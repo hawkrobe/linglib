@@ -31,9 +31,7 @@ def ex_71a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("structure", "nonOverlap"), ("form", "every")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_71b : LinguisticExample :=
   { id := "haslingerhienetal2025_71b"
@@ -49,9 +47,7 @@ def ex_71b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("structure", "bare"), ("form", "alle")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_73a : LinguisticExample :=
   { id := "haslingerhienetal2025_73a"
@@ -67,9 +63,7 @@ def ex_73a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("structure", "nonOverlap"), ("form", "every")]
-    comment := "Annotated [+dist] in the paper."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Annotated [+dist] in the paper." }
 
 def ex_73b : LinguisticExample :=
   { id := "haslingerhienetal2025_73b"
@@ -85,9 +79,7 @@ def ex_73b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("structure", "atomic"), ("form", "each")]
-    comment := "Starred and annotated [+dist] in the paper."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Starred and annotated [+dist] in the paper." }
 
 def ex_74a : LinguisticExample :=
   { id := "haslingerhienetal2025_74a"
@@ -103,9 +95,7 @@ def ex_74a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("structure", "bare"), ("form", "alle")]
-    comment := "Annotated [-dist] in the paper."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Annotated [-dist] in the paper." }
 
 def ex_74b : LinguisticExample :=
   { id := "haslingerhienetal2025_74b"
@@ -121,9 +111,7 @@ def ex_74b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("structure", "atomicOnly"), ("form", "jeder")]
-    comment := "Marked % and annotated [+dist] in the paper, which notes that the oddness is subject to variation."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Marked % and annotated [+dist] in the paper, which notes that the oddness is subject to variation." }
 
 def all : List LinguisticExample := [ex_71a, ex_71b, ex_73a, ex_73b, ex_74a, ex_74b]
 

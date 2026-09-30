@@ -31,9 +31,7 @@ def die_p1 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4"), ("pattern", "E1"), ("probability", "8/12")]
-    comment := "First premise of the Conjunctivitis counterexample: eight of the twelve faces."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "First premise of the Conjunctivitis counterexample: eight of the twelve faces." }
 
 def die_p2 : LinguisticExample :=
   { id := "yalcin2010_die_p2"
@@ -49,9 +47,7 @@ def die_p2 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4"), ("pattern", "E1"), ("probability", "8/12")]
-    comment := "Second premise, by parity with (P1); the paper notes a tendency to read it as modally subordinate to (P1)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Second premise, by parity with (P1); the paper notes a tendency to read it as modally subordinate to (P1)." }
 
 def die_c : LinguisticExample :=
   { id := "yalcin2010_die_c"
@@ -67,9 +63,7 @@ def die_c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4"), ("pattern", "E1"), ("probability", "4/12")]
-    comment := "The conclusion speakers are not tempted to accept: four of the twelve faces, refuting Conjunctivitis under the probability-space semantics."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The conclusion speakers are not tempted to accept: four of the twelve faces, refuting Conjunctivitis under the probability-space semantics." }
 
 def ex8 : LinguisticExample :=
   { id := "yalcin2010_ex8"
@@ -85,9 +79,7 @@ def ex8 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "6"), ("reading", "appreciably more likely than not")]
-    comment := "Suggests that heads is appreciably more likely than not; the probability-space semantics with the threshold one half does not predict the judgment, motivating a relative-adjective threshold."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Suggests that heads is appreciably more likely than not; the probability-space semantics with the threshold one half does not predict the judgment, motivating a relative-adjective threshold." }
 
 def ex9 : LinguisticExample :=
   { id := "yalcin2010_ex9"
@@ -103,9 +95,7 @@ def ex9 : LinguisticExample :=
     alternatives := []
     readings := [("probably > everyone", .acceptable), ("everyone > probably", .unacceptable)]
     paperFeatures := [("section", "7"), ("principle", "epistemic containment")]
-    comment := "Only the wide-scope reading of probably is available, although the narrow-scope one would be the more plausible claim."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Only the wide-scope reading of probably is available, although the narrow-scope one would be the more plausible claim." }
 
 def ex17 : LinguisticExample :=
   { id := "yalcin2010_ex17"
@@ -121,9 +111,7 @@ def ex17 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "8"), ("embedding", "imagine")]
-    comment := "Imagining a Moore-paradoxical proposition is odd but the sentence is not defective."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Imagining a Moore-paradoxical proposition is odd but the sentence is not defective." }
 
 def ex18 : LinguisticExample :=
   { id := "yalcin2010_ex18"
@@ -139,9 +127,7 @@ def ex18 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "8"), ("embedding", "imagine")]
-    comment := "Marked, unlike (17): the probability operator does not behave like a knowledge ascription under verbs of imagination."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Marked, unlike (17): the probability operator does not behave like a knowledge ascription under verbs of imagination." }
 
 def ex19 : LinguisticExample :=
   { id := "yalcin2010_ex19"
@@ -157,9 +143,7 @@ def ex19 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "8"), ("phenomenon", "modal concord")]
-    comment := "Iterated probability operators are odd, and when not odd often vacuous."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Iterated probability operators are odd, and when not odd often vacuous." }
 
 def all : List LinguisticExample := [die_p1, die_p2, die_c, ex8, ex9, ex17, ex18, ex19]
 

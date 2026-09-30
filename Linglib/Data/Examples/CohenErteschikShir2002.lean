@@ -31,9 +31,7 @@ def boys_brave : LinguisticExample :=
     alternatives := []
     readings := [("generic", .acceptable), ("existential", .unacceptable)]
     paperFeatures := [("predicate_level", "individual")]
-    comment := "Migrated from Phenomena/Generics/BarePlurals.lean boysAreBrave. I-level predicate forces the generic reading of the bare plural subject."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Migrated from Phenomena/Generics/BarePlurals.lean boysAreBrave. I-level predicate forces the generic reading of the bare plural subject." }
 
 def italians_good_looking : LinguisticExample :=
   { id := "cohenerteschikshir2002_italians_good_looking"
@@ -49,9 +47,7 @@ def italians_good_looking : LinguisticExample :=
     alternatives := []
     readings := [("generic", .acceptable), ("existential", .unacceptable)]
     paperFeatures := [("predicate_level", "individual")]
-    comment := "Migrated from Phenomena/Generics/BarePlurals.lean italiansGoodLooking. I-level predicate; no existential reading."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Migrated from Phenomena/Generics/BarePlurals.lean italiansGoodLooking. I-level predicate; no existential reading." }
 
 def lawyers_intelligent : LinguisticExample :=
   { id := "cohenerteschikshir2002_lawyers_intelligent"
@@ -67,9 +63,7 @@ def lawyers_intelligent : LinguisticExample :=
     alternatives := []
     readings := [("generic", .acceptable), ("existential", .unacceptable)]
     paperFeatures := [("predicate_level", "individual")]
-    comment := "Migrated from Phenomena/Generics/BarePlurals.lean lawyersIntelligent. I-level predicate forces the generic reading."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Migrated from Phenomena/Generics/BarePlurals.lean lawyersIntelligent. I-level predicate forces the generic reading." }
 
 def boys_present : LinguisticExample :=
   { id := "cohenerteschikshir2002_boys_present"
@@ -85,9 +79,7 @@ def boys_present : LinguisticExample :=
     alternatives := []
     readings := [("generic", .acceptable), ("existential", .acceptable)]
     paperFeatures := [("predicate_level", "stage"), ("locative_status", "argument")]
-    comment := "Migrated from Phenomena/Generics/BarePlurals.lean boysArePresent. S-level predicate with a locative ARGUMENT licenses the existential reading ('there are boys here')."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Migrated from Phenomena/Generics/BarePlurals.lean boysArePresent. S-level predicate with a locative ARGUMENT licenses the existential reading ('there are boys here')." }
 
 def firemen_available : LinguisticExample :=
   { id := "cohenerteschikshir2002_firemen_available"
@@ -103,9 +95,7 @@ def firemen_available : LinguisticExample :=
     alternatives := []
     readings := [("generic", .acceptable), ("existential", .acceptable)]
     paperFeatures := [("predicate_level", "stage"), ("locative_status", "argument")]
-    comment := "Migrated from Phenomena/Generics/BarePlurals.lean firemenAvailable. S-level predicate with an implicit locative argument (for some task/location)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Migrated from Phenomena/Generics/BarePlurals.lean firemenAvailable. S-level predicate with an implicit locative argument (for some task/location)." }
 
 def soldiers_arrived : LinguisticExample :=
   { id := "cohenerteschikshir2002_soldiers_arrived"
@@ -121,9 +111,7 @@ def soldiers_arrived : LinguisticExample :=
     alternatives := []
     readings := [("generic", .acceptable), ("existential", .acceptable)]
     paperFeatures := [("predicate_level", "stage"), ("locative_status", "argument")]
-    comment := "Migrated from Phenomena/Generics/BarePlurals.lean soldiersArrived. Motion verb with an implicit goal argument; existential reading available."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Migrated from Phenomena/Generics/BarePlurals.lean soldiersArrived. Motion verb with an implicit goal argument; existential reading available." }
 
 def all : List LinguisticExample := [boys_brave, italians_good_looking, lawyers_intelligent, boys_present, firemen_available, soldiers_arrived]
 

@@ -31,9 +31,7 @@ def ex_1A : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("context", "contrast"), ("polarity", "negative"), ("turn", "A")]
-    comment := "The negative claim about A's topic situation; the negation particle is accented."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The negative claim about A's topic situation; the negation particle is accented." }
 
 def ex_1B1 : LinguisticExample :=
   { id := "turcobraundimroth2014_1B1"
@@ -49,9 +47,7 @@ def ex_1B1 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("context", "contrast"), ("polarity", "positive"), ("marking", "verumFocus")]
-    comment := "Verum focus: a pitch accent on the finite auxiliary; the claims of A and B1 are compatible, being about different topic situations."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Verum focus: a pitch accent on the finite auxiliary; the claims of A and B1 are compatible, being about different topic situations." }
 
 def ex_1B2 : LinguisticExample :=
   { id := "turcobraundimroth2014_1B2"
@@ -67,9 +63,7 @@ def ex_1B2 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("context", "contrast"), ("polarity", "positive"), ("marking", "particle")]
-    comment := "An accented affirmative particle, schon or wohl, in place of Verum focus; German speakers produced no such particle in the experiment."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "An accented affirmative particle, schon or wohl, in place of Verum focus; German speakers produced no such particle in the experiment." }
 
 def ex_2A : LinguisticExample :=
   { id := "turcobraundimroth2014_2A"
@@ -85,9 +79,7 @@ def ex_2A : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("context", "correction"), ("polarity", "negative"), ("turn", "A")]
-    comment := "The negative claim that B corrects."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The negative claim that B corrects." }
 
 def ex_2B1 : LinguisticExample :=
   { id := "turcobraundimroth2014_2B1"
@@ -103,9 +95,7 @@ def ex_2B1 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("context", "correction"), ("polarity", "positive"), ("marking", "verumFocus")]
-    comment := "Verum focus; the claims of A and B1 exclude each other, being about the same topic situation."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Verum focus; the claims of A and B1 exclude each other, being about the same topic situation." }
 
 def ex_2B2 : LinguisticExample :=
   { id := "turcobraundimroth2014_2B2"
@@ -121,9 +111,7 @@ def ex_2B2 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("context", "correction"), ("polarity", "positive"), ("marking", "particle")]
-    comment := "An accented affirmative particle in place of Verum focus."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "An accented affirmative particle in place of Verum focus." }
 
 def ex_3 : LinguisticExample :=
   { id := "turcobraundimroth2014_3"
@@ -139,9 +127,7 @@ def ex_3 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("context", "contrast"), ("polarity", "positive"), ("marking", "particle"), ("genre", "monologue")]
-    comment := "Accented wel in a monologue marks a polarity contrast between two topic entities without undoing the earlier claim; from the Finite Story data of Dimroth and colleagues."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Accented wel in a monologue marks a polarity contrast between two topic entities without undoing the earlier claim; from the Finite Story data of Dimroth and colleagues." }
 
 def vf_negated : LinguisticExample :=
   { id := "turcobraundimroth2014_vf_negated"
@@ -157,9 +143,7 @@ def vf_negated : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("polarity", "negative"), ("marking", "verumFocus")]
-    comment := "Verum focus in a negated sentence: the assertion operator takes effect on a level above polarity."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Verum focus in a negated sentence: the assertion operator takes effect on a level above polarity." }
 
 def wel_negated : LinguisticExample :=
   { id := "turcobraundimroth2014_wel_negated"
@@ -175,9 +159,7 @@ def wel_negated : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("polarity", "negative"), ("marking", "particle")]
-    comment := "The affirmative particle cannot occur in a negated sentence: wel and niet are values of the one polarity operator."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The affirmative particle cannot occur in a negated sentence: wel and niet are values of the one polarity operator." }
 
 def all : List LinguisticExample := [ex_1A, ex_1B1, ex_1B2, ex_2A, ex_2B1, ex_2B2, ex_3, vf_negated, wel_negated]
 

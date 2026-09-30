@@ -15,9 +15,7 @@
     "paperFeatures": [
       ["puzzle", "Hart's vehicle rule"]
     ],
-    "comment": "Hart's no-vehicles-in-the-park rule; whether a bicycle, roller skates or a toy car count as vehicles is what the rule leaves open.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Hart's no-vehicles-in-the-park rule; whether a bicycle, roller skates or a toy car count as vehicles is what the rule leaves open."
   },
   {
     "id": "waldonetal2023_rule",
@@ -36,9 +34,7 @@
       ["rule", "prohibition"],
       ["artifactNoun", "electronic device"]
     ],
-    "comment": "The rule of Figure 1, read in the goal-neutral condition and with the goals of limiting light, limiting noise and preventing recordings.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The rule of Figure 1, read in the goal-neutral condition and with the goals of limiting light, limiting noise and preventing recordings."
   },
   {
     "id": "waldonetal2023_4a",
@@ -60,9 +56,7 @@
       ["construction", "dimensional"],
       ["nounType", "natural kind"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "waldonetal2023_4b",
@@ -81,9 +75,7 @@
       ["construction", "dimensional"],
       ["nounType", "artifact"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "waldonetal2023_4c",
@@ -102,9 +94,7 @@
       ["construction", "dimensional"],
       ["nounType", "multidimensional adjective"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "waldonetal2023_5a",
@@ -125,9 +115,7 @@
       ["construction", "degree"],
       ["nounType", "natural kind"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "waldonetal2023_5b",
@@ -148,9 +136,7 @@
       ["construction", "degree"],
       ["nounType", "artifact"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "waldonetal2023_5c",
@@ -169,9 +155,7 @@
       ["construction", "degree"],
       ["nounType", "multidimensional adjective"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "waldonetal2023_7",
@@ -192,9 +176,7 @@
       ["construction", "degree"],
       ["nounType", "single-dimensional adjective"]
     ],
-    "comment": "Not context sensitive: the comparative orders two degrees.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Not context sensitive: the comparative orders two degrees."
   },
   {
     "id": "waldonetal2023_10a",
@@ -213,9 +195,7 @@
       ["construction", "quantificational"],
       ["parameters", "F, W, s"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "waldonetal2023_11a",
@@ -234,9 +214,7 @@
       ["construction", "degree"],
       ["parameters", "F, W project"]
     ],
-    "comment": "Context sensitivity persists in the artifact noun comparative.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Context sensitivity persists in the artifact noun comparative."
   },
   {
     "id": "waldonetal2023_16a",
@@ -254,9 +232,7 @@
     "paperFeatures": [
       ["test", "meta-linguistic negotiation"]
     ],
-    "comment": "What counts as a member of the category is up for negotiation, as a threshold is for a gradable adjective.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "What counts as a member of the category is up for negotiation, as a threshold is for a gradable adjective."
   },
   {
     "id": "waldonetal2023_16b",
@@ -274,9 +250,7 @@
     "paperFeatures": [
       ["test", "meta-linguistic negotiation"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "waldonetal2023_16c",
@@ -295,8 +269,6 @@
       ["test", "meta-linguistic negotiation"],
       ["analysis", "domain restriction"]
     ],
-    "comment": "Domain restriction to the salient bottles is available, but what counts as a bottle of Heineken is not negotiated.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Domain restriction to the salient bottles is available, but what counts as a bottle of Heineken is not negotiated."
   }
 ]

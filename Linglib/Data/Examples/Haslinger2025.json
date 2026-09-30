@@ -32,8 +32,7 @@
         "lower"
       ]
     ],
-    "comment": "The simpler member: a definite plural with potential for imprecision.",
-    "lgrConformance": ""
+    "comment": "The simpler member: a definite plural with potential for imprecision."
   },
   {
     "id": "haslinger2025_ch1_6b",
@@ -68,8 +67,7 @@
         "higher"
       ]
     ],
-    "comment": "The more complex member: not blocked despite its complexity, because it is more precise.",
-    "lgrConformance": ""
+    "comment": "The more complex member: not blocked despite its complexity, because it is more precise."
   },
   {
     "id": "haslinger2025_ch1_7a",
@@ -104,8 +102,7 @@
         "lower"
       ]
     ],
-    "comment": "A round bare numeral, imprecise in the right context.",
-    "lgrConformance": ""
+    "comment": "A round bare numeral, imprecise in the right context."
   },
   {
     "id": "haslinger2025_ch1_7b",
@@ -140,8 +137,7 @@
         "higher"
       ]
     ],
-    "comment": "The modified numeral: more complex and more precise.",
-    "lgrConformance": ""
+    "comment": "The modified numeral: more complex and more precise."
   },
   {
     "id": "haslinger2025_ch1_8a",
@@ -180,8 +176,7 @@
         "yes"
       ]
     ],
-    "comment": "The hypothetical inverse pattern, an imprecise expression built by adding structure to the precise one: blocked in almost all contexts by No Needless Manner Violations, hence unattested.",
-    "lgrConformance": ""
+    "comment": "The hypothetical inverse pattern, an imprecise expression built by adding structure to the precise one: blocked in almost all contexts by No Needless Manner Violations, hence unattested."
   },
   {
     "id": "haslinger2025_ch1_8b",
@@ -220,8 +215,7 @@
         "yes"
       ]
     ],
-    "comment": "The hypothetical inverse pattern's precise member, simpler than its imprecise counterpart.",
-    "lgrConformance": ""
+    "comment": "The hypothetical inverse pattern's precise member, simpler than its imprecise counterpart."
   },
   {
     "id": "haslinger2025_ch1_9a",
@@ -256,8 +250,7 @@
         "lower"
       ]
     ],
-    "comment": "A conjunction with a homogeneity gap but no non-maximal reading: potential for imprecision that Inference Preservation blocks.",
-    "lgrConformance": ""
+    "comment": "A conjunction with a homogeneity gap but no non-maximal reading: potential for imprecision that Inference Preservation blocks."
   },
   {
     "id": "haslinger2025_ch1_9b",
@@ -292,8 +285,7 @@
         "higher"
       ]
     ],
-    "comment": "The gap-less counterpart, with extra material.",
-    "lgrConformance": ""
+    "comment": "The gap-less counterpart, with extra material."
   },
   {
     "id": "haslinger2025_ch2_19",
@@ -328,8 +320,7 @@
         "98"
       ]
     ],
-    "comment": "CARS(EXACT): the salient issue is the tax rate, which separates 98 from 100, so the exact construal is the only relevant one and the utterance is rejected.",
-    "lgrConformance": ""
+    "comment": "CARS(EXACT): the salient issue is the tax rate, which separates 98 from 100, so the exact construal is the only relevant one and the utterance is rejected."
   },
   {
     "id": "haslinger2025_ch2_20",
@@ -364,8 +355,7 @@
         "98"
       ]
     ],
-    "comment": "CARS(INEXACT): for the issue of extreme wealth 98 and 100 fall together, and the inexact construal makes the utterance acceptable.",
-    "lgrConformance": ""
+    "comment": "CARS(INEXACT): for the issue of extreme wealth 98 and 100 fall together, and the inexact construal makes the utterance acceptable."
   },
   {
     "id": "haslinger2025_ch2_164a",
@@ -396,8 +386,7 @@
         "gameShow"
       ]
     ],
-    "comment": "False on the exact construal, true on the inexact one; most consultants accept exactly one of (164a) and (164b), disagreeing on which, so round numerals show no homogeneity gap.",
-    "lgrConformance": ""
+    "comment": "False on the exact construal, true on the inexact one; most consultants accept exactly one of (164a) and (164b), disagreeing on which, so round numerals show no homogeneity gap."
   },
   {
     "id": "haslinger2025_ch2_164b",
@@ -428,8 +417,7 @@
         "gameShow"
       ]
     ],
-    "comment": "True on the exact construal, false on the inexact one.",
-    "lgrConformance": ""
+    "comment": "True on the exact construal, false on the inexact one."
   },
   {
     "id": "haslinger2025_ch6_8a",
@@ -460,8 +448,7 @@
         "tens"
       ]
     ],
-    "comment": "A numeral on the conventionalized scale of tens, which permits imprecision.",
-    "lgrConformance": ""
+    "comment": "A numeral on the conventionalized scale of tens, which permits imprecision."
   },
   {
     "id": "haslinger2025_ch6_8b",
@@ -492,8 +479,7 @@
         "units"
       ]
     ],
-    "comment": "A numeral off that scale, whose alternatives include 150: no imprecision.",
-    "lgrConformance": ""
+    "comment": "A numeral off that scale, whose alternatives include 150: no imprecision."
   },
   {
     "id": "haslinger2025_ch6_9a",
@@ -524,8 +510,7 @@
         "quarterHours"
       ]
     ],
-    "comment": "A clock time on the quarter-hour scale: acceptable exact and inexact.",
-    "lgrConformance": ""
+    "comment": "A clock time on the quarter-hour scale: acceptable exact and inexact."
   },
   {
     "id": "haslinger2025_ch6_9b",
@@ -556,8 +541,7 @@
         "minutes"
       ]
     ],
-    "comment": "A clock time off that scale: acceptable exact, unacceptable inexact.",
-    "lgrConformance": ""
+    "comment": "A clock time off that scale: acceptable exact, unacceptable inexact."
   },
   {
     "id": "haslinger2025_ch7_19b",
@@ -589,7 +573,6 @@
         "conjunctionMaximality"
       ]
     ],
-    "comment": "The precise truth conditions entail each conjunct alternative, so Inference Preservation admits only the maximal construal.",
-    "lgrConformance": ""
+    "comment": "The precise truth conditions entail each conjunct alternative, so Inference Preservation admits only the maximal construal."
   }
 ]

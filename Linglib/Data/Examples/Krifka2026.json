@@ -16,8 +16,7 @@
       ["antecedent", "count"],
       ["anaphor", "they"]
     ],
-    "comment": "The paper credits the observation to Krifka et al. (1995).",
-    "metaLanguage": "stan1293"
+    "comment": "The paper credits the observation to Krifka et al. (1995)."
   },
   {
     "id": "krifka2026_ex3b",
@@ -36,8 +35,7 @@
       ["antecedent", "mass"],
       ["anaphor", "it"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "krifka2026_ex5a",
@@ -61,8 +59,7 @@
       ["island", "negation"],
       ["anaphor", "they"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "krifka2026_ex5b",
@@ -86,8 +83,7 @@
       ["island", "negation"],
       ["anaphor", "it"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "krifka2026_ex5c",
@@ -110,8 +106,7 @@
       ["island", "negation"],
       ["anaphor", "entityPronoun"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "krifka2026_ex7a",
@@ -135,8 +130,7 @@
       ["antecedent", "count"],
       ["anaphor", "they"]
     ],
-    "comment": "The antecedent may also be *spiders* or *two spiders*.",
-    "metaLanguage": "stan1293"
+    "comment": "The antecedent may also be *spiders* or *two spiders*."
   },
   {
     "id": "krifka2026_ex7b",
@@ -160,8 +154,7 @@
       ["antecedent", "mass"],
       ["anaphor", "it"]
     ],
-    "comment": "The antecedent may also be *a spot of mold* or *two spots of mold*.",
-    "metaLanguage": "stan1293"
+    "comment": "The antecedent may also be *a spot of mold* or *two spots of mold*."
   },
   {
     "id": "krifka2026_ex8a",
@@ -185,8 +178,7 @@
       ["antecedent", "mass"],
       ["anaphor", "it"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "krifka2026_ex8b",
@@ -210,8 +202,7 @@
       ["antecedent", "count"],
       ["anaphor", "they"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "krifka2026_ex19a",
@@ -236,8 +227,7 @@
       ["island", "negation"],
       ["anaphor", "they"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "krifka2026_ex19b",
@@ -262,7 +252,6 @@
       ["island", "negation"],
       ["anaphor", "one"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   }
 ]

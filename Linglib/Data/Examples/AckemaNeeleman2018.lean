@@ -31,9 +31,7 @@ def ex_2a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("phenomenon", "expletive"), ("person", "third")]
-    comment := "Expletive pronouns are third person: only DIST can deliver an empty output set."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Expletive pronouns are third person: only DIST can deliver an empty output set." }
 
 def ex_2b : LinguisticExample :=
   { id := "ackemaneeleman2018_2b"
@@ -49,9 +47,7 @@ def ex_2b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("phenomenon", "expletive"), ("person", "third")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_20a : LinguisticExample :=
   { id := "ackemaneeleman2018_20a"
@@ -67,9 +63,7 @@ def ex_20a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("phenomenon", "self-talk"), ("roles", "i and u co-incide")]
-    comment := "The same individual bears the speaker and addressee roles; possible because the features carry no negative values."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The same individual bears the speaker and addressee roles; possible because the features carry no negative values." }
 
 def ex_21a : LinguisticExample :=
   { id := "ackemaneeleman2018_21a"
@@ -85,9 +79,7 @@ def ex_21a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("phenomenon", "self-talk"), ("person", "first plural")]
-    comment := "A first person plural cannot refer to the speaker and the addressee-guise of the same individual."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A first person plural cannot refer to the speaker and the addressee-guise of the same individual." }
 
 def ex_24 : LinguisticExample :=
   { id := "ackemaneeleman2018_24"
@@ -103,9 +95,7 @@ def ex_24 : LinguisticExample :=
     alternatives := [("It seem that Vitesse won.", .ungrammatical), ("I seem that Vitesse won.", .ungrammatical), ("You seem that Vitesse won.", .ungrammatical)]
     readings := []
     paperFeatures := [("phenomenon", "expletive"), ("person", "third singular")]
-    comment := "Expletives are third person singular: plural is undefined on the empty set."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Expletives are third person singular: plural is undefined on the empty set." }
 
 def ex_25 : LinguisticExample :=
   { id := "ackemaneeleman2018_25"
@@ -121,9 +111,7 @@ def ex_25 : LinguisticExample :=
     alternatives := [("Nog jaren ben naar een oplossing gezocht.", .ungrammatical), ("Nog jaren bent naar een oplossing gezocht.", .ungrammatical), ("Nog jaren zijn naar een oplossing gezocht.", .ungrammatical)]
     readings := []
     paperFeatures := [("phenomenon", "default agreement"), ("construction", "impersonal passive")]
-    comment := "Default agreement in the absence of an agreeing argument is third person singular."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Default agreement in the absence of an agreeing argument is third person singular." }
 
 def ex_30 : LinguisticExample :=
   { id := "ackemaneeleman2018_30"
@@ -139,9 +127,7 @@ def ex_30 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("phenomenon", "expletive"), ("pronoun", "featureless impersonal")]
-    comment := "The featureless pronoun refers to the whole input set, which has two obligatory members, so it cannot be a dummy."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The featureless pronoun refers to the whole input set, which has two obligatory members, so it cannot be a dummy." }
 
 def all : List LinguisticExample := [ex_2a, ex_2b, ex_20a, ex_21a, ex_24, ex_25, ex_30]
 

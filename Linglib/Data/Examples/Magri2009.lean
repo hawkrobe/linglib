@@ -31,9 +31,7 @@ def ex_8a : LinguisticExample :=
     alternatives := []
     readings := [("existential", .acceptable), ("generic", .unacceptable)]
     paperFeatures := [("predicate_level", "stage"), ("position", "right")]
-    comment := "Repeated as (125a), where Magri adds, following Diesing, that the bare plural subject to the right of ja doch has only the existential reading."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Repeated as (125a), where Magri adds, following Diesing, that the bare plural subject to the right of ja doch has only the existential reading." }
 
 def ex_8b : LinguisticExample :=
   { id := "magri2009_8b"
@@ -49,9 +47,7 @@ def ex_8b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("predicate_level", "stage"), ("position", "left")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_8c : LinguisticExample :=
   { id := "magri2009_8c"
@@ -67,9 +63,7 @@ def ex_8c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("predicate_level", "individual"), ("position", "right")]
-    comment := "Starred in (8); repeated as (125b), where it is marked # as odd."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Starred in (8); repeated as (125b), where it is marked # as odd." }
 
 def ex_8d : LinguisticExample :=
   { id := "magri2009_8d"
@@ -85,9 +79,7 @@ def ex_8d : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("predicate_level", "individual"), ("position", "left")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def all : List LinguisticExample := [ex_8a, ex_8b, ex_8c, ex_8d]
 

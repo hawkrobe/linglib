@@ -410,8 +410,7 @@
       ["outer", "rsp"],
       ["inner", "rsp"]
     ],
-    "comment": "Two resultative secondary predicates.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Two resultative secondary predicates."
   },
   {
     "id": "benz2025_ex193a",

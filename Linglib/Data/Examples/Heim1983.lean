@@ -31,9 +31,7 @@ def ex1 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "0"), ("presupposes", "there is a king")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex2 : LinguisticExample :=
   { id := "heim1983_ex2"
@@ -49,9 +47,7 @@ def ex2 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "0"), ("presupposes", "the king has a son")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex3 : LinguisticExample :=
   { id := "heim1983_ex3"
@@ -67,9 +63,7 @@ def ex3 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "0"), ("presupposes", "there is a king"), ("filtered", "the king has a son")]
-    comment := "Inherits the presupposition both constituents carry, not the one the consequent adds."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Inherits the presupposition both constituents carry, not the one the consequent adds." }
 
 def ex5 : LinguisticExample :=
   { id := "heim1983_ex5"
@@ -85,9 +79,7 @@ def ex5 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "1.2"), ("presupposes", "someone with children has twins"), ("gazdar", "nothing"), ("kp", "as reported")]
-    comment := "Slightly strange out of context; Karttunen and Peters predict this, Gazdar the opposite."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Slightly strange out of context; Karttunen and Peters predict this, Gazdar the opposite." }
 
 def ex6 : LinguisticExample :=
   { id := "heim1983_ex6"
@@ -103,9 +95,7 @@ def ex6 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "1.2"), ("presupposes", "nothing"), ("gazdar", "John has children"), ("kp", "nothing")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex7 : LinguisticExample :=
   { id := "heim1983_ex7"
@@ -121,9 +111,7 @@ def ex7 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "1.3"), ("presupposes", "every nation has a king"), ("kp", "every nation has a king")]
-    comment := "Derived from (21) and (22) in §3.2."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Derived from (21) and (22) in §3.2." }
 
 def ex16 : LinguisticExample :=
   { id := "heim1983_ex16"
@@ -139,9 +127,7 @@ def ex16 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.3"), ("global", "France has a king"), ("local", "either France has no king or he didn't come")]
-    comment := "Global accommodation is preferred; the local option is taken when the speaker continues with 'because France doesn't have a king'."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Global accommodation is preferred; the local option is taken when the speaker continues with 'because France doesn't have a king'." }
 
 def ex23 : LinguisticExample :=
   { id := "heim1983_ex23"
@@ -157,9 +143,7 @@ def ex23 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.2"), ("presupposes", "everyone has a king"), ("kp", "nothing")]
-    comment := "A presupposition in the restrictor; Heim's prediction differs from Karttunen and Peters's."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A presupposition in the restrictor; Heim's prediction differs from Karttunen and Peters's." }
 
 def ex24 : LinguisticExample :=
   { id := "heim1983_ex24"
@@ -175,9 +159,7 @@ def ex24 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.2"), ("cooper", "every nation has a king"), ("lernerZimmermann", "some nation has a king")]
-    comment := "The paper sides with Cooper, barring local accommodation; the CCP of 'no' is not given."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The paper sides with Cooper, barring local accommodation; the CCP of 'no' is not given." }
 
 def ex25 : LinguisticExample :=
   { id := "heim1983_ex25"
@@ -193,9 +175,7 @@ def ex25 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.3"), ("kp", "some fat man had a bicycle"), ("presupposes", "every fat man had a bicycle, unless accommodated")]
-    comment := "The universal presupposition is avoided by accommodating that the fat man in question had a bicycle in the course of the update."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The universal presupposition is avoided by accommodating that the fat man in question had a bicycle in the course of the update." }
 
 def all : List LinguisticExample := [ex1, ex2, ex3, ex5, ex6, ex7, ex16, ex23, ex24, ex25]
 

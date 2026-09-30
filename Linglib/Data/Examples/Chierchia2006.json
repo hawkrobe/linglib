@@ -24,8 +24,7 @@
         "episodic"
       ]
     ],
-    "comment": "Widening the domain of an existential in a positive context yields a weaker statement.",
-    "lgrConformance": ""
+    "comment": "Widening the domain of an existential in a positive context yields a weaker statement."
   },
   {
     "id": "chierchia2006_ex2b",
@@ -52,8 +51,7 @@
         "negation"
       ]
     ],
-    "comment": "Within the scope of negation the wider domain gives the stronger statement.",
-    "lgrConformance": ""
+    "comment": "Within the scope of negation the wider domain gives the stronger statement."
   },
   {
     "id": "chierchia2006_ex3",
@@ -85,8 +83,7 @@
         "future"
       ]
     ],
-    "comment": "Existential, with the speaker not choosy about which doctor.",
-    "lgrConformance": ""
+    "comment": "Existential, with the speaker not choosy about which doctor."
   },
   {
     "id": "chierchia2006_ex4",
@@ -118,8 +115,7 @@
         "episodic"
       ]
     ],
-    "comment": "An episodic sentence that still requires a covert epistemic modal for its interpretation.",
-    "lgrConformance": ""
+    "comment": "An episodic sentence that still requires a covert epistemic modal for its interpretation."
   },
   {
     "id": "chierchia2006_ex5",
@@ -151,8 +147,7 @@
         "episodicSubtrigged"
       ]
     ],
-    "comment": "Episodic, universal, and inviting counterfactual conclusions.",
-    "lgrConformance": ""
+    "comment": "Episodic, universal, and inviting counterfactual conclusions."
   },
   {
     "id": "chierchia2006_ex6",
@@ -184,8 +179,7 @@
         "imperative"
       ]
     ],
-    "comment": "Not an instruction to push all keys.",
-    "lgrConformance": ""
+    "comment": "Not an instruction to push all keys."
   },
   {
     "id": "chierchia2006_ex8a",
@@ -217,8 +211,7 @@
         "episodic"
       ]
     ],
-    "comment": "Slightly marginal out of the blue; existential in a semimodalized context.",
-    "lgrConformance": ""
+    "comment": "Slightly marginal out of the blue; existential in a semimodalized context."
   },
   {
     "id": "chierchia2006_ex8b",
@@ -250,8 +243,7 @@
         "episodicSubtrigged"
       ]
     ],
-    "comment": "Universal, with the modifier construed restrictively.",
-    "lgrConformance": ""
+    "comment": "Universal, with the modifier construed restrictively."
   },
   {
     "id": "chierchia2006_ex10a",
@@ -287,8 +279,7 @@
         "future"
       ]
     ],
-    "comment": "Under a modal the universal free-choice item also admits an existential reading.",
-    "lgrConformance": ""
+    "comment": "Under a modal the universal free-choice item also admits an existential reading."
   },
   {
     "id": "chierchia2006_ex10b",
@@ -320,8 +311,7 @@
         "future"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "chierchia2006_ex10c",
@@ -357,8 +347,7 @@
         "imperative"
       ]
     ],
-    "comment": "The ambiguity is very clear with imperatives.",
-    "lgrConformance": ""
+    "comment": "The ambiguity is very clear with imperatives."
   },
   {
     "id": "chierchia2006_ex10d",
@@ -390,8 +379,7 @@
         "imperative"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "chierchia2006_ex10e",
@@ -427,8 +415,7 @@
         "possibility"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "chierchia2006_ex10f",
@@ -460,8 +447,7 @@
         "possibility"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "chierchia2006_ex10g",
@@ -497,8 +483,7 @@
         "necessity"
       ]
     ],
-    "comment": "The universal reading is favored; the existential one needs a special context.",
-    "lgrConformance": ""
+    "comment": "The universal reading is favored; the existential one needs a special context."
   },
   {
     "id": "chierchia2006_ex10h",
@@ -530,8 +515,7 @@
         "necessity"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "chierchia2006_ex11a",
@@ -558,8 +542,7 @@
         "episodic"
       ]
     ],
-    "comment": "Marginal out of the blue.",
-    "lgrConformance": ""
+    "comment": "Marginal out of the blue."
   },
   {
     "id": "chierchia2006_ex11b",
@@ -586,8 +569,7 @@
         "episodicSubtrigged"
       ]
     ],
-    "comment": "The relative clause, if anything, makes things worse.",
-    "lgrConformance": ""
+    "comment": "The relative clause, if anything, makes things worse."
   },
   {
     "id": "chierchia2006_ex11c",
@@ -614,8 +596,7 @@
         "episodic"
       ]
     ],
-    "comment": "Marginal unless a special context is provided.",
-    "lgrConformance": ""
+    "comment": "Marginal unless a special context is provided."
   },
   {
     "id": "chierchia2006_ex11d",
@@ -647,8 +628,7 @@
         "episodicSubtrigged"
       ]
     ],
-    "comment": "The relative clause restores full acceptability: subtrigging.",
-    "lgrConformance": ""
+    "comment": "The relative clause restores full acceptability: subtrigging."
   },
   {
     "id": "chierchia2006_ex12",
@@ -684,8 +664,7 @@
         "negation"
       ]
     ],
-    "comment": "Acceptable only with the intonation of the rhetorical reading, not every book.",
-    "lgrConformance": ""
+    "comment": "Acceptable only with the intonation of the rhetorical reading, not every book."
   },
   {
     "id": "chierchia2006_ex13",
@@ -721,8 +700,7 @@
         "negationSubtrigged"
       ]
     ],
-    "comment": "The rhetorical reading remains and a negative-polarity reading, no book at all, appears.",
-    "lgrConformance": ""
+    "comment": "The rhetorical reading remains and a negative-polarity reading, no book at all, appears."
   },
   {
     "id": "chierchia2006_ex14",
@@ -758,8 +736,7 @@
         "negation"
       ]
     ],
-    "comment": "Only the rhetorical reading, unlike German irgendein.",
-    "lgrConformance": ""
+    "comment": "Only the rhetorical reading, unlike German irgendein."
   },
   {
     "id": "chierchia2006_ex47a",
@@ -786,8 +763,7 @@
         "episodic"
       ]
     ],
-    "comment": "With large domain alternatives the even-like implicature is inconsistent: every alternative is stronger than the statement.",
-    "lgrConformance": ""
+    "comment": "With large domain alternatives the even-like implicature is inconsistent: every alternative is stronger than the statement."
   },
   {
     "id": "chierchia2006_ex49a",
@@ -814,8 +790,7 @@
         "negation"
       ]
     ],
-    "comment": "Under negation the widest domain gives the strongest statement and the implicature is consistent.",
-    "lgrConformance": ""
+    "comment": "Under negation the widest domain gives the strongest statement and the implicature is consistent."
   },
   {
     "id": "chierchia2006_ex55a",
@@ -847,8 +822,7 @@
         "generic"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "chierchia2006_ex55b",
@@ -880,8 +854,7 @@
         "episodicSubtrigged"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "chierchia2006_ex64a",
@@ -917,8 +890,7 @@
         "negation"
       ]
     ],
-    "comment": "Negation over the freezing operator gives the rhetorical reading; freezing over negation the negative-polarity reading, whose implicature the assertion entails.",
-    "lgrConformance": ""
+    "comment": "Negation over the freezing operator gives the rhetorical reading; freezing over negation the negative-polarity reading, whose implicature the assertion entails."
   },
   {
     "id": "chierchia2006_ex67a",
@@ -945,8 +917,7 @@
         "episodic"
       ]
     ],
-    "comment": "Universal over every possible student: too strong for an episodic statement.",
-    "lgrConformance": ""
+    "comment": "Universal over every possible student: too strong for an episodic statement."
   },
   {
     "id": "chierchia2006_ex68a",
@@ -978,8 +949,7 @@
         "episodicSubtrigged"
       ]
     ],
-    "comment": "The relative clause anchors the possible students to actual ones.",
-    "lgrConformance": ""
+    "comment": "The relative clause anchors the possible students to actual ones."
   },
   {
     "id": "chierchia2006_ex69a",
@@ -1015,8 +985,7 @@
         "negation"
       ]
     ],
-    "comment": "Awkward out of the blue unless intonation or context warrants the rhetorical reading.",
-    "lgrConformance": ""
+    "comment": "Awkward out of the blue unless intonation or context warrants the rhetorical reading."
   },
   {
     "id": "chierchia2006_ex71a",
@@ -1048,8 +1017,7 @@
         "future"
       ]
     ],
-    "comment": "In a positive context adding the implicature properly strengthens the assertion.",
-    "lgrConformance": ""
+    "comment": "In a positive context adding the implicature properly strengthens the assertion."
   },
   {
     "id": "chierchia2006_ex77c",
@@ -1081,8 +1049,7 @@
         "necessity"
       ]
     ],
-    "comment": "An overt modality rescues an existential free-choice item.",
-    "lgrConformance": ""
+    "comment": "An overt modality rescues an existential free-choice item."
   },
   {
     "id": "chierchia2006_ex79a",
@@ -1109,8 +1076,7 @@
         "episodic"
       ]
     ],
-    "comment": "The free-choice implicature clashes with the uniqueness implicature.",
-    "lgrConformance": ""
+    "comment": "The free-choice implicature clashes with the uniqueness implicature."
   },
   {
     "id": "chierchia2006_ex83a",
@@ -1142,8 +1108,7 @@
         "possibility"
       ]
     ],
-    "comment": "The doctors distribute across the accessible worlds.",
-    "lgrConformance": ""
+    "comment": "The doctors distribute across the accessible worlds."
   },
   {
     "id": "chierchia2006_ex86a",
@@ -1170,8 +1135,7 @@
         "episodic"
       ]
     ],
-    "comment": "A quantified DP between the freezing operator and the item does not rescue it: intervention.",
-    "lgrConformance": ""
+    "comment": "A quantified DP between the freezing operator and the item does not rescue it: intervention."
   },
   {
     "id": "chierchia2006_ex88a",
@@ -1203,8 +1167,7 @@
         "possibility"
       ]
     ],
-    "comment": "One modal licenses two existential free-choice items.",
-    "lgrConformance": ""
+    "comment": "One modal licenses two existential free-choice items."
   },
   {
     "id": "chierchia2006_ex90a",
@@ -1240,8 +1203,7 @@
         "negationNecessity"
       ]
     ],
-    "comment": "The negative-polarity reading is preferred; the rhetorical one needs contrastive intonation.",
-    "lgrConformance": ""
+    "comment": "The negative-polarity reading is preferred; the rhetorical one needs contrastive intonation."
   },
   {
     "id": "chierchia2006_ex90b",
@@ -1277,8 +1239,7 @@
         "negationNecessity"
       ]
     ],
-    "comment": "Only the rhetorical reading.",
-    "lgrConformance": ""
+    "comment": "Only the rhetorical reading."
   },
   {
     "id": "chierchia2006_ex92a",
@@ -1314,8 +1275,7 @@
         "imperative"
       ]
     ],
-    "comment": "Freezing inside the imperative gives the existential reading with free choice over doughnuts.",
-    "lgrConformance": ""
+    "comment": "Freezing inside the imperative gives the existential reading with free choice over doughnuts."
   },
   {
     "id": "chierchia2006_ex92b",
@@ -1351,8 +1311,7 @@
         "imperative"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "chierchia2006_ex115",
@@ -1384,8 +1343,7 @@
         "necessity"
       ]
     ],
-    "comment": "Appendix A4: the free-choice implicature with a universal modal.",
-    "lgrConformance": ""
+    "comment": "Appendix A4: the free-choice implicature with a universal modal."
   },
   {
     "id": "chierchia2006_fn42i",
@@ -1421,7 +1379,6 @@
         "possibility"
       ]
     ],
-    "comment": "Cannot mean that he could do anything: freezing below the modal is contradictory.",
-    "lgrConformance": ""
+    "comment": "Cannot mean that he could do anything: freezing below the modal is contradictory."
   }
 ]

@@ -31,9 +31,7 @@ def ex_17 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3"), ("requirements", "ACC by gegessen, NOM by übrig war")]
-    comment := "The free relative pronoun was is the accusative object of the matrix verb and the nominative subject of the relative clause at once, the matching effect Groos and van Riemsdijk 1981, Ingria 1990 and Bayer 1996 discuss; speakers of the restrictive dialect require both agreements (fn. 2)."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "The free relative pronoun was is the accusative object of the matrix verb and the nominative subject of the relative clause at once, the matching effect Groos and van Riemsdijk 1981, Ingria 1990 and Bayer 1996 discuss; speakers of the restrictive dialect require both agreements (fn. 2)." }
 
 def ex_32 : LinguisticExample :=
   { id := "dalrymplekaplan2000_32"
@@ -49,9 +47,7 @@ def ex_32 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.1"), ("requirements", "DAT by vertraust, NOM by muss")]
-    comment := "wem is unambiguously dative, so the nominative requirement of the matrix verb is not met (example from Stefan Kaufmann, fn. 3)."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "wem is unambiguously dative, so the nominative requirement of the matrix verb is not met (example from Stefan Kaufmann, fn. 3)." }
 
 def ex_40 : LinguisticExample :=
   { id := "dalrymplekaplan2000_40"
@@ -67,9 +63,7 @@ def ex_40 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.3"), ("requirements", "ACC by lubi, GEN by nienawidzi")]
-    comment := "The fronted pronoun is the object of both conjoined verbs; kogo is the accusative and the genitive of kto."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "The fronted pronoun is the object of both conjoined verbs; kogo is the accusative and the genitive of kto." }
 
 def ex_41 : LinguisticExample :=
   { id := "dalrymplekaplan2000_41"
@@ -85,9 +79,7 @@ def ex_41 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.3"), ("requirements", "ACC by lubi, GEN by nienawidzi")]
-    comment := "co is the nominative and the accusative of co, not the genitive; the paper's gloss line prints 'who' for co."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "co is the nominative and the accusative of co, not the genitive; the paper's gloss line prints 'who' for co." }
 
 def ex_47 : LinguisticExample :=
   { id := "dalrymplekaplan2000_47"
@@ -103,9 +95,7 @@ def ex_47 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.3"), ("requirements", "BASE by will, PPART by have")]
-    comment := "will requires a bare infinitive and have a past participle; clarify is only the former."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "will requires a bare infinitive and have a past participle; clarify is only the former." }
 
 def ex_48 : LinguisticExample :=
   { id := "dalrymplekaplan2000_48"
@@ -121,9 +111,7 @@ def ex_48 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.3"), ("requirements", "BASE by will, PPART by have")]
-    comment := "clarified is only the past participle; speakers who let the nearest conjunct alone impose its requirement accept it (fn. 6)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "clarified is only the past participle; speakers who let the nearest conjunct alone impose its requirement accept it (fn. 6)." }
 
 def ex_49 : LinguisticExample :=
   { id := "dalrymplekaplan2000_49"
@@ -139,9 +127,7 @@ def ex_49 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.3"), ("requirements", "BASE by will, PPART by have")]
-    comment := "set is both the bare infinitive and the past participle, so its VFORM value contains both ((50))."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "set is both the bare infinitive and the past participle, so its VFORM value contains both ((50))." }
 
 def ex_53a : LinguisticExample :=
   { id := "dalrymplekaplan2000_53a"
@@ -157,9 +143,7 @@ def ex_53a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.4"), ("classes", "5/6 and 7/8"), ("requirement", "class 5/6")]
-    comment := "The verb's determinate class-6 requirement distributes to both conjuncts and the class-7/8 noun fails it."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "The verb's determinate class-6 requirement distributes to both conjuncts and the class-7/8 noun fails it." }
 
 def ex_53b : LinguisticExample :=
   { id := "dalrymplekaplan2000_53b"
@@ -175,9 +159,7 @@ def ex_53b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.4"), ("classes", "5/6 and 7/8"), ("requirement", "class 7/8")]
-    comment := "The class-8 requirement fails on the class-5/6 noun."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "The class-8 requirement fails on the class-5/6 noun." }
 
 def ex_54 : LinguisticExample :=
   { id := "dalrymplekaplan2000_54"
@@ -193,9 +175,7 @@ def ex_54 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.4"), ("classes", "7/8 and 9/10"), ("requirement", "class in {7/8, 9/10}")]
-    comment := "The prefix zi- is the agreement form of both the 7/8 and the 9/10 plural, so the verb's requirement is a set and each conjunct meets it."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "The prefix zi- is the agreement form of both the 7/8 and the 9/10 plural, so the verb's requirement is a set and each conjunct meets it." }
 
 def ex_57 : LinguisticExample :=
   { id := "dalrymplekaplan2000_57"
@@ -211,9 +191,7 @@ def ex_57 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.4"), ("classes", "6 and 6"), ("requirement", "class in {2, 6}")]
-    comment := "Corbett 1991, from Corbett and Mtenje 1987: the plural prefix a- serves classes 2 and 6."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Corbett 1991, from Corbett and Mtenje 1987: the plural prefix a- serves classes 2 and 6." }
 
 def ex_58 : LinguisticExample :=
   { id := "dalrymplekaplan2000_58"
@@ -229,9 +207,7 @@ def ex_58 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.4"), ("classes", "2 and 2"), ("requirement", "class in {2, 6}")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_59 : LinguisticExample :=
   { id := "dalrymplekaplan2000_59"
@@ -247,9 +223,7 @@ def ex_59 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.4"), ("classes", "2 and 6"), ("requirement", "class in {2, 6}")]
-    comment := "A mixed class-2 and class-6 coordination, each conjunct meeting the indeterminate requirement."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "A mixed class-2 and class-6 coordination, each conjunct meeting the indeterminate requirement." }
 
 def ex_61 : LinguisticExample :=
   { id := "dalrymplekaplan2000_61"
@@ -265,9 +239,7 @@ def ex_61 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.4"), ("subjects", "1PL and 3PL"), ("requirement", "person in {1, 3}")]
-    comment := "Right node raising of kaufen, the first- and third-plural form; the examples were presented by Eisenberg 1973 and discussed by Ingria 1990 and Pullum and Zwicky 1986."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Right node raising of kaufen, the first- and third-plural form; the examples were presented by Eisenberg 1973 and discussed by Ingria 1990 and Pullum and Zwicky 1986." }
 
 def ex_64 : LinguisticExample :=
   { id := "dalrymplekaplan2000_64"
@@ -283,9 +255,7 @@ def ex_64 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.4"), ("subjects", "2PL and 3SG"), ("requirement", "cell in {2PL, 3SG}")]
-    comment := "Correlated person and number indeterminacy: kauft is the second-plural and the third-singular form. Ungrammatical for all of Pullum and Zwicky's speakers, grammatical for some of the authors' informants and some of Zaenen and Karttunen's (fn. 9); the paper analyses the accepting grammar."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Correlated person and number indeterminacy: kauft is the second-plural and the third-singular form. Ungrammatical for all of Pullum and Zwicky's speakers, grammatical for some of the authors' informants and some of Zaenen and Karttunen's (fn. 9); the paper analyses the accepting grammar." }
 
 def ex_71 : LinguisticExample :=
   { id := "dalrymplekaplan2000_71"
@@ -301,9 +271,7 @@ def ex_71 : LinguisticExample :=
     alternatives := [("José y yo habláis.", .unacceptable), ("José y yo hablan.", .unacceptable)]
     readings := []
     paperFeatures := [("section", "5"), ("conjuncts", "3SG and 1SG"), ("agreement", "1PL")]
-    comment := "The coordinate phrase has a person of its own, first, although neither conjunct is first plural."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "The coordinate phrase has a person of its own, first, although neither conjunct is first plural." }
 
 def ex_76 : LinguisticExample :=
   { id := "dalrymplekaplan2000_76"
@@ -319,9 +287,7 @@ def ex_76 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "6"), ("conjuncts", "1SG and 2SG"), ("agreement", "1PL")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_81 : LinguisticExample :=
   { id := "dalrymplekaplan2000_81"
@@ -337,9 +303,7 @@ def ex_81 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "6.1"), ("conjuncts", "2 and 3"), ("agreement", "2")]
-    comment := "Guinean Fula, data from Aïcha Koné (fn. 14); the fronted coordinate subject is picked up by the incorporated pronoun on the verb ((79))."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Guinean Fula, data from Aïcha Koné (fn. 14); the fronted coordinate subject is picked up by the incorporated pronoun on the verb ((79))." }
 
 def ex_82 : LinguisticExample :=
   { id := "dalrymplekaplan2000_82"
@@ -355,9 +319,7 @@ def ex_82 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "6.1"), ("conjuncts", "3 and 3"), ("agreement", "3")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_83 : LinguisticExample :=
   { id := "dalrymplekaplan2000_83"
@@ -373,9 +335,7 @@ def ex_83 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "6.1"), ("conjuncts", "2 and 1"), ("agreement", "1INCL.PL")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_84 : LinguisticExample :=
   { id := "dalrymplekaplan2000_84"
@@ -391,9 +351,7 @@ def ex_84 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "6.1"), ("conjuncts", "2, 3 and 1"), ("agreement", "1INCL.PL")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_85 : LinguisticExample :=
   { id := "dalrymplekaplan2000_85"
@@ -409,9 +367,7 @@ def ex_85 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "6.1"), ("conjuncts", "3 and 1"), ("agreement", "1EXCL.PL")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_86 : LinguisticExample :=
   { id := "dalrymplekaplan2000_86"
@@ -427,9 +383,7 @@ def ex_86 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "6.1"), ("conjuncts", "3 and 1EXCL"), ("agreement", "1EXCL.PL")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_95 : LinguisticExample :=
   { id := "dalrymplekaplan2000_95"
@@ -445,9 +399,7 @@ def ex_95 : LinguisticExample :=
     alternatives := [("José y tú hablamos.", .unacceptable)]
     readings := []
     paperFeatures := [("section", "6.4"), ("conjuncts", "3SG and 2SG"), ("agreement", "2PL")]
-    comment := "The minimal set above {} and {H} is {H}, so the second-plural verb's constraining equation holds and the first-plural one fails ((97)-(99))."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "The minimal set above {} and {H} is {H}, so the second-plural verb's constraining equation holds and the first-plural one fails ((97)-(99))." }
 
 def ex_107 : LinguisticExample :=
   { id := "dalrymplekaplan2000_107"
@@ -463,9 +415,7 @@ def ex_107 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "7.1"), ("conjuncts", "MASC and FEM"), ("agreement", "MASC")]
-    comment := "Hindi has two genders (McGregor 1972); the resolution rules (109) are Corbett 1983a's and Corbett 1991's."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Hindi has two genders (McGregor 1972); the resolution rules (109) are Corbett 1983a's and Corbett 1991's." }
 
 def ex_108 : LinguisticExample :=
   { id := "dalrymplekaplan2000_108"
@@ -481,9 +431,7 @@ def ex_108 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "7.1"), ("conjuncts", "FEM and FEM"), ("agreement", "FEM")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_115 : LinguisticExample :=
   { id := "dalrymplekaplan2000_115"
@@ -499,9 +447,7 @@ def ex_115 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "7.2"), ("conjuncts", "MASC and FEM"), ("agreement", "NEUT")]
-    comment := "Examples discussed with Kristján Árnason (fn. 19); the generalization (114) is Corbett 1983b's."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Examples discussed with Kristján Árnason (fn. 19); the generalization (114) is Corbett 1983b's." }
 
 def ex_116 : LinguisticExample :=
   { id := "dalrymplekaplan2000_116"
@@ -517,9 +463,7 @@ def ex_116 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "7.2"), ("conjuncts", "MASC and NEUT"), ("agreement", "NEUT")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_117 : LinguisticExample :=
   { id := "dalrymplekaplan2000_117"
@@ -535,9 +479,7 @@ def ex_117 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "7.2"), ("conjuncts", "FEM and NEUT"), ("agreement", "NEUT")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_123 : LinguisticExample :=
   { id := "dalrymplekaplan2000_123"
@@ -553,9 +495,7 @@ def ex_123 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "7.3"), ("conjuncts", "NEUT and NEUT"), ("agreement", "MASC")]
-    comment := "Two neuter conjuncts take masculine agreement although a neuter plural verb form exists; the rule (121) is Corbett 1983a's, and Bajec, cited by Corbett, reports neuter agreement instead (fn. 21)."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Two neuter conjuncts take masculine agreement although a neuter plural verb form exists; the rule (121) is Corbett 1983a's, and Bajec, cited by Corbett, reports neuter agreement instead (fn. 21)." }
 
 def ex_128 : LinguisticExample :=
   { id := "dalrymplekaplan2000_128"
@@ -571,9 +511,7 @@ def ex_128 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "8"), ("requirements", "GENDER =c MASC and GENDER =c FEM")]
-    comment := "wah is ambiguously masculine or feminine but cannot be both at once: its gender is a wide-scope disjunction, not an indeterminate set ((140))."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "wah is ambiguously masculine or feminine but cannot be both at once: its gender is a wide-scope disjunction, not an indeterminate set ((140))." }
 
 def ex_141a : LinguisticExample :=
   { id := "dalrymplekaplan2000_141a"
@@ -589,9 +527,7 @@ def ex_141a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "8"), ("requirements", "GENDER =c MASC")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_141b : LinguisticExample :=
   { id := "dalrymplekaplan2000_141b"
@@ -607,9 +543,7 @@ def ex_141b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "8"), ("requirements", "GENDER =c FEM")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def all : List LinguisticExample := [ex_17, ex_32, ex_40, ex_41, ex_47, ex_48, ex_49, ex_53a, ex_53b, ex_54, ex_57, ex_58, ex_59, ex_61, ex_64, ex_71, ex_76, ex_81, ex_82, ex_83, ex_84, ex_85, ex_86, ex_95, ex_107, ex_108, ex_115, ex_116, ex_117, ex_123, ex_128, ex_141a, ex_141b]
 

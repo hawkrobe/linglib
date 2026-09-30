@@ -20,8 +20,7 @@
       ["embeddedSubject", "pronoun"],
       ["control", "subject"]
     ],
-    "comment": "The complementizer is optional.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The complementizer is optional."
   },
   {
     "id": "allotey2021_2b",
@@ -44,8 +43,7 @@
       ["control", "subject"],
       ["diagnostic", "nullSubject"]
     ],
-    "comment": "Null PRO in the embedded subject position.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Null PRO in the embedded subject position."
   },
   {
     "id": "allotey2021_3a",
@@ -67,8 +65,7 @@
       ["embeddedSubject", "pronoun"],
       ["control", "subject"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "allotey2021_3b",
@@ -91,8 +88,7 @@
       ["control", "subject"],
       ["diagnostic", "nullSubject"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "allotey2021_16",
@@ -115,8 +111,7 @@
       ["embeddedSubject", "pronoun"],
       ["control", "subject"]
     ],
-    "comment": "The complementizer is obligatory here.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The complementizer is obligatory here."
   },
   {
     "id": "allotey2021_34",
@@ -142,8 +137,7 @@
       ["control", "subject"],
       ["irrealisMarker", "present"]
     ],
-    "comment": "The complementizer is optional; the embedded 1.SG is the irrealis portmanteau má.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The complementizer is optional; the embedded 1.SG is the irrealis portmanteau má."
   },
   {
     "id": "allotey2021_35",
@@ -166,8 +160,7 @@
       ["embeddedSubject", "pronoun"],
       ["control", "subject"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "allotey2021_36",
@@ -190,8 +183,7 @@
       ["embeddedSubject", "pronoun"],
       ["control", "subject"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "allotey2021_37",
@@ -216,8 +208,7 @@
       ["person", "2"],
       ["number", "singular"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "allotey2021_38",
@@ -242,8 +233,7 @@
       ["person", "2"],
       ["number", "plural"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "allotey2021_39",
@@ -268,8 +258,7 @@
       ["person", "3"],
       ["number", "plural"]
     ],
-    "comment": "The complementizer is optional.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The complementizer is optional."
   },
   {
     "id": "allotey2021_40",
@@ -291,8 +280,7 @@
       ["embeddedSubject", "null"],
       ["diagnostic", "nullSubject"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "allotey2021_41",
@@ -314,8 +302,7 @@
       ["embeddedSubject", "null"],
       ["diagnostic", "nullSubject"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "allotey2021_42a",
@@ -339,8 +326,7 @@
       ["control", "subject"],
       ["diagnostic", "lexicalSubject"]
     ],
-    "comment": "A pronoun or a lexical noun may be the matrix subject.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "A pronoun or a lexical noun may be the matrix subject."
   },
   {
     "id": "allotey2021_42b",
@@ -363,8 +349,7 @@
       ["embeddedSubject", "lexical"],
       ["diagnostic", "lexicalSubject"]
     ],
-    "comment": "Out whether the embedded noun refers to the matrix subject or to a third party.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Out whether the embedded noun refers to the matrix subject or to a third party."
   },
   {
     "id": "allotey2021_42c",
@@ -387,8 +372,7 @@
       ["embeddedSubject", "lexical"],
       ["diagnostic", "lexicalSubject"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "allotey2021_43",
@@ -411,8 +395,7 @@
       ["embeddedSubject", "pronoun"],
       ["control", "subject"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "allotey2021_44",
@@ -435,8 +418,7 @@
       ["embeddedSubject", "pronoun"],
       ["control", "object"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "allotey2021_45a",
@@ -463,8 +445,7 @@
       ["number", "plural"],
       ["antecedent", "cCommanding"]
     ],
-    "comment": "The pronoun is coindexed with the whole possessive phrase, not the possessor Jojo.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The pronoun is coindexed with the whole possessive phrase, not the possessor Jojo."
   },
   {
     "id": "allotey2021_45b",
@@ -490,8 +471,7 @@
       ["number", "singular"],
       ["antecedent", "nonCCommanding"]
     ],
-    "comment": "Singular pronoun coindexed with the possessor Jojo.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Singular pronoun coindexed with the possessor Jojo."
   },
   {
     "id": "allotey2021_46a",
@@ -518,8 +498,7 @@
       ["number", "singular"],
       ["antecedent", "cCommanding"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "allotey2021_46b",
@@ -545,8 +524,7 @@
       ["number", "plural"],
       ["antecedent", "nonCCommanding"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "allotey2021_47",
@@ -571,8 +549,7 @@
       ["diagnostic", "longDistance"],
       ["antecedent", "local"]
     ],
-    "comment": "The embedded pronoun refers to Debo, the local subject, not to Jojo.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The embedded pronoun refers to Debo, the local subject, not to Jojo."
   },
   {
     "id": "allotey2021_48",
@@ -597,8 +574,7 @@
       ["diagnostic", "longDistance"],
       ["antecedent", "local"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "allotey2021_49",
@@ -623,8 +599,7 @@
       ["diagnostic", "longDistance"],
       ["antecedent", "local"]
     ],
-    "comment": "The embedded pronoun must be third person, matching the closest antecedent Debo.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The embedded pronoun must be third person, matching the closest antecedent Debo."
   },
   {
     "id": "allotey2021_49b",
@@ -645,8 +620,7 @@
       ["diagnostic", "longDistance"],
       ["antecedent", "longDistance"]
     ],
-    "comment": "The embedded first person cannot take the matrix subject as antecedent.",
-    "lgrConformance": ""
+    "comment": "The embedded first person cannot take the matrix subject as antecedent."
   },
   {
     "id": "allotey2021_52",
@@ -674,8 +648,7 @@
       ["control", "subject"],
       ["diagnostic", "ellipsis"]
     ],
-    "comment": "In the elided clause the pronoun refers to Peter only: sloppy reading.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "In the elided clause the pronoun refers to Peter only: sloppy reading."
   },
   {
     "id": "allotey2021_53",
@@ -699,8 +672,7 @@
       ["control", "subject"],
       ["diagnostic", "deSe"]
     ],
-    "comment": "Infelicitous in the context: the attitude holder does not self-ascribe winning.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Infelicitous in the context: the attitude holder does not self-ascribe winning."
   },
   {
     "id": "allotey2021_54",
@@ -723,8 +695,7 @@
       ["embeddedSubject", "pronoun"],
       ["control", "object"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "allotey2021_55",
@@ -747,8 +718,7 @@
       ["embeddedSubject", "pronoun"],
       ["control", "object"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "allotey2021_56",
@@ -771,8 +741,7 @@
       ["embeddedSubject", "pronoun"],
       ["control", "object"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "allotey2021_57",
@@ -795,8 +764,7 @@
       ["embeddedSubject", "pronoun"],
       ["control", "object"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "allotey2021_58",
@@ -819,8 +787,7 @@
       ["embeddedSubject", "pronoun"],
       ["control", "object"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "allotey2021_59",
@@ -843,8 +810,7 @@
       ["embeddedSubject", "pronoun"],
       ["control", "object"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "allotey2021_64",
@@ -867,8 +833,7 @@
       ["embeddedSubject", "lexical"],
       ["diagnostic", "lexicalSubject"]
     ],
-    "comment": "The Movement Theory of Control would pronounce a lexical copy here.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The Movement Theory of Control would pronounce a lexical copy here."
   },
   {
     "id": "allotey2021_74",
@@ -889,8 +854,7 @@
       ["number", "singular"],
       ["form", "clipped"]
     ],
-    "comment": "Past-tense clipped variant of mi.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Past-tense clipped variant of mi."
   },
   {
     "id": "allotey2021_78",
@@ -912,8 +876,7 @@
       ["irrealisMarker", "present"],
       ["clauseContext", "future"]
     ],
-    "comment": "The irrealis marker merged with the first-person pronoun.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The irrealis marker merged with the first-person pronoun."
   },
   {
     "id": "allotey2021_79",
@@ -936,8 +899,7 @@
       ["number", "singular"],
       ["diagnostic", "agreement"]
     ],
-    "comment": "The verb is invariant across subjects: no subject agreement on the verb.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The verb is invariant across subjects: no subject agreement on the verb."
   },
   {
     "id": "allotey2021_80",
@@ -960,8 +922,7 @@
       ["number", "singular"],
       ["diagnostic", "agreement"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "allotey2021_81",
@@ -984,8 +945,7 @@
       ["number", "singular"],
       ["diagnostic", "agreement"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "allotey2021_85",
@@ -1007,8 +967,7 @@
       ["verbTone", "high"],
       ["irrealisVowel", "present"]
     ],
-    "comment": "Lexical subject: the irrealis marker is a prefix on the verb plus a high tone on the verb.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Lexical subject: the irrealis marker is a prefix on the verb plus a high tone on the verb."
   },
   {
     "id": "allotey2021_86",
@@ -1030,8 +989,7 @@
       ["verbTone", "high"],
       ["irrealisVowel", "present"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "allotey2021_87",
@@ -1052,8 +1010,7 @@
       ["subjectTone", "high"],
       ["verbTone", "low"]
     ],
-    "comment": "High tone on the pronoun without the high tone on the verb: neither the subjunctive nor a past reading survives.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "High tone on the pronoun without the high tone on the verb: neither the subjunctive nor a past reading survives."
   },
   {
     "id": "allotey2021_88",
@@ -1079,8 +1036,7 @@
       ["diagnostic", "tone"],
       ["clauseContext", "control"]
     ],
-    "comment": "A high tone on the embedded bare verb, as in a true subjunctive, is ungrammatical.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "A high tone on the embedded bare verb, as in a true subjunctive, is ungrammatical."
   },
   {
     "id": "allotey2021_88b",
@@ -1104,8 +1060,7 @@
       ["diagnostic", "tone"],
       ["clauseContext", "control"]
     ],
-    "comment": "A high tone on the embedded verb, as in a true subjunctive.",
-    "lgrConformance": ""
+    "comment": "A high tone on the embedded verb, as in a true subjunctive."
   },
   {
     "id": "allotey2021_89a",
@@ -1130,8 +1085,7 @@
       ["irrealisMarker", "absent"],
       ["diagnostic", "implicative"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "allotey2021_89b",
@@ -1156,8 +1110,7 @@
       ["irrealisMarker", "absent"],
       ["diagnostic", "implicative"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "allotey2021_89c",
@@ -1183,8 +1136,7 @@
       ["diagnostic", "implicative"],
       ["control", "subject"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "allotey2021_89d",
@@ -1210,8 +1162,7 @@
       ["diagnostic", "implicative"],
       ["control", "subject"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "allotey2021_92",
@@ -1239,8 +1190,7 @@
       ["irrealisMarker", "present"],
       ["diagnostic", "obviation"]
     ],
-    "comment": "The embedded pronoun must be coreferential with Aku: no obviation, unlike a subjunctive.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The embedded pronoun must be coreferential with Aku: no obviation, unlike a subjunctive."
   },
   {
     "id": "allotey2021_93",
@@ -1262,8 +1212,7 @@
       ["verbTone", "high"],
       ["irrealisVowel", "present"]
     ],
-    "comment": "The reduplicated final vowel carries the irrealis high tone.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The reduplicated final vowel carries the irrealis high tone."
   },
   {
     "id": "allotey2021_94",
@@ -1285,8 +1234,7 @@
       ["verbTone", "high"],
       ["irrealisVowel", "present"]
     ],
-    "comment": "Without the high tone on both pronoun and verb the imperative reading is lost.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Without the high tone on both pronoun and verb the imperative reading is lost."
   },
   {
     "id": "allotey2021_95",
@@ -1307,8 +1255,7 @@
       ["person", "1"],
       ["number", "singular"]
     ],
-    "comment": "The portmanteau future is permitted with the first-person pronoun only.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The portmanteau future is permitted with the first-person pronoun only."
   },
   {
     "id": "allotey2021_96",
@@ -1330,8 +1277,7 @@
       ["verbTone", "low"],
       ["irrealisVowel", "present"]
     ],
-    "comment": "The irrealis marker is realized only inside the future prefix.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The irrealis marker is realized only inside the future prefix."
   },
   {
     "id": "allotey2021_96b",
@@ -1351,8 +1297,7 @@
       ["verbTone", "low"],
       ["irrealisVowel", "present"]
     ],
-    "comment": "A high tone on the future subject.",
-    "lgrConformance": ""
+    "comment": "A high tone on the future subject."
   },
   {
     "id": "allotey2021_97a",
@@ -1375,8 +1320,7 @@
       ["verbTone", "low"],
       ["irrealisVowel", "present"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "allotey2021_97b",
@@ -1401,8 +1345,7 @@
       ["verbTone", "low"],
       ["irrealisVowel", "present"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "allotey2021_100",
@@ -1430,8 +1373,7 @@
       ["verbTone", "low"],
       ["irrealisVowel", "absent"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "allotey2021_101",
@@ -1455,8 +1397,7 @@
       ["embeddedTAM", "future"],
       ["diagnostic", "tense"]
     ],
-    "comment": "Future tense cannot be encoded in the embedded control clause.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Future tense cannot be encoded in the embedded control clause."
   },
   {
     "id": "allotey2021_102",
@@ -1486,8 +1427,7 @@
       ["verbTone", "low"],
       ["irrealisVowel", "absent"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "allotey2021_103",
@@ -1517,8 +1457,7 @@
       ["verbTone", "low"],
       ["irrealisVowel", "absent"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "allotey2021_104",
@@ -1540,8 +1479,7 @@
       ["complementizer", "keji"],
       ["diagnostic", "cSelection"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "allotey2021_104b",
@@ -1560,8 +1498,7 @@
       ["complementizer", "ake"],
       ["diagnostic", "cSelection"]
     ],
-    "comment": "akɛ is used by beginners; not felicitous.",
-    "lgrConformance": ""
+    "comment": "akɛ is used by beginners; not felicitous."
   },
   {
     "id": "allotey2021_104c",
@@ -1580,8 +1517,7 @@
       ["complementizer", "ni"],
       ["diagnostic", "cSelection"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "allotey2021_105",
@@ -1605,8 +1541,7 @@
       ["clauseContext", "subjunctive"],
       ["diagnostic", "cSelection"]
     ],
-    "comment": "A true subjunctive complement with a lexical subject; ni or akɛ introduces it.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "A true subjunctive complement with a lexical subject; ni or akɛ introduces it."
   },
   {
     "id": "allotey2021_105b",
@@ -1627,8 +1562,7 @@
       ["clauseContext", "subjunctive"],
       ["diagnostic", "cSelection"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "allotey2021_105c",
@@ -1649,8 +1583,7 @@
       ["clauseContext", "subjunctive"],
       ["diagnostic", "cSelection"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "allotey2021_106",
@@ -1675,8 +1608,7 @@
       ["irrealisMarker", "present"],
       ["diagnostic", "cSelection"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "allotey2021_106b",
@@ -1696,8 +1628,7 @@
       ["embeddedSubject", "pronoun"],
       ["diagnostic", "cSelection"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "allotey2021_106c",
@@ -1717,8 +1648,7 @@
       ["embeddedSubject", "pronoun"],
       ["diagnostic", "cSelection"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "allotey2021_107",
@@ -1742,8 +1672,7 @@
       ["complementizer", "ake"],
       ["diagnostic", "focus"]
     ],
-    "comment": "Focus fronting inside an akɛ-clause; ungrammatical under ni.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Focus fronting inside an akɛ-clause; ungrammatical under ni."
   },
   {
     "id": "allotey2021_108",
@@ -1767,8 +1696,7 @@
       ["complementizer", "keji"],
       ["diagnostic", "focus"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "allotey2021_109",
@@ -1797,8 +1725,7 @@
       ["embeddedTAM", "none"],
       ["diagnostic", "tense"]
     ],
-    "comment": "A future reading without overt future marking; overt future or past marking is out.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "A future reading without overt future marking; overt future or past marking is out."
   },
   {
     "id": "allotey2021_110",
@@ -1827,8 +1754,7 @@
       ["verbTone", "low"],
       ["diagnostic", "tone"]
     ],
-    "comment": "Free reference of the low-tone embedded subject.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Free reference of the low-tone embedded subject."
   },
   {
     "id": "allotey2021_111",
@@ -1855,8 +1781,7 @@
       ["embeddedTAM", "future"],
       ["diagnostic", "tone"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "allotey2021_112",
@@ -1888,8 +1813,7 @@
       ["subjectTone", "high"],
       ["diagnostic", "tone"]
     ],
-    "comment": "The high-tone subject must be anaphoric to Aku.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The high-tone subject must be anaphoric to Aku."
   },
   {
     "id": "allotey2021_114b",
@@ -1909,8 +1833,7 @@
       ["diagnostic", "npi"],
       ["negation", "local"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "allotey2021_115a",
@@ -1933,8 +1856,7 @@
       ["diagnostic", "npi"],
       ["negation", "embedded"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "allotey2021_115b",
@@ -1957,8 +1879,7 @@
       ["diagnostic", "npi"],
       ["negation", "embedded"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "allotey2021_116a",
@@ -1981,8 +1902,7 @@
       ["diagnostic", "npi"],
       ["negation", "matrix"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "allotey2021_116b",
@@ -2005,8 +1925,7 @@
       ["diagnostic", "npi"],
       ["negation", "matrix"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "allotey2021_117a",
@@ -2032,8 +1951,7 @@
       ["diagnostic", "npi"],
       ["negation", "matrix"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "allotey2021_117b",
@@ -2059,8 +1977,7 @@
       ["diagnostic", "npi"],
       ["negation", "matrix"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "allotey2021_118",
@@ -2087,8 +2004,7 @@
       ["subjectTone", "high"],
       ["diagnostic", "tense"]
     ],
-    "comment": "A low-tone embedded pronoun and verb, the past-tense shape, is ungrammatical.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "A low-tone embedded pronoun and verb, the past-tense shape, is ungrammatical."
   },
   {
     "id": "allotey2021_119a",
@@ -2116,8 +2032,7 @@
       ["embeddedTAM", "none"],
       ["diagnostic", "tense"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "allotey2021_119b",
@@ -2145,8 +2060,7 @@
       ["embeddedTAM", "none"],
       ["diagnostic", "tense"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "allotey2021_121a",
@@ -2167,8 +2081,7 @@
       ["clauseType", "finite"],
       ["negationPosition", "postverbal"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "allotey2021_121b",
@@ -2189,8 +2102,7 @@
       ["clauseType", "finite"],
       ["negationPosition", "postverbal"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "allotey2021_121c",
@@ -2211,8 +2123,7 @@
       ["clauseType", "finite"],
       ["negationPosition", "postverbal"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "allotey2021_122a",
@@ -2241,8 +2152,7 @@
       ["clauseType", "control"],
       ["negationPosition", "preverbal"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "allotey2021_122b",
@@ -2271,8 +2181,7 @@
       ["clauseType", "control"],
       ["negationPosition", "preverbal"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "allotey2021_123a",
@@ -2293,8 +2202,7 @@
     "paperFeatures": [
       ["diagnostic", "agreement"]
     ],
-    "comment": "A subject pronoun cannot double a lexical subject: it is not an agreement marker.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "A subject pronoun cannot double a lexical subject: it is not an agreement marker."
   },
   {
     "id": "allotey2021_123b",
@@ -2315,8 +2223,7 @@
     "paperFeatures": [
       ["diagnostic", "agreement"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "allotey2021_124",
@@ -2337,7 +2244,6 @@
       ["clauseType", "finite"],
       ["negationPosition", "postverbal"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   }
 ]

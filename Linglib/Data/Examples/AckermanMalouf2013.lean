@@ -31,9 +31,7 @@ def ex_1 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("phenomenon", "polysynthesis"), ("complexity", "enumerative")]
-    comment := "West Greenlandic, cited from Fortescue as a word packaging what English expresses phrasally."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "West Greenlandic, cited from Fortescue as a word packaging what English expresses phrasally." }
 
 def all : List LinguisticExample := [ex_1]
 

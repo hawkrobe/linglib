@@ -31,9 +31,7 @@ def ex_9a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("alternation", "locative"), ("direct", "theme")]
-    comment := "Theme object: all the hay moved (quantized); the wagon at least partly filled (nonquantized)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Theme object: all the hay moved (quantized); the wagon at least partly filled (nonquantized)." }
 
 def ex_9b : LinguisticExample :=
   { id := "beavers2010_9b"
@@ -49,9 +47,7 @@ def ex_9b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("alternation", "locative"), ("direct", "location")]
-    comment := "Location object: the wagon completely filled (quantized); the hay at least partly moved (nonquantized) — Anderson's holistic effect."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Location object: the wagon completely filled (quantized); the hay at least partly moved (nonquantized) — Anderson's holistic effect." }
 
 def ex_10a : LinguisticExample :=
   { id := "beavers2010_10a"
@@ -67,9 +63,7 @@ def ex_10a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("alternation", "locative"), ("diagnostic", "holistic effect")]
-    comment := "Infelicitous: the theme object entails total movement."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Infelicitous: the theme object entails total movement." }
 
 def ex_18a : LinguisticExample :=
   { id := "beavers2010_18a"
@@ -85,9 +79,7 @@ def ex_18a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("alternation", "locative"), ("verb class", "cut/slice")]
-    comment := "Diamond affected: the object is damaged (nonquantized), the oblique only potentially (potential)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Diamond affected: the object is damaged (nonquantized), the oblique only potentially (potential)." }
 
 def ex_18b : LinguisticExample :=
   { id := "beavers2010_18b"
@@ -103,9 +95,7 @@ def ex_18b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("alternation", "locative"), ("verb class", "cut/slice")]
-    comment := "No holistic effect, so locative alternations are not in general governed by aspect."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "No holistic effect, so locative alternations are not in general governed by aspect." }
 
 def ex_20a : LinguisticExample :=
   { id := "beavers2010_20a"
@@ -121,9 +111,7 @@ def ex_20a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("alternation", "conative"), ("verb class", "cut")]
-    comment := "The rope is cut, to no specific degree: nonquantized change."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The rope is cut, to no specific degree: nonquantized change." }
 
 def ex_20b : LinguisticExample :=
   { id := "beavers2010_20b"
@@ -139,9 +127,7 @@ def ex_20b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("alternation", "conative"), ("verb class", "cut")]
-    comment := "The rope may or may not be cut: potential for change only."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The rope may or may not be cut: potential for change only." }
 
 def ex_21a : LinguisticExample :=
   { id := "beavers2010_21a"
@@ -157,9 +143,7 @@ def ex_21a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("alternation", "conative"), ("verb class", "consumption")]
-    comment := "All (or a contextually significant amount) of the cake consumed: quantized change."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "All (or a contextually significant amount) of the cake consumed: quantized change." }
 
 def ex_21b : LinguisticExample :=
   { id := "beavers2010_21b"
@@ -175,9 +159,7 @@ def ex_21b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("alternation", "conative"), ("verb class", "consumption")]
-    comment := "At least some consumed, not necessarily all: nonquantized change."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "At least some consumed, not necessarily all: nonquantized change." }
 
 def ex_22a : LinguisticExample :=
   { id := "beavers2010_22a"
@@ -193,9 +175,7 @@ def ex_22a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("alternation", "conative"), ("verb class", "impact")]
-    comment := "Defarge is hit but not necessarily affected: potential for change."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Defarge is hit but not necessarily affected: potential for change." }
 
 def ex_22b : LinguisticExample :=
   { id := "beavers2010_22b"
@@ -211,9 +191,7 @@ def ex_22b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("alternation", "conative"), ("verb class", "impact")]
-    comment := "Defarge not necessarily even hit: unspecified for change (double modality)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Defarge not necessarily even hit: unspecified for change (double modality)." }
 
 def ex_24a : LinguisticExample :=
   { id := "beavers2010_24a"
@@ -229,9 +207,7 @@ def ex_24a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("alternation", "locative"), ("contrast", "none")]
-    comment := "Alternates with 'John hit the stick against the fence' with no truth-conditional contrast — the equal-role case the MAP permits."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Alternates with 'John hit the stick against the fence' with no truth-conditional contrast — the equal-role case the MAP permits." }
 
 def ex_29 : LinguisticExample :=
   { id := "beavers2010_29"
@@ -247,9 +223,7 @@ def ex_29 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("degree", "quantized"), ("diagnostic", "telicity")]
-    comment := "Specific predicate-supplied result state: telic, quantized change."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Specific predicate-supplied result state: telic, quantized change." }
 
 def ex_30 : LinguisticExample :=
   { id := "beavers2010_30"
@@ -265,9 +239,7 @@ def ex_30 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("degree", "nonquantized"), ("diagnostic", "telicity")]
-    comment := "Some result on the length scale, unspecified which: atelic, nonquantized change."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Some result on the length scale, unspecified which: atelic, nonquantized change." }
 
 def ex_81a : LinguisticExample :=
   { id := "beavers2010_81a"
@@ -283,9 +255,7 @@ def ex_81a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("alternation", "traversal"), ("degree", "totally traversed")]
-    comment := "The stairs all traversed; the affected participant is John (quantized change of location)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The stairs all traversed; the affected participant is John (quantized change of location)." }
 
 def ex_81b : LinguisticExample :=
   { id := "beavers2010_81b"
@@ -301,9 +271,7 @@ def ex_81b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("alternation", "traversal"), ("degree", "traversed")]
-    comment := "The stairs all or partly traversed: the oblique weakens total traversal to mere traversal."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The stairs all or partly traversed: the oblique weakens total traversal to mere traversal." }
 
 def ex_88a : LinguisticExample :=
   { id := "beavers2010_88a"
@@ -319,9 +287,7 @@ def ex_88a : LinguisticExample :=
     alternatives := []
     readings := [("London as an agency (Scotland Yard reading)", .acceptable)]
     paperFeatures := [("alternation", "dative"), ("direct", "recipient")]
-    comment := "Indirect objects must be prospective possessors: the goal-only reading is out."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Indirect objects must be prospective possessors: the goal-only reading is out." }
 
 def ex_88b : LinguisticExample :=
   { id := "beavers2010_88b"
@@ -337,9 +303,7 @@ def ex_88b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("alternation", "dative"), ("oblique", "goal")]
-    comment := "The to-variant needs only a goal: the indirect object monotonically adds prospective possession (90)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The to-variant needs only a goal: the indirect object monotonically adds prospective possession (90)." }
 
 def all : List LinguisticExample := [ex_9a, ex_9b, ex_10a, ex_18a, ex_18b, ex_20a, ex_20b, ex_21a, ex_21b, ex_22a, ex_22b, ex_24a, ex_29, ex_30, ex_81a, ex_81b, ex_88a, ex_88b]
 

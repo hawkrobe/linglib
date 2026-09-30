@@ -12,9 +12,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["intervener", "nicht"], ["feature", "Neg"], ["order", "intervener-first"]],
-    "comment": "Multiple question with the second wh-phrase in situ, the intervener preceding it.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Multiple question with the second wh-phrase in situ, the intervener preceding it."
   },
   {
     "id": "kratzershimoyama2002_ex23b",
@@ -29,9 +27,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["intervener", "nie"], ["feature", "exists"], ["order", "intervener-first"]],
-    "comment": "Multiple question with the second wh-phrase in situ, the intervener preceding it.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Multiple question with the second wh-phrase in situ, the intervener preceding it."
   },
   {
     "id": "kratzershimoyama2002_ex23c",
@@ -46,9 +42,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["intervener", "niemand"], ["feature", "exists"], ["order", "intervener-first"]],
-    "comment": "Multiple question with the second wh-phrase in situ, the intervener preceding it.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Multiple question with the second wh-phrase in situ, the intervener preceding it."
   },
   {
     "id": "kratzershimoyama2002_ex23d",
@@ -63,9 +57,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["intervener", "fast jeder"], ["feature", "exists"], ["order", "intervener-first"]],
-    "comment": "Multiple question with the second wh-phrase in situ, the intervener preceding it.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Multiple question with the second wh-phrase in situ, the intervener preceding it."
   },
   {
     "id": "kratzershimoyama2002_ex23e",
@@ -80,9 +72,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["intervener", "(irgend)jemand"], ["feature", "exists"], ["order", "intervener-first"]],
-    "comment": "Multiple question with the second wh-phrase in situ, the intervener preceding it.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Multiple question with the second wh-phrase in situ, the intervener preceding it."
   },
   {
     "id": "kratzershimoyama2002_ex23f",
@@ -97,9 +87,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["intervener", "der Hans"], ["feature", "none"], ["order", "intervener-first"]],
-    "comment": "Multiple question with the second wh-phrase in situ, the intervener preceding it.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Multiple question with the second wh-phrase in situ, the intervener preceding it."
   },
   {
     "id": "kratzershimoyama2002_ex23g",
@@ -114,9 +102,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["intervener", "damals"], ["feature", "none"], ["order", "intervener-first"]],
-    "comment": "Multiple question with the second wh-phrase in situ, the intervener preceding it.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Multiple question with the second wh-phrase in situ, the intervener preceding it."
   },
   {
     "id": "kratzershimoyama2002_ex24a",
@@ -131,9 +117,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["intervener", "nicht"], ["feature", "Neg"], ["order", "wh-first"]],
-    "comment": "The in-situ wh-phrase scrambled over the intervener.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The in-situ wh-phrase scrambled over the intervener."
   },
   {
     "id": "kratzershimoyama2002_ex24b",
@@ -148,9 +132,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["intervener", "nie"], ["feature", "exists"], ["order", "wh-first"]],
-    "comment": "The in-situ wh-phrase scrambled over the intervener.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The in-situ wh-phrase scrambled over the intervener."
   },
   {
     "id": "kratzershimoyama2002_ex24c",
@@ -165,9 +147,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["intervener", "niemand"], ["feature", "exists"], ["order", "wh-first"]],
-    "comment": "The in-situ wh-phrase scrambled over the intervener.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The in-situ wh-phrase scrambled over the intervener."
   },
   {
     "id": "kratzershimoyama2002_ex24d",
@@ -182,9 +162,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["intervener", "fast jeder"], ["feature", "exists"], ["order", "wh-first"]],
-    "comment": "The in-situ wh-phrase scrambled over the intervener.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The in-situ wh-phrase scrambled over the intervener."
   },
   {
     "id": "kratzershimoyama2002_ex24e",
@@ -199,9 +177,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["intervener", "(irgend)jemand"], ["feature", "exists"], ["order", "wh-first"]],
-    "comment": "The in-situ wh-phrase scrambled over the intervener.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The in-situ wh-phrase scrambled over the intervener."
   },
   {
     "id": "kratzershimoyama2002_ex12",
@@ -216,9 +192,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["context", "nobody"], ["intervener", "niemand"], ["feature", "exists"]],
-    "comment": "Under a negative quantifier the distribution requirement disappears.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Under a negative quantifier the distribution requirement disappears."
   },
   {
     "id": "kratzershimoyama2002_ex13",
@@ -233,9 +207,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["context", "doubtVerb"]],
-    "comment": "Under a downward-entailing verb the distribution requirement disappears.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Under a downward-entailing verb the distribution requirement disappears."
   },
   {
     "id": "kratzershimoyama2002_ex16",
@@ -249,9 +221,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [["context", "modalPossibility"]],
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "paperFeatures": [["context", "modalPossibility"]]
   },
   {
     "id": "kratzershimoyama2002_ex17",
@@ -265,9 +235,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [["context", "modalNecessity"]],
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "paperFeatures": [["context", "modalNecessity"]]
   },
   {
     "id": "kratzershimoyama2002_ex18",
@@ -281,9 +249,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [["context", "nobody"], ["intervener", "auf keinen Fall"], ["feature", "exists"]],
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "paperFeatures": [["context", "nobody"], ["intervener", "auf keinen Fall"], ["feature", "exists"]]
   },
   {
     "id": "kratzershimoyama2002_ex21",
@@ -298,9 +264,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["context", "negation"], ["intervener", "nicht"], ["feature", "Neg"]],
-    "comment": "With irgend stressed the sentence has the reading 'I didn't read just ANYthing' (footnote 8).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "With irgend stressed the sentence has the reading 'I didn't read just ANYthing' (footnote 8)."
   },
   {
     "id": "kratzershimoyama2002_ex22",
@@ -315,8 +279,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["context", "question"]],
-    "comment": "In the embedded polar question irgendein has a single reading and no free-choice effect.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "In the embedded polar question irgendein has a single reading and no free-choice effect."
   }
 ]

@@ -31,9 +31,7 @@ def ex_2_pt : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("schema", "action")]
-    comment := "Action Schema: the verb 'take/have' with the possessor as subject."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Action Schema: the verb 'take/have' with the possessor as subject." }
 
 def ex_73a : LinguisticExample :=
   { id := "heine1997_73a"
@@ -49,9 +47,7 @@ def ex_73a : LinguisticExample :=
     alternatives := []
     readings := [("location", .acceptable)]
     paperFeatures := [("schema", "location"), ("source", "true"), ("target", "false")]
-    comment := "Stage I of the Overlap Model: u is an adessive preposition, the structure expresses 'Y is at X'."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Stage I of the Overlap Model: u is an adessive preposition, the structure expresses 'Y is at X'." }
 
 def ex_73b : LinguisticExample :=
   { id := "heine1997_73b"
@@ -67,9 +63,7 @@ def ex_73b : LinguisticExample :=
     alternatives := []
     readings := [("location", .acceptable)]
     paperFeatures := [("schema", "location"), ("source", "true"), ("target", "false")]
-    comment := "Stage I: locative meaning only."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Stage I: locative meaning only." }
 
 def ex_73c : LinguisticExample :=
   { id := "heine1997_73c"
@@ -85,9 +79,7 @@ def ex_73c : LinguisticExample :=
     alternatives := []
     readings := [("There is flu at the Markovs.", .acceptable), ("The Markovs have the flu now.", .acceptable)]
     paperFeatures := [("schema", "location"), ("source", "true"), ("target", "true")]
-    comment := "Stage II: the construction is ambiguous between the Location Schema and the possessive target."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Stage II: the construction is ambiguous between the Location Schema and the possessive target." }
 
 def ex_73d : LinguisticExample :=
   { id := "heine1997_73d"
@@ -103,9 +95,7 @@ def ex_73d : LinguisticExample :=
     alternatives := []
     readings := [("possession", .acceptable)]
     paperFeatures := [("schema", "location"), ("source", "false"), ("target", "true")]
-    comment := "Stage III: interpreted only with reference to the possessive target schema."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Stage III: interpreted only with reference to the possessive target schema." }
 
 def ex_84a : LinguisticExample :=
   { id := "heine1997_84a"
@@ -121,9 +111,7 @@ def ex_84a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("schema", "equation"), ("notion", "permanent")]
-    comment := "The Equation Schema ('Y is X's') expresses permanent possession, like 'I own a car'."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The Equation Schema ('Y is X's') expresses permanent possession, like 'I own a car'." }
 
 def ex_84b : LinguisticExample :=
   { id := "heine1997_84b"
@@ -139,9 +127,7 @@ def ex_84b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("schema", "equation"), ("notion", "inalienable")]
-    comment := "Marginal with inalienable possession, like '?I own two sisters'."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Marginal with inalienable possession, like '?I own two sisters'." }
 
 def ex_84c : LinguisticExample :=
   { id := "heine1997_84c"
@@ -157,9 +143,7 @@ def ex_84c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("schema", "equation"), ("notion", "abstract")]
-    comment := "Marginal with abstract possession, like '?I own a cold'."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Marginal with abstract possession, like '?I own a cold'." }
 
 def ex_84d : LinguisticExample :=
   { id := "heine1997_84d"
@@ -175,9 +159,7 @@ def ex_84d : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("schema", "equation"), ("notion", "inanimateInalienable")]
-    comment := "Marginal with inanimate inalienable possession, like '?My house owns two bedrooms'."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Marginal with inanimate inalienable possession, like '?My house owns two bedrooms'." }
 
 def ex_85a : LinguisticExample :=
   { id := "heine1997_85a"
@@ -193,9 +175,7 @@ def ex_85a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("schema", "location"), ("notion", "physical")]
-    comment := "The Location Schema, grammaticalized for physical and temporary possession."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The Location Schema, grammaticalized for physical and temporary possession." }
 
 def ex_85b : LinguisticExample :=
   { id := "heine1997_85b"
@@ -211,9 +191,7 @@ def ex_85b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("schema", "goal"), ("notion", "permanent")]
-    comment := "The Goal sub-schema of Existence for permanent possession."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The Goal sub-schema of Existence for permanent possession." }
 
 def ex_85c : LinguisticExample :=
   { id := "heine1997_85c"
@@ -229,9 +207,7 @@ def ex_85c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("schema", "goal"), ("notion", "inalienable")]
-    comment := "The Goal sub-schema for inalienable possession."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The Goal sub-schema for inalienable possession." }
 
 def ex_85d : LinguisticExample :=
   { id := "heine1997_85d"
@@ -247,9 +223,7 @@ def ex_85d : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("schema", "goal"), ("notion", "inalienable")]
-    comment := "The Goal sub-schema for inalienable (kinship) possession."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The Goal sub-schema for inalienable (kinship) possession." }
 
 def ex_85e : LinguisticExample :=
   { id := "heine1997_85e"
@@ -265,9 +239,7 @@ def ex_85e : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("schema", "goal"), ("notion", "inanimateInalienable")]
-    comment := "The Goal sub-schema for inanimate inalienable possession."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The Goal sub-schema for inanimate inalienable possession." }
 
 def ex_86a : LinguisticExample :=
   { id := "heine1997_86a"
@@ -283,9 +255,7 @@ def ex_86a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("schema", "goal"), ("possessee", "indefinite"), ("notion", "permanent")]
-    comment := "With an indefinite possessee the Goal construction expresses permanent possession."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "With an indefinite possessee the Goal construction expresses permanent possession." }
 
 def ex_86b : LinguisticExample :=
   { id := "heine1997_86b"
@@ -301,9 +271,7 @@ def ex_86b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("schema", "goal"), ("possessee", "definite"), ("notion", "physical")]
-    comment := "With a definite possessee the same construction denotes physical possession."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "With a definite possessee the same construction denotes physical possession." }
 
 def ex_87a : LinguisticExample :=
   { id := "heine1997_87a"
@@ -319,9 +287,7 @@ def ex_87a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("schema", "location"), ("possessee", "indefinite"), ("notion", "permanent")]
-    comment := "The Location construction with an indefinite possessee: permanent possession."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The Location construction with an indefinite possessee: permanent possession." }
 
 def ex_87b : LinguisticExample :=
   { id := "heine1997_87b"
@@ -337,9 +303,7 @@ def ex_87b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("schema", "location"), ("possessee", "definite"), ("notion", "physical")]
-    comment := "With a definite possessee, physical possession."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "With a definite possessee, physical possession." }
 
 def all : List LinguisticExample := [ex_2_pt, ex_73a, ex_73b, ex_73c, ex_73d, ex_84a, ex_84b, ex_84c, ex_84d, ex_85a, ex_85b, ex_85c, ex_85d, ex_85e, ex_86a, ex_86b, ex_87a, ex_87b]
 

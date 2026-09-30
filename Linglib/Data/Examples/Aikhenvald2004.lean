@@ -31,9 +31,7 @@ def ex1_1 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("system", "D1"), ("term", "visual"), ("source", "visual")]
-    comment := "Tariana's five-choice system: the evidential -ka is fused with recent past tense; omitting an evidential is ungrammatical."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Tariana's five-choice system: the evidential -ka is fused with recent past tense; omitting an evidential is ungrammatical." }
 
 def ex1_2 : LinguisticExample :=
   { id := "aikhenvald2004_ex1_2"
@@ -49,9 +47,7 @@ def ex1_2 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("system", "D1"), ("term", "sensory"), ("source", "nonvisual")]
-    comment := "Tariana's five-choice system: the evidential -mahka is fused with recent past tense; omitting an evidential is ungrammatical."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Tariana's five-choice system: the evidential -mahka is fused with recent past tense; omitting an evidential is ungrammatical." }
 
 def ex1_3 : LinguisticExample :=
   { id := "aikhenvald2004_ex1_3"
@@ -67,9 +63,7 @@ def ex1_3 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("system", "D1"), ("term", "inferred"), ("source", "inference")]
-    comment := "Tariana's five-choice system: the evidential -nihka is fused with recent past tense; omitting an evidential is ungrammatical."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Tariana's five-choice system: the evidential -nihka is fused with recent past tense; omitting an evidential is ungrammatical." }
 
 def ex1_4 : LinguisticExample :=
   { id := "aikhenvald2004_ex1_4"
@@ -85,9 +79,7 @@ def ex1_4 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("system", "D1"), ("term", "assumed"), ("source", "assumption")]
-    comment := "Tariana's five-choice system: the evidential -sika is fused with recent past tense; omitting an evidential is ungrammatical."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Tariana's five-choice system: the evidential -sika is fused with recent past tense; omitting an evidential is ungrammatical." }
 
 def ex1_5 : LinguisticExample :=
   { id := "aikhenvald2004_ex1_5"
@@ -103,9 +95,7 @@ def ex1_5 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("system", "D1"), ("term", "reported"), ("source", "report")]
-    comment := "Tariana's five-choice system: the evidential -pidaka is fused with recent past tense; omitting an evidential is ungrammatical."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Tariana's five-choice system: the evidential -pidaka is fused with recent past tense; omitting an evidential is ungrammatical." }
 
 def ex2_16 : LinguisticExample :=
   { id := "aikhenvald2004_ex2_16"
@@ -121,9 +111,7 @@ def ex2_16 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("system", "A2"), ("term", "nonfirsthand"), ("source", "report")]
-    comment := "The Turkish non-firsthand covers report, inference and non-visual perception; examples after Johanson."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The Turkish non-firsthand covers report, inference and non-visual perception; examples after Johanson." }
 
 def ex2_17 : LinguisticExample :=
   { id := "aikhenvald2004_ex2_17"
@@ -139,9 +127,7 @@ def ex2_17 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("system", "A2"), ("term", "nonfirsthand"), ("source", "inference")]
-    comment := "The Turkish non-firsthand covers report, inference and non-visual perception; examples after Johanson."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The Turkish non-firsthand covers report, inference and non-visual perception; examples after Johanson." }
 
 def ex2_18 : LinguisticExample :=
   { id := "aikhenvald2004_ex2_18"
@@ -157,9 +143,7 @@ def ex2_18 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("system", "A2"), ("term", "nonfirsthand"), ("source", "nonvisual")]
-    comment := "The Turkish non-firsthand covers report, inference and non-visual perception; examples after Johanson."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The Turkish non-firsthand covers report, inference and non-visual perception; examples after Johanson." }
 
 def ex2_40 : LinguisticExample :=
   { id := "aikhenvald2004_ex2_40"
@@ -175,9 +159,7 @@ def ex2_40 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("system", "B1"), ("term", "visual"), ("source", "visual")]
-    comment := "Wanka Quechua's three-choice system: direct -mi, inferred (conjectural) -chr(a), reported -shi; examples after Floyd."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Wanka Quechua's three-choice system: direct -mi, inferred (conjectural) -chr(a), reported -shi; examples after Floyd." }
 
 def ex2_41 : LinguisticExample :=
   { id := "aikhenvald2004_ex2_41"
@@ -193,9 +175,7 @@ def ex2_41 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("system", "B1"), ("term", "inferred"), ("source", "inference")]
-    comment := "Wanka Quechua's three-choice system: direct -mi, inferred (conjectural) -chr(a), reported -shi; examples after Floyd."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Wanka Quechua's three-choice system: direct -mi, inferred (conjectural) -chr(a), reported -shi; examples after Floyd." }
 
 def ex2_42 : LinguisticExample :=
   { id := "aikhenvald2004_ex2_42"
@@ -211,9 +191,7 @@ def ex2_42 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("system", "B1"), ("term", "reported"), ("source", "report")]
-    comment := "Wanka Quechua's three-choice system: direct -mi, inferred (conjectural) -chr(a), reported -shi; examples after Floyd."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Wanka Quechua's three-choice system: direct -mi, inferred (conjectural) -chr(a), reported -shi; examples after Floyd." }
 
 def ex4_7 : LinguisticExample :=
   { id := "aikhenvald2004_ex4_7"
@@ -229,9 +207,7 @@ def ex4_7 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("strategy", "perfect"), ("source", "nonfirsthand")]
-    comment := "The Georgian perfect's non-firsthand use is an extension of its resultative meaning, alongside present-perfect, negated-past and optative uses, so the perfect is an evidentiality strategy rather than an evidential; example after Hewitt."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The Georgian perfect's non-firsthand use is an extension of its resultative meaning, alongside present-perfect, negated-past and optative uses, so the perfect is an evidentiality strategy rather than an evidential; example after Hewitt." }
 
 def ex4_55 : LinguisticExample :=
   { id := "aikhenvald2004_ex4_55"
@@ -247,9 +223,7 @@ def ex4_55 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("system", "A2"), ("term", "nonfirsthand"), ("source", "report"), ("extension", "epistemic")]
-    comment := "The Bulgarian non-firsthand carries an epistemic overtone of distance: the speaker is unwilling to bear responsibility for the claim; example after Gvozdanović."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The Bulgarian non-firsthand carries an epistemic overtone of distance: the speaker is unwilling to bear responsibility for the claim; example after Gvozdanović." }
 
 def all : List LinguisticExample := [ex1_1, ex1_2, ex1_3, ex1_4, ex1_5, ex2_16, ex2_17, ex2_18, ex2_40, ex2_41, ex2_42, ex4_7, ex4_55]
 

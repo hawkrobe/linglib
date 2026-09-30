@@ -31,9 +31,7 @@ def ag2024a_t2_anna : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("experiment", "1"), ("item", "gigantic"), ("adjectiveType", "relative"), ("adjective", "tiny"), ("strength", "strong"), ("polarity", "negative"), ("negation", "negated"), ("condition", "negated negative strong")]
-    comment := "Three of the eight statements of the item; participants saw all eight concurrently and rated each room on the 1-5 scale. The same item appears in single-statement mode as Table 1 of Alexandropoulou and Gotzner (2024b)."
-    metaLanguage := "stan1293"
-    lgrConformance := "NONE" }
+    comment := "Three of the eight statements of the item; participants saw all eight concurrently and rated each room on the 1-5 scale. The same item appears in single-statement mode as Table 1 of Alexandropoulou and Gotzner (2024b)." }
 
 def ag2024a_t2_david : LinguisticExample :=
   { id := "ag2024a_t2_david"
@@ -49,9 +47,7 @@ def ag2024a_t2_david : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("experiment", "1"), ("item", "gigantic"), ("adjectiveType", "relative"), ("adjective", "small"), ("strength", "weak"), ("polarity", "negative"), ("negation", "nonNegated"), ("condition", "non-negated negative weak")]
-    comment := "Three of the eight statements of the item; participants saw all eight concurrently and rated each room on the 1-5 scale. The same item appears in single-statement mode as Table 1 of Alexandropoulou and Gotzner (2024b)."
-    metaLanguage := "stan1293"
-    lgrConformance := "NONE" }
+    comment := "Three of the eight statements of the item; participants saw all eight concurrently and rated each room on the 1-5 scale. The same item appears in single-statement mode as Table 1 of Alexandropoulou and Gotzner (2024b)." }
 
 def ag2024a_t2_brian : LinguisticExample :=
   { id := "ag2024a_t2_brian"
@@ -67,9 +63,7 @@ def ag2024a_t2_brian : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("experiment", "1"), ("item", "gigantic"), ("adjectiveType", "relative"), ("adjective", "gigantic"), ("strength", "strong"), ("polarity", "positive"), ("negation", "nonNegated"), ("condition", "non-negated positive strong")]
-    comment := "Three of the eight statements of the item; participants saw all eight concurrently and rated each room on the 1-5 scale. The same item appears in single-statement mode as Table 1 of Alexandropoulou and Gotzner (2024b)."
-    metaLanguage := "stan1293"
-    lgrConformance := "NONE" }
+    comment := "Three of the eight statements of the item; participants saw all eight concurrently and rated each room on the 1-5 scale. The same item appears in single-statement mode as Table 1 of Alexandropoulou and Gotzner (2024b)." }
 
 def ag2024a_t3_anthony : LinguisticExample :=
   { id := "ag2024a_t3_anthony"
@@ -85,9 +79,7 @@ def ag2024a_t3_anthony : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("experiment", "2"), ("item", "pristine"), ("adjectiveType", "absolute"), ("adjective", "filthy"), ("strength", "strong"), ("polarity", "negative"), ("negation", "negated"), ("condition", "negated negative strong")]
-    comment := "Three of the eight statements of the item; participants saw all eight concurrently and rated each hospital on the 1-5 scale. The same item appears in single-statement mode as Table 2 of Alexandropoulou and Gotzner (2024b)."
-    metaLanguage := "stan1293"
-    lgrConformance := "NONE" }
+    comment := "Three of the eight statements of the item; participants saw all eight concurrently and rated each hospital on the 1-5 scale. The same item appears in single-statement mode as Table 2 of Alexandropoulou and Gotzner (2024b)." }
 
 def ag2024a_t3_joseph : LinguisticExample :=
   { id := "ag2024a_t3_joseph"
@@ -103,9 +95,7 @@ def ag2024a_t3_joseph : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("experiment", "2"), ("item", "pristine"), ("adjectiveType", "absolute"), ("adjective", "dirty"), ("strength", "weak"), ("polarity", "negative"), ("negation", "negated"), ("condition", "negated negative weak")]
-    comment := "Three of the eight statements of the item; participants saw all eight concurrently and rated each hospital on the 1-5 scale. The same item appears in single-statement mode as Table 2 of Alexandropoulou and Gotzner (2024b)."
-    metaLanguage := "stan1293"
-    lgrConformance := "NONE" }
+    comment := "Three of the eight statements of the item; participants saw all eight concurrently and rated each hospital on the 1-5 scale. The same item appears in single-statement mode as Table 2 of Alexandropoulou and Gotzner (2024b)." }
 
 def ag2024a_t3_mary : LinguisticExample :=
   { id := "ag2024a_t3_mary"
@@ -121,9 +111,7 @@ def ag2024a_t3_mary : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("experiment", "2"), ("item", "pristine"), ("adjectiveType", "absolute"), ("adjective", "pristine"), ("strength", "strong"), ("polarity", "positive"), ("negation", "nonNegated"), ("condition", "non-negated positive strong")]
-    comment := "Three of the eight statements of the item; participants saw all eight concurrently and rated each hospital on the 1-5 scale. The same item appears in single-statement mode as Table 2 of Alexandropoulou and Gotzner (2024b)."
-    metaLanguage := "stan1293"
-    lgrConformance := "NONE" }
+    comment := "Three of the eight statements of the item; participants saw all eight concurrently and rated each hospital on the 1-5 scale. The same item appears in single-statement mode as Table 2 of Alexandropoulou and Gotzner (2024b)." }
 
 def all : List LinguisticExample := [ag2024a_t2_anna, ag2024a_t2_david, ag2024a_t2_brian, ag2024a_t3_anthony, ag2024a_t3_joseph, ag2024a_t3_mary]
 

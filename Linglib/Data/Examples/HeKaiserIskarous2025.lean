@@ -31,9 +31,7 @@ def house_no_bathroom : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "1"), ("polarity", "negative"), ("statePrior", "low")]
-    comment := "A negative sentence about a low-prior state: houses usually have bathrooms."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A negative sentence about a low-prior state: houses usually have bathrooms." }
 
 def house_ballroom : LinguisticExample :=
   { id := "hekaiseriskarous2025_house_ballroom"
@@ -49,9 +47,7 @@ def house_ballroom : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "1"), ("polarity", "positive"), ("statePrior", "low")]
-    comment := "A positive sentence about a low-prior state, similarly informative to the negative one but cheaper under the standard model."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A positive sentence about a low-prior state, similarly informative to the negative one but cheaper under the standard model." }
 
 def house_no_ballroom : LinguisticExample :=
   { id := "hekaiseriskarous2025_house_no_ballroom"
@@ -67,9 +63,7 @@ def house_no_ballroom : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "1"), ("polarity", "negative"), ("statePrior", "high")]
-    comment := "Presupposes the possibility of a ballroom, which the listener must accommodate before the update."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Presupposes the possibility of a ballroom, which the listener must accommodate before the update." }
 
 def exp1_pos : LinguisticExample :=
   { id := "hekaiseriskarous2025_exp1_pos"
@@ -85,9 +79,7 @@ def exp1_pos : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.2"), ("polarity", "positive"), ("experiment", "1")]
-    comment := "Experiment 1 item: participants rated how likely Emma would be to mention the fact."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Experiment 1 item: participants rated how likely Emma would be to mention the fact." }
 
 def exp1_neg : LinguisticExample :=
   { id := "hekaiseriskarous2025_exp1_neg"
@@ -103,9 +95,7 @@ def exp1_neg : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.2"), ("polarity", "negative"), ("experiment", "1")]
-    comment := "Experiment 1 item, the negative counterpart of the same part-whole relation."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Experiment 1 item, the negative counterpart of the same part-whole relation." }
 
 def classroom_no_board : LinguisticExample :=
   { id := "hekaiseriskarous2025_classroom_no_board"
@@ -121,9 +111,7 @@ def classroom_no_board : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.2"), ("polarity", "negative"), ("statePrior", "low")]
-    comment := "A low-prior negative-polarity situation, rated more likely to be communicated than a positive one of similar prior."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A low-prior negative-polarity situation, rated more likely to be communicated than a positive one of similar prior." }
 
 def classroom_stove : LinguisticExample :=
   { id := "hekaiseriskarous2025_classroom_stove"
@@ -139,9 +127,7 @@ def classroom_stove : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.2"), ("polarity", "positive"), ("statePrior", "low")]
-    comment := "A low-prior positive-polarity situation, rated less likely to be communicated than the negative one above."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A low-prior positive-polarity situation, rated less likely to be communicated than the negative one above." }
 
 def exp2 : LinguisticExample :=
   { id := "hekaiseriskarous2025_exp2"
@@ -157,9 +143,7 @@ def exp2 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.3"), ("polarity", "positive"), ("experiment", "2")]
-    comment := "Experiment 2 item: the fact statement in direct speech; participants rated how typical a house the house is."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Experiment 2 item: the fact statement in direct speech; participants rated how typical a house the house is." }
 
 def all : List LinguisticExample := [house_no_bathroom, house_ballroom, house_no_ballroom, exp1_pos, exp1_neg, classroom_no_board, classroom_stove, exp2]
 

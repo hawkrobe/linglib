@@ -31,9 +31,7 @@ def ex_1a_in : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verbClass", "telic"), ("object", "none"), ("adverbial", "in")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_1a_for : LinguisticExample :=
   { id := "filip2012_1a_for"
@@ -49,9 +47,7 @@ def ex_1a_for : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verbClass", "telic"), ("object", "none"), ("adverbial", "for")]
-    comment := "Acceptable only on a shifted reading, the chapter's (*)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Acceptable only on a shifted reading, the chapter's (*)." }
 
 def ex_1b_in : LinguisticExample :=
   { id := "filip2012_1b_in"
@@ -67,9 +63,7 @@ def ex_1b_in : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verbClass", "atelic"), ("object", "none"), ("adverbial", "in")]
-    comment := "Acceptable only on a shifted reading, the chapter's (*)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Acceptable only on a shifted reading, the chapter's (*)." }
 
 def ex_1b_for : LinguisticExample :=
   { id := "filip2012_1b_for"
@@ -85,9 +79,7 @@ def ex_1b_for : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verbClass", "atelic"), ("object", "none"), ("adverbial", "for")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_25a_in : LinguisticExample :=
   { id := "filip2012_25a_in"
@@ -103,9 +95,7 @@ def ex_25a_in : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verbClass", "incremental"), ("object", "quantized"), ("adverbial", "in")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_25a_for : LinguisticExample :=
   { id := "filip2012_25a_for"
@@ -121,9 +111,7 @@ def ex_25a_for : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verbClass", "incremental"), ("object", "quantized"), ("adverbial", "for")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_25b_in : LinguisticExample :=
   { id := "filip2012_25b_in"
@@ -139,9 +127,7 @@ def ex_25b_in : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verbClass", "incremental"), ("object", "cumulative"), ("adverbial", "in")]
-    comment := "Acceptable only on a shifted reading, the chapter's (*)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Acceptable only on a shifted reading, the chapter's (*)." }
 
 def ex_25b_for : LinguisticExample :=
   { id := "filip2012_25b_for"
@@ -157,9 +143,7 @@ def ex_25b_for : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verbClass", "incremental"), ("object", "cumulative"), ("adverbial", "for")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_26a_in : LinguisticExample :=
   { id := "filip2012_26a_in"
@@ -175,9 +159,7 @@ def ex_26a_in : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verbClass", "atelic"), ("object", "quantized"), ("adverbial", "in")]
-    comment := "Acceptable only on a shifted reading, the chapter's (*)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Acceptable only on a shifted reading, the chapter's (*)." }
 
 def ex_26a_for : LinguisticExample :=
   { id := "filip2012_26a_for"
@@ -193,9 +175,7 @@ def ex_26a_for : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verbClass", "atelic"), ("object", "quantized"), ("adverbial", "for")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_26b_in : LinguisticExample :=
   { id := "filip2012_26b_in"
@@ -211,9 +191,7 @@ def ex_26b_in : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verbClass", "atelic"), ("object", "cumulative"), ("adverbial", "in")]
-    comment := "Acceptable only on a shifted reading, the chapter's (*)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Acceptable only on a shifted reading, the chapter's (*)." }
 
 def ex_26b_for : LinguisticExample :=
   { id := "filip2012_26b_for"
@@ -229,9 +207,7 @@ def ex_26b_for : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verbClass", "atelic"), ("object", "cumulative"), ("adverbial", "for")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_31a_for : LinguisticExample :=
   { id := "filip2012_31a_for"
@@ -247,9 +223,7 @@ def ex_31a_for : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verbClass", "incremental"), ("object", "quantized"), ("adverbial", "for")]
-    comment := "Attributed to Zucchi (1998)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Attributed to Zucchi (1998)." }
 
 def ex_37a_for : LinguisticExample :=
   { id := "filip2012_37a_for"
@@ -265,9 +239,7 @@ def ex_37a_for : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verbClass", "telic"), ("object", "quantized"), ("adverbial", "for")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_37a_in : LinguisticExample :=
   { id := "filip2012_37a_in"
@@ -283,9 +255,7 @@ def ex_37a_in : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verbClass", "telic"), ("object", "quantized"), ("adverbial", "in")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def all : List LinguisticExample := [ex_1a_in, ex_1a_for, ex_1b_in, ex_1b_for, ex_25a_in, ex_25a_for, ex_25b_in, ex_25b_for, ex_26a_in, ex_26a_for, ex_26b_in, ex_26b_for, ex_31a_for, ex_37a_for, ex_37a_in]
 

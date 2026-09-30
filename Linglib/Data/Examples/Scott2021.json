@@ -20,8 +20,7 @@
       ["antecedentNumber", "sg"],
       ["form", "mi"]
     ],
-    "comment": "Simple cleft: the resumptive may match in person or be the personless animate pronoun; number must match.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Simple cleft: the resumptive may match in person or be the personless animate pronoun; number must match."
   },
   {
     "id": "scott2021_cleft_24_ye",
@@ -44,8 +43,7 @@
       ["antecedentNumber", "sg"],
       ["form", "ye"]
     ],
-    "comment": "Simple cleft: the resumptive may match in person or be the personless animate pronoun; number must match.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Simple cleft: the resumptive may match in person or be the personless animate pronoun; number must match."
   },
   {
     "id": "scott2021_cleft_25_we",
@@ -68,8 +66,7 @@
       ["antecedentNumber", "sg"],
       ["form", "we"]
     ],
-    "comment": "Simple cleft: the resumptive may match in person or be the personless animate pronoun; number must match.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Simple cleft: the resumptive may match in person or be the personless animate pronoun; number must match."
   },
   {
     "id": "scott2021_cleft_25_ye",
@@ -92,8 +89,7 @@
       ["antecedentNumber", "sg"],
       ["form", "ye"]
     ],
-    "comment": "Simple cleft: the resumptive may match in person or be the personless animate pronoun; number must match.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Simple cleft: the resumptive may match in person or be the personless animate pronoun; number must match."
   },
   {
     "id": "scott2021_cleft_29a_si",
@@ -116,8 +112,7 @@
       ["antecedentNumber", "sg"],
       ["form", "si"]
     ],
-    "comment": "Simple cleft: the resumptive may match in person or be the personless animate pronoun; number must match.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Simple cleft: the resumptive may match in person or be the personless animate pronoun; number must match."
   },
   {
     "id": "scott2021_cleft_29a_o",
@@ -140,8 +135,7 @@
       ["antecedentNumber", "sg"],
       ["form", "o"]
     ],
-    "comment": "Simple cleft: the resumptive may match in person or be the personless animate pronoun; number must match.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Simple cleft: the resumptive may match in person or be the personless animate pronoun; number must match."
   },
   {
     "id": "scott2021_cleft_29b_nyi",
@@ -164,8 +158,7 @@
       ["antecedentNumber", "sg"],
       ["form", "nyi"]
     ],
-    "comment": "Simple cleft: the resumptive may match in person or be the personless animate pronoun; number must match.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Simple cleft: the resumptive may match in person or be the personless animate pronoun; number must match."
   },
   {
     "id": "scott2021_cleft_29b_o",
@@ -188,8 +181,7 @@
       ["antecedentNumber", "sg"],
       ["form", "o"]
     ],
-    "comment": "Simple cleft: the resumptive may match in person or be the personless animate pronoun; number must match.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Simple cleft: the resumptive may match in person or be the personless animate pronoun; number must match."
   },
   {
     "id": "scott2021_island_31_we",
@@ -211,8 +203,7 @@
       ["antecedentNumber", "sg"],
       ["form", "we"]
     ],
-    "comment": "Adjunct island: movement is blocked, so only the bound, person-matching resumptive survives.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Adjunct island: movement is blocked, so only the bound, person-matching resumptive survives."
   },
   {
     "id": "scott2021_island_31_ye",
@@ -234,8 +225,7 @@
       ["antecedentNumber", "sg"],
       ["form", "ye"]
     ],
-    "comment": "Adjunct island: movement is blocked, so only the bound, person-matching resumptive survives.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Adjunct island: movement is blocked, so only the bound, person-matching resumptive survives."
   },
   {
     "id": "scott2021_island_32_mi",
@@ -257,8 +247,7 @@
       ["antecedentNumber", "sg"],
       ["form", "mi"]
     ],
-    "comment": "Adjunct island: movement is blocked, so only the bound, person-matching resumptive survives.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Adjunct island: movement is blocked, so only the bound, person-matching resumptive survives."
   },
   {
     "id": "scott2021_island_32_ye",
@@ -280,8 +269,7 @@
       ["antecedentNumber", "sg"],
       ["form", "ye"]
     ],
-    "comment": "Adjunct island: movement is blocked, so only the bound, person-matching resumptive survives.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Adjunct island: movement is blocked, so only the bound, person-matching resumptive survives."
   },
   {
     "id": "scott2021_island_33_mi",
@@ -303,8 +291,7 @@
       ["antecedentNumber", "sg"],
       ["form", "mi"]
     ],
-    "comment": "Adjunct island: movement is blocked, so only the bound, person-matching resumptive survives.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Adjunct island: movement is blocked, so only the bound, person-matching resumptive survives."
   },
   {
     "id": "scott2021_island_33_ye",
@@ -326,8 +313,7 @@
       ["antecedentNumber", "sg"],
       ["form", "ye"]
     ],
-    "comment": "Adjunct island: movement is blocked, so only the bound, person-matching resumptive survives.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Adjunct island: movement is blocked, so only the bound, person-matching resumptive survives."
   },
   {
     "id": "scott2021_pg_36",
@@ -350,8 +336,7 @@
       ["trueGap", "ye"],
       ["parasitic", "ye"]
     ],
-    "comment": "Movement copies in both the true-gap and parasitic positions.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Movement copies in both the true-gap and parasitic positions."
   },
   {
     "id": "scott2021_pg_37",
@@ -374,8 +359,7 @@
       ["trueGap", "mi"],
       ["parasitic", "ye"]
     ],
-    "comment": "A personless parasitic pronoun is not licensed by a bound true-gap pronoun; ye must be read as third person.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "A personless parasitic pronoun is not licensed by a bound true-gap pronoun; ye must be read as third person."
   },
   {
     "id": "scott2021_table4_sp1_ye_ye",
@@ -399,8 +383,7 @@
       ["parasitic", "ye"],
       ["speaker", "1"]
     ],
-    "comment": "Table 4, Speaker 1: true-gap ye, parasitic-gap ye.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Table 4, Speaker 1: true-gap ye, parasitic-gap ye."
   },
   {
     "id": "scott2021_table4_sp1_mi_ye",
@@ -424,8 +407,7 @@
       ["parasitic", "ye"],
       ["speaker", "1"]
     ],
-    "comment": "Table 4, Speaker 1: true-gap mi, parasitic-gap ye.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Table 4, Speaker 1: true-gap mi, parasitic-gap ye."
   },
   {
     "id": "scott2021_table4_sp1_mi_mi",
@@ -449,8 +431,7 @@
       ["parasitic", "mi"],
       ["speaker", "1"]
     ],
-    "comment": "Table 4, Speaker 1: true-gap mi, parasitic-gap mi.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Table 4, Speaker 1: true-gap mi, parasitic-gap mi."
   },
   {
     "id": "scott2021_table4_sp1_ye_mi",
@@ -474,8 +455,7 @@
       ["parasitic", "mi"],
       ["speaker", "1"]
     ],
-    "comment": "Table 4, Speaker 1: true-gap ye, parasitic-gap mi.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Table 4, Speaker 1: true-gap ye, parasitic-gap mi."
   },
   {
     "id": "scott2021_table4_sp2_ye_ye",
@@ -499,8 +479,7 @@
       ["parasitic", "ye"],
       ["speaker", "2"]
     ],
-    "comment": "Table 4, Speaker 2: true-gap ye, parasitic-gap ye.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Table 4, Speaker 2: true-gap ye, parasitic-gap ye."
   },
   {
     "id": "scott2021_table4_sp2_mi_ye",
@@ -524,8 +503,7 @@
       ["parasitic", "ye"],
       ["speaker", "2"]
     ],
-    "comment": "Table 4, Speaker 2: true-gap mi, parasitic-gap ye.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Table 4, Speaker 2: true-gap mi, parasitic-gap ye."
   },
   {
     "id": "scott2021_table4_sp2_mi_mi",
@@ -549,8 +527,7 @@
       ["parasitic", "mi"],
       ["speaker", "2"]
     ],
-    "comment": "Table 4, Speaker 2: true-gap mi, parasitic-gap mi.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Table 4, Speaker 2: true-gap mi, parasitic-gap mi."
   },
   {
     "id": "scott2021_table4_sp2_ye_mi",
@@ -574,8 +551,7 @@
       ["parasitic", "mi"],
       ["speaker", "2"]
     ],
-    "comment": "Table 4, Speaker 2: true-gap ye, parasitic-gap mi.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Table 4, Speaker 2: true-gap ye, parasitic-gap mi."
   },
   {
     "id": "scott2021_table4_sp3_ye_ye",
@@ -599,8 +575,7 @@
       ["parasitic", "ye"],
       ["speaker", "3"]
     ],
-    "comment": "Table 4, Speaker 3: true-gap ye, parasitic-gap ye.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Table 4, Speaker 3: true-gap ye, parasitic-gap ye."
   },
   {
     "id": "scott2021_table4_sp3_mi_ye",
@@ -624,8 +599,7 @@
       ["parasitic", "ye"],
       ["speaker", "3"]
     ],
-    "comment": "Table 4, Speaker 3: true-gap mi, parasitic-gap ye.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Table 4, Speaker 3: true-gap mi, parasitic-gap ye."
   },
   {
     "id": "scott2021_table4_sp3_mi_mi",
@@ -649,8 +623,7 @@
       ["parasitic", "mi"],
       ["speaker", "3"]
     ],
-    "comment": "Table 4, Speaker 3: true-gap mi, parasitic-gap mi.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Table 4, Speaker 3: true-gap mi, parasitic-gap mi."
   },
   {
     "id": "scott2021_table4_sp3_ye_mi",
@@ -674,7 +647,6 @@
       ["parasitic", "mi"],
       ["speaker", "3"]
     ],
-    "comment": "Table 4, Speaker 3: true-gap ye, parasitic-gap mi.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Table 4, Speaker 3: true-gap ye, parasitic-gap mi."
   }
 ]

@@ -25,8 +25,7 @@
         "positive"
       ]
     ],
-    "comment": "Positive epistemic implicature: the speaker believes or at least expects that John drinks.",
-    "metaLanguage": "stan1293"
+    "comment": "Positive epistemic implicature: the speaker believes or at least expects that John drinks."
   },
   {
     "id": "romerohan2004_does_john_not_drink",
@@ -54,8 +53,7 @@
         "none"
       ]
     ],
-    "comment": "No epistemic implicature necessary.",
-    "metaLanguage": "stan1293"
+    "comment": "No epistemic implicature necessary."
   },
   {
     "id": "romerohan2004_does_john_drink",
@@ -83,8 +81,7 @@
         "none"
       ]
     ],
-    "comment": "No epistemic implicature necessary.",
-    "metaLanguage": "stan1293"
+    "comment": "No epistemic implicature necessary."
   },
   {
     "id": "romerohan2004_does_john_really_drink",
@@ -116,8 +113,7 @@
         "negative"
       ]
     ],
-    "comment": "Negative epistemic implicature: the speaker believed or at least expected that John does not drink.",
-    "metaLanguage": "stan1293"
+    "comment": "Negative epistemic implicature: the speaker believed or at least expected that John does not drink."
   },
   {
     "id": "romerohan2004_isnt_jane_coming",
@@ -145,8 +141,7 @@
         "positive"
       ]
     ],
-    "comment": "Ambiguous between the p-reading and the ¬p-reading (Ladd 1981).",
-    "metaLanguage": "stan1293"
+    "comment": "Ambiguous between the p-reading and the ¬p-reading (Ladd 1981)."
   },
   {
     "id": "romerohan2004_isnt_jane_coming_too",
@@ -182,8 +177,7 @@
         "positive"
       ]
     ],
-    "comment": "PI-question: double-checks p; the speaker believed or expected that Jane is coming ((81)).",
-    "metaLanguage": "stan1293"
+    "comment": "PI-question: double-checks p; the speaker believed or expected that Jane is coming ((81))."
   },
   {
     "id": "romerohan2004_isnt_jane_coming_either",
@@ -219,8 +213,7 @@
         "positive"
       ]
     ],
-    "comment": "NI-question: double-checks the addressee's ¬p; the speaker still believed or expected that Jane is coming ((82)).",
-    "metaLanguage": "stan1293"
+    "comment": "NI-question: double-checks the addressee's ¬p; the speaker still believed or expected that Jane is coming ((82))."
   },
   {
     "id": "romerohan2004_is_jane_really_coming_too",
@@ -248,8 +241,7 @@
         "too"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "romerohan2004_is_jane_really_coming_either",
@@ -277,8 +269,7 @@
         "either"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "romerohan2004_is_jane_not_coming_too",
@@ -306,8 +297,7 @@
         "too"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "romerohan2004_is_jane_not_coming_either",
@@ -335,8 +325,7 @@
         "either"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "romerohan2004_greek_preposed",
@@ -385,8 +374,7 @@
         "positive"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "romerohan2004_greek_nonpreposed",
@@ -435,8 +423,7 @@
         "none"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "romerohan2004_spanish_preposed",
@@ -477,8 +464,7 @@
         "positive"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "romerohan2004_spanish_nonpreposed",
@@ -519,8 +505,7 @@
         "none"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "romerohan2004_bulgarian_preposed",
@@ -569,8 +554,7 @@
         "positive"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "romerohan2004_bulgarian_nonpreposed",
@@ -619,8 +603,7 @@
         "none"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "romerohan2004_german_preposed",
@@ -673,8 +656,7 @@
         "positive"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "romerohan2004_german_nonpreposed",
@@ -723,8 +705,7 @@
         "none"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "romerohan2004_korean_preposed",
@@ -769,8 +750,7 @@
         "positive"
       ]
     ],
-    "comment": "Negation following tense: preposed negation given Korean head-finality.",
-    "metaLanguage": "stan1293"
+    "comment": "Negation following tense: preposed negation given Korean head-finality."
   },
   {
     "id": "romerohan2004_korean_nonpreposed_short",
@@ -815,8 +795,7 @@
         "none"
       ]
     ],
-    "comment": "Short negation preceding tense.",
-    "metaLanguage": "stan1293"
+    "comment": "Short negation preceding tense."
   },
   {
     "id": "romerohan2004_korean_nonpreposed_long",
@@ -861,7 +840,6 @@
         "none"
       ]
     ],
-    "comment": "Long negation preceding tense.",
-    "metaLanguage": "stan1293"
+    "comment": "Long negation preceding tense."
   }
 ]

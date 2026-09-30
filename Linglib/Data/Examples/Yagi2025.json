@@ -15,9 +15,7 @@
     "paperFeatures": [
       ["presuppositions", "conflicting"]
     ],
-    "comment": "Hausser 1976. The disjunctive presupposition is a tautology; false if the liquid is fermenting.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Hausser 1976. The disjunctive presupposition is a tautology; false if the liquid is fermenting."
   },
   {
     "id": "yagi2025_2",
@@ -35,9 +33,7 @@
     "paperFeatures": [
       ["presuppositions", "conflicting"]
     ],
-    "comment": "Landman 1986. False if Suzan did not meet the head of the nation.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Landman 1986. False if Suzan did not meet the head of the nation."
   },
   {
     "id": "yagi2025_3",
@@ -58,9 +54,7 @@
     "paperFeatures": [
       ["presuppositions", "conflicting"]
     ],
-    "comment": "Beaver 2001.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Beaver 2001."
   },
   {
     "id": "yagi2025_4",
@@ -80,9 +74,7 @@
     "paperFeatures": [
       ["negation", "of conflicting disjunction"]
     ],
-    "comment": "Hausser 1976.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Hausser 1976."
   },
   {
     "id": "yagi2025_5",
@@ -102,9 +94,7 @@
     "paperFeatures": [
       ["negation", "of conflicting disjunction"]
     ],
-    "comment": "Beaver 2001.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Beaver 2001."
   },
   {
     "id": "yagi2025_6",
@@ -124,9 +114,7 @@
     "paperFeatures": [
       ["presupposition", "projects"]
     ],
-    "comment": "Karttunen 1974. The disjunction-of-presuppositions modification predicts a tautologous presupposition here.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Karttunen 1974. The disjunction-of-presuppositions modification predicts a tautologous presupposition here."
   },
   {
     "id": "yagi2025_7",
@@ -144,9 +132,7 @@
     "paperFeatures": [
       ["accommodation", "non-tautological"]
     ],
-    "comment": "The first assertion contradicts the second presupposition, so the default accommodation violates genuineness.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The first assertion contradicts the second presupposition, so the default accommodation violates genuineness."
   },
   {
     "id": "yagi2025_8",
@@ -166,9 +152,7 @@
     "paperFeatures": [
       ["presupposition", "filtered"]
     ],
-    "comment": "Beaver 2001. The standard update predicts the lack of projection; the default accommodation does not.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Beaver 2001. The standard update predicts the lack of projection; the default accommodation does not."
   },
   {
     "id": "yagi2025_9",
@@ -188,9 +172,7 @@
     "paperFeatures": [
       ["reading", "modal split"]
     ],
-    "comment": "Geurts 2005.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Geurts 2005."
   },
   {
     "id": "yagi2025_10",
@@ -208,9 +190,7 @@
     "paperFeatures": [
       ["reading", "modal split"]
     ],
-    "comment": "Landman 1986. Each disjunct is interpreted against one disjunct of the preceding sentence.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Landman 1986. Each disjunct is interpreted against one disjunct of the preceding sentence."
   },
   {
     "id": "yagi2025_11",
@@ -230,8 +210,6 @@
     "paperFeatures": [
       ["presupposition", "conditional"]
     ],
-    "comment": "Katzir and Singh 2012.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Katzir and Singh 2012."
   }
 ]

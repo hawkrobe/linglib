@@ -31,9 +31,7 @@ def hebrewEN : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("domain", "nP"), ("depth", "deep"), ("extractionAvailable", "false"), ("abarContext", "restrictive relative, interrogative, free relative")]
-    comment := "Landau 2026, §2.2 (18a). EN fails EIR: no internal structure to host the resumptive, so the Ā-operator violates the BVQ. NP-ellipsis previously established; EIR gives additional confirmation via the EN/ENP contrast."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Landau 2026, §2.2 (18a). EN fails EIR: no internal structure to host the resumptive, so the Ā-operator violates the BVQ. NP-ellipsis previously established; EIR gives additional confirmation via the EN/ENP contrast." }
 
 def hebrewENP : LinguisticExample :=
   { id := "landau2026_hebrewENP"
@@ -49,9 +47,7 @@ def hebrewENP : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("domain", "nP"), ("depth", "surface"), ("extractionAvailable", "false"), ("abarContext", "restrictive relative, interrogative, maximizing relative")]
-    comment := "Landau 2026, §2.2 (19a). ENP passes EIR: the resumptive inside the elided nP supplies the variable the operator binds."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Landau 2026, §2.2 (19a). ENP passes EIR: the resumptive inside the elided nP supplies the variable the operator binds." }
 
 def hebrewNCA_DP : LinguisticExample :=
   { id := "landau2026_hebrewNCA_DP"
@@ -67,9 +63,7 @@ def hebrewNCA_DP : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("domain", "DP"), ("depth", "deep"), ("extractionAvailable", "false"), ("abarContext", "restrictive relative, interrogative, free relative")]
-    comment := "Landau 2026, §3.2 (31a). NCA/pro fails EIR: no internal structure. The existence of AE in Hebrew was debated; EIR provides a novel argument."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Landau 2026, §3.2 (31a). NCA/pro fails EIR: no internal structure. The existence of AE in Hebrew was debated; EIR provides a novel argument." }
 
 def hebrewAE : LinguisticExample :=
   { id := "landau2026_hebrewAE"
@@ -85,9 +79,7 @@ def hebrewAE : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("domain", "DP"), ("depth", "surface"), ("extractionAvailable", "false"), ("abarContext", "restrictive relative, interrogative, free relative")]
-    comment := "Landau 2026, §3.2 (32a). AE passes EIR: a resumptive inside the elided DP supplies the variable. Novel argument for AE in Hebrew."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Landau 2026, §3.2 (32a). AE passes EIR: a resumptive inside the elided DP supplies the variable. Novel argument for AE in Hebrew." }
 
 def hebrewNCA_PP : LinguisticExample :=
   { id := "landau2026_hebrewNCA_PP"
@@ -103,9 +95,7 @@ def hebrewNCA_PP : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("domain", "PP"), ("depth", "deep"), ("extractionAvailable", "false"), ("abarContext", "restrictive relative, interrogative, free relative")]
-    comment := "Landau 2026, §4.2 (37a). Null PP via NCA fails EIR: no internal structure."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Landau 2026, §4.2 (37a). Null PP via NCA fails EIR: no internal structure." }
 
 def hebrewPPE : LinguisticExample :=
   { id := "landau2026_hebrewPPE"
@@ -121,9 +111,7 @@ def hebrewPPE : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("domain", "PP"), ("depth", "surface"), ("extractionAvailable", "false"), ("abarContext", "restrictive relative, interrogative, free relative")]
-    comment := "Landau 2026, §4.2 (38a). PPE passes EIR: first robust evidence for PP-ellipsis; the paper argues this holds cross-linguistically, not only in Hebrew."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Landau 2026, §4.2 (38a). PPE passes EIR: first robust evidence for PP-ellipsis; the paper argues this holds cross-linguistically, not only in Hebrew." }
 
 def englishVPE : LinguisticExample :=
   { id := "landau2026_englishVPE"
@@ -139,9 +127,7 @@ def englishVPE : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("domain", "VP"), ("depth", "surface"), ("extractionAvailable", "true"), ("abarContext", "left-dislocation")]
-    comment := "Landau 2026, §5 (44a). VP-ellipsis passes EIR."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Landau 2026, §5 (44a). VP-ellipsis passes EIR." }
 
 def englishDoSo : LinguisticExample :=
   { id := "landau2026_englishDoSo"
@@ -157,9 +143,7 @@ def englishDoSo : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("domain", "VP"), ("depth", "deep"), ("extractionAvailable", "true"), ("abarContext", "left-dislocation")]
-    comment := "Landau 2026, §5 (44c). do so fails EIR; Ā-extraction is also impossible, but that is ambiguous between deep anaphor and derivational bleeding. EIR resolves the ambiguity: do so is deep [bruening-2019]."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Landau 2026, §5 (44c). do so fails EIR; Ā-extraction is also impossible, but that is ambiguous between deep anaphor and derivational bleeding. EIR resolves the ambiguity: do so is deep [bruening-2019]." }
 
 def dutchDatDoen : LinguisticExample :=
   { id := "landau2026_dutchDatDoen"
@@ -175,9 +159,7 @@ def dutchDatDoen : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("domain", "VP"), ("depth", "deep"), ("extractionAvailable", "true"), ("abarContext", "left-dislocation")]
-    comment := "Landau 2026, §5 (45a). dat doen fails EIR (Marcel den Dikken, p.c.)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Landau 2026, §5 (45a). dat doen fails EIR (Marcel den Dikken, p.c.)." }
 
 def danishDet : LinguisticExample :=
   { id := "landau2026_danishDet"
@@ -193,9 +175,7 @@ def danishDet : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("domain", "VP"), ("depth", "deep"), ("extractionAvailable", "true"), ("abarContext", "left-dislocation")]
-    comment := "Landau 2026, §5 (46b). det fails EIR (Line Mikkelsen, p.c.). The grammatical baseline is (46a)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Landau 2026, §5 (46b). det fails EIR (Line Mikkelsen, p.c.). The grammatical baseline is (46a)." }
 
 def koreanNullObj : LinguisticExample :=
   { id := "landau2026_koreanNullObj"
@@ -211,9 +191,7 @@ def koreanNullObj : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("domain", "DP"), ("depth", "deep"), ("extractionAvailable", "true"), ("abarContext", "left-dislocation")]
-    comment := "Landau 2026, §5 (47b). Korean null object fails EIR (Heejeong Ko, p.c.), supporting the pro analysis over AE. The grammatical baseline is (47a)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Landau 2026, §5 (47b). Korean null object fails EIR (Heejeong Ko, p.c.), supporting the pro analysis over AE. The grammatical baseline is (47a)." }
 
 def all : List LinguisticExample := [hebrewEN, hebrewENP, hebrewNCA_DP, hebrewAE, hebrewNCA_PP, hebrewPPE, englishVPE, englishDoSo, dutchDatDoen, danishDet, koreanNullObj]
 

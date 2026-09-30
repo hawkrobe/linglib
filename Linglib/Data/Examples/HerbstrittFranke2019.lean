@@ -31,9 +31,7 @@ def ex1a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "1"), ("expression", "probably")]
-    comment := "Suggests (1b): otherwise the speaker would have uttered (1c)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Suggests (1b): otherwise the speaker would have uttered (1c)." }
 
 def ex1b : LinguisticExample :=
   { id := "herbstrittfranke2019_ex1b"
@@ -49,9 +47,7 @@ def ex1b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "1"), ("expression", "not certain")]
-    comment := "The scalar implicature of (1a)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The scalar implicature of (1a)." }
 
 def ex1c : LinguisticExample :=
   { id := "herbstrittfranke2019_ex1c"
@@ -67,9 +63,7 @@ def ex1c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "1"), ("expression", "certainly")]
-    comment := "The stronger alternative to (1a)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The stronger alternative to (1a)." }
 
 def ex2 : LinguisticExample :=
   { id := "herbstrittfranke2019_ex2"
@@ -85,9 +79,7 @@ def ex2 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2"), ("expression", "definitely likely")]
-    comment := "Moss's example: a complex expression a speaker with much evidence can assert."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Moss's example: a complex expression a speaker with much evidence can assert." }
 
 def ex3 : LinguisticExample :=
   { id := "herbstrittfranke2019_ex3"
@@ -103,9 +95,7 @@ def ex3 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2"), ("expression", "might be probable")]
-    comment := "Moss's example: the same proportion with less evidence licenses only the hedged complex expression."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Moss's example: the same proportion with less evidence licenses only the hedged complex expression." }
 
 def ex5a : LinguisticExample :=
   { id := "herbstrittfranke2019_ex5a"
@@ -121,9 +111,7 @@ def ex5a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2"), ("expression", "probable")]
-    comment := "A simple probability expression: true where the speaker's credence in RED exceeds the threshold of *probable*."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A simple probability expression: true where the speaker's credence in RED exceeds the threshold of *probable*." }
 
 def ex6a : LinguisticExample :=
   { id := "herbstrittfranke2019_ex6a"
@@ -139,9 +127,7 @@ def ex6a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2"), ("expression", "certainly probable")]
-    comment := "A complex probability expression: true where the speaker's credence in *probably RED* exceeds the threshold of *certainly*."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A complex probability expression: true where the speaker's credence in *probably RED* exceeds the threshold of *certainly*." }
 
 def ex11 : LinguisticExample :=
   { id := "herbstrittfranke2019_ex11"
@@ -157,9 +143,7 @@ def ex11 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3"), ("expression", "frame")]
-    comment := "The message frame of the production task; the sender fills in one of certainly, probably, possibly, probably not, certainly not."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The message frame of the production task; the sender fills in one of certainly, probably, possibly, probably not, certainly not." }
 
 def all : List LinguisticExample := [ex1a, ex1b, ex1c, ex2, ex3, ex5a, ex6a, ex11]
 

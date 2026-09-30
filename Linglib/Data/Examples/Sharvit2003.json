@@ -15,8 +15,7 @@
       {"name": "anteriority: the missing precedes the telling", "judgment": "acceptable"}
     ],
     "paperFeatures": [["language", "english"], ["matrix", "past"], ["embedded", "past"], ["nonpast", "yes"]],
-    "comment": "Inspired by an example of Abusch 1997. Past under past under past; the most deeply embedded past has a nonpast reading, John's 'Mother, I miss you', and an anteriority reading, 'Mother, I missed you'.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Inspired by an example of Abusch 1997. Past under past under past; the most deeply embedded past has a nonpast reading, John's 'Mother, I miss you', and an anteriority reading, 'Mother, I missed you'."
   },
   {
     "id": "sharvit2003_ex2",
@@ -34,8 +33,7 @@
       {"name": "anteriority: the pregnancy precedes John's now", "judgment": "acceptable"}
     ],
     "paperFeatures": [["language", "english"], ["matrix", "past"], ["embedded", "past"], ["nonpast", "yes"]],
-    "comment": "Cited from Enç 1987. Past under past with both readings, the diagnostic of an SOT language.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Cited from Enç 1987. Past under past with both readings, the diagnostic of an SOT language."
   },
   {
     "id": "sharvit2003_ex3",
@@ -53,8 +51,7 @@
       {"name": "nonpast: the pregnancy overlaps John's now only", "judgment": "ungrammatical"}
     ],
     "paperFeatures": [["language", "english"], ["matrix", "past"], ["embedded", "present"], ["nonpast", "no"]],
-    "comment": "Present under past: only the double access reading; the English present is a matrix indexical.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Present under past: only the double access reading; the English present is a matrix indexical."
   },
   {
     "id": "sharvit2003_ex4a",
@@ -71,8 +68,7 @@
       {"name": "nonpast: the pregnancy overlaps the finding out", "judgment": "acceptable"}
     ],
     "paperFeatures": [["language", "english"], ["matrix", "past"], ["embedded", "past"], ["nonpast", "yes"]],
-    "comment": "Acceptable through the nonpast reading: the pregnancy overlaps the finding out two years ago.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Acceptable through the nonpast reading: the pregnancy overlaps the finding out two years ago."
   },
   {
     "id": "sharvit2003_ex4b",
@@ -89,8 +85,7 @@
       {"name": "double access: the pregnancy contains the finding out and the utterance time", "judgment": "unacceptable"}
     ],
     "paperFeatures": [["language", "english"], ["matrix", "past"], ["embedded", "present"], ["nonpast", "no"]],
-    "comment": "Marked # in the paper: the double access reading requires the pregnancy to contain both the finding out two years ago and the utterance time, which conflicts with the duration of pregnancies.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Marked # in the paper: the double access reading requires the pregnancy to contain both the finding out two years ago and the utterance time, which conflicts with the duration of pregnancies."
   },
   {
     "id": "sharvit2003_ex5",
@@ -113,8 +108,7 @@
       {"name": "nonpast: the telling overlaps the missing", "judgment": "acceptable"}
     ],
     "paperFeatures": [["language", "hebrew"], ["matrix", "past"], ["embedded", "present"], ["nonpast", "yes"]],
-    "comment": "Hebrew present under past has the nonpast reading that English (1) gets from its deleted past: the Hebrew present is not a matrix indexical.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Hebrew present under past has the nonpast reading that English (1) gets from its deleted past: the Hebrew present is not a matrix indexical."
   },
   {
     "id": "sharvit2003_ex6",
@@ -138,8 +132,7 @@
       {"name": "nonpast: the telling overlaps the missing", "judgment": "ungrammatical"}
     ],
     "paperFeatures": [["language", "hebrew"], ["matrix", "past"], ["embedded", "past"], ["nonpast", "no"]],
-    "comment": "Minimal pair with (5): Hebrew has no SOT rule, so the embedded past is a real past and only the anteriority reading is available.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Minimal pair with (5): Hebrew has no SOT rule, so the embedded past is a real past and only the anteriority reading is available."
   },
   {
     "id": "sharvit2003_ex12a",
@@ -159,8 +152,7 @@
       {"name": "nonpast: the pregnancy overlaps the telling", "judgment": "acceptable"}
     ],
     "paperFeatures": [["language", "greek"], ["matrix", "past"], ["embedded", "present"], ["nonpast", "yes"]],
-    "comment": "Modern Greek present under past with a nonpast reading, attributed to Schlenker 1999 and Iatridou p.c.: the Greek present is not a matrix indexical.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Modern Greek present under past with a nonpast reading, attributed to Schlenker 1999 and Iatridou p.c.: the Greek present is not a matrix indexical."
   },
   {
     "id": "sharvit2003_ex12b",
@@ -180,7 +172,6 @@
       {"name": "nonpast: the pregnancy overlaps the telling", "judgment": "acceptable"}
     ],
     "paperFeatures": [["language", "greek"], ["matrix", "past"], ["embedded", "past"], ["nonpast", "yes"]],
-    "comment": "Modern Greek past under past with a nonpast reading under a non-factive verb, unlike Hebrew and Japanese (fn. 3): Greek has the SOT rule.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Modern Greek past under past with a nonpast reading under a non-factive verb, unlike Hebrew and Japanese (fn. 3): Greek has the SOT rule."
   }
 ]

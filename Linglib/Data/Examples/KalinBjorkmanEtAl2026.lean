@@ -31,9 +31,7 @@ def kb2026_cat : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.2.3"), ("ms", "free"), ("p", "free"), ("cell", "canonicalWord")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def kb2026_plural_s : LinguisticExample :=
   { id := "kb2026_plural_s"
@@ -49,9 +47,7 @@ def kb2026_plural_s : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.2.3"), ("ms", "bound"), ("p", "bound"), ("cell", "canonicalAffix")]
-    comment := "Combines only with nouns."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Combines only with nouns." }
 
 def kb2026_possessive_s : LinguisticExample :=
   { id := "kb2026_possessive_s"
@@ -67,9 +63,7 @@ def kb2026_possessive_s : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.2.3"), ("ms", "free"), ("p", "bound"), ("cell", "simpleClitic")]
-    comment := "No morphosyntactic relationship with the word it is phonologically bound to: the dean who I had a Zoom call with's cat."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "No morphosyntactic relationship with the word it is phonologically bound to: the dean who I had a Zoom call with's cat." }
 
 def kb2026_dutch_prefix : LinguisticExample :=
   { id := "kb2026_dutch_prefix"
@@ -85,9 +79,7 @@ def kb2026_dutch_prefix : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.2.3"), ("ms", "bound"), ("p", "free"), ("cell", "nonCoheringAffix")]
-    comment := "All Dutch prefixes are non-cohering; suffixes may be cohering or non-cohering (Booij 1995)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "All Dutch prefixes are non-cohering; suffixes may be cohering or non-cohering (Booij 1995)." }
 
 def kb2026_cat_form : LinguisticExample :=
   { id := "kb2026_cat_form"
@@ -103,9 +95,7 @@ def kb2026_cat_form : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4"), ("mapping", "oneToOne")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def kb2026_plural_allomorphy : LinguisticExample :=
   { id := "kb2026_plural_allomorphy"
@@ -121,9 +111,7 @@ def kb2026_plural_allomorphy : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4"), ("mapping", "allomorphy")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def kb2026_amharic_plural : LinguisticExample :=
   { id := "kb2026_amharic_plural"
@@ -139,9 +127,7 @@ def kb2026_amharic_plural : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4"), ("mapping", "multipleExponence")]
-    comment := "Two plural suffixes, one plural interpretation (Kramer 2016)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Two plural suffixes, one plural interpretation (Kramer 2016)." }
 
 def kb2026_ed : LinguisticExample :=
   { id := "kb2026_ed"
@@ -157,9 +143,7 @@ def kb2026_ed : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4"), ("mapping", "syncretism")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def kb2026_am : LinguisticExample :=
   { id := "kb2026_am"
@@ -175,9 +159,7 @@ def kb2026_am : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4"), ("mapping", "portmanteau")]
-    comment := "1st person, singular, present, copula."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "1st person, singular, present, copula." }
 
 def kb2026_stride : LinguisticExample :=
   { id := "kb2026_stride"
@@ -193,9 +175,7 @@ def kb2026_stride : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4"), ("mapping", "morphologicalGap")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def kb2026_theme_vowel : LinguisticExample :=
   { id := "kb2026_theme_vowel"
@@ -211,9 +191,7 @@ def kb2026_theme_vowel : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4"), ("mapping", "emptyMorph")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def all : List LinguisticExample := [kb2026_cat, kb2026_plural_s, kb2026_possessive_s, kb2026_dutch_prefix, kb2026_cat_form, kb2026_plural_allomorphy, kb2026_amharic_plural, kb2026_ed, kb2026_am, kb2026_stride, kb2026_theme_vowel]
 

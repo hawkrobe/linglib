@@ -31,9 +31,7 @@ def ex_10b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.1"), ("mover", "absolutive"), ("reflex", "blocked")]
-    comment := "Absolutive extraction is unmarked: no =(y)a' with an intransitive subject."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Absolutive extraction is unmarked: no =(y)a' with an intransitive subject." }
 
 def ex_11b : LinguisticExample :=
   { id := "elkinstorrencebrown2026_11b"
@@ -49,9 +47,7 @@ def ex_11b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.1"), ("mover", "absolutive"), ("reflex", "blocked")]
-    comment := "Absolutive extraction is unmarked: no =(y)a' with a direct object."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Absolutive extraction is unmarked: no =(y)a' with a direct object." }
 
 def ex_12b : LinguisticExample :=
   { id := "elkinstorrencebrown2026_12b"
@@ -67,9 +63,7 @@ def ex_12b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.1"), ("mover", "ergative"), ("reflex", "blocked")]
-    comment := "The Ergative Extraction Constraint: the agent is extracted through an antipassive, which demotes the theme to a relational-noun phrase; no =(y)a'."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "The Ergative Extraction Constraint: the agent is extracted through an antipassive, which demotes the theme to a relational-noun phrase; no =(y)a'." }
 
 def ex_13a : LinguisticExample :=
   { id := "elkinstorrencebrown2026_13a"
@@ -85,9 +79,7 @@ def ex_13a : LinguisticExample :=
     alternatives := [("El tsu'na' Li'y spik'b'il tu'n xb'uy.", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "2.2.1"), ("mover", "none"), ("reflex", "blocked")]
-    comment := "With the instrument in situ the enclitic is impossible: =(y)a' is associated with extraction, not with the presence of the adjunct."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "With the instrument in situ the enclitic is impossible: =(y)a' is associated with extraction, not with the presence of the adjunct." }
 
 def ex_13b : LinguisticExample :=
   { id := "elkinstorrencebrown2026_13b"
@@ -103,9 +95,7 @@ def ex_13b : LinguisticExample :=
     alternatives := [("Alqu'n el tsu'na' Li'y spik'b'il?", .acceptable), ("Alqu'n el tsu'n Li'y spik'b'il?", .acceptable)]
     readings := []
     paperFeatures := [("section", "2.2.1"), ("mover", "instrument"), ("reflex", "licensed")]
-    comment := "Instrument extraction optionally triggers =(y)a'; the relational noun inverts around the wh-word (pied-piping with inversion)."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Instrument extraction optionally triggers =(y)a'; the relational noun inverts around the wh-word (pied-piping with inversion)." }
 
 def ex_14b : LinguisticExample :=
   { id := "elkinstorrencebrown2026_14b"
@@ -121,9 +111,7 @@ def ex_14b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.2.2"), ("mover", "benefactive"), ("reflex", "licensed")]
-    comment := "Benefactive extraction optionally triggers =(y)a'."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Benefactive extraction optionally triggers =(y)a'." }
 
 def ex_15b : LinguisticExample :=
   { id := "elkinstorrencebrown2026_15b"
@@ -139,9 +127,7 @@ def ex_15b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.2.2"), ("mover", "dative"), ("reflex", "licensed")]
-    comment := "Dative extraction optionally triggers =(y)a'."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Dative extraction optionally triggers =(y)a'." }
 
 def ex_16b : LinguisticExample :=
   { id := "elkinstorrencebrown2026_16b"
@@ -157,9 +143,7 @@ def ex_16b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.2.3"), ("mover", "locative"), ("reflex", "licensed")]
-    comment := "Locative extraction optionally triggers =(y)a'."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Locative extraction optionally triggers =(y)a'." }
 
 def ex_17b : LinguisticExample :=
   { id := "elkinstorrencebrown2026_17b"
@@ -175,9 +159,7 @@ def ex_17b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.2.4"), ("mover", "reason"), ("reflex", "licensed")]
-    comment := "Reason extraction optionally triggers =(y)a'; the wh-expression is the wh-word plus the relational noun u'n."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Reason extraction optionally triggers =(y)a'; the wh-expression is the wh-word plus the relational noun u'n." }
 
 def ex_18b : LinguisticExample :=
   { id := "elkinstorrencebrown2026_18b"
@@ -193,9 +175,7 @@ def ex_18b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.2.4"), ("mover", "purpose"), ("reflex", "licensed")]
-    comment := "Purpose extraction optionally triggers =(y)a'."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Purpose extraction optionally triggers =(y)a'." }
 
 def ex_19b : LinguisticExample :=
   { id := "elkinstorrencebrown2026_19b"
@@ -211,9 +191,7 @@ def ex_19b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.2.5"), ("mover", "manner"), ("reflex", "licensed")]
-    comment := "Manner extraction optionally triggers =(y)a'."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Manner extraction optionally triggers =(y)a'." }
 
 def ex_20b : LinguisticExample :=
   { id := "elkinstorrencebrown2026_20b"
@@ -229,9 +207,7 @@ def ex_20b : LinguisticExample :=
     alternatives := [("Jtoj kxe'l telq'a'na' Xwan chmek'?", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "2.2.6"), ("mover", "temporal"), ("reflex", "blocked")]
-    comment := "Temporal extraction does not license =(y)a'."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Temporal extraction does not license =(y)a'." }
 
 def ex_21b : LinguisticExample :=
   { id := "elkinstorrencebrown2026_21b"
@@ -247,9 +223,7 @@ def ex_21b : LinguisticExample :=
     alternatives := [("Jtoje xi' telq'a'na' Xwan chmek'?", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "2.2.6"), ("mover", "temporal"), ("reflex", "blocked")]
-    comment := "Temporal extraction does not license =(y)a'."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Temporal extraction does not license =(y)a'." }
 
 def ex_22 : LinguisticExample :=
   { id := "elkinstorrencebrown2026_22"
@@ -265,9 +239,7 @@ def ex_22 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.1"), ("mover", "locative"), ("directionals", "1"), ("hosts", "2")]
-    comment := "Multiple exponence: the enclitic may appear on the predicate and on the directional, each optionally and independently, so four combinations are equivalent."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Multiple exponence: the enclitic may appear on the predicate and on the directional, each optionally and independently, so four combinations are equivalent." }
 
 def ex_24 : LinguisticExample :=
   { id := "elkinstorrencebrown2026_24"
@@ -283,9 +255,7 @@ def ex_24 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.2"), ("mover", "manner"), ("embeddedSize", "cP"), ("landing", "matrix"), ("matrixReflex", "licensed"), ("embeddedReflex", "licensed")]
-    comment := "Long-distance extraction from a kye complement: =(y)a' on both the matrix and the embedded predicate, each optional."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Long-distance extraction from a kye complement: =(y)a' on both the matrix and the embedded predicate, each optional." }
 
 def ex_26 : LinguisticExample :=
   { id := "elkinstorrencebrown2026_26"
@@ -301,9 +271,7 @@ def ex_26 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.2"), ("mover", "manner"), ("embeddedSize", "cP"), ("landing", "embedded"), ("matrixReflex", "blocked"), ("embeddedReflex", "licensed")]
-    comment := "Embedded question: the wh-expression moves within the embedded clause only, and =(y)a' is unavailable on the matrix predicate."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Embedded question: the wh-expression moves within the embedded clause only, and =(y)a' is unavailable on the matrix predicate." }
 
 def ex_28 : LinguisticExample :=
   { id := "elkinstorrencebrown2026_28"
@@ -319,9 +287,7 @@ def ex_28 : LinguisticExample :=
     alternatives := []
     readings := [("matrix locative (where Juan stole it)", .acceptable), ("relative-clause locative (where the women bought it)", .unacceptable)]
     paperFeatures := [("section", "3.2"), ("mover", "locative")]
-    comment := "The relative clause is an island: the enclitic appears only on the matrix predicate and the question has only the matrix reading."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "The relative clause is an island: the enclitic appears only on the matrix predicate and the question has only the matrix reading." }
 
 def ex_29a : LinguisticExample :=
   { id := "elkinstorrencebrown2026_29a"
@@ -337,9 +303,7 @@ def ex_29a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.2"), ("mover", "locative")]
-    comment := "=(y)a' inside the relative-clause island is rejected, and does not ameliorate extraction from the island."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "=(y)a' inside the relative-clause island is rejected, and does not ameliorate extraction from the island." }
 
 def ex_31 : LinguisticExample :=
   { id := "elkinstorrencebrown2026_31"
@@ -355,9 +319,7 @@ def ex_31 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.3"), ("mover", "locative"), ("embeddedSize", "voiceP"), ("landing", "matrix"), ("matrixReflex", "licensed"), ("embeddedReflex", "licensed")]
-    comment := "Extraction from a VoiceP-sized aspectless clause: =(y)a' on both predicates although the embedded clause has no CP layer, so the locus of the enclitic is below C."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Extraction from a VoiceP-sized aspectless clause: =(y)a' on both predicates although the embedded clause has no CP layer, so the locus of the enclitic is below C." }
 
 def ex_34 : LinguisticExample :=
   { id := "elkinstorrencebrown2026_34"
@@ -373,9 +335,7 @@ def ex_34 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.4"), ("mover", "benefactive"), ("embeddedSize", "bareVP"), ("landing", "matrix"), ("matrixReflex", "licensed"), ("embeddedReflex", "blocked")]
-    comment := "Extraction from a VP-sized nonfinite clause: =(y)a' on the matrix predicate only, so the locus of the enclitic is above VP. The primary text follows the glossed line; the paper's unglossed line differs."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Extraction from a VP-sized nonfinite clause: =(y)a' on the matrix predicate only, so the locus of the enclitic is above VP. The primary text follows the glossed line; the paper's unglossed line differs." }
 
 def ex_35c : LinguisticExample :=
   { id := "elkinstorrencebrown2026_35c"
@@ -391,9 +351,7 @@ def ex_35c : LinguisticExample :=
     alternatives := [("Iku', atzu tzaj tlq'o'na'.", .acceptable)]
     readings := []
     paperFeatures := [("section", "3.5"), ("mover", "none"), ("reflex", "blocked")]
-    comment := "=(y)a' cannot refer anaphorically to a previously established locative without an extracted adjunct; with the fronted atzu 'there' it is fine. So the enclitic is not a resumptive pronoun."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "=(y)a' cannot refer anaphorically to a previously established locative without an extracted adjunct; with the fronted atzu 'there' it is fine. So the enclitic is not a resumptive pronoun." }
 
 def ex_37 : LinguisticExample :=
   { id := "elkinstorrencebrown2026_37"
@@ -409,9 +367,7 @@ def ex_37 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.6"), ("mover", "locative"), ("reflex", "licensed"), ("voice", "passive")]
-    comment := "=(y)a' co-occurs with the passive suffix, unlike an Agent Focus morpheme, which is in complementary distribution with valency morphology."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "=(y)a' co-occurs with the passive suffix, unlike an Agent Focus morpheme, which is in complementary distribution with valency morphology." }
 
 def ex_38 : LinguisticExample :=
   { id := "elkinstorrencebrown2026_38"
@@ -427,9 +383,7 @@ def ex_38 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.6"), ("mover", "ergative"), ("antipassive", "embedded only")]
-    comment := "Long-distance ergative extraction: only the clause in which the agent originates is antipassivized, whereas =(y)a' is licensed in each clause along an adjunct's path."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Long-distance ergative extraction: only the clause in which the agent originates is antipassivized, whereas =(y)a' is licensed in each clause along an adjunct's path." }
 
 def ex_63 : LinguisticExample :=
   { id := "elkinstorrencebrown2026_63"
@@ -445,9 +399,7 @@ def ex_63 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "5.2"), ("mover", "locative"), ("directionals", "2"), ("hosts", "3")]
-    comment := "An intransitive predicate with its sole argument, two directionals and three instances of =(y)a': more reflexes than intervening DPs."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "An intransitive predicate with its sole argument, two directionals and three instances of =(y)a': more reflexes than intervening DPs." }
 
 def ex_65 : LinguisticExample :=
   { id := "elkinstorrencebrown2026_65"
@@ -463,9 +415,7 @@ def ex_65 : LinguisticExample :=
     alternatives := [("Jni' hor kub' kjonae' chib'j?", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "5.3"), ("mover", "temporal"), ("reflex", "blocked")]
-    comment := "Even a nominal-looking temporal phrase fails to trigger the enclitic; the featural characterization of the triggers is left open."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Even a nominal-looking temporal phrase fails to trigger the enclitic; the featural characterization of the triggers is left open." }
 
 def ex_51 : LinguisticExample :=
   { id := "elkinstorrencebrown2026_51"
@@ -481,9 +431,7 @@ def ex_51 : LinguisticExample :=
     alternatives := [("Jawii xatb'ee iwiir?", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "5.1"), ("mover", "locative"), ("reflex", "licensed")]
-    comment := "The K'iche' fronting particle wi is obligatory under low-adjunct extraction."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "The K'iche' fronting particle wi is obligatory under low-adjunct extraction." }
 
 def ex_52 : LinguisticExample :=
   { id := "elkinstorrencebrown2026_52"
@@ -499,9 +447,7 @@ def ex_52 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "5.1"), ("mover", "locative"), ("embeddedSize", "cP"), ("landing", "matrix"), ("matrixReflex", "licensed"), ("embeddedReflex", "licensed")]
-    comment := "With an overt complementizer, wi appears in every clause along the path."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "With an overt complementizer, wi appears in every clause along the path." }
 
 def ex_53 : LinguisticExample :=
   { id := "elkinstorrencebrown2026_53"
@@ -517,9 +463,7 @@ def ex_53 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "5.1"), ("mover", "instrument"), ("embeddedSize", "aspP"), ("landing", "matrix"), ("matrixReflex", "blocked"), ("embeddedReflex", "licensed")]
-    comment := "From a reduced AspP complement without a complementizer, wi appears in the embedded clause only: the Fronting Particle Generalization."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "From a reduced AspP complement without a complementizer, wi appears in the embedded clause only: the Fronting Particle Generalization." }
 
 def ex_64 : LinguisticExample :=
   { id := "elkinstorrencebrown2026_64"
@@ -535,9 +479,7 @@ def ex_64 : LinguisticExample :=
     alternatives := [("Achike ruma xsamäj wi ri a Juan?", .ungrammatical)]
     readings := []
     paperFeatures := [("section", "5.3"), ("mover", "reason"), ("reflex", "blocked")]
-    comment := "A reason adjunct, high in K'ichean, does not trigger wi, whereas Mam tiqu'n 'why' licenses =(y)a'."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "A reason adjunct, high in K'ichean, does not trigger wi, whereas Mam tiqu'n 'why' licenses =(y)a'." }
 
 def all : List LinguisticExample := [ex_10b, ex_11b, ex_12b, ex_13a, ex_13b, ex_14b, ex_15b, ex_16b, ex_17b, ex_18b, ex_19b, ex_20b, ex_21b, ex_22, ex_24, ex_26, ex_28, ex_29a, ex_31, ex_34, ex_35c, ex_37, ex_38, ex_63, ex_65, ex_51, ex_52, ex_53, ex_64]
 

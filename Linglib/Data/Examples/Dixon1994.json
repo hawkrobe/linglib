@@ -18,9 +18,7 @@
       ["construction", "simple"],
       ["function", "S"]
     ],
-    "comment": "A noun in S function bears absolutive case, with zero realisation; noun markers are omitted throughout, fn. 8.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "A noun in S function bears absolutive case, with zero realisation; noun markers are omitted throughout, fn. 8."
   },
   {
     "id": "dixon1994_1_2_7",
@@ -41,9 +39,7 @@
       ["construction", "simple"],
       ["function", "AO"]
     ],
-    "comment": "A noun in O function is absolutive like S; A takes ergative -ŋgu; the verb cross-references none of S, A and O.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "A noun in O function is absolutive like S; A takes ergative -ŋgu; the verb cross-references none of S, A and O."
   },
   {
     "id": "dixon1994_1_2_12",
@@ -64,9 +60,7 @@
       ["construction", "antipassive"],
       ["function", "S"]
     ],
-    "comment": "The antipassive of §1.2 (8): underlying A becomes S, underlying O goes into dative case, and the verb bears -ŋa-y between root and inflection, (11).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The antipassive of §1.2 (8): underlying A becomes S, underlying O goes into dative case, and the verb bears -ŋa-y between root and inflection, (11)."
   },
   {
     "id": "dixon1994_15",
@@ -87,9 +81,7 @@
       ["construction", "simple"],
       ["function", "AO"]
     ],
-    "comment": "First and second person pronouns inflect on a nominative-accusative pattern, Table 6.1: the split of Table 4.1.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "First and second person pronouns inflect on a nominative-accusative pattern, Table 6.1: the split of Table 4.1."
   },
   {
     "id": "dixon1994_17",
@@ -112,9 +104,7 @@
       ["second", "S"],
       ["derivation", "none"]
     ],
-    "comment": "Possibility (a): the common NP is in pivot function S in both clauses and its second occurrence is omitted; there is no overt coordinator.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Possibility (a): the common NP is in pivot function S in both clauses and its second occurrence is omitted; there is no overt coordinator."
   },
   {
     "id": "dixon1994_19",
@@ -138,9 +128,7 @@
       ["second", "O"],
       ["derivation", "none"]
     ],
-    "comment": "Possibility (b), S₁ = O₂: both are pivot functions under the S/O pivot.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Possibility (b), S₁ = O₂: both are pivot functions under the S/O pivot."
   },
   {
     "id": "dixon1994_20",
@@ -164,9 +152,7 @@
       ["second", "O"],
       ["derivation", "none"]
     ],
-    "comment": "The pivot is S/O for pronouns too, although their morphology is accusative: ŋana is retained and ŋana-na omitted.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The pivot is S/O for pronouns too, although their morphology is accusative: ŋana is retained and ŋana-na omitted."
   },
   {
     "id": "dixon1994_21",
@@ -190,9 +176,7 @@
       ["second", "S"],
       ["derivation", "none"]
     ],
-    "comment": "Possibility (d), O₁ = S₂.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Possibility (d), O₁ = S₂."
   },
   {
     "id": "dixon1994_24",
@@ -216,9 +200,7 @@
       ["second", "O"],
       ["derivation", "none"]
     ],
-    "comment": "Possibility (f), O₁ = O₂.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Possibility (f), O₁ = O₂."
   },
   {
     "id": "dixon1994_28",
@@ -242,9 +224,7 @@
       ["second", "O"],
       ["derivation", "none"]
     ],
-    "comment": "Possibility (j), O₁ = O₂ and A₁ = A₂: the pivot NP is the O; the A NP, always omittable, is understood as identical if unstated.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Possibility (j), O₁ = O₂ and A₁ = A₂: the pivot NP is the O; the A NP, always omittable, is understood as identical if unstated."
   },
   {
     "id": "dixon1994_32",
@@ -265,9 +245,7 @@
       ["construction", "antipassive"],
       ["function", "S"]
     ],
-    "comment": "The antipassive version of (11) 'father saw mother', (31): underlying A into derived S, underlying O into dative.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The antipassive version of (11) 'father saw mother', (31): underlying A into derived S, underlying O into dative."
   },
   {
     "id": "dixon1994_33",
@@ -289,9 +267,7 @@
       ["construction", "antipassive"],
       ["function", "S"]
     ],
-    "comment": "The antipassive version of (16); dative is -ŋgu with pronouns.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The antipassive version of (16); dative is -ŋgu with pronouns."
   },
   {
     "id": "dixon1994_34",
@@ -315,9 +291,7 @@
       ["second", "A"],
       ["derivation", "antipassive"]
     ],
-    "comment": "Possibility (c), S₁ = A₂: the second clause is antipassivized to bring the underlying A into derived S and satisfy the S/O pivot.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Possibility (c), S₁ = A₂: the second clause is antipassivized to bring the underlying A into derived S and satisfy the S/O pivot."
   },
   {
     "id": "dixon1994_36",
@@ -341,9 +315,7 @@
       ["second", "A"],
       ["derivation", "antipassive"]
     ],
-    "comment": "Possibility (h), O₁ = A₂, with the second clause antipassivized.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Possibility (h), O₁ = A₂, with the second clause antipassivized."
   },
   {
     "id": "dixon1994_39",
@@ -367,9 +339,7 @@
       ["second", "A"],
       ["derivation", "antipassive"]
     ],
-    "comment": "Possibility (k), O₁ = A₂ and A₁ = O₂: the O₁ = A₂ NP is the pivot; the final dative NP cannot be omitted.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Possibility (k), O₁ = A₂ and A₁ = O₂: the O₁ = A₂ NP is the pivot; the final dative NP cannot be omitted."
   },
   {
     "id": "dixon1994_42",
@@ -393,9 +363,7 @@
       ["second", "S"],
       ["derivation", "antipassive"]
     ],
-    "comment": "Possibility (e), A₁ = S₂, with the first clause antipassivized, which requires planning ahead; the -ŋurra construction of (46) is the alternative.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Possibility (e), A₁ = S₂, with the first clause antipassivized, which requires planning ahead; the -ŋurra construction of (46) is the alternative."
   },
   {
     "id": "dixon1994_44",
@@ -419,9 +387,7 @@
       ["second", "O"],
       ["derivation", "antipassive"]
     ],
-    "comment": "Possibility (i), A₁ = O₂, with the first clause antipassivized.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Possibility (i), A₁ = O₂, with the first clause antipassivized."
   },
   {
     "id": "dixon1994_46",
@@ -445,9 +411,7 @@
       ["second", "S"],
       ["derivation", "ngurra"]
     ],
-    "comment": "The verbal inflection -ŋurra marks that the S or O of its clause is identical to the A of the preceding clause and that the event follows immediately; the common NP may be included or omitted.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The verbal inflection -ŋurra marks that the S or O of its clause is identical to the A of the preceding clause and that the event follows immediately; the common NP may be included or omitted."
   },
   {
     "id": "dixon1994_52",
@@ -471,9 +435,7 @@
       ["second", "A"],
       ["derivation", "antipassive"]
     ],
-    "comment": "Possibility (g), A₁ = A₂: both clauses are antipassivized; alternatively only the second is, with the -ŋurra construction, (54).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Possibility (g), A₁ = A₂: both clauses are antipassivized; alternatively only the second is, with the -ŋurra construction, (54)."
   },
   {
     "id": "dixon1994_56",
@@ -497,9 +459,7 @@
       ["second", "O"],
       ["derivation", "none"]
     ],
-    "comment": "Purposive coordination obeys the same S/O pivot: main and purposive clause must share an NP in S or O function in each, contrary to the expectation of §4.4 that purposive clauses group S with A.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Purposive coordination obeys the same S/O pivot: main and purposive clause must share an NP in S or O function in each, contrary to the expectation of §4.4 that purposive clauses group S with A."
   },
   {
     "id": "dixon1994_57",
@@ -523,9 +483,7 @@
       ["second", "A"],
       ["derivation", "antipassive"]
     ],
-    "comment": "The purposive clause is antipassivized to bring its A into derived S.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The purposive clause is antipassivized to bring its A into derived S."
   },
   {
     "id": "dixon1994_59",
@@ -549,9 +507,7 @@
       ["second", "O"],
       ["derivation", "none"]
     ],
-    "comment": "O₁ = O₂ with the verb 'tell to do'; the author corrects an earlier statement that the O of giga-l must be coreferential with the A or S of its purposive clause, fn. 19.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "O₁ = O₂ with the verb 'tell to do'; the author corrects an earlier statement that the O of giga-l must be coreferential with the A or S of its purposive clause, fn. 19."
   },
   {
     "id": "dixon1994_60",
@@ -575,9 +531,7 @@
       ["second", "A"],
       ["derivation", "antipassive"]
     ],
-    "comment": "O₁ = A₂: the purposive clause must be antipassivized.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "O₁ = A₂: the purposive clause must be antipassivized."
   },
   {
     "id": "dixon1994_61",
@@ -601,9 +555,7 @@
       ["second", "S"],
       ["derivation", "none"]
     ],
-    "comment": "The common NP must be in S or O function within the relative clause; the relative verb bears -ŋu and a case inflection agreeing with the common NP in the main clause.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The common NP must be in S or O function within the relative clause; the relative verb bears -ŋu and a case inflection agreeing with the common NP in the main clause."
   },
   {
     "id": "dixon1994_62",
@@ -627,9 +579,7 @@
       ["second", "S"],
       ["derivation", "none"]
     ],
-    "comment": "The common NP may be in any core function in the main clause, here A, and the relative clause agrees in ergative case.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The common NP may be in any core function in the main clause, here A, and the relative clause agrees in ergative case."
   },
   {
     "id": "dixon1994_63",
@@ -653,9 +603,7 @@
       ["second", "A"],
       ["derivation", "antipassive"]
     ],
-    "comment": "The common NP is in A function in the relative clause, so antipassive applies before relativisation.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The common NP is in A function in the relative clause, so antipassive applies before relativisation."
   },
   {
     "id": "dixon1994_66",
@@ -677,9 +625,7 @@
       ["construction", "instrumentive"],
       ["function", "O"]
     ],
-    "comment": "The instrumentive derivation places an underlying instrumental NP into derived O function, demoting the underlying O to dative, with -ma-l on the verb; it feeds the S/O pivot, (67) and (68).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The instrumentive derivation places an underlying instrumental NP into derived O function, demoting the underlying O to dative, with -ma-l on the verb; it feeds the S/O pivot, (67) and (68)."
   },
   {
     "id": "dixon1994_68",
@@ -703,9 +649,7 @@
       ["second", "O"],
       ["derivation", "instrumentive"]
     ],
-    "comment": "The relative clause is first recast by the instrumentive derivation so that the common NP is in O function within it.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The relative clause is first recast by the instrumentive derivation so that the common NP is in O function within it."
   },
   {
     "id": "dixon1994_en_a",
@@ -726,9 +670,7 @@
       ["second", "S"],
       ["derivation", "none"]
     ],
-    "comment": "English's S/A pivot constrains omission of the second occurrence of a common NP, not clause linking itself: a weak pivot.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "English's S/A pivot constrains omission of the second occurrence of a common NP, not clause linking itself: a weak pivot."
   },
   {
     "id": "dixon1994_en_b",
@@ -749,9 +691,7 @@
       ["second", "O"],
       ["derivation", "passive"]
     ],
-    "comment": "S₁ = O₂: the second clause is passivized so that the common NP is in derived S.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "S₁ = O₂: the second clause is passivized so that the common NP is in derived S."
   },
   {
     "id": "dixon1994_en_c",
@@ -772,9 +712,7 @@
       ["second", "A"],
       ["derivation", "none"]
     ],
-    "comment": "S₁ = A₂.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "S₁ = A₂."
   },
   {
     "id": "dixon1994_en_d",
@@ -795,9 +733,7 @@
       ["second", "S"],
       ["derivation", "passive"]
     ],
-    "comment": "O₁ = S₂: the first clause is passivized.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "O₁ = S₂: the first clause is passivized."
   },
   {
     "id": "dixon1994_en_e",
@@ -818,9 +754,7 @@
       ["second", "S"],
       ["derivation", "none"]
     ],
-    "comment": "A₁ = S₂.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A₁ = S₂."
   },
   {
     "id": "dixon1994_en_f",
@@ -843,9 +777,7 @@
       ["second", "O"],
       ["derivation", "passive"]
     ],
-    "comment": "O₁ = O₂: both clauses are passivized; the alternative combines A-plus-verb from two clauses with the same O, which not all speakers accept.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "O₁ = O₂: both clauses are passivized; the alternative combines A-plus-verb from two clauses with the same O, which not all speakers accept."
   },
   {
     "id": "dixon1994_en_g",
@@ -866,9 +798,7 @@
       ["second", "A"],
       ["derivation", "none"]
     ],
-    "comment": "A₁ = A₂.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A₁ = A₂."
   },
   {
     "id": "dixon1994_en_h",
@@ -889,9 +819,7 @@
       ["second", "A"],
       ["derivation", "passive"]
     ],
-    "comment": "O₁ = A₂: the first clause is passivized.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "O₁ = A₂: the first clause is passivized."
   },
   {
     "id": "dixon1994_en_i",
@@ -912,9 +840,7 @@
       ["second", "O"],
       ["derivation", "passive"]
     ],
-    "comment": "A₁ = O₂: the second clause is passivized.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A₁ = O₂: the second clause is passivized."
   },
   {
     "id": "dixon1994_en_j",
@@ -937,9 +863,7 @@
       ["second", "A"],
       ["derivation", "none"]
     ],
-    "comment": "O₁ = O₂ and A₁ = A₂: the verbs are coordinated so that each NP is stated once.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "O₁ = O₂ and A₁ = A₂: the verbs are coordinated so that each NP is stated once."
   },
   {
     "id": "dixon1994_en_k",
@@ -962,8 +886,6 @@
       ["second", "O"],
       ["derivation", "passive"]
     ],
-    "comment": "O₁ = A₂ and A₁ = O₂: the A₁ = O₂ NP is the pivot and the second clause is passivized; not all speakers accept the alternative.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "O₁ = A₂ and A₁ = O₂: the A₁ = O₂ NP is the pivot and the second clause is passivized; not all speakers accept the alternative."
   }
 ]

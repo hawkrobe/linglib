@@ -15,9 +15,7 @@
     "paperFeatures": [
       ["phenomenon", "sequence of tense"]
     ],
-    "comment": "The subordinate past does not introduce a semantic past of its own; the sentence allows a simultaneous and a back-shifted reading but no forward shift.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The subordinate past does not introduce a semantic past of its own; the sentence allows a simultaneous and a back-shifted reading but no forward shift."
   },
   {
     "id": "zeijlstra2012_20b",
@@ -38,9 +36,7 @@
     "paperFeatures": [
       ["phenomenon", "sequence of tense"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "zeijlstra2012_21",
@@ -58,9 +54,7 @@
     "paperFeatures": [
       ["phenomenon", "tense scope"]
     ],
-    "comment": "The quantifier scopes between the past tense and the verb, so the past morpheme is not itself the semantic past operator.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The quantifier scopes between the past tense and the verb, so the past morpheme is not itself the semantic past operator."
   },
   {
     "id": "zeijlstra2012_50a",
@@ -82,9 +76,7 @@
       ["phenomenon", "negative concord"],
       ["type", "non-strict"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "zeijlstra2012_51a",
@@ -105,9 +97,7 @@
       ["phenomenon", "negative concord"],
       ["type", "strict"]
     ],
-    "comment": "The negative marker is obligatory; without it the sentence is out.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The negative marker is obligatory; without it the sentence is out."
   },
   {
     "id": "zeijlstra2012_53",
@@ -129,8 +119,6 @@
       ["phenomenon", "negative concord"],
       ["locality", "across CP"]
     ],
-    "comment": "Negative Concord does not cross the embedded clause boundary, unlike Sequence of Tense.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Negative Concord does not cross the embedded clause boundary, unlike Sequence of Tense."
   }
 ]

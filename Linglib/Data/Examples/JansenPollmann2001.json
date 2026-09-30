@@ -29,8 +29,7 @@
         "4"
       ]
     ],
-    "comment": "Two-number approximative expression: the sequence 1, 2, 3, 4 with ratio and first member 10^0.",
-    "metaLanguage": "stan1293"
+    "comment": "Two-number approximative expression: the sequence 1, 2, 3, 4 with ratio and first member 10^0."
   },
   {
     "id": "jansenpollmann2001_pair_40_50",
@@ -62,8 +61,7 @@
         "50"
       ]
     ],
-    "comment": "Two-number approximative expression: the sequence 10, 20, 30, 40, 50 with ratio and first member 10^1.",
-    "metaLanguage": "stan1293"
+    "comment": "Two-number approximative expression: the sequence 10, 20, 30, 40, 50 with ratio and first member 10^1."
   },
   {
     "id": "jansenpollmann2001_pair_18_20",
@@ -95,8 +93,7 @@
         "20"
       ]
     ],
-    "comment": "Two-number approximative expression: the sequence 2, 4, 6, ... with ratio and first member 2 x 10^0.",
-    "metaLanguage": "stan1293"
+    "comment": "Two-number approximative expression: the sequence 2, 4, 6, ... with ratio and first member 2 x 10^0."
   },
   {
     "id": "jansenpollmann2001_pair_100_150",
@@ -128,8 +125,7 @@
         "150"
       ]
     ],
-    "comment": "Two-number approximative expression: the sequence 50, 100, 150 with ratio and first member half of 10^2.",
-    "metaLanguage": "stan1293"
+    "comment": "Two-number approximative expression: the sequence 50, 100, 150 with ratio and first member half of 10^2."
   },
   {
     "id": "jansenpollmann2001_pair_100_125",
@@ -161,8 +157,7 @@
         "125"
       ]
     ],
-    "comment": "Two-number approximative expression: the sequence 25, 50, 75, 100, 125 with ratio a quarter of 10^2, licensed by the original sequence rule and dropped by the revised one, quarter pairs being under half a percent in every corpus.",
-    "metaLanguage": "stan1293"
+    "comment": "Two-number approximative expression: the sequence 25, 50, 75, 100, 125 with ratio a quarter of 10^2, licensed by the original sequence rule and dropped by the revised one, quarter pairs being under half a percent in every corpus."
   },
   {
     "id": "jansenpollmann2001_pair_1_3",
@@ -194,8 +189,7 @@
         "3"
       ]
     ],
-    "comment": "Two-number approximative expression: no sequence licensed by the rule; absent from the Dutch corpus.",
-    "metaLanguage": "stan1293"
+    "comment": "Two-number approximative expression: no sequence licensed by the rule; absent from the Dutch corpus."
   },
   {
     "id": "jansenpollmann2001_pair_5_7",
@@ -227,8 +221,7 @@
         "7"
       ]
     ],
-    "comment": "Two-number approximative expression: no sequence licensed by the rule; absent from the Dutch corpus.",
-    "metaLanguage": "stan1293"
+    "comment": "Two-number approximative expression: no sequence licensed by the rule; absent from the Dutch corpus."
   },
   {
     "id": "jansenpollmann2001_pair_6_9",
@@ -260,8 +253,7 @@
         "9"
       ]
     ],
-    "comment": "Two-number approximative expression: no sequence licensed by the rule; absent from the Dutch corpus.",
-    "metaLanguage": "stan1293"
+    "comment": "Two-number approximative expression: no sequence licensed by the rule; absent from the Dutch corpus."
   },
   {
     "id": "jansenpollmann2001_pair_40_80",
@@ -293,8 +285,7 @@
         "80"
       ]
     ],
-    "comment": "Two-number approximative expression: no sequence licensed by the rule; absent from the Dutch corpus.",
-    "metaLanguage": "stan1293"
+    "comment": "Two-number approximative expression: no sequence licensed by the rule; absent from the Dutch corpus."
   },
   {
     "id": "jansenpollmann2001_number_40",
@@ -334,8 +325,7 @@
         "true"
       ]
     ],
-    "comment": "A single number after an approximation word, with the three properties the paper reads off it: 10-ness, 2-ness, and 5-ness.",
-    "metaLanguage": "stan1293"
+    "comment": "A single number after an approximation word, with the three properties the paper reads off it: 10-ness, 2-ness, and 5-ness."
   },
   {
     "id": "jansenpollmann2001_number_8",
@@ -375,8 +365,7 @@
         "false"
       ]
     ],
-    "comment": "A single number after an approximation word, with the three properties the paper reads off it: 10-ness, 2-ness, and 5-ness.",
-    "metaLanguage": "stan1293"
+    "comment": "A single number after an approximation word, with the three properties the paper reads off it: 10-ness, 2-ness, and 5-ness."
   },
   {
     "id": "jansenpollmann2001_number_300",
@@ -416,8 +405,7 @@
         "true"
       ]
     ],
-    "comment": "A single number after an approximation word, with the three properties the paper reads off it: 10-ness, 2-ness, and 5-ness.",
-    "metaLanguage": "stan1293"
+    "comment": "A single number after an approximation word, with the three properties the paper reads off it: 10-ness, 2-ness, and 5-ness."
   },
   {
     "id": "jansenpollmann2001_number_70",
@@ -457,8 +445,7 @@
         "false"
       ]
     ],
-    "comment": "A single number after an approximation word, with the three properties the paper reads off it: 10-ness, 2-ness, and 5-ness.",
-    "metaLanguage": "stan1293"
+    "comment": "A single number after an approximation word, with the three properties the paper reads off it: 10-ness, 2-ness, and 5-ness."
   },
   {
     "id": "jansenpollmann2001_number_61",
@@ -498,7 +485,6 @@
         "false"
       ]
     ],
-    "comment": "A single number after an approximation word, with the three properties the paper reads off it: 10-ness, 2-ness, and 5-ness.",
-    "metaLanguage": "stan1293"
+    "comment": "A single number after an approximation word, with the three properties the paper reads off it: 10-ness, 2-ness, and 5-ness."
   }
 ]

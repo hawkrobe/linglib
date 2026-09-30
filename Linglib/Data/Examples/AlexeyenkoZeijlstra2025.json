@@ -15,8 +15,7 @@
       ["head", "proud"],
       ["dependent", "of"]
     ],
-    "comment": "",
-    "lgrConformance": "NONE"
+    "comment": ""
   },
   {
     "id": "az2025_1b",
@@ -35,8 +34,7 @@
       ["noun", "mother"],
       ["dependent", "of"]
     ],
-    "comment": "",
-    "lgrConformance": "NONE"
+    "comment": ""
   },
   {
     "id": "az2025_2a",
@@ -57,8 +55,7 @@
       ["head", "perifanos"],
       ["dependent", "gia"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "az2025_2b",
@@ -80,8 +77,7 @@
       ["noun", "pateras"],
       ["dependent", "gia"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "az2025_3a",
@@ -101,8 +97,7 @@
       ["head", "harro-a"],
       ["dependent", "Bere"]
     ],
-    "comment": "Hualde and Ortiz de Urbina (2003:138); repeated as (28a).",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Hualde and Ortiz de Urbina (2003:138); repeated as (28a)."
   },
   {
     "id": "az2025_3b",
@@ -123,8 +118,7 @@
       ["noun", "emakume"],
       ["dependent", "bere"]
     ],
-    "comment": "Repeated as (28c).",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Repeated as (28c)."
   },
   {
     "id": "az2025_4a",
@@ -145,8 +139,7 @@
       ["head", "moftaxar-∅-and"],
       ["dependent", "be"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "az2025_4b",
@@ -169,8 +162,7 @@
       ["noun", "madar-an=e"],
       ["dependent", "be"]
     ],
-    "comment": "Repeated as (33); the ezafe linker cliticizes to the noun.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Repeated as (33); the ezafe linker cliticizes to the noun."
   },
   {
     "id": "az2025_7a",
@@ -189,8 +181,7 @@
       ["noun", "meeting"],
       ["dependent", "smoothly"]
     ],
-    "comment": "From Sheehan (2017a:136).",
-    "lgrConformance": "NONE"
+    "comment": "From Sheehan (2017a:136)."
   },
   {
     "id": "az2025_7b",
@@ -209,8 +200,7 @@
       ["noun", "meeting"],
       ["dependent", "smoothly"]
     ],
-    "comment": "From Sheehan (2017a:136).",
-    "lgrConformance": "NONE"
+    "comment": "From Sheehan (2017a:136)."
   },
   {
     "id": "az2025_8",
@@ -229,8 +219,7 @@
       ["noun", "man"],
       ["dependent", "of"]
     ],
-    "comment": "Williams (1982:160); the PP is a complement of proud.",
-    "lgrConformance": "NONE"
+    "comment": "Williams (1982:160); the PP is a complement of proud."
   },
   {
     "id": "az2025_9a",
@@ -249,8 +238,7 @@
       ["noun", "woman"],
       ["dependent", "that"]
     ],
-    "comment": "",
-    "lgrConformance": "NONE"
+    "comment": ""
   },
   {
     "id": "az2025_9b",
@@ -269,8 +257,7 @@
       ["noun", "person"],
       ["dependent", "a"]
     ],
-    "comment": "",
-    "lgrConformance": "NONE"
+    "comment": ""
   },
   {
     "id": "az2025_10a",
@@ -289,8 +276,7 @@
       ["noun", "letter"],
       ["dependent", "Bill"]
     ],
-    "comment": "Williams (1982:160); prenominal PP.",
-    "lgrConformance": "NONE"
+    "comment": "Williams (1982:160); prenominal PP."
   },
   {
     "id": "az2025_10b",
@@ -309,8 +295,7 @@
       ["noun", "book"],
       ["dependent", "I"]
     ],
-    "comment": "Escribano (2004:2); prenominal relative clause.",
-    "lgrConformance": "NONE"
+    "comment": "Escribano (2004:2); prenominal relative clause."
   },
   {
     "id": "az2025_15",
@@ -330,8 +315,7 @@
       ["noun", "guy"],
       ["degree", "enough"]
     ],
-    "comment": "Sheehan (2017a:125); enough follows the adjective and immediately precedes the noun.",
-    "lgrConformance": "NONE"
+    "comment": "Sheehan (2017a:125); enough follows the adjective and immediately precedes the noun."
   },
   {
     "id": "az2025_16",
@@ -351,8 +335,7 @@
       ["dependent", "to"],
       ["degree", "enough"]
     ],
-    "comment": "Sheehan (2017a:125).",
-    "lgrConformance": "NONE"
+    "comment": "Sheehan (2017a:125)."
   },
   {
     "id": "az2025_17a",
@@ -373,8 +356,7 @@
       ["head", "damok'ideb-ul-i"],
       ["dependent", "tavis"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "az2025_17b",
@@ -396,8 +378,7 @@
       ["noun", "bič'-i"],
       ["dependent", "tavis"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "az2025_18a",
@@ -418,8 +399,7 @@
       ["head", "független"],
       ["dependent", "a"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "az2025_18b",
@@ -441,8 +421,7 @@
       ["noun", "fiú"],
       ["dependent", "a"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "az2025_19a",
@@ -463,8 +442,7 @@
       ["head", "stolt-ur"],
       ["dependent", "af"]
     ],
-    "comment": "Repeated as (40a).",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Repeated as (40a)."
   },
   {
     "id": "az2025_19b",
@@ -486,8 +464,7 @@
       ["noun", "faðir"],
       ["dependent", "af"]
     ],
-    "comment": "Repeated as (41a).",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Repeated as (41a)."
   },
   {
     "id": "az2025_20a",
@@ -508,8 +485,7 @@
       ["head", "hpart"],
       ["dependent", "ir"]
     ],
-    "comment": "The subject pronoun is optional.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The subject pronoun is optional."
   },
   {
     "id": "az2025_20b",
@@ -530,8 +506,7 @@
       ["noun", "hayr"],
       ["dependent", "ir"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "az2025_21a",
@@ -552,8 +527,7 @@
       ["head", "ponosan"],
       ["dependent", "na"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "az2025_21b",
@@ -575,8 +549,7 @@
       ["noun", "otac"],
       ["dependent", "na"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "az2025_23b",
@@ -599,8 +572,7 @@
       ["noun", "xores"],
       ["dependent", "pros"]
     ],
-    "comment": "Corpus of Modern Greek.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Corpus of Modern Greek."
   },
   {
     "id": "az2025_24c",
@@ -623,8 +595,7 @@
       ["noun", "glaza"],
       ["dependent", "ot"]
     ],
-    "comment": "Russian National Corpus.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Russian National Corpus."
   },
   {
     "id": "az2025_26",
@@ -647,8 +618,7 @@
       ["noun", "qīngshàonián"],
       ["dependent", "yú"]
     ],
-    "comment": "The attributivizer de cliticizes to the AP.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The attributivizer de cliticizes to the AP."
   },
   {
     "id": "az2025_27",
@@ -671,8 +641,7 @@
       ["noun", "damit"],
       ["dependent", "para"]
     ],
-    "comment": "Schachter and Otanes (1972:246), gloss the authors'; para is optional.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Schachter and Otanes (1972:246), gloss the authors'; para is optional."
   },
   {
     "id": "az2025_28b",
@@ -692,8 +661,7 @@
       ["head", "harro-a"],
       ["noun", "emakume"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "az2025_28d",
@@ -716,8 +684,7 @@
       ["dependent", "bere"],
       ["construction", "relative"]
     ],
-    "comment": "Prenominal relative clause containing the complex predicative AP.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Prenominal relative clause containing the complex predicative AP."
   },
   {
     "id": "az2025_29a",
@@ -740,8 +707,7 @@
       ["head", "yói"],
       ["dependent", "karetera"]
     ],
-    "comment": "The XP-A order is the less neutral option.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The XP-A order is the less neutral option."
   },
   {
     "id": "az2025_29b",
@@ -765,8 +731,7 @@
       ["noun", "motó"],
       ["dependent", "karetera"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "az2025_29c",
@@ -789,8 +754,7 @@
       ["dependent", "karetera"],
       ["construction", "relative"]
     ],
-    "comment": "With the linker =ka(to), analyzed as a relative clause marker.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "With the linker =ka(to), analyzed as a relative clause marker."
   },
   {
     "id": "az2025_30a",
@@ -811,8 +775,7 @@
       ["head", "boon-aa-ɗa"],
       ["dependent", "dureys-umma=tti"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "az2025_30b",
@@ -832,8 +795,7 @@
       ["head", "boon-aa-ɗa"],
       ["noun", "nama"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "az2025_30c",
@@ -855,8 +817,7 @@
       ["noun", "nama"],
       ["dependent", "dureys-umma=tti"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "az2025_30d",
@@ -879,8 +840,7 @@
       ["dependent", "dureys-umma=tti"],
       ["construction", "relative"]
     ],
-    "comment": "Relativization with the dependent clause marker.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Relativization with the dependent clause marker."
   },
   {
     "id": "az2025_31",
@@ -902,8 +862,7 @@
       ["noun", "nukappiaqqa-p"],
       ["dependent", "qimmi-mut"]
     ],
-    "comment": "Fortescue (1984:52); the participle carries the same case/number affix as the noun.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Fortescue (1984:52); the participle carries the same case/number affix as the noun."
   },
   {
     "id": "az2025_32",
@@ -926,8 +885,7 @@
       ["noun", "gore"],
       ["dependent", "jal=na"]
     ],
-    "comment": "Van Breugel (2010:518).",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Van Breugel (2010:518)."
   },
   {
     "id": "az2025_35",
@@ -949,8 +907,7 @@
       ["noun", "viris"],
       ["dependent", "re"]
     ],
-    "comment": "Cic. Fam. 1.9.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Cic. Fam. 1.9."
   },
   {
     "id": "az2025_36a",
@@ -972,8 +929,7 @@
       ["noun", "studenti"],
       ["dependent", "in"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "az2025_36b",
@@ -995,8 +951,7 @@
       ["noun", "studenti"],
       ["dependent", "in"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "az2025_36c",
@@ -1014,8 +969,7 @@
       ["head", "bravi"],
       ["noun", "studenti"]
     ],
-    "comment": "",
-    "lgrConformance": "NONE"
+    "comment": ""
   },
   {
     "id": "az2025_36d",
@@ -1033,8 +987,7 @@
       ["head", "bravi"],
       ["noun", "studenti"]
     ],
-    "comment": "bravi belongs to the restricted prenominal class.",
-    "lgrConformance": "NONE"
+    "comment": "bravi belongs to the restricted prenominal class."
   },
   {
     "id": "az2025_37a",
@@ -1056,8 +1009,7 @@
       ["head", "perifan-os"],
       ["marker", "agreement"]
     ],
-    "comment": "The subject pronoun is optional.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The subject pronoun is optional."
   },
   {
     "id": "az2025_37b",
@@ -1080,8 +1032,7 @@
       ["marker", "agreement"],
       ["noun", "pateras"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "az2025_38a",
@@ -1103,8 +1054,7 @@
       ["head", "stolz"],
       ["marker", "bare"]
     ],
-    "comment": "Repeated as (60a).",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Repeated as (60a)."
   },
   {
     "id": "az2025_38b",
@@ -1127,8 +1077,7 @@
       ["marker", "agreement"],
       ["noun", "Vater"]
     ],
-    "comment": "Repeated as (60b).",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Repeated as (60b)."
   },
   {
     "id": "az2025_39a",
@@ -1150,8 +1099,7 @@
       ["head", "umn-aja"],
       ["form", "long"]
     ],
-    "comment": "Short form umn-a: SHORT.F.SG, no case.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Short form umn-a: SHORT.F.SG, no case."
   },
   {
     "id": "az2025_39b",
@@ -1174,8 +1122,7 @@
       ["form", "long"],
       ["noun", "d'evočka"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "az2025_40b",
@@ -1196,8 +1143,7 @@
       ["head", "stolt-ur"],
       ["dependent", "af"]
     ],
-    "comment": "The more marked option.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The more marked option."
   },
   {
     "id": "az2025_41b",
@@ -1219,8 +1165,7 @@
       ["noun", "faðir"],
       ["dependent", "af"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "az2025_42a",
@@ -1242,8 +1187,7 @@
       ["head", "stolt-ur"],
       ["form", "strong"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "az2025_42b",
@@ -1267,8 +1211,7 @@
       ["definiteness", "indefinite"],
       ["noun", "faðir"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "az2025_42c",
@@ -1290,8 +1233,7 @@
       ["definiteness", "definite"],
       ["noun", "faðir-inn"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "az2025_42d",
@@ -1314,8 +1256,7 @@
       ["reading", "nonrestrictive"],
       ["noun", "faðir-inn"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "az2025_43a",
@@ -1337,8 +1278,7 @@
       ["head", "lijep"],
       ["form", "short"]
     ],
-    "comment": "Aljović (2002:28).",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Aljović (2002:28)."
   },
   {
     "id": "az2025_43b",
@@ -1360,8 +1300,7 @@
       ["definiteness", "indefinite"],
       ["noun", "momak"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "az2025_43c",
@@ -1383,8 +1322,7 @@
       ["definiteness", "definite"],
       ["noun", "momak"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "az2025_62",
@@ -1407,8 +1345,7 @@
       ["head", "stolz"],
       ["dependent", "auf"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "az2025_63a",
@@ -1431,8 +1368,7 @@
       ["noun", "Mutter"],
       ["dependent", "auf"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "az2025_63b",
@@ -1455,8 +1391,7 @@
       ["noun", "Mutter"],
       ["dependent", "auf"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "az2025_66a",
@@ -1479,8 +1414,7 @@
       ["noun", "vrouw"],
       ["dependent", "op"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "az2025_66b",
@@ -1503,8 +1437,7 @@
       ["noun", "vrouw"],
       ["dependent", "op"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "az2025_66c",
@@ -1527,8 +1460,7 @@
       ["noun", "vrouw"],
       ["dependent", "op"]
     ],
-    "comment": "The affix is adjacent to the adjective but not to the noun.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The affix is adjacent to the adjective but not to the noun."
   },
   {
     "id": "az2025_67a",
@@ -1551,8 +1483,7 @@
       ["noun", "kind"],
       ["dependent", "op"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "az2025_67b",
@@ -1575,8 +1506,7 @@
       ["noun", "kind"],
       ["dependent", "op"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "az2025_67c",
@@ -1599,8 +1529,7 @@
       ["noun", "kind"],
       ["dependent", "op"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "az2025_68a",
@@ -1622,8 +1551,7 @@
       ["noun", "kind"],
       ["degree", "genoeg-∅"]
     ],
-    "comment": "Van Riemsdijk (1998); some speaker variation is reported.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Van Riemsdijk (1998); some speaker variation is reported."
   },
   {
     "id": "az2025_68b",
@@ -1645,8 +1573,7 @@
       ["noun", "vrouw"],
       ["degree", "genoeg-e"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "az2025_68c",
@@ -1667,8 +1594,7 @@
       ["noun", "vrouw"],
       ["degree", "genoeg"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "az2025_68d",
@@ -1689,8 +1615,7 @@
       ["noun", "vrouw"],
       ["degree", "genoeg"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "az2025_71a",
@@ -1709,8 +1634,7 @@
       ["attributivizer", "null"],
       ["noun", "child"]
     ],
-    "comment": "",
-    "lgrConformance": "NONE"
+    "comment": ""
   },
   {
     "id": "az2025_71b",
@@ -1730,8 +1654,7 @@
       ["noun", "child"],
       ["dependent", "of"]
     ],
-    "comment": "",
-    "lgrConformance": "NONE"
+    "comment": ""
   },
   {
     "id": "az2025_71c",
@@ -1751,7 +1674,6 @@
       ["noun", "child"],
       ["degree", "enough"]
     ],
-    "comment": "",
-    "lgrConformance": "NONE"
+    "comment": ""
   }
 ]

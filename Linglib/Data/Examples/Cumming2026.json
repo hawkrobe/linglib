@@ -18,8 +18,7 @@
       ["speechTime", "1"],
       ["eventTime", "2"]
     ],
-    "comment": "Assertible on prior inferential grounds; Cumming's version of Ninan's case.",
-    "metaLanguage": "stan1293"
+    "comment": "Assertible on prior inferential grounds; Cumming's version of Ninan's case."
   },
   {
     "id": "cumming2026_2_prior",
@@ -40,8 +39,7 @@
       ["eventTime", "2"],
       ["speechTime", "3"]
     ],
-    "comment": "Asserting it would suggest further, post-prandial grounds.",
-    "metaLanguage": "stan1293"
+    "comment": "Asserting it would suggest further, post-prandial grounds."
   },
   {
     "id": "cumming2026_2_downstream",
@@ -62,8 +60,7 @@
       ["acquisitionTime", "3"],
       ["speechTime", "4"]
     ],
-    "comment": "Hearsay causally downstream of the event; direct witnessing and the empty plate are the paper's other downstream grounds.",
-    "metaLanguage": "stan1293"
+    "comment": "Hearsay causally downstream of the event; direct witnessing and the empty plate are the paper's other downstream grounds."
   },
   {
     "id": "cumming2026_4a",
@@ -84,8 +81,7 @@
       ["eventTime", "2"],
       ["speechTime", "3"]
     ],
-    "comment": "Felicitous though the grounds have not changed since (1).",
-    "metaLanguage": "stan1293"
+    "comment": "Felicitous though the grounds have not changed since (1)."
   },
   {
     "id": "cumming2026_11c",
@@ -106,8 +102,7 @@
       ["eventTime", "2"],
       ["speechTime", "2"]
     ],
-    "comment": "The constraint is absent when the future form speaks about the present; the scenario, during the meal on the prior inferential grounds of (1), is reconstructed.",
-    "metaLanguage": "stan1293"
+    "comment": "The constraint is absent when the future form speaks about the present; the scenario, during the meal on the prior inferential grounds of (1), is reconstructed."
   },
   {
     "id": "cumming2026_12b",
@@ -128,8 +123,7 @@
       ["eventTime", "2"],
       ["speechTime", "2"]
     ],
-    "comment": "Ninan's observation that present-tense sentences too cannot be asserted on prior inferential grounds; the scenario, during the meal on the prior inferential grounds of (1), is reconstructed.",
-    "metaLanguage": "stan1293"
+    "comment": "Ninan's observation that present-tense sentences too cannot be asserted on prior inferential grounds; the scenario, during the meal on the prior inferential grounds of (1), is reconstructed."
   },
   {
     "id": "cumming2026_21a_inferential",
@@ -150,8 +144,7 @@
       ["eventTime", "1"],
       ["speechTime", "2"]
     ],
-    "comment": "Felicitous only with a non-abductive inferential justification; the scenario, after the meeting on economic indicators known beforehand, is reconstructed from (3a).",
-    "metaLanguage": "stan1293"
+    "comment": "Felicitous only with a non-abductive inferential justification; the scenario, after the meeting on economic indicators known beforehand, is reconstructed from (3a)."
   },
   {
     "id": "cumming2026_21a_abductive",
@@ -172,8 +165,7 @@
       ["acquisitionTime", "2"],
       ["speechTime", "3"]
     ],
-    "comment": "No good on evidence causally downstream of the meeting.",
-    "metaLanguage": "stan1293"
+    "comment": "No good on evidence causally downstream of the meeting."
   },
   {
     "id": "cumming2026_13a",
@@ -196,8 +188,7 @@
       ["acquisitionTime", "1"],
       ["speechTime", "2"]
     ],
-    "comment": "Present tense under -te: the sensory evidence is contemporaneous with the event.",
-    "metaLanguage": "stan1293"
+    "comment": "Present tense under -te: the sensory evidence is contemporaneous with the event."
   },
   {
     "id": "cumming2026_13b",
@@ -220,8 +211,7 @@
       ["acquisitionTime", "1"],
       ["speechTime", "2"]
     ],
-    "comment": "Past tense under -te: the event precedes the sensory evidence.",
-    "metaLanguage": "stan1293"
+    "comment": "Past tense under -te: the event precedes the sensory evidence."
   },
   {
     "id": "cumming2026_13c",
@@ -244,8 +234,7 @@
       ["eventTime", "2"],
       ["speechTime", "3"]
     ],
-    "comment": "Future tense under -te: forward-looking inferential evidence for an event that has since come and gone.",
-    "metaLanguage": "stan1293"
+    "comment": "Future tense under -te: forward-looking inferential evidence for an event that has since come and gone."
   },
   {
     "id": "cumming2026_14a",
@@ -268,8 +257,7 @@
       ["acquisitionTime", "2"],
       ["speechTime", "2"]
     ],
-    "comment": "Under -ney the sensory evidence is present, so the present tense settles both perspectives.",
-    "metaLanguage": "stan1293"
+    "comment": "Under -ney the sensory evidence is present, so the present tense settles both perspectives."
   },
   {
     "id": "cumming2026_14b",
@@ -293,8 +281,7 @@
       ["acquisitionTime", "2"],
       ["speechTime", "2"]
     ],
-    "comment": "Past tense under -ney: the event precedes the present sensory evidence.",
-    "metaLanguage": "stan1293"
+    "comment": "Past tense under -ney: the event precedes the present sensory evidence."
   },
   {
     "id": "cumming2026_14c",
@@ -318,8 +305,7 @@
       ["speechTime", "2"],
       ["eventTime", "3"]
     ],
-    "comment": "Future tense under -ney: present evidence that is prospective is for a future event.",
-    "metaLanguage": "stan1293"
+    "comment": "Future tense under -ney: present evidence that is prospective is for a future event."
   },
   {
     "id": "cumming2026_15_nfut",
@@ -343,8 +329,7 @@
       ["acquisitionTime", "2"],
       ["speechTime", "3"]
     ],
-    "comment": "Nonfuture under -l: the evidence is downstream of the event.",
-    "metaLanguage": "stan1293"
+    "comment": "Nonfuture under -l: the evidence is downstream of the event."
   },
   {
     "id": "cumming2026_15_fut",
@@ -368,8 +353,7 @@
       ["acquisitionTime", "2"],
       ["speechTime", "3"]
     ],
-    "comment": "Future under -l requires prospective evidence, which the scenario lacks.",
-    "metaLanguage": "stan1293"
+    "comment": "Future under -l requires prospective evidence, which the scenario lacks."
   },
   {
     "id": "cumming2026_16_fut",
@@ -393,8 +377,7 @@
       ["eventTime", "1"],
       ["speechTime", "2"]
     ],
-    "comment": "The future appears on a sentence describing an event in the past.",
-    "metaLanguage": "stan1293"
+    "comment": "The future appears on a sentence describing an event in the past."
   },
   {
     "id": "cumming2026_16_nfut",
@@ -418,8 +401,7 @@
       ["eventTime", "1"],
       ["speechTime", "2"]
     ],
-    "comment": "Nonfuture under -l requires downstream evidence, which a forecast is not.",
-    "metaLanguage": "stan1293"
+    "comment": "Nonfuture under -l requires downstream evidence, which a forecast is not."
   },
   {
     "id": "cumming2026_33a",
@@ -442,8 +424,7 @@
       ["speechTime", "2"],
       ["eventTime", "3"]
     ],
-    "comment": "Nonfuture evidential sentences are restricted to events in the present or past of speech time; the acquisition time is stipulated at speech.",
-    "metaLanguage": "stan1293"
+    "comment": "Nonfuture evidential sentences are restricted to events in the present or past of speech time; the acquisition time is stipulated at speech."
   },
   {
     "id": "cumming2026_33b",
@@ -468,8 +449,7 @@
       ["eventTime", "3"],
       ["scheduled", "true"]
     ],
-    "comment": "A planned event is exempt from both the utterance and the evidential perspective of the nonfuture evidential.",
-    "metaLanguage": "stan1293"
+    "comment": "A planned event is exempt from both the utterance and the evidential perspective of the nonfuture evidential."
   },
   {
     "id": "cumming2026_34",
@@ -494,8 +474,7 @@
       ["eventTime", "5"],
       ["scheduled", "true"]
     ],
-    "comment": "A scheduled event that the speaker has not witnessed takes the present tense under -te.",
-    "metaLanguage": "stan1293"
+    "comment": "A scheduled event that the speaker has not witnessed takes the present tense under -te."
   },
   {
     "id": "cumming2026_28b",
@@ -517,8 +496,7 @@
       ["speechTime", "2"],
       ["scheduled", "true"]
     ],
-    "comment": "A planned event exempt from the downstream requirement of the simple past.",
-    "metaLanguage": "stan1293"
+    "comment": "A planned event exempt from the downstream requirement of the simple past."
   },
   {
     "id": "cumming2026_29",
@@ -540,8 +518,7 @@
       ["speechTime", "2"],
       ["scheduled", "true"]
     ],
-    "comment": "A scheduled event exempt from the downstream requirement of the simple past.",
-    "metaLanguage": "stan1293"
+    "comment": "A scheduled event exempt from the downstream requirement of the simple past."
   },
   {
     "id": "cumming2026_30",
@@ -562,8 +539,7 @@
       ["speechTime", "2"],
       ["eventTime", "3"]
     ],
-    "comment": "The present tense normally requires the event to overlap the present; the acquisition time is stipulated at speech.",
-    "metaLanguage": "stan1293"
+    "comment": "The present tense normally requires the event to overlap the present; the acquisition time is stipulated at speech."
   },
   {
     "id": "cumming2026_31a",
@@ -585,8 +561,7 @@
       ["eventTime", "2"],
       ["scheduled", "true"]
     ],
-    "comment": "The futurate present: a planned future event described with the present tense.",
-    "metaLanguage": "stan1293"
+    "comment": "The futurate present: a planned future event described with the present tense."
   },
   {
     "id": "cumming2026_31b",
@@ -608,7 +583,6 @@
       ["eventTime", "2"],
       ["scheduled", "true"]
     ],
-    "comment": "The futurate present: a scheduled event described with the present tense.",
-    "metaLanguage": "stan1293"
+    "comment": "The futurate present: a scheduled event described with the present tense."
   }
 ]

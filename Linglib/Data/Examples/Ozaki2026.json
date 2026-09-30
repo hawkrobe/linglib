@@ -28,9 +28,7 @@
         "alternation"
       ]
     ],
-    "comment": "Taro-NOM village-ACC leave-PAST",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Taro-NOM village-ACC leave-PAST"
   },
   {
     "id": "ozaki2026_ex1_abl",
@@ -61,9 +59,7 @@
         "alternation"
       ]
     ],
-    "comment": "Taro-NOM village-from leave-PAST",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Taro-NOM village-from leave-PAST"
   },
   {
     "id": "ozaki2026_ex9_acc",
@@ -94,9 +90,7 @@
         "ellipsis"
       ]
     ],
-    "comment": "Taro-TOP quickly station-ACC exited but Hanako-TOP quickly didn't.exit",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Taro-TOP quickly station-ACC exited but Hanako-TOP quickly didn't.exit"
   },
   {
     "id": "ozaki2026_ex9_abl",
@@ -127,9 +121,7 @@
         "ellipsis"
       ]
     ],
-    "comment": "Taro-TOP quickly station-from exited but Hanako-TOP quickly didn't.exit",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Taro-TOP quickly station-from exited but Hanako-TOP quickly didn't.exit"
   },
   {
     "id": "ozaki2026_ex13_acc",
@@ -160,9 +152,7 @@
         "scrambling"
       ]
     ],
-    "comment": "village-ACC Taro-TOP Hanako-NOM left COMP said",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "village-ACC Taro-TOP Hanako-NOM left COMP said"
   },
   {
     "id": "ozaki2026_ex13_abl",
@@ -193,9 +183,7 @@
         "scrambling"
       ]
     ],
-    "comment": "village-from Taro-TOP Hanako-NOM left COMP said",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "village-from Taro-TOP Hanako-NOM left COMP said"
   },
   {
     "id": "ozaki2026_ex14",
@@ -226,9 +214,7 @@
         "indirect_passive"
       ]
     ],
-    "comment": "that village-NOM Taro-DAT leave-PASS-PAST",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "that village-NOM Taro-DAT leave-PASS-PAST"
   },
   {
     "id": "ozaki2026_ex20",
@@ -259,9 +245,7 @@
         "direct_passive"
       ]
     ],
-    "comment": "that village-NOM Taro-NIYOTTE leave-PASS-PAST",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "that village-NOM Taro-NIYOTTE leave-PASS-PAST"
   },
   {
     "id": "ozaki2026_ex26_acc",
@@ -292,9 +276,7 @@
         "nani_o"
       ]
     ],
-    "comment": "what-ACC Taro-TOP village-ACC leave-PROG-PRES Q",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "what-ACC Taro-TOP village-ACC leave-PROG-PRES Q"
   },
   {
     "id": "ozaki2026_ex26_abl",
@@ -325,8 +307,6 @@
         "nani_o"
       ]
     ],
-    "comment": "what-ACC Taro-TOP village-from leave-PROG-PRES Q",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "what-ACC Taro-TOP village-from leave-PROG-PRES Q"
   }
 ]

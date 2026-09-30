@@ -31,9 +31,7 @@ def ex14a_bare : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("definite_form", "bare"), ("bridging_type", "none"), ("noun_arity", "sortal"), ("study", "none")]
-    comment := "Bare nouns occur freely and allow definite readings (also indefinite, generic and kind readings)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Bare nouns occur freely and allow definite readings (also indefinite, generic and kind readings)." }
 
 def ex14b_na : LinguisticExample :=
   { id := "ahnzhu2025_ex14b_na"
@@ -49,9 +47,7 @@ def ex14b_na : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("definite_form", "naCL"), ("bridging_type", "none"), ("noun_arity", "sortal"), ("study", "none")]
-    comment := "The demonstrative description na + classifier + noun."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The demonstrative description na + classifier + noun." }
 
 def ex17_partwhole_bare : LinguisticExample :=
   { id := "ahnzhu2025_ex17_partwhole_bare"
@@ -67,9 +63,7 @@ def ex17_partwhole_bare : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("definite_form", "bare"), ("bridging_type", "partWhole"), ("noun_arity", "sortal"), ("study", "none")]
-    comment := "Jenks's observation that part-whole bridging is expressed by bare nouns."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Jenks's observation that part-whole bridging is expressed by bare nouns." }
 
 def ex18_anaphoric_na : LinguisticExample :=
   { id := "ahnzhu2025_ex18_anaphoric_na"
@@ -85,9 +79,7 @@ def ex18_anaphoric_na : LinguisticExample :=
     alternatives := [("wo zuotian yudao nansheng.", .unacceptable)]
     readings := []
     paperFeatures := [("definite_form", "naCL"), ("bridging_type", "none"), ("noun_arity", "sortal"), ("study", "none"), ("use", "anaphoric")]
-    comment := "Jenks: in an anaphoric context the bare noun is infelicitous and the demonstrative is needed; the paper cites later work reporting anaphoric bare nouns as readily available."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Jenks: in an anaphoric context the bare noun is infelicitous and the demonstrative is needed; the paper cites later work reporting anaphoric bare nouns as readily available." }
 
 def ex21_partwhole_na : LinguisticExample :=
   { id := "ahnzhu2025_ex21_partwhole_na"
@@ -103,9 +95,7 @@ def ex21_partwhole_na : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("definite_form", "naCL"), ("bridging_type", "partWhole"), ("noun_arity", "sortal"), ("study", "none")]
-    comment := "The paper's illustration of a part-whole bridging context (bridged noun in demonstrative form)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The paper's illustration of a part-whole bridging context (bridged noun in demonstrative form)." }
 
 def ex22_relational_na : LinguisticExample :=
   { id := "ahnzhu2025_ex22_relational_na"
@@ -121,9 +111,7 @@ def ex22_relational_na : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("definite_form", "naCL"), ("bridging_type", "relational"), ("noun_arity", "relational"), ("study", "none")]
-    comment := "The paper's illustration of a relational bridging context."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The paper's illustration of a relational bridging context." }
 
 def ex24a_de_child : LinguisticExample :=
   { id := "ahnzhu2025_ex24a_de_child"
@@ -139,9 +127,7 @@ def ex24a_de_child : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("noun_arity", "relational"), ("diagnostic", "de")]
-    comment := "A relational noun takes an additional possessor introduced with de."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A relational noun takes an additional possessor introduced with de." }
 
 def ex24b_de_person : LinguisticExample :=
   { id := "ahnzhu2025_ex24b_de_person"
@@ -157,9 +143,7 @@ def ex24b_de_person : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("noun_arity", "sortal"), ("diagnostic", "de")]
-    comment := "A sortal noun cannot take the de-possessor."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A sortal noun cannot take the de-possessor." }
 
 def ex25_de_flower : LinguisticExample :=
   { id := "ahnzhu2025_ex25_de_flower"
@@ -175,9 +159,7 @@ def ex25_de_flower : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("noun_arity", "sortal"), ("diagnostic", "de")]
-    comment := "The de diagnostic is not sufficient for Mandarin: the sortal noun hua 'flower' passes it; nouns passing de without a conceptual requirement of a relatum were not used as relational stimuli."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The de diagnostic is not sufficient for Mandarin: the sortal noun hua 'flower' passes it; nouns passing de without a conceptual requirement of a relatum were not used as relational stimuli." }
 
 def ex28a_study1_partwhole_na : LinguisticExample :=
   { id := "ahnzhu2025_ex28a_study1_partwhole_na"
@@ -193,9 +175,7 @@ def ex28a_study1_partwhole_na : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("definite_form", "naCL"), ("bridging_type", "partWhole"), ("noun_arity", "sortal"), ("study", "1")]
-    comment := "Study 1 ratings: part-whole bridging 5.40/7 with demonstratives vs 5.59 with bare nouns; both far above the pragmatically odd (1.99) and semantically odd (1.62) controls."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Study 1 ratings: part-whole bridging 5.40/7 with demonstratives vs 5.59 with bare nouns; both far above the pragmatically odd (1.99) and semantically odd (1.62) controls." }
 
 def ex28b_study1_relational_bare : LinguisticExample :=
   { id := "ahnzhu2025_ex28b_study1_relational_bare"
@@ -211,9 +191,7 @@ def ex28b_study1_relational_bare : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("definite_form", "bare"), ("bridging_type", "relational"), ("noun_arity", "relational"), ("study", "1")]
-    comment := "Study 1 ratings: relational bridging 5.80/7 with bare nouns vs 5.61 with demonstratives."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Study 1 ratings: relational bridging 5.80/7 with bare nouns vs 5.61 with demonstratives." }
 
 def ex32_study1_painter : LinguisticExample :=
   { id := "ahnzhu2025_ex32_study1_painter"
@@ -229,9 +207,7 @@ def ex32_study1_painter : LinguisticExample :=
     alternatives := [("Zhou Yuxuan jia-li gua-zhe youhua, dan ta wanquan bu renshi huajia.", .marginal)]
     readings := []
     paperFeatures := [("definite_form", "naCL"), ("bridging_type", "relational"), ("noun_arity", "relational"), ("study", "1")]
-    comment := "Attributed to the stative verb renshi 'know', which with the bare noun huajia invites a generic reading unavailable to the demonstrative."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Attributed to the stative verb renshi 'know', which with the bare noun huajia invites a generic reading unavailable to the demonstrative." }
 
 def ex33a_study1_steeringwheel : LinguisticExample :=
   { id := "ahnzhu2025_ex33a_study1_steeringwheel"
@@ -247,9 +223,7 @@ def ex33a_study1_steeringwheel : LinguisticExample :=
     alternatives := [("Lin Zixuan xin mai-le qiche, dan ta hen-kuai faxian you-ren touzou-le na ge fangxiangpan.", .marginal)]
     readings := []
     paperFeatures := [("definite_form", "bare"), ("bridging_type", "partWhole"), ("noun_arity", "sortal"), ("study", "1")]
-    comment := "The demonstrative variant's lower rating is attributed to the infrequent combination of fangxiangpan with the classifier ge."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The demonstrative variant's lower rating is attributed to the infrequent combination of fangxiangpan with the classifier ge." }
 
 def ex37_study3_partwhole_bare : LinguisticExample :=
   { id := "ahnzhu2025_ex37_study3_partwhole_bare"
@@ -265,9 +239,7 @@ def ex37_study3_partwhole_bare : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("definite_form", "bare"), ("bridging_type", "partWhole"), ("noun_arity", "sortal"), ("study", "3"), ("pct_chosen", "83.2")]
-    comment := "83.2% of participants chose the bare noun (OPTION_BN or OPTION_BOTH) in part-whole bridging."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "83.2% of participants chose the bare noun (OPTION_BN or OPTION_BOTH) in part-whole bridging." }
 
 def ex37_study3_partwhole_na : LinguisticExample :=
   { id := "ahnzhu2025_ex37_study3_partwhole_na"
@@ -283,9 +255,7 @@ def ex37_study3_partwhole_na : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("definite_form", "naCL"), ("bridging_type", "partWhole"), ("noun_arity", "sortal"), ("study", "3"), ("pct_chosen", "51.3")]
-    comment := "51.3% chose the demonstrative (OPTION_DEM or OPTION_BOTH) in part-whole bridging; by McNemar's test the demonstrative choice rate does not differ between bridging types (p = 0.4391)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "51.3% chose the demonstrative (OPTION_DEM or OPTION_BOTH) in part-whole bridging; by McNemar's test the demonstrative choice rate does not differ between bridging types (p = 0.4391)." }
 
 def ex38_study3_relational_bare : LinguisticExample :=
   { id := "ahnzhu2025_ex38_study3_relational_bare"
@@ -301,9 +271,7 @@ def ex38_study3_relational_bare : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("definite_form", "bare"), ("bridging_type", "relational"), ("noun_arity", "relational"), ("study", "3"), ("pct_chosen", "73.4")]
-    comment := "73.4% chose the bare noun in relational bridging; the bare-noun choice rate differs significantly between bridging types (McNemar chi-squared 212.42, p = 2.2e-16)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "73.4% chose the bare noun in relational bridging; the bare-noun choice rate differs significantly between bridging types (McNemar chi-squared 212.42, p = 2.2e-16)." }
 
 def ex38_study3_relational_na : LinguisticExample :=
   { id := "ahnzhu2025_ex38_study3_relational_na"
@@ -319,9 +287,7 @@ def ex38_study3_relational_na : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("definite_form", "naCL"), ("bridging_type", "relational"), ("noun_arity", "relational"), ("study", "3"), ("pct_chosen", "51.9")]
-    comment := "51.9% chose the demonstrative in relational bridging."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "51.9% chose the demonstrative in relational bridging." }
 
 def ex39_study3_sn : LinguisticExample :=
   { id := "ahnzhu2025_ex39_study3_sn"
@@ -337,9 +303,7 @@ def ex39_study3_sn : LinguisticExample :=
     alternatives := [("Wang Yawen zhengzai yong yi tai diannao; ta faxian na tai diannao haoxiang turan huai le.", .acceptable)]
     readings := []
     paperFeatures := [("definite_form", "bare"), ("bridging_type", "none"), ("noun_arity", "sortal"), ("study", "3"), ("condition", "SN"), ("pct_bn", "67"), ("pct_dem", "80.2")]
-    comment := "Anaphoric use available for both forms: 67% chose the bare noun and 80.2% the demonstrative."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Anaphoric use available for both forms: 67% chose the bare noun and 80.2% the demonstrative." }
 
 def ex40_study3_pn : LinguisticExample :=
   { id := "ahnzhu2025_ex40_study3_pn"
@@ -355,9 +319,7 @@ def ex40_study3_pn : LinguisticExample :=
     alternatives := [("Wang Yawen zhengzai yong liang tai diannao; ta faxian na tai diannao haoxiang turan huai le.", .marginal)]
     readings := []
     paperFeatures := [("definite_form", "bare"), ("bridging_type", "none"), ("noun_arity", "sortal"), ("study", "3"), ("condition", "PN"), ("pct_bn", "53.8"), ("pct_dem", "38.8")]
-    comment := "53.8% chose the bare noun and 38.8% the demonstrative; the paper attributes the bare-noun rate to anaphoric bare nouns with a singular bias and the demonstrative rate to deictic or affective readings of na."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "53.8% chose the bare noun and 38.8% the demonstrative; the paper attributes the bare-noun rate to anaphoric bare nouns with a singular bias and the demonstrative rate to deictic or affective readings of na." }
 
 def ex41_study3_rn : LinguisticExample :=
   { id := "ahnzhu2025_ex41_study3_rn"
@@ -373,9 +335,7 @@ def ex41_study3_rn : LinguisticExample :=
     alternatives := [("Wang Yawen zhengzai yong diannao; ta faxian na tai diannao haoxiang turan huai le.", .acceptable)]
     readings := []
     paperFeatures := [("definite_form", "bare"), ("bridging_type", "none"), ("noun_arity", "sortal"), ("study", "3"), ("condition", "RN"), ("pct_bn", "68"), ("pct_dem", "75")]
-    comment := "68% chose the bare noun and 75% the demonstrative, confirming the anaphoric use of both forms."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "68% chose the bare noun and 75% the demonstrative, confirming the anaphoric use of both forms." }
 
 def ex42_study3_nn : LinguisticExample :=
   { id := "ahnzhu2025_ex42_study3_nn"
@@ -391,9 +351,7 @@ def ex42_study3_nn : LinguisticExample :=
     alternatives := [("Wang Yawen ganggang zai gongzuo; ta faxian na tai diannao haoxiang turan huai le.", .marginal)]
     readings := []
     paperFeatures := [("definite_form", "bare"), ("bridging_type", "none"), ("noun_arity", "sortal"), ("study", "3"), ("condition", "NN"), ("pct_bn", "89.5"), ("pct_dem", "29.6")]
-    comment := "89.5% chose the bare noun and only 29.6% the demonstrative — the lowest demonstrative rate, as demonstratives prefer a linguistically introduced antecedent."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "89.5% chose the bare noun and only 29.6% the demonstrative — the lowest demonstrative rate, as demonstratives prefer a linguistically introduced antecedent." }
 
 def ex59_study4_bare_author : LinguisticExample :=
   { id := "ahnzhu2025_ex59_study4_bare_author"
@@ -409,9 +367,7 @@ def ex59_study4_bare_author : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("definite_form", "bare"), ("bridging_type", "relational"), ("noun_arity", "relational"), ("study", "4")]
-    comment := "Relational bare nouns were rated 5.37/7; nominal type is not significant within the relational group (p = 0.732)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Relational bare nouns were rated 5.37/7; nominal type is not significant within the relational group (p = 0.732)." }
 
 def ex59_study4_na_author : LinguisticExample :=
   { id := "ahnzhu2025_ex59_study4_na_author"
@@ -427,9 +383,7 @@ def ex59_study4_na_author : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("definite_form", "naCL"), ("bridging_type", "relational"), ("noun_arity", "relational"), ("study", "4")]
-    comment := "Relational demonstratives were rated 5.2/7."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Relational demonstratives were rated 5.2/7." }
 
 def ex59_study4_bare_novelist : LinguisticExample :=
   { id := "ahnzhu2025_ex59_study4_bare_novelist"
@@ -445,9 +399,7 @@ def ex59_study4_bare_novelist : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("definite_form", "bare"), ("bridging_type", "relational"), ("noun_arity", "sortal"), ("study", "4")]
-    comment := "Non-relational bare nouns were rated 4.82/7, significantly below the demonstrative (nominal type p < 0.001 within the non-relational group); the bare noun has no slot for the relatum argument."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Non-relational bare nouns were rated 4.82/7, significantly below the demonstrative (nominal type p < 0.001 within the non-relational group); the bare noun has no slot for the relatum argument." }
 
 def ex59_study4_na_novelist : LinguisticExample :=
   { id := "ahnzhu2025_ex59_study4_na_novelist"
@@ -463,9 +415,7 @@ def ex59_study4_na_novelist : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("definite_form", "naCL"), ("bridging_type", "relational"), ("noun_arity", "sortal"), ("study", "4")]
-    comment := "Non-relational demonstratives were rated 5.48/7: na supplies the relatum argument itself."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Non-relational demonstratives were rated 5.48/7: na supplies the relatum argument itself." }
 
 def fn13_intersentential_novelist : LinguisticExample :=
   { id := "ahnzhu2025_fn13_intersentential_novelist"
@@ -481,9 +431,7 @@ def fn13_intersentential_novelist : LinguisticExample :=
     alternatives := [("... ta zuihou faxian ziji du-guo xiaoshuo-jia xie de ling yi ge gushi.", .marginal)]
     readings := []
     paperFeatures := [("definite_form", "naCL"), ("bridging_type", "relational"), ("noun_arity", "sortal"), ("study", "none")]
-    comment := "The non-relational bare noun xiaoshuo-jia is much less natural than the demonstrative here too."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The non-relational bare noun xiaoshuo-jia is much less natural than the demonstrative here too." }
 
 def ex61a_de_owner : LinguisticExample :=
   { id := "ahnzhu2025_ex61a_de_owner"
@@ -499,9 +447,7 @@ def ex61a_de_owner : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("noun_arity", "relational"), ("diagnostic", "de")]
-    comment := "Relational nouns are allowed after de in the possessive construction."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Relational nouns are allowed after de in the possessive construction." }
 
 def ex61b_de_person : LinguisticExample :=
   { id := "ahnzhu2025_ex61b_de_person"
@@ -517,9 +463,7 @@ def ex61b_de_person : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("noun_arity", "sortal"), ("diagnostic", "de")]
-    comment := "Non-relational nouns are excluded after de."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Non-relational nouns are excluded after de." }
 
 def ex62a_de_author : LinguisticExample :=
   { id := "ahnzhu2025_ex62a_de_author"
@@ -535,9 +479,7 @@ def ex62a_de_author : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("noun_arity", "relational"), ("diagnostic", "de"), ("norming_rating", "4.88")]
-    comment := "Average naturalness 4.88/5; relational nouns in Table 2 all scored 4.5 or above."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Average naturalness 4.88/5; relational nouns in Table 2 all scored 4.5 or above." }
 
 def ex62b_de_novelist : LinguisticExample :=
   { id := "ahnzhu2025_ex62b_de_novelist"
@@ -553,9 +495,7 @@ def ex62b_de_novelist : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("noun_arity", "sortal"), ("diagnostic", "de"), ("norming_rating", "1.50")]
-    comment := "Average naturalness 1.50/5; non-relational nouns in Table 2 all scored 1.5 or below."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Average naturalness 1.50/5; non-relational nouns in Table 2 all scored 1.5 or below." }
 
 def ex63_moon : LinguisticExample :=
   { id := "ahnzhu2025_ex63_moon"
@@ -571,9 +511,7 @@ def ex63_moon : LinguisticExample :=
     alternatives := [("na ge yueliang sheng shang lai le.", .unacceptable)]
     readings := []
     paperFeatures := [("definite_form", "bare"), ("bridging_type", "none"), ("noun_arity", "sortal"), ("study", "none")]
-    comment := "The paper derives the degraded na ge yueliang from pragmatic competition: both forms resolve to the same referent and the demonstrative's R restriction is redundant, not from an anti-uniqueness presupposition. Sentence from Jenks (2018), originally Chen (2004)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The paper derives the degraded na ge yueliang from pragmatic competition: both forms resolve to the same referent and the demonstrative's R restriction is redundant, not from an anti-uniqueness presupposition. Sentence from Jenks (2018), originally Chen (2004)." }
 
 def ex20a_the_roof : LinguisticExample :=
   { id := "ahnzhu2025_ex20a_the_roof"
@@ -589,9 +527,7 @@ def ex20a_the_roof : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("definite_form", "the"), ("bridging_type", "partWhole"), ("noun_arity", "sortal"), ("study", "none")]
-    comment := "Used to illustrate the anti-uniqueness account of demonstratives: the definite is fine."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Used to illustrate the anti-uniqueness account of demonstratives: the definite is fine." }
 
 def ex20b_that_roof : LinguisticExample :=
   { id := "ahnzhu2025_ex20b_that_roof"
@@ -607,9 +543,7 @@ def ex20b_that_roof : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("definite_form", "that"), ("bridging_type", "partWhole"), ("noun_arity", "sortal"), ("study", "none")]
-    comment := "Degraded on the anti-uniqueness account because nothing licenses extending the minimal situation to accommodate another roof."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Degraded on the anti-uniqueness account because nothing licenses extending the minimal situation to accommodate another roof." }
 
 def ex34a_study2_partwhole_the : LinguisticExample :=
   { id := "ahnzhu2025_ex34a_study2_partwhole_the"
@@ -625,9 +559,7 @@ def ex34a_study2_partwhole_the : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("definite_form", "the"), ("bridging_type", "partWhole"), ("noun_arity", "sortal"), ("study", "2")]
-    comment := "Study 2 ratings: part-whole bridging 5.35/7 with definite descriptions."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Study 2 ratings: part-whole bridging 5.35/7 with definite descriptions." }
 
 def ex34a_study2_partwhole_that : LinguisticExample :=
   { id := "ahnzhu2025_ex34a_study2_partwhole_that"
@@ -643,9 +575,7 @@ def ex34a_study2_partwhole_that : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("definite_form", "that"), ("bridging_type", "partWhole"), ("noun_arity", "sortal"), ("study", "2")]
-    comment := "Study 2 ratings: part-whole bridging 4.32/7 with demonstratives, significantly below definites yet well above the odd controls (1.91, 2.29)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Study 2 ratings: part-whole bridging 4.32/7 with demonstratives, significantly below definites yet well above the odd controls (1.91, 2.29)." }
 
 def ex34b_study2_relational_that : LinguisticExample :=
   { id := "ahnzhu2025_ex34b_study2_relational_that"
@@ -661,9 +591,7 @@ def ex34b_study2_relational_that : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("definite_form", "that"), ("bridging_type", "relational"), ("noun_arity", "relational"), ("study", "2")]
-    comment := "Study 2 ratings: relational bridging 5.01/7 with demonstratives vs 5.91 with definites; the language by noun-type interaction is significant, the English gap being larger than the Mandarin one."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Study 2 ratings: relational bridging 5.01/7 with demonstratives vs 5.91 with definites; the language by noun-type interaction is significant, the English gap being larger than the Mandarin one." }
 
 def ex34b_study2_relational_the : LinguisticExample :=
   { id := "ahnzhu2025_ex34b_study2_relational_the"
@@ -679,9 +607,7 @@ def ex34b_study2_relational_the : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("definite_form", "the"), ("bridging_type", "relational"), ("noun_arity", "relational"), ("study", "2")]
-    comment := "Study 2 ratings: relational bridging 5.91/7 with definite descriptions."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Study 2 ratings: relational bridging 5.91/7 with definite descriptions." }
 
 def ex36a_study2_author : LinguisticExample :=
   { id := "ahnzhu2025_ex36a_study2_author"
@@ -697,9 +623,7 @@ def ex36a_study2_author : LinguisticExample :=
     alternatives := [("Lucas read a novel yesterday, and if possible, he really wants to meet that author.", .marginal)]
     readings := []
     paperFeatures := [("definite_form", "the"), ("bridging_type", "relational"), ("noun_arity", "relational"), ("study", "2")]
-    comment := "The demonstrative variant was still rated numerically lower."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The demonstrative variant was still rated numerically lower." }
 
 def ex36b_study2_director : LinguisticExample :=
   { id := "ahnzhu2025_ex36b_study2_director"
@@ -715,9 +639,7 @@ def ex36b_study2_director : LinguisticExample :=
     alternatives := [("Ryan watched a movie last week, and he believed that he ran into that director after the movie.", .marginal)]
     readings := []
     paperFeatures := [("definite_form", "the"), ("bridging_type", "relational"), ("noun_arity", "relational"), ("study", "2")]
-    comment := "The demonstrative variant was still rated numerically lower."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The demonstrative variant was still rated numerically lower." }
 
 def ex49_author_at_issue : LinguisticExample :=
   { id := "ahnzhu2025_ex49_author_at_issue"
@@ -733,9 +655,7 @@ def ex49_author_at_issue : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("definite_form", "the"), ("bridging_type", "relational"), ("noun_arity", "relational"), ("study", "none"), ("at_issue", "relation")]
-    comment := "The bridged relation is at issue and directly deniable, motivating placing R in the asserted restriction of ι rather than in a presupposition."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The bridged relation is at issue and directly deniable, motivating placing R in the asserted restriction of ι rather than in a presupposition." }
 
 def ex54_deferred : LinguisticExample :=
   { id := "ahnzhu2025_ex54_deferred"
@@ -751,9 +671,7 @@ def ex54_deferred : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("definite_form", "that"), ("bridging_type", "none"), ("noun_arity", "sortal"), ("study", "none"), ("use", "deferred")]
-    comment := "Deferred reference: the demonstratum is the poster and the referent the unique movie related to it, a relational use restricted to deictic cases, where no definite description competes."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Deferred reference: the demonstratum is the poster and the referent the unique movie related to it, a relational use restricted to deictic cases, where no definite description competes." }
 
 def ex60a_of_author : LinguisticExample :=
   { id := "ahnzhu2025_ex60a_of_author"
@@ -769,9 +687,7 @@ def ex60a_of_author : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("noun_arity", "relational"), ("diagnostic", "of")]
-    comment := "Relational nouns take an of-possessive."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Relational nouns take an of-possessive." }
 
 def ex60b_of_novelist : LinguisticExample :=
   { id := "ahnzhu2025_ex60b_of_novelist"
@@ -787,9 +703,7 @@ def ex60b_of_novelist : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("noun_arity", "sortal"), ("diagnostic", "of")]
-    comment := "Non-relational nouns reject the of-possessive."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Non-relational nouns reject the of-possessive." }
 
 def all : List LinguisticExample := [ex14a_bare, ex14b_na, ex17_partwhole_bare, ex18_anaphoric_na, ex21_partwhole_na, ex22_relational_na, ex24a_de_child, ex24b_de_person, ex25_de_flower, ex28a_study1_partwhole_na, ex28b_study1_relational_bare, ex32_study1_painter, ex33a_study1_steeringwheel, ex37_study3_partwhole_bare, ex37_study3_partwhole_na, ex38_study3_relational_bare, ex38_study3_relational_na, ex39_study3_sn, ex40_study3_pn, ex41_study3_rn, ex42_study3_nn, ex59_study4_bare_author, ex59_study4_na_author, ex59_study4_bare_novelist, ex59_study4_na_novelist, fn13_intersentential_novelist, ex61a_de_owner, ex61b_de_person, ex62a_de_author, ex62b_de_novelist, ex63_moon, ex20a_the_roof, ex20b_that_roof, ex34a_study2_partwhole_the, ex34a_study2_partwhole_that, ex34b_study2_relational_that, ex34b_study2_relational_the, ex36a_study2_author, ex36b_study2_director, ex49_author_at_issue, ex54_deferred, ex60a_of_author, ex60b_of_novelist]
 

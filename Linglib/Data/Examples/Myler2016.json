@@ -18,8 +18,7 @@
       ["construction", "clausal"],
       ["verb", "hafa"]
     ],
-    "comment": "Clausal possession, concrete relation, with hafa.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Clausal possession, concrete relation, with hafa."
   },
   {
     "id": "myler2016_concrete_eiga",
@@ -40,8 +39,7 @@
       ["construction", "clausal"],
       ["verb", "eiga"]
     ],
-    "comment": "Clausal possession, concrete relation, with eiga.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Clausal possession, concrete relation, with eiga."
   },
   {
     "id": "myler2016_kinship_hafa",
@@ -62,8 +60,7 @@
       ["construction", "clausal"],
       ["verb", "hafa"]
     ],
-    "comment": "Clausal possession, kinship relation, with hafa.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Clausal possession, kinship relation, with hafa."
   },
   {
     "id": "myler2016_kinship_eiga",
@@ -84,8 +81,7 @@
       ["construction", "clausal"],
       ["verb", "eiga"]
     ],
-    "comment": "Clausal possession, kinship relation, with eiga.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Clausal possession, kinship relation, with eiga."
   },
   {
     "id": "myler2016_bodyPart_hafa",
@@ -106,8 +102,7 @@
       ["construction", "clausal"],
       ["verb", "hafa"]
     ],
-    "comment": "Clausal possession, bodyPart relation, with hafa.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Clausal possession, bodyPart relation, with hafa."
   },
   {
     "id": "myler2016_bodyPart_eiga",
@@ -128,8 +123,7 @@
       ["construction", "clausal"],
       ["verb", "eiga"]
     ],
-    "comment": "Clausal possession, bodyPart relation, with eiga.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Clausal possession, bodyPart relation, with eiga."
   },
   {
     "id": "myler2016_abstract_hafa",
@@ -150,8 +144,7 @@
       ["construction", "clausal"],
       ["verb", "hafa"]
     ],
-    "comment": "Clausal possession, abstract relation, with hafa.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Clausal possession, abstract relation, with hafa."
   },
   {
     "id": "myler2016_abstract_eiga",
@@ -172,8 +165,7 @@
       ["construction", "clausal"],
       ["verb", "eiga"]
     ],
-    "comment": "Clausal possession, abstract relation, with eiga.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Clausal possession, abstract relation, with eiga."
   },
   {
     "id": "myler2016_concrete_attrA",
@@ -193,8 +185,7 @@
       ["relation", "concrete"],
       ["construction", "attributiveA"]
     ],
-    "comment": "Attributive possession, column A of (92) (from Myler, Sigurðsson & Wood 2014); # is recorded as questionable, % as marginal.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Attributive possession, column A of (92) (from Myler, Sigurðsson & Wood 2014); # is recorded as questionable, % as marginal."
   },
   {
     "id": "myler2016_concrete_attrB",
@@ -214,8 +205,7 @@
       ["relation", "concrete"],
       ["construction", "attributiveB"]
     ],
-    "comment": "Attributive possession, column B of (92) (from Myler, Sigurðsson & Wood 2014); # is recorded as questionable, % as marginal.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Attributive possession, column B of (92) (from Myler, Sigurðsson & Wood 2014); # is recorded as questionable, % as marginal."
   },
   {
     "id": "myler2016_concrete_attrC",
@@ -235,8 +225,7 @@
       ["relation", "concrete"],
       ["construction", "attributiveC"]
     ],
-    "comment": "Attributive possession, column C of (92) (from Myler, Sigurðsson & Wood 2014); # is recorded as questionable, % as marginal.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Attributive possession, column C of (92) (from Myler, Sigurðsson & Wood 2014); # is recorded as questionable, % as marginal."
   },
   {
     "id": "myler2016_kinship_attrA",
@@ -256,8 +245,7 @@
       ["relation", "kinship"],
       ["construction", "attributiveA"]
     ],
-    "comment": "Attributive possession, column A of (92) (from Myler, Sigurðsson & Wood 2014); # is recorded as questionable, % as marginal.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Attributive possession, column A of (92) (from Myler, Sigurðsson & Wood 2014); # is recorded as questionable, % as marginal."
   },
   {
     "id": "myler2016_kinship_attrB",
@@ -277,8 +265,7 @@
       ["relation", "kinship"],
       ["construction", "attributiveB"]
     ],
-    "comment": "Attributive possession, column B of (92) (from Myler, Sigurðsson & Wood 2014); # is recorded as questionable, % as marginal.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Attributive possession, column B of (92) (from Myler, Sigurðsson & Wood 2014); # is recorded as questionable, % as marginal."
   },
   {
     "id": "myler2016_kinship_attrC",
@@ -298,8 +285,7 @@
       ["relation", "kinship"],
       ["construction", "attributiveC"]
     ],
-    "comment": "Attributive possession, column C of (92) (from Myler, Sigurðsson & Wood 2014); # is recorded as questionable, % as marginal.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Attributive possession, column C of (92) (from Myler, Sigurðsson & Wood 2014); # is recorded as questionable, % as marginal."
   },
   {
     "id": "myler2016_bodyPart_attrA",
@@ -319,8 +305,7 @@
       ["relation", "bodyPart"],
       ["construction", "attributiveA"]
     ],
-    "comment": "Attributive possession, column A of (92) (from Myler, Sigurðsson & Wood 2014); # is recorded as questionable, % as marginal.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Attributive possession, column A of (92) (from Myler, Sigurðsson & Wood 2014); # is recorded as questionable, % as marginal."
   },
   {
     "id": "myler2016_bodyPart_attrB",
@@ -340,8 +325,7 @@
       ["relation", "bodyPart"],
       ["construction", "attributiveB"]
     ],
-    "comment": "Attributive possession, column B of (92) (from Myler, Sigurðsson & Wood 2014); # is recorded as questionable, % as marginal.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Attributive possession, column B of (92) (from Myler, Sigurðsson & Wood 2014); # is recorded as questionable, % as marginal."
   },
   {
     "id": "myler2016_bodyPart_attrC",
@@ -361,8 +345,7 @@
       ["relation", "bodyPart"],
       ["construction", "attributiveC"]
     ],
-    "comment": "Attributive possession, column C of (92) (from Myler, Sigurðsson & Wood 2014); # is recorded as questionable, % as marginal.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Attributive possession, column C of (92) (from Myler, Sigurðsson & Wood 2014); # is recorded as questionable, % as marginal."
   },
   {
     "id": "myler2016_abstract_attrA",
@@ -382,8 +365,7 @@
       ["relation", "abstract"],
       ["construction", "attributiveA"]
     ],
-    "comment": "Attributive possession, column A of (92) (from Myler, Sigurðsson & Wood 2014); # is recorded as questionable, % as marginal.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Attributive possession, column A of (92) (from Myler, Sigurðsson & Wood 2014); # is recorded as questionable, % as marginal."
   },
   {
     "id": "myler2016_abstract_attrB",
@@ -403,8 +385,7 @@
       ["relation", "abstract"],
       ["construction", "attributiveB"]
     ],
-    "comment": "Attributive possession, column B of (92) (from Myler, Sigurðsson & Wood 2014); # is recorded as questionable, % as marginal.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Attributive possession, column B of (92) (from Myler, Sigurðsson & Wood 2014); # is recorded as questionable, % as marginal."
   },
   {
     "id": "myler2016_abstract_attrC",
@@ -424,7 +405,6 @@
       ["relation", "abstract"],
       ["construction", "attributiveC"]
     ],
-    "comment": "Attributive possession, column C of (92) (from Myler, Sigurðsson & Wood 2014); # is recorded as questionable, % as marginal.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Attributive possession, column C of (92) (from Myler, Sigurðsson & Wood 2014); # is recorded as questionable, % as marginal."
   }
 ]

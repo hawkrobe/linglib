@@ -31,9 +31,7 @@ def ronderos2024_1a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("adjType", "scalar"), ("condition", "contrast")]
-    comment := "Contrast condition: a same-kind object of the opposite size is present."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Contrast condition: a same-kind object of the opposite size is present." }
 
 def ronderos2024_1b : LinguisticExample :=
   { id := "ronderos2024_1b"
@@ -49,9 +47,7 @@ def ronderos2024_1b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("adjType", "scalar"), ("condition", "noContrast")]
-    comment := "No-contrast condition: the same-kind object is replaced by a distractor."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "No-contrast condition: the same-kind object is replaced by a distractor." }
 
 def ronderos2024_2a : LinguisticExample :=
   { id := "ronderos2024_2a"
@@ -67,9 +63,7 @@ def ronderos2024_2a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("adjType", "color"), ("condition", "contrast")]
-    comment := "Contrast condition: a same-kind object of another colour is present."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Contrast condition: a same-kind object of another colour is present." }
 
 def ronderos2024_2b : LinguisticExample :=
   { id := "ronderos2024_2b"
@@ -85,9 +79,7 @@ def ronderos2024_2b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("adjType", "color"), ("condition", "noContrast")]
-    comment := "No-contrast condition."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "No-contrast condition." }
 
 def ronderos2024_3a : LinguisticExample :=
   { id := "ronderos2024_3a"
@@ -103,9 +95,7 @@ def ronderos2024_3a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("adjType", "material"), ("condition", "contrast")]
-    comment := "Contrast condition: a same-kind object of another material is present."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Contrast condition: a same-kind object of another material is present." }
 
 def ronderos2024_3b : LinguisticExample :=
   { id := "ronderos2024_3b"
@@ -121,9 +111,7 @@ def ronderos2024_3b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("adjType", "material"), ("condition", "noContrast")]
-    comment := "No-contrast condition."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "No-contrast condition." }
 
 def all : List LinguisticExample := [ronderos2024_1a, ronderos2024_1b, ronderos2024_2a, ronderos2024_2b, ronderos2024_3a, ronderos2024_3b]
 

@@ -31,9 +31,7 @@ def exp1_sLowRHigh : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("experiment", "1"), ("predictor", "displayType"), ("level", "sLowRHigh"), ("reference", "sLowRHigh"), ("sufficient", "low"), ("redundant", "high"), ("refSufficient", "low"), ("refRedundant", "high")]
-    comment := "Reference level of the display-type predictor: the sufficient attribute is of low and the redundant attribute of high discriminability."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Reference level of the display-type predictor: the sufficient attribute is of low and the redundant attribute of high discriminability." }
 
 def exp1_baseline : LinguisticExample :=
   { id := "gilesetal2026_exp1_baseline"
@@ -49,9 +47,7 @@ def exp1_baseline : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("experiment", "1"), ("predictor", "displayType"), ("level", "baseline"), ("reference", "sLowRHigh"), ("sufficient", "high"), ("redundant", "high"), ("refSufficient", "low"), ("refRedundant", "high"), ("beta", "-94"), ("ciLower", "-120"), ("ciUpper", "-68")]
-    comment := "Both attributes of high discriminability; overinformativeness is credibly lower than at the reference level."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Both attributes of high discriminability; overinformativeness is credibly lower than at the reference level." }
 
 def exp1_sHighRLow : LinguisticExample :=
   { id := "gilesetal2026_exp1_sHighRLow"
@@ -67,9 +63,7 @@ def exp1_sHighRLow : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("experiment", "1"), ("predictor", "displayType"), ("level", "sHighRLow"), ("reference", "sLowRHigh"), ("sufficient", "high"), ("redundant", "low"), ("refSufficient", "low"), ("refRedundant", "high"), ("beta", "-109"), ("ciLower", "-135"), ("ciUpper", "-83")]
-    comment := "The sufficient attribute of high and the redundant attribute of low discriminability; overinformativeness is credibly lower than at the reference level."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The sufficient attribute of high and the redundant attribute of low discriminability; overinformativeness is credibly lower than at the reference level." }
 
 def exp1_colour : LinguisticExample :=
   { id := "gilesetal2026_exp1_colour"
@@ -85,9 +79,7 @@ def exp1_colour : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("experiment", "1"), ("predictor", "attribute"), ("level", "colour"), ("reference", "colour"), ("modality", "visual"), ("sufficient", "low"), ("redundant", "high"), ("refSufficient", "low"), ("refRedundant", "high")]
-    comment := "Reference level of the attribute predictor: colour is the redundant attribute."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Reference level of the attribute predictor: colour is the redundant attribute." }
 
 def exp1_material : LinguisticExample :=
   { id := "gilesetal2026_exp1_material"
@@ -103,9 +95,7 @@ def exp1_material : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("experiment", "1"), ("predictor", "attribute"), ("level", "material"), ("reference", "colour"), ("modality", "auditory"), ("sufficient", "low"), ("redundant", "high"), ("refSufficient", "low"), ("refRedundant", "high"), ("beta", "-143"), ("ciLower", "-165"), ("ciUpper", "-120")]
-    comment := "Material is the redundant attribute; with discriminability equated by the staircases, overinformativeness is credibly lower than with redundant colour."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Material is the redundant attribute; with discriminability equated by the staircases, overinformativeness is credibly lower than with redundant colour." }
 
 def exp2_hfColour : LinguisticExample :=
   { id := "gilesetal2026_exp2_hfColour"
@@ -121,9 +111,7 @@ def exp2_hfColour : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("experiment", "2"), ("predictor", "attribute"), ("level", "colour"), ("reference", "colour"), ("frequency", "high"), ("sufficient", "high"), ("redundant", "high"), ("refSufficient", "high"), ("refRedundant", "high")]
-    comment := "Reference level: colour redundant, named with the high-frequency terms green and blue."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Reference level: colour redundant, named with the high-frequency terms green and blue." }
 
 def exp2_orientation : LinguisticExample :=
   { id := "gilesetal2026_exp2_orientation"
@@ -139,9 +127,7 @@ def exp2_orientation : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("experiment", "2"), ("predictor", "attribute"), ("level", "orientation"), ("reference", "colour"), ("sufficient", "high"), ("redundant", "high"), ("refSufficient", "high"), ("refRedundant", "high"), ("beta", "-97"), ("ciLower", "-120"), ("ciUpper", "-75")]
-    comment := "Orientation redundant; with discriminability, attentional guidance and production effort controlled, overinformativeness is credibly lower than with redundant colour."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Orientation redundant; with discriminability, attentional guidance and production effort controlled, overinformativeness is credibly lower than with redundant colour." }
 
 def exp2_lfColour : LinguisticExample :=
   { id := "gilesetal2026_exp2_lfColour"
@@ -157,9 +143,7 @@ def exp2_lfColour : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("experiment", "2"), ("predictor", "frequency"), ("level", "colour"), ("reference", "colour"), ("frequency", "low"), ("sufficient", "high"), ("redundant", "high"), ("refSufficient", "high"), ("refRedundant", "high"), ("beta", "-20"), ("ciLower", "-44"), ("ciUpper", "3")]
-    comment := "Colour redundant, named with low-frequency terms; the credible interval includes zero, so term frequency does not account for colour's advantage."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Colour redundant, named with low-frequency terms; the credible interval includes zero, so term frequency does not account for colour's advantage." }
 
 def all : List LinguisticExample := [exp1_sLowRHigh, exp1_baseline, exp1_sHighRLow, exp1_colour, exp1_material, exp2_hfColour, exp2_orientation, exp2_lfColour]
 

@@ -38,8 +38,7 @@
         "action"
       ]
     ],
-    "comment": "Action Schema: the verb 'take/have' with the possessor as subject.",
-    "metaLanguage": "stan1293"
+    "comment": "Action Schema: the verb 'take/have' with the possessor as subject."
   },
   {
     "id": "heine1997_73a",
@@ -76,8 +75,7 @@
         "false"
       ]
     ],
-    "comment": "Stage I of the Overlap Model: u is an adessive preposition, the structure expresses 'Y is at X'.",
-    "metaLanguage": "stan1293"
+    "comment": "Stage I of the Overlap Model: u is an adessive preposition, the structure expresses 'Y is at X'."
   },
   {
     "id": "heine1997_73b",
@@ -114,8 +112,7 @@
         "false"
       ]
     ],
-    "comment": "Stage I: locative meaning only.",
-    "metaLanguage": "stan1293"
+    "comment": "Stage I: locative meaning only."
   },
   {
     "id": "heine1997_73c",
@@ -156,8 +153,7 @@
         "true"
       ]
     ],
-    "comment": "Stage II: the construction is ambiguous between the Location Schema and the possessive target.",
-    "metaLanguage": "stan1293"
+    "comment": "Stage II: the construction is ambiguous between the Location Schema and the possessive target."
   },
   {
     "id": "heine1997_73d",
@@ -194,8 +190,7 @@
         "true"
       ]
     ],
-    "comment": "Stage III: interpreted only with reference to the possessive target schema.",
-    "metaLanguage": "stan1293"
+    "comment": "Stage III: interpreted only with reference to the possessive target schema."
   },
   {
     "id": "heine1997_84a",
@@ -223,8 +218,7 @@
         "permanent"
       ]
     ],
-    "comment": "The Equation Schema ('Y is X's') expresses permanent possession, like 'I own a car'.",
-    "metaLanguage": "stan1293"
+    "comment": "The Equation Schema ('Y is X's') expresses permanent possession, like 'I own a car'."
   },
   {
     "id": "heine1997_84b",
@@ -252,8 +246,7 @@
         "inalienable"
       ]
     ],
-    "comment": "Marginal with inalienable possession, like '?I own two sisters'.",
-    "metaLanguage": "stan1293"
+    "comment": "Marginal with inalienable possession, like '?I own two sisters'."
   },
   {
     "id": "heine1997_84c",
@@ -281,8 +274,7 @@
         "abstract"
       ]
     ],
-    "comment": "Marginal with abstract possession, like '?I own a cold'.",
-    "metaLanguage": "stan1293"
+    "comment": "Marginal with abstract possession, like '?I own a cold'."
   },
   {
     "id": "heine1997_84d",
@@ -310,8 +302,7 @@
         "inanimateInalienable"
       ]
     ],
-    "comment": "Marginal with inanimate inalienable possession, like '?My house owns two bedrooms'.",
-    "metaLanguage": "stan1293"
+    "comment": "Marginal with inanimate inalienable possession, like '?My house owns two bedrooms'."
   },
   {
     "id": "heine1997_85a",
@@ -352,8 +343,7 @@
         "physical"
       ]
     ],
-    "comment": "The Location Schema, grammaticalized for physical and temporary possession.",
-    "metaLanguage": "stan1293"
+    "comment": "The Location Schema, grammaticalized for physical and temporary possession."
   },
   {
     "id": "heine1997_85b",
@@ -394,8 +384,7 @@
         "permanent"
       ]
     ],
-    "comment": "The Goal sub-schema of Existence for permanent possession.",
-    "metaLanguage": "stan1293"
+    "comment": "The Goal sub-schema of Existence for permanent possession."
   },
   {
     "id": "heine1997_85c",
@@ -440,8 +429,7 @@
         "inalienable"
       ]
     ],
-    "comment": "The Goal sub-schema for inalienable possession.",
-    "metaLanguage": "stan1293"
+    "comment": "The Goal sub-schema for inalienable possession."
   },
   {
     "id": "heine1997_85d",
@@ -486,8 +474,7 @@
         "inalienable"
       ]
     ],
-    "comment": "The Goal sub-schema for inalienable (kinship) possession.",
-    "metaLanguage": "stan1293"
+    "comment": "The Goal sub-schema for inalienable (kinship) possession."
   },
   {
     "id": "heine1997_85e",
@@ -528,8 +515,7 @@
         "inanimateInalienable"
       ]
     ],
-    "comment": "The Goal sub-schema for inanimate inalienable possession.",
-    "metaLanguage": "stan1293"
+    "comment": "The Goal sub-schema for inanimate inalienable possession."
   },
   {
     "id": "heine1997_86a",
@@ -578,8 +564,7 @@
         "permanent"
       ]
     ],
-    "comment": "With an indefinite possessee the Goal construction expresses permanent possession.",
-    "metaLanguage": "stan1293"
+    "comment": "With an indefinite possessee the Goal construction expresses permanent possession."
   },
   {
     "id": "heine1997_86b",
@@ -632,8 +617,7 @@
         "physical"
       ]
     ],
-    "comment": "With a definite possessee the same construction denotes physical possession.",
-    "metaLanguage": "stan1293"
+    "comment": "With a definite possessee the same construction denotes physical possession."
   },
   {
     "id": "heine1997_87a",
@@ -682,8 +666,7 @@
         "permanent"
       ]
     ],
-    "comment": "The Location construction with an indefinite possessee: permanent possession.",
-    "metaLanguage": "stan1293"
+    "comment": "The Location construction with an indefinite possessee: permanent possession."
   },
   {
     "id": "heine1997_87b",
@@ -736,7 +719,6 @@
         "physical"
       ]
     ],
-    "comment": "With a definite possessee, physical possession.",
-    "metaLanguage": "stan1293"
+    "comment": "With a definite possessee, physical possession."
   }
 ]

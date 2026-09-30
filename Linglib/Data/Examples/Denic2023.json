@@ -21,9 +21,7 @@
       ["disjuncts", "2"],
       ["preferred", "distributive"]
     ],
-    "comment": "Typically triggers the distributive inferences that at least one is French and at least one is Spanish, without ignorance inferences about them.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Typically triggers the distributive inferences that at least one is French and at least one is Spanish, without ignorance inferences about them."
   },
   {
     "id": "denic2023_7",
@@ -47,9 +45,7 @@
       ["disjuncts", "2"],
       ["preferred", "ignorance"]
     ],
-    "comment": "Minimally different from (6) in the cardinality of the restrictor; naturally interpreted with ignorance inferences about whether at least one is French and about whether at least one is Spanish.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Minimally different from (6) in the cardinality of the restrictor; naturally interpreted with ignorance inferences about whether at least one is French and about whether at least one is Spanish."
   },
   {
     "id": "denic2023_8",
@@ -73,9 +69,7 @@
       ["disjuncts", "2"],
       ["preferred", "distributive"]
     ],
-    "comment": "More naturally interpreted with distributive inferences than (9).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "More naturally interpreted with distributive inferences than (9)."
   },
   {
     "id": "denic2023_9",
@@ -99,9 +93,7 @@
       ["disjuncts", "4"],
       ["preferred", "ignorance"]
     ],
-    "comment": "Same restrictor as (8), more disjuncts; more naturally interpreted with ignorance inferences.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Same restrictor as (8), more disjuncts; more naturally interpreted with ignorance inferences."
   },
   {
     "id": "denic2023_12",
@@ -120,9 +112,7 @@
       ["name", "unembedded"],
       ["disjuncts", "2"]
     ],
-    "comment": "Triggers the ignorance inferences that the speaker is ignorant about whether John is French (Spanish) and the scalar implicature that he is not both; the disjunct alternatives are symmetric and cannot be pruned one without the other.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Triggers the ignorance inferences that the speaker is ignorant about whether John is French (Spanish) and the scalar implicature that he is not both; the disjunct alternatives are symmetric and cannot be pruned one without the other."
   },
   {
     "id": "denic2023_31",
@@ -142,9 +132,7 @@
       ["predicate", "identityCopula"],
       ["singletonDenoting", "yes"]
     ],
-    "comment": "Contextually equivalent to (35) given that Mary, Susan and Jane are three different individuals, yet cannot be used to convey it.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Contextually equivalent to (35) given that Mary, Susan and Jane are three different individuals, yet cannot be used to convey it."
   },
   {
     "id": "denic2023_32",
@@ -164,9 +152,7 @@
       ["predicate", "beCalled"],
       ["singletonDenoting", "no"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "denic2023_33",
@@ -186,9 +172,7 @@
       ["predicate", "write"],
       ["singletonDenoting", "yes"]
     ],
-    "comment": "For any book there is exactly one singular or plural individual who wrote it.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "For any book there is exactly one singular or plural individual who wrote it."
   },
   {
     "id": "denic2023_34",
@@ -208,9 +192,7 @@
       ["predicate", "read"],
       ["singletonDenoting", "no"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "denic2023_35",
@@ -228,9 +210,7 @@
     "paperFeatures": [
       ["name", "paraphrase-of-deviant-be"]
     ],
-    "comment": "The meaning (31) is contextually equivalent to and cannot convey.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The meaning (31) is contextually equivalent to and cannot convey."
   },
   {
     "id": "denic2023_37a",
@@ -252,9 +232,7 @@
       ["diagnostic", "singletonDenoting"],
       ["predicate", "identityCopula"]
     ],
-    "comment": "The continuation sounds contradictory: the identity predicate holds of at most one individual.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The continuation sounds contradictory: the identity predicate holds of at most one individual."
   },
   {
     "id": "denic2023_37b",
@@ -276,9 +254,7 @@
       ["diagnostic", "singletonDenoting"],
       ["predicate", "beCalled"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "denic2023_37c",
@@ -300,9 +276,7 @@
       ["diagnostic", "singletonDenoting"],
       ["predicate", "write"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "denic2023_37d",
@@ -324,9 +298,7 @@
       ["diagnostic", "singletonDenoting"],
       ["predicate", "read"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "denic2023_38",
@@ -345,9 +317,7 @@
       ["predicate", "write"],
       ["singletonDenoting", "no"]
     ],
-    "comment": "With an internal argument from the domain of letters, to write is not singleton-denoting and the sentence is not deviant.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "With an internal argument from the domain of letters, to write is not singleton-denoting and the sentence is not deviant."
   },
   {
     "id": "denic2023_41",
@@ -365,9 +335,7 @@
     "paperFeatures": [
       ["diagnostic", "blindImplicature"]
     ],
-    "comment": "Deviant because its scalar implicature that not all Italians come from a warm country contradicts common knowledge.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Deviant because its scalar implicature that not all Italians come from a warm country contradicts common knowledge."
   },
   {
     "id": "denic2023_43a",
@@ -385,9 +353,7 @@
     "paperFeatures": [
       ["diagnostic", "blindIgnorance"]
     ],
-    "comment": "Triggers the ignorance inference that the speaker is ignorant about whether Ann scored exactly 3 points, which contradicts common knowledge.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Triggers the ignorance inference that the speaker is ignorant about whether Ann scored exactly 3 points, which contradicts common knowledge."
   },
   {
     "id": "denic2023_43b",
@@ -405,9 +371,7 @@
     "paperFeatures": [
       ["diagnostic", "blindIgnorance"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "denic2023_48",
@@ -427,9 +391,7 @@
     "paperFeatures": [
       ["diagnostic", "symmetry"]
     ],
-    "comment": "The symmetric disjunct alternatives cannot be pruned one without the other, even though informativeness would favour pruning the cousins alternative.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The symmetric disjunct alternatives cannot be pruned one without the other, even though informativeness would favour pruning the cousins alternative."
   },
   {
     "id": "denic2023_55a",
@@ -448,9 +410,7 @@
       ["diagnostic", "modalContrast"],
       ["modal", "necessity"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "denic2023_55b",
@@ -469,9 +429,7 @@
       ["diagnostic", "modalContrast"],
       ["modal", "possibility"]
     ],
-    "comment": "The possibility modal below the universal quantifier saves the sentence.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The possibility modal below the universal quantifier saves the sentence."
   },
   {
     "id": "denic2023_57",
@@ -490,9 +448,7 @@
       ["diagnostic", "largerDomain"],
       ["restrictor", "20"]
     ],
-    "comment": "Deviant for some speakers although a restrictor of twenty favours distributive rather than ignorance inferences; a distribution estimate inference would contradict common knowledge.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Deviant for some speakers although a restrictor of twenty favours distributive rather than ignorance inferences; a distribution estimate inference would contradict common knowledge."
   },
   {
     "id": "denic2023_59",
@@ -510,9 +466,7 @@
     "paperFeatures": [
       ["diagnostic", "downwardEntailing"]
     ],
-    "comment": "Deviance persists under negation for some speakers, parallel to the embedded cases of Magri.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Deviance persists under negation for some speakers, parallel to the embedded cases of Magri."
   },
   {
     "id": "denic2023_63",
@@ -536,8 +490,6 @@
       ["disjuncts", "2"],
       ["preferred", "ignorance"]
     ],
-    "comment": "Even with a strong prior for American, the sentence is interpreted with ignorance and without distributive inferences, against domain-general reasoning from the literal meaning.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Even with a strong prior for American, the sentence is interpreted with ignorance and without distributive inferences, against domain-general reasoning from the literal meaning."
   }
 ]

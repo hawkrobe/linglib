@@ -31,9 +31,7 @@ def squid_t : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.2"), ("relation", "⊑ t'"), ("derivation", "three substitutions and two compositions")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def squid_t2 : LinguisticExample :=
   { id := "icard2012_squid_t2"
@@ -49,9 +47,7 @@ def squid_t2 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.2"), ("relation", "⊒ t")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def squid_u : LinguisticExample :=
   { id := "icard2012_squid_u"
@@ -67,9 +63,7 @@ def squid_u : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.2"), ("relation", "t | u, by safe | dangerous under ⊞")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def squid_v : LinguisticExample :=
   { id := "icard2012_squid_v"
@@ -85,9 +79,7 @@ def squid_v : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.2"), ("relation", "u ⊒ v, by giant squid ⊑ cephalopod under ◇; v ^ t'")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def mono : LinguisticExample :=
   { id := "icard2012_mono"
@@ -103,9 +95,7 @@ def mono : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.2"), ("relation", "a monotonicity inference from giant squid ⊑ cephalopod under ◇")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def no_notevery : LinguisticExample :=
   { id := "icard2012_no_notevery"
@@ -121,9 +111,7 @@ def no_notevery : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.2"), ("relation", "derived from no | every and every ^ not every, | ⋈ ^ = ⊑")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def confluence : LinguisticExample :=
   { id := "icard2012_confluence"
@@ -139,9 +127,7 @@ def confluence : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.3"), ("relation", "derivable in one substitution; lost after substituting octopus for squid, which yields #")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s4_1 : LinguisticExample :=
   { id := "icard2012_s4_1"
@@ -157,9 +143,7 @@ def s4_1 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4"), ("npi", "yet, weak"), ("context", "not every, antitone")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s4_2 : LinguisticExample :=
   { id := "icard2012_s4_2"
@@ -175,9 +159,7 @@ def s4_2 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4"), ("npi", "yet, weak"), ("context", "few, antitone")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s4_3 : LinguisticExample :=
   { id := "icard2012_s4_3"
@@ -193,9 +175,7 @@ def s4_3 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4"), ("npi", "in years, strong"), ("context", "few, not anti-additive")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s4_4 : LinguisticExample :=
   { id := "icard2012_s4_4"
@@ -211,9 +191,7 @@ def s4_4 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4"), ("npi", "in years, strong"), ("context", "no, anti-additive in its second argument")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s4_5 : LinguisticExample :=
   { id := "icard2012_s4_5"
@@ -229,9 +207,7 @@ def s4_5 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4"), ("npi", "a tad bit, superstrong"), ("context", "no, not anti-multiplicative")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s4_6 : LinguisticExample :=
   { id := "icard2012_s4_6"
@@ -247,9 +223,7 @@ def s4_6 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4"), ("npi", "a tad bit, superstrong"), ("context", "not, anti-additive and anti-multiplicative")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def all : List LinguisticExample := [squid_t, squid_t2, squid_u, squid_v, mono, no_notevery, confluence, s4_1, s4_2, s4_3, s4_4, s4_5, s4_6]
 

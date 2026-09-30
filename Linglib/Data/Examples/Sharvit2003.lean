@@ -31,9 +31,7 @@ def ex1 : LinguisticExample :=
     alternatives := []
     readings := [("nonpast: the telling overlaps the missing", .acceptable), ("anteriority: the missing precedes the telling", .acceptable)]
     paperFeatures := [("language", "english"), ("matrix", "past"), ("embedded", "past"), ("nonpast", "yes")]
-    comment := "Inspired by an example of Abusch 1997. Past under past under past; the most deeply embedded past has a nonpast reading, John's 'Mother, I miss you', and an anteriority reading, 'Mother, I missed you'."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Inspired by an example of Abusch 1997. Past under past under past; the most deeply embedded past has a nonpast reading, John's 'Mother, I miss you', and an anteriority reading, 'Mother, I missed you'." }
 
 def ex2 : LinguisticExample :=
   { id := "sharvit2003_ex2"
@@ -49,9 +47,7 @@ def ex2 : LinguisticExample :=
     alternatives := []
     readings := [("nonpast: the pregnancy overlaps John's now", .acceptable), ("anteriority: the pregnancy precedes John's now", .acceptable)]
     paperFeatures := [("language", "english"), ("matrix", "past"), ("embedded", "past"), ("nonpast", "yes")]
-    comment := "Cited from Enç 1987. Past under past with both readings, the diagnostic of an SOT language."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Cited from Enç 1987. Past under past with both readings, the diagnostic of an SOT language." }
 
 def ex3 : LinguisticExample :=
   { id := "sharvit2003_ex3"
@@ -67,9 +63,7 @@ def ex3 : LinguisticExample :=
     alternatives := []
     readings := [("double access: the pregnancy contains the believing time and the utterance time", .acceptable), ("nonpast: the pregnancy overlaps John's now only", .ungrammatical)]
     paperFeatures := [("language", "english"), ("matrix", "past"), ("embedded", "present"), ("nonpast", "no")]
-    comment := "Present under past: only the double access reading; the English present is a matrix indexical."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Present under past: only the double access reading; the English present is a matrix indexical." }
 
 def ex4a : LinguisticExample :=
   { id := "sharvit2003_ex4a"
@@ -85,9 +79,7 @@ def ex4a : LinguisticExample :=
     alternatives := []
     readings := [("nonpast: the pregnancy overlaps the finding out", .acceptable)]
     paperFeatures := [("language", "english"), ("matrix", "past"), ("embedded", "past"), ("nonpast", "yes")]
-    comment := "Acceptable through the nonpast reading: the pregnancy overlaps the finding out two years ago."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Acceptable through the nonpast reading: the pregnancy overlaps the finding out two years ago." }
 
 def ex4b : LinguisticExample :=
   { id := "sharvit2003_ex4b"
@@ -103,9 +95,7 @@ def ex4b : LinguisticExample :=
     alternatives := []
     readings := [("double access: the pregnancy contains the finding out and the utterance time", .unacceptable)]
     paperFeatures := [("language", "english"), ("matrix", "past"), ("embedded", "present"), ("nonpast", "no")]
-    comment := "Marked # in the paper: the double access reading requires the pregnancy to contain both the finding out two years ago and the utterance time, which conflicts with the duration of pregnancies."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Marked # in the paper: the double access reading requires the pregnancy to contain both the finding out two years ago and the utterance time, which conflicts with the duration of pregnancies." }
 
 def ex5 : LinguisticExample :=
   { id := "sharvit2003_ex5"
@@ -121,9 +111,7 @@ def ex5 : LinguisticExample :=
     alternatives := []
     readings := [("nonpast: the telling overlaps the missing", .acceptable)]
     paperFeatures := [("language", "hebrew"), ("matrix", "past"), ("embedded", "present"), ("nonpast", "yes")]
-    comment := "Hebrew present under past has the nonpast reading that English (1) gets from its deleted past: the Hebrew present is not a matrix indexical."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Hebrew present under past has the nonpast reading that English (1) gets from its deleted past: the Hebrew present is not a matrix indexical." }
 
 def ex6 : LinguisticExample :=
   { id := "sharvit2003_ex6"
@@ -139,9 +127,7 @@ def ex6 : LinguisticExample :=
     alternatives := []
     readings := [("anteriority: the missing precedes the telling", .acceptable), ("nonpast: the telling overlaps the missing", .ungrammatical)]
     paperFeatures := [("language", "hebrew"), ("matrix", "past"), ("embedded", "past"), ("nonpast", "no")]
-    comment := "Minimal pair with (5): Hebrew has no SOT rule, so the embedded past is a real past and only the anteriority reading is available."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Minimal pair with (5): Hebrew has no SOT rule, so the embedded past is a real past and only the anteriority reading is available." }
 
 def ex12a : LinguisticExample :=
   { id := "sharvit2003_ex12a"
@@ -157,9 +143,7 @@ def ex12a : LinguisticExample :=
     alternatives := []
     readings := [("nonpast: the pregnancy overlaps the telling", .acceptable)]
     paperFeatures := [("language", "greek"), ("matrix", "past"), ("embedded", "present"), ("nonpast", "yes")]
-    comment := "Modern Greek present under past with a nonpast reading, attributed to Schlenker 1999 and Iatridou p.c.: the Greek present is not a matrix indexical."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Modern Greek present under past with a nonpast reading, attributed to Schlenker 1999 and Iatridou p.c.: the Greek present is not a matrix indexical." }
 
 def ex12b : LinguisticExample :=
   { id := "sharvit2003_ex12b"
@@ -175,9 +159,7 @@ def ex12b : LinguisticExample :=
     alternatives := []
     readings := [("nonpast: the pregnancy overlaps the telling", .acceptable)]
     paperFeatures := [("language", "greek"), ("matrix", "past"), ("embedded", "past"), ("nonpast", "yes")]
-    comment := "Modern Greek past under past with a nonpast reading under a non-factive verb, unlike Hebrew and Japanese (fn. 3): Greek has the SOT rule."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Modern Greek past under past with a nonpast reading under a non-factive verb, unlike Hebrew and Japanese (fn. 3): Greek has the SOT rule." }
 
 def all : List LinguisticExample := [ex1, ex2, ex3, ex4a, ex4b, ex5, ex6, ex12a, ex12b]
 

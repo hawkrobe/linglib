@@ -236,10 +236,6 @@ abbrev ShonaValues (a b : Nominal Shona.Gender) (c : Shona.NounClass) : Prop :=
 
 /-! ### The rows -/
 
-/-- The values of a feature key, in order. -/
-def features (e : LinguisticExample) (key : String) : List String :=
-  (e.paperFeatures.filter (·.1 = key)).map (·.2)
-
 /-- The rows of one language. -/
 def rows (glottocode : String) : List LinguisticExample :=
   Examples.all.filter (·.language = glottocode)
@@ -277,16 +273,16 @@ def shonaConjuncts (e : LinguisticExample) :
 
 /-- The classes a Xhosa row accepts and rejects for plural agreement on &P. -/
 def xhosaAccepted (e : LinguisticExample) : List Xhosa.NounClass :=
-  (features e "agreement").filterMap xhosaClassOf
+  (e.features "agreement").filterMap xhosaClassOf
 
 def xhosaRejected (e : LinguisticExample) : List Xhosa.NounClass :=
-  (features e "rejected").filterMap xhosaClassOf
+  (e.features "rejected").filterMap xhosaClassOf
 
 def shonaAccepted (e : LinguisticExample) : List Shona.NounClass :=
-  (features e "agreement").filterMap shonaClassOf
+  (e.features "agreement").filterMap shonaClassOf
 
 def shonaRejected (e : LinguisticExample) : List Shona.NounClass :=
-  (features e "rejected").filterMap shonaClassOf
+  (e.features "rejected").filterMap shonaClassOf
 
 /-- Every class a row accepts values agreement under one of the two grammars, and none it
 rejects does, (6)–(9), (37)–(49), (55), (81)–(91) and (111). -/

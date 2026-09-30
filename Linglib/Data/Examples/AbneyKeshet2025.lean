@@ -31,9 +31,7 @@ def ex_10 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("pronoun", "simple"), ("phenomenon", "cross-sentential anaphora")]
-    comment := "Syntactic scope anaphora: the indefinite's local variable is closed by the discourse-level summation over the world."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Syntactic scope anaphora: the indefinite's local variable is closed by the discourse-level summation over the world." }
 
 def ex_15 : LinguisticExample :=
   { id := "abneykeshet2025_15"
@@ -49,9 +47,7 @@ def ex_15 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("operator", "every"), ("pronoun", "donkey")]
-    comment := "Resumptive scope anaphora: the restriction label repeated in the nuclear scope closes the donkey variable for both indefinite and pronoun."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Resumptive scope anaphora: the restriction label repeated in the nuclear scope closes the donkey variable for both indefinite and pronoun." }
 
 def ex_16 : LinguisticExample :=
   { id := "abneykeshet2025_16"
@@ -67,9 +63,7 @@ def ex_16 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("operator", "most")]
-    comment := "A generalized quantifier as a relation between the summation of the restriction and of the restriction-plus-scope."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A generalized quantifier as a relation between the summation of the restriction and of the restriction-plus-scope." }
 
 def ex_20 : LinguisticExample :=
   { id := "abneykeshet2025_20"
@@ -85,9 +79,7 @@ def ex_20 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("operator", "most"), ("pronoun", "donkey")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_45a : LinguisticExample :=
   { id := "abneykeshet2025_45a"
@@ -103,9 +95,7 @@ def ex_45a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("pronoun", "simple")]
-    comment := "The LF tree and the PIP tree of its meaning have the same shape."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The LF tree and the PIP tree of its meaning have the same shape." }
 
 def ex_47 : LinguisticExample :=
   { id := "abneykeshet2025_47"
@@ -121,9 +111,7 @@ def ex_47 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("operator", "indefinite")]
-    comment := "The tree whose interpretation introduces restricted variables and the operation FX."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The tree whose interpretation introduces restricted variables and the operation FX." }
 
 def ex_66 : LinguisticExample :=
   { id := "abneykeshet2025_66"
@@ -139,9 +127,7 @@ def ex_66 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("operator", "every")]
-    comment := "Quantifier raising inserts two summation operators labeled with the restriction set and the reference set."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Quantifier raising inserts two summation operators labeled with the restriction set and the reference set." }
 
 def ex_80a : LinguisticExample :=
   { id := "abneykeshet2025_80a"
@@ -157,9 +143,7 @@ def ex_80a : LinguisticExample :=
     alternatives := []
     readings := [("them = the girls (the restriction set)", .acceptable)]
     paperFeatures := [("operator", "most"), ("pronoun", "summation"), ("antecedent", "restriction set")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_80b : LinguisticExample :=
   { id := "abneykeshet2025_80b"
@@ -175,9 +159,7 @@ def ex_80b : LinguisticExample :=
     alternatives := []
     readings := [("them = the girls that wrote a paper (the reference set)", .acceptable)]
     paperFeatures := [("operator", "most"), ("pronoun", "summation"), ("antecedent", "reference set")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_80c : LinguisticExample :=
   { id := "abneykeshet2025_80c"
@@ -193,9 +175,7 @@ def ex_80c : LinguisticExample :=
     alternatives := []
     readings := [("they = the individuals that wrote a paper (the scope set)", .unacceptable)]
     paperFeatures := [("operator", "most"), ("pronoun", "summation"), ("antecedent", "scope set")]
-    comment := "No DP denotes the simple scope set, so it is not an antecedent."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "No DP denotes the simple scope set, so it is not an antecedent." }
 
 def ex_98 : LinguisticExample :=
   { id := "abneykeshet2025_98"
@@ -211,9 +191,7 @@ def ex_98 : LinguisticExample :=
     alternatives := []
     readings := [("they = the papers the girls wrote", .acceptable)]
     paperFeatures := [("operator", "every"), ("pronoun", "summation")]
-    comment := "The summation pronoun sums the paper variable of the reference-set label, presupposing plurality."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The summation pronoun sums the paper variable of the reference-set label, presupposing plurality." }
 
 def ex_101 : LinguisticExample :=
   { id := "abneykeshet2025_101"
@@ -229,9 +207,7 @@ def ex_101 : LinguisticExample :=
     alternatives := []
     readings := [("they = the dogs that bark", .acceptable)]
     paperFeatures := [("operator", "most"), ("pronoun", "summation")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_105 : LinguisticExample :=
   { id := "abneykeshet2025_105"
@@ -247,9 +223,7 @@ def ex_105 : LinguisticExample :=
     alternatives := []
     readings := [("distributive: each student sent in their own two papers", .acceptable), ("collective over the papers: each student sent all six papers", .acceptable)]
     paperFeatures := [("operator", "each"), ("pronoun", "summation")]
-    comment := "The collective reading, unavailable in Dynamic Plural Logic, is the summation pronoun over the papers written."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The collective reading, unavailable in Dynamic Plural Logic, is the summation pronoun over the papers written." }
 
 def ex_106 : LinguisticExample :=
   { id := "abneykeshet2025_106"
@@ -265,9 +239,7 @@ def ex_106 : LinguisticExample :=
     alternatives := []
     readings := [("collective: all the boys, all the balloons", .marginal)]
     paperFeatures := [("operator", "every"), ("pronoun", "summation")]
-    comment := "The collective reading is available but dispreferred without pragmatic support for the boys gathering."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The collective reading is available but dispreferred without pragmatic support for the boys gathering." }
 
 def ex_107a : LinguisticExample :=
   { id := "abneykeshet2025_107a"
@@ -283,9 +255,7 @@ def ex_107a : LinguisticExample :=
     alternatives := []
     readings := [("collective: all the children", .acceptable)]
     paperFeatures := [("operator", "every"), ("pronoun", "summation")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_107b : LinguisticExample :=
   { id := "abneykeshet2025_107b"
@@ -301,9 +271,7 @@ def ex_107b : LinguisticExample :=
     alternatives := []
     readings := [("collective: all the drinks", .acceptable)]
     paperFeatures := [("operator", "everyone"), ("pronoun", "summation")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_108 : LinguisticExample :=
   { id := "abneykeshet2025_108"
@@ -319,9 +287,7 @@ def ex_108 : LinguisticExample :=
     alternatives := [("Some girls were having lunch in the cafeteria. They waved to some other girls having lunch there, too.", .acceptable)]
     readings := []
     paperFeatures := [("operator", "some"), ("pronoun", "simple")]
-    comment := "A simple pronoun to a weak indefinite is not exhaustive: other lunching girls may be mentioned."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A simple pronoun to a weak indefinite is not exhaustive: other lunching girls may be mentioned." }
 
 def ex_109 : LinguisticExample :=
   { id := "abneykeshet2025_109"
@@ -337,9 +303,7 @@ def ex_109 : LinguisticExample :=
     alternatives := [("Most girls were having lunch in the cafeteria. They waved to some other girls having lunch there, too.", .unacceptable)]
     readings := []
     paperFeatures := [("operator", "most"), ("pronoun", "summation")]
-    comment := "A summation pronoun is exhaustive: it denotes all the girls lunching, so 'other girls' lunching is infelicitous."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A summation pronoun is exhaustive: it denotes all the girls lunching, so 'other girls' lunching is infelicitous." }
 
 def ex_110 : LinguisticExample :=
   { id := "abneykeshet2025_110"
@@ -355,9 +319,7 @@ def ex_110 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("pronoun", "paycheck")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_111 : LinguisticExample :=
   { id := "abneykeshet2025_111"
@@ -373,9 +335,7 @@ def ex_111 : LinguisticExample :=
     alternatives := []
     readings := [("it = the diorama made by each of the few", .acceptable)]
     paperFeatures := [("operator", "almost every"), ("pronoun", "paycheck")]
-    comment := "The antecedent label contains the free variable of the girl, rebound by 'few'; the pronoun refers to dioramas not mentioned before."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The antecedent label contains the free variable of the girl, rebound by 'few'; the pronoun refers to dioramas not mentioned before." }
 
 def ex_113 : LinguisticExample :=
   { id := "abneykeshet2025_113"
@@ -391,9 +351,7 @@ def ex_113 : LinguisticExample :=
     alternatives := []
     readings := [("weak: one umbrella per owner suffices", .acceptable)]
     paperFeatures := [("operator", "everyone"), ("pronoun", "donkey")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_114 : LinguisticExample :=
   { id := "abneykeshet2025_114"
@@ -409,9 +367,7 @@ def ex_114 : LinguisticExample :=
     alternatives := []
     readings := [("they = all the umbrellas actually brought, not one per owner", .acceptable)]
     paperFeatures := [("operator", "everyone"), ("pronoun", "summation")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_115 : LinguisticExample :=
   { id := "abneykeshet2025_115"
@@ -427,9 +383,7 @@ def ex_115 : LinguisticExample :=
     alternatives := []
     readings := [("strong: each locked up all their valuables", .acceptable)]
     paperFeatures := [("operator", "everyone"), ("pronoun", "donkey")]
-    comment := "The strong reading with the indefinite as a generalized quantifier and 'it' a summation pronoun over the valuables brought."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The strong reading with the indefinite as a generalized quantifier and 'it' a summation pronoun over the valuables brought." }
 
 def ex_117a : LinguisticExample :=
   { id := "abneykeshet2025_117a"
@@ -445,9 +399,7 @@ def ex_117a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("operator", "most"), ("pronoun", "donkey"), ("phenomenon", "quantificational subordination")]
-    comment := "The indefinite under the first quantifier antecedes a pronoun in the nuclear scope of the subordinate quantifier."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The indefinite under the first quantifier antecedes a pronoun in the nuclear scope of the subordinate quantifier." }
 
 def ex_117b : LinguisticExample :=
   { id := "abneykeshet2025_117b"
@@ -463,9 +415,7 @@ def ex_117b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("operator", "every"), ("pronoun", "donkey"), ("phenomenon", "quantificational subordination")]
-    comment := "The novel observation: the pronoun may also appear in the subordinate quantifier's restriction."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The novel observation: the pronoun may also appear in the subordinate quantifier's restriction." }
 
 def ex_130a : LinguisticExample :=
   { id := "abneykeshet2025_130a"
@@ -481,9 +431,7 @@ def ex_130a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("operator", "must"), ("pronoun", "donkey")]
-    comment := "A conditional donkey sentence: the modal's nuclear scope is subordinate to its if-clause restriction."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A conditional donkey sentence: the modal's nuclear scope is subordinate to its if-clause restriction." }
 
 def ex_131a : LinguisticExample :=
   { id := "abneykeshet2025_131a"
@@ -499,9 +447,7 @@ def ex_131a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("operator", "might")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_132 : LinguisticExample :=
   { id := "abneykeshet2025_132"
@@ -517,9 +463,7 @@ def ex_132 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("operator", "might"), ("pronoun", "donkey"), ("phenomenon", "modal subordination")]
-    comment := "The second modal's restriction is anaphoric to the first's nuclear-scope label."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The second modal's restriction is anaphoric to the first's nuclear-scope label." }
 
 def ex_134 : LinguisticExample :=
   { id := "abneykeshet2025_134"
@@ -535,9 +479,7 @@ def ex_134 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("operator", "negation")]
-    comment := "Negation existentially closes the indefinite: summation over worlds."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Negation existentially closes the indefinite: summation over worlds." }
 
 def ex_135 : LinguisticExample :=
   { id := "abneykeshet2025_135"
@@ -553,9 +495,7 @@ def ex_135 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("operator", "negation"), ("phenomenon", "modal subordination")]
-    comment := "Negation antecedes modal subordination."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Negation antecedes modal subordination." }
 
 def ex_138a : LinguisticExample :=
   { id := "abneykeshet2025_138a"
@@ -571,9 +511,7 @@ def ex_138a : LinguisticExample :=
     alternatives := []
     readings := [("it = the car he owns", .acceptable)]
     paperFeatures := [("operator", "negation"), ("pronoun", "summation")]
-    comment := "Anaphora out of double negation: the label embedded under two negations is accessible to a summation pronoun."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Anaphora out of double negation: the label embedded under two negations is accessible to a summation pronoun." }
 
 def ex_139 : LinguisticExample :=
   { id := "abneykeshet2025_139"
@@ -589,9 +527,7 @@ def ex_139 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("operator", "negation"), ("pronoun", "summation")]
-    comment := "The set of his cars is empty, so the pronoun's singular presupposition fails."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The set of his cars is empty, so the pronoun's singular presupposition fails." }
 
 def ex_140 : LinguisticExample :=
   { id := "abneykeshet2025_140"
@@ -607,9 +543,7 @@ def ex_140 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("operator", "negation"), ("pronoun", "summation")]
-    comment := "Odd through the difficulty of accommodating the gender and number presuppositions of 'he', not through inaccessibility of the label."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Odd through the difficulty of accommodating the gender and number presuppositions of 'he', not through inaccessibility of the label." }
 
 def ex_141a : LinguisticExample :=
   { id := "abneykeshet2025_141a"
@@ -625,9 +559,7 @@ def ex_141a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("operator", "negation"), ("pronoun", "summation")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_141b : LinguisticExample :=
   { id := "abneykeshet2025_141b"
@@ -643,9 +575,7 @@ def ex_141b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("operator", "negation"), ("pronoun", "summation")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_142 : LinguisticExample :=
   { id := "abneykeshet2025_142"
@@ -661,9 +591,7 @@ def ex_142 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("operator", "disjunction"), ("pronoun", "summation")]
-    comment := "Attributed to Barbara Partee; felicity reduces to: if there is a bathroom here, it is unique."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Attributed to Barbara Partee; felicity reduces to: if there is a bathroom here, it is unique." }
 
 def ex_146a : LinguisticExample :=
   { id := "abneykeshet2025_146a"
@@ -679,9 +607,7 @@ def ex_146a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("operator", "every"), ("phenomenon", "presupposition projection")]
-    comment := "No presupposition as a whole: the nuclear scope includes the restriction, which satisfies the pronoun's presupposition pointwise."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "No presupposition as a whole: the nuclear scope includes the restriction, which satisfies the pronoun's presupposition pointwise." }
 
 def ex_146b : LinguisticExample :=
   { id := "abneykeshet2025_146b"
@@ -697,9 +623,7 @@ def ex_146b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("operator", "some"), ("phenomenon", "presupposition projection")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_146c : LinguisticExample :=
   { id := "abneykeshet2025_146c"
@@ -715,9 +639,7 @@ def ex_146c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("operator", "most"), ("phenomenon", "presupposition projection")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_147 : LinguisticExample :=
   { id := "abneykeshet2025_147"
@@ -733,9 +655,7 @@ def ex_147 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("operator", "believe"), ("phenomenon", "presupposition projection")]
-    comment := "The presupposition of 'too' under 'wishes' is satisfied by the label of the belief report, as in modal subordination."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The presupposition of 'too' under 'wishes' is satisfied by the label of the belief report, as in modal subordination." }
 
 def ex_150a : LinguisticExample :=
   { id := "abneykeshet2025_150a"
@@ -751,9 +671,7 @@ def ex_150a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("operator", "most"), ("phenomenon", "presupposition projection"), ("phenomenon", "quantificational subordination")]
-    comment := "Presupposition satisfaction across quantificational subordination: the first sentence's reference-set label is the second quantifier's restriction."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Presupposition satisfaction across quantificational subordination: the first sentence's reference-set label is the second quantifier's restriction." }
 
 def ex_150b : LinguisticExample :=
   { id := "abneykeshet2025_150b"
@@ -769,9 +687,7 @@ def ex_150b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("operator", "some"), ("phenomenon", "presupposition projection"), ("phenomenon", "quantificational subordination")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_150c : LinguisticExample :=
   { id := "abneykeshet2025_150c"
@@ -787,9 +703,7 @@ def ex_150c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("operator", "most"), ("phenomenon", "presupposition projection"), ("phenomenon", "quantificational subordination")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def all : List LinguisticExample := [ex_10, ex_15, ex_16, ex_20, ex_45a, ex_47, ex_66, ex_80a, ex_80b, ex_80c, ex_98, ex_101, ex_105, ex_106, ex_107a, ex_107b, ex_108, ex_109, ex_110, ex_111, ex_113, ex_114, ex_115, ex_117a, ex_117b, ex_130a, ex_131a, ex_132, ex_134, ex_135, ex_138a, ex_139, ex_140, ex_141a, ex_141b, ex_142, ex_146a, ex_146b, ex_146c, ex_147, ex_150a, ex_150b, ex_150c]
 

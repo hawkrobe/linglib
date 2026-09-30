@@ -36,8 +36,7 @@
         "ok"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "jenks2018_10b",
@@ -80,8 +79,7 @@
         "bad"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "jenks2018_11a",
@@ -120,8 +118,7 @@
         "ok"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "jenks2018_11b",
@@ -160,8 +157,7 @@
         "ok"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "jenks2018_14a",
@@ -200,8 +196,7 @@
         "ok"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "jenks2018_14b",
@@ -244,8 +239,7 @@
         "ok"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "jenks2018_15b",
@@ -288,8 +282,7 @@
         "ok"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "jenks2018_15c",
@@ -332,8 +325,7 @@
         "ok"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "jenks2018_15d",
@@ -376,8 +368,7 @@
         "ok"
       ]
     ],
-    "comment": "Most speakers prefer the demonstrative.",
-    "lgrConformance": ""
+    "comment": "Most speakers prefer the demonstrative."
   },
   {
     "id": "jenks2018_15e",
@@ -420,8 +411,7 @@
         "ok"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "jenks2018_16b",
@@ -460,8 +450,7 @@
         "ok"
       ]
     ],
-    "comment": "Anaphoric reference de dicto to the woman of (16a).",
-    "lgrConformance": ""
+    "comment": "Anaphoric reference de dicto to the woman of (16a)."
   },
   {
     "id": "jenks2018_16c",
@@ -500,8 +489,7 @@
         "bad"
       ]
     ],
-    "comment": "The bare noun receives only an indefinite interpretation.",
-    "lgrConformance": ""
+    "comment": "The bare noun receives only an indefinite interpretation."
   },
   {
     "id": "jenks2018_18b",
@@ -540,8 +528,7 @@
         "ok"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "jenks2018_19",
@@ -580,8 +567,7 @@
         "bad"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "jenks2018_20",
@@ -624,8 +610,7 @@
         "ok"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "jenks2018_49",
@@ -668,8 +653,7 @@
         "bad"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "jenks2018_51B",
@@ -712,8 +696,7 @@
         "ok"
       ]
     ],
-    "comment": "The mouse, not the cat, is the topic of A's question.",
-    "lgrConformance": ""
+    "comment": "The mouse, not the cat, is the topic of A's question."
   },
   {
     "id": "jenks2018_51Bp",
@@ -756,8 +739,7 @@
         "ok"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "jenks2018_52b",
@@ -800,8 +782,7 @@
         "ok"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "jenks2018_53",
@@ -840,8 +821,7 @@
         "ok"
       ]
     ],
-    "comment": "The contrastive topic marker ne makes the topic a continuing one.",
-    "lgrConformance": ""
+    "comment": "The contrastive topic marker ne makes the topic a continuing one."
   },
   {
     "id": "jenks2018_54a",
@@ -880,8 +860,7 @@
         "ok"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "jenks2018_54b",
@@ -920,8 +899,7 @@
         "ok"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "jenks2018_55b",
@@ -960,8 +938,7 @@
         "ok"
       ]
     ],
-    "comment": "The demonstrative go2 is infelicitous here; the marked form is [Clf-N].",
-    "lgrConformance": ""
+    "comment": "The demonstrative go2 is infelicitous here; the marked form is [Clf-N]."
   },
   {
     "id": "jenks2018_56",
@@ -1000,7 +977,6 @@
         "ok"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   }
 ]

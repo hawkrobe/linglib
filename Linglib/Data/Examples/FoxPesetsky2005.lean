@@ -31,9 +31,7 @@ def ex19a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("sketch", "verbToC"), ("intervener", "none")]
-    comment := "Verb-second: the finite verb moves to C and the pronoun shifts."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Verb-second: the finite verb moves to C and the pronoun shifts." }
 
 def ex19b : LinguisticExample :=
   { id := "foxpesetsky2005_ex19b"
@@ -49,9 +47,7 @@ def ex19b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("sketch", "embedded"), ("intervener", "none")]
-    comment := "Embedded clause: the complementizer blocks verb movement."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Embedded clause: the complementizer blocks verb movement." }
 
 def ex19c : LinguisticExample :=
   { id := "foxpesetsky2005_ex19c"
@@ -67,9 +63,7 @@ def ex19c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("sketch", "auxiliary"), ("intervener", "none")]
-    comment := "The auxiliary moves to C and the participle stays in VP."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The auxiliary moves to C and the participle stays in VP." }
 
 def ex23a : LinguisticExample :=
   { id := "foxpesetsky2005_ex23a"
@@ -85,9 +79,7 @@ def ex23a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("sketch", "intervener"), ("intervener", "firstObject")]
-    comment := "The first object precedes the shifted object in VP."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The first object precedes the shifted object in VP." }
 
 def ex23b : LinguisticExample :=
   { id := "foxpesetsky2005_ex23b"
@@ -103,9 +95,7 @@ def ex23b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("sketch", "intervener"), ("intervener", "particle")]
-    comment := "The particle precedes the shifted object in VP."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The particle precedes the shifted object in VP." }
 
 def ex25a : LinguisticExample :=
   { id := "foxpesetsky2005_ex25a"
@@ -121,9 +111,7 @@ def ex25a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("sketch", "intervenerFronted"), ("intervener", "firstObject")]
-    comment := "The first object is wh-moved through the VP edge."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The first object is wh-moved through the VP edge." }
 
 def ex25b : LinguisticExample :=
   { id := "foxpesetsky2005_ex25b"
@@ -139,9 +127,7 @@ def ex25b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("sketch", "intervenerFronted"), ("intervener", "particle")]
-    comment := "The particle is topicalized through the VP edge."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The particle is topicalized through the VP edge." }
 
 def all : List LinguisticExample := [ex19a, ex19b, ex19c, ex23a, ex23b, ex25a, ex25b]
 

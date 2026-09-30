@@ -31,9 +31,7 @@ def ex_2a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "regret"), ("diagnostic", "projection"), ("environment", "atomic"), ("projective", "yes"), ("person", "3")]
-    comment := "Presupposes (3), Sheila is no longer young."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Presupposes (3), Sheila is no longer young." }
 
 def ex_2b : LinguisticExample :=
   { id := "karttunen1971b_2b"
@@ -49,9 +47,7 @@ def ex_2b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "regret"), ("diagnostic", "projection"), ("environment", "negation"), ("projective", "yes"), ("person", "3")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_2c : LinguisticExample :=
   { id := "karttunen1971b_2c"
@@ -67,9 +63,7 @@ def ex_2c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "regret"), ("diagnostic", "projection"), ("environment", "question"), ("projective", "yes"), ("person", "3")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_22a : LinguisticExample :=
   { id := "karttunen1971b_22a"
@@ -85,9 +79,7 @@ def ex_22a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "regret"), ("diagnostic", "projection"), ("environment", "negation"), ("projective", "yes"), ("person", "3")]
-    comment := "All of (22) presuppose that John had not told the truth."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "All of (22) presuppose that John had not told the truth." }
 
 def ex_22b : LinguisticExample :=
   { id := "karttunen1971b_22b"
@@ -103,9 +95,7 @@ def ex_22b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "realize"), ("diagnostic", "projection"), ("environment", "negation"), ("projective", "yes"), ("person", "3")]
-    comment := "All of (22) presuppose that John had not told the truth."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "All of (22) presuppose that John had not told the truth." }
 
 def ex_22c : LinguisticExample :=
   { id := "karttunen1971b_22c"
@@ -121,9 +111,7 @@ def ex_22c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "discover"), ("diagnostic", "projection"), ("environment", "negation"), ("projective", "yes"), ("person", "3")]
-    comment := "All of (22) presuppose that John had not told the truth."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "All of (22) presuppose that John had not told the truth." }
 
 def ex_23 : LinguisticExample :=
   { id := "karttunen1971b_23"
@@ -139,9 +127,7 @@ def ex_23 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "regret"), ("diagnostic", "denial"), ("environment", "negation"), ("projective", "no"), ("person", "3")]
-    comment := "The one circumstance in which (22) carries no commitment; footnote 7 analyzes it as 'it is not true that', the external negation of three-valued logic."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The one circumstance in which (22) carries no commitment; footnote 7 analyzes it as 'it is not true that', the external negation of three-valued logic." }
 
 def ex_24a : LinguisticExample :=
   { id := "karttunen1971b_24a"
@@ -157,9 +143,7 @@ def ex_24a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "regret"), ("diagnostic", "projection"), ("environment", "question"), ("projective", "yes"), ("person", "2")]
-    comment := "Most informants agree the question commits the speaker to the view that the addressee has not told the truth."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Most informants agree the question commits the speaker to the view that the addressee has not told the truth." }
 
 def ex_24b : LinguisticExample :=
   { id := "karttunen1971b_24b"
@@ -175,9 +159,7 @@ def ex_24b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "realize"), ("diagnostic", "projection"), ("environment", "question"), ("person", "2")]
-    comment := "'Possibly also with realize' the question commits the speaker; no judgment is recorded."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "'Possibly also with realize' the question commits the speaker; no judgment is recorded." }
 
 def ex_24c : LinguisticExample :=
   { id := "karttunen1971b_24c"
@@ -193,9 +175,7 @@ def ex_24c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "discover"), ("diagnostic", "projection"), ("environment", "question"), ("projective", "no"), ("person", "2")]
-    comment := "Can also be understood as a sincere request for information: both a factive and a non-factive interpretation."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Can also be understood as a sincere request for information: both a factive and a non-factive interpretation." }
 
 def ex_25a : LinguisticExample :=
   { id := "karttunen1971b_25a"
@@ -211,9 +191,7 @@ def ex_25a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "regret"), ("diagnostic", "projection"), ("environment", "conditional antecedent"), ("projective", "yes"), ("person", "1")]
-    comment := "The first clause contains an admission that the complement is true."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The first clause contains an admission that the complement is true." }
 
 def ex_25b : LinguisticExample :=
   { id := "karttunen1971b_25b"
@@ -229,9 +207,7 @@ def ex_25b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "realize"), ("diagnostic", "projection"), ("environment", "conditional antecedent"), ("projective", "no"), ("person", "1")]
-    comment := "One only admits that there is a possibility that one has not told the truth."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "One only admits that there is a possibility that one has not told the truth." }
 
 def ex_25c : LinguisticExample :=
   { id := "karttunen1971b_25c"
@@ -247,9 +223,7 @@ def ex_25c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "discover"), ("diagnostic", "projection"), ("environment", "conditional antecedent"), ("projective", "no"), ("person", "1")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_26a : LinguisticExample :=
   { id := "karttunen1971b_26a"
@@ -265,9 +239,7 @@ def ex_26a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "regret"), ("diagnostic", "projection"), ("environment", "epistemic modal"), ("projective", "yes"), ("person", "1")]
-    comment := "What (25a) conversationally implies; by the stronger postulates (11') one can infer the complement."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "What (25a) conversationally implies; by the stronger postulates (11') one can infer the complement." }
 
 def ex_26b : LinguisticExample :=
   { id := "karttunen1971b_26b"
@@ -283,9 +255,7 @@ def ex_26b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "realize"), ("diagnostic", "projection"), ("environment", "epistemic modal"), ("projective", "no"), ("person", "1")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_26c : LinguisticExample :=
   { id := "karttunen1971b_26c"
@@ -301,9 +271,7 @@ def ex_26c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "discover"), ("diagnostic", "projection"), ("environment", "epistemic modal"), ("projective", "no"), ("person", "1")]
-    comment := "From the fact that it is possible that I may discover something I cannot conclude that it is the case."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "From the fact that it is possible that I may discover something I cannot conclude that it is the case." }
 
 def all : List LinguisticExample := [ex_2a, ex_2b, ex_2c, ex_22a, ex_22b, ex_22c, ex_23, ex_24a, ex_24b, ex_24c, ex_25a, ex_25b, ex_25c, ex_26a, ex_26b, ex_26c]
 

@@ -31,9 +31,7 @@ def ex_1 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("pattern", "nominative"), ("clause", "intransitive")]
-    comment := "Rude 1982, (19)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Rude 1982, (19)." }
 
 def ex_2 : LinguisticExample :=
   { id := "woolford1997_2"
@@ -49,9 +47,7 @@ def ex_2 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("pattern", "nominative-accusative"), ("clause", "transitive")]
-    comment := "Rude 1988, (31). Neither case is overt; only the nominative triggers agreement."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Rude 1988, (31). Neither case is overt; only the nominative triggers agreement." }
 
 def ex_3 : LinguisticExample :=
   { id := "woolford1997_3"
@@ -67,9 +63,7 @@ def ex_3 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("pattern", "ergative-objective"), ("clause", "transitive")]
-    comment := "Rude 1988, (30). The ergative subject triggers subject agreement and the objective object triggers object agreement."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Rude 1988, (30). The ergative subject triggers subject agreement and the objective object triggers object agreement." }
 
 def ex_4 : LinguisticExample :=
   { id := "woolford1997_4"
@@ -85,9 +79,7 @@ def ex_4 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("pattern", "nominative-accusative-accusative"), ("clause", "ditransitive")]
-    comment := "Rude, personal communication. Neither object triggers agreement."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Rude, personal communication. Neither object triggers agreement." }
 
 def ex_5 : LinguisticExample :=
   { id := "woolford1997_5"
@@ -103,9 +95,7 @@ def ex_5 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("pattern", "ergative-objective-accusative"), ("clause", "ditransitive")]
-    comment := "Rude, personal communication. The goal is objective and triggers object agreement; the theme is accusative."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Rude, personal communication. The goal is objective and triggers object agreement; the theme is accusative." }
 
 def ex_6 : LinguisticExample :=
   { id := "woolford1997_6"
@@ -121,9 +111,7 @@ def ex_6 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("pattern", "ergative-dative-objective"), ("clause", "ditransitive")]
-    comment := "Rude, personal communication. With a dative goal the theme gets objective case."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Rude, personal communication. With a dative goal the theme gets objective case." }
 
 def ex_7 : LinguisticExample :=
   { id := "woolford1997_7"
@@ -139,9 +127,7 @@ def ex_7 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("pattern", "ergative-objective-accusative"), ("clause", "ditransitive")]
-    comment := "Blake 1982, (47). Only the goal triggers object agreement; the case labels on the unmarked forms are Woolford's."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Blake 1982, (47). Only the goal triggers object agreement; the case labels on the unmarked forms are Woolford's." }
 
 def all : List LinguisticExample := [ex_1, ex_2, ex_3, ex_4, ex_5, ex_6, ex_7]
 

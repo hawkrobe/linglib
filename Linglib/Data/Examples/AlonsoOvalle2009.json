@@ -38,8 +38,7 @@
       ["construction", "correlative"],
       ["number", "singular"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovalle2009_15b",
@@ -60,8 +59,7 @@
       ["construction", "correlative"],
       ["number", "plural"]
     ],
-    "comment": "Repeated as (18) and (28a).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Repeated as (18) and (28a)."
   },
   {
     "id": "alonsoovalle2009_15c",
@@ -82,8 +80,7 @@
       ["construction", "correlative"],
       ["number", "plural"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovalle2009_29",

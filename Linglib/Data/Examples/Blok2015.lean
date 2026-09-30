@@ -31,9 +31,7 @@ def ex_3a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("directional", "-"), ("test", "ifAny"), ("numeral", "3")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_3b : LinguisticExample :=
   { id := "blok2015_3b"
@@ -49,9 +47,7 @@ def ex_3b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("directional", "+"), ("test", "ifAny"), ("numeral", "3")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_4a : LinguisticExample :=
   { id := "blok2015_4a"
@@ -67,9 +63,7 @@ def ex_4a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("directional", "-"), ("test", "butNone"), ("numeral", "10")]
-    comment := "Provided by a reviewer."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Provided by a reviewer." }
 
 def ex_4b : LinguisticExample :=
   { id := "blok2015_4b"
@@ -85,9 +79,7 @@ def ex_4b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("directional", "+"), ("test", "butNone"), ("numeral", "10")]
-    comment := "Provided by a reviewer."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Provided by a reviewer." }
 
 def ex_7a : LinguisticExample :=
   { id := "blok2015_7a"
@@ -103,9 +95,7 @@ def ex_7a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("directional", "-"), ("test", "evenMore"), ("numeral", "10")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_7b : LinguisticExample :=
   { id := "blok2015_7b"
@@ -121,9 +111,7 @@ def ex_7b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("directional", "+"), ("test", "evenMore"), ("numeral", "10")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_11a : LinguisticExample :=
   { id := "blok2015_11a"
@@ -139,9 +127,7 @@ def ex_11a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("directional", "-"), ("test", "noMore"), ("numeral", "10")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_11b : LinguisticExample :=
   { id := "blok2015_11b"
@@ -157,9 +143,7 @@ def ex_11b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("directional", "+"), ("test", "noMore"), ("numeral", "10")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_22a : LinguisticExample :=
   { id := "blok2015_22a"
@@ -175,9 +159,7 @@ def ex_22a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("directional", "-"), ("test", "range"), ("numeral", "10")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_22b : LinguisticExample :=
   { id := "blok2015_22b"
@@ -193,9 +175,7 @@ def ex_22b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("directional", "-"), ("test", "range"), ("numeral", "1")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_23a : LinguisticExample :=
   { id := "blok2015_23a"
@@ -211,9 +191,7 @@ def ex_23a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("directional", "+"), ("test", "range"), ("numeral", "10")]
-    comment := "Cited in the source from Nouwen 2008."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Cited in the source from Nouwen 2008." }
 
 def ex_23b : LinguisticExample :=
   { id := "blok2015_23b"
@@ -229,9 +207,7 @@ def ex_23b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("directional", "+"), ("test", "range"), ("numeral", "1")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_29 : LinguisticExample :=
   { id := "blok2015_29"
@@ -247,9 +223,7 @@ def ex_29 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("directional", "-"), ("test", "range"), ("numeral", "0")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_34a : LinguisticExample :=
   { id := "blok2015_34a"
@@ -265,9 +239,7 @@ def ex_34a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("directional", "-"), ("test", "npi"), ("numeral", "5")]
-    comment := "The modal hoeven is a negative polarity item."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "The modal hoeven is a negative polarity item." }
 
 def ex_34b : LinguisticExample :=
   { id := "blok2015_34b"
@@ -283,9 +255,7 @@ def ex_34b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("directional", "+"), ("test", "npi"), ("numeral", "5")]
-    comment := "The modal hoeven is a negative polarity item."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "The modal hoeven is a negative polarity item." }
 
 def all : List LinguisticExample := [ex_3a, ex_3b, ex_4a, ex_4b, ex_7a, ex_7b, ex_11a, ex_11b, ex_22a, ex_22b, ex_23a, ex_23b, ex_29, ex_34a, ex_34b]
 

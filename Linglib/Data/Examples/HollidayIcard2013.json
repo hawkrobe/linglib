@@ -28,8 +28,7 @@
         "(φ ∨ χ) ⩾ (ψ ∨ χ)"
       ]
     ],
-    "comment": "Intuitively equivalent to (2): the motivation for qualitative additivity, the axiom A of the logic FA.",
-    "lgrConformance": ""
+    "comment": "Intuitively equivalent to (2): the motivation for qualitative additivity, the axiom A of the logic FA."
   },
   {
     "id": "hollidayicard2013_ex2",
@@ -60,8 +59,7 @@
         "φ ⩾ ψ"
       ]
     ],
-    "comment": "The shared disjunct Qatar cancels; a preliminary Mechanical Turk study found unanimous agreement with the equivalence (footnote 14).",
-    "lgrConformance": ""
+    "comment": "The shared disjunct Qatar cancels; a preliminary Mechanical Turk study found unanimous agreement with the equivalence (footnote 14)."
   },
   {
     "id": "hollidayicard2013_ex3",
@@ -92,8 +90,7 @@
         "{a, e} ≻ {c, d}"
       ]
     ],
-    "comment": "One of the four Kraft–Pratt–Seidenberg comparisons: jointly consistent with FA but with no finitely additive measure. The paper doubts that speakers find the combination inconsistent.",
-    "lgrConformance": ""
+    "comment": "One of the four Kraft–Pratt–Seidenberg comparisons: jointly consistent with FA but with no finitely additive measure. The paper doubts that speakers find the combination inconsistent."
   },
   {
     "id": "hollidayicard2013_ex4",
@@ -124,8 +121,7 @@
         "{b, c} ≻ {a, d}"
       ]
     ],
-    "comment": "One of the four Kraft–Pratt–Seidenberg comparisons: jointly consistent with FA but with no finitely additive measure. The paper doubts that speakers find the combination inconsistent.",
-    "lgrConformance": ""
+    "comment": "One of the four Kraft–Pratt–Seidenberg comparisons: jointly consistent with FA but with no finitely additive measure. The paper doubts that speakers find the combination inconsistent."
   },
   {
     "id": "hollidayicard2013_ex5",
@@ -156,8 +152,7 @@
         "{d} ≻ {a, c}"
       ]
     ],
-    "comment": "One of the four Kraft–Pratt–Seidenberg comparisons: jointly consistent with FA but with no finitely additive measure. The paper doubts that speakers find the combination inconsistent.",
-    "lgrConformance": ""
+    "comment": "One of the four Kraft–Pratt–Seidenberg comparisons: jointly consistent with FA but with no finitely additive measure. The paper doubts that speakers find the combination inconsistent."
   },
   {
     "id": "hollidayicard2013_ex6",
@@ -188,7 +183,6 @@
         "{a, c, d} ≻ {b, e}"
       ]
     ],
-    "comment": "One of the four Kraft–Pratt–Seidenberg comparisons: jointly consistent with FA but with no finitely additive measure. The paper doubts that speakers find the combination inconsistent.",
-    "lgrConformance": ""
+    "comment": "One of the four Kraft–Pratt–Seidenberg comparisons: jointly consistent with FA but with no finitely additive measure. The paper doubts that speakers find the combination inconsistent."
   }
 ]

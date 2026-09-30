@@ -19,8 +19,7 @@
       ["category", "v"],
       ["gloss", "learn"]
     ],
-    "comment": "Chapter 2 (3): the seven verbal patterns.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Chapter 2 (3): the seven verbal patterns."
   },
   {
     "id": "arad2005_3_nilmad",
@@ -42,8 +41,7 @@
       ["category", "v"],
       ["gloss", "learn (passive)"]
     ],
-    "comment": "Chapter 2 (3): the seven verbal patterns.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Chapter 2 (3): the seven verbal patterns."
   },
   {
     "id": "arad2005_3_siper",
@@ -65,8 +63,7 @@
       ["category", "v"],
       ["gloss", "tell"]
     ],
-    "comment": "Chapter 2 (3): the seven verbal patterns.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Chapter 2 (3): the seven verbal patterns."
   },
   {
     "id": "arad2005_3_supar",
@@ -88,8 +85,7 @@
       ["category", "v"],
       ["gloss", "tell (passive)"]
     ],
-    "comment": "Chapter 2 (3): the seven verbal patterns.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Chapter 2 (3): the seven verbal patterns."
   },
   {
     "id": "arad2005_3_hiqlit",
@@ -111,8 +107,7 @@
       ["category", "v"],
       ["gloss", "record"]
     ],
-    "comment": "Chapter 2 (3): the seven verbal patterns.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Chapter 2 (3): the seven verbal patterns."
   },
   {
     "id": "arad2005_3_huqlat",
@@ -134,8 +129,7 @@
       ["category", "v"],
       ["gloss", "record (passive)"]
     ],
-    "comment": "Chapter 2 (3): the seven verbal patterns.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Chapter 2 (3): the seven verbal patterns."
   },
   {
     "id": "arad2005_3_hitpalel",
@@ -157,8 +151,7 @@
       ["category", "v"],
       ["gloss", "pray"]
     ],
-    "comment": "Chapter 2 (3): the seven verbal patterns.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Chapter 2 (3): the seven verbal patterns."
   },
   {
     "id": "arad2005_6a_nipec",
@@ -180,8 +173,7 @@
       ["category", "v"],
       ["gloss", "shatter"]
     ],
-    "comment": "Chapter 2 (6): active member of the pair.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Chapter 2 (6): active member of the pair."
   },
   {
     "id": "arad2005_6a_nupac",
@@ -203,8 +195,7 @@
       ["category", "v"],
       ["gloss", "shatter (passive)"]
     ],
-    "comment": "Chapter 2 (6): passive member of the pair.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Chapter 2 (6): passive member of the pair."
   },
   {
     "id": "arad2005_6b_xileq",
@@ -226,8 +217,7 @@
       ["category", "v"],
       ["gloss", "divide"]
     ],
-    "comment": "Chapter 2 (6): active member of the pair.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Chapter 2 (6): active member of the pair."
   },
   {
     "id": "arad2005_6b_xulaq",
@@ -249,8 +239,7 @@
       ["category", "v"],
       ["gloss", "divide (passive)"]
     ],
-    "comment": "Chapter 2 (6): passive member of the pair.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Chapter 2 (6): passive member of the pair."
   },
   {
     "id": "arad2005_6c_histir",
@@ -272,8 +261,7 @@
       ["category", "v"],
       ["gloss", "hide"]
     ],
-    "comment": "Chapter 2 (6): active member of the pair.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Chapter 2 (6): active member of the pair."
   },
   {
     "id": "arad2005_6c_hustar",
@@ -295,8 +283,7 @@
       ["category", "v"],
       ["gloss", "hide (passive)"]
     ],
-    "comment": "Chapter 2 (6): passive member of the pair.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Chapter 2 (6): passive member of the pair."
   },
   {
     "id": "arad2005_6d_hifqid",
@@ -318,8 +305,7 @@
       ["category", "v"],
       ["gloss", "deposit"]
     ],
-    "comment": "Chapter 2 (6): active member of the pair.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Chapter 2 (6): active member of the pair."
   },
   {
     "id": "arad2005_6d_hufqad",
@@ -341,8 +327,7 @@
       ["category", "v"],
       ["gloss", "deposit (passive)"]
     ],
-    "comment": "Chapter 2 (6): passive member of the pair.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Chapter 2 (6): passive member of the pair."
   },
   {
     "id": "arad2005_29a_tilfen",
@@ -364,8 +349,7 @@
       ["category", "v"],
       ["gloss", "to telephone"]
     ],
-    "comment": "Chapter 2: verb formed from a noun or adjective by stem modification.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Chapter 2: verb formed from a noun or adjective by stem modification."
   },
   {
     "id": "arad2005_29b_hitmastel",
@@ -387,8 +371,7 @@
       ["category", "v"],
       ["gloss", "to get drunk"]
     ],
-    "comment": "Chapter 2: verb formed from a noun or adjective by stem modification.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Chapter 2: verb formed from a noun or adjective by stem modification."
   },
   {
     "id": "arad2005_29c_xarap",
@@ -410,8 +393,7 @@
       ["category", "v"],
       ["gloss", "to snooze"]
     ],
-    "comment": "Chapter 2: verb formed from a noun or adjective by stem modification.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Chapter 2: verb formed from a noun or adjective by stem modification."
   },
   {
     "id": "arad2005_29d_mixshev",
@@ -433,8 +415,7 @@
       ["category", "v"],
       ["gloss", "to computerize"]
     ],
-    "comment": "Chapter 2: verb formed from a noun or adjective by stem modification.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Chapter 2: verb formed from a noun or adjective by stem modification."
   },
   {
     "id": "arad2005_32a_tixzeq",
@@ -456,8 +437,7 @@
       ["category", "v"],
       ["gloss", "to maintain"]
     ],
-    "comment": "Chapter 2: verb formed from a noun or adjective by stem modification.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Chapter 2: verb formed from a noun or adjective by stem modification."
   },
   {
     "id": "arad2005_32b_misger",
@@ -479,8 +459,7 @@
       ["category", "v"],
       ["gloss", "to frame"]
     ],
-    "comment": "Chapter 2: verb formed from a noun or adjective by stem modification.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Chapter 2: verb formed from a noun or adjective by stem modification."
   },
   {
     "id": "arad2005_32c_cinzer",
@@ -502,8 +481,7 @@
       ["category", "v"],
       ["gloss", "to censor"]
     ],
-    "comment": "Chapter 2: verb formed from a noun or adjective by stem modification.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Chapter 2: verb formed from a noun or adjective by stem modification."
   },
   {
     "id": "arad2005_39a_trinsfer",
@@ -524,8 +502,7 @@
       ["category", "v"],
       ["gloss", "to transfer"]
     ],
-    "comment": "Chapter 7 §7.5, reported from Bat-El 1994: the base's consonant clusters are kept together.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Chapter 7 §7.5, reported from Bat-El 1994: the base's consonant clusters are kept together."
   },
   {
     "id": "arad2005_39b_striptez",
@@ -546,8 +523,7 @@
       ["category", "v"],
       ["gloss", "to perform a striptease"]
     ],
-    "comment": "Chapter 7 §7.5, reported from Bat-El 1994: the base's consonant clusters are kept together.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Chapter 7 §7.5, reported from Bat-El 1994: the base's consonant clusters are kept together."
   },
   {
     "id": "arad2005_39c_sinxren",
@@ -568,8 +544,7 @@
       ["category", "v"],
       ["gloss", "synchronize"]
     ],
-    "comment": "Chapter 7 §7.5, reported from Bat-El 1994: the base's consonant clusters are kept together.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Chapter 7 §7.5, reported from Bat-El 1994: the base's consonant clusters are kept together."
   },
   {
     "id": "arad2005_40a_hiqliq",
@@ -591,8 +566,7 @@
       ["category", "v"],
       ["gloss", "to click"]
     ],
-    "comment": "Chapter 7 §7.5, reported from Bat-El 1994: the base's consonant clusters are kept together.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Chapter 7 §7.5, reported from Bat-El 1994: the base's consonant clusters are kept together."
   },
   {
     "id": "arad2005_40b_hifliq",
@@ -614,8 +588,7 @@
       ["category", "v"],
       ["gloss", "to slap"]
     ],
-    "comment": "Chapter 7 §7.5, reported from Bat-El 1994: the base's consonant clusters are kept together.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Chapter 7 §7.5, reported from Bat-El 1994: the base's consonant clusters are kept together."
   },
   {
     "id": "arad2005_40c_hishpritz",
@@ -637,8 +610,7 @@
       ["category", "v"],
       ["gloss", "to splash"]
     ],
-    "comment": "Chapter 7 §7.5, reported from Bat-El 1994: the base's consonant clusters are kept together.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Chapter 7 §7.5, reported from Bat-El 1994: the base's consonant clusters are kept together."
   },
   {
     "id": "arad2005_6b)fn2_musgar",
@@ -660,8 +632,7 @@
       ["category", "v"],
       ["gloss", "was framed"]
     ],
-    "comment": "Chapter 7, footnote 2: the passive of the denominal verb.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Chapter 7, footnote 2: the passive of the denominal verb."
   },
   {
     "id": "arad2005_Ch7(2a_shemen",
@@ -683,8 +654,7 @@
       ["category", "n"],
       ["gloss", "oil, grease"]
     ],
-    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns."
   },
   {
     "id": "arad2005_Ch7(2b_shamenet",
@@ -706,8 +676,7 @@
       ["category", "n"],
       ["gloss", "cream"]
     ],
-    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns."
   },
   {
     "id": "arad2005_Ch7(2c_shuman",
@@ -729,8 +698,7 @@
       ["category", "n"],
       ["gloss", "fat"]
     ],
-    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns."
   },
   {
     "id": "arad2005_Ch7(2d_shamen",
@@ -752,8 +720,7 @@
       ["category", "adj"],
       ["gloss", "fat"]
     ],
-    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns."
   },
   {
     "id": "arad2005_Ch7(2e_hishmin",
@@ -775,8 +742,7 @@
       ["category", "v"],
       ["gloss", "grow fat, fatten"]
     ],
-    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns."
   },
   {
     "id": "arad2005_Ch7(2f_shimen",
@@ -798,8 +764,7 @@
       ["category", "v"],
       ["gloss", "grease"]
     ],
-    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns."
   },
   {
     "id": "arad2005_Ch7(3a_xashav",
@@ -821,8 +786,7 @@
       ["category", "v"],
       ["gloss", "to think"]
     ],
-    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns."
   },
   {
     "id": "arad2005_Ch7(3b_xishev",
@@ -844,8 +808,7 @@
       ["category", "v"],
       ["gloss", "to calculate"]
     ],
-    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns."
   },
   {
     "id": "arad2005_Ch7(3c_hexshiv",
@@ -867,8 +830,7 @@
       ["category", "v"],
       ["gloss", "to consider"]
     ],
-    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns."
   },
   {
     "id": "arad2005_Ch7(3d_hitxashev",
@@ -890,8 +852,7 @@
       ["category", "v"],
       ["gloss", "to be considerate"]
     ],
-    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns."
   },
   {
     "id": "arad2005_Ch7(3e_maxshev",
@@ -913,8 +874,7 @@
       ["category", "n"],
       ["gloss", "a computer, calculator"]
     ],
-    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns."
   },
   {
     "id": "arad2005_Ch7(3f_maxshava",
@@ -936,8 +896,7 @@
       ["category", "n"],
       ["gloss", "a thought"]
     ],
-    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns."
   },
   {
     "id": "arad2005_Ch7(3g_xashivut",
@@ -959,8 +918,7 @@
       ["category", "n"],
       ["gloss", "importance"]
     ],
-    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns."
   },
   {
     "id": "arad2005_Ch7(3h_xeshbon",
@@ -982,8 +940,7 @@
       ["category", "n"],
       ["gloss", "arithmetic, bill"]
     ],
-    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns."
   },
   {
     "id": "arad2005_Ch7(3i_taxshiv",
@@ -1005,8 +962,7 @@
       ["category", "n"],
       ["gloss", "calculus"]
     ],
-    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns."
   },
   {
     "id": "arad2005_Ch7(4a_qalat",
@@ -1028,8 +984,7 @@
       ["category", "v"],
       ["gloss", "to absorb, receive"]
     ],
-    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns."
   },
   {
     "id": "arad2005_Ch7(4b_hiqlit",
@@ -1051,8 +1006,7 @@
       ["category", "v"],
       ["gloss", "to record"]
     ],
-    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns."
   },
   {
     "id": "arad2005_Ch7(4c_miqlat",
@@ -1074,8 +1028,7 @@
       ["category", "n"],
       ["gloss", "a shelter"]
     ],
-    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns."
   },
   {
     "id": "arad2005_Ch7(4d_maqlet",
@@ -1097,8 +1050,7 @@
       ["category", "n"],
       ["gloss", "a receiver"]
     ],
-    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns."
   },
   {
     "id": "arad2005_Ch7(4e_taqlit",
@@ -1120,8 +1072,7 @@
       ["category", "n"],
       ["gloss", "a record"]
     ],
-    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns."
   },
   {
     "id": "arad2005_Ch7(4f_qaletet",
@@ -1143,8 +1094,7 @@
       ["category", "n"],
       ["gloss", "a cassette"]
     ],
-    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns."
   },
   {
     "id": "arad2005_Ch7(4g_qelet",
@@ -1166,8 +1116,7 @@
       ["category", "n"],
       ["gloss", "input"]
     ],
-    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns."
   },
   {
     "id": "arad2005_Ch7(5a_sagar",
@@ -1189,8 +1138,7 @@
       ["category", "v"],
       ["gloss", "close"]
     ],
-    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns."
   },
   {
     "id": "arad2005_Ch7(5b_hisgir",
@@ -1212,8 +1160,7 @@
       ["category", "v"],
       ["gloss", "extradite"]
     ],
-    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns."
   },
   {
     "id": "arad2005_Ch7(5c_histager",
@@ -1235,8 +1182,7 @@
       ["category", "v"],
       ["gloss", "cocoon oneself"]
     ],
-    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns."
   },
   {
     "id": "arad2005_Ch7(5d_seger",
@@ -1258,8 +1204,7 @@
       ["category", "n"],
       ["gloss", "closure"]
     ],
-    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns."
   },
   {
     "id": "arad2005_Ch7(5e_sograyim",
@@ -1281,8 +1226,7 @@
       ["category", "n"],
       ["gloss", "parentheses"]
     ],
-    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns."
   },
   {
     "id": "arad2005_Ch7(5f_misgeret",
@@ -1304,8 +1248,7 @@
       ["category", "n"],
       ["gloss", "frame"]
     ],
-    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns."
   },
   {
     "id": "arad2005_Ch7(6a_misgeret",
@@ -1327,8 +1270,7 @@
       ["category", "n"],
       ["gloss", "a frame"]
     ],
-    "comment": "Chapter 7 (6): the root-derived noun.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Chapter 7 (6): the root-derived noun."
   },
   {
     "id": "arad2005_Ch7(6b_misger",
@@ -1350,7 +1292,6 @@
       ["category", "v"],
       ["gloss", "to frame"]
     ],
-    "comment": "Chapter 7 (6): the noun-derived verb, with the nominal prefix m- carried over.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Chapter 7 (6): the noun-derived verb, with the nominal prefix m- carried over."
   }
 ]

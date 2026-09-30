@@ -19,8 +19,7 @@
       ["accessible", "yes"],
       ["licensor", "yes"]
     ],
-    "comment": "The shifted direct object is accusative; the accusative is obligatory.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The shifted direct object is accusative; the accusative is obligatory."
   },
   {
     "id": "poole2024_ex15_bare",
@@ -41,8 +40,7 @@
       ["accessible", "yes"],
       ["licensor", "yes"]
     ],
-    "comment": "The shifted direct object cannot stay unmarked.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The shifted direct object cannot stay unmarked."
   },
   {
     "id": "poole2024_ex18",
@@ -63,8 +61,7 @@
       ["accessible", "no"],
       ["licensor", "yes"]
     ],
-    "comment": "The direct object inside VP stays unmarked.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The direct object inside VP stays unmarked."
   },
   {
     "id": "poole2024_ex18_acc",
@@ -86,8 +83,7 @@
       ["accessible", "no"],
       ["licensor", "yes"]
     ],
-    "comment": "Accusative on the unshifted direct object is infelicitous.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Accusative on the unshifted direct object is infelicitous."
   },
   {
     "id": "poole2024_ex20a",
@@ -109,8 +105,7 @@
       ["accessible", "yes"],
       ["licensor", "yes"]
     ],
-    "comment": "The raised embedded subject is accusative in the presence of a matrix DP.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The raised embedded subject is accusative in the presence of a matrix DP."
   },
   {
     "id": "poole2024_ex20b",
@@ -132,8 +127,7 @@
       ["accessible", "yes"],
       ["licensor", "no"]
     ],
-    "comment": "No matrix DP unlocks the accusative.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "No matrix DP unlocks the accusative."
   },
   {
     "id": "poole2024_ex20b_bare",
@@ -154,7 +148,6 @@
       ["acc", "no"],
       ["accessible", "yes"],
       ["licensor", "no"]
-    ],
-    "lgrConformance": "WORD_ALIGNED"
+    ]
   }
 ]

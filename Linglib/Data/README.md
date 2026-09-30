@@ -4,7 +4,7 @@ Three sibling directories at this level:
 
 | Subdir | Purpose | Source format | Generated Lean |
 |---|---|---|---|
-| `Examples/` | Per-paper typed examples (`LinguisticExample` schema) | JSON, one file per paper | Inserted into study files via marker-block generator |
+| `Examples/` | Per-paper typed examples (`LinguisticExample` schema) | JSON, one file per paper | `Examples/{AuthorYear}.lean` |
 | `Experiments/` | Per-paper experimental results (stimulus coding, printed statistics) | JSON, one file per paper | `Experiments/{AuthorYear}.lean` |
 | `Forms/` | Per-paper CLDF word forms (`FormTable`, `ParameterTable`, custom `FormRelationTable`) | JSON, one file per paper | `Forms/{AuthorYear}.lean` |
 | `PHOIBLE/` | Cross-linguistic phonological inventories | CSV (raw under `PHOIBLE/raw/`) | `Inventories/{Lang}.lean` |
@@ -27,14 +27,15 @@ Linglib/Data/
     Schema.lean
     README.md                # JSON format + Leipzig conventions
     {AuthorYear}.json        # per-paper example data
+    {AuthorYear}.lean        # generated from the JSON
 ```
 
 ## Datasets
 
 ### Examples — typed `LinguisticExample` data
 
-See [`Examples/README.md`](Examples/README.md). Per-paper JSON; generator
-inserts into Studies files via marker blocks. JSON (not CSV) because the
+See [`Examples/README.md`](Examples/README.md). Per-paper JSON; the generator
+writes a module per paper that studies import. JSON (not CSV) because the
 schema has nested fields.
 
 ### Forms — CLDF word-level data

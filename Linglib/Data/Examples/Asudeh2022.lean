@@ -31,9 +31,7 @@ def ex_6 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("premises", "likes, alex, blake")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_14 : LinguisticExample :=
   { id := "asudeh2022_14"
@@ -49,9 +47,7 @@ def ex_14 : LinguisticExample :=
     alternatives := []
     readings := [("surface", .acceptable), ("inverse", .acceptable)]
     paperFeatures := [("premises", "love, every, some")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def fig2_finnish : LinguisticExample :=
   { id := "asudeh2022_fig2_finnish"
@@ -67,9 +63,7 @@ def fig2_finnish : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("premises", "speaker, drink, water")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def fig2_english : LinguisticExample :=
   { id := "asudeh2022_fig2_english"
@@ -85,9 +79,7 @@ def fig2_english : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("premises", "speaker, drink, water")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def all : List LinguisticExample := [ex_6, ex_14, fig2_finnish, fig2_english]
 

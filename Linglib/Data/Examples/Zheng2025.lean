@@ -31,9 +31,7 @@ def ex1 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("evidential_bias", "true"), ("epistemic_bias", "true"), ("unexpected_evidence", "true")]
-    comment := "Rhetorical use: the evidence (Lee working Sunday) contradicts B's norm that people don't work Sundays."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Rhetorical use: the evidence (Lee working Sunday) contradicts B's norm that people don't work Sundays." }
 
 def ex2 : LinguisticExample :=
   { id := "zheng2025_ex2"
@@ -49,9 +47,7 @@ def ex2 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("evidential_bias", "true"), ("epistemic_bias", "true"), ("unexpected_evidence", "true")]
-    comment := "Biased-question use: the evidence contradicts A's prior belief."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Biased-question use: the evidence contradicts A's prior belief." }
 
 def ex3 : LinguisticExample :=
   { id := "zheng2025_ex3"
@@ -67,9 +63,7 @@ def ex3 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("evidential_bias", "true"), ("epistemic_bias", "false"), ("unexpected_evidence", "true")]
-    comment := "Pure-inquiry use, the paper's novel datum: felicitous with no prior belief about the prejacent."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Pure-inquiry use, the paper's novel datum: felicitous with no prior belief about the prejacent." }
 
 def ex4b : LinguisticExample :=
   { id := "zheng2025_ex4b"
@@ -85,9 +79,7 @@ def ex4b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("evidential_bias", "false"), ("epistemic_bias", "true"), ("unexpected_evidence", "false")]
-    comment := "Xu's context supplies only the negative belief; Zheng observes that without contextual evidence the question is still infelicitous, so epistemic bias is not sufficient."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Xu's context supplies only the negative belief; Zheng observes that without contextual evidence the question is still infelicitous, so epistemic bias is not sufficient." }
 
 def ex5_ctx1 : LinguisticExample :=
   { id := "zheng2025_ex5_ctx1"
@@ -103,9 +95,7 @@ def ex5_ctx1 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("evidential_bias", "true"), ("epistemic_bias", "false"), ("unexpected_evidence", "true")]
-    comment := "Evidence without belief: positive evidential bias is sufficient."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Evidence without belief: positive evidential bias is sufficient." }
 
 def ex5_ctx2 : LinguisticExample :=
   { id := "zheng2025_ex5_ctx2"
@@ -121,9 +111,7 @@ def ex5_ctx2 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("evidential_bias", "false"), ("epistemic_bias", "false"), ("unexpected_evidence", "false")]
-    comment := "No evidence and no belief: infelicitous."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "No evidence and no belief: infelicitous." }
 
 def ex5_ctx3 : LinguisticExample :=
   { id := "zheng2025_ex5_ctx3"
@@ -139,9 +127,7 @@ def ex5_ctx3 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("evidential_bias", "false"), ("epistemic_bias", "true"), ("unexpected_evidence", "false")]
-    comment := "Belief without evidence: negative epistemic bias alone does not license nandao."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Belief without evidence: negative epistemic bias alone does not license nandao." }
 
 def ex6_ctx1 : LinguisticExample :=
   { id := "zheng2025_ex6_ctx1"
@@ -157,9 +143,7 @@ def ex6_ctx1 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("evidential_bias", "true"), ("epistemic_bias", "true"), ("unexpected_evidence", "true")]
-    comment := "Unexpected evidence: Lee working Sunday deviates from B's expectation."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Unexpected evidence: Lee working Sunday deviates from B's expectation." }
 
 def ex6_ctx2 : LinguisticExample :=
   { id := "zheng2025_ex6_ctx2"
@@ -175,9 +159,7 @@ def ex6_ctx2 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("evidential_bias", "true"), ("epistemic_bias", "false"), ("unexpected_evidence", "false")]
-    comment := "Expected evidence: the same evidence is unremarkable given B's knowledge, so nandao is infelicitous."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Expected evidence: the same evidence is unremarkable given B's knowledge, so nandao is infelicitous." }
 
 def ex4a : LinguisticExample :=
   { id := "zheng2025_ex4a"
@@ -193,9 +175,7 @@ def ex4a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("evidential_bias", "false"), ("epistemic_bias", "true"), ("unexpected_evidence", "false")]
-    comment := "The prejacent matches the speaker's belief; with no evidence for it the question is out."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The prejacent matches the speaker's belief; with no evidence for it the question is out." }
 
 def ex12a : LinguisticExample :=
   { id := "zheng2025_ex12a"
@@ -211,9 +191,7 @@ def ex12a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("clause_type", "declarative")]
-    comment := "Nandao does not combine with a declarative, with or without the question particle."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Nandao does not combine with a declarative, with or without the question particle." }
 
 def ex12b : LinguisticExample :=
   { id := "zheng2025_ex12b"
@@ -229,9 +207,7 @@ def ex12b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("clause_type", "wh-question")]
-    comment := "Nandao does not combine with a wh-question."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Nandao does not combine with a wh-question." }
 
 def all : List LinguisticExample := [ex1, ex2, ex3, ex4b, ex5_ctx1, ex5_ctx2, ex5_ctx3, ex6_ctx1, ex6_ctx2, ex4a, ex12a, ex12b]
 

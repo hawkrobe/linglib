@@ -31,9 +31,7 @@ def ex_53a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("suffix", "-alis"), ("analysis", "default l: tier-preceding consonant not lateral")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_53b1 : LinguisticExample :=
   { id := "belth2026_53b1"
@@ -49,9 +47,7 @@ def ex_53b1 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("suffix", "-aris"), ("analysis", "dissimilation from tier-adjacent stem l")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_53b2 : LinguisticExample :=
   { id := "belth2026_53b2"
@@ -67,9 +63,7 @@ def ex_53b2 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("suffix", "-aris"), ("analysis", "dissimilation across the coronal n")]
-    comment := "Rule (54) predicts *lunalis here (the tier-preceding consonant is non-lateral n): a residual error the Tolerance Principle absorbs."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Rule (54) predicts *lunalis here (the tier-preceding consonant is non-lateral n): a residual error the Tolerance Principle absorbs." }
 
 def ex_53c : LinguisticExample :=
   { id := "belth2026_53c"
@@ -85,9 +79,7 @@ def ex_53c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("suffix", "-alis"), ("analysis", "blocked by intervening r")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_53d1 : LinguisticExample :=
   { id := "belth2026_53d1"
@@ -103,9 +95,7 @@ def ex_53d1 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("suffix", "-alis"), ("analysis", "blocked by an intervening non-coronal consonant")]
-    comment := "The non-coronal blocker stays on the tier, hiding the stem l from the suffix liquid."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The non-coronal blocker stays on the tier, hiding the stem l from the suffix liquid." }
 
 def ex_53d2 : LinguisticExample :=
   { id := "belth2026_53d2"
@@ -121,9 +111,7 @@ def ex_53d2 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("suffix", "-alis"), ("analysis", "blocked by intervening g")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_46 : LinguisticExample :=
   { id := "belth2026_46"
@@ -139,9 +127,7 @@ def ex_46 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("process", "backness harmony"), ("tier", "vowels")]
-    comment := "Affix vowels harmonize with the preceding vowel across intervening consonants."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Affix vowels harmonize with the preceding vowel across intervening consonants." }
 
 def ex_47 : LinguisticExample :=
   { id := "belth2026_47"
@@ -157,9 +143,7 @@ def ex_47 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("process", "secondary rounding harmony"), ("target", "high vowels only")]
-    comment := "High affix vowels copy both backness and rounding from the preceding vowel of any height."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "High affix vowels copy both backness and rounding from the preceding vowel of any height." }
 
 def ex_51 : LinguisticExample :=
   { id := "belth2026_51"
@@ -175,9 +159,7 @@ def ex_51 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("process", "backness harmony"), ("neutral vowels", "i, e off the tier"), ("default", "front when only neutral vowels precede")]
-    comment := "koti-na: harmony passes over the neutral i; velje-nä: the Elsewhere default fires."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "koti-na: harmony passes over the neutral i; velje-nä: the Elsewhere default fires." }
 
 def all : List LinguisticExample := [ex_53a, ex_53b1, ex_53b2, ex_53c, ex_53d1, ex_53d2, ex_46, ex_47, ex_51]
 

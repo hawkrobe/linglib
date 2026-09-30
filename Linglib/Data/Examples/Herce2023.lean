@@ -31,9 +31,7 @@ def venir_1sg_ind : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("cell", "1SG.PRS.IND"), ("lexeme", "venir"), ("stem", "veng")]
-    comment := "The velar stem of the L-morphome."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The velar stem of the L-morphome." }
 
 def venir_2sg_ind : LinguisticExample :=
   { id := "herce2023_venir_2sg_ind"
@@ -49,9 +47,7 @@ def venir_2sg_ind : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("cell", "2SG.PRS.IND"), ("lexeme", "venir"), ("stem", "vien")]
-    comment := "The diphthongized stem outside the L-morphome."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The diphthongized stem outside the L-morphome." }
 
 def venir_1pl_ind : LinguisticExample :=
   { id := "herce2023_venir_1pl_ind"
@@ -67,9 +63,7 @@ def venir_1pl_ind : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("cell", "1PL.PRS.IND"), ("lexeme", "venir"), ("stem", "ven")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def venir_1sg_sbjv : LinguisticExample :=
   { id := "herce2023_venir_1sg_sbjv"
@@ -85,9 +79,7 @@ def venir_1sg_sbjv : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("cell", "1SG.PRS.SBJV"), ("lexeme", "venir"), ("stem", "veng")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def nacer_1sg_ind : LinguisticExample :=
   { id := "herce2023_nacer_1sg_ind"
@@ -103,9 +95,7 @@ def nacer_1sg_ind : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("cell", "1SG.PRS.IND"), ("lexeme", "nacer"), ("stem", "naθk")]
-    comment := "The velar stem of the L-morphome under a different exponent."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The velar stem of the L-morphome under a different exponent." }
 
 def nacer_1pl_ind : LinguisticExample :=
   { id := "herce2023_nacer_1pl_ind"
@@ -121,9 +111,7 @@ def nacer_1pl_ind : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("cell", "1PL.PRS.IND"), ("lexeme", "nacer"), ("stem", "naθ")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def caber_1sg_ind : LinguisticExample :=
   { id := "herce2023_caber_1sg_ind"
@@ -139,9 +127,7 @@ def caber_1sg_ind : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("cell", "1SG.PRS.IND"), ("lexeme", "caber"), ("stem", "kep")]
-    comment := "The weakly suppletive stem of the L-morphome."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The weakly suppletive stem of the L-morphome." }
 
 def caber_2sg_ind : LinguisticExample :=
   { id := "herce2023_caber_2sg_ind"
@@ -157,9 +143,7 @@ def caber_2sg_ind : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("cell", "2SG.PRS.IND"), ("lexeme", "caber"), ("stem", "kab")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ra_npst_1sg : LinguisticExample :=
   { id := "herce2023_ra_npst_1sg"
@@ -175,9 +159,7 @@ def ra_npst_1sg : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("cell", "NPST.1SG"), ("lexeme", "ra")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ra_npst_2sg : LinguisticExample :=
   { id := "herce2023_ra_npst_2sg"
@@ -193,9 +175,7 @@ def ra_npst_2sg : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("cell", "NPST.2SG"), ("lexeme", "ra")]
-    comment := "The suffix shared by the first person plural and the second person; the second person plural adds an optional -i."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The suffix shared by the first person plural and the second person; the second person plural adds an optional -i." }
 
 def ra_npst_3sg : LinguisticExample :=
   { id := "herce2023_ra_npst_3sg"
@@ -211,9 +191,7 @@ def ra_npst_3sg : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("cell", "NPST.3SG"), ("lexeme", "ra")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ra_pst_2sg : LinguisticExample :=
   { id := "herce2023_ra_pst_2sg"
@@ -229,9 +207,7 @@ def ra_pst_2sg : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("cell", "PST.2SG"), ("lexeme", "ra")]
-    comment := "The same cells share a different suffix in the past: the syncretism recurs across tenses."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The same cells share a different suffix in the past: the syncretism recurs across tenses." }
 
 def ra_pst_1sg : LinguisticExample :=
   { id := "herce2023_ra_pst_1sg"
@@ -247,9 +223,7 @@ def ra_pst_1sg : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("cell", "PST.1SG"), ("lexeme", "ra")]
-    comment := "The past form of the first person singular and the third person."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The past form of the first person singular and the third person." }
 
 def all : List LinguisticExample := [venir_1sg_ind, venir_2sg_ind, venir_1pl_ind, venir_1sg_sbjv, nacer_1sg_ind, nacer_1pl_ind, caber_1sg_ind, caber_2sg_ind, ra_npst_1sg, ra_npst_2sg, ra_npst_3sg, ra_pst_2sg, ra_pst_1sg]
 

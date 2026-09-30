@@ -22,9 +22,7 @@
       ["diagnostic", "truth-predicates"],
       ["nounSort", "content"]
     ],
-    "comment": "Paper prints the alternations 'Ideja /*situacija' and 'vernoj /ošibočnoj' inside one example; expanded here per the alternatives convention. Cont-NP 'idea' combines with 'true'/'mistaken', Sit-NP 'situation' does not. Bracketed [CP ...] markup dropped from primaryText.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Paper prints the alternations 'Ideja /*situacija' and 'vernoj /ošibočnoj' inside one example; expanded here per the alternatives convention. Cont-NP 'idea' combines with 'true'/'mistaken', Sit-NP 'situation' does not. Bracketed [CP ...] markup dropped from primaryText."
   },
   {
     "id": "bondarenko2022_ch2_106",
@@ -49,9 +47,7 @@
       ["diagnostic", "truth-predicates"],
       ["nounSort", "content"]
     ],
-    "comment": "Paper prints 'kecis-i-ta /cham-i-ta' (falsehood-COP-DECL /truth-COP-DECL) in one example; the cham- variant is expanded into alternatives. Bracketing dropped from primaryText.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Paper prints 'kecis-i-ta /cham-i-ta' (falsehood-COP-DECL /truth-COP-DECL) in one example; the cham- variant is expanded into alternatives. Bracketing dropped from primaryText."
   },
   {
     "id": "bondarenko2022_ch2_107",
@@ -75,9 +71,7 @@
       ["diagnostic", "truth-predicates"],
       ["nounSort", "situation"]
     ],
-    "comment": "Star scopes over both predicate variants ('kecis-i-ta /cham-i-ta'). Extraction prints the gloss of phwul-un as 'solve--adn' (double hyphen artifact); normalized to solve-ADN per the same form in (110), (112), (122).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Star scopes over both predicate variants ('kecis-i-ta /cham-i-ta'). Extraction prints the gloss of phwul-un as 'solve--adn' (double hyphen artifact); normalized to solve-ADN per the same form in (110), (112), (122)."
   },
   {
     "id": "bondarenko2022_ch2_108",
@@ -102,9 +96,7 @@
       ["diagnostic", "occurrence-predicates"],
       ["nounSort", "situation"]
     ],
-    "comment": "Paper prints 'proizošla /slučilas’ *ideja /situacija' in one example; expanded here. Occurrence verbs combine with Sit-NPs, not Cont-NPs. Gloss 'occured' is the paper's own spelling. Bracketing dropped from primaryText.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Paper prints 'proizošla /slučilas’ *ideja /situacija' in one example; expanded here. Occurrence verbs combine with Sit-NPs, not Cont-NPs. Gloss 'occured' is the paper's own spelling. Bracketing dropped from primaryText."
   },
   {
     "id": "bondarenko2022_ch2_109",
@@ -127,9 +119,7 @@
       ["diagnostic", "occurrence-predicates"],
       ["nounSort", "content"]
     ],
-    "comment": "Translation spelling 'occured' is the paper's own.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Translation spelling 'occured' is the paper's own."
   },
   {
     "id": "bondarenko2022_ch2_110",
@@ -151,9 +141,7 @@
       ["diagnostic", "occurrence-predicates"],
       ["nounSort", "situation"]
     ],
-    "comment": "Translation spelling 'occured' is the paper's own.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Translation spelling 'occured' is the paper's own."
   },
   {
     "id": "bondarenko2022_ch2_111",
@@ -176,9 +164,7 @@
       ["diagnostic", "situation-only-predicate-notice"],
       ["nounSort", "content"]
     ],
-    "comment": "Consultant comment (fn. 28): 'This verb [alachay] just does not sound good with claim'.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Consultant comment (fn. 28): 'This verb [alachay] just does not sound good with claim'."
   },
   {
     "id": "bondarenko2022_ch2_112",
@@ -201,9 +187,7 @@
       ["diagnostic", "situation-only-predicate-notice"],
       ["nounSort", "situation"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "bondarenko2022_ch2_120a",
@@ -228,9 +212,7 @@
       ["diagnostic", "substitution"],
       ["role", "premise-a"]
     ],
-    "comment": "Paper prints 'slux /slučaj' (rumor /event) in one example. Premise (a) of the (120) substitution triple: with Cont-NP slux, premises (a),(b) do not entail conclusion (c) (opacity); with Sit-NP slučaj they do (transparency). Bracketing dropped from primaryText.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Paper prints 'slux /slučaj' (rumor /event) in one example. Premise (a) of the (120) substitution triple: with Cont-NP slux, premises (a),(b) do not entail conclusion (c) (opacity); with Sit-NP slučaj they do (transparency). Bracketing dropped from primaryText."
   },
   {
     "id": "bondarenko2022_ch2_120b",
@@ -252,9 +234,7 @@
       ["diagnostic", "substitution"],
       ["role", "premise-b"]
     ],
-    "comment": "Identity premise (b) of the (120) substitution triple; the em dash is the Russian null copula.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Identity premise (b) of the (120) substitution triple; the em dash is the Russian null copula."
   },
   {
     "id": "bondarenko2022_ch2_120c",
@@ -279,9 +259,7 @@
       ["diagnostic", "substitution"],
       ["role", "conclusion"]
     ],
-    "comment": "Conclusion (c) of the (120) substitution triple: does not follow from (a),(b) with Cont-NP slux (opacity); follows with Sit-NP slučaj (transparency). Bracketing dropped from primaryText.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Conclusion (c) of the (120) substitution triple: does not follow from (a),(b) with Cont-NP slux (opacity); follows with Sit-NP slučaj (transparency). Bracketing dropped from primaryText."
   },
   {
     "id": "bondarenko2022_ch2_121a",
@@ -305,9 +283,7 @@
       ["nounSort", "content"],
       ["role", "premise-a"]
     ],
-    "comment": "Premise (a) of the (121) opacity triple: with Cont-NP cwucang 'claim', premises (a),(b) do not entail conclusion (c).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Premise (a) of the (121) opacity triple: with Cont-NP cwucang 'claim', premises (a),(b) do not entail conclusion (c)."
   },
   {
     "id": "bondarenko2022_ch2_121b",
@@ -329,9 +305,7 @@
       ["diagnostic", "substitution"],
       ["role", "premise-b"]
     ],
-    "comment": "Identity premise (b) of the (121) opacity triple.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Identity premise (b) of the (121) opacity triple."
   },
   {
     "id": "bondarenko2022_ch2_121c",
@@ -357,9 +331,7 @@
       ["role", "conclusion"],
       ["inference", "invalid"]
     ],
-    "comment": "Conclusion (c) of the (121) opacity triple: does not follow from (a),(b) — Cont-CPs are referentially opaque.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Conclusion (c) of the (121) opacity triple: does not follow from (a),(b) — Cont-CPs are referentially opaque."
   },
   {
     "id": "bondarenko2022_ch2_122a",
@@ -383,9 +355,7 @@
       ["nounSort", "situation"],
       ["role", "premise-a"]
     ],
-    "comment": "Premise (a) of the (122) transparency triple: with Sit-NP sanghwang 'situation', premises (a),(b) entail conclusion (c).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Premise (a) of the (122) transparency triple: with Sit-NP sanghwang 'situation', premises (a),(b) entail conclusion (c)."
   },
   {
     "id": "bondarenko2022_ch2_122b",
@@ -407,9 +377,7 @@
       ["diagnostic", "substitution"],
       ["role", "premise-b"]
     ],
-    "comment": "Identity premise (b) of the (122) transparency triple.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Identity premise (b) of the (122) transparency triple."
   },
   {
     "id": "bondarenko2022_ch2_122c",
@@ -435,9 +403,7 @@
       ["role", "conclusion"],
       ["inference", "valid"]
     ],
-    "comment": "Conclusion (c) of the (122) transparency triple: follows from (a),(b) — Sit-CPs are referentially transparent.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Conclusion (c) of the (122) transparency triple: follows from (a),(b) — Sit-CPs are referentially transparent."
   },
   {
     "id": "bondarenko2022_ch4_30",
@@ -459,9 +425,7 @@
       ["clauseType", "Cont-CP"],
       ["shape", "bare gɘ-žɘ clause"]
     ],
-    "comment": "Barguzin Buryat. Bare CP: [... V-TENSE gɘ-žɘ] with the say-root gɘ plus converb -žɘ, combining directly with the verb. Bracketing dropped from primaryText.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Barguzin Buryat. Bare CP: [... V-TENSE gɘ-žɘ] with the say-root gɘ plus converb -žɘ, combining directly with the verb. Bracketing dropped from primaryText."
   },
   {
     "id": "bondarenko2022_ch4_31",
@@ -483,9 +447,7 @@
       ["clauseType", "Sit-CP"],
       ["shape", "nominalized participial clause"]
     ],
-    "comment": "Barguzin Buryat. Nominalized Sit-CP: [... V-PART-CASE], genitive subject, participial -A:šA plus obligatory case and optional possessive marking. Bracketing dropped from primaryText.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Barguzin Buryat. Nominalized Sit-CP: [... V-PART-CASE], genitive subject, participial -A:šA plus obligatory case and optional possessive marking. Bracketing dropped from primaryText."
   },
   {
     "id": "bondarenko2022_ch4_32",
@@ -507,8 +469,6 @@
       ["clauseType", "Cont-CP"],
       ["shape", "nominalized gɘ-participial clause"]
     ],
-    "comment": "Barguzin Buryat. Nominalized Cont-CP: [... V-TENSE g-ɘ:š-CASE], the say-root gɘ plus participial -A:šA plus case (fn. 10: hiatus between gɘ and ɘ:šɘ resolved by vowel deletion in gɘ). Bracketing dropped from primaryText.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Barguzin Buryat. Nominalized Cont-CP: [... V-TENSE g-ɘ:š-CASE], the say-root gɘ plus participial -A:šA plus case (fn. 10: hiatus between gɘ and ɘ:šɘ resolved by vowel deletion in gɘ). Bracketing dropped from primaryText."
   }
 ]

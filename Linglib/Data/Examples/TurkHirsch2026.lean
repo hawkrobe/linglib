@@ -31,9 +31,7 @@ def ex_4 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("clitic_site", "default"), ("focus", "sigma")]
-    comment := "The focus clitic in its default rightmost position attaches to the covert polarity head; answerable by evet or hayır."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The focus clitic in its default rightmost position attaches to the covert polarity head; answerable by evet or hayır." }
 
 def ex_5 : LinguisticExample :=
   { id := "turkhirsch2026_5"
@@ -49,9 +47,7 @@ def ex_5 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("clitic_site", "subject"), ("focus", "subject")]
-    comment := "The clitic on the stressed subject; the Hamblin set is the set of propositions that x slept, as for a wh-question, and a bare negative answer is incomplete, (6)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The clitic on the stressed subject; the Hamblin set is the set of propositions that x slept, as for a wh-question, and a bare negative answer is incomplete, (6)." }
 
 def ex_6a : LinguisticExample :=
   { id := "turkhirsch2026_6a"
@@ -67,9 +63,7 @@ def ex_6a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("answer", "negative particle"), ("complete", "no")]
-    comment := "Not a complete answer to (5): the response particle is anaphoric to the ordinary value of the TP, but a true member of the Hamblin set must still be supplied."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Not a complete answer to (5): the response particle is anaphoric to the ordinary value of the TP, but a true member of the Hamblin set must still be supplied." }
 
 def ex_6b : LinguisticExample :=
   { id := "turkhirsch2026_6b"
@@ -85,9 +79,7 @@ def ex_6b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("answer", "negative particle with continuation"), ("complete", "yes")]
-    comment := "A complete answer to (5), naming the true member of the Hamblin set."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A complete answer to (5), naming the true member of the Hamblin set." }
 
 def ex_14 : LinguisticExample :=
   { id := "turkhirsch2026_14"
@@ -103,9 +95,7 @@ def ex_14 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("clitic_site", "below diye"), ("matrix", "declarative")]
-    comment := "The clitic below the complementizer: the highest focus is in the embedded clause, whose alternatives are used up by the embedded question head, so the matrix clause is a declarative."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The clitic below the complementizer: the highest focus is in the embedded clause, whose alternatives are used up by the embedded question head, so the matrix clause is a declarative." }
 
 def ex_18 : LinguisticExample :=
   { id := "turkhirsch2026_18"
@@ -121,9 +111,7 @@ def ex_18 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("clitic_site", "above diye"), ("matrix", "question")]
-    comment := "The clitic above the complementizer: the embedded clause is focused as a whole, its alternatives propagate to the matrix question head, and the matrix clause is a question."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The clitic above the complementizer: the embedded clause is focused as a whole, its alternatives propagate to the matrix question head, and the matrix clause is a question." }
 
 def ex_35a : LinguisticExample :=
   { id := "turkhirsch2026_35a"
@@ -139,9 +127,7 @@ def ex_35a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("answer", "positive"), ("complete", "yes")]
-    comment := "The complete answer; the type-theoretic Hamblin set wrongly makes it partial."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The complete answer; the type-theoretic Hamblin set wrongly makes it partial." }
 
 def ex_35b : LinguisticExample :=
   { id := "turkhirsch2026_35b"
@@ -157,9 +143,7 @@ def ex_35b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("answer", "modal conjunction"), ("complete", "over-informative")]
-    comment := "Over-informative: the answer the type-theoretic Hamblin set predicts to be complete, (34)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Over-informative: the answer the type-theoretic Hamblin set predicts to be complete, (34)." }
 
 def ex_41 : LinguisticExample :=
   { id := "turkhirsch2026_41"
@@ -175,9 +159,7 @@ def ex_41 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("answer", "modal"), ("complete", "no")]
-    comment := "Not a licit answer to (22) even in a context supporting the modalized Hamblin set (38); the answer would have to be that Ali did sleep."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Not a licit answer to (22) even in a context supporting the modalized Hamblin set (38); the answer would have to be that Ali did sleep." }
 
 def all : List LinguisticExample := [ex_4, ex_5, ex_6a, ex_6b, ex_14, ex_18, ex_35a, ex_35b, ex_41]
 

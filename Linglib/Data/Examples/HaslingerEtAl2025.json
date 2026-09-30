@@ -69,8 +69,7 @@
         "no"
       ]
     ],
-    "comment": "DP-internal jeder: obligatorily distributive, no exceptions.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "DP-internal jeder: obligatorily distributive, no exceptions."
   },
   {
     "id": "haslingeretal2025_ex2",
@@ -146,8 +145,7 @@
         "no"
       ]
     ],
-    "comment": "Distance-distributive jeder: the same semantic effects.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Distance-distributive jeder: the same semantic effects."
   },
   {
     "id": "haslingeretal2025_ex4a",
@@ -219,8 +217,7 @@
         "no"
       ]
     ],
-    "comment": "Not obligatorily distributive, but no exceptions.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Not obligatorily distributive, but no exceptions."
   },
   {
     "id": "haslingeretal2025_ex4b",
@@ -292,8 +289,7 @@
         "no"
       ]
     ],
-    "comment": "A numeral-modified indefinite: like alle.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "A numeral-modified indefinite: like alle."
   },
   {
     "id": "haslingeretal2025_ex4c",
@@ -365,8 +361,7 @@
         "yes"
       ]
     ],
-    "comment": "A definite plural: neither distributive nor exception-intolerant; true in (3c) given an adequate context.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "A definite plural: neither distributive nor exception-intolerant; true in (3c) given an adequate context."
   },
   {
     "id": "haslingeretal2025_ex22a",
@@ -438,8 +433,7 @@
         "no"
       ]
     ],
-    "comment": "Distance-distributive jeweils, out of the blue: distributive, and apparently maximal without a context that makes a non-maximal construal salient.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Distance-distributive jeweils, out of the blue: distributive, and apparently maximal without a context that makes a non-maximal construal salient."
   },
   {
     "id": "haslingeretal2025_ex22b",
@@ -507,8 +501,7 @@
         "no"
       ]
     ],
-    "comment": "DP-jeder.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "DP-jeder."
   },
   {
     "id": "haslingeretal2025_ex22c",
@@ -580,8 +573,7 @@
         "no"
       ]
     ],
-    "comment": "Distance jeder.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Distance jeder."
   },
   {
     "id": "haslingeretal2025_ex23b",
@@ -645,8 +637,7 @@
         "yes"
       ]
     ],
-    "comment": "Questionnaire item in the magnets scenario: true only on a non-maximal construal, which the explosion QUD makes salient; judgments were mixed across speakers (Figure 1).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Questionnaire item in the magnets scenario: true only on a non-maximal construal, which the explosion QUD makes salient; judgments were mixed across speakers (Figure 1)."
   },
   {
     "id": "haslingeretal2025_ex23c",
@@ -706,8 +697,7 @@
         "yes"
       ]
     ],
-    "comment": "Questionnaire item in the magnets scenario: overwhelmingly rejected (Figure 1).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Questionnaire item in the magnets scenario: overwhelmingly rejected (Figure 1)."
   },
   {
     "id": "haslingeretal2025_ex24b",
@@ -779,8 +769,7 @@
         "yes"
       ]
     ],
-    "comment": "Jeweils with a subject associate: accepted by some speakers in the non-maximal scenario (Figure 2).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Jeweils with a subject associate: accepted by some speakers in the non-maximal scenario (Figure 2)."
   },
   {
     "id": "haslingeretal2025_ex24c",
@@ -852,8 +841,7 @@
         "yes"
       ]
     ],
-    "comment": "Distance jeder: mostly rejected, less categorically than DP-jeder (Figure 2); 15 of 18 participants rated the jeweils minimal-pair sentence higher (Figure 3).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Distance jeder: mostly rejected, less categorically than DP-jeder (Figure 2); 15 of 18 participants rated the jeweils minimal-pair sentence higher (Figure 3)."
   },
   {
     "id": "haslingeretal2025_ex24d",
@@ -921,8 +909,7 @@
         "yes"
       ]
     ],
-    "comment": "DP-jeder: rejected in the non-maximal scenario (Figure 2).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "DP-jeder: rejected in the non-maximal scenario (Figure 2)."
   },
   {
     "id": "haslingeretal2025_ex26",
@@ -990,7 +977,6 @@
         "nonMaximal"
       ]
     ],
-    "comment": "A quantificational subject binds the tolerance parameter on its scope, so jeweils cannot add exception tolerance here.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "A quantificational subject binds the tolerance parameter on its scope, so jeweils cannot add exception tolerance here."
   }
 ]

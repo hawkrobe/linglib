@@ -22,9 +22,7 @@
       ["negation", "rc"],
       ["extraction", "subject"]
     ],
-    "comment": "Illusory licensing condition: negative quantifier inside the subject-extracted relative clause.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Illusory licensing condition: negative quantifier inside the subject-extracted relative clause."
   },
   {
     "id": "schwab2023_ex7b_jemals",
@@ -49,9 +47,7 @@
       ["negation", "matrix"],
       ["extraction", "subject"]
     ],
-    "comment": "Grammatical: matrix negative quantifier licenses the NPI.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Grammatical: matrix negative quantifier licenses the NPI."
   },
   {
     "id": "schwab2023_ex7c_jemals",
@@ -76,9 +72,7 @@
       ["negation", "none"],
       ["extraction", "subject"]
     ],
-    "comment": "Ungrammatical baseline: no negation.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Ungrammatical baseline: no negation."
   },
   {
     "id": "schwab2023_ex7a_sorecht",
@@ -103,9 +97,7 @@
       ["negation", "rc"],
       ["extraction", "subject"]
     ],
-    "comment": "Illusory licensing condition: negative quantifier inside the subject-extracted relative clause.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Illusory licensing condition: negative quantifier inside the subject-extracted relative clause."
   },
   {
     "id": "schwab2023_ex7b_sorecht",
@@ -130,9 +122,7 @@
       ["negation", "matrix"],
       ["extraction", "subject"]
     ],
-    "comment": "Grammatical: matrix negative quantifier licenses the NPI.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Grammatical: matrix negative quantifier licenses the NPI."
   },
   {
     "id": "schwab2023_ex7c_sorecht",
@@ -157,9 +147,7 @@
       ["negation", "none"],
       ["extraction", "subject"]
     ],
-    "comment": "Ungrammatical baseline: no negation.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Ungrammatical baseline: no negation."
   },
   {
     "id": "schwab2023_ex8a_jemals",
@@ -184,9 +172,7 @@
       ["negation", "rc"],
       ["extraction", "object"]
     ],
-    "comment": "Illusory licensing condition: negative quantifier inside the object-extracted relative clause.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Illusory licensing condition: negative quantifier inside the object-extracted relative clause."
   },
   {
     "id": "schwab2023_ex8b_jemals",
@@ -211,9 +197,7 @@
       ["negation", "matrix"],
       ["extraction", "object"]
     ],
-    "comment": "Grammatical: matrix negative quantifier licenses the NPI.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Grammatical: matrix negative quantifier licenses the NPI."
   },
   {
     "id": "schwab2023_ex8c_jemals",
@@ -238,9 +222,7 @@
       ["negation", "none"],
       ["extraction", "object"]
     ],
-    "comment": "Ungrammatical baseline: no negation.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Ungrammatical baseline: no negation."
   },
   {
     "id": "schwab2023_ex8a_sorecht",
@@ -265,9 +247,7 @@
       ["negation", "rc"],
       ["extraction", "object"]
     ],
-    "comment": "Illusory licensing condition: negative quantifier inside the object-extracted relative clause.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Illusory licensing condition: negative quantifier inside the object-extracted relative clause."
   },
   {
     "id": "schwab2023_ex8b_sorecht",
@@ -292,9 +272,7 @@
       ["negation", "matrix"],
       ["extraction", "object"]
     ],
-    "comment": "Grammatical: matrix negative quantifier licenses the NPI.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Grammatical: matrix negative quantifier licenses the NPI."
   },
   {
     "id": "schwab2023_ex8c_sorecht",
@@ -319,8 +297,6 @@
       ["negation", "none"],
       ["extraction", "object"]
     ],
-    "comment": "Ungrammatical baseline: no negation.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Ungrammatical baseline: no negation."
   }
 ]

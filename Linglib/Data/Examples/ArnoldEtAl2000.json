@@ -16,8 +16,7 @@
     "paperFeatures": [
       ["construction", "HNPS"]
     ],
-    "comment": "Heavy NP shift: (1a) canonical, (1b) shifted.",
-    "lgrConformance": ""
+    "comment": "Heavy NP shift: (1a) canonical, (1b) shifted."
   },
   {
     "id": "arnoldetal2000_2",
@@ -36,8 +35,7 @@
     "paperFeatures": [
       ["construction", "DA"]
     ],
-    "comment": "Dative alternation: (2a) prepositional, (2b) double object.",
-    "lgrConformance": ""
+    "comment": "Dative alternation: (2a) prepositional, (2b) double object."
   },
   {
     "id": "arnoldetal2000_3",
@@ -56,8 +54,7 @@
     "paperFeatures": [
       ["construction", "verb-particle"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "arnoldetal2000_5",
@@ -79,8 +76,7 @@
       ["second", "the valuable book that was extremely difficult to find"],
       ["eicWords", "4"]
     ],
-    "comment": "Hawkins's early immediate constituents: (5) needs four words to recognize the VP's constituents, (4) eleven.",
-    "lgrConformance": ""
+    "comment": "Hawkins's early immediate constituents: (5) needs four words to recognize the VP's constituents, (4) eleven."
   },
   {
     "id": "arnoldetal2000_6",
@@ -101,8 +97,7 @@
       ["first", "with the processing account"],
       ["second", "the claim that a subjectless sentence is not a grammatical option for the child, and that the omission is due to some aspect of performance"]
     ],
-    "comment": "Hyams and Wexler; the paper calls the unshifted order (7) almost unreadable.",
-    "lgrConformance": ""
+    "comment": "Hyams and Wexler; the paper calls the unshifted order (7) almost unreadable."
   },
   {
     "id": "arnoldetal2000_8",
@@ -122,8 +117,7 @@
       ["second", "Barry Bonds"],
       ["exception", "planning"]
     ],
-    "comment": "Baseball announcers' shift of a short NP: planning time, not parsing ease.",
-    "lgrConformance": ""
+    "comment": "Baseball announcers' shift of a short NP: planning time, not parsing ease."
   },
   {
     "id": "arnoldetal2000_9",
@@ -142,8 +136,7 @@
       ["shifted", "a grammar; an optimal structure"],
       ["newness", "new"]
     ],
-    "comment": "Smolensky, 1994 CUNY conference: short new NPs in shifted position, given-before-new without heaviness.",
-    "lgrConformance": ""
+    "comment": "Smolensky, 1994 CUNY conference: short new NPs in shifted position, given-before-new without heaviness."
   },
   {
     "id": "arnoldetal2000_10",
@@ -163,8 +156,7 @@
       ["second", "the fifth graders who could really take off"],
       ["function", "ambiguity avoidance"]
     ],
-    "comment": "Patrick Suppes, in a talk.",
-    "lgrConformance": ""
+    "comment": "Patrick Suppes, in a talk."
   },
   {
     "id": "arnoldetal2000_11",
@@ -184,8 +176,7 @@
       ["second", "his plans to quit"],
       ["function", "ambiguity avoidance"]
     ],
-    "comment": "San Jose Mercury 1991.",
-    "lgrConformance": ""
+    "comment": "San Jose Mercury 1991."
   },
   {
     "id": "arnoldetal2000_t1_bring",
@@ -206,8 +197,7 @@
       ["first", "tears"],
       ["second", "to the eyes of the Statue of Justice that stands silently in front of the Supreme Court of Canada"]
     ],
-    "comment": "Aligned-Hansard corpus.",
-    "lgrConformance": ""
+    "comment": "Aligned-Hansard corpus."
   },
   {
     "id": "arnoldetal2000_t1_take",
@@ -228,8 +218,7 @@
       ["first", "into account"],
       ["second", "the need not to be overtaken by the constant evolution of the labour market"]
     ],
-    "comment": "Aligned-Hansard corpus.",
-    "lgrConformance": ""
+    "comment": "Aligned-Hansard corpus."
   },
   {
     "id": "arnoldetal2000_t1_give",
@@ -250,8 +239,7 @@
       ["first", "its business"],
       ["second", "to a friend of the Government"]
     ],
-    "comment": "Aligned-Hansard corpus.",
-    "lgrConformance": ""
+    "comment": "Aligned-Hansard corpus."
   },
   {
     "id": "arnoldetal2000_12",
@@ -268,8 +256,7 @@
     "paperFeatures": [
       ["construction", "DA"]
     ],
-    "comment": "The exchange the design excluded: the actor may not mention both the character and the object.",
-    "lgrConformance": ""
+    "comment": "The exchange the design excluded: the actor may not mention both the character and the object."
   },
   {
     "id": "arnoldetal2000_13",
@@ -290,8 +277,7 @@
       ["first", "that"],
       ["second", "to the red dog"]
     ],
-    "comment": "The director's own mention makes the object given.",
-    "lgrConformance": ""
+    "comment": "The director's own mention makes the object given."
   },
   {
     "id": "arnoldetal2000_14",
@@ -310,8 +296,7 @@
       ["order", "double object"],
       ["given", "both"]
     ],
-    "comment": "Both character and object mentioned before the instruction; disfluencies marked as in the paper.",
-    "lgrConformance": ""
+    "comment": "Both character and object mentioned before the instruction; disfluencies marked as in the paper."
   },
   {
     "id": "arnoldetal2000_16",
@@ -329,8 +314,7 @@
       ["construction", "DA"],
       ["elliptical", "true"]
     ],
-    "comment": "Elliptical instructions were excluded from the analysis.",
-    "lgrConformance": ""
+    "comment": "Elliptical instructions were excluded from the analysis."
   },
   {
     "id": "arnoldetal2000_17",
@@ -351,8 +335,7 @@
       ["newness", "first new, second given"],
       ["exception", "other factors"]
     ],
-    "comment": "A longer, newer constituent before a shorter, given one.",
-    "lgrConformance": ""
+    "comment": "A longer, newer constituent before a shorter, given one."
   },
   {
     "id": "arnoldetal2000_t4_do",
@@ -370,8 +353,7 @@
       ["construction", "double object"],
       ["orderClass", "goal first"]
     ],
-    "comment": "Constructions counted in the dative alternation experiment.",
-    "lgrConformance": ""
+    "comment": "Constructions counted in the dative alternation experiment."
   },
   {
     "id": "arnoldetal2000_t4_hnps",
@@ -389,8 +371,7 @@
       ["construction", "heavy-NP-shifted"],
       ["orderClass", "goal first"]
     ],
-    "comment": "Constructions counted in the dative alternation experiment.",
-    "lgrConformance": ""
+    "comment": "Constructions counted in the dative alternation experiment."
   },
   {
     "id": "arnoldetal2000_t4_passg",
@@ -408,8 +389,7 @@
       ["construction", "passivized goal"],
       ["orderClass", "goal first"]
     ],
-    "comment": "Constructions counted in the dative alternation experiment.",
-    "lgrConformance": ""
+    "comment": "Constructions counted in the dative alternation experiment."
   },
   {
     "id": "arnoldetal2000_t4_dotop",
@@ -427,8 +407,7 @@
       ["construction", "double object, goal topicalized"],
       ["orderClass", "goal first"]
     ],
-    "comment": "Constructions counted in the dative alternation experiment.",
-    "lgrConformance": ""
+    "comment": "Constructions counted in the dative alternation experiment."
   },
   {
     "id": "arnoldetal2000_t4_preptop",
@@ -446,8 +425,7 @@
       ["construction", "prepositional, goal topicalized"],
       ["orderClass", "goal first"]
     ],
-    "comment": "Constructions counted in the dative alternation experiment.",
-    "lgrConformance": ""
+    "comment": "Constructions counted in the dative alternation experiment."
   },
   {
     "id": "arnoldetal2000_t4_prep",
@@ -465,8 +443,7 @@
       ["construction", "prepositional"],
       ["orderClass", "theme first"]
     ],
-    "comment": "Constructions counted in the dative alternation experiment.",
-    "lgrConformance": ""
+    "comment": "Constructions counted in the dative alternation experiment."
   },
   {
     "id": "arnoldetal2000_t4_passt",
@@ -484,8 +461,7 @@
       ["construction", "passivized theme"],
       ["orderClass", "theme first"]
     ],
-    "comment": "Constructions counted in the dative alternation experiment.",
-    "lgrConformance": ""
+    "comment": "Constructions counted in the dative alternation experiment."
   },
   {
     "id": "arnoldetal2000_t4_prepttop",
@@ -503,7 +479,6 @@
       ["construction", "prepositional, theme topicalized"],
       ["orderClass", "theme first"]
     ],
-    "comment": "Constructions counted in the dative alternation experiment.",
-    "lgrConformance": ""
+    "comment": "Constructions counted in the dative alternation experiment."
   }
 ]

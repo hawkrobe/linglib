@@ -24,8 +24,7 @@
         "classical"
       ]
     ],
-    "comment": "Coda s-deletion before an anterior sonorant lengthens the preceding vowel.",
-    "lgrConformance": ""
+    "comment": "Coda s-deletion before an anterior sonorant lengthens the preceding vowel."
   },
   {
     "id": "hayes1989_ex12b2",
@@ -52,8 +51,7 @@
         "classical"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "hayes1989_ex12b3",
@@ -80,8 +78,7 @@
         "classical"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "hayes1989_ex14a",
@@ -108,8 +105,7 @@
         "onset deletion"
       ]
     ],
-    "comment": "Word-initial s-deletion strands no mora: no lengthening.",
-    "lgrConformance": ""
+    "comment": "Word-initial s-deletion strands no mora: no lengthening."
   },
   {
     "id": "hayes1989_ex14b",
@@ -136,8 +132,7 @@
         "onset deletion"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "hayes1989_ex14c",
@@ -164,8 +159,7 @@
         "onset deletion"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "hayes1989_ex19a",
@@ -192,8 +186,7 @@
         "onset deletion"
       ]
     ],
-    "comment": "East Ionic: initial w-deletion without lengthening.",
-    "lgrConformance": ""
+    "comment": "East Ionic: initial w-deletion without lengthening."
   },
   {
     "id": "hayes1989_ex19b",
@@ -220,8 +213,7 @@
         "onset deletion"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "hayes1989_ex19c",
@@ -248,8 +240,7 @@
         "double flop"
       ]
     ],
-    "comment": "The vowel that lengthens is not adjacent to the deleted consonant.",
-    "lgrConformance": ""
+    "comment": "The vowel that lengthens is not adjacent to the deleted consonant."
   },
   {
     "id": "hayes1989_tale",
@@ -276,8 +267,7 @@
         "vowel loss"
       ]
     ],
-    "comment": "Minkova (1982): the stressed penult lengthens just when the final schwa drops.",
-    "lgrConformance": ""
+    "comment": "Minkova (1982): the stressed penult lengthens just when the final schwa drops."
   },
   {
     "id": "hayes1989_ex27a1",
@@ -312,8 +302,7 @@
         "usual"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "hayes1989_ex27a4",
@@ -348,8 +337,7 @@
         "usual"
       ]
     ],
-    "comment": "The derivation of (38)–(40): glide formation, Parasitic Delinking, spreading from the right.",
-    "lgrConformance": ""
+    "comment": "The derivation of (38)–(40): glide formation, Parasitic Delinking, spreading from the right."
   },
   {
     "id": "hayes1989_ex27b1",
@@ -384,8 +372,7 @@
         "sporadic"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "hayes1989_ex27c2",
@@ -420,8 +407,7 @@
         "never"
       ]
     ],
-    "comment": "Degemination (41) removes the geminate created by lengthening.",
-    "lgrConformance": ""
+    "comment": "Degemination (41) removes the geminate created by lengthening."
   },
   {
     "id": "hayes1989_ex27d1",
@@ -456,8 +442,7 @@
         "never"
       ]
     ],
-    "comment": "Neither member of a cluster geminates: the first half cannot be syllabified and is erased.",
-    "lgrConformance": ""
+    "comment": "Neither member of a cluster geminates: the first half cannot be syllabified and is erased."
   },
   {
     "id": "hayes1989_ex28",
@@ -484,8 +469,7 @@
         "never"
       ]
     ],
-    "comment": "An underlying glide: consonants do not geminate before glides in general.",
-    "lgrConformance": ""
+    "comment": "An underlying glide: consonants do not geminate before glides in general."
   },
   {
     "id": "hayes1989_ex42",
@@ -512,8 +496,7 @@
         "yes"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "hayes1989_ex46",
@@ -540,8 +523,7 @@
         "glide formation"
       ]
     ],
-    "comment": "Managerial Lengthening as compensatory lengthening from the left.",
-    "lgrConformance": ""
+    "comment": "Managerial Lengthening as compensatory lengthening from the left."
   },
   {
     "id": "hayes1989_ex55a",
@@ -568,8 +550,7 @@
         "inverse"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "hayes1989_ex57",
@@ -596,8 +577,7 @@
         "onset deletion"
       ]
     ],
-    "comment": "Schematic: lengthening from onset loss is unattested.",
-    "lgrConformance": ""
+    "comment": "Schematic: lengthening from onset loss is unattested."
   },
   {
     "id": "hayes1989_turkish1",
@@ -624,8 +604,7 @@
         "classical"
       ]
     ],
-    "comment": "Sezer (1986): coda v-deletion before a labial lengthens.",
-    "lgrConformance": ""
+    "comment": "Sezer (1986): coda v-deletion before a labial lengthens."
   },
   {
     "id": "hayes1989_turkish2",
@@ -652,8 +631,7 @@
         "onset deletion"
       ]
     ],
-    "comment": "Onset v-deletion does not lengthen.",
-    "lgrConformance": ""
+    "comment": "Onset v-deletion does not lengthen."
   },
   {
     "id": "hayes1989_ex61",
@@ -680,8 +658,7 @@
         "vowel loss"
       ]
     ],
-    "comment": "Schematic: a deleted vowel never lengthens the vowel to its right.",
-    "lgrConformance": ""
+    "comment": "Schematic: a deleted vowel never lengthens the vowel to its right."
   },
   {
     "id": "hayes1989_ex73a",
@@ -708,8 +685,7 @@
         "vowel loss"
       ]
     ],
-    "comment": "Komi Izma: l-loss lengthens when the l has its own mora.",
-    "lgrConformance": ""
+    "comment": "Komi Izma: l-loss lengthens when the l has its own mora."
   },
   {
     "id": "hayes1989_ex73b",
@@ -736,8 +712,7 @@
         "no lengthening"
       ]
     ],
-    "comment": "In a doubly closed syllable the deleted consonant shares a mora and strands nothing.",
-    "lgrConformance": ""
+    "comment": "In a doubly closed syllable the deleted consonant shares a mora and strands nothing."
   },
   {
     "id": "hayes1989_ex74",
@@ -768,8 +743,7 @@
         "yes"
       ]
     ],
-    "comment": "Proto-Germanic: lengthening in a doubly closed syllable requires a trimoraic syllable.",
-    "lgrConformance": ""
+    "comment": "Proto-Germanic: lengthening in a doubly closed syllable requires a trimoraic syllable."
   },
   {
     "id": "hayes1989_ex76a",
@@ -796,8 +770,7 @@
         "V"
       ]
     ],
-    "comment": "Dithmarschen/Stavenhagen German, after Hock (1986).",
-    "lgrConformance": ""
+    "comment": "Dithmarschen/Stavenhagen German, after Hock (1986)."
   },
   {
     "id": "hayes1989_ex76b",
@@ -824,8 +797,7 @@
         "Vː"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "hayes1989_ex76c",
@@ -856,7 +828,6 @@
         "vowel loss"
       ]
     ],
-    "comment": "Schwa loss with lengthening yields the three-way length contrast.",
-    "lgrConformance": ""
+    "comment": "Schwa loss with lengthening yields the three-way length contrast."
   }
 ]

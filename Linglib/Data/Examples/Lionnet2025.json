@@ -20,8 +20,7 @@
       ["surface", "(ꜜ)ɳi ꜜmwa ꜜɳii ꜜme"],
       ["levels", "4 3 2 1"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "lionnet2025_ex13a",
@@ -44,8 +43,7 @@
       ["surface", "ko te ꜜbeɽu-ɽe"],
       ["levels", "4 4 3 2.5 2.5"]
     ],
-    "comment": "Without pre-downstep raising.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Without pre-downstep raising."
   },
   {
     "id": "lionnet2025_ex13b",
@@ -68,8 +66,7 @@
       ["surface", "ko ꜛte ꜜbeɽu-ɽe"],
       ["levels", "4 5 2.5 2 2"]
     ],
-    "comment": "With pre-downstep raising of the descriptive marker.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "With pre-downstep raising of the descriptive marker."
   },
   {
     "id": "lionnet2025_ex19",
@@ -92,8 +89,7 @@
       ["surface", "(ꜜ)taa dɪɪ bee"],
       ["levels", "4 4 4"]
     ],
-    "comment": "Repeated as (31).",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Repeated as (31)."
   },
   {
     "id": "lionnet2025_ex20",
@@ -116,8 +112,7 @@
       ["surface", "(ꜜ)taa bee ꜛ%pwi"],
       ["levels", "4 4 5"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "lionnet2025_ex30",
@@ -140,8 +135,7 @@
       ["surface", "ko te tɪɪ-ɽe kuɽe"],
       ["levels", "4 4 4 4 4"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "lionnet2025_ex32",
@@ -164,8 +158,7 @@
       ["surface", "ꜛgoo ꜜmie"],
       ["levels", "5 3"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "lionnet2025_ex33",
@@ -188,8 +181,7 @@
       ["surface", "(ꜜ)goo ꜜmie"],
       ["levels", "4 3"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "lionnet2025_ex53a",
@@ -212,8 +204,7 @@
       ["surface", "ꜛkoo ꜜkwɛ-ɽe"],
       ["levels", "5 4"]
     ],
-    "comment": "The source gives no level for the suffix.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The source gives no level for the suffix."
   },
   {
     "id": "lionnet2025_ex53b",
@@ -236,8 +227,7 @@
       ["surface", "ꜛkoo ꜜꜜkwe-ɽe"],
       ["levels", "5 3"]
     ],
-    "comment": "The source gives no level for the suffix.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The source gives no level for the suffix."
   },
   {
     "id": "lionnet2025_ex56a",
@@ -259,8 +249,7 @@
       ["underlying", "ʈa-uɽu"],
       ["surface", "ʈa-uɽu"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "lionnet2025_ex56b",
@@ -282,8 +271,7 @@
       ["underlying", "ʈa-ꜜtie"],
       ["surface", "ꜜʈa-ꜜtie"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "lionnet2025_ex57",
@@ -306,8 +294,7 @@
       ["surface", "ko ꜛte ꜜʈa-ꜜtie-ɽe"],
       ["levels", "4 4.5 4 3 3 3"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "lionnet2025_ex18",
@@ -329,8 +316,7 @@
       ["underlying", "ꜜɳe ꜜmwa ꜜve"],
       ["surface", "(ꜜ)ɳe ꜜmwaꜛa ꜜve"]
     ],
-    "comment": "Levels 4, 3.5–4, 3: the raised second half of the perfective marker is a contour.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Levels 4, 3.5–4, 3: the raised second half of the perfective marker is a contour."
   },
   {
     "id": "lionnet2025_ex22",
@@ -353,8 +339,7 @@
       ["surface", "dɛɳu ꜛa ꜜ%ɳa"],
       ["levels", "4 4 4.5 3"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "lionnet2025_ex24",
@@ -377,8 +362,7 @@
       ["surface", "ꜛɟaa ꜜ%ɲĩ"],
       ["levels", "5 4"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "lionnet2025_ex25",
@@ -401,8 +385,7 @@
       ["surface", "ꜛɟaa ꜜꜜ%ɲĩ"],
       ["levels", "5 3.5"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "lionnet2025_ex26",
@@ -425,8 +408,7 @@
       ["surface", "dɛɳʊ a mii"],
       ["levels", "4 4 4 4"]
     ],
-    "comment": "The source prints the second vowel of 'jaw' as /u/ in (22).",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The source prints the second vowel of 'jaw' as /u/ in (22)."
   },
   {
     "id": "lionnet2025_ex28",
@@ -449,8 +431,7 @@
       ["surface", "(ꜜ)tẽẽ-ꜜẽ nõ ꜛbɛꜜtĩĩ ku"],
       ["levels", "5 4 4 5 3 3"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "lionnet2025_ex38",
@@ -473,8 +454,7 @@
       ["surface", "(ꜜ)cĩĩꜛbu ꜜmwã ꜜku ꜛmwoꜜ%ɽo"],
       ["levels", "4 5 4 3 4 3"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "lionnet2025_ex52",
@@ -498,8 +478,7 @@
       ["surface", "ꜛyaa ꜜꜜmẽ ꜛgee ꜜꜜmẽ ꜛɲaꜜi"],
       ["levels", "5 3 5 3 4 3"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "lionnet2025_ex62",
@@ -523,7 +502,6 @@
       ["surface", "ꜛgu ꜜcaꜛpɛ ꜜpaꜛɳaa ꜜko ꜛɲʊ ꜜwii to"],
       ["levels", "5 4 4.5 3 3.5 2 2.5 1.5 1.5"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   }
 ]

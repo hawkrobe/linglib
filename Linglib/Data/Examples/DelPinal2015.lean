@@ -31,9 +31,7 @@ def fake_gun : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "Del Pinal §3 eq. 17. Illustrates the full DC composition for the privative paradigm case. The TELIC-negation entailment (fake gun is not for shooting) distinguishes DC from a coarser Kamp-privative analysis that only commits to ¬gun."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Del Pinal §3 eq. 17. Illustrates the full DC composition for the privative paradigm case. The TELIC-negation entailment (fake gun is not for shooting) distinguishes DC from a coarser Kamp-privative analysis that only commits to ¬gun." }
 
 def counterfeit_rolex : LinguisticExample :=
   { id := "delpinal2015_counterfeit_rolex"
@@ -49,9 +47,7 @@ def counterfeit_rolex : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "Del Pinal §3 eq. 11. Discriminates counterfeit from fake at the C-structure level: counterfeit's AGENTIVE asserts MAKING with GOAL = (Q_F ∧ Q_T)(N), fake's asserts MAKING with GOAL = Q_F(N) only. This three-way contrast (fake/counterfeit/artificial) is the DC-specific empirical wedge against any account that lumps all privatives."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Del Pinal §3 eq. 11. Discriminates counterfeit from fake at the C-structure level: counterfeit's AGENTIVE asserts MAKING with GOAL = (Q_F ∧ Q_T)(N), fake's asserts MAKING with GOAL = Q_F(N) only. This three-way contrast (fake/counterfeit/artificial) is the DC-specific empirical wedge against any account that lumps all privatives." }
 
 def artificial_heart : LinguisticExample :=
   { id := "delpinal2015_artificial_heart"
@@ -67,9 +63,7 @@ def artificial_heart : LinguisticExample :=
     alternatives := []
     readings := [("strict privative (¬Q_E preserved)", .acceptable), ("non-privative (Q_E preserved)", .marginal)]
     paperFeatures := []
-    comment := "Del Pinal §3 eq. 12. Completes the fake/counterfeit/artificial trio. The reading-level annotation captures Del Pinal's own observation (p. 17) that mature speakers give 'mixed and unstable intuitions' about whether artificial N is a kind of N — a graded privativity that no purely-binary classification can model."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Del Pinal §3 eq. 12. Completes the fake/counterfeit/artificial trio. The reading-level annotation captures Del Pinal's own observation (p. 17) that mature speakers give 'mixed and unstable intuitions' about whether artificial N is a kind of N — a graded privativity that no purely-binary classification can model." }
 
 def fake_chanel_handbag : LinguisticExample :=
   { id := "delpinal2015_fake_chanel_handbag"
@@ -85,9 +79,7 @@ def fake_chanel_handbag : LinguisticExample :=
     alternatives := []
     readings := [("[fake [Chanel handbag]] (counterfeit)", .acceptable), ("[[fake Chanel] handbag] (falsely-branded)", .acceptable)]
     paperFeatures := []
-    comment := "Del Pinal §3 footnote 12. The scope ambiguity is structurally derivable in DC because both 'Chanel' (a brand-name modifier, adding to AGENTIVE) and 'fake' (a semantic restructuring operator) compose via FA_DC at different bracketings. Partee's noun-coercion account does not naturally yield the two readings — the canonical diagnostic for the DC-vs-Partee divergence on iterated privatives."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Del Pinal §3 footnote 12. The scope ambiguity is structurally derivable in DC because both 'Chanel' (a brand-name modifier, adding to AGENTIVE) and 'fake' (a semantic restructuring operator) compose via FA_DC at different bracketings. Partee's noun-coercion account does not naturally yield the two readings — the canonical diagnostic for the DC-vs-Partee divergence on iterated privatives." }
 
 def all : List LinguisticExample := [fake_gun, counterfeit_rolex, artificial_heart, fake_chanel_handbag]
 

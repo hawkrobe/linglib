@@ -31,9 +31,7 @@ def ex1 : LinguisticExample :=
     alternatives := []
     readings := [("not: John did all of the homework", .acceptable)]
     paperFeatures := [("inference", "yes"), ("symmetric", "no"), ("universal", "no"), ("compatible", "no")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex2 : LinguisticExample :=
   { id := "foxkatzir2011_ex2"
@@ -49,9 +47,7 @@ def ex2 : LinguisticExample :=
     alternatives := []
     readings := [("not: John did the reading and the homework", .acceptable)]
     paperFeatures := [("inference", "yes"), ("symmetric", "no"), ("universal", "no"), ("compatible", "no")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex3 : LinguisticExample :=
   { id := "foxkatzir2011_ex3"
@@ -67,9 +63,7 @@ def ex3 : LinguisticExample :=
     alternatives := []
     readings := [("not: John has four children", .acceptable)]
     paperFeatures := [("inference", "yes"), ("symmetric", "no"), ("universal", "no"), ("compatible", "no")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex29 : LinguisticExample :=
   { id := "foxkatzir2011_ex29"
@@ -85,9 +79,7 @@ def ex29 : LinguisticExample :=
     alternatives := []
     readings := [("not: John read four books", .acceptable)]
     paperFeatures := [("inference", "yes"), ("symmetric", "no"), ("universal", "no"), ("compatible", "no")]
-    comment := "Context: What did John do? The symmetric 'read exactly three books' is not a formal alternative."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Context: What did John do? The symmetric 'read exactly three books' is not a formal alternative." }
 
 def ex33 : LinguisticExample :=
   { id := "foxkatzir2011_ex33"
@@ -103,9 +95,7 @@ def ex33 : LinguisticExample :=
     alternatives := []
     readings := [("not: John read exactly three books", .unacceptable)]
     paperFeatures := [("inference", "no"), ("symmetric", "yes"), ("universal", "no"), ("compatible", "no")]
-    comment := "Context: Mary read exactly three books. What did John do? Making the symmetric alternative salient does not let context keep it and prune 'four books'."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Context: Mary read exactly three books. What did John do? Making the symmetric alternative salient does not let context keep it and prune 'four books'." }
 
 def ex38 : LinguisticExample :=
   { id := "foxkatzir2011_ex38"
@@ -121,9 +111,7 @@ def ex38 : LinguisticExample :=
     alternatives := []
     readings := [("not: John did all of the homework", .unacceptable)]
     paperFeatures := [("inference", "no"), ("symmetric", "yes"), ("universal", "no"), ("compatible", "no")]
-    comment := "Neither disjunct's negation is an implicature; the disjuncts partition the assertion."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Neither disjunct's negation is an implicature; the disjuncts partition the assertion." }
 
 def ex40 : LinguisticExample :=
   { id := "foxkatzir2011_ex40"
@@ -139,9 +127,7 @@ def ex40 : LinguisticExample :=
     alternatives := []
     readings := [("not: John is determined to do all of the homework", .acceptable)]
     paperFeatures := [("inference", "yes"), ("symmetric", "yes"), ("universal", "yes"), ("compatible", "no")]
-    comment := "Both implicatures arise: the universal operator removes the symmetry."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Both implicatures arise: the universal operator removes the symmetry." }
 
 def ex41 : LinguisticExample :=
   { id := "foxkatzir2011_ex41"
@@ -157,9 +143,7 @@ def ex41 : LinguisticExample :=
     alternatives := []
     readings := [("not: Each of my students did all of the homework", .acceptable)]
     paperFeatures := [("inference", "yes"), ("symmetric", "yes"), ("universal", "yes"), ("compatible", "no")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex42a : LinguisticExample :=
   { id := "foxkatzir2011_ex42a"
@@ -175,9 +159,7 @@ def ex42a : LinguisticExample :=
     alternatives := []
     readings := [("not: John did just some of the homework yesterday", .unacceptable)]
     paperFeatures := [("inference", "no"), ("symmetric", "yes"), ("universal", "no"), ("compatible", "no")]
-    comment := "'Just some' is salient, so both it and 'all' are formal alternatives of 'some'; context cannot keep one and prune the other."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "'Just some' is salient, so both it and 'all' are formal alternatives of 'some'; context cannot keep one and prune the other." }
 
 def ex44 : LinguisticExample :=
   { id := "foxkatzir2011_ex44"
@@ -193,9 +175,7 @@ def ex44 : LinguisticExample :=
     alternatives := []
     readings := [("not: John was required to do just some of the homework yesterday", .acceptable)]
     paperFeatures := [("inference", "yes"), ("symmetric", "yes"), ("universal", "yes"), ("compatible", "no")]
-    comment := "Also: not required to do all of it yesterday."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Also: not required to do all of it yesterday." }
 
 def ex46 : LinguisticExample :=
   { id := "foxkatzir2011_ex46"
@@ -211,9 +191,7 @@ def ex46 : LinguisticExample :=
     alternatives := []
     readings := [("not: Last week, every student got just some of the questions right", .acceptable)]
     paperFeatures := [("inference", "yes"), ("symmetric", "yes"), ("universal", "yes"), ("compatible", "no")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex47a : LinguisticExample :=
   { id := "foxkatzir2011_ex47a"
@@ -229,9 +207,7 @@ def ex47a : LinguisticExample :=
     alternatives := []
     readings := [("not: In last week's robbery they stole the books but not the jewelry", .unacceptable)]
     paperFeatures := [("inference", "no"), ("symmetric", "yes"), ("universal", "no"), ("compatible", "no")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex49a : LinguisticExample :=
   { id := "foxkatzir2011_ex49a"
@@ -247,9 +223,7 @@ def ex49a : LinguisticExample :=
     alternatives := []
     readings := [("not: Detective A concluded that the robbers stole the books but not the jewelry", .acceptable)]
     paperFeatures := [("inference", "yes"), ("symmetric", "yes"), ("universal", "yes"), ("compatible", "no")]
-    comment := "Also: not that they stole the books and the jewelry."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Also: not that they stole the books and the jewelry." }
 
 def ex53 : LinguisticExample :=
   { id := "foxkatzir2011_ex53"
@@ -265,9 +239,7 @@ def ex53 : LinguisticExample :=
     alternatives := []
     readings := [("not: Yesterday, John talked to Mary", .unacceptable)]
     paperFeatures := [("inference", "no"), ("symmetric", "no"), ("universal", "no"), ("compatible", "yes")]
-    comment := "The disjuncts are compatible, so not symmetric; the pruned disjunct is exhaustively relevant given the restriction, which the allowable-restriction condition forbids."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The disjuncts are compatible, so not symmetric; the pruned disjunct is exhaustively relevant given the restriction, which the allowable-restriction condition forbids." }
 
 def all : List LinguisticExample := [ex1, ex2, ex3, ex29, ex33, ex38, ex40, ex41, ex42a, ex44, ex46, ex47a, ex49a, ex53]
 

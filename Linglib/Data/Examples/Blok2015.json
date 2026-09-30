@@ -17,9 +17,7 @@
       ["test", "ifAny"],
       ["numeral", "3"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "blok2015_3b",
@@ -39,9 +37,7 @@
       ["test", "ifAny"],
       ["numeral", "3"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "blok2015_4a",
@@ -61,9 +57,7 @@
       ["test", "butNone"],
       ["numeral", "10"]
     ],
-    "comment": "Provided by a reviewer.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Provided by a reviewer."
   },
   {
     "id": "blok2015_4b",
@@ -83,9 +77,7 @@
       ["test", "butNone"],
       ["numeral", "10"]
     ],
-    "comment": "Provided by a reviewer.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Provided by a reviewer."
   },
   {
     "id": "blok2015_7a",
@@ -105,9 +97,7 @@
       ["test", "evenMore"],
       ["numeral", "10"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "blok2015_7b",
@@ -127,9 +117,7 @@
       ["test", "evenMore"],
       ["numeral", "10"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "blok2015_11a",
@@ -149,9 +137,7 @@
       ["test", "noMore"],
       ["numeral", "10"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "blok2015_11b",
@@ -171,9 +157,7 @@
       ["test", "noMore"],
       ["numeral", "10"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "blok2015_22a",
@@ -193,9 +177,7 @@
       ["test", "range"],
       ["numeral", "10"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "blok2015_22b",
@@ -215,9 +197,7 @@
       ["test", "range"],
       ["numeral", "1"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "blok2015_23a",
@@ -237,9 +217,7 @@
       ["test", "range"],
       ["numeral", "10"]
     ],
-    "comment": "Cited in the source from Nouwen 2008.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Cited in the source from Nouwen 2008."
   },
   {
     "id": "blok2015_23b",
@@ -259,9 +237,7 @@
       ["test", "range"],
       ["numeral", "1"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "blok2015_29",
@@ -281,9 +257,7 @@
       ["test", "range"],
       ["numeral", "0"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "blok2015_34a",
@@ -306,9 +280,7 @@
       ["test", "npi"],
       ["numeral", "5"]
     ],
-    "comment": "The modal hoeven is a negative polarity item.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The modal hoeven is a negative polarity item."
   },
   {
     "id": "blok2015_34b",
@@ -331,8 +303,6 @@
       ["test", "npi"],
       ["numeral", "5"]
     ],
-    "comment": "The modal hoeven is a negative polarity item.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The modal hoeven is a negative polarity item."
   }
 ]

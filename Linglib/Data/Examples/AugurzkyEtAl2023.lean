@@ -31,9 +31,7 @@ def ex_1 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_3 : LinguisticExample :=
   { id := "augurzkyetal2023_3"
@@ -49,9 +47,7 @@ def ex_3 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_14 : LinguisticExample :=
   { id := "augurzkyetal2023_14"
@@ -67,9 +63,7 @@ def ex_14 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_15 : LinguisticExample :=
   { id := "augurzkyetal2023_15"
@@ -85,9 +79,7 @@ def ex_15 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def notEvery : LinguisticExample :=
   { id := "augurzkyetal2023_notEvery"
@@ -103,9 +95,7 @@ def notEvery : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_20 : LinguisticExample :=
   { id := "augurzkyetal2023_20"
@@ -121,9 +111,7 @@ def ex_20 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def all : List LinguisticExample := [ex_1, ex_3, ex_14, ex_15, notEvery, ex_20]
 

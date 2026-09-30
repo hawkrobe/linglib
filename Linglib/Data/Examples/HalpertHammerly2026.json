@@ -42,7 +42,6 @@
       ]
     ],
     "comment": "The standard class 1 subject marker a- in a declarative.",
-    "lgrConformance": "WORD_ALIGNED",
     "reportedIn": {
       "bibkey": "halpert-hammerly-2026",
       "paperLabel": "(8a)"
@@ -91,7 +90,6 @@
       ]
     ],
     "comment": "A-bar extraction of a class 1 subject takes the alternative agreement marker o-.",
-    "lgrConformance": "WORD_ALIGNED",
     "reportedIn": {
       "bibkey": "halpert-hammerly-2026",
       "paperLabel": "(8b)"
@@ -144,7 +142,6 @@
       ]
     ],
     "comment": "Extracted singular local persons flatten to the same alternative agreement marker as class 1.",
-    "lgrConformance": "WORD_ALIGNED",
     "reportedIn": {
       "bibkey": "halpert-hammerly-2026",
       "paperLabel": "(8c)"
@@ -189,7 +186,6 @@
       ]
     ],
     "comment": "Class 7 subject marker in a declarative.",
-    "lgrConformance": "WORD_ALIGNED",
     "reportedIn": {
       "bibkey": "halpert-hammerly-2026",
       "paperLabel": "(9a)"
@@ -234,7 +230,6 @@
       ]
     ],
     "comment": "Class 7 keeps its subject marker under A-bar extraction: no alternative agreement outside class 1.",
-    "lgrConformance": "WORD_ALIGNED",
     "reportedIn": {
       "bibkey": "halpert-hammerly-2026",
       "paperLabel": "(9b)"
@@ -278,8 +273,7 @@
         "1"
       ]
     ],
-    "comment": "A first-person singular relative-clause subject takes class 1 subject marking.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "A first-person singular relative-clause subject takes class 1 subject marking."
   },
   {
     "id": "halperthammerly2026_ex10b",
@@ -319,8 +313,7 @@
         "2"
       ]
     ],
-    "comment": "A second-person plural subject of an adjectival predicate takes class 2 marking.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "A second-person plural subject of an adjectival predicate takes class 2 marking."
   },
   {
     "id": "halperthammerly2026_ex11a",
@@ -365,7 +358,6 @@
       ]
     ],
     "comment": "A human noun in class 7 triggers obligatory class 1 subject agreement.",
-    "lgrConformance": "WORD_ALIGNED",
     "reportedIn": {
       "bibkey": "halpert-hammerly-2026",
       "paperLabel": "(11a)"
@@ -414,7 +406,6 @@
       ]
     ],
     "comment": "Grammatical class 7 agreement with a human class 7 noun is ungrammatical.",
-    "lgrConformance": "WORD_ALIGNED",
     "reportedIn": {
       "bibkey": "halpert-hammerly-2026",
       "paperLabel": "(11b)"
@@ -467,7 +458,6 @@
       ]
     ],
     "comment": "A class 9 animal optionally takes class 1 object marking and concord.",
-    "lgrConformance": "WORD_ALIGNED",
     "reportedIn": {
       "bibkey": "halpert-hammerly-2026",
       "paperLabel": "(12a)"
@@ -516,7 +506,6 @@
       ]
     ],
     "comment": "The same class 9 animal with its grammatical class 9 object marker.",
-    "lgrConformance": "WORD_ALIGNED",
     "reportedIn": {
       "bibkey": "halpert-hammerly-2026",
       "paperLabel": "(12b)"
@@ -569,7 +558,6 @@
       ]
     ],
     "comment": "An inanimate class 7 noun controls class 7 concord and subject agreement.",
-    "lgrConformance": "WORD_ALIGNED",
     "reportedIn": {
       "bibkey": "halpert-hammerly-2026",
       "paperLabel": "(13a)"
@@ -622,7 +610,6 @@
       ]
     ],
     "comment": "A human class 7 noun controls class 1 concord and subject agreement: animacy override.",
-    "lgrConformance": "WORD_ALIGNED",
     "reportedIn": {
       "bibkey": "halpert-hammerly-2026",
       "paperLabel": "(13b)"
@@ -667,7 +654,6 @@
       ]
     ],
     "comment": "Object doubling with an overt animate object.",
-    "lgrConformance": "WORD_ALIGNED",
     "reportedIn": {
       "bibkey": "halpert-hammerly-2026",
       "paperLabel": "(14a)"
@@ -712,7 +698,6 @@
       ]
     ],
     "comment": "Object doubling with an overt inanimate object is ungrammatical.",
-    "lgrConformance": "WORD_ALIGNED",
     "reportedIn": {
       "bibkey": "halpert-hammerly-2026",
       "paperLabel": "(14b)"
@@ -765,7 +750,6 @@
       ]
     ],
     "comment": "Two conjoined class 1 nouns take the expected class 2 subject marker.",
-    "lgrConformance": "WORD_ALIGNED",
     "reportedIn": {
       "bibkey": "halpert-hammerly-2026",
       "paperLabel": "(15)"
@@ -827,7 +811,6 @@
       ]
     ],
     "comment": "Class 1 nouns with class 6 plurals converge to class 2, not class 6, under conjunction.",
-    "lgrConformance": "WORD_ALIGNED",
     "reportedIn": {
       "bibkey": "halpert-hammerly-2026",
       "paperLabel": "(16)"
@@ -889,7 +872,6 @@
       ]
     ],
     "comment": "Two inanimate class 5 nouns converge to class 8/10 zi-, not the expected class 6.",
-    "lgrConformance": "WORD_ALIGNED",
     "reportedIn": {
       "bibkey": "halpert-hammerly-2026",
       "paperLabel": "(17)"
@@ -930,7 +912,6 @@
       ]
     ],
     "comment": "The verbalizing final vowel -a.",
-    "lgrConformance": "WORD_ALIGNED",
     "reportedIn": {
       "bibkey": "halpert-hammerly-2026",
       "paperLabel": "(20a)"
@@ -971,7 +952,6 @@
       ]
     ],
     "comment": "The nominalizing final vowel -i.",
-    "lgrConformance": "WORD_ALIGNED",
     "reportedIn": {
       "bibkey": "halpert-hammerly-2026",
       "paperLabel": "(20b)"
@@ -1016,7 +996,6 @@
       ]
     ],
     "comment": "The animate nominalizing final vowel -i with the class 1 prefix.",
-    "lgrConformance": "WORD_ALIGNED",
     "reportedIn": {
       "bibkey": "halpert-hammerly-2026",
       "paperLabel": "(21a)"
@@ -1061,7 +1040,6 @@
       ]
     ],
     "comment": "The inanimate nominalizing final vowel -o with the class 3 prefix.",
-    "lgrConformance": "WORD_ALIGNED",
     "reportedIn": {
       "bibkey": "halpert-hammerly-2026",
       "paperLabel": "(21b)"
@@ -1106,7 +1084,6 @@
       ]
     ],
     "comment": "The animate final vowel -i with a class 7 prefix: core and prefixal class diverge.",
-    "lgrConformance": "WORD_ALIGNED",
     "reportedIn": {
       "bibkey": "halpert-hammerly-2026",
       "paperLabel": "(23)"
@@ -1147,7 +1124,6 @@
       ]
     ],
     "comment": "The class 1 noun before diminutivization.",
-    "lgrConformance": "WORD_ALIGNED",
     "reportedIn": {
       "bibkey": "halpert-hammerly-2026",
       "paperLabel": "(24a)"
@@ -1188,7 +1164,6 @@
       ]
     ],
     "comment": "The class 12 diminutive prefix stacks on the class 1 prefix.",
-    "lgrConformance": "WORD_ALIGNED",
     "reportedIn": {
       "bibkey": "halpert-hammerly-2026",
       "paperLabel": "(24b)"
@@ -1233,7 +1208,6 @@
       ]
     ],
     "comment": "Animate final vowel and class 1 prefix aligned.",
-    "lgrConformance": "WORD_ALIGNED",
     "reportedIn": {
       "bibkey": "halpert-hammerly-2026",
       "paperLabel": "(27a)"
@@ -1278,7 +1252,6 @@
       ]
     ],
     "comment": "Animate final vowel under a class 7 prefix: the secondary n bears its own class feature (28).",
-    "lgrConformance": "WORD_ALIGNED",
     "reportedIn": {
       "bibkey": "halpert-hammerly-2026",
       "paperLabel": "(27b)"
@@ -1323,7 +1296,6 @@
       ]
     ],
     "comment": "Inanimate final vowel and class 7 prefix aligned.",
-    "lgrConformance": "WORD_ALIGNED",
     "reportedIn": {
       "bibkey": "halpert-hammerly-2026",
       "paperLabel": "(27c)"
@@ -1364,7 +1336,6 @@
       ]
     ],
     "comment": "A noun derived from class 9 to class 14 keeping both prefixes.",
-    "lgrConformance": "WORD_ALIGNED",
     "reportedIn": {
       "bibkey": "halpert-hammerly-2026",
       "paperLabel": "(fn. 14 (i))"

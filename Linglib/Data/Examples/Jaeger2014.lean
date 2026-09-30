@@ -31,9 +31,7 @@ def ex_1a : LinguisticExample :=
     alternatives := []
     readings := [("not all boys came in", .acceptable)]
     paperFeatures := [("section", "5"), ("heuristic", "Q"), ("implicature", "Not all boys came in.")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_1b : LinguisticExample :=
   { id := "jaeger2014_1b"
@@ -49,9 +47,7 @@ def ex_1b : LinguisticExample :=
     alternatives := []
     readings := [("exactly three boys came in", .acceptable)]
     paperFeatures := [("section", "5"), ("heuristic", "Q"), ("implicature", "Exactly three boys came in.")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_3a : LinguisticExample :=
   { id := "jaeger2014_3a"
@@ -67,9 +63,7 @@ def ex_3a : LinguisticExample :=
     alternatives := []
     readings := [("the book that John is reading or that he has written is good", .acceptable)]
     paperFeatures := [("section", "5"), ("heuristic", "I")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_3b : LinguisticExample :=
   { id := "jaeger2014_3b"
@@ -85,9 +79,7 @@ def ex_3b : LinguisticExample :=
     alternatives := []
     readings := [("a female secretary", .acceptable)]
     paperFeatures := [("section", "5"), ("heuristic", "I")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_3c : LinguisticExample :=
   { id := "jaeger2014_3c"
@@ -103,9 +95,7 @@ def ex_3c : LinguisticExample :=
     alternatives := []
     readings := [("hard-surfaced road", .acceptable)]
     paperFeatures := [("section", "5"), ("heuristic", "I")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_4a : LinguisticExample :=
   { id := "jaeger2014_4a"
@@ -121,9 +111,7 @@ def ex_4a : LinguisticExample :=
     alternatives := []
     readings := [("John stopped the car in a regular way, using the foot brake", .acceptable)]
     paperFeatures := [("section", "5"), ("heuristic", "M"), ("signal", "f"), ("cost", "0"), ("world", "w1")]
-    comment := "The cheap synonym of Example 6, read as the frequent world."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The cheap synonym of Example 6, read as the frequent world." }
 
 def ex_4b : LinguisticExample :=
   { id := "jaeger2014_4b"
@@ -139,9 +127,7 @@ def ex_4b : LinguisticExample :=
     alternatives := []
     readings := [("John stopped the car in an abnormal way", .acceptable)]
     paperFeatures := [("section", "5"), ("heuristic", "M"), ("signal", "f'"), ("cost", "1"), ("world", "w2")]
-    comment := "The costly synonym of Example 6, read as the rare world."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The costly synonym of Example 6, read as the rare world." }
 
 def ex_5 : LinguisticExample :=
   { id := "jaeger2014_5"
@@ -157,9 +143,7 @@ def ex_5 : LinguisticExample :=
     alternatives := []
     readings := [("John stopped the car in a non-stereotypical way", .acceptable)]
     paperFeatures := [("section", "5"), ("heuristic", "M")]
-    comment := "A third, still more complex form; pragmatic rationalizability predicts no further specialization between (4b) and (5), unlike bidirectional OT."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A third, still more complex form; pragmatic rationalizability predicts no further specialization between (4b) and (5), unlike bidirectional OT." }
 
 def ex_6a : LinguisticExample :=
   { id := "jaeger2014_6a"
@@ -175,9 +159,7 @@ def ex_6a : LinguisticExample :=
     alternatives := []
     readings := [("vague, between 90 and 110 meter", .acceptable), ("precise", .acceptable)]
     paperFeatures := [("section", "5"), ("principle", "RN/RI"), ("precision", "low")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_6b : LinguisticExample :=
   { id := "jaeger2014_6b"
@@ -193,9 +175,7 @@ def ex_6b : LinguisticExample :=
     alternatives := []
     readings := [("precise, with a slack of at most 50 cm", .acceptable)]
     paperFeatures := [("section", "5"), ("principle", "RN/RI"), ("precision", "high")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_7 : LinguisticExample :=
   { id := "jaeger2014_7"
@@ -211,9 +191,7 @@ def ex_7 : LinguisticExample :=
     alternatives := []
     readings := [("precise", .acceptable)]
     paperFeatures := [("section", "5"), ("principle", "RN/RI"), ("precision", "high")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def all : List LinguisticExample := [ex_1a, ex_1b, ex_3a, ex_3b, ex_3c, ex_4a, ex_4b, ex_5, ex_6a, ex_6b, ex_7]
 

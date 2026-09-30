@@ -31,9 +31,7 @@ def ex1 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2a"), ("response", "safe")]
-    comment := "Knowing that Visa is taken settles the disjunctive question."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Knowing that Visa is taken settles the disjunctive question." }
 
 def ex2 : LinguisticExample :=
   { id := "hawkinsetal2025_ex2"
@@ -49,9 +47,7 @@ def ex2 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2a"), ("response", "unsafe")]
-    comment := "Knowing about American Express leaves the question open."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Knowing about American Express leaves the question open." }
 
 def ex3 : LinguisticExample :=
   { id := "hawkinsetal2025_ex3"
@@ -67,9 +63,7 @@ def ex3 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3a"), ("question", "specific"), ("target", "available"), ("response", "exhaustive")]
-    comment := "The least likely site of an exhaustive list: (4) ≥ (5) > (3)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The least likely site of an exhaustive list: (4) ≥ (5) > (3)." }
 
 def ex4 : LinguisticExample :=
   { id := "hawkinsetal2025_ex4"
@@ -85,9 +79,7 @@ def ex4 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3a"), ("question", "specific"), ("target", "unavailable"), ("response", "exhaustive")]
-    comment := "Model rate of exhaustive lists 0.75."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Model rate of exhaustive lists 0.75." }
 
 def ex5 : LinguisticExample :=
   { id := "hawkinsetal2025_ex5"
@@ -103,9 +95,7 @@ def ex5 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3a"), ("question", "general"), ("response", "exhaustive")]
-    comment := "Model rate of exhaustive lists 0.66."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Model rate of exhaustive lists 0.66." }
 
 def ex6 : LinguisticExample :=
   { id := "hawkinsetal2025_ex6"
@@ -121,9 +111,7 @@ def ex6 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3b"), ("competitor", "iced coffee"), ("sameCategory", "soda"), ("otherCategory", "Chardonnay")]
-    comment := "Predicted ordering of responses: competitor > taciturn ≥ same category > exhaustive."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Predicted ordering of responses: competitor > taciturn ≥ same category > exhaustive." }
 
 def ex7 : LinguisticExample :=
   { id := "hawkinsetal2025_ex7"
@@ -139,9 +127,7 @@ def ex7 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3c"), ("competitor", "sleeping bag"), ("mostSimilar", "pillow"), ("otherCategory", "carpet")]
-    comment := "The contextually relevant competitor is mentioned more than the most similar option."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The contextually relevant competitor is mentioned more than the most similar option." }
 
 def ex8 : LinguisticExample :=
   { id := "hawkinsetal2025_ex8"
@@ -157,9 +143,7 @@ def ex8 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3c"), ("competitor", "bubble wrap"), ("mostSimilar", "pillow"), ("otherCategory", "carpet")]
-    comment := "The same question and options as (7) with the other competitor relevant."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The same question and options as (7) with the other competitor relevant." }
 
 def icedtea : LinguisticExample :=
   { id := "hawkinsetal2025_icedtea"
@@ -175,9 +159,7 @@ def icedtea : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "1"), ("response", "competitor")]
-    comment := "The question signals a goal: something cold and caffeinated."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The question signals a goal: something cold and caffeinated." }
 
 def bbq : LinguisticExample :=
   { id := "hawkinsetal2025_bbq"
@@ -193,9 +175,7 @@ def bbq : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4"), ("response", "relevant, non-resolving")]
-    comment := "Relevance that shifts the likelihood of a world state without resolving the question."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Relevance that shifts the likelihood of a world state without resolving the question." }
 
 def all : List LinguisticExample := [ex1, ex2, ex3, ex4, ex5, ex6, ex7, ex8, icedtea, bbq]
 

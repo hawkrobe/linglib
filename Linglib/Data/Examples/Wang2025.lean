@@ -31,9 +31,7 @@ def ex_3_4 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("trigger", "ye"), ("focus", "Zhangsan")]
-    comment := "The antecedent must be salient, a focus alternative of the host, and distinct from it."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The antecedent must be salient, a focus alternative of the host, and distinct from it." }
 
 def ex_3_39 : LinguisticExample :=
   { id := "wang2025_3_39"
@@ -49,9 +47,7 @@ def ex_3_39 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("trigger", "fan'er"), ("focus", "Lisi")]
-    comment := "fan'er presupposes the falsity of a salient alternative, the mirror image of ye."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "fan'er presupposes the falsity of a salient alternative, the mirror image of ye." }
 
 def ex_3_40 : LinguisticExample :=
   { id := "wang2025_3_40"
@@ -67,9 +63,7 @@ def ex_3_40 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("trigger", "fan'er"), ("focus", "xuexiao")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_4_35a : LinguisticExample :=
   { id := "wang2025_4_35a"
@@ -85,9 +79,7 @@ def ex_4_35a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "yaome-yaome")]
-    comment := "Infers that Zhangsan did not eat both: the either-or construction enforces exhaustification of each disjunct."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Infers that Zhangsan did not eat both: the either-or construction enforces exhaustification of each disjunct." }
 
 def ex_4_35b : LinguisticExample :=
   { id := "wang2025_4_35b"
@@ -103,9 +95,7 @@ def ex_4_35b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "yaome-yaome"), ("modal", "above disjunction")]
-    comment := "Marked ?? in the dissertation: the disjunction is dispreferred above the possibility modal."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Marked ?? in the dissertation: the disjunction is dispreferred above the possibility modal." }
 
 def ex_4_35c : LinguisticExample :=
   { id := "wang2025_4_35c"
@@ -121,9 +111,7 @@ def ex_4_35c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "yaome-yaome"), ("modal", "below disjunction")]
-    comment := "The disjunction inside the scope of the modal, as the embedded exhaustification requires."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The disjunction inside the scope of the modal, as the embedded exhaustification requires." }
 
 def ex_4_36 : LinguisticExample :=
   { id := "wang2025_4_36"
@@ -139,9 +127,7 @@ def ex_4_36 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("context", "positive evidence"), ("trigger", "ye omitted")]
-    comment := "Exhaustifying the target sentence yields the implicature that Zhangsan did not go, which contradicts the positive evidence; the additive is therefore obligatory, Table 4.4."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Exhaustifying the target sentence yields the implicature that Zhangsan did not go, which contradicts the positive evidence; the additive is therefore obligatory, Table 4.4." }
 
 def ex_4_42 : LinguisticExample :=
   { id := "wang2025_4_42"
@@ -157,9 +143,7 @@ def ex_4_42 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("context", "positive evidence"), ("focus", "yexu")]
-    comment := "With focus on the possibility modal the first sentence carries an ignorance implicature, and exhaustification above the belief operator makes the trigger unnecessary."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "With focus on the possibility modal the first sentence carries an ignorance implicature, and exhaustification above the belief operator makes the trigger unnecessary." }
 
 def ex_4_45 : LinguisticExample :=
   { id := "wang2025_4_45"
@@ -175,9 +159,7 @@ def ex_4_45 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("trigger", "buzai"), ("context", "positive evidence"), ("contrast", "polarity and time")]
-    comment := "The double contrast yields two maximal consistent subsets of alternatives, so the cessative trigger is optional, Tables 4.7 and 4.9."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The double contrast yields two maximal consistent subsets of alternatives, so the cessative trigger is optional, Tables 4.7 and 4.9." }
 
 def all : List LinguisticExample := [ex_3_4, ex_3_39, ex_3_40, ex_4_35a, ex_4_35b, ex_4_35c, ex_4_36, ex_4_42, ex_4_45]
 

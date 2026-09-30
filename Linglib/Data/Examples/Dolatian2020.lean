@@ -31,9 +31,7 @@ def ex_1 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("dialect", "western"), ("process", "stress")]
-    comment := "Stress falls on the rightmost full vowel, whether in the root, a derivational suffix or an inflectional suffix, but never on a schwa."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Stress falls on the rightmost full vowel, whether in the root, a derivational suffix or an inflectional suffix, but never on a schwa." }
 
 def ex_2 : LinguisticExample :=
   { id := "dolatian2020_2"
@@ -49,9 +47,7 @@ def ex_2 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("dialect", "western"), ("suffix", "derivational"), ("reduction", "both")]
-    comment := "A destressed high vowel reduces to schwa, hín ~ hən-utjún, or deletes, teʁín ~ teʁn-orág."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "A destressed high vowel reduces to schwa, hín ~ hən-utjún, or deletes, teʁín ~ teʁn-orág." }
 
 def ex_3b : LinguisticExample :=
   { id := "dolatian2020_3b"
@@ -67,9 +63,7 @@ def ex_3b : LinguisticExample :=
     alternatives := [("had͡zχ-él", .ungrammatical), ("darpr-él", .ungrammatical)]
     readings := []
     paperFeatures := [("dialect", "western"), ("suffix", "derivational"), ("reduction", "none")]
-    comment := "Low and mid vowels do not reduce when destressed."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Low and mid vowels do not reduce when destressed." }
 
 def ex_4 : LinguisticExample :=
   { id := "dolatian2020_4"
@@ -85,9 +79,7 @@ def ex_4 : LinguisticExample :=
     alternatives := [("amsin-utjún", .ungrammatical), ("irgun-ajín", .ungrammatical)]
     readings := []
     paperFeatures := [("dialect", "western"), ("suffix", "derivational"), ("reduction", "deletion")]
-    comment := "Only the destressed high vowel reduces, the one stressed in the base and unstressed in the derivative; the other high vowels of the base stay."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Only the destressed high vowel reduces, the one stressed in the base and unstressed in the derivative; the other high vowels of the base stay." }
 
 def ex_5a : LinguisticExample :=
   { id := "dolatian2020_5a"
@@ -103,9 +95,7 @@ def ex_5a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("dialect", "western"), ("suffix", "derivational"), ("reduction", "schwa")]
-    comment := "Unbounded cyclicity: reduction applies to a sequence of destressed high vowels, each new morpheme triggering a new cycle of stress shift and reduction."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Unbounded cyclicity: reduction applies to a sequence of destressed high vowels, each new morpheme triggering a new cycle of stress shift and reduction." }
 
 def ex_5c : LinguisticExample :=
   { id := "dolatian2020_5c"
@@ -121,9 +111,7 @@ def ex_5c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("dialect", "western"), ("suffix", "compound"), ("reduction", "both")]
-    comment := "Reduction applies to suffixes and in compounds: the suffix vowel of kər-ít͡ʃ is destressed and deleted in the compound."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Reduction applies to suffixes and in compounds: the suffix vowel of kər-ít͡ʃ is destressed and deleted in the compound." }
 
 def ex_7a : LinguisticExample :=
   { id := "dolatian2020_7a"
@@ -139,9 +127,7 @@ def ex_7a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("dialect", "western"), ("suffix", "vInflection"), ("reduction", "none")]
-    comment := "In Western Armenian derivational suffixes trigger reduction and inflectional suffixes only stress shift: the stem-level against the word-level cophonology."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "In Western Armenian derivational suffixes trigger reduction and inflectional suffixes only stress shift: the stem-level against the word-level cophonology." }
 
 def ex_7b : LinguisticExample :=
   { id := "dolatian2020_7b"
@@ -157,9 +143,7 @@ def ex_7b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("dialect", "western"), ("suffix", "vInflection"), ("reduction", "diphthong")]
-    comment := "The destressed diphthong uj reduces to u in derivation and not in inflection."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "The destressed diphthong uj reduces to u in derivation and not in inflection." }
 
 def ex_10c : LinguisticExample :=
   { id := "dolatian2020_10c"
@@ -175,9 +159,7 @@ def ex_10c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("dialect", "eastern"), ("suffix", "vInflection"), ("reduction", "deletion")]
-    comment := "Vowel-initial inflection triggers reduction in Eastern Armenian: the resyllabified stem-final consonant misaligns the Prosodic Stem, which expands and triggers its own cophonology, (78)."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Vowel-initial inflection triggers reduction in Eastern Armenian: the resyllabified stem-final consonant misaligns the Prosodic Stem, which expands and triggers its own cophonology, (78)." }
 
 def ex_10e : LinguisticExample :=
   { id := "dolatian2020_10e"
@@ -193,9 +175,7 @@ def ex_10e : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("dialect", "eastern"), ("suffix", "cInflection"), ("reduction", "none")]
-    comment := "Consonant-initial inflection leaves the Prosodic Stem aligned with the morphological stem and the syllable, so only the word-level cophonology applies, in both dialects."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Consonant-initial inflection leaves the Prosodic Stem aligned with the morphological stem and the syllable, so only the word-level cophonology applies, in both dialects." }
 
 def ex_12a : LinguisticExample :=
   { id := "dolatian2020_12a"
@@ -211,9 +191,7 @@ def ex_12a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("dialect", "eastern"), ("suffix", "vInflection"), ("reduction", "diphthong")]
-    comment := "In both dialects the destressed diphthong reduces in derivation and not in inflection; Eastern vowel-initial inflection triggers high vowel reduction but not diphthong reduction, so the Prosodic Stem cophonology lies between the word-level and the stem-level, (76)."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "In both dialects the destressed diphthong reduces in derivation and not in inflection; Eastern vowel-initial inflection triggers high vowel reduction but not diphthong reduction, so the Prosodic Stem cophonology lies between the word-level and the stem-level, (76)." }
 
 def ex_41 : LinguisticExample :=
   { id := "dolatian2020_41"
@@ -229,9 +207,7 @@ def ex_41 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("dialect", "western"), ("suffix", "derivational"), ("reduction", "none")]
-    comment := "A suffix without a full vowel cannot shift stress, so there is no destressed vowel and no reduction."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "A suffix without a full vowel cannot shift stress, so there is no destressed vowel and no reduction." }
 
 def ex_42 : LinguisticExample :=
   { id := "dolatian2020_42"
@@ -247,9 +223,7 @@ def ex_42 : LinguisticExample :=
     alternatives := [("amusən-utjún", .ungrammatical), ("aznv-utjún", .ungrammatical)]
     readings := []
     paperFeatures := [("dialect", "western"), ("suffix", "derivational"), ("reduction", "both")]
-    comment := "Reduction deletes the vowel unless deletion would create an unsyllabifiable cluster, in which case the vowel is replaced by schwa, (46)."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Reduction deletes the vowel unless deletion would create an unsyllabifiable cluster, in which case the vowel is replaced by schwa, (46)." }
 
 def ex_47a : LinguisticExample :=
   { id := "dolatian2020_47a"
@@ -265,9 +239,7 @@ def ex_47a : LinguisticExample :=
     alternatives := [("həvant-anál", .ungrammatical), ("hankist-anál", .ungrammatical), ("amsin-anál", .ungrammatical)]
     readings := []
     paperFeatures := [("dialect", "western"), ("suffix", "derivational"), ("reduction", "both")]
-    comment := "The derivation of (47b): the unstressed high vowel of hivánt does not reduce, the destressed vowel of hankíst reduces to schwa because deletion would leave an unsyllabifiable cluster, and that of amusín deletes."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "The derivation of (47b): the unstressed high vowel of hivánt does not reduce, the destressed vowel of hankíst reduces to schwa because deletion would leave an unsyllabifiable cluster, and that of amusín deletes." }
 
 def ex_48a : LinguisticExample :=
   { id := "dolatian2020_48a"
@@ -283,9 +255,7 @@ def ex_48a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("dialect", "western"), ("suffix", "derivational"), ("reduction", "deletion")]
-    comment := "A destressed high vowel in a suffix reduces too."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "A destressed high vowel in a suffix reduces too." }
 
 def ex_65 : LinguisticExample :=
   { id := "dolatian2020_65"
@@ -301,9 +271,7 @@ def ex_65 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("dialect", "eastern"), ("suffix", "vInflection"), ("reduction", "both")]
-    comment := "All case suffixes are vowel-initial and Eastern Armenian reduces before each of them, Western Armenian before none: tux.t-í, amusi.n-óv."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "All case suffixes are vowel-initial and Eastern Armenian reduces before each of them, Western Armenian before none: tux.t-í, amusi.n-óv." }
 
 def ex_66 : LinguisticExample :=
   { id := "dolatian2020_66"
@@ -319,9 +287,7 @@ def ex_66 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("dialect", "eastern"), ("suffix", "plural"), ("reduction", "both")]
-    comment := "The plural is -er after monosyllabic bases and -ner after polysyllabic ones; the vowel-initial allomorph reduces the base and the consonant-initial one does not, whatever case follows."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "The plural is -er after monosyllabic bases and -ner after polysyllabic ones; the vowel-initial allomorph reduces the base and the consonant-initial one does not, whatever case follows." }
 
 def ex_72 : LinguisticExample :=
   { id := "dolatian2020_72"
@@ -337,9 +303,7 @@ def ex_72 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("dialect", "eastern"), ("suffix", "vInflection"), ("reduction", "none")]
-    comment := "Pre-inflectional reduction does not apply in regularized inflection, inflected adjectives or loanwords: it is a lexical process and not a post-cyclic word-level one, against the recursive prosodic word analysis of §2.5.3.2."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Pre-inflectional reduction does not apply in regularized inflection, inflected adjectives or loanwords: it is a lexical process and not a post-cyclic word-level one, against the recursive prosodic word analysis of §2.5.3.2." }
 
 def all : List LinguisticExample := [ex_1, ex_2, ex_3b, ex_4, ex_5a, ex_5c, ex_7a, ex_7b, ex_10c, ex_10e, ex_12a, ex_41, ex_42, ex_47a, ex_48a, ex_65, ex_66, ex_72]
 

@@ -31,9 +31,7 @@ def homework : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("kind", "underspecified"), ("antecedent", "quantified"), ("representation", "underspecified")]
-    comment := "Singular they attested for centuries (Balhorn 2004; Baron 2020)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Singular they attested for centuries (Balhorn 2004; Baron 2020)." }
 
 def lovato : LinguisticExample :=
   { id := "arnold2026_lovato"
@@ -49,9 +47,7 @@ def lovato : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("kind", "personal"), ("pronouns", "they/them"), ("representation", "elaborated")]
-    comment := "Article on Demi Lovato (Olson and Fuentes 2022)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Article on Demi Lovato (Olson and Fuentes 2022)." }
 
 def bed : LinguisticExample :=
   { id := "arnold2026_bed"
@@ -67,9 +63,7 @@ def bed : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("kind", "underspecified"), ("antecedent", "quantified"), ("representation", "underspecified")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def teacher : LinguisticExample :=
   { id := "arnold2026_teacher"
@@ -85,9 +79,7 @@ def teacher : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("kind", "underspecified"), ("antecedent", "indefinite"), ("referentGender", "unknown"), ("representation", "underspecified")]
-    comment := "Epicene referent."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Epicene referent." }
 
 def clerk : LinguisticExample :=
   { id := "arnold2026_clerk"
@@ -103,9 +95,7 @@ def clerk : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("kind", "underspecified"), ("antecedent", "definite"), ("referentGender", "unknown"), ("representation", "underspecified")]
-    comment := "Epicene referent."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Epicene referent." }
 
 def neighbor : LinguisticExample :=
   { id := "arnold2026_neighbor"
@@ -121,9 +111,7 @@ def neighbor : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("kind", "underspecified"), ("antecedent", "definite"), ("referentGender", "known"), ("representation", "underspecified")]
-    comment := "A known referent whose gender is not important to the story (Bjorkman 2017; Konnelly and Cowper 2020)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A known referent whose gender is not important to the story (Bjorkman 2017; Konnelly and Cowper 2020)." }
 
 def shakespeare : LinguisticExample :=
   { id := "arnold2026_shakespeare"
@@ -139,9 +127,7 @@ def shakespeare : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("kind", "underspecified"), ("antecedent", "quantified"), ("referentGender", "known"), ("representation", "underspecified")]
-    comment := "Shakespeare, Comedy of Errors, 1623."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Shakespeare, Comedy of Errors, 1623." }
 
 def landlord : LinguisticExample :=
   { id := "arnold2026_landlord"
@@ -157,9 +143,7 @@ def landlord : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("kind", "underspecified"), ("antecedent", "indefinite"), ("referentGender", "known"), ("representation", "underspecified")]
-    comment := "Spoken by a landlord interviewed by John Oliver, 29 June 2020."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Spoken by a landlord interviewed by John Oliver, 29 June 2020." }
 
 def son : LinguisticExample :=
   { id := "arnold2026_son"
@@ -175,9 +159,7 @@ def son : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("kind", "underspecified"), ("antecedent", "definite"), ("referentGender", "known"), ("representation", "underspecified")]
-    comment := "Phone conversation, July 2020."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Phone conversation, July 2020." }
 
 def alex : LinguisticExample :=
   { id := "arnold2026_alex"
@@ -193,9 +175,7 @@ def alex : LinguisticExample :=
     alternatives := []
     readings := [("Alex broke some plates", .acceptable), ("Alex and Will broke some plates", .acceptable)]
     paperFeatures := [("kind", "personal"), ("pronouns", "they/them"), ("representation", "elaborated"), ("ambiguity", "singular or plural")]
-    comment := "Arnold, Mayo and Dong (2021): Alex (they/them), Will (he/him), Liz (she/her); the plural interpretation dominates, explicit pronoun introduction raises the singular one."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Arnold, Mayo and Dong (2021): Alex (they/them), Will (he/him), Liz (she/her); the plural interpretation dominates, explicit pronoun introduction raises the singular one." }
 
 def dillon : LinguisticExample :=
   { id := "arnold2026_dillon"
@@ -211,9 +191,7 @@ def dillon : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("kind", "personal"), ("pronouns", "they/them"), ("representation", "elaborated")]
-    comment := "Wikipedia, Asia Kate Dillon, retrieved 27 May 2025: a specific person with a well-developed discourse description."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Wikipedia, Asia Kate Dillon, retrieved 27 May 2025: a specific person with a well-developed discourse description." }
 
 def mother : LinguisticExample :=
   { id := "arnold2026_mother"
@@ -229,9 +207,7 @@ def mother : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("kind", "underspecified"), ("antecedent", "definite"), ("referentGender", "known"), ("representation", "elaborated"), ("counterexample", "true")]
-    comment := "Konnelly and Cowper's stage-3 production; underspecified they for a specific representation would be a counterexample to the proposal."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Konnelly and Cowper's stage-3 production; underspecified they for a specific representation would be a counterexample to the proposal." }
 
 def butler : LinguisticExample :=
   { id := "arnold2026_butler"
@@ -247,9 +223,7 @@ def butler : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("kind", "personal"), ("pronouns", "they/them"), ("representation", "elaborated"), ("pronounsIntroduced", "true")]
-    comment := "Szalai 2024, New York Times: pronouns introduced explicitly."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Szalai 2024, New York Times: pronouns introduced explicitly." }
 
 def all : List LinguisticExample := [homework, lovato, bed, teacher, clerk, neighbor, shakespeare, landlord, son, alex, dillon, mother, butler]
 

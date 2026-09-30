@@ -31,9 +31,7 @@ def indefinite_persists : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("antecedent_type", "indefinite"), ("context", "none")]
-    comment := "Strawson's challenge to Russell's analysis of indefinites (Ch. I §1.1): the pronoun is read as bound by the same variable as the indefinite."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Strawson's challenge to Russell's analysis of indefinites (Ch. I §1.1): the pronoun is read as bound by the same variable as the indefinite." }
 
 def universal_blocks : LinguisticExample :=
   { id := "heim1982_universal_blocks"
@@ -49,9 +47,7 @@ def universal_blocks : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("antecedent_type", "universal"), ("context", "none")]
-    comment := "Neither (16) nor (17) permits a reading where 'it' is bound by the quantified NP of the preceding sentence: an unembedded sentence is a scope island."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Neither (16) nor (17) permits a reading where 'it' is bound by the quantified NP of the preceding sentence: an unembedded sentence is a scope island." }
 
 def negative_blocks : LinguisticExample :=
   { id := "heim1982_negative_blocks"
@@ -67,9 +63,7 @@ def negative_blocks : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("antecedent_type", "negative_quant"), ("context", "none")]
-    comment := "See (16)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "See (16)." }
 
 def definite_reference : LinguisticExample :=
   { id := "heim1982_definite_reference"
@@ -85,9 +79,7 @@ def definite_reference : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("antecedent_type", "indefinite"), ("context", "none")]
-    comment := "The first sentence adds a card with the entry 'is a cat'; the definite is then licensed by both the Novelty-Familiarity and the Descriptive-Content Condition (§5.1)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The first sentence adds a card with the entry 'is a cat'; the definite is then licensed by both the Novelty-Familiarity and the Descriptive-Content Condition (§5.1)." }
 
 def conditional_donkey : LinguisticExample :=
   { id := "heim1982_conditional_donkey"
@@ -103,9 +95,7 @@ def conditional_donkey : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("donkey_configuration", "conditional")]
-    comment := "The indefinites in the antecedent are read with universal force."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The indefinites in the antecedent are read with universal force." }
 
 def relative_donkey : LinguisticExample :=
   { id := "heim1982_relative_donkey"
@@ -121,9 +111,7 @@ def relative_donkey : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("donkey_configuration", "relative_clause")]
-    comment := "'every' binds the variable of 'a donkey' inside its restrictive term."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "'every' binds the variable of 'a donkey' inside its restrictive term." }
 
 def soldier_gun : LinguisticExample :=
   { id := "heim1982_soldier_gun"
@@ -139,9 +127,7 @@ def soldier_gun : LinguisticExample :=
     alternatives := [("Someone has a gun. He will shoot.", .acceptable)]
     readings := []
     paperFeatures := [("antecedent_type", "universal"), ("context", "none")]
-    comment := "A scope constraint, not a coindexing constraint: it distinguishes universals from indefinites and names (Ch. II §5.2)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A scope constraint, not a coindexing constraint: it distinguishes universals from indefinites and names (Ch. II §5.2)." }
 
 def cat_door : LinguisticExample :=
   { id := "heim1982_cat_door"
@@ -157,9 +143,7 @@ def cat_door : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("antecedent_type", "indefinite"), ("context", "none")]
-    comment := "Text-level truth comes out right, but the Ch. II truth definition assigns no truth value to the second sentence on its own — the motivation for evaluating sentences against files (Ch. III §3.2)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Text-level truth comes out right, but the Ch. II truth definition assigns no truth value to the second sentence on its own — the motivation for evaluating sentences against files (Ch. III §3.2)." }
 
 def woman_dog : LinguisticExample :=
   { id := "heim1982_woman_dog"
@@ -175,9 +159,7 @@ def woman_dog : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("antecedent_type", "indefinite"), ("context", "none")]
-    comment := "The text requires 1, 2 novel in the initial file although its second sentence, Ch. III (4), requires them familiar: felicity conditions project step by step (§2.5)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The text requires 1, 2 novel in the initial file although its second sentence, Ch. III (4), requires them familiar: felicity conditions project step by step (§2.5)." }
 
 def woman_dog_definite : LinguisticExample :=
   { id := "heim1982_woman_dog_definite"
@@ -193,9 +175,7 @@ def woman_dog_definite : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("antecedent_type", "definite"), ("context", "none")]
-    comment := "Same satisfaction conditions as 'A woman was bitten by a dog', but under criterion (C) the individuals must fit cards 1 and 2 (§3.2)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Same satisfaction conditions as 'A woman was bitten by a dog', but under criterion (C) the individuals must fit cards 1 and 2 (§3.2)." }
 
 def pretzel : LinguisticExample :=
   { id := "heim1982_pretzel"
@@ -211,9 +191,7 @@ def pretzel : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("antecedent_type", "indefinite"), ("context", "nuclear_scope")]
-    comment := "Felicitous although 'it₂' needs card 2: the card is introduced by 'a pretzel₂' in an intermediate file, so quantified file change must proceed in steps (§4.1)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Felicitous although 'it₂' needs card 2: the card is introduced by 'a pretzel₂' in an intermediate file, so quantified file change must proceed in steps (§4.1)." }
 
 def flea_collar : LinguisticExample :=
   { id := "heim1982_flea_collar"
@@ -229,9 +207,7 @@ def flea_collar : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("antecedent_type", "indefinite"), ("context", "nuclear_scope")]
-    comment := "'a flea collar' has narrow-scope existential force without a construal rule of Existential Closure: rule (III) existentially closes the nuclear scope (§4.3)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "'a flea collar' has narrow-scope existential force without a construal rule of Existential Closure: rule (III) existentially closes the nuclear scope (§4.3)." }
 
 def dog_bite : LinguisticExample :=
   { id := "heim1982_dog_bite"
@@ -247,9 +223,7 @@ def dog_bite : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("antecedent_type", "definite"), ("context", "accommodation")]
-    comment := "Hawkins's immediate situation use; a novel definite rendered felicitous by accommodating a card 'is a dog somewhere close by' (§5.2)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Hawkins's immediate situation use; a novel definite rendered felicitous by accommodating a card 'is a dog somewhere close by' (§5.2)." }
 
 def king_of_france : LinguisticExample :=
   { id := "heim1982_king_of_france"
@@ -265,9 +239,7 @@ def king_of_france : LinguisticExample :=
     alternatives := []
     readings := [("narrow scope (local accommodation)", .acceptable), ("existence implied (global accommodation)", .acceptable)]
     paperFeatures := [("antecedent_type", "definite"), ("context", "negation")]
-    comment := "Accommodation inside the auxiliary file of the negation yields the narrow-scope reading; accommodating the initial file instead implies a king of France and is the preferred option without the because-clause (§5.2)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Accommodation inside the auxiliary file of the negation yields the narrow-scope reading; accommodating the initial file instead implies a king of France and is the preferred option without the because-clause (§5.2)." }
 
 def all : List LinguisticExample := [indefinite_persists, universal_blocks, negative_blocks, definite_reference, conditional_donkey, relative_donkey, soldier_gun, cat_door, woman_dog, woman_dog_definite, pretzel, flea_collar, dog_bite, king_of_france]
 

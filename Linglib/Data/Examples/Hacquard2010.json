@@ -211,8 +211,7 @@
         "tense"
       ]
     ],
-    "comment": "The complement is backshifted with respect to the modal: only the epistemic reading.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The complement is backshifted with respect to the modal: only the epistemic reading."
   },
   {
     "id": "hacquard2010_ex14b",
@@ -273,8 +272,7 @@
         "tense"
       ]
     ],
-    "comment": "Tense and aspect morphology on the modal put it in the scope of tense: no epistemic reading.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Tense and aspect morphology on the modal put it in the scope of tense: no epistemic reading."
   },
   {
     "id": "hacquard2010_ex16",
@@ -346,8 +344,7 @@
         "actualityEntailment"
       ]
     ],
-    "comment": "The continuation contradicts the actuality entailment of the perfective root modal.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The continuation contradicts the actuality entailment of the perfective root modal."
   },
   {
     "id": "hacquard2010_ex17",

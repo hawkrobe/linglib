@@ -31,9 +31,7 @@ def cm2024_1_korean_conditional_eval : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("puzzle", "koreanComposition"), ("construction", "conditional-evaluative")]
-    comment := "The paper's centerpiece morphosyntactic argument. Korean realizes English-must as the transparent composition of (i) the evaluative predicate toy 'EVAL' as the measure function μ_R, (ii) the conditional 'if φ, EVAL' as the conditional expectation of μ_R given φ, (iii) the exhaustifier -(e)ya 'only-if'. Formalized in `koreanConditionalEvaluative_iff_mustCM`."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The paper's centerpiece morphosyntactic argument. Korean realizes English-must as the transparent composition of (i) the evaluative predicate toy 'EVAL' as the measure function μ_R, (ii) the conditional 'if φ, EVAL' as the conditional expectation of μ_R given φ, (iii) the exhaustifier -(e)ya 'only-if'. Formalized in `koreanConditionalEvaluative_iff_mustCM`." }
 
 def cm2024_4_linda_original : LinguisticExample :=
   { id := "cm2024_4_linda_original"
@@ -49,9 +47,7 @@ def cm2024_4_linda_original : LinguisticExample :=
     alternatives := [("Linda is a bank teller.", .acceptable), ("Linda is a bank teller and she is active in the feminist movement.", .acceptable)]
     readings := []
     paperFeatures := [("puzzle", "conjunctionFallacy"), ("empiricalDomain", "epistemic")]
-    comment := "Original Tversky-Kahneman 1983 conjunction-fallacy stimulus. C&M propose a *modal* version (mc2024_29_modal_linda) and argue their semantics predicts the fallacy at the modal level via explanatory-value (sum of likelihoods)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Original Tversky-Kahneman 1983 conjunction-fallacy stimulus. C&M propose a *modal* version (mc2024_29_modal_linda) and argue their semantics predicts the fallacy at the modal level via explanatory-value (sum of likelihoods)." }
 
 def cm2024_15a_minersBlockNeither : LinguisticExample :=
   { id := "cm2024_15a_minersBlockNeither"
@@ -67,9 +63,7 @@ def cm2024_15a_minersBlockNeither : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("puzzle", "miners"), ("modalForce", "ought")]
-    comment := "First clause of the Kolodny-MacFarlane miners triple. C&M's expected-utility analysis (formalized in `ought_blockNeither_at_threshold`) makes this true at any θ ∈ (5, 9)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "First clause of the Kolodny-MacFarlane miners triple. C&M's expected-utility analysis (formalized in `ought_blockNeither_at_threshold`) makes this true at any θ ∈ (5, 9)." }
 
 def cm2024_15b_minersBlockA : LinguisticExample :=
   { id := "cm2024_15b_minersBlockA"
@@ -85,9 +79,7 @@ def cm2024_15b_minersBlockA : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("puzzle", "miners"), ("modalForce", "ought"), ("conditional", "info-sensitive")]
-    comment := "Conditional clause of the miners triple. Together with (15a), it shows the Kratzerian ordering source cannot be information-insensitive. C&M's analysis formalized in `ought_under_minersInA_at_threshold` (eq. 24)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Conditional clause of the miners triple. Together with (15a), it shows the Kratzerian ordering source cannot be information-insensitive. C&M's analysis formalized in `ought_under_minersInA_at_threshold` (eq. 24)." }
 
 def cm2024_25a_minersMust : LinguisticExample :=
   { id := "cm2024_25a_minersMust"
@@ -103,9 +95,7 @@ def cm2024_25a_minersMust : LinguisticExample :=
     alternatives := [("We mustn't block either path.", .acceptable), ("We must / have to refrain from blocking either path.", .acceptable), ("We cannot block either path.", .acceptable)]
     readings := []
     paperFeatures := [("puzzle", "miners"), ("modalForce", "must")]
-    comment := "Must-variant of (15a). Paper judgment: (a) is questionable on intended reading because 'neither' triggers alternative-quantifier interference; the rephrasings in alternatives unambiguously target the intended reading."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Must-variant of (15a). Paper judgment: (a) is questionable on intended reading because 'neither' triggers alternative-quantifier interference; the rephrasings in alternatives unambiguously target the intended reading." }
 
 def cm2024_25b_minersMustA : LinguisticExample :=
   { id := "cm2024_25b_minersMustA"
@@ -121,9 +111,7 @@ def cm2024_25b_minersMustA : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("puzzle", "miners"), ("modalForce", "must"), ("prediction", "thresholdShift")]
-    comment := "Must-variant of (15b). With (26a)/(25b) both felicitous, the paper's threshold-shifting prediction follows: a single θ cannot validate both unconditional (5 < θ < 9) and conditional-on-A (9 < θ < 10) must-claims. Formalized in `must_miners_requires_threshold_shift`."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Must-variant of (15b). With (26a)/(25b) both felicitous, the paper's threshold-shifting prediction follows: a single θ cannot validate both unconditional (5 < θ < 9) and conditional-on-A (9 < θ < 10) must-claims. Formalized in `must_miners_requires_threshold_shift`." }
 
 def cm2024_29b_modal_linda : LinguisticExample :=
   { id := "cm2024_29b_modal_linda"
@@ -139,9 +127,7 @@ def cm2024_29b_modal_linda : LinguisticExample :=
     alternatives := [("Linda must be a bank teller.", .questionable)]
     readings := []
     paperFeatures := [("puzzle", "modalConjunctionFallacy"), ("empiricalDomain", "epistemic")]
-    comment := "Paper-introduced 'modal conjunction fallacy': introspectively, the conjunctive must-claim sounds *better* than the bare. C&M's analysis predicts this via the explanatory-value (sum of likelihoods) gap: 0.5 vs 1.5 (paper eq. 32 / 33). Formalized at the operator level in `mustCM_predicts_fallacy_under_CM_conditionals`."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Paper-introduced 'modal conjunction fallacy': introspectively, the conjunctive must-claim sounds *better* than the bare. C&M's analysis predicts this via the explanatory-value (sum of likelihoods) gap: 0.5 vs 1.5 (paper eq. 32 / 33). Formalized at the operator level in `mustCM_predicts_fallacy_under_CM_conditionals`." }
 
 def cm2024_35_jack_description : LinguisticExample :=
   { id := "cm2024_35_jack_description"
@@ -157,9 +143,7 @@ def cm2024_35_jack_description : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("puzzle", "baseRateNeglect"), ("empiricalDomain", "epistemic")]
-    comment := "Kahneman-Tversky 1973 base-rate-neglect stimulus. Subjects' engineer-probability judgment is unaffected by the 30/70 vs 70/30 prior split, signalling neglect of prior probabilities — the empirical phenomenon C&M's analysis predicts at the modal level."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Kahneman-Tversky 1973 base-rate-neglect stimulus. Subjects' engineer-probability judgment is unaffected by the 30/70 vs 70/30 prior split, signalling neglect of prior probabilities — the empirical phenomenon C&M's analysis predicts at the modal level." }
 
 def cm2024_36_jack_must_engineer : LinguisticExample :=
   { id := "cm2024_36_jack_must_engineer"
@@ -175,9 +159,7 @@ def cm2024_36_jack_must_engineer : LinguisticExample :=
     alternatives := [("Jack must be a lawyer.", .questionable)]
     readings := []
     paperFeatures := [("puzzle", "baseRateNeglect"), ("modalForce", "must")]
-    comment := "Paper-introduced 'modal base-rate neglect': introspectively, the engineer-claim sounds appropriate regardless of the 30/70 vs 70/30 prior. C&M's explanatory-value analysis: EV(engineer) = 1.33 (paper eq. 39) > EV(lawyer) = 0.63 (eq. 40), prior-independent. Formalized in `mustCM_predicts_base_rate_neglect_under_CM_conditionals`."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Paper-introduced 'modal base-rate neglect': introspectively, the engineer-claim sounds appropriate regardless of the 30/70 vs 70/30 prior. C&M's explanatory-value analysis: EV(engineer) = 1.33 (paper eq. 39) > EV(lawyer) = 0.63 (eq. 40), prior-independent. Formalized in `mustCM_predicts_base_rate_neglect_under_CM_conditionals`." }
 
 def cm2024_49a_cold : LinguisticExample :=
   { id := "cm2024_49a_cold"
@@ -193,9 +175,7 @@ def cm2024_49a_cold : LinguisticExample :=
     alternatives := [("#He must be dead.", .unacceptable)]
     readings := []
     paperFeatures := [("puzzle", "plausibilityFloor"), ("modalForce", "must")]
-    comment := "Dead-vs-cold contrast (paper §5, eq. 49a/b). The pure likelihood-based analysis incorrectly predicts must-dead acceptable (P(absent|dead)=1 ≫ P(absent|cold)). Motivates the §5 plausibility-floor patch (formalized as `mustCMWithPlausibility`)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Dead-vs-cold contrast (paper §5, eq. 49a/b). The pure likelihood-based analysis incorrectly predicts must-dead acceptable (P(absent|dead)=1 ≫ P(absent|cold)). Motivates the §5 plausibility-floor patch (formalized as `mustCMWithPlausibility`)." }
 
 def cm2024_54a_grammatical_mistake : LinguisticExample :=
   { id := "cm2024_54a_grammatical_mistake"
@@ -211,9 +191,7 @@ def cm2024_54a_grammatical_mistake : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("puzzle", "plausibilityFloor"), ("modalForce", "must"), ("modalType", "deontic")]
-    comment := "Deontic-domain instance of the §5 plausibility-floor requirement: the prejacent (never making any mistake) is implausible, infelicity follows. Extends the dead/cold contrast (cm2024_49a) from epistemic to deontic."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Deontic-domain instance of the §5 plausibility-floor requirement: the prejacent (never making any mistake) is implausible, infelicity follows. Extends the dead/cold contrast (cm2024_49a) from epistemic to deontic." }
 
 def cm2024_55a_bushwick_helicopter : LinguisticExample :=
   { id := "cm2024_55a_bushwick_helicopter"
@@ -229,9 +207,7 @@ def cm2024_55a_bushwick_helicopter : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("puzzle", "plausibilityFloor"), ("modalForce", "have-to"), ("modalType", "teleological")]
-    comment := "Teleological-domain instance of the §5 plausibility-floor requirement: the prejacent (helicopter-taking) is implausible / impractical. Extends the dead/cold contrast (cm2024_49a) from epistemic to teleological."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Teleological-domain instance of the §5 plausibility-floor requirement: the prejacent (helicopter-taking) is implausible / impractical. Extends the dead/cold contrast (cm2024_49a) from epistemic to teleological." }
 
 def cm2024_60a_kim_marry_pat : LinguisticExample :=
   { id := "cm2024_60a_kim_marry_pat"
@@ -247,9 +223,7 @@ def cm2024_60a_kim_marry_pat : LinguisticExample :=
     alternatives := [("Kim must marry PAT in order to inherit. (with PAT focused)", .unacceptable)]
     readings := []
     paperFeatures := [("puzzle", "focusContrast"), ("modalForce", "must")]
-    comment := "Focus contrast (§6 eq. 60). With neutral focus, the alternative-set is the polar negation of the prejacent (true / true-enough). With contrastive PAT-focus, the alternative-set is other people Kim might marry — making it false (any marriage works). C&M's evidence for alternative-sensitivity of must but not might."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Focus contrast (§6 eq. 60). With neutral focus, the alternative-set is the polar negation of the prejacent (true / true-enough). With contrastive PAT-focus, the alternative-set is other people Kim might marry — making it false (any marriage works). C&M's evidence for alternative-sensitivity of must but not might." }
 
 def cm2024_63_billy_rain : LinguisticExample :=
   { id := "cm2024_63_billy_rain"
@@ -265,9 +239,7 @@ def cm2024_63_billy_rain : LinguisticExample :=
     alternatives := [("It is raining. (without 'must')", .acceptable)]
     readings := []
     paperFeatures := [("puzzle", "vfgFelicity"), ("modalForce", "must"), ("modalType", "epistemic")]
-    comment := "von Fintel-Gillies 2010 puzzle: epistemic must infelicitous with direct perceptual evidence. C&M §7 adopt Goodhue 2017's felicity condition: must φ requires φ not be known. Not formalized — awaits project-wide epistemic-knowledge substrate."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "von Fintel-Gillies 2010 puzzle: epistemic must infelicitous with direct perceptual evidence. C&M §7 adopt Goodhue 2017's felicity condition: must φ requires φ not be known. Not formalized — awaits project-wide epistemic-knowledge substrate." }
 
 def all : List LinguisticExample := [cm2024_1_korean_conditional_eval, cm2024_4_linda_original, cm2024_15a_minersBlockNeither, cm2024_15b_minersBlockA, cm2024_25a_minersMust, cm2024_25b_minersMustA, cm2024_29b_modal_linda, cm2024_35_jack_description, cm2024_36_jack_must_engineer, cm2024_49a_cold, cm2024_54a_grammatical_mistake, cm2024_55a_bushwick_helicopter, cm2024_60a_kim_marry_pat, cm2024_63_billy_rain]
 

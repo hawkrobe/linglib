@@ -31,9 +31,7 @@ def exp1_verbfocus : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("experiment", "1"), ("focus_condition", "verbFocus"), ("verb_type", "mos")]
-    comment := "Dialog frame: Hanako's utterance sets the context and Scott's question is rated; capitals mark the focused constituent."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Dialog frame: Hanako's utterance sets the context and Scott's question is rated; capitals mark the focused constituent." }
 
 def exp1_embeddedfocus : LinguisticExample :=
   { id := "lupandegen2025_exp1_embeddedfocus"
@@ -49,9 +47,7 @@ def exp1_embeddedfocus : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("experiment", "1"), ("focus_condition", "embeddedFocus"), ("verb_type", "mos")]
-    comment := "Dialog frame: Hanako's utterance sets the context and Scott's question is rated; capitals mark the focused constituent."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Dialog frame: Hanako's utterance sets the context and Scott's question is rated; capitals mark the focused constituent." }
 
 def exp2a_say_verbfocus : LinguisticExample :=
   { id := "lupandegen2025_exp2a_say_verbfocus"
@@ -67,9 +63,7 @@ def exp2a_say_verbfocus : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("experiment", "2a"), ("focus_condition", "verbFocus"), ("verb_type", "say")]
-    comment := "Dialog frame: Hanako's utterance sets the context and Scott's question is rated; capitals mark the focused constituent. The item alternates whisper and say; this is the say version."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Dialog frame: Hanako's utterance sets the context and Scott's question is rated; capitals mark the focused constituent. The item alternates whisper and say; this is the say version." }
 
 def exp2a_say_embeddedfocus : LinguisticExample :=
   { id := "lupandegen2025_exp2a_say_embeddedfocus"
@@ -85,9 +79,7 @@ def exp2a_say_embeddedfocus : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("experiment", "2a"), ("focus_condition", "embeddedFocus"), ("verb_type", "say")]
-    comment := "Dialog frame: Hanako's utterance sets the context and Scott's question is rated; capitals mark the focused constituent. The item alternates whisper and say; this is the say version."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Dialog frame: Hanako's utterance sets the context and Scott's question is rated; capitals mark the focused constituent. The item alternates whisper and say; this is the say version." }
 
 def exp3a_say : LinguisticExample :=
   { id := "lupandegen2025_exp3a_say"
@@ -103,9 +95,7 @@ def exp3a_say : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("experiment", "3a"), ("focus_condition", "none"), ("verb_type", "say")]
-    comment := "Dialog frame: Hanako's utterance sets the context and Scott's question is rated; capitals mark the focused constituent."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Dialog frame: Hanako's utterance sets the context and Scott's question is rated; capitals mark the focused constituent." }
 
 def exp3a_sayadverb : LinguisticExample :=
   { id := "lupandegen2025_exp3a_sayadverb"
@@ -121,9 +111,7 @@ def exp3a_sayadverb : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("experiment", "3a"), ("focus_condition", "none"), ("verb_type", "sayAdverb")]
-    comment := "Dialog frame: Hanako's utterance sets the context and Scott's question is rated; capitals mark the focused constituent."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Dialog frame: Hanako's utterance sets the context and Scott's question is rated; capitals mark the focused constituent." }
 
 def exp3b_adverbfocus : LinguisticExample :=
   { id := "lupandegen2025_exp3b_adverbfocus"
@@ -139,9 +127,7 @@ def exp3b_adverbfocus : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("experiment", "3b"), ("focus_condition", "adverbFocus"), ("verb_type", "sayAdverb")]
-    comment := "Dialog frame: Hanako's utterance sets the context and Scott's question is rated; capitals mark the focused constituent."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Dialog frame: Hanako's utterance sets the context and Scott's question is rated; capitals mark the focused constituent." }
 
 def exp3b_embeddedfocus : LinguisticExample :=
   { id := "lupandegen2025_exp3b_embeddedfocus"
@@ -157,9 +143,7 @@ def exp3b_embeddedfocus : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("experiment", "3b"), ("focus_condition", "embeddedFocus"), ("verb_type", "sayAdverb")]
-    comment := "Dialog frame: Hanako's utterance sets the context and Scott's question is rated; capitals mark the focused constituent."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Dialog frame: Hanako's utterance sets the context and Scott's question is rated; capitals mark the focused constituent." }
 
 def all : List LinguisticExample := [exp1_verbfocus, exp1_embeddedfocus, exp2a_say_verbfocus, exp2a_say_embeddedfocus, exp3a_say, exp3a_sayadverb, exp3b_adverbfocus, exp3b_embeddedfocus]
 

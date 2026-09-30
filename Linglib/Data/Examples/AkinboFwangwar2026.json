@@ -17,8 +17,7 @@
       ["ideophone", "gɨ̀rgɨ̀r"],
       ["wordClass", "noun"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "akinbofwangwar2026_6b",
@@ -39,8 +38,7 @@
       ["ideophone", "gɨ̀rgɨ̀r"],
       ["wordClass", "noun"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "akinbofwangwar2026_6c",
@@ -61,8 +59,7 @@
       ["ideophone", "gɨ̀rgɨ̀r"],
       ["wordClass", "noun"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "akinbofwangwar2026_6d",
@@ -83,8 +80,7 @@
       ["ideophone", "gɨ̀rgɨ̀r"],
       ["wordClass", "adjective"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "akinbofwangwar2026_6e",
@@ -105,8 +101,7 @@
       ["ideophone", "gɨ̀rgɨ̀r"],
       ["wordClass", "adverb"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "akinbofwangwar2026_6f",
@@ -126,8 +121,7 @@
       ["ideophone", "múl"],
       ["wordClass", "verb"]
     ],
-    "comment": "The ideophonic verb carries a negative affective meaning: the oil was rubbed wastefully or imprecisely.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The ideophonic verb carries a negative affective meaning: the oil was rubbed wastefully or imprecisely."
   },
   {
     "id": "akinbofwangwar2026_6g",
@@ -148,8 +142,7 @@
       ["wordClass", "verb"],
       ["construction", "future"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "akinbofwangwar2026_11a",
@@ -170,8 +163,7 @@
       ["lexeme", "mwàːn"],
       ["construction", "presentPast"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "akinbofwangwar2026_11b",
@@ -192,8 +184,7 @@
       ["lexeme", "mwàːn"],
       ["construction", "future"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "akinbofwangwar2026_11c",
@@ -214,8 +205,7 @@
       ["lexeme", "mwàːn"],
       ["construction", "focus"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "akinbofwangwar2026_11d",
@@ -236,8 +226,7 @@
       ["lexeme", "mwàːn"],
       ["construction", "serialVerb"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "akinbofwangwar2026_11e",
@@ -259,8 +248,7 @@
       ["lexeme", "mwàːn"],
       ["construction", "negation"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "akinbofwangwar2026_12a",
@@ -281,8 +269,7 @@
       ["lexeme", "kɔ̄rjɔ́ŋ"],
       ["construction", "presentPast"]
     ],
-    "comment": "Derived from the ideophone kɔ̀rjɔ̀ŋ 'crooked' by the M-H verbaliser.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Derived from the ideophone kɔ̀rjɔ̀ŋ 'crooked' by the M-H verbaliser."
   },
   {
     "id": "akinbofwangwar2026_12b",
@@ -303,8 +290,7 @@
       ["lexeme", "kɔ̄rjɔ́ŋ"],
       ["construction", "future"]
     ],
-    "comment": "Derived from the ideophone kɔ̀rjɔ̀ŋ 'crooked' by the M-H verbaliser.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Derived from the ideophone kɔ̀rjɔ̀ŋ 'crooked' by the M-H verbaliser."
   },
   {
     "id": "akinbofwangwar2026_12c",
@@ -325,8 +311,7 @@
       ["lexeme", "kɔ̄rjɔ́ŋ"],
       ["construction", "focus"]
     ],
-    "comment": "Derived from the ideophone kɔ̀rjɔ̀ŋ 'crooked' by the M-H verbaliser.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Derived from the ideophone kɔ̀rjɔ̀ŋ 'crooked' by the M-H verbaliser."
   },
   {
     "id": "akinbofwangwar2026_12d",
@@ -348,8 +333,7 @@
       ["lexeme", "kɔ̄rjɔ́ŋ"],
       ["construction", "serialVerb"]
     ],
-    "comment": "Derived from the ideophone kɔ̀rjɔ̀ŋ 'crooked' by the M-H verbaliser.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Derived from the ideophone kɔ̀rjɔ̀ŋ 'crooked' by the M-H verbaliser."
   },
   {
     "id": "akinbofwangwar2026_12e",
@@ -370,8 +354,7 @@
       ["lexeme", "kɔ̄rjɔ́ŋ"],
       ["construction", "serialVerb"]
     ],
-    "comment": "Derived from the ideophone kɔ̀rjɔ̀ŋ 'crooked' by the M-H verbaliser.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Derived from the ideophone kɔ̀rjɔ̀ŋ 'crooked' by the M-H verbaliser."
   },
   {
     "id": "akinbofwangwar2026_12f",
@@ -393,8 +376,7 @@
       ["lexeme", "kɔ̄rjɔ́ŋ"],
       ["construction", "negation"]
     ],
-    "comment": "Derived from the ideophone kɔ̀rjɔ̀ŋ 'crooked' by the M-H verbaliser.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Derived from the ideophone kɔ̀rjɔ̀ŋ 'crooked' by the M-H verbaliser."
   },
   {
     "id": "akinbofwangwar2026_21_1",
@@ -415,8 +397,7 @@
       ["verbTones", "M"],
       ["gerundiveTones", "M"]
     ],
-    "comment": "The gerundive overwrites the verb's lexical tones with M, the melody the M verbaliser also yields.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The gerundive overwrites the verb's lexical tones with M, the melody the M verbaliser also yields."
   },
   {
     "id": "akinbofwangwar2026_21_2",
@@ -437,8 +418,7 @@
       ["verbTones", "M"],
       ["gerundiveTones", "M"]
     ],
-    "comment": "The gerundive overwrites the verb's lexical tones with M, the melody the M verbaliser also yields.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The gerundive overwrites the verb's lexical tones with M, the melody the M verbaliser also yields."
   },
   {
     "id": "akinbofwangwar2026_21_3",
@@ -459,8 +439,7 @@
       ["verbTones", "L"],
       ["gerundiveTones", "M"]
     ],
-    "comment": "The gerundive overwrites the verb's lexical tones with M, the melody the M verbaliser also yields.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The gerundive overwrites the verb's lexical tones with M, the melody the M verbaliser also yields."
   },
   {
     "id": "akinbofwangwar2026_21_4",
@@ -481,8 +460,7 @@
       ["verbTones", "L"],
       ["gerundiveTones", "M"]
     ],
-    "comment": "The gerundive overwrites the verb's lexical tones with M, the melody the M verbaliser also yields.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The gerundive overwrites the verb's lexical tones with M, the melody the M verbaliser also yields."
   },
   {
     "id": "akinbofwangwar2026_27_1",
@@ -504,8 +482,7 @@
       ["possessedTones", "L"],
       ["outputTones", "L"]
     ],
-    "comment": "N1 of an associative construction surfaces with L on every TBU; some H-tone nouns, and every H-tone ideophonic noun, surface with M instead.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "N1 of an associative construction surfaces with L on every TBU; some H-tone nouns, and every H-tone ideophonic noun, surface with M instead."
   },
   {
     "id": "akinbofwangwar2026_27_2",
@@ -527,8 +504,7 @@
       ["possessedTones", "M"],
       ["outputTones", "L"]
     ],
-    "comment": "N1 of an associative construction surfaces with L on every TBU; some H-tone nouns, and every H-tone ideophonic noun, surface with M instead.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "N1 of an associative construction surfaces with L on every TBU; some H-tone nouns, and every H-tone ideophonic noun, surface with M instead."
   },
   {
     "id": "akinbofwangwar2026_27_3",
@@ -550,8 +526,7 @@
       ["possessedTones", "H"],
       ["outputTones", "L"]
     ],
-    "comment": "N1 of an associative construction surfaces with L on every TBU; some H-tone nouns, and every H-tone ideophonic noun, surface with M instead.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "N1 of an associative construction surfaces with L on every TBU; some H-tone nouns, and every H-tone ideophonic noun, surface with M instead."
   },
   {
     "id": "akinbofwangwar2026_27_4",
@@ -573,8 +548,7 @@
       ["possessedTones", "H"],
       ["outputTones", "M"]
     ],
-    "comment": "N1 of an associative construction surfaces with L on every TBU; some H-tone nouns, and every H-tone ideophonic noun, surface with M instead.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "N1 of an associative construction surfaces with L on every TBU; some H-tone nouns, and every H-tone ideophonic noun, surface with M instead."
   },
   {
     "id": "akinbofwangwar2026_27_5",
@@ -596,8 +570,7 @@
       ["possessedTones", "L"],
       ["outputTones", "L"]
     ],
-    "comment": "N1 of an associative construction surfaces with L on every TBU; some H-tone nouns, and every H-tone ideophonic noun, surface with M instead.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "N1 of an associative construction surfaces with L on every TBU; some H-tone nouns, and every H-tone ideophonic noun, surface with M instead."
   },
   {
     "id": "akinbofwangwar2026_27_6",
@@ -619,8 +592,7 @@
       ["possessedTones", "M"],
       ["outputTones", "L"]
     ],
-    "comment": "N1 of an associative construction surfaces with L on every TBU; some H-tone nouns, and every H-tone ideophonic noun, surface with M instead.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "N1 of an associative construction surfaces with L on every TBU; some H-tone nouns, and every H-tone ideophonic noun, surface with M instead."
   },
   {
     "id": "akinbofwangwar2026_27_7",
@@ -642,7 +614,6 @@
       ["possessedTones", "H"],
       ["outputTones", "M"]
     ],
-    "comment": "N1 of an associative construction surfaces with L on every TBU; some H-tone nouns, and every H-tone ideophonic noun, surface with M instead.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "N1 of an associative construction surfaces with L on every TBU; some H-tone nouns, and every H-tone ideophonic noun, surface with M instead."
   }
 ]

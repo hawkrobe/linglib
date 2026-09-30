@@ -31,9 +31,7 @@ def ex_3a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "only"), ("focus", "Bill"), ("truth", "false")]
-    comment := "False in the introduction scenario: the domain of only is constrained to properties of the form 'introducing y to Sue', and Mary also introduced Tom to Sue."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "False in the introduction scenario: the domain of only is constrained to properties of the form 'introducing y to Sue', and Mary also introduced Tom to Sue." }
 
 def ex_3b : LinguisticExample :=
   { id := "rooth1992_3b"
@@ -49,9 +47,7 @@ def ex_3b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "only"), ("focus", "Sue"), ("truth", "true")]
-    comment := "True in the introduction scenario: among properties of the form 'introducing Bill to z', Mary has only 'introducing Bill to Sue'."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "True in the introduction scenario: among properties of the form 'introducing Bill to z', Mary has only 'introducing Bill to Sue'." }
 
 def ex_7 : LinguisticExample :=
   { id := "rooth1992_7"
@@ -67,9 +63,7 @@ def ex_7 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "only"), ("focus", "read")]
-    comment := "With a focused transitive verb the focus semantic value of the VP contains every property of the form 'R-ing The Recognitions', trivial relations included; fixing the domain of only to it gives unsatisfiable truth conditions, though the sentence can be true."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "With a focused transitive verb the focus semantic value of the VP contains every property of the form 'R-ing The Recognitions', trivial relations included; fixing the domain of only to it gives unsatisfiable truth conditions, though the sentence can be true." }
 
 def ex_11 : LinguisticExample :=
   { id := "rooth1992_11"
@@ -85,9 +79,7 @@ def ex_11 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "contrast")]
-    comment := "Symmetric contrast: each N' is construed as contrasting with the other, the ordinary value of each being a member of the focus semantic value of the other."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Symmetric contrast: each N' is construed as contrasting with the other, the ordinary value of each being a member of the focus semantic value of the other." }
 
 def ex_16 : LinguisticExample :=
   { id := "rooth1992_16"
@@ -103,9 +95,7 @@ def ex_16 : LinguisticExample :=
     alternatives := []
     readings := [("the speaker did not ace the quiz", .acceptable)]
     paperFeatures := [("construction", "scale"), ("focus", "passed")]
-    comment := "Suggests that the speaker did no better than passing, and nothing about whether the roommates passed."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Suggests that the speaker did no better than passing, and nothing about whether the roommates passed." }
 
 def ex_17 : LinguisticExample :=
   { id := "rooth1992_17"
@@ -121,9 +111,7 @@ def ex_17 : LinguisticExample :=
     alternatives := []
     readings := [("the roommates did not pass", .acceptable)]
     paperFeatures := [("construction", "scale"), ("focus", "I")]
-    comment := "Suggests that the roommates did not pass, via a scale of group propositions of the form 'x passed'."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Suggests that the roommates did not pass, via a scale of group propositions of the form 'x passed'." }
 
 def ex_23Aa_Qa : LinguisticExample :=
   { id := "rooth1992_23Aa_Qa"
@@ -139,9 +127,7 @@ def ex_23Aa_Qa : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "qa"), ("question", "whoCutBill"), ("focus", "Mary")]
-    comment := "An appropriate answer: the question denotation is a subset of the answer's focus semantic value."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "An appropriate answer: the question denotation is a subset of the answer's focus semantic value." }
 
 def ex_23Ab_Qa : LinguisticExample :=
   { id := "rooth1992_23Ab_Qa"
@@ -157,9 +143,7 @@ def ex_23Ab_Qa : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "qa"), ("question", "whoCutBill"), ("focus", "Bill")]
-    comment := "Inappropriate: the propositions of the form 'x cut Bill down to size' are not all of the form 'Mary cut y down to size'."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Inappropriate: the propositions of the form 'x cut Bill down to size' are not all of the form 'Mary cut y down to size'." }
 
 def ex_23Ab_Qb : LinguisticExample :=
   { id := "rooth1992_23Ab_Qb"
@@ -175,9 +159,7 @@ def ex_23Ab_Qb : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "qa"), ("question", "whoDidMaryCut"), ("focus", "Bill")]
-    comment := "An appropriate answer to the object question."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "An appropriate answer to the object question." }
 
 def ex_23Aa_Qb : LinguisticExample :=
   { id := "rooth1992_23Aa_Qb"
@@ -193,9 +175,7 @@ def ex_23Aa_Qb : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "qa"), ("question", "whoDidMaryCut"), ("focus", "Mary")]
-    comment := "Inappropriate as an answer to the object question."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Inappropriate as an answer to the object question." }
 
 def ex_59a : LinguisticExample :=
   { id := "rooth1992_59a"
@@ -211,9 +191,7 @@ def ex_59a : LinguisticExample :=
     alternatives := []
     readings := [("than she beats Sue", .acceptable), ("than Sue beats me", .unacceptable)]
     paperFeatures := [("construction", "ellipsis"), ("focus", "me")]
-    comment := "Bare remnant ellipsis: focus on the object correlate selects the reading in which the remnant corresponds to the object."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Bare remnant ellipsis: focus on the object correlate selects the reading in which the remnant corresponds to the object." }
 
 def ex_59b : LinguisticExample :=
   { id := "rooth1992_59b"
@@ -229,9 +207,7 @@ def ex_59b : LinguisticExample :=
     alternatives := []
     readings := [("than she beats Sue", .unacceptable), ("than Sue beats me", .acceptable)]
     paperFeatures := [("construction", "ellipsis"), ("focus", "she")]
-    comment := "Focus on the subject correlate selects the reading in which the remnant corresponds to the subject."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Focus on the subject correlate selects the reading in which the remnant corresponds to the subject." }
 
 def ex_70 : LinguisticExample :=
   { id := "rooth1992_70"
@@ -247,9 +223,7 @@ def ex_70 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "only"), ("focus", "eat")]
-    comment := "The focus on the verb is anaphoric to the other verb phrase rather than associated with only, whose domain is then fixed pragmatically: what is excluded is eating staples other than rice."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The focus on the verb is anaphoric to the other verb phrase rather than associated with only, whose domain is then fixed pragmatically: what is excluded is eating staples other than rice." }
 
 def ex_72a : LinguisticExample :=
   { id := "rooth1992_72a"
@@ -265,9 +239,7 @@ def ex_72a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "contrast")]
-    comment := "The anticipatory first focus of (11) is optional: no focus interpretation operator at the level of the first N'."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The anticipatory first focus of (11) is optional: no focus interpretation operator at the level of the first N'." }
 
 def all : List LinguisticExample := [ex_3a, ex_3b, ex_7, ex_11, ex_16, ex_17, ex_23Aa_Qa, ex_23Ab_Qa, ex_23Ab_Qb, ex_23Aa_Qb, ex_59a, ex_59b, ex_70, ex_72a]
 

@@ -31,9 +31,7 @@ def ex17b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("focused", "subject"), ("aspect", "perfective"), ("strategy", "postposing")]
-    comment := "Wh-subjects, like focused subjects, obligatorily move to a postverbal position (§4.1.1)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Wh-subjects, like focused subjects, obligatorily move to a postverbal position (§4.1.1)." }
 
 def ex24a : LinguisticExample :=
   { id := "hartmannzimmermann2004_ex24a"
@@ -49,9 +47,7 @@ def ex24a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("focused", "allNew"), ("aspect", "perfective"), ("strategy", "unmarked")]
-    comment := "Neutral all-new sentence: no focus suffix."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Neutral all-new sentence: no focus suffix." }
 
 def ex24b : LinguisticExample :=
   { id := "hartmannzimmermann2004_ex24b"
@@ -67,9 +63,7 @@ def ex24b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("focused", "vp"), ("aspect", "perfective"), ("strategy", "suffixI"), ("transitive", "false")]
-    comment := "Morphological focus marking with the suffix -i, reserved for (some) intransitive verbal predicates (§5.2.1, their fn. 6)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Morphological focus marking with the suffix -i, reserved for (some) intransitive verbal predicates (§5.2.1, their fn. 6)." }
 
 def ex25a : LinguisticExample :=
   { id := "hartmannzimmermann2004_ex25a"
@@ -85,9 +79,7 @@ def ex25a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("focused", "object"), ("aspect", "perfective"), ("strategy", "boundary"), ("transitive", "true")]
-    comment := "Prosodic phrase boundary after the verb: vowel elision and left line delinking are blocked (non-elided wai-gó with its H-tone intact)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Prosodic phrase boundary after the verb: vowel elision and left line delinking are blocked (non-elided wai-gó with its H-tone intact)." }
 
 def ex25b : LinguisticExample :=
   { id := "hartmannzimmermann2004_ex25b"
@@ -103,9 +95,7 @@ def ex25b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("focused", "vp"), ("aspect", "perfective"), ("strategy", "boundary"), ("transitive", "true")]
-    comment := "String-identical to (25a): the boundary marks V-, VP-, and OBJ-focus alike; the §5.3 pitch study finds no further prosodic cue."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "String-identical to (25a): the boundary marks V-, VP-, and OBJ-focus alike; the §5.3 pitch study finds no further prosodic cue." }
 
 def ex25c : LinguisticExample :=
   { id := "hartmannzimmermann2004_ex25c"
@@ -121,9 +111,7 @@ def ex25c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("focused", "verb"), ("aspect", "perfective"), ("strategy", "boundary"), ("transitive", "true")]
-    comment := "Third member of the string-identical (25) triple."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Third member of the string-identical (25) triple." }
 
 def ex31 : LinguisticExample :=
   { id := "hartmannzimmermann2004_ex31"
@@ -139,9 +127,7 @@ def ex31 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("focused", "allNew"), ("aspect", "progressive"), ("strategy", "unmarked")]
-    comment := "Neutral progressive: vowel elision applies obligatorily (balli > ball)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Neutral progressive: vowel elision applies obligatorily (balli > ball)." }
 
 def ex32a : LinguisticExample :=
   { id := "hartmannzimmermann2004_ex32a"
@@ -157,9 +143,7 @@ def ex32a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("focused", "object"), ("aspect", "progressive"), ("strategy", "unmarked")]
-    comment := "No discernible difference from neutral (31): VE applies as usual — contra Kidda 1993:127 (their fn. 12)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "No discernible difference from neutral (31): VE applies as usual — contra Kidda 1993:127 (their fn. 12)." }
 
 def ex32b : LinguisticExample :=
   { id := "hartmannzimmermann2004_ex32b"
@@ -175,9 +159,7 @@ def ex32b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("focused", "vp"), ("aspect", "progressive"), ("strategy", "unmarked")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex32c : LinguisticExample :=
   { id := "hartmannzimmermann2004_ex32c"
@@ -193,9 +175,7 @@ def ex32c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("focused", "verb"), ("aspect", "progressive"), ("strategy", "unmarked")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex36a : LinguisticExample :=
   { id := "hartmannzimmermann2004_ex36a"
@@ -211,9 +191,7 @@ def ex36a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("focused", "object"), ("aspect", "perfective"), ("association", "object")]
-    comment := "núm is syntactically fixed to DP expressions (like Hausa sái) but associates semantically with OBJ, VP, or V focus (§6.3); pitch tracks show no prosodic difference across (36a-c)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "núm is syntactically fixed to DP expressions (like Hausa sái) but associates semantically with OBJ, VP, or V focus (§6.3); pitch tracks show no prosodic difference across (36a-c)." }
 
 def ex36b : LinguisticExample :=
   { id := "hartmannzimmermann2004_ex36b"
@@ -229,9 +207,7 @@ def ex36b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("focused", "vp"), ("aspect", "perfective"), ("association", "vp")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex36c : LinguisticExample :=
   { id := "hartmannzimmermann2004_ex36c"
@@ -247,9 +223,7 @@ def ex36c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("focused", "verb"), ("aspect", "perfective"), ("association", "verb")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def all : List LinguisticExample := [ex17b, ex24a, ex24b, ex25a, ex25b, ex25c, ex31, ex32a, ex32b, ex32c, ex36a, ex36b, ex36c]
 

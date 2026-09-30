@@ -59,9 +59,7 @@
         "edge"
       ]
     ],
-    "comment": "The relative pronoun and complementizer are obligatory, *(yox̂ ke).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The relative pronoun and complementizer are obligatory, *(yox̂ ke)."
   },
   {
     "id": "deal2026_28b",
@@ -127,9 +125,7 @@
         "edge"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "deal2026_27b",
@@ -186,9 +182,7 @@
         "edge"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "deal2026_27d",
@@ -245,9 +239,7 @@
         "edge"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "deal2026_27e_eeys",
@@ -304,9 +296,7 @@
         "edge"
       ]
     ],
-    "comment": "One of the three predicates (27e) gives with one embedded clause.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "One of the three predicates (27e) gives with one embedded clause."
   },
   {
     "id": "deal2026_27e_qeese",
@@ -363,9 +353,7 @@
         "edge"
       ]
     ],
-    "comment": "One of the three predicates (27e) gives with one embedded clause.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "One of the three predicates (27e) gives with one embedded clause."
   },
   {
     "id": "deal2026_27e_timneeneki",
@@ -422,9 +410,7 @@
         "edge"
       ]
     ],
-    "comment": "One of the three predicates (27e) gives with one embedded clause.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "One of the three predicates (27e) gives with one embedded clause."
   },
   {
     "id": "deal2026_41a",
@@ -465,9 +451,7 @@
         "nominalComplement"
       ]
     ],
-    "comment": "Intended reading; an RE predicate takes no nominal complement.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Intended reading; an RE predicate takes no nominal complement."
   },
   {
     "id": "deal2026_41b",
@@ -508,9 +492,7 @@
         "nominalComplement"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "deal2026_42a",
@@ -567,9 +549,7 @@
         "edge"
       ]
     ],
-    "comment": "An unanalyzable particle, not a verb (fn. 16, §4).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "An unanalyzable particle, not a verb (fn. 16, §4)."
   },
   {
     "id": "deal2026_42b",
@@ -611,9 +591,7 @@
         "nominalComplement"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "deal2026_47a",
@@ -667,9 +645,7 @@
         "edge"
       ]
     ],
-    "comment": "The relative morphology is excluded, (*yox̂ ke); the addressee is accusative.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The relative morphology is excluded, (*yox̂ ke); the addressee is accusative."
   },
   {
     "id": "deal2026_47b",
@@ -714,9 +690,7 @@
         "aboutPP"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "deal2026_48a",
@@ -770,9 +744,7 @@
         "edge"
       ]
     ],
-    "comment": "Repeated as (65a).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Repeated as (65a)."
   },
   {
     "id": "deal2026_48b",
@@ -817,9 +789,7 @@
         "aboutPP"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "deal2026_65b",
@@ -873,9 +843,7 @@
         "edge"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "deal2026_66a",
@@ -924,9 +892,7 @@
         "edge"
       ]
     ],
-    "comment": "Simplex embedding under ‘know’ is extremely well documented.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Simplex embedding under ‘know’ is extremely well documented."
   },
   {
     "id": "deal2026_66b",
@@ -991,9 +957,7 @@
         "%"
       ]
     ],
-    "comment": "Marked %: consultants did on rare occasions accept an RE with ‘know’, and once produced one.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Marked %: consultants did on rare occasions accept an RE with ‘know’, and once produced one."
   },
   {
     "id": "deal2026_33",
@@ -1062,9 +1026,7 @@
         "3"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "deal2026_34",
@@ -1137,9 +1099,7 @@
         "3"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "deal2026_35",
@@ -1200,9 +1160,7 @@
         "3"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "deal2026_36",
@@ -1267,9 +1225,7 @@
         "3"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "deal2026_68",
@@ -1346,8 +1302,6 @@
         "3"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   }
 ]

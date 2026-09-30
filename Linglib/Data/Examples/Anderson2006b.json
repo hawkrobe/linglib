@@ -17,9 +17,7 @@
       ["arg", "abs"],
       ["subject", "erg"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "anderson2006b_39b",
@@ -39,9 +37,7 @@
       ["arg", "loc"],
       ["subject", "abs"]
     ],
-    "comment": "The locative carries the second-order feature {goal}; the subject is not inherently ergative.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The locative carries the second-order feature {goal}; the subject is not inherently ergative."
   },
   {
     "id": "anderson2006b_39c",
@@ -61,9 +57,7 @@
       ["arg", "loc"],
       ["subject", "abs,erg"]
     ],
-    "comment": "The locative carries {goal}.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The locative carries {goal}."
   },
   {
     "id": "anderson2006b_39h",
@@ -83,9 +77,7 @@
       ["arg", "abs"],
       ["subject", "erg,loc"]
     ],
-    "comment": "E (Experiencer) = erg,loc.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "E (Experiencer) = erg,loc."
   },
   {
     "id": "anderson2006b_39i",
@@ -105,9 +97,7 @@
       ["arg", "abs"],
       ["subject", "erg,loc"]
     ],
-    "comment": "Experiencer with {goal} on its locative component: erg,loc{goal} + abs. Also 'a new outlook'.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Experiencer with {goal} on its locative component: erg,loc{goal} + abs. Also 'a new outlook'."
   },
   {
     "id": "anderson2006b_39j",
@@ -127,9 +117,7 @@
       ["arg", "loc"],
       ["subject", "abs,erg,loc"]
     ],
-    "comment": "E + abl = abs,erg,loc{goal} + loc{src}. Also 'from delusions'.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "E + abl = abs,erg,loc{goal} + loc{src}. Also 'from delusions'."
   },
   {
     "id": "anderson2006b_34",
@@ -149,9 +137,7 @@
       ["arg", "loc"],
       ["subject", "abs,erg,loc"]
     ],
-    "comment": "A patient that is at once Experiencer and contactive: all three first-order features combine on one argument; the ablative is loc{src}.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A patient that is at once Experiencer and contactive: all three first-order features combine on one argument; the ablative is loc{src}."
   },
   {
     "id": "anderson2006b_4_8a",
@@ -171,9 +157,7 @@
       ["arg", "loc"],
       ["subject", "abs"]
     ],
-    "comment": "The simple absolutive is subject; the goal locative is a spatial argument, ineligible for subject.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The simple absolutive is subject; the goal locative is a spatial argument, ineligible for subject."
   },
   {
     "id": "anderson2006b_4_8b",
@@ -193,9 +177,7 @@
       ["adjunct", "abs"],
       ["subject", "abs,loc"]
     ],
-    "comment": "The holistic subject is a contactive; the with-phrase is a circumstantial outside subject selection, which is what lets (38)' drop the optional comma of (38).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The holistic subject is a contactive; the with-phrase is a circumstantial outside subject selection, which is what lets (38)' drop the optional comma of (38)."
   },
   {
     "id": "anderson2006b_23a",
@@ -215,8 +197,6 @@
       ["arg", "abs"],
       ["subject", "erg"]
     ],
-    "comment": "The object is absolutive but not contactive: no 'intimate contact'.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The object is absolutive but not contactive: no 'intimate contact'."
   }
 ]

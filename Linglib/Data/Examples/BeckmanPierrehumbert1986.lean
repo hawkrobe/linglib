@@ -31,9 +31,7 @@ def bp1986_fig3 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("accentual phrase", "unaccented"), ("tonal pattern", "phrasal H ... boundary L")]
-    comment := "The long unaccented AP shows smooth interpolation from phrasal H to boundary L — no H-tone spreading."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The long unaccented AP shows smooth interpolation from phrasal H to boundary L — no H-tone spreading." }
 
 def bp1986_fig5 : LinguisticExample :=
   { id := "bp1986_fig5"
@@ -49,9 +47,7 @@ def bp1986_fig5 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("accentual phrase", "accented"), ("process", "catathesis")]
-    comment := "The boundary L after the accented phrase is realized much lower: catathesis triggered by the accent."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The boundary L after the accented phrase is realized much lower: catathesis triggered by the accent." }
 
 def bp1986_fig6a : LinguisticExample :=
   { id := "bp1986_fig6a"
@@ -67,9 +63,7 @@ def bp1986_fig6a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("process", "accent deletion"), ("constraint", "one accent per AP")]
-    comment := "Grouping two accented words into one AP deletes the second accent; the contour equals Fig. 6b's."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Grouping two accented words into one AP deletes the second accent; the contour equals Fig. 6b's." }
 
 def bp1986_fig6b : LinguisticExample :=
   { id := "bp1986_fig6b"
@@ -85,9 +79,7 @@ def bp1986_fig6b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("accentual phrase", "one accent"), ("noun", "unaccented")]
-    comment := "Identical tonal contour to Fig. 6a — deletion neutralizes the mame'/ame accent contrast under grouping."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Identical tonal contour to Fig. 6a — deletion neutralizes the mame'/ame accent contrast under grouping." }
 
 def bp1986_fig8 : LinguisticExample :=
   { id := "bp1986_fig8"
@@ -103,9 +95,7 @@ def bp1986_fig8 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("focus", "initial"), ("process", "subordination or dephrasing")]
-    comment := "Focus on the unaccented adjective flattens the following accented noun's rise — extreme subordination is phonetically like dephrasing."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Focus on the unaccented adjective flattens the following accented noun's rise — extreme subordination is phonetically like dephrasing." }
 
 def bp1986_ex2 : LinguisticExample :=
   { id := "bp1986_ex2"
@@ -121,9 +111,7 @@ def bp1986_ex2 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("intermediate phrase", "break after first modifier")]
-    comment := "Most subjects split this into two intermediate phrases — smaller than an English intonation phrase."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Most subjects split this into two intermediate phrases — smaller than an English intonation phrase." }
 
 def bp1986_ex3 : LinguisticExample :=
   { id := "bp1986_ex3"
@@ -139,9 +127,7 @@ def bp1986_ex3 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("intermediate phrase", "break inside compound")]
-    comment := "Catathesis blocked after neage: an ip boundary can fall inside a compound in Japanese."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Catathesis blocked after neage: an ip boundary can fall inside a compound in Japanese." }
 
 def bp1986_fig36 : LinguisticExample :=
   { id := "bp1986_fig36"
@@ -157,9 +143,7 @@ def bp1986_fig36 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("process", "final lowering"), ("domain", "declaratives only")]
-    comment := "Declarative and interrogative F0 match early and diverge at the end: final lowering in declaratives."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Declarative and interrogative F0 match early and diverge at the end: final lowering in declaratives." }
 
 def bp1986_fig1 : LinguisticExample :=
   { id := "bp1986_fig1"
@@ -175,9 +159,7 @@ def bp1986_fig1 : LinguisticExample :=
     alternatives := []
     readings := [("H* H* L L%: neutral declarative", .acceptable), ("H*+L H* L L%: downstepping, feigned judiciousness", .acceptable), ("L* H* L L%: surprise-redundancy", .acceptable)]
     paperFeatures := [("accent inventory", "postlexical shape choice")]
-    comment := "Accent shape contrasts intonational meanings, never lexical items."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Accent shape contrasts intonational meanings, never lexical items." }
 
 def bp1986_fig2 : LinguisticExample :=
   { id := "bp1986_fig2"
@@ -193,9 +175,7 @@ def bp1986_fig2 : LinguisticExample :=
     alternatives := []
     readings := [("H* on Mary: peak near end of stressed syllable, impatient reassertion", .acceptable), ("H+L* on Mary: peak just before the stressed syllable, peevish", .acceptable)]
     paperFeatures := [("diagnostic", "peak alignment"), ("claim", "bitonal accents are units")]
-    comment := "The unstarred H of H+L* lands mid-word in Marianna — implausible as any phrasal tone."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The unstarred H of H+L* lands mid-word in Marianna — implausible as any phrasal tone." }
 
 def bp1986_fig11 : LinguisticExample :=
   { id := "bp1986_fig11"
@@ -211,9 +191,7 @@ def bp1986_fig11 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("process", "catathesis chain"), ("contour", "descending staircase")]
-    comment := "Iterated catathesis: up to six or seven step levels, ruling out a fixed mid tone."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Iterated catathesis: up to six or seven step levels, ruling out a fixed mid tone." }
 
 def bp1986_ex4 : LinguisticExample :=
   { id := "bp1986_ex4"
@@ -229,9 +207,7 @@ def bp1986_ex4 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("intermediate phrase", "medial L phrase accent")]
-    comment := "The definiendum is set off as its own intermediate phrase; a full intonation break would be too strong."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The definiendum is set off as its own intermediate phrase; a full intonation break would be too strong." }
 
 def bp1986_ex7 : LinguisticExample :=
   { id := "bp1986_ex7"
@@ -247,9 +223,7 @@ def bp1986_ex7 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("intermediate phrase", "H phrase accent per list item"), ("boundary tone", "one final H%")]
-    comment := "Three H-phrase-accent ips under one intonation phrase whose single H% closes the list."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Three H-phrase-accent ips under one intonation phrase whose single H% closes the list." }
 
 def bp1986_ex9 : LinguisticExample :=
   { id := "bp1986_ex9"
@@ -265,9 +239,7 @@ def bp1986_ex9 : LinguisticExample :=
     alternatives := []
     readings := [("pale | orange and yellow: both conjuncts pale", .acceptable), ("pale orange | and yellow: only the orange pale", .acceptable)]
     paperFeatures := [("intermediate phrase", "scope disambiguation")]
-    comment := "Intermediate phrasing disambiguates the scope of the modifier over the conjunction."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Intermediate phrasing disambiguates the scope of the modifier over the conjunction." }
 
 def bp1986_fig34 : LinguisticExample :=
   { id := "bp1986_fig34"
@@ -283,9 +255,7 @@ def bp1986_fig34 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("process", "catathesis blocked at focus"), ("intermediate phrase", "break before focus")]
-    comment := "Downstepping accents on the first three numbers; the focused item is set off by an ip boundary that resets the range."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Downstepping accents on the first three numbers; the focused item is set off by an ip boundary that resets the range." }
 
 def all : List LinguisticExample := [bp1986_fig3, bp1986_fig5, bp1986_fig6a, bp1986_fig6b, bp1986_fig8, bp1986_ex2, bp1986_ex3, bp1986_fig36, bp1986_fig1, bp1986_fig2, bp1986_fig11, bp1986_ex4, bp1986_ex7, bp1986_ex9, bp1986_fig34]
 

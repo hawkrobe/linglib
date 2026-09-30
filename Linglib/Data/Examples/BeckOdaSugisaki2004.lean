@@ -31,9 +31,7 @@ def amount_yori : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "amount_comparative")]
-    comment := "Amount yori-comparative; judgment from Ishii 1991. Gloss: Taroo-Top [Hanako-Nom bought YORI (mo)] many(-Gen) umbrella-Acc bought."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Amount yori-comparative; judgment from Ishii 1991. Gloss: Taroo-Top [Hanako-Nom bought YORI (mo)] many(-Gen) umbrella-Acc bought." }
 
 def degree_yori : LinguisticExample :=
   { id := "beckodasugisaki2004_degree_yori"
@@ -49,9 +47,7 @@ def degree_yori : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "degree_comparative")]
-    comment := "Degree yori-comparative; Ishii 1991 reports ?*, the authors' consultants range from ? to ??. Gloss: Taroo-Top [Hanako-Nom bought YORI (mo)] long umbrella-Acc bought."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Degree yori-comparative; Ishii 1991 reports ?*, the authors' consultants range from ? to ??. Gloss: Taroo-Top [Hanako-Nom bought YORI (mo)] long umbrella-Acc bought." }
 
 def subcomp_ja : LinguisticExample :=
   { id := "beckodasugisaki2004_subcomp_ja"
@@ -67,9 +63,7 @@ def subcomp_ja : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "subcomparative")]
-    comment := "Japanese lacks subcomparatives (observed by Snyder, Wexler & Das 1995). Gloss: this shelf-Top [that door-Nom wide YORI (mo)] (more) tall."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Japanese lacks subcomparatives (observed by Snyder, Wexler & Das 1995). Gloss: this shelf-Top [that door-Nom wide YORI (mo)] (more) tall." }
 
 def subcomp_en : LinguisticExample :=
   { id := "beckodasugisaki2004_subcomp_en"
@@ -85,9 +79,7 @@ def subcomp_en : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "subcomparative")]
-    comment := "English subcomparative control for (5-a)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "English subcomparative control for (5-a)." }
 
 def negisland_ja : LinguisticExample :=
   { id := "beckodasugisaki2004_negisland_ja"
@@ -103,9 +95,7 @@ def negisland_ja : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "negative_island")]
-    comment := "Well-formed, with the individual-comparing interpretation of the paper's (6'): the yori-clause denotes the (unique) book nobody bought, not a degree set. Gloss: John-Top [anyone buy-Neg-Past NO YORI] expensive book-Acc bought."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Well-formed, with the individual-comparing interpretation of the paper's (6'): the yori-clause denotes the (unique) book nobody bought, not a degree set. Gloss: John-Top [anyone buy-Neg-Past NO YORI] expensive book-Acc bought." }
 
 def negisland_en : LinguisticExample :=
   { id := "beckodasugisaki2004_negisland_en"
@@ -121,9 +111,7 @@ def negisland_en : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "negative_island")]
-    comment := "English negative-island effect: no maximal degree such that nobody bought a that-expensive book (Rullmann 1995 undefinedness)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "English negative-island effect: no maximal degree such that nobody bought a that-expensive book (Rullmann 1995 undefinedness)." }
 
 def all : List LinguisticExample := [amount_yori, degree_yori, subcomp_ja, subcomp_en, negisland_ja, negisland_en]
 

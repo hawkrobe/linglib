@@ -18,9 +18,7 @@
       ["clause", "root"],
       ["neg_suffix", "present"]
     ],
-    "comment": "Negative counterpart of (5a) mɨs dɨm-ay ji-ts'awɛt 'I play with my cat'.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Negative counterpart of (5a) mɨs dɨm-ay ji-ts'awɛt 'I play with my cat'."
   },
   {
     "id": "cacchioli2026_12a",
@@ -46,9 +44,7 @@
       ["clause", "relative"],
       ["neg_suffix", "absent"]
     ],
-    "comment": "(12b) suffix alone and (12c) prefix plus suffix are both ungrammatical in a relative clause; ʔaj- surfaces as ɛj- after zɨ-.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "(12b) suffix alone and (12c) prefix plus suffix are both ungrammatical in a relative clause; ʔaj- surfaces as ɛj- after zɨ-."
   },
   {
     "id": "cacchioli2026_14",
@@ -70,9 +66,7 @@
       ["clause", "seem"],
       ["neg_suffix", "absent"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "cacchioli2026_15",
@@ -94,9 +88,7 @@
       ["clause", "conditional"],
       ["neg_suffix", "absent"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "cacchioli2026_16",
@@ -121,9 +113,7 @@
       ["typer", "kemzi"],
       ["matrix_verb", "ask"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "cacchioli2026_20",
@@ -147,9 +137,7 @@
       ["typer", "ki"],
       ["matrix_verb", "try"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "cacchioli2026_21",
@@ -174,9 +162,7 @@
       ["typer", "ki"],
       ["matrix_verb", "order"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "cacchioli2026_22",
@@ -201,9 +187,7 @@
       ["typer", "ki"],
       ["matrix_verb", "want"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "cacchioli2026_23",
@@ -226,9 +210,7 @@
       ["clause", "purpose"],
       ["neg_suffix", "absent"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "cacchioli2026_24",
@@ -250,9 +232,7 @@
       ["clause", "future"],
       ["neg_suffix", "present"]
     ],
-    "comment": "The negative future: ʔaj- precedes kɨ- and the suffix is present.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The negative future: ʔaj- precedes kɨ- and the suffix is present."
   },
   {
     "id": "cacchioli2026_25",
@@ -279,9 +259,7 @@
       ["typer", "ilu"],
       ["matrix_verb", "explain"]
     ],
-    "comment": "Printed as ʔaj-Ø-nɨfɨri-*(n): the suffix is obligatory.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Printed as ʔaj-Ø-nɨfɨri-*(n): the suffix is obligatory."
   },
   {
     "id": "cacchioli2026_29",
@@ -304,9 +282,7 @@
       ["typer", "kemzi"],
       ["matrix_verb", "know"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "cacchioli2026_30",
@@ -329,9 +305,7 @@
       ["typer", "kemzi"],
       ["matrix_verb", "forget"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "cacchioli2026_31",
@@ -353,9 +327,7 @@
       ["typer", "kemzi"],
       ["matrix_verb", "admit"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "cacchioli2026_32",
@@ -378,9 +350,7 @@
       ["typer", "kemzi"],
       ["matrix_verb", "accept"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "cacchioli2026_33",
@@ -403,9 +373,7 @@
       ["typer", "kemzi"],
       ["matrix_verb", "think"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "cacchioli2026_34",
@@ -428,9 +396,7 @@
       ["typer", "kemzi"],
       ["matrix_verb", "believe"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "cacchioli2026_35",
@@ -453,9 +419,7 @@
       ["typer", "kemzi"],
       ["matrix_verb", "suspect"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "cacchioli2026_51",
@@ -478,9 +442,7 @@
       ["typer", "kemzi"],
       ["matrix_verb", "hear"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "cacchioli2026_52a",
@@ -505,9 +467,7 @@
       ["typer", "kemzi"],
       ["matrix_verb", "see"]
     ],
-    "comment": "ʔɨlu is excluded with perception verbs.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "ʔɨlu is excluded with perception verbs."
   },
   {
     "id": "cacchioli2026_53",
@@ -530,9 +490,7 @@
       ["typer", "ilu"],
       ["matrix_verb", "suspect"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "cacchioli2026_54",
@@ -555,9 +513,7 @@
       ["typer", "ilu"],
       ["matrix_verb", "dream"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "cacchioli2026_55",
@@ -580,8 +536,6 @@
       ["typer", "ilu"],
       ["matrix_verb", "read"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   }
 ]

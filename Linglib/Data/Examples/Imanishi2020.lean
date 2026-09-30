@@ -31,9 +31,7 @@ def s1a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "1"), ("alignment", "S/A = set B on ajin, O = set A on the nominalized verb")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s1b : LinguisticExample :=
   { id := "imanishi2020_s1b"
@@ -49,9 +47,7 @@ def s1b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "1"), ("alignment", "S = set B on ajin, no set A on the nominalized verb")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s2a : LinguisticExample :=
   { id := "imanishi2020_s2a"
@@ -67,9 +63,7 @@ def s2a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "1"), ("source", "Coon 2013a:11"), ("alignment", "A = set A, O = set B inside the nominalized clause")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s2b : LinguisticExample :=
   { id := "imanishi2020_s2b"
@@ -85,9 +79,7 @@ def s2b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "1"), ("source", "Coon 2013a:11"), ("alignment", "S = set A")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s3a : LinguisticExample :=
   { id := "imanishi2020_s3a"
@@ -103,9 +95,7 @@ def s3a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "1"), ("source", "Mateo Pedro 2009"), ("alignment", "A = set A, O = set B, the suffix -on supplying object Case")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s3b : LinguisticExample :=
   { id := "imanishi2020_s3b"
@@ -121,9 +111,7 @@ def s3b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "1"), ("source", "Mateo Pedro 2009"), ("alignment", "S = set A")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s62 : LinguisticExample :=
   { id := "imanishi2020_s62"
@@ -139,9 +127,7 @@ def s62 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.1"), ("source", "Alexiadou 2001:76"), ("nominalization", "process nominal without an external argument")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s64 : LinguisticExample :=
   { id := "imanishi2020_s64"
@@ -157,9 +143,7 @@ def s64 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.1"), ("nominalization", "the external argument appears in a relative clause")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s65 : LinguisticExample :=
   { id := "imanishi2020_s65"
@@ -175,9 +159,7 @@ def s65 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.1"), ("nominalization", "the by-phrase counterpart is degraded")]
-    comment := "Marked ?*."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Marked ?*." }
 
 def s66 : LinguisticExample :=
   { id := "imanishi2020_s66"
@@ -193,9 +175,7 @@ def s66 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.1"), ("nominalization", "two set A markers impossible in either order")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s67 : LinguisticExample :=
   { id := "imanishi2020_s67"
@@ -211,9 +191,7 @@ def s67 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.1"), ("nominalization", "a sole argument is the internal argument")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s68a : LinguisticExample :=
   { id := "imanishi2020_s68a"
@@ -229,9 +207,7 @@ def s68a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.1"), ("nominalization", "unergative nominalization excludes its external argument")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s68b : LinguisticExample :=
   { id := "imanishi2020_s68b"
@@ -247,9 +223,7 @@ def s68b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.1"), ("nominalization", "unergative nominalization excludes its external argument")]
-    comment := "Marked ?*."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Marked ?*." }
 
 def s69 : LinguisticExample :=
   { id := "imanishi2020_s69"
@@ -265,9 +239,7 @@ def s69 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.1"), ("nominalization", "unaccusative nominalized in subject position; the internal argument takes genitive")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s70 : LinguisticExample :=
   { id := "imanishi2020_s70"
@@ -283,9 +255,7 @@ def s70 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.1"), ("source", "Coon 2013a:141"), ("nominalization", "external and internal argument both inside")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s71 : LinguisticExample :=
   { id := "imanishi2020_s71"
@@ -301,9 +271,7 @@ def s71 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.1"), ("source", "p.c. Pedro Mateo Pedro"), ("nominalization", "external argument inside the nominalized clause")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s76a : LinguisticExample :=
   { id := "imanishi2020_s76a"
@@ -319,9 +287,7 @@ def s76a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.2.1"), ("voice", "active root transitive")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s76b : LinguisticExample :=
   { id := "imanishi2020_s76b"
@@ -337,9 +303,7 @@ def s76b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.2.1"), ("voice", "passive root transitive without overt passive morphology")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s78a : LinguisticExample :=
   { id := "imanishi2020_s78a"
@@ -355,9 +319,7 @@ def s78a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.2.1"), ("voice", "active, lax vowel")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s78b : LinguisticExample :=
   { id := "imanishi2020_s78b"
@@ -373,9 +335,7 @@ def s78b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.2.1"), ("voice", "passive, tensed vowel")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s80a : LinguisticExample :=
   { id := "imanishi2020_s80a"
@@ -391,9 +351,7 @@ def s80a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.2.1"), ("voice", "tensed vowel: the nominalized verb is passivized")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s80b : LinguisticExample :=
   { id := "imanishi2020_s80b"
@@ -409,9 +367,7 @@ def s80b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.2.1"), ("voice", "tensed vowel: the nominalized verb is passivized")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s82a : LinguisticExample :=
   { id := "imanishi2020_s82a"
@@ -427,9 +383,7 @@ def s82a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.2.1"), ("voice", "active derived transitive")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s82b : LinguisticExample :=
   { id := "imanishi2020_s82b"
@@ -445,9 +399,7 @@ def s82b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.2.1"), ("voice", "passive suffix -x replaces -j")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s83a : LinguisticExample :=
   { id := "imanishi2020_s83a"
@@ -463,9 +415,7 @@ def s83a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.2.1"), ("voice", "passive morpheme under nominalization")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s83b : LinguisticExample :=
   { id := "imanishi2020_s83b"
@@ -481,9 +431,7 @@ def s83b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.2.1"), ("voice", "passive morpheme under nominalization")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s85 : LinguisticExample :=
   { id := "imanishi2020_s85"
@@ -499,9 +447,7 @@ def s85 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.2.2"), ("derivation", "object genitive from D, subject absolutive from the matrix Infl")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s90 : LinguisticExample :=
   { id := "imanishi2020_s90"
@@ -517,9 +463,7 @@ def s90 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.2.2"), ("theta", "ajin assigns an agentive θ-role to its subject")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s91 : LinguisticExample :=
   { id := "imanishi2020_s91"
@@ -535,9 +479,7 @@ def s91 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.2.2"), ("derivation", "unergative base: no DP inside, no genitive")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s92 : LinguisticExample :=
   { id := "imanishi2020_s92"
@@ -553,9 +495,7 @@ def s92 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.2.2"), ("control", "unaccusative base resists nominalization under ajin")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s93a : LinguisticExample :=
   { id := "imanishi2020_s93a"
@@ -571,9 +511,7 @@ def s93a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.2.2"), ("control", "the unaccusative appears as a finite verb under ajin")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s93b : LinguisticExample :=
   { id := "imanishi2020_s93b"
@@ -589,9 +527,7 @@ def s93b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.2.2"), ("control", "simple imperfective")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s94 : LinguisticExample :=
   { id := "imanishi2020_s94"
@@ -607,9 +543,7 @@ def s94 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.2.2"), ("control", "passive base resists nominalization under ajin")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s95 : LinguisticExample :=
   { id := "imanishi2020_s95"
@@ -625,9 +559,7 @@ def s95 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.2.2"), ("control", "simple imperfective passive")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s96a : LinguisticExample :=
   { id := "imanishi2020_s96a"
@@ -643,9 +575,7 @@ def s96a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.2.2"), ("source", "Coon 2010a:104"), ("control", "engage in resists an unaccusative gerund")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s96b : LinguisticExample :=
   { id := "imanishi2020_s96b"
@@ -661,9 +591,7 @@ def s96b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.2.2"), ("source", "Coon 2010a:104"), ("control", "engage in resists a passive gerund")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s97 : LinguisticExample :=
   { id := "imanishi2020_s97"
@@ -679,9 +607,7 @@ def s97 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.2.2"), ("source", "Macario et al. 1998"), ("case", "no preposition when a single DP takes absolutive from Infl")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s98a : LinguisticExample :=
   { id := "imanishi2020_s98a"
@@ -697,9 +623,7 @@ def s98a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.2.3"), ("alignment", "subject inherent ergative from transitive v, object genitive: both set A")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s98b : LinguisticExample :=
   { id := "imanishi2020_s98b"
@@ -715,9 +639,7 @@ def s98b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.2.3"), ("alignment", "subject set A on chäp, no genitive inside")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s100 : LinguisticExample :=
   { id := "imanishi2020_s100"
@@ -733,9 +655,7 @@ def s100 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.3.1"), ("source", "García Matzar and Rodríguez Guaján 1997:457"), ("strategy", "antipassive: object oblique under the relational noun")]
-    comment := "Not accepted by the paper's consultants; attributed to dialectal difference."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Not accepted by the paper's consultants; attributed to dialectal difference." }
 
 def s102 : LinguisticExample :=
   { id := "imanishi2020_s102"
@@ -751,9 +671,7 @@ def s102 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.3.2"), ("strategy", "incorporating -oj nominalization, no set A")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s103 : LinguisticExample :=
   { id := "imanishi2020_s103"
@@ -769,9 +687,7 @@ def s103 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.3.2"), ("strategy", "incorporating -oj nominalization under chäp")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s104 : LinguisticExample :=
   { id := "imanishi2020_s104"
@@ -787,9 +703,7 @@ def s104 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.3.2"), ("strategy", "set A impossible on the -oj nominalization")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s107 : LinguisticExample :=
   { id := "imanishi2020_s107"
@@ -805,9 +719,7 @@ def s107 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.3.2"), ("incorporation", "a determiner-marked object cannot be incorporated")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s109 : LinguisticExample :=
   { id := "imanishi2020_s109"
@@ -823,9 +735,7 @@ def s109 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.3.2"), ("incorporation", "a numeral-marked object cannot be incorporated")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s112 : LinguisticExample :=
   { id := "imanishi2020_s112"
@@ -841,9 +751,7 @@ def s112 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.3.2"), ("incorporation", "a possessed object cannot be incorporated")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s113 : LinguisticExample :=
   { id := "imanishi2020_s113"
@@ -859,9 +767,7 @@ def s113 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.3.2"), ("incorporation", "no wh-extraction of the incorporated object")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s114 : LinguisticExample :=
   { id := "imanishi2020_s114"
@@ -877,9 +783,7 @@ def s114 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.3.2"), ("incorporation", "wh-extraction from the -ïk nominalization")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def all : List LinguisticExample := [s1a, s1b, s2a, s2b, s3a, s3b, s62, s64, s65, s66, s67, s68a, s68b, s69, s70, s71, s76a, s76b, s78a, s78b, s80a, s80b, s82a, s82b, s83a, s83b, s85, s90, s91, s92, s93a, s93b, s94, s95, s96a, s96b, s97, s98a, s98b, s100, s102, s103, s104, s107, s109, s112, s113, s114]
 

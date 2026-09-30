@@ -16,9 +16,7 @@
       ["complement", "finite"],
       ["inference", "presupposes (2)"]
     ],
-    "comment": "Factive with a finite complement: (2) survives negation, questioning and conditional antecedents (3).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Factive with a finite complement: (2) survives negation, questioning and conditional antecedents (3)."
   },
   {
     "id": "white2014_2",
@@ -37,9 +35,7 @@
       ["complement", "infinitive"],
       ["inference", "entails (2)"]
     ],
-    "comment": "Implicative with a control infinitive: (2) is entailed but not presupposed (4).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Implicative with a control infinitive: (2) is entailed but not presupposed (4)."
   },
   {
     "id": "white2014_3",
@@ -57,9 +53,7 @@
     "paperFeatures": [
       ["role", "the embedded content"]
     ],
-    "comment": "Implied by both sentences of (1), as a presupposition of (1a) and an entailment of (1b).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Implied by both sentences of (1), as a presupposition of (1a) and an entailment of (1b)."
   },
   {
     "id": "white2014_4",
@@ -79,9 +73,7 @@
       ["test", "negation"],
       ["inference", "still implies (2)"]
     ],
-    "comment": "The embedded content of the finite complement is inert under negation.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The embedded content of the finite complement is inert under negation."
   },
   {
     "id": "white2014_5",
@@ -101,9 +93,7 @@
       ["test", "negation"],
       ["inference", "implies the negation of (2)"]
     ],
-    "comment": "Negation interacts with the embedded content: the negative implicative entailment.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Negation interacts with the embedded content: the negative implicative entailment."
   },
   {
     "id": "white2014_6",
@@ -122,9 +112,7 @@
       ["verb", "hope"],
       ["complement", "infinitive"]
     ],
-    "comment": "A nonfactive verb with a control infinitive: factivity and implicativity are distributionally independent of finiteness.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A nonfactive verb with a control infinitive: factivity and implicativity are distributionally independent of finiteness."
   },
   {
     "id": "white2014_7",
@@ -143,9 +131,7 @@
       ["verb", "turn out"],
       ["complement", "finite"]
     ],
-    "comment": "An implicative verb with a finite complement.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "An implicative verb with a finite complement."
   },
   {
     "id": "white2014_8",
@@ -164,9 +150,7 @@
       ["complement", "finite with overt modal"],
       ["inference", "presupposes (7b)"]
     ],
-    "comment": "Presupposes that Bo had to take the trash out, as (1b) does: the presuppositional modality of the infinitive is that of an overt modal.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Presupposes that Bo had to take the trash out, as (1b) does: the presuppositional modality of the infinitive is that of an overt modal."
   },
   {
     "id": "white2014_9",
@@ -185,9 +169,7 @@
       ["complement", "infinitive"],
       ["test", "denial of obligation"]
     ],
-    "comment": "The presuppositional modality cannot be denied with the infinitive.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The presuppositional modality cannot be denied with the infinitive."
   },
   {
     "id": "white2014_10",
@@ -206,9 +188,7 @@
       ["complement", "finite"],
       ["test", "denial of obligation"]
     ],
-    "comment": "No presuppositional modality with the finite complement, so it is not encoded in the verb.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "No presuppositional modality with the finite complement, so it is not encoded in the verb."
   },
   {
     "id": "white2014_11",
@@ -226,9 +206,7 @@
     "paperFeatures": [
       ["test", "coordination"]
     ],
-    "comment": "Remember distributes over a control complement and a that-clause, against an ambiguity between two verbs.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Remember distributes over a control complement and a that-clause, against an ambiguity between two verbs."
   },
   {
     "id": "white2014_12",
@@ -246,9 +224,7 @@
     "paperFeatures": [
       ["test", "gapping"]
     ],
-    "comment": "Gapping across the two complement types.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Gapping across the two complement types."
   },
   {
     "id": "white2014_13",
@@ -266,9 +242,7 @@
     "paperFeatures": [
       ["test", "detachability"]
     ],
-    "comment": "The modalized presupposition is not detachable from the first conjunct of (9a).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The modalized presupposition is not detachable from the first conjunct of (9a)."
   },
   {
     "id": "white2014_14",
@@ -287,9 +261,7 @@
       ["complement", "infinitive"],
       ["test", "again"]
     ],
-    "comment": "The sentence whose restructuring the again test probes.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The sentence whose restructuring the again test probes."
   },
   {
     "id": "white2014_15",
@@ -309,9 +281,7 @@
       ["test", "again"],
       ["previous", "remembering only"]
     ],
-    "comment": "Matrix again is felicitous without a previous filling: it modifies only the remembering.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Matrix again is felicitous without a previous filling: it modifies only the remembering."
   },
   {
     "id": "white2014_16",
@@ -331,9 +301,7 @@
       ["test", "again"],
       ["previous", "filling only"]
     ],
-    "comment": "Infelicitous without a previous remembering.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Infelicitous without a previous remembering."
   },
   {
     "id": "white2014_17",
@@ -353,9 +321,7 @@
       ["test", "again"],
       ["previous", "remembering only"]
     ],
-    "comment": "Infelicitous without a previous filling: the embedded event is accessible from the matrix.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Infelicitous without a previous filling: the embedded event is accessible from the matrix."
   },
   {
     "id": "white2014_18",
@@ -375,9 +341,7 @@
       ["test", "again"],
       ["previous", "filling only"]
     ],
-    "comment": "Infelicitous without a previous remembering too: again modifies the compound event.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Infelicitous without a previous remembering too: again modifies the compound event."
   },
   {
     "id": "white2014_19",
@@ -397,9 +361,7 @@
       ["test", "again"],
       ["previous", "hoping only"]
     ],
-    "comment": "Hope to patterns with remember that: no semantic restructuring.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Hope to patterns with remember that: no semantic restructuring."
   },
   {
     "id": "white2014_20",
@@ -418,9 +380,7 @@
       ["complement", "finite with overt modal"],
       ["inference", "no actuality entailment"]
     ],
-    "comment": "A modalized presupposition alone does not yield an actuality entailment.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A modalized presupposition alone does not yield an actuality entailment."
   },
   {
     "id": "white2014_21",
@@ -439,8 +399,6 @@
       ["verb", "hope"],
       ["test", "coordination"]
     ],
-    "comment": "Hope also coordinates a control complement with a that-clause.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Hope also coordinates a control complement with a that-clause."
   }
 ]

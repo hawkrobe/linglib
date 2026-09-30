@@ -31,9 +31,7 @@ def fear : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "1.2"), ("phenomenon", "fearType"), ("verbType", "fear"), ("subject", "experiencer")]
-    comment := "A fear-type verb: the experiencer is the subject, the stimulus the object."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A fear-type verb: the experiencer is the subject, the stimulus the object." }
 
 def frighten : LinguisticExample :=
   { id := "hartshorneetal2016_frighten"
@@ -49,9 +47,7 @@ def frighten : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "1.2"), ("phenomenon", "frightenType"), ("verbType", "frighten"), ("subject", "stimulus")]
-    comment := "A frighten-type verb: the stimulus is the subject, the experiencer the object."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A frighten-type verb: the stimulus is the subject, the experiencer the object." }
 
 def episode : LinguisticExample :=
   { id := "hartshorneetal2016_episode"
@@ -67,9 +63,7 @@ def episode : LinguisticExample :=
     alternatives := [("The bats swooped out of the cave and Agnes feared them.", .unacceptable)]
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "frightenType"), ("verbType", "frighten")]
-    comment := "A frighten-type verb describes a specific instance in which an emotional state occurs."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A frighten-type verb describes a specific instance in which an emotional state occurs." }
 
 def stageLevel : LinguisticExample :=
   { id := "hartshorneetal2016_stageLevel"
@@ -85,9 +79,7 @@ def stageLevel : LinguisticExample :=
     alternatives := [("Agnes feared Bartholomew yesterday in the kitchen.", .unacceptable)]
     readings := []
     paperFeatures := [("section", "1.2"), ("phenomenon", "frightenType"), ("verbType", "frighten")]
-    comment := "The paper's rendering of the observation that frighten-type verbs describe states bound to a time and place, and fear-type verbs do not."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The paper's rendering of the observation that frighten-type verbs describe states bound to a time and place, and fear-type verbs do not." }
 
 def exp1 : LinguisticExample :=
   { id := "hartshorneetal2016_exp1"
@@ -103,9 +95,7 @@ def exp1 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.1.1"), ("phenomenon", "durationRating"), ("experiment", "1")]
-    comment := "Experiment 1 stimulus shape: how long is the mental state likely to have lasted (seconds to years)?"
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Experiment 1 stimulus shape: how long is the mental state likely to have lasted (seconds to years)?" }
 
 def exp2 : LinguisticExample :=
   { id := "hartshorneetal2016_exp2"
@@ -121,9 +111,7 @@ def exp2 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.2.1"), ("phenomenon", "causationJudgment"), ("experiment", "2")]
-    comment := "Experiment 2 stimulus shape: in a court case in which causing an emotion is illegal, who if anyone is guilty?"
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Experiment 2 stimulus shape: in a court case in which causing an emotion is illegal, who if anyone is guilty?" }
 
 def ex_2a : LinguisticExample :=
   { id := "hartshorneetal2016_2a"
@@ -139,9 +127,7 @@ def ex_2a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3"), ("phenomenon", "fearType"), ("verbType", "fear")]
-    comment := "Japanese fear-type verb, unaffixed."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Japanese fear-type verb, unaffixed." }
 
 def ex_2b : LinguisticExample :=
   { id := "hartshorneetal2016_2b"
@@ -157,9 +143,7 @@ def ex_2b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3"), ("phenomenon", "frightenType"), ("verbType", "frighten"), ("causativeAffix", "sase")]
-    comment := "Japanese frighten-type verb: the causative affix -(s)ase- on the fear-type stem."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Japanese frighten-type verb: the causative affix -(s)ase- on the fear-type stem." }
 
 def ex_3a : LinguisticExample :=
   { id := "hartshorneetal2016_3a"
@@ -175,9 +159,7 @@ def ex_3a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.1.1"), ("phenomenon", "novelVerb"), ("experiment", "5"), ("syntax", "fear")]
-    comment := "Experiment 5: the novel verb *douyo* 'uneasiness' with fear-type, experiencer-subject syntax."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Experiment 5: the novel verb *douyo* 'uneasiness' with fear-type, experiencer-subject syntax." }
 
 def ex_3b : LinguisticExample :=
   { id := "hartshorneetal2016_3b"
@@ -193,9 +175,7 @@ def ex_3b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.1.1"), ("phenomenon", "novelVerb"), ("experiment", "5"), ("syntax", "frighten")]
-    comment := "Experiment 5: the novel verb *douyo* with frighten-type, experiencer-object syntax."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Experiment 5: the novel verb *douyo* with frighten-type, experiencer-object syntax." }
 
 def ex_5 : LinguisticExample :=
   { id := "hartshorneetal2016_5"
@@ -211,9 +191,7 @@ def ex_5 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.1"), ("phenomenon", "novelVerb"), ("experiment", "9"), ("semanticType", "attitude")]
-    comment := "Experiment 9: the habitual-attitude definition of a novel verb, based on envy."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Experiment 9: the habitual-attitude definition of a novel verb, based on envy." }
 
 def ex_6 : LinguisticExample :=
   { id := "hartshorneetal2016_6"
@@ -229,9 +207,7 @@ def ex_6 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.1"), ("phenomenon", "novelVerb"), ("experiment", "9"), ("semanticType", "episode")]
-    comment := "Experiment 9: the emotional-episode definition of a novel verb, based on disgust."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Experiment 9: the emotional-episode definition of a novel verb, based on disgust." }
 
 def exp9q : LinguisticExample :=
   { id := "hartshorneetal2016_exp9q"
@@ -247,9 +223,7 @@ def exp9q : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.1"), ("phenomenon", "novelVerb"), ("experiment", "9")]
-    comment := "Experiment 9 test question: a fear-type linking picks the character Bear had the attitude about, a frighten-type linking the character Bear affected."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Experiment 9 test question: a fear-type linking picks the character Bear had the attitude about, a frighten-type linking the character Bear affected." }
 
 def ex_7 : LinguisticExample :=
   { id := "hartshorneetal2016_7"
@@ -265,9 +239,7 @@ def ex_7 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "5.4.3"), ("phenomenon", "frightenType"), ("verbType", "frighten")]
-    comment := "The unattested target of a caused emotional episode, which the Fig. 11 structures do not exclude."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The unattested target of a caused emotional episode, which the Fig. 11 structures do not exclude." }
 
 def all : List LinguisticExample := [fear, frighten, episode, stageLevel, exp1, exp2, ex_2a, ex_2b, ex_3a, ex_3b, ex_5, ex_6, exp9q, ex_7]
 

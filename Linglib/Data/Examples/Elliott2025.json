@@ -15,9 +15,7 @@
     "paperFeatures": [
       ["section", "2.1"]
     ],
-    "comment": "A numeral expression composes with a collective predicate, as the predicative theory of numerals predicts.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A numeral expression composes with a collective predicate, as the predicative theory of numerals predicts."
   },
   {
     "id": "elliott2025_7",
@@ -37,9 +35,7 @@
     "paperFeatures": [
       ["section", "2.1"]
     ],
-    "comment": "True in the context: the covert distributivity operator quantifies over the atomic parts.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "True in the context: the covert distributivity operator quantifies over the atomic parts."
   },
   {
     "id": "elliott2025_10",
@@ -59,9 +55,7 @@
     "paperFeatures": [
       ["section", "2.2.1"]
     ],
-    "comment": "The classical predicative entry wrongly predicts truth, since a two-boy part of the sneezers sneezed: van Benthem's problem.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The classical predicative entry wrongly predicts truth, since a two-boy part of the sneezers sneezed: van Benthem's problem."
   },
   {
     "id": "elliott2025_12",
@@ -81,9 +75,7 @@
     "paperFeatures": [
       ["section", "2.2.2"]
     ],
-    "comment": "Intuitively true, but the classical predicative entry requires a sneezing plurality of boys: the existential entailment problem.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Intuitively true, but the classical predicative entry requires a sneezing plurality of boys: the existential entailment problem."
   },
   {
     "id": "elliott2025_47",
@@ -104,9 +96,7 @@
     "paperFeatures": [
       ["section", "5"]
     ],
-    "comment": "The existential component of the numeral takes exceptional scope out of the antecedent; the distributive component stays inside.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The existential component of the numeral takes exceptional scope out of the antecedent; the distributive component stays inside."
   },
   {
     "id": "elliott2025_48a",
@@ -126,9 +116,7 @@
     "paperFeatures": [
       ["section", "5"]
     ],
-    "comment": "No exceptional scope: all relatives of mine denotes a singleton, so existential raising over it is scopeless and universal force stays inside the antecedent.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "No exceptional scope: all relatives of mine denotes a singleton, so existential raising over it is scopeless and universal force stays inside the antecedent."
   },
   {
     "id": "elliott2025_48b",
@@ -148,9 +136,7 @@
     "paperFeatures": [
       ["section", "5"]
     ],
-    "comment": "No exceptional scope: no relatives of mine denotes the wholly negative group.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "No exceptional scope: no relatives of mine denotes the wholly negative group."
   },
   {
     "id": "elliott2025_50",
@@ -170,9 +156,7 @@
     "paperFeatures": [
       ["section", "5"]
     ],
-    "comment": "Contrary to the received view on modified numerals, the exceptional existential scope reading the theory predicts is available; the judgment was checked with about ten speakers.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Contrary to the received view on modified numerals, the exceptional existential scope reading the theory predicts is available; the judgment was checked with about ten speakers."
   },
   {
     "id": "elliott2025_51a",
@@ -190,9 +174,7 @@
     "paperFeatures": [
       ["section", "6.1"]
     ],
-    "comment": "A collective predicate needs a semantically plural DP, which the singular predicative theory does not yet distinguish.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A collective predicate needs a semantically plural DP, which the singular predicative theory does not yet distinguish."
   },
   {
     "id": "elliott2025_51b",
@@ -210,8 +192,6 @@
     "paperFeatures": [
       ["section", "6.1"]
     ],
-    "comment": "The plural DP composes with the collective predicate.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The plural DP composes with the collective predicate."
   }
 ]

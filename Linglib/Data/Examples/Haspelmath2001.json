@@ -24,8 +24,7 @@
         "sae"
       ]
     ],
-    "comment": "Both a definite and an indefinite article.",
-    "lgrConformance": ""
+    "comment": "Both a definite and an indefinite article."
   },
   {
     "id": "haspelmath2001_relpro_en",
@@ -52,8 +51,7 @@
         "sae"
       ]
     ],
-    "comment": "Postnominal, an inflecting relative pronoun introducing the clause and resuming the head's role.",
-    "lgrConformance": ""
+    "comment": "Postnominal, an inflecting relative pronoun introducing the clause and resuming the head's role."
   },
   {
     "id": "haspelmath2001_relparticle_en",
@@ -80,8 +78,7 @@
         "particle"
       ]
     ],
-    "comment": "The postnominal relative clause introduced by a relative particle, the other widespread European type.",
-    "lgrConformance": ""
+    "comment": "The postnominal relative clause introduced by a relative particle, the other widespread European type."
   },
   {
     "id": "haspelmath2001_haveperf_en",
@@ -108,8 +105,7 @@
         "sae"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haspelmath2001_haveperf_sv",
@@ -136,8 +132,7 @@
         "sae"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haspelmath2001_haveperf_es",
@@ -164,8 +159,7 @@
         "sae"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haspelmath2001_perf_fi",
@@ -192,8 +186,7 @@
         "participialCopula"
       ]
     ],
-    "comment": "An active participle with the copula, the Slavic, Finno-Ugrian and Armenian type.",
-    "lgrConformance": ""
+    "comment": "An active participle with the copula, the Slavic, Finno-Ugrian and Armenian type."
   },
   {
     "id": "haspelmath2001_perf_cy",
@@ -220,8 +213,7 @@
         "prepositional"
       ]
     ],
-    "comment": "The Welsh perfect is formed with the preposition 'after'.",
-    "lgrConformance": ""
+    "comment": "The Welsh perfect is formed with the preposition 'after'."
   },
   {
     "id": "haspelmath2001_nomexp_en",
@@ -248,8 +240,7 @@
         "generalizing"
       ]
     ],
-    "comment": "The experiencer coded as a nominative subject.",
-    "lgrConformance": ""
+    "comment": "The experiencer coded as a nominative subject."
   },
   {
     "id": "haspelmath2001_invexp_en",
@@ -276,8 +267,7 @@
         "inverting"
       ]
     ],
-    "comment": "The stimulus coded as the nominative subject.",
-    "lgrConformance": ""
+    "comment": "The stimulus coded as the nominative subject."
   },
   {
     "id": "haspelmath2001_getpass_cy",
@@ -304,8 +294,7 @@
         "getPassive"
       ]
     ],
-    "comment": "The Welsh 'get'-passive rendered word for word.",
-    "lgrConformance": ""
+    "comment": "The Welsh 'get'-passive rendered word for word."
   },
   {
     "id": "haspelmath2001_caus_mn",
@@ -332,8 +321,7 @@
         "causative"
       ]
     ],
-    "comment": "A causative derived from the inchoative xajl- 'melt (intransitive)'.",
-    "lgrConformance": ""
+    "comment": "A causative derived from the inchoative xajl- 'melt (intransitive)'."
   },
   {
     "id": "haspelmath2001_anticaus_ru",
@@ -360,8 +348,7 @@
         "anticausative"
       ]
     ],
-    "comment": "An anticausative derived from the causative izmenit' 'change (transitive)'.",
-    "lgrConformance": ""
+    "comment": "An anticausative derived from the causative izmenit' 'change (transitive)'."
   },
   {
     "id": "haspelmath2001_datposs_de",
@@ -388,8 +375,7 @@
         "dative"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haspelmath2001_locposs_sv",
@@ -416,8 +402,7 @@
         "locative"
       ]
     ],
-    "comment": "The North Germanic and Balto-Finnic locative external possessor.",
-    "lgrConformance": ""
+    "comment": "The North Germanic and Balto-Finnic locative external possessor."
   },
   {
     "id": "haspelmath2001_vni_de",
@@ -444,8 +429,7 @@
         "sae"
       ]
     ],
-    "comment": "V + NI: the negative indefinite without verbal negation.",
-    "lgrConformance": ""
+    "comment": "V + NI: the negative indefinite without verbal negation."
   },
   {
     "id": "haspelmath2001_nvni_el",
@@ -472,8 +456,7 @@
         "negatedVerb"
       ]
     ],
-    "comment": "NV + NI: the negated verb with the negative indefinite.",
-    "lgrConformance": ""
+    "comment": "NV + NI: the negated verb with the negative indefinite."
   },
   {
     "id": "haspelmath2001_mixed_it_pre",
@@ -500,8 +483,7 @@
         "mixed"
       ]
     ],
-    "comment": "The preverbal negative indefinite takes no verbal negation.",
-    "lgrConformance": ""
+    "comment": "The preverbal negative indefinite takes no verbal negation."
   },
   {
     "id": "haspelmath2001_mixed_it_post",
@@ -528,8 +510,7 @@
         "mixed"
       ]
     ],
-    "comment": "The postverbal negative indefinite cooccurs with verbal negation.",
-    "lgrConformance": ""
+    "comment": "The postverbal negative indefinite cooccurs with verbal negation."
   },
   {
     "id": "haspelmath2001_equative_ca",
@@ -556,8 +537,7 @@
         "sae"
       ]
     ],
-    "comment": "com is an adverbial relative pronoun and tan a correlative demonstrative.",
-    "lgrConformance": ""
+    "comment": "com is an adverbial relative pronoun and tan a correlative demonstrative."
   },
   {
     "id": "haspelmath2001_equative_pt",
@@ -584,8 +564,7 @@
         "sae"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haspelmath2001_equative_de",
@@ -612,8 +591,7 @@
         "sae"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haspelmath2001_equative_ru",
@@ -640,8 +618,7 @@
         "sae"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haspelmath2001_equative_hu",
@@ -668,8 +645,7 @@
         "sae"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haspelmath2001_equative_fi",
@@ -696,8 +672,7 @@
         "sae"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haspelmath2001_equative_ka",
@@ -724,8 +699,7 @@
         "sae"
       ]
     ],
-    "comment": "Listed in §2.10 although Map 107.10 leaves Georgian outside the isogloss.",
-    "lgrConformance": ""
+    "comment": "Listed in §2.10 although Map 107.10 leaves Georgian outside the isogloss."
   },
   {
     "id": "haspelmath2001_equative_bg",
@@ -752,8 +726,7 @@
         "sae"
       ]
     ],
-    "comment": "No correlative demonstrative, but a standard marker of relative-pronoun origin.",
-    "lgrConformance": ""
+    "comment": "No correlative demonstrative, but a standard marker of relative-pronoun origin."
   },
   {
     "id": "haspelmath2001_equative_ga",
@@ -780,8 +753,7 @@
         "special"
       ]
     ],
-    "comment": "The Celtic special marker on the adjective.",
-    "lgrConformance": ""
+    "comment": "The Celtic special marker on the adjective."
   },
   {
     "id": "haspelmath2001_equative_sv",
@@ -808,8 +780,7 @@
         "equally"
       ]
     ],
-    "comment": "The Scandinavian 'equally' on the adjective.",
-    "lgrConformance": ""
+    "comment": "The Scandinavian 'equally' on the adjective."
   },
   {
     "id": "haspelmath2001_agr_bg",
@@ -836,8 +807,7 @@
         "referential"
       ]
     ],
-    "comment": "The subject suffix can have a referential function on its own.",
-    "lgrConformance": ""
+    "comment": "The subject suffix can have a referential function on its own."
   },
   {
     "id": "haspelmath2001_agr_de",
@@ -864,8 +834,7 @@
         "sae"
       ]
     ],
-    "comment": "The agreement suffix has no referential function, so the pronoun cannot be omitted.",
-    "lgrConformance": ""
+    "comment": "The agreement suffix has no referential function, so the pronoun cannot be omitted."
   },
   {
     "id": "haspelmath2001_nopro_sv",
@@ -892,8 +861,7 @@
         "obligatoryPronouns"
       ]
     ],
-    "comment": "Obligatory subject pronouns with no agreement distinctions on the verb.",
-    "lgrConformance": ""
+    "comment": "Obligatory subject pronouns with no agreement distinctions on the verb."
   },
   {
     "id": "haspelmath2001_intref_de",
@@ -920,8 +888,7 @@
         "sae"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haspelmath2001_intref_ru",
@@ -948,8 +915,7 @@
         "sae"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haspelmath2001_intref_it",
@@ -976,8 +942,7 @@
         "sae"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haspelmath2001_intref_el",
@@ -1004,8 +969,7 @@
         "sae"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haspelmath2001_intref_fa",
@@ -1032,8 +996,7 @@
         "undifferentiated"
       ]
     ],
-    "comment": "The intensifier xod-aš 'himself' doubles as the reflexive.",
-    "lgrConformance": ""
+    "comment": "The intensifier xod-aš 'himself' doubles as the reflexive."
   },
   {
     "id": "haspelmath2001_comparative_ja",
@@ -1060,8 +1023,7 @@
         "standardMarkerOnly"
       ]
     ],
-    "comment": "The comparative semantics carried by the standard marker alone.",
-    "lgrConformance": ""
+    "comment": "The comparative semantics carried by the standard marker alone."
   },
   {
     "id": "haspelmath2001_with_en",
@@ -1088,8 +1050,7 @@
         "sae"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haspelmath2001_negcoord_nl",
@@ -1116,7 +1077,6 @@
         "sae"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   }
 ]

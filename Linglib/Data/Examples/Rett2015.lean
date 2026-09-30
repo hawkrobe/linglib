@@ -31,9 +31,7 @@ def positive_tall : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "positive"), ("polarity", "positive"), ("evaluative", "true")]
-    comment := "Evaluativity of relative adjectives by construction and antonym polarity."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Evaluativity of relative adjectives by construction and antonym polarity." }
 
 def positive_short : LinguisticExample :=
   { id := "rett2015_positive_short"
@@ -49,9 +47,7 @@ def positive_short : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "positive"), ("polarity", "negative"), ("evaluative", "true")]
-    comment := "Evaluativity of relative adjectives by construction and antonym polarity."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Evaluativity of relative adjectives by construction and antonym polarity." }
 
 def comparative_tall : LinguisticExample :=
   { id := "rett2015_comparative_tall"
@@ -67,9 +63,7 @@ def comparative_tall : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "comparative"), ("polarity", "positive"), ("evaluative", "false")]
-    comment := "Evaluativity of relative adjectives by construction and antonym polarity."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Evaluativity of relative adjectives by construction and antonym polarity." }
 
 def comparative_short : LinguisticExample :=
   { id := "rett2015_comparative_short"
@@ -85,9 +79,7 @@ def comparative_short : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "comparative"), ("polarity", "negative"), ("evaluative", "false")]
-    comment := "Evaluativity of relative adjectives by construction and antonym polarity."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Evaluativity of relative adjectives by construction and antonym polarity." }
 
 def equative_tall : LinguisticExample :=
   { id := "rett2015_equative_tall"
@@ -103,9 +95,7 @@ def equative_tall : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "equative"), ("polarity", "positive"), ("evaluative", "false")]
-    comment := "Evaluativity of relative adjectives by construction and antonym polarity."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Evaluativity of relative adjectives by construction and antonym polarity." }
 
 def equative_short : LinguisticExample :=
   { id := "rett2015_equative_short"
@@ -121,9 +111,7 @@ def equative_short : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "equative"), ("polarity", "negative"), ("evaluative", "true")]
-    comment := "Evaluativity of relative adjectives by construction and antonym polarity."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Evaluativity of relative adjectives by construction and antonym polarity." }
 
 def mp_tall : LinguisticExample :=
   { id := "rett2015_mp_tall"
@@ -139,9 +127,7 @@ def mp_tall : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "measurePhrase"), ("polarity", "positive"), ("evaluative", "false")]
-    comment := "Evaluativity of relative adjectives by construction and antonym polarity."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Evaluativity of relative adjectives by construction and antonym polarity." }
 
 def mp_short : LinguisticExample :=
   { id := "rett2015_mp_short"
@@ -157,9 +143,7 @@ def mp_short : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "measurePhrase"), ("polarity", "negative")]
-    comment := "Evaluativity of relative adjectives by construction and antonym polarity."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Evaluativity of relative adjectives by construction and antonym polarity." }
 
 def question_tall : LinguisticExample :=
   { id := "rett2015_question_tall"
@@ -175,9 +159,7 @@ def question_tall : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "degreeQuestion"), ("polarity", "positive"), ("evaluative", "false")]
-    comment := "Evaluativity of relative adjectives by construction and antonym polarity."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Evaluativity of relative adjectives by construction and antonym polarity." }
 
 def question_short : LinguisticExample :=
   { id := "rett2015_question_short"
@@ -193,9 +175,7 @@ def question_short : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "degreeQuestion"), ("polarity", "negative"), ("evaluative", "true")]
-    comment := "Evaluativity of relative adjectives by construction and antonym polarity."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Evaluativity of relative adjectives by construction and antonym polarity." }
 
 def all : List LinguisticExample := [positive_tall, positive_short, comparative_tall, comparative_short, equative_tall, equative_short, mp_tall, mp_short, question_tall, question_short]
 

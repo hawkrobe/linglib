@@ -31,9 +31,7 @@ def ex3a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("strategy", "exSitu"), ("focused", "subject"), ("stabilizer", "cee"), ("host_tone", "L"), ("stab_tone", "H")]
-    comment := "Polar tone: the host Kandè ends low, so the stabilizer surfaces high."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Polar tone: the host Kandè ends low, so the stabilizer surfaces high." }
 
 def ex3b : LinguisticExample :=
   { id := "hartmannzimmermann2007_ex3b"
@@ -49,9 +47,7 @@ def ex3b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("strategy", "exSitu"), ("focused", "nonSubject"), ("stabilizer", "nee"), ("host_tone", "H"), ("stab_tone", "L")]
-    comment := "Polar tone: the host Kiifii ends high (unmarked vowel), so the stabilizer surfaces low."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Polar tone: the host Kiifii ends high (unmarked vowel), so the stabilizer surfaces low." }
 
 def ex8 : LinguisticExample :=
   { id := "hartmannzimmermann2007_ex8"
@@ -67,9 +63,7 @@ def ex8 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("strategy", "exSitu"), ("focused", "subject"), ("stabilizer", "none"), ("tam", "future")]
-    comment := "Subject focus with no overt marking: the future TAM has no Relative form, so the (vacuous) fronting is invisible — 'subject foci are syntactically and morphologically unmarked in the future, habitual and subjunctive aspects' (p. 4)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Subject focus with no overt marking: the future TAM has no Relative form, so the (vacuous) fronting is invisible — 'subject foci are syntactically and morphologically unmarked in the future, habitual and subjunctive aspects' (p. 4)." }
 
 def ex17a1 : LinguisticExample :=
   { id := "hartmannzimmermann2007_ex17a1"
@@ -85,9 +79,7 @@ def ex17a1 : LinguisticExample :=
     alternatives := [("Daudàa ya-kèe kirà-ntà.", .acceptable)]
     readings := []
     paperFeatures := [("strategy", "exSitu"), ("pragType", "newInfo"), ("focused", "subject"), ("stabilizer", "nee"), ("tam", "continuous")]
-    comment := "The particle is parenthesized-optional in the paper; the alternative records the particle-less variant."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The particle is parenthesized-optional in the paper; the alternative records the particle-less variant." }
 
 def ex17a2 : LinguisticExample :=
   { id := "hartmannzimmermann2007_ex17a2"
@@ -103,9 +95,7 @@ def ex17a2 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("strategy", "inSitu"), ("pragType", "newInfo"), ("focused", "subject"), ("stabilizer", "none"), ("tam", "continuous")]
-    comment := "Infelicitous as an answer to the subject wh-question: focused subjects cannot be realised in situ (paper §2.2.2); the General-mode auxiliary betrays the absence of movement."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Infelicitous as an answer to the subject wh-question: focused subjects cannot be realised in situ (paper §2.2.2); the General-mode auxiliary betrays the absence of movement." }
 
 def ex22 : LinguisticExample :=
   { id := "hartmannzimmermann2007_ex22"
@@ -121,9 +111,7 @@ def ex22 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("strategy", "exSitu"), ("pragType", "newInfo"), ("focused", "nonSubject"), ("stabilizer", "nee")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex23 : LinguisticExample :=
   { id := "hartmannzimmermann2007_ex23"
@@ -139,9 +127,7 @@ def ex23 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("strategy", "inSitu"), ("pragType", "newInfo"), ("focused", "nonSubject"), ("stabilizer", "none")]
-    comment := "In-situ new-information focus with no morphosyntactic reflex at all — the witness for the BFR refutation."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "In-situ new-information focus with no morphosyntactic reflex at all — the witness for the BFR refutation." }
 
 def ex24 : LinguisticExample :=
   { id := "hartmannzimmermann2007_ex24"
@@ -157,9 +143,7 @@ def ex24 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("strategy", "exSitu"), ("pragType", "corrective"), ("focused", "subject"), ("stabilizer", "cee")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex25 : LinguisticExample :=
   { id := "hartmannzimmermann2007_ex25"
@@ -175,9 +159,7 @@ def ex25 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("strategy", "inSitu"), ("pragType", "corrective"), ("focused", "nonSubject"), ("stabilizer", "nee")]
-    comment := "In-situ focus with the sentence-final particle nèe — a stabilizer without fronting or Relative morphology."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "In-situ focus with the sentence-final particle nèe — a stabilizer without fronting or Relative morphology." }
 
 def ex26 : LinguisticExample :=
   { id := "hartmannzimmermann2007_ex26"
@@ -193,9 +175,7 @@ def ex26 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("strategy", "inSitu"), ("pragType", "contrastive"), ("focused", "nonSubject"), ("stabilizer", "none")]
-    comment := "baayansà 'behind him' contrasts with the preceding utterance's ta gàbansà 'in front of him'."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "baayansà 'behind him' contrasts with the preceding utterance's ta gàbansà 'in front of him'." }
 
 def ex27 : LinguisticExample :=
   { id := "hartmannzimmermann2007_ex27"
@@ -211,9 +191,7 @@ def ex27 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("strategy", "exSitu"), ("pragType", "contrastive"), ("focused", "nonSubject"), ("stabilizer", "none")]
-    comment := "The fronted nominalised verb cî 'eating' contrasts with hiir̃a 'chatting'; the exhaustive flavour comes from kawài 'only' (paper §3.2.3)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The fronted nominalised verb cî 'eating' contrasts with hiir̃a 'chatting'; the exhaustive flavour comes from kawài 'only' (paper §3.2.3)." }
 
 def ex29 : LinguisticExample :=
   { id := "hartmannzimmermann2007_ex29"
@@ -229,9 +207,7 @@ def ex29 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("strategy", "exSitu"), ("pragType", "selective"), ("focused", "nonSubject"), ("stabilizer", "none")]
-    comment := "The paper's gloss reads 1sg.rel.perf, an apparent erratum: the kèe formative is the Relative continuous (cf. the paper's exx. 16, 22, 27)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The paper's gloss reads 1sg.rel.perf, an apparent erratum: the kèe formative is the Relative continuous (cf. the paper's exx. 16, 22, 27)." }
 
 def ex30 : LinguisticExample :=
   { id := "hartmannzimmermann2007_ex30"
@@ -247,9 +223,7 @@ def ex30 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("strategy", "inSitu"), ("pragType", "selective"), ("focused", "nonSubject"), ("stabilizer", "none")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def all : List LinguisticExample := [ex3a, ex3b, ex8, ex17a1, ex17a2, ex22, ex23, ex24, ex25, ex26, ex27, ex29, ex30]
 

@@ -31,9 +31,7 @@ def ex_1a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("number", "sg"), ("polarity", "positive"), ("inference", "one")]
-    comment := "⇝ |C| = 1, C the set of blue circles on the card."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "⇝ |C| = 1, C the set of blue circles on the card." }
 
 def ex_1b : LinguisticExample :=
   { id := "enguehard2024_1b"
@@ -49,9 +47,7 @@ def ex_1b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("number", "pl"), ("polarity", "positive"), ("inference", "atLeastTwo")]
-    comment := "⇝ |C| ≥ 2."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "⇝ |C| ≥ 2." }
 
 def ex_2a : LinguisticExample :=
   { id := "enguehard2024_2a"
@@ -67,9 +63,7 @@ def ex_2a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("number", "sg"), ("polarity", "negated"), ("inference", "zero")]
-    comment := "⇝ |C| = 0: under negation the number does not affect truth conditions."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "⇝ |C| = 0: under negation the number does not affect truth conditions." }
 
 def ex_2b : LinguisticExample :=
   { id := "enguehard2024_2b"
@@ -85,9 +79,7 @@ def ex_2b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("number", "pl"), ("polarity", "negated"), ("inference", "zero")]
-    comment := "⇝ |C| = 0."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "⇝ |C| = 0." }
 
 def ex_3a : LinguisticExample :=
   { id := "enguehard2024_3a"
@@ -103,9 +95,7 @@ def ex_3a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("number", "sg"), ("polarity", "negative"), ("inference", "zero")]
-    comment := "⇝ |C| = 0."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "⇝ |C| = 0." }
 
 def ex_3b : LinguisticExample :=
   { id := "enguehard2024_3b"
@@ -121,9 +111,7 @@ def ex_3b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("number", "pl"), ("polarity", "negative"), ("inference", "zero")]
-    comment := "⇝ |C| = 0."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "⇝ |C| = 0." }
 
 def ex_4 : LinguisticExample :=
   { id := "enguehard2024_4"
@@ -139,9 +127,7 @@ def ex_4 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "The competitor whose semantics entails at least two witnesses, source of the atomicity inference of (1a) on the scalar account."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The competitor whose semantics entails at least two witnesses, source of the atomicity inference of (1a) on the scalar account." }
 
 def ex_5a : LinguisticExample :=
   { id := "enguehard2024_5a"
@@ -157,9 +143,7 @@ def ex_5a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("noun", "tableOfContents"), ("number", "sg")]
-    comment := "A book can have at most one table of contents: exactly one is conceivable."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A book can have at most one table of contents: exactly one is conceivable." }
 
 def ex_5b : LinguisticExample :=
   { id := "enguehard2024_5b"
@@ -175,9 +159,7 @@ def ex_5b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("noun", "tableOfContents"), ("number", "pl")]
-    comment := "More than one table of contents is not conceivable: the plural's conceivability presupposition fails."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "More than one table of contents is not conceivable: the plural's conceivability presupposition fails." }
 
 def ex_6a : LinguisticExample :=
   { id := "enguehard2024_6a"
@@ -193,9 +175,7 @@ def ex_6a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("noun", "chapters"), ("number", "sg")]
-    comment := "A book never has a single chapter: the singular's conceivability presupposition fails."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A book never has a single chapter: the singular's conceivability presupposition fails." }
 
 def ex_6b : LinguisticExample :=
   { id := "enguehard2024_6b"
@@ -211,9 +191,7 @@ def ex_6b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("noun", "chapters"), ("number", "pl")]
-    comment := "Several chapters are conceivable."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Several chapters are conceivable." }
 
 def ex_9ai : LinguisticExample :=
   { id := "enguehard2024_9ai"
@@ -229,9 +207,7 @@ def ex_9ai : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "Adapted from Farkas and de Swart (2010): in a prototypical situation a parent has more than one child."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Adapted from Farkas and de Swart (2010): in a prototypical situation a parent has more than one child." }
 
 def ex_9aii : LinguisticExample :=
   { id := "enguehard2024_9aii"
@@ -247,9 +223,7 @@ def ex_9aii : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "Adapted from Farkas and de Swart (2010)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Adapted from Farkas and de Swart (2010)." }
 
 def ex_9bi : LinguisticExample :=
   { id := "enguehard2024_9bi"
@@ -265,9 +239,7 @@ def ex_9bi : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "Adapted from Farkas and de Swart (2010): a parent prototypically has one child on a given team."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Adapted from Farkas and de Swart (2010): a parent prototypically has one child on a given team." }
 
 def ex_9bii : LinguisticExample :=
   { id := "enguehard2024_9bii"
@@ -283,9 +255,7 @@ def ex_9bii : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "Adapted from Farkas and de Swart (2010)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Adapted from Farkas and de Swart (2010)." }
 
 def ex_12a : LinguisticExample :=
   { id := "enguehard2024_12a"
@@ -301,9 +271,7 @@ def ex_12a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "Acceptable and if anything more natural than (12b), although the speaker is more likely to find many chairs than exactly one: what matters is that the speaker needs one chair, so probability is not the right predictor."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Acceptable and if anything more natural than (12b), although the speaker is more likely to find many chairs than exactly one: what matters is that the speaker needs one chair, so probability is not the right predictor." }
 
 def ex_12b : LinguisticExample :=
   { id := "enguehard2024_12b"
@@ -319,9 +287,7 @@ def ex_12b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "Acceptable."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Acceptable." }
 
 def ex_13 : LinguisticExample :=
   { id := "enguehard2024_13"
@@ -337,9 +303,7 @@ def ex_13 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "The example on which DPL makes negation block dynamic binding."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The example on which DPL makes negation block dynamic binding." }
 
 def ex_14 : LinguisticExample :=
   { id := "enguehard2024_14"
@@ -355,9 +319,7 @@ def ex_14 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "A bathroom pronoun in the second disjunct refers back to the negative indefinite of the first."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A bathroom pronoun in the second disjunct refers back to the negative indefinite of the first." }
 
 def ex_15 : LinguisticExample :=
   { id := "enguehard2024_15"
@@ -373,9 +335,7 @@ def ex_15 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "A negated indefinite under negation can be referred back to."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A negated indefinite under negation can be referred back to." }
 
 def ex_16 : LinguisticExample :=
   { id := "enguehard2024_16"
@@ -391,9 +351,7 @@ def ex_16 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "Anaphora to a negated indefinite in a modal context."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Anaphora to a negated indefinite in a modal context." }
 
 def ex_17 : LinguisticExample :=
   { id := "enguehard2024_17"
@@ -409,9 +367,7 @@ def ex_17 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "Anaphora to a negated indefinite after a denial."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Anaphora to a negated indefinite after a denial." }
 
 def ex_18a : LinguisticExample :=
   { id := "enguehard2024_18a"
@@ -427,9 +383,7 @@ def ex_18a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("antecedent", "sg"), ("pronoun", "it")]
-    comment := "Felicitous for a card with a unique circle; not natural when the speaker sees several."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Felicitous for a card with a unique circle; not natural when the speaker sees several." }
 
 def ex_18b : LinguisticExample :=
   { id := "enguehard2024_18b"
@@ -445,9 +399,7 @@ def ex_18b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("antecedent", "sg"), ("pronoun", "they")]
-    comment := "The pronoun's number must match the indefinite's."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The pronoun's number must match the indefinite's." }
 
 def ex_19a : LinguisticExample :=
   { id := "enguehard2024_19a"
@@ -463,9 +415,7 @@ def ex_19a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("antecedent", "pl"), ("pronoun", "it")]
-    comment := "The pronoun's number must match the indefinite's."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The pronoun's number must match the indefinite's." }
 
 def ex_19b : LinguisticExample :=
   { id := "enguehard2024_19b"
@@ -481,9 +431,7 @@ def ex_19b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("antecedent", "pl"), ("pronoun", "they")]
-    comment := "Degraded when the speaker can see that the card has exactly one circle."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Degraded when the speaker can see that the card has exactly one circle." }
 
 def ex_20a : LinguisticExample :=
   { id := "enguehard2024_20a"
@@ -499,9 +447,7 @@ def ex_20a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "A new indefinite introduces a referent of the appropriate number: the inference is not present in the first sentence."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A new indefinite introduces a referent of the appropriate number: the inference is not present in the first sentence." }
 
 def ex_20b : LinguisticExample :=
   { id := "enguehard2024_20b"
@@ -517,9 +463,7 @@ def ex_20b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "A new indefinite introduces a referent of the appropriate number."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A new indefinite introduces a referent of the appropriate number." }
 
 def ex_21 : LinguisticExample :=
   { id := "enguehard2024_21"
@@ -535,9 +479,7 @@ def ex_21 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "The first speaker's negative assertion, repeated from (3a)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The first speaker's negative assertion, repeated from (3a)." }
 
 def ex_22a : LinguisticExample :=
   { id := "enguehard2024_22a"
@@ -553,9 +495,7 @@ def ex_22a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "The pronoun's number does not match the referent, or the referent is not maximal."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The pronoun's number does not match the referent, or the referent is not maximal." }
 
 def ex_22b : LinguisticExample :=
   { id := "enguehard2024_22b"
@@ -571,9 +511,7 @@ def ex_22b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "The pronoun's number does not match that of the indefinite that licenses it; the paper prints 'They're just are to see'."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The pronoun's number does not match that of the indefinite that licenses it; the paper prints 'They're just are to see'." }
 
 def ex_22c : LinguisticExample :=
   { id := "enguehard2024_22c"
@@ -589,9 +527,7 @@ def ex_22c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "Ineffability resolved by introducing a new referent."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Ineffability resolved by introducing a new referent." }
 
 def ex_24a : LinguisticExample :=
   { id := "enguehard2024_24a"
@@ -607,9 +543,7 @@ def ex_24a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "The parenthetical 'there are several' is obligatory: without it the plural pronoun has no licensing referent."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The parenthetical 'there are several' is obligatory: without it the plural pronoun has no licensing referent." }
 
 def ex_24b : LinguisticExample :=
   { id := "enguehard2024_24b"
@@ -625,9 +559,7 @@ def ex_24b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "The singular pronoun does not fit the several circles: the same ineffability as in (22) arises for indefinites in questions."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The singular pronoun does not fit the several circles: the same ineffability as in (22) arises for indefinites in questions." }
 
 def all : List LinguisticExample := [ex_1a, ex_1b, ex_2a, ex_2b, ex_3a, ex_3b, ex_4, ex_5a, ex_5b, ex_6a, ex_6b, ex_9ai, ex_9aii, ex_9bi, ex_9bii, ex_12a, ex_12b, ex_13, ex_14, ex_15, ex_16, ex_17, ex_18a, ex_18b, ex_19a, ex_19b, ex_20a, ex_20b, ex_21, ex_22a, ex_22b, ex_22c, ex_24a, ex_24b]
 

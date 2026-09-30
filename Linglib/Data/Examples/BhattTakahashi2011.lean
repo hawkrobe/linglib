@@ -31,9 +31,7 @@ def ex11a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "binding"), ("pron_c_commands_associate", "yes")]
-    comment := "The pronoun c-commands the associate and cannot corefer with an R-expression inside the standard; control: More people introduced John_i to Mary than to his_i mother."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The pronoun c-commands the associate and cannot corefer with an R-expression inside the standard; control: More people introduced John_i to Mary than to his_i mother." }
 
 def ex11b : LinguisticExample :=
   { id := "bhatttakahashi2011_ex11b"
@@ -49,9 +47,7 @@ def ex11b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "binding"), ("pron_c_commands_associate", "no")]
-    comment := "The pronoun does not c-command the associate; coreference into the standard is possible."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The pronoun does not c-command the associate; coreference into the standard is possible." }
 
 def ex12a : LinguisticExample :=
   { id := "bhatttakahashi2011_ex12a"
@@ -67,9 +63,7 @@ def ex12a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "binding"), ("pron_c_commands_associate", "yes")]
-    comment := "Control: More people talked to Peter_i about Sally than about his_i sister."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Control: More people talked to Peter_i about Sally than about his_i sister." }
 
 def ex12b : LinguisticExample :=
   { id := "bhatttakahashi2011_ex12b"
@@ -85,9 +79,7 @@ def ex12b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "binding"), ("pron_c_commands_associate", "no")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex13a : LinguisticExample :=
   { id := "bhatttakahashi2011_ex13a"
@@ -103,9 +95,7 @@ def ex13a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "binding"), ("pron_c_commands_associate", "yes")]
-    comment := "Control: More people expect Peter_i to overtake Sally than his_i sister."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Control: More people expect Peter_i to overtake Sally than his_i sister." }
 
 def ex13b : LinguisticExample :=
   { id := "bhatttakahashi2011_ex13b"
@@ -121,9 +111,7 @@ def ex13b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "binding"), ("pron_c_commands_associate", "no")]
-    comment := "Marginal for some speakers (fn. 5), in the coreference-licit direction."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Marginal for some speakers (fn. 5), in the coreference-licit direction." }
 
 def ex35 : LinguisticExample :=
   { id := "bhatttakahashi2011_ex35"
@@ -139,9 +127,7 @@ def ex35 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "binding"), ("pron_c_commands_associate", "yes")]
-    comment := "The pronoun follows the standard and precedes the associate, so it c-commands the associate, yet corefers with the R-expression inside the standard: the standard is an external PP."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "The pronoun follows the standard and precedes the associate, so it c-commands the associate, yet corefers with the R-expression inside the standard: the standard is an external PP." }
 
 def ex43a : LinguisticExample :=
   { id := "bhatttakahashi2011_ex43a"
@@ -157,9 +143,7 @@ def ex43a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "scope"), ("qp_base_c_commands_degree_trace", "yes"), ("than_internal_scope", "unavailable")]
-    comment := "The quantifier's base position c-commands the than-phrase-internal degree trace, so it must scope out."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The quantifier's base position c-commands the than-phrase-internal degree trace, so it must scope out." }
 
 def ex43b : LinguisticExample :=
   { id := "bhatttakahashi2011_ex43b"
@@ -175,9 +159,7 @@ def ex43b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "scope"), ("qp_base_c_commands_degree_trace", "no"), ("than_internal_scope", "available")]
-    comment := "The base position does not c-command the degree trace, so than-phrase-internal scope is possible."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The base position does not c-command the degree trace, so than-phrase-internal scope is possible." }
 
 def ex40 : LinguisticExample :=
   { id := "bhatttakahashi2011_ex40"
@@ -193,9 +175,7 @@ def ex40 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "scope"), ("qp_base_c_commands_degree_trace", "no"), ("than_internal_scope", "unavailable")]
-    comment := "Only the external scope reading, every > -er, is available; the than-phrase-internal reading needs the clausal comparative (41)."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Only the external scope reading, every > -er, is available; the than-phrase-internal reading needs the clausal comparative (41)." }
 
 def all : List LinguisticExample := [ex11a, ex11b, ex12a, ex12b, ex13a, ex13b, ex35, ex43a, ex43b, ex40]
 

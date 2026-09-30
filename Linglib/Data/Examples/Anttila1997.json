@@ -19,8 +19,7 @@
       ["syllables", "1"],
       ["variant", "strong"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "anttila1997_1a_potilaiden",
@@ -43,8 +42,7 @@
       ["variant", "strong"],
       ["final_syllable", "heavy"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "anttila1997_1b_kalojen",
@@ -66,8 +64,7 @@
       ["syllables", "2"],
       ["variant", "weak"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "anttila1997_1b_margariinien",
@@ -89,8 +86,7 @@
       ["syllables", "4"],
       ["variant", "weak"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "anttila1997_1c_naapureiden",
@@ -114,8 +110,7 @@
       ["syllables", "3"],
       ["variant", "strong"]
     ],
-    "comment": "Free variation; the weak variant is the alternative.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Free variation; the weak variant is the alternative."
   },
   {
     "id": "anttila1997_1c_reaganeiden",
@@ -139,8 +134,7 @@
       ["syllables", "3"],
       ["variant", "strong"]
     ],
-    "comment": "Free variation; the weak variant is the alternative.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Free variation; the weak variant is the alternative."
   },
   {
     "id": "anttila1997_1c_moskeijoiden",
@@ -164,8 +158,7 @@
       ["syllables", "3"],
       ["variant", "strong"]
     ],
-    "comment": "Free variation; the weak variant is the alternative.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Free variation; the weak variant is the alternative."
   },
   {
     "id": "anttila1997_1c_ministereiden",
@@ -189,8 +182,7 @@
       ["syllables", "4"],
       ["variant", "strong"]
     ],
-    "comment": "Free variation; the weak variant is the alternative.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Free variation; the weak variant is the alternative."
   },
   {
     "id": "anttila1997_3a_maiden",
@@ -212,8 +204,7 @@
       ["syllables", "1"],
       ["variant", "strong"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "anttila1997_3a_teiden",
@@ -235,8 +226,7 @@
       ["syllables", "1"],
       ["variant", "strong"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "anttila1997_3b_lasien",
@@ -258,8 +248,7 @@
       ["syllables", "2"],
       ["variant", "weak"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "anttila1997_3c_palttoiden",
@@ -282,8 +271,7 @@
       ["variant", "strong"],
       ["final_syllable", "heavy"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "anttila1997_3c_varkaiden",
@@ -306,8 +294,7 @@
       ["variant", "strong"],
       ["final_syllable", "heavy"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "anttila1997_6a_lemmikkien",
@@ -331,8 +318,7 @@
       ["syllables", "3"],
       ["variant", "weak"]
     ],
-    "comment": "The bracketed (dispreferred) variant is the alternative.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The bracketed (dispreferred) variant is the alternative."
   },
   {
     "id": "anttila1997_6a_sihteerien",
@@ -356,8 +342,7 @@
       ["syllables", "3"],
       ["variant", "weak"]
     ],
-    "comment": "The bracketed (dispreferred) variant is the alternative.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The bracketed (dispreferred) variant is the alternative."
   },
   {
     "id": "anttila1997_6a_naapurien",
@@ -381,8 +366,7 @@
       ["syllables", "3"],
       ["variant", "weak"]
     ],
-    "comment": "The bracketed (dispreferred) variant is the alternative.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The bracketed (dispreferred) variant is the alternative."
   },
   {
     "id": "anttila1997_6b_korjaamojen",
@@ -406,8 +390,7 @@
       ["syllables", "3"],
       ["variant", "weak"]
     ],
-    "comment": "The bracketed (dispreferred) variant is the alternative.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The bracketed (dispreferred) variant is the alternative."
   },
   {
     "id": "anttila1997_6b_fyysikkojen",
@@ -431,8 +414,7 @@
       ["syllables", "3"],
       ["variant", "weak"]
     ],
-    "comment": "Both variants unmarked.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Both variants unmarked."
   },
   {
     "id": "anttila1997_6b_lokeroiden",
@@ -456,8 +438,7 @@
       ["syllables", "3"],
       ["variant", "strong"]
     ],
-    "comment": "The ?-marked variant is the alternative.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The ?-marked variant is the alternative."
   },
   {
     "id": "anttila1997_6c_sairaaloiden",
@@ -481,8 +462,7 @@
       ["syllables", "3"],
       ["variant", "strong"]
     ],
-    "comment": "Both variants unmarked.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Both variants unmarked."
   },
   {
     "id": "anttila1997_6c_kameroiden",
@@ -506,8 +486,7 @@
       ["syllables", "3"],
       ["variant", "strong"]
     ],
-    "comment": "The ?-marked variant is the alternative.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The ?-marked variant is the alternative."
   },
   {
     "id": "anttila1997_6c_mansikoiden",
@@ -531,8 +510,7 @@
       ["syllables", "3"],
       ["variant", "strong"]
     ],
-    "comment": "The ?-marked variant is the alternative.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The ?-marked variant is the alternative."
   },
   {
     "id": "anttila1997_33_maiden",
@@ -556,8 +534,7 @@
       ["syllables", "1"],
       ["variant", "strong"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "anttila1997_35_kalojen",
@@ -581,8 +558,7 @@
       ["syllables", "2"],
       ["variant", "weak"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "anttila1997_37_maailmoiden",
@@ -606,8 +582,7 @@
       ["syllables", "3"],
       ["variant", "strong"]
     ],
-    "comment": "Both variants predicted (36).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Both variants predicted (36)."
   },
   {
     "id": "anttila1997_39_ministerien",
@@ -631,8 +606,7 @@
       ["syllables", "4"],
       ["variant", "weak"]
     ],
-    "comment": "Both variants predicted (38).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Both variants predicted (38)."
   },
   {
     "id": "anttila1997_40_margariinien",
@@ -656,8 +630,7 @@
       ["syllables", "4"],
       ["variant", "weak"]
     ],
-    "comment": "The starred form stands for candidates 2b and 2c of (38), which differ only in stress.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The starred form stands for candidates 2b and 2c of (38), which differ only in stress."
   },
   {
     "id": "anttila1997_42_aleksantereiden",
@@ -681,8 +654,7 @@
       ["syllables", "5"],
       ["variant", "strong"]
     ],
-    "comment": "Both variants predicted (41).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Both variants predicted (41)."
   },
   {
     "id": "anttila1997_43_koordinaatistoiden",
@@ -706,8 +678,7 @@
       ["syllables", "5"],
       ["variant", "strong"]
     ],
-    "comment": "Both variants predicted (41).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Both variants predicted (41)."
   },
   {
     "id": "anttila1997_44_italiaanojen",
@@ -731,8 +702,7 @@
       ["syllables", "5"],
       ["variant", "weak"]
     ],
-    "comment": "The starred form stands for candidates 3b and 3c of (41), which differ only in stress.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The starred form stands for candidates 3b and 3c of (41), which differ only in stress."
   },
   {
     "id": "anttila1997_46_intellektuellien",
@@ -756,8 +726,7 @@
       ["syllables", "6"],
       ["variant", "weak"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "anttila1997_47_eksistentialistien",
@@ -781,8 +750,7 @@
       ["syllables", "7"],
       ["variant", "weak"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "anttila1997_48a_kamerojen",
@@ -806,8 +774,7 @@
       ["motif", "l.ta"],
       ["obs_pct", "0.6"]
     ],
-    "comment": "Suomen Kuvalehti 1987 corpus frequency.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Suomen Kuvalehti 1987 corpus frequency."
   },
   {
     "id": "anttila1997_48a_kameroiden",
@@ -831,8 +798,7 @@
       ["motif", "l.taa"],
       ["obs_pct", "99.4"]
     ],
-    "comment": "Suomen Kuvalehti 1987 corpus frequency.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Suomen Kuvalehti 1987 corpus frequency."
   },
   {
     "id": "anttila1997_48b_sairaalojen",
@@ -856,8 +822,7 @@
       ["motif", "h.ta"],
       ["obs_pct", "49.5"]
     ],
-    "comment": "Suomen Kuvalehti 1987 corpus frequency.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Suomen Kuvalehti 1987 corpus frequency."
   },
   {
     "id": "anttila1997_48b_sairaaloiden",
@@ -881,8 +846,7 @@
       ["motif", "h.taa"],
       ["obs_pct", "50.5"]
     ],
-    "comment": "Suomen Kuvalehti 1987 corpus frequency.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Suomen Kuvalehti 1987 corpus frequency."
   },
   {
     "id": "anttila1997_48c_naapurien",
@@ -906,8 +870,7 @@
       ["motif", "l.ti"],
       ["obs_pct", "63.1"]
     ],
-    "comment": "Suomen Kuvalehti 1987 corpus frequency.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Suomen Kuvalehti 1987 corpus frequency."
   },
   {
     "id": "anttila1997_48c_naapureiden",
@@ -931,8 +894,7 @@
       ["motif", "l.tii"],
       ["obs_pct", "36.9"]
     ],
-    "comment": "Suomen Kuvalehti 1987 corpus frequency.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Suomen Kuvalehti 1987 corpus frequency."
   },
   {
     "id": "anttila1997_48d_korjaamojen",
@@ -956,8 +918,7 @@
       ["motif", "h.to"],
       ["obs_pct", "82.2"]
     ],
-    "comment": "Suomen Kuvalehti 1987 corpus frequency.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Suomen Kuvalehti 1987 corpus frequency."
   },
   {
     "id": "anttila1997_48d_korjaamoiden",
@@ -981,8 +942,7 @@
       ["motif", "h.too"],
       ["obs_pct", "17.8"]
     ],
-    "comment": "Suomen Kuvalehti 1987 corpus frequency.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Suomen Kuvalehti 1987 corpus frequency."
   },
   {
     "id": "anttila1997_531a_kameroiden",
@@ -1008,8 +968,7 @@
       ["obs_pct", "99.4"],
       ["count", "720"]
     ],
-    "comment": "Predicted and observed percentages with corpus token count.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Predicted and observed percentages with corpus token count."
   },
   {
     "id": "anttila1997_531b_kamerojen",
@@ -1035,8 +994,7 @@
       ["obs_pct", "0.6"],
       ["count", "4"]
     ],
-    "comment": "Predicted and observed percentages with corpus token count.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Predicted and observed percentages with corpus token count."
   },
   {
     "id": "anttila1997_532a_heteroiden",
@@ -1062,8 +1020,7 @@
       ["obs_pct", "99.5"],
       ["count", "389"]
     ],
-    "comment": "Predicted and observed percentages with corpus token count.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Predicted and observed percentages with corpus token count."
   },
   {
     "id": "anttila1997_532b_heterojen",
@@ -1089,8 +1046,7 @@
       ["obs_pct", "0.5"],
       ["count", "2"]
     ],
-    "comment": "Predicted and observed percentages with corpus token count.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Predicted and observed percentages with corpus token count."
   },
   {
     "id": "anttila1997_533a_naapureiden",
@@ -1116,8 +1072,7 @@
       ["obs_pct", "36.9"],
       ["count", "215"]
     ],
-    "comment": "Predicted and observed percentages with corpus token count.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Predicted and observed percentages with corpus token count."
   },
   {
     "id": "anttila1997_533b_naapurien",
@@ -1143,8 +1098,7 @@
       ["obs_pct", "63.1"],
       ["count", "368"]
     ],
-    "comment": "Predicted and observed percentages with corpus token count.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Predicted and observed percentages with corpus token count."
   },
   {
     "id": "anttila1997_534a_maailmoiden",
@@ -1170,8 +1124,7 @@
       ["obs_pct", "50.5"],
       ["count", "46"]
     ],
-    "comment": "Predicted and observed percentages with corpus token count.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Predicted and observed percentages with corpus token count."
   },
   {
     "id": "anttila1997_534b_maailmojen",
@@ -1197,8 +1150,7 @@
       ["obs_pct", "49.5"],
       ["count", "45"]
     ],
-    "comment": "Predicted and observed percentages with corpus token count.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Predicted and observed percentages with corpus token count."
   },
   {
     "id": "anttila1997_535a_korjaamoiden",
@@ -1224,8 +1176,7 @@
       ["obs_pct", "17.8"],
       ["count", "76"]
     ],
-    "comment": "Predicted and observed percentages with corpus token count.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Predicted and observed percentages with corpus token count."
   },
   {
     "id": "anttila1997_535b_korjaamojen",
@@ -1251,8 +1202,7 @@
       ["obs_pct", "82.2"],
       ["count", "350"]
     ],
-    "comment": "Predicted and observed percentages with corpus token count.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Predicted and observed percentages with corpus token count."
   },
   {
     "id": "anttila1997_536a_poliiseiden",
@@ -1278,8 +1228,7 @@
       ["obs_pct", "1.6"],
       ["count", "13"]
     ],
-    "comment": "Predicted and observed percentages with corpus token count.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Predicted and observed percentages with corpus token count."
   },
   {
     "id": "anttila1997_536b_poliisien",
@@ -1305,8 +1254,7 @@
       ["obs_pct", "98.4"],
       ["count", "806"]
     ],
-    "comment": "Predicted and observed percentages with corpus token count.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Predicted and observed percentages with corpus token count."
   },
   {
     "id": "anttila1997_541a_taiteilijoiden",
@@ -1332,8 +1280,7 @@
       ["obs_pct", "100"],
       ["count", "276"]
     ],
-    "comment": "Predicted and observed percentages with corpus token count.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Predicted and observed percentages with corpus token count."
   },
   {
     "id": "anttila1997_542a_luetteloiden",
@@ -1359,8 +1306,7 @@
       ["obs_pct", "100"],
       ["count", "25"]
     ],
-    "comment": "Predicted and observed percentages with corpus token count.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Predicted and observed percentages with corpus token count."
   },
   {
     "id": "anttila1997_543a_ministereiden",
@@ -1386,8 +1332,7 @@
       ["obs_pct", "14.3"],
       ["count", "39"]
     ],
-    "comment": "Predicted and observed percentages with corpus token count.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Predicted and observed percentages with corpus token count."
   },
   {
     "id": "anttila1997_543b_ministerien",
@@ -1413,8 +1358,7 @@
       ["obs_pct", "85.7"],
       ["count", "234"]
     ],
-    "comment": "Predicted and observed percentages with corpus token count.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Predicted and observed percentages with corpus token count."
   },
   {
     "id": "anttila1997_544b_luonnehdintojen",
@@ -1440,8 +1384,7 @@
       ["obs_pct", "100"],
       ["count", "1"]
     ],
-    "comment": "Predicted and observed percentages with corpus token count.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Predicted and observed percentages with corpus token count."
   },
   {
     "id": "anttila1997_545b_edustustojen",
@@ -1467,8 +1410,7 @@
       ["obs_pct", "100"],
       ["count", "84"]
     ],
-    "comment": "Predicted and observed percentages with corpus token count.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Predicted and observed percentages with corpus token count."
   },
   {
     "id": "anttila1997_546b_margariinien",
@@ -1494,8 +1436,7 @@
       ["obs_pct", "100"],
       ["count", "736"]
     ],
-    "comment": "Predicted and observed percentages with corpus token count.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Predicted and observed percentages with corpus token count."
   },
   {
     "id": "anttila1997_551a_ajattelijoiden",
@@ -1521,8 +1462,7 @@
       ["obs_pct", "100"],
       ["count", "101"]
     ],
-    "comment": "Predicted and observed percentages with corpus token count.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Predicted and observed percentages with corpus token count."
   },
   {
     "id": "anttila1997_552a_televisioiden",
@@ -1548,8 +1488,7 @@
       ["obs_pct", "100"],
       ["count", "41"]
     ],
-    "comment": "Predicted and observed percentages with corpus token count.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Predicted and observed percentages with corpus token count."
   },
   {
     "id": "anttila1997_553a_aleksantereiden",
@@ -1575,8 +1514,7 @@
       ["obs_pct", "11.8"],
       ["count", "2"]
     ],
-    "comment": "Predicted and observed percentages with corpus token count.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Predicted and observed percentages with corpus token count."
   },
   {
     "id": "anttila1997_553b_aleksanterien",
@@ -1602,8 +1540,7 @@
       ["obs_pct", "88.2"],
       ["count", "15"]
     ],
-    "comment": "Predicted and observed percentages with corpus token count.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Predicted and observed percentages with corpus token count."
   },
   {
     "id": "anttila1997_554b_evankelistojen",
@@ -1629,8 +1566,7 @@
       ["obs_pct", "100"],
       ["count", "2"]
     ],
-    "comment": "Predicted and observed percentages with corpus token count.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Predicted and observed percentages with corpus token count."
   },
   {
     "id": "anttila1997_555b_italiaanojen",
@@ -1656,8 +1592,7 @@
       ["obs_pct", "100"],
       ["count", "1"]
     ],
-    "comment": "Predicted and observed percentages with corpus token count.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Predicted and observed percentages with corpus token count."
   },
   {
     "id": "anttila1997_555c_koordinaatistoiden",
@@ -1683,8 +1618,7 @@
       ["obs_pct", "20"],
       ["count", "2"]
     ],
-    "comment": "Predicted and observed percentages with corpus token count.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Predicted and observed percentages with corpus token count."
   },
   {
     "id": "anttila1997_555d_koordinaatistojen",
@@ -1710,8 +1644,7 @@
       ["obs_pct", "80"],
       ["count", "8"]
     ],
-    "comment": "Predicted and observed percentages with corpus token count.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Predicted and observed percentages with corpus token count."
   },
   {
     "id": "anttila1997_556b_sosialistien",
@@ -1737,8 +1670,7 @@
       ["obs_pct", "100"],
       ["count", "99"]
     ],
-    "comment": "Predicted and observed percentages with corpus token count.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Predicted and observed percentages with corpus token count."
   },
   {
     "id": "anttila1997_556d_avantgardistien",
@@ -1764,7 +1696,6 @@
       ["obs_pct", "100"],
       ["count", "2"]
     ],
-    "comment": "Predicted and observed percentages with corpus token count.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Predicted and observed percentages with corpus token count."
   }
 ]

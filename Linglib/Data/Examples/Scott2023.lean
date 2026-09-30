@@ -31,9 +31,7 @@ def ex_78a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("position", "S"), ("cell", "1plExcl"), ("morphemes", "qo=i")]
-    comment := "The full first-person plural pronoun is out as an intransitive subject agreed with by Infl."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "The full first-person plural pronoun is out as an intransitive subject agreed with by Infl." }
 
 def ex_78b : LinguisticExample :=
   { id := "scott2023_78b"
@@ -49,9 +47,7 @@ def ex_78b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("position", "A"), ("cell", "1plExcl"), ("morphemes", "qo=i")]
-    comment := "The full first-person plural pronoun is out as a transitive subject agreed with by Voice."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "The full first-person plural pronoun is out as a transitive subject agreed with by Voice." }
 
 def ex_78c : LinguisticExample :=
   { id := "scott2023_78c"
@@ -67,9 +63,7 @@ def ex_78c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("position", "possessor"), ("cell", "1plExcl"), ("morphemes", "qo=i")]
-    comment := "The full first-person plural pronoun is out as a possessor agreed with by Poss."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "The full first-person plural pronoun is out as a possessor agreed with by Poss." }
 
 def ex_79 : LinguisticExample :=
   { id := "scott2023_79"
@@ -85,9 +79,7 @@ def ex_79 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("position", "unagreed"), ("cell", "1plExcl"), ("morphemes", "qo=i")]
-    comment := "With no agreement on the predicate the full pronoun is in."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "With no agreement on the predicate the full pronoun is in." }
 
 def ex_68b : LinguisticExample :=
   { id := "scott2023_68b"
@@ -103,9 +95,7 @@ def ex_68b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("position", "S"), ("cell", "1plExcl"), ("morphemes", "=i")]
-    comment := "The reduced first-person plural subject pronoun: the disagreement enclitic alone."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "The reduced first-person plural subject pronoun: the disagreement enclitic alone." }
 
 def ex_85a : LinguisticExample :=
   { id := "scott2023_85a"
@@ -121,9 +111,7 @@ def ex_85a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("position", "S"), ("cell", "1sg"), ("morphemes", "qin=i")]
-    comment := "The full first-person singular pronoun is out as an intransitive subject."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "The full first-person singular pronoun is out as an intransitive subject." }
 
 def ex_85b : LinguisticExample :=
   { id := "scott2023_85b"
@@ -139,9 +127,7 @@ def ex_85b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("position", "A"), ("cell", "1sg"), ("morphemes", "qin=i")]
-    comment := "The full first-person singular pronoun is out as a transitive subject."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "The full first-person singular pronoun is out as a transitive subject." }
 
 def ex_85c : LinguisticExample :=
   { id := "scott2023_85c"
@@ -157,9 +143,7 @@ def ex_85c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("position", "possessor"), ("cell", "1sg"), ("morphemes", "qin=i")]
-    comment := "The full first-person singular pronoun is out as a possessor."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "The full first-person singular pronoun is out as a possessor." }
 
 def ex_62 : LinguisticExample :=
   { id := "scott2023_62"
@@ -175,9 +159,7 @@ def ex_62 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("position", "S"), ("cell", "1sg"), ("morphemes", "=i")]
-    comment := "Agreeing Set B on Infl and the reduced first-person singular subject pronoun."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Agreeing Set B on Infl and the reduced first-person singular subject pronoun." }
 
 def ex_86a : LinguisticExample :=
   { id := "scott2023_86a"
@@ -193,9 +175,7 @@ def ex_86a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("position", "S"), ("cell", "2pl"), ("morphemes", "q=i")]
-    comment := "Second-person plural subjects keep their full form."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Second-person plural subjects keep their full form." }
 
 def ex_86b : LinguisticExample :=
   { id := "scott2023_86b"
@@ -211,9 +191,7 @@ def ex_86b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("position", "A"), ("cell", "2pl"), ("morphemes", "q=i")]
-    comment := "Second-person plural transitive subjects keep their full form."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Second-person plural transitive subjects keep their full form." }
 
 def ex_86c : LinguisticExample :=
   { id := "scott2023_86c"
@@ -229,9 +207,7 @@ def ex_86c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("position", "possessor"), ("cell", "2pl"), ("morphemes", "q=i")]
-    comment := "Second-person plural possessors keep their full form."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Second-person plural possessors keep their full form." }
 
 def ex_87a : LinguisticExample :=
   { id := "scott2023_87a"
@@ -247,9 +223,7 @@ def ex_87a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("position", "S"), ("cell", "3pl"), ("morphemes", "qa")]
-    comment := "Third-person plural subjects keep their full form."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Third-person plural subjects keep their full form." }
 
 def ex_87b : LinguisticExample :=
   { id := "scott2023_87b"
@@ -265,9 +239,7 @@ def ex_87b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("position", "A"), ("cell", "3pl"), ("morphemes", "qa")]
-    comment := "Third-person plural transitive subjects keep their full form."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Third-person plural transitive subjects keep their full form." }
 
 def ex_87c : LinguisticExample :=
   { id := "scott2023_87c"
@@ -283,9 +255,7 @@ def ex_87c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("position", "possessor"), ("cell", "3pl"), ("morphemes", "qa")]
-    comment := "Third-person plural possessors keep their full form."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Third-person plural possessors keep their full form." }
 
 def ex_88b : LinguisticExample :=
   { id := "scott2023_88b"
@@ -301,9 +271,7 @@ def ex_88b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("position", "unagreed"), ("cell", "1sg"), ("morphemes", "qin=i")]
-    comment := "Without agreement the first-person singular pronoun is full."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Without agreement the first-person singular pronoun is full." }
 
 def ex_88c : LinguisticExample :=
   { id := "scott2023_88c"
@@ -319,9 +287,7 @@ def ex_88c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("position", "unagreed"), ("cell", "2pl"), ("morphemes", "q=i")]
-    comment := "Without agreement the second-person plural pronoun is full."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Without agreement the second-person plural pronoun is full." }
 
 def ex_88d : LinguisticExample :=
   { id := "scott2023_88d"
@@ -337,9 +303,7 @@ def ex_88d : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("position", "unagreed"), ("cell", "3pl"), ("morphemes", "qa")]
-    comment := "Without agreement the third-person plural pronoun is full."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Without agreement the third-person plural pronoun is full." }
 
 def ex_69a : LinguisticExample :=
   { id := "scott2023_69a"
@@ -355,9 +319,7 @@ def ex_69a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("position", "object"), ("cell", "1sg"), ("morphemes", "qin=i")]
-    comment := "A transitive object is a full pronoun, next to default Set B on Infl."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "A transitive object is a full pronoun, next to default Set B on Infl." }
 
 def ex_89a : LinguisticExample :=
   { id := "scott2023_89a"
@@ -373,9 +335,7 @@ def ex_89a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("position", "possessor"), ("cell", "2pl"), ("morphemes", "q=i")]
-    comment := "The full second-person plural possessor."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "The full second-person plural possessor." }
 
 def ex_89b : LinguisticExample :=
   { id := "scott2023_89b"
@@ -391,9 +351,7 @@ def ex_89b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("position", "possessor"), ("cell", "2pl"), ("morphemes", "=i"), ("optionalReduction", "yes")]
-    comment := "The optionally reduced second-person plural possessor, a Set A context."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "The optionally reduced second-person plural possessor, a Set A context." }
 
 def ex_90b : LinguisticExample :=
   { id := "scott2023_90b"
@@ -409,9 +367,7 @@ def ex_90b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("position", "A"), ("cell", "2pl"), ("morphemes", "=i"), ("optionalReduction", "yes")]
-    comment := "The optionally reduced second-person plural transitive subject, a Set A context."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "The optionally reduced second-person plural transitive subject, a Set A context." }
 
 def ex_91a : LinguisticExample :=
   { id := "scott2023_91a"
@@ -427,9 +383,7 @@ def ex_91a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("position", "S"), ("cell", "2pl"), ("morphemes", "q=i")]
-    comment := "A second-person plural intransitive subject, a Set B context."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "A second-person plural intransitive subject, a Set B context." }
 
 def ex_91b : LinguisticExample :=
   { id := "scott2023_91b"
@@ -445,9 +399,7 @@ def ex_91b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("position", "S"), ("cell", "2pl"), ("morphemes", "=i")]
-    comment := "Reduction of the second-person plural is not available in a Set B context; the sentence is read as 'I danced'."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Reduction of the second-person plural is not available in a Set B context; the sentence is read as 'I danced'." }
 
 def ex_57 : LinguisticExample :=
   { id := "scott2023_57"
@@ -463,9 +415,7 @@ def ex_57 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "agreeingObject"), ("cell", "1sg"), ("setB", "chin")]
-    comment := "The agreeing-object pattern of standard Mam, available to some speakers as a formal variant: Infl's probe is satisfied by φ alone."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "The agreeing-object pattern of standard Mam, available to some speakers as a formal variant: Infl's probe is satisfied by φ alone." }
 
 def ex_59 : LinguisticExample :=
   { id := "scott2023_59"
@@ -481,9 +431,7 @@ def ex_59 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "defaultObject"), ("cell", "1sg"), ("setB", "tz'")]
-    comment := "Default Set B: Infl's probe halts at transitive Voice, and the object is a full pronoun."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Default Set B: Infl's probe halts at transitive Voice, and the object is a full pronoun." }
 
 def ex_73 : LinguisticExample :=
   { id := "scott2023_73"
@@ -499,9 +447,7 @@ def ex_73 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "superExtendedErgative"), ("position", "S"), ("cell", "1sg"), ("setA", "w")]
-    comment := "Extended ergativity: the intransitive subject of a when-clause takes Set A."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Extended ergativity: the intransitive subject of a when-clause takes Set A." }
 
 def ex_77a : LinguisticExample :=
   { id := "scott2023_77a"
@@ -517,9 +463,7 @@ def ex_77a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "superExtendedErgative"), ("position", "object"), ("cell", "1sg"), ("setA", "t")]
-    comment := "Super-extended ergativity: the object slot on the directional takes only the default Set A, and the object is a full pronoun."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Super-extended ergativity: the object slot on the directional takes only the default Set A, and the object is a full pronoun." }
 
 def ex_77b : LinguisticExample :=
   { id := "scott2023_77b"
@@ -535,9 +479,7 @@ def ex_77b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "superExtendedErgative"), ("position", "object"), ("cell", "1sg"), ("setA", "w")]
-    comment := "Agreeing Set A for the object is out in a super-extended ergative clause."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Agreeing Set A for the object is out in a super-extended ergative clause." }
 
 def all : List LinguisticExample := [ex_78a, ex_78b, ex_78c, ex_79, ex_68b, ex_85a, ex_85b, ex_85c, ex_62, ex_86a, ex_86b, ex_86c, ex_87a, ex_87b, ex_87c, ex_88b, ex_88c, ex_88d, ex_69a, ex_89a, ex_89b, ex_90b, ex_91a, ex_91b, ex_57, ex_59, ex_73, ex_77a, ex_77b]
 

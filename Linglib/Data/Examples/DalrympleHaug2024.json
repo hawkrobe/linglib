@@ -19,9 +19,7 @@
       ["section", "1"],
       ["antecedent", "plural pronoun"]
     ],
-    "comment": "Narrow scope is the we-reading (Tracy and Chris each thought 'We saw each other'); wide scope the I-reading (Tracy thought 'I saw Chris' and Chris thought 'I saw Tracy'), the terms of Heim, Lasnik and May 1991.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Narrow scope is the we-reading (Tracy and Chris each thought 'We saw each other'); wide scope the I-reading (Tracy thought 'I saw Chris' and Chris thought 'I saw Tracy'), the terms of Heim, Lasnik and May 1991."
   },
   {
     "id": "dalrymplehaug2024_10",
@@ -47,9 +45,7 @@
       ["section", "2"],
       ["antecedent", "bound singular null pronoun"]
     ],
-    "comment": "Data from György Rákosi (fn. 1). The coordinated matrix subject takes singular agreement, and the singular null subject of the complement must be interpreted as bound; an overt singular pronoun is not acceptable here (fn. 2).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Data from György Rákosi (fn. 1). The coordinated matrix subject takes singular agreement, and the singular null subject of the complement must be interpreted as bound; an overt singular pronoun is not acceptable here (fn. 2)."
   },
   {
     "id": "dalrymplehaug2024_11",
@@ -75,9 +71,7 @@
       ["section", "2"],
       ["antecedent", "plural reflexive"]
     ],
-    "comment": "The plural reflexive zibun-tati resists a bound reading and strongly favours group identity (Nishigauchi 1992), so as antecedent of the reciprocal it allows narrow scope only.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The plural reflexive zibun-tati resists a bound reading and strongly favours group identity (Nishigauchi 1992), so as antecedent of the reciprocal it allows narrow scope only."
   },
   {
     "id": "dalrymplehaug2024_12",
@@ -99,9 +93,7 @@
       ["section", "3"],
       ["antecedent", "collective conjunct"]
     ],
-    "comment": "The reciprocal VP is coordinated with the collective predicate 'meet at the tennis court' (Tay, New, Dalrymple and Haug 2021; fn. 3 credits Yimei Xiang). The wide reading binds the local antecedent, which then denotes an individual and offers no plurality for the collective conjunct.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The reciprocal VP is coordinated with the collective predicate 'meet at the tennis court' (Tay, New, Dalrymple and Haug 2021; fn. 3 credits Yimei Xiang). The wide reading binds the local antecedent, which then denotes an individual and offers no plurality for the collective conjunct."
   },
   {
     "id": "dalrymplehaug2024_13",
@@ -122,9 +114,7 @@
       ["section", "4"],
       ["antecedent", "PRO, partial-control verb"]
     ],
-    "comment": "Since Higginbotham 1980 it has been generally accepted that (13) permits only the wide-scope I-reading. Section 4 concludes that the wide-only claim holds up only for exhaustive control, so a partial-control verb like 'want' makes a narrow reading available.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Since Higginbotham 1980 it has been generally accepted that (13) permits only the wide-scope I-reading. Section 4 concludes that the wide-only claim holds up only for exhaustive control, so a partial-control verb like 'want' makes a narrow reading available."
   },
   {
     "id": "dalrymplehaug2024_14",
@@ -146,9 +136,7 @@
       ["section", "4"],
       ["antecedent", "PRO, collective controller"]
     ],
-    "comment": "Heim, Lasnik and May 1991 (pp. 98-99) attribute two readings: the matrix verb understood collectively with narrow scope, and the matrix subject understood distributively with wide scope. The squib finds the collective/distributive distinction hard to verify for many attitude verbs; Landau 2000 classes 'decide' as a partial-control verb.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Heim, Lasnik and May 1991 (pp. 98-99) attribute two readings: the matrix verb understood collectively with narrow scope, and the matrix subject understood distributively with wide scope. The squib finds the collective/distributive distinction hard to verify for many attitude verbs; Landau 2000 classes 'decide' as a partial-control verb."
   },
   {
     "id": "dalrymplehaug2024_15a",
@@ -170,9 +158,7 @@
       ["antecedent", "PRO, partial control"],
       ["attested", "web"]
     ],
-    "comment": "Naturally occurring (Quora). Partial control: the matrix argument is singular, so a collective interpretation of the attitude verb is impossible, yet PRO is semantically plural and antecedes the reciprocal in situ.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Naturally occurring (Quora). Partial control: the matrix argument is singular, so a collective interpretation of the attitude verb is impossible, yet PRO is semantically plural and antecedes the reciprocal in situ."
   },
   {
     "id": "dalrymplehaug2024_15b",
@@ -194,9 +180,7 @@
       ["antecedent", "PRO, partial control"],
       ["attested", "web"]
     ],
-    "comment": "Naturally occurring (wedding vows). Slightly incongruous, like most partial control, but attested.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Naturally occurring (wedding vows). Slightly incongruous, like most partial control, but attested."
   },
   {
     "id": "dalrymplehaug2024_16a",
@@ -215,9 +199,7 @@
       ["section", "4"],
       ["antecedent", "PRO, exhaustive-control verb"]
     ],
-    "comment": "(15a) with the exhaustive-control verb 'try' substituted: much worse, so (15) involves partial control.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "(15a) with the exhaustive-control verb 'try' substituted: much worse, so (15) involves partial control."
   },
   {
     "id": "dalrymplehaug2024_16b",
@@ -236,9 +218,7 @@
       ["section", "4"],
       ["antecedent", "PRO, exhaustive-control verb"]
     ],
-    "comment": "(15b) with 'try' substituted for 'want'.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "(15b) with 'try' substituted for 'want'."
   },
   {
     "id": "dalrymplehaug2024_17",
@@ -260,9 +240,7 @@
       ["section", "4"],
       ["antecedent", "PRO, exhaustive control, distributive controller"]
     ],
-    "comment": "If collective intention requires awareness of each other's intentions, the adjunct forces a distributive reading of the matrix subject, and the sentence then has only the wide reading: the squib's case of exhaustive control with a controller not interpreted collectively. Landau 2000 classes 'intend' as a partial-control verb.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "If collective intention requires awareness of each other's intentions, the adjunct forces a distributive reading of the matrix subject, and the sentence then has only the wide reading: the squib's case of exhaustive control with a controller not interpreted collectively. Landau 2000 classes 'intend' as a partial-control verb."
   },
   {
     "id": "dalrymplehaug2024_18a",
@@ -284,9 +262,7 @@
       ["section", "5"],
       ["antecedent", "matrix distributor"]
     ],
-    "comment": "Judgment from Heim, Lasnik and May 1991 (p. 86): unambiguous, with only the narrow-scope, contradictory reading, because distributive 'each' cannot apply to the already distributed antecedent. (26) attests wide scope for this structure.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Judgment from Heim, Lasnik and May 1991 (p. 86): unambiguous, with only the narrow-scope, contradictory reading, because distributive 'each' cannot apply to the already distributed antecedent. (26) attests wide scope for this structure."
   },
   {
     "id": "dalrymplehaug2024_18b",
@@ -305,9 +281,7 @@
       ["section", "5"],
       ["antecedent", "distributor, simple sentence"]
     ],
-    "comment": "Judgment from Heim, Lasnik and May 1991; (19) and (20) attest such sentences.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Judgment from Heim, Lasnik and May 1991; (19) and (20) attest such sentences."
   },
   {
     "id": "dalrymplehaug2024_19a",
@@ -327,9 +301,7 @@
       ["antecedent", "distributor, simple sentence"],
       ["attested", "web"]
     ],
-    "comment": "Naturally occurring (Amazon review).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Naturally occurring (Amazon review)."
   },
   {
     "id": "dalrymplehaug2024_19b",
@@ -349,9 +321,7 @@
       ["antecedent", "distributor, simple sentence"],
       ["attested", "web"]
     ],
-    "comment": "Naturally occurring (blog).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Naturally occurring (blog)."
   },
   {
     "id": "dalrymplehaug2024_20a",
@@ -371,9 +341,7 @@
       ["antecedent", "distributor 'each of them', simple sentence"],
       ["attested", "web"]
     ],
-    "comment": "Naturally occurring (aptitude-test forum).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Naturally occurring (aptitude-test forum)."
   },
   {
     "id": "dalrymplehaug2024_20b",
@@ -393,9 +361,7 @@
       ["antecedent", "distributor 'each of them', simple sentence"],
       ["attested", "web"]
     ],
-    "comment": "Naturally occurring (homework forum).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Naturally occurring (homework forum)."
   },
   {
     "id": "dalrymplehaug2024_21a",
@@ -417,9 +383,7 @@
       ["section", "5"],
       ["diagnostic", "internal reading of 'different'"]
     ],
-    "comment": "Distributive 'each' licenses the internal reading of 'different' (a different story for each girl) as well as the external one (a story different from some other salient story): Safir 2014 (p. 98), citing unpublished work by Brasoveanu.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Distributive 'each' licenses the internal reading of 'different' (a different story for each girl) as well as the external one (a story different from some other salient story): Safir 2014 (p. 98), citing unpublished work by Brasoveanu."
   },
   {
     "id": "dalrymplehaug2024_21b",
@@ -441,9 +405,7 @@
       ["section", "5"],
       ["diagnostic", "internal reading of 'different'"]
     ],
-    "comment": "The reciprocal alone does not license the internal reading of 'different'.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The reciprocal alone does not license the internal reading of 'different'."
   },
   {
     "id": "dalrymplehaug2024_22",
@@ -464,9 +426,7 @@
       ["section", "5"],
       ["diagnostic", "internal reading of 'different'"]
     ],
-    "comment": "Constructed minimal pair to (21b): the internal reading emerges with the superfluous 'each', so the 'each' is not vacuous and one can distribute on the reciprocal's antecedent.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Constructed minimal pair to (21b): the internal reading emerges with the superfluous 'each', so the 'each' is not vacuous and one can distribute on the reciprocal's antecedent."
   },
   {
     "id": "dalrymplehaug2024_23a",
@@ -488,9 +448,7 @@
       ["diagnostic", "internal reading of 'different'"],
       ["attested", "web"]
     ],
-    "comment": "Naturally occurring internal reading (blog).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Naturally occurring internal reading (blog)."
   },
   {
     "id": "dalrymplehaug2024_23b",
@@ -512,9 +470,7 @@
       ["diagnostic", "internal reading of 'different'"],
       ["attested", "web"]
     ],
-    "comment": "Naturally occurring internal reading (transcribed speech), quoted as printed.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Naturally occurring internal reading (transcribed speech), quoted as printed."
   },
   {
     "id": "dalrymplehaug2024_24a",
@@ -536,9 +492,7 @@
       ["antecedent", "distributor in the complement clause"],
       ["attested", "web"]
     ],
-    "comment": "Naturally occurring (fan wiki), narrow scope with 'each' in the subordinate clause.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Naturally occurring (fan wiki), narrow scope with 'each' in the subordinate clause."
   },
   {
     "id": "dalrymplehaug2024_24b",
@@ -560,9 +514,7 @@
       ["antecedent", "distributor in the complement clause"],
       ["attested", "web"]
     ],
-    "comment": "Naturally occurring (blog), narrow scope with 'each' in the subordinate clause.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Naturally occurring (blog), narrow scope with 'each' in the subordinate clause."
   },
   {
     "id": "dalrymplehaug2024_25",
@@ -587,9 +539,7 @@
       ["antecedent", "distributor in the complement clause"],
       ["attested", "web"]
     ],
-    "comment": "Naturally occurring (film review), wide scope with 'each' in the subordinate clause; the squib notes it looks like a crossed reading.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Naturally occurring (film review), wide scope with 'each' in the subordinate clause; the squib notes it looks like a crossed reading."
   },
   {
     "id": "dalrymplehaug2024_26a",
@@ -611,9 +561,7 @@
       ["antecedent", "matrix distributor"],
       ["attested", "web"]
     ],
-    "comment": "Naturally occurring (Wikipedia), the structure of (18a) with a wide reading.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Naturally occurring (Wikipedia), the structure of (18a) with a wide reading."
   },
   {
     "id": "dalrymplehaug2024_26b",
@@ -635,9 +583,7 @@
       ["antecedent", "matrix distributor 'neither of them'"],
       ["attested", "web"]
     ],
-    "comment": "Naturally occurring (web novel): the matrix distributor need not be 'each'.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Naturally occurring (web novel): the matrix distributor need not be 'each'."
   },
   {
     "id": "dalrymplehaug2024_28",
@@ -662,9 +608,7 @@
       ["section", "6"],
       ["antecedent", "logophor"]
     ],
-    "comment": "Data from Tatiana Nikitina (fn. 5). The wide reading, where each animal said 'I will eat the others' and only the hare sums the statements to a reciprocal one, is unavailable: 'they' is then interpreted outside the report and cannot be a logophor.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Data from Tatiana Nikitina (fn. 5). The wide reading, where each animal said 'I will eat the others' and only the hare sums the statements to a reciprocal one, is unavailable: 'they' is then interpreted outside the report and cannot be a logophor."
   },
   {
     "id": "dalrymplehaug2024_31",
@@ -689,9 +633,7 @@
       ["section", "6"],
       ["antecedent", "logophor, no reciprocal"]
     ],
-    "comment": "A bound reading of the plural logophor is possible and expresses the scenario of the missing wide reading of (28), as long as no reciprocal is used: it is the reciprocal that would drag its antecedent out of the report.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "A bound reading of the plural logophor is possible and expresses the scenario of the missing wide reading of (28), as long as no reciprocal is used: it is the reciprocal that would drag its antecedent out of the report."
   },
   {
     "id": "dalrymplehaug2024_32",
@@ -715,8 +657,6 @@
       ["section", "6"],
       ["antecedent", "ordinary plural pronoun"]
     ],
-    "comment": "The wide reading is expressible with a reciprocal, but requires the ordinary pronoun rather than the logophor. The pronoun is printed nasalized, and the gloss numeral carries the same tilde.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The wide reading is expressible with a reciprocal, but requires the ordinary pronoun rather than the logophor. The pronoun is printed nasalized, and the gloss numeral carries the same tilde."
   }
 ]

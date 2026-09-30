@@ -19,9 +19,7 @@
       {"name": "reported context", "judgment": "acceptable"}
     ],
     "paperFeatures": {"entry": "vano", "indexical": "I"},
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "anandnevins2004_5",
@@ -43,9 +41,7 @@
       {"name": "reported context", "judgment": "acceptable"}
     ],
     "paperFeatures": {"entry": "vano", "indexical": "you"},
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "anandnevins2004_6",
@@ -68,9 +64,7 @@
       {"name": "reported context", "judgment": "acceptable"}
     ],
     "paperFeatures": {"entry": "vano", "indexical": "here"},
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "anandnevins2004_7",
@@ -93,9 +87,7 @@
       {"name": "utterance context", "judgment": "unacceptable"}
     ],
     "paperFeatures": {"entry": "vano", "indexical": "yesterday", "pragmatic_clash": "a report made a week ago cannot concern the utterance's yesterday"},
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "anandnevins2004_fn3_i",
@@ -117,9 +109,7 @@
       {"name": "reported context", "judgment": "unacceptable"}
     ],
     "paperFeatures": {"entry": "zazaki_attitude", "indexical": "I"},
-    "comment": "Shifting is limited to *vano*; *believe*, *think*, *dream*, *hear*, *yell* do not shift.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Shifting is limited to *vano*; *believe*, *think*, *dream*, *hear*, *yell* do not shift."
   },
   {
     "id": "anandnevins2004_8",
@@ -139,9 +129,7 @@
     ],
     "readings": [],
     "paperFeatures": {"test": "npi", "npi": "kes"},
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "anandnevins2004_9",
@@ -162,9 +150,7 @@
       {"name": "reported context", "judgment": "acceptable"}
     ],
     "paperFeatures": {"entry": "vano", "indexical": "I", "test": "npi_licensing"},
-    "comment": "Matrix negation licenses the NPI inside the shifted clause, so the clause is not a quotation.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Matrix negation licenses the NPI inside the shifted clause, so the clause is not a quotation."
   },
   {
     "id": "anandnevins2004_10",
@@ -180,9 +166,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"test": "extraction", "construction": "direct quotation"},
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "anandnevins2004_11",
@@ -204,9 +188,7 @@
       {"name": "utterance context", "judgment": "acceptable"}
     ],
     "paperFeatures": {"entry": "vano", "indexical": "I", "test": "extraction"},
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "anandnevins2004_12",
@@ -228,9 +210,7 @@
       {"name": "utterance context", "judgment": "acceptable"}
     ],
     "paperFeatures": {"entry": "vano", "indexical": "I", "test": "extraction"},
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "anandnevins2004_13",
@@ -254,9 +234,7 @@
       {"name": "mixed I-reported you-utterance", "judgment": "unacceptable"}
     ],
     "paperFeatures": {"entry": "vano", "indexicals": "I, you", "test": "shift_together"},
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "anandnevins2004_14",
@@ -277,9 +255,7 @@
     ],
     "readings": [],
     "paperFeatures": {"entry": "vano", "indexicals": "now, here", "test": "shift_together"},
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "anandnevins2004_15",
@@ -302,9 +278,7 @@
       {"name": "mixed persons-reported time-utterance", "judgment": "unacceptable"}
     ],
     "paperFeatures": {"entry": "vano", "indexicals": "I, you, in two weeks", "test": "shift_together"},
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "anandnevins2004_17",
@@ -324,9 +298,7 @@
       {"name": "utterance context", "judgment": "acceptable"}
     ],
     "paperFeatures": {"entry": "slave_say", "indexical": "you"},
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "anandnevins2004_18",
@@ -349,9 +321,7 @@
       {"name": "mixed friend-utterance slippers-reported", "judgment": "unacceptable"}
     ],
     "paperFeatures": {"entry": "slave_want", "indexicals": "I, I", "test": "shift_together"},
-    "comment": "The two first-person possessors must both be the embedded author.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The two first-person possessors must both be the embedded author."
   },
   {
     "id": "anandnevins2004_21",
@@ -377,9 +347,7 @@
       {"name": "mixed first-utterance second-reported", "judgment": "unacceptable"}
     ],
     "paperFeatures": {"entry": "vano", "indexicals": "me, me", "test": "shift_together", "c_command": "no"},
-    "comment": "The two indexicals are in separate relative clauses, so Shift-Together is not a crossing-binding-paths effect.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The two indexicals are in separate relative clauses, so Shift-Together is not a crossing-binding-paths effect."
   },
   {
     "id": "anandnevins2004_32",
@@ -403,9 +371,7 @@
       {"name": "Andrew (utterance)", "judgment": "unacceptable"}
     ],
     "paperFeatures": {"entry": "vano", "indexical": "I", "test": "multiple_embedding", "intermediate_shift": "yes"},
-    "comment": "The shifted *to-ra* 'to you' (Andrew, not the neighbor) diagnoses the operator in the intermediate clause, which has overwritten the utterance context.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The shifted *to-ra* 'to you' (Andrew, not the neighbor) diagnoses the operator in the intermediate clause, which has overwritten the utterance context."
   },
   {
     "id": "anandnevins2004_33",
@@ -429,9 +395,7 @@
       {"name": "Andrew (utterance)", "judgment": "acceptable"}
     ],
     "paperFeatures": {"entry": "vano", "indexical": "I", "test": "multiple_embedding", "intermediate_shift": "no"},
-    "comment": "The gloss subscript {H,A,U} and the prose allow the utterance author; the printed translation's asterisk on Andrew is a typo carried over from (32).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The gloss subscript {H,A,U} and the prose allow the utterance author; the printed translation's asterisk on Andrew is a typo carried over from (32)."
   },
   {
     "id": "anandnevins2004_34a",
@@ -447,9 +411,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"language_type": "non-shifting"},
-    "comment": "English persons do not shift under any attitude verb.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "English persons do not shift under any attitude verb."
   },
   {
     "id": "anandnevins2004_34b",
@@ -465,9 +427,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"language_type": "non-shifting"},
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "anandnevins2004_36",
@@ -488,9 +448,7 @@
       {"name": "reported context", "judgment": "acceptable"}
     ],
     "paperFeatures": {"entry": "slave_tell", "indexical": "I", "indexicals": "I, you"},
-    "comment": "Under TELL both embedded persons refer to the author and addressee of the reported context.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Under TELL both embedded persons refer to the author and addressee of the reported context."
   },
   {
     "id": "anandnevins2004_37a",
@@ -512,9 +470,7 @@
       {"name": "reported context", "judgment": "unacceptable"}
     ],
     "paperFeatures": {"entry": "slave_want", "indexical": "you"},
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "anandnevins2004_37b",
@@ -535,9 +491,7 @@
       {"name": "reported context", "judgment": "unacceptable"}
     ],
     "paperFeatures": {"entry": "slave_want", "indexical": "you"},
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "anandnevins2004_38a",
@@ -559,9 +513,7 @@
       {"name": "utterance context", "judgment": "acceptable"}
     ],
     "paperFeatures": {"entry": "slave_want", "indexical": "I"},
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "anandnevins2004_38b",
@@ -582,9 +534,7 @@
       {"name": "utterance context", "judgment": "unacceptable"}
     ],
     "paperFeatures": {"entry": "slave_say", "indexical": "I"},
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "anandnevins2004_42a",
@@ -600,9 +550,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"test": "de_te"},
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "anandnevins2004_42b",
@@ -618,9 +566,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"test": "de_te"},
-    "comment": "Object-controlled PRO is read de te: the addressee coordinate of the index.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Object-controlled PRO is read de te: the addressee coordinate of the index."
   },
   {
     "id": "anandnevins2004_45",
@@ -639,9 +585,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"test": "context_blocking", "logophor": "ADDR-LOG"},
-    "comment": "The addressee logophor cannot corefer with the utterance author, for whom an indexical is available (44). Data from Frajzyngier 1993.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The addressee logophor cannot corefer with the utterance author, for whom an indexical is available (44). Data from Frajzyngier 1993."
   },
   {
     "id": "anandnevins2004_46",
@@ -662,9 +606,7 @@
       {"name": "I reported, me reported", "judgment": "unacceptable"}
     ],
     "paperFeatures": {"test": "shift_together", "indexicals": "I, me"},
-    "comment": "Schlenker's apparent counterexample to Shift-Together (from Leslau 1995); the authors add that the both-shifted reading is unavailable.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Schlenker's apparent counterexample to Shift-Together (from Leslau 1995); the authors add that the both-shifted reading is unavailable."
   },
   {
     "id": "anandnevins2004_47",
@@ -682,9 +624,7 @@
       {"name": "two days after each telling", "judgment": "acceptable"}
     ],
     "paperFeatures": {"expression": "in precisely two days"},
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "anandnevins2004_48",
@@ -703,9 +643,7 @@
       {"name": "May 23rd", "judgment": "unacceptable"}
     ],
     "paperFeatures": {"expression": "in precisely eight days", "embedded_tense": "would"},
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "anandnevins2004_49",
@@ -724,9 +662,7 @@
       {"name": "May 23rd", "judgment": "acceptable"}
     ],
     "paperFeatures": {"expression": "in precisely eight days", "embedded_tense": "will"},
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "anandnevins2004_50",
@@ -744,8 +680,6 @@
     ],
     "readings": [],
     "paperFeatures": {"expression": "in precisely two days", "test": "discourse_anaphora"},
-    "comment": "Schlenker marks the *in two days* version unacceptable; the authors' informants accept it.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Schlenker marks the *in two days* version unacceptable; the authors' informants accept it."
   }
 ]

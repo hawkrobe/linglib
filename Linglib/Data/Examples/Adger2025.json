@@ -29,9 +29,7 @@
         "embedded C"
       ]
     ],
-    "comment": "A wh-expression subjoined downward to the embedded C from the applied-argument position of ask.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A wh-expression subjoined downward to the embedded C from the applied-argument position of ask."
   },
   {
     "id": "adger2025_ch436a",
@@ -55,9 +53,7 @@
         "subextraction from PP"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "adger2025_ch436b",
@@ -81,9 +77,7 @@
         "subextraction from PP"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "adger2025_ch437a",
@@ -107,9 +101,7 @@
         "extraction from clausal complement"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "adger2025_ch437b",
@@ -133,9 +125,7 @@
         "extraction from clausal complement"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "adger2025_ch443",
@@ -167,9 +157,7 @@
         "embedded C[uWh]"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "adger2025_ch448a",
@@ -193,9 +181,7 @@
         "gum"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "adger2025_ch448b",
@@ -219,9 +205,7 @@
         "a (relative) at both clauses"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "adger2025_ch448c",
@@ -245,9 +229,7 @@
         "gum in the extraction path"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "adger2025_ch454",
@@ -271,9 +253,7 @@
         "clausal pied-piping"
       ]
     ],
-    "comment": "Intended as clausal pied-piping of the embedded question, available in Basque but not English.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Intended as clausal pied-piping of the embedded question, available in Basque but not English."
   },
   {
     "id": "adger2025_ch630",
@@ -297,9 +277,7 @@
         "locative PP as matching relative"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "adger2025_ch631",
@@ -327,9 +305,7 @@
         "free"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "adger2025_ch634",
@@ -357,9 +333,7 @@
         "Det"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "adger2025_ch635a",
@@ -387,9 +361,7 @@
         "Dem"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "adger2025_ch635b",
@@ -417,9 +389,7 @@
         "possessor"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "adger2025_ch635c",
@@ -447,9 +417,7 @@
         "free"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "adger2025_ch636a",
@@ -477,9 +445,7 @@
         "of"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "adger2025_ch636b",
@@ -507,9 +473,7 @@
         "of"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "adger2025_ch636c",
@@ -537,9 +501,7 @@
         "of"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "adger2025_ch636d",
@@ -567,9 +529,7 @@
         "of"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "adger2025_ch640a",
@@ -593,9 +553,7 @@
         "indefinite"
       ]
     ],
-    "comment": "From Müller et al. 2022.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "From Müller et al. 2022."
   },
   {
     "id": "adger2025_ch640b",
@@ -619,9 +577,7 @@
         "definite"
       ]
     ],
-    "comment": "Marked ?*.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Marked ?*."
   },
   {
     "id": "adger2025_ch640c",
@@ -645,9 +601,7 @@
         "prenominal possessor"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "adger2025_ch641a",
@@ -675,9 +629,7 @@
         "in situ, matrix scope"
       ]
     ],
-    "comment": "From Karimi 1999.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "From Karimi 1999."
   },
   {
     "id": "adger2025_ch641b",
@@ -705,9 +657,7 @@
         "in situ, matrix scope"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "adger2025_ch642a",
@@ -735,9 +685,7 @@
         "in situ, matrix scope"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "adger2025_ch642b",
@@ -765,9 +713,7 @@
         "in situ, echo question only"
       ]
     ],
-    "comment": "Only the echo-question reading; no matrix-scope information question.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Only the echo-question reading; no matrix-scope information question."
   },
   {
     "id": "adger2025_ch643a",
@@ -795,9 +741,7 @@
         "in situ, matrix scope"
       ]
     ],
-    "comment": "From Huang 1982.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "From Huang 1982."
   },
   {
     "id": "adger2025_ch643b",
@@ -825,9 +769,7 @@
         "in situ, matrix scope"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "adger2025_ch644a",
@@ -855,9 +797,7 @@
         "in situ, matrix scope"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "adger2025_ch644b",
@@ -885,9 +825,7 @@
         "in situ, matrix scope"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "adger2025_ch759a",
@@ -915,9 +853,7 @@
         "free"
       ]
     ],
-    "comment": "Subextraction from a subject, collected by Chaves 2021.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Subextraction from a subject, collected by Chaves 2021."
   },
   {
     "id": "adger2025_ch759b",
@@ -945,9 +881,7 @@
         "free"
       ]
     ],
-    "comment": "Subextraction from a subject, collected by Chaves 2021.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Subextraction from a subject, collected by Chaves 2021."
   },
   {
     "id": "adger2025_ch759c",
@@ -975,9 +909,7 @@
         "free"
       ]
     ],
-    "comment": "Subextraction from a subject, collected by Chaves 2021.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Subextraction from a subject, collected by Chaves 2021."
   },
   {
     "id": "adger2025_ch759d",
@@ -1005,9 +937,7 @@
         "free"
       ]
     ],
-    "comment": "Subextraction from a subject, collected by Chaves 2021.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Subextraction from a subject, collected by Chaves 2021."
   },
   {
     "id": "adger2025_ch759e",
@@ -1035,9 +965,7 @@
         "free"
       ]
     ],
-    "comment": "Subextraction from a subject, collected by Chaves 2021.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Subextraction from a subject, collected by Chaves 2021."
   },
   {
     "id": "adger2025_ch759f",
@@ -1065,9 +993,7 @@
         "free"
       ]
     ],
-    "comment": "Subextraction from a subject, collected by Chaves 2021.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Subextraction from a subject, collected by Chaves 2021."
   },
   {
     "id": "adger2025_ch759g",
@@ -1095,8 +1021,6 @@
         "free"
       ]
     ],
-    "comment": "Subextraction from a subject, collected by Chaves 2021.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Subextraction from a subject, collected by Chaves 2021."
   }
 ]

@@ -31,9 +31,7 @@ def healthy : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conj", "54"), ("disj", "11"), ("polarity", "660"), ("positive", "true"), ("totality", "87"), ("standard", "total"), ("antonym", "sick")]
-    comment := "conj and disj are the percentages of dimensional uses among exception phrases in positive and negated contexts; polarity is the mean judgment on the 1–7 scale in hundredths; totality is the normalized totality index; standard is the inference-test classification."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "conj and disj are the percentages of dimensional uses among exception phrases in positive and negated contexts; polarity is the mean judgment on the 1–7 scale in hundredths; totality is the normalized totality index; standard is the inference-test classification." }
 
 def normal : LinguisticExample :=
   { id := "sassoon2013_normal"
@@ -49,9 +47,7 @@ def normal : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conj", "69"), ("disj", "10"), ("polarity", "565"), ("positive", "true"), ("totality", "98"), ("standard", "total"), ("antonym", "abnormal")]
-    comment := "conj and disj are the percentages of dimensional uses among exception phrases in positive and negated contexts; polarity is the mean judgment on the 1–7 scale in hundredths; totality is the normalized totality index; standard is the inference-test classification."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "conj and disj are the percentages of dimensional uses among exception phrases in positive and negated contexts; polarity is the mean judgment on the 1–7 scale in hundredths; totality is the normalized totality index; standard is the inference-test classification." }
 
 def typical : LinguisticExample :=
   { id := "sassoon2013_typical"
@@ -67,9 +63,7 @@ def typical : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conj", "54"), ("disj", "9"), ("polarity", "420"), ("positive", "true"), ("totality", "92"), ("standard", "total"), ("antonym", "atypical")]
-    comment := "conj and disj are the percentages of dimensional uses among exception phrases in positive and negated contexts; polarity is the mean judgment on the 1–7 scale in hundredths; totality is the normalized totality index; standard is the inference-test classification."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "conj and disj are the percentages of dimensional uses among exception phrases in positive and negated contexts; polarity is the mean judgment on the 1–7 scale in hundredths; totality is the normalized totality index; standard is the inference-test classification." }
 
 def similar : LinguisticExample :=
   { id := "sassoon2013_similar"
@@ -85,9 +79,7 @@ def similar : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conj", "80"), ("disj", "67"), ("polarity", "450"), ("positive", "true"), ("totality", "50"), ("standard", "partial"), ("antonym", "dissimilar")]
-    comment := "conj and disj are the percentages of dimensional uses among exception phrases in positive and negated contexts; polarity is the mean judgment on the 1–7 scale in hundredths; totality is the normalized totality index; standard is the inference-test classification."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "conj and disj are the percentages of dimensional uses among exception phrases in positive and negated contexts; polarity is the mean judgment on the 1–7 scale in hundredths; totality is the normalized totality index; standard is the inference-test classification." }
 
 def identical : LinguisticExample :=
   { id := "sassoon2013_identical"
@@ -103,9 +95,7 @@ def identical : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conj", "86"), ("disj", "49"), ("polarity", "415"), ("positive", "true"), ("totality", "89"), ("standard", "total"), ("antonym", "different")]
-    comment := "conj and disj are the percentages of dimensional uses among exception phrases in positive and negated contexts; polarity is the mean judgment on the 1–7 scale in hundredths; totality is the normalized totality index; standard is the inference-test classification."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "conj and disj are the percentages of dimensional uses among exception phrases in positive and negated contexts; polarity is the mean judgment on the 1–7 scale in hundredths; totality is the normalized totality index; standard is the inference-test classification." }
 
 def good : LinguisticExample :=
   { id := "sassoon2013_good"
@@ -121,9 +111,7 @@ def good : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conj", "24"), ("disj", "21"), ("polarity", "645"), ("positive", "true"), ("totality", "90"), ("standard", "total"), ("antonym", "bad")]
-    comment := "conj and disj are the percentages of dimensional uses among exception phrases in positive and negated contexts; polarity is the mean judgment on the 1–7 scale in hundredths; totality is the normalized totality index; standard is the inference-test classification."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "conj and disj are the percentages of dimensional uses among exception phrases in positive and negated contexts; polarity is the mean judgment on the 1–7 scale in hundredths; totality is the normalized totality index; standard is the inference-test classification." }
 
 def familiar : LinguisticExample :=
   { id := "sassoon2013_familiar"
@@ -139,9 +127,7 @@ def familiar : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conj", "45"), ("disj", "9"), ("polarity", "580"), ("positive", "true"), ("totality", "68"), ("standard", "partial"), ("antonym", "unfamiliar")]
-    comment := "conj and disj are the percentages of dimensional uses among exception phrases in positive and negated contexts; polarity is the mean judgment on the 1–7 scale in hundredths; totality is the normalized totality index; standard is the inference-test classification."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "conj and disj are the percentages of dimensional uses among exception phrases in positive and negated contexts; polarity is the mean judgment on the 1–7 scale in hundredths; totality is the normalized totality index; standard is the inference-test classification." }
 
 def intelligent : LinguisticExample :=
   { id := "sassoon2013_intelligent"
@@ -157,9 +143,7 @@ def intelligent : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conj", "37"), ("disj", "41"), ("polarity", "670"), ("positive", "true"), ("totality", "71"), ("standard", "relative")]
-    comment := "conj and disj are the percentages of dimensional uses among exception phrases in positive and negated contexts; polarity is the mean judgment on the 1–7 scale in hundredths; totality is the normalized totality index; standard is the inference-test classification."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "conj and disj are the percentages of dimensional uses among exception phrases in positive and negated contexts; polarity is the mean judgment on the 1–7 scale in hundredths; totality is the normalized totality index; standard is the inference-test classification." }
 
 def healthier : LinguisticExample :=
   { id := "sassoon2013_healthier"
@@ -175,9 +159,7 @@ def healthier : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conj", "35"), ("disj", "9"), ("polarity", "605"), ("positive", "true"), ("totality", "3"), ("standard", "partial"), ("base", "healthy")]
-    comment := "conj and disj are the percentages of dimensional uses among exception phrases in positive and negated contexts; polarity is the mean judgment on the 1–7 scale in hundredths; totality is the normalized totality index; standard is the inference-test classification."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "conj and disj are the percentages of dimensional uses among exception phrases in positive and negated contexts; polarity is the mean judgment on the 1–7 scale in hundredths; totality is the normalized totality index; standard is the inference-test classification." }
 
 def better : LinguisticExample :=
   { id := "sassoon2013_better"
@@ -193,9 +175,7 @@ def better : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conj", "25"), ("disj", "25"), ("polarity", "630"), ("positive", "true"), ("totality", "3"), ("standard", "partial"), ("antonym", "worse"), ("base", "good")]
-    comment := "conj and disj are the percentages of dimensional uses among exception phrases in positive and negated contexts; polarity is the mean judgment on the 1–7 scale in hundredths; totality is the normalized totality index; standard is the inference-test classification."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "conj and disj are the percentages of dimensional uses among exception phrases in positive and negated contexts; polarity is the mean judgment on the 1–7 scale in hundredths; totality is the normalized totality index; standard is the inference-test classification." }
 
 def sick : LinguisticExample :=
   { id := "sassoon2013_sick"
@@ -211,9 +191,7 @@ def sick : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conj", "2"), ("disj", "26"), ("polarity", "150"), ("positive", "false"), ("totality", "49"), ("standard", "partial")]
-    comment := "conj and disj are the percentages of dimensional uses among exception phrases in positive and negated contexts; polarity is the mean judgment on the 1–7 scale in hundredths; totality is the normalized totality index; standard is the inference-test classification."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "conj and disj are the percentages of dimensional uses among exception phrases in positive and negated contexts; polarity is the mean judgment on the 1–7 scale in hundredths; totality is the normalized totality index; standard is the inference-test classification." }
 
 def abnormal : LinguisticExample :=
   { id := "sassoon2013_abnormal"
@@ -229,9 +207,7 @@ def abnormal : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conj", "6"), ("disj", "20"), ("polarity", "180"), ("positive", "false"), ("totality", "35"), ("standard", "partial")]
-    comment := "conj and disj are the percentages of dimensional uses among exception phrases in positive and negated contexts; polarity is the mean judgment on the 1–7 scale in hundredths; totality is the normalized totality index; standard is the inference-test classification."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "conj and disj are the percentages of dimensional uses among exception phrases in positive and negated contexts; polarity is the mean judgment on the 1–7 scale in hundredths; totality is the normalized totality index; standard is the inference-test classification." }
 
 def atypical : LinguisticExample :=
   { id := "sassoon2013_atypical"
@@ -247,9 +223,7 @@ def atypical : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conj", "19"), ("disj", "68"), ("polarity", "320"), ("positive", "false"), ("totality", "19"), ("standard", "partial")]
-    comment := "conj and disj are the percentages of dimensional uses among exception phrases in positive and negated contexts; polarity is the mean judgment on the 1–7 scale in hundredths; totality is the normalized totality index; standard is the inference-test classification."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "conj and disj are the percentages of dimensional uses among exception phrases in positive and negated contexts; polarity is the mean judgment on the 1–7 scale in hundredths; totality is the normalized totality index; standard is the inference-test classification." }
 
 def dissimilar : LinguisticExample :=
   { id := "sassoon2013_dissimilar"
@@ -265,9 +239,7 @@ def dissimilar : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conj", "58"), ("disj", "83"), ("polarity", "280"), ("positive", "false"), ("totality", "89"), ("standard", "total")]
-    comment := "conj and disj are the percentages of dimensional uses among exception phrases in positive and negated contexts; polarity is the mean judgment on the 1–7 scale in hundredths; totality is the normalized totality index; standard is the inference-test classification."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "conj and disj are the percentages of dimensional uses among exception phrases in positive and negated contexts; polarity is the mean judgment on the 1–7 scale in hundredths; totality is the normalized totality index; standard is the inference-test classification." }
 
 def different : LinguisticExample :=
   { id := "sassoon2013_different"
@@ -283,9 +255,7 @@ def different : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conj", "13"), ("disj", "40"), ("polarity", "340"), ("positive", "false"), ("totality", "38"), ("standard", "partial")]
-    comment := "conj and disj are the percentages of dimensional uses among exception phrases in positive and negated contexts; polarity is the mean judgment on the 1–7 scale in hundredths; totality is the normalized totality index; standard is the inference-test classification."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "conj and disj are the percentages of dimensional uses among exception phrases in positive and negated contexts; polarity is the mean judgment on the 1–7 scale in hundredths; totality is the normalized totality index; standard is the inference-test classification." }
 
 def bad : LinguisticExample :=
   { id := "sassoon2013_bad"
@@ -301,9 +271,7 @@ def bad : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conj", "3"), ("disj", "55"), ("polarity", "110"), ("positive", "false"), ("totality", "73"), ("standard", "partial")]
-    comment := "conj and disj are the percentages of dimensional uses among exception phrases in positive and negated contexts; polarity is the mean judgment on the 1–7 scale in hundredths; totality is the normalized totality index; standard is the inference-test classification."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "conj and disj are the percentages of dimensional uses among exception phrases in positive and negated contexts; polarity is the mean judgment on the 1–7 scale in hundredths; totality is the normalized totality index; standard is the inference-test classification." }
 
 def unfamiliar : LinguisticExample :=
   { id := "sassoon2013_unfamiliar"
@@ -319,9 +287,7 @@ def unfamiliar : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conj", "15"), ("disj", "27"), ("polarity", "260"), ("positive", "false"), ("totality", "85"), ("standard", "total")]
-    comment := "conj and disj are the percentages of dimensional uses among exception phrases in positive and negated contexts; polarity is the mean judgment on the 1–7 scale in hundredths; totality is the normalized totality index; standard is the inference-test classification."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "conj and disj are the percentages of dimensional uses among exception phrases in positive and negated contexts; polarity is the mean judgment on the 1–7 scale in hundredths; totality is the normalized totality index; standard is the inference-test classification." }
 
 def worse : LinguisticExample :=
   { id := "sassoon2013_worse"
@@ -337,9 +303,7 @@ def worse : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conj", "20"), ("disj", "32"), ("polarity", "140"), ("positive", "false"), ("totality", "2"), ("standard", "partial"), ("base", "bad")]
-    comment := "conj and disj are the percentages of dimensional uses among exception phrases in positive and negated contexts; polarity is the mean judgment on the 1–7 scale in hundredths; totality is the normalized totality index; standard is the inference-test classification."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "conj and disj are the percentages of dimensional uses among exception phrases in positive and negated contexts; polarity is the mean judgment on the 1–7 scale in hundredths; totality is the normalized totality index; standard is the inference-test classification." }
 
 def all : List LinguisticExample := [healthy, normal, typical, similar, identical, good, familiar, intelligent, healthier, better, sick, abnormal, atypical, dissimilar, different, bad, unfamiliar, worse]
 

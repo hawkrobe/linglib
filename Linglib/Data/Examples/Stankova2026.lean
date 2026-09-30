@@ -31,9 +31,7 @@ def ex6a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("negation", "inner"), ("diagnostic", "nciLicensed")]
-    comment := "Inner negation licenses the NCI žádný (nonV1 word order)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Inner negation licenses the NCI žádný (nonV1 word order)." }
 
 def ex6b : LinguisticExample :=
   { id := "stankova2026_ex6b"
@@ -49,9 +47,7 @@ def ex6b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("negation", "outer"), ("diagnostic", "nciLicensed")]
-    comment := "High (V1) negation anti-licenses NCIs: only the outer reading is available and it cannot license žádný."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "High (V1) negation anti-licenses NCIs: only the outer reading is available and it cannot license žádný." }
 
 def ex7a : LinguisticExample :=
   { id := "stankova2026_ex7a"
@@ -67,9 +63,7 @@ def ex7a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("negation", "medial"), ("diagnostic", "ppiOutscoping")]
-    comment := "Medial negation: syntactically low (nonV1) but wide LF scope, letting the PPI nějaký be interpreted under it."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Medial negation: syntactically low (nonV1) but wide LF scope, letting the PPI nějaký be interpreted under it." }
 
 def ex7b : LinguisticExample :=
   { id := "stankova2026_ex7b"
@@ -85,9 +79,7 @@ def ex7b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("negation", "outer"), ("diagnostic", "ppiOutscoping")]
-    comment := "Outer (V1) negation allows the PPI nějaký."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Outer (V1) negation allows the PPI nějaký." }
 
 def ex11 : LinguisticExample :=
   { id := "stankova2026_ex11"
@@ -103,9 +95,7 @@ def ex11 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("negation", "outer"), ("diagnostic", "nahodou")]
-    comment := "The paper marks the NCI variant žádnou # in the same frame: náhodou depends on outer negation."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The paper marks the NCI variant žádnou # in the same frame: náhodou depends on outer negation." }
 
 def ex15a : LinguisticExample :=
   { id := "stankova2026_ex15a"
@@ -121,9 +111,7 @@ def ex15a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("negation", "inner"), ("diagnostic", "fakt")]
-    comment := "fakt > ¬ > ∃_NCI: fakt over inner negation."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "fakt > ¬ > ∃_NCI: fakt over inner negation." }
 
 def ex15d : LinguisticExample :=
   { id := "stankova2026_ex15d"
@@ -139,9 +127,7 @@ def ex15d : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("negation", "outer"), ("diagnostic", "fakt")]
-    comment := "fakt is repelled by outer negation on its canonical reading; grammatical only on the 'after all' reading (fn. 8)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "fakt is repelled by outer negation on its canonical reading; grammatical only on the 'after all' reading (fn. 8)." }
 
 def all : List LinguisticExample := [ex6a, ex6b, ex7a, ex7b, ex11, ex15a, ex15d]
 

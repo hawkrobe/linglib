@@ -16,8 +16,7 @@
       ["subject", "barePlural"],
       ["reading", "definitional"]
     ],
-    "comment": "The paper credits the contrast to Lawler (1973).",
-    "metaLanguage": "stan1293"
+    "comment": "The paper credits the contrast to Lawler (1973)."
   },
   {
     "id": "krifka2013_ex1b",
@@ -36,8 +35,7 @@
       ["subject", "indefiniteSingular"],
       ["reading", "definitional"]
     ],
-    "comment": "Also (9), the linguistic rule among Cohen's rule types.",
-    "metaLanguage": "stan1293"
+    "comment": "Also (9), the linguistic rule among Cohen's rule types."
   },
   {
     "id": "krifka2013_ex2a",
@@ -56,8 +54,7 @@
       ["subject", "barePlural"],
       ["reading", "descriptive"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "krifka2013_ex2b",
@@ -76,8 +73,7 @@
       ["subject", "indefiniteSingular"],
       ["reading", "descriptive"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "krifka2013_ex3a",
@@ -96,8 +92,7 @@
       ["subject", "indefiniteSingular"],
       ["reading", "definitional"]
     ],
-    "comment": "The paper credits the example to Burton-Roberts (1976).",
-    "metaLanguage": "stan1293"
+    "comment": "The paper credits the example to Burton-Roberts (1976)."
   },
   {
     "id": "krifka2013_ex4a",
@@ -116,8 +111,7 @@
       ["subject", "indefiniteSingular"],
       ["reading", "descriptive"]
     ],
-    "comment": "The paper suggests the contrast is between universal and existential generics rather than descriptive and definitional ones.",
-    "metaLanguage": "stan1293"
+    "comment": "The paper suggests the contrast is between universal and existential generics rather than descriptive and definitional ones."
   },
   {
     "id": "krifka2013_ex5",
@@ -137,8 +131,7 @@
       ["reading", "definitional"],
       ["rule", "physical"]
     ],
-    "comment": "Cohen's rule types, (5) to (9).",
-    "metaLanguage": "stan1293"
+    "comment": "Cohen's rule types, (5) to (9)."
   },
   {
     "id": "krifka2013_ex6",
@@ -158,8 +151,7 @@
       ["reading", "definitional"],
       ["rule", "moral"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "krifka2013_ex7",
@@ -179,8 +171,7 @@
       ["reading", "definitional"],
       ["rule", "legal"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "krifka2013_ex8",
@@ -200,8 +191,7 @@
       ["reading", "definitional"],
       ["rule", "legal"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "krifka2013_ex13",
@@ -222,8 +212,7 @@
     "paperFeatures": [
       ["subject", "barePlural"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "krifka2013_ex29",
@@ -242,8 +231,7 @@
       ["subject", "indefiniteSingular"],
       ["reading", "definitional"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "krifka2013_ex37",
@@ -262,8 +250,7 @@
       ["subject", "indefiniteSingular"],
       ["reading", "definitional"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "krifka2013_ex38",
@@ -282,8 +269,7 @@
       ["subject", "indefiniteSingular"],
       ["reading", "definitional"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "krifka2013_ex39",
@@ -301,8 +287,7 @@
     "paperFeatures": [
       ["subject", "indefiniteSingular"]
     ],
-    "comment": "Marked (#) in parentheses in the paper.",
-    "metaLanguage": "stan1293"
+    "comment": "Marked (#) in parentheses in the paper."
   },
   {
     "id": "krifka2013_ex42a",
@@ -321,8 +306,7 @@
       ["subject", "indefiniteSingular"],
       ["reading", "descriptive"]
     ],
-    "comment": "The paper credits the contrast to Cohen (2001).",
-    "metaLanguage": "stan1293"
+    "comment": "The paper credits the contrast to Cohen (2001)."
   },
   {
     "id": "krifka2013_ex42b",
@@ -341,8 +325,7 @@
       ["subject", "indefiniteSingular"],
       ["reading", "definitional"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "krifka2013_ex43",
@@ -361,8 +344,7 @@
       ["subject", "indefiniteSingular"],
       ["reading", "descriptive"]
     ],
-    "comment": "The paper credits the example to Carlson (2009).",
-    "metaLanguage": "stan1293"
+    "comment": "The paper credits the example to Carlson (2009)."
   },
   {
     "id": "krifka2013_ex44a",
@@ -381,8 +363,7 @@
       ["subject", "indefiniteSingular"],
       ["reading", "descriptive"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "krifka2013_ex44b",
@@ -401,8 +382,7 @@
       ["subject", "indefiniteSingular"],
       ["reading", "descriptive"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "krifka2013_ex45a",
@@ -421,8 +401,7 @@
       ["subject", "barePlural"],
       ["reading", "descriptive"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "krifka2013_ex45b",
@@ -441,7 +420,6 @@
       ["subject", "indefiniteSingular"],
       ["reading", "descriptive"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   }
 ]

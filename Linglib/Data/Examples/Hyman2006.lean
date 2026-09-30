@@ -31,9 +31,7 @@ def makura : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3"), ("output", "mákùrà gà"), ("accent", "initial mora")]
-    comment := "Analysed accentually, with a drop after the accented mora, and tonally, with a prelinked H."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Analysed accentually, with a drop after the accented mora, and tonally, with a prelinked H." }
 
 def kokoro : LinguisticExample :=
   { id := "hyman2006_kokoro"
@@ -49,9 +47,7 @@ def kokoro : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3"), ("output", "kókórò gà"), ("accent", "second mora")]
-    comment := "Analysed accentually, with a drop after the accented mora, and tonally, with a prelinked H."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Analysed accentually, with a drop after the accented mora, and tonally, with a prelinked H." }
 
 def atama : LinguisticExample :=
   { id := "hyman2006_atama"
@@ -67,9 +63,7 @@ def atama : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3"), ("output", "átámá gà"), ("accent", "final mora")]
-    comment := "Analysed accentually, with a drop after the accented mora, and tonally, with a prelinked H."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Analysed accentually, with a drop after the accented mora, and tonally, with a prelinked H." }
 
 def sakana : LinguisticExample :=
   { id := "hyman2006_sakana"
@@ -85,9 +79,7 @@ def sakana : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3"), ("output", "sákáná gá"), ("accent", "none"), ("note", "unaccented: no pitch drop")]
-    comment := "Analysed accentually, with a drop after the accented mora, and tonally, with a prelinked H."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Analysed accentually, with a drop after the accented mora, and tonally, with a prelinked H." }
 
 def all : List LinguisticExample := [makura, kokoro, atama, sakana]
 

@@ -19,9 +19,7 @@
       ["mover", "absolutive"],
       ["reflex", "blocked"]
     ],
-    "comment": "Absolutive extraction is unmarked: no =(y)a' with an intransitive subject.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Absolutive extraction is unmarked: no =(y)a' with an intransitive subject."
   },
   {
     "id": "elkinstorrencebrown2026_11b",
@@ -43,9 +41,7 @@
       ["mover", "absolutive"],
       ["reflex", "blocked"]
     ],
-    "comment": "Absolutive extraction is unmarked: no =(y)a' with a direct object.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Absolutive extraction is unmarked: no =(y)a' with a direct object."
   },
   {
     "id": "elkinstorrencebrown2026_12b",
@@ -68,9 +64,7 @@
       ["mover", "ergative"],
       ["reflex", "blocked"]
     ],
-    "comment": "The Ergative Extraction Constraint: the agent is extracted through an antipassive, which demotes the theme to a relational-noun phrase; no =(y)a'.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The Ergative Extraction Constraint: the agent is extracted through an antipassive, which demotes the theme to a relational-noun phrase; no =(y)a'."
   },
   {
     "id": "elkinstorrencebrown2026_13a",
@@ -95,9 +89,7 @@
       ["mover", "none"],
       ["reflex", "blocked"]
     ],
-    "comment": "With the instrument in situ the enclitic is impossible: =(y)a' is associated with extraction, not with the presence of the adjunct.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "With the instrument in situ the enclitic is impossible: =(y)a' is associated with extraction, not with the presence of the adjunct."
   },
   {
     "id": "elkinstorrencebrown2026_13b",
@@ -123,9 +115,7 @@
       ["mover", "instrument"],
       ["reflex", "licensed"]
     ],
-    "comment": "Instrument extraction optionally triggers =(y)a'; the relational noun inverts around the wh-word (pied-piping with inversion).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Instrument extraction optionally triggers =(y)a'; the relational noun inverts around the wh-word (pied-piping with inversion)."
   },
   {
     "id": "elkinstorrencebrown2026_14b",
@@ -148,9 +138,7 @@
       ["mover", "benefactive"],
       ["reflex", "licensed"]
     ],
-    "comment": "Benefactive extraction optionally triggers =(y)a'.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Benefactive extraction optionally triggers =(y)a'."
   },
   {
     "id": "elkinstorrencebrown2026_15b",
@@ -173,9 +161,7 @@
       ["mover", "dative"],
       ["reflex", "licensed"]
     ],
-    "comment": "Dative extraction optionally triggers =(y)a'.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Dative extraction optionally triggers =(y)a'."
   },
   {
     "id": "elkinstorrencebrown2026_16b",
@@ -198,9 +184,7 @@
       ["mover", "locative"],
       ["reflex", "licensed"]
     ],
-    "comment": "Locative extraction optionally triggers =(y)a'.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Locative extraction optionally triggers =(y)a'."
   },
   {
     "id": "elkinstorrencebrown2026_17b",
@@ -224,9 +208,7 @@
       ["mover", "reason"],
       ["reflex", "licensed"]
     ],
-    "comment": "Reason extraction optionally triggers =(y)a'; the wh-expression is the wh-word plus the relational noun u'n.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Reason extraction optionally triggers =(y)a'; the wh-expression is the wh-word plus the relational noun u'n."
   },
   {
     "id": "elkinstorrencebrown2026_18b",
@@ -249,9 +231,7 @@
       ["mover", "purpose"],
       ["reflex", "licensed"]
     ],
-    "comment": "Purpose extraction optionally triggers =(y)a'.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Purpose extraction optionally triggers =(y)a'."
   },
   {
     "id": "elkinstorrencebrown2026_19b",
@@ -274,9 +254,7 @@
       ["mover", "manner"],
       ["reflex", "licensed"]
     ],
-    "comment": "Manner extraction optionally triggers =(y)a'.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Manner extraction optionally triggers =(y)a'."
   },
   {
     "id": "elkinstorrencebrown2026_20b",
@@ -301,9 +279,7 @@
       ["mover", "temporal"],
       ["reflex", "blocked"]
     ],
-    "comment": "Temporal extraction does not license =(y)a'.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Temporal extraction does not license =(y)a'."
   },
   {
     "id": "elkinstorrencebrown2026_21b",
@@ -328,9 +304,7 @@
       ["mover", "temporal"],
       ["reflex", "blocked"]
     ],
-    "comment": "Temporal extraction does not license =(y)a'.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Temporal extraction does not license =(y)a'."
   },
   {
     "id": "elkinstorrencebrown2026_22",
@@ -354,9 +328,7 @@
       ["directionals", "1"],
       ["hosts", "2"]
     ],
-    "comment": "Multiple exponence: the enclitic may appear on the predicate and on the directional, each optionally and independently, so four combinations are equivalent.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Multiple exponence: the enclitic may appear on the predicate and on the directional, each optionally and independently, so four combinations are equivalent."
   },
   {
     "id": "elkinstorrencebrown2026_24",
@@ -383,9 +355,7 @@
       ["matrixReflex", "licensed"],
       ["embeddedReflex", "licensed"]
     ],
-    "comment": "Long-distance extraction from a kye complement: =(y)a' on both the matrix and the embedded predicate, each optional.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Long-distance extraction from a kye complement: =(y)a' on both the matrix and the embedded predicate, each optional."
   },
   {
     "id": "elkinstorrencebrown2026_26",
@@ -412,9 +382,7 @@
       ["matrixReflex", "blocked"],
       ["embeddedReflex", "licensed"]
     ],
-    "comment": "Embedded question: the wh-expression moves within the embedded clause only, and =(y)a' is unavailable on the matrix predicate.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Embedded question: the wh-expression moves within the embedded clause only, and =(y)a' is unavailable on the matrix predicate."
   },
   {
     "id": "elkinstorrencebrown2026_28",
@@ -441,9 +409,7 @@
       ["section", "3.2"],
       ["mover", "locative"]
     ],
-    "comment": "The relative clause is an island: the enclitic appears only on the matrix predicate and the question has only the matrix reading.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The relative clause is an island: the enclitic appears only on the matrix predicate and the question has only the matrix reading."
   },
   {
     "id": "elkinstorrencebrown2026_29a",
@@ -467,9 +433,7 @@
       ["section", "3.2"],
       ["mover", "locative"]
     ],
-    "comment": "=(y)a' inside the relative-clause island is rejected, and does not ameliorate extraction from the island.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "=(y)a' inside the relative-clause island is rejected, and does not ameliorate extraction from the island."
   },
   {
     "id": "elkinstorrencebrown2026_31",
@@ -495,9 +459,7 @@
       ["matrixReflex", "licensed"],
       ["embeddedReflex", "licensed"]
     ],
-    "comment": "Extraction from a VoiceP-sized aspectless clause: =(y)a' on both predicates although the embedded clause has no CP layer, so the locus of the enclitic is below C.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Extraction from a VoiceP-sized aspectless clause: =(y)a' on both predicates although the embedded clause has no CP layer, so the locus of the enclitic is below C."
   },
   {
     "id": "elkinstorrencebrown2026_34",
@@ -524,9 +486,7 @@
       ["matrixReflex", "licensed"],
       ["embeddedReflex", "blocked"]
     ],
-    "comment": "Extraction from a VP-sized nonfinite clause: =(y)a' on the matrix predicate only, so the locus of the enclitic is above VP. The primary text follows the glossed line; the paper's unglossed line differs.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Extraction from a VP-sized nonfinite clause: =(y)a' on the matrix predicate only, so the locus of the enclitic is above VP. The primary text follows the glossed line; the paper's unglossed line differs."
   },
   {
     "id": "elkinstorrencebrown2026_35c",
@@ -550,9 +510,7 @@
       ["mover", "none"],
       ["reflex", "blocked"]
     ],
-    "comment": "=(y)a' cannot refer anaphorically to a previously established locative without an extracted adjunct; with the fronted atzu 'there' it is fine. So the enclitic is not a resumptive pronoun.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "=(y)a' cannot refer anaphorically to a previously established locative without an extracted adjunct; with the fronted atzu 'there' it is fine. So the enclitic is not a resumptive pronoun."
   },
   {
     "id": "elkinstorrencebrown2026_37",
@@ -576,9 +534,7 @@
       ["reflex", "licensed"],
       ["voice", "passive"]
     ],
-    "comment": "=(y)a' co-occurs with the passive suffix, unlike an Agent Focus morpheme, which is in complementary distribution with valency morphology.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "=(y)a' co-occurs with the passive suffix, unlike an Agent Focus morpheme, which is in complementary distribution with valency morphology."
   },
   {
     "id": "elkinstorrencebrown2026_38",
@@ -602,9 +558,7 @@
       ["mover", "ergative"],
       ["antipassive", "embedded only"]
     ],
-    "comment": "Long-distance ergative extraction: only the clause in which the agent originates is antipassivized, whereas =(y)a' is licensed in each clause along an adjunct's path.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Long-distance ergative extraction: only the clause in which the agent originates is antipassivized, whereas =(y)a' is licensed in each clause along an adjunct's path."
   },
   {
     "id": "elkinstorrencebrown2026_63",
@@ -628,9 +582,7 @@
       ["directionals", "2"],
       ["hosts", "3"]
     ],
-    "comment": "An intransitive predicate with its sole argument, two directionals and three instances of =(y)a': more reflexes than intervening DPs.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "An intransitive predicate with its sole argument, two directionals and three instances of =(y)a': more reflexes than intervening DPs."
   },
   {
     "id": "elkinstorrencebrown2026_65",
@@ -655,9 +607,7 @@
       ["mover", "temporal"],
       ["reflex", "blocked"]
     ],
-    "comment": "Even a nominal-looking temporal phrase fails to trigger the enclitic; the featural characterization of the triggers is left open.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Even a nominal-looking temporal phrase fails to trigger the enclitic; the featural characterization of the triggers is left open."
   },
   {
     "id": "elkinstorrencebrown2026_51",
@@ -681,9 +631,7 @@
       ["mover", "locative"],
       ["reflex", "licensed"]
     ],
-    "comment": "The K'iche' fronting particle wi is obligatory under low-adjunct extraction.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The K'iche' fronting particle wi is obligatory under low-adjunct extraction."
   },
   {
     "id": "elkinstorrencebrown2026_52",
@@ -709,9 +657,7 @@
       ["matrixReflex", "licensed"],
       ["embeddedReflex", "licensed"]
     ],
-    "comment": "With an overt complementizer, wi appears in every clause along the path.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "With an overt complementizer, wi appears in every clause along the path."
   },
   {
     "id": "elkinstorrencebrown2026_53",
@@ -738,9 +684,7 @@
       ["matrixReflex", "blocked"],
       ["embeddedReflex", "licensed"]
     ],
-    "comment": "From a reduced AspP complement without a complementizer, wi appears in the embedded clause only: the Fronting Particle Generalization.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "From a reduced AspP complement without a complementizer, wi appears in the embedded clause only: the Fronting Particle Generalization."
   },
   {
     "id": "elkinstorrencebrown2026_64",
@@ -765,8 +709,6 @@
       ["mover", "reason"],
       ["reflex", "blocked"]
     ],
-    "comment": "A reason adjunct, high in K'ichean, does not trigger wi, whereas Mam tiqu'n 'why' licenses =(y)a'.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "A reason adjunct, high in K'ichean, does not trigger wi, whereas Mam tiqu'n 'why' licenses =(y)a'."
   }
 ]

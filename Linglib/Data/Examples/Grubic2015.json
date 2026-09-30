@@ -20,8 +20,7 @@
       ["particle", "yak"],
       ["configuration", "predicate"]
     ],
-    "comment": "Both readings carry a mirative component: more, or something more prestigious, was expected.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Both readings carry a mirative component: more, or something more prestigious, was expected."
   },
   {
     "id": "grubic2015_6_25a",
@@ -43,8 +42,7 @@
       ["inference", "Dimza built a house"],
       ["inference", "nobody else built a house"]
     ],
-    "comment": "Consultant: Dimza built a house, and nobody else built a house.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Consultant: Dimza built a house, and nobody else built a house."
   },
   {
     "id": "grubic2015_6_25b",
@@ -67,8 +65,7 @@
       ["inference", "Dimza built a house"],
       ["inference", "other people also built a house"]
     ],
-    "comment": "The exclusive component is asserted; the prejacent projects through negation.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The exclusive component is asserted; the prejacent projects through negation."
   },
   {
     "id": "grubic2015_6_25c",
@@ -90,8 +87,7 @@
       ["configuration", "markedSubjectFocus"],
       ["inference", "Dimza built a house"]
     ],
-    "comment": "Consultant: Dimza built a house, and you want to confirm: alone or with other people?",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Consultant: Dimza built a house, and you want to confirm: alone or with other people?"
   },
   {
     "id": "grubic2015_6_26",
@@ -112,8 +108,7 @@
       ["particle", "yak"],
       ["configuration", "markedObjectFocus"]
     ],
-    "comment": "The exclusive component is not cancellable.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The exclusive component is not cancellable."
   },
   {
     "id": "grubic2015_6_28",
@@ -134,8 +129,7 @@
       ["particle", "yak"],
       ["configuration", "predicate"]
     ],
-    "comment": "The mirative component projects: odd because a good harvest is not less than expected.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The mirative component projects: odd because a good harvest is not less than expected."
   },
   {
     "id": "grubic2015_6_140",
@@ -156,8 +150,7 @@
       ["particle", "yak"],
       ["configuration", "unmarkedObjectFocus"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "grubic2015_6_145a",
@@ -178,8 +171,7 @@
       ["particle", "yak"],
       ["configuration", "dependentPronoun"]
     ],
-    "comment": "Reinterpreted with the exclusive associating with the direct object: Jajei is expecting a watch and other things.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Reinterpreted with the exclusive associating with the direct object: Jajei is expecting a watch and other things."
   },
   {
     "id": "grubic2015_6_145b",
@@ -200,8 +192,7 @@
       ["particle", "yak"],
       ["configuration", "independentPronoun"]
     ],
-    "comment": "Marginal because it is hard to tell who te refers to without intermediate discussion of Jajei.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Marginal because it is hard to tell who te refers to without intermediate discussion of Jajei."
   },
   {
     "id": "grubic2015_6_148a",
@@ -224,8 +215,7 @@
       ["particle", "yak"],
       ["configuration", "resumptivePronoun"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "grubic2015_6_148b",
@@ -249,8 +239,7 @@
       ["particle", "yak"],
       ["configuration", "topicalizedGap"]
     ],
-    "comment": "The exclusive cannot associate with the moved constituent.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The exclusive cannot associate with the moved constituent."
   },
   {
     "id": "grubic2015_6_149",
@@ -273,8 +262,7 @@
       ["particle", "leiKiTomiya"],
       ["configuration", "topicalizedGap"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "grubic2015_6_150a",
@@ -296,8 +284,7 @@
       ["particle", "yak"],
       ["configuration", "focusedPronoun"]
     ],
-    "comment": "Consultant: he always calls only her, never anybody else.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Consultant: he always calls only her, never anybody else."
   },
   {
     "id": "grubic2015_6_150b",
@@ -319,8 +306,7 @@
       ["particle", "yak"],
       ["configuration", "elidedPronoun"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "grubic2015_6_151",
@@ -342,8 +328,7 @@
       ["particle", "leiKiTomiya"],
       ["configuration", "elidedPronoun"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "grubic2015_6_153",
@@ -367,8 +352,7 @@
       ["particle", "yak"],
       ["configuration", "elidedObject"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "grubic2015_6_158",
@@ -389,8 +373,7 @@
       ["particle", "yak"],
       ["configuration", "presupposition"]
     ],
-    "comment": "The exclusive does not associate with the presupposition of gitko.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The exclusive does not associate with the presupposition of gitko."
   },
   {
     "id": "grubic2015_6_159",
@@ -414,8 +397,7 @@
       ["particle", "leiKiTomiya"],
       ["configuration", "presupposition"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "grubic2015_6_160",
@@ -436,8 +418,7 @@
       ["particle", "ke"],
       ["configuration", "dependentPronoun"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "grubic2015_6_162a",
@@ -458,8 +439,7 @@
       ["particle", "ke"],
       ["configuration", "independentPronoun"]
     ],
-    "comment": "Rejected in favour of a dependent pronoun with a totality-extended verb.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Rejected in favour of a dependent pronoun with a totality-extended verb."
   },
   {
     "id": "grubic2015_6_162b",
@@ -480,8 +460,7 @@
       ["particle", "ke"],
       ["configuration", "dependentPronoun"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "grubic2015_6_163",
@@ -501,8 +480,7 @@
       ["particle", "ke"],
       ["configuration", "elidedTopicalSubject"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "grubic2015_6_164",
@@ -523,8 +501,7 @@
       ["particle", "har"],
       ["configuration", "dependentPronoun"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "grubic2015_6_165",
@@ -545,8 +522,7 @@
       ["particle", "ke"],
       ["configuration", "preverbalSubject"]
     ],
-    "comment": "Preverbal subjects are out of focus, which the exclusive cannot associate with.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Preverbal subjects are out of focus, which the exclusive cannot associate with."
   },
   {
     "id": "grubic2015_6_166",
@@ -569,8 +545,7 @@
       ["inference", "he was expected to build more"],
       ["inference", "Dimza built a house"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "grubic2015_6_167",
@@ -592,8 +567,7 @@
       ["inference", "Dimza built a house"],
       ["inference", "Dimza built something else"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "grubic2015_6_168",
@@ -616,8 +590,7 @@
       ["inference", "he was expected to build less"],
       ["inference", "Dimza built something else"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "grubic2015_6_169",
@@ -639,8 +612,7 @@
       ["inference", "the speaker is nothing better than a secretary"],
       ["inference", "the speaker was expected to be something better"]
     ],
-    "comment": "A rank-order scale: the prejacent inference does not survive negation.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "A rank-order scale: the prejacent inference does not survive negation."
   },
   {
     "id": "grubic2015_6_170",
@@ -662,8 +634,7 @@
       ["inference", "Bah is a teacher"],
       ["inference", "he was expected to be something worse"]
     ],
-    "comment": "A rank-order scale: no additive inference.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "A rank-order scale: no additive inference."
   },
   {
     "id": "grubic2015_7_41",
@@ -684,8 +655,7 @@
       ["particle", "ke"],
       ["configuration", "distinctBackgroundDistinctFocus"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "grubic2015_7_42",
@@ -706,8 +676,7 @@
       ["particle", "ke"],
       ["configuration", "distinctBackgroundParallelFocus"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "grubic2015_7_43",
@@ -729,8 +698,7 @@
       ["particle", "ke"],
       ["configuration", "parallelUnmarkedBackground"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "grubic2015_7_44",
@@ -751,8 +719,7 @@
       ["particle", "ke"],
       ["configuration", "parallelMarkedBackground"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "grubic2015_7_46",
@@ -774,8 +741,7 @@
       ["particle", "ke"],
       ["configuration", "modalizedAntecedent"]
     ],
-    "comment": "The antecedent is merely given, not asserted to be true.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The antecedent is merely given, not asserted to be true."
   },
   {
     "id": "grubic2015_7_48",
@@ -796,8 +762,7 @@
       ["particle", "ke"],
       ["configuration", "nonParallel"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "grubic2015_7_49",
@@ -818,7 +783,6 @@
       ["particle", "ke"],
       ["configuration", "parallelMarkedBackground"]
     ],
-    "comment": "Possible if a temporal shift is accommodated: it is Hawwa that built the house and then Kule built a house.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Possible if a temporal shift is accommodated: it is Hawwa that built the house and then Kule built a house."
   }
 ]

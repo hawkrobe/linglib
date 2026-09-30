@@ -18,9 +18,7 @@
       ["level", "nonSubjective"],
       ["century", "16"]
     ],
-    "comment": "Subjectification of *be going to*: motion with intent to act, before the intentional non-motion (5b) and raising (5c) uses.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Subjectification of *be going to*: motion with intent to act, before the intentional non-motion (5b) and raising (5c) uses."
   },
   {
     "id": "traugott2010_5b",
@@ -41,9 +39,7 @@
       ["level", "nonSubjective"],
       ["century", "17"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "traugott2010_5c",
@@ -64,9 +60,7 @@
       ["level", "subjective"],
       ["century", "18"]
     ],
-    "comment": "The raising construction expresses the speaker's assessment of the future: the subjectified polysemy.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The raising construction expresses the speaker's assessment of the future: the subjectified polysemy."
   },
   {
     "id": "traugott2010_6",
@@ -90,9 +84,7 @@
       ["stage", "non-honorific > referent honorific > addressee honorific"],
       ["level", "nonSubjective > subjective > intersubjective"]
     ],
-    "comment": "The coded intersubjective addressee honorific arises from the subjectified referent honorific, from Traugott and Dasher (2002).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The coded intersubjective addressee honorific arises from the subjectified referent honorific, from Traugott and Dasher (2002)."
   },
   {
     "id": "traugott2010_12a",
@@ -112,9 +104,7 @@
       ["stage", "I Partitive"],
       ["level", "nonSubjective"]
     ],
-    "comment": "Stage I: a partitive with a concrete complement.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Stage I: a partitive with a concrete complement."
   },
   {
     "id": "traugott2010_13a",
@@ -134,9 +124,7 @@
       ["stage", "II Extended Partitive"],
       ["level", "nonSubjective"]
     ],
-    "comment": "Stage II: the complement generalized to abstract nouns, host-class expansion, with the invited inference of a small amount.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Stage II: the complement generalized to abstract nouns, host-class expansion, with the invited inference of a small amount."
   },
   {
     "id": "traugott2010_14a",
@@ -159,9 +147,7 @@
       ["stage", "III Degree Modifier"],
       ["level", "subjective"]
     ],
-    "comment": "Stage III: the bridging context in which a degree modifier reading arose, the only context where it developed robustly for *a piece of*.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Stage III: the bridging context in which a degree modifier reading arose, the only context where it developed robustly for *a piece of*."
   },
   {
     "id": "traugott2010_16a",
@@ -181,9 +167,7 @@
       ["stage", "0 Pre-Partitive"],
       ["level", "nonSubjective"]
     ],
-    "comment": "Stage 0: the nominalized *biting*, before the metonymic transfer to the piece bitten out.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Stage 0: the nominalized *biting*, before the metonymic transfer to the piece bitten out."
   },
   {
     "id": "traugott2010_17",
@@ -203,9 +187,7 @@
       ["stage", "I Partitive"],
       ["level", "nonSubjective"]
     ],
-    "comment": "Stage I: morsel, unit bitten out.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Stage I: morsel, unit bitten out."
   },
   {
     "id": "traugott2010_18a",
@@ -225,9 +207,7 @@
       ["stage", "II Extended Partitive"],
       ["level", "nonSubjective"]
     ],
-    "comment": "Stage II: generalized to non-food and abstract complements, host-class expansion, with the implicature that the unit is small or inadequate.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Stage II: generalized to non-food and abstract complements, host-class expansion, with the implicature that the unit is small or inadequate."
   },
   {
     "id": "traugott2010_19a",
@@ -248,9 +228,7 @@
       ["level", "subjective"],
       ["pragmatic", "intersubjective hedge"]
     ],
-    "comment": "Stage III: the downtoner *somewhat*, the subjectification; with a negatively evaluated head it is used intersubjectively as a hedge, a pragmatic intersubjectification that is not coded.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Stage III: the downtoner *somewhat*, the subjectification; with a negatively evaluated head it is used intersubjectively as a hedge, a pragmatic intersubjectification that is not coded."
   },
   {
     "id": "traugott2010_20",
@@ -270,9 +248,7 @@
       ["stage", "IV Adverb Degree Modifier"],
       ["level", "subjective"]
     ],
-    "comment": "Stage IV: syntactic expansion to pre-adjectival position.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Stage IV: syntactic expansion to pre-adjectival position."
   },
   {
     "id": "traugott2010_21b",
@@ -293,9 +269,7 @@
       ["level", "subjective"],
       ["polarity", "negative"]
     ],
-    "comment": "Stage V: a free adjunct in responses, usually in a negative context, where the understating *a bit* is emphatic.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Stage V: a free adjunct in responses, usually in a negative context, where the understating *a bit* is emphatic."
   },
   {
     "id": "traugott2010_22",
@@ -315,9 +289,7 @@
       ["stage", "III Degree Modifier"],
       ["head", "positively evaluated"]
     ],
-    "comment": "As a downtoner, *a bit of* is unlikely with a positively evaluated head except in special circumstances such as irony.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "As a downtoner, *a bit of* is unlikely with a positively evaluated head except in special circumstances such as irony."
   },
   {
     "id": "traugott2010_23",
@@ -337,9 +309,7 @@
       ["stage", "I Partitive"],
       ["level", "nonSubjective"]
     ],
-    "comment": "Stage I: a fragment cut or broken off, generalized in Middle English to bodies.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Stage I: a fragment cut or broken off, generalized in Middle English to bodies."
   },
   {
     "id": "traugott2010_24b",
@@ -359,9 +329,7 @@
       ["stage", "II Extended Partitive"],
       ["level", "nonSubjective"]
     ],
-    "comment": "Stage II: generalized to language, mankind and nature, still partitive, with the focus evaluated as small or inadequate.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Stage II: generalized to language, mankind and nature, still partitive, with the focus evaluated as small or inadequate."
   },
   {
     "id": "traugott2010_25a",
@@ -382,8 +350,6 @@
       ["level", "subjective"],
       ["polarity", "negative"]
     ],
-    "comment": "Stage III: a quantifier over an abstract, positively evaluated mass noun, by the twentieth century largely restricted to negative polarity syntax; no intersubjectification, since it is not used as a hedge.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Stage III: a quantifier over an abstract, positively evaluated mass noun, by the twentieth century largely restricted to negative polarity syntax; no intersubjectification, since it is not used as a hedge."
   }
 ]

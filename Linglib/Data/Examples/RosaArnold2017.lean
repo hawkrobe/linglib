@@ -31,9 +31,7 @@ def ex_1a : LinguisticExample :=
     alternatives := []
     readings := [("murdered someone", .acceptable)]
     paperFeatures := [("verbType", "implicitCausality"), ("expected", "stimulus")]
-    comment := "Implicit causality: the stimulus, the chauffeur, is the expected continuation."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Implicit causality: the stimulus, the chauffeur, is the expected continuation." }
 
 def ex_1b : LinguisticExample :=
   { id := "rosaarnold2017_1b"
@@ -49,9 +47,7 @@ def ex_1b : LinguisticExample :=
     alternatives := []
     readings := [("figured out the case", .acceptable)]
     paperFeatures := [("verbType", "implicitCausality"), ("expected", "stimulus")]
-    comment := "Implicit causality: the stimulus, the butler, is the expected continuation."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Implicit causality: the stimulus, the butler, is the expected continuation." }
 
 def ex_2a : LinguisticExample :=
   { id := "rosaarnold2017_2a"
@@ -67,9 +63,7 @@ def ex_2a : LinguisticExample :=
     alternatives := []
     readings := [("turned it in to the police", .acceptable)]
     paperFeatures := [("verbType", "transfer"), ("expected", "goal")]
-    comment := "Transfer of possession: the goal, the chauffeur, is the expected continuation."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Transfer of possession: the goal, the chauffeur, is the expected continuation." }
 
 def ex_2b : LinguisticExample :=
   { id := "rosaarnold2017_2b"
@@ -85,9 +79,7 @@ def ex_2b : LinguisticExample :=
     alternatives := []
     readings := [("chucked it into the river", .acceptable)]
     paperFeatures := [("verbType", "transfer"), ("expected", "goal")]
-    comment := "Transfer of possession with the goal as subject: the butler is the expected continuation."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Transfer of possession with the goal as subject: the butler is the expected continuation." }
 
 def ex_3a : LinguisticExample :=
   { id := "rosaarnold2017_3a"
@@ -103,9 +95,7 @@ def ex_3a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("role", "goal"), ("gram", "subject")]
-    comment := "Goal continuation, subject position: the continued character is the goal and the subject. The underlined character is the one the next picture continues."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Goal continuation, subject position: the continued character is the goal and the subject. The underlined character is the one the next picture continues." }
 
 def ex_3b : LinguisticExample :=
   { id := "rosaarnold2017_3b"
@@ -121,9 +111,7 @@ def ex_3b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("role", "goal"), ("gram", "nonsubject")]
-    comment := "Goal continuation, nonsubject position. The underlined character is the one the next picture continues."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Goal continuation, nonsubject position. The underlined character is the one the next picture continues." }
 
 def ex_4a : LinguisticExample :=
   { id := "rosaarnold2017_4a"
@@ -139,9 +127,7 @@ def ex_4a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("role", "source"), ("gram", "subject")]
-    comment := "Source continuation, subject position. The underlined character is the one the next picture continues."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Source continuation, subject position. The underlined character is the one the next picture continues." }
 
 def ex_4b : LinguisticExample :=
   { id := "rosaarnold2017_4b"
@@ -157,9 +143,7 @@ def ex_4b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("role", "source"), ("gram", "nonsubject")]
-    comment := "Source continuation, nonsubject position. The underlined character is the one the next picture continues."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Source continuation, nonsubject position. The underlined character is the one the next picture continues." }
 
 def all : List LinguisticExample := [ex_1a, ex_1b, ex_2a, ex_2b, ex_3a, ex_3b, ex_4a, ex_4b]
 

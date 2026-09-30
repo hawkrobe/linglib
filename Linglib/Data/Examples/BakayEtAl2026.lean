@@ -31,9 +31,7 @@ def ex_5a_match : LinguisticExample :=
     alternatives := []
     readings := [("matrix subject", .unacceptable), ("distractor", .unacceptable), ("embedded subject", .acceptable)]
     paperFeatures := [("experiment", "1"), ("condition", "Recent Target, Distractor Match"), ("target", "subject"), ("distractor", "possessor in subject"), ("distractorNumber", "plural")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_5a_mismatch : LinguisticExample :=
   { id := "bakayetal2026_5a_mismatch"
@@ -49,9 +47,7 @@ def ex_5a_mismatch : LinguisticExample :=
     alternatives := []
     readings := [("matrix subject", .unacceptable), ("distractor", .unacceptable), ("embedded subject", .acceptable)]
     paperFeatures := [("experiment", "1"), ("condition", "Recent Target, Distractor Mismatch"), ("target", "subject"), ("distractor", "possessor in subject"), ("distractorNumber", "singular")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_5b_match : LinguisticExample :=
   { id := "bakayetal2026_5b_match"
@@ -67,9 +63,7 @@ def ex_5b_match : LinguisticExample :=
     alternatives := []
     readings := [("matrix subject", .unacceptable), ("embedded subject", .acceptable), ("distractor", .unacceptable)]
     paperFeatures := [("experiment", "1"), ("condition", "Distant Target, Distractor Match"), ("target", "subject"), ("distractor", "possessor in adjunct"), ("distractorNumber", "plural")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_5b_mismatch : LinguisticExample :=
   { id := "bakayetal2026_5b_mismatch"
@@ -85,9 +79,7 @@ def ex_5b_mismatch : LinguisticExample :=
     alternatives := []
     readings := [("matrix subject", .unacceptable), ("embedded subject", .acceptable), ("distractor", .unacceptable)]
     paperFeatures := [("experiment", "1"), ("condition", "Distant Target, Distractor Mismatch"), ("target", "subject"), ("distractor", "possessor in adjunct"), ("distractorNumber", "singular")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_8a_match : LinguisticExample :=
   { id := "bakayetal2026_8a_match"
@@ -103,9 +95,7 @@ def ex_8a_match : LinguisticExample :=
     alternatives := []
     readings := [("matrix subject", .unacceptable), ("embedded subject", .acceptable), ("indirect object", .acceptable)]
     paperFeatures := [("experiment", "2"), ("condition", "Plural Subject, IO Match"), ("target", "subject"), ("second", "indirect object"), ("secondNumber", "plural")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_8a_mismatch : LinguisticExample :=
   { id := "bakayetal2026_8a_mismatch"
@@ -121,9 +111,7 @@ def ex_8a_mismatch : LinguisticExample :=
     alternatives := []
     readings := [("matrix subject", .unacceptable), ("embedded subject", .acceptable), ("indirect object", .acceptable)]
     paperFeatures := [("experiment", "2"), ("condition", "Plural Subject, IO Mismatch"), ("target", "subject"), ("second", "indirect object"), ("secondNumber", "singular")]
-    comment := "The paper coindexes singular indirect objects as available, since they occasionally bind the reciprocal despite the number mismatch."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The paper coindexes singular indirect objects as available, since they occasionally bind the reciprocal despite the number mismatch." }
 
 def ex_8b_match : LinguisticExample :=
   { id := "bakayetal2026_8b_match"
@@ -139,9 +127,7 @@ def ex_8b_match : LinguisticExample :=
     alternatives := []
     readings := [("matrix subject", .unacceptable), ("embedded subject", .acceptable), ("distractor", .unacceptable)]
     paperFeatures := [("experiment", "2"), ("condition", "Plural Subject, Distractor Match"), ("target", "subject"), ("distractor", "postpositional adjunct"), ("distractorNumber", "plural")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_8b_mismatch : LinguisticExample :=
   { id := "bakayetal2026_8b_mismatch"
@@ -157,9 +143,7 @@ def ex_8b_mismatch : LinguisticExample :=
     alternatives := []
     readings := [("matrix subject", .unacceptable), ("embedded subject", .acceptable), ("distractor", .unacceptable)]
     paperFeatures := [("experiment", "2"), ("condition", "Plural Subject, Distractor Mismatch"), ("target", "subject"), ("distractor", "postpositional adjunct"), ("distractorNumber", "singular")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_8c : LinguisticExample :=
   { id := "bakayetal2026_8c"
@@ -175,9 +159,7 @@ def ex_8c : LinguisticExample :=
     alternatives := []
     readings := [("matrix subject", .unacceptable), ("embedded subject", .acceptable), ("indirect object", .acceptable)]
     paperFeatures := [("experiment", "2"), ("condition", "Singular Subject, IO Match"), ("target", "subject"), ("targetNumber", "singular"), ("second", "indirect object"), ("secondNumber", "plural")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_10a : LinguisticExample :=
   { id := "bakayetal2026_10a"
@@ -193,9 +175,7 @@ def ex_10a : LinguisticExample :=
     alternatives := []
     readings := [("matrix subject", .unacceptable), ("embedded subject", .acceptable), ("indirect object", .acceptable)]
     paperFeatures := [("experiment", "3"), ("condition", "IO, Dative"), ("target", "subject"), ("second", "indirect object"), ("secondNumber", "plural")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_10b : LinguisticExample :=
   { id := "bakayetal2026_10b"
@@ -211,9 +191,7 @@ def ex_10b : LinguisticExample :=
     alternatives := []
     readings := [("matrix subject", .unacceptable), ("embedded subject", .acceptable), ("distractor", .unacceptable)]
     paperFeatures := [("experiment", "3"), ("condition", "Distractor, Dative"), ("target", "subject"), ("distractor", "postpositional adjunct"), ("distractorNumber", "plural")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_10c : LinguisticExample :=
   { id := "bakayetal2026_10c"
@@ -229,9 +207,7 @@ def ex_10c : LinguisticExample :=
     alternatives := []
     readings := [("matrix subject", .unacceptable), ("embedded subject", .acceptable), ("distractor", .unacceptable)]
     paperFeatures := [("experiment", "3"), ("condition", "Distractor, Genitive"), ("target", "subject"), ("distractor", "possessor in adjunct"), ("distractorNumber", "plural")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def all : List LinguisticExample := [ex_5a_match, ex_5a_mismatch, ex_5b_match, ex_5b_mismatch, ex_8a_match, ex_8a_mismatch, ex_8b_match, ex_8b_mismatch, ex_8c, ex_10a, ex_10b, ex_10c]
 

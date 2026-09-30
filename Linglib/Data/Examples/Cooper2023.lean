@@ -31,9 +31,7 @@ def ex_3_89 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("chapter", "3"), ("phenomenon", "predication")]
-    comment := "Marked # by Cooper: truth-conditionally equivalent to Dudamel is a conductor by the compositional contents (94), but the construction-based content conductor(d) (92a) is available only to the latter."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Marked # by Cooper: truth-conditionally equivalent to Dudamel is a conductor by the compositional contents (94), but the construction-based content conductor(d) (92a) is available only to the latter." }
 
 def ex_6_25 : LinguisticExample :=
   { id := "cooper2023_6_25"
@@ -49,9 +47,7 @@ def ex_6_25 : LinguisticExample :=
     alternatives := []
     readings := [("deontic", .acceptable), ("bouletic", .acceptable)]
     paperFeatures := [("chapter", "6"), ("phenomenon", "modality")]
-    comment := "Portner's example: bouletic when the fact that Mary loves broccoli is at issue, deontic when children are to eat everything on their plates; the deontic and the bouletic topos (28) each witness the necessity (29)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Portner's example: bouletic when the fact that Mary loves broccoli is at issue, deontic when children are to eat everything on their plates; the deontic and the bouletic topos (28) each witness the necessity (29)." }
 
 def ex_7_27 : LinguisticExample :=
   { id := "cooper2023_7_27"
@@ -67,9 +63,7 @@ def ex_7_27 : LinguisticExample :=
     alternatives := []
     readings := [("maxset", .acceptable)]
     paperFeatures := [("chapter", "7"), ("quantifier", "every")]
-    comment := "Plural discourse anaphora to a universal antecedent: a bare function witness for every yields no witness set for they to pick up."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Plural discourse anaphora to a universal antecedent: a bare function witness for every yields no witness set for they to pick up." }
 
 def ex_7_64 : LinguisticExample :=
   { id := "cooper2023_7_64"
@@ -85,9 +79,7 @@ def ex_7_64 : LinguisticExample :=
     alternatives := []
     readings := [("refset", .acceptable)]
     paperFeatures := [("chapter", "7"), ("quantifier", "a")]
-    comment := "Singular anaphora to the x-field of the particular witness (63)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Singular anaphora to the x-field of the particular witness (63)." }
 
 def ex_7_66 : LinguisticExample :=
   { id := "cooper2023_7_66"
@@ -103,9 +95,7 @@ def ex_7_66 : LinguisticExample :=
     alternatives := []
     readings := [("refset", .acceptable)]
     paperFeatures := [("chapter", "7"), ("quantifier", "some")]
-    comment := "Plural anaphora to the witness set of the general condition (65); no particular condition is needed."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Plural anaphora to the witness set of the general condition (65); no particular condition is needed." }
 
 def ex_7_71 : LinguisticExample :=
   { id := "cooper2023_7_71"
@@ -121,9 +111,7 @@ def ex_7_71 : LinguisticExample :=
     alternatives := []
     readings := [("compset", .acceptable)]
     paperFeatures := [("chapter", "7"), ("quantifier", "no")]
-    comment := "They picks up the witness set of type every-w(dog'), the dogs which did not bark: complement set anaphora (Moxey and Sanford), evidence for the particular condition (70) over the general one (67)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "They picks up the witness set of type every-w(dog'), the dogs which did not bark: complement set anaphora (Moxey and Sanford), evidence for the particular condition (70) over the general one (67)." }
 
 def ex_7_73 : LinguisticExample :=
   { id := "cooper2023_7_73"
@@ -139,9 +127,7 @@ def ex_7_73 : LinguisticExample :=
     alternatives := []
     readings := [("maxset", .acceptable)]
     paperFeatures := [("chapter", "7"), ("quantifier", "every")]
-    comment := "Plural discourse anaphora predicted by the general condition (72)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Plural discourse anaphora predicted by the general condition (72)." }
 
 def ex_7_75 : LinguisticExample :=
   { id := "cooper2023_7_75"
@@ -157,9 +143,7 @@ def ex_7_75 : LinguisticExample :=
     alternatives := []
     readings := [("refset", .acceptable), ("maxset", .acceptable)]
     paperFeatures := [("chapter", "7"), ("quantifier", "most")]
-    comment := "They refers to the witness set containing most dogs (REFSET) or to dogs in general (MAXSET); Cooper leaves the source of the MAXSET reading unresolved."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "They refers to the witness set containing most dogs (REFSET) or to dogs in general (MAXSET); Cooper leaves the source of the MAXSET reading unresolved." }
 
 def ex_7_76 : LinguisticExample :=
   { id := "cooper2023_7_76"
@@ -175,9 +159,7 @@ def ex_7_76 : LinguisticExample :=
     alternatives := []
     readings := [("compset", .unacceptable)]
     paperFeatures := [("chapter", "7"), ("quantifier", "most")]
-    comment := "Cooper's # marks the COMPSET reading: they cannot refer to the dogs which do not bark (Nouwen), consistent with the general condition (74)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Cooper's # marks the COMPSET reading: they cannot refer to the dogs which do not bark (Nouwen), consistent with the general condition (74)." }
 
 def ex_7_87 : LinguisticExample :=
   { id := "cooper2023_7_87"
@@ -193,9 +175,7 @@ def ex_7_87 : LinguisticExample :=
     alternatives := []
     readings := [("compset", .acceptable)]
     paperFeatures := [("chapter", "7"), ("quantifier", "few")]
-    comment := "COMPSET anaphora predicted by the particular condition (85)–(86) with the complement witness set."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "COMPSET anaphora predicted by the particular condition (85)–(86) with the complement witness set." }
 
 def ex_7_88 : LinguisticExample :=
   { id := "cooper2023_7_88"
@@ -211,9 +191,7 @@ def ex_7_88 : LinguisticExample :=
     alternatives := []
     readings := [("refset", .acceptable)]
     paperFeatures := [("chapter", "7"), ("quantifier", "few")]
-    comment := "Quoted by Cooper from Nouwen's discussion of Evans: REFSET anaphora with few, predicted by the general condition (79)–(80) rather than the particular one."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Quoted by Cooper from Nouwen's discussion of Evans: REFSET anaphora with few, predicted by the general condition (79)–(80) rather than the particular one." }
 
 def ex_7_91 : LinguisticExample :=
   { id := "cooper2023_7_91"
@@ -229,9 +207,7 @@ def ex_7_91 : LinguisticExample :=
     alternatives := []
     readings := [("refset", .acceptable)]
     paperFeatures := [("chapter", "7"), ("quantifier", "a few")]
-    comment := "REFSET anaphora predicted by the general condition (89)–(90)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "REFSET anaphora predicted by the general condition (89)–(90)." }
 
 def ex_7_92 : LinguisticExample :=
   { id := "cooper2023_7_92"
@@ -247,9 +223,7 @@ def ex_7_92 : LinguisticExample :=
     alternatives := []
     readings := [("compset", .unacceptable)]
     paperFeatures := [("chapter", "7"), ("quantifier", "a few")]
-    comment := "Cooper's # marks the COMPSET reading: they cannot refer to the dogs that did not bark, since only the general condition is available."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Cooper's # marks the COMPSET reading: they cannot refer to the dogs that did not bark, since only the general condition is available." }
 
 def ex_7_103a : LinguisticExample :=
   { id := "cooper2023_7_103a"
@@ -265,9 +239,7 @@ def ex_7_103a : LinguisticExample :=
     alternatives := []
     readings := [("maxset", .acceptable)]
     paperFeatures := [("chapter", "7"), ("quantifier", "a")]
-    comment := "They is dogs in general, the restr path of the content (102); Cooper: we could potentially have all of the anaphora in (103)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "They is dogs in general, the restr path of the content (102); Cooper: we could potentially have all of the anaphora in (103)." }
 
 def ex_7_103d : LinguisticExample :=
   { id := "cooper2023_7_103d"
@@ -283,9 +255,7 @@ def ex_7_103d : LinguisticExample :=
     alternatives := []
     readings := [("refset", .acceptable)]
     paperFeatures := [("chapter", "7"), ("quantifier", "a")]
-    comment := "It is the dog which barked, the x-field of the witness (100)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "It is the dog which barked, the x-field of the witness (100)." }
 
 def ex_7_108a : LinguisticExample :=
   { id := "cooper2023_7_108a"
@@ -301,9 +271,7 @@ def ex_7_108a : LinguisticExample :=
     alternatives := []
     readings := [("maxset", .acceptable)]
     paperFeatures := [("chapter", "7"), ("quantifier", "no")]
-    comment := "They is dogs in general, the restr path of the content (107)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "They is dogs in general, the restr path of the content (107)." }
 
 def ex_7_108d : LinguisticExample :=
   { id := "cooper2023_7_108d"
@@ -319,9 +287,7 @@ def ex_7_108d : LinguisticExample :=
     alternatives := []
     readings := [("compset", .acceptable)]
     paperFeatures := [("chapter", "7"), ("quantifier", "no")]
-    comment := "They is the dogs which did not bark, the X-field of the witness (106)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "They is the dogs which did not bark, the X-field of the witness (106)." }
 
 def ex_7_113a : LinguisticExample :=
   { id := "cooper2023_7_113a"
@@ -337,9 +303,7 @@ def ex_7_113a : LinguisticExample :=
     alternatives := []
     readings := [("maxset", .acceptable)]
     paperFeatures := [("chapter", "7"), ("quantifier", "few")]
-    comment := "They is dogs in general, the restr path of the content (112)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "They is dogs in general, the restr path of the content (112)." }
 
 def ex_7_113d : LinguisticExample :=
   { id := "cooper2023_7_113d"
@@ -355,9 +319,7 @@ def ex_7_113d : LinguisticExample :=
     alternatives := []
     readings := [("compset", .acceptable)]
     paperFeatures := [("chapter", "7"), ("quantifier", "few")]
-    comment := "They is the dogs which did not bark, the X-field of the witness (111); Cooper notes, after an anonymous referee, a possible garden-path effect on this reading."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "They is the dogs which did not bark, the X-field of the witness (111); Cooper notes, after an anonymous referee, a possible garden-path effect on this reading." }
 
 def ex_8_1 : LinguisticExample :=
   { id := "cooper2023_8_1"
@@ -373,9 +335,7 @@ def ex_8_1 : LinguisticExample :=
     alternatives := []
     readings := [("every > a", .acceptable), ("a > every", .acceptable)]
     paperFeatures := [("chapter", "8"), ("phenomenon", "scope")]
-    comment := "(1a) every boy is such that there is a dog he hugged, (1b) there is a dog every boy hugged: the content type has both as witnesses."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "(1a) every boy is such that there is a dog he hugged, (1b) there is a dog every boy hugged: the content type has both as witnesses." }
 
 def ex_8_2a : LinguisticExample :=
   { id := "cooper2023_8_2a"
@@ -391,9 +351,7 @@ def ex_8_2a : LinguisticExample :=
     alternatives := []
     readings := [("a > every", .acceptable), ("every > a", .acceptable)]
     paperFeatures := [("chapter", "8"), ("phenomenon", "scope")]
-    comment := "(2b) is the reading with the boy outermost; the wide scope of every dog comes from storage (17) and retrieval (19)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "(2b) is the reading with the boy outermost; the wide scope of every dog comes from storage (17) and retrieval (19)." }
 
 def ex_8_46a : LinguisticExample :=
   { id := "cooper2023_8_46a"
@@ -409,9 +367,7 @@ def ex_8_46a : LinguisticExample :=
     alternatives := []
     readings := [("it = a cat", .acceptable)]
     paperFeatures := [("chapter", "8"), ("phenomenon", "donkey anaphora")]
-    comment := "Donkey anaphora treated as discourse anaphora within the scope property (54)–(55): no dog catches any cat it chases."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Donkey anaphora treated as discourse anaphora within the scope property (54)–(55): no dog catches any cat it chases." }
 
 def ex_8_46b : LinguisticExample :=
   { id := "cooper2023_8_46b"
@@ -427,9 +383,7 @@ def ex_8_46b : LinguisticExample :=
     alternatives := []
     readings := [("it = every cat", .questionable)]
     paperFeatures := [("chapter", "8"), ("phenomenon", "donkey anaphora")]
-    comment := "Cooper: it is difficult to relate the singular pronoun to every cat, as in the discourse anaphora of (46d)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Cooper: it is difficult to relate the singular pronoun to every cat, as in the discourse anaphora of (46d)." }
 
 def ex_8_46c : LinguisticExample :=
   { id := "cooper2023_8_46c"
@@ -445,9 +399,7 @@ def ex_8_46c : LinguisticExample :=
     alternatives := []
     readings := [("them = every cat", .acceptable)]
     paperFeatures := [("chapter", "8"), ("phenomenon", "donkey anaphora")]
-    comment := "The plural pronoun relates to every cat, as in the discourse anaphora of (46e)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The plural pronoun relates to every cat, as in the discourse anaphora of (46e)." }
 
 def ex_8_46d : LinguisticExample :=
   { id := "cooper2023_8_46d"
@@ -463,9 +415,7 @@ def ex_8_46d : LinguisticExample :=
     alternatives := []
     readings := [("it = every cat", .questionable)]
     paperFeatures := [("chapter", "8"), ("phenomenon", "discourse anaphora")]
-    comment := "Cooper: it is difficult to relate the singular pronoun to every cat."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Cooper: it is difficult to relate the singular pronoun to every cat." }
 
 def ex_8_46e : LinguisticExample :=
   { id := "cooper2023_8_46e"
@@ -481,9 +431,7 @@ def ex_8_46e : LinguisticExample :=
     alternatives := []
     readings := [("maxset", .acceptable)]
     paperFeatures := [("chapter", "8"), ("quantifier", "every")]
-    comment := "The plural pronoun relates easily to every cat."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The plural pronoun relates easily to every cat." }
 
 def ex_8_56a : LinguisticExample :=
   { id := "cooper2023_8_56a"
@@ -499,9 +447,7 @@ def ex_8_56a : LinguisticExample :=
     alternatives := []
     readings := [("weak", .acceptable), ("strong", .unacceptable)]
     paperFeatures := [("chapter", "8"), ("phenomenon", "donkey anaphora")]
-    comment := "Does not suggest that anyone who had several dimes put them all in the meter: the weak reading, from the existential purification (59)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Does not suggest that anyone who had several dimes put them all in the meter: the weak reading, from the existential purification (59)." }
 
 def ex_8_56b : LinguisticExample :=
   { id := "cooper2023_8_56b"
@@ -517,9 +463,7 @@ def ex_8_56b : LinguisticExample :=
     alternatives := []
     readings := [("weak", .acceptable), ("strong", .unacceptable)]
     paperFeatures := [("chapter", "8"), ("phenomenon", "donkey anaphora")]
-    comment := "Does not commit a man with two daughters to the contradictory belief that each is the one most beautiful girl."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Does not commit a man with two daughters to the contradictory belief that each is the one most beautiful girl." }
 
 def ex_8_57 : LinguisticExample :=
   { id := "cooper2023_8_57"
@@ -535,9 +479,7 @@ def ex_8_57 : LinguisticExample :=
     alternatives := []
     readings := [("strong", .acceptable), ("weak", .questionable)]
     paperFeatures := [("chapter", "8"), ("phenomenon", "donkey anaphora")]
-    comment := "A modification of an example in Heim (1990), which Chierchia uses to argue for the strong reading, from the universal purification (60), (66): one man owning a slave but not the slave's offspring falsifies it. Cooper finds the case of a slave with several offspring, one owned by somebody else, unclear."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A modification of an example in Heim (1990), which Chierchia uses to argue for the strong reading, from the universal purification (60), (66): one man owning a slave but not the slave's offspring falsifies it. Cooper finds the case of a slave with several offspring, one owned by somebody else, unclear." }
 
 def ex_8_67 : LinguisticExample :=
   { id := "cooper2023_8_67"
@@ -553,9 +495,7 @@ def ex_8_67 : LinguisticExample :=
     alternatives := []
     readings := [("him = Sam", .unacceptable)]
     paperFeatures := [("chapter", "8"), ("phenomenon", "binding")]
-    comment := "Principle B: him cannot be anaphorically related to Sam within the clause, though the two may refer to the same individual, as when Sam likes the person described on a page he does not realise is about himself."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Principle B: him cannot be anaphorically related to Sam within the clause, though the two may refer to the same individual, as when Sam likes the person described on a page he does not realise is about himself." }
 
 def ex_8_man_walked : LinguisticExample :=
   { id := "cooper2023_8_man_walked"
@@ -571,9 +511,7 @@ def ex_8_man_walked : LinguisticExample :=
     alternatives := []
     readings := [("refset", .acceptable)]
     paperFeatures := [("chapter", "8"), ("quantifier", "a")]
-    comment := "Cross-sentential anaphora: the previous content is merged into the context under the label for the previous utterance and the pronoun's path identified with the man's."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Cross-sentential anaphora: the previous content is merged into the context under the label for the previous utterance and the pronoun's path identified with the man's." }
 
 def ex_8_no_girl : LinguisticExample :=
   { id := "cooper2023_8_no_girl"
@@ -589,9 +527,7 @@ def ex_8_no_girl : LinguisticExample :=
     alternatives := []
     readings := [("she bound by no girl", .acceptable)]
     paperFeatures := [("chapter", "8"), ("phenomenon", "binding")]
-    comment := "The stored no girl leaves a pronoun path in the context which anaphoric combination relates to she; retrieval quantifies over the property of being a girl who thinks she failed."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The stored no girl leaves a pronoun path in the context which anaphoric combination relates to she; retrieval quantifies over the property of being a girl who thinks she failed." }
 
 def all : List LinguisticExample := [ex_3_89, ex_6_25, ex_7_27, ex_7_64, ex_7_66, ex_7_71, ex_7_73, ex_7_75, ex_7_76, ex_7_87, ex_7_88, ex_7_91, ex_7_92, ex_7_103a, ex_7_103d, ex_7_108a, ex_7_108d, ex_7_113a, ex_7_113d, ex_8_1, ex_8_2a, ex_8_46a, ex_8_46b, ex_8_46c, ex_8_46d, ex_8_46e, ex_8_56a, ex_8_56b, ex_8_57, ex_8_67, ex_8_man_walked, ex_8_no_girl]
 

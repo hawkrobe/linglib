@@ -42,9 +42,7 @@
         "indicative"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "pietraszko2019_7a",
@@ -90,9 +88,7 @@
         "objectMarking"
       ]
     ],
-    "comment": "Object marking requires the disjoint form ya-.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Object marking requires the disjoint form ya-."
   },
   {
     "id": "pietraszko2019_7b",
@@ -150,9 +146,7 @@
         "objectMarking"
       ]
     ],
-    "comment": "A clausal complement is object-marked like a nominal one.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "A clausal complement is object-marked like a nominal one."
   },
   {
     "id": "pietraszko2019_14",
@@ -193,9 +187,7 @@
         "obliquePassiveSubject"
       ]
     ],
-    "comment": "The oblique prefix yi- replaces the augment.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The oblique prefix yi- replaces the augment."
   },
   {
     "id": "pietraszko2019_20b",
@@ -244,9 +236,7 @@
         "prepositionObject"
       ]
     ],
-    "comment": "Coalesces to ngokuthi.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Coalesces to ngokuthi."
   },
   {
     "id": "pietraszko2019_22",
@@ -295,8 +285,6 @@
         "subject"
       ]
     ],
-    "comment": "The clausal subject controls class-15 agreement.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The clausal subject controls class-15 agreement."
   }
 ]

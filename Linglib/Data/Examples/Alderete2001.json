@@ -18,8 +18,7 @@
       ["derivative", "bed-e"],
       ["change", "voicing"]
     ],
-    "comment": "Gregersen (1972), Okoth-Okombo (1982): the plural reverses the voicing of the stem-final obstruent.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Gregersen (1972), Okoth-Okombo (1982): the plural reverses the voicing of the stem-final obstruent."
   },
   {
     "id": "alderete2001_6a_luth",
@@ -40,8 +39,7 @@
       ["derivative", "luð-e"],
       ["change", "voicing"]
     ],
-    "comment": "Gregersen (1972), Okoth-Okombo (1982): the plural reverses the voicing of the stem-final obstruent.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Gregersen (1972), Okoth-Okombo (1982): the plural reverses the voicing of the stem-final obstruent."
   },
   {
     "id": "alderete2001_6b_cogo",
@@ -62,8 +60,7 @@
       ["derivative", "ʧok-e"],
       ["change", "devoicing"]
     ],
-    "comment": "Gregersen (1972), Okoth-Okombo (1982): the plural reverses the voicing of the stem-final obstruent.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Gregersen (1972), Okoth-Okombo (1982): the plural reverses the voicing of the stem-final obstruent."
   },
   {
     "id": "alderete2001_6b_owadu",
@@ -84,8 +81,7 @@
       ["derivative", "owet-e"],
       ["change", "devoicing"]
     ],
-    "comment": "Gregersen (1972), Okoth-Okombo (1982): the plural reverses the voicing of the stem-final obstruent.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Gregersen (1972), Okoth-Okombo (1982): the plural reverses the voicing of the stem-final obstruent."
   },
   {
     "id": "alderete2001_1_yon",
@@ -108,8 +104,7 @@
       ["affixClass", "recessive"],
       ["baseAccented", "true"]
     ],
-    "comment": "The root accent takes precedence over the recessive suffix's; the root /yóm/ surfaces as yón- before the suffix.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The root accent takes precedence over the recessive suffix's; the root /yóm/ surfaces as yón- before the suffix."
   },
   {
     "id": "alderete2001_1_yon2",
@@ -132,8 +127,7 @@
       ["affixClass", "recessive"],
       ["baseAccented", "false"]
     ],
-    "comment": "An unaccented root /yob/ lets the recessive suffix's accent surface.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "An unaccented root /yob/ lets the recessive suffix's accent surface."
   },
   {
     "id": "alderete2001_17_abura",
@@ -157,8 +151,7 @@
       ["affixAccented", "true"],
       ["baseAccented", "false"]
     ],
-    "comment": "Poser (1984): the dominant accented adjectival suffix deletes the base accent and keeps its own.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Poser (1984): the dominant accented adjectival suffix deletes the base accent and keeps its own."
   },
   {
     "id": "alderete2001_17_kaze",
@@ -182,8 +175,7 @@
       ["affixAccented", "true"],
       ["baseAccented", "false"]
     ],
-    "comment": "Poser (1984): the dominant accented adjectival suffix deletes the base accent and keeps its own.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Poser (1984): the dominant accented adjectival suffix deletes the base accent and keeps its own."
   },
   {
     "id": "alderete2001_17_kodomo",
@@ -207,8 +199,7 @@
       ["affixAccented", "true"],
       ["baseAccented", "false"]
     ],
-    "comment": "Poser (1984): the dominant accented adjectival suffix deletes the base accent and keeps its own.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Poser (1984): the dominant accented adjectival suffix deletes the base accent and keeps its own."
   },
   {
     "id": "alderete2001_17_ada",
@@ -232,8 +223,7 @@
       ["affixAccented", "true"],
       ["baseAccented", "true"]
     ],
-    "comment": "Poser (1984): the dominant accented adjectival suffix deletes the base accent and keeps its own.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Poser (1984): the dominant accented adjectival suffix deletes the base accent and keeps its own."
   },
   {
     "id": "alderete2001_17_netu",
@@ -257,8 +247,7 @@
       ["affixAccented", "true"],
       ["baseAccented", "true"]
     ],
-    "comment": "Poser (1984): the dominant accented adjectival suffix deletes the base accent and keeps its own.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Poser (1984): the dominant accented adjectival suffix deletes the base accent and keeps its own."
   },
   {
     "id": "alderete2001_17_kiza",
@@ -282,8 +271,7 @@
       ["affixAccented", "true"],
       ["baseAccented", "true"]
     ],
-    "comment": "Poser (1984): the dominant accented adjectival suffix deletes the base accent and keeps its own.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Poser (1984): the dominant accented adjectival suffix deletes the base accent and keeps its own."
   },
   {
     "id": "alderete2001_18_edo",
@@ -307,8 +295,7 @@
       ["affixAccented", "false"],
       ["baseAccented", "false"]
     ],
-    "comment": "Poser (1984): the dominant unaccented suffix deletes the base accent; the word surfaces unaccented.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Poser (1984): the dominant unaccented suffix deletes the base accent; the word surfaces unaccented."
   },
   {
     "id": "alderete2001_18_niigata",
@@ -332,8 +319,7 @@
       ["affixAccented", "false"],
       ["baseAccented", "false"]
     ],
-    "comment": "Poser (1984): the dominant unaccented suffix deletes the base accent; the word surfaces unaccented.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Poser (1984): the dominant unaccented suffix deletes the base accent; the word surfaces unaccented."
   },
   {
     "id": "alderete2001_18_oosaka",
@@ -357,8 +343,7 @@
       ["affixAccented", "false"],
       ["baseAccented", "false"]
     ],
-    "comment": "Poser (1984): the dominant unaccented suffix deletes the base accent; the word surfaces unaccented.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Poser (1984): the dominant unaccented suffix deletes the base accent; the word surfaces unaccented."
   },
   {
     "id": "alderete2001_18_koobe",
@@ -382,8 +367,7 @@
       ["affixAccented", "false"],
       ["baseAccented", "true"]
     ],
-    "comment": "Poser (1984): the dominant unaccented suffix deletes the base accent; the word surfaces unaccented.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Poser (1984): the dominant unaccented suffix deletes the base accent; the word surfaces unaccented."
   },
   {
     "id": "alderete2001_18_nagoya",
@@ -407,8 +391,7 @@
       ["affixAccented", "false"],
       ["baseAccented", "true"]
     ],
-    "comment": "Poser (1984): the dominant unaccented suffix deletes the base accent; the word surfaces unaccented.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Poser (1984): the dominant unaccented suffix deletes the base accent; the word surfaces unaccented."
   },
   {
     "id": "alderete2001_18_nyuuyooku",
@@ -432,8 +415,7 @@
       ["affixAccented", "false"],
       ["baseAccented", "true"]
     ],
-    "comment": "Poser (1984): the dominant unaccented suffix deletes the base accent; the word surfaces unaccented.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Poser (1984): the dominant unaccented suffix deletes the base accent; the word surfaces unaccented."
   },
   {
     "id": "alderete2001_42_wise_masculine",
@@ -456,8 +438,7 @@
       ["baseTone", "dragging"],
       ["derivativeTone", "falling"]
     ],
-    "comment": "Hermans (1991, 1999), Maasbracht dialect: the dragging tone (doubly linked H, written with two acutes) of the base becomes a falling tone under these suffixes; a falling-tone base is unchanged (stúur, stúur-ə).",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Hermans (1991, 1999), Maasbracht dialect: the dragging tone (doubly linked H, written with two acutes) of the base becomes a falling tone under these suffixes; a falling-tone base is unchanged (stúur, stúur-ə)."
   },
   {
     "id": "alderete2001_42_wise_feminine",
@@ -480,8 +461,7 @@
       ["baseTone", "dragging"],
       ["derivativeTone", "falling"]
     ],
-    "comment": "Hermans (1991, 1999), Maasbracht dialect: the dragging tone (doubly linked H, written with two acutes) of the base becomes a falling tone under these suffixes; a falling-tone base is unchanged (stúur, stúur-ə).",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Hermans (1991, 1999), Maasbracht dialect: the dragging tone (doubly linked H, written with two acutes) of the base becomes a falling tone under these suffixes; a falling-tone base is unchanged (stúur, stúur-ə)."
   },
   {
     "id": "alderete2001_42_wise_comparative",
@@ -504,8 +484,7 @@
       ["baseTone", "dragging"],
       ["derivativeTone", "falling"]
     ],
-    "comment": "Hermans (1991, 1999), Maasbracht dialect: the dragging tone (doubly linked H, written with two acutes) of the base becomes a falling tone under these suffixes; a falling-tone base is unchanged (stúur, stúur-ə).",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Hermans (1991, 1999), Maasbracht dialect: the dragging tone (doubly linked H, written with two acutes) of the base becomes a falling tone under these suffixes; a falling-tone base is unchanged (stúur, stúur-ə)."
   },
   {
     "id": "alderete2001_42_stiff_masculine",
@@ -528,8 +507,7 @@
       ["baseTone", "dragging"],
       ["derivativeTone", "falling"]
     ],
-    "comment": "Hermans (1991, 1999), Maasbracht dialect: the dragging tone (doubly linked H, written with two acutes) of the base becomes a falling tone under these suffixes; a falling-tone base is unchanged (stúur, stúur-ə).",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Hermans (1991, 1999), Maasbracht dialect: the dragging tone (doubly linked H, written with two acutes) of the base becomes a falling tone under these suffixes; a falling-tone base is unchanged (stúur, stúur-ə)."
   },
   {
     "id": "alderete2001_42_stiff_feminine",
@@ -552,8 +530,7 @@
       ["baseTone", "dragging"],
       ["derivativeTone", "falling"]
     ],
-    "comment": "Hermans (1991, 1999), Maasbracht dialect: the dragging tone (doubly linked H, written with two acutes) of the base becomes a falling tone under these suffixes; a falling-tone base is unchanged (stúur, stúur-ə).",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Hermans (1991, 1999), Maasbracht dialect: the dragging tone (doubly linked H, written with two acutes) of the base becomes a falling tone under these suffixes; a falling-tone base is unchanged (stúur, stúur-ə)."
   },
   {
     "id": "alderete2001_42_stiff_comparative",
@@ -576,8 +553,7 @@
       ["baseTone", "dragging"],
       ["derivativeTone", "falling"]
     ],
-    "comment": "Hermans (1991, 1999), Maasbracht dialect: the dragging tone (doubly linked H, written with two acutes) of the base becomes a falling tone under these suffixes; a falling-tone base is unchanged (stúur, stúur-ə).",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Hermans (1991, 1999), Maasbracht dialect: the dragging tone (doubly linked H, written with two acutes) of the base becomes a falling tone under these suffixes; a falling-tone base is unchanged (stúur, stúur-ə)."
   },
   {
     "id": "alderete2001_42_bald_masculine",
@@ -600,8 +576,7 @@
       ["baseTone", "dragging"],
       ["derivativeTone", "falling"]
     ],
-    "comment": "Hermans (1991, 1999), Maasbracht dialect: the dragging tone (doubly linked H, written with two acutes) of the base becomes a falling tone under these suffixes; a falling-tone base is unchanged (stúur, stúur-ə).",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Hermans (1991, 1999), Maasbracht dialect: the dragging tone (doubly linked H, written with two acutes) of the base becomes a falling tone under these suffixes; a falling-tone base is unchanged (stúur, stúur-ə)."
   },
   {
     "id": "alderete2001_42_bald_feminine",
@@ -624,8 +599,7 @@
       ["baseTone", "dragging"],
       ["derivativeTone", "falling"]
     ],
-    "comment": "Hermans (1991, 1999), Maasbracht dialect: the dragging tone (doubly linked H, written with two acutes) of the base becomes a falling tone under these suffixes; a falling-tone base is unchanged (stúur, stúur-ə).",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Hermans (1991, 1999), Maasbracht dialect: the dragging tone (doubly linked H, written with two acutes) of the base becomes a falling tone under these suffixes; a falling-tone base is unchanged (stúur, stúur-ə)."
   },
   {
     "id": "alderete2001_42_bald_comparative",
@@ -648,8 +622,7 @@
       ["baseTone", "dragging"],
       ["derivativeTone", "falling"]
     ],
-    "comment": "Hermans (1991, 1999), Maasbracht dialect: the dragging tone (doubly linked H, written with two acutes) of the base becomes a falling tone under these suffixes; a falling-tone base is unchanged (stúur, stúur-ə).",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Hermans (1991, 1999), Maasbracht dialect: the dragging tone (doubly linked H, written with two acutes) of the base becomes a falling tone under these suffixes; a falling-tone base is unchanged (stúur, stúur-ə)."
   },
   {
     "id": "alderete2001_42_paralysed_masculine",
@@ -672,8 +645,7 @@
       ["baseTone", "dragging"],
       ["derivativeTone", "falling"]
     ],
-    "comment": "Hermans (1991, 1999), Maasbracht dialect: the dragging tone (doubly linked H, written with two acutes) of the base becomes a falling tone under these suffixes; a falling-tone base is unchanged (stúur, stúur-ə).",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Hermans (1991, 1999), Maasbracht dialect: the dragging tone (doubly linked H, written with two acutes) of the base becomes a falling tone under these suffixes; a falling-tone base is unchanged (stúur, stúur-ə)."
   },
   {
     "id": "alderete2001_42_paralysed_feminine",
@@ -696,8 +668,7 @@
       ["baseTone", "dragging"],
       ["derivativeTone", "falling"]
     ],
-    "comment": "Hermans (1991, 1999), Maasbracht dialect: the dragging tone (doubly linked H, written with two acutes) of the base becomes a falling tone under these suffixes; a falling-tone base is unchanged (stúur, stúur-ə).",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Hermans (1991, 1999), Maasbracht dialect: the dragging tone (doubly linked H, written with two acutes) of the base becomes a falling tone under these suffixes; a falling-tone base is unchanged (stúur, stúur-ə)."
   },
   {
     "id": "alderete2001_42_paralysed_comparative",
@@ -720,8 +691,7 @@
       ["baseTone", "dragging"],
       ["derivativeTone", "falling"]
     ],
-    "comment": "Hermans (1991, 1999), Maasbracht dialect: the dragging tone (doubly linked H, written with two acutes) of the base becomes a falling tone under these suffixes; a falling-tone base is unchanged (stúur, stúur-ə).",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Hermans (1991, 1999), Maasbracht dialect: the dragging tone (doubly linked H, written with two acutes) of the base becomes a falling tone under these suffixes; a falling-tone base is unchanged (stúur, stúur-ə)."
   },
   {
     "id": "alderete2001_42_refined_masculine",
@@ -744,8 +714,7 @@
       ["baseTone", "dragging"],
       ["derivativeTone", "falling"]
     ],
-    "comment": "Hermans (1991, 1999), Maasbracht dialect: the dragging tone (doubly linked H, written with two acutes) of the base becomes a falling tone under these suffixes; a falling-tone base is unchanged (stúur, stúur-ə).",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Hermans (1991, 1999), Maasbracht dialect: the dragging tone (doubly linked H, written with two acutes) of the base becomes a falling tone under these suffixes; a falling-tone base is unchanged (stúur, stúur-ə)."
   },
   {
     "id": "alderete2001_42_refined_feminine",
@@ -768,8 +737,7 @@
       ["baseTone", "dragging"],
       ["derivativeTone", "falling"]
     ],
-    "comment": "Hermans (1991, 1999), Maasbracht dialect: the dragging tone (doubly linked H, written with two acutes) of the base becomes a falling tone under these suffixes; a falling-tone base is unchanged (stúur, stúur-ə).",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Hermans (1991, 1999), Maasbracht dialect: the dragging tone (doubly linked H, written with two acutes) of the base becomes a falling tone under these suffixes; a falling-tone base is unchanged (stúur, stúur-ə)."
   },
   {
     "id": "alderete2001_42_refined_comparative",
@@ -792,7 +760,6 @@
       ["baseTone", "dragging"],
       ["derivativeTone", "falling"]
     ],
-    "comment": "Hermans (1991, 1999), Maasbracht dialect: the dragging tone (doubly linked H, written with two acutes) of the base becomes a falling tone under these suffixes; a falling-tone base is unchanged (stúur, stúur-ə).",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Hermans (1991, 1999), Maasbracht dialect: the dragging tone (doubly linked H, written with two acutes) of the base becomes a falling tone under these suffixes; a falling-tone base is unchanged (stúur, stúur-ə)."
   }
 ]

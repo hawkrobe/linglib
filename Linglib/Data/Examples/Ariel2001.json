@@ -17,8 +17,7 @@
       ["marker", "distalDem"],
       ["marker", "distalDemNP"]
     ],
-    "comment": "Household corpus. The word awakened is referred to by that, it, that, and that word.",
-    "lgrConformance": ""
+    "comment": "Household corpus. The word awakened is referred to by that, it, that, and that word."
   },
   {
     "id": "ariel2001_3",
@@ -38,8 +37,7 @@
       ["victim", "zero"],
       ["rapists", "lastName"]
     ],
-    "comment": "Haaretz, 17 May 1995; the paper prints its English rendering. In the second sentence the victim is coded by zero and the rapist by a proper name.",
-    "lgrConformance": ""
+    "comment": "Haaretz, 17 May 1995; the paper prints its English rendering. In the second sentence the victim is coded by zero and the rapist by a proper name."
   },
   {
     "id": "ariel2001_4",
@@ -59,8 +57,7 @@
       ["victim", "proxDem"],
       ["rapists", "zero"]
     ],
-    "comment": "Maariv, 17 May 1995; the paper prints its English rendering. In the second sentence the rapists are coded by zero and the victim by a demonstrative pronoun.",
-    "lgrConformance": ""
+    "comment": "Maariv, 17 May 1995; the paper prints its English rendering. In the second sentence the rapists are coded by zero and the victim by a demonstrative pronoun."
   },
   {
     "id": "ariel2001_5",
@@ -77,8 +74,7 @@
     "paperFeatures": [
       ["speaker", "self"]
     ],
-    "comment": "Mudai, TV interview, 2 November 1998 (Mulokandov and Rieder 1998). The speaker refers to himself by first-person forms and by third-person generic forms.",
-    "lgrConformance": ""
+    "comment": "Mudai, TV interview, 2 November 1998 (Mulokandov and Rieder 1998). The speaker refers to himself by first-person forms and by third-person generic forms."
   },
   {
     "id": "ariel2001_6",
@@ -96,8 +92,7 @@
       ["antecedent", "girl and tree"],
       ["marker", "unstressedPron"]
     ],
-    "comment": "Sanford and Moxey's example: the second sentence is marked ? although both entities are highly accessible.",
-    "lgrConformance": ""
+    "comment": "Sanford and Moxey's example: the second sentence is marked ? although both entities are highly accessible."
   },
   {
     "id": "ariel2001_7",
@@ -114,8 +109,7 @@
     "paperFeatures": [
       ["marker", "stressedPron"]
     ],
-    "comment": "TV interview with Yo Yo Ma and Mark Morris, Israeli TV, 9 July 1998.",
-    "lgrConformance": ""
+    "comment": "TV interview with Yo Yo Ma and Mark Morris, Israeli TV, 9 July 1998."
   },
   {
     "id": "ariel2001_8a",
@@ -136,8 +130,7 @@
       ["marker", "fullName"],
       ["marker", "unstressedPron"]
     ],
-    "comment": "Haaretz, 14 July 1998, headline; the paper prints its English rendering. Markers in order: Arafat, Kadafi, Jerusalem, it.",
-    "lgrConformance": ""
+    "comment": "Haaretz, 14 July 1998, headline; the paper prints its English rendering. Markers in order: Arafat, Kadafi, Jerusalem, it."
   },
   {
     "id": "ariel2001_8b",
@@ -158,8 +151,7 @@
       ["marker", "fullNameMod"],
       ["marker", "proxDem"]
     ],
-    "comment": "Haaretz, 14 July 1998, opening sentence; the paper prints its English rendering. Markers in order, matching (8a).",
-    "lgrConformance": ""
+    "comment": "Haaretz, 14 July 1998, opening sentence; the paper prints its English rendering. Markers in order, matching (8a)."
   },
   {
     "id": "ariel2001_9",
@@ -176,8 +168,7 @@
     "paperFeatures": [
       ["marker", "stressedPron"]
     ],
-    "comment": "Clark Reed, quoted in The International Herald Tribune, 2–3 January 1999: a pronoun lengthened by self.",
-    "lgrConformance": ""
+    "comment": "Clark Reed, quoted in The International Herald Tribune, 2–3 January 1999: a pronoun lengthened by self."
   },
   {
     "id": "ariel2001_10",
@@ -197,8 +188,7 @@
       ["marker", "shortDefDescription"],
       ["marker", "shortDefDescription"]
     ],
-    "comment": "Jury corpus. The shorter description the paper resumes the newspaper; no disjoint reading arises.",
-    "lgrConformance": ""
+    "comment": "Jury corpus. The shorter description the paper resumes the newspaper; no disjoint reading arises."
   },
   {
     "id": "ariel2001_12",
@@ -216,8 +206,7 @@
       ["topicMarker", "unstressedPron"],
       ["subjectMarker", "shortDefDescription"]
     ],
-    "comment": "Haaretz, 21 January 1999; the paper prints its English rendering. The discourse topic (officer Feil) is pronominal although the higher officer is the subject of two consecutive clauses.",
-    "lgrConformance": ""
+    "comment": "Haaretz, 21 January 1999; the paper prints its English rendering. The discourse topic (officer Feil) is pronominal although the higher officer is the subject of two consecutive clauses."
   },
   {
     "id": "ariel2001_maya_rachel",
@@ -238,7 +227,6 @@
       ["maya", "unstressedPron"],
       ["rachel", "stressedPron"]
     ],
-    "comment": "The first-mentioned, topical but more distant Maya is later coded by an unstressed pronoun; the more recent, non-topical Rachel by a stressed pronoun.",
-    "lgrConformance": ""
+    "comment": "The first-mentioned, topical but more distant Maya is later coded by an unstressed pronoun; the more recent, non-topical Rachel by a stressed pronoun."
   }
 ]

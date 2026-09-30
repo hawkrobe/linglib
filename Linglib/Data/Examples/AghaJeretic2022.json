@@ -33,9 +33,7 @@
         "felicitous"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "aghajeretic2022_2b",
@@ -71,9 +69,7 @@
         "infelicitous"
       ]
     ],
-    "comment": "Continuation marked ??.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Continuation marked ??."
   },
   {
     "id": "aghajeretic2022_3a",
@@ -101,9 +97,7 @@
         "strong"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "aghajeretic2022_3b",
@@ -139,9 +133,7 @@
         "necessity"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "aghajeretic2022_4a",
@@ -169,9 +161,7 @@
         "strong"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "aghajeretic2022_4b",
@@ -207,9 +197,7 @@
         "necessity"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "aghajeretic2022_should_pos_all",
@@ -241,9 +229,7 @@
         "should"
       ]
     ],
-    "comment": "Baseline cell: true when you go in all the best worlds.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Baseline cell: true when you go in all the best worlds."
   },
   {
     "id": "aghajeretic2022_should_pos_none",
@@ -275,9 +261,7 @@
         "should"
       ]
     ],
-    "comment": "Baseline cell: false when you go in none of the best worlds.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Baseline cell: false when you go in none of the best worlds."
   },
   {
     "id": "aghajeretic2022_should_pos_gap",
@@ -313,9 +297,7 @@
         "true"
       ]
     ],
-    "comment": "Indeterminate: outright denial is infelicitous, a well-response is preferred.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Indeterminate: outright denial is infelicitous, a well-response is preferred."
   },
   {
     "id": "aghajeretic2022_should_neg_all",
@@ -347,9 +329,7 @@
         "should"
       ]
     ],
-    "comment": "Baseline cell: false when you go in all the best worlds.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Baseline cell: false when you go in all the best worlds."
   },
   {
     "id": "aghajeretic2022_should_neg_none",
@@ -381,9 +361,7 @@
         "should"
       ]
     ],
-    "comment": "Baseline cell: true when you go in none of the best worlds.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Baseline cell: true when you go in none of the best worlds."
   },
   {
     "id": "aghajeretic2022_should_neg_gap",
@@ -435,9 +413,7 @@
         "infelicitous"
       ]
     ],
-    "comment": "The existential continuation is contradictory, so the negated modal is not merely false in the mixed scenario.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The existential continuation is contradictory, so the negated modal is not merely false in the mixed scenario."
   },
   {
     "id": "aghajeretic2022_haveTo_pos_gap",
@@ -477,9 +453,7 @@
         "false"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "aghajeretic2022_haveTo_neg_gap",
@@ -527,9 +501,7 @@
         "felicitous"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "aghajeretic2022_8a",
@@ -569,9 +541,7 @@
         "infelicitous"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "aghajeretic2022_8b",
@@ -611,9 +581,7 @@
         "infelicitous"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "aghajeretic2022_10a",
@@ -653,9 +621,7 @@
         "infelicitous"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "aghajeretic2022_10b",
@@ -695,9 +661,7 @@
         "felicitous"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "aghajeretic2022_11a",
@@ -737,9 +701,7 @@
         "infelicitous"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "aghajeretic2022_11b",
@@ -779,9 +741,7 @@
         "felicitous"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "aghajeretic2022_12a",
@@ -821,9 +781,7 @@
         "infelicitous"
       ]
     ],
-    "comment": "Must takes wide scope over clausemate negation, unlike have to.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Must takes wide scope over clausemate negation, unlike have to."
   },
   {
     "id": "aghajeretic2022_12b",
@@ -863,9 +821,7 @@
         "felicitous"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "aghajeretic2022_14a",
@@ -905,9 +861,7 @@
         "infelicitous"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "aghajeretic2022_14b",
@@ -947,9 +901,7 @@
         "felicitous"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "aghajeretic2022_15a",
@@ -989,9 +941,7 @@
         "infelicitous"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "aghajeretic2022_15b",
@@ -1031,9 +981,7 @@
         "felicitous"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "aghajeretic2022_17a_qud1",
@@ -1065,9 +1013,7 @@
         "What is a way to get a perfect grade?"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "aghajeretic2022_17a_qud2",
@@ -1099,9 +1045,7 @@
         "What are the minimal requirements to get a perfect grade?"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "aghajeretic2022_17b_qud1",
@@ -1133,9 +1077,7 @@
         "What is a way to get a perfect grade?"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "aghajeretic2022_17b_qud2",
@@ -1167,9 +1109,7 @@
         "What are the minimal requirements to get a perfect grade?"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "aghajeretic2022_19a",
@@ -1209,9 +1149,7 @@
         "felicitous"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "aghajeretic2022_19b",
@@ -1251,9 +1189,7 @@
         "infelicitous"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "aghajeretic2022_31a",
@@ -1284,9 +1220,7 @@
         "possibility"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "aghajeretic2022_31b",
@@ -1321,9 +1255,7 @@
         "possibility"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "aghajeretic2022_32a",
@@ -1355,9 +1287,7 @@
         "necessity"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "aghajeretic2022_32b",
@@ -1389,9 +1319,7 @@
         "possibility"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "aghajeretic2022_38a",
@@ -1423,9 +1351,7 @@
         "infelicitous"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "aghajeretic2022_38b",
@@ -1461,9 +1387,7 @@
         "felicitous"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "aghajeretic2022_40a",
@@ -1495,9 +1419,7 @@
         "infelicitous"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "aghajeretic2022_40b",
@@ -1533,9 +1455,7 @@
         "felicitous"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "aghajeretic2022_41a",
@@ -1567,9 +1487,7 @@
         "infelicitous"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "aghajeretic2022_41b",
@@ -1605,9 +1523,7 @@
         "felicitous"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "aghajeretic2022_47a",
@@ -1639,9 +1555,7 @@
         "Which train is best?"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "aghajeretic2022_47b",
@@ -1673,8 +1587,6 @@
         "Which train is best?"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   }
 ]

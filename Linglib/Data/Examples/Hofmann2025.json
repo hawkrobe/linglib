@@ -28,8 +28,7 @@
         "veridical"
       ]
     ],
-    "comment": "A veridical antecedent and a veridical anaphor.",
-    "lgrConformance": ""
+    "comment": "A veridical antecedent and a veridical anaphor."
   },
   {
     "id": "hofmann2025_ex1b",
@@ -60,8 +59,7 @@
         "veridical"
       ]
     ],
-    "comment": "An unspecific negated indefinite cannot antecede a veridical anaphor.",
-    "lgrConformance": ""
+    "comment": "An unspecific negated indefinite cannot antecede a veridical anaphor."
   },
   {
     "id": "hofmann2025_ex2a",
@@ -97,7 +95,6 @@
       ]
     ],
     "comment": "Doubly negated antecedent; the indefinite is in a veridical context.",
-    "lgrConformance": "",
     "reportedIn": {
       "bibkey": "hofmann-2025",
       "paperLabel": "(2a)"
@@ -137,7 +134,6 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": "",
     "reportedIn": {
       "bibkey": "hofmann-2025",
       "paperLabel": "(2b)"
@@ -176,8 +172,7 @@
         "disagreement"
       ]
     ],
-    "comment": "The anaphor is in a nonveridical discourse relation to its antecedent; from Hofmann (2019).",
-    "lgrConformance": ""
+    "comment": "The anaphor is in a nonveridical discourse relation to its antecedent; from Hofmann (2019)."
   },
   {
     "id": "hofmann2025_ex2d",
@@ -213,7 +208,6 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": "",
     "reportedIn": {
       "bibkey": "hofmann-2025",
       "paperLabel": "(2d)"
@@ -248,8 +242,7 @@
         "veridical"
       ]
     ],
-    "comment": "A factive under negation keeps its complement veridical; based on Karttunen (1976).",
-    "lgrConformance": ""
+    "comment": "A factive under negation keeps its complement veridical; based on Karttunen (1976)."
   },
   {
     "id": "hofmann2025_ex5b",
@@ -280,8 +273,7 @@
         "veridical"
       ]
     ],
-    "comment": "A negative implicative under negation; based on Karttunen (1976).",
-    "lgrConformance": ""
+    "comment": "A negative implicative under negation; based on Karttunen (1976)."
   },
   {
     "id": "hofmann2025_ex6a",
@@ -312,8 +304,7 @@
         "veridical"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "hofmann2025_ex6b",
@@ -344,8 +335,7 @@
         "nonveridical"
       ]
     ],
-    "comment": "The same antecedent with a modal anaphor: the anaphor's context decides.",
-    "lgrConformance": ""
+    "comment": "The same antecedent with a modal anaphor: the anaphor's context decides."
   },
   {
     "id": "hofmann2025_ex6c",
@@ -376,8 +366,7 @@
         "nonveridical"
       ]
     ],
-    "comment": "A nonveridical attitude embeds the anaphor.",
-    "lgrConformance": ""
+    "comment": "A nonveridical attitude embeds the anaphor."
   },
   {
     "id": "hofmann2025_ex8",
@@ -405,7 +394,6 @@
       ]
     ],
     "comment": "The modalized indefinite introduces a hypothetical dref that exists in all worlds of the modal prejacent.",
-    "lgrConformance": "",
     "reportedIn": {
       "bibkey": "hofmann-2025",
       "paperLabel": "(8)"
@@ -444,8 +432,7 @@
         "double negation"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "hofmann2025_ex10",
@@ -480,8 +467,7 @@
         "bathroom disjunction"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "hofmann2025_ex11",
@@ -516,8 +502,7 @@
         "modal subordination"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "hofmann2025_ex12",
@@ -552,8 +537,7 @@
         "disagreement"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "hofmann2025_ex13a",
@@ -584,8 +568,7 @@
         "nonveridical"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "hofmann2025_ex13b",
@@ -616,8 +599,7 @@
         "veridical"
       ]
     ],
-    "comment": "A factive embeds the anaphor veridically, so the speaker would be committed to the car's existence.",
-    "lgrConformance": ""
+    "comment": "A factive embeds the anaphor veridically, so the speaker would be committed to the car's existence."
   },
   {
     "id": "hofmann2025_ex15",
@@ -648,8 +630,7 @@
         "nonveridical"
       ]
     ],
-    "comment": "Anaphora between two negative environments, which Heim's negation cannot admit; Kibble (1994), attributed to Paul Dekker.",
-    "lgrConformance": ""
+    "comment": "Anaphora between two negative environments, which Heim's negation cannot admit; Kibble (1994), attributed to Paul Dekker."
   },
   {
     "id": "hofmann2025_ex26",
@@ -680,8 +661,7 @@
         "veridical"
       ]
     ],
-    "comment": "Ruled out because the first utterance is inconsistent with the global existence of a referent.",
-    "lgrConformance": ""
+    "comment": "Ruled out because the first utterance is inconsistent with the global existence of a referent."
   },
   {
     "id": "hofmann2025_ex45",
@@ -708,8 +688,7 @@
         "bathroom disjunction"
       ]
     ],
-    "comment": "The second disjunct contextually entails the first; Hurford's constraint.",
-    "lgrConformance": ""
+    "comment": "The second disjunct contextually entails the first; Hurford's constraint."
   },
   {
     "id": "hofmann2025_ex49",
@@ -744,7 +723,6 @@
         "modal subordination"
       ]
     ],
-    "comment": "Anaphora under a nonveridical doxastic attitude.",
-    "lgrConformance": ""
+    "comment": "Anaphora under a nonveridical doxastic attitude."
   }
 ]

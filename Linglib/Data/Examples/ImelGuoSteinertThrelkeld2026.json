@@ -28,8 +28,7 @@
         "epistemic"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "imelguosteinertthrelkeld2026_s1b",
@@ -60,8 +59,7 @@
         "deontic"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "imelguosteinertthrelkeld2026_s2a",
@@ -92,8 +90,7 @@
         "epistemic"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "imelguosteinertthrelkeld2026_s2b",
@@ -124,8 +121,7 @@
         "deontic"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "imelguosteinertthrelkeld2026_s3a",
@@ -177,8 +173,7 @@
         "epistemic"
       ]
     ],
-    "comment": "Variable-force k'a used with strong force.",
-    "lgrConformance": ""
+    "comment": "Variable-force k'a used with strong force."
   },
   {
     "id": "imelguosteinertthrelkeld2026_s3b",
@@ -226,7 +221,6 @@
         "epistemic"
       ]
     ],
-    "comment": "Variable-force k'a used with weak force.",
-    "lgrConformance": ""
+    "comment": "Variable-force k'a used with weak force."
   }
 ]

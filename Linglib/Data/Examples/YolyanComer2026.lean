@@ -31,9 +31,7 @@ def ex_5a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("nasal_spreading", "none")]
-    comment := "No nasal, so no spreading. The paper gives translations only, no morpheme glosses."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "No nasal, so no spreading. The paper gives translations only, no morpheme glosses." }
 
 def ex_5b : LinguisticExample :=
   { id := "yolyancomer2026_5b"
@@ -49,9 +47,7 @@ def ex_5b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("nasal_spreading", "to word end")]
-    comment := "Nasality spreads rightward from the initial nasal through every following segment. The paper gives translations only, no morpheme glosses."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Nasality spreads rightward from the initial nasal through every following segment. The paper gives translations only, no morpheme glosses." }
 
 def ex_5c : LinguisticExample :=
   { id := "yolyancomer2026_5c"
@@ -67,9 +63,7 @@ def ex_5c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("nasal_spreading", "blocked by voiceless stop"), ("underlying_form", "/naote/")]
-    comment := "The Fig. 4 and Fig. 5 word: spreading from the initial n reaches a and o and is suspended by t. The paper gives translations only, no morpheme glosses."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The Fig. 4 and Fig. 5 word: spreading from the initial n reaches a and o and is suspended by t. The paper gives translations only, no morpheme glosses." }
 
 def ex_5d : LinguisticExample :=
   { id := "yolyancomer2026_5d"
@@ -85,9 +79,7 @@ def ex_5d : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("nasal_spreading", "blocked by voiceless stop")]
-    comment := "Spreading from the n runs through ĩw̃ã and is suspended by k. The paper gives translations only, no morpheme glosses."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Spreading from the n runs through ĩw̃ã and is suspended by k. The paper gives translations only, no morpheme glosses." }
 
 def ex_5e : LinguisticExample :=
   { id := "yolyancomer2026_5e"
@@ -103,9 +95,7 @@ def ex_5e : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("nasal_spreading", "blocked by voiceless stop")]
-    comment := "Each n spreads rightward until the next p; the final h and vowels are nasalized. The paper gives translations only, no morpheme glosses."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Each n spreads rightward until the next p; the final h and vowels are nasalized. The paper gives translations only, no morpheme glosses." }
 
 def all : List LinguisticExample := [ex_5a, ex_5b, ex_5c, ex_5d, ex_5e]
 

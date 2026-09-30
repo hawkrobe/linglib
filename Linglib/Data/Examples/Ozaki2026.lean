@@ -31,9 +31,7 @@ def ex1_acc : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "hanareru"), ("marking", "acc"), ("diagnostic", "alternation")]
-    comment := "Taro-NOM village-ACC leave-PAST"
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Taro-NOM village-ACC leave-PAST" }
 
 def ex1_abl : LinguisticExample :=
   { id := "ozaki2026_ex1_abl"
@@ -49,9 +47,7 @@ def ex1_abl : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "hanareru"), ("marking", "abl"), ("diagnostic", "alternation")]
-    comment := "Taro-NOM village-from leave-PAST"
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Taro-NOM village-from leave-PAST" }
 
 def ex9_acc : LinguisticExample :=
   { id := "ozaki2026_ex9_acc"
@@ -67,9 +63,7 @@ def ex9_acc : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "deru"), ("marking", "acc"), ("diagnostic", "ellipsis")]
-    comment := "Taro-TOP quickly station-ACC exited but Hanako-TOP quickly didn't.exit"
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Taro-TOP quickly station-ACC exited but Hanako-TOP quickly didn't.exit" }
 
 def ex9_abl : LinguisticExample :=
   { id := "ozaki2026_ex9_abl"
@@ -85,9 +79,7 @@ def ex9_abl : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "deru"), ("marking", "abl"), ("diagnostic", "ellipsis")]
-    comment := "Taro-TOP quickly station-from exited but Hanako-TOP quickly didn't.exit"
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Taro-TOP quickly station-from exited but Hanako-TOP quickly didn't.exit" }
 
 def ex13_acc : LinguisticExample :=
   { id := "ozaki2026_ex13_acc"
@@ -103,9 +95,7 @@ def ex13_acc : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "hanareru"), ("marking", "acc"), ("diagnostic", "scrambling")]
-    comment := "village-ACC Taro-TOP Hanako-NOM left COMP said"
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "village-ACC Taro-TOP Hanako-NOM left COMP said" }
 
 def ex13_abl : LinguisticExample :=
   { id := "ozaki2026_ex13_abl"
@@ -121,9 +111,7 @@ def ex13_abl : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "hanareru"), ("marking", "abl"), ("diagnostic", "scrambling")]
-    comment := "village-from Taro-TOP Hanako-NOM left COMP said"
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "village-from Taro-TOP Hanako-NOM left COMP said" }
 
 def ex14 : LinguisticExample :=
   { id := "ozaki2026_ex14"
@@ -139,9 +127,7 @@ def ex14 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "hanareru"), ("marking", "none"), ("diagnostic", "indirect_passive")]
-    comment := "that village-NOM Taro-DAT leave-PASS-PAST"
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "that village-NOM Taro-DAT leave-PASS-PAST" }
 
 def ex20 : LinguisticExample :=
   { id := "ozaki2026_ex20"
@@ -157,9 +143,7 @@ def ex20 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "hanareru"), ("marking", "none"), ("diagnostic", "direct_passive")]
-    comment := "that village-NOM Taro-NIYOTTE leave-PASS-PAST"
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "that village-NOM Taro-NIYOTTE leave-PASS-PAST" }
 
 def ex26_acc : LinguisticExample :=
   { id := "ozaki2026_ex26_acc"
@@ -175,9 +159,7 @@ def ex26_acc : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "hanareru"), ("marking", "acc"), ("diagnostic", "nani_o")]
-    comment := "what-ACC Taro-TOP village-ACC leave-PROG-PRES Q"
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "what-ACC Taro-TOP village-ACC leave-PROG-PRES Q" }
 
 def ex26_abl : LinguisticExample :=
   { id := "ozaki2026_ex26_abl"
@@ -193,9 +175,7 @@ def ex26_abl : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "hanareru"), ("marking", "abl"), ("diagnostic", "nani_o")]
-    comment := "what-ACC Taro-TOP village-from leave-PROG-PRES Q"
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "what-ACC Taro-TOP village-from leave-PROG-PRES Q" }
 
 def all : List LinguisticExample := [ex1_acc, ex1_abl, ex9_acc, ex9_abl, ex13_acc, ex13_abl, ex14, ex20, ex26_acc, ex26_abl]
 

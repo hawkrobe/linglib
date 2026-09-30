@@ -31,9 +31,7 @@ def ex16a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("family", "degree"), ("negation", "no"), ("modal", "no"), ("number", "na"), ("blocked", "no")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex16b : LinguisticExample :=
   { id := "fox2018_ex16b"
@@ -49,9 +47,7 @@ def ex16b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("family", "degree"), ("negation", "yes"), ("modal", "no"), ("number", "na"), ("blocked", "yes")]
-    comment := "No smallest degree above the actual speed: no maximally informative true member."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "No smallest degree above the actual speed: no maximally informative true member." }
 
 def ex16c : LinguisticExample :=
   { id := "fox2018_ex16c"
@@ -67,9 +63,7 @@ def ex16c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("family", "degree"), ("negation", "yes"), ("modal", "yes"), ("number", "na"), ("blocked", "no")]
-    comment := "The modal base can entail a least bound, so maximality can be met."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The modal base can entail a least bound, so maximality can be met." }
 
 def ex24 : LinguisticExample :=
   { id := "fox2018_ex24"
@@ -85,9 +79,7 @@ def ex24 : LinguisticExample :=
     alternatives := []
     readings := [("required > or", .acceptable), ("or > required", .acceptable)]
     paperFeatures := [("family", "higherOrder"), ("negation", "no"), ("modal", "yes"), ("number", "neutral"), ("blocked", "no")]
-    comment := "Both scopes: the trace may range over individuals or over generalized quantifiers."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Both scopes: the trace may range over individuals or over generalized quantifiers." }
 
 def ex26 : LinguisticExample :=
   { id := "fox2018_ex26"
@@ -103,9 +95,7 @@ def ex26 : LinguisticExample :=
     alternatives := []
     readings := [("not > or", .unacceptable), ("or > not", .acceptable)]
     paperFeatures := [("family", "higherOrder"), ("negation", "yes"), ("modal", "no"), ("number", "neutral"), ("blocked", "yes")]
-    comment := "The higher-order denotation always contains the weak negated conjunction (28), which identifies no cell: Non-Vacuity fails."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The higher-order denotation always contains the weak negated conjunction (28), which identifies no cell: Non-Vacuity fails." }
 
 def ex27 : LinguisticExample :=
   { id := "fox2018_ex27"
@@ -121,9 +111,7 @@ def ex27 : LinguisticExample :=
     alternatives := []
     readings := [("not > or", .acceptable), ("or > not", .acceptable)]
     paperFeatures := [("family", "higherOrder"), ("negation", "yes"), ("modal", "yes"), ("number", "neutral"), ("blocked", "no")]
-    comment := "Marked ? for the narrow-scope reading; the necessity modal lets (29) be the strongest true member."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Marked ? for the narrow-scope reading; the necessity modal lets (29) be the strongest true member." }
 
 def ex47a : LinguisticExample :=
   { id := "fox2018_ex47a"
@@ -139,9 +127,7 @@ def ex47a : LinguisticExample :=
     alternatives := []
     readings := [("required > or", .acceptable), ("or > required", .acceptable)]
     paperFeatures := [("family", "higherOrder"), ("negation", "no"), ("modal", "yes"), ("number", "neutral"), ("blocked", "no")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex47b : LinguisticExample :=
   { id := "fox2018_ex47b"
@@ -157,9 +143,7 @@ def ex47b : LinguisticExample :=
     alternatives := []
     readings := [("required > or", .acceptable), ("or > required", .acceptable)]
     paperFeatures := [("family", "higherOrder"), ("negation", "no"), ("modal", "yes"), ("number", "plural"), ("blocked", "no")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex48 : LinguisticExample :=
   { id := "fox2018_ex48"
@@ -175,9 +159,7 @@ def ex48 : LinguisticExample :=
     alternatives := []
     readings := [("required > or", .unacceptable), ("or > required", .acceptable)]
     paperFeatures := [("family", "higherOrder"), ("negation", "no"), ("modal", "yes"), ("number", "singular"), ("blocked", "yes")]
-    comment := "Singular wh-phrases cannot quantify over higher-type traces."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Singular wh-phrases cannot quantify over higher-type traces." }
 
 def all : List LinguisticExample := [ex16a, ex16b, ex16c, ex24, ex26, ex27, ex47a, ex47b, ex48]
 

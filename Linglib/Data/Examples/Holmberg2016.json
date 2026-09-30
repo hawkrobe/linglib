@@ -35,8 +35,7 @@
         "p"
       ]
     ],
-    "comment": "The answer is the elided sentence Yes [John is coming].",
-    "lgrConformance": ""
+    "comment": "The answer is the elided sentence Yes [John is coming]."
   },
   {
     "id": "holmberg2016_en_neutral_no",
@@ -74,8 +73,7 @@
         "not p"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "holmberg2016_fi_verb_echo",
@@ -113,8 +111,7 @@
         "p"
       ]
     ],
-    "comment": "The echoed verb is inflected for tense and agreement, so a sentence is present.",
-    "lgrConformance": ""
+    "comment": "The echoed verb is inflected for tense and agreement, so a sentence is present."
   },
   {
     "id": "holmberg2016_sv_neg_nej",
@@ -160,8 +157,7 @@
         "polarityBased"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "holmberg2016_yue_neg_hai",
@@ -203,8 +199,7 @@
         "truthBased"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "holmberg2016_en_neg_yes_bare",
@@ -242,8 +237,7 @@
         "p"
       ]
     ],
-    "comment": "Marked # for the intended reading that he does drink coffee: bare yes conveys that he does not, or is unclear.",
-    "lgrConformance": ""
+    "comment": "Marked # for the intended reading that he does drink coffee: bare yes conveys that he does not, or is unclear."
   },
   {
     "id": "holmberg2016_en_neg_yes_long",
@@ -281,8 +275,7 @@
         "p"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "holmberg2016_sv_neutral_ja",
@@ -320,8 +313,7 @@
         "p"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "holmberg2016_sv_neg_ja",
@@ -363,8 +355,7 @@
         "p"
       ]
     ],
-    "comment": "Ill formed under either reading: the middle negation values the polarity head, clashing with ja.",
-    "lgrConformance": ""
+    "comment": "Ill formed under either reading: the middle negation values the polarity head, clashing with ja."
   },
   {
     "id": "holmberg2016_sv_neg_jo",
@@ -410,8 +401,7 @@
         "polarity reversing"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "holmberg2016_yue_neg_hai_intended_p",
@@ -449,8 +439,7 @@
         "p"
       ]
     ],
-    "comment": "The affirmative particle confirms the negative alternative instead.",
-    "lgrConformance": ""
+    "comment": "The affirmative particle confirms the negative alternative instead."
   },
   {
     "id": "holmberg2016_yue_neg_mhai",
@@ -492,8 +481,7 @@
         "truthBased"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "holmberg2016_en_tell_me",
@@ -527,8 +515,7 @@
         "yes"
       ]
     ],
-    "comment": "Only a question containing the polarity variable can be answered yes or no.",
-    "lgrConformance": ""
+    "comment": "Only a question containing the polarity variable can be answered yes or no."
   },
   {
     "id": "holmberg2016_en_tea_or_not",
@@ -562,8 +549,7 @@
         "yes"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "holmberg2016_en_tea",
@@ -601,8 +587,7 @@
         "p"
       ]
     ],
-    "comment": "Yes assigns [+Pol] to the question variable: you [+Pol] want tea.",
-    "lgrConformance": ""
+    "comment": "Yes assigns [+Pol] to the question variable: you [+Pol] want tea."
   },
   {
     "id": "holmberg2016_en_maybe",
@@ -636,8 +621,7 @@
         "modified polarity"
       ]
     ],
-    "comment": "The adverb modifies a positive polarity head: [Pol maybe [+Pol]].",
-    "lgrConformance": ""
+    "comment": "The adverb modifies a positive polarity head: [Pol maybe [+Pol]]."
   },
   {
     "id": "holmberg2016_en_maybe_not",
@@ -671,8 +655,7 @@
         "modified polarity"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "holmberg2016_fi_luin",
@@ -710,8 +693,7 @@
         "p"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "holmberg2016_fi_en",
@@ -749,8 +731,7 @@
         "not p"
       ]
     ],
-    "comment": "The negation is inflected for agreement, so it is the sentential negation, not a particle.",
-    "lgrConformance": ""
+    "comment": "The negation is inflected for agreement, so it is the sentential negation, not a particle."
   },
   {
     "id": "holmberg2016_en_not_pass",
@@ -784,8 +765,7 @@
         "no"
       ]
     ],
-    "comment": "Ellipsis requires lexical identity: the answer cannot take the PolP of Did John fail the exam? as antecedent although the two mutually entail each other.",
-    "lgrConformance": ""
+    "comment": "Ellipsis requires lexical identity: the answer cannot take the PolP of Did John fail the exam? as antecedent although the two mutually entail each other."
   },
   {
     "id": "holmberg2016_fi_hajotti",
@@ -819,8 +799,7 @@
         "verb echo"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "holmberg2016_fi_rikkoi",
@@ -854,8 +833,7 @@
         "verb echo with a synonym"
       ]
     ],
-    "comment": "A synonymous verb cannot echo the question: the elided PolP must share the question's numeration.",
-    "lgrConformance": ""
+    "comment": "A synonymous verb cannot echo the question: the elided PolP must share the question's numeration."
   },
   {
     "id": "holmberg2016_en_coffee_not_yes",
@@ -893,8 +871,7 @@
         "p"
       ]
     ],
-    "comment": "Marked (??) for the reading that I do drink coffee.",
-    "lgrConformance": ""
+    "comment": "Marked (??) for the reading that I do drink coffee."
   },
   {
     "id": "holmberg2016_en_coffee_not_yes_i_do",
@@ -932,8 +909,7 @@
         "p"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "holmberg2016_fi_juo",
@@ -971,8 +947,7 @@
         "p"
       ]
     ],
-    "comment": "A bare verb does not suffice to confirm the positive alternative.",
-    "lgrConformance": ""
+    "comment": "A bare verb does not suffice to confirm the positive alternative."
   },
   {
     "id": "holmberg2016_fi_juo_se",
@@ -1010,8 +985,7 @@
         "p"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "holmberg2016_fr_oui",
@@ -1049,8 +1023,7 @@
         "p"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "holmberg2016_fr_neg_oui",
@@ -1092,8 +1065,7 @@
         "p"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "holmberg2016_fr_neg_si",
@@ -1139,8 +1111,7 @@
         "polarity reversing"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "holmberg2016_ja_neutral",
@@ -1174,8 +1145,7 @@
         "un / uun"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "holmberg2016_ja_neg_un",
@@ -1221,8 +1191,7 @@
         "truthBased"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "holmberg2016_ja_neg_uun",
@@ -1268,8 +1237,7 @@
         "truthBased"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "holmberg2016_sv_neg_tired_nej",
@@ -1315,8 +1283,7 @@
         "polarityBased"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "holmberg2016_en_neg_coffee_yes_he_does",
@@ -1358,8 +1325,7 @@
         "polarityBased"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "holmberg2016_en_not_yes_low",
@@ -1405,8 +1371,7 @@
         "low reading of not"
       ]
     ],
-    "comment": "Said when observing John decline coffee: for many speakers the bare yes means that he does not drink coffee, the truth-based pattern.",
-    "lgrConformance": ""
+    "comment": "Said when observing John decline coffee: for many speakers the bare yes means that he does not drink coffee, the truth-based pattern."
   },
   {
     "id": "holmberg2016_en_not_no",
@@ -1448,8 +1413,7 @@
         "not p"
       ]
     ],
-    "comment": "Kramer and Rawlins's negative neutralization: yes and no mean the same.",
-    "lgrConformance": ""
+    "comment": "Kramer and Rawlins's negative neutralization: yes and no mean the same."
   },
   {
     "id": "holmberg2016_en_isnt_either",
@@ -1487,8 +1451,7 @@
         "tolerant"
       ]
     ],
-    "comment": "Marked %: grammatical in the tolerant variety, where -n't can be interpreted in the middle position, ungrammatical in the restrictive one.",
-    "lgrConformance": ""
+    "comment": "Marked %: grammatical in the tolerant variety, where -n't can be interpreted in the middle position, ungrammatical in the restrictive one."
   },
   {
     "id": "holmberg2016_en_sometimes_yes",
@@ -1530,8 +1493,7 @@
         "not p"
       ]
     ],
-    "comment": "An adverb scoping over not forces the truth-based answer for all speakers.",
-    "lgrConformance": ""
+    "comment": "An adverb scoping over not forces the truth-based answer for all speakers."
   },
   {
     "id": "holmberg2016_en_sometimes_no",
@@ -1573,8 +1535,7 @@
         "p"
       ]
     ],
-    "comment": "Double negation: John is always on time.",
-    "lgrConformance": ""
+    "comment": "Double negation: John is always on time."
   },
   {
     "id": "holmberg2016_en_purposely",
@@ -1616,8 +1577,7 @@
         "not p"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "holmberg2016_en_two_negations",
@@ -1647,8 +1607,7 @@
         "middle and low"
       ]
     ],
-    "comment": "English has a middle and a low negation position.",
-    "lgrConformance": ""
+    "comment": "English has a middle and a low negation position."
   },
   {
     "id": "holmberg2016_en_two_middle",
@@ -1678,8 +1637,7 @@
         "two middle negations"
       ]
     ],
-    "comment": "There cannot be two negations taking sentential scope.",
-    "lgrConformance": ""
+    "comment": "There cannot be two negations taking sentential scope."
   },
   {
     "id": "holmberg2016_en_is_not_coming_yes",
@@ -1717,8 +1675,7 @@
         "not p"
       ]
     ],
-    "comment": "Marked %: well formed with the low reading of not, ill formed with the middle reading.",
-    "lgrConformance": ""
+    "comment": "Marked %: well formed with the low reading of not, ill formed with the middle reading."
   },
   {
     "id": "holmberg2016_en_no_he_is",
@@ -1756,8 +1713,7 @@
         "p"
       ]
     ],
-    "comment": "Two collocated sentences: no with PolP ellipsis reads as double negation, he is with VP ellipsis.",
-    "lgrConformance": ""
+    "comment": "Two collocated sentences: no with PolP ellipsis reads as double negation, he is with VP ellipsis."
   },
   {
     "id": "holmberg2016_en_delicious_no_it_is",
@@ -1795,8 +1751,7 @@
         "no + clause"
       ]
     ],
-    "comment": "The double-negation answer is possible only when the question expects a negative answer.",
-    "lgrConformance": ""
+    "comment": "The double-negation answer is possible only when the question expects a negative answer."
   },
   {
     "id": "holmberg2016_sv_kommit_ja",
@@ -1834,8 +1789,7 @@
         "ja"
       ]
     ],
-    "comment": "No ambiguity or speaker variation: ja can confirm neither alternative, since Swedish negation is exclusively middle.",
-    "lgrConformance": ""
+    "comment": "No ambiguity or speaker variation: ja can confirm neither alternative, since Swedish negation is exclusively middle."
   },
   {
     "id": "holmberg2016_sv_kommit_nej",
@@ -1877,8 +1831,7 @@
         "not p"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "holmberg2016_sv_inte_inte",
@@ -1908,8 +1861,7 @@
         "double"
       ]
     ],
-    "comment": "Swedish has no VP-scope negation, so double negation is impossible.",
-    "lgrConformance": ""
+    "comment": "Swedish has no VP-scope negation, so double negation is impossible."
   },
   {
     "id": "holmberg2016_sv_nangang_ja",
@@ -1951,8 +1903,7 @@
         "not p"
       ]
     ],
-    "comment": "The scope-taking adverb prevents the negation from valuing the polarity head, a Relativized Minimality effect.",
-    "lgrConformance": ""
+    "comment": "The scope-taking adverb prevents the negation from valuing the polarity head, a Relativized Minimality effect."
   },
   {
     "id": "holmberg2016_sv_nangang_nej",
@@ -1994,8 +1945,7 @@
         "p"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "holmberg2016_sv_kommit_jo",
@@ -2041,8 +1991,7 @@
         "polarity reversing"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "holmberg2016_nl_jawel",
@@ -2084,8 +2033,7 @@
         "affirmative plus particle"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "holmberg2016_fi_tulee",
@@ -2123,8 +2071,7 @@
         "p"
       ]
     ],
-    "comment": "The double-negation answer in a language without low negation: the interpretable no.",
-    "lgrConformance": ""
+    "comment": "The double-negation answer in a language without low negation: the interpretable no."
   },
   {
     "id": "holmberg2016_sv_road_ambiguous",
@@ -2154,8 +2101,7 @@
         "negative or positive bias"
       ]
     ],
-    "comment": "Ambiguous between the two biases out of context.",
-    "lgrConformance": ""
+    "comment": "Ambiguous between the two biases out of context."
   },
   {
     "id": "holmberg2016_sv_road_high",
@@ -2189,8 +2135,7 @@
         "high"
       ]
     ],
-    "comment": "With the negation preceding the subject, only the positive-bias reading survives.",
-    "lgrConformance": ""
+    "comment": "With the negation preceding the subject, only the positive-bias reading survives."
   },
   {
     "id": "holmberg2016_en_road_not",
@@ -2224,8 +2169,7 @@
         "middle"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "holmberg2016_en_road_isnt",
@@ -2259,8 +2203,7 @@
         "high"
       ]
     ],
-    "comment": "Only the positive-bias reading in the restrictive variety; ambiguous in the tolerant one.",
-    "lgrConformance": ""
+    "comment": "Only the positive-bias reading in the restrictive variety; ambiguous in the tolerant one."
   },
   {
     "id": "holmberg2016_en_road_so_it_is",
@@ -2294,8 +2237,7 @@
         "agreement"
       ]
     ],
-    "comment": "Agreement indicators need a polarity-valued clause as antecedent, which a neutral question lacks.",
-    "lgrConformance": ""
+    "comment": "Agreement indicators need a polarity-valued clause as antecedent, which a neutral question lacks."
   },
   {
     "id": "holmberg2016_en_tag_so_it_is",
@@ -2329,8 +2271,7 @@
         "agreement"
       ]
     ],
-    "comment": "The tag question contains a valued PolP, so the agreement indicator is natural.",
-    "lgrConformance": ""
+    "comment": "The tag question contains a valued PolP, so the agreement indicator is natural."
   },
   {
     "id": "holmberg2016_en_tag_at_all",
@@ -2364,8 +2305,7 @@
         "at all"
       ]
     ],
-    "comment": "The content clause has positive polarity and excludes the NPI.",
-    "lgrConformance": ""
+    "comment": "The content clause has positive polarity and excludes the NPI."
   },
   {
     "id": "holmberg2016_en_statement_no",
@@ -2399,7 +2339,6 @@
         "no"
       ]
     ],
-    "comment": "Bare no cannot respond to a positively valued statement, which provides no polarity variable.",
-    "lgrConformance": ""
+    "comment": "Bare no cannot respond to a positively valued statement, which provides no polarity variable."
   }
 ]

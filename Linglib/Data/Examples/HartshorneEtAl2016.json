@@ -32,8 +32,7 @@
         "experiencer"
       ]
     ],
-    "comment": "A fear-type verb: the experiencer is the subject, the stimulus the object.",
-    "lgrConformance": ""
+    "comment": "A fear-type verb: the experiencer is the subject, the stimulus the object."
   },
   {
     "id": "hartshorneetal2016_frighten",
@@ -68,8 +67,7 @@
         "stimulus"
       ]
     ],
-    "comment": "A frighten-type verb: the stimulus is the subject, the experiencer the object.",
-    "lgrConformance": ""
+    "comment": "A frighten-type verb: the stimulus is the subject, the experiencer the object."
   },
   {
     "id": "hartshorneetal2016_episode",
@@ -105,8 +103,7 @@
         "frighten"
       ]
     ],
-    "comment": "A frighten-type verb describes a specific instance in which an emotional state occurs.",
-    "lgrConformance": ""
+    "comment": "A frighten-type verb describes a specific instance in which an emotional state occurs."
   },
   {
     "id": "hartshorneetal2016_stageLevel",
@@ -142,8 +139,7 @@
         "frighten"
       ]
     ],
-    "comment": "The paper's rendering of the observation that frighten-type verbs describe states bound to a time and place, and fear-type verbs do not.",
-    "lgrConformance": ""
+    "comment": "The paper's rendering of the observation that frighten-type verbs describe states bound to a time and place, and fear-type verbs do not."
   },
   {
     "id": "hartshorneetal2016_exp1",
@@ -174,8 +170,7 @@
         "1"
       ]
     ],
-    "comment": "Experiment 1 stimulus shape: how long is the mental state likely to have lasted (seconds to years)?",
-    "lgrConformance": ""
+    "comment": "Experiment 1 stimulus shape: how long is the mental state likely to have lasted (seconds to years)?"
   },
   {
     "id": "hartshorneetal2016_exp2",
@@ -206,8 +201,7 @@
         "2"
       ]
     ],
-    "comment": "Experiment 2 stimulus shape: in a court case in which causing an emotion is illegal, who if anyone is guilty?",
-    "lgrConformance": ""
+    "comment": "Experiment 2 stimulus shape: in a court case in which causing an emotion is illegal, who if anyone is guilty?"
   },
   {
     "id": "hartshorneetal2016_2a",
@@ -251,8 +245,7 @@
         "fear"
       ]
     ],
-    "comment": "Japanese fear-type verb, unaffixed.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Japanese fear-type verb, unaffixed."
   },
   {
     "id": "hartshorneetal2016_2b",
@@ -300,8 +293,7 @@
         "sase"
       ]
     ],
-    "comment": "Japanese frighten-type verb: the causative affix -(s)ase- on the fear-type stem.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Japanese frighten-type verb: the causative affix -(s)ase- on the fear-type stem."
   },
   {
     "id": "hartshorneetal2016_3a",
@@ -336,8 +328,7 @@
         "fear"
       ]
     ],
-    "comment": "Experiment 5: the novel verb *douyo* 'uneasiness' with fear-type, experiencer-subject syntax.",
-    "lgrConformance": ""
+    "comment": "Experiment 5: the novel verb *douyo* 'uneasiness' with fear-type, experiencer-subject syntax."
   },
   {
     "id": "hartshorneetal2016_3b",
@@ -372,8 +363,7 @@
         "frighten"
       ]
     ],
-    "comment": "Experiment 5: the novel verb *douyo* with frighten-type, experiencer-object syntax.",
-    "lgrConformance": ""
+    "comment": "Experiment 5: the novel verb *douyo* with frighten-type, experiencer-object syntax."
   },
   {
     "id": "hartshorneetal2016_5",
@@ -408,8 +398,7 @@
         "attitude"
       ]
     ],
-    "comment": "Experiment 9: the habitual-attitude definition of a novel verb, based on envy.",
-    "lgrConformance": ""
+    "comment": "Experiment 9: the habitual-attitude definition of a novel verb, based on envy."
   },
   {
     "id": "hartshorneetal2016_6",
@@ -444,8 +433,7 @@
         "episode"
       ]
     ],
-    "comment": "Experiment 9: the emotional-episode definition of a novel verb, based on disgust.",
-    "lgrConformance": ""
+    "comment": "Experiment 9: the emotional-episode definition of a novel verb, based on disgust."
   },
   {
     "id": "hartshorneetal2016_exp9q",
@@ -476,8 +464,7 @@
         "9"
       ]
     ],
-    "comment": "Experiment 9 test question: a fear-type linking picks the character Bear had the attitude about, a frighten-type linking the character Bear affected.",
-    "lgrConformance": ""
+    "comment": "Experiment 9 test question: a fear-type linking picks the character Bear had the attitude about, a frighten-type linking the character Bear affected."
   },
   {
     "id": "hartshorneetal2016_7",
@@ -508,7 +495,6 @@
         "frighten"
       ]
     ],
-    "comment": "The unattested target of a caused emotional episode, which the Fig. 11 structures do not exclude.",
-    "lgrConformance": ""
+    "comment": "The unattested target of a caused emotional episode, which the Fig. 11 structures do not exclude."
   }
 ]

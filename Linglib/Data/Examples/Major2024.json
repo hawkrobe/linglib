@@ -19,9 +19,7 @@
       ["construction", "dep-clause"],
       ["matrixVerb", "oyla- 'think'"]
     ],
-    "comment": "Baseline dep complement. Paper adds the literal translation 'Mahinur thinks (something), saying Tursun made meatbread.' The parenthesized -(ni) marks the optional accusative on the embedded subject.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Baseline dep complement. Paper adds the literal translation 'Mahinur thinks (something), saying Tursun made meatbread.' The parenthesized -(ni) marks the optional accusative on the embedded subject."
   },
   {
     "id": "major2024_38",
@@ -43,9 +41,7 @@
       ["construction", "dep-clause"],
       ["matrixVerb", "warqira- 'scream'"]
     ],
-    "comment": "The dep clause modifies unergative 'scream' and coerces it into a verb of speech: the matrix clause is simply 'Mahinur screamed', the dep clause adds the communicative content. Bracketing dropped from primaryText.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The dep clause modifies unergative 'scream' and coerces it into a verb of speech: the matrix clause is simply 'Mahinur screamed', the dep clause adds the communicative content. Bracketing dropped from primaryText."
   },
   {
     "id": "major2024_39a",
@@ -68,9 +64,7 @@
       ["diagnostic", "subcategorization"],
       ["verb", "de- 'say'"]
     ],
-    "comment": "Paper prints '*(birnémi-ler-ni)': omitting the DP is ungrammatical (expanded into alternatives) — main-verb 'say' obligatorily introduces a DP complement.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Paper prints '*(birnémi-ler-ni)': omitting the DP is ungrammatical (expanded into alternatives) — main-verb 'say' obligatorily introduces a DP complement."
   },
   {
     "id": "major2024_39b",
@@ -93,9 +87,7 @@
       ["diagnostic", "subcategorization"],
       ["verb", "warqira- 'scream'"]
     ],
-    "comment": "Paper prints '(*birnémi-ler-ni)': adding the DP is ungrammatical (expanded into alternatives) — 'scream' is incompatible with a complement.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Paper prints '(*birnémi-ler-ni)': adding the DP is ungrammatical (expanded into alternatives) — 'scream' is incompatible with a complement."
   },
   {
     "id": "major2024_40a",
@@ -119,9 +111,7 @@
       ["diagnostic", "subcategorization"],
       ["verb", "de- 'say'"]
     ],
-    "comment": "Paper prints '*(Tursun-ning ket-ken-lik-i-ni)': omission is ungrammatical (expanded into alternatives) — 'say' obligatorily takes a (here participial) complement.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Paper prints '*(Tursun-ning ket-ken-lik-i-ni)': omission is ungrammatical (expanded into alternatives) — 'say' obligatorily takes a (here participial) complement."
   },
   {
     "id": "major2024_40b",
@@ -144,9 +134,7 @@
       ["diagnostic", "subcategorization"],
       ["verb", "warqira- 'scream'"]
     ],
-    "comment": "Paper prints '(*Tursun-ning ket-ken-lik-i-ni)': adding the participial clause is ungrammatical (expanded into alternatives) — 'scream' rejects a clausal complement.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Paper prints '(*Tursun-ning ket-ken-lik-i-ni)': adding the participial clause is ungrammatical (expanded into alternatives) — 'scream' rejects a clausal complement."
   },
   {
     "id": "major2024_41a",
@@ -170,9 +158,7 @@
       ["diagnostic", "subcategorization-persistence"],
       ["construction", "dep + scream"]
     ],
-    "comment": "Paper prints '*(birnémi-ler-ni)': the subcategorization requirement of de- 'say' persists inside the adjoined dep clause — 'say' obligatorily introduces an internal argument even under 'scream'.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Paper prints '*(birnémi-ler-ni)': the subcategorization requirement of de- 'say' persists inside the adjoined dep clause — 'say' obligatorily introduces an internal argument even under 'scream'."
   },
   {
     "id": "major2024_41b",
@@ -197,9 +183,7 @@
       ["diagnostic", "subcategorization-persistence"],
       ["construction", "dep + scream"]
     ],
-    "comment": "Paper prints '*(Tursun-ning ket-ken-lik-i-ni)': same persistence as (41a) with a clausal DP complement of 'say' inside the dep clause.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Paper prints '*(Tursun-ning ket-ken-lik-i-ni)': same persistence as (41a) with a clausal DP complement of 'say' inside the dep clause."
   },
   {
     "id": "major2024_49a",
@@ -222,9 +206,7 @@
       ["diagnostic", "subject-position"],
       ["clauseType", "participial"]
     ],
-    "comment": "The participial clause can serve as the grammatical subject (with nominative case) of the psych predicate 'make surprised', unlike dep clauses (49b).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The participial clause can serve as the grammatical subject (with nominative case) of the psych predicate 'make surprised', unlike dep clauses (49b)."
   },
   {
     "id": "major2024_49b",
@@ -247,8 +229,6 @@
       ["diagnostic", "subject-position"],
       ["clauseType", "dep"]
     ],
-    "comment": "Translation marked 'Intended:' in the paper — dep clauses cannot function as grammatical subjects. Fn. 18: grammatical only under a pro-dropped-subject parse ('S/he surprised me, saying that Tursun left').",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Translation marked 'Intended:' in the paper — dep clauses cannot function as grammatical subjects. Fn. 18: grammatical only under a pro-dropped-subject parse ('S/he surprised me, saying that Tursun left')."
   }
 ]

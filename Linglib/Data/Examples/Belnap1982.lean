@@ -31,9 +31,7 @@ def ex_1 : LinguisticExample :=
     alternatives := []
     readings := [("answers: John / It was John / The person who kicked Sam was John", .acceptable), ("non-answers: *He / *Sam kicked John / *China is populous", .unacceptable), ("responses but not answers: I don't know / Ask Sam", .acceptable)]
     paperFeatures := [("claim", "answerhood is as entrenched as sentencehood")]
-    comment := "The battery grounding Q1: linguistic theory should describe the question-answer relationship."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The battery grounding Q1: linguistic theory should describe the question-answer relationship." }
 
 def gas : LinguisticExample :=
   { id := "belnap1982_gas"
@@ -49,9 +47,7 @@ def gas : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "Unique Answer Fallacy"), ("answers", "multiple, each full and complete and true")]
-    comment := "A mention-some question: any open station is a complete true answer."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A mention-some question: any open station is a complete true answer." }
 
 def prime : LinguisticExample :=
   { id := "belnap1982_prime"
@@ -67,9 +63,7 @@ def prime : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "Unique Answer Fallacy"), ("target", "Karttunen-style unique denotations")]
-    comment := "A foundation on which every question has one answer cannot even state a language that asks for examples."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A foundation on which every question has one answer cannot even state a language that asks for examples." }
 
 def unicorns : LinguisticExample :=
   { id := "belnap1982_unicorns"
@@ -85,9 +79,7 @@ def unicorns : LinguisticExample :=
     alternatives := []
     readings := [("for each of two actual unicorns, John wonders where it lives", .acceptable), ("John wonders where the single place is at which two unicorns live", .acceptable), ("quantifier between wonder and the wh: each unicorn possibly living in a different place", .acceptable)]
     paperFeatures := [("phenomenon", "quantifying into questions")]
-    comment := "The third reading needs the quantifier scoped inside wonder but over where."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The third reading needs the quantifier scoped inside wonder but over where." }
 
 def grades : LinguisticExample :=
   { id := "belnap1982_grades"
@@ -103,9 +95,7 @@ def grades : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("phenomenon", "quantifying into questions"), ("embedding", "depend")]
-    comment := "Each cannot scope over the whole declarative nor inside the wh: the quantified indirect question is a closed unit."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Each cannot scope over the whole declarative nor inside the wh: the quantified indirect question is a closed unit." }
 
 def king : LinguisticExample :=
   { id := "belnap1982_king"
@@ -121,9 +111,7 @@ def king : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("phenomenon", "quantifying into a whether"), ("status", "no true answers")]
-    comment := "With the quantifier scoped in, an answer must answer for the present king of France; there being none, the question has no true answers."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "With the quantifier scoped in, an answer must answer for the present king of France; there being none, the question has no true answers." }
 
 def china : LinguisticExample :=
   { id := "belnap1982_china"
@@ -139,9 +127,7 @@ def china : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "Distributivity Test"), ("verdict", "consistent, so not an answer")]
-    comment := "Consistency of the know-P-but-not-IQ report rules P out as an answer."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Consistency of the know-P-but-not-IQ report rules P out as an answer." }
 
 def john : LinguisticExample :=
   { id := "belnap1982_john"
@@ -157,9 +143,7 @@ def john : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "Distributivity Test"), ("verdict", "inconsistent — likely an answer, not guaranteed")]
-    comment := "The test is a necessary condition only: passing it does not certify answerhood."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The test is a necessary condition only: passing it does not certify answerhood." }
 
 def all : List LinguisticExample := [ex_1, gas, prime, unicorns, grades, king, china, john]
 

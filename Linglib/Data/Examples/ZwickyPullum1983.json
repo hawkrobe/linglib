@@ -15,9 +15,7 @@
     "paperFeatures": [
       ["clitic", "'s"]
     ],
-    "comment": "She is or has gone.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "She is or has gone."
   },
   {
     "id": "zwickypullum1983_1b",
@@ -35,9 +33,7 @@
     "paperFeatures": [
       ["clitic", "'ve"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "zwickypullum1983_2a",
@@ -56,9 +52,7 @@
       ["criterion", "A"],
       ["host", "preposition"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "zwickypullum1983_2b",
@@ -77,9 +71,7 @@
       ["criterion", "A"],
       ["host", "verb"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "zwickypullum1983_2c",
@@ -98,9 +90,7 @@
       ["criterion", "A"],
       ["host", "adjective"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "zwickypullum1983_2d",
@@ -119,9 +109,7 @@
       ["criterion", "A"],
       ["host", "adverb"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "zwickypullum1983_3",
@@ -139,9 +127,7 @@
     "paperFeatures": [
       ["criterion", "F"]
     ],
-    "comment": "The clitic 've attaches to material already containing the clitic 'd.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The clitic 've attaches to material already containing the clitic 'd."
   },
   {
     "id": "zwickypullum1983_4a",
@@ -159,9 +145,7 @@
     "paperFeatures": [
       ["morpheme", "-n't"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "zwickypullum1983_4b",
@@ -179,9 +163,7 @@
     "paperFeatures": [
       ["criterion", "E"]
     ],
-    "comment": "Subject-auxiliary inversion carries the contracted negator with the auxiliary.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Subject-auxiliary inversion carries the contracted negator with the auxiliary."
   },
   {
     "id": "zwickypullum1983_5",
@@ -197,9 +179,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "zwickypullum1983_6",
@@ -217,9 +197,7 @@
     "paperFeatures": [
       ["criterion", "E"]
     ],
-    "comment": "The uncontracted counterpart of (4b) is out.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The uncontracted counterpart of (4b) is out."
   },
   {
     "id": "zwickypullum1983_7a",
@@ -235,9 +213,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "zwickypullum1983_7b",
@@ -253,9 +229,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "zwickypullum1983_8a",
@@ -273,9 +247,7 @@
     "paperFeatures": [
       ["clitic", "'ve"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "zwickypullum1983_8b",
@@ -293,9 +265,7 @@
     "paperFeatures": [
       ["criterion", "E"]
     ],
-    "comment": "Inversion cannot carry the clitic 've with the auxiliary.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Inversion cannot carry the clitic 've with the auxiliary."
   },
   {
     "id": "zwickypullum1983_9",
@@ -313,9 +283,7 @@
     "paperFeatures": [
       ["criterion", "F"]
     ],
-    "comment": "-n't cannot attach to material containing the clitic 'd.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "-n't cannot attach to material containing the clitic 'd."
   },
   {
     "id": "zwickypullum1983_10a",
@@ -331,9 +299,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "zwickypullum1983_10b",
@@ -349,9 +315,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "zwickypullum1983_12a",
@@ -369,9 +333,7 @@
     "paperFeatures": [
       ["criterion", "A"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "zwickypullum1983_12b",
@@ -389,9 +351,7 @@
     "paperFeatures": [
       ["criterion", "A"]
     ],
-    "comment": "-n't attaches only to finite auxiliaries.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "-n't attaches only to finite auxiliaries."
   },
   {
     "id": "zwickypullum1983_13a",
@@ -407,9 +367,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "zwickypullum1983_13b",
@@ -425,9 +383,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "zwickypullum1983_14a",
@@ -443,9 +399,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "zwickypullum1983_14b",
@@ -463,9 +417,7 @@
     "paperFeatures": [
       ["criterion", "A"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "zwickypullum1983_15a",
@@ -484,9 +436,7 @@
       ["criterion", "D"],
       ["reading", "CAN(NOT(P))"]
     ],
-    "comment": "With stressed, separated not: non-attendance can be forgiven.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "With stressed, separated not: non-attendance can be forgiven."
   },
   {
     "id": "zwickypullum1983_15b",
@@ -505,9 +455,7 @@
       ["criterion", "D"],
       ["reading", "NOT(CAN(P))"]
     ],
-    "comment": "The contracted form denies the possibility.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The contracted form denies the possibility."
   },
   {
     "id": "zwickypullum1983_16a",
@@ -525,9 +473,7 @@
     "paperFeatures": [
       ["criterion", "D"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "zwickypullum1983_16b",
@@ -545,9 +491,7 @@
     "paperFeatures": [
       ["criterion", "D"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "zwickypullum1983_17",
@@ -565,8 +509,6 @@
     "paperFeatures": [
       ["criterion", "D"]
     ],
-    "comment": "Ambiguous between denying the possibility of the trip and asking whether they can avoid it.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Ambiguous between denying the possibility of the trip and asking whether they can avoid it."
   }
 ]

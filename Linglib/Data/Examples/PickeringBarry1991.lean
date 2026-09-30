@@ -31,9 +31,7 @@ def ex15 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "piedPiping"), ("section", "Processing without gaps")]
-    comment := "The filler associates with put as soon as the verb is read."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The filler associates with put as soon as the verb is read." }
 
 def ex16 : LinguisticExample :=
   { id := "pickeringbarry1991_ex16"
@@ -49,9 +47,7 @@ def ex16 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "prepositionStranding"), ("section", "Processing without gaps")]
-    comment := "Rather awkward: the filler associates with the stranded preposition at the end."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Rather awkward: the filler associates with the stranded preposition at the end." }
 
 def ex42 : LinguisticExample :=
   { id := "pickeringbarry1991_ex42"
@@ -67,9 +63,7 @@ def ex42 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "multiplePiedPiping"), ("section", "Processing recursive constructions")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex44 : LinguisticExample :=
   { id := "pickeringbarry1991_ex44"
@@ -85,9 +79,7 @@ def ex44 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "multipleSubjectRelative"), ("section", "Processing recursive constructions")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex45 : LinguisticExample :=
   { id := "pickeringbarry1991_ex45"
@@ -103,9 +95,7 @@ def ex45 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "multipleObjectRelative"), ("section", "Processing recursive constructions")]
-    comment := "Grammatical but very hard to process."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Grammatical but very hard to process." }
 
 def ex48 : LinguisticExample :=
   { id := "pickeringbarry1991_ex48"
@@ -121,9 +111,7 @@ def ex48 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "multipleSubjectRelative"), ("section", "Processing recursive constructions")]
-    comment := "German speakers find it difficult in the same way English speakers find (45) difficult."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "German speakers find it difficult in the same way English speakers find (45) difficult." }
 
 def ex51 : LinguisticExample :=
   { id := "pickeringbarry1991_ex51"
@@ -139,9 +127,7 @@ def ex51 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "multipleSubjectRelative"), ("section", "Processing recursive constructions")]
-    comment := "A further relative clause adds no processing complexity."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A further relative clause adds no processing complexity." }
 
 def ex52 : LinguisticExample :=
   { id := "pickeringbarry1991_ex52"
@@ -157,9 +143,7 @@ def ex52 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "multipleObjectRelative"), ("section", "Processing recursive constructions")]
-    comment := "Extreme processing difficulty."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Extreme processing difficulty." }
 
 def ex53 : LinguisticExample :=
   { id := "pickeringbarry1991_ex53"
@@ -175,9 +159,7 @@ def ex53 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "multipleSubjectRelative"), ("section", "Processing recursive constructions")]
-    comment := "Virtually incomprehensible."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Virtually incomprehensible." }
 
 def ex54 : LinguisticExample :=
   { id := "pickeringbarry1991_ex54"
@@ -193,9 +175,7 @@ def ex54 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "multiplePiedPiping"), ("section", "Processing recursive constructions")]
-    comment := "Processed like (51), not like (52)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Processed like (51), not like (52)." }
 
 def ex55 : LinguisticExample :=
   { id := "pickeringbarry1991_ex55"
@@ -211,9 +191,7 @@ def ex55 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "multiplePiedPiping"), ("section", "Processing recursive constructions")]
-    comment := "Five gaps at the end of the sentence under the empty-category analysis, with no increase in processing difficulty."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Five gaps at the end of the sentence under the empty-category analysis, with no increase in processing difficulty." }
 
 def ex60 : LinguisticExample :=
   { id := "pickeringbarry1991_ex60"
@@ -229,9 +207,7 @@ def ex60 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "multiplePrepositionStranding"), ("section", "Discussion")]
-    comment := "Very hard to process: the filler–preposition associations are nested."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Very hard to process: the filler–preposition associations are nested." }
 
 def ex62 : LinguisticExample :=
   { id := "pickeringbarry1991_ex62"
@@ -247,9 +223,7 @@ def ex62 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "multipleObjectRelativeDitransitive"), ("section", "Discussion")]
-    comment := "Under the reading where Mary gave the slave the punishment and Tom sold the nobleman the slave."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Under the reading where Mary gave the slave the punishment and Tom sold the nobleman the slave." }
 
 def ex82a : LinguisticExample :=
   { id := "pickeringbarry1991_ex82a"
@@ -265,9 +239,7 @@ def ex82a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "embeddedQuestion"), ("section", "Unbounded dependencies in categorial grammar")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex82b : LinguisticExample :=
   { id := "pickeringbarry1991_ex82b"
@@ -283,9 +255,7 @@ def ex82b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "embeddedQuestion"), ("section", "Unbounded dependencies in categorial grammar")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex82c : LinguisticExample :=
   { id := "pickeringbarry1991_ex82c"
@@ -301,9 +271,7 @@ def ex82c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "embeddedQuestion"), ("section", "Unbounded dependencies in categorial grammar")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex82d : LinguisticExample :=
   { id := "pickeringbarry1991_ex82d"
@@ -319,9 +287,7 @@ def ex82d : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "embeddedQuestion"), ("section", "Unbounded dependencies in categorial grammar")]
-    comment := "Also with whom."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Also with whom." }
 
 def ex93 : LinguisticExample :=
   { id := "pickeringbarry1991_ex93"
@@ -337,9 +303,7 @@ def ex93 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "recursivePassive"), ("section", "Passives")]
-    comment := "Not hard to process, even if further recursions are added."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Not hard to process, even if further recursions are added." }
 
 def all : List LinguisticExample := [ex15, ex16, ex42, ex44, ex45, ex48, ex51, ex52, ex53, ex54, ex55, ex60, ex62, ex82a, ex82b, ex82c, ex82d, ex93]
 

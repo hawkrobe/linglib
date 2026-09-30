@@ -21,9 +21,7 @@
     "paperFeatures": [
       ["structure", "(17)"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "asherlascarides2003_18_pink",
@@ -50,9 +48,7 @@
       ["antecedent", "salmon"],
       ["antecedentLabel", "3"]
     ],
-    "comment": "The salmon is introduced in the constituent labelled π3, which is not on the right frontier.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The salmon is introduced in the constituent labelled π3, which is not on the right frontier."
   },
   {
     "id": "asherlascarides2003_19",
@@ -73,9 +69,7 @@
     "paperFeatures": [
       ["relations", "Contrast, Narration"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "asherlascarides2003_22",
@@ -97,9 +91,7 @@
       ["relations", "Background"],
       ["antecedent", "car"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "asherlascarides2003_23",
@@ -121,8 +113,6 @@
       ["relations", "Consequence"],
       ["antecedent", "car"]
     ],
-    "comment": "The car is under negation in the antecedent and so not available to the pronoun.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The car is under negation in the antecedent and so not available to the pronoun."
   }
 ]

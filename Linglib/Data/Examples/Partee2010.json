@@ -12,9 +12,7 @@
     "context": "Cited as an apparently-true privative entailment (the prima facie evidence for the privative class).",
     "judgment": "acceptable",
     "readings": [],
-    "comment": "Partee §2. Paired with (10b): if 'gun' excludes fake guns (the privative analysis), why is (10b) well-formed?",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Partee §2. Paired with (10b): if 'gun' excludes fake guns (the privative analysis), why is (10b) well-formed?"
   },
   {
     "id": "partee2010_10b",
@@ -29,9 +27,7 @@
     "context": "The 'gun puzzle': for this question to be well-formed, 'gun' must include both real and fake guns. Direct evidence that the noun's denotation coerces to include the adjective's extension.",
     "judgment": "acceptable",
     "readings": [],
-    "comment": "Partee §2 ex. (10b). The motivating puzzle: traditional privative analysis predicts 'gun' ∩ 'fake gun' = ∅, but (10b) presupposes 'gun' covers both. Resolved in §4 via NVP-licensed coercion of 'gun' to 'gun*'.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Partee §2 ex. (10b). The motivating puzzle: traditional privative analysis predicts 'gun' ∩ 'fake gun' = ∅, but (10b) presupposes 'gun' covers both. Resolved in §4 via NVP-licensed coercion of 'gun' to 'gun*'."
   },
   {
     "id": "partee2010_11a",
@@ -47,9 +43,7 @@
     "context": "Unmarked NP-internal word order; Adj+N adjacent within the PP.",
     "judgment": "acceptable",
     "readings": [],
-    "comment": "Partee 2010 §3 ex. (11a); Nowak 2000. Baseline for the split construction in (11b).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Partee 2010 §3 ex. (11a); Nowak 2000. Baseline for the split construction in (11b)."
   },
   {
     "id": "partee2010_11b",
@@ -65,9 +59,7 @@
     "context": "NP-split: preposition + adjective in sentence-initial position, head noun sentence-final. Topic-focus structure highlights the noun.",
     "judgment": "acceptable",
     "readings": [],
-    "comment": "Partee 2010 §3 ex. (11b); Nowak 2000. The split-NP construction central to Partee's argument: intersective 'przystojny' splits cleanly. Compare with (14b) where non-subsective 'były' cannot split.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Partee 2010 §3 ex. (11b); Nowak 2000. The split-NP construction central to Partee's argument: intersective 'przystojny' splits cleanly. Compare with (14b) where non-subsective 'były' cannot split."
   },
   {
     "id": "partee2010_13b",
@@ -83,9 +75,7 @@
     "context": "NP-split with intersective adjective 'rozległy' (large). The split succeeds, as expected for intersective Adj+N.",
     "judgment": "acceptable",
     "readings": [],
-    "comment": "Partee 2010 §3 ex. (13b); Nowak 2000. Intersective member of the splittable class (15a/c).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Partee 2010 §3 ex. (13b); Nowak 2000. Intersective member of the splittable class (15a/c)."
   },
   {
     "id": "partee2010_14b",
@@ -101,9 +91,7 @@
     "context": "Attempted NP-split with non-subsective modal adjective 'były' (former). The split is ungrammatical.",
     "judgment": "ungrammatical",
     "readings": [],
-    "comment": "Partee 2010 §3 ex. (14b); Nowak 2000. Critical negative datum: non-subsective adjectives cannot split. This is the empirical contrast that motivates the 3-class hierarchy: the splitting diagnostic distinguishes subsective (including former privatives) from non-subsective, NOT privative from non-privative.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Partee 2010 §3 ex. (14b); Nowak 2000. Critical negative datum: non-subsective adjectives cannot split. This is the empirical contrast that motivates the 3-class hierarchy: the splitting diagnostic distinguishes subsective (including former privatives) from non-subsective, NOT privative from non-privative."
   },
   {
     "id": "partee2010_biedny_ambiguity",
@@ -121,9 +109,7 @@
       {"name": "intersective 'not rich'", "judgment": "acceptable"},
       {"name": "non-subsective 'pitiful'", "judgment": "unacceptable"}
     ],
-    "comment": "Partee 2010 §3 exs. (15b) and (16a); Nowak 2000. The single most precise empirical claim in the paper: the same lexical item splits or fails to split depending on its semantic class. This refutes any attempt to assimilate splitting to a morphological or lexical feature of the adjective. The `readings` field captures the discrimination at the reading level — the discrimination cannot be encoded at the class level alone.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Partee 2010 §3 exs. (15b) and (16a); Nowak 2000. The single most precise empirical claim in the paper: the same lexical item splits or fails to split depending on its semantic class. This refutes any attempt to assimilate splitting to a morphological or lexical feature of the adjective. The `readings` field captures the discrimination at the reading level — the discrimination cannot be encoded at the class level alone."
   },
   {
     "id": "partee2010_17b",
@@ -139,9 +125,7 @@
     "context": "Generalization of the (10b) gun-puzzle to 'fur'. The polar disjunction 'fake or real' presupposes that 'fur' covers both fake and real fur; otherwise 'real' would be redundant. Direct evidence of NVP-licensed coercion of the noun extension.",
     "judgment": "acceptable",
     "readings": [],
-    "comment": "Partee 2010 §4 ex. (17b). Together with (10b), the canonical evidence for noun-extension coercion. The paper notes 'real' would always be redundant without coercion.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Partee 2010 §4 ex. (17b). Together with (10b), the canonical evidence for noun-extension coercion. The paper notes 'real' would always be redundant without coercion."
   },
   {
     "id": "partee2010_19b",
@@ -156,9 +140,7 @@
     "context": "Test case for HPP (Head Primacy Principle): the head 'giant' fixes the local domain; the modifier 'midget' is interpreted relative to that domain, yielding 'small for a giant'. Compare (19a) 'giant midget' = a midget who is exceptionally large.",
     "judgment": "acceptable",
     "readings": [],
-    "comment": "Partee 2010 §4 ex. (19b); credited to Kamp & Partee 1995. The classical HPP example: identical adjective+noun pairs receive different interpretations depending on which is head, because the head fixes the local domain.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Partee 2010 §4 ex. (19b); credited to Kamp & Partee 1995. The classical HPP example: identical adjective+noun pairs receive different interpretations depending on which is head, because the head fixes the local domain."
   },
   {
     "id": "partee2010_21b",
@@ -173,9 +155,7 @@
     "context": "Test case for NVP (Non-Vacuity Principle). Generic predication: 'sharp' would be redundant if 'knife' presupposed sharpness; NVP forces a reading where some knives are not sharp, so the generic claim is non-vacuous.",
     "judgment": "acceptable",
     "readings": [],
-    "comment": "Partee 2010 §4 ex. (21b); credited to Kamp & Partee 1995. Demonstrates that NVP applies to simple predicates, not just to Adj+N combinations — the same principle Partee invokes for privative coercion.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Partee 2010 §4 ex. (21b); credited to Kamp & Partee 1995. Demonstrates that NVP applies to simple predicates, not just to Adj+N combinations — the same principle Partee invokes for privative coercion."
   },
   {
     "id": "partee2010_22b",
@@ -190,9 +170,7 @@
     "context": "Demonstrates context-shift of the noun 'poet' independent of any adjective. With predicate 'buried', 'poets' presupposes dead poets; with 'live in' or similar present-tense, 'poets' presupposes living poets. Shows N's extension is itself adjustable, supporting the coercion mechanism Partee invokes for privatives.",
     "judgment": "acceptable",
     "readings": [],
-    "comment": "Partee 2010 §4 ex. (22b). Closing argument: noun extensions are context-adjustable independently of adjective modification, so the coercion machinery posited for privatives isn't an ad hoc rescue — it's a general property of noun interpretation.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Partee 2010 §4 ex. (22b). Closing argument: noun extensions are context-adjustable independently of adjective modification, so the coercion machinery posited for privatives isn't an ad hoc rescue — it's a general property of noun interpretation."
   },
   {
     "id": "partee2010_12a",
@@ -208,9 +186,7 @@
     "context": "Unmarked NP-internal order; baseline for the split in (12b).",
     "judgment": "acceptable",
     "readings": [],
-    "comment": "Partee 2010 §3 ex. (12a); Nowak 2000. Unsplit baseline for the (12b) split-NP contrast.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Partee 2010 §3 ex. (12a); Nowak 2000. Unsplit baseline for the (12b) split-NP contrast."
   },
   {
     "id": "partee2010_12b",
@@ -226,9 +202,7 @@
     "context": "NP-split: noun-in-PP sentence-initial, adjective sentence-final. Intersective 'nowy' (new) splits cleanly.",
     "judgment": "acceptable",
     "readings": [],
-    "comment": "Partee 2010 §3 ex. (12b); Nowak 2000. A second splittable intersective adjective, paired with (11b) to show the pattern is not lexically isolated.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Partee 2010 §3 ex. (12b); Nowak 2000. A second splittable intersective adjective, paired with (11b) to show the pattern is not lexically isolated."
   },
   {
     "id": "partee2010_13a",
@@ -244,9 +218,7 @@
     "context": "Alternate split order: preposition + adjective initial, noun final. Pair-mate of (13b).",
     "judgment": "acceptable",
     "readings": [],
-    "comment": "Partee 2010 §3 ex. (13a); Nowak 2000. Both orderings of (13) are acceptable splits, demonstrating that the construction does not constrain which element is sentence-final.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Partee 2010 §3 ex. (13a); Nowak 2000. Both orderings of (13) are acceptable splits, demonstrating that the construction does not constrain which element is sentence-final."
   },
   {
     "id": "partee2010_14a",
@@ -262,9 +234,7 @@
     "context": "Attempted NP-split with non-subsective 'były' (former). Ungrammatical regardless of split order; pair-mate of (14b).",
     "judgment": "ungrammatical",
     "readings": [],
-    "comment": "Partee 2010 §3 ex. (14a); Nowak 2000. The ungrammaticality holds for both split orders, ruling out a syntactic explanation tied to which element is sentence-final.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Partee 2010 §3 ex. (14a); Nowak 2000. The ungrammaticality holds for both split orders, ruling out a syntactic explanation tied to which element is sentence-final."
   },
   {
     "id": "partee2010_17a",
@@ -280,9 +250,7 @@
     "context": "Explicit form of the fur disjunction, with both 'fake fur' and 'real fur' as full NPs. The acceptability shows the noun 'fur' uncontroversially covers both extensions.",
     "judgment": "acceptable",
     "readings": [],
-    "comment": "Partee 2010 §4 ex. (17a). The unreduced form makes the coercion visible: 'fur' must be the extension covering both halves of the disjunction.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Partee 2010 §4 ex. (17a). The unreduced form makes the coercion visible: 'fur' must be the extension covering both halves of the disjunction."
   },
   {
     "id": "partee2010_19a",
@@ -297,9 +265,7 @@
     "context": "HPP pair-mate of (19b): with 'midget' as head, the local domain is midgets; 'giant' shifts to 'large for a midget'. Same words, opposite interpretations.",
     "judgment": "acceptable",
     "readings": [],
-    "comment": "Partee 2010 §4 ex. (19a); Kamp & Partee 1995. The (19a)/(19b) minimal pair is the canonical demonstration that head choice fixes the local domain — without (19a) as foil, (19b) does not make the HPP point.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Partee 2010 §4 ex. (19a); Kamp & Partee 1995. The (19a)/(19b) minimal pair is the canonical demonstration that head choice fixes the local domain — without (19a) as foil, (19b) does not make the HPP point."
   },
   {
     "id": "partee2010_21a",
@@ -315,9 +281,7 @@
     "context": "Episodic predication mate of the generic (21b). Both can be true together; 'sharp' is not redundant in (21a) because NVP requires the local domain of knives to contain both sharp and non-sharp instances.",
     "judgment": "acceptable",
     "readings": [],
-    "comment": "Partee 2010 §4 ex. (21a); Kamp & Partee 1995. Without (21a) as foil, the NVP analysis of (21b) does not have a contrastive case to anchor.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Partee 2010 §4 ex. (21a); Kamp & Partee 1995. Without (21a) as foil, the NVP analysis of (21b) does not have a contrastive case to anchor."
   },
   {
     "id": "partee2010_22a",
@@ -332,8 +296,6 @@
     "context": "Existential predicate companion of (22b). With 'are there', 'poets' presupposes living poets, contrasting with (22b) where 'are buried' presupposes dead poets. Same noun, context-shifted extension.",
     "judgment": "acceptable",
     "readings": [],
-    "comment": "Partee 2010 §4 ex. (22a). Required as the live-poets foil for (22b)'s dead-poets reading; the pair demonstrates that the noun-extension shift Partee invokes for privatives is independently attested for ordinary nouns under predicate-driven coercion.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Partee 2010 §4 ex. (22a). Required as the live-poets foil for (22b)'s dead-poets reading; the pair demonstrates that the noun-extension shift Partee invokes for privatives is independently attested for ordinary nouns under predicate-driven coercion."
   }
 ]

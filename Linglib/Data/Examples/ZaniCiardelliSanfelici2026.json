@@ -16,9 +16,7 @@
       ["mode", "indicative"],
       ["reading", "SDA"]
     ],
-    "comment": "Intuitively equivalent to the conjunction of its simplifications, (2a).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Intuitively equivalent to the conjunction of its simplifications, (2a)."
   },
   {
     "id": "zaniciardellisanfelici2026_1b",
@@ -37,9 +35,7 @@
       ["mode", "counterfactual"],
       ["reading", "SDA"]
     ],
-    "comment": "Intuitively equivalent to the conjunction of its simplifications, (2b).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Intuitively equivalent to the conjunction of its simplifications, (2b)."
   },
   {
     "id": "zaniciardellisanfelici2026_3",
@@ -59,9 +55,7 @@
       ["reading", "AR"],
       ["type", "specificational"]
     ],
-    "comment": "Cited from McKay and van Inwagen (1977): true because fighting with the Axis is the more realistic disjunct, so SDA fails.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Cited from McKay and van Inwagen (1977): true because fighting with the Axis is the more realistic disjunct, so SDA fails."
   },
   {
     "id": "zaniciardellisanfelici2026_4",
@@ -80,9 +74,7 @@
       ["mode", "counterfactual"],
       ["reading", "SDA"]
     ],
-    "comment": "Nute's bumper-crop example: judged false because the simplification with the less realistic disjunct, (4b), is false, against Lewis's prediction.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Nute's bumper-crop example: judged false because the simplification with the less realistic disjunct, (4b), is false, against Lewis's prediction."
   },
   {
     "id": "zaniciardellisanfelici2026_6",
@@ -101,9 +93,7 @@
       ["mode", "indicative"],
       ["reading", "DCR"]
     ],
-    "comment": "The continuation forces the disjunctive conditional reading: the disjunction of the simplifications.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The continuation forces the disjunctive conditional reading: the disjunction of the simplifications."
   },
   {
     "id": "zaniciardellisanfelici2026_7",
@@ -121,9 +111,7 @@
     "paperFeatures": [
       ["inference", "free choice"]
     ],
-    "comment": "Free-choice inference to each permission, taken to share its source with SDA.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Free-choice inference to each permission, taken to share its source with SDA."
   },
   {
     "id": "zaniciardellisanfelici2026_8",
@@ -141,9 +129,7 @@
     "paperFeatures": [
       ["phenomenon", "plural definite homogeneity"]
     ],
-    "comment": "Adults require all circles red; about a third of 4- and 5-year-olds accept it once some circles are red (Tieu et al. 2019).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Adults require all circles red; about a third of 4- and 5-year-olds accept it once some circles are red (Tieu et al. 2019)."
   },
   {
     "id": "zaniciardellisanfelici2026_target_ind",
@@ -168,9 +154,7 @@
       ["item", "target"],
       ["schema", "(9a)"]
     ],
-    "comment": "Target item: the hazelnut is the squirrel's prize, so one simplification is true and the other false.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Target item: the hazelnut is the squirrel's prize, so one simplification is true and the other false."
   },
   {
     "id": "zaniciardellisanfelici2026_target_ctf",
@@ -195,9 +179,7 @@
       ["item", "target"],
       ["schema", "(9a)"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "zaniciardellisanfelici2026_control_ind",
@@ -221,9 +203,7 @@
       ["item", "control"],
       ["expected", "true"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "zaniciardellisanfelici2026_control_ctf",
@@ -248,9 +228,7 @@
       ["item", "control"],
       ["expected", "true"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "zaniciardellisanfelici2026_closeness_ind",
@@ -272,9 +250,7 @@
       ["mode", "indicative"],
       ["item", "closeness evaluation"]
     ],
-    "comment": "Acceptance reveals that the participant regards the squirrel as a more realistic winner than the tortoise.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Acceptance reveals that the participant regards the squirrel as a more realistic winner than the tortoise."
   },
   {
     "id": "zaniciardellisanfelici2026_closeness_ctf",
@@ -297,9 +273,7 @@
       ["mode", "counterfactual"],
       ["item", "closeness evaluation"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "zaniciardellisanfelici2026_app_1",
@@ -324,9 +298,7 @@
       ["agreement", "singular"],
       ["reading", "DCR"]
     ],
-    "comment": "Singular agreement with the disjunctive subject allows the ignorance continuation.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Singular agreement with the disjunctive subject allows the ignorance continuation."
   },
   {
     "id": "zaniciardellisanfelici2026_app_2",
@@ -351,8 +323,6 @@
       ["agreement", "plural"],
       ["reading", "DCR"]
     ],
-    "comment": "Plural agreement blocks the ignorance continuation, marked # in the paper.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Plural agreement blocks the ignorance continuation, marked # in the paper."
   }
 ]

@@ -20,9 +20,7 @@
       ["classifier", "kenBuilding"],
       ["criterion", "cooccursWithNoun"]
     ],
-    "comment": "The second criterion of the definition: a true classifier readily co-occurs with a noun denoting the enumerated referent.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The second criterion of the definition: a true classifier readily co-occurs with a noun denoting the enumerated referent."
   },
   {
     "id": "downing1996_1_15",
@@ -45,9 +43,7 @@
       ["chapter", "1"],
       ["criterion", "cooccursWithNoun"]
     ],
-    "comment": "An unclassified time word: adding the co-referring noun hi 'day' is grammatical but marked, so -ka is not a classifier by the second criterion.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "An unclassified time word: adding the co-referring noun hi 'day' is grammatical but marked, so -ka is not a classifier by the second criterion."
   },
   {
     "id": "downing1996_3_2a",
@@ -69,9 +65,7 @@
       ["chapter", "3"],
       ["trait", "withoutNoun"]
     ],
-    "comment": "The classifier rooru cannot appear without an accompanying noun or antecedent.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The classifier rooru cannot appear without an accompanying noun or antecedent."
   },
   {
     "id": "downing1996_3_2b",
@@ -96,9 +90,7 @@
       ["classifier", "tsubu"],
       ["trait", "withoutNoun"]
     ],
-    "comment": "The shape classifier tsubu does not readily stand alone without a nominal antecedent.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The shape classifier tsubu does not readily stand alone without a nominal antecedent."
   },
   {
     "id": "downing1996_3_3",
@@ -124,9 +116,7 @@
       ["classifier", "hiki"],
       ["trait", "alternation"]
     ],
-    "comment": "Animate referents are invariably marked as such: live snakes take hiki and never the shape classifiers hon or suji, though they are long and thin.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Animate referents are invariably marked as such: live snakes take hiki and never the shape classifiers hon or suji, though they are long and thin."
   },
   {
     "id": "downing1996_3_4",
@@ -151,9 +141,7 @@
       ["classifier", "tsu"],
       ["trait", "alternation"]
     ],
-    "comment": "Shape classifiers may be replaced by the general tsu to combine referents of different classes.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Shape classifiers may be replaced by the general tsu to combine referents of different classes."
   },
   {
     "id": "downing1996_3_5a",
@@ -176,9 +164,7 @@
       ["classifier", "nin"],
       ["trait", "alternation"]
     ],
-    "comment": "The human classifier, unlike the shape classifiers, cannot be generalised to cover a dog together with a person; speakers vary.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The human classifier, unlike the shape classifiers, cannot be generalised to cover a dog together with a person; speakers vary."
   },
   {
     "id": "downing1996_3_33",
@@ -202,9 +188,7 @@
       ["cohesion", "kind"],
       ["function", "disambiguation"]
     ],
-    "comment": "A kind-classifier disambiguates a noun: dai picks out the telephone as apparatus and tsuu the telephone call.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A kind-classifier disambiguates a noun: dai picks out the telephone as apparatus and tsuu the telephone call."
   },
   {
     "id": "downing1996_3_35",
@@ -229,9 +213,7 @@
       ["cohesion", "quality"],
       ["function", "disambiguation"]
     ],
-    "comment": "Quality-classifiers disambiguate too: tsubu a grape, ko a grape or a bunch, fusa a bunch.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Quality-classifiers disambiguate too: tsubu a grape, ko a grape or a bunch, fusa a bunch."
   },
   {
     "id": "downing1996_3_36",
@@ -256,9 +238,7 @@
       ["cohesion", "quality"],
       ["function", "disambiguation"]
     ],
-    "comment": "hon a plum branch, ko a plum, and the kind-classifier rin a plum blossom.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "hon a plum branch, ko a plum, and the kind-classifier rin a plum blossom."
   },
   {
     "id": "downing1996_3_37a",
@@ -283,9 +263,7 @@
       ["cohesion", "quality"],
       ["function", "addingInformation"]
     ],
-    "comment": "A quality-classifier imposes on mist, a noun that normally takes no classifier, a shape the noun does not imply.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A quality-classifier imposes on mist, a noun that normally takes no classifier, a shape the noun does not imply."
   },
   {
     "id": "downing1996_3_38",
@@ -309,9 +287,7 @@
       ["classifier", "ten"],
       ["function", "addingInformation"]
     ],
-    "comment": "Stamps, which normally take mai, are counted with ten, the classifier for works of art, to convey their artistic value.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Stamps, which normally take mai, are counted with ten, the classifier for works of art, to convey their artistic value."
   },
   {
     "id": "downing1996_3_39",
@@ -334,9 +310,7 @@
       ["cohesion", "quality"],
       ["function", "addingInformation"]
     ],
-    "comment": "Feet printed on a sheet of paper take mai rather than hon or tsu: a shape classifier marks a referent as a non-standard member of the noun's category, a use closed to the kind-classifiers.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Feet printed on a sheet of paper take mai rather than hon or tsu: a shape classifier marks a referent as a non-standard member of the noun's category, a use closed to the kind-classifiers."
   },
   {
     "id": "downing1996_5_7",
@@ -360,9 +334,7 @@
       ["classifier", "wa"],
       ["function", "predication"]
     ],
-    "comment": "A numeral-classifier pair does not answer a question about the nature of a referent; a full noun does, (8). Classifiers acknowledge category membership rather than assert it.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A numeral-classifier pair does not answer a question about the nature of a referent; a full noun does, (8). Classifiers acknowledge category membership rather than assert it."
   },
   {
     "id": "downing1996_5_9",
@@ -385,9 +357,7 @@
       ["chapter", "5"],
       ["function", "disambiguation"]
     ],
-    "comment": "The classifier carries an independent semantic load when one noun admits several classifiers: a sheet of stamps against one stamp.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The classifier carries an independent semantic load when one noun admits several classifiers: a sheet of stamps against one stamp."
   },
   {
     "id": "downing1996_6_2",
@@ -409,9 +379,7 @@
       ["classifier", "hiki"],
       ["use", "predicate"]
     ],
-    "comment": "A noun-less numeral-classifier pair used non-referentially, as the predicate.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A noun-less numeral-classifier pair used non-referentially, as the predicate."
   },
   {
     "id": "downing1996_6_5",
@@ -435,9 +403,7 @@
       ["classifier", "hiki"],
       ["use", "additionalMembers"]
     ],
-    "comment": "Classifier phrases introducing additional members of a category already introduced, pronouns of laziness.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Classifier phrases introducing additional members of a category already introduced, pronouns of laziness."
   },
   {
     "id": "downing1996_6_6",
@@ -461,9 +427,7 @@
       ["classifier", "nin"],
       ["use", "subsets"]
     ],
-    "comment": "Naked numeral-classifier pairs singling out subsets of a grouping already introduced.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Naked numeral-classifier pairs singling out subsets of a grouping already introduced."
   },
   {
     "id": "downing1996_6_9",
@@ -486,9 +450,7 @@
       ["classifier", "nin"],
       ["use", "anaphoric"]
     ],
-    "comment": "A numeral-classifier pair carrying the identity of individuals already mentioned, like a zero anaphor or pronoun, and at a distance excluding them.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A numeral-classifier pair carrying the identity of individuals already mentioned, like a zero anaphor or pronoun, and at a distance excluding them."
   },
   {
     "id": "downing1996_6_13",
@@ -512,9 +474,7 @@
       ["construction", "preNominal"],
       ["use", "introduction"]
     ],
-    "comment": "'One' plus classifier introduces a specific referent, like English 'a certain'; 'one' never appears in the anaphoric use, competing with zero anaphora and carrying little contrastive information.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "'One' plus classifier introduces a specific referent, like English 'a certain'; 'one' never appears in the anaphoric use, competing with zero anaphora and carrying little contrastive information."
   },
   {
     "id": "downing1996_6_20",
@@ -538,9 +498,7 @@
       ["classifier", "nin"],
       ["use", "anaphoric"]
     ],
-    "comment": "The classifier phrase refers to the couple evenhandedly, avoiding the collective noun fuufu and the centring of Shingo-tachi or kanojo-tachi on one member.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The classifier phrase refers to the couple evenhandedly, avoiding the collective noun fuufu and the centring of Shingo-tachi or kanojo-tachi on one member."
   },
   {
     "id": "downing1996_7_2b",
@@ -564,9 +522,7 @@
       ["classifier", "nin"],
       ["number", "classifierAndPlural"]
     ],
-    "comment": "A classifier phrase and a plural suffix on one noun phrase without redundancy, against the hypothesis that classifiers and plural morphemes are in complementary distribution.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A classifier phrase and a plural suffix on one noun phrase without redundancy, against the hypothesis that classifiers and plural morphemes are in complementary distribution."
   },
   {
     "id": "downing1996_7_3",
@@ -589,9 +545,7 @@
       ["chapter", "7"],
       ["number", "transnumeral"]
     ],
-    "comment": "Bare nouns are transnumeral: me 'eye' refers to two eyes and hana 'nose' to one.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Bare nouns are transnumeral: me 'eye' refers to two eyes and hana 'nose' to one."
   },
   {
     "id": "downing1996_7_4",
@@ -615,9 +569,7 @@
       ["construction", "qFloat"],
       ["number", "unitizing"]
     ],
-    "comment": "A classifier phrase spells out the number of referents of a transnumeral noun.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A classifier phrase spells out the number of referents of a transnumeral noun."
   },
   {
     "id": "downing1996_7_6a",
@@ -644,9 +596,7 @@
       ["head", "commonNoun"],
       ["number", "pluralPossible"]
     ],
-    "comment": "A common noun with human referents takes a plural marker or not: Table 7.2, possible.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A common noun with human referents takes a plural marker or not: Table 7.2, possible."
   },
   {
     "id": "downing1996_7_7a",
@@ -671,9 +621,7 @@
       ["head", "commonNoun"],
       ["number", "pluralRare"]
     ],
-    "comment": "A plural marker on a common noun with animal referents is marginal, acceptable only for personified animals: Table 7.2, rare.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A plural marker on a common noun with animal referents is marginal, acceptable only for personified animals: Table 7.2, rare."
   },
   {
     "id": "downing1996_7_8a",
@@ -698,9 +646,7 @@
       ["head", "commonNoun"],
       ["number", "pluralImpossible"]
     ],
-    "comment": "Common nouns with inanimate referents reject plural markers: Table 7.2, impossible.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Common nouns with inanimate referents reject plural markers: Table 7.2, impossible."
   },
   {
     "id": "downing1996_7_9",
@@ -725,9 +671,7 @@
       ["head", "pronoun"],
       ["number", "pluralRequired"]
     ],
-    "comment": "With the same inanimate referents, the plural suffix is required on a demonstrative pronoun and unacceptable on a common noun, even one modified by a demonstrative.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "With the same inanimate referents, the plural suffix is required on a demonstrative pronoun and unacceptable on a common noun, even one modified by a demonstrative."
   },
   {
     "id": "downing1996_7_10",
@@ -755,9 +699,7 @@
       ["head", "pronoun"],
       ["number", "pluralRequired"]
     ],
-    "comment": "The common noun kanja may or may not carry the plural marker; the pronoun kare referring to the same group must.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The common noun kanja may or may not carry the plural marker; the pronoun kare referring to the same group must."
   },
   {
     "id": "downing1996_7_11",
@@ -781,9 +723,7 @@
       ["head", "properNoun"],
       ["number", "associativePlural"]
     ],
-    "comment": "On a proper noun the suffix is an associative plural, a group centred on Mr. Endo.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "On a proper noun the suffix is an associative plural, a group centred on Mr. Endo."
   },
   {
     "id": "downing1996_7_12",
@@ -811,9 +751,7 @@
       ["head", "commonNoun"],
       ["number", "classPlural"]
     ],
-    "comment": "On the common noun kodomo the suffix is a class plural only; okaasan, usable as a common noun or a proper name, yields a plural or an associative reading.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "On the common noun kodomo the suffix is a class plural only; okaasan, usable as a common noun or a proper name, yields a plural or an associative reading."
   },
   {
     "id": "downing1996_7_16",
@@ -842,9 +780,7 @@
       ["number", "tracking"],
       ["mentions", "classifierPhrase,pluralMarked,pluralMarked"]
     ],
-    "comment": "The referents are introduced by category with a classifier phrase and tracked as individuals with plural markers; the reverse order is unattested.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The referents are introduced by category with a classifier phrase and tracked as individuals with plural markers; the reverse order is unattested."
   },
   {
     "id": "downing1996_7_18",
@@ -867,9 +803,7 @@
       ["classifier", "hiki"],
       ["number", "unitizing"]
     ],
-    "comment": "A classifier phrase merely unitizes random members of a category, where a plural marker would flag particular tracking-worthy individuals.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A classifier phrase merely unitizes random members of a category, where a plural marker would flag particular tracking-worthy individuals."
   },
   {
     "id": "downing1996_7_23",
@@ -897,9 +831,7 @@
       ["number", "tracking"],
       ["mentions", "classifierPhrase,pluralMarked"]
     ],
-    "comment": "Introduction with noun plus classifier construction, then a noun plus plural marker: the typical pattern for groups of human referents.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Introduction with noun plus classifier construction, then a noun plus plural marker: the typical pattern for groups of human referents."
   },
   {
     "id": "downing1996_8_1",
@@ -924,9 +856,7 @@
       ["classifier", "dai"],
       ["construction", "preNominal"]
     ],
-    "comment": "The pre-nominal construction is specific and exhaustive, 'the two cars'; the Q-Float variant reads 'two of the cars'.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The pre-nominal construction is specific and exhaustive, 'the two cars'; the Q-Float variant reads 'two of the cars'."
   },
   {
     "id": "downing1996_8_2",
@@ -951,9 +881,7 @@
       ["classifier", "hon"],
       ["construction", "preNominal"]
     ],
-    "comment": "The pre-nominal construction emphasises the referents as individuals and is awkward where distinctions between members are irrelevant; Q-Float is preferred.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The pre-nominal construction emphasises the referents as individuals and is awkward where distinctions between members are irrelevant; Q-Float is preferred."
   },
   {
     "id": "downing1996_8_3",
@@ -978,9 +906,7 @@
       ["classifier", "nin"],
       ["construction", "preNominal"]
     ],
-    "comment": "Pre-nominal is preferred for particular individuals known to the speaker.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Pre-nominal is preferred for particular individuals known to the speaker."
   },
   {
     "id": "downing1996_8_4",
@@ -1004,9 +930,7 @@
       ["classifier", "nin"],
       ["construction", "qFloat"]
     ],
-    "comment": "Q-Float is preferred where the individuals are not identifiable as individuals.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Q-Float is preferred where the individuals are not identifiable as individuals."
   },
   {
     "id": "downing1996_8_5",
@@ -1030,9 +954,7 @@
       ["classifier", "nin"],
       ["construction", "appositive"]
     ],
-    "comment": "The nominal of the pre-nominal construction must denote a category; a pronoun is possible only in the appositive construction.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The nominal of the pre-nominal construction must denote a category; a pronoun is possible only in the appositive construction."
   },
   {
     "id": "downing1996_8_8",
@@ -1056,9 +978,7 @@
       ["construction", "preNominal"],
       ["use", "definitenessBlocking"]
     ],
-    "comment": "'One' plus classifier blocks the reading on which the referent exhausts the category.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "'One' plus classifier blocks the reading on which the referent exhausts the category."
   },
   {
     "id": "downing1996_8_17",
@@ -1081,9 +1001,7 @@
       ["construction", "appositive"],
       ["number", "associativePlural"]
     ],
-    "comment": "The appositive construction admits a proper name with the associative plural; the pre-nominal Go-nin-no Taroo-tachi-ga would mean five people all named Taro, (18).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The appositive construction admits a proper name with the associative plural; the pre-nominal Go-nin-no Taroo-tachi-ga would mean five people all named Taro, (18)."
   },
   {
     "id": "downing1996_8_19",
@@ -1108,9 +1026,7 @@
       ["construction", "appositive"],
       ["use", "exhaustive"]
     ],
-    "comment": "The appositive construction with a predictable number emphasises that the referent exhausts the group.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The appositive construction with a predictable number emphasises that the referent exhausts the group."
   },
   {
     "id": "downing1996_8_25",
@@ -1134,9 +1050,7 @@
       ["classifier", "nin"],
       ["construction", "summativeAppositive"]
     ],
-    "comment": "The summative appositive: the nominal enumerates the individuals whose number the classifier phrase confirms.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The summative appositive: the nominal enumerates the individuals whose number the classifier phrase confirms."
   },
   {
     "id": "downing1996_8_28",
@@ -1160,9 +1074,7 @@
       ["construction", "qFloat"],
       ["use", "distributive"]
     ],
-    "comment": "The adverbial flavour of Q-Float shows in distributive uses.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The adverbial flavour of Q-Float shows in distributive uses."
   },
   {
     "id": "downing1996_8_30",
@@ -1188,9 +1100,7 @@
       ["construction", "qFloat"],
       ["use", "introduction"]
     ],
-    "comment": "In introductions of individuated referents either construction may be used, with the same gloss.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "In introductions of individuated referents either construction may be used, with the same gloss."
   },
   {
     "id": "downing1996_8_31",
@@ -1216,9 +1126,7 @@
       ["construction", "preNominal"],
       ["role", "oblique"]
     ],
-    "comment": "Q-Float cannot quantify an argument bearing the comitative particle to.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Q-Float cannot quantify an argument bearing the comitative particle to."
   },
   {
     "id": "downing1996_8_33",
@@ -1244,9 +1152,7 @@
       ["construction", "preNominal"],
       ["role", "dativeSubject"]
     ],
-    "comment": "The dative-marked subject of wakaru does not launch Q-Float, while its nominative-marked subject does, (34): evidence for a case-marking account over a grammatical-role account.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The dative-marked subject of wakaru does not launch Q-Float, while its nominative-marked subject does, (34): evidence for a case-marking account over a grammatical-role account."
   },
   {
     "id": "downing1996_8_34",
@@ -1272,9 +1178,7 @@
       ["construction", "qFloat"],
       ["role", "nominativeSubject"]
     ],
-    "comment": "The same subject with the nominative particle ga launches Q-Float.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The same subject with the nominative particle ga launches Q-Float."
   },
   {
     "id": "downing1996_8_38",
@@ -1301,9 +1205,7 @@
       ["construction", "qFloat"],
       ["role", "object"]
     ],
-    "comment": "A floated quantifier compatible with subject and object is preferentially construed with the object: the absolutive pattern of Q-Float.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A floated quantifier compatible with subject and object is preferentially construed with the object: the absolutive pattern of Q-Float."
   },
   {
     "id": "downing1996_8_39",
@@ -1330,9 +1232,7 @@
       ["construction", "qFloat"],
       ["role", "unaccusativeSubject"]
     ],
-    "comment": "For some speakers Q-Float from an unaccusative subject is fine and from a transitive subject is not.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "For some speakers Q-Float from an unaccusative subject is fine and from a transitive subject is not."
   },
   {
     "id": "downing1996_8_42",
@@ -1356,9 +1256,7 @@
       ["construction", "qFloat"],
       ["use", "partitive"]
     ],
-    "comment": "Q-Float admits a partitive use, in which the quantity need not exhaust the group; the pre-nominal construction does not.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Q-Float admits a partitive use, in which the quantity need not exhaust the group; the pre-nominal construction does not."
   },
   {
     "id": "downing1996_8_43",
@@ -1386,9 +1284,7 @@
       ["use", "introduction"],
       ["mentions", "classifierPhrase,pluralMarked"]
     ],
-    "comment": "The referents are introduced with Q-Float, whose number information must be new, and re-mentioned with the exhaustive pre-nominal construction and a plural marker.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The referents are introduced with Q-Float, whose number information must be new, and re-mentioned with the exhaustive pre-nominal construction and a plural marker."
   },
   {
     "id": "downing1996_8_44",
@@ -1414,8 +1310,6 @@
       ["classifier", "tsu"],
       ["construction", "preNominal"]
     ],
-    "comment": "The same phrase in the pre-nominal, appositive and Q-Float positions: the same blouse, only a blouse, and one blouse as new information.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The same phrase in the pre-nominal, appositive and Q-Float positions: the same blouse, only a blouse, and one blouse as new information."
   }
 ]

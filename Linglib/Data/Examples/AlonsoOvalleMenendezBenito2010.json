@@ -19,8 +19,7 @@
       ["determiner", "algún"],
       ["inference", "ignorance of identity"]
     ],
-    "comment": "Conveys that the speaker does not know which student. Repeated as (19) and (55a).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Conveys that the speaker does not know which student. Repeated as (19) and (55a)."
   },
   {
     "id": "alonsoovallemenendezbenito2010_2",
@@ -43,8 +42,7 @@
       ["determiner", "algún"],
       ["continuation", "namely"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovallemenendezbenito2010_3",
@@ -67,8 +65,7 @@
       ["determiner", "un"],
       ["continuation", "namely"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovallemenendezbenito2010_4",
@@ -109,8 +106,7 @@
       ["determiner", "algún"],
       ["inference", "ignorance of number"]
     ],
-    "comment": "Strongly suggests that the speaker does not know how many dents her car has. Repeated as (74a).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Strongly suggests that the speaker does not know how many dents her car has. Repeated as (74a)."
   },
   {
     "id": "alonsoovallemenendezbenito2010_6",
@@ -131,8 +127,7 @@
       ["determiner", "irgendein"],
       ["inference", "free choice"]
     ],
-    "comment": "Kratzer 2005, p. 129; repeated as (12). Any doctor in the domain was a permitted option.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Kratzer 2005, p. 129; repeated as (12). Any doctor in the domain was a permitted option."
   },
   {
     "id": "alonsoovallemenendezbenito2010_7",
@@ -154,8 +149,7 @@
       ["modal", "must"],
       ["scenario", "hideAndSeek15"]
     ],
-    "comment": "Felicitous only if Juan is not in the same room in all of the speaker's epistemic alternatives; Pedro can utter it in the hide-and-seek scenario although not all rooms are possibilities. Repeated as (14) and (56a).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Felicitous only if Juan is not in the same room in all of the speaker's epistemic alternatives; Pedro can utter it in the hide-and-seek scenario although not all rooms are possibilities. Repeated as (14) and (56a)."
   },
   {
     "id": "alonsoovallemenendezbenito2010_8",
@@ -197,8 +191,7 @@
       ["modal", "must"],
       ["continuation", "namely"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovallemenendezbenito2010_10",
@@ -295,8 +288,7 @@
       ["modal", "may"],
       ["scenario", "oneRoom23"]
     ],
-    "comment": "Deviant when there is only one room where Juan might be. Repeated as (60a) without the scenario.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Deviant when there is only one room where Juan might be. Repeated as (60a) without the scenario."
   },
   {
     "id": "alonsoovallemenendezbenito2010_25",
@@ -318,8 +310,7 @@
       ["modal", "may"],
       ["scenario", "oneRoom23"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovallemenendezbenito2010_26",
@@ -341,8 +332,7 @@
       ["modal", "may"],
       ["inference", "free choice"]
     ],
-    "comment": "True only if the addressee is allowed to take any card.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "True only if the addressee is allowed to take any card."
   },
   {
     "id": "alonsoovallemenendezbenito2010_28a",
@@ -366,8 +356,7 @@
       ["scenario", "barn27"],
       ["verdict", "false"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovallemenendezbenito2010_28b",
@@ -390,8 +379,7 @@
       ["scenario", "barn27"],
       ["verdict", "true"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovallemenendezbenito2010_30a",
@@ -452,8 +440,7 @@
       ["construction", "-bhii correlative"],
       ["inference", "ignorance of identity"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovallemenendezbenito2010_31b",
@@ -540,8 +527,7 @@
       ["environment", "negation"],
       ["projection", "none"]
     ],
-    "comment": "No contradiction arises, so the modal component does not project; local accommodation would wrongly allow the speaker to know which girl. Repeated as (43).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "No contradiction arises, so the modal component does not project; local accommodation would wrongly allow the speaker to know which girl. Repeated as (43)."
   },
   {
     "id": "alonsoovallemenendezbenito2010_37",
@@ -692,8 +678,7 @@
       ["determiner", "algún"],
       ["property", "cancellable"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovallemenendezbenito2010_44",
@@ -717,8 +702,7 @@
       ["environment", "downward entailing"],
       ["projection", "none"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovallemenendezbenito2010_45a",
@@ -795,8 +779,7 @@
       ["determiner", "algún"],
       ["property", "reinforceable"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovallemenendezbenito2010_46",
@@ -818,8 +801,7 @@
       ["determiner", "un"],
       ["restrictor", "singleton"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovallemenendezbenito2010_47",
@@ -841,8 +823,7 @@
       ["determiner", "algún"],
       ["restrictor", "singleton"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovallemenendezbenito2010_48",
@@ -939,8 +920,7 @@
       ["uniqueness", "not assumed"],
       ["inference", "ignorance of number"]
     ],
-    "comment": "At least one fly in the soup, but the speaker is not sure how many.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "At least one fly in the soup, but the speaker is not sure how many."
   },
   {
     "id": "alonsoovallemenendezbenito2010_74b",
@@ -962,8 +942,7 @@
       ["uniqueness", "not assumed"],
       ["inference", "ignorance of number"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovallemenendezbenito2010_75a",
@@ -985,8 +964,7 @@
       ["environment", "negation"],
       ["inference", "none"]
     ],
-    "comment": "Just means that the soup is fly-less.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Just means that the soup is fly-less."
   },
   {
     "id": "alonsoovallemenendezbenito2010_75b",
@@ -1007,8 +985,7 @@
       ["determiner", "algún"],
       ["property", "cancellable"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovallemenendezbenito2010_75c",
@@ -1029,8 +1006,7 @@
       ["determiner", "algún"],
       ["property", "reinforceable"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovallemenendezbenito2010_77",
@@ -1049,8 +1025,7 @@
     "paperFeatures": [
       ["competitor", "plural"]
     ],
-    "comment": "The competitor that rules out a belief in more than one fly.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The competitor that rules out a belief in more than one fly."
   },
   {
     "id": "alonsoovallemenendezbenito2010_78",
@@ -1070,8 +1045,7 @@
     "paperFeatures": [
       ["competitor", "numeral"]
     ],
-    "comment": "The competitor that rules out knowledge of the exact number.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The competitor that rules out knowledge of the exact number."
   },
   {
     "id": "alonsoovallemenendezbenito2010_79",
@@ -1093,8 +1067,7 @@
     "paperFeatures": [
       ["determiner", "algún"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovallemenendezbenito2010_80a",
@@ -1115,8 +1088,7 @@
       ["determiner", "irgendein"],
       ["uniqueness", "required"]
     ],
-    "comment": "Can only mean that there is exactly one fly, which the speaker cannot identify; hence odd.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Can only mean that there is exactly one fly, which the speaker cannot identify; hence odd."
   },
   {
     "id": "alonsoovallemenendezbenito2010_80b",
@@ -1157,8 +1129,7 @@
       ["number", "plural"],
       ["inference", "anti-uniqueness"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovallemenendezbenito2010_81b",
@@ -1180,8 +1151,7 @@
       ["number", "plural"],
       ["inference", "anti-uniqueness"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovallemenendezbenito2010_82a",
@@ -1312,8 +1282,7 @@
       ["modal", "may"],
       ["inference", "exhaustivity optional"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovallemenendezbenito2010_fn32i",

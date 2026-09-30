@@ -107,8 +107,7 @@
       ["construction", "multipleSubjectRelative"],
       ["section", "Processing recursive constructions"]
     ],
-    "comment": "German speakers find it difficult in the same way English speakers find (45) difficult.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "German speakers find it difficult in the same way English speakers find (45) difficult."
   },
   {
     "id": "pickeringbarry1991_ex51",
@@ -167,8 +166,7 @@
       ["construction", "multipleSubjectRelative"],
       ["section", "Processing recursive constructions"]
     ],
-    "comment": "Virtually incomprehensible.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Virtually incomprehensible."
   },
   {
     "id": "pickeringbarry1991_ex54",

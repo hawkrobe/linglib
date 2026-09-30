@@ -31,9 +31,7 @@ def ex_9a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("root", "kzu"), ("rootClass", "I"), ("subj", "1sg"), ("obj", "3pl"), ("m1", "t"), ("m2", "kzu"), ("m3", "s"), ("m4", "cen")]
-    comment := "Class I: no class marker."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Class I: no class marker." }
 
 def ex_9b : LinguisticExample :=
   { id := "bobaljik2000_9b"
@@ -49,9 +47,7 @@ def ex_9b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("root", "t"), ("rootClass", "II"), ("subj", "1sg"), ("obj", "3pl"), ("m1", "t"), ("m2", "t"), ("m3", "s"), ("m4", "ki"), ("m5", "cen")]
-    comment := "Class II marker -ki- for a first-person subject acting on a third-person object (11)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Class II marker -ki- for a first-person subject acting on a third-person object (11)." }
 
 def ex_10a : LinguisticExample :=
   { id := "bobaljik2000_10a"
@@ -67,9 +63,7 @@ def ex_10a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("root", "lcqu"), ("rootClass", "I"), ("subj", "2sg"), ("obj", "3sg"), ("m1", "lcqu"), ("m2", "s"), ("m3", "in")]
-    comment := "Present /s/ voiced intervocalically (note 4); second-singular realis subject prefix is null (7)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Present /s/ voiced intervocalically (note 4); second-singular realis subject prefix is null (7)." }
 
 def ex_10b : LinguisticExample :=
   { id := "bobaljik2000_10b"
@@ -85,9 +79,7 @@ def ex_10b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("root", "t"), ("rootClass", "II"), ("subj", "2sg"), ("obj", "3sg"), ("m1", "t"), ("m2", "s"), ("m3", "c"), ("m4", "in")]
-    comment := "Class II marker -c- for a second-singular realis subject acting on a third-person object (11)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Class II marker -c- for a second-singular realis subject acting on a third-person object (11)." }
 
 def all : List LinguisticExample := [ex_9a, ex_9b, ex_10a, ex_10b]
 

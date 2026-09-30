@@ -16,9 +16,7 @@
       ["concord", "strict"],
       ["exponents", "clausal negator + negative adverb"]
     ],
-    "comment": "One semantic negation with two exponents.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "One semantic negation with two exponents."
   },
   {
     "id": "vanderauweravanalsenoy2016_2",
@@ -38,9 +36,7 @@
     "paperFeatures": [
       ["concord", "negative spread"]
     ],
-    "comment": "Two negative indefinites and no clausal negator: negative spread.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Two negative indefinites and no clausal negator: negative spread."
   },
   {
     "id": "vanderauweravanalsenoy2016_3a",
@@ -61,9 +57,7 @@
       ["indefinite", "negative"],
       ["negator", "ne"]
     ],
-    "comment": "Rien is treated as negative, its dominant use being negation.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Rien is treated as negative, its dominant use being negation."
   },
   {
     "id": "vanderauweravanalsenoy2016_3e",
@@ -83,9 +77,7 @@
     "paperFeatures": [
       ["indefinite", "negative"]
     ],
-    "comment": "Rien cannot mean 'something'; without ne the sentence means 'I heard nothing' in the informal register.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Rien cannot mean 'something'; without ne the sentence means 'I heard nothing' in the informal register."
   },
   {
     "id": "vanderauweravanalsenoy2016_14a",
@@ -106,9 +98,7 @@
       ["concord", "strict"],
       ["position", "preverbal"]
     ],
-    "comment": "Strict concord: the negator is obligatory with a preverbal negative indefinite.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Strict concord: the negator is obligatory with a preverbal negative indefinite."
   },
   {
     "id": "vanderauweravanalsenoy2016_14b",
@@ -129,9 +119,7 @@
       ["concord", "strict"],
       ["position", "postverbal"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "vanderauweravanalsenoy2016_15a",
@@ -153,9 +141,7 @@
       ["position", "preverbal"],
       ["negator", "absent"]
     ],
-    "comment": "The Spanish subtype: no clausal negator with a preverbal negative indefinite.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The Spanish subtype: no clausal negator with a preverbal negative indefinite."
   },
   {
     "id": "vanderauweravanalsenoy2016_15b",
@@ -177,9 +163,7 @@
       ["position", "postverbal"],
       ["negator", "obligatory"]
     ],
-    "comment": "The clausal negator is obligatory with a postverbal negative indefinite: Negative Early.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The clausal negator is obligatory with a postverbal negative indefinite: Negative Early."
   },
   {
     "id": "vanderauweravanalsenoy2016_16a",
@@ -200,9 +184,7 @@
       ["concord", "strict"],
       ["negator", "postverbal"]
     ],
-    "comment": "Strict concord in a sample language with a postverbal negator.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Strict concord in a sample language with a postverbal negator."
   },
   {
     "id": "vanderauweravanalsenoy2016_20a",
@@ -225,9 +207,7 @@
       ["position", "preverbal"],
       ["contact", "Spanish"]
     ],
-    "comment": "A preverbal negative indefinite in a VSO language, with the Spanish-type pattern borrowed along with the marker ni.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A preverbal negative indefinite in a VSO language, with the Spanish-type pattern borrowed along with the marker ni."
   },
   {
     "id": "vanderauweravanalsenoy2016_21a",
@@ -249,9 +229,7 @@
       ["position", "preverbal"],
       ["indefinite", "wala"]
     ],
-    "comment": "Only the scalar determiner wala shows non-strict concord in Egyptian Arabic.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Only the scalar determiner wala shows non-strict concord in Egyptian Arabic."
   },
   {
     "id": "vanderauweravanalsenoy2016_21b",
@@ -273,9 +251,7 @@
       ["position", "postverbal"],
       ["negator", "obligatory"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "vanderauweravanalsenoy2016_24",
@@ -297,9 +273,7 @@
       ["position", "postverbal"],
       ["paradigm", "neinn"]
     ],
-    "comment": "The second Icelandic paradigm takes the verbal negator postverbally.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The second Icelandic paradigm takes the verbal negator postverbally."
   },
   {
     "id": "vanderauweravanalsenoy2016_25",
@@ -321,9 +295,7 @@
       ["position", "preverbal"],
       ["paradigm", "neinn"]
     ],
-    "comment": "The neinn paradigm cannot occur preverbally at all, (26): concord depends on word order.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The neinn paradigm cannot occur preverbally at all, (26): concord depends on word order."
   },
   {
     "id": "vanderauweravanalsenoy2016_27c",
@@ -346,9 +318,7 @@
       ["position", "preverbal"],
       ["negator", "optional"]
     ],
-    "comment": "Older Slavic allows the negator with a preverbal negative indefinite, (28), unlike Spanish.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Older Slavic allows the negator with a preverbal negative indefinite, (28), unlike Spanish."
   },
   {
     "id": "vanderauweravanalsenoy2016_29a",
@@ -370,9 +340,7 @@
       ["position", "preverbal"],
       ["negator", "optional"]
     ],
-    "comment": "Catalan has the older Slavic pattern synchronically, moving from strict formal concord to Spanish-style informal concord.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Catalan has the older Slavic pattern synchronically, moving from strict formal concord to Spanish-style informal concord."
   },
   {
     "id": "vanderauweravanalsenoy2016_31a",
@@ -392,9 +360,7 @@
       ["position", "preverbal"],
       ["negator", "optional"]
     ],
-    "comment": "The negator is optional in both positions, (32).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The negator is optional in both positions, (32)."
   },
   {
     "id": "vanderauweravanalsenoy2016_33b",
@@ -416,9 +382,7 @@
       ["position", "postverbal"],
       ["negator", "optional"]
     ],
-    "comment": "Ne drop makes French a non-strict system of the (32) type.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Ne drop makes French a non-strict system of the (32) type."
   },
   {
     "id": "vanderauweravanalsenoy2016_34a",
@@ -441,9 +405,7 @@
       ["position", "preverbal"],
       ["negator", "absent"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "vanderauweravanalsenoy2016_34b",
@@ -465,9 +427,7 @@
       ["position", "postverbal"],
       ["negator", "optional"]
     ],
-    "comment": "The pattern (30), stage 2 of Table 6, with a postverbal negator.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The pattern (30), stage 2 of Table 6, with a postverbal negator."
   },
   {
     "id": "vanderauweravanalsenoy2016_35b",
@@ -489,9 +449,7 @@
       ["concord", "non-strict"],
       ["parameter", "immediate precedence"]
     ],
-    "comment": "The negator is optional only when the negative indefinite immediately precedes the verb, (36).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The negator is optional only when the negative indefinite immediately precedes the verb, (36)."
   },
   {
     "id": "vanderauweravanalsenoy2016_37",
@@ -513,9 +471,7 @@
       ["position", "preverbal"],
       ["negator", "optional"]
     ],
-    "comment": "Western Armenian tolerates no postverbal negative indefinite, (38), being strongly verb-final.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Western Armenian tolerates no postverbal negative indefinite, (38), being strongly verb-final."
   },
   {
     "id": "vanderauweravanalsenoy2016_40b",
@@ -537,9 +493,7 @@
       ["position", "postverbal"],
       ["negator", "optional"]
     ],
-    "comment": "Welsh is verb-initial, so there is no preverbal position, (39).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Welsh is verb-initial, so there is no preverbal position, (39)."
   },
   {
     "id": "vanderauweravanalsenoy2016_45",
@@ -558,8 +512,6 @@
       ["concord", "non-strict"],
       ["parameter", "emphasis"]
     ],
-    "comment": "In Yiddish the absence of concord creates emphasis, independently of word order.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "In Yiddish the absence of concord creates emphasis, independently of word order."
   }
 ]

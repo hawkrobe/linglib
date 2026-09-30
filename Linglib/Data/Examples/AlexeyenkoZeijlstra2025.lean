@@ -31,9 +31,7 @@ def az2025_1a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "proud"), ("dependent", "of")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "NONE" }
+    comment := "" }
 
 def az2025_1b : LinguisticExample :=
   { id := "az2025_1b"
@@ -49,9 +47,7 @@ def az2025_1b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "proud"), ("noun", "mother"), ("dependent", "of")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "NONE" }
+    comment := "" }
 
 def az2025_2a : LinguisticExample :=
   { id := "az2025_2a"
@@ -67,9 +63,7 @@ def az2025_2a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "perifanos"), ("dependent", "gia")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "" }
 
 def az2025_2b : LinguisticExample :=
   { id := "az2025_2b"
@@ -85,9 +79,7 @@ def az2025_2b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "perifanos"), ("noun", "pateras"), ("dependent", "gia")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "" }
 
 def az2025_3a : LinguisticExample :=
   { id := "az2025_3a"
@@ -103,9 +95,7 @@ def az2025_3a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "harro-a"), ("dependent", "Bere")]
-    comment := "Hualde and Ortiz de Urbina (2003:138); repeated as (28a)."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Hualde and Ortiz de Urbina (2003:138); repeated as (28a)." }
 
 def az2025_3b : LinguisticExample :=
   { id := "az2025_3b"
@@ -121,9 +111,7 @@ def az2025_3b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "harro-a"), ("noun", "emakume"), ("dependent", "bere")]
-    comment := "Repeated as (28c)."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Repeated as (28c)." }
 
 def az2025_4a : LinguisticExample :=
   { id := "az2025_4a"
@@ -139,9 +127,7 @@ def az2025_4a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "moftaxar-∅-and"), ("dependent", "be")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "" }
 
 def az2025_4b : LinguisticExample :=
   { id := "az2025_4b"
@@ -157,9 +143,7 @@ def az2025_4b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "moftaxar"), ("attributivizer", "clitic"), ("noun", "madar-an=e"), ("dependent", "be")]
-    comment := "Repeated as (33); the ezafe linker cliticizes to the noun."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Repeated as (33); the ezafe linker cliticizes to the noun." }
 
 def az2025_7a : LinguisticExample :=
   { id := "az2025_7a"
@@ -175,9 +159,7 @@ def az2025_7a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "running"), ("noun", "meeting"), ("dependent", "smoothly")]
-    comment := "From Sheehan (2017a:136)."
-    metaLanguage := "stan1293"
-    lgrConformance := "NONE" }
+    comment := "From Sheehan (2017a:136)." }
 
 def az2025_7b : LinguisticExample :=
   { id := "az2025_7b"
@@ -193,9 +175,7 @@ def az2025_7b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "running"), ("noun", "meeting"), ("dependent", "smoothly")]
-    comment := "From Sheehan (2017a:136)."
-    metaLanguage := "stan1293"
-    lgrConformance := "NONE" }
+    comment := "From Sheehan (2017a:136)." }
 
 def az2025_8 : LinguisticExample :=
   { id := "az2025_8"
@@ -211,9 +191,7 @@ def az2025_8 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "proud"), ("noun", "man"), ("dependent", "of")]
-    comment := "Williams (1982:160); the PP is a complement of proud."
-    metaLanguage := "stan1293"
-    lgrConformance := "NONE" }
+    comment := "Williams (1982:160); the PP is a complement of proud." }
 
 def az2025_9a : LinguisticExample :=
   { id := "az2025_9a"
@@ -229,9 +207,7 @@ def az2025_9a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "proud"), ("noun", "woman"), ("dependent", "that")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "NONE" }
+    comment := "" }
 
 def az2025_9b : LinguisticExample :=
   { id := "az2025_9b"
@@ -247,9 +223,7 @@ def az2025_9b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "wearing"), ("noun", "person"), ("dependent", "a")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "NONE" }
+    comment := "" }
 
 def az2025_10a : LinguisticExample :=
   { id := "az2025_10a"
@@ -265,9 +239,7 @@ def az2025_10a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "to"), ("noun", "letter"), ("dependent", "Bill")]
-    comment := "Williams (1982:160); prenominal PP."
-    metaLanguage := "stan1293"
-    lgrConformance := "NONE" }
+    comment := "Williams (1982:160); prenominal PP." }
 
 def az2025_10b : LinguisticExample :=
   { id := "az2025_10b"
@@ -283,9 +255,7 @@ def az2025_10b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "which"), ("noun", "book"), ("dependent", "I")]
-    comment := "Escribano (2004:2); prenominal relative clause."
-    metaLanguage := "stan1293"
-    lgrConformance := "NONE" }
+    comment := "Escribano (2004:2); prenominal relative clause." }
 
 def az2025_15 : LinguisticExample :=
   { id := "az2025_15"
@@ -301,9 +271,7 @@ def az2025_15 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "tall"), ("attributivizer", "null"), ("noun", "guy"), ("degree", "enough")]
-    comment := "Sheehan (2017a:125); enough follows the adjective and immediately precedes the noun."
-    metaLanguage := "stan1293"
-    lgrConformance := "NONE" }
+    comment := "Sheehan (2017a:125); enough follows the adjective and immediately precedes the noun." }
 
 def az2025_16 : LinguisticExample :=
   { id := "az2025_16"
@@ -319,9 +287,7 @@ def az2025_16 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "tall"), ("noun", "guy"), ("dependent", "to"), ("degree", "enough")]
-    comment := "Sheehan (2017a:125)."
-    metaLanguage := "stan1293"
-    lgrConformance := "NONE" }
+    comment := "Sheehan (2017a:125)." }
 
 def az2025_17a : LinguisticExample :=
   { id := "az2025_17a"
@@ -337,9 +303,7 @@ def az2025_17a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "damok'ideb-ul-i"), ("dependent", "tavis")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "" }
 
 def az2025_17b : LinguisticExample :=
   { id := "az2025_17b"
@@ -355,9 +319,7 @@ def az2025_17b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "damok'ideb-ul-i"), ("noun", "bič'-i"), ("dependent", "tavis")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "" }
 
 def az2025_18a : LinguisticExample :=
   { id := "az2025_18a"
@@ -373,9 +335,7 @@ def az2025_18a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "független"), ("dependent", "a")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "" }
 
 def az2025_18b : LinguisticExample :=
   { id := "az2025_18b"
@@ -391,9 +351,7 @@ def az2025_18b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "független"), ("noun", "fiú"), ("dependent", "a")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "" }
 
 def az2025_19a : LinguisticExample :=
   { id := "az2025_19a"
@@ -409,9 +367,7 @@ def az2025_19a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "stolt-ur"), ("dependent", "af")]
-    comment := "Repeated as (40a)."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Repeated as (40a)." }
 
 def az2025_19b : LinguisticExample :=
   { id := "az2025_19b"
@@ -427,9 +383,7 @@ def az2025_19b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "stolt-ur"), ("noun", "faðir"), ("dependent", "af")]
-    comment := "Repeated as (41a)."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Repeated as (41a)." }
 
 def az2025_20a : LinguisticExample :=
   { id := "az2025_20a"
@@ -445,9 +399,7 @@ def az2025_20a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "hpart"), ("dependent", "ir")]
-    comment := "The subject pronoun is optional."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "The subject pronoun is optional." }
 
 def az2025_20b : LinguisticExample :=
   { id := "az2025_20b"
@@ -463,9 +415,7 @@ def az2025_20b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "hpart"), ("noun", "hayr"), ("dependent", "ir")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "" }
 
 def az2025_21a : LinguisticExample :=
   { id := "az2025_21a"
@@ -481,9 +431,7 @@ def az2025_21a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "ponosan"), ("dependent", "na")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "" }
 
 def az2025_21b : LinguisticExample :=
   { id := "az2025_21b"
@@ -499,9 +447,7 @@ def az2025_21b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "ponosan"), ("noun", "otac"), ("dependent", "na")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "" }
 
 def az2025_23b : LinguisticExample :=
   { id := "az2025_23b"
@@ -517,9 +463,7 @@ def az2025_23b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "filikes"), ("noun", "xores"), ("dependent", "pros")]
-    comment := "Corpus of Modern Greek."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Corpus of Modern Greek." }
 
 def az2025_24c : LinguisticExample :=
   { id := "az2025_24c"
@@ -535,9 +479,7 @@ def az2025_24c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "ustavšyje"), ("noun", "glaza"), ("dependent", "ot")]
-    comment := "Russian National Corpus."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Russian National Corpus." }
 
 def az2025_26 : LinguisticExample :=
   { id := "az2025_26"
@@ -553,9 +495,7 @@ def az2025_26 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "dúlì"), ("attributivizer", "clitic"), ("noun", "qīngshàonián"), ("dependent", "yú")]
-    comment := "The attributivizer de cliticizes to the AP."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "The attributivizer de cliticizes to the AP." }
 
 def az2025_27 : LinguisticExample :=
   { id := "az2025_27"
@@ -571,9 +511,7 @@ def az2025_27 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "bagay"), ("attributivizer", "clitic"), ("noun", "damit"), ("dependent", "para")]
-    comment := "Schachter and Otanes (1972:246), gloss the authors'; para is optional."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Schachter and Otanes (1972:246), gloss the authors'; para is optional." }
 
 def az2025_28b : LinguisticExample :=
   { id := "az2025_28b"
@@ -589,9 +527,7 @@ def az2025_28b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "harro-a"), ("noun", "emakume")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "" }
 
 def az2025_28d : LinguisticExample :=
   { id := "az2025_28d"
@@ -607,9 +543,7 @@ def az2025_28d : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "harro-a"), ("noun", "emakume-a"), ("dependent", "bere"), ("construction", "relative")]
-    comment := "Prenominal relative clause containing the complex predicative AP."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Prenominal relative clause containing the complex predicative AP." }
 
 def az2025_29a : LinguisticExample :=
   { id := "az2025_29a"
@@ -625,9 +559,7 @@ def az2025_29a : LinguisticExample :=
     alternatives := [("naa motó tsi ʂo karetera ka=tí yói.", .acceptable)]
     readings := []
     paperFeatures := [("head", "yói"), ("dependent", "karetera")]
-    comment := "The XP-A order is the less neutral option."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "The XP-A order is the less neutral option." }
 
 def az2025_29b : LinguisticExample :=
   { id := "az2025_29b"
@@ -643,9 +575,7 @@ def az2025_29b : LinguisticExample :=
     alternatives := [("motó karetera ka=tí yói kopi=ki paí.", .unacceptable)]
     readings := []
     paperFeatures := [("head", "yói"), ("noun", "motó"), ("dependent", "karetera")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "" }
 
 def az2025_29c : LinguisticExample :=
   { id := "az2025_29c"
@@ -661,9 +591,7 @@ def az2025_29c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "yói=ka"), ("noun", "motó"), ("dependent", "karetera"), ("construction", "relative")]
-    comment := "With the linker =ka(to), analyzed as a relative clause marker."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "With the linker =ka(to), analyzed as a relative clause marker." }
 
 def az2025_30a : LinguisticExample :=
   { id := "az2025_30a"
@@ -679,9 +607,7 @@ def az2025_30a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "boon-aa-ɗa"), ("dependent", "dureys-umma=tti")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "" }
 
 def az2025_30b : LinguisticExample :=
   { id := "az2025_30b"
@@ -697,9 +623,7 @@ def az2025_30b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "boon-aa-ɗa"), ("noun", "nama")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "" }
 
 def az2025_30c : LinguisticExample :=
   { id := "az2025_30c"
@@ -715,9 +639,7 @@ def az2025_30c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "boon-aa-ɗa"), ("noun", "nama"), ("dependent", "dureys-umma=tti")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "" }
 
 def az2025_30d : LinguisticExample :=
   { id := "az2025_30d"
@@ -733,9 +655,7 @@ def az2025_30d : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "boon-∅-u"), ("noun", "nama"), ("dependent", "dureys-umma=tti"), ("construction", "relative")]
-    comment := "Relativization with the dependent clause marker."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Relativization with the dependent clause marker." }
 
 def az2025_31 : LinguisticExample :=
   { id := "az2025_31"
@@ -751,9 +671,7 @@ def az2025_31 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "kii-sit-tu-p"), ("noun", "nukappiaqqa-p"), ("dependent", "qimmi-mut")]
-    comment := "Fortescue (1984:52); the participle carries the same case/number affix as the noun."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Fortescue (1984:52); the participle carries the same case/number affix as the noun." }
 
 def az2025_32 : LinguisticExample :=
   { id := "az2025_32"
@@ -769,9 +687,7 @@ def az2025_32 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "rak-khal"), ("attributivizer", "clitic"), ("noun", "gore"), ("dependent", "jal=na")]
-    comment := "Van Breugel (2010:518)."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Van Breugel (2010:518)." }
 
 def az2025_35 : LinguisticExample :=
   { id := "az2025_35"
@@ -787,9 +703,7 @@ def az2025_35 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "praestantibus"), ("noun", "viris"), ("dependent", "re")]
-    comment := "Cic. Fam. 1.9."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Cic. Fam. 1.9." }
 
 def az2025_36a : LinguisticExample :=
   { id := "az2025_36a"
@@ -805,9 +719,7 @@ def az2025_36a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "bravi"), ("noun", "studenti"), ("dependent", "in")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "" }
 
 def az2025_36b : LinguisticExample :=
   { id := "az2025_36b"
@@ -823,9 +735,7 @@ def az2025_36b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "bravi"), ("noun", "studenti"), ("dependent", "in")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "" }
 
 def az2025_36c : LinguisticExample :=
   { id := "az2025_36c"
@@ -841,9 +751,7 @@ def az2025_36c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "bravi"), ("noun", "studenti")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "NONE" }
+    comment := "" }
 
 def az2025_36d : LinguisticExample :=
   { id := "az2025_36d"
@@ -859,9 +767,7 @@ def az2025_36d : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "bravi"), ("noun", "studenti")]
-    comment := "bravi belongs to the restricted prenominal class."
-    metaLanguage := "stan1293"
-    lgrConformance := "NONE" }
+    comment := "bravi belongs to the restricted prenominal class." }
 
 def az2025_37a : LinguisticExample :=
   { id := "az2025_37a"
@@ -877,9 +783,7 @@ def az2025_37a : LinguisticExample :=
     alternatives := [("Aftos ine perifan.", .unacceptable)]
     readings := []
     paperFeatures := [("head", "perifan-os"), ("marker", "agreement")]
-    comment := "The subject pronoun is optional."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "The subject pronoun is optional." }
 
 def az2025_37b : LinguisticExample :=
   { id := "az2025_37b"
@@ -895,9 +799,7 @@ def az2025_37b : LinguisticExample :=
     alternatives := [("o perifan pateras", .unacceptable)]
     readings := []
     paperFeatures := [("head", "perifan-os"), ("marker", "agreement"), ("noun", "pateras")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "" }
 
 def az2025_38a : LinguisticExample :=
   { id := "az2025_38a"
@@ -913,9 +815,7 @@ def az2025_38a : LinguisticExample :=
     alternatives := [("Er ist stolz-er.", .unacceptable)]
     readings := []
     paperFeatures := [("head", "stolz"), ("marker", "bare")]
-    comment := "Repeated as (60a)."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Repeated as (60a)." }
 
 def az2025_38b : LinguisticExample :=
   { id := "az2025_38b"
@@ -931,9 +831,7 @@ def az2025_38b : LinguisticExample :=
     alternatives := [("stolz Vater", .unacceptable)]
     readings := []
     paperFeatures := [("head", "stolz-er"), ("marker", "agreement"), ("noun", "Vater")]
-    comment := "Repeated as (60b)."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Repeated as (60b)." }
 
 def az2025_39a : LinguisticExample :=
   { id := "az2025_39a"
@@ -949,9 +847,7 @@ def az2025_39a : LinguisticExample :=
     alternatives := [("Ona umn-a.", .acceptable)]
     readings := []
     paperFeatures := [("head", "umn-aja"), ("form", "long")]
-    comment := "Short form umn-a: SHORT.F.SG, no case."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Short form umn-a: SHORT.F.SG, no case." }
 
 def az2025_39b : LinguisticExample :=
   { id := "az2025_39b"
@@ -967,9 +863,7 @@ def az2025_39b : LinguisticExample :=
     alternatives := [("umn-a d'evočka", .unacceptable)]
     readings := []
     paperFeatures := [("head", "umn-aja"), ("form", "long"), ("noun", "d'evočka")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "" }
 
 def az2025_40b : LinguisticExample :=
   { id := "az2025_40b"
@@ -985,9 +879,7 @@ def az2025_40b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "stolt-ur"), ("dependent", "af")]
-    comment := "The more marked option."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "The more marked option." }
 
 def az2025_41b : LinguisticExample :=
   { id := "az2025_41b"
@@ -1003,9 +895,7 @@ def az2025_41b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "stolt-ur"), ("noun", "faðir"), ("dependent", "af")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "" }
 
 def az2025_42a : LinguisticExample :=
   { id := "az2025_42a"
@@ -1021,9 +911,7 @@ def az2025_42a : LinguisticExample :=
     alternatives := [("Jón er stolt-i.", .unacceptable)]
     readings := []
     paperFeatures := [("head", "stolt-ur"), ("form", "strong")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "" }
 
 def az2025_42b : LinguisticExample :=
   { id := "az2025_42b"
@@ -1039,9 +927,7 @@ def az2025_42b : LinguisticExample :=
     alternatives := [("stolt-i faðir", .unacceptable)]
     readings := []
     paperFeatures := [("head", "stolt-ur"), ("form", "strong"), ("definiteness", "indefinite"), ("noun", "faðir")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "" }
 
 def az2025_42c : LinguisticExample :=
   { id := "az2025_42c"
@@ -1057,9 +943,7 @@ def az2025_42c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "stolt-i"), ("form", "weak"), ("definiteness", "definite"), ("noun", "faðir-inn")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "" }
 
 def az2025_42d : LinguisticExample :=
   { id := "az2025_42d"
@@ -1075,9 +959,7 @@ def az2025_42d : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "stolt-ur"), ("form", "strong"), ("definiteness", "definite"), ("reading", "nonrestrictive"), ("noun", "faðir-inn")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "" }
 
 def az2025_43a : LinguisticExample :=
   { id := "az2025_43a"
@@ -1093,9 +975,7 @@ def az2025_43a : LinguisticExample :=
     alternatives := [("Goran je lijepi.", .unacceptable)]
     readings := []
     paperFeatures := [("head", "lijep"), ("form", "short")]
-    comment := "Aljović (2002:28)."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Aljović (2002:28)." }
 
 def az2025_43b : LinguisticExample :=
   { id := "az2025_43b"
@@ -1111,9 +991,7 @@ def az2025_43b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "lijep"), ("form", "short"), ("definiteness", "indefinite"), ("noun", "momak")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "" }
 
 def az2025_43c : LinguisticExample :=
   { id := "az2025_43c"
@@ -1129,9 +1007,7 @@ def az2025_43c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "lijepi"), ("form", "long"), ("definiteness", "definite"), ("noun", "momak")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "" }
 
 def az2025_62 : LinguisticExample :=
   { id := "az2025_62"
@@ -1147,9 +1023,7 @@ def az2025_62 : LinguisticExample :=
     alternatives := [("Maria ist auf ihre Tochter stolz.", .acceptable)]
     readings := []
     paperFeatures := [("head", "stolz"), ("dependent", "auf")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "" }
 
 def az2025_63a : LinguisticExample :=
   { id := "az2025_63a"
@@ -1165,9 +1039,7 @@ def az2025_63a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "stolz"), ("attributivizer", "affix"), ("noun", "Mutter"), ("dependent", "auf")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "" }
 
 def az2025_63b : LinguisticExample :=
   { id := "az2025_63b"
@@ -1183,9 +1055,7 @@ def az2025_63b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "stolz-e"), ("attributivizer", "affix"), ("noun", "Mutter"), ("dependent", "auf")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "" }
 
 def az2025_66a : LinguisticExample :=
   { id := "az2025_66a"
@@ -1201,9 +1071,7 @@ def az2025_66a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "trots-e"), ("attributivizer", "affix"), ("noun", "vrouw"), ("dependent", "op")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "" }
 
 def az2025_66b : LinguisticExample :=
   { id := "az2025_66b"
@@ -1219,9 +1087,7 @@ def az2025_66b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "trots"), ("attributivizer", "affix"), ("noun", "vrouw"), ("dependent", "op")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "" }
 
 def az2025_66c : LinguisticExample :=
   { id := "az2025_66c"
@@ -1237,9 +1103,7 @@ def az2025_66c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "trots-e"), ("attributivizer", "affix"), ("noun", "vrouw"), ("dependent", "op")]
-    comment := "The affix is adjacent to the adjective but not to the noun."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "The affix is adjacent to the adjective but not to the noun." }
 
 def az2025_67a : LinguisticExample :=
   { id := "az2025_67a"
@@ -1255,9 +1119,7 @@ def az2025_67a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "trots-∅"), ("attributivizer", "null"), ("noun", "kind"), ("dependent", "op")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "" }
 
 def az2025_67b : LinguisticExample :=
   { id := "az2025_67b"
@@ -1273,9 +1135,7 @@ def az2025_67b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "trots"), ("attributivizer", "null"), ("noun", "kind"), ("dependent", "op")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "" }
 
 def az2025_67c : LinguisticExample :=
   { id := "az2025_67c"
@@ -1291,9 +1151,7 @@ def az2025_67c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "trots-∅"), ("attributivizer", "null"), ("noun", "kind"), ("dependent", "op")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "" }
 
 def az2025_68a : LinguisticExample :=
   { id := "az2025_68a"
@@ -1309,9 +1167,7 @@ def az2025_68a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "groot"), ("attributivizer", "null"), ("noun", "kind"), ("degree", "genoeg-∅")]
-    comment := "Van Riemsdijk (1998); some speaker variation is reported."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Van Riemsdijk (1998); some speaker variation is reported." }
 
 def az2025_68b : LinguisticExample :=
   { id := "az2025_68b"
@@ -1327,9 +1183,7 @@ def az2025_68b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "groot"), ("attributivizer", "affix"), ("noun", "vrouw"), ("degree", "genoeg-e")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "" }
 
 def az2025_68c : LinguisticExample :=
   { id := "az2025_68c"
@@ -1345,9 +1199,7 @@ def az2025_68c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "groot-e"), ("noun", "vrouw"), ("degree", "genoeg")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "" }
 
 def az2025_68d : LinguisticExample :=
   { id := "az2025_68d"
@@ -1363,9 +1215,7 @@ def az2025_68d : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "groot"), ("noun", "vrouw"), ("degree", "genoeg")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "" }
 
 def az2025_71a : LinguisticExample :=
   { id := "az2025_71a"
@@ -1381,9 +1231,7 @@ def az2025_71a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "proud"), ("attributivizer", "null"), ("noun", "child")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "NONE" }
+    comment := "" }
 
 def az2025_71b : LinguisticExample :=
   { id := "az2025_71b"
@@ -1399,9 +1247,7 @@ def az2025_71b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "proud"), ("attributivizer", "null"), ("noun", "child"), ("dependent", "of")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "NONE" }
+    comment := "" }
 
 def az2025_71c : LinguisticExample :=
   { id := "az2025_71c"
@@ -1417,9 +1263,7 @@ def az2025_71c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("head", "proud"), ("attributivizer", "null"), ("noun", "child"), ("degree", "enough")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "NONE" }
+    comment := "" }
 
 def all : List LinguisticExample := [az2025_1a, az2025_1b, az2025_2a, az2025_2b, az2025_3a, az2025_3b, az2025_4a, az2025_4b, az2025_7a, az2025_7b, az2025_8, az2025_9a, az2025_9b, az2025_10a, az2025_10b, az2025_15, az2025_16, az2025_17a, az2025_17b, az2025_18a, az2025_18b, az2025_19a, az2025_19b, az2025_20a, az2025_20b, az2025_21a, az2025_21b, az2025_23b, az2025_24c, az2025_26, az2025_27, az2025_28b, az2025_28d, az2025_29a, az2025_29b, az2025_29c, az2025_30a, az2025_30b, az2025_30c, az2025_30d, az2025_31, az2025_32, az2025_35, az2025_36a, az2025_36b, az2025_36c, az2025_36d, az2025_37a, az2025_37b, az2025_38a, az2025_38b, az2025_39a, az2025_39b, az2025_40b, az2025_41b, az2025_42a, az2025_42b, az2025_42c, az2025_42d, az2025_43a, az2025_43b, az2025_43c, az2025_62, az2025_63a, az2025_63b, az2025_66a, az2025_66b, az2025_66c, az2025_67a, az2025_67b, az2025_67c, az2025_68a, az2025_68b, az2025_68c, az2025_68d, az2025_71a, az2025_71b, az2025_71c]
 

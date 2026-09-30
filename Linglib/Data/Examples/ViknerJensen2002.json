@@ -18,9 +18,7 @@
       ["headNoun", "relational"],
       ["relationType", "inherent"]
     ],
-    "comment": "A kinship relation supplied by the relational head noun.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A kinship relation supplied by the relational head noun."
   },
   {
     "id": "viknerjensen2002_1b",
@@ -42,9 +40,7 @@
       ["relationType", "partWhole"],
       ["quale", "constitutive"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "viknerjensen2002_1c",
@@ -65,9 +61,7 @@
       ["headNoun", "sortal"],
       ["relationType", "control"]
     ],
-    "comment": "Control, not ownership: the girl may own, borrow, hire, drive or sit in the car.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Control, not ownership: the girl may own, borrow, hire, drive or sit in the car."
   },
   {
     "id": "viknerjensen2002_2a",
@@ -89,9 +83,7 @@
       ["headNoun", "relational"],
       ["interpretation", "lexical and pragmatic"]
     ],
-    "comment": "The relation varies with no change of lexical material; only the first reading is lexical.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The relation varies with no change of lexical material; only the first reading is lexical."
   },
   {
     "id": "viknerjensen2002_2b",
@@ -113,9 +105,7 @@
       ["headNoun", "sortal"],
       ["interpretation", "lexical and pragmatic"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "viknerjensen2002_4",
@@ -136,9 +126,7 @@
       ["interpretation", "lexical"],
       ["relationType", "agentive"]
     ],
-    "comment": "The default interpretation available to any speaker without a supporting context.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The default interpretation available to any speaker without a supporting context."
   },
   {
     "id": "viknerjensen2002_5a",
@@ -159,9 +147,7 @@
       ["interpretation", "lexical"],
       ["relationType", "inherent"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "viknerjensen2002_5b",
@@ -182,9 +168,7 @@
       ["interpretation", "lexical"],
       ["relationType", "partWhole"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "viknerjensen2002_5c",
@@ -205,9 +189,7 @@
       ["interpretation", "lexical"],
       ["relationType", "agentive"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "viknerjensen2002_5d",
@@ -228,9 +210,7 @@
       ["interpretation", "lexical"],
       ["relationType", "control"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "viknerjensen2002_6a",
@@ -251,9 +231,7 @@
     "paperFeatures": [
       ["interpretation", "pragmatic"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "viknerjensen2002_6d",
@@ -274,9 +252,7 @@
     "paperFeatures": [
       ["interpretation", "pragmatic"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "viknerjensen2002_7a",
@@ -297,9 +273,7 @@
     "paperFeatures": [
       ["interpretation", "no lexical interpretation"]
     ],
-    "comment": "The relatum of teacher must be a person; a pragmatic interpretation can always be imagined.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The relatum of teacher must be a person; a pragmatic interpretation can always be imagined."
   },
   {
     "id": "viknerjensen2002_7b",
@@ -320,9 +294,7 @@
     "paperFeatures": [
       ["interpretation", "no lexical interpretation"]
     ],
-    "comment": "A company is not of the sort body that the constitutive quale of nose requires of the whole.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A company is not of the sort body that the constitutive quale of nose requires of the whole."
   },
   {
     "id": "viknerjensen2002_7d",
@@ -343,9 +315,7 @@
     "paperFeatures": [
       ["interpretation", "no lexical interpretation"]
     ],
-    "comment": "The controller must be animate and the agent of a cake must be able to bake; the oddity is lexical, unlike that of the horse's car, which is world knowledge.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The controller must be animate and the agent of a cake must be able to bake; the oddity is lexical, unlike that of the horse's car, which is world knowledge."
   },
   {
     "id": "viknerjensen2002_11a",
@@ -366,9 +336,7 @@
       ["construction", "quantified possessor"],
       ["definite", "narrow scope"]
     ],
-    "comment": "The implicit definite of the head scopes under the possessor's existential quantifier.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The implicit definite of the head scopes under the possessor's existential quantifier."
   },
   {
     "id": "viknerjensen2002_11b",
@@ -389,9 +357,7 @@
       ["construction", "quantified possessor"],
       ["definite", "narrow scope"]
     ],
-    "comment": "Each girl has only one teacher; a wide-scope definite would wrongly require one teacher shared by all girls.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Each girl has only one teacher; a wide-scope definite would wrongly require one teacher shared by all girls."
   },
   {
     "id": "viknerjensen2002_28a",
@@ -410,9 +376,7 @@
       ["headNoun", "relational"],
       ["test", "isolation"]
     ],
-    "comment": "Relational nouns are odd in isolation.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Relational nouns are odd in isolation."
   },
   {
     "id": "viknerjensen2002_28b",
@@ -431,9 +395,7 @@
       ["headNoun", "dependent part"],
       ["test", "isolation"]
     ],
-    "comment": "Dependent-part nouns pattern with relational nouns, so they are relational in the lexicon.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Dependent-part nouns pattern with relational nouns, so they are relational in the lexicon."
   },
   {
     "id": "viknerjensen2002_29a",
@@ -452,9 +414,7 @@
       ["headNoun", "sortal"],
       ["test", "isolation"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "viknerjensen2002_29b",
@@ -473,9 +433,7 @@
       ["headNoun", "autonomous part"],
       ["test", "isolation"]
     ],
-    "comment": "Autonomous-part nouns pattern with sortal nouns and reach the part-whole reading by the constitutive quale.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Autonomous-part nouns pattern with sortal nouns and reach the part-whole reading by the constitutive quale."
   },
   {
     "id": "viknerjensen2002_38",
@@ -497,9 +455,7 @@
       ["use", "referent-introducing"],
       ["relationType", "inherent"]
     ],
-    "comment": "A genitive introducing a novel referent.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A genitive introducing a novel referent."
   },
   {
     "id": "viknerjensen2002_39a",
@@ -518,9 +474,7 @@
       ["use", "referent-introducing"],
       ["relationType", "control"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "viknerjensen2002_39b",
@@ -539,9 +493,7 @@
       ["use", "referent-introducing"],
       ["relationType", "control"]
     ],
-    "comment": "Barker marks it infelicitous on the referent-introducing reading and appeals to conventionalized expectation; the paper's informants accept it, as the control analysis predicts.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Barker marks it infelicitous on the referent-introducing reading and appeals to conventionalized expectation; the paper's informants accept it, as the control analysis predicts."
   },
   {
     "id": "viknerjensen2002_40b",
@@ -560,9 +512,7 @@
       ["use", "referent-introducing"],
       ["relationType", "control"]
     ],
-    "comment": "Barker's #; accepted by the paper's informants.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Barker's #; accepted by the paper's informants."
   },
   {
     "id": "viknerjensen2002_41b",
@@ -582,9 +532,7 @@
       ["relationType", "control"],
       ["source", "fiction"]
     ],
-    "comment": "An attested referent-introducing genitive with the control relation.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "An attested referent-introducing genitive with the control relation."
   },
   {
     "id": "viknerjensen2002_42c",
@@ -606,9 +554,7 @@
       ["use", "referent-introducing"],
       ["relationType", "agentive"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "viknerjensen2002_s4_favourite_sister",
@@ -629,9 +575,7 @@
       ["construction", "favourite"],
       ["headNoun", "relational"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "viknerjensen2002_s4_favourite_chair",
@@ -653,9 +597,7 @@
       ["headNoun", "sortal"],
       ["quale", "telic"]
     ],
-    "comment": "The telic quale of chair supplies the relation; a dialogue What is your favourite cigarette? I don't smoke is coherent.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The telic quale of chair supplies the relation; a dialogue What is your favourite cigarette? I don't smoke is coherent."
   },
   {
     "id": "viknerjensen2002_s4_favourite_movie",
@@ -677,9 +619,7 @@
       ["headNoun", "sortal"],
       ["quale", "telic"]
     ],
-    "comment": "One lexical interpretation, where Mary's movie has two: the movie Mary controls and the movie Mary has made.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "One lexical interpretation, where Mary's movie has two: the movie Mary controls and the movie Mary has made."
   },
   {
     "id": "viknerjensen2002_s4_favourite_sky",
@@ -703,9 +643,7 @@
       ["headNoun", "sortal"],
       ["quale", "none"]
     ],
-    "comment": "Sky has no telic quale, so favourite sky has only pragmatic interpretations.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Sky has no telic quale, so favourite sky has only pragmatic interpretations."
   },
   {
     "id": "viknerjensen2002_50",
@@ -729,9 +667,7 @@
       ["headNoun", "sortal"],
       ["quale", "none"]
     ],
-    "comment": "Animal designations have no telic quale.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Animal designations have no telic quale."
   },
   {
     "id": "viknerjensen2002_51",
@@ -755,8 +691,6 @@
       ["headNoun", "sortal"],
       ["quale", "none"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   }
 ]

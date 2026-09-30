@@ -169,7 +169,7 @@ def marker (r : LinguisticExample) (key : String) : Option AccessibilityLevel :=
 
 /-- All the markers a row lists, in order. -/
 def markers (r : LinguisticExample) : List AccessibilityLevel :=
-  r.paperFeatures.filterMap fun p => if p.1 = "marker" then ofLabel p.2 else none
+  (r.features "marker").filterMap ofLabel
 
 /-- Topicality outranks distance: the topical, more distant Maya takes the higher marker. -/
 theorem rows_topicality_over_distance :

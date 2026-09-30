@@ -16,9 +16,7 @@
       ["connective", "before"],
       ["pattern", "transitivity"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "anscombe1964_ii",
@@ -37,9 +35,7 @@
       ["connective", "after"],
       ["pattern", "transitivity"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "anscombe1964_mutual_before",
@@ -58,9 +54,7 @@
       ["connective", "before"],
       ["pattern", "mutual"]
     ],
-    "comment": "Incompatible with the consequent, and hence the antecedent, of (i).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Incompatible with the consequent, and hence the antecedent, of (i)."
   },
   {
     "id": "anscombe1964_mutual_after",
@@ -79,9 +73,7 @@
       ["connective", "after"],
       ["pattern", "mutual"]
     ],
-    "comment": "Compatible with the consequent and antecedent of (ii): after is not asymmetric.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Compatible with the consequent and antecedent of (ii): after is not asymmetric."
   },
   {
     "id": "anscombe1964_born",
@@ -100,9 +92,7 @@
       ["connective", "after"],
       ["pattern", "transitivity_failure"]
     ],
-    "comment": "After is not unrestrictedly transitive.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "After is not unrestrictedly transitive."
   },
   {
     "id": "anscombe1964_scout",
@@ -121,9 +111,7 @@
       ["connective", "after"],
       ["pattern", "alternative_verifications"]
     ],
-    "comment": "True if I became one after you did, if I went on after you stopped, or if I was one for a while after you became one.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "True if I became one after you did, if I went on after you stopped, or if I was one for a while after you became one."
   },
   {
     "id": "anscombe1964_james1",
@@ -143,9 +131,7 @@
       ["pattern", "verification"],
       ["verification", "begin_after_begin"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "anscombe1964_james2",
@@ -165,9 +151,7 @@
       ["pattern", "verification"],
       ["verification", "begin_after_stop"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "anscombe1964_james3",
@@ -187,9 +171,7 @@
       ["pattern", "verification"],
       ["verification", "overlap_after_begin"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "anscombe1964_james4",
@@ -209,9 +191,7 @@
       ["pattern", "verification"],
       ["verification", "after_stop"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "anscombe1964_greece",
@@ -230,9 +210,7 @@
       ["connective", "before"],
       ["pattern", "quantification"]
     ],
-    "comment": "Right for 'I was in Greece before you were ever in Italy' (§V), stronger than plain 'before'.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Right for 'I was in Greece before you were ever in Italy' (§V), stronger than plain 'before'."
   },
   {
     "id": "anscombe1964_italy",
@@ -251,9 +229,7 @@
       ["connective", "after"],
       ["pattern", "quantification"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "anscombe1964_glass",
@@ -272,9 +248,7 @@
       ["connective", "before"],
       ["pattern", "before_ever"]
     ],
-    "comment": "Does not suggest that he did so before he ever in his life used the telephone.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Does not suggest that he did so before he ever in his life used the telephone."
   },
   {
     "id": "anscombe1964_battle",
@@ -293,9 +267,7 @@
       ["connective", "after"],
       ["pattern", "mutual"]
     ],
-    "comment": "Not inconsistent, unlike 'The battle took place after the rain'.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Not inconsistent, unlike 'The battle took place after the rain'."
   },
   {
     "id": "anscombe1964_quarrel",
@@ -314,9 +286,7 @@
       ["connective", "after"],
       ["pattern", "mutual"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "anscombe1964_report",
@@ -335,9 +305,7 @@
       ["connective", "after"],
       ["pattern", "mutual"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "anscombe1964_arrival",
@@ -357,9 +325,7 @@
       ["pattern", "nominal"],
       ["instantaneous", "yes"]
     ],
-    "comment": "Events named by nouns: one wholly preceded the other, so before and after are converses.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Events named by nouns: one wholly preceded the other, so before and after are converses."
   },
   {
     "id": "anscombe1964_john_tom",
@@ -379,8 +345,6 @@
       ["pattern", "instantaneous"],
       ["instantaneous", "yes"]
     ],
-    "comment": "No possibility that Tom also arrived after John.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "No possibility that Tom also arrived after John."
   }
 ]

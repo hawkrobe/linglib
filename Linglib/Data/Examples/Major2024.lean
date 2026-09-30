@@ -31,9 +31,7 @@ def ex_2 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "dep-clause"), ("matrixVerb", "oyla- 'think'")]
-    comment := "Baseline dep complement. Paper adds the literal translation 'Mahinur thinks (something), saying Tursun made meatbread.' The parenthesized -(ni) marks the optional accusative on the embedded subject."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Baseline dep complement. Paper adds the literal translation 'Mahinur thinks (something), saying Tursun made meatbread.' The parenthesized -(ni) marks the optional accusative on the embedded subject." }
 
 def ex_38 : LinguisticExample :=
   { id := "major2024_38"
@@ -49,9 +47,7 @@ def ex_38 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "dep-clause"), ("matrixVerb", "warqira- 'scream'")]
-    comment := "The dep clause modifies unergative 'scream' and coerces it into a verb of speech: the matrix clause is simply 'Mahinur screamed', the dep clause adds the communicative content. Bracketing dropped from primaryText."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "The dep clause modifies unergative 'scream' and coerces it into a verb of speech: the matrix clause is simply 'Mahinur screamed', the dep clause adds the communicative content. Bracketing dropped from primaryText." }
 
 def ex_39a : LinguisticExample :=
   { id := "major2024_39a"
@@ -67,9 +63,7 @@ def ex_39a : LinguisticExample :=
     alternatives := [("Mahinur dé-d-i.", .ungrammatical)]
     readings := []
     paperFeatures := [("diagnostic", "subcategorization"), ("verb", "de- 'say'")]
-    comment := "Paper prints '*(birnémi-ler-ni)': omitting the DP is ungrammatical (expanded into alternatives) — main-verb 'say' obligatorily introduces a DP complement."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Paper prints '*(birnémi-ler-ni)': omitting the DP is ungrammatical (expanded into alternatives) — main-verb 'say' obligatorily introduces a DP complement." }
 
 def ex_39b : LinguisticExample :=
   { id := "major2024_39b"
@@ -85,9 +79,7 @@ def ex_39b : LinguisticExample :=
     alternatives := [("Mahinur birnémi-ler-ni warqiri-di.", .ungrammatical)]
     readings := []
     paperFeatures := [("diagnostic", "subcategorization"), ("verb", "warqira- 'scream'")]
-    comment := "Paper prints '(*birnémi-ler-ni)': adding the DP is ungrammatical (expanded into alternatives) — 'scream' is incompatible with a complement."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Paper prints '(*birnémi-ler-ni)': adding the DP is ungrammatical (expanded into alternatives) — 'scream' is incompatible with a complement." }
 
 def ex_40a : LinguisticExample :=
   { id := "major2024_40a"
@@ -103,9 +95,7 @@ def ex_40a : LinguisticExample :=
     alternatives := [("Mahinur dé-d-i.", .ungrammatical)]
     readings := []
     paperFeatures := [("diagnostic", "subcategorization"), ("verb", "de- 'say'")]
-    comment := "Paper prints '*(Tursun-ning ket-ken-lik-i-ni)': omission is ungrammatical (expanded into alternatives) — 'say' obligatorily takes a (here participial) complement."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Paper prints '*(Tursun-ning ket-ken-lik-i-ni)': omission is ungrammatical (expanded into alternatives) — 'say' obligatorily takes a (here participial) complement." }
 
 def ex_40b : LinguisticExample :=
   { id := "major2024_40b"
@@ -121,9 +111,7 @@ def ex_40b : LinguisticExample :=
     alternatives := [("Mahinur Tursun-ning ket-ken-lik-i-ni warqiri-di.", .ungrammatical)]
     readings := []
     paperFeatures := [("diagnostic", "subcategorization"), ("verb", "warqira- 'scream'")]
-    comment := "Paper prints '(*Tursun-ning ket-ken-lik-i-ni)': adding the participial clause is ungrammatical (expanded into alternatives) — 'scream' rejects a clausal complement."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Paper prints '(*Tursun-ning ket-ken-lik-i-ni)': adding the participial clause is ungrammatical (expanded into alternatives) — 'scream' rejects a clausal complement." }
 
 def ex_41a : LinguisticExample :=
   { id := "major2024_41a"
@@ -139,9 +127,7 @@ def ex_41a : LinguisticExample :=
     alternatives := [("Mahinur de-p warqiri-di.", .ungrammatical)]
     readings := []
     paperFeatures := [("diagnostic", "subcategorization-persistence"), ("construction", "dep + scream")]
-    comment := "Paper prints '*(birnémi-ler-ni)': the subcategorization requirement of de- 'say' persists inside the adjoined dep clause — 'say' obligatorily introduces an internal argument even under 'scream'."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Paper prints '*(birnémi-ler-ni)': the subcategorization requirement of de- 'say' persists inside the adjoined dep clause — 'say' obligatorily introduces an internal argument even under 'scream'." }
 
 def ex_41b : LinguisticExample :=
   { id := "major2024_41b"
@@ -157,9 +143,7 @@ def ex_41b : LinguisticExample :=
     alternatives := [("Mahinur de-p warqiri-di.", .ungrammatical)]
     readings := []
     paperFeatures := [("diagnostic", "subcategorization-persistence"), ("construction", "dep + scream")]
-    comment := "Paper prints '*(Tursun-ning ket-ken-lik-i-ni)': same persistence as (41a) with a clausal DP complement of 'say' inside the dep clause."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Paper prints '*(Tursun-ning ket-ken-lik-i-ni)': same persistence as (41a) with a clausal DP complement of 'say' inside the dep clause." }
 
 def ex_49a : LinguisticExample :=
   { id := "major2024_49a"
@@ -175,9 +159,7 @@ def ex_49a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "subject-position"), ("clauseType", "participial")]
-    comment := "The participial clause can serve as the grammatical subject (with nominative case) of the psych predicate 'make surprised', unlike dep clauses (49b)."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "The participial clause can serve as the grammatical subject (with nominative case) of the psych predicate 'make surprised', unlike dep clauses (49b)." }
 
 def ex_49b : LinguisticExample :=
   { id := "major2024_49b"
@@ -193,9 +175,7 @@ def ex_49b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "subject-position"), ("clauseType", "dep")]
-    comment := "Translation marked 'Intended:' in the paper — dep clauses cannot function as grammatical subjects. Fn. 18: grammatical only under a pro-dropped-subject parse ('S/he surprised me, saying that Tursun left')."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Translation marked 'Intended:' in the paper — dep clauses cannot function as grammatical subjects. Fn. 18: grammatical only under a pro-dropped-subject parse ('S/he surprised me, saying that Tursun left')." }
 
 def all : List LinguisticExample := [ex_2, ex_38, ex_39a, ex_39b, ex_40a, ex_40b, ex_41a, ex_41b, ex_49a, ex_49b]
 

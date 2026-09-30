@@ -31,9 +31,7 @@ def ex_1a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("aspect", "atelic")]
-    comment := "The in-adverbial is out: a manner of motion verb alone is atelic."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The in-adverbial is out: a manner of motion verb alone is atelic." }
 
 def ex_1b : LinguisticExample :=
   { id := "zwarts2005_1b"
@@ -49,9 +47,7 @@ def ex_1b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("aspect", "telic"), ("preposition", "to")]
-    comment := "The for-adverbial is out: the goal phrase makes the sentence telic."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The for-adverbial is out: the goal phrase makes the sentence telic." }
 
 def ex_1c : LinguisticExample :=
   { id := "zwarts2005_1c"
@@ -67,9 +63,7 @@ def ex_1c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("aspect", "atelic"), ("preposition", "towards")]
-    comment := "The in-adverbial is out: the comparative phrase leaves the sentence atelic."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The in-adverbial is out: the comparative phrase leaves the sentence atelic." }
 
 def ex_12a : LinguisticExample :=
   { id := "zwarts2005_12a"
@@ -85,9 +79,7 @@ def ex_12a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("preposition", "away from")]
-    comment := "Can be telic although the phrase specifies no endpoint."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Can be telic although the phrase specifies no endpoint." }
 
 def ex_23a : LinguisticExample :=
   { id := "zwarts2005_23a"
@@ -103,9 +95,7 @@ def ex_23a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("aspect", "telic"), ("preposition", "to")]
-    comment := "Bounded but not quantized: a path to the house has proper subpaths to the house."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Bounded but not quantized: a path to the house has proper subpaths to the house." }
 
 def ex_23b : LinguisticExample :=
   { id := "zwarts2005_23b"
@@ -121,9 +111,7 @@ def ex_23b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("aspect", "telic"), ("preposition", "over")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_23c : LinguisticExample :=
   { id := "zwarts2005_23c"
@@ -139,9 +127,7 @@ def ex_23c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("aspect", "telic"), ("preposition", "out of")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_30a : LinguisticExample :=
   { id := "zwarts2005_30a"
@@ -157,9 +143,7 @@ def ex_30a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("preposition", "to")]
-    comment := "The verb phrase whose weak goal denotation (30c) is cumulative."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The verb phrase whose weak goal denotation (30c) is cumulative." }
 
 def all : List LinguisticExample := [ex_1a, ex_1b, ex_1c, ex_12a, ex_23a, ex_23b, ex_23c, ex_30a]
 

@@ -31,9 +31,7 @@ def ex_1a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("transitive", "no"), ("subjectCase", "NOM")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_1b : LinguisticExample :=
   { id := "baker2015_1b"
@@ -49,9 +47,7 @@ def ex_1b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("transitive", "yes"), ("subjectCase", "NOM"), ("objectCase", "ACC")]
-    comment := "From Vinokurova 2005."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "From Vinokurova 2005." }
 
 def ex_1c : LinguisticExample :=
   { id := "baker2015_1c"
@@ -67,9 +63,7 @@ def ex_1c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("transitive", "yes"), ("subjectCase", "NOM"), ("objectCase", "ACC")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_12a : LinguisticExample :=
   { id := "baker2015_12a"
@@ -85,9 +79,7 @@ def ex_12a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("transitive", "yes"), ("subjectCase", "ERG"), ("objectCase", "unmarked")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_12b : LinguisticExample :=
   { id := "baker2015_12b"
@@ -103,9 +95,7 @@ def ex_12b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("transitive", "no"), ("subjectCase", "unmarked")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_28a : LinguisticExample :=
   { id := "baker2015_28a"
@@ -121,9 +111,7 @@ def ex_28a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("transitive", "yes"), ("subjectCase", "ERG"), ("objectCase", "unmarked"), ("genitiveForm", "Jose-kan")]
-    comment := "The ergative suffix is also the genitive of the possessor in Jose-kan ochiti 'José's dog'; only the singular first and third person pronouns have distinct genitive forms."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The ergative suffix is also the genitive of the possessor in Jose-kan ochiti 'José's dog'; only the singular first and third person pronouns have distinct genitive forms." }
 
 def ex_28b : LinguisticExample :=
   { id := "baker2015_28b"
@@ -139,9 +127,7 @@ def ex_28b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("transitive", "yes"), ("subjectCase", "ERG"), ("objectCase", "unmarked"), ("genitiveForm", "nokon")]
-    comment := "The first-person possessor has the distinct genitive form nokon in nokon ochiti 'my dog'."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The first-person possessor has the distinct genitive form nokon in nokon ochiti 'my dog'." }
 
 def ex_30a : LinguisticExample :=
   { id := "baker2015_30a"
@@ -157,9 +143,7 @@ def ex_30a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("transitive", "no"), ("subjectCase", "NOM")]
-    comment := "From Rude 1986."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "From Rude 1986." }
 
 def ex_30b : LinguisticExample :=
   { id := "baker2015_30b"
@@ -175,9 +159,7 @@ def ex_30b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("transitive", "yes"), ("subjectCase", "ERG"), ("objectCase", "ACC")]
-    comment := "From Rude 1986."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "From Rude 1986." }
 
 def ex_21a : LinguisticExample :=
   { id := "baker2015_21a"
@@ -193,9 +175,7 @@ def ex_21a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("transitive", "no"), ("subjectCase", "ABS")]
-    comment := "From Haspelmath 1993."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "From Haspelmath 1993." }
 
 def ex_21b : LinguisticExample :=
   { id := "baker2015_21b"
@@ -211,9 +191,7 @@ def ex_21b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("transitive", "yes"), ("subjectCase", "ERG"), ("objectCase", "ABS")]
-    comment := "From Haspelmath 1993."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "From Haspelmath 1993." }
 
 def ex_22a : LinguisticExample :=
   { id := "baker2015_22a"
@@ -229,9 +207,7 @@ def ex_22a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("transitive", "no"), ("subjectCase", "unmarked"), ("subjectAgreement", "yes")]
-    comment := "From Franklin 1971; Kewa has subject agreement with ergative and absolutive subjects alike and no object agreement."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "From Franklin 1971; Kewa has subject agreement with ergative and absolutive subjects alike and no object agreement." }
 
 def ex_22b : LinguisticExample :=
   { id := "baker2015_22b"
@@ -247,9 +223,7 @@ def ex_22b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("transitive", "yes"), ("subjectCase", "ERG"), ("objectCase", "unmarked"), ("subjectAgreement", "yes")]
-    comment := "From Franklin 1971."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "From Franklin 1971." }
 
 def ex_23a : LinguisticExample :=
   { id := "baker2015_23a"
@@ -265,9 +239,7 @@ def ex_23a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("transitive", "no"), ("subjectCase", "ABS"), ("subjectAgreement", "yes")]
-    comment := "From Willson 1996."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "From Willson 1996." }
 
 def ex_23b : LinguisticExample :=
   { id := "baker2015_23b"
@@ -283,9 +255,7 @@ def ex_23b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("transitive", "yes"), ("subjectCase", "ERG"), ("objectCase", "ABS"), ("subjectAgreement", "yes"), ("objectAgreement", "yes")]
-    comment := "From Willson 1996; the tense suffix agrees with ergative and absolutive subjects alike, the prefix with the absolutive object."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "From Willson 1996; the tense suffix agrees with ergative and absolutive subjects alike, the prefix with the absolutive object." }
 
 def ex_25a : LinguisticExample :=
   { id := "baker2015_25a"
@@ -301,9 +271,7 @@ def ex_25a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("transitive", "no"), ("subjectCase", "NOM"), ("subjectAgreement", "yes")]
-    comment := "From Butt and King 2003."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "From Butt and King 2003." }
 
 def ex_25b : LinguisticExample :=
   { id := "baker2015_25b"
@@ -319,9 +287,7 @@ def ex_25b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("transitive", "yes"), ("subjectCase", "ERG"), ("objectCase", "NOM"), ("subjectAgreement", "no"), ("objectAgreement", "yes")]
-    comment := "From Butt and King 2003; the finite verb agrees with a nominative subject but not with an ergative one."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "From Butt and King 2003; the finite verb agrees with a nominative subject but not with an ergative one." }
 
 def all : List LinguisticExample := [ex_1a, ex_1b, ex_1c, ex_12a, ex_12b, ex_28a, ex_28b, ex_30a, ex_30b, ex_21a, ex_21b, ex_22a, ex_22b, ex_23a, ex_23b, ex_25a, ex_25b]
 

@@ -16,8 +16,7 @@
       ["pattern", "E1"],
       ["probability", "8/12"]
     ],
-    "comment": "First premise of the Conjunctivitis counterexample: eight of the twelve faces.",
-    "lgrConformance": ""
+    "comment": "First premise of the Conjunctivitis counterexample: eight of the twelve faces."
   },
   {
     "id": "yalcin2010_die_p2",
@@ -36,8 +35,7 @@
       ["pattern", "E1"],
       ["probability", "8/12"]
     ],
-    "comment": "Second premise, by parity with (P1); the paper notes a tendency to read it as modally subordinate to (P1).",
-    "lgrConformance": ""
+    "comment": "Second premise, by parity with (P1); the paper notes a tendency to read it as modally subordinate to (P1)."
   },
   {
     "id": "yalcin2010_die_c",
@@ -56,8 +54,7 @@
       ["pattern", "E1"],
       ["probability", "4/12"]
     ],
-    "comment": "The conclusion speakers are not tempted to accept: four of the twelve faces, refuting Conjunctivitis under the probability-space semantics.",
-    "lgrConformance": ""
+    "comment": "The conclusion speakers are not tempted to accept: four of the twelve faces, refuting Conjunctivitis under the probability-space semantics."
   },
   {
     "id": "yalcin2010_ex8",
@@ -75,8 +72,7 @@
       ["section", "6"],
       ["reading", "appreciably more likely than not"]
     ],
-    "comment": "Suggests that heads is appreciably more likely than not; the probability-space semantics with the threshold one half does not predict the judgment, motivating a relative-adjective threshold.",
-    "lgrConformance": ""
+    "comment": "Suggests that heads is appreciably more likely than not; the probability-space semantics with the threshold one half does not predict the judgment, motivating a relative-adjective threshold."
   },
   {
     "id": "yalcin2010_ex9",
@@ -97,8 +93,7 @@
       ["section", "7"],
       ["principle", "epistemic containment"]
     ],
-    "comment": "Only the wide-scope reading of probably is available, although the narrow-scope one would be the more plausible claim.",
-    "lgrConformance": ""
+    "comment": "Only the wide-scope reading of probably is available, although the narrow-scope one would be the more plausible claim."
   },
   {
     "id": "yalcin2010_ex17",
@@ -116,8 +111,7 @@
       ["section", "8"],
       ["embedding", "imagine"]
     ],
-    "comment": "Imagining a Moore-paradoxical proposition is odd but the sentence is not defective.",
-    "lgrConformance": ""
+    "comment": "Imagining a Moore-paradoxical proposition is odd but the sentence is not defective."
   },
   {
     "id": "yalcin2010_ex18",
@@ -135,8 +129,7 @@
       ["section", "8"],
       ["embedding", "imagine"]
     ],
-    "comment": "Marked, unlike (17): the probability operator does not behave like a knowledge ascription under verbs of imagination.",
-    "lgrConformance": ""
+    "comment": "Marked, unlike (17): the probability operator does not behave like a knowledge ascription under verbs of imagination."
   },
   {
     "id": "yalcin2010_ex19",
@@ -154,7 +147,6 @@
       ["section", "8"],
       ["phenomenon", "modal concord"]
     ],
-    "comment": "Iterated probability operators are odd, and when not odd often vacuous.",
-    "lgrConformance": ""
+    "comment": "Iterated probability operators are odd, and when not odd often vacuous."
   }
 ]

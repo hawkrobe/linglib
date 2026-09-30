@@ -128,8 +128,7 @@
       ["diagnostic", "binding"],
       ["pron_c_commands_associate", "yes"]
     ],
-    "comment": "The pronoun follows the standard and precedes the associate, so it c-commands the associate, yet corefers with the R-expression inside the standard: the standard is an external PP.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The pronoun follows the standard and precedes the associate, so it c-commands the associate, yet corefers with the R-expression inside the standard: the standard is an external PP."
   },
   {
     "id": "bhatttakahashi2011_ex43a",
@@ -190,7 +189,6 @@
       ["qp_base_c_commands_degree_trace", "no"],
       ["than_internal_scope", "unavailable"]
     ],
-    "comment": "Only the external scope reading, every > -er, is available; the than-phrase-internal reading needs the clausal comparative (41).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Only the external scope reading, every > -er, is available; the than-phrase-internal reading needs the clausal comparative (41)."
   }
 ]

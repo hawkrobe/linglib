@@ -14,8 +14,7 @@
     "paperFeatures": [
       ["construction", "equative"]
     ],
-    "comment": "Approximative *just* with an equative: as tall at the highest level of precision; COCA.",
-    "lgrConformance": ""
+    "comment": "Approximative *just* with an equative: as tall at the highest level of precision; COCA."
   },
   {
     "id": "thomasdeo2020_5",
@@ -32,8 +31,7 @@
     "paperFeatures": [
       ["construction", "comparative"]
     ],
-    "comment": "Approximative *just* with a comparative: slightly older; COCA.",
-    "lgrConformance": ""
+    "comment": "Approximative *just* with a comparative: slightly older; COCA."
   },
   {
     "id": "thomasdeo2020_14a",
@@ -50,8 +48,7 @@
     "paperFeatures": [
       ["construction", "equative"]
     ],
-    "comment": "The prejacent is stronger than what the context leads one to expect, which *just* tolerates.",
-    "lgrConformance": ""
+    "comment": "The prejacent is stronger than what the context leads one to expect, which *just* tolerates."
   },
   {
     "id": "thomasdeo2020_14b",
@@ -68,8 +65,7 @@
     "paperFeatures": [
       ["construction", "equative"]
     ],
-    "comment": "*only* lowers a contextual expectation that the context makes strong.",
-    "lgrConformance": ""
+    "comment": "*only* lowers a contextual expectation that the context makes strong."
   },
   {
     "id": "thomasdeo2020_15b",
@@ -86,8 +82,7 @@
     "paperFeatures": [
       ["construction", "equative"]
     ],
-    "comment": "*only* conveys that the expectation is stronger than the facts, contrary to the context.",
-    "lgrConformance": ""
+    "comment": "*only* conveys that the expectation is stronger than the facts, contrary to the context."
   },
   {
     "id": "thomasdeo2020_16b",
@@ -104,8 +99,7 @@
     "paperFeatures": [
       ["construction", "equative"]
     ],
-    "comment": "Approximative *just* with an equative enforces no upper bound: a taller continuation is consistent.",
-    "lgrConformance": ""
+    "comment": "Approximative *just* with an equative enforces no upper bound: a taller continuation is consistent."
   },
   {
     "id": "thomasdeo2020_17b",
@@ -122,8 +116,7 @@
     "paperFeatures": [
       ["construction", "equative"]
     ],
-    "comment": "Focus inside the scope of *just* gives the exclusive reading, which enforces an upper bound.",
-    "lgrConformance": ""
+    "comment": "Focus inside the scope of *just* gives the exclusive reading, which enforces an upper bound."
   },
   {
     "id": "thomasdeo2020_19",
@@ -140,8 +133,7 @@
     "paperFeatures": [
       ["construction", "equative"]
     ],
-    "comment": "A bare equative tolerates later precisification: the two utterances are interpreted at different grains.",
-    "lgrConformance": ""
+    "comment": "A bare equative tolerates later precisification: the two utterances are interpreted at different grains."
   },
   {
     "id": "thomasdeo2020_20",
@@ -158,8 +150,7 @@
     "paperFeatures": [
       ["construction", "equative"]
     ],
-    "comment": "*just* already interprets the equative at the finest permissible grain, so precisification contradicts it.",
-    "lgrConformance": ""
+    "comment": "*just* already interprets the equative at the finest permissible grain, so precisification contradicts it."
   },
   {
     "id": "thomasdeo2020_22",
@@ -176,8 +167,7 @@
     "paperFeatures": [
       ["construction", "comparative"]
     ],
-    "comment": "Slightly bigger; COCA.",
-    "lgrConformance": ""
+    "comment": "Slightly bigger; COCA."
   },
   {
     "id": "thomasdeo2020_23",
@@ -194,8 +184,7 @@
     "paperFeatures": [
       ["construction", "comparative"]
     ],
-    "comment": "Slightly over; COCA.",
-    "lgrConformance": ""
+    "comment": "Slightly over; COCA."
   },
   {
     "id": "thomasdeo2020_24a",
@@ -212,8 +201,7 @@
     "paperFeatures": [
       ["construction", "comparative"]
     ],
-    "comment": "The upper bound of approximative *just* with a comparative cannot be cancelled.",
-    "lgrConformance": ""
+    "comment": "The upper bound of approximative *just* with a comparative cannot be cancelled."
   },
   {
     "id": "thomasdeo2020_25",
@@ -230,8 +218,7 @@
     "paperFeatures": [
       ["construction", "comparative"]
     ],
-    "comment": "Focus on the standard gives the exclusive reading: older than Siri but than no other salient person.",
-    "lgrConformance": ""
+    "comment": "Focus on the standard gives the exclusive reading: older than Siri but than no other salient person."
   },
   {
     "id": "thomasdeo2020_28",
@@ -248,8 +235,7 @@
     "paperFeatures": [
       ["construction", "comparative"]
     ],
-    "comment": "Comparatives cannot be used loosely: the bare comparative excludes Fafen being younger by any amount.",
-    "lgrConformance": ""
+    "comment": "Comparatives cannot be used loosely: the bare comparative excludes Fafen being younger by any amount."
   },
   {
     "id": "thomasdeo2020_29b",
@@ -266,8 +252,7 @@
     "paperFeatures": [
       ["construction", "comparative"]
     ],
-    "comment": "A comparative cannot be introduced by *roughly speaking*.",
-    "lgrConformance": ""
+    "comment": "A comparative cannot be introduced by *roughly speaking*."
   },
   {
     "id": "thomasdeo2020_30",
@@ -284,8 +269,7 @@
     "paperFeatures": [
       ["construction", "comparative"]
     ],
-    "comment": "At one level of precision the comparative and the reversed equative cannot both be true: a difference below the grain makes the comparative false.",
-    "lgrConformance": ""
+    "comment": "At one level of precision the comparative and the reversed equative cannot both be true: a difference below the grain makes the comparative false."
   },
   {
     "id": "thomasdeo2020_31a",
@@ -305,8 +289,7 @@
     "paperFeatures": [
       ["construction", "comparative"]
     ],
-    "comment": "Negation targets either component: the comparative fails at the finest grain, or it holds at some coarser grain, so Fafen is significantly older.",
-    "lgrConformance": ""
+    "comment": "Negation targets either component: the comparative fails at the finest grain, or it holds at some coarser grain, so Fafen is significantly older."
   },
   {
     "id": "thomasdeo2020_33b",
@@ -323,8 +306,7 @@
     "paperFeatures": [
       ["construction", "comparative"]
     ],
-    "comment": "The reason clause targets the negative component: her age is close to eleven.",
-    "lgrConformance": ""
+    "comment": "The reason clause targets the negative component: her age is close to eleven."
   },
   {
     "id": "thomasdeo2020_35",
@@ -341,8 +323,7 @@
     "paperFeatures": [
       ["construction", "comparative"]
     ],
-    "comment": "An interlocutor can contradict the negative component without backtracking, so it is at issue.",
-    "lgrConformance": ""
+    "comment": "An interlocutor can contradict the negative component without backtracking, so it is at issue."
   },
   {
     "id": "thomasdeo2020_37",
@@ -359,8 +340,7 @@
     "paperFeatures": [
       ["construction", "comparative"]
     ],
-    "comment": "No inference about contextual expectations: neither that Fafen was expected to be much older nor younger.",
-    "lgrConformance": ""
+    "comment": "No inference about contextual expectations: neither that Fafen was expected to be much older nor younger."
   },
   {
     "id": "thomasdeo2020_38",
@@ -377,7 +357,6 @@
     "paperFeatures": [
       ["construction", "equative"]
     ],
-    "comment": "Suggests that miniature amaryllis were expected to be shorter: *just* with an equative raises an expectation.",
-    "lgrConformance": ""
+    "comment": "Suggests that miniature amaryllis were expected to be shorter: *just* with an equative raises an expectation."
   }
 ]

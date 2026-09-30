@@ -16,9 +16,7 @@
     "readings": [
       {"name": "past-shifted (defendant in lab before jurors' believing)", "judgment": "acceptable"}
     ],
-    "comment": "Abusch 1997 ex (1), Linguistics and Philosophy 20 p. 2. Two-sentence discourse establishing the time-of-the-crime antecedent; the second sentence's embedded past picks up that antecedent rather than the matrix `believed` event. Cornerstone of the anaphoric (vs. SOT-deletion) account of past-under-past.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Abusch 1997 ex (1), Linguistics and Philosophy 20 p. 2. Two-sentence discourse establishing the time-of-the-crime antecedent; the second sentence's embedded past picks up that antecedent rather than the matrix `believed` event. Cornerstone of the anaphoric (vs. SOT-deletion) account of past-under-past."
   },
   {
     "id": "abusch1997_ex2",
@@ -35,9 +33,7 @@
       {"name": "simultaneous (raining at believing time)", "judgment": "acceptable"},
       {"name": "past-shifted (raining before believing)", "judgment": "acceptable"}
     ],
-    "comment": "Abusch 1997 ex (2), p. 3. Footnote 2 attributes the simultaneous-reading shape to Enç 1987 (cited as 'Eng 1987'). Standard past-under-past minimal example.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Abusch 1997 ex (2), p. 3. Footnote 2 attributes the simultaneous-reading shape to Enç 1987 (cited as 'Eng 1987'). Standard past-under-past minimal example."
   },
   {
     "id": "abusch1997_ex3_ULC",
@@ -57,9 +53,7 @@
       {"name": "past-shifted (attack before thinking)", "judgment": "acceptable"},
       {"name": "forward-shifted (attack co-temporal with later opening, after thinking)", "judgment": "ungrammatical"}
     ],
-    "comment": "Abusch 1997 ex (3), p. 4. The decisive counterexample to the pure Independent Theory: the predicted forward-shifted reading (paraphrased by ex (4) 'When I open the door, a burglar will attack me') is unavailable. Motivates the Upper Limit Constraint: embedded R cannot exceed matrix E.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Abusch 1997 ex (3), p. 4. The decisive counterexample to the pure Independent Theory: the predicted forward-shifted reading (paraphrased by ex (4) 'When I open the door, a burglar will attack me') is unavailable. Motivates the Upper Limit Constraint: embedded R cannot exceed matrix E."
   },
   {
     "id": "abusch1997_ex8_doubleAccess",
@@ -76,9 +70,7 @@
       {"name": "double-access (pregnancy includes utterance + believing)", "judgment": "acceptable"},
       {"name": "future-shifted (pregnancy only at believing, not utterance)", "judgment": "ungrammatical"}
     ],
-    "comment": "Abusch 1997 ex (8), p. 5. Cornerstone present-under-past example. Sharvit 2003 ex (3) descends from this. The double-access constraint is one of two phenomena (alongside the ULC of ex 3) that the pure Independent Theory cannot derive; Abusch addresses both via de re belief + acquaintance relations.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Abusch 1997 ex (8), p. 5. Cornerstone present-under-past example. Sharvit 2003 ex (3) descends from this. The double-access constraint is one of two phenomena (alongside the ULC of ex 3) that the pure Independent Theory cannot derive; Abusch addresses both via de re belief + acquaintance relations."
   },
   {
     "id": "abusch1997_ex6",
@@ -102,9 +94,7 @@
       ["configuration", "would under past"],
       ["reading", "forward-shifted"]
     ],
-    "comment": "The forward-shifted reading (3) lacks is available with would: the past on would is anaphoric to the past on thought and woll orders the attack after it.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The forward-shifted reading (3) lacks is available with would: the past on would is anaphoric to the past on thought and woll orders the attack after it."
   },
   {
     "id": "abusch1997_ex27",
@@ -126,9 +116,7 @@
       ["phenomenon", "upper limit"],
       ["anaphora", "internal to the attitude"]
     ],
-    "comment": "Temporal anaphora internal to the belief context, beyond the reach of acquaintance relations; an upper limit phenomenon.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Temporal anaphora internal to the belief context, beyond the reach of acquaintance relations; an upper limit phenomenon."
   },
   {
     "id": "abusch1997_ex29",
@@ -150,9 +138,7 @@
       ["phenomenon", "upper limit"],
       ["anaphora", "internal to the attitude"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "abusch1997_ex30",
@@ -173,9 +159,7 @@
       ["phenomenon", "sequence of tense"],
       ["morphology", "past without precedence"]
     ],
-    "comment": "Past morphology on loved with no precedence relative to the utterance time: anaphora internal to the attitude, so not de re.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Past morphology on loved with no precedence relative to the utterance time: anaphora internal to the attitude, so not de re."
   },
   {
     "id": "abusch1997_ex34",
@@ -196,9 +180,7 @@
       ["phenomenon", "sequence of tense"],
       ["morphology", "past without precedence"]
     ],
-    "comment": "The meal time precedes no time mentioned in the sentence; a sequence-of-tense past licensed non-locally.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The meal time precedes no time mentioned in the sentence; a sequence-of-tense past licensed non-locally."
   },
   {
     "id": "abusch1997_ex46a",
@@ -217,9 +199,7 @@
       ["phenomenon", "upper limit"],
       ["reading", "backward-shifted"]
     ],
-    "comment": "The past is determinate from an epistemic alternative.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The past is determinate from an epistemic alternative."
   },
   {
     "id": "abusch1997_ex46b",
@@ -240,9 +220,7 @@
       ["phenomenon", "upper limit"],
       ["reading", "forward-shifted"]
     ],
-    "comment": "The future branches across epistemic alternatives; the now of an alternative is an upper limit for tense denotation.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The future branches across epistemic alternatives; the now of an alternative is an upper limit for tense denotation."
   },
   {
     "id": "abusch1997_ex47",
@@ -264,9 +242,7 @@
       ["phenomenon", "future-directed acquaintance"],
       ["source", "Bonomi"]
     ],
-    "comment": "Anaphoric then under believes refers to a future time de re, refuting a constraint on acquaintance relations as the source of upper limit effects.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Anaphoric then under believes refers to a future time de re, refuting a constraint on acquaintance relations as the source of upper limit effects."
   },
   {
     "id": "abusch1997_ex53",
@@ -288,9 +264,7 @@
       ["phenomenon", "sequence of tense"],
       ["sensitivity", "logical scope"]
     ],
-    "comment": "Non-local licensing of the relative-clause past is available only when the noun phrase scopes under the attitude.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Non-local licensing of the relative-clause past is available only when the noun phrase scopes under the attitude."
   },
   {
     "id": "abusch1997_ex60",
@@ -311,9 +285,7 @@
       ["phenomenon", "local licensing"],
       ["matrix", "present"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "abusch1997_ex63",
@@ -335,9 +307,7 @@
       ["phenomenon", "local licensing"],
       ["matrix", "present"]
     ],
-    "comment": "Under a present matrix neither relation can license a past coindexed with the marrying time.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Under a present matrix neither relation can license a past coindexed with the marrying time."
   },
   {
     "id": "abusch1997_ex64",
@@ -358,9 +328,7 @@
       ["phenomenon", "local licensing"],
       ["operator", "will as evaluation-time shifter"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "abusch1997_ex69",
@@ -379,9 +347,7 @@
       ["phenomenon", "double access"],
       ["complement", "not true at either time"]
     ],
-    "comment": "The double access reading does not require the complement to hold at the believing time or the utterance time.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The double access reading does not require the complement to hold at the believing time or the utterance time."
   },
   {
     "id": "abusch1997_ex81",
@@ -402,8 +368,6 @@
       ["phenomenon", "double access"],
       ["alternative", "simultaneous past"]
     ],
-    "comment": "The pragmatically neutral report when Mary's symptom no longer persists at the utterance time.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The pragmatically neutral report when Mary's symptom no longer persists at the utterance time."
   }
 ]

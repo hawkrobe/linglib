@@ -17,9 +17,7 @@
       ["group", "speaker and lion"],
       ["property", "context-dependence"]
     ],
-    "comment": "The speaker and the lion are not associates in the context, so the first-person plural cannot refer to the group, though (16b) *they* can.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The speaker and the lion are not associates in the context, so the first-person plural cannot refer to the group, though (16b) *they* can."
   },
   {
     "id": "toosarvandani2023_16b",
@@ -39,9 +37,7 @@
       ["group", "Paul and lion"],
       ["property", "context-dependence"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "toosarvandani2023_17a",
@@ -61,9 +57,7 @@
       ["group", "speaker and pet dog"],
       ["property", "context-dependence"]
     ],
-    "comment": "A beloved pet counts as an associate, so the mixed human-animal group takes *we*.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A beloved pet counts as an associate, so the mixed human-animal group takes *we*."
   },
   {
     "id": "toosarvandani2023_18a",
@@ -83,9 +77,7 @@
       ["group", "speaker and parachute"],
       ["property", "context-dependence"]
     ],
-    "comment": "A first-person plural cannot refer to the speaker and an inanimate object; (18b) *they* can.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A first-person plural cannot refer to the speaker and an inanimate object; (18b) *they* can."
   },
   {
     "id": "toosarvandani2023_77a",
@@ -106,9 +98,7 @@
       ["configuration", "1 > 3"],
       ["cliticization", "both"]
     ],
-    "comment": "kill.comp=pl=1sg=3.an; Yalálag, from Avelino Becerra (2004). A first-person subject clitic with a third-person animal object clitic.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "kill.comp=pl=1sg=3.an; Yalálag, from Avelino Becerra (2004). A first-person subject clitic with a third-person animal object clitic."
   },
   {
     "id": "toosarvandani2023_77b",
@@ -129,9 +119,7 @@
       ["configuration", "3 > 1"],
       ["cliticization", "object blocked"]
     ],
-    "comment": "follow.comp=3.an=1sg; the person-case constraint: a local-person object cannot cliticize under a third-person subject.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "follow.comp=3.an=1sg; the person-case constraint: a local-person object cannot cliticize under a third-person subject."
   },
   {
     "id": "toosarvandani2023_78a",
@@ -152,9 +140,7 @@
       ["configuration", "2 > 3"],
       ["cliticization", "both"]
     ],
-    "comment": "kill.comp=adv=2sg=3.an.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "kill.comp=adv=2sg=3.an."
   },
   {
     "id": "toosarvandani2023_78b",
@@ -175,9 +161,7 @@
       ["configuration", "3 > 2"],
       ["cliticization", "object blocked"]
     ],
-    "comment": "kill.comp=adv=3.an=2sg.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "kill.comp=adv=3.an=2sg."
   },
   {
     "id": "toosarvandani2023_79a",
@@ -198,9 +182,7 @@
       ["configuration", "3.el > 3.hu"],
       ["cliticization", "both"]
     ],
-    "comment": "make.cry.comp=3.el=3.hu; the animacy-based constraint of Foley and Toosarvandani: the subject outranks the object in animacy.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "make.cry.comp=3.el=3.hu; the animacy-based constraint of Foley and Toosarvandani: the subject outranks the object in animacy."
   },
   {
     "id": "toosarvandani2023_79b",
@@ -221,9 +203,7 @@
       ["configuration", "3.hu > 3.el"],
       ["cliticization", "object blocked"]
     ],
-    "comment": "make.cry.comp=3.hu=3.el; in the Laxopa variety, whose probe does not see the elder feature, this combination is permitted.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "make.cry.comp=3.hu=3.el; in the Laxopa variety, whose probe does not see the elder feature, this combination is permitted."
   },
   {
     "id": "toosarvandani2023_80a",
@@ -244,9 +224,7 @@
       ["configuration", "3.hu > 3.an"],
       ["cliticization", "both"]
     ],
-    "comment": "kick.comp=3.hu=3.an.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "kick.comp=3.hu=3.an."
   },
   {
     "id": "toosarvandani2023_80b",
@@ -267,9 +245,7 @@
       ["configuration", "3.an > 3.hu"],
       ["cliticization", "object blocked"]
     ],
-    "comment": "bite.comp=3.an=3.hu.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "bite.comp=3.an=3.hu."
   },
   {
     "id": "toosarvandani2023_81a",
@@ -290,9 +266,7 @@
       ["configuration", "3.an > 3.in"],
       ["cliticization", "both"]
     ],
-    "comment": "hit.comp=3.an=3.in.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "hit.comp=3.an=3.in."
   },
   {
     "id": "toosarvandani2023_81b",
@@ -313,8 +287,6 @@
       ["configuration", "3.in > 3.an"],
       ["cliticization", "object blocked"]
     ],
-    "comment": "hit.comp=3.in=3.an; in the Zoogocho variety, whose probe sees only the animate feature, any combination of animate clitics is allowed.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "hit.comp=3.in=3.an; in the Zoogocho variety, whose probe sees only the animate feature, any combination of animate clitics is allowed."
   }
 ]

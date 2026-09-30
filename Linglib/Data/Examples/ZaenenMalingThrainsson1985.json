@@ -19,9 +19,7 @@
       ["voice", "active"],
       ["cases", "nom dat"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "zmt1985_8b",
@@ -43,9 +41,7 @@
       ["voice", "active"],
       ["cases", "nom gen"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "zmt1985_9a",
@@ -67,9 +63,7 @@
       ["voice", "passive"],
       ["cases", ""]
     ],
-    "comment": "The impersonal passive.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The impersonal passive."
   },
   {
     "id": "zmt1985_11a",
@@ -91,9 +85,7 @@
       ["voice", "passive"],
       ["cases", "dat"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "zmt1985_11b",
@@ -115,9 +107,7 @@
       ["voice", "passive"],
       ["cases", "gen"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "zmt1985_13",
@@ -140,9 +130,7 @@
       ["voice", "active"],
       ["cases", "dat nom"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "zmt1985_29a",
@@ -164,9 +152,7 @@
       ["voice", "active"],
       ["cases", "acc acc"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "zmt1985_37a",
@@ -189,9 +175,7 @@
       ["voice", "active"],
       ["cases", "nom acc dat"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "zmt1985_37b",
@@ -213,9 +197,7 @@
       ["voice", "active"],
       ["cases", "nom acc gen"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "zmt1985_37c",
@@ -237,9 +219,7 @@
       ["voice", "active"],
       ["cases", "nom dat acc"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "zmt1985_37d",
@@ -262,9 +242,7 @@
       ["voice", "active"],
       ["cases", "nom dat dat"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "zmt1985_37e",
@@ -287,9 +265,7 @@
       ["voice", "active"],
       ["cases", "nom dat gen"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "zmt1985_42a",
@@ -311,9 +287,7 @@
       ["voice", "active"],
       ["cases", "nom dat dat"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "zmt1985_42b",
@@ -338,9 +312,7 @@
       ["test", "passive"],
       ["tested", "goal"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "zmt1985_42c",
@@ -364,9 +336,7 @@
       ["test", "passive"],
       ["tested", "theme"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "zmt1985_44a",
@@ -391,9 +361,7 @@
       ["test", "passive"],
       ["tested", "goal"]
     ],
-    "comment": "The retained object is nominative and the verb agrees with it.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The retained object is nominative and the verb agrees with it."
   },
   {
     "id": "zmt1985_44b",
@@ -418,9 +386,7 @@
       ["test", "passive"],
       ["tested", "theme"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "zmt1985_64a",
@@ -443,9 +409,7 @@
       ["voice", "active"],
       ["cases", "nom acc dat"]
     ],
-    "comment": "From Rögnvaldsson (1982).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "From Rögnvaldsson (1982)."
   },
   {
     "id": "zmt1985_66b",
@@ -467,9 +431,7 @@
       ["voice", "active"],
       ["cases", "nom gen"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "zmt1985_66c",
@@ -490,9 +452,7 @@
       ["verb", "óska"],
       ["voice", "active"]
     ],
-    "comment": "The recipient is optional, the theme is not.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The recipient is optional, the theme is not."
   },
   {
     "id": "zmt1985_14b",
@@ -517,9 +477,7 @@
       ["test", "raising"],
       ["tested", "experiencer"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "zmt1985_14d",
@@ -543,9 +501,7 @@
       ["test", "raising"],
       ["tested", "theme"]
     ],
-    "comment": "One of the four starred variants of (14d).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "One of the four starred variants of (14d)."
   },
   {
     "id": "zmt1985_16",
@@ -570,9 +526,7 @@
       ["test", "raising"],
       ["tested", "experiencer"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "zmt1985_18a",
@@ -596,9 +550,7 @@
       ["test", "reflexivization"],
       ["tested", "experiencer"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "zmt1985_21a",
@@ -622,9 +574,7 @@
       ["test", "inversion"],
       ["tested", "experiencer"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "zmt1985_21c",
@@ -648,9 +598,7 @@
       ["test", "inversion"],
       ["tested", "theme"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "zmt1985_23b",
@@ -675,9 +623,7 @@
       ["test", "extraction"],
       ["tested", "experiencer"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "zmt1985_23d",
@@ -702,9 +648,7 @@
       ["test", "extraction"],
       ["tested", "theme"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "zmt1985_25a",
@@ -728,9 +672,7 @@
       ["test", "postposing"],
       ["tested", "experiencer"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "zmt1985_25c",
@@ -754,9 +696,7 @@
       ["test", "postposing"],
       ["tested", "theme"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "zmt1985_27a",
@@ -781,9 +721,7 @@
       ["test", "ellipsis"],
       ["tested", "experiencer"]
     ],
-    "comment": "The elided dative subject of finnast is identified with the nominative subject of the first conjunct.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The elided dative subject of finnast is identified with the nominative subject of the first conjunct."
   },
   {
     "id": "zmt1985_27b",
@@ -807,9 +745,7 @@
       ["test", "ellipsis"],
       ["tested", "theme"]
     ],
-    "comment": "The elided nominative object cannot be identified with the nominative subject of the first conjunct.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The elided nominative object cannot be identified with the nominative subject of the first conjunct."
   },
   {
     "id": "zmt1985_29b",
@@ -833,9 +769,7 @@
       ["test", "control"],
       ["tested", "experiencer"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "zmt1985_30",
@@ -859,9 +793,7 @@
       ["test", "raising"],
       ["tested", "theme"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "zmt1985_31",
@@ -885,9 +817,7 @@
       ["test", "reflexivization"],
       ["tested", "theme"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "zmt1985_32a",
@@ -911,9 +841,7 @@
       ["test", "inversion"],
       ["tested", "theme"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "zmt1985_33b",
@@ -937,9 +865,7 @@
       ["test", "extraction"],
       ["tested", "theme"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "zmt1985_34",
@@ -963,9 +889,7 @@
       ["test", "postposing"],
       ["tested", "theme"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "zmt1985_35",
@@ -990,9 +914,7 @@
       ["test", "ellipsis"],
       ["tested", "theme"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "zmt1985_36a",
@@ -1016,9 +938,7 @@
       ["test", "control"],
       ["tested", "theme"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "zmt1985_45a",
@@ -1042,9 +962,7 @@
       ["test", "raising"],
       ["tested", "goal"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "zmt1985_45b",
@@ -1068,9 +986,7 @@
       ["test", "raising"],
       ["tested", "theme"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "zmt1985_68a",
@@ -1094,9 +1010,7 @@
       ["test", "passive"],
       ["tested", "theme"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "zmt1985_68a'",
@@ -1119,9 +1033,7 @@
       ["test", "passive"],
       ["tested", "theme"]
     ],
-    "comment": "The starred parenthesized variant of (68a): with the recipient present, the genitive theme does not passivize.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The starred parenthesized variant of (68a): with the recipient present, the genitive theme does not passivize."
   },
   {
     "id": "zmt1985_68c",
@@ -1145,8 +1057,6 @@
       ["test", "passive"],
       ["tested", "goal"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   }
 ]

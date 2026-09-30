@@ -31,9 +31,7 @@ def ex1a_U : LinguisticExample :=
     alternatives := []
     readings := [("universal (live-in-LA holds throughout 2000-now)", .acceptable)]
     paperFeatures := []
-    comment := "Pancheva 2003 §1 ex (1a). One of the three canonical perfect-reading exemplars. Universal reading requires stative or progressive participial aspect (Pancheva §2 thesis)."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Pancheva 2003 §1 ex (1a). One of the three canonical perfect-reading exemplars. Universal reading requires stative or progressive participial aspect (Pancheva §2 thesis)." }
 
 def ex1b_EXP : LinguisticExample :=
   { id := "pancheva2003_ex1b_EXP"
@@ -49,9 +47,7 @@ def ex1b_EXP : LinguisticExample :=
     alternatives := []
     readings := [("experiential (LA-being at some past subinterval)", .acceptable)]
     paperFeatures := []
-    comment := "Pancheva 2003 §1 ex (1b). Subsumed under EXISTENTIAL by McCawley 1971, Mittwoch 1988 (umbrella for Experiential + Resultative); Pancheva keeps the finer Experiential/Resultative distinction."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Pancheva 2003 §1 ex (1b). Subsumed under EXISTENTIAL by McCawley 1971, Mittwoch 1988 (umbrella for Experiential + Resultative); Pancheva keeps the finer Experiential/Resultative distinction." }
 
 def ex1c_RES : LinguisticExample :=
   { id := "pancheva2003_ex1c_RES"
@@ -67,9 +63,7 @@ def ex1c_RES : LinguisticExample :=
     alternatives := []
     readings := [("resultative (arrived + still in LA at utterance)", .acceptable)]
     paperFeatures := []
-    comment := "Pancheva 2003 §1 ex (1c). The Resultative reading requires a telic predicate (Kratzer 1994: only telic events have a natural result state); see (5)/(6) for the telic vs atelic contrast."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Pancheva 2003 §1 ex (1c). The Resultative reading requires a telic predicate (Kratzer 1994: only telic events have a natural result state); see (5)/(6) for the telic vs atelic contrast." }
 
 def ex5a_atelic : LinguisticExample :=
   { id := "pancheva2003_ex5a_atelic"
@@ -85,9 +79,7 @@ def ex5a_atelic : LinguisticExample :=
     alternatives := []
     readings := [("experiential (running at some past time)", .acceptable), ("resultative", .ungrammatical)]
     paperFeatures := []
-    comment := "Pancheva 2003 §2 ex (5a). Diagnostic for the telic-only restriction on Resultative reading."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Pancheva 2003 §2 ex (5a). Diagnostic for the telic-only restriction on Resultative reading." }
 
 def ex6a_telic : LinguisticExample :=
   { id := "pancheva2003_ex6a_telic"
@@ -103,9 +95,7 @@ def ex6a_telic : LinguisticExample :=
     alternatives := []
     readings := [("experiential (lost at some past time)", .acceptable), ("resultative (lost + still missing now)", .acceptable)]
     paperFeatures := []
-    comment := "Pancheva 2003 §2 ex (6a). The telic contrast partner to (5a). Demonstrates that telic predicates license both readings; atelic predicates only EXP."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Pancheva 2003 §2 ex (6a). The telic contrast partner to (5a). Demonstrates that telic predicates license both readings; atelic predicates only EXP." }
 
 def all : List LinguisticExample := [ex1a_U, ex1b_EXP, ex1c_RES, ex5a_atelic, ex6a_telic]
 

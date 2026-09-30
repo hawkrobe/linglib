@@ -31,9 +31,7 @@ def ex_23 : LinguisticExample :=
     alternatives := []
     readings := [("restitutive", .acceptable), ("repetitive", .acceptable)]
     paperFeatures := [("diagnostic", "again"), ("root class", "property concept")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_24a : LinguisticExample :=
   { id := "yuausensismith2023_24a"
@@ -49,9 +47,7 @@ def ex_24a : LinguisticExample :=
     alternatives := []
     readings := [("restitutive", .acceptable)]
     paperFeatures := [("diagnostic", "again"), ("root class", "property concept")]
-    comment := "One sharpening suffices. The paper attributes the example to Beavers and Koontz-Garboden 2020."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "One sharpening suffices. The paper attributes the example to Beavers and Koontz-Garboden 2020." }
 
 def ex_25a : LinguisticExample :=
   { id := "yuausensismith2023_25a"
@@ -67,9 +63,7 @@ def ex_25a : LinguisticExample :=
     alternatives := []
     readings := [("restitutive", .unacceptable), ("repetitive", .acceptable)]
     paperFeatures := [("diagnostic", "again"), ("root class", "change of state")]
-    comment := "Necessarily two breakings."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Necessarily two breakings." }
 
 def ex_25b : LinguisticExample :=
   { id := "yuausensismith2023_25b"
@@ -85,9 +79,7 @@ def ex_25b : LinguisticExample :=
     alternatives := []
     readings := [("restitutive", .unacceptable), ("repetitive", .acceptable)]
     paperFeatures := [("diagnostic", "again"), ("root class", "change of state")]
-    comment := "Necessarily two defrostings."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Necessarily two defrostings." }
 
 def ex_25c : LinguisticExample :=
   { id := "yuausensismith2023_25c"
@@ -103,9 +95,7 @@ def ex_25c : LinguisticExample :=
     alternatives := []
     readings := [("restitutive", .unacceptable), ("repetitive", .acceptable)]
     paperFeatures := [("diagnostic", "again"), ("root class", "change of state")]
-    comment := "Necessarily two meltings."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Necessarily two meltings." }
 
 def ex_26 : LinguisticExample :=
   { id := "yuausensismith2023_26"
@@ -121,9 +111,7 @@ def ex_26 : LinguisticExample :=
     alternatives := []
     readings := [("durative", .acceptable), ("internal", .acceptable)]
     paperFeatures := [("diagnostic", "for-phrase"), ("root class", "property concept")]
-    comment := "Internal reading: the door remained open for two hours."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Internal reading: the door remained open for two hours." }
 
 def ex_27 : LinguisticExample :=
   { id := "yuausensismith2023_27"
@@ -139,9 +127,7 @@ def ex_27 : LinguisticExample :=
     alternatives := []
     readings := [("durative", .acceptable), ("internal", .unacceptable)]
     paperFeatures := [("diagnostic", "for-phrase"), ("root class", "change of state")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_28 : LinguisticExample :=
   { id := "yuausensismith2023_28"
@@ -157,9 +143,7 @@ def ex_28 : LinguisticExample :=
     alternatives := []
     readings := [("durative", .acceptable), ("internal", .unacceptable)]
     paperFeatures := [("diagnostic", "for-phrase"), ("root class", "change of state")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_29 : LinguisticExample :=
   { id := "yuausensismith2023_29"
@@ -175,9 +159,7 @@ def ex_29 : LinguisticExample :=
     alternatives := []
     readings := [("durative", .acceptable), ("internal", .unacceptable)]
     paperFeatures := [("diagnostic", "for-phrase"), ("root class", "change of state")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_30 : LinguisticExample :=
   { id := "yuausensismith2023_30"
@@ -193,9 +175,7 @@ def ex_30 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "resultative modifier"), ("root class", "property concept")]
-    comment := "Intended: Kim caused the door to go into the garden by opening."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Intended: Kim caused the door to go into the garden by opening." }
 
 def ex_31a : LinguisticExample :=
   { id := "yuausensismith2023_31a"
@@ -211,9 +191,7 @@ def ex_31a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "resultative modifier"), ("root class", "property concept")]
-    comment := "Cannot mean that the citizens caused the city to become invisible by darkening."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Cannot mean that the citizens caused the city to become invisible by darkening." }
 
 def ex_31b : LinguisticExample :=
   { id := "yuausensismith2023_31b"
@@ -229,9 +207,7 @@ def ex_31b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "resultative modifier"), ("root class", "property concept")]
-    comment := "Cannot mean that the dentist caused the teeth to become clean by whitening."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Cannot mean that the dentist caused the teeth to become clean by whitening." }
 
 def ex_35b : LinguisticExample :=
   { id := "yuausensismith2023_35b"
@@ -247,9 +223,7 @@ def ex_35b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "resultative modifier"), ("root class", "change of state")]
-    comment := "Corpus example with an unselected object: it is the deck, not the corpse, that breaks."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Corpus example with an unselected object: it is the deck, not the corpse, that breaks." }
 
 def ex_35c : LinguisticExample :=
   { id := "yuausensismith2023_35c"
@@ -265,9 +239,7 @@ def ex_35c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "resultative modifier"), ("root class", "change of state")]
-    comment := "Web example with an unselected object."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Web example with an unselected object." }
 
 def all : List LinguisticExample := [ex_23, ex_24a, ex_25a, ex_25b, ex_25c, ex_26, ex_27, ex_28, ex_29, ex_30, ex_31a, ex_31b, ex_35b, ex_35c]
 

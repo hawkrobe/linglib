@@ -16,9 +16,7 @@
       ["type", "Moore-paradoxical"],
       ["embedding", "none"]
     ],
-    "comment": "Unassertable, but coherent under embedding.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Unassertable, but coherent under embedding."
   },
   {
     "id": "yalcin2007_2",
@@ -37,9 +35,7 @@
       ["type", "Moore-paradoxical"],
       ["embedding", "none"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "yalcin2007_3",
@@ -58,9 +54,7 @@
       ["type", "epistemic contradiction"],
       ["embedding", "suppose"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "yalcin2007_4",
@@ -79,9 +73,7 @@
       ["type", "epistemic contradiction"],
       ["embedding", "suppose"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "yalcin2007_5",
@@ -100,9 +92,7 @@
       ["type", "epistemic contradiction"],
       ["embedding", "suppose"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "yalcin2007_6",
@@ -121,9 +111,7 @@
       ["type", "epistemic contradiction"],
       ["embedding", "conditional antecedent"]
     ],
-    "comment": "Unintelligible whatever the consequent.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Unintelligible whatever the consequent."
   },
   {
     "id": "yalcin2007_7",
@@ -142,9 +130,7 @@
       ["type", "epistemic contradiction"],
       ["embedding", "conditional antecedent"]
     ],
-    "comment": "Unintelligible rather than trivially true.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Unintelligible rather than trivially true."
   },
   {
     "id": "yalcin2007_8",
@@ -163,9 +149,7 @@
       ["type", "Moore-paradoxical"],
       ["embedding", "suppose"]
     ],
-    "comment": "A coherent request.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A coherent request."
   },
   {
     "id": "yalcin2007_9",
@@ -184,9 +168,7 @@
       ["type", "Moore-paradoxical"],
       ["embedding", "suppose"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "yalcin2007_10",
@@ -205,9 +187,7 @@
       ["type", "Moore-paradoxical"],
       ["embedding", "conditional antecedent"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "yalcin2007_11",
@@ -226,9 +206,7 @@
       ["type", "Moore-paradoxical"],
       ["embedding", "conditional antecedent"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "yalcin2007_12",
@@ -247,9 +225,7 @@
       ["type", "epistemic contradiction"],
       ["embedding", "conditional antecedent"]
     ],
-    "comment": "A relational semantics on which might entails for-all-I-know predicts this true.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A relational semantics on which might entails for-all-I-know predicts this true."
   },
   {
     "id": "yalcin2007_13",
@@ -269,9 +245,7 @@
     "paperFeatures": [
       ["embedding", "believe"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "yalcin2007_14",
@@ -289,9 +263,7 @@
     "paperFeatures": [
       ["embedding", "think"]
     ],
-    "comment": "True without second-order beliefs on Fido's part.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "True without second-order beliefs on Fido's part."
   },
   {
     "id": "yalcin2007_15",
@@ -309,9 +281,7 @@
     "paperFeatures": [
       ["reading", "expert information"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "yalcin2007_16",
@@ -329,9 +299,7 @@
     "paperFeatures": [
       ["reading", "target information state"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "yalcin2007_17",
@@ -351,9 +319,7 @@
       ["modal", "must"],
       ["embedding", "suppose"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "yalcin2007_18",
@@ -373,9 +339,7 @@
       ["modal", "probability"],
       ["embedding", "suppose"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "yalcin2007_19",
@@ -395,9 +359,7 @@
       ["modal", "probability"],
       ["embedding", "suppose"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "yalcin2007_20",
@@ -417,9 +379,7 @@
       ["modal", "probability"],
       ["embedding", "conditional antecedent"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "yalcin2007_21",
@@ -437,9 +397,7 @@
     "paperFeatures": [
       ["consequent", "plain"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "yalcin2007_22",
@@ -457,8 +415,6 @@
     "paperFeatures": [
       ["consequent", "must"]
     ],
-    "comment": "Sounds equivalent to (C1).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Sounds equivalent to (C1)."
   }
 ]

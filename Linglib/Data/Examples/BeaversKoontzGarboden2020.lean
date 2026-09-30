@@ -31,9 +31,7 @@ def bkg2020_25a : LinguisticExample :=
     alternatives := []
     readings := [("restitutive: again scopes over the root state", .acceptable)]
     paperFeatures := [("diagnostic", "sublexical again"), ("attachment", "root")]
-    comment := "Lowest of the three attachment sites in (27)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Lowest of the three attachment sites in (27)." }
 
 def bkg2020_25b : LinguisticExample :=
   { id := "bkg2020_25b"
@@ -49,9 +47,7 @@ def bkg2020_25b : LinguisticExample :=
     alternatives := []
     readings := [("repetitive over the change: again scopes over v_become", .acceptable)]
     paperFeatures := [("diagnostic", "sublexical again"), ("attachment", "v_become")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def bkg2020_25c : LinguisticExample :=
   { id := "bkg2020_25c"
@@ -67,9 +63,7 @@ def bkg2020_25c : LinguisticExample :=
     alternatives := []
     readings := [("repetitive over the causation: again scopes over v_cause", .acceptable)]
     paperFeatures := [("diagnostic", "sublexical again"), ("attachment", "v_cause")]
-    comment := "(25c) entails (25b) entails (25a) — the reading hierarchy."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "(25c) entails (25b) entails (25a) — the reading hierarchy." }
 
 def bkg2020_ch2_46a : LinguisticExample :=
   { id := "bkg2020_ch2_46a"
@@ -85,9 +79,7 @@ def bkg2020_ch2_46a : LinguisticExample :=
     alternatives := []
     readings := [("restitutive: could be just one sharpening", .acceptable)]
     paperFeatures := [("root class", "property concept"), ("diagnostic", "restitutive again")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def bkg2020_ch2_47a : LinguisticExample :=
   { id := "bkg2020_ch2_47a"
@@ -103,9 +95,7 @@ def bkg2020_ch2_47a : LinguisticExample :=
     alternatives := []
     readings := [("repetitive: necessarily two returnings", .acceptable)]
     paperFeatures := [("root class", "result"), ("diagnostic", "restitutive again")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def bkg2020_ch2_47b : LinguisticExample :=
   { id := "bkg2020_ch2_47b"
@@ -121,9 +111,7 @@ def bkg2020_ch2_47b : LinguisticExample :=
     alternatives := []
     readings := [("repetitive: necessarily two defrostings", .acceptable)]
     paperFeatures := [("root class", "result"), ("diagnostic", "restitutive again")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def bkg2020_ch2_48 : LinguisticExample :=
   { id := "bkg2020_ch2_48"
@@ -139,9 +127,7 @@ def bkg2020_ch2_48 : LinguisticExample :=
     alternatives := []
     readings := [("repetitive: necessarily two fryings", .acceptable)]
     paperFeatures := [("root class", "result"), ("diagnostic", "restitutive again")]
-    comment := "Even granting a prototypical fried state, no restitutive reading."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Even granting a prototypical fried state, no restitutive reading." }
 
 def bkg2020_ch3_10a : LinguisticExample :=
   { id := "bkg2020_ch3_10a"
@@ -157,9 +143,7 @@ def bkg2020_ch3_10a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("root class", "true possession"), ("diagnostic", "result denial")]
-    comment := "Possession is non-cancelable with giving verbs (give, hand, pass)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Possession is non-cancelable with giving verbs (give, hand, pass)." }
 
 def bkg2020_ch3_11a : LinguisticExample :=
   { id := "bkg2020_ch3_11a"
@@ -175,9 +159,7 @@ def bkg2020_ch3_11a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("root class", "release"), ("diagnostic", "result denial")]
-    comment := "Sending verbs cancel the possession inference: prospective rather than actual having."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Sending verbs cancel the possession inference: prospective rather than actual having." }
 
 def bkg2020_ch3_48a : LinguisticExample :=
   { id := "bkg2020_ch3_48a"
@@ -193,9 +175,7 @@ def bkg2020_ch3_48a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("root class", "transfer of possession by motion"), ("diagnostic", "result denial")]
-    comment := "The hand root entails change along a possession-by-motion scale in both templates."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The hand root entails change along a possession-by-motion scale in both templates." }
 
 def bkg2020_ch4_25a : LinguisticExample :=
   { id := "bkg2020_ch4_25a"
@@ -211,9 +191,7 @@ def bkg2020_ch4_25a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb class", "manner of killing"), ("diagnostic", "result denial")]
-    comment := "Manner-of-killing verbs pattern with result verbs: the result is entailed."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Manner-of-killing verbs pattern with result verbs: the result is entailed." }
 
 def bkg2020_ch4_26c : LinguisticExample :=
   { id := "bkg2020_ch4_26c"
@@ -229,9 +207,7 @@ def bkg2020_ch4_26c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb class", "manner of killing"), ("diagnostic", "object deletion")]
-    comment := "On the transitive-killing reading: result verbs disallow object deletion."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "On the transitive-killing reading: result verbs disallow object deletion." }
 
 def bkg2020_ch4_32b : LinguisticExample :=
   { id := "bkg2020_ch4_32b"
@@ -247,9 +223,7 @@ def bkg2020_ch4_32b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb class", "manner of killing"), ("diagnostic", "action denial")]
-    comment := "Actor-oriented manner is entailed alongside the result: manner+result in one root."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Actor-oriented manner is entailed alongside the result: manner+result in one root." }
 
 def all : List LinguisticExample := [bkg2020_25a, bkg2020_25b, bkg2020_25c, bkg2020_ch2_46a, bkg2020_ch2_47a, bkg2020_ch2_47b, bkg2020_ch2_48, bkg2020_ch3_10a, bkg2020_ch3_11a, bkg2020_ch3_48a, bkg2020_ch4_25a, bkg2020_ch4_26c, bkg2020_ch4_32b]
 

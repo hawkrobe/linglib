@@ -31,9 +31,7 @@ def ex13_v1_nci : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verbPosition", "v1"), ("indefinite", "nci"), ("context", "neutral")]
-    comment := "Mean rating ≈ 3 (Figure 2a). V1 forces the outer reading (FALSUM), which cannot license the NCI žádné: main effect of INDEFINITE in V1, z = −15.674, p < .001."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Mean rating ≈ 3 (Figure 2a). V1 forces the outer reading (FALSUM), which cannot license the NCI žádné: main effect of INDEFINITE in V1, z = −15.674, p < .001." }
 
 def ex13_v1_ppi : LinguisticExample :=
   { id := "stankovasimik2025_ex13_v1_ppi"
@@ -49,9 +47,7 @@ def ex13_v1_ppi : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verbPosition", "v1"), ("indefinite", "ppi"), ("context", "neutral")]
-    comment := "Mean rating ≈ 5, highest in neutral context (Figure 2a; CONTEXT within PPI z = −3.522, p < .001). FALSUM allows the PPI nějaké in its scope."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Mean rating ≈ 5, highest in neutral context (Figure 2a; CONTEXT within PPI z = −3.522, p < .001). FALSUM allows the PPI nějaké in its scope." }
 
 def ex13_nonv1_nci : LinguisticExample :=
   { id := "stankovasimik2025_ex13_nonv1_nci"
@@ -67,9 +63,7 @@ def ex13_nonv1_nci : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verbPosition", "nonv1"), ("indefinite", "nci"), ("context", "negative")]
-    comment := "Mean rating ≈ 5 in negative context (Figure 2b). The inner default reading licenses the NCI; nonV1 PQs need negative evidential bias (main effect of CONTEXT, z = 8.674, p < 0.01)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Mean rating ≈ 5 in negative context (Figure 2b). The inner default reading licenses the NCI; nonV1 PQs need negative evidential bias (main effect of CONTEXT, z = 8.674, p < 0.01)." }
 
 def ex13_nonv1_ppi : LinguisticExample :=
   { id := "stankovasimik2025_ex13_nonv1_ppi"
@@ -85,9 +79,7 @@ def ex13_nonv1_ppi : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verbPosition", "nonv1"), ("indefinite", "ppi"), ("context", "negative")]
-    comment := "Mean rating ≈ 4 in negative context (Figure 2b). The PPI needs the outer reading, available in nonV1 but dispreferred: main effect of INDEFINITE, z = 6.208, p < 0.01, NCI over PPI."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Mean rating ≈ 4 in negative context (Figure 2b). The PPI needs the outer reading, available in nonV1 but dispreferred: main effect of INDEFINITE, z = 6.208, p < 0.01, NCI over PPI." }
 
 def ex14 : LinguisticExample :=
   { id := "stankovasimik2025_ex14"
@@ -103,9 +95,7 @@ def ex14 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verbPosition", "v1"), ("indefinite", "ppi"), ("context", "positive")]
-    comment := "Median 6, vs 5 for the analogous neutral-context condition (§5.3): Czech FALSUM is compatible even with positive evidential bias, unlike English high negation."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Median 6, vs 5 for the analogous neutral-context condition (§5.3): Czech FALSUM is compatible even with positive evidential bias, unlike English high negation." }
 
 def ex17_ppi : LinguisticExample :=
   { id := "stankovasimik2025_ex17_ppi"
@@ -121,9 +111,7 @@ def ex17_ppi : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("particle", "nahodou"), ("verbPosition", "v1"), ("indefinite", "ppi"), ("context", "neutral")]
-    comment := "Mean rating ≈ 4.8 in both contexts (Figure 3): náhodou, like its licensor FALSUM, is insensitive to contextual evidence."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Mean rating ≈ 4.8 in both contexts (Figure 3): náhodou, like its licensor FALSUM, is insensitive to contextual evidence." }
 
 def ex17_nci : LinguisticExample :=
   { id := "stankovasimik2025_ex17_nci"
@@ -139,9 +127,7 @@ def ex17_nci : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("particle", "nahodou"), ("verbPosition", "v1"), ("indefinite", "nci"), ("context", "neutral")]
-    comment := "Mean rating ≈ 2.3 neutral / ≈ 3.0 negative (Figure 3). náhodou requires FALSUM, which cannot license the NCI: main effect of INDEFINITE, z = −12.845, p < .001."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Mean rating ≈ 2.3 neutral / ≈ 3.0 negative (Figure 3). náhodou requires FALSUM, which cannot license the NCI: main effect of INDEFINITE, z = −12.845, p < .001." }
 
 def ex18 : LinguisticExample :=
   { id := "stankovasimik2025_ex18"
@@ -157,9 +143,7 @@ def ex18 : LinguisticExample :=
     alternatives := [("A Petr si náhodou nekoupil žádnou knihu?", .unacceptable)]
     readings := []
     paperFeatures := [("particle", "nahodou"), ("verbPosition", "nonv1"), ("indefinite", "ppi")]
-    comment := "náhodou in a nonV1 PQ: needs a contrastive topic (Petr) and contrastive focus on the negated verb, and the negation must still be FALSUM — witness the infelicitous NCI alternative žádnou."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "náhodou in a nonV1 PQ: needs a contrastive topic (Petr) and contrastive focus on the negated verb, and the negation must still be FALSUM — witness the infelicitous NCI alternative žádnou." }
 
 def all : List LinguisticExample := [ex13_v1_nci, ex13_v1_ppi, ex13_nonv1_nci, ex13_nonv1_ppi, ex14, ex17_ppi, ex17_nci, ex18]
 

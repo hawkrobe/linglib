@@ -20,9 +20,7 @@
       ["concord", "determiner adjective"],
       ["index", "verb pronoun"]
     ],
-    "comment": "The determiner and adjective show concord with the noun; the finite verb and the pronoun show index agreement.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The determiner and adjective show concord with the noun; the finite verb and the pronoun show index agreement."
   },
   {
     "id": "wechslerzlatic2000_2",
@@ -45,9 +43,7 @@
       ["pronoun", "neuter singular"],
       ["agreement", "index"]
     ],
-    "comment": "The neuter singular pronoun agrees with the diminutive's neuter index.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The neuter singular pronoun agrees with the diminutive's neuter index."
   },
   {
     "id": "wechslerzlatic2000_3",
@@ -70,9 +66,7 @@
       ["pronoun", "feminine singular"],
       ["agreement", "pragmatic"]
     ],
-    "comment": "The feminine pronoun is pragmatic agreement with the female referent.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The feminine pronoun is pragmatic agreement with the female referent."
   },
   {
     "id": "wechslerzlatic2000_4",
@@ -92,9 +86,7 @@
     "paperFeatures": [
       ["agreement", "concord"]
     ],
-    "comment": "Determiner and adjective agree with the head noun in gender, number and case.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Determiner and adjective agree with the head noun in gender, number and case."
   },
   {
     "id": "wechslerzlatic2000_5",
@@ -115,9 +107,7 @@
     "paperFeatures": [
       ["target", "participle"]
     ],
-    "comment": "The participle agrees in gender and number only, so concord and index agreement cannot be told apart.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The participle agrees in gender and number only, so concord and index agreement cannot be told apart."
   },
   {
     "id": "wechslerzlatic2000_6",
@@ -140,9 +130,7 @@
       ["sex", "male"],
       ["gender", "masculine"]
     ],
-    "comment": "Applied to a male the class II noun triggers masculine concord and index.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Applied to a male the class II noun triggers masculine concord and index."
   },
   {
     "id": "wechslerzlatic2000_7",
@@ -165,9 +153,7 @@
       ["sex", "female"],
       ["gender", "feminine"]
     ],
-    "comment": "Applied to a female the same noun triggers feminine concord and index.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Applied to a female the same noun triggers feminine concord and index."
   },
   {
     "id": "wechslerzlatic2000_8",
@@ -188,9 +174,7 @@
       ["noun", "kit"],
       ["sex", "unspecified"]
     ],
-    "comment": "A masculine noun with no sex specification.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A masculine noun with no sex specification."
   },
   {
     "id": "wechslerzlatic2000_9",
@@ -212,9 +196,7 @@
       ["noun", "kit"],
       ["gender", "masculine"]
     ],
-    "comment": "Masculine agreement regardless of the whale's sex.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Masculine agreement regardless of the whale's sex."
   },
   {
     "id": "wechslerzlatic2000_10",
@@ -237,9 +219,7 @@
       ["noun", "telad"],
       ["predicate", "nondistributive"]
     ],
-    "comment": "Collectives in -ad allow singular or plural agreement with a nondistributive predicate.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Collectives in -ad allow singular or plural agreement with a nondistributive predicate."
   },
   {
     "id": "wechslerzlatic2000_11",
@@ -263,9 +243,7 @@
       ["noun", "telad"],
       ["predicate", "distributive"]
     ],
-    "comment": "A distributive predicate requires plural agreement.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A distributive predicate requires plural agreement."
   },
   {
     "id": "wechslerzlatic2000_12",
@@ -289,9 +267,7 @@
       ["declension", "II"],
       ["gender", "masculine"]
     ],
-    "comment": "A male name in -a declines in class II with masculine concord and index.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A male name in -a declines in class II with masculine concord and index."
   },
   {
     "id": "wechslerzlatic2000_13",
@@ -312,9 +288,7 @@
       ["noun", "mušterija"],
       ["sex", "unspecified"]
     ],
-    "comment": "With feminine forms the noun is unmarked for sex.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "With feminine forms the noun is unmarked for sex."
   },
   {
     "id": "wechslerzlatic2000_14",
@@ -335,9 +309,7 @@
       ["noun", "mušterija"],
       ["sex", "male"]
     ],
-    "comment": "With masculine forms the noun is interpreted as male.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "With masculine forms the noun is interpreted as male."
   },
   {
     "id": "wechslerzlatic2000_15",
@@ -358,9 +330,7 @@
       ["noun", "sudije"],
       ["number", "plural"]
     ],
-    "comment": "The plural loses the disjunctive sex specification and is feminine throughout.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The plural loses the disjunctive sex specification and is feminine throughout."
   },
   {
     "id": "wechslerzlatic2000_16",
@@ -382,9 +352,7 @@
       ["noun", "naočare"],
       ["type", "plurale tantum"]
     ],
-    "comment": "Plural declension, concord and index with a nonaggregate referent.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Plural declension, concord and index with a nonaggregate referent."
   },
   {
     "id": "wechslerzlatic2000_17",
@@ -408,9 +376,7 @@
       ["noun", "braća"],
       ["pronoun", "neuter plural"]
     ],
-    "comment": "A male-only noun with a neuter plural index; the masculine plural pronoun is pragmatic agreement.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A male-only noun with a neuter plural index; the masculine plural pronoun is pragmatic agreement."
   },
   {
     "id": "wechslerzlatic2000_18",
@@ -431,9 +397,7 @@
       ["noun", "braća"],
       ["concord", "feminine singular"]
     ],
-    "comment": "Feminine singular concord on the modifiers.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Feminine singular concord on the modifiers."
   },
   {
     "id": "wechslerzlatic2000_19",
@@ -454,9 +418,7 @@
       ["noun", "braća"],
       ["concord", "feminine singular"]
     ],
-    "comment": "Feminine singular concord in the instrumental.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Feminine singular concord in the instrumental."
   },
   {
     "id": "wechslerzlatic2000_20",
@@ -480,9 +442,7 @@
       ["noun", "gospoda"],
       ["pronoun", "masculine plural"]
     ],
-    "comment": "Unlike braća, the male-only collective takes a masculine rather than neuter pronoun.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Unlike braća, the male-only collective takes a masculine rather than neuter pronoun."
   },
   {
     "id": "wechslerzlatic2000_21",
@@ -506,9 +466,7 @@
       ["concord", "feminine singular"],
       ["index", "neuter plural"]
     ],
-    "comment": "Mixed agreement: feminine singular on the modifiers, neuter plural on the pronoun.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Mixed agreement: feminine singular on the modifiers, neuter plural on the pronoun."
   },
   {
     "id": "wechslerzlatic2000_22",
@@ -530,9 +488,7 @@
       ["noun", "deca"],
       ["index", "neuter plural"]
     ],
-    "comment": "Plural finite auxiliary and plural pronoun.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Plural finite auxiliary and plural pronoun."
   },
   {
     "id": "wechslerzlatic2000_23",
@@ -554,9 +510,7 @@
       ["noun", "deca"],
       ["target", "participle"]
     ],
-    "comment": "The nominative participle in -a is ambiguous between feminine singular and neuter plural.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The nominative participle in -a is ambiguous between feminine singular and neuter plural."
   },
   {
     "id": "wechslerzlatic2000_24",
@@ -578,9 +532,7 @@
       ["noun", "deca"],
       ["target", "finite verb"]
     ],
-    "comment": "The finite verb shows plural index agreement.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The finite verb shows plural index agreement."
   },
   {
     "id": "wechslerzlatic2000_25",
@@ -604,9 +556,7 @@
       ["noun", "deca"],
       ["target", "secondary predicate"]
     ],
-    "comment": "In the instrumental the secondary predicate is unambiguously feminine singular, so it shows concord.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "In the instrumental the secondary predicate is unambiguously feminine singular, so it shows concord."
   },
   {
     "id": "wechslerzlatic2000_26",
@@ -630,9 +580,7 @@
       ["noun", "deca"],
       ["target", "coordination"]
     ],
-    "comment": "Coordination with a feminine singular noun resolves to masculine, as if deca were neuter plural.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Coordination with a feminine singular noun resolves to masculine, as if deca were neuter plural."
   },
   {
     "id": "wechslerzlatic2000_27",
@@ -656,9 +604,7 @@
       ["noun", "deca"],
       ["target", "coordination"]
     ],
-    "comment": "Same resolution on a predicate adjective.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Same resolution on a predicate adjective."
   },
   {
     "id": "wechslerzlatic2000_28",
@@ -683,9 +629,7 @@
       ["noun", "deca"],
       ["target", "coordination"]
     ],
-    "comment": "Coordination with a neuter plural noun resolves to neuter plural.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Coordination with a neuter plural noun resolves to neuter plural."
   },
   {
     "id": "wechslerzlatic2000_29",
@@ -709,9 +653,7 @@
       ["noun", "deca"],
       ["relative", "nominative"]
     ],
-    "comment": "The nominative relative pronoun triggers plural within its clause.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The nominative relative pronoun triggers plural within its clause."
   },
   {
     "id": "wechslerzlatic2000_30",
@@ -732,9 +674,7 @@
       ["noun", "deca"],
       ["relative", "accusative"]
     ],
-    "comment": "The accusative relative pronoun is feminine singular.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The accusative relative pronoun is feminine singular."
   },
   {
     "id": "wechslerzlatic2000_31",
@@ -758,9 +698,7 @@
       ["noun", "deca"],
       ["relative", "genitive"]
     ],
-    "comment": "Genitive relatives take the feminine singular or the gender-unmarked plural form.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Genitive relatives take the feminine singular or the gender-unmarked plural form."
   },
   {
     "id": "wechslerzlatic2000_32",
@@ -784,9 +722,7 @@
       ["noun", "deca"],
       ["relative", "što"]
     ],
-    "comment": "The resumptive pronoun of a što-relative is an ordinary pronoun and shows index agreement.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The resumptive pronoun of a što-relative is an ordinary pronoun and shows index agreement."
   },
   {
     "id": "wechslerzlatic2000_33",
@@ -810,9 +746,7 @@
       ["noun", "deca"],
       ["relative", "što"]
     ],
-    "comment": "The singular resumptive of the što-relative is ungrammatical.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The singular resumptive of the što-relative is ungrammatical."
   },
   {
     "id": "wechslerzlatic2000_34",
@@ -835,8 +769,6 @@
       ["concord", "feminine"],
       ["index", "masculine"]
     ],
-    "comment": "A Spanish title with feminine concord and masculine index, adapted from Corbett.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A Spanish title with feminine concord and masculine index, adapted from Corbett."
   }
 ]

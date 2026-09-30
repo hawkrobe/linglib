@@ -16,9 +16,7 @@
       ["puzzle", "Asher"],
       ["role", "premise"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "yan2023_2",
@@ -37,9 +35,7 @@
       ["puzzle", "Asher"],
       ["role", "monotonic conclusion"]
     ],
-    "comment": "False in the scenario although a free trip is a trip.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "False in the scenario although a free trip is a trip."
   },
   {
     "id": "yan2023_3",
@@ -58,9 +54,7 @@
       ["puzzle", "Heim"],
       ["role", "premise"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "yan2023_4",
@@ -79,9 +73,7 @@
       ["puzzle", "Heim"],
       ["role", "monotonic conclusion"]
     ],
-    "comment": "Utterable in a situation where the speaker does not want to teach at all.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Utterable in a situation where the speaker does not want to teach at all."
   },
   {
     "id": "yan2023_5",
@@ -100,9 +92,7 @@
       ["puzzle", "Ross"],
       ["role", "premise"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "yan2023_6",
@@ -121,9 +111,7 @@
       ["puzzle", "Ross"],
       ["role", "monotonic conclusion"]
     ],
-    "comment": "Suggests that John is okay with burning the letter.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Suggests that John is okay with burning the letter."
   },
   {
     "id": "yan2023_7",
@@ -143,9 +131,7 @@
     "paperFeatures": [
       ["inference", "box free choice"]
     ],
-    "comment": "The distributive inference does not rely on John not wanting a Ferrari and not wanting a Porsche.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The distributive inference does not rely on John not wanting a Ferrari and not wanting a Porsche."
   },
   {
     "id": "yan2023_8",
@@ -164,9 +150,7 @@
       ["puzzle", "Ross"],
       ["formula", "◇SEND a"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "yan2023_9",
@@ -185,9 +169,7 @@
       ["puzzle", "Ross"],
       ["formula", "◇BURN a"]
     ],
-    "comment": "Licensed only by the enriched disjunctive want, which the premise does not support.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Licensed only by the enriched disjunctive want, which the premise does not support."
   },
   {
     "id": "yan2023_10",
@@ -206,9 +188,7 @@
       ["puzzle", "Asher"],
       ["formula", "◇∃x FREE x"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "yan2023_11",
@@ -227,9 +207,7 @@
       ["puzzle", "Asher"],
       ["formula", "◇∃x ¬FREE x"]
     ],
-    "comment": "Licensed only by the enriched reinterpretation of TRIP, which the premise does not justify.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Licensed only by the enriched reinterpretation of TRIP, which the premise does not justify."
   },
   {
     "id": "yan2023_12",
@@ -248,9 +226,7 @@
       ["evidence", "monotonicity"],
       ["item", "NPI any"]
     ],
-    "comment": "The NPI is licensed under negated want, which requires want to be upward monotonic.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The NPI is licensed under negated want, which requires want to be upward monotonic."
   },
   {
     "id": "yan2023_13",
@@ -269,9 +245,7 @@
       ["evidence", "monotonicity"],
       ["role", "contradiction"]
     ],
-    "comment": "Infelicitous, as expected if want is upward monotonic; from Zimmermann 2006.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Infelicitous, as expected if want is upward monotonic; from Zimmermann 2006."
   },
   {
     "id": "yan2023_14",
@@ -290,9 +264,7 @@
       ["puzzle", "Ross"],
       ["role", "free-choice inference"]
     ],
-    "comment": "The □-free-choice inference from the disjunctive want (8a), read with want scoping over the disjunction.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The □-free-choice inference from the disjunctive want (8a), read with want scoping over the disjunction."
   },
   {
     "id": "yan2023_15",
@@ -311,9 +283,7 @@
       ["puzzle", "Heim"],
       ["role", "unwarranted inference"]
     ],
-    "comment": "Drawn from the reinterpreted conclusion (16b) by free choice; not justified by the premise.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Drawn from the reinterpreted conclusion (16b) by free choice; not justified by the premise."
   },
   {
     "id": "yan2023_16",
@@ -332,9 +302,7 @@
       ["puzzle", "Good Samaritan under desire"],
       ["role", "premise"]
     ],
-    "comment": "A Good Samaritan case under desire, with a wide- and a narrow-scope reading of the relative clause.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A Good Samaritan case under desire, with a wide- and a narrow-scope reading of the relative clause."
   },
   {
     "id": "yan2023_17",
@@ -353,8 +321,6 @@
       ["puzzle", "Good Samaritan under desire"],
       ["role", "monotonic conclusion"]
     ],
-    "comment": "Follows from the wide-scope reading of (19a) by conjunction elimination; the paper leaves this case to a scope solution.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Follows from the wide-scope reading of (19a) by conjunction elimination; the paper leaves this case to a scope solution."
   }
 ]

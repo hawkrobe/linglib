@@ -31,9 +31,7 @@ def keys_drawer : LinguisticExample :=
     alternatives := [("They are in the kitchen drawer.", .acceptable)]
     readings := []
     paperFeatures := [("kind", "must_pair"), ("modal", "must"), ("evidence", "indirect"), ("must_entails_prejacent", "true")]
-    comment := "Karttunen's Problem: by standard modal logic the must-answer is at least as strong as the bare answer, but naive intuition takes the bare answer to convey more confidence. Migrated from Phenomena/Modality/EpistemicEvidentiality.lean keysInDrawer."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Karttunen's Problem: by standard modal logic the must-answer is at least as strong as the bare answer, but naive intuition takes the bare answer to convey more confidence. Migrated from Phenomena/Modality/EpistemicEvidentiality.lean keysInDrawer." }
 
 def john_left : LinguisticExample :=
   { id := "vonfintelgillies2010_john_left"
@@ -49,9 +47,7 @@ def john_left : LinguisticExample :=
     alternatives := [("John left.", .acceptable)]
     readings := []
     paperFeatures := [("kind", "must_pair"), ("modal", "must"), ("evidence", "indirect"), ("must_entails_prejacent", "true")]
-    comment := "Datum due to Karttunen (1972): 'intuitively, (3b) makes a weaker claim than (3a)'. Migrated from Phenomena/Modality/EpistemicEvidentiality.lean johnLeft."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Datum due to Karttunen (1972): 'intuitively, (3b) makes a weaker claim than (3a)'. Migrated from Phenomena/Modality/EpistemicEvidentiality.lean johnLeft." }
 
 def john_home : LinguisticExample :=
   { id := "vonfintelgillies2010_john_home"
@@ -67,9 +63,7 @@ def john_home : LinguisticExample :=
     alternatives := [("John is at home.", .acceptable)]
     readings := []
     paperFeatures := [("kind", "must_pair"), ("modal", "must"), ("evidence", "indirect"), ("must_entails_prejacent", "true")]
-    comment := "Attributed by VF&G to Groenendijk & Stokhof: 'A statement like (4a) is weaker than (4b). (4b) expresses more conviction'. Migrated from Phenomena/Modality/EpistemicEvidentiality.lean johnHome."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Attributed by VF&G to Groenendijk & Stokhof: 'A statement like (4a) is weaker than (4b). (4b) expresses more conviction'. Migrated from Phenomena/Modality/EpistemicEvidentiality.lean johnHome." }
 
 def mount_toby : LinguisticExample :=
   { id := "vonfintelgillies2010_mount_toby"
@@ -85,9 +79,7 @@ def mount_toby : LinguisticExample :=
     alternatives := [("She climbed Mount Toby.", .acceptable)]
     readings := []
     paperFeatures := [("kind", "must_pair"), ("modal", "must"), ("evidence", "indirect"), ("must_entails_prejacent", "true")]
-    comment := "Kratzer (1991): 'I make a stronger claim in uttering (5a) than in (5b)' — the canonical statement of the Mantra that must is weak. Migrated from Phenomena/Modality/EpistemicEvidentiality.lean mountToby."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Kratzer (1991): 'I make a stronger claim in uttering (5a) than in (5b)' — the canonical statement of the Mantra that must is weak. Migrated from Phenomena/Modality/EpistemicEvidentiality.lean mountToby." }
 
 def billy_sees_rain : LinguisticExample :=
   { id := "vonfintelgillies2010_billy_sees_rain"
@@ -103,9 +95,7 @@ def billy_sees_rain : LinguisticExample :=
     alternatives := [("It's raining.", .acceptable)]
     readings := []
     paperFeatures := [("kind", "must_pair"), ("modal", "must"), ("evidence", "direct"), ("must_entails_prejacent", "true")]
-    comment := "Core observation: direct perceptual evidence for the prejacent makes must infelicitous. Migrated from Phenomena/Modality/EpistemicEvidentiality.lean billySeesRain."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Core observation: direct perceptual evidence for the prejacent makes must infelicitous. Migrated from Phenomena/Modality/EpistemicEvidentiality.lean billySeesRain." }
 
 def billy_wet_gear : LinguisticExample :=
   { id := "vonfintelgillies2010_billy_wet_gear"
@@ -121,9 +111,7 @@ def billy_wet_gear : LinguisticExample :=
     alternatives := [("It's raining.", .acceptable)]
     readings := []
     paperFeatures := [("kind", "must_pair"), ("modal", "must"), ("evidence", "indirect"), ("must_entails_prejacent", "true")]
-    comment := "Indirect causal inference licenses must even though the prejacent is entailed ex hypothesi. Revisited as Argument 4.2.2: the inference is conclusive, so must is strong here — the licensing gap is that the kernel does not directly settle the prejacent. Migrated from Phenomena/Modality/EpistemicEvidentiality.lean billySeesWetGear (the near-duplicate billyWetGearStrong row was merged into this one)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Indirect causal inference licenses must even though the prejacent is entailed ex hypothesi. Revisited as Argument 4.2.2: the inference is conclusive, so must is strong here — the licensing gap is that the kernel does not directly settle the prejacent. Migrated from Phenomena/Modality/EpistemicEvidentiality.lean billySeesWetGear (the near-duplicate billyWetGearStrong row was merged into this one)." }
 
 def chris_ball : LinguisticExample :=
   { id := "vonfintelgillies2010_chris_ball"
@@ -139,9 +127,7 @@ def chris_ball : LinguisticExample :=
     alternatives := [("It is in C.", .acceptable)]
     readings := []
     paperFeatures := [("kind", "must_pair"), ("modal", "must"), ("evidence", "elimination"), ("must_entails_prejacent", "true")]
-    comment := "Argument 4.2.1: elimination reasoning with full certainty — must is perfectly felicitous and feels strong, not weak. Had Chris opened Box C, 'It must be in C' would be odd (direct evidence). Migrated from Phenomena/Modality/EpistemicEvidentiality.lean chrisBall."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Argument 4.2.1: elimination reasoning with full certainty — must is perfectly felicitous and feels strong, not weak. Had Chris opened Box C, 'It must be in C' would be odd (direct evidence). Migrated from Phenomena/Modality/EpistemicEvidentiality.lean chrisBall." }
 
 def cant_mastermind : LinguisticExample :=
   { id := "vonfintelgillies2010_cant_mastermind"
@@ -157,9 +143,7 @@ def cant_mastermind : LinguisticExample :=
     alternatives := [("There aren't two reds.", .acceptable)]
     readings := []
     paperFeatures := [("kind", "must_pair"), ("modal", "cant"), ("evidence", "indirect"), ("must_entails_prejacent", "true")]
-    comment := "The can't-variant carries the indirect-evidence signal; the bare negation does not. Can't patterns with must, not with weak modals. Migrated from Phenomena/Modality/EpistemicEvidentiality.lean cantEvidentialSignal."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The can't-variant carries the indirect-evidence signal; the bare negation does not. Can't patterns with must, not with weak modals. Migrated from Phenomena/Modality/EpistemicEvidentiality.lean cantEvidentialSignal." }
 
 def cant_sunshine : LinguisticExample :=
   { id := "vonfintelgillies2010_cant_sunshine"
@@ -175,9 +159,7 @@ def cant_sunshine : LinguisticExample :=
     alternatives := [("It's not raining.", .acceptable)]
     readings := []
     paperFeatures := [("kind", "must_pair"), ("modal", "cant"), ("evidence", "direct"), ("must_entails_prejacent", "true")]
-    comment := "Direct evidence of not-rain makes 'It can't be raining' infelicitous, exactly parallel to must with direct evidence of rain. Migrated from Phenomena/Modality/EpistemicEvidentiality.lean cantDirectEvidence."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Direct evidence of not-rain makes 'It can't be raining' infelicitous, exactly parallel to must with direct evidence of rain. Migrated from Phenomena/Modality/EpistemicEvidentiality.lean cantDirectEvidence." }
 
 def cant_sun_gear : LinguisticExample :=
   { id := "vonfintelgillies2010_cant_sun_gear"
@@ -193,9 +175,7 @@ def cant_sun_gear : LinguisticExample :=
     alternatives := [("It's not raining.", .acceptable)]
     readings := []
     paperFeatures := [("kind", "must_pair"), ("modal", "cant"), ("evidence", "indirect"), ("must_entails_prejacent", "true")]
-    comment := "Indirect evidence licenses can't — exact parallel with must. Migrated from Phenomena/Modality/EpistemicEvidentiality.lean cantIndirectEvidence."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Indirect evidence licenses can't — exact parallel with must. Migrated from Phenomena/Modality/EpistemicEvidentiality.lean cantIndirectEvidence." }
 
 def must_be_hungry : LinguisticExample :=
   { id := "vonfintelgillies2010_must_be_hungry"
@@ -211,9 +191,7 @@ def must_be_hungry : LinguisticExample :=
     alternatives := [("I am hungry.", .acceptable)]
     readings := []
     paperFeatures := [("kind", "must_pair"), ("modal", "must"), ("evidence", "indirect"), ("must_entails_prejacent", "true")]
-    comment := "Internal states (§8): must signals that the speaker is inferring hunger indirectly (irritability, time since the last meal) rather than via the usual direct introspective access — hence the marked flavor. Migrated from Phenomena/Modality/EpistemicEvidentiality.lean mustBeHungry."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Internal states (§8): must signals that the speaker is inferring hunger indirectly (irritability, time since the last meal) rather than via the usual direct introspective access — hence the marked flavor. Migrated from Phenomena/Modality/EpistemicEvidentiality.lean mustBeHungry." }
 
 def modus_ponens : LinguisticExample :=
   { id := "vonfintelgillies2010_modus_ponens"
@@ -229,9 +207,7 @@ def modus_ponens : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("kind", "inference"), ("pattern", "modus_ponens")]
-    comment := "Argument 4.3.1: the argument is valid. If must were weak, the premises would be too weak to support the unmodalized conclusion. Migrated from Phenomena/Modality/EpistemicEvidentiality.lean modusPonens."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Argument 4.3.1: the argument is valid. If must were weak, the premises would be too weak to support the unmodalized conclusion. Migrated from Phenomena/Modality/EpistemicEvidentiality.lean modusPonens." }
 
 def must_perhaps : LinguisticExample :=
   { id := "vonfintelgillies2010_must_perhaps"
@@ -247,9 +223,7 @@ def must_perhaps : LinguisticExample :=
     alternatives := [("Perhaps it isn't raining but it must be.", .unacceptable)]
     readings := []
     paperFeatures := [("kind", "inference"), ("pattern", "epistemic_contradiction")]
-    comment := "Argument 4.3.2: both orders are contradictory. If must phi did not entail phi, must phi together with perhaps not-phi should be consistent. Migrated from Phenomena/Modality/EpistemicEvidentiality.lean mustPerhapsContradiction."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Argument 4.3.2: both orders are contradictory. If must phi did not entail phi, must phi together with perhaps not-phi should be consistent. Migrated from Phenomena/Modality/EpistemicEvidentiality.lean mustPerhapsContradiction." }
 
 def might_retraction : LinguisticExample :=
   { id := "vonfintelgillies2010_might_retraction"
@@ -265,9 +239,7 @@ def might_retraction : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("kind", "inference"), ("pattern", "retraction"), ("modal", "might")]
-    comment := "Might allows distancing from the prejacent: the retraction succeeds. Contrast with the must-variant. Migrated from Phenomena/Modality/EpistemicEvidentiality.lean mightRetraction."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Might allows distancing from the prejacent: the retraction succeeds. Contrast with the must-variant. Migrated from Phenomena/Modality/EpistemicEvidentiality.lean mightRetraction." }
 
 def must_no_retraction : LinguisticExample :=
   { id := "vonfintelgillies2010_must_no_retraction"
@@ -283,9 +255,7 @@ def must_no_retraction : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("kind", "inference"), ("pattern", "retraction"), ("modal", "must")]
-    comment := "Argument 4.3.3: must does not allow the retraction escape that might allows — must is not weak. VF&G 2021 (Observation 3, exx. (6)/(10)) reuse this datum: 'only' fails to rescue must, evidence that must sits at the top of the epistemic scale. Migrated from Phenomena/Modality/EpistemicEvidentiality.lean noRetraction and mustOnlyIncompatibility (the latter was a verbatim duplicate of this dialogue)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Argument 4.3.3: must does not allow the retraction escape that might allows — must is not weak. VF&G 2021 (Observation 3, exx. (6)/(10)) reuse this datum: 'only' fails to rescue must, evidence that must sits at the top of the epistemic scale. Migrated from Phenomena/Modality/EpistemicEvidentiality.lean noRetraction and mustOnlyIncompatibility (the latter was a verbatim duplicate of this dialogue)." }
 
 def hedging : LinguisticExample :=
   { id := "vonfintelgillies2010_hedging"
@@ -301,9 +271,7 @@ def hedging : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("kind", "inference"), ("pattern", "hedging")]
-    comment := "Argument 4.3.4: when hedging is wanted, speakers reach for 'probably', not 'must'. If must were weak, must should be the natural hedge. UNVERIFIED detail: the migrated Phenomena file's notes were internally inconsistent on which form is preferred; this row follows its judgment field ('(c) preferred for hedging, not (b)'). Migrated from Phenomena/Modality/EpistemicEvidentiality.lean hedgingPreference."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Argument 4.3.4: when hedging is wanted, speakers reach for 'probably', not 'must'. If must were weak, must should be the natural hedge. UNVERIFIED detail: the migrated Phenomena file's notes were internally inconsistent on which form is preferred; this row follows its judgment field ('(c) preferred for hedging, not (b)'). Migrated from Phenomena/Modality/EpistemicEvidentiality.lean hedgingPreference." }
 
 def hey_wait_a_minute : LinguisticExample :=
   { id := "vonfintelgillies2010_hey_wait_a_minute"
@@ -319,9 +287,7 @@ def hey_wait_a_minute : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("kind", "inference"), ("pattern", "hwam_test")]
-    comment := "The 'Hey! Wait a minute' test (von Fintel 2004) diagnoses presuppositions. Billy targets the evidential signal: the presupposition that the speaker's kernel does not directly settle the prejacent. Migrated from Phenomena/Modality/EpistemicEvidentiality.lean heyWaitAMinute."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The 'Hey! Wait a minute' test (von Fintel 2004) diagnoses presuppositions. Billy targets the evidential signal: the presupposition that the speaker's kernel does not directly settle the prejacent. Migrated from Phenomena/Modality/EpistemicEvidentiality.lean heyWaitAMinute." }
 
 def all : List LinguisticExample := [keys_drawer, john_left, john_home, mount_toby, billy_sees_rain, billy_wet_gear, chris_ball, cant_mastermind, cant_sunshine, cant_sun_gear, must_be_hungry, modus_ponens, must_perhaps, might_retraction, must_no_retraction, hedging, hey_wait_a_minute]
 

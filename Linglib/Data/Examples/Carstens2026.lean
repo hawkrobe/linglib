@@ -31,9 +31,7 @@ def ex6a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conjunct1", "ummi"), ("conjunct2", "umongameli"), ("agreement", "2")]
-    comment := "[1&1=2]."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "[1&1=2]." }
 
 def ex6b : LinguisticExample :=
   { id := "carstens2026_ex6b"
@@ -49,9 +47,7 @@ def ex6b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conjunct1", "uL"), ("conjunct2", "uM"), ("agreement", "2")]
-    comment := "[1&1=2]: arbitrary members of gender A."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "[1&1=2]: arbitrary members of gender A." }
 
 def ex7b : LinguisticExample :=
   { id := "carstens2026_ex7b"
@@ -67,9 +63,7 @@ def ex7b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conjunct1", "isanuse"), ("conjunct2", "isazi"), ("agreement", "8")]
-    comment := "[7&7=8] with human conjuncts of class 7."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "[7&7=8] with human conjuncts of class 7." }
 
 def ex8b : LinguisticExample :=
   { id := "carstens2026_ex8b"
@@ -85,9 +79,7 @@ def ex8b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conjunct1", "iqanda"), ("conjunct2", "icepe"), ("agreement", "8"), ("rejected", "6")]
-    comment := "[5+5=8; ≠6]: the class 6 marker of the plural (8d) is ruled out."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "[5+5=8; ≠6]: the class 6 marker of the plural (8d) is ruled out." }
 
 def ex9a : LinguisticExample :=
   { id := "carstens2026_ex9a"
@@ -103,9 +95,7 @@ def ex9a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conjunct1", "isanuse"), ("conjunct2", "intombi"), ("agreement", "2")]
-    comment := "Mismatched humans, repeated as (87a)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Mismatched humans, repeated as (87a)." }
 
 def ex9b : LinguisticExample :=
   { id := "carstens2026_ex9b"
@@ -121,9 +111,7 @@ def ex9b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conjunct1", "ubhaka"), ("conjunct2", "incwadi"), ("agreement", "8")]
-    comment := "Mismatched inanimates, repeated as (87b)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Mismatched inanimates, repeated as (87b)." }
 
 def ex37a : LinguisticExample :=
   { id := "carstens2026_ex37a"
@@ -139,9 +127,7 @@ def ex37a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conjunct1", "umgewu"), ("conjunct2", "umlwelwe"), ("agreement", "2"), ("rejected", "4"), ("matching", "0"), ("default", "15"), ("judgments", "15")]
-    comment := "[3&3=2; ≠4], from Taraldsen et al. 2018. Table 13 [3&3] human: 15 speakers."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "[3&3=2; ≠4], from Taraldsen et al. 2018. Table 13 [3&3] human: 15 speakers." }
 
 def ex38a : LinguisticExample :=
   { id := "carstens2026_ex38a"
@@ -157,9 +143,7 @@ def ex38a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conjunct1", "umnqwazi"), ("conjunct2", "umpu"), ("agreement", "8"), ("rejected", "4"), ("matching", "1"), ("default", "33"), ("judgments", "45")]
-    comment := "[3+3=8; ≠4]. Table 13 [3&3] non-human: 45 judgments over (38a-c), one gender-matching i-."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "[3+3=8; ≠4]. Table 13 [3&3] non-human: 45 judgments over (38a-c), one gender-matching i-." }
 
 def ex38b : LinguisticExample :=
   { id := "carstens2026_ex38b"
@@ -175,9 +159,7 @@ def ex38b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conjunct1", "umhlonyane"), ("conjunct2", "umnquma"), ("agreement", "8"), ("rejected", "4")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex38c : LinguisticExample :=
   { id := "carstens2026_ex38c"
@@ -193,9 +175,7 @@ def ex38c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conjunct1", "umkhonto"), ("conjunct2", "umbhobho"), ("agreement", "8"), ("rejected", "4")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex40a : LinguisticExample :=
   { id := "carstens2026_ex40a"
@@ -211,9 +191,7 @@ def ex40a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conjunct1", "igqwetha"), ("conjunct2", "isela"), ("agreement", "2"), ("rejected", "6"), ("matching", "0"), ("default", "19"), ("judgments", "30")]
-    comment := "[5+5=2; ≠6]. Table 13 [5&5] human: 30 judgments over (40a,b)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "[5+5=2; ≠6]. Table 13 [5&5] human: 30 judgments over (40a,b)." }
 
 def ex40b : LinguisticExample :=
   { id := "carstens2026_ex40b"
@@ -229,9 +207,7 @@ def ex40b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conjunct1", "igorha"), ("conjunct2", "ikhoboka"), ("agreement", "2"), ("rejected", "6")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex41a : LinguisticExample :=
   { id := "carstens2026_ex41a"
@@ -247,9 +223,7 @@ def ex41a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conjunct1", "ilitye"), ("conjunct2", "iqanda"), ("agreement", "8"), ("rejected", "6"), ("matching", "0"), ("default", "22"), ("judgments", "30")]
-    comment := "[5&5=8; ≠6]. Table 13 [5&5] non-human: 30 judgments over (41a,b)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "[5&5=8; ≠6]. Table 13 [5&5] non-human: 30 judgments over (41a,b)." }
 
 def ex41b : LinguisticExample :=
   { id := "carstens2026_ex41b"
@@ -265,9 +239,7 @@ def ex41b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conjunct1", "icepe"), ("conjunct2", "icici"), ("agreement", "8"), ("rejected", "6")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex44 : LinguisticExample :=
   { id := "carstens2026_ex44"
@@ -283,9 +255,7 @@ def ex44 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conjunct1", "umntwana"), ("conjunct2", "umfazi"), ("agreement", "2"), ("matching", "30"), ("default", "30"), ("judgments", "30")]
-    comment := "[1&1=2]. Table 13 [1&1] human: ba- is matching and default alike, the two merged."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "[1&1=2]. Table 13 [1&1] human: ba- is matching and default alike, the two merged." }
 
 def ex45a : LinguisticExample :=
   { id := "carstens2026_ex45a"
@@ -301,9 +271,7 @@ def ex45a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conjunct1", "uL"), ("conjunct2", "uM"), ("agreement", "2"), ("matching", "22"), ("default", "7"), ("judgments", "30")]
-    comment := "[1&1=2], from Taraldsen et al. 2018. Table 13 [1&1] non-human: 30 judgments over (45a,b), default zi- in the rest."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "[1&1=2], from Taraldsen et al. 2018. Table 13 [1&1] non-human: 30 judgments over (45a,b), default zi- in the rest." }
 
 def ex45b : LinguisticExample :=
   { id := "carstens2026_ex45b"
@@ -319,9 +287,7 @@ def ex45b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conjunct1", "uloliwe"), ("conjunct2", "umatshini"), ("agreement", "2")]
-    comment := "[1&1=2]."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "[1&1=2]." }
 
 def ex46a : LinguisticExample :=
   { id := "carstens2026_ex46a"
@@ -337,9 +303,7 @@ def ex46a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conjunct1", "isibane"), ("conjunct2", "isitya"), ("agreement", "8"), ("matching", "30"), ("default", "30"), ("judgments", "30")]
-    comment := "[7&7=8], also (7a). Table 13 [7&7] non-human: zi- matching and default alike."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "[7&7=8], also (7a). Table 13 [7&7] non-human: zi- matching and default alike." }
 
 def ex46b : LinguisticExample :=
   { id := "carstens2026_ex46b"
@@ -355,9 +319,7 @@ def ex46b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conjunct1", "isiXhosa"), ("conjunct2", "isiZulu"), ("agreement", "8")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex47a : LinguisticExample :=
   { id := "carstens2026_ex47a"
@@ -373,9 +335,7 @@ def ex47a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conjunct1", "isanuse"), ("conjunct2", "isangoma"), ("agreement", "8"), ("agreement", "2"), ("matching", "18"), ("default", "9"), ("judgments", "30")]
-    comment := "[7&7] human, from Taraldsen et al. 2018: Table 13 zi- 60%, ba- 30%, either 10% over (47a,b)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "[7&7] human, from Taraldsen et al. 2018: Table 13 zi- 60%, ba- 30%, either 10% over (47a,b)." }
 
 def ex47b : LinguisticExample :=
   { id := "carstens2026_ex47b"
@@ -391,9 +351,7 @@ def ex47b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conjunct1", "isibhanxa"), ("conjunct2", "isazi"), ("agreement", "8"), ("agreement", "2")]
-    comment := "ba- for the same conjunction is (81b)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "ba- for the same conjunction is (81b)." }
 
 def ex48a : LinguisticExample :=
   { id := "carstens2026_ex48a"
@@ -409,9 +367,7 @@ def ex48a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conjunct1", "intombi"), ("conjunct2", "imbongi"), ("agreement", "10"), ("agreement", "2"), ("matching", "15"), ("default", "12"), ("judgments", "30")]
-    comment := "[9&9=10 or 2]. Table 13 [9&9] human: zi- 50%, ba- 40%, either 10% over (48a,b)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "[9&9=10 or 2]. Table 13 [9&9] human: zi- 50%, ba- 40%, either 10% over (48a,b)." }
 
 def ex48b : LinguisticExample :=
   { id := "carstens2026_ex48b"
@@ -427,9 +383,7 @@ def ex48b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conjunct1", "ingcaphephe"), ("conjunct2", "ingcali"), ("agreement", "10"), ("agreement", "2")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex49a : LinguisticExample :=
   { id := "carstens2026_ex49a"
@@ -445,9 +399,7 @@ def ex49a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conjunct1", "incwadi"), ("conjunct2", "ipeni"), ("agreement", "10"), ("agreement", "8"), ("matching", "30"), ("default", "30"), ("judgments", "30")]
-    comment := "[9&9=10]: zi- is ambiguous between matching class 10 and default class 8. Table 13 [9&9] non-human: zi- throughout."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "[9&9=10]: zi- is ambiguous between matching class 10 and default class 8. Table 13 [9&9] non-human: zi- throughout." }
 
 def ex49b : LinguisticExample :=
   { id := "carstens2026_ex49b"
@@ -463,9 +415,7 @@ def ex49b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conjunct1", "indlovu"), ("conjunct2", "ingwe"), ("agreement", "10")]
-    comment := "Conjoined animals of class 9: zi- taken as class 10, the [animal] default."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Conjoined animals of class 9: zi- taken as class 10, the [animal] default." }
 
 def ex55a : LinguisticExample :=
   { id := "carstens2026_ex55a"
@@ -481,9 +431,7 @@ def ex55a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conjunct1", "umvundla"), ("conjunct2", "umqhagi"), ("agreement", "10"), ("rejected", "4")]
-    comment := "[3&3=10; ≠4]: animals of class 3 take the [animal] default."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "[3&3=10; ≠4]: animals of class 3 take the [animal] default." }
 
 def ex55b : LinguisticExample :=
   { id := "carstens2026_ex55b"
@@ -499,9 +447,7 @@ def ex55b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conjunct1", "isikhova"), ("conjunct2", "ihobe"), ("agreement", "10")]
-    comment := "[7&5=10]: mismatched visible genders, shared [animal] core."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "[7&5=10]: mismatched visible genders, shared [animal] core." }
 
 def ex81a : LinguisticExample :=
   { id := "carstens2026_ex81a"
@@ -517,9 +463,7 @@ def ex81a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conjunct1", "uL"), ("conjunct2", "uM"), ("agreement", "8")]
-    comment := "The Best-Semantic-Match choice for (45a): the shared [inanimate] core."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The Best-Semantic-Match choice for (45a): the shared [inanimate] core." }
 
 def ex81b : LinguisticExample :=
   { id := "carstens2026_ex81b"
@@ -535,9 +479,7 @@ def ex81b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conjunct1", "isibhanxa"), ("conjunct2", "isazi"), ("agreement", "2")]
-    comment := "The Best-Semantic-Match choice for (47b): the shared [human] core."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The Best-Semantic-Match choice for (47b): the shared [human] core." }
 
 def ex83 : LinguisticExample :=
   { id := "carstens2026_ex83"
@@ -553,9 +495,7 @@ def ex83 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conjunct1", "unonkala"), ("conjunct2", "ukrebe"), ("agreement", "2"), ("agreement", "10")]
-    comment := "Five of six speakers chose ba- (Highest Wins), one zi- (Best Semantic Match)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Five of six speakers chose ba- (Highest Wins), one zi- (Best Semantic Match)." }
 
 def ex85a : LinguisticExample :=
   { id := "carstens2026_ex85a"
@@ -571,9 +511,7 @@ def ex85a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conjunct1", "umgulukudu"), ("conjunct2", "ipolisa"), ("agreement", "2")]
-    comment := "Mismatched u-genders above shared [human] cores (86a)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Mismatched u-genders above shared [human] cores (86a)." }
 
 def ex85b : LinguisticExample :=
   { id := "carstens2026_ex85b"
@@ -589,9 +527,7 @@ def ex85b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conjunct1", "umnqathe"), ("conjunct2", "iqanda"), ("agreement", "8")]
-    comment := "Mismatched u-genders above shared [inanimate] cores (86b); from Mitchley 2015."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Mismatched u-genders above shared [inanimate] cores (86b); from Mitchley 2015." }
 
 def ex89 : LinguisticExample :=
   { id := "carstens2026_ex89"
@@ -607,9 +543,7 @@ def ex89 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conjunct1", "umntwana"), ("conjunct2", "uloliwe"), ("agreement", "2")]
-    comment := "(90): the [human] flavor of class 1 and the [entity] flavor of class 1a share the formal gender feature."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "(90): the [human] flavor of class 1 and the [entity] flavor of class 1a share the formal gender feature." }
 
 def ex91 : LinguisticExample :=
   { id := "carstens2026_ex91"
@@ -625,9 +559,7 @@ def ex91 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conjunct1", "intombi"), ("conjunct2", "uloliwe"), ("rejected", "8"), ("rejected", "2")]
-    comment := "(92): neither the visible genders 9 and 1a nor the cores 1 and 7 match; ineffable."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "(92): neither the visible genders 9 and 1a nor the cores 1 and 7 match; ineffable." }
 
 def ex111 : LinguisticExample :=
   { id := "carstens2026_ex111"
@@ -643,9 +575,7 @@ def ex111 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conjunct1", "umntwana"), ("conjunct2", "indlovu"), ("rejected", "2"), ("rejected", "10")]
-    comment := "(112): a human and an animal share no formal gender feature, whatever animacy feature they share."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "(112): a human and an animal share no formal gender feature, whatever animacy feature they share." }
 
 def ex58 : LinguisticExample :=
   { id := "carstens2026_ex58"
@@ -661,9 +591,7 @@ def ex58 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conjunct1", "murume"), ("conjunct2", "mukadzi"), ("agreement", "2")]
-    comment := "[1&1=2]."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "[1&1=2]." }
 
 def ex59 : LinguisticExample :=
   { id := "carstens2026_ex59"
@@ -679,9 +607,7 @@ def ex59 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conjunct1", "munwe"), ("conjunct2", "muromo"), ("agreement", "8"), ("rejected", "4")]
-    comment := "[3&3=8; ≠4]. The paper's gloss line pairs the two nouns in the order of the translation."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "[3&3=8; ≠4]. The paper's gloss line pairs the two nouns in the order of the translation." }
 
 def ex60 : LinguisticExample :=
   { id := "carstens2026_ex60"
@@ -697,9 +623,7 @@ def ex60 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conjunct1", "dombo"), ("conjunct2", "zai"), ("agreement", "8"), ("rejected", "6")]
-    comment := "[5&5=8; ≠6]."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "[5&5=8; ≠6]." }
 
 def ex61 : LinguisticExample :=
   { id := "carstens2026_ex61"
@@ -715,9 +639,7 @@ def ex61 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conjunct1", "benzi"), ("conjunct2", "dinga"), ("agreement", "2"), ("rejected", "6")]
-    comment := "[5&5=2; ≠6]."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "[5&5=2; ≠6]." }
 
 def ex62 : LinguisticExample :=
   { id := "carstens2026_ex62"
@@ -733,9 +655,7 @@ def ex62 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conjunct1", "chingwa"), ("conjunct2", "chibage"), ("agreement", "8")]
-    comment := "[7&7=8], inanimate."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "[7&7=8], inanimate." }
 
 def ex63 : LinguisticExample :=
   { id := "carstens2026_ex63"
@@ -751,9 +671,7 @@ def ex63 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conjunct1", "chidhakwa"), ("conjunct2", "chikomana"), ("agreement", "2"), ("agreement", "8")]
-    comment := "[7&7=2 or 8], human: class 2 volunteered, class 8 judged acceptable though less good (fn. 27)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "[7&7=2 or 8], human: class 2 volunteered, class 8 judged acceptable though less good (fn. 27)." }
 
 def ex64b : LinguisticExample :=
   { id := "carstens2026_ex64b"
@@ -769,9 +687,7 @@ def ex64b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conjunct1", "nherera"), ("conjunct2", "nyanzvi"), ("agreement", "2"), ("rejected", "10")]
-    comment := "[9&9=2; *10]."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "[9&9=2; *10]." }
 
 def ex64c : LinguisticExample :=
   { id := "carstens2026_ex64c"
@@ -787,9 +703,7 @@ def ex64c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conjunct1", "imbwa"), ("conjunct2", "mhou"), ("agreement", "8"), ("rejected", "10")]
-    comment := "[9&9=8; *10]: the [animal] association has bleached from Shona 9/10."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "[9&9=8; *10]: the [animal] association has bleached from Shona 9/10." }
 
 def ex64d : LinguisticExample :=
   { id := "carstens2026_ex64d"
@@ -805,9 +719,7 @@ def ex64d : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conjunct1", "mhuno"), ("conjunct2", "nzeve"), ("agreement", "8"), ("rejected", "10")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex64e : LinguisticExample :=
   { id := "carstens2026_ex64e"
@@ -823,9 +735,7 @@ def ex64e : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conjunct1", "mbiya"), ("conjunct2", "sando"), ("agreement", "8"), ("rejected", "10")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex64f : LinguisticExample :=
   { id := "carstens2026_ex64f"
@@ -841,9 +751,7 @@ def ex64f : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conjunct1", "nyota"), ("conjunct2", "nzara"), ("agreement", "8"), ("rejected", "10")]
-    comment := "The paper's gloss line pairs the two nouns in the order of the translation."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The paper's gloss line pairs the two nouns in the order of the translation." }
 
 def ex65a : LinguisticExample :=
   { id := "carstens2026_ex65a"
@@ -859,9 +767,7 @@ def ex65a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conjunct1", "rukova"), ("conjunct2", "rukova"), ("agreement", "8"), ("rejected", "10")]
-    comment := "[11&11=8; *10]: the class 10 dzi- of the plural (65b) is ruled out."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "[11&11=8; *10]: the class 10 dzi- of the plural (65b) is ruled out." }
 
 def ex66a : LinguisticExample :=
   { id := "carstens2026_ex66a"
@@ -877,9 +783,7 @@ def ex66a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conjunct1", "uta"), ("conjunct2", "utanho"), ("agreement", "8"), ("rejected", "6")]
-    comment := "[14&14=8; *6]: the class 6 a- of the plural (66b) is ruled out."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "[14&14=8; *6]: the class 6 a- of the plural (66b) is ruled out." }
 
 def ex68a : LinguisticExample :=
   { id := "carstens2026_ex68a"
@@ -895,9 +799,7 @@ def ex68a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conjunct1", "kasikana"), ("conjunct2", "kakomana"), ("agreement", "2"), ("rejected", "13")]
-    comment := "[12&12=2; *13]: conjoined diminutives take class 2, not the class 13 tu- of their plurals (67b)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "[12&12=2; *13]: conjoined diminutives take class 2, not the class 13 tu- of their plurals (67b)." }
 
 def ex68b : LinguisticExample :=
   { id := "carstens2026_ex68b"
@@ -913,9 +815,7 @@ def ex68b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("conjunct1", "kamba"), ("conjunct2", "kamotokari"), ("agreement", "8"), ("rejected", "13")]
-    comment := "[12&12=8; *13]."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "[12&12=8; *13]." }
 
 def all : List LinguisticExample := [ex6a, ex6b, ex7b, ex8b, ex9a, ex9b, ex37a, ex38a, ex38b, ex38c, ex40a, ex40b, ex41a, ex41b, ex44, ex45a, ex45b, ex46a, ex46b, ex47a, ex47b, ex48a, ex48b, ex49a, ex49b, ex55a, ex55b, ex81a, ex81b, ex83, ex85a, ex85b, ex89, ex91, ex111, ex58, ex59, ex60, ex61, ex62, ex63, ex64b, ex64c, ex64d, ex64e, ex64f, ex65a, ex66a, ex68a, ex68b]
 

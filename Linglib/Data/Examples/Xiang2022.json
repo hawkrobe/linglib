@@ -15,9 +15,7 @@
     "paperFeatures": [
       ["answer", "complete"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "xiang2022_2",
@@ -36,9 +34,7 @@
       ["answer", "partial"],
       ["contour", "rise-fall-rise"]
     ],
-    "comment": "A marked partial answer.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A marked partial answer."
   },
   {
     "id": "xiang2022_3",
@@ -57,9 +53,7 @@
       ["answer", "partial"],
       ["contour", "falling"]
     ],
-    "comment": "An unmarked partial answer yields a misleading exclusivity inference.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "An unmarked partial answer yields a misleading exclusivity inference."
   },
   {
     "id": "xiang2022_4",
@@ -86,9 +80,7 @@
       ["modal", "can"],
       ["flavor", "teleological"]
     ],
-    "comment": "The mention-some answer carries no exclusivity inference.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The mention-some answer carries no exclusivity inference."
   },
   {
     "id": "xiang2022_5",
@@ -110,9 +102,7 @@
       ["modal", "could"],
       ["flavor", "epistemic"]
     ],
-    "comment": "An epistemic modal does not license mention-some without contextual support.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "An epistemic modal does not license mention-some without contextual support."
   },
   {
     "id": "xiang2022_6",
@@ -134,9 +124,7 @@
       ["modal", "should"],
       ["force", "universal"]
     ],
-    "comment": "A universal modal does not license mention-some.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A universal modal does not license mention-some."
   },
   {
     "id": "xiang2022_7",
@@ -157,9 +145,7 @@
       ["modal", "can"],
       ["goal", "exhaustive"]
     ],
-    "comment": "An exhaustive conversational goal blocks mention-some.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "An exhaustive conversational goal blocks mention-some."
   },
   {
     "id": "xiang2022_8",
@@ -180,9 +166,7 @@
       ["wh", "singular"],
       ["inference", "uniqueness"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "xiang2022_9",
@@ -200,9 +184,7 @@
     "paperFeatures": [
       ["wh", "plural"]
     ],
-    "comment": "The sum-based answer is exhaustive.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The sum-based answer is exhaustive."
   },
   {
     "id": "xiang2022_10",
@@ -220,9 +202,7 @@
     "paperFeatures": [
       ["wh", "singular"]
     ],
-    "comment": "No exhaustive true answer: Dayal's presupposition fails.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "No exhaustive true answer: Dayal's presupposition fails."
   },
   {
     "id": "xiang2022_11",
@@ -243,9 +223,7 @@
       ["wh", "singular"],
       ["answer", "higher-order disjunction"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "xiang2022_12",
@@ -267,9 +245,7 @@
       ["wh", "singular"],
       ["asymmetry", "disjunction-conjunction"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "xiang2022_13",
@@ -290,9 +266,7 @@
       ["modal", "could"],
       ["inference", "local uniqueness"]
     ],
-    "comment": "The unique letter that we add could be a and could be r.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The unique letter that we add could be a and could be r."
   },
   {
     "id": "xiang2022_14",
@@ -313,9 +287,7 @@
       ["modal", "have to"],
       ["inference", "local uniqueness"]
     ],
-    "comment": "Local uniqueness is independent of modal force.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Local uniqueness is independent of modal force."
   },
   {
     "id": "xiang2022_15",
@@ -334,9 +306,7 @@
       ["modal", "can"],
       ["inference", "local uniqueness"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "xiang2022_16",
@@ -355,9 +325,7 @@
       ["modal", "can"],
       ["exhaustification", "local"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "xiang2022_17",
@@ -376,9 +344,7 @@
       ["modal", "could"],
       ["inference", "local uniqueness"]
     ],
-    "comment": "Nine of eleven speakers found the question unnatural: it suggests at most one paper.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Nine of eleven speakers found the question unnatural: it suggests at most one paper."
   },
   {
     "id": "xiang2022_18",
@@ -396,9 +362,7 @@
     "paperFeatures": [
       ["modal", "could"]
     ],
-    "comment": "A sub-question of the instructor's request.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A sub-question of the instructor's request."
   },
   {
     "id": "xiang2022_19",
@@ -419,9 +383,7 @@
       ["modal", "have to"],
       ["interpretation", "first-order"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "xiang2022_20",
@@ -442,9 +404,7 @@
       ["modal", "have to"],
       ["interpretation", "narrow-scope higher-order"]
     ],
-    "comment": "In the scenario where some accessible world assigns both chapters, only Relativized Exhaustivity is violated.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "In the scenario where some accessible world assigns both chapters, only Relativized Exhaustivity is violated."
   },
   {
     "id": "xiang2022_21",
@@ -465,9 +425,7 @@
       ["modal", "can"],
       ["interpretation", "mention-some"]
     ],
-    "comment": "We can assign exactly one chapter, but not more.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "We can assign exactly one chapter, but not more."
   },
   {
     "id": "xiang2022_22",
@@ -488,9 +446,7 @@
       ["modal", "can"],
       ["exhaustification", "local"]
     ],
-    "comment": "Only the accessible worlds where exactly one chapter is assigned matter.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Only the accessible worlds where exactly one chapter is assigned matter."
   },
   {
     "id": "xiang2022_23",
@@ -514,8 +470,6 @@
       ["modal", "can"],
       ["wh", "singular"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   }
 ]

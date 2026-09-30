@@ -19,9 +19,7 @@
       ["inference", "conditional perfection"],
       ["flavor", "bouletic"]
     ],
-    "comment": "Geis and Zwicky's invited inference; Lilje's addressee may still ask whether cleaning the garage would earn the money.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Geis and Zwicky's invited inference; Lilje's addressee may still ask whether cleaning the garage would earn the money."
   },
   {
     "id": "vonfintel2001_2",
@@ -39,9 +37,7 @@
     "paperFeatures": [
       ["inference", "conditional perfection"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "vonfintel2001_3",
@@ -59,9 +55,7 @@
     "paperFeatures": [
       ["inference", "conditional perfection"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "vonfintel2001_4",
@@ -79,9 +73,7 @@
     "paperFeatures": [
       ["inference", "conditional perfection"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "vonfintel2001_6",
@@ -102,9 +94,7 @@
     "paperFeatures": [
       ["inference", "no perfection"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "vonfintel2001_7",
@@ -126,9 +116,7 @@
       ["inference", "no perfection"],
       ["question", "information-seeking"]
     ],
-    "comment": "A speaker who has just learned the antecedent may utter it to show how the conclusion was reached.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A speaker who has just learned the antecedent may utter it to show how the conclusion was reached."
   },
   {
     "id": "vonfintel2001_8",
@@ -148,9 +136,7 @@
     "paperFeatures": [
       ["inference", "no perfection"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "vonfintel2001_9",
@@ -170,9 +156,7 @@
     "paperFeatures": [
       ["inference", "no perfection"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "vonfintel2001_10",
@@ -193,9 +177,7 @@
     "paperFeatures": [
       ["inference", "no perfection"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "vonfintel2001_11",
@@ -216,9 +198,7 @@
     "paperFeatures": [
       ["inference", "no perfection"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "vonfintel2001_17a",
@@ -240,9 +220,7 @@
       ["test", "not only α but β"],
       ["scale", "same monotonicity"]
     ],
-    "comment": "Evidence for Matsumoto's monotonicity condition on Horn scales.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Evidence for Matsumoto's monotonicity condition on Horn scales."
   },
   {
     "id": "vonfintel2001_17b",
@@ -264,9 +242,7 @@
       ["test", "not only α but β"],
       ["scale", "mixed monotonicity"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "vonfintel2001_seat",
@@ -287,9 +263,7 @@
       ["inference", "conditional perfection"],
       ["presumption", "exhaustivity"]
     ],
-    "comment": "The utterance situation suggests that other sufficient conditions would have been mentioned.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The utterance situation suggests that other sufficient conditions would have been mentioned."
   },
   {
     "id": "vonfintel2001_p14_2",
@@ -312,9 +286,7 @@
     "paperFeatures": [
       ["answer", "exhaustive"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "vonfintel2001_p15_3",
@@ -338,9 +310,7 @@
       ["answer", "exhaustive"],
       ["inference", "conditional perfection"]
     ],
-    "comment": "A conditional answer to a yes/no question, read as the answer to under which conditions Robin comes.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A conditional answer to a yes/no question, read as the answer to under which conditions Robin comes."
   },
   {
     "id": "vonfintel2001_p17_4a",
@@ -366,9 +336,7 @@
       ["question", "yes/no conditional"],
       ["inference", "no perfection"]
     ],
-    "comment": "Exhaustivity applies vacuously to a yes-answer.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Exhaustivity applies vacuously to a yes-answer."
   },
   {
     "id": "vonfintel2001_p17_5",
@@ -392,9 +360,7 @@
       ["question", "consequences of an antecedent"],
       ["inference", "no perfection"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "vonfintel2001_p17_6",
@@ -417,9 +383,7 @@
     "paperFeatures": [
       ["question", "mention-some"]
     ],
-    "comment": "One convenient place is enough; a teenager asking how to earn five dollars is answered likewise without perfection.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "One convenient place is enough; a teenager asking how to earn five dollars is answered likewise without perfection."
   },
   {
     "id": "vonfintel2001_18",
@@ -444,8 +408,6 @@
       ["inference", "relativized perfection"],
       ["question", "antecedents from a narrow set"]
     ],
-    "comment": "An insult during a call before midnight is not excluded; modeled after an example of Irene Heim's.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "An insult during a call before midnight is not excluded; modeled after an example of Irene Heim's."
   }
 ]

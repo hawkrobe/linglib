@@ -31,9 +31,7 @@ def ex2a : LinguisticExample :=
     alternatives := []
     readings := [("simultaneous (Hanako sick at saying time)", .acceptable), ("shifted (Hanako sick before saying)", .ungrammatical)]
     paperFeatures := []
-    comment := "Ogihara 1996 ex (2a), Chapter 1 §1.2 p. 11. Half of the minimal pair (2a)/(2b) — the embedded PRESENT form. Together with (2b) below, motivates Ogihara's analysis: embedded tense in Japanese is absolute, so PRESENT delivers simultaneity (via attitude shift) and PAST delivers strict backward shift."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Ogihara 1996 ex (2a), Chapter 1 §1.2 p. 11. Half of the minimal pair (2a)/(2b) — the embedded PRESENT form. Together with (2b) below, motivates Ogihara's analysis: embedded tense in Japanese is absolute, so PRESENT delivers simultaneity (via attitude shift) and PAST delivers strict backward shift." }
 
 def ex2b : LinguisticExample :=
   { id := "ogihara1996_ex2b"
@@ -49,9 +47,7 @@ def ex2b : LinguisticExample :=
     alternatives := []
     readings := [("shifted (Hanako sick before saying)", .acceptable), ("simultaneous (Hanako sick at saying time)", .ungrammatical)]
     paperFeatures := []
-    comment := "Ogihara 1996 ex (2b), Chapter 1 §1.2 p. 11. The other half of the minimal pair. With English-style SOT, the embedded past should admit a simultaneous reading; its unavailability here is Ogihara's main empirical hook."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Ogihara 1996 ex (2b), Chapter 1 §1.2 p. 11. The other half of the minimal pair. With English-style SOT, the embedded past should admit a simultaneous reading; its unavailability here is Ogihara's main empirical hook." }
 
 def ex19d : LinguisticExample :=
   { id := "ogihara1996_ex19d"
@@ -67,9 +63,7 @@ def ex19d : LinguisticExample :=
     alternatives := []
     readings := [("Mary's reading at yesterday (definite past)", .acceptable)]
     paperFeatures := []
-    comment := "Ogihara 1996 ex (19d), Chapter 1 §1.4 p. 12. Part of the (18a-d)/(19a-d) discussion arguing the perfect can be a preterit. The adverbial-licensing argument: definite-past adverbials like `yesterday` co-occur with the perfect, showing the perfect doesn't always require an open interval up to reference time."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Ogihara 1996 ex (19d), Chapter 1 §1.4 p. 12. Part of the (18a-d)/(19a-d) discussion arguing the perfect can be a preterit. The adverbial-licensing argument: definite-past adverbials like `yesterday` co-occur with the perfect, showing the perfect doesn't always require an open interval up to reference time." }
 
 def all : List LinguisticExample := [ex2a, ex2b, ex19d]
 

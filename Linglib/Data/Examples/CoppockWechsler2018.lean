@@ -31,9 +31,7 @@ def ex_27 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("subject", "1"), ("clause", "declarative"), ("marking", "ego")]
-    comment := "Repeated from the paper's (1a), after Hargreaves 2005."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Repeated from the paper's (1a), after Hargreaves 2005." }
 
 def ex_28 : LinguisticExample :=
   { id := "coppockwechsler2018_28"
@@ -49,9 +47,7 @@ def ex_28 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("subject", "2"), ("clause", "declarative"), ("marking", "ego")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_34a : LinguisticExample :=
   { id := "coppockwechsler2018_34a"
@@ -67,9 +63,7 @@ def ex_34a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("subject", "1"), ("clause", "interrogative"), ("marking", "ego")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_34b : LinguisticExample :=
   { id := "coppockwechsler2018_34b"
@@ -85,9 +79,7 @@ def ex_34b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("subject", "1"), ("clause", "interrogative"), ("marking", "plain")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_35a : LinguisticExample :=
   { id := "coppockwechsler2018_35a"
@@ -103,9 +95,7 @@ def ex_35a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("subject", "2"), ("clause", "interrogative"), ("marking", "ego")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_35b : LinguisticExample :=
   { id := "coppockwechsler2018_35b"
@@ -121,9 +111,7 @@ def ex_35b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("subject", "2"), ("clause", "interrogative"), ("marking", "plain")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def all : List LinguisticExample := [ex_27, ex_28, ex_34a, ex_34b, ex_35a, ex_35b]
 

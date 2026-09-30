@@ -40,8 +40,7 @@
         "zero"
       ]
     ],
-    "comment": "First person A, no ergative flag.",
-    "lgrConformance": ""
+    "comment": "First person A, no ergative flag."
   },
   {
     "id": "haspelmath2021_ex1b",
@@ -84,8 +83,7 @@
         "special"
       ]
     ],
-    "comment": "Third person A with the ergative flag -ye.",
-    "lgrConformance": ""
+    "comment": "Third person A with the ergative flag -ye."
   },
   {
     "id": "haspelmath2021_ex2a",
@@ -128,8 +126,7 @@
         "zero"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haspelmath2021_ex2b",
@@ -172,8 +169,7 @@
         "special"
       ]
     ],
-    "comment": "Definite P with the accusative -y.",
-    "lgrConformance": ""
+    "comment": "Definite P with the accusative -y."
   },
   {
     "id": "haspelmath2021_ex3a",
@@ -220,8 +216,7 @@
         "zero"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haspelmath2021_ex3b",
@@ -268,8 +263,7 @@
         "special"
       ]
     ],
-    "comment": "The object marker ben- is required.",
-    "lgrConformance": ""
+    "comment": "The object marker ben- is required."
   },
   {
     "id": "haspelmath2021_ex4a",
@@ -316,8 +310,7 @@
         "zero"
       ]
     ],
-    "comment": "The prepositional dative 'She gave the money to Kim' is also possible.",
-    "lgrConformance": ""
+    "comment": "The prepositional dative 'She gave the money to Kim' is also possible."
   },
   {
     "id": "haspelmath2021_ex4b",
@@ -364,8 +357,7 @@
         "zero"
       ]
     ],
-    "comment": "The prepositional dative 'She gave it to him' is also possible.",
-    "lgrConformance": ""
+    "comment": "The prepositional dative 'She gave it to him' is also possible."
   },
   {
     "id": "haspelmath2021_ex4c",
@@ -417,8 +409,7 @@
         "zero"
       ]
     ],
-    "comment": "Only the prepositional dative is possible.",
-    "lgrConformance": ""
+    "comment": "Only the prepositional dative is possible."
   },
   {
     "id": "haspelmath2021_ex17a",
@@ -461,8 +452,7 @@
         "special"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haspelmath2021_ex17b",
@@ -505,8 +495,7 @@
         "zero"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haspelmath2021_ex18a",
@@ -549,8 +538,7 @@
         "zero"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haspelmath2021_ex18b",
@@ -593,8 +581,7 @@
         "special"
       ]
     ],
-    "comment": "Definite P with the accusative postposition nũũ.",
-    "lgrConformance": ""
+    "comment": "Definite P with the accusative postposition nũũ."
   },
   {
     "id": "haspelmath2021_ex19a",
@@ -637,8 +624,7 @@
         "special"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haspelmath2021_ex19b",
@@ -681,8 +667,7 @@
         "zero"
       ]
     ],
-    "comment": "The accusative flag -râ is not allowed on a nontopical P.",
-    "lgrConformance": ""
+    "comment": "The accusative flag -râ is not allowed on a nontopical P."
   },
   {
     "id": "haspelmath2021_ex19c",
@@ -725,8 +710,7 @@
         "special"
       ]
     ],
-    "comment": "The accusative flag -râ is required on a topical P.",
-    "lgrConformance": ""
+    "comment": "The accusative flag -râ is required on a topical P."
   },
   {
     "id": "haspelmath2021_ex20a",
@@ -769,8 +753,7 @@
         "special"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haspelmath2021_ex20b",
@@ -813,8 +796,7 @@
         "special"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haspelmath2021_ex20c",
@@ -857,8 +839,7 @@
         "special"
       ]
     ],
-    "comment": "The preposition a is impossible on an aliophoric P.",
-    "lgrConformance": ""
+    "comment": "The preposition a is impossible on an aliophoric P."
   },
   {
     "id": "haspelmath2021_ex23a",
@@ -901,8 +882,7 @@
         "zero"
       ]
     ],
-    "comment": "No flag on the S argument.",
-    "lgrConformance": ""
+    "comment": "No flag on the S argument."
   },
   {
     "id": "haspelmath2021_ex23b",
@@ -945,8 +925,7 @@
         "zero"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haspelmath2021_ex23c",
@@ -989,8 +968,7 @@
         "special"
       ]
     ],
-    "comment": "Ergative flag -du on the full nominal A.",
-    "lgrConformance": ""
+    "comment": "Ergative flag -du on the full nominal A."
   },
   {
     "id": "haspelmath2021_ex24a",
@@ -1033,8 +1011,7 @@
         "special"
       ]
     ],
-    "comment": "Ergative prefix on the inanimate (neuter) A.",
-    "lgrConformance": ""
+    "comment": "Ergative prefix on the inanimate (neuter) A."
   },
   {
     "id": "haspelmath2021_ex24b",
@@ -1077,8 +1054,7 @@
         "zero"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haspelmath2021_ex25a",
@@ -1121,8 +1097,7 @@
         "zero"
       ]
     ],
-    "comment": "No flag on the topical A.",
-    "lgrConformance": ""
+    "comment": "No flag on the topical A."
   },
   {
     "id": "haspelmath2021_ex25b",
@@ -1165,8 +1140,7 @@
         "special"
       ]
     ],
-    "comment": "Ergative flag -ki' on the focused A.",
-    "lgrConformance": ""
+    "comment": "Ergative flag -ki' on the focused A."
   },
   {
     "id": "haspelmath2021_ex29a",
@@ -1209,8 +1183,7 @@
         "special"
       ]
     ],
-    "comment": "Dative preposition ta on the full-nominal R.",
-    "lgrConformance": ""
+    "comment": "Dative preposition ta on the full-nominal R."
   },
   {
     "id": "haspelmath2021_ex29b",
@@ -1253,8 +1226,7 @@
         "special"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haspelmath2021_ex29c",
@@ -1297,8 +1269,7 @@
         "zero"
       ]
     ],
-    "comment": "The R is an index on the verb.",
-    "lgrConformance": ""
+    "comment": "The R is an index on the verb."
   },
   {
     "id": "haspelmath2021_ex29d",
@@ -1341,8 +1312,7 @@
         "zero"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haspelmath2021_ex30a",
@@ -1385,8 +1355,7 @@
         "zero"
       ]
     ],
-    "comment": "Animate R in the zero-coded absolutive.",
-    "lgrConformance": ""
+    "comment": "Animate R in the zero-coded absolutive."
   },
   {
     "id": "haspelmath2021_ex30b",
@@ -1429,8 +1398,7 @@
         "special"
       ]
     ],
-    "comment": "Inanimate R in the locative.",
-    "lgrConformance": ""
+    "comment": "Inanimate R in the locative."
   },
   {
     "id": "haspelmath2021_ex31a",
@@ -1473,8 +1441,7 @@
         "zero"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haspelmath2021_ex31b",
@@ -1517,8 +1484,7 @@
         "zero"
       ]
     ],
-    "comment": "An indefinite R cannot be unflagged.",
-    "lgrConformance": ""
+    "comment": "An indefinite R cannot be unflagged."
   },
   {
     "id": "haspelmath2021_ex31c",
@@ -1561,8 +1527,7 @@
         "special"
       ]
     ],
-    "comment": "Dative preposition ci on the indefinite R.",
-    "lgrConformance": ""
+    "comment": "Dative preposition ci on the indefinite R."
   },
   {
     "id": "haspelmath2021_ex32a",
@@ -1605,8 +1570,7 @@
         "zero"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haspelmath2021_ex32b",
@@ -1649,8 +1613,7 @@
         "zero"
       ]
     ],
-    "comment": "The flagless construction is ungrammatical with a person-form T.",
-    "lgrConformance": ""
+    "comment": "The flagless construction is ungrammatical with a person-form T."
   },
   {
     "id": "haspelmath2021_ex32c",
@@ -1693,8 +1656,7 @@
         "special"
       ]
     ],
-    "comment": "Person-form T flagged with the serial verb tsɔ́ 'take'.",
-    "lgrConformance": ""
+    "comment": "Person-form T flagged with the serial verb tsɔ́ 'take'."
   },
   {
     "id": "haspelmath2021_ex33a",
@@ -1737,8 +1699,7 @@
         "zero"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haspelmath2021_ex33b",
@@ -1781,8 +1742,7 @@
         "zero"
       ]
     ],
-    "comment": "A definite T is impossible in the simple double object construction.",
-    "lgrConformance": ""
+    "comment": "A definite T is impossible in the simple double object construction."
   },
   {
     "id": "haspelmath2021_ex33c",
@@ -1825,8 +1785,7 @@
         "special"
       ]
     ],
-    "comment": "Definite T flagged with the serial verb de 'take'.",
-    "lgrConformance": ""
+    "comment": "Definite T flagged with the serial verb de 'take'."
   },
   {
     "id": "haspelmath2021_ex34a",
@@ -1869,8 +1828,7 @@
         "zero"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haspelmath2021_ex34b",
@@ -1913,8 +1871,7 @@
         "zero"
       ]
     ],
-    "comment": "A locuphoric pronoun cannot appear in its ordinary form as T.",
-    "lgrConformance": ""
+    "comment": "A locuphoric pronoun cannot appear in its ordinary form as T."
   },
   {
     "id": "haspelmath2021_ex34c",
@@ -1957,8 +1914,7 @@
         "special"
       ]
     ],
-    "comment": "The reinforced form šeni tavi 'your self'.",
-    "lgrConformance": ""
+    "comment": "The reinforced form šeni tavi 'your self'."
   },
   {
     "id": "haspelmath2021_ex35a",
@@ -2005,8 +1961,7 @@
         "special"
       ]
     ],
-    "comment": "A is third person: special accusative flag.",
-    "lgrConformance": ""
+    "comment": "A is third person: special accusative flag."
   },
   {
     "id": "haspelmath2021_ex35b",
@@ -2053,8 +2008,7 @@
         "zero"
       ]
     ],
-    "comment": "A is locuphoric: no P flagging.",
-    "lgrConformance": ""
+    "comment": "A is locuphoric: no P flagging."
   },
   {
     "id": "haspelmath2021_ex36a",
@@ -2101,8 +2055,7 @@
         "special"
       ]
     ],
-    "comment": "P is locuphoric: special ergative flag.",
-    "lgrConformance": ""
+    "comment": "P is locuphoric: special ergative flag."
   },
   {
     "id": "haspelmath2021_ex36b",
@@ -2149,8 +2102,7 @@
         "zero"
       ]
     ],
-    "comment": "P is third person: no A flagging.",
-    "lgrConformance": ""
+    "comment": "P is third person: no A flagging."
   },
   {
     "id": "haspelmath2021_ex37a",
@@ -2197,8 +2149,7 @@
         "zero"
       ]
     ],
-    "comment": "P is nonspecific: no A flagging.",
-    "lgrConformance": ""
+    "comment": "P is nonspecific: no A flagging."
   },
   {
     "id": "haspelmath2021_ex37b",
@@ -2245,8 +2196,7 @@
         "special"
       ]
     ],
-    "comment": "P is specific: special ergative flag.",
-    "lgrConformance": ""
+    "comment": "P is specific: special ergative flag."
   },
   {
     "id": "haspelmath2021_ex38",
@@ -2293,8 +2243,7 @@
         "special"
       ]
     ],
-    "comment": "The preposition a on P with an inanimate A.",
-    "lgrConformance": ""
+    "comment": "The preposition a on P with an inanimate A."
   },
   {
     "id": "haspelmath2021_ex39a",
@@ -2341,8 +2290,7 @@
         "zero"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haspelmath2021_ex39b",
@@ -2389,8 +2337,7 @@
         "zero"
       ]
     ],
-    "comment": "Two clitics are impossible with a locuphoric T.",
-    "lgrConformance": ""
+    "comment": "Two clitics are impossible with a locuphoric T."
   },
   {
     "id": "haspelmath2021_ex39c",
@@ -2437,8 +2384,7 @@
         "special"
       ]
     ],
-    "comment": "The dative preposition na on the R.",
-    "lgrConformance": ""
+    "comment": "The dative preposition na on the R."
   },
   {
     "id": "haspelmath2021_ex40a",
@@ -2485,8 +2431,7 @@
         "zero"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haspelmath2021_ex40b",
@@ -2533,8 +2478,7 @@
         "zero"
       ]
     ],
-    "comment": "Two indexes are impossible in the upstream scenario.",
-    "lgrConformance": ""
+    "comment": "Two indexes are impossible in the upstream scenario."
   },
   {
     "id": "haspelmath2021_ex40c",
@@ -2581,8 +2525,7 @@
         "special"
       ]
     ],
-    "comment": "The preposition kwa on the R.",
-    "lgrConformance": ""
+    "comment": "The preposition kwa on the R."
   },
   {
     "id": "haspelmath2021_ex43a",
@@ -2633,8 +2576,7 @@
         "zero"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haspelmath2021_ex43b",
@@ -2685,8 +2627,7 @@
         "zero"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haspelmath2021_ex44a",
@@ -2742,8 +2683,7 @@
         "zero"
       ]
     ],
-    "comment": "Unacceptable in the American varieties.",
-    "lgrConformance": ""
+    "comment": "Unacceptable in the American varieties."
   },
   {
     "id": "haspelmath2021_ex44b",
@@ -2799,8 +2739,7 @@
         "zero"
       ]
     ],
-    "comment": "Unacceptable in all varieties.",
-    "lgrConformance": ""
+    "comment": "Unacceptable in all varieties."
   },
   {
     "id": "haspelmath2021_ex45a",
@@ -2847,8 +2786,7 @@
         "zero"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haspelmath2021_ex45b",
@@ -2895,8 +2833,7 @@
         "zero"
       ]
     ],
-    "comment": "The T proclitic is impossible in the upstream scenario.",
-    "lgrConformance": ""
+    "comment": "The T proclitic is impossible in the upstream scenario."
   },
   {
     "id": "haspelmath2021_ex45c",
@@ -2943,8 +2880,7 @@
         "special"
       ]
     ],
-    "comment": "The independent pronoun eména as T.",
-    "lgrConformance": ""
+    "comment": "The independent pronoun eména as T."
   },
   {
     "id": "haspelmath2021_ex46a",
@@ -2991,8 +2927,7 @@
         "zero"
       ]
     ],
-    "comment": "Dative case on the R.",
-    "lgrConformance": ""
+    "comment": "Dative case on the R."
   },
   {
     "id": "haspelmath2021_ex46b",
@@ -3039,8 +2974,7 @@
         "special"
       ]
     ],
-    "comment": "The preposition fyrir on the R with an animate T.",
-    "lgrConformance": ""
+    "comment": "The preposition fyrir on the R with an animate T."
   },
   {
     "id": "haspelmath2021_ex48a",
@@ -3087,8 +3021,7 @@
         "zero"
       ]
     ],
-    "comment": "Absolutive P.",
-    "lgrConformance": ""
+    "comment": "Absolutive P."
   },
   {
     "id": "haspelmath2021_ex48b",
@@ -3135,8 +3068,7 @@
         "zero"
       ]
     ],
-    "comment": "Absolutive P.",
-    "lgrConformance": ""
+    "comment": "Absolutive P."
   },
   {
     "id": "haspelmath2021_ex48c",
@@ -3183,8 +3115,7 @@
         "special"
       ]
     ],
-    "comment": "Dative P.",
-    "lgrConformance": ""
+    "comment": "Dative P."
   },
   {
     "id": "haspelmath2021_ex48d",
@@ -3231,8 +3162,7 @@
         "special"
       ]
     ],
-    "comment": "Dative P.",
-    "lgrConformance": ""
+    "comment": "Dative P."
   },
   {
     "id": "haspelmath2021_ex50a",
@@ -3279,8 +3209,7 @@
         "zero"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haspelmath2021_ex50b",
@@ -3327,8 +3256,7 @@
         "zero"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haspelmath2021_ex51a",
@@ -3375,8 +3303,7 @@
         "zero"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haspelmath2021_ex51b",
@@ -3423,8 +3350,7 @@
         "special"
       ]
     ],
-    "comment": "T flagged with the serial verb fà.",
-    "lgrConformance": ""
+    "comment": "T flagged with the serial verb fà."
   },
   {
     "id": "haspelmath2021_ex52a",
@@ -3471,8 +3397,7 @@
         "zero"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haspelmath2021_ex52b",
@@ -3519,8 +3444,7 @@
         "special"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haspelmath2021_ex53a",
@@ -3567,8 +3491,7 @@
         "zero"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haspelmath2021_ex53b",
@@ -3615,8 +3538,7 @@
         "special"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haspelmath2021_ex55a",
@@ -3663,8 +3585,7 @@
         "zero"
       ]
     ],
-    "comment": "Direct form.",
-    "lgrConformance": ""
+    "comment": "Direct form."
   },
   {
     "id": "haspelmath2021_ex55b",
@@ -3711,8 +3632,7 @@
         "special"
       ]
     ],
-    "comment": "Inverse prefix k'i-.",
-    "lgrConformance": ""
+    "comment": "Inverse prefix k'i-."
   },
   {
     "id": "haspelmath2021_ex56a",
@@ -3755,8 +3675,7 @@
         "zero"
       ]
     ],
-    "comment": "The underived verb sare with an indefinite T.",
-    "lgrConformance": ""
+    "comment": "The underived verb sare with an indefinite T."
   },
   {
     "id": "haspelmath2021_ex56b",
@@ -3799,8 +3718,7 @@
         "special"
       ]
     ],
-    "comment": "The applicative suffix -ang with a definite T.",
-    "lgrConformance": ""
+    "comment": "The applicative suffix -ang with a definite T."
   },
   {
     "id": "haspelmath2021_ex56c",
@@ -3843,8 +3761,7 @@
         "special"
       ]
     ],
-    "comment": "The applicative suffix -ang with a person-form T.",
-    "lgrConformance": ""
+    "comment": "The applicative suffix -ang with a person-form T."
   },
   {
     "id": "haspelmath2021_ex58a",
@@ -3875,8 +3792,7 @@
         "active"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haspelmath2021_ex58b",
@@ -3907,8 +3823,7 @@
         "passive"
       ]
     ],
-    "comment": "Special verb coding and the preposition by on the A.",
-    "lgrConformance": ""
+    "comment": "Special verb coding and the preposition by on the A."
   },
   {
     "id": "haspelmath2021_ex59a",
@@ -3939,8 +3854,7 @@
         "ergative"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haspelmath2021_ex59b",
@@ -3971,8 +3885,7 @@
         "antipassive"
       ]
     ],
-    "comment": "The antipassive prefix ine- and the instrumental on the P.",
-    "lgrConformance": ""
+    "comment": "The antipassive prefix ine- and the instrumental on the P."
   },
   {
     "id": "haspelmath2021_ex60a",
@@ -4003,8 +3916,7 @@
         "double object"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haspelmath2021_ex60b",
@@ -4035,8 +3947,7 @@
         "prepositional dative"
       ]
     ],
-    "comment": "The extra dative preposition to.",
-    "lgrConformance": ""
+    "comment": "The extra dative preposition to."
   },
   {
     "id": "haspelmath2021_ex64a",
@@ -4083,8 +3994,7 @@
         "zero"
       ]
     ],
-    "comment": "Active only; not 'The man knows him'.",
-    "lgrConformance": ""
+    "comment": "Active only; not 'The man knows him'."
   },
   {
     "id": "haspelmath2021_ex64b",
@@ -4131,8 +4041,7 @@
         "zero"
       ]
     ],
-    "comment": "Active only.",
-    "lgrConformance": ""
+    "comment": "Active only."
   },
   {
     "id": "haspelmath2021_ex64c",
@@ -4179,8 +4088,7 @@
         "special"
       ]
     ],
-    "comment": "The passive with the suffix -ŋ and the oblique A is obligatory.",
-    "lgrConformance": ""
+    "comment": "The passive with the suffix -ŋ and the oblique A is obligatory."
   },
   {
     "id": "haspelmath2021_ex65a",
@@ -4227,8 +4135,7 @@
         "zero"
       ]
     ],
-    "comment": "Either the active or the passive can be used.",
-    "lgrConformance": ""
+    "comment": "Either the active or the passive can be used."
   },
   {
     "id": "haspelmath2021_ex65b",
@@ -4275,8 +4182,7 @@
         "special"
       ]
     ],
-    "comment": "Either the active or the passive can be used.",
-    "lgrConformance": ""
+    "comment": "Either the active or the passive can be used."
   },
   {
     "id": "haspelmath2021_ex66a",
@@ -4323,8 +4229,7 @@
         "special"
       ]
     ],
-    "comment": "The postpositional dative construction is the only possibility.",
-    "lgrConformance": ""
+    "comment": "The postpositional dative construction is the only possibility."
   },
   {
     "id": "haspelmath2021_ex66b",
@@ -4371,8 +4276,7 @@
         "special"
       ]
     ],
-    "comment": "The postpositional dative construction is the only possibility.",
-    "lgrConformance": ""
+    "comment": "The postpositional dative construction is the only possibility."
   },
   {
     "id": "haspelmath2021_ex66c",
@@ -4419,8 +4323,7 @@
         "special"
       ]
     ],
-    "comment": "The postpositional dative construction is the only possibility.",
-    "lgrConformance": ""
+    "comment": "The postpositional dative construction is the only possibility."
   },
   {
     "id": "haspelmath2021_ex66d",
@@ -4467,8 +4370,7 @@
         "zero"
       ]
     ],
-    "comment": "The double object construction.",
-    "lgrConformance": ""
+    "comment": "The double object construction."
   },
   {
     "id": "haspelmath2021_ex67a",
@@ -4515,8 +4417,7 @@
         "special"
       ]
     ],
-    "comment": "The postpositional dative construction is also possible in the downstream scenario.",
-    "lgrConformance": ""
+    "comment": "The postpositional dative construction is also possible in the downstream scenario."
   },
   {
     "id": "haspelmath2021_ex67b",
@@ -4563,7 +4464,6 @@
         "zero"
       ]
     ],
-    "comment": "The double object construction in the downstream scenario.",
-    "lgrConformance": ""
+    "comment": "The double object construction in the downstream scenario."
   }
 ]

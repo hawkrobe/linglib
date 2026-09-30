@@ -23,9 +23,7 @@
       ["complement", "dass"],
       ["position", "postverbal"]
     ],
-    "comment": "Bare dass-clause with a non-CP-selecting verb.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Bare dass-clause with a non-CP-selecting verb."
   },
   {
     "id": "schwarzer2026_ex11b",
@@ -53,9 +51,7 @@
       ["position", "postverbal"],
       ["order", "dpFirst"]
     ],
-    "comment": "DP-CP coordination with a non-CP-selecting verb, rated like the marked-but-grammatical filler group C; the coordination improves over the bare clause by more than the selected contexts predict.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "DP-CP coordination with a non-CP-selecting verb, rated like the marked-but-grammatical filler group C; the coordination improves over the bare clause by more than the selected contexts predict."
   },
   {
     "id": "schwarzer2026_ex12a",
@@ -81,9 +77,7 @@
       ["complement", "dass"],
       ["position", "postverbal"]
     ],
-    "comment": "Bare dass-clause with a CP-selecting verb.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Bare dass-clause with a CP-selecting verb."
   },
   {
     "id": "schwarzer2026_ex12b",
@@ -111,9 +105,7 @@
       ["position", "postverbal"],
       ["order", "dpFirst"]
     ],
-    "comment": "DP-CP coordination with a CP-selecting verb.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "DP-CP coordination with a CP-selecting verb."
   },
   {
     "id": "schwarzer2026_ex16a",
@@ -141,9 +133,7 @@
       ["position", "preverbal"],
       ["order", "dpFirst"]
     ],
-    "comment": "Preverbal coordination, DP first: chosen over (16b) more often in the forced choice.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Preverbal coordination, DP first: chosen over (16b) more often in the forced choice."
   },
   {
     "id": "schwarzer2026_ex16b",
@@ -171,9 +161,7 @@
       ["position", "preverbal"],
       ["order", "cpFirst"]
     ],
-    "comment": "Preverbal coordination, CP first: the order the linear and temporal closeness accounts predict to be preferred.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Preverbal coordination, CP first: the order the linear and temporal closeness accounts predict to be preferred."
   },
   {
     "id": "schwarzer2026_ex17a",
@@ -201,9 +189,7 @@
       ["position", "postverbal"],
       ["order", "dpFirst"]
     ],
-    "comment": "Postverbal coordination, DP first: chosen as often as in preverbal position.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Postverbal coordination, DP first: chosen as often as in preverbal position."
   },
   {
     "id": "schwarzer2026_ex17b",
@@ -231,8 +217,6 @@
       ["position", "postverbal"],
       ["order", "cpFirst"]
     ],
-    "comment": "Postverbal coordination, CP first.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Postverbal coordination, CP first."
   }
 ]

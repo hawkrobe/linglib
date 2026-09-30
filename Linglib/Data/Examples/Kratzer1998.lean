@@ -31,9 +31,7 @@ def ex01 : LinguisticExample :=
     alternatives := []
     readings := [("uninterpreted-past (SOT)", .acceptable)]
     paperFeatures := []
-    comment := "Kratzer's plot example (1). The point: a past tense morpheme can fail to make any semantic contribution beyond agreeing with a higher past. Section 1, p. 1."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Kratzer's plot example (1). The point: a past tense morpheme can fail to make any semantic contribution beyond agreeing with a higher past. Section 1, p. 1." }
 
 def ex02 : LinguisticExample :=
   { id := "kratzer1998_ex02"
@@ -49,9 +47,7 @@ def ex02 : LinguisticExample :=
     alternatives := []
     readings := [("alive-at-buying (later-than-saying)", .acceptable), ("alive-at-saying", .acceptable)]
     paperFeatures := []
-    comment := "Kratzer's plot example (2), reported from Ogihara 1989. Ambiguity highlights non-pronominal use of past. Section 1, p. 1."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Kratzer's plot example (2), reported from Ogihara 1989. Ambiguity highlights non-pronominal use of past. Section 1, p. 1." }
 
 def ex03 : LinguisticExample :=
   { id := "kratzer1998_ex03"
@@ -67,9 +63,7 @@ def ex03 : LinguisticExample :=
     alternatives := []
     readings := [("pregnancy-at-knowing (future-of-utterance)", .acceptable)]
     paperFeatures := []
-    comment := "Kratzer's plot example (3). The minute-clause shows even adjunct past morphology can be SOT'd. Section 1, p. 1."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Kratzer's plot example (3). The minute-clause shows even adjunct past morphology can be SOT'd. Section 1, p. 1." }
 
 def ex05 : LinguisticExample :=
   { id := "kratzer1998_ex05"
@@ -85,9 +79,7 @@ def ex05 : LinguisticExample :=
     alternatives := []
     readings := [("going-to-Harvard at past-of-utterance", .acceptable)]
     paperFeatures := []
-    comment := "Kratzer's \"major obstacle\" example (5), Section 1, p. 2: not all past tenses can be analyzed as pronouns. Motivates the perfect-aspect-as-operator move in Section 7."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Kratzer's \"major obstacle\" example (5), Section 1, p. 2: not all past tenses can be analyzed as pronouns. Motivates the perfect-aspect-as-operator move in Section 7." }
 
 def ex29 : LinguisticExample :=
   { id := "kratzer1998_ex29"
@@ -103,9 +95,7 @@ def ex29 : LinguisticExample :=
     alternatives := []
     readings := [("de se (John self-locates at 10)", .acceptable), ("indexical (John thinks 11 is 10)", .marginal)]
     paperFeatures := []
-    comment := "Kratzer's temporal de se example (29), Section 5, p. 11. Attributed to v. Stechow 1982."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Kratzer's temporal de se example (29), Section 5, p. 11. Attributed to v. Stechow 1982." }
 
 def ex30 : LinguisticExample :=
   { id := "kratzer1998_ex30"
@@ -121,9 +111,7 @@ def ex30 : LinguisticExample :=
     alternatives := []
     readings := [("de se (headache at John's now)", .acceptable)]
     paperFeatures := []
-    comment := "Kratzer's example (30), Section 5, p. 11: even non-dramatic embedded tense gets a de se interpretation."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Kratzer's example (30), Section 5, p. 11: even non-dramatic embedded tense gets a de se interpretation." }
 
 def ex32a : LinguisticExample :=
   { id := "kratzer1998_ex32a"
@@ -139,9 +127,7 @@ def ex32a : LinguisticExample :=
     alternatives := []
     readings := [("simultaneous (alive-at-buying, zero tense in RC)", .acceptable), ("independent past (alive-before-buying, past in RC)", .acceptable)]
     paperFeatures := []
-    comment := "Kratzer's example (32a), Section 5, p. 13. RC tense is structurally optional in a way SOT complement-tense is not."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Kratzer's example (32a), Section 5, p. 13. RC tense is structurally optional in a way SOT complement-tense is not." }
 
 def ex33a : LinguisticExample :=
   { id := "kratzer1998_ex33a"
@@ -157,9 +143,7 @@ def ex33a : LinguisticExample :=
     alternatives := []
     readings := [("RC zero-tense (alive-at-buying)", .acceptable), ("RC past-tense (alive-at-saying)", .acceptable)]
     paperFeatures := []
-    comment := "Kratzer's example (33a), Section 5, p. 13. Two LFs for the RC tense — zero-tense bound at the buying time, or genuine past bound at the saying time."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Kratzer's example (33a), Section 5, p. 13. Two LFs for the RC tense — zero-tense bound at the buying time, or genuine past bound at the saying time." }
 
 def ex34a : LinguisticExample :=
   { id := "kratzer1998_ex34a"
@@ -175,9 +159,7 @@ def ex34a : LinguisticExample :=
     alternatives := []
     readings := [("sickness-at-yesterday (de re past)", .acceptable)]
     paperFeatures := []
-    comment := "Kratzer's example (34a), Section 5, p. 13. Contrasts minimally with (35a) below."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Kratzer's example (34a), Section 5, p. 13. Contrasts minimally with (35a) below." }
 
 def ex35a : LinguisticExample :=
   { id := "kratzer1998_ex35a"
@@ -193,9 +175,7 @@ def ex35a : LinguisticExample :=
     alternatives := []
     readings := [("sickness-at-thought-time", .ungrammatical)]
     paperFeatures := []
-    comment := "Kratzer's example (35a), Section 5, p. 13. Star is Kratzer's. Illustrates the minimal de re vs SOT contrast."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Kratzer's example (35a), Section 5, p. 13. Star is Kratzer's. Illustrates the minimal de re vs SOT contrast." }
 
 def ex36a : LinguisticExample :=
   { id := "kratzer1998_ex36a"
@@ -211,9 +191,7 @@ def ex36a : LinguisticExample :=
     alternatives := []
     readings := [("de re on present state", .marginal)]
     paperFeatures := []
-    comment := "Kratzer's example (36a), Section 6, p. 14. \"Marginal for many speakers\" per Kratzer; some speakers accept readily."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Kratzer's example (36a), Section 6, p. 14. \"Marginal for many speakers\" per Kratzer; some speakers accept readily." }
 
 def ex36b : LinguisticExample :=
   { id := "kratzer1998_ex36b"
@@ -229,9 +207,7 @@ def ex36b : LinguisticExample :=
     alternatives := []
     readings := [("de re on present state (explicit)", .acceptable)]
     paperFeatures := []
-    comment := "Kratzer's example (36b), Section 6, p. 14."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Kratzer's example (36b), Section 6, p. 14." }
 
 def ex40a : LinguisticExample :=
   { id := "kratzer1998_ex40a"
@@ -247,9 +223,7 @@ def ex40a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("form", "simple past"), ("context", "out of the blue")]
-    comment := "Kratzer's example (40a), Section 7, p. 16. Cornerstone of the deictic-vs-anaphoric contrast: English simple past does not require a contextually salient past time."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Kratzer's example (40a), Section 7, p. 16. Cornerstone of the deictic-vs-anaphoric contrast: English simple past does not require a contextually salient past time." }
 
 def ex40b : LinguisticExample :=
   { id := "kratzer1998_ex40b"
@@ -265,9 +239,7 @@ def ex40b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("form", "Präteritum"), ("context", "out of the blue")]
-    comment := "Kratzer's example (40b), Section 7, p. 16. Star is Kratzer's. Per Kratzer: \"At best, it sounds like the hypercorrect utterance of a South German speaker.\" Cornerstone of the deictic-vs-anaphoric Preterit asymmetry."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Kratzer's example (40b), Section 7, p. 16. Star is Kratzer's. Per Kratzer: \"At best, it sounds like the hypercorrect utterance of a South German speaker.\" Cornerstone of the deictic-vs-anaphoric Preterit asymmetry." }
 
 def ex40c : LinguisticExample :=
   { id := "kratzer1998_ex40c"
@@ -283,9 +255,7 @@ def ex40c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("form", "Perfekt"), ("context", "out of the blue")]
-    comment := "Kratzer's example (40c), Section 7, p. 16. The Perfekt fills the deictic-past slot that the Preterit cannot. Supports Kratzer's decomposition: English simple past = perfect-aspect + present-tense."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Kratzer's example (40c), Section 7, p. 16. The Perfekt fills the deictic-past slot that the Preterit cannot. Supports Kratzer's decomposition: English simple past = perfect-aspect + present-tense." }
 
 def ex41a : LinguisticExample :=
   { id := "kratzer1998_ex41a"
@@ -301,9 +271,7 @@ def ex41a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("form", "simple past"), ("context", "out of the blue")]
-    comment := "Kratzer's example (41a), Section 7, p. 16. English simple past = perfect tolerated in embedded sentences."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Kratzer's example (41a), Section 7, p. 16. English simple past = perfect tolerated in embedded sentences." }
 
 def ex41b : LinguisticExample :=
   { id := "kratzer1998_ex41b"
@@ -319,9 +287,7 @@ def ex41b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("form", "Präteritum"), ("context", "out of the blue")]
-    comment := "Kratzer's example (41b), Section 7, p. 16. Per Kratzer: \"needs a contextually salient past time to be acceptable\" — directly diagnoses the anaphoric requirement."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Kratzer's example (41b), Section 7, p. 16. Per Kratzer: \"needs a contextually salient past time to be acceptable\" — directly diagnoses the anaphoric requirement." }
 
 def ex41c : LinguisticExample :=
   { id := "kratzer1998_ex41c"
@@ -337,9 +303,7 @@ def ex41c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("form", "Perfekt"), ("context", "out of the blue")]
-    comment := "Kratzer's example (41c), Section 7, p. 16. The Perfekt slot again fills in for the missing deictic Preterit."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Kratzer's example (41c), Section 7, p. 16. The Perfekt slot again fills in for the missing deictic Preterit." }
 
 def ex42a : LinguisticExample :=
   { id := "kratzer1998_ex42a"
@@ -355,9 +319,7 @@ def ex42a : LinguisticExample :=
     alternatives := []
     readings := [("anaphoric (caught-before-dreaming)", .acceptable), ("backward-shifted (caught-before-eating)", .acceptable)]
     paperFeatures := []
-    comment := "Kratzer's example (42a), Section 7, p. 16-17. Per Kratzer: \"Underlined past tense does not have to be anaphoric.\""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Kratzer's example (42a), Section 7, p. 16-17. Per Kratzer: \"Underlined past tense does not have to be anaphoric.\"" }
 
 def ex42b : LinguisticExample :=
   { id := "kratzer1998_ex42b"
@@ -373,9 +335,7 @@ def ex42b : LinguisticExample :=
     alternatives := []
     readings := [("anaphoric (caught-at-dreaming-time)", .acceptable), ("backward-shifted (caught-before-eating)", .unacceptable)]
     paperFeatures := []
-    comment := "Kratzer's example (42b), Section 7, p. 16-17. Per Kratzer: \"Underlined past tense must be anaphoric.\" The backward-shifted reading is an interpretation gap (unavailable LF), not a string ill-formedness — hence `unacceptable` rather than `ungrammatical`."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Kratzer's example (42b), Section 7, p. 16-17. Per Kratzer: \"Underlined past tense must be anaphoric.\" The backward-shifted reading is an interpretation gap (unavailable LF), not a string ill-formedness — hence `unacceptable` rather than `ungrammatical`." }
 
 def ex42c : LinguisticExample :=
   { id := "kratzer1998_ex42c"
@@ -391,9 +351,7 @@ def ex42c : LinguisticExample :=
     alternatives := []
     readings := [("backward-shifted (caught-before-eating)", .acceptable)]
     paperFeatures := []
-    comment := "Kratzer's example (42c), Section 7, p. 17. Past perfect fills the backward-shifted slot that the bare Preterit cannot. NB: Kratzer's free English translation in the PDF reads \"catching\" (typo for \"eating\"); the German `einen Fisch zu essen` is unambiguously \"to eat a fish\", with the catching in the RC `den er selber gefangen hatte`. Translation here reflects the German."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Kratzer's example (42c), Section 7, p. 17. Past perfect fills the backward-shifted slot that the bare Preterit cannot. NB: Kratzer's free English translation in the PDF reads \"catching\" (typo for \"eating\"); the German `einen Fisch zu essen` is unambiguously \"to eat a fish\", with the catching in the RC `den er selber gefangen hatte`. Translation here reflects the German." }
 
 def all : List LinguisticExample := [ex01, ex02, ex03, ex05, ex29, ex30, ex32a, ex33a, ex34a, ex35a, ex36a, ex36b, ex40a, ex40b, ex40c, ex41a, ex41b, ex41c, ex42a, ex42b, ex42c]
 

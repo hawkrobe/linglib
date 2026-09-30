@@ -415,11 +415,6 @@ def functionTable : List (String × HaspelmathFunction) :=
     ("indirectNeg", .indirectNeg), ("directNeg", .directNeg), ("comparative", .comparative),
     ("freeChoice", .freeChoice)]
 
-/-- `seriesLabels e` lists the series an example is tagged with, two for a sentence with two
-indefinites and none for an indefinite outside the series of its language. -/
-def seriesLabels (e : LinguisticExample) : List String :=
-  e.paperFeatures.filterMap fun kv ↦ if kv.1 = "series" then some kv.2 else none
-
 /-- The region the figure of an example's language draws for a series. -/
 def region? (e : LinguisticExample) (label : String) : Option (Finset HaspelmathFunction) :=
   (paradigm? e.language).bind fun p ↦ (p.find? (·.label = label)).map (·.functions)
@@ -439,9 +434,10 @@ instance (e : LinguisticExample) (label : String) : Decidable (Excludes e label)
   inferInstanceAs (Decidable (∃ f ∈ _, ∃ r ∈ _, _))
 
 /-- Every acceptable example of the book lies in the region its figure draws for each of its
-series. -/
+series: two for a sentence with two indefinites, none for an indefinite outside the series of its
+language. -/
 theorem acceptable_covers :
-    ∀ e ∈ Examples.all, e.judgment = .acceptable → ∀ l ∈ seriesLabels e, Covers e l := by
+    ∀ e ∈ Examples.all, e.judgment = .acceptable → ∀ l ∈ e.features "series", Covers e l := by
   decide +kernel
 
 /-- Every example the book stars out of context lies outside the region its figure draws for
@@ -449,7 +445,7 @@ each of its series. The two starred English conditionals are starred for
 the speaker's expectation, which their context records, and not for the function. -/
 theorem ungrammatical_excludes :
     ∀ e ∈ Examples.all, e.judgment = .ungrammatical → e.context = "" →
-      ∀ l ∈ seriesLabels e, Excludes e l := by
+      ∀ l ∈ e.features "series", Excludes e l := by
   decide +kernel
 
 end Haspelmath1997

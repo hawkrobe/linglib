@@ -31,9 +31,7 @@ def bs2022_3 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "measurement verb"), ("numeral", "0.9"), ("unit", "grams")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def bs2022_6 : LinguisticExample :=
   { id := "bs2022_6"
@@ -49,9 +47,7 @@ def bs2022_6 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "measurement verb"), ("numeral", "0.9"), ("unit", "grams"), ("per_unit", "milliliter"), ("unit_sensitivity", "the sample's volume is at least 1 milliliter")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def bs2022_10 : LinguisticExample :=
   { id := "bs2022_10"
@@ -67,9 +63,7 @@ def bs2022_10 : LinguisticExample :=
     alternatives := []
     readings := [("same weight", .acceptable), ("same density", .unacceptable)]
     paperFeatures := [("construction", "free relative")]
-    comment := "Judged false in the context, so the density reading is unavailable."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Judged false in the context, so the density reading is unavailable." }
 
 def bs2022_14a : LinguisticExample :=
   { id := "bs2022_14a"
@@ -85,9 +79,7 @@ def bs2022_14a : LinguisticExample :=
     alternatives := []
     readings := [("comparing weight", .acceptable), ("comparing density", .unacceptable)]
     paperFeatures := [("construction", "comparative")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def bs2022_14b : LinguisticExample :=
   { id := "bs2022_14b"
@@ -103,9 +95,7 @@ def bs2022_14b : LinguisticExample :=
     alternatives := []
     readings := [("asking for weight", .acceptable), ("asking for density", .unacceptable)]
     paperFeatures := [("construction", "wh-interrogative")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def bs2022_23a : LinguisticExample :=
   { id := "bs2022_23a"
@@ -121,9 +111,7 @@ def bs2022_23a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "pseudo-partitive"), ("numeral", "0.9"), ("unit", "grams"), ("measure_function", "weight")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def bs2022_23b : LinguisticExample :=
   { id := "bs2022_23b"
@@ -139,9 +127,7 @@ def bs2022_23b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "pseudo-partitive"), ("numeral", "0.8"), ("unit", "milliliters"), ("measure_function", "volume")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def bs2022_27 : LinguisticExample :=
   { id := "bs2022_27"
@@ -157,9 +143,7 @@ def bs2022_27 : LinguisticExample :=
     alternatives := [("The mixture contains 0.1 grams of salt per milliliter.", .acceptable)]
     readings := []
     paperFeatures := [("construction", "pseudo-partitive"), ("numeral", "0.1"), ("unit", "grams"), ("per_unit", "milliliter"), ("unit_sensitivity", "the mixture's volume is at least 1 milliliter")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def bs2022_33 : LinguisticExample :=
   { id := "bs2022_33"
@@ -175,9 +159,7 @@ def bs2022_33 : LinguisticExample :=
     alternatives := []
     readings := [("asking for absolute weight or volume", .acceptable), ("asking for concentration", .acceptable)]
     paperFeatures := [("construction", "wh-interrogative"), ("measure_function", "underspecified")]
-    comment := "The concentration reading is brought out by appending 'proportionally speaking'."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The concentration reading is brought out by appending 'proportionally speaking'." }
 
 def bs2022_34 : LinguisticExample :=
   { id := "bs2022_34"
@@ -193,9 +175,7 @@ def bs2022_34 : LinguisticExample :=
     alternatives := []
     readings := [("knowing the absolute weight or volume", .acceptable), ("knowing the concentration", .acceptable)]
     paperFeatures := [("construction", "embedded question"), ("measure_function", "underspecified")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def bs2022_36a : LinguisticExample :=
   { id := "bs2022_36a"
@@ -211,9 +191,7 @@ def bs2022_36a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "pseudo-partitive"), ("numeral", "0.1"), ("unit", "kilograms"), ("per_unit", "liter"), ("unit_sensitivity", "the mixture's volume is at least 1 liter")]
-    comment := "Not equivalent to (27), despite 0.1 kg/L = 0.1 g/mL."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Not equivalent to (27), despite 0.1 kg/L = 0.1 g/mL." }
 
 def bs2022_37 : LinguisticExample :=
   { id := "bs2022_37"
@@ -229,9 +207,7 @@ def bs2022_37 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "pseudo-partitive"), ("subject_measure", "5"), ("subject_unit", "milliliter"), ("numeral", "0.1"), ("unit", "grams"), ("per_unit", "milliliter"), ("unit_sensitivity", "5 mL ≥ mL")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def bs2022_38a : LinguisticExample :=
   { id := "bs2022_38a"
@@ -247,9 +223,7 @@ def bs2022_38a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "pseudo-partitive"), ("subject_measure", "5"), ("subject_unit", "milliliter"), ("numeral", "0.1"), ("unit", "grams"), ("per_unit", "liter"), ("unit_sensitivity", "5 mL ≥ L")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def bs2022_38b : LinguisticExample :=
   { id := "bs2022_38b"
@@ -265,9 +239,7 @@ def bs2022_38b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "pseudo-partitive"), ("subject_measure", "0.1"), ("subject_unit", "milliliter"), ("numeral", "0.1"), ("unit", "grams"), ("per_unit", "milliliter"), ("unit_sensitivity", "0.1 mL ≥ mL")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def bs2022_39a : LinguisticExample :=
   { id := "bs2022_39a"
@@ -283,9 +255,7 @@ def bs2022_39a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "pseudo-partitive"), ("per_unit", "page"), ("unit_sensitivity", "a monograph has at least one page")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def bs2022_39b : LinguisticExample :=
   { id := "bs2022_39b"
@@ -301,9 +271,7 @@ def bs2022_39b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "pseudo-partitive"), ("per_unit", "line"), ("unit_sensitivity", "a paragraph has at least one line")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def bs2022_40 : LinguisticExample :=
   { id := "bs2022_40"
@@ -319,9 +287,7 @@ def bs2022_40 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "pseudo-partitive"), ("per_unit", "page"), ("unit_sensitivity", "a paragraph comprises less than a whole page")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def bs2022_44 : LinguisticExample :=
   { id := "bs2022_44"
@@ -337,9 +303,7 @@ def bs2022_44 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "measurement verb"), ("subject_measure", "5"), ("subject_unit", "milliliter"), ("numeral", "0.9"), ("unit", "grams"), ("per_unit", "milliliter"), ("unit_sensitivity", "5 mL ≥ mL")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def bs2022_45a : LinguisticExample :=
   { id := "bs2022_45a"
@@ -355,9 +319,7 @@ def bs2022_45a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "measurement verb"), ("subject_measure", "5"), ("subject_unit", "milliliter"), ("numeral", "0.9"), ("unit", "kilograms"), ("per_unit", "liter"), ("unit_sensitivity", "5 mL ≥ L")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def bs2022_45b : LinguisticExample :=
   { id := "bs2022_45b"
@@ -373,9 +335,7 @@ def bs2022_45b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "measurement verb"), ("subject_measure", "0.1"), ("subject_unit", "milliliter"), ("numeral", "0.9"), ("unit", "grams"), ("per_unit", "milliliter"), ("unit_sensitivity", "0.1 mL ≥ mL")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def bs2022_46 : LinguisticExample :=
   { id := "bs2022_46"
@@ -391,9 +351,7 @@ def bs2022_46 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "copular"), ("numeral", "0.9"), ("unit", "grams"), ("per_unit", "milliliter")]
-    comment := "Reports on the sample's density."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Reports on the sample's density." }
 
 def bs2022_47 : LinguisticExample :=
   { id := "bs2022_47"
@@ -409,9 +367,7 @@ def bs2022_47 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "copular"), ("numeral", "0.9"), ("unit", "grams")]
-    comment := "A weight quantity portrayed as a density: mismatching dimensions."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A weight quantity portrayed as a density: mismatching dimensions." }
 
 def bs2022_48 : LinguisticExample :=
   { id := "bs2022_48"
@@ -427,9 +383,7 @@ def bs2022_48 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "copular"), ("numeral", "0.9"), ("unit", "grams"), ("quantifier", "for every")]
-    comment := "Expresses density without vocabulary associated with quantity division."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Expresses density without vocabulary associated with quantity division." }
 
 def bs2022_49 : LinguisticExample :=
   { id := "bs2022_49"
@@ -445,9 +399,7 @@ def bs2022_49 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "copular"), ("numeral", "968"), ("unit", "people"), ("quantifier", "for every")]
-    comment := "Naturally occurring example (blackburnnews.com)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Naturally occurring example (blackburnnews.com)." }
 
 def all : List LinguisticExample := [bs2022_3, bs2022_6, bs2022_10, bs2022_14a, bs2022_14b, bs2022_23a, bs2022_23b, bs2022_27, bs2022_33, bs2022_34, bs2022_36a, bs2022_37, bs2022_38a, bs2022_38b, bs2022_39a, bs2022_39b, bs2022_40, bs2022_44, bs2022_45a, bs2022_45b, bs2022_46, bs2022_47, bs2022_48, bs2022_49]
 

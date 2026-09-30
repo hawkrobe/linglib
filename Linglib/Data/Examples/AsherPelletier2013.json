@@ -15,9 +15,7 @@
     "paperFeatures": [
       ["type", "characterizing"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "asherpelletier2013_4a",
@@ -36,9 +34,7 @@
       ["type", "characterizing"],
       ["problem", "restricted subkind"]
     ],
-    "comment": "Repeated as (32a).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Repeated as (32a)."
   },
   {
     "id": "asherpelletier2013_4b",
@@ -57,9 +53,7 @@
       ["type", "characterizing"],
       ["problem", "restricted subkind"]
     ],
-    "comment": "Repeated as (32b).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Repeated as (32b)."
   },
   {
     "id": "asherpelletier2013_5",
@@ -78,9 +72,7 @@
       ["type", "characterizing"],
       ["problem", "weak existential"]
     ],
-    "comment": "Repeated as (43b).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Repeated as (43b)."
   },
   {
     "id": "asherpelletier2013_6a",
@@ -98,9 +90,7 @@
     "paperFeatures": [
       ["type", "characterizing"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "asherpelletier2013_6b",
@@ -119,9 +109,7 @@
       ["type", "characterizing"],
       ["problem", "no actual instances"]
     ],
-    "comment": "Repeated as (13a).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Repeated as (13a)."
   },
   {
     "id": "asherpelletier2013_7",
@@ -139,9 +127,7 @@
     "paperFeatures": [
       ["type", "characterizing"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "asherpelletier2013_8",
@@ -159,9 +145,7 @@
     "paperFeatures": [
       ["type", "characterizing"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "asherpelletier2013_9",
@@ -182,9 +166,7 @@
     "paperFeatures": [
       ["type", "characterizing"]
     ],
-    "comment": "True under the teleological construal of normality, false under the statistical one.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "True under the teleological construal of normality, false under the statistical one."
   },
   {
     "id": "asherpelletier2013_10",
@@ -202,9 +184,7 @@
     "paperFeatures": [
       ["type", "generic comparison"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "asherpelletier2013_13b",
@@ -223,9 +203,7 @@
       ["type", "characterizing"],
       ["problem", "no actual instances"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "asherpelletier2013_14a",
@@ -244,9 +222,7 @@
       ["type", "embedded generic"],
       ["embedding", "antecedent"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "asherpelletier2013_14b",
@@ -265,9 +241,7 @@
       ["type", "embedded generic"],
       ["embedding", "consequent"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "asherpelletier2013_15a",
@@ -285,9 +259,7 @@
     "paperFeatures": [
       ["type", "kind predication"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "asherpelletier2013_15b",
@@ -305,9 +277,7 @@
     "paperFeatures": [
       ["type", "kind predication"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "asherpelletier2013_16",
@@ -326,9 +296,7 @@
       ["type", "copredication"],
       ["aspects", "individual, kind"]
     ],
-    "comment": "Repeated as (39a).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Repeated as (39a)."
   },
   {
     "id": "asherpelletier2013_17a",
@@ -349,9 +317,7 @@
     "paperFeatures": [
       ["type", "characterizing"]
     ],
-    "comment": "The existential reading is prominent with prosodic stress on typhoons; the logical forms are (18b) and (19b).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The existential reading is prominent with prosodic stress on typhoons; the logical forms are (18b) and (19b)."
   },
   {
     "id": "asherpelletier2013_17b",
@@ -372,9 +338,7 @@
       ["type", "existential"],
       ["restrictor", "tautologous"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "asherpelletier2013_20a",
@@ -393,9 +357,7 @@
       ["type", "characterizing"],
       ["focus", "beer"]
     ],
-    "comment": "Logical form (20b): if John drinks something, it is normally beer.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Logical form (20b): if John drinks something, it is normally beer."
   },
   {
     "id": "asherpelletier2013_20c",
@@ -414,9 +376,7 @@
       ["type", "characterizing"],
       ["focus", "drinks"]
     ],
-    "comment": "Logical form (20d): if John does something with beer, it is normally drinking it.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Logical form (20d): if John does something with beer, it is normally drinking it."
   },
   {
     "id": "asherpelletier2013_20e",
@@ -435,9 +395,7 @@
       ["type", "characterizing"],
       ["focus", "drinks beer"]
     ],
-    "comment": "Logical form (20f): if John has a relevant alternative property, it is normally drinking beer.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Logical form (20f): if John has a relevant alternative property, it is normally drinking beer."
   },
   {
     "id": "asherpelletier2013_23",
@@ -455,9 +413,7 @@
     "paperFeatures": [
       ["type", "adverb of quantification"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "asherpelletier2013_24",
@@ -478,9 +434,7 @@
     "paperFeatures": [
       ["type", "adverb of quantification"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "asherpelletier2013_25a",
@@ -502,9 +456,7 @@
       ["type", "characterizing"],
       ["focus", "poisonous"]
     ],
-    "comment": "Logical form (26a).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Logical form (26a)."
   },
   {
     "id": "asherpelletier2013_25b",
@@ -526,9 +478,7 @@
       ["type", "characterizing"],
       ["focus", "Australian, South American"]
     ],
-    "comment": "Logical form (26b).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Logical form (26b)."
   },
   {
     "id": "asherpelletier2013_28",
@@ -548,9 +498,7 @@
       ["focus", "Australian, Asian"],
       ["discourse", "parallelism"]
     ],
-    "comment": "Logical form (29).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Logical form (29)."
   },
   {
     "id": "asherpelletier2013_30a",
@@ -569,9 +517,7 @@
       ["type", "characterizing"],
       ["focus", "Frenchmen"]
     ],
-    "comment": "Logical form (30b): a horsemeat eater is normally French.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Logical form (30b): a horsemeat eater is normally French."
   },
   {
     "id": "asherpelletier2013_31",
@@ -593,9 +539,7 @@
       ["type", "characterizing"],
       ["focus", "French, horsemeat"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "asherpelletier2013_33a",
@@ -614,9 +558,7 @@
       ["type", "characterizing"],
       ["accommodated", "restrictor"]
     ],
-    "comment": "Repeated as (37).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Repeated as (37)."
   },
   {
     "id": "asherpelletier2013_33b",
@@ -635,9 +577,7 @@
       ["type", "characterizing"],
       ["accommodated", "restrictor"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "asherpelletier2013_34",
@@ -656,9 +596,7 @@
       ["type", "characterizing"],
       ["verdict", "false"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "asherpelletier2013_36",
@@ -681,9 +619,7 @@
       ["type", "characterizing"],
       ["discourse", "Elaboration"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "asherpelletier2013_38",
@@ -705,9 +641,7 @@
       ["type", "characterizing"],
       ["discourse", "Correction"]
     ],
-    "comment": "B's male and female carry the contrastive-topic contour.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "B's male and female carry the contrastive-topic contour."
   },
   {
     "id": "asherpelletier2013_39b",
@@ -726,9 +660,7 @@
       ["type", "copredication"],
       ["aspects", "kind, individual"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "asherpelletier2013_40a",
@@ -747,9 +679,7 @@
       ["type", "copredication"],
       ["aspects", "disjoint subkinds"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "asherpelletier2013_40b",
@@ -768,9 +698,7 @@
       ["type", "copredication"],
       ["aspects", "disjoint subkinds"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "asherpelletier2013_40c",
@@ -789,9 +717,7 @@
       ["type", "copredication"],
       ["aspects", "disjoint subkinds"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "asherpelletier2013_40d",
@@ -810,9 +736,7 @@
       ["type", "copredication"],
       ["aspects", "disjoint subkinds"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "asherpelletier2013_40e",
@@ -834,9 +758,7 @@
       ["type", "copredication"],
       ["aspects", "disjoint subkinds"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "asherpelletier2013_41",
@@ -858,9 +780,7 @@
       ["type", "characterizing"],
       ["problem", "weak existential"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "asherpelletier2013_42a",
@@ -880,9 +800,7 @@
       ["verdict", "false"],
       ["relativeAccount", "true"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "asherpelletier2013_42b",
@@ -902,9 +820,7 @@
       ["verdict", "false"],
       ["relativeAccount", "true"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "asherpelletier2013_42c",
@@ -924,9 +840,7 @@
       ["verdict", "false"],
       ["relativeAccount", "true"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "asherpelletier2013_43a",
@@ -945,9 +859,7 @@
       ["type", "characterizing"],
       ["genericity", "events"]
     ],
-    "comment": "Logical form (44a).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Logical form (44a)."
   },
   {
     "id": "asherpelletier2013_43c",
@@ -966,9 +878,7 @@
       ["type", "characterizing"],
       ["genericity", "individuals, events"]
     ],
-    "comment": "Logical form (44c).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Logical form (44c)."
   },
   {
     "id": "asherpelletier2013_45",
@@ -987,9 +897,7 @@
       ["type", "characterizing"],
       ["genericity", "individuals, circumstances"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "asherpelletier2013_46a",
@@ -1009,9 +917,7 @@
     "paperFeatures": [
       ["type", "focus-sensitive adverb"]
     ],
-    "comment": "From Sterken 2009; the authors hear an existential quantification over kinds.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "From Sterken 2009; the authors hear an existential quantification over kinds."
   },
   {
     "id": "asherpelletier2013_46b",
@@ -1030,9 +936,7 @@
       ["type", "focus-sensitive adverb"],
       ["verdict", "false"]
     ],
-    "comment": "From Sterken 2009; false unless discourse restricts the alternatives.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "From Sterken 2009; false unless discourse restricts the alternatives."
   },
   {
     "id": "asherpelletier2013_46c",
@@ -1053,8 +957,6 @@
     "paperFeatures": [
       ["type", "focus-sensitive adverb"]
     ],
-    "comment": "From Sterken 2009; the alternatives are (48a) and (48b).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "From Sterken 2009; the alternatives are (48a) and (48b)."
   }
 ]

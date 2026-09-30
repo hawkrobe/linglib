@@ -18,8 +18,7 @@
       ["participant", "John"],
       ["inferred", "true"]
     ],
-    "comment": "The feature attribution follows §4's account of own-energy action; the paper attributes none here.",
-    "metaLanguage": "stan1293"
+    "comment": "The feature attribution follows §4's account of own-energy action; the paper attributes none here."
   },
   {
     "id": "cruse1973_8",
@@ -40,8 +39,7 @@
       ["participant", "the vase"],
       ["animate", "false"]
     ],
-    "comment": "A happen-clause: no feature.",
-    "metaLanguage": "stan1293"
+    "comment": "A happen-clause: no feature."
   },
   {
     "id": "cruse1973_9",
@@ -62,8 +60,7 @@
       ["participant", "John"],
       ["inferred", "true"]
     ],
-    "comment": "Attribution inferred as for (7).",
-    "metaLanguage": "stan1293"
+    "comment": "Attribution inferred as for (7)."
   },
   {
     "id": "cruse1973_10",
@@ -84,8 +81,7 @@
       ["participant", "the vase"],
       ["animate", "false"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "cruse1973_11",
@@ -106,8 +102,7 @@
       ["participant", "the prisoners"],
       ["inferred", "true"]
     ],
-    "comment": "The entailment form detects the agentive object, which the what-X-did form does not; the attribution follows the denial of the object's agentivity in (64).",
-    "metaLanguage": "stan1293"
+    "comment": "The entailment form detects the agentive object, which the what-X-did form does not; the attribution follows the denial of the object's agentivity in (64)."
   },
   {
     "id": "cruse1973_12",
@@ -127,8 +122,7 @@
       ["features", ""],
       ["participant", "the prisoners"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "cruse1973_13",
@@ -150,8 +144,7 @@
       ["animate", "false"],
       ["inferred", "true"]
     ],
-    "comment": "A natural agent is a doer; the attribution follows §4, where the wind of (56) is a true agentive, while here the paper says only that such nouns are perhaps grammatically animate.",
-    "metaLanguage": "stan1293"
+    "comment": "A natural agent is a doer; the attribution follows §4, where the wind of (56) is a true agentive, while here the paper says only that such nouns are perhaps grammatically animate."
   },
   {
     "id": "cruse1973_14",
@@ -173,8 +166,7 @@
       ["animate", "false"],
       ["inferred", "true"]
     ],
-    "comment": "Attribution inferred as for (13).",
-    "metaLanguage": "stan1293"
+    "comment": "Attribution inferred as for (13)."
   },
   {
     "id": "cruse1973_15",
@@ -196,8 +188,7 @@
       ["animate", "false"],
       ["inferred", "true"]
     ],
-    "comment": "Certain machines use their own energy (§4); the attribution is inferred.",
-    "metaLanguage": "stan1293"
+    "comment": "Certain machines use their own energy (§4); the attribution is inferred."
   },
   {
     "id": "cruse1973_16",
@@ -219,8 +210,7 @@
       ["animate", "false"],
       ["inferred", "true"]
     ],
-    "comment": "Attribution inferred as for (15).",
-    "metaLanguage": "stan1293"
+    "comment": "Attribution inferred as for (15)."
   },
   {
     "id": "cruse1973_17",
@@ -242,8 +232,7 @@
       ["animate", "false"],
       ["inferred", "true"]
     ],
-    "comment": "An indisputably inanimate doer, by its kinetic energy; the attribution follows §2's force from motion, and is inferred.",
-    "metaLanguage": "stan1293"
+    "comment": "An indisputably inanimate doer, by its kinetic energy; the attribution follows §2's force from motion, and is inferred."
   },
   {
     "id": "cruse1973_18",
@@ -265,8 +254,7 @@
       ["animate", "false"],
       ["inferred", "true"]
     ],
-    "comment": "Attribution inferred as for (17).",
-    "metaLanguage": "stan1293"
+    "comment": "Attribution inferred as for (17)."
   },
   {
     "id": "cruse1973_19",
@@ -288,8 +276,7 @@
       ["animate", "false"],
       ["inferred", "true"]
     ],
-    "comment": "Attribution inferred as for (17).",
-    "metaLanguage": "stan1293"
+    "comment": "Attribution inferred as for (17)."
   },
   {
     "id": "cruse1973_20",
@@ -311,8 +298,7 @@
       ["animate", "false"],
       ["neutralized", "true"]
     ],
-    "comment": "The difference between do and happen is neutralized, do being the normal form; the circumstances are left open.",
-    "metaLanguage": "stan1293"
+    "comment": "The difference between do and happen is neutralized, do being the normal form; the circumstances are left open."
   },
   {
     "id": "cruse1973_21",
@@ -334,8 +320,7 @@
       ["animate", "false"],
       ["neutralized", "true"]
     ],
-    "comment": "Neutralization of do and happen.",
-    "metaLanguage": "stan1293"
+    "comment": "Neutralization of do and happen."
   },
   {
     "id": "cruse1973_22",
@@ -357,8 +342,7 @@
       ["animate", "false"],
       ["neutralized", "true"]
     ],
-    "comment": "Not deviant in any radical way, but artificial; entered as marginal.",
-    "metaLanguage": "stan1293"
+    "comment": "Not deviant in any radical way, but artificial; entered as marginal."
   },
   {
     "id": "cruse1973_23",
@@ -379,8 +363,7 @@
       ["participant", "Christ"],
       ["verbClass", "process"]
     ],
-    "comment": "A process verb with a do-interpretation.",
-    "metaLanguage": "stan1293"
+    "comment": "A process verb with a do-interpretation."
   },
   {
     "id": "cruse1973_24",
@@ -401,8 +384,7 @@
       ["participant", "Christ"],
       ["verbClass", "process"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "cruse1973_25",
@@ -423,8 +405,7 @@
       ["participant", "Christ"],
       ["verbClass", "process"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "cruse1973_26",
@@ -444,8 +425,7 @@
       ["participant", "John"],
       ["verbClass", "stative"]
     ],
-    "comment": "Stand, sit and lie refer to states yet are do-verbs; no feature is attributed in the paper.",
-    "metaLanguage": "stan1293"
+    "comment": "Stand, sit and lie refer to states yet are do-verbs; no feature is attributed in the paper."
   },
   {
     "id": "cruse1973_27",
@@ -465,8 +445,7 @@
       ["participant", "I"],
       ["verbClass", "stative"]
     ],
-    "comment": "A do-interpretation where the progressive is impossible.",
-    "metaLanguage": "stan1293"
+    "comment": "A do-interpretation where the progressive is impossible."
   },
   {
     "id": "cruse1973_28",
@@ -486,8 +465,7 @@
       ["participant", "I"],
       ["verbClass", "stative"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "cruse1973_29",
@@ -507,8 +485,7 @@
       ["participant", "you"],
       ["verbClass", "stative"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "cruse1973_30",
@@ -528,8 +505,7 @@
       ["participant", "you"],
       ["verbClass", "stative"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "cruse1973_31",
@@ -549,8 +525,7 @@
       ["features", "volitive"],
       ["participant", "John"]
     ],
-    "comment": "An act of will without own energy: the do-feature is due entirely to the volitive feature.",
-    "metaLanguage": "stan1293"
+    "comment": "An act of will without own energy: the do-feature is due entirely to the volitive feature."
   },
   {
     "id": "cruse1973_32",
@@ -570,8 +545,7 @@
       ["features", "volitive"],
       ["participant", "John"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "cruse1973_33",
@@ -592,8 +566,7 @@
       ["participant", "John"],
       ["verbClass", "stative"]
     ],
-    "comment": "Willing a state is a kind of doing.",
-    "metaLanguage": "stan1293"
+    "comment": "Willing a state is a kind of doing."
   },
   {
     "id": "cruse1973_34",
@@ -613,8 +586,7 @@
       ["features", "volitive"],
       ["participant", "John"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "cruse1973_35",
@@ -634,8 +606,7 @@
       ["features", "volitive"],
       ["participant", "John"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "cruse1973_36",
@@ -655,8 +626,7 @@
       ["features", ""],
       ["participant", "John"]
     ],
-    "comment": "With volition denied, the clause becomes a happen-clause.",
-    "metaLanguage": "stan1293"
+    "comment": "With volition denied, the clause becomes a happen-clause."
   },
   {
     "id": "cruse1973_37",
@@ -676,8 +646,7 @@
       ["features", ""],
       ["participant", "John"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "cruse1973_38",
@@ -698,8 +667,7 @@
       ["participant", "John"],
       ["verbClass", "process"]
     ],
-    "comment": "Dying without an act of will, unlike (24).",
-    "metaLanguage": "stan1293"
+    "comment": "Dying without an act of will, unlike (24)."
   },
   {
     "id": "cruse1973_39",
@@ -720,8 +688,7 @@
       ["participant", "John"],
       ["verbClass", "process"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "cruse1973_40",
@@ -741,8 +708,7 @@
       ["features", "agentive"],
       ["participant", "John"]
     ],
-    "comment": "The purpose phrase tests volitivity; the agentivity of the noun is irrelevant.",
-    "metaLanguage": "stan1293"
+    "comment": "The purpose phrase tests volitivity; the agentivity of the noun is irrelevant."
   },
   {
     "id": "cruse1973_41",
@@ -763,8 +729,7 @@
       ["participant", "John"],
       ["inferred", "true"]
     ],
-    "comment": "A do-sentence without volition; that the remaining feature is the agentive is inferred.",
-    "metaLanguage": "stan1293"
+    "comment": "A do-sentence without volition; that the remaining feature is the agentive is inferred."
   },
   {
     "id": "cruse1973_42",
@@ -785,8 +750,7 @@
       ["participant", "the addressee"],
       ["inferred", "true"]
     ],
-    "comment": "The imperative tests volitivity, not the do-relation; the attribution is inferred as for (41).",
-    "metaLanguage": "stan1293"
+    "comment": "The imperative tests volitivity, not the do-relation; the attribution is inferred as for (41)."
   },
   {
     "id": "cruse1973_43",
@@ -807,8 +771,7 @@
       ["participant", "John"],
       ["inferred", "true"]
     ],
-    "comment": "A do-sentence Anderson counts as non-ergative, his ergative being volitive plus agentive; the attribution of the agentive alone is inferred.",
-    "metaLanguage": "stan1293"
+    "comment": "A do-sentence Anderson counts as non-ergative, his ergative being volitive plus agentive; the attribution of the agentive alone is inferred."
   },
   {
     "id": "cruse1973_44",
@@ -829,8 +792,7 @@
       ["participant", "John"],
       ["inferred", "true"]
     ],
-    "comment": "Attribution inferred as for (43).",
-    "metaLanguage": "stan1293"
+    "comment": "Attribution inferred as for (43)."
   },
   {
     "id": "cruse1973_45",
@@ -851,8 +813,7 @@
       ["participant", "John"],
       ["inferred", "true"]
     ],
-    "comment": "Attribution inferred as for (43).",
-    "metaLanguage": "stan1293"
+    "comment": "Attribution inferred as for (43)."
   },
   {
     "id": "cruse1973_46",
@@ -873,8 +834,7 @@
       ["participant", "John"],
       ["inferred", "true"]
     ],
-    "comment": "Attribution inferred as for (43).",
-    "metaLanguage": "stan1293"
+    "comment": "Attribution inferred as for (43)."
   },
   {
     "id": "cruse1973_47",
@@ -895,8 +855,7 @@
       ["participant", "John"],
       ["inferred", "true"]
     ],
-    "comment": "Carefully detects volitivity together with agentivity; that falling carries neither is inferred.",
-    "metaLanguage": "stan1293"
+    "comment": "Carefully detects volitivity together with agentivity; that falling carries neither is inferred."
   },
   {
     "id": "cruse1973_48",
@@ -917,8 +876,7 @@
       ["participant", "John"],
       ["inferred", "true"]
     ],
-    "comment": "That accidentally pushing carries the agentive without the volitive is inferred.",
-    "metaLanguage": "stan1293"
+    "comment": "That accidentally pushing carries the agentive without the volitive is inferred."
   },
   {
     "id": "cruse1973_49",
@@ -938,8 +896,7 @@
       ["features", "volitive+agentive"],
       ["participant", "John"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "cruse1973_50",
@@ -960,8 +917,7 @@
       ["participant", "these columns"],
       ["animate", "false"]
     ],
-    "comment": "Force from position: the effective feature.",
-    "metaLanguage": "stan1293"
+    "comment": "Force from position: the effective feature."
   },
   {
     "id": "cruse1973_51",
@@ -982,8 +938,7 @@
       ["participant", "these columns"],
       ["animate", "false"]
     ],
-    "comment": "Printed as 'What these column do'.",
-    "metaLanguage": "stan1293"
+    "comment": "Printed as 'What these column do'."
   },
   {
     "id": "cruse1973_52",
@@ -1004,8 +959,7 @@
       ["participant", "these columns"],
       ["animate", "false"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "cruse1973_53",
@@ -1026,8 +980,7 @@
       ["participant", "the flying stone"],
       ["animate", "false"]
     ],
-    "comment": "Force from motion: the effective feature.",
-    "metaLanguage": "stan1293"
+    "comment": "Force from motion: the effective feature."
   },
   {
     "id": "cruse1973_54",
@@ -1048,8 +1001,7 @@
       ["participant", "the flying stone"],
       ["animate", "false"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "cruse1973_55",
@@ -1070,8 +1022,7 @@
       ["participant", "the flying stone"],
       ["animate", "false"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "cruse1973_56",
@@ -1092,8 +1043,7 @@
       ["participant", "the wind"],
       ["animate", "false"]
     ],
-    "comment": "Fillmore's instrumental; for Cruse the wind is a true agentive in a do-relationship with opened.",
-    "metaLanguage": "stan1293"
+    "comment": "Fillmore's instrumental; for Cruse the wind is a true agentive in a do-relationship with opened."
   },
   {
     "id": "cruse1973_57",
@@ -1113,8 +1063,7 @@
       ["participant", "the stone"],
       ["animate", "false"]
     ],
-    "comment": "Ambiguous between the instrumental reading of (58) and the effective reading of (60); a do-sentence only under the second.",
-    "metaLanguage": "stan1293"
+    "comment": "Ambiguous between the instrumental reading of (58) and the effective reading of (60); a do-sentence only under the second."
   },
   {
     "id": "cruse1973_58",
@@ -1135,8 +1084,7 @@
       ["participant", "a stone"],
       ["animate", "false"]
     ],
-    "comment": "The stone is an instrumental, not in a do-relationship with broke.",
-    "metaLanguage": "stan1293"
+    "comment": "The stone is an instrumental, not in a do-relationship with broke."
   },
   {
     "id": "cruse1973_59",
@@ -1157,8 +1105,7 @@
       ["participant", "the stone"],
       ["animate", "false"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "cruse1973_60",
@@ -1179,8 +1126,7 @@
       ["participant", "a stone"],
       ["animate", "false"]
     ],
-    "comment": "The context selecting the effective reading of (57).",
-    "metaLanguage": "stan1293"
+    "comment": "The context selecting the effective reading of (57)."
   },
   {
     "id": "cruse1973_61",
@@ -1201,8 +1147,7 @@
       ["participant", "this key"],
       ["animate", "false"]
     ],
-    "comment": "The instrumental reading is dominant.",
-    "metaLanguage": "stan1293"
+    "comment": "The instrumental reading is dominant."
   },
   {
     "id": "cruse1973_62",
@@ -1222,8 +1167,7 @@
       ["features", "initiative"],
       ["participant", "the warder"]
     ],
-    "comment": "Initiation of an action by giving a command.",
-    "metaLanguage": "stan1293"
+    "comment": "Initiation of an action by giving a command."
   },
   {
     "id": "cruse1973_63",
@@ -1243,8 +1187,7 @@
       ["features", "initiative"],
       ["participant", "John"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "cruse1973_64",
@@ -1264,8 +1207,7 @@
       ["features", "initiative"],
       ["participant", "John"]
     ],
-    "comment": "The context denies the agentivity of the object.",
-    "metaLanguage": "stan1293"
+    "comment": "The context denies the agentivity of the object."
   },
   {
     "id": "cruse1973_65",
@@ -1285,8 +1227,7 @@
       ["features", "initiative"],
       ["participant", "John"]
     ],
-    "comment": "The context denies a channel of communication between subject and object.",
-    "metaLanguage": "stan1293"
+    "comment": "The context denies a channel of communication between subject and object."
   },
   {
     "id": "cruse1973_66",
@@ -1306,8 +1247,7 @@
       ["features", "initiative"],
       ["participant", "the warder"]
     ],
-    "comment": "The context denies the responsiveness of the object to command.",
-    "metaLanguage": "stan1293"
+    "comment": "The context denies the responsiveness of the object to command."
   },
   {
     "id": "cruse1973_67",
@@ -1327,8 +1267,7 @@
       ["features", "agentive"],
       ["participant", "John"]
     ],
-    "comment": "Reflexivization of an ergative verb has minor semantic effects when the agentive feature is present.",
-    "metaLanguage": "stan1293"
+    "comment": "Reflexivization of an ergative verb has minor semantic effects when the agentive feature is present."
   },
   {
     "id": "cruse1973_68",
@@ -1349,8 +1288,7 @@
       ["participant", "the machine"],
       ["animate", "false"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "cruse1973_69",
@@ -1371,8 +1309,7 @@
       ["participant", "the fire"],
       ["animate", "false"]
     ],
-    "comment": "A natural agent as the subject of an intransitive.",
-    "metaLanguage": "stan1293"
+    "comment": "A natural agent as the subject of an intransitive."
   },
   {
     "id": "cruse1973_70",
@@ -1393,8 +1330,7 @@
       ["participant", "the sea"],
       ["animate", "false"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "cruse1973_71",
@@ -1416,8 +1352,7 @@
       ["animate", "false"],
       ["inferred", "true"]
     ],
-    "comment": "The paper says only that the agentive feature is absent; no feature is entered.",
-    "metaLanguage": "stan1293"
+    "comment": "The paper says only that the agentive feature is absent; no feature is entered."
   },
   {
     "id": "cruse1973_72",
@@ -1439,8 +1374,7 @@
       ["animate", "false"],
       ["inferred", "true"]
     ],
-    "comment": "Reflexivization has considerable effects when the agentive feature is absent; no feature is entered.",
-    "metaLanguage": "stan1293"
+    "comment": "Reflexivization has considerable effects when the agentive feature is absent; no feature is entered."
   },
   {
     "id": "cruse1973_73",
@@ -1462,8 +1396,7 @@
       ["animate", "false"],
       ["inferred", "true"]
     ],
-    "comment": "The paper says only that the agentive feature is absent.",
-    "metaLanguage": "stan1293"
+    "comment": "The paper says only that the agentive feature is absent."
   },
   {
     "id": "cruse1973_74",
@@ -1485,8 +1418,7 @@
       ["animate", "false"],
       ["inferred", "true"]
     ],
-    "comment": "By no means impossible, but suggests that the ball contained some sort of mechanism; entered as marginal, the binary judgment not expressing acceptability with a meaning change.",
-    "metaLanguage": "stan1293"
+    "comment": "By no means impossible, but suggests that the ball contained some sort of mechanism; entered as marginal, the binary judgment not expressing acceptability with a meaning change."
   },
   {
     "id": "cruse1973_75",
@@ -1506,8 +1438,7 @@
       ["features", "agentive"],
       ["participant", "John"]
     ],
-    "comment": "A kind of reflexivization distinguishing non-ergative verbs carrying the feature.",
-    "metaLanguage": "stan1293"
+    "comment": "A kind of reflexivization distinguishing non-ergative verbs carrying the feature."
   },
   {
     "id": "cruse1973_76",
@@ -1527,8 +1458,7 @@
       ["features", "agentive"],
       ["participant", "John"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "cruse1973_77",
@@ -1548,8 +1478,7 @@
       ["features", ""],
       ["participant", "John"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "cruse1973_78",
@@ -1569,8 +1498,7 @@
       ["features", ""],
       ["participant", "John"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "cruse1973_79",
@@ -1592,8 +1520,7 @@
       ["animate", "false"],
       ["inferred", "true"]
     ],
-    "comment": "The paper says only that the stone is not capable of carrying the agentive feature; no feature is entered.",
-    "metaLanguage": "stan1293"
+    "comment": "The paper says only that the stone is not capable of carrying the agentive feature; no feature is entered."
   },
   {
     "id": "cruse1973_80",
@@ -1614,8 +1541,7 @@
       ["participant", "the hawk"],
       ["inferred", "true"]
     ],
-    "comment": "Capable of carrying the agentive feature; the attribution to the sentence is inferred.",
-    "metaLanguage": "stan1293"
+    "comment": "Capable of carrying the agentive feature; the attribution to the sentence is inferred."
   },
   {
     "id": "cruse1973_81",
@@ -1637,8 +1563,7 @@
       ["animate", "false"],
       ["inferred", "true"]
     ],
-    "comment": "Capable of carrying the agentive feature, as a machine; the attribution is inferred.",
-    "metaLanguage": "stan1293"
+    "comment": "Capable of carrying the agentive feature, as a machine; the attribution is inferred."
   },
   {
     "id": "cruse1973_82",
@@ -1659,8 +1584,7 @@
       ["participant", "the stone"],
       ["animate", "false"]
     ],
-    "comment": "Jump and fly take as object only what is capable of carrying the agentive feature; the locative use, John flew the Atlantic, is excepted.",
-    "metaLanguage": "stan1293"
+    "comment": "Jump and fly take as object only what is capable of carrying the agentive feature; the locative use, John flew the Atlantic, is excepted."
   },
   {
     "id": "cruse1973_83",
@@ -1681,8 +1605,7 @@
       ["participant", "the hawk"],
       ["inferred", "true"]
     ],
-    "comment": "Attribution inferred as for (80).",
-    "metaLanguage": "stan1293"
+    "comment": "Attribution inferred as for (80)."
   },
   {
     "id": "cruse1973_84",
@@ -1704,8 +1627,7 @@
       ["animate", "false"],
       ["inferred", "true"]
     ],
-    "comment": "Attribution inferred as for (81).",
-    "metaLanguage": "stan1293"
+    "comment": "Attribution inferred as for (81)."
   },
   {
     "id": "cruse1973_85a",
@@ -1726,8 +1648,7 @@
       ["participant", "the machine"],
       ["animate", "false"]
     ],
-    "comment": "The modification selects the effective reading.",
-    "metaLanguage": "stan1293"
+    "comment": "The modification selects the effective reading."
   },
   {
     "id": "cruse1973_85b",
@@ -1748,8 +1669,7 @@
       ["participant", "the machine"],
       ["animate", "false"]
     ],
-    "comment": "The modification selects the agentive reading.",
-    "metaLanguage": "stan1293"
+    "comment": "The modification selects the agentive reading."
   },
   {
     "id": "cruse1973_86a",
@@ -1769,8 +1689,7 @@
       ["features", "effective"],
       ["participant", "John"]
     ],
-    "comment": "The modification selects the effective reading.",
-    "metaLanguage": "stan1293"
+    "comment": "The modification selects the effective reading."
   },
   {
     "id": "cruse1973_86b",
@@ -1790,8 +1709,7 @@
       ["features", "agentive"],
       ["participant", "John"]
     ],
-    "comment": "The modification selects the agentive reading.",
-    "metaLanguage": "stan1293"
+    "comment": "The modification selects the agentive reading."
   },
   {
     "id": "cruse1973_87",
@@ -1812,8 +1730,7 @@
       ["participant", "the machine"],
       ["animate", "false"]
     ],
-    "comment": "Manner adverbs of energy output discriminate effective from agentive.",
-    "metaLanguage": "stan1293"
+    "comment": "Manner adverbs of energy output discriminate effective from agentive."
   },
   {
     "id": "cruse1973_88",
@@ -1834,8 +1751,7 @@
       ["participant", "the machine"],
       ["animate", "false"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "cruse1973_89",
@@ -1855,8 +1771,7 @@
       ["features", "agentive"],
       ["participant", "John"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "cruse1973_90",
@@ -1876,8 +1791,7 @@
       ["features", "effective"],
       ["participant", "John"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "cruse1973_91",
@@ -1896,7 +1810,6 @@
       ["frame", "manner"],
       ["participant", "John"]
     ],
-    "comment": "The adverbs are less satisfactory where physical action is not prominent; look may be the volitive rather than the agentive counterpart of see, so no feature is attributed.",
-    "metaLanguage": "stan1293"
+    "comment": "The adverbs are less satisfactory where physical action is not prominent; look may be the volitive rather than the agentive counterpart of see, so no feature is attributed."
   }
 ]

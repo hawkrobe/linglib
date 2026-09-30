@@ -33,8 +33,7 @@
         "Not all boys came in."
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "jaeger2014_1b",
@@ -70,8 +69,7 @@
         "Exactly three boys came in."
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "jaeger2014_3a",
@@ -103,8 +101,7 @@
         "I"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "jaeger2014_3b",
@@ -136,8 +133,7 @@
         "I"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "jaeger2014_3c",
@@ -169,8 +165,7 @@
         "I"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "jaeger2014_4a",
@@ -214,8 +209,7 @@
         "w1"
       ]
     ],
-    "comment": "The cheap synonym of Example 6, read as the frequent world.",
-    "lgrConformance": ""
+    "comment": "The cheap synonym of Example 6, read as the frequent world."
   },
   {
     "id": "jaeger2014_4b",
@@ -259,8 +253,7 @@
         "w2"
       ]
     ],
-    "comment": "The costly synonym of Example 6, read as the rare world.",
-    "lgrConformance": ""
+    "comment": "The costly synonym of Example 6, read as the rare world."
   },
   {
     "id": "jaeger2014_5",
@@ -292,8 +285,7 @@
         "M"
       ]
     ],
-    "comment": "A third, still more complex form; pragmatic rationalizability predicts no further specialization between (4b) and (5), unlike bidirectional OT.",
-    "lgrConformance": ""
+    "comment": "A third, still more complex form; pragmatic rationalizability predicts no further specialization between (4b) and (5), unlike bidirectional OT."
   },
   {
     "id": "jaeger2014_6a",
@@ -333,8 +325,7 @@
         "low"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "jaeger2014_6b",
@@ -370,8 +361,7 @@
         "high"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "jaeger2014_7",
@@ -407,7 +397,6 @@
         "high"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   }
 ]

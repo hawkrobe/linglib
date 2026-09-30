@@ -31,9 +31,7 @@ def amavi : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("root", "AM"), ("h1", "v"), ("h1exp", ""), ("h2", "theme"), ("h2exp", "-ā"), ("h3", "aspect"), ("h3exp", "-vi"), ("h4", "tense"), ("h4exp", ""), ("h5", "agr"), ("h5exp", "-ī"), ("target", "5"), ("conditioner", "3"), ("claim", "attested")]
-    comment := "Perfect indicative: null T[pres] is pruned, Agr is concatenated with Asp[perf] and takes the special -ī."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Perfect indicative: null T[pres] is pruned, Agr is concatenated with Asp[perf] and takes the special -ī." }
 
 def amavisti : LinguisticExample :=
   { id := "embick2010_amavisti"
@@ -49,9 +47,7 @@ def amavisti : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("root", "AM"), ("h1", "v"), ("h1exp", ""), ("h2", "theme"), ("h2exp", "-ā"), ("h3", "aspect"), ("h3exp", "-vi"), ("h4", "tense"), ("h4exp", ""), ("h5", "agr"), ("h5exp", "-istī"), ("target", "5"), ("conditioner", "3"), ("claim", "attested")]
-    comment := "Perfect indicative 2sg: the special -istī next to Asp[perf]."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Perfect indicative 2sg: the special -istī next to Asp[perf]." }
 
 def amaveram : LinguisticExample :=
   { id := "embick2010_amaveram"
@@ -67,9 +63,7 @@ def amaveram : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("root", "AM"), ("h1", "v"), ("h1exp", ""), ("h2", "theme"), ("h2exp", "-ā"), ("h3", "aspect"), ("h3exp", "-vi"), ("h4", "tense"), ("h4exp", "-sā"), ("h5", "agr"), ("h5exp", "-m"), ("target", "5"), ("conditioner", "3"), ("claim", "blocked")]
-    comment := "Pluperfect: overt T between Asp[perf] and Agr, so the elsewhere -m."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Pluperfect: overt T between Asp[perf] and Agr, so the elsewhere -m." }
 
 def amaverim : LinguisticExample :=
   { id := "embick2010_amaverim"
@@ -85,9 +79,7 @@ def amaverim : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("root", "AM"), ("h1", "v"), ("h1exp", ""), ("h2", "theme"), ("h2exp", "-ā"), ("h3", "aspect"), ("h3exp", "-vi"), ("h4", "tense"), ("h4exp", "-sī"), ("h5", "agr"), ("h5exp", "-m"), ("target", "5"), ("conditioner", "3"), ("claim", "blocked")]
-    comment := "Perfect subjunctive: overt T intervenes."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Perfect subjunctive: overt T intervenes." }
 
 def amavero : LinguisticExample :=
   { id := "embick2010_amavero"
@@ -103,9 +95,7 @@ def amavero : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("root", "AM"), ("h1", "v"), ("h1exp", ""), ("h2", "theme"), ("h2exp", "-ā"), ("h3", "aspect"), ("h3exp", "-vi"), ("h4", "tense"), ("h4exp", "-si"), ("h5", "agr"), ("h5exp", "-ō"), ("target", "5"), ("conditioner", "3"), ("claim", "blocked")]
-    comment := "Future perfect: overt T intervenes."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Future perfect: overt T intervenes." }
 
 def capimus : LinguisticExample :=
   { id := "embick2010_capimus"
@@ -121,9 +111,7 @@ def capimus : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("root", "CAP"), ("h1", "v"), ("h1exp", ""), ("h2", "theme"), ("h2exp", "-i"), ("target", "2"), ("conditioner", "root"), ("claim", "attested")]
-    comment := "The theme sees the root's conjugation feature across the pruned v."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The theme sees the root's conjugation feature across the pruned v." }
 
 def capessimus_root : LinguisticExample :=
   { id := "embick2010_capessimus_root"
@@ -139,9 +127,7 @@ def capessimus_root : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("root", "CAP"), ("h1", "v"), ("h1exp", "-ess"), ("h2", "theme"), ("h2exp", "-i"), ("target", "2"), ("conditioner", "root"), ("claim", "blocked")]
-    comment := "The overt desiderative v intervenes: the theme cannot see the root's class."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The overt desiderative v intervenes: the theme cannot see the root's class." }
 
 def capessimus_v : LinguisticExample :=
   { id := "embick2010_capessimus_v"
@@ -157,9 +143,7 @@ def capessimus_v : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("root", "CAP"), ("h1", "v"), ("h1exp", "-ess"), ("h2", "theme"), ("h2exp", "-i"), ("target", "2"), ("conditioner", "1"), ("claim", "attested")]
-    comment := "The theme sees the class feature of the exponent it is concatenated with, -ess[III]."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The theme sees the class feature of the exponent it is concatenated with, -ess[III]." }
 
 def marriage : LinguisticExample :=
   { id := "embick2010_marriage"
@@ -175,9 +159,7 @@ def marriage : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("root", "MARRY"), ("h1", "n"), ("h1exp", "-age"), ("target", "1"), ("conditioner", "root"), ("claim", "attested")]
-    comment := "Root-attached n: Root-determined -age."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Root-attached n: Root-determined -age." }
 
 def marrying : LinguisticExample :=
   { id := "embick2010_marrying"
@@ -193,9 +175,7 @@ def marrying : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("root", "MARRY"), ("h1", "v"), ("h1exp", ""), ("h2", "n"), ("h2exp", "-ing"), ("target", "2"), ("conditioner", "root"), ("claim", "blocked")]
-    comment := "Gerund: the Root is not present in the cycle in which n is spelled out."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Gerund: the Root is not present in the cycle in which n is spelled out." }
 
 def bent : LinguisticExample :=
   { id := "embick2010_bent"
@@ -211,9 +191,7 @@ def bent : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("root", "BEND"), ("h1", "v"), ("h1exp", ""), ("h2", "tense"), ("h2exp", "-t"), ("target", "2"), ("conditioner", "root"), ("claim", "attested")]
-    comment := "Noncyclic T[past] sees the Root across the pruned v."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Noncyclic T[past] sees the Root across the pruned v." }
 
 def oxen : LinguisticExample :=
   { id := "embick2010_oxen"
@@ -229,9 +207,7 @@ def oxen : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("root", "OX"), ("h1", "n"), ("h1exp", ""), ("h2", "number"), ("h2exp", "-en"), ("target", "2"), ("conditioner", "root"), ("claim", "attested")]
-    comment := "Noncyclic [pl] sees the Root across the pruned n."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Noncyclic [pl] sees the Root across the pruned n." }
 
 def breakability : LinguisticExample :=
   { id := "embick2010_breakability"
@@ -247,9 +223,7 @@ def breakability : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("root", "BREAK"), ("h1", "a"), ("h1exp", "-able"), ("h2", "n"), ("h2exp", "-ity"), ("target", "2"), ("conditioner", "1"), ("claim", "attested")]
-    comment := "Potentiation: n sees the a realized as -able."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Potentiation: n sees the a realized as -able." }
 
 def colorization_v : LinguisticExample :=
   { id := "embick2010_colorization_v"
@@ -265,9 +239,7 @@ def colorization_v : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("root", "COLOR"), ("h1", "v"), ("h1exp", "-ize"), ("h2", "n"), ("h2exp", "-ation"), ("target", "2"), ("conditioner", "1"), ("claim", "attested")]
-    comment := "Outer n sees the v realized as -ize, which conditions -ation."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Outer n sees the v realized as -ize, which conditions -ation." }
 
 def colorization_root : LinguisticExample :=
   { id := "embick2010_colorization_root"
@@ -283,9 +255,7 @@ def colorization_root : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("root", "COLOR"), ("h1", "v"), ("h1exp", "-ize"), ("h2", "n"), ("h2exp", "-ation"), ("target", "2"), ("conditioner", "root"), ("claim", "blocked")]
-    comment := "Outer n cannot see the Root."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Outer n cannot see the Root." }
 
 def bachaanaa : LinguisticExample :=
   { id := "embick2010_bachaanaa"
@@ -301,9 +271,7 @@ def bachaanaa : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("root", "BACH"), ("h1", "v"), ("h1exp", ""), ("h2", "voice"), ("h2exp", "-aa"), ("target", "2"), ("conditioner", "root"), ("claim", "attested")]
-    comment := "Transitive: noncyclic Voice[ag] shows Root-determined -aa vs -Ø."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Transitive: noncyclic Voice[ag] shows Root-determined -aa vs -Ø." }
 
 def bachvaanaa : LinguisticExample :=
   { id := "embick2010_bachvaanaa"
@@ -319,9 +287,7 @@ def bachvaanaa : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("root", "BACH"), ("h1", "v"), ("h1exp", ""), ("h2", "voicePassive"), ("h2exp", "-v"), ("h3", "v"), ("h3exp", ""), ("h4", "voice"), ("h4exp", "-aa"), ("target", "4"), ("conditioner", "root"), ("claim", "blocked")]
-    comment := "Indirect causative: the outer Voice[ag] is two cycles up, so the default -aa."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Indirect causative: the outer Voice[ag] is two cycles up, so the default -aa." }
 
 def all : List LinguisticExample := [amavi, amavisti, amaveram, amaverim, amavero, capimus, capessimus_root, capessimus_v, marriage, marrying, bent, oxen, breakability, colorization_v, colorization_root, bachaanaa, bachvaanaa]
 

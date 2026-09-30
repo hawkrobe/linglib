@@ -31,9 +31,7 @@ def every_C2_gap : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("operator", "every"), ("embedding", "E-every"), ("condition", "GAP"), ("experiment", "C2"), ("gap_detected", "true"), ("display", "9929")]
-    comment := "C2 target condition. All three gap diagnostics significant (Table 9): Diag.1 β=6.7 χ²=26.7 p<10⁻⁶; Diag.2 β=7.7 χ²=35.1 p<10⁻⁸; Diag.3 β=4.9 χ²=4.0 p=.046. The dominant neither-response shows participants did not fall back on the weak/non-maximal reading ('every boy found some of his presents'), which would have made the sentence true here."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "C2 target condition. All three gap diagnostics significant (Table 9): Diag.1 β=6.7 χ²=26.7 p<10⁻⁶; Diag.2 β=7.7 χ²=35.1 p<10⁻⁸; Diag.3 β=4.9 χ²=4.0 p=.046. The dominant neither-response shows participants did not fall back on the weak/non-maximal reading ('every boy found some of his presents'), which would have made the sentence true here." }
 
 def no_C2_gap : LinguisticExample :=
   { id := "krizchemla2015_no_C2_gap"
@@ -49,9 +47,7 @@ def no_C2_gap : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("operator", "no"), ("embedding", "E-no"), ("condition", "GAP"), ("experiment", "C2"), ("gap_detected", "true"), ("gap_size", "small_but_robust"), ("display", "0070")]
-    comment := "C2 corrects the apparent null result from A2/B2, whose E-no stimuli ('In none of the cells, ...') were accidentally ungrammatical for lack of negative inversion (fn. 10) and plausibly parsed with an unbound definite (fn. 14). C2's grammatical 'No boy found his presents.' yields a small-but-robust gap on all three diagnostics (Table 9): Diag.1 β=1.3 χ²=8.2 p=.004; Diag.2 β=1.1 χ²=5.2 p=.022; Diag.3 β=1.6 χ²=7.8 p=.005. Quoting §5.2.3: 'this time, E-no does show a gap, which, albeit small, is robust.'"
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "C2 corrects the apparent null result from A2/B2, whose E-no stimuli ('In none of the cells, ...') were accidentally ungrammatical for lack of negative inversion (fn. 10) and plausibly parsed with an unbound definite (fn. 14). C2's grammatical 'No boy found his presents.' yields a small-but-robust gap on all three diagnostics (Table 9): Diag.1 β=1.3 χ²=8.2 p=.004; Diag.2 β=1.1 χ²=5.2 p=.022; Diag.3 β=1.6 χ²=7.8 p=.005. Quoting §5.2.3: 'this time, E-no does show a gap, which, albeit small, is robust.'" }
 
 def every_C2_true : LinguisticExample :=
   { id := "krizchemla2015_every_C2_true"
@@ -67,9 +63,7 @@ def every_C2_true : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("operator", "every"), ("embedding", "E-every"), ("condition", "TRUE"), ("experiment", "C2"), ("display", "9999")]
-    comment := "Judged completely true (Fig. 16)."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Judged completely true (Fig. 16)." }
 
 def every_C2_false : LinguisticExample :=
   { id := "krizchemla2015_every_C2_false"
@@ -85,9 +79,7 @@ def every_C2_false : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("operator", "every"), ("embedding", "E-every"), ("condition", "FALSE"), ("experiment", "C2"), ("display", "9770")]
-    comment := "Judged completely false although some boys' present-sets are non-homogeneous — the basis of §6.3's argument (42) that a homogeneity presupposition cannot project universally from the scope of every/all."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Judged completely false although some boys' present-sets are non-homogeneous — the basis of §6.3's argument (42) that a homogeneity presupposition cannot project universally from the scope of every/all." }
 
 def no_C2_true : LinguisticExample :=
   { id := "krizchemla2015_no_C2_true"
@@ -103,9 +95,7 @@ def no_C2_true : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("operator", "no"), ("embedding", "E-no"), ("condition", "TRUE"), ("experiment", "C2"), ("display", "0000")]
-    comment := "Judged completely true (Fig. 16)."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Judged completely true (Fig. 16)." }
 
 def no_C2_false : LinguisticExample :=
   { id := "krizchemla2015_no_C2_false"
@@ -121,9 +111,7 @@ def no_C2_false : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("operator", "no"), ("embedding", "E-no"), ("condition", "FALSE"), ("experiment", "C2"), ("display", "5009")]
-    comment := "Judged completely false although the five-presents boy's set is non-homogeneous; like the E-every false condition, this excludes universal projection of a homogeneity presupposition (§6.3). C2's false-condition items replace the ungrammatical A2/B2 ones (Table 13 note)."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Judged completely false although the five-presents boy's set is non-homogeneous; like the E-every false condition, this excludes universal projection of a homogeneity presupposition (§6.3). C2's false-condition items replace the ungrammatical A2/B2 ones (Table 13 note)." }
 
 def exactlyTwo_C3_gap : LinguisticExample :=
   { id := "krizchemla2015_exactlyTwo_C3_gap"
@@ -139,9 +127,7 @@ def exactlyTwo_C3_gap : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("operator", "exactlyTwo"), ("embedding", "E-exactly"), ("condition", "GAP"), ("experiment", "C3"), ("gap_detected", "true"), ("display", "9200")]
-    comment := "C3 proper-gap condition: exactly 2 boys found some, but it is not the case that exactly 2 found all, so the some-substituted and all-substituted variants of the sentence differ in truth value. All three gap diagnostics significant (Table 10): Diag.1 β=3.9 χ²=21.0 p<10⁻⁵; Diag.2 β=7.7 χ²=38.8 p<10⁻⁹; Diag.3 β=6.6 χ²=13.5 p=.0002."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "C3 proper-gap condition: exactly 2 boys found some, but it is not the case that exactly 2 found all, so the some-substituted and all-substituted variants of the sentence differ in truth value. All three gap diagnostics significant (Table 10): Diag.1 β=3.9 χ²=21.0 p<10⁻⁵; Diag.2 β=7.7 χ²=38.8 p<10⁻⁹; Diag.3 β=6.6 χ²=13.5 p=.0002." }
 
 def exactlyTwo_C3_gap_q : LinguisticExample :=
   { id := "krizchemla2015_exactlyTwo_C3_gap_q"
@@ -157,9 +143,7 @@ def exactlyTwo_C3_gap_q : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("operator", "exactlyTwo"), ("embedding", "E-exactly"), ("condition", "GAP?"), ("experiment", "C3"), ("gap_detected", "false"), ("classical_value", "false"), ("display", "9202")]
-    comment := "No gap (Table 10: Diag.1 p=.23, Diag.2 p=.15, Diag.3 p=.88), replicating A3/B3. A predicted null: both the some-substituted ('exactly 2 found some': three did) and the all-substituted ('exactly 2 found all': one did) variants are false here, so every implicature construal and the two-candidate supervaluation account predict plain falsity (Table 12, s5); the observed value is recorded as classical_value=false accordingly ('the at least-reading, discussed in Sect. 3.4, seems to have disappeared in this experiment', §5.3). The null instead disfavors richer-candidate supervaluation variants (fn. 19) and universal projection of a homogeneity presupposition, which predict a gap here. §3.4's at-least reading of 'exactly 2' (Marty, Chemla & Spector 2014 on modified numerals) explains only the residual true/gap tendencies in A3."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "No gap (Table 10: Diag.1 p=.23, Diag.2 p=.15, Diag.3 p=.88), replicating A3/B3. A predicted null: both the some-substituted ('exactly 2 found some': three did) and the all-substituted ('exactly 2 found all': one did) variants are false here, so every implicature construal and the two-candidate supervaluation account predict plain falsity (Table 12, s5); the observed value is recorded as classical_value=false accordingly ('the at least-reading, discussed in Sect. 3.4, seems to have disappeared in this experiment', §5.3). The null instead disfavors richer-candidate supervaluation variants (fn. 19) and universal projection of a homogeneity presupposition, which predict a gap here. §3.4's at-least reading of 'exactly 2' (Marty, Chemla & Spector 2014 on modified numerals) explains only the residual true/gap tendencies in A3." }
 
 def exactlyTwo_C4_gap_qq : LinguisticExample :=
   { id := "krizchemla2015_exactlyTwo_C4_gap_qq"
@@ -175,9 +159,7 @@ def exactlyTwo_C4_gap_qq : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("operator", "exactlyTwo"), ("embedding", "E-exactly"), ("condition", "GAP??"), ("experiment", "C4"), ("gap_detected", "true"), ("display", "9209")]
-    comment := "C4's new condition: the some-substituted variant ('exactly 2 found some') is false — three boys found some — while the all-substituted variant ('exactly 2 found all') is true, the mirror image of the gap condition. All three diagnostics significant (Table 11): Diag.1 β=4.4 χ²=13.4 p=.0002; Diag.2 β=7.6 χ²=49.4 p<10⁻¹¹; Diag.3 β=7.0 χ²=11.5 p=.0007. Table 12 (s6): construals that equate the gap with a literal-vs-global-exhaustification conflict predict plain falsity here, so the observed gap requires the implicature to be singled out as a meaning component or local exhaustification (§6.1.3)."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "C4's new condition: the some-substituted variant ('exactly 2 found some') is false — three boys found some — while the all-substituted variant ('exactly 2 found all') is true, the mirror image of the gap condition. All three diagnostics significant (Table 11): Diag.1 β=4.4 χ²=13.4 p=.0002; Diag.2 β=7.6 χ²=49.4 p<10⁻¹¹; Diag.3 β=7.0 χ²=11.5 p=.0007. Table 12 (s6): construals that equate the gap with a literal-vs-global-exhaustification conflict predict plain falsity here, so the observed gap requires the implicature to be singled out as a meaning component or local exhaustification (§6.1.3)." }
 
 def exactlyTwo_C3_true : LinguisticExample :=
   { id := "krizchemla2015_exactlyTwo_C3_true"
@@ -193,9 +175,7 @@ def exactlyTwo_C3_true : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("operator", "exactlyTwo"), ("embedding", "E-exactly"), ("condition", "TRUE"), ("experiment", "C3"), ("display", "9900")]
-    comment := "Judged completely true (Fig. 17)."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Judged completely true (Fig. 17)." }
 
 def exactlyTwo_C3_false : LinguisticExample :=
   { id := "krizchemla2015_exactlyTwo_C3_false"
@@ -211,9 +191,7 @@ def exactlyTwo_C3_false : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("operator", "exactlyTwo"), ("embedding", "E-exactly"), ("condition", "FALSE"), ("experiment", "C3"), ("display", "4000")]
-    comment := "Judged completely false (Fig. 17). §3.4 notes elevated true-responses on false displays where more than 2 boys' cells contain target objects (9990-type items), evidence of a non-salient at-least reading of 'exactly 2' (Marty, Chemla & Spector 2014)."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Judged completely false (Fig. 17). §3.4 notes elevated true-responses on false displays where more than 2 boys' cells contain target objects (9990-type items), evidence of a non-salient at-least reading of 'exactly 2' (Marty, Chemla & Spector 2014)." }
 
 def pos_A1_all : LinguisticExample :=
   { id := "krizchemla2015_pos_A1_all"
@@ -229,9 +207,7 @@ def pos_A1_all : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("polarity", "positive"), ("condition", "ALL"), ("embedding", "unembedded")]
-    comment := "Judged completely true. Exp. A1 target sentences had the form 'The [shapes] are [color]' (schema (6a)/(8a)), judged against displays of nine shapes with 0, 2, 4, 6, 8, or 9 in the target color. All three gap diagnostics significant for E-∅ (Table 3); replicated with the ternary method in Exp. B1 (Table 6)."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Judged completely true. Exp. A1 target sentences had the form 'The [shapes] are [color]' (schema (6a)/(8a)), judged against displays of nine shapes with 0, 2, 4, 6, 8, or 9 in the target color. All three gap diagnostics significant for E-∅ (Table 3); replicated with the ternary method in Exp. B1 (Table 6)." }
 
 def pos_A1_none : LinguisticExample :=
   { id := "krizchemla2015_pos_A1_none"
@@ -247,9 +223,7 @@ def pos_A1_none : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("polarity", "positive"), ("condition", "NONE"), ("embedding", "unembedded")]
-    comment := "Judged completely false. Exp. A1 target sentences had the form 'The [shapes] are [color]' (schema (6a)/(8a)), judged against displays of nine shapes with 0, 2, 4, 6, 8, or 9 in the target color. All three gap diagnostics significant for E-∅ (Table 3); replicated with the ternary method in Exp. B1 (Table 6)."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Judged completely false. Exp. A1 target sentences had the form 'The [shapes] are [color]' (schema (6a)/(8a)), judged against displays of nine shapes with 0, 2, 4, 6, 8, or 9 in the target color. All three gap diagnostics significant for E-∅ (Table 3); replicated with the ternary method in Exp. B1 (Table 6)." }
 
 def pos_A1_gap : LinguisticExample :=
   { id := "krizchemla2015_pos_A1_gap"
@@ -265,9 +239,7 @@ def pos_A1_gap : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("polarity", "positive"), ("condition", "GAP"), ("embedding", "unembedded"), ("gap_detected", "true")]
-    comment := "Judged neither completely true nor completely false: the unembedded homogeneity gap. Exp. A1 target sentences had the form 'The [shapes] are [color]' (schema (6a)/(8a)), judged against displays of nine shapes with 0, 2, 4, 6, 8, or 9 in the target color. All three gap diagnostics significant for E-∅ (Table 3); replicated with the ternary method in Exp. B1 (Table 6)."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Judged neither completely true nor completely false: the unembedded homogeneity gap. Exp. A1 target sentences had the form 'The [shapes] are [color]' (schema (6a)/(8a)), judged against displays of nine shapes with 0, 2, 4, 6, 8, or 9 in the target color. All three gap diagnostics significant for E-∅ (Table 3); replicated with the ternary method in Exp. B1 (Table 6)." }
 
 def neg_A1_all : LinguisticExample :=
   { id := "krizchemla2015_neg_A1_all"
@@ -283,9 +255,7 @@ def neg_A1_all : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("polarity", "negative"), ("condition", "ALL"), ("embedding", "unembedded")]
-    comment := "Judged completely false. Exp. A1 negated targets had the form 'The [shapes] aren't [color]' (schema (8b)); homogeneity projects through sentential negation. All three gap diagnostics significant for E-neg (Table 3); replicated with the ternary method in Exp. B1 (Table 6)."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Judged completely false. Exp. A1 negated targets had the form 'The [shapes] aren't [color]' (schema (8b)); homogeneity projects through sentential negation. All three gap diagnostics significant for E-neg (Table 3); replicated with the ternary method in Exp. B1 (Table 6)." }
 
 def neg_A1_none : LinguisticExample :=
   { id := "krizchemla2015_neg_A1_none"
@@ -301,9 +271,7 @@ def neg_A1_none : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("polarity", "negative"), ("condition", "NONE"), ("embedding", "unembedded")]
-    comment := "Judged completely true: the negated sentence requires total absence, not mere non-totality. Exp. A1 negated targets had the form 'The [shapes] aren't [color]' (schema (8b)); homogeneity projects through sentential negation. All three gap diagnostics significant for E-neg (Table 3); replicated with the ternary method in Exp. B1 (Table 6)."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Judged completely true: the negated sentence requires total absence, not mere non-totality. Exp. A1 negated targets had the form 'The [shapes] aren't [color]' (schema (8b)); homogeneity projects through sentential negation. All three gap diagnostics significant for E-neg (Table 3); replicated with the ternary method in Exp. B1 (Table 6)." }
 
 def neg_A1_gap : LinguisticExample :=
   { id := "krizchemla2015_neg_A1_gap"
@@ -319,9 +287,7 @@ def neg_A1_gap : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("polarity", "negative"), ("condition", "GAP"), ("embedding", "unembedded"), ("gap_detected", "true")]
-    comment := "Judged neither completely true nor completely false: the gap projects through negation. Exp. A1 negated targets had the form 'The [shapes] aren't [color]' (schema (8b)); homogeneity projects through sentential negation. All three gap diagnostics significant for E-neg (Table 3); replicated with the ternary method in Exp. B1 (Table 6)."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Judged neither completely true nor completely false: the gap projects through negation. Exp. A1 negated targets had the form 'The [shapes] aren't [color]' (schema (8b)); homogeneity projects through sentential negation. All three gap diagnostics significant for E-neg (Table 3); replicated with the ternary method in Exp. B1 (Table 6)." }
 
 def all : List LinguisticExample := [every_C2_gap, no_C2_gap, every_C2_true, every_C2_false, no_C2_true, no_C2_false, exactlyTwo_C3_gap, exactlyTwo_C3_gap_q, exactlyTwo_C4_gap_qq, exactlyTwo_C3_true, exactlyTwo_C3_false, pos_A1_all, pos_A1_none, pos_A1_gap, neg_A1_all, neg_A1_none, neg_A1_gap]
 

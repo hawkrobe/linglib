@@ -31,9 +31,7 @@ def ex_56a : LinguisticExample :=
     alternatives := [("Naistina săžaljavam, če ne otdelix poveče vnimanie na postrojkata.", .acceptable)]
     readings := []
     paperFeatures := [("verb", "săžaljavam"), ("complementizer", "deto"), ("diagnostic", "detoSelection")]
-    comment := "deto alternates freely with če, apart from style and register; colloquial speech."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "deto alternates freely with če, apart from style and register; colloquial speech." }
 
 def ex_56b : LinguisticExample :=
   { id := "krapova2010_56b"
@@ -49,9 +47,7 @@ def ex_56b : LinguisticExample :=
     alternatives := [("Samo me e jad, če grivnata izčezna sled zatămnenieto.", .acceptable)]
     readings := []
     paperFeatures := [("verb", "jad me e"), ("complementizer", "deto"), ("diagnostic", "detoSelection")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_57a : LinguisticExample :=
   { id := "krapova2010_57a"
@@ -67,9 +63,7 @@ def ex_57a : LinguisticExample :=
     alternatives := [("Nikak ne săžaljavam, če sreštata im se e provalila.", .acceptable)]
     readings := []
     paperFeatures := [("verb", "săžaljavam"), ("complementizer", "deto"), ("diagnostic", "projection"), ("environment", "negation"), ("projective", "yes"), ("person", "1")]
-    comment := "Presupposes that the meeting has failed, although the speaker does not regret that."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Presupposes that the meeting has failed, although the speaker does not regret that." }
 
 def ex_57b : LinguisticExample :=
   { id := "krapova2010_57b"
@@ -85,9 +79,7 @@ def ex_57b : LinguisticExample :=
     alternatives := [("Vinoven li săm če gostite pristignaxa kăsno?", .acceptable)]
     readings := []
     paperFeatures := [("verb", "vinoven săm"), ("complementizer", "deto"), ("diagnostic", "projection"), ("environment", "question"), ("projective", "yes"), ("person", "1")]
-    comment := "Presupposes that the visitors arrived late."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Presupposes that the visitors arrived late." }
 
 def ex_57c : LinguisticExample :=
   { id := "krapova2010_57c"
@@ -103,9 +95,7 @@ def ex_57c : LinguisticExample :=
     alternatives := [("Săžaljavam, če ne moža da ostaneš poveče.", .acceptable), ("Săžaljavam, deto ne moža da ostaneš poveče, no vsăšnost ti ostana poveče.", .unacceptable)]
     readings := []
     paperFeatures := [("verb", "săžaljavam"), ("complementizer", "deto"), ("diagnostic", "contradiction"), ("person", "1")]
-    comment := "Adding 'but in fact you stayed longer' cancels the presupposition and is a contradiction."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Adding 'but in fact you stayed longer' cancels the presupposition and is a contradiction." }
 
 def ex_58a : LinguisticExample :=
   { id := "krapova2010_58a"
@@ -121,9 +111,7 @@ def ex_58a : LinguisticExample :=
     alternatives := [("Văzmutix se če ne sa mogli da provedat sreštata.", .acceptable)]
     readings := []
     paperFeatures := [("verb", "văzmuštavam se"), ("complementizer", "deto"), ("diagnostic", "detoSelection")]
-    comment := "An emotive factive without a za phrase takes če only."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "An emotive factive without a za phrase takes če only." }
 
 def ex_58b : LinguisticExample :=
   { id := "krapova2010_58b"
@@ -139,9 +127,7 @@ def ex_58b : LinguisticExample :=
     alternatives := [("Otkrix če sreštata im se e provalila.", .acceptable)]
     readings := []
     paperFeatures := [("verb", "otkrivam"), ("complementizer", "deto"), ("diagnostic", "detoSelection")]
-    comment := "A semi-factive takes če only."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "A semi-factive takes če only." }
 
 def ex_59a : LinguisticExample :=
   { id := "krapova2010_59a"
@@ -157,9 +143,7 @@ def ex_59a : LinguisticExample :=
     alternatives := [("Săžaljavam na provala na sreštata.", .ungrammatical), ("Săžaljavam provala na sreštata.", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "săžaljavam"), ("diagnostic", "zaPhrase")]
-    comment := "Other prepositions and preposition-less noun phrases are excluded; the nominal paraphrase of (57a)."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Other prepositions and preposition-less noun phrases are excluded; the nominal paraphrase of (57a)." }
 
 def ex_59b : LinguisticExample :=
   { id := "krapova2010_59b"
@@ -175,9 +159,7 @@ def ex_59b : LinguisticExample :=
     alternatives := [("Vinoven li săm na zakăsnenieto na gostite?", .ungrammatical), ("Vinoven li săm zakăsnenieto na gostite?", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "vinoven săm"), ("diagnostic", "zaPhrase")]
-    comment := "The nominal paraphrase of (57b)."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "The nominal paraphrase of (57b)." }
 
 def fn46i : LinguisticExample :=
   { id := "krapova2010_fn46i"
@@ -193,9 +175,7 @@ def fn46i : LinguisticExample :=
     alternatives := [("Văzmutix se če ne sa mogli da provedat sreštata, no vsăšnost te provedoxa sreštata.", .unacceptable)]
     readings := []
     paperFeatures := [("verb", "văzmuštavam se"), ("complementizer", "če"), ("diagnostic", "contradiction"), ("person", "1")]
-    comment := "The če complement is factive too: factivity is the context's, not the complementizer's."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "The če complement is factive too: factivity is the context's, not the complementizer's." }
 
 def all : List LinguisticExample := [ex_56a, ex_56b, ex_57a, ex_57b, ex_57c, ex_58a, ex_58b, ex_59a, ex_59b, fn46i]
 

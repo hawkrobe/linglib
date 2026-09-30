@@ -31,9 +31,7 @@ def ex44a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.2.4"), ("phenomenon", "dorsalAssimilation")]
-    comment := "The palatalised coronal nasal before assimilation."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The palatalised coronal nasal before assimilation." }
 
 def ex44a_ii : LinguisticExample :=
   { id := "hallevauxwolfe2000_ex44a-ii"
@@ -49,9 +47,7 @@ def ex44a_ii : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.2.4"), ("phenomenon", "dorsalAssimilation")]
-    comment := "The nasal assimilates the dorsal primary articulation of the following g but keeps its own palatalisation."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The nasal assimilates the dorsal primary articulation of the following g but keeps its own palatalisation." }
 
 def ex44b : LinguisticExample :=
   { id := "hallevauxwolfe2000_ex44b"
@@ -67,9 +63,7 @@ def ex44b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.2.4"), ("phenomenon", "dorsalAssimilation")]
-    comment := "The plain coronal nasal before assimilation."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The plain coronal nasal before assimilation." }
 
 def ex44b_ii : LinguisticExample :=
   { id := "hallevauxwolfe2000_ex44b-ii"
@@ -85,9 +79,7 @@ def ex44b_ii : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.2.4"), ("phenomenon", "dorsalAssimilation")]
-    comment := "The plain nasal assimilates the dorsal articulation of the following palatalised gʲ but not its palatalisation."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The plain nasal assimilates the dorsal articulation of the following palatalised gʲ but not its palatalisation." }
 
 def all : List LinguisticExample := [ex44a, ex44a_ii, ex44b, ex44b_ii]
 

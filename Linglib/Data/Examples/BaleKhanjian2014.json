@@ -20,9 +20,7 @@
       ["definite", "no"],
       ["reading", "general"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "balekhanjian2014_4a",
@@ -44,9 +42,7 @@
       ["subject", "atom"],
       ["number", "SG"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "balekhanjian2014_4b",
@@ -69,9 +65,7 @@
       ["subject", "group"],
       ["number", "SG"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "balekhanjian2014_5a",
@@ -95,9 +89,7 @@
       ["number", "PL"],
       ["numeral", "two"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "balekhanjian2014_5b",
@@ -121,9 +113,7 @@
       ["number", "SG"],
       ["numeral", "one"]
     ],
-    "comment": "No distributive reading, as a distributive operator on the predicate would give.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "No distributive reading, as a distributive operator on the predicate would give."
   },
   {
     "id": "balekhanjian2014_5c",
@@ -146,9 +136,7 @@
       ["subject", "group"],
       ["number", "SG"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "balekhanjian2014_6a",
@@ -171,9 +159,7 @@
       ["subject", "group"],
       ["number", "PL"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "balekhanjian2014_6b",
@@ -195,9 +181,7 @@
       ["subject", "atom"],
       ["number", "PL"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "balekhanjian2014_7",
@@ -220,9 +204,7 @@
       ["definite", "no"],
       ["reading", "strictPlural"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "balekhanjian2014_8a",
@@ -245,9 +227,7 @@
       ["number", "PL"],
       ["reading", "strictPlural"]
     ],
-    "comment": "Speakers prefer the singular in restrictors; when forced, the plural keeps its strict reading.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Speakers prefer the singular in restrictors; when forced, the plural keeps its strict reading."
   },
   {
     "id": "balekhanjian2014_8b",
@@ -270,9 +250,7 @@
       ["number", "SG"],
       ["reading", "general"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "balekhanjian2014_10a",
@@ -295,9 +273,7 @@
       ["numeral", "two"],
       ["definite", "no"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "balekhanjian2014_10b",
@@ -320,9 +296,7 @@
       ["numeral", "two"],
       ["definite", "no"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "balekhanjian2014_11b",
@@ -345,9 +319,7 @@
       ["definite", "yes"],
       ["reading", "strictSingular"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "balekhanjian2014_13a",
@@ -371,9 +343,7 @@
       ["definite", "yes"],
       ["reading", "strictPlural"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "balekhanjian2014_13b",
@@ -397,9 +367,7 @@
       ["definite", "yes"],
       ["reading", "strictSingular"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "balekhanjian2014_14a",
@@ -422,9 +390,7 @@
       ["numeral", "two"],
       ["definite", "yes"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "balekhanjian2014_14b",
@@ -447,9 +413,7 @@
       ["numeral", "two"],
       ["definite", "yes"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "balekhanjian2014_24a",
@@ -472,9 +436,7 @@
       ["definite", "no"],
       ["scopeAmbiguous", "no"]
     ],
-    "comment": "Only the reading with negation over the existential.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Only the reading with negation over the existential."
   },
   {
     "id": "balekhanjian2014_25a",
@@ -497,9 +459,7 @@
       ["definite", "no"],
       ["scopeAmbiguous", "yes"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "balekhanjian2014_26a",
@@ -523,9 +483,7 @@
       ["definite", "no"],
       ["scopeAmbiguous", "yes"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "balekhanjian2014_27a",
@@ -549,8 +507,6 @@
       ["definite", "no"],
       ["scopeAmbiguous", "yes"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   }
 ]

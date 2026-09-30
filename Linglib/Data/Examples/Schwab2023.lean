@@ -31,9 +31,7 @@ def ex7a_jemals : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("experiment", "1"), ("npi", "jemals"), ("npiType", "strengthening"), ("negation", "rc"), ("extraction", "subject")]
-    comment := "Illusory licensing condition: negative quantifier inside the subject-extracted relative clause."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Illusory licensing condition: negative quantifier inside the subject-extracted relative clause." }
 
 def ex7b_jemals : LinguisticExample :=
   { id := "schwab2023_ex7b_jemals"
@@ -49,9 +47,7 @@ def ex7b_jemals : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("experiment", "1"), ("npi", "jemals"), ("npiType", "strengthening"), ("negation", "matrix"), ("extraction", "subject")]
-    comment := "Grammatical: matrix negative quantifier licenses the NPI."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Grammatical: matrix negative quantifier licenses the NPI." }
 
 def ex7c_jemals : LinguisticExample :=
   { id := "schwab2023_ex7c_jemals"
@@ -67,9 +63,7 @@ def ex7c_jemals : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("experiment", "1"), ("npi", "jemals"), ("npiType", "strengthening"), ("negation", "none"), ("extraction", "subject")]
-    comment := "Ungrammatical baseline: no negation."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Ungrammatical baseline: no negation." }
 
 def ex7a_sorecht : LinguisticExample :=
   { id := "schwab2023_ex7a_sorecht"
@@ -85,9 +79,7 @@ def ex7a_sorecht : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("experiment", "1"), ("npi", "so recht"), ("npiType", "attenuating"), ("negation", "rc"), ("extraction", "subject")]
-    comment := "Illusory licensing condition: negative quantifier inside the subject-extracted relative clause."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Illusory licensing condition: negative quantifier inside the subject-extracted relative clause." }
 
 def ex7b_sorecht : LinguisticExample :=
   { id := "schwab2023_ex7b_sorecht"
@@ -103,9 +95,7 @@ def ex7b_sorecht : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("experiment", "1"), ("npi", "so recht"), ("npiType", "attenuating"), ("negation", "matrix"), ("extraction", "subject")]
-    comment := "Grammatical: matrix negative quantifier licenses the NPI."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Grammatical: matrix negative quantifier licenses the NPI." }
 
 def ex7c_sorecht : LinguisticExample :=
   { id := "schwab2023_ex7c_sorecht"
@@ -121,9 +111,7 @@ def ex7c_sorecht : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("experiment", "1"), ("npi", "so recht"), ("npiType", "attenuating"), ("negation", "none"), ("extraction", "subject")]
-    comment := "Ungrammatical baseline: no negation."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Ungrammatical baseline: no negation." }
 
 def ex8a_jemals : LinguisticExample :=
   { id := "schwab2023_ex8a_jemals"
@@ -139,9 +127,7 @@ def ex8a_jemals : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("experiment", "2"), ("npi", "jemals"), ("npiType", "strengthening"), ("negation", "rc"), ("extraction", "object")]
-    comment := "Illusory licensing condition: negative quantifier inside the object-extracted relative clause."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Illusory licensing condition: negative quantifier inside the object-extracted relative clause." }
 
 def ex8b_jemals : LinguisticExample :=
   { id := "schwab2023_ex8b_jemals"
@@ -157,9 +143,7 @@ def ex8b_jemals : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("experiment", "2"), ("npi", "jemals"), ("npiType", "strengthening"), ("negation", "matrix"), ("extraction", "object")]
-    comment := "Grammatical: matrix negative quantifier licenses the NPI."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Grammatical: matrix negative quantifier licenses the NPI." }
 
 def ex8c_jemals : LinguisticExample :=
   { id := "schwab2023_ex8c_jemals"
@@ -175,9 +159,7 @@ def ex8c_jemals : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("experiment", "2"), ("npi", "jemals"), ("npiType", "strengthening"), ("negation", "none"), ("extraction", "object")]
-    comment := "Ungrammatical baseline: no negation."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Ungrammatical baseline: no negation." }
 
 def ex8a_sorecht : LinguisticExample :=
   { id := "schwab2023_ex8a_sorecht"
@@ -193,9 +175,7 @@ def ex8a_sorecht : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("experiment", "2"), ("npi", "so recht"), ("npiType", "attenuating"), ("negation", "rc"), ("extraction", "object")]
-    comment := "Illusory licensing condition: negative quantifier inside the object-extracted relative clause."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Illusory licensing condition: negative quantifier inside the object-extracted relative clause." }
 
 def ex8b_sorecht : LinguisticExample :=
   { id := "schwab2023_ex8b_sorecht"
@@ -211,9 +191,7 @@ def ex8b_sorecht : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("experiment", "2"), ("npi", "so recht"), ("npiType", "attenuating"), ("negation", "matrix"), ("extraction", "object")]
-    comment := "Grammatical: matrix negative quantifier licenses the NPI."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Grammatical: matrix negative quantifier licenses the NPI." }
 
 def ex8c_sorecht : LinguisticExample :=
   { id := "schwab2023_ex8c_sorecht"
@@ -229,9 +207,7 @@ def ex8c_sorecht : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("experiment", "2"), ("npi", "so recht"), ("npiType", "attenuating"), ("negation", "none"), ("extraction", "object")]
-    comment := "Ungrammatical baseline: no negation."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Ungrammatical baseline: no negation." }
 
 def all : List LinguisticExample := [ex7a_jemals, ex7b_jemals, ex7c_jemals, ex7a_sorecht, ex7b_sorecht, ex7c_sorecht, ex8a_jemals, ex8b_jemals, ex8c_jemals, ex8a_sorecht, ex8b_sorecht, ex8c_sorecht]
 

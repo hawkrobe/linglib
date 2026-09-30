@@ -31,9 +31,7 @@ def ex_13 : LinguisticExample :=
     alternatives := [("During the tax year, you received a distribution from a foreign trust?", .unacceptable), ("During the tax year, you received a distribution from a foreign trust.", .unacceptable)]
     readings := []
     paperFeatures := [("section", "2.2"), ("phenomenon", "neutrality"), ("locutions", "interrogative;risingDeclarative;fallingDeclarative")]
-    comment := "Declaratives cannot elicit information in an unbiased way."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Declaratives cannot elicit information in an unbiased way." }
 
 def ex_14 : LinguisticExample :=
   { id := "gunlogson2001_14"
@@ -49,9 +47,7 @@ def ex_14 : LinguisticExample :=
     alternatives := [("It's bigger than a breadbox?", .unacceptable), ("It's bigger than a breadbox.", .unacceptable)]
     readings := []
     paperFeatures := [("section", "2.2"), ("phenomenon", "neutrality"), ("locutions", "interrogative;risingDeclarative;fallingDeclarative")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_16 : LinguisticExample :=
   { id := "gunlogson2001_16"
@@ -67,9 +63,7 @@ def ex_16 : LinguisticExample :=
     alternatives := [("She lied to the grand jury?", .unacceptable), ("She lied to the grand jury.", .unacceptable)]
     readings := []
     paperFeatures := [("section", "2.2"), ("phenomenon", "neutrality"), ("locutions", "interrogative;risingDeclarative;fallingDeclarative")]
-    comment := "The issue raised by a declarative question cannot be regarded as open."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The issue raised by a declarative question cannot be regarded as open." }
 
 def ex_27 : LinguisticExample :=
   { id := "gunlogson2001_27"
@@ -85,9 +79,7 @@ def ex_27 : LinguisticExample :=
     alternatives := [("You can (please) pass the salt?", .unacceptable), ("You can (please) pass the salt.", .unacceptable)]
     readings := []
     paperFeatures := [("section", "2.2"), ("phenomenon", "neutrality"), ("locutions", "interrogative;risingDeclarative;fallingDeclarative")]
-    comment := "Polite requests for action are a function of interrogatives that declaratives lack."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Polite requests for action are a function of interrogatives that declaratives lack." }
 
 def ex_31 : LinguisticExample :=
   { id := "gunlogson2001_31"
@@ -103,9 +95,7 @@ def ex_31 : LinguisticExample :=
     alternatives := [("I'm from Skokie?", .acceptable), ("I'm from Skokie.", .acceptable)]
     readings := []
     paperFeatures := [("section", "2.2"), ("phenomenon", "informativeRising"), ("locutions", "interrogative;risingDeclarative;fallingDeclarative")]
-    comment := "A rising declarative can offer new information; adapted by the paper from Hirschberg and Ward 1995. Rising interrogatives lack this function."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A rising declarative can offer new information; adapted by the paper from Hirschberg and Ward 1995. Rising interrogatives lack this function." }
 
 def ex_33 : LinguisticExample :=
   { id := "gunlogson2001_33"
@@ -121,9 +111,7 @@ def ex_33 : LinguisticExample :=
     alternatives := [("The manager has of course been informed?", .acceptable), ("The manager has of course been informed.", .acceptable)]
     readings := []
     paperFeatures := [("section", "2.2"), ("phenomenon", "biasMarker"), ("locutions", "interrogative;risingDeclarative;fallingDeclarative")]
-    comment := "Bias markers such as 'of course' are incompatible with interrogatives, an observation the paper credits to Huddleston 1994."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Bias markers such as 'of course' are incompatible with interrogatives, an observation the paper credits to Huddleston 1994." }
 
 def ex_44 : LinguisticExample :=
   { id := "gunlogson2001_44"
@@ -139,9 +127,7 @@ def ex_44 : LinguisticExample :=
     alternatives := [("It has? I don't see much evidence of that.", .acceptable), ("It has. I don't see much evidence of that.", .unacceptable)]
     readings := []
     paperFeatures := [("section", "2.3"), ("phenomenon", "speakerCommitment"), ("locutions", "interrogative;risingDeclarative;fallingDeclarative")]
-    comment := "Only the falling declarative is inconsistent with the skeptical follow-up."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Only the falling declarative is inconsistent with the skeptical follow-up." }
 
 def ex_45 : LinguisticExample :=
   { id := "gunlogson2001_45"
@@ -157,9 +143,7 @@ def ex_45 : LinguisticExample :=
     alternatives := [("It is? Thanks, I'll use a different one.", .acceptable), ("(Oh), it is. Thanks, I'll use a different one.", .acceptable)]
     readings := []
     paperFeatures := [("section", "2.3"), ("phenomenon", "speakerCommitment"), ("locutions", "interrogative;risingDeclarative;fallingDeclarative")]
-    comment := "All three are compatible with the speaker's routine acceptance; a reiterative question."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "All three are compatible with the speaker's routine acceptance; a reiterative question." }
 
 def ex_46 : LinguisticExample :=
   { id := "gunlogson2001_46"
@@ -175,9 +159,7 @@ def ex_46 : LinguisticExample :=
     alternatives := [("Jake's here? Then let's get started.", .acceptable), ("(Oh), Jake's here. Then let's get started.", .acceptable)]
     readings := []
     paperFeatures := [("section", "2.3"), ("phenomenon", "speakerCommitment"), ("locutions", "interrogative;risingDeclarative;fallingDeclarative")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_47 : LinguisticExample :=
   { id := "gunlogson2001_47"
@@ -193,9 +175,7 @@ def ex_47 : LinguisticExample :=
     alternatives := [("France is a monarchy?", .acceptable), ("France is a monarchy.", .unacceptable)]
     readings := []
     paperFeatures := [("section", "2.3"), ("phenomenon", "speakerCommitment"), ("locutions", "interrogative;risingDeclarative;fallingDeclarative")]
-    comment := "The question concerns a presupposition of A's utterance rather than its main content."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The question concerns a presupposition of A's utterance rather than its main content." }
 
 def ex_48 : LinguisticExample :=
   { id := "gunlogson2001_48"
@@ -211,9 +191,7 @@ def ex_48 : LinguisticExample :=
     alternatives := [("Shoplifting's fun?", .acceptable), ("Shoplifting's fun.", .unacceptable)]
     readings := []
     paperFeatures := [("section", "2.3"), ("phenomenon", "speakerCommitment"), ("locutions", "interrogative;risingDeclarative;fallingDeclarative")]
-    comment := "The falling declarative portrays the speaker as the source of the information."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The falling declarative portrays the speaker as the source of the information." }
 
 def ex_100 : LinguisticExample :=
   { id := "gunlogson2001_100"
@@ -229,9 +207,7 @@ def ex_100 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.5"), ("phenomenon", "entailedButInformative")]
-    comment := "A's second falling declarative is entailed by the context, since A is already committed, but still informative with respect to B's commitment set."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A's second falling declarative is entailed by the context, since A is already committed, but still informative with respect to B's commitment set." }
 
 def ex_102 : LinguisticExample :=
   { id := "gunlogson2001_102"
@@ -247,9 +223,7 @@ def ex_102 : LinguisticExample :=
     alternatives := [("We're out of beer?", .acceptable), ("(So) we're out of beer.", .acceptable)]
     readings := []
     paperFeatures := [("section", "3.5"), ("phenomenon", "vacuousness"), ("locutions", "interrogative;risingDeclarative;fallingDeclarative")]
-    comment := "Not vacuous: A's entailment that there is no beer is not yet a joint commitment, though the rising declarative and the interrogative are uninformative and entailed."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Not vacuous: A's entailment that there is no beer is not yet a joint commitment, though the rising declarative and the interrogative are uninformative and entailed." }
 
 def ex_103 : LinguisticExample :=
   { id := "gunlogson2001_103"
@@ -265,9 +239,7 @@ def ex_103 : LinguisticExample :=
     alternatives := [("We're out of beer?", .unacceptable), ("(So) we're out of beer.", .unacceptable)]
     readings := []
     paperFeatures := [("section", "3.5"), ("phenomenon", "vacuousness"), ("locutions", "interrogative;risingDeclarative;fallingDeclarative")]
-    comment := "Vacuous in every form: A and B agree about the barren state of the refrigerator."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Vacuous in every form: A and B agree about the barren state of the refrigerator." }
 
 def ex_118 : LinguisticExample :=
   { id := "gunlogson2001_118"
@@ -283,9 +255,7 @@ def ex_118 : LinguisticExample :=
     alternatives := [("Maria's married?", .acceptable), ("Maria's married.", .unacceptable)]
     readings := []
     paperFeatures := [("section", "4.3"), ("phenomenon", "fallingDeclarativeQuestion"), ("locutions", "interrogative;risingDeclarative;fallingDeclarative")]
-    comment := "The falling declarative fails as a question although A's statement presupposes its content."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The falling declarative fails as a question although A's statement presupposes its content." }
 
 def ex_128 : LinguisticExample :=
   { id := "gunlogson2001_128"
@@ -301,9 +271,7 @@ def ex_128 : LinguisticExample :=
     alternatives := [("It's raining?", .acceptable), ("(I see that/So) It's raining.", .acceptable)]
     readings := []
     paperFeatures := [("section", "4.3"), ("phenomenon", "fallingDeclarativeQuestion"), ("locutions", "interrogative;risingDeclarative;fallingDeclarative")]
-    comment := "A resolving question; the falling declarative works much better with the parenthesized inferential marker, which shows the speaker's commitment to be contingent on the addressee's."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A resolving question; the falling declarative works much better with the parenthesized inferential marker, which shows the speaker's commitment to be contingent on the addressee's." }
 
 def all : List LinguisticExample := [ex_13, ex_14, ex_16, ex_27, ex_31, ex_33, ex_44, ex_45, ex_46, ex_47, ex_48, ex_100, ex_102, ex_103, ex_118, ex_128]
 

@@ -31,9 +31,7 @@ def ex_2_11a_1 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("underlying_form", "/bá-ka-fik-a/"), ("spreading", "unbounded"), ("tone_skeleton_input", "HLLL"), ("tone_skeleton_output", "HHHH")]
-    comment := "Copperbelt Bemba data cited from Bickmore and Kula (2013) and Kula and Bickmore (2015)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Copperbelt Bemba data cited from Bickmore and Kula (2013) and Kula and Bickmore (2015)." }
 
 def ex_2_11a_2 : LinguisticExample :=
   { id := "yolyan2025_2_11a_2"
@@ -49,9 +47,7 @@ def ex_2_11a_2 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("underlying_form", "/bá-ka-mu-londolol-a/"), ("spreading", "unbounded")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_2_11b_1 : LinguisticExample :=
   { id := "yolyan2025_2_11b_1"
@@ -67,9 +63,7 @@ def ex_2_11b_1 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("underlying_form", "/bá-ka-pat-a kó/"), ("spreading", "bounded"), ("tone_skeleton_input", "HLLLH"), ("tone_skeleton_output", "HHHLH")]
-    comment := "The following high tone of kó blocks unbounded spreading; only the next two vowels surface high."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The following high tone of kó blocks unbounded spreading; only the next two vowels surface high." }
 
 def ex_2_11b_2 : LinguisticExample :=
   { id := "yolyan2025_2_11b_2"
@@ -85,9 +79,7 @@ def ex_2_11b_2 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("underlying_form", "/bá-ka-londolol-a kó/"), ("spreading", "bounded")]
-    comment := "Form as printed in the paper; the root londolol is split across the second spread vowel."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Form as printed in the paper; the root londolol is split across the second spread vowel." }
 
 def ex_2_11c : LinguisticExample :=
   { id := "yolyan2025_2_11c"
@@ -103,9 +95,7 @@ def ex_2_11c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("underlying_form", "/u-ku-tul-a/"), ("spreading", "none"), ("tone_skeleton_input", "LLLL"), ("tone_skeleton_output", "LLLL")]
-    comment := "No underlying high tone; every vowel surfaces low by default."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "No underlying high tone; every vowel surfaces low by default." }
 
 def ex_2_12a_1 : LinguisticExample :=
   { id := "yolyan2025_2_12a_1"
@@ -121,9 +111,7 @@ def ex_2_12a_1 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("root_atr", "+"), ("blocking", "none")]
-    comment := "Tutrugbu data cited from McCollum et al. (2020) and McCollum and Essegbey (2018)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Tutrugbu data cited from McCollum et al. (2020) and McCollum and Essegbey (2018)." }
 
 def ex_2_12a_2 : LinguisticExample :=
   { id := "yolyan2025_2_12a_2"
@@ -139,9 +127,7 @@ def ex_2_12a_2 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("root_atr", "+"), ("blocking", "none")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_2_12b_1 : LinguisticExample :=
   { id := "yolyan2025_2_12b_1"
@@ -157,9 +143,7 @@ def ex_2_12b_1 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("root_atr", "-"), ("blocking", "none")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_2_12b_2 : LinguisticExample :=
   { id := "yolyan2025_2_12b_2"
@@ -175,9 +159,7 @@ def ex_2_12b_2 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("root_atr", "-"), ("blocking", "none")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_2_12c_1 : LinguisticExample :=
   { id := "yolyan2025_2_12c_1"
@@ -193,9 +175,7 @@ def ex_2_12c_1 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("root_atr", "+"), ("blocking", "none"), ("initial_high", "yes")]
-    comment := "The [+high] initial prefix harmonizes: no [-high] vowel intervenes."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The [+high] initial prefix harmonizes: no [-high] vowel intervenes." }
 
 def ex_2_12c_2 : LinguisticExample :=
   { id := "yolyan2025_2_12c_2"
@@ -211,9 +191,7 @@ def ex_2_12c_2 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("root_atr", "+"), ("blocking", "conditional"), ("initial_high", "yes")]
-    comment := "The [-high] prefix ba blocks harmony onto the [+high] initial prefix."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The [-high] prefix ba blocks harmony onto the [+high] initial prefix." }
 
 def ex_2_12c_3 : LinguisticExample :=
   { id := "yolyan2025_2_12c_3"
@@ -229,9 +207,7 @@ def ex_2_12c_3 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("root_atr", "+"), ("blocking", "conditional"), ("initial_high", "yes")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_2_12c_4 : LinguisticExample :=
   { id := "yolyan2025_2_12c_4"
@@ -247,9 +223,7 @@ def ex_2_12c_4 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("root_atr", "+"), ("blocking", "none"), ("initial_high", "no")]
-    comment := "With a [-high] initial prefix the [-high] vowels do not block, and every prefix harmonizes."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "With a [-high] initial prefix the [-high] vowels do not block, and every prefix harmonizes." }
 
 def all : List LinguisticExample := [ex_2_11a_1, ex_2_11a_2, ex_2_11b_1, ex_2_11b_2, ex_2_11c, ex_2_12a_1, ex_2_12a_2, ex_2_12b_1, ex_2_12b_2, ex_2_12c_1, ex_2_12c_2, ex_2_12c_3, ex_2_12c_4]
 

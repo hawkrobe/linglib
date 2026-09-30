@@ -150,8 +150,7 @@ end Relation
 
 /-- The predication a row records, adjuncts excluded. -/
 def Predication.ofRow (e : LinguisticExample) : Predication :=
-  e.paperFeatures.filterMap λ kv =>
-    if kv.1 = "arg" then List.lookup kv.2 Relation.ofString else none
+  (e.features "arg").filterMap (List.lookup · Relation.ofString)
 
 /-- The hierarchy selects the recorded subject of each of the book's examples, and no other
 argument ties with it. -/

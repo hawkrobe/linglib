@@ -12,9 +12,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"connective": "until", "clause": "main", "vendler_class": "state"},
-    "comment": "Schematic illustration of Karttunen 1974's durative selectional restriction on *until* main clauses; sentence not verified verbatim against the paper.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Schematic illustration of Karttunen 1974's durative selectional restriction on *until* main clauses; sentence not verified verbatim against the paper."
   },
   {
     "id": "karttunen1974_until_activity",
@@ -29,9 +27,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"connective": "until", "clause": "main", "vendler_class": "activity"},
-    "comment": "Schematic illustration of Karttunen 1974's durative selectional restriction on *until* main clauses; sentence not verified verbatim against the paper.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Schematic illustration of Karttunen 1974's durative selectional restriction on *until* main clauses; sentence not verified verbatim against the paper."
   },
   {
     "id": "karttunen1974_until_achievement",
@@ -46,9 +42,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"connective": "until", "clause": "main", "vendler_class": "achievement", "coercion": "iterative", "result_class": "activity"},
-    "comment": "Schematic illustration of Karttunen 1974's durative selectional restriction on *until* main clauses; sentence not verified verbatim against the paper.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Schematic illustration of Karttunen 1974's durative selectional restriction on *until* main clauses; sentence not verified verbatim against the paper."
   },
   {
     "id": "karttunen1974_until_accomplishment",
@@ -63,8 +57,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"connective": "until", "clause": "main", "vendler_class": "accomplishment", "coercion": "atelicize", "result_class": "activity"},
-    "comment": "Schematic illustration of Karttunen 1974's durative selectional restriction on *until* main clauses; sentence not verified verbatim against the paper.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Schematic illustration of Karttunen 1974's durative selectional restriction on *until* main clauses; sentence not verified verbatim against the paper."
   }
 ]

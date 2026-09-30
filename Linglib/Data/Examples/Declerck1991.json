@@ -11,9 +11,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "comment": "Declerck 1991 ch. 3, example (1a). Cornerstone illustration of temporal subordination (no domain shift) — three simultaneous situations under one past domain anchor.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Declerck 1991 ch. 3, example (1a). Cornerstone illustration of temporal subordination (no domain shift) — three simultaneous situations under one past domain anchor."
   },
   {
     "id": "declerck1991_domainShift1b",
@@ -30,9 +28,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "comment": "Declerck 1991 ch. 3, example (1b). The minimal pair with (1a): same time-sphere, but no temporal subordination — each clause shifts into a new domain. Iconic ordering from clause order is the pragmatic default.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Declerck 1991 ch. 3, example (1b). The minimal pair with (1a): same time-sphere, but no temporal subordination — each clause shifts into a new domain. Iconic ordering from clause order is the pragmatic default."
   },
   {
     "id": "declerck1991_domainShift3a",
@@ -49,9 +45,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "comment": "Declerck 1991 ch. 3 ex (3a). Compared to (3b) `He would die shortly afterwards`, which uses a relative tense (conditional) within the same temporal domain anchored by `got wounded`.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Declerck 1991 ch. 3 ex (3a). Compared to (3b) `He would die shortly afterwards`, which uses a relative tense (conditional) within the same temporal domain anchored by `got wounded`."
   },
   {
     "id": "declerck1991_modalPastWish",
@@ -65,9 +59,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "comment": "Declerck 1991 ch. 2 §3. Cornerstone example of modal past tense — past morphology, non-past interpretation. The 'false tense' phenomenon.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Declerck 1991 ch. 2 §3. Cornerstone example of modal past tense — past morphology, non-past interpretation. The 'false tense' phenomenon."
   },
   {
     "id": "declerck1991_modalPastIfWas",
@@ -81,9 +73,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "comment": "Declerck 1991 ch. 2 §3. Modal past in conditional protasis — the reference is non-past despite past morphology.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Declerck 1991 ch. 2 §3. Modal past in conditional protasis — the reference is non-past despite past morphology."
   },
   {
     "id": "declerck1991_futurePerfect",
@@ -97,9 +87,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "comment": "Declerck 1991 ch. 2 §2. Future perfect listed alongside present perfect, past perfect, conditional, conditional perfect in the tense inventory.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Declerck 1991 ch. 2 §2. Future perfect listed alongside present perfect, past perfect, conditional, conditional perfect in the tense inventory."
   },
   {
     "id": "declerck1991_whenPresent",
@@ -113,9 +101,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "comment": "Declerck 1991 ch. 2 §1. Compare `He didn't tell me when he will come home` where `when` introduces a noun clause and `will` is allowed.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Declerck 1991 ch. 2 §1. Compare `He didn't tell me when he will come home` where `when` introduces a noun clause and `will` is allowed."
   },
   {
     "id": "declerck1991_perfectHaveCome",
@@ -129,9 +115,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "comment": "Declerck 1991 ch. 2 §2. Present perfect listed alongside present, past, future, conditional, past perfect, future perfect, conditional perfect in the tense inventory.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Declerck 1991 ch. 2 §2. Present perfect listed alongside present, past, future, conditional, past perfect, future perfect, conditional perfect in the tense inventory."
   },
   {
     "id": "declerck1991_perfectOverslept",
@@ -147,8 +131,6 @@
       {"form": "I overslept this morning.", "judgment": "acceptable"}
     ],
     "readings": [],
-    "comment": "Declerck 1991 ch. 3 fn 49. Cornerstone perfect-vs-preterit minimal pair demonstrating the time-sphere distinction. Both can refer to the same objective event; the difference is conceptualization.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Declerck 1991 ch. 3 fn 49. Cornerstone perfect-vs-preterit minimal pair demonstrating the time-sphere distinction. Both can refer to the same objective event; the difference is conceptualization."
   }
 ]

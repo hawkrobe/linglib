@@ -19,8 +19,7 @@
       ["matrix", "positive"],
       ["entails", "complement"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "nadathur2023_2b",
@@ -42,8 +41,7 @@
       ["matrix", "negated"],
       ["entails", "negation"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "nadathur2023_4a",
@@ -65,8 +63,7 @@
       ["matrix", "positive"],
       ["entails", "complement"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "nadathur2023_4b",
@@ -88,8 +85,7 @@
       ["matrix", "negated"],
       ["entails", "negation"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "nadathur2023_5a",
@@ -110,8 +106,7 @@
       ["matrix", "positive"],
       ["entails", "nothing"]
     ],
-    "comment": "The complement is implicated, not entailed.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The complement is implicated, not entailed."
   },
   {
     "id": "nadathur2023_5b",
@@ -133,8 +128,7 @@
       ["matrix", "negated"],
       ["entails", "negation"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "nadathur2023_10a",
@@ -155,8 +149,7 @@
       ["matrix", "positive"],
       ["entails", "complement"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "nadathur2023_10b",
@@ -178,8 +171,7 @@
       ["matrix", "negated"],
       ["entails", "negation"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "nadathur2023_11a",
@@ -200,8 +192,7 @@
       ["matrix", "positive"],
       ["entails", "complement"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "nadathur2023_11b",
@@ -223,8 +214,7 @@
       ["matrix", "negated"],
       ["entails", "negation"]
     ],
-    "comment": "The source prints no final period.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The source prints no final period."
   },
   {
     "id": "nadathur2023_27a",
@@ -246,8 +236,7 @@
       ["matrix", "positive"],
       ["entails", "complement"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "nadathur2023_27b",
@@ -269,8 +258,7 @@
       ["matrix", "negated"],
       ["entails", "negation"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "nadathur2023_29a",
@@ -291,8 +279,7 @@
       ["matrix", "positive"],
       ["entails", "nothing"]
     ],
-    "comment": "The complement is implicated, not entailed.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The complement is implicated, not entailed."
   },
   {
     "id": "nadathur2023_29b",
@@ -314,8 +301,7 @@
       ["matrix", "negated"],
       ["entails", "negation"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "nadathur2023_30a",
@@ -337,8 +323,7 @@
       ["matrix", "positive"],
       ["entails", "nothing"]
     ],
-    "comment": "The complement is implicated, not entailed.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The complement is implicated, not entailed."
   },
   {
     "id": "nadathur2023_30b",
@@ -360,8 +345,7 @@
       ["matrix", "negated"],
       ["entails", "negation"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "nadathur2023_44a",
@@ -383,8 +367,7 @@
       ["matrix", "positive"],
       ["entails", "negation"]
     ],
-    "comment": "The source prints the pair under (43) without its number, which the text gives as (44).",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The source prints the pair under (43) without its number, which the text gives as (44)."
   },
   {
     "id": "nadathur2023_44b",
@@ -406,8 +389,7 @@
       ["matrix", "negated"],
       ["entails", "complement"]
     ],
-    "comment": "The source prints the pair under (43) without its number, which the text gives as (44).",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The source prints the pair under (43) without its number, which the text gives as (44)."
   },
   {
     "id": "nadathur2023_46a",
@@ -429,8 +411,7 @@
       ["matrix", "positive"],
       ["entails", "nothing"]
     ],
-    "comment": "The source prints no final period.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The source prints no final period."
   },
   {
     "id": "nadathur2023_46b",
@@ -452,7 +433,6 @@
       ["matrix", "negated"],
       ["entails", "complement"]
     ],
-    "comment": "The source prints no final period.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The source prints no final period."
   }
 ]

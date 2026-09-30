@@ -31,9 +31,7 @@ def ex_9a_completive : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "ka'án"), ("clauseType", "finite"), ("diagnostic", "aspect"), ("aspect", "completive")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_9a_continuous : LinguisticExample :=
   { id := "ostrove2026_9a_continuous"
@@ -49,9 +47,7 @@ def ex_9a_continuous : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "ka'án"), ("clauseType", "finite"), ("diagnostic", "aspect"), ("aspect", "continuous")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_9a_irrealis : LinguisticExample :=
   { id := "ostrove2026_9a_irrealis"
@@ -67,9 +63,7 @@ def ex_9a_irrealis : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "ka'án"), ("clauseType", "finite"), ("diagnostic", "aspect"), ("aspect", "irrealis")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_9b_completive : LinguisticExample :=
   { id := "ostrove2026_9b_completive"
@@ -85,9 +79,7 @@ def ex_9b_completive : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "kà'àn"), ("clauseType", "finite"), ("diagnostic", "aspect"), ("aspect", "completive")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_9b_continuous : LinguisticExample :=
   { id := "ostrove2026_9b_continuous"
@@ -103,9 +95,7 @@ def ex_9b_continuous : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "kà'àn"), ("clauseType", "finite"), ("diagnostic", "aspect"), ("aspect", "continuous")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_9b_irrealis : LinguisticExample :=
   { id := "ostrove2026_9b_irrealis"
@@ -121,9 +111,7 @@ def ex_9b_irrealis : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "kà'àn"), ("clauseType", "finite"), ("diagnostic", "aspect"), ("aspect", "irrealis")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_9c_completive : LinguisticExample :=
   { id := "ostrove2026_9c_completive"
@@ -139,9 +127,7 @@ def ex_9c_completive : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "kusijǐ ini"), ("clauseType", "finite"), ("diagnostic", "aspect"), ("aspect", "completive")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_9c_continuous : LinguisticExample :=
   { id := "ostrove2026_9c_continuous"
@@ -157,9 +143,7 @@ def ex_9c_continuous : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "kusijǐ ini"), ("clauseType", "finite"), ("diagnostic", "aspect"), ("aspect", "continuous")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_9c_irrealis : LinguisticExample :=
   { id := "ostrove2026_9c_irrealis"
@@ -175,9 +159,7 @@ def ex_9c_irrealis : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "kusijǐ ini"), ("clauseType", "finite"), ("diagnostic", "aspect"), ("aspect", "irrealis")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_13a_completive : LinguisticExample :=
   { id := "ostrove2026_13a_completive"
@@ -193,9 +175,7 @@ def ex_13a_completive : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "ntatu"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "aspect"), ("aspect", "completive")]
-    comment := "The source prints the embedded subject as rà, without the clitic boundary."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "The source prints the embedded subject as rà, without the clitic boundary." }
 
 def ex_13a_continuous : LinguisticExample :=
   { id := "ostrove2026_13a_continuous"
@@ -211,9 +191,7 @@ def ex_13a_continuous : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "ntatu"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "aspect"), ("aspect", "continuous")]
-    comment := "The source prints the embedded subject as rà, without the clitic boundary."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "The source prints the embedded subject as rà, without the clitic boundary." }
 
 def ex_13a_irrealis : LinguisticExample :=
   { id := "ostrove2026_13a_irrealis"
@@ -229,9 +207,7 @@ def ex_13a_irrealis : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "ntatu"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "aspect"), ("aspect", "irrealis")]
-    comment := "The source prints the embedded subject as rà, without the clitic boundary."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "The source prints the embedded subject as rà, without the clitic boundary." }
 
 def ex_13b_completive : LinguisticExample :=
   { id := "ostrove2026_13b_completive"
@@ -247,9 +223,7 @@ def ex_13b_completive : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "kòni"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "aspect"), ("aspect", "completive")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_13b_continuous : LinguisticExample :=
   { id := "ostrove2026_13b_continuous"
@@ -265,9 +239,7 @@ def ex_13b_continuous : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "kòni"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "aspect"), ("aspect", "continuous")]
-    comment := "As printed; (13a) has xóná for open:CONT."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "As printed; (13a) has xóná for open:CONT." }
 
 def ex_13b_irrealis : LinguisticExample :=
   { id := "ostrove2026_13b_irrealis"
@@ -283,9 +255,7 @@ def ex_13b_irrealis : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "kòni"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "aspect"), ("aspect", "irrealis")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_13c_completive : LinguisticExample :=
   { id := "ostrove2026_13c_completive"
@@ -301,9 +271,7 @@ def ex_13c_completive : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "ntukú"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "aspect"), ("aspect", "completive")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_13c_continuous : LinguisticExample :=
   { id := "ostrove2026_13c_continuous"
@@ -319,9 +287,7 @@ def ex_13c_continuous : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "ntukú"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "aspect"), ("aspect", "continuous")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_13c_irrealis : LinguisticExample :=
   { id := "ostrove2026_13c_irrealis"
@@ -337,9 +303,7 @@ def ex_13c_irrealis : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "ntukú"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "aspect"), ("aspect", "irrealis")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_13d_completive : LinguisticExample :=
   { id := "ostrove2026_13d_completive"
@@ -355,9 +319,7 @@ def ex_13d_completive : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "xiniñu'u"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "aspect"), ("aspect", "completive")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_13d_continuous : LinguisticExample :=
   { id := "ostrove2026_13d_continuous"
@@ -373,9 +335,7 @@ def ex_13d_continuous : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "xiniñu'u"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "aspect"), ("aspect", "continuous")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_13d_irrealis : LinguisticExample :=
   { id := "ostrove2026_13d_irrealis"
@@ -391,9 +351,7 @@ def ex_13d_irrealis : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "xiniñu'u"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "aspect"), ("aspect", "irrealis")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_10a : LinguisticExample :=
   { id := "ostrove2026_10a"
@@ -409,9 +367,7 @@ def ex_10a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "kà'àn"), ("clauseType", "finite"), ("diagnostic", "tense")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_10b : LinguisticExample :=
   { id := "ostrove2026_10b"
@@ -427,9 +383,7 @@ def ex_10b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "ka'án"), ("clauseType", "finite"), ("diagnostic", "tense")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_16a : LinguisticExample :=
   { id := "ostrove2026_16a"
@@ -445,9 +399,7 @@ def ex_16a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "ntatu"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "tense")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_16b : LinguisticExample :=
   { id := "ostrove2026_16b"
@@ -463,9 +415,7 @@ def ex_16b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "kòni"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "tense")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_17a : LinguisticExample :=
   { id := "ostrove2026_17a"
@@ -481,9 +431,7 @@ def ex_17a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "nakú'ún ini"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "tense")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_17b : LinguisticExample :=
   { id := "ostrove2026_17b"
@@ -499,9 +447,7 @@ def ex_17b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "ntukú"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "tense")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_12a : LinguisticExample :=
   { id := "ostrove2026_12a"
@@ -517,9 +463,7 @@ def ex_12a : LinguisticExample :=
     alternatives := []
     readings := [("controlled", .acceptable), ("free", .acceptable)]
     paperFeatures := [("verb", "káchi"), ("clauseType", "finite"), ("diagnostic", "subject")]
-    comment := "The embedded =rà may refer to Raul, to Pablo, or to another man."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "The embedded =rà may refer to Raul, to Pablo, or to another man." }
 
 def ex_12b : LinguisticExample :=
   { id := "ostrove2026_12b"
@@ -535,9 +479,7 @@ def ex_12b : LinguisticExample :=
     alternatives := []
     readings := [("controlled", .acceptable), ("free", .acceptable)]
     paperFeatures := [("verb", "kusijǐ ini"), ("clauseType", "finite"), ("diagnostic", "subject")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_18a : LinguisticExample :=
   { id := "ostrove2026_18a"
@@ -553,9 +495,7 @@ def ex_18a : LinguisticExample :=
     alternatives := []
     readings := [("controlled", .acceptable), ("free", .unacceptable)]
     paperFeatures := [("verb", "kòni"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "subject")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_18b : LinguisticExample :=
   { id := "ostrove2026_18b"
@@ -571,9 +511,7 @@ def ex_18b : LinguisticExample :=
     alternatives := []
     readings := [("controlled", .unacceptable), ("free", .acceptable)]
     paperFeatures := [("verb", "kòni"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "subject")]
-    comment := "Ná forces disjoint reference. Repeated as (39a)."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Ná forces disjoint reference. Repeated as (39a)." }
 
 def ex_18c : LinguisticExample :=
   { id := "ostrove2026_18c"
@@ -589,9 +527,7 @@ def ex_18c : LinguisticExample :=
     alternatives := [("Kôni Maria ná kusi =rí", .acceptable)]
     readings := [("free", .acceptable)]
     paperFeatures := [("verb", "kòni"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "subject")]
-    comment := "Ná is optional when the embedded subject does not match the matrix subject in φ-features. Repeated as (39b)."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Ná is optional when the embedded subject does not match the matrix subject in φ-features. Repeated as (39b)." }
 
 def ex_18d : LinguisticExample :=
   { id := "ostrove2026_18d"
@@ -607,9 +543,7 @@ def ex_18d : LinguisticExample :=
     alternatives := [("Kôni Maria ná kusi lěe =ñá", .acceptable)]
     readings := [("free", .acceptable)]
     paperFeatures := [("verb", "kòni"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "subject"), ("embeddedSubject", "lexical")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_19a : LinguisticExample :=
   { id := "ostrove2026_19a"
@@ -625,9 +559,7 @@ def ex_19a : LinguisticExample :=
     alternatives := [("Ntùkú Maria ná ku'un =rà tienda", .ungrammatical), ("Ntùkú Maria ná ku'un =ñá tienda", .ungrammatical)]
     readings := [("free", .ungrammatical)]
     paperFeatures := [("verb", "ntukú"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "subject")]
-    comment := "The source prints optional ná and the alternation {=ñá, =rà}; the intended disjoint subject is out in every variant."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "The source prints optional ná and the alternation {=ñá, =rà}; the intended disjoint subject is out in every variant." }
 
 def ex_19b : LinguisticExample :=
   { id := "ostrove2026_19b"
@@ -643,9 +575,7 @@ def ex_19b : LinguisticExample :=
     alternatives := [("Nàkú'ún ini Maria ná kata bà'a =rà", .ungrammatical), ("Nàkú'ún ini Maria ná kata bà'a =ñá", .ungrammatical)]
     readings := [("free", .ungrammatical)]
     paperFeatures := [("verb", "nakú'ún ini"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "subject")]
-    comment := "The source prints optional ná and the alternation {=ñá, =rà}; the intended disjoint subject is out in every variant."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "The source prints optional ná and the alternation {=ñá, =rà}; the intended disjoint subject is out in every variant." }
 
 def ex_40a : LinguisticExample :=
   { id := "ostrove2026_40a"
@@ -661,9 +591,7 @@ def ex_40a : LinguisticExample :=
     alternatives := [("Xíniñu'u Maria ná kwiin =rà iin koto xàá", .ungrammatical), ("Xíniñu'u Maria ná kwiin =ñá iin koto xàá", .ungrammatical)]
     readings := [("free", .ungrammatical)]
     paperFeatures := [("verb", "xiniñu'u"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "subject")]
-    comment := "The source prints optional ná and the alternation {=ñá, =rà}; the intended disjoint subject is out in every variant."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "The source prints optional ná and the alternation {=ñá, =rà}; the intended disjoint subject is out in every variant." }
 
 def ex_40b : LinguisticExample :=
   { id := "ostrove2026_40b"
@@ -679,9 +607,7 @@ def ex_40b : LinguisticExample :=
     alternatives := [("Kìxǎ Maria ná kata bà'a =rà", .ungrammatical), ("Kìxǎ Maria ná kata bà'a =ñá", .ungrammatical)]
     readings := [("free", .ungrammatical)]
     paperFeatures := [("verb", "kixǎ"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "subject")]
-    comment := "The source prints optional ná and the alternation {=ñá, =rà}; the intended disjoint subject is out in every variant."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "The source prints optional ná and the alternation {=ñá, =rà}; the intended disjoint subject is out in every variant." }
 
 def ex_41a : LinguisticExample :=
   { id := "ostrove2026_41a"
@@ -697,9 +623,7 @@ def ex_41a : LinguisticExample :=
     alternatives := []
     readings := [("free", .acceptable)]
     paperFeatures := [("verb", "ntatu"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "subject"), ("embeddedSubject", "lexical")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_41b : LinguisticExample :=
   { id := "ostrove2026_41b"
@@ -715,9 +639,7 @@ def ex_41b : LinguisticExample :=
     alternatives := []
     readings := [("free", .ungrammatical)]
     paperFeatures := [("verb", "xiniñu'u"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "subject"), ("embeddedSubject", "lexical")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_20a : LinguisticExample :=
   { id := "ostrove2026_20a"
@@ -733,9 +655,7 @@ def ex_20a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "ntatǔ'un"), ("clauseType", "finite"), ("diagnostic", "fronting"), ("fronting", "out")]
-    comment := "The source prints ndàtǔ'un 'talk'; (27a) lists the verb as ntatǔ'un 'chat'."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "The source prints ndàtǔ'un 'talk'; (27a) lists the verb as ntatǔ'un 'chat'." }
 
 def ex_20b : LinguisticExample :=
   { id := "ostrove2026_20b"
@@ -751,9 +671,7 @@ def ex_20b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "ka'án"), ("clauseType", "finite"), ("diagnostic", "fronting"), ("fronting", "out")]
-    comment := "The source prints ká'á; (9a) has ká'án 'think:CONT'."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "The source prints ká'á; (9a) has ká'án 'think:CONT'." }
 
 def ex_21a : LinguisticExample :=
   { id := "ostrove2026_21a"
@@ -769,9 +687,7 @@ def ex_21a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "káchi"), ("clauseType", "finite"), ("diagnostic", "fronting"), ("fronting", "within")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_21b : LinguisticExample :=
   { id := "ostrove2026_21b"
@@ -787,9 +703,7 @@ def ex_21b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "kuntàà ini"), ("clauseType", "finite"), ("diagnostic", "fronting"), ("fronting", "within")]
-    comment := "Glossed 'believe' here; (27a) lists kuntàà ini as 'wonder'."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Glossed 'believe' here; (27a) lists kuntàà ini as 'wonder'." }
 
 def ex_22a : LinguisticExample :=
   { id := "ostrove2026_22a"
@@ -805,9 +719,7 @@ def ex_22a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "ntatu"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "fronting"), ("fronting", "out")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_22b : LinguisticExample :=
   { id := "ostrove2026_22b"
@@ -823,9 +735,7 @@ def ex_22b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "chikàà ini"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "fronting"), ("fronting", "out")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_23a : LinguisticExample :=
   { id := "ostrove2026_23a"
@@ -841,9 +751,7 @@ def ex_23a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "ntatu"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "fronting"), ("fronting", "within")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_23b : LinguisticExample :=
   { id := "ostrove2026_23b"
@@ -859,9 +767,7 @@ def ex_23b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "chikàà ini"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "fronting"), ("fronting", "within")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_24a : LinguisticExample :=
   { id := "ostrove2026_24a"
@@ -877,9 +783,7 @@ def ex_24a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "nantǒso"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "fronting"), ("fronting", "out")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_24b : LinguisticExample :=
   { id := "ostrove2026_24b"
@@ -895,9 +799,7 @@ def ex_24b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "ntukú"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "fronting"), ("fronting", "out")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_25a : LinguisticExample :=
   { id := "ostrove2026_25a"
@@ -913,9 +815,7 @@ def ex_25a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "nantǒso"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "fronting"), ("fronting", "within")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_25b : LinguisticExample :=
   { id := "ostrove2026_25b"
@@ -931,9 +831,7 @@ def ex_25b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "ntukú"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "fronting"), ("fronting", "within")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_109 : LinguisticExample :=
   { id := "ostrove2026_109"
@@ -949,9 +847,7 @@ def ex_109 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "kòni"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "fronting"), ("fronting", "out")]
-    comment := "Footnote 8: kòni 'want' is the one exception to the ban on fronting out of a tensed subjunctive."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Footnote 8: kòni 'want' is the one exception to the ban on fronting out of a tensed subjunctive." }
 
 def ex_30a : LinguisticExample :=
   { id := "ostrove2026_30a"
@@ -967,9 +863,7 @@ def ex_30a : LinguisticExample :=
     alternatives := []
     readings := [("sloppy", .acceptable), ("strict", .acceptable)]
     paperFeatures := [("verb", "káchi"), ("clauseType", "finite"), ("diagnostic", "ellipsis")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_30b : LinguisticExample :=
   { id := "ostrove2026_30b"
@@ -985,9 +879,7 @@ def ex_30b : LinguisticExample :=
     alternatives := []
     readings := [("sloppy", .acceptable), ("strict", .acceptable)]
     paperFeatures := [("verb", "ka'án"), ("clauseType", "finite"), ("diagnostic", "ellipsis")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_32a : LinguisticExample :=
   { id := "ostrove2026_32a"
@@ -1003,9 +895,7 @@ def ex_32a : LinguisticExample :=
     alternatives := []
     readings := [("sloppy", .acceptable), ("strict", .acceptable)]
     paperFeatures := [("verb", "kòni"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "ellipsis")]
-    comment := "The context is the one given for the strict reading."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "The context is the one given for the strict reading." }
 
 def ex_32b : LinguisticExample :=
   { id := "ostrove2026_32b"
@@ -1021,9 +911,7 @@ def ex_32b : LinguisticExample :=
     alternatives := []
     readings := [("sloppy", .acceptable), ("strict", .acceptable)]
     paperFeatures := [("verb", "ntatu"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "ellipsis")]
-    comment := "The context is the one given for the strict reading."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "The context is the one given for the strict reading." }
 
 def ex_33a : LinguisticExample :=
   { id := "ostrove2026_33a"
@@ -1039,9 +927,7 @@ def ex_33a : LinguisticExample :=
     alternatives := []
     readings := [("sloppy", .acceptable), ("strict", .unacceptable)]
     paperFeatures := [("verb", "kònì"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "ellipsis")]
-    comment := "The context is the one given for the strict reading. Xînì is the continuous stem of kònì 'know (how to)'."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "The context is the one given for the strict reading. Xînì is the continuous stem of kònì 'know (how to)'." }
 
 def ex_33b : LinguisticExample :=
   { id := "ostrove2026_33b"
@@ -1057,9 +943,7 @@ def ex_33b : LinguisticExample :=
     alternatives := []
     readings := [("sloppy", .acceptable), ("strict", .unacceptable)]
     paperFeatures := [("verb", "nakú'ún ini"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "ellipsis")]
-    comment := "The context is the one given for the strict reading."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "The context is the one given for the strict reading." }
 
 def ex_37a : LinguisticExample :=
   { id := "ostrove2026_37a"
@@ -1075,9 +959,7 @@ def ex_37a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "nantǒso"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "partialControl")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_37b : LinguisticExample :=
   { id := "ostrove2026_37b"
@@ -1093,9 +975,7 @@ def ex_37b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "xiniñu'u"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "partialControl")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_43a : LinguisticExample :=
   { id := "ostrove2026_43a"
@@ -1111,9 +991,7 @@ def ex_43a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "kòni"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "cCommand"), ("antecedent", "nonCCommanding")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_43b : LinguisticExample :=
   { id := "ostrove2026_43b"
@@ -1129,9 +1007,7 @@ def ex_43b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "ntatu"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "cCommand"), ("antecedent", "nonCCommanding")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_44a : LinguisticExample :=
   { id := "ostrove2026_44a"
@@ -1147,9 +1023,7 @@ def ex_44a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "nantǒso"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "cCommand"), ("antecedent", "nonCCommanding")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_44b : LinguisticExample :=
   { id := "ostrove2026_44b"
@@ -1165,9 +1039,7 @@ def ex_44b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "xiniñu'u"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "cCommand"), ("antecedent", "nonCCommanding")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_45a : LinguisticExample :=
   { id := "ostrove2026_45a"
@@ -1183,9 +1055,7 @@ def ex_45a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "ntatu"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "cCommand"), ("antecedent", "nonCCommanding")]
-    comment := "The antecedent is a possessor inside an adjunct."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "The antecedent is a possessor inside an adjunct." }
 
 def ex_45b : LinguisticExample :=
   { id := "ostrove2026_45b"
@@ -1201,9 +1071,7 @@ def ex_45b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "kòni"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "cCommand"), ("antecedent", "nonCCommanding")]
-    comment := "The antecedent is a possessor inside an adjunct."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "The antecedent is a possessor inside an adjunct." }
 
 def ex_46a : LinguisticExample :=
   { id := "ostrove2026_46a"
@@ -1219,9 +1087,7 @@ def ex_46a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "xiniñu'u"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "cCommand"), ("antecedent", "nonCCommanding")]
-    comment := "The antecedent is a possessor inside an adjunct."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "The antecedent is a possessor inside an adjunct." }
 
 def ex_46b : LinguisticExample :=
   { id := "ostrove2026_46b"
@@ -1237,9 +1103,7 @@ def ex_46b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "ntukú"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "cCommand"), ("antecedent", "nonCCommanding")]
-    comment := "The antecedent is a possessor inside an adjunct."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "The antecedent is a possessor inside an adjunct." }
 
 def ex_67a : LinguisticExample :=
   { id := "ostrove2026_67a"
@@ -1255,9 +1119,7 @@ def ex_67a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "nantǒso"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "clitic"), ("embeddedSubject", "nonclitic")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_67b : LinguisticExample :=
   { id := "ostrove2026_67b"
@@ -1273,9 +1135,7 @@ def ex_67b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "kònì"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "clitic"), ("embeddedSubject", "nonclitic")]
-    comment := "The subject is a clitic strengthened by the definite article."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "The subject is a clitic strengthened by the definite article." }
 
 def ex_67c : LinguisticExample :=
   { id := "ostrove2026_67c"
@@ -1291,9 +1151,7 @@ def ex_67c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "kixǎ"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "clitic"), ("embeddedSubject", "nonclitic")]
-    comment := "The subject is a pronoun strengthened by a demonstrative."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "The subject is a pronoun strengthened by a demonstrative." }
 
 def ex_68a : LinguisticExample :=
   { id := "ostrove2026_68a"
@@ -1309,9 +1167,7 @@ def ex_68a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "kòni"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "clitic"), ("embeddedSubject", "nonclitic")]
-    comment := "The subject is a clitic strengthened by the definite article."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "The subject is a clitic strengthened by the definite article." }
 
 def ex_68b : LinguisticExample :=
   { id := "ostrove2026_68b"
@@ -1327,9 +1183,7 @@ def ex_68b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "ntatu"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "clitic"), ("embeddedSubject", "nonclitic")]
-    comment := "The subject is a clitic strengthened by the definite article."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "The subject is a clitic strengthened by the definite article." }
 
 def ex_75a : LinguisticExample :=
   { id := "ostrove2026_75a"
@@ -1345,9 +1199,7 @@ def ex_75a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "exemptAnaphor"), ("antecedent", "quantified")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_75b : LinguisticExample :=
   { id := "ostrove2026_75b"
@@ -1363,9 +1215,7 @@ def ex_75b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "exemptAnaphor"), ("antecedent", "quantified")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_86a : LinguisticExample :=
   { id := "ostrove2026_86a"
@@ -1381,9 +1231,7 @@ def ex_86a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "kixǎ"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "exemptAnaphor"), ("antecedent", "quantified")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_86b : LinguisticExample :=
   { id := "ostrove2026_86b"
@@ -1399,9 +1247,7 @@ def ex_86b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "xiniñu'u"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "exemptAnaphor"), ("antecedent", "quantified")]
-    comment := "The source glosses 'see' as IRRR."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "The source glosses 'see' as IRRR." }
 
 def ex_87a : LinguisticExample :=
   { id := "ostrove2026_87a"
@@ -1417,9 +1263,7 @@ def ex_87a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "kixǎ"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "exemptAnaphor"), ("antecedent", "quantified")]
-    comment := "The source translates 'started to bit'."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "The source translates 'started to bit'." }
 
 def ex_87b : LinguisticExample :=
   { id := "ostrove2026_87b"
@@ -1435,9 +1279,7 @@ def ex_87b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "xiniñu'u"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "exemptAnaphor"), ("antecedent", "quantified")]
-    comment := "The source glosses 'see' as IRRR."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "The source glosses 'see' as IRRR." }
 
 def all : List LinguisticExample := [ex_9a_completive, ex_9a_continuous, ex_9a_irrealis, ex_9b_completive, ex_9b_continuous, ex_9b_irrealis, ex_9c_completive, ex_9c_continuous, ex_9c_irrealis, ex_13a_completive, ex_13a_continuous, ex_13a_irrealis, ex_13b_completive, ex_13b_continuous, ex_13b_irrealis, ex_13c_completive, ex_13c_continuous, ex_13c_irrealis, ex_13d_completive, ex_13d_continuous, ex_13d_irrealis, ex_10a, ex_10b, ex_16a, ex_16b, ex_17a, ex_17b, ex_12a, ex_12b, ex_18a, ex_18b, ex_18c, ex_18d, ex_19a, ex_19b, ex_40a, ex_40b, ex_41a, ex_41b, ex_20a, ex_20b, ex_21a, ex_21b, ex_22a, ex_22b, ex_23a, ex_23b, ex_24a, ex_24b, ex_25a, ex_25b, ex_109, ex_30a, ex_30b, ex_32a, ex_32b, ex_33a, ex_33b, ex_37a, ex_37b, ex_43a, ex_43b, ex_44a, ex_44b, ex_45a, ex_45b, ex_46a, ex_46b, ex_67a, ex_67b, ex_67c, ex_68a, ex_68b, ex_75a, ex_75b, ex_86a, ex_86b, ex_87a, ex_87b]
 

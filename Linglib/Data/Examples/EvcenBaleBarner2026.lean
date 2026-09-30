@@ -31,9 +31,7 @@ def ex_1a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "Where Peter, Paul and Mary might be mowing, the assertion implies that Peter and Paul did not: a quantity implicature over ad hoc alternatives."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Where Peter, Paul and Mary might be mowing, the assertion implies that Peter and Paul did not: a quantity implicature over ad hoc alternatives." }
 
 def ex_1b : LinguisticExample :=
   { id := "evcenbalebarner2026_1b"
@@ -49,9 +47,7 @@ def ex_1b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "An ad hoc alternative to (1a)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "An ad hoc alternative to (1a)." }
 
 def ex_1c : LinguisticExample :=
   { id := "evcenbalebarner2026_1c"
@@ -67,9 +63,7 @@ def ex_1c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "An ad hoc alternative to (1a)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "An ad hoc alternative to (1a)." }
 
 def ex_2a : LinguisticExample :=
   { id := "evcenbalebarner2026_2a"
@@ -85,9 +79,7 @@ def ex_2a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "Perfected to only if, on von Fintel's account, by excluding the conditionals with the alternative antecedents (2b) and (2c)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Perfected to only if, on von Fintel's account, by excluding the conditionals with the alternative antecedents (2b) and (2c)." }
 
 def ex_2b : LinguisticExample :=
   { id := "evcenbalebarner2026_2b"
@@ -103,9 +95,7 @@ def ex_2b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_2c : LinguisticExample :=
   { id := "evcenbalebarner2026_2c"
@@ -121,9 +111,7 @@ def ex_2c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_3a : LinguisticExample :=
   { id := "evcenbalebarner2026_3a"
@@ -139,9 +127,7 @@ def ex_3a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "As an answer to this question (1a) implies that neither Peter nor Paul mowed; (1b) and (1c) are answers to it."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "As an answer to this question (1a) implies that neither Peter nor Paul mowed; (1b) and (1c) are answers to it." }
 
 def ex_3b : LinguisticExample :=
   { id := "evcenbalebarner2026_3b"
@@ -157,9 +143,7 @@ def ex_3b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "As an answer to this question (1a) says nothing about Peter or Paul."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "As an answer to this question (1a) says nothing about Peter or Paul." }
 
 def ex_3c : LinguisticExample :=
   { id := "evcenbalebarner2026_3c"
@@ -175,9 +159,7 @@ def ex_3c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def exp1_antecedent : LinguisticExample :=
   { id := "evcenbalebarner2026_exp1_antecedent"
@@ -193,9 +175,7 @@ def exp1_antecedent : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("qud", "antecedentFocused"), ("tested", "all"), ("response", "no")]
-    comment := "Perfection rate 0.65 (SE 0.10); the follow-ups with 'what buttons' and 'which buttons' gave 0.86 and 0.77."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Perfection rate 0.65 (SE 0.10); the follow-ups with 'what buttons' and 'which buttons' gave 0.86 and 0.77." }
 
 def exp1_consequent : LinguisticExample :=
   { id := "evcenbalebarner2026_exp1_consequent"
@@ -211,9 +191,7 @@ def exp1_consequent : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("qud", "consequentFocused"), ("tested", "all"), ("response", "cantTell")]
-    comment := "Perfection rate 0.22 (SE 0.10)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Perfection rate 0.22 (SE 0.10)." }
 
 def exp1_neutral : LinguisticExample :=
   { id := "evcenbalebarner2026_exp1_neutral"
@@ -229,9 +207,7 @@ def exp1_neutral : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("qud", "neutral"), ("tested", "all"), ("response", "cantTell")]
-    comment := "Perfection rate 0.29 (SE 0.11), not different from the consequent-focused condition."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Perfection rate 0.29 (SE 0.11), not different from the consequent-focused condition." }
 
 def exp3_full : LinguisticExample :=
   { id := "evcenbalebarner2026_exp3_full"
@@ -247,9 +223,7 @@ def exp3_full : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("qud", "antecedentFocused"), ("tested", "all"), ("response", "no")]
-    comment := "Perfection rate 0.72 (SE 0.13)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Perfection rate 0.72 (SE 0.13)." }
 
 def exp3_partial : LinguisticExample :=
   { id := "evcenbalebarner2026_exp3_partial"
@@ -265,9 +239,7 @@ def exp3_partial : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("qud", "antecedentFocused"), ("tested", "two"), ("response", "cantTell")]
-    comment := "Perfection rate 0.21 (SE 0.12)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Perfection rate 0.21 (SE 0.12)." }
 
 def exp2_optimal : LinguisticExample :=
   { id := "evcenbalebarner2026_exp2_optimal"
@@ -283,9 +255,7 @@ def exp2_optimal : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("answerType", "optimallyInformative"), ("response", "no")]
-    comment := "Asked whether the squares play the same sound: perfection rate 0.92 (SE 0.09)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Asked whether the squares play the same sound: perfection rate 0.92 (SE 0.09)." }
 
 def exp2_overly : LinguisticExample :=
   { id := "evcenbalebarner2026_exp2_overly"
@@ -301,9 +271,7 @@ def exp2_overly : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("answerType", "overlyInformative"), ("response", "no")]
-    comment := "Asked whether the red square plays the same sound: perfection rate 0.84 (SE 0.07), not reliably different (p = .16)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Asked whether the red square plays the same sound: perfection rate 0.84 (SE 0.07), not reliably different (p = .16)." }
 
 def all : List LinguisticExample := [ex_1a, ex_1b, ex_1c, ex_2a, ex_2b, ex_2c, ex_3a, ex_3b, ex_3c, exp1_antecedent, exp1_consequent, exp1_neutral, exp3_full, exp3_partial, exp2_optimal, exp2_overly]
 

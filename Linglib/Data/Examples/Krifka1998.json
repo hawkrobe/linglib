@@ -15,8 +15,7 @@
     "paperFeatures": [
       ["measureFunction", "extensive"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "krifka1998_ex11b",
@@ -34,8 +33,7 @@
     "paperFeatures": [
       ["measureFunction", "extensive"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "krifka1998_ex11c",
@@ -53,8 +51,7 @@
     "paperFeatures": [
       ["measureFunction", "nonExtensive"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "krifka1998_ex11d",
@@ -72,8 +69,7 @@
     "paperFeatures": [
       ["measureFunction", "nonExtensive"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "krifka1998_ex12c",
@@ -91,8 +87,7 @@
     "paperFeatures": [
       ["measureFunction", "extensive"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "krifka1998_ex58",
@@ -110,8 +105,7 @@
     "paperFeatures": [
       ["adverbial", "in"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "krifka1998_ex60a",
@@ -129,8 +123,7 @@
     "paperFeatures": [
       ["adverbial", "in"]
     ],
-    "comment": "The paper credits the observation to White (1994), Mittwoch (1982) and White and Zucchi (1996).",
-    "metaLanguage": "stan1293"
+    "comment": "The paper credits the observation to White (1994), Mittwoch (1982) and White and Zucchi (1996)."
   },
   {
     "id": "krifka1998_ex60b",
@@ -148,8 +141,7 @@
     "paperFeatures": [
       ["adverbial", "in"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "krifka1998_ex60c",
@@ -167,8 +159,7 @@
     "paperFeatures": [
       ["adverbial", "in"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "krifka1998_ex66a",
@@ -186,8 +177,7 @@
     "paperFeatures": [
       ["clitic", "se"]
     ],
-    "comment": "The paper credits the observation to Nishida (1994).",
-    "metaLanguage": "stan1293"
+    "comment": "The paper credits the observation to Nishida (1994)."
   },
   {
     "id": "krifka1998_ex66b",
@@ -205,8 +195,7 @@
     "paperFeatures": [
       ["clitic", "se"]
     ],
-    "comment": "The paper credits the observation to Nishida (1994).",
-    "metaLanguage": "stan1293"
+    "comment": "The paper credits the observation to Nishida (1994)."
   },
   {
     "id": "krifka1998_ex74",
@@ -224,8 +213,7 @@
     "paperFeatures": [
       ["path", "sourceGoal"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "krifka1998_ex75",
@@ -243,8 +231,7 @@
     "paperFeatures": [
       ["path", "sourceDirection"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "krifka1998_ex75_in",
@@ -263,8 +250,7 @@
       ["path", "sourceDirection"],
       ["adverbial", "in"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "krifka1998_ex77a_in",
@@ -283,8 +269,7 @@
       ["goal", "specified"],
       ["adverbial", "in"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "krifka1998_ex77a_for",
@@ -303,8 +288,7 @@
       ["goal", "specified"],
       ["adverbial", "for"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "krifka1998_ex77b_in",
@@ -323,8 +307,7 @@
       ["goal", "specified"],
       ["adverbial", "in"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "krifka1998_ex77b_for",
@@ -343,8 +326,7 @@
       ["goal", "specified"],
       ["adverbial", "for"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "krifka1998_ex77c",
@@ -365,8 +347,7 @@
     "paperFeatures": [
       ["goal", "implicit"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "krifka1998_ex78",
@@ -384,7 +365,6 @@
     "paperFeatures": [
       ["path", "goal"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   }
 ]

@@ -31,9 +31,7 @@ def beltrama_schwarz_2024_cst_nopersona : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("persona", "noPersona"), ("task", "coveredScreen"), ("screenFit", "imprecise"), ("statedAmount", "200"), ("displayedAmount", "207"), ("rejectionMeasure", "covered"), ("rejectionVsBaseline", "baseline"), ("contrastZ", "0"), ("contrastSig", "baseline")]
-    comment := "Exp 1 Covered-Screen Task, critical Imprecise cell, baseline (no persona). Figures 1-3. Data: doi 10.3765/sp.17.10 supplementary."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Exp 1 Covered-Screen Task, critical Imprecise cell, baseline (no persona). Figures 1-3. Data: doi 10.3765/sp.17.10 supplementary." }
 
 def beltrama_schwarz_2024_cst_nerdy : LinguisticExample :=
   { id := "beltrama_schwarz_2024_cst_nerdy"
@@ -49,9 +47,7 @@ def beltrama_schwarz_2024_cst_nerdy : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("persona", "nerdy"), ("task", "coveredScreen"), ("screenFit", "imprecise"), ("statedAmount", "200"), ("displayedAmount", "207"), ("rejectionMeasure", "covered"), ("rejectionVsBaseline", "higher"), ("contrastZ", "6.62"), ("contrastSig", "significant")]
-    comment := "Exp 1: COVERED rates higher for Nerdy than No.Persona (z=6.62, p<.0001), section 4.5. Nerdy demands exactness."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Exp 1: COVERED rates higher for Nerdy than No.Persona (z=6.62, p<.0001), section 4.5. Nerdy demands exactness." }
 
 def beltrama_schwarz_2024_cst_chill : LinguisticExample :=
   { id := "beltrama_schwarz_2024_cst_chill"
@@ -67,9 +63,7 @@ def beltrama_schwarz_2024_cst_chill : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("persona", "chill"), ("task", "coveredScreen"), ("screenFit", "imprecise"), ("statedAmount", "200"), ("displayedAmount", "207"), ("rejectionMeasure", "covered"), ("rejectionVsBaseline", "lower"), ("contrastZ", "7.61"), ("contrastSig", "significant")]
-    comment := "Exp 1: COVERED rates lower for Chill than No.Persona (z=7.61, p<.0001), section 4.5. Chill extends tolerance."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Exp 1: COVERED rates lower for Chill than No.Persona (z=7.61, p<.0001), section 4.5. Chill extends tolerance." }
 
 def beltrama_schwarz_2024_tvj_nopersona : LinguisticExample :=
   { id := "beltrama_schwarz_2024_tvj_nopersona"
@@ -85,9 +79,7 @@ def beltrama_schwarz_2024_tvj_nopersona : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("persona", "noPersona"), ("task", "truthValueJudgment"), ("screenFit", "imprecise"), ("statedAmount", "200"), ("displayedAmount", "207"), ("rejectionMeasure", "wrong"), ("rejectionVsBaseline", "baseline"), ("contrastZ", "0"), ("contrastSig", "baseline")]
-    comment := "Exp 2 Truth-Value Judgment Task, critical Imprecise cell, baseline (no persona). Figures 5-6."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Exp 2 Truth-Value Judgment Task, critical Imprecise cell, baseline (no persona). Figures 5-6." }
 
 def beltrama_schwarz_2024_tvj_nerdy : LinguisticExample :=
   { id := "beltrama_schwarz_2024_tvj_nerdy"
@@ -103,9 +95,7 @@ def beltrama_schwarz_2024_tvj_nerdy : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("persona", "nerdy"), ("task", "truthValueJudgment"), ("screenFit", "imprecise"), ("statedAmount", "200"), ("displayedAmount", "207"), ("rejectionMeasure", "wrong"), ("rejectionVsBaseline", "same"), ("contrastZ", "0.15"), ("contrastSig", "null")]
-    comment := "Exp 2: WRONG rates for Nerdy do NOT differ from No.Persona (main effect z=0.15, p=.87; no Screen-Fit interaction), section 5.3. The Exp 1 exactness effect vanishes."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Exp 2: WRONG rates for Nerdy do NOT differ from No.Persona (main effect z=0.15, p=.87; no Screen-Fit interaction), section 5.3. The Exp 1 exactness effect vanishes." }
 
 def beltrama_schwarz_2024_tvj_chill : LinguisticExample :=
   { id := "beltrama_schwarz_2024_tvj_chill"
@@ -121,9 +111,7 @@ def beltrama_schwarz_2024_tvj_chill : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("persona", "chill"), ("task", "truthValueJudgment"), ("screenFit", "imprecise"), ("statedAmount", "200"), ("displayedAmount", "207"), ("rejectionMeasure", "wrong"), ("rejectionVsBaseline", "lower"), ("contrastZ", "8.43"), ("contrastSig", "significant")]
-    comment := "Exp 2: WRONG rates lower for Chill than No.Persona (z=8.43, p<.0001), section 5.3. Chill tolerance survives in the judgment task."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Exp 2: WRONG rates lower for Chill than No.Persona (z=8.43, p<.0001), section 5.3. Chill tolerance survives in the judgment task." }
 
 def all : List LinguisticExample := [beltrama_schwarz_2024_cst_nopersona, beltrama_schwarz_2024_cst_nerdy, beltrama_schwarz_2024_cst_chill, beltrama_schwarz_2024_tvj_nopersona, beltrama_schwarz_2024_tvj_nerdy, beltrama_schwarz_2024_tvj_chill]
 

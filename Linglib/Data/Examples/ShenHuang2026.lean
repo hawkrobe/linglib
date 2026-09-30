@@ -31,9 +31,7 @@ def ex3a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("dependency", "movement"), ("object", "indefinite"), ("creation", "yes")]
-    comment := "Subextraction from an indefinite object under a verb of creation, the baseline of the verb-of-creation effect."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Subextraction from an indefinite object under a verb of creation, the baseline of the verb-of-creation effect." }
 
 def ex3b : LinguisticExample :=
   { id := "shenhuang2026_ex3b"
@@ -49,9 +47,7 @@ def ex3b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("dependency", "movement"), ("object", "definite"), ("creation", "yes")]
-    comment := "Davies and Dubinsky observe no contrast with (3a); Experiment 1 finds a smaller but nonzero definite island under verbs of creation."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Davies and Dubinsky observe no contrast with (3a); Experiment 1 finds a smaller but nonzero definite island under verbs of creation." }
 
 def ex28_indefinite : LinguisticExample :=
   { id := "shenhuang2026_ex28_indefinite"
@@ -67,9 +63,7 @@ def ex28_indefinite : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("dependency", "binding"), ("object", "indefinite"), ("creation", "no")]
-    comment := "The wh-indefinite reading, the wh-phrase bound by existential closure, adapted by the paper from Li's example without the demonstrative."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The wh-indefinite reading, the wh-phrase bound by existential closure, adapted by the paper from Li's example without the demonstrative." }
 
 def ex28_definite : LinguisticExample :=
   { id := "shenhuang2026_ex28_definite"
@@ -85,9 +79,7 @@ def ex28_definite : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("dependency", "binding"), ("object", "definite"), ("creation", "no")]
-    comment := "The demonstrative blocks the wh-indefinite reading, the contrast Experiment 3 confirms."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The demonstrative blocks the wh-indefinite reading, the contrast Experiment 3 confirms." }
 
 def all : List LinguisticExample := [ex3a, ex3b, ex28_indefinite, ex28_definite]
 

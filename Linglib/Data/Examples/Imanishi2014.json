@@ -73,8 +73,7 @@
         "external argument introduced by a preposition"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "imanishi2014_s91",
@@ -142,8 +141,7 @@
         "only the internal argument inside; the agent in a relative clause"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "imanishi2014_s92",
@@ -191,8 +189,7 @@
         "a sole argument is the internal argument"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "imanishi2014_s93a",
@@ -236,8 +233,7 @@
         "S/A=ABS on ajin, O=ERG on the nominalized verb"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "imanishi2014_s93b",
@@ -277,8 +273,7 @@
         "S=ABS on ajin"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "imanishi2014_s94a",
@@ -322,8 +317,7 @@
         "embedding verb chäp 'begin'"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "imanishi2014_s99b",
@@ -371,8 +365,7 @@
         "tensed vowel of the root transitive under nominalization"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "imanishi2014_s100b",
@@ -420,8 +413,7 @@
         "tensed vowel of the root transitive under nominalization"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "imanishi2014_s102b",
@@ -473,8 +465,7 @@
         "the passive suffix -x on the derived transitive under nominalization"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "imanishi2014_s137a",
@@ -514,8 +505,7 @@
         "A=ERG, O=ABS inside the nominalized clause"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "imanishi2014_s137b",
@@ -555,8 +545,7 @@
         "S=ERG"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "imanishi2014_s138a",
@@ -600,8 +589,7 @@
         "A=ERG, O=ABS, the suffix -on supplying object Case"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "imanishi2014_s138b",
@@ -641,8 +629,7 @@
         "S=ERG"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "imanishi2014_s181",
@@ -702,8 +689,7 @@
         "S=ERG in an aspectless temporal clause"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "imanishi2014_s182",
@@ -775,8 +761,7 @@
         "double ergative: A and O both ERG"
       ]
     ],
-    "comment": "An apparent counterexample to phase head ergative Case; attributed to a second, covert phase head.",
-    "lgrConformance": ""
+    "comment": "An apparent counterexample to phase head ergative Case; attributed to a second, covert phase head."
   },
   {
     "id": "imanishi2014_t178_kaqchikel",
@@ -811,8 +796,7 @@
         "S/A=ABS, O=ERG"
       ]
     ],
-    "comment": "Summary of the nominative-accusative alignment in non-perfective clauses.",
-    "lgrConformance": ""
+    "comment": "Summary of the nominative-accusative alignment in non-perfective clauses."
   },
   {
     "id": "imanishi2014_t178_tojolabal",
@@ -847,8 +831,7 @@
         "S/A=ABS, O=ERG"
       ]
     ],
-    "comment": "Summary of the nominative-accusative alignment in non-perfective clauses.",
-    "lgrConformance": ""
+    "comment": "Summary of the nominative-accusative alignment in non-perfective clauses."
   },
   {
     "id": "imanishi2014_t178_chol",
@@ -883,8 +866,7 @@
         "S/A=ERG, O=ABS"
       ]
     ],
-    "comment": "Summary of the nominative-accusative alignment in non-perfective clauses.",
-    "lgrConformance": ""
+    "comment": "Summary of the nominative-accusative alignment in non-perfective clauses."
   },
   {
     "id": "imanishi2014_t178_qanjobal",
@@ -919,8 +901,7 @@
         "S/A=ERG, O=ABS"
       ]
     ],
-    "comment": "Summary of the nominative-accusative alignment in non-perfective clauses.",
-    "lgrConformance": ""
+    "comment": "Summary of the nominative-accusative alignment in non-perfective clauses."
   },
   {
     "id": "imanishi2014_t178_chuj",
@@ -955,8 +936,7 @@
         "S/A=ERG, O=ABS"
       ]
     ],
-    "comment": "Summary of the nominative-accusative alignment in non-perfective clauses.",
-    "lgrConformance": ""
+    "comment": "Summary of the nominative-accusative alignment in non-perfective clauses."
   },
   {
     "id": "imanishi2014_t178_ixil",
@@ -991,8 +971,7 @@
         "S/A=ERG, O=ABS"
       ]
     ],
-    "comment": "Summary of the nominative-accusative alignment in non-perfective clauses.",
-    "lgrConformance": ""
+    "comment": "Summary of the nominative-accusative alignment in non-perfective clauses."
   },
   {
     "id": "imanishi2014_t178_yucatec",
@@ -1027,7 +1006,6 @@
         "S/A=ERG, O=ABS"
       ]
     ],
-    "comment": "Summary of the nominative-accusative alignment in non-perfective clauses.",
-    "lgrConformance": ""
+    "comment": "Summary of the nominative-accusative alignment in non-perfective clauses."
   }
 ]

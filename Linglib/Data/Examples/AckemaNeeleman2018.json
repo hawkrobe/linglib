@@ -16,9 +16,7 @@
       ["phenomenon", "expletive"],
       ["person", "third"]
     ],
-    "comment": "Expletive pronouns are third person: only DIST can deliver an empty output set.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Expletive pronouns are third person: only DIST can deliver an empty output set."
   },
   {
     "id": "ackemaneeleman2018_2b",
@@ -37,9 +35,7 @@
       ["phenomenon", "expletive"],
       ["person", "third"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "ackemaneeleman2018_20a",
@@ -58,9 +54,7 @@
       ["phenomenon", "self-talk"],
       ["roles", "i and u co-incide"]
     ],
-    "comment": "The same individual bears the speaker and addressee roles; possible because the features carry no negative values.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The same individual bears the speaker and addressee roles; possible because the features carry no negative values."
   },
   {
     "id": "ackemaneeleman2018_21a",
@@ -82,9 +76,7 @@
       ["phenomenon", "self-talk"],
       ["person", "first plural"]
     ],
-    "comment": "A first person plural cannot refer to the speaker and the addressee-guise of the same individual.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A first person plural cannot refer to the speaker and the addressee-guise of the same individual."
   },
   {
     "id": "ackemaneeleman2018_24",
@@ -107,9 +99,7 @@
       ["phenomenon", "expletive"],
       ["person", "third singular"]
     ],
-    "comment": "Expletives are third person singular: plural is undefined on the empty set.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Expletives are third person singular: plural is undefined on the empty set."
   },
   {
     "id": "ackemaneeleman2018_25",
@@ -135,9 +125,7 @@
       ["phenomenon", "default agreement"],
       ["construction", "impersonal passive"]
     ],
-    "comment": "Default agreement in the absence of an agreeing argument is third person singular.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Default agreement in the absence of an agreeing argument is third person singular."
   },
   {
     "id": "ackemaneeleman2018_30",
@@ -158,8 +146,6 @@
       ["phenomenon", "expletive"],
       ["pronoun", "featureless impersonal"]
     ],
-    "comment": "The featureless pronoun refers to the whole input set, which has two obligatory members, so it cannot be a dummy.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The featureless pronoun refers to the whole input set, which has two obligatory members, so it cannot be a dummy."
   }
 ]

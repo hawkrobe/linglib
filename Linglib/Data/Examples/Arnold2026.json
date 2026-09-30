@@ -16,8 +16,7 @@
       ["antecedent", "quantified"],
       ["representation", "underspecified"]
     ],
-    "comment": "Singular they attested for centuries (Balhorn 2004; Baron 2020).",
-    "lgrConformance": ""
+    "comment": "Singular they attested for centuries (Balhorn 2004; Baron 2020)."
   },
   {
     "id": "arnold2026_lovato",
@@ -36,8 +35,7 @@
       ["pronouns", "they/them"],
       ["representation", "elaborated"]
     ],
-    "comment": "Article on Demi Lovato (Olson and Fuentes 2022).",
-    "lgrConformance": ""
+    "comment": "Article on Demi Lovato (Olson and Fuentes 2022)."
   },
   {
     "id": "arnold2026_bed",
@@ -56,8 +54,7 @@
       ["antecedent", "quantified"],
       ["representation", "underspecified"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "arnold2026_teacher",
@@ -77,8 +74,7 @@
       ["referentGender", "unknown"],
       ["representation", "underspecified"]
     ],
-    "comment": "Epicene referent.",
-    "lgrConformance": ""
+    "comment": "Epicene referent."
   },
   {
     "id": "arnold2026_clerk",
@@ -98,8 +94,7 @@
       ["referentGender", "unknown"],
       ["representation", "underspecified"]
     ],
-    "comment": "Epicene referent.",
-    "lgrConformance": ""
+    "comment": "Epicene referent."
   },
   {
     "id": "arnold2026_neighbor",
@@ -119,8 +114,7 @@
       ["referentGender", "known"],
       ["representation", "underspecified"]
     ],
-    "comment": "A known referent whose gender is not important to the story (Bjorkman 2017; Konnelly and Cowper 2020).",
-    "lgrConformance": ""
+    "comment": "A known referent whose gender is not important to the story (Bjorkman 2017; Konnelly and Cowper 2020)."
   },
   {
     "id": "arnold2026_shakespeare",
@@ -140,8 +134,7 @@
       ["referentGender", "known"],
       ["representation", "underspecified"]
     ],
-    "comment": "Shakespeare, Comedy of Errors, 1623.",
-    "lgrConformance": ""
+    "comment": "Shakespeare, Comedy of Errors, 1623."
   },
   {
     "id": "arnold2026_landlord",
@@ -161,8 +154,7 @@
       ["referentGender", "known"],
       ["representation", "underspecified"]
     ],
-    "comment": "Spoken by a landlord interviewed by John Oliver, 29 June 2020.",
-    "lgrConformance": ""
+    "comment": "Spoken by a landlord interviewed by John Oliver, 29 June 2020."
   },
   {
     "id": "arnold2026_son",
@@ -182,8 +174,7 @@
       ["referentGender", "known"],
       ["representation", "underspecified"]
     ],
-    "comment": "Phone conversation, July 2020.",
-    "lgrConformance": ""
+    "comment": "Phone conversation, July 2020."
   },
   {
     "id": "arnold2026_alex",
@@ -206,8 +197,7 @@
       ["representation", "elaborated"],
       ["ambiguity", "singular or plural"]
     ],
-    "comment": "Arnold, Mayo and Dong (2021): Alex (they/them), Will (he/him), Liz (she/her); the plural interpretation dominates, explicit pronoun introduction raises the singular one.",
-    "lgrConformance": ""
+    "comment": "Arnold, Mayo and Dong (2021): Alex (they/them), Will (he/him), Liz (she/her); the plural interpretation dominates, explicit pronoun introduction raises the singular one."
   },
   {
     "id": "arnold2026_dillon",
@@ -226,8 +216,7 @@
       ["pronouns", "they/them"],
       ["representation", "elaborated"]
     ],
-    "comment": "Wikipedia, Asia Kate Dillon, retrieved 27 May 2025: a specific person with a well-developed discourse description.",
-    "lgrConformance": ""
+    "comment": "Wikipedia, Asia Kate Dillon, retrieved 27 May 2025: a specific person with a well-developed discourse description."
   },
   {
     "id": "arnold2026_mother",
@@ -248,8 +237,7 @@
       ["representation", "elaborated"],
       ["counterexample", "true"]
     ],
-    "comment": "Konnelly and Cowper's stage-3 production; underspecified they for a specific representation would be a counterexample to the proposal.",
-    "lgrConformance": ""
+    "comment": "Konnelly and Cowper's stage-3 production; underspecified they for a specific representation would be a counterexample to the proposal."
   },
   {
     "id": "arnold2026_butler",
@@ -269,7 +257,6 @@
       ["representation", "elaborated"],
       ["pronounsIntroduced", "true"]
     ],
-    "comment": "Szalai 2024, New York Times: pronouns introduced explicitly.",
-    "lgrConformance": ""
+    "comment": "Szalai 2024, New York Times: pronouns introduced explicitly."
   }
 ]

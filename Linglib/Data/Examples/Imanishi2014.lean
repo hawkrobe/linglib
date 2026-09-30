@@ -31,9 +31,7 @@ def s89 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.3.1"), ("source", "Alexiadou 2001:76"), ("nominalization", "external argument introduced by a preposition")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s91 : LinguisticExample :=
   { id := "imanishi2014_s91"
@@ -49,9 +47,7 @@ def s91 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.3.1"), ("nominalization", "only the internal argument inside; the agent in a relative clause")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s92 : LinguisticExample :=
   { id := "imanishi2014_s92"
@@ -67,9 +63,7 @@ def s92 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.3.1"), ("nominalization", "a sole argument is the internal argument")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s93a : LinguisticExample :=
   { id := "imanishi2014_s93a"
@@ -85,9 +79,7 @@ def s93a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.3.1"), ("alignment", "S/A=ABS on ajin, O=ERG on the nominalized verb")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s93b : LinguisticExample :=
   { id := "imanishi2014_s93b"
@@ -103,9 +95,7 @@ def s93b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.3.1"), ("alignment", "S=ABS on ajin")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s94a : LinguisticExample :=
   { id := "imanishi2014_s94a"
@@ -121,9 +111,7 @@ def s94a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.3.1"), ("construction", "embedding verb chäp 'begin'")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s99b : LinguisticExample :=
   { id := "imanishi2014_s99b"
@@ -139,9 +127,7 @@ def s99b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.3.1"), ("passivization", "tensed vowel of the root transitive under nominalization")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s100b : LinguisticExample :=
   { id := "imanishi2014_s100b"
@@ -157,9 +143,7 @@ def s100b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.3.1"), ("passivization", "tensed vowel of the root transitive under nominalization")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s102b : LinguisticExample :=
   { id := "imanishi2014_s102b"
@@ -175,9 +159,7 @@ def s102b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.3.1"), ("passivization", "the passive suffix -x on the derived transitive under nominalization")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s137a : LinguisticExample :=
   { id := "imanishi2014_s137a"
@@ -193,9 +175,7 @@ def s137a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.3.3"), ("source", "Coon 2013a:11"), ("alignment", "A=ERG, O=ABS inside the nominalized clause")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s137b : LinguisticExample :=
   { id := "imanishi2014_s137b"
@@ -211,9 +191,7 @@ def s137b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.3.3"), ("source", "Coon 2013a:11"), ("alignment", "S=ERG")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s138a : LinguisticExample :=
   { id := "imanishi2014_s138a"
@@ -229,9 +207,7 @@ def s138a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.3.3"), ("source", "Mateo Pedro 2009"), ("alignment", "A=ERG, O=ABS, the suffix -on supplying object Case")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s138b : LinguisticExample :=
   { id := "imanishi2014_s138b"
@@ -247,9 +223,7 @@ def s138b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.3.3"), ("source", "Mateo Pedro 2009"), ("alignment", "S=ERG")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s181 : LinguisticExample :=
   { id := "imanishi2014_s181"
@@ -265,9 +239,7 @@ def s181 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.4.4"), ("source", "England 1983b:265"), ("alignment", "S=ERG in an aspectless temporal clause")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s182 : LinguisticExample :=
   { id := "imanishi2014_s182"
@@ -283,9 +255,7 @@ def s182 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.4.4"), ("source", "England 1983b:260"), ("alignment", "double ergative: A and O both ERG")]
-    comment := "An apparent counterexample to phase head ergative Case; attributed to a second, covert phase head."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "An apparent counterexample to phase head ergative Case; attributed to a second, covert phase head." }
 
 def t178_kaqchikel : LinguisticExample :=
   { id := "imanishi2014_t178_kaqchikel"
@@ -301,9 +271,7 @@ def t178_kaqchikel : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.4.3"), ("absolutive", "high"), ("urn", "+"), ("alignment", "S/A=ABS, O=ERG")]
-    comment := "Summary of the nominative-accusative alignment in non-perfective clauses."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Summary of the nominative-accusative alignment in non-perfective clauses." }
 
 def t178_tojolabal : LinguisticExample :=
   { id := "imanishi2014_t178_tojolabal"
@@ -319,9 +287,7 @@ def t178_tojolabal : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.4.3"), ("absolutive", "low"), ("urn", "+"), ("alignment", "S/A=ABS, O=ERG")]
-    comment := "Summary of the nominative-accusative alignment in non-perfective clauses."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Summary of the nominative-accusative alignment in non-perfective clauses." }
 
 def t178_chol : LinguisticExample :=
   { id := "imanishi2014_t178_chol"
@@ -337,9 +303,7 @@ def t178_chol : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.4.3"), ("absolutive", "low"), ("urn", "-"), ("alignment", "S/A=ERG, O=ABS")]
-    comment := "Summary of the nominative-accusative alignment in non-perfective clauses."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Summary of the nominative-accusative alignment in non-perfective clauses." }
 
 def t178_qanjobal : LinguisticExample :=
   { id := "imanishi2014_t178_qanjobal"
@@ -355,9 +319,7 @@ def t178_qanjobal : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.4.3"), ("absolutive", "high"), ("urn", "-"), ("alignment", "S/A=ERG, O=ABS")]
-    comment := "Summary of the nominative-accusative alignment in non-perfective clauses."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Summary of the nominative-accusative alignment in non-perfective clauses." }
 
 def t178_chuj : LinguisticExample :=
   { id := "imanishi2014_t178_chuj"
@@ -373,9 +335,7 @@ def t178_chuj : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.4.3"), ("absolutive", "high"), ("urn", "-"), ("alignment", "S/A=ERG, O=ABS")]
-    comment := "Summary of the nominative-accusative alignment in non-perfective clauses."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Summary of the nominative-accusative alignment in non-perfective clauses." }
 
 def t178_ixil : LinguisticExample :=
   { id := "imanishi2014_t178_ixil"
@@ -391,9 +351,7 @@ def t178_ixil : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.4.3"), ("absolutive", "low"), ("urn", "-"), ("alignment", "S/A=ERG, O=ABS")]
-    comment := "Summary of the nominative-accusative alignment in non-perfective clauses."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Summary of the nominative-accusative alignment in non-perfective clauses." }
 
 def t178_yucatec : LinguisticExample :=
   { id := "imanishi2014_t178_yucatec"
@@ -409,9 +367,7 @@ def t178_yucatec : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.4.3"), ("absolutive", "low"), ("urn", "-"), ("alignment", "S/A=ERG, O=ABS")]
-    comment := "Summary of the nominative-accusative alignment in non-perfective clauses."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Summary of the nominative-accusative alignment in non-perfective clauses." }
 
 def all : List LinguisticExample := [s89, s91, s92, s93a, s93b, s94a, s99b, s100b, s102b, s137a, s137b, s138a, s138b, s181, s182, t178_kaqchikel, t178_tojolabal, t178_chol, t178_qanjobal, t178_chuj, t178_ixil, t178_yucatec]
 

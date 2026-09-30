@@ -16,9 +16,7 @@
       ["comparison", "indirect"],
       ["entails", "(1b)"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bale2008_1b",
@@ -34,9 +32,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bale2008_2a",
@@ -55,9 +51,7 @@
       ["comparison", "direct"],
       ["entails", "none"]
     ],
-    "comment": "Does not entail (2b): true of a short, very wide Seymour whose height still exceeds his width.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Does not entail (2b): true of a short, very wide Seymour whose height still exceeds his width."
   },
   {
     "id": "bale2008_2b",
@@ -73,9 +67,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bale2008_3a",
@@ -98,9 +90,7 @@
       ["comparison", "indirect"],
       ["morpheme", "più"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bale2008_3b",
@@ -122,9 +112,7 @@
       ["comparison", "direct"],
       ["morpheme", "più"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bale2008_4a",
@@ -146,9 +134,7 @@
       ["comparison", "indirect"],
       ["morpheme", "-er"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bale2008_4b",
@@ -170,9 +156,7 @@
       ["comparison", "direct"],
       ["morpheme", "-er"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bale2008_5a",
@@ -195,9 +179,7 @@
       ["comparison", "indirect"],
       ["morpheme", "plus"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bale2008_5b",
@@ -219,9 +201,7 @@
       ["comparison", "direct"],
       ["morpheme", "plus"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bale2008_6a",
@@ -244,9 +224,7 @@
       ["comparison", "indirect"],
       ["morpheme", "mai"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bale2008_6b",
@@ -268,9 +246,7 @@
       ["comparison", "direct"],
       ["morpheme", "mai"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bale2008_7a",
@@ -288,9 +264,7 @@
     "paperFeatures": [
       ["comparison", "metalinguistic"]
     ],
-    "comment": "Implies that Seymour is tall and wide.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Implies that Seymour is tall and wide."
   },
   {
     "id": "bale2008_7b",
@@ -308,9 +282,7 @@
     "paperFeatures": [
       ["comparison", "metalinguistic"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bale2008_7c",
@@ -328,9 +300,7 @@
     "paperFeatures": [
       ["comparison", "deviation"]
     ],
-    "comment": "Implies that Seymour is tall now and was short before.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Implies that Seymour is tall now and was short before."
   },
   {
     "id": "bale2008_8a",
@@ -349,9 +319,7 @@
       ["comparison", "indirect"],
       ["affix", "-er"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bale2008_8c",
@@ -370,9 +338,7 @@
       ["comparison", "indirect"],
       ["affix", "-er"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bale2008_8d",
@@ -391,9 +357,7 @@
       ["comparison", "indirect"],
       ["affix", "-er"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bale2008_9",
@@ -411,9 +375,7 @@
     "paperFeatures": [
       ["comparison", "indirect"]
     ],
-    "comment": "Felicitous where Mary is quite stupid: no positive implication.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Felicitous where Mary is quite stupid: no positive implication."
   },
   {
     "id": "bale2008_11a",
@@ -431,9 +393,7 @@
     "paperFeatures": [
       ["comparison", "metalinguistic"]
     ],
-    "comment": "Implies that I am pretty, inconsistent with the continuation.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Implies that I am pretty, inconsistent with the continuation."
   },
   {
     "id": "bale2008_11b",
@@ -451,9 +411,7 @@
     "paperFeatures": [
       ["comparison", "indirect"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bale2008_14a",
@@ -471,9 +429,7 @@
     "paperFeatures": [
       ["comparison", "direct"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bale2008_14b",
@@ -491,9 +447,7 @@
     "paperFeatures": [
       ["comparison", "indirect"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bale2008_18a",
@@ -511,9 +465,7 @@
     "paperFeatures": [
       ["comparison", "indirect"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bale2008_18c",
@@ -531,9 +483,7 @@
     "paperFeatures": [
       ["comparison", "indirect"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bale2008_18d",
@@ -551,9 +501,7 @@
     "paperFeatures": [
       ["comparison", "indirect"]
     ],
-    "comment": "Paraphrases (18c): the modified nominals restrict the comparison classes.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Paraphrases (18c): the modified nominals restrict the comparison classes."
   },
   {
     "id": "bale2008_19a",
@@ -577,9 +525,7 @@
       ["standardScale", "intelligence"],
       ["truth", "true"]
     ],
-    "comment": "Betty is the second most beautiful of ten, Heather the fifth most intelligent.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Betty is the second most beautiful of ten, Heather the fifth most intelligent."
   },
   {
     "id": "bale2008_19b",
@@ -603,9 +549,7 @@
       ["standardScale", "beauty"],
       ["truth", "false"]
     ],
-    "comment": "Betty is the third least intelligent of ten, Evelin the fifth most beautiful.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Betty is the third least intelligent of ten, Evelin the fifth most beautiful."
   },
   {
     "id": "bale2008_22a",
@@ -623,9 +567,7 @@
     "paperFeatures": [
       ["comparison", "indirect"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bale2008_22b",
@@ -643,9 +585,7 @@
     "paperFeatures": [
       ["comparison", "indirect"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bale2008_25a",
@@ -663,9 +603,7 @@
     "paperFeatures": [
       ["measurePhrase", "subject"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bale2008_25b",
@@ -683,9 +621,7 @@
     "paperFeatures": [
       ["measurePhrase", "subject"]
     ],
-    "comment": "With plural agreement the phrase refers to actual feet.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "With plural agreement the phrase refers to actual feet."
   },
   {
     "id": "bale2008_25d",
@@ -703,9 +639,7 @@
     "paperFeatures": [
       ["measurePhrase", "subject"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bale2008_26a",
@@ -721,9 +655,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Accepted for heights reported as six feet two inches even if they differ by an eighth of an inch.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Accepted for heights reported as six feet two inches even if they differ by an eighth of an inch."
   },
   {
     "id": "bale2008_30a",
@@ -741,9 +673,7 @@
     "paperFeatures": [
       ["measurePhrase", "subject"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bale2008_31a",
@@ -767,9 +697,7 @@
       ["standardScale", "width"],
       ["truth", "true"]
     ],
-    "comment": "Seymour is five feet two inches tall and three feet wide, measurements to eighty inches.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Seymour is five feet two inches tall and three feet wide, measurements to eighty inches."
   },
   {
     "id": "bale2008_31b",
@@ -793,9 +721,7 @@
       ["standardScale", "height"],
       ["truth", "false"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bale2008_34",
@@ -813,9 +739,7 @@
     "paperFeatures": [
       ["comparison", "direct"]
     ],
-    "comment": "True whenever the measurement of his height exceeds that of his width, even for a man shorter and wider than most.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "True whenever the measurement of his height exceeds that of his width, even for a man shorter and wider than most."
   },
   {
     "id": "bale2008_35",
@@ -839,9 +763,7 @@
       ["standardScale", "width"],
       ["truth", "false"]
     ],
-    "comment": "Seymour, five feet tall and three feet wide, is the shortest of the men and as wide as the widest.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Seymour, five feet tall and three feet wide, is the shortest of the men and as wide as the widest."
   },
   {
     "id": "bale2008_37",
@@ -865,9 +787,7 @@
       ["standardScale", "width"],
       ["truth", "false"]
     ],
-    "comment": "The modified nominal restricts both comparison classes to men.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The modified nominal restricts both comparison classes to men."
   },
   {
     "id": "bale2008_38a",
@@ -883,9 +803,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "True of a Seymour five feet tall and four feet wide.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "True of a Seymour five feet tall and four feet wide."
   },
   {
     "id": "bale2008_38b",
@@ -903,9 +821,7 @@
     "paperFeatures": [
       ["comparison", "direct"]
     ],
-    "comment": "Judged false of the same Seymour without contextual priming; an indirect reading is possible but dispreferred.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Judged false of the same Seymour without contextual priming; an indirect reading is possible but dispreferred."
   },
   {
     "id": "bale2008_39",
@@ -921,9 +837,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "True of the same Seymour.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "True of the same Seymour."
   },
   {
     "id": "bale2008_40",
@@ -941,9 +855,7 @@
     "paperFeatures": [
       ["comparison", "indirect"]
     ],
-    "comment": "Not true of the same Seymour.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Not true of the same Seymour."
   },
   {
     "id": "bale2008_41a",
@@ -961,9 +873,7 @@
     "paperFeatures": [
       ["comparison", "indirect"]
     ],
-    "comment": "Awkward out of the blue: no salient comparison class.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Awkward out of the blue: no salient comparison class."
   },
   {
     "id": "bale2008_41b",
@@ -981,9 +891,7 @@
     "paperFeatures": [
       ["comparison", "direct"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bale2008_42a",
@@ -1001,9 +909,7 @@
     "paperFeatures": [
       ["comparison", "indirect"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bale2008_42b",
@@ -1021,8 +927,6 @@
     "paperFeatures": [
       ["comparison", "indirect"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   }
 ]

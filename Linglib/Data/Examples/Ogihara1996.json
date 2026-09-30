@@ -17,9 +17,7 @@
       {"name": "simultaneous (Hanako sick at saying time)", "judgment": "acceptable"},
       {"name": "shifted (Hanako sick before saying)", "judgment": "ungrammatical"}
     ],
-    "comment": "Ogihara 1996 ex (2a), Chapter 1 §1.2 p. 11. Half of the minimal pair (2a)/(2b) — the embedded PRESENT form. Together with (2b) below, motivates Ogihara's analysis: embedded tense in Japanese is absolute, so PRESENT delivers simultaneity (via attitude shift) and PAST delivers strict backward shift.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Ogihara 1996 ex (2a), Chapter 1 §1.2 p. 11. Half of the minimal pair (2a)/(2b) — the embedded PRESENT form. Together with (2b) below, motivates Ogihara's analysis: embedded tense in Japanese is absolute, so PRESENT delivers simultaneity (via attitude shift) and PAST delivers strict backward shift."
   },
   {
     "id": "ogihara1996_ex2b",
@@ -39,9 +37,7 @@
       {"name": "shifted (Hanako sick before saying)", "judgment": "acceptable"},
       {"name": "simultaneous (Hanako sick at saying time)", "judgment": "ungrammatical"}
     ],
-    "comment": "Ogihara 1996 ex (2b), Chapter 1 §1.2 p. 11. The other half of the minimal pair. With English-style SOT, the embedded past should admit a simultaneous reading; its unavailability here is Ogihara's main empirical hook.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Ogihara 1996 ex (2b), Chapter 1 §1.2 p. 11. The other half of the minimal pair. With English-style SOT, the embedded past should admit a simultaneous reading; its unavailability here is Ogihara's main empirical hook."
   },
   {
     "id": "ogihara1996_ex19d",
@@ -57,8 +53,6 @@
     "readings": [
       {"name": "Mary's reading at yesterday (definite past)", "judgment": "acceptable"}
     ],
-    "comment": "Ogihara 1996 ex (19d), Chapter 1 §1.4 p. 12. Part of the (18a-d)/(19a-d) discussion arguing the perfect can be a preterit. The adverbial-licensing argument: definite-past adverbials like `yesterday` co-occur with the perfect, showing the perfect doesn't always require an open interval up to reference time.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Ogihara 1996 ex (19d), Chapter 1 §1.4 p. 12. Part of the (18a-d)/(19a-d) discussion arguing the perfect can be a preterit. The adverbial-licensing argument: definite-past adverbials like `yesterday` co-occur with the perfect, showing the perfect doesn't always require an open interval up to reference time."
   }
 ]

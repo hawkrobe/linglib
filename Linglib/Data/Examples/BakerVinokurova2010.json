@@ -19,9 +19,7 @@
       ["verbAgreement", "yes"],
       ["subjectCase", "NOM"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bakervinokurova2010_3b",
@@ -48,9 +46,7 @@
       ["objectCase", "ACC"],
       ["objectSpecific", "yes"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bakervinokurova2010_3c",
@@ -75,9 +71,7 @@
       ["goalCase", "DAT"],
       ["objectCase", "ACC"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bakervinokurova2010_7b",
@@ -101,9 +95,7 @@
       ["objectCase", "ACC"],
       ["objectSpecific", "yes"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bakervinokurova2010_7c",
@@ -128,9 +120,7 @@
       ["goalCase", "DAT"],
       ["objectCase", "ACC"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bakervinokurova2010_8a",
@@ -155,9 +145,7 @@
       ["objectSpecific", "no"],
       ["objectAdjacent", "yes"]
     ],
-    "comment": "From Vinokurova 2005.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "From Vinokurova 2005."
   },
   {
     "id": "bakervinokurova2010_10a",
@@ -182,9 +170,7 @@
       ["objectCase", "ACC"],
       ["objectAdjacent", "no"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bakervinokurova2010_10a_bare",
@@ -209,9 +195,7 @@
       ["objectCase", "bare"],
       ["objectAdjacent", "no"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bakervinokurova2010_10b",
@@ -236,9 +220,7 @@
       ["objectCase", "bare"],
       ["objectAdjacent", "yes"]
     ],
-    "comment": "Accusative on the post-adverbial object only under contrastive focus.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Accusative on the post-adverbial object only under contrastive focus."
   },
   {
     "id": "bakervinokurova2010_11a",
@@ -265,9 +247,7 @@
       ["objectSpecific", "no"],
       ["objectAdjacent", "yes"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bakervinokurova2010_11b",
@@ -293,9 +273,7 @@
       ["objectCase", "ACC"],
       ["objectSpecific", "yes"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bakervinokurova2010_11b_bare",
@@ -321,9 +299,7 @@
       ["objectCase", "bare"],
       ["objectAdjacent", "no"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bakervinokurova2010_13",
@@ -350,9 +326,7 @@
       ["objectSpecific", "no"],
       ["objectAdjacent", "yes"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bakervinokurova2010_13_acc",
@@ -379,9 +353,7 @@
       ["objectSpecific", "no"],
       ["objectAdjacent", "yes"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bakervinokurova2010_14",
@@ -406,9 +378,7 @@
       ["objectCase", "ACC"],
       ["objectSpecific", "yes"]
     ],
-    "comment": "The object is scrambled over the subject.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The object is scrambled over the subject."
   },
   {
     "id": "bakervinokurova2010_16",
@@ -430,9 +400,7 @@
       ["verbAgreement", "yes"],
       ["subjectCase", "NOM"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bakervinokurova2010_16_dat",
@@ -454,9 +422,7 @@
       ["verbAgreement", "yes"],
       ["subjectCase", "DAT"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bakervinokurova2010_16_acc",
@@ -478,9 +444,7 @@
       ["verbAgreement", "yes"],
       ["subjectCase", "ACC"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bakervinokurova2010_17",
@@ -505,9 +469,7 @@
       ["objectCase", "bare"],
       ["objectAdjacent", "yes"]
     ],
-    "comment": "The dative asymmetrically c-commands the nominative in the base structure, by the anaphor-binding contrast in (19).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The dative asymmetrically c-commands the nominative in the base structure, by the anaphor-binding contrast in (19)."
   },
   {
     "id": "bakervinokurova2010_21a",
@@ -531,9 +493,7 @@
       ["causeeCase", "ACC"],
       ["causeeSpecific", "yes"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bakervinokurova2010_21a_dat",
@@ -557,9 +517,7 @@
       ["causeeCase", "DAT"],
       ["causeeSpecific", "yes"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bakervinokurova2010_21b",
@@ -584,9 +542,7 @@
       ["causeeCase", "DAT"],
       ["objectCase", "ACC"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bakervinokurova2010_21b_bare",
@@ -612,9 +568,7 @@
       ["objectCase", "bare"],
       ["objectAdjacent", "yes"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bakervinokurova2010_23a",
@@ -638,9 +592,7 @@
       ["objectCase", "ACC"],
       ["objectSpecific", "yes"]
     ],
-    "comment": "From Vinokurova 2005.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "From Vinokurova 2005."
   },
   {
     "id": "bakervinokurova2010_23b",
@@ -664,9 +616,7 @@
       ["subjectCase", "NOM"],
       ["subjectAdjacent", "yes"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bakervinokurova2010_23b_acc",
@@ -689,9 +639,7 @@
       ["unaccusative", "yes"],
       ["subjectCase", "ACC"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bakervinokurova2010_24a",
@@ -714,9 +662,7 @@
       ["objectCase", "ACC"],
       ["objectSpecific", "yes"]
     ],
-    "comment": "From Vinokurova 2005.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "From Vinokurova 2005."
   },
   {
     "id": "bakervinokurova2010_24a_nom",
@@ -739,9 +685,7 @@
       ["objectCase", "NOM"],
       ["objectSpecific", "yes"]
     ],
-    "comment": "From Vinokurova 2005.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "From Vinokurova 2005."
   },
   {
     "id": "bakervinokurova2010_24b",
@@ -764,9 +708,7 @@
       ["objectCase", "ACC"],
       ["objectSpecific", "yes"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bakervinokurova2010_25a",
@@ -792,9 +734,7 @@
       ["objectSpecific", "yes"],
       ["objectAdjacent", "no"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bakervinokurova2010_25b",
@@ -820,9 +760,7 @@
       ["objectSpecific", "yes"],
       ["objectAdjacent", "no"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bakervinokurova2010_27",
@@ -847,9 +785,7 @@
       ["objectCase", "ACC"],
       ["objectSpecific", "yes"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bakervinokurova2010_27_nom",
@@ -873,9 +809,7 @@
       ["objectCase", "NOM"],
       ["objectSpecific", "yes"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bakervinokurova2010_27_goalnom",
@@ -900,9 +834,7 @@
       ["objectSpecific", "no"],
       ["objectAdjacent", "yes"]
     ],
-    "comment": "Marked ?* in the text; generally rejected, marginally accepted by some permissive speakers depending on the verb (fn. 11).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Marked ?* in the text; generally rejected, marginally accepted by some permissive speakers depending on the verb (fn. 11)."
   },
   {
     "id": "bakervinokurova2010_29a",
@@ -926,9 +858,7 @@
       ["objectCase", "ACC"],
       ["objectSpecific", "yes"]
     ],
-    "comment": "Features describe the bracketed agentive nominalization, not the matrix clause.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Features describe the bracketed agentive nominalization, not the matrix clause."
   },
   {
     "id": "bakervinokurova2010_29b",
@@ -952,9 +882,7 @@
       ["objectCase", "ACC"],
       ["objectSpecific", "yes"]
     ],
-    "comment": "Features describe the bracketed agentive nominalization, not the matrix clause.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Features describe the bracketed agentive nominalization, not the matrix clause."
   },
   {
     "id": "bakervinokurova2010_33a_acc",
@@ -978,9 +906,7 @@
       ["unaccusative", "yes"],
       ["subjectCase", "ACC"]
     ],
-    "comment": "Features describe the event nominalization, not the matrix clause; the optional possessive suffix of the acceptable form is omitted.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Features describe the event nominalization, not the matrix clause; the optional possessive suffix of the acceptable form is omitted."
   },
   {
     "id": "bakervinokurova2010_34",
@@ -1005,9 +931,7 @@
       ["objectSpecific", "no"],
       ["objectAdjacent", "yes"]
     ],
-    "comment": "Features describe the bracketed agentive nominalization, not the matrix clause.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Features describe the bracketed agentive nominalization, not the matrix clause."
   },
   {
     "id": "bakervinokurova2010_35",
@@ -1033,9 +957,7 @@
       ["objectSpecific", "no"],
       ["objectAdjacent", "yes"]
     ],
-    "comment": "Features describe the agentive nominalization, not the matrix clause.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Features describe the agentive nominalization, not the matrix clause."
   },
   {
     "id": "bakervinokurova2010_37a",
@@ -1059,9 +981,7 @@
       ["subjectCase", "NOM"],
       ["raisedCase", "ACC"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bakervinokurova2010_37b",
@@ -1085,9 +1005,7 @@
       ["subjectCase", "NOM"],
       ["raisedCase", "ACC"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bakervinokurova2010_39a",
@@ -1111,9 +1029,7 @@
       ["subjectCase", "NOM"],
       ["raisedCase", "ACC"]
     ],
-    "comment": "Unaccusative matrix verb. From Vinokurova 2005.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Unaccusative matrix verb. From Vinokurova 2005."
   },
   {
     "id": "bakervinokurova2010_39b",
@@ -1137,9 +1053,7 @@
       ["subjectCase", "NOM"],
       ["raisedCase", "ACC"]
     ],
-    "comment": "Unaccusative matrix verb.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Unaccusative matrix verb."
   },
   {
     "id": "bakervinokurova2010_40",
@@ -1164,9 +1078,7 @@
       ["subjectCase", "NOM"],
       ["raisedCase", "ACC"]
     ],
-    "comment": "Passive matrix verb with no syntactically present agent.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Passive matrix verb with no syntactically present agent."
   },
   {
     "id": "bakervinokurova2010_42a",
@@ -1190,9 +1102,7 @@
       ["verbAgreement", "yes"],
       ["raisedCase", "NOM"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bakervinokurova2010_42a_acc",
@@ -1216,9 +1126,7 @@
       ["verbAgreement", "yes"],
       ["raisedCase", "ACC"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bakervinokurova2010_42b",
@@ -1241,9 +1149,7 @@
       ["verbAgreement", "yes"],
       ["raisedCase", "NOM"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bakervinokurova2010_42b_acc",
@@ -1266,9 +1172,7 @@
       ["verbAgreement", "yes"],
       ["raisedCase", "ACC"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bakervinokurova2010_43",
@@ -1293,9 +1197,7 @@
       ["subjectCase", "NOM"],
       ["goalCase", "ACC"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bakervinokurova2010_44",
@@ -1321,9 +1223,7 @@
       ["goalCase", "DAT"],
       ["raisedCase", "ACC"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bakervinokurova2010_44_acc",
@@ -1349,9 +1249,7 @@
       ["goalCase", "ACC"],
       ["raisedCase", "ACC"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bakervinokurova2010_50b",
@@ -1375,9 +1273,7 @@
       ["subjectCase", "NOM"],
       ["pObjectCase", "ACC"]
     ],
-    "comment": "Accusative on the object of the postposition is optional.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Accusative on the object of the postposition is optional."
   },
   {
     "id": "bakervinokurova2010_51a_acc",
@@ -1399,9 +1295,7 @@
       ["verbAgreement", "no"],
       ["pObjectCase", "ACC"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bakervinokurova2010_54b",
@@ -1427,9 +1321,7 @@
       ["objectSpecific", "yes"],
       ["objectAdjacent", "no"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bakervinokurova2010_56a",
@@ -1455,9 +1347,7 @@
       ["objectSpecific", "no"],
       ["objectAdjacent", "no"]
     ],
-    "comment": "The dative on the goal is lexical; the goal phrase is not a case competitor.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The dative on the goal is lexical; the goal phrase is not a case competitor."
   },
   {
     "id": "bakervinokurova2010_56b",
@@ -1482,9 +1372,7 @@
       ["objectSpecific", "no"],
       ["objectAdjacent", "no"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bakervinokurova2010_57",
@@ -1510,9 +1398,7 @@
       ["objectSpecific", "no"],
       ["objectAdjacent", "yes"]
     ],
-    "comment": "The dative on the goal is lexical; the goal phrase is not a case competitor.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The dative on the goal is lexical; the goal phrase is not a case competitor."
   },
   {
     "id": "bakervinokurova2010_61a",
@@ -1538,9 +1424,7 @@
       ["subjectSpecific", "no"],
       ["subjectAdjacent", "yes"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bakervinokurova2010_62a",
@@ -1566,9 +1450,7 @@
       ["objectSpecific", "no"],
       ["objectAdjacent", "yes"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bakervinokurova2010_62c",
@@ -1593,9 +1475,7 @@
       ["subjectSpecific", "no"],
       ["subjectAdjacent", "yes"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bakervinokurova2010_62d",
@@ -1622,9 +1502,7 @@
       ["subjectSpecific", "yes"],
       ["subjectAdjacent", "no"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bakervinokurova2010_63a",
@@ -1650,9 +1528,7 @@
       ["objectSpecific", "no"],
       ["objectAdjacent", "yes"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bakervinokurova2010_63c",
@@ -1675,9 +1551,7 @@
       ["headNounAgreement", "yes"],
       ["subjectCase", "GEN"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bakervinokurova2010_63d",
@@ -1704,9 +1578,7 @@
       ["subjectSpecific", "yes"],
       ["subjectAdjacent", "no"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bakervinokurova2010_64",
@@ -1732,9 +1604,7 @@
       ["possessorCase", "GEN"],
       ["possesseeAgreement", "yes"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bakervinokurova2010_65",
@@ -1759,9 +1629,7 @@
       ["objectCase", "ACC"],
       ["agreesWith", "none"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bakervinokurova2010_65_pl",
@@ -1786,9 +1654,7 @@
       ["objectCase", "ACC"],
       ["agreesWith", "object"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bakervinokurova2010_66",
@@ -1814,9 +1680,7 @@
       ["objectSpecific", "yes"],
       ["agreesWith", "object"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bakervinokurova2010_66_sg",
@@ -1841,9 +1705,7 @@
       ["objectSpecific", "yes"],
       ["agreesWith", "none"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bakervinokurova2010_68a",
@@ -1866,9 +1728,7 @@
       ["headNounAgreement", "no"],
       ["subjectCase", "NOM"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bakervinokurova2010_68b",
@@ -1891,9 +1751,7 @@
       ["headNounAgreement", "no"],
       ["subjectCase", "NOM"]
     ],
-    "comment": "The head noun's third-person suffix agrees with the clause, not with its subject.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The head noun's third-person suffix agrees with the clause, not with its subject."
   },
   {
     "id": "bakervinokurova2010_68c",
@@ -1916,9 +1774,7 @@
       ["headNounAgreement", "yes"],
       ["subjectCase", "GEN"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bakervinokurova2010_70",
@@ -1941,9 +1797,7 @@
       ["headNounAgreement", "no"],
       ["subjectCase", "bare"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bakervinokurova2010_71b",
@@ -1965,9 +1819,7 @@
       ["possessorCase", "GEN"],
       ["possesseeAgreement", "no"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bakervinokurova2010_71c",
@@ -1989,9 +1841,7 @@
       ["possessorCase", "GEN"],
       ["possesseeAgreement", "yes"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bakervinokurova2010_72a",
@@ -2015,9 +1865,7 @@
       ["objectCase", "ACC"],
       ["objectSpecific", "yes"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bakervinokurova2010_72b",
@@ -2042,9 +1890,7 @@
       ["objectCase", "ACC"],
       ["objectSpecific", "yes"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bakervinokurova2010_72c",
@@ -2070,9 +1916,7 @@
       ["objectCase", "ACC"],
       ["objectSpecific", "yes"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bakervinokurova2010_75a",
@@ -2098,9 +1942,7 @@
       ["objectAdjacent", "yes"],
       ["agreesWith", "object"]
     ],
-    "comment": "Third-person singular agreement is unmarked on the predicate.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Third-person singular agreement is unmarked on the predicate."
   },
   {
     "id": "bakervinokurova2010_75a_pl",
@@ -2126,9 +1968,7 @@
       ["objectAdjacent", "yes"],
       ["agreesWith", "subject"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bakervinokurova2010_75b",
@@ -2151,9 +1991,7 @@
       ["objectCase", "ACC"],
       ["agreesWith", "none"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bakervinokurova2010_75b_pl",
@@ -2176,8 +2014,6 @@
       ["objectCase", "ACC"],
       ["agreesWith", "object"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   }
 ]

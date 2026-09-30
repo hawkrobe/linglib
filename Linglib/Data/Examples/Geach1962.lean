@@ -31,9 +31,7 @@ def donkey_classic : LinguisticExample :=
     alternatives := []
     readings := [("strong/universal", .acceptable), ("weak/existential", .acceptable), ("bound", .acceptable)]
     paperFeatures := [("donkey_configuration", "relative_clause"), ("preferred_reading", "strong")]
-    comment := "Migrated from Phenomena/Anaphora/DonkeyAnaphora.lean geachDonkey. The original donkey sentence: 'a donkey' sits inside a relative clause and does not c-command 'it', yet binds it. The strong (every donkey they own) reading is preferred out of the blue; the weak (some donkey they own) reading is less salient."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Migrated from Phenomena/Anaphora/DonkeyAnaphora.lean geachDonkey. The original donkey sentence: 'a donkey' sits inside a relative clause and does not c-command 'it', yet binds it. The strong (every donkey they own) reading is preferred out of the blue; the weak (some donkey they own) reading is less salient." }
 
 def all : List LinguisticExample := [donkey_classic]
 

@@ -31,9 +31,7 @@ def tr_001a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("tam", "DI"), ("ET_ST", "ET < ST")]
-    comment := "baseline DI"
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "baseline DI" }
 
 def tr_001b : LinguisticExample :=
   { id := "tr_001b"
@@ -49,9 +47,7 @@ def tr_001b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("tam", "MIS"), ("ET_ST", "ET < ST"), ("EAT_ET", "ET < EAT")]
-    comment := "baseline MIS"
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "baseline MIS" }
 
 def tr_002 : LinguisticExample :=
   { id := "tr_002"
@@ -70,9 +66,7 @@ Now you say about that event:"
     alternatives := []
     readings := []
     paperFeatures := [("tam", "DI"), ("ET_ST", "ET < ST"), ("EAT_ET", "ET < EAT"), ("evidence_type", "indirect")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "" }
 
 def tr_003 : LinguisticExample :=
   { id := "tr_003"
@@ -90,9 +84,7 @@ book. Today, when someone asks you what Maria does, you say:"
     alternatives := []
     readings := []
     paperFeatures := [("tam", "MIS"), ("EAT_ET", "ET < EAT"), ("evidence_type", "indirect")]
-    comment := "ST < EAT, Abusch upper limit constraint"
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "ST < EAT, Abusch upper limit constraint" }
 
 def tr_004a : LinguisticExample :=
   { id := "tr_004a"
@@ -109,9 +101,7 @@ a friend of yours:"
     alternatives := []
     readings := []
     paperFeatures := [("tam", "DI"), ("ET_ST", "ST < ET"), ("EAT_ET", "EAT < ET"), ("evidence_type", "indirect"), ("evidential_context", "reportative")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "" }
 
 def tr_004b : LinguisticExample :=
   { id := "tr_004b"
@@ -128,9 +118,7 @@ friend:"
     alternatives := []
     readings := []
     paperFeatures := [("tam", "MIS"), ("ET_ST", "ST < ET"), ("EAT_ET", "EAT < ET"), ("evidence_type", "indirect"), ("evidential_context", "inferential")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "" }
 
 def tr_005 : LinguisticExample :=
   { id := "tr_005"
@@ -147,9 +135,7 @@ cook for 20 more minutes. However, when you taste the dish, you realize that it 
     alternatives := []
     readings := []
     paperFeatures := [("tam", "MIS"), ("ET_ST", "ET < ST"), ("EAT_ET", "ET < EAT"), ("evidence_type", "direct"), ("evidential_context", "inferential")]
-    comment := "Smirnova takes this to be ET = EAT = ST"
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Smirnova takes this to be ET = EAT = ST" }
 
 def tr_006a : LinguisticExample :=
   { id := "tr_006a"
@@ -167,9 +153,7 @@ as you watch and stir it. You say:"
     alternatives := []
     readings := []
     paperFeatures := [("tam", "MIS"), ("ET_ST", "ET = ST"), ("EAT_ET", "ET = EAT"), ("evidence_type", "direct")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "" }
 
 def tr_006b : LinguisticExample :=
   { id := "tr_006b"
@@ -187,9 +171,7 @@ The last time you checked, it was not done yet, but now, to your surprise, it is
     alternatives := []
     readings := []
     paperFeatures := [("tam", "MIS"), ("ET_ST", "ET < ST"), ("EAT_ET", "ET < EAT"), ("evidence_type", "direct"), ("evidential_context", "inferential")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "" }
 
 def tr_007a : LinguisticExample :=
   { id := "tr_007a"
@@ -205,9 +187,7 @@ def tr_007a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("tam", "DI"), ("ET_ST", "ET < ST")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "" }
 
 def tr_007b : LinguisticExample :=
   { id := "tr_007b"
@@ -223,9 +203,7 @@ def tr_007b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("tam", "DI"), ("ET_ST", "ET < ST")]
-    comment := "Outer negation is not compatible with DI."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Outer negation is not compatible with DI." }
 
 def tr_008a : LinguisticExample :=
   { id := "tr_008a"
@@ -243,9 +221,7 @@ on the match:"
     alternatives := []
     readings := []
     paperFeatures := [("tam", "DI"), ("ET_ST", "ET < ST"), ("EAT_ET", "ET = EAT"), ("evidence_type", "indirect")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "" }
 
 def tr_008b : LinguisticExample :=
   { id := "tr_008b"
@@ -263,9 +239,7 @@ on the match:"
     alternatives := []
     readings := []
     paperFeatures := [("tam", "MIS"), ("ET_ST", "ET < ST"), ("EAT_ET", "ET < EAT"), ("evidence_type", "indirect")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "" }
 
 def tr_008c : LinguisticExample :=
   { id := "tr_008c"
@@ -282,9 +256,7 @@ a later break. The next day, you say:"
     alternatives := []
     readings := []
     paperFeatures := [("tam", "MIS"), ("ET_ST", "ET < ST"), ("EAT_ET", "ET < EAT"), ("evidence_type", "indirect"), ("evidential_context", "reportative")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "" }
 
 def tr_009a : LinguisticExample :=
   { id := "tr_009a"
@@ -300,9 +272,7 @@ def tr_009a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("tam", "DI, MIS")]
-    comment := "DI + MIS is not a licensed form"
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "DI + MIS is not a licensed form" }
 
 def tr_009b : LinguisticExample :=
   { id := "tr_009b"
@@ -318,9 +288,7 @@ def tr_009b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("tam", "DI, MIS")]
-    comment := "MS + DI is licensed"
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "MS + DI is licensed" }
 
 def all : List LinguisticExample := [tr_001a, tr_001b, tr_002, tr_003, tr_004a, tr_004b, tr_005, tr_006a, tr_006b, tr_007a, tr_007b, tr_008a, tr_008b, tr_008c, tr_009a, tr_009b]
 

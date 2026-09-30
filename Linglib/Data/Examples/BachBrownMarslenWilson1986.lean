@@ -31,9 +31,7 @@ def ex_1 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("dependency", "crossed"), ("verb_cluster_size", "2")]
-    comment := "Word-by-word order: The men have Hans the horses teach feed."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Word-by-word order: The men have Hans the horses teach feed." }
 
 def ex_2 : LinguisticExample :=
   { id := "bachbrownmarslenwilson1986_2"
@@ -49,9 +47,7 @@ def ex_2 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("dependency", "nested"), ("verb_cluster_size", "2")]
-    comment := "Word-by-word order: The men have Hans the horses feed teach."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Word-by-word order: The men have Hans the horses feed teach." }
 
 def ex_3 : LinguisticExample :=
   { id := "bachbrownmarslenwilson1986_3"
@@ -67,9 +63,7 @@ def ex_3 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("dependency", "right-branching"), ("verb_cluster_size", "2")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_4 : LinguisticExample :=
   { id := "bachbrownmarslenwilson1986_4"
@@ -85,9 +79,7 @@ def ex_4 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("dependency", "crossed"), ("verb_cluster_size", "3")]
-    comment := "Rejected outright by native speakers of Dutch as unacceptable."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Rejected outright by native speakers of Dutch as unacceptable." }
 
 def ex_5 : LinguisticExample :=
   { id := "bachbrownmarslenwilson1986_5"
@@ -103,9 +95,7 @@ def ex_5 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("dependency", "nested"), ("verb_cluster_size", "3")]
-    comment := "Rejected outright by native speakers of German as unacceptable."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Rejected outright by native speakers of German as unacceptable." }
 
 def ex_6 : LinguisticExample :=
   { id := "bachbrownmarslenwilson1986_6"
@@ -121,9 +111,7 @@ def ex_6 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("dependency", "right-branching"), ("verb_cluster_size", "3")]
-    comment := "Only marginally more complex than (3) to a speaker of English; readily comprehensible."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Only marginally more complex than (3) to a speaker of English; readily comprehensible." }
 
 def ex_7 : LinguisticExample :=
   { id := "bachbrownmarslenwilson1986_7"
@@ -139,9 +127,7 @@ def ex_7 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("dependency", "crossed"), ("verb_cluster_size", "4")]
-    comment := "Third level of embedding; clearly not normally acceptable."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Third level of embedding; clearly not normally acceptable." }
 
 def ex_8 : LinguisticExample :=
   { id := "bachbrownmarslenwilson1986_8"
@@ -157,9 +143,7 @@ def ex_8 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("dependency", "nested"), ("verb_cluster_size", "4")]
-    comment := "Third level of embedding; clearly not normally acceptable."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Third level of embedding; clearly not normally acceptable." }
 
 def ex_9 : LinguisticExample :=
   { id := "bachbrownmarslenwilson1986_9"
@@ -175,9 +159,7 @@ def ex_9 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("dependency", "right-branching"), ("verb_cluster_size", "4")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def level1_nl : LinguisticExample :=
   { id := "bachbrownmarslenwilson1986_level1_nl"
@@ -193,9 +175,7 @@ def level1_nl : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("sentence_type", "test"), ("embedding_level", "1")]
-    comment := "Sample test-set item. Mean comprehensibility rating 1.14 (1 = easy, 9 = hard)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Sample test-set item. Mean comprehensibility rating 1.14 (1 = easy, 9 = hard)." }
 
 def level1_de : LinguisticExample :=
   { id := "bachbrownmarslenwilson1986_level1_de"
@@ -211,9 +191,7 @@ def level1_de : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("sentence_type", "test"), ("embedding_level", "1")]
-    comment := "Sample test-set item."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Sample test-set item." }
 
 def level2_nl : LinguisticExample :=
   { id := "bachbrownmarslenwilson1986_level2_nl"
@@ -229,9 +207,7 @@ def level2_nl : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("sentence_type", "test"), ("embedding_level", "2"), ("dependency", "crossed")]
-    comment := "One level of embedding, two-verb cluster helpen-opruimen in crossed order."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "One level of embedding, two-verb cluster helpen-opruimen in crossed order." }
 
 def level2_de : LinguisticExample :=
   { id := "bachbrownmarslenwilson1986_level2_de"
@@ -247,9 +223,7 @@ def level2_de : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("sentence_type", "test"), ("embedding_level", "2"), ("dependency", "nested")]
-    comment := "Infinitive version; the participle version ends in geholfen."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Infinitive version; the participle version ends in geholfen." }
 
 def level3_nl : LinguisticExample :=
   { id := "bachbrownmarslenwilson1986_level3_nl"
@@ -265,9 +239,7 @@ def level3_nl : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("sentence_type", "test"), ("embedding_level", "3"), ("dependency", "crossed")]
-    comment := "Two levels of embedding, three-verb cluster laten-helpen-opruimen in crossed order."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Two levels of embedding, three-verb cluster laten-helpen-opruimen in crossed order." }
 
 def level3_de : LinguisticExample :=
   { id := "bachbrownmarslenwilson1986_level3_de"
@@ -283,9 +255,7 @@ def level3_de : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("sentence_type", "test"), ("embedding_level", "3"), ("dependency", "nested")]
-    comment := "Infinitive version; lassen appears only in the infinitive."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Infinitive version; lassen appears only in the infinitive." }
 
 def level4_nl : LinguisticExample :=
   { id := "bachbrownmarslenwilson1986_level4_nl"
@@ -301,9 +271,7 @@ def level4_nl : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("sentence_type", "test"), ("embedding_level", "4"), ("dependency", "crossed")]
-    comment := "Third level of embedding; separate nine-sentence set, mean rating 7.66."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Third level of embedding; separate nine-sentence set, mean rating 7.66." }
 
 def level4_de : LinguisticExample :=
   { id := "bachbrownmarslenwilson1986_level4_de"
@@ -319,9 +287,7 @@ def level4_de : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("sentence_type", "test"), ("embedding_level", "4"), ("dependency", "nested")]
-    comment := "Third level of embedding; mean rating 8.26 (infinitive version)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Third level of embedding; mean rating 8.26 (infinitive version)." }
 
 def para2_nl : LinguisticExample :=
   { id := "bachbrownmarslenwilson1986_para2_nl"
@@ -337,9 +303,7 @@ def para2_nl : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("sentence_type", "paraphrase"), ("embedding_level", "2"), ("dependency", "right-branching")]
-    comment := "Same propositions as the Level 2 test sentence, right-branching structure."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Same propositions as the Level 2 test sentence, right-branching structure." }
 
 def para2_de : LinguisticExample :=
   { id := "bachbrownmarslenwilson1986_para2_de"
@@ -355,9 +319,7 @@ def para2_de : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("sentence_type", "paraphrase"), ("embedding_level", "2"), ("dependency", "right-branching")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def para3_de : LinguisticExample :=
   { id := "bachbrownmarslenwilson1986_para3_de"
@@ -373,9 +335,7 @@ def para3_de : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("sentence_type", "paraphrase"), ("embedding_level", "3"), ("dependency", "right-branching")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_10 : LinguisticExample :=
   { id := "bachbrownmarslenwilson1986_10"
@@ -391,9 +351,7 @@ def ex_10 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("dependency", "crossed"), ("verb_cluster_size", "3")]
-    comment := "Interpretation (12): P(let (H, (see (the children, (milk (A, the cows))))))."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Interpretation (12): P(let (H, (see (the children, (milk (A, the cows))))))." }
 
 def ex_11 : LinguisticExample :=
   { id := "bachbrownmarslenwilson1986_11"
@@ -409,9 +367,7 @@ def ex_11 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("dependency", "nested"), ("verb_cluster_size", "3")]
-    comment := "Same interpretation (12) as the Dutch (10)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Same interpretation (12) as the Dutch (10)." }
 
 def ex_13 : LinguisticExample :=
   { id := "bachbrownmarslenwilson1986_13"
@@ -427,9 +383,7 @@ def ex_13 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("dependency", "crossed"), ("construction", "long-distance filler-gap")]
-    comment := "Crossing long-distance dependencies; English listeners react markedly against these."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Crossing long-distance dependencies; English listeners react markedly against these." }
 
 def ex_14 : LinguisticExample :=
   { id := "bachbrownmarslenwilson1986_14"
@@ -445,9 +399,7 @@ def ex_14 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("dependency", "nested"), ("construction", "long-distance filler-gap")]
-    comment := "Nested long-distance dependencies, contrasting with the crossed (13)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Nested long-distance dependencies, contrasting with the crossed (13)." }
 
 def filler1_de : LinguisticExample :=
   { id := "bachbrownmarslenwilson1986_filler1_de"
@@ -463,9 +415,7 @@ def filler1_de : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("sentence_type", "filler"), ("embedding_level", "1")]
-    comment := "Fillers match the test levels in numbers of nouns and verbs but not in structure."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Fillers match the test levels in numbers of nouns and verbs but not in structure." }
 
 def all : List LinguisticExample := [ex_1, ex_2, ex_3, ex_4, ex_5, ex_6, ex_7, ex_8, ex_9, level1_nl, level1_de, level2_nl, level2_de, level3_nl, level3_de, level4_nl, level4_de, para2_nl, para2_de, para3_de, ex_10, ex_11, ex_13, ex_14, filler1_de]
 

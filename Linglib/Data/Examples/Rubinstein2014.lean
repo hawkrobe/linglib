@@ -31,9 +31,7 @@ def nr_should : LinguisticExample :=
     alternatives := []
     readings := [("lowerNeg", .acceptable)]
     paperFeatures := [("modal", "should"), ("category", "modalVerb"), ("diagnostic", "negRaising")]
-    comment := "Horn (1978, p. 198) ex. (31a): 'I don't think you should leave' is paraphrasable as 'I think you should stay' — the lower-negation (THINK > NOT > should) reading is available for weak necessity should."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Horn (1978, p. 198) ex. (31a): 'I don't think you should leave' is paraphrasable as 'I think you should stay' — the lower-negation (THINK > NOT > should) reading is available for weak necessity should." }
 
 def nr_ought : LinguisticExample :=
   { id := "rubinstein2014_nr_ought"
@@ -49,9 +47,7 @@ def nr_ought : LinguisticExample :=
     alternatives := []
     readings := [("lowerNeg", .acceptable)]
     paperFeatures := [("modal", "ought"), ("category", "modalVerb"), ("diagnostic", "negRaising")]
-    comment := "Horn (1978, p. 198) ex. (31a): weak necessity 'ought to' admits the lower-negation reading 'I think you ought to stay'."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Horn (1978, p. 198) ex. (31a): weak necessity 'ought to' admits the lower-negation reading 'I think you ought to stay'." }
 
 def nr_better : LinguisticExample :=
   { id := "rubinstein2014_nr_better"
@@ -67,9 +63,7 @@ def nr_better : LinguisticExample :=
     alternatives := []
     readings := [("lowerNeg", .acceptable)]
     paperFeatures := [("modal", "better"), ("category", "evaluativeComparative"), ("diagnostic", "negRaising")]
-    comment := "Horn (1978, p. 198) ex. (31a): the comparative evaluative ''d better' neg-raises, paraphrasable as 'I think you'd better stay'."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Horn (1978, p. 198) ex. (31a): the comparative evaluative ''d better' neg-raises, paraphrasable as 'I think you'd better stay'." }
 
 def nr_good : LinguisticExample :=
   { id := "rubinstein2014_nr_good"
@@ -85,9 +79,7 @@ def nr_good : LinguisticExample :=
     alternatives := []
     readings := [("lowerNeg", .acceptable)]
     paperFeatures := [("modal", "good"), ("category", "evaluativeComparative"), ("diagnostic", "negRaising")]
-    comment := "Horn (1978, p. 211) ex. (30): 'It wouldn't be good for you to cheat' is read as 'It would be good for you not to cheat' — modal 'good' neg-raises."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Horn (1978, p. 211) ex. (30): 'It wouldn't be good for you to cheat' is read as 'It would be good for you not to cheat' — modal 'good' neg-raises." }
 
 def nr_must : LinguisticExample :=
   { id := "rubinstein2014_nr_must"
@@ -103,9 +95,7 @@ def nr_must : LinguisticExample :=
     alternatives := []
     readings := [("lowerNeg", .unacceptable)]
     paperFeatures := [("modal", "must"), ("category", "modalVerb"), ("diagnostic", "negRaising")]
-    comment := "Horn (1978, p. 198) ex. (31b): strong necessity 'must' does NOT support the lower-negation reading — 'I don't think you must leave' is not equivalent to 'I think you must stay'."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Horn (1978, p. 198) ex. (31b): strong necessity 'must' does NOT support the lower-negation reading — 'I don't think you must leave' is not equivalent to 'I think you must stay'." }
 
 def nr_haveTo : LinguisticExample :=
   { id := "rubinstein2014_nr_haveTo"
@@ -121,9 +111,7 @@ def nr_haveTo : LinguisticExample :=
     alternatives := []
     readings := [("lowerNeg", .unacceptable)]
     paperFeatures := [("modal", "have to"), ("category", "modalVerb"), ("diagnostic", "negRaising")]
-    comment := "Horn (1978, p. 198) ex. (31b): strong necessity 'have to' lacks the lower-negation reading; negation can only be interpreted in the matrix clause."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Horn (1978, p. 198) ex. (31b): strong necessity 'have to' lacks the lower-negation reading; negation can only be interpreted in the matrix clause." }
 
 def nr_adif : LinguisticExample :=
   { id := "rubinstein2014_nr_adif"
@@ -139,9 +127,7 @@ def nr_adif : LinguisticExample :=
     alternatives := []
     readings := [("lowerNeg", .acceptable)]
     paperFeatures := [("modal", "adif"), ("category", "evaluativeComparative"), ("diagnostic", "negRaising")]
-    comment := "Rubinstein (2014) ex. (33): 'adif 'preferable' shows the neg-raising (cyclicity) reading in Hebrew — negation interpreted narrowly under the evaluative comparative (THINK > PREFERABLE > NOT)."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Rubinstein (2014) ex. (33): 'adif 'preferable' shows the neg-raising (cyclicity) reading in Hebrew — negation interpreted narrowly under the evaluative comparative (THINK > PREFERABLE > NOT)." }
 
 def ought_lexical : LinguisticExample :=
   { id := "rubinstein2014_ought_lexical"
@@ -157,9 +143,7 @@ def ought_lexical : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("modal", "ought"), ("category", "modalVerb"), ("strategy", "lexical"), ("diagnostic", "test1")]
-    comment := "Rubinstein (2014) ex. (8a), 'Lexical WN': English dedicates a lexical item (ought/should) to weak necessity. Passes Test 1 — felicitous because weak necessity is strictly weaker than have-to."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Rubinstein (2014) ex. (8a), 'Lexical WN': English dedicates a lexical item (ought/should) to weak necessity. Passes Test 1 — felicitous because weak necessity is strictly weaker than have-to." }
 
 def compositional_deberia : LinguisticExample :=
   { id := "rubinstein2014_compositional_deberia"
@@ -175,9 +159,7 @@ def compositional_deberia : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("modal", "deberia"), ("category", "compositional"), ("strategy", "compositional"), ("diagnostic", "test1")]
-    comment := "Rubinstein (2014) ex. (8b), 'Compositional WN' (von Fintel & Iatridou 2008, p. 122): Spanish builds weak necessity from a strong necessity modal (deber) plus the conditional morphology characteristic of counterfactual consequents."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Rubinstein (2014) ex. (8b), 'Compositional WN' (von Fintel & Iatridou 2008, p. 122): Spanish builds weak necessity from a strong necessity modal (deber) plus the conditional morphology characteristic of counterfactual consequents." }
 
 def test1_carix : LinguisticExample :=
   { id := "rubinstein2014_test1_carix"
@@ -193,9 +175,7 @@ def test1_carix : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("modal", "carix"), ("category", "modalVerb"), ("diagnostic", "test1")]
-    comment := "Rubinstein (2014) ex. (16a): substituting carix 'need' for ought yields a contradiction in Test 1 — carix aligns with strong necessity (xayav 'must'), so 'needs to but doesn't have to' is infelicitous."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Rubinstein (2014) ex. (16a): substituting carix 'need' for ought yields a contradiction in Test 1 — carix aligns with strong necessity (xayav 'must'), so 'needs to but doesn't have to' is infelicitous." }
 
 def test2_carix : LinguisticExample :=
   { id := "rubinstein2014_test2_carix"
@@ -211,9 +191,7 @@ def test2_carix : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("modal", "carix"), ("category", "modalVerb"), ("diagnostic", "test2")]
-    comment := "Rubinstein (2014) ex. (19): 'Test 2 with an exclusive' — carix 'need' does not set up a felicitous scalar contrast against xayav 'must', confirming it is not a weak necessity modal."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Rubinstein (2014) ex. (19): 'Test 2 with an exclusive' — carix 'need' does not set up a felicitous scalar contrast against xayav 'must', confirming it is not a weak necessity modal." }
 
 def heb_yoter_tov : LinguisticExample :=
   { id := "rubinstein2014_heb_yoter_tov"
@@ -229,9 +207,7 @@ def heb_yoter_tov : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("modal", "tov"), ("category", "evaluativeComparative"), ("strategy", "evaluativeComparative"), ("diagnostic", "test1")]
-    comment := "Rubinstein (2014) ex. (21a): Hebrew, lacking a lexical weak-necessity modal, translates priority-type 'ought' with the morphological comparative yoter/haxi tov 'more/most good'. Passes Test 1."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Rubinstein (2014) ex. (21a): Hebrew, lacking a lexical weak-necessity modal, translates priority-type 'ought' with the morphological comparative yoter/haxi tov 'more/most good'. Passes Test 1." }
 
 def heb_adif : LinguisticExample :=
   { id := "rubinstein2014_heb_adif"
@@ -247,9 +223,7 @@ def heb_adif : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("modal", "adif"), ("category", "evaluativeComparative"), ("strategy", "evaluativeComparative"), ("diagnostic", "test1")]
-    comment := "Rubinstein (2014) ex. (21b): lexical comparison with the predicate of preference 'adif 'preferable'."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Rubinstein (2014) ex. (21b): lexical comparison with the predicate of preference 'adif 'preferable'." }
 
 def heb_kday : LinguisticExample :=
   { id := "rubinstein2014_heb_kday"
@@ -265,9 +239,7 @@ def heb_kday : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("modal", "kday"), ("category", "evaluativeComparative"), ("strategy", "evaluativeComparative"), ("diagnostic", "test1")]
-    comment := "Rubinstein (2014) ex. (21c): implicit comparison with evaluative predicates kday 'worthwhile' / ra'uy 'fitting'."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Rubinstein (2014) ex. (21c): implicit comparison with evaluative predicates kday 'worthwhile' / ra'uy 'fitting'." }
 
 def comp_better : LinguisticExample :=
   { id := "rubinstein2014_comp_better"
@@ -283,9 +255,7 @@ def comp_better : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("modal", "better"), ("category", "evaluativeComparative"), ("pairwise", "true")]
-    comment := "Rubinstein (2014) ex. (24) (Julia Staffel, p.c.): the morphological comparative 'better' supports an explicit than-clause comparing two alternatives, whereas modal 'ought' (positive/superlative) only selects the overall best. The comparative backbone is overt in the than-clause."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Rubinstein (2014) ex. (24) (Julia Staffel, p.c.): the morphological comparative 'better' supports an explicit than-clause comparing two alternatives, whereas modal 'ought' (positive/superlative) only selects the overall best. The comparative backbone is overt in the than-clause." }
 
 def nr_carix : LinguisticExample :=
   { id := "rubinstein2014_nr_carix"
@@ -301,9 +271,7 @@ def nr_carix : LinguisticExample :=
     alternatives := []
     readings := [("lowerNeg", .acceptable)]
     paperFeatures := [("modal", "carix"), ("category", "modalVerb"), ("diagnostic", "negRaising"), ("hybrid", "true")]
-    comment := "Read as 'I think you shouldn't be here': the paper's apparent exception to the rule that strong necessity modals do not neg-raise, tied to the hybrid nature of carix."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Read as 'I think you shouldn't be here': the paper's apparent exception to the rule that strong necessity modals do not neg-raise, tied to the hybrid nature of carix." }
 
 def all : List LinguisticExample := [nr_should, nr_ought, nr_better, nr_good, nr_must, nr_haveTo, nr_adif, ought_lexical, compositional_deberia, test1_carix, test2_carix, heb_yoter_tov, heb_adif, heb_kday, comp_better, nr_carix]
 

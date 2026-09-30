@@ -31,9 +31,7 @@ def outOfBlue_epithet : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("aciStatus", "doesNotArise"), ("expressionType", "epithet"), ("licensingMechanism", "outOfBlue")]
-    comment := "Out-of-the-blue baseline (Lo Guercio 2025 §3.1). Bare proper-name sentence with no contextually-relevant epithet alternative. No ACI arises: hearer does not infer the speaker disbelieves any epithet attribution to John. Mechanism: the epithet construction `[DP that bastard John]` is structurally more complex than the bare name (introduces a DP node), so it is not a formal alternative reachable from the bare sentence without context-supplied material. Predicted by MCIs! via failure of the formal-alternative clause."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Out-of-the-blue baseline (Lo Guercio 2025 §3.1). Bare proper-name sentence with no contextually-relevant epithet alternative. No ACI arises: hearer does not infer the speaker disbelieves any epithet attribution to John. Mechanism: the epithet construction `[DP that bastard John]` is structurally more complex than the bare name (introduces a DP node), so it is not a formal alternative reachable from the bare sentence without context-supplied material. Predicted by MCIs! via failure of the formal-alternative clause." }
 
 def priorMention_epithet : LinguisticExample :=
   { id := "loguercio2025_priorMention_epithet"
@@ -49,9 +47,7 @@ def priorMention_epithet : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("aciStatus", "arises"), ("aciTarget", "John (first conjunct)"), ("expressionType", "epithet"), ("licensingMechanism", "priorMention")]
-    comment := "Lo Guercio 2025 (20a). The second conjunct's epithet construction `that bastard Pedro` makes the parallel `that bastard John` contextually relevant (a formal alternative for the first conjunct's bare `John`). MCIs! then derives the ACI: ¬(speaker believes John is a bastard), because had the speaker so believed, the CI-stronger `that bastard John arrived first` was available and equally complex. The whole utterance is felicitous; the ACI targets only the bare-name first conjunct, not the asserted content."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Lo Guercio 2025 (20a). The second conjunct's epithet construction `that bastard Pedro` makes the parallel `that bastard John` contextually relevant (a formal alternative for the first conjunct's bare `John`). MCIs! then derives the ACI: ¬(speaker believes John is a bastard), because had the speaker so believed, the CI-stronger `that bastard John arrived first` was available and equally complex. The whole utterance is felicitous; the ACI targets only the bare-name first conjunct, not the asserted content." }
 
 def subconstituent_epithet : LinguisticExample :=
   { id := "loguercio2025_subconstituent_epithet"
@@ -67,9 +63,7 @@ def subconstituent_epithet : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("aciStatus", "arises"), ("aciTarget", "John (matrix subject)"), ("expressionType", "epithet"), ("licensingMechanism", "subconstituent")]
-    comment := "Lo Guercio 2025 §3.1, sub-constituent licensing of the epithet alternative. `That bastard Pedro` as a subconstituent feeds the substitution source for the matrix `John`, making `that bastard John met with that bastard Pedro` a formal alternative. MCIs! derives ¬(speaker believes John is a bastard) by the same mechanism as (20a)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Lo Guercio 2025 §3.1, sub-constituent licensing of the epithet alternative. `That bastard Pedro` as a subconstituent feeds the substitution source for the matrix `John`, making `that bastard John met with that bastard Pedro` a formal alternative. MCIs! derives ¬(speaker believes John is a bastard) by the same mechanism as (20a)." }
 
 def outOfBlue_honorific : LinguisticExample :=
   { id := "loguercio2025_outOfBlue_honorific"
@@ -85,9 +79,7 @@ def outOfBlue_honorific : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("aciStatus", "doesNotArise"), ("expressionType", "honorific"), ("licensingMechanism", "outOfBlue"), ("language", "Spanish")]
-    comment := "Lo Guercio 2025 §3.1, Spanish honorifics. Unlike Japanese ADTs (*san*, *kun*, *chan*) and *desu/masu*-style polite forms (which carry a default expectation that any referent be properly honorified, so omission triggers a systematic ACI), Spanish *don/doña* is not systematically expected. Out of the blue, no honorific alternative is contextually relevant, so no ACI arises. Mechanism mirrors the epithet OOTB case: the formal-alternative clause fails."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Lo Guercio 2025 §3.1, Spanish honorifics. Unlike Japanese ADTs (*san*, *kun*, *chan*) and *desu/masu*-style polite forms (which carry a default expectation that any referent be properly honorified, so omission triggers a systematic ACI), Spanish *don/doña* is not systematically expected. Out of the blue, no honorific alternative is contextually relevant, so no ACI arises. Mechanism mirrors the epithet OOTB case: the formal-alternative clause fails." }
 
 def contrastive_honorific : LinguisticExample :=
   { id := "loguercio2025_contrastive_honorific"
@@ -103,9 +95,7 @@ def contrastive_honorific : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("aciStatus", "arises"), ("aciTarget", "Donato (first segment)"), ("expressionType", "honorific"), ("licensingMechanism", "priorMention"), ("language", "Spanish")]
-    comment := "Lo Guercio 2025 (22a). Using *Don* for Pedro makes *Don Donato* a contextually-relevant CI-stronger alternative for the first segment's bare *Donato*. MCIs! derives an at-most upper-bounding ACI (Horn-style, cf. paper around (24), p. 14): the speaker conveys at most a lower honorific attitude toward Donato than toward Pedro. (Not a literal contrastive denial — the upper-bound reading is what Lo Guercio analyses as in scope.)"
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Lo Guercio 2025 (22a). Using *Don* for Pedro makes *Don Donato* a contextually-relevant CI-stronger alternative for the first segment's bare *Donato*. MCIs! derives an at-most upper-bounding ACI (Horn-style, cf. paper around (24), p. 14): the speaker conveys at most a lower honorific attitude toward Donato than toward Pedro. (Not a literal contrastive denial — the upper-bound reading is what Lo Guercio analyses as in scope.)" }
 
 def outOfBlue_appositive : LinguisticExample :=
   { id := "loguercio2025_outOfBlue_appositive"
@@ -121,9 +111,7 @@ def outOfBlue_appositive : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("aciStatus", "doesNotArise"), ("expressionType", "appositive"), ("licensingMechanism", "outOfBlue")]
-    comment := "Lo Guercio 2025 (31a). Bare-DP subject sentence with no prior appositive construction; no ACI arises about any descriptive property the appositive `Diego, a doctor` would otherwise contribute. The paper glosses the non-arising inference as ¬(Diego is a doctor) (or any other potential appositive content). Mechanism: no appositive alternative is contextually relevant."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Lo Guercio 2025 (31a). Bare-DP subject sentence with no prior appositive construction; no ACI arises about any descriptive property the appositive `Diego, a doctor` would otherwise contribute. The paper glosses the non-arising inference as ¬(Diego is a doctor) (or any other potential appositive content). Mechanism: no appositive alternative is contextually relevant." }
 
 def priorMention_appositive : LinguisticExample :=
   { id := "loguercio2025_priorMention_appositive"
@@ -139,9 +127,7 @@ def priorMention_appositive : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("aciStatus", "arises"), ("aciTarget", "Diego (first segment)"), ("expressionType", "appositive"), ("licensingMechanism", "priorMention")]
-    comment := "Lo Guercio 2025 (31b). With Laura's appositive `, a doctor,` in the second sentence, the parallel `Diego, a doctor, recommended an aspirin` becomes a formal alternative for the first. MCIs! derives ¬(speaker believes Diego is a doctor): had the speaker so believed, the CI-stronger appositive variant was available."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Lo Guercio 2025 (31b). With Laura's appositive `, a doctor,` in the second sentence, the parallel `Diego, a doctor, recommended an aspirin` becomes a formal alternative for the first. MCIs! derives ¬(speaker believes Diego is a doctor): had the speaker so believed, the CI-stronger appositive variant was available." }
 
 def outOfBlue_suppAdverb : LinguisticExample :=
   { id := "loguercio2025_outOfBlue_suppAdverb"
@@ -157,9 +143,7 @@ def outOfBlue_suppAdverb : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("aciStatus", "doesNotArise"), ("expressionType", "supplementaryAdverb"), ("licensingMechanism", "outOfBlue")]
-    comment := "Lo Guercio 2025 (33a). No supplementary adverb is contextually relevant, so no ACI of the form ¬*luckily/amazingly*(Juan signed up) arises. Mechanism: formal-alternative clause fails."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Lo Guercio 2025 (33a). No supplementary adverb is contextually relevant, so no ACI of the form ¬*luckily/amazingly*(Juan signed up) arises. Mechanism: formal-alternative clause fails." }
 
 def priorMention_suppAdverb : LinguisticExample :=
   { id := "loguercio2025_priorMention_suppAdverb"
@@ -175,9 +159,7 @@ def priorMention_suppAdverb : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("aciStatus", "arises"), ("aciTarget", "Juan-signup proposition (first conjunct)"), ("expressionType", "supplementaryAdverb"), ("licensingMechanism", "priorMention")]
-    comment := "Lo Guercio 2025 §3.1, supplementary adverbs. Using `luckily,` for Pedro's signup makes `luckily, Juan signed up for the tournament` a CI-stronger formal alternative. MCIs! derives ¬*luckily*(Juan signed up): the speaker does not consider Juan's signup lucky. Parallel structure replaces *luckily* with *amazingly* in (33b)/(35) etc."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Lo Guercio 2025 §3.1, supplementary adverbs. Using `luckily,` for Pedro's signup makes `luckily, Juan signed up for the tournament` a CI-stronger formal alternative. MCIs! derives ¬*luckily*(Juan signed up): the speaker does not consider Juan's signup lucky. Parallel structure replaces *luckily* with *amazingly* in (33b)/(35) etc." }
 
 def priorMention_emotiveMarker : LinguisticExample :=
   { id := "loguercio2025_priorMention_emotiveMarker"
@@ -193,9 +175,7 @@ def priorMention_emotiveMarker : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("aciStatus", "arises"), ("aciTarget", "Juan-signup proposition (first conjunct)"), ("expressionType", "emotiveMarker"), ("licensingMechanism", "priorMention")]
-    comment := "Lo Guercio 2025 (38a). Same mechanism as supplementary-adverb prior-mention case (above), with emotive marker `Alas`/`Wow` etc. ACI: ¬(speaker is disappointed/surprised about Juan signing up for the tournament)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Lo Guercio 2025 (38a). Same mechanism as supplementary-adverb prior-mention case (above), with emotive marker `Alas`/`Wow` etc. ACI: ¬(speaker is disappointed/surprised about Juan signing up for the tournament)." }
 
 def registerBlocking : LinguisticExample :=
   { id := "loguercio2025_registerBlocking"
@@ -211,9 +191,7 @@ def registerBlocking : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("aciStatus", "doesNotArise"), ("expressionType", "epithet"), ("licensingMechanism", "register"), ("registerContrast", "bastard~motherfucker")]
-    comment := "Lo Guercio 2025 (28a-b), p. 19. Despite *motherfucker* being CI-stronger than *bastard* (both lexical, both in substitution source), the predicted ACI ¬(John is a motherfucker) does NOT arise. Lo Guercio attributes the blocking to register/coarseness difference, citing [levinson-2000] (`items in the same scale must be in salient opposition: of the same form class, in the same dialect or register, and lexicalised to the same degree`). Note: Lo Guercio is explicit (p. 20) that he does not yet have a full explanation for how register differs from other not-at-issue dimensions in blocking alternativehood."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Lo Guercio 2025 (28a-b), p. 19. Despite *motherfucker* being CI-stronger than *bastard* (both lexical, both in substitution source), the predicted ACI ¬(John is a motherfucker) does NOT arise. Lo Guercio attributes the blocking to register/coarseness difference, citing [levinson-2000] (`items in the same scale must be in salient opposition: of the same form class, in the same dialect or register, and lexicalised to the same degree`). Note: Lo Guercio is explicit (p. 20) that he does not yet have a full explanation for how register differs from other not-at-issue dimensions in blocking alternativehood." }
 
 def disjunction_independent_of_assertion : LinguisticExample :=
   { id := "loguercio2025_disjunction_independent_of_assertion"
@@ -229,9 +207,7 @@ def disjunction_independent_of_assertion : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("aciStatus", "arises"), ("aciTarget", "María"), ("expressionType", "epithet"), ("aciProperty", "independentOfAssertion")]
-    comment := "Lo Guercio 2025 (50). The CI-stronger alternative `Juan called María and that bastard Pedro` differs in at-issue content (conjunction vs disjunction), yet the ACI ¬(speaker believes María is a bastard) still arises. Distinguishes ACIs from antipresuppositions (which require same assertive content per MP!) — confirming that `violatesMCIs` does NOT include the same-assertion clause that `violatesMP` does."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Lo Guercio 2025 (50). The CI-stronger alternative `Juan called María and that bastard Pedro` differs in at-issue content (conjunction vs disjunction), yet the ACI ¬(speaker believes María is a bastard) still arises. Distinguishes ACIs from antipresuppositions (which require same assertive content per MP!) — confirming that `violatesMCIs` does NOT include the same-assertion clause that `violatesMP` does." }
 
 def DE_aci_survives : LinguisticExample :=
   { id := "loguercio2025_DE_aci_survives"
@@ -247,9 +223,7 @@ def DE_aci_survives : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("aciStatus", "arises"), ("aciTarget", "Juan"), ("expressionType", "epithet"), ("aciProperty", "unaffectedByDE")]
-    comment := "Lo Guercio 2025 §4. Under `I doubt that`, scalar implicatures are blocked (DE reverses entailment), but the ACI ¬(speaker believes Juan is a bastard) still arises. Because CI content is independent of at-issue truth-conditional entailment (Potts 2005), DE environments have no effect on MCIs! computation. Diagnostic contrast: paired SI ¬(both passed) is blocked here, while the ACI is not."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Lo Guercio 2025 §4. Under `I doubt that`, scalar implicatures are blocked (DE reverses entailment), but the ACI ¬(speaker believes Juan is a bastard) still arises. Because CI content is independent of at-issue truth-conditional entailment (Potts 2005), DE environments have no effect on MCIs! computation. Diagnostic contrast: paired SI ¬(both passed) is blocked here, while the ACI is not." }
 
 def cancellation : LinguisticExample :=
   { id := "loguercio2025_cancellation"
@@ -265,9 +239,7 @@ def cancellation : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("aciStatus", "cancelled"), ("aciProperty", "cancellable")]
-    comment := "Lo Guercio 2025 §4. The parenthetical `By the way, Juan is also a bastard` cancels the ACI that would otherwise be derived from the prior-mention configuration. Distinguishes ACIs from presuppositions, which would sound redundant when reinforced/cancelled this way."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Lo Guercio 2025 §4. The parenthetical `By the way, Juan is also a bastard` cancels the ACI that would otherwise be derived from the prior-mention configuration. Distinguishes ACIs from presuppositions, which would sound redundant when reinforced/cancelled this way." }
 
 def reinforcement : LinguisticExample :=
   { id := "loguercio2025_reinforcement"
@@ -283,9 +255,7 @@ def reinforcement : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("aciStatus", "arises"), ("aciProperty", "reinforceable")]
-    comment := "Lo Guercio 2025 §4. The reinforcement `By the way, Juan is not a bastard` is informative, not redundant — contrasting with presupposition reinforcement (which is redundant)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Lo Guercio 2025 §4. The reinforcement `By the way, Juan is not a bastard` is informative, not redundant — contrasting with presupposition reinforcement (which is redundant)." }
 
 def all : List LinguisticExample := [outOfBlue_epithet, priorMention_epithet, subconstituent_epithet, outOfBlue_honorific, contrastive_honorific, outOfBlue_appositive, priorMention_appositive, outOfBlue_suppAdverb, priorMention_suppAdverb, priorMention_emotiveMarker, registerBlocking, disjunction_independent_of_assertion, DE_aci_survives, cancellation, reinforcement]
 

@@ -36,8 +36,7 @@
         "-positive"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "seeligerrepp2018_de_pdq",
@@ -85,8 +84,7 @@
         "-positive"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "seeligerrepp2018_sv_pdq",
@@ -134,8 +132,7 @@
         "-positive"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "seeligerrepp2018_en_ndq",
@@ -174,8 +171,7 @@
         "-negative"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "seeligerrepp2018_de_ndq",
@@ -227,8 +223,7 @@
         "-negative"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "seeligerrepp2018_sv_ndq",
@@ -280,8 +275,7 @@
         "-negative"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "seeligerrepp2018_en_nrq",
@@ -320,8 +314,7 @@
         "+negative"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "seeligerrepp2018_de_nrq_doch_wohl",
@@ -381,8 +374,7 @@
         "+negative"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "seeligerrepp2018_sv_nrq_fronted_negation",
@@ -454,8 +446,7 @@
         "direct"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "seeligerrepp2018_en_prq",
@@ -494,8 +485,7 @@
         "+positive"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "seeligerrepp2018_de_prq_doch_wohl",
@@ -551,8 +541,7 @@
         "+positive"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "seeligerrepp2018_sv_prq_men_val",
@@ -628,8 +617,7 @@
         "direct"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "seeligerrepp2018_sv_prq_visst",
@@ -706,8 +694,7 @@
         "direct"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "seeligerrepp2018_sv_23a",
@@ -774,8 +761,7 @@
         "indirect"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "seeligerrepp2018_sv_23b",
@@ -850,8 +836,7 @@
         "indirect"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "seeligerrepp2018_sv_23c",
@@ -927,8 +912,7 @@
         "indirect"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "seeligerrepp2018_sv_23d",
@@ -1008,8 +992,7 @@
         "indirect"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "seeligerrepp2018_sv_24a",
@@ -1080,8 +1063,7 @@
         "indirect"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "seeligerrepp2018_sv_24b",
@@ -1156,8 +1138,7 @@
         "indirect"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "seeligerrepp2018_sv_24c",
@@ -1228,8 +1209,7 @@
         "indirect"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "seeligerrepp2018_sv_24d",
@@ -1304,7 +1284,6 @@
         "indirect"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   }
 ]

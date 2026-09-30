@@ -31,9 +31,7 @@ def ch2_24 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("coreference", "he = John"), ("deletion_site", "d-proud of John")]
-    comment := "Comparative Deletion removes the adjective phrase with its complement; the sentence lacks the reading on which John and he corefer."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Comparative Deletion removes the adjective phrase with its complement; the sentence lacks the reading on which John and he corefer." }
 
 def ch2_25 : LinguisticExample :=
   { id := "lechner2004_ch2_25"
@@ -49,9 +47,7 @@ def ch2_25 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("coreference", "he = John"), ("deletion_site", "d-proud of John")]
-    comment := "Embedding the deletion site in a complement clause obviates the disjoint-reference effect of (24)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Embedding the deletion site in a complement clause obviates the disjoint-reference effect of (24)." }
 
 def ch4_83a : LinguisticExample :=
   { id := "lechner2004_ch4_83a"
@@ -67,9 +63,7 @@ def ch4_83a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("coreference", "him = Peter"), ("remnant_case", "NOM")]
-    comment := "Test context A (82): the correlate Sally is higher than the pronoun. Underlying (83b): than Peter's sister introduced him to d-many friends."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Test context A (82): the correlate Sally is higher than the pronoun. Underlying (83b): than Peter's sister introduced him to d-many friends." }
 
 def ch4_85a : LinguisticExample :=
   { id := "lechner2004_ch4_85a"
@@ -85,9 +79,7 @@ def ch4_85a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("coreference", "he = Peter"), ("remnant_case", "ACC")]
-    comment := "Test context A (82): the correlate Sally is lower than the pronoun. Underlying (85b): than he introduced Peter's sister to d-many friends."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Test context A (82): the correlate Sally is lower than the pronoun. Underlying (85b): than he introduced Peter's sister to d-many friends." }
 
 def ch4_87a : LinguisticExample :=
   { id := "lechner2004_ch4_87a"
@@ -103,9 +95,7 @@ def ch4_87a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("coreference", "ihm = Peter"), ("remnant_case", "NOM")]
-    comment := "Test context A (82): the nominative remnant has the subject sie as its correlate, which is higher than the pronoun."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Test context A (82): the nominative remnant has the subject sie as its correlate, which is higher than the pronoun." }
 
 def ch4_87b : LinguisticExample :=
   { id := "lechner2004_ch4_87b"
@@ -121,9 +111,7 @@ def ch4_87b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("coreference", "er = Peter"), ("remnant_case", "DAT")]
-    comment := "Test context A (82): the dative remnant has the dative ihr as its correlate, which is lower than the pronoun."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Test context A (82): the dative remnant has the dative ihr as its correlate, which is lower than the pronoun." }
 
 def ch4_90a : LinguisticExample :=
   { id := "lechner2004_ch4_90a"
@@ -139,9 +127,7 @@ def ch4_90a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("coreference", "ihn = Präsident"), ("remnant_case", "ACC")]
-    comment := "Test context B (89): the accusative remnant has the object die Öffentlichkeit as its correlate, which is lower than the name. The underlying parse (90b) prints the name's index as j in the matrix clause and i in the elided copy."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Test context B (89): the accusative remnant has the object die Öffentlichkeit as its correlate, which is lower than the name. The underlying parse (90b) prints the name's index as j in the matrix clause and i in the elided copy." }
 
 def ch4_91a : LinguisticExample :=
   { id := "lechner2004_ch4_91a"
@@ -157,9 +143,7 @@ def ch4_91a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("coreference", "er = Präsident"), ("remnant_case", "NOM")]
-    comment := "Test context B (89): the nominative remnant has the subject die Öffentlichkeit as its correlate, which is higher than the name. The book notes that judgments are subtle here but contrast clearly with (90)."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Test context B (89): the nominative remnant has the subject die Öffentlichkeit as its correlate, which is higher than the name. The book notes that judgments are subtle here but contrast clearly with (90)." }
 
 def all : List LinguisticExample := [ch2_24, ch2_25, ch4_83a, ch4_85a, ch4_87a, ch4_87b, ch4_90a, ch4_91a]
 

@@ -31,9 +31,7 @@ def ex_6 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.1")]
-    comment := "A numeral expression composes with a collective predicate, as the predicative theory of numerals predicts."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A numeral expression composes with a collective predicate, as the predicative theory of numerals predicts." }
 
 def ex_7 : LinguisticExample :=
   { id := "elliott2025_7"
@@ -49,9 +47,7 @@ def ex_7 : LinguisticExample :=
     alternatives := []
     readings := [("distributive scope over the disjunction", .acceptable)]
     paperFeatures := [("section", "2.1")]
-    comment := "True in the context: the covert distributivity operator quantifies over the atomic parts."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "True in the context: the covert distributivity operator quantifies over the atomic parts." }
 
 def ex_10 : LinguisticExample :=
   { id := "elliott2025_10"
@@ -67,9 +63,7 @@ def ex_10 : LinguisticExample :=
     alternatives := []
     readings := [("true in the context", .unacceptable)]
     paperFeatures := [("section", "2.2.1")]
-    comment := "The classical predicative entry wrongly predicts truth, since a two-boy part of the sneezers sneezed: van Benthem's problem."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The classical predicative entry wrongly predicts truth, since a two-boy part of the sneezers sneezed: van Benthem's problem." }
 
 def ex_12 : LinguisticExample :=
   { id := "elliott2025_12"
@@ -85,9 +79,7 @@ def ex_12 : LinguisticExample :=
     alternatives := []
     readings := [("true in the context", .acceptable)]
     paperFeatures := [("section", "2.2.2")]
-    comment := "Intuitively true, but the classical predicative entry requires a sneezing plurality of boys: the existential entailment problem."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Intuitively true, but the classical predicative entry requires a sneezing plurality of boys: the existential entailment problem." }
 
 def ex_47 : LinguisticExample :=
   { id := "elliott2025_47"
@@ -103,9 +95,7 @@ def ex_47 : LinguisticExample :=
     alternatives := []
     readings := [("∃ > if..then > Dist", .acceptable), ("∃ > Dist > if..then", .unacceptable)]
     paperFeatures := [("section", "5")]
-    comment := "The existential component of the numeral takes exceptional scope out of the antecedent; the distributive component stays inside."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The existential component of the numeral takes exceptional scope out of the antecedent; the distributive component stays inside." }
 
 def ex_48a : LinguisticExample :=
   { id := "elliott2025_48a"
@@ -121,9 +111,7 @@ def ex_48a : LinguisticExample :=
     alternatives := []
     readings := [("∀ > if..then", .unacceptable)]
     paperFeatures := [("section", "5")]
-    comment := "No exceptional scope: all relatives of mine denotes a singleton, so existential raising over it is scopeless and universal force stays inside the antecedent."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "No exceptional scope: all relatives of mine denotes a singleton, so existential raising over it is scopeless and universal force stays inside the antecedent." }
 
 def ex_48b : LinguisticExample :=
   { id := "elliott2025_48b"
@@ -139,9 +127,7 @@ def ex_48b : LinguisticExample :=
     alternatives := []
     readings := [("no > if..then", .unacceptable)]
     paperFeatures := [("section", "5")]
-    comment := "No exceptional scope: no relatives of mine denotes the wholly negative group."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "No exceptional scope: no relatives of mine denotes the wholly negative group." }
 
 def ex_50 : LinguisticExample :=
   { id := "elliott2025_50"
@@ -157,9 +143,7 @@ def ex_50 : LinguisticExample :=
     alternatives := []
     readings := [("∃ > if..then (exceptional existential scope)", .acceptable)]
     paperFeatures := [("section", "5")]
-    comment := "Contrary to the received view on modified numerals, the exceptional existential scope reading the theory predicts is available; the judgment was checked with about ten speakers."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Contrary to the received view on modified numerals, the exceptional existential scope reading the theory predicts is available; the judgment was checked with about ten speakers." }
 
 def ex_51a : LinguisticExample :=
   { id := "elliott2025_51a"
@@ -175,9 +159,7 @@ def ex_51a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "6.1")]
-    comment := "A collective predicate needs a semantically plural DP, which the singular predicative theory does not yet distinguish."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A collective predicate needs a semantically plural DP, which the singular predicative theory does not yet distinguish." }
 
 def ex_51b : LinguisticExample :=
   { id := "elliott2025_51b"
@@ -193,9 +175,7 @@ def ex_51b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "6.1")]
-    comment := "The plural DP composes with the collective predicate."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The plural DP composes with the collective predicate." }
 
 def all : List LinguisticExample := [ex_6, ex_7, ex_10, ex_12, ex_47, ex_48a, ex_48b, ex_50, ex_51a, ex_51b]
 

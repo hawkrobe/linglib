@@ -36,8 +36,7 @@
         "4481"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "jaeger2007_t1_cvc",
@@ -76,8 +75,7 @@
         "3205"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "jaeger2007_t1_vc",
@@ -116,8 +114,7 @@
         "1199"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "jaeger2007_t1_v",
@@ -156,8 +153,7 @@
         "385"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "jaeger2007_t1_cvcc",
@@ -196,8 +192,7 @@
         "325"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "jaeger2007_t1_ccvc",
@@ -236,8 +231,7 @@
         "198"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "jaeger2007_t1_ccv",
@@ -276,8 +270,7 @@
         "138"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "jaeger2007_t1_vcc",
@@ -316,8 +309,7 @@
         "42"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "jaeger2007_t1_ccvcc",
@@ -356,7 +348,6 @@
         "26"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   }
 ]

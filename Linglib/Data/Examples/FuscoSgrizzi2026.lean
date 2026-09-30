@@ -31,9 +31,7 @@ def ex4a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("size", "cP"), ("diagnostic", "belief"), ("grammatical", "yes")]
-    comment := "The belief reading: Marco causes Gianni to believe a state of affairs. PRO may be Marco or Gianni."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The belief reading: Marco causes Gianni to believe a state of affairs. PRO may be Marco or Gianni." }
 
 def ex4b : LinguisticExample :=
   { id := "fuscosgrizzi2026_ex4b"
@@ -49,9 +47,7 @@ def ex4b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("size", "aP"), ("diagnostic", "intention"), ("grammatical", "yes")]
-    comment := "The intention reading: Gianni comes to intend to bring the state of affairs about; at the time of the convincing he does not yet have a child."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The intention reading: Gianni comes to intend to bring the state of affairs about; at the time of the convincing he does not yet have a child." }
 
 def ex4a_control : LinguisticExample :=
   { id := "fuscosgrizzi2026_ex4a_control"
@@ -67,9 +63,7 @@ def ex4a_control : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("size", "cP"), ("diagnostic", "subjectControl"), ("grammatical", "yes")]
-    comment := "The di-infinitive allows subject as well as object control: FinP hosts the logophoric centre."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The di-infinitive allows subject as well as object control: FinP hosts the logophoric centre." }
 
 def ex4b_control : LinguisticExample :=
   { id := "fuscosgrizzi2026_ex4b_control"
@@ -85,9 +79,7 @@ def ex4b_control : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("size", "aP"), ("diagnostic", "subjectControl"), ("grammatical", "no")]
-    comment := "The a-infinitive allows only object control: the matrix object is the closest referent for PRO. Footnote 1 reports a marginal subject-control reading for a causative complement."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The a-infinitive allows only object control: the matrix object is the closest referent for PRO. Footnote 1 reports a marginal subject-control reading for a causative complement." }
 
 def ex11a : LinguisticExample :=
   { id := "fuscosgrizzi2026_ex11a"
@@ -103,9 +95,7 @@ def ex11a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("size", "cP"), ("diagnostic", "truthAssessable"), ("grammatical", "yes")]
-    comment := "A propositional complement can be assessed for truth."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A propositional complement can be assessed for truth." }
 
 def ex11b : LinguisticExample :=
   { id := "fuscosgrizzi2026_ex11b"
@@ -121,9 +111,7 @@ def ex11b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("size", "aP"), ("diagnostic", "truthAssessable"), ("grammatical", "no")]
-    comment := "The a-infinitive is not large enough to be a proposition; the continuation is infelicitous."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The a-infinitive is not large enough to be a proposition; the continuation is infelicitous." }
 
 def ex12 : LinguisticExample :=
   { id := "fuscosgrizzi2026_ex12"
@@ -139,9 +127,7 @@ def ex12 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("size", "aP"), ("diagnostic", "passive"), ("grammatical", "yes")]
-    comment := "Passive is available in the a-infinitive; the guest consents to the interview."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Passive is available in the a-infinitive; the guest consents to the interview." }
 
 def ex13 : LinguisticExample :=
   { id := "fuscosgrizzi2026_ex13"
@@ -157,9 +143,7 @@ def ex13 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("size", "aP"), ("diagnostic", "aspectual"), ("grammatical", "yes")]
-    comment := "Low aspectual restructuring verbs, merged at the edge of vP, fit inside the a-infinitive; the paper also gives continuare a and finire di."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Low aspectual restructuring verbs, merged at the edge of vP, fit inside the a-infinitive; the paper also gives continuare a and finire di." }
 
 def ex14 : LinguisticExample :=
   { id := "fuscosgrizzi2026_ex14"
@@ -175,9 +159,7 @@ def ex14 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("size", "vP"), ("diagnostic", "cliticClimbing"), ("grammatical", "yes")]
-    comment := "Under the restructuring verb provare the object clitic climbs over the matrix verb: the infinitive is no larger than vP."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Under the restructuring verb provare the object clitic climbs over the matrix verb: the infinitive is no larger than vP." }
 
 def ex15 : LinguisticExample :=
   { id := "fuscosgrizzi2026_ex15"
@@ -193,9 +175,7 @@ def ex15 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("size", "aP"), ("diagnostic", "cliticClimbing"), ("grammatical", "no")]
-    comment := "Under an attitude verb the a-infinitive does not let the clitic climb."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Under an attitude verb the a-infinitive does not let the clitic climb." }
 
 def ex16 : LinguisticExample :=
   { id := "fuscosgrizzi2026_ex16"
@@ -211,9 +191,7 @@ def ex16 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("size", "aP"), ("diagnostic", "negation"), ("grammatical", "yes")]
-    comment := "The a-infinitive hosts negation, so it projects functional structure above vP."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The a-infinitive hosts negation, so it projects functional structure above vP." }
 
 def ex17 : LinguisticExample :=
   { id := "fuscosgrizzi2026_ex17"
@@ -229,9 +207,7 @@ def ex17 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("size", "aP"), ("diagnostic", "independentTime"), ("grammatical", "yes")]
-    comment := "The a-infinitive is its own temporal domain and takes a temporal adverb of its own."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The a-infinitive is its own temporal domain and takes a temporal adverb of its own." }
 
 def ex18 : LinguisticExample :=
   { id := "fuscosgrizzi2026_ex18"
@@ -247,9 +223,7 @@ def ex18 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("size", "vP"), ("diagnostic", "independentTime"), ("grammatical", "no")]
-    comment := "A restructuring infinitive depends on the matrix clause for its temporal specification."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A restructuring infinitive depends on the matrix clause for its temporal specification." }
 
 def all : List LinguisticExample := [ex4a, ex4b, ex4a_control, ex4b_control, ex11a, ex11b, ex12, ex13, ex14, ex15, ex16, ex17, ex18]
 

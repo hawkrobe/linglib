@@ -31,9 +31,7 @@ def ex_1a : LinguisticExample :=
     alternatives := []
     readings := [("more than one giraffe", .acceptable)]
     paperFeatures := [("polarity", "positive")]
-    comment := "Conveys that Emily fed more than one giraffe, the multiplicity inference."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Conveys that Emily fed more than one giraffe, the multiplicity inference." }
 
 def ex_2a : LinguisticExample :=
   { id := "tieuetal2020_2a"
@@ -49,9 +47,7 @@ def ex_2a : LinguisticExample :=
     alternatives := []
     readings := [("not more than one giraffe", .unacceptable), ("not a single giraffe", .acceptable)]
     paperFeatures := [("polarity", "negative")]
-    comment := "Paraphrased as the negation of the singular, that Emily fed no giraffe, rather than as not more than one."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Paraphrased as the negation of the singular, that Emily fed no giraffe, rather than as not more than one." }
 
 def ex_3a : LinguisticExample :=
   { id := "tieuetal2020_3a"
@@ -67,9 +63,7 @@ def ex_3a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("polarity", "downward")]
-    comment := "In the antecedent of a conditional the plural is equivalent to the singular."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "In the antecedent of a conditional the plural is equivalent to the singular." }
 
 def ex_4a : LinguisticExample :=
   { id := "tieuetal2020_4a"
@@ -85,9 +79,7 @@ def ex_4a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("polarity", "downward")]
-    comment := "In a question the plural is equivalent to the singular."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "In a question the plural is equivalent to the singular." }
 
 def ex_8 : LinguisticExample :=
   { id := "tieuetal2020_8"
@@ -103,9 +95,7 @@ def ex_8 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("polarity", "negative")]
-    comment := "The marked reading with stress on the plural morpheme: the weak reading of the ambiguity account, a local implicature, or an undefined sentence used as if true."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The marked reading with stress on the plural morpheme: the weak reading of the ambiguity account, a local implicature, or an undefined sentence used as if true." }
 
 def ex_14 : LinguisticExample :=
   { id := "tieuetal2020_14"
@@ -121,9 +111,7 @@ def ex_14 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("polarity", "positive")]
-    comment := "The more informative alternative to (13) whose denial is the multiplicity inference."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The more informative alternative to (13) whose denial is the multiplicity inference." }
 
 def ex_17 : LinguisticExample :=
   { id := "tieuetal2020_17"
@@ -139,9 +127,7 @@ def ex_17 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("polarity", "negative")]
-    comment := "Weaker than (16), so no implicature arises under negation."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Weaker than (16), so no implicature arises under negation." }
 
 def ex_27a : LinguisticExample :=
   { id := "tieuetal2020_27a"
@@ -157,9 +143,7 @@ def ex_27a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("polarity", "positive"), ("n_acted_on", "one")]
-    comment := "In a context where Emily fed only one giraffe: literally true with a false implicature on the implicature approach, false on the ambiguity approach, undefined on the homogeneity approach."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "In a context where Emily fed only one giraffe: literally true with a false implicature on the implicature approach, false on the ambiguity approach, undefined on the homogeneity approach." }
 
 def ex_27b : LinguisticExample :=
   { id := "tieuetal2020_27b"
@@ -175,9 +159,7 @@ def ex_27b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("polarity", "negative"), ("n_acted_on", "one")]
-    comment := "In the same context: false on the implicature and ambiguity approaches, undefined on the homogeneity approach."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "In the same context: false on the implicature and ambiguity approaches, undefined on the homogeneity approach." }
 
 def ex_29a : LinguisticExample :=
   { id := "tieuetal2020_29a"
@@ -193,9 +175,7 @@ def ex_29a : LinguisticExample :=
     alternatives := []
     readings := [("not all of the giraffes", .acceptable)]
     paperFeatures := [("polarity", "positive")]
-    comment := "Children accept it where the stronger (29b) is also true, failing to compute the implicature (29c)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Children accept it where the stronger (29b) is also true, failing to compute the implicature (29c)." }
 
 def exp1_positive : LinguisticExample :=
   { id := "tieuetal2020_exp1_positive"
@@ -211,9 +191,7 @@ def exp1_positive : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("experiment", "1"), ("polarity", "positive"), ("n_acted_on", "one")]
-    comment := "Truth-value judgment after a story in which Emily fed exactly one pig; rejection indicates the multiplicity inference. Adults rejected at a high rate and children at a low rate."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Truth-value judgment after a story in which Emily fed exactly one pig; rejection indicates the multiplicity inference. Adults rejected at a high rate and children at a low rate." }
 
 def exp1_negative : LinguisticExample :=
   { id := "tieuetal2020_exp1_negative"
@@ -229,9 +207,7 @@ def exp1_negative : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("experiment", "1"), ("polarity", "negative"), ("n_acted_on", "one")]
-    comment := "Truth-value judgment after a story in which Emily fed exactly one giraffe; acceptance indicates a local multiplicity reading under negation, which adults gave at a moderate rate and children at a low rate."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Truth-value judgment after a story in which Emily fed exactly one giraffe; acceptance indicates a local multiplicity reading under negation, which adults gave at a moderate rate and children at a low rate." }
 
 def exp2_si : LinguisticExample :=
   { id := "tieuetal2020_exp2_si"
@@ -247,9 +223,7 @@ def exp2_si : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("experiment", "2"), ("polarity", "positive"), ("inference", "scalar")]
-    comment := "Scalar-implicature target after a story in which Lion carried all of the apples; rejection indicates the not-all implicature. Children computed fewer scalar implicatures and fewer multiplicity inferences than adults, and the two rates were correlated within children."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Scalar-implicature target after a story in which Lion carried all of the apples; rejection indicates the not-all implicature. Children computed fewer scalar implicatures and fewer multiplicity inferences than adults, and the two rates were correlated within children." }
 
 def exp3_positive_plural : LinguisticExample :=
   { id := "tieuetal2020_exp3_positive_plural"
@@ -265,9 +239,7 @@ def exp3_positive_plural : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("experiment", "3"), ("polarity", "positive"), ("n_acted_on", "one"), ("task", "ternary_reward"), ("preferred_reward", "intermediate")]
-    comment := "Ternary judgment with adults after Koala bought exactly one pear: the intermediate reward, literally true but misleading."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Ternary judgment with adults after Koala bought exactly one pear: the intermediate reward, literally true but misleading." }
 
 def exp3_negative_plural : LinguisticExample :=
   { id := "tieuetal2020_exp3_negative_plural"
@@ -283,9 +255,7 @@ def exp3_negative_plural : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("experiment", "3"), ("polarity", "negative"), ("n_acted_on", "one"), ("task", "ternary_reward"), ("preferred_reward", "minimal")]
-    comment := "Ternary judgment with adults after Koala bought exactly one pear: the minimal reward, literally false."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Ternary judgment with adults after Koala bought exactly one pear: the minimal reward, literally false." }
 
 def all : List LinguisticExample := [ex_1a, ex_2a, ex_3a, ex_4a, ex_8, ex_14, ex_17, ex_27a, ex_27b, ex_29a, exp1_positive, exp1_negative, exp2_si, exp3_positive_plural, exp3_negative_plural]
 

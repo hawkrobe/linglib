@@ -31,9 +31,7 @@ def ex_20a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("phenomenon", "sequence of tense")]
-    comment := "The subordinate past does not introduce a semantic past of its own; the sentence allows a simultaneous and a back-shifted reading but no forward shift."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The subordinate past does not introduce a semantic past of its own; the sentence allows a simultaneous and a back-shifted reading but no forward shift." }
 
 def ex_20b : LinguisticExample :=
   { id := "zeijlstra2012_20b"
@@ -49,9 +47,7 @@ def ex_20b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("phenomenon", "sequence of tense")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_21 : LinguisticExample :=
   { id := "zeijlstra2012_21"
@@ -67,9 +63,7 @@ def ex_21 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("phenomenon", "tense scope")]
-    comment := "The quantifier scopes between the past tense and the verb, so the past morpheme is not itself the semantic past operator."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The quantifier scopes between the past tense and the verb, so the past morpheme is not itself the semantic past operator." }
 
 def ex_50a : LinguisticExample :=
   { id := "zeijlstra2012_50a"
@@ -85,9 +79,7 @@ def ex_50a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("phenomenon", "negative concord"), ("type", "non-strict")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_51a : LinguisticExample :=
   { id := "zeijlstra2012_51a"
@@ -103,9 +95,7 @@ def ex_51a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("phenomenon", "negative concord"), ("type", "strict")]
-    comment := "The negative marker is obligatory; without it the sentence is out."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The negative marker is obligatory; without it the sentence is out." }
 
 def ex_53 : LinguisticExample :=
   { id := "zeijlstra2012_53"
@@ -121,9 +111,7 @@ def ex_53 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("phenomenon", "negative concord"), ("locality", "across CP")]
-    comment := "Negative Concord does not cross the embedded clause boundary, unlike Sequence of Tense."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Negative Concord does not cross the embedded clause boundary, unlike Sequence of Tense." }
 
 def all : List LinguisticExample := [ex_20a, ex_20b, ex_21, ex_50a, ex_51a, ex_53]
 

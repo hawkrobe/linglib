@@ -31,9 +31,7 @@ def ex1 : LinguisticExample :=
     alternatives := []
     readings := [("simultaneous (pregnancy at thinking)", .acceptable), ("shifted (pregnancy before thinking)", .acceptable), ("future-shifted (pregnancy after thinking)", .ungrammatical)]
     paperFeatures := [("verb", "think"), ("past", "available"), ("present", "available"), ("future", "unavailable")]
-    comment := "Klecha 2016 ex (1), Semantics & Pragmatics 9(10) p. 9:1. Opening example introducing ULC; both deictic-tense and relative-tense theories are surveyed in his §1 against this datum. The DOX modal base under `think` blocks future-shifted reading, which is Klecha's central explanatory move."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Klecha 2016 ex (1), Semantics & Pragmatics 9(10) p. 9:1. Opening example introducing ULC; both deictic-tense and relative-tense theories are surveyed in his §1 against this datum. The DOX modal base under `think` blocks future-shifted reading, which is Klecha's central explanatory move." }
 
 def ex2a : LinguisticExample :=
   { id := "klecha2016_ex2a"
@@ -49,9 +47,7 @@ def ex2a : LinguisticExample :=
     alternatives := []
     readings := [("future-shifted (missed-cut after hoping)", .acceptable)]
     paperFeatures := [("verb", "hope"), ("future", "available")]
-    comment := "Klecha 2016 ex (2a), p. 9:2-3. Corpus of Contemporary American English (Davies 2008). Cornerstone of Klecha's argument: under `hope` (which permits a CIR modal base), embedded past can have a future-shifted reading — impossible under `think` (DOX-only). Diagnoses the modal-base parameter, not the attitude verb per se."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Klecha 2016 ex (2a), p. 9:2-3. Corpus of Contemporary American English (Davies 2008). Cornerstone of Klecha's argument: under `hope` (which permits a CIR modal base), embedded past can have a future-shifted reading — impossible under `think` (DOX-only). Diagnoses the modal-base parameter, not the attitude verb per se." }
 
 def ex2b : LinguisticExample :=
   { id := "klecha2016_ex2b"
@@ -67,9 +63,7 @@ def ex2b : LinguisticExample :=
     alternatives := []
     readings := [("future-shifted (try-to-kill after hoping)", .acceptable)]
     paperFeatures := [("verb", "hope"), ("future", "available")]
-    comment := "Klecha 2016 ex (2b), p. 9:3. Second corpus example for the same point."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Klecha 2016 ex (2b), p. 9:3. Second corpus example for the same point." }
 
 def ex3a : LinguisticExample :=
   { id := "klecha2016_ex3a"
@@ -85,9 +79,7 @@ def ex3a : LinguisticExample :=
     alternatives := []
     readings := [("future-shifted (got-open after praying)", .acceptable)]
     paperFeatures := [("verb", "pray"), ("future", "available")]
-    comment := "Klecha 2016 ex (3a), p. 9:3. `Pray` patterns with `hope`: CIR-base attitude verbs permit future-shifted embedded past. Quarterback Kerry Collins, attributed in the paper."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Klecha 2016 ex (3a), p. 9:3. `Pray` patterns with `hope`: CIR-base attitude verbs permit future-shifted embedded past. Quarterback Kerry Collins, attributed in the paper." }
 
 def ex3b : LinguisticExample :=
   { id := "klecha2016_ex3b"
@@ -103,9 +95,7 @@ def ex3b : LinguisticExample :=
     alternatives := []
     readings := [("future-shifted (survival after praying)", .acceptable)]
     paperFeatures := [("verb", "pray"), ("future", "available")]
-    comment := "Klecha 2016 ex (3b), p. 9:3. Fourth corpus example. The (2a-b)/(3a-b) cluster establishes that future-shifted past is systematic across CIR-compatible attitude verbs, not exceptional."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Klecha 2016 ex (3b), p. 9:3. Fourth corpus example. The (2a-b)/(3a-b) cluster establishes that future-shifted past is systematic across CIR-compatible attitude verbs, not exceptional." }
 
 def all : List LinguisticExample := [ex1, ex2a, ex2b, ex3a, ex3b]
 

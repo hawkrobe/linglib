@@ -31,9 +31,7 @@ def s1a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "Modality"), ("force", "strong"), ("flavor", "epistemic")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s1b : LinguisticExample :=
   { id := "imelguosteinertthrelkeld2026_s1b"
@@ -49,9 +47,7 @@ def s1b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "Modality"), ("force", "strong"), ("flavor", "deontic")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s2a : LinguisticExample :=
   { id := "imelguosteinertthrelkeld2026_s2a"
@@ -67,9 +63,7 @@ def s2a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "Modality"), ("force", "weak"), ("flavor", "epistemic")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s2b : LinguisticExample :=
   { id := "imelguosteinertthrelkeld2026_s2b"
@@ -85,9 +79,7 @@ def s2b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "Modality"), ("force", "weak"), ("flavor", "deontic")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s3a : LinguisticExample :=
   { id := "imelguosteinertthrelkeld2026_s3a"
@@ -103,9 +95,7 @@ def s3a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "Modality"), ("source", "Rullmann et al. 2008:321, (5c)"), ("force", "strong"), ("flavor", "epistemic")]
-    comment := "Variable-force k'a used with strong force."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Variable-force k'a used with strong force." }
 
 def s3b : LinguisticExample :=
   { id := "imelguosteinertthrelkeld2026_s3b"
@@ -121,9 +111,7 @@ def s3b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "Modality"), ("source", "Rullmann et al. 2008:321, (5e)"), ("force", "weak"), ("flavor", "epistemic")]
-    comment := "Variable-force k'a used with weak force."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Variable-force k'a used with weak force." }
 
 def all : List LinguisticExample := [s1a, s1b, s2a, s2b, s3a, s3b]
 

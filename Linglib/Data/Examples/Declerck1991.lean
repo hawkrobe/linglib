@@ -31,9 +31,7 @@ def domainShift1a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "Declerck 1991 ch. 3, example (1a). Cornerstone illustration of temporal subordination (no domain shift) — three simultaneous situations under one past domain anchor."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Declerck 1991 ch. 3, example (1a). Cornerstone illustration of temporal subordination (no domain shift) — three simultaneous situations under one past domain anchor." }
 
 def domainShift1b : LinguisticExample :=
   { id := "declerck1991_domainShift1b"
@@ -49,9 +47,7 @@ def domainShift1b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "Declerck 1991 ch. 3, example (1b). The minimal pair with (1a): same time-sphere, but no temporal subordination — each clause shifts into a new domain. Iconic ordering from clause order is the pragmatic default."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Declerck 1991 ch. 3, example (1b). The minimal pair with (1a): same time-sphere, but no temporal subordination — each clause shifts into a new domain. Iconic ordering from clause order is the pragmatic default." }
 
 def domainShift3a : LinguisticExample :=
   { id := "declerck1991_domainShift3a"
@@ -67,9 +63,7 @@ def domainShift3a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "Declerck 1991 ch. 3 ex (3a). Compared to (3b) `He would die shortly afterwards`, which uses a relative tense (conditional) within the same temporal domain anchored by `got wounded`."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Declerck 1991 ch. 3 ex (3a). Compared to (3b) `He would die shortly afterwards`, which uses a relative tense (conditional) within the same temporal domain anchored by `got wounded`." }
 
 def modalPastWish : LinguisticExample :=
   { id := "declerck1991_modalPastWish"
@@ -85,9 +79,7 @@ def modalPastWish : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "Declerck 1991 ch. 2 §3. Cornerstone example of modal past tense — past morphology, non-past interpretation. The 'false tense' phenomenon."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Declerck 1991 ch. 2 §3. Cornerstone example of modal past tense — past morphology, non-past interpretation. The 'false tense' phenomenon." }
 
 def modalPastIfWas : LinguisticExample :=
   { id := "declerck1991_modalPastIfWas"
@@ -103,9 +95,7 @@ def modalPastIfWas : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "Declerck 1991 ch. 2 §3. Modal past in conditional protasis — the reference is non-past despite past morphology."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Declerck 1991 ch. 2 §3. Modal past in conditional protasis — the reference is non-past despite past morphology." }
 
 def futurePerfect : LinguisticExample :=
   { id := "declerck1991_futurePerfect"
@@ -121,9 +111,7 @@ def futurePerfect : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "Declerck 1991 ch. 2 §2. Future perfect listed alongside present perfect, past perfect, conditional, conditional perfect in the tense inventory."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Declerck 1991 ch. 2 §2. Future perfect listed alongside present perfect, past perfect, conditional, conditional perfect in the tense inventory." }
 
 def whenPresent : LinguisticExample :=
   { id := "declerck1991_whenPresent"
@@ -139,9 +127,7 @@ def whenPresent : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "Declerck 1991 ch. 2 §1. Compare `He didn't tell me when he will come home` where `when` introduces a noun clause and `will` is allowed."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Declerck 1991 ch. 2 §1. Compare `He didn't tell me when he will come home` where `when` introduces a noun clause and `will` is allowed." }
 
 def perfectHaveCome : LinguisticExample :=
   { id := "declerck1991_perfectHaveCome"
@@ -157,9 +143,7 @@ def perfectHaveCome : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "Declerck 1991 ch. 2 §2. Present perfect listed alongside present, past, future, conditional, past perfect, future perfect, conditional perfect in the tense inventory."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Declerck 1991 ch. 2 §2. Present perfect listed alongside present, past, future, conditional, past perfect, future perfect, conditional perfect in the tense inventory." }
 
 def perfectOverslept : LinguisticExample :=
   { id := "declerck1991_perfectOverslept"
@@ -175,9 +159,7 @@ def perfectOverslept : LinguisticExample :=
     alternatives := [("I overslept this morning.", .acceptable)]
     readings := []
     paperFeatures := []
-    comment := "Declerck 1991 ch. 3 fn 49. Cornerstone perfect-vs-preterit minimal pair demonstrating the time-sphere distinction. Both can refer to the same objective event; the difference is conceptualization."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Declerck 1991 ch. 3 fn 49. Cornerstone perfect-vs-preterit minimal pair demonstrating the time-sphere distinction. Both can refer to the same objective event; the difference is conceptualization." }
 
 def all : List LinguisticExample := [domainShift1a, domainShift1b, domainShift3a, modalPastWish, modalPastIfWas, futurePerfect, whenPresent, perfectHaveCome, perfectOverslept]
 

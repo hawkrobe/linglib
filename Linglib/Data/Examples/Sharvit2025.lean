@@ -31,9 +31,7 @@ def ex5a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("connective", "and"), ("presuppositionalClause", "second"), ("redundant", "no")]
-    comment := "The conjunction inherits the presupposition of its left conjunct only, so the antecedent does not presuppose that Mia has money."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "The conjunction inherits the presupposition of its left conjunct only, so the antecedent does not presuppose that Mia has money." }
 
 def ex5b : LinguisticExample :=
   { id := "sharvit2025_ex5b"
@@ -49,9 +47,7 @@ def ex5b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("connective", "and"), ("presuppositionalClause", "first"), ("redundant", "yes")]
-    comment := "Marked # in the paper: the antecedent presupposes that Mia has money, so its second conjunct is uninformative."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Marked # in the paper: the antecedent presupposes that Mia has money, so its second conjunct is uninformative." }
 
 def ex9a : LinguisticExample :=
   { id := "sharvit2025_ex9a"
@@ -67,9 +63,7 @@ def ex9a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("connective", "if"), ("presuppositionalClause", "second"), ("redundant", "no")]
-    comment := "A redundancy contrast with (9b): the conditional inherits the presupposition of its antecedent only."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "A redundancy contrast with (9b): the conditional inherits the presupposition of its antecedent only." }
 
 def ex9b : LinguisticExample :=
   { id := "sharvit2025_ex9b"
@@ -85,9 +79,7 @@ def ex9b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("connective", "if"), ("presuppositionalClause", "first"), ("redundant", "yes")]
-    comment := "Marked # in the paper: the conditional presupposes that Mia has money, so its consequent is uninformative."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Marked # in the paper: the conditional presupposes that Mia has money, so its consequent is uninformative." }
 
 def ex10a : LinguisticExample :=
   { id := "sharvit2025_ex10a"
@@ -103,9 +95,7 @@ def ex10a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("connective", "and"), ("presuppositionalClause", "second"), ("redundant", "no")]
-    comment := "A redundancy contrast with (10b)."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "A redundancy contrast with (10b)." }
 
 def ex10b : LinguisticExample :=
   { id := "sharvit2025_ex10b"
@@ -121,9 +111,7 @@ def ex10b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("connective", "and"), ("presuppositionalClause", "first"), ("redundant", "yes")]
-    comment := "Marked # in the paper: the conjunction presupposes that Mia has money, so its second conjunct is uninformative."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Marked # in the paper: the conjunction presupposes that Mia has money, so its second conjunct is uninformative." }
 
 def ex11a : LinguisticExample :=
   { id := "sharvit2025_ex11a"
@@ -139,9 +127,7 @@ def ex11a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("connective", "or"), ("presuppositionalClause", "second"), ("redundant", "no")]
-    comment := "Equivalent to (11b): the disjunction does not project the presupposition of its left disjunct."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Equivalent to (11b): the disjunction does not project the presupposition of its left disjunct." }
 
 def ex11b : LinguisticExample :=
   { id := "sharvit2025_ex11b"
@@ -157,9 +143,7 @@ def ex11b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("connective", "or"), ("presuppositionalClause", "first"), ("redundant", "no")]
-    comment := "Unlike (9b) and (10b), not a violator of the Cooperative Principle: or is symmetric."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Unlike (9b) and (10b), not a violator of the Cooperative Principle: or is symmetric." }
 
 def ex30 : LinguisticExample :=
   { id := "sharvit2025_ex30"
@@ -175,9 +159,7 @@ def ex30 : LinguisticExample :=
     alternatives := []
     readings := [("if-over-∃: if Mia is bored or penniless, Sue is bored or penniless", .acceptable), ("∀-over-if: if Mia is bored, Sue is bored, and if Mia is penniless, Sue is penniless", .acceptable)]
     paperFeatures := [("construction", "roothPartee"), ("ellipsis", "yes"), ("presuppositionalDisjunct", "no")]
-    comment := "A Rooth-Partee conditional with presupposition-free disjuncts; the two readings (31) and (32) are distinct, as the responses (33a) and (33b) show."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "A Rooth-Partee conditional with presupposition-free disjuncts; the two readings (31) and (32) are distinct, as the responses (33a) and (33b) show." }
 
 def ex34 : LinguisticExample :=
   { id := "sharvit2025_ex34"
@@ -193,9 +175,7 @@ def ex34 : LinguisticExample :=
     alternatives := []
     readings := [("if-over-∃: if Mia is bored or penniless, Sue is bored or penniless", .acceptable), ("∀-over-if: if Mia is bored, Sue is bored, and if Mia is penniless, Sue is penniless", .ungrammatical)]
     paperFeatures := [("construction", "roothPartee"), ("ellipsis", "no"), ("presuppositionalDisjunct", "no")]
-    comment := "Without ellipsis only the if-over-∃ reading exists: the ∀-over-if reading depends on the ambiguity of the elided property."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Without ellipsis only the if-over-∃ reading exists: the ∀-over-if reading depends on the ambiguity of the elided property." }
 
 def ex48 : LinguisticExample :=
   { id := "sharvit2025_ex48"
@@ -211,9 +191,7 @@ def ex48 : LinguisticExample :=
     alternatives := []
     readings := [("if-over-∃: if Mia is penniless or proud of her money, Sue is penniless or proud of hers", .acceptable), ("∀-over-if: if Mia is penniless, Sue is penniless, and if Mia is proud of her money, Sue is proud of hers; presupposes that Sue has money if Mia does", .acceptable)]
     paperFeatures := [("construction", "roothPartee"), ("ellipsis", "yes"), ("presuppositionalDisjunct", "yes")]
-    comment := "The central example, repeated as (63a), (67), (90a), (111) and (133). The ∀-over-if reading presupposes if Mia has money, Sue has money (52a), refined in (91) and (135a), as the responses (53) and (92) show."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "The central example, repeated as (63a), (67), (90a), (111) and (133). The ∀-over-if reading presupposes if Mia has money, Sue has money (52a), refined in (91) and (135a), as the responses (53) and (92) show." }
 
 def ex50 : LinguisticExample :=
   { id := "sharvit2025_ex50"
@@ -229,9 +207,7 @@ def ex50 : LinguisticExample :=
     alternatives := []
     readings := [("if-over-∃: if Mia is penniless or proud of her money, Sue is penniless or proud of hers", .acceptable), ("∀-over-if: if Mia is penniless, Sue is penniless, and if Mia is proud of her money, Sue is proud of hers", .ungrammatical)]
     paperFeatures := [("construction", "roothPartee"), ("ellipsis", "no"), ("presuppositionalDisjunct", "yes")]
-    comment := "The ellipsis-free counterpart of (48) has only the if-over-∃ reading; the response (49b) is infelicitous and (54) shows it presupposes nothing about Sue's money."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "The ellipsis-free counterpart of (48) has only the if-over-∃ reading; the response (49b) is infelicitous and (54) shows it presupposes nothing about Sue's money." }
 
 def ex63b : LinguisticExample :=
   { id := "sharvit2025_ex63b"
@@ -247,9 +223,7 @@ def ex63b : LinguisticExample :=
     alternatives := []
     readings := [("if-over-∃: if Mia is penniless or proud of her money, Sue is penniless or proud of hers", .acceptable), ("∀-over-if: if Mia is penniless, Sue is penniless, and if Mia is proud of her money, Sue is proud of hers; presupposes that Sue has money if Mia does", .acceptable)]
     paperFeatures := [("construction", "roothPartee"), ("ellipsis", "yes"), ("presuppositionalDisjunct", "yes")]
-    comment := "The disjuncts of (48) swapped: both readings survive with the same presupposition, which an asymmetric or cannot deliver with or without accommodation."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "The disjuncts of (48) swapped: both readings survive with the same presupposition, which an asymmetric or cannot deliver with or without accommodation." }
 
 def ex148a : LinguisticExample :=
   { id := "sharvit2025_ex148a"
@@ -265,9 +239,7 @@ def ex148a : LinguisticExample :=
     alternatives := []
     readings := [("∀-over-if, equivalent to that of (148b)", .acceptable)]
     paperFeatures := [("construction", "roothPartee"), ("ellipsis", "yes"), ("presuppositionalDisjunct", "both")]
-    comment := "Two presuppositional disjuncts: (148a) and (148b) are equivalent in the classical sense, not merely Strawson-equivalent, so the disjunction must be symmetric."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Two presuppositional disjuncts: (148a) and (148b) are equivalent in the classical sense, not merely Strawson-equivalent, so the disjunction must be symmetric." }
 
 def ex148b : LinguisticExample :=
   { id := "sharvit2025_ex148b"
@@ -283,9 +255,7 @@ def ex148b : LinguisticExample :=
     alternatives := []
     readings := [("∀-over-if, equivalent to that of (148a)", .acceptable)]
     paperFeatures := [("construction", "roothPartee"), ("ellipsis", "yes"), ("presuppositionalDisjunct", "both")]
-    comment := "The disjuncts of (148a) swapped."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "The disjuncts of (148a) swapped." }
 
 def all : List LinguisticExample := [ex5a, ex5b, ex9a, ex9b, ex10a, ex10b, ex11a, ex11b, ex30, ex34, ex48, ex50, ex63b, ex148a, ex148b]
 

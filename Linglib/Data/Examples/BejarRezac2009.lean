@@ -31,9 +31,7 @@ def br2009_2a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("ea", "1"), ("ia", "2"), ("controller", "2"), ("context", "inverse")]
-    comment := "The core slot tracks the IA: a 2nd-person object fully checks the [u-3-2] probe."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The core slot tracks the IA: a 2nd-person object fully checks the [u-3-2] probe." }
 
 def br2009_2b : LinguisticExample :=
   { id := "br2009_2b"
@@ -49,9 +47,7 @@ def br2009_2b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("ea", "3"), ("ia", "1"), ("controller", "1"), ("context", "inverse")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def br2009_2c : LinguisticExample :=
   { id := "br2009_2c"
@@ -67,9 +63,7 @@ def br2009_2c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("ea", "2"), ("ia", "1"), ("controller", "1"), ("context", "inverse")]
-    comment := "With (2a): no ranking of person values decides between two SAP arguments — the IA wins both times."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "With (2a): no ranking of person values decides between two SAP arguments — the IA wins both times." }
 
 def br2009_2d : LinguisticExample :=
   { id := "br2009_2d"
@@ -85,9 +79,7 @@ def br2009_2d : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("ea", "1"), ("ia", "3"), ("controller", "1"), ("context", "direct")]
-    comment := "The 3rd-person IA leaves the [u2] residue, which the SAP EA checks on cycle II: displacement to the EA."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The 3rd-person IA leaves the [u2] residue, which the SAP EA checks on cycle II: displacement to the EA." }
 
 def br2009_3 : LinguisticExample :=
   { id := "br2009_3"
@@ -103,9 +95,7 @@ def br2009_3 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("ea", "1"), ("ia", "3"), ("controller", "1"), ("diagnostic", "case and binding unaffected")]
-    comment := "Ergative displacement changes neither case marking nor binding: agreement displacement is not movement."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Ergative displacement changes neither case marking nor binding: agreement displacement is not movement." }
 
 def br2009_15 : LinguisticExample :=
   { id := "br2009_15"
@@ -121,9 +111,7 @@ def br2009_15 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("constraint", "Person Case Constraint")]
-    comment := "With a dative goal absorbing the π-probe, a 1st-person theme is unlicensable — the PLC at work."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "With a dative goal absorbing the π-probe, a 1st-person theme is unlicensable — the PLC at work." }
 
 def br2009_t9_3_1 : LinguisticExample :=
   { id := "br2009_t9_3_1"
@@ -139,9 +127,7 @@ def br2009_t9_3_1 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("ea", "3"), ("ia", "1"), ("repair", "added probe (INV)")]
-    comment := "The INV slot spells out the added probe that licenses the EA in inverse contexts."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The INV slot spells out the added probe that licenses the EA in inverse contexts." }
 
 def br2009_10 : LinguisticExample :=
   { id := "br2009_10"
@@ -157,9 +143,7 @@ def br2009_10 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("probe", "flat [u-3]"), ("agreement", "object and subject independent")]
-    comment := "A flat probe is fully checked by any IA: no person-hierarchy interaction, every context inverse."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A flat probe is fully checked by any IA: no person-hierarchy interaction, every context inverse." }
 
 def br2009_17a : LinguisticExample :=
   { id := "br2009_17a"
@@ -175,9 +159,7 @@ def br2009_17a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("ea", "1"), ("ia", "2"), ("controller", "2"), ("context", "inverse")]
-    comment := "Nishnaabemwin (Odawa/Eastern Ojibwe): 2nd person is most specified ([u-3-1-2]), so the 2nd-person IA wins."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Nishnaabemwin (Odawa/Eastern Ojibwe): 2nd person is most specified ([u-3-1-2]), so the 2nd-person IA wins." }
 
 def br2009_17b : LinguisticExample :=
   { id := "br2009_17b"
@@ -193,9 +175,7 @@ def br2009_17b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("ea", "2"), ("ia", "1"), ("controller", "2"), ("context", "direct")]
-    comment := "The 1st-person IA leaves the [u2] segment, checked by the 2nd-person EA on cycle II."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The 1st-person IA leaves the [u2] segment, checked by the 2nd-person EA on cycle II." }
 
 def br2009_17c : LinguisticExample :=
   { id := "br2009_17c"
@@ -211,9 +191,7 @@ def br2009_17c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("ea", "3"), ("ia", "1"), ("controller", "1"), ("context", "inverse")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def br2009_17d : LinguisticExample :=
   { id := "br2009_17d"
@@ -229,9 +207,7 @@ def br2009_17d : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("ea", "3"), ("ia", "2"), ("controller", "2"), ("context", "inverse")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def br2009_18a : LinguisticExample :=
   { id := "br2009_18a"
@@ -247,9 +223,7 @@ def br2009_18a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("ea", "3"), ("ia", "1"), ("controller", "1"), ("morphology", "first-cycle m-")]
-    comment := "1sg spelled m- when the probe is valued on cycle I (IA controls)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "1sg spelled m- when the probe is valued on cycle I (IA controls)." }
 
 def br2009_18b : LinguisticExample :=
   { id := "br2009_18b"
@@ -265,9 +239,7 @@ def br2009_18b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("ea", "1"), ("ia", "3"), ("controller", "1"), ("morphology", "second-cycle v-")]
-    comment := "Same 1sg value spelled v- when valued on cycle II — a second-cycle effect."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Same 1sg value spelled v- when valued on cycle II — a second-cycle effect." }
 
 def br2009_29a : LinguisticExample :=
   { id := "br2009_29a"
@@ -283,9 +255,7 @@ def br2009_29a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("ea", "1"), ("ia", "2"), ("context", "direct"), ("IA case", "unmarked")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def br2009_29b : LinguisticExample :=
   { id := "br2009_29b"
@@ -301,9 +271,7 @@ def br2009_29b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("ea", "2"), ("ia", "1"), ("context", "inverse"), ("IA case", "R-Case (dative form)")]
-    comment := "The inverse-context IA takes the special R-Case; the sole agreement slot tracks the EA."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The inverse-context IA takes the special R-Case; the sole agreement slot tracks the EA." }
 
 def br2009_30b : LinguisticExample :=
   { id := "br2009_30b"
@@ -319,9 +287,7 @@ def br2009_30b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "passivization"), ("result", "R-Case disappears")]
-    comment := "R-Case vanishes under passivization, unlike the inherent dative (30a) — it is structural, tied to the inverse configuration."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "R-Case vanishes under passivization, unlike the inherent dative (30a) — it is structural, tied to the inverse configuration." }
 
 def all : List LinguisticExample := [br2009_2a, br2009_2b, br2009_2c, br2009_2d, br2009_3, br2009_15, br2009_t9_3_1, br2009_10, br2009_17a, br2009_17b, br2009_17c, br2009_17d, br2009_18a, br2009_18b, br2009_29a, br2009_29b, br2009_30b]
 

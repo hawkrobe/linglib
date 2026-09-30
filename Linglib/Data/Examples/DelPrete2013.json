@@ -23,9 +23,7 @@
       ["qAdverb", "none"],
       ["soe", "none"]
     ],
-    "comment": "Temporal anchoring to a large or small reference time selects the habitual or the progressive reading.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Temporal anchoring to a large or small reference time selects the habitual or the progressive reading."
   },
   {
     "id": "delprete2013_2a",
@@ -51,9 +49,7 @@
       ["qAdverb", "none"],
       ["soe", "individual"]
     ],
-    "comment": "Repeated as (22). On HAB the same sports car is driven throughout; the same-object effect is compatible with common knowledge.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Repeated as (22). On HAB the same sports car is driven throughout; the same-object effect is compatible with common knowledge."
   },
   {
     "id": "delprete2013_2b",
@@ -79,9 +75,7 @@
       ["qAdverb", "none"],
       ["soe", "individual"]
     ],
-    "comment": "Repeated as (7) and (28). Odd on HAB: the same-object effect, reading the same book over and over, conflicts with common knowledge.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Repeated as (7) and (28). Odd on HAB: the same-object effect, reading the same book over and over, conflicts with common knowledge."
   },
   {
     "id": "delprete2013_3",
@@ -106,9 +100,7 @@
       ["qAdverb", "none"],
       ["soe", "kind"]
     ],
-    "comment": "Repeated as (9a) and (25). The indefinite is coerced to a kind reading; on the individual reading the sentence would be odd on HAB (footnote 5).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Repeated as (9a) and (25). The indefinite is coerced to a kind reading; on the individual reading the sentence would be odd on HAB (footnote 5)."
   },
   {
     "id": "delprete2013_4a",
@@ -132,9 +124,7 @@
       ["qAdverb", "none"],
       ["soe", "none"]
     ],
-    "comment": "The covert quantifier analysis maps (4a) and (4b) onto isomorphic logical forms (5a) and (5b).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The covert quantifier analysis maps (4a) and (4b) onto isomorphic logical forms (5a) and (5b)."
   },
   {
     "id": "delprete2013_4b",
@@ -159,9 +149,7 @@
       ["qAdverb", "sempre"],
       ["soe", "none"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "delprete2013_6",
@@ -187,9 +175,7 @@
       ["qAdverb", "sempre"],
       ["soe", "none"]
     ],
-    "comment": "The when-clause supplies the restriction of the Q-adverb, (6').",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The when-clause supplies the restriction of the Q-adverb, (6')."
   },
   {
     "id": "delprete2013_8",
@@ -215,9 +201,7 @@
       ["qAdverb", "sempre"],
       ["soe", "none"]
     ],
-    "comment": "Repeated as (29). The indefinite scopes below the Q-adverb, so the book varies with the situation and no same-object effect arises.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Repeated as (29). The indefinite scopes below the Q-adverb, so the book varies with the situation and no same-object effect arises."
   },
   {
     "id": "delprete2013_9b",
@@ -242,9 +226,7 @@
       ["qAdverb", "none"],
       ["soe", "none"]
     ],
-    "comment": "The negative indefinite must scope below negation; with obligatory wide scope over GEN its truth conditions, (10b), are too weak, and the intuitive reading is (10'b).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The negative indefinite must scope below negation; with obligatory wide scope over GEN its truth conditions, (10b), are too weak, and the intuitive reading is (10'b)."
   },
   {
     "id": "delprete2013_11",
@@ -270,9 +252,7 @@
       ["qAdverb", "none"],
       ["soe", "kind"]
     ],
-    "comment": "Repeated as (30). The bare plural names the kind and distributes its instances over the singular sub-events, so only a kind-level effect arises (footnote 33).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Repeated as (30). The bare plural names the kind and distributes its instances over the singular sub-events, so only a kind-level effect arises (footnote 33)."
   },
   {
     "id": "delprete2013_12",
@@ -299,9 +279,7 @@
       ["qAdverb", "none"],
       ["soe", "kind"]
     ],
-    "comment": "A kind-level same-object effect over a sub-kind of the kind of philosophy books, which makes sense pragmatically.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A kind-level same-object effect over a sub-kind of the kind of philosophy books, which makes sense pragmatically."
   },
   {
     "id": "delprete2013_13",
@@ -326,9 +304,7 @@
       ["qAdverb", "none"],
       ["soe", "kind"]
     ],
-    "comment": "(9a) asymmetrically entails (13) on the habitual reading: in the footnote 12 scenario (13) is true and (9a) is not.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "(9a) asymmetrically entails (13) on the habitual reading: in the footnote 12 scenario (13) is true and (9a) is not."
   },
   {
     "id": "delprete2013_14",
@@ -353,9 +329,7 @@
       ["qAdverb", "none"],
       ["soe", "kind"]
     ],
-    "comment": "The kind-denoting indefinite that expresses the existential generalization of (11) (footnote 13).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The kind-denoting indefinite that expresses the existential generalization of (11) (footnote 13)."
   },
   {
     "id": "delprete2013_fn11",
@@ -380,9 +354,7 @@
       ["qAdverb", "none"],
       ["soe", "kind"]
     ],
-    "comment": "A bare plural imperfective good on PROG: the average temporal size of the singular events decides the availability of the reading.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A bare plural imperfective good on PROG: the average temporal size of the singular events decides the availability of the reading."
   },
   {
     "id": "delprete2013_17",
@@ -411,9 +383,7 @@
       ["qAdverb", "none"],
       ["soe", "none"]
     ],
-    "comment": "The same reference situation is forward-expanded twice, with a null expansion for the stative clause and a non-null one for the activity clause.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The same reference situation is forward-expanded twice, with a null expansion for the stative clause and a non-null one for the activity clause."
   },
   {
     "id": "delprete2013_19",
@@ -439,9 +409,7 @@
       ["qAdverb", "ogni"],
       ["soe", "none"]
     ],
-    "comment": "The quantificational adverbial is part of the description of the habit and does not anchor it; the habit still needs a reference time adverbial, (20).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The quantificational adverbial is part of the description of the habit and does not anchor it; the habit still needs a reference time adverbial, (20)."
   },
   {
     "id": "delprete2013_20",
@@ -467,9 +435,7 @@
       ["qAdverb", "ogni"],
       ["soe", "none"]
     ],
-    "comment": "Only the initial adverbial anchors the habit; the quantificational adverbial contributes a universal quantification within it.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Only the initial adverbial anchors the habit; the quantificational adverbial contributes a universal quantification within it."
   },
   {
     "id": "delprete2013_fn29",
@@ -494,9 +460,7 @@
       ["qAdverb", "none"],
       ["soe", "kind"]
     ],
-    "comment": "A small reference situation clashes with the plurality of the verb phrase; the clash motivates instantiating the event quantifier by a singular event for PROG.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A small reference situation clashes with the plurality of the verb phrase; the clash motivates instantiating the event quantifier by a singular event for PROG."
   },
   {
     "id": "delprete2013_fn31",
@@ -522,9 +486,7 @@
       ["qAdverb", "sempre"],
       ["soe", "none"]
     ],
-    "comment": "The when-clause realizes the restriction of sempre that (29) accommodates; both Imperfetto forms manifest one IMPF feature (assumption C).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The when-clause realizes the restriction of sempre that (29) accommodates; both Imperfetto forms manifest one IMPF feature (assumption C)."
   },
   {
     "id": "delprete2013_tennis",
@@ -548,9 +510,7 @@
       ["qAdverb", "none"],
       ["soe", "none"]
     ],
-    "comment": "The lexical cumulativity hypothesis at work: there is a plural event of Gianni playing tennis whose temporal trace includes the relevant period.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The lexical cumulativity hypothesis at work: there is a plural event of Gianni playing tennis whose temporal trace includes the relevant period."
   },
   {
     "id": "delprete2013_frequentative",
@@ -573,8 +533,6 @@
       ["qAdverb", "none"],
       ["soe", "kind"]
     ],
-    "comment": "The frequentative motivating Distribution to Sub-Events, (21): a series of smoking events lasted twenty years and each had a cigar of the kind Toscanello as its theme.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The frequentative motivating Distribution to Sub-Events, (21): a series of smoking events lasted twenty years and each had a cigar of the kind Toscanello as its theme."
   }
 ]

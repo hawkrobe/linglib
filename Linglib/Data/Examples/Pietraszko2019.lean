@@ -31,9 +31,7 @@ def ex_4 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "cabanga"), ("role", "complement"), ("mood", "indicative")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_7a : LinguisticExample :=
   { id := "pietraszko2019_7a"
@@ -49,9 +47,7 @@ def ex_7a : LinguisticExample :=
     alternatives := [("Ngi-ku-funa ukudla.", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "funa"), ("role", "complement"), ("diagnostic", "objectMarking")]
-    comment := "Object marking requires the disjoint form ya-."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Object marking requires the disjoint form ya-." }
 
 def ex_7b : LinguisticExample :=
   { id := "pietraszko2019_7b"
@@ -67,9 +63,7 @@ def ex_7b : LinguisticExample :=
     alternatives := [("Ngi-ku-funa ukuthi uZodwa a-pheke.", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "funa"), ("role", "complement"), ("mood", "subjunctive"), ("diagnostic", "objectMarking")]
-    comment := "A clausal complement is object-marked like a nominal one."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "A clausal complement is object-marked like a nominal one." }
 
 def ex_14 : LinguisticExample :=
   { id := "pietraszko2019_14"
@@ -85,9 +79,7 @@ def ex_14 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "danisa"), ("role", "obliquePassiveSubject")]
-    comment := "The oblique prefix yi- replaces the augment."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "The oblique prefix yi- replaces the augment." }
 
 def ex_20b : LinguisticExample :=
   { id := "pietraszko2019_20b"
@@ -103,9 +95,7 @@ def ex_20b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "khuluma nga"), ("role", "prepositionObject")]
-    comment := "Coalesces to ngokuthi."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Coalesces to ngokuthi." }
 
 def ex_22 : LinguisticExample :=
   { id := "pietraszko2019_22"
@@ -121,9 +111,7 @@ def ex_22 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "bala"), ("role", "subject")]
-    comment := "The clausal subject controls class-15 agreement."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "The clausal subject controls class-15 agreement." }
 
 def all : List LinguisticExample := [ex_4, ex_7a, ex_7b, ex_14, ex_20b, ex_22]
 

@@ -31,9 +31,7 @@ def ex_10a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "Partee §2. Paired with (10b): if 'gun' excludes fake guns (the privative analysis), why is (10b) well-formed?"
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Partee §2. Paired with (10b): if 'gun' excludes fake guns (the privative analysis), why is (10b) well-formed?" }
 
 def ex_10b : LinguisticExample :=
   { id := "partee2010_10b"
@@ -49,9 +47,7 @@ def ex_10b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "Partee §2 ex. (10b). The motivating puzzle: traditional privative analysis predicts 'gun' ∩ 'fake gun' = ∅, but (10b) presupposes 'gun' covers both. Resolved in §4 via NVP-licensed coercion of 'gun' to 'gun*'."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Partee §2 ex. (10b). The motivating puzzle: traditional privative analysis predicts 'gun' ∩ 'fake gun' = ∅, but (10b) presupposes 'gun' covers both. Resolved in §4 via NVP-licensed coercion of 'gun' to 'gun*'." }
 
 def ex_11a : LinguisticExample :=
   { id := "partee2010_11a"
@@ -67,9 +63,7 @@ def ex_11a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "Partee 2010 §3 ex. (11a); Nowak 2000. Baseline for the split construction in (11b)."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Partee 2010 §3 ex. (11a); Nowak 2000. Baseline for the split construction in (11b)." }
 
 def ex_11b : LinguisticExample :=
   { id := "partee2010_11b"
@@ -85,9 +79,7 @@ def ex_11b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "Partee 2010 §3 ex. (11b); Nowak 2000. The split-NP construction central to Partee's argument: intersective 'przystojny' splits cleanly. Compare with (14b) where non-subsective 'były' cannot split."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Partee 2010 §3 ex. (11b); Nowak 2000. The split-NP construction central to Partee's argument: intersective 'przystojny' splits cleanly. Compare with (14b) where non-subsective 'były' cannot split." }
 
 def ex_13b : LinguisticExample :=
   { id := "partee2010_13b"
@@ -103,9 +95,7 @@ def ex_13b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "Partee 2010 §3 ex. (13b); Nowak 2000. Intersective member of the splittable class (15a/c)."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Partee 2010 §3 ex. (13b); Nowak 2000. Intersective member of the splittable class (15a/c)." }
 
 def ex_14b : LinguisticExample :=
   { id := "partee2010_14b"
@@ -121,9 +111,7 @@ def ex_14b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "Partee 2010 §3 ex. (14b); Nowak 2000. Critical negative datum: non-subsective adjectives cannot split. This is the empirical contrast that motivates the 3-class hierarchy: the splitting diagnostic distinguishes subsective (including former privatives) from non-subsective, NOT privative from non-privative."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Partee 2010 §3 ex. (14b); Nowak 2000. Critical negative datum: non-subsective adjectives cannot split. This is the empirical contrast that motivates the 3-class hierarchy: the splitting diagnostic distinguishes subsective (including former privatives) from non-subsective, NOT privative from non-privative." }
 
 def biedny_ambiguity : LinguisticExample :=
   { id := "partee2010_biedny_ambiguity"
@@ -139,9 +127,7 @@ def biedny_ambiguity : LinguisticExample :=
     alternatives := []
     readings := [("intersective 'not rich'", .acceptable), ("non-subsective 'pitiful'", .unacceptable)]
     paperFeatures := []
-    comment := "Partee 2010 §3 exs. (15b) and (16a); Nowak 2000. The single most precise empirical claim in the paper: the same lexical item splits or fails to split depending on its semantic class. This refutes any attempt to assimilate splitting to a morphological or lexical feature of the adjective. The `readings` field captures the discrimination at the reading level — the discrimination cannot be encoded at the class level alone."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Partee 2010 §3 exs. (15b) and (16a); Nowak 2000. The single most precise empirical claim in the paper: the same lexical item splits or fails to split depending on its semantic class. This refutes any attempt to assimilate splitting to a morphological or lexical feature of the adjective. The `readings` field captures the discrimination at the reading level — the discrimination cannot be encoded at the class level alone." }
 
 def ex_17b : LinguisticExample :=
   { id := "partee2010_17b"
@@ -157,9 +143,7 @@ def ex_17b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "Partee 2010 §4 ex. (17b). Together with (10b), the canonical evidence for noun-extension coercion. The paper notes 'real' would always be redundant without coercion."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Partee 2010 §4 ex. (17b). Together with (10b), the canonical evidence for noun-extension coercion. The paper notes 'real' would always be redundant without coercion." }
 
 def ex_19b : LinguisticExample :=
   { id := "partee2010_19b"
@@ -175,9 +159,7 @@ def ex_19b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "Partee 2010 §4 ex. (19b); credited to Kamp & Partee 1995. The classical HPP example: identical adjective+noun pairs receive different interpretations depending on which is head, because the head fixes the local domain."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Partee 2010 §4 ex. (19b); credited to Kamp & Partee 1995. The classical HPP example: identical adjective+noun pairs receive different interpretations depending on which is head, because the head fixes the local domain." }
 
 def ex_21b : LinguisticExample :=
   { id := "partee2010_21b"
@@ -193,9 +175,7 @@ def ex_21b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "Partee 2010 §4 ex. (21b); credited to Kamp & Partee 1995. Demonstrates that NVP applies to simple predicates, not just to Adj+N combinations — the same principle Partee invokes for privative coercion."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Partee 2010 §4 ex. (21b); credited to Kamp & Partee 1995. Demonstrates that NVP applies to simple predicates, not just to Adj+N combinations — the same principle Partee invokes for privative coercion." }
 
 def ex_22b : LinguisticExample :=
   { id := "partee2010_22b"
@@ -211,9 +191,7 @@ def ex_22b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "Partee 2010 §4 ex. (22b). Closing argument: noun extensions are context-adjustable independently of adjective modification, so the coercion machinery posited for privatives isn't an ad hoc rescue — it's a general property of noun interpretation."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Partee 2010 §4 ex. (22b). Closing argument: noun extensions are context-adjustable independently of adjective modification, so the coercion machinery posited for privatives isn't an ad hoc rescue — it's a general property of noun interpretation." }
 
 def ex_12a : LinguisticExample :=
   { id := "partee2010_12a"
@@ -229,9 +207,7 @@ def ex_12a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "Partee 2010 §3 ex. (12a); Nowak 2000. Unsplit baseline for the (12b) split-NP contrast."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Partee 2010 §3 ex. (12a); Nowak 2000. Unsplit baseline for the (12b) split-NP contrast." }
 
 def ex_12b : LinguisticExample :=
   { id := "partee2010_12b"
@@ -247,9 +223,7 @@ def ex_12b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "Partee 2010 §3 ex. (12b); Nowak 2000. A second splittable intersective adjective, paired with (11b) to show the pattern is not lexically isolated."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Partee 2010 §3 ex. (12b); Nowak 2000. A second splittable intersective adjective, paired with (11b) to show the pattern is not lexically isolated." }
 
 def ex_13a : LinguisticExample :=
   { id := "partee2010_13a"
@@ -265,9 +239,7 @@ def ex_13a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "Partee 2010 §3 ex. (13a); Nowak 2000. Both orderings of (13) are acceptable splits, demonstrating that the construction does not constrain which element is sentence-final."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Partee 2010 §3 ex. (13a); Nowak 2000. Both orderings of (13) are acceptable splits, demonstrating that the construction does not constrain which element is sentence-final." }
 
 def ex_14a : LinguisticExample :=
   { id := "partee2010_14a"
@@ -283,9 +255,7 @@ def ex_14a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "Partee 2010 §3 ex. (14a); Nowak 2000. The ungrammaticality holds for both split orders, ruling out a syntactic explanation tied to which element is sentence-final."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Partee 2010 §3 ex. (14a); Nowak 2000. The ungrammaticality holds for both split orders, ruling out a syntactic explanation tied to which element is sentence-final." }
 
 def ex_17a : LinguisticExample :=
   { id := "partee2010_17a"
@@ -301,9 +271,7 @@ def ex_17a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "Partee 2010 §4 ex. (17a). The unreduced form makes the coercion visible: 'fur' must be the extension covering both halves of the disjunction."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Partee 2010 §4 ex. (17a). The unreduced form makes the coercion visible: 'fur' must be the extension covering both halves of the disjunction." }
 
 def ex_19a : LinguisticExample :=
   { id := "partee2010_19a"
@@ -319,9 +287,7 @@ def ex_19a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "Partee 2010 §4 ex. (19a); Kamp & Partee 1995. The (19a)/(19b) minimal pair is the canonical demonstration that head choice fixes the local domain — without (19a) as foil, (19b) does not make the HPP point."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Partee 2010 §4 ex. (19a); Kamp & Partee 1995. The (19a)/(19b) minimal pair is the canonical demonstration that head choice fixes the local domain — without (19a) as foil, (19b) does not make the HPP point." }
 
 def ex_21a : LinguisticExample :=
   { id := "partee2010_21a"
@@ -337,9 +303,7 @@ def ex_21a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "Partee 2010 §4 ex. (21a); Kamp & Partee 1995. Without (21a) as foil, the NVP analysis of (21b) does not have a contrastive case to anchor."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Partee 2010 §4 ex. (21a); Kamp & Partee 1995. Without (21a) as foil, the NVP analysis of (21b) does not have a contrastive case to anchor." }
 
 def ex_22a : LinguisticExample :=
   { id := "partee2010_22a"
@@ -355,9 +319,7 @@ def ex_22a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "Partee 2010 §4 ex. (22a). Required as the live-poets foil for (22b)'s dead-poets reading; the pair demonstrates that the noun-extension shift Partee invokes for privatives is independently attested for ordinary nouns under predicate-driven coercion."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Partee 2010 §4 ex. (22a). Required as the live-poets foil for (22b)'s dead-poets reading; the pair demonstrates that the noun-extension shift Partee invokes for privatives is independently attested for ordinary nouns under predicate-driven coercion." }
 
 def all : List LinguisticExample := [ex_10a, ex_10b, ex_11a, ex_11b, ex_13b, ex_14b, biedny_ambiguity, ex_17b, ex_19b, ex_21b, ex_22b, ex_12a, ex_12b, ex_13a, ex_14a, ex_17a, ex_19a, ex_21a, ex_22a]
 

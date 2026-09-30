@@ -18,9 +18,7 @@
       ["transitive", "no"],
       ["subjectCase", "NOM"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "baker2015_1b",
@@ -42,9 +40,7 @@
       ["subjectCase", "NOM"],
       ["objectCase", "ACC"]
     ],
-    "comment": "From Vinokurova 2005.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "From Vinokurova 2005."
   },
   {
     "id": "baker2015_1c",
@@ -66,9 +62,7 @@
       ["subjectCase", "NOM"],
       ["objectCase", "ACC"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "baker2015_12a",
@@ -90,9 +84,7 @@
       ["subjectCase", "ERG"],
       ["objectCase", "unmarked"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "baker2015_12b",
@@ -113,9 +105,7 @@
       ["transitive", "no"],
       ["subjectCase", "unmarked"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "baker2015_28a",
@@ -138,9 +128,7 @@
       ["objectCase", "unmarked"],
       ["genitiveForm", "Jose-kan"]
     ],
-    "comment": "The ergative suffix is also the genitive of the possessor in Jose-kan ochiti 'José's dog'; only the singular first and third person pronouns have distinct genitive forms.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The ergative suffix is also the genitive of the possessor in Jose-kan ochiti 'José's dog'; only the singular first and third person pronouns have distinct genitive forms."
   },
   {
     "id": "baker2015_28b",
@@ -163,9 +151,7 @@
       ["objectCase", "unmarked"],
       ["genitiveForm", "nokon"]
     ],
-    "comment": "The first-person possessor has the distinct genitive form nokon in nokon ochiti 'my dog'.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The first-person possessor has the distinct genitive form nokon in nokon ochiti 'my dog'."
   },
   {
     "id": "baker2015_30a",
@@ -186,9 +172,7 @@
       ["transitive", "no"],
       ["subjectCase", "NOM"]
     ],
-    "comment": "From Rude 1986.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "From Rude 1986."
   },
   {
     "id": "baker2015_30b",
@@ -211,9 +195,7 @@
       ["subjectCase", "ERG"],
       ["objectCase", "ACC"]
     ],
-    "comment": "From Rude 1986.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "From Rude 1986."
   },
   {
     "id": "baker2015_21a",
@@ -234,9 +216,7 @@
       ["transitive", "no"],
       ["subjectCase", "ABS"]
     ],
-    "comment": "From Haspelmath 1993.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "From Haspelmath 1993."
   },
   {
     "id": "baker2015_21b",
@@ -258,9 +238,7 @@
       ["subjectCase", "ERG"],
       ["objectCase", "ABS"]
     ],
-    "comment": "From Haspelmath 1993.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "From Haspelmath 1993."
   },
   {
     "id": "baker2015_22a",
@@ -282,9 +260,7 @@
       ["subjectCase", "unmarked"],
       ["subjectAgreement", "yes"]
     ],
-    "comment": "From Franklin 1971; Kewa has subject agreement with ergative and absolutive subjects alike and no object agreement.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "From Franklin 1971; Kewa has subject agreement with ergative and absolutive subjects alike and no object agreement."
   },
   {
     "id": "baker2015_22b",
@@ -307,9 +283,7 @@
       ["objectCase", "unmarked"],
       ["subjectAgreement", "yes"]
     ],
-    "comment": "From Franklin 1971.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "From Franklin 1971."
   },
   {
     "id": "baker2015_23a",
@@ -332,9 +306,7 @@
       ["subjectCase", "ABS"],
       ["subjectAgreement", "yes"]
     ],
-    "comment": "From Willson 1996.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "From Willson 1996."
   },
   {
     "id": "baker2015_23b",
@@ -359,9 +331,7 @@
       ["subjectAgreement", "yes"],
       ["objectAgreement", "yes"]
     ],
-    "comment": "From Willson 1996; the tense suffix agrees with ergative and absolutive subjects alike, the prefix with the absolutive object.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "From Willson 1996; the tense suffix agrees with ergative and absolutive subjects alike, the prefix with the absolutive object."
   },
   {
     "id": "baker2015_25a",
@@ -383,9 +353,7 @@
       ["subjectCase", "NOM"],
       ["subjectAgreement", "yes"]
     ],
-    "comment": "From Butt and King 2003.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "From Butt and King 2003."
   },
   {
     "id": "baker2015_25b",
@@ -410,8 +378,6 @@
       ["subjectAgreement", "no"],
       ["objectAgreement", "yes"]
     ],
-    "comment": "From Butt and King 2003; the finite verb agrees with a nominative subject but not with an ergative one.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "From Butt and King 2003; the finite verb agrees with a nominative subject but not with an ergative one."
   }
 ]

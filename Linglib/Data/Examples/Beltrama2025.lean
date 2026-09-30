@@ -31,9 +31,7 @@ def ex_1a : LinguisticExample :=
     alternatives := []
     readings := [("middling: positive but only moderately so", .acceptable)]
     paperFeatures := [("class", "MPA"), ("inference", "middling")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_3c : LinguisticExample :=
   { id := "beltrama2025_3c"
@@ -49,9 +47,7 @@ def ex_3c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "cancelability"), ("verdict", "middling inference is an implicature")]
-    comment := "Contrast lukewarm (3b): elaborating with the stronger term contradicts lexicalized upper bounds."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Contrast lukewarm (3b): elaborating with the stronger term contradicts lexicalized upper bounds." }
 
 def ex_4c : LinguisticExample :=
   { id := "beltrama2025_4c"
@@ -67,9 +63,7 @@ def ex_4c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "reinforceability")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_5c : LinguisticExample :=
   { id := "beltrama2025_5c"
@@ -85,9 +79,7 @@ def ex_5c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "DE suspension"), ("verdict", "no upper-bounded reading in the restrictor")]
-    comment := "The contradictory flavor shows the middling inference is suspended in downward-entailing contexts."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The contradictory flavor shows the middling inference is suspended in downward-entailing contexts." }
 
 def ex_8a : LinguisticExample :=
   { id := "beltrama2025_8a"
@@ -103,9 +95,7 @@ def ex_8a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "for-phrase"), ("property", "context-sensitivity")]
-    comment := "MPAs are comparison-class sensitive, unlike absolute adjectives."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "MPAs are comparison-class sensitive, unlike absolute adjectives." }
 
 def ex_11a : LinguisticExample :=
   { id := "beltrama2025_11a"
@@ -121,9 +111,7 @@ def ex_11a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "strong intensifiers"), ("property", "restricted gradability")]
-    comment := "Moderate modifiers (quite, pretty, somewhat) are fine; high and extreme ones degrade."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Moderate modifiers (quite, pretty, somewhat) are fine; high and extreme ones degrade." }
 
 def ex_12a : LinguisticExample :=
   { id := "beltrama2025_12a"
@@ -139,9 +127,7 @@ def ex_12a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "comparative"), ("property", "mildness retained in comparatives")]
-    comment := "Better is fine in the same context: the MPA comparative keeps the middling flavor."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Better is fine in the same context: the MPA comparative keeps the middling flavor." }
 
 def ex_15a : LinguisticExample :=
   { id := "beltrama2025_15a"
@@ -157,9 +143,7 @@ def ex_15a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "zone of indifference"), ("verdict", "near-contradiction")]
-    comment := "Good/bad leave a neutral gap (14a); MPAs do not — existential vs universal force clash."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Good/bad leave a neutral gap (14a); MPAs do not — existential vs universal force clash." }
 
 def ex_21 : LinguisticExample :=
   { id := "beltrama2025_21"
@@ -175,9 +159,7 @@ def ex_21 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "barely"), ("property", "crisp boundary")]
-    comment := "#barely good needs a special high-standard context; the necessity standard gives MPAs a crisp edge."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "#barely good needs a special high-standard context; the necessity standard gives MPAs a crisp edge." }
 
 def ex_22a : LinguisticExample :=
   { id := "beltrama2025_22a"
@@ -193,9 +175,7 @@ def ex_22a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "crisp judgment")]
-    comment := "The same continuation with good is infelicitous — vague standards resist crisp cutoffs."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The same continuation with good is infelicitous — vague standards resist crisp cutoffs." }
 
 def ex_24a : LinguisticExample :=
   { id := "beltrama2025_24a"
@@ -211,9 +191,7 @@ def ex_24a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "emphasis in DE"), ("parallel", "minimizers")]
-    comment := "With good or fantastic in place of decent the emphasis collapses."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "With good or fantastic in place of decent the emphasis collapses." }
 
 def ex_26a : LinguisticExample :=
   { id := "beltrama2025_26a"
@@ -229,9 +207,7 @@ def ex_26a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "minimal sufficiency exclusive")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_39 : LinguisticExample :=
   { id := "beltrama2025_39"
@@ -247,9 +223,7 @@ def ex_39 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "slightly"), ("verdict", "against the MinSAA analysis")]
-    comment := "MinSAAs (slightly wet, slightly profitable) accept the modifier; MPAs reject it out of the blue."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "MinSAAs (slightly wet, slightly profitable) accept the modifier; MPAs reject it out of the blue." }
 
 def ex_51b : LinguisticExample :=
   { id := "beltrama2025_51b"
@@ -265,9 +239,7 @@ def ex_51b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "comparative entailment"), ("verdict", "positive form not entailed")]
-    comment := "For MinSAAs the parallel construction contradicts — the MPA standard is more than nonzero value."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "For MinSAAs the parallel construction contradicts — the MPA standard is more than nonzero value." }
 
 def ex_70 : LinguisticExample :=
   { id := "beltrama2025_70"
@@ -283,9 +255,7 @@ def ex_70 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "strong intensifier rescued"), ("condition", "significance excluded from the QUD")]
-    comment := "When only the necessity standard is at issue, the intensifier clash with the middling flavor disappears."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "When only the necessity standard is at issue, the intensifier clash with the middling flavor disappears." }
 
 def all : List LinguisticExample := [ex_1a, ex_3c, ex_4c, ex_5c, ex_8a, ex_11a, ex_12a, ex_15a, ex_21, ex_22a, ex_24a, ex_26a, ex_39, ex_51b, ex_70]
 

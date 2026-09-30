@@ -16,8 +16,7 @@
       ["sort", "anaphor"],
       ["binder", "local"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sagwasowbender2003_ex2b",
@@ -36,8 +35,7 @@
       ["sort", "pronoun"],
       ["binder", "local"]
     ],
-    "comment": "Her coindexed with Susan.",
-    "lgrConformance": ""
+    "comment": "Her coindexed with Susan."
   },
   {
     "id": "sagwasowbender2003_ex3a",
@@ -56,8 +54,7 @@
       ["sort", "anaphor"],
       ["binder", "local"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sagwasowbender2003_ex3b",
@@ -76,8 +73,7 @@
       ["sort", "pronoun"],
       ["binder", "local"]
     ],
-    "comment": "Her coindexed with Susan.",
-    "lgrConformance": ""
+    "comment": "Her coindexed with Susan."
   },
   {
     "id": "sagwasowbender2003_ex4a",
@@ -96,8 +92,7 @@
       ["sort", "anaphor"],
       ["binder", "local"]
     ],
-    "comment": "The object of the argument-marking preposition ranks with its PP, so the subject outranks it.",
-    "lgrConformance": ""
+    "comment": "The object of the argument-marking preposition ranks with its PP, so the subject outranks it."
   },
   {
     "id": "sagwasowbender2003_ex4b",
@@ -116,8 +111,7 @@
       ["sort", "pronoun"],
       ["binder", "local"]
     ],
-    "comment": "Her coindexed with Susan.",
-    "lgrConformance": ""
+    "comment": "Her coindexed with Susan."
   },
   {
     "id": "sagwasowbender2003_ex5a",
@@ -136,8 +130,7 @@
       ["sort", "anaphor"],
       ["binder", "local"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sagwasowbender2003_ex5b",
@@ -156,8 +149,7 @@
       ["sort", "pronoun"],
       ["binder", "local"]
     ],
-    "comment": "Her coindexed with Susan.",
-    "lgrConformance": ""
+    "comment": "Her coindexed with Susan."
   },
   {
     "id": "sagwasowbender2003_ex6a",
@@ -176,8 +168,7 @@
       ["sort", "anaphor"],
       ["binder", "local"]
     ],
-    "comment": "The local o-commander of herself is the object Susan.",
-    "lgrConformance": ""
+    "comment": "The local o-commander of herself is the object Susan."
   },
   {
     "id": "sagwasowbender2003_ex6b",
@@ -196,8 +187,7 @@
       ["sort", "pronoun"],
       ["binder", "local"]
     ],
-    "comment": "Her coindexed with Susan.",
-    "lgrConformance": ""
+    "comment": "Her coindexed with Susan."
   },
   {
     "id": "sagwasowbender2003_ex7a",
@@ -216,8 +206,7 @@
       ["sort", "anaphor"],
       ["binder", "nonlocal"]
     ],
-    "comment": "Herself coindexed with Susan, not with its local o-commander nobody.",
-    "lgrConformance": ""
+    "comment": "Herself coindexed with Susan, not with its local o-commander nobody."
   },
   {
     "id": "sagwasowbender2003_ex7b",
@@ -236,8 +225,7 @@
       ["sort", "pronoun"],
       ["binder", "nonlocal"]
     ],
-    "comment": "Her coindexed with Susan.",
-    "lgrConformance": ""
+    "comment": "Her coindexed with Susan."
   },
   {
     "id": "sagwasowbender2003_ex8a",
@@ -256,8 +244,7 @@
       ["sort", "anaphor"],
       ["binder", "nonlocal"]
     ],
-    "comment": "Herself coindexed with Susan, not with its local o-commander Susan's friends.",
-    "lgrConformance": ""
+    "comment": "Herself coindexed with Susan, not with its local o-commander Susan's friends."
   },
   {
     "id": "sagwasowbender2003_ex8b",
@@ -276,8 +263,7 @@
       ["sort", "pronoun"],
       ["binder", "nonlocal"]
     ],
-    "comment": "Her coindexed with Susan.",
-    "lgrConformance": ""
+    "comment": "Her coindexed with Susan."
   },
   {
     "id": "sagwasowbender2003_ex9a",
@@ -296,8 +282,7 @@
       ["sort", "anaphor"],
       ["binder", "nonlocal"]
     ],
-    "comment": "Herself coindexed with Susan, not with its local o-commander the picture.",
-    "lgrConformance": ""
+    "comment": "Herself coindexed with Susan, not with its local o-commander the picture."
   },
   {
     "id": "sagwasowbender2003_ex9b",
@@ -316,8 +301,7 @@
       ["sort", "pronoun"],
       ["binder", "nonlocal"]
     ],
-    "comment": "Her coindexed with Susan.",
-    "lgrConformance": ""
+    "comment": "Her coindexed with Susan."
   },
   {
     "id": "sagwasowbender2003_ex37a",
@@ -336,8 +320,7 @@
       ["gapInFirst", "true"],
       ["gapInSecond", "false"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sagwasowbender2003_ex37b",
@@ -356,8 +339,7 @@
       ["gapInFirst", "false"],
       ["gapInSecond", "true"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sagwasowbender2003_ex38a",
@@ -376,8 +358,7 @@
       ["gapInFirst", "true"],
       ["gapInSecond", "false"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sagwasowbender2003_ex38b",
@@ -396,8 +377,7 @@
       ["gapInFirst", "false"],
       ["gapInSecond", "true"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sagwasowbender2003_ex40a",
@@ -416,8 +396,7 @@
       ["gapInFirst", "true"],
       ["gapInSecond", "true"]
     ],
-    "comment": "Across the board: each conjunct has a gap paired with the same filler.",
-    "lgrConformance": ""
+    "comment": "Across the board: each conjunct has a gap paired with the same filler."
   },
   {
     "id": "sagwasowbender2003_ex40b",
@@ -436,8 +415,7 @@
       ["gapInFirst", "true"],
       ["gapInSecond", "true"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sagwasowbender2003_ex40c",
@@ -456,8 +434,7 @@
       ["gapInFirst", "true"],
       ["gapInSecond", "true"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sagwasowbender2003_ex36a",
@@ -474,8 +451,7 @@
     "paperFeatures": [
       ["topic", "conjunctGap"]
     ],
-    "comment": "The first conjunct is a gap.",
-    "lgrConformance": ""
+    "comment": "The first conjunct is a gap."
   },
   {
     "id": "sagwasowbender2003_ex36b",
@@ -492,8 +468,7 @@
     "paperFeatures": [
       ["topic", "conjunctGap"]
     ],
-    "comment": "The second conjunct is a gap.",
-    "lgrConformance": ""
+    "comment": "The second conjunct is a gap."
   },
   {
     "id": "sagwasowbender2003_ex44",
@@ -510,7 +485,6 @@
     "paperFeatures": [
       ["topic", "conjunctGap"]
     ],
-    "comment": "Both conjuncts are gaps paired with one filler, which the across-the-board exception as stated would permit.",
-    "lgrConformance": ""
+    "comment": "Both conjuncts are gaps paired with one filler, which the across-the-board exception as stated would permit."
   }
 ]

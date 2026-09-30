@@ -28,8 +28,7 @@
         "NPI"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "israel2001_s1b",
@@ -60,8 +59,7 @@
         "NPI"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "israel2001_s2a",
@@ -92,8 +90,7 @@
         "PPI"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "israel2001_s2b",
@@ -124,8 +121,7 @@
         "PPI"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "israel2001_s3a",
@@ -156,8 +152,7 @@
         "antecedent of a conditional"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "israel2001_s3b",
@@ -188,8 +183,7 @@
         "antecedent of a conditional"
       ]
     ],
-    "comment": "Marked ??.",
-    "lgrConformance": ""
+    "comment": "Marked ??."
   },
   {
     "id": "israel2001_s4a",
@@ -220,8 +214,7 @@
         "interrogative"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "israel2001_s4b",
@@ -252,8 +245,7 @@
         "interrogative"
       ]
     ],
-    "comment": "Marked ??.",
-    "lgrConformance": ""
+    "comment": "Marked ??."
   },
   {
     "id": "israel2001_s5a",
@@ -284,8 +276,7 @@
         "restriction of a universal"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "israel2001_s5b",
@@ -316,8 +307,7 @@
         "restriction of a universal"
       ]
     ],
-    "comment": "Marked ??.",
-    "lgrConformance": ""
+    "comment": "Marked ??."
   },
   {
     "id": "israel2001_s6a",
@@ -348,8 +338,7 @@
         "standard of a comparative"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "israel2001_s6b",
@@ -380,8 +369,7 @@
         "standard of a comparative"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "israel2001_s7a",
@@ -412,8 +400,7 @@
         "emphatic NPI, low value"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "israel2001_s7b",
@@ -444,8 +431,7 @@
         "emphatic NPI, low value"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "israel2001_s7c",
@@ -476,8 +462,7 @@
         "emphatic NPI, low value"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "israel2001_s8a",
@@ -508,8 +493,7 @@
         "attenuating NPI, high value"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "israel2001_s8b",
@@ -540,8 +524,7 @@
         "attenuating NPI, high value"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "israel2001_s8c",
@@ -572,8 +555,7 @@
         "attenuating NPI, high value"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "israel2001_s9a",
@@ -604,8 +586,7 @@
         "emphatic PPI, high value"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "israel2001_s9b",
@@ -636,8 +617,7 @@
         "emphatic PPI, high value"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "israel2001_s9c",
@@ -668,8 +648,7 @@
         "emphatic PPI, high value"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "israel2001_s10a",
@@ -700,8 +679,7 @@
         "attenuating PPI, low value"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "israel2001_s10b",
@@ -732,8 +710,7 @@
         "attenuating PPI, low value"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "israel2001_s10c",
@@ -764,8 +741,7 @@
         "attenuating PPI, low value"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "israel2001_s11a",
@@ -805,8 +781,7 @@
         "facilitating: stimulus"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "israel2001_s11b",
@@ -846,8 +821,7 @@
         "facilitating: reward"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "israel2001_s11c",
@@ -882,8 +856,7 @@
         "facilitating: instrument"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "israel2001_s12a",
@@ -923,8 +896,7 @@
         "facilitating: stimulus"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "israel2001_s12b",
@@ -964,8 +936,7 @@
         "facilitating: stimulus"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "israel2001_s12c",
@@ -1000,8 +971,7 @@
         "facilitating: instrument"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "israel2001_s13a",
@@ -1037,8 +1007,7 @@
         "inverted NPI, large time span"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "israel2001_s13b",
@@ -1074,8 +1043,7 @@
         "inverted NPI, large time span"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "israel2001_s14a",
@@ -1111,8 +1079,7 @@
         "inverted PPI, minimal span"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "israel2001_s14b",
@@ -1148,8 +1115,7 @@
         "inverted PPI, minimal span"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "israel2001_s15a",
@@ -1184,8 +1150,7 @@
         "resource"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "israel2001_s15b",
@@ -1220,8 +1185,7 @@
         "reward"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "israel2001_s16a",
@@ -1256,8 +1220,7 @@
         "resource"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "israel2001_s16b",
@@ -1292,8 +1255,7 @@
         "reward"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "israel2001_s17a",
@@ -1329,8 +1291,7 @@
         "duration: impeding"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "israel2001_s17b",
@@ -1366,8 +1327,7 @@
         "duration: impeding"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "israel2001_s18a",
@@ -1398,8 +1358,7 @@
         "duration: impeding"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "israel2001_s18b",
@@ -1430,8 +1389,7 @@
         "duration: impeding"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "israel2001_s19",
@@ -1462,8 +1420,7 @@
         "five coordinated scales"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "israel2001_s20a",
@@ -1490,8 +1447,7 @@
         "solvers, problems, time spans"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "israel2001_s20b",
@@ -1518,8 +1474,7 @@
         "solvers, problems, time spans"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "israel2001_s20c",
@@ -1546,8 +1501,7 @@
         "solvers, problems, time spans"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "israel2001_s21a",
@@ -1574,8 +1528,7 @@
         "solvers, problems, time spans"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "israel2001_s21b",
@@ -1602,8 +1555,7 @@
         "solvers, problems, time spans"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "israel2001_s21c",
@@ -1630,8 +1582,7 @@
         "solvers, problems, time spans"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "israel2001_s22a",
@@ -1658,8 +1609,7 @@
         "existential"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "israel2001_s22b",
@@ -1686,8 +1636,7 @@
         "perceptual ability"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "israel2001_s22c",
@@ -1714,8 +1663,7 @@
         "of both (22a) and (22b)"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "israel2001_s23a",
@@ -1742,8 +1690,7 @@
         "existential"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "israel2001_s23b",
@@ -1770,8 +1717,7 @@
         "perceptual ability"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "israel2001_s24a",
@@ -1798,8 +1744,7 @@
         "perceptual ability"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "israel2001_s24b",
@@ -1826,8 +1771,7 @@
         "existential"
       ]
     ],
-    "comment": "Marked ??.",
-    "lgrConformance": ""
+    "comment": "Marked ??."
   },
   {
     "id": "israel2001_s25a",
@@ -1854,8 +1798,7 @@
         "existential"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "israel2001_s25b",
@@ -1882,8 +1825,7 @@
         "perceptual ability"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "israel2001_s26a",
@@ -1910,8 +1852,7 @@
         "see"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "israel2001_s26b",
@@ -1938,8 +1879,7 @@
         "see"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "israel2001_s27a",
@@ -1966,8 +1906,7 @@
         "detect"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "israel2001_s27b",
@@ -1994,8 +1933,7 @@
         "detect"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "israel2001_s28a",
@@ -2022,8 +1960,7 @@
         "find"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "israel2001_s28b",
@@ -2050,7 +1987,6 @@
         "find"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   }
 ]

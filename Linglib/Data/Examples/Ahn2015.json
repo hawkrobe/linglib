@@ -29,9 +29,7 @@
         "John"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "ahn2015_2",
@@ -63,9 +61,7 @@
         "John"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "ahn2015_3",
@@ -93,9 +89,7 @@
         "positive"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "ahn2015_5_too",
@@ -130,9 +124,7 @@
         "positive"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "ahn2015_5_either",
@@ -167,9 +159,7 @@
         "positive"
       ]
     ],
-    "comment": "A negative host with a positive antecedent: the anaphor's antecedent must be false.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A negative host with a positive antecedent: the anaphor's antecedent must be false."
   },
   {
     "id": "ahn2015_9",
@@ -197,9 +187,7 @@
         "negative"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "ahn2015_10",
@@ -227,9 +215,7 @@
         "positive"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "ahn2015_11",
@@ -261,9 +247,7 @@
         "almost"
       ]
     ],
-    "comment": "Rullmann's licensing condition wrongly predicts almost, which implies the host is false, to license either.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Rullmann's licensing condition wrongly predicts almost, which implies the host is false, to license either."
   },
   {
     "id": "ahn2015_12",
@@ -298,9 +282,7 @@
         "John"
       ]
     ],
-    "comment": "An existential presupposition would be satisfied, yet too is infelicitous without a salient antecedent.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "An existential presupposition would be satisfied, yet too is infelicitous without a salient antecedent."
   },
   {
     "id": "ahn2015_15",
@@ -335,9 +317,7 @@
         "John and the boss must be distinct"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "ahn2015_23",
@@ -369,9 +349,7 @@
         "negation below too"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "ahn2015_24",
@@ -403,9 +381,7 @@
         "negation above too"
       ]
     ],
-    "comment": "Asserts ¬(q ∧ p); with q true from the discourse, ¬p follows.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Asserts ¬(q ∧ p); with q true from the discourse, ¬p follows."
   },
   {
     "id": "ahn2015_26a",
@@ -433,9 +409,7 @@
         "Abrusán entailment"
       ]
     ],
-    "comment": "From Abrusán 2014.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "From Abrusán 2014."
   },
   {
     "id": "ahn2015_26b",
@@ -463,9 +437,7 @@
         "Abrusán entailment"
       ]
     ],
-    "comment": "From Abrusán 2014.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "From Abrusán 2014."
   },
   {
     "id": "ahn2015_29",
@@ -497,9 +469,7 @@
         "not presupposed"
       ]
     ],
-    "comment": "The additive meaning is not presupposed: the question at hand is the conjunction.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The additive meaning is not presupposed: the question at hand is the conjunction."
   },
   {
     "id": "ahn2015_32",
@@ -531,9 +501,7 @@
         "John"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "ahn2015_41",
@@ -561,9 +529,7 @@
         "positive"
       ]
     ],
-    "comment": "O over the alternatives of the disjunction yields a contradiction.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "O over the alternatives of the disjunction yields a contradiction."
   },
   {
     "id": "ahn2015_43",
@@ -591,9 +557,7 @@
         "negative"
       ]
     ],
-    "comment": "Under negation the disjunction entails every alternative; exhaustification is vacuous.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Under negation the disjunction entails every alternative; exhaustification is vacuous."
   },
   {
     "id": "ahn2015_45",
@@ -625,8 +589,6 @@
         "almost"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   }
 ]

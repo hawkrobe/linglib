@@ -31,9 +31,7 @@ def ex_1 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("clauseType", "declarative"), ("act", "warning")]
-    comment := "Bilal warns Anu to take the road conditions into account before driving."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Bilal warns Anu to take the road conditions into account before driving." }
 
 def ex_2 : LinguisticExample :=
   { id := "deo2025_2"
@@ -49,9 +47,7 @@ def ex_2 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("clauseType", "imperative"), ("act", "command")]
-    comment := "The particle intensifies the directive force of the imperative."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "The particle intensifies the directive force of the imperative." }
 
 def ex_3 : LinguisticExample :=
   { id := "deo2025_3"
@@ -67,9 +63,7 @@ def ex_3 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("clauseType", "constituent"), ("act", "question")]
-    comment := "The wh-interrogative use, which the paper leaves outside its analysis of declaratives and imperatives."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "The wh-interrogative use, which the paper leaves outside its analysis of declaratives and imperatives." }
 
 def ex_4 : LinguisticExample :=
   { id := "deo2025_4"
@@ -85,9 +79,7 @@ def ex_4 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("clauseType", "declarative"), ("act", "informing")]
-    comment := "New information relevant to the addressee's actions, with the expectation that he take it on as a commitment; the goal that the plumber be let in is a joint preference."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "New information relevant to the addressee's actions, with the expectation that he take it on as a commitment; the goal that the plumber be let in is a joint preference." }
 
 def ex_5a : LinguisticExample :=
   { id := "deo2025_5a"
@@ -103,9 +95,7 @@ def ex_5a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("clauseType", "declarative"), ("act", "warning")]
-    comment := "Bilal wants Anu to alter her plan and not travel today, offering no alternative plan: her commitment to the content is a precondition for staying safe."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Bilal wants Anu to alter her plan and not travel today, offering no alternative plan: her commitment to the content is a precondition for staying safe." }
 
 def ex_5b : LinguisticExample :=
   { id := "deo2025_5b"
@@ -121,9 +111,7 @@ def ex_5b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("clauseType", "declarative"), ("act", "warning"), ("infelicity", "precondition")]
-    comment := "The content points towards one alternative plan among many, so committing to it is not a precondition for the goal. All three consulted speakers rule it out, fn. 3."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "The content points towards one alternative plan among many, so committing to it is not a precondition for the goal. All three consulted speakers rule it out, fn. 3." }
 
 def ex_6 : LinguisticExample :=
   { id := "deo2025_6"
@@ -139,9 +127,7 @@ def ex_6 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("clauseType", "declarative"), ("act", "advice")]
-    comment := "The doctor's expertise gives the authority to express a preference for dependent commitment; the addressee has no action choices aligned with the goal yet."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "The doctor's expertise gives the authority to express a preference for dependent commitment; the addressee has no action choices aligned with the goal yet." }
 
 def ex_7ctx1 : LinguisticExample :=
   { id := "deo2025_7ctx1"
@@ -157,9 +143,7 @@ def ex_7ctx1 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("clauseType", "declarative"), ("act", "reminder"), ("infelicity", "alignment")]
-    comment := "Anu may reasonably assume that Bilal is aware of the content, so nothing shows his action choices misaligned with it."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Anu may reasonably assume that Bilal is aware of the content, so nothing shows his action choices misaligned with it." }
 
 def ex_7ctx2 : LinguisticExample :=
   { id := "deo2025_7ctx2"
@@ -175,9 +159,7 @@ def ex_7ctx2 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("clauseType", "declarative"), ("act", "reminder")]
-    comment := "The table setting is evidence that Bilal's action choices do not reflect commitment to the content."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "The table setting is evidence that Bilal's action choices do not reflect commitment to the content." }
 
 def ex_8 : LinguisticExample :=
   { id := "deo2025_8"
@@ -193,9 +175,7 @@ def ex_8 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("clauseType", "declarative"), ("act", "warning")]
-    comment := "Shared content uttered to warn of adverse consequences if it is left out of the decision: a warning and a reminder at once."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Shared content uttered to warn of adverse consequences if it is left out of the decision: a warning and a reminder at once." }
 
 def ex_9 : LinguisticExample :=
   { id := "deo2025_9"
@@ -211,9 +191,7 @@ def ex_9 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("clauseType", "declarative"), ("act", "commissive"), ("infelicity", "source")]
-    comment := "A declarative used commissively aligns with a manifest addressee preference: Bilal, who asked, is already a source for the content."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "A declarative used commissively aligns with a manifest addressee preference: Bilal, who asked, is already a source for the content." }
 
 def ex_10a : LinguisticExample :=
   { id := "deo2025_10a"
@@ -229,9 +207,7 @@ def ex_10a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("clauseType", "imperative"), ("act", "request"), ("infelicity", "benefit")]
-    comment := "A request: realizing the content benefits the speaker and does not interfere with the addressee's existing preferences."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "A request: realizing the content benefits the speaker and does not interfere with the addressee's existing preferences." }
 
 def ex_10b : LinguisticExample :=
   { id := "deo2025_10b"
@@ -247,9 +223,7 @@ def ex_10b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("clauseType", "imperative"), ("act", "plea"), ("infelicity", "benefit")]
-    comment := "A plea: realizing the content benefits the speaker and is presumed inconsistent with the addressee's existing preferences."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "A plea: realizing the content benefits the speaker and is presumed inconsistent with the addressee's existing preferences." }
 
 def ex_11a : LinguisticExample :=
   { id := "deo2025_11a"
@@ -265,9 +239,7 @@ def ex_11a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("clauseType", "imperative"), ("act", "offer"), ("infelicity", "deference")]
-    comment := "With the particle the utterance is understood as a mock command or a veiled threat rather than an offer, fn. 4."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "With the particle the utterance is understood as a mock command or a veiled threat rather than an offer, fn. 4." }
 
 def ex_11b : LinguisticExample :=
   { id := "deo2025_11b"
@@ -283,9 +255,7 @@ def ex_11b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("clauseType", "imperative"), ("act", "permission"), ("infelicity", "source")]
-    comment := "A permission with a well-wish: Deepa has asked, so she is a source for the content."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "A permission with a well-wish: Deepa has asked, so she is a source for the content." }
 
 def ex_11c : LinguisticExample :=
   { id := "deo2025_11c"
@@ -301,9 +271,7 @@ def ex_11c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("clauseType", "imperative"), ("act", "concession"), ("infelicity", "source")]
-    comment := "A concession: Deepa has revealed her preference for the content and is a source for it."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "A concession: Deepa has revealed her preference for the content and is a source for it." }
 
 def ex_11d : LinguisticExample :=
   { id := "deo2025_11d"
@@ -319,9 +287,7 @@ def ex_11d : LinguisticExample :=
     alternatives := [("ʣa məsəɳa=t bərə", .unacceptable)]
     readings := []
     paperFeatures := [("clauseType", "imperative"), ("act", "curse"), ("infelicity", "benefit")]
-    comment := "A curse, detrimental to the addressee; the variant with məsəɳa=t 'burial.ground.OBL=LOC' is the same curse."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "A curse, detrimental to the addressee; the variant with məsəɳa=t 'burial.ground.OBL=LOC' is the same curse." }
 
 def ex_12 : LinguisticExample :=
   { id := "deo2025_12"
@@ -337,9 +303,7 @@ def ex_12 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("clauseType", "imperative"), ("act", "command")]
-    comment := "Anu's authority is made salient; Deepa does not share the goal that she be rested, and her action choices are not aligned with it, fn. 12."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Anu's authority is made salient; Deepa does not share the goal that she be rested, and her action choices are not aligned with it, fn. 12." }
 
 def ex_13 : LinguisticExample :=
   { id := "deo2025_13"
@@ -355,9 +319,7 @@ def ex_13 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("clauseType", "imperative"), ("act", "warning")]
-    comment := "Deepa is expected to comply in order to ensure her own safety, a goal she most likely shares, fn. 12."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Deepa is expected to comply in order to ensure her own safety, a goal she most likely shares, fn. 12." }
 
 def ex_14 : LinguisticExample :=
   { id := "deo2025_14"
@@ -373,9 +335,7 @@ def ex_14 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("clauseType", "imperative"), ("act", "recommendation")]
-    comment := "A strong recommendation towards a goal, learning to express gratitude, that the addressee does not share, fn. 12."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "A strong recommendation towards a goal, learning to express gratitude, that the addressee does not share, fn. 12." }
 
 def ex_15ctx1 : LinguisticExample :=
   { id := "deo2025_15ctx1"
@@ -391,9 +351,7 @@ def ex_15ctx1 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("clauseType", "imperative"), ("act", "recommendation")]
-    comment := "Bilal's preference for taking the car is latent, so Anu's proposal sounds like a solicitous command that he will comply with; it cannot be conditionalized with 'if you like', fn. 7."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Bilal's preference for taking the car is latent, so Anu's proposal sounds like a solicitous command that he will comply with; it cannot be conditionalized with 'if you like', fn. 7." }
 
 def ex_15ctx2 : LinguisticExample :=
   { id := "deo2025_15ctx2"
@@ -409,9 +367,7 @@ def ex_15ctx2 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("clauseType", "imperative"), ("act", "recommendation"), ("infelicity", "source")]
-    comment := "Bilal has revealed his preference, so he is a source for the content."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Bilal has revealed his preference, so he is a source for the content." }
 
 def ex_16 : LinguisticExample :=
   { id := "deo2025_16"
@@ -427,9 +383,7 @@ def ex_16 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("clauseType", "imperative"), ("act", "agreement"), ("infelicity", "source")]
-    comment := "An imperative agreeing with an actional commitment the addressee has undertaken: Anu is a source for the content."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "An imperative agreeing with an actional commitment the addressee has undertaken: Anu is a source for the content." }
 
 def ex_19a : LinguisticExample :=
   { id := "deo2025_19a"
@@ -445,9 +399,7 @@ def ex_19a : LinguisticExample :=
     alternatives := [("Ok", .acceptable), ("Yes", .acceptable)]
     readings := []
     paperFeatures := [("construction", "responseParticle")]
-    comment := "Ok takes on Anu's preferential commitment as a dependent, yes commits to the preference independently; only ok admits the continuation 'I had been planning to circulate the minutes', fn. 10."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Ok takes on Anu's preferential commitment as a dependent, yes commits to the preference independently; only ok admits the continuation 'I had been planning to circulate the minutes', fn. 10." }
 
 def ex_19b : LinguisticExample :=
   { id := "deo2025_19b"
@@ -463,9 +415,7 @@ def ex_19b : LinguisticExample :=
     alternatives := [("Ok", .acceptable), ("Yes", .unacceptable)]
     readings := []
     paperFeatures := [("construction", "responseParticle")]
-    comment := "Nina has expressed an intention incompatible with the preference, so she can no longer commit to it independently with yes."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Nina has expressed an intention incompatible with the preference, so she can no longer commit to it independently with yes." }
 
 def all : List LinguisticExample := [ex_1, ex_2, ex_3, ex_4, ex_5a, ex_5b, ex_6, ex_7ctx1, ex_7ctx2, ex_8, ex_9, ex_10a, ex_10b, ex_11a, ex_11b, ex_11c, ex_11d, ex_12, ex_13, ex_14, ex_15ctx1, ex_15ctx2, ex_16, ex_19a, ex_19b]
 

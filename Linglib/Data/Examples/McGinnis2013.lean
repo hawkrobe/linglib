@@ -31,9 +31,7 @@ def ex_17a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("subjPerson", "3"), ("subjNumber", "sg"), ("objPerson", "2"), ("objNumber", "pl"), ("objCase", "dat"), ("screeve", "aorist"), ("prefix", "g"), ("suffix1", "a"), ("suffix2", "t")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_17b : LinguisticExample :=
   { id := "mcginnis2013_17b"
@@ -49,9 +47,7 @@ def ex_17b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("subjPerson", "3"), ("subjNumber", "pl"), ("objPerson", "2"), ("objNumber", "sg"), ("objCase", "dat"), ("screeve", "aorist"), ("prefix", "g"), ("suffix1", "es")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_3b : LinguisticExample :=
   { id := "mcginnis2013_3b"
@@ -67,9 +63,7 @@ def ex_3b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("subjPerson", "3"), ("subjNumber", "pl"), ("objPerson", "2"), ("objNumber", "pl"), ("objCase", "dat"), ("screeve", "aorist"), ("prefix", "g"), ("suffix1", "es"), ("suffix2", "t")]
-    comment := "Double plural marking: the subject's Group is discharged by -es, and the object contributes no second Group."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Double plural marking: the subject's Group is discharged by -es, and the object contributes no second Group." }
 
 def ex_5c : LinguisticExample :=
   { id := "mcginnis2013_5c"
@@ -85,9 +79,7 @@ def ex_5c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("subjPerson", "3"), ("subjNumber", "sg"), ("objPerson", "2"), ("objNumber", "sg"), ("objCase", "dat"), ("screeve", "aorist"), ("prefix", "g"), ("suffix1", "a")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_6a : LinguisticExample :=
   { id := "mcginnis2013_6a"
@@ -103,9 +95,7 @@ def ex_6a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("subjPerson", "1"), ("subjNumber", "sg"), ("objPerson", "3"), ("objNumber", "pl"), ("objCase", "dat"), ("screeve", "aorist"), ("prefix", "v"), ("suffix1", "es")]
-    comment := "A third-person object is not a clitic and is out of T's reach."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A third-person object is not a clitic and is out of T's reach." }
 
 def ex_6b_we : LinguisticExample :=
   { id := "mcginnis2013_6b_we"
@@ -121,9 +111,7 @@ def ex_6b_we : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("subjPerson", "1"), ("subjNumber", "pl"), ("objPerson", "3"), ("objNumber", "sg"), ("objCase", "dat"), ("screeve", "aorist"), ("prefix", "v"), ("suffix1", "e"), ("suffix2", "t")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_6b_i : LinguisticExample :=
   { id := "mcginnis2013_6b_i"
@@ -139,9 +127,7 @@ def ex_6b_i : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("subjPerson", "1"), ("subjNumber", "sg"), ("objPerson", "3"), ("objNumber", "pl"), ("objCase", "dat"), ("screeve", "aorist"), ("prefix", "v"), ("suffix1", "e"), ("suffix2", "t")]
-    comment := "The reading on which -t registers the third-person plural object."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The reading on which -t registers the third-person plural object." }
 
 def ex_6c : LinguisticExample :=
   { id := "mcginnis2013_6c"
@@ -157,9 +143,7 @@ def ex_6c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("subjPerson", "1"), ("subjNumber", "sg"), ("objPerson", "3"), ("objNumber", "sg"), ("objCase", "dat"), ("screeve", "aorist"), ("prefix", "v"), ("suffix1", "e")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_18a : LinguisticExample :=
   { id := "mcginnis2013_18a"
@@ -175,9 +159,7 @@ def ex_18a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("subjPerson", "3"), ("subjNumber", "sg"), ("objPerson", "2"), ("objNumber", "sg"), ("objCase", "dat"), ("screeve", "optative"), ("prefix", "g"), ("suffix1", "o"), ("suffix2", "s")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_18b : LinguisticExample :=
   { id := "mcginnis2013_18b"
@@ -193,9 +175,7 @@ def ex_18b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("subjPerson", "3"), ("subjNumber", "sg"), ("objPerson", "2"), ("objNumber", "pl"), ("objCase", "dat"), ("screeve", "optative"), ("prefix", "g"), ("suffix1", "o"), ("suffix2", "t")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_18b_st : LinguisticExample :=
   { id := "mcginnis2013_18b_st"
@@ -211,9 +191,7 @@ def ex_18b_st : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("subjPerson", "3"), ("subjNumber", "sg"), ("objPerson", "2"), ("objNumber", "pl"), ("objCase", "dat"), ("screeve", "optative"), ("prefix", "g"), ("suffix1", "o"), ("suffix2", "s"), ("suffix3", "t")]
-    comment := "-t discharges [#], so -s cannot."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "-t discharges [#], so -s cannot." }
 
 def ex_18b_ts : LinguisticExample :=
   { id := "mcginnis2013_18b_ts"
@@ -229,9 +207,7 @@ def ex_18b_ts : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("subjPerson", "3"), ("subjNumber", "sg"), ("objPerson", "2"), ("objNumber", "pl"), ("objCase", "dat"), ("screeve", "optative"), ("prefix", "g"), ("suffix1", "o"), ("suffix2", "t"), ("suffix3", "s")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_21 : LinguisticExample :=
   { id := "mcginnis2013_21"
@@ -247,9 +223,7 @@ def ex_21 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("subjPerson", "2"), ("subjNumber", "pl"), ("objPerson", "1"), ("objNumber", "pl"), ("objCase", "dat"), ("screeve", "aorist"), ("prefix", "gv"), ("suffix1", "e"), ("suffix2", "t")]
-    comment := "The dative first-person plural bears Multispeaker, its Group impoverished; the plural subject supplies the one Group."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The dative first-person plural bears Multispeaker, its Group impoverished; the plural subject supplies the one Group." }
 
 def ex_23a : LinguisticExample :=
   { id := "mcginnis2013_23a"
@@ -265,9 +239,7 @@ def ex_23a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("subjPerson", "3"), ("subjNumber", "sg"), ("objPerson", "1"), ("objNumber", "sg"), ("objCase", "dat"), ("screeve", "aorist"), ("prefix", "m"), ("suffix1", "a")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_23b : LinguisticExample :=
   { id := "mcginnis2013_23b"
@@ -283,9 +255,7 @@ def ex_23b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("subjPerson", "3"), ("subjNumber", "sg"), ("objPerson", "1"), ("objNumber", "pl"), ("objCase", "dat"), ("screeve", "aorist"), ("prefix", "gv"), ("suffix1", "a")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_23b_t : LinguisticExample :=
   { id := "mcginnis2013_23b_t"
@@ -301,9 +271,7 @@ def ex_23b_t : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("subjPerson", "3"), ("subjNumber", "sg"), ("objPerson", "1"), ("objNumber", "pl"), ("objCase", "dat"), ("screeve", "aorist"), ("prefix", "gv"), ("suffix1", "a"), ("suffix2", "t")]
-    comment := "No Group survives Impoverishment on the dative first-person plural."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "No Group survives Impoverishment on the dative first-person plural." }
 
 def ex_26 : LinguisticExample :=
   { id := "mcginnis2013_26"
@@ -319,9 +287,7 @@ def ex_26 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("subjPerson", "3"), ("subjNumber", "pl"), ("objPerson", "1"), ("objNumber", "pl"), ("objCase", "dat"), ("screeve", "aorist"), ("prefix", "gv"), ("suffix1", "es")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def all : List LinguisticExample := [ex_17a, ex_17b, ex_3b, ex_5c, ex_6a, ex_6b_we, ex_6b_i, ex_6c, ex_18a, ex_18b, ex_18b_st, ex_18b_ts, ex_21, ex_23a, ex_23b, ex_23b_t, ex_26]
 

@@ -24,8 +24,7 @@
         "Patrick believes he owns a cello"
       ]
     ],
-    "comment": "Karttunen: the report presupposes the belief, not the fact.",
-    "lgrConformance": ""
+    "comment": "Karttunen: the report presupposes the belief, not the fact."
   },
   {
     "id": "heim1992_s2",
@@ -52,8 +51,7 @@
         "none as a whole"
       ]
     ],
-    "comment": "The first conjunct supplies the belief the second conjunct's complement presupposes.",
-    "lgrConformance": ""
+    "comment": "The first conjunct supplies the belief the second conjunct's complement presupposes."
   },
   {
     "id": "heim1992_s10",
@@ -80,8 +78,7 @@
         "(13): true in w iff it rains in every world of Dox_J(w)"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "heim1992_s19",
@@ -112,8 +109,7 @@
         "none as a whole"
       ]
     ],
-    "comment": "The proof after (24): the intermediate context satisfies the too-clause's requirement.",
-    "lgrConformance": ""
+    "comment": "The proof after (24): the intermediate context satisfies the too-clause's requirement."
   },
   {
     "id": "heim1992_s25",
@@ -140,8 +136,7 @@
         "guaranteed undefined after the first conjunct"
       ]
     ],
-    "comment": "Doubt as not-believe leaves every Dox_J(w) failing to entail that Mary is here.",
-    "lgrConformance": ""
+    "comment": "Doubt as not-believe leaves every Dox_J(w) failing to entail that Mary is here."
   },
   {
     "id": "heim1992_s26",
@@ -168,8 +163,7 @@
         "undefined; the conditional inherits its antecedent's presupposition"
       ]
     ],
-    "comment": "Deviant although the second complement's content is compatible with Mary's absence.",
-    "lgrConformance": ""
+    "comment": "Deviant although the second complement's content is compatible with Mary's absence."
   },
   {
     "id": "heim1992_s28",
@@ -196,8 +190,7 @@
         "none as a whole"
       ]
     ],
-    "comment": "A want-want sequence filters the presupposition, as (27) but not Karttunen's (3) predicts.",
-    "lgrConformance": ""
+    "comment": "A want-want sequence filters the presupposition, as (27) but not Karttunen's (3) predicts."
   },
   {
     "id": "heim1992_s29",
@@ -224,8 +217,7 @@
         "none as a whole"
       ]
     ],
-    "comment": "Filtered under (27); a presupposition failure under (39), Section 4.3.4.",
-    "lgrConformance": ""
+    "comment": "Filtered under (27); a presupposition failure under (39), Section 4.3.4."
   },
   {
     "id": "heim1992_s30",
@@ -252,8 +244,7 @@
         "none as a whole"
       ]
     ],
-    "comment": "A believe-want sequence: Karttunen's generalization, not (27), filters it.",
-    "lgrConformance": ""
+    "comment": "A believe-want sequence: Karttunen's generalization, not (27), filters it."
   },
   {
     "id": "heim1992_s32a",
@@ -284,8 +275,7 @@
         "Asher 1987"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "heim1992_s32b",
@@ -316,8 +306,7 @@
         "Asher 1987"
       ]
     ],
-    "comment": "(31) blocks the inference from (32a): the likely belief-worlds where he flies and pays are worse than similar worlds where he does not fly.",
-    "lgrConformance": ""
+    "comment": "(31) blocks the inference from (32a): the likely belief-worlds where he flies and pays are worse than similar worlds where he does not fly."
   },
   {
     "id": "heim1992_s33",
@@ -344,8 +333,7 @@
         "true under (31), false under (27)"
       ]
     ],
-    "comment": "In the worlds compatible with everything the speaker desires she does not teach at all.",
-    "lgrConformance": ""
+    "comment": "In the worlds compatible with everything the speaker desires she does not teach at all."
   },
   {
     "id": "heim1992_s41",
@@ -372,8 +360,7 @@
         "no doubt about where John will be"
       ]
     ],
-    "comment": "A threat to the (40) amendment; want here reads like intend, with the accessibility function F_a of (43).",
-    "lgrConformance": ""
+    "comment": "A threat to the (40) amendment; want here reads like intend, with the accessibility function F_a of (43)."
   },
   {
     "id": "heim1992_s42",
@@ -400,8 +387,7 @@
         "wanting what one is convinced will not happen"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "heim1992_s44",
@@ -428,8 +414,7 @@
         "Patrick believes he has a cello independently of what he does"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "heim1992_s46",
@@ -456,8 +441,7 @@
         "not filtered: want before believe"
       ]
     ],
-    "comment": "A bit less good than (2) or (28).",
-    "lgrConformance": ""
+    "comment": "A bit less good than (2) or (28)."
   },
   {
     "id": "heim1992_s47a",
@@ -488,8 +472,7 @@
         "it as the car his wife will buy him"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "heim1992_s47b",
@@ -516,8 +499,7 @@
         "Asher 1987"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "heim1992_s47c",
@@ -544,8 +526,7 @@
         "Asher 1987"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "heim1992_s48",
@@ -576,8 +557,7 @@
         "the belief as an implicit conditional"
       ]
     ],
-    "comment": "Accommodation by modal subordination.",
-    "lgrConformance": ""
+    "comment": "Accommodation by modal subordination."
   },
   {
     "id": "heim1992_s49",
@@ -608,8 +588,7 @@
         "the belief as an implicit conditional"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "heim1992_s50",
@@ -632,8 +611,7 @@
         "4.2.4"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "heim1992_s51",
@@ -656,8 +634,7 @@
         "4.2.4"
       ]
     ],
-    "comment": "A strange continuation of (50), though it should be another way of saying that Steffi cried if Gabriela won.",
-    "lgrConformance": ""
+    "comment": "A strange continuation of (50), though it should be another way of saying that Steffi cried if Gabriela won."
   },
   {
     "id": "heim1992_s52",
@@ -684,8 +661,7 @@
         "not doxastic: John may be certain he will not teach Tuesdays"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "heim1992_s53",
@@ -712,8 +688,7 @@
         "none as a whole"
       ]
     ],
-    "comment": "As felicitous as (30), yet (39) with (40) would leave the wish-clause undefined.",
-    "lgrConformance": ""
+    "comment": "As felicitous as (30), yet (39) with (40) would leave the wish-clause undefined."
   },
   {
     "id": "heim1992_s54",
@@ -740,8 +715,7 @@
         "John believes he will teach on Tuesdays"
       ]
     ],
-    "comment": "A factive desire predicate; (39) would trivialize its truth conditions.",
-    "lgrConformance": ""
+    "comment": "A factive desire predicate; (39) would trivialize its truth conditions."
   },
   {
     "id": "heim1992_s55",
@@ -768,8 +742,7 @@
         "satisfied in the belief-worlds"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "heim1992_s56a",
@@ -796,8 +769,7 @@
         "none as a whole"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "heim1992_s56b",
@@ -824,8 +796,7 @@
         "none as a whole"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "heim1992_s57a",
@@ -852,8 +823,7 @@
         "accommodated: Patrick believes he sold his cello"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "heim1992_s57b",
@@ -880,8 +850,7 @@
         "accommodated: Patrick believes he did not sell his cello"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "heim1992_s59",
@@ -908,8 +877,7 @@
         "someone else attended, in the common ground"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "heim1992_s60",
@@ -936,7 +904,6 @@
         "someone else attended, in the common ground"
       ]
     ],
-    "comment": "Licensed under the same condition as (59): the revision (61) keeps the antecedent's presuppositions.",
-    "lgrConformance": ""
+    "comment": "Licensed under the same condition as (59): the revision (61) keeps the antecedent's presuppositions."
   }
 ]

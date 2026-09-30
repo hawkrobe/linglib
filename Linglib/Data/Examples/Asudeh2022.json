@@ -17,9 +17,7 @@
     "paperFeatures": [
       ["premises", "likes, alex, blake"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "asudeh2022_14",
@@ -42,9 +40,7 @@
     "paperFeatures": [
       ["premises", "love, every, some"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "asudeh2022_fig2_finnish",
@@ -64,9 +60,7 @@
     "paperFeatures": [
       ["premises", "speaker, drink, water"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "asudeh2022_fig2_english",
@@ -86,8 +80,6 @@
     "paperFeatures": [
       ["premises", "speaker, drink, water"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   }
 ]

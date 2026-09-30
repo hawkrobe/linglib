@@ -15,9 +15,7 @@
     "paperFeatures": [
       ["class", "future"]
     ],
-    "comment": "A future irrealis infinitive.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A future irrealis infinitive."
   },
   {
     "id": "wurmbrand2014_2",
@@ -35,9 +33,7 @@
     "paperFeatures": [
       ["class", "propositional"]
     ],
-    "comment": "A propositional infinitive.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A propositional infinitive."
   },
   {
     "id": "wurmbrand2014_3",
@@ -56,9 +52,7 @@
       ["class", "future"],
       ["episodic", "possible"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "wurmbrand2014_4",
@@ -79,9 +73,7 @@
       ["class", "propositional"],
       ["episodic", "impossible"]
     ],
-    "comment": "A bare episodic verb phrase is out; the progressive rescues it.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A bare episodic verb phrase is out; the progressive rescues it."
   },
   {
     "id": "wurmbrand2014_5",
@@ -100,9 +92,7 @@
       ["class", "propositional"],
       ["syntax", "control"]
     ],
-    "comment": "A propositional control infinitive.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A propositional control infinitive."
   },
   {
     "id": "wurmbrand2014_6",
@@ -123,9 +113,7 @@
       ["class", "propositional"],
       ["episodic", "impossible"]
     ],
-    "comment": "Without the adverbial the complement is generic.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Without the adverbial the complement is generic."
   },
   {
     "id": "wurmbrand2014_7",
@@ -143,9 +131,7 @@
     "paperFeatures": [
       ["class", "future"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "wurmbrand2014_8",
@@ -165,9 +151,7 @@
     "paperFeatures": [
       ["class", "tenseless simultaneous"]
     ],
-    "comment": "No future adverbial in a simultaneous infinitive.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "No future adverbial in a simultaneous infinitive."
   },
   {
     "id": "wurmbrand2014_9",
@@ -185,9 +169,7 @@
     "paperFeatures": [
       ["class", "propositional"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "wurmbrand2014_10",
@@ -207,9 +189,7 @@
     "paperFeatures": [
       ["class", "propositional"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "wurmbrand2014_11",
@@ -228,9 +208,7 @@
       ["class", "future"],
       ["syntax", "ECM"]
     ],
-    "comment": "A future infinitive under passive expect with an inanimate subject: raising, not control.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A future infinitive under passive expect with an inanimate subject: raising, not control."
   },
   {
     "id": "wurmbrand2014_12",
@@ -249,9 +227,7 @@
       ["class", "future"],
       ["future", "relative"]
     ],
-    "comment": "Infinitival future is relative: the party precedes the utterance time.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Infinitival future is relative: the party precedes the utterance time."
   },
   {
     "id": "wurmbrand2014_13",
@@ -271,9 +247,7 @@
     "paperFeatures": [
       ["future", "absolute"]
     ],
-    "comment": "Finite will is absolute.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Finite will is absolute."
   },
   {
     "id": "wurmbrand2014_14",
@@ -291,9 +265,7 @@
     "paperFeatures": [
       ["class", "future"]
     ],
-    "comment": "The paper leaves the lowest clause open with an ellipsis.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The paper leaves the lowest clause open with an ellipsis."
   },
   {
     "id": "wurmbrand2014_15",
@@ -311,9 +283,7 @@
     "paperFeatures": [
       ["would", "temporal"]
     ],
-    "comment": "Temporal would under will is out; a conditional would is fine.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Temporal would under will is out; a conditional would is fine."
   },
   {
     "id": "wurmbrand2014_16",
@@ -331,9 +301,7 @@
     "paperFeatures": [
       ["would", "relative"]
     ],
-    "comment": "would, past plus woll, is relative.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "would, past plus woll, is relative."
   },
   {
     "id": "wurmbrand2014_17",
@@ -354,9 +322,7 @@
     "paperFeatures": [
       ["SOT", "blocked"]
     ],
-    "comment": "The present of will intervenes between the two pasts.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The present of will intervenes between the two pasts."
   },
   {
     "id": "wurmbrand2014_18",
@@ -376,9 +342,7 @@
     "paperFeatures": [
       ["SOT", "applies"]
     ],
-    "comment": "The tenseless infinitive does not intervene.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The tenseless infinitive does not intervene."
   },
   {
     "id": "wurmbrand2014_19",
@@ -398,9 +362,7 @@
     "paperFeatures": [
       ["SOT", "applies"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "wurmbrand2014_20",
@@ -421,9 +383,7 @@
     "paperFeatures": [
       ["would", "obligatory SOT"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "wurmbrand2014_21",
@@ -442,9 +402,7 @@
       ["would", "temporal"],
       ["SOT", "blocked"]
     ],
-    "comment": "would's past must delete, and no past is above it.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "would's past must delete, and no past is above it."
   },
   {
     "id": "wurmbrand2014_22",
@@ -465,9 +423,7 @@
     "paperFeatures": [
       ["SOT", "blocked"]
     ],
-    "comment": "Against a silent would in the infinitive: a past there would license deletion.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Against a silent would in the infinitive: a past there would license deletion."
   },
   {
     "id": "wurmbrand2014_23",
@@ -488,9 +444,7 @@
       ["tense", "present"],
       ["episodic", "impossible"]
     ],
-    "comment": "The bare present is only habitual.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The bare present is only habitual."
   },
   {
     "id": "wurmbrand2014_24",
@@ -509,9 +463,7 @@
       ["tense", "past"],
       ["episodic", "possible"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "wurmbrand2014_25",
@@ -530,9 +482,7 @@
       ["tense", "future"],
       ["episodic", "possible"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "wurmbrand2014_26",
@@ -552,9 +502,7 @@
     "paperFeatures": [
       ["reference time", "restricted"]
     ],
-    "comment": "Out unless inchoative: the when-clause restricts the reference time to a short interval.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Out unless inchoative: the when-clause restricts the reference time to a short interval."
   },
   {
     "id": "wurmbrand2014_27",
@@ -573,9 +521,7 @@
       {"name": "shifted past", "judgment": "acceptable"}
     ],
     "paperFeatures": [],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "wurmbrand2014_28",
@@ -594,9 +540,7 @@
       {"name": "shifted past", "judgment": "acceptable"}
     ],
     "paperFeatures": [],
-    "comment": "A deleted past behaves like the present: no bare episodic reading.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A deleted past behaves like the present: no bare episodic reading."
   },
   {
     "id": "wurmbrand2014_29",
@@ -615,9 +559,7 @@
       ["class", "future"],
       ["aspect", "perfective"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "wurmbrand2014_30",
@@ -638,9 +580,7 @@
       ["class", "future"],
       ["reference time", "restricted"]
     ],
-    "comment": "The adverbial restricts the reference time to an instant.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The adverbial restricts the reference time to an instant."
   },
   {
     "id": "wurmbrand2014_31",
@@ -659,9 +599,7 @@
       ["class", "propositional"],
       ["aspect", "perfective"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "wurmbrand2014_32",
@@ -680,9 +618,7 @@
       ["class", "propositional"],
       ["aspect", "perfective"]
     ],
-    "comment": "A past matrix does not help: the reference time is the attitude holder's NOW.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A past matrix does not help: the reference time is the attitude holder's NOW."
   },
   {
     "id": "wurmbrand2014_33",
@@ -701,9 +637,7 @@
       ["class", "propositional"],
       ["predicate", "stative"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "wurmbrand2014_34",
@@ -722,9 +656,7 @@
       ["class", "propositional"],
       ["aspect", "imperfective"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "wurmbrand2014_35",
@@ -743,9 +675,7 @@
       ["class", "propositional"],
       ["syntax", "control"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "wurmbrand2014_36",
@@ -764,9 +694,7 @@
       ["class", "propositional"],
       ["aspect", "imperfective"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "wurmbrand2014_37",
@@ -785,9 +713,7 @@
       ["class", "tenseless simultaneous"],
       ["matrix tense", "present"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "wurmbrand2014_38",
@@ -806,9 +732,7 @@
       ["class", "tenseless simultaneous"],
       ["aspect", "imperfective"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "wurmbrand2014_39",
@@ -827,9 +751,7 @@
       ["class", "tenseless simultaneous"],
       ["matrix tense", "past"]
     ],
-    "comment": "A past matrix reference time is extended enough to include the event.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A past matrix reference time is extended enough to include the event."
   },
   {
     "id": "wurmbrand2014_40",
@@ -847,9 +769,7 @@
     "paperFeatures": [
       ["reading", "double access"]
     ],
-    "comment": "Pragmatically ill-formed under double access.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Pragmatically ill-formed under double access."
   },
   {
     "id": "wurmbrand2014_41",
@@ -867,9 +787,7 @@
     "paperFeatures": [
       ["class", "propositional"]
     ],
-    "comment": "No double access reading is forced: no present tense in the infinitive.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "No double access reading is forced: no present tense in the infinitive."
   },
   {
     "id": "wurmbrand2014_42",
@@ -887,9 +805,7 @@
       {"name": "simultaneous (SOT)", "judgment": "acceptable"}
     ],
     "paperFeatures": [],
-    "comment": "SOT across a propositional infinitive.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "SOT across a propositional infinitive."
   },
   {
     "id": "wurmbrand2014_43",
@@ -908,9 +824,7 @@
       {"name": "simultaneous", "judgment": "unacceptable"}
     ],
     "paperFeatures": [],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "wurmbrand2014_44",
@@ -928,9 +842,7 @@
       {"name": "simultaneous", "judgment": "acceptable"}
     ],
     "paperFeatures": [],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "wurmbrand2014_45",
@@ -950,9 +862,7 @@
     "paperFeatures": [
       ["class", "tenseless simultaneous"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "wurmbrand2014_46",
@@ -973,9 +883,7 @@
       ["class", "tenseless simultaneous"],
       ["syntax", "raising"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "wurmbrand2014_47",
@@ -996,9 +904,7 @@
       ["class", "tenseless simultaneous"],
       ["matrix tense", "present"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "wurmbrand2014_48",
@@ -1017,9 +923,7 @@
       ["class", "tenseless simultaneous"],
       ["matrix tense", "past"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "wurmbrand2014_49",
@@ -1039,9 +943,7 @@
     "paperFeatures": [
       ["reference time", "restricted"]
     ],
-    "comment": "Out unless inchoative: the adverbial restricts the matrix reference time.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Out unless inchoative: the adverbial restricts the matrix reference time."
   },
   {
     "id": "wurmbrand2014_50",
@@ -1060,9 +962,7 @@
       ["class", "tenseless simultaneous"],
       ["matrix tense", "past"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "wurmbrand2014_51",
@@ -1082,9 +982,7 @@
     "paperFeatures": [
       ["matrix aspect", "perfective"]
     ],
-    "comment": "The matrix verb itself cannot be a bare episodic present.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The matrix verb itself cannot be a bare episodic present."
   },
   {
     "id": "wurmbrand2014_52",
@@ -1103,9 +1001,7 @@
       ["attitude holder", "overt"],
       ["aspect", "imperfective"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "wurmbrand2014_53",
@@ -1124,9 +1020,7 @@
       ["attitude holder", "overt"],
       ["aspect", "perfective"]
     ],
-    "comment": "With an attitude holder the reference time is the holder's NOW, not the two-hour matrix time.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "With an attitude holder the reference time is the holder's NOW, not the two-hour matrix time."
   },
   {
     "id": "wurmbrand2014_54",
@@ -1145,8 +1039,6 @@
       ["attitude holder", "understood"],
       ["aspect", "perfective"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   }
 ]

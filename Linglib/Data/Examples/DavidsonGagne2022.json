@@ -22,9 +22,7 @@
       ["quantifier", "FS(ALL)"],
       ["realization", "simultaneous"]
     ],
-    "comment": "Also (3a) and (49a). The reading 'All of the people in the world became vampires' is marked # in (3a).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Also (3a) and (49a). The reading 'All of the people in the world became vampires' is marked # in (3a)."
   },
   {
     "id": "davidsongagne2022_32b",
@@ -49,9 +47,7 @@
       ["quantifier", "FS(ALL)"],
       ["realization", "simultaneous"]
     ],
-    "comment": "Also (3b) and (49b). The reading 'All of my friends became vampires' is marked # in (3b). The hands are no wider apart than at neutral height; eye gaze and the arc are directed up.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Also (3b) and (49b). The reading 'All of my friends became vampires' is marked # in (3b). The hands are no wider apart than at neutral height; eye gaze and the arc are directed up."
   },
   {
     "id": "davidsongagne2022_14a",
@@ -75,9 +71,7 @@
       ["height", "neutral"],
       ["locus", "implicit"]
     ],
-    "comment": "The second arc traces the remainder of the neutral plane: everyone else in the current context besides the students.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The second arc traces the remainder of the neutral plane: everyone else in the current context besides the students."
   },
   {
     "id": "davidsongagne2022_14b",
@@ -101,9 +95,7 @@
       ["height", "high"],
       ["locus", "implicit"]
     ],
-    "comment": "The same whole-plane arc made higher refers to a superset of both the students' locus and the neutral superset.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The same whole-plane arc made higher refers to a superset of both the students' locus and the neutral superset."
   },
   {
     "id": "davidsongagne2022_15a",
@@ -124,9 +116,7 @@
       ["height", "neutral"],
       ["levels", "3"]
     ],
-    "comment": "Three heights in one discourse.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Three heights in one discourse."
   },
   {
     "id": "davidsongagne2022_15b",
@@ -147,9 +137,7 @@
       ["height", "mid"],
       ["levels", "3"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "davidsongagne2022_15c",
@@ -170,9 +158,7 @@
       ["height", "high"],
       ["levels", "3"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "davidsongagne2022_16a",
@@ -193,9 +179,7 @@
       ["height", "neutral"],
       ["levels", "2"]
     ],
-    "comment": "With only two groups contrasted, the nudist colony takes the neutral height: heights convey relative, not absolute, restriction.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "With only two groups contrasted, the nudist colony takes the neutral height: heights convey relative, not absolute, restriction."
   },
   {
     "id": "davidsongagne2022_16b",
@@ -216,9 +200,7 @@
       ["height", "high"],
       ["levels", "2"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "davidsongagne2022_17a",
@@ -240,9 +222,7 @@
       ["verb", "LIKE"],
       ["verbClass", "plain"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "davidsongagne2022_17b",
@@ -264,9 +244,7 @@
       ["verb", "LIKE"],
       ["verbClass", "plain"]
     ],
-    "comment": "A plain verb does not change its form for its arguments.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A plain verb does not change its form for its arguments."
   },
   {
     "id": "davidsongagne2022_18a",
@@ -288,9 +266,7 @@
       ["verb", "INFORM"],
       ["verbClass", "directional"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "davidsongagne2022_18b",
@@ -312,9 +288,7 @@
       ["verb", "INFORM"],
       ["verbClass", "directional"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "davidsongagne2022_18c",
@@ -336,9 +310,7 @@
       ["verb", "INFORM"],
       ["verbClass", "directional"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "davidsongagne2022_21a",
@@ -360,9 +332,7 @@
       ["verb", "LIKE"],
       ["verbClass", "plain"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "davidsongagne2022_21b",
@@ -384,9 +354,7 @@
       ["verb", "LIKE"],
       ["verbClass", "plain"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "davidsongagne2022_21c",
@@ -408,9 +376,7 @@
       ["verb", "LIKE"],
       ["verbClass", "plain"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "davidsongagne2022_21d",
@@ -432,9 +398,7 @@
       ["verb", "LIKE"],
       ["verbClass", "plain"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "davidsongagne2022_22a",
@@ -456,9 +420,7 @@
       ["verb", "INFORM"],
       ["verbClass", "directional"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "davidsongagne2022_22b",
@@ -480,9 +442,7 @@
       ["verb", "INFORM"],
       ["verbClass", "directional"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "davidsongagne2022_23a",
@@ -504,9 +464,7 @@
       ["verb", "PICK-FROM"],
       ["verbClass", "directional"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "davidsongagne2022_23b",
@@ -528,9 +486,7 @@
       ["verb", "PICK-FROM"],
       ["verbClass", "directional"]
     ],
-    "comment": "The indiscriminate reading of a widened domain.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The indiscriminate reading of a widened domain."
   },
   {
     "id": "davidsongagne2022_24a",
@@ -553,9 +509,7 @@
       ["verbClass", "directional"],
       ["levels", "3"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "davidsongagne2022_24b",
@@ -578,9 +532,7 @@
       ["verbClass", "directional"],
       ["levels", "3"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "davidsongagne2022_24c",
@@ -603,9 +555,7 @@
       ["verbClass", "directional"],
       ["levels", "3"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "davidsongagne2022_25",
@@ -635,9 +585,7 @@
       ["verbClass", "directional"],
       ["anaphora", "locus"]
     ],
-    "comment": "The later IX-arc returns to the neutral locus of the verb's domain to refer to the people chosen from the specified set. Video on the paper's OSF site.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The later IX-arc returns to the neutral locus of the verb's domain to refer to the people chosen from the specified set. Video on the paper's OSF site."
   },
   {
     "id": "davidsongagne2022_26",
@@ -667,9 +615,7 @@
       ["verbClass", "directional"],
       ["anaphora", "locus"]
     ],
-    "comment": "The later IX-arc returns to the high locus introduced only by the height of the verb, so the widened domain licenses anaphora, unlike English covert domain restriction. Video on the paper's OSF site.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The later IX-arc returns to the high locus introduced only by the height of the verb, so the widened domain licenses anaphora, unlike English covert domain restriction. Video on the paper's OSF site."
   },
   {
     "id": "davidsongagne2022_27",
@@ -692,9 +638,7 @@
       ["heightOn", "noun"],
       ["height", "high"]
     ],
-    "comment": "All consultants reject the widened-domain reading. The reading 'I want the dog that is high (up on that roof)' is marginal and needs eye gaze directed to the sign DOG rather than to the interlocutor.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "All consultants reject the widened-domain reading. The reading 'I want the dog that is high (up on that roof)' is marginal and needs eye gaze directed to the sign DOG rather than to the interlocutor."
   },
   {
     "id": "davidsongagne2022_28",
@@ -716,9 +660,7 @@
       ["quantifier", "SOMETHING"],
       ["realization", "simultaneous"]
     ],
-    "comment": "The closest expression of the indiscriminate reading uses an existential quantifier signed high.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The closest expression of the indiscriminate reading uses an existential quantifier signed high."
   },
   {
     "id": "davidsongagne2022_33a",
@@ -740,9 +682,7 @@
       ["quantifier", "NONEsym"],
       ["realization", "simultaneous"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "davidsongagne2022_33b",
@@ -764,9 +704,7 @@
       ["quantifier", "NONEsym"],
       ["realization", "simultaneous"]
     ],
-    "comment": "Even the high domain is pragmatically restricted: the whole family in an unexpectedly broad sense, not everyone in the world.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Even the high domain is pragmatically restricted: the whole family in an unexpectedly broad sense, not everyone in the world."
   },
   {
     "id": "davidsongagne2022_34a",
@@ -789,9 +727,7 @@
       ["realization", "simultaneous"],
       ["levels", "3"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "davidsongagne2022_34b",
@@ -814,9 +750,7 @@
       ["realization", "simultaneous"],
       ["levels", "3"]
     ],
-    "comment": "The mid and high productions differ minimally in form, yet all consultants reported targeting three heights.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The mid and high productions differ minimally in form, yet all consultants reported targeting three heights."
   },
   {
     "id": "davidsongagne2022_34c",
@@ -839,9 +773,7 @@
       ["realization", "simultaneous"],
       ["levels", "3"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "davidsongagne2022_35neutral",
@@ -864,9 +796,7 @@
       ["realization", "simultaneous"],
       ["bound", "typically"]
     ],
-    "comment": "Glossed none-sym-neutral/high in the paper. The adverb binds the domain: the restricted group may differ from test to test.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Glossed none-sym-neutral/high in the paper. The adverb binds the domain: the restricted group may differ from test to test."
   },
   {
     "id": "davidsongagne2022_35high",
@@ -889,9 +819,7 @@
       ["realization", "simultaneous"],
       ["bound", "typically"]
     ],
-    "comment": "The high variant of the same example.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The high variant of the same example."
   },
   {
     "id": "davidsongagne2022_36a",
@@ -914,9 +842,7 @@
       ["realization", "simultaneous"],
       ["bound", "typically"]
     ],
-    "comment": "A specific, widest-scope reading with the same person at every party is also available.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A specific, widest-scope reading with the same person at every party is also available."
   },
   {
     "id": "davidsongagne2022_36b",
@@ -939,9 +865,7 @@
       ["realization", "simultaneous"],
       ["bound", "typically"]
     ],
-    "comment": "The widened existential is weaker, not stronger, so height is not intensification.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The widened existential is weaker, not stronger, so height is not intensification."
   },
   {
     "id": "davidsongagne2022_37a",
@@ -963,9 +887,7 @@
       ["quantifier", "FEW"],
       ["realization", "sequential"]
     ],
-    "comment": "FEW cannot move for phonological reasons; the height-marked IX-arc follows it. Video on the paper's OSF site.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "FEW cannot move for phonological reasons; the height-marked IX-arc follows it. Video on the paper's OSF site."
   },
   {
     "id": "davidsongagne2022_37b",
@@ -987,9 +909,7 @@
       ["quantifier", "FEW"],
       ["realization", "sequential"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "davidsongagne2022_38a",
@@ -1011,9 +931,7 @@
       ["quantifier", "FS(ALL)"],
       ["realization", "both"]
     ],
-    "comment": "Also with NONE-high and SOMEONE-high: a quantifier that incorporates the pronoun rejects a following spatially modified pronoun.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Also with NONE-high and SOMEONE-high: a quantifier that incorporates the pronoun rejects a following spatially modified pronoun."
   },
   {
     "id": "davidsongagne2022_39a_none",
@@ -1035,9 +953,7 @@
       ["quantifier", "NONEsym"],
       ["realization", "simultaneous"]
     ],
-    "comment": "Glossed none in the paper.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Glossed none in the paper."
   },
   {
     "id": "davidsongagne2022_39a_each",
@@ -1059,9 +975,7 @@
       ["quantifier", "EACH"],
       ["realization", "sequential"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "davidsongagne2022_39b_one",
@@ -1083,9 +997,7 @@
       ["quantifier", "ONE"],
       ["realization", "simultaneous"]
     ],
-    "comment": "A weak quantifier with a widened domain takes an indiscriminate reading.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A weak quantifier with a widened domain takes an indiscriminate reading."
   },
   {
     "id": "davidsongagne2022_39b_two",
@@ -1107,9 +1019,7 @@
       ["quantifier", "TWO"],
       ["realization", "simultaneous"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "davidsongagne2022_39b_many",
@@ -1131,9 +1041,7 @@
       ["quantifier", "MANY"],
       ["realization", "sequential"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "davidsongagne2022_54a",
@@ -1154,9 +1062,7 @@
       ["height", "neutral"],
       ["levels", "3"]
     ],
-    "comment": "Signed at the chest.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Signed at the chest."
   },
   {
     "id": "davidsongagne2022_54b",
@@ -1177,9 +1083,7 @@
       ["height", "mid"],
       ["levels", "3"]
     ],
-    "comment": "Signed at the cheek.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Signed at the cheek."
   },
   {
     "id": "davidsongagne2022_54c",
@@ -1200,8 +1104,6 @@
       ["height", "high"],
       ["levels", "3"]
     ],
-    "comment": "Signed at the forehead.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Signed at the forehead."
   }
 ]

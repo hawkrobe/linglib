@@ -53,8 +53,7 @@
         "matrix"
       ]
     ],
-    "comment": "Presupposes that the addressee may know the answer.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Presupposes that the addressee may know the answer."
   },
   {
     "id": "gutzmann2015_5_35",
@@ -110,8 +109,7 @@
         "insubordinated"
       ]
     ],
-    "comment": "A deliberative question: no assumption that the addressee knows the answer.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "A deliberative question: no assumption that the addressee knows the answer."
   },
   {
     "id": "gutzmann2015_5_36a",
@@ -245,8 +243,7 @@
         "insubordinated"
       ]
     ],
-    "comment": "The speaker wants the hearer not to forget the keys again: deontic interpretation only, since dass is semantically empty.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The speaker wants the hearer not to forget the keys again: deontic interpretation only, since dass is semantically empty."
   },
   {
     "id": "gutzmann2015_5_46",
@@ -341,8 +338,7 @@
         "insubordinated"
       ]
     ],
-    "comment": "True if the hearer does not arrive late; felicitous if the speaker wants the hearer not to be late.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "True if the hearer does not arrive late; felicitous if the speaker wants the hearer not to be late."
   },
   {
     "id": "gutzmann2015_6_20",
@@ -406,8 +402,7 @@
         "ja"
       ]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "gutzmann2015_6_21a",
@@ -463,8 +458,7 @@
         "ja"
       ]
     ],
-    "comment": "The book credits the example to M. Zimmermann (2012).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The book credits the example to M. Zimmermann (2012)."
   },
   {
     "id": "gutzmann2015_6_21b",
@@ -524,8 +518,7 @@
         "ja"
       ]
     ],
-    "comment": "The book credits the example to Meibauer (1994).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The book credits the example to Meibauer (1994)."
   },
   {
     "id": "gutzmann2015_6_22a",
@@ -585,8 +578,7 @@
         "ja"
       ]
     ],
-    "comment": "The book credits the example to Meibauer (1994).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The book credits the example to Meibauer (1994)."
   },
   {
     "id": "gutzmann2015_6_22b",
@@ -658,8 +650,7 @@
         "ja"
       ]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "gutzmann2015_6_26",
@@ -723,8 +714,7 @@
         "ja"
       ]
     ],
-    "comment": "A declarative used as a question keeps ja: the restriction is semantic, tied to sentence mood, not to the speech act.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "A declarative used as a question keeps ja: the restriction is semantic, tied to sentence mood, not to the speech act."
   },
   {
     "id": "gutzmann2015_6_27",
@@ -792,8 +782,7 @@
         "ja"
       ]
     ],
-    "comment": "A rhetorical question used as an assertion still excludes ja.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "A rhetorical question used as an assertion still excludes ja."
   },
   {
     "id": "gutzmann2015_6_28a",
@@ -853,8 +842,7 @@
         "denn"
       ]
     ],
-    "comment": "The book credits the example to Helbig (1988).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The book credits the example to Helbig (1988)."
   },
   {
     "id": "gutzmann2015_6_28b",
@@ -910,8 +898,7 @@
         "denn"
       ]
     ],
-    "comment": "The book credits the example to Kwon (2005).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The book credits the example to Kwon (2005)."
   },
   {
     "id": "gutzmann2015_6_29",
@@ -971,8 +958,7 @@
         "denn"
       ]
     ],
-    "comment": "Repeated as (6.143), where the use conditions derived for it have the speaker want the hearer to know the reason for asking whether Peter is a philosopher.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Repeated as (6.143), where the use conditions derived for it have the speaker want the hearer to know the reason for asking whether Peter is a philosopher."
   },
   {
     "id": "gutzmann2015_6_30",
@@ -1032,8 +1018,7 @@
         "denn"
       ]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "gutzmann2015_6_31",
@@ -1101,8 +1086,7 @@
         "denn"
       ]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "gutzmann2015_6_32",
@@ -1166,8 +1150,7 @@
         "denn"
       ]
     ],
-    "comment": "A check question excludes denn: declarative mood.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "A check question excludes denn: declarative mood."
   },
   {
     "id": "gutzmann2015_6_33",
@@ -1235,8 +1218,7 @@
         "denn"
       ]
     ],
-    "comment": "A rhetorical question allows denn: interrogative mood.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "A rhetorical question allows denn: interrogative mood."
   },
   {
     "id": "gutzmann2015_6_35",
@@ -1296,8 +1278,7 @@
         "wohl"
       ]
     ],
-    "comment": "The book credits the example to M. Zimmermann (2004).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The book credits the example to M. Zimmermann (2004)."
   },
   {
     "id": "gutzmann2015_6_36",
@@ -1357,8 +1338,7 @@
         "wohl"
       ]
     ],
-    "comment": "The book credits the example to M. Zimmermann (2004).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The book credits the example to M. Zimmermann (2004)."
   },
   {
     "id": "gutzmann2015_6_37a",
@@ -1418,8 +1398,7 @@
         "wohl"
       ]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "gutzmann2015_6_37b",
@@ -1487,8 +1466,7 @@
         "wohl"
       ]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "gutzmann2015_6_38",
@@ -1544,8 +1522,7 @@
         "wohl"
       ]
     ],
-    "comment": "An interrogative used as a request keeps wohl. The book credits the example to M. Zimmermann (2004).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "An interrogative used as a request keeps wohl. The book credits the example to M. Zimmermann (2004)."
   },
   {
     "id": "gutzmann2015_6_39",
@@ -1613,8 +1590,7 @@
         "wohl"
       ]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "gutzmann2015_6_41",
@@ -1830,8 +1806,7 @@
         "ja"
       ]
     ],
-    "comment": "Its use conditions, wanting to know whether p while believing p common knowledge, cannot be met by a reasonable speaker.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Its use conditions, wanting to know whether p while believing p common knowledge, cannot be met by a reasonable speaker."
   },
   {
     "id": "gutzmann2015_6_134",
@@ -1954,8 +1929,7 @@
         "denn"
       ]
     ],
-    "comment": "Discourse-initially there is no proposition the hearer knows to be the reason for the question. From Thurmair (1989).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Discourse-initially there is no proposition the hearer knows to be the reason for the question. From Thurmair (1989)."
   },
   {
     "id": "gutzmann2015_6_139",
@@ -2015,8 +1989,7 @@
         "denn"
       ]
     ],
-    "comment": "Felicitous given extralinguistic motivation, such as seeing the addressee write. From Kwon (2005).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Felicitous given extralinguistic motivation, such as seeing the addressee write. From Kwon (2005)."
   },
   {
     "id": "gutzmann2015_6_141",
