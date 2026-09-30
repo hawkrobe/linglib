@@ -41,10 +41,7 @@ namespace Degree
     - [cariani-santorio-wellwood-2024] (eq. 21) — CSW use this exact
       formulation for confidence orderings.
     - [pasternak-2019] (def 4) — `μ_int` monotonicity on the
-      part-whole structure of mental states.
-    - [ying-zhi-xuan-wong-mansinghka-tenenbaum-2025] —
-      `EpistemicThreshold.IsProbabilistic` is a strengthening of this
-      (Monotone, not StrictMono). -/
+      part-whole structure of mental states. -/
 abbrev admissibleMeasure {S D : Type*} [Preorder S] [Preorder D]
     (μ : S → D) : Prop :=
   StrictMono μ

@@ -3,6 +3,7 @@ module
 public import Linglib.Logic.ComparativeProbability.Patterns
 public import Linglib.Logic.ComparativeProbability.WorldOrdering
 public import Linglib.Core.Order.Probability.Content
+public import Linglib.Semantics.Degree.Comparison
 public import Linglib.Semantics.Modality.Kratzer.Operators
 public import Linglib.Data.Examples.Yalcin2010
 public import Mathlib.Data.NNRat.Defs
@@ -564,9 +565,9 @@ section Threshold
 
 variable {W : Type*} (P : FinAddMeasure ℚ W)
 
-/-- *Probably* with threshold `n`: `Pr(A) > n`, the strict form of the positive-form threshold
-semantics `EpistemicThreshold.meetsThreshold` (which reads `≥`). -/
-def probablyAt (n : ℚ) (A : Set W) : Prop := n < P A
+/-- *Probably* with threshold `n`: `Pr(A) > n`, the strict positive form of the probability
+scale. -/
+def probablyAt (n : ℚ) (A : Set W) : Prop := A ∈ Degree.Comparison.gt.over P n
 
 /-- With a threshold of at least one half, a proposition and its complement are not both
 probable. -/
@@ -574,7 +575,7 @@ theorem probablyAt_V1 {n : ℚ} (hn : 1 / 2 ≤ n) (A : Set W) :
     probablyAt P n A → ¬probablyAt P n Aᶜ := by
   intro hA hAc
   have := P.mu_compl A
-  simp only [probablyAt] at hA hAc
+  simp only [probablyAt, Degree.Comparison.mem_over, Degree.Comparison.rel] at hA hAc
   linarith
 
 end Threshold
@@ -585,7 +586,8 @@ theorem probablyAt_refutes_V1 :
     probablyAt (FinAddMeasure.uniform (K := ℚ) (Fin 2)) (1 / 3) {0} ∧
       probablyAt (FinAddMeasure.uniform (K := ℚ) (Fin 2)) (1 / 3) ({0} : Set (Fin 2))ᶜ := by
   have hc : ({0} : Set (Fin 2))ᶜ = {1} := by ext x; fin_cases x <;> simp
-  simp only [probablyAt, hc, FinAddMeasure.uniform_singleton, Fintype.card_fin]
+  simp only [probablyAt, Degree.Comparison.mem_over, Degree.Comparison.rel, hc,
+    FinAddMeasure.uniform_singleton, Fintype.card_fin]
   norm_num
 
 end Yalcin2010

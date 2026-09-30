@@ -96,6 +96,10 @@ theorem mu_mono (m : FinAddMeasure K W) {A B : Set W} (h : A ⊆ B) :
   have hunion := m.additive (A := A) (B := B \ A) disjoint_sdiff_self_right
   rw [Set.union_sdiff_cancel h] at hunion; linarith [m.nonneg (B \ A)]
 
+/-- Every event has measure at most one. -/
+theorem mu_le_one (m : FinAddMeasure K W) (A : Set W) : m A ≤ 1 :=
+  m.total ▸ m.mu_mono (Set.subset_univ A)
+
 /-- Complement measure: `μ(A) + μ(Aᶜ) = 1`. -/
 theorem mu_compl (m : FinAddMeasure K W) (A : Set W) :
     m A + m Aᶜ = 1 := by

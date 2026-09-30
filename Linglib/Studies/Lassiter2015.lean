@@ -4,7 +4,7 @@ public import Linglib.Logic.ComparativeProbability.Patterns
 public import Linglib.Logic.ComparativeProbability.WorldOrdering
 public import Linglib.Core.Order.Probability.Content
 public import Linglib.Semantics.Modality.Kratzer.Operators
-public import Linglib.Semantics.Attitudes.EpistemicThreshold
+public import Linglib.Semantics.Degree.Comparison
 public import Linglib.Studies.HollidayIcard2013
 public import Linglib.Data.Examples.Lassiter2015
 public import Mathlib.Data.Fin.VecNotation
@@ -50,8 +50,9 @@ replacements for the auxiliaries, quantificational, strong and weak, and the inf
 * The three world-ordering countermodels share one model: three worlds, the first alone best,
   masses `0.4`, `0.3`, `0.3`; BR3 holds in it by [holliday-icard-2013]'s footnote-13 lemma,
   since the order agrees with the measure on singletons.
-* The strong and weak probabilistic auxiliaries are `EpistemicThreshold.meetsThreshold`, the
-  positive-form threshold semantics, with thresholds `1` and `θ < 1`.
+* The strong and weak probabilistic auxiliaries are the positive forms of the probability scale,
+  `Degree.Comparison.ge.over` for *must* and `Degree.Comparison.gt.over` for its dual *might*,
+  with thresholds `1` and `θ < 1`.
 * The ratio-modifier argument of §2.2 and the open problems of §4 are recorded as examples
   only.
 
@@ -369,11 +370,10 @@ source: the whole space. -/
 def quantMust (A : Set W) : Prop := A = Set.univ
 
 /-- The probabilistic *must* with threshold `θ`, strong at `θ = 1` and weak below. -/
-def probMust (θ : ℚ) (A : Set W) : Prop :=
-  EpistemicThreshold.meetsThreshold (fun _ : Unit ↦ (P : Set W → ℚ)) θ () A
+def probMust (θ : ℚ) (A : Set W) : Prop := A ∈ Degree.Comparison.ge.over P θ
 
 /-- The dual *might*: `Pr(A) > 1 - θ`. -/
-def probMight (θ : ℚ) (A : Set W) : Prop := 1 - θ < P A
+def probMight (θ : ℚ) (A : Set W) : Prop := A ∈ Degree.Comparison.gt.over P (1 - θ)
 
 /-- (56) under the quantificational auxiliaries: a necessary proposition has all the mass, the
 largest possible margin over its negation. -/
@@ -381,15 +381,16 @@ theorem quantMust_prob {A : Set W} (h : quantMust A) : P A = 1 ∧ P Aᶜ = 0 :=
   subst h; simp
 
 /-- The strong probabilistic *must* agrees with the quantificational one on the mass. -/
-theorem probMust_one_iff (A : Set W) : probMust P 1 A ↔ P A = 1 := by
-  unfold probMust EpistemicThreshold.meetsThreshold
-  constructor
-  · intro h
-    have h' : 1 ≤ P A := h
-    exact le_antisymm (by have := P.mu_compl A; have := P.nonneg Aᶜ; linarith) h'
-  · intro h
-    show 1 ≤ P A
-    rw [h]
+theorem probMust_one_iff (A : Set W) : probMust P 1 A ↔ P A = 1 :=
+  ⟨fun h ↦ le_antisymm (P.mu_le_one A) h, fun h ↦ h.ge⟩
+
+/-- *Might* is the dual of *must*: `A` might hold iff its complement is not a must. -/
+theorem probMight_iff_not_probMust_compl (θ : ℚ) (A : Set W) :
+    probMight P θ A ↔ ¬ probMust P θ Aᶜ := by
+  change 1 - θ < P A ↔ ¬ θ ≤ P Aᶜ
+  have := P.mu_compl A
+  rw [not_le]
+  constructor <;> intro h <;> linarith
 
 /-- (64): under the strong probabilistic auxiliaries, what is more likely than something might
 be, since it has positive mass. -/
@@ -397,7 +398,8 @@ theorem moreLikely_might {A B : Set W} (h : Strict P.inducedGe A B) : probMight 
   obtain ⟨hle, hnot⟩ := h
   simp only [FinAddMeasure.inducedGe, ge_iff_le, not_le] at hle hnot
   have := P.nonneg B
-  unfold probMight; linarith
+  show 1 - 1 < P A
+  linarith
 
 /-- (65): under a weak *might*, two astronomically unlikely teams can be ordered without either
 being a live possibility. -/
@@ -410,8 +412,9 @@ theorem weak_refutes_moreLikely_might :
   · simp only [FinAddMeasure.inducedGe, ge_iff_le, not_le, FinAddMeasure.uniform_apply,
       Set.ncard_singleton, Set.ncard_pair (show (0 : Fin 100) ≠ 1 by decide), Fintype.card_fin]
     norm_num
-  · simp only [probMight, FinAddMeasure.uniform_apply,
-      Set.ncard_pair (show (0 : Fin 100) ≠ 1 by decide), Fintype.card_fin, not_lt]
+  · simp only [probMight, Degree.Comparison.mem_over, Degree.Comparison.rel,
+      FinAddMeasure.uniform_apply, Set.ncard_pair (show (0 : Fin 100) ≠ 1 by decide),
+      Fintype.card_fin, not_lt]
     norm_num
 
 end Auxiliaries

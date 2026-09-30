@@ -1,9 +1,10 @@
 module
 
-public import Linglib.Fragments.English.Auxiliaries
-public import Linglib.Semantics.Attitudes.EpistemicThreshold
+public import Mathlib.Probability.Kernel.Basic
 public import Mathlib.Tactic.NormNum
-public import Mathlib.Tactic.Linarith
+public import Mathlib.Tactic.Order
+public import Linglib.Fragments.English.Auxiliaries
+public import Linglib.Semantics.Degree.Comparison
 public import Linglib.Data.Examples.YingEtAl2025
 
 /-!
@@ -11,34 +12,38 @@ public import Linglib.Data.Examples.YingEtAl2025
 
 This file formalizes the epistemic language of thought of
 [ying-zhi-xuan-wong-mansinghka-tenenbaum-2025], a degree-based semantics for attitude verbs,
-modal verbs and modal adjectives grounded in the probability an agent assigns to a formula.
-Each expression compares that probability with a lexical threshold (`Thresholds`,
-`meetsThreshold`): *believes*, *certain*, the modal verbs from *could* to *must*, and
-*likely* hold when the probability clears their threshold; *uncertain* and *unlikely* when it
-falls below; *knows that* is belief plus truth, *knows if* knowledge of the question, and the
-*about* operators quantify over a contextually restricted domain (`knowsAbout`,
-`certainAbout`, `uncertainAbout`). A modal under *believes* is lowered to a comparison with
-the modal's own threshold rather than the belief threshold (`believesModal_might`).
-Comparatives and superlatives compare degrees, and the strengthened superlative scales the
-threshold by a multiplier (`mostStr`). The entailments among the expressions follow from the
-ordering of the thresholds alone (`Thresholds.Ordered`, `must_entails_might`,
-`certainAbout_believes`, `uncertainAbout_certainAbout`), and the fitted values of the paper's
-lexicon respect that ordering (`fitted`, `fitted_ordered`). The modal verbs' forces in the
-English fragment agree with the ordering: no possibility modal carries a higher threshold
-than a necessity modal (`force_threshold_le`).
+modal verbs and modal adjectives grounded in the probability an agent assigns to a formula,
+following the scalar semantics of [lassiter-2017]. Each expression is the positive form of the
+probability scale at a lexical threshold (`Thresholds`, `Degree.Comparison.ge.over`):
+*believes*, *certain*, the modal verbs from *could* to *must*, and *likely* hold when the
+probability clears their threshold; *uncertain* and *unlikely* when it falls below
+(`Degree.Comparison.lt.over`); *knows that* is belief plus truth, *knows if* knowledge of the
+question, and the *about* operators quantify over a contextually restricted domain
+(`knowsAbout`, `certainAbout`, `uncertainAbout`). A modal under *believes* is lowered to a
+comparison with the modal's own threshold rather than the belief threshold
+(`believesModal_might`). Comparatives and superlatives compare probabilities, and the
+strengthened superlative scales the threshold by a multiplier (`mostStr`). The entailments among
+the expressions follow from the ordering of the thresholds alone (`Thresholds.Ordered`,
+`must_entails_might`, `certainAbout_believes`, `uncertainAbout_certainAbout`), and the fitted
+values of the paper's lexicon respect that ordering (`fitted`, `fitted_ordered`). The modal
+verbs' forces in the English fragment agree with the ordering: no possibility modal carries a
+higher threshold than a necessity modal (`force_threshold_le`).
 
 ## Implementation notes
 
-The probabilities are the agent's credences as a function of agent and proposition, as in
-the threshold substrate; the Bayesian theory-of-mind inference that produces them from
-observed actions is not modelled. The fitted thresholds and the literature-derived initial
-values of the paper's second appendix are recorded as instances of `Thresholds`, and the
-theorems are stated for any thresholds satisfying the ordering.
+An agent's credences are a Markov kernel from agents to worlds, `Pr a φ` the probability agent
+`a` assigns to `φ`; the Bayesian theory-of-mind inference that produces it from observed
+actions is not modelled. Thresholds live on the probability scale `ℝ≥0∞`. The fitted thresholds
+and the literature-derived initial values of the paper's second appendix are recorded as
+instances of `Thresholds`, and the theorems are stated for any thresholds satisfying the
+ordering. The paper states no ordering; `Thresholds.Ordered` is this file's, and its modal part
+agrees with [lassiter-2017]'s θ_might < θ_likely < θ_must < θ_certain (p. 152), weakened to
+`≤` since the fitted values tie.
 
 ## References
 
 * [ying-zhi-xuan-wong-mansinghka-tenenbaum-2025]
-* [lassiter-goodman-2017]
+* [lassiter-2017]
 * [hintikka-1962]
 -/
 
@@ -46,27 +51,27 @@ theorems are stated for any thresholds satisfying the ordering.
 
 namespace YingEtAl2025
 
-open EpistemicThreshold English.Auxiliaries Modality
+open MeasureTheory ProbabilityTheory Degree English.Auxiliaries Modality
+open scoped ENNReal
 
-variable {E W X : Type*}
+variable {E W X : Type*} [MeasurableSpace E] [MeasurableSpace W]
 
 /-! ### Thresholds -/
 
 /-- The probability thresholds of the epistemic lexicon and the multiplier of the
 strengthened superlative. -/
 structure Thresholds where
-  believes : ℚ
-  certain : ℚ
-  uncertain : ℚ
-  likely : ℚ
-  unlikely : ℚ
-  could : ℚ
-  might : ℚ
-  may : ℚ
-  should : ℚ
-  must : ℚ
-  most : ℚ
-  deriving DecidableEq, Repr
+  believes : ℝ≥0∞
+  certain : ℝ≥0∞
+  uncertain : ℝ≥0∞
+  likely : ℝ≥0∞
+  unlikely : ℝ≥0∞
+  could : ℝ≥0∞
+  might : ℝ≥0∞
+  may : ℝ≥0∞
+  should : ℝ≥0∞
+  must : ℝ≥0∞
+  most : ℝ≥0∞
 
 /-- The ordering of the thresholds the entailments rest on: the modal verbs form a scale from
 *could* to *must*, *likely* sits between *may* and *should*, belief lies above *likely* and
@@ -84,25 +89,33 @@ structure Thresholds.Ordered (Θ : Thresholds) : Prop where
   one_le_most : 1 ≤ Θ.most
 
 /-- The thresholds fitted against human plausibility ratings. -/
-def fitted : Thresholds :=
-  ⟨3/4, 19/20, 7/10, 7/10, 2/5, 1/5, 1/5, 3/10, 4/5, 19/20, 3/2⟩
+noncomputable def fitted : Thresholds :=
+  ⟨.ofReal (3/4), .ofReal (19/20), .ofReal (7/10), .ofReal (7/10), .ofReal (2/5), .ofReal (1/5),
+    .ofReal (1/5), .ofReal (3/10), .ofReal (4/5), .ofReal (19/20), .ofReal (3/2)⟩
 
 /-- The initial thresholds derived from the literature, before fitting. -/
-def initial : Thresholds :=
-  ⟨3/4, 19/20, 1/2, 3/5, 2/5, 1/5, 1/5, 3/10, 4/5, 19/20, 3/2⟩
+noncomputable def initial : Thresholds :=
+  ⟨.ofReal (3/4), .ofReal (19/20), .ofReal (1/2), .ofReal (3/5), .ofReal (2/5), .ofReal (1/5),
+    .ofReal (1/5), .ofReal (3/10), .ofReal (4/5), .ofReal (19/20), .ofReal (3/2)⟩
 
 theorem fitted_ordered : fitted.Ordered := by
-  constructor <;> norm_num [fitted]
+  constructor <;> simp only [fitted] <;>
+    first
+      | exact ENNReal.ofReal_le_ofReal (by norm_num)
+      | exact ENNReal.one_le_ofReal.2 (by norm_num)
 
 theorem initial_ordered : initial.Ordered := by
-  constructor <;> norm_num [initial]
+  constructor <;> simp only [initial] <;>
+    first
+      | exact ENNReal.ofReal_le_ofReal (by norm_num)
+      | exact ENNReal.one_le_ofReal.2 (by norm_num)
 
 /-! ### The epistemic expressions -/
 
-variable (Θ : Thresholds) (Pr : E → Set W → ℚ)
+variable (Θ : Thresholds) (Pr : Kernel E W)
 
 /-- *A believes that φ*. -/
-def believes (a : E) (φ : Set W) : Prop := meetsThreshold Pr Θ.believes a φ
+def believes (a : E) (φ : Set W) : Prop := φ ∈ Comparison.ge.over (Pr a) Θ.believes
 
 /-- *A believes M*, for a modal claim `M`: the modal applied to the agent. -/
 def believesModal (a : E) (M : E → Prop) : Prop := M a
@@ -122,7 +135,7 @@ def knowsAbout (a : E) (C : X → Prop) (φ : X → Set W) (w : W) : Prop :=
 def notKnowsThat (a : E) (φ : Set W) (w : W) : Prop := ¬ believes Θ Pr a φ ∧ w ∈ φ
 
 /-- *A is certain that φ*. -/
-def certainThat (a : E) (φ : Set W) : Prop := meetsThreshold Pr Θ.certain a φ
+def certainThat (a : E) (φ : Set W) : Prop := φ ∈ Comparison.ge.over (Pr a) Θ.certain
 
 /-- *A is certain about φ*: some relevant entity of which the agent is certain. -/
 def certainAbout (a : E) (C : X → Prop) (φ : X → Set W) : Prop :=
@@ -130,42 +143,34 @@ def certainAbout (a : E) (C : X → Prop) (φ : X → Set W) : Prop :=
 
 /-- *A is uncertain if φ or ψ*: neither alternative reaches the threshold. -/
 def uncertainIf (a : E) (φ ψ : Set W) : Prop :=
-  failsThreshold Pr Θ.uncertain a φ ∧ failsThreshold Pr Θ.uncertain a ψ
+  φ ∈ Comparison.lt.over (Pr a) Θ.uncertain ∧ ψ ∈ Comparison.lt.over (Pr a) Θ.uncertain
 
 /-- *A is uncertain about φ*: no relevant entity reaches the threshold. -/
 def uncertainAbout (a : E) (C : X → Prop) (φ : X → Set W) : Prop :=
-  ∀ x, C x → failsThreshold Pr Θ.uncertain a (φ x)
+  ∀ x, C x → φ x ∈ Comparison.lt.over (Pr a) Θ.uncertain
 
 /-- The modal verbs and adjective, each a property of agents. -/
-def could (φ : Set W) (a : E) : Prop := meetsThreshold Pr Θ.could a φ
-def might (φ : Set W) (a : E) : Prop := meetsThreshold Pr Θ.might a φ
-def may (φ : Set W) (a : E) : Prop := meetsThreshold Pr Θ.may a φ
-def should (φ : Set W) (a : E) : Prop := meetsThreshold Pr Θ.should a φ
-def must (φ : Set W) (a : E) : Prop := meetsThreshold Pr Θ.must a φ
-def likely (φ : Set W) (a : E) : Prop := meetsThreshold Pr Θ.likely a φ
-def unlikely (φ : Set W) (a : E) : Prop := failsThreshold Pr Θ.unlikely a φ
-
-/-- The degree of *likely*: the probability itself. -/
-def degree (a : E) (φ : Set W) : ℚ := Pr a φ
+def could (φ : Set W) (a : E) : Prop := φ ∈ Comparison.ge.over (Pr a) Θ.could
+def might (φ : Set W) (a : E) : Prop := φ ∈ Comparison.ge.over (Pr a) Θ.might
+def may (φ : Set W) (a : E) : Prop := φ ∈ Comparison.ge.over (Pr a) Θ.may
+def should (φ : Set W) (a : E) : Prop := φ ∈ Comparison.ge.over (Pr a) Θ.should
+def must (φ : Set W) (a : E) : Prop := φ ∈ Comparison.ge.over (Pr a) Θ.must
+def likely (φ : Set W) (a : E) : Prop := φ ∈ Comparison.ge.over (Pr a) Θ.likely
+def unlikely (φ : Set W) (a : E) : Prop := φ ∈ Comparison.lt.over (Pr a) Θ.unlikely
 
 /-- *φ is more likely than ψ*. -/
-def more (φ ψ : Set W) (a : E) : Prop := degree Pr a ψ < degree Pr a φ
+def more (φ ψ : Set W) (a : E) : Prop := Pr a ψ < Pr a φ
 
 /-- *φ of o is most likely* among the relevant alternatives. -/
 def mostSup (o : X) (C : X → Prop) (φ : X → Set W) (a : E) : Prop :=
-  ∀ x, C x → degree Pr a (φ x) ≤ degree Pr a (φ o)
+  ∀ x, C x → Pr a (φ x) ≤ Pr a (φ o)
 
-/-- The strengthened superlative: the degree reaches the multiplied threshold. -/
-def mostStr (θ : ℚ) (φ : Set W) (a : E) : Prop := Θ.most * θ ≤ degree Pr a φ
+/-- The strengthened superlative: the probability reaches the multiplied threshold. -/
+def mostStr (θ : ℝ≥0∞) (φ : Set W) (a : E) : Prop := φ ∈ Comparison.ge.over (Pr a) (Θ.most * θ)
 
 /-! ### Entailments from the ordering -/
 
 variable {Θ Pr}
-
-/-- A higher threshold entails a lower one. -/
-theorem meets_of_meets_of_le {θ₁ θ₂ : ℚ} (h : θ₁ ≤ θ₂) {a : E} {φ : Set W}
-    (hm : meetsThreshold Pr θ₂ a φ) : meetsThreshold Pr θ₁ a φ :=
-  h.trans hm
 
 /-- Knowledge entails belief. -/
 theorem knowsThat_believes {a : E} {φ : Set W} {w : W} (h : knowsThat Θ Pr a φ w) :
@@ -180,34 +185,36 @@ theorem knowsIf_of_knowsThat {a : E} {φ : Set W} {w : W} (h : knowsThat Θ Pr a
 
 /-- Belief and not knowing exclude one another. -/
 theorem not_notKnowsThat_of_believes {a : E} {φ : Set W} {w : W} (h : believes Θ Pr a φ) :
-    ¬ notKnowsThat Θ Pr a φ w := λ hn => hn.1 h
+    ¬ notKnowsThat Θ Pr a φ w := fun hn ↦ hn.1 h
 
 /-- A modal under *believes* is lowered to the modal's own threshold. -/
 theorem believesModal_might (a : E) (φ : Set W) :
-    believesModal (E := E) a (might Θ Pr φ) ↔ meetsThreshold Pr Θ.might a φ := Iff.rfl
+    believesModal (E := E) a (might Θ Pr φ) ↔ φ ∈ Comparison.ge.over (Pr a) Θ.might := Iff.rfl
 
 /-- *must* entails *should*, *likely*, *may*, *might* and *could* under the ordering. -/
 theorem must_entails_might (h : Θ.Ordered) {φ : Set W} {a : E} (hm : must Θ Pr φ a) :
-    might Θ Pr φ a :=
-  meets_of_meets_of_le (h.might_may.trans (h.may_likely.trans (h.likely_believes.trans
-    (h.believes_should.trans h.should_must)))) hm
+    might Θ Pr φ a := by
+  have := h.might_may; have := h.may_likely; have := h.likely_believes
+  have := h.believes_should; have := h.should_must
+  exact Comparison.antitone_ge_over (Pr a) (by order) hm
 
 theorem must_entails_should (h : Θ.Ordered) {φ : Set W} {a : E} (hm : must Θ Pr φ a) :
     should Θ Pr φ a :=
-  meets_of_meets_of_le h.should_must hm
+  Comparison.antitone_ge_over (Pr a) h.should_must hm
 
 theorem should_entails_likely (h : Θ.Ordered) {φ : Set W} {a : E} (hm : should Θ Pr φ a) :
     likely Θ Pr φ a :=
-  meets_of_meets_of_le (h.likely_believes.trans h.believes_should) hm
+  Comparison.antitone_ge_over (Pr a) (h.likely_believes.trans h.believes_should) hm
 
 theorem might_entails_could (h : Θ.Ordered) {φ : Set W} {a : E} (hm : might Θ Pr φ a) :
     could Θ Pr φ a :=
-  meets_of_meets_of_le h.could_might hm
+  Comparison.antitone_ge_over (Pr a) h.could_might hm
 
 /-- Certainty entails belief. -/
 theorem certainThat_believes (h : Θ.Ordered) {a : E} {φ : Set W} (hc : certainThat Θ Pr a φ) :
     believes Θ Pr a φ :=
-  meets_of_meets_of_le (h.believes_should.trans (h.should_must.trans h.must_certain)) hc
+  Comparison.antitone_ge_over (Pr a) (h.believes_should.trans (h.should_must.trans h.must_certain))
+    hc
 
 /-- Certainty about supplies a believed witness. -/
 theorem certainAbout_believes (h : Θ.Ordered) {a : E} {C : X → Prop} {φ : X → Set W}
@@ -219,16 +226,13 @@ theorem certainAbout_believes (h : Θ.Ordered) {a : E} {C : X → Prop} {φ : X 
 theorem uncertainAbout_certainAbout (h : Θ.Ordered) {a : E} {C : X → Prop} {φ : X → Set W}
     (hu : uncertainAbout Θ Pr a C φ) (hc : certainAbout Θ Pr a C φ) : False :=
   let ⟨x, hC, hx⟩ := hc
-  absurd (lt_of_le_of_lt (h.uncertain_certain.trans hx) (hu x hC)) (lt_irrefl _)
+  (Comparison.mem_ge_over_iff_not_mem_lt_over (Pr a)).1
+    (Comparison.antitone_ge_over (Pr a) h.uncertain_certain hx) (hu x hC)
 
 /-- The strengthened superlative entails the plain threshold reading. -/
-theorem mostStr_meets (h : Θ.Ordered) {θ : ℚ} (hθ : 0 ≤ θ) {φ : Set W} {a : E}
-    (hm : mostStr Θ Pr θ φ a) : meetsThreshold Pr θ a φ :=
-  le_trans (le_mul_of_one_le_left hθ h.one_le_most) hm
-
-/-- The superlative holds of a maximal alternative. -/
-theorem mostSup_of_forall {o : X} {C : X → Prop} {φ : X → Set W} {a : E}
-    (h : ∀ x, C x → Pr a (φ x) ≤ Pr a (φ o)) : mostSup Pr o C φ a := h
+theorem mostStr_meets (h : Θ.Ordered) {θ : ℝ≥0∞} {φ : Set W} {a : E}
+    (hm : mostStr Θ Pr θ φ a) : φ ∈ Comparison.ge.over (Pr a) θ :=
+  Comparison.antitone_ge_over (Pr a) (le_mul_of_one_le_left zero_le h.one_le_most) hm
 
 /-! ### The English modal verbs -/
 
@@ -242,7 +246,7 @@ inductive ModalVerb where
   deriving DecidableEq, Repr, Fintype
 
 /-- The threshold of each modal verb. -/
-def ModalVerb.threshold (Θ : Thresholds) : ModalVerb → ℚ
+def ModalVerb.threshold (Θ : Thresholds) : ModalVerb → ℝ≥0∞
   | .could => Θ.could
   | .might => Θ.might
   | .may => Θ.may
@@ -277,6 +281,6 @@ theorem force_threshold_le (h : Θ.Ordered) {v v' : ModalVerb}
     first
       | exact absurd hv (by decide)
       | exact absurd (by decide) hv'
-      | (simp only [ModalVerb.threshold]; linarith)
+      | (simp only [ModalVerb.threshold]; order)
 
 end YingEtAl2025
