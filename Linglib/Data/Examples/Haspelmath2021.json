@@ -8,7 +8,20 @@
     "language": "taka1261",
     "primaryText": "ŋa:-Ø la: ŋa-səih-ke",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "ŋa:-Ø",
+        "I-Ø"
+      ],
+      [
+        "la:",
+        "leopard.ABS"
+      ],
+      [
+        "ŋa-səih-ke",
+        "1SG-kill-PFV"
+      ]
+    ],
     "translation": "I killed a leopard.",
     "context": "",
     "judgment": "acceptable",
@@ -40,7 +53,8 @@
         "zero"
       ]
     ],
-    "comment": "First person A, no ergative flag."
+    "comment": "First person A, no ergative flag. The source cites (Watters 2002: 67).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex1b",
@@ -51,7 +65,20 @@
     "language": "taka1261",
     "primaryText": "no:-ye la: səih-ke-o",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "no:-ye",
+        "he-ERG"
+      ],
+      [
+        "la:",
+        "leopard.ABS"
+      ],
+      [
+        "səih-ke-o",
+        "kill-PFV-3SG"
+      ]
+    ],
     "translation": "He killed a leopard.",
     "context": "",
     "judgment": "acceptable",
@@ -83,18 +110,36 @@
         "special"
       ]
     ],
-    "comment": "Third person A with the ergative flag -ye."
+    "comment": "Third person A with the ergative flag -ye. The source cites (Watters 2002: 67).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex2a",
     "source": {
-      "bibkey": "haspelmath-2021",
-      "paperLabel": "(2a)"
+      "bibkey": "baker-2015",
+      "paperLabel": "pp. 4-5"
     },
     "language": "yaku1245",
     "primaryText": "Masha türgennik salamaat-Ø sie-te.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Masha",
+        "Masha"
+      ],
+      [
+        "türgennik",
+        "quickly"
+      ],
+      [
+        "salamaat-Ø",
+        "porridge-Ø"
+      ],
+      [
+        "sie-te",
+        "eat-PST.3SG.SBJ"
+      ]
+    ],
     "translation": "Masha ate porridge quickly.",
     "context": "",
     "judgment": "acceptable",
@@ -126,18 +171,40 @@
         "zero"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "reportedIn": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(2a)"
+    },
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex2b",
     "source": {
-      "bibkey": "haspelmath-2021",
-      "paperLabel": "(2b)"
+      "bibkey": "baker-2015",
+      "paperLabel": "pp. 4-5"
     },
     "language": "yaku1245",
     "primaryText": "Masha salamaat-y türgennik sie-te.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Masha",
+        "Masha"
+      ],
+      [
+        "salamaat-y",
+        "porridge-ACC"
+      ],
+      [
+        "türgennik",
+        "quickly"
+      ],
+      [
+        "sie-te",
+        "eat-PST.3SG.SBJ"
+      ]
+    ],
     "translation": "Masha ate the porridge quickly.",
     "context": "",
     "judgment": "acceptable",
@@ -169,7 +236,12 @@
         "special"
       ]
     ],
-    "comment": "Definite P with the accusative -y."
+    "comment": "Definite P with the accusative -y.",
+    "reportedIn": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(2b)"
+    },
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex3a",
@@ -180,7 +252,32 @@
     "language": "teop1238",
     "primaryText": "Enaa paa dee ma=u e guu.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Enaa",
+        "1SG"
+      ],
+      [
+        "paa",
+        "TAM"
+      ],
+      [
+        "dee",
+        "carry"
+      ],
+      [
+        "ma=u",
+        "DIR=IMM"
+      ],
+      [
+        "e",
+        "ART"
+      ],
+      [
+        "guu",
+        "pig"
+      ]
+    ],
     "translation": "I have brought a pig.",
     "context": "",
     "judgment": "acceptable",
@@ -216,7 +313,8 @@
         "zero"
       ]
     ],
-    "comment": ""
+    "comment": "The source cites (Mosel 2007: 10).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex3b",
@@ -227,7 +325,36 @@
     "language": "teop1238",
     "primaryText": "A beiko tenaa paa asun=u ben-e guu.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "A",
+        "ART"
+      ],
+      [
+        "beiko",
+        "child"
+      ],
+      [
+        "tenaa",
+        "my"
+      ],
+      [
+        "paa",
+        "TAM"
+      ],
+      [
+        "asun=u",
+        "kill=IMM"
+      ],
+      [
+        "ben-e",
+        "OBJ-ART"
+      ],
+      [
+        "guu",
+        "pig"
+      ]
+    ],
     "translation": "My child has killed the pig.",
     "context": "",
     "judgment": "acceptable",
@@ -263,7 +390,8 @@
         "special"
       ]
     ],
-    "comment": "The object marker ben- is required."
+    "comment": "The object marker ben- is required. The source cites (Mosel 2007: 10).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex4a",
@@ -310,7 +438,8 @@
         "zero"
       ]
     ],
-    "comment": "The prepositional dative 'She gave the money to Kim' is also possible."
+    "comment": "The prepositional dative 'She gave the money to Kim' is also possible.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex4b",
@@ -357,7 +486,8 @@
         "zero"
       ]
     ],
-    "comment": "The prepositional dative 'She gave it to him' is also possible."
+    "comment": "The prepositional dative 'She gave it to him' is also possible.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex4c",
@@ -366,7 +496,7 @@
       "paperLabel": "(4c)"
     },
     "language": "stan1293",
-    "primaryText": "*She gave Kim it.",
+    "primaryText": "She gave Kim it.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -409,7 +539,8 @@
         "zero"
       ]
     ],
-    "comment": "Only the prepositional dative is possible."
+    "comment": "Only the prepositional dative is possible.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex17a",
@@ -420,7 +551,24 @@
     "language": "nuor1238",
     "primaryText": "a mortu a Serbadore",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "a",
+        "has"
+      ],
+      [
+        "mortu",
+        "killed"
+      ],
+      [
+        "a",
+        "ACC"
+      ],
+      [
+        "Serbadore",
+        "Salvatore"
+      ]
+    ],
     "translation": "He killed Salvatore.",
     "context": "",
     "judgment": "acceptable",
@@ -452,7 +600,8 @@
         "special"
       ]
     ],
-    "comment": ""
+    "comment": "The source cites (Bossong 1991: 148).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex17b",
@@ -463,7 +612,24 @@
     "language": "nuor1238",
     "primaryText": "a mortu su lupu",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "a",
+        "has"
+      ],
+      [
+        "mortu",
+        "killed"
+      ],
+      [
+        "su",
+        "the"
+      ],
+      [
+        "lupu",
+        "wolf"
+      ]
+    ],
     "translation": "He killed the wolf.",
     "context": "",
     "judgment": "acceptable",
@@ -495,7 +661,8 @@
         "zero"
       ]
     ],
-    "comment": ""
+    "comment": "The source cites (Bossong 1991: 148).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex18a",
@@ -506,7 +673,16 @@
     "language": "panj1256",
     "primaryText": "Kataab vekho.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Kataab",
+        "book"
+      ],
+      [
+        "vekho",
+        "look.IMP.2PL"
+      ]
+    ],
     "translation": "Look at a book.",
     "context": "",
     "judgment": "acceptable",
@@ -538,7 +714,8 @@
         "zero"
       ]
     ],
-    "comment": ""
+    "comment": "The source cites (Bhatia 1993: 172–174).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex18b",
@@ -549,7 +726,20 @@
     "language": "panj1256",
     "primaryText": "Kataab nũũ vekho.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Kataab",
+        "book"
+      ],
+      [
+        "nũũ",
+        "ACC"
+      ],
+      [
+        "vekho",
+        "look.IMP.2PL"
+      ]
+    ],
     "translation": "Look at the book.",
     "context": "",
     "judgment": "acceptable",
@@ -581,7 +771,8 @@
         "special"
       ]
     ],
-    "comment": "Definite P with the accusative postposition nũũ."
+    "comment": "Definite P with the accusative postposition nũũ. The source cites (Bhatia 1993: 172–174).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex19a",
@@ -592,7 +783,20 @@
     "language": "west2369",
     "primaryText": "man ketâb-râ xarid-am.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "man",
+        "I"
+      ],
+      [
+        "ketâb-râ",
+        "book-ACC"
+      ],
+      [
+        "xarid-am",
+        "buy.PST-1SG"
+      ]
+    ],
     "translation": "I bought the book.",
     "context": "",
     "judgment": "acceptable",
@@ -624,7 +828,8 @@
         "special"
       ]
     ],
-    "comment": ""
+    "comment": "The source cites (Dalrymple and Nikolaeva 2011: 108–112).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex19b",
@@ -635,7 +840,20 @@
     "language": "west2369",
     "primaryText": "man sib-i xord-am.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "man",
+        "I"
+      ],
+      [
+        "sib-i",
+        "apple-INDF"
+      ],
+      [
+        "xord-am",
+        "eat.PST-1SG"
+      ]
+    ],
     "translation": "I ate an apple.",
     "context": "",
     "judgment": "acceptable",
@@ -667,7 +885,8 @@
         "zero"
       ]
     ],
-    "comment": "The accusative flag -râ is not allowed on a nontopical P."
+    "comment": "The accusative flag -râ is not allowed on a nontopical P. The source cites (Dalrymple and Nikolaeva 2011: 108–112). The source prints sib-i(*-râ) 'apple-INDF(-ACC)'; the row is the grammatical form.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex19c",
@@ -678,7 +897,20 @@
     "language": "west2369",
     "primaryText": "ki mašin-i-râ did?",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "ki",
+        "who"
+      ],
+      [
+        "mašin-i-râ",
+        "car-INDF-ACC"
+      ],
+      [
+        "did",
+        "see.PST[3SG]"
+      ]
+    ],
     "translation": "Who saw a car?",
     "context": "",
     "judgment": "acceptable",
@@ -710,7 +942,8 @@
         "special"
       ]
     ],
-    "comment": "The accusative flag -râ is required on a topical P."
+    "comment": "The accusative flag -râ is required on a topical P. The source cites (Dalrymple and Nikolaeva 2011: 108–112). The source prints mašin-i-*(râ) 'car-INDF-(ACC)'; the row is the grammatical form.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex20a",
@@ -721,7 +954,32 @@
     "language": "neap1235",
     "primaryText": "So vistə a mme / a tte.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "So",
+        "be.1SG"
+      ],
+      [
+        "vistə",
+        "seen"
+      ],
+      [
+        "a",
+        "to"
+      ],
+      [
+        "mme",
+        "me"
+      ],
+      [
+        "a",
+        "to"
+      ],
+      [
+        "tte",
+        "you"
+      ]
+    ],
     "translation": "I have seen myself/you.",
     "context": "",
     "judgment": "acceptable",
@@ -753,7 +1011,8 @@
         "special"
       ]
     ],
-    "comment": ""
+    "comment": "The source cites (D'Alessandro 2017: 8).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex20b",
@@ -764,7 +1023,32 @@
     "language": "neap1235",
     "primaryText": "Semə vistə a nnu / a vvu.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Semə",
+        "be.1PL"
+      ],
+      [
+        "vistə",
+        "seen"
+      ],
+      [
+        "a",
+        "to"
+      ],
+      [
+        "nnu",
+        "us"
+      ],
+      [
+        "a",
+        "to"
+      ],
+      [
+        "vvu",
+        "you"
+      ]
+    ],
     "translation": "We have seen us/you.",
     "context": "",
     "judgment": "acceptable",
@@ -796,7 +1080,8 @@
         "special"
       ]
     ],
-    "comment": ""
+    "comment": "The source cites (D'Alessandro 2017: 8).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex20c",
@@ -805,9 +1090,42 @@
       "paperLabel": "(20c)"
     },
     "language": "neap1235",
-    "primaryText": "*So vistə a Marije / a jissə / a quillə.",
+    "primaryText": "So vistə a Marije / a jissə / a quillə.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "So",
+        "be.1SG"
+      ],
+      [
+        "vistə",
+        "seen"
+      ],
+      [
+        "a",
+        "to"
+      ],
+      [
+        "Marije",
+        "Maria"
+      ],
+      [
+        "a",
+        "to"
+      ],
+      [
+        "jissə",
+        "them"
+      ],
+      [
+        "a",
+        "to"
+      ],
+      [
+        "quillə",
+        "them"
+      ]
+    ],
     "translation": "I have seen Maria/them.",
     "context": "",
     "judgment": "ungrammatical",
@@ -839,7 +1157,8 @@
         "special"
       ]
     ],
-    "comment": "The preposition a is impossible on an aliophoric P."
+    "comment": "The preposition a is impossible on an aliophoric P. The source cites (D'Alessandro 2017: 8).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex23a",
@@ -850,7 +1169,16 @@
     "language": "warr1255",
     "primaryText": "ngana-Ø gaga-ma",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "ngana-Ø",
+        "we-NOM"
+      ],
+      [
+        "gaga-ma",
+        "go-FUT"
+      ]
+    ],
     "translation": "We will go.",
     "context": "",
     "judgment": "acceptable",
@@ -882,7 +1210,8 @@
         "zero"
       ]
     ],
-    "comment": "No flag on the S argument."
+    "comment": "No flag on the S argument. The source cites (cf. Dixon 1980: 287–289).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex23b",
@@ -893,7 +1222,20 @@
     "language": "warr1255",
     "primaryText": "ngana-Ø ngulmburu-Ø ngunda-lma",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "ngana-Ø",
+        "we-ERG"
+      ],
+      [
+        "ngulmburu-Ø",
+        "woman-ACC"
+      ],
+      [
+        "ngunda-lma",
+        "see-FUT"
+      ]
+    ],
     "translation": "We will see the woman.",
     "context": "",
     "judgment": "acceptable",
@@ -925,7 +1267,8 @@
         "zero"
       ]
     ],
-    "comment": ""
+    "comment": "The source cites (cf. Dixon 1980: 287–289).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex23c",
@@ -936,7 +1279,20 @@
     "language": "warr1255",
     "primaryText": "maal-du ngulmburu-Ø ngunda-lma",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "maal-du",
+        "man-ERG"
+      ],
+      [
+        "ngulmburu-Ø",
+        "woman-ACC"
+      ],
+      [
+        "ngunda-lma",
+        "see-FUT"
+      ]
+    ],
     "translation": "The man will see the woman.",
     "context": "",
     "judgment": "acceptable",
@@ -968,7 +1324,8 @@
         "special"
       ]
     ],
-    "comment": "Ergative flag -du on the full nominal A."
+    "comment": "Ergative flag -du on the full nominal A. The source cites (cf. Dixon 1980: 287–289).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex24a",
@@ -979,7 +1336,20 @@
     "language": "mang1381",
     "primaryText": "Ṇa-ŋugu ñim ŋan-ga-ŋiñ.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Ṇa-ŋugu",
+        "N.ERG-water"
+      ],
+      [
+        "ñim",
+        "submerge"
+      ],
+      [
+        "ŋan-ga-ŋiñ",
+        "3SG > 1SG-AUX-PST.PUNCT"
+      ]
+    ],
     "translation": "Water covered/submerged me.",
     "context": "",
     "judgment": "acceptable",
@@ -1011,7 +1381,8 @@
         "special"
       ]
     ],
-    "comment": "Ergative prefix on the inanimate (neuter) A."
+    "comment": "Ergative prefix on the inanimate (neuter) A. The source cites (Merlan 1982: 61).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex24b",
@@ -1022,7 +1393,20 @@
     "language": "mang1381",
     "primaryText": "Buyʔ ñan-wu-na ŋaḷa-bugbugʔ.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Buyʔ",
+        "show"
+      ],
+      [
+        "ñan-wu-na",
+        "3SG > 2SG-AUX-PST.PUNCT"
+      ],
+      [
+        "ŋaḷa-bugbugʔ",
+        "F.NOM-old.woman"
+      ]
+    ],
     "translation": "Did the old woman show you (to him)?",
     "context": "",
     "judgment": "acceptable",
@@ -1054,7 +1438,8 @@
         "zero"
       ]
     ],
-    "comment": ""
+    "comment": "The source cites (Merlan 1982: 61).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex25a",
@@ -1065,7 +1450,20 @@
     "language": "cent2346",
     "primaryText": "khōng khāla' so-kiyo:re'",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "khōng",
+        "he"
+      ],
+      [
+        "khāla'",
+        "food"
+      ],
+      [
+        "so-kiyo:re'",
+        "make-IPFV.GNOM"
+      ]
+    ],
     "translation": "He prepares the meals.",
     "context": "",
     "judgment": "acceptable",
@@ -1097,7 +1495,8 @@
         "zero"
       ]
     ],
-    "comment": "No flag on the topical A."
+    "comment": "No flag on the topical A. The source cites (Tournadre 1995: 264).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex25b",
@@ -1108,7 +1507,20 @@
     "language": "cent2346",
     "primaryText": "khōng-ki' khāla' so-kiyo:re'",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "khōng-ki'",
+        "he-ERG"
+      ],
+      [
+        "khāla'",
+        "food"
+      ],
+      [
+        "so-kiyo:re'",
+        "make-IPFV.GNOM"
+      ]
+    ],
     "translation": "HE prepares the meals.",
     "context": "",
     "judgment": "acceptable",
@@ -1140,7 +1552,8 @@
         "special"
       ]
     ],
-    "comment": "Ergative flag -ki' on the focused A."
+    "comment": "Ergative flag -ki' on the focused A. The source cites (Tournadre 1995: 264).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex29a",
@@ -1151,7 +1564,24 @@
     "language": "telk1238",
     "primaryText": "wəl-lə pārə ta xa-məskenɒ",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "wəl-lə",
+        "gave-he"
+      ],
+      [
+        "pārə",
+        "money"
+      ],
+      [
+        "ta",
+        "to"
+      ],
+      [
+        "xa-məskenɒ",
+        "a.certain-poor.person"
+      ]
+    ],
     "translation": "He gave money to a certain poor person.",
     "context": "",
     "judgment": "acceptable",
@@ -1183,7 +1613,8 @@
         "special"
       ]
     ],
-    "comment": "Dative preposition ta on the full-nominal R."
+    "comment": "Dative preposition ta on the full-nominal R. The source cites (Coghill 2010: 226–228). (= Coghill's 11b)",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex29b",
@@ -1194,7 +1625,20 @@
     "language": "telk1238",
     "primaryText": "kəm-yāwəl-lə ta məskenɒ",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "kəm-yāwəl-lə",
+        "PST-he.give-3SG.M.OBJ"
+      ],
+      [
+        "ta",
+        "to"
+      ],
+      [
+        "məskenɒ",
+        "poor.person"
+      ]
+    ],
     "translation": "He gave it to a poor person.",
     "context": "",
     "judgment": "acceptable",
@@ -1226,7 +1670,8 @@
         "special"
       ]
     ],
-    "comment": ""
+    "comment": "The source cites (Coghill 2010: 226–228). (= 14b)",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex29c",
@@ -1237,7 +1682,16 @@
     "language": "telk1238",
     "primaryText": "kəm-yāwəl-lə hadiynɒ",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "kəm-yāwəl-lə",
+        "PST-he.give-3SG.M.OBJ"
+      ],
+      [
+        "hadiynɒ",
+        "present"
+      ]
+    ],
     "translation": "He gave him a present.",
     "context": "",
     "judgment": "acceptable",
@@ -1269,7 +1723,8 @@
         "zero"
       ]
     ],
-    "comment": "The R is an index on the verb."
+    "comment": "The R is an index on the verb. The source cites (Coghill 2010: 226–228). (= 14c)",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex29d",
@@ -1280,7 +1735,12 @@
     "language": "telk1238",
     "primaryText": "kəm-yāwəl-lux-ila",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "kəm-yāwəl-lux-ila",
+        "PST-he.give-2SG.M.OBJ-3SG.M.SEC"
+      ]
+    ],
     "translation": "He gave them to you.",
     "context": "",
     "judgment": "acceptable",
@@ -1312,7 +1772,8 @@
         "zero"
       ]
     ],
-    "comment": ""
+    "comment": "The source cites (Coghill 2010: 226–228). (= 16b)",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex30a",
@@ -1323,7 +1784,24 @@
     "language": "yakk1236",
     "primaryText": "ka nniŋda photo-ci ham-biʔ-meʔ-nenin=ha",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "ka",
+        "1SG[NOM]"
+      ],
+      [
+        "nniŋda",
+        "2PL[NOM]"
+      ],
+      [
+        "photo-ci",
+        "photo-PL[NOM]"
+      ],
+      [
+        "ham-biʔ-meʔ-nenin=ha",
+        "distribute-BEN-NPST-1>2PL=PL"
+      ]
+    ],
     "translation": "I distribute the photos to you all.",
     "context": "",
     "judgment": "acceptable",
@@ -1355,7 +1833,8 @@
         "zero"
       ]
     ],
-    "comment": "Animate R in the zero-coded absolutive."
+    "comment": "Animate R in the zero-coded absolutive. The source cites (Schackow 2012: 161–162).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex30b",
@@ -1366,7 +1845,24 @@
     "language": "yakk1236",
     "primaryText": "sarkar=ŋa yaŋ tenten=be ŋ-hapsu-bi-ci=ha",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "sarkar=ŋa",
+        "government=ERG"
+      ],
+      [
+        "yaŋ",
+        "money[NOM]"
+      ],
+      [
+        "tenten=be",
+        "villages=LOC"
+      ],
+      [
+        "ŋ-hapsu-bi-ci=ha",
+        "3PL.A-distribute-BEN-3PL.P=PL"
+      ]
+    ],
     "translation": "The government distributed the money to the villages.",
     "context": "",
     "judgment": "acceptable",
@@ -1398,7 +1894,8 @@
         "special"
       ]
     ],
-    "comment": "Inanimate R in the locative."
+    "comment": "Inanimate R in the locative. The source cites (Schackow 2012: 161–162).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex31a",
@@ -1409,7 +1906,32 @@
     "language": "nucl1347",
     "primaryText": "Jox naa xale bu jigéén ji benn velo.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Jox",
+        "give"
+      ],
+      [
+        "naa",
+        "1SG"
+      ],
+      [
+        "xale bu jigéén",
+        "girl"
+      ],
+      [
+        "ji",
+        "DEF"
+      ],
+      [
+        "benn",
+        "INDF"
+      ],
+      [
+        "velo",
+        "bicycle"
+      ]
+    ],
     "translation": "I gave the girl a bicycle.",
     "context": "",
     "judgment": "acceptable",
@@ -1441,7 +1963,8 @@
         "zero"
       ]
     ],
-    "comment": ""
+    "comment": "The source cites (Becher 2005: 19).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex31b",
@@ -1450,9 +1973,34 @@
       "paperLabel": "(31b)"
     },
     "language": "nucl1347",
-    "primaryText": "*Jox naa benn xale bu jigéén velo bi.",
+    "primaryText": "Jox naa benn xale bu jigéén velo bi.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Jox",
+        "give"
+      ],
+      [
+        "naa",
+        "1SG"
+      ],
+      [
+        "benn",
+        "INDF"
+      ],
+      [
+        "xale bu jigéén",
+        "girl"
+      ],
+      [
+        "velo",
+        "bicycle"
+      ],
+      [
+        "bi",
+        "DEF"
+      ]
+    ],
     "translation": "I gave a girl the bicycle.",
     "context": "",
     "judgment": "ungrammatical",
@@ -1484,7 +2032,8 @@
         "zero"
       ]
     ],
-    "comment": "An indefinite R cannot be unflagged."
+    "comment": "An indefinite R cannot be unflagged. The source cites (Becher 2005: 19).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex31c",
@@ -1495,7 +2044,36 @@
     "language": "nucl1347",
     "primaryText": "Jox naa velo bi ci benn xale bu jigéen.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Jox",
+        "give"
+      ],
+      [
+        "naa",
+        "1SG"
+      ],
+      [
+        "velo",
+        "bicycle"
+      ],
+      [
+        "bi",
+        "DEF"
+      ],
+      [
+        "ci",
+        "to"
+      ],
+      [
+        "benn",
+        "INDF"
+      ],
+      [
+        "xale bu jigéen",
+        "girl"
+      ]
+    ],
     "translation": "I gave the bicycle to a girl.",
     "context": "",
     "judgment": "acceptable",
@@ -1527,7 +2105,8 @@
         "special"
       ]
     ],
-    "comment": "Dative preposition ci on the indefinite R."
+    "comment": "Dative preposition ci on the indefinite R. The source cites (Becher 2005: 19).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex32a",
@@ -1538,7 +2117,28 @@
     "language": "ewee1241",
     "primaryText": "Kosí ná ga lá nyɔ́nuví-á.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Kosí",
+        "Kosi"
+      ],
+      [
+        "ná",
+        "give"
+      ],
+      [
+        "ga",
+        "money"
+      ],
+      [
+        "lá",
+        "DEF"
+      ],
+      [
+        "nyɔ́nuví-á",
+        "girl-DEF"
+      ]
+    ],
     "translation": "Kosi gave the money to the girl.",
     "context": "",
     "judgment": "acceptable",
@@ -1570,7 +2170,8 @@
         "zero"
       ]
     ],
-    "comment": ""
+    "comment": "The source cites (Essegbey 2010: 182–183).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex32b",
@@ -1579,9 +2180,22 @@
       "paperLabel": "(32b)"
     },
     "language": "ewee1241",
-    "primaryText": "*Kosí ná-e Amí.",
+    "primaryText": "Kosí ná-e Amí.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Kosí",
+        "Kosi"
+      ],
+      [
+        "ná-e",
+        "give-3SG.OBJ"
+      ],
+      [
+        "Amí",
+        "Ami"
+      ]
+    ],
     "translation": "Kosi gave it to Ami.",
     "context": "",
     "judgment": "ungrammatical",
@@ -1613,7 +2227,8 @@
         "zero"
       ]
     ],
-    "comment": "The flagless construction is ungrammatical with a person-form T."
+    "comment": "The flagless construction is ungrammatical with a person-form T. The source cites (Essegbey 2010: 182–183).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex32c",
@@ -1624,7 +2239,24 @@
     "language": "ewee1241",
     "primaryText": "Kosí tsɔ́-e ná Amí.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Kosí",
+        "Kosi"
+      ],
+      [
+        "tsɔ́-e",
+        "take-3SG.OBJ"
+      ],
+      [
+        "ná",
+        "give"
+      ],
+      [
+        "Amí",
+        "Ami"
+      ]
+    ],
     "translation": "Kosi gave it to Ami.",
     "context": "",
     "judgment": "acceptable",
@@ -1656,7 +2288,8 @@
         "special"
       ]
     ],
-    "comment": "Person-form T flagged with the serial verb tsɔ́ 'take'."
+    "comment": "Person-form T flagged with the serial verb tsɔ́ 'take'. The source cites (Essegbey 2010: 182–183).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex33a",
@@ -1667,7 +2300,28 @@
     "language": "akan1250",
     "primaryText": "Kofi ma-a abofra no akokɔ",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Kofi",
+        "Kofi"
+      ],
+      [
+        "ma-a",
+        "give-COMPL"
+      ],
+      [
+        "abofra",
+        "child"
+      ],
+      [
+        "no",
+        "DEF"
+      ],
+      [
+        "akokɔ",
+        "chicken"
+      ]
+    ],
     "translation": "Kofi gave the child a chicken.",
     "context": "",
     "judgment": "acceptable",
@@ -1699,7 +2353,8 @@
         "zero"
       ]
     ],
-    "comment": ""
+    "comment": "The source cites (Osam 1996: 63–64).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex33b",
@@ -1708,9 +2363,34 @@
       "paperLabel": "(33b)"
     },
     "language": "akan1250",
-    "primaryText": "*Kofi ma-a abofra no akokɔ no",
+    "primaryText": "Kofi ma-a abofra no akokɔ no",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Kofi",
+        "Kofi"
+      ],
+      [
+        "ma-a",
+        "give-COMPL"
+      ],
+      [
+        "abofra",
+        "child"
+      ],
+      [
+        "no",
+        "DEF"
+      ],
+      [
+        "akokɔ",
+        "chicken"
+      ],
+      [
+        "no",
+        "DEF"
+      ]
+    ],
     "translation": "Kofi gave the child the chicken.",
     "context": "",
     "judgment": "ungrammatical",
@@ -1742,7 +2422,8 @@
         "zero"
       ]
     ],
-    "comment": "A definite T is impossible in the simple double object construction."
+    "comment": "A definite T is impossible in the simple double object construction. The source cites (Osam 1996: 63–64).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex33c",
@@ -1753,7 +2434,36 @@
     "language": "akan1250",
     "primaryText": "Kofi de akokɔ no ma-a abofra no",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Kofi",
+        "Kofi"
+      ],
+      [
+        "de",
+        "take"
+      ],
+      [
+        "akokɔ",
+        "chicken"
+      ],
+      [
+        "no",
+        "DEF"
+      ],
+      [
+        "ma-a",
+        "give-COMPL"
+      ],
+      [
+        "abofra",
+        "child"
+      ],
+      [
+        "no",
+        "DEF"
+      ]
+    ],
     "translation": "Kofi gave the chicken to the child.",
     "context": "",
     "judgment": "acceptable",
@@ -1785,18 +2495,36 @@
         "special"
       ]
     ],
-    "comment": "Definite T flagged with the serial verb de 'take'."
+    "comment": "Definite T flagged with the serial verb de 'take'. The source cites (Osam 1996: 63–64).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex34a",
     "source": {
-      "bibkey": "haspelmath-2021",
-      "paperLabel": "(34a)"
+      "bibkey": "harris-1981",
+      "paperLabel": "pp. 48-49"
     },
     "language": "nucl1302",
     "primaryText": "Vano-m Anzor-i še-Ø-adara Givi-s.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Vano-m",
+        "Vano-ERG"
+      ],
+      [
+        "Anzor-i",
+        "Anzor-NOM"
+      ],
+      [
+        "še-Ø-adara",
+        "PVB-3.OBJ-compared"
+      ],
+      [
+        "Givi-s",
+        "Givi-DAT"
+      ]
+    ],
     "translation": "Vano compared Anzori to Givi.",
     "context": "",
     "judgment": "acceptable",
@@ -1828,18 +2556,40 @@
         "zero"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "reportedIn": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(34a)"
+    },
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex34b",
     "source": {
-      "bibkey": "haspelmath-2021",
-      "paperLabel": "(34b)"
+      "bibkey": "harris-1981",
+      "paperLabel": "pp. 48-49"
     },
     "language": "nucl1302",
-    "primaryText": "*Vano-m (šen) še-g-adara Givi-s.",
+    "primaryText": "Vano-m (šen) še-g-adara Givi-s.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Vano-m",
+        "Vano-ERG"
+      ],
+      [
+        "(šen)",
+        "(you)"
+      ],
+      [
+        "še-g-adara",
+        "PVB-2.OBJ-compared"
+      ],
+      [
+        "Givi-s",
+        "Givi-DAT"
+      ]
+    ],
     "translation": "Vano compared you to Givi.",
     "context": "",
     "judgment": "ungrammatical",
@@ -1871,18 +2621,44 @@
         "zero"
       ]
     ],
-    "comment": "A locuphoric pronoun cannot appear in its ordinary form as T."
+    "comment": "A locuphoric pronoun cannot appear in its ordinary form as T.",
+    "reportedIn": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(34b)"
+    },
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex34c",
     "source": {
-      "bibkey": "haspelmath-2021",
-      "paperLabel": "(34c)"
+      "bibkey": "harris-1981",
+      "paperLabel": "pp. 48-49"
     },
     "language": "nucl1302",
     "primaryText": "Vano-m šen-i tav-i še-Ø-adara Givi-s.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Vano-m",
+        "Vano-ERG"
+      ],
+      [
+        "šen-i",
+        "your-NOM"
+      ],
+      [
+        "tav-i",
+        "self-NOM"
+      ],
+      [
+        "še-Ø-adara",
+        "PVB-3.OBJ-compared"
+      ],
+      [
+        "Givi-s",
+        "Givi-DAT"
+      ]
+    ],
     "translation": "Vano compared you to Givi.",
     "context": "",
     "judgment": "acceptable",
@@ -1914,18 +2690,44 @@
         "special"
       ]
     ],
-    "comment": "The reinforced form šeni tavi 'your self'."
+    "comment": "The reinforced form šeni tavi 'your self'.",
+    "reportedIn": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(34c)"
+    },
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex35a",
     "source": {
-      "bibkey": "haspelmath-2021",
-      "paperLabel": "(35a)"
+      "bibkey": "maslova-2003",
+      "paperLabel": "pp. 89, 10"
     },
     "language": "sout2750",
     "primaryText": "met es'ie tet pulut-kele kudede-m",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "met",
+        "my"
+      ],
+      [
+        "es'ie",
+        "father.NOM"
+      ],
+      [
+        "tet",
+        "your"
+      ],
+      [
+        "pulut-kele",
+        "husband-ACC"
+      ],
+      [
+        "kudede-m",
+        "kill-TR.3SG"
+      ]
+    ],
     "translation": "My father has killed your husband.",
     "context": "",
     "judgment": "acceptable",
@@ -1961,18 +2763,36 @@
         "special"
       ]
     ],
-    "comment": "A is third person: special accusative flag."
+    "comment": "A is third person: special accusative flag.",
+    "reportedIn": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(35a)"
+    },
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex35b",
     "source": {
-      "bibkey": "haspelmath-2021",
-      "paperLabel": "(35b)"
+      "bibkey": "maslova-2003",
+      "paperLabel": "pp. 89, 10"
     },
     "language": "sout2750",
     "primaryText": "met tolow kudede",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "met",
+        "I.NOM"
+      ],
+      [
+        "tolow",
+        "deer.NOM"
+      ],
+      [
+        "kudede",
+        "kill.TR.1SG"
+      ]
+    ],
     "translation": "I killed a deer.",
     "context": "",
     "judgment": "acceptable",
@@ -2008,7 +2828,12 @@
         "zero"
       ]
     ],
-    "comment": "A is locuphoric: no P flagging."
+    "comment": "A is locuphoric: no P flagging.",
+    "reportedIn": {
+      "bibkey": "haspelmath-2021",
+      "paperLabel": "(35b)"
+    },
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex36a",
@@ -2019,7 +2844,20 @@
     "language": "saha1240",
     "primaryText": "ku=š i-q'ínun-a tílaaki-nɨm",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "ku=š",
+        "and=1SG"
+      ],
+      [
+        "i-q'ínun-a",
+        "3.NOM-see-PST"
+      ],
+      [
+        "tílaaki-nɨm",
+        "woman-ERG"
+      ]
+    ],
     "translation": "And the woman saw me.",
     "context": "",
     "judgment": "acceptable",
@@ -2055,7 +2893,8 @@
         "special"
       ]
     ],
-    "comment": "P is locuphoric: special ergative flag."
+    "comment": "P is locuphoric: special ergative flag. The source cites (Rude 2009: 13–14).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex36b",
@@ -2066,7 +2905,24 @@
     "language": "saha1240",
     "primaryText": "ku i-q'ínun-a áswan-Ø tílaaki-na",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "ku",
+        "and"
+      ],
+      [
+        "i-q'ínun-a",
+        "3.NOM-see-PST"
+      ],
+      [
+        "áswan-Ø",
+        "boy-ABS"
+      ],
+      [
+        "tílaaki-na",
+        "woman-ACC"
+      ]
+    ],
     "translation": "And the boy saw the woman.",
     "context": "",
     "judgment": "acceptable",
@@ -2102,7 +2958,8 @@
         "zero"
       ]
     ],
-    "comment": "P is third person: no A flagging."
+    "comment": "P is third person: no A flagging. The source cites (Rude 2009: 13–14).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex37a",
@@ -2113,7 +2970,24 @@
     "language": "east2774",
     "primaryText": "Mä t'əkäjəɣlämnä ula mənɣäləm.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Mä",
+        "we.DU.NOM"
+      ],
+      [
+        "t'əkäjəɣlämnä",
+        "younger.sister.COM"
+      ],
+      [
+        "ula",
+        "berry"
+      ],
+      [
+        "mənɣäləm",
+        "pick.PST.1PL.SBJ"
+      ]
+    ],
     "translation": "I went to pick berries with my younger sister.",
     "context": "",
     "judgment": "acceptable",
@@ -2149,7 +3023,8 @@
         "zero"
       ]
     ],
-    "comment": "P is nonspecific: no A flagging."
+    "comment": "P is nonspecific: no A flagging. The source cites (Gulya 1966: 135).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex37b",
@@ -2160,7 +3035,32 @@
     "language": "east2774",
     "primaryText": "Mə-ŋən ləɣə əllə juɣ kanŋa aməɣaloɣ.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Mə-ŋən",
+        "we-ERG"
+      ],
+      [
+        "ləɣə",
+        "them"
+      ],
+      [
+        "əllə",
+        "large"
+      ],
+      [
+        "juɣ",
+        "tree"
+      ],
+      [
+        "kanŋa",
+        "beside"
+      ],
+      [
+        "aməɣaloɣ",
+        "put.PST.3PL.OBJ/1PL.SBJ"
+      ]
+    ],
     "translation": "We put them (pots of berries) beside a big tree.",
     "context": "",
     "judgment": "acceptable",
@@ -2196,7 +3096,8 @@
         "special"
       ]
     ],
-    "comment": "P is specific: special ergative flag."
+    "comment": "P is specific: special ergative flag. The source cites (Gulya 1966: 135).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex38",
@@ -2207,7 +3108,44 @@
     "language": "stan1288",
     "primaryText": "En esta receta, la leche puede sustituir a-l huevo.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "En",
+        "in"
+      ],
+      [
+        "esta",
+        "this"
+      ],
+      [
+        "receta",
+        "recipe"
+      ],
+      [
+        "la",
+        "the"
+      ],
+      [
+        "leche",
+        "milk"
+      ],
+      [
+        "puede",
+        "can"
+      ],
+      [
+        "sustituir",
+        "replace"
+      ],
+      [
+        "a-l",
+        "ACC-the"
+      ],
+      [
+        "huevo",
+        "egg"
+      ]
+    ],
     "translation": "In this recipe, milk can replace the egg.",
     "context": "",
     "judgment": "acceptable",
@@ -2243,7 +3181,8 @@
         "special"
       ]
     ],
-    "comment": "The preposition a on P with an inanimate A."
+    "comment": "The preposition a on P with an inanimate A. The source cites (García García 2007: 64).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex39a",
@@ -2254,7 +3193,24 @@
     "language": "bulg1262",
     "primaryText": "Az im ja preporâčvam.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Az",
+        "I"
+      ],
+      [
+        "im",
+        "3PL.DAT"
+      ],
+      [
+        "ja",
+        "3SG.F.ACC"
+      ],
+      [
+        "preporâčvam",
+        "recommend.PRS.1SG"
+      ]
+    ],
     "translation": "I recommend her to them.",
     "context": "",
     "judgment": "acceptable",
@@ -2290,7 +3246,8 @@
         "zero"
       ]
     ],
-    "comment": ""
+    "comment": "The source cites (Hauge 1999 [1976]).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex39b",
@@ -2299,9 +3256,26 @@
       "paperLabel": "(39b)"
     },
     "language": "bulg1262",
-    "primaryText": "*Az im te preporâčvam.",
+    "primaryText": "Az im te preporâčvam.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Az",
+        "I"
+      ],
+      [
+        "im",
+        "3PL.DAT"
+      ],
+      [
+        "te",
+        "2SG.ACC"
+      ],
+      [
+        "preporâčvam",
+        "recommend.PRS.1SG"
+      ]
+    ],
     "translation": "I recommend you to them.",
     "context": "",
     "judgment": "ungrammatical",
@@ -2337,7 +3311,8 @@
         "zero"
       ]
     ],
-    "comment": "Two clitics are impossible with a locuphoric T."
+    "comment": "Two clitics are impossible with a locuphoric T. The source cites (Hauge 1999 [1976]).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex39c",
@@ -2348,7 +3323,28 @@
     "language": "bulg1262",
     "primaryText": "Az te preporâčvam na tjah.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Az",
+        "I"
+      ],
+      [
+        "te",
+        "2SG.ACC"
+      ],
+      [
+        "preporâčvam",
+        "recommend.PRS.1SG"
+      ],
+      [
+        "na",
+        "to"
+      ],
+      [
+        "tjah",
+        "them"
+      ]
+    ],
     "translation": "I recommend you to them.",
     "context": "",
     "judgment": "acceptable",
@@ -2384,7 +3380,8 @@
         "special"
       ]
     ],
-    "comment": "The dative preposition na on the R."
+    "comment": "The dative preposition na on the R. The source cites (Hauge 1999 [1976]).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex40a",
@@ -2395,7 +3392,12 @@
     "language": "sham1280",
     "primaryText": "A-za-m-ni-et-ea.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "A-za-m-ni-et-ea",
+        "3SG.SBJ-PST-3SG.T-1SG.R-bring-APPL"
+      ]
+    ],
     "translation": "S/he has brought him/her to me.",
     "context": "",
     "judgment": "acceptable",
@@ -2431,7 +3433,8 @@
         "zero"
       ]
     ],
-    "comment": ""
+    "comment": "The source cites (Duranti 1979: 36).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex40b",
@@ -2440,9 +3443,14 @@
       "paperLabel": "(40b)"
     },
     "language": "sham1280",
-    "primaryText": "*A-za-ni-mw-et-ea.",
+    "primaryText": "A-za-ni-mw-et-ea.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "A-za-ni-mw-et-ea",
+        "3SG.SBJ-PST-1SG.T-3SG.R-bring-APPL"
+      ]
+    ],
     "translation": "S/he has brought me to him/her.",
     "context": "",
     "judgment": "ungrammatical",
@@ -2478,7 +3486,8 @@
         "zero"
       ]
     ],
-    "comment": "Two indexes are impossible in the upstream scenario."
+    "comment": "Two indexes are impossible in the upstream scenario. The source cites (Duranti 1979: 36).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex40c",
@@ -2489,7 +3498,20 @@
     "language": "sham1280",
     "primaryText": "A-za-ni-eta kwa yeye.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "A-za-ni-eta",
+        "3SG.SBJ-PST-1SG.THM-bring"
+      ],
+      [
+        "kwa",
+        "to"
+      ],
+      [
+        "yeye",
+        "him/her"
+      ]
+    ],
     "translation": "S/he has brought me to him/her.",
     "context": "",
     "judgment": "acceptable",
@@ -2525,7 +3547,8 @@
         "special"
       ]
     ],
-    "comment": "The preposition kwa on the R."
+    "comment": "The preposition kwa on the R. The source cites (Duranti 1979: 36).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex43a",
@@ -2576,7 +3599,8 @@
         "zero"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex43b",
@@ -2627,7 +3651,8 @@
         "zero"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex44a",
@@ -2636,7 +3661,7 @@
       "paperLabel": "(44a)"
     },
     "language": "stan1293",
-    "primaryText": "*Pat showed him it.",
+    "primaryText": "Pat showed him it.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -2683,7 +3708,8 @@
         "zero"
       ]
     ],
-    "comment": "Unacceptable in the American varieties."
+    "comment": "Unacceptable in the American varieties.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex44b",
@@ -2692,7 +3718,7 @@
       "paperLabel": "(44b)"
     },
     "language": "stan1293",
-    "primaryText": "*Pat showed his wife it.",
+    "primaryText": "Pat showed his wife it.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -2739,7 +3765,8 @@
         "zero"
       ]
     ],
-    "comment": "Unacceptable in all varieties."
+    "comment": "Unacceptable in all varieties.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex45a",
@@ -2750,7 +3777,20 @@
     "language": "mode1248",
     "primaryText": "Tu to éðose.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Tu",
+        "him.DAT"
+      ],
+      [
+        "to",
+        "it.ACC"
+      ],
+      [
+        "éðose",
+        "he.gave"
+      ]
+    ],
     "translation": "He gave it to him.",
     "context": "",
     "judgment": "acceptable",
@@ -2786,7 +3826,8 @@
         "zero"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex45b",
@@ -2795,9 +3836,22 @@
       "paperLabel": "(45b)"
     },
     "language": "mode1248",
-    "primaryText": "*Tu me éðose.",
+    "primaryText": "Tu me éðose.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Tu",
+        "him.DAT"
+      ],
+      [
+        "me",
+        "me.ACC"
+      ],
+      [
+        "éðose",
+        "he.gave"
+      ]
+    ],
     "translation": "He gave me to him.",
     "context": "",
     "judgment": "ungrammatical",
@@ -2833,7 +3887,8 @@
         "zero"
       ]
     ],
-    "comment": "The T proclitic is impossible in the upstream scenario."
+    "comment": "The T proclitic is impossible in the upstream scenario.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex45c",
@@ -2844,7 +3899,20 @@
     "language": "mode1248",
     "primaryText": "Tu éðose eména.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Tu",
+        "him.DAT"
+      ],
+      [
+        "éðose",
+        "he.gave"
+      ],
+      [
+        "eména",
+        "me.FULL.ACC"
+      ]
+    ],
     "translation": "He gave me to him.",
     "context": "",
     "judgment": "acceptable",
@@ -2880,7 +3948,8 @@
         "special"
       ]
     ],
-    "comment": "The independent pronoun eména as T."
+    "comment": "The independent pronoun eména as T.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex46a",
@@ -2891,7 +3960,32 @@
     "language": "icel1247",
     "primaryText": "Hann kynnti mér þessa gerð skáldsagna.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Hann",
+        "he.NOM"
+      ],
+      [
+        "kynnti",
+        "introduced"
+      ],
+      [
+        "mér",
+        "me.DAT"
+      ],
+      [
+        "þessa",
+        "this"
+      ],
+      [
+        "gerð",
+        "type"
+      ],
+      [
+        "skáldsagna",
+        "fiction"
+      ]
+    ],
     "translation": "He introduced this type of fiction to me.",
     "context": "",
     "judgment": "acceptable",
@@ -2927,7 +4021,8 @@
         "zero"
       ]
     ],
-    "comment": "Dative case on the R."
+    "comment": "Dative case on the R. The source cites (Siewierska and van Lier 2013: 194).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex46b",
@@ -2938,7 +4033,32 @@
     "language": "icel1247",
     "primaryText": "Ég mun kynna þig fyrir henni.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Ég",
+        "I.NOM"
+      ],
+      [
+        "mun",
+        "will"
+      ],
+      [
+        "kynna",
+        "introduce"
+      ],
+      [
+        "þig",
+        "you.ACC"
+      ],
+      [
+        "fyrir",
+        "to"
+      ],
+      [
+        "henni",
+        "her"
+      ]
+    ],
     "translation": "I will introduce you to her.",
     "context": "",
     "judgment": "acceptable",
@@ -2974,7 +4094,8 @@
         "special"
       ]
     ],
-    "comment": "The preposition fyrir on the R with an animate T."
+    "comment": "The preposition fyrir on the R with an animate T. The source cites (Siewierska and van Lier 2013: 194).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex48a",
@@ -2985,7 +4106,24 @@
     "language": "kash1277",
     "primaryText": "bI chu-s-ath tsI parInaavaan",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "bI",
+        "I.ABS"
+      ],
+      [
+        "chu-s-ath",
+        "be-1SG.ABS-2SG.OBL"
+      ],
+      [
+        "tsI",
+        "you.ABS"
+      ],
+      [
+        "parInaavaan",
+        "teaching"
+      ]
+    ],
     "translation": "I am teaching you.",
     "context": "",
     "judgment": "acceptable",
@@ -3021,7 +4159,8 @@
         "zero"
       ]
     ],
-    "comment": "Absolutive P."
+    "comment": "Absolutive P. The source cites (Wali and Koul 1994: 976–977).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex48b",
@@ -3032,7 +4171,24 @@
     "language": "kash1277",
     "primaryText": "tsI chi-h-an su parInaavaan",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "tsI",
+        "you.ABS"
+      ],
+      [
+        "chi-h-an",
+        "be-2SG.ABS-3SG.OBL"
+      ],
+      [
+        "su",
+        "he.ABS"
+      ],
+      [
+        "parInaavaan",
+        "teaching"
+      ]
+    ],
     "translation": "You are teaching him.",
     "context": "",
     "judgment": "acceptable",
@@ -3068,7 +4224,8 @@
         "zero"
       ]
     ],
-    "comment": "Absolutive P."
+    "comment": "Absolutive P. The source cites (Wali and Koul 1994: 976–977).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex48c",
@@ -3079,7 +4236,24 @@
     "language": "kash1277",
     "primaryText": "su chu-y ts-e parInaavaan",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "su",
+        "he.ABS"
+      ],
+      [
+        "chu-y",
+        "be-2SG.DAT"
+      ],
+      [
+        "ts-e",
+        "you-DAT"
+      ],
+      [
+        "parInaavaan",
+        "teaching"
+      ]
+    ],
     "translation": "He is teaching you.",
     "context": "",
     "judgment": "acceptable",
@@ -3115,7 +4289,8 @@
         "special"
       ]
     ],
-    "comment": "Dative P."
+    "comment": "Dative P. The source cites (Wali and Koul 1994: 976–977).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex48d",
@@ -3126,7 +4301,24 @@
     "language": "kash1277",
     "primaryText": "su chu tə-mis parInaavaan",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "su",
+        "he.ABS"
+      ],
+      [
+        "chu",
+        "be"
+      ],
+      [
+        "tə-mis",
+        "he-DAT"
+      ],
+      [
+        "parInaavaan",
+        "teaching"
+      ]
+    ],
     "translation": "He is teaching him.",
     "context": "",
     "judgment": "acceptable",
@@ -3162,7 +4354,8 @@
         "special"
       ]
     ],
-    "comment": "Dative P."
+    "comment": "Dative P. The source cites (Wali and Koul 1994: 976–977).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex50a",
@@ -3173,7 +4366,28 @@
     "language": "baou1238",
     "primaryText": "Kuàkú klè-lì Kòfí wɔ́ suǎʼn.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Kuàkú",
+        "Kouakou"
+      ],
+      [
+        "klè-lì",
+        "show-PFV"
+      ],
+      [
+        "Kòfí",
+        "Kofi"
+      ],
+      [
+        "wɔ́",
+        "2SG"
+      ],
+      [
+        "suǎʼn",
+        "house.DEF"
+      ]
+    ],
     "translation": "Kouakou showed your house to Kofi.",
     "context": "",
     "judgment": "acceptable",
@@ -3209,7 +4423,8 @@
         "zero"
       ]
     ],
-    "comment": ""
+    "comment": "The source cites (Creissels and Kouadio 2010: 176).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex50b",
@@ -3220,7 +4435,24 @@
     "language": "baou1238",
     "primaryText": "Kuàkú klè-lì mín Ákísí.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Kuàkú",
+        "Kouakou"
+      ],
+      [
+        "klè-lì",
+        "show-PFV"
+      ],
+      [
+        "mín",
+        "1SG"
+      ],
+      [
+        "Ákísí",
+        "Akissi"
+      ]
+    ],
     "translation": "Kouakou showed me Akissi.",
     "context": "",
     "judgment": "acceptable",
@@ -3256,7 +4488,8 @@
         "zero"
       ]
     ],
-    "comment": ""
+    "comment": "The source cites (Creissels and Kouadio 2010: 176).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex51a",
@@ -3265,9 +4498,26 @@
       "paperLabel": "(51a)"
     },
     "language": "baou1238",
-    "primaryText": "*Kuàkú klè-lì Ákísí mín.",
+    "primaryText": "Kuàkú klè-lì Ákísí mín.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Kuàkú",
+        "Kouakou"
+      ],
+      [
+        "klè-lì",
+        "show-PFV"
+      ],
+      [
+        "Ákísí",
+        "Akissi"
+      ],
+      [
+        "mín",
+        "1SG"
+      ]
+    ],
     "translation": "Kouakou showed me to Akissi.",
     "context": "",
     "judgment": "ungrammatical",
@@ -3303,7 +4553,8 @@
         "zero"
       ]
     ],
-    "comment": ""
+    "comment": "The source cites (Creissels and Kouadio 2010: 176).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex51b",
@@ -3314,7 +4565,28 @@
     "language": "baou1238",
     "primaryText": "Kuàkú fà-lì mín klè-lì Ákísí.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Kuàkú",
+        "Kouakou"
+      ],
+      [
+        "fà-lì",
+        "take-PFV"
+      ],
+      [
+        "mín",
+        "1SG"
+      ],
+      [
+        "klè-lì",
+        "show-PFV"
+      ],
+      [
+        "Ákísí",
+        "Akissi"
+      ]
+    ],
     "translation": "Kouakou showed me to Akissi.",
     "context": "",
     "judgment": "acceptable",
@@ -3350,7 +4622,8 @@
         "special"
       ]
     ],
-    "comment": "T flagged with the serial verb fà."
+    "comment": "T flagged with the serial verb fà. The source cites (Creissels and Kouadio 2010: 176).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex52a",
@@ -3359,9 +4632,26 @@
       "paperLabel": "(52a)"
     },
     "language": "baou1238",
-    "primaryText": "*Kuàkú klè-lì mín bé.",
+    "primaryText": "Kuàkú klè-lì mín bé.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Kuàkú",
+        "Kouakou"
+      ],
+      [
+        "klè-lì",
+        "show-PFV"
+      ],
+      [
+        "mín",
+        "1SG"
+      ],
+      [
+        "bé",
+        "3PL"
+      ]
+    ],
     "translation": "Kouakou showed them to me.",
     "context": "",
     "judgment": "ungrammatical",
@@ -3397,7 +4687,8 @@
         "zero"
       ]
     ],
-    "comment": ""
+    "comment": "The source cites (Creissels and Kouadio 2010: 176).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex52b",
@@ -3408,7 +4699,28 @@
     "language": "baou1238",
     "primaryText": "Kuàkú fà-lì bé klè-lì mín.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Kuàkú",
+        "Kouakou"
+      ],
+      [
+        "fà-lì",
+        "take-PFV"
+      ],
+      [
+        "bé",
+        "3PL"
+      ],
+      [
+        "klè-lì",
+        "show-PFV"
+      ],
+      [
+        "mín",
+        "1SG"
+      ]
+    ],
     "translation": "Kouakou showed them to me.",
     "context": "",
     "judgment": "acceptable",
@@ -3444,7 +4756,8 @@
         "special"
       ]
     ],
-    "comment": ""
+    "comment": "The source cites (Creissels and Kouadio 2010: 176).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex53a",
@@ -3453,9 +4766,26 @@
       "paperLabel": "(53a)"
     },
     "language": "baou1238",
-    "primaryText": "*Kuàkú klè-lì Kòfí Ákísí.",
+    "primaryText": "Kuàkú klè-lì Kòfí Ákísí.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Kuàkú",
+        "Kouakou"
+      ],
+      [
+        "klè-lì",
+        "show-PFV"
+      ],
+      [
+        "Kòfí",
+        "Kofi"
+      ],
+      [
+        "Ákísí",
+        "Akissi"
+      ]
+    ],
     "translation": "Kouakou showed Akissi to Kofi.",
     "context": "",
     "judgment": "ungrammatical",
@@ -3491,7 +4821,8 @@
         "zero"
       ]
     ],
-    "comment": ""
+    "comment": "The source cites (Creissels and Kouadio 2010: 176).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex53b",
@@ -3502,7 +4833,28 @@
     "language": "baou1238",
     "primaryText": "Kuàkú fà-lì Ákísí klè-lì Kòfí.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Kuàkú",
+        "Kouakou"
+      ],
+      [
+        "fà-lì",
+        "take-PFV"
+      ],
+      [
+        "Ákísí",
+        "Akissi"
+      ],
+      [
+        "klè-lì",
+        "show-PFV"
+      ],
+      [
+        "Kòfí",
+        "Kofi"
+      ]
+    ],
     "translation": "Kouakou showed Akissi to Kofi.",
     "context": "",
     "judgment": "acceptable",
@@ -3538,7 +4890,8 @@
         "special"
       ]
     ],
-    "comment": ""
+    "comment": "The source cites (Creissels and Kouadio 2010: 176).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex55a",
@@ -3549,7 +4902,12 @@
     "language": "iton1250",
     "primaryText": "ke'-sewane",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "ke'-sewane",
+        "2SG.F-see"
+      ]
+    ],
     "translation": "you (F) see him/her",
     "context": "",
     "judgment": "acceptable",
@@ -3585,7 +4943,8 @@
         "zero"
       ]
     ],
-    "comment": "Direct form."
+    "comment": "Direct form. The source cites (Crevels 2010: 680, 682).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex55b",
@@ -3596,7 +4955,12 @@
     "language": "iton1250",
     "primaryText": "ka'-k'i-kamo",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "ka'-k'i-kamo",
+        "2SG.F-INV-hit.face"
+      ]
+    ],
     "translation": "he hit you (F) in the face",
     "context": "",
     "judgment": "acceptable",
@@ -3632,7 +4996,8 @@
         "special"
       ]
     ],
-    "comment": "Inverse prefix k'i-."
+    "comment": "Inverse prefix k'i-. The source cites (Crevels 2010: 680, 682).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex56a",
@@ -3643,7 +5008,16 @@
     "language": "maka1311",
     "primaryText": "La-ku-sare-ko doe'.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "La-ku-sare-ko",
+        "FUT-1-give-2.F"
+      ],
+      [
+        "doe'",
+        "money"
+      ]
+    ],
     "translation": "I'll give you some money.",
     "context": "",
     "judgment": "acceptable",
@@ -3675,7 +5049,8 @@
         "zero"
       ]
     ],
-    "comment": "The underived verb sare with an indefinite T."
+    "comment": "The underived verb sare with an indefinite T. The source cites (Jukes 2006: 341).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex56b",
@@ -3686,7 +5061,16 @@
     "language": "maka1311",
     "primaryText": "La-ku-saré-ang-ko doe-kku",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "La-ku-saré-ang-ko",
+        "FUT-1-give-APPL-2.F"
+      ],
+      [
+        "doe-kku",
+        "money-1.POSS"
+      ]
+    ],
     "translation": "I'll give you my money.",
     "context": "",
     "judgment": "acceptable",
@@ -3718,7 +5102,8 @@
         "special"
       ]
     ],
-    "comment": "The applicative suffix -ang with a definite T."
+    "comment": "The applicative suffix -ang with a definite T. The source cites (Jukes 2006: 341).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex56c",
@@ -3729,7 +5114,12 @@
     "language": "maka1311",
     "primaryText": "La-ku-saré-ang-ko.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "La-ku-saré-ang-ko",
+        "FUT-1-give-APPL-2.F"
+      ]
+    ],
     "translation": "I'll give it to you.",
     "context": "",
     "judgment": "acceptable",
@@ -3761,7 +5151,8 @@
         "special"
       ]
     ],
-    "comment": "The applicative suffix -ang with a person-form T."
+    "comment": "The applicative suffix -ang with a person-form T. The source cites (Jukes 2006: 341).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex58a",
@@ -3792,7 +5183,8 @@
         "active"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex58b",
@@ -3823,7 +5215,8 @@
         "passive"
       ]
     ],
-    "comment": "Special verb coding and the preposition by on the A."
+    "comment": "Special verb coding and the preposition by on the A.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex59a",
@@ -3834,7 +5227,20 @@
     "language": "chuk1273",
     "primaryText": "ətlʔa-ta məčəkw-ən tən-nin",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "ətlʔa-ta",
+        "mother-ERG"
+      ],
+      [
+        "məčəkw-ən",
+        "shirt-ABS"
+      ],
+      [
+        "tən-nin",
+        "sew-3SG > 3SG.AOR"
+      ]
+    ],
     "translation": "The mother sewed the shirt.",
     "context": "",
     "judgment": "acceptable",
@@ -3854,7 +5260,8 @@
         "ergative"
       ]
     ],
-    "comment": ""
+    "comment": "The source cites (Kozinsky et al. 1988: 667).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex59b",
@@ -3865,7 +5272,20 @@
     "language": "chuk1273",
     "primaryText": "ətlʔa-Ø ine-nn-gʔi məčəkw-ən",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "ətlʔa-Ø",
+        "mother-ABS"
+      ],
+      [
+        "ine-nn-gʔi",
+        "ANTIP-sew-3SG.AOR"
+      ],
+      [
+        "məčəkw-ən",
+        "shirt-INS"
+      ]
+    ],
     "translation": "The mother sewed the shirt.",
     "context": "",
     "judgment": "acceptable",
@@ -3885,7 +5305,8 @@
         "antipassive"
       ]
     ],
-    "comment": "The antipassive prefix ine- and the instrumental on the P."
+    "comment": "The antipassive prefix ine- and the instrumental on the P. The source cites (Kozinsky et al. 1988: 667).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex60a",
@@ -3916,7 +5337,8 @@
         "double object"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex60b",
@@ -3947,7 +5369,8 @@
         "prepositional dative"
       ]
     ],
-    "comment": "The extra dative preposition to."
+    "comment": "The extra dative preposition to.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex64a",
@@ -3958,7 +5381,20 @@
     "language": "lumm1243",
     "primaryText": "x̣čit-s cə swəyʔqəʔ",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "x̣čit-s",
+        "know-3SG"
+      ],
+      [
+        "cə",
+        "DET"
+      ],
+      [
+        "swəyʔqəʔ",
+        "man"
+      ]
+    ],
     "translation": "He knows the man.",
     "context": "",
     "judgment": "acceptable",
@@ -3994,7 +5430,8 @@
         "zero"
       ]
     ],
-    "comment": "Active only; not 'The man knows him'."
+    "comment": "Active only; not 'The man knows him'. The source cites (Jelinek and Demers 1983). The source prints '.x̣čit-s'.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex64b",
@@ -4005,7 +5442,12 @@
     "language": "lumm1243",
     "primaryText": "x̣čit-s",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "x̣čit-s",
+        "know-3SG"
+      ]
+    ],
     "translation": "He knows it.",
     "context": "",
     "judgment": "acceptable",
@@ -4041,7 +5483,8 @@
         "zero"
       ]
     ],
-    "comment": "Active only."
+    "comment": "Active only. The source cites (Jelinek and Demers 1983).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex64c",
@@ -4052,7 +5495,24 @@
     "language": "lumm1243",
     "primaryText": "x̣čit-ŋ ə cə swəyʔqəʔ",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "x̣čit-ŋ",
+        "know-PASS"
+      ],
+      [
+        "ə",
+        "OBL"
+      ],
+      [
+        "cə",
+        "DET"
+      ],
+      [
+        "swəyʔqəʔ",
+        "man"
+      ]
+    ],
     "translation": "He is known by the man.",
     "context": "",
     "judgment": "acceptable",
@@ -4088,7 +5548,8 @@
         "special"
       ]
     ],
-    "comment": "The passive with the suffix -ŋ and the oblique A is obligatory."
+    "comment": "The passive with the suffix -ŋ and the oblique A is obligatory. The source cites (Jelinek and Demers 1983).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex65a",
@@ -4099,7 +5560,28 @@
     "language": "lumm1243",
     "primaryText": "x̣čit-s cə swəyʔqəʔ cə swiʔqoʔəɫ",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "x̣čit-s",
+        "know-3SG"
+      ],
+      [
+        "cə",
+        "DET"
+      ],
+      [
+        "swəyʔqəʔ",
+        "man"
+      ],
+      [
+        "cə",
+        "DET"
+      ],
+      [
+        "swiʔqoʔəɫ",
+        "boy"
+      ]
+    ],
     "translation": "The man knows the boy.",
     "context": "",
     "judgment": "acceptable",
@@ -4135,7 +5617,8 @@
         "zero"
       ]
     ],
-    "comment": "Either the active or the passive can be used."
+    "comment": "Either the active or the passive can be used. The source cites (Jelinek and Demers 1983).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex65b",
@@ -4146,7 +5629,32 @@
     "language": "lumm1243",
     "primaryText": "x̣čit-ŋ cə swiʔqóʔəɫ ə cə swəyʔqəʔ",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "x̣čit-ŋ",
+        "know-PASS"
+      ],
+      [
+        "cə",
+        "DET"
+      ],
+      [
+        "swiʔqóʔəɫ",
+        "boy"
+      ],
+      [
+        "ə",
+        "OBL"
+      ],
+      [
+        "cə",
+        "DET"
+      ],
+      [
+        "swəyʔqəʔ",
+        "man"
+      ]
+    ],
     "translation": "The boy is known by the man.",
     "context": "",
     "judgment": "acceptable",
@@ -4182,7 +5690,8 @@
         "special"
       ]
     ],
-    "comment": "Either the active or the passive can be used."
+    "comment": "Either the active or the passive can be used. The source cites (Jelinek and Demers 1983).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex66a",
@@ -4193,7 +5702,32 @@
     "language": "koyr1240",
     "primaryText": "Ay noo ga woy di se.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Ay",
+        "1SG.SBJ"
+      ],
+      [
+        "noo",
+        "give"
+      ],
+      [
+        "ga",
+        "3SG.OBJ"
+      ],
+      [
+        "woy",
+        "woman"
+      ],
+      [
+        "di",
+        "DEF"
+      ],
+      [
+        "se",
+        "DAT"
+      ]
+    ],
     "translation": "I gave it to the woman.",
     "context": "",
     "judgment": "acceptable",
@@ -4229,7 +5763,8 @@
         "special"
       ]
     ],
-    "comment": "The postpositional dative construction is the only possibility."
+    "comment": "The postpositional dative construction is the only possibility. The source cites (Heath 1999: Section 9.1.2). (= Heath's 445b)",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex66b",
@@ -4240,7 +5775,32 @@
     "language": "koyr1240",
     "primaryText": "Ay noo woy di se hari.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Ay",
+        "1SG.SBJ"
+      ],
+      [
+        "noo",
+        "give"
+      ],
+      [
+        "woy",
+        "woman"
+      ],
+      [
+        "di",
+        "DEF"
+      ],
+      [
+        "se",
+        "DAT"
+      ],
+      [
+        "hari",
+        "water"
+      ]
+    ],
     "translation": "I gave the woman some water.",
     "context": "",
     "judgment": "acceptable",
@@ -4276,7 +5836,8 @@
         "special"
       ]
     ],
-    "comment": "The postpositional dative construction is the only possibility."
+    "comment": "The postpositional dative construction is the only possibility. The source cites (Heath 1999: Section 9.1.2). (= 445d)",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex66c",
@@ -4287,7 +5848,28 @@
     "language": "koyr1240",
     "primaryText": "No-o noo ga i se.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "No-o",
+        "2SG.SBJ-IMPF"
+      ],
+      [
+        "noo",
+        "give"
+      ],
+      [
+        "ga",
+        "3SG.OBJ"
+      ],
+      [
+        "i",
+        "3PL"
+      ],
+      [
+        "se",
+        "DAT"
+      ]
+    ],
     "translation": "You give it to them.",
     "context": "",
     "judgment": "acceptable",
@@ -4323,7 +5905,8 @@
         "special"
       ]
     ],
-    "comment": "The postpositional dative construction is the only possibility."
+    "comment": "The postpositional dative construction is the only possibility. The source cites (Heath 1999: Section 9.1.2). (= 449b)",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex66d",
@@ -4334,7 +5917,24 @@
     "language": "koyr1240",
     "primaryText": "No-o noo gi njerfu.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "No-o",
+        "2SG.SBJ-IMPF"
+      ],
+      [
+        "noo",
+        "give"
+      ],
+      [
+        "gi",
+        "3PL.OBJ"
+      ],
+      [
+        "njerfu",
+        "money"
+      ]
+    ],
     "translation": "You give them some money.",
     "context": "",
     "judgment": "acceptable",
@@ -4370,7 +5970,8 @@
         "zero"
       ]
     ],
-    "comment": "The double object construction."
+    "comment": "The double object construction. The source cites (Heath 1999: Section 9.1.2). (= 447b)",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex67a",
@@ -4381,7 +5982,52 @@
     "language": "koyr1240",
     "primaryText": "Yer o har i se i ma noo yer se idumbo.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Yer",
+        "1PL.SBJ"
+      ],
+      [
+        "o",
+        "IMPF"
+      ],
+      [
+        "har",
+        "say"
+      ],
+      [
+        "i",
+        "3PL"
+      ],
+      [
+        "se",
+        "DAT"
+      ],
+      [
+        "i",
+        "3PL.SBJ"
+      ],
+      [
+        "ma",
+        "SBJV"
+      ],
+      [
+        "noo",
+        "give"
+      ],
+      [
+        "yer",
+        "1PL"
+      ],
+      [
+        "se",
+        "DAT"
+      ],
+      [
+        "idumbo",
+        "piece"
+      ]
+    ],
     "translation": "We tell them to give us a piece.",
     "context": "",
     "judgment": "acceptable",
@@ -4417,7 +6063,8 @@
         "special"
       ]
     ],
-    "comment": "The postpositional dative construction is also possible in the downstream scenario."
+    "comment": "The postpositional dative construction is also possible in the downstream scenario. The source cites (Heath 1999: Section 9.1.2). (= Heath's 448)",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath2021_ex67b",
@@ -4428,7 +6075,52 @@
     "language": "koyr1240",
     "primaryText": "boro kul kaa hin ka noo yer a wane fahaamey di",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "boro",
+        "person"
+      ],
+      [
+        "kul",
+        "all"
+      ],
+      [
+        "kaa",
+        "REL"
+      ],
+      [
+        "hin",
+        "can"
+      ],
+      [
+        "ka",
+        "INF"
+      ],
+      [
+        "noo",
+        "give"
+      ],
+      [
+        "yer",
+        "1PL"
+      ],
+      [
+        "a",
+        "3SG"
+      ],
+      [
+        "wane",
+        "POSS"
+      ],
+      [
+        "fahaamey",
+        "understanding"
+      ],
+      [
+        "di",
+        "DEF"
+      ]
+    ],
     "translation": "anyone who can give us information about it",
     "context": "",
     "judgment": "acceptable",
@@ -4464,6 +6156,7 @@
         "zero"
       ]
     ],
-    "comment": "The double object construction in the downstream scenario."
+    "comment": "The double object construction in the downstream scenario. The source cites (Heath 1999: Section 9.1.2). (= 447a)",
+    "verified": "page-image"
   }
 ]
