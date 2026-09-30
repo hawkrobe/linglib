@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.Reference.Iota
 public import Linglib.Semantics.Modification.Basic
-public import Linglib.Pragmatics.Expressives.Basic
+public import Linglib.Semantics.ConventionalImplicature
 public import Linglib.Data.Examples.AhnKocabDavidson2026
 
 /-!
@@ -37,7 +37,7 @@ hypothesis over the consultant data and the experimental stimuli.
 
 namespace AhnKocabDavidson2026
 
-open Pragmatics.Expressives (TwoDimProp)
+open ConventionalImplicature (TwoDim)
 open Reference
 
 variable {E L W : Type*}
@@ -83,22 +83,23 @@ theorem that_assigned_isSome (assoc : E → Option L) (h : ∀ x y o, assoc x = 
 
 /-- The introducing use `SOL IX_a …`: the association is use-conditional, supplementing the
 at-issue clause `p`. -/
-def introducing (p : W → Prop) (R : W → E → L → Prop) (x : E) (o : L) : TwoDimProp W :=
-  ⟨p, λ w => R w x o⟩
+def introducing (p : W → Prop) (R : W → E → L → Prop) (x : E) (o : L) :
+    TwoDim W (W → Prop) :=
+  ⟨p, fun w ↦ R w x o⟩
 
 /-- The anaphoric use `∅ IX_a DANCE`: asserts of an entity associated with `o` that it
 satisfies `P` and presupposes, use-conditionally, that exactly one entity is. -/
-def anaphoric (P : W → E → Prop) (R : W → E → L → Prop) (o : L) : TwoDimProp W :=
-  ⟨λ w => ∃ x, R w x o ∧ P w x, λ w => ∃! x, R w x o⟩
+def anaphoric (P : W → E → Prop) (R : W → E → L → Prop) (o : L) : TwoDim W (W → Prop) :=
+  ⟨fun w ↦ ∃ x, R w x o ∧ P w x, fun w ↦ ∃! x, R w x o⟩
 
 /-- The association introduced by `IX_a` survives negation of the clause. -/
-theorem introducing_neg_ci (p : W → Prop) (R : W → E → L → Prop) (x : E) (o : L) :
-    (TwoDimProp.neg (introducing p R x o)).ci = λ w => R w x o :=
-  TwoDimProp.ci_projects_through_neg _
+theorem introducing_neg_notAtIssue (p : W → Prop) (R : W → E → L → Prop) (x : E) (o : L) :
+    (introducing p R x o).neg.notAtIssue = fun w ↦ R w x o :=
+  rfl
 
 /-- Given its presupposition, the anaphoric use predicates `P` of *the* entity at `o`. -/
 theorem anaphoric_atIssue (P : W → E → Prop) (R : W → E → L → Prop) (o : L) (w : W)
-    (h : (anaphoric P R o).ci w) :
+    (h : (anaphoric P R o).notAtIssue w) :
     (anaphoric P R o).atIssue w ↔ ∀ x, R w x o → P w x := by
   obtain ⟨x, hx, hu⟩ := h
   exact ⟨λ ⟨y, hy, hP⟩ z hz => hu z hz ▸ hu y hy ▸ hP, λ hall => ⟨x, hx, hall x hx⟩⟩

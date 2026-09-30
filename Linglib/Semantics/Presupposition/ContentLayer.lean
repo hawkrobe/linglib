@@ -11,24 +11,19 @@ This file defines the three layers of a semantic contribution — presupposition
 content, and implicature — the propositions carrying content at each layer, and the layers
 of such a proposition that a correction makes offensive, which a denial targets. The layers
 are [van-der-sandt-maier-2003]'s labels `pr`, `fr`, and `imp` of Layered DRT; `PartialProp`
-is the two-layer case, and `BiLayered` collapses the two backgrounded layers into one
-not-at-issue layer for analyses that only separate proffered from backgrounded content
-([anderbois-brasoveanu-henderson-2015]).
+is the two-layer case.
 
 ## Main definitions
 
 * `ContentLayer` — the three layers.
-* `LayeredProp` — content at each layer, with `get`, `toPartialProp`, `ofPartialProp`, and
-  `toBiLayered`.
+* `LayeredProp` — content at each layer, with `get`, `toPartialProp`, and `ofPartialProp`.
 * `LayeredProp.IsOffensive`, `LayeredProp.offensiveLayers` — the layers inconsistent with a
   correction.
-* `BiLayered` — at-issue and not-at-issue content, with `ofProp`.
 
 ## References
 
 * [van-der-sandt-maier-2003]
 * [tonhauser-beaver-roberts-simons-2013]
-* [anderbois-brasoveanu-henderson-2015]
 -/
 
 @[expose] public section
@@ -49,25 +44,6 @@ structure LayeredProp (W : Type*) where
   presupposition : W → Prop
   atIssue : W → Prop
   implicature : W → Prop := fun _ => True
-
-/-- At-issue and not-at-issue content; the not-at-issue layer is trivial by default. -/
-@[ext]
-structure BiLayered (W : Type*) where
-  atIssue : W → Prop
-  notAtIssue : W → Prop := fun _ => True
-
-namespace BiLayered
-
-variable {W : Type*}
-
-/-- A proposition with no not-at-issue content. -/
-def ofProp (p : W → Prop) : BiLayered W := { atIssue := p }
-
-@[simp] theorem ofProp_atIssue (p : W → Prop) : (ofProp p).atIssue = p := rfl
-
-@[simp] theorem ofProp_notAtIssue (p : W → Prop) : (ofProp p).notAtIssue = fun _ => True := rfl
-
-end BiLayered
 
 namespace LayeredProp
 
@@ -91,9 +67,6 @@ def ofPartialProp (p : PartialProp W) : LayeredProp W := ⟨p.presup, p.assertio
 
 @[simp] theorem toPartialProp_ofPartialProp (p : PartialProp W) :
     (ofPartialProp p).toPartialProp = p := rfl
-
-/-- The backgrounded layers collapsed into the not-at-issue layer. -/
-def toBiLayered : BiLayered W := ⟨φ.atIssue, fun w => φ.presupposition w ∧ φ.implicature w⟩
 
 /-- Layer `l` is offensive against the correction `K` when no `K`-world satisfies its
 content — the layers a denial with correction `K` targets. -/

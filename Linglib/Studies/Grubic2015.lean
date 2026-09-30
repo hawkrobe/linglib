@@ -7,7 +7,7 @@ module
 
 public import Linglib.Semantics.Exhaustification.Excluder
 public import Linglib.Semantics.Focus.Control
-public import Linglib.Pragmatics.Expressives.Basic
+public import Linglib.Semantics.Presupposition.Basic
 public import Linglib.Data.Examples.Grubic2015
 public import Mathlib.Data.Set.Lattice.Bounded
 
@@ -22,10 +22,10 @@ that some alternative at least as strong as the prejacent on a salient scale is 
 that no true alternative is stronger (`yak`). On an entailment scale, the complement-exclusion
 reading of section 6.1.1, the presupposition entails the prejacent, which therefore projects
 through negation as in (29) (`prejacent_projects`), and over the conjunctions of independent
-atomic answers, the lattice of (11), the total content is the prejacent with every other atom
-false, the exclusive inference of (166) (`total_yak`). The additive *ke('e)* has no
-truth-conditional content and presupposes a salient antecedent about a different topic
-situation, (45), one that need not be true, (46), and one that parallel background-marked
+atomic answers, the lattice of (11), it is defined and true exactly where the prejacent holds
+and every other atom fails, the exclusive inference of (166) (`truthSet_yak`). The additive
+*ke('e)* has no truth-conditional content and presupposes a salient antecedent about a different
+topic situation, (45), one that need not be true, (46), and one that parallel background-marked
 antecedents, being anaphoric, cannot supply, (44) and (49) (`ke_undefined_of_anaphoric`). The
 scalar *har('i)* asserts its prejacent and presupposes that a contextual implication of it, in
 the sense of (18), ranks highest among its alternatives, (17) (`har`).
@@ -50,7 +50,7 @@ not theorems.
 
 namespace Grubic2015
 
-open Exhaustification Pragmatics.Expressives Focus
+open Exhaustification Presupposition Focus
 
 variable {W T : Type*} (S : Set W → Set W → Prop) (C : Set (Set W)) (p : Set W)
 
@@ -68,53 +68,50 @@ def atMost : Set W := {w | ∀ q ∈ C, w ∈ q → S p q}
 theorem atMost_subset_eq : atMost (· ⊆ ·) C p = excludes C p := rfl
 
 /-- *yak('i)* 'only', the propositional entry (2). -/
-def yak : TwoDimProp W := .withCI (· ∈ atMost S C p) (· ∈ atLeast S C p)
-
-/-- The total content of a two-dimensional meaning, at-issue and presupposed together. -/
-def total (m : TwoDimProp W) : Set W := {w | m.atIssue w ∧ m.ci w}
+def yak : PartialProp W := ⟨(· ∈ atLeast S C p), (· ∈ atMost S C p)⟩
 
 /-- On an entailment scale the presupposition entails the prejacent. -/
-theorem atLeast_subset : atLeast (· ⊆ ·) C p ⊆ p := λ _ ⟨_, _, hw, hq⟩ => hq hw
+theorem atLeast_subset : atLeast (· ⊆ ·) C p ⊆ p := fun _ ⟨_, _, hw, hq⟩ ↦ hq hw
 
 /-- (29): negation leaves the presupposition in place, so *not only Dimza built a house* still
 has Dimza building a house; on a rank-order scale, where alternatives need not entail the
 prejacent, nothing of the kind follows. -/
-theorem prejacent_projects {w : W} (h : (yak (· ⊆ ·) C p).neg.ci w) : w ∈ p :=
+theorem prejacent_projects {w : W} (h : (yak (· ⊆ ·) C p).neg.presup w) : w ∈ p :=
   atLeast_subset C p h
 
 /-- The answers of (11): the nonempty conjunctions of a set of atomic answers. -/
 def conjunctions (atoms : Set (Set W)) : Set (Set W) :=
   {q | ∃ A ⊆ atoms, A.Nonempty ∧ q = ⋂₀ A}
 
-/-- (166) and (25): over the conjunctions of atomic answers, the total content of *yak('i)* on
-the entailment scale is the prejacent with no other atom true, the exhaustification
-`Exhaustification.exh` over the atoms. -/
-theorem total_yak {atoms : Set (Set W)} (hp : p ∈ atoms) :
-    total (yak (· ⊆ ·) (conjunctions atoms) p) = exh atoms p := by
+/-- Over the conjunctions of atomic answers, the truth set of *yak('i)* on the entailment scale
+is the prejacent with no other atom true, the exhaustification `Exhaustification.exh` over the
+atoms ((166) and (25)). -/
+theorem truthSet_yak {atoms : Set (Set W)} (hp : p ∈ atoms) :
+    (yak (· ⊆ ·) (conjunctions atoms) p).truthSet = exh atoms p := by
   ext w
   constructor
-  · rintro ⟨hmost, _, ⟨A, hA, -, rfl⟩, hw, hq⟩
-    refine ⟨hq hw, λ r hr hwr x hx => ?_⟩
+  · rintro ⟨⟨_, ⟨A, hA, -, rfl⟩, hw, hq⟩, hmost⟩
+    refine ⟨hq hw, fun r hr hwr x hx ↦ ?_⟩
     exact (hmost (p ∩ r) ⟨{p, r}, by simp [Set.insert_subset_iff, hp, hr], by simp, by simp⟩
       ⟨hq hw, hwr⟩ hx).2
   · rintro ⟨hw, honly⟩
-    refine ⟨?_, p, ⟨{p}, by simpa, Set.singleton_nonempty p, (Set.sInter_singleton p).symm⟩, hw,
-      subset_rfl⟩
+    refine ⟨⟨p, ⟨{p}, by simpa, Set.singleton_nonempty p, (Set.sInter_singleton p).symm⟩, hw,
+      subset_rfl⟩, ?_⟩
     rintro q ⟨A, hA, -, rfl⟩ hwq x hx
-    exact Set.mem_sInter.mpr λ a ha => honly a (hA ha) (Set.mem_sInter.mp hwq a ha) hx
+    exact Set.mem_sInter.mpr fun a ha ↦ honly a (hA ha) (Set.mem_sInter.mp hwq a ha) hx
 
 /-! ### The additive *ke('e)*, section 7.3 -/
 
 /-- *ke('e)* 'also', (45): no truth-conditional contribution, and the presupposition of a salient
 antecedent about a different topic situation, one that need not itself be true, (46). -/
-def ke (given : Set (Set W)) (topic : Set W → T) : TwoDimProp W :=
-  .withCI (· ∈ p) (λ _ => ∃ q ∈ given, topic q ≠ topic p)
+def ke (given : Set (Set W)) (topic : Set W → T) : PartialProp W :=
+  ⟨fun _ ↦ ∃ q ∈ given, topic q ≠ topic p, (· ∈ p)⟩
 
 /-- (44) and (49): when every salient antecedent is anaphoric to the host's topic situation, as
 parallel background-marked antecedents are by default, *ke('e)* is undefined. -/
 theorem ke_undefined_of_anaphoric {given : Set (Set W)} {topic : Set W → T}
-    (h : ∀ q ∈ given, topic q = topic p) (w : W) : ¬ (ke p given topic).ci w :=
-  λ ⟨q, hq, hne⟩ => hne (h q hq)
+    (h : ∀ q ∈ given, topic q = topic p) (w : W) : ¬ (ke p given topic).defined w :=
+  fun ⟨q, hq, hne⟩ ↦ hne (h q hq)
 
 /-! ### The scalar *har('i)*, section 7.2 -/
 
@@ -124,13 +121,13 @@ def CImpl (CG q : Set W) : Prop := ¬ CG ⊆ q ∧ CG ∩ p ⊆ q
 
 /-- *har('i)* 'even', (17): asserts the prejacent and presupposes that some contextual
 implication of it ranks highest among its alternatives on the salient scale. -/
-def har (CG : Set W) (alt : Set W → Set (Set W)) : TwoDimProp W :=
-  .withCI (· ∈ p) (λ w => ∃ q, CImpl p CG q ∧ ∀ q' ∈ alt q, w ∈ q' → S q q')
+def har (CG : Set W) (alt : Set W → Set (Set W)) : PartialProp W :=
+  ⟨fun w ↦ ∃ q, CImpl p CG q ∧ ∀ q' ∈ alt q, w ∈ q' → S q q', (· ∈ p)⟩
 
 /-- At a world of the common ground where the prejacent holds, the implication *har('i)*
 presupposes holds as well, so the scale is anchored by a true alternative. -/
 theorem har_impl_holds {CG : Set W} {alt : Set W → Set (Set W)} {w : W} (hw : w ∈ CG)
-    (hp : w ∈ p) (h : (har S p CG alt).ci w) : ∃ q, CImpl p CG q ∧ w ∈ q :=
+    (hp : w ∈ p) (h : (har S p CG alt).presup w) : ∃ q, CImpl p CG q ∧ w ∈ q :=
   let ⟨q, hq, _⟩ := h
   ⟨q, hq, hq.2 ⟨hw, hp⟩⟩
 

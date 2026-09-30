@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Pragmatics.Expressives.Basic
+public import Linglib.Semantics.ConventionalImplicature
 public import Linglib.Logic.Modal.Defs
 public import Linglib.Semantics.Conditionals.SelectionFunction
 public import Mathlib.Logic.Function.Basic
@@ -23,7 +23,7 @@ dispute) and 'in a sense' (7′).
 
 `Model` interprets ⦇∗⦈, R and the accessibility relation of ⧫ in the appendix's intended model,
 with the output type of ⦇∗⦈ fixed to propositions; `mq`, `shunt`, `approp` and `Model.dagger`
-are the four covert items on `TwoDimProp`, † being `Function.extend`, so that
+are the four covert items on `TwoDim`, † being `Function.extend`, so that
 `Model.exists_dagger_iff` identifies the paper's footnote-22 assumption with
 `Function.FactorsThrough`; `appropAssertion` and `metaNeg` are the forms ↓[… 𝔄𝔐q …] and its
 negation, whose at-issue content `metaNeg_atIssue_iff` gives as ¬p ∨ ¬⧫R. Parsetrees and the
@@ -49,7 +49,7 @@ licenses.
 
 namespace KirkGiannini2024
 
-open Pragmatics.Expressives (TwoDimProp)
+open ConventionalImplicature (TwoDim)
 open Function (FactorsThrough)
 open scoped ModalLogic
 
@@ -106,35 +106,38 @@ end Model
 
 /-- 𝔐 ⇝ `λq.⦇q⦈(w_c)(s_x) • λq.R(s_x, u_x, q)`, both saturated by the pure-quoted sister `q`
 (a-to-p Shunting). -/
-def mq (q : Expr) : TwoDimProp W := ⟨M.quot q wc sx, M.utter sx ux q⟩
+def mq (q : Expr) : TwoDim W (W → Prop) := ⟨M.quot q wc sx, M.utter sx ux q⟩
 
 /-- ↓ ⇝ `λp.p̌` with p-to-a Shunting ([mccready-2010]): the peripheral proposition is conjoined
 with the at-issue one, and the single peripheral dimension is then empty. -/
-def shunt (p : TwoDimProp W) : TwoDimProp W := ⟨p.atIssue ⊓ p.ci, ⊤⟩
+def shunt (p : TwoDim W (W → Prop)) : TwoDim W (W → Prop) := ⟨p.atIssue ⊓ p.notAtIssue, ⊤⟩
 
 /-- 𝔄 ⇝ ⧫ with Peripheral Intensional Function Application: the peripheral proposition is
 replaced by ⧫ of its intension, the at-issue meaning passing up unchanged. -/
-def approp (p : TwoDimProp W) : TwoDimProp W := ⟨p.atIssue, □[M.appropriate] p.ci⟩
+def approp (p : TwoDim W (W → Prop)) : TwoDim W (W → Prop) :=
+  ⟨p.atIssue, □[M.appropriate] p.notAtIssue⟩
 
 /-- †𝔐: † applied to 𝔐's at-issue meaning, the peripheral meaning passing up unchanged. -/
-noncomputable def daggerMQ (q : Expr) : TwoDimProp W :=
+noncomputable def daggerMQ (q : Expr) : TwoDim W (W → Prop) :=
   ⟨M.dagger wc (M.mqAtIssue wc sx) q, M.utter sx ux q⟩
 
 @[simp] theorem mq_atIssue (q : Expr) (w : W) :
     (mq M wc sx ux q).atIssue w ↔ M.quot q wc sx w := Iff.rfl
 
-@[simp] theorem mq_ci (q : Expr) (w : W) : (mq M wc sx ux q).ci w ↔ M.utter sx ux q w := Iff.rfl
+@[simp] theorem mq_notAtIssue (q : Expr) (w : W) :
+    (mq M wc sx ux q).notAtIssue w ↔ M.utter sx ux q w := Iff.rfl
 
-@[simp] theorem shunt_atIssue (p : TwoDimProp W) (w : W) :
-    (shunt p).atIssue w ↔ p.atIssue w ∧ p.ci w := Iff.rfl
+@[simp] theorem shunt_atIssue (p : TwoDim W (W → Prop)) (w : W) :
+    (shunt p).atIssue w ↔ p.atIssue w ∧ p.notAtIssue w := Iff.rfl
 
-@[simp] theorem shunt_ci (p : TwoDimProp W) (w : W) : (shunt p).ci w := trivial
+@[simp] theorem shunt_notAtIssue (p : TwoDim W (W → Prop)) (w : W) : (shunt p).notAtIssue w :=
+  trivial
 
-@[simp] theorem approp_atIssue (p : TwoDimProp W) (w : W) :
+@[simp] theorem approp_atIssue (p : TwoDim W (W → Prop)) (w : W) :
     (approp M p).atIssue w ↔ p.atIssue w := Iff.rfl
 
-@[simp] theorem approp_ci (p : TwoDimProp W) (w : W) :
-    (approp M p).ci w ↔ □[M.appropriate] p.ci w := Iff.rfl
+@[simp] theorem approp_notAtIssue (p : TwoDim W (W → Prop)) (w : W) :
+    (approp M p).notAtIssue w ↔ □[M.appropriate] p.notAtIssue w := Iff.rfl
 
 theorem daggerMQ_atIssue (h : FactorsThrough M.diag (M.mqAtIssue wc)) (q : Expr) :
     (daggerMQ M wc sx ux q).atIssue = M.diag sx q :=
@@ -149,14 +152,13 @@ theorem shunt_mq_atIssue (q : Expr) (w : W) :
 /-! ### Conventional implicature items (§3) -/
 
 /-- (26) and (26″): a speech report `F` of a CI item `q` whose meaning is `lex q`, whose
-peripheral content projects unquoted (`TwoDimProp.mapAtIssue_ci`) but, 𝔪-quoted, is replaced by
+peripheral content projects unquoted (`TwoDim.map_notAtIssue`) but, 𝔪-quoted, is replaced by
 the attribution R(s_x, u_x, q) while the at-issue content is unchanged, given that ⦇∗⦈ returns
 only at-issue content. -/
-theorem report_mq (lex : Expr → TwoDimProp W) (F : (W → Prop) → W → Prop) (q : Expr)
+theorem report_mq (lex : Expr → TwoDim W (W → Prop)) (F : (W → Prop) → W → Prop) (q : Expr)
     (h : M.quot q wc sx = (lex q).atIssue) :
-    (TwoDimProp.mapAtIssue F (mq M wc sx ux q)).atIssue =
-        (TwoDimProp.mapAtIssue F (lex q)).atIssue ∧
-      (TwoDimProp.mapAtIssue F (mq M wc sx ux q)).ci = M.utter sx ux q :=
+    (F <$> mq M wc sx ux q).atIssue = (F <$> lex q).atIssue ∧
+      (F <$> mq M wc sx ux q).notAtIssue = M.utter sx ux q :=
   ⟨congrArg F h, rfl⟩
 
 /-! ### C-monsters (§4) -/
@@ -177,10 +179,10 @@ theorem selectionConditional_daggerMQ (h : FactorsThrough M.diag (M.mqAtIssue wc
 
 /-- ↓[… 𝔄𝔐q …]: the quoted clause conjoined with the appropriateness of `q`'s verbatim use.
 A's assertion in (6), the antecedent of (35″), the prejacent of (36). -/
-def appropAssertion (q : Expr) : TwoDimProp W := shunt (approp M (mq M wc sx ux q))
+def appropAssertion (q : Expr) : TwoDim W (W → Prop) := shunt (approp M (mq M wc sx ux q))
 
 /-- not ↓[… 𝔄𝔐q …]: metalinguistic negation, (3), and B's denial in (6). -/
-def metaNeg (q : Expr) : TwoDimProp W := TwoDimProp.neg (appropAssertion M wc sx ux q)
+def metaNeg (q : Expr) : TwoDim W (W → Prop) := (appropAssertion M wc sx ux q).neg
 
 theorem appropAssertion_atIssue (q : Expr) (w : W) :
     (appropAssertion M wc sx ux q).atIssue w ↔

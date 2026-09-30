@@ -35,7 +35,9 @@ leak back into at-issue computation.
 
 See `Studies/Charlow2021.lean` (`PostSupp`) for the same pattern applied to
 dynamic GQs, with the log monoid `(Update S, ○, SetRel.id)` in place of
-`List P`.
+`List P`. A log of CI propositions conjoins to the not-at-issue content of a
+two-dimensional meaning, a monad morphism onto `ConventionalImplicature.TwoDim`
+(`TwoDim.ofWriter_bind`).
 -/
 
 @[expose] public section
