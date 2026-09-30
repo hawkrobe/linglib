@@ -3,7 +3,6 @@ module
 public import Linglib.Semantics.Attitudes.Basic
 public import Linglib.Semantics.Causation.VerbClass
 public import Linglib.Semantics.ArgumentStructure.LevinClass
-public import Linglib.Semantics.ArgumentStructure.MeaningComponents
 public import Linglib.Semantics.Causation.CausalModel.Dependence
 public import Linglib.Semantics.Polarity.Basic
 
