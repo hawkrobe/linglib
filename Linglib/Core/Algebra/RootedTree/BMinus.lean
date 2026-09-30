@@ -22,8 +22,8 @@ symmetric algebra (their Proposition 4.1).
 
 Under the symmetry-weighted pairing, `B⁻_a` is the transpose of `B⁺_a`, and it satisfies
 `B⁻_a (x ⋆ y) = ε(x) • B⁻_a y + B⁻_a x ⋆ y` for the Grossman–Larson product. With the
-multiplicativity of the counit, these drive the induction that proves the duality of
-`Coproduct/PruningDuality.lean`.
+multiplicativity of the counit (`GrossmanLarson.counit_product`), these drive the induction that
+proves the duality of `Coproduct/PruningDuality.lean`.
 
 ## Main definitions
 
@@ -34,8 +34,9 @@ multiplicativity of the counit, these drive the induction that proves the dualit
 
 * `GrossmanLarson.bMinusLin_pairing_adjoint`, `GrossmanLarson.isAdjointPair_bMinusLin_bPlusLin`:
   `⟨B⁻_a x, y⟩ = ⟨x, B⁺_a y⟩`.
+* `GrossmanLarson.insertion_of'_singleton_node`: grafting into the tree `node a A` is
+  `B⁺_a (A ⋆ B)`.
 * `GrossmanLarson.bMinusLin_gl_mul`: `B⁻_a (x ⋆ y) = ε(x) • B⁻_a y + B⁻_a x ⋆ y`.
-* `GrossmanLarson.counit_gl_mul`: the counit is multiplicative for the Grossman–Larson product.
 * `GrossmanLarson.pairing_apply_bPlus_gl_mul`: `⟨x ⋆ y, B⁺_a z⟩` in terms of `B⁻_a`.
 
 ## References
@@ -157,293 +158,56 @@ theorem bMinusLin_pairing_adjoint (a : α)
 
 The identity `B⁻_a (x ⋆ y) = ε(x) • B⁻_a y + B⁻_a x ⋆ y` reduces to basis forests `x = of' A`.
 If `A` is not a single tree with root `a`, both sides vanish or agree by counting trees. If
-`A = {node a A'}`, grafting `B` into `node a A'` is `B⁺_a` of the product `of' A' ⋆ of' B`
-(`singleton_node_a_insertion_eq_bPlus_gl_mul`). -/
+`A = {node a A'}`, grafting into `node a A'` is `B⁺_a` of the product `A' ⋆ B`
+(`UnorderedTree.insertionMultiset_singleton_node`). -/
 
-/-- Grafting `of' B` into the single tree `node a A'` is `B⁺_a` of the Grossman–Larson product
-`of' A' ⋆ of' B`: each guest is either a new child of the root or grafted into a tree of `A'`,
-as in `UnorderedTree.insertionMultiset_singleton_node`. -/
-theorem singleton_node_a_insertion_eq_bPlus_gl_mul
-    (a : α) (A' B : Forest (UnorderedTree α)) :
-    insertion (R := R)
-        (GrossmanLarson.of' ({UnorderedTree.node a A'} : Forest (UnorderedTree α)))
-        (GrossmanLarson.of' B) =
-      ConnesKreimer.bPlusLin (R := R) a
-        (unop
-          ((GrossmanLarson.of' (R := R) A' : GrossmanLarson R α) *
-            GrossmanLarson.of' B)) := by
-  -- Common form: (B.powerset.map (fun B₁ =>
-  --   ((NIM A' B₁).map (fun F' => of' {node a (F' + (B - B₁))})).sum)).sum
-  set common : ConnesKreimer R (UnorderedTree α) :=
-    (B.powerset.map fun B₁ =>
-      ((UnorderedTree.insertionMultiset A' B₁).map fun F' =>
-        ConnesKreimer.of' (R := R)
-          ({UnorderedTree.node a (F' + (B - B₁))} : Forest (UnorderedTree α))).sum).sum
-    with h_common
-  -- Step 1: LHS = common.
-  have hLHS : (insertion (R := R)
-      (GrossmanLarson.of' ({UnorderedTree.node a A'} : Forest (UnorderedTree α)))
-      (GrossmanLarson.of' B) : GrossmanLarson R α) = common := by
-    rw [insertion_of'_of']
-    unfold insertionBasis
-    rw [UnorderedTree.insertionMultiset_singleton_node a A' B]
-    rw [Multiset.map_bind, Multiset.sum_bind, h_common]
-    congr 1
-    apply Multiset.map_congr rfl
-    intro B₁ _
-    rw [Multiset.map_map]
-    rfl
-  -- Step 2: RHS = common.
-  have hRHS : ConnesKreimer.bPlusLin (R := R) a
-      (unop
-        ((GrossmanLarson.of' (R := R) A' : GrossmanLarson R α) *
-          GrossmanLarson.of' B)) = common := by
-    -- Per-summand identity:
-    have h_summand : ∀ B₁ : Forest (UnorderedTree α),
-        ConnesKreimer.bPlusLin (R := R) a
-          ((unop
-            (insertion (R := R)
-              (GrossmanLarson.of' A') (GrossmanLarson.of' B₁)) :
-              ConnesKreimer R (UnorderedTree α)) *
-            (unop (GrossmanLarson.of' (R := R) (B - B₁)))) =
-        ((UnorderedTree.insertionMultiset A' B₁).map fun F' =>
-          ConnesKreimer.of' (R := R)
-            ({UnorderedTree.node a (F' + (B - B₁))} : Forest (UnorderedTree α))).sum := by
-      intro B₁
-      -- insertion (of' A') (of' B₁) = insertionBasis A' B₁ = (NIM ...).map of').sum.
-      rw [insertion_of'_of']
-      unfold insertionBasis
-      -- Goal: bPlusLin a ((NIM A' B₁).map of').sum.unop * of'(B - B₁).unop) = ...
-      -- unop on basis sum is the same sum on CK side.
-      show ConnesKreimer.bPlusLin (R := R) a
-          ((((UnorderedTree.insertionMultiset A' B₁).map fun F' =>
-              ConnesKreimer.of' (R := R) F').sum) *
-            (ConnesKreimer.of' (R := R) (B - B₁))) =
-        ((UnorderedTree.insertionMultiset A' B₁).map fun F' =>
-          ConnesKreimer.of' (R := R)
-            ({UnorderedTree.node a (F' + (B - B₁))} : Forest (UnorderedTree α))).sum
-      -- Push * over sum (right-distributive): (Σ X_i) * Y = Σ (X_i * Y).
-      rw [← Multiset.sum_map_mul_right]
-      -- Now: bPlusLin a ((NIM A' B₁).map (fun F' => of' F' * of' (B - B₁))).sum
-      -- For each F': of' F' * of' (B - B₁) = of' (F' + (B - B₁)) [of'_add].
-      rw [show ((UnorderedTree.insertionMultiset A' B₁).map fun F' =>
-              (ConnesKreimer.of' (R := R) F' : ConnesKreimer R (UnorderedTree α)) *
-                ConnesKreimer.of' (R := R) (B - B₁)) =
-            ((UnorderedTree.insertionMultiset A' B₁).map fun F' =>
-              ConnesKreimer.of' (R := R) (F' + (B - B₁)))
-          from by
-        apply Multiset.map_congr rfl
-        intro F' _
-        rw [ConnesKreimer.of'_add]]
-      -- bPlusLin a is linear, distributes over Multiset.sum.
-      rw [show ConnesKreimer.bPlusLin (R := R) a
-              ((UnorderedTree.insertionMultiset A' B₁).map fun F' =>
-                ConnesKreimer.of' (R := R) (F' + (B - B₁))).sum =
-            ((UnorderedTree.insertionMultiset A' B₁).map fun F' =>
-              ConnesKreimer.bPlusLin (R := R) a
-                (ConnesKreimer.of' (R := R) (F' + (B - B₁)))).sum from ?_]
-      swap
-      · -- Push bPlusLin a through Multiset.sum via linearity.
-        induction UnorderedTree.insertionMultiset A' B₁ using Multiset.induction with
-        | empty => simp
-        | cons F' rest ih =>
-          simp only [Multiset.map_cons, Multiset.sum_cons, map_add, ih]
-      -- bPlusLin a (of' G) = ofTree (node a G) = of' {node a G}.
-      congr 1
-      apply Multiset.map_congr rfl
-      intro F' _
-      show ConnesKreimer.bPlusLin (R := R) a
-          (ConnesKreimer.of' (F' + (B - B₁))) =
-        ConnesKreimer.of' ({UnorderedTree.node a (F' + (B - B₁))} : Forest _)
-      rw [ConnesKreimer.bPlusLin_of']
-      rfl
-    -- Apply per-summand identity to RHS structure.
-    -- RHS = bPlusLin a (unop (productForest powerset sum)).
-    rw [GrossmanLarson.of'_mul_of']
-    unfold productForest
-    rw [h_common]
-    -- Define the per-B₁ summand function and use linearity.
-    -- For each B₁, the summand is op (unop (insertion ...) * unop (of' ...)),
-    -- so unop'd it's just unop (insertion ...) * unop (of' ...).
-    -- bPlusLin a (Σ ...) = Σ bPlusLin a (...).
-    -- Use h_summand B₁ for each.
-    -- Push unop through Multiset.sum (it's linear) — define a helper.
-    have h_unop_sum : ∀ (s : Multiset (Forest (UnorderedTree α))),
-        unop
-            (s.map fun B₁ =>
-              op
-                (unop
-                    (insertion (R := R)
-                      (GrossmanLarson.of' A') (GrossmanLarson.of' B₁)) *
-                  unop (GrossmanLarson.of' (B - B₁)))).sum =
-          (s.map fun B₁ =>
-            (unop
-                (insertion (R := R)
-                  (GrossmanLarson.of' A') (GrossmanLarson.of' B₁)) :
-              ConnesKreimer R (UnorderedTree α)) *
-              unop (GrossmanLarson.of' (B - B₁))).sum := by
-      intro s
-      induction s using Multiset.induction with
-      | empty => rfl
-      | cons B₁ rest ih =>
-        simp only [Multiset.map_cons, Multiset.sum_cons]
-        show (unop
-              ((op _ : GrossmanLarson R α) + (rest.map _).sum)) =
-          _ + (rest.map _).sum
-        rfl
-    rw [h_unop_sum B.powerset]
-    -- Now push bPlusLin a through Multiset.sum.
-    have h_bPlus_sum : ∀ (s : Multiset (Forest (UnorderedTree α))),
-        ConnesKreimer.bPlusLin (R := R) a
-            (s.map fun B₁ =>
-              (unop
-                  (insertion (R := R)
-                    (GrossmanLarson.of' A') (GrossmanLarson.of' B₁)) :
-                ConnesKreimer R (UnorderedTree α)) *
-                unop (GrossmanLarson.of' (B - B₁))).sum =
-          (s.map fun B₁ =>
-            ConnesKreimer.bPlusLin (R := R) a
-              ((unop
-                  (insertion (R := R)
-                    (GrossmanLarson.of' A') (GrossmanLarson.of' B₁)) :
-                ConnesKreimer R (UnorderedTree α)) *
-                unop (GrossmanLarson.of' (B - B₁)))).sum := by
-      intro s
-      induction s using Multiset.induction with
-      | empty => simp
-      | cons B₁ rest ih =>
-        simp only [Multiset.map_cons, Multiset.sum_cons, map_add, ih]
-    rw [h_bPlus_sum B.powerset]
-    -- Apply h_summand per B₁.
-    congr 1
-    apply Multiset.map_congr rfl
-    intro B₁ _
-    exact h_summand B₁
-  rw [hLHS, hRHS]
-
-/-! ### The identity for `B⁻_a` -/
-
-private theorem counit_of'_eq (F : Forest (UnorderedTree α)) :
-    (ConnesKreimer.counit : ConnesKreimer R (UnorderedTree α) →ₐ[R] R)
-      (ConnesKreimer.of' F) =
-      (if F = 0 then (1 : R) else 0) := by
-  rw [ConnesKreimer.counit_of']
-  by_cases h : F = 0
-  · subst h; simp
-  · have hne : F.card ≠ 0 := fun hc => h (Multiset.card_eq_zero.mp hc)
-    rw [ite_eq_right hne, ite_eq_right h]
+omit [DecidableEq α] in
+/-- Grafting `of' B` into the single tree `node a A` is `B⁺_a` of the Grossman–Larson product
+`of' A ⋆ of' B`: each guest is either a new child of the root or grafted into a tree of `A`. -/
+theorem insertion_of'_singleton_node (a : α) (A B : Forest (UnorderedTree α)) :
+    insertion (of' {UnorderedTree.node a A}) (of' B) =
+      bPlusLin (R := R) a (product (of' A) (of' B)) := by
+  rw [insertion_of'_of', insertionMultiset_singleton_node, product_of'_of',
+    map_multiset_sum (bPlusLin (R := R) a), Multiset.map_map, Multiset.map_map]
+  simp [bPlusLin_of']
 
 private theorem bMinusBasis_singleton_node_add (a : α)
     (F G : Forest (UnorderedTree α)) :
-    bMinusBasis (R := R) a ({UnorderedTree.node a F} + G) =
-      (if G = 0 then (ConnesKreimer.of' (R := R) F : ConnesKreimer R (UnorderedTree α))
-       else 0) := by
-  by_cases hG : G = 0
-  · subst hG
-    rw [add_zero, ite_eq_left rfl, bMinusBasis_singleton_node]
-    rfl
-  · rw [ite_eq_right hG]
-    apply bMinusBasis_eq_zero_of_not_singleton_a
+    bMinusBasis (R := R) a ({UnorderedTree.node a F} + G) = if G = 0 then of' F else 0 := by
+  split_ifs with hG
+  · rw [hG, add_zero, bMinusBasis_singleton_node]
+  · apply bMinusBasis_eq_zero_of_not_singleton_a
     rintro ⟨G', hG'⟩
-    have hcard : ({UnorderedTree.node a F} + G : Forest (UnorderedTree α)).card =
-        ({UnorderedTree.node a G'} : Forest (UnorderedTree α)).card := by rw [hG']
+    have hcard := congrArg Multiset.card hG'
     rw [Multiset.card_add, Multiset.card_singleton, Multiset.card_singleton] at hcard
-    have hGcard : G.card = 0 := by omega
-    exact hG (Multiset.card_eq_zero.mp hGcard)
+    exact hG (Multiset.card_eq_zero.mp (by omega))
 
 private theorem bMinusLin_bPlusLin_mul_of' (a : α)
     (Y : ConnesKreimer R (UnorderedTree α)) (G : Forest (UnorderedTree α)) :
-    bMinusLin (R := R) a
-      (ConnesKreimer.bPlusLin (R := R) a Y *
-        ConnesKreimer.of' (R := R) G) =
-      (if G = 0 then Y else 0) := by
-  refine ConnesKreimer.induction_linear Y ?_ ?_ ?_
-  · -- Y = 0
-    show bMinusLin (R := R) a
-        (ConnesKreimer.bPlusLin (R := R) a (0 : ConnesKreimer R (UnorderedTree α)) *
-          ConnesKreimer.of' (R := R) G) = _
-    rw [(ConnesKreimer.bPlusLin (R := R) a).map_zero, zero_mul,
-        (bMinusLin (R := R) a).map_zero]
-    split_ifs <;> rfl
-  · -- Y = Y₁ + Y₂
-    intro Y₁ Y₂ ih₁ ih₂
-    let Y₁' : ConnesKreimer R (UnorderedTree α) := Y₁
-    let Y₂' : ConnesKreimer R (UnorderedTree α) := Y₂
-    show bMinusLin (R := R) a
-        (ConnesKreimer.bPlusLin (R := R) a (Y₁' + Y₂') *
-          ConnesKreimer.of' (R := R) G) = _
-    rw [(ConnesKreimer.bPlusLin (R := R) a).map_add, add_mul,
-        (bMinusLin (R := R) a).map_add, ih₁, ih₂]
-    split_ifs <;> first | rfl | simp
-  · -- Y = single F r = r • of' F
-    intro F r
-    -- Compute bPlusLin a (single F r) = r • of' {node a F}.
-    have h_bPlus : ConnesKreimer.bPlusLin (R := R) a (ConnesKreimer.single F r) =
-        r • ConnesKreimer.of' (R := R) ({UnorderedTree.node a F} : Forest _) := by
-      show ConnesKreimer.linearLift (fun F => ConnesKreimer.ofTree (UnorderedTree.node a F))
-            (ConnesKreimer.single F r) = _
-      rw [ConnesKreimer.linearLift_single]
-      rfl
-    show bMinusLin (R := R) a
-        (ConnesKreimer.bPlusLin (R := R) a (ConnesKreimer.single F r) *
-          ConnesKreimer.of' (R := R) G) = _
-    rw [h_bPlus, smul_mul_assoc, ← of'_add, (bMinusLin (R := R) a).map_smul]
-    -- Now: r • bMinusLin a (of' ({node a F} + G)) = if G = 0 then single F r else 0
-    rw [show bMinusLin (R := R) a
-            (ConnesKreimer.of' (R := R) ({UnorderedTree.node a F} + G) :
-              ConnesKreimer R (UnorderedTree α)) =
-          bMinusBasis (R := R) a ({UnorderedTree.node a F} + G) from
-        bMinusLin_of' a _]
-    rw [bMinusBasis_singleton_node_add]
-    split_ifs with hG
-    · -- G = 0: r • of' F = single F r
-      subst hG
-      show r • ConnesKreimer.of' (R := R) F =
-        (ConnesKreimer.single F r : ConnesKreimer R (UnorderedTree α))
-      exact (ConnesKreimer.smul_single_one F r).symm
-    · rw [smul_zero]
+    bMinusLin (R := R) a (bPlusLin (R := R) a Y * of' G) = if G = 0 then Y else 0 := by
+  induction Y using ConnesKreimer.induction_linear with
+  | zero => simp
+  | add Y₁ Y₂ ih₁ ih₂ => rw [map_add, add_mul, map_add, ih₁, ih₂]; split_ifs <;> simp
+  | single F r =>
+    rw [smul_single_one, map_smul, smul_mul_assoc, map_smul]
+    change r • bMinusLin a (bPlusLin a (of' F) * of' G) = if G = 0 then r • of' F else 0
+    rw [bPlusLin_of', ← of'_singleton, ← of'_add, bMinusLin_of', bMinusBasis_singleton_node_add]
+    split_ifs <;> simp
 
-private lemma sum_powerset_diff_zero_indicator
-    {β : Type*} [AddCommMonoid β]
+/-- Only the split with no bystanders survives an indicator on the bystanders. -/
+private theorem sum_antidiagonal_ite_fst_eq_zero {β : Type*} [AddCommMonoid β]
     (B : Forest (UnorderedTree α)) (f : Forest (UnorderedTree α) → β) :
-    (B.powerset.map fun B₁ =>
-      if B - B₁ = (0 : Forest (UnorderedTree α)) then f B₁ else (0 : β)).sum = f B := by
+    (B.antidiagonal.map fun p ↦ if p.1 = 0 then f p.2 else 0).sum = f B := by
   induction B using Multiset.induction generalizing f with
-  | empty =>
-    rw [Multiset.powerset_zero, Multiset.map_singleton, Multiset.sum_singleton]
-    rw [show (0 - (0 : Forest (UnorderedTree α))) = 0 from Multiset.sub_zero _, ite_eq_left rfl]
-  | cons T B' ih =>
-    rw [Multiset.powerset_cons, Multiset.map_add, Multiset.sum_add]
-    have h_first_zero : (B'.powerset.map fun B₁ =>
-          if T ::ₘ B' - B₁ = (0 : Forest (UnorderedTree α)) then f B₁
-          else (0 : β)).sum = 0 := by
-      apply Multiset.sum_eq_zero
-      intro x hx
-      rw [Multiset.mem_map] at hx
-      obtain ⟨B₁, hB₁, hx_eq⟩ := hx
-      have hB₁le : B₁ ≤ B' := Multiset.mem_powerset.mp hB₁
-      have hne : T ::ₘ B' - B₁ ≠ (0 : Forest (UnorderedTree α)) := by
-        rw [Multiset.cons_sub_of_le T hB₁le]
-        exact Multiset.cons_ne_zero
-      rw [← hx_eq, ite_eq_right hne]
-    rw [h_first_zero, zero_add, Multiset.map_map]
-    have h_cond_eq : (B'.powerset.map ((fun B₁ =>
-            if T ::ₘ B' - B₁ = (0 : Forest (UnorderedTree α)) then f B₁
-            else (0 : β)) ∘ (T ::ₘ ·))) =
-        B'.powerset.map (fun B₁' =>
-          if B' - B₁' = (0 : Forest (UnorderedTree α)) then f (T ::ₘ B₁')
-          else (0 : β)) := by
-      apply Multiset.map_congr rfl
-      intro B₁ _
-      show (if T ::ₘ B' - (T ::ₘ B₁) = (0 : Forest (UnorderedTree α))
-              then f (T ::ₘ B₁) else (0 : β)) =
-        (if B' - B₁ = (0 : Forest (UnorderedTree α)) then f (T ::ₘ B₁)
-          else (0 : β))
-      rw [Multiset.sub_cons, Multiset.erase_cons_head]
-    rw [h_cond_eq]
-    exact ih (fun B₁' => f (T ::ₘ B₁'))
+  | empty => simp
+  | cons T B ih =>
+    rw [Multiset.antidiagonal_cons, Multiset.map_add, Multiset.sum_add, Multiset.map_map,
+      Multiset.map_map]
+    simp only [Function.comp_def, Prod.map_fst, Prod.map_snd, id_eq, Multiset.cons_ne_zero,
+      ↓reduceIte, Multiset.map_const', Multiset.sum_replicate, smul_zero, add_zero]
+    exact ih (f ∘ (T ::ₘ ·))
 
-private theorem bMinusBasis_nim_add_eq_zero (a : α)
+private theorem bMinusBasis_insertionMultiset_add_eq_zero (a : α)
     (A B₁ B' F' : Forest (UnorderedTree α))
     (hA_ne : A ≠ 0)
     (hA : ¬ ∃ G' : Forest (UnorderedTree α), A = ({UnorderedTree.node a G'} : Forest _))
@@ -451,546 +215,61 @@ private theorem bMinusBasis_nim_add_eq_zero (a : α)
     bMinusBasis (R := R) a (F' + B') = 0 := by
   apply bMinusBasis_eq_zero_of_not_singleton_a
   rintro ⟨G, hG⟩
-  -- (F' + B').card = |A| + |B'|; must equal 1.
-  have hcard_F' : F'.card = A.card :=
-    UnorderedTree.insertionMultiset_card_eq A B₁ hF'
-  have h_total_card : (F' + B').card = 1 := by
-    rw [hG]; exact Multiset.card_singleton _
-  rw [Multiset.card_add, hcard_F'] at h_total_card
-  -- A.card ≥ 1 since A ≠ 0.
-  have hA_card_pos : 1 ≤ A.card := by
-    have : A.card ≠ 0 := fun h => hA_ne (Multiset.card_eq_zero.mp h)
+  have hcard := congrArg Multiset.card hG
+  rw [Multiset.card_add, UnorderedTree.insertionMultiset_card_eq A B₁ hF',
+    Multiset.card_singleton] at hcard
+  have hA_card : A.card = 1 := by
+    have := Multiset.card_pos.mpr hA_ne
     omega
-  -- So A.card = 1 and B'.card = 0.
-  have hA_card : A.card = 1 := by omega
-  have hB'_card : B'.card = 0 := by omega
-  have hB' : B' = 0 := Multiset.card_eq_zero.mp hB'_card
-  subst hB'
-  -- F' + 0 = F', and F' has card 1, F' = {T'} with T' = node a G.
-  rw [add_zero] at hG
-  -- Now F' ∈ NIM A B₁ with A.card = 1; A = {T} for some T with T.value ≠ a.
-  -- Goal: derive contradiction from F' = {node a G} via root preservation.
-  have hF'_card : F'.card = 1 := by rw [hcard_F', hA_card]
-  -- A is a singleton (card 1): A = {T_A} for some T_A.
-  obtain ⟨T_A, hT_A⟩ : ∃ T_A : UnorderedTree α, A = {T_A} := by
-    rcases Multiset.card_eq_one.mp hA_card with ⟨T_A, hT_A⟩
-    exact ⟨T_A, hT_A⟩
-  -- T_A.value ≠ a (otherwise A = {node a (children T_A)} via node_eta).
-  have hT_A_lab : T_A.value ≠ a := by
-    intro h_lab
-    apply hA
-    refine ⟨UnorderedTree.children T_A, ?_⟩
-    rw [hT_A]
-    congr 1
-    rw [← h_lab, UnorderedTree.node_eta]
-  -- Apply NIM singleton root preservation.
-  subst hT_A
-  obtain ⟨T', hF'_eq, hT'_lab⟩ :=
-    UnorderedTree.insertionMultiset_singleton_value T_A B₁ hF'
-  -- F' = {T'} with T'.value = T_A.value ≠ a.
-  -- But hG says F' = {node a G}, so T' = node a G.
-  rw [hF'_eq] at hG
-  have hT'_eq_node : T' = UnorderedTree.node a G := Multiset.singleton_inj.mp hG
-  -- Then T'.value = a, contradicting hT'_lab + hT_A_lab.
-  have hT'_lab_a : T'.value = a := by
-    rw [hT'_eq_node, UnorderedTree.value_node]
-  rw [hT'_lab_a] at hT'_lab
-  exact hT_A_lab hT'_lab.symm
+  obtain rfl : B' = 0 := Multiset.card_eq_zero.mp (by omega)
+  obtain ⟨T, rfl⟩ := Multiset.card_eq_one.mp hA_card
+  obtain ⟨T', rfl, hT'⟩ := UnorderedTree.insertionMultiset_singleton_value T B₁ hF'
+  rw [add_zero, Multiset.singleton_inj] at hG
+  subst hG
+  rw [UnorderedTree.value_node] at hT'
+  exact hA ⟨T.children, by rw [hT', UnorderedTree.node_eta]⟩
 
 private theorem bMinusLin_gl_mul_basis (a : α) (A B : Forest (UnorderedTree α)) :
-    bMinusLin (R := R) a
-      ((GrossmanLarson.of' (R := R) A : GrossmanLarson R α) *
-        GrossmanLarson.of' B) =
-      ((ConnesKreimer.counit : ConnesKreimer R (UnorderedTree α) →ₐ[R] R)
-          (ConnesKreimer.of' A)) •
-        bMinusLin (R := R) a (ConnesKreimer.of' B) +
-      unop
-        ((op (bMinusLin (R := R) a (ConnesKreimer.of' A))) *
-          GrossmanLarson.of' B) := by
+    bMinusLin (R := R) a (product (of' A) (of' B)) =
+      counit (of' (R := R) A) • bMinusLin (R := R) a (of' B) +
+        product (bMinusLin (R := R) a (of' A)) (of' B) := by
   by_cases hA : ∃ A' : Forest (UnorderedTree α), A = ({UnorderedTree.node a A'} : Forest _)
-  · -- Hard case: A = {node a A'}. Uses singleton_node_a_insertion_eq_bPlus_gl_mul.
-    obtain ⟨A', hAA'⟩ := hA
-    subst hAA'
-    -- Simplify counit and bMinusLin a on of' {node a A'}.
-    have h_counit : (ConnesKreimer.counit : ConnesKreimer R (UnorderedTree α) →ₐ[R] R)
-        (ConnesKreimer.of' ({UnorderedTree.node a A'} : Forest (UnorderedTree α))) = 0 := by
-      rw [ConnesKreimer.counit_of', Multiset.card_singleton, ite_eq_right one_ne_zero]
-    have h_bmin : bMinusLin (R := R) a
-          (ConnesKreimer.of' ({UnorderedTree.node a A'} : Forest (UnorderedTree α))) =
-        ConnesKreimer.of' A' := by
-      -- Use show to bridge namespace difference for bMinusLin_of'.
-      rw [show bMinusLin (R := R) a
-            (ConnesKreimer.of' (R := R) ({UnorderedTree.node a A'} : Forest _) :
-              ConnesKreimer R (UnorderedTree α)) =
-          bMinusBasis (R := R) a ({UnorderedTree.node a A'} : Forest _) from
-        bMinusLin_of' a _]
-      rw [bMinusBasis_singleton_node]
-      rfl
-    rw [h_counit, zero_smul, zero_add, h_bmin]
-    -- Goal: bMinusLin a ((of'{node a A'} : GL) * of' B) = unop(op(of' A') * of' B).
-    -- Both sides equal unop(of' A' *_GL of' B) (op/unop are identity coercions).
-    -- Convert * to productForest using show (mul_def is rfl) + of'_mul_of'.
-    show bMinusLin (R := R) a
-        (product
-          (GrossmanLarson.of' (R := R)
-            ({UnorderedTree.node a A'} : Forest (UnorderedTree α)))
-          (GrossmanLarson.of' B)) = _
-    rw [show product
-            (GrossmanLarson.of' (R := R)
-              ({UnorderedTree.node a A'} : Forest (UnorderedTree α)))
-            (GrossmanLarson.of' B) =
-          productForest
-            (GrossmanLarson.of' (R := R)
-              ({UnorderedTree.node a A'} : Forest (UnorderedTree α))) B from
-        GrossmanLarson.of'_mul_of' _ _]
-    unfold productForest
-    -- Push bMinusLin a through Multiset.sum.
-    have h_push_sum : bMinusLin (R := R) a
-          ((B.powerset.map fun B₁ =>
-            op
-              (unop
-                  (insertion (R := R)
-                    (GrossmanLarson.of'
-                      ({UnorderedTree.node a A'} : Forest (UnorderedTree α)))
-                    (GrossmanLarson.of' B₁)) *
-                unop (GrossmanLarson.of' (B - B₁)))).sum) =
-        (B.powerset.map fun B₁ =>
-          bMinusLin (R := R) a
-            (op
-              (unop
-                  (insertion (R := R)
-                    (GrossmanLarson.of'
-                      ({UnorderedTree.node a A'} : Forest (UnorderedTree α)))
-                    (GrossmanLarson.of' B₁)) *
-                unop (GrossmanLarson.of' (B - B₁))))).sum := by
-      rw [map_multiset_sum (bMinusLin (R := R) a), Multiset.map_map]
-      rfl
-    rw [h_push_sum]
-    -- Per-summand: apply singleton bridge then helper 2.
-    have h_summand : ∀ B₁ : Forest (UnorderedTree α),
-        bMinusLin (R := R) a
-          (op
-            (unop
-                (insertion (R := R)
-                  (GrossmanLarson.of'
-                    ({UnorderedTree.node a A'} : Forest (UnorderedTree α)))
-                  (GrossmanLarson.of' B₁)) *
-              unop (GrossmanLarson.of' (B - B₁)))) =
-        (if B - B₁ = (0 : Forest (UnorderedTree α)) then
-           unop
-             ((GrossmanLarson.of' (R := R) A' : GrossmanLarson R α) *
-               GrossmanLarson.of' B₁)
-         else 0) := by
-      intro B₁
-      rw [singleton_node_a_insertion_eq_bPlus_gl_mul]
-      -- Now: bMinusLin a (op (unop (bPlusLin a (unop(of' A' * of' B₁))) * unop(of' (B - B₁))))
-      -- = bMinusLin a (bPlusLin a (unop(of' A' * of' B₁)) * of'(B - B₁))   [op, unop are id]
-      show bMinusLin (R := R) a
-          ((ConnesKreimer.bPlusLin (R := R) a
-              (unop
-                ((GrossmanLarson.of' (R := R) A' : GrossmanLarson R α) *
-                  GrossmanLarson.of' B₁))) *
-            ConnesKreimer.of' (R := R) (B - B₁)) = _
-      rw [bMinusLin_bPlusLin_mul_of']
-    have h_map_eq : (B.powerset.map fun B₁ =>
-          bMinusLin (R := R) a
-            (op
-              (unop
-                  (insertion (R := R)
-                    (GrossmanLarson.of'
-                      ({UnorderedTree.node a A'} : Forest (UnorderedTree α)))
-                    (GrossmanLarson.of' B₁)) *
-                unop (GrossmanLarson.of' (B - B₁))))) =
-        B.powerset.map (fun B₁ =>
-          if B - B₁ = (0 : Forest (UnorderedTree α)) then
-            unop
-              ((GrossmanLarson.of' (R := R) A' : GrossmanLarson R α) *
-                GrossmanLarson.of' B₁)
-          else 0) := by
-      apply Multiset.map_congr rfl
-      intro B₁ _
-      exact h_summand B₁
-    rw [h_map_eq]
-    -- Collapse via helper 3.
-    have h_collapse := sum_powerset_diff_zero_indicator B (fun B₁ =>
-        unop
-          ((GrossmanLarson.of' (R := R) A' : GrossmanLarson R α) *
-            GrossmanLarson.of' B₁))
-    convert h_collapse using 4
-    · rfl
-  · -- A is not singleton-a-rooted. bMinusLin a (of' A) = 0 and counit (of' A) handled by sub-cases.
-    have hBmin : bMinusLin (R := R) a (ConnesKreimer.of' A) = 0 := by
-      show bMinusLin (R := R) a (of' A) = 0
-      rw [bMinusLin_of', bMinusBasis_eq_zero_of_not_singleton_a a A hA]
-    rw [hBmin]
-    show bMinusLin (R := R) a
-          ((GrossmanLarson.of' (R := R) A : GrossmanLarson R α) *
-            GrossmanLarson.of' B) =
-        ((ConnesKreimer.counit : ConnesKreimer R (UnorderedTree α) →ₐ[R] R)
-            (ConnesKreimer.of' A)) •
-          bMinusLin (R := R) a (ConnesKreimer.of' B) +
-        unop
-          ((op (0 : ConnesKreimer R (UnorderedTree α))) *
-            GrossmanLarson.of' B)
-    -- Simplify `(op 0 * of' B).unop = 0` using `product`'s linearity.
-    have hZero : (op (0 : ConnesKreimer R (UnorderedTree α)) :
-        GrossmanLarson R α) * GrossmanLarson.of' B =
-      (0 : GrossmanLarson R α) := by
-      show product (0 : GrossmanLarson R α)
-            (GrossmanLarson.of' B) = 0
-      rw [LinearMap.map_zero, LinearMap.zero_apply]
-    rw [hZero, show unop (0 : GrossmanLarson R α) =
-                  (0 : ConnesKreimer R (UnorderedTree α)) from rfl,
-        add_zero]
-    -- Goal: bMinusLin a (of' A *_GL of' B) = counit (of' A) • bMinusLin a (of' B).
-    -- Case-on A = 0 (counit = 1, of' A *_GL of' B = of' B *_GL 1 = of' B → bMinusLin a (of' B))
-    -- vs A ≠ 0 (counit = 0, RHS = 0; need to show LHS = 0).
-    by_cases hA0 : A = 0
-    · subst hA0
-      rw [counit_of'_eq, ite_eq_left rfl, one_smul]
-      -- LHS: bMinusLin a (of' 0 *_GL of' B) = bMinusLin a (1 *_GL of' B) = bMinusLin a (of' B).
-      show bMinusLin (R := R) a
-          ((GrossmanLarson.of' (R := R) (0 : Forest (UnorderedTree α)) :
-            GrossmanLarson R α) *
-            GrossmanLarson.of' B) =
-        bMinusLin (R := R) a (ConnesKreimer.of' B)
-      congr 1
-      show (GrossmanLarson.of' (R := R) (0 : Forest (UnorderedTree α)) :
-          GrossmanLarson R α) * GrossmanLarson.of' B =
-        ConnesKreimer.of' B
-      rw [show (GrossmanLarson.of' (R := R) (0 : Forest (UnorderedTree α)) :
-              GrossmanLarson R α) = 1 from GrossmanLarson.of'_zero]
-      exact one_mul _
-    · rw [counit_of'_eq, ite_eq_right hA0, zero_smul]
-      -- LHS = 0; A ≠ 0 and A is not singleton-a-rooted.
-      -- Expand of' A *_GL of' B via productForest = powerset-sum.
-      change bMinusLin (R := R) a
-          (product
-            (GrossmanLarson.of' (R := R) A)
-            (GrossmanLarson.of' B)) = 0
-      rw [show product
-              (GrossmanLarson.of' (R := R) A) (GrossmanLarson.of' B) =
-            productForest (GrossmanLarson.of' (R := R) A) B from
-          GrossmanLarson.of'_mul_of' _ _]
-      unfold productForest
-      -- Push bMinusLin a through Multiset.sum
-      -- (treating the GrossmanLarson-typed sum as a CK-typed sum, defeq).
-      have h_push : bMinusLin (R := R) a
-          (B.powerset.map fun B₁ =>
-            op
-              (unop
-                  (insertion (R := R)
-                    (GrossmanLarson.of' A) (GrossmanLarson.of' B₁)) *
-                unop (GrossmanLarson.of' (B - B₁)))).sum =
-          (B.powerset.map fun B₁ =>
-            bMinusLin (R := R) a
-              (op
-                (unop
-                    (insertion (R := R)
-                      (GrossmanLarson.of' A) (GrossmanLarson.of' B₁)) *
-                  unop
-                    (GrossmanLarson.of' (B - B₁))) :
-                ConnesKreimer R (UnorderedTree α))).sum := by
-        rw [map_multiset_sum (bMinusLin (R := R) a), Multiset.map_map]
-        rfl
-      rw [h_push]
-      -- Now: (B.powerset.map (bMinusLin a ∘ (B₁ => op (unop (insertion ...) * of'(B-B₁))))).sum
-      -- Each summand: bMinusLin a (op (unop X * unop Y)) = bMinusLin a (X * Y) (op/unop are id).
-      -- where X = insertion (of' A) (of' B₁) = Σ_{F' ∈ NIM A B₁} of' F'
-      --       Y = of' (B - B₁)
-      -- So X * Y = Σ of' F' * of' (B-B₁) = Σ of' (F' + (B-B₁))
-      -- and bMinusLin a of that sum = Σ bMinusBasis a (F' + (B-B₁)) = 0 by helper.
-      -- Reduce each summand to 0.
-      apply Multiset.sum_eq_zero
-      intro x hx
-      rw [Multiset.mem_map] at hx
-      obtain ⟨B₁, _hB₁_mem, hx_eq⟩ := hx
-      subst hx_eq
-      -- Per-B₁ closure:
-      -- bMinusLin a (op (unop (insertion (of' A) (of' B₁)) * unop (of' (B-B₁)))) = 0
-      -- op/unop are identity; reduce to CK level. The `op` outer is a
-      -- no-op on the underlying carrier; the goal already has CK as the
-      -- ambient bMinusLin argument.
-      have h_step : bMinusLin (R := R) a
-          (((unop
-              (insertion (R := R)
-                (GrossmanLarson.of' A) (GrossmanLarson.of' B₁)) :
-              ConnesKreimer R (UnorderedTree α)) *
-            unop (GrossmanLarson.of' (B - B₁)))) = 0 := by
-        -- Unfold insertion (of' A) (of' B₁) = insertionBasis A B₁.
-        rw [show (unop
-              (insertion (R := R)
-                (GrossmanLarson.of' A) (GrossmanLarson.of' B₁)) :
-              ConnesKreimer R (UnorderedTree α)) =
-            insertionBasis A B₁ from by
-          rw [insertion_of'_of']; rfl]
-        unfold insertionBasis
-        -- Now: bMinusLin a (((NIM A B₁).map of').sum * unop (of' (B-B₁))) = 0.
-        show bMinusLin (R := R) a
-            ((((UnorderedTree.insertionMultiset A B₁).map fun F' =>
-                ConnesKreimer.of' (R := R) F').sum :
-              ConnesKreimer R (UnorderedTree α)) *
-              ConnesKreimer.of' (R := R) (B - B₁)) = 0
-        -- Distribute * over the sum (right distributivity).
-        rw [← Multiset.sum_map_mul_right]
-        -- Push bMinusLin a through Multiset.sum.
-        rw [map_multiset_sum (bMinusLin (R := R) a), Multiset.map_map]
-        -- Show every summand is 0.
-        apply Multiset.sum_eq_zero
-        intro y hy
-        rw [Multiset.mem_map] at hy
-        obtain ⟨F', hF'_mem, hy_eq⟩ := hy
-        subst hy_eq
-        -- of' F' * of' (B - B₁) = of' (F' + (B - B₁)),
-        -- then bMinusLin a (of' ...) = bMinusBasis a ...
-        show bMinusLin (R := R) a
-            ((ConnesKreimer.of' (R := R) F' : ConnesKreimer R (UnorderedTree α)) *
-              ConnesKreimer.of' (R := R) (B - B₁)) = 0
-        rw [← ConnesKreimer.of'_add]
-        rw [show bMinusLin (R := R) a
-              (ConnesKreimer.of' (R := R) (F' + (B - B₁)) :
-                ConnesKreimer R (UnorderedTree α)) =
-            bMinusBasis (R := R) a (F' + (B - B₁)) from
-          bMinusLin_of' a _]
-        exact bMinusBasis_nim_add_eq_zero a A B₁ (B - B₁) F' hA0 hA hF'_mem
-      exact h_step
+  · obtain ⟨A', rfl⟩ := hA
+    simp only [counit_of', Multiset.card_singleton, one_ne_zero, ↓reduceIte, zero_smul, zero_add]
+    rw [bMinusLin_of', bMinusBasis_singleton_node, product_of',
+      map_multiset_sum (bMinusLin (R := R) a), Multiset.map_map]
+    simp only [Function.comp_def, insertion_of'_singleton_node, bMinusLin_bPlusLin_mul_of']
+    exact sum_antidiagonal_ite_fst_eq_zero B fun G ↦ product (of' A') (of' G)
+  · rw [bMinusLin_of' a A, bMinusBasis_eq_zero_of_not_singleton_a a A hA, map_zero,
+      LinearMap.zero_apply, add_zero]
+    rcases eq_or_ne A 0 with rfl | hA0
+    · rw [of'_zero, product_one_left, counit_one, one_smul]
+    · simp only [counit_of', Multiset.card_eq_zero, hA0, ↓reduceIte, zero_smul]
+      rw [product_of'_of', map_multiset_sum (bMinusLin (R := R) a), Multiset.map_map]
+      refine Multiset.sum_eq_zero fun x hx ↦ ?_
+      obtain ⟨W, hW, rfl⟩ := Multiset.mem_map.mp hx
+      obtain ⟨p, -, hW⟩ := Multiset.mem_bind.mp hW
+      obtain ⟨X, hX, rfl⟩ := Multiset.mem_map.mp hW
+      rw [Function.comp_apply, bMinusLin_of']
+      exact bMinusBasis_insertionMultiset_add_eq_zero a A p.2 p.1 X hA0 hA hX
 
 /-- `B⁻_a (x ⋆ y) = ε(x) • B⁻_a y + B⁻_a x ⋆ y`. -/
-theorem bMinusLin_gl_mul (a : α)
-    (x y : ConnesKreimer R (UnorderedTree α)) :
-    bMinusLin (R := R) a (product (R := R) x y) =
-      ((ConnesKreimer.counit : ConnesKreimer R (UnorderedTree α) →ₐ[R] R) x) •
-        bMinusLin (R := R) a y +
-      unop (product (R := R) (bMinusLin (R := R) a x) y) := by
-  let mulCK : ConnesKreimer R (UnorderedTree α) →ₗ[R]
-      ConnesKreimer R (UnorderedTree α) →ₗ[R] ConnesKreimer R (UnorderedTree α) :=
-    product (R := R) (α := α)
-  have h : mulCK.compr₂ (bMinusLin (R := R) a) =
-      LinearMap.smulRight
-          (ConnesKreimer.counit :
-            ConnesKreimer R (UnorderedTree α) →ₐ[R] R).toLinearMap
-          (bMinusLin (R := R) a) +
-        mulCK.comp (bMinusLin (R := R) a) :=
-    ConnesKreimer.lhom_ext' fun A => ConnesKreimer.lhom_ext' fun B =>
-      bMinusLin_gl_mul_basis a A B
-  exact LinearMap.congr_fun (LinearMap.congr_fun h x) y
-
-/-! ### The steps of the duality induction
-
-The counit is multiplicative for the Grossman–Larson product, and pairing against `B⁺_a z`
-unfolds through the transpose of `B⁺_a` and the identity for `B⁻_a`. -/
-
-private theorem counit_insertionBasis (A B : Forest (UnorderedTree α)) :
-    (counit : ConnesKreimer R (UnorderedTree α) →ₐ[R] R)
-        (unop
-          (insertionBasis (R := R) A B)) =
-      (counit (ConnesKreimer.of' A : ConnesKreimer R (UnorderedTree α))) *
-        (counit (ConnesKreimer.of' B : ConnesKreimer R (UnorderedTree α))) := by
-  -- Unfold insertionBasis: sum over NIM(A, B) of of' F'.
-  -- ε of sum = sum of ε. ε(of' F') = if F'.card = 0 then 1 else 0.
-  -- Case on A:
-  -- * A = 0: NIM(0, B) handled by insertionMultiset_zero_left / _zero_right.
-  -- * A ≠ 0: every F' has |F'| = |A| ≥ 1, so ε(of' F') = 0, sum = 0.
-  unfold insertionBasis
-  -- Goal: counit (unop ((NIM A B).map (fun F' => of' F')).sum) =
-  --        counit (of' A) * counit (of' B)
-  show (counit : ConnesKreimer R (UnorderedTree α) →ₐ[R] R)
-      ((UnorderedTree.insertionMultiset A B).map
-        fun F' => ConnesKreimer.of' (R := R) F').sum =
-    _
-  -- counit (Σ ...) = Σ counit (...).
-  rw [show ((UnorderedTree.insertionMultiset A B).map
-        fun F' => ConnesKreimer.of' (R := R) F').sum =
-      ((UnorderedTree.insertionMultiset A B).map
-        fun F' => ConnesKreimer.of' (R := R) F').sum from rfl]
-  -- Use additivity of counit through Multiset.sum.
-  rw [show (counit : ConnesKreimer R (UnorderedTree α) →ₐ[R] R)
-        ((UnorderedTree.insertionMultiset A B).map
-          (fun F' => ConnesKreimer.of' (R := R) F')).sum =
-      ((UnorderedTree.insertionMultiset A B).map
-        (fun F' => (counit : ConnesKreimer R (UnorderedTree α) →ₐ[R] R)
-          (ConnesKreimer.of' (R := R) F'))).sum from ?_]
-  swap
-  · -- counit preserves Multiset.sum via additivity.
-    induction UnorderedTree.insertionMultiset A B using Multiset.induction with
-    | empty => simp
-    | cons F' rest ih =>
-      simp only [Multiset.map_cons, Multiset.sum_cons, map_add, ih]
-  -- Now: (NIM(A, B).map (fun F' => counit (of' F'))).sum = counit (of' A) * counit (of' B).
-  -- ε(of' F') = if F'.card = 0 then 1 else 0.
-  simp only [ConnesKreimer.counit_of']
-  -- Now: (NIM(A,B).map (fun F' => if F'.card = 0 then 1 else 0)).sum =
-  --       (if A.card = 0 then 1 else 0) * (if B.card = 0 then 1 else 0)
-  by_cases hA : A = 0
-  · subst hA
-    -- Case A = 0: NIM(0, B) = {0} if B = 0 else 0.
-    by_cases hB : B = 0
-    · subst hB
-      -- NIM(0, 0) = {0}.
-      rw [UnorderedTree.insertionMultiset_zero_right]
-      simp
-    · -- NIM(0, B) = 0 for B ≠ 0 (no host vertices).
-      rw [UnorderedTree.insertionMultiset_zero_left_of_ne_zero B hB]
-      simp [hB]
-  · -- Case A ≠ 0: every F' ∈ NIM(A, B) has cardinality |A| ≥ 1, so F' ≠ 0.
-    -- So ε(of' F') = 0 for every F'; sum = 0.
-    -- And ε(of' A) = 0 (since A.card ≠ 0).
-    have hAcard : A.card ≠ 0 := fun hc => hA (Multiset.card_eq_zero.mp hc)
-    rw [ite_eq_right hAcard, zero_mul]
-    -- Need: (NIM(A,B).map (fun F' => if F'.card = 0 then 1 else 0)).sum = 0.
-    apply Multiset.sum_eq_zero
-    intro x hx
-    rw [Multiset.mem_map] at hx
-    obtain ⟨F', hF', hF'_eq⟩ := hx
-    rw [← hF'_eq]
-    -- |F'| = |A| ≠ 0.
-    have hF'card : F'.card = A.card :=
-      UnorderedTree.insertionMultiset_card_eq A B hF'
-    rw [hF'card, ite_eq_right hAcard]
-
-private theorem counit_gl_mul_basis (A B : Forest (UnorderedTree α)) :
-    (counit : ConnesKreimer R (UnorderedTree α) →ₐ[R] R)
-        (unop
-          ((GrossmanLarson.of' (R := R) A : GrossmanLarson R α) *
-            GrossmanLarson.of' B)) =
-      (counit (ConnesKreimer.of' A : ConnesKreimer R (UnorderedTree α))) *
-        (counit (ConnesKreimer.of' B : ConnesKreimer R (UnorderedTree α))) := by
-  by_cases hB : B = 0
-  · subst hB
-    -- of' A *_GL of' 0 = of' A *_GL 1 = of' A.
-    have h_of_zero : (GrossmanLarson.of' (R := R) (0 : Forest (UnorderedTree α)) :
-          GrossmanLarson R α) = 1 := GrossmanLarson.of'_zero
-    rw [h_of_zero, mul_one]
-    show (counit : ConnesKreimer R (UnorderedTree α) →ₐ[R] R)
-        (ConnesKreimer.of' A) =
-      (counit : ConnesKreimer R (UnorderedTree α) →ₐ[R] R)
-          (ConnesKreimer.of' A) *
-        (counit : ConnesKreimer R (UnorderedTree α) →ₐ[R] R)
-          (ConnesKreimer.of' (0 : Forest (UnorderedTree α)))
-    rw [show (ConnesKreimer.of' (0 : Forest (UnorderedTree α)) :
-            ConnesKreimer R (UnorderedTree α)) = 1 from
-        ConnesKreimer.of'_zero, map_one]
-    ring
-  · -- B ≠ 0: counit(of' B) = 0, RHS = counit(of' A) * 0 = 0.
-    have hBcard : B.card ≠ 0 := fun hc => hB (Multiset.card_eq_zero.mp hc)
-    have hCBzero : (counit : ConnesKreimer R (UnorderedTree α) →ₐ[R] R)
-        (ConnesKreimer.of' B) = 0 := by
-      rw [ConnesKreimer.counit_of', ite_eq_right hBcard]
-    rw [hCBzero, mul_zero]
-    -- Strategy: expand of' A * of' B via productForest formula, push counit through
-    -- the Multiset.sum, show each summand reduces to counit(of' A) * counit(of' B) = 0,
-    -- so the sum is 0.
-    -- Helper: per-summand (CK product after unop) identity.
-    have h_summand : ∀ B₁ : Forest (UnorderedTree α),
-        (counit : ConnesKreimer R (UnorderedTree α) →ₐ[R] R)
-          ((unop
-              (insertion (R := R) (GrossmanLarson.of' A)
-                (GrossmanLarson.of' B₁)) : ConnesKreimer R (UnorderedTree α)) *
-            ConnesKreimer.of' (R := R) (B - B₁)) =
-        (counit (ConnesKreimer.of' A : ConnesKreimer R (UnorderedTree α))) *
-          (counit (ConnesKreimer.of' (R := R) (B₁ + (B - B₁)) :
-            ConnesKreimer R (UnorderedTree α))) := by
-      intro B₁
-      -- counit (X *_CK Y) = counit X * counit Y (algebra hom).
-      rw [map_mul]
-      -- Convert insertion (of' A) (of' B₁) → insertionBasis A B₁ (def via insertion_of'_of').
-      rw [insertion_of'_of']
-      -- counit (unop (insertionBasis A B₁)) = counit (of' A) * counit (of' B₁).
-      rw [counit_insertionBasis A B₁]
-      -- counit (of' (B₁ + (B - B₁))) = counit (of' B₁ * of'(B - B₁))
-      --                              = counit (of' B₁) * counit (of'(B - B₁)).
-      rw [show (ConnesKreimer.of' (R := R) (B₁ + (B - B₁)) :
-              ConnesKreimer R (UnorderedTree α)) =
-            ConnesKreimer.of' (R := R) B₁ * ConnesKreimer.of' (R := R) (B - B₁) from
-          ConnesKreimer.of'_add B₁ (B - B₁)]
-      rw [map_mul]
-      ring
-    -- Outer: expand (of' A) * (of' B) via productForest, push counit through sum.
-    -- Generic helper: push counit (algebra hom) ∘ unop through Multiset.sum.
-    -- (unop is identity coercion, so this reduces to map_multiset_sum on counit.)
-    have h_push_counit_unop_sum : ∀ s : Multiset (GrossmanLarson R α),
-        (counit : ConnesKreimer R (UnorderedTree α) →ₐ[R] R)
-            (unop s.sum) =
-          (s.map (fun x =>
-            (counit : ConnesKreimer R (UnorderedTree α) →ₐ[R] R)
-              (unop x))).sum :=
-      fun s => map_multiset_sum (counit : ConnesKreimer R (UnorderedTree α) →ₐ[R] R) s
-    -- Each summand of the productForest sum reduces to 0 after counit ∘ unop:
-    -- op (unop(insertion (of' A) (of' B₁)) * unop(of'(B-B₁))) — after unop on the outer,
-    -- becomes the inner CK product. counit applied via h_summand: = 0 for B₁ ⊆ B.
-    have h_each_zero : ∀ x ∈ B.powerset.map (fun B₁ =>
-        op
-          ((unop
-              (insertion (R := R) (GrossmanLarson.of' A)
-                (GrossmanLarson.of' B₁)) : ConnesKreimer R (UnorderedTree α)) *
-            unop (GrossmanLarson.of' (B - B₁)))),
-        (counit : ConnesKreimer R (UnorderedTree α) →ₐ[R] R)
-          (unop x) = 0 := by
-      intro x hx
-      rw [Multiset.mem_map] at hx
-      obtain ⟨B₁, hB₁, hx_eq⟩ := hx
-      have hB₁le : B₁ ≤ B := Multiset.mem_powerset.mp hB₁
-      have hB₁add : B₁ + (B - B₁) = B := by
-        rw [add_comm]; exact Multiset.sub_add_cancel hB₁le
-      rw [← hx_eq]
-      show (counit : ConnesKreimer R (UnorderedTree α) →ₐ[R] R)
-          ((unop
-              (insertion (R := R) (GrossmanLarson.of' A)
-                (GrossmanLarson.of' B₁)) : ConnesKreimer R (UnorderedTree α)) *
-            unop (GrossmanLarson.of' (B - B₁))) = 0
-      show (counit : ConnesKreimer R (UnorderedTree α) →ₐ[R] R)
-          ((unop
-              (insertion (R := R) (GrossmanLarson.of' A)
-                (GrossmanLarson.of' B₁)) : ConnesKreimer R (UnorderedTree α)) *
-            ConnesKreimer.of' (R := R) (B - B₁)) = 0
-      rw [h_summand B₁, hB₁add, hCBzero, mul_zero]
-    -- Now compute LHS via productForest expansion.
-    rw [GrossmanLarson.of'_mul_of']
-    unfold productForest
-    -- Goal: counit (unop ((B.powerset.map ...).sum)) = 0
-    rw [h_push_counit_unop_sum]
-    -- Goal: ((B.powerset.map ...).map (fun x => counit (unop x))).sum = 0
-    apply Multiset.sum_eq_zero
-    intro y hy
-    rw [Multiset.mem_map] at hy
-    obtain ⟨x, hx, hy_eq⟩ := hy
-    rw [← hy_eq]
-    exact h_each_zero x hx
-
-/-- The counit is multiplicative for the Grossman–Larson product. -/
-theorem counit_gl_mul (x y : ConnesKreimer R (UnorderedTree α)) :
-    (counit : ConnesKreimer R (UnorderedTree α) →ₐ[R] R)
-        (product (R := R) x y) =
-      (counit x) * (counit y) := by
-  let mulCK : ConnesKreimer R (UnorderedTree α) →ₗ[R]
-      ConnesKreimer R (UnorderedTree α) →ₗ[R] ConnesKreimer R (UnorderedTree α) :=
-    product (R := R) (α := α)
-  have h : mulCK.compr₂
-        (counit : ConnesKreimer R (UnorderedTree α) →ₐ[R] R).toLinearMap =
-      LinearMap.smulRight
-        (counit : ConnesKreimer R (UnorderedTree α) →ₐ[R] R).toLinearMap
-        (counit : ConnesKreimer R (UnorderedTree α) →ₐ[R] R).toLinearMap :=
-    ConnesKreimer.lhom_ext' fun A => ConnesKreimer.lhom_ext' fun B =>
-      counit_gl_mul_basis A B
+theorem bMinusLin_gl_mul (a : α) (x y : ConnesKreimer R (UnorderedTree α)) :
+    bMinusLin (R := R) a (product x y) =
+      counit x • bMinusLin (R := R) a y + product (bMinusLin (R := R) a x) y := by
+  have h : product.compr₂ (bMinusLin (R := R) a) =
+      (counit : ConnesKreimer R (UnorderedTree α) →ₐ[R] R).toLinearMap.smulRight
+          (bMinusLin (R := R) a) + product.comp (bMinusLin (R := R) a) :=
+    lhom_ext' fun A ↦ lhom_ext' fun B ↦ bMinusLin_gl_mul_basis a A B
   exact LinearMap.congr_fun (LinearMap.congr_fun h x) y
 
 /-- `⟨X ⋆ Y, B⁺_a z⟩ = ε(X) · ⟨B⁻_a Y, z⟩ + ⟨B⁻_a X ⋆ Y, z⟩`. -/
 theorem pairing_apply_bPlus_gl_mul (a : α)
     (X Y z : ConnesKreimer R (UnorderedTree α)) :
-    pairing (R := R) (product (R := R) X Y)
-      (ConnesKreimer.bPlusLin (R := R) a z) =
-      (counit X) * pairing (R := R) (bMinusLin (R := R) a Y) z +
-      pairing (R := R) (product (R := R) (bMinusLin (R := R) a X) Y) z := by
-  rw [← bMinusLin_pairing_adjoint a (product (R := R) X Y) z,
-      bMinusLin_gl_mul, LinearMap.map_add, LinearMap.add_apply,
-      show pairing (R := R)
-          (((counit : ConnesKreimer R (UnorderedTree α) →ₐ[R] R) X) •
-            bMinusLin (R := R) a Y) =
-        ((counit : ConnesKreimer R (UnorderedTree α) →ₐ[R] R) X) •
-          pairing (R := R) (bMinusLin a Y) from
-        LinearMap.map_smul (pairing : ConnesKreimer R _ →ₗ[R] _) _ _,
-      LinearMap.smul_apply, smul_eq_mul]
-  rfl
+    pairing (R := R) (product X Y) (bPlusLin (R := R) a z) =
+      counit X * pairing (R := R) (bMinusLin (R := R) a Y) z +
+        pairing (R := R) (product (bMinusLin (R := R) a X) Y) z := by
+  rw [← bMinusLin_pairing_adjoint, bMinusLin_gl_mul, map_add, LinearMap.add_apply, map_smul,
+    LinearMap.smul_apply, smul_eq_mul]
 
 end GrossmanLarson
-

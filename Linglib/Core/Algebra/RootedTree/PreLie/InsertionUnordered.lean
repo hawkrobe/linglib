@@ -19,19 +19,22 @@ This file defines `UnorderedTree.insertionMultiset F G`, the insertion of a gues
 a host forest `F` of nonplanar trees: the multiset, over all assignments of the trees of `G` to
 vertices of `F`, of the forests obtained by grafting each guest at its vertex. It is
 `RoseTree.insertionForest` read through `UnorderedTree.mk`, and Foissy's formula for the
-Guin–Oudom extension of the grafting product.
+Guin–Oudom extension of the grafting product. From it the file defines
+`UnorderedTree.productMultiset F G`, the forests of the Grossman–Larson product `F ⋆ G`: over the
+splits `G = G₁ + G₂`, the graftings of `G₂` into `F` with `G₁` placed alongside.
 
 ## Main results
 
 * `insertionMultiset_singleton_singleton`: one host and one guest give the grafting product.
 * `map_singleton_bind_insertSum`: two successive graftings, the degree-two case of Oudom and
   Guin's recursion for the extended product.
-* `insertionMultiset_singleton_node`: grafting into a single node splits the guests between the
-  root and the child forest.
+* `insertionMultiset_singleton_node`: grafting into a single node `node a A` puts the forests of
+  `A ⋆ B` under the root.
 * `insertionMultiset_add_host`: grafting into a disjoint union splits the guests between the two
   parts, the rule `AB ∘ C = (A ∘ C₍₁₎)(B ∘ C₍₂₎)` of Oudom and Guin's Proposition 3.7.
 * `insertionMultiset_antidiagonal`: splits of an output forest are splits of the host and of the
   guests, each guest following its host.
+* `productMultiset_zero_left`, `productMultiset_zero_right`: the empty forest is a unit.
 
 ## Implementation notes
 
@@ -196,20 +199,56 @@ theorem insertionMultiset_add_host (A B C : Multiset (UnorderedTree α)) :
   simp only [SProd.sprod, Multiset.product, Multiset.map_bind, Multiset.bind_map, Multiset.map_map]
   exact Multiset.bind_congr fun L₁ _ => Multiset.map_congr rfl fun L₂ _ => by simp
 
-/-- Grafting into a single node splits the guests between new children of the root and the
-child forest. -/
-theorem insertionMultiset_singleton_node [DecidableEq α] (a : α)
-    (A B : Multiset (UnorderedTree α)) :
-    insertionMultiset {node a A} B =
-      B.powerset.bind fun B₁ =>
-        (insertionMultiset A B₁).map fun F => {node a (F + (B - B₁))} := by
+/-! ### The Grossman–Larson product -/
+
+/-- `productMultiset F G` is the multiset of forests in the Grossman–Larson product `F ⋆ G`: over
+the splits `G = G₁ + G₂`, the forests `X + G₁` with `X` a grafting of the trees of `G₂` onto `F`. -/
+noncomputable def productMultiset (F G : Multiset (UnorderedTree α)) :
+    Multiset (Multiset (UnorderedTree α)) :=
+  G.antidiagonal.bind fun p ↦ (insertionMultiset F p.2).map (· + p.1)
+
+@[simp] theorem productMultiset_zero_right (F : Multiset (UnorderedTree α)) :
+    productMultiset F 0 = {F} := by
+  simp [productMultiset, insertionMultiset_zero_right]
+
+@[simp] theorem productMultiset_zero_left (G : Multiset (UnorderedTree α)) :
+    productMultiset 0 G = {G} := by
+  induction G using Multiset.induction with
+  | empty => simp [productMultiset, insertionMultiset_zero_right]
+  | cons a G ih =>
+    rw [productMultiset] at ih ⊢
+    rw [Multiset.antidiagonal_cons, Multiset.add_bind, Multiset.bind_map, Multiset.bind_map]
+    have h (p : Multiset (UnorderedTree α) × Multiset (UnorderedTree α)) :
+        (insertionMultiset 0 (a ::ₘ p.2)).map (· + p.1) = 0 := by
+      rw [insertionMultiset_zero_left_of_ne_zero _ (Multiset.cons_ne_zero), Multiset.map_zero]
+    simp only [Prod.map_fst, Prod.map_snd, id_eq, h, Multiset.bind_zero, zero_add]
+    simpa [Multiset.map_bind, Multiset.map_map, Function.comp_def] using
+      congrArg (Multiset.map (a ::ₘ ·)) ih
+
+/-- Two one-tree forests multiply to their disjoint union and their graftings. -/
+theorem productMultiset_singleton_singleton (T S : UnorderedTree α) :
+    productMultiset {T} {S} = {T, S} ::ₘ (T ◁ S).map ({·}) := by
+  rw [productMultiset, ← Multiset.cons_zero, Multiset.antidiagonal_cons, Multiset.antidiagonal_zero]
+  simp [insertionMultiset_zero_right, insertionMultiset_singleton_singleton, add_comm]
+
+/-- Every forest of `F ⋆ G` has at least as many trees as `F`. -/
+theorem card_le_of_mem_productMultiset {F G W : Multiset (UnorderedTree α)}
+    (h : W ∈ productMultiset F G) : F.card ≤ W.card := by
+  obtain ⟨p, -, h⟩ := Multiset.mem_bind.mp h
+  obtain ⟨X, hX, rfl⟩ := Multiset.mem_map.mp h
+  simp [insertionMultiset_card_eq F p.2 hX]
+
+/-- Grafting into a single node `node a A` puts the forests of `A ⋆ B` under the root: each guest
+is a new child of the root or grafted into `A`. -/
+theorem insertionMultiset_singleton_node (a : α) (A B : Multiset (UnorderedTree α)) :
+    insertionMultiset {node a A} B = (productMultiset A B).map fun F => {node a F} := by
+  rw [productMultiset, Multiset.map_bind]
+  simp only [Multiset.map_map, Function.comp_def]
   induction A using forest_inductionOn with | h cs =>
   induction B using forest_inductionOn with | h gs =>
-  rw [← Multiset.bind_map _ (fun p => (insertionMultiset _ p.2).map fun F => {node a (F + p.1)})
-      fun t => (_ - t, t), ← Multiset.antidiagonal_eq_map_powerset, antidiagonal_mk,
-    Multiset.bind_map, node_mk_tree_list, ← Multiset.coe_singleton, ← List.map_singleton,
-    insertionMultiset_mk, insertionForest_singleton, Multiset.map_map, insertion_node,
-    Multiset.map_bind]
+  rw [antidiagonal_mk, Multiset.bind_map, node_mk_tree_list, ← Multiset.coe_singleton,
+    ← List.map_singleton, insertionMultiset_mk, insertionForest_singleton, Multiset.map_map,
+    insertion_node, Multiset.map_bind]
   refine Multiset.bind_congr fun p _ => ?_
   rw [insertionMultiset_mk, Multiset.map_map, Multiset.map_map]
   refine Multiset.map_congr rfl fun L _ => ?_

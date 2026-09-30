@@ -31,7 +31,6 @@ import Linglib.Core.Algebra.RootedTree.Coproduct.TraceGrading
 import Linglib.Core.Algebra.RootedTree.DysonSchwinger
 import Linglib.Core.Algebra.RootedTree.FormSet
 import Linglib.Core.Algebra.RootedTree.GrossmanLarson.Basic
-import Linglib.Core.Algebra.RootedTree.GrossmanLarson.Monoid
 import Linglib.Core.Algebra.RootedTree.GrossmanLarson.Pairing
 import Linglib.Core.Algebra.RootedTree.GrossmanLarson.PairingMul
 import Linglib.Core.Algebra.RootedTree.HopfAlgebra
