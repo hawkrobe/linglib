@@ -17,7 +17,7 @@ namespace AlokBhalla2026.Examples
 
 open Data.Examples
 
-def ex_1a : LinguisticExample :=
+def ex_1a : Datum :=
   { id := "alokbhalla2026_1a"
     source := ⟨"alok-bhalla-2026", "(1a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_1a : LinguisticExample :=
     readings := []
     paperFeatures := [("marker", "-k"), ("addressee", "nh"), ("addresseeGender", "m"), ("clause", "matrix")] }
 
-def ex_1b : LinguisticExample :=
+def ex_1b : Datum :=
   { id := "alokbhalla2026_1b"
     source := ⟨"alok-bhalla-2026", "(1b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_1b : LinguisticExample :=
     readings := []
     paperFeatures := [("marker", "-n"), ("addressee", "nh"), ("addresseeGender", "f"), ("clause", "matrix")] }
 
-def ex_1c : LinguisticExample :=
+def ex_1c : Datum :=
   { id := "alokbhalla2026_1c"
     source := ⟨"alok-bhalla-2026", "(1c)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_1c : LinguisticExample :=
     readings := []
     paperFeatures := [("marker", "-zü"), ("addressee", "h"), ("clause", "matrix")] }
 
-def ex_1d : LinguisticExample :=
+def ex_1d : Datum :=
   { id := "alokbhalla2026_1d"
     source := ⟨"alok-bhalla-2026", "(1d)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_1d : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "matrix")] }
 
-def ex_2a : LinguisticExample :=
+def ex_2a : Datum :=
   { id := "alokbhalla2026_2a"
     source := ⟨"alok-bhalla-2026", "(2a)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_2a : LinguisticExample :=
     readings := []
     paperFeatures := [("marker", "-au"), ("subject", "nh"), ("addressee", "nh"), ("clause", "matrix")] }
 
-def ex_2b : LinguisticExample :=
+def ex_2b : Datum :=
   { id := "alokbhalla2026_2b"
     source := ⟨"alok-bhalla-2026", "(2b)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_2b : LinguisticExample :=
     readings := []
     paperFeatures := [("marker", "-o"), ("subject", "nh"), ("addressee", "h"), ("clause", "matrix")] }
 
-def ex_2c : LinguisticExample :=
+def ex_2c : Datum :=
   { id := "alokbhalla2026_2c"
     source := ⟨"alok-bhalla-2026", "(2c)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_2c : LinguisticExample :=
     readings := []
     paperFeatures := [("marker", "-ain"), ("subject", "nh"), ("addressee", "hh"), ("clause", "matrix")] }
 
-def ex_3 : LinguisticExample :=
+def ex_3 : Datum :=
   { id := "alokbhalla2026_3"
     source := ⟨"alok-bhalla-2026", "(3)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_3 : LinguisticExample :=
     readings := []
     paperFeatures := [("marker", "-au"), ("subject", "nh"), ("addressee", "nh"), ("clause", "matrix")] }
 
-def ex_4 : LinguisticExample :=
+def ex_4 : Datum :=
   { id := "alokbhalla2026_4"
     source := ⟨"alok-bhalla-2026", "(4)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_4 : LinguisticExample :=
     readings := []
     paperFeatures := [("marker", "-thu(n)"), ("subject", "h"), ("addressee", "nh"), ("clause", "matrix")] }
 
-def ex_5 : LinguisticExample :=
+def ex_5 : Datum :=
   { id := "alokbhalla2026_5"
     source := ⟨"alok-bhalla-2026", "(5)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_5 : LinguisticExample :=
     readings := []
     paperFeatures := [("marker", "-ain"), ("subject", "nh"), ("addressee", "hh"), ("clause", "matrix")] }
 
-def ex_6 : LinguisticExample :=
+def ex_6 : Datum :=
   { id := "alokbhalla2026_6"
     source := ⟨"alok-bhalla-2026", "(6)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_6 : LinguisticExample :=
     readings := []
     paperFeatures := [("marker", "-thi(n)"), ("subject", "hh"), ("addressee", "hh"), ("clause", "matrix")] }
 
-def ex_7 : LinguisticExample :=
+def ex_7 : Datum :=
   { id := "alokbhalla2026_7"
     source := ⟨"alok-bhalla-2026", "(7)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_7 : LinguisticExample :=
     readings := []
     paperFeatures := [("marker", "-ŋgæ"), ("addressee", "h"), ("clause", "matrix")] }
 
-def ex_8a : LinguisticExample :=
+def ex_8a : Datum :=
   { id := "alokbhalla2026_8a"
     source := ⟨"alok-bhalla-2026", "(8a)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_8a : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "supnita"), ("speechStyle", "form"), ("clause", "matrix"), ("status", "lt"), ("formal", "+")] }
 
-def ex_8b : LinguisticExample :=
+def ex_8b : Datum :=
   { id := "alokbhalla2026_8b"
     source := ⟨"alok-bhalla-2026", "(8b)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_8b : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "eyo"), ("speechStyle", "pol"), ("clause", "matrix"), ("status", "lt"), ("formal", "-")] }
 
-def ex_8c : LinguisticExample :=
+def ex_8c : Datum :=
   { id := "alokbhalla2026_8c"
     source := ⟨"alok-bhalla-2026", "(8c)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_8c : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "ney"), ("speechStyle", "fam"), ("clause", "matrix")] }
 
-def ex_8d : LinguisticExample :=
+def ex_8d : Datum :=
   { id := "alokbhalla2026_8d"
     source := ⟨"alok-bhalla-2026", "(8d)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_8d : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "e"), ("speechStyle", "intim"), ("clause", "matrix"), ("status", "ge"), ("formal", "-")] }
 
-def ex_9a : LinguisticExample :=
+def ex_9a : Datum :=
   { id := "alokbhalla2026_9a"
     source := ⟨"alok-bhalla-2026", "(9a)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex_9a : LinguisticExample :=
     readings := []
     paperFeatures := [("marker", "vos"), ("clause", "embedded"), ("embedding", "factive")] }
 
-def ex_9b : LinguisticExample :=
+def ex_9b : Datum :=
   { id := "alokbhalla2026_9b"
     source := ⟨"alok-bhalla-2026", "(9b)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex_9b : LinguisticExample :=
     readings := []
     paperFeatures := [("marker", "che"), ("clause", "embedded"), ("embedding", "relative")] }
 
-def ex_10 : LinguisticExample :=
+def ex_10 : Datum :=
   { id := "alokbhalla2026_10"
     source := ⟨"alok-bhalla-2026", "(10)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex_10 : LinguisticExample :=
     readings := []
     paperFeatures := [("marker", "che"), ("clause", "matrix")] }
 
-def ex_11 : LinguisticExample :=
+def ex_11 : Datum :=
   { id := "alokbhalla2026_11"
     source := ⟨"alok-bhalla-2026", "(11)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex_11 : LinguisticExample :=
     readings := []
     paperFeatures := [("argumentAgreement", "2sg"), ("clause", "matrix")] }
 
-def ex_12 : LinguisticExample :=
+def ex_12 : Datum :=
   { id := "alokbhalla2026_12"
     source := ⟨"alok-bhalla-2026", "(12)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex_12 : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "embedded"), ("embedding", "complement")] }
 
-def ex_13 : LinguisticExample :=
+def ex_13 : Datum :=
   { id := "alokbhalla2026_13"
     source := ⟨"alok-bhalla-2026", "(13)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex_13 : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "supnita"), ("clause", "embedded"), ("embedding", "saying")] }
 
-def ex_14a : LinguisticExample :=
+def ex_14a : Datum :=
   { id := "alokbhalla2026_14a"
     source := ⟨"alok-bhalla-2026", "(14a)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex_14a : LinguisticExample :=
     readings := []
     paperFeatures := [("marker", "-mas-"), ("clause", "embedded"), ("embedding", "saying")] }
 
-def ex_14b : LinguisticExample :=
+def ex_14b : Datum :=
   { id := "alokbhalla2026_14b"
     source := ⟨"alok-bhalla-2026", "(14b)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex_14b : LinguisticExample :=
     readings := []
     paperFeatures := [("marker", "-mas-"), ("clause", "embedded"), ("embedding", "believe")] }
 
-def ex_15 : LinguisticExample :=
+def ex_15 : Datum :=
   { id := "alokbhalla2026_15"
     source := ⟨"alok-bhalla-2026", "(15)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex_15 : LinguisticExample :=
     readings := []
     paperFeatures := [("marker", "-mas-"), ("clause", "embedded"), ("embedding", "reason")] }
 
-def ex_16 : LinguisticExample :=
+def ex_16 : Datum :=
   { id := "alokbhalla2026_16"
     source := ⟨"alok-bhalla-2026", "(16)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex_16 : LinguisticExample :=
     readings := []
     paperFeatures := [("marker", "-au"), ("addressee", "nh"), ("clause", "embedded"), ("embedding", "perceptual")] }
 
-def ex_17 : LinguisticExample :=
+def ex_17 : Datum :=
   { id := "alokbhalla2026_17"
     source := ⟨"alok-bhalla-2026", "(17)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def ex_17 : LinguisticExample :=
     readings := []
     paperFeatures := [("marker", "-au"), ("addressee", "nh"), ("clause", "embedded"), ("embedding", "relative")] }
 
-def ex_18 : LinguisticExample :=
+def ex_18 : Datum :=
   { id := "alokbhalla2026_18"
     source := ⟨"alok-bhalla-2026", "(18)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def ex_18 : LinguisticExample :=
     readings := []
     paperFeatures := [("marker", "-au"), ("addressee", "nh"), ("clause", "embedded"), ("embedding", "nounComplement")] }
 
-def ex_21 : LinguisticExample :=
+def ex_21 : Datum :=
   { id := "alokbhalla2026_21"
     source := ⟨"alok-bhalla-2026", "(21)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def ex_21 : LinguisticExample :=
     readings := []
     paperFeatures := [("marker", "che"), ("clause", "embedded"), ("embedding", "wh")] }
 
-def ex_30a : LinguisticExample :=
+def ex_30a : Datum :=
   { id := "alokbhalla2026_30a"
     source := ⟨"alok-bhalla-2026", "(30a)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def ex_30a : LinguisticExample :=
     readings := []
     paperFeatures := [("marker", "-au"), ("addressee", "nh"), ("clause", "embedded"), ("embedding", "nonfinite")] }
 
-def ex_30b : LinguisticExample :=
+def ex_30b : Datum :=
   { id := "alokbhalla2026_30b"
     source := ⟨"alok-bhalla-2026", "(30b)"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def ex_30b : LinguisticExample :=
     readings := []
     paperFeatures := [("marker", "-au"), ("addressee", "nh"), ("clause", "embedded"), ("embedding", "nonfinite")] }
 
-def ex_31a : LinguisticExample :=
+def ex_31a : Datum :=
   { id := "alokbhalla2026_31a"
     source := ⟨"alok-bhalla-2026", "(31a)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def ex_31a : LinguisticExample :=
     readings := []
     paperFeatures := [("marker", "-ŋgæ"), ("clause", "matrix"), ("positions", "2")] }
 
-def ex_31b : LinguisticExample :=
+def ex_31b : Datum :=
   { id := "alokbhalla2026_31b"
     source := ⟨"alok-bhalla-2026", "(31b)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def ex_31b : LinguisticExample :=
     readings := []
     paperFeatures := [("marker", "-ŋgæ"), ("clause", "embedded"), ("embedding", "saying"), ("positions", "1")] }
 
-def ex_32 : LinguisticExample :=
+def ex_32 : Datum :=
   { id := "alokbhalla2026_32"
     source := ⟨"alok-bhalla-2026", "(32)"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def ex_32 : LinguisticExample :=
     readings := []
     paperFeatures := [("marker", "che"), ("clause", "embedded"), ("embedding", "infinitive")] }
 
-def ex_33a : LinguisticExample :=
+def ex_33a : Datum :=
   { id := "alokbhalla2026_33a"
     source := ⟨"alok-bhalla-2026", "(33a)"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def ex_33a : LinguisticExample :=
     readings := []
     paperFeatures := [("marker", "-mas-"), ("clause", "embedded"), ("embedding", "koto")] }
 
-def ex_33b : LinguisticExample :=
+def ex_33b : Datum :=
   { id := "alokbhalla2026_33b"
     source := ⟨"alok-bhalla-2026", "(33b)"⟩
     reportedIn := none
@@ -485,7 +485,7 @@ def ex_33b : LinguisticExample :=
     readings := []
     paperFeatures := [("marker", "-mas-"), ("clause", "embedded"), ("embedding", "yooni")] }
 
-def ex_33c : LinguisticExample :=
+def ex_33c : Datum :=
   { id := "alokbhalla2026_33c"
     source := ⟨"alok-bhalla-2026", "(33c)"⟩
     reportedIn := none
@@ -498,7 +498,7 @@ def ex_33c : LinguisticExample :=
     readings := []
     paperFeatures := [("marker", "-mas-"), ("clause", "embedded"), ("embedding", "to")] }
 
-def ex_35 : LinguisticExample :=
+def ex_35 : Datum :=
   { id := "alokbhalla2026_35"
     source := ⟨"alok-bhalla-2026", "(35)"⟩
     reportedIn := none
@@ -511,7 +511,7 @@ def ex_35 : LinguisticExample :=
     readings := []
     paperFeatures := [("pronoun2", "nh"), ("tv", "T")] }
 
-def ex_36 : LinguisticExample :=
+def ex_36 : Datum :=
   { id := "alokbhalla2026_36"
     source := ⟨"alok-bhalla-2026", "(36)"⟩
     reportedIn := none
@@ -524,7 +524,7 @@ def ex_36 : LinguisticExample :=
     readings := []
     paperFeatures := [("pronoun2", "h"), ("tv", "V")] }
 
-def ex_39 : LinguisticExample :=
+def ex_39 : Datum :=
   { id := "alokbhalla2026_39"
     source := ⟨"alok-bhalla-2026", "(39)"⟩
     reportedIn := none
@@ -537,7 +537,7 @@ def ex_39 : LinguisticExample :=
     readings := []
     paperFeatures := [("pronoun2", "nh"), ("subject", "nh")] }
 
-def ex_40 : LinguisticExample :=
+def ex_40 : Datum :=
   { id := "alokbhalla2026_40"
     source := ⟨"alok-bhalla-2026", "(40)"⟩
     reportedIn := none
@@ -550,7 +550,7 @@ def ex_40 : LinguisticExample :=
     readings := []
     paperFeatures := [("pronoun2", "hh"), ("subject", "nh")] }
 
-def ex_41 : LinguisticExample :=
+def ex_41 : Datum :=
   { id := "alokbhalla2026_41"
     source := ⟨"alok-bhalla-2026", "(41)"⟩
     reportedIn := none
@@ -563,7 +563,7 @@ def ex_41 : LinguisticExample :=
     readings := []
     paperFeatures := [("pronoun2", "hh"), ("pronoun2Other", "nh"), ("subject", "nh")] }
 
-def ex_42 : LinguisticExample :=
+def ex_42 : Datum :=
   { id := "alokbhalla2026_42"
     source := ⟨"alok-bhalla-2026", "(42)"⟩
     reportedIn := none
@@ -576,7 +576,7 @@ def ex_42 : LinguisticExample :=
     readings := []
     paperFeatures := [("pronoun2", "hh"), ("marker", "-ain"), ("addressee", "hh"), ("subject", "nh")] }
 
-def ex_43 : LinguisticExample :=
+def ex_43 : Datum :=
   { id := "alokbhalla2026_43"
     source := ⟨"alok-bhalla-2026", "(43)"⟩
     reportedIn := none
@@ -589,7 +589,7 @@ def ex_43 : LinguisticExample :=
     readings := []
     paperFeatures := [("pronoun2", "nh"), ("marker", "-au"), ("addressee", "nh"), ("subject", "nh")] }
 
-def ex_44a : LinguisticExample :=
+def ex_44a : Datum :=
   { id := "alokbhalla2026_44a"
     source := ⟨"alok-bhalla-2026", "(44a)"⟩
     reportedIn := none
@@ -602,7 +602,7 @@ def ex_44a : LinguisticExample :=
     readings := []
     paperFeatures := [("pronoun3", "nh"), ("subject", "nh")] }
 
-def ex_44b : LinguisticExample :=
+def ex_44b : Datum :=
   { id := "alokbhalla2026_44b"
     source := ⟨"alok-bhalla-2026", "(44b)"⟩
     reportedIn := none
@@ -615,7 +615,7 @@ def ex_44b : LinguisticExample :=
     readings := []
     paperFeatures := [("pronoun3", "h"), ("subject", "nh")] }
 
-def ex_45 : LinguisticExample :=
+def ex_45 : Datum :=
   { id := "alokbhalla2026_45"
     source := ⟨"alok-bhalla-2026", "(45)"⟩
     reportedIn := none
@@ -628,7 +628,7 @@ def ex_45 : LinguisticExample :=
     readings := []
     paperFeatures := [("pronoun2", "hh"), ("pronoun3", "nh"), ("pronoun3Other", "h"), ("subject", "hh")] }
 
-def ex_48a : LinguisticExample :=
+def ex_48a : Datum :=
   { id := "alokbhalla2026_48a"
     source := ⟨"alok-bhalla-2026", "(48a)"⟩
     reportedIn := none
@@ -641,7 +641,7 @@ def ex_48a : LinguisticExample :=
     readings := []
     paperFeatures := [("subjectHon", "h"), ("subjectNumber", "sg"), ("agreement", "pl")] }
 
-def ex_48b : LinguisticExample :=
+def ex_48b : Datum :=
   { id := "alokbhalla2026_48b"
     source := ⟨"alok-bhalla-2026", "(48b)"⟩
     reportedIn := none
@@ -654,7 +654,7 @@ def ex_48b : LinguisticExample :=
     readings := []
     paperFeatures := [("subjectHon", "nh"), ("subjectNumber", "sg"), ("agreement", "sg")] }
 
-def ex_48c : LinguisticExample :=
+def ex_48c : Datum :=
   { id := "alokbhalla2026_48c"
     source := ⟨"alok-bhalla-2026", "(48c)"⟩
     reportedIn := none
@@ -667,6 +667,6 @@ def ex_48c : LinguisticExample :=
     readings := []
     paperFeatures := [("subjectHon", "nh"), ("subjectNumber", "pl"), ("agreement", "pl")] }
 
-def all : List LinguisticExample := [ex_1a, ex_1b, ex_1c, ex_1d, ex_2a, ex_2b, ex_2c, ex_3, ex_4, ex_5, ex_6, ex_7, ex_8a, ex_8b, ex_8c, ex_8d, ex_9a, ex_9b, ex_10, ex_11, ex_12, ex_13, ex_14a, ex_14b, ex_15, ex_16, ex_17, ex_18, ex_21, ex_30a, ex_30b, ex_31a, ex_31b, ex_32, ex_33a, ex_33b, ex_33c, ex_35, ex_36, ex_39, ex_40, ex_41, ex_42, ex_43, ex_44a, ex_44b, ex_45, ex_48a, ex_48b, ex_48c]
+def all : List Datum := [ex_1a, ex_1b, ex_1c, ex_1d, ex_2a, ex_2b, ex_2c, ex_3, ex_4, ex_5, ex_6, ex_7, ex_8a, ex_8b, ex_8c, ex_8d, ex_9a, ex_9b, ex_10, ex_11, ex_12, ex_13, ex_14a, ex_14b, ex_15, ex_16, ex_17, ex_18, ex_21, ex_30a, ex_30b, ex_31a, ex_31b, ex_32, ex_33a, ex_33b, ex_33c, ex_35, ex_36, ex_39, ex_40, ex_41, ex_42, ex_43, ex_44a, ex_44b, ex_45, ex_48a, ex_48b, ex_48c]
 
 end AlokBhalla2026.Examples

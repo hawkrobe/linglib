@@ -17,7 +17,7 @@ namespace Ahn2015.Examples
 
 open Data.Examples
 
-def ex_1 : LinguisticExample :=
+def ex_1 : Datum :=
   { id := "ahn2015_1"
     source := ⟨"ahn-2015", "(1)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "too"), ("polarity", "positive"), ("focus", "John")] }
 
-def ex_2 : LinguisticExample :=
+def ex_2 : Datum :=
   { id := "ahn2015_2"
     source := ⟨"ahn-2015", "(2)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "either"), ("polarity", "negative"), ("focus", "John")] }
 
-def ex_3 : LinguisticExample :=
+def ex_3 : Datum :=
   { id := "ahn2015_3"
     source := ⟨"ahn-2015", "(3)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_3 : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "either"), ("polarity", "positive")] }
 
-def ex_5_too : LinguisticExample :=
+def ex_5_too : Datum :=
   { id := "ahn2015_5_too"
     source := ⟨"rullmann-2003", "(5)"⟩
     reportedIn := some ⟨"ahn-2015", "(5)"⟩
@@ -69,7 +69,7 @@ def ex_5_too : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "too"), ("polarity", "positive"), ("antecedent", "positive")] }
 
-def ex_5_either : LinguisticExample :=
+def ex_5_either : Datum :=
   { id := "ahn2015_5_either"
     source := ⟨"rullmann-2003", "(5)"⟩
     reportedIn := some ⟨"ahn-2015", "(5)"⟩
@@ -82,7 +82,7 @@ def ex_5_either : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "either"), ("polarity", "negative"), ("antecedent", "positive")] }
 
-def ex_9 : LinguisticExample :=
+def ex_9 : Datum :=
   { id := "ahn2015_9"
     source := ⟨"ahn-2015", "(9)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_9 : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "either"), ("polarity", "negative")] }
 
-def ex_10 : LinguisticExample :=
+def ex_10 : Datum :=
   { id := "ahn2015_10"
     source := ⟨"ahn-2015", "(10)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_10 : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "either"), ("polarity", "positive")] }
 
-def ex_11 : LinguisticExample :=
+def ex_11 : Datum :=
   { id := "ahn2015_11"
     source := ⟨"ahn-2015", "(11a)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_11 : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "either"), ("polarity", "positive"), ("operator", "almost")] }
 
-def ex_12 : LinguisticExample :=
+def ex_12 : Datum :=
   { id := "ahn2015_12"
     source := ⟨"kripke-2009", "(12)"⟩
     reportedIn := some ⟨"ahn-2015", "(12)"⟩
@@ -134,7 +134,7 @@ def ex_12 : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "too"), ("polarity", "positive"), ("focus", "John")] }
 
-def ex_15 : LinguisticExample :=
+def ex_15 : Datum :=
   { id := "ahn2015_15"
     source := ⟨"kripke-2009", "(15)"⟩
     reportedIn := some ⟨"ahn-2015", "(15)"⟩
@@ -147,7 +147,7 @@ def ex_15 : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "too"), ("polarity", "positive"), ("distinctness", "John and the boss must be distinct")] }
 
-def ex_23 : LinguisticExample :=
+def ex_23 : Datum :=
   { id := "ahn2015_23"
     source := ⟨"ahn-2015", "(23)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_23 : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "too"), ("polarity", "negative"), ("scope", "negation below too")] }
 
-def ex_24 : LinguisticExample :=
+def ex_24 : Datum :=
   { id := "ahn2015_24"
     source := ⟨"ahn-2015", "(24)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_24 : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "too"), ("polarity", "negative"), ("scope", "negation above too")] }
 
-def ex_26a : LinguisticExample :=
+def ex_26a : Datum :=
   { id := "ahn2015_26a"
     source := ⟨"ahn-2015", "(26a)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_26a : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "none"), ("test", "Abrusán entailment")] }
 
-def ex_26b : LinguisticExample :=
+def ex_26b : Datum :=
   { id := "ahn2015_26b"
     source := ⟨"ahn-2015", "(26b)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_26b : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "as well"), ("test", "Abrusán entailment")] }
 
-def ex_29 : LinguisticExample :=
+def ex_29 : Datum :=
   { id := "ahn2015_29"
     source := ⟨"ahn-2015", "(29)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_29 : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "too"), ("polarity", "positive"), ("antecedent", "not presupposed")] }
 
-def ex_32 : LinguisticExample :=
+def ex_32 : Datum :=
   { id := "ahn2015_32"
     source := ⟨"ahn-2015", "(32)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_32 : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "either"), ("polarity", "negative"), ("focus", "John")] }
 
-def ex_41 : LinguisticExample :=
+def ex_41 : Datum :=
   { id := "ahn2015_41"
     source := ⟨"ahn-2015", "(41)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex_41 : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "either"), ("polarity", "positive")] }
 
-def ex_43 : LinguisticExample :=
+def ex_43 : Datum :=
   { id := "ahn2015_43"
     source := ⟨"ahn-2015", "(43)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex_43 : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "either"), ("polarity", "negative")] }
 
-def ex_45 : LinguisticExample :=
+def ex_45 : Datum :=
   { id := "ahn2015_45"
     source := ⟨"ahn-2015", "(45)"⟩
     reportedIn := none
@@ -264,6 +264,6 @@ def ex_45 : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "either"), ("polarity", "positive"), ("operator", "almost")] }
 
-def all : List LinguisticExample := [ex_1, ex_2, ex_3, ex_5_too, ex_5_either, ex_9, ex_10, ex_11, ex_12, ex_15, ex_23, ex_24, ex_26a, ex_26b, ex_29, ex_32, ex_41, ex_43, ex_45]
+def all : List Datum := [ex_1, ex_2, ex_3, ex_5_too, ex_5_either, ex_9, ex_10, ex_11, ex_12, ex_15, ex_23, ex_24, ex_26a, ex_26b, ex_29, ex_32, ex_41, ex_43, ex_45]
 
 end Ahn2015.Examples

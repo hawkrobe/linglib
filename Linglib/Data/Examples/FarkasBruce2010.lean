@@ -17,7 +17,7 @@ namespace FarkasBruce2010.Examples
 
 open Data.Examples
 
-def ex_36_yes : LinguisticExample :=
+def ex_36_yes : Datum :=
   { id := "farkasbruce2010_36_yes"
     source := ⟨"farkas-bruce-2010", "(36)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_36_yes : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "assertion"), ("input", "positive"), ("response", "positive"), ("particle", "yes")] }
 
-def ex_36_no : LinguisticExample :=
+def ex_36_no : Datum :=
   { id := "farkasbruce2010_36_no"
     source := ⟨"farkas-bruce-2010", "(36)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_36_no : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "assertion"), ("input", "positive"), ("response", "negative"), ("particle", "no")] }
 
-def ex_37_yes : LinguisticExample :=
+def ex_37_yes : Datum :=
   { id := "farkasbruce2010_37_yes"
     source := ⟨"farkas-bruce-2010", "(37)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_37_yes : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "question"), ("input", "positive"), ("response", "positive"), ("particle", "yes")] }
 
-def ex_37_no : LinguisticExample :=
+def ex_37_no : Datum :=
   { id := "farkasbruce2010_37_no"
     source := ⟨"farkas-bruce-2010", "(37)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_37_no : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "question"), ("input", "positive"), ("response", "negative"), ("particle", "no")] }
 
-def ex_35_assertion_yes : LinguisticExample :=
+def ex_35_assertion_yes : Datum :=
   { id := "farkasbruce2010_35_assertion_yes"
     source := ⟨"farkas-bruce-2010", "(35)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_35_assertion_yes : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "assertion"), ("input", "negative"), ("response", "positive"), ("particle", "yes")] }
 
-def ex_35_assertion_no : LinguisticExample :=
+def ex_35_assertion_no : Datum :=
   { id := "farkasbruce2010_35_assertion_no"
     source := ⟨"farkas-bruce-2010", "(35)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_35_assertion_no : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "assertion"), ("input", "negative"), ("response", "negative"), ("particle", "no")] }
 
-def ex_35_question_yes : LinguisticExample :=
+def ex_35_question_yes : Datum :=
   { id := "farkasbruce2010_35_question_yes"
     source := ⟨"farkas-bruce-2010", "(35)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_35_question_yes : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "question"), ("input", "negative"), ("response", "positive"), ("particle", "yes")] }
 
-def ex_35_question_no : LinguisticExample :=
+def ex_35_question_no : Datum :=
   { id := "farkasbruce2010_35_question_no"
     source := ⟨"farkas-bruce-2010", "(35)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_35_question_no : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "question"), ("input", "negative"), ("response", "negative"), ("particle", "no")] }
 
-def ex_38_yes : LinguisticExample :=
+def ex_38_yes : Datum :=
   { id := "farkasbruce2010_38_yes"
     source := ⟨"farkas-bruce-2010", "(38)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_38_yes : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "assertion"), ("input", "negative"), ("response", "negative"), ("particle", "yes")] }
 
-def ex_38_no : LinguisticExample :=
+def ex_38_no : Datum :=
   { id := "farkasbruce2010_38_no"
     source := ⟨"farkas-bruce-2010", "(38)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_38_no : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "assertion"), ("input", "negative"), ("response", "positive"), ("particle", "no")] }
 
-def ex_50_assertion : LinguisticExample :=
+def ex_50_assertion : Datum :=
   { id := "farkasbruce2010_50_assertion"
     source := ⟨"farkas-bruce-2010", "(50)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_50_assertion : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "assertion"), ("input", "negative"), ("response", "negative"), ("particle", "yes"), ("particle2", "no")] }
 
-def ex_50_question : LinguisticExample :=
+def ex_50_question : Datum :=
   { id := "farkasbruce2010_50_question"
     source := ⟨"farkas-bruce-2010", "(50)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_50_question : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "question"), ("input", "negative"), ("response", "negative"), ("particle", "yes"), ("particle2", "no")] }
 
-def ex_4_nu : LinguisticExample :=
+def ex_4_nu : Datum :=
   { id := "farkasbruce2010_4_nu"
     source := ⟨"farkas-bruce-2010", "(4)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_4_nu : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "question"), ("input", "positive"), ("response", "negative"), ("particle", "nu")] }
 
-def ex_4_ba_nu : LinguisticExample :=
+def ex_4_ba_nu : Datum :=
   { id := "farkasbruce2010_4_ba_nu"
     source := ⟨"farkas-bruce-2010", "(4)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_4_ba_nu : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "question"), ("input", "positive"), ("response", "negative"), ("particle", "ba"), ("particle2", "nu")] }
 
-def ex_5_nu : LinguisticExample :=
+def ex_5_nu : Datum :=
   { id := "farkasbruce2010_5_nu"
     source := ⟨"farkas-bruce-2010", "(5)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_5_nu : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "assertion"), ("input", "positive"), ("response", "negative"), ("particle", "nu")] }
 
-def ex_5_ba_nu : LinguisticExample :=
+def ex_5_ba_nu : Datum :=
   { id := "farkasbruce2010_5_ba_nu"
     source := ⟨"farkas-bruce-2010", "(5)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_5_ba_nu : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "assertion"), ("input", "positive"), ("response", "negative"), ("particle", "ba"), ("particle2", "nu")] }
 
-def ex_39_da : LinguisticExample :=
+def ex_39_da : Datum :=
   { id := "farkasbruce2010_39_da"
     source := ⟨"farkas-bruce-2010", "(39)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex_39_da : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "assertion"), ("input", "positive"), ("response", "positive"), ("particle", "da")] }
 
-def ex_40_nu : LinguisticExample :=
+def ex_40_nu : Datum :=
   { id := "farkasbruce2010_40_nu"
     source := ⟨"farkas-bruce-2010", "(40)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex_40_nu : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "assertion"), ("input", "negative"), ("response", "negative"), ("particle", "nu")] }
 
-def ex_41_da : LinguisticExample :=
+def ex_41_da : Datum :=
   { id := "farkasbruce2010_41_da"
     source := ⟨"farkas-bruce-2010", "(41)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex_41_da : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "question"), ("input", "positive"), ("response", "positive"), ("particle", "da")] }
 
-def ex_41_nu : LinguisticExample :=
+def ex_41_nu : Datum :=
   { id := "farkasbruce2010_41_nu"
     source := ⟨"farkas-bruce-2010", "(41)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex_41_nu : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "question"), ("input", "positive"), ("response", "negative"), ("particle", "nu")] }
 
-def ex_42_ba_nu : LinguisticExample :=
+def ex_42_ba_nu : Datum :=
   { id := "farkasbruce2010_42_ba_nu"
     source := ⟨"farkas-bruce-2010", "(42)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex_42_ba_nu : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "assertion"), ("input", "positive"), ("response", "negative"), ("particle", "ba"), ("particle2", "nu")] }
 
-def ex_42_nu : LinguisticExample :=
+def ex_42_nu : Datum :=
   { id := "farkasbruce2010_42_nu"
     source := ⟨"farkas-bruce-2010", "(42)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex_42_nu : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "assertion"), ("input", "positive"), ("response", "negative"), ("particle", "nu")] }
 
-def ex_43_nu : LinguisticExample :=
+def ex_43_nu : Datum :=
   { id := "farkasbruce2010_43_nu"
     source := ⟨"farkas-bruce-2010", "(43)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex_43_nu : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "question"), ("input", "positive"), ("response", "negative"), ("particle", "nu")] }
 
-def ex_43_ba_nu : LinguisticExample :=
+def ex_43_ba_nu : Datum :=
   { id := "farkasbruce2010_43_ba_nu"
     source := ⟨"farkas-bruce-2010", "(43)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex_43_ba_nu : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "question"), ("input", "positive"), ("response", "negative"), ("particle", "ba"), ("particle2", "nu")] }
 
-def ex_44_ba_da : LinguisticExample :=
+def ex_44_ba_da : Datum :=
   { id := "farkasbruce2010_44_ba_da"
     source := ⟨"farkas-bruce-2010", "(44)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex_44_ba_da : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "assertion"), ("input", "negative"), ("response", "positive"), ("particle", "ba"), ("particle2", "da")] }
 
-def ex_45_ba_da : LinguisticExample :=
+def ex_45_ba_da : Datum :=
   { id := "farkasbruce2010_45_ba_da"
     source := ⟨"farkas-bruce-2010", "(45)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex_45_ba_da : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "question"), ("input", "negative"), ("response", "positive"), ("particle", "ba"), ("particle2", "da")] }
 
-def ex_46_si : LinguisticExample :=
+def ex_46_si : Datum :=
   { id := "farkasbruce2010_46_si"
     source := ⟨"farkas-bruce-2010", "(46)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def ex_46_si : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "assertion"), ("input", "negative"), ("response", "positive"), ("particle", "si")] }
 
-def ex_47_si : LinguisticExample :=
+def ex_47_si : Datum :=
   { id := "farkasbruce2010_47_si"
     source := ⟨"farkas-bruce-2010", "(47)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def ex_47_si : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "question"), ("input", "negative"), ("response", "positive"), ("particle", "si")] }
 
-def ex_48_doch : LinguisticExample :=
+def ex_48_doch : Datum :=
   { id := "farkasbruce2010_48_doch"
     source := ⟨"farkas-bruce-2010", "(48)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def ex_48_doch : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "assertion"), ("input", "negative"), ("response", "positive"), ("particle", "doch")] }
 
-def ex_49_doch : LinguisticExample :=
+def ex_49_doch : Datum :=
   { id := "farkasbruce2010_49_doch"
     source := ⟨"farkas-bruce-2010", "(49)"⟩
     reportedIn := none
@@ -407,6 +407,6 @@ def ex_49_doch : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "question"), ("input", "negative"), ("response", "positive"), ("particle", "doch")] }
 
-def all : List LinguisticExample := [ex_36_yes, ex_36_no, ex_37_yes, ex_37_no, ex_35_assertion_yes, ex_35_assertion_no, ex_35_question_yes, ex_35_question_no, ex_38_yes, ex_38_no, ex_50_assertion, ex_50_question, ex_4_nu, ex_4_ba_nu, ex_5_nu, ex_5_ba_nu, ex_39_da, ex_40_nu, ex_41_da, ex_41_nu, ex_42_ba_nu, ex_42_nu, ex_43_nu, ex_43_ba_nu, ex_44_ba_da, ex_45_ba_da, ex_46_si, ex_47_si, ex_48_doch, ex_49_doch]
+def all : List Datum := [ex_36_yes, ex_36_no, ex_37_yes, ex_37_no, ex_35_assertion_yes, ex_35_assertion_no, ex_35_question_yes, ex_35_question_no, ex_38_yes, ex_38_no, ex_50_assertion, ex_50_question, ex_4_nu, ex_4_ba_nu, ex_5_nu, ex_5_ba_nu, ex_39_da, ex_40_nu, ex_41_da, ex_41_nu, ex_42_ba_nu, ex_42_nu, ex_43_nu, ex_43_ba_nu, ex_44_ba_da, ex_45_ba_da, ex_46_si, ex_47_si, ex_48_doch, ex_49_doch]
 
 end FarkasBruce2010.Examples

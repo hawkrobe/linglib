@@ -17,7 +17,7 @@ namespace Pancheva2003.Examples
 
 open Data.Examples
 
-def ex1a_U : LinguisticExample :=
+def ex1a_U : Datum :=
   { id := "pancheva2003_ex1a_U"
     source := ⟨"pancheva-2003", "(1a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex1a_U : LinguisticExample :=
     readings := [("universal (live-in-LA holds throughout 2000-now)", .acceptable)]
     paperFeatures := [] }
 
-def ex1b_EXP : LinguisticExample :=
+def ex1b_EXP : Datum :=
   { id := "pancheva2003_ex1b_EXP"
     source := ⟨"pancheva-2003", "(1b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex1b_EXP : LinguisticExample :=
     readings := [("experiential (LA-being at some past subinterval)", .acceptable)]
     paperFeatures := [] }
 
-def ex1c_RES : LinguisticExample :=
+def ex1c_RES : Datum :=
   { id := "pancheva2003_ex1c_RES"
     source := ⟨"pancheva-2003", "(1c)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex1c_RES : LinguisticExample :=
     readings := [("resultative (arrived + still in LA at utterance)", .acceptable)]
     paperFeatures := [] }
 
-def ex5a_atelic : LinguisticExample :=
+def ex5a_atelic : Datum :=
   { id := "pancheva2003_ex5a_atelic"
     source := ⟨"pancheva-2003", "(5a)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex5a_atelic : LinguisticExample :=
     readings := [("experiential (running at some past time)", .acceptable), ("resultative", .ungrammatical)]
     paperFeatures := [] }
 
-def ex6a_telic : LinguisticExample :=
+def ex6a_telic : Datum :=
   { id := "pancheva2003_ex6a_telic"
     source := ⟨"pancheva-2003", "(6a)"⟩
     reportedIn := none
@@ -82,6 +82,6 @@ def ex6a_telic : LinguisticExample :=
     readings := [("experiential (lost at some past time)", .acceptable), ("resultative (lost + still missing now)", .acceptable)]
     paperFeatures := [] }
 
-def all : List LinguisticExample := [ex1a_U, ex1b_EXP, ex1c_RES, ex5a_atelic, ex6a_telic]
+def all : List Datum := [ex1a_U, ex1b_EXP, ex1c_RES, ex5a_atelic, ex6a_telic]
 
 end Pancheva2003.Examples

@@ -98,7 +98,7 @@ theorem satisfiesDurativeRestriction_iff (c : VendlerClass) :
   cases c <;> decide
 
 /-- The Vendler class a row records. -/
-def vendlerOf (row : LinguisticExample) : Option VendlerClass :=
+def vendlerOf (row : Datum) : Option VendlerClass :=
   match row.feature? "vendler_class" with
   | some "state" => some .state
   | some "activity" => some .activity

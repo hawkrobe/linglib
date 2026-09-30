@@ -146,7 +146,7 @@ instance : DecidablePred Condition.Prominent
 
 /-- A grammatical row of the survey: the role, whether it is indexed, and the paper's
 condition. -/
-def datum (r : LinguisticExample) : Option (ArgumentRole × Bool × Condition) := do
+def datum (r : Datum) : Option (ArgumentRole × Bool × Condition) := do
   if r.judgment ≠ .acceptable then none
   let role ← r.parse? "role" [("A", ArgumentRole.A), ("P", .P)]
   let ix ← r.parse? "indexed" [("true", true), ("false", false)]
@@ -181,7 +181,7 @@ inductive IndexedArgs where
   deriving DecidableEq, Repr
 
 /-- A scenario of the paper's table, the persons of A and P, with the arguments indexed. -/
-def scenario (r : LinguisticExample) : Option (Scenario Person × IndexedArgs) := do
+def scenario (r : Datum) : Option (Scenario Person × IndexedArgs) := do
   let persons := [("1", Person.first), ("2", .second), ("3", .third)]
   let a ← r.parse? "aPerson" persons
   let p ← r.parse? "pPerson" persons

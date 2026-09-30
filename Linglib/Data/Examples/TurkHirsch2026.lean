@@ -17,7 +17,7 @@ namespace TurkHirsch2026.Examples
 
 open Data.Examples
 
-def ex_4 : LinguisticExample :=
+def ex_4 : Datum :=
   { id := "turkhirsch2026_4"
     source := ⟨"turk-hirsch-2026", "(4)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_4 : LinguisticExample :=
     readings := []
     paperFeatures := [("clitic_site", "default"), ("focus", "sigma")] }
 
-def ex_5 : LinguisticExample :=
+def ex_5 : Datum :=
   { id := "turkhirsch2026_5"
     source := ⟨"turk-hirsch-2026", "(5)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_5 : LinguisticExample :=
     readings := []
     paperFeatures := [("clitic_site", "subject"), ("focus", "subject")] }
 
-def ex_6a : LinguisticExample :=
+def ex_6a : Datum :=
   { id := "turkhirsch2026_6a"
     source := ⟨"turk-hirsch-2026", "(6a)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_6a : LinguisticExample :=
     readings := []
     paperFeatures := [("answer", "negative particle"), ("complete", "no")] }
 
-def ex_6b : LinguisticExample :=
+def ex_6b : Datum :=
   { id := "turkhirsch2026_6b"
     source := ⟨"turk-hirsch-2026", "(6b)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_6b : LinguisticExample :=
     readings := []
     paperFeatures := [("answer", "negative particle with continuation"), ("complete", "yes")] }
 
-def ex_14 : LinguisticExample :=
+def ex_14 : Datum :=
   { id := "turkhirsch2026_14"
     source := ⟨"turk-hirsch-2026", "(14)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_14 : LinguisticExample :=
     readings := []
     paperFeatures := [("clitic_site", "below diye"), ("matrix", "declarative")] }
 
-def ex_18 : LinguisticExample :=
+def ex_18 : Datum :=
   { id := "turkhirsch2026_18"
     source := ⟨"turk-hirsch-2026", "(18)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_18 : LinguisticExample :=
     readings := []
     paperFeatures := [("clitic_site", "above diye"), ("matrix", "question")] }
 
-def ex_35a : LinguisticExample :=
+def ex_35a : Datum :=
   { id := "turkhirsch2026_35a"
     source := ⟨"turk-hirsch-2026", "(35a)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_35a : LinguisticExample :=
     readings := []
     paperFeatures := [("answer", "positive"), ("complete", "yes")] }
 
-def ex_35b : LinguisticExample :=
+def ex_35b : Datum :=
   { id := "turkhirsch2026_35b"
     source := ⟨"turk-hirsch-2026", "(35b)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_35b : LinguisticExample :=
     readings := []
     paperFeatures := [("answer", "modal conjunction"), ("complete", "over-informative")] }
 
-def ex_41 : LinguisticExample :=
+def ex_41 : Datum :=
   { id := "turkhirsch2026_41"
     source := ⟨"turk-hirsch-2026", "(41)"⟩
     reportedIn := none
@@ -134,6 +134,6 @@ def ex_41 : LinguisticExample :=
     readings := []
     paperFeatures := [("answer", "modal"), ("complete", "no")] }
 
-def all : List LinguisticExample := [ex_4, ex_5, ex_6a, ex_6b, ex_14, ex_18, ex_35a, ex_35b, ex_41]
+def all : List Datum := [ex_4, ex_5, ex_6a, ex_6b, ex_14, ex_18, ex_35a, ex_35b, ex_41]
 
 end TurkHirsch2026.Examples

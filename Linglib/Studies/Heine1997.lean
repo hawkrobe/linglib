@@ -221,14 +221,14 @@ theorem overlap_of_gradual (f : ℕ → Finset Meaning) (hf : Gradual f) (h0 : f
 /-! ### The rows -/
 
 /-- The schema a row instantiates. -/
-def schema (r : LinguisticExample) : Option Schema :=
+def schema (r : Datum) : Option Schema :=
   r.parse? "schema" [("action", .action), ("location", .location), ("companion", .companion),
     ("genitive", .genitive), ("goal", .goal), ("source", .source), ("topic", .topic),
     ("equation", .equation)]
 
 /-- The meanings a row's construction carries, read from whether the source and the target
 readings are available. -/
-def meanings (r : LinguisticExample) : Finset Meaning :=
+def meanings (r : Datum) : Finset Meaning :=
   (if r.feature? "source" = some "true" then {Meaning.source} else ∅) ∪
     (if r.feature? "target" = some "true" then {Meaning.target} else ∅)
 
@@ -242,7 +242,7 @@ ambiguous (73c) at the overlap stage. -/
 theorem russian_stages : ∀ i, stage i ∈ russianData := by decide +kernel
 
 /-- The possessive notion a row expresses. -/
-def notion (r : LinguisticExample) : Option Notion :=
+def notion (r : Datum) : Option Notion :=
   r.parse? "notion" [("physical", .physical), ("temporary", .temporary),
     ("permanent", .permanent), ("inalienable", .inalienable), ("abstract", .abstract),
     ("inanimateInalienable", .inanimateInalienable), ("inanimateAlienable", .inanimateAlienable)]

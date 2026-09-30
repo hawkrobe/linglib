@@ -17,7 +17,7 @@ namespace Carstens2026.Examples
 
 open Data.Examples
 
-def ex6a : LinguisticExample :=
+def ex6a : Datum :=
   { id := "carstens2026_ex6a"
     source := ⟨"carstens-2026", "(6a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex6a : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunct1", "ummi"), ("conjunct2", "umongameli"), ("agreement", "2")] }
 
-def ex6b : LinguisticExample :=
+def ex6b : Datum :=
   { id := "carstens2026_ex6b"
     source := ⟨"carstens-2026", "(6b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex6b : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunct1", "uL"), ("conjunct2", "uM"), ("agreement", "2")] }
 
-def ex7b : LinguisticExample :=
+def ex7b : Datum :=
   { id := "carstens2026_ex7b"
     source := ⟨"carstens-2026", "(7b)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex7b : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunct1", "isanuse"), ("conjunct2", "isazi"), ("agreement", "8")] }
 
-def ex8b : LinguisticExample :=
+def ex8b : Datum :=
   { id := "carstens2026_ex8b"
     source := ⟨"carstens-2026", "(8b)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex8b : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunct1", "iqanda"), ("conjunct2", "icepe"), ("agreement", "8"), ("rejected", "6")] }
 
-def ex9a : LinguisticExample :=
+def ex9a : Datum :=
   { id := "carstens2026_ex9a"
     source := ⟨"carstens-2026", "(9a)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex9a : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunct1", "isanuse"), ("conjunct2", "intombi"), ("agreement", "2")] }
 
-def ex9b : LinguisticExample :=
+def ex9b : Datum :=
   { id := "carstens2026_ex9b"
     source := ⟨"carstens-2026", "(9b)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex9b : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunct1", "ubhaka"), ("conjunct2", "incwadi"), ("agreement", "8")] }
 
-def ex37a : LinguisticExample :=
+def ex37a : Datum :=
   { id := "carstens2026_ex37a"
     source := ⟨"carstens-2026", "(37a)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex37a : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunct1", "umgewu"), ("conjunct2", "umlwelwe"), ("agreement", "2"), ("rejected", "4"), ("matching", "0"), ("default", "15"), ("judgments", "15")] }
 
-def ex38a : LinguisticExample :=
+def ex38a : Datum :=
   { id := "carstens2026_ex38a"
     source := ⟨"carstens-2026", "(38a)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex38a : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunct1", "umnqwazi"), ("conjunct2", "umpu"), ("agreement", "8"), ("rejected", "4"), ("matching", "1"), ("default", "33"), ("judgments", "45")] }
 
-def ex38b : LinguisticExample :=
+def ex38b : Datum :=
   { id := "carstens2026_ex38b"
     source := ⟨"carstens-2026", "(38b)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex38b : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunct1", "umhlonyane"), ("conjunct2", "umnquma"), ("agreement", "8"), ("rejected", "4")] }
 
-def ex38c : LinguisticExample :=
+def ex38c : Datum :=
   { id := "carstens2026_ex38c"
     source := ⟨"carstens-2026", "(38c)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex38c : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunct1", "umkhonto"), ("conjunct2", "umbhobho"), ("agreement", "8"), ("rejected", "4")] }
 
-def ex40a : LinguisticExample :=
+def ex40a : Datum :=
   { id := "carstens2026_ex40a"
     source := ⟨"carstens-2026", "(40a)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex40a : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunct1", "igqwetha"), ("conjunct2", "isela"), ("agreement", "2"), ("rejected", "6"), ("matching", "0"), ("default", "19"), ("judgments", "30")] }
 
-def ex40b : LinguisticExample :=
+def ex40b : Datum :=
   { id := "carstens2026_ex40b"
     source := ⟨"carstens-2026", "(40b)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex40b : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunct1", "igorha"), ("conjunct2", "ikhoboka"), ("agreement", "2"), ("rejected", "6")] }
 
-def ex41a : LinguisticExample :=
+def ex41a : Datum :=
   { id := "carstens2026_ex41a"
     source := ⟨"carstens-2026", "(41a)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex41a : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunct1", "ilitye"), ("conjunct2", "iqanda"), ("agreement", "8"), ("rejected", "6"), ("matching", "0"), ("default", "22"), ("judgments", "30")] }
 
-def ex41b : LinguisticExample :=
+def ex41b : Datum :=
   { id := "carstens2026_ex41b"
     source := ⟨"carstens-2026", "(41b)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex41b : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunct1", "icepe"), ("conjunct2", "icici"), ("agreement", "8"), ("rejected", "6")] }
 
-def ex44 : LinguisticExample :=
+def ex44 : Datum :=
   { id := "carstens2026_ex44"
     source := ⟨"carstens-2026", "(44)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex44 : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunct1", "umntwana"), ("conjunct2", "umfazi"), ("agreement", "2"), ("matching", "30"), ("default", "30"), ("judgments", "30")] }
 
-def ex45a : LinguisticExample :=
+def ex45a : Datum :=
   { id := "carstens2026_ex45a"
     source := ⟨"carstens-2026", "(45a)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex45a : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunct1", "uL"), ("conjunct2", "uM"), ("agreement", "2"), ("matching", "22"), ("default", "7"), ("judgments", "30")] }
 
-def ex45b : LinguisticExample :=
+def ex45b : Datum :=
   { id := "carstens2026_ex45b"
     source := ⟨"carstens-2026", "(45b)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex45b : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunct1", "uloliwe"), ("conjunct2", "umatshini"), ("agreement", "2")] }
 
-def ex46a : LinguisticExample :=
+def ex46a : Datum :=
   { id := "carstens2026_ex46a"
     source := ⟨"carstens-2026", "(46a)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex46a : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunct1", "isibane"), ("conjunct2", "isitya"), ("agreement", "8"), ("matching", "30"), ("default", "30"), ("judgments", "30")] }
 
-def ex46b : LinguisticExample :=
+def ex46b : Datum :=
   { id := "carstens2026_ex46b"
     source := ⟨"carstens-2026", "(46b)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex46b : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunct1", "isiXhosa"), ("conjunct2", "isiZulu"), ("agreement", "8")] }
 
-def ex47a : LinguisticExample :=
+def ex47a : Datum :=
   { id := "carstens2026_ex47a"
     source := ⟨"carstens-2026", "(47a)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex47a : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunct1", "isanuse"), ("conjunct2", "isangoma"), ("agreement", "8"), ("agreement", "2"), ("matching", "18"), ("default", "9"), ("judgments", "30")] }
 
-def ex47b : LinguisticExample :=
+def ex47b : Datum :=
   { id := "carstens2026_ex47b"
     source := ⟨"carstens-2026", "(47b)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex47b : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunct1", "isibhanxa"), ("conjunct2", "isazi"), ("agreement", "8"), ("agreement", "2")] }
 
-def ex48a : LinguisticExample :=
+def ex48a : Datum :=
   { id := "carstens2026_ex48a"
     source := ⟨"carstens-2026", "(48a)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex48a : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunct1", "intombi"), ("conjunct2", "imbongi"), ("agreement", "10"), ("agreement", "2"), ("matching", "15"), ("default", "12"), ("judgments", "30")] }
 
-def ex48b : LinguisticExample :=
+def ex48b : Datum :=
   { id := "carstens2026_ex48b"
     source := ⟨"carstens-2026", "(48b)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex48b : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunct1", "ingcaphephe"), ("conjunct2", "ingcali"), ("agreement", "10"), ("agreement", "2")] }
 
-def ex49a : LinguisticExample :=
+def ex49a : Datum :=
   { id := "carstens2026_ex49a"
     source := ⟨"carstens-2026", "(49a)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex49a : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunct1", "incwadi"), ("conjunct2", "ipeni"), ("agreement", "10"), ("agreement", "8"), ("matching", "30"), ("default", "30"), ("judgments", "30")] }
 
-def ex49b : LinguisticExample :=
+def ex49b : Datum :=
   { id := "carstens2026_ex49b"
     source := ⟨"carstens-2026", "(49b)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex49b : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunct1", "indlovu"), ("conjunct2", "ingwe"), ("agreement", "10")] }
 
-def ex55a : LinguisticExample :=
+def ex55a : Datum :=
   { id := "carstens2026_ex55a"
     source := ⟨"carstens-2026", "(55a)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex55a : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunct1", "umvundla"), ("conjunct2", "umqhagi"), ("agreement", "10"), ("rejected", "4")] }
 
-def ex55b : LinguisticExample :=
+def ex55b : Datum :=
   { id := "carstens2026_ex55b"
     source := ⟨"carstens-2026", "(55b)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def ex55b : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunct1", "isikhova"), ("conjunct2", "ihobe"), ("agreement", "10")] }
 
-def ex81a : LinguisticExample :=
+def ex81a : Datum :=
   { id := "carstens2026_ex81a"
     source := ⟨"carstens-2026", "(81a)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def ex81a : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunct1", "uL"), ("conjunct2", "uM"), ("agreement", "8")] }
 
-def ex81b : LinguisticExample :=
+def ex81b : Datum :=
   { id := "carstens2026_ex81b"
     source := ⟨"carstens-2026", "(81b)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def ex81b : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunct1", "isibhanxa"), ("conjunct2", "isazi"), ("agreement", "2")] }
 
-def ex83 : LinguisticExample :=
+def ex83 : Datum :=
   { id := "carstens2026_ex83"
     source := ⟨"carstens-2026", "(83)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def ex83 : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunct1", "unonkala"), ("conjunct2", "ukrebe"), ("agreement", "2"), ("agreement", "10")] }
 
-def ex85a : LinguisticExample :=
+def ex85a : Datum :=
   { id := "carstens2026_ex85a"
     source := ⟨"carstens-2026", "(85a)"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def ex85a : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunct1", "umgulukudu"), ("conjunct2", "ipolisa"), ("agreement", "2")] }
 
-def ex85b : LinguisticExample :=
+def ex85b : Datum :=
   { id := "carstens2026_ex85b"
     source := ⟨"carstens-2026", "(85b)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def ex85b : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunct1", "umnqathe"), ("conjunct2", "iqanda"), ("agreement", "8")] }
 
-def ex89 : LinguisticExample :=
+def ex89 : Datum :=
   { id := "carstens2026_ex89"
     source := ⟨"carstens-2026", "(89)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def ex89 : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunct1", "umntwana"), ("conjunct2", "uloliwe"), ("agreement", "2")] }
 
-def ex91 : LinguisticExample :=
+def ex91 : Datum :=
   { id := "carstens2026_ex91"
     source := ⟨"carstens-2026", "(91)"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def ex91 : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunct1", "intombi"), ("conjunct2", "uloliwe"), ("rejected", "8"), ("rejected", "2")] }
 
-def ex111 : LinguisticExample :=
+def ex111 : Datum :=
   { id := "carstens2026_ex111"
     source := ⟨"carstens-2026", "(111)"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def ex111 : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunct1", "umntwana"), ("conjunct2", "indlovu"), ("rejected", "2"), ("rejected", "10")] }
 
-def ex58 : LinguisticExample :=
+def ex58 : Datum :=
   { id := "carstens2026_ex58"
     source := ⟨"carstens-2026", "(58)"⟩
     reportedIn := none
@@ -485,7 +485,7 @@ def ex58 : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunct1", "murume"), ("conjunct2", "mukadzi"), ("agreement", "2")] }
 
-def ex59 : LinguisticExample :=
+def ex59 : Datum :=
   { id := "carstens2026_ex59"
     source := ⟨"carstens-2026", "(59)"⟩
     reportedIn := none
@@ -498,7 +498,7 @@ def ex59 : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunct1", "munwe"), ("conjunct2", "muromo"), ("agreement", "8"), ("rejected", "4")] }
 
-def ex60 : LinguisticExample :=
+def ex60 : Datum :=
   { id := "carstens2026_ex60"
     source := ⟨"carstens-2026", "(60)"⟩
     reportedIn := none
@@ -511,7 +511,7 @@ def ex60 : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunct1", "dombo"), ("conjunct2", "zai"), ("agreement", "8"), ("rejected", "6")] }
 
-def ex61 : LinguisticExample :=
+def ex61 : Datum :=
   { id := "carstens2026_ex61"
     source := ⟨"carstens-2026", "(61)"⟩
     reportedIn := none
@@ -524,7 +524,7 @@ def ex61 : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunct1", "benzi"), ("conjunct2", "dinga"), ("agreement", "2"), ("rejected", "6")] }
 
-def ex62 : LinguisticExample :=
+def ex62 : Datum :=
   { id := "carstens2026_ex62"
     source := ⟨"carstens-2026", "(62)"⟩
     reportedIn := none
@@ -537,7 +537,7 @@ def ex62 : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunct1", "chingwa"), ("conjunct2", "chibage"), ("agreement", "8")] }
 
-def ex63 : LinguisticExample :=
+def ex63 : Datum :=
   { id := "carstens2026_ex63"
     source := ⟨"carstens-2026", "(63)"⟩
     reportedIn := none
@@ -550,7 +550,7 @@ def ex63 : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunct1", "chidhakwa"), ("conjunct2", "chikomana"), ("agreement", "2"), ("agreement", "8")] }
 
-def ex64b : LinguisticExample :=
+def ex64b : Datum :=
   { id := "carstens2026_ex64b"
     source := ⟨"carstens-2026", "(64b)"⟩
     reportedIn := none
@@ -563,7 +563,7 @@ def ex64b : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunct1", "nherera"), ("conjunct2", "nyanzvi"), ("agreement", "2"), ("rejected", "10")] }
 
-def ex64c : LinguisticExample :=
+def ex64c : Datum :=
   { id := "carstens2026_ex64c"
     source := ⟨"carstens-2026", "(64c)"⟩
     reportedIn := none
@@ -576,7 +576,7 @@ def ex64c : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunct1", "imbwa"), ("conjunct2", "mhou"), ("agreement", "8"), ("rejected", "10")] }
 
-def ex64d : LinguisticExample :=
+def ex64d : Datum :=
   { id := "carstens2026_ex64d"
     source := ⟨"carstens-2026", "(64d)"⟩
     reportedIn := none
@@ -589,7 +589,7 @@ def ex64d : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunct1", "mhuno"), ("conjunct2", "nzeve"), ("agreement", "8"), ("rejected", "10")] }
 
-def ex64e : LinguisticExample :=
+def ex64e : Datum :=
   { id := "carstens2026_ex64e"
     source := ⟨"carstens-2026", "(64e)"⟩
     reportedIn := none
@@ -602,7 +602,7 @@ def ex64e : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunct1", "mbiya"), ("conjunct2", "sando"), ("agreement", "8"), ("rejected", "10")] }
 
-def ex64f : LinguisticExample :=
+def ex64f : Datum :=
   { id := "carstens2026_ex64f"
     source := ⟨"carstens-2026", "(64f)"⟩
     reportedIn := none
@@ -615,7 +615,7 @@ def ex64f : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunct1", "nyota"), ("conjunct2", "nzara"), ("agreement", "8"), ("rejected", "10")] }
 
-def ex65a : LinguisticExample :=
+def ex65a : Datum :=
   { id := "carstens2026_ex65a"
     source := ⟨"carstens-2026", "(65a)"⟩
     reportedIn := none
@@ -628,7 +628,7 @@ def ex65a : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunct1", "rukova"), ("conjunct2", "rukova"), ("agreement", "8"), ("rejected", "10")] }
 
-def ex66a : LinguisticExample :=
+def ex66a : Datum :=
   { id := "carstens2026_ex66a"
     source := ⟨"carstens-2026", "(66a)"⟩
     reportedIn := none
@@ -641,7 +641,7 @@ def ex66a : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunct1", "uta"), ("conjunct2", "utanho"), ("agreement", "8"), ("rejected", "6")] }
 
-def ex68a : LinguisticExample :=
+def ex68a : Datum :=
   { id := "carstens2026_ex68a"
     source := ⟨"carstens-2026", "(68a)"⟩
     reportedIn := none
@@ -654,7 +654,7 @@ def ex68a : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunct1", "kasikana"), ("conjunct2", "kakomana"), ("agreement", "2"), ("rejected", "13")] }
 
-def ex68b : LinguisticExample :=
+def ex68b : Datum :=
   { id := "carstens2026_ex68b"
     source := ⟨"carstens-2026", "(68b)"⟩
     reportedIn := none
@@ -667,6 +667,6 @@ def ex68b : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunct1", "kamba"), ("conjunct2", "kamotokari"), ("agreement", "8"), ("rejected", "13")] }
 
-def all : List LinguisticExample := [ex6a, ex6b, ex7b, ex8b, ex9a, ex9b, ex37a, ex38a, ex38b, ex38c, ex40a, ex40b, ex41a, ex41b, ex44, ex45a, ex45b, ex46a, ex46b, ex47a, ex47b, ex48a, ex48b, ex49a, ex49b, ex55a, ex55b, ex81a, ex81b, ex83, ex85a, ex85b, ex89, ex91, ex111, ex58, ex59, ex60, ex61, ex62, ex63, ex64b, ex64c, ex64d, ex64e, ex64f, ex65a, ex66a, ex68a, ex68b]
+def all : List Datum := [ex6a, ex6b, ex7b, ex8b, ex9a, ex9b, ex37a, ex38a, ex38b, ex38c, ex40a, ex40b, ex41a, ex41b, ex44, ex45a, ex45b, ex46a, ex46b, ex47a, ex47b, ex48a, ex48b, ex49a, ex49b, ex55a, ex55b, ex81a, ex81b, ex83, ex85a, ex85b, ex89, ex91, ex111, ex58, ex59, ex60, ex61, ex62, ex63, ex64b, ex64c, ex64d, ex64e, ex64f, ex65a, ex66a, ex68a, ex68b]
 
 end Carstens2026.Examples

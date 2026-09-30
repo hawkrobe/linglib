@@ -52,7 +52,7 @@ mismatches among the diagnostics.
 
 namespace Svenonius2004
 
-open Data.Examples (LinguisticExample)
+open Data.Examples (Datum)
 open Morphology (Morph)
 open Morphology.Word (Tree)
 open Aspect (Perfectivity)
@@ -180,7 +180,7 @@ end Structure
 prefix sequence, outermost first. -/
 structure Analysis where
   /-- The attested example. -/
-  ex : LinguisticExample
+  ex : Datum
   /-- The fragment verb stem. -/
   stem : Stem
   /-- The classified fragment prefix morphs, outermost first. -/

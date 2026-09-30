@@ -17,7 +17,7 @@ namespace Umbach2004.Examples
 
 open Data.Examples
 
-def ex_9a : LinguisticExample :=
+def ex_9a : Datum :=
   { id := "umbach2004_9a"
     source := ⟨"umbach-2004", "(9a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_9a : LinguisticExample :=
     readings := []
     paperFeatures := [("condition", "semantic independence"), ("construction", "coordination")] }
 
-def ex_9b : LinguisticExample :=
+def ex_9b : Datum :=
   { id := "umbach2004_9b"
     source := ⟨"umbach-2004", "(9b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_9b : LinguisticExample :=
     readings := [("port as a drink", .acceptable), ("port as a harbour", .questionable)]
     paperFeatures := [("condition", "common integrator"), ("construction", "coordination")] }
 
-def ex_10a : LinguisticExample :=
+def ex_10a : Datum :=
   { id := "umbach2004_10a"
     source := ⟨"umbach-2004", "(10a)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_10a : LinguisticExample :=
     readings := []
     paperFeatures := [("condition", "semantic independence"), ("construction", "focus")] }
 
-def ex_10b : LinguisticExample :=
+def ex_10b : Datum :=
   { id := "umbach2004_10b"
     source := ⟨"umbach-2004", "(10b)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_10b : LinguisticExample :=
     readings := []
     paperFeatures := [("condition", "common integrator"), ("construction", "focus")] }
 
-def ex_12 : LinguisticExample :=
+def ex_12 : Datum :=
   { id := "umbach2004_12"
     source := ⟨"umbach-2004", "(12)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_12 : LinguisticExample :=
     readings := []
     paperFeatures := [("focus", "contrastive"), ("exclusion", "instead")] }
 
-def ex_14a : LinguisticExample :=
+def ex_14a : Datum :=
   { id := "umbach2004_14a"
     source := ⟨"umbach-2004", "(14a)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_14a : LinguisticExample :=
     readings := []
     paperFeatures := [("focus", "contrastive"), ("exclusion", "instead"), ("presupposition", "someone went shopping")] }
 
-def ex_14b : LinguisticExample :=
+def ex_14b : Datum :=
   { id := "umbach2004_14b"
     source := ⟨"umbach-2004", "(14b)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_14b : LinguisticExample :=
     readings := []
     paperFeatures := [("focus", "only-phrase"), ("exclusion", "in addition"), ("presupposition", "Ronald went shopping")] }
 
-def ex_16a : LinguisticExample :=
+def ex_16a : Datum :=
   { id := "umbach2004_16a"
     source := ⟨"umbach-2004", "(16a)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_16a : LinguisticExample :=
     readings := []
     paperFeatures := [("focus", "verb phrase"), ("contrast", "activity")] }
 
-def ex_16b : LinguisticExample :=
+def ex_16b : Datum :=
   { id := "umbach2004_16b"
     source := ⟨"umbach-2004", "(16b)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_16b : LinguisticExample :=
     readings := []
     paperFeatures := [("focus", "subject"), ("contrast", "person")] }
 
-def ex_17b : LinguisticExample :=
+def ex_17b : Datum :=
   { id := "umbach2004_17b"
     source := ⟨"umbach-2004", "(17b)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_17b : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "and"), ("answer", "confirm+confirm")] }
 
-def ex_17c : LinguisticExample :=
+def ex_17c : Datum :=
   { id := "umbach2004_17c"
     source := ⟨"umbach-2004", "(17c)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_17c : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "but"), ("answer", "confirm+confirm")] }
 
-def ex_17d : LinguisticExample :=
+def ex_17d : Datum :=
   { id := "umbach2004_17d"
     source := ⟨"umbach-2004", "(17d)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_17d : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "but"), ("answer", "deny+deny")] }
 
-def ex_17e : LinguisticExample :=
+def ex_17e : Datum :=
   { id := "umbach2004_17e"
     source := ⟨"umbach-2004", "(17e)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_17e : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "but"), ("answer", "confirm+deny")] }
 
-def ex_17f : LinguisticExample :=
+def ex_17f : Datum :=
   { id := "umbach2004_17f"
     source := ⟨"umbach-2004", "(17f)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_17f : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "but"), ("answer", "confirm+deny"), ("negation", "implicit")] }
 
-def ex_17g : LinguisticExample :=
+def ex_17g : Datum :=
   { id := "umbach2004_17g"
     source := ⟨"umbach-2004", "(17g)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_17g : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "but"), ("answer", "deny+confirm")] }
 
-def ex_19a : LinguisticExample :=
+def ex_19a : Datum :=
   { id := "umbach2004_19a"
     source := ⟨"umbach-2004", "(19a)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_19a : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "but"), ("contrast", "simple"), ("exclusion", "in addition")] }
 
-def ex_19b : LinguisticExample :=
+def ex_19b : Datum :=
   { id := "umbach2004_19b"
     source := ⟨"umbach-2004", "(19b)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex_19b : LinguisticExample :=
     readings := []
     paperFeatures := [("focus", "only-phrase"), ("exclusion", "in addition")] }
 
-def ex_21b : LinguisticExample :=
+def ex_21b : Datum :=
   { id := "umbach2004_21b"
     source := ⟨"umbach-2004", "(21b)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex_21b : LinguisticExample :=
     readings := []
     paperFeatures := [("contrast", "simple"), ("alternatives", "individuals")] }
 
-def ex_22a : LinguisticExample :=
+def ex_22a : Datum :=
   { id := "umbach2004_22a"
     source := ⟨"umbach-2004", "(22a)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex_22a : LinguisticExample :=
     readings := []
     paperFeatures := [("contrast", "double")] }
 
-def ex_23a : LinguisticExample :=
+def ex_23a : Datum :=
   { id := "umbach2004_23a"
     source := ⟨"umbach-2004", "(23a)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex_23a : LinguisticExample :=
     readings := []
     paperFeatures := [("relation", "correction"), ("conjuncts", "non-sentential")] }
 
-def ex_23b : LinguisticExample :=
+def ex_23b : Datum :=
   { id := "umbach2004_23b"
     source := ⟨"umbach-2004", "(23b)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex_23b : LinguisticExample :=
     readings := []
     paperFeatures := [("relation", "correction"), ("connective", "sondern")] }
 
-def ex_23c : LinguisticExample :=
+def ex_23c : Datum :=
   { id := "umbach2004_23c"
     source := ⟨"umbach-2004", "(23c)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex_23c : LinguisticExample :=
     readings := []
     paperFeatures := [("relation", "contrast")] }
 
-def ex_23d : LinguisticExample :=
+def ex_23d : Datum :=
   { id := "umbach2004_23d"
     source := ⟨"umbach-2004", "(23d)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex_23d : LinguisticExample :=
     readings := []
     paperFeatures := [("relation", "correction"), ("connective", "sondern")] }
 
-def ex_24a : LinguisticExample :=
+def ex_24a : Datum :=
   { id := "umbach2004_24a"
     source := ⟨"umbach-2004", "(24a)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex_24a : LinguisticExample :=
     readings := []
     paperFeatures := [("relation", "contrast"), ("counterfactual", "John might have gone to Berlin in addition to Paris")] }
 
-def ex_25a : LinguisticExample :=
+def ex_25a : Datum :=
   { id := "umbach2004_25a"
     source := ⟨"umbach-2004", "(25a)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex_25a : LinguisticExample :=
     readings := []
     paperFeatures := [("relation", "correction"), ("counterfactual", "he might have gone to Berlin instead of Paris")] }
 
-def ex_26b : LinguisticExample :=
+def ex_26b : Datum :=
   { id := "umbach2004_26b"
     source := ⟨"umbach-2004", "(26b)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex_26b : LinguisticExample :=
     readings := []
     paperFeatures := [("relation", "correction"), ("exclusion", "instead")] }
 
-def ex_27b : LinguisticExample :=
+def ex_27b : Datum :=
   { id := "umbach2004_27b"
     source := ⟨"umbach-2004", "(27b)"⟩
     reportedIn := none
@@ -368,6 +368,6 @@ def ex_27b : LinguisticExample :=
     readings := []
     paperFeatures := [("relation", "contrast"), ("exclusion", "in addition")] }
 
-def all : List LinguisticExample := [ex_9a, ex_9b, ex_10a, ex_10b, ex_12, ex_14a, ex_14b, ex_16a, ex_16b, ex_17b, ex_17c, ex_17d, ex_17e, ex_17f, ex_17g, ex_19a, ex_19b, ex_21b, ex_22a, ex_23a, ex_23b, ex_23c, ex_23d, ex_24a, ex_25a, ex_26b, ex_27b]
+def all : List Datum := [ex_9a, ex_9b, ex_10a, ex_10b, ex_12, ex_14a, ex_14b, ex_16a, ex_16b, ex_17b, ex_17c, ex_17d, ex_17e, ex_17f, ex_17g, ex_19a, ex_19b, ex_21b, ex_22a, ex_23a, ex_23b, ex_23c, ex_23d, ex_24a, ex_25a, ex_26b, ex_27b]
 
 end Umbach2004.Examples

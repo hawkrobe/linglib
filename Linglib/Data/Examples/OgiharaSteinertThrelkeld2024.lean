@@ -17,7 +17,7 @@ namespace OgiharaSteinertThrelkeld2024.Examples
 
 open Data.Examples
 
-def ost2024_after_veridical : LinguisticExample :=
+def ost2024_after_veridical : Datum :=
   { id := "ost2024_after_veridical"
     source := ⟨"ogihara-steinert-threlkeld-2024", "veridicality"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ost2024_after_veridical : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "veridicality"), ("connective", "after"), ("complement_entailed", "true")] }
 
-def ost2024_before_nonveridical : LinguisticExample :=
+def ost2024_before_nonveridical : Datum :=
   { id := "ost2024_before_nonveridical"
     source := ⟨"ogihara-steinert-threlkeld-2024", "veridicality"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ost2024_before_nonveridical : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "veridicality"), ("connective", "before"), ("complement_entailed", "false")] }
 
-def ost2024_before_counterfactual : LinguisticExample :=
+def ost2024_before_counterfactual : Datum :=
   { id := "ost2024_before_counterfactual"
     source := ⟨"ogihara-steinert-threlkeld-2024", "veridicality"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ost2024_before_counterfactual : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "veridicality"), ("connective", "before"), ("complement_entailed", "false")] }
 
-def ost2024_after_veridical_2 : LinguisticExample :=
+def ost2024_after_veridical_2 : Datum :=
   { id := "ost2024_after_veridical_2"
     source := ⟨"ogihara-steinert-threlkeld-2024", "veridicality"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ost2024_after_veridical_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "veridicality"), ("connective", "after"), ("complement_entailed", "true")] }
 
-def ost2024_before_noncommittal : LinguisticExample :=
+def ost2024_before_noncommittal : Datum :=
   { id := "ost2024_before_noncommittal"
     source := ⟨"beaver-condoravdi-2003", "(43)"⟩
     reportedIn := some ⟨"ogihara-steinert-threlkeld-2024", "veridicality"⟩
@@ -82,7 +82,7 @@ def ost2024_before_noncommittal : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "veridicality"), ("connective", "before"), ("complement_entailed", "false")] }
 
-def ost2024_before_counterfactual_mozart : LinguisticExample :=
+def ost2024_before_counterfactual_mozart : Datum :=
   { id := "ost2024_before_counterfactual_mozart"
     source := ⟨"beaver-condoravdi-2003", "(24)"⟩
     reportedIn := some ⟨"ogihara-steinert-threlkeld-2024", "veridicality"⟩
@@ -95,7 +95,7 @@ def ost2024_before_counterfactual_mozart : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "veridicality"), ("connective", "before"), ("complement_entailed", "false")] }
 
-def ost2024_ohtani : LinguisticExample :=
+def ost2024_ohtani : Datum :=
   { id := "ost2024_ohtani"
     source := ⟨"ogihara-steinert-threlkeld-2024", "(20a)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ost2024_ohtani : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "bc_counterexample"), ("reading", "counterfactual")] }
 
-def ost2024_snow : LinguisticExample :=
+def ost2024_snow : Datum :=
   { id := "ost2024_snow"
     source := ⟨"ogihara-steinert-threlkeld-2024", "(20b)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ost2024_snow : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "bc_counterexample"), ("reading", "nonCommittal")] }
 
-def ost2024_nostradamus : LinguisticExample :=
+def ost2024_nostradamus : Datum :=
   { id := "ost2024_nostradamus"
     source := ⟨"ogihara-steinert-threlkeld-2024", "(20c)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ost2024_nostradamus : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "bc_counterexample"), ("reading", "counterfactual")] }
 
-def ost2024_noncommittal_available : LinguisticExample :=
+def ost2024_noncommittal_available : Datum :=
   { id := "ost2024_noncommittal_available"
     source := ⟨"ogihara-steinert-threlkeld-2024", "(22a)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ost2024_noncommittal_available : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "noncommittal"), ("noncommittal_available", "true")] }
 
-def ost2024_noncommittal_unavailable : LinguisticExample :=
+def ost2024_noncommittal_unavailable : Datum :=
   { id := "ost2024_noncommittal_unavailable"
     source := ⟨"ogihara-steinert-threlkeld-2024", "(22b)"⟩
     reportedIn := none
@@ -160,6 +160,6 @@ def ost2024_noncommittal_unavailable : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "noncommittal"), ("noncommittal_available", "false")] }
 
-def all : List LinguisticExample := [ost2024_after_veridical, ost2024_before_nonveridical, ost2024_before_counterfactual, ost2024_after_veridical_2, ost2024_before_noncommittal, ost2024_before_counterfactual_mozart, ost2024_ohtani, ost2024_snow, ost2024_nostradamus, ost2024_noncommittal_available, ost2024_noncommittal_unavailable]
+def all : List Datum := [ost2024_after_veridical, ost2024_before_nonveridical, ost2024_before_counterfactual, ost2024_after_veridical_2, ost2024_before_noncommittal, ost2024_before_counterfactual_mozart, ost2024_ohtani, ost2024_snow, ost2024_nostradamus, ost2024_noncommittal_available, ost2024_noncommittal_unavailable]
 
 end OgiharaSteinertThrelkeld2024.Examples

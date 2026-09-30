@@ -17,7 +17,7 @@ namespace Krifka1998.Examples
 
 open Data.Examples
 
-def ex11a : LinguisticExample :=
+def ex11a : Datum :=
   { id := "krifka1998_ex11a"
     source := ⟨"krifka-1998", "(11a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex11a : LinguisticExample :=
     readings := []
     paperFeatures := [("measureFunction", "extensive")] }
 
-def ex11b : LinguisticExample :=
+def ex11b : Datum :=
   { id := "krifka1998_ex11b"
     source := ⟨"krifka-1998", "(11b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex11b : LinguisticExample :=
     readings := []
     paperFeatures := [("measureFunction", "extensive")] }
 
-def ex11c : LinguisticExample :=
+def ex11c : Datum :=
   { id := "krifka1998_ex11c"
     source := ⟨"krifka-1998", "(11c)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex11c : LinguisticExample :=
     readings := []
     paperFeatures := [("measureFunction", "nonExtensive")] }
 
-def ex11d : LinguisticExample :=
+def ex11d : Datum :=
   { id := "krifka1998_ex11d"
     source := ⟨"krifka-1998", "(11d)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex11d : LinguisticExample :=
     readings := []
     paperFeatures := [("measureFunction", "nonExtensive")] }
 
-def ex12c : LinguisticExample :=
+def ex12c : Datum :=
   { id := "krifka1998_ex12c"
     source := ⟨"krifka-1998", "(12c)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex12c : LinguisticExample :=
     readings := []
     paperFeatures := [("measureFunction", "extensive")] }
 
-def ex58 : LinguisticExample :=
+def ex58 : Datum :=
   { id := "krifka1998_ex58"
     source := ⟨"krifka-1998", "(58)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex58 : LinguisticExample :=
     readings := []
     paperFeatures := [("adverbial", "in")] }
 
-def ex60a : LinguisticExample :=
+def ex60a : Datum :=
   { id := "krifka1998_ex60a"
     source := ⟨"krifka-1998", "(60a)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex60a : LinguisticExample :=
     readings := []
     paperFeatures := [("adverbial", "in")] }
 
-def ex60b : LinguisticExample :=
+def ex60b : Datum :=
   { id := "krifka1998_ex60b"
     source := ⟨"krifka-1998", "(60b)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex60b : LinguisticExample :=
     readings := []
     paperFeatures := [("adverbial", "in")] }
 
-def ex60c : LinguisticExample :=
+def ex60c : Datum :=
   { id := "krifka1998_ex60c"
     source := ⟨"krifka-1998", "(60c)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex60c : LinguisticExample :=
     readings := []
     paperFeatures := [("adverbial", "in")] }
 
-def ex66a : LinguisticExample :=
+def ex66a : Datum :=
   { id := "krifka1998_ex66a"
     source := ⟨"krifka-1998", "(66a)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex66a : LinguisticExample :=
     readings := []
     paperFeatures := [("clitic", "se")] }
 
-def ex66b : LinguisticExample :=
+def ex66b : Datum :=
   { id := "krifka1998_ex66b"
     source := ⟨"krifka-1998", "(66b)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex66b : LinguisticExample :=
     readings := []
     paperFeatures := [("clitic", "se")] }
 
-def ex74 : LinguisticExample :=
+def ex74 : Datum :=
   { id := "krifka1998_ex74"
     source := ⟨"krifka-1998", "(74)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex74 : LinguisticExample :=
     readings := []
     paperFeatures := [("path", "sourceGoal")] }
 
-def ex75 : LinguisticExample :=
+def ex75 : Datum :=
   { id := "krifka1998_ex75"
     source := ⟨"krifka-1998", "(75)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex75 : LinguisticExample :=
     readings := []
     paperFeatures := [("path", "sourceDirection")] }
 
-def ex75_in : LinguisticExample :=
+def ex75_in : Datum :=
   { id := "krifka1998_ex75_in"
     source := ⟨"krifka-1998", "(75)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex75_in : LinguisticExample :=
     readings := []
     paperFeatures := [("path", "sourceDirection"), ("adverbial", "in")] }
 
-def ex77a_in : LinguisticExample :=
+def ex77a_in : Datum :=
   { id := "krifka1998_ex77a_in"
     source := ⟨"krifka-1998", "(77a)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex77a_in : LinguisticExample :=
     readings := []
     paperFeatures := [("goal", "specified"), ("adverbial", "in")] }
 
-def ex77a_for : LinguisticExample :=
+def ex77a_for : Datum :=
   { id := "krifka1998_ex77a_for"
     source := ⟨"krifka-1998", "(77a)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex77a_for : LinguisticExample :=
     readings := []
     paperFeatures := [("goal", "specified"), ("adverbial", "for")] }
 
-def ex77b_in : LinguisticExample :=
+def ex77b_in : Datum :=
   { id := "krifka1998_ex77b_in"
     source := ⟨"krifka-1998", "(77b)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex77b_in : LinguisticExample :=
     readings := []
     paperFeatures := [("goal", "specified"), ("adverbial", "in")] }
 
-def ex77b_for : LinguisticExample :=
+def ex77b_for : Datum :=
   { id := "krifka1998_ex77b_for"
     source := ⟨"krifka-1998", "(77b)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex77b_for : LinguisticExample :=
     readings := []
     paperFeatures := [("goal", "specified"), ("adverbial", "for")] }
 
-def ex77c : LinguisticExample :=
+def ex77c : Datum :=
   { id := "krifka1998_ex77c"
     source := ⟨"krifka-1998", "(77c)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex77c : LinguisticExample :=
     readings := [("goal reached (in an hour)", .acceptable), ("process only (for an hour)", .acceptable)]
     paperFeatures := [("goal", "implicit")] }
 
-def ex78 : LinguisticExample :=
+def ex78 : Datum :=
   { id := "krifka1998_ex78"
     source := ⟨"krifka-1998", "(78)"⟩
     reportedIn := none
@@ -277,6 +277,6 @@ def ex78 : LinguisticExample :=
     readings := []
     paperFeatures := [("path", "goal")] }
 
-def all : List LinguisticExample := [ex11a, ex11b, ex11c, ex11d, ex12c, ex58, ex60a, ex60b, ex60c, ex66a, ex66b, ex74, ex75, ex75_in, ex77a_in, ex77a_for, ex77b_in, ex77b_for, ex77c, ex78]
+def all : List Datum := [ex11a, ex11b, ex11c, ex11d, ex12c, ex58, ex60a, ex60b, ex60c, ex66a, ex66b, ex74, ex75, ex75_in, ex77a_in, ex77a_for, ex77b_in, ex77b_for, ex77c, ex78]
 
 end Krifka1998.Examples

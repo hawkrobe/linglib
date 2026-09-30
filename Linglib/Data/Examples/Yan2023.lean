@@ -17,7 +17,7 @@ namespace Yan2023.Examples
 
 open Data.Examples
 
-def ex_1 : LinguisticExample :=
+def ex_1 : Datum :=
   { id := "yan2023_1"
     source := ⟨"yan-2023", "Ch. 4 (1b)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("puzzle", "Asher"), ("role", "premise")] }
 
-def ex_2 : LinguisticExample :=
+def ex_2 : Datum :=
   { id := "yan2023_2"
     source := ⟨"yan-2023", "Ch. 4 (1c)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("puzzle", "Asher"), ("role", "monotonic conclusion")] }
 
-def ex_3 : LinguisticExample :=
+def ex_3 : Datum :=
   { id := "yan2023_3"
     source := ⟨"yan-2023", "Ch. 4 (2b)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_3 : LinguisticExample :=
     readings := []
     paperFeatures := [("puzzle", "Heim"), ("role", "premise")] }
 
-def ex_4 : LinguisticExample :=
+def ex_4 : Datum :=
   { id := "yan2023_4"
     source := ⟨"yan-2023", "Ch. 4 (2c)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_4 : LinguisticExample :=
     readings := []
     paperFeatures := [("puzzle", "Heim"), ("role", "monotonic conclusion")] }
 
-def ex_5 : LinguisticExample :=
+def ex_5 : Datum :=
   { id := "yan2023_5"
     source := ⟨"yan-2023", "Ch. 4 (3a)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_5 : LinguisticExample :=
     readings := []
     paperFeatures := [("puzzle", "Ross"), ("role", "premise")] }
 
-def ex_6 : LinguisticExample :=
+def ex_6 : Datum :=
   { id := "yan2023_6"
     source := ⟨"yan-2023", "Ch. 4 (3b)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_6 : LinguisticExample :=
     readings := []
     paperFeatures := [("puzzle", "Ross"), ("role", "monotonic conclusion")] }
 
-def ex_7 : LinguisticExample :=
+def ex_7 : Datum :=
   { id := "yan2023_7"
     source := ⟨"yan-2023", "Ch. 4 (23)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_7 : LinguisticExample :=
     readings := [("John is ok with a Ferrari and he is ok with a Porsche", .acceptable)]
     paperFeatures := [("inference", "box free choice")] }
 
-def ex_8 : LinguisticExample :=
+def ex_8 : Datum :=
   { id := "yan2023_8"
     source := ⟨"yan-2023", "Ch. 4 (26c)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_8 : LinguisticExample :=
     readings := []
     paperFeatures := [("puzzle", "Ross"), ("formula", "◇SEND a")] }
 
-def ex_9 : LinguisticExample :=
+def ex_9 : Datum :=
   { id := "yan2023_9"
     source := ⟨"yan-2023", "Ch. 4 (26d)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_9 : LinguisticExample :=
     readings := []
     paperFeatures := [("puzzle", "Ross"), ("formula", "◇BURN a")] }
 
-def ex_10 : LinguisticExample :=
+def ex_10 : Datum :=
   { id := "yan2023_10"
     source := ⟨"yan-2023", "Ch. 4 (27c)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_10 : LinguisticExample :=
     readings := []
     paperFeatures := [("puzzle", "Asher"), ("formula", "◇∃x FREE x")] }
 
-def ex_11 : LinguisticExample :=
+def ex_11 : Datum :=
   { id := "yan2023_11"
     source := ⟨"yan-2023", "Ch. 4 (27d)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_11 : LinguisticExample :=
     readings := []
     paperFeatures := [("puzzle", "Asher"), ("formula", "◇∃x ¬FREE x")] }
 
-def ex_12 : LinguisticExample :=
+def ex_12 : Datum :=
   { id := "yan2023_12"
     source := ⟨"yan-2023", "Ch. 4 (5)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_12 : LinguisticExample :=
     readings := []
     paperFeatures := [("evidence", "monotonicity"), ("item", "NPI any")] }
 
-def ex_13 : LinguisticExample :=
+def ex_13 : Datum :=
   { id := "yan2023_13"
     source := ⟨"yan-2023", "Ch. 4 (6)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_13 : LinguisticExample :=
     readings := []
     paperFeatures := [("evidence", "monotonicity"), ("role", "contradiction")] }
 
-def ex_14 : LinguisticExample :=
+def ex_14 : Datum :=
   { id := "yan2023_14"
     source := ⟨"yan-2023", "Ch. 4 (8b)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_14 : LinguisticExample :=
     readings := []
     paperFeatures := [("puzzle", "Ross"), ("role", "free-choice inference")] }
 
-def ex_15 : LinguisticExample :=
+def ex_15 : Datum :=
   { id := "yan2023_15"
     source := ⟨"yan-2023", "Ch. 4 (16c)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_15 : LinguisticExample :=
     readings := []
     paperFeatures := [("puzzle", "Heim"), ("role", "unwarranted inference")] }
 
-def ex_16 : LinguisticExample :=
+def ex_16 : Datum :=
   { id := "yan2023_16"
     source := ⟨"yan-2023", "Ch. 4 (19a)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_16 : LinguisticExample :=
     readings := []
     paperFeatures := [("puzzle", "Good Samaritan under desire"), ("role", "premise")] }
 
-def ex_17 : LinguisticExample :=
+def ex_17 : Datum :=
   { id := "yan2023_17"
     source := ⟨"yan-2023", "Ch. 4 (19b)"⟩
     reportedIn := none
@@ -238,6 +238,6 @@ def ex_17 : LinguisticExample :=
     readings := []
     paperFeatures := [("puzzle", "Good Samaritan under desire"), ("role", "monotonic conclusion")] }
 
-def all : List LinguisticExample := [ex_1, ex_2, ex_3, ex_4, ex_5, ex_6, ex_7, ex_8, ex_9, ex_10, ex_11, ex_12, ex_13, ex_14, ex_15, ex_16, ex_17]
+def all : List Datum := [ex_1, ex_2, ex_3, ex_4, ex_5, ex_6, ex_7, ex_8, ex_9, ex_10, ex_11, ex_12, ex_13, ex_14, ex_15, ex_16, ex_17]
 
 end Yan2023.Examples

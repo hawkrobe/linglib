@@ -17,7 +17,7 @@ namespace Scott2023.Examples
 
 open Data.Examples
 
-def ex_78a : LinguisticExample :=
+def ex_78a : Datum :=
   { id := "scott2023_78a"
     source := ⟨"scott-2023", "(78a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_78a : LinguisticExample :=
     readings := []
     paperFeatures := [("position", "S"), ("cell", "1plExcl"), ("morphemes", "qo=i")] }
 
-def ex_78b : LinguisticExample :=
+def ex_78b : Datum :=
   { id := "scott2023_78b"
     source := ⟨"scott-2023", "(78b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_78b : LinguisticExample :=
     readings := []
     paperFeatures := [("position", "A"), ("cell", "1plExcl"), ("morphemes", "qo=i")] }
 
-def ex_78c : LinguisticExample :=
+def ex_78c : Datum :=
   { id := "scott2023_78c"
     source := ⟨"scott-2023", "(78c)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_78c : LinguisticExample :=
     readings := []
     paperFeatures := [("position", "possessor"), ("cell", "1plExcl"), ("morphemes", "qo=i")] }
 
-def ex_79 : LinguisticExample :=
+def ex_79 : Datum :=
   { id := "scott2023_79"
     source := ⟨"scott-2023", "(79)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_79 : LinguisticExample :=
     readings := []
     paperFeatures := [("position", "unagreed"), ("cell", "1plExcl"), ("morphemes", "qo=i")] }
 
-def ex_68b : LinguisticExample :=
+def ex_68b : Datum :=
   { id := "scott2023_68b"
     source := ⟨"scott-2023", "(68b)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_68b : LinguisticExample :=
     readings := []
     paperFeatures := [("position", "S"), ("cell", "1plExcl"), ("morphemes", "=i")] }
 
-def ex_85a : LinguisticExample :=
+def ex_85a : Datum :=
   { id := "scott2023_85a"
     source := ⟨"scott-2023", "(85a)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_85a : LinguisticExample :=
     readings := []
     paperFeatures := [("position", "S"), ("cell", "1sg"), ("morphemes", "qin=i")] }
 
-def ex_85b : LinguisticExample :=
+def ex_85b : Datum :=
   { id := "scott2023_85b"
     source := ⟨"scott-2023", "(85b)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_85b : LinguisticExample :=
     readings := []
     paperFeatures := [("position", "A"), ("cell", "1sg"), ("morphemes", "qin=i")] }
 
-def ex_85c : LinguisticExample :=
+def ex_85c : Datum :=
   { id := "scott2023_85c"
     source := ⟨"scott-2023", "(85c)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_85c : LinguisticExample :=
     readings := []
     paperFeatures := [("position", "possessor"), ("cell", "1sg"), ("morphemes", "qin=i")] }
 
-def ex_62 : LinguisticExample :=
+def ex_62 : Datum :=
   { id := "scott2023_62"
     source := ⟨"scott-2023", "(62)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_62 : LinguisticExample :=
     readings := []
     paperFeatures := [("position", "S"), ("cell", "1sg"), ("morphemes", "=i")] }
 
-def ex_86a : LinguisticExample :=
+def ex_86a : Datum :=
   { id := "scott2023_86a"
     source := ⟨"scott-2023", "(86a)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_86a : LinguisticExample :=
     readings := []
     paperFeatures := [("position", "S"), ("cell", "2pl"), ("morphemes", "q=i")] }
 
-def ex_86b : LinguisticExample :=
+def ex_86b : Datum :=
   { id := "scott2023_86b"
     source := ⟨"scott-2023", "(86b)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_86b : LinguisticExample :=
     readings := []
     paperFeatures := [("position", "A"), ("cell", "2pl"), ("morphemes", "q=i")] }
 
-def ex_86c : LinguisticExample :=
+def ex_86c : Datum :=
   { id := "scott2023_86c"
     source := ⟨"scott-2023", "(86c)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_86c : LinguisticExample :=
     readings := []
     paperFeatures := [("position", "possessor"), ("cell", "2pl"), ("morphemes", "q=i")] }
 
-def ex_87a : LinguisticExample :=
+def ex_87a : Datum :=
   { id := "scott2023_87a"
     source := ⟨"scott-2023", "(87a)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_87a : LinguisticExample :=
     readings := []
     paperFeatures := [("position", "S"), ("cell", "3pl"), ("morphemes", "qa")] }
 
-def ex_87b : LinguisticExample :=
+def ex_87b : Datum :=
   { id := "scott2023_87b"
     source := ⟨"scott-2023", "(87b)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_87b : LinguisticExample :=
     readings := []
     paperFeatures := [("position", "A"), ("cell", "3pl"), ("morphemes", "qa")] }
 
-def ex_87c : LinguisticExample :=
+def ex_87c : Datum :=
   { id := "scott2023_87c"
     source := ⟨"scott-2023", "(87c)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_87c : LinguisticExample :=
     readings := []
     paperFeatures := [("position", "possessor"), ("cell", "3pl"), ("morphemes", "qa")] }
 
-def ex_88b : LinguisticExample :=
+def ex_88b : Datum :=
   { id := "scott2023_88b"
     source := ⟨"scott-2023", "(88b)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_88b : LinguisticExample :=
     readings := []
     paperFeatures := [("position", "unagreed"), ("cell", "1sg"), ("morphemes", "qin=i")] }
 
-def ex_88c : LinguisticExample :=
+def ex_88c : Datum :=
   { id := "scott2023_88c"
     source := ⟨"scott-2023", "(88c)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex_88c : LinguisticExample :=
     readings := []
     paperFeatures := [("position", "unagreed"), ("cell", "2pl"), ("morphemes", "q=i")] }
 
-def ex_88d : LinguisticExample :=
+def ex_88d : Datum :=
   { id := "scott2023_88d"
     source := ⟨"scott-2023", "(88d)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex_88d : LinguisticExample :=
     readings := []
     paperFeatures := [("position", "unagreed"), ("cell", "3pl"), ("morphemes", "qa")] }
 
-def ex_69a : LinguisticExample :=
+def ex_69a : Datum :=
   { id := "scott2023_69a"
     source := ⟨"scott-2023", "(69a)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex_69a : LinguisticExample :=
     readings := []
     paperFeatures := [("position", "object"), ("cell", "1sg"), ("morphemes", "qin=i")] }
 
-def ex_89a : LinguisticExample :=
+def ex_89a : Datum :=
   { id := "scott2023_89a"
     source := ⟨"scott-2023", "(89a)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex_89a : LinguisticExample :=
     readings := []
     paperFeatures := [("position", "possessor"), ("cell", "2pl"), ("morphemes", "q=i")] }
 
-def ex_89b : LinguisticExample :=
+def ex_89b : Datum :=
   { id := "scott2023_89b"
     source := ⟨"scott-2023", "(89b)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex_89b : LinguisticExample :=
     readings := []
     paperFeatures := [("position", "possessor"), ("cell", "2pl"), ("morphemes", "=i"), ("optionalReduction", "yes")] }
 
-def ex_90b : LinguisticExample :=
+def ex_90b : Datum :=
   { id := "scott2023_90b"
     source := ⟨"scott-2023", "(90b)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex_90b : LinguisticExample :=
     readings := []
     paperFeatures := [("position", "A"), ("cell", "2pl"), ("morphemes", "=i"), ("optionalReduction", "yes")] }
 
-def ex_91a : LinguisticExample :=
+def ex_91a : Datum :=
   { id := "scott2023_91a"
     source := ⟨"scott-2023", "(91a)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex_91a : LinguisticExample :=
     readings := []
     paperFeatures := [("position", "S"), ("cell", "2pl"), ("morphemes", "q=i")] }
 
-def ex_91b : LinguisticExample :=
+def ex_91b : Datum :=
   { id := "scott2023_91b"
     source := ⟨"scott-2023", "(91b)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex_91b : LinguisticExample :=
     readings := []
     paperFeatures := [("position", "S"), ("cell", "2pl"), ("morphemes", "=i")] }
 
-def ex_57 : LinguisticExample :=
+def ex_57 : Datum :=
   { id := "scott2023_57"
     source := ⟨"scott-2023", "(57)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex_57 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "agreeingObject"), ("cell", "1sg"), ("setB", "chin")] }
 
-def ex_59 : LinguisticExample :=
+def ex_59 : Datum :=
   { id := "scott2023_59"
     source := ⟨"scott-2023", "(59)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex_59 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "defaultObject"), ("cell", "1sg"), ("setB", "tz'")] }
 
-def ex_73 : LinguisticExample :=
+def ex_73 : Datum :=
   { id := "scott2023_73"
     source := ⟨"scott-2023", "(73)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def ex_73 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "superExtendedErgative"), ("position", "S"), ("cell", "1sg"), ("setA", "w")] }
 
-def ex_77a : LinguisticExample :=
+def ex_77a : Datum :=
   { id := "scott2023_77a"
     source := ⟨"scott-2023", "(77a)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def ex_77a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "superExtendedErgative"), ("position", "object"), ("cell", "1sg"), ("setA", "t")] }
 
-def ex_77b : LinguisticExample :=
+def ex_77b : Datum :=
   { id := "scott2023_77b"
     source := ⟨"scott-2023", "(77b)"⟩
     reportedIn := none
@@ -394,6 +394,6 @@ def ex_77b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "superExtendedErgative"), ("position", "object"), ("cell", "1sg"), ("setA", "w")] }
 
-def all : List LinguisticExample := [ex_78a, ex_78b, ex_78c, ex_79, ex_68b, ex_85a, ex_85b, ex_85c, ex_62, ex_86a, ex_86b, ex_86c, ex_87a, ex_87b, ex_87c, ex_88b, ex_88c, ex_88d, ex_69a, ex_89a, ex_89b, ex_90b, ex_91a, ex_91b, ex_57, ex_59, ex_73, ex_77a, ex_77b]
+def all : List Datum := [ex_78a, ex_78b, ex_78c, ex_79, ex_68b, ex_85a, ex_85b, ex_85c, ex_62, ex_86a, ex_86b, ex_86c, ex_87a, ex_87b, ex_87c, ex_88b, ex_88c, ex_88d, ex_69a, ex_89a, ex_89b, ex_90b, ex_91a, ex_91b, ex_57, ex_59, ex_73, ex_77a, ex_77b]
 
 end Scott2023.Examples

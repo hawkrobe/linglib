@@ -17,7 +17,7 @@ namespace BeaversUdayana2022.Examples
 
 open Data.Examples
 
-def bu2022_2a : LinguisticExample :=
+def bu2022_2a : Datum :=
   { id := "bu2022_2a"
     source := ⟨"beavers-udayana-2022", "(2a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def bu2022_2a : LinguisticExample :=
     readings := []
     paperFeatures := [("middle type", "inherent reflexive"), ("root class", "naturally reflexive")] }
 
-def bu2022_2b : LinguisticExample :=
+def bu2022_2b : Datum :=
   { id := "bu2022_2b"
     source := ⟨"beavers-udayana-2022", "(2b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def bu2022_2b : LinguisticExample :=
     readings := []
     paperFeatures := [("middle type", "dispositional"), ("reading", "generic")] }
 
-def bu2022_7 : LinguisticExample :=
+def bu2022_7 : Datum :=
   { id := "bu2022_7"
     source := ⟨"beavers-udayana-2022", "(7)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def bu2022_7 : LinguisticExample :=
     readings := []
     paperFeatures := [("middle type", "passive middle"), ("reading", "episodic")] }
 
-def bu2022_9a : LinguisticExample :=
+def bu2022_9a : Datum :=
   { id := "bu2022_9a"
     source := ⟨"beavers-udayana-2022", "(9a)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def bu2022_9a : LinguisticExample :=
     readings := []
     paperFeatures := [("middle type", "dispositional"), ("diagnostic", "agent denial")] }
 
-def bu2022_10c : LinguisticExample :=
+def bu2022_10c : Datum :=
   { id := "bu2022_10c"
     source := ⟨"beavers-udayana-2022", "(10c)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def bu2022_10c : LinguisticExample :=
     readings := []
     paperFeatures := [("middle type", "dispositional"), ("diagnostic", "dengan sendiri=nya")] }
 
-def bu2022_11 : LinguisticExample :=
+def bu2022_11 : Datum :=
   { id := "bu2022_11"
     source := ⟨"beavers-udayana-2022", "(11)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def bu2022_11 : LinguisticExample :=
     readings := []
     paperFeatures := [("voice", "di- passive"), ("diagnostic", "oleh phrase")] }
 
-def bu2022_13 : LinguisticExample :=
+def bu2022_13 : Datum :=
   { id := "bu2022_13"
     source := ⟨"beavers-udayana-2022", "(13)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def bu2022_13 : LinguisticExample :=
     readings := []
     paperFeatures := [("middle type", "dispositional"), ("diagnostic", "rationale clause")] }
 
-def bu2022_17b : LinguisticExample :=
+def bu2022_17b : Datum :=
   { id := "bu2022_17b"
     source := ⟨"beavers-udayana-2022", "(17b)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def bu2022_17b : LinguisticExample :=
     readings := []
     paperFeatures := [("middle type", "inherent reflexive"), ("diagnostic", "dengan sendiri=nya")] }
 
-def bu2022_18a : LinguisticExample :=
+def bu2022_18a : Datum :=
   { id := "bu2022_18a"
     source := ⟨"beavers-udayana-2022", "(18a)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def bu2022_18a : LinguisticExample :=
     readings := [("compositional: washed his eyes", .acceptable), ("idiomatic: watched the girls go by (24b)", .acceptable)]
     paperFeatures := [("middle type", "incorporation"), ("object", "incorporated NP")] }
 
-def bu2022_19b : LinguisticExample :=
+def bu2022_19b : Datum :=
   { id := "bu2022_19b"
     source := ⟨"beavers-udayana-2022", "(19b)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def bu2022_19b : LinguisticExample :=
     readings := []
     paperFeatures := [("middle type", "incorporation"), ("diagnostic", "non-separability")] }
 
-def bu2022_22 : LinguisticExample :=
+def bu2022_22 : Datum :=
   { id := "bu2022_22"
     source := ⟨"beavers-udayana-2022", "(22)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def bu2022_22 : LinguisticExample :=
     readings := []
     paperFeatures := [("middle type", "incorporation"), ("diagnostic", "discourse opacity")] }
 
-def bu2022_26b : LinguisticExample :=
+def bu2022_26b : Datum :=
   { id := "bu2022_26b"
     source := ⟨"beavers-udayana-2022", "(26b)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def bu2022_26b : LinguisticExample :=
     readings := []
     paperFeatures := [("middle type", "incorporated reflexive"), ("object", "diri")] }
 
-def bu2022_28 : LinguisticExample :=
+def bu2022_28 : Datum :=
   { id := "bu2022_28"
     source := ⟨"beavers-udayana-2022", "(28)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def bu2022_28 : LinguisticExample :=
     readings := []
     paperFeatures := [("middle type", "incorporation"), ("diagnostic", "complementary distribution")] }
 
-def bu2022_44a : LinguisticExample :=
+def bu2022_44a : Datum :=
   { id := "bu2022_44a"
     source := ⟨"beavers-udayana-2022", "(44a)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def bu2022_44a : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "mixed readings"), ("analysis", "open variable vs existential")] }
 
-def bu2022_59 : LinguisticExample :=
+def bu2022_59 : Datum :=
   { id := "bu2022_59"
     source := ⟨"beavers-udayana-2022", "(59)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def bu2022_59 : LinguisticExample :=
     readings := []
     paperFeatures := [("middle type", "conflation"), ("root class", "relational noun")] }
 
-def bu2022_62 : LinguisticExample :=
+def bu2022_62 : Datum :=
   { id := "bu2022_62"
     source := ⟨"beavers-udayana-2022", "(62)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def bu2022_62 : LinguisticExample :=
     readings := []
     paperFeatures := [("middle type", "conflation"), ("diagnostic", "change denial")] }
 
-def bu2022_67a : LinguisticExample :=
+def bu2022_67a : Datum :=
   { id := "bu2022_67a"
     source := ⟨"beavers-udayana-2022", "(67a)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def bu2022_67a : LinguisticExample :=
     readings := []
     paperFeatures := [("middle type", "anticausative"), ("diagnostic", "causer denial")] }
 
-def bu2022_74 : LinguisticExample :=
+def bu2022_74 : Datum :=
   { id := "bu2022_74"
     source := ⟨"beavers-udayana-2022", "(74)"⟩
     reportedIn := none
@@ -251,6 +251,6 @@ def bu2022_74 : LinguisticExample :=
     readings := []
     paperFeatures := [("middle type", "dispositional"), ("diagnostic", "causer denial")] }
 
-def all : List LinguisticExample := [bu2022_2a, bu2022_2b, bu2022_7, bu2022_9a, bu2022_10c, bu2022_11, bu2022_13, bu2022_17b, bu2022_18a, bu2022_19b, bu2022_22, bu2022_26b, bu2022_28, bu2022_44a, bu2022_59, bu2022_62, bu2022_67a, bu2022_74]
+def all : List Datum := [bu2022_2a, bu2022_2b, bu2022_7, bu2022_9a, bu2022_10c, bu2022_11, bu2022_13, bu2022_17b, bu2022_18a, bu2022_19b, bu2022_22, bu2022_26b, bu2022_28, bu2022_44a, bu2022_59, bu2022_62, bu2022_67a, bu2022_74]
 
 end BeaversUdayana2022.Examples

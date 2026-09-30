@@ -684,7 +684,7 @@ structure Row where
   turn : Turn
   deriving DecidableEq
 
-def Row.ofExample (ex : LinguisticExample) : Option Row :=
+def Row.ofDatum (ex : Datum) : Option Row :=
   (ex.parse? (α := Row) "speaker" [("addressee", ⟨.clarification, .change⟩),
       ("original speaker", ⟨.selfRepair, .keep⟩)]).orElse fun _ ↦
     (ex.parse? "repair" [("other-initiated", ⟨.clarification, .change⟩),
@@ -707,7 +707,7 @@ def Row.rule (r : Row) : Rule Agent Fact Q :=
   | .followUp => .qspec (ofMove (.ask .why)) r.turn
 
 /-- The seven rows of exx. 22–24. -/
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- Each row's rule applies to its gameboard and leaves the turn where the book records it. -/
 theorem rows_turn :

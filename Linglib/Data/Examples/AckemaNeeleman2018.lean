@@ -17,7 +17,7 @@ namespace AckemaNeeleman2018.Examples
 
 open Data.Examples
 
-def ex_2a : LinguisticExample :=
+def ex_2a : Datum :=
   { id := "ackemaneeleman2018_2a"
     source := ⟨"ackema-neeleman-2018", "ch. 2 (2a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_2a : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "expletive"), ("person", "third")] }
 
-def ex_2b : LinguisticExample :=
+def ex_2b : Datum :=
   { id := "ackemaneeleman2018_2b"
     source := ⟨"ackema-neeleman-2018", "ch. 2 (2b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_2b : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "expletive"), ("person", "third")] }
 
-def ex_20a : LinguisticExample :=
+def ex_20a : Datum :=
   { id := "ackemaneeleman2018_20a"
     source := ⟨"ackema-neeleman-2018", "ch. 2 (20a)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_20a : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "self-talk"), ("roles", "i and u co-incide")] }
 
-def ex_21a : LinguisticExample :=
+def ex_21a : Datum :=
   { id := "ackemaneeleman2018_21a"
     source := ⟨"ackema-neeleman-2018", "ch. 2 (21a)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_21a : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "self-talk"), ("person", "first plural")] }
 
-def ex_24 : LinguisticExample :=
+def ex_24 : Datum :=
   { id := "ackemaneeleman2018_24"
     source := ⟨"ackema-neeleman-2018", "ch. 2 (24)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_24 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "expletive"), ("person", "third singular")] }
 
-def ex_25 : LinguisticExample :=
+def ex_25 : Datum :=
   { id := "ackemaneeleman2018_25"
     source := ⟨"ackema-neeleman-2018", "ch. 2 (25)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_25 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "default agreement"), ("construction", "impersonal passive")] }
 
-def ex_30 : LinguisticExample :=
+def ex_30 : Datum :=
   { id := "ackemaneeleman2018_30"
     source := ⟨"ackema-neeleman-2018", "ch. 2 (30)"⟩
     reportedIn := none
@@ -108,6 +108,6 @@ def ex_30 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "expletive"), ("pronoun", "featureless impersonal")] }
 
-def all : List LinguisticExample := [ex_2a, ex_2b, ex_20a, ex_21a, ex_24, ex_25, ex_30]
+def all : List Datum := [ex_2a, ex_2b, ex_20a, ex_21a, ex_24, ex_25, ex_30]
 
 end AckemaNeeleman2018.Examples

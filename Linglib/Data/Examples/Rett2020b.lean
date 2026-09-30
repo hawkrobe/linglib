@@ -17,7 +17,7 @@ namespace Rett2020b.Examples
 
 open Data.Examples
 
-def ex_50a : LinguisticExample :=
+def ex_50a : Datum :=
   { id := "rett2020b_50a"
     source := ⟨"rett-2020b", "(50a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_50a : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "sufficientive")] }
 
-def ex_50b : LinguisticExample :=
+def ex_50b : Datum :=
   { id := "rett2020b_50b"
     source := ⟨"rett-2020b", "(50b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_50b : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "smOnly")] }
 
-def ex_50c : LinguisticExample :=
+def ex_50c : Datum :=
   { id := "rett2020b_50c"
     source := ⟨"rett-2020b", "(50c)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_50c : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "conjoined")] }
 
-def ex_50d : LinguisticExample :=
+def ex_50d : Datum :=
   { id := "rett2020b_50d"
     source := ⟨"rett-2020b", "(50d)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_50d : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "predicateMain")] }
 
-def ex_51a : LinguisticExample :=
+def ex_51a : Datum :=
   { id := "rett2020b_51a"
     source := ⟨"rett-2020b", "(51a)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_51a : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "sufficientive"), ("diagnostic", "weak")] }
 
-def ex_51b : LinguisticExample :=
+def ex_51b : Datum :=
   { id := "rett2020b_51b"
     source := ⟨"rett-2020b", "(51b)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_51b : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "smOnly"), ("diagnostic", "weak")] }
 
-def ex_51c : LinguisticExample :=
+def ex_51c : Datum :=
   { id := "rett2020b_51c"
     source := ⟨"rett-2020b", "(51c)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_51c : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "conjoined"), ("diagnostic", "weak")] }
 
-def ex_51d : LinguisticExample :=
+def ex_51d : Datum :=
   { id := "rett2020b_51d"
     source := ⟨"rett-2020b", "(51d)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_51d : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "predicateMain"), ("diagnostic", "weak")] }
 
-def ex_53a : LinguisticExample :=
+def ex_53a : Datum :=
   { id := "rett2020b_53a"
     source := ⟨"rett-2020b", "(53a)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_53a : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "sufficientive"), ("diagnostic", "evaluativity")] }
 
-def ex_53b : LinguisticExample :=
+def ex_53b : Datum :=
   { id := "rett2020b_53b"
     source := ⟨"rett-2020b", "(53b)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_53b : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "smOnly"), ("diagnostic", "evaluativity")] }
 
-def ex_53c : LinguisticExample :=
+def ex_53c : Datum :=
   { id := "rett2020b_53c"
     source := ⟨"rett-2020b", "(53c)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_53c : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "conjoined"), ("diagnostic", "evaluativity")] }
 
-def ex_53d : LinguisticExample :=
+def ex_53d : Datum :=
   { id := "rett2020b_53d"
     source := ⟨"rett-2020b", "(53d)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_53d : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "predicateMain"), ("diagnostic", "evaluativity")] }
 
-def ex_54a : LinguisticExample :=
+def ex_54a : Datum :=
   { id := "rett2020b_54a"
     source := ⟨"rett-2020b", "(54a)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_54a : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "sufficientive"), ("diagnostic", "factor")] }
 
-def ex_54b : LinguisticExample :=
+def ex_54b : Datum :=
   { id := "rett2020b_54b"
     source := ⟨"rett-2020b", "(54b)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_54b : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "smOnly"), ("diagnostic", "factor")] }
 
-def ex_54c : LinguisticExample :=
+def ex_54c : Datum :=
   { id := "rett2020b_54c"
     source := ⟨"rett-2020b", "(54c)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_54c : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "conjoined"), ("diagnostic", "factor")] }
 
-def ex_54d : LinguisticExample :=
+def ex_54d : Datum :=
   { id := "rett2020b_54d"
     source := ⟨"rett-2020b", "(54d)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_54d : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "predicateMain"), ("diagnostic", "factor")] }
 
-def ex_55 : LinguisticExample :=
+def ex_55 : Datum :=
   { id := "rett2020b_55"
     source := ⟨"rett-2020b", "(55)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex_55 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "predicateAdverbial"), ("diagnostic", "weak")] }
 
-def ex_56 : LinguisticExample :=
+def ex_56 : Datum :=
   { id := "rett2020b_56"
     source := ⟨"rett-2020b", "(56)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex_56 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "predicateAdverbial"), ("diagnostic", "weak")] }
 
-def ex_58 : LinguisticExample :=
+def ex_58 : Datum :=
   { id := "rett2020b_58"
     source := ⟨"rett-2020b", "(58)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex_58 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "smOnly")] }
 
-def ex_59 : LinguisticExample :=
+def ex_59 : Datum :=
   { id := "rett2020b_59"
     source := ⟨"rett-2020b", "(59)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex_59 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "smOnly"), ("diagnostic", "factor")] }
 
-def ex_61 : LinguisticExample :=
+def ex_61 : Datum :=
   { id := "rett2020b_61"
     source := ⟨"rett-2020b", "(61)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex_61 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "smOnly")] }
 
-def ex_62 : LinguisticExample :=
+def ex_62 : Datum :=
   { id := "rett2020b_62"
     source := ⟨"rett-2020b", "(62)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex_62 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "smOnly"), ("diagnostic", "factor")] }
 
-def ex_63 : LinguisticExample :=
+def ex_63 : Datum :=
   { id := "rett2020b_63"
     source := ⟨"rett-2020b", "(63)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex_63 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "sufficientive")] }
 
-def ex_64 : LinguisticExample :=
+def ex_64 : Datum :=
   { id := "rett2020b_64"
     source := ⟨"rett-2020b", "(64)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex_64 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "sufficientive"), ("diagnostic", "factor")] }
 
-def ex_65 : LinguisticExample :=
+def ex_65 : Datum :=
   { id := "rett2020b_65"
     source := ⟨"rett-2020b", "(65)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex_65 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "sufficientive"), ("diagnostic", "evaluativity")] }
 
-def ex_66 : LinguisticExample :=
+def ex_66 : Datum :=
   { id := "rett2020b_66"
     source := ⟨"rett-2020b", "(66)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex_66 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "sufficientive"), ("diagnostic", "weak")] }
 
-def ex_67 : LinguisticExample :=
+def ex_67 : Datum :=
   { id := "rett2020b_67"
     source := ⟨"rett-2020b", "(67)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def ex_67 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "sufficientive"), ("diagnostic", "factor")] }
 
-def ex_68 : LinguisticExample :=
+def ex_68 : Datum :=
   { id := "rett2020b_68"
     source := ⟨"rett-2020b", "(68)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def ex_68 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "sufficientive"), ("diagnostic", "evaluativity")] }
 
-def ex_69 : LinguisticExample :=
+def ex_69 : Datum :=
   { id := "rett2020b_69"
     source := ⟨"rett-2020b", "(69)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def ex_69 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "sufficientive"), ("diagnostic", "weak")] }
 
-def ex_70 : LinguisticExample :=
+def ex_70 : Datum :=
   { id := "rett2020b_70"
     source := ⟨"rett-2020b", "(70)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def ex_70 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "demonstrative"), ("diagnostic", "evaluativity")] }
 
-def ex_71 : LinguisticExample :=
+def ex_71 : Datum :=
   { id := "rett2020b_71"
     source := ⟨"rett-2020b", "(71)"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def ex_71 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "demonstrative"), ("diagnostic", "weak")] }
 
-def ex_72 : LinguisticExample :=
+def ex_72 : Datum :=
   { id := "rett2020b_72"
     source := ⟨"rett-2020b", "(72)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def ex_72 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "demonstrative"), ("diagnostic", "factor")] }
 
-def ex_73 : LinguisticExample :=
+def ex_73 : Datum :=
   { id := "rett2020b_73"
     source := ⟨"rett-2020b", "(73)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def ex_73 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "demonstrative"), ("diagnostic", "evaluativity")] }
 
-def ex_74 : LinguisticExample :=
+def ex_74 : Datum :=
   { id := "rett2020b_74"
     source := ⟨"rett-2020b", "(74)"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def ex_74 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "demonstrative"), ("diagnostic", "weak")] }
 
-def ex_75 : LinguisticExample :=
+def ex_75 : Datum :=
   { id := "rett2020b_75"
     source := ⟨"rett-2020b", "(75)"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def ex_75 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "demonstrative"), ("diagnostic", "factor")] }
 
-def ex_26 : LinguisticExample :=
+def ex_26 : Datum :=
   { id := "rett2020b_26"
     source := ⟨"rett-2020b", "(26)"⟩
     reportedIn := none
@@ -485,7 +485,7 @@ def ex_26 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "smOnly")] }
 
-def ex_27 : LinguisticExample :=
+def ex_27 : Datum :=
   { id := "rett2020b_27"
     source := ⟨"rett-2020b", "(27)"⟩
     reportedIn := none
@@ -498,7 +498,7 @@ def ex_27 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "smOnly")] }
 
-def ex_28 : LinguisticExample :=
+def ex_28 : Datum :=
   { id := "rett2020b_28"
     source := ⟨"rett-2020b", "(28)"⟩
     reportedIn := none
@@ -511,7 +511,7 @@ def ex_28 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "smOnly")] }
 
-def ex_29 : LinguisticExample :=
+def ex_29 : Datum :=
   { id := "rett2020b_29"
     source := ⟨"rett-2020b", "(29)"⟩
     reportedIn := none
@@ -524,7 +524,7 @@ def ex_29 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "smOnly")] }
 
-def ex_30 : LinguisticExample :=
+def ex_30 : Datum :=
   { id := "rett2020b_30"
     source := ⟨"rett-2020b", "(30)"⟩
     reportedIn := none
@@ -537,7 +537,7 @@ def ex_30 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "demonstrative")] }
 
-def ex_31 : LinguisticExample :=
+def ex_31 : Datum :=
   { id := "rett2020b_31"
     source := ⟨"rett-2020b", "(31)"⟩
     reportedIn := none
@@ -550,7 +550,7 @@ def ex_31 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "sufficientive")] }
 
-def ex_34 : LinguisticExample :=
+def ex_34 : Datum :=
   { id := "rett2020b_34"
     source := ⟨"rett-2020b", "(34)"⟩
     reportedIn := none
@@ -563,7 +563,7 @@ def ex_34 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "predicateMain")] }
 
-def ex_37 : LinguisticExample :=
+def ex_37 : Datum :=
   { id := "rett2020b_37"
     source := ⟨"rett-2020b", "(37)"⟩
     reportedIn := none
@@ -576,7 +576,7 @@ def ex_37 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "predicateAdverbial")] }
 
-def ex_39 : LinguisticExample :=
+def ex_39 : Datum :=
   { id := "rett2020b_39"
     source := ⟨"rett-2020b", "(39)"⟩
     reportedIn := none
@@ -589,7 +589,7 @@ def ex_39 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "predicateAdverbial")] }
 
-def ex_47 : LinguisticExample :=
+def ex_47 : Datum :=
   { id := "rett2020b_47"
     source := ⟨"rett-2020b", "(47)"⟩
     reportedIn := none
@@ -602,7 +602,7 @@ def ex_47 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "dedicated")] }
 
-def ex_92 : LinguisticExample :=
+def ex_92 : Datum :=
   { id := "rett2020b_92"
     source := ⟨"rett-2020b", "(92)"⟩
     reportedIn := none
@@ -615,7 +615,7 @@ def ex_92 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "demonstrative")] }
 
-def ex_93 : LinguisticExample :=
+def ex_93 : Datum :=
   { id := "rett2020b_93"
     source := ⟨"rett-2020b", "(93)"⟩
     reportedIn := none
@@ -628,7 +628,7 @@ def ex_93 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "sufficientive")] }
 
-def ex_95 : LinguisticExample :=
+def ex_95 : Datum :=
   { id := "rett2020b_95"
     source := ⟨"rett-2020b", "(95)"⟩
     reportedIn := none
@@ -641,7 +641,7 @@ def ex_95 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "demonstrative")] }
 
-def ex_97 : LinguisticExample :=
+def ex_97 : Datum :=
   { id := "rett2020b_97"
     source := ⟨"rett-2020b", "(97)"⟩
     reportedIn := none
@@ -654,7 +654,7 @@ def ex_97 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "demonstrative")] }
 
-def ex_100 : LinguisticExample :=
+def ex_100 : Datum :=
   { id := "rett2020b_100"
     source := ⟨"rett-2020b", "(100)"⟩
     reportedIn := none
@@ -667,6 +667,6 @@ def ex_100 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "demonstrative")] }
 
-def all : List LinguisticExample := [ex_50a, ex_50b, ex_50c, ex_50d, ex_51a, ex_51b, ex_51c, ex_51d, ex_53a, ex_53b, ex_53c, ex_53d, ex_54a, ex_54b, ex_54c, ex_54d, ex_55, ex_56, ex_58, ex_59, ex_61, ex_62, ex_63, ex_64, ex_65, ex_66, ex_67, ex_68, ex_69, ex_70, ex_71, ex_72, ex_73, ex_74, ex_75, ex_26, ex_27, ex_28, ex_29, ex_30, ex_31, ex_34, ex_37, ex_39, ex_47, ex_92, ex_93, ex_95, ex_97, ex_100]
+def all : List Datum := [ex_50a, ex_50b, ex_50c, ex_50d, ex_51a, ex_51b, ex_51c, ex_51d, ex_53a, ex_53b, ex_53c, ex_53d, ex_54a, ex_54b, ex_54c, ex_54d, ex_55, ex_56, ex_58, ex_59, ex_61, ex_62, ex_63, ex_64, ex_65, ex_66, ex_67, ex_68, ex_69, ex_70, ex_71, ex_72, ex_73, ex_74, ex_75, ex_26, ex_27, ex_28, ex_29, ex_30, ex_31, ex_34, ex_37, ex_39, ex_47, ex_92, ex_93, ex_95, ex_97, ex_100]
 
 end Rett2020b.Examples

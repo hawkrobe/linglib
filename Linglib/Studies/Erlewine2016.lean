@@ -263,7 +263,7 @@ structure Row where
   judgment : Judgment
 
 /-- A row from an example; landing layers count from one in the rows. -/
-def Row.ofExample (ex : LinguisticExample) : Option Row := do
+def Row.ofDatum (ex : Datum) : Option Row := do
   let transitive ← ex.parse? "clause" clauseTable
   let layers ← ex.parse? "layers" layerTable
   let extracted ← match ← ex.parse? "extracted" extractedTable with
@@ -275,14 +275,14 @@ def Row.ofExample (ex : LinguisticExample) : Option Row := do
   pure ⟨⟨transitive, layers, extracted, subj, (ex.parse? "object" personTable).getD .third⟩,
     grammar, af, ex.judgment⟩
 
-theorem row_ofExample_isSome : ∀ ex ∈ Examples.all, (Row.ofExample ex).isSome := by decide
+theorem row_ofDatum_isSome : ∀ ex ∈ Examples.all, (Row.ofDatum ex).isSome := by decide
 
 /-- The rows of all four languages. -/
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- The Kaqchikel rows. -/
 def kaqchikelRows : List Row :=
-  (Examples.all.filter (·.language = "kaqc1270")).filterMap Row.ofExample
+  (Examples.all.filter (·.language = "kaqc1270")).filterMap Row.ofDatum
 
 /-- Every row: the attested form is grammatical exactly when an optimal derivation realizes
 it. -/

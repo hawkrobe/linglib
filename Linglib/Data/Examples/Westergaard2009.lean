@@ -17,7 +17,7 @@ namespace Westergaard2009.Examples
 
 open Data.Examples
 
-def ex_1 : LinguisticExample :=
+def ex_1 : Datum :=
   { id := "westergaard2009_1"
     source := ⟨"westergaard-2009", "ch. 1 (1)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "wh-question"), ("order", "V2")] }
 
-def ex_2 : LinguisticExample :=
+def ex_2 : Datum :=
   { id := "westergaard2009_2"
     source := ⟨"westergaard-2009", "ch. 1 (2)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "non-subject-initial declarative"), ("order", "V2")] }
 
-def ex_3 : LinguisticExample :=
+def ex_3 : Datum :=
   { id := "westergaard2009_3"
     source := ⟨"westergaard-2009", "ch. 2 (20)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_3 : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "wh-question"), ("order", "V2")] }
 
-def ex_4 : LinguisticExample :=
+def ex_4 : Datum :=
   { id := "westergaard2009_4"
     source := ⟨"westergaard-2009", "ch. 2 (21)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_4 : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "yes/no-question"), ("order", "V1")] }
 
-def ex_5 : LinguisticExample :=
+def ex_5 : Datum :=
   { id := "westergaard2009_5"
     source := ⟨"westergaard-2009", "ch. 2 (23)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_5 : LinguisticExample :=
     readings := []
     paperFeatures := [("variety", "Belfast English"), ("clause", "embedded question"), ("order", "V2")] }
 
-def ex_6 : LinguisticExample :=
+def ex_6 : Datum :=
   { id := "westergaard2009_6"
     source := ⟨"westergaard-2009", "ch. 2 (24)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_6 : LinguisticExample :=
     readings := []
     paperFeatures := [("variety", "Belfast English"), ("clause", "imperative"), ("order", "V2")] }
 
-def ex_7 : LinguisticExample :=
+def ex_7 : Datum :=
   { id := "westergaard2009_7"
     source := ⟨"westergaard-2009", "ch. 2 (36)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_7 : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "embedded declarative"), ("order", "non-V2 or V2")] }
 
-def ex_8 : LinguisticExample :=
+def ex_8 : Datum :=
   { id := "westergaard2009_8"
     source := ⟨"westergaard-2009", "ch. 2 (39)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_8 : LinguisticExample :=
     readings := []
     paperFeatures := [("variety", "Tromsø"), ("wh", "phrase"), ("order", "V2")] }
 
-def ex_9 : LinguisticExample :=
+def ex_9 : Datum :=
   { id := "westergaard2009_9"
     source := ⟨"westergaard-2009", "ch. 2 (40)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_9 : LinguisticExample :=
     readings := []
     paperFeatures := [("variety", "Tromsø"), ("wh", "disyllabic"), ("order", "V2")] }
 
-def ex_10 : LinguisticExample :=
+def ex_10 : Datum :=
   { id := "westergaard2009_10"
     source := ⟨"westergaard-2009", "ch. 2 (41)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_10 : LinguisticExample :=
     readings := []
     paperFeatures := [("variety", "Tromsø"), ("wh", "disyllabic"), ("order", "V2")] }
 
-def ex_11 : LinguisticExample :=
+def ex_11 : Datum :=
   { id := "westergaard2009_11"
     source := ⟨"westergaard-2009", "ch. 3 (12)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_11 : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "yes/no-question"), ("order", "V1")] }
 
-def ex_12 : LinguisticExample :=
+def ex_12 : Datum :=
   { id := "westergaard2009_12"
     source := ⟨"westergaard-2009", "ch. 3 (17)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_12 : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "exclamative"), ("order", "V2")] }
 
-def ex_13 : LinguisticExample :=
+def ex_13 : Datum :=
   { id := "westergaard2009_13"
     source := ⟨"westergaard-2009", "ch. 3 (21)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_13 : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "declarative"), ("adverb", "kanskje"), ("order", "non-V2 or V2")] }
 
-def ex_14 : LinguisticExample :=
+def ex_14 : Datum :=
   { id := "westergaard2009_14"
     source := ⟨"westergaard-2009", "ch. 3 (22a)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_14 : LinguisticExample :=
     readings := []
     paperFeatures := [("variety", "Standard Norwegian"), ("wh", "monosyllabic"), ("order", "V2")] }
 
-def ex_15 : LinguisticExample :=
+def ex_15 : Datum :=
   { id := "westergaard2009_15"
     source := ⟨"westergaard-2009", "ch. 3 (22b)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_15 : LinguisticExample :=
     readings := []
     paperFeatures := [("variety", "Standard Norwegian"), ("wh", "phrase"), ("order", "V2")] }
 
-def ex_16 : LinguisticExample :=
+def ex_16 : Datum :=
   { id := "westergaard2009_16"
     source := ⟨"westergaard-2009", "ch. 3 (23a)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_16 : LinguisticExample :=
     readings := []
     paperFeatures := [("variety", "Tromsø"), ("wh", "monosyllabic"), ("order", "V2 or non-V2")] }
 
-def ex_17 : LinguisticExample :=
+def ex_17 : Datum :=
   { id := "westergaard2009_17"
     source := ⟨"westergaard-2009", "ch. 3 (23b)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex_17 : LinguisticExample :=
     readings := []
     paperFeatures := [("variety", "Tromsø"), ("wh", "phrase"), ("order", "V2")] }
 
-def ex_18 : LinguisticExample :=
+def ex_18 : Datum :=
   { id := "westergaard2009_18"
     source := ⟨"westergaard-2009", "ch. 3 (24a)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex_18 : LinguisticExample :=
     readings := []
     paperFeatures := [("variety", "Nordmøre"), ("wh", "monosyllabic"), ("order", "non-V2 or V2")] }
 
-def ex_19 : LinguisticExample :=
+def ex_19 : Datum :=
   { id := "westergaard2009_19"
     source := ⟨"westergaard-2009", "ch. 3 (24b)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex_19 : LinguisticExample :=
     readings := []
     paperFeatures := [("variety", "Nordmøre"), ("wh", "phrase"), ("order", "non-V2 or V2")] }
 
-def ex_20 : LinguisticExample :=
+def ex_20 : Datum :=
   { id := "westergaard2009_20"
     source := ⟨"westergaard-2009", "ch. 3 (29)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex_20 : LinguisticExample :=
     readings := []
     paperFeatures := [("variety", "Tromsø"), ("subject", "new"), ("order", "V2")] }
 
-def ex_21 : LinguisticExample :=
+def ex_21 : Datum :=
   { id := "westergaard2009_21"
     source := ⟨"westergaard-2009", "ch. 3 (30)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex_21 : LinguisticExample :=
     readings := []
     paperFeatures := [("variety", "Tromsø"), ("subject", "given"), ("order", "non-V2")] }
 
-def ex_22 : LinguisticExample :=
+def ex_22 : Datum :=
   { id := "westergaard2009_22"
     source := ⟨"westergaard-2009", "ch. 3 (33)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex_22 : LinguisticExample :=
     readings := []
     paperFeatures := [("variety", "Tromsø"), ("clause", "subject question"), ("order", "non-V2")] }
 
-def ex_23 : LinguisticExample :=
+def ex_23 : Datum :=
   { id := "westergaard2009_23"
     source := ⟨"westergaard-2009", "ch. 3 (38)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex_23 : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "subject-initial declarative"), ("adverb", "focus-sensitive")] }
 
-def ex_24 : LinguisticExample :=
+def ex_24 : Datum :=
   { id := "westergaard2009_24"
     source := ⟨"westergaard-2009", "ch. 3 (47)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex_24 : LinguisticExample :=
     readings := []
     paperFeatures := [("variety", "Standard Norwegian"), ("clause", "wh-question"), ("order", "V2")] }
 
-def ex_25 : LinguisticExample :=
+def ex_25 : Datum :=
   { id := "westergaard2009_25"
     source := ⟨"westergaard-2009", "ch. 3 (48)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex_25 : LinguisticExample :=
     readings := []
     paperFeatures := [("variety", "Standard Norwegian"), ("clause", "non-subject-initial declarative"), ("order", "V2")] }
 
-def ex_26 : LinguisticExample :=
+def ex_26 : Datum :=
   { id := "westergaard2009_26"
     source := ⟨"westergaard-2009", "ch. 3 (66)"⟩
     reportedIn := none
@@ -355,6 +355,6 @@ def ex_26 : LinguisticExample :=
     readings := []
     paperFeatures := [("variety", "Tromsø"), ("clause", "subject question"), ("som", "inserted")] }
 
-def all : List LinguisticExample := [ex_1, ex_2, ex_3, ex_4, ex_5, ex_6, ex_7, ex_8, ex_9, ex_10, ex_11, ex_12, ex_13, ex_14, ex_15, ex_16, ex_17, ex_18, ex_19, ex_20, ex_21, ex_22, ex_23, ex_24, ex_25, ex_26]
+def all : List Datum := [ex_1, ex_2, ex_3, ex_4, ex_5, ex_6, ex_7, ex_8, ex_9, ex_10, ex_11, ex_12, ex_13, ex_14, ex_15, ex_16, ex_17, ex_18, ex_19, ex_20, ex_21, ex_22, ex_23, ex_24, ex_25, ex_26]
 
 end Westergaard2009.Examples

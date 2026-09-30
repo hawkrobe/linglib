@@ -17,7 +17,7 @@ namespace Wang2023.Examples
 
 open Data.Examples
 
-def ex_1 : LinguisticExample :=
+def ex_1 : Datum :=
   { id := "wang2023_1"
     source := ⟨"wang-r-2023", "(1)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("address", "familiar"), ("number", "singular")] }
 
-def ex_2 : LinguisticExample :=
+def ex_2 : Datum :=
   { id := "wang2023_2"
     source := ⟨"wang-r-2023", "(2)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("address", "polite"), ("number", "plural"), ("mismatch", "referentially singular")] }
 
-def ex_3a : LinguisticExample :=
+def ex_3a : Datum :=
   { id := "wang2023_3a"
     source := ⟨"wang-r-2023", "(3a)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_3a : LinguisticExample :=
     readings := []
     paperFeatures := [("address", "familiar"), ("person", "second")] }
 
-def ex_3b : LinguisticExample :=
+def ex_3b : Datum :=
   { id := "wang2023_3b"
     source := ⟨"wang-r-2023", "(3b)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_3b : LinguisticExample :=
     readings := []
     paperFeatures := [("address", "polite"), ("person", "third"), ("mismatch", "second-person addressee")] }
 
-def ex_4a : LinguisticExample :=
+def ex_4a : Datum :=
   { id := "wang2023_4a"
     source := ⟨"wang-r-2023", "(4a)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_4a : LinguisticExample :=
     readings := []
     paperFeatures := [("address", "familiar"), ("definiteness", "definite pronoun")] }
 
-def ex_4b : LinguisticExample :=
+def ex_4b : Datum :=
   { id := "wang2023_4b"
     source := ⟨"wang-r-2023", "(4b)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_4b : LinguisticExample :=
     readings := []
     paperFeatures := [("address", "polite"), ("definiteness", "indefinite pronoun"), ("mismatch", "definite addressee")] }
 
-def ex_29 : LinguisticExample :=
+def ex_29 : Datum :=
   { id := "wang2023_29"
     source := ⟨"wang-r-2023", "(29)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_29 : LinguisticExample :=
     readings := []
     paperFeatures := [("unattested", "honorific singular")] }
 
-def ex_30a : LinguisticExample :=
+def ex_30a : Datum :=
   { id := "wang2023_30a"
     source := ⟨"wang-r-2023", "(30a)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_30a : LinguisticExample :=
     readings := []
     paperFeatures := [("unattested", "honorific first person")] }
 
-def ex_30b : LinguisticExample :=
+def ex_30b : Datum :=
   { id := "wang2023_30b"
     source := ⟨"wang-r-2023", "(30b)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_30b : LinguisticExample :=
     readings := []
     paperFeatures := [("unattested", "honorific second person")] }
 
-def ex_31 : LinguisticExample :=
+def ex_31 : Datum :=
   { id := "wang2023_31"
     source := ⟨"wang-r-2023", "(31)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_31 : LinguisticExample :=
     readings := []
     paperFeatures := [("unattested", "honorific definite")] }
 
-def ex_48a : LinguisticExample :=
+def ex_48a : Datum :=
   { id := "wang2023_48a"
     source := ⟨"wang-r-2023", "(48a)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_48a : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "semantic markedness"), ("number", "plural inclusive")] }
 
-def ex_49 : LinguisticExample :=
+def ex_49 : Datum :=
   { id := "wang2023_49"
     source := ⟨"wang-r-2023", "(49)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_49 : LinguisticExample :=
     readings := [("each girl owns exactly one hamster", .acceptable), ("mixed: some girls own one, others several", .acceptable)]
     paperFeatures := [("diagnostic", "quantification"), ("number", "plural inclusive")] }
 
-def ex_50 : LinguisticExample :=
+def ex_50 : Datum :=
   { id := "wang2023_50"
     source := ⟨"wang-r-2023", "(50)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_50 : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "quantification"), ("person", "third unmarked")] }
 
-def ex_53a : LinguisticExample :=
+def ex_53a : Datum :=
   { id := "wang2023_53a"
     source := ⟨"wang-r-2023", "(53a)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_53a : LinguisticExample :=
     readings := []
     paperFeatures := [("definiteness", "definite"), ("presupposition", "familiarity")] }
 
-def ex_53b : LinguisticExample :=
+def ex_53b : Datum :=
   { id := "wang2023_53b"
     source := ⟨"wang-r-2023", "(53b)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_53b : LinguisticExample :=
     readings := []
     paperFeatures := [("definiteness", "indefinite")] }
 
-def ex_60 : LinguisticExample :=
+def ex_60 : Datum :=
   { id := "wang2023_60"
     source := ⟨"wang-r-2023", "(60)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_60 : LinguisticExample :=
     readings := []
     paperFeatures := [("address", "polite"), ("number", "plural"), ("case", "ceiling")] }
 
-def ex_72 : LinguisticExample :=
+def ex_72 : Datum :=
   { id := "wang2023_72"
     source := ⟨"wang-r-2023", "(72)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex_72 : LinguisticExample :=
     readings := []
     paperFeatures := [("address", "polite"), ("number", "dual"), ("system", "honorific dual only")] }
 
-def ex_74b : LinguisticExample :=
+def ex_74b : Datum :=
   { id := "wang2023_74b"
     source := ⟨"wang-r-2023", "(74b)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex_74b : LinguisticExample :=
     readings := []
     paperFeatures := [("reference", "polite"), ("number", "dual for three referents"), ("system", "honorific dual only")] }
 
-def ex_75a : LinguisticExample :=
+def ex_75a : Datum :=
   { id := "wang2023_75a"
     source := ⟨"wang-r-2023", "(75a)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex_75a : LinguisticExample :=
     readings := []
     paperFeatures := [("address", "polite"), ("number", "plural"), ("system", "honorific plural only")] }
 
-def ex_75b : LinguisticExample :=
+def ex_75b : Datum :=
   { id := "wang2023_75b"
     source := ⟨"wang-r-2023", "(75b)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex_75b : LinguisticExample :=
     readings := []
     paperFeatures := [("address", "plain dual"), ("number", "dual")] }
 
-def ex_78a : LinguisticExample :=
+def ex_78a : Datum :=
   { id := "wang2023_78a"
     source := ⟨"wang-r-2023", "(78a)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex_78a : LinguisticExample :=
     readings := []
     paperFeatures := [("address", "polite"), ("number", "dual or plural"), ("system", "non-escalating")] }
 
-def ex_81 : LinguisticExample :=
+def ex_81 : Datum :=
   { id := "wang2023_81"
     source := ⟨"wang-r-2023", "(81)"⟩
     reportedIn := none
@@ -303,6 +303,6 @@ def ex_81 : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "quantification"), ("number", "dual intermediate")] }
 
-def all : List LinguisticExample := [ex_1, ex_2, ex_3a, ex_3b, ex_4a, ex_4b, ex_29, ex_30a, ex_30b, ex_31, ex_48a, ex_49, ex_50, ex_53a, ex_53b, ex_60, ex_72, ex_74b, ex_75a, ex_75b, ex_78a, ex_81]
+def all : List Datum := [ex_1, ex_2, ex_3a, ex_3b, ex_4a, ex_4b, ex_29, ex_30a, ex_30b, ex_31, ex_48a, ex_49, ex_50, ex_53a, ex_53b, ex_60, ex_72, ex_74b, ex_75a, ex_75b, ex_78a, ex_81]
 
 end Wang2023.Examples

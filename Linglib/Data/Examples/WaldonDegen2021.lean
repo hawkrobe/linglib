@@ -17,7 +17,7 @@ namespace WaldonDegen2021.Examples
 
 open Data.Examples
 
-def ex_1 : LinguisticExample :=
+def ex_1 : Datum :=
   { id := "waldondegen2021_1"
     source := ⟨"waldon-degen-2021", "(1)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("idiolect", "Spanish-postnominal"), ("order", "noun color size")] }
 
-def ex_2a : LinguisticExample :=
+def ex_2a : Datum :=
   { id := "waldondegen2021_2a"
     source := ⟨"waldon-degen-2021", "(2a)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_2a : LinguisticExample :=
     readings := []
     paperFeatures := [("idiolect", "Spanish-postnominal-conjunctive"), ("order", "suspended under conjunction")] }
 
-def ex_3a : LinguisticExample :=
+def ex_3a : Datum :=
   { id := "waldondegen2021_3a"
     source := ⟨"waldon-degen-2021", "(3a)"⟩
     reportedIn := none
@@ -56,6 +56,6 @@ def ex_3a : LinguisticExample :=
     readings := []
     paperFeatures := [("idiolect", "Spanish-split"), ("order", "size noun color")] }
 
-def all : List LinguisticExample := [ex_1, ex_2a, ex_3a]
+def all : List Datum := [ex_1, ex_2a, ex_3a]
 
 end WaldonDegen2021.Examples

@@ -17,7 +17,7 @@ namespace Jaeger2007.Examples
 
 open Data.Examples
 
-def t1_cv : LinguisticExample :=
+def t1_cv : Datum :=
   { id := "jaeger2007_t1_cv"
     source := ⟨"jaeger-2007", "Table 1"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def t1_cv : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("onset", "1"), ("coda", "0"), ("frequency", "44.81"), ("permyriad", "4481")] }
 
-def t1_cvc : LinguisticExample :=
+def t1_cvc : Datum :=
   { id := "jaeger2007_t1_cvc"
     source := ⟨"jaeger-2007", "Table 1"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def t1_cvc : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("onset", "1"), ("coda", "1"), ("frequency", "32.05"), ("permyriad", "3205")] }
 
-def t1_vc : LinguisticExample :=
+def t1_vc : Datum :=
   { id := "jaeger2007_t1_vc"
     source := ⟨"jaeger-2007", "Table 1"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def t1_vc : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("onset", "0"), ("coda", "1"), ("frequency", "11.99"), ("permyriad", "1199")] }
 
-def t1_v : LinguisticExample :=
+def t1_v : Datum :=
   { id := "jaeger2007_t1_v"
     source := ⟨"jaeger-2007", "Table 1"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def t1_v : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("onset", "0"), ("coda", "0"), ("frequency", "3.85"), ("permyriad", "385")] }
 
-def t1_cvcc : LinguisticExample :=
+def t1_cvcc : Datum :=
   { id := "jaeger2007_t1_cvcc"
     source := ⟨"jaeger-2007", "Table 1"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def t1_cvcc : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("onset", "1"), ("coda", "2"), ("frequency", "3.25"), ("permyriad", "325")] }
 
-def t1_ccvc : LinguisticExample :=
+def t1_ccvc : Datum :=
   { id := "jaeger2007_t1_ccvc"
     source := ⟨"jaeger-2007", "Table 1"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def t1_ccvc : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("onset", "2"), ("coda", "1"), ("frequency", "1.98"), ("permyriad", "198")] }
 
-def t1_ccv : LinguisticExample :=
+def t1_ccv : Datum :=
   { id := "jaeger2007_t1_ccv"
     source := ⟨"jaeger-2007", "Table 1"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def t1_ccv : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("onset", "2"), ("coda", "0"), ("frequency", "1.38"), ("permyriad", "138")] }
 
-def t1_vcc : LinguisticExample :=
+def t1_vcc : Datum :=
   { id := "jaeger2007_t1_vcc"
     source := ⟨"jaeger-2007", "Table 1"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def t1_vcc : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("onset", "0"), ("coda", "2"), ("frequency", "0.42"), ("permyriad", "42")] }
 
-def t1_ccvcc : LinguisticExample :=
+def t1_ccvcc : Datum :=
   { id := "jaeger2007_t1_ccvcc"
     source := ⟨"jaeger-2007", "Table 1"⟩
     reportedIn := none
@@ -134,6 +134,6 @@ def t1_ccvcc : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("onset", "2"), ("coda", "2"), ("frequency", "0.26"), ("permyriad", "26")] }
 
-def all : List LinguisticExample := [t1_cv, t1_cvc, t1_vc, t1_v, t1_cvcc, t1_ccvc, t1_ccv, t1_vcc, t1_ccvcc]
+def all : List Datum := [t1_cv, t1_cvc, t1_vc, t1_v, t1_cvcc, t1_ccvc, t1_ccv, t1_vcc, t1_ccvcc]
 
 end Jaeger2007.Examples

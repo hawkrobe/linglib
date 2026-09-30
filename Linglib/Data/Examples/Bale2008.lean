@@ -17,7 +17,7 @@ namespace Bale2008.Examples
 
 open Data.Examples
 
-def ex_1a : LinguisticExample :=
+def ex_1a : Datum :=
   { id := "bale2008_1a"
     source := ⟨"bale-2008", "(1a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_1a : LinguisticExample :=
     readings := []
     paperFeatures := [("comparison", "indirect"), ("entails", "(1b)")] }
 
-def ex_1b : LinguisticExample :=
+def ex_1b : Datum :=
   { id := "bale2008_1b"
     source := ⟨"bale-2008", "(1b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_1b : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_2a : LinguisticExample :=
+def ex_2a : Datum :=
   { id := "bale2008_2a"
     source := ⟨"bale-2008", "(2a)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_2a : LinguisticExample :=
     readings := []
     paperFeatures := [("comparison", "direct"), ("entails", "none")] }
 
-def ex_2b : LinguisticExample :=
+def ex_2b : Datum :=
   { id := "bale2008_2b"
     source := ⟨"bale-2008", "(2b)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_2b : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_3a : LinguisticExample :=
+def ex_3a : Datum :=
   { id := "bale2008_3a"
     source := ⟨"bale-2008", "(3a)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_3a : LinguisticExample :=
     readings := []
     paperFeatures := [("comparison", "indirect"), ("morpheme", "più")] }
 
-def ex_3b : LinguisticExample :=
+def ex_3b : Datum :=
   { id := "bale2008_3b"
     source := ⟨"bale-2008", "(3b)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_3b : LinguisticExample :=
     readings := []
     paperFeatures := [("comparison", "direct"), ("morpheme", "più")] }
 
-def ex_4a : LinguisticExample :=
+def ex_4a : Datum :=
   { id := "bale2008_4a"
     source := ⟨"bale-2008", "(4a)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_4a : LinguisticExample :=
     readings := []
     paperFeatures := [("comparison", "indirect"), ("morpheme", "-er")] }
 
-def ex_4b : LinguisticExample :=
+def ex_4b : Datum :=
   { id := "bale2008_4b"
     source := ⟨"bale-2008", "(4b)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_4b : LinguisticExample :=
     readings := []
     paperFeatures := [("comparison", "direct"), ("morpheme", "-er")] }
 
-def ex_5a : LinguisticExample :=
+def ex_5a : Datum :=
   { id := "bale2008_5a"
     source := ⟨"bale-2008", "(5a)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_5a : LinguisticExample :=
     readings := []
     paperFeatures := [("comparison", "indirect"), ("morpheme", "plus")] }
 
-def ex_5b : LinguisticExample :=
+def ex_5b : Datum :=
   { id := "bale2008_5b"
     source := ⟨"bale-2008", "(5b)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_5b : LinguisticExample :=
     readings := []
     paperFeatures := [("comparison", "direct"), ("morpheme", "plus")] }
 
-def ex_6a : LinguisticExample :=
+def ex_6a : Datum :=
   { id := "bale2008_6a"
     source := ⟨"bale-2008", "(6a)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_6a : LinguisticExample :=
     readings := []
     paperFeatures := [("comparison", "indirect"), ("morpheme", "mai")] }
 
-def ex_6b : LinguisticExample :=
+def ex_6b : Datum :=
   { id := "bale2008_6b"
     source := ⟨"bale-2008", "(6b)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_6b : LinguisticExample :=
     readings := []
     paperFeatures := [("comparison", "direct"), ("morpheme", "mai")] }
 
-def ex_7a : LinguisticExample :=
+def ex_7a : Datum :=
   { id := "bale2008_7a"
     source := ⟨"bale-2008", "(7a)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_7a : LinguisticExample :=
     readings := []
     paperFeatures := [("comparison", "metalinguistic")] }
 
-def ex_7b : LinguisticExample :=
+def ex_7b : Datum :=
   { id := "bale2008_7b"
     source := ⟨"bale-2008", "(7b)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_7b : LinguisticExample :=
     readings := []
     paperFeatures := [("comparison", "metalinguistic")] }
 
-def ex_7c : LinguisticExample :=
+def ex_7c : Datum :=
   { id := "bale2008_7c"
     source := ⟨"bale-2008", "(7c)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_7c : LinguisticExample :=
     readings := []
     paperFeatures := [("comparison", "deviation")] }
 
-def ex_8a : LinguisticExample :=
+def ex_8a : Datum :=
   { id := "bale2008_8a"
     source := ⟨"bale-2008", "(8a)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_8a : LinguisticExample :=
     readings := []
     paperFeatures := [("comparison", "indirect"), ("affix", "-er")] }
 
-def ex_8c : LinguisticExample :=
+def ex_8c : Datum :=
   { id := "bale2008_8c"
     source := ⟨"bale-2008", "(8c)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex_8c : LinguisticExample :=
     readings := []
     paperFeatures := [("comparison", "indirect"), ("affix", "-er")] }
 
-def ex_8d : LinguisticExample :=
+def ex_8d : Datum :=
   { id := "bale2008_8d"
     source := ⟨"bale-2008", "(8d)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex_8d : LinguisticExample :=
     readings := []
     paperFeatures := [("comparison", "indirect"), ("affix", "-er")] }
 
-def ex_9 : LinguisticExample :=
+def ex_9 : Datum :=
   { id := "bale2008_9"
     source := ⟨"bale-2008", "(9)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex_9 : LinguisticExample :=
     readings := []
     paperFeatures := [("comparison", "indirect")] }
 
-def ex_11a : LinguisticExample :=
+def ex_11a : Datum :=
   { id := "bale2008_11a"
     source := ⟨"bale-2008", "(11a)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex_11a : LinguisticExample :=
     readings := []
     paperFeatures := [("comparison", "metalinguistic")] }
 
-def ex_11b : LinguisticExample :=
+def ex_11b : Datum :=
   { id := "bale2008_11b"
     source := ⟨"bale-2008", "(11b)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex_11b : LinguisticExample :=
     readings := []
     paperFeatures := [("comparison", "indirect")] }
 
-def ex_14a : LinguisticExample :=
+def ex_14a : Datum :=
   { id := "bale2008_14a"
     source := ⟨"bale-2008", "(14a)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex_14a : LinguisticExample :=
     readings := []
     paperFeatures := [("comparison", "direct")] }
 
-def ex_14b : LinguisticExample :=
+def ex_14b : Datum :=
   { id := "bale2008_14b"
     source := ⟨"bale-2008", "(14b)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex_14b : LinguisticExample :=
     readings := []
     paperFeatures := [("comparison", "indirect")] }
 
-def ex_18a : LinguisticExample :=
+def ex_18a : Datum :=
   { id := "bale2008_18a"
     source := ⟨"bale-2008", "(18a)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex_18a : LinguisticExample :=
     readings := []
     paperFeatures := [("comparison", "indirect")] }
 
-def ex_18c : LinguisticExample :=
+def ex_18c : Datum :=
   { id := "bale2008_18c"
     source := ⟨"bale-2008", "(18c)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex_18c : LinguisticExample :=
     readings := []
     paperFeatures := [("comparison", "indirect")] }
 
-def ex_18d : LinguisticExample :=
+def ex_18d : Datum :=
   { id := "bale2008_18d"
     source := ⟨"bale-2008", "(18d)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex_18d : LinguisticExample :=
     readings := []
     paperFeatures := [("comparison", "indirect")] }
 
-def ex_19a : LinguisticExample :=
+def ex_19a : Datum :=
   { id := "bale2008_19a"
     source := ⟨"bale-2008", "(19a)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def ex_19a : LinguisticExample :=
     readings := []
     paperFeatures := [("comparison", "indirect"), ("model", "committee"), ("subject", "b"), ("subjectScale", "beauty"), ("standard", "h"), ("standardScale", "intelligence"), ("truth", "true")] }
 
-def ex_19b : LinguisticExample :=
+def ex_19b : Datum :=
   { id := "bale2008_19b"
     source := ⟨"bale-2008", "(19b)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def ex_19b : LinguisticExample :=
     readings := []
     paperFeatures := [("comparison", "indirect"), ("model", "committee"), ("subject", "b"), ("subjectScale", "intelligence"), ("standard", "e"), ("standardScale", "beauty"), ("truth", "false")] }
 
-def ex_22a : LinguisticExample :=
+def ex_22a : Datum :=
   { id := "bale2008_22a"
     source := ⟨"bale-2008", "(22a)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def ex_22a : LinguisticExample :=
     readings := []
     paperFeatures := [("comparison", "indirect")] }
 
-def ex_22b : LinguisticExample :=
+def ex_22b : Datum :=
   { id := "bale2008_22b"
     source := ⟨"bale-2008", "(22b)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def ex_22b : LinguisticExample :=
     readings := []
     paperFeatures := [("comparison", "indirect")] }
 
-def ex_25a : LinguisticExample :=
+def ex_25a : Datum :=
   { id := "bale2008_25a"
     source := ⟨"bale-2008", "(25a)"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def ex_25a : LinguisticExample :=
     readings := []
     paperFeatures := [("measurePhrase", "subject")] }
 
-def ex_25b : LinguisticExample :=
+def ex_25b : Datum :=
   { id := "bale2008_25b"
     source := ⟨"bale-2008", "(25b)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def ex_25b : LinguisticExample :=
     readings := []
     paperFeatures := [("measurePhrase", "subject")] }
 
-def ex_25d : LinguisticExample :=
+def ex_25d : Datum :=
   { id := "bale2008_25d"
     source := ⟨"bale-2008", "(25d)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def ex_25d : LinguisticExample :=
     readings := []
     paperFeatures := [("measurePhrase", "subject")] }
 
-def ex_26a : LinguisticExample :=
+def ex_26a : Datum :=
   { id := "bale2008_26a"
     source := ⟨"bale-2008", "(26a)"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def ex_26a : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_30a : LinguisticExample :=
+def ex_30a : Datum :=
   { id := "bale2008_30a"
     source := ⟨"bale-2008", "(30a)"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def ex_30a : LinguisticExample :=
     readings := []
     paperFeatures := [("measurePhrase", "subject")] }
 
-def ex_31a : LinguisticExample :=
+def ex_31a : Datum :=
   { id := "bale2008_31a"
     source := ⟨"bale-2008", "(31a)"⟩
     reportedIn := none
@@ -485,7 +485,7 @@ def ex_31a : LinguisticExample :=
     readings := []
     paperFeatures := [("comparison", "direct"), ("model", "measured"), ("subject", "s"), ("subjectScale", "height"), ("standard", "s"), ("standardScale", "width"), ("truth", "true")] }
 
-def ex_31b : LinguisticExample :=
+def ex_31b : Datum :=
   { id := "bale2008_31b"
     source := ⟨"bale-2008", "(31b)"⟩
     reportedIn := none
@@ -498,7 +498,7 @@ def ex_31b : LinguisticExample :=
     readings := []
     paperFeatures := [("comparison", "direct"), ("model", "measured"), ("subject", "s"), ("subjectScale", "width"), ("standard", "s"), ("standardScale", "height"), ("truth", "false")] }
 
-def ex_34 : LinguisticExample :=
+def ex_34 : Datum :=
   { id := "bale2008_34"
     source := ⟨"bale-2008", "(34)"⟩
     reportedIn := none
@@ -511,7 +511,7 @@ def ex_34 : LinguisticExample :=
     readings := []
     paperFeatures := [("comparison", "direct")] }
 
-def ex_35 : LinguisticExample :=
+def ex_35 : Datum :=
   { id := "bale2008_35"
     source := ⟨"bale-2008", "(35)"⟩
     reportedIn := none
@@ -524,7 +524,7 @@ def ex_35 : LinguisticExample :=
     readings := []
     paperFeatures := [("comparison", "indirect"), ("model", "men"), ("subject", "s"), ("subjectScale", "height"), ("standard", "s"), ("standardScale", "width"), ("truth", "false")] }
 
-def ex_37 : LinguisticExample :=
+def ex_37 : Datum :=
   { id := "bale2008_37"
     source := ⟨"bale-2008", "(37)"⟩
     reportedIn := none
@@ -537,7 +537,7 @@ def ex_37 : LinguisticExample :=
     readings := []
     paperFeatures := [("comparison", "indirect"), ("model", "men"), ("subject", "s"), ("subjectScale", "height"), ("standard", "s"), ("standardScale", "width"), ("truth", "false")] }
 
-def ex_38a : LinguisticExample :=
+def ex_38a : Datum :=
   { id := "bale2008_38a"
     source := ⟨"bale-2008", "(38a)"⟩
     reportedIn := none
@@ -550,7 +550,7 @@ def ex_38a : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_38b : LinguisticExample :=
+def ex_38b : Datum :=
   { id := "bale2008_38b"
     source := ⟨"bale-2008", "(38b)"⟩
     reportedIn := none
@@ -563,7 +563,7 @@ def ex_38b : LinguisticExample :=
     readings := []
     paperFeatures := [("comparison", "direct")] }
 
-def ex_39 : LinguisticExample :=
+def ex_39 : Datum :=
   { id := "bale2008_39"
     source := ⟨"bale-2008", "(39)"⟩
     reportedIn := none
@@ -576,7 +576,7 @@ def ex_39 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_40 : LinguisticExample :=
+def ex_40 : Datum :=
   { id := "bale2008_40"
     source := ⟨"bale-2008", "(40)"⟩
     reportedIn := none
@@ -589,7 +589,7 @@ def ex_40 : LinguisticExample :=
     readings := []
     paperFeatures := [("comparison", "indirect")] }
 
-def ex_41a : LinguisticExample :=
+def ex_41a : Datum :=
   { id := "bale2008_41a"
     source := ⟨"bale-2008", "(41a)"⟩
     reportedIn := none
@@ -602,7 +602,7 @@ def ex_41a : LinguisticExample :=
     readings := []
     paperFeatures := [("comparison", "indirect")] }
 
-def ex_41b : LinguisticExample :=
+def ex_41b : Datum :=
   { id := "bale2008_41b"
     source := ⟨"bale-2008", "(41b)"⟩
     reportedIn := none
@@ -615,7 +615,7 @@ def ex_41b : LinguisticExample :=
     readings := []
     paperFeatures := [("comparison", "direct")] }
 
-def ex_42a : LinguisticExample :=
+def ex_42a : Datum :=
   { id := "bale2008_42a"
     source := ⟨"bale-2008", "(42a)"⟩
     reportedIn := none
@@ -628,7 +628,7 @@ def ex_42a : LinguisticExample :=
     readings := []
     paperFeatures := [("comparison", "indirect")] }
 
-def ex_42b : LinguisticExample :=
+def ex_42b : Datum :=
   { id := "bale2008_42b"
     source := ⟨"bale-2008", "(42b)"⟩
     reportedIn := none
@@ -641,6 +641,6 @@ def ex_42b : LinguisticExample :=
     readings := []
     paperFeatures := [("comparison", "indirect")] }
 
-def all : List LinguisticExample := [ex_1a, ex_1b, ex_2a, ex_2b, ex_3a, ex_3b, ex_4a, ex_4b, ex_5a, ex_5b, ex_6a, ex_6b, ex_7a, ex_7b, ex_7c, ex_8a, ex_8c, ex_8d, ex_9, ex_11a, ex_11b, ex_14a, ex_14b, ex_18a, ex_18c, ex_18d, ex_19a, ex_19b, ex_22a, ex_22b, ex_25a, ex_25b, ex_25d, ex_26a, ex_30a, ex_31a, ex_31b, ex_34, ex_35, ex_37, ex_38a, ex_38b, ex_39, ex_40, ex_41a, ex_41b, ex_42a, ex_42b]
+def all : List Datum := [ex_1a, ex_1b, ex_2a, ex_2b, ex_3a, ex_3b, ex_4a, ex_4b, ex_5a, ex_5b, ex_6a, ex_6b, ex_7a, ex_7b, ex_7c, ex_8a, ex_8c, ex_8d, ex_9, ex_11a, ex_11b, ex_14a, ex_14b, ex_18a, ex_18c, ex_18d, ex_19a, ex_19b, ex_22a, ex_22b, ex_25a, ex_25b, ex_25d, ex_26a, ex_30a, ex_31a, ex_31b, ex_34, ex_35, ex_37, ex_38a, ex_38b, ex_39, ex_40, ex_41a, ex_41b, ex_42a, ex_42b]
 
 end Bale2008.Examples

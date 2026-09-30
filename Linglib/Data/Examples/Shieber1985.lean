@@ -17,7 +17,7 @@ namespace Shieber1985.Examples
 
 open Data.Examples
 
-def ex1 : LinguisticExample :=
+def ex1 : Datum :=
   { id := "shieber1985_ex1"
     source := ⟨"shieber-1985", "(1)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex1 : LinguisticExample :=
     readings := []
     paperFeatures := [("order", "crossSerial")] }
 
-def ex2 : LinguisticExample :=
+def ex2 : Datum :=
   { id := "shieber1985_ex2"
     source := ⟨"shieber-1985", "(2)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex2 : LinguisticExample :=
     readings := []
     paperFeatures := [("order", "crossSerial")] }
 
-def ex3 : LinguisticExample :=
+def ex3 : Datum :=
   { id := "shieber1985_ex3"
     source := ⟨"shieber-1985", "(3)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex3 : LinguisticExample :=
     readings := []
     paperFeatures := [("order", "crossSerial")] }
 
-def ex4 : LinguisticExample :=
+def ex4 : Datum :=
   { id := "shieber1985_ex4"
     source := ⟨"shieber-1985", "(4)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex4 : LinguisticExample :=
     readings := []
     paperFeatures := [("order", "crossSerial")] }
 
-def ex5 : LinguisticExample :=
+def ex5 : Datum :=
   { id := "shieber1985_ex5"
     source := ⟨"shieber-1985", "(5)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex5 : LinguisticExample :=
     readings := []
     paperFeatures := [("order", "crossSerial")] }
 
-def ex6 : LinguisticExample :=
+def ex6 : Datum :=
   { id := "shieber1985_ex6"
     source := ⟨"shieber-1985", "(6)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex6 : LinguisticExample :=
     readings := []
     paperFeatures := [("order", "crossSerial")] }
 
-def ex7 : LinguisticExample :=
+def ex7 : Datum :=
   { id := "shieber1985_ex7"
     source := ⟨"shieber-1985", "(7)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex7 : LinguisticExample :=
     readings := []
     paperFeatures := [("order", "crossSerial")] }
 
-def ex8 : LinguisticExample :=
+def ex8 : Datum :=
   { id := "shieber1985_ex8"
     source := ⟨"shieber-1985", "(8)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex8 : LinguisticExample :=
     readings := []
     paperFeatures := [("order", "crossSerial")] }
 
-def ex9 : LinguisticExample :=
+def ex9 : Datum :=
   { id := "shieber1985_ex9"
     source := ⟨"shieber-1985", "(9)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex9 : LinguisticExample :=
     readings := []
     paperFeatures := [("order", "other")] }
 
-def ex10 : LinguisticExample :=
+def ex10 : Datum :=
   { id := "shieber1985_ex10"
     source := ⟨"shieber-1985", "(10)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex10 : LinguisticExample :=
     readings := []
     paperFeatures := [("order", "other")] }
 
-def ex11 : LinguisticExample :=
+def ex11 : Datum :=
   { id := "shieber1985_ex11"
     source := ⟨"shieber-1985", "(11)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex11 : LinguisticExample :=
     readings := []
     paperFeatures := [("order", "other")] }
 
-def ex12 : LinguisticExample :=
+def ex12 : Datum :=
   { id := "shieber1985_ex12"
     source := ⟨"shieber-1985", "(12)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex12 : LinguisticExample :=
     readings := []
     paperFeatures := [("order", "other")] }
 
-def ex13 : LinguisticExample :=
+def ex13 : Datum :=
   { id := "shieber1985_ex13"
     source := ⟨"shieber-1985", "(13)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex13 : LinguisticExample :=
     readings := []
     paperFeatures := [("order", "other")] }
 
-def ex14 : LinguisticExample :=
+def ex14 : Datum :=
   { id := "shieber1985_ex14"
     source := ⟨"shieber-1985", "(14)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex14 : LinguisticExample :=
     readings := []
     paperFeatures := [("order", "other")] }
 
-def ex15 : LinguisticExample :=
+def ex15 : Datum :=
   { id := "shieber1985_ex15"
     source := ⟨"shieber-1985", "(15)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex15 : LinguisticExample :=
     readings := []
     paperFeatures := [("order", "other")] }
 
-def ex16 : LinguisticExample :=
+def ex16 : Datum :=
   { id := "shieber1985_ex16"
     source := ⟨"shieber-1985", "(16)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex16 : LinguisticExample :=
     readings := []
     paperFeatures := [("order", "other")] }
 
-def ex17 : LinguisticExample :=
+def ex17 : Datum :=
   { id := "shieber1985_ex17"
     source := ⟨"shieber-1985", "(17)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex17 : LinguisticExample :=
     readings := []
     paperFeatures := [("order", "other")] }
 
-def ex18 : LinguisticExample :=
+def ex18 : Datum :=
   { id := "shieber1985_ex18"
     source := ⟨"shieber-1985", "(18)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex18 : LinguisticExample :=
     readings := []
     paperFeatures := [("order", "other")] }
 
-def ex19 : LinguisticExample :=
+def ex19 : Datum :=
   { id := "shieber1985_ex19"
     source := ⟨"shieber-1985", "(19)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex19 : LinguisticExample :=
     readings := []
     paperFeatures := [("order", "other")] }
 
-def ex20 : LinguisticExample :=
+def ex20 : Datum :=
   { id := "shieber1985_ex20"
     source := ⟨"shieber-1985", "(20)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex20 : LinguisticExample :=
     readings := []
     paperFeatures := [("order", "other")] }
 
-def ex21 : LinguisticExample :=
+def ex21 : Datum :=
   { id := "shieber1985_ex21"
     source := ⟨"shieber-1985", "(21)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex21 : LinguisticExample :=
     readings := []
     paperFeatures := [("order", "other")] }
 
-def ex22 : LinguisticExample :=
+def ex22 : Datum :=
   { id := "shieber1985_ex22"
     source := ⟨"shieber-1985", "(22)"⟩
     reportedIn := none
@@ -303,6 +303,6 @@ def ex22 : LinguisticExample :=
     readings := []
     paperFeatures := [("order", "crossSerial")] }
 
-def all : List LinguisticExample := [ex1, ex2, ex3, ex4, ex5, ex6, ex7, ex8, ex9, ex10, ex11, ex12, ex13, ex14, ex15, ex16, ex17, ex18, ex19, ex20, ex21, ex22]
+def all : List Datum := [ex1, ex2, ex3, ex4, ex5, ex6, ex7, ex8, ex9, ex10, ex11, ex12, ex13, ex14, ex15, ex16, ex17, ex18, ex19, ex20, ex21, ex22]
 
 end Shieber1985.Examples

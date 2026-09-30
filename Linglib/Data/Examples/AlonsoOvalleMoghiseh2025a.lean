@@ -17,7 +17,7 @@ namespace AlonsoOvalleMoghiseh2025a.Examples
 
 open Data.Examples
 
-def ex_1 : LinguisticExample :=
+def ex_1 : Datum :=
   { id := "alonsoovallemoghiseh2025a_1"
     source := ⟨"aloni-port-2015", "p. 121"⟩
     reportedIn := some ⟨"alonso-ovalle-moghiseh-2025a", "(1)"⟩
@@ -30,7 +30,7 @@ def ex_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "irgendein"), ("environment", "downward entailing")] }
 
-def ex_3b : LinguisticExample :=
+def ex_3b : Datum :=
   { id := "alonsoovallemoghiseh2025a_3b"
     source := ⟨"kratzer-shimoyama-2002", "p. 11"⟩
     reportedIn := some ⟨"alonso-ovalle-moghiseh-2025a", "(3b)"⟩
@@ -43,7 +43,7 @@ def ex_3b : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "irgendein"), ("modal", "deontic necessity"), ("inference", "free choice")] }
 
-def ex_4 : LinguisticExample :=
+def ex_4 : Datum :=
   { id := "alonsoovallemoghiseh2025a_4"
     source := ⟨"falaus-2014", "p. 122"⟩
     reportedIn := some ⟨"alonso-ovalle-moghiseh-2025a", "(4)"⟩
@@ -56,7 +56,7 @@ def ex_4 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "vreun"), ("environment", "unembedded"), ("modalInsertion", "no"), ("partialExhaustification", "no")] }
 
-def ex_5 : LinguisticExample :=
+def ex_5 : Datum :=
   { id := "alonsoovallemoghiseh2025a_5"
     source := ⟨"alonso-ovalle-menendez-benito-2015b", "p. 2"⟩
     reportedIn := some ⟨"alonso-ovalle-moghiseh-2025a", "(5)"⟩
@@ -69,7 +69,7 @@ def ex_5 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "algún"), ("environment", "unembedded"), ("inference", "speaker ignorance")] }
 
-def ex_6 : LinguisticExample :=
+def ex_6 : Datum :=
   { id := "alonsoovallemoghiseh2025a_6"
     source := ⟨"alonso-ovalle-menendez-benito-2015b", "p. 2"⟩
     reportedIn := some ⟨"alonso-ovalle-moghiseh-2025a", "(6)"⟩
@@ -82,7 +82,7 @@ def ex_6 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "algún"), ("environment", "unembedded"), ("continuation", "namely")] }
 
-def ex_7 : LinguisticExample :=
+def ex_7 : Datum :=
   { id := "alonsoovallemoghiseh2025a_7"
     source := ⟨"alonso-ovalle-menendez-benito-2018", "p. 2"⟩
     reportedIn := some ⟨"alonso-ovalle-moghiseh-2025a", "(7)"⟩
@@ -95,7 +95,7 @@ def ex_7 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "un NP cualquiera"), ("environment", "unembedded"), ("inference", "agent indifference")] }
 
-def ex_8 : LinguisticExample :=
+def ex_8 : Datum :=
   { id := "alonsoovallemoghiseh2025a_8"
     source := ⟨"alonso-ovalle-moghiseh-2025a", "(8)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_8 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "yek-i"), ("environment", "unembedded")] }
 
-def ex_9 : LinguisticExample :=
+def ex_9 : Datum :=
   { id := "alonsoovallemoghiseh2025a_9"
     source := ⟨"alonso-ovalle-moghiseh-2025a", "(9)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_9 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "yek-i"), ("environment", "unembedded"), ("continuation", "namely")] }
 
-def ex_10a : LinguisticExample :=
+def ex_10a : Datum :=
   { id := "alonsoovallemoghiseh2025a_10a"
     source := ⟨"alonso-ovalle-moghiseh-2025a", "(10a)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_10a : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "yek-i"), ("environment", "unembedded"), ("inference", "uniqueness")] }
 
-def ex_10b : LinguisticExample :=
+def ex_10b : Datum :=
   { id := "alonsoovallemoghiseh2025a_10b"
     source := ⟨"alonso-ovalle-moghiseh-2025a", "(10b)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_10b : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "algún"), ("environment", "unembedded")] }
 
-def ex_11 : LinguisticExample :=
+def ex_11 : Datum :=
   { id := "alonsoovallemoghiseh2025a_11"
     source := ⟨"alonso-ovalle-moghiseh-2025a", "(11)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_11 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "yek"), ("environment", "unembedded")] }
 
-def ex_12a : LinguisticExample :=
+def ex_12a : Datum :=
   { id := "alonsoovallemoghiseh2025a_12a"
     source := ⟨"alonso-ovalle-moghiseh-2025a", "(12a)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_12a : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "numeral -i"), ("environment", "unembedded")] }
 
-def ex_12b : LinguisticExample :=
+def ex_12b : Datum :=
   { id := "alonsoovallemoghiseh2025a_12b"
     source := ⟨"alonso-ovalle-moghiseh-2025a", "(12b)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_12b : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "numeral"), ("environment", "unembedded")] }
 
-def ex_13 : LinguisticExample :=
+def ex_13 : Datum :=
   { id := "alonsoovallemoghiseh2025a_13"
     source := ⟨"alonso-ovalle-moghiseh-2025a", "(13)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_13 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "yek-i plural"), ("environment", "unembedded")] }
 
-def ex_14 : LinguisticExample :=
+def ex_14 : Datum :=
   { id := "alonsoovallemoghiseh2025a_14"
     source := ⟨"alonso-ovalle-moghiseh-2025a", "(14)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_14 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "bare -i"), ("environment", "unembedded")] }
 
-def ex_15 : LinguisticExample :=
+def ex_15 : Datum :=
   { id := "alonsoovallemoghiseh2025a_15"
     source := ⟨"alonso-ovalle-moghiseh-2025a", "(15)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_15 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "yek-i"), ("environment", "downward entailing"), ("scope", "doubt > ∃")] }
 
-def ex_16 : LinguisticExample :=
+def ex_16 : Datum :=
   { id := "alonsoovallemoghiseh2025a_16"
     source := ⟨"alonso-ovalle-moghiseh-2025a", "(16)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex_16 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "yek-i"), ("environment", "downward entailing"), ("scope", "if > ∃")] }
 
-def ex_17 : LinguisticExample :=
+def ex_17 : Datum :=
   { id := "alonsoovallemoghiseh2025a_17"
     source := ⟨"alonso-ovalle-moghiseh-2025a", "(17)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex_17 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "yek-i"), ("environment", "sentential negation")] }
 
-def ex_18 : LinguisticExample :=
+def ex_18 : Datum :=
   { id := "alonsoovallemoghiseh2025a_18"
     source := ⟨"alonso-ovalle-moghiseh-2025a", "(18)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex_18 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "algún"), ("environment", "sentential negation")] }
 
-def ex_19 : LinguisticExample :=
+def ex_19 : Datum :=
   { id := "alonsoovallemoghiseh2025a_19"
     source := ⟨"chierchia-2013", "p. 250"⟩
     reportedIn := some ⟨"alonso-ovalle-moghiseh-2025a", "(19)"⟩
@@ -277,7 +277,7 @@ def ex_19 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "irgendein"), ("environment", "sentential negation")] }
 
-def ex_20a : LinguisticExample :=
+def ex_20a : Datum :=
   { id := "alonsoovallemoghiseh2025a_20a"
     source := ⟨"alonso-ovalle-moghiseh-2025a", "(20a)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex_20a : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "yek-i"), ("modal", "deontic possibility"), ("inference", "free choice")] }
 
-def ex_20b : LinguisticExample :=
+def ex_20b : Datum :=
   { id := "alonsoovallemoghiseh2025a_20b"
     source := ⟨"alonso-ovalle-moghiseh-2025a", "(20b)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex_20b : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "yek-i"), ("modal", "deontic necessity"), ("inference", "free choice")] }
 
-def ex_21a : LinguisticExample :=
+def ex_21a : Datum :=
   { id := "alonsoovallemoghiseh2025a_21a"
     source := ⟨"alonso-ovalle-moghiseh-2025a", "(21a)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex_21a : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "yek-i"), ("modal", "epistemic possibility"), ("inference", "modal variation")] }
 
-def ex_21b : LinguisticExample :=
+def ex_21b : Datum :=
   { id := "alonsoovallemoghiseh2025a_21b"
     source := ⟨"alonso-ovalle-moghiseh-2025a", "(21b)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex_21b : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "yek-i"), ("modal", "epistemic necessity"), ("inference", "modal variation")] }
 
-def ex_23 : LinguisticExample :=
+def ex_23 : Datum :=
   { id := "alonsoovallemoghiseh2025a_23"
     source := ⟨"alonso-ovalle-menendez-benito-2015b", "p. 10"⟩
     reportedIn := some ⟨"alonso-ovalle-moghiseh-2025a", "(23)"⟩
@@ -342,7 +342,7 @@ def ex_23 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "algún"), ("modal", "deontic necessity"), ("inference", "modal variation")] }
 
-def ex_25 : LinguisticExample :=
+def ex_25 : Datum :=
   { id := "alonsoovallemoghiseh2025a_25"
     source := ⟨"alonso-ovalle-moghiseh-2025a", "(25)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex_25 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "yek"), ("modal", "deontic possibility"), ("scenario", "permitted24"), ("verdict", "true")] }
 
-def ex_26 : LinguisticExample :=
+def ex_26 : Datum :=
   { id := "alonsoovallemoghiseh2025a_26"
     source := ⟨"alonso-ovalle-moghiseh-2025a", "(26)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def ex_26 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "yek-i"), ("modal", "deontic possibility"), ("scenario", "permitted24"), ("verdict", "false")] }
 
-def ex_27 : LinguisticExample :=
+def ex_27 : Datum :=
   { id := "alonsoovallemoghiseh2025a_27"
     source := ⟨"alonso-ovalle-moghiseh-2025a", "(27)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def ex_27 : LinguisticExample :=
     readings := []
     paperFeatures := [("role", "continuation incompatible with free choice")] }
 
-def ex_29 : LinguisticExample :=
+def ex_29 : Datum :=
   { id := "alonsoovallemoghiseh2025a_29"
     source := ⟨"alonso-ovalle-moghiseh-2025a", "(29)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def ex_29 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "yek"), ("modal", "deontic necessity"), ("scenario", "required28"), ("verdict", "true")] }
 
-def ex_30 : LinguisticExample :=
+def ex_30 : Datum :=
   { id := "alonsoovallemoghiseh2025a_30"
     source := ⟨"alonso-ovalle-moghiseh-2025a", "(30)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def ex_30 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "yek-i"), ("modal", "deontic necessity"), ("scenario", "required28"), ("verdict", "false")] }
 
-def ex_32 : LinguisticExample :=
+def ex_32 : Datum :=
   { id := "alonsoovallemoghiseh2025a_32"
     source := ⟨"alonso-ovalle-moghiseh-2025a", "(32)"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def ex_32 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "yek-i"), ("modal", "epistemic possibility"), ("scenario", "known31"), ("verdict", "true")] }
 
-def ex_33 : LinguisticExample :=
+def ex_33 : Datum :=
   { id := "alonsoovallemoghiseh2025a_33"
     source := ⟨"alonso-ovalle-moghiseh-2025a", "(33)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def ex_33 : LinguisticExample :=
     readings := []
     paperFeatures := [("role", "continuation incompatible with free choice")] }
 
-def ex_35 : LinguisticExample :=
+def ex_35 : Datum :=
   { id := "alonsoovallemoghiseh2025a_35"
     source := ⟨"alonso-ovalle-moghiseh-2025a", "(35)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def ex_35 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "yek-i"), ("modal", "epistemic necessity"), ("scenario", "known34"), ("verdict", "true")] }
 
-def ex_36 : LinguisticExample :=
+def ex_36 : Datum :=
   { id := "alonsoovallemoghiseh2025a_36"
     source := ⟨"alonso-ovalle-moghiseh-2025a", "(36)"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def ex_36 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "yek-i"), ("environment", "unembedded"), ("modalInsertion", "no"), ("partialExhaustification", "yes")] }
 
-def ex_40 : LinguisticExample :=
+def ex_40 : Datum :=
   { id := "alonsoovallemoghiseh2025a_40"
     source := ⟨"alonso-ovalle-moghiseh-2025a", "(40)"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def ex_40 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "yek-i"), ("environment", "unembedded"), ("continuation", "which-question")] }
 
-def ex_41 : LinguisticExample :=
+def ex_41 : Datum :=
   { id := "alonsoovallemoghiseh2025a_41"
     source := ⟨"alonso-ovalle-moghiseh-2025a", "(41)"⟩
     reportedIn := none
@@ -485,7 +485,7 @@ def ex_41 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "algún"), ("environment", "unembedded"), ("continuation", "which-question")] }
 
-def ex_42 : LinguisticExample :=
+def ex_42 : Datum :=
   { id := "alonsoovallemoghiseh2025a_42"
     source := ⟨"aloni-port-2015", "p. 119"⟩
     reportedIn := some ⟨"alonso-ovalle-moghiseh-2025a", "(42)"⟩
@@ -498,7 +498,7 @@ def ex_42 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "irgendein"), ("environment", "unembedded"), ("continuation", "guess who")] }
 
-def ex_43 : LinguisticExample :=
+def ex_43 : Datum :=
   { id := "alonsoovallemoghiseh2025a_43"
     source := ⟨"alonso-ovalle-moghiseh-2025a", "(43)"⟩
     reportedIn := none
@@ -511,7 +511,7 @@ def ex_43 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "yek-i"), ("environment", "unembedded"), ("continuation", "guess what")] }
 
-def ex_44 : LinguisticExample :=
+def ex_44 : Datum :=
   { id := "alonsoovallemoghiseh2025a_44"
     source := ⟨"chierchia-2013", "p. 251"⟩
     reportedIn := some ⟨"alonso-ovalle-moghiseh-2025a", "(44)"⟩
@@ -524,7 +524,7 @@ def ex_44 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "irgendein"), ("environment", "unembedded"), ("continuation", "previously mentioned witness")] }
 
-def ex_45 : LinguisticExample :=
+def ex_45 : Datum :=
   { id := "alonsoovallemoghiseh2025a_45"
     source := ⟨"alonso-ovalle-moghiseh-2025a", "(45)"⟩
     reportedIn := none
@@ -537,7 +537,7 @@ def ex_45 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "yek-i"), ("environment", "unembedded"), ("continuation", "previously mentioned witness")] }
 
-def ex_47 : LinguisticExample :=
+def ex_47 : Datum :=
   { id := "alonsoovallemoghiseh2025a_47"
     source := ⟨"alonso-ovalle-moghiseh-2025a", "(47)"⟩
     reportedIn := none
@@ -550,7 +550,7 @@ def ex_47 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "yek-i"), ("environment", "unembedded"), ("continuation", "how-many question"), ("inference", "uniqueness")] }
 
-def ex_48 : LinguisticExample :=
+def ex_48 : Datum :=
   { id := "alonsoovallemoghiseh2025a_48"
     source := ⟨"alonso-ovalle-moghiseh-2025a", "(48)"⟩
     reportedIn := none
@@ -563,7 +563,7 @@ def ex_48 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "algún"), ("environment", "unembedded"), ("continuation", "how-many question")] }
 
-def ex_49 : LinguisticExample :=
+def ex_49 : Datum :=
   { id := "alonsoovallemoghiseh2025a_49"
     source := ⟨"alonso-ovalle-moghiseh-2025a", "(49)"⟩
     reportedIn := none
@@ -576,7 +576,7 @@ def ex_49 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "yek-i"), ("environment", "downward entailing"), ("inference", "uniqueness absent")] }
 
-def ex_50 : LinguisticExample :=
+def ex_50 : Datum :=
   { id := "alonsoovallemoghiseh2025a_50"
     source := ⟨"alonso-ovalle-moghiseh-2025a", "(50)"⟩
     reportedIn := none
@@ -589,7 +589,7 @@ def ex_50 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "yek-i"), ("environment", "downward entailing"), ("inference", "free choice absent")] }
 
-def ex_62 : LinguisticExample :=
+def ex_62 : Datum :=
   { id := "alonsoovallemoghiseh2025a_62"
     source := ⟨"alonso-ovalle-moghiseh-2025a", "(62)"⟩
     reportedIn := none
@@ -602,7 +602,7 @@ def ex_62 : LinguisticExample :=
     readings := []
     paperFeatures := [("role", "continuation"), ("inference", "no anti-plurality under possibility")] }
 
-def ex_73a : LinguisticExample :=
+def ex_73a : Datum :=
   { id := "alonsoovallemoghiseh2025a_73a"
     source := ⟨"alonso-ovalle-moghiseh-2025a", "(73a)"⟩
     reportedIn := none
@@ -615,7 +615,7 @@ def ex_73a : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "algún"), ("modal", "deontic possibility"), ("inference", "modal variation")] }
 
-def ex_81a : LinguisticExample :=
+def ex_81a : Datum :=
   { id := "alonsoovallemoghiseh2025a_81a"
     source := ⟨"alonso-ovalle-moghiseh-2025a", "(81a)"⟩
     reportedIn := none
@@ -628,7 +628,7 @@ def ex_81a : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "irgendein"), ("environment", "unembedded"), ("modalInsertion", "yes"), ("partialExhaustification", "no")] }
 
-def ex_105a : LinguisticExample :=
+def ex_105a : Datum :=
   { id := "alonsoovallemoghiseh2025a_105a"
     source := ⟨"alonso-ovalle-moghiseh-2025a", "(105a)"⟩
     reportedIn := none
@@ -641,7 +641,7 @@ def ex_105a : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "algún"), ("modal", "deontic necessity"), ("scenario", "anyNumber104"), ("verdict", "true")] }
 
-def ex_105b : LinguisticExample :=
+def ex_105b : Datum :=
   { id := "alonsoovallemoghiseh2025a_105b"
     source := ⟨"alonso-ovalle-moghiseh-2025a", "(105b)"⟩
     reportedIn := none
@@ -654,7 +654,7 @@ def ex_105b : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "irgendein"), ("modal", "deontic necessity"), ("scenario", "anyNumber104"), ("verdict", "true")] }
 
-def ex_106 : LinguisticExample :=
+def ex_106 : Datum :=
   { id := "alonsoovallemoghiseh2025a_106"
     source := ⟨"alonso-ovalle-moghiseh-2025a", "(106)"⟩
     reportedIn := none
@@ -667,7 +667,7 @@ def ex_106 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "yek-i"), ("modal", "deontic necessity"), ("scenario", "anyNumber104"), ("verdict", "false")] }
 
-def ex_109 : LinguisticExample :=
+def ex_109 : Datum :=
   { id := "alonsoovallemoghiseh2025a_109"
     source := ⟨"alonso-ovalle-moghiseh-2025a", "(109)"⟩
     reportedIn := none
@@ -680,7 +680,7 @@ def ex_109 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "yek-i"), ("modal", "deontic possibility"), ("scenario", "twoBooks108"), ("verdict", "false")] }
 
-def ex_110 : LinguisticExample :=
+def ex_110 : Datum :=
   { id := "alonsoovallemoghiseh2025a_110"
     source := ⟨"alonso-ovalle-moghiseh-2025a", "(110)"⟩
     reportedIn := none
@@ -693,7 +693,7 @@ def ex_110 : LinguisticExample :=
     readings := []
     paperFeatures := [("role", "continuation")] }
 
-def ex_111 : LinguisticExample :=
+def ex_111 : Datum :=
   { id := "alonsoovallemoghiseh2025a_111"
     source := ⟨"alonso-ovalle-moghiseh-2025a", "(111)"⟩
     reportedIn := none
@@ -706,7 +706,7 @@ def ex_111 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "yek-i"), ("environment", "downward entailing"), ("inference", "embedded uniqueness absent")] }
 
-def ex_121 : LinguisticExample :=
+def ex_121 : Datum :=
   { id := "alonsoovallemoghiseh2025a_121"
     source := ⟨"alonso-ovalle-moghiseh-2025a", "(121)"⟩
     reportedIn := none
@@ -719,7 +719,7 @@ def ex_121 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "yek-i"), ("modal", "epistemic possibility"), ("inference", "embedded uniqueness")] }
 
-def ex_125 : LinguisticExample :=
+def ex_125 : Datum :=
   { id := "alonsoovallemoghiseh2025a_125"
     source := ⟨"alonso-ovalle-moghiseh-2025a", "(125)"⟩
     reportedIn := none
@@ -732,7 +732,7 @@ def ex_125 : LinguisticExample :=
     readings := [("You see! There is one book", .acceptable), ("You see! There are three books", .unacceptable)]
     paperFeatures := [("item", "yek-i"), ("modal", "epistemic necessity"), ("inference", "embedded uniqueness")] }
 
-def ex_128 : LinguisticExample :=
+def ex_128 : Datum :=
   { id := "alonsoovallemoghiseh2025a_128"
     source := ⟨"alonso-ovalle-moghiseh-2025a", "(128)"⟩
     reportedIn := none
@@ -745,6 +745,6 @@ def ex_128 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "yek-i"), ("modal", "epistemic necessity"), ("inference", "apparent counterexample")] }
 
-def all : List LinguisticExample := [ex_1, ex_3b, ex_4, ex_5, ex_6, ex_7, ex_8, ex_9, ex_10a, ex_10b, ex_11, ex_12a, ex_12b, ex_13, ex_14, ex_15, ex_16, ex_17, ex_18, ex_19, ex_20a, ex_20b, ex_21a, ex_21b, ex_23, ex_25, ex_26, ex_27, ex_29, ex_30, ex_32, ex_33, ex_35, ex_36, ex_40, ex_41, ex_42, ex_43, ex_44, ex_45, ex_47, ex_48, ex_49, ex_50, ex_62, ex_73a, ex_81a, ex_105a, ex_105b, ex_106, ex_109, ex_110, ex_111, ex_121, ex_125, ex_128]
+def all : List Datum := [ex_1, ex_3b, ex_4, ex_5, ex_6, ex_7, ex_8, ex_9, ex_10a, ex_10b, ex_11, ex_12a, ex_12b, ex_13, ex_14, ex_15, ex_16, ex_17, ex_18, ex_19, ex_20a, ex_20b, ex_21a, ex_21b, ex_23, ex_25, ex_26, ex_27, ex_29, ex_30, ex_32, ex_33, ex_35, ex_36, ex_40, ex_41, ex_42, ex_43, ex_44, ex_45, ex_47, ex_48, ex_49, ex_50, ex_62, ex_73a, ex_81a, ex_105a, ex_105b, ex_106, ex_109, ex_110, ex_111, ex_121, ex_125, ex_128]
 
 end AlonsoOvalleMoghiseh2025a.Examples

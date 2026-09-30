@@ -17,7 +17,7 @@ namespace BeckOdaSugisaki2004.Examples
 
 open Data.Examples
 
-def amount_yori : LinguisticExample :=
+def amount_yori : Datum :=
   { id := "beckodasugisaki2004_amount_yori"
     source := ⟨"beck-oda-sugisaki-2004", "(3-a), p. 290"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def amount_yori : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "amount_comparative")] }
 
-def degree_yori : LinguisticExample :=
+def degree_yori : Datum :=
   { id := "beckodasugisaki2004_degree_yori"
     source := ⟨"beck-oda-sugisaki-2004", "(4-a), p. 290"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def degree_yori : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "degree_comparative")] }
 
-def subcomp_ja : LinguisticExample :=
+def subcomp_ja : Datum :=
   { id := "beckodasugisaki2004_subcomp_ja"
     source := ⟨"beck-oda-sugisaki-2004", "(5-a), p. 290"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def subcomp_ja : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "subcomparative")] }
 
-def subcomp_en : LinguisticExample :=
+def subcomp_en : Datum :=
   { id := "beckodasugisaki2004_subcomp_en"
     source := ⟨"beck-oda-sugisaki-2004", "(5-b), p. 290"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def subcomp_en : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "subcomparative")] }
 
-def negisland_ja : LinguisticExample :=
+def negisland_ja : Datum :=
   { id := "beckodasugisaki2004_negisland_ja"
     source := ⟨"beck-oda-sugisaki-2004", "(6-a), p. 290"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def negisland_ja : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "negative_island")] }
 
-def negisland_en : LinguisticExample :=
+def negisland_en : Datum :=
   { id := "beckodasugisaki2004_negisland_en"
     source := ⟨"beck-oda-sugisaki-2004", "(6-b), p. 290"⟩
     reportedIn := none
@@ -95,6 +95,6 @@ def negisland_en : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "negative_island")] }
 
-def all : List LinguisticExample := [amount_yori, degree_yori, subcomp_ja, subcomp_en, negisland_ja, negisland_en]
+def all : List Datum := [amount_yori, degree_yori, subcomp_ja, subcomp_en, negisland_ja, negisland_en]
 
 end BeckOdaSugisaki2004.Examples

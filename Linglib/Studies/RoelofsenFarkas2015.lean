@@ -289,7 +289,7 @@ structure Row where
 
 def relativeTable : List (String × Polarity) := [("agree", .positive), ("reverse", .negative)]
 
-def Row.ofExample (ex : LinguisticExample) : Option Row := do
+def Row.ofDatum (ex : Datum) : Option Row := do
   guard (ex.feature? "reaction" = some "assertion")
   let table ← List.lookup ex.language particleTable
   let antecedent ← ex.parse? "antecedent" polarityTable
@@ -298,7 +298,7 @@ def Row.ofExample (ex : LinguisticExample) : Option Row := do
   let particle ← ex.parse? "particle" table
   pure ⟨⟨.assertion, antecedent, polarity⟩, relative, particle, ex.judgment⟩
 
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- The relative feature of every response, the quotient of its polarity by its antecedent's
 (`relativePresup_smul_iff`), is the one the paper assigns it. -/
@@ -327,7 +327,7 @@ structure QuestionRow where
   judgment : Judgment
   deriving DecidableEq, Repr
 
-def QuestionRow.ofExample (ex : LinguisticExample) : Option QuestionRow := do
+def QuestionRow.ofDatum (ex : Datum) : Option QuestionRow := do
   let particle ← ex.parse? "particle" [("yes", English.PolarityParticle.yes), ("no", .no)]
   let response ← ex.parse? "response" polarityTable
   if ex.feature? "reaction" = some "question" then
@@ -338,10 +338,10 @@ def QuestionRow.ofExample (ex : LinguisticExample) : Option QuestionRow := do
     pure ⟨none, response, particle, none, ex.judgment⟩
   else none
 
-def questionRows : List QuestionRow := Examples.all.filterMap QuestionRow.ofExample
+def questionRows : List QuestionRow := Examples.all.filterMap QuestionRow.ofDatum
 
-theorem ofExample_isSome :
-    ∀ ex ∈ Examples.all, (Row.ofExample ex).isSome ∨ (QuestionRow.ofExample ex).isSome := by
+theorem ofDatum_isSome :
+    ∀ ex ∈ Examples.all, (Row.ofDatum ex).isSome ∨ (QuestionRow.ofDatum ex).isSome := by
   decide
 
 /-- The prediction for a question row: a response of polarity `s` to a polar question of

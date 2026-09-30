@@ -17,7 +17,7 @@ namespace TurcoBraunDimroth2014.Examples
 
 open Data.Examples
 
-def ex_1A : LinguisticExample :=
+def ex_1A : Datum :=
   { id := "turcobraundimroth2014_1A"
     source := ⟨"turco-braun-dimroth-2014", "(1) A"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_1A : LinguisticExample :=
     readings := []
     paperFeatures := [("context", "contrast"), ("polarity", "negative"), ("turn", "A")] }
 
-def ex_1B1 : LinguisticExample :=
+def ex_1B1 : Datum :=
   { id := "turcobraundimroth2014_1B1"
     source := ⟨"turco-braun-dimroth-2014", "(1) B1"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_1B1 : LinguisticExample :=
     readings := []
     paperFeatures := [("context", "contrast"), ("polarity", "positive"), ("marking", "verumFocus")] }
 
-def ex_1B2 : LinguisticExample :=
+def ex_1B2 : Datum :=
   { id := "turcobraundimroth2014_1B2"
     source := ⟨"turco-braun-dimroth-2014", "(1) B2"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_1B2 : LinguisticExample :=
     readings := []
     paperFeatures := [("context", "contrast"), ("polarity", "positive"), ("marking", "particle")] }
 
-def ex_2A : LinguisticExample :=
+def ex_2A : Datum :=
   { id := "turcobraundimroth2014_2A"
     source := ⟨"turco-braun-dimroth-2014", "(2) A"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_2A : LinguisticExample :=
     readings := []
     paperFeatures := [("context", "correction"), ("polarity", "negative"), ("turn", "A")] }
 
-def ex_2B1 : LinguisticExample :=
+def ex_2B1 : Datum :=
   { id := "turcobraundimroth2014_2B1"
     source := ⟨"turco-braun-dimroth-2014", "(2) B1"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_2B1 : LinguisticExample :=
     readings := []
     paperFeatures := [("context", "correction"), ("polarity", "positive"), ("marking", "verumFocus")] }
 
-def ex_2B2 : LinguisticExample :=
+def ex_2B2 : Datum :=
   { id := "turcobraundimroth2014_2B2"
     source := ⟨"turco-braun-dimroth-2014", "(2) B2"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_2B2 : LinguisticExample :=
     readings := []
     paperFeatures := [("context", "correction"), ("polarity", "positive"), ("marking", "particle")] }
 
-def ex_3 : LinguisticExample :=
+def ex_3 : Datum :=
   { id := "turcobraundimroth2014_3"
     source := ⟨"turco-braun-dimroth-2014", "(3)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_3 : LinguisticExample :=
     readings := []
     paperFeatures := [("context", "contrast"), ("polarity", "positive"), ("marking", "particle"), ("genre", "monologue")] }
 
-def vf_negated : LinguisticExample :=
+def vf_negated : Datum :=
   { id := "turcobraundimroth2014_vf_negated"
     source := ⟨"turco-braun-dimroth-2014", "section 4"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def vf_negated : LinguisticExample :=
     readings := []
     paperFeatures := [("polarity", "negative"), ("marking", "verumFocus")] }
 
-def wel_negated : LinguisticExample :=
+def wel_negated : Datum :=
   { id := "turcobraundimroth2014_wel_negated"
     source := ⟨"turco-braun-dimroth-2014", "section 4"⟩
     reportedIn := none
@@ -134,6 +134,6 @@ def wel_negated : LinguisticExample :=
     readings := []
     paperFeatures := [("polarity", "negative"), ("marking", "particle")] }
 
-def all : List LinguisticExample := [ex_1A, ex_1B1, ex_1B2, ex_2A, ex_2B1, ex_2B2, ex_3, vf_negated, wel_negated]
+def all : List Datum := [ex_1A, ex_1B1, ex_1B2, ex_2A, ex_2B1, ex_2B2, ex_3, vf_negated, wel_negated]
 
 end TurcoBraunDimroth2014.Examples

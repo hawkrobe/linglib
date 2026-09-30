@@ -17,7 +17,7 @@ namespace Krifka2026.Examples
 
 open Data.Examples
 
-def ex3a : LinguisticExample :=
+def ex3a : Datum :=
   { id := "krifka2026_ex3a"
     source := ⟨"krifka-2026", "(3a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex3a : LinguisticExample :=
     readings := []
     paperFeatures := [("antecedent", "count"), ("anaphor", "they")] }
 
-def ex3b : LinguisticExample :=
+def ex3b : Datum :=
   { id := "krifka2026_ex3b"
     source := ⟨"krifka-2026", "(3b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex3b : LinguisticExample :=
     readings := []
     paperFeatures := [("antecedent", "mass"), ("anaphor", "it")] }
 
-def ex5a : LinguisticExample :=
+def ex5a : Datum :=
   { id := "krifka2026_ex5a"
     source := ⟨"krifka-2026", "(5a)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex5a : LinguisticExample :=
     readings := []
     paperFeatures := [("antecedent", "count"), ("island", "negation"), ("anaphor", "they")] }
 
-def ex5b : LinguisticExample :=
+def ex5b : Datum :=
   { id := "krifka2026_ex5b"
     source := ⟨"krifka-2026", "(5b)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex5b : LinguisticExample :=
     readings := []
     paperFeatures := [("antecedent", "mass"), ("island", "negation"), ("anaphor", "it")] }
 
-def ex5c : LinguisticExample :=
+def ex5c : Datum :=
   { id := "krifka2026_ex5c"
     source := ⟨"krifka-2026", "(5c)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex5c : LinguisticExample :=
     readings := []
     paperFeatures := [("antecedent", "count"), ("island", "negation"), ("anaphor", "entityPronoun")] }
 
-def ex7a : LinguisticExample :=
+def ex7a : Datum :=
   { id := "krifka2026_ex7a"
     source := ⟨"krifka-2026", "(7a)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex7a : LinguisticExample :=
     readings := []
     paperFeatures := [("antecedent", "count"), ("anaphor", "they")] }
 
-def ex7b : LinguisticExample :=
+def ex7b : Datum :=
   { id := "krifka2026_ex7b"
     source := ⟨"krifka-2026", "(7b)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex7b : LinguisticExample :=
     readings := []
     paperFeatures := [("antecedent", "mass"), ("anaphor", "it")] }
 
-def ex8a : LinguisticExample :=
+def ex8a : Datum :=
   { id := "krifka2026_ex8a"
     source := ⟨"krifka-2026", "(8a)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex8a : LinguisticExample :=
     readings := []
     paperFeatures := [("antecedent", "mass"), ("anaphor", "it")] }
 
-def ex8b : LinguisticExample :=
+def ex8b : Datum :=
   { id := "krifka2026_ex8b"
     source := ⟨"krifka-2026", "(8b)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex8b : LinguisticExample :=
     readings := []
     paperFeatures := [("antecedent", "count"), ("anaphor", "they")] }
 
-def ex19a : LinguisticExample :=
+def ex19a : Datum :=
   { id := "krifka2026_ex19a"
     source := ⟨"krifka-2026", "(19a)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex19a : LinguisticExample :=
     readings := [("afraid of dogs", .acceptable)]
     paperFeatures := [("antecedent", "count"), ("island", "negation"), ("anaphor", "they")] }
 
-def ex19b : LinguisticExample :=
+def ex19b : Datum :=
   { id := "krifka2026_ex19b"
     source := ⟨"krifka-2026", "(19b)"⟩
     reportedIn := none
@@ -160,6 +160,6 @@ def ex19b : LinguisticExample :=
     readings := [("a dog from the shelter downtown", .acceptable)]
     paperFeatures := [("antecedent", "count"), ("island", "negation"), ("anaphor", "one")] }
 
-def all : List LinguisticExample := [ex3a, ex3b, ex5a, ex5b, ex5c, ex7a, ex7b, ex8a, ex8b, ex19a, ex19b]
+def all : List Datum := [ex3a, ex3b, ex5a, ex5b, ex5c, ex7a, ex7b, ex8a, ex8b, ex19a, ex19b]
 
 end Krifka2026.Examples

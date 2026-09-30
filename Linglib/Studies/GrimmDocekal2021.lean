@@ -119,7 +119,7 @@ structure Row where
   judgment : Judgment
   deriving DecidableEq, Repr
 
-def Row.ofExample (ex : LinguisticExample) : Option Row := do
+def Row.ofDatum (ex : Datum) : Option Row := do
   let noun ← ex.parse? "noun"
     [("ordinary", Noun.ordinary), ("animate", .animate), ("derivedAggregate", .derivedAggregate),
       ("pluraleTantum", .pluraleTantum), ("multiple", .multiple), ("substance", .substance),
@@ -138,7 +138,7 @@ def Row.ofExample (ex : LinguisticExample) : Option Row := do
     ex.feature? "reading" = some "taxonomic", ex.judgment⟩
 
 /-- The judged phrases of sections 2, 4, and 5. -/
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- Nouns derived by *-í* take neither plural, nor simple cardinal, nor a vague quantifier, nor a
 packaging reading, (9) to (12). -/

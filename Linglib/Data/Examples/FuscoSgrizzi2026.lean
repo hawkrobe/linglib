@@ -17,7 +17,7 @@ namespace FuscoSgrizzi2026.Examples
 
 open Data.Examples
 
-def ex4a : LinguisticExample :=
+def ex4a : Datum :=
   { id := "fuscosgrizzi2026_ex4a"
     source := ⟨"fusco-sgrizzi-2026", "(4a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex4a : LinguisticExample :=
     readings := []
     paperFeatures := [("size", "cP"), ("diagnostic", "belief"), ("grammatical", "yes")] }
 
-def ex4b : LinguisticExample :=
+def ex4b : Datum :=
   { id := "fuscosgrizzi2026_ex4b"
     source := ⟨"fusco-sgrizzi-2026", "(4b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex4b : LinguisticExample :=
     readings := []
     paperFeatures := [("size", "aP"), ("diagnostic", "intention"), ("grammatical", "yes")] }
 
-def ex4a_control : LinguisticExample :=
+def ex4a_control : Datum :=
   { id := "fuscosgrizzi2026_ex4a_control"
     source := ⟨"fusco-sgrizzi-2026", "(4a)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex4a_control : LinguisticExample :=
     readings := []
     paperFeatures := [("size", "cP"), ("diagnostic", "subjectControl"), ("grammatical", "yes")] }
 
-def ex4b_control : LinguisticExample :=
+def ex4b_control : Datum :=
   { id := "fuscosgrizzi2026_ex4b_control"
     source := ⟨"fusco-sgrizzi-2026", "(4b)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex4b_control : LinguisticExample :=
     readings := []
     paperFeatures := [("size", "aP"), ("diagnostic", "subjectControl"), ("grammatical", "no")] }
 
-def ex11a : LinguisticExample :=
+def ex11a : Datum :=
   { id := "fuscosgrizzi2026_ex11a"
     source := ⟨"fusco-sgrizzi-2026", "(11a)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex11a : LinguisticExample :=
     readings := []
     paperFeatures := [("size", "cP"), ("diagnostic", "truthAssessable"), ("grammatical", "yes")] }
 
-def ex11b : LinguisticExample :=
+def ex11b : Datum :=
   { id := "fuscosgrizzi2026_ex11b"
     source := ⟨"fusco-sgrizzi-2026", "(11b)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex11b : LinguisticExample :=
     readings := []
     paperFeatures := [("size", "aP"), ("diagnostic", "truthAssessable"), ("grammatical", "no")] }
 
-def ex12 : LinguisticExample :=
+def ex12 : Datum :=
   { id := "fuscosgrizzi2026_ex12"
     source := ⟨"fusco-sgrizzi-2026", "(12)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex12 : LinguisticExample :=
     readings := []
     paperFeatures := [("size", "aP"), ("diagnostic", "passive"), ("grammatical", "yes")] }
 
-def ex13 : LinguisticExample :=
+def ex13 : Datum :=
   { id := "fuscosgrizzi2026_ex13"
     source := ⟨"fusco-sgrizzi-2026", "(13)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex13 : LinguisticExample :=
     readings := []
     paperFeatures := [("size", "aP"), ("diagnostic", "aspectual"), ("grammatical", "yes")] }
 
-def ex14 : LinguisticExample :=
+def ex14 : Datum :=
   { id := "fuscosgrizzi2026_ex14"
     source := ⟨"fusco-sgrizzi-2026", "(14)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex14 : LinguisticExample :=
     readings := []
     paperFeatures := [("size", "vP"), ("diagnostic", "cliticClimbing"), ("grammatical", "yes")] }
 
-def ex15 : LinguisticExample :=
+def ex15 : Datum :=
   { id := "fuscosgrizzi2026_ex15"
     source := ⟨"fusco-sgrizzi-2026", "(15)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex15 : LinguisticExample :=
     readings := []
     paperFeatures := [("size", "aP"), ("diagnostic", "cliticClimbing"), ("grammatical", "no")] }
 
-def ex16 : LinguisticExample :=
+def ex16 : Datum :=
   { id := "fuscosgrizzi2026_ex16"
     source := ⟨"fusco-sgrizzi-2026", "(16)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex16 : LinguisticExample :=
     readings := []
     paperFeatures := [("size", "aP"), ("diagnostic", "negation"), ("grammatical", "yes")] }
 
-def ex17 : LinguisticExample :=
+def ex17 : Datum :=
   { id := "fuscosgrizzi2026_ex17"
     source := ⟨"fusco-sgrizzi-2026", "(17)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex17 : LinguisticExample :=
     readings := []
     paperFeatures := [("size", "aP"), ("diagnostic", "independentTime"), ("grammatical", "yes")] }
 
-def ex18 : LinguisticExample :=
+def ex18 : Datum :=
   { id := "fuscosgrizzi2026_ex18"
     source := ⟨"fusco-sgrizzi-2026", "(18)"⟩
     reportedIn := none
@@ -186,6 +186,6 @@ def ex18 : LinguisticExample :=
     readings := []
     paperFeatures := [("size", "vP"), ("diagnostic", "independentTime"), ("grammatical", "no")] }
 
-def all : List LinguisticExample := [ex4a, ex4b, ex4a_control, ex4b_control, ex11a, ex11b, ex12, ex13, ex14, ex15, ex16, ex17, ex18]
+def all : List Datum := [ex4a, ex4b, ex4a_control, ex4b_control, ex11a, ex11b, ex12, ex13, ex14, ex15, ex16, ex17, ex18]
 
 end FuscoSgrizzi2026.Examples

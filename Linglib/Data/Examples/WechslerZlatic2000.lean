@@ -17,7 +17,7 @@ namespace WechslerZlatic2000.Examples
 
 open Data.Examples
 
-def ex_1 : LinguisticExample :=
+def ex_1 : Datum :=
   { id := "wechslerzlatic2000_1"
     source := ⟨"wechsler-zlatic-2000", "(6)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("concord", "determiner adjective"), ("index", "verb pronoun")] }
 
-def ex_2 : LinguisticExample :=
+def ex_2 : Datum :=
   { id := "wechslerzlatic2000_2"
     source := ⟨"wechsler-zlatic-2000", "(11a)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("pronoun", "neuter singular"), ("agreement", "index")] }
 
-def ex_3 : LinguisticExample :=
+def ex_3 : Datum :=
   { id := "wechslerzlatic2000_3"
     source := ⟨"wechsler-zlatic-2000", "(11b)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_3 : LinguisticExample :=
     readings := []
     paperFeatures := [("pronoun", "feminine singular"), ("agreement", "pragmatic")] }
 
-def ex_4 : LinguisticExample :=
+def ex_4 : Datum :=
   { id := "wechslerzlatic2000_4"
     source := ⟨"wechsler-zlatic-2000", "(12)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_4 : LinguisticExample :=
     readings := []
     paperFeatures := [("agreement", "concord")] }
 
-def ex_5 : LinguisticExample :=
+def ex_5 : Datum :=
   { id := "wechslerzlatic2000_5"
     source := ⟨"wechsler-zlatic-2000", "(13)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_5 : LinguisticExample :=
     readings := []
     paperFeatures := [("target", "participle")] }
 
-def ex_6 : LinguisticExample :=
+def ex_6 : Datum :=
   { id := "wechslerzlatic2000_6"
     source := ⟨"wechsler-zlatic-2000", "(19a)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_6 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "sudija"), ("sex", "male"), ("gender", "masculine")] }
 
-def ex_7 : LinguisticExample :=
+def ex_7 : Datum :=
   { id := "wechslerzlatic2000_7"
     source := ⟨"wechsler-zlatic-2000", "(19b)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_7 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "sudija"), ("sex", "female"), ("gender", "feminine")] }
 
-def ex_8 : LinguisticExample :=
+def ex_8 : Datum :=
   { id := "wechslerzlatic2000_8"
     source := ⟨"wechsler-zlatic-2000", "(21a)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_8 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "kit"), ("sex", "unspecified")] }
 
-def ex_9 : LinguisticExample :=
+def ex_9 : Datum :=
   { id := "wechslerzlatic2000_9"
     source := ⟨"wechsler-zlatic-2000", "(21b)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_9 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "kit"), ("gender", "masculine")] }
 
-def ex_10 : LinguisticExample :=
+def ex_10 : Datum :=
   { id := "wechslerzlatic2000_10"
     source := ⟨"wechsler-zlatic-2000", "(23a)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_10 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "telad"), ("predicate", "nondistributive")] }
 
-def ex_11 : LinguisticExample :=
+def ex_11 : Datum :=
   { id := "wechslerzlatic2000_11"
     source := ⟨"wechsler-zlatic-2000", "(23b)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_11 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "telad"), ("predicate", "distributive")] }
 
-def ex_12 : LinguisticExample :=
+def ex_12 : Datum :=
   { id := "wechslerzlatic2000_12"
     source := ⟨"wechsler-zlatic-2000", "(28)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_12 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "Steva"), ("declension", "II"), ("gender", "masculine")] }
 
-def ex_13 : LinguisticExample :=
+def ex_13 : Datum :=
   { id := "wechslerzlatic2000_13"
     source := ⟨"wechsler-zlatic-2000", "(30a)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_13 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "mušterija"), ("sex", "unspecified")] }
 
-def ex_14 : LinguisticExample :=
+def ex_14 : Datum :=
   { id := "wechslerzlatic2000_14"
     source := ⟨"wechsler-zlatic-2000", "(30b)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_14 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "mušterija"), ("sex", "male")] }
 
-def ex_15 : LinguisticExample :=
+def ex_15 : Datum :=
   { id := "wechslerzlatic2000_15"
     source := ⟨"wechsler-zlatic-2000", "(33)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_15 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "sudije"), ("number", "plural")] }
 
-def ex_16 : LinguisticExample :=
+def ex_16 : Datum :=
   { id := "wechslerzlatic2000_16"
     source := ⟨"wechsler-zlatic-2000", "(34)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_16 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "naočare"), ("type", "plurale tantum")] }
 
-def ex_17 : LinguisticExample :=
+def ex_17 : Datum :=
   { id := "wechslerzlatic2000_17"
     source := ⟨"wechsler-zlatic-2000", "(36)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex_17 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "braća"), ("pronoun", "neuter plural")] }
 
-def ex_18 : LinguisticExample :=
+def ex_18 : Datum :=
   { id := "wechslerzlatic2000_18"
     source := ⟨"wechsler-zlatic-2000", "(37)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex_18 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "braća"), ("concord", "feminine singular")] }
 
-def ex_19 : LinguisticExample :=
+def ex_19 : Datum :=
   { id := "wechslerzlatic2000_19"
     source := ⟨"wechsler-zlatic-2000", "(38)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex_19 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "braća"), ("concord", "feminine singular")] }
 
-def ex_20 : LinguisticExample :=
+def ex_20 : Datum :=
   { id := "wechslerzlatic2000_20"
     source := ⟨"wechsler-zlatic-2000", "(40)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex_20 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "gospoda"), ("pronoun", "masculine plural")] }
 
-def ex_21 : LinguisticExample :=
+def ex_21 : Datum :=
   { id := "wechslerzlatic2000_21"
     source := ⟨"wechsler-zlatic-2000", "(41)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex_21 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "deca"), ("concord", "feminine singular"), ("index", "neuter plural")] }
 
-def ex_22 : LinguisticExample :=
+def ex_22 : Datum :=
   { id := "wechslerzlatic2000_22"
     source := ⟨"wechsler-zlatic-2000", "(42)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex_22 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "deca"), ("index", "neuter plural")] }
 
-def ex_23 : LinguisticExample :=
+def ex_23 : Datum :=
   { id := "wechslerzlatic2000_23"
     source := ⟨"wechsler-zlatic-2000", "(43)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex_23 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "deca"), ("target", "participle")] }
 
-def ex_24 : LinguisticExample :=
+def ex_24 : Datum :=
   { id := "wechslerzlatic2000_24"
     source := ⟨"wechsler-zlatic-2000", "(44)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex_24 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "deca"), ("target", "finite verb")] }
 
-def ex_25 : LinguisticExample :=
+def ex_25 : Datum :=
   { id := "wechslerzlatic2000_25"
     source := ⟨"wechsler-zlatic-2000", "(50)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex_25 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "deca"), ("target", "secondary predicate")] }
 
-def ex_26 : LinguisticExample :=
+def ex_26 : Datum :=
   { id := "wechslerzlatic2000_26"
     source := ⟨"wechsler-zlatic-2000", "(51)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex_26 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "deca"), ("target", "coordination")] }
 
-def ex_27 : LinguisticExample :=
+def ex_27 : Datum :=
   { id := "wechslerzlatic2000_27"
     source := ⟨"wechsler-zlatic-2000", "(52)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def ex_27 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "deca"), ("target", "coordination")] }
 
-def ex_28 : LinguisticExample :=
+def ex_28 : Datum :=
   { id := "wechslerzlatic2000_28"
     source := ⟨"wechsler-zlatic-2000", "(53)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def ex_28 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "deca"), ("target", "coordination")] }
 
-def ex_29 : LinguisticExample :=
+def ex_29 : Datum :=
   { id := "wechslerzlatic2000_29"
     source := ⟨"wechsler-zlatic-2000", "(54)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def ex_29 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "deca"), ("relative", "nominative")] }
 
-def ex_30 : LinguisticExample :=
+def ex_30 : Datum :=
   { id := "wechslerzlatic2000_30"
     source := ⟨"wechsler-zlatic-2000", "(55)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def ex_30 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "deca"), ("relative", "accusative")] }
 
-def ex_31 : LinguisticExample :=
+def ex_31 : Datum :=
   { id := "wechslerzlatic2000_31"
     source := ⟨"wechsler-zlatic-2000", "(56)"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def ex_31 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "deca"), ("relative", "genitive")] }
 
-def ex_32 : LinguisticExample :=
+def ex_32 : Datum :=
   { id := "wechslerzlatic2000_32"
     source := ⟨"wechsler-zlatic-2000", "(59)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def ex_32 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "deca"), ("relative", "što")] }
 
-def ex_33 : LinguisticExample :=
+def ex_33 : Datum :=
   { id := "wechslerzlatic2000_33"
     source := ⟨"wechsler-zlatic-2000", "(61b)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def ex_33 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "deca"), ("relative", "što")] }
 
-def ex_34 : LinguisticExample :=
+def ex_34 : Datum :=
   { id := "wechslerzlatic2000_34"
     source := ⟨"wechsler-zlatic-2000", "(64)"⟩
     reportedIn := none
@@ -459,6 +459,6 @@ def ex_34 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "Majestad"), ("concord", "feminine"), ("index", "masculine")] }
 
-def all : List LinguisticExample := [ex_1, ex_2, ex_3, ex_4, ex_5, ex_6, ex_7, ex_8, ex_9, ex_10, ex_11, ex_12, ex_13, ex_14, ex_15, ex_16, ex_17, ex_18, ex_19, ex_20, ex_21, ex_22, ex_23, ex_24, ex_25, ex_26, ex_27, ex_28, ex_29, ex_30, ex_31, ex_32, ex_33, ex_34]
+def all : List Datum := [ex_1, ex_2, ex_3, ex_4, ex_5, ex_6, ex_7, ex_8, ex_9, ex_10, ex_11, ex_12, ex_13, ex_14, ex_15, ex_16, ex_17, ex_18, ex_19, ex_20, ex_21, ex_22, ex_23, ex_24, ex_25, ex_26, ex_27, ex_28, ex_29, ex_30, ex_31, ex_32, ex_33, ex_34]
 
 end WechslerZlatic2000.Examples

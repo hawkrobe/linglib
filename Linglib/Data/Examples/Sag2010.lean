@@ -17,7 +17,7 @@ namespace Sag2010.Examples
 
 open Data.Examples
 
-def ex7a : LinguisticExample :=
+def ex7a : Datum :=
   { id := "sag2010_ex7a"
     source := ⟨"sag-2010", "(7a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex7a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "topicalized"), ("parameter", "distinguished")] }
 
-def ex7b : LinguisticExample :=
+def ex7b : Datum :=
   { id := "sag2010_ex7b"
     source := ⟨"sag-2010", "(7b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex7b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "distinguished"), ("whForm", "what"), ("whCategory", "np")] }
 
-def ex7c : LinguisticExample :=
+def ex7c : Datum :=
   { id := "sag2010_ex7c"
     source := ⟨"sag-2010", "(7c)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex7c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whRelative"), ("parameter", "distinguished"), ("whForm", "who"), ("whCategory", "np")] }
 
-def ex7d : LinguisticExample :=
+def ex7d : Datum :=
   { id := "sag2010_ex7d"
     source := ⟨"sag-2010", "(7d)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex7d : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "distinguished"), ("whForm", "whatA"), ("whCategory", "detSing")] }
 
-def ex7e : LinguisticExample :=
+def ex7e : Datum :=
   { id := "sag2010_ex7e"
     source := ⟨"sag-2010", "(7e)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex7e : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "theClause"), ("parameter", "distinguished"), ("the", "true")] }
 
-def ex8a : LinguisticExample :=
+def ex8a : Datum :=
   { id := "sag2010_ex8a"
     source := ⟨"sag-2010", "(8a)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex8a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "topicalized"), ("parameter", "distinguished"), ("whForm", "which"), ("whCategory", "det")] }
 
-def ex8a_ii : LinguisticExample :=
+def ex8a_ii : Datum :=
   { id := "sag2010_ex8a_ii"
     source := ⟨"sag-2010", "(8a)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex8a_ii : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "topicalized"), ("parameter", "distinguished"), ("whForm", "who"), ("whCategory", "np")] }
 
-def ex8b : LinguisticExample :=
+def ex8b : Datum :=
   { id := "sag2010_ex8b"
     source := ⟨"sag-2010", "(8b)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex8b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "distinguished"), ("whForm", "whatA"), ("whCategory", "detSing")] }
 
-def ex8c : LinguisticExample :=
+def ex8c : Datum :=
   { id := "sag2010_ex8c"
     source := ⟨"sag-2010", "(8c)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex8c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whRelative"), ("parameter", "distinguished"), ("whForm", "what"), ("whCategory", "np")] }
 
-def ex8d : LinguisticExample :=
+def ex8d : Datum :=
   { id := "sag2010_ex8d"
     source := ⟨"sag-2010", "(8d)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex8d : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "distinguished"), ("whForm", "which"), ("whCategory", "det")] }
 
-def ex8d_ii : LinguisticExample :=
+def ex8d_ii : Datum :=
   { id := "sag2010_ex8d_ii"
     source := ⟨"sag-2010", "(8d)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex8d_ii : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "distinguished"), ("whForm", "what"), ("whCategory", "np")] }
 
-def ex8e : LinguisticExample :=
+def ex8e : Datum :=
   { id := "sag2010_ex8e"
     source := ⟨"sag-2010", "(8e)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex8e : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "theClause"), ("parameter", "distinguished"), ("whForm", "which"), ("whCategory", "det")] }
 
-def ex9a : LinguisticExample :=
+def ex9a : Datum :=
   { id := "sag2010_ex9a"
     source := ⟨"sag-2010", "(9a)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex9a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "inventory"), ("whForm", "who"), ("whCategory", "np")] }
 
-def ex9b : LinguisticExample :=
+def ex9b : Datum :=
   { id := "sag2010_ex9b"
     source := ⟨"sag-2010", "(9b)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex9b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "inventory"), ("whForm", "who"), ("whCategory", "np")] }
 
-def ex9c : LinguisticExample :=
+def ex9c : Datum :=
   { id := "sag2010_ex9c"
     source := ⟨"sag-2010", "(9c)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex9c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whRelative"), ("parameter", "inventory"), ("whForm", "who"), ("whCategory", "np")] }
 
-def ex10a : LinguisticExample :=
+def ex10a : Datum :=
   { id := "sag2010_ex10a"
     source := ⟨"sag-2010", "(10a)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex10a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "inventory"), ("whForm", "whose"), ("whCategory", "det")] }
 
-def ex10b : LinguisticExample :=
+def ex10b : Datum :=
   { id := "sag2010_ex10b"
     source := ⟨"sag-2010", "(10b)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex10b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "inventory"), ("whForm", "whose"), ("whCategory", "det")] }
 
-def ex10c : LinguisticExample :=
+def ex10c : Datum :=
   { id := "sag2010_ex10c"
     source := ⟨"sag-2010", "(10c)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex10c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whRelative"), ("parameter", "inventory"), ("whForm", "whose"), ("whCategory", "det")] }
 
-def ex11a : LinguisticExample :=
+def ex11a : Datum :=
   { id := "sag2010_ex11a"
     source := ⟨"sag-2010", "(11a)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex11a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "inventory"), ("whForm", "what"), ("whCategory", "np")] }
 
-def ex11b : LinguisticExample :=
+def ex11b : Datum :=
   { id := "sag2010_ex11b"
     source := ⟨"sag-2010", "(11b)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex11b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "inventory"), ("whForm", "what"), ("whCategory", "np")] }
 
-def ex11c : LinguisticExample :=
+def ex11c : Datum :=
   { id := "sag2010_ex11c"
     source := ⟨"sag-2010", "(11c)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex11c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whRelative"), ("parameter", "inventory"), ("whForm", "what"), ("whCategory", "np")] }
 
-def ex12a : LinguisticExample :=
+def ex12a : Datum :=
   { id := "sag2010_ex12a"
     source := ⟨"sag-2010", "(12a)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex12a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "inventory"), ("whForm", "what"), ("whCategory", "detSing")] }
 
-def ex12b : LinguisticExample :=
+def ex12b : Datum :=
   { id := "sag2010_ex12b"
     source := ⟨"sag-2010", "(12b)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex12b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "inventory"), ("whForm", "what"), ("whCategory", "detSing")] }
 
-def ex12c : LinguisticExample :=
+def ex12c : Datum :=
   { id := "sag2010_ex12c"
     source := ⟨"sag-2010", "(12c)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex12c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whRelative"), ("parameter", "inventory"), ("whForm", "what"), ("whCategory", "detSing")] }
 
-def ex13a : LinguisticExample :=
+def ex13a : Datum :=
   { id := "sag2010_ex13a"
     source := ⟨"sag-2010", "(13a)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex13a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "inventory"), ("whForm", "what"), ("whCategory", "detPl")] }
 
-def ex13b : LinguisticExample :=
+def ex13b : Datum :=
   { id := "sag2010_ex13b"
     source := ⟨"sag-2010", "(13b)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex13b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "inventory"), ("whForm", "what"), ("whCategory", "detPl")] }
 
-def ex13c : LinguisticExample :=
+def ex13c : Datum :=
   { id := "sag2010_ex13c"
     source := ⟨"sag-2010", "(13c)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def ex13c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whRelative"), ("parameter", "inventory"), ("whForm", "what"), ("whCategory", "detPl")] }
 
-def ex14a : LinguisticExample :=
+def ex14a : Datum :=
   { id := "sag2010_ex14a"
     source := ⟨"sag-2010", "(14a)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def ex14a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "inventory"), ("whForm", "what"), ("whCategory", "degree")] }
 
-def ex14b : LinguisticExample :=
+def ex14b : Datum :=
   { id := "sag2010_ex14b"
     source := ⟨"sag-2010", "(14b)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def ex14b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "inventory"), ("whForm", "what"), ("whCategory", "degree")] }
 
-def ex14c : LinguisticExample :=
+def ex14c : Datum :=
   { id := "sag2010_ex14c"
     source := ⟨"sag-2010", "(14c)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def ex14c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whRelative"), ("parameter", "inventory"), ("whForm", "what"), ("whCategory", "degree")] }
 
-def ex15a : LinguisticExample :=
+def ex15a : Datum :=
   { id := "sag2010_ex15a"
     source := ⟨"sag-2010", "(15a)"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def ex15a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "inventory"), ("whForm", "whatA"), ("whCategory", "detSing")] }
 
-def ex15b : LinguisticExample :=
+def ex15b : Datum :=
   { id := "sag2010_ex15b"
     source := ⟨"sag-2010", "(15b)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def ex15b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "inventory"), ("whForm", "whatA"), ("whCategory", "detSing")] }
 
-def ex15c : LinguisticExample :=
+def ex15c : Datum :=
   { id := "sag2010_ex15c"
     source := ⟨"sag-2010", "(15c)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def ex15c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whRelative"), ("parameter", "inventory"), ("whForm", "whatA"), ("whCategory", "detSing")] }
 
-def ex16a : LinguisticExample :=
+def ex16a : Datum :=
   { id := "sag2010_ex16a"
     source := ⟨"sag-2010", "(16a)"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def ex16a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "inventory"), ("whForm", "which"), ("whCategory", "det")] }
 
-def ex16b : LinguisticExample :=
+def ex16b : Datum :=
   { id := "sag2010_ex16b"
     source := ⟨"sag-2010", "(16b)"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def ex16b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "inventory"), ("whForm", "which"), ("whCategory", "np")] }
 
-def ex16c : LinguisticExample :=
+def ex16c : Datum :=
   { id := "sag2010_ex16c"
     source := ⟨"sag-2010", "(16c)"⟩
     reportedIn := none
@@ -485,7 +485,7 @@ def ex16c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whRelative"), ("parameter", "inventory"), ("whForm", "which"), ("whCategory", "np")] }
 
-def ex17a : LinguisticExample :=
+def ex17a : Datum :=
   { id := "sag2010_ex17a"
     source := ⟨"sag-2010", "(17a)"⟩
     reportedIn := none
@@ -498,7 +498,7 @@ def ex17a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "inventory"), ("whForm", "which"), ("whCategory", "det")] }
 
-def ex17b : LinguisticExample :=
+def ex17b : Datum :=
   { id := "sag2010_ex17b"
     source := ⟨"sag-2010", "(17b)"⟩
     reportedIn := none
@@ -511,7 +511,7 @@ def ex17b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "inventory"), ("whForm", "which"), ("whCategory", "det")] }
 
-def ex17c : LinguisticExample :=
+def ex17c : Datum :=
   { id := "sag2010_ex17c"
     source := ⟨"sag-2010", "(17c)"⟩
     reportedIn := none
@@ -524,7 +524,7 @@ def ex17c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whRelative"), ("parameter", "inventory"), ("whForm", "which"), ("whCategory", "det")] }
 
-def ex18a : LinguisticExample :=
+def ex18a : Datum :=
   { id := "sag2010_ex18a"
     source := ⟨"sag-2010", "(18a)"⟩
     reportedIn := none
@@ -537,7 +537,7 @@ def ex18a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "inventory"), ("whForm", "how"), ("whCategory", "advpManner")] }
 
-def ex18b : LinguisticExample :=
+def ex18b : Datum :=
   { id := "sag2010_ex18b"
     source := ⟨"sag-2010", "(18b)"⟩
     reportedIn := none
@@ -550,7 +550,7 @@ def ex18b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "inventory"), ("whForm", "how"), ("whCategory", "advpManner")] }
 
-def ex18c : LinguisticExample :=
+def ex18c : Datum :=
   { id := "sag2010_ex18c"
     source := ⟨"sag-2010", "(18c)"⟩
     reportedIn := none
@@ -563,7 +563,7 @@ def ex18c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whRelative"), ("parameter", "inventory"), ("whForm", "how"), ("whCategory", "advpManner")] }
 
-def ex19a : LinguisticExample :=
+def ex19a : Datum :=
   { id := "sag2010_ex19a"
     source := ⟨"sag-2010", "(19a)"⟩
     reportedIn := none
@@ -576,7 +576,7 @@ def ex19a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "inventory"), ("whForm", "how"), ("whCategory", "ap")] }
 
-def ex19b : LinguisticExample :=
+def ex19b : Datum :=
   { id := "sag2010_ex19b"
     source := ⟨"sag-2010", "(19b)"⟩
     reportedIn := none
@@ -589,7 +589,7 @@ def ex19b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "inventory"), ("whForm", "how"), ("whCategory", "ap")] }
 
-def ex19c : LinguisticExample :=
+def ex19c : Datum :=
   { id := "sag2010_ex19c"
     source := ⟨"sag-2010", "(19c)"⟩
     reportedIn := none
@@ -602,7 +602,7 @@ def ex19c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whRelative"), ("parameter", "inventory"), ("whForm", "how"), ("whCategory", "ap")] }
 
-def ex20a : LinguisticExample :=
+def ex20a : Datum :=
   { id := "sag2010_ex20a"
     source := ⟨"sag-2010", "(20a)"⟩
     reportedIn := none
@@ -615,7 +615,7 @@ def ex20a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "inventory"), ("whForm", "how"), ("whCategory", "degree")] }
 
-def ex20b : LinguisticExample :=
+def ex20b : Datum :=
   { id := "sag2010_ex20b"
     source := ⟨"sag-2010", "(20b)"⟩
     reportedIn := none
@@ -628,7 +628,7 @@ def ex20b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "inventory"), ("whForm", "how"), ("whCategory", "degree")] }
 
-def ex20c : LinguisticExample :=
+def ex20c : Datum :=
   { id := "sag2010_ex20c"
     source := ⟨"sag-2010", "(20c)"⟩
     reportedIn := none
@@ -641,7 +641,7 @@ def ex20c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whRelative"), ("parameter", "inventory"), ("whForm", "how"), ("whCategory", "degree")] }
 
-def ex21a : LinguisticExample :=
+def ex21a : Datum :=
   { id := "sag2010_ex21a"
     source := ⟨"sag-2010", "(21a)"⟩
     reportedIn := none
@@ -654,7 +654,7 @@ def ex21a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "inventory"), ("whForm", "when"), ("whCategory", "ppTime")] }
 
-def ex21b : LinguisticExample :=
+def ex21b : Datum :=
   { id := "sag2010_ex21b"
     source := ⟨"sag-2010", "(21b)"⟩
     reportedIn := none
@@ -667,7 +667,7 @@ def ex21b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "inventory"), ("whForm", "when"), ("whCategory", "ppTime")] }
 
-def ex21c : LinguisticExample :=
+def ex21c : Datum :=
   { id := "sag2010_ex21c"
     source := ⟨"sag-2010", "(21c)"⟩
     reportedIn := none
@@ -680,7 +680,7 @@ def ex21c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whRelative"), ("parameter", "inventory"), ("whForm", "when"), ("whCategory", "ppTime")] }
 
-def ex22a : LinguisticExample :=
+def ex22a : Datum :=
   { id := "sag2010_ex22a"
     source := ⟨"sag-2010", "(22a)"⟩
     reportedIn := none
@@ -693,7 +693,7 @@ def ex22a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "inventory"), ("whForm", "where"), ("whCategory", "ppPlace")] }
 
-def ex22b : LinguisticExample :=
+def ex22b : Datum :=
   { id := "sag2010_ex22b"
     source := ⟨"sag-2010", "(22b)"⟩
     reportedIn := none
@@ -706,7 +706,7 @@ def ex22b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "inventory"), ("whForm", "where"), ("whCategory", "ppPlace")] }
 
-def ex22c : LinguisticExample :=
+def ex22c : Datum :=
   { id := "sag2010_ex22c"
     source := ⟨"sag-2010", "(22c)"⟩
     reportedIn := none
@@ -719,7 +719,7 @@ def ex22c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whRelative"), ("parameter", "inventory"), ("whForm", "where"), ("whCategory", "ppPlace")] }
 
-def ex23a : LinguisticExample :=
+def ex23a : Datum :=
   { id := "sag2010_ex23a"
     source := ⟨"sag-2010", "(23a)"⟩
     reportedIn := none
@@ -732,7 +732,7 @@ def ex23a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "inventory"), ("whForm", "why"), ("whCategory", "ppReason")] }
 
-def ex23b : LinguisticExample :=
+def ex23b : Datum :=
   { id := "sag2010_ex23b"
     source := ⟨"sag-2010", "(23b)"⟩
     reportedIn := none
@@ -745,7 +745,7 @@ def ex23b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "inventory"), ("whForm", "why"), ("whCategory", "ppReason")] }
 
-def ex23c : LinguisticExample :=
+def ex23c : Datum :=
   { id := "sag2010_ex23c"
     source := ⟨"sag-2010", "(23c)"⟩
     reportedIn := none
@@ -758,7 +758,7 @@ def ex23c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whRelative"), ("parameter", "inventory"), ("whForm", "why"), ("whCategory", "ppReason")] }
 
-def ex4a : LinguisticExample :=
+def ex4a : Datum :=
   { id := "sag2010_ex4a"
     source := ⟨"sag-2010", "(4a)"⟩
     reportedIn := none
@@ -771,7 +771,7 @@ def ex4a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whRelative"), ("parameter", "fillerCategory"), ("filler", "NP"), ("embedded", "true")] }
 
-def ex4b : LinguisticExample :=
+def ex4b : Datum :=
   { id := "sag2010_ex4b"
     source := ⟨"sag-2010", "(4b)"⟩
     reportedIn := none
@@ -784,7 +784,7 @@ def ex4b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whRelative"), ("parameter", "fillerCategory"), ("filler", "PP"), ("finite", "false"), ("embedded", "true")] }
 
-def ex26a : LinguisticExample :=
+def ex26a : Datum :=
   { id := "sag2010_ex26a"
     source := ⟨"sag-2010", "(26a)"⟩
     reportedIn := none
@@ -797,7 +797,7 @@ def ex26a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whRelative"), ("parameter", "fillerCategory"), ("filler", "AP"), ("embedded", "true")] }
 
-def ex26b : LinguisticExample :=
+def ex26b : Datum :=
   { id := "sag2010_ex26b"
     source := ⟨"sag-2010", "(26b)"⟩
     reportedIn := none
@@ -810,7 +810,7 @@ def ex26b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "fillerCategory"), ("filler", "VP")] }
 
-def ex26c : LinguisticExample :=
+def ex26c : Datum :=
   { id := "sag2010_ex26c"
     source := ⟨"sag-2010", "(26c)"⟩
     reportedIn := none
@@ -823,7 +823,7 @@ def ex26c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "theClause"), ("parameter", "fillerCategory"), ("filler", "VP")] }
 
-def ex26d : LinguisticExample :=
+def ex26d : Datum :=
   { id := "sag2010_ex26d"
     source := ⟨"sag-2010", "(26d)"⟩
     reportedIn := none
@@ -836,7 +836,7 @@ def ex26d : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whRelative"), ("parameter", "fillerCategory"), ("filler", "NP"), ("finite", "false"), ("embedded", "true")] }
 
-def ex63a : LinguisticExample :=
+def ex63a : Datum :=
   { id := "sag2010_ex63a"
     source := ⟨"sag-2010", "(63a)"⟩
     reportedIn := none
@@ -849,7 +849,7 @@ def ex63a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "topicalized"), ("parameter", "fillerCategory"), ("filler", "NP")] }
 
-def ex63b : LinguisticExample :=
+def ex63b : Datum :=
   { id := "sag2010_ex63b"
     source := ⟨"sag-2010", "(63b)"⟩
     reportedIn := none
@@ -862,7 +862,7 @@ def ex63b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "topicalized"), ("parameter", "fillerCategory"), ("filler", "PP")] }
 
-def ex63c : LinguisticExample :=
+def ex63c : Datum :=
   { id := "sag2010_ex63c"
     source := ⟨"sag-2010", "(63c)"⟩
     reportedIn := none
@@ -875,7 +875,7 @@ def ex63c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "topicalized"), ("parameter", "fillerCategory"), ("filler", "AP")] }
 
-def ex63d : LinguisticExample :=
+def ex63d : Datum :=
   { id := "sag2010_ex63d"
     source := ⟨"sag-2010", "(63d)"⟩
     reportedIn := none
@@ -888,7 +888,7 @@ def ex63d : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "topicalized"), ("parameter", "fillerCategory"), ("filler", "AdvP")] }
 
-def ex76a : LinguisticExample :=
+def ex76a : Datum :=
   { id := "sag2010_ex76a"
     source := ⟨"sag-2010", "(76a)"⟩
     reportedIn := none
@@ -901,7 +901,7 @@ def ex76a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "fillerCategory"), ("filler", "NP")] }
 
-def ex76b : LinguisticExample :=
+def ex76b : Datum :=
   { id := "sag2010_ex76b"
     source := ⟨"sag-2010", "(76b)"⟩
     reportedIn := none
@@ -914,7 +914,7 @@ def ex76b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "fillerCategory"), ("filler", "AP")] }
 
-def ex76c : LinguisticExample :=
+def ex76c : Datum :=
   { id := "sag2010_ex76c"
     source := ⟨"sag-2010", "(76c)"⟩
     reportedIn := none
@@ -927,7 +927,7 @@ def ex76c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "fillerCategory"), ("filler", "AdvP")] }
 
-def ex76d : LinguisticExample :=
+def ex76d : Datum :=
   { id := "sag2010_ex76d"
     source := ⟨"sag-2010", "(76d)"⟩
     reportedIn := none
@@ -940,7 +940,7 @@ def ex76d : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "fillerCategory"), ("filler", "PP")] }
 
-def ex76e : LinguisticExample :=
+def ex76e : Datum :=
   { id := "sag2010_ex76e"
     source := ⟨"sag-2010", "(76e)"⟩
     reportedIn := none
@@ -953,7 +953,7 @@ def ex76e : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "fillerCategory"), ("filler", "VP")] }
 
-def ex76f : LinguisticExample :=
+def ex76f : Datum :=
   { id := "sag2010_ex76f"
     source := ⟨"sag-2010", "(76f)"⟩
     reportedIn := none
@@ -966,7 +966,7 @@ def ex76f : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "fillerCategory"), ("filler", "VP")] }
 
-def ex86a : LinguisticExample :=
+def ex86a : Datum :=
   { id := "sag2010_ex86a"
     source := ⟨"sag-2010", "(86a)"⟩
     reportedIn := none
@@ -979,7 +979,7 @@ def ex86a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "fillerCategory"), ("filler", "NP"), ("inverted", "true")] }
 
-def ex86b : LinguisticExample :=
+def ex86b : Datum :=
   { id := "sag2010_ex86b"
     source := ⟨"sag-2010", "(86b)"⟩
     reportedIn := none
@@ -992,7 +992,7 @@ def ex86b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "fillerCategory"), ("filler", "PP"), ("inverted", "true")] }
 
-def ex86c : LinguisticExample :=
+def ex86c : Datum :=
   { id := "sag2010_ex86c"
     source := ⟨"sag-2010", "(86c)"⟩
     reportedIn := none
@@ -1005,7 +1005,7 @@ def ex86c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "fillerCategory"), ("filler", "AP"), ("inverted", "true")] }
 
-def ex86d : LinguisticExample :=
+def ex86d : Datum :=
   { id := "sag2010_ex86d"
     source := ⟨"sag-2010", "(86d)"⟩
     reportedIn := none
@@ -1018,7 +1018,7 @@ def ex86d : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "fillerCategory"), ("filler", "AdvP"), ("inverted", "true")] }
 
-def ex87 : LinguisticExample :=
+def ex87 : Datum :=
   { id := "sag2010_ex87"
     source := ⟨"sag-2010", "(87)"⟩
     reportedIn := none
@@ -1031,7 +1031,7 @@ def ex87 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "fillerCategory"), ("filler", "VP"), ("inverted", "true")] }
 
-def ex96a : LinguisticExample :=
+def ex96a : Datum :=
   { id := "sag2010_ex96a"
     source := ⟨"sag-2010", "(96a)"⟩
     reportedIn := none
@@ -1044,7 +1044,7 @@ def ex96a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whRelative"), ("parameter", "fillerCategory"), ("filler", "PP"), ("finite", "false"), ("embedded", "true")] }
 
-def ex96b : LinguisticExample :=
+def ex96b : Datum :=
   { id := "sag2010_ex96b"
     source := ⟨"sag-2010", "(96b)"⟩
     reportedIn := none
@@ -1057,7 +1057,7 @@ def ex96b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whRelative"), ("parameter", "fillerCategory"), ("filler", "NP"), ("finite", "false"), ("embedded", "true")] }
 
-def ex96c : LinguisticExample :=
+def ex96c : Datum :=
   { id := "sag2010_ex96c"
     source := ⟨"sag-2010", "(96c)"⟩
     reportedIn := none
@@ -1070,7 +1070,7 @@ def ex96c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whRelative"), ("parameter", "fillerCategory"), ("filler", "AP"), ("finite", "false"), ("embedded", "true")] }
 
-def ex96d : LinguisticExample :=
+def ex96d : Datum :=
   { id := "sag2010_ex96d"
     source := ⟨"sag-2010", "(96d)"⟩
     reportedIn := none
@@ -1083,7 +1083,7 @@ def ex96d : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whRelative"), ("parameter", "fillerCategory"), ("filler", "AdvP"), ("finite", "false"), ("embedded", "true")] }
 
-def ex96e : LinguisticExample :=
+def ex96e : Datum :=
   { id := "sag2010_ex96e"
     source := ⟨"sag-2010", "(96e)"⟩
     reportedIn := none
@@ -1096,7 +1096,7 @@ def ex96e : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whRelative"), ("parameter", "fillerCategory"), ("filler", "VP"), ("finite", "false"), ("embedded", "true")] }
 
-def ex27a : LinguisticExample :=
+def ex27a : Datum :=
   { id := "sag2010_ex27a"
     source := ⟨"sag-2010", "(27a)"⟩
     reportedIn := none
@@ -1109,7 +1109,7 @@ def ex27a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "topicalized"), ("parameter", "headCategory"), ("head", "CP")] }
 
-def ex27a_ii : LinguisticExample :=
+def ex27a_ii : Datum :=
   { id := "sag2010_ex27a_ii"
     source := ⟨"sag-2010", "(27a)"⟩
     reportedIn := none
@@ -1122,7 +1122,7 @@ def ex27a_ii : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "headCategory"), ("head", "CP"), ("embedded", "true")] }
 
-def ex27a_iii : LinguisticExample :=
+def ex27a_iii : Datum :=
   { id := "sag2010_ex27a_iii"
     source := ⟨"sag-2010", "(27a)"⟩
     reportedIn := none
@@ -1135,7 +1135,7 @@ def ex27a_iii : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whRelative"), ("parameter", "headCategory"), ("head", "CP"), ("embedded", "true")] }
 
-def ex27a_iiii : LinguisticExample :=
+def ex27a_iiii : Datum :=
   { id := "sag2010_ex27a_iiii"
     source := ⟨"sag-2010", "(27a)"⟩
     reportedIn := none
@@ -1148,7 +1148,7 @@ def ex27a_iiii : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "headCategory"), ("head", "CP")] }
 
-def ex28a : LinguisticExample :=
+def ex28a : Datum :=
   { id := "sag2010_ex28a"
     source := ⟨"sag-2010", "(28a)"⟩
     reportedIn := none
@@ -1161,7 +1161,7 @@ def ex28a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "inversion"), ("filler", "AP"), ("inverted", "true")] }
 
-def ex28a_ii : LinguisticExample :=
+def ex28a_ii : Datum :=
   { id := "sag2010_ex28a_ii"
     source := ⟨"sag-2010", "(28a)"⟩
     reportedIn := none
@@ -1174,7 +1174,7 @@ def ex28a_ii : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "inversion"), ("filler", "AP"), ("inverted", "true"), ("embedded", "true")] }
 
-def ex28b : LinguisticExample :=
+def ex28b : Datum :=
   { id := "sag2010_ex28b"
     source := ⟨"sag-2010", "(28b)"⟩
     reportedIn := none
@@ -1187,7 +1187,7 @@ def ex28b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "topicalized"), ("parameter", "inversion"), ("inverted", "true")] }
 
-def ex28b_ii : LinguisticExample :=
+def ex28b_ii : Datum :=
   { id := "sag2010_ex28b_ii"
     source := ⟨"sag-2010", "(28b)"⟩
     reportedIn := none
@@ -1200,7 +1200,7 @@ def ex28b_ii : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whRelative"), ("parameter", "inversion"), ("inverted", "true"), ("embedded", "true")] }
 
-def ex28b_iii : LinguisticExample :=
+def ex28b_iii : Datum :=
   { id := "sag2010_ex28b_iii"
     source := ⟨"sag-2010", "(28b)"⟩
     reportedIn := none
@@ -1213,7 +1213,7 @@ def ex28b_iii : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "inversion"), ("filler", "AP"), ("inverted", "true")] }
 
-def ex28b_iiii : LinguisticExample :=
+def ex28b_iiii : Datum :=
   { id := "sag2010_ex28b_iiii"
     source := ⟨"sag-2010", "(28b)"⟩
     reportedIn := none
@@ -1226,7 +1226,7 @@ def ex28b_iiii : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "inversion"), ("inverted", "true")] }
 
-def ex28c : LinguisticExample :=
+def ex28c : Datum :=
   { id := "sag2010_ex28c"
     source := ⟨"sag-2010", "(28c)"⟩
     reportedIn := none
@@ -1239,7 +1239,7 @@ def ex28c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "theClause"), ("parameter", "inversion"), ("inverted", "true")] }
 
-def ex28c_ii : LinguisticExample :=
+def ex28c_ii : Datum :=
   { id := "sag2010_ex28c_ii"
     source := ⟨"sag-2010", "(28c)"⟩
     reportedIn := none
@@ -1252,7 +1252,7 @@ def ex28c_ii : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "theClause"), ("parameter", "inversion")] }
 
-def ex71a : LinguisticExample :=
+def ex71a : Datum :=
   { id := "sag2010_ex71a"
     source := ⟨"sag-2010", "(71a)"⟩
     reportedIn := none
@@ -1265,7 +1265,7 @@ def ex71a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "inversion"), ("embedded", "true")] }
 
-def ex71a_ii : LinguisticExample :=
+def ex71a_ii : Datum :=
   { id := "sag2010_ex71a_ii"
     source := ⟨"sag-2010", "(71a)"⟩
     reportedIn := none
@@ -1278,7 +1278,7 @@ def ex71a_ii : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "inversion"), ("inverted", "true"), ("embedded", "true")] }
 
-def ex71b : LinguisticExample :=
+def ex71b : Datum :=
   { id := "sag2010_ex71b"
     source := ⟨"sag-2010", "(71b)"⟩
     reportedIn := none
@@ -1291,7 +1291,7 @@ def ex71b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "inversion")] }
 
-def ex71b_ii : LinguisticExample :=
+def ex71b_ii : Datum :=
   { id := "sag2010_ex71b_ii"
     source := ⟨"sag-2010", "(71b)"⟩
     reportedIn := none
@@ -1304,7 +1304,7 @@ def ex71b_ii : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "inversion"), ("inverted", "true")] }
 
-def ex84a : LinguisticExample :=
+def ex84a : Datum :=
   { id := "sag2010_ex84a"
     source := ⟨"sag-2010", "(84a)"⟩
     reportedIn := none
@@ -1317,7 +1317,7 @@ def ex84a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "inversion"), ("inverted", "true")] }
 
-def ex84b : LinguisticExample :=
+def ex84b : Datum :=
   { id := "sag2010_ex84b"
     source := ⟨"sag-2010", "(84b)"⟩
     reportedIn := none
@@ -1330,7 +1330,7 @@ def ex84b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "inversion")] }
 
-def ex84c : LinguisticExample :=
+def ex84c : Datum :=
   { id := "sag2010_ex84c"
     source := ⟨"sag-2010", "(84c)"⟩
     reportedIn := none
@@ -1343,7 +1343,7 @@ def ex84c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "inversion"), ("embedded", "true")] }
 
-def ex84d : LinguisticExample :=
+def ex84d : Datum :=
   { id := "sag2010_ex84d"
     source := ⟨"sag-2010", "(84d)"⟩
     reportedIn := none
@@ -1356,7 +1356,7 @@ def ex84d : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "inversion"), ("inverted", "true"), ("embedded", "true")] }
 
-def ex29a : LinguisticExample :=
+def ex29a : Datum :=
   { id := "sag2010_ex29a"
     source := ⟨"sag-2010", "(29a)"⟩
     reportedIn := none
@@ -1369,7 +1369,7 @@ def ex29a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "topicalized"), ("parameter", "finiteness"), ("finite", "false")] }
 
-def ex29a_ii : LinguisticExample :=
+def ex29a_ii : Datum :=
   { id := "sag2010_ex29a_ii"
     source := ⟨"sag-2010", "(29a)"⟩
     reportedIn := none
@@ -1382,7 +1382,7 @@ def ex29a_ii : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "finiteness"), ("finite", "false"), ("embedded", "true")] }
 
-def ex29a_iii : LinguisticExample :=
+def ex29a_iii : Datum :=
   { id := "sag2010_ex29a_iii"
     source := ⟨"sag-2010", "(29a)"⟩
     reportedIn := none
@@ -1395,7 +1395,7 @@ def ex29a_iii : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "theClause"), ("parameter", "finiteness"), ("filler", "AP"), ("finite", "false")] }
 
-def ex29b : LinguisticExample :=
+def ex29b : Datum :=
   { id := "sag2010_ex29b"
     source := ⟨"sag-2010", "(29b)"⟩
     reportedIn := none
@@ -1408,7 +1408,7 @@ def ex29b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "finiteness"), ("finite", "false"), ("embedded", "true")] }
 
-def ex29b_ii : LinguisticExample :=
+def ex29b_ii : Datum :=
   { id := "sag2010_ex29b_ii"
     source := ⟨"sag-2010", "(29b)"⟩
     reportedIn := none
@@ -1421,7 +1421,7 @@ def ex29b_ii : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whRelative"), ("parameter", "finiteness"), ("filler", "PP"), ("finite", "false"), ("embedded", "true")] }
 
-def ex71c : LinguisticExample :=
+def ex71c : Datum :=
   { id := "sag2010_ex71c"
     source := ⟨"sag-2010", "(71c)"⟩
     reportedIn := none
@@ -1434,7 +1434,7 @@ def ex71c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "finiteness"), ("finite", "false"), ("embedded", "true")] }
 
-def ex85 : LinguisticExample :=
+def ex85 : Datum :=
   { id := "sag2010_ex85"
     source := ⟨"sag-2010", "(85)"⟩
     reportedIn := none
@@ -1447,7 +1447,7 @@ def ex85 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "finiteness"), ("finite", "false"), ("embedded", "true")] }
 
-def ex31a : LinguisticExample :=
+def ex31a : Datum :=
   { id := "sag2010_ex31a"
     source := ⟨"sag-2010", "(31a)"⟩
     reportedIn := none
@@ -1460,7 +1460,7 @@ def ex31a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "independence"), ("embedded", "true")] }
 
-def ex31b : LinguisticExample :=
+def ex31b : Datum :=
   { id := "sag2010_ex31b"
     source := ⟨"sag-2010", "(31b)"⟩
     reportedIn := none
@@ -1473,7 +1473,7 @@ def ex31b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "independence")] }
 
-def ex67 : LinguisticExample :=
+def ex67 : Datum :=
   { id := "sag2010_ex67"
     source := ⟨"sag-2010", "(67)"⟩
     reportedIn := none
@@ -1486,7 +1486,7 @@ def ex67 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "topicalized"), ("parameter", "island")] }
 
-def ex74 : LinguisticExample :=
+def ex74 : Datum :=
   { id := "sag2010_ex74"
     source := ⟨"sag-2010", "(74)"⟩
     reportedIn := none
@@ -1499,7 +1499,7 @@ def ex74 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whExclamative"), ("parameter", "island")] }
 
-def ex88a : LinguisticExample :=
+def ex88a : Datum :=
   { id := "sag2010_ex88a"
     source := ⟨"sag-2010", "(88a)"⟩
     reportedIn := none
@@ -1512,7 +1512,7 @@ def ex88a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "island"), ("finite", "false"), ("embedded", "true")] }
 
-def ex88b : LinguisticExample :=
+def ex88b : Datum :=
   { id := "sag2010_ex88b"
     source := ⟨"sag-2010", "(88b)"⟩
     reportedIn := none
@@ -1525,7 +1525,7 @@ def ex88b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "island"), ("embedded", "true")] }
 
-def ex88c : LinguisticExample :=
+def ex88c : Datum :=
   { id := "sag2010_ex88c"
     source := ⟨"sag-2010", "(88c)"⟩
     reportedIn := none
@@ -1538,6 +1538,6 @@ def ex88c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "whInterrogative"), ("parameter", "island"), ("embedded", "true")] }
 
-def all : List LinguisticExample := [ex7a, ex7b, ex7c, ex7d, ex7e, ex8a, ex8a_ii, ex8b, ex8c, ex8d, ex8d_ii, ex8e, ex9a, ex9b, ex9c, ex10a, ex10b, ex10c, ex11a, ex11b, ex11c, ex12a, ex12b, ex12c, ex13a, ex13b, ex13c, ex14a, ex14b, ex14c, ex15a, ex15b, ex15c, ex16a, ex16b, ex16c, ex17a, ex17b, ex17c, ex18a, ex18b, ex18c, ex19a, ex19b, ex19c, ex20a, ex20b, ex20c, ex21a, ex21b, ex21c, ex22a, ex22b, ex22c, ex23a, ex23b, ex23c, ex4a, ex4b, ex26a, ex26b, ex26c, ex26d, ex63a, ex63b, ex63c, ex63d, ex76a, ex76b, ex76c, ex76d, ex76e, ex76f, ex86a, ex86b, ex86c, ex86d, ex87, ex96a, ex96b, ex96c, ex96d, ex96e, ex27a, ex27a_ii, ex27a_iii, ex27a_iiii, ex28a, ex28a_ii, ex28b, ex28b_ii, ex28b_iii, ex28b_iiii, ex28c, ex28c_ii, ex71a, ex71a_ii, ex71b, ex71b_ii, ex84a, ex84b, ex84c, ex84d, ex29a, ex29a_ii, ex29a_iii, ex29b, ex29b_ii, ex71c, ex85, ex31a, ex31b, ex67, ex74, ex88a, ex88b, ex88c]
+def all : List Datum := [ex7a, ex7b, ex7c, ex7d, ex7e, ex8a, ex8a_ii, ex8b, ex8c, ex8d, ex8d_ii, ex8e, ex9a, ex9b, ex9c, ex10a, ex10b, ex10c, ex11a, ex11b, ex11c, ex12a, ex12b, ex12c, ex13a, ex13b, ex13c, ex14a, ex14b, ex14c, ex15a, ex15b, ex15c, ex16a, ex16b, ex16c, ex17a, ex17b, ex17c, ex18a, ex18b, ex18c, ex19a, ex19b, ex19c, ex20a, ex20b, ex20c, ex21a, ex21b, ex21c, ex22a, ex22b, ex22c, ex23a, ex23b, ex23c, ex4a, ex4b, ex26a, ex26b, ex26c, ex26d, ex63a, ex63b, ex63c, ex63d, ex76a, ex76b, ex76c, ex76d, ex76e, ex76f, ex86a, ex86b, ex86c, ex86d, ex87, ex96a, ex96b, ex96c, ex96d, ex96e, ex27a, ex27a_ii, ex27a_iii, ex27a_iiii, ex28a, ex28a_ii, ex28b, ex28b_ii, ex28b_iii, ex28b_iiii, ex28c, ex28c_ii, ex71a, ex71a_ii, ex71b, ex71b_ii, ex84a, ex84b, ex84c, ex84d, ex29a, ex29a_ii, ex29a_iii, ex29b, ex29b_ii, ex71c, ex85, ex31a, ex31b, ex67, ex74, ex88a, ex88b, ex88c]
 
 end Sag2010.Examples

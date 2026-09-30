@@ -17,7 +17,7 @@ namespace BeaversKoontzGarboden2020.Examples
 
 open Data.Examples
 
-def bkg2020_25a : LinguisticExample :=
+def bkg2020_25a : Datum :=
   { id := "bkg2020_25a"
     source := ⟨"beavers-koontz-garboden-2020", "(25a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def bkg2020_25a : LinguisticExample :=
     readings := [("restitutive: again scopes over the root state", .acceptable)]
     paperFeatures := [("diagnostic", "sublexical again"), ("attachment", "root")] }
 
-def bkg2020_25b : LinguisticExample :=
+def bkg2020_25b : Datum :=
   { id := "bkg2020_25b"
     source := ⟨"beavers-koontz-garboden-2020", "(25b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def bkg2020_25b : LinguisticExample :=
     readings := [("repetitive over the change: again scopes over v_become", .acceptable)]
     paperFeatures := [("diagnostic", "sublexical again"), ("attachment", "v_become")] }
 
-def bkg2020_25c : LinguisticExample :=
+def bkg2020_25c : Datum :=
   { id := "bkg2020_25c"
     source := ⟨"beavers-koontz-garboden-2020", "(25c)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def bkg2020_25c : LinguisticExample :=
     readings := [("repetitive over the causation: again scopes over v_cause", .acceptable)]
     paperFeatures := [("diagnostic", "sublexical again"), ("attachment", "v_cause")] }
 
-def bkg2020_ch2_46a : LinguisticExample :=
+def bkg2020_ch2_46a : Datum :=
   { id := "bkg2020_ch2_46a"
     source := ⟨"beavers-koontz-garboden-2020", "ch. 2 (46a)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def bkg2020_ch2_46a : LinguisticExample :=
     readings := [("restitutive: could be just one sharpening", .acceptable)]
     paperFeatures := [("root class", "property concept"), ("diagnostic", "restitutive again")] }
 
-def bkg2020_ch2_47a : LinguisticExample :=
+def bkg2020_ch2_47a : Datum :=
   { id := "bkg2020_ch2_47a"
     source := ⟨"beavers-koontz-garboden-2020", "ch. 2 (47a)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def bkg2020_ch2_47a : LinguisticExample :=
     readings := [("repetitive: necessarily two returnings", .acceptable)]
     paperFeatures := [("root class", "result"), ("diagnostic", "restitutive again")] }
 
-def bkg2020_ch2_47b : LinguisticExample :=
+def bkg2020_ch2_47b : Datum :=
   { id := "bkg2020_ch2_47b"
     source := ⟨"beavers-koontz-garboden-2020", "ch. 2 (47b)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def bkg2020_ch2_47b : LinguisticExample :=
     readings := [("repetitive: necessarily two defrostings", .acceptable)]
     paperFeatures := [("root class", "result"), ("diagnostic", "restitutive again")] }
 
-def bkg2020_ch2_48 : LinguisticExample :=
+def bkg2020_ch2_48 : Datum :=
   { id := "bkg2020_ch2_48"
     source := ⟨"beavers-koontz-garboden-2020", "ch. 2 (48)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def bkg2020_ch2_48 : LinguisticExample :=
     readings := [("repetitive: necessarily two fryings", .acceptable)]
     paperFeatures := [("root class", "result"), ("diagnostic", "restitutive again")] }
 
-def bkg2020_ch3_10a : LinguisticExample :=
+def bkg2020_ch3_10a : Datum :=
   { id := "bkg2020_ch3_10a"
     source := ⟨"beavers-koontz-garboden-2020", "ch. 3 (10a)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def bkg2020_ch3_10a : LinguisticExample :=
     readings := []
     paperFeatures := [("root class", "true possession"), ("diagnostic", "result denial")] }
 
-def bkg2020_ch3_11a : LinguisticExample :=
+def bkg2020_ch3_11a : Datum :=
   { id := "bkg2020_ch3_11a"
     source := ⟨"beavers-koontz-garboden-2020", "ch. 3 (11a)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def bkg2020_ch3_11a : LinguisticExample :=
     readings := []
     paperFeatures := [("root class", "release"), ("diagnostic", "result denial")] }
 
-def bkg2020_ch3_48a : LinguisticExample :=
+def bkg2020_ch3_48a : Datum :=
   { id := "bkg2020_ch3_48a"
     source := ⟨"beavers-koontz-garboden-2020", "ch. 3 (48a)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def bkg2020_ch3_48a : LinguisticExample :=
     readings := []
     paperFeatures := [("root class", "transfer of possession by motion"), ("diagnostic", "result denial")] }
 
-def bkg2020_ch4_25a : LinguisticExample :=
+def bkg2020_ch4_25a : Datum :=
   { id := "bkg2020_ch4_25a"
     source := ⟨"beavers-koontz-garboden-2020", "ch. 4 (25a)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def bkg2020_ch4_25a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb class", "manner of killing"), ("diagnostic", "result denial")] }
 
-def bkg2020_ch4_26c : LinguisticExample :=
+def bkg2020_ch4_26c : Datum :=
   { id := "bkg2020_ch4_26c"
     source := ⟨"beavers-koontz-garboden-2020", "ch. 4 (26c)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def bkg2020_ch4_26c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb class", "manner of killing"), ("diagnostic", "object deletion")] }
 
-def bkg2020_ch4_32b : LinguisticExample :=
+def bkg2020_ch4_32b : Datum :=
   { id := "bkg2020_ch4_32b"
     source := ⟨"beavers-koontz-garboden-2020", "ch. 4 (32b)"⟩
     reportedIn := none
@@ -186,6 +186,6 @@ def bkg2020_ch4_32b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb class", "manner of killing"), ("diagnostic", "action denial")] }
 
-def all : List LinguisticExample := [bkg2020_25a, bkg2020_25b, bkg2020_25c, bkg2020_ch2_46a, bkg2020_ch2_47a, bkg2020_ch2_47b, bkg2020_ch2_48, bkg2020_ch3_10a, bkg2020_ch3_11a, bkg2020_ch3_48a, bkg2020_ch4_25a, bkg2020_ch4_26c, bkg2020_ch4_32b]
+def all : List Datum := [bkg2020_25a, bkg2020_25b, bkg2020_25c, bkg2020_ch2_46a, bkg2020_ch2_47a, bkg2020_ch2_47b, bkg2020_ch2_48, bkg2020_ch3_10a, bkg2020_ch3_11a, bkg2020_ch3_48a, bkg2020_ch4_25a, bkg2020_ch4_26c, bkg2020_ch4_32b]
 
 end BeaversKoontzGarboden2020.Examples

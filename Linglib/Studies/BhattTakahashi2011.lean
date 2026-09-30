@@ -111,13 +111,13 @@ instance (data : List BindingDatum) : Decidable (realizesDirect data) :=
 
 /-- `bindingOf e` reads a binding row into a `BindingDatum`, recording whether the matrix pronoun
 c-commands the associate and whether the coreferential reading the row states is attested. -/
-def bindingOf (e : LinguisticExample) : Option BindingDatum :=
+def bindingOf (e : Datum) : Option BindingDatum :=
   (e.feature? "pron_c_commands_associate").bind fun s ↦
     let cc : Option Bool := match s with | "yes" => some true | "no" => some false | _ => none
     cc.map fun b ↦ ⟨e.id, b, decide (.marginal ≤ e.judgment)⟩
 
 /-- `rowsOf g` lists the rows of the language with Glottocode `g`. -/
-def rowsOf (glottocode : String) : List LinguisticExample :=
+def rowsOf (glottocode : String) : List Datum :=
   Examples.all.filter (·.language = glottocode)
 
 /-- `englishBindingPairs` holds the English minimal pairs (11)–(13). -/
@@ -168,7 +168,7 @@ def thanClause43b : ThanClause where
 
 /-- A scope row's *than*-clause has the configuration of (43a) when the quantifier's base position
 c-commands the degree trace and that of (43b) when it does not. -/
-def thanClauseOf (e : LinguisticExample) : Option ThanClause :=
+def thanClauseOf (e : Datum) : Option ThanClause :=
   match e.feature? "qp_base_c_commands_degree_trace" with
   | some "yes" => some thanClause43a
   | some "no" => some thanClause43b
@@ -177,12 +177,12 @@ def thanClauseOf (e : LinguisticExample) : Option ThanClause :=
 /-- Under reduction, as (43) shows, than-phrase-internal scope is available exactly when the
 quantifier in its base position satisfies the Heim–Kennedy constraint against the degree
 abstraction at the root of the *than*-clause. -/
-def RAPredictsScope (e : LinguisticExample) : Prop :=
+def RAPredictsScope (e : Datum) : Prop :=
   ∀ c ∈ thanClauseOf e,
     (IsHeimKennedy (cCommandAt c.tree) c.qp ⊥ c.trace ↔
       e.feature? "than_internal_scope" = some "available")
 
-instance (e : LinguisticExample) : Decidable (RAPredictsScope e) :=
+instance (e : Datum) : Decidable (RAPredictsScope e) :=
   inferInstanceAs (Decidable (∀ _ ∈ _, _))
 
 /-- The English scope data (43a–b) follow the reduction generalization. -/

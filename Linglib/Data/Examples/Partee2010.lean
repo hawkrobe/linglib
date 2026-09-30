@@ -17,7 +17,7 @@ namespace Partee2010.Examples
 
 open Data.Examples
 
-def ex_10a : LinguisticExample :=
+def ex_10a : Datum :=
   { id := "partee2010_10a"
     source := ⟨"partee-2010", "(10a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_10a : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_10b : LinguisticExample :=
+def ex_10b : Datum :=
   { id := "partee2010_10b"
     source := ⟨"partee-2010", "(10b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_10b : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_11a : LinguisticExample :=
+def ex_11a : Datum :=
   { id := "partee2010_11a"
     source := ⟨"nowak-2000", "(11a)"⟩
     reportedIn := some ⟨"partee-2010", "(11a)"⟩
@@ -56,7 +56,7 @@ def ex_11a : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_11b : LinguisticExample :=
+def ex_11b : Datum :=
   { id := "partee2010_11b"
     source := ⟨"nowak-2000", "(11b)"⟩
     reportedIn := some ⟨"partee-2010", "(11b)"⟩
@@ -69,7 +69,7 @@ def ex_11b : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_13b : LinguisticExample :=
+def ex_13b : Datum :=
   { id := "partee2010_13b"
     source := ⟨"nowak-2000", "(13b)"⟩
     reportedIn := some ⟨"partee-2010", "(13b)"⟩
@@ -82,7 +82,7 @@ def ex_13b : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_14b : LinguisticExample :=
+def ex_14b : Datum :=
   { id := "partee2010_14b"
     source := ⟨"nowak-2000", "(14b)"⟩
     reportedIn := some ⟨"partee-2010", "(14b)"⟩
@@ -95,7 +95,7 @@ def ex_14b : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def biedny_ambiguity : LinguisticExample :=
+def biedny_ambiguity : Datum :=
   { id := "partee2010_biedny_ambiguity"
     source := ⟨"nowak-2000", "(15b),(16a)"⟩
     reportedIn := some ⟨"partee-2010", "(15b),(16a)"⟩
@@ -108,7 +108,7 @@ def biedny_ambiguity : LinguisticExample :=
     readings := [("intersective 'not rich'", .acceptable), ("non-subsective 'pitiful'", .unacceptable)]
     paperFeatures := [] }
 
-def ex_17b : LinguisticExample :=
+def ex_17b : Datum :=
   { id := "partee2010_17b"
     source := ⟨"partee-2010", "(17b)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_17b : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_19b : LinguisticExample :=
+def ex_19b : Datum :=
   { id := "partee2010_19b"
     source := ⟨"kamp-partee-1995", "(19b) in Partee 2010"⟩
     reportedIn := some ⟨"partee-2010", "(19b)"⟩
@@ -134,7 +134,7 @@ def ex_19b : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_21b : LinguisticExample :=
+def ex_21b : Datum :=
   { id := "partee2010_21b"
     source := ⟨"kamp-partee-1995", "(21b) in Partee 2010"⟩
     reportedIn := some ⟨"partee-2010", "(21b)"⟩
@@ -147,7 +147,7 @@ def ex_21b : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_22b : LinguisticExample :=
+def ex_22b : Datum :=
   { id := "partee2010_22b"
     source := ⟨"partee-2010", "(22b)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_22b : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_12a : LinguisticExample :=
+def ex_12a : Datum :=
   { id := "partee2010_12a"
     source := ⟨"nowak-2000", "(12a)"⟩
     reportedIn := some ⟨"partee-2010", "(12a)"⟩
@@ -173,7 +173,7 @@ def ex_12a : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_12b : LinguisticExample :=
+def ex_12b : Datum :=
   { id := "partee2010_12b"
     source := ⟨"nowak-2000", "(12b)"⟩
     reportedIn := some ⟨"partee-2010", "(12b)"⟩
@@ -186,7 +186,7 @@ def ex_12b : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_13a : LinguisticExample :=
+def ex_13a : Datum :=
   { id := "partee2010_13a"
     source := ⟨"nowak-2000", "(13a)"⟩
     reportedIn := some ⟨"partee-2010", "(13a)"⟩
@@ -199,7 +199,7 @@ def ex_13a : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_14a : LinguisticExample :=
+def ex_14a : Datum :=
   { id := "partee2010_14a"
     source := ⟨"nowak-2000", "(14a)"⟩
     reportedIn := some ⟨"partee-2010", "(14a)"⟩
@@ -212,7 +212,7 @@ def ex_14a : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_17a : LinguisticExample :=
+def ex_17a : Datum :=
   { id := "partee2010_17a"
     source := ⟨"partee-2010", "(17a)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_17a : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_19a : LinguisticExample :=
+def ex_19a : Datum :=
   { id := "partee2010_19a"
     source := ⟨"kamp-partee-1995", "(19a) in Partee 2010"⟩
     reportedIn := some ⟨"partee-2010", "(19a)"⟩
@@ -238,7 +238,7 @@ def ex_19a : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_21a : LinguisticExample :=
+def ex_21a : Datum :=
   { id := "partee2010_21a"
     source := ⟨"kamp-partee-1995", "(21a) in Partee 2010"⟩
     reportedIn := some ⟨"partee-2010", "(21a)"⟩
@@ -251,7 +251,7 @@ def ex_21a : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_22a : LinguisticExample :=
+def ex_22a : Datum :=
   { id := "partee2010_22a"
     source := ⟨"partee-2010", "(22a)"⟩
     reportedIn := none
@@ -264,6 +264,6 @@ def ex_22a : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def all : List LinguisticExample := [ex_10a, ex_10b, ex_11a, ex_11b, ex_13b, ex_14b, biedny_ambiguity, ex_17b, ex_19b, ex_21b, ex_22b, ex_12a, ex_12b, ex_13a, ex_14a, ex_17a, ex_19a, ex_21a, ex_22a]
+def all : List Datum := [ex_10a, ex_10b, ex_11a, ex_11b, ex_13b, ex_14b, biedny_ambiguity, ex_17b, ex_19b, ex_21b, ex_22b, ex_12a, ex_12b, ex_13a, ex_14a, ex_17a, ex_19a, ex_21a, ex_22a]
 
 end Partee2010.Examples

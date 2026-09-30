@@ -17,7 +17,7 @@ namespace Ferreira2023.Examples
 
 open Data.Examples
 
-def ex_16 : LinguisticExample :=
+def ex_16 : Datum :=
   { id := "ferreira2023_16"
     source := ⟨"ferreira-2023", "(16)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_16 : LinguisticExample :=
     readings := []
     paperFeatures := [("first", "sn_p"), ("second", "pos_notp")] }
 
-def ex_17 : LinguisticExample :=
+def ex_17 : Datum :=
   { id := "ferreira2023_17"
     source := ⟨"ferreira-2023", "(17)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_17 : LinguisticExample :=
     readings := []
     paperFeatures := [("first", "wn_p"), ("second", "pos_notp")] }
 
-def ex_18 : LinguisticExample :=
+def ex_18 : Datum :=
   { id := "ferreira2023_18"
     source := ⟨"ferreira-2023", "(18)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_18 : LinguisticExample :=
     readings := []
     paperFeatures := [("first", "pos_p"), ("second", "pos_notp")] }
 
-def ex_19 : LinguisticExample :=
+def ex_19 : Datum :=
   { id := "ferreira2023_19"
     source := ⟨"ferreira-2023", "(19)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_19 : LinguisticExample :=
     readings := []
     paperFeatures := [("first", "sn_p"), ("second", "not_wn_p")] }
 
-def ex_20 : LinguisticExample :=
+def ex_20 : Datum :=
   { id := "ferreira2023_20"
     source := ⟨"ferreira-2023", "(20)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_20 : LinguisticExample :=
     readings := []
     paperFeatures := [("first", "wn_p"), ("second", "not_sn_p")] }
 
-def ex_21 : LinguisticExample :=
+def ex_21 : Datum :=
   { id := "ferreira2023_21"
     source := ⟨"ferreira-2023", "(21)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_21 : LinguisticExample :=
     readings := []
     paperFeatures := [("first", "wn_p"), ("second", "not_pos_p")] }
 
-def ex_22 : LinguisticExample :=
+def ex_22 : Datum :=
   { id := "ferreira2023_22"
     source := ⟨"ferreira-2023", "(22)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_22 : LinguisticExample :=
     readings := []
     paperFeatures := [("first", "pos_p"), ("second", "not_wn_p")] }
 
-def ex_24 : LinguisticExample :=
+def ex_24 : Datum :=
   { id := "ferreira2023_24"
     source := ⟨"ferreira-2023", "(24)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_24 : LinguisticExample :=
     readings := []
     paperFeatures := [("first", "wn_p"), ("second", "wn_notp")] }
 
-def ex_25 : LinguisticExample :=
+def ex_25 : Datum :=
   { id := "ferreira2023_25"
     source := ⟨"ferreira-2023", "(25)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_25 : LinguisticExample :=
     readings := []
     paperFeatures := [("first", "sn_p"), ("second", "sn_notp")] }
 
-def ex_30a : LinguisticExample :=
+def ex_30a : Datum :=
   { id := "ferreira2023_30a"
     source := ⟨"ferreira-2023", "(30a)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_30a : LinguisticExample :=
     readings := []
     paperFeatures := [("first", "wn_p"), ("second", "not_sn_p")] }
 
-def ex_30b : LinguisticExample :=
+def ex_30b : Datum :=
   { id := "ferreira2023_30b"
     source := ⟨"ferreira-2023", "(30b)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_30b : LinguisticExample :=
     readings := []
     paperFeatures := [("first", "wn_p"), ("second", "sn_p")] }
 
-def ex_32a : LinguisticExample :=
+def ex_32a : Datum :=
   { id := "ferreira2023_32a"
     source := ⟨"ferreira-2023", "(32a)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_32a : LinguisticExample :=
     readings := []
     paperFeatures := [("first", "sn_p"), ("second", "not_sn_p")] }
 
-def ex_32b : LinguisticExample :=
+def ex_32b : Datum :=
   { id := "ferreira2023_32b"
     source := ⟨"ferreira-2023", "(32b)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_32b : LinguisticExample :=
     readings := []
     paperFeatures := [("first", "wn_p"), ("second", "not_sn_p")] }
 
-def ex_80 : LinguisticExample :=
+def ex_80 : Datum :=
   { id := "ferreira2023_80"
     source := ⟨"ferreira-2023", "(80)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_80 : LinguisticExample :=
     readings := []
     paperFeatures := [("base", "holiday")] }
 
-def ex_81 : LinguisticExample :=
+def ex_81 : Datum :=
   { id := "ferreira2023_81"
     source := ⟨"ferreira-2023", "(81)"⟩
     reportedIn := none
@@ -212,6 +212,6 @@ def ex_81 : LinguisticExample :=
     readings := []
     paperFeatures := [("base", "checked")] }
 
-def all : List LinguisticExample := [ex_16, ex_17, ex_18, ex_19, ex_20, ex_21, ex_22, ex_24, ex_25, ex_30a, ex_30b, ex_32a, ex_32b, ex_80, ex_81]
+def all : List Datum := [ex_16, ex_17, ex_18, ex_19, ex_20, ex_21, ex_22, ex_24, ex_25, ex_30a, ex_30b, ex_32a, ex_32b, ex_80, ex_81]
 
 end Ferreira2023.Examples

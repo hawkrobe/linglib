@@ -167,7 +167,7 @@ structure Row where
   subquestion : Bool
   deriving DecidableEq, Repr
 
-def Row.ofExample (ex : LinguisticExample) : Option Row := do
+def Row.ofDatum (ex : Datum) : Option Row := do
   let means ← ex.parse? "strategy" [("emphaticDo", Means.emphaticDo),
     ("verumAccent", .verumAccent), ("embedding", .embedding), ("juxtaposed", .juxtaposed),
     ("ellipticEmbedding", .ellipticEmbedding), ("fronting", .fronting), ("faireCleft", .faireCleft),
@@ -183,7 +183,7 @@ def Row.ofExample (ex : LinguisticExample) : Option Row := do
   let subquestion ← ex.parse? "subquestion" [("yes", true), ("no", false)]
   pure ⟨means, antecedent, dislocated, relation, subquestion⟩
 
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- Polarity focus after a denial of the proposition is attested in situational identity and in
 situational analogy alike: presupposing the negation does not decide the relation to the

@@ -149,33 +149,33 @@ def label : Scope → String
   | .wide => "wide"
 
 /-- The paper records reading `r` of example `e` as available. -/
-def Attested (e : LinguisticExample) (r : Scope) : Prop :=
+def Attested (e : Datum) (r : Scope) : Prop :=
   e.readings.lookup (label r) = some .acceptable
 
-instance (e : LinguisticExample) (r : Scope) : Decidable (Attested e r) := by
+instance (e : Datum) (r : Scope) : Decidable (Attested e r) := by
   unfold Attested; infer_instance
 
 /-- Every reading the paper records for `e` is available on `A` with local antecedent `a`. -/
-def Covers (A : Analysis) (a : Antecedent) (e : LinguisticExample) : Prop :=
+def Covers (A : Analysis) (a : Antecedent) (e : Datum) : Prop :=
   ∀ r, Attested e r → Available A a r
 
-instance (A : Analysis) (a : Antecedent) (e : LinguisticExample) : Decidable (Covers A a e) := by
+instance (A : Analysis) (a : Antecedent) (e : Datum) : Decidable (Covers A a e) := by
   unfold Covers; infer_instance
 
 /-- A reading is available on `A` with local antecedent `a` exactly when the paper records it
     for `e`. -/
-def Fits (A : Analysis) (a : Antecedent) (e : LinguisticExample) : Prop :=
+def Fits (A : Analysis) (a : Antecedent) (e : Datum) : Prop :=
   ∀ r, Available A a r ↔ Attested e r
 
-instance (A : Analysis) (a : Antecedent) (e : LinguisticExample) : Decidable (Fits A a e) := by
+instance (A : Analysis) (a : Antecedent) (e : Datum) : Decidable (Fits A a e) := by
   unfold Fits; infer_instance
 
 /-- A simple sentence has only the in-situ reading, and is acceptable on `A` exactly when that
     reading is available. -/
-def FitsSimple (A : Analysis) (a : Antecedent) (e : LinguisticExample) : Prop :=
+def FitsSimple (A : Analysis) (a : Antecedent) (e : Datum) : Prop :=
   Available A a .narrow ↔ e.judgment = .acceptable
 
-instance (A : Analysis) (a : Antecedent) (e : LinguisticExample) :
+instance (A : Analysis) (a : Antecedent) (e : Datum) :
     Decidable (FitsSimple A a e) := by
   unfold FitsSimple; infer_instance
 
@@ -188,11 +188,11 @@ theorem available_iff_of_none {A B : Analysis} {a : Antecedent} (hd : a.distribu
   simp [Available, hd, hl]
 
 theorem fits_iff_of_none {A B : Analysis} {a : Antecedent} (hd : a.distributor = none)
-    (hl : a.logophoric = false) (e : LinguisticExample) : Fits A a e ↔ Fits B a e :=
+    (hl : a.logophoric = false) (e : Datum) : Fits A a e ↔ Fits B a e :=
   forall_congr' λ r => iff_congr (available_iff_of_none hd hl r) Iff.rfl
 
 theorem covers_iff_of_none {A B : Analysis} {a : Antecedent} (hd : a.distributor = none)
-    (hl : a.logophoric = false) (e : LinguisticExample) : Covers A a e ↔ Covers B a e :=
+    (hl : a.logophoric = false) (e : Datum) : Covers A a e ↔ Covers B a e :=
   forall_congr' λ r => imp_congr Iff.rfl (available_iff_of_none hd hl r)
 
 /-- Wide scope binds the local antecedent, so a form that must denote the plurality has narrow

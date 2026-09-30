@@ -17,7 +17,7 @@ namespace AlonsoOvalleMenendezBenito2010.Examples
 
 open Data.Examples
 
-def ex_1 : LinguisticExample :=
+def ex_1 : Datum :=
   { id := "alonsoovallemenendezbenito2010_1"
     source := ⟨"alonso-ovalle-menendez-benito-2010", "(1)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("determiner", "algún"), ("inference", "ignorance of identity")] }
 
-def ex_2 : LinguisticExample :=
+def ex_2 : Datum :=
   { id := "alonsoovallemenendezbenito2010_2"
     source := ⟨"alonso-ovalle-menendez-benito-2010", "(2)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("determiner", "algún"), ("continuation", "namely")] }
 
-def ex_3 : LinguisticExample :=
+def ex_3 : Datum :=
   { id := "alonsoovallemenendezbenito2010_3"
     source := ⟨"alonso-ovalle-menendez-benito-2010", "(3)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_3 : LinguisticExample :=
     readings := []
     paperFeatures := [("determiner", "un"), ("continuation", "namely")] }
 
-def ex_4 : LinguisticExample :=
+def ex_4 : Datum :=
   { id := "alonsoovallemenendezbenito2010_4"
     source := ⟨"alonso-ovalle-menendez-benito-2010", "(4)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_4 : LinguisticExample :=
     readings := [("wide scope: a particular student Pedro thinks María married, the speaker does not know who", .acceptable), ("narrow scope: Pedro is uncertain about the identity of the student", .acceptable)]
     paperFeatures := [("determiner", "algún"), ("embedding", "attitude verb")] }
 
-def ex_5 : LinguisticExample :=
+def ex_5 : Datum :=
   { id := "alonsoovallemenendezbenito2010_5"
     source := ⟨"alonso-ovalle-menendez-benito-2010", "(5)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_5 : LinguisticExample :=
     readings := []
     paperFeatures := [("determiner", "algún"), ("inference", "ignorance of number")] }
 
-def ex_6 : LinguisticExample :=
+def ex_6 : Datum :=
   { id := "alonsoovallemenendezbenito2010_6"
     source := ⟨"alonso-ovalle-menendez-benito-2010", "(6)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_6 : LinguisticExample :=
     readings := []
     paperFeatures := [("determiner", "irgendein"), ("inference", "free choice")] }
 
-def ex_7 : LinguisticExample :=
+def ex_7 : Datum :=
   { id := "alonsoovallemenendezbenito2010_7"
     source := ⟨"alonso-ovalle-menendez-benito-2010", "(7)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_7 : LinguisticExample :=
     readings := []
     paperFeatures := [("determiner", "algún"), ("modal", "must"), ("scenario", "hideAndSeek15")] }
 
-def ex_8 : LinguisticExample :=
+def ex_8 : Datum :=
   { id := "alonsoovallemenendezbenito2010_8"
     source := ⟨"alonso-ovalle-menendez-benito-2010", "(8)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_8 : LinguisticExample :=
     readings := []
     paperFeatures := [("determiner", "algún"), ("modal", "must"), ("continuation", "which-question")] }
 
-def ex_9 : LinguisticExample :=
+def ex_9 : Datum :=
   { id := "alonsoovallemenendezbenito2010_9"
     source := ⟨"alonso-ovalle-menendez-benito-2010", "(9)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_9 : LinguisticExample :=
     readings := []
     paperFeatures := [("determiner", "algún"), ("modal", "must"), ("continuation", "namely")] }
 
-def ex_10 : LinguisticExample :=
+def ex_10 : Datum :=
   { id := "alonsoovallemenendezbenito2010_10"
     source := ⟨"alonso-ovalle-menendez-benito-2010", "(10)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_10 : LinguisticExample :=
     readings := []
     paperFeatures := [("determiner", "un"), ("modal", "must"), ("continuation", "which-question")] }
 
-def ex_11 : LinguisticExample :=
+def ex_11 : Datum :=
   { id := "alonsoovallemenendezbenito2010_11"
     source := ⟨"alonso-ovalle-menendez-benito-2010", "(11)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_11 : LinguisticExample :=
     readings := []
     paperFeatures := [("determiner", "un"), ("modal", "must"), ("continuation", "namely")] }
 
-def ex_17 : LinguisticExample :=
+def ex_17 : Datum :=
   { id := "alonsoovallemenendezbenito2010_17"
     source := ⟨"alonso-ovalle-menendez-benito-2010", "(17)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_17 : LinguisticExample :=
     readings := []
     paperFeatures := [("determiner", "algún"), ("modal", "must"), ("scenario", "subway16")] }
 
-def ex_22 : LinguisticExample :=
+def ex_22 : Datum :=
   { id := "alonsoovallemenendezbenito2010_22"
     source := ⟨"alonso-ovalle-menendez-benito-2010", "(22)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_22 : LinguisticExample :=
     readings := []
     paperFeatures := [("determiner", "algún"), ("modal base", "common ground")] }
 
-def ex_24 : LinguisticExample :=
+def ex_24 : Datum :=
   { id := "alonsoovallemenendezbenito2010_24"
     source := ⟨"alonso-ovalle-menendez-benito-2010", "(24)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_24 : LinguisticExample :=
     readings := []
     paperFeatures := [("determiner", "algún"), ("modal", "may"), ("scenario", "oneRoom23")] }
 
-def ex_25 : LinguisticExample :=
+def ex_25 : Datum :=
   { id := "alonsoovallemenendezbenito2010_25"
     source := ⟨"alonso-ovalle-menendez-benito-2010", "(25)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_25 : LinguisticExample :=
     readings := []
     paperFeatures := [("determiner", "un"), ("modal", "may"), ("scenario", "oneRoom23")] }
 
-def ex_26 : LinguisticExample :=
+def ex_26 : Datum :=
   { id := "alonsoovallemenendezbenito2010_26"
     source := ⟨"alonso-ovalle-menendez-benito-2010", "(26)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_26 : LinguisticExample :=
     readings := []
     paperFeatures := [("determiner", "cualquiera"), ("modal", "may"), ("inference", "free choice")] }
 
-def ex_28a : LinguisticExample :=
+def ex_28a : Datum :=
   { id := "alonsoovallemenendezbenito2010_28a"
     source := ⟨"alonso-ovalle-menendez-benito-2010", "(28a)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex_28a : LinguisticExample :=
     readings := []
     paperFeatures := [("determiner", "cualquiera"), ("modal", "may"), ("scenario", "barn27"), ("verdict", "false")] }
 
-def ex_28b : LinguisticExample :=
+def ex_28b : Datum :=
   { id := "alonsoovallemenendezbenito2010_28b"
     source := ⟨"alonso-ovalle-menendez-benito-2010", "(28b)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex_28b : LinguisticExample :=
     readings := []
     paperFeatures := [("determiner", "algún"), ("modal", "may"), ("scenario", "barn27"), ("verdict", "true")] }
 
-def ex_30a : LinguisticExample :=
+def ex_30a : Datum :=
   { id := "alonsoovallemenendezbenito2010_30a"
     source := ⟨"alonso-ovalle-menendez-benito-2010", "(30a)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex_30a : LinguisticExample :=
     readings := []
     paperFeatures := [("determiner", "cualquiera"), ("modal", "may"), ("scenario", "hiring29"), ("verdict", "false")] }
 
-def ex_30b : LinguisticExample :=
+def ex_30b : Datum :=
   { id := "alonsoovallemenendezbenito2010_30b"
     source := ⟨"alonso-ovalle-menendez-benito-2010", "(30b)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex_30b : LinguisticExample :=
     readings := []
     paperFeatures := [("determiner", "algún"), ("modal", "may"), ("scenario", "hiring29"), ("verdict", "true")] }
 
-def ex_31a : LinguisticExample :=
+def ex_31a : Datum :=
   { id := "alonsoovallemenendezbenito2010_31a"
     source := ⟨"dayal-1997", "p. 9"⟩
     reportedIn := some ⟨"alonso-ovalle-menendez-benito-2010", "(31a)"⟩
@@ -290,7 +290,7 @@ def ex_31a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "-bhii correlative"), ("inference", "ignorance of identity")] }
 
-def ex_31b : LinguisticExample :=
+def ex_31b : Datum :=
   { id := "alonsoovallemenendezbenito2010_31b"
     source := ⟨"von-fintel-2000-whatever", "(1)"⟩
     reportedIn := some ⟨"alonso-ovalle-menendez-benito-2010", "(31b)"⟩
@@ -303,7 +303,7 @@ def ex_31b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "-ever free relative"), ("inference", "ignorance of identity")] }
 
-def ex_33 : LinguisticExample :=
+def ex_33 : Datum :=
   { id := "alonsoovallemenendezbenito2010_33"
     source := ⟨"von-fintel-2000-whatever", "unless"⟩
     reportedIn := some ⟨"alonso-ovalle-menendez-benito-2010", "(33)"⟩
@@ -316,7 +316,7 @@ def ex_33 : LinguisticExample :=
     readings := [("Unless I don't know what Arlo is cooking and there is a lot of garlic in what he is cooking, I will eat out tonight", .unacceptable)]
     paperFeatures := [("construction", "-ever free relative"), ("environment", "unless"), ("projection", "global")] }
 
-def ex_34 : LinguisticExample :=
+def ex_34 : Datum :=
   { id := "alonsoovallemenendezbenito2010_34"
     source := ⟨"alonso-ovalle-menendez-benito-2010", "(34)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex_34 : LinguisticExample :=
     readings := [("the speaker doesn't know what Arlo is cooking, but the thing Arlo is cooking has a lot of garlic in it", .acceptable)]
     paperFeatures := [("construction", "-ever free relative"), ("environment", "negation"), ("projection", "global")] }
 
-def ex_36 : LinguisticExample :=
+def ex_36 : Datum :=
   { id := "alonsoovallemenendezbenito2010_36"
     source := ⟨"alonso-ovalle-menendez-benito-2010", "(36)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex_36 : LinguisticExample :=
     readings := [("Juan is not dating any girl in the department", .acceptable), ("the speaker knows which girl Juan is dating", .unacceptable)]
     paperFeatures := [("determiner", "algún"), ("environment", "negation"), ("projection", "none")] }
 
-def ex_37 : LinguisticExample :=
+def ex_37 : Datum :=
   { id := "alonsoovallemenendezbenito2010_37"
     source := ⟨"alonso-ovalle-menendez-benito-2010", "(37)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex_37 : LinguisticExample :=
     readings := []
     paperFeatures := [("projection", "local accommodation")] }
 
-def ex_38a : LinguisticExample :=
+def ex_38a : Datum :=
   { id := "alonsoovallemenendezbenito2010_38a"
     source := ⟨"potts-2007b", "(38a)"⟩
     reportedIn := some ⟨"alonso-ovalle-menendez-benito-2010", "(38a)"⟩
@@ -368,7 +368,7 @@ def ex_38a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "appositive"), ("status", "conventional implicature")] }
 
-def ex_38b : LinguisticExample :=
+def ex_38b : Datum :=
   { id := "alonsoovallemenendezbenito2010_38b"
     source := ⟨"potts-2007b", "(38b)"⟩
     reportedIn := some ⟨"alonso-ovalle-menendez-benito-2010", "(38b)"⟩
@@ -381,7 +381,7 @@ def ex_38b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "appositive"), ("status", "conventional implicature"), ("property", "speaker-oriented")] }
 
-def ex_39 : LinguisticExample :=
+def ex_39 : Datum :=
   { id := "alonsoovallemenendezbenito2010_39"
     source := ⟨"alonso-ovalle-menendez-benito-2010", "(39)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def ex_39 : LinguisticExample :=
     readings := []
     paperFeatures := [("determiner", "algún"), ("embedding", "attitude verb"), ("property", "not speaker-oriented")] }
 
-def ex_40 : LinguisticExample :=
+def ex_40 : Datum :=
   { id := "alonsoovallemenendezbenito2010_40"
     source := ⟨"alonso-ovalle-menendez-benito-2010", "(40)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def ex_40 : LinguisticExample :=
     readings := []
     paperFeatures := [("determiner", "algún"), ("embedding", "attitude verb"), ("property", "not speaker-oriented")] }
 
-def ex_41a : LinguisticExample :=
+def ex_41a : Datum :=
   { id := "alonsoovallemenendezbenito2010_41a"
     source := ⟨"potts-2007b", "(41a)"⟩
     reportedIn := some ⟨"alonso-ovalle-menendez-benito-2010", "(41a)"⟩
@@ -420,7 +420,7 @@ def ex_41a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "appositive"), ("status", "conventional implicature")] }
 
-def ex_41b : LinguisticExample :=
+def ex_41b : Datum :=
   { id := "alonsoovallemenendezbenito2010_41b"
     source := ⟨"potts-2007b", "(41b)"⟩
     reportedIn := some ⟨"alonso-ovalle-menendez-benito-2010", "(41b)"⟩
@@ -433,7 +433,7 @@ def ex_41b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "appositive"), ("property", "not cancellable")] }
 
-def ex_42 : LinguisticExample :=
+def ex_42 : Datum :=
   { id := "alonsoovallemenendezbenito2010_42"
     source := ⟨"alonso-ovalle-menendez-benito-2010", "(42)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def ex_42 : LinguisticExample :=
     readings := []
     paperFeatures := [("determiner", "algún"), ("property", "cancellable")] }
 
-def ex_44 : LinguisticExample :=
+def ex_44 : Datum :=
   { id := "alonsoovallemenendezbenito2010_44"
     source := ⟨"alonso-ovalle-menendez-benito-2010", "(44)"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def ex_44 : LinguisticExample :=
     readings := []
     paperFeatures := [("determiner", "algún"), ("environment", "downward entailing"), ("projection", "none")] }
 
-def ex_45a : LinguisticExample :=
+def ex_45a : Datum :=
   { id := "alonsoovallemenendezbenito2010_45a"
     source := ⟨"alonso-ovalle-menendez-benito-2010", "(45a)"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def ex_45a : LinguisticExample :=
     readings := []
     paperFeatures := [("status", "conventional implicature"), ("property", "reinforcement redundant")] }
 
-def ex_45b : LinguisticExample :=
+def ex_45b : Datum :=
   { id := "alonsoovallemenendezbenito2010_45b"
     source := ⟨"alonso-ovalle-menendez-benito-2010", "(45b)"⟩
     reportedIn := none
@@ -485,7 +485,7 @@ def ex_45b : LinguisticExample :=
     readings := []
     paperFeatures := [("status", "presupposition"), ("property", "reinforcement redundant")] }
 
-def ex_45c : LinguisticExample :=
+def ex_45c : Datum :=
   { id := "alonsoovallemenendezbenito2010_45c"
     source := ⟨"alonso-ovalle-menendez-benito-2010", "(45c)"⟩
     reportedIn := none
@@ -498,7 +498,7 @@ def ex_45c : LinguisticExample :=
     readings := []
     paperFeatures := [("status", "entailment"), ("property", "reinforcement redundant")] }
 
-def ex_45d : LinguisticExample :=
+def ex_45d : Datum :=
   { id := "alonsoovallemenendezbenito2010_45d"
     source := ⟨"alonso-ovalle-menendez-benito-2010", "(45d)"⟩
     reportedIn := none
@@ -511,7 +511,7 @@ def ex_45d : LinguisticExample :=
     readings := []
     paperFeatures := [("determiner", "algún"), ("property", "reinforceable")] }
 
-def ex_46 : LinguisticExample :=
+def ex_46 : Datum :=
   { id := "alonsoovallemenendezbenito2010_46"
     source := ⟨"alonso-ovalle-menendez-benito-2010", "(46)"⟩
     reportedIn := none
@@ -524,7 +524,7 @@ def ex_46 : LinguisticExample :=
     readings := []
     paperFeatures := [("determiner", "un"), ("restrictor", "singleton")] }
 
-def ex_47 : LinguisticExample :=
+def ex_47 : Datum :=
   { id := "alonsoovallemenendezbenito2010_47"
     source := ⟨"alonso-ovalle-menendez-benito-2010", "(47)"⟩
     reportedIn := none
@@ -537,7 +537,7 @@ def ex_47 : LinguisticExample :=
     readings := []
     paperFeatures := [("determiner", "algún"), ("restrictor", "singleton")] }
 
-def ex_48 : LinguisticExample :=
+def ex_48 : Datum :=
   { id := "alonsoovallemenendezbenito2010_48"
     source := ⟨"alonso-ovalle-menendez-benito-2010", "(48)"⟩
     reportedIn := none
@@ -550,7 +550,7 @@ def ex_48 : LinguisticExample :=
     readings := []
     paperFeatures := [("determiner", "un"), ("restrictor", "singleton")] }
 
-def ex_49 : LinguisticExample :=
+def ex_49 : Datum :=
   { id := "alonsoovallemenendezbenito2010_49"
     source := ⟨"alonso-ovalle-menendez-benito-2010", "(49)"⟩
     reportedIn := none
@@ -563,7 +563,7 @@ def ex_49 : LinguisticExample :=
     readings := []
     paperFeatures := [("determiner", "algún"), ("restrictor", "singleton")] }
 
-def ex_62 : LinguisticExample :=
+def ex_62 : Datum :=
   { id := "alonsoovallemenendezbenito2010_62"
     source := ⟨"alonso-ovalle-menendez-benito-2010", "(62)"⟩
     reportedIn := none
@@ -576,7 +576,7 @@ def ex_62 : LinguisticExample :=
     readings := [("Juan might be in the bathroom", .acceptable), ("Juan might be in the living room", .acceptable), ("there is no other room of the house where Juan might be", .acceptable)]
     paperFeatures := [("inference", "exhaustivity")] }
 
-def ex_64 : LinguisticExample :=
+def ex_64 : Datum :=
   { id := "alonsoovallemenendezbenito2010_64"
     source := ⟨"alonso-ovalle-menendez-benito-2010", "(64)"⟩
     reportedIn := none
@@ -589,7 +589,7 @@ def ex_64 : LinguisticExample :=
     readings := []
     paperFeatures := [("determiner", "algún"), ("inference", "exhaustivity")] }
 
-def ex_73 : LinguisticExample :=
+def ex_73 : Datum :=
   { id := "alonsoovallemenendezbenito2010_73"
     source := ⟨"alonso-ovalle-menendez-benito-2010", "(73)"⟩
     reportedIn := none
@@ -602,7 +602,7 @@ def ex_73 : LinguisticExample :=
     readings := []
     paperFeatures := [("determiner", "algún"), ("uniqueness", "not assumed"), ("inference", "ignorance of number")] }
 
-def ex_74b : LinguisticExample :=
+def ex_74b : Datum :=
   { id := "alonsoovallemenendezbenito2010_74b"
     source := ⟨"alonso-ovalle-menendez-benito-2010", "(74b)"⟩
     reportedIn := none
@@ -615,7 +615,7 @@ def ex_74b : LinguisticExample :=
     readings := []
     paperFeatures := [("determiner", "algún"), ("uniqueness", "not assumed"), ("inference", "ignorance of number")] }
 
-def ex_75a : LinguisticExample :=
+def ex_75a : Datum :=
   { id := "alonsoovallemenendezbenito2010_75a"
     source := ⟨"alonso-ovalle-menendez-benito-2010", "(75a)"⟩
     reportedIn := none
@@ -628,7 +628,7 @@ def ex_75a : LinguisticExample :=
     readings := []
     paperFeatures := [("determiner", "algún"), ("environment", "negation"), ("inference", "none")] }
 
-def ex_75b : LinguisticExample :=
+def ex_75b : Datum :=
   { id := "alonsoovallemenendezbenito2010_75b"
     source := ⟨"alonso-ovalle-menendez-benito-2010", "(75b)"⟩
     reportedIn := none
@@ -641,7 +641,7 @@ def ex_75b : LinguisticExample :=
     readings := []
     paperFeatures := [("determiner", "algún"), ("property", "cancellable")] }
 
-def ex_75c : LinguisticExample :=
+def ex_75c : Datum :=
   { id := "alonsoovallemenendezbenito2010_75c"
     source := ⟨"alonso-ovalle-menendez-benito-2010", "(75c)"⟩
     reportedIn := none
@@ -654,7 +654,7 @@ def ex_75c : LinguisticExample :=
     readings := []
     paperFeatures := [("determiner", "algún"), ("property", "reinforceable")] }
 
-def ex_77 : LinguisticExample :=
+def ex_77 : Datum :=
   { id := "alonsoovallemenendezbenito2010_77"
     source := ⟨"alonso-ovalle-menendez-benito-2010", "(77)"⟩
     reportedIn := none
@@ -667,7 +667,7 @@ def ex_77 : LinguisticExample :=
     readings := []
     paperFeatures := [("competitor", "plural")] }
 
-def ex_78 : LinguisticExample :=
+def ex_78 : Datum :=
   { id := "alonsoovallemenendezbenito2010_78"
     source := ⟨"alonso-ovalle-menendez-benito-2010", "(78)"⟩
     reportedIn := none
@@ -680,7 +680,7 @@ def ex_78 : LinguisticExample :=
     readings := []
     paperFeatures := [("competitor", "numeral")] }
 
-def ex_79 : LinguisticExample :=
+def ex_79 : Datum :=
   { id := "alonsoovallemenendezbenito2010_79"
     source := ⟨"alonso-ovalle-menendez-benito-2010", "(79)"⟩
     reportedIn := none
@@ -693,7 +693,7 @@ def ex_79 : LinguisticExample :=
     readings := [("the speaker does not know who the student was (uniqueness assumed)", .acceptable), ("the speaker does not know how many students came (uniqueness not assumed)", .acceptable)]
     paperFeatures := [("determiner", "algún")] }
 
-def ex_80a : LinguisticExample :=
+def ex_80a : Datum :=
   { id := "alonsoovallemenendezbenito2010_80a"
     source := ⟨"alonso-ovalle-menendez-benito-2010", "(80a)"⟩
     reportedIn := none
@@ -706,7 +706,7 @@ def ex_80a : LinguisticExample :=
     readings := []
     paperFeatures := [("determiner", "irgendein"), ("uniqueness", "required")] }
 
-def ex_80b : LinguisticExample :=
+def ex_80b : Datum :=
   { id := "alonsoovallemenendezbenito2010_80b"
     source := ⟨"alonso-ovalle-menendez-benito-2010", "(80b)"⟩
     reportedIn := none
@@ -719,7 +719,7 @@ def ex_80b : LinguisticExample :=
     readings := []
     paperFeatures := [("determiner", "some"), ("uniqueness", "required")] }
 
-def ex_81a : LinguisticExample :=
+def ex_81a : Datum :=
   { id := "alonsoovallemenendezbenito2010_81a"
     source := ⟨"alonso-ovalle-menendez-benito-2010", "(81a)"⟩
     reportedIn := none
@@ -732,7 +732,7 @@ def ex_81a : LinguisticExample :=
     readings := []
     paperFeatures := [("determiner", "irgendwelche"), ("number", "plural"), ("inference", "anti-uniqueness")] }
 
-def ex_81b : LinguisticExample :=
+def ex_81b : Datum :=
   { id := "alonsoovallemenendezbenito2010_81b"
     source := ⟨"alonso-ovalle-menendez-benito-2010", "(81b)"⟩
     reportedIn := none
@@ -745,7 +745,7 @@ def ex_81b : LinguisticExample :=
     readings := []
     paperFeatures := [("determiner", "algunos"), ("number", "plural"), ("inference", "anti-uniqueness")] }
 
-def ex_82a : LinguisticExample :=
+def ex_82a : Datum :=
   { id := "alonsoovallemenendezbenito2010_82a"
     source := ⟨"alonso-ovalle-menendez-benito-2010", "(82a)"⟩
     reportedIn := none
@@ -758,7 +758,7 @@ def ex_82a : LinguisticExample :=
     readings := []
     paperFeatures := [("determiner", "irgendwelche"), ("number", "plural"), ("continuation", "namely")] }
 
-def ex_82b : LinguisticExample :=
+def ex_82b : Datum :=
   { id := "alonsoovallemenendezbenito2010_82b"
     source := ⟨"alonso-ovalle-menendez-benito-2010", "(82b)"⟩
     reportedIn := none
@@ -771,7 +771,7 @@ def ex_82b : LinguisticExample :=
     readings := []
     paperFeatures := [("determiner", "algunos"), ("number", "plural"), ("continuation", "namely")] }
 
-def fn17ia : LinguisticExample :=
+def fn17ia : Datum :=
   { id := "alonsoovallemenendezbenito2010_fn17ia"
     source := ⟨"alonso-ovalle-menendez-benito-2010", "fn. 17 (ia)"⟩
     reportedIn := none
@@ -784,7 +784,7 @@ def fn17ia : LinguisticExample :=
     readings := []
     paperFeatures := [("determiner", "un"), ("restrictor", "singleton by superlative")] }
 
-def fn17ib : LinguisticExample :=
+def fn17ib : Datum :=
   { id := "alonsoovallemenendezbenito2010_fn17ib"
     source := ⟨"alonso-ovalle-menendez-benito-2010", "fn. 17 (ib)"⟩
     reportedIn := none
@@ -797,7 +797,7 @@ def fn17ib : LinguisticExample :=
     readings := []
     paperFeatures := [("determiner", "un"), ("restrictor", "singleton by relative clause")] }
 
-def fn20ii : LinguisticExample :=
+def fn20ii : Datum :=
   { id := "alonsoovallemenendezbenito2010_fn20ii"
     source := ⟨"alonso-ovalle-menendez-benito-2010", "fn. 20 (ii)"⟩
     reportedIn := none
@@ -810,7 +810,7 @@ def fn20ii : LinguisticExample :=
     readings := []
     paperFeatures := [("determiner", "un"), ("restrictor", "contextual")] }
 
-def fn27i : LinguisticExample :=
+def fn27i : Datum :=
   { id := "alonsoovallemenendezbenito2010_fn27i"
     source := ⟨"alonso-ovalle-menendez-benito-2010", "fn. 27 (i)"⟩
     reportedIn := none
@@ -823,7 +823,7 @@ def fn27i : LinguisticExample :=
     readings := []
     paperFeatures := [("inference", "exhaustivity optional")] }
 
-def fn27ii : LinguisticExample :=
+def fn27ii : Datum :=
   { id := "alonsoovallemenendezbenito2010_fn27ii"
     source := ⟨"alonso-ovalle-menendez-benito-2010", "fn. 27 (ii)"⟩
     reportedIn := none
@@ -836,7 +836,7 @@ def fn27ii : LinguisticExample :=
     readings := []
     paperFeatures := [("determiner", "un"), ("modal", "may"), ("inference", "exhaustivity optional")] }
 
-def fn32i : LinguisticExample :=
+def fn32i : Datum :=
   { id := "alonsoovallemenendezbenito2010_fn32i"
     source := ⟨"alonso-ovalle-menendez-benito-2010", "fn. 32 (i)"⟩
     reportedIn := none
@@ -849,7 +849,7 @@ def fn32i : LinguisticExample :=
     readings := []
     paperFeatures := [("determiner", "irgendein"), ("uniqueness", "not required")] }
 
-def fn32ii : LinguisticExample :=
+def fn32ii : Datum :=
   { id := "alonsoovallemenendezbenito2010_fn32ii"
     source := ⟨"alonso-ovalle-menendez-benito-2010", "fn. 32 (ii)"⟩
     reportedIn := none
@@ -862,6 +862,6 @@ def fn32ii : LinguisticExample :=
     readings := []
     paperFeatures := [("determiner", "un"), ("uniqueness", "not required")] }
 
-def all : List LinguisticExample := [ex_1, ex_2, ex_3, ex_4, ex_5, ex_6, ex_7, ex_8, ex_9, ex_10, ex_11, ex_17, ex_22, ex_24, ex_25, ex_26, ex_28a, ex_28b, ex_30a, ex_30b, ex_31a, ex_31b, ex_33, ex_34, ex_36, ex_37, ex_38a, ex_38b, ex_39, ex_40, ex_41a, ex_41b, ex_42, ex_44, ex_45a, ex_45b, ex_45c, ex_45d, ex_46, ex_47, ex_48, ex_49, ex_62, ex_64, ex_73, ex_74b, ex_75a, ex_75b, ex_75c, ex_77, ex_78, ex_79, ex_80a, ex_80b, ex_81a, ex_81b, ex_82a, ex_82b, fn17ia, fn17ib, fn20ii, fn27i, fn27ii, fn32i, fn32ii]
+def all : List Datum := [ex_1, ex_2, ex_3, ex_4, ex_5, ex_6, ex_7, ex_8, ex_9, ex_10, ex_11, ex_17, ex_22, ex_24, ex_25, ex_26, ex_28a, ex_28b, ex_30a, ex_30b, ex_31a, ex_31b, ex_33, ex_34, ex_36, ex_37, ex_38a, ex_38b, ex_39, ex_40, ex_41a, ex_41b, ex_42, ex_44, ex_45a, ex_45b, ex_45c, ex_45d, ex_46, ex_47, ex_48, ex_49, ex_62, ex_64, ex_73, ex_74b, ex_75a, ex_75b, ex_75c, ex_77, ex_78, ex_79, ex_80a, ex_80b, ex_81a, ex_81b, ex_82a, ex_82b, fn17ia, fn17ib, fn20ii, fn27i, fn27ii, fn32i, fn32ii]
 
 end AlonsoOvalleMenendezBenito2010.Examples

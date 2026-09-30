@@ -17,7 +17,7 @@ namespace ChungMascarenhas2023.Examples
 
 open Data.Examples
 
-def cm2024_1_korean_conditional_eval : LinguisticExample :=
+def cm2024_1_korean_conditional_eval : Datum :=
   { id := "cm2024_1_korean_conditional_eval"
     source := ⟨"chung-mascarenhas-2023", "(1) / (42)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def cm2024_1_korean_conditional_eval : LinguisticExample :=
     readings := []
     paperFeatures := [("puzzle", "koreanComposition"), ("construction", "conditional-evaluative")] }
 
-def cm2024_4_linda_original : LinguisticExample :=
+def cm2024_4_linda_original : Datum :=
   { id := "cm2024_4_linda_original"
     source := ⟨"tversky-kahneman-1983", "Linda task"⟩
     reportedIn := some ⟨"chung-mascarenhas-2023", "(4) / (28)"⟩
@@ -43,7 +43,7 @@ def cm2024_4_linda_original : LinguisticExample :=
     readings := []
     paperFeatures := [("puzzle", "conjunctionFallacy"), ("empiricalDomain", "epistemic")] }
 
-def cm2024_15a_minersBlockNeither : LinguisticExample :=
+def cm2024_15a_minersBlockNeither : Datum :=
   { id := "cm2024_15a_minersBlockNeither"
     source := ⟨"kolodny-macfarlane-2010", "Miners (15a)"⟩
     reportedIn := some ⟨"chung-mascarenhas-2023", "(15a)"⟩
@@ -56,7 +56,7 @@ def cm2024_15a_minersBlockNeither : LinguisticExample :=
     readings := []
     paperFeatures := [("puzzle", "miners"), ("modalForce", "ought")] }
 
-def cm2024_15b_minersBlockA : LinguisticExample :=
+def cm2024_15b_minersBlockA : Datum :=
   { id := "cm2024_15b_minersBlockA"
     source := ⟨"kolodny-macfarlane-2010", "Miners (15b)"⟩
     reportedIn := some ⟨"chung-mascarenhas-2023", "(15b)"⟩
@@ -69,7 +69,7 @@ def cm2024_15b_minersBlockA : LinguisticExample :=
     readings := []
     paperFeatures := [("puzzle", "miners"), ("modalForce", "ought"), ("conditional", "info-sensitive")] }
 
-def cm2024_25a_minersMust : LinguisticExample :=
+def cm2024_25a_minersMust : Datum :=
   { id := "cm2024_25a_minersMust"
     source := ⟨"chung-mascarenhas-2023", "(25a)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def cm2024_25a_minersMust : LinguisticExample :=
     readings := []
     paperFeatures := [("puzzle", "miners"), ("modalForce", "must")] }
 
-def cm2024_25b_minersMustA : LinguisticExample :=
+def cm2024_25b_minersMustA : Datum :=
   { id := "cm2024_25b_minersMustA"
     source := ⟨"chung-mascarenhas-2023", "(25b)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def cm2024_25b_minersMustA : LinguisticExample :=
     readings := []
     paperFeatures := [("puzzle", "miners"), ("modalForce", "must"), ("prediction", "thresholdShift")] }
 
-def cm2024_29b_modal_linda : LinguisticExample :=
+def cm2024_29b_modal_linda : Datum :=
   { id := "cm2024_29b_modal_linda"
     source := ⟨"chung-mascarenhas-2023", "(29b)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def cm2024_29b_modal_linda : LinguisticExample :=
     readings := []
     paperFeatures := [("puzzle", "modalConjunctionFallacy"), ("empiricalDomain", "epistemic")] }
 
-def cm2024_35_jack_description : LinguisticExample :=
+def cm2024_35_jack_description : Datum :=
   { id := "cm2024_35_jack_description"
     source := ⟨"kahneman-tversky-1973", "Jack description"⟩
     reportedIn := some ⟨"chung-mascarenhas-2023", "(35)"⟩
@@ -121,7 +121,7 @@ def cm2024_35_jack_description : LinguisticExample :=
     readings := []
     paperFeatures := [("puzzle", "baseRateNeglect"), ("empiricalDomain", "epistemic")] }
 
-def cm2024_36_jack_must_engineer : LinguisticExample :=
+def cm2024_36_jack_must_engineer : Datum :=
   { id := "cm2024_36_jack_must_engineer"
     source := ⟨"chung-mascarenhas-2023", "(36)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def cm2024_36_jack_must_engineer : LinguisticExample :=
     readings := []
     paperFeatures := [("puzzle", "baseRateNeglect"), ("modalForce", "must")] }
 
-def cm2024_49a_cold : LinguisticExample :=
+def cm2024_49a_cold : Datum :=
   { id := "cm2024_49a_cold"
     source := ⟨"chung-mascarenhas-2023", "(49a)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def cm2024_49a_cold : LinguisticExample :=
     readings := []
     paperFeatures := [("puzzle", "plausibilityFloor"), ("modalForce", "must")] }
 
-def cm2024_54a_grammatical_mistake : LinguisticExample :=
+def cm2024_54a_grammatical_mistake : Datum :=
   { id := "cm2024_54a_grammatical_mistake"
     source := ⟨"chung-mascarenhas-2023", "(54a)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def cm2024_54a_grammatical_mistake : LinguisticExample :=
     readings := []
     paperFeatures := [("puzzle", "plausibilityFloor"), ("modalForce", "must"), ("modalType", "deontic")] }
 
-def cm2024_55a_bushwick_helicopter : LinguisticExample :=
+def cm2024_55a_bushwick_helicopter : Datum :=
   { id := "cm2024_55a_bushwick_helicopter"
     source := ⟨"chung-mascarenhas-2023", "(55a)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def cm2024_55a_bushwick_helicopter : LinguisticExample :=
     readings := []
     paperFeatures := [("puzzle", "plausibilityFloor"), ("modalForce", "have-to"), ("modalType", "teleological")] }
 
-def cm2024_60a_kim_marry_pat : LinguisticExample :=
+def cm2024_60a_kim_marry_pat : Datum :=
   { id := "cm2024_60a_kim_marry_pat"
     source := ⟨"dretske-1972", "(adapted; PAT focus)"⟩
     reportedIn := some ⟨"chung-mascarenhas-2023", "(60a)"⟩
@@ -186,7 +186,7 @@ def cm2024_60a_kim_marry_pat : LinguisticExample :=
     readings := []
     paperFeatures := [("puzzle", "focusContrast"), ("modalForce", "must")] }
 
-def cm2024_63_billy_rain : LinguisticExample :=
+def cm2024_63_billy_rain : Datum :=
   { id := "cm2024_63_billy_rain"
     source := ⟨"von-fintel-gillies-2010", "(originally)"⟩
     reportedIn := some ⟨"chung-mascarenhas-2023", "(63)"⟩
@@ -199,6 +199,6 @@ def cm2024_63_billy_rain : LinguisticExample :=
     readings := []
     paperFeatures := [("puzzle", "vfgFelicity"), ("modalForce", "must"), ("modalType", "epistemic")] }
 
-def all : List LinguisticExample := [cm2024_1_korean_conditional_eval, cm2024_4_linda_original, cm2024_15a_minersBlockNeither, cm2024_15b_minersBlockA, cm2024_25a_minersMust, cm2024_25b_minersMustA, cm2024_29b_modal_linda, cm2024_35_jack_description, cm2024_36_jack_must_engineer, cm2024_49a_cold, cm2024_54a_grammatical_mistake, cm2024_55a_bushwick_helicopter, cm2024_60a_kim_marry_pat, cm2024_63_billy_rain]
+def all : List Datum := [cm2024_1_korean_conditional_eval, cm2024_4_linda_original, cm2024_15a_minersBlockNeither, cm2024_15b_minersBlockA, cm2024_25a_minersMust, cm2024_25b_minersMustA, cm2024_29b_modal_linda, cm2024_35_jack_description, cm2024_36_jack_must_engineer, cm2024_49a_cold, cm2024_54a_grammatical_mistake, cm2024_55a_bushwick_helicopter, cm2024_60a_kim_marry_pat, cm2024_63_billy_rain]
 
 end ChungMascarenhas2023.Examples

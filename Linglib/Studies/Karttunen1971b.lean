@@ -95,7 +95,7 @@ theorem projects_semi_iff (e : Environment) :
 def verbs : List Verb := [regret.toVerb, realize.toVerb, discover.toVerb]
 
 /-- The Fragment entry for a row's verb. -/
-def verbOf (row : LinguisticExample) : Option Verb :=
+def verbOf (row : Datum) : Option Verb :=
   (row.feature? "verb").bind (Verb.find? verbs ·)
 
 /-- The judgments of (2), (22) and (24)–(26) are the postulates' predictions, *regret*'s

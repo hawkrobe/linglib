@@ -17,7 +17,7 @@ namespace GroszJoshiWeinstein1995.Examples
 
 open Data.Examples
 
-def ex_1 : LinguisticExample :=
+def ex_1 : Datum :=
   { id := "groszjoshiweinstein1995_1"
     source := ⟨"grosz-joshi-weinstein-1995", "(1)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("phenomenon", "coherence"), ("coherence", "more")] }
 
-def ex_2 : LinguisticExample :=
+def ex_2 : Datum :=
   { id := "groszjoshiweinstein1995_2"
     source := ⟨"grosz-joshi-weinstein-1995", "(2)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("phenomenon", "coherence"), ("coherence", "less")] }
 
-def ex_3 : LinguisticExample :=
+def ex_3 : Datum :=
   { id := "groszjoshiweinstein1995_3"
     source := ⟨"grosz-joshi-weinstein-1995", "(3)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_3 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("phenomenon", "pronounMisdirection")] }
 
-def ex_4 : LinguisticExample :=
+def ex_4 : Datum :=
   { id := "groszjoshiweinstein1995_4"
     source := ⟨"grosz-joshi-weinstein-1995", "(4)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_4 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("phenomenon", "pronounMisdirection")] }
 
-def ex_5 : LinguisticExample :=
+def ex_5 : Datum :=
   { id := "groszjoshiweinstein1995_5"
     source := ⟨"grosz-joshi-weinstein-1995", "(5)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_5 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("phenomenon", "pronounMisdirection")] }
 
-def ex_6 : LinguisticExample :=
+def ex_6 : Datum :=
   { id := "groszjoshiweinstein1995_6"
     source := ⟨"grosz-joshi-weinstein-1995", "(6)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_6 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("phenomenon", "uniqueCb")] }
 
-def ex_7 : LinguisticExample :=
+def ex_7 : Datum :=
   { id := "groszjoshiweinstein1995_7"
     source := ⟨"grosz-joshi-weinstein-1995", "(7)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_7 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("phenomenon", "rule1"), ("rule1", "satisfied")] }
 
-def ex_8 : LinguisticExample :=
+def ex_8 : Datum :=
   { id := "groszjoshiweinstein1995_8"
     source := ⟨"grosz-joshi-weinstein-1995", "(8)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_8 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("phenomenon", "rule1"), ("rule1", "satisfied")] }
 
-def ex_9 : LinguisticExample :=
+def ex_9 : Datum :=
   { id := "groszjoshiweinstein1995_9"
     source := ⟨"grosz-joshi-weinstein-1995", "(9)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_9 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("phenomenon", "rule1"), ("rule1", "violated")] }
 
-def ex_10 : LinguisticExample :=
+def ex_10 : Datum :=
   { id := "groszjoshiweinstein1995_10"
     source := ⟨"grosz-joshi-weinstein-1995", "(10)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_10 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("phenomenon", "rule1"), ("rule1", "violated")] }
 
-def ex_11 : LinguisticExample :=
+def ex_11 : Datum :=
   { id := "groszjoshiweinstein1995_11"
     source := ⟨"grosz-joshi-weinstein-1995", "(11)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_11 : LinguisticExample :=
     readings := [("she = Susan", .acceptable), ("she = Betsy", .marginal)]
     paperFeatures := [("section", "5"), ("phenomenon", "cfRanking")] }
 
-def ex_12 : LinguisticExample :=
+def ex_12 : Datum :=
   { id := "groszjoshiweinstein1995_12"
     source := ⟨"grosz-joshi-weinstein-1995", "(12)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_12 : LinguisticExample :=
     readings := [("her = Susan", .acceptable), ("her = Betsy", .marginal)]
     paperFeatures := [("section", "5"), ("phenomenon", "cfRanking")] }
 
-def ex_13 : LinguisticExample :=
+def ex_13 : Datum :=
   { id := "groszjoshiweinstein1995_13"
     source := ⟨"grosz-joshi-weinstein-1995", "(13)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_13 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("phenomenon", "cfRanking"), ("coherence", "more")] }
 
-def ex_14 : LinguisticExample :=
+def ex_14 : Datum :=
   { id := "groszjoshiweinstein1995_14"
     source := ⟨"grosz-joshi-weinstein-1995", "(14)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_14 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("phenomenon", "cfRanking"), ("coherence", "less")] }
 
-def ex_15 : LinguisticExample :=
+def ex_15 : Datum :=
   { id := "groszjoshiweinstein1995_15"
     source := ⟨"grosz-joshi-weinstein-1995", "(15)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_15 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7"), ("phenomenon", "rule1"), ("rule1", "violated")] }
 
-def ex_16 : LinguisticExample :=
+def ex_16 : Datum :=
   { id := "groszjoshiweinstein1995_16"
     source := ⟨"grosz-joshi-weinstein-1995", "(16)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_16 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7"), ("phenomenon", "rule1"), ("rule1", "satisfied")] }
 
-def ex_17 : LinguisticExample :=
+def ex_17 : Datum :=
   { id := "groszjoshiweinstein1995_17"
     source := ⟨"grosz-joshi-weinstein-1995", "(17)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex_17 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7"), ("phenomenon", "fullNounPhraseCb")] }
 
-def ex_18 : LinguisticExample :=
+def ex_18 : Datum :=
   { id := "groszjoshiweinstein1995_18"
     source := ⟨"grosz-joshi-weinstein-1995", "(18)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex_18 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7"), ("phenomenon", "fullNounPhraseCb")] }
 
-def ex_19 : LinguisticExample :=
+def ex_19 : Datum :=
   { id := "groszjoshiweinstein1995_19"
     source := ⟨"grosz-joshi-weinstein-1995", "(19)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex_19 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7"), ("phenomenon", "functionalDependence")] }
 
-def ex_20 : LinguisticExample :=
+def ex_20 : Datum :=
   { id := "groszjoshiweinstein1995_20"
     source := ⟨"grosz-joshi-weinstein-1995", "(20)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex_20 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7"), ("phenomenon", "transitions"), ("rule1", "satisfied")] }
 
-def ex_25 : LinguisticExample :=
+def ex_25 : Datum :=
   { id := "groszjoshiweinstein1995_25"
     source := ⟨"grosz-joshi-weinstein-1995", "(25)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex_25 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "8"), ("phenomenon", "valueFreeLoaded")] }
 
-def ex_26 : LinguisticExample :=
+def ex_26 : Datum :=
   { id := "groszjoshiweinstein1995_26"
     source := ⟨"grosz-joshi-weinstein-1995", "(26)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex_26 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "8"), ("phenomenon", "valueFreeLoaded")] }
 
-def ex_27 : LinguisticExample :=
+def ex_27 : Datum :=
   { id := "groszjoshiweinstein1995_27"
     source := ⟨"grosz-joshi-weinstein-1995", "(27)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex_27 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "8"), ("phenomenon", "valueFreeLoaded")] }
 
-def ex_28 : LinguisticExample :=
+def ex_28 : Datum :=
   { id := "groszjoshiweinstein1995_28"
     source := ⟨"grosz-joshi-weinstein-1995", "(28)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex_28 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "8"), ("phenomenon", "valueFreeLoaded")] }
 
-def ex_32 : LinguisticExample :=
+def ex_32 : Datum :=
   { id := "groszjoshiweinstein1995_32"
     source := ⟨"grosz-joshi-weinstein-1995", "(32)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex_32 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "8"), ("phenomenon", "referentialUse")] }
 
-def ex_33 : LinguisticExample :=
+def ex_33 : Datum :=
   { id := "groszjoshiweinstein1995_33"
     source := ⟨"grosz-joshi-weinstein-1995", "(33)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex_33 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "8"), ("phenomenon", "referentialUse")] }
 
-def ex_34 : LinguisticExample :=
+def ex_34 : Datum :=
   { id := "groszjoshiweinstein1995_34"
     source := ⟨"sidner-1979", "(34)"⟩
     reportedIn := some ⟨"grosz-joshi-weinstein-1995", "(34)"⟩
@@ -368,6 +368,6 @@ def ex_34 : LinguisticExample :=
     readings := [("he in (c) = Jeff", .acceptable)]
     paperFeatures := [("section", "9"), ("phenomenon", "sidnerComparison")] }
 
-def all : List LinguisticExample := [ex_1, ex_2, ex_3, ex_4, ex_5, ex_6, ex_7, ex_8, ex_9, ex_10, ex_11, ex_12, ex_13, ex_14, ex_15, ex_16, ex_17, ex_18, ex_19, ex_20, ex_25, ex_26, ex_27, ex_28, ex_32, ex_33, ex_34]
+def all : List Datum := [ex_1, ex_2, ex_3, ex_4, ex_5, ex_6, ex_7, ex_8, ex_9, ex_10, ex_11, ex_12, ex_13, ex_14, ex_15, ex_16, ex_17, ex_18, ex_19, ex_20, ex_25, ex_26, ex_27, ex_28, ex_32, ex_33, ex_34]
 
 end GroszJoshiWeinstein1995.Examples

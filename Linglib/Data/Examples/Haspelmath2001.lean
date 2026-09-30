@@ -17,7 +17,7 @@ namespace Haspelmath2001.Examples
 
 open Data.Examples
 
-def articles_en : LinguisticExample :=
+def articles_en : Datum :=
   { id := "haspelmath2001_articles_en"
     source := ⟨"haspelmath-2001", "§2.1"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def articles_en : LinguisticExample :=
     readings := []
     paperFeatures := [("feature", "articles"), ("value", "sae")] }
 
-def relpro_en : LinguisticExample :=
+def relpro_en : Datum :=
   { id := "haspelmath2001_relpro_en"
     source := ⟨"haspelmath-2001", "§2.2"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def relpro_en : LinguisticExample :=
     readings := []
     paperFeatures := [("feature", "relativePronouns"), ("value", "sae")] }
 
-def relparticle_en : LinguisticExample :=
+def relparticle_en : Datum :=
   { id := "haspelmath2001_relparticle_en"
     source := ⟨"haspelmath-2001", "§2.2"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def relparticle_en : LinguisticExample :=
     readings := []
     paperFeatures := [("feature", "relativePronouns"), ("value", "particle")] }
 
-def haveperf_en : LinguisticExample :=
+def haveperf_en : Datum :=
   { id := "haspelmath2001_haveperf_en"
     source := ⟨"haspelmath-2001", "§2.3"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def haveperf_en : LinguisticExample :=
     readings := []
     paperFeatures := [("feature", "havePerfect"), ("value", "sae")] }
 
-def haveperf_sv : LinguisticExample :=
+def haveperf_sv : Datum :=
   { id := "haspelmath2001_haveperf_sv"
     source := ⟨"haspelmath-2001", "§2.3"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def haveperf_sv : LinguisticExample :=
     readings := []
     paperFeatures := [("feature", "havePerfect"), ("value", "sae")] }
 
-def haveperf_es : LinguisticExample :=
+def haveperf_es : Datum :=
   { id := "haspelmath2001_haveperf_es"
     source := ⟨"haspelmath-2001", "§2.3"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def haveperf_es : LinguisticExample :=
     readings := []
     paperFeatures := [("feature", "havePerfect"), ("value", "sae")] }
 
-def perf_fi : LinguisticExample :=
+def perf_fi : Datum :=
   { id := "haspelmath2001_perf_fi"
     source := ⟨"haspelmath-2001", "§2.3"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def perf_fi : LinguisticExample :=
     readings := []
     paperFeatures := [("feature", "havePerfect"), ("value", "participialCopula")] }
 
-def perf_cy : LinguisticExample :=
+def perf_cy : Datum :=
   { id := "haspelmath2001_perf_cy"
     source := ⟨"haspelmath-2001", "§2.3"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def perf_cy : LinguisticExample :=
     readings := []
     paperFeatures := [("feature", "havePerfect"), ("value", "prepositional")] }
 
-def nomexp_en : LinguisticExample :=
+def nomexp_en : Datum :=
   { id := "haspelmath2001_nomexp_en"
     source := ⟨"haspelmath-2001", "§2.4"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def nomexp_en : LinguisticExample :=
     readings := []
     paperFeatures := [("feature", "nominativeExperiencers"), ("value", "generalizing")] }
 
-def invexp_en : LinguisticExample :=
+def invexp_en : Datum :=
   { id := "haspelmath2001_invexp_en"
     source := ⟨"haspelmath-2001", "§2.4"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def invexp_en : LinguisticExample :=
     readings := []
     paperFeatures := [("feature", "nominativeExperiencers"), ("value", "inverting")] }
 
-def getpass_cy : LinguisticExample :=
+def getpass_cy : Datum :=
   { id := "haspelmath2001_getpass_cy"
     source := ⟨"haspelmath-2001", "§2.5"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def getpass_cy : LinguisticExample :=
     readings := []
     paperFeatures := [("feature", "participialPassive"), ("value", "getPassive")] }
 
-def caus_mn : LinguisticExample :=
+def caus_mn : Datum :=
   { id := "haspelmath2001_caus_mn"
     source := ⟨"haspelmath-2001", "§2.6"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def caus_mn : LinguisticExample :=
     readings := []
     paperFeatures := [("feature", "anticausativeProminence"), ("value", "causative")] }
 
-def anticaus_ru : LinguisticExample :=
+def anticaus_ru : Datum :=
   { id := "haspelmath2001_anticaus_ru"
     source := ⟨"haspelmath-2001", "§2.6"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def anticaus_ru : LinguisticExample :=
     readings := []
     paperFeatures := [("feature", "anticausativeProminence"), ("value", "anticausative")] }
 
-def datposs_de : LinguisticExample :=
+def datposs_de : Datum :=
   { id := "haspelmath2001_datposs_de"
     source := ⟨"haspelmath-2001", "§2.7"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def datposs_de : LinguisticExample :=
     readings := []
     paperFeatures := [("feature", "dativeExternalPossessors"), ("value", "dative")] }
 
-def locposs_sv : LinguisticExample :=
+def locposs_sv : Datum :=
   { id := "haspelmath2001_locposs_sv"
     source := ⟨"haspelmath-2001", "§2.7"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def locposs_sv : LinguisticExample :=
     readings := []
     paperFeatures := [("feature", "dativeExternalPossessors"), ("value", "locative")] }
 
-def vni_de : LinguisticExample :=
+def vni_de : Datum :=
   { id := "haspelmath2001_vni_de"
     source := ⟨"haspelmath-2001", "§2.8"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def vni_de : LinguisticExample :=
     readings := []
     paperFeatures := [("feature", "negativeIndefinitesWithoutVerbalNegation"), ("value", "sae")] }
 
-def nvni_el : LinguisticExample :=
+def nvni_el : Datum :=
   { id := "haspelmath2001_nvni_el"
     source := ⟨"haspelmath-2001", "§2.8"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def nvni_el : LinguisticExample :=
     readings := []
     paperFeatures := [("feature", "negativeIndefinitesWithoutVerbalNegation"), ("value", "negatedVerb")] }
 
-def mixed_it_pre : LinguisticExample :=
+def mixed_it_pre : Datum :=
   { id := "haspelmath2001_mixed_it_pre"
     source := ⟨"haspelmath-2001", "§2.8"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def mixed_it_pre : LinguisticExample :=
     readings := []
     paperFeatures := [("feature", "negativeIndefinitesWithoutVerbalNegation"), ("value", "mixed")] }
 
-def mixed_it_post : LinguisticExample :=
+def mixed_it_post : Datum :=
   { id := "haspelmath2001_mixed_it_post"
     source := ⟨"haspelmath-2001", "§2.8"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def mixed_it_post : LinguisticExample :=
     readings := []
     paperFeatures := [("feature", "negativeIndefinitesWithoutVerbalNegation"), ("value", "mixed")] }
 
-def equative_ca : LinguisticExample :=
+def equative_ca : Datum :=
   { id := "haspelmath2001_equative_ca"
     source := ⟨"haspelmath-2001", "§2.10"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def equative_ca : LinguisticExample :=
     readings := []
     paperFeatures := [("feature", "relativeBasedEquative"), ("value", "sae")] }
 
-def equative_pt : LinguisticExample :=
+def equative_pt : Datum :=
   { id := "haspelmath2001_equative_pt"
     source := ⟨"haspelmath-2001", "§2.10"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def equative_pt : LinguisticExample :=
     readings := []
     paperFeatures := [("feature", "relativeBasedEquative"), ("value", "sae")] }
 
-def equative_de : LinguisticExample :=
+def equative_de : Datum :=
   { id := "haspelmath2001_equative_de"
     source := ⟨"haspelmath-2001", "§2.10"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def equative_de : LinguisticExample :=
     readings := []
     paperFeatures := [("feature", "relativeBasedEquative"), ("value", "sae")] }
 
-def equative_ru : LinguisticExample :=
+def equative_ru : Datum :=
   { id := "haspelmath2001_equative_ru"
     source := ⟨"haspelmath-2001", "§2.10"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def equative_ru : LinguisticExample :=
     readings := []
     paperFeatures := [("feature", "relativeBasedEquative"), ("value", "sae")] }
 
-def equative_hu : LinguisticExample :=
+def equative_hu : Datum :=
   { id := "haspelmath2001_equative_hu"
     source := ⟨"haspelmath-2001", "§2.10"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def equative_hu : LinguisticExample :=
     readings := []
     paperFeatures := [("feature", "relativeBasedEquative"), ("value", "sae")] }
 
-def equative_fi : LinguisticExample :=
+def equative_fi : Datum :=
   { id := "haspelmath2001_equative_fi"
     source := ⟨"haspelmath-2001", "§2.10"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def equative_fi : LinguisticExample :=
     readings := []
     paperFeatures := [("feature", "relativeBasedEquative"), ("value", "sae")] }
 
-def equative_ka : LinguisticExample :=
+def equative_ka : Datum :=
   { id := "haspelmath2001_equative_ka"
     source := ⟨"haspelmath-2001", "§2.10"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def equative_ka : LinguisticExample :=
     readings := []
     paperFeatures := [("feature", "relativeBasedEquative"), ("value", "sae")] }
 
-def equative_bg : LinguisticExample :=
+def equative_bg : Datum :=
   { id := "haspelmath2001_equative_bg"
     source := ⟨"haspelmath-2001", "§2.10"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def equative_bg : LinguisticExample :=
     readings := []
     paperFeatures := [("feature", "relativeBasedEquative"), ("value", "sae")] }
 
-def equative_ga : LinguisticExample :=
+def equative_ga : Datum :=
   { id := "haspelmath2001_equative_ga"
     source := ⟨"haspelmath-2001", "§2.10"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def equative_ga : LinguisticExample :=
     readings := []
     paperFeatures := [("feature", "relativeBasedEquative"), ("value", "special")] }
 
-def equative_sv : LinguisticExample :=
+def equative_sv : Datum :=
   { id := "haspelmath2001_equative_sv"
     source := ⟨"haspelmath-2001", "§2.10"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def equative_sv : LinguisticExample :=
     readings := []
     paperFeatures := [("feature", "relativeBasedEquative"), ("value", "equally")] }
 
-def agr_bg : LinguisticExample :=
+def agr_bg : Datum :=
   { id := "haspelmath2001_agr_bg"
     source := ⟨"haspelmath-2001", "§2.11"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def agr_bg : LinguisticExample :=
     readings := []
     paperFeatures := [("feature", "strictAgreement"), ("value", "referential")] }
 
-def agr_de : LinguisticExample :=
+def agr_de : Datum :=
   { id := "haspelmath2001_agr_de"
     source := ⟨"haspelmath-2001", "§2.11"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def agr_de : LinguisticExample :=
     readings := []
     paperFeatures := [("feature", "strictAgreement"), ("value", "sae")] }
 
-def nopro_sv : LinguisticExample :=
+def nopro_sv : Datum :=
   { id := "haspelmath2001_nopro_sv"
     source := ⟨"haspelmath-2001", "§2.11"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def nopro_sv : LinguisticExample :=
     readings := []
     paperFeatures := [("feature", "strictAgreement"), ("value", "obligatoryPronouns")] }
 
-def intref_de : LinguisticExample :=
+def intref_de : Datum :=
   { id := "haspelmath2001_intref_de"
     source := ⟨"haspelmath-2001", "§2.12"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def intref_de : LinguisticExample :=
     readings := []
     paperFeatures := [("feature", "intensifierReflexiveDifferentiation"), ("value", "sae")] }
 
-def intref_ru : LinguisticExample :=
+def intref_ru : Datum :=
   { id := "haspelmath2001_intref_ru"
     source := ⟨"haspelmath-2001", "§2.12"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def intref_ru : LinguisticExample :=
     readings := []
     paperFeatures := [("feature", "intensifierReflexiveDifferentiation"), ("value", "sae")] }
 
-def intref_it : LinguisticExample :=
+def intref_it : Datum :=
   { id := "haspelmath2001_intref_it"
     source := ⟨"haspelmath-2001", "§2.12"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def intref_it : LinguisticExample :=
     readings := []
     paperFeatures := [("feature", "intensifierReflexiveDifferentiation"), ("value", "sae")] }
 
-def intref_el : LinguisticExample :=
+def intref_el : Datum :=
   { id := "haspelmath2001_intref_el"
     source := ⟨"haspelmath-2001", "§2.12"⟩
     reportedIn := none
@@ -485,7 +485,7 @@ def intref_el : LinguisticExample :=
     readings := []
     paperFeatures := [("feature", "intensifierReflexiveDifferentiation"), ("value", "sae")] }
 
-def intref_fa : LinguisticExample :=
+def intref_fa : Datum :=
   { id := "haspelmath2001_intref_fa"
     source := ⟨"haspelmath-2001", "§2.12"⟩
     reportedIn := none
@@ -498,7 +498,7 @@ def intref_fa : LinguisticExample :=
     readings := []
     paperFeatures := [("feature", "intensifierReflexiveDifferentiation"), ("value", "undifferentiated")] }
 
-def comparative_ja : LinguisticExample :=
+def comparative_ja : Datum :=
   { id := "haspelmath2001_comparative_ja"
     source := ⟨"haspelmath-2001", "§3.2"⟩
     reportedIn := none
@@ -511,7 +511,7 @@ def comparative_ja : LinguisticExample :=
     readings := []
     paperFeatures := [("feature", "comparativeMarking"), ("value", "standardMarkerOnly")] }
 
-def with_en : LinguisticExample :=
+def with_en : Datum :=
   { id := "haspelmath2001_with_en"
     source := ⟨"haspelmath-2001", "§3.4"⟩
     reportedIn := none
@@ -524,7 +524,7 @@ def with_en : LinguisticExample :=
     readings := []
     paperFeatures := [("feature", "comitativeInstrumentalSyncretism"), ("value", "sae")] }
 
-def negcoord_nl : LinguisticExample :=
+def negcoord_nl : Datum :=
   { id := "haspelmath2001_negcoord_nl"
     source := ⟨"haspelmath-2001", "§3.6"⟩
     reportedIn := none
@@ -537,6 +537,6 @@ def negcoord_nl : LinguisticExample :=
     readings := []
     paperFeatures := [("feature", "negativeCoordination"), ("value", "sae")] }
 
-def all : List LinguisticExample := [articles_en, relpro_en, relparticle_en, haveperf_en, haveperf_sv, haveperf_es, perf_fi, perf_cy, nomexp_en, invexp_en, getpass_cy, caus_mn, anticaus_ru, datposs_de, locposs_sv, vni_de, nvni_el, mixed_it_pre, mixed_it_post, equative_ca, equative_pt, equative_de, equative_ru, equative_hu, equative_fi, equative_ka, equative_bg, equative_ga, equative_sv, agr_bg, agr_de, nopro_sv, intref_de, intref_ru, intref_it, intref_el, intref_fa, comparative_ja, with_en, negcoord_nl]
+def all : List Datum := [articles_en, relpro_en, relparticle_en, haveperf_en, haveperf_sv, haveperf_es, perf_fi, perf_cy, nomexp_en, invexp_en, getpass_cy, caus_mn, anticaus_ru, datposs_de, locposs_sv, vni_de, nvni_el, mixed_it_pre, mixed_it_post, equative_ca, equative_pt, equative_de, equative_ru, equative_hu, equative_fi, equative_ka, equative_bg, equative_ga, equative_sv, agr_bg, agr_de, nopro_sv, intref_de, intref_ru, intref_it, intref_el, intref_fa, comparative_ja, with_en, negcoord_nl]
 
 end Haspelmath2001.Examples

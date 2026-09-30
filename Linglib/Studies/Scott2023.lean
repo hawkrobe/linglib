@@ -401,7 +401,7 @@ structure Row where
   accepted : Bool
   deriving DecidableEq, Repr
 
-def Row.ofExample (ex : LinguisticExample) : Option Row := do
+def Row.ofDatum (ex : Datum) : Option Row := do
   let fs := ex.paperFeatures
   let flag ← match fs.lookup "position" with
     | some "S" => some (some Locus.infl)
@@ -418,7 +418,7 @@ def Row.ofExample (ex : LinguisticExample) : Option Row := do
     ex.judgment = .acceptable⟩
 
 /-- The pronoun judgments of §4.4. -/
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- A pronoun is accepted exactly when it is the derived form, under (84) or, where the row
 invokes it, the optional (93). -/

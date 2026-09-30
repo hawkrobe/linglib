@@ -89,7 +89,7 @@ theorem control_iff_untensed : ∀ v ∈ verbs, ∀ fr ∈ v.frames,
 /-! ### The rows -/
 
 /-- The clause type a row's `clauseType` feature names. -/
-def clauseTypeOf (row : LinguisticExample) : Option EmbeddedClauseType :=
+def clauseTypeOf (row : Datum) : Option EmbeddedClauseType :=
   match row.feature? "clauseType" with
   | some "finite" => some .finite
   | some "tensedSubjunctive" => some .tensedSubjunctive
@@ -97,7 +97,7 @@ def clauseTypeOf (row : LinguisticExample) : Option EmbeddedClauseType :=
   | _ => none
 
 /-- The fragment verb a row's `verb` feature names. -/
-def verbOf (row : LinguisticExample) : Option Verb :=
+def verbOf (row : Datum) : Option Verb :=
   (row.feature? "verb").bind (Verb.find? verbs ·)
 
 /-- The rows agree with the predicate lists (27): each row's clause type is one its matrix verb
@@ -107,10 +107,10 @@ theorem clauseTypeOf_mem_verbOf : ∀ row ∈ Examples.all, ∀ c ∈ clauseType
   decide +kernel
 
 /-- A row records reading `r` with judgment `j`. -/
-def reads (row : LinguisticExample) (r : String) (j : Judgment) : Prop :=
+def reads (row : Datum) (r : String) (j : Judgment) : Prop :=
   ∃ x ∈ row.readings, x = (r, j)
 
-instance (row : LinguisticExample) (r : String) (j : Judgment) : Decidable (reads row r j) :=
+instance (row : Datum) (r : String) (j : Judgment) : Decidable (reads row r j) :=
   inferInstanceAs (Decidable (∃ x ∈ row.readings, _))
 
 /-! ### The clause typology (26) from the rows -/
@@ -169,14 +169,14 @@ theorem frontingOut_iff : ∀ row ∈ Examples.all, row.feature? "fronting" = so
 /-- The control diagnostic an acceptable reading of a row attests: a free reading of the
 embedded subject, a strict reading under ellipsis, or a non-c-commanding antecedent. The paper
 tests neither long-distance antecedents nor readings under *only*. -/
-def attests (row : LinguisticExample) : Diagnostic → Prop
+def attests (row : Datum) : Diagnostic → Prop
   | .arbitraryControl => reads row "free" .acceptable
   | .strictEllipsis => reads row "strict" .acceptable
   | .nonCCommandingControl =>
     row.feature? "antecedent" = some "nonCCommanding" ∧ row.judgment = .acceptable
   | .longDistanceControl | .strictUnderOnly => False
 
-instance (row : LinguisticExample) : DecidablePred (attests row) := fun d => by
+instance (row : Datum) : DecidablePred (attests row) := fun d => by
   cases d <;> unfold attests <;> infer_instance
 
 /-- The diagnostics the rows attest for a clause type. -/

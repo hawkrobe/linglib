@@ -17,7 +17,7 @@ namespace Kubota2026.Examples
 
 open Data.Examples
 
-def ex10_nanka_noncancelable : LinguisticExample :=
+def ex10_nanka_noncancelable : Datum :=
   { id := "kubota2026_ex10_nanka_noncancelable"
     source := ⟨"kubota-2026", "(10)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex10_nanka_noncancelable : LinguisticExample :=
     readings := []
     paperFeatures := [("marker", "nanka"), ("phenomenon", "noncancelability"), ("contextStance", "positive")] }
 
-def ex11_mushiro_unexpected : LinguisticExample :=
+def ex11_mushiro_unexpected : Datum :=
   { id := "kubota2026_ex11_mushiro_unexpected"
     source := ⟨"kubota-2026", "(11)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex11_mushiro_unexpected : LinguisticExample :=
     readings := []
     paperFeatures := [("marker", "mushiro"), ("phenomenon", "noncancelability"), ("contextExpectation", "unexpected")] }
 
-def ex12_yahari_expected : LinguisticExample :=
+def ex12_yahari_expected : Datum :=
   { id := "kubota2026_ex12_yahari_expected"
     source := ⟨"kubota-2026", "(12)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex12_yahari_expected : LinguisticExample :=
     readings := []
     paperFeatures := [("marker", "yahari"), ("phenomenon", "noncancelability"), ("contextExpectation", "expected")] }
 
-def ex37_nanka_counterstance : LinguisticExample :=
+def ex37_nanka_counterstance : Datum :=
   { id := "kubota2026_ex37_nanka_counterstance"
     source := ⟨"kubota-2026", "(37)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex37_nanka_counterstance : LinguisticExample :=
     readings := []
     paperFeatures := [("marker", "nanka"), ("phenomenon", "counterstance"), ("priorMove", "evaluativeAssertion")] }
 
-def ex38_nanka_no_counterstance : LinguisticExample :=
+def ex38_nanka_no_counterstance : Datum :=
   { id := "kubota2026_ex38_nanka_no_counterstance"
     source := ⟨"kubota-2026", "(38)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex38_nanka_no_counterstance : LinguisticExample :=
     readings := []
     paperFeatures := [("marker", "nanka"), ("phenomenon", "counterstance"), ("priorMove", "whQuestion")] }
 
-def ex39_dose_q1 : LinguisticExample :=
+def ex39_dose_q1 : Datum :=
   { id := "kubota2026_ex39_dose_q1"
     source := ⟨"kubota-2026", "(39), response to Q1"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex39_dose_q1 : LinguisticExample :=
     readings := []
     paperFeatures := [("marker", "dōse"), ("phenomenon", "counterstance"), ("priorMove", "polarQuestion")] }
 
-def ex39_dose_q2 : LinguisticExample :=
+def ex39_dose_q2 : Datum :=
   { id := "kubota2026_ex39_dose_q2"
     source := ⟨"kubota-2026", "(39), response to Q2"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex39_dose_q2 : LinguisticExample :=
     readings := []
     paperFeatures := [("marker", "dōse"), ("phenomenon", "counterstance"), ("priorMove", "whQuestion")] }
 
-def ex40_nanka_denial : LinguisticExample :=
+def ex40_nanka_denial : Datum :=
   { id := "kubota2026_ex40_nanka_denial"
     source := ⟨"kubota-2026", "(40)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex40_nanka_denial : LinguisticExample :=
     readings := []
     paperFeatures := [("marker", "nanka"), ("phenomenon", "denial"), ("denialTarget", "prejacent")] }
 
-def ex41_dose_denial : LinguisticExample :=
+def ex41_dose_denial : Datum :=
   { id := "kubota2026_ex41_dose_denial"
     source := ⟨"kubota-2026", "(41)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex41_dose_denial : LinguisticExample :=
     readings := []
     paperFeatures := [("marker", "dōse"), ("phenomenon", "denial"), ("denialTarget", "prejacent")] }
 
-def ex42_perspective_shift : LinguisticExample :=
+def ex42_perspective_shift : Datum :=
   { id := "kubota2026_ex42_perspective_shift"
     source := ⟨"kubota-2026", "(42)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex42_perspective_shift : LinguisticExample :=
     readings := []
     paperFeatures := [("marker", "dōse+nanka"), ("phenomenon", "perspectiveShift"), ("perspectiveHolder", "attitudeHolder")] }
 
-def ex45a_nanka_epistemic : LinguisticExample :=
+def ex45a_nanka_epistemic : Datum :=
   { id := "kubota2026_ex45a_nanka_epistemic"
     source := ⟨"kubota-2026", "(45a)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex45a_nanka_epistemic : LinguisticExample :=
     readings := []
     paperFeatures := [("marker", "nanka"), ("phenomenon", "modalInteraction"), ("modalForm", "hazu"), ("modalFlavor", "epistemic"), ("evaluation", "neutral")] }
 
-def ex45b_nanka_ability : LinguisticExample :=
+def ex45b_nanka_ability : Datum :=
   { id := "kubota2026_ex45b_nanka_ability"
     source := ⟨"kubota-2026", "(45b)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex45b_nanka_ability : LinguisticExample :=
     readings := []
     paperFeatures := [("marker", "nanka"), ("phenomenon", "modalInteraction"), ("modalForm", "-eru"), ("modalFlavor", "circumstantial"), ("evaluation", "neutral")] }
 
-def ex45c_nanka_deontic : LinguisticExample :=
+def ex45c_nanka_deontic : Datum :=
   { id := "kubota2026_ex45c_nanka_deontic"
     source := ⟨"kubota-2026", "(45c)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex45c_nanka_deontic : LinguisticExample :=
     readings := []
     paperFeatures := [("marker", "nanka"), ("phenomenon", "modalInteraction"), ("modalForm", "hō-ga yokat-ta"), ("modalFlavor", "deontic"), ("evaluation", "pejorative")] }
 
-def ex45d_nanka_bouletic : LinguisticExample :=
+def ex45d_nanka_bouletic : Datum :=
   { id := "kubota2026_ex45d_nanka_bouletic"
     source := ⟨"kubota-2026", "(45d)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex45d_nanka_bouletic : LinguisticExample :=
     readings := []
     paperFeatures := [("marker", "nanka"), ("phenomenon", "modalInteraction"), ("modalForm", "iranai"), ("modalFlavor", "bouletic"), ("evaluation", "pejorative")] }
 
-def ex46a_semete_epistemic : LinguisticExample :=
+def ex46a_semete_epistemic : Datum :=
   { id := "kubota2026_ex46a_semete_epistemic"
     source := ⟨"kubota-2026", "(46a)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex46a_semete_epistemic : LinguisticExample :=
     readings := []
     paperFeatures := [("marker", "semete"), ("phenomenon", "modalInteraction"), ("modalForm", "hazu"), ("modalFlavor", "epistemic")] }
 
-def ex46b_semete_ability : LinguisticExample :=
+def ex46b_semete_ability : Datum :=
   { id := "kubota2026_ex46b_semete_ability"
     source := ⟨"kubota-2026", "(46b)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex46b_semete_ability : LinguisticExample :=
     readings := []
     paperFeatures := [("marker", "semete"), ("phenomenon", "modalInteraction"), ("modalForm", "-eru"), ("modalFlavor", "circumstantial")] }
 
-def ex46c_semete_desiderative : LinguisticExample :=
+def ex46c_semete_desiderative : Datum :=
   { id := "kubota2026_ex46c_semete_desiderative"
     source := ⟨"kubota-2026", "(46c)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex46c_semete_desiderative : LinguisticExample :=
     readings := []
     paperFeatures := [("marker", "semete"), ("phenomenon", "modalInteraction"), ("modalForm", "-tai"), ("modalFlavor", "bouletic")] }
 
-def ex46d_semete_deontic : LinguisticExample :=
+def ex46d_semete_deontic : Datum :=
   { id := "kubota2026_ex46d_semete_deontic"
     source := ⟨"kubota-2026", "(46d)"⟩
     reportedIn := none
@@ -251,6 +251,6 @@ def ex46d_semete_deontic : LinguisticExample :=
     readings := []
     paperFeatures := [("marker", "semete"), ("phenomenon", "modalInteraction"), ("modalForm", "-beki"), ("modalFlavor", "deontic")] }
 
-def all : List LinguisticExample := [ex10_nanka_noncancelable, ex11_mushiro_unexpected, ex12_yahari_expected, ex37_nanka_counterstance, ex38_nanka_no_counterstance, ex39_dose_q1, ex39_dose_q2, ex40_nanka_denial, ex41_dose_denial, ex42_perspective_shift, ex45a_nanka_epistemic, ex45b_nanka_ability, ex45c_nanka_deontic, ex45d_nanka_bouletic, ex46a_semete_epistemic, ex46b_semete_ability, ex46c_semete_desiderative, ex46d_semete_deontic]
+def all : List Datum := [ex10_nanka_noncancelable, ex11_mushiro_unexpected, ex12_yahari_expected, ex37_nanka_counterstance, ex38_nanka_no_counterstance, ex39_dose_q1, ex39_dose_q2, ex40_nanka_denial, ex41_dose_denial, ex42_perspective_shift, ex45a_nanka_epistemic, ex45b_nanka_ability, ex45c_nanka_deontic, ex45d_nanka_bouletic, ex46a_semete_epistemic, ex46b_semete_ability, ex46c_semete_desiderative, ex46d_semete_deontic]
 
 end Kubota2026.Examples

@@ -17,7 +17,7 @@ namespace Barker2002.Examples
 
 open Data.Examples
 
-def ex_4a : LinguisticExample :=
+def ex_4a : Datum :=
   { id := "barker2002_4a"
     source := ⟨"barker-2002", "(4a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_4a : LinguisticExample :=
     readings := []
     paperFeatures := [("translation", "left j")] }
 
-def ex_4b : LinguisticExample :=
+def ex_4b : Datum :=
   { id := "barker2002_4b"
     source := ⟨"barker-2002", "(4b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_4b : LinguisticExample :=
     readings := []
     paperFeatures := [("translation", "saw m j")] }
 
-def ex_14 : LinguisticExample :=
+def ex_14 : Datum :=
   { id := "barker2002_14"
     source := ⟨"barker-2002", "(14)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_14 : LinguisticExample :=
     readings := []
     paperFeatures := [("translation", "∀x.saw x j"), ("quantifiers", "everyone")] }
 
-def ex_17a : LinguisticExample :=
+def ex_17a : Datum :=
   { id := "barker2002_17a"
     source := ⟨"barker-2002", "(17a)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_17a : LinguisticExample :=
     readings := []
     paperFeatures := [("translation", "∀x.man x → saw x j"), ("quantifiers", "every")] }
 
-def ex_17b : LinguisticExample :=
+def ex_17b : Datum :=
   { id := "barker2002_17b"
     source := ⟨"barker-2002", "(17b)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_17b : LinguisticExample :=
     readings := []
     paperFeatures := [("translation", "most(man)(λx.saw x j)"), ("quantifiers", "most")] }
 
-def ex_17c : LinguisticExample :=
+def ex_17c : Datum :=
   { id := "barker2002_17c"
     source := ⟨"barker-2002", "(17c)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_17c : LinguisticExample :=
     readings := [("a > every", .acceptable), ("every > a", .acceptable)]
     paperFeatures := [("quantifiers", "every a")] }
 
-def ex_19a : LinguisticExample :=
+def ex_19a : Datum :=
   { id := "barker2002_19a"
     source := ⟨"barker-2002", "(19a)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_19a : LinguisticExample :=
     readings := []
     paperFeatures := [("quantifiers", "a every"), ("natural_reading", "every > a")] }
 
-def ex_19b : LinguisticExample :=
+def ex_19b : Datum :=
   { id := "barker2002_19b"
     source := ⟨"barker-2002", "(19b)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_19b : LinguisticExample :=
     readings := []
     paperFeatures := [("quantifiers", "a every"), ("natural_reading", "every > a")] }
 
-def ex_19c : LinguisticExample :=
+def ex_19c : Datum :=
   { id := "barker2002_19c"
     source := ⟨"barker-2002", "(19c)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_19c : LinguisticExample :=
     readings := []
     paperFeatures := [("quantifiers", "a every"), ("natural_reading", "every > a")] }
 
-def ex_21a : LinguisticExample :=
+def ex_21a : Datum :=
   { id := "barker2002_21a"
     source := ⟨"barker-2002", "(21a)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_21a : LinguisticExample :=
     readings := []
     paperFeatures := [("quantifiers", "a everyone"), ("translation", "∃y.man y ∧ thought(∀x.saw m x) y"), ("island", "tensed S")] }
 
-def ex_22a : LinguisticExample :=
+def ex_22a : Datum :=
   { id := "barker2002_22a"
     source := ⟨"barker-2002", "(22a)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_22a : LinguisticExample :=
     readings := [("no > a", .acceptable), ("a > no", .acceptable)]
     paperFeatures := [("quantifiers", "no a")] }
 
-def ex_23a : LinguisticExample :=
+def ex_23a : Datum :=
   { id := "barker2002_23a"
     source := ⟨"barker-2002", "(23a)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_23a : LinguisticExample :=
     readings := [("every > two > someone", .unacceptable)]
     paperFeatures := [("quantifiers", "two someone every"), ("constituent", "someone every")] }
 
-def ex_26a : LinguisticExample :=
+def ex_26a : Datum :=
   { id := "barker2002_26a"
     source := ⟨"barker-2002", "(26a)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_26a : LinguisticExample :=
     readings := [("every > most > an", .unacceptable)]
     paperFeatures := [("quantifiers", "most an every"), ("constituent", "an every")] }
 
-def ex_27a : LinguisticExample :=
+def ex_27a : Datum :=
   { id := "barker2002_27a"
     source := ⟨"barker-2002", "(27a)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_27a : LinguisticExample :=
     readings := []
     paperFeatures := [("coordination", "S"), ("translation", "and(left j)(slept j)")] }
 
-def ex_27b : LinguisticExample :=
+def ex_27b : Datum :=
   { id := "barker2002_27b"
     source := ⟨"barker-2002", "(27b)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_27b : LinguisticExample :=
     readings := []
     paperFeatures := [("coordination", "VP"), ("translation", "and(left j)(slept j)")] }
 
-def ex_27c : LinguisticExample :=
+def ex_27c : Datum :=
   { id := "barker2002_27c"
     source := ⟨"barker-2002", "(27c)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_27c : LinguisticExample :=
     readings := []
     paperFeatures := [("coordination", "Vt"), ("translation", "and(saw m j)(liked m j)")] }
 
-def ex_27d : LinguisticExample :=
+def ex_27d : Datum :=
   { id := "barker2002_27d"
     source := ⟨"barker-2002", "(27d)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex_27d : LinguisticExample :=
     readings := []
     paperFeatures := [("coordination", "NP"), ("translation", "and(left j)(left m)")] }
 
-def ex_42a : LinguisticExample :=
+def ex_42a : Datum :=
   { id := "barker2002_42a"
     source := ⟨"barker-2002", "(42a)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex_42a : LinguisticExample :=
     readings := [("someone > everyone", .acceptable), ("everyone > someone", .acceptable)]
     paperFeatures := [("quantifiers", "someone everyone")] }
 
-def ex_43 : LinguisticExample :=
+def ex_43 : Datum :=
   { id := "barker2002_43"
     source := ⟨"barker-2002", "(43)"⟩
     reportedIn := none
@@ -264,6 +264,6 @@ def ex_43 : LinguisticExample :=
     readings := [("someone > a > everyone", .acceptable), ("someone > everyone > a", .acceptable), ("a > everyone > someone", .acceptable), ("everyone > a > someone", .acceptable), ("everyone > someone > a", .unacceptable), ("a > someone > everyone", .unacceptable)]
     paperFeatures := [("quantifiers", "someone a everyone"), ("constituent", "a everyone"), ("derivation", "someone saw a friend of everyone")] }
 
-def all : List LinguisticExample := [ex_4a, ex_4b, ex_14, ex_17a, ex_17b, ex_17c, ex_19a, ex_19b, ex_19c, ex_21a, ex_22a, ex_23a, ex_26a, ex_27a, ex_27b, ex_27c, ex_27d, ex_42a, ex_43]
+def all : List Datum := [ex_4a, ex_4b, ex_14, ex_17a, ex_17b, ex_17c, ex_19a, ex_19b, ex_19c, ex_21a, ex_22a, ex_23a, ex_26a, ex_27a, ex_27b, ex_27c, ex_27d, ex_42a, ex_43]
 
 end Barker2002.Examples

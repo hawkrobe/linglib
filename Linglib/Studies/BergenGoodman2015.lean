@@ -436,7 +436,7 @@ theorem S1_bobWent_lt_BOB_went (hε₀ : 0 < ε) (hε : ε ≤ 1 / 2) :
     ⟨hε₀.le, by norm_num; linarith⟩ (by linarith)
 
 /-- Utterance adapter: a row's `stress` feature as an utterance. -/
-def uttOf (row : Data.Examples.LinguisticExample) : Option Utterance :=
+def uttOf (row : Data.Examples.Datum) : Option Utterance :=
   match row.feature? "stress" with
   | some "subject" => some .BOB_went
   | some "none"    => some .bobWent

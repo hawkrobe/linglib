@@ -17,7 +17,7 @@ namespace MoensSteedman1988.Examples
 
 open Data.Examples
 
-def when_state : LinguisticExample :=
+def when_state : Datum :=
   { id := "moenssteedman1988_when_state"
     source := ⟨"moens-steedman-1988", "UNVERIFIED §4.2"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def when_state : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "when"), ("clause", "embedded"), ("vendler_class", "state")] }
 
-def when_activity : LinguisticExample :=
+def when_activity : Datum :=
   { id := "moenssteedman1988_when_activity"
     source := ⟨"moens-steedman-1988", "UNVERIFIED §4.2"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def when_activity : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "when"), ("clause", "embedded"), ("vendler_class", "activity"), ("coercion", "inception"), ("result_class", "achievement")] }
 
-def when_accomplishment : LinguisticExample :=
+def when_accomplishment : Datum :=
   { id := "moenssteedman1988_when_accomplishment"
     source := ⟨"moens-steedman-1988", "UNVERIFIED §4.2"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def when_accomplishment : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "when"), ("clause", "embedded"), ("vendler_class", "accomplishment"), ("coercion", "culmination"), ("result_class", "achievement")] }
 
-def when_achievement : LinguisticExample :=
+def when_achievement : Datum :=
   { id := "moenssteedman1988_when_achievement"
     source := ⟨"moens-steedman-1988", "UNVERIFIED §4.2"⟩
     reportedIn := none
@@ -69,6 +69,6 @@ def when_achievement : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "when"), ("clause", "embedded"), ("vendler_class", "achievement")] }
 
-def all : List LinguisticExample := [when_state, when_activity, when_accomplishment, when_achievement]
+def all : List Datum := [when_state, when_activity, when_accomplishment, when_achievement]
 
 end MoensSteedman1988.Examples

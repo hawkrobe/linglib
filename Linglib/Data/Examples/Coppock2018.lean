@@ -17,7 +17,7 @@ namespace Coppock2018.Examples
 
 open Data.Examples
 
-def ex_1a : LinguisticExample :=
+def ex_1a : Datum :=
   { id := "coppock2018_1a"
     source := ⟨"coppock-2018", "(1a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_1a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "tycka"), ("complement", "discretionary")] }
 
-def ex_1b : LinguisticExample :=
+def ex_1b : Datum :=
   { id := "coppock2018_1b"
     source := ⟨"coppock-2018", "(1b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_1b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "tycka"), ("complement", "discretionary")] }
 
-def ex_1c : LinguisticExample :=
+def ex_1c : Datum :=
   { id := "coppock2018_1c"
     source := ⟨"coppock-2018", "(1c)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_1c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "tycka"), ("complement", "discretionary")] }
 
-def ex_1d : LinguisticExample :=
+def ex_1d : Datum :=
   { id := "coppock2018_1d"
     source := ⟨"coppock-2018", "(1d)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_1d : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "tycka"), ("complement", "discretionary")] }
 
-def ex_1e : LinguisticExample :=
+def ex_1e : Datum :=
   { id := "coppock2018_1e"
     source := ⟨"coppock-2018", "(1e)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_1e : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "tycka"), ("complement", "discretionary")] }
 
-def ex_2a_tro : LinguisticExample :=
+def ex_2a_tro : Datum :=
   { id := "coppock2018_2a_tro"
     source := ⟨"coppock-2018", "(2a)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_2a_tro : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "tro"), ("complement", "objective")] }
 
-def ex_2a_tycka : LinguisticExample :=
+def ex_2a_tycka : Datum :=
   { id := "coppock2018_2a_tycka"
     source := ⟨"coppock-2018", "(2a)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_2a_tycka : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "tycka"), ("complement", "objective")] }
 
-def ex_2b_tro : LinguisticExample :=
+def ex_2b_tro : Datum :=
   { id := "coppock2018_2b_tro"
     source := ⟨"coppock-2018", "(2b)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_2b_tro : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "tro"), ("complement", "objective")] }
 
-def ex_2b_tycka : LinguisticExample :=
+def ex_2b_tycka : Datum :=
   { id := "coppock2018_2b_tycka"
     source := ⟨"coppock-2018", "(2b)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_2b_tycka : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "tycka"), ("complement", "objective")] }
 
-def ex_2c_tro : LinguisticExample :=
+def ex_2c_tro : Datum :=
   { id := "coppock2018_2c_tro"
     source := ⟨"coppock-2018", "(2c)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_2c_tro : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "tro"), ("complement", "objective")] }
 
-def ex_2c_tycka : LinguisticExample :=
+def ex_2c_tycka : Datum :=
   { id := "coppock2018_2c_tycka"
     source := ⟨"coppock-2018", "(2c)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_2c_tycka : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "tycka"), ("complement", "objective")] }
 
-def ex_2d_tro : LinguisticExample :=
+def ex_2d_tro : Datum :=
   { id := "coppock2018_2d_tro"
     source := ⟨"coppock-2018", "(2d)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_2d_tro : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "tro"), ("complement", "objective")] }
 
-def ex_2d_tycka : LinguisticExample :=
+def ex_2d_tycka : Datum :=
   { id := "coppock2018_2d_tycka"
     source := ⟨"coppock-2018", "(2d)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_2d_tycka : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "tycka"), ("complement", "objective")] }
 
-def ex_2e_tro : LinguisticExample :=
+def ex_2e_tro : Datum :=
   { id := "coppock2018_2e_tro"
     source := ⟨"coppock-2018", "(2e)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_2e_tro : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "tro"), ("complement", "objective")] }
 
-def ex_2e_tycka : LinguisticExample :=
+def ex_2e_tycka : Datum :=
   { id := "coppock2018_2e_tycka"
     source := ⟨"coppock-2018", "(2e)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_2e_tycka : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "tycka"), ("complement", "objective")] }
 
-def ex_3 : LinguisticExample :=
+def ex_3 : Datum :=
   { id := "coppock2018_3"
     source := ⟨"coppock-2018", "(3)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_3 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "faultless disagreement")] }
 
-def ex_6 : LinguisticExample :=
+def ex_6 : Datum :=
   { id := "coppock2018_6"
     source := ⟨"coppock-2018", "(6)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex_6 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "indexical")] }
 
-def ex_7 : LinguisticExample :=
+def ex_7 : Datum :=
   { id := "coppock2018_7"
     source := ⟨"coppock-2018", "(7)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex_7 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "indexical")] }
 
-def ex_8 : LinguisticExample :=
+def ex_8 : Datum :=
   { id := "coppock2018_8"
     source := ⟨"huvenes-2012", ""⟩
     reportedIn := some ⟨"coppock-2018", "(8)"⟩
@@ -264,7 +264,7 @@ def ex_8 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "indexical")] }
 
-def ex_9a : LinguisticExample :=
+def ex_9a : Datum :=
   { id := "coppock2018_9a"
     source := ⟨"kennedy-willer-2016", ""⟩
     reportedIn := some ⟨"coppock-2018", "(9a)"⟩
@@ -277,7 +277,7 @@ def ex_9a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "consider"), ("complement", "objective")] }
 
-def ex_9b : LinguisticExample :=
+def ex_9b : Datum :=
   { id := "coppock2018_9b"
     source := ⟨"kennedy-willer-2016", ""⟩
     reportedIn := some ⟨"coppock-2018", "(9b)"⟩
@@ -290,7 +290,7 @@ def ex_9b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "consider"), ("complement", "discretionary")] }
 
-def ex_10 : LinguisticExample :=
+def ex_10 : Datum :=
   { id := "coppock2018_10"
     source := ⟨"coppock-2018", "(10)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex_10 : LinguisticExample :=
     readings := []
     paperFeatures := [("complement", "hybrid")] }
 
-def ex_11 : LinguisticExample :=
+def ex_11 : Datum :=
   { id := "coppock2018_11"
     source := ⟨"coppock-2018", "(11)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex_11 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "faultless disagreement")] }
 
-def ex_12 : LinguisticExample :=
+def ex_12 : Datum :=
   { id := "coppock2018_12"
     source := ⟨"coppock-2018", "(12)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex_12 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "disagreement")] }
 
-def ex_13a : LinguisticExample :=
+def ex_13a : Datum :=
   { id := "coppock2018_13a"
     source := ⟨"coppock-2018", "(13a)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex_13a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "tro"), ("complement", "objective")] }
 
-def ex_13b : LinguisticExample :=
+def ex_13b : Datum :=
   { id := "coppock2018_13b"
     source := ⟨"coppock-2018", "(13b)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex_13b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "tycka"), ("complement", "objective")] }
 
-def ex_15 : LinguisticExample :=
+def ex_15 : Datum :=
   { id := "coppock2018_15"
     source := ⟨"coppock-2018", "(15)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def ex_15 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "tycka"), ("complement", "hybrid"), ("commonGround", "objectiveGiven")] }
 
-def ex_16 : LinguisticExample :=
+def ex_16 : Datum :=
   { id := "coppock2018_16"
     source := ⟨"coppock-2018", "(16)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def ex_16 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "tycka"), ("complement", "hybrid"), ("commonGround", "objectiveGiven")] }
 
-def ex_17 : LinguisticExample :=
+def ex_17 : Datum :=
   { id := "coppock2018_17"
     source := ⟨"coppock-2018", "(17)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def ex_17 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "tycka"), ("complement", "hybrid"), ("commonGround", "objectiveGiven")] }
 
-def ex_20 : LinguisticExample :=
+def ex_20 : Datum :=
   { id := "coppock2018_20"
     source := ⟨"coppock-2018", "(20)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def ex_20 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "tycka")] }
 
-def ex_21 : LinguisticExample :=
+def ex_21 : Datum :=
   { id := "coppock2018_21"
     source := ⟨"saebo-2009", "p. 338"⟩
     reportedIn := some ⟨"coppock-2018", "(21)"⟩
@@ -420,7 +420,7 @@ def ex_21 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "find")] }
 
-def ex_22 : LinguisticExample :=
+def ex_22 : Datum :=
   { id := "coppock2018_22"
     source := ⟨"coppock-2018", "(22)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def ex_22 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "presupposed conjunct")] }
 
-def ex_23 : LinguisticExample :=
+def ex_23 : Datum :=
   { id := "coppock2018_23"
     source := ⟨"coppock-2018", "(23)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def ex_23 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "presupposed conjunct")] }
 
-def ex_24 : LinguisticExample :=
+def ex_24 : Datum :=
   { id := "coppock2018_24"
     source := ⟨"coppock-2018", "(24)"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def ex_24 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "tycka")] }
 
-def ex_25 : LinguisticExample :=
+def ex_25 : Datum :=
   { id := "coppock2018_25"
     source := ⟨"coppock-2018", "(25)"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def ex_25 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "tycka")] }
 
-def ex_26 : LinguisticExample :=
+def ex_26 : Datum :=
   { id := "coppock2018_26"
     source := ⟨"kennedy-willer-2016", ""⟩
     reportedIn := some ⟨"coppock-2018", "(26)"⟩
@@ -485,7 +485,7 @@ def ex_26 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "find")] }
 
-def ex_27 : LinguisticExample :=
+def ex_27 : Datum :=
   { id := "coppock2018_27"
     source := ⟨"kennedy-willer-2016", ""⟩
     reportedIn := some ⟨"coppock-2018", "(27)"⟩
@@ -498,7 +498,7 @@ def ex_27 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "find")] }
 
-def ex_28 : LinguisticExample :=
+def ex_28 : Datum :=
   { id := "coppock2018_28"
     source := ⟨"coppock-2018", "(28)"⟩
     reportedIn := none
@@ -511,7 +511,7 @@ def ex_28 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "tycka"), ("complement", "objective")] }
 
-def ex_29 : LinguisticExample :=
+def ex_29 : Datum :=
   { id := "coppock2018_29"
     source := ⟨"coppock-2018", "(29)"⟩
     reportedIn := none
@@ -524,7 +524,7 @@ def ex_29 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "tycka"), ("complement", "objective")] }
 
-def ex_33 : LinguisticExample :=
+def ex_33 : Datum :=
   { id := "coppock2018_33"
     source := ⟨"coppock-2018", "(33)"⟩
     reportedIn := none
@@ -537,7 +537,7 @@ def ex_33 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "tycka"), ("complement", "presupObjective"), ("commonGround", "objectiveGiven")] }
 
-def ex_34_tro : LinguisticExample :=
+def ex_34_tro : Datum :=
   { id := "coppock2018_34_tro"
     source := ⟨"coppock-2018", "(34)"⟩
     reportedIn := none
@@ -550,7 +550,7 @@ def ex_34_tro : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "tro"), ("complement", "presupDiscretionary"), ("commonGround", "discretionaryGiven")] }
 
-def ex_34_tycka : LinguisticExample :=
+def ex_34_tycka : Datum :=
   { id := "coppock2018_34_tycka"
     source := ⟨"coppock-2018", "(34)"⟩
     reportedIn := none
@@ -563,7 +563,7 @@ def ex_34_tycka : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "tycka"), ("complement", "presupDiscretionary"), ("commonGround", "discretionaryGiven")] }
 
-def ex_35_find : LinguisticExample :=
+def ex_35_find : Datum :=
   { id := "coppock2018_35_find"
     source := ⟨"kennedy-willer-2016", ""⟩
     reportedIn := some ⟨"coppock-2018", "(35)"⟩
@@ -576,7 +576,7 @@ def ex_35_find : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "find"), ("complement", "objective")] }
 
-def ex_36_find : LinguisticExample :=
+def ex_36_find : Datum :=
   { id := "coppock2018_36_find"
     source := ⟨"kennedy-willer-2016", ""⟩
     reportedIn := some ⟨"coppock-2018", "(36)"⟩
@@ -589,7 +589,7 @@ def ex_36_find : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "find"), ("complement", "discretionary")] }
 
-def ex_35_consider : LinguisticExample :=
+def ex_35_consider : Datum :=
   { id := "coppock2018_35_consider"
     source := ⟨"kennedy-willer-2016", ""⟩
     reportedIn := some ⟨"coppock-2018", "(35)"⟩
@@ -602,7 +602,7 @@ def ex_35_consider : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "consider"), ("complement", "objective")] }
 
-def ex_36_consider : LinguisticExample :=
+def ex_36_consider : Datum :=
   { id := "coppock2018_36_consider"
     source := ⟨"kennedy-willer-2016", ""⟩
     reportedIn := some ⟨"coppock-2018", "(36)"⟩
@@ -615,7 +615,7 @@ def ex_36_consider : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "consider"), ("complement", "discretionary")] }
 
-def ex_37_find : LinguisticExample :=
+def ex_37_find : Datum :=
   { id := "coppock2018_37_find"
     source := ⟨"kennedy-willer-2016", ""⟩
     reportedIn := some ⟨"coppock-2018", "(37)"⟩
@@ -628,7 +628,7 @@ def ex_37_find : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "find"), ("complement", "hybrid")] }
 
-def ex_37_consider : LinguisticExample :=
+def ex_37_consider : Datum :=
   { id := "coppock2018_37_consider"
     source := ⟨"kennedy-willer-2016", ""⟩
     reportedIn := some ⟨"coppock-2018", "(37)"⟩
@@ -641,7 +641,7 @@ def ex_37_consider : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "consider"), ("complement", "hybrid")] }
 
-def ex_38 : LinguisticExample :=
+def ex_38 : Datum :=
   { id := "coppock2018_38"
     source := ⟨"coppock-2018", "(38)"⟩
     reportedIn := none
@@ -654,7 +654,7 @@ def ex_38 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "tycka"), ("complement", "discretionary")] }
 
-def ex_43a : LinguisticExample :=
+def ex_43a : Datum :=
   { id := "coppock2018_43a"
     source := ⟨"pearson-2013", "(31)"⟩
     reportedIn := some ⟨"coppock-2018", "(43a)"⟩
@@ -667,7 +667,7 @@ def ex_43a : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "relevance of tastes")] }
 
-def ex_43b : LinguisticExample :=
+def ex_43b : Datum :=
   { id := "coppock2018_43b"
     source := ⟨"pearson-2013", "(32)"⟩
     reportedIn := some ⟨"coppock-2018", "(43b)"⟩
@@ -680,7 +680,7 @@ def ex_43b : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "relevance of tastes")] }
 
-def ex_44 : LinguisticExample :=
+def ex_44 : Datum :=
   { id := "coppock2018_44"
     source := ⟨"coppock-2018", "(44)"⟩
     reportedIn := none
@@ -693,7 +693,7 @@ def ex_44 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "think")] }
 
-def ex_45 : LinguisticExample :=
+def ex_45 : Datum :=
   { id := "coppock2018_45"
     source := ⟨"coppock-2018", "(45)"⟩
     reportedIn := none
@@ -706,7 +706,7 @@ def ex_45 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "think")] }
 
-def ex_46a : LinguisticExample :=
+def ex_46a : Datum :=
   { id := "coppock2018_46a"
     source := ⟨"coppock-2018", "(46a)"⟩
     reportedIn := none
@@ -719,7 +719,7 @@ def ex_46a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "tro"), ("complement", "objective")] }
 
-def ex_46b : LinguisticExample :=
+def ex_46b : Datum :=
   { id := "coppock2018_46b"
     source := ⟨"coppock-2018", "(46b)"⟩
     reportedIn := none
@@ -732,7 +732,7 @@ def ex_46b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "tycka")] }
 
-def fn14_1_tro : LinguisticExample :=
+def fn14_1_tro : Datum :=
   { id := "coppock2018_fn14_1_tro"
     source := ⟨"coppock-2018", "fn. 14, (1)"⟩
     reportedIn := none
@@ -745,7 +745,7 @@ def fn14_1_tro : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "tro")] }
 
-def fn14_2_tro : LinguisticExample :=
+def fn14_2_tro : Datum :=
   { id := "coppock2018_fn14_2_tro"
     source := ⟨"coppock-2018", "fn. 14, (2)"⟩
     reportedIn := none
@@ -758,7 +758,7 @@ def fn14_2_tro : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "tro")] }
 
-def fn14_1_tycka : LinguisticExample :=
+def fn14_1_tycka : Datum :=
   { id := "coppock2018_fn14_1_tycka"
     source := ⟨"coppock-2018", "fn. 14, (1)"⟩
     reportedIn := none
@@ -771,7 +771,7 @@ def fn14_1_tycka : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "tycka")] }
 
-def fn14_2_tycka : LinguisticExample :=
+def fn14_2_tycka : Datum :=
   { id := "coppock2018_fn14_2_tycka"
     source := ⟨"coppock-2018", "fn. 14, (2)"⟩
     reportedIn := none
@@ -784,6 +784,6 @@ def fn14_2_tycka : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "tycka")] }
 
-def all : List LinguisticExample := [ex_1a, ex_1b, ex_1c, ex_1d, ex_1e, ex_2a_tro, ex_2a_tycka, ex_2b_tro, ex_2b_tycka, ex_2c_tro, ex_2c_tycka, ex_2d_tro, ex_2d_tycka, ex_2e_tro, ex_2e_tycka, ex_3, ex_6, ex_7, ex_8, ex_9a, ex_9b, ex_10, ex_11, ex_12, ex_13a, ex_13b, ex_15, ex_16, ex_17, ex_20, ex_21, ex_22, ex_23, ex_24, ex_25, ex_26, ex_27, ex_28, ex_29, ex_33, ex_34_tro, ex_34_tycka, ex_35_find, ex_36_find, ex_35_consider, ex_36_consider, ex_37_find, ex_37_consider, ex_38, ex_43a, ex_43b, ex_44, ex_45, ex_46a, ex_46b, fn14_1_tro, fn14_2_tro, fn14_1_tycka, fn14_2_tycka]
+def all : List Datum := [ex_1a, ex_1b, ex_1c, ex_1d, ex_1e, ex_2a_tro, ex_2a_tycka, ex_2b_tro, ex_2b_tycka, ex_2c_tro, ex_2c_tycka, ex_2d_tro, ex_2d_tycka, ex_2e_tro, ex_2e_tycka, ex_3, ex_6, ex_7, ex_8, ex_9a, ex_9b, ex_10, ex_11, ex_12, ex_13a, ex_13b, ex_15, ex_16, ex_17, ex_20, ex_21, ex_22, ex_23, ex_24, ex_25, ex_26, ex_27, ex_28, ex_29, ex_33, ex_34_tro, ex_34_tycka, ex_35_find, ex_36_find, ex_35_consider, ex_36_consider, ex_37_find, ex_37_consider, ex_38, ex_43a, ex_43b, ex_44, ex_45, ex_46a, ex_46b, fn14_1_tro, fn14_2_tro, fn14_1_tycka, fn14_2_tycka]
 
 end Coppock2018.Examples

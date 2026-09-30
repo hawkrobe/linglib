@@ -637,7 +637,7 @@ def halfSteps? (cs : List Char) : Option ℕ := go cs [] where
     | c :: cs, acc => go cs (c :: acc)
 
 /-- The levels a row transcribes, in half steps. -/
-def levels? (e : LinguisticExample) : Option (List ℕ) :=
+def levels? (e : Datum) : Option (List ℕ) :=
   (e.feature? "levels").bind fun s ↦ (tokens s.toList).mapM halfSteps?
 
 /-- The direction of each step. -/
@@ -646,7 +646,7 @@ def signs (xs : List Int) : List Int := (xs.zip xs.tail).map fun p ↦ Int.sign 
 /-- The derivation of each levelled row's utterance from the fragments, under the steps its
 surface transcription shows. The two transcriptions of (13) are left out: their drop within
 /ꜜbeɽu/ is a half step of declination on a registerless syllable, not a register shift. -/
-def derivations : List (Registered Syllable × LinguisticExample) :=
+def derivations : List (Registered Syllable × Datum) :=
   [(derive [] [Drubea.ni3pl, Drubea.mwaPfv, Drubea.niiSay, Drubea.meThat], Examples.ex11),
     (derive [] [Drubea.taaOne, Drubea.diiSmall, Drubea.beeFish], Examples.ex19),
     (derive [finalRaising] [Drubea.taaOne, Drubea.beeFish, Drubea.pwiCooked], Examples.ex20),

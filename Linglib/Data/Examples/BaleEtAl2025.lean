@@ -17,7 +17,7 @@ namespace BaleEtAl2025.Examples
 
 open Data.Examples
 
-def ex_1 : LinguisticExample :=
+def ex_1 : Datum :=
   { id := "baleetal2025_1"
     source := ⟨"bale-etal-2025", "(1)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("quantifier", "some")] }
 
-def ex_2 : LinguisticExample :=
+def ex_2 : Datum :=
   { id := "baleetal2025_2"
     source := ⟨"bale-etal-2025", "(2)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("quantifier", "all")] }
 
-def fk_all : LinguisticExample :=
+def fk_all : Datum :=
   { id := "baleetal2025_fk_all"
     source := ⟨"bale-etal-2025", "Full-Knowledge+All trial"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def fk_all : LinguisticExample :=
     readings := []
     paperFeatures := [("quantifier", "all"), ("boxesSeen", "3"), ("expectedResponse", "yes")] }
 
-def fk_some : LinguisticExample :=
+def fk_some : Datum :=
   { id := "baleetal2025_fk_some"
     source := ⟨"bale-etal-2025", "Full-Knowledge+Some trial"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def fk_some : LinguisticExample :=
     readings := []
     paperFeatures := [("quantifier", "some"), ("boxesSeen", "3"), ("expectedResponse", "no")] }
 
-def pk_some : LinguisticExample :=
+def pk_some : Datum :=
   { id := "baleetal2025_pk_some"
     source := ⟨"bale-etal-2025", "Partial-Knowledge+Some trial (4)"⟩
     reportedIn := none
@@ -82,6 +82,6 @@ def pk_some : LinguisticExample :=
     readings := []
     paperFeatures := [("quantifier", "some"), ("boxesSeen", "2"), ("expectedResponse", "dontKnow")] }
 
-def all : List LinguisticExample := [ex_1, ex_2, fk_all, fk_some, pk_some]
+def all : List Datum := [ex_1, ex_2, fk_all, fk_some, pk_some]
 
 end BaleEtAl2025.Examples

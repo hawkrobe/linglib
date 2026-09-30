@@ -17,7 +17,7 @@ namespace TheilerRoelofsenAloni2018.Examples
 
 open Data.Examples
 
-def theileretal2018_1a : LinguisticExample :=
+def theileretal2018_1a : Datum :=
   { id := "theileretal2018_1a"
     source := ⟨"theiler-etal-2018", "(1a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def theileretal2018_1a : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def theileretal2018_1b : LinguisticExample :=
+def theileretal2018_1b : Datum :=
   { id := "theileretal2018_1b"
     source := ⟨"theiler-etal-2018", "(1b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def theileretal2018_1b : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def theileretal2018_12 : LinguisticExample :=
+def theileretal2018_12 : Datum :=
   { id := "theileretal2018_12"
     source := ⟨"theiler-etal-2018", "(12)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def theileretal2018_12 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def theileretal2018_13a : LinguisticExample :=
+def theileretal2018_13a : Datum :=
   { id := "theileretal2018_13a"
     source := ⟨"theiler-etal-2018", "(13a), (24)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def theileretal2018_13a : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def theileretal2018_13b : LinguisticExample :=
+def theileretal2018_13b : Datum :=
   { id := "theileretal2018_13b"
     source := ⟨"theiler-etal-2018", "(13b), (25)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def theileretal2018_13b : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def theileretal2018_15 : LinguisticExample :=
+def theileretal2018_15 : Datum :=
   { id := "theileretal2018_15"
     source := ⟨"theiler-etal-2018", "(15), (53)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def theileretal2018_15 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def theileretal2018_17 : LinguisticExample :=
+def theileretal2018_17 : Datum :=
   { id := "theileretal2018_17"
     source := ⟨"theiler-etal-2018", "(17)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def theileretal2018_17 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def theileretal2018_18 : LinguisticExample :=
+def theileretal2018_18 : Datum :=
   { id := "theileretal2018_18"
     source := ⟨"theiler-etal-2018", "(18)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def theileretal2018_18 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def theileretal2018_26 : LinguisticExample :=
+def theileretal2018_26 : Datum :=
   { id := "theileretal2018_26"
     source := ⟨"theiler-etal-2018", "(26)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def theileretal2018_26 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def theileretal2018_29 : LinguisticExample :=
+def theileretal2018_29 : Datum :=
   { id := "theileretal2018_29"
     source := ⟨"theiler-etal-2018", "(29)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def theileretal2018_29 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def theileretal2018_31 : LinguisticExample :=
+def theileretal2018_31 : Datum :=
   { id := "theileretal2018_31"
     source := ⟨"theiler-etal-2018", "(31)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def theileretal2018_31 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def theileretal2018_32 : LinguisticExample :=
+def theileretal2018_32 : Datum :=
   { id := "theileretal2018_32"
     source := ⟨"theiler-etal-2018", "(32)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def theileretal2018_32 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def theileretal2018_37 : LinguisticExample :=
+def theileretal2018_37 : Datum :=
   { id := "theileretal2018_37"
     source := ⟨"theiler-etal-2018", "(37)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def theileretal2018_37 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def theileretal2018_39 : LinguisticExample :=
+def theileretal2018_39 : Datum :=
   { id := "theileretal2018_39"
     source := ⟨"theiler-etal-2018", "(39)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def theileretal2018_39 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def theileretal2018_40 : LinguisticExample :=
+def theileretal2018_40 : Datum :=
   { id := "theileretal2018_40"
     source := ⟨"theiler-etal-2018", "(40), (51)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def theileretal2018_40 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def theileretal2018_41 : LinguisticExample :=
+def theileretal2018_41 : Datum :=
   { id := "theileretal2018_41"
     source := ⟨"theiler-etal-2018", "(41)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def theileretal2018_41 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def theileretal2018_42b : LinguisticExample :=
+def theileretal2018_42b : Datum :=
   { id := "theileretal2018_42b"
     source := ⟨"theiler-etal-2018", "(42b), (56)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def theileretal2018_42b : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def theileretal2018_45 : LinguisticExample :=
+def theileretal2018_45 : Datum :=
   { id := "theileretal2018_45"
     source := ⟨"theiler-etal-2018", "(45)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def theileretal2018_45 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def theileretal2018_46 : LinguisticExample :=
+def theileretal2018_46 : Datum :=
   { id := "theileretal2018_46"
     source := ⟨"theiler-etal-2018", "(46), (52)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def theileretal2018_46 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def theileretal2018_57 : LinguisticExample :=
+def theileretal2018_57 : Datum :=
   { id := "theileretal2018_57"
     source := ⟨"theiler-etal-2018", "(57)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def theileretal2018_57 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def theileretal2018_62 : LinguisticExample :=
+def theileretal2018_62 : Datum :=
   { id := "theileretal2018_62"
     source := ⟨"theiler-etal-2018", "(62)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def theileretal2018_62 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def theileretal2018_67 : LinguisticExample :=
+def theileretal2018_67 : Datum :=
   { id := "theileretal2018_67"
     source := ⟨"theiler-etal-2018", "(67)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def theileretal2018_67 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def theileretal2018_69a : LinguisticExample :=
+def theileretal2018_69a : Datum :=
   { id := "theileretal2018_69a"
     source := ⟨"theiler-etal-2018", "(69a)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def theileretal2018_69a : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def theileretal2018_69b : LinguisticExample :=
+def theileretal2018_69b : Datum :=
   { id := "theileretal2018_69b"
     source := ⟨"theiler-etal-2018", "(69b)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def theileretal2018_69b : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def theileretal2018_74 : LinguisticExample :=
+def theileretal2018_74 : Datum :=
   { id := "theileretal2018_74"
     source := ⟨"theiler-etal-2018", "(74)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def theileretal2018_74 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def theileretal2018_77 : LinguisticExample :=
+def theileretal2018_77 : Datum :=
   { id := "theileretal2018_77"
     source := ⟨"theiler-etal-2018", "(77)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def theileretal2018_77 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def theileretal2018_79 : LinguisticExample :=
+def theileretal2018_79 : Datum :=
   { id := "theileretal2018_79"
     source := ⟨"theiler-etal-2018", "(79)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def theileretal2018_79 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def theileretal2018_84 : LinguisticExample :=
+def theileretal2018_84 : Datum :=
   { id := "theileretal2018_84"
     source := ⟨"theiler-etal-2018", "(84)"⟩
     reportedIn := none
@@ -381,6 +381,6 @@ def theileretal2018_84 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def all : List LinguisticExample := [theileretal2018_1a, theileretal2018_1b, theileretal2018_12, theileretal2018_13a, theileretal2018_13b, theileretal2018_15, theileretal2018_17, theileretal2018_18, theileretal2018_26, theileretal2018_29, theileretal2018_31, theileretal2018_32, theileretal2018_37, theileretal2018_39, theileretal2018_40, theileretal2018_41, theileretal2018_42b, theileretal2018_45, theileretal2018_46, theileretal2018_57, theileretal2018_62, theileretal2018_67, theileretal2018_69a, theileretal2018_69b, theileretal2018_74, theileretal2018_77, theileretal2018_79, theileretal2018_84]
+def all : List Datum := [theileretal2018_1a, theileretal2018_1b, theileretal2018_12, theileretal2018_13a, theileretal2018_13b, theileretal2018_15, theileretal2018_17, theileretal2018_18, theileretal2018_26, theileretal2018_29, theileretal2018_31, theileretal2018_32, theileretal2018_37, theileretal2018_39, theileretal2018_40, theileretal2018_41, theileretal2018_42b, theileretal2018_45, theileretal2018_46, theileretal2018_57, theileretal2018_62, theileretal2018_67, theileretal2018_69a, theileretal2018_69b, theileretal2018_74, theileretal2018_77, theileretal2018_79, theileretal2018_84]
 
 end TheilerRoelofsenAloni2018.Examples

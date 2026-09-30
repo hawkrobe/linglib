@@ -17,7 +17,7 @@ namespace AlonsoOvalleMoghiseh2025b.Examples
 
 open Data.Examples
 
-def ex_1 : LinguisticExample :=
+def ex_1 : Datum :=
   { id := "alonsoovallemoghiseh2025b_1"
     source := ⟨"alonso-ovalle-moghiseh-2025b", "(1)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_1 : LinguisticExample :=
     readings := [("singular answer: This one", .acceptable), ("plural answer: This one and that one", .unacceptable)]
     paperFeatures := [("type", "SCI"), ("language", "English")] }
 
-def ex_2 : LinguisticExample :=
+def ex_2 : Datum :=
   { id := "alonsoovallemoghiseh2025b_2"
     source := ⟨"alonso-ovalle-moghiseh-2025b", "(2)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_2 : LinguisticExample :=
     readings := [("singular answer: This thing", .acceptable), ("plural answer: This thing and that thing", .acceptable)]
     paperFeatures := [("type", "BI"), ("language", "English")] }
 
-def ex_7 : LinguisticExample :=
+def ex_7 : Datum :=
   { id := "alonsoovallemoghiseh2025b_7"
     source := ⟨"alonso-ovalle-moghiseh-2025b", "(7)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_7 : LinguisticExample :=
     readings := [("singular answer: This one", .unacceptable), ("plural answer: This one and that one", .acceptable)]
     paperFeatures := [("type", "PCI"), ("language", "English")] }
 
-def ex_20 : LinguisticExample :=
+def ex_20 : Datum :=
   { id := "alonsoovallemoghiseh2025b_20"
     source := ⟨"alonso-ovalle-moghiseh-2025b", "(20)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_20 : LinguisticExample :=
     readings := [("singular answer: This thing", .acceptable), ("plural answer: This thing and that thing", .acceptable)]
     paperFeatures := [("type", "SBI"), ("ro", "no")] }
 
-def ex_21 : LinguisticExample :=
+def ex_21 : Datum :=
   { id := "alonsoovallemoghiseh2025b_21"
     source := ⟨"alonso-ovalle-moghiseh-2025b", "(21)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_21 : LinguisticExample :=
     readings := [("singular answer: This thing", .unacceptable), ("plural answer: This thing and that thing", .acceptable)]
     paperFeatures := [("type", "PBI"), ("ro", "no")] }
 
-def ex_16 : LinguisticExample :=
+def ex_16 : Datum :=
   { id := "alonsoovallemoghiseh2025b_16"
     source := ⟨"alonso-ovalle-moghiseh-2025b", "(16)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_16 : LinguisticExample :=
     readings := [("singular answer: A Juan", .acceptable), ("plural answer: A Juan y a Pedro", .acceptable)]
     paperFeatures := [("type", "SBI"), ("language", "Spanish")] }
 
-def ex_17 : LinguisticExample :=
+def ex_17 : Datum :=
   { id := "alonsoovallemoghiseh2025b_17"
     source := ⟨"alonso-ovalle-moghiseh-2025b", "(17)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_17 : LinguisticExample :=
     readings := [("singular answer: A Juan", .unacceptable), ("plural answer: A Juan y a Pedro", .acceptable)]
     paperFeatures := [("type", "PBI"), ("language", "Spanish")] }
 
-def ex_22 : LinguisticExample :=
+def ex_22 : Datum :=
   { id := "alonsoovallemoghiseh2025b_22"
     source := ⟨"alonso-ovalle-moghiseh-2025b", "(22)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_22 : LinguisticExample :=
     readings := [("singular answer: A Juan", .acceptable), ("plural answer: A Juan y a Pedro", .unacceptable)]
     paperFeatures := [("type", "SCI"), ("language", "Spanish")] }
 
-def ex_23 : LinguisticExample :=
+def ex_23 : Datum :=
   { id := "alonsoovallemoghiseh2025b_23"
     source := ⟨"alonso-ovalle-moghiseh-2025b", "(23)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_23 : LinguisticExample :=
     readings := [("singular answer: This book", .acceptable), ("plural answer: This book and that book", .acceptable)]
     paperFeatures := [("type", "SCI"), ("ro", "no")] }
 
-def ex_24 : LinguisticExample :=
+def ex_24 : Datum :=
   { id := "alonsoovallemoghiseh2025b_24"
     source := ⟨"alonso-ovalle-moghiseh-2025b", "(24)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_24 : LinguisticExample :=
     readings := [("singular answer: A Juan", .unacceptable), ("plural answer: A Juan y a Pedro", .acceptable)]
     paperFeatures := [("type", "PCI"), ("language", "Spanish")] }
 
-def ex_25 : LinguisticExample :=
+def ex_25 : Datum :=
   { id := "alonsoovallemoghiseh2025b_25"
     source := ⟨"alonso-ovalle-moghiseh-2025b", "(25)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_25 : LinguisticExample :=
     readings := [("singular answer: This book", .unacceptable), ("plural answer: This book and that book", .acceptable)]
     paperFeatures := [("type", "PCI"), ("ro", "no")] }
 
-def ex_26 : LinguisticExample :=
+def ex_26 : Datum :=
   { id := "alonsoovallemoghiseh2025b_26"
     source := ⟨"alonso-ovalle-moghiseh-2025b", "(26)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_26 : LinguisticExample :=
     readings := [("singular answer: This thing", .acceptable), ("plural answer: This thing and that thing", .acceptable)]
     paperFeatures := [("type", "SBI"), ("ro", "yes")] }
 
-def ex_27 : LinguisticExample :=
+def ex_27 : Datum :=
   { id := "alonsoovallemoghiseh2025b_27"
     source := ⟨"alonso-ovalle-moghiseh-2025b", "(27)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_27 : LinguisticExample :=
     readings := [("singular answer: This book", .acceptable), ("plural answer: This book and that book", .unacceptable)]
     paperFeatures := [("type", "SCI"), ("ro", "yes")] }
 
-def ex_28 : LinguisticExample :=
+def ex_28 : Datum :=
   { id := "alonsoovallemoghiseh2025b_28"
     source := ⟨"alonso-ovalle-moghiseh-2025b", "(28)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_28 : LinguisticExample :=
     readings := [("singular answer: This book", .unacceptable), ("plural answer: This book and that book", .acceptable)]
     paperFeatures := [("type", "PCI"), ("ro", "yes")] }
 
-def ex_30 : LinguisticExample :=
+def ex_30 : Datum :=
   { id := "alonsoovallemoghiseh2025b_30"
     source := ⟨"alonso-ovalle-moghiseh-2025b", "(30)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_30 : LinguisticExample :=
     readings := [("free choice answer: This thing or that thing — either one", .acceptable)]
     paperFeatures := [("type", "SBI"), ("ro", "no"), ("modal", "must")] }
 
-def ex_31 : LinguisticExample :=
+def ex_31 : Datum :=
   { id := "alonsoovallemoghiseh2025b_31"
     source := ⟨"alonso-ovalle-moghiseh-2025b", "(31)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_31 : LinguisticExample :=
     readings := [("free choice answer: This book or that book — either book", .acceptable)]
     paperFeatures := [("type", "SCI"), ("ro", "no"), ("modal", "must")] }
 
-def ex_47 : LinguisticExample :=
+def ex_47 : Datum :=
   { id := "alonsoovallemoghiseh2025b_47"
     source := ⟨"alonso-ovalle-moghiseh-2025b", "(47)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex_47 : LinguisticExample :=
     readings := []
     paperFeatures := [("ro", "yes"), ("inference", "specificity")] }
 
-def ex_56 : LinguisticExample :=
+def ex_56 : Datum :=
   { id := "alonsoovallemoghiseh2025b_56"
     source := ⟨"alonso-ovalle-moghiseh-2025b", "(56)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex_56 : LinguisticExample :=
     readings := [("collective answer: This and that", .acceptable)]
     paperFeatures := [("type", "SBI"), ("predicate", "collective")] }
 
-def ex_57 : LinguisticExample :=
+def ex_57 : Datum :=
   { id := "alonsoovallemoghiseh2025b_57"
     source := ⟨"alonso-ovalle-moghiseh-2025b", "(57)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex_57 : LinguisticExample :=
     readings := []
     paperFeatures := [("type", "SCI"), ("predicate", "collective")] }
 
-def ex_60 : LinguisticExample :=
+def ex_60 : Datum :=
   { id := "alonsoovallemoghiseh2025b_60"
     source := ⟨"alonso-ovalle-moghiseh-2025b", "(60)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex_60 : LinguisticExample :=
     readings := []
     paperFeatures := [("type", "SBI"), ("ro", "no"), ("modal", "must"), ("scenario", "freeChoice59"), ("verdict", "true")] }
 
-def ex_61 : LinguisticExample :=
+def ex_61 : Datum :=
   { id := "alonsoovallemoghiseh2025b_61"
     source := ⟨"alonso-ovalle-moghiseh-2025b", "(61)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex_61 : LinguisticExample :=
     readings := []
     paperFeatures := [("type", "SCI"), ("ro", "no"), ("modal", "must"), ("scenario", "freeChoice59"), ("verdict", "true")] }
 
-def ex_62 : LinguisticExample :=
+def ex_62 : Datum :=
   { id := "alonsoovallemoghiseh2025b_62"
     source := ⟨"alonso-ovalle-moghiseh-2025b", "(62)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex_62 : LinguisticExample :=
     readings := []
     paperFeatures := [("type", "SBI"), ("ro", "yes"), ("modal", "must"), ("scenario", "freeChoice59"), ("verdict", "false")] }
 
-def ex_63 : LinguisticExample :=
+def ex_63 : Datum :=
   { id := "alonsoovallemoghiseh2025b_63"
     source := ⟨"alonso-ovalle-moghiseh-2025b", "(63)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex_63 : LinguisticExample :=
     readings := []
     paperFeatures := [("type", "SCI"), ("ro", "yes"), ("modal", "must"), ("scenario", "freeChoice59"), ("verdict", "false")] }
 
-def ex_64 : LinguisticExample :=
+def ex_64 : Datum :=
   { id := "alonsoovallemoghiseh2025b_64"
     source := ⟨"alonso-ovalle-moghiseh-2025b", "(64)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex_64 : LinguisticExample :=
     readings := [("free choice answer: This thing or that thing", .acceptable)]
     paperFeatures := [("type", "SBI"), ("ro", "yes"), ("modal", "must")] }
 
-def ex_65 : LinguisticExample :=
+def ex_65 : Datum :=
   { id := "alonsoovallemoghiseh2025b_65"
     source := ⟨"alonso-ovalle-moghiseh-2025b", "(65)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex_65 : LinguisticExample :=
     readings := [("free choice answer: This book or that book", .acceptable)]
     paperFeatures := [("type", "SCI"), ("ro", "yes"), ("modal", "must")] }
 
-def ex_66 : LinguisticExample :=
+def ex_66 : Datum :=
   { id := "alonsoovallemoghiseh2025b_66"
     source := ⟨"alonso-ovalle-moghiseh-2025b", "(66)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex_66 : LinguisticExample :=
     readings := [("Maybe this thing", .acceptable), ("Maybe this thing and that thing", .acceptable)]
     paperFeatures := [("type", "SBI"), ("use", "epistemic indefinite")] }
 
-def ex_67 : LinguisticExample :=
+def ex_67 : Datum :=
   { id := "alonsoovallemoghiseh2025b_67"
     source := ⟨"alonso-ovalle-moghiseh-2025b", "(67)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def ex_67 : LinguisticExample :=
     readings := [("Maybe this book", .acceptable), ("Maybe this book and that book", .unacceptable)]
     paperFeatures := [("type", "SCI"), ("use", "epistemic indefinite")] }
 
-def ex_69 : LinguisticExample :=
+def ex_69 : Datum :=
   { id := "alonsoovallemoghiseh2025b_69"
     source := ⟨"alonso-ovalle-moghiseh-2025b", "(69)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def ex_69 : LinguisticExample :=
     readings := []
     paperFeatures := [("type", "which CI"), ("ro", "yes"), ("property", "D-linked")] }
 
-def ex_70a : LinguisticExample :=
+def ex_70a : Datum :=
   { id := "alonsoovallemoghiseh2025b_70a"
     source := ⟨"alonso-ovalle-moghiseh-2025b", "(70a)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def ex_70a : LinguisticExample :=
     readings := []
     paperFeatures := [("type", "which CI"), ("ro", "no")] }
 
-def ex_70b : LinguisticExample :=
+def ex_70b : Datum :=
   { id := "alonsoovallemoghiseh2025b_70b"
     source := ⟨"alonso-ovalle-moghiseh-2025b", "(70b)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def ex_70b : LinguisticExample :=
     readings := [("singular answer: This book", .acceptable), ("plural answer: This book and that book", .unacceptable)]
     paperFeatures := [("type", "which CI"), ("ro", "yes")] }
 
-def ex_73 : LinguisticExample :=
+def ex_73 : Datum :=
   { id := "alonsoovallemoghiseh2025b_73"
     source := ⟨"alonso-ovalle-moghiseh-2025b", "(73)"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def ex_73 : LinguisticExample :=
     readings := []
     paperFeatures := [("type", "which CI"), ("ro", "yes"), ("modal", "must"), ("inference", "free choice")] }
 
-def ex_74 : LinguisticExample :=
+def ex_74 : Datum :=
   { id := "alonsoovallemoghiseh2025b_74"
     source := ⟨"alonso-ovalle-moghiseh-2025b", "(74)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def ex_74 : LinguisticExample :=
     readings := []
     paperFeatures := [("type", "which CI"), ("language", "English"), ("modal", "must")] }
 
-def ex_75 : LinguisticExample :=
+def ex_75 : Datum :=
   { id := "alonsoovallemoghiseh2025b_75"
     source := ⟨"alonso-ovalle-moghiseh-2025b", "(75)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def ex_75 : LinguisticExample :=
     readings := []
     paperFeatures := [("type", "which CI"), ("ro", "yes"), ("modal", "must")] }
 
-def fn2 : LinguisticExample :=
+def fn2 : Datum :=
   { id := "alonsoovallemoghiseh2025b_fn2"
     source := ⟨"alonso-ovalle-moghiseh-2025b", "fn. 2 (i)"⟩
     reportedIn := none
@@ -459,6 +459,6 @@ def fn2 : LinguisticExample :=
     readings := []
     paperFeatures := [("type", "SBI"), ("agreement", "singular")] }
 
-def all : List LinguisticExample := [ex_1, ex_2, ex_7, ex_20, ex_21, ex_16, ex_17, ex_22, ex_23, ex_24, ex_25, ex_26, ex_27, ex_28, ex_30, ex_31, ex_47, ex_56, ex_57, ex_60, ex_61, ex_62, ex_63, ex_64, ex_65, ex_66, ex_67, ex_69, ex_70a, ex_70b, ex_73, ex_74, ex_75, fn2]
+def all : List Datum := [ex_1, ex_2, ex_7, ex_20, ex_21, ex_16, ex_17, ex_22, ex_23, ex_24, ex_25, ex_26, ex_27, ex_28, ex_30, ex_31, ex_47, ex_56, ex_57, ex_60, ex_61, ex_62, ex_63, ex_64, ex_65, ex_66, ex_67, ex_69, ex_70a, ex_70b, ex_73, ex_74, ex_75, fn2]
 
 end AlonsoOvalleMoghiseh2025b.Examples

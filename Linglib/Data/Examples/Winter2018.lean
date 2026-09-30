@@ -17,7 +17,7 @@ namespace Winter2018.Examples
 
 open Data.Examples
 
-def ex_1 : LinguisticExample :=
+def ex_1 : Datum :=
   { id := "winter2018_1"
     source := ⟨"winter-2018", "(1a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "date"), ("property", "symmetric")] }
 
-def ex_2 : LinguisticExample :=
+def ex_2 : Datum :=
   { id := "winter2018_2"
     source := ⟨"winter-2018", "(2a)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "date"), ("alternation", "plain")] }
 
-def ex_3 : LinguisticExample :=
+def ex_3 : Datum :=
   { id := "winter2018_3"
     source := ⟨"winter-2018", "(3)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_3 : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "hug"), ("alternation", "non-plain")] }
 
-def ex_4 : LinguisticExample :=
+def ex_4 : Datum :=
   { id := "winter2018_4"
     source := ⟨"winter-2018", "(8)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_4 : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "hug"), ("inference", "does not entail Sue and Dan hugged")] }
 
-def ex_5 : LinguisticExample :=
+def ex_5 : Datum :=
   { id := "winter2018_5"
     source := ⟨"winter-2018", "(25a)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_5 : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "agree"), ("inference", "one shared opinion")] }
 
-def ex_6 : LinguisticExample :=
+def ex_6 : Datum :=
   { id := "winter2018_6"
     source := ⟨"winter-2018", "(25b)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_6 : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "agree"), ("inference", "possibly three opinions")] }
 
-def ex_7 : LinguisticExample :=
+def ex_7 : Datum :=
   { id := "winter2018_7"
     source := ⟨"winter-2018", "(33)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_7 : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "embrace"), ("property", "non-symmetric")] }
 
-def ex_8 : LinguisticExample :=
+def ex_8 : Datum :=
   { id := "winter2018_8"
     source := ⟨"winter-2018", "(37)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_8 : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "hug"), ("scenario", "(39)"), ("truth", "does not follow")] }
 
-def ex_9 : LinguisticExample :=
+def ex_9 : Datum :=
   { id := "winter2018_9"
     source := ⟨"winter-2018", "(38)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_9 : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "hug"), ("scenario", "(39)"), ("truth", "true")] }
 
-def ex_10 : LinguisticExample :=
+def ex_10 : Datum :=
   { id := "winter2018_10"
     source := ⟨"winter-2018", "(44)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_10 : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "hug"), ("inference", "entails Sue and Dan hugged")] }
 
-def ex_11 : LinguisticExample :=
+def ex_11 : Datum :=
   { id := "winter2018_11"
     source := ⟨"winter-2018", "(45)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_11 : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "break up"), ("inference", "does not entail Sue broke up with Dan")] }
 
-def ex_12 : LinguisticExample :=
+def ex_12 : Datum :=
   { id := "winter2018_12"
     source := ⟨"winter-2018", "(46)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_12 : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "break up"), ("inference", "entails Sue and Dan broke up")] }
 
-def ex_13 : LinguisticExample :=
+def ex_13 : Datum :=
   { id := "winter2018_13"
     source := ⟨"winter-2018", "(47)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_13 : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "makir"), ("inference", "does not entail (48)")] }
 
-def ex_14 : LinguisticExample :=
+def ex_14 : Datum :=
   { id := "winter2018_14"
     source := ⟨"winter-2018", "(48)"⟩
     reportedIn := none
@@ -199,6 +199,6 @@ def ex_14 : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "makir"), ("reading", "collective only")] }
 
-def all : List LinguisticExample := [ex_1, ex_2, ex_3, ex_4, ex_5, ex_6, ex_7, ex_8, ex_9, ex_10, ex_11, ex_12, ex_13, ex_14]
+def all : List Datum := [ex_1, ex_2, ex_3, ex_4, ex_5, ex_6, ex_7, ex_8, ex_9, ex_10, ex_11, ex_12, ex_13, ex_14]
 
 end Winter2018.Examples

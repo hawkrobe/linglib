@@ -116,7 +116,7 @@ inductive Diagnostic where
 
 /-- The judgment a row tests: of the reading it names under `reading`, as (72b), which is
 acceptable on its affirmative reading and tests the negative one; otherwise of the sentence. -/
-def testedJudgment (ex : LinguisticExample) : Judgment :=
+def testedJudgment (ex : Datum) : Judgment :=
   ((ex.feature? "reading").bind (ex.readings.lookup ·)).getD ex.judgment
 
 /-- A judged sentence, or reading, with the features the analysis reads off it. -/
@@ -130,7 +130,7 @@ structure Row where
   judgment : Judgment
   deriving DecidableEq, Repr
 
-def Row.ofExample (ex : LinguisticExample) : Option Row := do
+def Row.ofDatum (ex : Datum) : Option Row := do
   let construction ← ex.parse? "construction"
     [("Sneg", Construction.sneg), ("NRQ", .nrq), ("ENE", .ene), ("embedded focus", .embeddedFocus)]
   pure ⟨construction,
@@ -147,7 +147,7 @@ def Row.ofExample (ex : LinguisticExample) : Option Row := do
     ex.parse? "focus" [("DP", Cat.D), ("TP", .T)], testedJudgment ex⟩
 
 /-- The judged sentences of sections 2 to 4. -/
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 /-! ### Section 3: Snegs are neither rhetorical questions nor exclamatives -/
 

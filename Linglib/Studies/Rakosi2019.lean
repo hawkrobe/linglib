@@ -55,18 +55,18 @@ inductive Anaphor
   deriving DecidableEq
 
 /-- The anaphor a row records. -/
-def anaphor? (e : LinguisticExample) : Option Anaphor :=
+def anaphor? (e : Datum) : Option Anaphor :=
   e.parse? "anaphor" [("reciprocal", .reciprocal), ("reflexiveSg", .reflexiveSg),
     ("reflexivePl", .reflexivePl), ("inclusiveReflexive", .inclusiveReflexive)]
 
 /-- The verb agrees in the plural. -/
-def VerbPlural (e : LinguisticExample) : Prop := e.feature? "verb" = some "pl"
+def VerbPlural (e : Datum) : Prop := e.feature? "verb" = some "pl"
 
 /-- The antecedent denotes a plurality. -/
-def SemanticPlural (e : LinguisticExample) : Prop := e.feature? "semanticPlural" = some "yes"
+def SemanticPlural (e : Datum) : Prop := e.feature? "semanticPlural" = some "yes"
 
-instance (e : LinguisticExample) : Decidable (VerbPlural e) := by unfold VerbPlural; infer_instance
-instance (e : LinguisticExample) : Decidable (SemanticPlural e) := by
+instance (e : Datum) : Decidable (VerbPlural e) := by unfold VerbPlural; infer_instance
+instance (e : Datum) : Decidable (SemanticPlural e) := by
   unfold SemanticPlural; infer_instance
 
 /-! ### The asymmetry -/

@@ -17,7 +17,7 @@ namespace Adger2025.Examples
 
 open Data.Examples
 
-def ch433 : LinguisticExample :=
+def ch433 : Datum :=
   { id := "adger2025_ch433"
     source := ⟨"adger-2025", "ch. 4 (33)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ch433 : LinguisticExample :=
     readings := []
     paperFeatures := [("configuration", "lowering"), ("mover", "who"), ("target", "embedded C")] }
 
-def ch436a : LinguisticExample :=
+def ch436a : Datum :=
   { id := "adger2025_ch436a"
     source := ⟨"adger-2025", "ch. 4 (36a)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ch436a : LinguisticExample :=
     readings := []
     paperFeatures := [("configuration", "subextraction from PP")] }
 
-def ch436b : LinguisticExample :=
+def ch436b : Datum :=
   { id := "adger2025_ch436b"
     source := ⟨"adger-2025", "ch. 4 (36b)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ch436b : LinguisticExample :=
     readings := []
     paperFeatures := [("configuration", "subextraction from PP")] }
 
-def ch437a : LinguisticExample :=
+def ch437a : Datum :=
   { id := "adger2025_ch437a"
     source := ⟨"adger-2025", "ch. 4 (37a)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ch437a : LinguisticExample :=
     readings := []
     paperFeatures := [("configuration", "extraction from clausal complement")] }
 
-def ch437b : LinguisticExample :=
+def ch437b : Datum :=
   { id := "adger2025_ch437b"
     source := ⟨"adger-2025", "ch. 4 (37b)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ch437b : LinguisticExample :=
     readings := []
     paperFeatures := [("configuration", "extraction from clausal complement")] }
 
-def ch443 : LinguisticExample :=
+def ch443 : Datum :=
   { id := "adger2025_ch443"
     source := ⟨"adger-2025", "ch. 4 (43)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ch443 : LinguisticExample :=
     readings := []
     paperFeatures := [("configuration", "successive-cyclic extraction"), ("mover", "who"), ("intermediate", "embedded C[uWh]")] }
 
-def ch448a : LinguisticExample :=
+def ch448a : Datum :=
   { id := "adger2025_ch448a"
     source := ⟨"adger-2025", "ch. 4 (48a)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ch448a : LinguisticExample :=
     readings := []
     paperFeatures := [("complementizer", "gum")] }
 
-def ch448b : LinguisticExample :=
+def ch448b : Datum :=
   { id := "adger2025_ch448b"
     source := ⟨"adger-2025", "ch. 4 (48b)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ch448b : LinguisticExample :=
     readings := []
     paperFeatures := [("complementizer", "a (relative) at both clauses")] }
 
-def ch448c : LinguisticExample :=
+def ch448c : Datum :=
   { id := "adger2025_ch448c"
     source := ⟨"adger-2025", "ch. 4 (48c)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ch448c : LinguisticExample :=
     readings := []
     paperFeatures := [("complementizer", "gum in the extraction path")] }
 
-def ch454 : LinguisticExample :=
+def ch454 : Datum :=
   { id := "adger2025_ch454"
     source := ⟨"adger-2025", "ch. 4 (54)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ch454 : LinguisticExample :=
     readings := []
     paperFeatures := [("configuration", "clausal pied-piping")] }
 
-def ch630 : LinguisticExample :=
+def ch630 : Datum :=
   { id := "adger2025_ch630"
     source := ⟨"adger-2025", "ch. 6 (30)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ch630 : LinguisticExample :=
     readings := []
     paperFeatures := [("nominal", "locative PP as matching relative")] }
 
-def ch631 : LinguisticExample :=
+def ch631 : Datum :=
   { id := "adger2025_ch631"
     source := ⟨"adger-2025", "ch. 6 (31)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ch631 : LinguisticExample :=
     readings := []
     paperFeatures := [("nominal", "indefinite"), ("D 2-part", "free")] }
 
-def ch634 : LinguisticExample :=
+def ch634 : Datum :=
   { id := "adger2025_ch634"
     source := ⟨"adger-2025", "ch. 6 (34)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ch634 : LinguisticExample :=
     readings := []
     paperFeatures := [("nominal", "definite"), ("D 2-part", "Det")] }
 
-def ch635a : LinguisticExample :=
+def ch635a : Datum :=
   { id := "adger2025_ch635a"
     source := ⟨"adger-2025", "ch. 6 (35a)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ch635a : LinguisticExample :=
     readings := []
     paperFeatures := [("nominal", "demonstrative"), ("D 2-part", "Dem")] }
 
-def ch635b : LinguisticExample :=
+def ch635b : Datum :=
   { id := "adger2025_ch635b"
     source := ⟨"adger-2025", "ch. 6 (35b)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ch635b : LinguisticExample :=
     readings := []
     paperFeatures := [("nominal", "prenominal possessor"), ("D 2-part", "possessor")] }
 
-def ch635c : LinguisticExample :=
+def ch635c : Datum :=
   { id := "adger2025_ch635c"
     source := ⟨"adger-2025", "ch. 6 (35c)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ch635c : LinguisticExample :=
     readings := []
     paperFeatures := [("nominal", "postnominal possessive"), ("D 2-part", "free")] }
 
-def ch636a : LinguisticExample :=
+def ch636a : Datum :=
   { id := "adger2025_ch636a"
     source := ⟨"adger-2025", "ch. 6 (36a)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ch636a : LinguisticExample :=
     readings := []
     paperFeatures := [("nominal", "indefinite"), ("pied-piping", "of")] }
 
-def ch636b : LinguisticExample :=
+def ch636b : Datum :=
   { id := "adger2025_ch636b"
     source := ⟨"adger-2025", "ch. 6 (36b)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ch636b : LinguisticExample :=
     readings := []
     paperFeatures := [("nominal", "definite"), ("pied-piping", "of")] }
 
-def ch636c : LinguisticExample :=
+def ch636c : Datum :=
   { id := "adger2025_ch636c"
     source := ⟨"adger-2025", "ch. 6 (36c)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ch636c : LinguisticExample :=
     readings := []
     paperFeatures := [("nominal", "demonstrative"), ("pied-piping", "of")] }
 
-def ch636d : LinguisticExample :=
+def ch636d : Datum :=
   { id := "adger2025_ch636d"
     source := ⟨"adger-2025", "ch. 6 (36d)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ch636d : LinguisticExample :=
     readings := []
     paperFeatures := [("nominal", "prenominal possessor"), ("pied-piping", "of")] }
 
-def ch640a : LinguisticExample :=
+def ch640a : Datum :=
   { id := "adger2025_ch640a"
     source := ⟨"adger-2025", "ch. 6 (40a)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ch640a : LinguisticExample :=
     readings := []
     paperFeatures := [("nominal", "indefinite")] }
 
-def ch640b : LinguisticExample :=
+def ch640b : Datum :=
   { id := "adger2025_ch640b"
     source := ⟨"adger-2025", "ch. 6 (40b)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ch640b : LinguisticExample :=
     readings := []
     paperFeatures := [("nominal", "definite")] }
 
-def ch640c : LinguisticExample :=
+def ch640c : Datum :=
   { id := "adger2025_ch640c"
     source := ⟨"adger-2025", "ch. 6 (40c)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ch640c : LinguisticExample :=
     readings := []
     paperFeatures := [("nominal", "prenominal possessor")] }
 
-def ch641a : LinguisticExample :=
+def ch641a : Datum :=
   { id := "adger2025_ch641a"
     source := ⟨"adger-2025", "ch. 6 (41a)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ch641a : LinguisticExample :=
     readings := []
     paperFeatures := [("nominal", "indefinite"), ("wh", "in situ, matrix scope")] }
 
-def ch641b : LinguisticExample :=
+def ch641b : Datum :=
   { id := "adger2025_ch641b"
     source := ⟨"adger-2025", "ch. 6 (41b)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ch641b : LinguisticExample :=
     readings := []
     paperFeatures := [("nominal", "demonstrative"), ("wh", "in situ, matrix scope")] }
 
-def ch642a : LinguisticExample :=
+def ch642a : Datum :=
   { id := "adger2025_ch642a"
     source := ⟨"adger-2025", "ch. 6 (42a)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ch642a : LinguisticExample :=
     readings := []
     paperFeatures := [("nominal", "indefinite"), ("wh", "in situ, matrix scope")] }
 
-def ch642b : LinguisticExample :=
+def ch642b : Datum :=
   { id := "adger2025_ch642b"
     source := ⟨"adger-2025", "ch. 6 (42b)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def ch642b : LinguisticExample :=
     readings := []
     paperFeatures := [("nominal", "demonstrative"), ("wh", "in situ, echo question only")] }
 
-def ch643a : LinguisticExample :=
+def ch643a : Datum :=
   { id := "adger2025_ch643a"
     source := ⟨"adger-2025", "ch. 6 (43a)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def ch643a : LinguisticExample :=
     readings := []
     paperFeatures := [("nominal", "indefinite relative"), ("wh", "in situ, matrix scope")] }
 
-def ch643b : LinguisticExample :=
+def ch643b : Datum :=
   { id := "adger2025_ch643b"
     source := ⟨"adger-2025", "ch. 6 (43b)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def ch643b : LinguisticExample :=
     readings := []
     paperFeatures := [("nominal", "demonstrative relative"), ("wh", "in situ, matrix scope")] }
 
-def ch644a : LinguisticExample :=
+def ch644a : Datum :=
   { id := "adger2025_ch644a"
     source := ⟨"adger-2025", "ch. 6 (44a)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def ch644a : LinguisticExample :=
     readings := []
     paperFeatures := [("nominal", "indefinite relative"), ("wh", "in situ, matrix scope")] }
 
-def ch644b : LinguisticExample :=
+def ch644b : Datum :=
   { id := "adger2025_ch644b"
     source := ⟨"adger-2025", "ch. 6 (44b)"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def ch644b : LinguisticExample :=
     readings := []
     paperFeatures := [("nominal", "demonstrative relative"), ("wh", "in situ, matrix scope")] }
 
-def ch759a : LinguisticExample :=
+def ch759a : Datum :=
   { id := "adger2025_ch759a"
     source := ⟨"adger-2025", "ch. 7 (59a)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def ch759a : LinguisticExample :=
     readings := []
     paperFeatures := [("subject", "indefinite or weak definite"), ("D 2-part", "free")] }
 
-def ch759b : LinguisticExample :=
+def ch759b : Datum :=
   { id := "adger2025_ch759b"
     source := ⟨"adger-2025", "ch. 7 (59b)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def ch759b : LinguisticExample :=
     readings := []
     paperFeatures := [("subject", "indefinite or weak definite"), ("D 2-part", "free")] }
 
-def ch759c : LinguisticExample :=
+def ch759c : Datum :=
   { id := "adger2025_ch759c"
     source := ⟨"adger-2025", "ch. 7 (59c)"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def ch759c : LinguisticExample :=
     readings := []
     paperFeatures := [("subject", "indefinite or weak definite"), ("D 2-part", "free")] }
 
-def ch759d : LinguisticExample :=
+def ch759d : Datum :=
   { id := "adger2025_ch759d"
     source := ⟨"adger-2025", "ch. 7 (59d)"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def ch759d : LinguisticExample :=
     readings := []
     paperFeatures := [("subject", "indefinite or weak definite"), ("D 2-part", "free")] }
 
-def ch759e : LinguisticExample :=
+def ch759e : Datum :=
   { id := "adger2025_ch759e"
     source := ⟨"adger-2025", "ch. 7 (59e)"⟩
     reportedIn := none
@@ -485,7 +485,7 @@ def ch759e : LinguisticExample :=
     readings := []
     paperFeatures := [("subject", "indefinite or weak definite"), ("D 2-part", "free")] }
 
-def ch759f : LinguisticExample :=
+def ch759f : Datum :=
   { id := "adger2025_ch759f"
     source := ⟨"adger-2025", "ch. 7 (59f)"⟩
     reportedIn := none
@@ -498,7 +498,7 @@ def ch759f : LinguisticExample :=
     readings := []
     paperFeatures := [("subject", "indefinite or weak definite"), ("D 2-part", "free")] }
 
-def ch759g : LinguisticExample :=
+def ch759g : Datum :=
   { id := "adger2025_ch759g"
     source := ⟨"adger-2025", "ch. 7 (59g)"⟩
     reportedIn := none
@@ -511,6 +511,6 @@ def ch759g : LinguisticExample :=
     readings := []
     paperFeatures := [("subject", "indefinite or weak definite"), ("D 2-part", "free")] }
 
-def all : List LinguisticExample := [ch433, ch436a, ch436b, ch437a, ch437b, ch443, ch448a, ch448b, ch448c, ch454, ch630, ch631, ch634, ch635a, ch635b, ch635c, ch636a, ch636b, ch636c, ch636d, ch640a, ch640b, ch640c, ch641a, ch641b, ch642a, ch642b, ch643a, ch643b, ch644a, ch644b, ch759a, ch759b, ch759c, ch759d, ch759e, ch759f, ch759g]
+def all : List Datum := [ch433, ch436a, ch436b, ch437a, ch437b, ch443, ch448a, ch448b, ch448c, ch454, ch630, ch631, ch634, ch635a, ch635b, ch635c, ch636a, ch636b, ch636c, ch636d, ch640a, ch640b, ch640c, ch641a, ch641b, ch642a, ch642b, ch643a, ch643b, ch644a, ch644b, ch759a, ch759b, ch759c, ch759d, ch759e, ch759f, ch759g]
 
 end Adger2025.Examples

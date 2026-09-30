@@ -260,7 +260,7 @@ def Predicted (r : Row) : Prop :=
 
 instance : DecidablePred Predicted := λ _ => by unfold Predicted; infer_instance
 
-def Row.ofExample (ex : LinguisticExample) : Option Row := do
+def Row.ofDatum (ex : Datum) : Option Row := do
   let connective ← ex.parse? "connective" [("until", Connective.until), ("mexri", .mexri),
     ("paraMonon", .paraMonon), ("prin", .prin), ("til", .til), ("fyrrEn", .fyrrEn), ("tot", .tot),
     ("pas", .pas)]
@@ -275,7 +275,7 @@ def Row.ofExample (ex : LinguisticExample) : Option Row := do
     ("noEventContinuation", .noEventContinuation)]
   pure ⟨connective, aspect, eventuality, licenser, test, ex.judgment == .acceptable⟩
 
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- Every judgment on the UNTIL sentences follows from the connective's fragment entry, the
 homogeneity of the main clause and the licensing of the polarity item. -/
@@ -295,7 +295,7 @@ structure DiagnosticRow where
   acceptable : Bool
   deriving DecidableEq, Repr
 
-def DiagnosticRow.ofExample (ex : LinguisticExample) : Option DiagnosticRow := do
+def DiagnosticRow.ofDatum (ex : Datum) : Option DiagnosticRow := do
   let diagnostic ← ex.parse? "diagnostic" [("howLong", Diagnostic.howLong), ("while", .while),
     ("forAdverbial", .forAdverbial), ("imperative", .imperative)]
   let aspect ← ex.parse? "aspect" [("imperfective", AspectForm.imperfective),
@@ -307,7 +307,7 @@ def DiagnosticRow.ofExample (ex : LinguisticExample) : Option DiagnosticRow := d
     ("without", .without), ("nonveridical", .nonveridical)]
   pure ⟨diagnostic, aspect, eventuality, licenser, ex.judgment == .acceptable⟩
 
-def diagnostics : List DiagnosticRow := Examples.all.filterMap DiagnosticRow.ofExample
+def diagnostics : List DiagnosticRow := Examples.all.filterMap DiagnosticRow.ofDatum
 
 /-- The stative diagnostics accept a homogeneous clause and the imperative rejects one, with
 negation playing no role: negation is no stativizer. -/

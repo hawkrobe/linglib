@@ -17,7 +17,7 @@ namespace TonhauserEtAl2013.Examples
 
 open Data.Examples
 
-def ex_1a : LinguisticExample :=
+def ex_1a : Datum :=
   { id := "tonhauseretal2013_1a"
     source := ⟨"tonhauser-beaver-roberts-simons-2013", "(1a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_1a : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "atomic"), ("trigger", "definite"), ("content", "existence of a unique queen of France")] }
 
-def ex_1b : LinguisticExample :=
+def ex_1b : Datum :=
   { id := "tonhauseretal2013_1b"
     source := ⟨"tonhauser-beaver-roberts-simons-2013", "(1b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_1b : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "negation"), ("trigger", "definite"), ("content", "existence of a unique queen of France")] }
 
-def ex_1c : LinguisticExample :=
+def ex_1c : Datum :=
   { id := "tonhauseretal2013_1c"
     source := ⟨"tonhauser-beaver-roberts-simons-2013", "(1c)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_1c : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "question"), ("trigger", "definite"), ("content", "existence of a unique queen of France")] }
 
-def ex_1d : LinguisticExample :=
+def ex_1d : Datum :=
   { id := "tonhauseretal2013_1d"
     source := ⟨"tonhauser-beaver-roberts-simons-2013", "(1d)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_1d : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "conditional antecedent"), ("trigger", "definite"), ("content", "existence of a unique queen of France")] }
 
-def ex_13 : LinguisticExample :=
+def ex_13 : Datum :=
   { id := "tonhauseretal2013_13"
     source := ⟨"tonhauser-beaver-roberts-simons-2013", "(13)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_13 : LinguisticExample :=
     readings := []
     paperFeatures := [("trigger", "expressive"), ("content", "negative evaluation"), ("context", "m-neutral"), ("diagnostic", "strong contextual felicity"), ("scf", "no")] }
 
-def ex_14a : LinguisticExample :=
+def ex_14a : Datum :=
   { id := "tonhauseretal2013_14a"
     source := ⟨"tonhauser-beaver-roberts-simons-2013", "(14a)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_14a : LinguisticExample :=
     readings := []
     paperFeatures := [("trigger", "appositive"), ("content", "descriptive content"), ("context", "m-neutral"), ("diagnostic", "strong contextual felicity"), ("scf", "no")] }
 
-def ex_14b : LinguisticExample :=
+def ex_14b : Datum :=
   { id := "tonhauseretal2013_14b"
     source := ⟨"tonhauser-beaver-roberts-simons-2013", "(14b)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_14b : LinguisticExample :=
     readings := []
     paperFeatures := [("trigger", "NRRC"), ("content", "descriptive content"), ("context", "m-neutral"), ("diagnostic", "strong contextual felicity"), ("scf", "no")] }
 
-def ex_15a : LinguisticExample :=
+def ex_15a : Datum :=
   { id := "tonhauseretal2013_15a"
     source := ⟨"tonhauser-beaver-roberts-simons-2013", "(15a)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_15a : LinguisticExample :=
     readings := []
     paperFeatures := [("trigger", "aimete 'almost'"), ("content", "polar implication"), ("context", "m-neutral"), ("diagnostic", "strong contextual felicity"), ("scf", "no")] }
 
-def ex_15b : LinguisticExample :=
+def ex_15b : Datum :=
   { id := "tonhauseretal2013_15b"
     source := ⟨"tonhauser-beaver-roberts-simons-2013", "(15b)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_15b : LinguisticExample :=
     readings := []
     paperFeatures := [("trigger", "-nte 'only'"), ("content", "prejacent"), ("context", "m-neutral"), ("diagnostic", "strong contextual felicity"), ("scf", "no")] }
 
-def ex_16a : LinguisticExample :=
+def ex_16a : Datum :=
   { id := "tonhauseretal2013_16a"
     source := ⟨"tonhauser-beaver-roberts-simons-2013", "(16a)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_16a : LinguisticExample :=
     readings := []
     paperFeatures := [("trigger", "demonstrative NP"), ("content", "descriptive content"), ("context", "m-neutral, n-positive"), ("diagnostic", "strong contextual felicity"), ("scf", "no")] }
 
-def ex_16b : LinguisticExample :=
+def ex_16b : Datum :=
   { id := "tonhauseretal2013_16b"
     source := ⟨"tonhauser-beaver-roberts-simons-2013", "(16b)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_16b : LinguisticExample :=
     readings := []
     paperFeatures := [("trigger", "ha'e '3rd'"), ("content", "human referent"), ("context", "m-neutral, n-positive"), ("diagnostic", "strong contextual felicity"), ("scf", "no")] }
 
-def ex_17a : LinguisticExample :=
+def ex_17a : Datum :=
   { id := "tonhauseretal2013_17a"
     source := ⟨"tonhauser-beaver-roberts-simons-2013", "(17a)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_17a : LinguisticExample :=
     readings := []
     paperFeatures := [("trigger", "avei 'too'"), ("content", "existence of an alternative"), ("context", "m-neutral"), ("diagnostic", "strong contextual felicity"), ("scf", "yes")] }
 
-def ex_22a : LinguisticExample :=
+def ex_22a : Datum :=
   { id := "tonhauseretal2013_22a"
     source := ⟨"tonhauser-beaver-roberts-simons-2013", "(22a)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_22a : LinguisticExample :=
     readings := []
     paperFeatures := [("trigger", "demonstrative NP"), ("content", "indication"), ("context", "m-neutral"), ("diagnostic", "projection")] }
 
-def ex_30a : LinguisticExample :=
+def ex_30a : Datum :=
   { id := "tonhauseretal2013_30a"
     source := ⟨"tonhauser-beaver-roberts-simons-2013", "(30a)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_30a : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "atomic"), ("trigger", "avei 'too'"), ("content", "existence of an alternative"), ("context", "m-neutral"), ("diagnostic", "projection"), ("projective", "yes")] }
 
-def ex_30b : LinguisticExample :=
+def ex_30b : Datum :=
   { id := "tonhauseretal2013_30b"
     source := ⟨"tonhauser-beaver-roberts-simons-2013", "(30b)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_30b : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "epistemic modal"), ("trigger", "avei 'too'"), ("content", "existence of an alternative"), ("context", "m-neutral"), ("diagnostic", "projection"), ("projective", "yes")] }
 
-def ex_30c : LinguisticExample :=
+def ex_30c : Datum :=
   { id := "tonhauseretal2013_30c"
     source := ⟨"tonhauser-beaver-roberts-simons-2013", "(30c)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_30c : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "conditional antecedent"), ("trigger", "avei 'too'"), ("content", "existence of an alternative"), ("context", "m-neutral"), ("diagnostic", "projection"), ("projective", "yes")] }
 
-def ex_30d : LinguisticExample :=
+def ex_30d : Datum :=
   { id := "tonhauseretal2013_30d"
     source := ⟨"tonhauser-beaver-roberts-simons-2013", "(30d)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex_30d : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "question"), ("trigger", "avei 'too'"), ("content", "existence of an alternative"), ("context", "m-neutral"), ("diagnostic", "projection"), ("projective", "yes")] }
 
-def ex_38a : LinguisticExample :=
+def ex_38a : Datum :=
   { id := "tonhauseretal2013_38a"
     source := ⟨"tonhauser-beaver-roberts-simons-2013", "(38a)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex_38a : LinguisticExample :=
     readings := []
     paperFeatures := [("trigger", "stop"), ("content", "prestate"), ("diagnostic", "obligatory local effect"), ("localEffect", "yes")] }
 
-def ex_38b : LinguisticExample :=
+def ex_38b : Datum :=
   { id := "tonhauseretal2013_38b"
     source := ⟨"tonhauser-beaver-roberts-simons-2013", "(38b)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex_38b : LinguisticExample :=
     readings := []
     paperFeatures := [("trigger", "NRRC"), ("content", "descriptive content"), ("diagnostic", "obligatory local effect"), ("localEffect", "yes")] }
 
-def ex_39a : LinguisticExample :=
+def ex_39a : Datum :=
   { id := "tonhauseretal2013_39a"
     source := ⟨"tonhauser-beaver-roberts-simons-2013", "(39a)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex_39a : LinguisticExample :=
     readings := []
     paperFeatures := [("trigger", "stop"), ("content", "prestate"), ("diagnostic", "obligatory local effect"), ("ole", "yes")] }
 
-def ex_39b : LinguisticExample :=
+def ex_39b : Datum :=
   { id := "tonhauseretal2013_39b"
     source := ⟨"tonhauser-beaver-roberts-simons-2013", "(39b)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex_39b : LinguisticExample :=
     readings := []
     paperFeatures := [("trigger", "NRRC"), ("content", "descriptive content"), ("diagnostic", "obligatory local effect"), ("ole", "no")] }
 
-def ex_46a : LinguisticExample :=
+def ex_46a : Datum :=
   { id := "tonhauseretal2013_46a"
     source := ⟨"tonhauser-beaver-roberts-simons-2013", "(46a)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex_46a : LinguisticExample :=
     readings := []
     paperFeatures := [("trigger", "avei 'too'"), ("content", "existence of an alternative"), ("context", "globally m-positive, locally m-neutral"), ("diagnostic", "obligatory local effect"), ("ole", "yes")] }
 
-def ex_46b : LinguisticExample :=
+def ex_46b : Datum :=
   { id := "tonhauseretal2013_46b"
     source := ⟨"tonhauser-beaver-roberts-simons-2013", "(46b)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex_46b : LinguisticExample :=
     readings := []
     paperFeatures := [("trigger", "ha'e '3rd'"), ("content", "existence of referent"), ("context", "globally m-positive, locally m-neutral"), ("diagnostic", "obligatory local effect"), ("ole", "yes")] }
 
-def ex_54a : LinguisticExample :=
+def ex_54a : Datum :=
   { id := "tonhauseretal2013_54a"
     source := ⟨"tonhauser-beaver-roberts-simons-2013", "(54a)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex_54a : LinguisticExample :=
     readings := []
     paperFeatures := [("trigger", "demonstrative NP"), ("content", "indication"), ("context", "m-neutral"), ("diagnostic", "strong contextual felicity"), ("scf", "yes")] }
 
-def ex_54b : LinguisticExample :=
+def ex_54b : Datum :=
   { id := "tonhauseretal2013_54b"
     source := ⟨"tonhauser-beaver-roberts-simons-2013", "(54b)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex_54b : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "conditional antecedent"), ("trigger", "demonstrative NP"), ("content", "indication"), ("context", "m-neutral"), ("diagnostic", "projection"), ("projective", "yes")] }
 
-def ex_54c : LinguisticExample :=
+def ex_54c : Datum :=
   { id := "tonhauseretal2013_54c"
     source := ⟨"tonhauser-beaver-roberts-simons-2013", "(54c)"⟩
     reportedIn := none
@@ -355,6 +355,6 @@ def ex_54c : LinguisticExample :=
     readings := []
     paperFeatures := [("trigger", "demonstrative NP"), ("content", "indication"), ("context", "globally m-positive, locally m-neutral"), ("diagnostic", "obligatory local effect"), ("ole", "no")] }
 
-def all : List LinguisticExample := [ex_1a, ex_1b, ex_1c, ex_1d, ex_13, ex_14a, ex_14b, ex_15a, ex_15b, ex_16a, ex_16b, ex_17a, ex_22a, ex_30a, ex_30b, ex_30c, ex_30d, ex_38a, ex_38b, ex_39a, ex_39b, ex_46a, ex_46b, ex_54a, ex_54b, ex_54c]
+def all : List Datum := [ex_1a, ex_1b, ex_1c, ex_1d, ex_13, ex_14a, ex_14b, ex_15a, ex_15b, ex_16a, ex_16b, ex_17a, ex_22a, ex_30a, ex_30b, ex_30c, ex_30d, ex_38a, ex_38b, ex_39a, ex_39b, ex_46a, ex_46b, ex_54a, ex_54b, ex_54c]
 
 end TonhauserEtAl2013.Examples

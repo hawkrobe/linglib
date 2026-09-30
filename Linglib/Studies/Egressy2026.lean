@@ -112,7 +112,7 @@ theorem raising_crosses_TP : WilliamsCycle .T .T := WilliamsCycle.refl _
 theorem raising_blocked_by_CP : ¬ WilliamsCycle .T .C := by decide
 
 /-- The complement size crossed in a raising row. -/
-def crossed? (e : LinguisticExample) : Option ComplementSize :=
+def crossed? (e : Datum) : Option ComplementSize :=
   e.parse? "crossed" [("tP", .tP), ("cP", .cP)]
 
 /-- The raising rows are judged exactly as the Williams Cycle predicts. -/
@@ -231,14 +231,14 @@ def clauseTypeTable : List (String × ClauseType) :=
   [("nonSpeechReporting", .nonSpeechReporting), ("speechReporting", .speechReporting)]
 
 /-- The clause type of a single-embedding row. -/
-def clauseType? (e : LinguisticExample) : Option ClauseType :=
+def clauseType? (e : Datum) : Option ClauseType :=
   e.parse? "clauseType" clauseTypeTable
 
 /-- Whether a row's feature `key` records direct perception. -/
-def DirectPerceptionAt (e : LinguisticExample) (key : String) : Prop :=
+def DirectPerceptionAt (e : Datum) (key : String) : Prop :=
   e.feature? key = some "yes"
 
-instance (e : LinguisticExample) (key : String) : Decidable (DirectPerceptionAt e key) :=
+instance (e : Datum) (key : String) : Decidable (DirectPerceptionAt e key) :=
   inferInstanceAs (Decidable (_ = _))
 
 /-- The readings as named in the rows. -/
@@ -247,20 +247,20 @@ def readingTable : List (String × EmbeddedTenseReading) :=
 
 /-- A row's reported readings at embedding level `lvl` agree with a predicted reading set when
 each named reading is judged acceptable exactly if predicted. -/
-def Agrees (e : LinguisticExample) (lvl : String) (rs : List EmbeddedTenseReading) : Prop :=
+def Agrees (e : Datum) (lvl : String) (rs : List EmbeddedTenseReading) : Prop :=
   ∀ r ∈ e.readings, ∀ x ∈ readingTable, r.1 = lvl ++ x.1 → (r.2 = .acceptable ↔ x.2 ∈ rs)
 
-instance (e : LinguisticExample) (lvl : String) (rs : List EmbeddedTenseReading) :
+instance (e : Datum) (lvl : String) (rs : List EmbeddedTenseReading) :
     Decidable (Agrees e lvl rs) :=
   inferInstanceAs (Decidable (∀ r ∈ e.readings, ∀ x ∈ readingTable, _ → _))
 
 /-- The predicted readings of a single-embedding Hungarian row: the grammar at its clause
 type, narrowed by direct perception. -/
-def predicted (e : LinguisticExample) (ct : ClauseType) : List EmbeddedTenseReading :=
+def predicted (e : Datum) (ct : ClauseType) : List EmbeddedTenseReading :=
   observed (DirectPerceptionAt e "directPerception") (readings .sizeDependent ct.size)
 
 /-- The single-embedding rows of §2.1–2.2: object, subject and adjunct clauses of both types. -/
-def singleRows : List LinguisticExample :=
+def singleRows : List Datum :=
   [ex_4, ex_5, ex_6, ex_7, ex_8, ex_9, ex_11a, ex_11b, ex_11c, ex_12, ex_13, ex_14]
 
 /-- Every single-embedding row is predicted: the simultaneous reading exactly in
@@ -271,7 +271,7 @@ theorem singleRows_predicted :
   decide
 
 /-- The fragment entry named by a row's `matrixVerb` feature. -/
-def matrixVerb? (e : LinguisticExample) : Option Verb :=
+def matrixVerb? (e : Datum) : Option Verb :=
   e.parse? "matrixVerb" [("lát", lat), ("hall", hall), ("álmodik", almodik), ("gondol", gondol),
     ("aggaszt", aggaszt), ("mond", mond), ("rikolt", rikolt), ("morog", morog)]
 

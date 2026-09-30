@@ -212,7 +212,7 @@ theorem collective :
 
 /-- The Hamblin set a row's `type`, `ro`, and `language` features name, for the
 interrogatives the paper derives. -/
-def hamblinOf (row : LinguisticExample) : Option (Finset (Finset World)) :=
+def hamblinOf (row : Datum) : Option (Finset (Finset World)) :=
   match row.feature? "language", row.feature? "type", row.feature? "ro" with
   | some "English", some "BI", _ => some (hamblinRo bought neutral)
   | some "English", some "SCI", _ => some (hamblinRo bought atoms)
@@ -225,14 +225,14 @@ def hamblinOf (row : LinguisticExample) : Option (Finset (Finset World)) :=
 
 /-- Whether a singular and a plural answer are predicted, where the English plural complex
 interrogative goes through EXHp against its singular alternative and the others through ANS. -/
-def predicted (row : LinguisticExample) : Option (Bool × Bool) :=
+def predicted (row : Datum) : Option (Bool × Bool) :=
   match row.feature? "language", row.feature? "type" with
   | some "English", some "PCI" =>
     some (exhAnswers (hamblinRo bought neutral) (hamblinRo bought atoms))
   | _, _ => (hamblinOf row).map answers
 
 /-- A row's answer judgments, read off its `singular answer`/`plural answer` readings. -/
-def observed (row : LinguisticExample) : Bool × Bool :=
+def observed (row : Datum) : Bool × Bool :=
   (row.readings.any fun r => "singular".toList <+: r.1.toList ∧ r.2 = .acceptable,
     row.readings.any fun r => "plural".toList <+: r.1.toList ∧ r.2 = .acceptable)
 

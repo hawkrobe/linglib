@@ -471,27 +471,27 @@ def Slot.labels : List (String × Slot) :=
    ("with", .withObject), ("pp", .directionalPP)]
 
 /-- A participant's slot, unexpressed when the row names none. -/
-def slot? (e : LinguisticExample) (key : String) : Option Slot :=
+def slot? (e : Datum) (key : String) : Option Slot :=
   match e.feature? key with
   | none => some .unexpressed
   | some v => Slot.labels.lookup v
 
 /-- The causer's kind, none when the row names none. -/
-def causer? (e : LinguisticExample) : Option (Option Kind) :=
+def causer? (e : Datum) : Option (Option Kind) :=
   match e.feature? "causer" with
   | none => some none
   | some v => (Kind.labels.lookup v).map some
 
 /-- An example of the paper: its verb, the event it describes, the slots of the participants,
 and the judgment. -/
-structure Datum where
+structure Row where
   verb : Verb
   event : Event
   slots : Slots
   judgment : Data.Examples.Judgment
 
-/-- An example read into its datum. -/
-def datum (e : LinguisticExample) : Option Datum := do
+/-- A datum read into its row. -/
+def Row.ofDatum (e : Datum) : Option Row := do
   pure { verb := ← e.parse? "verb" Verb.labels
          event := { sense := ← e.parse? "sense" Sense.labels
                     mover := ← e.parse? "mover" Kind.labels
@@ -501,10 +501,10 @@ def datum (e : LinguisticExample) : Option Datum := do
          judgment := e.judgment }
 
 /-- Every example is read. -/
-theorem isSome_datum : ∀ e ∈ Examples.all, (datum e).isSome := by decide
+theorem isSome_ofDatum : ∀ e ∈ Examples.all, (Row.ofDatum e).isSome := by decide
 
 /-- The paper's examples. -/
-def data : List Datum := Examples.all.filterMap datum
+def data : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- A sentence is acceptable exactly when one of the two predicates licenses it for the event
 it describes. -/

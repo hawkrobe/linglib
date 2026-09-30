@@ -17,7 +17,7 @@ namespace WangSun2026.Examples
 
 open Data.Examples
 
-def ex_1 : LinguisticExample :=
+def ex_1 : Datum :=
   { id := "wangsun2026_1"
     source := ⟨"wang-sun-2026", "(4c)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("modifier", "degree"), ("position", "Num _ Cl")] }
 
-def ex_2 : LinguisticExample :=
+def ex_2 : Datum :=
   { id := "wangsun2026_2"
     source := ⟨"wang-sun-2026", "(8a)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("modifier", "bare"), ("position", "Cl _ N")] }
 
-def ex_3 : LinguisticExample :=
+def ex_3 : Datum :=
   { id := "wangsun2026_3"
     source := ⟨"wang-sun-2026", "(29a)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_3 : LinguisticExample :=
     readings := []
     paperFeatures := [("modifier", "degree"), ("position", "Num _ Cl")] }
 
-def ex_4 : LinguisticExample :=
+def ex_4 : Datum :=
   { id := "wangsun2026_4"
     source := ⟨"wang-sun-2026", "(29b)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_4 : LinguisticExample :=
     readings := []
     paperFeatures := [("modifier", "bare"), ("position", "Num _ Cl")] }
 
-def ex_5 : LinguisticExample :=
+def ex_5 : Datum :=
   { id := "wangsun2026_5"
     source := ⟨"wang-sun-2026", "(28a)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_5 : LinguisticExample :=
     readings := []
     paperFeatures := [("modifier", "degree"), ("position", "Cl _ N")] }
 
-def ex_6 : LinguisticExample :=
+def ex_6 : Datum :=
   { id := "wangsun2026_6"
     source := ⟨"wang-sun-2026", "(5c)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_6 : LinguisticExample :=
     readings := []
     paperFeatures := [("dislocation", "Cl N")] }
 
-def ex_7 : LinguisticExample :=
+def ex_7 : Datum :=
   { id := "wangsun2026_7"
     source := ⟨"wang-sun-2026", "(13b)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_7 : LinguisticExample :=
     readings := []
     paperFeatures := [("dislocation", "N")] }
 
-def ex_8 : LinguisticExample :=
+def ex_8 : Datum :=
   { id := "wangsun2026_8"
     source := ⟨"wang-sun-2026", "(14a)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_8 : LinguisticExample :=
     readings := []
     paperFeatures := [("dislocation", "Num Cl")] }
 
-def ex_9 : LinguisticExample :=
+def ex_9 : Datum :=
   { id := "wangsun2026_9"
     source := ⟨"wang-sun-2026", "(39a)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_9 : LinguisticExample :=
     readings := []
     paperFeatures := [("wh", "numeral"), ("modifier", "post-classifier")] }
 
-def ex_10 : LinguisticExample :=
+def ex_10 : Datum :=
   { id := "wangsun2026_10"
     source := ⟨"wang-sun-2026", "(39b)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_10 : LinguisticExample :=
     readings := []
     paperFeatures := [("wh", "numeral"), ("modifier", "pre-nominal")] }
 
-def ex_11 : LinguisticExample :=
+def ex_11 : Datum :=
   { id := "wangsun2026_11"
     source := ⟨"wang-sun-2026", "(33a)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_11 : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "none"), ("reading", "sortal")] }
 
-def ex_12 : LinguisticExample :=
+def ex_12 : Datum :=
   { id := "wangsun2026_12"
     source := ⟨"wang-sun-2026", "(33b)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_12 : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "de"), ("reading", "mensural")] }
 
-def ex_13 : LinguisticExample :=
+def ex_13 : Datum :=
   { id := "wangsun2026_13"
     source := ⟨"wang-sun-2026", "(31)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_13 : LinguisticExample :=
     readings := []
     paperFeatures := [("modifier", "de-marked"), ("position", "D _ Num")] }
 
-def ex_14 : LinguisticExample :=
+def ex_14 : Datum :=
   { id := "wangsun2026_14"
     source := ⟨"wang-sun-2026", "(37a)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_14 : LinguisticExample :=
     readings := []
     paperFeatures := [("modifier", "two de-marked"), ("target", "D")] }
 
-def ex_15 : LinguisticExample :=
+def ex_15 : Datum :=
   { id := "wangsun2026_15"
     source := ⟨"wang-sun-2026", "(37b)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_15 : LinguisticExample :=
     readings := []
     paperFeatures := [("modifier", "nested de-marked")] }
 
-def ex_16 : LinguisticExample :=
+def ex_16 : Datum :=
   { id := "wangsun2026_16"
     source := ⟨"wang-sun-2026", "(43a)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_16 : LinguisticExample :=
     readings := []
     paperFeatures := [("topicalisation", "D")] }
 
-def ex_17 : LinguisticExample :=
+def ex_17 : Datum :=
   { id := "wangsun2026_17"
     source := ⟨"wang-sun-2026", "(44a)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex_17 : LinguisticExample :=
     readings := []
     paperFeatures := [("topicalisation", "N"), ("modifier", "2-part of Cl")] }
 
-def ex_18 : LinguisticExample :=
+def ex_18 : Datum :=
   { id := "wangsun2026_18"
     source := ⟨"wang-sun-2026", "(44b)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex_18 : LinguisticExample :=
     readings := []
     paperFeatures := [("topicalisation", "N"), ("modifier", "2-part of D")] }
 
-def ex_19 : LinguisticExample :=
+def ex_19 : Datum :=
   { id := "wangsun2026_19"
     source := ⟨"wang-sun-2026", "(45a)"⟩
     reportedIn := none
@@ -264,6 +264,6 @@ def ex_19 : LinguisticExample :=
     readings := []
     paperFeatures := [("use", "measure"), ("noun", "absent")] }
 
-def all : List LinguisticExample := [ex_1, ex_2, ex_3, ex_4, ex_5, ex_6, ex_7, ex_8, ex_9, ex_10, ex_11, ex_12, ex_13, ex_14, ex_15, ex_16, ex_17, ex_18, ex_19]
+def all : List Datum := [ex_1, ex_2, ex_3, ex_4, ex_5, ex_6, ex_7, ex_8, ex_9, ex_10, ex_11, ex_12, ex_13, ex_14, ex_15, ex_16, ex_17, ex_18, ex_19]
 
 end WangSun2026.Examples

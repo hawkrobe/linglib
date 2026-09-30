@@ -269,7 +269,7 @@ structure Row where
   predicted : Bool
   deriving DecidableEq, Repr
 
-def Row.ofExample (ex : LinguisticExample) : Option Row := do
+def Row.ofDatum (ex : Datum) : Option Row := do
   let quant ← ex.parse? "quantifier" [("all", Quant.all), ("moreThanOne", .moreThanOne),
     ("exactlyTwo", .exactlyTwo), ("notAll", .notAll), ("notMoreThanOne", .notMoreThanOne)]
   let trial ← ex.parse? "trial" [("none", Trial.none), ("A", .a), ("B", .b)]
@@ -277,7 +277,7 @@ def Row.ofExample (ex : LinguisticExample) : Option Row := do
   let predicted ← ex.nat? "predictedRate"
   pure ⟨quant, trial, decide (50 ≤ observed), decide (50 ≤ predicted)⟩
 
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 theorem rows_eq : rows = [⟨.all, .none, true, false⟩, ⟨.moreThanOne, .none, true, false⟩,
     ⟨.exactlyTwo, .a, true, false⟩, ⟨.exactlyTwo, .b, false, true⟩, ⟨.notAll, .none, false, false⟩,

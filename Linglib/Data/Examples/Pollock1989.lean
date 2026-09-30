@@ -17,7 +17,7 @@ namespace Pollock1989.Examples
 
 open Data.Examples
 
-def ex2a : LinguisticExample :=
+def ex2a : Datum :=
   { id := "pollock1989_ex2a"
     source := ⟨"pollock-1989", "(2a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex2a : LinguisticExample :=
     readings := []
     paperFeatures := [("finite", "yes"), ("verb", "lexical"), ("diagnostic", "negation"), ("verbPrecedes", "true")] }
 
-def ex2b : LinguisticExample :=
+def ex2b : Datum :=
   { id := "pollock1989_ex2b"
     source := ⟨"pollock-1989", "(2b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex2b : LinguisticExample :=
     readings := []
     paperFeatures := [("finite", "yes"), ("verb", "lexical"), ("diagnostic", "negation"), ("verbPrecedes", "true")] }
 
-def ex3a : LinguisticExample :=
+def ex3a : Datum :=
   { id := "pollock1989_ex3a"
     source := ⟨"pollock-1989", "(3a)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex3a : LinguisticExample :=
     readings := []
     paperFeatures := [("finite", "yes"), ("verb", "lexical"), ("diagnostic", "inversion"), ("verbPrecedes", "true")] }
 
-def ex3b : LinguisticExample :=
+def ex3b : Datum :=
   { id := "pollock1989_ex3b"
     source := ⟨"pollock-1989", "(3b)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex3b : LinguisticExample :=
     readings := []
     paperFeatures := [("finite", "yes"), ("verb", "lexical"), ("diagnostic", "inversion"), ("verbPrecedes", "true")] }
 
-def ex4a : LinguisticExample :=
+def ex4a : Datum :=
   { id := "pollock1989_ex4a"
     source := ⟨"pollock-1989", "(4a)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex4a : LinguisticExample :=
     readings := []
     paperFeatures := [("finite", "yes"), ("verb", "lexical"), ("diagnostic", "adverb"), ("verbPrecedes", "true")] }
 
-def ex4b : LinguisticExample :=
+def ex4b : Datum :=
   { id := "pollock1989_ex4b"
     source := ⟨"pollock-1989", "(4b)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex4b : LinguisticExample :=
     readings := []
     paperFeatures := [("finite", "yes"), ("verb", "lexical"), ("diagnostic", "adverb"), ("verbPrecedes", "true")] }
 
-def ex4c : LinguisticExample :=
+def ex4c : Datum :=
   { id := "pollock1989_ex4c"
     source := ⟨"pollock-1989", "(4c)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex4c : LinguisticExample :=
     readings := []
     paperFeatures := [("finite", "yes"), ("verb", "lexical"), ("diagnostic", "adverb"), ("verbPrecedes", "false")] }
 
-def ex4d : LinguisticExample :=
+def ex4d : Datum :=
   { id := "pollock1989_ex4d"
     source := ⟨"pollock-1989", "(4d)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex4d : LinguisticExample :=
     readings := []
     paperFeatures := [("finite", "yes"), ("verb", "lexical"), ("diagnostic", "adverb"), ("verbPrecedes", "false")] }
 
-def ex5a : LinguisticExample :=
+def ex5a : Datum :=
   { id := "pollock1989_ex5a"
     source := ⟨"pollock-1989", "(5a)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex5a : LinguisticExample :=
     readings := []
     paperFeatures := [("finite", "yes"), ("verb", "lexical"), ("diagnostic", "floatingQ"), ("verbPrecedes", "true")] }
 
-def ex5b : LinguisticExample :=
+def ex5b : Datum :=
   { id := "pollock1989_ex5b"
     source := ⟨"pollock-1989", "(5b)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex5b : LinguisticExample :=
     readings := []
     paperFeatures := [("finite", "yes"), ("verb", "lexical"), ("diagnostic", "floatingQ"), ("verbPrecedes", "true")] }
 
-def ex5c : LinguisticExample :=
+def ex5c : Datum :=
   { id := "pollock1989_ex5c"
     source := ⟨"pollock-1989", "(5c)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex5c : LinguisticExample :=
     readings := []
     paperFeatures := [("finite", "yes"), ("verb", "lexical"), ("diagnostic", "floatingQ"), ("verbPrecedes", "false")] }
 
-def ex5d : LinguisticExample :=
+def ex5d : Datum :=
   { id := "pollock1989_ex5d"
     source := ⟨"pollock-1989", "(5d)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex5d : LinguisticExample :=
     readings := []
     paperFeatures := [("finite", "yes"), ("verb", "lexical"), ("diagnostic", "floatingQ"), ("verbPrecedes", "false")] }
 
-def ex7a : LinguisticExample :=
+def ex7a : Datum :=
   { id := "pollock1989_ex7a"
     source := ⟨"pollock-1989", "(7a)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex7a : LinguisticExample :=
     readings := []
     paperFeatures := [("finite", "yes"), ("verb", "auxiliary"), ("diagnostic", "negation"), ("verbPrecedes", "true")] }
 
-def ex7b : LinguisticExample :=
+def ex7b : Datum :=
   { id := "pollock1989_ex7b"
     source := ⟨"pollock-1989", "(7b)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex7b : LinguisticExample :=
     readings := []
     paperFeatures := [("finite", "yes"), ("verb", "auxiliary"), ("diagnostic", "negation"), ("verbPrecedes", "false")] }
 
-def ex11a_neg : LinguisticExample :=
+def ex11a_neg : Datum :=
   { id := "pollock1989_ex11a_neg"
     source := ⟨"pollock-1989", "(11a)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex11a_neg : LinguisticExample :=
     readings := []
     paperFeatures := [("finite", "yes"), ("verb", "auxiliary"), ("diagnostic", "negation"), ("verbPrecedes", "true")] }
 
-def ex11a_inv : LinguisticExample :=
+def ex11a_inv : Datum :=
   { id := "pollock1989_ex11a_inv"
     source := ⟨"pollock-1989", "(11a)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex11a_inv : LinguisticExample :=
     readings := []
     paperFeatures := [("finite", "yes"), ("verb", "auxiliary"), ("diagnostic", "inversion"), ("verbPrecedes", "true")] }
 
-def ex11b_neg : LinguisticExample :=
+def ex11b_neg : Datum :=
   { id := "pollock1989_ex11b_neg"
     source := ⟨"pollock-1989", "(11b)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex11b_neg : LinguisticExample :=
     readings := []
     paperFeatures := [("finite", "yes"), ("verb", "auxiliary"), ("diagnostic", "negation"), ("verbPrecedes", "true")] }
 
-def ex11b_inv : LinguisticExample :=
+def ex11b_inv : Datum :=
   { id := "pollock1989_ex11b_inv"
     source := ⟨"pollock-1989", "(11b)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex11b_inv : LinguisticExample :=
     readings := []
     paperFeatures := [("finite", "yes"), ("verb", "auxiliary"), ("diagnostic", "inversion"), ("verbPrecedes", "true")] }
 
-def ex11c_adv : LinguisticExample :=
+def ex11c_adv : Datum :=
   { id := "pollock1989_ex11c_adv"
     source := ⟨"pollock-1989", "(11c)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex11c_adv : LinguisticExample :=
     readings := []
     paperFeatures := [("finite", "yes"), ("verb", "auxiliary"), ("diagnostic", "adverb"), ("verbPrecedes", "true")] }
 
-def ex11c_fq : LinguisticExample :=
+def ex11c_fq : Datum :=
   { id := "pollock1989_ex11c_fq"
     source := ⟨"pollock-1989", "(11c)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex11c_fq : LinguisticExample :=
     readings := []
     paperFeatures := [("finite", "yes"), ("verb", "auxiliary"), ("diagnostic", "floatingQ"), ("verbPrecedes", "true")] }
 
-def ex11d_adv : LinguisticExample :=
+def ex11d_adv : Datum :=
   { id := "pollock1989_ex11d_adv"
     source := ⟨"pollock-1989", "(11d)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex11d_adv : LinguisticExample :=
     readings := []
     paperFeatures := [("finite", "yes"), ("verb", "auxiliary"), ("diagnostic", "adverb"), ("verbPrecedes", "true")] }
 
-def ex11d_fq : LinguisticExample :=
+def ex11d_fq : Datum :=
   { id := "pollock1989_ex11d_fq"
     source := ⟨"pollock-1989", "(11d)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex11d_fq : LinguisticExample :=
     readings := []
     paperFeatures := [("finite", "yes"), ("verb", "auxiliary"), ("diagnostic", "floatingQ"), ("verbPrecedes", "true")] }
 
-def ex12a : LinguisticExample :=
+def ex12a : Datum :=
   { id := "pollock1989_ex12a"
     source := ⟨"pollock-1989", "(12a)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex12a : LinguisticExample :=
     readings := []
     paperFeatures := [("finite", "yes"), ("verb", "auxiliary"), ("diagnostic", "negation"), ("verbPrecedes", "false")] }
 
-def ex15a : LinguisticExample :=
+def ex15a : Datum :=
   { id := "pollock1989_ex15a"
     source := ⟨"pollock-1989", "(15a)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex15a : LinguisticExample :=
     readings := []
     paperFeatures := [("finite", "no"), ("verb", "auxiliary"), ("diagnostic", "negation"), ("verbPrecedes", "false")] }
 
-def ex15b : LinguisticExample :=
+def ex15b : Datum :=
   { id := "pollock1989_ex15b"
     source := ⟨"pollock-1989", "(15b)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex15b : LinguisticExample :=
     readings := []
     paperFeatures := [("finite", "no"), ("verb", "auxiliary"), ("diagnostic", "negation"), ("verbPrecedes", "true")] }
 
-def ex16a : LinguisticExample :=
+def ex16a : Datum :=
   { id := "pollock1989_ex16a"
     source := ⟨"pollock-1989", "(16a)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex16a : LinguisticExample :=
     readings := []
     paperFeatures := [("finite", "no"), ("verb", "lexical"), ("diagnostic", "negation"), ("verbPrecedes", "false")] }
 
-def ex16b : LinguisticExample :=
+def ex16b : Datum :=
   { id := "pollock1989_ex16b"
     source := ⟨"pollock-1989", "(16b)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def ex16b : LinguisticExample :=
     readings := []
     paperFeatures := [("finite", "no"), ("verb", "lexical"), ("diagnostic", "negation"), ("verbPrecedes", "true")] }
 
-def ex21a : LinguisticExample :=
+def ex21a : Datum :=
   { id := "pollock1989_ex21a"
     source := ⟨"pollock-1989", "(21a)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def ex21a : LinguisticExample :=
     readings := []
     paperFeatures := [("finite", "no"), ("verb", "auxiliary"), ("diagnostic", "negation"), ("verbPrecedes", "false")] }
 
-def ex21b : LinguisticExample :=
+def ex21b : Datum :=
   { id := "pollock1989_ex21b"
     source := ⟨"pollock-1989", "(21b)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def ex21b : LinguisticExample :=
     readings := []
     paperFeatures := [("finite", "no"), ("verb", "auxiliary"), ("diagnostic", "negation"), ("verbPrecedes", "true")] }
 
-def ex22a : LinguisticExample :=
+def ex22a : Datum :=
   { id := "pollock1989_ex22a"
     source := ⟨"pollock-1989", "(22a)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def ex22a : LinguisticExample :=
     readings := []
     paperFeatures := [("finite", "no"), ("verb", "lexical"), ("diagnostic", "negation"), ("verbPrecedes", "false")] }
 
-def ex22b : LinguisticExample :=
+def ex22b : Datum :=
   { id := "pollock1989_ex22b"
     source := ⟨"pollock-1989", "(22b)"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def ex22b : LinguisticExample :=
     readings := []
     paperFeatures := [("finite", "no"), ("verb", "lexical"), ("diagnostic", "negation"), ("verbPrecedes", "true")] }
 
-def ex24b : LinguisticExample :=
+def ex24b : Datum :=
   { id := "pollock1989_ex24b"
     source := ⟨"pollock-1989", "(24b)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def ex24b : LinguisticExample :=
     readings := []
     paperFeatures := [("finite", "no"), ("verb", "lexical"), ("diagnostic", "adverb"), ("verbPrecedes", "false")] }
 
-def ex27b : LinguisticExample :=
+def ex27b : Datum :=
   { id := "pollock1989_ex27b"
     source := ⟨"pollock-1989", "(27b)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def ex27b : LinguisticExample :=
     readings := []
     paperFeatures := [("finite", "no"), ("verb", "lexical"), ("diagnostic", "adverb"), ("verbPrecedes", "true")] }
 
-def ex28a : LinguisticExample :=
+def ex28a : Datum :=
   { id := "pollock1989_ex28a"
     source := ⟨"pollock-1989", "(28a)"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def ex28a : LinguisticExample :=
     readings := []
     paperFeatures := [("finite", "no"), ("verb", "lexical"), ("diagnostic", "floatingQ"), ("verbPrecedes", "true")] }
 
-def ex29c : LinguisticExample :=
+def ex29c : Datum :=
   { id := "pollock1989_ex29c"
     source := ⟨"pollock-1989", "(29c)"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def ex29c : LinguisticExample :=
     readings := []
     paperFeatures := [("finite", "no"), ("verb", "lexical"), ("diagnostic", "negation"), ("verbPrecedes", "true")] }
 
-def ex37b : LinguisticExample :=
+def ex37b : Datum :=
   { id := "pollock1989_ex37b"
     source := ⟨"pollock-1989", "(37b)"⟩
     reportedIn := none
@@ -485,7 +485,7 @@ def ex37b : LinguisticExample :=
     readings := []
     paperFeatures := [("finite", "no"), ("verb", "lexical"), ("diagnostic", "adverb"), ("verbPrecedes", "false")] }
 
-def ex38b : LinguisticExample :=
+def ex38b : Datum :=
   { id := "pollock1989_ex38b"
     source := ⟨"pollock-1989", "(38b)"⟩
     reportedIn := none
@@ -498,7 +498,7 @@ def ex38b : LinguisticExample :=
     readings := []
     paperFeatures := [("finite", "no"), ("verb", "lexical"), ("diagnostic", "adverb"), ("verbPrecedes", "true")] }
 
-def ex39a : LinguisticExample :=
+def ex39a : Datum :=
   { id := "pollock1989_ex39a"
     source := ⟨"pollock-1989", "(39a)"⟩
     reportedIn := none
@@ -511,7 +511,7 @@ def ex39a : LinguisticExample :=
     readings := []
     paperFeatures := [("finite", "no"), ("verb", "auxiliary"), ("diagnostic", "adverb"), ("verbPrecedes", "false")] }
 
-def ex39c : LinguisticExample :=
+def ex39c : Datum :=
   { id := "pollock1989_ex39c"
     source := ⟨"pollock-1989", "(39c)"⟩
     reportedIn := none
@@ -524,7 +524,7 @@ def ex39c : LinguisticExample :=
     readings := []
     paperFeatures := [("finite", "no"), ("verb", "auxiliary"), ("diagnostic", "adverb"), ("verbPrecedes", "true")] }
 
-def ex39d : LinguisticExample :=
+def ex39d : Datum :=
   { id := "pollock1989_ex39d"
     source := ⟨"pollock-1989", "(39d)"⟩
     reportedIn := none
@@ -537,6 +537,6 @@ def ex39d : LinguisticExample :=
     readings := []
     paperFeatures := [("finite", "no"), ("verb", "lexical"), ("diagnostic", "adverb"), ("verbPrecedes", "true")] }
 
-def all : List LinguisticExample := [ex2a, ex2b, ex3a, ex3b, ex4a, ex4b, ex4c, ex4d, ex5a, ex5b, ex5c, ex5d, ex7a, ex7b, ex11a_neg, ex11a_inv, ex11b_neg, ex11b_inv, ex11c_adv, ex11c_fq, ex11d_adv, ex11d_fq, ex12a, ex15a, ex15b, ex16a, ex16b, ex21a, ex21b, ex22a, ex22b, ex24b, ex27b, ex28a, ex29c, ex37b, ex38b, ex39a, ex39c, ex39d]
+def all : List Datum := [ex2a, ex2b, ex3a, ex3b, ex4a, ex4b, ex4c, ex4d, ex5a, ex5b, ex5c, ex5d, ex7a, ex7b, ex11a_neg, ex11a_inv, ex11b_neg, ex11b_inv, ex11c_adv, ex11c_fq, ex11d_adv, ex11d_fq, ex12a, ex15a, ex15b, ex16a, ex16b, ex21a, ex21b, ex22a, ex22b, ex24b, ex27b, ex28a, ex29c, ex37b, ex38b, ex39a, ex39c, ex39d]
 
 end Pollock1989.Examples

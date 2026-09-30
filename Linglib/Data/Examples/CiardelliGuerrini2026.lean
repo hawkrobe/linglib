@@ -17,7 +17,7 @@ namespace CiardelliGuerrini2026.Examples
 
 open Data.Examples
 
-def ex2 : LinguisticExample :=
+def ex2 : Datum :=
   { id := "ciardelliguerrini2026_ex2"
     source := ⟨"ciardelli-guerrini-2026", "(2)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex2 : LinguisticExample :=
     readings := [("free choice", .acceptable), ("ignorance", .acceptable)]
     paperFeatures := [("modal1", "may"), ("modal2", "may"), ("coordinator", "or"), ("narrowReading", "free choice")] }
 
-def ex5 : LinguisticExample :=
+def ex5 : Datum :=
   { id := "ciardelliguerrini2026_ex5"
     source := ⟨"ciardelli-guerrini-2026", "(5)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex5 : LinguisticExample :=
     readings := [("disjunctive obligation", .acceptable), ("ignorance", .acceptable)]
     paperFeatures := [("modal1", "must"), ("modal2", "must"), ("coordinator", "or"), ("narrowReading", "disjunctive obligation")] }
 
-def ex7 : LinguisticExample :=
+def ex7 : Datum :=
   { id := "ciardelliguerrini2026_ex7"
     source := ⟨"ciardelli-guerrini-2026", "(7)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex7 : LinguisticExample :=
     readings := [("conjunctive permission", .acceptable), ("conjunction of permissions", .acceptable)]
     paperFeatures := [("modal1", "may"), ("modal2", "may"), ("coordinator", "and"), ("narrowReading", "conjunctive permission")] }
 
-def ex9b : LinguisticExample :=
+def ex9b : Datum :=
   { id := "ciardelliguerrini2026_ex9b"
     source := ⟨"ciardelli-guerrini-2026", "(9b)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex9b : LinguisticExample :=
     readings := [("conjunctive permission", .acceptable)]
     paperFeatures := [("modal1", "may"), ("modal2", "may"), ("coordinator", "and"), ("narrowReading", "conjunctive permission")] }
 
-def ex19a : LinguisticExample :=
+def ex19a : Datum :=
   { id := "ciardelliguerrini2026_ex19a"
     source := ⟨"ciardelli-guerrini-2026", "(19a)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex19a : LinguisticExample :=
     readings := [("free choice", .unacceptable)]
     paperFeatures := [("modal1", "it's ok"), ("modal2", "it's ok"), ("coordinator", "or")] }
 
-def ex19b_allowed : LinguisticExample :=
+def ex19b_allowed : Datum :=
   { id := "ciardelliguerrini2026_ex19b_allowed"
     source := ⟨"ciardelli-guerrini-2026", "(19b)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex19b_allowed : LinguisticExample :=
     readings := [("free choice", .unacceptable)]
     paperFeatures := [("modal1", "be allowed"), ("modal2", "be allowed"), ("coordinator", "or")] }
 
-def ex19b_required : LinguisticExample :=
+def ex19b_required : Datum :=
   { id := "ciardelliguerrini2026_ex19b_required"
     source := ⟨"ciardelli-guerrini-2026", "(19b)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex19b_required : LinguisticExample :=
     readings := [("free choice", .unacceptable)]
     paperFeatures := [("modal1", "be required"), ("modal2", "be required"), ("coordinator", "or")] }
 
-def ex22a : LinguisticExample :=
+def ex22a : Datum :=
   { id := "ciardelliguerrini2026_ex22a"
     source := ⟨"ciardelli-guerrini-2026", "(22a)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex22a : LinguisticExample :=
     readings := [("free choice", .acceptable)]
     paperFeatures := [("modal1", "may"), ("modal2", "may"), ("coordinator", "or"), ("narrowReading", "free choice")] }
 
-def ex22b : LinguisticExample :=
+def ex22b : Datum :=
   { id := "ciardelliguerrini2026_ex22b"
     source := ⟨"ciardelli-guerrini-2026", "(22b)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex22b : LinguisticExample :=
     readings := [("free choice", .acceptable)]
     paperFeatures := [("modal1", "may"), ("modal2", "may"), ("coordinator", "or"), ("narrowReading", "free choice")] }
 
-def exfn4i : LinguisticExample :=
+def exfn4i : Datum :=
   { id := "ciardelliguerrini2026_exfn4i"
     source := ⟨"ciardelli-guerrini-2026", "fn. 4 (i)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def exfn4i : LinguisticExample :=
     readings := [("free choice", .acceptable)]
     paperFeatures := [("modal1", "may"), ("modal2", "can"), ("coordinator", "or"), ("narrowReading", "free choice")] }
 
-def ex28 : LinguisticExample :=
+def ex28 : Datum :=
   { id := "ciardelliguerrini2026_ex28"
     source := ⟨"ciardelli-guerrini-2026", "(28)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex28 : LinguisticExample :=
     readings := [("permission to do neither", .acceptable), ("obligation to do neither", .unacceptable)]
     paperFeatures := [("modal1", "need"), ("modal2", "need"), ("coordinator", "and"), ("narrowReading", "permission to do neither"), ("negated", "true")] }
 
-def ex11a : LinguisticExample :=
+def ex11a : Datum :=
   { id := "ciardelliguerrini2026_ex11a"
     source := ⟨"ciardelli-guerrini-2026", "(11a)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex11a : LinguisticExample :=
     readings := [("modal concord", .acceptable)]
     paperFeatures := [("checker", "allow"), ("checked", "may")] }
 
-def ex11b : LinguisticExample :=
+def ex11b : Datum :=
   { id := "ciardelliguerrini2026_ex11b"
     source := ⟨"ciardelli-guerrini-2026", "(11b)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex11b : LinguisticExample :=
     readings := [("modal concord", .acceptable)]
     paperFeatures := [("checker", "demand"), ("checked", "must")] }
 
-def ex20a : LinguisticExample :=
+def ex20a : Datum :=
   { id := "ciardelliguerrini2026_ex20a"
     source := ⟨"ciardelli-guerrini-2026", "(20a)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex20a : LinguisticExample :=
     readings := [("modal concord", .unacceptable)]
     paperFeatures := [("checker", "allow"), ("checked", "be permitted")] }
 
-def ex20b : LinguisticExample :=
+def ex20b : Datum :=
   { id := "ciardelliguerrini2026_ex20b"
     source := ⟨"ciardelli-guerrini-2026", "(20b)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex20b : LinguisticExample :=
     readings := [("modal concord", .unacceptable)]
     paperFeatures := [("checker", "demand"), ("checked", "be required")] }
 
-def ex24 : LinguisticExample :=
+def ex24 : Datum :=
   { id := "ciardelliguerrini2026_ex24"
     source := ⟨"ciardelli-guerrini-2026", "(24)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex24 : LinguisticExample :=
     readings := [("modal concord", .acceptable)]
     paperFeatures := [("checker", "allow"), ("checked", "need"), ("negated", "true")] }
 
-def ex25 : LinguisticExample :=
+def ex25 : Datum :=
   { id := "ciardelliguerrini2026_ex25"
     source := ⟨"ciardelli-guerrini-2026", "(25)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex25 : LinguisticExample :=
     readings := [("modal concord", .acceptable)]
     paperFeatures := [("checker", "demand"), ("checked", "may"), ("negated", "true")] }
 
-def ex26 : LinguisticExample :=
+def ex26 : Datum :=
   { id := "ciardelliguerrini2026_ex26"
     source := ⟨"ciardelli-guerrini-2026", "(26)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex26 : LinguisticExample :=
     readings := [("modal concord", .unacceptable)]
     paperFeatures := [("checker", "demand"), ("checked", "need"), ("negated", "true")] }
 
-def ex27 : LinguisticExample :=
+def ex27 : Datum :=
   { id := "ciardelliguerrini2026_ex27"
     source := ⟨"ciardelli-guerrini-2026", "(27)"⟩
     reportedIn := none
@@ -264,6 +264,6 @@ def ex27 : LinguisticExample :=
     readings := [("modal concord", .unacceptable)]
     paperFeatures := [("checker", "allow"), ("checked", "may"), ("negated", "true")] }
 
-def all : List LinguisticExample := [ex2, ex5, ex7, ex9b, ex19a, ex19b_allowed, ex19b_required, ex22a, ex22b, exfn4i, ex28, ex11a, ex11b, ex20a, ex20b, ex24, ex25, ex26, ex27]
+def all : List Datum := [ex2, ex5, ex7, ex9b, ex19a, ex19b_allowed, ex19b_required, ex22a, ex22b, exfn4i, ex28, ex11a, ex11b, ex20a, ex20b, ex24, ex25, ex26, ex27]
 
 end CiardelliGuerrini2026.Examples

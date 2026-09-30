@@ -633,15 +633,15 @@ namespace Examples
 
 /-- The construction a row describes over its five participant slots, absent where
 unlisted. -/
-def construction (row : LinguisticExample) : Construction (Fin 5) :=
+def construction (row : Datum) : Construction (Fin 5) :=
   ![slot row "p1", slot row "p2", slot row "p3", slot row "p4", slot row "p5"]
 where
   /-- The status of one slot. -/
-  slot (row : LinguisticExample) (k : String) : Status := (row.parse? k statusNames).getD .absent
+  slot (row : Datum) (k : String) : Status := (row.parse? k statusNames).getD .absent
 
 /-- The rows of the same example whose variant the row names under a key: its initial
 construction, or the transitive use of a flexivalent verb. -/
-def paired (key : String) (row : LinguisticExample) : List LinguisticExample :=
+def paired (key : String) (row : Datum) : List Datum :=
   all.filter λ r =>
     r.feature? "example" = row.feature? "example" ∧ r.feature? "variant" = row.feature? key
 
@@ -735,7 +735,7 @@ reduces to neither (§8.3.7). -/
 theorem portative_isValencyIncreasing : portative.IsValencyIncreasing := by decide
 
 /-- Each voice with the book's initial and derived example of its type. -/
-def definingExamples : List (Voice × LinguisticExample × LinguisticExample) :=
+def definingExamples : List (Voice × Datum × Datum) :=
   [(passive, ex_8_1a, ex_8_1b), (impersonalPassive, ex_8_14a, ex_8_14c),
     (impersonalPassive .intransitive, ex_8_14d, ex_8_14e), (antipassive, ex_8_21a, ex_8_21b),
     (anticausative, ex_8_19a, ex_8_19b), (causative, ex_8_18a, ex_8_18b),

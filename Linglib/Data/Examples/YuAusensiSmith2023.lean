@@ -17,7 +17,7 @@ namespace YuAusensiSmith2023.Examples
 
 open Data.Examples
 
-def ex_23 : LinguisticExample :=
+def ex_23 : Datum :=
   { id := "yuausensismith2023_23"
     source := ⟨"yu-ausensi-smith-2023", "(23)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_23 : LinguisticExample :=
     readings := [("restitutive", .acceptable), ("repetitive", .acceptable)]
     paperFeatures := [("diagnostic", "again"), ("root class", "property concept")] }
 
-def ex_24a : LinguisticExample :=
+def ex_24a : Datum :=
   { id := "yuausensismith2023_24a"
     source := ⟨"yu-ausensi-smith-2023", "(24a)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_24a : LinguisticExample :=
     readings := [("restitutive", .acceptable)]
     paperFeatures := [("diagnostic", "again"), ("root class", "property concept")] }
 
-def ex_25a : LinguisticExample :=
+def ex_25a : Datum :=
   { id := "yuausensismith2023_25a"
     source := ⟨"yu-ausensi-smith-2023", "(25a)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_25a : LinguisticExample :=
     readings := [("restitutive", .unacceptable), ("repetitive", .acceptable)]
     paperFeatures := [("diagnostic", "again"), ("root class", "change of state")] }
 
-def ex_25b : LinguisticExample :=
+def ex_25b : Datum :=
   { id := "yuausensismith2023_25b"
     source := ⟨"yu-ausensi-smith-2023", "(25b)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_25b : LinguisticExample :=
     readings := [("restitutive", .unacceptable), ("repetitive", .acceptable)]
     paperFeatures := [("diagnostic", "again"), ("root class", "change of state")] }
 
-def ex_25c : LinguisticExample :=
+def ex_25c : Datum :=
   { id := "yuausensismith2023_25c"
     source := ⟨"yu-ausensi-smith-2023", "(25c)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_25c : LinguisticExample :=
     readings := [("restitutive", .unacceptable), ("repetitive", .acceptable)]
     paperFeatures := [("diagnostic", "again"), ("root class", "change of state")] }
 
-def ex_26 : LinguisticExample :=
+def ex_26 : Datum :=
   { id := "yuausensismith2023_26"
     source := ⟨"yu-ausensi-smith-2023", "(26)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_26 : LinguisticExample :=
     readings := [("durative", .acceptable), ("internal", .acceptable)]
     paperFeatures := [("diagnostic", "for-phrase"), ("root class", "property concept")] }
 
-def ex_27 : LinguisticExample :=
+def ex_27 : Datum :=
   { id := "yuausensismith2023_27"
     source := ⟨"yu-ausensi-smith-2023", "(27)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_27 : LinguisticExample :=
     readings := [("durative", .acceptable), ("internal", .unacceptable)]
     paperFeatures := [("diagnostic", "for-phrase"), ("root class", "change of state")] }
 
-def ex_28 : LinguisticExample :=
+def ex_28 : Datum :=
   { id := "yuausensismith2023_28"
     source := ⟨"yu-ausensi-smith-2023", "(28)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_28 : LinguisticExample :=
     readings := [("durative", .acceptable), ("internal", .unacceptable)]
     paperFeatures := [("diagnostic", "for-phrase"), ("root class", "change of state")] }
 
-def ex_29 : LinguisticExample :=
+def ex_29 : Datum :=
   { id := "yuausensismith2023_29"
     source := ⟨"yu-ausensi-smith-2023", "(29)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_29 : LinguisticExample :=
     readings := [("durative", .acceptable), ("internal", .unacceptable)]
     paperFeatures := [("diagnostic", "for-phrase"), ("root class", "change of state")] }
 
-def ex_30 : LinguisticExample :=
+def ex_30 : Datum :=
   { id := "yuausensismith2023_30"
     source := ⟨"yu-ausensi-smith-2023", "(30)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_30 : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "resultative modifier"), ("root class", "property concept")] }
 
-def ex_31a : LinguisticExample :=
+def ex_31a : Datum :=
   { id := "yuausensismith2023_31a"
     source := ⟨"yu-ausensi-smith-2023", "(31a)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_31a : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "resultative modifier"), ("root class", "property concept")] }
 
-def ex_31b : LinguisticExample :=
+def ex_31b : Datum :=
   { id := "yuausensismith2023_31b"
     source := ⟨"yu-ausensi-smith-2023", "(31b)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_31b : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "resultative modifier"), ("root class", "property concept")] }
 
-def ex_35b : LinguisticExample :=
+def ex_35b : Datum :=
   { id := "yuausensismith2023_35b"
     source := ⟨"yu-ausensi-smith-2023", "(35b)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_35b : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "resultative modifier"), ("root class", "change of state")] }
 
-def ex_35c : LinguisticExample :=
+def ex_35c : Datum :=
   { id := "yuausensismith2023_35c"
     source := ⟨"yu-ausensi-smith-2023", "(35c)"⟩
     reportedIn := none
@@ -199,6 +199,6 @@ def ex_35c : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "resultative modifier"), ("root class", "change of state")] }
 
-def all : List LinguisticExample := [ex_23, ex_24a, ex_25a, ex_25b, ex_25c, ex_26, ex_27, ex_28, ex_29, ex_30, ex_31a, ex_31b, ex_35b, ex_35c]
+def all : List Datum := [ex_23, ex_24a, ex_25a, ex_25b, ex_25c, ex_26, ex_27, ex_28, ex_29, ex_30, ex_31a, ex_31b, ex_35b, ex_35c]
 
 end YuAusensiSmith2023.Examples

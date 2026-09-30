@@ -170,7 +170,7 @@ theorem one_factor_decides (wH wN : ℝ) (p : Pair) :
 def words (s : String) : ℕ := (s.toList.filter (· = ' ')).length + 1
 
 /-- The word counts of a row's two constituents in surface order. -/
-def constituents (r : LinguisticExample) : Option (ℕ × ℕ) := do
+def constituents (r : Datum) : Option (ℕ × ℕ) := do
   let a ← r.feature? "first"
   let b ← r.feature? "second"
   pure (words a, words b)

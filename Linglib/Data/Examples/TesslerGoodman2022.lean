@@ -17,7 +17,7 @@ namespace TesslerGoodman2022.Examples
 
 open Data.Examples
 
-def tg2022_tall_basketball : LinguisticExample :=
+def tg2022_tall_basketball : Datum :=
   { id := "tg2022_tall_basketball"
     source := ⟨"tessler-goodman-2022", "UNVERIFIED §3.2.1, Fig. 3"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def tg2022_tall_basketball : LinguisticExample :=
     readings := []
     paperFeatures := [("adjective", "tall"), ("polarity", "positive"), ("noun", "basketball player"), ("prior_expectation", "high"), ("inferred_class", "superordinate")] }
 
-def tg2022_short_basketball : LinguisticExample :=
+def tg2022_short_basketball : Datum :=
   { id := "tg2022_short_basketball"
     source := ⟨"tessler-goodman-2022", "UNVERIFIED §3.2.1, Fig. 3"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def tg2022_short_basketball : LinguisticExample :=
     readings := []
     paperFeatures := [("adjective", "short"), ("polarity", "negative"), ("noun", "basketball player"), ("prior_expectation", "high"), ("inferred_class", "subordinate")] }
 
-def tg2022_tall_jockey : LinguisticExample :=
+def tg2022_tall_jockey : Datum :=
   { id := "tg2022_tall_jockey"
     source := ⟨"tessler-goodman-2022", "UNVERIFIED §3.2.1, Fig. 3"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def tg2022_tall_jockey : LinguisticExample :=
     readings := []
     paperFeatures := [("adjective", "tall"), ("polarity", "positive"), ("noun", "jockey"), ("prior_expectation", "low"), ("inferred_class", "subordinate")] }
 
-def tg2022_short_jockey : LinguisticExample :=
+def tg2022_short_jockey : Datum :=
   { id := "tg2022_short_jockey"
     source := ⟨"tessler-goodman-2022", "UNVERIFIED §3.2.1, Fig. 3"⟩
     reportedIn := none
@@ -69,6 +69,6 @@ def tg2022_short_jockey : LinguisticExample :=
     readings := []
     paperFeatures := [("adjective", "short"), ("polarity", "negative"), ("noun", "jockey"), ("prior_expectation", "low"), ("inferred_class", "superordinate")] }
 
-def all : List LinguisticExample := [tg2022_tall_basketball, tg2022_short_basketball, tg2022_tall_jockey, tg2022_short_jockey]
+def all : List Datum := [tg2022_tall_basketball, tg2022_short_basketball, tg2022_tall_jockey, tg2022_short_jockey]
 
 end TesslerGoodman2022.Examples

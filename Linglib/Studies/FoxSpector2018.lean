@@ -278,7 +278,7 @@ structure Row where
 
 def yesNoTable : List (String × Bool) := [("yes", true), ("no", false)]
 
-def Row.ofExample (ex : LinguisticExample) : Option Row := do
+def Row.ofDatum (ex : Datum) : Option Row := do
   let h ← ex.parse? "hurford" yesNoTable
   let r ← ex.parse? "rescuable" yesNoTable
   let o ← ex.parse? "order" [("canonical", true), ("reverse", false)]
@@ -286,7 +286,7 @@ def Row.ofExample (ex : LinguisticExample) : Option Row := do
   let n ← ex.nat? "de"
   pure ⟨h, r, o, d, n, ex.judgment⟩
 
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- Economy accounts for the distribution: a Hurford disjunction is acceptable when a scalar
 alternative lets `exh` break the entailment on a disjunct where it is licensed, the first one or

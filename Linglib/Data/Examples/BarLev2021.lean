@@ -17,7 +17,7 @@ namespace BarLev2021.Examples
 
 open Data.Examples
 
-def ex_1a : LinguisticExample :=
+def ex_1a : Datum :=
   { id := "barlev2021_1a"
     source := ⟨"bar-lev-2021", "(1a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_1a : LinguisticExample :=
     readings := [("all the kids laughed", .acceptable), ("some of the kids laughed", .unacceptable)]
     paperFeatures := [("polarity", "positive")] }
 
-def ex_1b : LinguisticExample :=
+def ex_1b : Datum :=
   { id := "barlev2021_1b"
     source := ⟨"bar-lev-2021", "(1b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_1b : LinguisticExample :=
     readings := [("not all the kids laughed", .unacceptable), ("none of the kids laughed", .acceptable)]
     paperFeatures := [("polarity", "negative")] }
 
-def ex_2 : LinguisticExample :=
+def ex_2 : Datum :=
   { id := "barlev2021_2"
     source := ⟨"bar-lev-2021", "(2)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_2 : LinguisticExample :=
     readings := [("no boy found all of his presents", .unacceptable), ("no boy found any of his presents", .acceptable)]
     paperFeatures := [("polarity", "negative"), ("scope", "definite plural bound below negation")] }
 
-def ex_3b : LinguisticExample :=
+def ex_3b : Datum :=
   { id := "barlev2021_3b"
     source := ⟨"bar-lev-2021", "(3b)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_3b : LinguisticExample :=
     readings := [("true if most of the kids laughed", .acceptable)]
     paperFeatures := [("polarity", "positive"), ("reading", "non-maximal")] }
 
-def ex_4b : LinguisticExample :=
+def ex_4b : Datum :=
   { id := "barlev2021_4b"
     source := ⟨"bar-lev-2021", "(4b)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_4b : LinguisticExample :=
     readings := [("true if most of the kids laughed", .unacceptable)]
     paperFeatures := [("polarity", "positive"), ("reading", "maximal")] }
 
-def ex_9b : LinguisticExample :=
+def ex_9b : Datum :=
   { id := "barlev2021_9b"
     source := ⟨"bar-lev-2021", "(9b)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_9b : LinguisticExample :=
     readings := [("true if most of the kids didn't laugh", .questionable)]
     paperFeatures := [("polarity", "negative")] }
 
-def ex_10a : LinguisticExample :=
+def ex_10a : Datum :=
   { id := "barlev2021_10a"
     source := ⟨"bar-lev-2021", "(10a)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_10a : LinguisticExample :=
     readings := [("every kid took at least 2 vitamins", .acceptable)]
     paperFeatures := [("polarity", "positive"), ("scope", "definite plural bound")] }
 
-def ex_10b : LinguisticExample :=
+def ex_10b : Datum :=
   { id := "barlev2021_10b"
     source := ⟨"bar-lev-2021", "(10b)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_10b : LinguisticExample :=
     readings := [("no kid took any vitamin", .acceptable), ("no kid took at least 2 vitamins", .questionable)]
     paperFeatures := [("polarity", "negative"), ("scope", "definite plural bound")] }
 
-def ex_11a : LinguisticExample :=
+def ex_11a : Datum :=
   { id := "barlev2021_11a"
     source := ⟨"bar-lev-2021", "(11a)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_11a : LinguisticExample :=
     readings := [("every kid came with at least one parent", .acceptable)]
     paperFeatures := [("polarity", "positive"), ("scope", "definite plural bound")] }
 
-def ex_11b : LinguisticExample :=
+def ex_11b : Datum :=
   { id := "barlev2021_11b"
     source := ⟨"bar-lev-2021", "(11b)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_11b : LinguisticExample :=
     readings := [("no kid came with any parent", .acceptable)]
     paperFeatures := [("polarity", "negative"), ("scope", "definite plural bound")] }
 
-def ex_14a : LinguisticExample :=
+def ex_14a : Datum :=
   { id := "barlev2021_14a"
     source := ⟨"bar-lev-2021", "(14a)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_14a : LinguisticExample :=
     readings := []
     paperFeatures := [("polarity", "positive"), ("scope", "definite plural bound")] }
 
-def ex_14b : LinguisticExample :=
+def ex_14b : Datum :=
   { id := "barlev2021_14b"
     source := ⟨"bar-lev-2021", "(14b)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_14b : LinguisticExample :=
     readings := []
     paperFeatures := [("polarity", "negative"), ("scope", "definite plural bound")] }
 
-def ex_17 : LinguisticExample :=
+def ex_17 : Datum :=
   { id := "barlev2021_17"
     source := ⟨"bar-lev-2021", "(17)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_17 : LinguisticExample :=
     readings := [("allowed to read W&P and allowed to read AK", .acceptable), ("allowed to read W&P or allowed to read AK", .unacceptable)]
     paperFeatures := [("phenomenon", "free choice")] }
 
-def ex_18 : LinguisticExample :=
+def ex_18 : Datum :=
   { id := "barlev2021_18"
     source := ⟨"bar-lev-2021", "(18)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_18 : LinguisticExample :=
     readings := [("not both allowed", .unacceptable), ("allowed to read neither", .acceptable)]
     paperFeatures := [("phenomenon", "free choice"), ("polarity", "negative")] }
 
-def ex_21 : LinguisticExample :=
+def ex_21 : Datum :=
   { id := "barlev2021_21"
     source := ⟨"bar-lev-2021", "(21)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_21 : LinguisticExample :=
     readings := [("one student read all of the books and no more than one read any", .acceptable)]
     paperFeatures := [("environment", "non-monotonic")] }
 
-def ex_23 : LinguisticExample :=
+def ex_23 : Datum :=
   { id := "barlev2021_23"
     source := ⟨"bar-lev-2021", "(23)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_23 : LinguisticExample :=
     readings := [("Mary read all and John read none", .acceptable)]
     paperFeatures := [("environment", "ellipsis")] }
 
-def ex_41a : LinguisticExample :=
+def ex_41a : Datum :=
   { id := "barlev2021_41a"
     source := ⟨"bar-lev-2021", "(41a)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex_41a : LinguisticExample :=
     readings := [("Kelly or Jane laughed but not both", .acceptable)]
     paperFeatures := [("alternatives", "with conjunction")] }
 
-def ex_41b : LinguisticExample :=
+def ex_41b : Datum :=
   { id := "barlev2021_41b"
     source := ⟨"bar-lev-2021", "(41b)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex_41b : LinguisticExample :=
     readings := [("Kelly and Jane laughed", .acceptable)]
     paperFeatures := [("alternatives", "subdomain only")] }
 
-def ex_71b : LinguisticExample :=
+def ex_71b : Datum :=
   { id := "barlev2021_71b"
     source := ⟨"bar-lev-2021", "(71b)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex_71b : LinguisticExample :=
     readings := [("no guest ate more than 3 poisoned peas", .acceptable)]
     paperFeatures := [("polarity", "negative"), ("scope", "definite plural bound")] }
 
-def ex_72b : LinguisticExample :=
+def ex_72b : Datum :=
   { id := "barlev2021_72b"
     source := ⟨"bar-lev-2021", "(72b)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex_72b : LinguisticExample :=
     readings := [("no contestant ate at least 20 pies", .acceptable)]
     paperFeatures := [("polarity", "negative"), ("scope", "definite plural bound")] }
 
-def ex_73 : LinguisticExample :=
+def ex_73 : Datum :=
   { id := "barlev2021_73"
     source := ⟨"bar-lev-2021", "(73)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex_73 : LinguisticExample :=
     readings := [("true if Mary read all of the books", .acceptable), ("false if Mary read none", .acceptable), ("neither true nor false if some but not all", .acceptable)]
     paperFeatures := [("polarity", "positive"), ("gappiness", "yes")] }
 
-def ex_74a : LinguisticExample :=
+def ex_74a : Datum :=
   { id := "barlev2021_74a"
     source := ⟨"bar-lev-2021", "(74a)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex_74a : LinguisticExample :=
     readings := [("Mary read all of the 4 books", .acceptable)]
     paperFeatures := [("polarity", "positive"), ("gappiness", "no"), ("non_maximality", "no")] }
 
-def ex_74b : LinguisticExample :=
+def ex_74b : Datum :=
   { id := "barlev2021_74b"
     source := ⟨"bar-lev-2021", "(74b)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex_74b : LinguisticExample :=
     readings := [("Mary didn't read any of the 4 books", .acceptable)]
     paperFeatures := [("polarity", "negative"), ("gappiness", "no")] }
 
-def ex_76 : LinguisticExample :=
+def ex_76 : Datum :=
   { id := "barlev2021_76"
     source := ⟨"bar-lev-2021", "(76)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex_76 : LinguisticExample :=
     readings := [("true if Mary read all of the 4 books", .acceptable), ("false otherwise", .acceptable)]
     paperFeatures := [("gappiness", "no")] }
 
-def ex_77 : LinguisticExample :=
+def ex_77 : Datum :=
   { id := "barlev2021_77"
     source := ⟨"bar-lev-2021", "(77)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex_77 : LinguisticExample :=
     readings := [("true if both", .acceptable), ("false otherwise", .acceptable)]
     paperFeatures := [("gappiness", "no")] }
 
-def ex_80 : LinguisticExample :=
+def ex_80 : Datum :=
   { id := "barlev2021_80"
     source := ⟨"bar-lev-2021", "(80)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex_80 : LinguisticExample :=
     readings := [("true if Mary read at least five of the ten books", .acceptable), ("false otherwise", .acceptable)]
     paperFeatures := [("gappiness", "no"), ("reading", "at least five")] }
 
-def ex_81 : LinguisticExample :=
+def ex_81 : Datum :=
   { id := "barlev2021_81"
     source := ⟨"bar-lev-2021", "(81)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def ex_81 : LinguisticExample :=
     readings := [("true if Mary read all of the ten books", .acceptable), ("false otherwise", .acceptable)]
     paperFeatures := [("gappiness", "no"), ("reading", "maximal")] }
 
-def ex_82a : LinguisticExample :=
+def ex_82a : Datum :=
   { id := "barlev2021_82a"
     source := ⟨"bar-lev-2021", "(82a)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def ex_82a : LinguisticExample :=
     readings := [("neither true nor false if some but not all of the squares are red", .acceptable)]
     paperFeatures := [("polarity", "positive"), ("gappiness", "yes")] }
 
-def ex_82b : LinguisticExample :=
+def ex_82b : Datum :=
   { id := "barlev2021_82b"
     source := ⟨"bar-lev-2021", "(82b)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def ex_82b : LinguisticExample :=
     readings := [("neither true nor false if some but not all of the squares are red", .questionable)]
     paperFeatures := [("polarity", "negative"), ("gappiness", "reduced")] }
 
-def ex_84a : LinguisticExample :=
+def ex_84a : Datum :=
   { id := "barlev2021_84a"
     source := ⟨"bar-lev-2021", "(84a)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def ex_84a : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "cancellation")] }
 
-def ex_84b : LinguisticExample :=
+def ex_84b : Datum :=
   { id := "barlev2021_84b"
     source := ⟨"bar-lev-2021", "(84b)"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def ex_84b : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "cancellation")] }
 
-def ex_85a : LinguisticExample :=
+def ex_85a : Datum :=
   { id := "barlev2021_85a"
     source := ⟨"bar-lev-2021", "(85a)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def ex_85a : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "cancellation")] }
 
-def ex_85b : LinguisticExample :=
+def ex_85b : Datum :=
   { id := "barlev2021_85b"
     source := ⟨"bar-lev-2021", "(85b)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def ex_85b : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "cancellation")] }
 
-def ex_88a : LinguisticExample :=
+def ex_88a : Datum :=
   { id := "barlev2021_88a"
     source := ⟨"bar-lev-2021", "(88a)"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def ex_88a : LinguisticExample :=
     readings := [("true if half of the kids lifted it together and no one else did", .unacceptable)]
     paperFeatures := [("predicate", "non-distributive")] }
 
-def ex_88b : LinguisticExample :=
+def ex_88b : Datum :=
   { id := "barlev2021_88b"
     source := ⟨"bar-lev-2021", "(88b)"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def ex_88b : LinguisticExample :=
     readings := [("true if half of the kids lifted it together and no one else did", .unacceptable)]
     paperFeatures := [("predicate", "non-distributive"), ("polarity", "negative")] }
 
-def ex_94a : LinguisticExample :=
+def ex_94a : Datum :=
   { id := "barlev2021_94a"
     source := ⟨"bar-lev-2021", "(94a)"⟩
     reportedIn := none
@@ -485,7 +485,7 @@ def ex_94a : LinguisticExample :=
     readings := [("every girl danced with some boy and every boy with some girl", .acceptable)]
     paperFeatures := [("predicate", "two-place")] }
 
-def ex_94b : LinguisticExample :=
+def ex_94b : Datum :=
   { id := "barlev2021_94b"
     source := ⟨"bar-lev-2021", "(94b)"⟩
     reportedIn := none
@@ -498,6 +498,6 @@ def ex_94b : LinguisticExample :=
     readings := [("no girl danced with any boy", .acceptable)]
     paperFeatures := [("predicate", "two-place"), ("polarity", "negative")] }
 
-def all : List LinguisticExample := [ex_1a, ex_1b, ex_2, ex_3b, ex_4b, ex_9b, ex_10a, ex_10b, ex_11a, ex_11b, ex_14a, ex_14b, ex_17, ex_18, ex_21, ex_23, ex_41a, ex_41b, ex_71b, ex_72b, ex_73, ex_74a, ex_74b, ex_76, ex_77, ex_80, ex_81, ex_82a, ex_82b, ex_84a, ex_84b, ex_85a, ex_85b, ex_88a, ex_88b, ex_94a, ex_94b]
+def all : List Datum := [ex_1a, ex_1b, ex_2, ex_3b, ex_4b, ex_9b, ex_10a, ex_10b, ex_11a, ex_11b, ex_14a, ex_14b, ex_17, ex_18, ex_21, ex_23, ex_41a, ex_41b, ex_71b, ex_72b, ex_73, ex_74a, ex_74b, ex_76, ex_77, ex_80, ex_81, ex_82a, ex_82b, ex_84a, ex_84b, ex_85a, ex_85b, ex_88a, ex_88b, ex_94a, ex_94b]
 
 end BarLev2021.Examples

@@ -17,7 +17,7 @@ namespace SandeClemDabkowski2026.Examples
 
 open Data.Examples
 
-def ex11a : LinguisticExample :=
+def ex11a : Datum :=
   { id := "sandeclemdabkowski2026_ex11a"
     source := ⟨"sande-clem-dabkowski-2026", "(11a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex11a : LinguisticExample :=
     readings := []
     paperFeatures := [("order", "SAuxOPartV"), ("pattern", "S Aux O Part V"), ("verb", "ni"), ("particleATR", "plus")] }
 
-def ex11b : LinguisticExample :=
+def ex11b : Datum :=
   { id := "sandeclemdabkowski2026_ex11b"
     source := ⟨"sande-clem-dabkowski-2026", "(11b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex11b : LinguisticExample :=
     readings := []
     paperFeatures := [("order", "SVOPart"), ("pattern", "S V O Part"), ("verb", "ni"), ("particleATR", "minus")] }
 
-def ex11c : LinguisticExample :=
+def ex11c : Datum :=
   { id := "sandeclemdabkowski2026_ex11c"
     source := ⟨"sande-clem-dabkowski-2026", "(11c)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex11c : LinguisticExample :=
     readings := []
     paperFeatures := [("pattern", "S Part V O")] }
 
-def ex12b : LinguisticExample :=
+def ex12b : Datum :=
   { id := "sandeclemdabkowski2026_ex12b"
     source := ⟨"sande-clem-dabkowski-2026", "(12b)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex12b : LinguisticExample :=
     readings := []
     paperFeatures := [("order", "SAuxOPartV"), ("pattern", "S Aux O Part V"), ("verb", "ngwOsa"), ("particleATR", "minus")] }
 
-def ex13b : LinguisticExample :=
+def ex13b : Datum :=
   { id := "sandeclemdabkowski2026_ex13b"
     source := ⟨"sande-clem-dabkowski-2026", "(13b)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex13b : LinguisticExample :=
     readings := []
     paperFeatures := [("order", "SVOPart"), ("pattern", "S V O Part"), ("verb", "ngwOsa"), ("particleATR", "minus")] }
 
-def ex21a : LinguisticExample :=
+def ex21a : Datum :=
   { id := "sandeclemdabkowski2026_ex21a"
     source := ⟨"sande-clem-dabkowski-2026", "(21a)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex21a : LinguisticExample :=
     readings := []
     paperFeatures := [("order", "PartSVO"), ("pattern", "Part S V O"), ("verb", "ni"), ("particleATR", "minus")] }
 
-def ex21b : LinguisticExample :=
+def ex21b : Datum :=
   { id := "sandeclemdabkowski2026_ex21b"
     source := ⟨"sande-clem-dabkowski-2026", "(21b)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex21b : LinguisticExample :=
     readings := []
     paperFeatures := [("pattern", "Part V S V O")] }
 
-def ex21c : LinguisticExample :=
+def ex21c : Datum :=
   { id := "sandeclemdabkowski2026_ex21c"
     source := ⟨"sande-clem-dabkowski-2026", "(21c)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex21c : LinguisticExample :=
     readings := []
     paperFeatures := [("pattern", "V S V O Part")] }
 
-def ex21d : LinguisticExample :=
+def ex21d : Datum :=
   { id := "sandeclemdabkowski2026_ex21d"
     source := ⟨"sande-clem-dabkowski-2026", "(21d)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex21d : LinguisticExample :=
     readings := []
     paperFeatures := [("pattern", "V S O Part")] }
 
-def ex21e : LinguisticExample :=
+def ex21e : Datum :=
   { id := "sandeclemdabkowski2026_ex21e"
     source := ⟨"sande-clem-dabkowski-2026", "(21e)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex21e : LinguisticExample :=
     readings := []
     paperFeatures := [("pattern", "Part S V O Part")] }
 
-def ex22 : LinguisticExample :=
+def ex22 : Datum :=
   { id := "sandeclemdabkowski2026_ex22"
     source := ⟨"sande-clem-dabkowski-2026", "(22)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex22 : LinguisticExample :=
     readings := []
     paperFeatures := [("order", "PartSAuxOV"), ("pattern", "Part S Aux O V"), ("verb", "ni"), ("particleATR", "plus")] }
 
-def ex24b : LinguisticExample :=
+def ex24b : Datum :=
   { id := "sandeclemdabkowski2026_ex24b"
     source := ⟨"sande-clem-dabkowski-2026", "(24b)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex24b : LinguisticExample :=
     readings := []
     paperFeatures := [("order", "PartSAuxOV"), ("pattern", "Part S Aux O V"), ("verb", "ni"), ("particleATR", "plus")] }
 
-def ex49a : LinguisticExample :=
+def ex49a : Datum :=
   { id := "sandeclemdabkowski2026_ex49a"
     source := ⟨"sande-clem-dabkowski-2026", "(49a)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex49a : LinguisticExample :=
     readings := []
     paperFeatures := [("shape", "localDP"), ("headATR", "minus"), ("demATR", "minus")] }
 
-def ex49b : LinguisticExample :=
+def ex49b : Datum :=
   { id := "sandeclemdabkowski2026_ex49b"
     source := ⟨"sande-clem-dabkowski-2026", "(49b)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex49b : LinguisticExample :=
     readings := []
     paperFeatures := [("shape", "localDP"), ("headATR", "plus"), ("demATR", "plus")] }
 
-def ex50a : LinguisticExample :=
+def ex50a : Datum :=
   { id := "sandeclemdabkowski2026_ex50a"
     source := ⟨"sande-clem-dabkowski-2026", "(50a)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex50a : LinguisticExample :=
     readings := []
     paperFeatures := [("shape", "relClause"), ("headATR", "minus"), ("stativeATR", "minus"), ("demATR", "minus")] }
 
-def ex50b : LinguisticExample :=
+def ex50b : Datum :=
   { id := "sandeclemdabkowski2026_ex50b"
     source := ⟨"sande-clem-dabkowski-2026", "(50b)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex50b : LinguisticExample :=
     readings := []
     paperFeatures := [("shape", "relClause"), ("headATR", "plus"), ("stativeATR", "plus"), ("demATR", "plus")] }
 
-def ex50c : LinguisticExample :=
+def ex50c : Datum :=
   { id := "sandeclemdabkowski2026_ex50c"
     source := ⟨"sande-clem-dabkowski-2026", "(50c)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex50c : LinguisticExample :=
     readings := []
     paperFeatures := [("shape", "relClause"), ("headATR", "minus"), ("stativeATR", "plus"), ("demATR", "minus")] }
 
-def ex50d : LinguisticExample :=
+def ex50d : Datum :=
   { id := "sandeclemdabkowski2026_ex50d"
     source := ⟨"sande-clem-dabkowski-2026", "(50d)"⟩
     reportedIn := none
@@ -251,6 +251,6 @@ def ex50d : LinguisticExample :=
     readings := []
     paperFeatures := [("shape", "relClause"), ("headATR", "plus"), ("stativeATR", "minus"), ("demATR", "plus")] }
 
-def all : List LinguisticExample := [ex11a, ex11b, ex11c, ex12b, ex13b, ex21a, ex21b, ex21c, ex21d, ex21e, ex22, ex24b, ex49a, ex49b, ex50a, ex50b, ex50c, ex50d]
+def all : List Datum := [ex11a, ex11b, ex11c, ex12b, ex13b, ex21a, ex21b, ex21c, ex21d, ex21e, ex22, ex24b, ex49a, ex49b, ex50a, ex50b, ex50c, ex50d]
 
 end SandeClemDabkowski2026.Examples

@@ -17,7 +17,7 @@ namespace Israel2001.Examples
 
 open Data.Examples
 
-def s1a : LinguisticExample :=
+def s1a : Datum :=
   { id := "israel2001_s1a"
     source := ⟨"israel-2001", "(1a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def s1a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "0"), ("item", "the least bit"), ("type", "NPI")] }
 
-def s1b : LinguisticExample :=
+def s1b : Datum :=
   { id := "israel2001_s1b"
     source := ⟨"israel-2001", "(1b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def s1b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "0"), ("item", "the least bit"), ("type", "NPI")] }
 
-def s2a : LinguisticExample :=
+def s2a : Datum :=
   { id := "israel2001_s2a"
     source := ⟨"israel-2001", "(2a)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def s2a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "0"), ("item", "rather"), ("type", "PPI")] }
 
-def s2b : LinguisticExample :=
+def s2b : Datum :=
   { id := "israel2001_s2b"
     source := ⟨"israel-2001", "(2b)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def s2b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "0"), ("item", "rather"), ("type", "PPI")] }
 
-def s3a : LinguisticExample :=
+def s3a : Datum :=
   { id := "israel2001_s3a"
     source := ⟨"israel-2001", "(3a)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def s3a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "0"), ("item", "the least bit"), ("context", "antecedent of a conditional")] }
 
-def s3b : LinguisticExample :=
+def s3b : Datum :=
   { id := "israel2001_s3b"
     source := ⟨"israel-2001", "(3b)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def s3b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "0"), ("item", "rather"), ("context", "antecedent of a conditional")] }
 
-def s4a : LinguisticExample :=
+def s4a : Datum :=
   { id := "israel2001_s4a"
     source := ⟨"israel-2001", "(4a)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def s4a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "0"), ("item", "the least bit"), ("context", "interrogative")] }
 
-def s4b : LinguisticExample :=
+def s4b : Datum :=
   { id := "israel2001_s4b"
     source := ⟨"israel-2001", "(4b)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def s4b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "0"), ("item", "rather"), ("context", "interrogative")] }
 
-def s5a : LinguisticExample :=
+def s5a : Datum :=
   { id := "israel2001_s5a"
     source := ⟨"israel-2001", "(5a)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def s5a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "0"), ("item", "the least bit"), ("context", "restriction of a universal")] }
 
-def s5b : LinguisticExample :=
+def s5b : Datum :=
   { id := "israel2001_s5b"
     source := ⟨"israel-2001", "(5b)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def s5b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "0"), ("item", "rather"), ("context", "restriction of a universal")] }
 
-def s6a : LinguisticExample :=
+def s6a : Datum :=
   { id := "israel2001_s6a"
     source := ⟨"israel-2001", "(6a)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def s6a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "0"), ("item", "the least bit"), ("context", "standard of a comparative")] }
 
-def s6b : LinguisticExample :=
+def s6b : Datum :=
   { id := "israel2001_s6b"
     source := ⟨"israel-2001", "(6b)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def s6b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "0"), ("item", "rather"), ("context", "standard of a comparative")] }
 
-def s7a : LinguisticExample :=
+def s7a : Datum :=
   { id := "israel2001_s7a"
     source := ⟨"israel-2001", "(7a)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def s7a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("item", "a wink"), ("cell", "emphatic NPI, low value")] }
 
-def s7b : LinguisticExample :=
+def s7b : Datum :=
   { id := "israel2001_s7b"
     source := ⟨"israel-2001", "(7b)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def s7b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("item", "the least bit"), ("cell", "emphatic NPI, low value")] }
 
-def s7c : LinguisticExample :=
+def s7c : Datum :=
   { id := "israel2001_s7c"
     source := ⟨"israel-2001", "(7c)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def s7c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("item", "an inch"), ("cell", "emphatic NPI, low value")] }
 
-def s8a : LinguisticExample :=
+def s8a : Datum :=
   { id := "israel2001_s8a"
     source := ⟨"israel-2001", "(8a)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def s8a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("item", "much"), ("cell", "attenuating NPI, high value")] }
 
-def s8b : LinguisticExample :=
+def s8b : Datum :=
   { id := "israel2001_s8b"
     source := ⟨"israel-2001", "(8b)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def s8b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("item", "all that"), ("cell", "attenuating NPI, high value")] }
 
-def s8c : LinguisticExample :=
+def s8c : Datum :=
   { id := "israel2001_s8c"
     source := ⟨"israel-2001", "(8c)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def s8c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("item", "long"), ("cell", "attenuating NPI, high value")] }
 
-def s9a : LinguisticExample :=
+def s9a : Datum :=
   { id := "israel2001_s9a"
     source := ⟨"israel-2001", "(9a)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def s9a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("item", "insanely"), ("cell", "emphatic PPI, high value")] }
 
-def s9b : LinguisticExample :=
+def s9b : Datum :=
   { id := "israel2001_s9b"
     source := ⟨"israel-2001", "(9b)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def s9b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("item", "utterly"), ("cell", "emphatic PPI, high value")] }
 
-def s9c : LinguisticExample :=
+def s9c : Datum :=
   { id := "israel2001_s9c"
     source := ⟨"israel-2001", "(9c)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def s9c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("item", "a heap"), ("cell", "emphatic PPI, high value")] }
 
-def s10a : LinguisticExample :=
+def s10a : Datum :=
   { id := "israel2001_s10a"
     source := ⟨"israel-2001", "(10a)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def s10a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("item", "sorta"), ("cell", "attenuating PPI, low value")] }
 
-def s10b : LinguisticExample :=
+def s10b : Datum :=
   { id := "israel2001_s10b"
     source := ⟨"israel-2001", "(10b)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def s10b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("item", "rather"), ("cell", "attenuating PPI, low value")] }
 
-def s10c : LinguisticExample :=
+def s10c : Datum :=
   { id := "israel2001_s10c"
     source := ⟨"israel-2001", "(10c)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def s10c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("item", "somewhat"), ("cell", "attenuating PPI, low value")] }
 
-def s11a : LinguisticExample :=
+def s11a : Datum :=
   { id := "israel2001_s11a"
     source := ⟨"israel-2001", "(11a)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def s11a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("item", "wild horses"), ("cell", "maximizing NPI"), ("role", "facilitating: stimulus")] }
 
-def s11b : LinguisticExample :=
+def s11b : Datum :=
   { id := "israel2001_s11b"
     source := ⟨"israel-2001", "(11b)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def s11b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("item", "all the tea in China"), ("cell", "maximizing NPI"), ("role", "facilitating: reward")] }
 
-def s11c : LinguisticExample :=
+def s11c : Datum :=
   { id := "israel2001_s11c"
     source := ⟨"israel-2001", "(11c)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def s11c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("item", "a ten-foot pole"), ("cell", "maximizing NPI"), ("role", "facilitating: instrument")] }
 
-def s12a : LinguisticExample :=
+def s12a : Datum :=
   { id := "israel2001_s12a"
     source := ⟨"israel-2001", "(12a)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def s12a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("item", "his own shadow"), ("cell", "minimizing PPI"), ("role", "facilitating: stimulus")] }
 
-def s12b : LinguisticExample :=
+def s12b : Datum :=
   { id := "israel2001_s12b"
     source := ⟨"israel-2001", "(12b)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def s12b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("item", "at the drop of a hat"), ("cell", "minimizing PPI"), ("role", "facilitating: stimulus")] }
 
-def s12c : LinguisticExample :=
+def s12c : Datum :=
   { id := "israel2001_s12c"
     source := ⟨"israel-2001", "(12c)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def s12c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("item", "with a feather"), ("cell", "minimizing PPI"), ("role", "facilitating: instrument")] }
 
-def s13a : LinguisticExample :=
+def s13a : Datum :=
   { id := "israel2001_s13a"
     source := ⟨"israel-2001", "(13a)"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def s13a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("item", "in a coon's age"), ("cell", "inverted NPI, large time span")] }
 
-def s13b : LinguisticExample :=
+def s13b : Datum :=
   { id := "israel2001_s13b"
     source := ⟨"israel-2001", "(13b)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def s13b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("item", "in a million years"), ("cell", "inverted NPI, large time span")] }
 
-def s14a : LinguisticExample :=
+def s14a : Datum :=
   { id := "israel2001_s14a"
     source := ⟨"israel-2001", "(14a)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def s14a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("item", "in a jiffy"), ("cell", "inverted PPI, minimal span")] }
 
-def s14b : LinguisticExample :=
+def s14b : Datum :=
   { id := "israel2001_s14b"
     source := ⟨"israel-2001", "(14b)"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def s14b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("item", "in a New York minute"), ("cell", "inverted PPI, minimal span")] }
 
-def s15a : LinguisticExample :=
+def s15a : Datum :=
   { id := "israel2001_s15a"
     source := ⟨"israel-2001", "(15a)"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def s15a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("item", "a red cent"), ("cell", "canonical NPI"), ("role", "resource")] }
 
-def s15b : LinguisticExample :=
+def s15b : Datum :=
   { id := "israel2001_s15b"
     source := ⟨"israel-2001", "(15b)"⟩
     reportedIn := none
@@ -485,7 +485,7 @@ def s15b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("item", "all the tea in China"), ("cell", "inverted NPI"), ("role", "reward")] }
 
-def s16a : LinguisticExample :=
+def s16a : Datum :=
   { id := "israel2001_s16a"
     source := ⟨"israel-2001", "(16a)"⟩
     reportedIn := none
@@ -498,7 +498,7 @@ def s16a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("item", "a king's ransom"), ("cell", "canonical PPI"), ("role", "resource")] }
 
-def s16b : LinguisticExample :=
+def s16b : Datum :=
   { id := "israel2001_s16b"
     source := ⟨"israel-2001", "(16b)"⟩
     reportedIn := none
@@ -511,7 +511,7 @@ def s16b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("item", "for peanuts"), ("cell", "inverted PPI"), ("role", "reward")] }
 
-def s17a : LinguisticExample :=
+def s17a : Datum :=
   { id := "israel2001_s17a"
     source := ⟨"israel-2001", "(17a)"⟩
     reportedIn := none
@@ -524,7 +524,7 @@ def s17a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("item", "half a minute"), ("role", "duration: impeding")] }
 
-def s17b : LinguisticExample :=
+def s17b : Datum :=
   { id := "israel2001_s17b"
     source := ⟨"israel-2001", "(17b)"⟩
     reportedIn := none
@@ -537,7 +537,7 @@ def s17b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("item", "for a second"), ("role", "duration: impeding")] }
 
-def s18a : LinguisticExample :=
+def s18a : Datum :=
   { id := "israel2001_s18a"
     source := ⟨"israel-2001", "(18a)"⟩
     reportedIn := none
@@ -550,7 +550,7 @@ def s18a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("item", "time out of mind"), ("role", "duration: impeding")] }
 
-def s18b : LinguisticExample :=
+def s18b : Datum :=
   { id := "israel2001_s18b"
     source := ⟨"israel-2001", "(18b)"⟩
     reportedIn := none
@@ -563,7 +563,7 @@ def s18b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("item", "for ages"), ("role", "duration: impeding")] }
 
-def s19 : LinguisticExample :=
+def s19 : Datum :=
   { id := "israel2001_s19"
     source := ⟨"israel-2001", "(19)"⟩
     reportedIn := none
@@ -576,7 +576,7 @@ def s19 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("source", "Fillmore, Kay and O'Connor 1988"), ("scales", "five coordinated scales")] }
 
-def s20a : LinguisticExample :=
+def s20a : Datum :=
   { id := "israel2001_s20a"
     source := ⟨"israel-2001", "(20a)"⟩
     reportedIn := none
@@ -589,7 +589,7 @@ def s20a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("scales", "solvers, problems, time spans")] }
 
-def s20b : LinguisticExample :=
+def s20b : Datum :=
   { id := "israel2001_s20b"
     source := ⟨"israel-2001", "(20b)"⟩
     reportedIn := none
@@ -602,7 +602,7 @@ def s20b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("scales", "solvers, problems, time spans")] }
 
-def s20c : LinguisticExample :=
+def s20c : Datum :=
   { id := "israel2001_s20c"
     source := ⟨"israel-2001", "(20c)"⟩
     reportedIn := none
@@ -615,7 +615,7 @@ def s20c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("scales", "solvers, problems, time spans")] }
 
-def s21a : LinguisticExample :=
+def s21a : Datum :=
   { id := "israel2001_s21a"
     source := ⟨"israel-2001", "(21a)"⟩
     reportedIn := none
@@ -628,7 +628,7 @@ def s21a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("scales", "solvers, problems, time spans")] }
 
-def s21b : LinguisticExample :=
+def s21b : Datum :=
   { id := "israel2001_s21b"
     source := ⟨"israel-2001", "(21b)"⟩
     reportedIn := none
@@ -641,7 +641,7 @@ def s21b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("scales", "solvers, problems, time spans")] }
 
-def s21c : LinguisticExample :=
+def s21c : Datum :=
   { id := "israel2001_s21c"
     source := ⟨"israel-2001", "(21c)"⟩
     reportedIn := none
@@ -654,7 +654,7 @@ def s21c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("scales", "solvers, problems, time spans")] }
 
-def s22a : LinguisticExample :=
+def s22a : Datum :=
   { id := "israel2001_s22a"
     source := ⟨"israel-2001", "(22a)"⟩
     reportedIn := none
@@ -667,7 +667,7 @@ def s22a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("scale", "existential")] }
 
-def s22b : LinguisticExample :=
+def s22b : Datum :=
   { id := "israel2001_s22b"
     source := ⟨"israel-2001", "(22b)"⟩
     reportedIn := none
@@ -680,7 +680,7 @@ def s22b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("scale", "perceptual ability")] }
 
-def s22c : LinguisticExample :=
+def s22c : Datum :=
   { id := "israel2001_s22c"
     source := ⟨"israel-2001", "(22c)"⟩
     reportedIn := none
@@ -693,7 +693,7 @@ def s22c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("paraphrase", "of both (22a) and (22b)")] }
 
-def s23a : LinguisticExample :=
+def s23a : Datum :=
   { id := "israel2001_s23a"
     source := ⟨"israel-2001", "(23a)"⟩
     reportedIn := none
@@ -706,7 +706,7 @@ def s23a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("scale", "existential")] }
 
-def s23b : LinguisticExample :=
+def s23b : Datum :=
   { id := "israel2001_s23b"
     source := ⟨"israel-2001", "(23b)"⟩
     reportedIn := none
@@ -719,7 +719,7 @@ def s23b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("scale", "perceptual ability")] }
 
-def s24a : LinguisticExample :=
+def s24a : Datum :=
   { id := "israel2001_s24a"
     source := ⟨"israel-2001", "(24a)"⟩
     reportedIn := none
@@ -732,7 +732,7 @@ def s24a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("scale", "perceptual ability")] }
 
-def s24b : LinguisticExample :=
+def s24b : Datum :=
   { id := "israel2001_s24b"
     source := ⟨"israel-2001", "(24b)"⟩
     reportedIn := none
@@ -745,7 +745,7 @@ def s24b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("scale", "existential")] }
 
-def s25a : LinguisticExample :=
+def s25a : Datum :=
   { id := "israel2001_s25a"
     source := ⟨"israel-2001", "(25a)"⟩
     reportedIn := none
@@ -758,7 +758,7 @@ def s25a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("scale", "existential")] }
 
-def s25b : LinguisticExample :=
+def s25b : Datum :=
   { id := "israel2001_s25b"
     source := ⟨"israel-2001", "(25b)"⟩
     reportedIn := none
@@ -771,7 +771,7 @@ def s25b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("scale", "perceptual ability")] }
 
-def s26a : LinguisticExample :=
+def s26a : Datum :=
   { id := "israel2001_s26a"
     source := ⟨"israel-2001", "(26a)"⟩
     reportedIn := none
@@ -784,7 +784,7 @@ def s26a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("verb", "see")] }
 
-def s26b : LinguisticExample :=
+def s26b : Datum :=
   { id := "israel2001_s26b"
     source := ⟨"israel-2001", "(26b)"⟩
     reportedIn := none
@@ -797,7 +797,7 @@ def s26b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("verb", "see")] }
 
-def s27a : LinguisticExample :=
+def s27a : Datum :=
   { id := "israel2001_s27a"
     source := ⟨"israel-2001", "(27a)"⟩
     reportedIn := none
@@ -810,7 +810,7 @@ def s27a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("verb", "detect")] }
 
-def s27b : LinguisticExample :=
+def s27b : Datum :=
   { id := "israel2001_s27b"
     source := ⟨"israel-2001", "(27b)"⟩
     reportedIn := none
@@ -823,7 +823,7 @@ def s27b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("verb", "detect")] }
 
-def s28a : LinguisticExample :=
+def s28a : Datum :=
   { id := "israel2001_s28a"
     source := ⟨"israel-2001", "(28a)"⟩
     reportedIn := none
@@ -836,7 +836,7 @@ def s28a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("verb", "find")] }
 
-def s28b : LinguisticExample :=
+def s28b : Datum :=
   { id := "israel2001_s28b"
     source := ⟨"israel-2001", "(28b)"⟩
     reportedIn := none
@@ -849,6 +849,6 @@ def s28b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("verb", "find")] }
 
-def all : List LinguisticExample := [s1a, s1b, s2a, s2b, s3a, s3b, s4a, s4b, s5a, s5b, s6a, s6b, s7a, s7b, s7c, s8a, s8b, s8c, s9a, s9b, s9c, s10a, s10b, s10c, s11a, s11b, s11c, s12a, s12b, s12c, s13a, s13b, s14a, s14b, s15a, s15b, s16a, s16b, s17a, s17b, s18a, s18b, s19, s20a, s20b, s20c, s21a, s21b, s21c, s22a, s22b, s22c, s23a, s23b, s24a, s24b, s25a, s25b, s26a, s26b, s27a, s27b, s28a, s28b]
+def all : List Datum := [s1a, s1b, s2a, s2b, s3a, s3b, s4a, s4b, s5a, s5b, s6a, s6b, s7a, s7b, s7c, s8a, s8b, s8c, s9a, s9b, s9c, s10a, s10b, s10c, s11a, s11b, s11c, s12a, s12b, s12c, s13a, s13b, s14a, s14b, s15a, s15b, s16a, s16b, s17a, s17b, s18a, s18b, s19, s20a, s20b, s20c, s21a, s21b, s21c, s22a, s22b, s22c, s23a, s23b, s24a, s24b, s25a, s25b, s26a, s26b, s27a, s27b, s28a, s28b]
 
 end Israel2001.Examples

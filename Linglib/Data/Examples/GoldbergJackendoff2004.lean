@@ -17,7 +17,7 @@ namespace GoldbergJackendoff2004.Examples
 
 open Data.Examples
 
-def gj2004_5a : LinguisticExample :=
+def gj2004_5a : Datum :=
   { id := "gj2004_5a"
     source := ⟨"goldberg-jackendoff-2004", "(5a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def gj2004_5a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "hammer"), ("subconstruction", "causative property"), ("rpCat", "AP"), ("selection", "selected")] }
 
-def gj2004_5b : LinguisticExample :=
+def gj2004_5b : Datum :=
   { id := "gj2004_5b"
     source := ⟨"goldberg-jackendoff-2004", "(5b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def gj2004_5b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "laugh"), ("subconstruction", "causative path"), ("rpCat", "PP"), ("selection", "unselected")] }
 
-def gj2004_6a : LinguisticExample :=
+def gj2004_6a : Datum :=
   { id := "gj2004_6a"
     source := ⟨"goldberg-jackendoff-2004", "(6a)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def gj2004_6a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "freeze"), ("subconstruction", "noncausative property"), ("rpCat", "AP")] }
 
-def gj2004_6b : LinguisticExample :=
+def gj2004_6b : Datum :=
   { id := "gj2004_6b"
     source := ⟨"goldberg-jackendoff-2004", "(6b)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def gj2004_6b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "roll"), ("subconstruction", "noncausative path"), ("rpCat", "PP")] }
 
-def gj2004_7a : LinguisticExample :=
+def gj2004_7a : Datum :=
   { id := "gj2004_7a"
     source := ⟨"goldberg-jackendoff-2004", "(7a)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def gj2004_7a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "water"), ("subconstruction", "causative property"), ("rpCat", "AP"), ("selection", "selected")] }
 
-def gj2004_7b : LinguisticExample :=
+def gj2004_7b : Datum :=
   { id := "gj2004_7b"
     source := ⟨"goldberg-jackendoff-2004", "(7b)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def gj2004_7b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "break"), ("subconstruction", "causative property"), ("rpCat", "PP"), ("selection", "selected")] }
 
-def gj2004_8a : LinguisticExample :=
+def gj2004_8a : Datum :=
   { id := "gj2004_8a"
     source := ⟨"goldberg-jackendoff-2004", "(8a)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def gj2004_8a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "drink"), ("subconstruction", "causative property"), ("rpCat", "AP"), ("selection", "unselected")] }
 
-def gj2004_8b : LinguisticExample :=
+def gj2004_8b : Datum :=
   { id := "gj2004_8b"
     source := ⟨"goldberg-jackendoff-2004", "(8b)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def gj2004_8b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "talk"), ("subconstruction", "causative property"), ("rpCat", "PP"), ("selection", "unselected")] }
 
-def gj2004_9a : LinguisticExample :=
+def gj2004_9a : Datum :=
   { id := "gj2004_9a"
     source := ⟨"goldberg-jackendoff-2004", "(9a)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def gj2004_9a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "yell"), ("subconstruction", "causative property"), ("rpCat", "AP"), ("selection", "fake reflexive")] }
 
-def gj2004_23a : LinguisticExample :=
+def gj2004_23a : Datum :=
   { id := "gj2004_23a"
     source := ⟨"goldberg-jackendoff-2004", "(23a)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def gj2004_23a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "heat"), ("subconstruction", "causative property"), ("rpCat", "AP"), ("endBounded", "false")] }
 
-def gj2004_23b : LinguisticExample :=
+def gj2004_23b : Datum :=
   { id := "gj2004_23b"
     source := ⟨"goldberg-jackendoff-2004", "(23b)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def gj2004_23b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "hammer"), ("subconstruction", "causative property"), ("rpCat", "AP"), ("endBounded", "false")] }
 
-def gj2004_23c : LinguisticExample :=
+def gj2004_23c : Datum :=
   { id := "gj2004_23c"
     source := ⟨"goldberg-jackendoff-2004", "(23c)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def gj2004_23c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "weave"), ("subconstruction", "causative property"), ("rpCat", "AP"), ("endBounded", "false")] }
 
-def gj2004_24a : LinguisticExample :=
+def gj2004_24a : Datum :=
   { id := "gj2004_24a"
     source := ⟨"goldberg-jackendoff-2004", "(24a)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def gj2004_24a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "float"), ("subconstruction", "noncausative path"), ("rpCat", "PP"), ("endBounded", "true")] }
 
-def gj2004_24b : LinguisticExample :=
+def gj2004_24b : Datum :=
   { id := "gj2004_24b"
     source := ⟨"goldberg-jackendoff-2004", "(24b)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def gj2004_24b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "push"), ("subconstruction", "causative path"), ("rpCat", "PP"), ("endBounded", "true")] }
 
-def gj2004_24c : LinguisticExample :=
+def gj2004_24c : Datum :=
   { id := "gj2004_24c"
     source := ⟨"goldberg-jackendoff-2004", "(24c)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def gj2004_24c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "float"), ("subconstruction", "noncausative path"), ("rpCat", "PP"), ("endBounded", "false")] }
 
-def gj2004_24d : LinguisticExample :=
+def gj2004_24d : Datum :=
   { id := "gj2004_24d"
     source := ⟨"goldberg-jackendoff-2004", "(24d)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def gj2004_24d : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "push"), ("subconstruction", "causative path"), ("rpCat", "PP"), ("endBounded", "false")] }
 
-def gj2004_45a : LinguisticExample :=
+def gj2004_45a : Datum :=
   { id := "gj2004_45a"
     source := ⟨"goldberg-jackendoff-2004", "(45a)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def gj2004_45a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "yell"), ("subconstruction", "noncausative property"), ("rpCat", "AP"), ("subjectRole", "agent")] }
 
-def gj2004_45b : LinguisticExample :=
+def gj2004_45b : Datum :=
   { id := "gj2004_45b"
     source := ⟨"goldberg-jackendoff-2004", "(45b)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def gj2004_45b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "cry"), ("subconstruction", "noncausative property"), ("rpCat", "PP"), ("subjectRole", "agent")] }
 
-def gj2004_45c : LinguisticExample :=
+def gj2004_45c : Datum :=
   { id := "gj2004_45c"
     source := ⟨"goldberg-jackendoff-2004", "(45c)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def gj2004_45c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "bleed"), ("subconstruction", "noncausative property"), ("rpCat", "PP"), ("subjectRole", "patient")] }
 
-def gj2004_46a : LinguisticExample :=
+def gj2004_46a : Datum :=
   { id := "gj2004_46a"
     source := ⟨"goldberg-jackendoff-2004", "(46a)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def gj2004_46a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "cough"), ("subconstruction", "noncausative property"), ("rpCat", "AP"), ("subjectRole", "agent or patient")] }
 
-def gj2004_47a : LinguisticExample :=
+def gj2004_47a : Datum :=
   { id := "gj2004_47a"
     source := ⟨"goldberg-jackendoff-2004", "(47a)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def gj2004_47a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "cough"), ("subconstruction", "causative property"), ("rpCat", "AP"), ("selection", "fake reflexive"), ("subjectRole", "agent or patient")] }
 
-def gj2004_48a : LinguisticExample :=
+def gj2004_48a : Datum :=
   { id := "gj2004_48a"
     source := ⟨"goldberg-jackendoff-2004", "(48a)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def gj2004_48a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "wriggle"), ("subconstruction", "noncausative path"), ("rpCat", "PP"), ("subjectRole", "agent")] }
 
-def gj2004_48b : LinguisticExample :=
+def gj2004_48b : Datum :=
   { id := "gj2004_48b"
     source := ⟨"goldberg-jackendoff-2004", "(48b)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def gj2004_48b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "melt"), ("subconstruction", "noncausative path"), ("rpCat", "PP"), ("subjectRole", "patient")] }
 
-def gj2004_49a : LinguisticExample :=
+def gj2004_49a : Datum :=
   { id := "gj2004_49a"
     source := ⟨"goldberg-jackendoff-2004", "(49a)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def gj2004_49a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "wiggle"), ("subconstruction", "causative path"), ("rpCat", "AP"), ("subjectRole", "agent")] }
 
-def gj2004_49b : LinguisticExample :=
+def gj2004_49b : Datum :=
   { id := "gj2004_49b"
     source := ⟨"goldberg-jackendoff-2004", "(49b)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def gj2004_49b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "wiggle"), ("subconstruction", "causative path"), ("rpCat", "AP"), ("subjectRole", "agent")] }
 
-def gj2004_49c : LinguisticExample :=
+def gj2004_49c : Datum :=
   { id := "gj2004_49c"
     source := ⟨"goldberg-jackendoff-2004", "(49c)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def gj2004_49c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "wiggle"), ("subconstruction", "causative path"), ("rpCat", "AP"), ("subjectRole", "agent")] }
 
-def gj2004_49e : LinguisticExample :=
+def gj2004_49e : Datum :=
   { id := "gj2004_49e"
     source := ⟨"goldberg-jackendoff-2004", "(49e)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def gj2004_49e : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "wiggle"), ("subconstruction", "causative path"), ("rpCat", "AP"), ("subjectRole", "patient")] }
 
-def gj2004_wipe : LinguisticExample :=
+def gj2004_wipe : Datum :=
   { id := "gj2004_wipe"
     source := ⟨"goldberg-jackendoff-2004", "§6.2"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def gj2004_wipe : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "wipe"), ("subconstruction", "causative property"), ("rpCat", "AP"), ("selection", "selected"), ("objectRole", "patient")] }
 
-def gj2004_97c : LinguisticExample :=
+def gj2004_97c : Datum :=
   { id := "gj2004_97c"
     source := ⟨"goldberg-jackendoff-2004", "(97c)"⟩
     reportedIn := none
@@ -394,6 +394,6 @@ def gj2004_97c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "rumble"), ("subconstruction", "noncausative path"), ("rpCat", "PP"), ("subeventRelation", "result")] }
 
-def all : List LinguisticExample := [gj2004_5a, gj2004_5b, gj2004_6a, gj2004_6b, gj2004_7a, gj2004_7b, gj2004_8a, gj2004_8b, gj2004_9a, gj2004_23a, gj2004_23b, gj2004_23c, gj2004_24a, gj2004_24b, gj2004_24c, gj2004_24d, gj2004_45a, gj2004_45b, gj2004_45c, gj2004_46a, gj2004_47a, gj2004_48a, gj2004_48b, gj2004_49a, gj2004_49b, gj2004_49c, gj2004_49e, gj2004_wipe, gj2004_97c]
+def all : List Datum := [gj2004_5a, gj2004_5b, gj2004_6a, gj2004_6b, gj2004_7a, gj2004_7b, gj2004_8a, gj2004_8b, gj2004_9a, gj2004_23a, gj2004_23b, gj2004_23c, gj2004_24a, gj2004_24b, gj2004_24c, gj2004_24d, gj2004_45a, gj2004_45b, gj2004_45c, gj2004_46a, gj2004_47a, gj2004_48a, gj2004_48b, gj2004_49a, gj2004_49b, gj2004_49c, gj2004_49e, gj2004_wipe, gj2004_97c]
 
 end GoldbergJackendoff2004.Examples

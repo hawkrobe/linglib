@@ -17,7 +17,7 @@ namespace Creissels2024.Examples
 
 open Data.Examples
 
-def ex_1_13a : LinguisticExample :=
+def ex_1_13a : Datum :=
   { id := "creissels2024_1_13a"
     source := ⟨"creissels-2024", "ch. 1 (13a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_1_13a : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "1.13"), ("variant", "a"), ("participants", "man,bicycle"), ("p1", "A"), ("p2", "P")] }
 
-def ex_1_13b : LinguisticExample :=
+def ex_1_13b : Datum :=
   { id := "creissels2024_1_13b"
     source := ⟨"creissels-2024", "ch. 1 (13b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_1_13b : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "1.13"), ("variant", "b"), ("participants", "man,name"), ("p1", "S"), ("p2", "X")] }
 
-def ex_1_22a : LinguisticExample :=
+def ex_1_22a : Datum :=
   { id := "creissels2024_1_22a"
     source := ⟨"creissels-2024", "ch. 1 (22a)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_1_22a : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "1.22"), ("variant", "a"), ("S", "zero")] }
 
-def ex_1_22b : LinguisticExample :=
+def ex_1_22b : Datum :=
   { id := "creissels2024_1_22b"
     source := ⟨"creissels-2024", "ch. 1 (22b)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_1_22b : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "1.22"), ("variant", "b"), ("S", "ergative")] }
 
-def ex_1_22c : LinguisticExample :=
+def ex_1_22c : Datum :=
   { id := "creissels2024_1_22c"
     source := ⟨"creissels-2024", "ch. 1 (22c)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_1_22c : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "1.22"), ("variant", "c"), ("A", "ergative"), ("P", "zero")] }
 
-def ex_1_23a : LinguisticExample :=
+def ex_1_23a : Datum :=
   { id := "creissels2024_1_23a"
     source := ⟨"creissels-2024", "ch. 1 (23a)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_1_23a : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "1.23"), ("variant", "a"), ("S", "zero")] }
 
-def ex_1_23b : LinguisticExample :=
+def ex_1_23b : Datum :=
   { id := "creissels2024_1_23b"
     source := ⟨"creissels-2024", "ch. 1 (23b)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_1_23b : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "1.23"), ("variant", "b"), ("S", "zero")] }
 
-def ex_1_23c : LinguisticExample :=
+def ex_1_23c : Datum :=
   { id := "creissels2024_1_23c"
     source := ⟨"creissels-2024", "ch. 1 (23c)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_1_23c : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "1.23"), ("variant", "c"), ("A", "zero"), ("P", "accusative")] }
 
-def ex_1_24a : LinguisticExample :=
+def ex_1_24a : Datum :=
   { id := "creissels2024_1_24a"
     source := ⟨"creissels-2024", "ch. 1 (24a)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_1_24a : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "1.24"), ("variant", "a"), ("S", "zero")] }
 
-def ex_1_24b : LinguisticExample :=
+def ex_1_24b : Datum :=
   { id := "creissels2024_1_24b"
     source := ⟨"creissels-2024", "ch. 1 (24b)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_1_24b : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "1.24"), ("variant", "b"), ("S", "zero")] }
 
-def ex_1_24c : LinguisticExample :=
+def ex_1_24c : Datum :=
   { id := "creissels2024_1_24c"
     source := ⟨"creissels-2024", "ch. 1 (24c)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_1_24c : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "1.24"), ("variant", "c"), ("A", "ergative"), ("P", "zero")] }
 
-def ex_8_1a : LinguisticExample :=
+def ex_8_1a : Datum :=
   { id := "creissels2024_8_1a"
     source := ⟨"creissels-2024", "ch. 8 (1a)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_8_1a : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.1"), ("variant", "a"), ("participants", "writer,letter"), ("p1", "A"), ("p2", "P")] }
 
-def ex_8_1b : LinguisticExample :=
+def ex_8_1b : Datum :=
   { id := "creissels2024_8_1b"
     source := ⟨"creissels-2024", "ch. 8 (1b)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_8_1b : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.1"), ("variant", "b"), ("participants", "writer,letter"), ("p1", "X"), ("p2", "S"), ("marker", "-w"), ("alternation", "passivization"), ("initial", "a"), ("marking", "synthetic")] }
 
-def ex_8_2a : LinguisticExample :=
+def ex_8_2a : Datum :=
   { id := "creissels2024_8_2a"
     source := ⟨"creissels-2024", "ch. 8 (2a)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_8_2a : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.2"), ("variant", "a"), ("participants", "writer,letter"), ("p1", "A"), ("p2", "P")] }
 
-def ex_8_2b : LinguisticExample :=
+def ex_8_2b : Datum :=
   { id := "creissels2024_8_2b"
     source := ⟨"creissels-2024", "ch. 8 (2b)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_8_2b : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.2"), ("variant", "b"), ("participants", "writer,letter"), ("p1", "X"), ("p2", "S"), ("marking", "uncoded"), ("transitive", "a")] }
 
-def ex_8_3a : LinguisticExample :=
+def ex_8_3a : Datum :=
   { id := "creissels2024_8_3a"
     source := ⟨"creissels-2024", "ch. 8 (3a)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_8_3a : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.3"), ("variant", "a"), ("participants", "writer,letter"), ("p1", "A"), ("p2", "P")] }
 
-def ex_8_3b : LinguisticExample :=
+def ex_8_3b : Datum :=
   { id := "creissels2024_8_3b"
     source := ⟨"creissels-2024", "ch. 8 (3b)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex_8_3b : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.3"), ("variant", "b"), ("participants", "writer,letter"), ("p1", "X"), ("p2", "S"), ("marking", "uncoded"), ("transitive", "a")] }
 
-def ex_8_4a : LinguisticExample :=
+def ex_8_4a : Datum :=
   { id := "creissels2024_8_4a"
     source := ⟨"creissels-2024", "ch. 8 (4a)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex_8_4a : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.4"), ("variant", "a"), ("participants", "child,mirror"), ("p1", "A"), ("p2", "P")] }
 
-def ex_8_4b : LinguisticExample :=
+def ex_8_4b : Datum :=
   { id := "creissels2024_8_4b"
     source := ⟨"creissels-2024", "ch. 8 (4b)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex_8_4b : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.4"), ("variant", "b"), ("participants", "child,mirror"), ("p1", "absent"), ("p2", "S"), ("marking", "uncoded"), ("transitive", "a"), ("ambitransitivity", "P-ambitransitivity")] }
 
-def ex_8_5a : LinguisticExample :=
+def ex_8_5a : Datum :=
   { id := "creissels2024_8_5a"
     source := ⟨"creissels-2024", "ch. 8 (5a)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex_8_5a : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.5"), ("variant", "a"), ("participants", "we,work,friend"), ("p1", "A"), ("p2", "P"), ("p3", "absent")] }
 
-def ex_8_5b : LinguisticExample :=
+def ex_8_5b : Datum :=
   { id := "creissels2024_8_5b"
     source := ⟨"creissels-2024", "ch. 8 (5b)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex_8_5b : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.5"), ("variant", "b"), ("participants", "we,work,friend"), ("p1", "A"), ("p2", "P"), ("p3", "dative"), ("marker", "grade"), ("alternation", "dApplicativization"), ("initial", "a"), ("marking", "equipollent"), ("new", "p3")] }
 
-def ex_8_6a : LinguisticExample :=
+def ex_8_6a : Datum :=
   { id := "creissels2024_8_6a"
     source := ⟨"creissels-2024", "ch. 8 (6a)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex_8_6a : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.6"), ("variant", "a"), ("participants", "writer,letter,Kitso,causer"), ("p1", "A"), ("p2", "P"), ("p3", "absent"), ("p4", "absent")] }
 
-def ex_8_6b : LinguisticExample :=
+def ex_8_6b : Datum :=
   { id := "creissels2024_8_6b"
     source := ⟨"creissels-2024", "ch. 8 (6b)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex_8_6b : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.6"), ("variant", "b"), ("participants", "writer,letter,Kitso,causer"), ("p1", "A"), ("p2", "P"), ("p3", "P"), ("p4", "absent"), ("marker", "-ɛl"), ("alternation", "pApplicativization"), ("initial", "a"), ("marking", "synthetic"), ("new", "p3")] }
 
-def ex_8_6c : LinguisticExample :=
+def ex_8_6c : Datum :=
   { id := "creissels2024_8_6c"
     source := ⟨"creissels-2024", "ch. 8 (6c)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex_8_6c : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.6"), ("variant", "c"), ("participants", "writer,letter,Kitso,causer"), ("p1", "X"), ("p2", "S"), ("p3", "absent"), ("p4", "absent"), ("marker", "-w"), ("alternation", "passivization"), ("initial", "a"), ("marking", "synthetic")] }
 
-def ex_8_6d : LinguisticExample :=
+def ex_8_6d : Datum :=
   { id := "creissels2024_8_6d"
     source := ⟨"creissels-2024", "ch. 8 (6d)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex_8_6d : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.6"), ("variant", "d"), ("participants", "writer,letter,Kitso,causer"), ("p1", "P"), ("p2", "P"), ("p3", "absent"), ("p4", "A"), ("marker", "-is"), ("alternation", "causativization"), ("initial", "a"), ("marking", "synthetic"), ("new", "p4")] }
 
-def ex_8_13a : LinguisticExample :=
+def ex_8_13a : Datum :=
   { id := "creissels2024_8_13a"
     source := ⟨"creissels-2024", "ch. 8 (13a)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex_8_13a : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.13"), ("variant", "a"), ("participants", "cook,porridge,meat"), ("p1", "A"), ("p2", "P"), ("p3", "X")] }
 
-def ex_8_13b : LinguisticExample :=
+def ex_8_13b : Datum :=
   { id := "creissels2024_8_13b"
     source := ⟨"creissels-2024", "ch. 8 (13b)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def ex_8_13b : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.13"), ("variant", "b"), ("participants", "cook,porridge,meat"), ("p1", "implicit"), ("p2", "P"), ("p3", "A"), ("marker", "-ɛl"), ("alternation", "aNucleativization"), ("initial", "a"), ("marking", "synthetic"), ("new", "p3")] }
 
-def ex_8_14a : LinguisticExample :=
+def ex_8_14a : Datum :=
   { id := "creissels2024_8_14a"
     source := ⟨"creissels-2024", "ch. 8 (14a)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def ex_8_14a : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.14"), ("variant", "a"), ("participants", "Kitso,letter,women"), ("p1", "A"), ("p2", "P"), ("p3", "absent")] }
 
-def ex_8_14b : LinguisticExample :=
+def ex_8_14b : Datum :=
   { id := "creissels2024_8_14b"
     source := ⟨"creissels-2024", "ch. 8 (14b)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def ex_8_14b : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.14"), ("variant", "b"), ("participants", "Kitso,letter,women"), ("p1", "X"), ("p2", "S"), ("p3", "absent"), ("marker", "-w"), ("alternation", "passivization"), ("initial", "a"), ("marking", "synthetic")] }
 
-def ex_8_14c : LinguisticExample :=
+def ex_8_14c : Datum :=
   { id := "creissels2024_8_14c"
     source := ⟨"creissels-2024", "ch. 8 (14c)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def ex_8_14c : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.14"), ("variant", "c"), ("participants", "Kitso,letter,women"), ("p1", "implicit"), ("p2", "P"), ("p3", "absent"), ("marker", "-w"), ("alternation", "impersonalPassivization"), ("initial", "a"), ("marking", "synthetic")] }
 
-def ex_8_14d : LinguisticExample :=
+def ex_8_14d : Datum :=
   { id := "creissels2024_8_14d"
     source := ⟨"creissels-2024", "ch. 8 (14d)"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def ex_8_14d : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.14"), ("variant", "d"), ("participants", "Kitso,letter,women"), ("p1", "absent"), ("p2", "absent"), ("p3", "S")] }
 
-def ex_8_14e : LinguisticExample :=
+def ex_8_14e : Datum :=
   { id := "creissels2024_8_14e"
     source := ⟨"creissels-2024", "ch. 8 (14e)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def ex_8_14e : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.14"), ("variant", "e"), ("participants", "Kitso,letter,women"), ("p1", "absent"), ("p2", "absent"), ("p3", "implicit"), ("marker", "-w"), ("alternation", "sDenucleativization"), ("initial", "d"), ("marking", "synthetic")] }
 
-def ex_8_15a : LinguisticExample :=
+def ex_8_15a : Datum :=
   { id := "creissels2024_8_15a"
     source := ⟨"creissels-2024", "ch. 8 (15a)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def ex_8_15a : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.15"), ("variant", "a"), ("participants", "Moussa,rice,Ali"), ("p1", "A"), ("p2", "P"), ("p3", "absent")] }
 
-def ex_8_15b : LinguisticExample :=
+def ex_8_15b : Datum :=
   { id := "creissels2024_8_15b"
     source := ⟨"creissels-2024", "ch. 8 (15b)"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def ex_8_15b : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.15"), ("variant", "b"), ("participants", "Moussa,rice,Ali"), ("p1", "dative"), ("p2", "P"), ("p3", "A"), ("marker", "-ndi"), ("alternation", "causativization"), ("initial", "a"), ("marking", "synthetic"), ("new", "p3")] }
 
-def ex_8_15c : LinguisticExample :=
+def ex_8_15c : Datum :=
   { id := "creissels2024_8_15c"
     source := ⟨"creissels-2024", "ch. 8 (15c)"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def ex_8_15c : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.15"), ("variant", "c"), ("participants", "Moussa,rice,Ali"), ("p1", "implicit"), ("p2", "S"), ("p3", "absent"), ("marker", "-ndi"), ("alternation", "passivization"), ("initial", "a"), ("marking", "synthetic")] }
 
-def ex_8_16a : LinguisticExample :=
+def ex_8_16a : Datum :=
   { id := "creissels2024_8_16a"
     source := ⟨"creissels-2024", "ch. 8 (16a)"⟩
     reportedIn := none
@@ -485,7 +485,7 @@ def ex_8_16a : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.16"), ("variant", "a"), ("participants", "Péter,János"), ("p1", "S"), ("p2", "X")] }
 
-def ex_8_16b : LinguisticExample :=
+def ex_8_16b : Datum :=
   { id := "creissels2024_8_16b"
     source := ⟨"creissels-2024", "ch. 8 (16b)"⟩
     reportedIn := none
@@ -498,7 +498,7 @@ def ex_8_16b : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.16"), ("variant", "b"), ("participants", "Péter,János"), ("p1", "A"), ("p2", "P"), ("marker", "ki-"), ("alternation", "pApplicativization"), ("initial", "a"), ("marking", "synthetic"), ("new", "p2")] }
 
-def ex_8_18a : LinguisticExample :=
+def ex_8_18a : Datum :=
   { id := "creissels2024_8_18a"
     source := ⟨"creissels-2024", "ch. 8 (18a)"⟩
     reportedIn := none
@@ -511,7 +511,7 @@ def ex_8_18a : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.18"), ("variant", "a"), ("participants", "cloth,causer"), ("p1", "S"), ("p2", "absent")] }
 
-def ex_8_18b : LinguisticExample :=
+def ex_8_18b : Datum :=
   { id := "creissels2024_8_18b"
     source := ⟨"creissels-2024", "ch. 8 (18b)"⟩
     reportedIn := none
@@ -524,7 +524,7 @@ def ex_8_18b : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.18"), ("variant", "b"), ("participants", "cloth,causer"), ("p1", "P"), ("p2", "A"), ("marker", "-ndi"), ("alternation", "causativization"), ("initial", "a"), ("marking", "synthetic"), ("new", "p2")] }
 
-def ex_8_19a : LinguisticExample :=
+def ex_8_19a : Datum :=
   { id := "creissels2024_8_19a"
     source := ⟨"creissels-2024", "ch. 8 (19a)"⟩
     reportedIn := none
@@ -537,7 +537,7 @@ def ex_8_19a : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.19"), ("variant", "a"), ("participants", "child,eggs"), ("p1", "A"), ("p2", "P")] }
 
-def ex_8_19b : LinguisticExample :=
+def ex_8_19b : Datum :=
   { id := "creissels2024_8_19b"
     source := ⟨"creissels-2024", "ch. 8 (19b)"⟩
     reportedIn := none
@@ -550,7 +550,7 @@ def ex_8_19b : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.19"), ("variant", "b"), ("participants", "child,eggs"), ("p1", "absent"), ("p2", "S"), ("marker", "-ɛχ"), ("alternation", "decausativization"), ("initial", "a"), ("marking", "synthetic")] }
 
-def ex_8_21a : LinguisticExample :=
+def ex_8_21a : Datum :=
   { id := "creissels2024_8_21a"
     source := ⟨"creissels-2024", "ch. 8 (21a)"⟩
     reportedIn := none
@@ -563,7 +563,7 @@ def ex_8_21a : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.21"), ("variant", "a"), ("participants", "woman,shirt"), ("p1", "A"), ("p2", "P")] }
 
-def ex_8_21b : LinguisticExample :=
+def ex_8_21b : Datum :=
   { id := "creissels2024_8_21b"
     source := ⟨"creissels-2024", "ch. 8 (21b)"⟩
     reportedIn := none
@@ -576,7 +576,7 @@ def ex_8_21b : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.21"), ("variant", "b"), ("participants", "woman,shirt"), ("p1", "S"), ("p2", "X"), ("marker", "-i"), ("alternation", "antipassivization"), ("initial", "a"), ("marking", "synthetic")] }
 
-def ex_8_23a : LinguisticExample :=
+def ex_8_23a : Datum :=
   { id := "creissels2024_8_23a"
     source := ⟨"creissels-2024", "ch. 8 (23a)"⟩
     reportedIn := none
@@ -589,7 +589,7 @@ def ex_8_23a : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.23"), ("variant", "a"), ("participants", "looker,looked-at"), ("p1", "A"), ("p2", "P")] }
 
-def ex_8_23b : LinguisticExample :=
+def ex_8_23b : Datum :=
   { id := "creissels2024_8_23b"
     source := ⟨"creissels-2024", "ch. 8 (23b)"⟩
     reportedIn := none
@@ -602,7 +602,7 @@ def ex_8_23b : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.23"), ("variant", "b"), ("participants", "looker,looked-at"), ("p1", "S"), ("p2", "S"), ("marker", "-oro"), ("alternation", "reflexivization"), ("initial", "a"), ("marking", "synthetic")] }
 
-def ex_8_24a : LinguisticExample :=
+def ex_8_24a : Datum :=
   { id := "creissels2024_8_24a"
     source := ⟨"creissels-2024", "ch. 8 (24a)"⟩
     reportedIn := none
@@ -615,7 +615,7 @@ def ex_8_24a : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.24"), ("variant", "a"), ("participants", "greeter,greeted"), ("p1", "A"), ("p2", "P")] }
 
-def ex_8_24b : LinguisticExample :=
+def ex_8_24b : Datum :=
   { id := "creissels2024_8_24b"
     source := ⟨"creissels-2024", "ch. 8 (24b)"⟩
     reportedIn := none
@@ -628,7 +628,7 @@ def ex_8_24b : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.24"), ("variant", "b"), ("participants", "greeter,greeted"), ("p1", "S"), ("p2", "S"), ("marker", "-or"), ("alternation", "reciprocalization"), ("initial", "a"), ("marking", "synthetic")] }
 
-def ex_8_27a : LinguisticExample :=
+def ex_8_27a : Datum :=
   { id := "creissels2024_8_27a"
     source := ⟨"creissels-2024", "ch. 8 (27a)"⟩
     reportedIn := none
@@ -641,7 +641,7 @@ def ex_8_27a : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.27"), ("variant", "a"), ("participants", "anchor,concernee"), ("p1", "S"), ("p2", "absent")] }
 
-def ex_8_27b : LinguisticExample :=
+def ex_8_27b : Datum :=
   { id := "creissels2024_8_27b"
     source := ⟨"creissels-2024", "ch. 8 (27b)"⟩
     reportedIn := none
@@ -654,7 +654,7 @@ def ex_8_27b : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.27"), ("variant", "b"), ("participants", "anchor,concernee"), ("p1", "P"), ("p2", "A"), ("marker", "-i-"), ("alternation", "concernativization"), ("initial", "a"), ("marking", "synthetic"), ("new", "p2")] }
 
-def ex_8_28a : LinguisticExample :=
+def ex_8_28a : Datum :=
   { id := "creissels2024_8_28a"
     source := ⟨"creissels-2024", "ch. 8 (28a)"⟩
     reportedIn := none
@@ -667,7 +667,7 @@ def ex_8_28a : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.28"), ("variant", "a"), ("participants", "child,well"), ("p1", "S"), ("p2", "absent")] }
 
-def ex_8_28b : LinguisticExample :=
+def ex_8_28b : Datum :=
   { id := "creissels2024_8_28b"
     source := ⟨"creissels-2024", "ch. 8 (28b)"⟩
     reportedIn := none
@@ -680,7 +680,7 @@ def ex_8_28b : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.28"), ("variant", "b"), ("participants", "child,well"), ("p1", "S"), ("p2", "X"), ("marker", "-ɛl"), ("alternation", "xApplicativization"), ("initial", "a"), ("marking", "synthetic"), ("new", "p2")] }
 
-def ex_8_33a : LinguisticExample :=
+def ex_8_33a : Datum :=
   { id := "creissels2024_8_33a"
     source := ⟨"creissels-2024", "ch. 8 (33a)"⟩
     reportedIn := none
@@ -693,7 +693,7 @@ def ex_8_33a : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.33"), ("variant", "a"), ("participants", "goer,carried"), ("p1", "S"), ("p2", "absent")] }
 
-def ex_8_33b : LinguisticExample :=
+def ex_8_33b : Datum :=
   { id := "creissels2024_8_33b"
     source := ⟨"creissels-2024", "ch. 8 (33b)"⟩
     reportedIn := none
@@ -706,7 +706,7 @@ def ex_8_33b : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.33"), ("variant", "b"), ("participants", "goer,carried"), ("p1", "A"), ("p2", "P"), ("marker", "ni-"), ("alternation", "portative"), ("initial", "a"), ("marking", "synthetic"), ("new", "p2")] }
 
-def ex_8_38a : LinguisticExample :=
+def ex_8_38a : Datum :=
   { id := "creissels2024_8_38a"
     source := ⟨"creissels-2024", "ch. 8 (38a)"⟩
     reportedIn := none
@@ -719,7 +719,7 @@ def ex_8_38a : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.38"), ("variant", "a"), ("participants", "writer,letter,causer,recipient"), ("p1", "A"), ("p2", "P"), ("p3", "absent"), ("p4", "absent")] }
 
-def ex_8_38b : LinguisticExample :=
+def ex_8_38b : Datum :=
   { id := "creissels2024_8_38b"
     source := ⟨"creissels-2024", "ch. 8 (38b)"⟩
     reportedIn := none
@@ -732,7 +732,7 @@ def ex_8_38b : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.38"), ("variant", "b"), ("participants", "writer,letter,causer,recipient"), ("p1", "implicit"), ("p2", "S"), ("p3", "absent"), ("p4", "absent"), ("marker", "-w"), ("alternation", "passivization"), ("initial", "a"), ("marking", "synthetic")] }
 
-def ex_8_38c : LinguisticExample :=
+def ex_8_38c : Datum :=
   { id := "creissels2024_8_38c"
     source := ⟨"creissels-2024", "ch. 8 (38c)"⟩
     reportedIn := none
@@ -745,7 +745,7 @@ def ex_8_38c : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.38"), ("variant", "c"), ("participants", "writer,letter,causer,recipient"), ("p1", "A"), ("p2", "P"), ("p3", "absent"), ("p4", "P"), ("marker", "-ɛl"), ("alternation", "pApplicativization"), ("initial", "a"), ("marking", "synthetic"), ("new", "p4")] }
 
-def ex_8_38d : LinguisticExample :=
+def ex_8_38d : Datum :=
   { id := "creissels2024_8_38d"
     source := ⟨"creissels-2024", "ch. 8 (38d)"⟩
     reportedIn := none
@@ -758,7 +758,7 @@ def ex_8_38d : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.38"), ("variant", "d"), ("participants", "writer,letter,causer,recipient"), ("p1", "P"), ("p2", "P"), ("p3", "A"), ("p4", "absent"), ("marker", "-is"), ("alternation", "causativization"), ("initial", "a"), ("marking", "synthetic"), ("new", "p3")] }
 
-def ex_8_38e : LinguisticExample :=
+def ex_8_38e : Datum :=
   { id := "creissels2024_8_38e"
     source := ⟨"creissels-2024", "ch. 8 (38e)"⟩
     reportedIn := none
@@ -771,7 +771,7 @@ def ex_8_38e : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.38"), ("variant", "e"), ("participants", "writer,letter,causer,recipient"), ("p1", "implicit"), ("p2", "P"), ("p3", "A"), ("p4", "P"), ("marker", "-is-ets"), ("alternation", "pApplicativization"), ("initial", "d"), ("marking", "synthetic"), ("new", "p4")] }
 
-def ex_8_38f : LinguisticExample :=
+def ex_8_38f : Datum :=
   { id := "creissels2024_8_38f"
     source := ⟨"creissels-2024", "ch. 8 (38f)"⟩
     reportedIn := none
@@ -784,7 +784,7 @@ def ex_8_38f : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.38"), ("variant", "f"), ("participants", "writer,letter,causer,recipient"), ("p1", "implicit"), ("p2", "P"), ("p3", "absent"), ("p4", "A"), ("marker", "-ɛl-w"), ("alternation", "passivization"), ("initial", "c"), ("marking", "synthetic")] }
 
-def ex_8_38g : LinguisticExample :=
+def ex_8_38g : Datum :=
   { id := "creissels2024_8_38g"
     source := ⟨"creissels-2024", "ch. 8 (38g)"⟩
     reportedIn := none
@@ -797,7 +797,7 @@ def ex_8_38g : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.38"), ("variant", "g"), ("participants", "writer,letter,causer,recipient"), ("p1", "A"), ("p2", "P"), ("p3", "implicit"), ("p4", "absent"), ("marker", "-is-iw"), ("alternation", "passivization"), ("initial", "d"), ("marking", "synthetic")] }
 
-def ex_8_38h : LinguisticExample :=
+def ex_8_38h : Datum :=
   { id := "creissels2024_8_38h"
     source := ⟨"creissels-2024", "ch. 8 (38h)"⟩
     reportedIn := none
@@ -810,7 +810,7 @@ def ex_8_38h : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.38"), ("variant", "h"), ("participants", "writer,letter,causer,recipient"), ("p1", "implicit"), ("p2", "P"), ("p3", "implicit"), ("p4", "A"), ("marker", "-is-ed-iw"), ("alternation", "passivization"), ("initial", "e"), ("marking", "synthetic")] }
 
-def ex_8_39a : LinguisticExample :=
+def ex_8_39a : Datum :=
   { id := "creissels2024_8_39a"
     source := ⟨"creissels-2024", "ch. 8 (39a)"⟩
     reportedIn := none
@@ -823,7 +823,7 @@ def ex_8_39a : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.39"), ("variant", "a"), ("participants", "eater,meat,causer"), ("p1", "A"), ("p2", "P"), ("p3", "absent")] }
 
-def ex_8_39b : LinguisticExample :=
+def ex_8_39b : Datum :=
   { id := "creissels2024_8_39b"
     source := ⟨"creissels-2024", "ch. 8 (39b)"⟩
     reportedIn := none
@@ -836,7 +836,7 @@ def ex_8_39b : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.39"), ("variant", "b"), ("participants", "eater,meat,causer"), ("p1", "P"), ("p2", "P"), ("p3", "A"), ("marker", "-ltia"), ("alternation", "causativization"), ("initial", "a"), ("marking", "synthetic"), ("new", "p3")] }
 
-def ex_8_39c : LinguisticExample :=
+def ex_8_39c : Datum :=
   { id := "creissels2024_8_39c"
     source := ⟨"creissels-2024", "ch. 8 (39c)"⟩
     reportedIn := none
@@ -849,7 +849,7 @@ def ex_8_39c : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.39"), ("variant", "c"), ("participants", "eater,meat,causer"), ("p1", "P"), ("p2", "implicit"), ("p3", "A"), ("marker", "tla-"), ("alternation", "antipassivization"), ("initial", "b"), ("marking", "synthetic")] }
 
-def ex_8_39d : LinguisticExample :=
+def ex_8_39d : Datum :=
   { id := "creissels2024_8_39d"
     source := ⟨"creissels-2024", "ch. 8 (39d)"⟩
     reportedIn := none
@@ -862,7 +862,7 @@ def ex_8_39d : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.39"), ("variant", "d"), ("participants", "eater,meat,causer"), ("p1", "A"), ("p2", "P"), ("p3", "implicit"), ("marker", "-lo"), ("alternation", "passivization"), ("initial", "b"), ("marking", "synthetic")] }
 
-def ex_8_39e : LinguisticExample :=
+def ex_8_39e : Datum :=
   { id := "creissels2024_8_39e"
     source := ⟨"creissels-2024", "ch. 8 (39e)"⟩
     reportedIn := none
@@ -875,7 +875,7 @@ def ex_8_39e : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.39"), ("variant", "e"), ("participants", "eater,meat,causer"), ("p1", "S"), ("p2", "implicit"), ("p3", "implicit"), ("marker", "-lo"), ("alternation", "passivization"), ("initial", "c"), ("marking", "synthetic")] }
 
-def ex_8_47a : LinguisticExample :=
+def ex_8_47a : Datum :=
   { id := "creissels2024_8_47a"
     source := ⟨"creissels-2024", "ch. 8 (47a)"⟩
     reportedIn := none
@@ -888,7 +888,7 @@ def ex_8_47a : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.47"), ("variant", "a"), ("participants", "taker,shirt"), ("p1", "A"), ("p2", "P"), ("marker", "N-"), ("alternation", "symmetrical"), ("initial", "b"), ("marking", "synthetic"), ("pivot", "p1")] }
 
-def ex_8_47b : LinguisticExample :=
+def ex_8_47b : Datum :=
   { id := "creissels2024_8_47b"
     source := ⟨"creissels-2024", "ch. 8 (47b)"⟩
     reportedIn := none
@@ -901,7 +901,7 @@ def ex_8_47b : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.47"), ("variant", "b"), ("participants", "taker,shirt"), ("p1", "A"), ("p2", "P"), ("pivot", "p2")] }
 
-def ex_8_48a : LinguisticExample :=
+def ex_8_48a : Datum :=
   { id := "creissels2024_8_48a"
     source := ⟨"creissels-2024", "ch. 8 (48a)"⟩
     reportedIn := none
@@ -914,7 +914,7 @@ def ex_8_48a : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.48"), ("variant", "a"), ("participants", "man,fish,store,child,money"), ("p1", "A"), ("p2", "P"), ("p3", "X"), ("p4", "absent"), ("p5", "absent"), ("pivot", "p1")] }
 
-def ex_8_48b : LinguisticExample :=
+def ex_8_48b : Datum :=
   { id := "creissels2024_8_48b"
     source := ⟨"creissels-2024", "ch. 8 (48b)"⟩
     reportedIn := none
@@ -927,7 +927,7 @@ def ex_8_48b : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.48"), ("variant", "b"), ("participants", "man,fish,store,child,money"), ("p1", "A"), ("p2", "P"), ("p3", "X"), ("p4", "absent"), ("p5", "absent"), ("marker", "-Ø"), ("alternation", "symmetrical"), ("initial", "a"), ("marking", "synthetic"), ("pivot", "p2")] }
 
-def ex_8_48c : LinguisticExample :=
+def ex_8_48c : Datum :=
   { id := "creissels2024_8_48c"
     source := ⟨"creissels-2024", "ch. 8 (48c)"⟩
     reportedIn := none
@@ -940,7 +940,7 @@ def ex_8_48c : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.48"), ("variant", "c"), ("participants", "man,fish,store,child,money"), ("p1", "A"), ("p2", "P"), ("p3", "X"), ("p4", "absent"), ("p5", "absent"), ("marker", "-an"), ("alternation", "symmetrical"), ("initial", "a"), ("marking", "synthetic"), ("pivot", "p3")] }
 
-def ex_8_48d : LinguisticExample :=
+def ex_8_48d : Datum :=
   { id := "creissels2024_8_48d"
     source := ⟨"creissels-2024", "ch. 8 (48d)"⟩
     reportedIn := none
@@ -953,7 +953,7 @@ def ex_8_48d : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.48"), ("variant", "d"), ("participants", "man,fish,store,child,money"), ("p1", "A"), ("p2", "P"), ("p3", "absent"), ("p4", "X"), ("p5", "absent"), ("marker", "i-"), ("alternation", "symmetrical"), ("initial", "a"), ("marking", "synthetic"), ("pivot", "p4")] }
 
-def ex_8_48e : LinguisticExample :=
+def ex_8_48e : Datum :=
   { id := "creissels2024_8_48e"
     source := ⟨"creissels-2024", "ch. 8 (48e)"⟩
     reportedIn := none
@@ -966,7 +966,7 @@ def ex_8_48e : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.48"), ("variant", "e"), ("participants", "man,fish,store,child,money"), ("p1", "A"), ("p2", "P"), ("p3", "absent"), ("p4", "absent"), ("p5", "X"), ("marker", "ipaN-"), ("alternation", "symmetrical"), ("initial", "a"), ("marking", "synthetic"), ("pivot", "p5")] }
 
-def ex_8_50a : LinguisticExample :=
+def ex_8_50a : Datum :=
   { id := "creissels2024_8_50a"
     source := ⟨"creissels-2024", "ch. 8 (50a)"⟩
     reportedIn := none
@@ -979,7 +979,7 @@ def ex_8_50a : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.50"), ("variant", "a"), ("participants", "mother,rice,person"), ("p1", "A"), ("p2", "P"), ("p3", "X")] }
 
-def ex_8_50b : LinguisticExample :=
+def ex_8_50b : Datum :=
   { id := "creissels2024_8_50b"
     source := ⟨"creissels-2024", "ch. 8 (50b)"⟩
     reportedIn := none
@@ -992,7 +992,7 @@ def ex_8_50b : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.50"), ("variant", "b"), ("participants", "mother,rice,person"), ("p1", "A"), ("p2", "P"), ("p3", "P"), ("marker", "-in"), ("alternation", "pApplicativization"), ("initial", "a"), ("marking", "synthetic"), ("new", "p3")] }
 
-def ex_8_51a : LinguisticExample :=
+def ex_8_51a : Datum :=
   { id := "creissels2024_8_51a"
     source := ⟨"creissels-2024", "ch. 8 (51a)"⟩
     reportedIn := none
@@ -1005,7 +1005,7 @@ def ex_8_51a : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.51"), ("variant", "a"), ("participants", "kisser,sibling,causer"), ("p1", "A"), ("p2", "P"), ("p3", "absent")] }
 
-def ex_8_51b : LinguisticExample :=
+def ex_8_51b : Datum :=
   { id := "creissels2024_8_51b"
     source := ⟨"creissels-2024", "ch. 8 (51b)"⟩
     reportedIn := none
@@ -1018,7 +1018,7 @@ def ex_8_51b : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "8.51"), ("variant", "b"), ("participants", "kisser,sibling,causer"), ("p1", "P"), ("p2", "X"), ("p3", "A"), ("marker", "-ang"), ("alternation", "causativization"), ("initial", "a"), ("marking", "synthetic"), ("new", "p3")] }
 
-def ex_12_2a : LinguisticExample :=
+def ex_12_2a : Datum :=
   { id := "creissels2024_12_2a"
     source := ⟨"creissels-2024", "ch. 12 (2a)"⟩
     reportedIn := none
@@ -1031,7 +1031,7 @@ def ex_12_2a : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "12.2"), ("variant", "a"), ("participants", "child,woman"), ("p1", "P"), ("p2", "A"), ("marker", "-is"), ("alternation", "causativization"), ("initial", "b"), ("marking", "synthetic"), ("new", "p2")] }
 
-def ex_12_2b : LinguisticExample :=
+def ex_12_2b : Datum :=
   { id := "creissels2024_12_2b"
     source := ⟨"creissels-2024", "ch. 12 (2b)"⟩
     reportedIn := none
@@ -1044,7 +1044,7 @@ def ex_12_2b : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "12.2"), ("variant", "b"), ("participants", "child,woman"), ("p1", "S"), ("p2", "absent")] }
 
-def ex_12_3a : LinguisticExample :=
+def ex_12_3a : Datum :=
   { id := "creissels2024_12_3a"
     source := ⟨"creissels-2024", "ch. 12 (3a)"⟩
     reportedIn := none
@@ -1057,7 +1057,7 @@ def ex_12_3a : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "12.3"), ("variant", "a"), ("participants", "woman,food"), ("p1", "A"), ("p2", "P"), ("marker", "-is"), ("alternation", "portative"), ("initial", "b"), ("marking", "synthetic"), ("new", "p2")] }
 
-def ex_12_3b : LinguisticExample :=
+def ex_12_3b : Datum :=
   { id := "creissels2024_12_3b"
     source := ⟨"creissels-2024", "ch. 12 (3b)"⟩
     reportedIn := none
@@ -1070,7 +1070,7 @@ def ex_12_3b : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "12.3"), ("variant", "b"), ("participants", "woman,food"), ("p1", "S"), ("p2", "absent")] }
 
-def ex_12_3c : LinguisticExample :=
+def ex_12_3c : Datum :=
   { id := "creissels2024_12_3c"
     source := ⟨"creissels-2024", "ch. 12 (3c)"⟩
     reportedIn := none
@@ -1083,6 +1083,6 @@ def ex_12_3c : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "12.3"), ("variant", "c"), ("participants", "woman,food"), ("p1", "absent"), ("p2", "S")] }
 
-def all : List LinguisticExample := [ex_1_13a, ex_1_13b, ex_1_22a, ex_1_22b, ex_1_22c, ex_1_23a, ex_1_23b, ex_1_23c, ex_1_24a, ex_1_24b, ex_1_24c, ex_8_1a, ex_8_1b, ex_8_2a, ex_8_2b, ex_8_3a, ex_8_3b, ex_8_4a, ex_8_4b, ex_8_5a, ex_8_5b, ex_8_6a, ex_8_6b, ex_8_6c, ex_8_6d, ex_8_13a, ex_8_13b, ex_8_14a, ex_8_14b, ex_8_14c, ex_8_14d, ex_8_14e, ex_8_15a, ex_8_15b, ex_8_15c, ex_8_16a, ex_8_16b, ex_8_18a, ex_8_18b, ex_8_19a, ex_8_19b, ex_8_21a, ex_8_21b, ex_8_23a, ex_8_23b, ex_8_24a, ex_8_24b, ex_8_27a, ex_8_27b, ex_8_28a, ex_8_28b, ex_8_33a, ex_8_33b, ex_8_38a, ex_8_38b, ex_8_38c, ex_8_38d, ex_8_38e, ex_8_38f, ex_8_38g, ex_8_38h, ex_8_39a, ex_8_39b, ex_8_39c, ex_8_39d, ex_8_39e, ex_8_47a, ex_8_47b, ex_8_48a, ex_8_48b, ex_8_48c, ex_8_48d, ex_8_48e, ex_8_50a, ex_8_50b, ex_8_51a, ex_8_51b, ex_12_2a, ex_12_2b, ex_12_3a, ex_12_3b, ex_12_3c]
+def all : List Datum := [ex_1_13a, ex_1_13b, ex_1_22a, ex_1_22b, ex_1_22c, ex_1_23a, ex_1_23b, ex_1_23c, ex_1_24a, ex_1_24b, ex_1_24c, ex_8_1a, ex_8_1b, ex_8_2a, ex_8_2b, ex_8_3a, ex_8_3b, ex_8_4a, ex_8_4b, ex_8_5a, ex_8_5b, ex_8_6a, ex_8_6b, ex_8_6c, ex_8_6d, ex_8_13a, ex_8_13b, ex_8_14a, ex_8_14b, ex_8_14c, ex_8_14d, ex_8_14e, ex_8_15a, ex_8_15b, ex_8_15c, ex_8_16a, ex_8_16b, ex_8_18a, ex_8_18b, ex_8_19a, ex_8_19b, ex_8_21a, ex_8_21b, ex_8_23a, ex_8_23b, ex_8_24a, ex_8_24b, ex_8_27a, ex_8_27b, ex_8_28a, ex_8_28b, ex_8_33a, ex_8_33b, ex_8_38a, ex_8_38b, ex_8_38c, ex_8_38d, ex_8_38e, ex_8_38f, ex_8_38g, ex_8_38h, ex_8_39a, ex_8_39b, ex_8_39c, ex_8_39d, ex_8_39e, ex_8_47a, ex_8_47b, ex_8_48a, ex_8_48b, ex_8_48c, ex_8_48d, ex_8_48e, ex_8_50a, ex_8_50b, ex_8_51a, ex_8_51b, ex_12_2a, ex_12_2b, ex_12_3a, ex_12_3b, ex_12_3c]
 
 end Creissels2024.Examples

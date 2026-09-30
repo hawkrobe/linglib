@@ -17,7 +17,7 @@ namespace RoelofsenFarkas2015.Examples
 
 open Data.Examples
 
-def ex_6a_yes : LinguisticExample :=
+def ex_6a_yes : Datum :=
   { id := "roelofsenfarkas2015_6a_yes"
     source := ⟨"roelofsen-farkas-2015", "(6a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_6a_yes : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "assertion"), ("antecedent", "positive"), ("response", "positive"), ("relative", "agree"), ("particle", "yes")] }
 
-def ex_6a_no : LinguisticExample :=
+def ex_6a_no : Datum :=
   { id := "roelofsenfarkas2015_6a_no"
     source := ⟨"roelofsen-farkas-2015", "(6a)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_6a_no : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "assertion"), ("antecedent", "positive"), ("response", "positive"), ("relative", "agree"), ("particle", "no")] }
 
-def ex_6b_yes : LinguisticExample :=
+def ex_6b_yes : Datum :=
   { id := "roelofsenfarkas2015_6b_yes"
     source := ⟨"roelofsen-farkas-2015", "(6b)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_6b_yes : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "assertion"), ("antecedent", "positive"), ("response", "negative"), ("relative", "reverse"), ("particle", "yes")] }
 
-def ex_6b_no : LinguisticExample :=
+def ex_6b_no : Datum :=
   { id := "roelofsenfarkas2015_6b_no"
     source := ⟨"roelofsen-farkas-2015", "(6b)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_6b_no : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "assertion"), ("antecedent", "positive"), ("response", "negative"), ("relative", "reverse"), ("particle", "no")] }
 
-def ex_7a_yes : LinguisticExample :=
+def ex_7a_yes : Datum :=
   { id := "roelofsenfarkas2015_7a_yes"
     source := ⟨"roelofsen-farkas-2015", "(7a)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_7a_yes : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "assertion"), ("antecedent", "negative"), ("response", "negative"), ("relative", "agree"), ("particle", "yes")] }
 
-def ex_7a_no : LinguisticExample :=
+def ex_7a_no : Datum :=
   { id := "roelofsenfarkas2015_7a_no"
     source := ⟨"roelofsen-farkas-2015", "(7a)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_7a_no : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "assertion"), ("antecedent", "negative"), ("response", "negative"), ("relative", "agree"), ("particle", "no")] }
 
-def ex_7b_yes : LinguisticExample :=
+def ex_7b_yes : Datum :=
   { id := "roelofsenfarkas2015_7b_yes"
     source := ⟨"roelofsen-farkas-2015", "(7b)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_7b_yes : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "assertion"), ("antecedent", "negative"), ("response", "positive"), ("relative", "reverse"), ("particle", "yes")] }
 
-def ex_7b_no : LinguisticExample :=
+def ex_7b_no : Datum :=
   { id := "roelofsenfarkas2015_7b_no"
     source := ⟨"roelofsen-farkas-2015", "(7b)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_7b_no : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "assertion"), ("antecedent", "negative"), ("response", "positive"), ("relative", "reverse"), ("particle", "no")] }
 
-def ex_119_oui : LinguisticExample :=
+def ex_119_oui : Datum :=
   { id := "roelofsenfarkas2015_119_oui"
     source := ⟨"roelofsen-farkas-2015", "(119)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_119_oui : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "assertion"), ("antecedent", "positive"), ("response", "positive"), ("relative", "agree"), ("particle", "oui")] }
 
-def ex_119_non : LinguisticExample :=
+def ex_119_non : Datum :=
   { id := "roelofsenfarkas2015_119_non"
     source := ⟨"roelofsen-farkas-2015", "(119)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_119_non : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "assertion"), ("antecedent", "positive"), ("response", "positive"), ("relative", "agree"), ("particle", "non")] }
 
-def ex_119_si : LinguisticExample :=
+def ex_119_si : Datum :=
   { id := "roelofsenfarkas2015_119_si"
     source := ⟨"roelofsen-farkas-2015", "(119)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_119_si : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "assertion"), ("antecedent", "positive"), ("response", "positive"), ("relative", "agree"), ("particle", "si")] }
 
-def ex_120_oui : LinguisticExample :=
+def ex_120_oui : Datum :=
   { id := "roelofsenfarkas2015_120_oui"
     source := ⟨"roelofsen-farkas-2015", "(120)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_120_oui : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "assertion"), ("antecedent", "negative"), ("response", "negative"), ("relative", "agree"), ("particle", "oui")] }
 
-def ex_120_non : LinguisticExample :=
+def ex_120_non : Datum :=
   { id := "roelofsenfarkas2015_120_non"
     source := ⟨"roelofsen-farkas-2015", "(120)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_120_non : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "assertion"), ("antecedent", "negative"), ("response", "negative"), ("relative", "agree"), ("particle", "non")] }
 
-def ex_120_si : LinguisticExample :=
+def ex_120_si : Datum :=
   { id := "roelofsenfarkas2015_120_si"
     source := ⟨"roelofsen-farkas-2015", "(120)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_120_si : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "assertion"), ("antecedent", "negative"), ("response", "negative"), ("relative", "agree"), ("particle", "si")] }
 
-def ex_121_oui : LinguisticExample :=
+def ex_121_oui : Datum :=
   { id := "roelofsenfarkas2015_121_oui"
     source := ⟨"roelofsen-farkas-2015", "(121)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_121_oui : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "assertion"), ("antecedent", "negative"), ("response", "positive"), ("relative", "reverse"), ("particle", "oui")] }
 
-def ex_121_non : LinguisticExample :=
+def ex_121_non : Datum :=
   { id := "roelofsenfarkas2015_121_non"
     source := ⟨"roelofsen-farkas-2015", "(121)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_121_non : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "assertion"), ("antecedent", "negative"), ("response", "positive"), ("relative", "reverse"), ("particle", "non")] }
 
-def ex_121_si : LinguisticExample :=
+def ex_121_si : Datum :=
   { id := "roelofsenfarkas2015_121_si"
     source := ⟨"roelofsen-farkas-2015", "(121)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex_121_si : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "assertion"), ("antecedent", "negative"), ("response", "positive"), ("relative", "reverse"), ("particle", "si")] }
 
-def ex_122_oui : LinguisticExample :=
+def ex_122_oui : Datum :=
   { id := "roelofsenfarkas2015_122_oui"
     source := ⟨"roelofsen-farkas-2015", "(122)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex_122_oui : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "assertion"), ("antecedent", "positive"), ("response", "negative"), ("relative", "reverse"), ("particle", "oui")] }
 
-def ex_122_non : LinguisticExample :=
+def ex_122_non : Datum :=
   { id := "roelofsenfarkas2015_122_non"
     source := ⟨"roelofsen-farkas-2015", "(122)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex_122_non : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "assertion"), ("antecedent", "positive"), ("response", "negative"), ("relative", "reverse"), ("particle", "non")] }
 
-def ex_122_si : LinguisticExample :=
+def ex_122_si : Datum :=
   { id := "roelofsenfarkas2015_122_si"
     source := ⟨"roelofsen-farkas-2015", "(122)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex_122_si : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "assertion"), ("antecedent", "positive"), ("response", "negative"), ("relative", "reverse"), ("particle", "si")] }
 
-def ex_124_ja : LinguisticExample :=
+def ex_124_ja : Datum :=
   { id := "roelofsenfarkas2015_124_ja"
     source := ⟨"roelofsen-farkas-2015", "(124)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex_124_ja : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "assertion"), ("antecedent", "positive"), ("response", "positive"), ("relative", "agree"), ("particle", "ja")] }
 
-def ex_124_nein : LinguisticExample :=
+def ex_124_nein : Datum :=
   { id := "roelofsenfarkas2015_124_nein"
     source := ⟨"roelofsen-farkas-2015", "(124)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex_124_nein : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "assertion"), ("antecedent", "positive"), ("response", "positive"), ("relative", "agree"), ("particle", "nein")] }
 
-def ex_124_doch : LinguisticExample :=
+def ex_124_doch : Datum :=
   { id := "roelofsenfarkas2015_124_doch"
     source := ⟨"roelofsen-farkas-2015", "(124)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex_124_doch : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "assertion"), ("antecedent", "positive"), ("response", "positive"), ("relative", "agree"), ("particle", "doch")] }
 
-def ex_125_ja : LinguisticExample :=
+def ex_125_ja : Datum :=
   { id := "roelofsenfarkas2015_125_ja"
     source := ⟨"roelofsen-farkas-2015", "(125)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex_125_ja : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "assertion"), ("antecedent", "negative"), ("response", "negative"), ("relative", "agree"), ("particle", "ja")] }
 
-def ex_125_nein : LinguisticExample :=
+def ex_125_nein : Datum :=
   { id := "roelofsenfarkas2015_125_nein"
     source := ⟨"roelofsen-farkas-2015", "(125)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex_125_nein : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "assertion"), ("antecedent", "negative"), ("response", "negative"), ("relative", "agree"), ("particle", "nein")] }
 
-def ex_125_doch : LinguisticExample :=
+def ex_125_doch : Datum :=
   { id := "roelofsenfarkas2015_125_doch"
     source := ⟨"roelofsen-farkas-2015", "(125)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex_125_doch : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "assertion"), ("antecedent", "negative"), ("response", "negative"), ("relative", "agree"), ("particle", "doch")] }
 
-def ex_126_ja : LinguisticExample :=
+def ex_126_ja : Datum :=
   { id := "roelofsenfarkas2015_126_ja"
     source := ⟨"roelofsen-farkas-2015", "(126)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def ex_126_ja : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "assertion"), ("antecedent", "negative"), ("response", "positive"), ("relative", "reverse"), ("particle", "ja")] }
 
-def ex_126_nein : LinguisticExample :=
+def ex_126_nein : Datum :=
   { id := "roelofsenfarkas2015_126_nein"
     source := ⟨"roelofsen-farkas-2015", "(126)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def ex_126_nein : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "assertion"), ("antecedent", "negative"), ("response", "positive"), ("relative", "reverse"), ("particle", "nein")] }
 
-def ex_126_doch : LinguisticExample :=
+def ex_126_doch : Datum :=
   { id := "roelofsenfarkas2015_126_doch"
     source := ⟨"roelofsen-farkas-2015", "(126)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def ex_126_doch : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "assertion"), ("antecedent", "negative"), ("response", "positive"), ("relative", "reverse"), ("particle", "doch")] }
 
-def ex_127_ja : LinguisticExample :=
+def ex_127_ja : Datum :=
   { id := "roelofsenfarkas2015_127_ja"
     source := ⟨"roelofsen-farkas-2015", "(127)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def ex_127_ja : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "assertion"), ("antecedent", "positive"), ("response", "negative"), ("relative", "reverse"), ("particle", "ja")] }
 
-def ex_127_nein : LinguisticExample :=
+def ex_127_nein : Datum :=
   { id := "roelofsenfarkas2015_127_nein"
     source := ⟨"roelofsen-farkas-2015", "(127)"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def ex_127_nein : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "assertion"), ("antecedent", "positive"), ("response", "negative"), ("relative", "reverse"), ("particle", "nein")] }
 
-def ex_127_doch : LinguisticExample :=
+def ex_127_doch : Datum :=
   { id := "roelofsenfarkas2015_127_doch"
     source := ⟨"roelofsen-farkas-2015", "(127)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def ex_127_doch : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "assertion"), ("antecedent", "positive"), ("response", "negative"), ("relative", "reverse"), ("particle", "doch")] }
 
-def ex_49_yes : LinguisticExample :=
+def ex_49_yes : Datum :=
   { id := "roelofsenfarkas2015_49_yes"
     source := ⟨"roelofsen-farkas-2015", "(49)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def ex_49_yes : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "question"), ("radical", "even"), ("antecedent", "positive"), ("response", "positive"), ("particle", "yes"), ("conveys", "even")] }
 
-def ex_49_no : LinguisticExample :=
+def ex_49_no : Datum :=
   { id := "roelofsenfarkas2015_49_no"
     source := ⟨"roelofsen-farkas-2015", "(49)"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def ex_49_no : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "question"), ("radical", "even"), ("antecedent", "positive"), ("response", "negative"), ("particle", "no"), ("conveys", "odd")] }
 
-def ex_50_yes : LinguisticExample :=
+def ex_50_yes : Datum :=
   { id := "roelofsenfarkas2015_50_yes"
     source := ⟨"roelofsen-farkas-2015", "(50)"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def ex_50_yes : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "question"), ("radical", "odd"), ("antecedent", "positive"), ("response", "positive"), ("particle", "yes"), ("conveys", "odd")] }
 
-def ex_50_no : LinguisticExample :=
+def ex_50_no : Datum :=
   { id := "roelofsenfarkas2015_50_no"
     source := ⟨"roelofsen-farkas-2015", "(50)"⟩
     reportedIn := none
@@ -485,7 +485,7 @@ def ex_50_no : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "question"), ("radical", "odd"), ("antecedent", "positive"), ("response", "negative"), ("particle", "no"), ("conveys", "even")] }
 
-def ex_51_yes : LinguisticExample :=
+def ex_51_yes : Datum :=
   { id := "roelofsenfarkas2015_51_yes"
     source := ⟨"roelofsen-farkas-2015", "(51)"⟩
     reportedIn := none
@@ -498,7 +498,7 @@ def ex_51_yes : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "alternativeQuestion"), ("response", "positive"), ("particle", "yes")] }
 
-def ex_51_no : LinguisticExample :=
+def ex_51_no : Datum :=
   { id := "roelofsenfarkas2015_51_no"
     source := ⟨"roelofsen-farkas-2015", "(51)"⟩
     reportedIn := none
@@ -511,7 +511,7 @@ def ex_51_no : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "alternativeQuestion"), ("response", "negative"), ("particle", "no")] }
 
-def ex_52_no : LinguisticExample :=
+def ex_52_no : Datum :=
   { id := "roelofsenfarkas2015_52_no"
     source := ⟨"roelofsen-farkas-2015", "(52)"⟩
     reportedIn := none
@@ -524,7 +524,7 @@ def ex_52_no : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "question"), ("radical", "odd"), ("antecedent", "positive"), ("response", "negative"), ("particle", "no"), ("conveys", "not odd")] }
 
-def ex_53_no : LinguisticExample :=
+def ex_53_no : Datum :=
   { id := "roelofsenfarkas2015_53_no"
     source := ⟨"roelofsen-farkas-2015", "(53)"⟩
     reportedIn := none
@@ -537,6 +537,6 @@ def ex_53_no : LinguisticExample :=
     readings := []
     paperFeatures := [("reaction", "question"), ("radical", "even"), ("antecedent", "negative"), ("response", "negative"), ("particle", "no"), ("conveys", "not even")] }
 
-def all : List LinguisticExample := [ex_6a_yes, ex_6a_no, ex_6b_yes, ex_6b_no, ex_7a_yes, ex_7a_no, ex_7b_yes, ex_7b_no, ex_119_oui, ex_119_non, ex_119_si, ex_120_oui, ex_120_non, ex_120_si, ex_121_oui, ex_121_non, ex_121_si, ex_122_oui, ex_122_non, ex_122_si, ex_124_ja, ex_124_nein, ex_124_doch, ex_125_ja, ex_125_nein, ex_125_doch, ex_126_ja, ex_126_nein, ex_126_doch, ex_127_ja, ex_127_nein, ex_127_doch, ex_49_yes, ex_49_no, ex_50_yes, ex_50_no, ex_51_yes, ex_51_no, ex_52_no, ex_53_no]
+def all : List Datum := [ex_6a_yes, ex_6a_no, ex_6b_yes, ex_6b_no, ex_7a_yes, ex_7a_no, ex_7b_yes, ex_7b_no, ex_119_oui, ex_119_non, ex_119_si, ex_120_oui, ex_120_non, ex_120_si, ex_121_oui, ex_121_non, ex_121_si, ex_122_oui, ex_122_non, ex_122_si, ex_124_ja, ex_124_nein, ex_124_doch, ex_125_ja, ex_125_nein, ex_125_doch, ex_126_ja, ex_126_nein, ex_126_doch, ex_127_ja, ex_127_nein, ex_127_doch, ex_49_yes, ex_49_no, ex_50_yes, ex_50_no, ex_51_yes, ex_51_no, ex_52_no, ex_53_no]
 
 end RoelofsenFarkas2015.Examples

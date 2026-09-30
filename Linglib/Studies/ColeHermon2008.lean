@@ -100,7 +100,7 @@ open ArgumentStructure
 namespace ColeHermon2008
 
 open Minimalist SyntacticObject
-open Data.Examples (LinguisticExample)
+open Data.Examples (Datum)
 
 /-! ### The clause and its derivations (§4.1–§4.2) -/
 
@@ -359,7 +359,7 @@ instance (e : Extraction) (hyp : OrderHypothesis) : Decidable (e.Licit hyp) := b
   unfold Licit; infer_instance
 
 /-- The configuration a row records. -/
-def ofRow (row : LinguisticExample) : Option Extraction := do
+def ofRow (row : Datum) : Option Extraction := do
   guard (row.feature? "construction" = some "extraction")
   return ⟨← row.parse? "voice" voices, ← row.parse? "order" orders,
     ← row.parse? "transitivity" [("monotransitive", false), ("ditransitive", true)],
@@ -413,7 +413,7 @@ def clause (a : Reflexivization) : Clause := .of a.voice "V" "Agent" "Patient"
 def derivation (a : Reflexivization) : Derivation := a.clause.derivation .vosHypothesis a.order
 
 /-- The configuration a row records. -/
-def ofRow (row : LinguisticExample) : Option Reflexivization := do
+def ofRow (row : Datum) : Option Reflexivization := do
   guard (row.feature? "construction" = some "binding" ∧ row.language = tobaBatak)
   return ⟨← row.parse? "voice" voices, ← row.parse? "order" orders,
     ← row.parse? "antecedent" args, ← row.parse? "reflexive" args⟩
@@ -547,7 +547,7 @@ theorem english_order :
 
 /-- The pair a row's roles pick out in the English derivation: the patient is the raised DP,
 the agent the *by*-phrase, which fills no core position. -/
-def englishPair? (row : LinguisticExample) : Option (SyntacticObject × SyntacticObject) := do
+def englishPair? (row : Datum) : Option (SyntacticObject × SyntacticObject) := do
   guard (row.feature? "construction" = some "binding" ∧ row.language = english)
   let slot (a : Arg) : Option SyntacticObject := match a.role with
     | .patient => some theBoy

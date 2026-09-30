@@ -123,7 +123,7 @@ theorem preferred_ne_performative (a : Perfectivity) (S : Finset Parameter) :
 /-! ### The examples -/
 
 /-- The mode an example's `mode` feature names. -/
-def mode? (r : LinguisticExample) : Option Mode :=
+def mode? (r : Datum) : Option Mode :=
   match r.feature? "mode" with
   | some "spontaneous" => some .spontaneous
   | some "responsive" => some .responsive
@@ -132,14 +132,14 @@ def mode? (r : LinguisticExample) : Option Mode :=
   | _ => none
 
 /-- The aspects an example's stem may have: the one its `aspect` feature names, or either. -/
-def aspects (r : LinguisticExample) : List Perfectivity :=
+def aspects (r : Datum) : List Perfectivity :=
   match r.feature? "aspect" with
   | some "imperfective" => [.imperfective]
   | some "perfective" => [.perfective]
   | _ => [.imperfective, .perfective]
 
 /-- The evidential an example's `evidential` feature names, for a stem of the given aspect. -/
-def evidential? (r : LinguisticExample) (a : Perfectivity) : Option Evidential :=
+def evidential? (r : Datum) (a : Perfectivity) : Option Evidential :=
   match r.feature? "evidential" with
   | some "performative" => some (performative a)
   | some "factualVisual" => some (factualVisual a)

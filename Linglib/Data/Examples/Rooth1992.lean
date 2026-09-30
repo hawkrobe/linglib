@@ -17,7 +17,7 @@ namespace Rooth1992.Examples
 
 open Data.Examples
 
-def ex_3a : LinguisticExample :=
+def ex_3a : Datum :=
   { id := "rooth1992_3a"
     source := ⟨"rooth-1992", "(3a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_3a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "only"), ("focus", "Bill"), ("truth", "false")] }
 
-def ex_3b : LinguisticExample :=
+def ex_3b : Datum :=
   { id := "rooth1992_3b"
     source := ⟨"rooth-1992", "(3b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_3b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "only"), ("focus", "Sue"), ("truth", "true")] }
 
-def ex_7 : LinguisticExample :=
+def ex_7 : Datum :=
   { id := "rooth1992_7"
     source := ⟨"rooth-1992", "(7)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_7 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "only"), ("focus", "read")] }
 
-def ex_11 : LinguisticExample :=
+def ex_11 : Datum :=
   { id := "rooth1992_11"
     source := ⟨"rooth-1992", "(11)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_11 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "contrast")] }
 
-def ex_16 : LinguisticExample :=
+def ex_16 : Datum :=
   { id := "rooth1992_16"
     source := ⟨"rooth-1992", "(16)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_16 : LinguisticExample :=
     readings := [("the speaker did not ace the quiz", .acceptable)]
     paperFeatures := [("construction", "scale"), ("focus", "passed")] }
 
-def ex_17 : LinguisticExample :=
+def ex_17 : Datum :=
   { id := "rooth1992_17"
     source := ⟨"rooth-1992", "(17)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_17 : LinguisticExample :=
     readings := [("the roommates did not pass", .acceptable)]
     paperFeatures := [("construction", "scale"), ("focus", "I")] }
 
-def ex_23Aa_Qa : LinguisticExample :=
+def ex_23Aa_Qa : Datum :=
   { id := "rooth1992_23Aa_Qa"
     source := ⟨"rooth-1992", "(23Aa) answering (23Qa)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_23Aa_Qa : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "qa"), ("question", "whoCutBill"), ("focus", "Mary")] }
 
-def ex_23Ab_Qa : LinguisticExample :=
+def ex_23Ab_Qa : Datum :=
   { id := "rooth1992_23Ab_Qa"
     source := ⟨"rooth-1992", "(23Ab) answering (23Qa)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_23Ab_Qa : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "qa"), ("question", "whoCutBill"), ("focus", "Bill")] }
 
-def ex_23Ab_Qb : LinguisticExample :=
+def ex_23Ab_Qb : Datum :=
   { id := "rooth1992_23Ab_Qb"
     source := ⟨"rooth-1992", "(23Ab) answering (23Qb)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_23Ab_Qb : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "qa"), ("question", "whoDidMaryCut"), ("focus", "Bill")] }
 
-def ex_23Aa_Qb : LinguisticExample :=
+def ex_23Aa_Qb : Datum :=
   { id := "rooth1992_23Aa_Qb"
     source := ⟨"rooth-1992", "(23Aa) answering (23Qb)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_23Aa_Qb : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "qa"), ("question", "whoDidMaryCut"), ("focus", "Mary")] }
 
-def ex_59a : LinguisticExample :=
+def ex_59a : Datum :=
   { id := "rooth1992_59a"
     source := ⟨"rooth-1992", "(59a)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_59a : LinguisticExample :=
     readings := [("than she beats Sue", .acceptable), ("than Sue beats me", .unacceptable)]
     paperFeatures := [("construction", "ellipsis"), ("focus", "me")] }
 
-def ex_59b : LinguisticExample :=
+def ex_59b : Datum :=
   { id := "rooth1992_59b"
     source := ⟨"rooth-1992", "(59b)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_59b : LinguisticExample :=
     readings := [("than she beats Sue", .unacceptable), ("than Sue beats me", .acceptable)]
     paperFeatures := [("construction", "ellipsis"), ("focus", "she")] }
 
-def ex_70 : LinguisticExample :=
+def ex_70 : Datum :=
   { id := "rooth1992_70"
     source := ⟨"rooth-1992", "(70)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_70 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "only"), ("focus", "eat")] }
 
-def ex_72a : LinguisticExample :=
+def ex_72a : Datum :=
   { id := "rooth1992_72a"
     source := ⟨"rooth-1992", "(72a)"⟩
     reportedIn := none
@@ -199,6 +199,6 @@ def ex_72a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "contrast")] }
 
-def all : List LinguisticExample := [ex_3a, ex_3b, ex_7, ex_11, ex_16, ex_17, ex_23Aa_Qa, ex_23Ab_Qa, ex_23Ab_Qb, ex_23Aa_Qb, ex_59a, ex_59b, ex_70, ex_72a]
+def all : List Datum := [ex_3a, ex_3b, ex_7, ex_11, ex_16, ex_17, ex_23Aa_Qa, ex_23Ab_Qa, ex_23Ab_Qb, ex_23Aa_Qb, ex_59a, ex_59b, ex_70, ex_72a]
 
 end Rooth1992.Examples

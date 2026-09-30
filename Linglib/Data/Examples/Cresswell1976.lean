@@ -17,7 +17,7 @@ namespace Cresswell1976.Examples
 
 open Data.Examples
 
-def ex_13 : LinguisticExample :=
+def ex_13 : Datum :=
   { id := "cresswell1976_13"
     source := ⟨"cresswell-1976", "(13)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_13 : LinguisticExample :=
     readings := []
     paperFeatures := [("leftScale", "distance"), ("rightScale", "distance")] }
 
-def ex_15 : LinguisticExample :=
+def ex_15 : Datum :=
   { id := "cresswell1976_15"
     source := ⟨"cresswell-1976", "(15)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_15 : LinguisticExample :=
     readings := []
     paperFeatures := [("leftScale", "distance"), ("rightScale", "distance")] }
 
-def ex_23 : LinguisticExample :=
+def ex_23 : Datum :=
   { id := "cresswell1976_23"
     source := ⟨"cresswell-1976", "(23)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_23 : LinguisticExample :=
     readings := []
     paperFeatures := [("leftScale", "distance"), ("rightScale", "cleverness")] }
 
-def ex_35 : LinguisticExample :=
+def ex_35 : Datum :=
   { id := "cresswell1976_35"
     source := ⟨"cresswell-1976", "(35)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_35 : LinguisticExample :=
     readings := []
     paperFeatures := [("leftScale", "distance"), ("rightScale", "distance")] }
 
-def ex_37 : LinguisticExample :=
+def ex_37 : Datum :=
   { id := "cresswell1976_37"
     source := ⟨"cresswell-1976", "(37)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_37 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_39 : LinguisticExample :=
+def ex_39 : Datum :=
   { id := "cresswell1976_39"
     source := ⟨"cresswell-1976", "(39)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_39 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_41 : LinguisticExample :=
+def ex_41 : Datum :=
   { id := "cresswell1976_41"
     source := ⟨"cresswell-1976", "(41)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_41 : LinguisticExample :=
     readings := []
     paperFeatures := [("leftScale", "volume"), ("rightScale", "volume")] }
 
-def ex_50 : LinguisticExample :=
+def ex_50 : Datum :=
   { id := "cresswell1976_50"
     source := ⟨"cresswell-1976", "(50)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_50 : LinguisticExample :=
     readings := []
     paperFeatures := [("leftScale", "beauty"), ("rightScale", "cleverness")] }
 
-def ex_52 : LinguisticExample :=
+def ex_52 : Datum :=
   { id := "cresswell1976_52"
     source := ⟨"cresswell-1976", "(52)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_52 : LinguisticExample :=
     readings := []
     paperFeatures := [("leftScale", "number"), ("rightScale", "number")] }
 
-def ex_56 : LinguisticExample :=
+def ex_56 : Datum :=
   { id := "cresswell1976_56"
     source := ⟨"cresswell-1976", "(56)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_56 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_57 : LinguisticExample :=
+def ex_57 : Datum :=
   { id := "cresswell1976_57"
     source := ⟨"cresswell-1976", "(57)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_57 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_62 : LinguisticExample :=
+def ex_62 : Datum :=
   { id := "cresswell1976_62"
     source := ⟨"cresswell-1976", "(62)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_62 : LinguisticExample :=
     readings := []
     paperFeatures := [("leftScale", "beauty"), ("rightScale", "beauty")] }
 
-def ex_65 : LinguisticExample :=
+def ex_65 : Datum :=
   { id := "cresswell1976_65"
     source := ⟨"cresswell-1976", "(65)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_65 : LinguisticExample :=
     readings := []
     paperFeatures := [("leftScale", "distance"), ("rightScale", "beauty")] }
 
-def ex_66 : LinguisticExample :=
+def ex_66 : Datum :=
   { id := "cresswell1976_66"
     source := ⟨"cresswell-1976", "(66)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_66 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_69 : LinguisticExample :=
+def ex_69 : Datum :=
   { id := "cresswell1976_69"
     source := ⟨"cresswell-1976", "(69)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_69 : LinguisticExample :=
     readings := []
     paperFeatures := [("leftScale", "time"), ("rightScale", "distance")] }
 
-def ex_70 : LinguisticExample :=
+def ex_70 : Datum :=
   { id := "cresswell1976_70"
     source := ⟨"cresswell-1976", "(70)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_70 : LinguisticExample :=
     readings := []
     paperFeatures := [("leftScale", "distanceDownward"), ("rightScale", "distanceDownward")] }
 
-def fn10_iii : LinguisticExample :=
+def fn10_iii : Datum :=
   { id := "cresswell1976_fn10_iii"
     source := ⟨"cresswell-1976", "footnote 10 (iii)"⟩
     reportedIn := none
@@ -238,6 +238,6 @@ def fn10_iii : LinguisticExample :=
     readings := []
     paperFeatures := [("leftScale", "distance"), ("rightScale", "distance")] }
 
-def all : List LinguisticExample := [ex_13, ex_15, ex_23, ex_35, ex_37, ex_39, ex_41, ex_50, ex_52, ex_56, ex_57, ex_62, ex_65, ex_66, ex_69, ex_70, fn10_iii]
+def all : List Datum := [ex_13, ex_15, ex_23, ex_35, ex_37, ex_39, ex_41, ex_50, ex_52, ex_56, ex_57, ex_62, ex_65, ex_66, ex_69, ex_70, fn10_iii]
 
 end Cresswell1976.Examples

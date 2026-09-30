@@ -17,7 +17,7 @@ namespace HalpertHammerly2026.Examples
 
 open Data.Examples
 
-def ex8a : LinguisticExample :=
+def ex8a : Datum :=
   { id := "halperthammerly2026_ex8a"
     source := ⟨"wasike-2006", "p. 235"⟩
     reportedIn := some ⟨"halpert-hammerly-2026", "(8a)"⟩
@@ -30,7 +30,7 @@ def ex8a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("phenomenon", "alternativeAgreement"), ("class", "1")] }
 
-def ex8b : LinguisticExample :=
+def ex8b : Datum :=
   { id := "halperthammerly2026_ex8b"
     source := ⟨"wasike-2006", "p. 236"⟩
     reportedIn := some ⟨"halpert-hammerly-2026", "(8b)"⟩
@@ -43,7 +43,7 @@ def ex8b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("phenomenon", "alternativeAgreement"), ("class", "1")] }
 
-def ex8c : LinguisticExample :=
+def ex8c : Datum :=
   { id := "halperthammerly2026_ex8c"
     source := ⟨"diercks-2010", "p. 133"⟩
     reportedIn := some ⟨"halpert-hammerly-2026", "(8c)"⟩
@@ -56,7 +56,7 @@ def ex8c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("phenomenon", "alternativeAgreement"), ("person", "local")] }
 
-def ex9a : LinguisticExample :=
+def ex9a : Datum :=
   { id := "halperthammerly2026_ex9a"
     source := ⟨"diercks-2010", "p. 117"⟩
     reportedIn := some ⟨"halpert-hammerly-2026", "(9a)"⟩
@@ -69,7 +69,7 @@ def ex9a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("phenomenon", "alternativeAgreement"), ("class", "7")] }
 
-def ex9b : LinguisticExample :=
+def ex9b : Datum :=
   { id := "halperthammerly2026_ex9b"
     source := ⟨"diercks-2010", "p. 117"⟩
     reportedIn := some ⟨"halpert-hammerly-2026", "(9b)"⟩
@@ -82,7 +82,7 @@ def ex9b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("phenomenon", "alternativeAgreement"), ("class", "7")] }
 
-def ex10a : LinguisticExample :=
+def ex10a : Datum :=
   { id := "halperthammerly2026_ex10a"
     source := ⟨"halpert-hammerly-2026", "(10a)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex10a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("phenomenon", "personReduction"), ("class", "1")] }
 
-def ex10b : LinguisticExample :=
+def ex10b : Datum :=
   { id := "halperthammerly2026_ex10b"
     source := ⟨"halpert-hammerly-2026", "(10b)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex10b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("phenomenon", "personReduction"), ("class", "2")] }
 
-def ex11a : LinguisticExample :=
+def ex11a : Datum :=
   { id := "halperthammerly2026_ex11a"
     source := ⟨"riedel-taji-2022", "(28)"⟩
     reportedIn := some ⟨"halpert-hammerly-2026", "(11a)"⟩
@@ -121,7 +121,7 @@ def ex11a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("phenomenon", "animacyAgreement"), ("class", "7"), ("core", "human")] }
 
-def ex11b : LinguisticExample :=
+def ex11b : Datum :=
   { id := "halperthammerly2026_ex11b"
     source := ⟨"riedel-taji-2022", "(28)"⟩
     reportedIn := some ⟨"halpert-hammerly-2026", "(11b)"⟩
@@ -134,7 +134,7 @@ def ex11b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("phenomenon", "animacyAgreement"), ("class", "7"), ("core", "human")] }
 
-def ex12a : LinguisticExample :=
+def ex12a : Datum :=
   { id := "halperthammerly2026_ex12a"
     source := ⟨"riedel-taji-2022", "(35)"⟩
     reportedIn := some ⟨"halpert-hammerly-2026", "(12a)"⟩
@@ -147,7 +147,7 @@ def ex12a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("phenomenon", "animacyAgreement"), ("class", "9"), ("core", "animal")] }
 
-def ex12b : LinguisticExample :=
+def ex12b : Datum :=
   { id := "halperthammerly2026_ex12b"
     source := ⟨"riedel-taji-2022", "(35)"⟩
     reportedIn := some ⟨"halpert-hammerly-2026", "(12b)"⟩
@@ -160,7 +160,7 @@ def ex12b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("phenomenon", "animacyAgreement"), ("class", "9"), ("core", "animal")] }
 
-def ex13a : LinguisticExample :=
+def ex13a : Datum :=
   { id := "halperthammerly2026_ex13a"
     source := ⟨"contini-morava-2008", "(1)"⟩
     reportedIn := some ⟨"halpert-hammerly-2026", "(13a)"⟩
@@ -173,7 +173,7 @@ def ex13a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("phenomenon", "animacyAgreement"), ("class", "7"), ("core", "inanimate")] }
 
-def ex13b : LinguisticExample :=
+def ex13b : Datum :=
   { id := "halperthammerly2026_ex13b"
     source := ⟨"contini-morava-2008", "(1)"⟩
     reportedIn := some ⟨"halpert-hammerly-2026", "(13b)"⟩
@@ -186,7 +186,7 @@ def ex13b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("phenomenon", "animacyAgreement"), ("class", "7"), ("core", "human")] }
 
-def ex14a : LinguisticExample :=
+def ex14a : Datum :=
   { id := "halperthammerly2026_ex14a"
     source := ⟨"hualde-1989", "p. 182"⟩
     reportedIn := some ⟨"halpert-hammerly-2026", "(14a)"⟩
@@ -199,7 +199,7 @@ def ex14a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("phenomenon", "objectDoubling"), ("core", "human")] }
 
-def ex14b : LinguisticExample :=
+def ex14b : Datum :=
   { id := "halperthammerly2026_ex14b"
     source := ⟨"hualde-1989", "p. 182"⟩
     reportedIn := some ⟨"halpert-hammerly-2026", "(14b)"⟩
@@ -212,7 +212,7 @@ def ex14b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("phenomenon", "objectDoubling"), ("core", "inanimate")] }
 
-def ex15 : LinguisticExample :=
+def ex15 : Datum :=
   { id := "halperthammerly2026_ex15"
     source := ⟨"taraldsen-et-al-2018", "p. 1345"⟩
     reportedIn := some ⟨"halpert-hammerly-2026", "(15)"⟩
@@ -225,7 +225,7 @@ def ex15 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("phenomenon", "conjunctAgreement"), ("class", "1"), ("core", "human")] }
 
-def ex16 : LinguisticExample :=
+def ex16 : Datum :=
   { id := "halperthammerly2026_ex16"
     source := ⟨"taraldsen-et-al-2018", "p. 1346"⟩
     reportedIn := some ⟨"halpert-hammerly-2026", "(16)"⟩
@@ -238,7 +238,7 @@ def ex16 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("phenomenon", "conjunctAgreement"), ("class", "1"), ("core", "human")] }
 
-def ex17 : LinguisticExample :=
+def ex17 : Datum :=
   { id := "halperthammerly2026_ex17"
     source := ⟨"taraldsen-et-al-2018", "p. 1347"⟩
     reportedIn := some ⟨"halpert-hammerly-2026", "(17)"⟩
@@ -251,7 +251,7 @@ def ex17 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("phenomenon", "conjunctAgreement"), ("class", "5"), ("core", "inanimate")] }
 
-def ex20a : LinguisticExample :=
+def ex20a : Datum :=
   { id := "halperthammerly2026_ex20a"
     source := ⟨"msaka-2019", "p. 74"⟩
     reportedIn := some ⟨"halpert-hammerly-2026", "(20a)"⟩
@@ -264,7 +264,7 @@ def ex20a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("phenomenon", "finalVowel"), ("vowel", "a")] }
 
-def ex20b : LinguisticExample :=
+def ex20b : Datum :=
   { id := "halperthammerly2026_ex20b"
     source := ⟨"msaka-2019", "p. 74"⟩
     reportedIn := some ⟨"halpert-hammerly-2026", "(20b)"⟩
@@ -277,7 +277,7 @@ def ex20b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("phenomenon", "finalVowel"), ("vowel", "i")] }
 
-def ex21a : LinguisticExample :=
+def ex21a : Datum :=
   { id := "halperthammerly2026_ex21a"
     source := ⟨"mletshe-2019", ""⟩
     reportedIn := some ⟨"halpert-hammerly-2026", "(21a)"⟩
@@ -290,7 +290,7 @@ def ex21a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("phenomenon", "finalVowel"), ("vowel", "i"), ("class", "1")] }
 
-def ex21b : LinguisticExample :=
+def ex21b : Datum :=
   { id := "halperthammerly2026_ex21b"
     source := ⟨"mletshe-2019", ""⟩
     reportedIn := some ⟨"halpert-hammerly-2026", "(21b)"⟩
@@ -303,7 +303,7 @@ def ex21b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("phenomenon", "finalVowel"), ("vowel", "o"), ("class", "3")] }
 
-def ex23 : LinguisticExample :=
+def ex23 : Datum :=
   { id := "halperthammerly2026_ex23"
     source := ⟨"mletshe-2019", ""⟩
     reportedIn := some ⟨"halpert-hammerly-2026", "(23)"⟩
@@ -316,7 +316,7 @@ def ex23 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("phenomenon", "finalVowel"), ("vowel", "i"), ("class", "7")] }
 
-def ex24a : LinguisticExample :=
+def ex24a : Datum :=
   { id := "halperthammerly2026_ex24a"
     source := ⟨"dechaine-et-al-2014", ""⟩
     reportedIn := some ⟨"halpert-hammerly-2026", "(24a)"⟩
@@ -329,7 +329,7 @@ def ex24a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("phenomenon", "stacking"), ("class", "1")] }
 
-def ex24b : LinguisticExample :=
+def ex24b : Datum :=
   { id := "halperthammerly2026_ex24b"
     source := ⟨"dechaine-et-al-2014", ""⟩
     reportedIn := some ⟨"halpert-hammerly-2026", "(24b)"⟩
@@ -342,7 +342,7 @@ def ex24b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("phenomenon", "stacking"), ("class", "12")] }
 
-def ex27a : LinguisticExample :=
+def ex27a : Datum :=
   { id := "halperthammerly2026_ex27a"
     source := ⟨"mletshe-2019", ""⟩
     reportedIn := some ⟨"halpert-hammerly-2026", "(27a)"⟩
@@ -355,7 +355,7 @@ def ex27a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("phenomenon", "stacking"), ("vowel", "i"), ("class", "1")] }
 
-def ex27b : LinguisticExample :=
+def ex27b : Datum :=
   { id := "halperthammerly2026_ex27b"
     source := ⟨"mletshe-2019", ""⟩
     reportedIn := some ⟨"halpert-hammerly-2026", "(27b)"⟩
@@ -368,7 +368,7 @@ def ex27b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("phenomenon", "stacking"), ("vowel", "i"), ("class", "7")] }
 
-def ex27c : LinguisticExample :=
+def ex27c : Datum :=
   { id := "halperthammerly2026_ex27c"
     source := ⟨"mletshe-2019", ""⟩
     reportedIn := some ⟨"halpert-hammerly-2026", "(27c)"⟩
@@ -381,7 +381,7 @@ def ex27c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("phenomenon", "stacking"), ("vowel", "a"), ("class", "7")] }
 
-def exfn14i : LinguisticExample :=
+def exfn14i : Datum :=
   { id := "halperthammerly2026_exfn14i"
     source := ⟨"xala-1996", "p. 50"⟩
     reportedIn := some ⟨"halpert-hammerly-2026", "(fn. 14 (i))"⟩
@@ -394,6 +394,6 @@ def exfn14i : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("phenomenon", "stacking"), ("class", "14")] }
 
-def all : List LinguisticExample := [ex8a, ex8b, ex8c, ex9a, ex9b, ex10a, ex10b, ex11a, ex11b, ex12a, ex12b, ex13a, ex13b, ex14a, ex14b, ex15, ex16, ex17, ex20a, ex20b, ex21a, ex21b, ex23, ex24a, ex24b, ex27a, ex27b, ex27c, exfn14i]
+def all : List Datum := [ex8a, ex8b, ex8c, ex9a, ex9b, ex10a, ex10b, ex11a, ex11b, ex12a, ex12b, ex13a, ex13b, ex14a, ex14b, ex15, ex16, ex17, ex20a, ex20b, ex21a, ex21b, ex23, ex24a, ex24b, ex27a, ex27b, ex27c, exfn14i]
 
 end HalpertHammerly2026.Examples

@@ -17,7 +17,7 @@ namespace HayesWilson2008.Examples
 
 open Data.Examples
 
-def k : LinguisticExample :=
+def k : Datum :=
   { id := "hayeswilson2008_k"
     source := ⟨"hayes-wilson-2008", "(11)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def k : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "2764")] }
 
-def r : LinguisticExample :=
+def r : Datum :=
   { id := "hayeswilson2008_r"
     source := ⟨"hayes-wilson-2008", "(11)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def r : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "2752")] }
 
-def d : LinguisticExample :=
+def d : Datum :=
   { id := "hayeswilson2008_d"
     source := ⟨"hayes-wilson-2008", "(11)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def d : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "2526")] }
 
-def s : LinguisticExample :=
+def s : Datum :=
   { id := "hayeswilson2008_s"
     source := ⟨"hayes-wilson-2008", "(11)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def s : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "2215")] }
 
-def m : LinguisticExample :=
+def m : Datum :=
   { id := "hayeswilson2008_m"
     source := ⟨"hayes-wilson-2008", "(11)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def m : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "1965")] }
 
-def p : LinguisticExample :=
+def p : Datum :=
   { id := "hayeswilson2008_p"
     source := ⟨"hayes-wilson-2008", "(11)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def p : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "1881")] }
 
-def b : LinguisticExample :=
+def b : Datum :=
   { id := "hayeswilson2008_b"
     source := ⟨"hayes-wilson-2008", "(11)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "1544")] }
 
-def l : LinguisticExample :=
+def l : Datum :=
   { id := "hayeswilson2008_l"
     source := ⟨"hayes-wilson-2008", "(11)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def l : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "1225")] }
 
-def f : LinguisticExample :=
+def f : Datum :=
   { id := "hayeswilson2008_f"
     source := ⟨"hayes-wilson-2008", "(11)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def f : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "1222")] }
 
-def h : LinguisticExample :=
+def h : Datum :=
   { id := "hayeswilson2008_h"
     source := ⟨"hayes-wilson-2008", "(11)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def h : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "1153")] }
 
-def t : LinguisticExample :=
+def t : Datum :=
   { id := "hayeswilson2008_t"
     source := ⟨"hayes-wilson-2008", "(11)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def t : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "1146")] }
 
-def pr : LinguisticExample :=
+def pr : Datum :=
   { id := "hayeswilson2008_pr"
     source := ⟨"hayes-wilson-2008", "(11)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def pr : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "1046")] }
 
-def w : LinguisticExample :=
+def w : Datum :=
   { id := "hayeswilson2008_w"
     source := ⟨"hayes-wilson-2008", "(11)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def w : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "780")] }
 
-def n : LinguisticExample :=
+def n : Datum :=
   { id := "hayeswilson2008_n"
     source := ⟨"hayes-wilson-2008", "(11)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def n : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "716")] }
 
-def v : LinguisticExample :=
+def v : Datum :=
   { id := "hayeswilson2008_v"
     source := ⟨"hayes-wilson-2008", "(11)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def v : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "615")] }
 
-def g : LinguisticExample :=
+def g : Datum :=
   { id := "hayeswilson2008_g"
     source := ⟨"hayes-wilson-2008", "(11)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def g : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "537")] }
 
-def dzh : LinguisticExample :=
+def dzh : Datum :=
   { id := "hayeswilson2008_dzh"
     source := ⟨"hayes-wilson-2008", "(11)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def dzh : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "524")] }
 
-def st : LinguisticExample :=
+def st : Datum :=
   { id := "hayeswilson2008_st"
     source := ⟨"hayes-wilson-2008", "(11)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def st : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "521")] }
 
-def tr : LinguisticExample :=
+def tr : Datum :=
   { id := "hayeswilson2008_tr"
     source := ⟨"hayes-wilson-2008", "(11)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def tr : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "515")] }
 
-def kr : LinguisticExample :=
+def kr : Datum :=
   { id := "hayeswilson2008_kr"
     source := ⟨"hayes-wilson-2008", "(11)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def kr : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "387")] }
 
-def sh : LinguisticExample :=
+def sh : Datum :=
   { id := "hayeswilson2008_sh"
     source := ⟨"hayes-wilson-2008", "(11)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def sh : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "379")] }
 
-def gr : LinguisticExample :=
+def gr : Datum :=
   { id := "hayeswilson2008_gr"
     source := ⟨"hayes-wilson-2008", "(11)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def gr : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "331")] }
 
-def tsh : LinguisticExample :=
+def tsh : Datum :=
   { id := "hayeswilson2008_tsh"
     source := ⟨"hayes-wilson-2008", "(11)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def tsh : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "329")] }
 
-def br : LinguisticExample :=
+def br : Datum :=
   { id := "hayeswilson2008_br"
     source := ⟨"hayes-wilson-2008", "(11)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def br : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "319")] }
 
-def sp : LinguisticExample :=
+def sp : Datum :=
   { id := "hayeswilson2008_sp"
     source := ⟨"hayes-wilson-2008", "(11)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def sp : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "313")] }
 
-def fl : LinguisticExample :=
+def fl : Datum :=
   { id := "hayeswilson2008_fl"
     source := ⟨"hayes-wilson-2008", "(11)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def fl : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "290")] }
 
-def kl : LinguisticExample :=
+def kl : Datum :=
   { id := "hayeswilson2008_kl"
     source := ⟨"hayes-wilson-2008", "(11)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def kl : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "285")] }
 
-def sk : LinguisticExample :=
+def sk : Datum :=
   { id := "hayeswilson2008_sk"
     source := ⟨"hayes-wilson-2008", "(11)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def sk : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "278")] }
 
-def j : LinguisticExample :=
+def j : Datum :=
   { id := "hayeswilson2008_j"
     source := ⟨"hayes-wilson-2008", "(11)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def j : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "268")] }
 
-def fr : LinguisticExample :=
+def fr : Datum :=
   { id := "hayeswilson2008_fr"
     source := ⟨"hayes-wilson-2008", "(11)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def fr : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "254")] }
 
-def pl : LinguisticExample :=
+def pl : Datum :=
   { id := "hayeswilson2008_pl"
     source := ⟨"hayes-wilson-2008", "(11)"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def pl : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "238")] }
 
-def bl : LinguisticExample :=
+def bl : Datum :=
   { id := "hayeswilson2008_bl"
     source := ⟨"hayes-wilson-2008", "(11)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def bl : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "213")] }
 
-def sl : LinguisticExample :=
+def sl : Datum :=
   { id := "hayeswilson2008_sl"
     source := ⟨"hayes-wilson-2008", "(11)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def sl : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "213")] }
 
-def dr : LinguisticExample :=
+def dr : Datum :=
   { id := "hayeswilson2008_dr"
     source := ⟨"hayes-wilson-2008", "(11)"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def dr : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "211")] }
 
-def kw : LinguisticExample :=
+def kw : Datum :=
   { id := "hayeswilson2008_kw"
     source := ⟨"hayes-wilson-2008", "(11)"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def kw : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "201")] }
 
-def str : LinguisticExample :=
+def str : Datum :=
   { id := "hayeswilson2008_str"
     source := ⟨"hayes-wilson-2008", "(11)"⟩
     reportedIn := none
@@ -485,7 +485,7 @@ def str : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "183")] }
 
-def th : LinguisticExample :=
+def th : Datum :=
   { id := "hayeswilson2008_th"
     source := ⟨"hayes-wilson-2008", "(11)"⟩
     reportedIn := none
@@ -498,7 +498,7 @@ def th : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "173"), ("score", "1.85")] }
 
-def sw : LinguisticExample :=
+def sw : Datum :=
   { id := "hayeswilson2008_sw"
     source := ⟨"hayes-wilson-2008", "(11)"⟩
     reportedIn := none
@@ -511,7 +511,7 @@ def sw : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "153")] }
 
-def gl : LinguisticExample :=
+def gl : Datum :=
   { id := "hayeswilson2008_gl"
     source := ⟨"hayes-wilson-2008", "(11)"⟩
     reportedIn := none
@@ -524,7 +524,7 @@ def gl : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "131")] }
 
-def hw : LinguisticExample :=
+def hw : Datum :=
   { id := "hayeswilson2008_hw"
     source := ⟨"hayes-wilson-2008", "(11)"⟩
     reportedIn := none
@@ -537,7 +537,7 @@ def hw : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "111")] }
 
-def sn : LinguisticExample :=
+def sn : Datum :=
   { id := "hayeswilson2008_sn"
     source := ⟨"hayes-wilson-2008", "(11)"⟩
     reportedIn := none
@@ -550,7 +550,7 @@ def sn : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "109")] }
 
-def skr : LinguisticExample :=
+def skr : Datum :=
   { id := "hayeswilson2008_skr"
     source := ⟨"hayes-wilson-2008", "(11)"⟩
     reportedIn := none
@@ -563,7 +563,7 @@ def skr : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "93")] }
 
-def z : LinguisticExample :=
+def z : Datum :=
   { id := "hayeswilson2008_z"
     source := ⟨"hayes-wilson-2008", "(11)"⟩
     reportedIn := none
@@ -576,7 +576,7 @@ def z : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "83"), ("score", "2.69")] }
 
-def sm : LinguisticExample :=
+def sm : Datum :=
   { id := "hayeswilson2008_sm"
     source := ⟨"hayes-wilson-2008", "(11)"⟩
     reportedIn := none
@@ -589,7 +589,7 @@ def sm : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "82")] }
 
-def thr : LinguisticExample :=
+def thr : Datum :=
   { id := "hayeswilson2008_thr"
     source := ⟨"hayes-wilson-2008", "(11)"⟩
     reportedIn := none
@@ -602,7 +602,7 @@ def thr : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "73"), ("score", "1.85")] }
 
-def skw : LinguisticExample :=
+def skw : Datum :=
   { id := "hayeswilson2008_skw"
     source := ⟨"hayes-wilson-2008", "(11)"⟩
     reportedIn := none
@@ -615,7 +615,7 @@ def skw : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "69")] }
 
-def tw : LinguisticExample :=
+def tw : Datum :=
   { id := "hayeswilson2008_tw"
     source := ⟨"hayes-wilson-2008", "(11)"⟩
     reportedIn := none
@@ -628,7 +628,7 @@ def tw : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "55"), ("score", "1.70")] }
 
-def spr : LinguisticExample :=
+def spr : Datum :=
   { id := "hayeswilson2008_spr"
     source := ⟨"hayes-wilson-2008", "(11)"⟩
     reportedIn := none
@@ -641,7 +641,7 @@ def spr : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "51")] }
 
-def shr : LinguisticExample :=
+def shr : Datum :=
   { id := "hayeswilson2008_shr"
     source := ⟨"hayes-wilson-2008", "(11)"⟩
     reportedIn := none
@@ -654,7 +654,7 @@ def shr : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "40"), ("score", "2.10")] }
 
-def spl : LinguisticExample :=
+def spl : Datum :=
   { id := "hayeswilson2008_spl"
     source := ⟨"hayes-wilson-2008", "(11)"⟩
     reportedIn := none
@@ -667,7 +667,7 @@ def spl : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "27")] }
 
-def dh : LinguisticExample :=
+def dh : Datum :=
   { id := "hayeswilson2008_dh"
     source := ⟨"hayes-wilson-2008", "(11)"⟩
     reportedIn := none
@@ -680,7 +680,7 @@ def dh : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "19"), ("score", "4.54")] }
 
-def dw : LinguisticExample :=
+def dw : Datum :=
   { id := "hayeswilson2008_dw"
     source := ⟨"hayes-wilson-2008", "(11)"⟩
     reportedIn := none
@@ -693,7 +693,7 @@ def dw : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "17"), ("score", "2.97")] }
 
-def gw : LinguisticExample :=
+def gw : Datum :=
   { id := "hayeswilson2008_gw"
     source := ⟨"hayes-wilson-2008", "(11)"⟩
     reportedIn := none
@@ -706,7 +706,7 @@ def gw : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "11"), ("score", "2.97")] }
 
-def thw : LinguisticExample :=
+def thw : Datum :=
   { id := "hayeswilson2008_thw"
     source := ⟨"hayes-wilson-2008", "(11)"⟩
     reportedIn := none
@@ -719,7 +719,7 @@ def thw : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "4"), ("score", "3.91"), ("gang", "18, 21")] }
 
-def skl : LinguisticExample :=
+def skl : Datum :=
   { id := "hayeswilson2008_skl"
     source := ⟨"hayes-wilson-2008", "(11)"⟩
     reportedIn := none
@@ -732,7 +732,7 @@ def skl : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("corpus", "(11)"), ("frequency", "1"), ("score", "3.05")] }
 
-def stw : LinguisticExample :=
+def stw : Datum :=
   { id := "hayeswilson2008_stw"
     source := ⟨"hayes-wilson-2008", "§5.3.1"⟩
     reportedIn := none
@@ -745,7 +745,7 @@ def stw : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3.1"), ("status", "unattested"), ("score", "3.76")] }
 
-def dl : LinguisticExample :=
+def dl : Datum :=
   { id := "hayeswilson2008_dl"
     source := ⟨"hayes-wilson-2008", "§5.3.1"⟩
     reportedIn := none
@@ -758,7 +758,7 @@ def dl : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3.1"), ("status", "unattested"), ("score", "4.40")] }
 
-def hl : LinguisticExample :=
+def hl : Datum :=
   { id := "hayeswilson2008_hl"
     source := ⟨"hayes-wilson-2008", "§5.3.1"⟩
     reportedIn := none
@@ -771,7 +771,7 @@ def hl : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3.1"), ("status", "unattested"), ("score", "4.82")] }
 
-def hr : LinguisticExample :=
+def hr : Datum :=
   { id := "hayeswilson2008_hr"
     source := ⟨"hayes-wilson-2008", "§5.3.1"⟩
     reportedIn := none
@@ -784,7 +784,7 @@ def hr : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3.1"), ("status", "unattested"), ("score", "4.82")] }
 
-def vl : LinguisticExample :=
+def vl : Datum :=
   { id := "hayeswilson2008_vl"
     source := ⟨"hayes-wilson-2008", "§5.3.1"⟩
     reportedIn := none
@@ -797,7 +797,7 @@ def vl : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3.1"), ("status", "unattested"), ("score", "4.84")] }
 
-def vr : LinguisticExample :=
+def vr : Datum :=
   { id := "hayeswilson2008_vr"
     source := ⟨"hayes-wilson-2008", "§5.3.1"⟩
     reportedIn := none
@@ -810,7 +810,7 @@ def vr : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3.1"), ("status", "unattested"), ("score", "4.84")] }
 
-def shl : LinguisticExample :=
+def shl : Datum :=
   { id := "hayeswilson2008_shl"
     source := ⟨"hayes-wilson-2008", "§5.3.1"⟩
     reportedIn := none
@@ -823,7 +823,7 @@ def shl : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3.1"), ("status", "unattested"), ("score", "4.84")] }
 
-def shw : LinguisticExample :=
+def shw : Datum :=
   { id := "hayeswilson2008_shw"
     source := ⟨"hayes-wilson-2008", "§5.3.1"⟩
     reportedIn := none
@@ -836,7 +836,7 @@ def shw : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3.1"), ("status", "unattested"), ("score", "4.84")] }
 
-def sr : LinguisticExample :=
+def sr : Datum :=
   { id := "hayeswilson2008_sr"
     source := ⟨"hayes-wilson-2008", "§5.3.1"⟩
     reportedIn := none
@@ -849,7 +849,7 @@ def sr : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3.1"), ("status", "unattested"), ("score", "4.90")] }
 
-def fw : LinguisticExample :=
+def fw : Datum :=
   { id := "hayeswilson2008_fw"
     source := ⟨"hayes-wilson-2008", "§5.3.1"⟩
     reportedIn := none
@@ -862,7 +862,7 @@ def fw : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3.1"), ("status", "unattested"), ("score", "4.96")] }
 
-def pw : LinguisticExample :=
+def pw : Datum :=
   { id := "hayeswilson2008_pw"
     source := ⟨"hayes-wilson-2008", "§5.3.1"⟩
     reportedIn := none
@@ -875,7 +875,7 @@ def pw : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3.1"), ("status", "unattested"), ("score", "4.96")] }
 
-def spw : LinguisticExample :=
+def spw : Datum :=
   { id := "hayeswilson2008_spw"
     source := ⟨"hayes-wilson-2008", "§5.3.1"⟩
     reportedIn := none
@@ -888,7 +888,7 @@ def spw : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3.1"), ("status", "unattested"), ("score", "4.96")] }
 
-def rt : LinguisticExample :=
+def rt : Datum :=
   { id := "hayeswilson2008_rt"
     source := ⟨"hayes-wilson-2008", "§5.3.1"⟩
     reportedIn := none
@@ -901,7 +901,7 @@ def rt : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3.1"), ("status", "unattested"), ("score", "21.81")] }
 
-def stsh : LinguisticExample :=
+def stsh : Datum :=
   { id := "hayeswilson2008_stsh"
     source := ⟨"hayes-wilson-2008", "§5.2"⟩
     reportedIn := none
@@ -914,7 +914,7 @@ def stsh : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2"), ("status", "unattested"), ("score", "6.21"), ("gang", "8, 14, 22")] }
 
-def zh : LinguisticExample :=
+def zh : Datum :=
   { id := "hayeswilson2008_zh"
     source := ⟨"hayes-wilson-2008", "§5.2"⟩
     reportedIn := none
@@ -927,6 +927,6 @@ def zh : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2"), ("status", "unattested"), ("gang", "2, 16")] }
 
-def all : List LinguisticExample := [k, r, d, s, m, p, b, l, f, h, t, pr, w, n, v, g, dzh, st, tr, kr, sh, gr, tsh, br, sp, fl, kl, sk, j, fr, pl, bl, sl, dr, kw, str, th, sw, gl, hw, sn, skr, z, sm, thr, skw, tw, spr, shr, spl, dh, dw, gw, thw, skl, stw, dl, hl, hr, vl, vr, shl, shw, sr, fw, pw, spw, rt, stsh, zh]
+def all : List Datum := [k, r, d, s, m, p, b, l, f, h, t, pr, w, n, v, g, dzh, st, tr, kr, sh, gr, tsh, br, sp, fl, kl, sk, j, fr, pl, bl, sl, dr, kw, str, th, sw, gl, hw, sn, skr, z, sm, thr, skw, tw, spr, shr, spl, dh, dw, gw, thw, skl, stw, dl, hl, hr, vl, vr, shl, shw, sr, fw, pw, spw, rt, stsh, zh]
 
 end HayesWilson2008.Examples

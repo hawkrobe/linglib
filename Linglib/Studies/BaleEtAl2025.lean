@@ -191,21 +191,21 @@ theorem load_agrees_of_knowledgeable (q : QUtt) :
 /-! ### The trial types -/
 
 /-- How many boxes Farmer Brown looked into. -/
-def access? (r : LinguisticExample) : Option Access :=
+def access? (r : Datum) : Option Access :=
   match r.feature? "boxesSeen" with
   | some "2" => some 2
   | some "3" => some 3
   | _ => none
 
 /-- The quantifier of his statement. -/
-def quantifier? (r : LinguisticExample) : Option QUtt :=
+def quantifier? (r : Datum) : Option QUtt :=
   match r.feature? "quantifier" with
   | some "some" => some .some_
   | some "all" => some .all
   | _ => none
 
 /-- The response the paper expects. -/
-def expected? (r : LinguisticExample) : Option Answer :=
+def expected? (r : Datum) : Option Answer :=
   match r.feature? "expectedResponse" with
   | some "yes" => some .yes
   | some "no" => some .no

@@ -17,7 +17,7 @@ namespace Jardine2019.Examples
 
 open Data.Examples
 
-def ex_27_empty : LinguisticExample :=
+def ex_27_empty : Datum :=
   { id := "jardine2019_27_empty"
     source := ⟨"jardine-2019", "(27)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_27_empty : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3"), ("string", ""), ("grammar", "26"), ("member", "yes")] }
 
-def ex_27_L : LinguisticExample :=
+def ex_27_L : Datum :=
   { id := "jardine2019_27_L"
     source := ⟨"jardine-2019", "(27)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_27_L : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3"), ("string", "L"), ("grammar", "26"), ("member", "yes")] }
 
-def ex_27_H : LinguisticExample :=
+def ex_27_H : Datum :=
   { id := "jardine2019_27_H"
     source := ⟨"jardine-2019", "(27)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_27_H : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3"), ("string", "H"), ("grammar", "26"), ("member", "yes")] }
 
-def ex_27_F : LinguisticExample :=
+def ex_27_F : Datum :=
   { id := "jardine2019_27_F"
     source := ⟨"jardine-2019", "(27)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_27_F : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3"), ("string", "F"), ("grammar", "26"), ("member", "yes")] }
 
-def ex_27_LL : LinguisticExample :=
+def ex_27_LL : Datum :=
   { id := "jardine2019_27_LL"
     source := ⟨"jardine-2019", "(27)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_27_LL : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3"), ("string", "LL"), ("grammar", "26"), ("member", "yes")] }
 
-def ex_27_LH : LinguisticExample :=
+def ex_27_LH : Datum :=
   { id := "jardine2019_27_LH"
     source := ⟨"jardine-2019", "(27)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_27_LH : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3"), ("string", "LH"), ("grammar", "26"), ("member", "yes")] }
 
-def ex_27_LF : LinguisticExample :=
+def ex_27_LF : Datum :=
   { id := "jardine2019_27_LF"
     source := ⟨"jardine-2019", "(27)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_27_LF : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3"), ("string", "LF"), ("grammar", "26"), ("member", "yes")] }
 
-def ex_27_HL : LinguisticExample :=
+def ex_27_HL : Datum :=
   { id := "jardine2019_27_HL"
     source := ⟨"jardine-2019", "(27)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_27_HL : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3"), ("string", "HL"), ("grammar", "26"), ("member", "yes")] }
 
-def ex_27_FH : LinguisticExample :=
+def ex_27_FH : Datum :=
   { id := "jardine2019_27_FH"
     source := ⟨"jardine-2019", "(27)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_27_FH : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3"), ("string", "FH"), ("grammar", "26"), ("member", "yes")] }
 
-def ex_27_FF : LinguisticExample :=
+def ex_27_FF : Datum :=
   { id := "jardine2019_27_FF"
     source := ⟨"jardine-2019", "(27)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_27_FF : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3"), ("string", "FF"), ("grammar", "26"), ("member", "yes")] }
 
-def ex_27_LLL : LinguisticExample :=
+def ex_27_LLL : Datum :=
   { id := "jardine2019_27_LLL"
     source := ⟨"jardine-2019", "(27)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_27_LLL : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3"), ("string", "LLL"), ("grammar", "26"), ("member", "yes")] }
 
-def ex_27_LLH : LinguisticExample :=
+def ex_27_LLH : Datum :=
   { id := "jardine2019_27_LLH"
     source := ⟨"jardine-2019", "(27)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_27_LLH : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3"), ("string", "LLH"), ("grammar", "26"), ("member", "yes")] }
 
-def ex_27_LLF : LinguisticExample :=
+def ex_27_LLF : Datum :=
   { id := "jardine2019_27_LLF"
     source := ⟨"jardine-2019", "(27)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_27_LLF : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3"), ("string", "LLF"), ("grammar", "26"), ("member", "yes")] }
 
-def ex_27_LHL : LinguisticExample :=
+def ex_27_LHL : Datum :=
   { id := "jardine2019_27_LHL"
     source := ⟨"jardine-2019", "(27)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_27_LHL : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3"), ("string", "LHL"), ("grammar", "26"), ("member", "yes")] }
 
-def ex_27_LFL : LinguisticExample :=
+def ex_27_LFL : Datum :=
   { id := "jardine2019_27_LFL"
     source := ⟨"jardine-2019", "(27)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_27_LFL : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3"), ("string", "LFL"), ("grammar", "26"), ("member", "yes")] }
 
-def ex_27_LFF : LinguisticExample :=
+def ex_27_LFF : Datum :=
   { id := "jardine2019_27_LFF"
     source := ⟨"jardine-2019", "(27)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_27_LFF : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3"), ("string", "LFF"), ("grammar", "26"), ("member", "yes")] }
 
-def ex_27_HLL : LinguisticExample :=
+def ex_27_HLL : Datum :=
   { id := "jardine2019_27_HLL"
     source := ⟨"jardine-2019", "(27)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex_27_HLL : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3"), ("string", "HLL"), ("grammar", "26"), ("member", "yes")] }
 
-def ex_27_HLH : LinguisticExample :=
+def ex_27_HLH : Datum :=
   { id := "jardine2019_27_HLH"
     source := ⟨"jardine-2019", "(27)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex_27_HLH : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3"), ("string", "HLH"), ("grammar", "26"), ("member", "yes")] }
 
-def ex_27_HLF : LinguisticExample :=
+def ex_27_HLF : Datum :=
   { id := "jardine2019_27_HLF"
     source := ⟨"jardine-2019", "(27)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex_27_HLF : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3"), ("string", "HLF"), ("grammar", "26"), ("member", "yes")] }
 
-def ex_26_HH : LinguisticExample :=
+def ex_26_HH : Datum :=
   { id := "jardine2019_26_HH"
     source := ⟨"jardine-2019", "(26)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex_26_HH : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3"), ("string", "HH"), ("grammar", "26"), ("member", "no")] }
 
-def ex_26_HF : LinguisticExample :=
+def ex_26_HF : Datum :=
   { id := "jardine2019_26_HF"
     source := ⟨"jardine-2019", "(26)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex_26_HF : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3"), ("string", "HF"), ("grammar", "26"), ("member", "no")] }
 
-def ex_32_empty : LinguisticExample :=
+def ex_32_empty : Datum :=
   { id := "jardine2019_32_empty"
     source := ⟨"jardine-2019", "(32)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex_32_empty : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("string", ""), ("grammar", "33"), ("member", "yes")] }
 
-def ex_32_L : LinguisticExample :=
+def ex_32_L : Datum :=
   { id := "jardine2019_32_L"
     source := ⟨"jardine-2019", "(32)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex_32_L : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("string", "L"), ("grammar", "33"), ("member", "yes")] }
 
-def ex_32_H : LinguisticExample :=
+def ex_32_H : Datum :=
   { id := "jardine2019_32_H"
     source := ⟨"jardine-2019", "(32)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex_32_H : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("string", "H"), ("grammar", "33"), ("member", "yes")] }
 
-def ex_32_LL : LinguisticExample :=
+def ex_32_LL : Datum :=
   { id := "jardine2019_32_LL"
     source := ⟨"jardine-2019", "(32)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex_32_LL : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("string", "LL"), ("grammar", "33"), ("member", "yes")] }
 
-def ex_32_LH : LinguisticExample :=
+def ex_32_LH : Datum :=
   { id := "jardine2019_32_LH"
     source := ⟨"jardine-2019", "(32)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex_32_LH : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("string", "LH"), ("grammar", "33"), ("member", "yes")] }
 
-def ex_32_HL : LinguisticExample :=
+def ex_32_HL : Datum :=
   { id := "jardine2019_32_HL"
     source := ⟨"jardine-2019", "(32)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def ex_32_HL : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("string", "HL"), ("grammar", "33"), ("member", "yes")] }
 
-def ex_32_HH : LinguisticExample :=
+def ex_32_HH : Datum :=
   { id := "jardine2019_32_HH"
     source := ⟨"jardine-2019", "(32)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def ex_32_HH : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("string", "HH"), ("grammar", "33"), ("member", "yes")] }
 
-def ex_32_LLL : LinguisticExample :=
+def ex_32_LLL : Datum :=
   { id := "jardine2019_32_LLL"
     source := ⟨"jardine-2019", "(32)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def ex_32_LLL : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("string", "LLL"), ("grammar", "33"), ("member", "yes")] }
 
-def ex_32_LLH : LinguisticExample :=
+def ex_32_LLH : Datum :=
   { id := "jardine2019_32_LLH"
     source := ⟨"jardine-2019", "(32)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def ex_32_LLH : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("string", "LLH"), ("grammar", "33"), ("member", "yes")] }
 
-def ex_32_LHL : LinguisticExample :=
+def ex_32_LHL : Datum :=
   { id := "jardine2019_32_LHL"
     source := ⟨"jardine-2019", "(32)"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def ex_32_LHL : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("string", "LHL"), ("grammar", "33"), ("member", "yes")] }
 
-def ex_32_LHH : LinguisticExample :=
+def ex_32_LHH : Datum :=
   { id := "jardine2019_32_LHH"
     source := ⟨"jardine-2019", "(32)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def ex_32_LHH : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("string", "LHH"), ("grammar", "33"), ("member", "yes")] }
 
-def ex_32_HLL : LinguisticExample :=
+def ex_32_HLL : Datum :=
   { id := "jardine2019_32_HLL"
     source := ⟨"jardine-2019", "(32)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def ex_32_HLL : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("string", "HLL"), ("grammar", "33"), ("member", "yes")] }
 
-def ex_32_HHL : LinguisticExample :=
+def ex_32_HHL : Datum :=
   { id := "jardine2019_32_HHL"
     source := ⟨"jardine-2019", "(32)"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def ex_32_HHL : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("string", "HHL"), ("grammar", "33"), ("member", "yes")] }
 
-def ex_32_HHH : LinguisticExample :=
+def ex_32_HHH : Datum :=
   { id := "jardine2019_32_HHH"
     source := ⟨"jardine-2019", "(32)"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def ex_32_HHH : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("string", "HHH"), ("grammar", "33"), ("member", "yes")] }
 
-def ex_32_LLLL : LinguisticExample :=
+def ex_32_LLLL : Datum :=
   { id := "jardine2019_32_LLLL"
     source := ⟨"jardine-2019", "(32)"⟩
     reportedIn := none
@@ -485,7 +485,7 @@ def ex_32_LLLL : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("string", "LLLL"), ("grammar", "33"), ("member", "yes")] }
 
-def ex_32_LLLH : LinguisticExample :=
+def ex_32_LLLH : Datum :=
   { id := "jardine2019_32_LLLH"
     source := ⟨"jardine-2019", "(32)"⟩
     reportedIn := none
@@ -498,7 +498,7 @@ def ex_32_LLLH : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("string", "LLLH"), ("grammar", "33"), ("member", "yes")] }
 
-def ex_32_LLHL : LinguisticExample :=
+def ex_32_LLHL : Datum :=
   { id := "jardine2019_32_LLHL"
     source := ⟨"jardine-2019", "(32)"⟩
     reportedIn := none
@@ -511,7 +511,7 @@ def ex_32_LLHL : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("string", "LLHL"), ("grammar", "33"), ("member", "yes")] }
 
-def ex_32_LLHH : LinguisticExample :=
+def ex_32_LLHH : Datum :=
   { id := "jardine2019_32_LLHH"
     source := ⟨"jardine-2019", "(32)"⟩
     reportedIn := none
@@ -524,7 +524,7 @@ def ex_32_LLHH : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("string", "LLHH"), ("grammar", "33"), ("member", "yes")] }
 
-def ex_32_LHLL : LinguisticExample :=
+def ex_32_LHLL : Datum :=
   { id := "jardine2019_32_LHLL"
     source := ⟨"jardine-2019", "(32)"⟩
     reportedIn := none
@@ -537,7 +537,7 @@ def ex_32_LHLL : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("string", "LHLL"), ("grammar", "33"), ("member", "yes")] }
 
-def ex_32_LHHL : LinguisticExample :=
+def ex_32_LHHL : Datum :=
   { id := "jardine2019_32_LHHL"
     source := ⟨"jardine-2019", "(32)"⟩
     reportedIn := none
@@ -550,7 +550,7 @@ def ex_32_LHHL : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("string", "LHHL"), ("grammar", "33"), ("member", "yes")] }
 
-def ex_32_LHHH : LinguisticExample :=
+def ex_32_LHHH : Datum :=
   { id := "jardine2019_32_LHHH"
     source := ⟨"jardine-2019", "(32)"⟩
     reportedIn := none
@@ -563,7 +563,7 @@ def ex_32_LHHH : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("string", "LHHH"), ("grammar", "33"), ("member", "yes")] }
 
-def ex_32_HLLL : LinguisticExample :=
+def ex_32_HLLL : Datum :=
   { id := "jardine2019_32_HLLL"
     source := ⟨"jardine-2019", "(32)"⟩
     reportedIn := none
@@ -576,7 +576,7 @@ def ex_32_HLLL : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("string", "HLLL"), ("grammar", "33"), ("member", "yes")] }
 
-def ex_32_HHLL : LinguisticExample :=
+def ex_32_HHLL : Datum :=
   { id := "jardine2019_32_HHLL"
     source := ⟨"jardine-2019", "(32)"⟩
     reportedIn := none
@@ -589,7 +589,7 @@ def ex_32_HHLL : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("string", "HHLL"), ("grammar", "33"), ("member", "yes")] }
 
-def ex_32_HHHL : LinguisticExample :=
+def ex_32_HHHL : Datum :=
   { id := "jardine2019_32_HHHL"
     source := ⟨"jardine-2019", "(32)"⟩
     reportedIn := none
@@ -602,7 +602,7 @@ def ex_32_HHHL : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("string", "HHHL"), ("grammar", "33"), ("member", "yes")] }
 
-def ex_32_HHHH : LinguisticExample :=
+def ex_32_HHHH : Datum :=
   { id := "jardine2019_32_HHHH"
     source := ⟨"jardine-2019", "(32)"⟩
     reportedIn := none
@@ -615,6 +615,6 @@ def ex_32_HHHH : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("string", "HHHH"), ("grammar", "33"), ("member", "yes")] }
 
-def all : List LinguisticExample := [ex_27_empty, ex_27_L, ex_27_H, ex_27_F, ex_27_LL, ex_27_LH, ex_27_LF, ex_27_HL, ex_27_FH, ex_27_FF, ex_27_LLL, ex_27_LLH, ex_27_LLF, ex_27_LHL, ex_27_LFL, ex_27_LFF, ex_27_HLL, ex_27_HLH, ex_27_HLF, ex_26_HH, ex_26_HF, ex_32_empty, ex_32_L, ex_32_H, ex_32_LL, ex_32_LH, ex_32_HL, ex_32_HH, ex_32_LLL, ex_32_LLH, ex_32_LHL, ex_32_LHH, ex_32_HLL, ex_32_HHL, ex_32_HHH, ex_32_LLLL, ex_32_LLLH, ex_32_LLHL, ex_32_LLHH, ex_32_LHLL, ex_32_LHHL, ex_32_LHHH, ex_32_HLLL, ex_32_HHLL, ex_32_HHHL, ex_32_HHHH]
+def all : List Datum := [ex_27_empty, ex_27_L, ex_27_H, ex_27_F, ex_27_LL, ex_27_LH, ex_27_LF, ex_27_HL, ex_27_FH, ex_27_FF, ex_27_LLL, ex_27_LLH, ex_27_LLF, ex_27_LHL, ex_27_LFL, ex_27_LFF, ex_27_HLL, ex_27_HLH, ex_27_HLF, ex_26_HH, ex_26_HF, ex_32_empty, ex_32_L, ex_32_H, ex_32_LL, ex_32_LH, ex_32_HL, ex_32_HH, ex_32_LLL, ex_32_LLH, ex_32_LHL, ex_32_LHH, ex_32_HLL, ex_32_HHL, ex_32_HHH, ex_32_LLLL, ex_32_LLLH, ex_32_LLHL, ex_32_LLHH, ex_32_LHLL, ex_32_LHHL, ex_32_LHHH, ex_32_HLLL, ex_32_HHLL, ex_32_HHHL, ex_32_HHHH]
 
 end Jardine2019.Examples

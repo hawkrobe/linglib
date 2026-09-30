@@ -17,7 +17,7 @@ namespace HartmannZimmermann2004.Examples
 
 open Data.Examples
 
-def ex17b : LinguisticExample :=
+def ex17b : Datum :=
   { id := "hartmannzimmermann2004_ex17b"
     source := ⟨"hartmann-zimmermann-2004", "(17b)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex17b : LinguisticExample :=
     readings := []
     paperFeatures := [("focused", "subject"), ("aspect", "perfective"), ("strategy", "postposing")] }
 
-def ex24a : LinguisticExample :=
+def ex24a : Datum :=
   { id := "hartmannzimmermann2004_ex24a"
     source := ⟨"hartmann-zimmermann-2004", "(24a)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex24a : LinguisticExample :=
     readings := []
     paperFeatures := [("focused", "allNew"), ("aspect", "perfective"), ("strategy", "unmarked")] }
 
-def ex24b : LinguisticExample :=
+def ex24b : Datum :=
   { id := "hartmannzimmermann2004_ex24b"
     source := ⟨"hartmann-zimmermann-2004", "(24b)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex24b : LinguisticExample :=
     readings := []
     paperFeatures := [("focused", "vp"), ("aspect", "perfective"), ("strategy", "suffixI"), ("transitive", "false")] }
 
-def ex25a : LinguisticExample :=
+def ex25a : Datum :=
   { id := "hartmannzimmermann2004_ex25a"
     source := ⟨"hartmann-zimmermann-2004", "(25a)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex25a : LinguisticExample :=
     readings := []
     paperFeatures := [("focused", "object"), ("aspect", "perfective"), ("strategy", "boundary"), ("transitive", "true")] }
 
-def ex25b : LinguisticExample :=
+def ex25b : Datum :=
   { id := "hartmannzimmermann2004_ex25b"
     source := ⟨"hartmann-zimmermann-2004", "(25b)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex25b : LinguisticExample :=
     readings := []
     paperFeatures := [("focused", "vp"), ("aspect", "perfective"), ("strategy", "boundary"), ("transitive", "true")] }
 
-def ex25c : LinguisticExample :=
+def ex25c : Datum :=
   { id := "hartmannzimmermann2004_ex25c"
     source := ⟨"hartmann-zimmermann-2004", "(25c)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex25c : LinguisticExample :=
     readings := []
     paperFeatures := [("focused", "verb"), ("aspect", "perfective"), ("strategy", "boundary"), ("transitive", "true")] }
 
-def ex31 : LinguisticExample :=
+def ex31 : Datum :=
   { id := "hartmannzimmermann2004_ex31"
     source := ⟨"hartmann-zimmermann-2004", "(31)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex31 : LinguisticExample :=
     readings := []
     paperFeatures := [("focused", "allNew"), ("aspect", "progressive"), ("strategy", "unmarked")] }
 
-def ex32a : LinguisticExample :=
+def ex32a : Datum :=
   { id := "hartmannzimmermann2004_ex32a"
     source := ⟨"hartmann-zimmermann-2004", "(32a)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex32a : LinguisticExample :=
     readings := []
     paperFeatures := [("focused", "object"), ("aspect", "progressive"), ("strategy", "unmarked")] }
 
-def ex32b : LinguisticExample :=
+def ex32b : Datum :=
   { id := "hartmannzimmermann2004_ex32b"
     source := ⟨"hartmann-zimmermann-2004", "(32b)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex32b : LinguisticExample :=
     readings := []
     paperFeatures := [("focused", "vp"), ("aspect", "progressive"), ("strategy", "unmarked")] }
 
-def ex32c : LinguisticExample :=
+def ex32c : Datum :=
   { id := "hartmannzimmermann2004_ex32c"
     source := ⟨"hartmann-zimmermann-2004", "(32c)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex32c : LinguisticExample :=
     readings := []
     paperFeatures := [("focused", "verb"), ("aspect", "progressive"), ("strategy", "unmarked")] }
 
-def ex36a : LinguisticExample :=
+def ex36a : Datum :=
   { id := "hartmannzimmermann2004_ex36a"
     source := ⟨"hartmann-zimmermann-2004", "(36a)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex36a : LinguisticExample :=
     readings := []
     paperFeatures := [("focused", "object"), ("aspect", "perfective"), ("association", "object")] }
 
-def ex36b : LinguisticExample :=
+def ex36b : Datum :=
   { id := "hartmannzimmermann2004_ex36b"
     source := ⟨"hartmann-zimmermann-2004", "(36b)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex36b : LinguisticExample :=
     readings := []
     paperFeatures := [("focused", "vp"), ("aspect", "perfective"), ("association", "vp")] }
 
-def ex36c : LinguisticExample :=
+def ex36c : Datum :=
   { id := "hartmannzimmermann2004_ex36c"
     source := ⟨"hartmann-zimmermann-2004", "(36c)"⟩
     reportedIn := none
@@ -186,6 +186,6 @@ def ex36c : LinguisticExample :=
     readings := []
     paperFeatures := [("focused", "verb"), ("aspect", "perfective"), ("association", "verb")] }
 
-def all : List LinguisticExample := [ex17b, ex24a, ex24b, ex25a, ex25b, ex25c, ex31, ex32a, ex32b, ex32c, ex36a, ex36b, ex36c]
+def all : List Datum := [ex17b, ex24a, ex24b, ex25a, ex25b, ex25c, ex31, ex32a, ex32b, ex32c, ex36a, ex36b, ex36c]
 
 end HartmannZimmermann2004.Examples

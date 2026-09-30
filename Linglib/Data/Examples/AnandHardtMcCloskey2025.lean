@@ -17,7 +17,7 @@ namespace AnandHardtMcCloskey2025.Examples
 
 open Data.Examples
 
-def ex_13a : LinguisticExample :=
+def ex_13a : Datum :=
   { id := "anandhardtmccloskey2025_13a"
     source := ⟨"anand-hardt-mccloskey-2025", "(13a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_13a : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "sluicing"), ("ppType", "nonargument")] }
 
-def ex_13b : LinguisticExample :=
+def ex_13b : Datum :=
   { id := "anandhardtmccloskey2025_13b"
     source := ⟨"anand-hardt-mccloskey-2025", "(13b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_13b : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "sluicing"), ("ppType", "nonargument")] }
 
-def ex_12c : LinguisticExample :=
+def ex_12c : Datum :=
   { id := "anandhardtmccloskey2025_12c"
     source := ⟨"anand-hardt-mccloskey-2025", "(12c)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_12c : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "sluicing"), ("ppType", "argument")] }
 
-def ex_15a : LinguisticExample :=
+def ex_15a : Datum :=
   { id := "anandhardtmccloskey2025_15a"
     source := ⟨"anand-hardt-mccloskey-2025", "(15a)"⟩
     reportedIn := none
@@ -69,6 +69,6 @@ def ex_15a : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "sluicing"), ("ppType", "argument")] }
 
-def all : List LinguisticExample := [ex_13a, ex_13b, ex_12c, ex_15a]
+def all : List Datum := [ex_13a, ex_13b, ex_12c, ex_15a]
 
 end AnandHardtMcCloskey2025.Examples

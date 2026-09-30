@@ -17,7 +17,7 @@ namespace Haspelmath2007.Examples
 
 open Data.Examples
 
-def ex5 : LinguisticExample :=
+def ex5 : Datum :=
   { id := "haspelmath2007_ex5"
     source := ⟨"haspelmath-2007", "(5)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex5 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "0"), ("pattern", "a'co_b'co")] }
 
-def ex6a : LinguisticExample :=
+def ex6a : Datum :=
   { id := "haspelmath2007_ex6a"
     source := ⟨"haspelmath-2007", "(6a)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex6a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "0"), ("pattern", "co'a_co'b"), ("emphatic", "yes")] }
 
-def ex6b : LinguisticExample :=
+def ex6b : Datum :=
   { id := "haspelmath2007_ex6b"
     source := ⟨"haspelmath-2007", "(6b)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex6b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "0"), ("pattern", "a_co_b"), ("emphatic", "no")] }
 
-def ex7a : LinguisticExample :=
+def ex7a : Datum :=
   { id := "haspelmath2007_ex7a"
     source := ⟨"haspelmath-2007", "(7a)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex7a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "0"), ("pattern", "co'a_co'b"), ("emphatic", "yes"), ("negative", "yes")] }
 
-def ex12a : LinguisticExample :=
+def ex12a : Datum :=
   { id := "haspelmath2007_ex12a"
     source := ⟨"haspelmath-2007", "(12a)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex12a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "0"), ("use", "comitative")] }
 
-def ex12b : LinguisticExample :=
+def ex12b : Datum :=
   { id := "haspelmath2007_ex12b"
     source := ⟨"haspelmath-2007", "(12b)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex12b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "0"), ("pattern", "a_co_b"), ("source", "comitative")] }
 
-def ex18b : LinguisticExample :=
+def ex18b : Datum :=
   { id := "haspelmath2007_ex18b"
     source := ⟨"haspelmath-2007", "(18b)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex18b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.1"), ("pattern", "asyndetic")] }
 
-def ex20 : LinguisticExample :=
+def ex20 : Datum :=
   { id := "haspelmath2007_ex20"
     source := ⟨"haspelmath-2007", "(20)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex20 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.2"), ("pattern", "a_co_b"), ("source", "comitative")] }
 
-def ex21 : LinguisticExample :=
+def ex21 : Datum :=
   { id := "haspelmath2007_ex21"
     source := ⟨"haspelmath-2007", "(21)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex21 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.2"), ("pattern", "a'co_b")] }
 
-def ex22 : LinguisticExample :=
+def ex22 : Datum :=
   { id := "haspelmath2007_ex22"
     source := ⟨"haspelmath-2007", "(22)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex22 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.2"), ("pattern", "a_b'co")] }
 
-def ex23 : LinguisticExample :=
+def ex23 : Datum :=
   { id := "haspelmath2007_ex23"
     source := ⟨"haspelmath-2007", "(23)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex23 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.2"), ("pattern", "a_b'co")] }
 
-def ex24a : LinguisticExample :=
+def ex24a : Datum :=
   { id := "haspelmath2007_ex24a"
     source := ⟨"haspelmath-2007", "(24a)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex24a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.2"), ("pattern", "a'co_b'co")] }
 
-def ex24b : LinguisticExample :=
+def ex24b : Datum :=
   { id := "haspelmath2007_ex24b"
     source := ⟨"haspelmath-2007", "(24b)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex24b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.2"), ("pattern", "a_co_b"), ("type", "disjunction")] }
 
-def ex25 : LinguisticExample :=
+def ex25 : Datum :=
   { id := "haspelmath2007_ex25"
     source := ⟨"haspelmath-2007", "(25)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex25 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.3"), ("pattern", "co'a_co'b"), ("emphatic", "yes")] }
 
-def ex26 : LinguisticExample :=
+def ex26 : Datum :=
   { id := "haspelmath2007_ex26"
     source := ⟨"haspelmath-2007", "(26)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex26 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.3"), ("pattern", "a'co_b'co")] }
 
-def ex27 : LinguisticExample :=
+def ex27 : Datum :=
   { id := "haspelmath2007_ex27"
     source := ⟨"haspelmath-2007", "(27)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex27 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.3"), ("pattern", "a'co_co'b")] }
 
-def ex28 : LinguisticExample :=
+def ex28 : Datum :=
   { id := "haspelmath2007_ex28"
     source := ⟨"haspelmath-2007", "(28)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex28 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.3"), ("pattern", "co'a_b'co"), ("emphatic", "yes")] }
 
-def ex29 : LinguisticExample :=
+def ex29 : Datum :=
   { id := "haspelmath2007_ex29"
     source := ⟨"haspelmath-2007", "(29)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex29 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.4"), ("pattern", "a'co_b'co"), ("coordinands", "3")] }
 
-def ex30 : LinguisticExample :=
+def ex30 : Datum :=
   { id := "haspelmath2007_ex30"
     source := ⟨"haspelmath-2007", "(30)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex30 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.4"), ("pattern", "co'a_co'b"), ("type", "disjunction"), ("coordinands", "3")] }
 
-def ex31 : LinguisticExample :=
+def ex31 : Datum :=
   { id := "haspelmath2007_ex31"
     source := ⟨"haspelmath-2007", "(31)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex31 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.4"), ("pattern", "a_co_b"), ("coordinands", "3")] }
 
-def ex32 : LinguisticExample :=
+def ex32 : Datum :=
   { id := "haspelmath2007_ex32"
     source := ⟨"haspelmath-2007", "(32)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex32 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.4"), ("pattern", "a'co_b"), ("coordinands", "3")] }
 
-def ex33 : LinguisticExample :=
+def ex33 : Datum :=
   { id := "haspelmath2007_ex33"
     source := ⟨"haspelmath-2007", "(33)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex33 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.4"), ("pattern", "a_b'co"), ("coordinands", "3")] }
 
-def ex34 : LinguisticExample :=
+def ex34 : Datum :=
   { id := "haspelmath2007_ex34"
     source := ⟨"haspelmath-2007", "(34)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex34 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.4"), ("pattern", "a_b'co"), ("coordinands", "3"), ("omission", "allButLast")] }
 
-def ex35 : LinguisticExample :=
+def ex35 : Datum :=
   { id := "haspelmath2007_ex35"
     source := ⟨"haspelmath-2007", "(35)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex35 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.4"), ("pattern", "a'co_b"), ("coordinands", "3"), ("omission", "allButLast")] }
 
-def ex36a : LinguisticExample :=
+def ex36a : Datum :=
   { id := "haspelmath2007_ex36a"
     source := ⟨"haspelmath-2007", "(36a)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex36a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.4"), ("pattern", "a'co_b"), ("coordinands", "4"), ("omission", "allButFirst")] }
 
-def ex36b : LinguisticExample :=
+def ex36b : Datum :=
   { id := "haspelmath2007_ex36b"
     source := ⟨"haspelmath-2007", "(36b)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex36b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.4"), ("pattern", "a'co_b"), ("coordinands", "3"), ("omission", "allButFirst")] }
 
-def ex37 : LinguisticExample :=
+def ex37 : Datum :=
   { id := "haspelmath2007_ex37"
     source := ⟨"haspelmath-2007", "(37)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def ex37 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.4"), ("pattern", "a_co_b"), ("coordinands", "4"), ("omission", "none")] }
 
-def ex43 : LinguisticExample :=
+def ex43 : Datum :=
   { id := "haspelmath2007_ex43"
     source := ⟨"haspelmath-2007", "(43)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def ex43 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("pattern", "co'a_co'b"), ("emphatic", "yes")] }
 
-def ex44 : LinguisticExample :=
+def ex44 : Datum :=
   { id := "haspelmath2007_ex44"
     source := ⟨"haspelmath-2007", "(44)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def ex44 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("emphatic", "yes")] }
 
-def ex57a : LinguisticExample :=
+def ex57a : Datum :=
   { id := "haspelmath2007_ex57a"
     source := ⟨"haspelmath-2007", "(57a)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def ex57a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("pattern", "a'co_b"), ("coordinands", "np")] }
 
-def ex57b : LinguisticExample :=
+def ex57b : Datum :=
   { id := "haspelmath2007_ex57b"
     source := ⟨"haspelmath-2007", "(57b)"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def ex57b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("coordinands", "event")] }
 
-def ex58a : LinguisticExample :=
+def ex58a : Datum :=
   { id := "haspelmath2007_ex58a"
     source := ⟨"haspelmath-2007", "(58a)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def ex58a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("pattern", "a'co_b"), ("coordinands", "np")] }
 
-def ex58b : LinguisticExample :=
+def ex58b : Datum :=
   { id := "haspelmath2007_ex58b"
     source := ⟨"haspelmath-2007", "(58b)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def ex58b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("coordinands", "event")] }
 
-def ex59a : LinguisticExample :=
+def ex59a : Datum :=
   { id := "haspelmath2007_ex59a"
     source := ⟨"haspelmath-2007", "(59a)"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def ex59a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("pattern", "a_co_b"), ("coordinands", "np"), ("emphatic", "no")] }
 
-def ex60a : LinguisticExample :=
+def ex60a : Datum :=
   { id := "haspelmath2007_ex60a"
     source := ⟨"haspelmath-2007", "(60a)"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def ex60a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("pattern", "a_co_b"), ("coordinands", "np")] }
 
-def ex62a : LinguisticExample :=
+def ex62a : Datum :=
   { id := "haspelmath2007_ex62a"
     source := ⟨"haspelmath-2007", "(62a)"⟩
     reportedIn := none
@@ -485,7 +485,7 @@ def ex62a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("pattern", "asyndetic"), ("conjunction", "natural")] }
 
-def ex62b : LinguisticExample :=
+def ex62b : Datum :=
   { id := "haspelmath2007_ex62b"
     source := ⟨"haspelmath-2007", "(62b)"⟩
     reportedIn := none
@@ -498,7 +498,7 @@ def ex62b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("pattern", "a_co_b"), ("conjunction", "accidental")] }
 
-def ex63a : LinguisticExample :=
+def ex63a : Datum :=
   { id := "haspelmath2007_ex63a"
     source := ⟨"haspelmath-2007", "(63a)"⟩
     reportedIn := none
@@ -511,7 +511,7 @@ def ex63a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("pattern", "asyndetic"), ("conjunction", "natural")] }
 
-def ex63b : LinguisticExample :=
+def ex63b : Datum :=
   { id := "haspelmath2007_ex63b"
     source := ⟨"haspelmath-2007", "(63b)"⟩
     reportedIn := none
@@ -524,7 +524,7 @@ def ex63b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("pattern", "a_co_b"), ("conjunction", "accidental")] }
 
-def ex64a : LinguisticExample :=
+def ex64a : Datum :=
   { id := "haspelmath2007_ex64a"
     source := ⟨"haspelmath-2007", "(64a)"⟩
     reportedIn := none
@@ -537,7 +537,7 @@ def ex64a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("conjunction", "accidental")] }
 
-def ex64b : LinguisticExample :=
+def ex64b : Datum :=
   { id := "haspelmath2007_ex64b"
     source := ⟨"haspelmath-2007", "(64b)"⟩
     reportedIn := none
@@ -550,7 +550,7 @@ def ex64b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("conjunction", "natural")] }
 
-def ex77a : LinguisticExample :=
+def ex77a : Datum :=
   { id := "haspelmath2007_ex77a"
     source := ⟨"haspelmath-2007", "(77a)"⟩
     reportedIn := none
@@ -563,7 +563,7 @@ def ex77a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("use", "comitative")] }
 
-def ex77b : LinguisticExample :=
+def ex77b : Datum :=
   { id := "haspelmath2007_ex77b"
     source := ⟨"haspelmath-2007", "(77b)"⟩
     reportedIn := none
@@ -576,7 +576,7 @@ def ex77b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("pattern", "a_co_b"), ("source", "comitative")] }
 
-def ex78a : LinguisticExample :=
+def ex78a : Datum :=
   { id := "haspelmath2007_ex78a"
     source := ⟨"haspelmath-2007", "(78a)"⟩
     reportedIn := none
@@ -589,7 +589,7 @@ def ex78a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("use", "comitative")] }
 
-def ex78b : LinguisticExample :=
+def ex78b : Datum :=
   { id := "haspelmath2007_ex78b"
     source := ⟨"haspelmath-2007", "(78b)"⟩
     reportedIn := none
@@ -602,7 +602,7 @@ def ex78b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("pattern", "a'co_b"), ("source", "comitative")] }
 
-def ex79 : LinguisticExample :=
+def ex79 : Datum :=
   { id := "haspelmath2007_ex79"
     source := ⟨"haspelmath-2007", "(79)"⟩
     reportedIn := none
@@ -615,7 +615,7 @@ def ex79 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("pattern", "a_co_b"), ("source", "comitative")] }
 
-def ex80c : LinguisticExample :=
+def ex80c : Datum :=
   { id := "haspelmath2007_ex80c"
     source := ⟨"haspelmath-2007", "(80c)"⟩
     reportedIn := none
@@ -628,7 +628,7 @@ def ex80c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("source", "comitative")] }
 
-def ex81 : LinguisticExample :=
+def ex81 : Datum :=
   { id := "haspelmath2007_ex81"
     source := ⟨"haspelmath-2007", "(81)"⟩
     reportedIn := none
@@ -641,7 +641,7 @@ def ex81 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("pattern", "a'co_b"), ("source", "comitative")] }
 
-def ex85a : LinguisticExample :=
+def ex85a : Datum :=
   { id := "haspelmath2007_ex85a"
     source := ⟨"haspelmath-2007", "(85a)"⟩
     reportedIn := none
@@ -654,7 +654,7 @@ def ex85a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("use", "comitative")] }
 
-def ex85b : LinguisticExample :=
+def ex85b : Datum :=
   { id := "haspelmath2007_ex85b"
     source := ⟨"haspelmath-2007", "(85b)"⟩
     reportedIn := none
@@ -667,7 +667,7 @@ def ex85b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("pattern", "a'co_b'co"), ("source", "comitative")] }
 
-def ex86 : LinguisticExample :=
+def ex86 : Datum :=
   { id := "haspelmath2007_ex86"
     source := ⟨"haspelmath-2007", "(86)"⟩
     reportedIn := none
@@ -680,7 +680,7 @@ def ex86 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("pattern", "a'co_b"), ("source", "comitative")] }
 
-def ex87a : LinguisticExample :=
+def ex87a : Datum :=
   { id := "haspelmath2007_ex87a"
     source := ⟨"haspelmath-2007", "(87a)"⟩
     reportedIn := none
@@ -693,7 +693,7 @@ def ex87a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2"), ("conjunction", "inclusory")] }
 
-def ex87c : LinguisticExample :=
+def ex87c : Datum :=
   { id := "haspelmath2007_ex87c"
     source := ⟨"haspelmath-2007", "(87c)"⟩
     reportedIn := none
@@ -706,7 +706,7 @@ def ex87c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2"), ("pattern", "asyndetic"), ("conjunction", "inclusory")] }
 
-def ex89c : LinguisticExample :=
+def ex89c : Datum :=
   { id := "haspelmath2007_ex89c"
     source := ⟨"haspelmath-2007", "(89c)"⟩
     reportedIn := none
@@ -719,7 +719,7 @@ def ex89c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2"), ("conjunction", "splitInclusory")] }
 
-def ex91b : LinguisticExample :=
+def ex91b : Datum :=
   { id := "haspelmath2007_ex91b"
     source := ⟨"haspelmath-2007", "(91b)"⟩
     reportedIn := none
@@ -732,6 +732,6 @@ def ex91b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3"), ("conjunction", "summary")] }
 
-def all : List LinguisticExample := [ex5, ex6a, ex6b, ex7a, ex12a, ex12b, ex18b, ex20, ex21, ex22, ex23, ex24a, ex24b, ex25, ex26, ex27, ex28, ex29, ex30, ex31, ex32, ex33, ex34, ex35, ex36a, ex36b, ex37, ex43, ex44, ex57a, ex57b, ex58a, ex58b, ex59a, ex60a, ex62a, ex62b, ex63a, ex63b, ex64a, ex64b, ex77a, ex77b, ex78a, ex78b, ex79, ex80c, ex81, ex85a, ex85b, ex86, ex87a, ex87c, ex89c, ex91b]
+def all : List Datum := [ex5, ex6a, ex6b, ex7a, ex12a, ex12b, ex18b, ex20, ex21, ex22, ex23, ex24a, ex24b, ex25, ex26, ex27, ex28, ex29, ex30, ex31, ex32, ex33, ex34, ex35, ex36a, ex36b, ex37, ex43, ex44, ex57a, ex57b, ex58a, ex58b, ex59a, ex60a, ex62a, ex62b, ex63a, ex63b, ex64a, ex64b, ex77a, ex77b, ex78a, ex78b, ex79, ex80c, ex81, ex85a, ex85b, ex86, ex87a, ex87c, ex89c, ex91b]
 
 end Haspelmath2007.Examples

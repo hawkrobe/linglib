@@ -241,7 +241,7 @@ def cellOf : String → Option WordhoodClass
   | _ => none
 
 /-- A row from the paper's features. -/
-def WordhoodRow.ofExample (e : LinguisticExample) : Option WordhoodRow := do
+def WordhoodRow.ofDatum (e : Datum) : Option WordhoodRow := do
   let ms ← (e.feature? "ms").bind msOf
   let p ← (e.feature? "p").bind pOf
   let c ← (e.feature? "cell").bind cellOf
@@ -249,7 +249,7 @@ def WordhoodRow.ofExample (e : LinguisticExample) : Option WordhoodRow := do
 
 /-- The Element's examples of the four cells: *cat*, plural *-s*, possessive *'s* and the Dutch
 prefixes. -/
-def wordhoodRows : List WordhoodRow := Examples.all.filterMap WordhoodRow.ofExample
+def wordhoodRows : List WordhoodRow := Examples.all.filterMap WordhoodRow.ofDatum
 
 /-- Each example sits in the cell its boundnesses give. -/
 theorem rows_cells : ∀ r ∈ wordhoodRows, r.profile.classify = r.cell := by decide

@@ -68,7 +68,7 @@ bases (`paradigmCoreNPs_two`).
 
 namespace Song1996
 
-open Data.Examples (LinguisticExample)
+open Data.Examples (Datum)
 open Causation.Morphological (CausativeComplexity causeeDemotion)
 
 /-! ### Forms and types (chapter 2) -/
@@ -139,7 +139,7 @@ theorem type_eq_compact_iff {f : Form} :
   | twoClauses l o => cases l <;> cases o <;> decide
 
 /-- The form of an example, as Song describes it. -/
-def ofRow (e : LinguisticExample) : Option Form :=
+def ofRow (e : Datum) : Option Form :=
   match e.feature? "clauses" with
   | some "one" => oneClause <$> e.parse? "vcause" [("fused", .fused), ("bound", .bound),
       ("free", .free)]

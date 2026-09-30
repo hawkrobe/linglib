@@ -17,7 +17,7 @@ namespace AlexandropoulouGotzner2024a.Examples
 
 open Data.Examples
 
-def ag2024a_t2_anna : LinguisticExample :=
+def ag2024a_t2_anna : Datum :=
   { id := "ag2024a_t2_anna"
     source := ⟨"alexandropoulou-gotzner-2024a", "Table 2"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ag2024a_t2_anna : LinguisticExample :=
     readings := []
     paperFeatures := [("experiment", "1"), ("item", "gigantic"), ("adjectiveType", "relative"), ("adjective", "tiny"), ("strength", "strong"), ("polarity", "negative"), ("negation", "negated"), ("condition", "negated negative strong")] }
 
-def ag2024a_t2_david : LinguisticExample :=
+def ag2024a_t2_david : Datum :=
   { id := "ag2024a_t2_david"
     source := ⟨"alexandropoulou-gotzner-2024a", "Table 2"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ag2024a_t2_david : LinguisticExample :=
     readings := []
     paperFeatures := [("experiment", "1"), ("item", "gigantic"), ("adjectiveType", "relative"), ("adjective", "small"), ("strength", "weak"), ("polarity", "negative"), ("negation", "nonNegated"), ("condition", "non-negated negative weak")] }
 
-def ag2024a_t2_brian : LinguisticExample :=
+def ag2024a_t2_brian : Datum :=
   { id := "ag2024a_t2_brian"
     source := ⟨"alexandropoulou-gotzner-2024a", "Table 2"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ag2024a_t2_brian : LinguisticExample :=
     readings := []
     paperFeatures := [("experiment", "1"), ("item", "gigantic"), ("adjectiveType", "relative"), ("adjective", "gigantic"), ("strength", "strong"), ("polarity", "positive"), ("negation", "nonNegated"), ("condition", "non-negated positive strong")] }
 
-def ag2024a_t3_anthony : LinguisticExample :=
+def ag2024a_t3_anthony : Datum :=
   { id := "ag2024a_t3_anthony"
     source := ⟨"alexandropoulou-gotzner-2024a", "Table 3"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ag2024a_t3_anthony : LinguisticExample :=
     readings := []
     paperFeatures := [("experiment", "2"), ("item", "pristine"), ("adjectiveType", "absolute"), ("adjective", "filthy"), ("strength", "strong"), ("polarity", "negative"), ("negation", "negated"), ("condition", "negated negative strong")] }
 
-def ag2024a_t3_joseph : LinguisticExample :=
+def ag2024a_t3_joseph : Datum :=
   { id := "ag2024a_t3_joseph"
     source := ⟨"alexandropoulou-gotzner-2024a", "Table 3"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ag2024a_t3_joseph : LinguisticExample :=
     readings := []
     paperFeatures := [("experiment", "2"), ("item", "pristine"), ("adjectiveType", "absolute"), ("adjective", "dirty"), ("strength", "weak"), ("polarity", "negative"), ("negation", "negated"), ("condition", "negated negative weak")] }
 
-def ag2024a_t3_mary : LinguisticExample :=
+def ag2024a_t3_mary : Datum :=
   { id := "ag2024a_t3_mary"
     source := ⟨"alexandropoulou-gotzner-2024a", "Table 3"⟩
     reportedIn := none
@@ -95,6 +95,6 @@ def ag2024a_t3_mary : LinguisticExample :=
     readings := []
     paperFeatures := [("experiment", "2"), ("item", "pristine"), ("adjectiveType", "absolute"), ("adjective", "pristine"), ("strength", "strong"), ("polarity", "positive"), ("negation", "nonNegated"), ("condition", "non-negated positive strong")] }
 
-def all : List LinguisticExample := [ag2024a_t2_anna, ag2024a_t2_david, ag2024a_t2_brian, ag2024a_t3_anthony, ag2024a_t3_joseph, ag2024a_t3_mary]
+def all : List Datum := [ag2024a_t2_anna, ag2024a_t2_david, ag2024a_t2_brian, ag2024a_t3_anthony, ag2024a_t3_joseph, ag2024a_t3_mary]
 
 end AlexandropoulouGotzner2024a.Examples

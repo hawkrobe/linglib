@@ -17,7 +17,7 @@ namespace Heine1997.Examples
 
 open Data.Examples
 
-def ex_2_pt : LinguisticExample :=
+def ex_2_pt : Datum :=
   { id := "heine1997_2_pt"
     source := ⟨"heine-1997", "(2)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_2_pt : LinguisticExample :=
     readings := []
     paperFeatures := [("schema", "action")] }
 
-def ex_73a : LinguisticExample :=
+def ex_73a : Datum :=
   { id := "heine1997_73a"
     source := ⟨"heine-1997", "(73a)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_73a : LinguisticExample :=
     readings := [("location", .acceptable)]
     paperFeatures := [("schema", "location"), ("source", "true"), ("target", "false")] }
 
-def ex_73b : LinguisticExample :=
+def ex_73b : Datum :=
   { id := "heine1997_73b"
     source := ⟨"heine-1997", "(73b)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_73b : LinguisticExample :=
     readings := [("location", .acceptable)]
     paperFeatures := [("schema", "location"), ("source", "true"), ("target", "false")] }
 
-def ex_73c : LinguisticExample :=
+def ex_73c : Datum :=
   { id := "heine1997_73c"
     source := ⟨"heine-1997", "(73c)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_73c : LinguisticExample :=
     readings := [("There is flu at the Markovs.", .acceptable), ("The Markovs have the flu now.", .acceptable)]
     paperFeatures := [("schema", "location"), ("source", "true"), ("target", "true")] }
 
-def ex_73d : LinguisticExample :=
+def ex_73d : Datum :=
   { id := "heine1997_73d"
     source := ⟨"heine-1997", "(73d)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_73d : LinguisticExample :=
     readings := [("possession", .acceptable)]
     paperFeatures := [("schema", "location"), ("source", "false"), ("target", "true")] }
 
-def ex_84a : LinguisticExample :=
+def ex_84a : Datum :=
   { id := "heine1997_84a"
     source := ⟨"heine-1997", "(84a)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_84a : LinguisticExample :=
     readings := []
     paperFeatures := [("schema", "equation"), ("notion", "permanent")] }
 
-def ex_84b : LinguisticExample :=
+def ex_84b : Datum :=
   { id := "heine1997_84b"
     source := ⟨"heine-1997", "(84b)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_84b : LinguisticExample :=
     readings := []
     paperFeatures := [("schema", "equation"), ("notion", "inalienable")] }
 
-def ex_84c : LinguisticExample :=
+def ex_84c : Datum :=
   { id := "heine1997_84c"
     source := ⟨"heine-1997", "(84c)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_84c : LinguisticExample :=
     readings := []
     paperFeatures := [("schema", "equation"), ("notion", "abstract")] }
 
-def ex_84d : LinguisticExample :=
+def ex_84d : Datum :=
   { id := "heine1997_84d"
     source := ⟨"heine-1997", "(84d)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_84d : LinguisticExample :=
     readings := []
     paperFeatures := [("schema", "equation"), ("notion", "inanimateInalienable")] }
 
-def ex_85a : LinguisticExample :=
+def ex_85a : Datum :=
   { id := "heine1997_85a"
     source := ⟨"heine-1997", "(85a)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_85a : LinguisticExample :=
     readings := []
     paperFeatures := [("schema", "location"), ("notion", "physical")] }
 
-def ex_85b : LinguisticExample :=
+def ex_85b : Datum :=
   { id := "heine1997_85b"
     source := ⟨"heine-1997", "(85b)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_85b : LinguisticExample :=
     readings := []
     paperFeatures := [("schema", "goal"), ("notion", "permanent")] }
 
-def ex_85c : LinguisticExample :=
+def ex_85c : Datum :=
   { id := "heine1997_85c"
     source := ⟨"heine-1997", "(85c)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_85c : LinguisticExample :=
     readings := []
     paperFeatures := [("schema", "goal"), ("notion", "inalienable")] }
 
-def ex_85d : LinguisticExample :=
+def ex_85d : Datum :=
   { id := "heine1997_85d"
     source := ⟨"heine-1997", "(85d)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_85d : LinguisticExample :=
     readings := []
     paperFeatures := [("schema", "goal"), ("notion", "inalienable")] }
 
-def ex_85e : LinguisticExample :=
+def ex_85e : Datum :=
   { id := "heine1997_85e"
     source := ⟨"heine-1997", "(85e)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_85e : LinguisticExample :=
     readings := []
     paperFeatures := [("schema", "goal"), ("notion", "inanimateInalienable")] }
 
-def ex_86a : LinguisticExample :=
+def ex_86a : Datum :=
   { id := "heine1997_86a"
     source := ⟨"heine-1997", "(86a)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_86a : LinguisticExample :=
     readings := []
     paperFeatures := [("schema", "goal"), ("possessee", "indefinite"), ("notion", "permanent")] }
 
-def ex_86b : LinguisticExample :=
+def ex_86b : Datum :=
   { id := "heine1997_86b"
     source := ⟨"heine-1997", "(86b)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_86b : LinguisticExample :=
     readings := []
     paperFeatures := [("schema", "goal"), ("possessee", "definite"), ("notion", "physical")] }
 
-def ex_87a : LinguisticExample :=
+def ex_87a : Datum :=
   { id := "heine1997_87a"
     source := ⟨"heine-1997", "(87a)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex_87a : LinguisticExample :=
     readings := []
     paperFeatures := [("schema", "location"), ("possessee", "indefinite"), ("notion", "permanent")] }
 
-def ex_87b : LinguisticExample :=
+def ex_87b : Datum :=
   { id := "heine1997_87b"
     source := ⟨"heine-1997", "(87b)"⟩
     reportedIn := none
@@ -251,6 +251,6 @@ def ex_87b : LinguisticExample :=
     readings := []
     paperFeatures := [("schema", "location"), ("possessee", "definite"), ("notion", "physical")] }
 
-def all : List LinguisticExample := [ex_2_pt, ex_73a, ex_73b, ex_73c, ex_73d, ex_84a, ex_84b, ex_84c, ex_84d, ex_85a, ex_85b, ex_85c, ex_85d, ex_85e, ex_86a, ex_86b, ex_87a, ex_87b]
+def all : List Datum := [ex_2_pt, ex_73a, ex_73b, ex_73c, ex_73d, ex_84a, ex_84b, ex_84c, ex_84d, ex_85a, ex_85b, ex_85c, ex_85d, ex_85e, ex_86a, ex_86b, ex_87a, ex_87b]
 
 end Heine1997.Examples

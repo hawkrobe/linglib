@@ -167,7 +167,7 @@ def DirectedScale.ofLabel : String → Option DirectedScale
   | _ => none
 
 /-- The scales of an example's two terms and its judgment. -/
-def datum (e : Data.Examples.LinguisticExample) :
+def datum (e : Data.Examples.Datum) :
     Option (DirectedScale × DirectedScale × Data.Examples.Judgment) := do
   let l ← DirectedScale.ofLabel (← e.feature? "leftScale")
   let r ← DirectedScale.ofLabel (← e.feature? "rightScale")

@@ -17,7 +17,7 @@ namespace HayKennedyLevin1999.Examples
 
 open Data.Examples
 
-def ex2a : LinguisticExample :=
+def ex2a : Datum :=
   { id := "haykennedylevin1999_ex2a"
     source := ⟨"hay-kennedy-levin-1999", "(2a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex2a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("test", "progressive"), ("verb", "lengthen"), ("telic", "no")] }
 
-def ex2b : LinguisticExample :=
+def ex2b : Datum :=
   { id := "haykennedylevin1999_ex2b"
     source := ⟨"hay-kennedy-levin-1999", "(2b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex2b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("test", "progressive"), ("verb", "straighten"), ("telic", "yes")] }
 
-def ex4a : LinguisticExample :=
+def ex4a : Datum :=
   { id := "haykennedylevin1999_ex4a"
     source := ⟨"hay-kennedy-levin-1999", "(4a)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex4a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("test", "for"), ("verb", "cool"), ("telic", "no")] }
 
-def ex4b : LinguisticExample :=
+def ex4b : Datum :=
   { id := "haykennedylevin1999_ex4b"
     source := ⟨"hay-kennedy-levin-1999", "(4b)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex4b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("test", "in"), ("verb", "cool"), ("telic", "yes")] }
 
-def ex6a : LinguisticExample :=
+def ex6a : Datum :=
   { id := "haykennedylevin1999_ex6a"
     source := ⟨"hay-kennedy-levin-1999", "(6a)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex6a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("test", "almost"), ("verb", "lengthen"), ("telic", "yes"), ("boundSource", "context")] }
 
-def ex6b : LinguisticExample :=
+def ex6b : Datum :=
   { id := "haykennedylevin1999_ex6b"
     source := ⟨"hay-kennedy-levin-1999", "(6b)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex6b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("test", "almost"), ("verb", "lengthen"), ("telic", "no"), ("boundSource", "none")] }
 
-def ex8a : LinguisticExample :=
+def ex8a : Datum :=
   { id := "haykennedylevin1999_ex8a"
     source := ⟨"hay-kennedy-levin-1999", "(8a)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex8a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("verb", "lengthen"), ("differenceValue", "some amount"), ("telic", "no")] }
 
-def ex8b : LinguisticExample :=
+def ex8b : Datum :=
   { id := "haykennedylevin1999_ex8b"
     source := ⟨"hay-kennedy-levin-1999", "(8b)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex8b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("verb", "lengthen"), ("differenceValue", "5 inches"), ("boundSource", "measure"), ("telic", "yes")] }
 
-def ex10 : LinguisticExample :=
+def ex10 : Datum :=
   { id := "haykennedylevin1999_ex10"
     source := ⟨"hay-kennedy-levin-1999", "(10)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex10 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("test", "progressive"), ("verb", "lengthen"), ("boundSource", "measure"), ("telic", "yes")] }
 
-def ex18a : LinguisticExample :=
+def ex18a : Datum :=
   { id := "haykennedylevin1999_ex18a"
     source := ⟨"hay-kennedy-levin-1999", "(18a)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex18a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("verb", "widen"), ("boundSource", "measure"), ("telic", "yes")] }
 
-def ex18b : LinguisticExample :=
+def ex18b : Datum :=
   { id := "haykennedylevin1999_ex18b"
     source := ⟨"hay-kennedy-levin-1999", "(18b)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex18b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("verb", "cool"), ("boundSource", "measure"), ("telic", "yes")] }
 
-def ex19a : LinguisticExample :=
+def ex19a : Datum :=
   { id := "haykennedylevin1999_ex19a"
     source := ⟨"hay-kennedy-levin-1999", "(19a)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex19a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("test", "progressive"), ("verb", "widen"), ("boundSource", "measure"), ("telic", "yes")] }
 
-def ex19b : LinguisticExample :=
+def ex19b : Datum :=
   { id := "haykennedylevin1999_ex19b"
     source := ⟨"hay-kennedy-levin-1999", "(19b)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex19b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("test", "progressive"), ("verb", "cool"), ("boundSource", "measure"), ("telic", "yes")] }
 
-def ex20a : LinguisticExample :=
+def ex20a : Datum :=
   { id := "haykennedylevin1999_ex20a"
     source := ⟨"hay-kennedy-levin-1999", "(20a)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex20a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("test", "almost"), ("verb", "widen"), ("boundSource", "measure"), ("telic", "yes")] }
 
-def ex20b : LinguisticExample :=
+def ex20b : Datum :=
   { id := "haykennedylevin1999_ex20b"
     source := ⟨"hay-kennedy-levin-1999", "(20b)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex20b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("test", "almost"), ("verb", "cool"), ("boundSource", "measure"), ("telic", "yes")] }
 
-def ex21a : LinguisticExample :=
+def ex21a : Datum :=
   { id := "haykennedylevin1999_ex21a"
     source := ⟨"hay-kennedy-levin-1999", "(21a)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex21a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("verb", "straighten"), ("modifier", "completely"), ("boundSource", "completely"), ("telic", "yes")] }
 
-def ex21b : LinguisticExample :=
+def ex21b : Datum :=
   { id := "haykennedylevin1999_ex21b"
     source := ⟨"hay-kennedy-levin-1999", "(21b)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex21b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("verb", "dry"), ("modifier", "completely"), ("boundSource", "completely"), ("telic", "yes")] }
 
-def ex22a : LinguisticExample :=
+def ex22a : Datum :=
   { id := "haykennedylevin1999_ex22a"
     source := ⟨"hay-kennedy-levin-1999", "(22a)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex22a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("test", "progressive"), ("verb", "straighten"), ("modifier", "completely"), ("telic", "yes")] }
 
-def ex22b : LinguisticExample :=
+def ex22b : Datum :=
   { id := "haykennedylevin1999_ex22b"
     source := ⟨"hay-kennedy-levin-1999", "(22b)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex22b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("test", "progressive"), ("verb", "dry"), ("modifier", "completely"), ("telic", "yes")] }
 
-def ex23a : LinguisticExample :=
+def ex23a : Datum :=
   { id := "haykennedylevin1999_ex23a"
     source := ⟨"hay-kennedy-levin-1999", "(23a)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex23a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("verb", "broaden"), ("modifier", "significantly"), ("boundSource", "significantly"), ("telic", "yes")] }
 
-def ex23b : LinguisticExample :=
+def ex23b : Datum :=
   { id := "haykennedylevin1999_ex23b"
     source := ⟨"hay-kennedy-levin-1999", "(23b)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex23b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("test", "almost"), ("verb", "broaden"), ("modifier", "significantly"), ("telic", "yes")] }
 
-def ex23c : LinguisticExample :=
+def ex23c : Datum :=
   { id := "haykennedylevin1999_ex23c"
     source := ⟨"hay-kennedy-levin-1999", "(23c)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex23c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("test", "progressive"), ("verb", "broaden"), ("modifier", "significantly"), ("telic", "yes")] }
 
-def ex24a : LinguisticExample :=
+def ex24a : Datum :=
   { id := "haykennedylevin1999_ex24a"
     source := ⟨"hay-kennedy-levin-1999", "(24a)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex24a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("verb", "broaden"), ("modifier", "slightly"), ("boundSource", "none"), ("telic", "no")] }
 
-def ex24b : LinguisticExample :=
+def ex24b : Datum :=
   { id := "haykennedylevin1999_ex24b"
     source := ⟨"hay-kennedy-levin-1999", "(24b)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex24b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("test", "almost"), ("verb", "broaden"), ("modifier", "slightly"), ("telic", "no")] }
 
-def ex24c : LinguisticExample :=
+def ex24c : Datum :=
   { id := "haykennedylevin1999_ex24c"
     source := ⟨"hay-kennedy-levin-1999", "(24c)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex24c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("test", "progressive"), ("verb", "broaden"), ("modifier", "slightly"), ("telic", "no")] }
 
-def ex25a_straight : LinguisticExample :=
+def ex25a_straight : Datum :=
   { id := "haykennedylevin1999_ex25a_straight"
     source := ⟨"hay-kennedy-levin-1999", "(25a)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex25a_straight : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("adjective", "straight"), ("range", "closed")] }
 
-def ex25a_empty : LinguisticExample :=
+def ex25a_empty : Datum :=
   { id := "haykennedylevin1999_ex25a_empty"
     source := ⟨"hay-kennedy-levin-1999", "(25a)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def ex25a_empty : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("adjective", "empty"), ("range", "closed")] }
 
-def ex25a_dry : LinguisticExample :=
+def ex25a_dry : Datum :=
   { id := "haykennedylevin1999_ex25a_dry"
     source := ⟨"hay-kennedy-levin-1999", "(25a)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def ex25a_dry : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("adjective", "dry"), ("range", "closed")] }
 
-def ex25b_long : LinguisticExample :=
+def ex25b_long : Datum :=
   { id := "haykennedylevin1999_ex25b_long"
     source := ⟨"hay-kennedy-levin-1999", "(25b)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def ex25b_long : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("adjective", "long"), ("range", "open")] }
 
-def ex25b_wide : LinguisticExample :=
+def ex25b_wide : Datum :=
   { id := "haykennedylevin1999_ex25b_wide"
     source := ⟨"hay-kennedy-levin-1999", "(25b)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def ex25b_wide : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("adjective", "wide"), ("range", "open")] }
 
-def ex25b_short : LinguisticExample :=
+def ex25b_short : Datum :=
   { id := "haykennedylevin1999_ex25b_short"
     source := ⟨"hay-kennedy-levin-1999", "(25b)"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def ex25b_short : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("adjective", "short"), ("range", "open")] }
 
-def ex26a : LinguisticExample :=
+def ex26a : Datum :=
   { id := "haykennedylevin1999_ex26a"
     source := ⟨"hay-kennedy-levin-1999", "(26a)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def ex26a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("test", "progressive"), ("verb", "straighten"), ("range", "closed"), ("boundSource", "scale"), ("telic", "yes")] }
 
-def ex26b : LinguisticExample :=
+def ex26b : Datum :=
   { id := "haykennedylevin1999_ex26b"
     source := ⟨"hay-kennedy-levin-1999", "(26b)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def ex26b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("test", "progressive"), ("verb", "dry"), ("range", "closed"), ("boundSource", "scale"), ("telic", "yes")] }
 
-def ex27a : LinguisticExample :=
+def ex27a : Datum :=
   { id := "haykennedylevin1999_ex27a"
     source := ⟨"hay-kennedy-levin-1999", "(27a)"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def ex27a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("test", "progressive"), ("verb", "lengthen"), ("range", "open"), ("boundSource", "none"), ("telic", "no")] }
 
-def ex27b : LinguisticExample :=
+def ex27b : Datum :=
   { id := "haykennedylevin1999_ex27b"
     source := ⟨"hay-kennedy-levin-1999", "(27b)"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def ex27b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("test", "progressive"), ("verb", "slow"), ("range", "open"), ("boundSource", "none"), ("telic", "no")] }
 
-def ex28a : LinguisticExample :=
+def ex28a : Datum :=
   { id := "haykennedylevin1999_ex28a"
     source := ⟨"hay-kennedy-levin-1999", "(28a)"⟩
     reportedIn := none
@@ -485,7 +485,7 @@ def ex28a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("verb", "lengthen"), ("boundSource", "context"), ("telic", "yes")] }
 
-def ex28b : LinguisticExample :=
+def ex28b : Datum :=
   { id := "haykennedylevin1999_ex28b"
     source := ⟨"hay-kennedy-levin-1999", "(28b)"⟩
     reportedIn := none
@@ -498,7 +498,7 @@ def ex28b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("verb", "lower"), ("boundSource", "context"), ("telic", "yes")] }
 
-def ex29a : LinguisticExample :=
+def ex29a : Datum :=
   { id := "haykennedylevin1999_ex29a"
     source := ⟨"hay-kennedy-levin-1999", "(29a)"⟩
     reportedIn := none
@@ -511,7 +511,7 @@ def ex29a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("test", "progressive"), ("verb", "lengthen"), ("boundSource", "context"), ("telic", "yes")] }
 
-def ex29b : LinguisticExample :=
+def ex29b : Datum :=
   { id := "haykennedylevin1999_ex29b"
     source := ⟨"hay-kennedy-levin-1999", "(29b)"⟩
     reportedIn := none
@@ -524,7 +524,7 @@ def ex29b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("test", "progressive"), ("verb", "lower"), ("boundSource", "context"), ("telic", "yes")] }
 
-def ex30a : LinguisticExample :=
+def ex30a : Datum :=
   { id := "haykennedylevin1999_ex30a"
     source := ⟨"hay-kennedy-levin-1999", "(30a)"⟩
     reportedIn := none
@@ -537,7 +537,7 @@ def ex30a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("verb", "lengthen"), ("boundSource", "none"), ("telic", "no")] }
 
-def ex30b : LinguisticExample :=
+def ex30b : Datum :=
   { id := "haykennedylevin1999_ex30b"
     source := ⟨"hay-kennedy-levin-1999", "(30b)"⟩
     reportedIn := none
@@ -550,7 +550,7 @@ def ex30b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("verb", "lower"), ("boundSource", "none"), ("telic", "no")] }
 
-def ex31a : LinguisticExample :=
+def ex31a : Datum :=
   { id := "haykennedylevin1999_ex31a"
     source := ⟨"hay-kennedy-levin-1999", "(31a)"⟩
     reportedIn := none
@@ -563,7 +563,7 @@ def ex31a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("test", "progressive"), ("verb", "lengthen"), ("boundSource", "none"), ("telic", "no")] }
 
-def ex31b : LinguisticExample :=
+def ex31b : Datum :=
   { id := "haykennedylevin1999_ex31b"
     source := ⟨"hay-kennedy-levin-1999", "(31b)"⟩
     reportedIn := none
@@ -576,7 +576,7 @@ def ex31b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("test", "progressive"), ("verb", "lower"), ("boundSource", "none"), ("telic", "no")] }
 
-def ex32a : LinguisticExample :=
+def ex32a : Datum :=
   { id := "haykennedylevin1999_ex32a"
     source := ⟨"hay-kennedy-levin-1999", "(32a)"⟩
     reportedIn := none
@@ -589,7 +589,7 @@ def ex32a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("test", "cancellation"), ("verb", "lengthen"), ("boundSource", "context"), ("cancellable", "yes")] }
 
-def ex32b : LinguisticExample :=
+def ex32b : Datum :=
   { id := "haykennedylevin1999_ex32b"
     source := ⟨"hay-kennedy-levin-1999", "(32b)"⟩
     reportedIn := none
@@ -602,7 +602,7 @@ def ex32b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("test", "cancellation"), ("verb", "straighten"), ("boundSource", "scale"), ("cancellable", "yes")] }
 
-def ex33a : LinguisticExample :=
+def ex33a : Datum :=
   { id := "haykennedylevin1999_ex33a"
     source := ⟨"hay-kennedy-levin-1999", "(33a)"⟩
     reportedIn := none
@@ -615,7 +615,7 @@ def ex33a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("test", "cancellation"), ("verb", "straighten"), ("boundSource", "completely"), ("cancellable", "no")] }
 
-def ex33b : LinguisticExample :=
+def ex33b : Datum :=
   { id := "haykennedylevin1999_ex33b"
     source := ⟨"hay-kennedy-levin-1999", "(33b)"⟩
     reportedIn := none
@@ -628,7 +628,7 @@ def ex33b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("test", "cancellation"), ("verb", "widen"), ("boundSource", "measure"), ("cancellable", "no")] }
 
-def ex34a : LinguisticExample :=
+def ex34a : Datum :=
   { id := "haykennedylevin1999_ex34a"
     source := ⟨"hay-kennedy-levin-1999", "(34a)"⟩
     reportedIn := none
@@ -641,7 +641,7 @@ def ex34a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("test", "in"), ("verb", "cool"), ("boundSource", "context"), ("telic", "yes")] }
 
-def ex34b : LinguisticExample :=
+def ex34b : Datum :=
   { id := "haykennedylevin1999_ex34b"
     source := ⟨"hay-kennedy-levin-1999", "(34b)"⟩
     reportedIn := none
@@ -654,7 +654,7 @@ def ex34b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("test", "for"), ("verb", "cool"), ("boundSource", "none"), ("telic", "no")] }
 
-def ex35a : LinguisticExample :=
+def ex35a : Datum :=
   { id := "haykennedylevin1999_ex35a"
     source := ⟨"hay-kennedy-levin-1999", "(35a)"⟩
     reportedIn := none
@@ -667,7 +667,7 @@ def ex35a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("test", "in"), ("verb", "cool"), ("modifier", "completely"), ("telic", "yes")] }
 
-def ex35b : LinguisticExample :=
+def ex35b : Datum :=
   { id := "haykennedylevin1999_ex35b"
     source := ⟨"hay-kennedy-levin-1999", "(35b)"⟩
     reportedIn := none
@@ -680,7 +680,7 @@ def ex35b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("test", "for"), ("verb", "cool"), ("modifier", "completely"), ("telic", "yes")] }
 
-def ex36 : LinguisticExample :=
+def ex36 : Datum :=
   { id := "haykennedylevin1999_ex36"
     source := ⟨"hay-kennedy-levin-1999", "(36)"⟩
     reportedIn := none
@@ -693,7 +693,7 @@ def ex36 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("test", "cancellation"), ("verb", "eat"), ("verbClass", "consumption"), ("cancellable", "yes")] }
 
-def ex37a : LinguisticExample :=
+def ex37a : Datum :=
   { id := "haykennedylevin1999_ex37a"
     source := ⟨"hay-kennedy-levin-1999", "(37a)"⟩
     reportedIn := none
@@ -706,7 +706,7 @@ def ex37a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("test", "in"), ("verb", "eat"), ("verbClass", "consumption"), ("telic", "yes")] }
 
-def ex37b : LinguisticExample :=
+def ex37b : Datum :=
   { id := "haykennedylevin1999_ex37b"
     source := ⟨"hay-kennedy-levin-1999", "(37b)"⟩
     reportedIn := none
@@ -719,7 +719,7 @@ def ex37b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("test", "for"), ("verb", "eat"), ("verbClass", "consumption"), ("telic", "no")] }
 
-def ex38a : LinguisticExample :=
+def ex38a : Datum :=
   { id := "haykennedylevin1999_ex38a"
     source := ⟨"hay-kennedy-levin-1999", "(38a)"⟩
     reportedIn := none
@@ -732,7 +732,7 @@ def ex38a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("test", "cancellation"), ("verb", "run"), ("verbClass", "motion"), ("boundSource", "measure"), ("cancellable", "no")] }
 
-def ex38b : LinguisticExample :=
+def ex38b : Datum :=
   { id := "haykennedylevin1999_ex38b"
     source := ⟨"hay-kennedy-levin-1999", "(38b)"⟩
     reportedIn := none
@@ -745,7 +745,7 @@ def ex38b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("test", "cancellation"), ("verb", "run"), ("verbClass", "motion"), ("boundSource", "context"), ("cancellable", "yes")] }
 
-def ex39a : LinguisticExample :=
+def ex39a : Datum :=
   { id := "haykennedylevin1999_ex39a"
     source := ⟨"hay-kennedy-levin-1999", "(39a)"⟩
     reportedIn := none
@@ -758,7 +758,7 @@ def ex39a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("test", "cancellation"), ("verb", "draw"), ("verbClass", "creation"), ("boundSource", "measure"), ("cancellable", "no")] }
 
-def ex39b : LinguisticExample :=
+def ex39b : Datum :=
   { id := "haykennedylevin1999_ex39b"
     source := ⟨"hay-kennedy-levin-1999", "(39b)"⟩
     reportedIn := none
@@ -771,7 +771,7 @@ def ex39b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("test", "cancellation"), ("verb", "draw"), ("verbClass", "creation"), ("boundSource", "context"), ("cancellable", "yes")] }
 
-def ex40a : LinguisticExample :=
+def ex40a : Datum :=
   { id := "haykennedylevin1999_ex40a"
     source := ⟨"hay-kennedy-levin-1999", "(40a)"⟩
     reportedIn := none
@@ -784,7 +784,7 @@ def ex40a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("verb", "descend"), ("verbClass", "directed motion"), ("boundSource", "measure"), ("telic", "yes")] }
 
-def ex40b : LinguisticExample :=
+def ex40b : Datum :=
   { id := "haykennedylevin1999_ex40b"
     source := ⟨"hay-kennedy-levin-1999", "(40b)"⟩
     reportedIn := none
@@ -797,7 +797,7 @@ def ex40b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("verb", "rise"), ("verbClass", "directed motion"), ("boundSource", "measure"), ("telic", "yes")] }
 
-def ex41a : LinguisticExample :=
+def ex41a : Datum :=
   { id := "haykennedylevin1999_ex41a"
     source := ⟨"hay-kennedy-levin-1999", "(41a)"⟩
     reportedIn := none
@@ -810,7 +810,7 @@ def ex41a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("test", "in"), ("verb", "descend"), ("verbClass", "directed motion"), ("boundSource", "context"), ("telic", "yes")] }
 
-def ex41b : LinguisticExample :=
+def ex41b : Datum :=
   { id := "haykennedylevin1999_ex41b"
     source := ⟨"hay-kennedy-levin-1999", "(41b)"⟩
     reportedIn := none
@@ -823,7 +823,7 @@ def ex41b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("test", "for"), ("verb", "descend"), ("verbClass", "directed motion"), ("boundSource", "none"), ("telic", "no")] }
 
-def ex42a : LinguisticExample :=
+def ex42a : Datum :=
   { id := "haykennedylevin1999_ex42a"
     source := ⟨"hay-kennedy-levin-1999", "(42a)"⟩
     reportedIn := none
@@ -836,7 +836,7 @@ def ex42a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("test", "progressive"), ("verb", "rise"), ("verbClass", "directed motion"), ("boundSource", "context"), ("telic", "yes")] }
 
-def ex42b : LinguisticExample :=
+def ex42b : Datum :=
   { id := "haykennedylevin1999_ex42b"
     source := ⟨"hay-kennedy-levin-1999", "(42b)"⟩
     reportedIn := none
@@ -849,6 +849,6 @@ def ex42b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("test", "progressive"), ("verb", "rise"), ("verbClass", "directed motion"), ("boundSource", "none"), ("telic", "no")] }
 
-def all : List LinguisticExample := [ex2a, ex2b, ex4a, ex4b, ex6a, ex6b, ex8a, ex8b, ex10, ex18a, ex18b, ex19a, ex19b, ex20a, ex20b, ex21a, ex21b, ex22a, ex22b, ex23a, ex23b, ex23c, ex24a, ex24b, ex24c, ex25a_straight, ex25a_empty, ex25a_dry, ex25b_long, ex25b_wide, ex25b_short, ex26a, ex26b, ex27a, ex27b, ex28a, ex28b, ex29a, ex29b, ex30a, ex30b, ex31a, ex31b, ex32a, ex32b, ex33a, ex33b, ex34a, ex34b, ex35a, ex35b, ex36, ex37a, ex37b, ex38a, ex38b, ex39a, ex39b, ex40a, ex40b, ex41a, ex41b, ex42a, ex42b]
+def all : List Datum := [ex2a, ex2b, ex4a, ex4b, ex6a, ex6b, ex8a, ex8b, ex10, ex18a, ex18b, ex19a, ex19b, ex20a, ex20b, ex21a, ex21b, ex22a, ex22b, ex23a, ex23b, ex23c, ex24a, ex24b, ex24c, ex25a_straight, ex25a_empty, ex25a_dry, ex25b_long, ex25b_wide, ex25b_short, ex26a, ex26b, ex27a, ex27b, ex28a, ex28b, ex29a, ex29b, ex30a, ex30b, ex31a, ex31b, ex32a, ex32b, ex33a, ex33b, ex34a, ex34b, ex35a, ex35b, ex36, ex37a, ex37b, ex38a, ex38b, ex39a, ex39b, ex40a, ex40b, ex41a, ex41b, ex42a, ex42b]
 
 end HayKennedyLevin1999.Examples

@@ -17,7 +17,7 @@ namespace Wang2025.Examples
 
 open Data.Examples
 
-def ex_3_4 : LinguisticExample :=
+def ex_3_4 : Datum :=
   { id := "wang2025_3_4"
     source := ⟨"wang-2025", "Ch. 3 (4)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_3_4 : LinguisticExample :=
     readings := []
     paperFeatures := [("trigger", "ye"), ("focus", "Zhangsan")] }
 
-def ex_3_39 : LinguisticExample :=
+def ex_3_39 : Datum :=
   { id := "wang2025_3_39"
     source := ⟨"wang-2025", "Ch. 3 (39)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_3_39 : LinguisticExample :=
     readings := []
     paperFeatures := [("trigger", "fan'er"), ("focus", "Lisi")] }
 
-def ex_3_40 : LinguisticExample :=
+def ex_3_40 : Datum :=
   { id := "wang2025_3_40"
     source := ⟨"wang-2025", "Ch. 3 (40)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_3_40 : LinguisticExample :=
     readings := []
     paperFeatures := [("trigger", "fan'er"), ("focus", "xuexiao")] }
 
-def ex_4_35a : LinguisticExample :=
+def ex_4_35a : Datum :=
   { id := "wang2025_4_35a"
     source := ⟨"wang-2025", "Ch. 4 (35a)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_4_35a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "yaome-yaome")] }
 
-def ex_4_35b : LinguisticExample :=
+def ex_4_35b : Datum :=
   { id := "wang2025_4_35b"
     source := ⟨"wang-2025", "Ch. 4 (35b)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_4_35b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "yaome-yaome"), ("modal", "above disjunction")] }
 
-def ex_4_35c : LinguisticExample :=
+def ex_4_35c : Datum :=
   { id := "wang2025_4_35c"
     source := ⟨"wang-2025", "Ch. 4 (35c)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_4_35c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "yaome-yaome"), ("modal", "below disjunction")] }
 
-def ex_4_36 : LinguisticExample :=
+def ex_4_36 : Datum :=
   { id := "wang2025_4_36"
     source := ⟨"wang-2025", "Ch. 4 (36)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_4_36 : LinguisticExample :=
     readings := []
     paperFeatures := [("context", "positive evidence"), ("trigger", "ye omitted")] }
 
-def ex_4_42 : LinguisticExample :=
+def ex_4_42 : Datum :=
   { id := "wang2025_4_42"
     source := ⟨"wang-2025", "Ch. 4 (42)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_4_42 : LinguisticExample :=
     readings := []
     paperFeatures := [("context", "positive evidence"), ("focus", "yexu")] }
 
-def ex_4_45 : LinguisticExample :=
+def ex_4_45 : Datum :=
   { id := "wang2025_4_45"
     source := ⟨"wang-2025", "Ch. 4 (45)"⟩
     reportedIn := none
@@ -134,6 +134,6 @@ def ex_4_45 : LinguisticExample :=
     readings := []
     paperFeatures := [("trigger", "buzai"), ("context", "positive evidence"), ("contrast", "polarity and time")] }
 
-def all : List LinguisticExample := [ex_3_4, ex_3_39, ex_3_40, ex_4_35a, ex_4_35b, ex_4_35c, ex_4_36, ex_4_42, ex_4_45]
+def all : List Datum := [ex_3_4, ex_3_39, ex_3_40, ex_4_35a, ex_4_35b, ex_4_35c, ex_4_36, ex_4_42, ex_4_45]
 
 end Wang2025.Examples

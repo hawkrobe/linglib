@@ -332,20 +332,20 @@ def nounOf : String → Option English.Nouns.Noun
   | _ => none
 
 /-- The rows of one of the paper's paradigms. -/
-def rows (set : String) : List LinguisticExample :=
+def rows (set : String) : List Datum :=
   Examples.all.filter (·.feature? "set" = some set)
 
 /-- A row's QP. -/
-def qpOf (e : LinguisticExample) : Option QP :=
+def qpOf (e : Datum) : Option QP :=
   ((e.feature? "q").bind qOf).map λ q =>
     ⟨⟨(e.feature? "particle").bind particleOf, (e.feature? "clitic").bind cliticOf⟩, q⟩
 
 /-- The position of a row's QP. -/
-def positionOfRow (e : LinguisticExample) : Option Position :=
+def positionOfRow (e : Datum) : Option Position :=
   (e.feature? "position").bind positionOf
 
 /-- A row's surface form. -/
-def surfaceOf (e : LinguisticExample) : Option Surface :=
+def surfaceOf (e : Datum) : Option Surface :=
   match e.feature? "surface" with
   | some "analytic" => some .analytic
   | some "deleted" => some .deleted
@@ -353,36 +353,36 @@ def surfaceOf (e : LinguisticExample) : Option Surface :=
   | _ => none
 
 /-- A row's order of AP and article. -/
-def orderOf (e : LinguisticExample) : Option Order :=
+def orderOf (e : Datum) : Option Order :=
   match e.feature? "order" with
   | some "prearticle" => some .prearticle
   | some "postarticle" => some .postarticle
   | _ => none
 
 /-- A row's head. -/
-def headOf (e : LinguisticExample) : Option Head := do
+def headOf (e : Datum) : Option Head := do
   let cat ← (e.feature? "head").bind catOf
   let site ← (e.feature? "head_site").bind positionOf
   pure ⟨cat, site, ((e.feature? "adjective").bind adjectiveOf).map (·.polarity)⟩
 
 /-- What a row's clause supplies. -/
-def supplyOf (e : LinguisticExample) : Option Supply := do
+def supplyOf (e : Datum) : Option Supply := do
   let cat ← (e.feature? "clause").bind catOf
   let site ← (e.feature? "clause_site").bind positionOf
   pure ⟨cat, site⟩
 
 /-- The paper's star. -/
-def Starred (e : LinguisticExample) : Prop := e.judgment = .unacceptable
+def Starred (e : Datum) : Prop := e.judgment = .unacceptable
 
 instance : DecidablePred Starred := λ _ => by unfold Starred; infer_instance
 
 /-- The clause's tensed auxiliary is contracted. -/
-def Contracted (e : LinguisticExample) : Prop := e.feature? "contraction" = some "yes"
+def Contracted (e : Datum) : Prop := e.feature? "contraction" = some "yes"
 
 instance : DecidablePred Contracted := λ _ => by unfold Contracted; infer_instance
 
 /-- The sentence carries an anomalous implication. -/
-def Anomalous (e : LinguisticExample) : Prop := e.feature? "anomalous" = some "yes"
+def Anomalous (e : Datum) : Prop := e.feature? "anomalous" = some "yes"
 
 instance : DecidablePred Anomalous := λ _ => by unfold Anomalous; infer_instance
 

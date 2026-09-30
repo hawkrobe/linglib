@@ -17,7 +17,7 @@ namespace ZaniCiardelliSanfelici2026.Examples
 
 open Data.Examples
 
-def ex_1a : LinguisticExample :=
+def ex_1a : Datum :=
   { id := "zaniciardellisanfelici2026_1a"
     source := ⟨"zani-ciardelli-sanfelici-2026", "(1a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_1a : LinguisticExample :=
     readings := []
     paperFeatures := [("mode", "indicative"), ("reading", "SDA")] }
 
-def ex_1b : LinguisticExample :=
+def ex_1b : Datum :=
   { id := "zaniciardellisanfelici2026_1b"
     source := ⟨"zani-ciardelli-sanfelici-2026", "(1b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_1b : LinguisticExample :=
     readings := []
     paperFeatures := [("mode", "counterfactual"), ("reading", "SDA")] }
 
-def ex_3 : LinguisticExample :=
+def ex_3 : Datum :=
   { id := "zaniciardellisanfelici2026_3"
     source := ⟨"zani-ciardelli-sanfelici-2026", "(3)"⟩
     reportedIn := some ⟨"mckay-vaninwagen-1977", ""⟩
@@ -56,7 +56,7 @@ def ex_3 : LinguisticExample :=
     readings := []
     paperFeatures := [("mode", "counterfactual"), ("reading", "AR"), ("type", "specificational")] }
 
-def ex_4 : LinguisticExample :=
+def ex_4 : Datum :=
   { id := "zaniciardellisanfelici2026_4"
     source := ⟨"zani-ciardelli-sanfelici-2026", "(4)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_4 : LinguisticExample :=
     readings := []
     paperFeatures := [("mode", "counterfactual"), ("reading", "SDA")] }
 
-def ex_6 : LinguisticExample :=
+def ex_6 : Datum :=
   { id := "zaniciardellisanfelici2026_6"
     source := ⟨"zani-ciardelli-sanfelici-2026", "(6)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_6 : LinguisticExample :=
     readings := []
     paperFeatures := [("mode", "indicative"), ("reading", "DCR")] }
 
-def ex_7 : LinguisticExample :=
+def ex_7 : Datum :=
   { id := "zaniciardellisanfelici2026_7"
     source := ⟨"zani-ciardelli-sanfelici-2026", "(7)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_7 : LinguisticExample :=
     readings := []
     paperFeatures := [("inference", "free choice")] }
 
-def ex_8 : LinguisticExample :=
+def ex_8 : Datum :=
   { id := "zaniciardellisanfelici2026_8"
     source := ⟨"zani-ciardelli-sanfelici-2026", "(8)"⟩
     reportedIn := some ⟨"tieu-kriz-chemla-2019", ""⟩
@@ -108,7 +108,7 @@ def ex_8 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "plural definite homogeneity")] }
 
-def target_ind : LinguisticExample :=
+def target_ind : Datum :=
   { id := "zaniciardellisanfelici2026_target_ind"
     source := ⟨"zani-ciardelli-sanfelici-2026", "§4 target item, Ind."⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def target_ind : LinguisticExample :=
     readings := []
     paperFeatures := [("mode", "indicative"), ("item", "target"), ("schema", "(9a)")] }
 
-def target_ctf : LinguisticExample :=
+def target_ctf : Datum :=
   { id := "zaniciardellisanfelici2026_target_ctf"
     source := ⟨"zani-ciardelli-sanfelici-2026", "§4 target item, Ctf."⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def target_ctf : LinguisticExample :=
     readings := []
     paperFeatures := [("mode", "counterfactual"), ("item", "target"), ("schema", "(9a)")] }
 
-def control_ind : LinguisticExample :=
+def control_ind : Datum :=
   { id := "zaniciardellisanfelici2026_control_ind"
     source := ⟨"zani-ciardelli-sanfelici-2026", "§4 control item, Ind."⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def control_ind : LinguisticExample :=
     readings := []
     paperFeatures := [("mode", "indicative"), ("item", "control"), ("expected", "true")] }
 
-def control_ctf : LinguisticExample :=
+def control_ctf : Datum :=
   { id := "zaniciardellisanfelici2026_control_ctf"
     source := ⟨"zani-ciardelli-sanfelici-2026", "§4 control item, Ctf."⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def control_ctf : LinguisticExample :=
     readings := []
     paperFeatures := [("mode", "counterfactual"), ("item", "control"), ("expected", "true")] }
 
-def closeness_ind : LinguisticExample :=
+def closeness_ind : Datum :=
   { id := "zaniciardellisanfelici2026_closeness_ind"
     source := ⟨"zani-ciardelli-sanfelici-2026", "§4 closeness evaluation item, Ind."⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def closeness_ind : LinguisticExample :=
     readings := []
     paperFeatures := [("mode", "indicative"), ("item", "closeness evaluation")] }
 
-def closeness_ctf : LinguisticExample :=
+def closeness_ctf : Datum :=
   { id := "zaniciardellisanfelici2026_closeness_ctf"
     source := ⟨"zani-ciardelli-sanfelici-2026", "§4 closeness evaluation item, Ctf."⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def closeness_ctf : LinguisticExample :=
     readings := []
     paperFeatures := [("mode", "counterfactual"), ("item", "closeness evaluation")] }
 
-def app_1 : LinguisticExample :=
+def app_1 : Datum :=
   { id := "zaniciardellisanfelici2026_app_1"
     source := ⟨"zani-ciardelli-sanfelici-2026", "Appendix (1)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def app_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("agreement", "singular"), ("reading", "DCR")] }
 
-def app_2 : LinguisticExample :=
+def app_2 : Datum :=
   { id := "zaniciardellisanfelici2026_app_2"
     source := ⟨"zani-ciardelli-sanfelici-2026", "Appendix (2)"⟩
     reportedIn := none
@@ -212,6 +212,6 @@ def app_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("agreement", "plural"), ("reading", "DCR")] }
 
-def all : List LinguisticExample := [ex_1a, ex_1b, ex_3, ex_4, ex_6, ex_7, ex_8, target_ind, target_ctf, control_ind, control_ctf, closeness_ind, closeness_ctf, app_1, app_2]
+def all : List Datum := [ex_1a, ex_1b, ex_3, ex_4, ex_6, ex_7, ex_8, target_ind, target_ctf, control_ind, control_ctf, closeness_ind, closeness_ctf, app_1, app_2]
 
 end ZaniCiardelliSanfelici2026.Examples

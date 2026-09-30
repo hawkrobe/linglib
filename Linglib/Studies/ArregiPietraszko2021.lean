@@ -266,7 +266,7 @@ def vallader : Language := ⟨(· = .T), false, true, .obliterate⟩
 def ndebele : Language := vallader
 
 /-- The language of a row, by glottocode. -/
-def Language.ofRow (r : LinguisticExample) : Option Language :=
+def Language.ofRow (r : Datum) : Option Language :=
   match r.language with
   | "stan1293" => some english
   | "stan1290" => some french
@@ -309,14 +309,14 @@ def VerbForm.parse? : String → Option VerbForm
   | _ => none
 
 /-- A row's surface features agree with a derived surface. -/
-def Surface.Matches (s : Surface) (r : LinguisticExample) : Prop :=
+def Surface.Matches (s : Surface) (r : Datum) : Prop :=
   (∀ p ∈ (r.feature? "finitePosition" >>= Head.parse?).toList, s.finitePosition = some p) ∧
   (∀ d ∈ (r.feature? "doSupport").toList, (d = "true") = s.doSupport) ∧
   (∀ f ∈ (r.feature? "verbForm" >>= VerbForm.parse?).toList, s.verbForm = some f) ∧
   (∀ b ∈ (r.feature? "imperativeForm").toList, (b = "true") = s.cInChain) ∧
   (∀ f ∈ (r.feature? "frontedForm" >>= VerbForm.parse?).toList, s.frontedForm = some f)
 
-instance (s : Surface) (r : LinguisticExample) : Decidable (s.Matches r) := by
+instance (s : Surface) (r : Datum) : Decidable (s.Matches r) := by
   unfold Surface.Matches; infer_instance
 
 /-- Every verb-placement, do-support, imperative, ellipsis, and fronting example of the paper

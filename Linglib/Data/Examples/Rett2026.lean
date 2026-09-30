@@ -17,7 +17,7 @@ namespace Rett2026.Examples
 
 open Data.Examples
 
-def ex_8 : LinguisticExample :=
+def ex_8 : Datum :=
   { id := "rett2026_8"
     source := ⟨"rett-2026", "(8)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_8 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "before")] }
 
-def ex_9 : LinguisticExample :=
+def ex_9 : Datum :=
   { id := "rett2026_9"
     source := ⟨"rett-2026", "(9)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_9 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "before")] }
 
-def ex_10 : LinguisticExample :=
+def ex_10 : Datum :=
   { id := "rett2026_10"
     source := ⟨"rett-2026", "(10)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_10 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "before")] }
 
-def ex_11 : LinguisticExample :=
+def ex_11 : Datum :=
   { id := "rett2026_11"
     source := ⟨"rett-2026", "(11)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_11 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "before")] }
 
-def ex_12 : LinguisticExample :=
+def ex_12 : Datum :=
   { id := "rett2026_12"
     source := ⟨"rett-2026", "(12)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_12 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "before")] }
 
-def ex_13 : LinguisticExample :=
+def ex_13 : Datum :=
   { id := "rett2026_13"
     source := ⟨"rett-2026", "(13)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_13 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "until")] }
 
-def ex_14 : LinguisticExample :=
+def ex_14 : Datum :=
   { id := "rett2026_14"
     source := ⟨"rett-2026", "(14)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_14 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "until")] }
 
-def ex_15 : LinguisticExample :=
+def ex_15 : Datum :=
   { id := "rett2026_15"
     source := ⟨"rett-2026", "(15)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_15 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "since")] }
 
-def ex_16 : LinguisticExample :=
+def ex_16 : Datum :=
   { id := "rett2026_16"
     source := ⟨"rett-2026", "(16)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_16 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "since")] }
 
-def ex_17 : LinguisticExample :=
+def ex_17 : Datum :=
   { id := "rett2026_17"
     source := ⟨"rett-2026", "(17)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_17 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "comparative")] }
 
-def ex_18 : LinguisticExample :=
+def ex_18 : Datum :=
   { id := "rett2026_18"
     source := ⟨"rett-2026", "(18)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_18 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "comparative")] }
 
-def ex_19 : LinguisticExample :=
+def ex_19 : Datum :=
   { id := "rett2026_19"
     source := ⟨"rett-2026", "(19)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_19 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "preference")] }
 
-def ex_20 : LinguisticExample :=
+def ex_20 : Datum :=
   { id := "rett2026_20"
     source := ⟨"rett-2026", "(20)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_20 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "negativeVerb")] }
 
-def ex_21 : LinguisticExample :=
+def ex_21 : Datum :=
   { id := "rett2026_21"
     source := ⟨"rett-2026", "(21)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_21 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "negativeVerb")] }
 
-def ex_22 : LinguisticExample :=
+def ex_22 : Datum :=
   { id := "rett2026_22"
     source := ⟨"rett-2026", "(22)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_22 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "negativeVerb")] }
 
-def ex_23 : LinguisticExample :=
+def ex_23 : Datum :=
   { id := "rett2026_23"
     source := ⟨"rett-2026", "(23)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_23 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "negativeVerb")] }
 
-def ex_24 : LinguisticExample :=
+def ex_24 : Datum :=
   { id := "rett2026_24"
     source := ⟨"rett-2026", "(24)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex_24 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "negativeVerb")] }
 
-def ex_25b : LinguisticExample :=
+def ex_25b : Datum :=
   { id := "rett2026_25b"
     source := ⟨"rett-2026", "(25b)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex_25b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "exclamative")] }
 
-def ex_26 : LinguisticExample :=
+def ex_26 : Datum :=
   { id := "rett2026_26"
     source := ⟨"rett-2026", "(26)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex_26 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "exclamative")] }
 
-def ex_27 : LinguisticExample :=
+def ex_27 : Datum :=
   { id := "rett2026_27"
     source := ⟨"rett-2026", "(27)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex_27 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "exclamative")] }
 
-def ex_31 : LinguisticExample :=
+def ex_31 : Datum :=
   { id := "rett2026_31"
     source := ⟨"rett-2026", "(31)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex_31 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "surpriseNegation")] }
 
-def ii_a : LinguisticExample :=
+def ii_a : Datum :=
   { id := "rett2026_ii_a"
     source := ⟨"rett-2026", "(ii a)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ii_a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "equative")] }
 
-def ii_it : LinguisticExample :=
+def ii_it : Datum :=
   { id := "rett2026_ii_it"
     source := ⟨"rett-2026", "(ii)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ii_it : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "equative")] }
 
-def ex_55 : LinguisticExample :=
+def ex_55 : Datum :=
   { id := "rett2026_55"
     source := ⟨"rett-2026", "(55)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex_55 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "differentialComparative")] }
 
-def ex_56a : LinguisticExample :=
+def ex_56a : Datum :=
   { id := "rett2026_56a"
     source := ⟨"rett-2026", "(56a)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex_56a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "comparative")] }
 
-def ex_56b : LinguisticExample :=
+def ex_56b : Datum :=
   { id := "rett2026_56b"
     source := ⟨"rett-2026", "(56b)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex_56b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "closedScaleComparative")] }
 
-def ex_68 : LinguisticExample :=
+def ex_68 : Datum :=
   { id := "rett2026_68"
     source := ⟨"rett-2026", "(68)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def ex_68 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "before")] }
 
-def ex_69 : LinguisticExample :=
+def ex_69 : Datum :=
   { id := "rett2026_69"
     source := ⟨"rett-2026", "(69)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def ex_69 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "before")] }
 
-def ex_74b : LinguisticExample :=
+def ex_74b : Datum :=
   { id := "rett2026_74b"
     source := ⟨"rett-2026", "(74b)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def ex_74b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "until")] }
 
-def ex_78 : LinguisticExample :=
+def ex_78 : Datum :=
   { id := "rett2026_78"
     source := ⟨"rett-2026", "(78)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def ex_78 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "until")] }
 
-def ex_90b : LinguisticExample :=
+def ex_90b : Datum :=
   { id := "rett2026_90b"
     source := ⟨"rett-2026", "(90b)"⟩
     reportedIn := none
@@ -420,6 +420,6 @@ def ex_90b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "notSure")] }
 
-def all : List LinguisticExample := [ex_8, ex_9, ex_10, ex_11, ex_12, ex_13, ex_14, ex_15, ex_16, ex_17, ex_18, ex_19, ex_20, ex_21, ex_22, ex_23, ex_24, ex_25b, ex_26, ex_27, ex_31, ii_a, ii_it, ex_55, ex_56a, ex_56b, ex_68, ex_69, ex_74b, ex_78, ex_90b]
+def all : List Datum := [ex_8, ex_9, ex_10, ex_11, ex_12, ex_13, ex_14, ex_15, ex_16, ex_17, ex_18, ex_19, ex_20, ex_21, ex_22, ex_23, ex_24, ex_25b, ex_26, ex_27, ex_31, ii_a, ii_it, ex_55, ex_56a, ex_56b, ex_68, ex_69, ex_74b, ex_78, ex_90b]
 
 end Rett2026.Examples

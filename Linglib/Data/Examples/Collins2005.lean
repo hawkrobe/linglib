@@ -17,7 +17,7 @@ namespace Collins2005.Examples
 
 open Data.Examples
 
-def ex9a : LinguisticExample :=
+def ex9a : Datum :=
   { id := "collins2005_ex9a"
     source := ⟨"collins-2005", "(9a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex9a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "passive"), ("analysis", "inSitu"), ("verb", "written"), ("agent", "John"), ("patient", "the book")] }
 
-def ex9b : LinguisticExample :=
+def ex9b : Datum :=
   { id := "collins2005_ex9b"
     source := ⟨"collins-2005", "(9b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex9b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "passive"), ("analysis", "partP"), ("verb", "written"), ("agent", "John"), ("patient", "the book")] }
 
-def ex10a : LinguisticExample :=
+def ex10a : Datum :=
   { id := "collins2005_ex10a"
     source := ⟨"collins-2005", "(10a)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex10a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "licensing"), ("dependency", "npi"), ("antecedent", "external"), ("dependent", "pp"), ("evacuated", "false"), ("verb", "given"), ("agent", "no professor"), ("patient", "the book"), ("pp", "to any student")] }
 
-def ex10b : LinguisticExample :=
+def ex10b : Datum :=
   { id := "collins2005_ex10b"
     source := ⟨"collins-2005", "(10b)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex10b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "licensing"), ("dependency", "other"), ("antecedent", "external"), ("dependent", "pp"), ("evacuated", "false"), ("verb", "given"), ("agent", "each professor"), ("patient", "the book"), ("pp", "to the other")] }
 
-def ex10c : LinguisticExample :=
+def ex10c : Datum :=
   { id := "collins2005_ex10c"
     source := ⟨"collins-2005", "(10c)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex10c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "licensing"), ("dependency", "npi"), ("antecedent", "external"), ("dependent", "pp"), ("evacuated", "true"), ("verb", "given"), ("agent", "no professor"), ("patient", "the book"), ("pp", "to any student")] }
 
-def ex10d : LinguisticExample :=
+def ex10d : Datum :=
   { id := "collins2005_ex10d"
     source := ⟨"collins-2005", "(10d)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex10d : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "licensing"), ("dependency", "other"), ("antecedent", "external"), ("dependent", "pp"), ("evacuated", "true"), ("verb", "given"), ("agent", "each professor"), ("patient", "a book"), ("pp", "to the other")] }
 
-def ex15a : LinguisticExample :=
+def ex15a : Datum :=
   { id := "collins2005_ex15a"
     source := ⟨"collins-2005", "(15a)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex15a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "passive"), ("analysis", "partP"), ("verb", "summed"), ("agent", "the coach"), ("patient", "the argument"), ("particle", "up")] }
 
-def ex15b : LinguisticExample :=
+def ex15b : Datum :=
   { id := "collins2005_ex15b"
     source := ⟨"collins-2005", "(15b)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex15b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "passive"), ("analysis", "headMovement"), ("verb", "summed"), ("agent", "the coach"), ("patient", "the argument"), ("particle", "up")] }
 
-def ex18a : LinguisticExample :=
+def ex18a : Datum :=
   { id := "collins2005_ex18a"
     source := ⟨"collins-2005", "(18a)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex18a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "passive"), ("analysis", "partP"), ("verb", "spoken"), ("agent", "Mary"), ("patient", "John"), ("particle", "to")] }
 
-def ex18b : LinguisticExample :=
+def ex18b : Datum :=
   { id := "collins2005_ex18b"
     source := ⟨"collins-2005", "(18b)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex18b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "passive"), ("analysis", "headMovement"), ("verb", "spoken"), ("agent", "Mary"), ("patient", "John"), ("particle", "to")] }
 
-def ex23a : LinguisticExample :=
+def ex23a : Datum :=
   { id := "collins2005_ex23a"
     source := ⟨"collins-2005", "(23a)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex23a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "participle"), ("auxiliary", "have"), ("voiceP", "false")] }
 
-def ex23b : LinguisticExample :=
+def ex23b : Datum :=
   { id := "collins2005_ex23b"
     source := ⟨"collins-2005", "(23b)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex23b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "participle"), ("auxiliary", "have"), ("voiceP", "true")] }
 
-def ex23c : LinguisticExample :=
+def ex23c : Datum :=
   { id := "collins2005_ex23c"
     source := ⟨"collins-2005", "(23c)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex23c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "participle"), ("auxiliary", "be"), ("voiceP", "true")] }
 
-def ex23d : LinguisticExample :=
+def ex23d : Datum :=
   { id := "collins2005_ex23d"
     source := ⟨"collins-2005", "(23d)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex23d : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "participle"), ("auxiliary", "be"), ("voiceP", "false")] }
 
-def ex27a : LinguisticExample :=
+def ex27a : Datum :=
   { id := "collins2005_ex27a"
     source := ⟨"collins-2005", "(27a)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex27a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "participle"), ("auxiliary", "none"), ("voiceP", "true")] }
 
-def ex27b : LinguisticExample :=
+def ex27b : Datum :=
   { id := "collins2005_ex27b"
     source := ⟨"collins-2005", "(27b)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex27b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "participle"), ("auxiliary", "none"), ("voiceP", "false")] }
 
-def ex29 : LinguisticExample :=
+def ex29 : Datum :=
   { id := "collins2005_ex29"
     source := ⟨"collins-2005", "(29)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex29 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "byComplement"), ("complement", "DP")] }
 
-def ex56c : LinguisticExample :=
+def ex56c : Datum :=
   { id := "collins2005_ex56c"
     source := ⟨"collins-2005", "(56c)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex56c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "passive"), ("analysis", "partP"), ("evacuated", "false"), ("verb", "given"), ("agent", "John"), ("patient", "the book"), ("pp", "to Mary")] }
 
-def ex56d : LinguisticExample :=
+def ex56d : Datum :=
   { id := "collins2005_ex56d"
     source := ⟨"collins-2005", "(56d)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex56d : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "passive"), ("analysis", "partP"), ("evacuated", "true"), ("verb", "given"), ("agent", "John"), ("patient", "the book"), ("pp", "to Mary")] }
 
-def ex72a : LinguisticExample :=
+def ex72a : Datum :=
   { id := "collins2005_ex72a"
     source := ⟨"collins-2005", "(72a)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex72a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "licensing"), ("dependency", "reflexive"), ("antecedent", "external"), ("dependent", "pp"), ("evacuated", "false"), ("verb", "sent"), ("agent", "Mary"), ("patient", "the magazines"), ("pp", "to herself")] }
 
-def ex74a : LinguisticExample :=
+def ex74a : Datum :=
   { id := "collins2005_ex74a"
     source := ⟨"collins-2005", "(74a)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex74a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "licensing"), ("dependency", "reflexive"), ("antecedent", "external"), ("dependent", "pp"), ("evacuated", "true"), ("verb", "sent"), ("agent", "Mary"), ("patient", "the magazines"), ("pp", "to herself")] }
 
-def ex75 : LinguisticExample :=
+def ex75 : Datum :=
   { id := "collins2005_ex75"
     source := ⟨"collins-2005", "(75)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex75 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "licensing"), ("dependency", "variable"), ("antecedent", "external"), ("dependent", "pp"), ("evacuated", "false"), ("verb", "given"), ("agent", "every boy"), ("patient", "money"), ("pp", "to his mother")] }
 
-def ex80a : LinguisticExample :=
+def ex80a : Datum :=
   { id := "collins2005_ex80a"
     source := ⟨"collins-2005", "(80a)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex80a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "licensing"), ("dependency", "pronoun"), ("antecedent", "external"), ("dependent", "pp"), ("evacuated", "false"), ("verb", "sent"), ("agent", "Mary"), ("patient", "the magazines"), ("pp", "to her")] }
 
-def ex85a : LinguisticExample :=
+def ex85a : Datum :=
   { id := "collins2005_ex85a"
     source := ⟨"collins-2005", "(85a)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex85a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "licensing"), ("dependency", "name"), ("antecedent", "pp"), ("dependent", "external"), ("evacuated", "false"), ("verb", "given"), ("agent", "John's mother"), ("patient", "the book"), ("pp", "to him")] }
 
-def ex85b : LinguisticExample :=
+def ex85b : Datum :=
   { id := "collins2005_ex85b"
     source := ⟨"collins-2005", "(85b)"⟩
     reportedIn := none
@@ -342,6 +342,6 @@ def ex85b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "licensing"), ("dependency", "name"), ("antecedent", "external"), ("dependent", "pp"), ("evacuated", "true"), ("verb", "given"), ("agent", "him"), ("patient", "the book"), ("pp", "to John's mother")] }
 
-def all : List LinguisticExample := [ex9a, ex9b, ex10a, ex10b, ex10c, ex10d, ex15a, ex15b, ex18a, ex18b, ex23a, ex23b, ex23c, ex23d, ex27a, ex27b, ex29, ex56c, ex56d, ex72a, ex74a, ex75, ex80a, ex85a, ex85b]
+def all : List Datum := [ex9a, ex9b, ex10a, ex10b, ex10c, ex10d, ex15a, ex15b, ex18a, ex18b, ex23a, ex23b, ex23c, ex23d, ex27a, ex27b, ex29, ex56c, ex56d, ex72a, ex74a, ex75, ex80a, ex85a, ex85b]
 
 end Collins2005.Examples

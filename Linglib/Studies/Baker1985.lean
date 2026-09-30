@@ -293,26 +293,26 @@ def morphKeys : List (String × String) :=
   [("m1", "f1"), ("m2", "f2"), ("m3", "f3"), ("m4", "f4"), ("m5", "f5"), ("m6", "f6")]
 
 /-- A row's segmentation: the gloss label and form of each morph in surface order. -/
-def segmentation (r : LinguisticExample) : List (String × String) :=
+def segmentation (r : Datum) : List (String × String) :=
   morphKeys.filterMap fun k ↦ (r.feature? k.1).bind fun l ↦ (r.feature? k.2).map (l, ·)
 
 /-- The gloss label of a row's root. -/
-def rootLabel (r : LinguisticExample) : String := (r.feature? "root").getD ""
+def rootLabel (r : Datum) : String := (r.feature? "root").getD ""
 
 /-- The morphs before the root, outermost first. -/
-def prefixes (r : LinguisticExample) : List (String × String) :=
+def prefixes (r : Datum) : List (String × String) :=
   (segmentation r).takeWhile (·.1 ≠ rootLabel r)
 
 /-- The morphs after the root, innermost first. -/
-def suffixes (r : LinguisticExample) : List (String × String) :=
+def suffixes (r : Datum) : List (String × String) :=
   ((segmentation r).dropWhile (·.1 ≠ rootLabel r)).drop 1
 
 /-- A row's root morph. -/
-def rootMorph (r : LinguisticExample) : Morph :=
+def rootMorph (r : Datum) : Morph :=
   .root ((((segmentation r).find? (·.1 = rootLabel r)).map (·.2)).getD "")
 
 /-- A row's morphs in surface order: prefixes, root, suffixes. -/
-def morphs (r : LinguisticExample) : List Morph :=
+def morphs (r : Datum) : List Morph :=
   (prefixes r).map (Morph.pref ·.2) ++ rootMorph r :: (suffixes r).map (Morph.suff ·.2)
 
 /-- The process a gloss label marks. -/
@@ -326,21 +326,21 @@ def process? : String → Option Process
 
 /-- A row's derivation: its process-marking affixes in order of application, the prefixes from
 the root outward and then the suffixes, each bound on its side. -/
-def derivation (r : LinguisticExample) : Derivation :=
+def derivation (r : Datum) : Derivation :=
   ((prefixes r).reverse.filterMap fun m ↦ (process? m.1).map (·, Morph.pref m.2)) ++
     (suffixes r).filterMap fun m ↦ (process? m.1).map (·, Morph.suff m.2)
 
 /-- A row's processes in order of application. -/
-def processes (r : LinguisticExample) : List Process := (derivation r).map (·.1)
+def processes (r : Datum) : List Process := (derivation r).map (·.1)
 
 /-- A row's initial stage: transitive as recorded, with an oblique when an applicative
 applies. -/
-def initialOf (r : LinguisticExample) : Stage :=
+def initialOf (r : Datum) : Stage :=
   initial (r.feature? "valence" = some "transitive") (.applicative ∈ processes r)
 
 /-- A row's language settings: Chamorro, Bemba, Huichol and Chi-Mwi:ni have the Chamorro
 causative, Quechua its own; Kinyarwanda's passive reaches a second object. -/
-def grammar? (r : LinguisticExample) : Option Grammar :=
+def grammar? (r : Datum) : Option Grammar :=
   match r.language with
   | "cham1312" | "bemb1257" | "huic1243" | "chim1312" => some ⟨.chamorro, false⟩
   | "quec1387" => some ⟨.quechua, false⟩
@@ -362,7 +362,7 @@ inductive Level
   deriving DecidableEq, Repr
 
 /-- The subject a row reports its agreement registering. -/
-def level? (r : LinguisticExample) : Option Level :=
+def level? (r : Datum) : Option Level :=
   r.parse? "agreesWith" [("surface subject", .surface), ("semantic subject", .semantic),
     ("intermediate subject", .intermediate)]
 
@@ -383,7 +383,7 @@ theorem rows_agreement :
   decide +kernel
 
 /-- The dependency a row's translation records. -/
-def links? (r : LinguisticExample) : Option (Arg × Arg) :=
+def links? (r : Datum) : Option (Arg × Arg) :=
   r.parse? "links" [("agent-patient", (.agent, .patient)), ("causer-patient", (.causer, .patient)),
     ("causer-agent", (.causer, .agent))]
 
@@ -395,7 +395,7 @@ theorem rows_links :
   decide +kernel
 
 /-- The surface subject a row reports. -/
-def surfaceSubject? (r : LinguisticExample) : Option Arg :=
+def surfaceSubject? (r : Datum) : Option Arg :=
   r.parse? "surfaceSubject" [("applied object", .applied), ("patient", .patient)]
 
 /-- A passive of an applicative is acceptable exactly when some run of the affix order makes

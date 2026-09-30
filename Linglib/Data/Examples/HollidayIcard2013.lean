@@ -17,7 +17,7 @@ namespace HollidayIcard2013.Examples
 
 open Data.Examples
 
-def ex1 : LinguisticExample :=
+def ex1 : Datum :=
   { id := "hollidayicard2013_ex1"
     source := ⟨"holliday-icard-2013", "(1)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex1 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7"), ("axiom", "A"), ("form", "(φ ∨ χ) ⩾ (ψ ∨ χ)")] }
 
-def ex2 : LinguisticExample :=
+def ex2 : Datum :=
   { id := "hollidayicard2013_ex2"
     source := ⟨"holliday-icard-2013", "(2)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex2 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7"), ("axiom", "A"), ("form", "φ ⩾ ψ")] }
 
-def ex3 : LinguisticExample :=
+def ex3 : Datum :=
   { id := "hollidayicard2013_ex3"
     source := ⟨"holliday-icard-2013", "(3)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex3 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "10.1"), ("axiom", "Scott4"), ("form", "{a, e} ≻ {c, d}")] }
 
-def ex4 : LinguisticExample :=
+def ex4 : Datum :=
   { id := "hollidayicard2013_ex4"
     source := ⟨"holliday-icard-2013", "(4)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex4 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "10.1"), ("axiom", "Scott4"), ("form", "{b, c} ≻ {a, d}")] }
 
-def ex5 : LinguisticExample :=
+def ex5 : Datum :=
   { id := "hollidayicard2013_ex5"
     source := ⟨"holliday-icard-2013", "(5)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex5 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "10.1"), ("axiom", "Scott4"), ("form", "{d} ≻ {a, c}")] }
 
-def ex6 : LinguisticExample :=
+def ex6 : Datum :=
   { id := "hollidayicard2013_ex6"
     source := ⟨"holliday-icard-2013", "(6)"⟩
     reportedIn := none
@@ -95,6 +95,6 @@ def ex6 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "10.1"), ("axiom", "Scott4"), ("form", "{a, c, d} ≻ {b, e}")] }
 
-def all : List LinguisticExample := [ex1, ex2, ex3, ex4, ex5, ex6]
+def all : List Datum := [ex1, ex2, ex3, ex4, ex5, ex6]
 
 end HollidayIcard2013.Examples

@@ -17,7 +17,7 @@ namespace Mizuno2024.Examples
 
 open Data.Examples
 
-def en1a : LinguisticExample :=
+def en1a : Datum :=
   { id := "mizuno2024_en1a"
     source := ⟨"mizuno-2024", "(1a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def en1a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "anderson"), ("strategy", "x-marking")] }
 
-def en2 : LinguisticExample :=
+def en2 : Datum :=
   { id := "mizuno2024_en2"
     source := ⟨"mizuno-2024", "(2)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def en2 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "anderson"), ("strategy", "o-marking")] }
 
-def ja3 : LinguisticExample :=
+def ja3 : Datum :=
   { id := "mizuno2024_ja3"
     source := ⟨"mizuno-2024", "(3)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ja3 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "fake-past"), ("x_exponent", "-ta")] }
 
-def ja4a : LinguisticExample :=
+def ja4a : Datum :=
   { id := "mizuno2024_ja4a"
     source := ⟨"mizuno-2024", "(4a)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ja4a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "anderson"), ("strategy", "o-marking")] }
 
-def ja7a : LinguisticExample :=
+def ja7a : Datum :=
   { id := "mizuno2024_ja7a"
     source := ⟨"mizuno-2024", "(7a)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ja7a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "anderson"), ("strategy", "o-marking"), ("hp_type", "radical")] }
 
-def ma13a : LinguisticExample :=
+def ma13a : Datum :=
   { id := "mizuno2024_ma13a"
     source := ⟨"mizuno-2024", "(13a)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ma13a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "anderson"), ("strategy", "o-marking")] }
 
-def en8 : LinguisticExample :=
+def en8 : Datum :=
   { id := "mizuno2024_en8"
     source := ⟨"mizuno-2024", "(8)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def en8 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "flv"), ("strategy", "x-marking"), ("flv_xmarking", "available")] }
 
-def ja9 : LinguisticExample :=
+def ja9 : Datum :=
   { id := "mizuno2024_ja9"
     source := ⟨"mizuno-2024", "(9)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ja9 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "flv"), ("strategy", "o-marking"), ("flv_xmarking", "unavailable")] }
 
-def ma11 : LinguisticExample :=
+def ma11 : Datum :=
   { id := "mizuno2024_ma11"
     source := ⟨"mizuno-2024", "(11)"⟩
     reportedIn := none
@@ -134,6 +134,6 @@ def ma11 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "flv"), ("strategy", "o-marking"), ("flv_xmarking", "unavailable")] }
 
-def all : List LinguisticExample := [en1a, en2, ja3, ja4a, ja7a, ma13a, en8, ja9, ma11]
+def all : List Datum := [en1a, en2, ja3, ja4a, ja7a, ma13a, en8, ja9, ma11]
 
 end Mizuno2024.Examples

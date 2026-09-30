@@ -327,15 +327,15 @@ instance (c : Constraint) (m : Movement) : Decidable (c.Fires m) := by
 
 /-- An example: its movement, the kind of rule that moved it, the constraint the dissertation
 holds responsible, if any, and its judgment. -/
-structure Datum where
+structure Row where
   movement : Movement
   rule : Rule
   constraint : Option Constraint
   judgment : Judgment
 
 /-- The row of an example. -/
-def datum (r : LinguisticExample) : Option Datum := do
-  let m ← movement r.source.paperLabel
+def Row.ofDatum (r : Datum) : Option Row := do
+  let m ← Ross1967.movement r.source.paperLabel
   let rule ← r.parse? "rule" [("question", Rule.chopping), ("relativization", .chopping),
     ("topicalization", .chopping), ("leftDislocation", .copying)]
   let c := r.parse? "constraint" [("CNPC", Constraint.cnpc), ("CSC", .csc), ("SSC", .ssc),
@@ -343,7 +343,7 @@ def datum (r : LinguisticExample) : Option Datum := do
   pure ⟨m, rule, c, r.judgment⟩
 
 /-- The examples. -/
-def data : List Datum := Examples.all.filterMap datum
+def data : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- Every row has its movement. -/
 theorem data_length : data.length = Examples.all.length := by decide +kernel

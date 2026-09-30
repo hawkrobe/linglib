@@ -238,7 +238,7 @@ def patterns : List (String × List String) :=
     ("Part S V O Part", ["Part", "S", "V", "O", "Part"])]
 
 /-- The rows in a language. -/
-def rowsIn (lang : String) : List LinguisticExample := Examples.all.filter (·.language == lang)
+def rowsIn (lang : String) : List Datum := Examples.all.filter (·.language == lang)
 
 /-- The Guébie rows' particles surface with the value harmony assigns from the row's order and
 verb root. -/

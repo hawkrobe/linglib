@@ -17,7 +17,7 @@ namespace Elbourne2026.Examples
 
 open Data.Examples
 
-def ex_14 : LinguisticExample :=
+def ex_14 : Datum :=
   { id := "elbourne2026_14"
     source := ⟨"elbourne-2026", "(14)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_14 : LinguisticExample :=
     readings := [("surface scope", .acceptable), ("inverse scope", .acceptable)]
     paperFeatures := [("section", "2.3")] }
 
-def ex_28 : LinguisticExample :=
+def ex_28 : Datum :=
   { id := "elbourne2026_28"
     source := ⟨"elbourne-2026", "(28)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_28 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("entry", "cute"), ("position", "predicative")] }
 
-def ex_31 : LinguisticExample :=
+def ex_31 : Datum :=
   { id := "elbourne2026_31"
     source := ⟨"elbourne-2026", "(31)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_31 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2")] }
 
-def ex_36 : LinguisticExample :=
+def ex_36 : Datum :=
   { id := "elbourne2026_36"
     source := ⟨"elbourne-2026", "(36)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_36 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("entry", "former"), ("position", "predicative")] }
 
-def ex_37 : LinguisticExample :=
+def ex_37 : Datum :=
   { id := "elbourne2026_37"
     source := ⟨"elbourne-2026", "(37)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_37 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2")] }
 
-def ex_42 : LinguisticExample :=
+def ex_42 : Datum :=
   { id := "elbourne2026_42"
     source := ⟨"elbourne-2026", "(42)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_42 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("entry", "former"), ("position", "predicative")] }
 
-def ex_43 : LinguisticExample :=
+def ex_43 : Datum :=
   { id := "elbourne2026_43"
     source := ⟨"beesley-1982", "p. 202"⟩
     reportedIn := some ⟨"elbourne-2026", "(43)"⟩
@@ -108,7 +108,7 @@ def ex_43 : LinguisticExample :=
     readings := [("short by the standard of men", .acceptable)]
     paperFeatures := [("section", "3.3")] }
 
-def ex_45 : LinguisticExample :=
+def ex_45 : Datum :=
   { id := "elbourne2026_45"
     source := ⟨"elbourne-2026", "(45)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_45 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.4"), ("entry", "former"), ("position", "attributive")] }
 
-def ex_47 : LinguisticExample :=
+def ex_47 : Datum :=
   { id := "elbourne2026_47"
     source := ⟨"elbourne-2026", "(47)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_47 : LinguisticExample :=
     readings := [("local to John", .acceptable)]
     paperFeatures := [("section", "3.5")] }
 
-def ex_48 : LinguisticExample :=
+def ex_48 : Datum :=
   { id := "elbourne2026_48"
     source := ⟨"elbourne-2026", "(48)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_48 : LinguisticExample :=
     readings := [("local to each fan", .acceptable)]
     paperFeatures := [("section", "3.5")] }
 
-def ex_49 : LinguisticExample :=
+def ex_49 : Datum :=
   { id := "elbourne2026_49"
     source := ⟨"elbourne-2026", "(49)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_49 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.5")] }
 
-def ex_55 : LinguisticExample :=
+def ex_55 : Datum :=
   { id := "elbourne2026_55"
     source := ⟨"elbourne-2026", "(55)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_55 : LinguisticExample :=
     readings := [("local to each person", .acceptable)]
     paperFeatures := [("section", "3.5")] }
 
-def ex_64_long : LinguisticExample :=
+def ex_64_long : Datum :=
   { id := "elbourne2026_64_long"
     source := ⟨"morzycki-2015", "p. 30"⟩
     reportedIn := some ⟨"elbourne-2026", "(64)"⟩
@@ -186,7 +186,7 @@ def ex_64_long : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2"), ("entry", "long form"), ("position", "predicative")] }
 
-def ex_64_short : LinguisticExample :=
+def ex_64_short : Datum :=
   { id := "elbourne2026_64_short"
     source := ⟨"morzycki-2015", "p. 30"⟩
     reportedIn := some ⟨"elbourne-2026", "(64)"⟩
@@ -199,7 +199,7 @@ def ex_64_short : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2"), ("entry", "short form"), ("position", "predicative")] }
 
-def ex_65a : LinguisticExample :=
+def ex_65a : Datum :=
   { id := "elbourne2026_65a"
     source := ⟨"morzycki-2015", "p. 30"⟩
     reportedIn := some ⟨"elbourne-2026", "(65a)"⟩
@@ -212,7 +212,7 @@ def ex_65a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2"), ("entry", "long form"), ("position", "attributive")] }
 
-def ex_65b : LinguisticExample :=
+def ex_65b : Datum :=
   { id := "elbourne2026_65b"
     source := ⟨"morzycki-2015", "p. 30"⟩
     reportedIn := some ⟨"elbourne-2026", "(65b)"⟩
@@ -225,7 +225,7 @@ def ex_65b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2"), ("entry", "short form"), ("position", "attributive")] }
 
-def ex_82 : LinguisticExample :=
+def ex_82 : Datum :=
   { id := "elbourne2026_82"
     source := ⟨"mcnally-boleda-2004", "p. 180"⟩
     reportedIn := some ⟨"elbourne-2026", "(82)"⟩
@@ -238,7 +238,7 @@ def ex_82 : LinguisticExample :=
     readings := [("dances beautifully", .acceptable), ("Olga is beautiful", .acceptable)]
     paperFeatures := [("section", "4.4")] }
 
-def ex_83 : LinguisticExample :=
+def ex_83 : Datum :=
   { id := "elbourne2026_83"
     source := ⟨"mcnally-boleda-2004", "p. 180"⟩
     reportedIn := some ⟨"elbourne-2026", "(83)"⟩
@@ -251,7 +251,7 @@ def ex_83 : LinguisticExample :=
     readings := [("Olga is beautiful", .acceptable)]
     paperFeatures := [("section", "4.4")] }
 
-def ex_92a : LinguisticExample :=
+def ex_92a : Datum :=
   { id := "elbourne2026_92a"
     source := ⟨"mcnally-boleda-2004", "p. 186"⟩
     reportedIn := some ⟨"elbourne-2026", "(92a)"⟩
@@ -264,7 +264,7 @@ def ex_92a : LinguisticExample :=
     readings := [("speaker committed to the person's youth", .acceptable)]
     paperFeatures := [("section", "4.4")] }
 
-def ex_92b : LinguisticExample :=
+def ex_92b : Datum :=
   { id := "elbourne2026_92b"
     source := ⟨"mcnally-boleda-2004", "p. 186"⟩
     reportedIn := some ⟨"elbourne-2026", "(92b)"⟩
@@ -277,7 +277,7 @@ def ex_92b : LinguisticExample :=
     readings := [("youth part of the allegation", .acceptable)]
     paperFeatures := [("section", "4.4")] }
 
-def ex_93 : LinguisticExample :=
+def ex_93 : Datum :=
   { id := "elbourne2026_93"
     source := ⟨"bolinger-1967", "p. 4"⟩
     reportedIn := some ⟨"elbourne-2026", "(93)"⟩
@@ -290,7 +290,7 @@ def ex_93 : LinguisticExample :=
     readings := [("inherently visible", .acceptable), ("visible on the occasion", .acceptable)]
     paperFeatures := [("section", "4.5")] }
 
-def ex_94 : LinguisticExample :=
+def ex_94 : Datum :=
   { id := "elbourne2026_94"
     source := ⟨"bolinger-1967", "p. 4"⟩
     reportedIn := some ⟨"elbourne-2026", "(94)"⟩
@@ -303,7 +303,7 @@ def ex_94 : LinguisticExample :=
     readings := [("inherently visible", .unacceptable), ("visible on the occasion", .acceptable)]
     paperFeatures := [("section", "4.5")] }
 
-def ex_101 : LinguisticExample :=
+def ex_101 : Datum :=
   { id := "elbourne2026_101"
     source := ⟨"elbourne-2026", "(101)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex_101 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.6")] }
 
-def ex_105 : LinguisticExample :=
+def ex_105 : Datum :=
   { id := "elbourne2026_105"
     source := ⟨"elbourne-2026", "(105)"⟩
     reportedIn := none
@@ -329,6 +329,6 @@ def ex_105 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5")] }
 
-def all : List LinguisticExample := [ex_14, ex_28, ex_31, ex_36, ex_37, ex_42, ex_43, ex_45, ex_47, ex_48, ex_49, ex_55, ex_64_long, ex_64_short, ex_65a, ex_65b, ex_82, ex_83, ex_92a, ex_92b, ex_93, ex_94, ex_101, ex_105]
+def all : List Datum := [ex_14, ex_28, ex_31, ex_36, ex_37, ex_42, ex_43, ex_45, ex_47, ex_48, ex_49, ex_55, ex_64_long, ex_64_short, ex_65a, ex_65b, ex_82, ex_83, ex_92a, ex_92b, ex_93, ex_94, ex_101, ex_105]
 
 end Elbourne2026.Examples

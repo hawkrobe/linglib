@@ -17,7 +17,7 @@ namespace BakayEtAl2026.Examples
 
 open Data.Examples
 
-def ex_5a_match : LinguisticExample :=
+def ex_5a_match : Datum :=
   { id := "bakayetal2026_5a_match"
     source := ⟨"bakay-etal-2026", "(5a), Distractor Match"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_5a_match : LinguisticExample :=
     readings := [("matrix subject", .unacceptable), ("distractor", .unacceptable), ("embedded subject", .acceptable)]
     paperFeatures := [("experiment", "1"), ("condition", "Recent Target, Distractor Match"), ("target", "subject"), ("distractor", "possessor in subject"), ("distractorNumber", "plural")] }
 
-def ex_5a_mismatch : LinguisticExample :=
+def ex_5a_mismatch : Datum :=
   { id := "bakayetal2026_5a_mismatch"
     source := ⟨"bakay-etal-2026", "(5a), Distractor Mismatch"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_5a_mismatch : LinguisticExample :=
     readings := [("matrix subject", .unacceptable), ("distractor", .unacceptable), ("embedded subject", .acceptable)]
     paperFeatures := [("experiment", "1"), ("condition", "Recent Target, Distractor Mismatch"), ("target", "subject"), ("distractor", "possessor in subject"), ("distractorNumber", "singular")] }
 
-def ex_5b_match : LinguisticExample :=
+def ex_5b_match : Datum :=
   { id := "bakayetal2026_5b_match"
     source := ⟨"bakay-etal-2026", "(5b), Distractor Match"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_5b_match : LinguisticExample :=
     readings := [("matrix subject", .unacceptable), ("embedded subject", .acceptable), ("distractor", .unacceptable)]
     paperFeatures := [("experiment", "1"), ("condition", "Distant Target, Distractor Match"), ("target", "subject"), ("distractor", "possessor in adjunct"), ("distractorNumber", "plural")] }
 
-def ex_5b_mismatch : LinguisticExample :=
+def ex_5b_mismatch : Datum :=
   { id := "bakayetal2026_5b_mismatch"
     source := ⟨"bakay-etal-2026", "(5b), Distractor Mismatch"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_5b_mismatch : LinguisticExample :=
     readings := [("matrix subject", .unacceptable), ("embedded subject", .acceptable), ("distractor", .unacceptable)]
     paperFeatures := [("experiment", "1"), ("condition", "Distant Target, Distractor Mismatch"), ("target", "subject"), ("distractor", "possessor in adjunct"), ("distractorNumber", "singular")] }
 
-def ex_8a_match : LinguisticExample :=
+def ex_8a_match : Datum :=
   { id := "bakayetal2026_8a_match"
     source := ⟨"bakay-etal-2026", "(8a), IO Match"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_8a_match : LinguisticExample :=
     readings := [("matrix subject", .unacceptable), ("embedded subject", .acceptable), ("indirect object", .acceptable)]
     paperFeatures := [("experiment", "2"), ("condition", "Plural Subject, IO Match"), ("target", "subject"), ("second", "indirect object"), ("secondNumber", "plural")] }
 
-def ex_8a_mismatch : LinguisticExample :=
+def ex_8a_mismatch : Datum :=
   { id := "bakayetal2026_8a_mismatch"
     source := ⟨"bakay-etal-2026", "(8a), IO Mismatch"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_8a_mismatch : LinguisticExample :=
     readings := [("matrix subject", .unacceptable), ("embedded subject", .acceptable), ("indirect object", .acceptable)]
     paperFeatures := [("experiment", "2"), ("condition", "Plural Subject, IO Mismatch"), ("target", "subject"), ("second", "indirect object"), ("secondNumber", "singular")] }
 
-def ex_8b_match : LinguisticExample :=
+def ex_8b_match : Datum :=
   { id := "bakayetal2026_8b_match"
     source := ⟨"bakay-etal-2026", "(8b), Distractor Match"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_8b_match : LinguisticExample :=
     readings := [("matrix subject", .unacceptable), ("embedded subject", .acceptable), ("distractor", .unacceptable)]
     paperFeatures := [("experiment", "2"), ("condition", "Plural Subject, Distractor Match"), ("target", "subject"), ("distractor", "postpositional adjunct"), ("distractorNumber", "plural")] }
 
-def ex_8b_mismatch : LinguisticExample :=
+def ex_8b_mismatch : Datum :=
   { id := "bakayetal2026_8b_mismatch"
     source := ⟨"bakay-etal-2026", "(8b), Distractor Mismatch"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_8b_mismatch : LinguisticExample :=
     readings := [("matrix subject", .unacceptable), ("embedded subject", .acceptable), ("distractor", .unacceptable)]
     paperFeatures := [("experiment", "2"), ("condition", "Plural Subject, Distractor Mismatch"), ("target", "subject"), ("distractor", "postpositional adjunct"), ("distractorNumber", "singular")] }
 
-def ex_8c : LinguisticExample :=
+def ex_8c : Datum :=
   { id := "bakayetal2026_8c"
     source := ⟨"bakay-etal-2026", "(8c), Singular Subject, IO Match"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_8c : LinguisticExample :=
     readings := [("matrix subject", .unacceptable), ("embedded subject", .acceptable), ("indirect object", .acceptable)]
     paperFeatures := [("experiment", "2"), ("condition", "Singular Subject, IO Match"), ("target", "subject"), ("targetNumber", "singular"), ("second", "indirect object"), ("secondNumber", "plural")] }
 
-def ex_10a : LinguisticExample :=
+def ex_10a : Datum :=
   { id := "bakayetal2026_10a"
     source := ⟨"bakay-etal-2026", "(10a), IO, Dative"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_10a : LinguisticExample :=
     readings := [("matrix subject", .unacceptable), ("embedded subject", .acceptable), ("indirect object", .acceptable)]
     paperFeatures := [("experiment", "3"), ("condition", "IO, Dative"), ("target", "subject"), ("second", "indirect object"), ("secondNumber", "plural")] }
 
-def ex_10b : LinguisticExample :=
+def ex_10b : Datum :=
   { id := "bakayetal2026_10b"
     source := ⟨"bakay-etal-2026", "(10b), Distractor, Dative"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_10b : LinguisticExample :=
     readings := [("matrix subject", .unacceptable), ("embedded subject", .acceptable), ("distractor", .unacceptable)]
     paperFeatures := [("experiment", "3"), ("condition", "Distractor, Dative"), ("target", "subject"), ("distractor", "postpositional adjunct"), ("distractorNumber", "plural")] }
 
-def ex_10c : LinguisticExample :=
+def ex_10c : Datum :=
   { id := "bakayetal2026_10c"
     source := ⟨"bakay-etal-2026", "(10c), Distractor, Genitive"⟩
     reportedIn := none
@@ -173,6 +173,6 @@ def ex_10c : LinguisticExample :=
     readings := [("matrix subject", .unacceptable), ("embedded subject", .acceptable), ("distractor", .unacceptable)]
     paperFeatures := [("experiment", "3"), ("condition", "Distractor, Genitive"), ("target", "subject"), ("distractor", "possessor in adjunct"), ("distractorNumber", "plural")] }
 
-def all : List LinguisticExample := [ex_5a_match, ex_5a_mismatch, ex_5b_match, ex_5b_mismatch, ex_8a_match, ex_8a_mismatch, ex_8b_match, ex_8b_mismatch, ex_8c, ex_10a, ex_10b, ex_10c]
+def all : List Datum := [ex_5a_match, ex_5a_mismatch, ex_5b_match, ex_5b_mismatch, ex_8a_match, ex_8a_mismatch, ex_8b_match, ex_8b_mismatch, ex_8c, ex_10a, ex_10b, ex_10c]
 
 end BakayEtAl2026.Examples

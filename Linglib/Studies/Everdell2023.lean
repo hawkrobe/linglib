@@ -241,17 +241,17 @@ def roleTable : List (String × Option Role) :=
   [("agent", some .agent), ("promotion", some .promoted), ("beneficiary", some .beneficiary),
     ("blocked", none)]
 
-def Row.ofExample (ex : LinguisticExample) : Option Row := do
+def Row.ofDatum (ex : Datum) : Option Row := do
   let verbClass ← ex.parse? "class" classTable
   let objects ← ex.nat? "objects"
   let entailed ← ex.parse? "entailed" entailedTable
   let observed ← ex.parse? "function" roleTable
   pure ⟨⟨verbClass, objects, entailed⟩, observed, ex.nat? "paradigm"⟩
 
-theorem row_ofExample_isSome : ∀ ex ∈ Examples.all, (Row.ofExample ex).isSome := by
+theorem row_ofDatum_isSome : ∀ ex ∈ Examples.all, (Row.ofDatum ex).isSome := by
   decide +kernel
 
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- The most arguments any alternant of suppletive paradigm `p` has. -/
 def paradigmMax (p : ℕ) : ℕ :=

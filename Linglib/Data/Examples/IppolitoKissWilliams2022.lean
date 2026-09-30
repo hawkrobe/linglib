@@ -17,7 +17,7 @@ namespace IppolitoKissWilliams2022.Examples
 
 open Data.Examples
 
-def s1a : LinguisticExample :=
+def s1a : Datum :=
   { id := "ippolitokisswilliams2022_s1a"
     source := ⟨"ippolito-kiss-williams-2022", "(1a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def s1a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("use", "conjunctive")] }
 
-def s1b : LinguisticExample :=
+def s1b : Datum :=
   { id := "ippolitokisswilliams2022_s1b"
     source := ⟨"ippolito-kiss-williams-2022", "(1b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def s1b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("use", "conjunctive")] }
 
-def s2 : LinguisticExample :=
+def s2 : Datum :=
   { id := "ippolitokisswilliams2022_s2"
     source := ⟨"ippolito-kiss-williams-2022", "(2)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def s2 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("scenario", "HOUSE"), ("clause", "declarative"), ("qud", "should A and B buy the house")] }
 
-def s3 : LinguisticExample :=
+def s3 : Datum :=
   { id := "ippolitokisswilliams2022_s3"
     source := ⟨"ippolito-kiss-williams-2022", "(3)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def s3 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("scenario", "VEGETARIAN"), ("clause", "negative polar question, negative bias"), ("qud", "will Mia eat meat")] }
 
-def s4 : LinguisticExample :=
+def s4 : Datum :=
   { id := "ippolitokisswilliams2022_s4"
     source := ⟨"ippolito-kiss-williams-2022", "(4)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def s4 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("clause", "imperative")] }
 
-def s5 : LinguisticExample :=
+def s5 : Datum :=
   { id := "ippolitokisswilliams2022_s5"
     source := ⟨"ippolito-kiss-williams-2022", "(5)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def s5 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("clause", "exclamative")] }
 
-def s6 : LinguisticExample :=
+def s6 : Datum :=
   { id := "ippolitokisswilliams2022_s6"
     source := ⟨"ippolito-kiss-williams-2022", "(6)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def s6 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("scenario", "HOUSE"), ("clause", "declarative")] }
 
-def s7a : LinguisticExample :=
+def s7a : Datum :=
   { id := "ippolitokisswilliams2022_s7a"
     source := ⟨"ippolito-kiss-williams-2022", "(7a)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def s7a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("scenario", "BAKERY"), ("clause", "out-of-the-blue information-seeking question")] }
 
-def s7b : LinguisticExample :=
+def s7b : Datum :=
   { id := "ippolitokisswilliams2022_s7b"
     source := ⟨"ippolito-kiss-williams-2022", "(7b)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def s7b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("scenario", "BAKERY"), ("clause", "out-of-the-blue information-seeking question")] }
 
-def s9 : LinguisticExample :=
+def s9 : Datum :=
   { id := "ippolitokisswilliams2022_s9"
     source := ⟨"ippolito-kiss-williams-2022", "(9)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def s9 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("scenario", "HELP"), ("clause", "wh-question, negative bias"), ("qud", "will someone help Teo")] }
 
-def s10 : LinguisticExample :=
+def s10 : Datum :=
   { id := "ippolitokisswilliams2022_s10"
     source := ⟨"ippolito-kiss-williams-2022", "(10)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def s10 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("scenario", "TWIN SISTERS"), ("clause", "wh-question, ignorance reading"), ("qud", "is the recipient Carla or Paola")] }
 
-def s11 : LinguisticExample :=
+def s11 : Datum :=
   { id := "ippolitokisswilliams2022_s11"
     source := ⟨"ippolito-kiss-williams-2022", "(11)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def s11 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("scenario", "NIGHT"), ("clause", "wh-question, ignorance reading"), ("qud", "is it time for Max to wake up")] }
 
-def s12 : LinguisticExample :=
+def s12 : Datum :=
   { id := "ippolitokisswilliams2022_s12"
     source := ⟨"ippolito-kiss-williams-2022", "(12)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def s12 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("scenario", "HELP"), ("clause", "wh-question, negative bias")] }
 
-def s13 : LinguisticExample :=
+def s13 : Datum :=
   { id := "ippolitokisswilliams2022_s13"
     source := ⟨"ippolito-kiss-williams-2022", "(13)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def s13 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("scenario", "TWIN SISTERS"), ("clause", "wh-question, ignorance reading")] }
 
-def s14 : LinguisticExample :=
+def s14 : Datum :=
   { id := "ippolitokisswilliams2022_s14"
     source := ⟨"ippolito-kiss-williams-2022", "(14)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def s14 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("scenario", "NIGHT"), ("clause", "wh-question, ignorance reading")] }
 
-def s20 : LinguisticExample :=
+def s20 : Datum :=
   { id := "ippolitokisswilliams2022_s20"
     source := ⟨"ippolito-kiss-williams-2022", "(20)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def s20 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("scenario", "DINNER"), ("clause", "declarative"), ("qud", "will the Rossis come to dinner tonight")] }
 
-def s35b : LinguisticExample :=
+def s35b : Datum :=
   { id := "ippolitokisswilliams2022_s35b"
     source := ⟨"ippolito-kiss-williams-2022", "(35B)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def s35b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("scenario", "KEY"), ("clause", "negative polar question")] }
 
-def s35b2 : LinguisticExample :=
+def s35b2 : Datum :=
   { id := "ippolitokisswilliams2022_s35b2"
     source := ⟨"ippolito-kiss-williams-2022", "(35B')"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def s35b2 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("scenario", "KEY"), ("clause", "positive polar question, ignorance reading"), ("qud", "can B get into the house")] }
 
-def s37b : LinguisticExample :=
+def s37b : Datum :=
   { id := "ippolitokisswilliams2022_s37b"
     source := ⟨"ippolito-kiss-williams-2022", "(37B)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def s37b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("scenario", "KEY"), ("clause", "negative polar question")] }
 
-def s37b2 : LinguisticExample :=
+def s37b2 : Datum :=
   { id := "ippolitokisswilliams2022_s37b2"
     source := ⟨"ippolito-kiss-williams-2022", "(37B')"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def s37b2 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("scenario", "KEY"), ("clause", "positive polar question, ignorance reading")] }
 
-def s38 : LinguisticExample :=
+def s38 : Datum :=
   { id := "ippolitokisswilliams2022_s38"
     source := ⟨"ippolito-kiss-williams-2022", "(38)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def s38 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("clause", "wh-question, positive bias"), ("qud", "who will help Lena")] }
 
-def s39a : LinguisticExample :=
+def s39a : Datum :=
   { id := "ippolitokisswilliams2022_s39a"
     source := ⟨"ippolito-kiss-williams-2022", "(39a)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def s39a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("flavor", "counterexpectational")] }
 
-def s39b : LinguisticExample :=
+def s39b : Datum :=
   { id := "ippolitokisswilliams2022_s39b"
     source := ⟨"ippolito-kiss-williams-2022", "(39b)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def s39b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("flavor", "correctional")] }
 
-def s39c : LinguisticExample :=
+def s39c : Datum :=
   { id := "ippolitokisswilliams2022_s39c"
     source := ⟨"ippolito-kiss-williams-2022", "(39c)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def s39c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("flavor", "opposition")] }
 
-def s41 : LinguisticExample :=
+def s41 : Datum :=
   { id := "ippolitokisswilliams2022_s41"
     source := ⟨"ippolito-kiss-williams-2022", "(41)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def s41 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("source", "Toosarvandani 2014"), ("qud", "is the player clumsy")] }
 
-def s44 : LinguisticExample :=
+def s44 : Datum :=
   { id := "ippolitokisswilliams2022_s44"
     source := ⟨"ippolito-kiss-williams-2022", "(44)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def s44 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("clause", "specificational but-question")] }
 
-def s46 : LinguisticExample :=
+def s46 : Datum :=
   { id := "ippolitokisswilliams2022_s46"
     source := ⟨"ippolito-kiss-williams-2022", "(46)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def s46 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("scenario", "TWIN SISTERS"), ("clause", "specificational but-question")] }
 
-def s47 : LinguisticExample :=
+def s47 : Datum :=
   { id := "ippolitokisswilliams2022_s47"
     source := ⟨"ippolito-kiss-williams-2022", "(47)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def s47 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("reading", "negative bias unavailable without would")] }
 
-def s48 : LinguisticExample :=
+def s48 : Datum :=
   { id := "ippolitokisswilliams2022_s48"
     source := ⟨"ippolito-kiss-williams-2022", "(48)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def s48 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("reading", "negative bias available with would")] }
 
-def s49 : LinguisticExample :=
+def s49 : Datum :=
   { id := "ippolitokisswilliams2022_s49"
     source := ⟨"ippolito-kiss-williams-2022", "(49)"⟩
     reportedIn := none
@@ -407,6 +407,6 @@ def s49 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("clause", "modally subordinated wh-question")] }
 
-def all : List LinguisticExample := [s1a, s1b, s2, s3, s4, s5, s6, s7a, s7b, s9, s10, s11, s12, s13, s14, s20, s35b, s35b2, s37b, s37b2, s38, s39a, s39b, s39c, s41, s44, s46, s47, s48, s49]
+def all : List Datum := [s1a, s1b, s2, s3, s4, s5, s6, s7a, s7b, s9, s10, s11, s12, s13, s14, s20, s35b, s35b2, s37b, s37b2, s38, s39a, s39b, s39c, s41, s44, s46, s47, s48, s49]
 
 end IppolitoKissWilliams2022.Examples

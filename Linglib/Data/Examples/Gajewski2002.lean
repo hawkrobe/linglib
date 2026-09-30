@@ -17,7 +17,7 @@ namespace Gajewski2002.Examples
 
 open Data.Examples
 
-def ex4c : LinguisticExample :=
+def ex4c : Datum :=
   { id := "gajewski2002_ex4c"
     source := ⟨"barwise-cooper-1981", "(4c)"⟩
     reportedIn := some ⟨"gajewski-2002", "(4c)"⟩
@@ -30,7 +30,7 @@ def ex4c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "there"), ("determiner", "every"), ("grammatical", "no")] }
 
-def ex30a : LinguisticExample :=
+def ex30a : Datum :=
   { id := "gajewski2002_ex30a"
     source := ⟨"gajewski-2002", "(30a)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex30a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "there"), ("determiner", "every"), ("grammatical", "no")] }
 
-def ex5a : LinguisticExample :=
+def ex5a : Datum :=
   { id := "gajewski2002_ex5a"
     source := ⟨"barwise-cooper-1981", "(5a)"⟩
     reportedIn := some ⟨"gajewski-2002", "(5a)"⟩
@@ -56,7 +56,7 @@ def ex5a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "there"), ("determiner", "some"), ("grammatical", "yes")] }
 
-def ex5c : LinguisticExample :=
+def ex5c : Datum :=
   { id := "gajewski2002_ex5c"
     source := ⟨"barwise-cooper-1981", "(5c)"⟩
     reportedIn := some ⟨"gajewski-2002", "(5c)"⟩
@@ -69,7 +69,7 @@ def ex5c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "there"), ("determiner", "some"), ("grammatical", "yes")] }
 
-def ex11a_every : LinguisticExample :=
+def ex11a_every : Datum :=
   { id := "gajewski2002_ex11a_every"
     source := ⟨"von-fintel-1993", "(11a)"⟩
     reportedIn := some ⟨"gajewski-2002", "(11a)"⟩
@@ -82,7 +82,7 @@ def ex11a_every : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "exceptive"), ("determiner", "every"), ("grammatical", "yes")] }
 
-def ex11a_no : LinguisticExample :=
+def ex11a_no : Datum :=
   { id := "gajewski2002_ex11a_no"
     source := ⟨"von-fintel-1993", "(11a)"⟩
     reportedIn := some ⟨"gajewski-2002", "(11a)"⟩
@@ -95,7 +95,7 @@ def ex11a_no : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "exceptive"), ("determiner", "no"), ("grammatical", "yes")] }
 
-def ex11b : LinguisticExample :=
+def ex11b : Datum :=
   { id := "gajewski2002_ex11b"
     source := ⟨"von-fintel-1993", "(11b)"⟩
     reportedIn := some ⟨"gajewski-2002", "(11b)"⟩
@@ -108,7 +108,7 @@ def ex11b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "exceptive"), ("determiner", "some"), ("grammatical", "no")] }
 
-def ex34a : LinguisticExample :=
+def ex34a : Datum :=
   { id := "gajewski2002_ex34a"
     source := ⟨"gajewski-2002", "(34a)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex34a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "everyIs"), ("determiner", "every"), ("grammatical", "yes")] }
 
-def ex34b : LinguisticExample :=
+def ex34b : Datum :=
   { id := "gajewski2002_ex34b"
     source := ⟨"gajewski-2002", "(34b)"⟩
     reportedIn := none
@@ -134,6 +134,6 @@ def ex34b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "andNot"), ("determiner", "none"), ("grammatical", "yes")] }
 
-def all : List LinguisticExample := [ex4c, ex30a, ex5a, ex5c, ex11a_every, ex11a_no, ex11b, ex34a, ex34b]
+def all : List Datum := [ex4c, ex30a, ex5a, ex5c, ex11a_every, ex11a_no, ex11b, ex34a, ex34b]
 
 end Gajewski2002.Examples

@@ -17,7 +17,7 @@ namespace Sharvit2003.Examples
 
 open Data.Examples
 
-def ex1 : LinguisticExample :=
+def ex1 : Datum :=
   { id := "sharvit2003_ex1"
     source := ⟨"sharvit-2003", "(1)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex1 : LinguisticExample :=
     readings := [("nonpast: the telling overlaps the missing", .acceptable), ("anteriority: the missing precedes the telling", .acceptable)]
     paperFeatures := [("language", "english"), ("matrix", "past"), ("embedded", "past"), ("nonpast", "yes")] }
 
-def ex2 : LinguisticExample :=
+def ex2 : Datum :=
   { id := "sharvit2003_ex2"
     source := ⟨"sharvit-2003", "(2)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex2 : LinguisticExample :=
     readings := [("nonpast: the pregnancy overlaps John's now", .acceptable), ("anteriority: the pregnancy precedes John's now", .acceptable)]
     paperFeatures := [("language", "english"), ("matrix", "past"), ("embedded", "past"), ("nonpast", "yes")] }
 
-def ex3 : LinguisticExample :=
+def ex3 : Datum :=
   { id := "sharvit2003_ex3"
     source := ⟨"sharvit-2003", "(3)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex3 : LinguisticExample :=
     readings := [("double access: the pregnancy contains the believing time and the utterance time", .acceptable), ("nonpast: the pregnancy overlaps John's now only", .ungrammatical)]
     paperFeatures := [("language", "english"), ("matrix", "past"), ("embedded", "present"), ("nonpast", "no")] }
 
-def ex4a : LinguisticExample :=
+def ex4a : Datum :=
   { id := "sharvit2003_ex4a"
     source := ⟨"sharvit-2003", "(4a)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex4a : LinguisticExample :=
     readings := [("nonpast: the pregnancy overlaps the finding out", .acceptable)]
     paperFeatures := [("language", "english"), ("matrix", "past"), ("embedded", "past"), ("nonpast", "yes")] }
 
-def ex4b : LinguisticExample :=
+def ex4b : Datum :=
   { id := "sharvit2003_ex4b"
     source := ⟨"sharvit-2003", "(4b)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex4b : LinguisticExample :=
     readings := [("double access: the pregnancy contains the finding out and the utterance time", .unacceptable)]
     paperFeatures := [("language", "english"), ("matrix", "past"), ("embedded", "present"), ("nonpast", "no")] }
 
-def ex5 : LinguisticExample :=
+def ex5 : Datum :=
   { id := "sharvit2003_ex5"
     source := ⟨"sharvit-2003", "(5)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex5 : LinguisticExample :=
     readings := [("nonpast: the telling overlaps the missing", .acceptable)]
     paperFeatures := [("language", "hebrew"), ("matrix", "past"), ("embedded", "present"), ("nonpast", "yes")] }
 
-def ex6 : LinguisticExample :=
+def ex6 : Datum :=
   { id := "sharvit2003_ex6"
     source := ⟨"sharvit-2003", "(6)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex6 : LinguisticExample :=
     readings := [("anteriority: the missing precedes the telling", .acceptable), ("nonpast: the telling overlaps the missing", .ungrammatical)]
     paperFeatures := [("language", "hebrew"), ("matrix", "past"), ("embedded", "past"), ("nonpast", "no")] }
 
-def ex12a : LinguisticExample :=
+def ex12a : Datum :=
   { id := "sharvit2003_ex12a"
     source := ⟨"sharvit-2003", "(12a)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex12a : LinguisticExample :=
     readings := [("nonpast: the pregnancy overlaps the telling", .acceptable)]
     paperFeatures := [("language", "greek"), ("matrix", "past"), ("embedded", "present"), ("nonpast", "yes")] }
 
-def ex12b : LinguisticExample :=
+def ex12b : Datum :=
   { id := "sharvit2003_ex12b"
     source := ⟨"sharvit-2003", "(12b)"⟩
     reportedIn := none
@@ -134,6 +134,6 @@ def ex12b : LinguisticExample :=
     readings := [("nonpast: the pregnancy overlaps the telling", .acceptable)]
     paperFeatures := [("language", "greek"), ("matrix", "past"), ("embedded", "past"), ("nonpast", "yes")] }
 
-def all : List LinguisticExample := [ex1, ex2, ex3, ex4a, ex4b, ex5, ex6, ex12a, ex12b]
+def all : List Datum := [ex1, ex2, ex3, ex4a, ex4b, ex5, ex6, ex12a, ex12b]
 
 end Sharvit2003.Examples

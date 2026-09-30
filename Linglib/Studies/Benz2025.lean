@@ -54,12 +54,12 @@ def entryOf (form : String) : Option German.Verb := allVerbs.find? (·.form = fo
 /-! ## Content nominalizations (Ch. 3) -/
 
 /-- The (32) stimulus rows, in margin-label order Event, RN, Content. -/
-def beobachtungRows : List LinguisticExample :=
+def beobachtungRows : List Datum :=
   [Examples.ex32a, Examples.ex32b, Examples.ex32c]
 
 /-- The reading a stimulus row exemplifies, from its `reading` feature. The paper's loose "RN"
 label is rendered as the simple entity reading. -/
-def readingOf (e : LinguisticExample) : Option NominalizationReading :=
+def readingOf (e : Datum) : Option NominalizationReading :=
   match e.feature? "reading" with
   | some "Event" => some .complexEvent
   | some "RN" => some .simpleEntity
@@ -423,12 +423,12 @@ def elementOf : String → Option PreverbalElement
 /-- `CellAcceptable e` holds when the combination the row tests is acceptable, the combination
 being the row's alternative where it gives one ((87) and (88) pair a resultative baseline with the
 blocked prefixed or particle form) and the row itself otherwise. -/
-def CellAcceptable (e : LinguisticExample) : Prop :=
+def CellAcceptable (e : Datum) : Prop :=
   match e.alternatives with
   | [] => e.judgment = .acceptable
   | a :: _ => a.2 = .acceptable
 
-instance (e : LinguisticExample) : Decidable (CellAcceptable e) := by
+instance (e : Datum) : Decidable (CellAcceptable e) := by
   unfold CellAcceptable; split <;> infer_instance
 
 /-- Table 3 agrees with its examples ((81)–(84), (86)–(88)): a combination is acceptable exactly
@@ -445,7 +445,7 @@ the verb, the R(esult) predicate the resultative, and the End Theme Postulate (1
 complex event's Theme to the end state. -/
 
 /-- The resultative stimulus rows ((89), (115); the (115) rows are due to [creemers-2020]). -/
-def rspRows : List LinguisticExample :=
+def rspRows : List Datum :=
   [Examples.ex89a, Examples.ex89b, Examples.ex115a, Examples.ex115e, Examples.ex115f]
 
 /-- Every resultative row names a means predicate with a fragment entry. -/
@@ -528,18 +528,18 @@ def typeOf : String → Option NominalizationType
   | _ => none
 
 /-- A row's nominalization type. -/
-def nominalizationOf (e : LinguisticExample) : Option NominalizationType :=
+def nominalizationOf (e : Datum) : Option NominalizationType :=
   (e.feature? "nominalization").bind typeOf
 
 /-- `Predicted e` holds when the account predicts the nominalization row `e`: the type's solution
 accommodates the preverbal element, and an *-ung* form has a base with complex change-of-state
 structure. -/
-def Predicted (e : LinguisticExample) : Prop :=
+def Predicted (e : Datum) : Prop :=
   (∀ nt ∈ nominalizationOf e, ∀ pe ∈ (e.feature? "element").bind elementOf,
     nt.solution.Admits pe) ∧
     (nominalizationOf e = some .ung → ∀ v ∈ (e.feature? "verb").bind entryOf, CanUngNominalize v)
 
-instance (e : LinguisticExample) : Decidable (Predicted e) :=
+instance (e : Datum) : Decidable (Predicted e) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
 /-- Every nominalization row names a verb with a fragment entry. -/

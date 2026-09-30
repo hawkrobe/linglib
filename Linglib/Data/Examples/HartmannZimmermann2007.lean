@@ -17,7 +17,7 @@ namespace HartmannZimmermann2007.Examples
 
 open Data.Examples
 
-def ex3a : LinguisticExample :=
+def ex3a : Datum :=
   { id := "hartmannzimmermann2007_ex3a"
     source := ⟨"hartmann-zimmermann-2007", "(3a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex3a : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "exSitu"), ("focused", "subject"), ("stabilizer", "cee"), ("host_tone", "L"), ("stab_tone", "H")] }
 
-def ex3b : LinguisticExample :=
+def ex3b : Datum :=
   { id := "hartmannzimmermann2007_ex3b"
     source := ⟨"hartmann-zimmermann-2007", "(3b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex3b : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "exSitu"), ("focused", "nonSubject"), ("stabilizer", "nee"), ("host_tone", "H"), ("stab_tone", "L")] }
 
-def ex8 : LinguisticExample :=
+def ex8 : Datum :=
   { id := "hartmannzimmermann2007_ex8"
     source := ⟨"hartmann-zimmermann-2007", "(8)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex8 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "exSitu"), ("focused", "subject"), ("stabilizer", "none"), ("tam", "future")] }
 
-def ex17a1 : LinguisticExample :=
+def ex17a1 : Datum :=
   { id := "hartmannzimmermann2007_ex17a1"
     source := ⟨"hartmann-zimmermann-2007", "(17 A1)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex17a1 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "exSitu"), ("pragType", "newInfo"), ("focused", "subject"), ("stabilizer", "nee"), ("tam", "continuous")] }
 
-def ex17a2 : LinguisticExample :=
+def ex17a2 : Datum :=
   { id := "hartmannzimmermann2007_ex17a2"
     source := ⟨"hartmann-zimmermann-2007", "(17 A2)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex17a2 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "inSitu"), ("pragType", "newInfo"), ("focused", "subject"), ("stabilizer", "none"), ("tam", "continuous")] }
 
-def ex22 : LinguisticExample :=
+def ex22 : Datum :=
   { id := "hartmannzimmermann2007_ex22"
     source := ⟨"hartmann-zimmermann-2007", "(22)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex22 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "exSitu"), ("pragType", "newInfo"), ("focused", "nonSubject"), ("stabilizer", "nee")] }
 
-def ex23 : LinguisticExample :=
+def ex23 : Datum :=
   { id := "hartmannzimmermann2007_ex23"
     source := ⟨"randell-bature-schuh-1998", "HB 1.11"⟩
     reportedIn := some ⟨"hartmann-zimmermann-2007", "(23)"⟩
@@ -108,7 +108,7 @@ def ex23 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "inSitu"), ("pragType", "newInfo"), ("focused", "nonSubject"), ("stabilizer", "none")] }
 
-def ex24 : LinguisticExample :=
+def ex24 : Datum :=
   { id := "hartmannzimmermann2007_ex24"
     source := ⟨"hartmann-zimmermann-2007", "(24)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex24 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "exSitu"), ("pragType", "corrective"), ("focused", "subject"), ("stabilizer", "cee")] }
 
-def ex25 : LinguisticExample :=
+def ex25 : Datum :=
   { id := "hartmannzimmermann2007_ex25"
     source := ⟨"randell-bature-schuh-1998", "HB 3.03"⟩
     reportedIn := some ⟨"hartmann-zimmermann-2007", "(25)"⟩
@@ -134,7 +134,7 @@ def ex25 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "inSitu"), ("pragType", "corrective"), ("focused", "nonSubject"), ("stabilizer", "nee")] }
 
-def ex26 : LinguisticExample :=
+def ex26 : Datum :=
   { id := "hartmannzimmermann2007_ex26"
     source := ⟨"randell-bature-schuh-1998", "HB 1.10"⟩
     reportedIn := some ⟨"hartmann-zimmermann-2007", "(26)"⟩
@@ -147,7 +147,7 @@ def ex26 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "inSitu"), ("pragType", "contrastive"), ("focused", "nonSubject"), ("stabilizer", "none")] }
 
-def ex27 : LinguisticExample :=
+def ex27 : Datum :=
   { id := "hartmannzimmermann2007_ex27"
     source := ⟨"randell-bature-schuh-1998", "HB 2.03"⟩
     reportedIn := some ⟨"hartmann-zimmermann-2007", "(27)"⟩
@@ -160,7 +160,7 @@ def ex27 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "exSitu"), ("pragType", "contrastive"), ("focused", "nonSubject"), ("stabilizer", "none")] }
 
-def ex29 : LinguisticExample :=
+def ex29 : Datum :=
   { id := "hartmannzimmermann2007_ex29"
     source := ⟨"randell-bature-schuh-1998", "HB 1.10"⟩
     reportedIn := some ⟨"hartmann-zimmermann-2007", "(29)"⟩
@@ -173,7 +173,7 @@ def ex29 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "exSitu"), ("pragType", "selective"), ("focused", "nonSubject"), ("stabilizer", "none")] }
 
-def ex30 : LinguisticExample :=
+def ex30 : Datum :=
   { id := "hartmannzimmermann2007_ex30"
     source := ⟨"jaggar-2001", "p. 498"⟩
     reportedIn := some ⟨"hartmann-zimmermann-2007", "(30)"⟩
@@ -186,6 +186,6 @@ def ex30 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "inSitu"), ("pragType", "selective"), ("focused", "nonSubject"), ("stabilizer", "none")] }
 
-def all : List LinguisticExample := [ex3a, ex3b, ex8, ex17a1, ex17a2, ex22, ex23, ex24, ex25, ex26, ex27, ex29, ex30]
+def all : List Datum := [ex3a, ex3b, ex8, ex17a1, ex17a2, ex22, ex23, ex24, ex25, ex26, ex27, ex29, ex30]
 
 end HartmannZimmermann2007.Examples

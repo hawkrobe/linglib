@@ -17,7 +17,7 @@ namespace Jardine2016a.Examples
 
 open Data.Examples
 
-def ex_8_kikopo : LinguisticExample :=
+def ex_8_kikopo : Datum :=
   { id := "jardine2016a_8_kikopo"
     source := ⟨"jardine-2016a", "(8)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_8_kikopo : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("underlying_form", "/ki-kópo/"), ("underlying", "OHO"), ("surface", "OHO")] }
 
-def ex_8_kisiki : LinguisticExample :=
+def ex_8_kisiki : Datum :=
   { id := "jardine2016a_8_kisiki"
     source := ⟨"jardine-2016a", "(8)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_8_kisiki : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("underlying_form", "/ki-sikí/"), ("underlying", "OOH"), ("surface", "OOH")] }
 
-def ex_8_kitabo : LinguisticExample :=
+def ex_8_kitabo : Datum :=
   { id := "jardine2016a_8_kitabo"
     source := ⟨"jardine-2016a", "(8)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_8_kitabo : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("underlying_form", "/ki-tabo/"), ("underlying", "OOO"), ("surface", "OOO")] }
 
-def ex_8_mutunda : LinguisticExample :=
+def ex_8_mutunda : Datum :=
   { id := "jardine2016a_8_mutunda"
     source := ⟨"jardine-2016a", "(8)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_8_mutunda : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("underlying_form", "/mu-tund-a/"), ("underlying", "OOO"), ("surface", "OOO")] }
 
-def ex_8_mutema : LinguisticExample :=
+def ex_8_mutema : Datum :=
   { id := "jardine2016a_8_mutema"
     source := ⟨"jardine-2016a", "(8)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_8_mutema : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("underlying_form", "/mu-tém-a/"), ("underlying", "OHO"), ("surface", "OHO")] }
 
-def ex_9a : LinguisticExample :=
+def ex_9a : Datum :=
   { id := "jardine2016a_9a"
     source := ⟨"jardine-2016a", "(9a)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_9a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("underlying_form", "/mu-tund-a+bi-kópo/"), ("underlying", "OOOOHO"), ("surface", "OOOOHO")] }
 
-def ex_9b : LinguisticExample :=
+def ex_9b : Datum :=
   { id := "jardine2016a_9b"
     source := ⟨"jardine-2016a", "(9b)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_9b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("underlying_form", "/mu-tém-a+bi-sikí/"), ("underlying", "OHOOOH"), ("surface", "OHHHHH")] }
 
-def ex_10b : LinguisticExample :=
+def ex_10b : Datum :=
   { id := "jardine2016a_10b"
     source := ⟨"jardine-2016a", "(10b)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_10b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("underlying_form", "/tw-áa-láb-w-a walúsimbi/"), ("underlying", "HHHOOHOO"), ("surface", "HHHHHHOO")] }
 
-def ex_12a : LinguisticExample :=
+def ex_12a : Datum :=
   { id := "jardine2016a_12a"
     source := ⟨"jardine-2016a", "(12a)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_12a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("underlying_form", "/tw-áa-láb-a byaa=walúsimbi/"), ("underlying", "HHHOOOOHOO"), ("surface", "HHHHHHHHOO")] }
 
-def ex_12b : LinguisticExample :=
+def ex_12b : Datum :=
   { id := "jardine2016a_12b"
     source := ⟨"jardine-2016a", "(12b)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_12b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("underlying_form", "/tw-áa-génd-a na=byaa=ba=walúsimbi/"), ("underlying", "HHHOOOOOOHOO"), ("surface", "HHHHHHHHHHOO")] }
 
-def ex_18b : LinguisticExample :=
+def ex_18b : Datum :=
   { id := "jardine2016a_18b"
     source := ⟨"jardine-2016a", "(18b)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_18b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("underlying_form", "/ámàkhòsánà/"), ("underlying", "HOOHO"), ("surface", "HHHHO")] }
 
-def ex_21a : LinguisticExample :=
+def ex_21a : Datum :=
   { id := "jardine2016a_21a"
     source := ⟨"jardine-2016a", "(21a)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_21a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("underlying_form", "/dí hánso sëmbë/"), ("underlying", "HHOOO"), ("surface", "HHOOO")] }
 
-def ex_21b : LinguisticExample :=
+def ex_21b : Datum :=
   { id := "jardine2016a_21b"
     source := ⟨"jardine-2016a", "(21b)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_21b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("underlying_form", "/dí hánso wómi/"), ("underlying", "HHOHO"), ("surface", "HHHHO")] }
 
-def ex_21c : LinguisticExample :=
+def ex_21c : Datum :=
   { id := "jardine2016a_21c"
     source := ⟨"jardine-2016a", "(21c)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_21c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("underlying_form", "/dí hánso mujêE/"), ("underlying", "HHOOHO"), ("surface", "HHHHHO")] }
 
-def ex_21d : LinguisticExample :=
+def ex_21d : Datum :=
   { id := "jardine2016a_21d"
     source := ⟨"jardine-2016a", "(21d)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_21d : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("underlying_form", "/dí wajamáka=dé á óbo/"), ("underlying", "HOOHOHHHO"), ("surface", "HHHHHHHHO")] }
 
-def ex_21e : LinguisticExample :=
+def ex_21e : Datum :=
   { id := "jardine2016a_21e"
     source := ⟨"jardine-2016a", "(21e)"⟩
     reportedIn := none
@@ -225,6 +225,6 @@ def ex_21e : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("underlying_form", "/taánga amEEká wómi/"), ("underlying", "OHOOOOHHO"), ("surface", "OHHHHHHHO")] }
 
-def all : List LinguisticExample := [ex_8_kikopo, ex_8_kisiki, ex_8_kitabo, ex_8_mutunda, ex_8_mutema, ex_9a, ex_9b, ex_10b, ex_12a, ex_12b, ex_18b, ex_21a, ex_21b, ex_21c, ex_21d, ex_21e]
+def all : List Datum := [ex_8_kikopo, ex_8_kisiki, ex_8_kitabo, ex_8_mutunda, ex_8_mutema, ex_9a, ex_9b, ex_10b, ex_12a, ex_12b, ex_18b, ex_21a, ex_21b, ex_21c, ex_21d, ex_21e]
 
 end Jardine2016a.Examples

@@ -284,7 +284,7 @@ structure Row where
   entails : Option Bool
 
 /-- A row from the paper's features. -/
-def Row.ofExample (e : LinguisticExample) : Option Row := do
+def Row.ofDatum (e : Datum) : Option Row := do
   let k ← e.parse? "verb" (finnish.map fun p ↦ (p.1.form, p.2))
   let neg ← e.parse? "matrix" [("positive", false), ("negated", true)]
   let ent ← e.parse? "entails"
@@ -292,11 +292,11 @@ def Row.ofExample (e : LinguisticExample) : Option Row := do
   some ⟨k, neg, ent⟩
 
 /-- Every example is a row. -/
-theorem isSome_ofExample : ∀ e ∈ Examples.all, (Row.ofExample e).isSome := by
+theorem isSome_ofDatum : ∀ e ∈ Examples.all, (Row.ofDatum e).isSome := by
   decide
 
 /-- The rows of the paper's Finnish minimal pairs. -/
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- Each claim entails what its verb's class predicts. -/
 theorem rows_agree : ∀ r ∈ rows, entailed r.implicativeClass r.negated = r.entails := by

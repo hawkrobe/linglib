@@ -17,7 +17,7 @@ namespace HeKaiserIskarous2025.Examples
 
 open Data.Examples
 
-def house_no_bathroom : LinguisticExample :=
+def house_no_bathroom : Datum :=
   { id := "hekaiseriskarous2025_house_no_bathroom"
     source := ⟨"he-kaiser-iskarous-2025", "§1"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def house_no_bathroom : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("polarity", "negative"), ("statePrior", "low")] }
 
-def house_ballroom : LinguisticExample :=
+def house_ballroom : Datum :=
   { id := "hekaiseriskarous2025_house_ballroom"
     source := ⟨"he-kaiser-iskarous-2025", "§1"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def house_ballroom : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("polarity", "positive"), ("statePrior", "low")] }
 
-def house_no_ballroom : LinguisticExample :=
+def house_no_ballroom : Datum :=
   { id := "hekaiseriskarous2025_house_no_ballroom"
     source := ⟨"he-kaiser-iskarous-2025", "§1"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def house_no_ballroom : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("polarity", "negative"), ("statePrior", "high")] }
 
-def exp1_pos : LinguisticExample :=
+def exp1_pos : Datum :=
   { id := "hekaiseriskarous2025_exp1_pos"
     source := ⟨"he-kaiser-iskarous-2025", "§3.2"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def exp1_pos : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("polarity", "positive"), ("experiment", "1")] }
 
-def exp1_neg : LinguisticExample :=
+def exp1_neg : Datum :=
   { id := "hekaiseriskarous2025_exp1_neg"
     source := ⟨"he-kaiser-iskarous-2025", "§3.2"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def exp1_neg : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("polarity", "negative"), ("experiment", "1")] }
 
-def classroom_no_board : LinguisticExample :=
+def classroom_no_board : Datum :=
   { id := "hekaiseriskarous2025_classroom_no_board"
     source := ⟨"he-kaiser-iskarous-2025", "§3.2"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def classroom_no_board : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("polarity", "negative"), ("statePrior", "low")] }
 
-def classroom_stove : LinguisticExample :=
+def classroom_stove : Datum :=
   { id := "hekaiseriskarous2025_classroom_stove"
     source := ⟨"he-kaiser-iskarous-2025", "§3.2"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def classroom_stove : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("polarity", "positive"), ("statePrior", "low")] }
 
-def exp2 : LinguisticExample :=
+def exp2 : Datum :=
   { id := "hekaiseriskarous2025_exp2"
     source := ⟨"he-kaiser-iskarous-2025", "§3.3"⟩
     reportedIn := none
@@ -121,6 +121,6 @@ def exp2 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("polarity", "positive"), ("experiment", "2")] }
 
-def all : List LinguisticExample := [house_no_bathroom, house_ballroom, house_no_ballroom, exp1_pos, exp1_neg, classroom_no_board, classroom_stove, exp2]
+def all : List Datum := [house_no_bathroom, house_ballroom, house_no_ballroom, exp1_pos, exp1_neg, classroom_no_board, classroom_stove, exp2]
 
 end HeKaiserIskarous2025.Examples

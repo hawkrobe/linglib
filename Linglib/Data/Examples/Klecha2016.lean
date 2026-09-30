@@ -17,7 +17,7 @@ namespace Klecha2016.Examples
 
 open Data.Examples
 
-def ex1 : LinguisticExample :=
+def ex1 : Datum :=
   { id := "klecha2016_ex1"
     source := ⟨"klecha-2016", "(1)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex1 : LinguisticExample :=
     readings := [("simultaneous (pregnancy at thinking)", .acceptable), ("shifted (pregnancy before thinking)", .acceptable), ("future-shifted (pregnancy after thinking)", .ungrammatical)]
     paperFeatures := [("verb", "think"), ("past", "available"), ("present", "available"), ("future", "unavailable")] }
 
-def ex2a : LinguisticExample :=
+def ex2a : Datum :=
   { id := "klecha2016_ex2a"
     source := ⟨"klecha-2016", "(2a) — COCA corpus"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex2a : LinguisticExample :=
     readings := [("future-shifted (missed-cut after hoping)", .acceptable)]
     paperFeatures := [("verb", "hope"), ("future", "available")] }
 
-def ex2b : LinguisticExample :=
+def ex2b : Datum :=
   { id := "klecha2016_ex2b"
     source := ⟨"klecha-2016", "(2b) — COCA corpus"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex2b : LinguisticExample :=
     readings := [("future-shifted (try-to-kill after hoping)", .acceptable)]
     paperFeatures := [("verb", "hope"), ("future", "available")] }
 
-def ex3a : LinguisticExample :=
+def ex3a : Datum :=
   { id := "klecha2016_ex3a"
     source := ⟨"klecha-2016", "(3a) — COCA corpus"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex3a : LinguisticExample :=
     readings := [("future-shifted (got-open after praying)", .acceptable)]
     paperFeatures := [("verb", "pray"), ("future", "available")] }
 
-def ex3b : LinguisticExample :=
+def ex3b : Datum :=
   { id := "klecha2016_ex3b"
     source := ⟨"klecha-2016", "(3b) — COCA corpus"⟩
     reportedIn := none
@@ -82,6 +82,6 @@ def ex3b : LinguisticExample :=
     readings := [("future-shifted (survival after praying)", .acceptable)]
     paperFeatures := [("verb", "pray"), ("future", "available")] }
 
-def all : List LinguisticExample := [ex1, ex2a, ex2b, ex3a, ex3b]
+def all : List Datum := [ex1, ex2a, ex2b, ex3a, ex3b]
 
 end Klecha2016.Examples

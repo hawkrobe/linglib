@@ -209,7 +209,7 @@ def tGoals (licensor accessible : Bool) : Valuation Arg (Case × Mechanism) :=
   (if licensor then [(.EA, none)] else []) ++ (if accessible then [(.DO, none)] else [])
 
 /-- A row's accusative marking, accessibility, and licensor, read from its features. -/
-def interpret (r : LinguisticExample) : Option (Bool × Bool × Bool) := do
+def interpret (r : Datum) : Option (Bool × Bool × Bool) := do
   let hasAcc ← match r.feature? "acc" with
     | some "yes" => some true
     | some "no" => some false
@@ -226,13 +226,13 @@ def interpret (r : LinguisticExample) : Option (Bool × Bool × Bool) := do
 
 /-- A row is predicted: it is acceptable exactly when it carries accusative just in case T's
 stack assigns it. -/
-def Predicted (r : LinguisticExample) : Prop :=
+def Predicted (r : Datum) : Prop :=
   match interpret r with
   | some (hasAcc, accessible, licensor) =>
       r.judgment = .acceptable ↔ hasAcc = (stack (tGoals licensor accessible)).isSome
   | none => False
 
-instance (r : LinguisticExample) : Decidable (Predicted r) := by
+instance (r : Datum) : Decidable (Predicted r) := by
   unfold Predicted; split <;> infer_instance
 
 /-- (15), (18), (20): the shifted direct object and the raised embedded subject are accusative

@@ -17,7 +17,7 @@ namespace AkinboFwangwar2026.Examples
 
 open Data.Examples
 
-def ex_6a : LinguisticExample :=
+def ex_6a : Datum :=
   { id := "akinbofwangwar2026_6a"
     source := ⟨"akinbo-fwangwar-2026", "(6a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_6a : LinguisticExample :=
     readings := []
     paperFeatures := [("ideophone", "gɨ̀rgɨ̀r"), ("wordClass", "noun")] }
 
-def ex_6b : LinguisticExample :=
+def ex_6b : Datum :=
   { id := "akinbofwangwar2026_6b"
     source := ⟨"akinbo-fwangwar-2026", "(6b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_6b : LinguisticExample :=
     readings := []
     paperFeatures := [("ideophone", "gɨ̀rgɨ̀r"), ("wordClass", "noun")] }
 
-def ex_6c : LinguisticExample :=
+def ex_6c : Datum :=
   { id := "akinbofwangwar2026_6c"
     source := ⟨"akinbo-fwangwar-2026", "(6c)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_6c : LinguisticExample :=
     readings := []
     paperFeatures := [("ideophone", "gɨ̀rgɨ̀r"), ("wordClass", "noun")] }
 
-def ex_6d : LinguisticExample :=
+def ex_6d : Datum :=
   { id := "akinbofwangwar2026_6d"
     source := ⟨"akinbo-fwangwar-2026", "(6d)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_6d : LinguisticExample :=
     readings := []
     paperFeatures := [("ideophone", "gɨ̀rgɨ̀r"), ("wordClass", "adjective")] }
 
-def ex_6e : LinguisticExample :=
+def ex_6e : Datum :=
   { id := "akinbofwangwar2026_6e"
     source := ⟨"akinbo-fwangwar-2026", "(6e)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_6e : LinguisticExample :=
     readings := []
     paperFeatures := [("ideophone", "gɨ̀rgɨ̀r"), ("wordClass", "adverb")] }
 
-def ex_6f : LinguisticExample :=
+def ex_6f : Datum :=
   { id := "akinbofwangwar2026_6f"
     source := ⟨"akinbo-fwangwar-2026", "(6f)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_6f : LinguisticExample :=
     readings := []
     paperFeatures := [("ideophone", "múl"), ("wordClass", "verb")] }
 
-def ex_6g : LinguisticExample :=
+def ex_6g : Datum :=
   { id := "akinbofwangwar2026_6g"
     source := ⟨"akinbo-fwangwar-2026", "(6g)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_6g : LinguisticExample :=
     readings := []
     paperFeatures := [("ideophone", "múl"), ("wordClass", "verb"), ("construction", "future")] }
 
-def ex_11a : LinguisticExample :=
+def ex_11a : Datum :=
   { id := "akinbofwangwar2026_11a"
     source := ⟨"akinbo-fwangwar-2026", "(11a)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_11a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "underived"), ("lexeme", "mwàːn"), ("construction", "presentPast")] }
 
-def ex_11b : LinguisticExample :=
+def ex_11b : Datum :=
   { id := "akinbofwangwar2026_11b"
     source := ⟨"akinbo-fwangwar-2026", "(11b)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_11b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "underived"), ("lexeme", "mwàːn"), ("construction", "future")] }
 
-def ex_11c : LinguisticExample :=
+def ex_11c : Datum :=
   { id := "akinbofwangwar2026_11c"
     source := ⟨"akinbo-fwangwar-2026", "(11c)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_11c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "underived"), ("lexeme", "mwàːn"), ("construction", "focus")] }
 
-def ex_11d : LinguisticExample :=
+def ex_11d : Datum :=
   { id := "akinbofwangwar2026_11d"
     source := ⟨"akinbo-fwangwar-2026", "(11d)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_11d : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "underived"), ("lexeme", "mwàːn"), ("construction", "serialVerb")] }
 
-def ex_11e : LinguisticExample :=
+def ex_11e : Datum :=
   { id := "akinbofwangwar2026_11e"
     source := ⟨"akinbo-fwangwar-2026", "(11e)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_11e : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "underived"), ("lexeme", "mwàːn"), ("construction", "negation")] }
 
-def ex_12a : LinguisticExample :=
+def ex_12a : Datum :=
   { id := "akinbofwangwar2026_12a"
     source := ⟨"akinbo-fwangwar-2026", "(12a)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_12a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "derived"), ("lexeme", "kɔ̄rjɔ́ŋ"), ("construction", "presentPast")] }
 
-def ex_12b : LinguisticExample :=
+def ex_12b : Datum :=
   { id := "akinbofwangwar2026_12b"
     source := ⟨"akinbo-fwangwar-2026", "(12b)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_12b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "derived"), ("lexeme", "kɔ̄rjɔ́ŋ"), ("construction", "future")] }
 
-def ex_12c : LinguisticExample :=
+def ex_12c : Datum :=
   { id := "akinbofwangwar2026_12c"
     source := ⟨"akinbo-fwangwar-2026", "(12c)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_12c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "derived"), ("lexeme", "kɔ̄rjɔ́ŋ"), ("construction", "focus")] }
 
-def ex_12d : LinguisticExample :=
+def ex_12d : Datum :=
   { id := "akinbofwangwar2026_12d"
     source := ⟨"akinbo-fwangwar-2026", "(12d)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_12d : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "derived"), ("lexeme", "kɔ̄rjɔ́ŋ"), ("construction", "serialVerb")] }
 
-def ex_12e : LinguisticExample :=
+def ex_12e : Datum :=
   { id := "akinbofwangwar2026_12e"
     source := ⟨"akinbo-fwangwar-2026", "(12e)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex_12e : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "derived"), ("lexeme", "kɔ̄rjɔ́ŋ"), ("construction", "serialVerb")] }
 
-def ex_12f : LinguisticExample :=
+def ex_12f : Datum :=
   { id := "akinbofwangwar2026_12f"
     source := ⟨"akinbo-fwangwar-2026", "(12f)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex_12f : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "derived"), ("lexeme", "kɔ̄rjɔ́ŋ"), ("construction", "negation")] }
 
-def ex_21_1 : LinguisticExample :=
+def ex_21_1 : Datum :=
   { id := "akinbofwangwar2026_21_1"
     source := ⟨"akinbo-fwangwar-2026", "(21)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex_21_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "wāːm"), ("verbTones", "M"), ("gerundiveTones", "M")] }
 
-def ex_21_2 : LinguisticExample :=
+def ex_21_2 : Datum :=
   { id := "akinbofwangwar2026_21_2"
     source := ⟨"akinbo-fwangwar-2026", "(21)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex_21_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "pɨ̄lāŋ"), ("verbTones", "M"), ("gerundiveTones", "M")] }
 
-def ex_21_3 : LinguisticExample :=
+def ex_21_3 : Datum :=
   { id := "akinbofwangwar2026_21_3"
     source := ⟨"akinbo-fwangwar-2026", "(21)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex_21_3 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "wàm"), ("verbTones", "L"), ("gerundiveTones", "M")] }
 
-def ex_21_4 : LinguisticExample :=
+def ex_21_4 : Datum :=
   { id := "akinbofwangwar2026_21_4"
     source := ⟨"akinbo-fwangwar-2026", "(21)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex_21_4 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "zùɣùm"), ("verbTones", "L"), ("gerundiveTones", "M")] }
 
-def ex_27_1 : LinguisticExample :=
+def ex_27_1 : Datum :=
   { id := "akinbofwangwar2026_27_1"
     source := ⟨"akinbo-fwangwar-2026", "(27)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex_27_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("possessed", "lɛ̀k"), ("possessedClass", "nonideophone"), ("possessedTones", "L"), ("outputTones", "L")] }
 
-def ex_27_2 : LinguisticExample :=
+def ex_27_2 : Datum :=
   { id := "akinbofwangwar2026_27_2"
     source := ⟨"akinbo-fwangwar-2026", "(27)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex_27_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("possessed", "wān"), ("possessedClass", "nonideophone"), ("possessedTones", "M"), ("outputTones", "L")] }
 
-def ex_27_3 : LinguisticExample :=
+def ex_27_3 : Datum :=
   { id := "akinbofwangwar2026_27_3"
     source := ⟨"akinbo-fwangwar-2026", "(27)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex_27_3 : LinguisticExample :=
     readings := []
     paperFeatures := [("possessed", "ɓwɔ́ːn"), ("possessedClass", "nonideophone"), ("possessedTones", "H"), ("outputTones", "L")] }
 
-def ex_27_4 : LinguisticExample :=
+def ex_27_4 : Datum :=
   { id := "akinbofwangwar2026_27_4"
     source := ⟨"akinbo-fwangwar-2026", "(27)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex_27_4 : LinguisticExample :=
     readings := []
     paperFeatures := [("possessed", "ɓwɔ́ːn"), ("possessedClass", "nonideophone"), ("possessedTones", "H"), ("outputTones", "M")] }
 
-def ex_27_5 : LinguisticExample :=
+def ex_27_5 : Datum :=
   { id := "akinbofwangwar2026_27_5"
     source := ⟨"akinbo-fwangwar-2026", "(27)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def ex_27_5 : LinguisticExample :=
     readings := []
     paperFeatures := [("possessed", "gɨ̀r-gɨ̀r"), ("possessedClass", "ideophone"), ("possessedTones", "L"), ("outputTones", "L")] }
 
-def ex_27_6 : LinguisticExample :=
+def ex_27_6 : Datum :=
   { id := "akinbofwangwar2026_27_6"
     source := ⟨"akinbo-fwangwar-2026", "(27)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def ex_27_6 : LinguisticExample :=
     readings := []
     paperFeatures := [("possessed", "rām-rām"), ("possessedClass", "ideophone"), ("possessedTones", "M"), ("outputTones", "L")] }
 
-def ex_27_7 : LinguisticExample :=
+def ex_27_7 : Datum :=
   { id := "akinbofwangwar2026_27_7"
     source := ⟨"akinbo-fwangwar-2026", "(27)"⟩
     reportedIn := none
@@ -394,6 +394,6 @@ def ex_27_7 : LinguisticExample :=
     readings := []
     paperFeatures := [("possessed", "kúráʃ"), ("possessedClass", "ideophone"), ("possessedTones", "H"), ("outputTones", "M")] }
 
-def all : List LinguisticExample := [ex_6a, ex_6b, ex_6c, ex_6d, ex_6e, ex_6f, ex_6g, ex_11a, ex_11b, ex_11c, ex_11d, ex_11e, ex_12a, ex_12b, ex_12c, ex_12d, ex_12e, ex_12f, ex_21_1, ex_21_2, ex_21_3, ex_21_4, ex_27_1, ex_27_2, ex_27_3, ex_27_4, ex_27_5, ex_27_6, ex_27_7]
+def all : List Datum := [ex_6a, ex_6b, ex_6c, ex_6d, ex_6e, ex_6f, ex_6g, ex_11a, ex_11b, ex_11c, ex_11d, ex_11e, ex_12a, ex_12b, ex_12c, ex_12d, ex_12e, ex_12f, ex_21_1, ex_21_2, ex_21_3, ex_21_4, ex_27_1, ex_27_2, ex_27_3, ex_27_4, ex_27_5, ex_27_6, ex_27_7]
 
 end AkinboFwangwar2026.Examples

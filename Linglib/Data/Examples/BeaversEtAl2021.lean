@@ -17,7 +17,7 @@ namespace BeaversEtAl2021.Examples
 
 open Data.Examples
 
-def beavers_etal2021_1c : LinguisticExample :=
+def beavers_etal2021_1c : Datum :=
   { id := "beavers_etal2021_1c"
     source := ⟨"beavers-etal-2021", "(1c)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def beavers_etal2021_1c : LinguisticExample :=
     readings := []
     paperFeatures := [("root class", "result"), ("form", "monomorphemic verb")] }
 
-def beavers_etal2021_7a : LinguisticExample :=
+def beavers_etal2021_7a : Datum :=
   { id := "beavers_etal2021_7a"
     source := ⟨"beavers-etal-2021", "(7a)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def beavers_etal2021_7a : LinguisticExample :=
     readings := []
     paperFeatures := [("root class", "property concept"), ("form", "basic stative")] }
 
-def beavers_etal2021_10a : LinguisticExample :=
+def beavers_etal2021_10a : Datum :=
   { id := "beavers_etal2021_10a"
     source := ⟨"beavers-etal-2021", "(10a)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def beavers_etal2021_10a : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "change denial"), ("root class", "property concept")] }
 
-def beavers_etal2021_11c : LinguisticExample :=
+def beavers_etal2021_11c : Datum :=
   { id := "beavers_etal2021_11c"
     source := ⟨"beavers-etal-2021", "(11c)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def beavers_etal2021_11c : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "change denial"), ("root class", "result")] }
 
-def beavers_etal2021_13 : LinguisticExample :=
+def beavers_etal2021_13 : Datum :=
   { id := "beavers_etal2021_13"
     source := ⟨"beavers-etal-2021", "(13)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def beavers_etal2021_13 : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "change denial"), ("root class", "result")] }
 
-def beavers_etal2021_15a : LinguisticExample :=
+def beavers_etal2021_15a : Datum :=
   { id := "beavers_etal2021_15a"
     source := ⟨"beavers-etal-2021", "(15a)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def beavers_etal2021_15a : LinguisticExample :=
     readings := [("restitutive: could be just one sharpening", .acceptable)]
     paperFeatures := [("diagnostic", "restitutive again"), ("root class", "property concept")] }
 
-def beavers_etal2021_16a : LinguisticExample :=
+def beavers_etal2021_16a : Datum :=
   { id := "beavers_etal2021_16a"
     source := ⟨"beavers-etal-2021", "(16a)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def beavers_etal2021_16a : LinguisticExample :=
     readings := [("repetitive: necessarily two defrostings", .acceptable)]
     paperFeatures := [("diagnostic", "restitutive again"), ("root class", "result")] }
 
-def beavers_etal2021_25a : LinguisticExample :=
+def beavers_etal2021_25a : Datum :=
   { id := "beavers_etal2021_25a"
     source := ⟨"beavers-etal-2021", "(25a)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def beavers_etal2021_25a : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "restitutive again"), ("root class", "property concept")] }
 
-def beavers_etal2021_26 : LinguisticExample :=
+def beavers_etal2021_26 : Datum :=
   { id := "beavers_etal2021_26"
     source := ⟨"beavers-etal-2021", "(26)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def beavers_etal2021_26 : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "restitutive again"), ("root class", "result")] }
 
-def beavers_etal2021_28a : LinguisticExample :=
+def beavers_etal2021_28a : Datum :=
   { id := "beavers_etal2021_28a"
     source := ⟨"beavers-etal-2021", "(28a)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def beavers_etal2021_28a : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "change denial"), ("root class", "property concept")] }
 
-def beavers_etal2021_28b : LinguisticExample :=
+def beavers_etal2021_28b : Datum :=
   { id := "beavers_etal2021_28b"
     source := ⟨"beavers-etal-2021", "(28b)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def beavers_etal2021_28b : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "change denial"), ("root class", "result")] }
 
-def beavers_etal2021_29b : LinguisticExample :=
+def beavers_etal2021_29b : Datum :=
   { id := "beavers_etal2021_29b"
     source := ⟨"beavers-etal-2021", "(29b)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def beavers_etal2021_29b : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "restitutive again"), ("root class", "result")] }
 
-def beavers_etal2021_31 : LinguisticExample :=
+def beavers_etal2021_31 : Datum :=
   { id := "beavers_etal2021_31"
     source := ⟨"beavers-etal-2021", "(31)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def beavers_etal2021_31 : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "change denial"), ("root class", "property concept")] }
 
-def beavers_etal2021_32 : LinguisticExample :=
+def beavers_etal2021_32 : Datum :=
   { id := "beavers_etal2021_32"
     source := ⟨"beavers-etal-2021", "(32)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def beavers_etal2021_32 : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "change denial"), ("root class", "result")] }
 
-def beavers_etal2021_33b : LinguisticExample :=
+def beavers_etal2021_33b : Datum :=
   { id := "beavers_etal2021_33b"
     source := ⟨"beavers-etal-2021", "(33b)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def beavers_etal2021_33b : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "restitutive again"), ("root class", "result")] }
 
-def beavers_etal2021_35b : LinguisticExample :=
+def beavers_etal2021_35b : Datum :=
   { id := "beavers_etal2021_35b"
     source := ⟨"beavers-etal-2021", "(35b)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def beavers_etal2021_35b : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "change denial"), ("root class", "result")] }
 
-def beavers_etal2021_36b : LinguisticExample :=
+def beavers_etal2021_36b : Datum :=
   { id := "beavers_etal2021_36b"
     source := ⟨"beavers-etal-2021", "(36b)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def beavers_etal2021_36b : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "restitutive again"), ("root class", "result")] }
 
-def beavers_etal2021_38b : LinguisticExample :=
+def beavers_etal2021_38b : Datum :=
   { id := "beavers_etal2021_38b"
     source := ⟨"beavers-etal-2021", "(38b)"⟩
     reportedIn := none
@@ -251,6 +251,6 @@ def beavers_etal2021_38b : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "additive restitutive"), ("root class", "result")] }
 
-def all : List LinguisticExample := [beavers_etal2021_1c, beavers_etal2021_7a, beavers_etal2021_10a, beavers_etal2021_11c, beavers_etal2021_13, beavers_etal2021_15a, beavers_etal2021_16a, beavers_etal2021_25a, beavers_etal2021_26, beavers_etal2021_28a, beavers_etal2021_28b, beavers_etal2021_29b, beavers_etal2021_31, beavers_etal2021_32, beavers_etal2021_33b, beavers_etal2021_35b, beavers_etal2021_36b, beavers_etal2021_38b]
+def all : List Datum := [beavers_etal2021_1c, beavers_etal2021_7a, beavers_etal2021_10a, beavers_etal2021_11c, beavers_etal2021_13, beavers_etal2021_15a, beavers_etal2021_16a, beavers_etal2021_25a, beavers_etal2021_26, beavers_etal2021_28a, beavers_etal2021_28b, beavers_etal2021_29b, beavers_etal2021_31, beavers_etal2021_32, beavers_etal2021_33b, beavers_etal2021_35b, beavers_etal2021_36b, beavers_etal2021_38b]
 
 end BeaversEtAl2021.Examples

@@ -17,7 +17,7 @@ namespace Woolford1997.Examples
 
 open Data.Examples
 
-def ex_1 : LinguisticExample :=
+def ex_1 : Datum :=
   { id := "woolford1997_1"
     source := ⟨"woolford-1997", "(3)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("pattern", "nominative"), ("clause", "intransitive")] }
 
-def ex_2 : LinguisticExample :=
+def ex_2 : Datum :=
   { id := "woolford1997_2"
     source := ⟨"woolford-1997", "(4)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("pattern", "nominative-accusative"), ("clause", "transitive")] }
 
-def ex_3 : LinguisticExample :=
+def ex_3 : Datum :=
   { id := "woolford1997_3"
     source := ⟨"woolford-1997", "(5)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_3 : LinguisticExample :=
     readings := []
     paperFeatures := [("pattern", "ergative-objective"), ("clause", "transitive")] }
 
-def ex_4 : LinguisticExample :=
+def ex_4 : Datum :=
   { id := "woolford1997_4"
     source := ⟨"woolford-1997", "(6)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_4 : LinguisticExample :=
     readings := []
     paperFeatures := [("pattern", "nominative-accusative-accusative"), ("clause", "ditransitive")] }
 
-def ex_5 : LinguisticExample :=
+def ex_5 : Datum :=
   { id := "woolford1997_5"
     source := ⟨"woolford-1997", "(7)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_5 : LinguisticExample :=
     readings := []
     paperFeatures := [("pattern", "ergative-objective-accusative"), ("clause", "ditransitive")] }
 
-def ex_6 : LinguisticExample :=
+def ex_6 : Datum :=
   { id := "woolford1997_6"
     source := ⟨"woolford-1997", "(8)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_6 : LinguisticExample :=
     readings := []
     paperFeatures := [("pattern", "ergative-dative-objective"), ("clause", "ditransitive")] }
 
-def ex_7 : LinguisticExample :=
+def ex_7 : Datum :=
   { id := "woolford1997_7"
     source := ⟨"woolford-1997", "(57)"⟩
     reportedIn := none
@@ -108,6 +108,6 @@ def ex_7 : LinguisticExample :=
     readings := []
     paperFeatures := [("pattern", "ergative-objective-accusative"), ("clause", "ditransitive")] }
 
-def all : List LinguisticExample := [ex_1, ex_2, ex_3, ex_4, ex_5, ex_6, ex_7]
+def all : List Datum := [ex_1, ex_2, ex_3, ex_4, ex_5, ex_6, ex_7]
 
 end Woolford1997.Examples

@@ -259,7 +259,7 @@ inductive ExternalArgument
   deriving DecidableEq
 
 /-- The reading of the external argument a row records. -/
-def externalArgument? (ex : LinguisticExample) : Option ExternalArgument :=
+def externalArgument? (ex : Datum) : Option ExternalArgument :=
   ex.parse? "externalArgument"
     [("agent", .agent), ("theme", .theme), ("subjectMatter", .subjectMatter),
      ("pureCauser", .pureCauser)]

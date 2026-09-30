@@ -17,7 +17,7 @@ namespace Deal2011.Examples
 
 open Data.Examples
 
-def ex1 : LinguisticExample :=
+def ex1 : Datum :=
   { id := "deal2011_ex1"
     source := ⟨"deal-2011", "(1)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex1 : LinguisticExample :=
     readings := [("possibility", .acceptable), ("necessity", .acceptable)]
     paperFeatures := [("modal", "o'qa"), ("environment", "unembedded")] }
 
-def ex5 : LinguisticExample :=
+def ex5 : Datum :=
   { id := "deal2011_ex5"
     source := ⟨"deal-2011", "(5)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex5 : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "o'qa"), ("environment", "unembedded"), ("force", "necessity")] }
 
-def ex6 : LinguisticExample :=
+def ex6 : Datum :=
   { id := "deal2011_ex6"
     source := ⟨"deal-2011", "(6)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex6 : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "o'qa"), ("environment", "conditional consequent"), ("force", "necessity")] }
 
-def ex10 : LinguisticExample :=
+def ex10 : Datum :=
   { id := "deal2011_ex10"
     source := ⟨"deal-2011", "(10)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex10 : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "o'qa"), ("environment", "unembedded"), ("force", "necessity")] }
 
-def ex46 : LinguisticExample :=
+def ex46 : Datum :=
   { id := "deal2011_ex46"
     source := ⟨"deal-2011", "(46)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex46 : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "o'qa"), ("environment", "negation"), ("force", "possibility")] }
 
-def ex47 : LinguisticExample :=
+def ex47 : Datum :=
   { id := "deal2011_ex47"
     source := ⟨"deal-2011", "(47)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex47 : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "o'qa"), ("environment", "negation"), ("force", "possibility")] }
 
-def ex48 : LinguisticExample :=
+def ex48 : Datum :=
   { id := "deal2011_ex48"
     source := ⟨"deal-2011", "(48)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex48 : LinguisticExample :=
     readings := [("possibility", .acceptable), ("necessity", .unacceptable)]
     paperFeatures := [("modal", "o'qa"), ("environment", "negation")] }
 
-def ex49 : LinguisticExample :=
+def ex49 : Datum :=
   { id := "deal2011_ex49"
     source := ⟨"deal-2011", "(49)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex49 : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "o'qa"), ("environment", "negation"), ("force", "necessity")] }
 
-def ex50 : LinguisticExample :=
+def ex50 : Datum :=
   { id := "deal2011_ex50"
     source := ⟨"deal-2011", "(50)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex50 : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "o'qa"), ("environment", "negation"), ("force", "necessity")] }
 
-def ex51 : LinguisticExample :=
+def ex51 : Datum :=
   { id := "deal2011_ex51"
     source := ⟨"deal-2011", "(51)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex51 : LinguisticExample :=
     readings := [("possibility", .acceptable), ("necessity", .acceptable)]
     paperFeatures := [("modal", "o'qa"), ("environment", "existential restriction")] }
 
-def ex52 : LinguisticExample :=
+def ex52 : Datum :=
   { id := "deal2011_ex52"
     source := ⟨"deal-2011", "(52)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex52 : LinguisticExample :=
     readings := [("possibility", .acceptable), ("necessity", .unacceptable)]
     paperFeatures := [("modal", "o'qa"), ("environment", "universal restriction")] }
 
-def ex53 : LinguisticExample :=
+def ex53 : Datum :=
   { id := "deal2011_ex53"
     source := ⟨"deal-2011", "(53)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex53 : LinguisticExample :=
     readings := [("possibility", .acceptable), ("necessity", .unacceptable)]
     paperFeatures := [("modal", "o'qa"), ("environment", "universal restriction")] }
 
-def ex54 : LinguisticExample :=
+def ex54 : Datum :=
   { id := "deal2011_ex54"
     source := ⟨"deal-2011", "(54)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex54 : LinguisticExample :=
     readings := [("possibility", .acceptable), ("necessity", .unacceptable)]
     paperFeatures := [("modal", "o'qa"), ("environment", "universal restriction")] }
 
-def ex57 : LinguisticExample :=
+def ex57 : Datum :=
   { id := "deal2011_ex57"
     source := ⟨"deal-2011", "(57)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex57 : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "o'qa"), ("environment", "conditional consequent"), ("force", "necessity")] }
 
-def ex58 : LinguisticExample :=
+def ex58 : Datum :=
   { id := "deal2011_ex58"
     source := ⟨"deal-2011", "(58)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex58 : LinguisticExample :=
     readings := [("possibility", .acceptable), ("necessity", .unacceptable)]
     paperFeatures := [("modal", "o'qa"), ("environment", "conditional antecedent")] }
 
-def ex59 : LinguisticExample :=
+def ex59 : Datum :=
   { id := "deal2011_ex59"
     source := ⟨"deal-2011", "(59)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex59 : LinguisticExample :=
     readings := [("possibility", .acceptable), ("necessity", .unacceptable)]
     paperFeatures := [("modal", "o'qa"), ("environment", "conditional antecedent")] }
 
-def ex60 : LinguisticExample :=
+def ex60 : Datum :=
   { id := "deal2011_ex60"
     source := ⟨"deal-2011", "(60)"⟩
     reportedIn := none
@@ -238,6 +238,6 @@ def ex60 : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "o'qa"), ("environment", "conditional antecedent"), ("force", "necessity")] }
 
-def all : List LinguisticExample := [ex1, ex5, ex6, ex10, ex46, ex47, ex48, ex49, ex50, ex51, ex52, ex53, ex54, ex57, ex58, ex59, ex60]
+def all : List Datum := [ex1, ex5, ex6, ex10, ex46, ex47, ex48, ex49, ex50, ex51, ex52, ex53, ex54, ex57, ex58, ex59, ex60]
 
 end Deal2011.Examples

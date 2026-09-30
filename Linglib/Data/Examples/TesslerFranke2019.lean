@@ -17,7 +17,7 @@ namespace TesslerFranke2019.Examples
 
 open Data.Examples
 
-def happy : LinguisticExample :=
+def happy : Datum :=
   { id := "tesslerfranke2019_happy"
     source := ⟨"tessler-franke-2019", "UNVERIFIED quadruplet, bare positive"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def happy : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "positive"), ("inner_neg", "none"), ("cost", "0"), ("equivalent_to_positive", "true")] }
 
-def unhappy : LinguisticExample :=
+def unhappy : Datum :=
   { id := "tesslerfranke2019_unhappy"
     source := ⟨"tessler-franke-2019", "UNVERIFIED Experiment 1, morphological negation"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def unhappy : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "negative"), ("inner_neg", "morphological"), ("interpretation", "contrary"), ("cost", "2"), ("equivalent_to_positive", "false")] }
 
-def not_happy : LinguisticExample :=
+def not_happy : Datum :=
   { id := "tesslerfranke2019_not_happy"
     source := ⟨"tessler-franke-2019", "UNVERIFIED Experiment 1, syntactic negation"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def not_happy : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "notPositive"), ("inner_neg", "syntactic"), ("interpretation", "contradictory"), ("cost", "3"), ("equivalent_to_positive", "false")] }
 
-def not_unhappy : LinguisticExample :=
+def not_unhappy : Datum :=
   { id := "tesslerfranke2019_not_unhappy"
     source := ⟨"tessler-franke-2019", "UNVERIFIED §1, double negation"⟩
     reportedIn := none
@@ -69,6 +69,6 @@ def not_unhappy : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "notNegative"), ("inner_neg", "morphological"), ("interpretation", "contrary"), ("cost", "5"), ("equivalent_to_positive", "false")] }
 
-def all : List LinguisticExample := [happy, unhappy, not_happy, not_unhappy]
+def all : List Datum := [happy, unhappy, not_happy, not_unhappy]
 
 end TesslerFranke2019.Examples

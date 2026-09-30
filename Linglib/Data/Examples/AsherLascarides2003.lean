@@ -17,7 +17,7 @@ namespace AsherLascarides2003.Examples
 
 open Data.Examples
 
-def ex_18 : LinguisticExample :=
+def ex_18 : Datum :=
   { id := "asherlascarides2003_18"
     source := ⟨"asher-lascarides-2003", "(18)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_18 : LinguisticExample :=
     readings := []
     paperFeatures := [("structure", "(17)")] }
 
-def ex_18_pink : LinguisticExample :=
+def ex_18_pink : Datum :=
   { id := "asherlascarides2003_18_pink"
     source := ⟨"asher-lascarides-2003", "(18), p. 147 continuation"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_18_pink : LinguisticExample :=
     readings := []
     paperFeatures := [("structure", "(17)"), ("antecedent", "salmon"), ("antecedentLabel", "3")] }
 
-def ex_19 : LinguisticExample :=
+def ex_19 : Datum :=
   { id := "asherlascarides2003_19"
     source := ⟨"asher-lascarides-2003", "(19)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_19 : LinguisticExample :=
     readings := []
     paperFeatures := [("relations", "Contrast, Narration")] }
 
-def ex_22 : LinguisticExample :=
+def ex_22 : Datum :=
   { id := "asherlascarides2003_22"
     source := ⟨"asher-lascarides-2003", "(22)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_22 : LinguisticExample :=
     readings := []
     paperFeatures := [("relations", "Background"), ("antecedent", "car")] }
 
-def ex_23 : LinguisticExample :=
+def ex_23 : Datum :=
   { id := "asherlascarides2003_23"
     source := ⟨"asher-lascarides-2003", "(23)"⟩
     reportedIn := none
@@ -82,6 +82,6 @@ def ex_23 : LinguisticExample :=
     readings := []
     paperFeatures := [("relations", "Consequence"), ("antecedent", "car")] }
 
-def all : List LinguisticExample := [ex_18, ex_18_pink, ex_19, ex_22, ex_23]
+def all : List Datum := [ex_18, ex_18_pink, ex_19, ex_22, ex_23]
 
 end AsherLascarides2003.Examples

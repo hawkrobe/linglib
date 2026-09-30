@@ -17,7 +17,7 @@ namespace GonzalezPootMcGinnis2006.Examples
 
 open Data.Examples
 
-def gpm2006_19 : LinguisticExample :=
+def gpm2006_19 : Datum :=
   { id := "gpm2006_19"
     source := ⟨"gonzalez-poot-mcginnis-2006", "(19)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def gpm2006_19 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "transitive"), ("subjPerson", "2"), ("subjNumber", "pl"), ("objPerson", "1"), ("objNumber", "pl"), ("aux", "a"), ("prefix", "w"), ("suffix1", "oʔon"), ("suffix2", "éːʃ")] }
 
-def gpm2006_20 : LinguisticExample :=
+def gpm2006_20 : Datum :=
   { id := "gpm2006_20"
     source := ⟨"gonzalez-poot-mcginnis-2006", "(20)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def gpm2006_20 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "transitive"), ("subjPerson", "3"), ("subjNumber", "pl"), ("objPerson", "2"), ("objNumber", "pl"), ("aux", "u"), ("prefix", "j"), ("suffix1", "éːʃ"), ("suffix2", "oʔob")] }
 
-def gpm2006_21 : LinguisticExample :=
+def gpm2006_21 : Datum :=
   { id := "gpm2006_21"
     source := ⟨"gonzalez-poot-mcginnis-2006", "(21)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def gpm2006_21 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "transitive"), ("subjPerson", "2"), ("subjNumber", "pl"), ("objPerson", "3"), ("objNumber", "pl"), ("aux", "a"), ("prefix", "w"), ("suffix1", "oʔob"), ("suffix2", "éːʃ")] }
 
-def gpm2006_22 : LinguisticExample :=
+def gpm2006_22 : Datum :=
   { id := "gpm2006_22"
     source := ⟨"gonzalez-poot-mcginnis-2006", "(22)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def gpm2006_22 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "transitive"), ("subjPerson", "2"), ("subjNumber", "pl"), ("objPerson", "3"), ("objNumber", "pl"), ("aux", "a"), ("prefix", "w"), ("suffix1", "éːʃ"), ("suffix2", "oʔob")] }
 
-def gpm2006_23 : LinguisticExample :=
+def gpm2006_23 : Datum :=
   { id := "gpm2006_23"
     source := ⟨"gonzalez-poot-mcginnis-2006", "(23)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def gpm2006_23 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "transitive"), ("subjPerson", "3"), ("subjNumber", "pl"), ("objPerson", "3"), ("objNumber", "pl"), ("aux", "u"), ("prefix", "j"), ("suffix1", "oʔob"), ("suffix2", "oʔob")] }
 
-def gpm2006_24 : LinguisticExample :=
+def gpm2006_24 : Datum :=
   { id := "gpm2006_24"
     source := ⟨"gonzalez-poot-mcginnis-2006", "(24)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def gpm2006_24 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "transitive"), ("subjPerson", "3"), ("subjNumber", "pl"), ("objPerson", "3"), ("objNumber", "pl"), ("aux", "u"), ("prefix", "j"), ("suffix1", "oʔob"), ("suffix2", "")] }
 
-def gpm2006_16ex : LinguisticExample :=
+def gpm2006_16ex : Datum :=
   { id := "gpm2006_16ex"
     source := ⟨"gonzalez-poot-mcginnis-2006", "(16)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def gpm2006_16ex : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "transitive"), ("subjPerson", "3"), ("subjNumber", "sg"), ("objPerson", "1"), ("objNumber", "sg"), ("aux", "u"), ("prefix", "j"), ("suffix1", "en"), ("suffix2", "")] }
 
-def gpm2006_3 : LinguisticExample :=
+def gpm2006_3 : Datum :=
   { id := "gpm2006_3"
     source := ⟨"gonzalez-poot-mcginnis-2006", "(3)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def gpm2006_3 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "intransitive"), ("subjPerson", "1"), ("subjNumber", "sg"), ("aux", "in"), ("prefix", "w"), ("suffix1", ""), ("suffix2", "")] }
 
-def gpm2006_4 : LinguisticExample :=
+def gpm2006_4 : Datum :=
   { id := "gpm2006_4"
     source := ⟨"gonzalez-poot-mcginnis-2006", "(4)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def gpm2006_4 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "intransitive"), ("subjPerson", "1"), ("subjNumber", "pl"), ("aux", "k"), ("prefix", ""), ("suffix1", ""), ("suffix2", "")] }
 
-def gpm2006_5 : LinguisticExample :=
+def gpm2006_5 : Datum :=
   { id := "gpm2006_5"
     source := ⟨"gonzalez-poot-mcginnis-2006", "(5)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def gpm2006_5 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "intransitive"), ("subjPerson", "2"), ("subjNumber", "sg"), ("aux", "a"), ("prefix", "w"), ("suffix1", ""), ("suffix2", "")] }
 
-def gpm2006_6 : LinguisticExample :=
+def gpm2006_6 : Datum :=
   { id := "gpm2006_6"
     source := ⟨"gonzalez-poot-mcginnis-2006", "(6)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def gpm2006_6 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "intransitive"), ("subjPerson", "2"), ("subjNumber", "pl"), ("aux", "a"), ("prefix", "w"), ("suffix1", "éːʃ"), ("suffix2", "")] }
 
-def gpm2006_7 : LinguisticExample :=
+def gpm2006_7 : Datum :=
   { id := "gpm2006_7"
     source := ⟨"gonzalez-poot-mcginnis-2006", "(7)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def gpm2006_7 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "intransitive"), ("subjPerson", "3"), ("subjNumber", "sg"), ("aux", "u"), ("prefix", "j"), ("suffix1", ""), ("suffix2", "")] }
 
-def gpm2006_8 : LinguisticExample :=
+def gpm2006_8 : Datum :=
   { id := "gpm2006_8"
     source := ⟨"gonzalez-poot-mcginnis-2006", "(8)"⟩
     reportedIn := none
@@ -186,6 +186,6 @@ def gpm2006_8 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "intransitive"), ("subjPerson", "3"), ("subjNumber", "pl"), ("aux", "u"), ("prefix", "j"), ("suffix1", "oʔob"), ("suffix2", "")] }
 
-def all : List LinguisticExample := [gpm2006_19, gpm2006_20, gpm2006_21, gpm2006_22, gpm2006_23, gpm2006_24, gpm2006_16ex, gpm2006_3, gpm2006_4, gpm2006_5, gpm2006_6, gpm2006_7, gpm2006_8]
+def all : List Datum := [gpm2006_19, gpm2006_20, gpm2006_21, gpm2006_22, gpm2006_23, gpm2006_24, gpm2006_16ex, gpm2006_3, gpm2006_4, gpm2006_5, gpm2006_6, gpm2006_7, gpm2006_8]
 
 end GonzalezPootMcGinnis2006.Examples

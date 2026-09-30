@@ -17,7 +17,7 @@ namespace Svenonius2004.Examples
 
 open Data.Examples
 
-def ex_1a : LinguisticExample :=
+def ex_1a : Datum :=
   { id := "svenonius2004_1a"
     source := ⟨"svenonius-2004", "(1a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_1a : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_1b : LinguisticExample :=
+def ex_1b : Datum :=
   { id := "svenonius2004_1b"
     source := ⟨"svenonius-2004", "(1b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_1b : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_1c : LinguisticExample :=
+def ex_1c : Datum :=
   { id := "svenonius2004_1c"
     source := ⟨"svenonius-2004", "(1c)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_1c : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_4a : LinguisticExample :=
+def ex_4a : Datum :=
   { id := "svenonius2004_4a"
     source := ⟨"svenonius-2004", "(4a)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_4a : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_4c : LinguisticExample :=
+def ex_4c : Datum :=
   { id := "svenonius2004_4c"
     source := ⟨"svenonius-2004", "(4c)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_4c : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_3a : LinguisticExample :=
+def ex_3a : Datum :=
   { id := "svenonius2004_3a"
     source := ⟨"istratkova-2004", "§4 (kaža table)"⟩
     reportedIn := some ⟨"svenonius-2004", "(3a)"⟩
@@ -95,7 +95,7 @@ def ex_3a : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_3e : LinguisticExample :=
+def ex_3e : Datum :=
   { id := "svenonius2004_3e"
     source := ⟨"istratkova-2004", "§4 (kaža table)"⟩
     reportedIn := some ⟨"svenonius-2004", "(3e)"⟩
@@ -108,7 +108,7 @@ def ex_3e : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_58za : LinguisticExample :=
+def ex_58za : Datum :=
   { id := "svenonius2004_58za"
     source := ⟨"svenonius-2004", "§4.1 (58) discussion"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_58za : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_58po : LinguisticExample :=
+def ex_58po : Datum :=
   { id := "svenonius2004_58po"
     source := ⟨"svenonius-2004", "§4.1 (58) discussion"⟩
     reportedIn := none
@@ -134,6 +134,6 @@ def ex_58po : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def all : List LinguisticExample := [ex_1a, ex_1b, ex_1c, ex_4a, ex_4c, ex_3a, ex_3e, ex_58za, ex_58po]
+def all : List Datum := [ex_1a, ex_1b, ex_1c, ex_4a, ex_4c, ex_3a, ex_3e, ex_58za, ex_58po]
 
 end Svenonius2004.Examples

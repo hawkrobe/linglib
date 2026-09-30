@@ -17,7 +17,7 @@ namespace Imanishi2020.Examples
 
 open Data.Examples
 
-def s1a : LinguisticExample :=
+def s1a : Datum :=
   { id := "imanishi2020_s1a"
     source := ⟨"imanishi-2020", "(1a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def s1a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("alignment", "S/A = set B on ajin, O = set A on the nominalized verb")] }
 
-def s1b : LinguisticExample :=
+def s1b : Datum :=
   { id := "imanishi2020_s1b"
     source := ⟨"imanishi-2020", "(1b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def s1b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("alignment", "S = set B on ajin, no set A on the nominalized verb")] }
 
-def s2a : LinguisticExample :=
+def s2a : Datum :=
   { id := "imanishi2020_s2a"
     source := ⟨"imanishi-2020", "(2a)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def s2a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("source", "Coon 2013a:11"), ("alignment", "A = set A, O = set B inside the nominalized clause")] }
 
-def s2b : LinguisticExample :=
+def s2b : Datum :=
   { id := "imanishi2020_s2b"
     source := ⟨"imanishi-2020", "(2b)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def s2b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("source", "Coon 2013a:11"), ("alignment", "S = set A")] }
 
-def s3a : LinguisticExample :=
+def s3a : Datum :=
   { id := "imanishi2020_s3a"
     source := ⟨"imanishi-2020", "(3a)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def s3a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("source", "Mateo Pedro 2009"), ("alignment", "A = set A, O = set B, the suffix -on supplying object Case")] }
 
-def s3b : LinguisticExample :=
+def s3b : Datum :=
   { id := "imanishi2020_s3b"
     source := ⟨"imanishi-2020", "(3b)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def s3b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("source", "Mateo Pedro 2009"), ("alignment", "S = set A")] }
 
-def s62 : LinguisticExample :=
+def s62 : Datum :=
   { id := "imanishi2020_s62"
     source := ⟨"imanishi-2020", "(62)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def s62 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("source", "Alexiadou 2001:76"), ("nominalization", "process nominal without an external argument")] }
 
-def s64 : LinguisticExample :=
+def s64 : Datum :=
   { id := "imanishi2020_s64"
     source := ⟨"imanishi-2020", "(64)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def s64 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("nominalization", "the external argument appears in a relative clause")] }
 
-def s65 : LinguisticExample :=
+def s65 : Datum :=
   { id := "imanishi2020_s65"
     source := ⟨"imanishi-2020", "(65)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def s65 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("nominalization", "the by-phrase counterpart is degraded")] }
 
-def s66 : LinguisticExample :=
+def s66 : Datum :=
   { id := "imanishi2020_s66"
     source := ⟨"imanishi-2020", "(66)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def s66 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("nominalization", "two set A markers impossible in either order")] }
 
-def s67 : LinguisticExample :=
+def s67 : Datum :=
   { id := "imanishi2020_s67"
     source := ⟨"imanishi-2020", "(67)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def s67 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("nominalization", "a sole argument is the internal argument")] }
 
-def s68a : LinguisticExample :=
+def s68a : Datum :=
   { id := "imanishi2020_s68a"
     source := ⟨"imanishi-2020", "(68a)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def s68a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("nominalization", "unergative nominalization excludes its external argument")] }
 
-def s68b : LinguisticExample :=
+def s68b : Datum :=
   { id := "imanishi2020_s68b"
     source := ⟨"imanishi-2020", "(68b)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def s68b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("nominalization", "unergative nominalization excludes its external argument")] }
 
-def s69 : LinguisticExample :=
+def s69 : Datum :=
   { id := "imanishi2020_s69"
     source := ⟨"imanishi-2020", "(69)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def s69 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("nominalization", "unaccusative nominalized in subject position; the internal argument takes genitive")] }
 
-def s70 : LinguisticExample :=
+def s70 : Datum :=
   { id := "imanishi2020_s70"
     source := ⟨"imanishi-2020", "(70)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def s70 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("source", "Coon 2013a:141"), ("nominalization", "external and internal argument both inside")] }
 
-def s71 : LinguisticExample :=
+def s71 : Datum :=
   { id := "imanishi2020_s71"
     source := ⟨"imanishi-2020", "(71)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def s71 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("source", "p.c. Pedro Mateo Pedro"), ("nominalization", "external argument inside the nominalized clause")] }
 
-def s76a : LinguisticExample :=
+def s76a : Datum :=
   { id := "imanishi2020_s76a"
     source := ⟨"imanishi-2020", "(76a)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def s76a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2.1"), ("voice", "active root transitive")] }
 
-def s76b : LinguisticExample :=
+def s76b : Datum :=
   { id := "imanishi2020_s76b"
     source := ⟨"imanishi-2020", "(76b)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def s76b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2.1"), ("voice", "passive root transitive without overt passive morphology")] }
 
-def s78a : LinguisticExample :=
+def s78a : Datum :=
   { id := "imanishi2020_s78a"
     source := ⟨"imanishi-2020", "(78a)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def s78a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2.1"), ("voice", "active, lax vowel")] }
 
-def s78b : LinguisticExample :=
+def s78b : Datum :=
   { id := "imanishi2020_s78b"
     source := ⟨"imanishi-2020", "(78b)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def s78b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2.1"), ("voice", "passive, tensed vowel")] }
 
-def s80a : LinguisticExample :=
+def s80a : Datum :=
   { id := "imanishi2020_s80a"
     source := ⟨"imanishi-2020", "(80a)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def s80a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2.1"), ("voice", "tensed vowel: the nominalized verb is passivized")] }
 
-def s80b : LinguisticExample :=
+def s80b : Datum :=
   { id := "imanishi2020_s80b"
     source := ⟨"imanishi-2020", "(80b)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def s80b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2.1"), ("voice", "tensed vowel: the nominalized verb is passivized")] }
 
-def s82a : LinguisticExample :=
+def s82a : Datum :=
   { id := "imanishi2020_s82a"
     source := ⟨"imanishi-2020", "(82a)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def s82a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2.1"), ("voice", "active derived transitive")] }
 
-def s82b : LinguisticExample :=
+def s82b : Datum :=
   { id := "imanishi2020_s82b"
     source := ⟨"imanishi-2020", "(82b)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def s82b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2.1"), ("voice", "passive suffix -x replaces -j")] }
 
-def s83a : LinguisticExample :=
+def s83a : Datum :=
   { id := "imanishi2020_s83a"
     source := ⟨"imanishi-2020", "(83a)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def s83a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2.1"), ("voice", "passive morpheme under nominalization")] }
 
-def s83b : LinguisticExample :=
+def s83b : Datum :=
   { id := "imanishi2020_s83b"
     source := ⟨"imanishi-2020", "(83b)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def s83b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2.1"), ("voice", "passive morpheme under nominalization")] }
 
-def s85 : LinguisticExample :=
+def s85 : Datum :=
   { id := "imanishi2020_s85"
     source := ⟨"imanishi-2020", "(85)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def s85 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2.2"), ("derivation", "object genitive from D, subject absolutive from the matrix Infl")] }
 
-def s90 : LinguisticExample :=
+def s90 : Datum :=
   { id := "imanishi2020_s90"
     source := ⟨"imanishi-2020", "(90)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def s90 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2.2"), ("theta", "ajin assigns an agentive θ-role to its subject")] }
 
-def s91 : LinguisticExample :=
+def s91 : Datum :=
   { id := "imanishi2020_s91"
     source := ⟨"imanishi-2020", "(91)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def s91 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2.2"), ("derivation", "unergative base: no DP inside, no genitive")] }
 
-def s92 : LinguisticExample :=
+def s92 : Datum :=
   { id := "imanishi2020_s92"
     source := ⟨"imanishi-2020", "(92)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def s92 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2.2"), ("control", "unaccusative base resists nominalization under ajin")] }
 
-def s93a : LinguisticExample :=
+def s93a : Datum :=
   { id := "imanishi2020_s93a"
     source := ⟨"imanishi-2020", "(93a)"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def s93a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2.2"), ("control", "the unaccusative appears as a finite verb under ajin")] }
 
-def s93b : LinguisticExample :=
+def s93b : Datum :=
   { id := "imanishi2020_s93b"
     source := ⟨"imanishi-2020", "(93b)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def s93b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2.2"), ("control", "simple imperfective")] }
 
-def s94 : LinguisticExample :=
+def s94 : Datum :=
   { id := "imanishi2020_s94"
     source := ⟨"imanishi-2020", "(94)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def s94 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2.2"), ("control", "passive base resists nominalization under ajin")] }
 
-def s95 : LinguisticExample :=
+def s95 : Datum :=
   { id := "imanishi2020_s95"
     source := ⟨"imanishi-2020", "(95)"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def s95 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2.2"), ("control", "simple imperfective passive")] }
 
-def s96a : LinguisticExample :=
+def s96a : Datum :=
   { id := "imanishi2020_s96a"
     source := ⟨"imanishi-2020", "(96a)"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def s96a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2.2"), ("source", "Coon 2010a:104"), ("control", "engage in resists an unaccusative gerund")] }
 
-def s96b : LinguisticExample :=
+def s96b : Datum :=
   { id := "imanishi2020_s96b"
     source := ⟨"imanishi-2020", "(96b)"⟩
     reportedIn := none
@@ -485,7 +485,7 @@ def s96b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2.2"), ("source", "Coon 2010a:104"), ("control", "engage in resists a passive gerund")] }
 
-def s97 : LinguisticExample :=
+def s97 : Datum :=
   { id := "imanishi2020_s97"
     source := ⟨"imanishi-2020", "(97)"⟩
     reportedIn := none
@@ -498,7 +498,7 @@ def s97 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2.2"), ("source", "Macario et al. 1998"), ("case", "no preposition when a single DP takes absolutive from Infl")] }
 
-def s98a : LinguisticExample :=
+def s98a : Datum :=
   { id := "imanishi2020_s98a"
     source := ⟨"imanishi-2020", "(98a)"⟩
     reportedIn := none
@@ -511,7 +511,7 @@ def s98a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2.3"), ("alignment", "subject inherent ergative from transitive v, object genitive: both set A")] }
 
-def s98b : LinguisticExample :=
+def s98b : Datum :=
   { id := "imanishi2020_s98b"
     source := ⟨"imanishi-2020", "(98b)"⟩
     reportedIn := none
@@ -524,7 +524,7 @@ def s98b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2.3"), ("alignment", "subject set A on chäp, no genitive inside")] }
 
-def s100 : LinguisticExample :=
+def s100 : Datum :=
   { id := "imanishi2020_s100"
     source := ⟨"imanishi-2020", "(100)"⟩
     reportedIn := none
@@ -537,7 +537,7 @@ def s100 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3.1"), ("source", "García Matzar and Rodríguez Guaján 1997:457"), ("strategy", "antipassive: object oblique under the relational noun")] }
 
-def s102 : LinguisticExample :=
+def s102 : Datum :=
   { id := "imanishi2020_s102"
     source := ⟨"imanishi-2020", "(102)"⟩
     reportedIn := none
@@ -550,7 +550,7 @@ def s102 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3.2"), ("strategy", "incorporating -oj nominalization, no set A")] }
 
-def s103 : LinguisticExample :=
+def s103 : Datum :=
   { id := "imanishi2020_s103"
     source := ⟨"imanishi-2020", "(103)"⟩
     reportedIn := none
@@ -563,7 +563,7 @@ def s103 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3.2"), ("strategy", "incorporating -oj nominalization under chäp")] }
 
-def s104 : LinguisticExample :=
+def s104 : Datum :=
   { id := "imanishi2020_s104"
     source := ⟨"imanishi-2020", "(104)"⟩
     reportedIn := none
@@ -576,7 +576,7 @@ def s104 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3.2"), ("strategy", "set A impossible on the -oj nominalization")] }
 
-def s107 : LinguisticExample :=
+def s107 : Datum :=
   { id := "imanishi2020_s107"
     source := ⟨"imanishi-2020", "(107)"⟩
     reportedIn := none
@@ -589,7 +589,7 @@ def s107 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3.2"), ("incorporation", "a determiner-marked object cannot be incorporated")] }
 
-def s109 : LinguisticExample :=
+def s109 : Datum :=
   { id := "imanishi2020_s109"
     source := ⟨"imanishi-2020", "(109)"⟩
     reportedIn := none
@@ -602,7 +602,7 @@ def s109 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3.2"), ("incorporation", "a numeral-marked object cannot be incorporated")] }
 
-def s112 : LinguisticExample :=
+def s112 : Datum :=
   { id := "imanishi2020_s112"
     source := ⟨"imanishi-2020", "(112)"⟩
     reportedIn := none
@@ -615,7 +615,7 @@ def s112 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3.2"), ("incorporation", "a possessed object cannot be incorporated")] }
 
-def s113 : LinguisticExample :=
+def s113 : Datum :=
   { id := "imanishi2020_s113"
     source := ⟨"imanishi-2020", "(113)"⟩
     reportedIn := none
@@ -628,7 +628,7 @@ def s113 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3.2"), ("incorporation", "no wh-extraction of the incorporated object")] }
 
-def s114 : LinguisticExample :=
+def s114 : Datum :=
   { id := "imanishi2020_s114"
     source := ⟨"imanishi-2020", "(114)"⟩
     reportedIn := none
@@ -641,6 +641,6 @@ def s114 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3.2"), ("incorporation", "wh-extraction from the -ïk nominalization")] }
 
-def all : List LinguisticExample := [s1a, s1b, s2a, s2b, s3a, s3b, s62, s64, s65, s66, s67, s68a, s68b, s69, s70, s71, s76a, s76b, s78a, s78b, s80a, s80b, s82a, s82b, s83a, s83b, s85, s90, s91, s92, s93a, s93b, s94, s95, s96a, s96b, s97, s98a, s98b, s100, s102, s103, s104, s107, s109, s112, s113, s114]
+def all : List Datum := [s1a, s1b, s2a, s2b, s3a, s3b, s62, s64, s65, s66, s67, s68a, s68b, s69, s70, s71, s76a, s76b, s78a, s78b, s80a, s80b, s82a, s82b, s83a, s83b, s85, s90, s91, s92, s93a, s93b, s94, s95, s96a, s96b, s97, s98a, s98b, s100, s102, s103, s104, s107, s109, s112, s113, s114]
 
 end Imanishi2020.Examples

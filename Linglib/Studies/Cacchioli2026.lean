@@ -104,7 +104,7 @@ structure SelectionDatum where
   deriving DecidableEq, Repr
 
 /-- The selection pairing an example records, where it records one. -/
-def selectionDatum (e : LinguisticExample) : Option SelectionDatum := do
+def selectionDatum (e : Datum) : Option SelectionDatum := do
   let c ← parseVerbClass (← e.paperFeatures.lookup "verb_class")
   let t ← parseTyper (← e.paperFeatures.lookup "typer")
   some ⟨c, t⟩
@@ -164,7 +164,7 @@ structure NegationDatum where
   deriving DecidableEq, Repr
 
 /-- The negated clause an example records, where it records one. -/
-def negationDatum (e : LinguisticExample) : Option NegationDatum := do
+def negationDatum (e : Datum) : Option NegationDatum := do
   let c ← parseClauseKind (← e.paperFeatures.lookup "clause")
   let s ← parseSuffix (← e.paperFeatures.lookup "neg_suffix")
   some ⟨c, s⟩

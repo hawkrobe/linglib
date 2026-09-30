@@ -17,7 +17,7 @@ namespace KalinBjorkmanEtAl2026.Examples
 
 open Data.Examples
 
-def kb2026_cat : LinguisticExample :=
+def kb2026_cat : Datum :=
   { id := "kb2026_cat"
     source := ⟨"kalin-bjorkman-etal-2026", "Table 3"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def kb2026_cat : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2.3"), ("ms", "free"), ("p", "free"), ("cell", "canonicalWord")] }
 
-def kb2026_plural_s : LinguisticExample :=
+def kb2026_plural_s : Datum :=
   { id := "kb2026_plural_s"
     source := ⟨"kalin-bjorkman-etal-2026", "Table 3"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def kb2026_plural_s : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2.3"), ("ms", "bound"), ("p", "bound"), ("cell", "canonicalAffix")] }
 
-def kb2026_possessive_s : LinguisticExample :=
+def kb2026_possessive_s : Datum :=
   { id := "kb2026_possessive_s"
     source := ⟨"kalin-bjorkman-etal-2026", "Table 3"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def kb2026_possessive_s : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2.3"), ("ms", "free"), ("p", "bound"), ("cell", "simpleClitic")] }
 
-def kb2026_dutch_prefix : LinguisticExample :=
+def kb2026_dutch_prefix : Datum :=
   { id := "kb2026_dutch_prefix"
     source := ⟨"kalin-bjorkman-etal-2026", "Table 3"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def kb2026_dutch_prefix : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2.3"), ("ms", "bound"), ("p", "free"), ("cell", "nonCoheringAffix")] }
 
-def kb2026_cat_form : LinguisticExample :=
+def kb2026_cat_form : Datum :=
   { id := "kb2026_cat_form"
     source := ⟨"kalin-bjorkman-etal-2026", "4"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def kb2026_cat_form : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("mapping", "oneToOne")] }
 
-def kb2026_plural_allomorphy : LinguisticExample :=
+def kb2026_plural_allomorphy : Datum :=
   { id := "kb2026_plural_allomorphy"
     source := ⟨"kalin-bjorkman-etal-2026", "4"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def kb2026_plural_allomorphy : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("mapping", "allomorphy")] }
 
-def kb2026_amharic_plural : LinguisticExample :=
+def kb2026_amharic_plural : Datum :=
   { id := "kb2026_amharic_plural"
     source := ⟨"kalin-bjorkman-etal-2026", "4"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def kb2026_amharic_plural : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("mapping", "multipleExponence")] }
 
-def kb2026_ed : LinguisticExample :=
+def kb2026_ed : Datum :=
   { id := "kb2026_ed"
     source := ⟨"kalin-bjorkman-etal-2026", "4"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def kb2026_ed : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("mapping", "syncretism")] }
 
-def kb2026_am : LinguisticExample :=
+def kb2026_am : Datum :=
   { id := "kb2026_am"
     source := ⟨"kalin-bjorkman-etal-2026", "4"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def kb2026_am : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("mapping", "portmanteau")] }
 
-def kb2026_stride : LinguisticExample :=
+def kb2026_stride : Datum :=
   { id := "kb2026_stride"
     source := ⟨"kalin-bjorkman-etal-2026", "4"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def kb2026_stride : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("mapping", "morphologicalGap")] }
 
-def kb2026_theme_vowel : LinguisticExample :=
+def kb2026_theme_vowel : Datum :=
   { id := "kb2026_theme_vowel"
     source := ⟨"kalin-bjorkman-etal-2026", "4"⟩
     reportedIn := none
@@ -160,6 +160,6 @@ def kb2026_theme_vowel : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("mapping", "emptyMorph")] }
 
-def all : List LinguisticExample := [kb2026_cat, kb2026_plural_s, kb2026_possessive_s, kb2026_dutch_prefix, kb2026_cat_form, kb2026_plural_allomorphy, kb2026_amharic_plural, kb2026_ed, kb2026_am, kb2026_stride, kb2026_theme_vowel]
+def all : List Datum := [kb2026_cat, kb2026_plural_s, kb2026_possessive_s, kb2026_dutch_prefix, kb2026_cat_form, kb2026_plural_allomorphy, kb2026_amharic_plural, kb2026_ed, kb2026_am, kb2026_stride, kb2026_theme_vowel]
 
 end KalinBjorkmanEtAl2026.Examples

@@ -17,7 +17,7 @@ namespace Alderete2001.Examples
 
 open Data.Examples
 
-def ex_6a_bat : LinguisticExample :=
+def ex_6a_bat : Datum :=
   { id := "alderete2001_6a_bat"
     source := ⟨"alderete-2001", "(6a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_6a_bat : LinguisticExample :=
     readings := []
     paperFeatures := [("base", "bat"), ("derivative", "bed-e"), ("change", "voicing")] }
 
-def ex_6a_luth : LinguisticExample :=
+def ex_6a_luth : Datum :=
   { id := "alderete2001_6a_luth"
     source := ⟨"alderete-2001", "(6a)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_6a_luth : LinguisticExample :=
     readings := []
     paperFeatures := [("base", "luθ"), ("derivative", "luð-e"), ("change", "voicing")] }
 
-def ex_6b_cogo : LinguisticExample :=
+def ex_6b_cogo : Datum :=
   { id := "alderete2001_6b_cogo"
     source := ⟨"alderete-2001", "(6b)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_6b_cogo : LinguisticExample :=
     readings := []
     paperFeatures := [("base", "ʧogo"), ("derivative", "ʧok-e"), ("change", "devoicing")] }
 
-def ex_6b_owadu : LinguisticExample :=
+def ex_6b_owadu : Datum :=
   { id := "alderete2001_6b_owadu"
     source := ⟨"alderete-2001", "(6b)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_6b_owadu : LinguisticExample :=
     readings := []
     paperFeatures := [("base", "owadu"), ("derivative", "owet-e"), ("change", "devoicing")] }
 
-def ex_1_yon : LinguisticExample :=
+def ex_1_yon : Datum :=
   { id := "alderete2001_1_yon"
     source := ⟨"alderete-2001", "(1)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_1_yon : LinguisticExample :=
     readings := []
     paperFeatures := [("base", "yón"), ("derivative", "yón-dara"), ("affix", "-tára"), ("affixClass", "recessive"), ("baseAccented", "true")] }
 
-def ex_1_yon2 : LinguisticExample :=
+def ex_1_yon2 : Datum :=
   { id := "alderete2001_1_yon2"
     source := ⟨"alderete-2001", "(1)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_1_yon2 : LinguisticExample :=
     readings := []
     paperFeatures := [("base", "yon"), ("derivative", "yon-dára"), ("affix", "-tára"), ("affixClass", "recessive"), ("baseAccented", "false")] }
 
-def ex_17_abura : LinguisticExample :=
+def ex_17_abura : Datum :=
   { id := "alderete2001_17_abura"
     source := ⟨"alderete-2001", "(17a)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_17_abura : LinguisticExample :=
     readings := []
     paperFeatures := [("base", "abura"), ("derivative", "abura-ppó-i"), ("affix", "-ppó"), ("affixClass", "dominant"), ("affixAccented", "true"), ("baseAccented", "false")] }
 
-def ex_17_kaze : LinguisticExample :=
+def ex_17_kaze : Datum :=
   { id := "alderete2001_17_kaze"
     source := ⟨"alderete-2001", "(17a)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_17_kaze : LinguisticExample :=
     readings := []
     paperFeatures := [("base", "kaze"), ("derivative", "kaze-ppó-i"), ("affix", "-ppó"), ("affixClass", "dominant"), ("affixAccented", "true"), ("baseAccented", "false")] }
 
-def ex_17_kodomo : LinguisticExample :=
+def ex_17_kodomo : Datum :=
   { id := "alderete2001_17_kodomo"
     source := ⟨"alderete-2001", "(17a)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_17_kodomo : LinguisticExample :=
     readings := []
     paperFeatures := [("base", "kodomo"), ("derivative", "kodomo-ppó-i"), ("affix", "-ppó"), ("affixClass", "dominant"), ("affixAccented", "true"), ("baseAccented", "false")] }
 
-def ex_17_ada : LinguisticExample :=
+def ex_17_ada : Datum :=
   { id := "alderete2001_17_ada"
     source := ⟨"alderete-2001", "(17b)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_17_ada : LinguisticExample :=
     readings := []
     paperFeatures := [("base", "adá"), ("derivative", "ada-ppó-i"), ("affix", "-ppó"), ("affixClass", "dominant"), ("affixAccented", "true"), ("baseAccented", "true")] }
 
-def ex_17_netu : LinguisticExample :=
+def ex_17_netu : Datum :=
   { id := "alderete2001_17_netu"
     source := ⟨"alderete-2001", "(17b)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_17_netu : LinguisticExample :=
     readings := []
     paperFeatures := [("base", "netú"), ("derivative", "netu-ppó-i"), ("affix", "-ppó"), ("affixClass", "dominant"), ("affixAccented", "true"), ("baseAccented", "true")] }
 
-def ex_17_kiza : LinguisticExample :=
+def ex_17_kiza : Datum :=
   { id := "alderete2001_17_kiza"
     source := ⟨"alderete-2001", "(17b)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_17_kiza : LinguisticExample :=
     readings := []
     paperFeatures := [("base", "kíza"), ("derivative", "kiza-ppó-i"), ("affix", "-ppó"), ("affixClass", "dominant"), ("affixAccented", "true"), ("baseAccented", "true")] }
 
-def ex_18_edo : LinguisticExample :=
+def ex_18_edo : Datum :=
   { id := "alderete2001_18_edo"
     source := ⟨"alderete-2001", "(18a)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_18_edo : LinguisticExample :=
     readings := []
     paperFeatures := [("base", "edo"), ("derivative", "edo-kko"), ("affix", "-kko"), ("affixClass", "dominant"), ("affixAccented", "false"), ("baseAccented", "false")] }
 
-def ex_18_niigata : LinguisticExample :=
+def ex_18_niigata : Datum :=
   { id := "alderete2001_18_niigata"
     source := ⟨"alderete-2001", "(18a)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_18_niigata : LinguisticExample :=
     readings := []
     paperFeatures := [("base", "niigata"), ("derivative", "niigata-kko"), ("affix", "-kko"), ("affixClass", "dominant"), ("affixAccented", "false"), ("baseAccented", "false")] }
 
-def ex_18_oosaka : LinguisticExample :=
+def ex_18_oosaka : Datum :=
   { id := "alderete2001_18_oosaka"
     source := ⟨"alderete-2001", "(18a)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_18_oosaka : LinguisticExample :=
     readings := []
     paperFeatures := [("base", "oosaka"), ("derivative", "oosaka-kko"), ("affix", "-kko"), ("affixClass", "dominant"), ("affixAccented", "false"), ("baseAccented", "false")] }
 
-def ex_18_koobe : LinguisticExample :=
+def ex_18_koobe : Datum :=
   { id := "alderete2001_18_koobe"
     source := ⟨"alderete-2001", "(18b)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_18_koobe : LinguisticExample :=
     readings := []
     paperFeatures := [("base", "kóobe"), ("derivative", "koobe-kko"), ("affix", "-kko"), ("affixClass", "dominant"), ("affixAccented", "false"), ("baseAccented", "true")] }
 
-def ex_18_nagoya : LinguisticExample :=
+def ex_18_nagoya : Datum :=
   { id := "alderete2001_18_nagoya"
     source := ⟨"alderete-2001", "(18b)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex_18_nagoya : LinguisticExample :=
     readings := []
     paperFeatures := [("base", "nágoya"), ("derivative", "nagoya-kko"), ("affix", "-kko"), ("affixClass", "dominant"), ("affixAccented", "false"), ("baseAccented", "true")] }
 
-def ex_18_nyuuyooku : LinguisticExample :=
+def ex_18_nyuuyooku : Datum :=
   { id := "alderete2001_18_nyuuyooku"
     source := ⟨"alderete-2001", "(18b)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex_18_nyuuyooku : LinguisticExample :=
     readings := []
     paperFeatures := [("base", "nyuuyóoku"), ("derivative", "nyuuyooku-kko"), ("affix", "-kko"), ("affixClass", "dominant"), ("affixAccented", "false"), ("baseAccented", "true")] }
 
-def ex_42_wise_masculine : LinguisticExample :=
+def ex_42_wise_masculine : Datum :=
   { id := "alderete2001_42_wise_masculine"
     source := ⟨"alderete-2001", "(42)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex_42_wise_masculine : LinguisticExample :=
     readings := []
     paperFeatures := [("base", "wíís"), ("derivative", "wíiz-ə"), ("suffix", "masculine"), ("baseTone", "dragging"), ("derivativeTone", "falling")] }
 
-def ex_42_wise_feminine : LinguisticExample :=
+def ex_42_wise_feminine : Datum :=
   { id := "alderete2001_42_wise_feminine"
     source := ⟨"alderete-2001", "(42)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex_42_wise_feminine : LinguisticExample :=
     readings := []
     paperFeatures := [("base", "wíís"), ("derivative", "wíis"), ("suffix", "feminine"), ("baseTone", "dragging"), ("derivativeTone", "falling")] }
 
-def ex_42_wise_comparative : LinguisticExample :=
+def ex_42_wise_comparative : Datum :=
   { id := "alderete2001_42_wise_comparative"
     source := ⟨"alderete-2001", "(42)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex_42_wise_comparative : LinguisticExample :=
     readings := []
     paperFeatures := [("base", "wíís"), ("derivative", "wíiz-ər"), ("suffix", "comparative"), ("baseTone", "dragging"), ("derivativeTone", "falling")] }
 
-def ex_42_stiff_masculine : LinguisticExample :=
+def ex_42_stiff_masculine : Datum :=
   { id := "alderete2001_42_stiff_masculine"
     source := ⟨"alderete-2001", "(42)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex_42_stiff_masculine : LinguisticExample :=
     readings := []
     paperFeatures := [("base", "stííf"), ("derivative", "stíiv-ə"), ("suffix", "masculine"), ("baseTone", "dragging"), ("derivativeTone", "falling")] }
 
-def ex_42_stiff_feminine : LinguisticExample :=
+def ex_42_stiff_feminine : Datum :=
   { id := "alderete2001_42_stiff_feminine"
     source := ⟨"alderete-2001", "(42)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex_42_stiff_feminine : LinguisticExample :=
     readings := []
     paperFeatures := [("base", "stííf"), ("derivative", "stíif"), ("suffix", "feminine"), ("baseTone", "dragging"), ("derivativeTone", "falling")] }
 
-def ex_42_stiff_comparative : LinguisticExample :=
+def ex_42_stiff_comparative : Datum :=
   { id := "alderete2001_42_stiff_comparative"
     source := ⟨"alderete-2001", "(42)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex_42_stiff_comparative : LinguisticExample :=
     readings := []
     paperFeatures := [("base", "stííf"), ("derivative", "stíiv-ər"), ("suffix", "comparative"), ("baseTone", "dragging"), ("derivativeTone", "falling")] }
 
-def ex_42_bald_masculine : LinguisticExample :=
+def ex_42_bald_masculine : Datum :=
   { id := "alderete2001_42_bald_masculine"
     source := ⟨"alderete-2001", "(42)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex_42_bald_masculine : LinguisticExample :=
     readings := []
     paperFeatures := [("base", "káál"), ("derivative", "káal-ə"), ("suffix", "masculine"), ("baseTone", "dragging"), ("derivativeTone", "falling")] }
 
-def ex_42_bald_feminine : LinguisticExample :=
+def ex_42_bald_feminine : Datum :=
   { id := "alderete2001_42_bald_feminine"
     source := ⟨"alderete-2001", "(42)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex_42_bald_feminine : LinguisticExample :=
     readings := []
     paperFeatures := [("base", "káál"), ("derivative", "káal"), ("suffix", "feminine"), ("baseTone", "dragging"), ("derivativeTone", "falling")] }
 
-def ex_42_bald_comparative : LinguisticExample :=
+def ex_42_bald_comparative : Datum :=
   { id := "alderete2001_42_bald_comparative"
     source := ⟨"alderete-2001", "(42)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def ex_42_bald_comparative : LinguisticExample :=
     readings := []
     paperFeatures := [("base", "káál"), ("derivative", "káal-ər"), ("suffix", "comparative"), ("baseTone", "dragging"), ("derivativeTone", "falling")] }
 
-def ex_42_paralysed_masculine : LinguisticExample :=
+def ex_42_paralysed_masculine : Datum :=
   { id := "alderete2001_42_paralysed_masculine"
     source := ⟨"alderete-2001", "(42)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def ex_42_paralysed_masculine : LinguisticExample :=
     readings := []
     paperFeatures := [("base", "láám"), ("derivative", "láam-ə"), ("suffix", "masculine"), ("baseTone", "dragging"), ("derivativeTone", "falling")] }
 
-def ex_42_paralysed_feminine : LinguisticExample :=
+def ex_42_paralysed_feminine : Datum :=
   { id := "alderete2001_42_paralysed_feminine"
     source := ⟨"alderete-2001", "(42)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def ex_42_paralysed_feminine : LinguisticExample :=
     readings := []
     paperFeatures := [("base", "láám"), ("derivative", "láam"), ("suffix", "feminine"), ("baseTone", "dragging"), ("derivativeTone", "falling")] }
 
-def ex_42_paralysed_comparative : LinguisticExample :=
+def ex_42_paralysed_comparative : Datum :=
   { id := "alderete2001_42_paralysed_comparative"
     source := ⟨"alderete-2001", "(42)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def ex_42_paralysed_comparative : LinguisticExample :=
     readings := []
     paperFeatures := [("base", "láám"), ("derivative", "láam-ər"), ("suffix", "comparative"), ("baseTone", "dragging"), ("derivativeTone", "falling")] }
 
-def ex_42_refined_masculine : LinguisticExample :=
+def ex_42_refined_masculine : Datum :=
   { id := "alderete2001_42_refined_masculine"
     source := ⟨"alderete-2001", "(42)"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def ex_42_refined_masculine : LinguisticExample :=
     readings := []
     paperFeatures := [("base", "fíín"), ("derivative", "fíin-ə"), ("suffix", "masculine"), ("baseTone", "dragging"), ("derivativeTone", "falling")] }
 
-def ex_42_refined_feminine : LinguisticExample :=
+def ex_42_refined_feminine : Datum :=
   { id := "alderete2001_42_refined_feminine"
     source := ⟨"alderete-2001", "(42)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def ex_42_refined_feminine : LinguisticExample :=
     readings := []
     paperFeatures := [("base", "fíín"), ("derivative", "fíin"), ("suffix", "feminine"), ("baseTone", "dragging"), ("derivativeTone", "falling")] }
 
-def ex_42_refined_comparative : LinguisticExample :=
+def ex_42_refined_comparative : Datum :=
   { id := "alderete2001_42_refined_comparative"
     source := ⟨"alderete-2001", "(42)"⟩
     reportedIn := none
@@ -446,6 +446,6 @@ def ex_42_refined_comparative : LinguisticExample :=
     readings := []
     paperFeatures := [("base", "fíín"), ("derivative", "fíin-ər"), ("suffix", "comparative"), ("baseTone", "dragging"), ("derivativeTone", "falling")] }
 
-def all : List LinguisticExample := [ex_6a_bat, ex_6a_luth, ex_6b_cogo, ex_6b_owadu, ex_1_yon, ex_1_yon2, ex_17_abura, ex_17_kaze, ex_17_kodomo, ex_17_ada, ex_17_netu, ex_17_kiza, ex_18_edo, ex_18_niigata, ex_18_oosaka, ex_18_koobe, ex_18_nagoya, ex_18_nyuuyooku, ex_42_wise_masculine, ex_42_wise_feminine, ex_42_wise_comparative, ex_42_stiff_masculine, ex_42_stiff_feminine, ex_42_stiff_comparative, ex_42_bald_masculine, ex_42_bald_feminine, ex_42_bald_comparative, ex_42_paralysed_masculine, ex_42_paralysed_feminine, ex_42_paralysed_comparative, ex_42_refined_masculine, ex_42_refined_feminine, ex_42_refined_comparative]
+def all : List Datum := [ex_6a_bat, ex_6a_luth, ex_6b_cogo, ex_6b_owadu, ex_1_yon, ex_1_yon2, ex_17_abura, ex_17_kaze, ex_17_kodomo, ex_17_ada, ex_17_netu, ex_17_kiza, ex_18_edo, ex_18_niigata, ex_18_oosaka, ex_18_koobe, ex_18_nagoya, ex_18_nyuuyooku, ex_42_wise_masculine, ex_42_wise_feminine, ex_42_wise_comparative, ex_42_stiff_masculine, ex_42_stiff_feminine, ex_42_stiff_comparative, ex_42_bald_masculine, ex_42_bald_feminine, ex_42_bald_comparative, ex_42_paralysed_masculine, ex_42_paralysed_feminine, ex_42_paralysed_comparative, ex_42_refined_masculine, ex_42_refined_feminine, ex_42_refined_comparative]
 
 end Alderete2001.Examples

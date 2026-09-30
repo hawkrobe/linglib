@@ -17,7 +17,7 @@ namespace Kratzer1998.Examples
 
 open Data.Examples
 
-def ex01 : LinguisticExample :=
+def ex01 : Datum :=
   { id := "kratzer1998_ex01"
     source := ⟨"abusch-1988", "WCCFL 7 SOT example"⟩
     reportedIn := some ⟨"kratzer-1998", "(1)"⟩
@@ -30,7 +30,7 @@ def ex01 : LinguisticExample :=
     readings := [("uninterpreted-past (SOT)", .acceptable)]
     paperFeatures := [] }
 
-def ex02 : LinguisticExample :=
+def ex02 : Datum :=
   { id := "kratzer1998_ex02"
     source := ⟨"ogihara-1989", "dissertation SOT example"⟩
     reportedIn := some ⟨"kratzer-1998", "(2)"⟩
@@ -43,7 +43,7 @@ def ex02 : LinguisticExample :=
     readings := [("alive-at-buying (later-than-saying)", .acceptable), ("alive-at-saying", .acceptable)]
     paperFeatures := [] }
 
-def ex03 : LinguisticExample :=
+def ex03 : Datum :=
   { id := "kratzer1998_ex03"
     source := ⟨"kratzer-1998", "(3)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex03 : LinguisticExample :=
     readings := [("pregnancy-at-knowing (future-of-utterance)", .acceptable)]
     paperFeatures := [] }
 
-def ex05 : LinguisticExample :=
+def ex05 : Datum :=
   { id := "kratzer1998_ex05"
     source := ⟨"kratzer-1998", "(5)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex05 : LinguisticExample :=
     readings := [("going-to-Harvard at past-of-utterance", .acceptable)]
     paperFeatures := [] }
 
-def ex29 : LinguisticExample :=
+def ex29 : Datum :=
   { id := "kratzer1998_ex29"
     source := ⟨"kratzer-1998", "(29)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex29 : LinguisticExample :=
     readings := [("de se (John self-locates at 10)", .acceptable), ("indexical (John thinks 11 is 10)", .marginal)]
     paperFeatures := [] }
 
-def ex30 : LinguisticExample :=
+def ex30 : Datum :=
   { id := "kratzer1998_ex30"
     source := ⟨"kratzer-1998", "(30)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex30 : LinguisticExample :=
     readings := [("de se (headache at John's now)", .acceptable)]
     paperFeatures := [] }
 
-def ex32a : LinguisticExample :=
+def ex32a : Datum :=
   { id := "kratzer1998_ex32a"
     source := ⟨"kratzer-1998", "(32a)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex32a : LinguisticExample :=
     readings := [("simultaneous (alive-at-buying, zero tense in RC)", .acceptable), ("independent past (alive-before-buying, past in RC)", .acceptable)]
     paperFeatures := [] }
 
-def ex33a : LinguisticExample :=
+def ex33a : Datum :=
   { id := "kratzer1998_ex33a"
     source := ⟨"kratzer-1998", "(33a)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex33a : LinguisticExample :=
     readings := [("RC zero-tense (alive-at-buying)", .acceptable), ("RC past-tense (alive-at-saying)", .acceptable)]
     paperFeatures := [] }
 
-def ex34a : LinguisticExample :=
+def ex34a : Datum :=
   { id := "kratzer1998_ex34a"
     source := ⟨"kratzer-1998", "(34a)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex34a : LinguisticExample :=
     readings := [("sickness-at-yesterday (de re past)", .acceptable)]
     paperFeatures := [] }
 
-def ex35a : LinguisticExample :=
+def ex35a : Datum :=
   { id := "kratzer1998_ex35a"
     source := ⟨"kratzer-1998", "(35a)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex35a : LinguisticExample :=
     readings := [("sickness-at-thought-time", .ungrammatical)]
     paperFeatures := [] }
 
-def ex36a : LinguisticExample :=
+def ex36a : Datum :=
   { id := "kratzer1998_ex36a"
     source := ⟨"kratzer-1998", "(36a)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex36a : LinguisticExample :=
     readings := [("de re on present state", .marginal)]
     paperFeatures := [] }
 
-def ex36b : LinguisticExample :=
+def ex36b : Datum :=
   { id := "kratzer1998_ex36b"
     source := ⟨"kratzer-1998", "(36b)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex36b : LinguisticExample :=
     readings := [("de re on present state (explicit)", .acceptable)]
     paperFeatures := [] }
 
-def ex40a : LinguisticExample :=
+def ex40a : Datum :=
   { id := "kratzer1998_ex40a"
     source := ⟨"kratzer-1998", "(40a)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex40a : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "simple past"), ("context", "out of the blue")] }
 
-def ex40b : LinguisticExample :=
+def ex40b : Datum :=
   { id := "kratzer1998_ex40b"
     source := ⟨"kratzer-1998", "(40b)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex40b : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "Präteritum"), ("context", "out of the blue")] }
 
-def ex40c : LinguisticExample :=
+def ex40c : Datum :=
   { id := "kratzer1998_ex40c"
     source := ⟨"kratzer-1998", "(40c)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex40c : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "Perfekt"), ("context", "out of the blue")] }
 
-def ex41a : LinguisticExample :=
+def ex41a : Datum :=
   { id := "kratzer1998_ex41a"
     source := ⟨"kratzer-1998", "(41a)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex41a : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "simple past"), ("context", "out of the blue")] }
 
-def ex41b : LinguisticExample :=
+def ex41b : Datum :=
   { id := "kratzer1998_ex41b"
     source := ⟨"kratzer-1998", "(41b)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex41b : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "Präteritum"), ("context", "out of the blue")] }
 
-def ex41c : LinguisticExample :=
+def ex41c : Datum :=
   { id := "kratzer1998_ex41c"
     source := ⟨"kratzer-1998", "(41c)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex41c : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "Perfekt"), ("context", "out of the blue")] }
 
-def ex42a : LinguisticExample :=
+def ex42a : Datum :=
   { id := "kratzer1998_ex42a"
     source := ⟨"kratzer-1998", "(42a)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex42a : LinguisticExample :=
     readings := [("anaphoric (caught-before-dreaming)", .acceptable), ("backward-shifted (caught-before-eating)", .acceptable)]
     paperFeatures := [] }
 
-def ex42b : LinguisticExample :=
+def ex42b : Datum :=
   { id := "kratzer1998_ex42b"
     source := ⟨"kratzer-1998", "(42b)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex42b : LinguisticExample :=
     readings := [("anaphoric (caught-at-dreaming-time)", .acceptable), ("backward-shifted (caught-before-eating)", .unacceptable)]
     paperFeatures := [] }
 
-def ex42c : LinguisticExample :=
+def ex42c : Datum :=
   { id := "kratzer1998_ex42c"
     source := ⟨"kratzer-1998", "(42c)"⟩
     reportedIn := none
@@ -290,6 +290,6 @@ def ex42c : LinguisticExample :=
     readings := [("backward-shifted (caught-before-eating)", .acceptable)]
     paperFeatures := [] }
 
-def all : List LinguisticExample := [ex01, ex02, ex03, ex05, ex29, ex30, ex32a, ex33a, ex34a, ex35a, ex36a, ex36b, ex40a, ex40b, ex40c, ex41a, ex41b, ex41c, ex42a, ex42b, ex42c]
+def all : List Datum := [ex01, ex02, ex03, ex05, ex29, ex30, ex32a, ex33a, ex34a, ex35a, ex36a, ex36b, ex40a, ex40b, ex40c, ex41a, ex41b, ex41c, ex42a, ex42b, ex42c]
 
 end Kratzer1998.Examples

@@ -17,7 +17,7 @@ namespace FaustLampitelli2026.Examples
 
 open Data.Examples
 
-def ex_4a_depPrf : LinguisticExample :=
+def ex_4a_depPrf : Datum :=
   { id := "faustlampitelli2026_4a_depPrf"
     source := ⟨"faust-lampitelli-2026", "(4a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_4a_depPrf : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "whip"), ("template", "depPrf")] }
 
-def ex_4a_prf : LinguisticExample :=
+def ex_4a_prf : Datum :=
   { id := "faustlampitelli2026_4a_prf"
     source := ⟨"faust-lampitelli-2026", "(4a)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_4a_prf : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "whip"), ("template", "prf")] }
 
-def ex_4a_imprf : LinguisticExample :=
+def ex_4a_imprf : Datum :=
   { id := "faustlampitelli2026_4a_imprf"
     source := ⟨"faust-lampitelli-2026", "(4a)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_4a_imprf : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "whip"), ("template", "imprf")] }
 
-def ex_4b_depPrf : LinguisticExample :=
+def ex_4b_depPrf : Datum :=
   { id := "faustlampitelli2026_4b_depPrf"
     source := ⟨"faust-lampitelli-2026", "(4b)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_4b_depPrf : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "hear"), ("template", "depPrf")] }
 
-def ex_4b_prf : LinguisticExample :=
+def ex_4b_prf : Datum :=
   { id := "faustlampitelli2026_4b_prf"
     source := ⟨"faust-lampitelli-2026", "(4b)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_4b_prf : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "hear"), ("template", "prf")] }
 
-def ex_4b_imprf : LinguisticExample :=
+def ex_4b_imprf : Datum :=
   { id := "faustlampitelli2026_4b_imprf"
     source := ⟨"faust-lampitelli-2026", "(4b)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_4b_imprf : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "hear"), ("template", "imprf")] }
 
-def ex_4c_depPrf : LinguisticExample :=
+def ex_4c_depPrf : Datum :=
   { id := "faustlampitelli2026_4c_depPrf"
     source := ⟨"faust-lampitelli-2026", "(4c)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_4c_depPrf : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "arrest"), ("template", "depPrf")] }
 
-def ex_4c_prf : LinguisticExample :=
+def ex_4c_prf : Datum :=
   { id := "faustlampitelli2026_4c_prf"
     source := ⟨"faust-lampitelli-2026", "(4c)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_4c_prf : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "arrest"), ("template", "prf")] }
 
-def ex_4c_imprf : LinguisticExample :=
+def ex_4c_imprf : Datum :=
   { id := "faustlampitelli2026_4c_imprf"
     source := ⟨"faust-lampitelli-2026", "(4c)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_4c_imprf : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "arrest"), ("template", "imprf")] }
 
-def ex_4d_depPrf : LinguisticExample :=
+def ex_4d_depPrf : Datum :=
   { id := "faustlampitelli2026_4d_depPrf"
     source := ⟨"faust-lampitelli-2026", "(4d)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_4d_depPrf : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "pull"), ("template", "depPrf")] }
 
-def ex_4d_prf : LinguisticExample :=
+def ex_4d_prf : Datum :=
   { id := "faustlampitelli2026_4d_prf"
     source := ⟨"faust-lampitelli-2026", "(4d)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_4d_prf : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "pull"), ("template", "prf")] }
 
-def ex_4d_imprf : LinguisticExample :=
+def ex_4d_imprf : Datum :=
   { id := "faustlampitelli2026_4d_imprf"
     source := ⟨"faust-lampitelli-2026", "(4d)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_4d_imprf : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "pull"), ("template", "imprf")] }
 
-def ex_5a_juss : LinguisticExample :=
+def ex_5a_juss : Datum :=
   { id := "faustlampitelli2026_5a_juss"
     source := ⟨"faust-lampitelli-2026", "(5a)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_5a_juss : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "weigh"), ("template", "jussGem2")] }
 
-def ex_5a_imp : LinguisticExample :=
+def ex_5a_imp : Datum :=
   { id := "faustlampitelli2026_5a_imp"
     source := ⟨"faust-lampitelli-2026", "(5a)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_5a_imp : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "weigh"), ("template", "impGem")] }
 
-def ex_5b_juss : LinguisticExample :=
+def ex_5b_juss : Datum :=
   { id := "faustlampitelli2026_5b_juss"
     source := ⟨"faust-lampitelli-2026", "(5b)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_5b_juss : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "leave"), ("template", "juss2")] }
 
-def ex_5b_imp : LinguisticExample :=
+def ex_5b_imp : Datum :=
   { id := "faustlampitelli2026_5b_imp"
     source := ⟨"faust-lampitelli-2026", "(5b)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_5b_imp : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "leave"), ("template", "imp")] }
 
-def ex_5c_juss : LinguisticExample :=
+def ex_5c_juss : Datum :=
   { id := "faustlampitelli2026_5c_juss"
     source := ⟨"faust-lampitelli-2026", "(5c)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex_5c_juss : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "getUp"), ("template", "juss2")] }
 
-def ex_5c_imp : LinguisticExample :=
+def ex_5c_imp : Datum :=
   { id := "faustlampitelli2026_5c_imp"
     source := ⟨"faust-lampitelli-2026", "(5c)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex_5c_imp : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "getUp"), ("template", "imp")] }
 
-def ex_6a_prf : LinguisticExample :=
+def ex_6a_prf : Datum :=
   { id := "faustlampitelli2026_6a_prf"
     source := ⟨"faust-lampitelli-2026", "(6a)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex_6a_prf : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "leave"), ("template", "prf3"), ("suffix", "a")] }
 
-def ex_6b_prf : LinguisticExample :=
+def ex_6b_prf : Datum :=
   { id := "faustlampitelli2026_6b_prf"
     source := ⟨"faust-lampitelli-2026", "(6b)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex_6b_prf : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "wash"), ("template", "prf3"), ("suffix", "a")] }
 
-def ex_6b_juss : LinguisticExample :=
+def ex_6b_juss : Datum :=
   { id := "faustlampitelli2026_6b_juss"
     source := ⟨"faust-lampitelli-2026", "(6b)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex_6b_juss : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "wash"), ("template", "juss2")] }
 
-def ex_6c_prf : LinguisticExample :=
+def ex_6c_prf : Datum :=
   { id := "faustlampitelli2026_6c_prf"
     source := ⟨"faust-lampitelli-2026", "(6c)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex_6c_prf : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "flee"), ("template", "prf3"), ("suffix", "a")] }
 
-def ex_7a : LinguisticExample :=
+def ex_7a : Datum :=
   { id := "faustlampitelli2026_7a"
     source := ⟨"faust-lampitelli-2026", "(7a)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex_7a : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "whip"), ("template", "imprf2")] }
 
-def ex_7b : LinguisticExample :=
+def ex_7b : Datum :=
   { id := "faustlampitelli2026_7b"
     source := ⟨"faust-lampitelli-2026", "(7b)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex_7b : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "slaughter"), ("template", "imprf2")] }
 
-def ex_7c : LinguisticExample :=
+def ex_7c : Datum :=
   { id := "faustlampitelli2026_7c"
     source := ⟨"faust-lampitelli-2026", "(7c)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex_7c : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "escape"), ("template", "imprf2NoGem")] }
 
-def ex_7d : LinguisticExample :=
+def ex_7d : Datum :=
   { id := "faustlampitelli2026_7d"
     source := ⟨"faust-lampitelli-2026", "(7d)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex_7d : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "whip"), ("template", "imp")] }
 
-def ex_7e : LinguisticExample :=
+def ex_7e : Datum :=
   { id := "faustlampitelli2026_7e"
     source := ⟨"faust-lampitelli-2026", "(7e)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def ex_7e : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "teach"), ("template", "imp")] }
 
-def ex_7f : LinguisticExample :=
+def ex_7f : Datum :=
   { id := "faustlampitelli2026_7f"
     source := ⟨"faust-lampitelli-2026", "(7f)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def ex_7f : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "ask"), ("template", "imp")] }
 
-def ex_10a_f : LinguisticExample :=
+def ex_10a_f : Datum :=
   { id := "faustlampitelli2026_10a_f"
     source := ⟨"faust-lampitelli-2026", "(10a)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def ex_10a_f : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "whip"), ("template", "imp"), ("suffix", "i")] }
 
-def ex_10b_m : LinguisticExample :=
+def ex_10b_m : Datum :=
   { id := "faustlampitelli2026_10b_m"
     source := ⟨"faust-lampitelli-2026", "(10b)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def ex_10b_m : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "bark"), ("template", "imp")] }
 
-def ex_10b_f : LinguisticExample :=
+def ex_10b_f : Datum :=
   { id := "faustlampitelli2026_10b_f"
     source := ⟨"faust-lampitelli-2026", "(10b)"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def ex_10b_f : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "bark"), ("template", "imp"), ("suffix", "i")] }
 
-def ex_10c_m : LinguisticExample :=
+def ex_10c_m : Datum :=
   { id := "faustlampitelli2026_10c_m"
     source := ⟨"faust-lampitelli-2026", "(10c)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def ex_10c_m : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "hear"), ("template", "imp")] }
 
-def ex_10c_f : LinguisticExample :=
+def ex_10c_f : Datum :=
   { id := "faustlampitelli2026_10c_f"
     source := ⟨"faust-lampitelli-2026", "(10c)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def ex_10c_f : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "hear"), ("template", "imp"), ("suffix", "i")] }
 
-def ex_10d_m : LinguisticExample :=
+def ex_10d_m : Datum :=
   { id := "faustlampitelli2026_10d_m"
     source := ⟨"faust-lampitelli-2026", "(10d)"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def ex_10d_m : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "uncover"), ("template", "imp")] }
 
-def ex_10d_f : LinguisticExample :=
+def ex_10d_f : Datum :=
   { id := "faustlampitelli2026_10d_f"
     source := ⟨"faust-lampitelli-2026", "(10d)"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def ex_10d_f : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "uncover"), ("template", "imp"), ("suffix", "i")] }
 
-def ex_36b : LinguisticExample :=
+def ex_36b : Datum :=
   { id := "faustlampitelli2026_36b"
     source := ⟨"faust-lampitelli-2026", "(36b)"⟩
     reportedIn := none
@@ -485,7 +485,7 @@ def ex_36b : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "hear"), ("template", "imp"), ("suffix", "a")] }
 
-def ex_12a : LinguisticExample :=
+def ex_12a : Datum :=
   { id := "faustlampitelli2026_12a"
     source := ⟨"faust-lampitelli-2026", "(12a)"⟩
     reportedIn := none
@@ -498,7 +498,7 @@ def ex_12a : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "whip"), ("template", "imprf2")] }
 
-def ex_12b : LinguisticExample :=
+def ex_12b : Datum :=
   { id := "faustlampitelli2026_12b"
     source := ⟨"faust-lampitelli-2026", "(12b)"⟩
     reportedIn := none
@@ -511,7 +511,7 @@ def ex_12b : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "ask"), ("template", "imprf2")] }
 
-def ex_12c : LinguisticExample :=
+def ex_12c : Datum :=
   { id := "faustlampitelli2026_12c"
     source := ⟨"faust-lampitelli-2026", "(12c)"⟩
     reportedIn := none
@@ -524,7 +524,7 @@ def ex_12c : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "load"), ("template", "imprf2")] }
 
-def ex_12d : LinguisticExample :=
+def ex_12d : Datum :=
   { id := "faustlampitelli2026_12d"
     source := ⟨"faust-lampitelli-2026", "(12d)"⟩
     reportedIn := none
@@ -537,7 +537,7 @@ def ex_12d : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "uncover"), ("template", "imprf2")] }
 
-def ex_26d : LinguisticExample :=
+def ex_26d : Datum :=
   { id := "faustlampitelli2026_26d"
     source := ⟨"faust-lampitelli-2026", "(26d)"⟩
     reportedIn := none
@@ -550,7 +550,7 @@ def ex_26d : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "pull"), ("template", "imprf2")] }
 
-def ex_13a_ger : LinguisticExample :=
+def ex_13a_ger : Datum :=
   { id := "faustlampitelli2026_13a_ger"
     source := ⟨"faust-lampitelli-2026", "(13a)"⟩
     reportedIn := none
@@ -563,7 +563,7 @@ def ex_13a_ger : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "whip"), ("template", "gerA")] }
 
-def ex_13a_poss : LinguisticExample :=
+def ex_13a_poss : Datum :=
   { id := "faustlampitelli2026_13a_poss"
     source := ⟨"faust-lampitelli-2026", "(13a)"⟩
     reportedIn := none
@@ -576,7 +576,7 @@ def ex_13a_poss : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "whip"), ("template", "gerA"), ("suffix", "u")] }
 
-def ex_13b_ger : LinguisticExample :=
+def ex_13b_ger : Datum :=
   { id := "faustlampitelli2026_13b_ger"
     source := ⟨"faust-lampitelli-2026", "(13b)"⟩
     reportedIn := none
@@ -589,7 +589,7 @@ def ex_13b_ger : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "bark"), ("template", "gerA")] }
 
-def ex_13b_poss : LinguisticExample :=
+def ex_13b_poss : Datum :=
   { id := "faustlampitelli2026_13b_poss"
     source := ⟨"faust-lampitelli-2026", "(13b)"⟩
     reportedIn := none
@@ -602,7 +602,7 @@ def ex_13b_poss : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "bark"), ("template", "gerA"), ("suffix", "u")] }
 
-def ex_13c_ger : LinguisticExample :=
+def ex_13c_ger : Datum :=
   { id := "faustlampitelli2026_13c_ger"
     source := ⟨"faust-lampitelli-2026", "(13c)"⟩
     reportedIn := none
@@ -615,7 +615,7 @@ def ex_13c_ger : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "hear"), ("template", "gerA")] }
 
-def ex_13c_poss : LinguisticExample :=
+def ex_13c_poss : Datum :=
   { id := "faustlampitelli2026_13c_poss"
     source := ⟨"faust-lampitelli-2026", "(13c)"⟩
     reportedIn := none
@@ -628,7 +628,7 @@ def ex_13c_poss : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "hear"), ("template", "gerA"), ("suffix", "ej")] }
 
-def ex_13d_ger : LinguisticExample :=
+def ex_13d_ger : Datum :=
   { id := "faustlampitelli2026_13d_ger"
     source := ⟨"faust-lampitelli-2026", "(13d)"⟩
     reportedIn := none
@@ -641,7 +641,7 @@ def ex_13d_ger : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "uncover"), ("template", "gerA")] }
 
-def ex_13d_poss : LinguisticExample :=
+def ex_13d_poss : Datum :=
   { id := "faustlampitelli2026_13d_poss"
     source := ⟨"faust-lampitelli-2026", "(13d)"⟩
     reportedIn := none
@@ -654,7 +654,7 @@ def ex_13d_poss : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "uncover"), ("template", "gerA"), ("suffix", "om")] }
 
-def ex_37a : LinguisticExample :=
+def ex_37a : Datum :=
   { id := "faustlampitelli2026_37a"
     source := ⟨"faust-lampitelli-2026", "(37a)"⟩
     reportedIn := none
@@ -667,7 +667,7 @@ def ex_37a : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "hear"), ("template", "gerA"), ("suffix", "u")] }
 
-def ex_17a_pass : LinguisticExample :=
+def ex_17a_pass : Datum :=
   { id := "faustlampitelli2026_17a_pass"
     source := ⟨"faust-lampitelli-2026", "(17a)"⟩
     reportedIn := none
@@ -680,7 +680,7 @@ def ex_17a_pass : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "whip"), ("template", "passPrf")] }
 
-def ex_17b_imprf : LinguisticExample :=
+def ex_17b_imprf : Datum :=
   { id := "faustlampitelli2026_17b_imprf"
     source := ⟨"faust-lampitelli-2026", "(17b)"⟩
     reportedIn := none
@@ -693,7 +693,7 @@ def ex_17b_imprf : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "pull"), ("template", "imprf2"), ("predicted", "no")] }
 
-def ex_17b_pass : LinguisticExample :=
+def ex_17b_pass : Datum :=
   { id := "faustlampitelli2026_17b_pass"
     source := ⟨"faust-lampitelli-2026", "(17b)"⟩
     reportedIn := none
@@ -706,7 +706,7 @@ def ex_17b_pass : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "pull"), ("template", "passPrf"), ("predicted", "no")] }
 
-def ex_17c_imprf : LinguisticExample :=
+def ex_17c_imprf : Datum :=
   { id := "faustlampitelli2026_17c_imprf"
     source := ⟨"faust-lampitelli-2026", "(17c)"⟩
     reportedIn := none
@@ -719,7 +719,7 @@ def ex_17c_imprf : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "teach"), ("template", "imprf2"), ("predicted", "no")] }
 
-def ex_17c_pass : LinguisticExample :=
+def ex_17c_pass : Datum :=
   { id := "faustlampitelli2026_17c_pass"
     source := ⟨"faust-lampitelli-2026", "(17c)"⟩
     reportedIn := none
@@ -732,7 +732,7 @@ def ex_17c_pass : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "teach"), ("template", "passPrf"), ("predicted", "no")] }
 
-def ex_17d_imprf : LinguisticExample :=
+def ex_17d_imprf : Datum :=
   { id := "faustlampitelli2026_17d_imprf"
     source := ⟨"faust-lampitelli-2026", "(17d)"⟩
     reportedIn := none
@@ -745,7 +745,7 @@ def ex_17d_imprf : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "ask"), ("template", "imprf2"), ("predicted", "no")] }
 
-def ex_17d_pass : LinguisticExample :=
+def ex_17d_pass : Datum :=
   { id := "faustlampitelli2026_17d_pass"
     source := ⟨"faust-lampitelli-2026", "(17d)"⟩
     reportedIn := none
@@ -758,7 +758,7 @@ def ex_17d_pass : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "ask"), ("template", "passPrf"), ("predicted", "no")] }
 
-def ex_18a_dep : LinguisticExample :=
+def ex_18a_dep : Datum :=
   { id := "faustlampitelli2026_18a_dep"
     source := ⟨"faust-lampitelli-2026", "(18a)"⟩
     reportedIn := none
@@ -771,7 +771,7 @@ def ex_18a_dep : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "whip"), ("template", "depPrf"), ("suffix", "ʌ")] }
 
-def ex_18b_dep : LinguisticExample :=
+def ex_18b_dep : Datum :=
   { id := "faustlampitelli2026_18b_dep"
     source := ⟨"faust-lampitelli-2026", "(18b)"⟩
     reportedIn := none
@@ -784,7 +784,7 @@ def ex_18b_dep : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "hurt"), ("template", "depPrfB"), ("suffix", "ʌ")] }
 
-def ex_18b_ger : LinguisticExample :=
+def ex_18b_ger : Datum :=
   { id := "faustlampitelli2026_18b_ger"
     source := ⟨"faust-lampitelli-2026", "(18b)"⟩
     reportedIn := none
@@ -797,7 +797,7 @@ def ex_18b_ger : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "hurt"), ("template", "gerB")] }
 
-def ex_18c_dep : LinguisticExample :=
+def ex_18c_dep : Datum :=
   { id := "faustlampitelli2026_18c_dep"
     source := ⟨"faust-lampitelli-2026", "(18c)"⟩
     reportedIn := none
@@ -810,7 +810,7 @@ def ex_18c_dep : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "bless"), ("template", "depPrfC"), ("suffix", "ʌ")] }
 
-def ex_18c_ger : LinguisticExample :=
+def ex_18c_ger : Datum :=
   { id := "faustlampitelli2026_18c_ger"
     source := ⟨"faust-lampitelli-2026", "(18c)"⟩
     reportedIn := none
@@ -823,7 +823,7 @@ def ex_18c_ger : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "bless"), ("template", "gerC"), ("predicted", "no")] }
 
-def ex_19b_arifu : LinguisticExample :=
+def ex_19b_arifu : Datum :=
   { id := "faustlampitelli2026_19b_arifu"
     source := ⟨"faust-lampitelli-2026", "(19b)"⟩
     reportedIn := none
@@ -836,7 +836,7 @@ def ex_19b_arifu : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "arf"), ("template", "prf"), ("suffix", "u")] }
 
-def ex_19b_tismaa : LinguisticExample :=
+def ex_19b_tismaa : Datum :=
   { id := "faustlampitelli2026_19b_tismaa"
     source := ⟨"faust-lampitelli-2026", "(19b)"⟩
     reportedIn := none
@@ -849,7 +849,7 @@ def ex_19b_tismaa : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "hear"), ("template", "juss2")] }
 
-def ex_19c : LinguisticExample :=
+def ex_19c : Datum :=
   { id := "faustlampitelli2026_19c"
     source := ⟨"faust-lampitelli-2026", "(19c)"⟩
     reportedIn := none
@@ -862,7 +862,7 @@ def ex_19c : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "hear"), ("template", "caus"), ("suffix", "ka")] }
 
-def ex_31a : LinguisticExample :=
+def ex_31a : Datum :=
   { id := "faustlampitelli2026_31a"
     source := ⟨"faust-lampitelli-2026", "(31a)"⟩
     reportedIn := none
@@ -875,7 +875,7 @@ def ex_31a : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "leave"), ("template", "juss2")] }
 
-def ex_32b : LinguisticExample :=
+def ex_32b : Datum :=
   { id := "faustlampitelli2026_32b"
     source := ⟨"faust-lampitelli-2026", "(32b)"⟩
     reportedIn := none
@@ -888,7 +888,7 @@ def ex_32b : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "pull"), ("template", "juss2")] }
 
-def ex_32c : LinguisticExample :=
+def ex_32c : Datum :=
   { id := "faustlampitelli2026_32c"
     source := ⟨"faust-lampitelli-2026", "(32c)"⟩
     reportedIn := none
@@ -901,7 +901,7 @@ def ex_32c : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "pull"), ("template", "juss2"), ("suffix", "i")] }
 
-def ex_33a : LinguisticExample :=
+def ex_33a : Datum :=
   { id := "faustlampitelli2026_33a"
     source := ⟨"faust-lampitelli-2026", "(33a)"⟩
     reportedIn := none
@@ -914,7 +914,7 @@ def ex_33a : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "arf"), ("template", "imp")] }
 
-def ex_33b : LinguisticExample :=
+def ex_33b : Datum :=
   { id := "faustlampitelli2026_33b"
     source := ⟨"faust-lampitelli-2026", "(33b)"⟩
     reportedIn := none
@@ -927,7 +927,7 @@ def ex_33b : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "arf"), ("template", "depPrf")] }
 
-def ex_37b : LinguisticExample :=
+def ex_37b : Datum :=
   { id := "faustlampitelli2026_37b"
     source := ⟨"faust-lampitelli-2026", "(37b)"⟩
     reportedIn := none
@@ -940,7 +940,7 @@ def ex_37b : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "pull"), ("template", "imp")] }
 
-def ex_37d : LinguisticExample :=
+def ex_37d : Datum :=
   { id := "faustlampitelli2026_37d"
     source := ⟨"faust-lampitelli-2026", "(37d)"⟩
     reportedIn := none
@@ -953,7 +953,7 @@ def ex_37d : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "hear"), ("template", "depPrf"), ("suffix", "ku")] }
 
-def ex_38 : LinguisticExample :=
+def ex_38 : Datum :=
   { id := "faustlampitelli2026_38"
     source := ⟨"faust-lampitelli-2026", "(38)"⟩
     reportedIn := none
@@ -966,6 +966,6 @@ def ex_38 : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "hear"), ("template", "passPrf"), ("suffix", "u")] }
 
-def all : List LinguisticExample := [ex_4a_depPrf, ex_4a_prf, ex_4a_imprf, ex_4b_depPrf, ex_4b_prf, ex_4b_imprf, ex_4c_depPrf, ex_4c_prf, ex_4c_imprf, ex_4d_depPrf, ex_4d_prf, ex_4d_imprf, ex_5a_juss, ex_5a_imp, ex_5b_juss, ex_5b_imp, ex_5c_juss, ex_5c_imp, ex_6a_prf, ex_6b_prf, ex_6b_juss, ex_6c_prf, ex_7a, ex_7b, ex_7c, ex_7d, ex_7e, ex_7f, ex_10a_f, ex_10b_m, ex_10b_f, ex_10c_m, ex_10c_f, ex_10d_m, ex_10d_f, ex_36b, ex_12a, ex_12b, ex_12c, ex_12d, ex_26d, ex_13a_ger, ex_13a_poss, ex_13b_ger, ex_13b_poss, ex_13c_ger, ex_13c_poss, ex_13d_ger, ex_13d_poss, ex_37a, ex_17a_pass, ex_17b_imprf, ex_17b_pass, ex_17c_imprf, ex_17c_pass, ex_17d_imprf, ex_17d_pass, ex_18a_dep, ex_18b_dep, ex_18b_ger, ex_18c_dep, ex_18c_ger, ex_19b_arifu, ex_19b_tismaa, ex_19c, ex_31a, ex_32b, ex_32c, ex_33a, ex_33b, ex_37b, ex_37d, ex_38]
+def all : List Datum := [ex_4a_depPrf, ex_4a_prf, ex_4a_imprf, ex_4b_depPrf, ex_4b_prf, ex_4b_imprf, ex_4c_depPrf, ex_4c_prf, ex_4c_imprf, ex_4d_depPrf, ex_4d_prf, ex_4d_imprf, ex_5a_juss, ex_5a_imp, ex_5b_juss, ex_5b_imp, ex_5c_juss, ex_5c_imp, ex_6a_prf, ex_6b_prf, ex_6b_juss, ex_6c_prf, ex_7a, ex_7b, ex_7c, ex_7d, ex_7e, ex_7f, ex_10a_f, ex_10b_m, ex_10b_f, ex_10c_m, ex_10c_f, ex_10d_m, ex_10d_f, ex_36b, ex_12a, ex_12b, ex_12c, ex_12d, ex_26d, ex_13a_ger, ex_13a_poss, ex_13b_ger, ex_13b_poss, ex_13c_ger, ex_13c_poss, ex_13d_ger, ex_13d_poss, ex_37a, ex_17a_pass, ex_17b_imprf, ex_17b_pass, ex_17c_imprf, ex_17c_pass, ex_17d_imprf, ex_17d_pass, ex_18a_dep, ex_18b_dep, ex_18b_ger, ex_18c_dep, ex_18c_ger, ex_19b_arifu, ex_19b_tismaa, ex_19c, ex_31a, ex_32b, ex_32c, ex_33a, ex_33b, ex_37b, ex_37d, ex_38]
 
 end FaustLampitelli2026.Examples

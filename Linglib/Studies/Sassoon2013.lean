@@ -55,11 +55,11 @@ def classify (conj disj : ℕ) : DimensionBindingType :=
   if 3 * disj ≤ conj then .conjunctive else if 3 * conj ≤ disj then .disjunctive else .mixed
 
 /-- A sampled adjective's binding type from its corpus percentages. -/
-def binding? (x : LinguisticExample) : Option DimensionBindingType :=
+def binding? (x : Datum) : Option DimensionBindingType :=
   (x.nat? "conj").bind λ c => (x.nat? "disj").map (classify c)
 
 /-- The row of an adjective. -/
-def rowOf (form : String) : Option LinguisticExample :=
+def rowOf (form : String) : Option Datum :=
   Examples.all.find? (·.primaryText == form)
 
 /-- The criterion applied to the sample yields the paper's lists: the conjunctive adjectives,

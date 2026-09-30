@@ -17,7 +17,7 @@ namespace Herce2023.Examples
 
 open Data.Examples
 
-def venir_1sg_ind : LinguisticExample :=
+def venir_1sg_ind : Datum :=
   { id := "herce2023_venir_1sg_ind"
     source := ⟨"herce-2023", "Table 1.2"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def venir_1sg_ind : LinguisticExample :=
     readings := []
     paperFeatures := [("cell", "1SG.PRS.IND"), ("lexeme", "venir"), ("stem", "veng")] }
 
-def venir_2sg_ind : LinguisticExample :=
+def venir_2sg_ind : Datum :=
   { id := "herce2023_venir_2sg_ind"
     source := ⟨"herce-2023", "Table 1.2"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def venir_2sg_ind : LinguisticExample :=
     readings := []
     paperFeatures := [("cell", "2SG.PRS.IND"), ("lexeme", "venir"), ("stem", "vien")] }
 
-def venir_1pl_ind : LinguisticExample :=
+def venir_1pl_ind : Datum :=
   { id := "herce2023_venir_1pl_ind"
     source := ⟨"herce-2023", "Table 1.2"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def venir_1pl_ind : LinguisticExample :=
     readings := []
     paperFeatures := [("cell", "1PL.PRS.IND"), ("lexeme", "venir"), ("stem", "ven")] }
 
-def venir_1sg_sbjv : LinguisticExample :=
+def venir_1sg_sbjv : Datum :=
   { id := "herce2023_venir_1sg_sbjv"
     source := ⟨"herce-2023", "Table 1.2"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def venir_1sg_sbjv : LinguisticExample :=
     readings := []
     paperFeatures := [("cell", "1SG.PRS.SBJV"), ("lexeme", "venir"), ("stem", "veng")] }
 
-def nacer_1sg_ind : LinguisticExample :=
+def nacer_1sg_ind : Datum :=
   { id := "herce2023_nacer_1sg_ind"
     source := ⟨"herce-2023", "Table 1.2"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def nacer_1sg_ind : LinguisticExample :=
     readings := []
     paperFeatures := [("cell", "1SG.PRS.IND"), ("lexeme", "nacer"), ("stem", "naθk")] }
 
-def nacer_1pl_ind : LinguisticExample :=
+def nacer_1pl_ind : Datum :=
   { id := "herce2023_nacer_1pl_ind"
     source := ⟨"herce-2023", "Table 1.2"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def nacer_1pl_ind : LinguisticExample :=
     readings := []
     paperFeatures := [("cell", "1PL.PRS.IND"), ("lexeme", "nacer"), ("stem", "naθ")] }
 
-def caber_1sg_ind : LinguisticExample :=
+def caber_1sg_ind : Datum :=
   { id := "herce2023_caber_1sg_ind"
     source := ⟨"herce-2023", "Table 1.2"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def caber_1sg_ind : LinguisticExample :=
     readings := []
     paperFeatures := [("cell", "1SG.PRS.IND"), ("lexeme", "caber"), ("stem", "kep")] }
 
-def caber_2sg_ind : LinguisticExample :=
+def caber_2sg_ind : Datum :=
   { id := "herce2023_caber_2sg_ind"
     source := ⟨"herce-2023", "Table 1.2"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def caber_2sg_ind : LinguisticExample :=
     readings := []
     paperFeatures := [("cell", "2SG.PRS.IND"), ("lexeme", "caber"), ("stem", "kab")] }
 
-def ra_npst_1sg : LinguisticExample :=
+def ra_npst_1sg : Datum :=
   { id := "herce2023_ra_npst_1sg"
     source := ⟨"herce-2023", "Table 4.32"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ra_npst_1sg : LinguisticExample :=
     readings := []
     paperFeatures := [("cell", "NPST.1SG"), ("lexeme", "ra")] }
 
-def ra_npst_2sg : LinguisticExample :=
+def ra_npst_2sg : Datum :=
   { id := "herce2023_ra_npst_2sg"
     source := ⟨"herce-2023", "Table 4.32"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ra_npst_2sg : LinguisticExample :=
     readings := []
     paperFeatures := [("cell", "NPST.2SG"), ("lexeme", "ra")] }
 
-def ra_npst_3sg : LinguisticExample :=
+def ra_npst_3sg : Datum :=
   { id := "herce2023_ra_npst_3sg"
     source := ⟨"herce-2023", "Table 4.32"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ra_npst_3sg : LinguisticExample :=
     readings := []
     paperFeatures := [("cell", "NPST.3SG"), ("lexeme", "ra")] }
 
-def ra_pst_2sg : LinguisticExample :=
+def ra_pst_2sg : Datum :=
   { id := "herce2023_ra_pst_2sg"
     source := ⟨"herce-2023", "Table 4.32"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ra_pst_2sg : LinguisticExample :=
     readings := []
     paperFeatures := [("cell", "PST.2SG"), ("lexeme", "ra")] }
 
-def ra_pst_1sg : LinguisticExample :=
+def ra_pst_1sg : Datum :=
   { id := "herce2023_ra_pst_1sg"
     source := ⟨"herce-2023", "Table 4.32"⟩
     reportedIn := none
@@ -186,6 +186,6 @@ def ra_pst_1sg : LinguisticExample :=
     readings := []
     paperFeatures := [("cell", "PST.1SG"), ("lexeme", "ra")] }
 
-def all : List LinguisticExample := [venir_1sg_ind, venir_2sg_ind, venir_1pl_ind, venir_1sg_sbjv, nacer_1sg_ind, nacer_1pl_ind, caber_1sg_ind, caber_2sg_ind, ra_npst_1sg, ra_npst_2sg, ra_npst_3sg, ra_pst_2sg, ra_pst_1sg]
+def all : List Datum := [venir_1sg_ind, venir_2sg_ind, venir_1pl_ind, venir_1sg_sbjv, nacer_1sg_ind, nacer_1pl_ind, caber_1sg_ind, caber_2sg_ind, ra_npst_1sg, ra_npst_2sg, ra_npst_3sg, ra_pst_2sg, ra_pst_1sg]
 
 end Herce2023.Examples

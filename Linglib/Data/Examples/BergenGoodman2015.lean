@@ -17,7 +17,7 @@ namespace BergenGoodman2015.Examples
 
 open Data.Examples
 
-def stressed_subject : LinguisticExample :=
+def stressed_subject : Datum :=
   { id := "bergengoodman2015_stressed_subject"
     source := ⟨"bergen-goodman-2015", "UNVERIFIED (2)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def stressed_subject : LinguisticExample :=
     readings := []
     paperFeatures := [("stress", "subject"), ("reading", "exhaustive")] }
 
-def unstressed_subject : LinguisticExample :=
+def unstressed_subject : Datum :=
   { id := "bergengoodman2015_unstressed_subject"
     source := ⟨"bergen-goodman-2015", "UNVERIFIED section 4"⟩
     reportedIn := none
@@ -43,6 +43,6 @@ def unstressed_subject : LinguisticExample :=
     readings := []
     paperFeatures := [("stress", "none"), ("reading", "nonExhaustive")] }
 
-def all : List LinguisticExample := [stressed_subject, unstressed_subject]
+def all : List Datum := [stressed_subject, unstressed_subject]
 
 end BergenGoodman2015.Examples

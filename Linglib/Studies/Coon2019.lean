@@ -361,7 +361,7 @@ end Semantics
 /-! ### The rows -/
 
 /-- The root of a row, from the fragment lexicon by its form. -/
-def rowRoot (row : LinguisticExample) : Option ChujRoot :=
+def rowRoot (row : Datum) : Option ChujRoot :=
   row.feature? "rootForm" >>= λ f => allRoots.find? (·.form == f)
 
 def heads : List (String × V) :=
@@ -381,7 +381,7 @@ structure Stem where
   hasAj : Bool
 
 /-- The stem a row records. -/
-def Stem.ofRow (row : LinguisticExample) : Option Stem := do
+def Stem.ofRow (row : Datum) : Option Stem := do
   guard (row.feature? "construction" = some "stem")
   return ⟨(← rowRoot row).class', ← row.parse? "head" heads,
     ← row.parse? "internal"
@@ -397,7 +397,7 @@ theorem stem_rows : ∀ row ∈ Examples.all, row.feature? "construction" = some
   decide
 
 /-- The head a diagnostic row tests. -/
-def diagnosticHead (row : LinguisticExample) : Option V := do
+def diagnosticHead (row : Datum) : Option V := do
   guard (row.feature? "construction" = some "diagnostic")
   row.parse? "head" heads
 
@@ -409,7 +409,7 @@ theorem diagnostic_rows : ∀ row ∈ Examples.all,
   decide
 
 /-- The head and the recorded reading of an oblique row. -/
-def obliqueRow (row : LinguisticExample) : Option (V × ObliqueReading) := do
+def obliqueRow (row : Datum) : Option (V × ObliqueReading) := do
   guard (row.feature? "oblique").isSome
   return (← row.parse? "head" heads,
     ← row.parse? "oblique" [("agent", ObliqueReading.agent), ("cause", .cause)])

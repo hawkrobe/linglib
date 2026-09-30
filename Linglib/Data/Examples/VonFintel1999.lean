@@ -17,7 +17,7 @@ namespace VonFintel1999.Examples
 
 open Data.Examples
 
-def ex10 : LinguisticExample :=
+def ex10 : Datum :=
   { id := "vonfintel1999_ex10"
     source := ⟨"von-fintel-1999", "ex. 10, p. 101"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex10 : LinguisticExample :=
     readings := []
     paperFeatures := [("licenser", "only John"), ("npi", "ever, any")] }
 
-def ex21 : LinguisticExample :=
+def ex21 : Datum :=
   { id := "vonfintel1999_ex21"
     source := ⟨"von-fintel-1999", "ex. 21, p. 107"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex21 : LinguisticExample :=
     readings := []
     paperFeatures := [("licenser", "since"), ("npi", "any")] }
 
-def ex28a : LinguisticExample :=
+def ex28a : Datum :=
   { id := "vonfintel1999_ex28a"
     source := ⟨"von-fintel-1999", "ex. 28a, p. 111"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex28a : LinguisticExample :=
     readings := []
     paperFeatures := [("licenser", "amazed/surprised"), ("npi", "ever")] }
 
-def ex28b : LinguisticExample :=
+def ex28b : Datum :=
   { id := "vonfintel1999_ex28b"
     source := ⟨"von-fintel-1999", "ex. 28b, p. 111"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex28b : LinguisticExample :=
     readings := []
     paperFeatures := [("licenser", "sorry/regret"), ("npi", "any")] }
 
-def glad_any : LinguisticExample :=
+def glad_any : Datum :=
   { id := "vonfintel1999_glad_any"
     source := ⟨"von-fintel-1999", "§3.3 discussion"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def glad_any : LinguisticExample :=
     readings := []
     paperFeatures := [("licenser", "glad (non-licenser)"), ("npi", "any")] }
 
-def ex70a : LinguisticExample :=
+def ex70a : Datum :=
   { id := "vonfintel1999_ex70a"
     source := ⟨"von-fintel-1999", "ex. 70a, p. 135"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex70a : LinguisticExample :=
     readings := []
     paperFeatures := [("licenser", "conditional antecedent"), ("npi", "any, ever")] }
 
-def ex75 : LinguisticExample :=
+def ex75 : Datum :=
   { id := "vonfintel1999_ex75"
     source := ⟨"von-fintel-1999", "ex. 75, p. 138"⟩
     reportedIn := none
@@ -108,6 +108,6 @@ def ex75 : LinguisticExample :=
     readings := []
     paperFeatures := [("licenser", "superlative"), ("npi", "ever")] }
 
-def all : List LinguisticExample := [ex10, ex21, ex28a, ex28b, glad_any, ex70a, ex75]
+def all : List Datum := [ex10, ex21, ex28a, ex28b, glad_any, ex70a, ex75]
 
 end VonFintel1999.Examples

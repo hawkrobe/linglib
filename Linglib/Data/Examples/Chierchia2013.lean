@@ -17,7 +17,7 @@ namespace Chierchia2013.Examples
 
 open Data.Examples
 
-def ex1a : LinguisticExample :=
+def ex1a : Datum :=
   { id := "chierchia2013_ex1a"
     source := ⟨"chierchia-2013", "(1a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex1a : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "or"), ("position", "conditionalConsequent"), ("reading", "exclusive")] }
 
-def ex1b : LinguisticExample :=
+def ex1b : Datum :=
   { id := "chierchia2013_ex1b"
     source := ⟨"chierchia-2013", "(1b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex1b : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "or"), ("position", "conditionalAntecedent"), ("reading", "inclusive")] }
 
-def ex5a : LinguisticExample :=
+def ex5a : Datum :=
   { id := "chierchia2013_ex5a"
     source := ⟨"chierchia-2013", "(5a)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex5a : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "or"), ("position", "everyScope"), ("reading", "exclusive")] }
 
-def ex5b : LinguisticExample :=
+def ex5b : Datum :=
   { id := "chierchia2013_ex5b"
     source := ⟨"chierchia-2013", "(5b)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex5b : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "or"), ("position", "universalRestrictor"), ("reading", "inclusive")] }
 
-def ex12a : LinguisticExample :=
+def ex12a : Datum :=
   { id := "chierchia2013_ex12a"
     source := ⟨"chierchia-2013", "(12a)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex12a : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "or"), ("position", "positiveQuantifierScope"), ("reading", "exclusive")] }
 
-def ex12b : LinguisticExample :=
+def ex12b : Datum :=
   { id := "chierchia2013_ex12b"
     source := ⟨"chierchia-2013", "(12b)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex12b : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "or"), ("position", "nobody"), ("reading", "inclusive")] }
 
-def ex12c : LinguisticExample :=
+def ex12c : Datum :=
   { id := "chierchia2013_ex12c"
     source := ⟨"chierchia-2013", "(12c)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex12c : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "or"), ("position", "matrix"), ("reading", "exclusive")] }
 
-def ex12d : LinguisticExample :=
+def ex12d : Datum :=
   { id := "chierchia2013_ex12d"
     source := ⟨"chierchia-2013", "(12d)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex12d : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "or"), ("position", "negation"), ("reading", "inclusive")] }
 
-def ex13 : LinguisticExample :=
+def ex13 : Datum :=
   { id := "chierchia2013_ex13"
     source := ⟨"chierchia-2013", "(13)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex13 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "or"), ("position", "nobody"), ("reading", "exclusive"), ("forced", "true")] }
 
-def ex19a : LinguisticExample :=
+def ex19a : Datum :=
   { id := "chierchia2013_ex19a"
     source := ⟨"chierchia-2013", "(19a)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex19a : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "or"), ("position", "negation"), ("reading", "inclusive")] }
 
-def ex15ia : LinguisticExample :=
+def ex15ia : Datum :=
   { id := "chierchia2013_ex15ia"
     source := ⟨"chierchia-2013", "(15i a)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex15ia : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "any"), ("position", "conditionalConsequent")] }
 
-def ex15ib : LinguisticExample :=
+def ex15ib : Datum :=
   { id := "chierchia2013_ex15ib"
     source := ⟨"chierchia-2013", "(15i b)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex15ib : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "any"), ("position", "conditionalAntecedent")] }
 
-def ex15iia : LinguisticExample :=
+def ex15iia : Datum :=
   { id := "chierchia2013_ex15iia"
     source := ⟨"chierchia-2013", "(15ii a)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex15iia : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "any"), ("position", "everyScope")] }
 
-def ex15iib : LinguisticExample :=
+def ex15iib : Datum :=
   { id := "chierchia2013_ex15iib"
     source := ⟨"chierchia-2013", "(15ii b)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex15iib : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "any"), ("position", "universalRestrictor")] }
 
-def ex15iiia : LinguisticExample :=
+def ex15iiia : Datum :=
   { id := "chierchia2013_ex15iiia"
     source := ⟨"chierchia-2013", "(15iii a)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex15iiia : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "any"), ("position", "positiveQuantifierScope")] }
 
-def ex15iiib : LinguisticExample :=
+def ex15iiib : Datum :=
   { id := "chierchia2013_ex15iiib"
     source := ⟨"chierchia-2013", "(15iii b)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex15iiib : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "any"), ("position", "nobody")] }
 
-def ex16ia : LinguisticExample :=
+def ex16ia : Datum :=
   { id := "chierchia2013_ex16ia"
     source := ⟨"chierchia-2013", "(16i a)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex16ia : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "ever"), ("position", "conditionalConsequent")] }
 
-def ex16ib : LinguisticExample :=
+def ex16ib : Datum :=
   { id := "chierchia2013_ex16ib"
     source := ⟨"chierchia-2013", "(16i b)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex16ib : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "ever"), ("position", "conditionalAntecedent")] }
 
-def ex16iia : LinguisticExample :=
+def ex16iia : Datum :=
   { id := "chierchia2013_ex16iia"
     source := ⟨"chierchia-2013", "(16ii a)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex16iia : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "ever"), ("position", "everyScope")] }
 
-def ex16iib : LinguisticExample :=
+def ex16iib : Datum :=
   { id := "chierchia2013_ex16iib"
     source := ⟨"chierchia-2013", "(16ii b)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex16iib : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "ever"), ("position", "universalRestrictor")] }
 
-def ex16iiia : LinguisticExample :=
+def ex16iiia : Datum :=
   { id := "chierchia2013_ex16iiia"
     source := ⟨"chierchia-2013", "(16iii a)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex16iiia : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "ever"), ("position", "positiveQuantifierScope")] }
 
-def ex16iiib : LinguisticExample :=
+def ex16iiib : Datum :=
   { id := "chierchia2013_ex16iiib"
     source := ⟨"chierchia-2013", "(16iii b)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex16iiib : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "ever"), ("position", "nobody")] }
 
-def ex21a : LinguisticExample :=
+def ex21a : Datum :=
   { id := "chierchia2013_ex21a"
     source := ⟨"chierchia-2013", "(21a)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex21a : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "any"), ("position", "matrix")] }
 
-def ex21b : LinguisticExample :=
+def ex21b : Datum :=
   { id := "chierchia2013_ex21b"
     source := ⟨"chierchia-2013", "(21b)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex21b : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "ever"), ("position", "matrix")] }
 
-def ex21c : LinguisticExample :=
+def ex21c : Datum :=
   { id := "chierchia2013_ex21c"
     source := ⟨"chierchia-2013", "(21c)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex21c : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "any"), ("position", "doubtVerb")] }
 
-def ex21d : LinguisticExample :=
+def ex21d : Datum :=
   { id := "chierchia2013_ex21d"
     source := ⟨"chierchia-2013", "(21d)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex21d : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "ever"), ("position", "doubtVerb")] }
 
-def ex70ai : LinguisticExample :=
+def ex70ai : Datum :=
   { id := "chierchia2013_ex70ai"
     source := ⟨"chierchia-2013", "(70a i)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def ex70ai : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "any"), ("position", "modalPossibility")] }
 
-def ex70aii : LinguisticExample :=
+def ex70aii : Datum :=
   { id := "chierchia2013_ex70aii"
     source := ⟨"chierchia-2013", "(70a ii)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def ex70aii : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "ever"), ("position", "modalPossibility")] }
 
-def ex70ci : LinguisticExample :=
+def ex70ci : Datum :=
   { id := "chierchia2013_ex70ci"
     source := ⟨"chierchia-2013", "(70c i)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def ex70ci : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "any"), ("position", "imperative")] }
 
-def ex70cii : LinguisticExample :=
+def ex70cii : Datum :=
   { id := "chierchia2013_ex70cii"
     source := ⟨"chierchia-2013", "(70c ii)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def ex70cii : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "ever"), ("position", "imperative")] }
 
-def ex70di : LinguisticExample :=
+def ex70di : Datum :=
   { id := "chierchia2013_ex70di"
     source := ⟨"chierchia-2013", "(70d i)"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def ex70di : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "alcuno"), ("position", "doubtVerb")] }
 
-def ex70dii : LinguisticExample :=
+def ex70dii : Datum :=
   { id := "chierchia2013_ex70dii"
     source := ⟨"chierchia-2013", "(70d ii)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def ex70dii : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "alcuno"), ("position", "modalPossibility")] }
 
-def ex70ei : LinguisticExample :=
+def ex70ei : Datum :=
   { id := "chierchia2013_ex70ei"
     source := ⟨"chierchia-2013", "(70e i)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def ex70ei : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "qualsiasi"), ("position", "negation")] }
 
-def ex70eii : LinguisticExample :=
+def ex70eii : Datum :=
   { id := "chierchia2013_ex70eii"
     source := ⟨"chierchia-2013", "(70e ii)"⟩
     reportedIn := none
@@ -459,6 +459,6 @@ def ex70eii : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "qualsiasi"), ("position", "modalPossibility")] }
 
-def all : List LinguisticExample := [ex1a, ex1b, ex5a, ex5b, ex12a, ex12b, ex12c, ex12d, ex13, ex19a, ex15ia, ex15ib, ex15iia, ex15iib, ex15iiia, ex15iiib, ex16ia, ex16ib, ex16iia, ex16iib, ex16iiia, ex16iiib, ex21a, ex21b, ex21c, ex21d, ex70ai, ex70aii, ex70ci, ex70cii, ex70di, ex70dii, ex70ei, ex70eii]
+def all : List Datum := [ex1a, ex1b, ex5a, ex5b, ex12a, ex12b, ex12c, ex12d, ex13, ex19a, ex15ia, ex15ib, ex15iia, ex15iib, ex15iiia, ex15iiib, ex16ia, ex16ib, ex16iia, ex16iib, ex16iiia, ex16iiib, ex21a, ex21b, ex21c, ex21d, ex70ai, ex70aii, ex70ci, ex70cii, ex70di, ex70dii, ex70ei, ex70eii]
 
 end Chierchia2013.Examples

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate Lean 4 LinguisticExample modules from per-paper JSON files.
+"""Generate the Lean 4 example modules, lists of `Datum`, from per-paper JSON files.
 
 Usage:
     python3 scripts/gen_examples.py <AuthorYear>
@@ -19,7 +19,7 @@ The `Linglib.lean` root import is not touched: the lakefile globs every
 submodule, and `scripts/mk_all.py` regenerates the root before a release.
 
 JSON file format: a single top-level JSON array of example objects. Each
-object's keys are the fields of the `LinguisticExample` Lean struct, plus the
+object's keys are the fields of the `Datum` Lean struct, plus the
 record-only keys `discourseSegments`, `translation`, `comment` and `verified`:
 
   {
@@ -251,7 +251,7 @@ def emit_example(ex: dict, author_year_lower: str) -> str:
     readings    = emit_form_judgment_list(ex.get("readings", []), where + ".readings", "name")
     features    = emit_string_pair_list(ex.get("paperFeatures", []), where + ".paperFeatures")
 
-    return f"""def {local} : LinguisticExample :=
+    return f"""def {local} : Datum :=
   {{ id := {lean_string(ex_id)}
     source := {src}
     reportedIn := {reported_in}
@@ -269,14 +269,14 @@ def emit_module(author_year: str, examples: list) -> str:
     ay_lower = author_year.lower()
     if not examples:
         body = "-- (no examples in JSON)"
-        all_def = "def all : List LinguisticExample := []"
+        all_def = "def all : List Datum := []"
     else:
         body = "\n\n".join(emit_example(e, ay_lower) for e in examples)
         local_ids = [
             lean_identifier((e.get("id") or "").strip(), ay_lower)
             for e in examples
         ]
-        all_def = f"def all : List LinguisticExample := [{', '.join(local_ids)}]"
+        all_def = f"def all : List Datum := [{', '.join(local_ids)}]"
 
     return f"""import Linglib.Data.Examples.Schema
 

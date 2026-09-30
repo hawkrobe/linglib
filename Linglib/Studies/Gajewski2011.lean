@@ -275,13 +275,13 @@ structure Row where
   judgment : Judgment
   deriving DecidableEq, Repr
 
-def Row.ofExample (ex : LinguisticExample) : Option Row := do
+def Row.ofDatum (ex : Datum) : Option Row := do
   let licenser ← ex.parse? "licenser" [("no", Licenser.no), ("atMostFive", .atMostFive),
     ("some", .some), ("only", .only), ("conditional", .conditional), ("sorry", .sorryThat)]
   let strength ← ex.parse? "strength" [("weak", Strength.weak), ("strong", .strong)]
   pure ⟨licenser, strength, ex.judgment⟩
 
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- Every judgment in the paper follows from the two licensing principles. -/
 theorem rows_predicted :

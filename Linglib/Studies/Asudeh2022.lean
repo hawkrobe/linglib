@@ -268,7 +268,7 @@ theorem readings_differ :
 /-! ### The paper's examples -/
 
 /-- The meaning constructors a row's words contribute. -/
-def lexicon? (r : LinguisticExample) : Option (List (List (GlueTy Label))) :=
+def lexicon? (r : Datum) : Option (List (List (GlueTy Label))) :=
   match r.language, r.feature? "premises" with
   | "finn1318", some "speaker, drink, water" => some finnish
   | "stan1293", some "speaker, drink, water" => some english

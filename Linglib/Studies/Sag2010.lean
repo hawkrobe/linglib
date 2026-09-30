@@ -315,16 +315,16 @@ def whCategories : List (String × WhCategory) :=
     ("ppReason", .ppReason)]
 
 /-- The rows probing a parameter. -/
-def probing (p : Parameter) : List LinguisticExample :=
+def probing (p : Parameter) : List Datum :=
   Examples.all.filter fun x ↦ decide (x.parse? "parameter" parameters = some p)
 
 /-- The clause a row instantiates. -/
-def clause? (x : LinguisticExample) : Option FGClause := x.parse? "construction" clauses
+def clause? (x : Datum) : Option FGClause := x.parse? "construction" clauses
 
 /-- The construct that a row describes, with its filler and head categories and the inversion,
 finiteness and embedding of its head. The filler is an NP and the head an uninverted, finite,
 matrix S unless the row records otherwise. -/
-def construct (x : LinguisticExample) : Construct where
+def construct (x : Datum) : Construct where
   filler := (x.parse? "filler" cats).getD .NP
   head := (x.parse? "head" cats).getD .S
   inverted := (x.parse? "inverted" bools).getD false
@@ -332,7 +332,7 @@ def construct (x : LinguisticExample) : Construct where
   independent := !(x.parse? "embedded" bools).getD false
 
 /-- The wh-form and category of a row's filler, if it contains a wh-word. -/
-def whWord? (x : LinguisticExample) : Option (WhForm × WhCategory) :=
+def whWord? (x : Datum) : Option (WhForm × WhCategory) :=
   (x.parse? "whForm" whForms).bind fun f ↦ (x.parse? "whCategory" whCategories).map (f, ·)
 
 /-- The judgment the inventory records for a wh-form of a category in a wh-construction. -/
@@ -357,7 +357,7 @@ def markers (f : WhForm) (cat : WhCategory) : List Marker :=
 
 /-- The markers that a row's filler can bear. They are those of its wh-word if it contains one,
 the definite degree marker if it contains comparative *the*, and none otherwise. -/
-def fillerMarkers (x : LinguisticExample) : List Marker :=
+def fillerMarkers (x : Datum) : List Marker :=
   match whWord? x with
   | some (f, cat) => markers f cat
   | none => if (x.parse? "the" bools).getD false then [.the] else [.none]

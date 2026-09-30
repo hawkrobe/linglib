@@ -17,7 +17,7 @@ namespace HawkinsEtAl2025.Examples
 
 open Data.Examples
 
-def ex1 : LinguisticExample :=
+def ex1 : Datum :=
   { id := "hawkinsetal2025_ex1"
     source := ⟨"hawkins-etal-2025", "(1)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex1 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2a"), ("response", "safe")] }
 
-def ex2 : LinguisticExample :=
+def ex2 : Datum :=
   { id := "hawkinsetal2025_ex2"
     source := ⟨"hawkins-etal-2025", "(2)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex2 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2a"), ("response", "unsafe")] }
 
-def ex3 : LinguisticExample :=
+def ex3 : Datum :=
   { id := "hawkinsetal2025_ex3"
     source := ⟨"hawkins-etal-2025", "(3)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex3 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3a"), ("question", "specific"), ("target", "available"), ("response", "exhaustive")] }
 
-def ex4 : LinguisticExample :=
+def ex4 : Datum :=
   { id := "hawkinsetal2025_ex4"
     source := ⟨"hawkins-etal-2025", "(4)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex4 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3a"), ("question", "specific"), ("target", "unavailable"), ("response", "exhaustive")] }
 
-def ex5 : LinguisticExample :=
+def ex5 : Datum :=
   { id := "hawkinsetal2025_ex5"
     source := ⟨"hawkins-etal-2025", "(5)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex5 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3a"), ("question", "general"), ("response", "exhaustive")] }
 
-def ex6 : LinguisticExample :=
+def ex6 : Datum :=
   { id := "hawkinsetal2025_ex6"
     source := ⟨"hawkins-etal-2025", "(6)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex6 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3b"), ("competitor", "iced coffee"), ("sameCategory", "soda"), ("otherCategory", "Chardonnay")] }
 
-def ex7 : LinguisticExample :=
+def ex7 : Datum :=
   { id := "hawkinsetal2025_ex7"
     source := ⟨"hawkins-etal-2025", "(7)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex7 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3c"), ("competitor", "sleeping bag"), ("mostSimilar", "pillow"), ("otherCategory", "carpet")] }
 
-def ex8 : LinguisticExample :=
+def ex8 : Datum :=
   { id := "hawkinsetal2025_ex8"
     source := ⟨"hawkins-etal-2025", "(8)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex8 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3c"), ("competitor", "bubble wrap"), ("mostSimilar", "pillow"), ("otherCategory", "carpet")] }
 
-def icedtea : LinguisticExample :=
+def icedtea : Datum :=
   { id := "hawkinsetal2025_icedtea"
     source := ⟨"hawkins-etal-2025", "§1"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def icedtea : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("response", "competitor")] }
 
-def bbq : LinguisticExample :=
+def bbq : Datum :=
   { id := "hawkinsetal2025_bbq"
     source := ⟨"hawkins-etal-2025", "§4"⟩
     reportedIn := none
@@ -147,6 +147,6 @@ def bbq : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("response", "relevant, non-resolving")] }
 
-def all : List LinguisticExample := [ex1, ex2, ex3, ex4, ex5, ex6, ex7, ex8, icedtea, bbq]
+def all : List Datum := [ex1, ex2, ex3, ex4, ex5, ex6, ex7, ex8, icedtea, bbq]
 
 end HawkinsEtAl2025.Examples

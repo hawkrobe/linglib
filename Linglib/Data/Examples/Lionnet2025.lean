@@ -17,7 +17,7 @@ namespace Lionnet2025.Examples
 
 open Data.Examples
 
-def ex11 : LinguisticExample :=
+def ex11 : Datum :=
   { id := "lionnet2025_ex11"
     source := ⟨"shintani-paita-1990b", "p. 19"⟩
     reportedIn := some ⟨"lionnet-2025", "(11)"⟩
@@ -30,7 +30,7 @@ def ex11 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("underlying", "ꜜɳi ꜜmwa ꜜɳii ꜜme"), ("surface", "(ꜜ)ɳi ꜜmwa ꜜɳii ꜜme"), ("levels", "4 3 2 1")] }
 
-def ex13a : LinguisticExample :=
+def ex13a : Datum :=
   { id := "lionnet2025_ex13a"
     source := ⟨"rivierre-1973", "p. 132"⟩
     reportedIn := some ⟨"lionnet-2025", "(13a)"⟩
@@ -43,7 +43,7 @@ def ex13a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("underlying", "ko te ꜜbeɽu-ɽe"), ("surface", "ko te ꜜbeɽu-ɽe"), ("levels", "4 4 3 2.5 2.5")] }
 
-def ex13b : LinguisticExample :=
+def ex13b : Datum :=
   { id := "lionnet2025_ex13b"
     source := ⟨"rivierre-1973", "p. 132"⟩
     reportedIn := some ⟨"lionnet-2025", "(13b)"⟩
@@ -56,7 +56,7 @@ def ex13b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("underlying", "ko te ꜜbeɽu-ɽe"), ("surface", "ko ꜛte ꜜbeɽu-ɽe"), ("levels", "4 5 2.5 2 2")] }
 
-def ex19 : LinguisticExample :=
+def ex19 : Datum :=
   { id := "lionnet2025_ex19"
     source := ⟨"rivierre-1973", "p. 126"⟩
     reportedIn := some ⟨"lionnet-2025", "(19)"⟩
@@ -69,7 +69,7 @@ def ex19 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("underlying", "ꜜtaa dɪɪ bee"), ("surface", "(ꜜ)taa dɪɪ bee"), ("levels", "4 4 4")] }
 
-def ex20 : LinguisticExample :=
+def ex20 : Datum :=
   { id := "lionnet2025_ex20"
     source := ⟨"rivierre-1973", "p. 128"⟩
     reportedIn := some ⟨"lionnet-2025", "(20)"⟩
@@ -82,7 +82,7 @@ def ex20 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("underlying", "ꜜtaa bee pwi + ꜛ%"), ("surface", "(ꜜ)taa bee ꜛ%pwi"), ("levels", "4 4 5")] }
 
-def ex30 : LinguisticExample :=
+def ex30 : Datum :=
   { id := "lionnet2025_ex30"
     source := ⟨"rivierre-1973", "p. 127"⟩
     reportedIn := some ⟨"lionnet-2025", "(30)"⟩
@@ -95,7 +95,7 @@ def ex30 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.5"), ("underlying", "ko te tɪɪ-ɽe kuɽe"), ("surface", "ko te tɪɪ-ɽe kuɽe"), ("levels", "4 4 4 4 4")] }
 
-def ex32 : LinguisticExample :=
+def ex32 : Datum :=
   { id := "lionnet2025_ex32"
     source := ⟨"rivierre-1973", "p. 125"⟩
     reportedIn := some ⟨"lionnet-2025", "(32)"⟩
@@ -108,7 +108,7 @@ def ex32 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.5"), ("underlying", "goo ꜜmie"), ("surface", "ꜛgoo ꜜmie"), ("levels", "5 3")] }
 
-def ex33 : LinguisticExample :=
+def ex33 : Datum :=
   { id := "lionnet2025_ex33"
     source := ⟨"rivierre-1973", "p. 125"⟩
     reportedIn := some ⟨"lionnet-2025", "(33)"⟩
@@ -121,7 +121,7 @@ def ex33 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.5"), ("underlying", "ꜜgoo ꜜmie"), ("surface", "(ꜜ)goo ꜜmie"), ("levels", "4 3")] }
 
-def ex53a : LinguisticExample :=
+def ex53a : Datum :=
   { id := "lionnet2025_ex53a"
     source := ⟨"rivierre-1973", "p. 144"⟩
     reportedIn := some ⟨"lionnet-2025", "(53a)"⟩
@@ -134,7 +134,7 @@ def ex53a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.7"), ("underlying", "koꜜo kwɛ-ɽe"), ("surface", "ꜛkoo ꜜkwɛ-ɽe"), ("levels", "5 4")] }
 
-def ex53b : LinguisticExample :=
+def ex53b : Datum :=
   { id := "lionnet2025_ex53b"
     source := ⟨"rivierre-1973", "p. 144"⟩
     reportedIn := some ⟨"lionnet-2025", "(53b)"⟩
@@ -147,7 +147,7 @@ def ex53b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.7"), ("underlying", "koꜜo ꜜkwe-ɽe"), ("surface", "ꜛkoo ꜜꜜkwe-ɽe"), ("levels", "5 3")] }
 
-def ex56a : LinguisticExample :=
+def ex56a : Datum :=
   { id := "lionnet2025_ex56a"
     source := ⟨"rivierre-1973", "pp. 140–141"⟩
     reportedIn := some ⟨"lionnet-2025", "(56a)"⟩
@@ -160,7 +160,7 @@ def ex56a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.9"), ("underlying", "ʈa-uɽu"), ("surface", "ʈa-uɽu")] }
 
-def ex56b : LinguisticExample :=
+def ex56b : Datum :=
   { id := "lionnet2025_ex56b"
     source := ⟨"rivierre-1973", "pp. 140–141"⟩
     reportedIn := some ⟨"lionnet-2025", "(56b)"⟩
@@ -173,7 +173,7 @@ def ex56b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.9"), ("underlying", "ʈa-ꜜtie"), ("surface", "ꜜʈa-ꜜtie")] }
 
-def ex57 : LinguisticExample :=
+def ex57 : Datum :=
   { id := "lionnet2025_ex57"
     source := ⟨"rivierre-1973", "p. 141"⟩
     reportedIn := some ⟨"lionnet-2025", "(57)"⟩
@@ -186,7 +186,7 @@ def ex57 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.9"), ("underlying", "ko te ʈa-ꜜtie-ɽe"), ("surface", "ko ꜛte ꜜʈa-ꜜtie-ɽe"), ("levels", "4 4.5 4 3 3 3")] }
 
-def ex18 : LinguisticExample :=
+def ex18 : Datum :=
   { id := "lionnet2025_ex18"
     source := ⟨"rivierre-1973", "p. 147"⟩
     reportedIn := some ⟨"lionnet-2025", "(18)"⟩
@@ -199,7 +199,7 @@ def ex18 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("underlying", "ꜜɳe ꜜmwa ꜜve"), ("surface", "(ꜜ)ɳe ꜜmwaꜛa ꜜve")] }
 
-def ex22 : LinguisticExample :=
+def ex22 : Datum :=
   { id := "lionnet2025_ex22"
     source := ⟨"rivierre-1973", "p. 132"⟩
     reportedIn := some ⟨"lionnet-2025", "(22)"⟩
@@ -212,7 +212,7 @@ def ex22 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.4"), ("underlying", "dɛɳu a ɳa + ꜜ%"), ("surface", "dɛɳu ꜛa ꜜ%ɳa"), ("levels", "4 4 4.5 3")] }
 
-def ex24 : LinguisticExample :=
+def ex24 : Datum :=
   { id := "lionnet2025_ex24"
     source := ⟨"rivierre-1973", "p. 127"⟩
     reportedIn := some ⟨"lionnet-2025", "(24)"⟩
@@ -225,7 +225,7 @@ def ex24 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.4"), ("underlying", "jaa ɲĩ + ꜜ%"), ("surface", "ꜛɟaa ꜜ%ɲĩ"), ("levels", "5 4")] }
 
-def ex25 : LinguisticExample :=
+def ex25 : Datum :=
   { id := "lionnet2025_ex25"
     source := ⟨"rivierre-1973", "p. 127"⟩
     reportedIn := some ⟨"lionnet-2025", "(25)"⟩
@@ -238,7 +238,7 @@ def ex25 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.4"), ("underlying", "jaa ꜜɲĩ + ꜜ%"), ("surface", "ꜛɟaa ꜜꜜ%ɲĩ"), ("levels", "5 3.5")] }
 
-def ex26 : LinguisticExample :=
+def ex26 : Datum :=
   { id := "lionnet2025_ex26"
     source := ⟨"rivierre-1973", "p. 132"⟩
     reportedIn := some ⟨"lionnet-2025", "(26)"⟩
@@ -251,7 +251,7 @@ def ex26 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.4"), ("underlying", "dɛɳʊ a mii + ꜜ%"), ("surface", "dɛɳʊ a mii"), ("levels", "4 4 4 4")] }
 
-def ex28 : LinguisticExample :=
+def ex28 : Datum :=
   { id := "lionnet2025_ex28"
     source := ⟨"rivierre-1973", "p. 135"⟩
     reportedIn := some ⟨"lionnet-2025", "(28)"⟩
@@ -264,7 +264,7 @@ def ex28 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.4"), ("underlying", "ꜜtẽẽ-ꜜẽ nõ bɛꜜtĩĩ ku + ꜜ%"), ("surface", "(ꜜ)tẽẽ-ꜜẽ nõ ꜛbɛꜜtĩĩ ku"), ("levels", "5 4 4 5 3 3")] }
 
-def ex38 : LinguisticExample :=
+def ex38 : Datum :=
   { id := "lionnet2025_ex38"
     source := ⟨"rivierre-1973", "p. 146"⟩
     reportedIn := some ⟨"lionnet-2025", "(38)"⟩
@@ -277,7 +277,7 @@ def ex38 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.6"), ("underlying", "ꜜcĩĩbu ꜜmwã ꜜku mwoɽo + ꜜ%"), ("surface", "(ꜜ)cĩĩꜛbu ꜜmwã ꜜku ꜛmwoꜜ%ɽo"), ("levels", "4 5 4 3 4 3")] }
 
-def ex52 : LinguisticExample :=
+def ex52 : Datum :=
   { id := "lionnet2025_ex52"
     source := ⟨"rivierre-1973", "p. 143"⟩
     reportedIn := some ⟨"lionnet-2025", "(52)"⟩
@@ -290,7 +290,7 @@ def ex52 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.7"), ("underlying", "yaꜜa ꜜmẽ geꜜe ꜜmẽ ɲaꜜi"), ("surface", "ꜛyaa ꜜꜜmẽ ꜛgee ꜜꜜmẽ ꜛɲaꜜi"), ("levels", "5 3 5 3 4 3")] }
 
-def ex62 : LinguisticExample :=
+def ex62 : Datum :=
   { id := "lionnet2025_ex62"
     source := ⟨"rivierre-1973", "p. 134"⟩
     reportedIn := some ⟨"lionnet-2025", "(62)"⟩
@@ -303,6 +303,6 @@ def ex62 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.4"), ("underlying", "gu ꜜcapɛ ꜜpaɳaa ꜜko ɲʊ ꜜwii to"), ("surface", "ꜛgu ꜜcaꜛpɛ ꜜpaꜛɳaa ꜜko ꜛɲʊ ꜜwii to"), ("levels", "5 4 4.5 3 3.5 2 2.5 1.5 1.5")] }
 
-def all : List LinguisticExample := [ex11, ex13a, ex13b, ex19, ex20, ex30, ex32, ex33, ex53a, ex53b, ex56a, ex56b, ex57, ex18, ex22, ex24, ex25, ex26, ex28, ex38, ex52, ex62]
+def all : List Datum := [ex11, ex13a, ex13b, ex19, ex20, ex30, ex32, ex33, ex53a, ex53b, ex56a, ex56b, ex57, ex18, ex22, ex24, ex25, ex26, ex28, ex38, ex52, ex62]
 
 end Lionnet2025.Examples

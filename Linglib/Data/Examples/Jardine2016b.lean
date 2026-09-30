@@ -17,7 +17,7 @@ namespace Jardine2016b.Examples
 
 open Data.Examples
 
-def ex_7_5_pa : LinguisticExample :=
+def ex_7_5_pa : Datum :=
   { id := "jardine2016b_7_5_pa"
     source := ⟨"jardine-2016b", "(7.5)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_7_5_pa : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7.2"), ("input", "pa"), ("output", "pa"), ("in_rvoice", "yes")] }
 
-def ex_7_5_aaa : LinguisticExample :=
+def ex_7_5_aaa : Datum :=
   { id := "jardine2016b_7_5_aaa"
     source := ⟨"jardine-2016b", "(7.5)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_7_5_aaa : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7.2"), ("input", "aaa"), ("output", "aaa"), ("in_rvoice", "yes")] }
 
-def ex_7_5_apa : LinguisticExample :=
+def ex_7_5_apa : Datum :=
   { id := "jardine2016b_7_5_apa"
     source := ⟨"jardine-2016b", "(7.5)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_7_5_apa : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7.2"), ("input", "apa"), ("output", "aba"), ("in_rvoice", "yes")] }
 
-def ex_7_5_aba : LinguisticExample :=
+def ex_7_5_aba : Datum :=
   { id := "jardine2016b_7_5_aba"
     source := ⟨"jardine-2016b", "(7.5)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_7_5_aba : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7.2"), ("input", "aba"), ("output", "aba"), ("in_rvoice", "yes")] }
 
-def ex_7_5_appa : LinguisticExample :=
+def ex_7_5_appa : Datum :=
   { id := "jardine2016b_7_5_appa"
     source := ⟨"jardine-2016b", "(7.5)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_7_5_appa : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7.2"), ("input", "appa"), ("output", "appa"), ("in_rvoice", "yes")] }
 
-def ex_7_5_aapaaapa : LinguisticExample :=
+def ex_7_5_aapaaapa : Datum :=
   { id := "jardine2016b_7_5_aapaaapa"
     source := ⟨"jardine-2016b", "(7.5)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_7_5_aapaaapa : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7.2"), ("input", "aapaaapa"), ("output", "aabaaaba"), ("in_rvoice", "yes")] }
 
-def ex_7_17_pa_ba : LinguisticExample :=
+def ex_7_17_pa_ba : Datum :=
   { id := "jardine2016b_7_17_pa_ba"
     source := ⟨"jardine-2016b", "(7.17)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_7_17_pa_ba : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7.2"), ("input", "pa"), ("output", "ba"), ("in_rvoice", "no")] }
 
-def ex_7_17_apa_apa : LinguisticExample :=
+def ex_7_17_apa_apa : Datum :=
   { id := "jardine2016b_7_17_apa_apa"
     source := ⟨"jardine-2016b", "(7.17)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_7_17_apa_apa : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7.2"), ("input", "apa"), ("output", "apa"), ("in_rvoice", "no")] }
 
-def ex_7_17_appa_abpa : LinguisticExample :=
+def ex_7_17_appa_abpa : Datum :=
   { id := "jardine2016b_7_17_appa_abpa"
     source := ⟨"jardine-2016b", "(7.17)"⟩
     reportedIn := none
@@ -134,6 +134,6 @@ def ex_7_17_appa_abpa : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7.2"), ("input", "appa"), ("output", "abpa"), ("in_rvoice", "no")] }
 
-def all : List LinguisticExample := [ex_7_5_pa, ex_7_5_aaa, ex_7_5_apa, ex_7_5_aba, ex_7_5_appa, ex_7_5_aapaaapa, ex_7_17_pa_ba, ex_7_17_apa_apa, ex_7_17_appa_abpa]
+def all : List Datum := [ex_7_5_pa, ex_7_5_aaa, ex_7_5_apa, ex_7_5_aba, ex_7_5_appa, ex_7_5_aapaaapa, ex_7_17_pa_ba, ex_7_17_apa_apa, ex_7_17_appa_abpa]
 
 end Jardine2016b.Examples

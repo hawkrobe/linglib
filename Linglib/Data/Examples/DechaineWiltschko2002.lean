@@ -17,7 +17,7 @@ namespace DechaineWiltschko2002.Examples
 
 open Data.Examples
 
-def ex32a_1 : LinguisticExample :=
+def ex32a_1 : Datum :=
   { id := "dechainewiltschko2002_ex32a_1"
     source := ⟨"dechaine-wiltschko-2002", "(32a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex32a_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("test", "precedesNoun"), ("pronoun", "we"), ("dialect", "A")] }
 
-def ex32a_2 : LinguisticExample :=
+def ex32a_2 : Datum :=
   { id := "dechainewiltschko2002_ex32a_2"
     source := ⟨"dechaine-wiltschko-2002", "(32a)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex32a_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("test", "precedesNoun"), ("pronoun", "us"), ("dialect", "A")] }
 
-def ex32b : LinguisticExample :=
+def ex32b : Datum :=
   { id := "dechainewiltschko2002_ex32b"
     source := ⟨"dechaine-wiltschko-2002", "(32b)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex32b : LinguisticExample :=
     readings := []
     paperFeatures := [("test", "precedesNoun"), ("pronoun", "you"), ("dialect", "A")] }
 
-def ex32c_1 : LinguisticExample :=
+def ex32c_1 : Datum :=
   { id := "dechainewiltschko2002_ex32c_1"
     source := ⟨"dechaine-wiltschko-2002", "(32c)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex32c_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("test", "precedesNoun"), ("pronoun", "they"), ("dialect", "A")] }
 
-def ex32c_2 : LinguisticExample :=
+def ex32c_2 : Datum :=
   { id := "dechainewiltschko2002_ex32c_2"
     source := ⟨"dechaine-wiltschko-2002", "(32c)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex32c_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("test", "precedesNoun"), ("pronoun", "them"), ("dialect", "A")] }
 
-def ex34c_1 : LinguisticExample :=
+def ex34c_1 : Datum :=
   { id := "dechainewiltschko2002_ex34c_1"
     source := ⟨"dechaine-wiltschko-2002", "(34c)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex34c_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("test", "precedesNoun"), ("pronoun", "they"), ("dialect", "B")] }
 
-def ex34c_2 : LinguisticExample :=
+def ex34c_2 : Datum :=
   { id := "dechainewiltschko2002_ex34c_2"
     source := ⟨"dechaine-wiltschko-2002", "(34c)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex34c_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("test", "precedesNoun"), ("pronoun", "them"), ("dialect", "B")] }
 
-def ex38 : LinguisticExample :=
+def ex38 : Datum :=
   { id := "dechainewiltschko2002_ex38"
     source := ⟨"dechaine-wiltschko-2002", "(38)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex38 : LinguisticExample :=
     readings := []
     paperFeatures := [("test", "boundVariable"), ("pronoun", "he")] }
 
-def ex40 : LinguisticExample :=
+def ex40 : Datum :=
   { id := "dechainewiltschko2002_ex40"
     source := ⟨"dechaine-wiltschko-2002", "(40)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex40 : LinguisticExample :=
     readings := [("strict", .acceptable), ("sloppy", .unacceptable)]
     paperFeatures := [("test", "boundVariable"), ("pronoun", "me")] }
 
-def ex30a : LinguisticExample :=
+def ex30a : Datum :=
   { id := "dechainewiltschko2002_ex30a"
     source := ⟨"dechaine-wiltschko-2002", "(30a)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex30a : LinguisticExample :=
     readings := []
     paperFeatures := [("test", "boundVariable"), ("pronoun", "one")] }
 
-def ex30b : LinguisticExample :=
+def ex30b : Datum :=
   { id := "dechainewiltschko2002_ex30b"
     source := ⟨"dechaine-wiltschko-2002", "(30b)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex30b : LinguisticExample :=
     readings := []
     paperFeatures := [("test", "boundVariable"), ("pronoun", "one")] }
 
-def ex22a : LinguisticExample :=
+def ex22a : Datum :=
   { id := "dechainewiltschko2002_ex22a"
     source := ⟨"dechaine-wiltschko-2002", "(22a)"⟩
     reportedIn := none
@@ -173,6 +173,6 @@ def ex22a : LinguisticExample :=
     readings := []
     paperFeatures := [("test", "boundVariable"), ("pronoun", "kare")] }
 
-def all : List LinguisticExample := [ex32a_1, ex32a_2, ex32b, ex32c_1, ex32c_2, ex34c_1, ex34c_2, ex38, ex40, ex30a, ex30b, ex22a]
+def all : List Datum := [ex32a_1, ex32a_2, ex32b, ex32c_1, ex32c_2, ex34c_1, ex34c_2, ex38, ex40, ex30a, ex30b, ex22a]
 
 end DechaineWiltschko2002.Examples

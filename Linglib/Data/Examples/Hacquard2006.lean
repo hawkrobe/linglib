@@ -17,7 +17,7 @@ namespace Hacquard2006.Examples
 
 open Data.Examples
 
-def ex1a : LinguisticExample :=
+def ex1a : Datum :=
   { id := "hacquard2006_ex1a"
     source := ⟨"hacquard-2006", "(1a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex1a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "intro"), ("phenomenon", "actualityEntailment"), ("aspect", "imperfective"), ("flavor", "goalOriented"), ("actualityEntailment", "false")] }
 
-def ex1b : LinguisticExample :=
+def ex1b : Datum :=
   { id := "hacquard2006_ex1b"
     source := ⟨"hacquard-2006", "(1b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex1b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "intro"), ("phenomenon", "actualityEntailment"), ("aspect", "perfective"), ("flavor", "goalOriented"), ("actualityEntailment", "true")] }
 
-def ex2a : LinguisticExample :=
+def ex2a : Datum :=
   { id := "hacquard2006_ex2a"
     source := ⟨"bhatt-1999", "(2a)"⟩
     reportedIn := some ⟨"hacquard-2006", "(2a)"⟩
@@ -56,7 +56,7 @@ def ex2a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "intro"), ("phenomenon", "actualityEntailment"), ("aspect", "perfective"), ("flavor", "ability"), ("actualityEntailment", "true")] }
 
-def ex2b : LinguisticExample :=
+def ex2b : Datum :=
   { id := "hacquard2006_ex2b"
     source := ⟨"hacquard-2006", "(2b)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex2b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "intro"), ("phenomenon", "actualityEntailment"), ("aspect", "imperfective"), ("flavor", "ability"), ("actualityEntailment", "false")] }
 
-def ex22a : LinguisticExample :=
+def ex22a : Datum :=
   { id := "hacquard2006_ex22a"
     source := ⟨"hacquard-2006", "(22a)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex22a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.1.2"), ("phenomenon", "actualityEntailment"), ("aspect", "perfective"), ("flavor", "ability"), ("actualityEntailment", "true")] }
 
-def ex22b : LinguisticExample :=
+def ex22b : Datum :=
   { id := "hacquard2006_ex22b"
     source := ⟨"hacquard-2006", "(22b)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex22b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.1.2"), ("phenomenon", "actualityEntailment"), ("aspect", "perfective"), ("flavor", "ability"), ("actualityEntailment", "true")] }
 
-def ex23a : LinguisticExample :=
+def ex23a : Datum :=
   { id := "hacquard2006_ex23a"
     source := ⟨"hacquard-2006", "(23a)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex23a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.1.2"), ("phenomenon", "actualityEntailment"), ("aspect", "imperfective"), ("flavor", "ability"), ("actualityEntailment", "false")] }
 
-def ex23b : LinguisticExample :=
+def ex23b : Datum :=
   { id := "hacquard2006_ex23b"
     source := ⟨"hacquard-2006", "(23b)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex23b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.1.2"), ("phenomenon", "actualityEntailment"), ("aspect", "imperfective"), ("flavor", "ability"), ("actualityEntailment", "false")] }
 
-def ex81a : LinguisticExample :=
+def ex81a : Datum :=
   { id := "hacquard2006_ex81a"
     source := ⟨"hacquard-2006", "(81a)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex81a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.2.3"), ("phenomenon", "eventIdentification"), ("aspect", "perfective"), ("flavor", "circumstantial"), ("actualityEntailment", "true")] }
 
-def ex81b : LinguisticExample :=
+def ex81b : Datum :=
   { id := "hacquard2006_ex81b"
     source := ⟨"hacquard-2006", "(81b)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex81b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.2.3"), ("phenomenon", "eventIdentification"), ("aspect", "perfective"), ("flavor", "circumstantial"), ("actualityEntailment", "true")] }
 
-def ex86 : LinguisticExample :=
+def ex86 : Datum :=
   { id := "hacquard2006_ex86"
     source := ⟨"hacquard-2006", "(86)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex86 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.2.5"), ("phenomenon", "goalOriented"), ("aspect", "perfective"), ("flavor", "goalOriented"), ("actualityEntailment", "true")] }
 
-def ex87 : LinguisticExample :=
+def ex87 : Datum :=
   { id := "hacquard2006_ex87"
     source := ⟨"hacquard-2006", "(87)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex87 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.2.5"), ("phenomenon", "goalOriented"), ("aspect", "perfective"), ("flavor", "goalOriented"), ("actualityEntailment", "true")] }
 
-def ex88 : LinguisticExample :=
+def ex88 : Datum :=
   { id := "hacquard2006_ex88"
     source := ⟨"hacquard-2006", "(88)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex88 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.2.5"), ("phenomenon", "goalOriented"), ("aspect", "perfective"), ("flavor", "goalOriented"), ("actualityEntailment", "true")] }
 
-def ex89a : LinguisticExample :=
+def ex89a : Datum :=
   { id := "hacquard2006_ex89a"
     source := ⟨"hacquard-2006", "(89a)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex89a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.2.5"), ("phenomenon", "implicature"), ("aspect", "perfective")] }
 
-def ex89b : LinguisticExample :=
+def ex89b : Datum :=
   { id := "hacquard2006_ex89b"
     source := ⟨"hacquard-2006", "(89b)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex89b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.2.5"), ("phenomenon", "implicature"), ("aspect", "perfective"), ("flavor", "goalOriented"), ("actualityEntailment", "true")] }
 
-def ex89c : LinguisticExample :=
+def ex89c : Datum :=
   { id := "hacquard2006_ex89c"
     source := ⟨"hacquard-2006", "(89c)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex89c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.2.5"), ("phenomenon", "implicature"), ("aspect", "perfective"), ("flavor", "goalOriented"), ("actualityEntailment", "true")] }
 
-def ex100a : LinguisticExample :=
+def ex100a : Datum :=
   { id := "hacquard2006_ex100a"
     source := ⟨"hacquard-2006", "(100a)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex100a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "genericAbility"), ("aspect", "imperfective"), ("flavor", "ability"), ("actualityEntailment", "false")] }
 
-def ex100b : LinguisticExample :=
+def ex100b : Datum :=
   { id := "hacquard2006_ex100b"
     source := ⟨"hacquard-2006", "(100b)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex100b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "genericAbility"), ("aspect", "imperfective"), ("flavor", "ability"), ("actualityEntailment", "false")] }
 
-def ex101a : LinguisticExample :=
+def ex101a : Datum :=
   { id := "hacquard2006_ex101a"
     source := ⟨"hacquard-2006", "(101a)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex101a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "genericAbility"), ("aspect", "imperfective"), ("flavor", "ability"), ("actualityEntailment", "false")] }
 
-def ex101b : LinguisticExample :=
+def ex101b : Datum :=
   { id := "hacquard2006_ex101b"
     source := ⟨"hacquard-2006", "(101b)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex101b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "genericAbility"), ("aspect", "perfective"), ("flavor", "ability"), ("actualityEntailment", "true")] }
 
-def ex103 : LinguisticExample :=
+def ex103 : Datum :=
   { id := "hacquard2006_ex103"
     source := ⟨"hacquard-2006", "(103)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex103 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "counterfactualImperfective"), ("aspect", "imperfective"), ("flavor", "goalOriented"), ("actualityEntailment", "false")] }
 
-def ex201 : LinguisticExample :=
+def ex201 : Datum :=
   { id := "hacquard2006_ex201"
     source := ⟨"hacquard-2006", "(201)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex201 : LinguisticExample :=
     readings := [("epistemic: given my evidence now, Jane must have taken the train", .acceptable), ("goalOriented: given Jane's circumstances then, Jane had to take the train", .acceptable)]
     paperFeatures := [("section", "3.4.1"), ("phenomenon", "eventBinding")] }
 
-def ex242a : LinguisticExample :=
+def ex242a : Datum :=
   { id := "hacquard2006_ex242a"
     source := ⟨"hacquard-2006", "(242a)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex242a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.4.3"), ("phenomenon", "progressiveComplement"), ("aspect", "imperfective"), ("flavor", "epistemic")] }
 
-def ex242b : LinguisticExample :=
+def ex242b : Datum :=
   { id := "hacquard2006_ex242b"
     source := ⟨"hacquard-2006", "(242b)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex242b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.4.3"), ("phenomenon", "progressiveComplement"), ("aspect", "imperfective"), ("flavor", "epistemic")] }
 
-def ex244a : LinguisticExample :=
+def ex244a : Datum :=
   { id := "hacquard2006_ex244a"
     source := ⟨"hacquard-2006", "(244a)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex244a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.4.3"), ("phenomenon", "changeOfState"), ("flavor", "ability")] }
 
-def ex244b : LinguisticExample :=
+def ex244b : Datum :=
   { id := "hacquard2006_ex244b"
     source := ⟨"hacquard-2006", "(244b)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex244b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.4.3"), ("phenomenon", "changeOfState"), ("flavor", "ability")] }
 
-def ex245a : LinguisticExample :=
+def ex245a : Datum :=
   { id := "hacquard2006_ex245a"
     source := ⟨"hacquard-2006", "(245a)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def ex245a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.4.3"), ("phenomenon", "changeOfState"), ("aspect", "perfective"), ("flavor", "epistemic"), ("actualityEntailment", "false")] }
 
-def ex246 : LinguisticExample :=
+def ex246 : Datum :=
   { id := "hacquard2006_ex246"
     source := ⟨"hacquard-2006", "(246)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def ex246 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.4.3"), ("phenomenon", "contentLicensing"), ("flavor", "ability")] }
 
-def ex247b : LinguisticExample :=
+def ex247b : Datum :=
   { id := "hacquard2006_ex247b"
     source := ⟨"hacquard-2006", "(247b)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def ex247b : LinguisticExample :=
     readings := [("speechBoundEpistemic: possible given the speaker's evidence", .acceptable), ("aspectBoundEpistemic: an epistemic necessity for Jane at a past belief state", .questionable)]
     paperFeatures := [("section", "3.4.3"), ("phenomenon", "contentLicensing"), ("aspect", "perfective")] }
 
-def ex249b : LinguisticExample :=
+def ex249b : Datum :=
   { id := "hacquard2006_ex249b"
     source := ⟨"hacquard-2006", "(249b)"⟩
     reportedIn := none
@@ -407,6 +407,6 @@ def ex249b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.4.3"), ("phenomenon", "contentLicensing"), ("aspect", "perfective"), ("actualityEntailment", "true")] }
 
-def all : List LinguisticExample := [ex1a, ex1b, ex2a, ex2b, ex22a, ex22b, ex23a, ex23b, ex81a, ex81b, ex86, ex87, ex88, ex89a, ex89b, ex89c, ex100a, ex100b, ex101a, ex101b, ex103, ex201, ex242a, ex242b, ex244a, ex244b, ex245a, ex246, ex247b, ex249b]
+def all : List Datum := [ex1a, ex1b, ex2a, ex2b, ex22a, ex22b, ex23a, ex23b, ex81a, ex81b, ex86, ex87, ex88, ex89a, ex89b, ex89c, ex100a, ex100b, ex101a, ex101b, ex103, ex201, ex242a, ex242b, ex244a, ex244b, ex245a, ex246, ex247b, ex249b]
 
 end Hacquard2006.Examples

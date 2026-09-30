@@ -17,7 +17,7 @@ namespace RomeroHan2004.Examples
 
 open Data.Examples
 
-def doesnt_john_drink : LinguisticExample :=
+def doesnt_john_drink : Datum :=
   { id := "romerohan2004_doesnt_john_drink"
     source := ⟨"romero-han-2004", "(1)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def doesnt_john_drink : LinguisticExample :=
     readings := []
     paperFeatures := [("negation", "preposed"), ("bias", "positive")] }
 
-def does_john_not_drink : LinguisticExample :=
+def does_john_not_drink : Datum :=
   { id := "romerohan2004_does_john_not_drink"
     source := ⟨"romero-han-2004", "(2)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def does_john_not_drink : LinguisticExample :=
     readings := []
     paperFeatures := [("negation", "nonPreposed"), ("bias", "none")] }
 
-def does_john_drink : LinguisticExample :=
+def does_john_drink : Datum :=
   { id := "romerohan2004_does_john_drink"
     source := ⟨"romero-han-2004", "(36)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def does_john_drink : LinguisticExample :=
     readings := []
     paperFeatures := [("negation", "none"), ("bias", "none")] }
 
-def does_john_really_drink : LinguisticExample :=
+def does_john_really_drink : Datum :=
   { id := "romerohan2004_does_john_really_drink"
     source := ⟨"romero-han-2004", "(37)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def does_john_really_drink : LinguisticExample :=
     readings := []
     paperFeatures := [("negation", "none"), ("form", "really"), ("bias", "negative")] }
 
-def isnt_jane_coming : LinguisticExample :=
+def isnt_jane_coming : Datum :=
   { id := "romerohan2004_isnt_jane_coming"
     source := ⟨"romero-han-2004", "(5)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def isnt_jane_coming : LinguisticExample :=
     readings := []
     paperFeatures := [("negation", "preposed"), ("bias", "positive")] }
 
-def isnt_jane_coming_too : LinguisticExample :=
+def isnt_jane_coming_too : Datum :=
   { id := "romerohan2004_isnt_jane_coming_too"
     source := ⟨"romero-han-2004", "(6)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def isnt_jane_coming_too : LinguisticExample :=
     readings := []
     paperFeatures := [("negation", "preposed"), ("form", "pi"), ("item", "too"), ("bias", "positive")] }
 
-def isnt_jane_coming_either : LinguisticExample :=
+def isnt_jane_coming_either : Datum :=
   { id := "romerohan2004_isnt_jane_coming_either"
     source := ⟨"romero-han-2004", "(7)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def isnt_jane_coming_either : LinguisticExample :=
     readings := []
     paperFeatures := [("negation", "preposed"), ("form", "ni"), ("item", "either"), ("bias", "positive")] }
 
-def is_jane_really_coming_too : LinguisticExample :=
+def is_jane_really_coming_too : Datum :=
   { id := "romerohan2004_is_jane_really_coming_too"
     source := ⟨"romero-han-2004", "(77)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def is_jane_really_coming_too : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "really"), ("item", "too")] }
 
-def is_jane_really_coming_either : LinguisticExample :=
+def is_jane_really_coming_either : Datum :=
   { id := "romerohan2004_is_jane_really_coming_either"
     source := ⟨"romero-han-2004", "(78)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def is_jane_really_coming_either : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "really"), ("item", "either")] }
 
-def is_jane_not_coming_too : LinguisticExample :=
+def is_jane_not_coming_too : Datum :=
   { id := "romerohan2004_is_jane_not_coming_too"
     source := ⟨"romero-han-2004", "(79)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def is_jane_not_coming_too : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "notFocus"), ("item", "too")] }
 
-def is_jane_not_coming_either : LinguisticExample :=
+def is_jane_not_coming_either : Datum :=
   { id := "romerohan2004_is_jane_not_coming_either"
     source := ⟨"romero-han-2004", "(80)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def is_jane_not_coming_either : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "notFocus"), ("item", "either")] }
 
-def greek_preposed : LinguisticExample :=
+def greek_preposed : Datum :=
   { id := "romerohan2004_greek_preposed"
     source := ⟨"romero-han-2004", "(14a)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def greek_preposed : LinguisticExample :=
     readings := []
     paperFeatures := [("negation", "preposed"), ("bias", "positive")] }
 
-def greek_nonpreposed : LinguisticExample :=
+def greek_nonpreposed : Datum :=
   { id := "romerohan2004_greek_nonpreposed"
     source := ⟨"romero-han-2004", "(14b)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def greek_nonpreposed : LinguisticExample :=
     readings := []
     paperFeatures := [("negation", "nonPreposed"), ("bias", "none")] }
 
-def spanish_preposed : LinguisticExample :=
+def spanish_preposed : Datum :=
   { id := "romerohan2004_spanish_preposed"
     source := ⟨"romero-han-2004", "(15a)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def spanish_preposed : LinguisticExample :=
     readings := []
     paperFeatures := [("negation", "preposed"), ("bias", "positive")] }
 
-def spanish_nonpreposed : LinguisticExample :=
+def spanish_nonpreposed : Datum :=
   { id := "romerohan2004_spanish_nonpreposed"
     source := ⟨"romero-han-2004", "(15b)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def spanish_nonpreposed : LinguisticExample :=
     readings := []
     paperFeatures := [("negation", "nonPreposed"), ("bias", "none")] }
 
-def bulgarian_preposed : LinguisticExample :=
+def bulgarian_preposed : Datum :=
   { id := "romerohan2004_bulgarian_preposed"
     source := ⟨"romero-han-2004", "(16a)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def bulgarian_preposed : LinguisticExample :=
     readings := []
     paperFeatures := [("negation", "preposed"), ("bias", "positive")] }
 
-def bulgarian_nonpreposed : LinguisticExample :=
+def bulgarian_nonpreposed : Datum :=
   { id := "romerohan2004_bulgarian_nonpreposed"
     source := ⟨"romero-han-2004", "(16b)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def bulgarian_nonpreposed : LinguisticExample :=
     readings := []
     paperFeatures := [("negation", "nonPreposed"), ("bias", "none")] }
 
-def german_preposed : LinguisticExample :=
+def german_preposed : Datum :=
   { id := "romerohan2004_german_preposed"
     source := ⟨"romero-han-2004", "(17a)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def german_preposed : LinguisticExample :=
     readings := []
     paperFeatures := [("negation", "preposed"), ("bias", "positive")] }
 
-def german_nonpreposed : LinguisticExample :=
+def german_nonpreposed : Datum :=
   { id := "romerohan2004_german_nonpreposed"
     source := ⟨"romero-han-2004", "(17b)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def german_nonpreposed : LinguisticExample :=
     readings := []
     paperFeatures := [("negation", "nonPreposed"), ("bias", "none")] }
 
-def korean_preposed : LinguisticExample :=
+def korean_preposed : Datum :=
   { id := "romerohan2004_korean_preposed"
     source := ⟨"romero-han-2004", "(18a)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def korean_preposed : LinguisticExample :=
     readings := []
     paperFeatures := [("negation", "preposed"), ("bias", "positive")] }
 
-def korean_nonpreposed_short : LinguisticExample :=
+def korean_nonpreposed_short : Datum :=
   { id := "romerohan2004_korean_nonpreposed_short"
     source := ⟨"romero-han-2004", "(18b)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def korean_nonpreposed_short : LinguisticExample :=
     readings := []
     paperFeatures := [("negation", "nonPreposed"), ("bias", "none")] }
 
-def korean_nonpreposed_long : LinguisticExample :=
+def korean_nonpreposed_long : Datum :=
   { id := "romerohan2004_korean_nonpreposed_long"
     source := ⟨"romero-han-2004", "(18c)"⟩
     reportedIn := none
@@ -303,6 +303,6 @@ def korean_nonpreposed_long : LinguisticExample :=
     readings := []
     paperFeatures := [("negation", "nonPreposed"), ("bias", "none")] }
 
-def all : List LinguisticExample := [doesnt_john_drink, does_john_not_drink, does_john_drink, does_john_really_drink, isnt_jane_coming, isnt_jane_coming_too, isnt_jane_coming_either, is_jane_really_coming_too, is_jane_really_coming_either, is_jane_not_coming_too, is_jane_not_coming_either, greek_preposed, greek_nonpreposed, spanish_preposed, spanish_nonpreposed, bulgarian_preposed, bulgarian_nonpreposed, german_preposed, german_nonpreposed, korean_preposed, korean_nonpreposed_short, korean_nonpreposed_long]
+def all : List Datum := [doesnt_john_drink, does_john_not_drink, does_john_drink, does_john_really_drink, isnt_jane_coming, isnt_jane_coming_too, isnt_jane_coming_either, is_jane_really_coming_too, is_jane_really_coming_either, is_jane_not_coming_too, is_jane_not_coming_either, greek_preposed, greek_nonpreposed, spanish_preposed, spanish_nonpreposed, bulgarian_preposed, bulgarian_nonpreposed, german_preposed, german_nonpreposed, korean_preposed, korean_nonpreposed_short, korean_nonpreposed_long]
 
 end RomeroHan2004.Examples

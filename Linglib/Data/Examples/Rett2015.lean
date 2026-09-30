@@ -17,7 +17,7 @@ namespace Rett2015.Examples
 
 open Data.Examples
 
-def positive_tall : LinguisticExample :=
+def positive_tall : Datum :=
   { id := "rett2015_positive_tall"
     source := ⟨"rett-2015", "Table 3.1"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def positive_tall : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "positive"), ("polarity", "positive"), ("evaluative", "true")] }
 
-def positive_short : LinguisticExample :=
+def positive_short : Datum :=
   { id := "rett2015_positive_short"
     source := ⟨"rett-2015", "Table 3.1"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def positive_short : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "positive"), ("polarity", "negative"), ("evaluative", "true")] }
 
-def comparative_tall : LinguisticExample :=
+def comparative_tall : Datum :=
   { id := "rett2015_comparative_tall"
     source := ⟨"rett-2015", "Table 3.1"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def comparative_tall : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "comparative"), ("polarity", "positive"), ("evaluative", "false")] }
 
-def comparative_short : LinguisticExample :=
+def comparative_short : Datum :=
   { id := "rett2015_comparative_short"
     source := ⟨"rett-2015", "Table 3.1"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def comparative_short : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "comparative"), ("polarity", "negative"), ("evaluative", "false")] }
 
-def equative_tall : LinguisticExample :=
+def equative_tall : Datum :=
   { id := "rett2015_equative_tall"
     source := ⟨"rett-2015", "Table 3.1"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def equative_tall : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "equative"), ("polarity", "positive"), ("evaluative", "false")] }
 
-def equative_short : LinguisticExample :=
+def equative_short : Datum :=
   { id := "rett2015_equative_short"
     source := ⟨"rett-2015", "Table 3.1"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def equative_short : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "equative"), ("polarity", "negative"), ("evaluative", "true")] }
 
-def mp_tall : LinguisticExample :=
+def mp_tall : Datum :=
   { id := "rett2015_mp_tall"
     source := ⟨"rett-2015", "Table 3.1"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def mp_tall : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "measurePhrase"), ("polarity", "positive"), ("evaluative", "false")] }
 
-def mp_short : LinguisticExample :=
+def mp_short : Datum :=
   { id := "rett2015_mp_short"
     source := ⟨"rett-2015", "Table 3.1"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def mp_short : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "measurePhrase"), ("polarity", "negative")] }
 
-def question_tall : LinguisticExample :=
+def question_tall : Datum :=
   { id := "rett2015_question_tall"
     source := ⟨"rett-2015", "Table 3.1"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def question_tall : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "degreeQuestion"), ("polarity", "positive"), ("evaluative", "false")] }
 
-def question_short : LinguisticExample :=
+def question_short : Datum :=
   { id := "rett2015_question_short"
     source := ⟨"rett-2015", "Table 3.1"⟩
     reportedIn := none
@@ -147,6 +147,6 @@ def question_short : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "degreeQuestion"), ("polarity", "negative"), ("evaluative", "true")] }
 
-def all : List LinguisticExample := [positive_tall, positive_short, comparative_tall, comparative_short, equative_tall, equative_short, mp_tall, mp_short, question_tall, question_short]
+def all : List Datum := [positive_tall, positive_short, comparative_tall, comparative_short, equative_tall, equative_short, mp_tall, mp_short, question_tall, question_short]
 
 end Rett2015.Examples

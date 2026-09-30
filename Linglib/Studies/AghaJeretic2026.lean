@@ -225,11 +225,11 @@ over a doubly restricted domain. -/
 def anga : Projection := ⟨true, true, false, true⟩
 
 /-- The projection a row concerns. -/
-def projection? (e : LinguisticExample) : Option Projection :=
+def projection? (e : Datum) : Option Projection :=
   e.parse? "modal" [("o'qa", oqa), ("ba'iji", baiji), ("får", får), ("anga", anga)]
 
 /-- The environment a row concerns. -/
-def environment? (e : LinguisticExample) : Option Environment :=
+def environment? (e : Datum) : Option Environment :=
   e.parse? "environment" [("unembedded", Environment.unembedded),
     ("clausemate negation", .clausemateNegation), ("other DE", .otherDE)]
 

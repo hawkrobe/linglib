@@ -17,7 +17,7 @@ namespace Belnap1982.Examples
 
 open Data.Examples
 
-def ex_1 : LinguisticExample :=
+def ex_1 : Datum :=
   { id := "belnap1982_1"
     source := ⟨"belnap-1982", "(1)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_1 : LinguisticExample :=
     readings := [("answers: John / It was John / The person who kicked Sam was John", .acceptable), ("non-answers: *He / *Sam kicked John / *China is populous", .unacceptable), ("responses but not answers: I don't know / Ask Sam", .acceptable)]
     paperFeatures := [("claim", "answerhood is as entrenched as sentencehood")] }
 
-def gas : LinguisticExample :=
+def gas : Datum :=
   { id := "belnap1982_gas"
     source := ⟨"belnap-1982", "p. 172"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def gas : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "Unique Answer Fallacy"), ("answers", "multiple, each full and complete and true")] }
 
-def prime : LinguisticExample :=
+def prime : Datum :=
   { id := "belnap1982_prime"
     source := ⟨"belnap-1982", "p. 174"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def prime : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "Unique Answer Fallacy"), ("target", "Karttunen-style unique denotations")] }
 
-def unicorns : LinguisticExample :=
+def unicorns : Datum :=
   { id := "belnap1982_unicorns"
     source := ⟨"belnap-1982", "§3"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def unicorns : LinguisticExample :=
     readings := [("for each of two actual unicorns, John wonders where it lives", .acceptable), ("John wonders where the single place is at which two unicorns live", .acceptable), ("quantifier between wonder and the wh: each unicorn possibly living in a different place", .acceptable)]
     paperFeatures := [("phenomenon", "quantifying into questions")] }
 
-def grades : LinguisticExample :=
+def grades : Datum :=
   { id := "belnap1982_grades"
     source := ⟨"belnap-1982", "§3"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def grades : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "quantifying into questions"), ("embedding", "depend")] }
 
-def king : LinguisticExample :=
+def king : Datum :=
   { id := "belnap1982_king"
     source := ⟨"belnap-1982", "§3"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def king : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "quantifying into a whether"), ("status", "no true answers")] }
 
-def china : LinguisticExample :=
+def china : Datum :=
   { id := "belnap1982_china"
     source := ⟨"belnap-1982", "p. 177"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def china : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "Distributivity Test"), ("verdict", "consistent, so not an answer")] }
 
-def john : LinguisticExample :=
+def john : Datum :=
   { id := "belnap1982_john"
     source := ⟨"belnap-1982", "p. 177"⟩
     reportedIn := none
@@ -121,6 +121,6 @@ def john : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "Distributivity Test"), ("verdict", "inconsistent — likely an answer, not guaranteed")] }
 
-def all : List LinguisticExample := [ex_1, gas, prime, unicorns, grades, king, china, john]
+def all : List Datum := [ex_1, gas, prime, unicorns, grades, king, china, john]
 
 end Belnap1982.Examples

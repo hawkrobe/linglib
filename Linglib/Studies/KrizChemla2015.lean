@@ -48,7 +48,7 @@ condition's (`pointwise_divergence`).
 * `reading`, `someReading`, `allReading`: the some- and all-substituted variants.
 * `supervaluation`, `globalExh`, `globalConstrual`, `universalPresupposition`, `pointwise`: the
   approaches assessed in §6.
-* `Operator`, `Condition`, `Datum`, `data`: the tested embedded conditions, read off the rows.
+* `Operator`, `Condition`, `Row`, `data`: the tested embedded conditions, read off the rows.
 
 ## Main results
 
@@ -135,7 +135,7 @@ theorem designated_lp_cell (n : ℕ) : designated .lp (cell n) ↔ 1 ≤ n := by
     fun h _ ↦ ⟨0, by omega, h⟩⟩
 
 /-- The display recorded on a row, read cell by cell from its digits. -/
-def displayOf? (e : LinguisticExample) : Option Display :=
+def displayOf? (e : Datum) : Option Display :=
   (e.feature? "display").bind fun s ↦
     s.toList.mapM fun ch ↦ if ch.isDigit then some (cell (ch.toNat - '0'.toNat)) else none
 
@@ -500,7 +500,7 @@ inductive Condition where
 
 /-- One tested condition: the quantifier, the condition, the Table 13 display, and the judgment
 the results commit to. -/
-structure Datum where
+structure Row where
   operator : Operator
   condition : Condition
   display : Display
@@ -509,7 +509,7 @@ structure Datum where
 
 /-- Read a row: its display, a clear condition as its clear value, and a gap-family condition as
 recorded (`HomogeneityGap.gapTruth`). -/
-def Datum.ofExample (e : LinguisticExample) : Option Datum := do
+def Row.ofDatum (e : Datum) : Option Row := do
   let op ← e.parse? "operator" [("every", .every), ("no", .no), ("exactlyTwo", .exactlyTwo)]
   let c ← e.parse? "condition" [("TRUE", .clearlyTrue), ("FALSE", .clearlyFalse),
     ("GAP", .gap), ("GAP?", .gapQ), ("GAP??", .gapQQ)]
@@ -521,7 +521,7 @@ def Datum.ofExample (e : LinguisticExample) : Option Datum := do
   some ⟨op, c, d, observed⟩
 
 /-- The embedded conditions of Experiments C2 to C4. -/
-def data : List Datum := Examples.all.filterMap Datum.ofExample
+def data : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- Each condition is realized by a display with the intended pattern of variants: both true in
 the clearly true condition, differing in the gap and gap?? conditions, and both false otherwise. -/
@@ -578,7 +578,7 @@ target-colored; the positive sentence is the scope-monotone and its negation the
 corner of the square over it. -/
 
 /-- The paper's unembedded rows, read by the pool's adapter. -/
-def gapData : List HomogeneityGap.GapDatum := Examples.all.filterMap HomogeneityGap.fromExample
+def gapData : List HomogeneityGap.GapDatum := Examples.all.filterMap HomogeneityGap.fromDatum
 
 /-- The value of the single cell realizing each unembedded scenario. -/
 def scenarioValue : HomogeneityGap.GapScenario → Trivalent

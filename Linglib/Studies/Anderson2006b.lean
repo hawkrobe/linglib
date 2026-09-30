@@ -149,7 +149,7 @@ def ofString : List (String × Relation) :=
 end Relation
 
 /-- The predication a row records, adjuncts excluded. -/
-def Predication.ofRow (e : LinguisticExample) : Predication :=
+def Predication.ofRow (e : Datum) : Predication :=
   (e.features "arg").filterMap (List.lookup · Relation.ofString)
 
 /-- The hierarchy selects the recorded subject of each of the book's examples, and no other

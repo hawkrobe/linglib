@@ -17,7 +17,7 @@ namespace LiuRotter2025.Examples
 
 open Data.Examples
 
-def poss_sm : LinguisticExample :=
+def poss_sm : Datum :=
   { id := "liurotter2025_poss_sm"
     source := ⟨"liu-rotter-2025", "(3) possibility SM"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def poss_sm : LinguisticExample :=
     readings := []
     paperFeatures := [("force", "possibility"), ("number", "SM"), ("commitment", "522"), ("grammaticality", "645"), ("ses", "487"), ("education", "494"), ("formality", "484"), ("politeness", "545"), ("confidence", "436"), ("friendliness", "503"), ("warmth", "494"), ("coolness", "456"), ("rebelliousness", "309")] }
 
-def poss_mc : LinguisticExample :=
+def poss_mc : Datum :=
   { id := "liurotter2025_poss_mc"
     source := ⟨"liu-rotter-2025", "(3) possibility MC"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def poss_mc : LinguisticExample :=
     readings := []
     paperFeatures := [("force", "possibility"), ("number", "MC"), ("commitment", "511"), ("grammaticality", "506"), ("ses", "473"), ("education", "469"), ("formality", "473"), ("politeness", "536"), ("confidence", "403"), ("friendliness", "492"), ("warmth", "482"), ("coolness", "429"), ("rebelliousness", "311")] }
 
-def nece_sm : LinguisticExample :=
+def nece_sm : Datum :=
   { id := "liurotter2025_nece_sm"
     source := ⟨"liu-rotter-2025", "(3) necessity SM"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def nece_sm : LinguisticExample :=
     readings := []
     paperFeatures := [("force", "necessity"), ("number", "SM"), ("commitment", "612"), ("grammaticality", "641"), ("ses", "487"), ("education", "489"), ("formality", "476"), ("politeness", "528"), ("confidence", "519"), ("friendliness", "497"), ("warmth", "486"), ("coolness", "453"), ("rebelliousness", "312")] }
 
-def nece_mc : LinguisticExample :=
+def nece_mc : Datum :=
   { id := "liurotter2025_nece_mc"
     source := ⟨"liu-rotter-2025", "(3) necessity MC"⟩
     reportedIn := none
@@ -69,6 +69,6 @@ def nece_mc : LinguisticExample :=
     readings := []
     paperFeatures := [("force", "necessity"), ("number", "MC"), ("commitment", "640"), ("grammaticality", "490"), ("ses", "485"), ("education", "480"), ("formality", "499"), ("politeness", "539"), ("confidence", "548"), ("friendliness", "476"), ("warmth", "462"), ("coolness", "420"), ("rebelliousness", "304")] }
 
-def all : List LinguisticExample := [poss_sm, poss_mc, nece_sm, nece_mc]
+def all : List Datum := [poss_sm, poss_mc, nece_sm, nece_mc]
 
 end LiuRotter2025.Examples

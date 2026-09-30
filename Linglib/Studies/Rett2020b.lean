@@ -206,13 +206,13 @@ def Diagnostic.labels : List (String × Diagnostic) :=
   [("weak", .weak), ("evaluativity", .evaluativity), ("factor", .factor)]
 
 /-- An example: its strategy, the diagnostic it applies if any, and the judgment. -/
-structure Datum where
+structure Row where
   strategy : Strategy
   diagnostic : Option Diagnostic
   judgment : Data.Examples.Judgment
 
-/-- An example read into its datum. -/
-def datum (e : LinguisticExample) : Option Datum := do
+/-- A datum read into its row. -/
+def Row.ofDatum (e : Datum) : Option Row := do
   let s ← e.parse? "strategy" Strategy.labels
   let d ← match e.feature? "diagnostic" with
     | none => some none
@@ -220,10 +220,10 @@ def datum (e : LinguisticExample) : Option Datum := do
   pure ⟨s, d, e.judgment⟩
 
 /-- Every example is read. -/
-theorem isSome_datum : ∀ e ∈ Examples.all, (datum e).isSome := by decide
+theorem isSome_ofDatum : ∀ e ∈ Examples.all, (Row.ofDatum e).isSome := by decide
 
 /-- The chapter's examples. -/
-def data : List Datum := Examples.all.filterMap datum
+def data : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- A diagnostic sentence is acceptable exactly when Figure 3 expects it of the strategy's
 class. -/

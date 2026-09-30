@@ -427,7 +427,7 @@ def suffixTable : List (String × Suffix) :=
 def transcribe (s : String) : List Char :=
   (s.toList.filter (· ≠ '-')).map λ c => if c = 'β' then 'b' else c
 
-def Row.ofExample (ex : LinguisticExample) : Option Row := do
+def Row.ofDatum (ex : Datum) : Option Row := do
   let lang ← List.lookup ex.language langTable
   let root ← ex.parse? "root" (match lang with | .tigrinya => tigrinyaRoots | .tigre => tigreRoots)
   let template ← ex.parse? "template" templateTable
@@ -435,9 +435,9 @@ def Row.ofExample (ex : LinguisticExample) : Option Row := do
     (ex.primaryText :: ex.alternatives.map Prod.fst).map transcribe,
     ex.feature? "predicted" != some "no"⟩
 
-theorem row_ofExample_isSome : ∀ ex ∈ Examples.all, (Row.ofExample ex).isSome := by decide
+theorem row_ofDatum_isSome : ∀ ex ∈ Examples.all, (Row.ofDatum ex).isSome := by decide
 
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- The underlying form of a row: its template instantiated by its root, with its suffix. -/
 def Row.stem (r : Row) : Option Form :=

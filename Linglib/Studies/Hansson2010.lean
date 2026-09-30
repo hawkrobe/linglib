@@ -61,10 +61,10 @@ def classify (c : Char) : Sibilant :=
 def tierOf (s : String) : List Sibilant := s.toList.map classify
 
 /-- The underlying form of a row, from its `underlying` feature. -/
-def ur (e : LinguisticExample) : List Sibilant := tierOf ((e.feature? "underlying").getD "")
+def ur (e : Datum) : List Sibilant := tierOf ((e.feature? "underlying").getD "")
 
 /-- The surface form of a row. -/
-def sr (e : LinguisticExample) : List Sibilant := tierOf e.primaryText
+def sr (e : Datum) : List Sibilant := tierOf e.primaryText
 
 /-- The sibilants of a word, in order. -/
 abbrev sibilants (w : List Sibilant) : List Sibilant := w.filter (Sibilant.onTier ·)

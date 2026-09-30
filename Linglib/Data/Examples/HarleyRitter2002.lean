@@ -17,7 +17,7 @@ namespace HarleyRitter2002.Examples
 
 open Data.Examples
 
-def hr2002_daga_1sg : LinguisticExample :=
+def hr2002_daga_1sg : Datum :=
   { id := "hr2002_daga_1sg"
     source := ⟨"harley-ritter-2002", "Table 3"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def hr2002_daga_1sg : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "1"), ("number", "sg")] }
 
-def hr2002_daga_1pl : LinguisticExample :=
+def hr2002_daga_1pl : Datum :=
   { id := "hr2002_daga_1pl"
     source := ⟨"harley-ritter-2002", "Table 3"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def hr2002_daga_1pl : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "1"), ("number", "pl")] }
 
-def hr2002_daga_2sg : LinguisticExample :=
+def hr2002_daga_2sg : Datum :=
   { id := "hr2002_daga_2sg"
     source := ⟨"harley-ritter-2002", "Table 3"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def hr2002_daga_2sg : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "2"), ("number", "sg")] }
 
-def hr2002_daga_2pl : LinguisticExample :=
+def hr2002_daga_2pl : Datum :=
   { id := "hr2002_daga_2pl"
     source := ⟨"harley-ritter-2002", "Table 3"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def hr2002_daga_2pl : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "2"), ("number", "pl")] }
 
-def hr2002_daga_3sg : LinguisticExample :=
+def hr2002_daga_3sg : Datum :=
   { id := "hr2002_daga_3sg"
     source := ⟨"harley-ritter-2002", "Table 3"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def hr2002_daga_3sg : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "3"), ("number", "sg")] }
 
-def hr2002_daga_3pl : LinguisticExample :=
+def hr2002_daga_3pl : Datum :=
   { id := "hr2002_daga_3pl"
     source := ⟨"harley-ritter-2002", "Table 3"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def hr2002_daga_3pl : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "3"), ("number", "pl")] }
 
-def hr2002_gali_1exsg : LinguisticExample :=
+def hr2002_gali_1exsg : Datum :=
   { id := "hr2002_gali_1exsg"
     source := ⟨"harley-ritter-2002", "Table 4"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def hr2002_gali_1exsg : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "1ex"), ("number", "sg")] }
 
-def hr2002_gali_1expl : LinguisticExample :=
+def hr2002_gali_1expl : Datum :=
   { id := "hr2002_gali_1expl"
     source := ⟨"harley-ritter-2002", "Table 4"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def hr2002_gali_1expl : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "1ex"), ("number", "pl")] }
 
-def hr2002_gali_1insg : LinguisticExample :=
+def hr2002_gali_1insg : Datum :=
   { id := "hr2002_gali_1insg"
     source := ⟨"harley-ritter-2002", "Table 4"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def hr2002_gali_1insg : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "1in"), ("number", "sg")] }
 
-def hr2002_gali_1inpl : LinguisticExample :=
+def hr2002_gali_1inpl : Datum :=
   { id := "hr2002_gali_1inpl"
     source := ⟨"harley-ritter-2002", "Table 4"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def hr2002_gali_1inpl : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "1in"), ("number", "pl")] }
 
-def hr2002_gali_2sg : LinguisticExample :=
+def hr2002_gali_2sg : Datum :=
   { id := "hr2002_gali_2sg"
     source := ⟨"harley-ritter-2002", "Table 4"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def hr2002_gali_2sg : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "2"), ("number", "sg")] }
 
-def hr2002_gali_2pl : LinguisticExample :=
+def hr2002_gali_2pl : Datum :=
   { id := "hr2002_gali_2pl"
     source := ⟨"harley-ritter-2002", "Table 4"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def hr2002_gali_2pl : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "2"), ("number", "pl")] }
 
-def hr2002_gali_3sg : LinguisticExample :=
+def hr2002_gali_3sg : Datum :=
   { id := "hr2002_gali_3sg"
     source := ⟨"harley-ritter-2002", "Table 4"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def hr2002_gali_3sg : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "3"), ("number", "sg")] }
 
-def hr2002_gali_3pl : LinguisticExample :=
+def hr2002_gali_3pl : Datum :=
   { id := "hr2002_gali_3pl"
     source := ⟨"harley-ritter-2002", "Table 4"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def hr2002_gali_3pl : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "3"), ("number", "pl")] }
 
-def hr2002_tonk_1sg : LinguisticExample :=
+def hr2002_tonk_1sg : Datum :=
   { id := "hr2002_tonk_1sg"
     source := ⟨"harley-ritter-2002", "Table 5"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def hr2002_tonk_1sg : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "1"), ("number", "sg")] }
 
-def hr2002_tonk_1du : LinguisticExample :=
+def hr2002_tonk_1du : Datum :=
   { id := "hr2002_tonk_1du"
     source := ⟨"harley-ritter-2002", "Table 5"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def hr2002_tonk_1du : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "1"), ("number", "du")] }
 
-def hr2002_tonk_1pl : LinguisticExample :=
+def hr2002_tonk_1pl : Datum :=
   { id := "hr2002_tonk_1pl"
     source := ⟨"harley-ritter-2002", "Table 5"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def hr2002_tonk_1pl : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "1"), ("number", "pl")] }
 
-def hr2002_tonk_2sg : LinguisticExample :=
+def hr2002_tonk_2sg : Datum :=
   { id := "hr2002_tonk_2sg"
     source := ⟨"harley-ritter-2002", "Table 5"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def hr2002_tonk_2sg : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "2"), ("number", "sg")] }
 
-def hr2002_tonk_2du : LinguisticExample :=
+def hr2002_tonk_2du : Datum :=
   { id := "hr2002_tonk_2du"
     source := ⟨"harley-ritter-2002", "Table 5"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def hr2002_tonk_2du : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "2"), ("number", "du")] }
 
-def hr2002_tonk_2pl : LinguisticExample :=
+def hr2002_tonk_2pl : Datum :=
   { id := "hr2002_tonk_2pl"
     source := ⟨"harley-ritter-2002", "Table 5"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def hr2002_tonk_2pl : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "2"), ("number", "pl")] }
 
-def hr2002_tonk_3sg : LinguisticExample :=
+def hr2002_tonk_3sg : Datum :=
   { id := "hr2002_tonk_3sg"
     source := ⟨"harley-ritter-2002", "Table 5"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def hr2002_tonk_3sg : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "3"), ("number", "sg")] }
 
-def hr2002_tonk_3du : LinguisticExample :=
+def hr2002_tonk_3du : Datum :=
   { id := "hr2002_tonk_3du"
     source := ⟨"harley-ritter-2002", "Table 5"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def hr2002_tonk_3du : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "3"), ("number", "du")] }
 
-def hr2002_tonk_3pl : LinguisticExample :=
+def hr2002_tonk_3pl : Datum :=
   { id := "hr2002_tonk_3pl"
     source := ⟨"harley-ritter-2002", "Table 5"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def hr2002_tonk_3pl : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "3"), ("number", "pl")] }
 
-def hr2002_chin_1exsg : LinguisticExample :=
+def hr2002_chin_1exsg : Datum :=
   { id := "hr2002_chin_1exsg"
     source := ⟨"harley-ritter-2002", "Table 6"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def hr2002_chin_1exsg : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "1ex"), ("number", "sg")] }
 
-def hr2002_chin_1exdu : LinguisticExample :=
+def hr2002_chin_1exdu : Datum :=
   { id := "hr2002_chin_1exdu"
     source := ⟨"harley-ritter-2002", "Table 6"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def hr2002_chin_1exdu : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "1ex"), ("number", "du")] }
 
-def hr2002_chin_1expl : LinguisticExample :=
+def hr2002_chin_1expl : Datum :=
   { id := "hr2002_chin_1expl"
     source := ⟨"harley-ritter-2002", "Table 6"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def hr2002_chin_1expl : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "1ex"), ("number", "pl")] }
 
-def hr2002_chin_1indu : LinguisticExample :=
+def hr2002_chin_1indu : Datum :=
   { id := "hr2002_chin_1indu"
     source := ⟨"harley-ritter-2002", "Table 6"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def hr2002_chin_1indu : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "1in"), ("number", "du")] }
 
-def hr2002_chin_1inpl : LinguisticExample :=
+def hr2002_chin_1inpl : Datum :=
   { id := "hr2002_chin_1inpl"
     source := ⟨"harley-ritter-2002", "Table 6"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def hr2002_chin_1inpl : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "1in"), ("number", "pl")] }
 
-def hr2002_chin_2sg : LinguisticExample :=
+def hr2002_chin_2sg : Datum :=
   { id := "hr2002_chin_2sg"
     source := ⟨"harley-ritter-2002", "Table 6"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def hr2002_chin_2sg : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "2"), ("number", "sg")] }
 
-def hr2002_chin_2du : LinguisticExample :=
+def hr2002_chin_2du : Datum :=
   { id := "hr2002_chin_2du"
     source := ⟨"harley-ritter-2002", "Table 6"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def hr2002_chin_2du : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "2"), ("number", "du")] }
 
-def hr2002_chin_2pl : LinguisticExample :=
+def hr2002_chin_2pl : Datum :=
   { id := "hr2002_chin_2pl"
     source := ⟨"harley-ritter-2002", "Table 6"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def hr2002_chin_2pl : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "2"), ("number", "pl")] }
 
-def hr2002_chin_3sg : LinguisticExample :=
+def hr2002_chin_3sg : Datum :=
   { id := "hr2002_chin_3sg"
     source := ⟨"harley-ritter-2002", "Table 6"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def hr2002_chin_3sg : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "3"), ("number", "sg")] }
 
-def hr2002_chin_3du : LinguisticExample :=
+def hr2002_chin_3du : Datum :=
   { id := "hr2002_chin_3du"
     source := ⟨"harley-ritter-2002", "Table 6"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def hr2002_chin_3du : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "3"), ("number", "du")] }
 
-def hr2002_chin_3pl : LinguisticExample :=
+def hr2002_chin_3pl : Datum :=
   { id := "hr2002_chin_3pl"
     source := ⟨"harley-ritter-2002", "Table 6"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def hr2002_chin_3pl : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "3"), ("number", "pl")] }
 
-def hr2002_yima_1sg : LinguisticExample :=
+def hr2002_yima_1sg : Datum :=
   { id := "hr2002_yima_1sg"
     source := ⟨"harley-ritter-2002", "Table 7"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def hr2002_yima_1sg : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "1"), ("number", "sg")] }
 
-def hr2002_yima_1du : LinguisticExample :=
+def hr2002_yima_1du : Datum :=
   { id := "hr2002_yima_1du"
     source := ⟨"harley-ritter-2002", "Table 7"⟩
     reportedIn := none
@@ -485,7 +485,7 @@ def hr2002_yima_1du : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "1"), ("number", "du")] }
 
-def hr2002_yima_1pc : LinguisticExample :=
+def hr2002_yima_1pc : Datum :=
   { id := "hr2002_yima_1pc"
     source := ⟨"harley-ritter-2002", "Table 7"⟩
     reportedIn := none
@@ -498,7 +498,7 @@ def hr2002_yima_1pc : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "1"), ("number", "pc")] }
 
-def hr2002_yima_1pl : LinguisticExample :=
+def hr2002_yima_1pl : Datum :=
   { id := "hr2002_yima_1pl"
     source := ⟨"harley-ritter-2002", "Table 7"⟩
     reportedIn := none
@@ -511,7 +511,7 @@ def hr2002_yima_1pl : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "1"), ("number", "pl")] }
 
-def hr2002_yima_2sg : LinguisticExample :=
+def hr2002_yima_2sg : Datum :=
   { id := "hr2002_yima_2sg"
     source := ⟨"harley-ritter-2002", "Table 7"⟩
     reportedIn := none
@@ -524,7 +524,7 @@ def hr2002_yima_2sg : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "2"), ("number", "sg")] }
 
-def hr2002_yima_2du : LinguisticExample :=
+def hr2002_yima_2du : Datum :=
   { id := "hr2002_yima_2du"
     source := ⟨"harley-ritter-2002", "Table 7"⟩
     reportedIn := none
@@ -537,7 +537,7 @@ def hr2002_yima_2du : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "2"), ("number", "du")] }
 
-def hr2002_yima_2pc : LinguisticExample :=
+def hr2002_yima_2pc : Datum :=
   { id := "hr2002_yima_2pc"
     source := ⟨"harley-ritter-2002", "Table 7"⟩
     reportedIn := none
@@ -550,7 +550,7 @@ def hr2002_yima_2pc : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "2"), ("number", "pc")] }
 
-def hr2002_yima_2pl : LinguisticExample :=
+def hr2002_yima_2pl : Datum :=
   { id := "hr2002_yima_2pl"
     source := ⟨"harley-ritter-2002", "Table 7"⟩
     reportedIn := none
@@ -563,7 +563,7 @@ def hr2002_yima_2pl : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "2"), ("number", "pl")] }
 
-def hr2002_yima_3sg : LinguisticExample :=
+def hr2002_yima_3sg : Datum :=
   { id := "hr2002_yima_3sg"
     source := ⟨"harley-ritter-2002", "Table 7"⟩
     reportedIn := none
@@ -576,7 +576,7 @@ def hr2002_yima_3sg : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "3"), ("number", "sg")] }
 
-def hr2002_yima_3du : LinguisticExample :=
+def hr2002_yima_3du : Datum :=
   { id := "hr2002_yima_3du"
     source := ⟨"harley-ritter-2002", "Table 7"⟩
     reportedIn := none
@@ -589,7 +589,7 @@ def hr2002_yima_3du : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "3"), ("number", "du")] }
 
-def hr2002_yima_3pl : LinguisticExample :=
+def hr2002_yima_3pl : Datum :=
   { id := "hr2002_yima_3pl"
     source := ⟨"harley-ritter-2002", "Table 7"⟩
     reportedIn := none
@@ -602,7 +602,7 @@ def hr2002_yima_3pl : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "3"), ("number", "pl")] }
 
-def hr2002_fiji_1exsg : LinguisticExample :=
+def hr2002_fiji_1exsg : Datum :=
   { id := "hr2002_fiji_1exsg"
     source := ⟨"harley-ritter-2002", "Table 8"⟩
     reportedIn := none
@@ -615,7 +615,7 @@ def hr2002_fiji_1exsg : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "1ex"), ("number", "sg")] }
 
-def hr2002_fiji_1expl : LinguisticExample :=
+def hr2002_fiji_1expl : Datum :=
   { id := "hr2002_fiji_1expl"
     source := ⟨"harley-ritter-2002", "Table 8"⟩
     reportedIn := none
@@ -628,7 +628,7 @@ def hr2002_fiji_1expl : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "1ex"), ("number", "pl")] }
 
-def hr2002_fiji_1exdu : LinguisticExample :=
+def hr2002_fiji_1exdu : Datum :=
   { id := "hr2002_fiji_1exdu"
     source := ⟨"harley-ritter-2002", "Table 8"⟩
     reportedIn := none
@@ -641,7 +641,7 @@ def hr2002_fiji_1exdu : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "1ex"), ("number", "du")] }
 
-def hr2002_fiji_1expc : LinguisticExample :=
+def hr2002_fiji_1expc : Datum :=
   { id := "hr2002_fiji_1expc"
     source := ⟨"harley-ritter-2002", "Table 8"⟩
     reportedIn := none
@@ -654,7 +654,7 @@ def hr2002_fiji_1expc : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "1ex"), ("number", "pc")] }
 
-def hr2002_fiji_1inpl : LinguisticExample :=
+def hr2002_fiji_1inpl : Datum :=
   { id := "hr2002_fiji_1inpl"
     source := ⟨"harley-ritter-2002", "Table 8"⟩
     reportedIn := none
@@ -667,7 +667,7 @@ def hr2002_fiji_1inpl : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "1in"), ("number", "pl")] }
 
-def hr2002_fiji_1indu : LinguisticExample :=
+def hr2002_fiji_1indu : Datum :=
   { id := "hr2002_fiji_1indu"
     source := ⟨"harley-ritter-2002", "Table 8"⟩
     reportedIn := none
@@ -680,7 +680,7 @@ def hr2002_fiji_1indu : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "1in"), ("number", "du")] }
 
-def hr2002_fiji_1inpc : LinguisticExample :=
+def hr2002_fiji_1inpc : Datum :=
   { id := "hr2002_fiji_1inpc"
     source := ⟨"harley-ritter-2002", "Table 8"⟩
     reportedIn := none
@@ -693,7 +693,7 @@ def hr2002_fiji_1inpc : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "1in"), ("number", "pc")] }
 
-def hr2002_fiji_2sg : LinguisticExample :=
+def hr2002_fiji_2sg : Datum :=
   { id := "hr2002_fiji_2sg"
     source := ⟨"harley-ritter-2002", "Table 8"⟩
     reportedIn := none
@@ -706,7 +706,7 @@ def hr2002_fiji_2sg : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "2"), ("number", "sg")] }
 
-def hr2002_fiji_2pl : LinguisticExample :=
+def hr2002_fiji_2pl : Datum :=
   { id := "hr2002_fiji_2pl"
     source := ⟨"harley-ritter-2002", "Table 8"⟩
     reportedIn := none
@@ -719,7 +719,7 @@ def hr2002_fiji_2pl : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "2"), ("number", "pl")] }
 
-def hr2002_fiji_2du : LinguisticExample :=
+def hr2002_fiji_2du : Datum :=
   { id := "hr2002_fiji_2du"
     source := ⟨"harley-ritter-2002", "Table 8"⟩
     reportedIn := none
@@ -732,7 +732,7 @@ def hr2002_fiji_2du : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "2"), ("number", "du")] }
 
-def hr2002_fiji_2pc : LinguisticExample :=
+def hr2002_fiji_2pc : Datum :=
   { id := "hr2002_fiji_2pc"
     source := ⟨"harley-ritter-2002", "Table 8"⟩
     reportedIn := none
@@ -745,7 +745,7 @@ def hr2002_fiji_2pc : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "2"), ("number", "pc")] }
 
-def hr2002_fiji_3sg : LinguisticExample :=
+def hr2002_fiji_3sg : Datum :=
   { id := "hr2002_fiji_3sg"
     source := ⟨"harley-ritter-2002", "Table 8"⟩
     reportedIn := none
@@ -758,7 +758,7 @@ def hr2002_fiji_3sg : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "3"), ("number", "sg")] }
 
-def hr2002_fiji_3pl : LinguisticExample :=
+def hr2002_fiji_3pl : Datum :=
   { id := "hr2002_fiji_3pl"
     source := ⟨"harley-ritter-2002", "Table 8"⟩
     reportedIn := none
@@ -771,7 +771,7 @@ def hr2002_fiji_3pl : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "3"), ("number", "pl")] }
 
-def hr2002_fiji_3du : LinguisticExample :=
+def hr2002_fiji_3du : Datum :=
   { id := "hr2002_fiji_3du"
     source := ⟨"harley-ritter-2002", "Table 8"⟩
     reportedIn := none
@@ -784,7 +784,7 @@ def hr2002_fiji_3du : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "3"), ("number", "du")] }
 
-def hr2002_fiji_3pc : LinguisticExample :=
+def hr2002_fiji_3pc : Datum :=
   { id := "hr2002_fiji_3pc"
     source := ⟨"harley-ritter-2002", "Table 8"⟩
     reportedIn := none
@@ -797,7 +797,7 @@ def hr2002_fiji_3pc : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "3"), ("number", "pc")] }
 
-def hr2002_pira_1 : LinguisticExample :=
+def hr2002_pira_1 : Datum :=
   { id := "hr2002_pira_1"
     source := ⟨"harley-ritter-2002", "Table 13"⟩
     reportedIn := none
@@ -810,7 +810,7 @@ def hr2002_pira_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "1"), ("number", "none")] }
 
-def hr2002_pira_2 : LinguisticExample :=
+def hr2002_pira_2 : Datum :=
   { id := "hr2002_pira_2"
     source := ⟨"harley-ritter-2002", "Table 13"⟩
     reportedIn := none
@@ -823,7 +823,7 @@ def hr2002_pira_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "2"), ("number", "none")] }
 
-def hr2002_pira_3 : LinguisticExample :=
+def hr2002_pira_3 : Datum :=
   { id := "hr2002_pira_3"
     source := ⟨"harley-ritter-2002", "Table 13"⟩
     reportedIn := none
@@ -836,7 +836,7 @@ def hr2002_pira_3 : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "3"), ("number", "none")] }
 
-def hr2002_maxa_1sg : LinguisticExample :=
+def hr2002_maxa_1sg : Datum :=
   { id := "hr2002_maxa_1sg"
     source := ⟨"harley-ritter-2002", "Table 14"⟩
     reportedIn := none
@@ -849,7 +849,7 @@ def hr2002_maxa_1sg : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "1"), ("number", "sg")] }
 
-def hr2002_maxa_1expl : LinguisticExample :=
+def hr2002_maxa_1expl : Datum :=
   { id := "hr2002_maxa_1expl"
     source := ⟨"harley-ritter-2002", "Table 14"⟩
     reportedIn := none
@@ -862,7 +862,7 @@ def hr2002_maxa_1expl : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "1ex"), ("number", "pl")] }
 
-def hr2002_maxa_1in : LinguisticExample :=
+def hr2002_maxa_1in : Datum :=
   { id := "hr2002_maxa_1in"
     source := ⟨"harley-ritter-2002", "Table 14"⟩
     reportedIn := none
@@ -875,7 +875,7 @@ def hr2002_maxa_1in : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "1in"), ("number", "none")] }
 
-def hr2002_maxa_2 : LinguisticExample :=
+def hr2002_maxa_2 : Datum :=
   { id := "hr2002_maxa_2"
     source := ⟨"harley-ritter-2002", "Table 14"⟩
     reportedIn := none
@@ -888,7 +888,7 @@ def hr2002_maxa_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "2"), ("number", "none")] }
 
-def hr2002_maxa_3 : LinguisticExample :=
+def hr2002_maxa_3 : Datum :=
   { id := "hr2002_maxa_3"
     source := ⟨"harley-ritter-2002", "Table 14"⟩
     reportedIn := none
@@ -901,7 +901,7 @@ def hr2002_maxa_3 : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "3"), ("number", "none")] }
 
-def hr2002_kwak_1sg : LinguisticExample :=
+def hr2002_kwak_1sg : Datum :=
   { id := "hr2002_kwak_1sg"
     source := ⟨"harley-ritter-2002", "Table 15"⟩
     reportedIn := none
@@ -914,7 +914,7 @@ def hr2002_kwak_1sg : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "1"), ("number", "sg")] }
 
-def hr2002_kwak_1expl : LinguisticExample :=
+def hr2002_kwak_1expl : Datum :=
   { id := "hr2002_kwak_1expl"
     source := ⟨"harley-ritter-2002", "Table 15"⟩
     reportedIn := none
@@ -927,7 +927,7 @@ def hr2002_kwak_1expl : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "1ex"), ("number", "pl")] }
 
-def hr2002_kwak_1in : LinguisticExample :=
+def hr2002_kwak_1in : Datum :=
   { id := "hr2002_kwak_1in"
     source := ⟨"harley-ritter-2002", "Table 15"⟩
     reportedIn := none
@@ -940,7 +940,7 @@ def hr2002_kwak_1in : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "1in"), ("number", "none")] }
 
-def hr2002_kwak_2 : LinguisticExample :=
+def hr2002_kwak_2 : Datum :=
   { id := "hr2002_kwak_2"
     source := ⟨"harley-ritter-2002", "Table 15"⟩
     reportedIn := none
@@ -953,7 +953,7 @@ def hr2002_kwak_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "2"), ("number", "none")] }
 
-def hr2002_kwak_3 : LinguisticExample :=
+def hr2002_kwak_3 : Datum :=
   { id := "hr2002_kwak_3"
     source := ⟨"harley-ritter-2002", "Table 15"⟩
     reportedIn := none
@@ -966,6 +966,6 @@ def hr2002_kwak_3 : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "3"), ("number", "none")] }
 
-def all : List LinguisticExample := [hr2002_daga_1sg, hr2002_daga_1pl, hr2002_daga_2sg, hr2002_daga_2pl, hr2002_daga_3sg, hr2002_daga_3pl, hr2002_gali_1exsg, hr2002_gali_1expl, hr2002_gali_1insg, hr2002_gali_1inpl, hr2002_gali_2sg, hr2002_gali_2pl, hr2002_gali_3sg, hr2002_gali_3pl, hr2002_tonk_1sg, hr2002_tonk_1du, hr2002_tonk_1pl, hr2002_tonk_2sg, hr2002_tonk_2du, hr2002_tonk_2pl, hr2002_tonk_3sg, hr2002_tonk_3du, hr2002_tonk_3pl, hr2002_chin_1exsg, hr2002_chin_1exdu, hr2002_chin_1expl, hr2002_chin_1indu, hr2002_chin_1inpl, hr2002_chin_2sg, hr2002_chin_2du, hr2002_chin_2pl, hr2002_chin_3sg, hr2002_chin_3du, hr2002_chin_3pl, hr2002_yima_1sg, hr2002_yima_1du, hr2002_yima_1pc, hr2002_yima_1pl, hr2002_yima_2sg, hr2002_yima_2du, hr2002_yima_2pc, hr2002_yima_2pl, hr2002_yima_3sg, hr2002_yima_3du, hr2002_yima_3pl, hr2002_fiji_1exsg, hr2002_fiji_1expl, hr2002_fiji_1exdu, hr2002_fiji_1expc, hr2002_fiji_1inpl, hr2002_fiji_1indu, hr2002_fiji_1inpc, hr2002_fiji_2sg, hr2002_fiji_2pl, hr2002_fiji_2du, hr2002_fiji_2pc, hr2002_fiji_3sg, hr2002_fiji_3pl, hr2002_fiji_3du, hr2002_fiji_3pc, hr2002_pira_1, hr2002_pira_2, hr2002_pira_3, hr2002_maxa_1sg, hr2002_maxa_1expl, hr2002_maxa_1in, hr2002_maxa_2, hr2002_maxa_3, hr2002_kwak_1sg, hr2002_kwak_1expl, hr2002_kwak_1in, hr2002_kwak_2, hr2002_kwak_3]
+def all : List Datum := [hr2002_daga_1sg, hr2002_daga_1pl, hr2002_daga_2sg, hr2002_daga_2pl, hr2002_daga_3sg, hr2002_daga_3pl, hr2002_gali_1exsg, hr2002_gali_1expl, hr2002_gali_1insg, hr2002_gali_1inpl, hr2002_gali_2sg, hr2002_gali_2pl, hr2002_gali_3sg, hr2002_gali_3pl, hr2002_tonk_1sg, hr2002_tonk_1du, hr2002_tonk_1pl, hr2002_tonk_2sg, hr2002_tonk_2du, hr2002_tonk_2pl, hr2002_tonk_3sg, hr2002_tonk_3du, hr2002_tonk_3pl, hr2002_chin_1exsg, hr2002_chin_1exdu, hr2002_chin_1expl, hr2002_chin_1indu, hr2002_chin_1inpl, hr2002_chin_2sg, hr2002_chin_2du, hr2002_chin_2pl, hr2002_chin_3sg, hr2002_chin_3du, hr2002_chin_3pl, hr2002_yima_1sg, hr2002_yima_1du, hr2002_yima_1pc, hr2002_yima_1pl, hr2002_yima_2sg, hr2002_yima_2du, hr2002_yima_2pc, hr2002_yima_2pl, hr2002_yima_3sg, hr2002_yima_3du, hr2002_yima_3pl, hr2002_fiji_1exsg, hr2002_fiji_1expl, hr2002_fiji_1exdu, hr2002_fiji_1expc, hr2002_fiji_1inpl, hr2002_fiji_1indu, hr2002_fiji_1inpc, hr2002_fiji_2sg, hr2002_fiji_2pl, hr2002_fiji_2du, hr2002_fiji_2pc, hr2002_fiji_3sg, hr2002_fiji_3pl, hr2002_fiji_3du, hr2002_fiji_3pc, hr2002_pira_1, hr2002_pira_2, hr2002_pira_3, hr2002_maxa_1sg, hr2002_maxa_1expl, hr2002_maxa_1in, hr2002_maxa_2, hr2002_maxa_3, hr2002_kwak_1sg, hr2002_kwak_1expl, hr2002_kwak_1in, hr2002_kwak_2, hr2002_kwak_3]
 
 end HarleyRitter2002.Examples

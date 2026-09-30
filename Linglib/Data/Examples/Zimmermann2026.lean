@@ -17,7 +17,7 @@ namespace Zimmermann2026.Examples
 
 open Data.Examples
 
-def ex_12 : LinguisticExample :=
+def ex_12 : Datum :=
   { id := "zimmermann2026_12"
     source := ⟨"zimmermann-2026", "(12)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_12 : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "sluicing antecedent")] }
 
-def ex_13a : LinguisticExample :=
+def ex_13a : Datum :=
   { id := "zimmermann2026_13a"
     source := ⟨"zimmermann-2026", "(13a)"⟩
     reportedIn := some ⟨"zimmermann-2014", ""⟩
@@ -43,7 +43,7 @@ def ex_13a : LinguisticExample :=
     readings := []
     paperFeatures := [("scope", "wide"), ("context", "Audu bought a lot of fish, but")] }
 
-def ex_13b : LinguisticExample :=
+def ex_13b : Datum :=
   { id := "zimmermann2026_13b"
     source := ⟨"zimmermann-2026", "(13b)"⟩
     reportedIn := some ⟨"zimmermann-2014", ""⟩
@@ -56,7 +56,7 @@ def ex_13b : LinguisticExample :=
     readings := []
     paperFeatures := [("scope", "narrow"), ("context", "the market was closed, so")] }
 
-def ex_14 : LinguisticExample :=
+def ex_14 : Datum :=
   { id := "zimmermann2026_14"
     source := ⟨"zimmermann-2026", "(14)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_14 : LinguisticExample :=
     readings := []
     paperFeatures := [("inference", "specificity")] }
 
-def ex_15 : LinguisticExample :=
+def ex_15 : Datum :=
   { id := "zimmermann2026_15"
     source := ⟨"zimmermann-2026", "(15)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_15 : LinguisticExample :=
     readings := []
     paperFeatures := [("scope", "wide only")] }
 
-def ex_17 : LinguisticExample :=
+def ex_17 : Datum :=
   { id := "zimmermann2026_17"
     source := ⟨"zimmermann-2026", "(17)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_17 : LinguisticExample :=
     readings := []
     paperFeatures := [("marker", "ko"), ("reading", "existentially closed choice function")] }
 
-def ex_18 : LinguisticExample :=
+def ex_18 : Datum :=
   { id := "zimmermann2026_18"
     source := ⟨"zimmermann-2026", "(18)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_18 : LinguisticExample :=
     readings := []
     paperFeatures := [("co-occurrence", "INDEF and DEF")] }
 
-def ex_19 : LinguisticExample :=
+def ex_19 : Datum :=
   { id := "zimmermann2026_19"
     source := ⟨"zimmermann-2026", "(19)"⟩
     reportedIn := none
@@ -121,6 +121,6 @@ def ex_19 : LinguisticExample :=
     readings := []
     paperFeatures := [("bare NP", "definite or indefinite")] }
 
-def all : List LinguisticExample := [ex_12, ex_13a, ex_13b, ex_14, ex_15, ex_17, ex_18, ex_19]
+def all : List Datum := [ex_12, ex_13a, ex_13b, ex_14, ex_15, ex_17, ex_18, ex_19]
 
 end Zimmermann2026.Examples

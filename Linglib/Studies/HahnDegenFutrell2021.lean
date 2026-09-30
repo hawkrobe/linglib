@@ -335,11 +335,11 @@ def japaneseSuffix? : String → Option (Σ σ, Japanese.Verb.Exponent σ)
   | _ => none
 
 /-- The suffixes a row's gloss line names after the stem. -/
-def japaneseSuffixes (r : LinguisticExample) : List (Σ σ, Japanese.Verb.Exponent σ) :=
+def japaneseSuffixes (r : Datum) : List (Σ σ, Japanese.Verb.Exponent σ) :=
   r.glossLine.tail.filterMap japaneseSuffix?
 
 /-- The supplement's Japanese forms. -/
-def japaneseForms : List LinguisticExample :=
+def japaneseForms : List Datum :=
   Examples.all.filter (·.language = "nucl1643")
 
 /-- Every gloss after the stem of each of the supplement's Japanese forms names a suffix of
@@ -378,11 +378,11 @@ def sesothoAffix : String → List (Σ σ, Sesotho.Verb.Exponent σ)
   | _ => []
 
 /-- The affixes a row's gloss line names, in linear order. -/
-def sesothoAffixes (r : LinguisticExample) : List (Σ σ, Sesotho.Verb.Exponent σ) :=
+def sesothoAffixes (r : Datum) : List (Σ σ, Sesotho.Verb.Exponent σ) :=
   r.glossLine.flatMap sesothoAffix
 
 /-- The paper's Sesotho forms. -/
-def sesothoForms : List LinguisticExample :=
+def sesothoForms : List Datum :=
   Examples.all.filter (·.language = "sout2807")
 
 /-- In each Sesotho form exactly one gloss, the stem's, names no affix, and the affixes of the

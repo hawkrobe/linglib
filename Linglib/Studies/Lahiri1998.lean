@@ -183,7 +183,7 @@ inductive Alternatives where
 
 /-- A judged example: its environment, the fragment entry of its item with the alternatives it
 introduces, and the judgment. -/
-structure Datum where
+structure Row where
   env : Environment
   item : PolarityItem
   alternatives : Alternatives
@@ -191,7 +191,7 @@ structure Datum where
 
 /-- The fragment entry of a row's item, with its alternatives; the paper does not classify
 *kabhii bhii* 'ever', read here with the property alternatives of *koii* and *kuch*. -/
-def item? (r : LinguisticExample) : Option (PolarityItem × Alternatives) :=
+def item? (r : Datum) : Option (PolarityItem × Alternatives) :=
   r.parse? "npi" [("koii bhii", (koiiBhii, .property)), ("koi bhii", (koiiBhii, .property)),
     ("kisii-ko bhii", (koiiBhii, .property)), ("kisii-se bhii", (koiiBhii, .property)),
     ("kisiike bhii", (koiiBhii, .property)), ("ek bhii", (ekBhii, .cardinality)),
@@ -199,7 +199,7 @@ def item? (r : LinguisticExample) : Option (PolarityItem × Alternatives) :=
     ("zaraa bhii", (zaraaBhii, .cardinality)), ("kabhii bhii", (kabhiiBhii, .property))]
 
 /-- A row of the survey. -/
-def datum (r : LinguisticExample) : Option Datum := do
+def Row.ofDatum (r : Datum) : Option Row := do
   let env ← r.parse? "environment" [("positive (UE)", Environment.positive),
     ("negation", .negation), ("negation (subject NPI)", .negation),
     ("conditional protasis", .protasis), ("conditional apodosis", .apodosis),
@@ -217,7 +217,7 @@ def datum (r : LinguisticExample) : Option Datum := do
   pure ⟨env, item, alternatives, r.judgment⟩
 
 /-- The survey. -/
-def data : List Datum := Examples.all.filterMap datum
+def data : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- The analysis reads every judgment of the survey, the cardinality items in imperatives and
 with numerals aside: an indefinite plus *bhii* is acceptable exactly in the environments it

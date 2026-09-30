@@ -17,7 +17,7 @@ namespace George2011.Examples
 
 open Data.Examples
 
-def ex12 : LinguisticExample :=
+def ex12 : Datum :=
   { id := "george2011_ex12"
     source := ⟨"george-2011", "(12)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex12 : LinguisticExample :=
     readings := []
     paperFeatures := [("sentence", "admittedKnown"), ("holds", "yes")] }
 
-def ex13 : LinguisticExample :=
+def ex13 : Datum :=
   { id := "george2011_ex13"
     source := ⟨"george-2011", "(13)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex13 : LinguisticExample :=
     readings := []
     paperFeatures := [("sentence", "notAdmittedKnown"), ("holds", "no")] }
 
-def ex4 : LinguisticExample :=
+def ex4 : Datum :=
   { id := "george2011_ex4"
     source := ⟨"george-2011", "(4)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex4 : LinguisticExample :=
     readings := []
     paperFeatures := [("sentence", "admittedButNot"), ("holds", "yes")] }
 
-def ex17 : LinguisticExample :=
+def ex17 : Datum :=
   { id := "george2011_ex17"
     source := ⟨"george-2011", "(17)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex17 : LinguisticExample :=
     readings := []
     paperFeatures := [("sentence", "fourStudents"), ("holds", "yes")] }
 
-def ex33 : LinguisticExample :=
+def ex33 : Datum :=
   { id := "george2011_ex33"
     source := ⟨"george-2011", "(33)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex33 : LinguisticExample :=
     readings := []
     paperFeatures := [("sentence", "jannaNewspaper"), ("holds", "yes")] }
 
-def ex34 : LinguisticExample :=
+def ex34 : Datum :=
   { id := "george2011_ex34"
     source := ⟨"george-2011", "(34)"⟩
     reportedIn := none
@@ -95,6 +95,6 @@ def ex34 : LinguisticExample :=
     readings := []
     paperFeatures := [("sentence", "redNewspaper"), ("holds", "no")] }
 
-def all : List LinguisticExample := [ex12, ex13, ex4, ex17, ex33, ex34]
+def all : List Datum := [ex12, ex13, ex4, ex17, ex33, ex34]
 
 end George2011.Examples

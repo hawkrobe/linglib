@@ -219,14 +219,14 @@ structure Row where
   deriving DecidableEq
 
 /-- A row from the paper's features. -/
-def Row.ofExample (e : LinguisticExample) : Option Row := do
+def Row.ofDatum (e : Datum) : Option Row := do
   let i ← e.feature? "input"
   let o ← e.feature? "output"
   let m ← e.feature? "in_rvoice"
   some ⟨i.toList.map segOf, o.toList.map segOf, m = "yes"⟩
 
 /-- The pairs of `Rvoice`, (7.5), and the pairs of GEN outside it, (7.17). -/
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- On the paper's pairs the grammar's relation agrees with `Rvoice`: the pairs of (7.5) are in
 it and those of (7.17) outside `Rvoice`, (7.18b) and (7.20), are excluded. -/

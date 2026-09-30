@@ -17,7 +17,7 @@ namespace AdamsonZompi2025.Examples
 
 open Data.Examples
 
-def ex_2a : LinguisticExample :=
+def ex_2a : Datum :=
   { id := "adamsonzompi2025_2a"
     source := ⟨"adamson-zompi-2025", "(2a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_2a : LinguisticExample :=
     readings := []
     paperFeatures := [("dative", "2"), ("accusative", "3"), ("cell", "2>3")] }
 
-def ex_2b : LinguisticExample :=
+def ex_2b : Datum :=
   { id := "adamsonzompi2025_2b"
     source := ⟨"adamson-zompi-2025", "(2b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_2b : LinguisticExample :=
     readings := []
     paperFeatures := [("dative", "3"), ("accusative", "3"), ("cell", "3>3")] }
 
-def ex_3a : LinguisticExample :=
+def ex_3a : Datum :=
   { id := "adamsonzompi2025_3a"
     source := ⟨"adamson-zompi-2025", "(3a)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_3a : LinguisticExample :=
     readings := []
     paperFeatures := [("dative", "3"), ("accusative", "2"), ("cell", "3>2")] }
 
-def ex_4a : LinguisticExample :=
+def ex_4a : Datum :=
   { id := "adamsonzompi2025_4a"
     source := ⟨"adamson-zompi-2025", "(4a)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_4a : LinguisticExample :=
     readings := []
     paperFeatures := [("dative", "3"), ("accusative", "3"), ("cell", "3>3"), ("host", "infinitive enclisis")] }
 
-def ex_4b : LinguisticExample :=
+def ex_4b : Datum :=
   { id := "adamsonzompi2025_4b"
     source := ⟨"adamson-zompi-2025", "(4b)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_4b : LinguisticExample :=
     readings := []
     paperFeatures := [("dative", "3"), ("accusative", "2"), ("cell", "3>2"), ("host", "infinitive enclisis")] }
 
-def ex_5a : LinguisticExample :=
+def ex_5a : Datum :=
   { id := "adamsonzompi2025_5a"
     source := ⟨"adamson-zompi-2025", "(5a)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_5a : LinguisticExample :=
     readings := []
     paperFeatures := [("dative", "3"), ("accusative", "2 stressed"), ("repair", "stressed pronoun")] }
 
-def ex_5b : LinguisticExample :=
+def ex_5b : Datum :=
   { id := "adamsonzompi2025_5b"
     source := ⟨"adamson-zompi-2025", "(5b)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_5b : LinguisticExample :=
     readings := []
     paperFeatures := [("dative", "3 PP"), ("accusative", "2"), ("repair", "prepositional dative")] }
 
-def ex_6 : LinguisticExample :=
+def ex_6 : Datum :=
   { id := "adamsonzompi2025_6"
     source := ⟨"adamson-zompi-2025", "(6)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_6 : LinguisticExample :=
     readings := []
     paperFeatures := [("dative", "1 or 2"), ("accusative", "2 or 1"), ("cell", "1>2 / 2>1")] }
 
-def ex_8a : LinguisticExample :=
+def ex_8a : Datum :=
   { id := "adamsonzompi2025_8a"
     source := ⟨"adamson-zompi-2025", "(8a)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_8a : LinguisticExample :=
     readings := []
     paperFeatures := [("subject", "LEI"), ("agreement", "3SG")] }
 
-def ex_10 : LinguisticExample :=
+def ex_10 : Datum :=
   { id := "adamsonzompi2025_10"
     source := ⟨"adamson-zompi-2025", "(10)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_10 : LinguisticExample :=
     readings := []
     paperFeatures := [("subject", "LEI"), ("reflexive", "3 si")] }
 
-def ex_11c : LinguisticExample :=
+def ex_11c : Datum :=
   { id := "adamsonzompi2025_11c"
     source := ⟨"adamson-zompi-2025", "(11c)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_11c : LinguisticExample :=
     readings := []
     paperFeatures := [("accusative", "LEI"), ("order", "LOC > LEI")] }
 
-def ex_14 : LinguisticExample :=
+def ex_14 : Datum :=
   { id := "adamsonzompi2025_14"
     source := ⟨"adamson-zompi-2025", "(14)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_14 : LinguisticExample :=
     readings := []
     paperFeatures := [("accusative", "LEI"), ("participle agreement", "F.SG obligatory")] }
 
-def ex_16 : LinguisticExample :=
+def ex_16 : Datum :=
   { id := "adamsonzompi2025_16"
     source := ⟨"adamson-zompi-2025", "(16)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_16 : LinguisticExample :=
     readings := []
     paperFeatures := [("dative", "LEI or 3"), ("accusative", "3"), ("cell", "LEI>3")] }
 
-def ex_17 : LinguisticExample :=
+def ex_17 : Datum :=
   { id := "adamsonzompi2025_17"
     source := ⟨"adamson-zompi-2025", "(17)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_17 : LinguisticExample :=
     readings := []
     paperFeatures := [("dative", "3"), ("accusative", "LEI"), ("cell", "3>LEI")] }
 
-def ex_18 : LinguisticExample :=
+def ex_18 : Datum :=
   { id := "adamsonzompi2025_18"
     source := ⟨"adamson-zompi-2025", "(18)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_18 : LinguisticExample :=
     readings := []
     paperFeatures := [("dative", "3"), ("accusative", "LEI"), ("cell", "3>LEI")] }
 
-def ex_19a : LinguisticExample :=
+def ex_19a : Datum :=
   { id := "adamsonzompi2025_19a"
     source := ⟨"adamson-zompi-2025", "(19a)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_19a : LinguisticExample :=
     readings := []
     paperFeatures := [("dative", "LEI"), ("accusative", "3"), ("cell", "LEI>3")] }
 
-def ex_19b : LinguisticExample :=
+def ex_19b : Datum :=
   { id := "adamsonzompi2025_19b"
     source := ⟨"adamson-zompi-2025", "(19b)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex_19b : LinguisticExample :=
     readings := []
     paperFeatures := [("dative", "3"), ("accusative", "LEI"), ("cell", "3>LEI")] }
 
-def ex_20a : LinguisticExample :=
+def ex_20a : Datum :=
   { id := "adamsonzompi2025_20a"
     source := ⟨"adamson-zompi-2025", "(20a)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex_20a : LinguisticExample :=
     readings := []
     paperFeatures := [("dative", "LEI or 3"), ("accusative", "3"), ("host", "infinitive enclisis")] }
 
-def ex_20b : LinguisticExample :=
+def ex_20b : Datum :=
   { id := "adamsonzompi2025_20b"
     source := ⟨"adamson-zompi-2025", "(20b)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex_20b : LinguisticExample :=
     readings := []
     paperFeatures := [("dative", "3"), ("accusative", "LEI"), ("host", "infinitive enclisis")] }
 
-def ex_21a : LinguisticExample :=
+def ex_21a : Datum :=
   { id := "adamsonzompi2025_21a"
     source := ⟨"adamson-zompi-2025", "(21a)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex_21a : LinguisticExample :=
     readings := []
     paperFeatures := [("dative", "3"), ("accusative", "LEI stressed"), ("repair", "stressed pronoun")] }
 
-def ex_21b : LinguisticExample :=
+def ex_21b : Datum :=
   { id := "adamsonzompi2025_21b"
     source := ⟨"adamson-zompi-2025", "(21b)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex_21b : LinguisticExample :=
     readings := []
     paperFeatures := [("dative", "3 PP"), ("accusative", "LEI"), ("repair", "prepositional dative")] }
 
-def ex_24 : LinguisticExample :=
+def ex_24 : Datum :=
   { id := "adamsonzompi2025_24"
     source := ⟨"adamson-zompi-2025", "(24)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex_24 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "faire infinitif"), ("causee", "3"), ("accusative", "3")] }
 
-def ex_25 : LinguisticExample :=
+def ex_25 : Datum :=
   { id := "adamsonzompi2025_25"
     source := ⟨"adamson-zompi-2025", "(25)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex_25 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "faire infinitif"), ("causee", "3"), ("accusative", "LEI")] }
 
-def ex_26 : LinguisticExample :=
+def ex_26 : Datum :=
   { id := "adamsonzompi2025_26"
     source := ⟨"adamson-zompi-2025", "(26)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex_26 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "faire infinitif"), ("causee", "3"), ("accusative", "LEI stressed")] }
 
-def ex_27 : LinguisticExample :=
+def ex_27 : Datum :=
   { id := "adamsonzompi2025_27"
     source := ⟨"adamson-zompi-2025", "(27)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex_27 : LinguisticExample :=
     readings := []
     paperFeatures := [("dative", "3"), ("accusative", "3 resuming camouflage nominal"), ("cell", "3>imposter")] }
 
-def ex_29a : LinguisticExample :=
+def ex_29a : Datum :=
   { id := "adamsonzompi2025_29a"
     source := ⟨"adamson-zompi-2025", "(29a)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex_29a : LinguisticExample :=
     readings := []
     paperFeatures := [("dative", "3"), ("accusative", "3 resuming imposter"), ("cell", "3>imposter")] }
 
-def ex_30 : LinguisticExample :=
+def ex_30 : Datum :=
   { id := "adamsonzompi2025_30"
     source := ⟨"adamson-zompi-2025", "(30)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def ex_30 : LinguisticExample :=
     readings := []
     paperFeatures := [("conjuncts", "LEI + 3"), ("resolved", "2PL")] }
 
-def ex_31 : LinguisticExample :=
+def ex_31 : Datum :=
   { id := "adamsonzompi2025_31"
     source := ⟨"adamson-zompi-2025", "(31)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def ex_31 : LinguisticExample :=
     readings := []
     paperFeatures := [("conjuncts", "camouflage + 3"), ("resolved", "3PL")] }
 
-def ex_32 : LinguisticExample :=
+def ex_32 : Datum :=
   { id := "adamsonzompi2025_32"
     source := ⟨"adamson-zompi-2025", "(32)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def ex_32 : LinguisticExample :=
     readings := []
     paperFeatures := [("conjuncts", "imposter + 3"), ("resolved", "3PL")] }
 
-def ex_42 : LinguisticExample :=
+def ex_42 : Datum :=
   { id := "adamsonzompi2025_42"
     source := ⟨"adamson-zompi-2025", "(42)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def ex_42 : LinguisticExample :=
     readings := []
     paperFeatures := [("accusative", "USTED"), ("clitic", "3SG la")] }
 
-def ex_43 : LinguisticExample :=
+def ex_43 : Datum :=
   { id := "adamsonzompi2025_43"
     source := ⟨"rezac-2011", "(43)"⟩
     reportedIn := some ⟨"adamson-zompi-2025", "(43)"⟩
@@ -420,7 +420,7 @@ def ex_43 : LinguisticExample :=
     readings := [("accusative 3SG.F", .acceptable), ("accusative USTED", .ungrammatical)]
     paperFeatures := [("dative", "3 (spurious se)"), ("accusative", "3 or USTED")] }
 
-def ex_44a : LinguisticExample :=
+def ex_44a : Datum :=
   { id := "adamsonzompi2025_44a"
     source := ⟨"adamson-zompi-2025", "(44a)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def ex_44a : LinguisticExample :=
     readings := []
     paperFeatures := [("dative", "USTED or 3"), ("accusative", "3"), ("cell", "USTED>3")] }
 
-def ex_44b : LinguisticExample :=
+def ex_44b : Datum :=
   { id := "adamsonzompi2025_44b"
     source := ⟨"adamson-zompi-2025", "(44b)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def ex_44b : LinguisticExample :=
     readings := []
     paperFeatures := [("dative", "3"), ("accusative", "USTED"), ("cell", "3>USTED")] }
 
-def ex_45b : LinguisticExample :=
+def ex_45b : Datum :=
   { id := "adamsonzompi2025_45b"
     source := ⟨"adamson-zompi-2025", "(45b)"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def ex_45b : LinguisticExample :=
     readings := []
     paperFeatures := [("subject", "SIE"), ("agreement", "3PL")] }
 
-def ex_46b : LinguisticExample :=
+def ex_46b : Datum :=
   { id := "adamsonzompi2025_46b"
     source := ⟨"adamson-zompi-2025", "(46b)"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def ex_46b : LinguisticExample :=
     readings := []
     paperFeatures := [("dative", "3"), ("accusative", "2"), ("cell", "3>2"), ("position", "Wackernagel cluster before subject")] }
 
-def ex_47 : LinguisticExample :=
+def ex_47 : Datum :=
   { id := "adamsonzompi2025_47"
     source := ⟨"adamson-zompi-2025", "(47)"⟩
     reportedIn := none
@@ -485,7 +485,7 @@ def ex_47 : LinguisticExample :=
     readings := []
     paperFeatures := [("dative", "3"), ("accusative", "3PL"), ("cell", "3>3")] }
 
-def ex_48 : LinguisticExample :=
+def ex_48 : Datum :=
   { id := "adamsonzompi2025_48"
     source := ⟨"adamson-zompi-2025", "(48)"⟩
     reportedIn := none
@@ -498,7 +498,7 @@ def ex_48 : LinguisticExample :=
     readings := []
     paperFeatures := [("dative", "3"), ("accusative", "SIE"), ("cell", "3>SIE")] }
 
-def ex_49a : LinguisticExample :=
+def ex_49a : Datum :=
   { id := "adamsonzompi2025_49a"
     source := ⟨"coon-keine-2021", "(49a)"⟩
     reportedIn := some ⟨"adamson-zompi-2025", "(49a)"⟩
@@ -511,7 +511,7 @@ def ex_49a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "assumed identity"), ("DP1", "2SG"), ("DP2", "3SG")] }
 
-def ex_49b : LinguisticExample :=
+def ex_49b : Datum :=
   { id := "adamsonzompi2025_49b"
     source := ⟨"coon-keine-2021", "(49b)"⟩
     reportedIn := some ⟨"adamson-zompi-2025", "(49b)"⟩
@@ -524,7 +524,7 @@ def ex_49b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "assumed identity"), ("DP1", "3SG"), ("DP2", "2SG")] }
 
-def ex_50a : LinguisticExample :=
+def ex_50a : Datum :=
   { id := "adamsonzompi2025_50a"
     source := ⟨"coon-keine-2021", "(50a)"⟩
     reportedIn := some ⟨"adamson-zompi-2025", "(50a)"⟩
@@ -537,7 +537,7 @@ def ex_50a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "assumed identity"), ("DP1", "3PL"), ("DP2", "3SG")] }
 
-def ex_50b : LinguisticExample :=
+def ex_50b : Datum :=
   { id := "adamsonzompi2025_50b"
     source := ⟨"coon-keine-2021", "(50b)"⟩
     reportedIn := some ⟨"adamson-zompi-2025", "(50b)"⟩
@@ -550,7 +550,7 @@ def ex_50b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "assumed identity"), ("DP1", "3SG"), ("DP2", "3PL")] }
 
-def ex_52 : LinguisticExample :=
+def ex_52 : Datum :=
   { id := "adamsonzompi2025_52"
     source := ⟨"adamson-zompi-2025", "(52)"⟩
     reportedIn := none
@@ -563,7 +563,7 @@ def ex_52 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "assumed identity"), ("DP1", "3PL"), ("DP2", "3PL")] }
 
-def ex_53 : LinguisticExample :=
+def ex_53 : Datum :=
   { id := "adamsonzompi2025_53"
     source := ⟨"adamson-zompi-2025", "(53)"⟩
     reportedIn := none
@@ -576,7 +576,7 @@ def ex_53 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "assumed identity"), ("DP1", "3PL"), ("DP2", "SIE")] }
 
-def fn27i : LinguisticExample :=
+def fn27i : Datum :=
   { id := "adamsonzompi2025_fn27i"
     source := ⟨"adamson-zompi-2025", "fn. 27 (i)"⟩
     reportedIn := none
@@ -589,7 +589,7 @@ def fn27i : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "assumed identity"), ("DP1", "3SG"), ("DP2", "SIE")] }
 
-def ex_55b : LinguisticExample :=
+def ex_55b : Datum :=
   { id := "adamsonzompi2025_55b"
     source := ⟨"adamson-zompi-2025", "(55b)"⟩
     reportedIn := none
@@ -602,7 +602,7 @@ def ex_55b : LinguisticExample :=
     readings := []
     paperFeatures := [("dative", "1"), ("accusative", "3"), ("cell", "1>3")] }
 
-def ex_56 : LinguisticExample :=
+def ex_56 : Datum :=
   { id := "adamsonzompi2025_56"
     source := ⟨"adamson-zompi-2025", "(56)"⟩
     reportedIn := none
@@ -615,6 +615,6 @@ def ex_56 : LinguisticExample :=
     readings := []
     paperFeatures := [("dative", "1"), ("accusative", "LEI"), ("cell", "1>LEI")] }
 
-def all : List LinguisticExample := [ex_2a, ex_2b, ex_3a, ex_4a, ex_4b, ex_5a, ex_5b, ex_6, ex_8a, ex_10, ex_11c, ex_14, ex_16, ex_17, ex_18, ex_19a, ex_19b, ex_20a, ex_20b, ex_21a, ex_21b, ex_24, ex_25, ex_26, ex_27, ex_29a, ex_30, ex_31, ex_32, ex_42, ex_43, ex_44a, ex_44b, ex_45b, ex_46b, ex_47, ex_48, ex_49a, ex_49b, ex_50a, ex_50b, ex_52, ex_53, fn27i, ex_55b, ex_56]
+def all : List Datum := [ex_2a, ex_2b, ex_3a, ex_4a, ex_4b, ex_5a, ex_5b, ex_6, ex_8a, ex_10, ex_11c, ex_14, ex_16, ex_17, ex_18, ex_19a, ex_19b, ex_20a, ex_20b, ex_21a, ex_21b, ex_24, ex_25, ex_26, ex_27, ex_29a, ex_30, ex_31, ex_32, ex_42, ex_43, ex_44a, ex_44b, ex_45b, ex_46b, ex_47, ex_48, ex_49a, ex_49b, ex_50a, ex_50b, ex_52, ex_53, fn27i, ex_55b, ex_56]
 
 end AdamsonZompi2025.Examples

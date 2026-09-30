@@ -17,7 +17,7 @@ namespace Beavers2010.Examples
 
 open Data.Examples
 
-def ex_9a : LinguisticExample :=
+def ex_9a : Datum :=
   { id := "beavers2010_9a"
     source := ⟨"beavers-2010", "(9a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_9a : LinguisticExample :=
     readings := []
     paperFeatures := [("alternation", "locative"), ("direct", "theme")] }
 
-def ex_9b : LinguisticExample :=
+def ex_9b : Datum :=
   { id := "beavers2010_9b"
     source := ⟨"beavers-2010", "(9b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_9b : LinguisticExample :=
     readings := []
     paperFeatures := [("alternation", "locative"), ("direct", "location")] }
 
-def ex_10a : LinguisticExample :=
+def ex_10a : Datum :=
   { id := "beavers2010_10a"
     source := ⟨"beavers-2010", "(10a)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_10a : LinguisticExample :=
     readings := []
     paperFeatures := [("alternation", "locative"), ("diagnostic", "holistic effect")] }
 
-def ex_18a : LinguisticExample :=
+def ex_18a : Datum :=
   { id := "beavers2010_18a"
     source := ⟨"beavers-2010", "(18a)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_18a : LinguisticExample :=
     readings := []
     paperFeatures := [("alternation", "locative"), ("verb class", "cut/slice")] }
 
-def ex_18b : LinguisticExample :=
+def ex_18b : Datum :=
   { id := "beavers2010_18b"
     source := ⟨"beavers-2010", "(18b)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_18b : LinguisticExample :=
     readings := []
     paperFeatures := [("alternation", "locative"), ("verb class", "cut/slice")] }
 
-def ex_20a : LinguisticExample :=
+def ex_20a : Datum :=
   { id := "beavers2010_20a"
     source := ⟨"beavers-2010", "(20a)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_20a : LinguisticExample :=
     readings := []
     paperFeatures := [("alternation", "conative"), ("verb class", "cut")] }
 
-def ex_20b : LinguisticExample :=
+def ex_20b : Datum :=
   { id := "beavers2010_20b"
     source := ⟨"beavers-2010", "(20b)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_20b : LinguisticExample :=
     readings := []
     paperFeatures := [("alternation", "conative"), ("verb class", "cut")] }
 
-def ex_21a : LinguisticExample :=
+def ex_21a : Datum :=
   { id := "beavers2010_21a"
     source := ⟨"beavers-2010", "(21a)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_21a : LinguisticExample :=
     readings := []
     paperFeatures := [("alternation", "conative"), ("verb class", "consumption")] }
 
-def ex_21b : LinguisticExample :=
+def ex_21b : Datum :=
   { id := "beavers2010_21b"
     source := ⟨"beavers-2010", "(21b)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_21b : LinguisticExample :=
     readings := []
     paperFeatures := [("alternation", "conative"), ("verb class", "consumption")] }
 
-def ex_22a : LinguisticExample :=
+def ex_22a : Datum :=
   { id := "beavers2010_22a"
     source := ⟨"beavers-2010", "(22a)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_22a : LinguisticExample :=
     readings := []
     paperFeatures := [("alternation", "conative"), ("verb class", "impact")] }
 
-def ex_22b : LinguisticExample :=
+def ex_22b : Datum :=
   { id := "beavers2010_22b"
     source := ⟨"beavers-2010", "(22b)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_22b : LinguisticExample :=
     readings := []
     paperFeatures := [("alternation", "conative"), ("verb class", "impact")] }
 
-def ex_24a : LinguisticExample :=
+def ex_24a : Datum :=
   { id := "beavers2010_24a"
     source := ⟨"beavers-2010", "(24a)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_24a : LinguisticExample :=
     readings := []
     paperFeatures := [("alternation", "locative"), ("contrast", "none")] }
 
-def ex_29 : LinguisticExample :=
+def ex_29 : Datum :=
   { id := "beavers2010_29"
     source := ⟨"beavers-2010", "(29)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_29 : LinguisticExample :=
     readings := []
     paperFeatures := [("degree", "quantized"), ("diagnostic", "telicity")] }
 
-def ex_30 : LinguisticExample :=
+def ex_30 : Datum :=
   { id := "beavers2010_30"
     source := ⟨"beavers-2010", "(30)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_30 : LinguisticExample :=
     readings := []
     paperFeatures := [("degree", "nonquantized"), ("diagnostic", "telicity")] }
 
-def ex_81a : LinguisticExample :=
+def ex_81a : Datum :=
   { id := "beavers2010_81a"
     source := ⟨"beavers-2010", "(81a)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_81a : LinguisticExample :=
     readings := []
     paperFeatures := [("alternation", "traversal"), ("degree", "totally traversed")] }
 
-def ex_81b : LinguisticExample :=
+def ex_81b : Datum :=
   { id := "beavers2010_81b"
     source := ⟨"beavers-2010", "(81b)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_81b : LinguisticExample :=
     readings := []
     paperFeatures := [("alternation", "traversal"), ("degree", "traversed")] }
 
-def ex_88a : LinguisticExample :=
+def ex_88a : Datum :=
   { id := "beavers2010_88a"
     source := ⟨"beavers-2010", "(88a)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex_88a : LinguisticExample :=
     readings := [("London as an agency (Scotland Yard reading)", .acceptable)]
     paperFeatures := [("alternation", "dative"), ("direct", "recipient")] }
 
-def ex_88b : LinguisticExample :=
+def ex_88b : Datum :=
   { id := "beavers2010_88b"
     source := ⟨"beavers-2010", "(88b)"⟩
     reportedIn := none
@@ -251,6 +251,6 @@ def ex_88b : LinguisticExample :=
     readings := []
     paperFeatures := [("alternation", "dative"), ("oblique", "goal")] }
 
-def all : List LinguisticExample := [ex_9a, ex_9b, ex_10a, ex_18a, ex_18b, ex_20a, ex_20b, ex_21a, ex_21b, ex_22a, ex_22b, ex_24a, ex_29, ex_30, ex_81a, ex_81b, ex_88a, ex_88b]
+def all : List Datum := [ex_9a, ex_9b, ex_10a, ex_18a, ex_18b, ex_20a, ex_20b, ex_21a, ex_21b, ex_22a, ex_22b, ex_24a, ex_29, ex_30, ex_81a, ex_81b, ex_88a, ex_88b]
 
 end Beavers2010.Examples

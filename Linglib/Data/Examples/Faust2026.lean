@@ -17,7 +17,7 @@ namespace Faust2026.Examples
 
 open Data.Examples
 
-def ex_3a_pst3msg : LinguisticExample :=
+def ex_3a_pst3msg : Datum :=
   { id := "faust2026_3a_pst3msg"
     source := ⟨"faust-2026", "(3a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_3a_pst3msg : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "klt"), ("cell", "pst3msg")] }
 
-def ex_3a_actionNoun : LinguisticExample :=
+def ex_3a_actionNoun : Datum :=
   { id := "faust2026_3a_actionNoun"
     source := ⟨"faust-2026", "(3a)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_3a_actionNoun : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "klt"), ("cell", "actionNoun")] }
 
-def ex_3a_passPrtc : LinguisticExample :=
+def ex_3a_passPrtc : Datum :=
   { id := "faust2026_3a_passPrtc"
     source := ⟨"faust-2026", "(3a)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_3a_passPrtc : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "klt"), ("cell", "passPrtc")] }
 
-def ex_3b_pst3msg : LinguisticExample :=
+def ex_3b_pst3msg : Datum :=
   { id := "faust2026_3b_pst3msg"
     source := ⟨"faust-2026", "(3b)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_3b_pst3msg : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "kl"), ("cell", "pst3msg")] }
 
-def ex_3b_actionNoun : LinguisticExample :=
+def ex_3b_actionNoun : Datum :=
   { id := "faust2026_3b_actionNoun"
     source := ⟨"faust-2026", "(3b)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_3b_actionNoun : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "kl"), ("cell", "actionNoun")] }
 
-def ex_3b_passPrtc : LinguisticExample :=
+def ex_3b_passPrtc : Datum :=
   { id := "faust2026_3b_passPrtc"
     source := ⟨"faust-2026", "(3b)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_3b_passPrtc : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "kl"), ("cell", "passPrtc")] }
 
-def ex_3c_pst3msg : LinguisticExample :=
+def ex_3c_pst3msg : Datum :=
   { id := "faust2026_3c_pst3msg"
     source := ⟨"faust-2026", "(3c)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_3c_pst3msg : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "klj"), ("cell", "pst3msg")] }
 
-def ex_3c_actionNoun : LinguisticExample :=
+def ex_3c_actionNoun : Datum :=
   { id := "faust2026_3c_actionNoun"
     source := ⟨"faust-2026", "(3c)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_3c_actionNoun : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "klj"), ("cell", "actionNoun")] }
 
-def ex_3c_passPrtc : LinguisticExample :=
+def ex_3c_passPrtc : Datum :=
   { id := "faust2026_3c_passPrtc"
     source := ⟨"faust-2026", "(3c)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_3c_passPrtc : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "klj"), ("cell", "passPrtc")] }
 
-def ex_5a_pfv : LinguisticExample :=
+def ex_5a_pfv : Datum :=
   { id := "faust2026_5a_pfv"
     source := ⟨"faust-2026", "(5a)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_5a_pfv : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "sbr"), ("cell", "pfv")] }
 
-def ex_5a_ipfv : LinguisticExample :=
+def ex_5a_ipfv : Datum :=
   { id := "faust2026_5a_ipfv"
     source := ⟨"faust-2026", "(5a)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_5a_ipfv : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "sbr"), ("cell", "ipfv")] }
 
-def ex_5a_juss : LinguisticExample :=
+def ex_5a_juss : Datum :=
   { id := "faust2026_5a_juss"
     source := ⟨"faust-2026", "(5a)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_5a_juss : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "sbr"), ("cell", "juss")] }
 
-def ex_5a_grnd : LinguisticExample :=
+def ex_5a_grnd : Datum :=
   { id := "faust2026_5a_grnd"
     source := ⟨"faust-2026", "(5a)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_5a_grnd : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "sbr"), ("cell", "grnd")] }
 
-def ex_5a_inf : LinguisticExample :=
+def ex_5a_inf : Datum :=
   { id := "faust2026_5a_inf"
     source := ⟨"faust-2026", "(5a)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_5a_inf : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "sbr"), ("cell", "inf")] }
 
-def ex_5b_pfv : LinguisticExample :=
+def ex_5b_pfv : Datum :=
   { id := "faust2026_5b_pfv"
     source := ⟨"faust-2026", "(5b)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_5b_pfv : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "wd"), ("cell", "pfv")] }
 
-def ex_5b_ipfv : LinguisticExample :=
+def ex_5b_ipfv : Datum :=
   { id := "faust2026_5b_ipfv"
     source := ⟨"faust-2026", "(5b)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_5b_ipfv : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "wd"), ("cell", "ipfv")] }
 
-def ex_5b_juss : LinguisticExample :=
+def ex_5b_juss : Datum :=
   { id := "faust2026_5b_juss"
     source := ⟨"faust-2026", "(5b)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex_5b_juss : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "wd"), ("cell", "juss")] }
 
-def ex_5b_grnd : LinguisticExample :=
+def ex_5b_grnd : Datum :=
   { id := "faust2026_5b_grnd"
     source := ⟨"faust-2026", "(5b)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex_5b_grnd : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "wd"), ("cell", "grnd")] }
 
-def ex_5b_inf : LinguisticExample :=
+def ex_5b_inf : Datum :=
   { id := "faust2026_5b_inf"
     source := ⟨"faust-2026", "(5b)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex_5b_inf : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "wd"), ("cell", "inf")] }
 
-def ex_5c_pfv : LinguisticExample :=
+def ex_5c_pfv : Datum :=
   { id := "faust2026_5c_pfv"
     source := ⟨"faust-2026", "(5c)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex_5c_pfv : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "fdj"), ("cell", "pfv")] }
 
-def ex_5c_ipfv : LinguisticExample :=
+def ex_5c_ipfv : Datum :=
   { id := "faust2026_5c_ipfv"
     source := ⟨"faust-2026", "(5c)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex_5c_ipfv : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "fdj"), ("cell", "ipfv")] }
 
-def ex_5c_juss : LinguisticExample :=
+def ex_5c_juss : Datum :=
   { id := "faust2026_5c_juss"
     source := ⟨"faust-2026", "(5c)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex_5c_juss : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "fdj"), ("cell", "juss")] }
 
-def ex_5c_grnd : LinguisticExample :=
+def ex_5c_grnd : Datum :=
   { id := "faust2026_5c_grnd"
     source := ⟨"faust-2026", "(5c)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex_5c_grnd : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "fdj"), ("cell", "grnd")] }
 
-def ex_5c_inf : LinguisticExample :=
+def ex_5c_inf : Datum :=
   { id := "faust2026_5c_inf"
     source := ⟨"faust-2026", "(5c)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex_5c_inf : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "fdj"), ("cell", "inf")] }
 
-def ex_12c_pfv : LinguisticExample :=
+def ex_12c_pfv : Datum :=
   { id := "faust2026_12c_pfv"
     source := ⟨"faust-2026", "(12c)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex_12c_pfv : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "sma"), ("cell", "pfv")] }
 
-def ex_12c_ipfv : LinguisticExample :=
+def ex_12c_ipfv : Datum :=
   { id := "faust2026_12c_ipfv"
     source := ⟨"faust-2026", "(12c)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex_12c_ipfv : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "sma"), ("cell", "ipfv")] }
 
-def ex_12c_juss : LinguisticExample :=
+def ex_12c_juss : Datum :=
   { id := "faust2026_12c_juss"
     source := ⟨"faust-2026", "(12c)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def ex_12c_juss : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "sma"), ("cell", "juss")] }
 
-def ex_12c_grnd : LinguisticExample :=
+def ex_12c_grnd : Datum :=
   { id := "faust2026_12c_grnd"
     source := ⟨"faust-2026", "(12c)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def ex_12c_grnd : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "sma"), ("cell", "grnd")] }
 
-def ex_12c_inf : LinguisticExample :=
+def ex_12c_inf : Datum :=
   { id := "faust2026_12c_inf"
     source := ⟨"faust-2026", "(12c)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def ex_12c_inf : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "sma"), ("cell", "inf")] }
 
-def ex_12d_pfv : LinguisticExample :=
+def ex_12d_pfv : Datum :=
   { id := "faust2026_12d_pfv"
     source := ⟨"faust-2026", "(12d)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def ex_12d_pfv : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "sam"), ("cell", "pfv")] }
 
-def ex_12d_ipfv : LinguisticExample :=
+def ex_12d_ipfv : Datum :=
   { id := "faust2026_12d_ipfv"
     source := ⟨"faust-2026", "(12d)"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def ex_12d_ipfv : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "sam"), ("cell", "ipfv")] }
 
-def ex_12d_juss : LinguisticExample :=
+def ex_12d_juss : Datum :=
   { id := "faust2026_12d_juss"
     source := ⟨"faust-2026", "(12d)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def ex_12d_juss : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "sam"), ("cell", "juss")] }
 
-def ex_12d_grnd : LinguisticExample :=
+def ex_12d_grnd : Datum :=
   { id := "faust2026_12d_grnd"
     source := ⟨"faust-2026", "(12d)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def ex_12d_grnd : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "sam"), ("cell", "grnd")] }
 
-def ex_12d_inf : LinguisticExample :=
+def ex_12d_inf : Datum :=
   { id := "faust2026_12d_inf"
     source := ⟨"faust-2026", "(12d)"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def ex_12d_inf : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "sam"), ("cell", "inf")] }
 
-def ex_12e_pfv : LinguisticExample :=
+def ex_12e_pfv : Datum :=
   { id := "faust2026_12e_pfv"
     source := ⟨"faust-2026", "(12e)"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def ex_12e_pfv : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "hid"), ("cell", "pfv")] }
 
-def ex_12e_ipfv : LinguisticExample :=
+def ex_12e_ipfv : Datum :=
   { id := "faust2026_12e_ipfv"
     source := ⟨"faust-2026", "(12e)"⟩
     reportedIn := none
@@ -485,7 +485,7 @@ def ex_12e_ipfv : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "hid"), ("cell", "ipfv")] }
 
-def ex_12e_juss : LinguisticExample :=
+def ex_12e_juss : Datum :=
   { id := "faust2026_12e_juss"
     source := ⟨"faust-2026", "(12e)"⟩
     reportedIn := none
@@ -498,7 +498,7 @@ def ex_12e_juss : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "hid"), ("cell", "juss")] }
 
-def ex_12e_grnd : LinguisticExample :=
+def ex_12e_grnd : Datum :=
   { id := "faust2026_12e_grnd"
     source := ⟨"faust-2026", "(12e)"⟩
     reportedIn := none
@@ -511,7 +511,7 @@ def ex_12e_grnd : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "hid"), ("cell", "grnd")] }
 
-def ex_12e_inf : LinguisticExample :=
+def ex_12e_inf : Datum :=
   { id := "faust2026_12e_inf"
     source := ⟨"faust-2026", "(12e)"⟩
     reportedIn := none
@@ -524,7 +524,7 @@ def ex_12e_inf : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "hid"), ("cell", "inf")] }
 
-def ex_9a_tavshil : LinguisticExample :=
+def ex_9a_tavshil : Datum :=
   { id := "faust2026_9a_tavshil"
     source := ⟨"faust-2026", "(9a)"⟩
     reportedIn := none
@@ -537,7 +537,7 @@ def ex_9a_tavshil : LinguisticExample :=
     readings := []
     paperFeatures := [("gender", "masculine")] }
 
-def ex_9a_tadrix : LinguisticExample :=
+def ex_9a_tadrix : Datum :=
   { id := "faust2026_9a_tadrix"
     source := ⟨"faust-2026", "(9a)"⟩
     reportedIn := none
@@ -550,7 +550,7 @@ def ex_9a_tadrix : LinguisticExample :=
     readings := []
     paperFeatures := [("gender", "masculine")] }
 
-def ex_9a_tadpis : LinguisticExample :=
+def ex_9a_tadpis : Datum :=
   { id := "faust2026_9a_tadpis"
     source := ⟨"faust-2026", "(9a)"⟩
     reportedIn := none
@@ -563,7 +563,7 @@ def ex_9a_tadpis : LinguisticExample :=
     readings := []
     paperFeatures := [("gender", "masculine")] }
 
-def ex_9a_taxbiv : LinguisticExample :=
+def ex_9a_taxbiv : Datum :=
   { id := "faust2026_9a_taxbiv"
     source := ⟨"faust-2026", "(9a)"⟩
     reportedIn := none
@@ -576,7 +576,7 @@ def ex_9a_taxbiv : LinguisticExample :=
     readings := []
     paperFeatures := [("gender", "masculine")] }
 
-def ex_9a_tazkir : LinguisticExample :=
+def ex_9a_tazkir : Datum :=
   { id := "faust2026_9a_tazkir"
     source := ⟨"faust-2026", "(9a)"⟩
     reportedIn := none
@@ -589,7 +589,7 @@ def ex_9a_tazkir : LinguisticExample :=
     readings := []
     paperFeatures := [("gender", "masculine")] }
 
-def ex_9a_tazkik : LinguisticExample :=
+def ex_9a_tazkik : Datum :=
   { id := "faust2026_9a_tazkik"
     source := ⟨"faust-2026", "(9a)"⟩
     reportedIn := none
@@ -602,7 +602,7 @@ def ex_9a_tazkik : LinguisticExample :=
     readings := []
     paperFeatures := [("gender", "masculine")] }
 
-def ex_9a_tazrim : LinguisticExample :=
+def ex_9a_tazrim : Datum :=
   { id := "faust2026_9a_tazrim"
     source := ⟨"faust-2026", "(9a)"⟩
     reportedIn := none
@@ -615,7 +615,7 @@ def ex_9a_tazrim : LinguisticExample :=
     readings := []
     paperFeatures := [("gender", "masculine")] }
 
-def ex_9a_taxkir : LinguisticExample :=
+def ex_9a_taxkir : Datum :=
   { id := "faust2026_9a_taxkir"
     source := ⟨"faust-2026", "(9a)"⟩
     reportedIn := none
@@ -628,7 +628,7 @@ def ex_9a_taxkir : LinguisticExample :=
     readings := []
     paperFeatures := [("gender", "masculine")] }
 
-def ex_9a_taskit : LinguisticExample :=
+def ex_9a_taskit : Datum :=
   { id := "faust2026_9a_taskit"
     source := ⟨"faust-2026", "(9a)"⟩
     reportedIn := none
@@ -641,7 +641,7 @@ def ex_9a_taskit : LinguisticExample :=
     readings := []
     paperFeatures := [("gender", "masculine"), ("root", "skt")] }
 
-def ex_9b_tavnit : LinguisticExample :=
+def ex_9b_tavnit : Datum :=
   { id := "faust2026_9b_tavnit"
     source := ⟨"faust-2026", "(9b)"⟩
     reportedIn := none
@@ -654,7 +654,7 @@ def ex_9b_tavnit : LinguisticExample :=
     readings := []
     paperFeatures := [("gender", "feminine")] }
 
-def ex_9b_taglit : LinguisticExample :=
+def ex_9b_taglit : Datum :=
   { id := "faust2026_9b_taglit"
     source := ⟨"faust-2026", "(9b)"⟩
     reportedIn := none
@@ -667,7 +667,7 @@ def ex_9b_taglit : LinguisticExample :=
     readings := []
     paperFeatures := [("gender", "feminine"), ("root", "glj")] }
 
-def ex_9b_tadmit : LinguisticExample :=
+def ex_9b_tadmit : Datum :=
   { id := "faust2026_9b_tadmit"
     source := ⟨"faust-2026", "(9b)"⟩
     reportedIn := none
@@ -680,7 +680,7 @@ def ex_9b_tadmit : LinguisticExample :=
     readings := []
     paperFeatures := [("gender", "feminine"), ("root", "dmj")] }
 
-def ex_9b_tarmit : LinguisticExample :=
+def ex_9b_tarmit : Datum :=
   { id := "faust2026_9b_tarmit"
     source := ⟨"faust-2026", "(9b)"⟩
     reportedIn := none
@@ -693,7 +693,7 @@ def ex_9b_tarmit : LinguisticExample :=
     readings := []
     paperFeatures := [("gender", "feminine"), ("root", "rmj")] }
 
-def ex_9b_taxlit : LinguisticExample :=
+def ex_9b_taxlit : Datum :=
   { id := "faust2026_9b_taxlit"
     source := ⟨"faust-2026", "(9b)"⟩
     reportedIn := none
@@ -706,7 +706,7 @@ def ex_9b_taxlit : LinguisticExample :=
     readings := []
     paperFeatures := [("gender", "feminine")] }
 
-def ex_9b_tamtsit : LinguisticExample :=
+def ex_9b_tamtsit : Datum :=
   { id := "faust2026_9b_tamtsit"
     source := ⟨"faust-2026", "(9b)"⟩
     reportedIn := none
@@ -719,7 +719,7 @@ def ex_9b_tamtsit : LinguisticExample :=
     readings := []
     paperFeatures := [("gender", "feminine")] }
 
-def ex_9b_taanit : LinguisticExample :=
+def ex_9b_taanit : Datum :=
   { id := "faust2026_9b_taanit"
     source := ⟨"faust-2026", "(9b)"⟩
     reportedIn := none
@@ -732,7 +732,7 @@ def ex_9b_taanit : LinguisticExample :=
     readings := []
     paperFeatures := [("gender", "feminine")] }
 
-def ex_9b_tafnit : LinguisticExample :=
+def ex_9b_tafnit : Datum :=
   { id := "faust2026_9b_tafnit"
     source := ⟨"faust-2026", "(9b)"⟩
     reportedIn := none
@@ -745,7 +745,7 @@ def ex_9b_tafnit : LinguisticExample :=
     readings := []
     paperFeatures := [("gender", "feminine")] }
 
-def ex_9b_tatspit : LinguisticExample :=
+def ex_9b_tatspit : Datum :=
   { id := "faust2026_9b_tatspit"
     source := ⟨"faust-2026", "(9b)"⟩
     reportedIn := none
@@ -758,6 +758,6 @@ def ex_9b_tatspit : LinguisticExample :=
     readings := []
     paperFeatures := [("gender", "feminine")] }
 
-def all : List LinguisticExample := [ex_3a_pst3msg, ex_3a_actionNoun, ex_3a_passPrtc, ex_3b_pst3msg, ex_3b_actionNoun, ex_3b_passPrtc, ex_3c_pst3msg, ex_3c_actionNoun, ex_3c_passPrtc, ex_5a_pfv, ex_5a_ipfv, ex_5a_juss, ex_5a_grnd, ex_5a_inf, ex_5b_pfv, ex_5b_ipfv, ex_5b_juss, ex_5b_grnd, ex_5b_inf, ex_5c_pfv, ex_5c_ipfv, ex_5c_juss, ex_5c_grnd, ex_5c_inf, ex_12c_pfv, ex_12c_ipfv, ex_12c_juss, ex_12c_grnd, ex_12c_inf, ex_12d_pfv, ex_12d_ipfv, ex_12d_juss, ex_12d_grnd, ex_12d_inf, ex_12e_pfv, ex_12e_ipfv, ex_12e_juss, ex_12e_grnd, ex_12e_inf, ex_9a_tavshil, ex_9a_tadrix, ex_9a_tadpis, ex_9a_taxbiv, ex_9a_tazkir, ex_9a_tazkik, ex_9a_tazrim, ex_9a_taxkir, ex_9a_taskit, ex_9b_tavnit, ex_9b_taglit, ex_9b_tadmit, ex_9b_tarmit, ex_9b_taxlit, ex_9b_tamtsit, ex_9b_taanit, ex_9b_tafnit, ex_9b_tatspit]
+def all : List Datum := [ex_3a_pst3msg, ex_3a_actionNoun, ex_3a_passPrtc, ex_3b_pst3msg, ex_3b_actionNoun, ex_3b_passPrtc, ex_3c_pst3msg, ex_3c_actionNoun, ex_3c_passPrtc, ex_5a_pfv, ex_5a_ipfv, ex_5a_juss, ex_5a_grnd, ex_5a_inf, ex_5b_pfv, ex_5b_ipfv, ex_5b_juss, ex_5b_grnd, ex_5b_inf, ex_5c_pfv, ex_5c_ipfv, ex_5c_juss, ex_5c_grnd, ex_5c_inf, ex_12c_pfv, ex_12c_ipfv, ex_12c_juss, ex_12c_grnd, ex_12c_inf, ex_12d_pfv, ex_12d_ipfv, ex_12d_juss, ex_12d_grnd, ex_12d_inf, ex_12e_pfv, ex_12e_ipfv, ex_12e_juss, ex_12e_grnd, ex_12e_inf, ex_9a_tavshil, ex_9a_tadrix, ex_9a_tadpis, ex_9a_taxbiv, ex_9a_tazkir, ex_9a_tazkik, ex_9a_tazrim, ex_9a_taxkir, ex_9a_taskit, ex_9b_tavnit, ex_9b_taglit, ex_9b_tadmit, ex_9b_tarmit, ex_9b_taxlit, ex_9b_tamtsit, ex_9b_taanit, ex_9b_tafnit, ex_9b_tatspit]
 
 end Faust2026.Examples

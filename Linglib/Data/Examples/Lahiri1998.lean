@@ -17,7 +17,7 @@ namespace Lahiri1998.Examples
 
 open Data.Examples
 
-def ex6a : LinguisticExample :=
+def ex6a : Datum :=
   { id := "lahiri1998_ex6a"
     source := ⟨"lahiri-1998", "(6a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex6a : LinguisticExample :=
     readings := []
     paperFeatures := [("npi", "koii bhii"), ("environment", "positive (UE)")] }
 
-def ex6b : LinguisticExample :=
+def ex6b : Datum :=
   { id := "lahiri1998_ex6b"
     source := ⟨"lahiri-1998", "(6b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex6b : LinguisticExample :=
     readings := []
     paperFeatures := [("npi", "koii bhii"), ("environment", "negation")] }
 
-def ex6c : LinguisticExample :=
+def ex6c : Datum :=
   { id := "lahiri1998_ex6c"
     source := ⟨"lahiri-1998", "(6c)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex6c : LinguisticExample :=
     readings := []
     paperFeatures := [("npi", "kisii-ko bhii"), ("environment", "positive (UE)")] }
 
-def ex6d : LinguisticExample :=
+def ex6d : Datum :=
   { id := "lahiri1998_ex6d"
     source := ⟨"lahiri-1998", "(6d)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex6d : LinguisticExample :=
     readings := []
     paperFeatures := [("npi", "kisii-ko bhii"), ("environment", "negation")] }
 
-def ex7a : LinguisticExample :=
+def ex7a : Datum :=
   { id := "lahiri1998_ex7a"
     source := ⟨"lahiri-1998", "(7a)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex7a : LinguisticExample :=
     readings := []
     paperFeatures := [("npi", "ek bhii"), ("environment", "positive (UE)")] }
 
-def ex7b : LinguisticExample :=
+def ex7b : Datum :=
   { id := "lahiri1998_ex7b"
     source := ⟨"lahiri-1998", "(7b)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex7b : LinguisticExample :=
     readings := []
     paperFeatures := [("npi", "ek bhii"), ("environment", "negation")] }
 
-def ex8a : LinguisticExample :=
+def ex8a : Datum :=
   { id := "lahiri1998_ex8a"
     source := ⟨"lahiri-1998", "(8a)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex8a : LinguisticExample :=
     readings := []
     paperFeatures := [("npi", "kuch bhii"), ("environment", "positive (UE)")] }
 
-def ex8b : LinguisticExample :=
+def ex8b : Datum :=
   { id := "lahiri1998_ex8b"
     source := ⟨"lahiri-1998", "(8b)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex8b : LinguisticExample :=
     readings := []
     paperFeatures := [("npi", "kuch bhii"), ("environment", "negation")] }
 
-def ex9a : LinguisticExample :=
+def ex9a : Datum :=
   { id := "lahiri1998_ex9a"
     source := ⟨"lahiri-1998", "(9a)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex9a : LinguisticExample :=
     readings := []
     paperFeatures := [("npi", "zaraa bhii"), ("environment", "positive (UE)")] }
 
-def ex9b : LinguisticExample :=
+def ex9b : Datum :=
   { id := "lahiri1998_ex9b"
     source := ⟨"lahiri-1998", "(9b)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex9b : LinguisticExample :=
     readings := []
     paperFeatures := [("npi", "zaraa bhii"), ("environment", "negation")] }
 
-def ex10a : LinguisticExample :=
+def ex10a : Datum :=
   { id := "lahiri1998_ex10a"
     source := ⟨"lahiri-1998", "(10a)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex10a : LinguisticExample :=
     readings := []
     paperFeatures := [("npi", "kisii-ko bhii"), ("environment", "conditional protasis")] }
 
-def ex10c : LinguisticExample :=
+def ex10c : Datum :=
   { id := "lahiri1998_ex10c"
     source := ⟨"lahiri-1998", "(10c)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex10c : LinguisticExample :=
     readings := []
     paperFeatures := [("npi", "kuch bhii"), ("environment", "conditional apodosis")] }
 
-def ex11a : LinguisticExample :=
+def ex11a : Datum :=
   { id := "lahiri1998_ex11a"
     source := ⟨"lahiri-1998", "(11a)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex11a : LinguisticExample :=
     readings := []
     paperFeatures := [("npi", "ek bhii"), ("environment", "universal restrictor")] }
 
-def ex12a : LinguisticExample :=
+def ex12a : Datum :=
   { id := "lahiri1998_ex12a"
     source := ⟨"lahiri-1998", "(12a)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex12a : LinguisticExample :=
     readings := []
     paperFeatures := [("npi", "ek bhii"), ("environment", "existential restrictor")] }
 
-def ex29a : LinguisticExample :=
+def ex29a : Datum :=
   { id := "lahiri1998_ex29a"
     source := ⟨"lahiri-1998", "(29a)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex29a : LinguisticExample :=
     readings := []
     paperFeatures := [("npi", "ek bhii"), ("environment", "adversative")] }
 
-def ex29b : LinguisticExample :=
+def ex29b : Datum :=
   { id := "lahiri1998_ex29b"
     source := ⟨"lahiri-1998", "(29b)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex29b : LinguisticExample :=
     readings := []
     paperFeatures := [("npi", "koii bhii"), ("environment", "adversative")] }
 
-def ex29c : LinguisticExample :=
+def ex29c : Datum :=
   { id := "lahiri1998_ex29c"
     source := ⟨"lahiri-1998", "(29c)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex29c : LinguisticExample :=
     readings := []
     paperFeatures := [("npi", "kisii-se bhii"), ("environment", "prohibition verb")] }
 
-def ex29d : LinguisticExample :=
+def ex29d : Datum :=
   { id := "lahiri1998_ex29d"
     source := ⟨"lahiri-1998", "(29d)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex29d : LinguisticExample :=
     readings := []
     paperFeatures := [("npi", "kisii-ko bhii"), ("environment", "outside prohibition scope")] }
 
-def ex31a : LinguisticExample :=
+def ex31a : Datum :=
   { id := "lahiri1998_ex31a"
     source := ⟨"lahiri-1998", "(31a)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex31a : LinguisticExample :=
     readings := []
     paperFeatures := [("npi", "koii bhii"), ("environment", "non-adversative factive")] }
 
-def ex31b : LinguisticExample :=
+def ex31b : Datum :=
   { id := "lahiri1998_ex31b"
     source := ⟨"lahiri-1998", "(31b)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex31b : LinguisticExample :=
     readings := []
     paperFeatures := [("npi", "koii bhii"), ("environment", "settle-for-less glad")] }
 
-def ex32a : LinguisticExample :=
+def ex32a : Datum :=
   { id := "lahiri1998_ex32a"
     source := ⟨"lahiri-1998", "(32a)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex32a : LinguisticExample :=
     readings := []
     paperFeatures := [("npi", "kisiike bhii"), ("environment", "before-clause")] }
 
-def ex33a : LinguisticExample :=
+def ex33a : Datum :=
   { id := "lahiri1998_ex33a"
     source := ⟨"lahiri-1998", "(33a)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex33a : LinguisticExample :=
     readings := []
     paperFeatures := [("npi", "kisiike bhii"), ("environment", "after-clause")] }
 
-def ex34a : LinguisticExample :=
+def ex34a : Datum :=
   { id := "lahiri1998_ex34a"
     source := ⟨"lahiri-1998", "(34a)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex34a : LinguisticExample :=
     readings := []
     paperFeatures := [("npi", "koii bhii"), ("environment", "question")] }
 
-def ex41a : LinguisticExample :=
+def ex41a : Datum :=
   { id := "lahiri1998_ex41a"
     source := ⟨"lahiri-1998", "(41a)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex41a : LinguisticExample :=
     readings := []
     paperFeatures := [("npi", "koi bhii"), ("environment", "negation (subject NPI)")] }
 
-def ex35a : LinguisticExample :=
+def ex35a : Datum :=
   { id := "lahiri1998_ex35a"
     source := ⟨"lahiri-1998", "(35a)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex35a : LinguisticExample :=
     readings := []
     paperFeatures := [("npi", "koii bhii"), ("environment", "generic")] }
 
-def ex35b : LinguisticExample :=
+def ex35b : Datum :=
   { id := "lahiri1998_ex35b"
     source := ⟨"lahiri-1998", "(35b)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex35b : LinguisticExample :=
     readings := []
     paperFeatures := [("npi", "koii bhii"), ("environment", "generic")] }
 
-def ex35d : LinguisticExample :=
+def ex35d : Datum :=
   { id := "lahiri1998_ex35d"
     source := ⟨"lahiri-1998", "(35d)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def ex35d : LinguisticExample :=
     readings := []
     paperFeatures := [("npi", "ek bhii"), ("environment", "generic")] }
 
-def ex35e : LinguisticExample :=
+def ex35e : Datum :=
   { id := "lahiri1998_ex35e"
     source := ⟨"lahiri-1998", "(35e)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def ex35e : LinguisticExample :=
     readings := []
     paperFeatures := [("npi", "zaraa bhii"), ("environment", "generic")] }
 
-def ex36a : LinguisticExample :=
+def ex36a : Datum :=
   { id := "lahiri1998_ex36a"
     source := ⟨"lahiri-1998", "(36a)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def ex36a : LinguisticExample :=
     readings := []
     paperFeatures := [("npi", "ek bhii"), ("environment", "possibility modal")] }
 
-def ex36b : LinguisticExample :=
+def ex36b : Datum :=
   { id := "lahiri1998_ex36b"
     source := ⟨"lahiri-1998", "(36b)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def ex36b : LinguisticExample :=
     readings := []
     paperFeatures := [("npi", "koii bhii"), ("environment", "possibility modal")] }
 
-def ex36c : LinguisticExample :=
+def ex36c : Datum :=
   { id := "lahiri1998_ex36c"
     source := ⟨"lahiri-1998", "(36c)"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def ex36c : LinguisticExample :=
     readings := []
     paperFeatures := [("npi", "kabhii bhii"), ("environment", "possibility modal")] }
 
-def ex36d : LinguisticExample :=
+def ex36d : Datum :=
   { id := "lahiri1998_ex36d"
     source := ⟨"lahiri-1998", "(36d)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def ex36d : LinguisticExample :=
     readings := []
     paperFeatures := [("npi", "kisii-ko bhii"), ("environment", "necessity modal")] }
 
-def ex36e : LinguisticExample :=
+def ex36e : Datum :=
   { id := "lahiri1998_ex36e"
     source := ⟨"lahiri-1998", "(36e)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def ex36e : LinguisticExample :=
     readings := []
     paperFeatures := [("npi", "ek bhii"), ("environment", "necessity modal")] }
 
-def ex37a : LinguisticExample :=
+def ex37a : Datum :=
   { id := "lahiri1998_ex37a"
     source := ⟨"lahiri-1998", "(37a)"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def ex37a : LinguisticExample :=
     readings := []
     paperFeatures := [("npi", "koii bhii"), ("environment", "episodic possibility modal")] }
 
-def ex38a : LinguisticExample :=
+def ex38a : Datum :=
   { id := "lahiri1998_ex38a"
     source := ⟨"lahiri-1998", "(38a)"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def ex38a : LinguisticExample :=
     readings := []
     paperFeatures := [("npi", "ek bhii"), ("environment", "generic future")] }
 
-def ex38e : LinguisticExample :=
+def ex38e : Datum :=
   { id := "lahiri1998_ex38e"
     source := ⟨"lahiri-1998", "(38e)"⟩
     reportedIn := none
@@ -485,7 +485,7 @@ def ex38e : LinguisticExample :=
     readings := []
     paperFeatures := [("npi", "koii bhii"), ("environment", "episodic future")] }
 
-def ex39a : LinguisticExample :=
+def ex39a : Datum :=
   { id := "lahiri1998_ex39a"
     source := ⟨"lahiri-1998", "(39a)"⟩
     reportedIn := none
@@ -498,7 +498,7 @@ def ex39a : LinguisticExample :=
     readings := []
     paperFeatures := [("npi", "kuchh bhii"), ("environment", "imperative")] }
 
-def ex39b : LinguisticExample :=
+def ex39b : Datum :=
   { id := "lahiri1998_ex39b"
     source := ⟨"lahiri-1998", "(39b)"⟩
     reportedIn := none
@@ -511,7 +511,7 @@ def ex39b : LinguisticExample :=
     readings := []
     paperFeatures := [("npi", "koii bhii"), ("environment", "imperative")] }
 
-def ex40a : LinguisticExample :=
+def ex40a : Datum :=
   { id := "lahiri1998_ex40a"
     source := ⟨"lahiri-1998", "(40a)"⟩
     reportedIn := none
@@ -524,7 +524,7 @@ def ex40a : LinguisticExample :=
     readings := []
     paperFeatures := [("npi", "zaraa bhii"), ("environment", "imperative")] }
 
-def ex40b : LinguisticExample :=
+def ex40b : Datum :=
   { id := "lahiri1998_ex40b"
     source := ⟨"lahiri-1998", "(40b)"⟩
     reportedIn := none
@@ -537,7 +537,7 @@ def ex40b : LinguisticExample :=
     readings := []
     paperFeatures := [("npi", "ek bhii"), ("environment", "imperative")] }
 
-def ex100a : LinguisticExample :=
+def ex100a : Datum :=
   { id := "lahiri1998_ex100a"
     source := ⟨"lahiri-1998", "(100a)"⟩
     reportedIn := none
@@ -550,7 +550,7 @@ def ex100a : LinguisticExample :=
     readings := []
     paperFeatures := [("npi", "koii bhii"), ("environment", "generic, with numeral")] }
 
-def ex100b : LinguisticExample :=
+def ex100b : Datum :=
   { id := "lahiri1998_ex100b"
     source := ⟨"lahiri-1998", "(100b)"⟩
     reportedIn := none
@@ -563,6 +563,6 @@ def ex100b : LinguisticExample :=
     readings := []
     paperFeatures := [("npi", "ek bhii"), ("environment", "generic, with numeral")] }
 
-def all : List LinguisticExample := [ex6a, ex6b, ex6c, ex6d, ex7a, ex7b, ex8a, ex8b, ex9a, ex9b, ex10a, ex10c, ex11a, ex12a, ex29a, ex29b, ex29c, ex29d, ex31a, ex31b, ex32a, ex33a, ex34a, ex41a, ex35a, ex35b, ex35d, ex35e, ex36a, ex36b, ex36c, ex36d, ex36e, ex37a, ex38a, ex38e, ex39a, ex39b, ex40a, ex40b, ex100a, ex100b]
+def all : List Datum := [ex6a, ex6b, ex6c, ex6d, ex7a, ex7b, ex8a, ex8b, ex9a, ex9b, ex10a, ex10c, ex11a, ex12a, ex29a, ex29b, ex29c, ex29d, ex31a, ex31b, ex32a, ex33a, ex34a, ex41a, ex35a, ex35b, ex35d, ex35e, ex36a, ex36b, ex36c, ex36d, ex36e, ex37a, ex38a, ex38e, ex39a, ex39b, ex40a, ex40b, ex100a, ex100b]
 
 end Lahiri1998.Examples

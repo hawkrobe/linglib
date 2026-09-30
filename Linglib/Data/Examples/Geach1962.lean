@@ -17,7 +17,7 @@ namespace Geach1962.Examples
 
 open Data.Examples
 
-def donkey_classic : LinguisticExample :=
+def donkey_classic : Datum :=
   { id := "geach1962_donkey_classic"
     source := ⟨"geach-1962", "UNVERIFIED the donkey sentence"⟩
     reportedIn := none
@@ -30,6 +30,6 @@ def donkey_classic : LinguisticExample :=
     readings := [("strong/universal", .acceptable), ("weak/existential", .acceptable), ("bound", .acceptable)]
     paperFeatures := [("donkey_configuration", "relative_clause"), ("preferred_reading", "strong")] }
 
-def all : List LinguisticExample := [donkey_classic]
+def all : List Datum := [donkey_classic]
 
 end Geach1962.Examples

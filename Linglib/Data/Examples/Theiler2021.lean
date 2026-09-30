@@ -17,7 +17,7 @@ namespace Theiler2021.Examples
 
 open Data.Examples
 
-def ex_1a : LinguisticExample :=
+def ex_1a : Datum :=
   { id := "theiler2021_1a"
     source := ⟨"theiler-2021", "(1a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_1a : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_2a : LinguisticExample :=
+def ex_2a : Datum :=
   { id := "theiler2021_2a"
     source := ⟨"theiler-2021", "(2a)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_2a : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_3a : LinguisticExample :=
+def ex_3a : Datum :=
   { id := "theiler2021_3a"
     source := ⟨"theiler-2021", "(3a)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_3a : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_4a : LinguisticExample :=
+def ex_4a : Datum :=
   { id := "theiler2021_4a"
     source := ⟨"theiler-2021", "(4a), (20a)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_4a : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_4b : LinguisticExample :=
+def ex_4b : Datum :=
   { id := "theiler2021_4b"
     source := ⟨"theiler-2021", "(4b), (20b)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_4b : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_6 : LinguisticExample :=
+def ex_6 : Datum :=
   { id := "theiler2021_6"
     source := ⟨"theiler-2021", "(6)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_6 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_7 : LinguisticExample :=
+def ex_7 : Datum :=
   { id := "theiler2021_7"
     source := ⟨"theiler-2021", "(7)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_7 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_8 : LinguisticExample :=
+def ex_8 : Datum :=
   { id := "theiler2021_8"
     source := ⟨"theiler-2021", "(8)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_8 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_9 : LinguisticExample :=
+def ex_9 : Datum :=
   { id := "theiler2021_9"
     source := ⟨"theiler-2021", "(9)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_9 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_12 : LinguisticExample :=
+def ex_12 : Datum :=
   { id := "theiler2021_12"
     source := ⟨"theiler-2021", "(12)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_12 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_13 : LinguisticExample :=
+def ex_13 : Datum :=
   { id := "theiler2021_13"
     source := ⟨"theiler-2021", "(13)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_13 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_14a : LinguisticExample :=
+def ex_14a : Datum :=
   { id := "theiler2021_14a"
     source := ⟨"theiler-2021", "(14a), (27)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_14a : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_14b : LinguisticExample :=
+def ex_14b : Datum :=
   { id := "theiler2021_14b"
     source := ⟨"theiler-2021", "(14b)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_14b : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_21 : LinguisticExample :=
+def ex_21 : Datum :=
   { id := "theiler2021_21"
     source := ⟨"theiler-2021", "(21)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_21 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_22 : LinguisticExample :=
+def ex_22 : Datum :=
   { id := "theiler2021_22"
     source := ⟨"theiler-2021", "(22)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_22 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_23 : LinguisticExample :=
+def ex_23 : Datum :=
   { id := "theiler2021_23"
     source := ⟨"theiler-2021", "(23)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_23 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_24 : LinguisticExample :=
+def ex_24 : Datum :=
   { id := "theiler2021_24"
     source := ⟨"theiler-2021", "(24)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex_24 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_25 : LinguisticExample :=
+def ex_25 : Datum :=
   { id := "theiler2021_25"
     source := ⟨"theiler-2021", "(25)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex_25 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_26a : LinguisticExample :=
+def ex_26a : Datum :=
   { id := "theiler2021_26a"
     source := ⟨"theiler-2021", "(26a)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex_26a : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_29 : LinguisticExample :=
+def ex_29 : Datum :=
   { id := "theiler2021_29"
     source := ⟨"theiler-2021", "(29)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex_29 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_31a : LinguisticExample :=
+def ex_31a : Datum :=
   { id := "theiler2021_31a"
     source := ⟨"theiler-2021", "(31a)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex_31a : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_31b : LinguisticExample :=
+def ex_31b : Datum :=
   { id := "theiler2021_31b"
     source := ⟨"theiler-2021", "(31b)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex_31b : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_32a : LinguisticExample :=
+def ex_32a : Datum :=
   { id := "theiler2021_32a"
     source := ⟨"theiler-2021", "(32a)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex_32a : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_32b : LinguisticExample :=
+def ex_32b : Datum :=
   { id := "theiler2021_32b"
     source := ⟨"theiler-2021", "(32b)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex_32b : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_32c : LinguisticExample :=
+def ex_32c : Datum :=
   { id := "theiler2021_32c"
     source := ⟨"theiler-2021", "(32c)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex_32c : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_35 : LinguisticExample :=
+def ex_35 : Datum :=
   { id := "theiler2021_35"
     source := ⟨"theiler-2021", "(35)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex_35 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_36 : LinguisticExample :=
+def ex_36 : Datum :=
   { id := "theiler2021_36"
     source := ⟨"theiler-2021", "(36)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def ex_36 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_38 : LinguisticExample :=
+def ex_38 : Datum :=
   { id := "theiler2021_38"
     source := ⟨"theiler-2021", "(38)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def ex_38 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_45 : LinguisticExample :=
+def ex_45 : Datum :=
   { id := "theiler2021_45"
     source := ⟨"theiler-2021", "(45)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def ex_45 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_47b : LinguisticExample :=
+def ex_47b : Datum :=
   { id := "theiler2021_47b"
     source := ⟨"theiler-2021", "(47b)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def ex_47b : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_48a : LinguisticExample :=
+def ex_48a : Datum :=
   { id := "theiler2021_48a"
     source := ⟨"theiler-2021", "(48a)"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def ex_48a : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_48b : LinguisticExample :=
+def ex_48b : Datum :=
   { id := "theiler2021_48b"
     source := ⟨"theiler-2021", "(48b)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def ex_48b : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_52 : LinguisticExample :=
+def ex_52 : Datum :=
   { id := "theiler2021_52"
     source := ⟨"theiler-2021", "(52)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def ex_52 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_61a : LinguisticExample :=
+def ex_61a : Datum :=
   { id := "theiler2021_61a"
     source := ⟨"theiler-2021", "(61a)"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def ex_61a : LinguisticExample :=
     readings := [("with überhaupt", .acceptable), ("with denn", .unacceptable)]
     paperFeatures := [] }
 
-def ex_61b : LinguisticExample :=
+def ex_61b : Datum :=
   { id := "theiler2021_61b"
     source := ⟨"theiler-2021", "(61b)"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def ex_61b : LinguisticExample :=
     readings := [("with überhaupt", .unacceptable), ("with denn", .acceptable)]
     paperFeatures := [] }
 
-def ex_70 : LinguisticExample :=
+def ex_70 : Datum :=
   { id := "theiler2021_70"
     source := ⟨"theiler-2021", "(70)"⟩
     reportedIn := none
@@ -485,7 +485,7 @@ def ex_70 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_71 : LinguisticExample :=
+def ex_71 : Datum :=
   { id := "theiler2021_71"
     source := ⟨"theiler-2021", "(71)"⟩
     reportedIn := none
@@ -498,7 +498,7 @@ def ex_71 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_72 : LinguisticExample :=
+def ex_72 : Datum :=
   { id := "theiler2021_72"
     source := ⟨"theiler-2021", "(72)"⟩
     reportedIn := none
@@ -511,6 +511,6 @@ def ex_72 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def all : List LinguisticExample := [ex_1a, ex_2a, ex_3a, ex_4a, ex_4b, ex_6, ex_7, ex_8, ex_9, ex_12, ex_13, ex_14a, ex_14b, ex_21, ex_22, ex_23, ex_24, ex_25, ex_26a, ex_29, ex_31a, ex_31b, ex_32a, ex_32b, ex_32c, ex_35, ex_36, ex_38, ex_45, ex_47b, ex_48a, ex_48b, ex_52, ex_61a, ex_61b, ex_70, ex_71, ex_72]
+def all : List Datum := [ex_1a, ex_2a, ex_3a, ex_4a, ex_4b, ex_6, ex_7, ex_8, ex_9, ex_12, ex_13, ex_14a, ex_14b, ex_21, ex_22, ex_23, ex_24, ex_25, ex_26a, ex_29, ex_31a, ex_31b, ex_32a, ex_32b, ex_32c, ex_35, ex_36, ex_38, ex_45, ex_47b, ex_48a, ex_48b, ex_52, ex_61a, ex_61b, ex_70, ex_71, ex_72]
 
 end Theiler2021.Examples

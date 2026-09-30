@@ -147,14 +147,14 @@ structure Row where
   deriving DecidableEq
 
 /-- The row of an example annotated with a type and a bias profile. -/
-def Row.ofExample (ex : LinguisticExample) : Option Row := do
+def Row.ofDatum (ex : Datum) : Option Row := do
   let (k, s) ← ex.parse? "type" typeTable
   let ev ← ex.parse? "evidential" biasTable
   let ep ← ex.parse? "epistemic" biasTable
   pure ⟨k, s, ⟨ev, ep⟩⟩
 
 /-- The examples (5) to (8) of Table 1. -/
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- The rows cover the four types in English, German and Swedish, with (8c′). -/
 theorem rows_length : rows.length = 13 := by decide
@@ -203,7 +203,7 @@ structure MarkingRow where
 def yesNo : List (String × Bool) := [("yes", true), ("no", false)]
 
 /-- The marking row of an example annotated with its cues. -/
-def MarkingRow.ofExample (ex : LinguisticExample) : Option MarkingRow := do
+def MarkingRow.ofDatum (ex : Datum) : Option MarkingRow := do
   let (k, s) ← ex.parse? "type" typeTable
   guard (k = .rejecting)
   let fronted ← ex.parse? "negation" [("fronted", true), ("low", false), ("none", false)]
@@ -214,7 +214,7 @@ def MarkingRow.ofExample (ex : LinguisticExample) : Option MarkingRow := do
   pure ⟨s, ⟨fronted, val, men, initial, direct⟩, ex.judgment⟩
 
 /-- The Swedish examples (7c), (8c), (8c′), (23) and (24). -/
-def markingRows : List MarkingRow := Examples.all.filterMap MarkingRow.ofExample
+def markingRows : List MarkingRow := Examples.all.filterMap MarkingRow.ofDatum
 
 /-- The rows cover the three Swedish rejecting questions of (7) and (8) and the eight of (23)
 and (24). -/

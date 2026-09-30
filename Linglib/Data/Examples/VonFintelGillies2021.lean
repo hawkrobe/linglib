@@ -17,7 +17,7 @@ namespace VonFintelGillies2021.Examples
 
 open Data.Examples
 
-def cant_possible : LinguisticExample :=
+def cant_possible : Datum :=
   { id := "vonfintelgillies2021_cant_possible"
     source := ⟨"von-fintel-gillies-2021", "(22a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def cant_possible : LinguisticExample :=
     readings := []
     paperFeatures := [("kind", "inference"), ("pattern", "cant_possible_contradiction"), ("modal", "cant")] }
 
-def phil_dinner : LinguisticExample :=
+def phil_dinner : Datum :=
   { id := "vonfintelgillies2021_phil_dinner"
     source := ⟨"von-fintel-gillies-2021", "(24b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def phil_dinner : LinguisticExample :=
     readings := []
     paperFeatures := [("kind", "must_pair"), ("modal", "must"), ("evidence", "direct"), ("must_entails_prejacent", "true")] }
 
-def meryl_dinner : LinguisticExample :=
+def meryl_dinner : Datum :=
   { id := "vonfintelgillies2021_meryl_dinner"
     source := ⟨"von-fintel-gillies-2021", "(25b)"⟩
     reportedIn := none
@@ -56,6 +56,6 @@ def meryl_dinner : LinguisticExample :=
     readings := []
     paperFeatures := [("kind", "must_pair"), ("modal", "must"), ("evidence", "indirect"), ("must_entails_prejacent", "true")] }
 
-def all : List LinguisticExample := [cant_possible, phil_dinner, meryl_dinner]
+def all : List Datum := [cant_possible, phil_dinner, meryl_dinner]
 
 end VonFintelGillies2021.Examples

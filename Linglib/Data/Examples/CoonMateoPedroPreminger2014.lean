@@ -17,7 +17,7 @@ namespace CoonMateoPedroPreminger2014.Examples
 
 open Data.Examples
 
-def ex_1 : LinguisticExample :=
+def ex_1 : Datum :=
   { id := "coonmateopedropreminger2014_1"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(1)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "agentFocus"), ("object", "dp"), ("extracted", "A")] }
 
-def ex_2 : LinguisticExample :=
+def ex_2 : Datum :=
   { id := "coonmateopedropreminger2014_2"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(2)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "no"), ("predicate", "agentFocus"), ("object", "dp")] }
 
-def ex_12a : LinguisticExample :=
+def ex_12a : Datum :=
   { id := "coonmateopedropreminger2014_12a"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(12a)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_12a : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "transitive"), ("object", "dp")] }
 
-def ex_12b : LinguisticExample :=
+def ex_12b : Datum :=
   { id := "coonmateopedropreminger2014_12b"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(12b)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_12b : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "intransitive"), ("marking", "abs")] }
 
-def ex_15a : LinguisticExample :=
+def ex_15a : Datum :=
   { id := "coonmateopedropreminger2014_15a"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(15a)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_15a : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "intransitive"), ("marking", "abs")] }
 
-def ex_18a : LinguisticExample :=
+def ex_18a : Datum :=
   { id := "coonmateopedropreminger2014_18a"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(18a)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_18a : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "low"), ("finite", "yes"), ("predicate", "transitive"), ("object", "dp")] }
 
-def ex_18b : LinguisticExample :=
+def ex_18b : Datum :=
   { id := "coonmateopedropreminger2014_18b"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(18b)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_18b : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "low"), ("finite", "yes"), ("predicate", "intransitive"), ("marking", "abs")] }
 
-def ex_20a : LinguisticExample :=
+def ex_20a : Datum :=
   { id := "coonmateopedropreminger2014_20a"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(20a)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_20a : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "intransitive"), ("marking", "abs")] }
 
-def ex_20b : LinguisticExample :=
+def ex_20b : Datum :=
   { id := "coonmateopedropreminger2014_20b"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(20b)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_20b : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "intransitive"), ("marking", "abs"), ("extracted", "S")] }
 
-def ex_21a : LinguisticExample :=
+def ex_21a : Datum :=
   { id := "coonmateopedropreminger2014_21a"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(21a)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_21a : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "transitive"), ("object", "dp")] }
 
-def ex_21b : LinguisticExample :=
+def ex_21b : Datum :=
   { id := "coonmateopedropreminger2014_21b"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(21b)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_21b : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "transitive"), ("object", "dp"), ("extracted", "P")] }
 
-def ex_21c : LinguisticExample :=
+def ex_21c : Datum :=
   { id := "coonmateopedropreminger2014_21c"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(21c)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_21c : LinguisticExample :=
     readings := [("agent extraction", .ungrammatical), ("patient extraction", .acceptable)]
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "transitive"), ("object", "dp"), ("extracted", "A")] }
 
-def ex_22a : LinguisticExample :=
+def ex_22a : Datum :=
   { id := "coonmateopedropreminger2014_22a"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(22a)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_22a : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "low"), ("finite", "yes"), ("predicate", "transitive"), ("object", "dp")] }
 
-def ex_22b : LinguisticExample :=
+def ex_22b : Datum :=
   { id := "coonmateopedropreminger2014_22b"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(22b)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_22b : LinguisticExample :=
     readings := [("agent extraction", .acceptable), ("patient extraction", .acceptable)]
     paperFeatures := [("absPosition", "low"), ("finite", "yes"), ("predicate", "transitive"), ("object", "dp"), ("extracted", "A")] }
 
-def ex_23 : LinguisticExample :=
+def ex_23 : Datum :=
   { id := "coonmateopedropreminger2014_23"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(23)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_23 : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "low"), ("finite", "yes"), ("predicate", "transitive"), ("object", "dp"), ("extracted", "A")] }
 
-def ex_28a : LinguisticExample :=
+def ex_28a : Datum :=
   { id := "coonmateopedropreminger2014_28a"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(28a)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_28a : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "transitive"), ("object", "dp")] }
 
-def ex_28b : LinguisticExample :=
+def ex_28b : Datum :=
   { id := "coonmateopedropreminger2014_28b"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(28b)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex_28b : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "transitive"), ("object", "dp")] }
 
-def ex_29a : LinguisticExample :=
+def ex_29a : Datum :=
   { id := "coonmateopedropreminger2014_29a"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(29a)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex_29a : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "no"), ("predicate", "transitive"), ("object", "dp")] }
 
-def ex_29b : LinguisticExample :=
+def ex_29b : Datum :=
   { id := "coonmateopedropreminger2014_29b"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(29b)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex_29b : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "no"), ("predicate", "transitive"), ("object", "dp")] }
 
-def ex_30a : LinguisticExample :=
+def ex_30a : Datum :=
   { id := "coonmateopedropreminger2014_30a"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(30a)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex_30a : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "transitive"), ("object", "dp")] }
 
-def ex_30b : LinguisticExample :=
+def ex_30b : Datum :=
   { id := "coonmateopedropreminger2014_30b"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(30b)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex_30b : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "no"), ("predicate", "transitive"), ("object", "dp")] }
 
-def ex_31a : LinguisticExample :=
+def ex_31a : Datum :=
   { id := "coonmateopedropreminger2014_31a"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(31a)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex_31a : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "intransitive"), ("marking", "abs")] }
 
-def ex_32a : LinguisticExample :=
+def ex_32a : Datum :=
   { id := "coonmateopedropreminger2014_32a"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(32a)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex_32a : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "no"), ("predicate", "intransitive"), ("marking", "erg")] }
 
-def ex_32b : LinguisticExample :=
+def ex_32b : Datum :=
   { id := "coonmateopedropreminger2014_32b"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(32b)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex_32b : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "no"), ("predicate", "intransitive"), ("marking", "erg")] }
 
-def ex_33a : LinguisticExample :=
+def ex_33a : Datum :=
   { id := "coonmateopedropreminger2014_33a"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(33a)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex_33a : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "no"), ("predicate", "intransitive"), ("marking", "abs")] }
 
-def ex_33b : LinguisticExample :=
+def ex_33b : Datum :=
   { id := "coonmateopedropreminger2014_33b"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(33b)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex_33b : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "no"), ("predicate", "intransitive"), ("marking", "abs")] }
 
-def ex_34a : LinguisticExample :=
+def ex_34a : Datum :=
   { id := "coonmateopedropreminger2014_34a"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(34a)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def ex_34a : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "transitive"), ("object", "dp")] }
 
-def ex_34b : LinguisticExample :=
+def ex_34b : Datum :=
   { id := "coonmateopedropreminger2014_34b"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(34b)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def ex_34b : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "intransitive"), ("marking", "abs")] }
 
-def ex_35a : LinguisticExample :=
+def ex_35a : Datum :=
   { id := "coonmateopedropreminger2014_35a"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(35a)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def ex_35a : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "transitive"), ("object", "dp")] }
 
-def ex_35b : LinguisticExample :=
+def ex_35b : Datum :=
   { id := "coonmateopedropreminger2014_35b"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(35b)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def ex_35b : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "transitive"), ("object", "dp")] }
 
-def ex_35c : LinguisticExample :=
+def ex_35c : Datum :=
   { id := "coonmateopedropreminger2014_35c"
     source := ⟨"imanishi-2014", "n.p."⟩
     reportedIn := some ⟨"coon-mateo-pedro-preminger-2014", "(35c)"⟩
@@ -420,7 +420,7 @@ def ex_35c : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high")] }
 
-def ex_35d : LinguisticExample :=
+def ex_35d : Datum :=
   { id := "coonmateopedropreminger2014_35d"
     source := ⟨"imanishi-2014", "n.p."⟩
     reportedIn := some ⟨"coon-mateo-pedro-preminger-2014", "(35d)"⟩
@@ -433,7 +433,7 @@ def ex_35d : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "no"), ("predicate", "antipassive"), ("object", "caseless")] }
 
-def ex_36a : LinguisticExample :=
+def ex_36a : Datum :=
   { id := "coonmateopedropreminger2014_36a"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(36a)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def ex_36a : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "intransitive"), ("marking", "abs")] }
 
-def ex_36b : LinguisticExample :=
+def ex_36b : Datum :=
   { id := "coonmateopedropreminger2014_36b"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(36b)"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def ex_36b : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "intransitive"), ("marking", "abs")] }
 
-def ex_36c : LinguisticExample :=
+def ex_36c : Datum :=
   { id := "coonmateopedropreminger2014_36c"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(36c)"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def ex_36c : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "no"), ("predicate", "intransitive"), ("marking", "erg")] }
 
-def ex_37a : LinguisticExample :=
+def ex_37a : Datum :=
   { id := "coonmateopedropreminger2014_37a"
     source := ⟨"berinstein-1998", "p. 213"⟩
     reportedIn := some ⟨"coon-mateo-pedro-preminger-2014", "(37a)"⟩
@@ -485,7 +485,7 @@ def ex_37a : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "transitive"), ("object", "dp")] }
 
-def ex_37b : LinguisticExample :=
+def ex_37b : Datum :=
   { id := "coonmateopedropreminger2014_37b"
     source := ⟨"berinstein-1998", "p. 213"⟩
     reportedIn := some ⟨"coon-mateo-pedro-preminger-2014", "(37b)"⟩
@@ -498,7 +498,7 @@ def ex_37b : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "intransitive"), ("marking", "abs")] }
 
-def ex_38a : LinguisticExample :=
+def ex_38a : Datum :=
   { id := "coonmateopedropreminger2014_38a"
     source := ⟨"berinstein-1985", "pp. 265–269"⟩
     reportedIn := some ⟨"coon-mateo-pedro-preminger-2014", "(38a)"⟩
@@ -511,7 +511,7 @@ def ex_38a : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high")] }
 
-def ex_38b : LinguisticExample :=
+def ex_38b : Datum :=
   { id := "coonmateopedropreminger2014_38b"
     source := ⟨"berinstein-1985", "pp. 265–269"⟩
     reportedIn := some ⟨"coon-mateo-pedro-preminger-2014", "(38b)"⟩
@@ -524,7 +524,7 @@ def ex_38b : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "no"), ("predicate", "antipassive"), ("object", "caseless")] }
 
-def ex_39a : LinguisticExample :=
+def ex_39a : Datum :=
   { id := "coonmateopedropreminger2014_39a"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(39a)"⟩
     reportedIn := none
@@ -537,7 +537,7 @@ def ex_39a : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "no"), ("predicate", "transitive"), ("object", "oblique")] }
 
-def ex_39b : LinguisticExample :=
+def ex_39b : Datum :=
   { id := "coonmateopedropreminger2014_39b"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(39b)"⟩
     reportedIn := none
@@ -550,7 +550,7 @@ def ex_39b : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "no"), ("predicate", "transitive"), ("object", "caseless")] }
 
-def ex_41 : LinguisticExample :=
+def ex_41 : Datum :=
   { id := "coonmateopedropreminger2014_41"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(41)"⟩
     reportedIn := none
@@ -563,7 +563,7 @@ def ex_41 : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "no"), ("predicate", "intransitive"), ("marking", "erg")] }
 
-def ex_42a : LinguisticExample :=
+def ex_42a : Datum :=
   { id := "coonmateopedropreminger2014_42a"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(42a)"⟩
     reportedIn := none
@@ -576,7 +576,7 @@ def ex_42a : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "low"), ("finite", "no"), ("predicate", "transitive"), ("object", "dp")] }
 
-def ex_42b : LinguisticExample :=
+def ex_42b : Datum :=
   { id := "coonmateopedropreminger2014_42b"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(42b)"⟩
     reportedIn := none
@@ -589,7 +589,7 @@ def ex_42b : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "low"), ("finite", "no"), ("predicate", "transitive"), ("object", "dp")] }
 
-def ex_43a : LinguisticExample :=
+def ex_43a : Datum :=
   { id := "coonmateopedropreminger2014_43a"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(43a)"⟩
     reportedIn := none
@@ -602,7 +602,7 @@ def ex_43a : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "low"), ("finite", "yes"), ("predicate", "intransitive"), ("marking", "abs")] }
 
-def ex_43b : LinguisticExample :=
+def ex_43b : Datum :=
   { id := "coonmateopedropreminger2014_43b"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(43b)"⟩
     reportedIn := none
@@ -615,7 +615,7 @@ def ex_43b : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "low"), ("finite", "no"), ("predicate", "intransitive"), ("marking", "erg")] }
 
-def ex_43c : LinguisticExample :=
+def ex_43c : Datum :=
   { id := "coonmateopedropreminger2014_43c"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(43c)"⟩
     reportedIn := none
@@ -628,7 +628,7 @@ def ex_43c : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "low"), ("finite", "no"), ("predicate", "intransitive"), ("marking", "abs")] }
 
-def ex_44 : LinguisticExample :=
+def ex_44 : Datum :=
   { id := "coonmateopedropreminger2014_44"
     source := ⟨"bricker-1981", "p. 96"⟩
     reportedIn := some ⟨"coon-mateo-pedro-preminger-2014", "(44)"⟩
@@ -641,7 +641,7 @@ def ex_44 : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "low"), ("finite", "no"), ("predicate", "transitive"), ("object", "dp")] }
 
-def ex_45 : LinguisticExample :=
+def ex_45 : Datum :=
   { id := "coonmateopedropreminger2014_45"
     source := ⟨"hofling-2000", "p. 486"⟩
     reportedIn := some ⟨"coon-mateo-pedro-preminger-2014", "(45)"⟩
@@ -654,7 +654,7 @@ def ex_45 : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "low"), ("finite", "no"), ("predicate", "transitive"), ("object", "dp")] }
 
-def ex_46a : LinguisticExample :=
+def ex_46a : Datum :=
   { id := "coonmateopedropreminger2014_46a"
     source := ⟨"bricker-1981", "p. 84"⟩
     reportedIn := some ⟨"coon-mateo-pedro-preminger-2014", "(46a)"⟩
@@ -667,7 +667,7 @@ def ex_46a : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "low"), ("finite", "yes"), ("predicate", "intransitive"), ("marking", "abs")] }
 
-def ex_46b : LinguisticExample :=
+def ex_46b : Datum :=
   { id := "coonmateopedropreminger2014_46b"
     source := ⟨"bricker-1981", "p. 84"⟩
     reportedIn := some ⟨"coon-mateo-pedro-preminger-2014", "(46b)"⟩
@@ -680,7 +680,7 @@ def ex_46b : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "low"), ("finite", "no"), ("predicate", "intransitive"), ("marking", "erg")] }
 
-def ex_48a : LinguisticExample :=
+def ex_48a : Datum :=
   { id := "coonmateopedropreminger2014_48a"
     source := ⟨"furbee-losee-1976", "pp. 207–209"⟩
     reportedIn := some ⟨"coon-mateo-pedro-preminger-2014", "(48a)"⟩
@@ -693,7 +693,7 @@ def ex_48a : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "low"), ("finite", "no"), ("predicate", "transitive"), ("object", "dp")] }
 
-def ex_48b : LinguisticExample :=
+def ex_48b : Datum :=
   { id := "coonmateopedropreminger2014_48b"
     source := ⟨"furbee-losee-1976", "pp. 207–209"⟩
     reportedIn := some ⟨"coon-mateo-pedro-preminger-2014", "(48b)"⟩
@@ -706,7 +706,7 @@ def ex_48b : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "low"), ("finite", "no"), ("predicate", "transitive"), ("object", "dp")] }
 
-def ex_49a : LinguisticExample :=
+def ex_49a : Datum :=
   { id := "coonmateopedropreminger2014_49a"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(49a)"⟩
     reportedIn := none
@@ -719,7 +719,7 @@ def ex_49a : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "no"), ("predicate", "intransitive"), ("marking", "erg"), ("extracted", "S")] }
 
-def ex_49b : LinguisticExample :=
+def ex_49b : Datum :=
   { id := "coonmateopedropreminger2014_49b"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(49b)"⟩
     reportedIn := none
@@ -732,7 +732,7 @@ def ex_49b : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "no"), ("predicate", "intransitive"), ("marking", "erg"), ("extracted", "S")] }
 
-def ex_57a : LinguisticExample :=
+def ex_57a : Datum :=
   { id := "coonmateopedropreminger2014_57a"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(57a)"⟩
     reportedIn := none
@@ -745,7 +745,7 @@ def ex_57a : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "transitive"), ("object", "dp")] }
 
-def ex_57b : LinguisticExample :=
+def ex_57b : Datum :=
   { id := "coonmateopedropreminger2014_57b"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(57b)"⟩
     reportedIn := none
@@ -758,7 +758,7 @@ def ex_57b : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "transitive"), ("object", "dp")] }
 
-def ex_58a : LinguisticExample :=
+def ex_58a : Datum :=
   { id := "coonmateopedropreminger2014_58a"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(58a)"⟩
     reportedIn := none
@@ -771,7 +771,7 @@ def ex_58a : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "agentFocus"), ("object", "dp"), ("extracted", "A")] }
 
-def ex_58b : LinguisticExample :=
+def ex_58b : Datum :=
   { id := "coonmateopedropreminger2014_58b"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(58b)"⟩
     reportedIn := none
@@ -784,7 +784,7 @@ def ex_58b : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "agentFocus"), ("object", "dp"), ("extracted", "A")] }
 
-def ex_58c : LinguisticExample :=
+def ex_58c : Datum :=
   { id := "coonmateopedropreminger2014_58c"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(58c)"⟩
     reportedIn := none
@@ -797,7 +797,7 @@ def ex_58c : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "agentFocus"), ("object", "dp"), ("extracted", "A")] }
 
-def ex_59 : LinguisticExample :=
+def ex_59 : Datum :=
   { id := "coonmateopedropreminger2014_59"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(59)"⟩
     reportedIn := none
@@ -810,7 +810,7 @@ def ex_59 : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "antipassive"), ("object", "oblique")] }
 
-def ex_60 : LinguisticExample :=
+def ex_60 : Datum :=
   { id := "coonmateopedropreminger2014_60"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(60)"⟩
     reportedIn := none
@@ -823,7 +823,7 @@ def ex_60 : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "antipassive"), ("object", "oblique"), ("extracted", "A")] }
 
-def ex_61a : LinguisticExample :=
+def ex_61a : Datum :=
   { id := "coonmateopedropreminger2014_61a"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(61a)"⟩
     reportedIn := none
@@ -836,7 +836,7 @@ def ex_61a : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "antipassive"), ("object", "oblique"), ("extracted", "A")] }
 
-def ex_69a : LinguisticExample :=
+def ex_69a : Datum :=
   { id := "coonmateopedropreminger2014_69a"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(69a)"⟩
     reportedIn := none
@@ -849,7 +849,7 @@ def ex_69a : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "no"), ("predicate", "agentFocus"), ("object", "dp")] }
 
-def ex_69b : LinguisticExample :=
+def ex_69b : Datum :=
   { id := "coonmateopedropreminger2014_69b"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(69b)"⟩
     reportedIn := none
@@ -862,7 +862,7 @@ def ex_69b : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "no"), ("predicate", "agentFocus"), ("object", "dp")] }
 
-def ex_71a : LinguisticExample :=
+def ex_71a : Datum :=
   { id := "coonmateopedropreminger2014_71a"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(71a)"⟩
     reportedIn := none
@@ -875,7 +875,7 @@ def ex_71a : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "transitive"), ("object", "dp")] }
 
-def ex_71c : LinguisticExample :=
+def ex_71c : Datum :=
   { id := "coonmateopedropreminger2014_71c"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(71c)"⟩
     reportedIn := none
@@ -888,7 +888,7 @@ def ex_71c : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "agentFocus"), ("object", "dp"), ("extracted", "A")] }
 
-def ex_72a : LinguisticExample :=
+def ex_72a : Datum :=
   { id := "coonmateopedropreminger2014_72a"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(72a)"⟩
     reportedIn := none
@@ -901,7 +901,7 @@ def ex_72a : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "agentFocus"), ("object", "dp"), ("extracted", "A")] }
 
-def ex_72b : LinguisticExample :=
+def ex_72b : Datum :=
   { id := "coonmateopedropreminger2014_72b"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(72b)"⟩
     reportedIn := none
@@ -914,7 +914,7 @@ def ex_72b : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "transitive"), ("object", "dp")] }
 
-def ex_73a : LinguisticExample :=
+def ex_73a : Datum :=
   { id := "coonmateopedropreminger2014_73a"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(73a)"⟩
     reportedIn := none
@@ -927,7 +927,7 @@ def ex_73a : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high")] }
 
-def ex_73b : LinguisticExample :=
+def ex_73b : Datum :=
   { id := "coonmateopedropreminger2014_73b"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(73b)"⟩
     reportedIn := none
@@ -940,7 +940,7 @@ def ex_73b : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high")] }
 
-def ex_74 : LinguisticExample :=
+def ex_74 : Datum :=
   { id := "coonmateopedropreminger2014_74"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(74)"⟩
     reportedIn := none
@@ -953,7 +953,7 @@ def ex_74 : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "no"), ("predicate", "agentFocus"), ("object", "dp")] }
 
-def ex_75a : LinguisticExample :=
+def ex_75a : Datum :=
   { id := "coonmateopedropreminger2014_75a"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(75a)"⟩
     reportedIn := none
@@ -966,7 +966,7 @@ def ex_75a : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "transitive"), ("object", "caseless"), ("extracted", "A")] }
 
-def ex_75b : LinguisticExample :=
+def ex_75b : Datum :=
   { id := "coonmateopedropreminger2014_75b"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(75b)"⟩
     reportedIn := none
@@ -979,7 +979,7 @@ def ex_75b : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "agentFocus"), ("object", "caseless"), ("extracted", "A")] }
 
-def ex_75c : LinguisticExample :=
+def ex_75c : Datum :=
   { id := "coonmateopedropreminger2014_75c"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(75c)"⟩
     reportedIn := none
@@ -992,7 +992,7 @@ def ex_75c : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "agentFocus"), ("object", "dp"), ("extracted", "A")] }
 
-def ex_76a : LinguisticExample :=
+def ex_76a : Datum :=
   { id := "coonmateopedropreminger2014_76a"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(76a)"⟩
     reportedIn := none
@@ -1005,7 +1005,7 @@ def ex_76a : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "transitive"), ("object", "caseless"), ("extracted", "A")] }
 
-def ex_76b : LinguisticExample :=
+def ex_76b : Datum :=
   { id := "coonmateopedropreminger2014_76b"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(76b)"⟩
     reportedIn := none
@@ -1018,7 +1018,7 @@ def ex_76b : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "agentFocus"), ("object", "dp"), ("extracted", "A")] }
 
-def ex_77b : LinguisticExample :=
+def ex_77b : Datum :=
   { id := "coonmateopedropreminger2014_77b"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(77b)"⟩
     reportedIn := none
@@ -1031,7 +1031,7 @@ def ex_77b : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "transitive"), ("object", "caseless")] }
 
-def ex_78a : LinguisticExample :=
+def ex_78a : Datum :=
   { id := "coonmateopedropreminger2014_78a"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(78a)"⟩
     reportedIn := none
@@ -1044,7 +1044,7 @@ def ex_78a : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "transitive"), ("object", "caseless"), ("extracted", "A")] }
 
-def ex_78a_clf : LinguisticExample :=
+def ex_78a_clf : Datum :=
   { id := "coonmateopedropreminger2014_78a_clf"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(78a)"⟩
     reportedIn := none
@@ -1057,7 +1057,7 @@ def ex_78a_clf : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "transitive"), ("object", "dp"), ("extracted", "A")] }
 
-def ex_78b : LinguisticExample :=
+def ex_78b : Datum :=
   { id := "coonmateopedropreminger2014_78b"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(78b)"⟩
     reportedIn := none
@@ -1070,7 +1070,7 @@ def ex_78b : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "agentFocus"), ("object", "dp"), ("extracted", "A")] }
 
-def ex_78b_bare : LinguisticExample :=
+def ex_78b_bare : Datum :=
   { id := "coonmateopedropreminger2014_78b_bare"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(78b)"⟩
     reportedIn := none
@@ -1083,7 +1083,7 @@ def ex_78b_bare : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "agentFocus"), ("object", "caseless"), ("extracted", "A")] }
 
-def ex_79a : LinguisticExample :=
+def ex_79a : Datum :=
   { id := "coonmateopedropreminger2014_79a"
     source := ⟨"aissen-2011", "p. 15"⟩
     reportedIn := some ⟨"coon-mateo-pedro-preminger-2014", "(79a)"⟩
@@ -1096,7 +1096,7 @@ def ex_79a : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "transitive"), ("object", "caseless"), ("extracted", "A")] }
 
-def ex_79b : LinguisticExample :=
+def ex_79b : Datum :=
   { id := "coonmateopedropreminger2014_79b"
     source := ⟨"aissen-2011", "p. 15"⟩
     reportedIn := some ⟨"coon-mateo-pedro-preminger-2014", "(79b)"⟩
@@ -1109,7 +1109,7 @@ def ex_79b : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "transitive"), ("object", "dp"), ("extracted", "A")] }
 
-def ex_81a : LinguisticExample :=
+def ex_81a : Datum :=
   { id := "coonmateopedropreminger2014_81a"
     source := ⟨"hou-2013", "n.p."⟩
     reportedIn := some ⟨"coon-mateo-pedro-preminger-2014", "(81a)"⟩
@@ -1122,7 +1122,7 @@ def ex_81a : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "transitive"), ("object", "caseless"), ("extracted", "A")] }
 
-def ex_81a_adv : LinguisticExample :=
+def ex_81a_adv : Datum :=
   { id := "coonmateopedropreminger2014_81a_adv"
     source := ⟨"hou-2013", "n.p."⟩
     reportedIn := some ⟨"coon-mateo-pedro-preminger-2014", "(81a)"⟩
@@ -1135,7 +1135,7 @@ def ex_81a_adv : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "transitive"), ("object", "caseless"), ("extracted", "A"), ("separated", "yes")] }
 
-def ex_81b : LinguisticExample :=
+def ex_81b : Datum :=
   { id := "coonmateopedropreminger2014_81b"
     source := ⟨"hou-2013", "n.p."⟩
     reportedIn := some ⟨"coon-mateo-pedro-preminger-2014", "(81b)"⟩
@@ -1148,7 +1148,7 @@ def ex_81b : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "yes"), ("predicate", "agentFocus"), ("object", "dp"), ("extracted", "A")] }
 
-def ex_82a : LinguisticExample :=
+def ex_82a : Datum :=
   { id := "coonmateopedropreminger2014_82a"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(82a)"⟩
     reportedIn := none
@@ -1161,7 +1161,7 @@ def ex_82a : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "low")] }
 
-def ex_82b : LinguisticExample :=
+def ex_82b : Datum :=
   { id := "coonmateopedropreminger2014_82b"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(82b)"⟩
     reportedIn := none
@@ -1174,7 +1174,7 @@ def ex_82b : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high")] }
 
-def ex_82c : LinguisticExample :=
+def ex_82c : Datum :=
   { id := "coonmateopedropreminger2014_82c"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(82c)"⟩
     reportedIn := none
@@ -1187,7 +1187,7 @@ def ex_82c : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high")] }
 
-def ex_86a : LinguisticExample :=
+def ex_86a : Datum :=
   { id := "coonmateopedropreminger2014_86a"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(86a)"⟩
     reportedIn := none
@@ -1200,7 +1200,7 @@ def ex_86a : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "no"), ("predicate", "intransitive"), ("marking", "erg")] }
 
-def ex_86b : LinguisticExample :=
+def ex_86b : Datum :=
   { id := "coonmateopedropreminger2014_86b"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(86b)"⟩
     reportedIn := none
@@ -1213,6 +1213,6 @@ def ex_86b : LinguisticExample :=
     readings := []
     paperFeatures := [("absPosition", "high"), ("finite", "no"), ("predicate", "agentFocus"), ("object", "dp")] }
 
-def all : List LinguisticExample := [ex_1, ex_2, ex_12a, ex_12b, ex_15a, ex_18a, ex_18b, ex_20a, ex_20b, ex_21a, ex_21b, ex_21c, ex_22a, ex_22b, ex_23, ex_28a, ex_28b, ex_29a, ex_29b, ex_30a, ex_30b, ex_31a, ex_32a, ex_32b, ex_33a, ex_33b, ex_34a, ex_34b, ex_35a, ex_35b, ex_35c, ex_35d, ex_36a, ex_36b, ex_36c, ex_37a, ex_37b, ex_38a, ex_38b, ex_39a, ex_39b, ex_41, ex_42a, ex_42b, ex_43a, ex_43b, ex_43c, ex_44, ex_45, ex_46a, ex_46b, ex_48a, ex_48b, ex_49a, ex_49b, ex_57a, ex_57b, ex_58a, ex_58b, ex_58c, ex_59, ex_60, ex_61a, ex_69a, ex_69b, ex_71a, ex_71c, ex_72a, ex_72b, ex_73a, ex_73b, ex_74, ex_75a, ex_75b, ex_75c, ex_76a, ex_76b, ex_77b, ex_78a, ex_78a_clf, ex_78b, ex_78b_bare, ex_79a, ex_79b, ex_81a, ex_81a_adv, ex_81b, ex_82a, ex_82b, ex_82c, ex_86a, ex_86b]
+def all : List Datum := [ex_1, ex_2, ex_12a, ex_12b, ex_15a, ex_18a, ex_18b, ex_20a, ex_20b, ex_21a, ex_21b, ex_21c, ex_22a, ex_22b, ex_23, ex_28a, ex_28b, ex_29a, ex_29b, ex_30a, ex_30b, ex_31a, ex_32a, ex_32b, ex_33a, ex_33b, ex_34a, ex_34b, ex_35a, ex_35b, ex_35c, ex_35d, ex_36a, ex_36b, ex_36c, ex_37a, ex_37b, ex_38a, ex_38b, ex_39a, ex_39b, ex_41, ex_42a, ex_42b, ex_43a, ex_43b, ex_43c, ex_44, ex_45, ex_46a, ex_46b, ex_48a, ex_48b, ex_49a, ex_49b, ex_57a, ex_57b, ex_58a, ex_58b, ex_58c, ex_59, ex_60, ex_61a, ex_69a, ex_69b, ex_71a, ex_71c, ex_72a, ex_72b, ex_73a, ex_73b, ex_74, ex_75a, ex_75b, ex_75c, ex_76a, ex_76b, ex_77b, ex_78a, ex_78a_clf, ex_78b, ex_78b_bare, ex_79a, ex_79b, ex_81a, ex_81a_adv, ex_81b, ex_82a, ex_82b, ex_82c, ex_86a, ex_86b]
 
 end CoonMateoPedroPreminger2014.Examples

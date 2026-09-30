@@ -17,7 +17,7 @@ namespace Kennedy1999.Examples
 
 open Data.Examples
 
-def cpa_long_short : LinguisticExample :=
+def cpa_long_short : Datum :=
   { id := "kennedy1999_cpa_long_short"
     source := ⟨"kennedy-1999", "(15), §3.1.3"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def cpa_long_short : LinguisticExample :=
     readings := []
     paperFeatures := [("matrix_polarity", "positive"), ("standard_polarity", "negative"), ("shared_scale", "true")] }
 
-def cpa_short_long : LinguisticExample :=
+def cpa_short_long : Datum :=
   { id := "kennedy1999_cpa_short_long"
     source := ⟨"kennedy-1999", "(16), §3.1.3"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def cpa_short_long : LinguisticExample :=
     readings := []
     paperFeatures := [("matrix_polarity", "negative"), ("standard_polarity", "positive"), ("shared_scale", "true")] }
 
-def subdel_pos_pos : LinguisticExample :=
+def subdel_pos_pos : Datum :=
   { id := "kennedy1999_subdel_pos_pos"
     source := ⟨"kennedy-1999", "(19), §3.1.3"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def subdel_pos_pos : LinguisticExample :=
     readings := []
     paperFeatures := [("matrix_polarity", "positive"), ("standard_polarity", "positive"), ("shared_scale", "true")] }
 
-def subdel_neg_neg : LinguisticExample :=
+def subdel_neg_neg : Datum :=
   { id := "kennedy1999_subdel_neg_neg"
     source := ⟨"kennedy-1999", "(20), §3.1.3"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def subdel_neg_neg : LinguisticExample :=
     readings := []
     paperFeatures := [("matrix_polarity", "negative"), ("standard_polarity", "negative"), ("shared_scale", "true")] }
 
-def ficus_tall_high : LinguisticExample :=
+def ficus_tall_high : Datum :=
   { id := "kennedy1999_ficus_tall_high"
     source := ⟨"kennedy-1999", "(61), §3.1.7"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ficus_tall_high : LinguisticExample :=
     readings := []
     paperFeatures := [("matrix_polarity", "positive"), ("standard_polarity", "positive"), ("shared_scale", "true")] }
 
-def ficus_tall_low : LinguisticExample :=
+def ficus_tall_low : Datum :=
   { id := "kennedy1999_ficus_tall_low"
     source := ⟨"kennedy-1999", "(62), §3.1.7"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ficus_tall_low : LinguisticExample :=
     readings := []
     paperFeatures := [("matrix_polarity", "positive"), ("standard_polarity", "negative"), ("shared_scale", "true")] }
 
-def ficus_short_low : LinguisticExample :=
+def ficus_short_low : Datum :=
   { id := "kennedy1999_ficus_short_low"
     source := ⟨"kennedy-1999", "(63), §3.1.7"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ficus_short_low : LinguisticExample :=
     readings := []
     paperFeatures := [("matrix_polarity", "negative"), ("standard_polarity", "negative"), ("shared_scale", "true")] }
 
-def ficus_short_high : LinguisticExample :=
+def ficus_short_high : Datum :=
   { id := "kennedy1999_ficus_short_high"
     source := ⟨"kennedy-1999", "(64), §3.1.7"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ficus_short_high : LinguisticExample :=
     readings := []
     paperFeatures := [("matrix_polarity", "negative"), ("standard_polarity", "positive"), ("shared_scale", "true")] }
 
-def incomm_tall_clever : LinguisticExample :=
+def incomm_tall_clever : Datum :=
   { id := "kennedy1999_incomm_tall_clever"
     source := ⟨"kennedy-1999", "(25), §3.1.4"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def incomm_tall_clever : LinguisticExample :=
     readings := []
     paperFeatures := [("matrix_polarity", "positive"), ("standard_polarity", "positive"), ("shared_scale", "false")] }
 
-def incomm_tragic_heavy : LinguisticExample :=
+def incomm_tragic_heavy : Datum :=
   { id := "kennedy1999_incomm_tragic_heavy"
     source := ⟨"kennedy-1999", "(26), §3.1.4"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def incomm_tragic_heavy : LinguisticExample :=
     readings := []
     paperFeatures := [("matrix_polarity", "positive"), ("standard_polarity", "positive"), ("shared_scale", "false")] }
 
-def mp_cadillac : LinguisticExample :=
+def mp_cadillac : Datum :=
   { id := "kennedy1999_mp_cadillac"
     source := ⟨"kennedy-1999", "(69), §3.1.8"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def mp_cadillac : LinguisticExample :=
     readings := []
     paperFeatures := [("polarity", "positive"), ("construction", "absolute")] }
 
-def mp_fiat : LinguisticExample :=
+def mp_fiat : Datum :=
   { id := "kennedy1999_mp_fiat"
     source := ⟨"kennedy-1999", "(70), §3.1.8"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def mp_fiat : LinguisticExample :=
     readings := []
     paperFeatures := [("polarity", "negative"), ("construction", "absolute")] }
 
-def mp_fiat_comparative : LinguisticExample :=
+def mp_fiat_comparative : Datum :=
   { id := "kennedy1999_mp_fiat_comparative"
     source := ⟨"kennedy-1999", "(73), §3.1.8"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def mp_fiat_comparative : LinguisticExample :=
     readings := []
     paperFeatures := [("polarity", "negative"), ("construction", "comparative")] }
 
-def mp_reich : LinguisticExample :=
+def mp_reich : Datum :=
   { id := "kennedy1999_mp_reich"
     source := ⟨"kennedy-1999", "(79), §3.1.9"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def mp_reich : LinguisticExample :=
     readings := []
     paperFeatures := [("polarity", "negative"), ("construction", "absolute")] }
 
-def mp_slow : LinguisticExample :=
+def mp_slow : Datum :=
   { id := "kennedy1999_mp_slow"
     source := ⟨"kennedy-1999", "(80), §3.1.9"⟩
     reportedIn := none
@@ -212,6 +212,6 @@ def mp_slow : LinguisticExample :=
     readings := []
     paperFeatures := [("polarity", "negative"), ("construction", "absolute")] }
 
-def all : List LinguisticExample := [cpa_long_short, cpa_short_long, subdel_pos_pos, subdel_neg_neg, ficus_tall_high, ficus_tall_low, ficus_short_low, ficus_short_high, incomm_tall_clever, incomm_tragic_heavy, mp_cadillac, mp_fiat, mp_fiat_comparative, mp_reich, mp_slow]
+def all : List Datum := [cpa_long_short, cpa_short_long, subdel_pos_pos, subdel_neg_neg, ficus_tall_high, ficus_tall_low, ficus_short_low, ficus_short_high, incomm_tall_clever, incomm_tragic_heavy, mp_cadillac, mp_fiat, mp_fiat_comparative, mp_reich, mp_slow]
 
 end Kennedy1999.Examples

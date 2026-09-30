@@ -403,7 +403,7 @@ def suffixFeature : String → Option (Option Suffix)
   | _ => none
 
 /-- A row from the paper's features. -/
-def Row.ofExample (e : LinguisticExample) : Option Row := do
+def Row.ofDatum (e : Datum) : Option Row := do
   let cl ← match e.feature? "aspect" with
     | some "imperfective" => some imperfective
     | some "perfective" => some perfective
@@ -419,7 +419,7 @@ def Row.ofExample (e : LinguisticExample) : Option Row := do
   some ⟨cl, obj, s, o, e.judgment = .acceptable⟩
 
 /-- The Senaya data, (8) to (12) and (38). -/
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- The nominals of a row: a subject of the given specificity, and the row's object if any. -/
 def Row.nominals (r : Row) (subject : Bool) : List LicensedNP :=

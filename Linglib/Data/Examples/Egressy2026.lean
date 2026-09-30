@@ -17,7 +17,7 @@ namespace Egressy2026.Examples
 
 open Data.Examples
 
-def ex_4 : LinguisticExample :=
+def ex_4 : Datum :=
   { id := "egressy2026_4"
     source := ⟨"egressy-2026", "(4)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_4 : LinguisticExample :=
     readings := [("simultaneous", .acceptable), ("backshifted", .unacceptable)]
     paperFeatures := [("clauseType", "nonSpeechReporting"), ("matrixVerb", "lát"), ("directPerception", "yes"), ("clauseRole", "object")] }
 
-def ex_5 : LinguisticExample :=
+def ex_5 : Datum :=
   { id := "egressy2026_5"
     source := ⟨"egressy-2026", "(5)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_5 : LinguisticExample :=
     readings := [("simultaneous", .acceptable), ("backshifted", .unacceptable)]
     paperFeatures := [("clauseType", "nonSpeechReporting"), ("matrixVerb", "hall"), ("directPerception", "yes"), ("clauseRole", "object")] }
 
-def ex_6 : LinguisticExample :=
+def ex_6 : Datum :=
   { id := "egressy2026_6"
     source := ⟨"egressy-2026", "(6)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_6 : LinguisticExample :=
     readings := [("simultaneous", .acceptable), ("backshifted", .unacceptable)]
     paperFeatures := [("clauseType", "nonSpeechReporting"), ("matrixVerb", "álmodik"), ("directPerception", "yes"), ("clauseRole", "object")] }
 
-def ex_7 : LinguisticExample :=
+def ex_7 : Datum :=
   { id := "egressy2026_7"
     source := ⟨"egressy-2026", "(7)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_7 : LinguisticExample :=
     readings := [("simultaneous", .acceptable), ("backshifted", .acceptable)]
     paperFeatures := [("clauseType", "nonSpeechReporting"), ("matrixVerb", "gondol"), ("directPerception", "no"), ("clauseRole", "object")] }
 
-def ex_8 : LinguisticExample :=
+def ex_8 : Datum :=
   { id := "egressy2026_8"
     source := ⟨"egressy-2026", "(8)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_8 : LinguisticExample :=
     readings := [("simultaneous", .acceptable), ("backshifted", .acceptable)]
     paperFeatures := [("clauseType", "nonSpeechReporting"), ("matrixVerb", "aggaszt"), ("directPerception", "no"), ("clauseRole", "subject")] }
 
-def ex_9 : LinguisticExample :=
+def ex_9 : Datum :=
   { id := "egressy2026_9"
     source := ⟨"egressy-2026", "(9)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_9 : LinguisticExample :=
     readings := [("simultaneous", .acceptable), ("backshifted", .acceptable)]
     paperFeatures := [("clauseType", "nonSpeechReporting"), ("matrixVerb", "morog"), ("directPerception", "no"), ("clauseRole", "adjunct")] }
 
-def ex_10 : LinguisticExample :=
+def ex_10 : Datum :=
   { id := "egressy2026_10"
     source := ⟨"egressy-2026", "(10)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_10 : LinguisticExample :=
     readings := [("intermediate simultaneous", .acceptable), ("intermediate backshifted", .unacceptable), ("deepest simultaneous", .acceptable), ("deepest backshifted", .unacceptable)]
     paperFeatures := [("intermediateClauseType", "nonSpeechReporting"), ("deepestClauseType", "nonSpeechReporting"), ("matrixVerb", "álmodik"), ("intermediateVerb", "lát"), ("intermediateDirectPerception", "yes"), ("deepestDirectPerception", "yes")] }
 
-def ex_11a : LinguisticExample :=
+def ex_11a : Datum :=
   { id := "egressy2026_11a"
     source := ⟨"egressy-2026", "(11)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_11a : LinguisticExample :=
     readings := [("simultaneous", .unacceptable), ("backshifted", .acceptable)]
     paperFeatures := [("clauseType", "speechReporting"), ("matrixVerb", "mond"), ("directPerception", "no"), ("clauseRole", "object")] }
 
-def ex_11b : LinguisticExample :=
+def ex_11b : Datum :=
   { id := "egressy2026_11b"
     source := ⟨"egressy-2026", "(11)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_11b : LinguisticExample :=
     readings := [("simultaneous", .unacceptable), ("backshifted", .acceptable)]
     paperFeatures := [("clauseType", "speechReporting"), ("matrixVerb", "rikolt"), ("directPerception", "no"), ("clauseRole", "object")] }
 
-def ex_11c : LinguisticExample :=
+def ex_11c : Datum :=
   { id := "egressy2026_11c"
     source := ⟨"egressy-2026", "(11)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_11c : LinguisticExample :=
     readings := [("simultaneous", .unacceptable), ("backshifted", .acceptable)]
     paperFeatures := [("clauseType", "speechReporting"), ("matrixVerb", "morog"), ("directPerception", "no"), ("clauseRole", "object")] }
 
-def ex_12 : LinguisticExample :=
+def ex_12 : Datum :=
   { id := "egressy2026_12"
     source := ⟨"egressy-2026", "(12)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_12 : LinguisticExample :=
     readings := [("simultaneous", .unacceptable), ("backshifted", .acceptable)]
     paperFeatures := [("clauseType", "speechReporting"), ("matrixVerb", "telefonál"), ("directPerception", "no"), ("clauseRole", "adjunct")] }
 
-def ex_13 : LinguisticExample :=
+def ex_13 : Datum :=
   { id := "egressy2026_13"
     source := ⟨"egressy-2026", "(13)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_13 : LinguisticExample :=
     readings := [("simultaneous", .unacceptable), ("backshifted", .acceptable)]
     paperFeatures := [("clauseType", "speechReporting"), ("matrixVerb", "hall"), ("directPerception", "no"), ("clauseRole", "object")] }
 
-def ex_14 : LinguisticExample :=
+def ex_14 : Datum :=
   { id := "egressy2026_14"
     source := ⟨"egressy-2026", "(14)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_14 : LinguisticExample :=
     readings := [("simultaneous", .unacceptable), ("backshifted", .acceptable)]
     paperFeatures := [("clauseType", "speechReporting"), ("matrixVerb", "lát"), ("directPerception", "no"), ("clauseRole", "object")] }
 
-def ex_15 : LinguisticExample :=
+def ex_15 : Datum :=
   { id := "egressy2026_15"
     source := ⟨"egressy-2026", "(15)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_15 : LinguisticExample :=
     readings := [("intermediate simultaneous", .unacceptable), ("intermediate backshifted", .acceptable), ("deepest simultaneous", .unacceptable), ("deepest backshifted", .acceptable)]
     paperFeatures := [("intermediateClauseType", "speechReporting"), ("deepestClauseType", "speechReporting"), ("matrixVerb", "rikolt"), ("intermediateVerb", "morog"), ("intermediateDirectPerception", "no"), ("deepestDirectPerception", "no")] }
 
-def ex_16 : LinguisticExample :=
+def ex_16 : Datum :=
   { id := "egressy2026_16"
     source := ⟨"egressy-2026", "(16)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_16 : LinguisticExample :=
     readings := [("intermediate simultaneous", .unacceptable), ("intermediate backshifted", .acceptable), ("deepest simultaneous", .acceptable), ("deepest backshifted", .unacceptable)]
     paperFeatures := [("intermediateClauseType", "speechReporting"), ("deepestClauseType", "nonSpeechReporting"), ("matrixVerb", "rikolt"), ("intermediateVerb", "lát"), ("intermediateDirectPerception", "no"), ("deepestDirectPerception", "yes")] }
 
-def ex_17 : LinguisticExample :=
+def ex_17 : Datum :=
   { id := "egressy2026_17"
     source := ⟨"egressy-2026", "(17)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_17 : LinguisticExample :=
     readings := [("intermediate simultaneous", .acceptable), ("intermediate backshifted", .unacceptable), ("deepest simultaneous", .unacceptable), ("deepest backshifted", .acceptable)]
     paperFeatures := [("intermediateClauseType", "nonSpeechReporting"), ("deepestClauseType", "speechReporting"), ("matrixVerb", "hall"), ("intermediateVerb", "rikolt"), ("intermediateDirectPerception", "yes"), ("deepestDirectPerception", "no")] }
 
-def ex_18 : LinguisticExample :=
+def ex_18 : Datum :=
   { id := "egressy2026_18"
     source := ⟨"ogihara-1996", "p. 105"⟩
     reportedIn := some ⟨"egressy-2026", "(18)"⟩
@@ -238,7 +238,7 @@ def ex_18 : LinguisticExample :=
     readings := [("deepest simultaneous", .unacceptable), ("deepest backshifted", .acceptable)]
     paperFeatures := [("intermediateTense", "future"), ("deepestTense", "past")] }
 
-def ex_19 : LinguisticExample :=
+def ex_19 : Datum :=
   { id := "egressy2026_19"
     source := ⟨"egressy-2026", "(19)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex_19 : LinguisticExample :=
     readings := [("simultaneous", .acceptable)]
     paperFeatures := [("clauseSize", "cP"), ("directPerception", "no")] }
 
-def ex_23 : LinguisticExample :=
+def ex_23 : Datum :=
   { id := "egressy2026_23"
     source := ⟨"egressy-2026", "(23)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex_23 : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "evaluativeAdverb"), ("matrixVerb", "mond")] }
 
-def ex_24 : LinguisticExample :=
+def ex_24 : Datum :=
   { id := "egressy2026_24"
     source := ⟨"egressy-2026", "(24)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex_24 : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "focusMovement"), ("matrixVerb", "hall"), ("embeddedAdverb", "no")] }
 
-def ex_25 : LinguisticExample :=
+def ex_25 : Datum :=
   { id := "egressy2026_25"
     source := ⟨"egressy-2026", "(25)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex_25 : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "whMovement"), ("matrixVerb", "lát")] }
 
-def ex_27 : LinguisticExample :=
+def ex_27 : Datum :=
   { id := "egressy2026_27"
     source := ⟨"egressy-2026", "(27)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex_27 : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "raising"), ("crossed", "tP")] }
 
-def ex_28 : LinguisticExample :=
+def ex_28 : Datum :=
   { id := "egressy2026_28"
     source := ⟨"egressy-2026", "(28)"⟩
     reportedIn := none
@@ -316,6 +316,6 @@ def ex_28 : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "raising"), ("crossed", "cP")] }
 
-def all : List LinguisticExample := [ex_4, ex_5, ex_6, ex_7, ex_8, ex_9, ex_10, ex_11a, ex_11b, ex_11c, ex_12, ex_13, ex_14, ex_15, ex_16, ex_17, ex_18, ex_19, ex_23, ex_24, ex_25, ex_27, ex_28]
+def all : List Datum := [ex_4, ex_5, ex_6, ex_7, ex_8, ex_9, ex_10, ex_11a, ex_11b, ex_11c, ex_12, ex_13, ex_14, ex_15, ex_16, ex_17, ex_18, ex_19, ex_23, ex_24, ex_25, ex_27, ex_28]
 
 end Egressy2026.Examples

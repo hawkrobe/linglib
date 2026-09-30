@@ -17,7 +17,7 @@ namespace AnandNevins2004.Examples
 
 open Data.Examples
 
-def ex_4 : LinguisticExample :=
+def ex_4 : Datum :=
   { id := "anandnevins2004_4"
     source := ⟨"anand-nevins-2004", "(4)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_4 : LinguisticExample :=
     readings := [("utterance context", .acceptable), ("reported context", .acceptable)]
     paperFeatures := [("entry", "vano"), ("indexical", "I")] }
 
-def ex_5 : LinguisticExample :=
+def ex_5 : Datum :=
   { id := "anandnevins2004_5"
     source := ⟨"anand-nevins-2004", "(5)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_5 : LinguisticExample :=
     readings := [("utterance context", .acceptable), ("reported context", .acceptable)]
     paperFeatures := [("entry", "vano"), ("indexical", "you")] }
 
-def ex_6 : LinguisticExample :=
+def ex_6 : Datum :=
   { id := "anandnevins2004_6"
     source := ⟨"anand-nevins-2004", "(6)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_6 : LinguisticExample :=
     readings := [("utterance context", .acceptable), ("reported context", .acceptable)]
     paperFeatures := [("entry", "vano"), ("indexical", "here")] }
 
-def ex_7 : LinguisticExample :=
+def ex_7 : Datum :=
   { id := "anandnevins2004_7"
     source := ⟨"anand-nevins-2004", "(7)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_7 : LinguisticExample :=
     readings := [("reported context", .acceptable), ("utterance context", .unacceptable)]
     paperFeatures := [("entry", "vano"), ("indexical", "yesterday"), ("pragmatic_clash", "a report made a week ago cannot concern the utterance's yesterday")] }
 
-def fn3_i : LinguisticExample :=
+def fn3_i : Datum :=
   { id := "anandnevins2004_fn3_i"
     source := ⟨"anand-nevins-2004", "fn. 3 (i)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def fn3_i : LinguisticExample :=
     readings := [("utterance context", .acceptable), ("reported context", .unacceptable)]
     paperFeatures := [("entry", "zazaki_attitude"), ("indexical", "I")] }
 
-def ex_8 : LinguisticExample :=
+def ex_8 : Datum :=
   { id := "anandnevins2004_8"
     source := ⟨"anand-nevins-2004", "(8)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_8 : LinguisticExample :=
     readings := []
     paperFeatures := [("test", "npi"), ("npi", "kes")] }
 
-def ex_9 : LinguisticExample :=
+def ex_9 : Datum :=
   { id := "anandnevins2004_9"
     source := ⟨"anand-nevins-2004", "(9)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_9 : LinguisticExample :=
     readings := [("reported context", .acceptable)]
     paperFeatures := [("entry", "vano"), ("indexical", "I"), ("test", "npi_licensing")] }
 
-def ex_10 : LinguisticExample :=
+def ex_10 : Datum :=
   { id := "anandnevins2004_10"
     source := ⟨"anand-nevins-2004", "(10)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_10 : LinguisticExample :=
     readings := []
     paperFeatures := [("test", "extraction"), ("construction", "direct quotation")] }
 
-def ex_11 : LinguisticExample :=
+def ex_11 : Datum :=
   { id := "anandnevins2004_11"
     source := ⟨"anand-nevins-2004", "(11)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_11 : LinguisticExample :=
     readings := [("reported context", .acceptable), ("utterance context", .acceptable)]
     paperFeatures := [("entry", "vano"), ("indexical", "I"), ("test", "extraction")] }
 
-def ex_12 : LinguisticExample :=
+def ex_12 : Datum :=
   { id := "anandnevins2004_12"
     source := ⟨"anand-nevins-2004", "(12)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_12 : LinguisticExample :=
     readings := [("reported context", .acceptable), ("utterance context", .acceptable)]
     paperFeatures := [("entry", "vano"), ("indexical", "I"), ("test", "extraction")] }
 
-def ex_13 : LinguisticExample :=
+def ex_13 : Datum :=
   { id := "anandnevins2004_13"
     source := ⟨"anand-nevins-2004", "(13)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_13 : LinguisticExample :=
     readings := [("both reported", .acceptable), ("both utterance", .acceptable), ("mixed I-utterance you-reported", .unacceptable), ("mixed I-reported you-utterance", .unacceptable)]
     paperFeatures := [("entry", "vano"), ("indexicals", "I, you"), ("test", "shift_together")] }
 
-def ex_14 : LinguisticExample :=
+def ex_14 : Datum :=
   { id := "anandnevins2004_14"
     source := ⟨"anand-nevins-2004", "(14)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_14 : LinguisticExample :=
     readings := []
     paperFeatures := [("entry", "vano"), ("indexicals", "now, here"), ("test", "shift_together")] }
 
-def ex_15 : LinguisticExample :=
+def ex_15 : Datum :=
   { id := "anandnevins2004_15"
     source := ⟨"anand-nevins-2004", "(15)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_15 : LinguisticExample :=
     readings := [("both reported", .acceptable), ("mixed persons-reported time-utterance", .unacceptable)]
     paperFeatures := [("entry", "vano"), ("indexicals", "I, you, in two weeks"), ("test", "shift_together")] }
 
-def ex_17 : LinguisticExample :=
+def ex_17 : Datum :=
   { id := "anandnevins2004_17"
     source := ⟨"anand-nevins-2004", "(17)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_17 : LinguisticExample :=
     readings := [("utterance context", .acceptable)]
     paperFeatures := [("entry", "slave_say"), ("indexical", "you")] }
 
-def ex_18 : LinguisticExample :=
+def ex_18 : Datum :=
   { id := "anandnevins2004_18"
     source := ⟨"anand-nevins-2004", "(18)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_18 : LinguisticExample :=
     readings := [("both reported", .acceptable), ("mixed friend-reported slippers-utterance", .unacceptable), ("mixed friend-utterance slippers-reported", .unacceptable)]
     paperFeatures := [("entry", "slave_want"), ("indexicals", "I, I"), ("test", "shift_together")] }
 
-def ex_21 : LinguisticExample :=
+def ex_21 : Datum :=
   { id := "anandnevins2004_21"
     source := ⟨"anand-nevins-2004", "(21)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_21 : LinguisticExample :=
     readings := [("both reported", .acceptable), ("both utterance", .acceptable), ("mixed first-reported second-utterance", .unacceptable), ("mixed first-utterance second-reported", .unacceptable)]
     paperFeatures := [("entry", "vano"), ("indexicals", "me, me"), ("test", "shift_together"), ("c_command", "no")] }
 
-def ex_32 : LinguisticExample :=
+def ex_32 : Datum :=
   { id := "anandnevins2004_32"
     source := ⟨"anand-nevins-2004", "(32)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex_32 : LinguisticExample :=
     readings := [("Hesen (lowest report)", .acceptable), ("Ali (intermediate report)", .acceptable), ("Andrew (utterance)", .unacceptable)]
     paperFeatures := [("entry", "vano"), ("indexical", "I"), ("test", "multiple_embedding"), ("intermediate_shift", "yes")] }
 
-def ex_33 : LinguisticExample :=
+def ex_33 : Datum :=
   { id := "anandnevins2004_33"
     source := ⟨"anand-nevins-2004", "(33)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex_33 : LinguisticExample :=
     readings := [("Hesen (lowest report)", .acceptable), ("Ali (intermediate report)", .acceptable), ("Andrew (utterance)", .acceptable)]
     paperFeatures := [("entry", "vano"), ("indexical", "I"), ("test", "multiple_embedding"), ("intermediate_shift", "no")] }
 
-def ex_34a : LinguisticExample :=
+def ex_34a : Datum :=
   { id := "anandnevins2004_34a"
     source := ⟨"anand-nevins-2004", "(34a)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex_34a : LinguisticExample :=
     readings := []
     paperFeatures := [("language_type", "non-shifting")] }
 
-def ex_34b : LinguisticExample :=
+def ex_34b : Datum :=
   { id := "anandnevins2004_34b"
     source := ⟨"anand-nevins-2004", "(34b)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex_34b : LinguisticExample :=
     readings := []
     paperFeatures := [("language_type", "non-shifting")] }
 
-def ex_36 : LinguisticExample :=
+def ex_36 : Datum :=
   { id := "anandnevins2004_36"
     source := ⟨"anand-nevins-2004", "(36)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex_36 : LinguisticExample :=
     readings := [("reported context", .acceptable)]
     paperFeatures := [("entry", "slave_tell"), ("indexical", "I"), ("indexicals", "I, you")] }
 
-def ex_37a : LinguisticExample :=
+def ex_37a : Datum :=
   { id := "anandnevins2004_37a"
     source := ⟨"anand-nevins-2004", "(37a)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex_37a : LinguisticExample :=
     readings := [("utterance context", .acceptable), ("reported context", .unacceptable)]
     paperFeatures := [("entry", "slave_want"), ("indexical", "you")] }
 
-def ex_37b : LinguisticExample :=
+def ex_37b : Datum :=
   { id := "anandnevins2004_37b"
     source := ⟨"anand-nevins-2004", "(37b)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex_37b : LinguisticExample :=
     readings := [("utterance context", .acceptable), ("reported context", .unacceptable)]
     paperFeatures := [("entry", "slave_want"), ("indexical", "you")] }
 
-def ex_38a : LinguisticExample :=
+def ex_38a : Datum :=
   { id := "anandnevins2004_38a"
     source := ⟨"anand-nevins-2004", "(38a)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex_38a : LinguisticExample :=
     readings := [("reported context", .acceptable), ("utterance context", .acceptable)]
     paperFeatures := [("entry", "slave_want"), ("indexical", "I")] }
 
-def ex_38b : LinguisticExample :=
+def ex_38b : Datum :=
   { id := "anandnevins2004_38b"
     source := ⟨"anand-nevins-2004", "(38b)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex_38b : LinguisticExample :=
     readings := [("reported context", .acceptable), ("utterance context", .unacceptable)]
     paperFeatures := [("entry", "slave_say"), ("indexical", "I")] }
 
-def ex_42a : LinguisticExample :=
+def ex_42a : Datum :=
   { id := "anandnevins2004_42a"
     source := ⟨"anand-nevins-2004", "(42a)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex_42a : LinguisticExample :=
     readings := []
     paperFeatures := [("test", "de_te")] }
 
-def ex_42b : LinguisticExample :=
+def ex_42b : Datum :=
   { id := "anandnevins2004_42b"
     source := ⟨"anand-nevins-2004", "(42b)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def ex_42b : LinguisticExample :=
     readings := []
     paperFeatures := [("test", "de_te")] }
 
-def ex_45 : LinguisticExample :=
+def ex_45 : Datum :=
   { id := "anandnevins2004_45"
     source := ⟨"anand-nevins-2004", "(45)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def ex_45 : LinguisticExample :=
     readings := []
     paperFeatures := [("test", "context_blocking"), ("logophor", "ADDR-LOG")] }
 
-def ex_46 : LinguisticExample :=
+def ex_46 : Datum :=
   { id := "anandnevins2004_46"
     source := ⟨"anand-nevins-2004", "(46)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def ex_46 : LinguisticExample :=
     readings := [("I reported, me utterance", .acceptable), ("I reported, me reported", .unacceptable)]
     paperFeatures := [("test", "shift_together"), ("indexicals", "I, me")] }
 
-def ex_47 : LinguisticExample :=
+def ex_47 : Datum :=
   { id := "anandnevins2004_47"
     source := ⟨"anand-nevins-2004", "(47)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def ex_47 : LinguisticExample :=
     readings := [("two days after each telling", .acceptable)]
     paperFeatures := [("expression", "in precisely two days")] }
 
-def ex_48 : LinguisticExample :=
+def ex_48 : Datum :=
   { id := "anandnevins2004_48"
     source := ⟨"anand-nevins-2004", "(48)"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def ex_48 : LinguisticExample :=
     readings := [("May 16th", .acceptable), ("May 23rd", .unacceptable)]
     paperFeatures := [("expression", "in precisely eight days"), ("embedded_tense", "would")] }
 
-def ex_49 : LinguisticExample :=
+def ex_49 : Datum :=
   { id := "anandnevins2004_49"
     source := ⟨"anand-nevins-2004", "(49)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def ex_49 : LinguisticExample :=
     readings := [("May 16th", .unacceptable), ("May 23rd", .acceptable)]
     paperFeatures := [("expression", "in precisely eight days"), ("embedded_tense", "will")] }
 
-def ex_50 : LinguisticExample :=
+def ex_50 : Datum :=
   { id := "anandnevins2004_50"
     source := ⟨"anand-nevins-2004", "(50)"⟩
     reportedIn := none
@@ -446,6 +446,6 @@ def ex_50 : LinguisticExample :=
     readings := []
     paperFeatures := [("expression", "in precisely two days"), ("test", "discourse_anaphora")] }
 
-def all : List LinguisticExample := [ex_4, ex_5, ex_6, ex_7, fn3_i, ex_8, ex_9, ex_10, ex_11, ex_12, ex_13, ex_14, ex_15, ex_17, ex_18, ex_21, ex_32, ex_33, ex_34a, ex_34b, ex_36, ex_37a, ex_37b, ex_38a, ex_38b, ex_42a, ex_42b, ex_45, ex_46, ex_47, ex_48, ex_49, ex_50]
+def all : List Datum := [ex_4, ex_5, ex_6, ex_7, fn3_i, ex_8, ex_9, ex_10, ex_11, ex_12, ex_13, ex_14, ex_15, ex_17, ex_18, ex_21, ex_32, ex_33, ex_34a, ex_34b, ex_36, ex_37a, ex_37b, ex_38a, ex_38b, ex_42a, ex_42b, ex_45, ex_46, ex_47, ex_48, ex_49, ex_50]
 
 end AnandNevins2004.Examples

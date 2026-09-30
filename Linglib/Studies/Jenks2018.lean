@@ -165,7 +165,7 @@ def topicOf : String → Option Topic
   | _ => none
 
 /-- A row from the paper's features. -/
-def Row.ofExample (e : LinguisticExample) : Option Row := do
+def Row.ofDatum (e : Datum) : Option Row := do
   let inv ← match e.language with
     | "mand1415" => some Mandarin.Determiners.inventory
     | "cant1236" => some Cantonese.Determiners.inventory
@@ -175,7 +175,7 @@ def Row.ofExample (e : LinguisticExample) : Option Row := do
   some ⟨inv, env, t, (e.feature? "bare").map (· == "ok"), (e.feature? "marked").map (· == "ok")⟩
 
 /-- The Mandarin data of Sections 3 and 5 and the Cantonese data of Section 6. -/
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- A judgment, where the paper gives one, agrees with a prediction. -/
 def Agrees (p : Prop) : Option Bool → Prop

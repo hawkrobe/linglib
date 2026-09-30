@@ -17,7 +17,7 @@ namespace Fortuny2024.Examples
 
 open Data.Examples
 
-def ex3a : LinguisticExample :=
+def ex3a : Datum :=
   { id := "fortuny2024_ex3a"
     source := ⟨"fortuny-2024", "(3a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex3a : LinguisticExample :=
     readings := []
     paperFeatures := [("left", "Adj wh"), ("right", "Adj"), ("moved", "left"), ("same", "no"), ("coordinator", "and")] }
 
-def ex3b : LinguisticExample :=
+def ex3b : Datum :=
   { id := "fortuny2024_ex3b"
     source := ⟨"fortuny-2024", "(3b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex3b : LinguisticExample :=
     readings := []
     paperFeatures := [("left", "Adj"), ("right", "Adj wh"), ("moved", "right"), ("same", "no"), ("coordinator", "and")] }
 
-def ex3c : LinguisticExample :=
+def ex3c : Datum :=
   { id := "fortuny2024_ex3c"
     source := ⟨"fortuny-2024", "(3c)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex3c : LinguisticExample :=
     readings := []
     paperFeatures := [("left", "Adj wh"), ("right", "Adj"), ("moved", "left"), ("same", "no"), ("coordinator", "or")] }
 
-def ex3d : LinguisticExample :=
+def ex3d : Datum :=
   { id := "fortuny2024_ex3d"
     source := ⟨"fortuny-2024", "(3d)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex3d : LinguisticExample :=
     readings := []
     paperFeatures := [("left", "Adj"), ("right", "Adj wh"), ("moved", "right"), ("same", "no"), ("coordinator", "or")] }
 
-def ex3e : LinguisticExample :=
+def ex3e : Datum :=
   { id := "fortuny2024_ex3e"
     source := ⟨"fortuny-2024", "(3e)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex3e : LinguisticExample :=
     readings := []
     paperFeatures := [("left", "Adj wh"), ("right", "Adj"), ("moved", "left"), ("same", "no"), ("coordinator", "but")] }
 
-def ex3f : LinguisticExample :=
+def ex3f : Datum :=
   { id := "fortuny2024_ex3f"
     source := ⟨"fortuny-2024", "(3f)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex3f : LinguisticExample :=
     readings := []
     paperFeatures := [("left", "Adj"), ("right", "Adj wh"), ("moved", "right"), ("same", "no"), ("coordinator", "but")] }
 
-def ex7 : LinguisticExample :=
+def ex7 : Datum :=
   { id := "fortuny2024_ex7"
     source := ⟨"fortuny-2024", "(7)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex7 : LinguisticExample :=
     readings := []
     paperFeatures := [("left", "C"), ("right", "C"), ("moved", "none"), ("same", "no"), ("coordinator", "and")] }
 
-def ex25a : LinguisticExample :=
+def ex25a : Datum :=
   { id := "fortuny2024_ex25a"
     source := ⟨"fortuny-2024", "(25a)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex25a : LinguisticExample :=
     readings := []
     paperFeatures := [("left", "D wh"), ("right", "D"), ("moved", "left"), ("same", "no"), ("coordinator", "and")] }
 
-def ex26a : LinguisticExample :=
+def ex26a : Datum :=
   { id := "fortuny2024_ex26a"
     source := ⟨"fortuny-2024", "(26a)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex26a : LinguisticExample :=
     readings := []
     paperFeatures := [("left", "D focus"), ("right", "D"), ("moved", "left"), ("same", "no"), ("coordinator", "and")] }
 
-def ex26c : LinguisticExample :=
+def ex26c : Datum :=
   { id := "fortuny2024_ex26c"
     source := ⟨"fortuny-2024", "(26c)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex26c : LinguisticExample :=
     readings := []
     paperFeatures := [("left", "D topic"), ("right", "D"), ("moved", "left"), ("same", "no"), ("coordinator", "and")] }
 
-def ex27a : LinguisticExample :=
+def ex27a : Datum :=
   { id := "fortuny2024_ex27a"
     source := ⟨"fortuny-2024", "(27a)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex27a : LinguisticExample :=
     readings := []
     paperFeatures := [("left", "Adj wh"), ("right", "Adj"), ("moved", "left"), ("same", "no"), ("coordinator", "but")] }
 
-def ex28a : LinguisticExample :=
+def ex28a : Datum :=
   { id := "fortuny2024_ex28a"
     source := ⟨"fortuny-2024", "(28a)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex28a : LinguisticExample :=
     readings := []
     paperFeatures := [("left", "Adj focus"), ("right", "Adj"), ("moved", "left"), ("same", "no"), ("coordinator", "but")] }
 
-def ex29a : LinguisticExample :=
+def ex29a : Datum :=
   { id := "fortuny2024_ex29a"
     source := ⟨"fortuny-2024", "(29a)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex29a : LinguisticExample :=
     readings := []
     paperFeatures := [("left", "Adj topic"), ("right", "Adj"), ("moved", "left"), ("same", "no"), ("coordinator", "but")] }
 
-def ex30 : LinguisticExample :=
+def ex30 : Datum :=
   { id := "fortuny2024_ex30"
     source := ⟨"fortuny-2024", "(30)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex30 : LinguisticExample :=
     readings := []
     paperFeatures := [("left", "D"), ("right", "D"), ("moved", "none"), ("same", "no"), ("coordinator", "and")] }
 
-def ex31a : LinguisticExample :=
+def ex31a : Datum :=
   { id := "fortuny2024_ex31a"
     source := ⟨"fortuny-2024", "(31a)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex31a : LinguisticExample :=
     readings := []
     paperFeatures := [("left", "D wh"), ("right", "D"), ("moved", "left"), ("same", "no"), ("coordinator", "and")] }
 
-def ex34a : LinguisticExample :=
+def ex34a : Datum :=
   { id := "fortuny2024_ex34a"
     source := ⟨"fortuny-2024", "(34a)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex34a : LinguisticExample :=
     readings := []
     paperFeatures := [("left", "D"), ("right", "D wh"), ("moved", "none"), ("same", "no"), ("coordinator", "and")] }
 
-def ex41a : LinguisticExample :=
+def ex41a : Datum :=
   { id := "fortuny2024_ex41a"
     source := ⟨"fortuny-2024", "(41a)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex41a : LinguisticExample :=
     readings := []
     paperFeatures := [("left", "D wh"), ("right", "D"), ("moved", "none"), ("same", "no"), ("coordinator", "and")] }
 
-def ex42a : LinguisticExample :=
+def ex42a : Datum :=
   { id := "fortuny2024_ex42a"
     source := ⟨"fortuny-2024", "(42a)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex42a : LinguisticExample :=
     readings := []
     paperFeatures := [("left", "D"), ("right", "D wh"), ("moved", "none"), ("same", "no"), ("coordinator", "and")] }
 
-def ex46a : LinguisticExample :=
+def ex46a : Datum :=
   { id := "fortuny2024_ex46a"
     source := ⟨"fortuny-2024", "(46a)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex46a : LinguisticExample :=
     readings := []
     paperFeatures := [("left", "D wh"), ("right", "D"), ("moved", "whole"), ("same", "no"), ("coordinator", "and")] }
 
-def ex46b : LinguisticExample :=
+def ex46b : Datum :=
   { id := "fortuny2024_ex46b"
     source := ⟨"fortuny-2024", "(46b)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex46b : LinguisticExample :=
     readings := []
     paperFeatures := [("left", "D"), ("right", "D wh"), ("moved", "whole"), ("same", "no"), ("coordinator", "and")] }
 
-def ex47 : LinguisticExample :=
+def ex47 : Datum :=
   { id := "fortuny2024_ex47"
     source := ⟨"fortuny-2024", "(47)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex47 : LinguisticExample :=
     readings := []
     paperFeatures := [("left", "D topic"), ("right", "D focus"), ("moved", "both"), ("same", "no"), ("coordinator", "and")] }
 
-def ex51b : LinguisticExample :=
+def ex51b : Datum :=
   { id := "fortuny2024_ex51b"
     source := ⟨"zhang-2010", "p. 66"⟩
     reportedIn := some ⟨"fortuny-2024", "(51b)"⟩
@@ -303,7 +303,7 @@ def ex51b : LinguisticExample :=
     readings := []
     paperFeatures := [("left", "D wh"), ("right", "D wh"), ("moved", "both"), ("same", "no"), ("coordinator", "and")] }
 
-def ex52 : LinguisticExample :=
+def ex52 : Datum :=
   { id := "fortuny2024_ex52"
     source := ⟨"fortuny-2024", "(52)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex52 : LinguisticExample :=
     readings := []
     paperFeatures := [("left", "D wh"), ("right", "D wh"), ("moved", "whole"), ("same", "no"), ("coordinator", "and")] }
 
-def ex59a : LinguisticExample :=
+def ex59a : Datum :=
   { id := "fortuny2024_ex59a"
     source := ⟨"fortuny-2024", "(59a)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex59a : LinguisticExample :=
     readings := []
     paperFeatures := [("left", "D uC"), ("right", "D uC"), ("moved", "left"), ("same", "no"), ("coordinator", "and")] }
 
-def ex59b : LinguisticExample :=
+def ex59b : Datum :=
   { id := "fortuny2024_ex59b"
     source := ⟨"fortuny-2024", "(59b)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex59b : LinguisticExample :=
     readings := []
     paperFeatures := [("left", "D uC"), ("right", "D uC"), ("moved", "left"), ("same", "no"), ("coordinator", "and")] }
 
-def ex61a : LinguisticExample :=
+def ex61a : Datum :=
   { id := "fortuny2024_ex61a"
     source := ⟨"fortuny-2024", "(61a)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex61a : LinguisticExample :=
     readings := []
     paperFeatures := [("left", "D uC"), ("right", "D uC"), ("moved", "whole"), ("same", "no"), ("coordinator", "and")] }
 
-def ex63a : LinguisticExample :=
+def ex63a : Datum :=
   { id := "fortuny2024_ex63a"
     source := ⟨"fortuny-2024", "(63a)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def ex63a : LinguisticExample :=
     readings := []
     paperFeatures := [("left", "D wh"), ("right", "D wh"), ("moved", "both"), ("same", "no"), ("coordinator", "and")] }
 
-def ex63b : LinguisticExample :=
+def ex63b : Datum :=
   { id := "fortuny2024_ex63b"
     source := ⟨"fortuny-2024", "(63b)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def ex63b : LinguisticExample :=
     readings := []
     paperFeatures := [("left", "D topic"), ("right", "D topic"), ("moved", "both"), ("same", "no"), ("coordinator", "and")] }
 
-def ex64a : LinguisticExample :=
+def ex64a : Datum :=
   { id := "fortuny2024_ex64a"
     source := ⟨"fortuny-2024", "(64a)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def ex64a : LinguisticExample :=
     readings := []
     paperFeatures := [("left", "D wh"), ("right", "D wh"), ("moved", "whole"), ("same", "no"), ("coordinator", "and")] }
 
-def ex64b : LinguisticExample :=
+def ex64b : Datum :=
   { id := "fortuny2024_ex64b"
     source := ⟨"fortuny-2024", "(64b)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def ex64b : LinguisticExample :=
     readings := []
     paperFeatures := [("left", "D topic"), ("right", "D topic"), ("moved", "whole"), ("same", "no"), ("coordinator", "and")] }
 
-def ex67 : LinguisticExample :=
+def ex67 : Datum :=
   { id := "fortuny2024_ex67"
     source := ⟨"fortuny-2024", "(67)"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def ex67 : LinguisticExample :=
     readings := []
     paperFeatures := [("left", "C"), ("right", "C"), ("moved", "none"), ("same", "no"), ("coordinator", "and")] }
 
-def ex68a : LinguisticExample :=
+def ex68a : Datum :=
   { id := "fortuny2024_ex68a"
     source := ⟨"fortuny-2024", "(68a)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def ex68a : LinguisticExample :=
     readings := []
     paperFeatures := [("left", "D wh"), ("right", "D wh"), ("moved", "whole"), ("same", "yes"), ("coordinator", "and")] }
 
-def ex68b : LinguisticExample :=
+def ex68b : Datum :=
   { id := "fortuny2024_ex68b"
     source := ⟨"fortuny-2024", "(68b)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def ex68b : LinguisticExample :=
     readings := []
     paperFeatures := [("left", "D topic"), ("right", "D topic"), ("moved", "whole"), ("same", "yes"), ("coordinator", "and")] }
 
-def ex69 : LinguisticExample :=
+def ex69 : Datum :=
   { id := "fortuny2024_ex69"
     source := ⟨"fortuny-2024", "(69)"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def ex69 : LinguisticExample :=
     readings := []
     paperFeatures := [("left", "D wh"), ("right", "D wh"), ("moved", "whole"), ("same", "yes"), ("coordinator", "and")] }
 
-def ex70a : LinguisticExample :=
+def ex70a : Datum :=
   { id := "fortuny2024_ex70a"
     source := ⟨"fortuny-2024", "(70a)"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def ex70a : LinguisticExample :=
     readings := []
     paperFeatures := [("left", "D"), ("right", "D"), ("moved", "none"), ("same", "yes"), ("coordinator", "and")] }
 
-def ex70b : LinguisticExample :=
+def ex70b : Datum :=
   { id := "fortuny2024_ex70b"
     source := ⟨"fortuny-2024", "(70b)"⟩
     reportedIn := none
@@ -485,7 +485,7 @@ def ex70b : LinguisticExample :=
     readings := []
     paperFeatures := [("left", "P"), ("right", "P"), ("moved", "none"), ("same", "yes"), ("coordinator", "and")] }
 
-def ex70c : LinguisticExample :=
+def ex70c : Datum :=
   { id := "fortuny2024_ex70c"
     source := ⟨"fortuny-2024", "(70c)"⟩
     reportedIn := none
@@ -498,7 +498,7 @@ def ex70c : LinguisticExample :=
     readings := []
     paperFeatures := [("left", "P"), ("right", "P"), ("moved", "none"), ("same", "yes"), ("coordinator", "and")] }
 
-def ex72a : LinguisticExample :=
+def ex72a : Datum :=
   { id := "fortuny2024_ex72a"
     source := ⟨"fortuny-2024", "(72a)"⟩
     reportedIn := none
@@ -511,7 +511,7 @@ def ex72a : LinguisticExample :=
     readings := []
     paperFeatures := [("left", "D"), ("right", "D"), ("moved", "none"), ("same", "yes"), ("coordinator", "or")] }
 
-def ex72b : LinguisticExample :=
+def ex72b : Datum :=
   { id := "fortuny2024_ex72b"
     source := ⟨"fortuny-2024", "(72b)"⟩
     reportedIn := none
@@ -524,7 +524,7 @@ def ex72b : LinguisticExample :=
     readings := []
     paperFeatures := [("left", "P"), ("right", "P"), ("moved", "none"), ("same", "yes"), ("coordinator", "or")] }
 
-def ex72c : LinguisticExample :=
+def ex72c : Datum :=
   { id := "fortuny2024_ex72c"
     source := ⟨"fortuny-2024", "(72c)"⟩
     reportedIn := none
@@ -537,7 +537,7 @@ def ex72c : LinguisticExample :=
     readings := []
     paperFeatures := [("left", "P"), ("right", "P"), ("moved", "none"), ("same", "yes"), ("coordinator", "or")] }
 
-def ex73a_same : LinguisticExample :=
+def ex73a_same : Datum :=
   { id := "fortuny2024_ex73a_same"
     source := ⟨"fortuny-2024", "(73a)"⟩
     reportedIn := none
@@ -550,7 +550,7 @@ def ex73a_same : LinguisticExample :=
     readings := []
     paperFeatures := [("left", "D"), ("right", "D"), ("moved", "none"), ("same", "yes"), ("coordinator", "but")] }
 
-def ex73a : LinguisticExample :=
+def ex73a : Datum :=
   { id := "fortuny2024_ex73a"
     source := ⟨"fortuny-2024", "(73a)"⟩
     reportedIn := none
@@ -563,7 +563,7 @@ def ex73a : LinguisticExample :=
     readings := []
     paperFeatures := [("left", "D"), ("right", "D"), ("moved", "none"), ("same", "no"), ("coordinator", "but")] }
 
-def ex74_same : LinguisticExample :=
+def ex74_same : Datum :=
   { id := "fortuny2024_ex74_same"
     source := ⟨"fortuny-2024", "(74)"⟩
     reportedIn := none
@@ -576,7 +576,7 @@ def ex74_same : LinguisticExample :=
     readings := []
     paperFeatures := [("left", "Adj"), ("right", "Adj"), ("moved", "none"), ("same", "yes"), ("coordinator", "but")] }
 
-def ex74 : LinguisticExample :=
+def ex74 : Datum :=
   { id := "fortuny2024_ex74"
     source := ⟨"fortuny-2024", "(74)"⟩
     reportedIn := none
@@ -589,7 +589,7 @@ def ex74 : LinguisticExample :=
     readings := []
     paperFeatures := [("left", "Adj"), ("right", "Adj"), ("moved", "none"), ("same", "no"), ("coordinator", "but")] }
 
-def ex75a : LinguisticExample :=
+def ex75a : Datum :=
   { id := "fortuny2024_ex75a"
     source := ⟨"fortuny-2024", "(75a)"⟩
     reportedIn := none
@@ -602,7 +602,7 @@ def ex75a : LinguisticExample :=
     readings := []
     paperFeatures := [("left", "D"), ("right", "D"), ("moved", "none"), ("same", "no"), ("coordinator", "and")] }
 
-def ex75b : LinguisticExample :=
+def ex75b : Datum :=
   { id := "fortuny2024_ex75b"
     source := ⟨"fortuny-2024", "(75b)"⟩
     reportedIn := none
@@ -615,7 +615,7 @@ def ex75b : LinguisticExample :=
     readings := []
     paperFeatures := [("left", "D"), ("right", "D"), ("moved", "none"), ("same", "no"), ("coordinator", "and")] }
 
-def ex76 : LinguisticExample :=
+def ex76 : Datum :=
   { id := "fortuny2024_ex76"
     source := ⟨"fortuny-2024", "(76)"⟩
     reportedIn := none
@@ -628,6 +628,6 @@ def ex76 : LinguisticExample :=
     readings := []
     paperFeatures := [("left", "D"), ("right", "D"), ("moved", "none"), ("same", "no"), ("coordinator", "and")] }
 
-def all : List LinguisticExample := [ex3a, ex3b, ex3c, ex3d, ex3e, ex3f, ex7, ex25a, ex26a, ex26c, ex27a, ex28a, ex29a, ex30, ex31a, ex34a, ex41a, ex42a, ex46a, ex46b, ex47, ex51b, ex52, ex59a, ex59b, ex61a, ex63a, ex63b, ex64a, ex64b, ex67, ex68a, ex68b, ex69, ex70a, ex70b, ex70c, ex72a, ex72b, ex72c, ex73a_same, ex73a, ex74_same, ex74, ex75a, ex75b, ex76]
+def all : List Datum := [ex3a, ex3b, ex3c, ex3d, ex3e, ex3f, ex7, ex25a, ex26a, ex26c, ex27a, ex28a, ex29a, ex30, ex31a, ex34a, ex41a, ex42a, ex46a, ex46b, ex47, ex51b, ex52, ex59a, ex59b, ex61a, ex63a, ex63b, ex64a, ex64b, ex67, ex68a, ex68b, ex69, ex70a, ex70b, ex70c, ex72a, ex72b, ex72c, ex73a_same, ex73a, ex74_same, ex74, ex75a, ex75b, ex76]
 
 end Fortuny2024.Examples

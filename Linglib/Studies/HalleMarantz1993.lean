@@ -139,17 +139,17 @@ def Part.ofString : String → Option Part
   | "nonpast_finite" => some .nonpastFinite | _ => none
 
 /-- The cell an example of (7) records, from its `paperFeatures`. -/
-def Cell.ofExample (ex : LinguisticExample) : Option Cell := do
+def Cell.ofDatum (ex : Datum) : Option Cell := do
   let verb ← ex.paperFeatures.lookup "verb" >>= Verb.ofString
   let part ← ex.paperFeatures.lookup "part" >>= Part.ofString
   let suffix ← ex.paperFeatures.lookup "suffix"
   pure ⟨verb, part, suffix⟩
 
 /-- Every row of the data pool is a well-formed cell. -/
-theorem cell_ofExample_isSome : ∀ ex ∈ Examples.all, (Cell.ofExample ex).isSome := by decide
+theorem cell_ofDatum_isSome : ∀ ex ∈ Examples.all, (Cell.ofDatum ex).isSome := by decide
 
 /-- The cells of (7). -/
-def cells : List Cell := Examples.all.filterMap Cell.ofExample
+def cells : List Cell := Examples.all.filterMap Cell.ofDatum
 
 /-- **The principal parts**: the Subset Principle over (8) spells out every
 cell of (7) with the suffix the paper segments. -/

@@ -17,7 +17,7 @@ namespace FoxHackl2006.Examples
 
 open Data.Examples
 
-def ex_1 : LinguisticExample :=
+def ex_1 : Datum :=
   { id := "foxhackl2006_1"
     source := ⟨"fox-hackl-2006", "(1)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_1 : LinguisticExample :=
     readings := [("implicature: John doesn't have 4 children", .acceptable)]
     paperFeatures := [("operator", "exh"), ("modal", "none"), ("property", "upward")] }
 
-def ex_2 : LinguisticExample :=
+def ex_2 : Datum :=
   { id := "foxhackl2006_2"
     source := ⟨"fox-hackl-2006", "(2)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_2 : LinguisticExample :=
     readings := [("implicature: John doesn't have more than 4 children", .unacceptable)]
     paperFeatures := [("operator", "exh"), ("modal", "none"), ("property", "upward")] }
 
-def ex_4 : LinguisticExample :=
+def ex_4 : Datum :=
   { id := "foxhackl2006_4"
     source := ⟨"fox-hackl-2006", "(4)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_4 : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "only"), ("modal", "none"), ("property", "upward")] }
 
-def ex_5 : LinguisticExample :=
+def ex_5 : Datum :=
   { id := "foxhackl2006_5"
     source := ⟨"fox-hackl-2006", "(5)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_5 : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "only"), ("modal", "none"), ("property", "upward")] }
 
-def ex_7a : LinguisticExample :=
+def ex_7a : Datum :=
   { id := "foxhackl2006_7a"
     source := ⟨"fox-hackl-2006", "(7a)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_7a : LinguisticExample :=
     readings := [("implicature: John only weighs 120 pounds", .acceptable)]
     paperFeatures := [("operator", "exh"), ("modal", "none"), ("property", "upward")] }
 
-def ex_7b : LinguisticExample :=
+def ex_7b : Datum :=
   { id := "foxhackl2006_7b"
     source := ⟨"fox-hackl-2006", "(7b)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_7b : LinguisticExample :=
     readings := [("implicature: for every degree d greater than 120, John does not weigh more than d pounds", .unacceptable)]
     paperFeatures := [("operator", "exh"), ("modal", "none"), ("property", "upward")] }
 
-def ex_7c : LinguisticExample :=
+def ex_7c : Datum :=
   { id := "foxhackl2006_7c"
     source := ⟨"fox-hackl-2006", "(7c)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_7c : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "only"), ("modal", "none"), ("property", "upward")] }
 
-def ex_13a : LinguisticExample :=
+def ex_13a : Datum :=
   { id := "foxhackl2006_13a"
     source := ⟨"fox-hackl-2006", "(13a)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_13a : LinguisticExample :=
     readings := [("implicature: there is no degree d greater than 30 such that you are required to read more than d books", .acceptable)]
     paperFeatures := [("operator", "exh"), ("modal", "universal"), ("property", "upward")] }
 
-def ex_13b : LinguisticExample :=
+def ex_13b : Datum :=
   { id := "foxhackl2006_13b"
     source := ⟨"fox-hackl-2006", "(13b)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_13b : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "only"), ("modal", "universal"), ("property", "upward")] }
 
-def ex_14a : LinguisticExample :=
+def ex_14a : Datum :=
   { id := "foxhackl2006_14a"
     source := ⟨"fox-hackl-2006", "(14a)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_14a : LinguisticExample :=
     readings := [("implicature: there is no degree d greater than 30 such that you are allowed to smoke more than d cigarettes", .unacceptable)]
     paperFeatures := [("operator", "exh"), ("modal", "existential"), ("property", "upward")] }
 
-def ex_14b : LinguisticExample :=
+def ex_14b : Datum :=
   { id := "foxhackl2006_14b"
     source := ⟨"fox-hackl-2006", "(14b)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_14b : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "only"), ("modal", "existential"), ("property", "upward")] }
 
-def ex_16 : LinguisticExample :=
+def ex_16 : Datum :=
   { id := "foxhackl2006_16"
     source := ⟨"fox-hackl-2006", "(16)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_16 : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "question"), ("modal", "none"), ("property", "downward")] }
 
-def ex_19a : LinguisticExample :=
+def ex_19a : Datum :=
   { id := "foxhackl2006_19a"
     source := ⟨"fox-hackl-2006", "(19a)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_19a : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "definite"), ("modal", "none"), ("property", "downward")] }
 
-def ex_19b : LinguisticExample :=
+def ex_19b : Datum :=
   { id := "foxhackl2006_19b"
     source := ⟨"fox-hackl-2006", "(19b)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_19b : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "indefinite"), ("modal", "none"), ("property", "downward")] }
 
-def ex_21 : LinguisticExample :=
+def ex_21 : Datum :=
   { id := "foxhackl2006_21"
     source := ⟨"fox-hackl-2006", "(21)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_21 : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "question"), ("modal", "none"), ("property", "downward")] }
 
-def ex_23 : LinguisticExample :=
+def ex_23 : Datum :=
   { id := "foxhackl2006_23"
     source := ⟨"fox-hackl-2006", "(23)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_23 : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "definite"), ("modal", "none"), ("property", "downward")] }
 
-def ex_27a : LinguisticExample :=
+def ex_27a : Datum :=
   { id := "foxhackl2006_27a"
     source := ⟨"fox-hackl-2006", "(27a)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex_27a : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "question"), ("modal", "universal"), ("property", "downward")] }
 
-def ex_27b : LinguisticExample :=
+def ex_27b : Datum :=
   { id := "foxhackl2006_27b"
     source := ⟨"fox-hackl-2006", "(27b)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex_27b : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "question"), ("modal", "universal"), ("property", "downward")] }
 
-def ex_27c : LinguisticExample :=
+def ex_27c : Datum :=
   { id := "foxhackl2006_27c"
     source := ⟨"fox-hackl-2006", "(27c)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex_27c : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "definite"), ("modal", "universal"), ("property", "downward")] }
 
-def ex_28a : LinguisticExample :=
+def ex_28a : Datum :=
   { id := "foxhackl2006_28a"
     source := ⟨"fox-hackl-2006", "(28a)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex_28a : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "question"), ("modal", "universal"), ("property", "downward")] }
 
-def ex_28b : LinguisticExample :=
+def ex_28b : Datum :=
   { id := "foxhackl2006_28b"
     source := ⟨"fox-hackl-2006", "(28b)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex_28b : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "question"), ("modal", "existential"), ("property", "downward")] }
 
-def ex_29a : LinguisticExample :=
+def ex_29a : Datum :=
   { id := "foxhackl2006_29a"
     source := ⟨"fox-hackl-2006", "(29a)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex_29a : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "question"), ("modal", "universal"), ("property", "downward")] }
 
-def ex_29b : LinguisticExample :=
+def ex_29b : Datum :=
   { id := "foxhackl2006_29b"
     source := ⟨"fox-hackl-2006", "(29b)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex_29b : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "question"), ("modal", "existential"), ("property", "downward")] }
 
-def ex_30b : LinguisticExample :=
+def ex_30b : Datum :=
   { id := "foxhackl2006_30b"
     source := ⟨"fox-hackl-2006", "(30b)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex_30b : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "definite"), ("modal", "existential"), ("property", "downward")] }
 
-def ex_32 : LinguisticExample :=
+def ex_32 : Datum :=
   { id := "foxhackl2006_32"
     source := ⟨"fox-hackl-2006", "(32)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex_32 : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "question"), ("modal", "none"), ("property", "downward")] }
 
-def ex_33 : LinguisticExample :=
+def ex_33 : Datum :=
   { id := "foxhackl2006_33"
     source := ⟨"fox-hackl-2006", "(33)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex_33 : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "question"), ("modal", "universal"), ("property", "downward")] }
 
-def ex_34 : LinguisticExample :=
+def ex_34 : Datum :=
   { id := "foxhackl2006_34"
     source := ⟨"fox-hackl-2006", "(34)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def ex_34 : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "question"), ("modal", "existential"), ("property", "downward")] }
 
-def ex_50a : LinguisticExample :=
+def ex_50a : Datum :=
   { id := "foxhackl2006_50a"
     source := ⟨"fox-hackl-2006", "(50a)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def ex_50a : LinguisticExample :=
     readings := [("implicature: John smoked 29 cigarettes", .unacceptable)]
     paperFeatures := [("operator", "exh"), ("modal", "none"), ("property", "downward")] }
 
-def ex_50b : LinguisticExample :=
+def ex_50b : Datum :=
   { id := "foxhackl2006_50b"
     source := ⟨"fox-hackl-2006", "(50b)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def ex_50b : LinguisticExample :=
     readings := [("implicature: John read 29 books", .unacceptable)]
     paperFeatures := [("operator", "exh"), ("modal", "none"), ("property", "downward")] }
 
-def ex_52 : LinguisticExample :=
+def ex_52 : Datum :=
   { id := "foxhackl2006_52"
     source := ⟨"fox-hackl-2006", "(52)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def ex_52 : LinguisticExample :=
     readings := [("implicature: John is allowed to smoke 29 cigarettes", .acceptable)]
     paperFeatures := [("operator", "exh"), ("modal", "universal"), ("property", "downward")] }
 
-def ex_53 : LinguisticExample :=
+def ex_53 : Datum :=
   { id := "foxhackl2006_53"
     source := ⟨"fox-hackl-2006", "(53)"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def ex_53 : LinguisticExample :=
     readings := [("implicature: John is allowed to smoke 29 cigarettes", .acceptable)]
     paperFeatures := [("operator", "exh"), ("modal", "universal"), ("property", "downward")] }
 
-def ex_54 : LinguisticExample :=
+def ex_54 : Datum :=
   { id := "foxhackl2006_54"
     source := ⟨"fox-hackl-2006", "(54)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def ex_54 : LinguisticExample :=
     readings := [("implicature: John is required to read 29 books", .unacceptable)]
     paperFeatures := [("operator", "exh"), ("modal", "existential"), ("property", "downward")] }
 
-def ex_55 : LinguisticExample :=
+def ex_55 : Datum :=
   { id := "foxhackl2006_55"
     source := ⟨"fox-hackl-2006", "(55)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def ex_55 : LinguisticExample :=
     readings := [("implicature: John is required to read 29 books", .unacceptable)]
     paperFeatures := [("operator", "exh"), ("modal", "existential"), ("property", "downward")] }
 
-def ex_57a : LinguisticExample :=
+def ex_57a : Datum :=
   { id := "foxhackl2006_57a"
     source := ⟨"fox-hackl-2006", "(57a)"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def ex_57a : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "only"), ("modal", "none"), ("property", "downward")] }
 
-def ex_57c : LinguisticExample :=
+def ex_57c : Datum :=
   { id := "foxhackl2006_57c"
     source := ⟨"fox-hackl-2006", "(57c)"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def ex_57c : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "only"), ("modal", "none"), ("property", "downward")] }
 
-def ex_58a : LinguisticExample :=
+def ex_58a : Datum :=
   { id := "foxhackl2006_58a"
     source := ⟨"fox-hackl-2006", "(58a)"⟩
     reportedIn := none
@@ -485,7 +485,7 @@ def ex_58a : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "only"), ("modal", "universal"), ("property", "downward")] }
 
-def ex_60 : LinguisticExample :=
+def ex_60 : Datum :=
   { id := "foxhackl2006_60"
     source := ⟨"fox-hackl-2006", "(60)"⟩
     reportedIn := none
@@ -498,7 +498,7 @@ def ex_60 : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "only"), ("modal", "existential"), ("property", "downward")] }
 
-def ex_61 : LinguisticExample :=
+def ex_61 : Datum :=
   { id := "foxhackl2006_61"
     source := ⟨"fox-hackl-2006", "(61)"⟩
     reportedIn := none
@@ -511,7 +511,7 @@ def ex_61 : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "only"), ("modal", "existential"), ("property", "downward")] }
 
-def ex_62a : LinguisticExample :=
+def ex_62a : Datum :=
   { id := "foxhackl2006_62a"
     source := ⟨"fox-hackl-2006", "(62a)"⟩
     reportedIn := none
@@ -524,7 +524,7 @@ def ex_62a : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "question"), ("modal", "none"), ("property", "upward")] }
 
-def ex_62b : LinguisticExample :=
+def ex_62b : Datum :=
   { id := "foxhackl2006_62b"
     source := ⟨"fox-hackl-2006", "(62b)"⟩
     reportedIn := none
@@ -537,7 +537,7 @@ def ex_62b : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "question"), ("modal", "universal"), ("property", "upward")] }
 
-def ex_62c : LinguisticExample :=
+def ex_62c : Datum :=
   { id := "foxhackl2006_62c"
     source := ⟨"fox-hackl-2006", "(62c)"⟩
     reportedIn := none
@@ -550,7 +550,7 @@ def ex_62c : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "question"), ("modal", "existential"), ("property", "upward")] }
 
-def ex_63a : LinguisticExample :=
+def ex_63a : Datum :=
   { id := "foxhackl2006_63a"
     source := ⟨"fox-hackl-2006", "(63a)"⟩
     reportedIn := none
@@ -563,7 +563,7 @@ def ex_63a : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "question"), ("modal", "none"), ("property", "upward")] }
 
-def ex_63b : LinguisticExample :=
+def ex_63b : Datum :=
   { id := "foxhackl2006_63b"
     source := ⟨"fox-hackl-2006", "(63b)"⟩
     reportedIn := none
@@ -576,7 +576,7 @@ def ex_63b : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "question"), ("modal", "universal"), ("property", "upward")] }
 
-def ex_64a : LinguisticExample :=
+def ex_64a : Datum :=
   { id := "foxhackl2006_64a"
     source := ⟨"fox-hackl-2006", "(64a)"⟩
     reportedIn := none
@@ -589,7 +589,7 @@ def ex_64a : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "definite"), ("modal", "none"), ("property", "upward")] }
 
-def ex_64b : LinguisticExample :=
+def ex_64b : Datum :=
   { id := "foxhackl2006_64b"
     source := ⟨"fox-hackl-2006", "(64b)"⟩
     reportedIn := none
@@ -602,7 +602,7 @@ def ex_64b : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "definite"), ("modal", "universal"), ("property", "upward")] }
 
-def ex_64c : LinguisticExample :=
+def ex_64c : Datum :=
   { id := "foxhackl2006_64c"
     source := ⟨"fox-hackl-2006", "(64c)"⟩
     reportedIn := none
@@ -615,7 +615,7 @@ def ex_64c : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "definite"), ("modal", "existential"), ("property", "upward")] }
 
-def ex_100a : LinguisticExample :=
+def ex_100a : Datum :=
   { id := "foxhackl2006_100a"
     source := ⟨"fox-hackl-2006", "(100a)"⟩
     reportedIn := none
@@ -628,7 +628,7 @@ def ex_100a : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "question"), ("modal", "none"), ("property", "downward")] }
 
-def ex_100b : LinguisticExample :=
+def ex_100b : Datum :=
   { id := "foxhackl2006_100b"
     source := ⟨"fox-hackl-2006", "(100b)"⟩
     reportedIn := none
@@ -641,6 +641,6 @@ def ex_100b : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "question"), ("modal", "none"), ("property", "downward")] }
 
-def all : List LinguisticExample := [ex_1, ex_2, ex_4, ex_5, ex_7a, ex_7b, ex_7c, ex_13a, ex_13b, ex_14a, ex_14b, ex_16, ex_19a, ex_19b, ex_21, ex_23, ex_27a, ex_27b, ex_27c, ex_28a, ex_28b, ex_29a, ex_29b, ex_30b, ex_32, ex_33, ex_34, ex_50a, ex_50b, ex_52, ex_53, ex_54, ex_55, ex_57a, ex_57c, ex_58a, ex_60, ex_61, ex_62a, ex_62b, ex_62c, ex_63a, ex_63b, ex_64a, ex_64b, ex_64c, ex_100a, ex_100b]
+def all : List Datum := [ex_1, ex_2, ex_4, ex_5, ex_7a, ex_7b, ex_7c, ex_13a, ex_13b, ex_14a, ex_14b, ex_16, ex_19a, ex_19b, ex_21, ex_23, ex_27a, ex_27b, ex_27c, ex_28a, ex_28b, ex_29a, ex_29b, ex_30b, ex_32, ex_33, ex_34, ex_50a, ex_50b, ex_52, ex_53, ex_54, ex_55, ex_57a, ex_57c, ex_58a, ex_60, ex_61, ex_62a, ex_62b, ex_62c, ex_63a, ex_63b, ex_64a, ex_64b, ex_64c, ex_100a, ex_100b]
 
 end FoxHackl2006.Examples

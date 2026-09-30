@@ -17,7 +17,7 @@ namespace Jaeger2014.Examples
 
 open Data.Examples
 
-def ex_1a : LinguisticExample :=
+def ex_1a : Datum :=
   { id := "jaeger2014_1a"
     source := ⟨"jaeger-2014", "(1a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_1a : LinguisticExample :=
     readings := [("not all boys came in", .acceptable)]
     paperFeatures := [("section", "5"), ("heuristic", "Q"), ("implicature", "Not all boys came in.")] }
 
-def ex_1b : LinguisticExample :=
+def ex_1b : Datum :=
   { id := "jaeger2014_1b"
     source := ⟨"jaeger-2014", "(1b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_1b : LinguisticExample :=
     readings := [("exactly three boys came in", .acceptable)]
     paperFeatures := [("section", "5"), ("heuristic", "Q"), ("implicature", "Exactly three boys came in.")] }
 
-def ex_3a : LinguisticExample :=
+def ex_3a : Datum :=
   { id := "jaeger2014_3a"
     source := ⟨"jaeger-2014", "(3a)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_3a : LinguisticExample :=
     readings := [("the book that John is reading or that he has written is good", .acceptable)]
     paperFeatures := [("section", "5"), ("heuristic", "I")] }
 
-def ex_3b : LinguisticExample :=
+def ex_3b : Datum :=
   { id := "jaeger2014_3b"
     source := ⟨"jaeger-2014", "(3b)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_3b : LinguisticExample :=
     readings := [("a female secretary", .acceptable)]
     paperFeatures := [("section", "5"), ("heuristic", "I")] }
 
-def ex_3c : LinguisticExample :=
+def ex_3c : Datum :=
   { id := "jaeger2014_3c"
     source := ⟨"jaeger-2014", "(3c)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_3c : LinguisticExample :=
     readings := [("hard-surfaced road", .acceptable)]
     paperFeatures := [("section", "5"), ("heuristic", "I")] }
 
-def ex_4a : LinguisticExample :=
+def ex_4a : Datum :=
   { id := "jaeger2014_4a"
     source := ⟨"jaeger-2014", "(4a)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_4a : LinguisticExample :=
     readings := [("John stopped the car in a regular way, using the foot brake", .acceptable)]
     paperFeatures := [("section", "5"), ("heuristic", "M"), ("signal", "f"), ("cost", "0"), ("world", "w1")] }
 
-def ex_4b : LinguisticExample :=
+def ex_4b : Datum :=
   { id := "jaeger2014_4b"
     source := ⟨"jaeger-2014", "(4b)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_4b : LinguisticExample :=
     readings := [("John stopped the car in an abnormal way", .acceptable)]
     paperFeatures := [("section", "5"), ("heuristic", "M"), ("signal", "f'"), ("cost", "1"), ("world", "w2")] }
 
-def ex_5 : LinguisticExample :=
+def ex_5 : Datum :=
   { id := "jaeger2014_5"
     source := ⟨"jaeger-2014", "(5)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_5 : LinguisticExample :=
     readings := [("John stopped the car in a non-stereotypical way", .acceptable)]
     paperFeatures := [("section", "5"), ("heuristic", "M")] }
 
-def ex_6a : LinguisticExample :=
+def ex_6a : Datum :=
   { id := "jaeger2014_6a"
     source := ⟨"jaeger-2014", "(6a)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_6a : LinguisticExample :=
     readings := [("vague, between 90 and 110 meter", .acceptable), ("precise", .acceptable)]
     paperFeatures := [("section", "5"), ("principle", "RN/RI"), ("precision", "low")] }
 
-def ex_6b : LinguisticExample :=
+def ex_6b : Datum :=
   { id := "jaeger2014_6b"
     source := ⟨"jaeger-2014", "(6b)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_6b : LinguisticExample :=
     readings := [("precise, with a slack of at most 50 cm", .acceptable)]
     paperFeatures := [("section", "5"), ("principle", "RN/RI"), ("precision", "high")] }
 
-def ex_7 : LinguisticExample :=
+def ex_7 : Datum :=
   { id := "jaeger2014_7"
     source := ⟨"jaeger-2014", "(7)"⟩
     reportedIn := none
@@ -160,6 +160,6 @@ def ex_7 : LinguisticExample :=
     readings := [("precise", .acceptable)]
     paperFeatures := [("section", "5"), ("principle", "RN/RI"), ("precision", "high")] }
 
-def all : List LinguisticExample := [ex_1a, ex_1b, ex_3a, ex_3b, ex_3c, ex_4a, ex_4b, ex_5, ex_6a, ex_6b, ex_7]
+def all : List Datum := [ex_1a, ex_1b, ex_3a, ex_3b, ex_3c, ex_4a, ex_4b, ex_5, ex_6a, ex_6b, ex_7]
 
 end Jaeger2014.Examples

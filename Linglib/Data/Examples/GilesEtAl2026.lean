@@ -17,7 +17,7 @@ namespace GilesEtAl2026.Examples
 
 open Data.Examples
 
-def exp1_sLowRHigh : LinguisticExample :=
+def exp1_sLowRHigh : Datum :=
   { id := "gilesetal2026_exp1_sLowRHigh"
     source := ⟨"giles-etal-2026", "Table 1 reference"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def exp1_sLowRHigh : LinguisticExample :=
     readings := []
     paperFeatures := [("experiment", "1"), ("predictor", "displayType"), ("level", "sLowRHigh"), ("reference", "sLowRHigh"), ("sufficient", "low"), ("redundant", "high"), ("refSufficient", "low"), ("refRedundant", "high")] }
 
-def exp1_baseline : LinguisticExample :=
+def exp1_baseline : Datum :=
   { id := "gilesetal2026_exp1_baseline"
     source := ⟨"giles-etal-2026", "Table 1 Baseline"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def exp1_baseline : LinguisticExample :=
     readings := []
     paperFeatures := [("experiment", "1"), ("predictor", "displayType"), ("level", "baseline"), ("reference", "sLowRHigh"), ("sufficient", "high"), ("redundant", "high"), ("refSufficient", "low"), ("refRedundant", "high"), ("beta", "-94"), ("ciLower", "-120"), ("ciUpper", "-68")] }
 
-def exp1_sHighRLow : LinguisticExample :=
+def exp1_sHighRLow : Datum :=
   { id := "gilesetal2026_exp1_sHighRLow"
     source := ⟨"giles-etal-2026", "Table 1 S-High/R-Low"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def exp1_sHighRLow : LinguisticExample :=
     readings := []
     paperFeatures := [("experiment", "1"), ("predictor", "displayType"), ("level", "sHighRLow"), ("reference", "sLowRHigh"), ("sufficient", "high"), ("redundant", "low"), ("refSufficient", "low"), ("refRedundant", "high"), ("beta", "-109"), ("ciLower", "-135"), ("ciUpper", "-83")] }
 
-def exp1_colour : LinguisticExample :=
+def exp1_colour : Datum :=
   { id := "gilesetal2026_exp1_colour"
     source := ⟨"giles-etal-2026", "Table 1 reference"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def exp1_colour : LinguisticExample :=
     readings := []
     paperFeatures := [("experiment", "1"), ("predictor", "attribute"), ("level", "colour"), ("reference", "colour"), ("modality", "visual"), ("sufficient", "low"), ("redundant", "high"), ("refSufficient", "low"), ("refRedundant", "high")] }
 
-def exp1_material : LinguisticExample :=
+def exp1_material : Datum :=
   { id := "gilesetal2026_exp1_material"
     source := ⟨"giles-etal-2026", "Table 1 Material Redundant"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def exp1_material : LinguisticExample :=
     readings := []
     paperFeatures := [("experiment", "1"), ("predictor", "attribute"), ("level", "material"), ("reference", "colour"), ("modality", "auditory"), ("sufficient", "low"), ("redundant", "high"), ("refSufficient", "low"), ("refRedundant", "high"), ("beta", "-143"), ("ciLower", "-165"), ("ciUpper", "-120")] }
 
-def exp2_hfColour : LinguisticExample :=
+def exp2_hfColour : Datum :=
   { id := "gilesetal2026_exp2_hfColour"
     source := ⟨"giles-etal-2026", "Table 2 reference"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def exp2_hfColour : LinguisticExample :=
     readings := []
     paperFeatures := [("experiment", "2"), ("predictor", "attribute"), ("level", "colour"), ("reference", "colour"), ("frequency", "high"), ("sufficient", "high"), ("redundant", "high"), ("refSufficient", "high"), ("refRedundant", "high")] }
 
-def exp2_orientation : LinguisticExample :=
+def exp2_orientation : Datum :=
   { id := "gilesetal2026_exp2_orientation"
     source := ⟨"giles-etal-2026", "Table 2 Orientation Redundant"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def exp2_orientation : LinguisticExample :=
     readings := []
     paperFeatures := [("experiment", "2"), ("predictor", "attribute"), ("level", "orientation"), ("reference", "colour"), ("sufficient", "high"), ("redundant", "high"), ("refSufficient", "high"), ("refRedundant", "high"), ("beta", "-97"), ("ciLower", "-120"), ("ciUpper", "-75")] }
 
-def exp2_lfColour : LinguisticExample :=
+def exp2_lfColour : Datum :=
   { id := "gilesetal2026_exp2_lfColour"
     source := ⟨"giles-etal-2026", "Table 2 LF Colour Terms Redundant"⟩
     reportedIn := none
@@ -121,6 +121,6 @@ def exp2_lfColour : LinguisticExample :=
     readings := []
     paperFeatures := [("experiment", "2"), ("predictor", "frequency"), ("level", "colour"), ("reference", "colour"), ("frequency", "low"), ("sufficient", "high"), ("redundant", "high"), ("refSufficient", "high"), ("refRedundant", "high"), ("beta", "-20"), ("ciLower", "-44"), ("ciUpper", "3")] }
 
-def all : List LinguisticExample := [exp1_sLowRHigh, exp1_baseline, exp1_sHighRLow, exp1_colour, exp1_material, exp2_hfColour, exp2_orientation, exp2_lfColour]
+def all : List Datum := [exp1_sLowRHigh, exp1_baseline, exp1_sHighRLow, exp1_colour, exp1_material, exp2_hfColour, exp2_orientation, exp2_lfColour]
 
 end GilesEtAl2026.Examples

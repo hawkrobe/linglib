@@ -213,7 +213,7 @@ def construals : List (String × Finset ThetaRole) :=
   [("agent", {.agent}), ("patient", {.patient}), ("agent or patient", {.agent, .patient})]
 
 /-- The row an example encodes, when its features parse. -/
-def Row.ofExample (ex : LinguisticExample) : Option Row := do
+def Row.ofDatum (ex : Datum) : Option Row := do
   let verb ← ex.parse? "verb" verbs
   let subconstruction ← ex.parse? "subconstruction"
     [("causative property", ⟨true, .property⟩), ("causative path", ⟨true, .path⟩),
@@ -229,7 +229,7 @@ def Row.ofExample (ex : LinguisticExample) : Option Row := do
          judgment := ex.judgment }
 
 /-- The paper's examples (5)–(9), (23)–(24), (45)–(49), (97c), and *wipe the table clean*. -/
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 example : rows.length = Examples.all.length := by decide
 

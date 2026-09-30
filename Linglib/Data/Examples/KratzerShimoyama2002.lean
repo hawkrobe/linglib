@@ -17,7 +17,7 @@ namespace KratzerShimoyama2002.Examples
 
 open Data.Examples
 
-def ex23a : LinguisticExample :=
+def ex23a : Datum :=
   { id := "kratzershimoyama2002_ex23a"
     source := ⟨"kratzer-shimoyama-2002", "(23a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex23a : LinguisticExample :=
     readings := []
     paperFeatures := [("intervener", "nicht"), ("feature", "Neg"), ("order", "intervener-first")] }
 
-def ex23b : LinguisticExample :=
+def ex23b : Datum :=
   { id := "kratzershimoyama2002_ex23b"
     source := ⟨"kratzer-shimoyama-2002", "(23b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex23b : LinguisticExample :=
     readings := []
     paperFeatures := [("intervener", "nie"), ("feature", "exists"), ("order", "intervener-first")] }
 
-def ex23c : LinguisticExample :=
+def ex23c : Datum :=
   { id := "kratzershimoyama2002_ex23c"
     source := ⟨"kratzer-shimoyama-2002", "(23c)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex23c : LinguisticExample :=
     readings := []
     paperFeatures := [("intervener", "niemand"), ("feature", "exists"), ("order", "intervener-first")] }
 
-def ex23d : LinguisticExample :=
+def ex23d : Datum :=
   { id := "kratzershimoyama2002_ex23d"
     source := ⟨"kratzer-shimoyama-2002", "(23d)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex23d : LinguisticExample :=
     readings := []
     paperFeatures := [("intervener", "fast jeder"), ("feature", "exists"), ("order", "intervener-first")] }
 
-def ex23e : LinguisticExample :=
+def ex23e : Datum :=
   { id := "kratzershimoyama2002_ex23e"
     source := ⟨"kratzer-shimoyama-2002", "(23e)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex23e : LinguisticExample :=
     readings := []
     paperFeatures := [("intervener", "(irgend)jemand"), ("feature", "exists"), ("order", "intervener-first")] }
 
-def ex23f : LinguisticExample :=
+def ex23f : Datum :=
   { id := "kratzershimoyama2002_ex23f"
     source := ⟨"kratzer-shimoyama-2002", "(23f)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex23f : LinguisticExample :=
     readings := []
     paperFeatures := [("intervener", "der Hans"), ("feature", "none"), ("order", "intervener-first")] }
 
-def ex23g : LinguisticExample :=
+def ex23g : Datum :=
   { id := "kratzershimoyama2002_ex23g"
     source := ⟨"kratzer-shimoyama-2002", "(23g)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex23g : LinguisticExample :=
     readings := []
     paperFeatures := [("intervener", "damals"), ("feature", "none"), ("order", "intervener-first")] }
 
-def ex24a : LinguisticExample :=
+def ex24a : Datum :=
   { id := "kratzershimoyama2002_ex24a"
     source := ⟨"kratzer-shimoyama-2002", "(24a)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex24a : LinguisticExample :=
     readings := []
     paperFeatures := [("intervener", "nicht"), ("feature", "Neg"), ("order", "wh-first")] }
 
-def ex24b : LinguisticExample :=
+def ex24b : Datum :=
   { id := "kratzershimoyama2002_ex24b"
     source := ⟨"kratzer-shimoyama-2002", "(24b)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex24b : LinguisticExample :=
     readings := []
     paperFeatures := [("intervener", "nie"), ("feature", "exists"), ("order", "wh-first")] }
 
-def ex24c : LinguisticExample :=
+def ex24c : Datum :=
   { id := "kratzershimoyama2002_ex24c"
     source := ⟨"kratzer-shimoyama-2002", "(24c)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex24c : LinguisticExample :=
     readings := []
     paperFeatures := [("intervener", "niemand"), ("feature", "exists"), ("order", "wh-first")] }
 
-def ex24d : LinguisticExample :=
+def ex24d : Datum :=
   { id := "kratzershimoyama2002_ex24d"
     source := ⟨"kratzer-shimoyama-2002", "(24d)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex24d : LinguisticExample :=
     readings := []
     paperFeatures := [("intervener", "fast jeder"), ("feature", "exists"), ("order", "wh-first")] }
 
-def ex24e : LinguisticExample :=
+def ex24e : Datum :=
   { id := "kratzershimoyama2002_ex24e"
     source := ⟨"kratzer-shimoyama-2002", "(24e)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex24e : LinguisticExample :=
     readings := []
     paperFeatures := [("intervener", "(irgend)jemand"), ("feature", "exists"), ("order", "wh-first")] }
 
-def ex12 : LinguisticExample :=
+def ex12 : Datum :=
   { id := "kratzershimoyama2002_ex12"
     source := ⟨"kratzer-shimoyama-2002", "(12)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex12 : LinguisticExample :=
     readings := []
     paperFeatures := [("context", "nobody"), ("intervener", "niemand"), ("feature", "exists")] }
 
-def ex13 : LinguisticExample :=
+def ex13 : Datum :=
   { id := "kratzershimoyama2002_ex13"
     source := ⟨"kratzer-shimoyama-2002", "(13)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex13 : LinguisticExample :=
     readings := []
     paperFeatures := [("context", "doubtVerb")] }
 
-def ex16 : LinguisticExample :=
+def ex16 : Datum :=
   { id := "kratzershimoyama2002_ex16"
     source := ⟨"kratzer-shimoyama-2002", "(16)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex16 : LinguisticExample :=
     readings := []
     paperFeatures := [("context", "modalPossibility")] }
 
-def ex17 : LinguisticExample :=
+def ex17 : Datum :=
   { id := "kratzershimoyama2002_ex17"
     source := ⟨"kratzer-shimoyama-2002", "(17)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex17 : LinguisticExample :=
     readings := []
     paperFeatures := [("context", "modalNecessity")] }
 
-def ex18 : LinguisticExample :=
+def ex18 : Datum :=
   { id := "kratzershimoyama2002_ex18"
     source := ⟨"kratzer-shimoyama-2002", "(18)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex18 : LinguisticExample :=
     readings := []
     paperFeatures := [("context", "nobody"), ("intervener", "auf keinen Fall"), ("feature", "exists")] }
 
-def ex21 : LinguisticExample :=
+def ex21 : Datum :=
   { id := "kratzershimoyama2002_ex21"
     source := ⟨"kratzer-shimoyama-2002", "(21)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex21 : LinguisticExample :=
     readings := []
     paperFeatures := [("context", "negation"), ("intervener", "nicht"), ("feature", "Neg")] }
 
-def ex22 : LinguisticExample :=
+def ex22 : Datum :=
   { id := "kratzershimoyama2002_ex22"
     source := ⟨"kratzer-shimoyama-2002", "(22)"⟩
     reportedIn := none
@@ -264,6 +264,6 @@ def ex22 : LinguisticExample :=
     readings := []
     paperFeatures := [("context", "question")] }
 
-def all : List LinguisticExample := [ex23a, ex23b, ex23c, ex23d, ex23e, ex23f, ex23g, ex24a, ex24b, ex24c, ex24d, ex24e, ex12, ex13, ex16, ex17, ex18, ex21, ex22]
+def all : List Datum := [ex23a, ex23b, ex23c, ex23d, ex23e, ex23f, ex23g, ex24a, ex24b, ex24c, ex24d, ex24e, ex12, ex13, ex16, ex17, ex18, ex21, ex22]
 
 end KratzerShimoyama2002.Examples

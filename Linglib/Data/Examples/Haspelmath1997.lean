@@ -17,7 +17,7 @@ namespace Haspelmath1997.Examples
 
 open Data.Examples
 
-def en_102a : LinguisticExample :=
+def en_102a : Datum :=
   { id := "haspelmath1997_en_102a"
     source := ⟨"warfel-1972", "pp. 43–4"⟩
     reportedIn := some ⟨"haspelmath-1997", "(102a)"⟩
@@ -30,7 +30,7 @@ def en_102a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2.4"), ("function", "specificUnknown"), ("item", "some (determiner)")] }
 
-def en_102a_known : LinguisticExample :=
+def en_102a_known : Datum :=
   { id := "haspelmath1997_en_102a_known"
     source := ⟨"warfel-1972", "pp. 43–4"⟩
     reportedIn := some ⟨"haspelmath-1997", "(102a)"⟩
@@ -43,7 +43,7 @@ def en_102a_known : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2.4"), ("function", "specificKnown"), ("item", "some (determiner)")] }
 
-def en_151a : LinguisticExample :=
+def en_151a : Datum :=
   { id := "haspelmath1997_en_151a"
     source := ⟨"lakoff-1969", "pp. 609–11"⟩
     reportedIn := some ⟨"haspelmath-1997", "(151a)"⟩
@@ -56,7 +56,7 @@ def en_151a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.7.4"), ("function", "question"), ("series", "some-")] }
 
-def en_151b : LinguisticExample :=
+def en_151b : Datum :=
   { id := "haspelmath1997_en_151b"
     source := ⟨"lakoff-1969", "pp. 609–11"⟩
     reportedIn := some ⟨"haspelmath-1997", "(151b)"⟩
@@ -69,7 +69,7 @@ def en_151b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.7.4"), ("function", "question"), ("series", "any-")] }
 
-def en_154a : LinguisticExample :=
+def en_154a : Datum :=
   { id := "haspelmath1997_en_154a"
     source := ⟨"lakoff-1969", "p. 611"⟩
     reportedIn := some ⟨"haspelmath-1997", "(154a)"⟩
@@ -82,7 +82,7 @@ def en_154a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.7.4"), ("function", "conditional"), ("series", "some-")] }
 
-def en_154a_any : LinguisticExample :=
+def en_154a_any : Datum :=
   { id := "haspelmath1997_en_154a_any"
     source := ⟨"lakoff-1969", "p. 611"⟩
     reportedIn := some ⟨"haspelmath-1997", "(154a)"⟩
@@ -95,7 +95,7 @@ def en_154a_any : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.7.4"), ("function", "conditional"), ("series", "any-")] }
 
-def en_154b : LinguisticExample :=
+def en_154b : Datum :=
   { id := "haspelmath1997_en_154b"
     source := ⟨"lakoff-1969", "p. 611"⟩
     reportedIn := some ⟨"haspelmath-1997", "(154b)"⟩
@@ -108,7 +108,7 @@ def en_154b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.7.4"), ("function", "conditional"), ("series", "any-")] }
 
-def en_154b_some : LinguisticExample :=
+def en_154b_some : Datum :=
   { id := "haspelmath1997_en_154b_some"
     source := ⟨"lakoff-1969", "p. 611"⟩
     reportedIn := some ⟨"haspelmath-1997", "(154b)"⟩
@@ -121,7 +121,7 @@ def en_154b_some : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.7.4"), ("function", "conditional"), ("series", "some-")] }
 
-def en_44b : LinguisticExample :=
+def en_44b : Datum :=
   { id := "haspelmath1997_en_44b"
     source := ⟨"haspelmath-1997", "(44b)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def en_44b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2.2"), ("function", "question"), ("series", "any-")] }
 
-def en_45b : LinguisticExample :=
+def en_45b : Datum :=
   { id := "haspelmath1997_en_45b"
     source := ⟨"haspelmath-1997", "(45b)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def en_45b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2.2"), ("function", "conditional"), ("series", "any-")] }
 
-def en_49b : LinguisticExample :=
+def en_49b : Datum :=
   { id := "haspelmath1997_en_49b"
     source := ⟨"haspelmath-1997", "(49b)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def en_49b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2.2"), ("function", "indirectNeg"), ("series", "any-")] }
 
-def en_50b : LinguisticExample :=
+def en_50b : Datum :=
   { id := "haspelmath1997_en_50b"
     source := ⟨"haspelmath-1997", "(50b)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def en_50b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2.2"), ("function", "indirectNeg"), ("series", "any-")] }
 
-def en_51b : LinguisticExample :=
+def en_51b : Datum :=
   { id := "haspelmath1997_en_51b"
     source := ⟨"haspelmath-1997", "(51b)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def en_51b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2.2"), ("function", "comparative"), ("series", "any-")] }
 
-def en_52 : LinguisticExample :=
+def en_52 : Datum :=
   { id := "haspelmath1997_en_52"
     source := ⟨"haspelmath-1997", "(52)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def en_52 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2.2"), ("function", "comparative"), ("series", "any-")] }
 
-def en_43b : LinguisticExample :=
+def en_43b : Datum :=
   { id := "haspelmath1997_en_43b"
     source := ⟨"haspelmath-1997", "(43b)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def en_43b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2.2"), ("function", "directNeg"), ("series", "any-")] }
 
-def en_103a : LinguisticExample :=
+def en_103a : Datum :=
   { id := "haspelmath1997_en_103a"
     source := ⟨"haspelmath-1997", "(103a)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def en_103a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2.5"), ("function", "freeChoice"), ("series", "any-")] }
 
-def en_34b : LinguisticExample :=
+def en_34b : Datum :=
   { id := "haspelmath1997_en_34b"
     source := ⟨"haspelmath-1997", "(34b)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def en_34b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2.1"), ("function", "directNeg"), ("series", "no-")] }
 
-def de_A1a_etwas : LinguisticExample :=
+def de_A1a_etwas : Datum :=
   { id := "haspelmath1997_de_A1a_etwas"
     source := ⟨"haspelmath-1997", "(A1a)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def de_A1a_etwas : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.1"), ("function", "specificKnown"), ("series", "etwas-")] }
 
-def de_A1a_irgend : LinguisticExample :=
+def de_A1a_irgend : Datum :=
   { id := "haspelmath1997_de_A1a_irgend"
     source := ⟨"haspelmath-1997", "(A1a)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def de_A1a_irgend : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.1"), ("function", "specificKnown"), ("series", "irgend-")] }
 
-def de_A1b_etwas : LinguisticExample :=
+def de_A1b_etwas : Datum :=
   { id := "haspelmath1997_de_A1b_etwas"
     source := ⟨"haspelmath-1997", "(A1b)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def de_A1b_etwas : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.1"), ("function", "specificUnknown"), ("series", "etwas-")] }
 
-def de_A1b_irgend : LinguisticExample :=
+def de_A1b_irgend : Datum :=
   { id := "haspelmath1997_de_A1b_irgend"
     source := ⟨"haspelmath-1997", "(A1b)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def de_A1b_irgend : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.1"), ("function", "specificUnknown"), ("series", "irgend-")] }
 
-def de_A2_etwas : LinguisticExample :=
+def de_A2_etwas : Datum :=
   { id := "haspelmath1997_de_A2_etwas"
     source := ⟨"haspelmath-1997", "(A2)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def de_A2_etwas : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.1"), ("function", "irrealis"), ("series", "etwas-")] }
 
-def de_A2_irgend : LinguisticExample :=
+def de_A2_irgend : Datum :=
   { id := "haspelmath1997_de_A2_irgend"
     source := ⟨"haspelmath-1997", "(A2)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def de_A2_irgend : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.1"), ("function", "irrealis"), ("series", "irgend-")] }
 
-def de_A3a_etwas : LinguisticExample :=
+def de_A3a_etwas : Datum :=
   { id := "haspelmath1997_de_A3a_etwas"
     source := ⟨"haspelmath-1997", "(A3a)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def de_A3a_etwas : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.1"), ("function", "question"), ("series", "etwas-")] }
 
-def de_A3a_irgend : LinguisticExample :=
+def de_A3a_irgend : Datum :=
   { id := "haspelmath1997_de_A3a_irgend"
     source := ⟨"haspelmath-1997", "(A3a)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def de_A3a_irgend : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.1"), ("function", "question"), ("series", "irgend-")] }
 
-def de_A3b_irgend : LinguisticExample :=
+def de_A3b_irgend : Datum :=
   { id := "haspelmath1997_de_A3b_irgend"
     source := ⟨"haspelmath-1997", "(A3b)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def de_A3b_irgend : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.1"), ("function", "question"), ("series", "irgend-")] }
 
-def de_A3b_je : LinguisticExample :=
+def de_A3b_je : Datum :=
   { id := "haspelmath1997_de_A3b_je"
     source := ⟨"haspelmath-1997", "(A3b)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def de_A3b_je : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.1"), ("function", "question"), ("series", "je")] }
 
-def de_A3c_etwas : LinguisticExample :=
+def de_A3c_etwas : Datum :=
   { id := "haspelmath1997_de_A3c_etwas"
     source := ⟨"haspelmath-1997", "(A3c)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def de_A3c_etwas : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.1"), ("function", "conditional"), ("series", "etwas-")] }
 
-def de_A3c_irgend : LinguisticExample :=
+def de_A3c_irgend : Datum :=
   { id := "haspelmath1997_de_A3c_irgend"
     source := ⟨"haspelmath-1997", "(A3c)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def de_A3c_irgend : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.1"), ("function", "conditional"), ("series", "irgend-")] }
 
-def de_A4_je_etwas : LinguisticExample :=
+def de_A4_je_etwas : Datum :=
   { id := "haspelmath1997_de_A4_je_etwas"
     source := ⟨"haspelmath-1997", "(A4)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def de_A4_je_etwas : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.1"), ("function", "indirectNeg"), ("series", "je"), ("series", "etwas-")] }
 
-def de_A4_je_irgend : LinguisticExample :=
+def de_A4_je_irgend : Datum :=
   { id := "haspelmath1997_de_A4_je_irgend"
     source := ⟨"haspelmath-1997", "(A4)"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def de_A4_je_irgend : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.1"), ("function", "indirectNeg"), ("series", "je"), ("series", "irgend-")] }
 
-def de_A4_irgend_etwas : LinguisticExample :=
+def de_A4_irgend_etwas : Datum :=
   { id := "haspelmath1997_de_A4_irgend_etwas"
     source := ⟨"haspelmath-1997", "(A4)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def de_A4_irgend_etwas : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.1"), ("function", "indirectNeg"), ("series", "irgend-"), ("series", "etwas-")] }
 
-def de_A4_irgend_irgend : LinguisticExample :=
+def de_A4_irgend_irgend : Datum :=
   { id := "haspelmath1997_de_A4_irgend_irgend"
     source := ⟨"haspelmath-1997", "(A4)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def de_A4_irgend_irgend : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.1"), ("function", "indirectNeg"), ("series", "irgend-")] }
 
-def de_A5 : LinguisticExample :=
+def de_A5 : Datum :=
   { id := "haspelmath1997_de_A5"
     source := ⟨"haspelmath-1997", "(A5)"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def de_A5 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.1"), ("function", "comparative"), ("series", "irgend-"), ("series", "je")] }
 
-def de_A6 : LinguisticExample :=
+def de_A6 : Datum :=
   { id := "haspelmath1997_de_A6"
     source := ⟨"haspelmath-1997", "(A6)"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def de_A6 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.1"), ("function", "freeChoice"), ("series", "irgend-")] }
 
-def de_A7 : LinguisticExample :=
+def de_A7 : Datum :=
   { id := "haspelmath1997_de_A7"
     source := ⟨"haspelmath-1997", "(A7)"⟩
     reportedIn := none
@@ -485,7 +485,7 @@ def de_A7 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.1"), ("function", "freeChoice"), ("series", "jeder")] }
 
-def de_A8 : LinguisticExample :=
+def de_A8 : Datum :=
   { id := "haspelmath1997_de_A8"
     source := ⟨"haspelmath-1997", "(A8)"⟩
     reportedIn := none
@@ -498,7 +498,7 @@ def de_A8 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.1"), ("function", "comparative"), ("series", "jeder")] }
 
-def de_A9a_jeder : LinguisticExample :=
+def de_A9a_jeder : Datum :=
   { id := "haspelmath1997_de_A9a_jeder"
     source := ⟨"haspelmath-1997", "(A9a)"⟩
     reportedIn := none
@@ -511,7 +511,7 @@ def de_A9a_jeder : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.1"), ("function", "indirectNeg"), ("series", "jeder")] }
 
-def de_A9a_irgend : LinguisticExample :=
+def de_A9a_irgend : Datum :=
   { id := "haspelmath1997_de_A9a_irgend"
     source := ⟨"haspelmath-1997", "(A9a)"⟩
     reportedIn := none
@@ -524,7 +524,7 @@ def de_A9a_irgend : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.1"), ("function", "indirectNeg"), ("series", "irgend-")] }
 
-def de_A9b_jeder : LinguisticExample :=
+def de_A9b_jeder : Datum :=
   { id := "haspelmath1997_de_A9b_jeder"
     source := ⟨"haspelmath-1997", "(A9b)"⟩
     reportedIn := none
@@ -537,7 +537,7 @@ def de_A9b_jeder : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.1"), ("function", "indirectNeg"), ("series", "jeder")] }
 
-def de_A9b_irgend : LinguisticExample :=
+def de_A9b_irgend : Datum :=
   { id := "haspelmath1997_de_A9b_irgend"
     source := ⟨"haspelmath-1997", "(A9b)"⟩
     reportedIn := none
@@ -550,7 +550,7 @@ def de_A9b_irgend : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.1"), ("function", "indirectNeg"), ("series", "irgend-")] }
 
-def de_A10a : LinguisticExample :=
+def de_A10a : Datum :=
   { id := "haspelmath1997_de_A10a"
     source := ⟨"haspelmath-1997", "(A10a)"⟩
     reportedIn := none
@@ -563,7 +563,7 @@ def de_A10a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.1"), ("function", "directNeg"), ("series", "n-")] }
 
-def de_A10b_etwas : LinguisticExample :=
+def de_A10b_etwas : Datum :=
   { id := "haspelmath1997_de_A10b_etwas"
     source := ⟨"haspelmath-1997", "(A10b)"⟩
     reportedIn := none
@@ -576,7 +576,7 @@ def de_A10b_etwas : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.1"), ("function", "directNeg"), ("series", "n-")] }
 
-def de_A10b_irgend : LinguisticExample :=
+def de_A10b_irgend : Datum :=
   { id := "haspelmath1997_de_A10b_irgend"
     source := ⟨"haspelmath-1997", "(A10b)"⟩
     reportedIn := none
@@ -589,7 +589,7 @@ def de_A10b_irgend : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.1"), ("function", "directNeg"), ("series", "n-")] }
 
-def it_A74 : LinguisticExample :=
+def it_A74 : Datum :=
   { id := "haspelmath1997_it_A74"
     source := ⟨"haspelmath-1997", "(A74)"⟩
     reportedIn := none
@@ -602,7 +602,7 @@ def it_A74 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.10"), ("function", "specificKnown"), ("series", "qualche-")] }
 
-def it_A75 : LinguisticExample :=
+def it_A75 : Datum :=
   { id := "haspelmath1997_it_A75"
     source := ⟨"haspelmath-1997", "(A75)"⟩
     reportedIn := none
@@ -615,7 +615,7 @@ def it_A75 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.10"), ("function", "specificUnknown"), ("series", "qualche-")] }
 
-def it_A76 : LinguisticExample :=
+def it_A76 : Datum :=
   { id := "haspelmath1997_it_A76"
     source := ⟨"haspelmath-1997", "(A76)"⟩
     reportedIn := none
@@ -628,7 +628,7 @@ def it_A76 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.10"), ("function", "irrealis"), ("series", "qualche-")] }
 
-def it_A77_qualche : LinguisticExample :=
+def it_A77_qualche : Datum :=
   { id := "haspelmath1997_it_A77_qualche"
     source := ⟨"haspelmath-1997", "(A77)"⟩
     reportedIn := none
@@ -641,7 +641,7 @@ def it_A77_qualche : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.10"), ("function", "question"), ("series", "qualche-")] }
 
-def it_A77_nessuno : LinguisticExample :=
+def it_A77_nessuno : Datum :=
   { id := "haspelmath1997_it_A77_nessuno"
     source := ⟨"haspelmath-1997", "(A77)"⟩
     reportedIn := none
@@ -654,7 +654,7 @@ def it_A77_nessuno : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.10"), ("function", "question"), ("series", "nessuno")] }
 
-def it_A78 : LinguisticExample :=
+def it_A78 : Datum :=
   { id := "haspelmath1997_it_A78"
     source := ⟨"haspelmath-1997", "(A78)"⟩
     reportedIn := none
@@ -667,7 +667,7 @@ def it_A78 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.10"), ("function", "conditional"), ("series", "qualche-")] }
 
-def it_A78_nessuno : LinguisticExample :=
+def it_A78_nessuno : Datum :=
   { id := "haspelmath1997_it_A78_nessuno"
     source := ⟨"haspelmath-1997", "(A78)"⟩
     reportedIn := none
@@ -680,7 +680,7 @@ def it_A78_nessuno : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.10"), ("function", "conditional"), ("series", "nessuno")] }
 
-def it_A79_nessuno : LinguisticExample :=
+def it_A79_nessuno : Datum :=
   { id := "haspelmath1997_it_A79_nessuno"
     source := ⟨"haspelmath-1997", "(A79)"⟩
     reportedIn := none
@@ -693,7 +693,7 @@ def it_A79_nessuno : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.10"), ("function", "indirectNeg"), ("series", "nessuno")] }
 
-def it_A79_qualche : LinguisticExample :=
+def it_A79_qualche : Datum :=
   { id := "haspelmath1997_it_A79_qualche"
     source := ⟨"haspelmath-1997", "(A79)"⟩
     reportedIn := none
@@ -706,7 +706,7 @@ def it_A79_qualche : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.10"), ("function", "indirectNeg"), ("series", "qualche-")] }
 
-def it_A80 : LinguisticExample :=
+def it_A80 : Datum :=
   { id := "haspelmath1997_it_A80"
     source := ⟨"haspelmath-1997", "(A80)"⟩
     reportedIn := none
@@ -719,7 +719,7 @@ def it_A80 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.10"), ("function", "freeChoice"), ("series", "-unque")] }
 
-def it_A81 : LinguisticExample :=
+def it_A81 : Datum :=
   { id := "haspelmath1997_it_A81"
     source := ⟨"haspelmath-1997", "(A81)"⟩
     reportedIn := none
@@ -732,7 +732,7 @@ def it_A81 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.10"), ("function", "comparative"), ("series", "-unque")] }
 
-def it_A82a : LinguisticExample :=
+def it_A82a : Datum :=
   { id := "haspelmath1997_it_A82a"
     source := ⟨"haspelmath-1997", "(A82a)"⟩
     reportedIn := none
@@ -745,7 +745,7 @@ def it_A82a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.10"), ("function", "directNeg"), ("series", "nessuno")] }
 
-def it_A82b : LinguisticExample :=
+def it_A82b : Datum :=
   { id := "haspelmath1997_it_A82b"
     source := ⟨"haspelmath-1997", "(A82b)"⟩
     reportedIn := none
@@ -758,7 +758,7 @@ def it_A82b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.10"), ("function", "directNeg"), ("series", "nessuno")] }
 
-def it_A82c : LinguisticExample :=
+def it_A82c : Datum :=
   { id := "haspelmath1997_it_A82c"
     source := ⟨"haspelmath-1997", "(A82c)"⟩
     reportedIn := none
@@ -771,7 +771,7 @@ def it_A82c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.10"), ("function", "directNeg"), ("series", "nessuno")] }
 
-def ru_A121 : LinguisticExample :=
+def ru_A121 : Datum :=
   { id := "haspelmath1997_ru_A121"
     source := ⟨"haspelmath-1997", "(A121)"⟩
     reportedIn := none
@@ -784,7 +784,7 @@ def ru_A121 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.16"), ("function", "specificUnknown"), ("series", "-to")] }
 
-def ru_A122a_nibud : LinguisticExample :=
+def ru_A122a_nibud : Datum :=
   { id := "haspelmath1997_ru_A122a_nibud"
     source := ⟨"haspelmath-1997", "(A122a)"⟩
     reportedIn := none
@@ -797,7 +797,7 @@ def ru_A122a_nibud : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.16"), ("function", "irrealis"), ("series", "-nibud'")] }
 
-def ru_A122a_libo : LinguisticExample :=
+def ru_A122a_libo : Datum :=
   { id := "haspelmath1997_ru_A122a_libo"
     source := ⟨"haspelmath-1997", "(A122a)"⟩
     reportedIn := none
@@ -810,7 +810,7 @@ def ru_A122a_libo : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.16"), ("function", "irrealis"), ("series", "-libo")] }
 
-def ru_A122b_nibud : LinguisticExample :=
+def ru_A122b_nibud : Datum :=
   { id := "haspelmath1997_ru_A122b_nibud"
     source := ⟨"haspelmath-1997", "(A122b)"⟩
     reportedIn := none
@@ -823,7 +823,7 @@ def ru_A122b_nibud : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.16"), ("function", "irrealis"), ("series", "-nibud'")] }
 
-def ru_A122b_libo : LinguisticExample :=
+def ru_A122b_libo : Datum :=
   { id := "haspelmath1997_ru_A122b_libo"
     source := ⟨"haspelmath-1997", "(A122b)"⟩
     reportedIn := none
@@ -836,7 +836,7 @@ def ru_A122b_libo : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.16"), ("function", "irrealis"), ("series", "-libo")] }
 
-def ru_A123a_nibud : LinguisticExample :=
+def ru_A123a_nibud : Datum :=
   { id := "haspelmath1997_ru_A123a_nibud"
     source := ⟨"haspelmath-1997", "(A123a)"⟩
     reportedIn := none
@@ -849,7 +849,7 @@ def ru_A123a_nibud : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.16"), ("function", "question"), ("series", "-nibud'")] }
 
-def ru_A123a_libo : LinguisticExample :=
+def ru_A123a_libo : Datum :=
   { id := "haspelmath1997_ru_A123a_libo"
     source := ⟨"haspelmath-1997", "(A123a)"⟩
     reportedIn := none
@@ -862,7 +862,7 @@ def ru_A123a_libo : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.16"), ("function", "question"), ("series", "-libo")] }
 
-def ru_A123b_nibud : LinguisticExample :=
+def ru_A123b_nibud : Datum :=
   { id := "haspelmath1997_ru_A123b_nibud"
     source := ⟨"haspelmath-1997", "(A123b)"⟩
     reportedIn := none
@@ -875,7 +875,7 @@ def ru_A123b_nibud : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.16"), ("function", "conditional"), ("series", "-nibud'")] }
 
-def ru_A123b_libo : LinguisticExample :=
+def ru_A123b_libo : Datum :=
   { id := "haspelmath1997_ru_A123b_libo"
     source := ⟨"haspelmath-1997", "(A123b)"⟩
     reportedIn := none
@@ -888,7 +888,7 @@ def ru_A123b_libo : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.16"), ("function", "conditional"), ("series", "-libo")] }
 
-def ru_A124a : LinguisticExample :=
+def ru_A124a : Datum :=
   { id := "haspelmath1997_ru_A124a"
     source := ⟨"haspelmath-1997", "(A124a)"⟩
     reportedIn := none
@@ -901,7 +901,7 @@ def ru_A124a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.16"), ("function", "specificUnknown"), ("series", "-to")] }
 
-def ru_A124b_nibud : LinguisticExample :=
+def ru_A124b_nibud : Datum :=
   { id := "haspelmath1997_ru_A124b_nibud"
     source := ⟨"haspelmath-1997", "(A124b)"⟩
     reportedIn := none
@@ -914,7 +914,7 @@ def ru_A124b_nibud : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.16"), ("function", "irrealis"), ("series", "-nibud'")] }
 
-def ru_A124b_to : LinguisticExample :=
+def ru_A124b_to : Datum :=
   { id := "haspelmath1997_ru_A124b_to"
     source := ⟨"haspelmath-1997", "(A124b)"⟩
     reportedIn := none
@@ -927,7 +927,7 @@ def ru_A124b_to : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.16"), ("function", "irrealis"), ("series", "-to")] }
 
-def ru_A125_libo : LinguisticExample :=
+def ru_A125_libo : Datum :=
   { id := "haspelmath1997_ru_A125_libo"
     source := ⟨"haspelmath-1997", "(A125)"⟩
     reportedIn := none
@@ -940,7 +940,7 @@ def ru_A125_libo : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.16"), ("function", "comparative"), ("series", "-libo")] }
 
-def ru_A125_byToNiBylo : LinguisticExample :=
+def ru_A125_byToNiBylo : Datum :=
   { id := "haspelmath1997_ru_A125_byToNiBylo"
     source := ⟨"haspelmath-1997", "(A125)"⟩
     reportedIn := none
@@ -953,7 +953,7 @@ def ru_A125_byToNiBylo : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.16"), ("function", "comparative"), ("series", "by to ni bylo")] }
 
-def ru_A126a_libo : LinguisticExample :=
+def ru_A126a_libo : Datum :=
   { id := "haspelmath1997_ru_A126a_libo"
     source := ⟨"haspelmath-1997", "(A126a)"⟩
     reportedIn := none
@@ -966,7 +966,7 @@ def ru_A126a_libo : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.16"), ("function", "indirectNeg"), ("series", "-libo")] }
 
-def ru_A126a_byToNiBylo : LinguisticExample :=
+def ru_A126a_byToNiBylo : Datum :=
   { id := "haspelmath1997_ru_A126a_byToNiBylo"
     source := ⟨"haspelmath-1997", "(A126a)"⟩
     reportedIn := none
@@ -979,7 +979,7 @@ def ru_A126a_byToNiBylo : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.16"), ("function", "indirectNeg"), ("series", "by to ni bylo")] }
 
-def ru_A126b_libo : LinguisticExample :=
+def ru_A126b_libo : Datum :=
   { id := "haspelmath1997_ru_A126b_libo"
     source := ⟨"haspelmath-1997", "(A126b)"⟩
     reportedIn := none
@@ -992,7 +992,7 @@ def ru_A126b_libo : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.16"), ("function", "indirectNeg"), ("series", "-libo")] }
 
-def ru_A126b_byToNiBylo : LinguisticExample :=
+def ru_A126b_byToNiBylo : Datum :=
   { id := "haspelmath1997_ru_A126b_byToNiBylo"
     source := ⟨"haspelmath-1997", "(A126b)"⟩
     reportedIn := none
@@ -1005,7 +1005,7 @@ def ru_A126b_byToNiBylo : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.16"), ("function", "indirectNeg"), ("series", "by to ni bylo")] }
 
-def ru_A127a : LinguisticExample :=
+def ru_A127a : Datum :=
   { id := "haspelmath1997_ru_A127a"
     source := ⟨"haspelmath-1997", "(A127a)"⟩
     reportedIn := none
@@ -1018,7 +1018,7 @@ def ru_A127a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.16"), ("function", "conditional"), ("series", "by to ni bylo")] }
 
-def ru_A127b : LinguisticExample :=
+def ru_A127b : Datum :=
   { id := "haspelmath1997_ru_A127b"
     source := ⟨"haspelmath-1997", "(A127b)"⟩
     reportedIn := none
@@ -1031,7 +1031,7 @@ def ru_A127b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.16"), ("function", "question"), ("series", "by to ni bylo")] }
 
-def ru_A128_ljuboj : LinguisticExample :=
+def ru_A128_ljuboj : Datum :=
   { id := "haspelmath1997_ru_A128_ljuboj"
     source := ⟨"haspelmath-1997", "(A128)"⟩
     reportedIn := none
@@ -1044,7 +1044,7 @@ def ru_A128_ljuboj : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.16"), ("function", "freeChoice"), ("series", "ljuboj")] }
 
-def ru_A128_ugodno : LinguisticExample :=
+def ru_A128_ugodno : Datum :=
   { id := "haspelmath1997_ru_A128_ugodno"
     source := ⟨"haspelmath-1997", "(A128)"⟩
     reportedIn := none
@@ -1057,7 +1057,7 @@ def ru_A128_ugodno : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.16"), ("function", "freeChoice"), ("series", "ugodno")] }
 
-def ru_A128_byToNiBylo : LinguisticExample :=
+def ru_A128_byToNiBylo : Datum :=
   { id := "haspelmath1997_ru_A128_byToNiBylo"
     source := ⟨"haspelmath-1997", "(A128)"⟩
     reportedIn := none
@@ -1070,7 +1070,7 @@ def ru_A128_byToNiBylo : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.16"), ("function", "freeChoice"), ("series", "by to ni bylo")] }
 
-def ru_A129 : LinguisticExample :=
+def ru_A129 : Datum :=
   { id := "haspelmath1997_ru_A129"
     source := ⟨"haspelmath-1997", "(A129)"⟩
     reportedIn := none
@@ -1083,7 +1083,7 @@ def ru_A129 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.16"), ("function", "directNeg"), ("series", "ni-")] }
 
-def ru_A130 : LinguisticExample :=
+def ru_A130 : Datum :=
   { id := "haspelmath1997_ru_A130"
     source := ⟨"haspelmath-1997", "(A130)"⟩
     reportedIn := none
@@ -1096,7 +1096,7 @@ def ru_A130 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.16"), ("function", "specificKnown"), ("series", "koe-")] }
 
-def lv_A138 : LinguisticExample :=
+def lv_A138 : Datum :=
   { id := "haspelmath1997_lv_A138"
     source := ⟨"haspelmath-1997", "(A138)"⟩
     reportedIn := none
@@ -1109,7 +1109,7 @@ def lv_A138 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.18"), ("function", "specificUnknown"), ("series", "kaut")] }
 
-def lv_A139 : LinguisticExample :=
+def lv_A139 : Datum :=
   { id := "haspelmath1997_lv_A139"
     source := ⟨"haspelmath-1997", "(A139)"⟩
     reportedIn := none
@@ -1122,7 +1122,7 @@ def lv_A139 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.18"), ("function", "irrealis"), ("series", "kaut")] }
 
-def lv_A140a : LinguisticExample :=
+def lv_A140a : Datum :=
   { id := "haspelmath1997_lv_A140a"
     source := ⟨"haspelmath-1997", "(A140a)"⟩
     reportedIn := none
@@ -1135,7 +1135,7 @@ def lv_A140a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.18"), ("function", "question"), ("series", "kaut")] }
 
-def lv_A140b : LinguisticExample :=
+def lv_A140b : Datum :=
   { id := "haspelmath1997_lv_A140b"
     source := ⟨"haspelmath-1997", "(A140b)"⟩
     reportedIn := none
@@ -1148,7 +1148,7 @@ def lv_A140b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.18"), ("function", "conditional"), ("item", "kāds (bare interrogative)")] }
 
-def lv_A140c_kaut : LinguisticExample :=
+def lv_A140c_kaut : Datum :=
   { id := "haspelmath1997_lv_A140c_kaut"
     source := ⟨"haspelmath-1997", "(A140c)"⟩
     reportedIn := none
@@ -1161,7 +1161,7 @@ def lv_A140c_kaut : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.18"), ("function", "conditional"), ("series", "kaut")] }
 
-def lv_A140c_jeb : LinguisticExample :=
+def lv_A140c_jeb : Datum :=
   { id := "haspelmath1997_lv_A140c_jeb"
     source := ⟨"haspelmath-1997", "(A140c)"⟩
     reportedIn := none
@@ -1174,7 +1174,7 @@ def lv_A140c_jeb : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.18"), ("function", "conditional"), ("series", "jeb-")] }
 
-def lv_A141 : LinguisticExample :=
+def lv_A141 : Datum :=
   { id := "haspelmath1997_lv_A141"
     source := ⟨"haspelmath-1997", "(A141)"⟩
     reportedIn := none
@@ -1187,7 +1187,7 @@ def lv_A141 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.18"), ("function", "freeChoice"), ("series", "jeb-")] }
 
-def lv_A142 : LinguisticExample :=
+def lv_A142 : Datum :=
   { id := "haspelmath1997_lv_A142"
     source := ⟨"haspelmath-1997", "(A142)"⟩
     reportedIn := none
@@ -1200,7 +1200,7 @@ def lv_A142 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.18"), ("function", "comparative"), ("series", "jeb-")] }
 
-def lv_A143a : LinguisticExample :=
+def lv_A143a : Datum :=
   { id := "haspelmath1997_lv_A143a"
     source := ⟨"haspelmath-1997", "(A143a)"⟩
     reportedIn := none
@@ -1213,7 +1213,7 @@ def lv_A143a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.18"), ("function", "indirectNeg"), ("series", "jeb-")] }
 
-def lv_A143b : LinguisticExample :=
+def lv_A143b : Datum :=
   { id := "haspelmath1997_lv_A143b"
     source := ⟨"haspelmath-1997", "(A143b)"⟩
     reportedIn := none
@@ -1226,7 +1226,7 @@ def lv_A143b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.18"), ("function", "indirectNeg"), ("item", "kāds (bare interrogative)")] }
 
-def lv_A144 : LinguisticExample :=
+def lv_A144 : Datum :=
   { id := "haspelmath1997_lv_A144"
     source := ⟨"haspelmath-1997", "(A144)"⟩
     reportedIn := none
@@ -1239,7 +1239,7 @@ def lv_A144 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.18"), ("function", "directNeg"), ("series", "ne-")] }
 
-def hi_A167_known : LinguisticExample :=
+def hi_A167_known : Datum :=
   { id := "haspelmath1997_hi_A167_known"
     source := ⟨"haspelmath-1997", "(A167)"⟩
     reportedIn := none
@@ -1252,7 +1252,7 @@ def hi_A167_known : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.22"), ("function", "specificKnown"), ("series", "koii")] }
 
-def hi_A167_unknown : LinguisticExample :=
+def hi_A167_unknown : Datum :=
   { id := "haspelmath1997_hi_A167_unknown"
     source := ⟨"haspelmath-1997", "(A167)"⟩
     reportedIn := none
@@ -1265,7 +1265,7 @@ def hi_A167_unknown : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.22"), ("function", "specificUnknown"), ("series", "koii")] }
 
-def hi_A167_bhii : LinguisticExample :=
+def hi_A167_bhii : Datum :=
   { id := "haspelmath1997_hi_A167_bhii"
     source := ⟨"haspelmath-1997", "(A167)"⟩
     reportedIn := none
@@ -1278,7 +1278,7 @@ def hi_A167_bhii : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.22"), ("function", "specificKnown"), ("series", "bhii")] }
 
-def hi_A167_bhii_unknown : LinguisticExample :=
+def hi_A167_bhii_unknown : Datum :=
   { id := "haspelmath1997_hi_A167_bhii_unknown"
     source := ⟨"haspelmath-1997", "(A167)"⟩
     reportedIn := none
@@ -1291,7 +1291,7 @@ def hi_A167_bhii_unknown : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.22"), ("function", "specificUnknown"), ("series", "bhii")] }
 
-def hi_A168_koii : LinguisticExample :=
+def hi_A168_koii : Datum :=
   { id := "haspelmath1997_hi_A168_koii"
     source := ⟨"davison-1978", "p. 37"⟩
     reportedIn := some ⟨"haspelmath-1997", "(A168)"⟩
@@ -1304,7 +1304,7 @@ def hi_A168_koii : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.22"), ("function", "indirectNeg"), ("series", "koii")] }
 
-def hi_A168_bhii : LinguisticExample :=
+def hi_A168_bhii : Datum :=
   { id := "haspelmath1997_hi_A168_bhii"
     source := ⟨"davison-1978", "p. 37"⟩
     reportedIn := some ⟨"haspelmath-1997", "(A168)"⟩
@@ -1317,7 +1317,7 @@ def hi_A168_bhii : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.22"), ("function", "indirectNeg"), ("series", "bhii")] }
 
-def hi_A169a_koii : LinguisticExample :=
+def hi_A169a_koii : Datum :=
   { id := "haspelmath1997_hi_A169a_koii"
     source := ⟨"bhatia-1978", "p. 69"⟩
     reportedIn := some ⟨"haspelmath-1997", "(A169a)"⟩
@@ -1330,7 +1330,7 @@ def hi_A169a_koii : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.22"), ("function", "directNeg"), ("series", "koii")] }
 
-def hi_A169a_bhii : LinguisticExample :=
+def hi_A169a_bhii : Datum :=
   { id := "haspelmath1997_hi_A169a_bhii"
     source := ⟨"bhatia-1978", "p. 69"⟩
     reportedIn := some ⟨"haspelmath-1997", "(A169a)"⟩
@@ -1343,7 +1343,7 @@ def hi_A169a_bhii : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.22"), ("function", "directNeg"), ("series", "bhii")] }
 
-def hi_A169b : LinguisticExample :=
+def hi_A169b : Datum :=
   { id := "haspelmath1997_hi_A169b"
     source := ⟨"davison-1978", "p. 29"⟩
     reportedIn := some ⟨"haspelmath-1997", "(A169b)"⟩
@@ -1356,7 +1356,7 @@ def hi_A169b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.22"), ("function", "directNeg"), ("series", "koii")] }
 
-def hi_A170a_koii : LinguisticExample :=
+def hi_A170a_koii : Datum :=
   { id := "haspelmath1997_hi_A170a_koii"
     source := ⟨"haspelmath-1997", "(A170a)"⟩
     reportedIn := none
@@ -1369,7 +1369,7 @@ def hi_A170a_koii : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.22"), ("function", "irrealis"), ("series", "koii")] }
 
-def hi_A170a_bhii : LinguisticExample :=
+def hi_A170a_bhii : Datum :=
   { id := "haspelmath1997_hi_A170a_bhii"
     source := ⟨"haspelmath-1997", "(A170a)"⟩
     reportedIn := none
@@ -1382,7 +1382,7 @@ def hi_A170a_bhii : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.22"), ("function", "irrealis"), ("series", "bhii")] }
 
-def hi_A170b_koii : LinguisticExample :=
+def hi_A170b_koii : Datum :=
   { id := "haspelmath1997_hi_A170b_koii"
     source := ⟨"haspelmath-1997", "(A170b)"⟩
     reportedIn := none
@@ -1395,7 +1395,7 @@ def hi_A170b_koii : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.22"), ("function", "irrealis"), ("series", "koii")] }
 
-def hi_A170b_bhii : LinguisticExample :=
+def hi_A170b_bhii : Datum :=
   { id := "haspelmath1997_hi_A170b_bhii"
     source := ⟨"haspelmath-1997", "(A170b)"⟩
     reportedIn := none
@@ -1408,7 +1408,7 @@ def hi_A170b_bhii : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.22"), ("function", "irrealis"), ("series", "bhii")] }
 
-def hi_A171a_koii : LinguisticExample :=
+def hi_A171a_koii : Datum :=
   { id := "haspelmath1997_hi_A171a_koii"
     source := ⟨"davison-1978", "pp. 27–8"⟩
     reportedIn := some ⟨"haspelmath-1997", "(A171a)"⟩
@@ -1421,7 +1421,7 @@ def hi_A171a_koii : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.22"), ("function", "question"), ("series", "koii")] }
 
-def hi_A171a_bhii : LinguisticExample :=
+def hi_A171a_bhii : Datum :=
   { id := "haspelmath1997_hi_A171a_bhii"
     source := ⟨"davison-1978", "pp. 27–8"⟩
     reportedIn := some ⟨"haspelmath-1997", "(A171a)"⟩
@@ -1434,7 +1434,7 @@ def hi_A171a_bhii : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.22"), ("function", "question"), ("series", "bhii")] }
 
-def hi_A171b_koii : LinguisticExample :=
+def hi_A171b_koii : Datum :=
   { id := "haspelmath1997_hi_A171b_koii"
     source := ⟨"haspelmath-1997", "(A171b)"⟩
     reportedIn := none
@@ -1447,7 +1447,7 @@ def hi_A171b_koii : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.22"), ("function", "conditional"), ("series", "koii")] }
 
-def hi_A171b_bhii : LinguisticExample :=
+def hi_A171b_bhii : Datum :=
   { id := "haspelmath1997_hi_A171b_bhii"
     source := ⟨"haspelmath-1997", "(A171b)"⟩
     reportedIn := none
@@ -1460,7 +1460,7 @@ def hi_A171b_bhii : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.22"), ("function", "conditional"), ("series", "bhii")] }
 
-def hi_A172 : LinguisticExample :=
+def hi_A172 : Datum :=
   { id := "haspelmath1997_hi_A172"
     source := ⟨"haspelmath-1997", "(A172)"⟩
     reportedIn := none
@@ -1473,7 +1473,7 @@ def hi_A172 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.22"), ("function", "comparative"), ("series", "bhii")] }
 
-def hi_A173 : LinguisticExample :=
+def hi_A173 : Datum :=
   { id := "haspelmath1997_hi_A173"
     source := ⟨"bhatia-1978", "p. 70"⟩
     reportedIn := some ⟨"haspelmath-1997", "(A173)"⟩
@@ -1486,7 +1486,7 @@ def hi_A173 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.22"), ("function", "freeChoice"), ("series", "bhii")] }
 
-def tr_A174 : LinguisticExample :=
+def tr_A174 : Datum :=
   { id := "haspelmath1997_tr_A174"
     source := ⟨"haspelmath-1997", "(A174)"⟩
     reportedIn := none
@@ -1499,7 +1499,7 @@ def tr_A174 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.23"), ("function", "specificKnown"), ("series", "bir-")] }
 
-def tr_A175_bir : LinguisticExample :=
+def tr_A175_bir : Datum :=
   { id := "haspelmath1997_tr_A175_bir"
     source := ⟨"haspelmath-1997", "(A175)"⟩
     reportedIn := none
@@ -1512,7 +1512,7 @@ def tr_A175_bir : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.23"), ("function", "specificUnknown"), ("series", "bir-")] }
 
-def tr_A175_herhangi : LinguisticExample :=
+def tr_A175_herhangi : Datum :=
   { id := "haspelmath1997_tr_A175_herhangi"
     source := ⟨"haspelmath-1997", "(A175)"⟩
     reportedIn := none
@@ -1525,7 +1525,7 @@ def tr_A175_herhangi : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.23"), ("function", "specificUnknown"), ("series", "herhangi")] }
 
-def tr_A176_herhangi : LinguisticExample :=
+def tr_A176_herhangi : Datum :=
   { id := "haspelmath1997_tr_A176_herhangi"
     source := ⟨"haspelmath-1997", "(A176)"⟩
     reportedIn := none
@@ -1538,7 +1538,7 @@ def tr_A176_herhangi : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.23"), ("function", "irrealis"), ("series", "herhangi")] }
 
-def tr_A176_bir : LinguisticExample :=
+def tr_A176_bir : Datum :=
   { id := "haspelmath1997_tr_A176_bir"
     source := ⟨"haspelmath-1997", "(A176)"⟩
     reportedIn := none
@@ -1551,7 +1551,7 @@ def tr_A176_bir : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.23"), ("function", "irrealis"), ("series", "bir-")] }
 
-def tr_A177a_herhangi : LinguisticExample :=
+def tr_A177a_herhangi : Datum :=
   { id := "haspelmath1997_tr_A177a_herhangi"
     source := ⟨"haspelmath-1997", "(A177a)"⟩
     reportedIn := none
@@ -1564,7 +1564,7 @@ def tr_A177a_herhangi : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.23"), ("function", "question"), ("series", "herhangi")] }
 
-def tr_A177a_bir : LinguisticExample :=
+def tr_A177a_bir : Datum :=
   { id := "haspelmath1997_tr_A177a_bir"
     source := ⟨"haspelmath-1997", "(A177a)"⟩
     reportedIn := none
@@ -1577,7 +1577,7 @@ def tr_A177a_bir : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.23"), ("function", "question"), ("series", "bir-")] }
 
-def tr_A177a_hic : LinguisticExample :=
+def tr_A177a_hic : Datum :=
   { id := "haspelmath1997_tr_A177a_hic"
     source := ⟨"haspelmath-1997", "(A177a)"⟩
     reportedIn := none
@@ -1590,7 +1590,7 @@ def tr_A177a_hic : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.23"), ("function", "question"), ("series", "hiç")] }
 
-def tr_A177b_herhangi : LinguisticExample :=
+def tr_A177b_herhangi : Datum :=
   { id := "haspelmath1997_tr_A177b_herhangi"
     source := ⟨"haspelmath-1997", "(A177b)"⟩
     reportedIn := none
@@ -1603,7 +1603,7 @@ def tr_A177b_herhangi : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.23"), ("function", "conditional"), ("series", "herhangi")] }
 
-def tr_A177b_bir : LinguisticExample :=
+def tr_A177b_bir : Datum :=
   { id := "haspelmath1997_tr_A177b_bir"
     source := ⟨"haspelmath-1997", "(A177b)"⟩
     reportedIn := none
@@ -1616,7 +1616,7 @@ def tr_A177b_bir : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.23"), ("function", "conditional"), ("series", "bir-")] }
 
-def tr_A178_kimse : LinguisticExample :=
+def tr_A178_kimse : Datum :=
   { id := "haspelmath1997_tr_A178_kimse"
     source := ⟨"haspelmath-1997", "(A178)"⟩
     reportedIn := none
@@ -1629,7 +1629,7 @@ def tr_A178_kimse : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.23"), ("function", "indirectNeg"), ("item", "kimse")] }
 
-def tr_A178_herhangi : LinguisticExample :=
+def tr_A178_herhangi : Datum :=
   { id := "haspelmath1997_tr_A178_herhangi"
     source := ⟨"haspelmath-1997", "(A178)"⟩
     reportedIn := none
@@ -1642,7 +1642,7 @@ def tr_A178_herhangi : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.23"), ("function", "indirectNeg"), ("series", "herhangi")] }
 
-def tr_A178_hic : LinguisticExample :=
+def tr_A178_hic : Datum :=
   { id := "haspelmath1997_tr_A178_hic"
     source := ⟨"haspelmath-1997", "(A178)"⟩
     reportedIn := none
@@ -1655,7 +1655,7 @@ def tr_A178_hic : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.23"), ("function", "indirectNeg"), ("series", "hiç")] }
 
-def tr_A179_hic : LinguisticExample :=
+def tr_A179_hic : Datum :=
   { id := "haspelmath1997_tr_A179_hic"
     source := ⟨"haspelmath-1997", "(A179)"⟩
     reportedIn := none
@@ -1668,7 +1668,7 @@ def tr_A179_hic : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.23"), ("function", "directNeg"), ("series", "hiç")] }
 
-def tr_A179_herhangi : LinguisticExample :=
+def tr_A179_herhangi : Datum :=
   { id := "haspelmath1997_tr_A179_herhangi"
     source := ⟨"haspelmath-1997", "(A179)"⟩
     reportedIn := none
@@ -1681,7 +1681,7 @@ def tr_A179_herhangi : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.23"), ("function", "directNeg"), ("series", "herhangi")] }
 
-def tr_A179_bir : LinguisticExample :=
+def tr_A179_bir : Datum :=
   { id := "haspelmath1997_tr_A179_bir"
     source := ⟨"haspelmath-1997", "(A179)"⟩
     reportedIn := none
@@ -1694,7 +1694,7 @@ def tr_A179_bir : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.23"), ("function", "directNeg"), ("series", "bir-")] }
 
-def tr_A180 : LinguisticExample :=
+def tr_A180 : Datum :=
   { id := "haspelmath1997_tr_A180"
     source := ⟨"haspelmath-1997", "(A180)"⟩
     reportedIn := none
@@ -1707,7 +1707,7 @@ def tr_A180 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.23"), ("function", "freeChoice"), ("series", "herhangi")] }
 
-def tr_A181 : LinguisticExample :=
+def tr_A181 : Datum :=
   { id := "haspelmath1997_tr_A181"
     source := ⟨"haspelmath-1997", "(A181)"⟩
     reportedIn := none
@@ -1720,7 +1720,7 @@ def tr_A181 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.23"), ("function", "comparative"), ("series", "herhangi")] }
 
-def hu_A196 : LinguisticExample :=
+def hu_A196 : Datum :=
   { id := "haspelmath1997_hu_A196"
     source := ⟨"haspelmath-1997", "(A196)"⟩
     reportedIn := none
@@ -1733,7 +1733,7 @@ def hu_A196 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.26"), ("function", "specificUnknown"), ("series", "vala-")] }
 
-def hu_A197 : LinguisticExample :=
+def hu_A197 : Datum :=
   { id := "haspelmath1997_hu_A197"
     source := ⟨"haspelmath-1997", "(A197)"⟩
     reportedIn := none
@@ -1746,7 +1746,7 @@ def hu_A197 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.26"), ("function", "specificKnown"), ("series", "vala-")] }
 
-def hu_A198 : LinguisticExample :=
+def hu_A198 : Datum :=
   { id := "haspelmath1997_hu_A198"
     source := ⟨"haspelmath-1997", "(A198)"⟩
     reportedIn := none
@@ -1759,7 +1759,7 @@ def hu_A198 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.26"), ("function", "irrealis"), ("series", "vala-")] }
 
-def hu_A199a : LinguisticExample :=
+def hu_A199a : Datum :=
   { id := "haspelmath1997_hu_A199a"
     source := ⟨"haspelmath-1997", "(A199a)"⟩
     reportedIn := none
@@ -1772,7 +1772,7 @@ def hu_A199a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.26"), ("function", "directNeg"), ("series", "sem-")] }
 
-def hu_A199a_akar : LinguisticExample :=
+def hu_A199a_akar : Datum :=
   { id := "haspelmath1997_hu_A199a_akar"
     source := ⟨"haspelmath-1997", "(A199a)"⟩
     reportedIn := none
@@ -1785,7 +1785,7 @@ def hu_A199a_akar : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.26"), ("function", "directNeg"), ("series", "akár-")] }
 
-def hu_A199a_bar : LinguisticExample :=
+def hu_A199a_bar : Datum :=
   { id := "haspelmath1997_hu_A199a_bar"
     source := ⟨"haspelmath-1997", "(A199a)"⟩
     reportedIn := none
@@ -1798,7 +1798,7 @@ def hu_A199a_bar : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.26"), ("function", "directNeg"), ("series", "bár-")] }
 
-def hu_A199b : LinguisticExample :=
+def hu_A199b : Datum :=
   { id := "haspelmath1997_hu_A199b"
     source := ⟨"haspelmath-1997", "(A199b)"⟩
     reportedIn := none
@@ -1811,7 +1811,7 @@ def hu_A199b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.26"), ("function", "directNeg"), ("series", "sem-")] }
 
-def hu_A200 : LinguisticExample :=
+def hu_A200 : Datum :=
   { id := "haspelmath1997_hu_A200"
     source := ⟨"haspelmath-1997", "(A200)"⟩
     reportedIn := none
@@ -1824,7 +1824,7 @@ def hu_A200 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.26"), ("function", "freeChoice"), ("series", "akár-")] }
 
-def hu_A201_akar : LinguisticExample :=
+def hu_A201_akar : Datum :=
   { id := "haspelmath1997_hu_A201_akar"
     source := ⟨"haspelmath-1997", "(A201)"⟩
     reportedIn := none
@@ -1837,7 +1837,7 @@ def hu_A201_akar : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.26"), ("function", "comparative"), ("series", "akár-")] }
 
-def hu_A201_bar : LinguisticExample :=
+def hu_A201_bar : Datum :=
   { id := "haspelmath1997_hu_A201_bar"
     source := ⟨"haspelmath-1997", "(A201)"⟩
     reportedIn := none
@@ -1850,7 +1850,7 @@ def hu_A201_bar : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.26"), ("function", "comparative"), ("series", "bár-")] }
 
-def hu_A202_vala : LinguisticExample :=
+def hu_A202_vala : Datum :=
   { id := "haspelmath1997_hu_A202_vala"
     source := ⟨"haspelmath-1997", "(A202)"⟩
     reportedIn := none
@@ -1863,7 +1863,7 @@ def hu_A202_vala : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.26"), ("function", "indirectNeg"), ("series", "vala-")] }
 
-def hu_A202_bar : LinguisticExample :=
+def hu_A202_bar : Datum :=
   { id := "haspelmath1997_hu_A202_bar"
     source := ⟨"haspelmath-1997", "(A202)"⟩
     reportedIn := none
@@ -1876,7 +1876,7 @@ def hu_A202_bar : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.26"), ("function", "indirectNeg"), ("series", "bár-")] }
 
-def hu_A202_akar : LinguisticExample :=
+def hu_A202_akar : Datum :=
   { id := "haspelmath1997_hu_A202_akar"
     source := ⟨"haspelmath-1997", "(A202)"⟩
     reportedIn := none
@@ -1889,7 +1889,7 @@ def hu_A202_akar : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.26"), ("function", "indirectNeg"), ("series", "akár-")] }
 
-def hu_A203_bar : LinguisticExample :=
+def hu_A203_bar : Datum :=
   { id := "haspelmath1997_hu_A203_bar"
     source := ⟨"haspelmath-1997", "(A203)"⟩
     reportedIn := none
@@ -1902,7 +1902,7 @@ def hu_A203_bar : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.26"), ("function", "conditional"), ("series", "bár-")] }
 
-def hu_A203_akar : LinguisticExample :=
+def hu_A203_akar : Datum :=
   { id := "haspelmath1997_hu_A203_akar"
     source := ⟨"haspelmath-1997", "(A203)"⟩
     reportedIn := none
@@ -1915,7 +1915,7 @@ def hu_A203_akar : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.26"), ("function", "conditional"), ("series", "akár-")] }
 
-def hu_A203_vala : LinguisticExample :=
+def hu_A203_vala : Datum :=
   { id := "haspelmath1997_hu_A203_vala"
     source := ⟨"haspelmath-1997", "(A203)"⟩
     reportedIn := none
@@ -1928,7 +1928,7 @@ def hu_A203_vala : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.26"), ("function", "conditional"), ("series", "vala-")] }
 
-def hu_A204 : LinguisticExample :=
+def hu_A204 : Datum :=
   { id := "haspelmath1997_hu_A204"
     source := ⟨"haspelmath-1997", "(A204)"⟩
     reportedIn := none
@@ -1941,7 +1941,7 @@ def hu_A204 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.26"), ("function", "question"), ("series", "vala-")] }
 
-def hu_A204_akar : LinguisticExample :=
+def hu_A204_akar : Datum :=
   { id := "haspelmath1997_hu_A204_akar"
     source := ⟨"haspelmath-1997", "(A204)"⟩
     reportedIn := none
@@ -1954,7 +1954,7 @@ def hu_A204_akar : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.26"), ("function", "question"), ("series", "akár-")] }
 
-def hu_A204_bar : LinguisticExample :=
+def hu_A204_bar : Datum :=
   { id := "haspelmath1997_hu_A204_bar"
     source := ⟨"haspelmath-1997", "(A204)"⟩
     reportedIn := none
@@ -1967,7 +1967,7 @@ def hu_A204_bar : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.26"), ("function", "question"), ("series", "bár-")] }
 
-def fi_A205a : LinguisticExample :=
+def fi_A205a : Datum :=
   { id := "haspelmath1997_fi_A205a"
     source := ⟨"haspelmath-1997", "(A205a)"⟩
     reportedIn := none
@@ -1980,7 +1980,7 @@ def fi_A205a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.27"), ("function", "specificKnown"), ("series", "-kin")] }
 
-def fi_A205b : LinguisticExample :=
+def fi_A205b : Datum :=
   { id := "haspelmath1997_fi_A205b"
     source := ⟨"haspelmath-1997", "(A205b)"⟩
     reportedIn := none
@@ -1993,7 +1993,7 @@ def fi_A205b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.27"), ("function", "specificKnown"), ("series", "eräs")] }
 
-def fi_A206 : LinguisticExample :=
+def fi_A206 : Datum :=
   { id := "haspelmath1997_fi_A206"
     source := ⟨"haspelmath-1997", "(A206)"⟩
     reportedIn := none
@@ -2006,7 +2006,7 @@ def fi_A206 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.27"), ("function", "specificUnknown"), ("series", "-kin")] }
 
-def fi_A207 : LinguisticExample :=
+def fi_A207 : Datum :=
   { id := "haspelmath1997_fi_A207"
     source := ⟨"haspelmath-1997", "(A207)"⟩
     reportedIn := none
@@ -2019,7 +2019,7 @@ def fi_A207 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.27"), ("function", "irrealis"), ("series", "-kin")] }
 
-def fi_A208_kin : LinguisticExample :=
+def fi_A208_kin : Datum :=
   { id := "haspelmath1997_fi_A208_kin"
     source := ⟨"haspelmath-1997", "(A208)"⟩
     reportedIn := none
@@ -2032,7 +2032,7 @@ def fi_A208_kin : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.27"), ("function", "question"), ("series", "-kin")] }
 
-def fi_A208_kaan : LinguisticExample :=
+def fi_A208_kaan : Datum :=
   { id := "haspelmath1997_fi_A208_kaan"
     source := ⟨"haspelmath-1997", "(A208)"⟩
     reportedIn := none
@@ -2045,7 +2045,7 @@ def fi_A208_kaan : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.27"), ("function", "question"), ("series", "-kaan")] }
 
-def fi_A208_hyvansa : LinguisticExample :=
+def fi_A208_hyvansa : Datum :=
   { id := "haspelmath1997_fi_A208_hyvansa"
     source := ⟨"haspelmath-1997", "(A208)"⟩
     reportedIn := none
@@ -2058,7 +2058,7 @@ def fi_A208_hyvansa : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.27"), ("function", "question"), ("series", "hyvänsä")] }
 
-def fi_A209_kin : LinguisticExample :=
+def fi_A209_kin : Datum :=
   { id := "haspelmath1997_fi_A209_kin"
     source := ⟨"haspelmath-1997", "(A209)"⟩
     reportedIn := none
@@ -2071,7 +2071,7 @@ def fi_A209_kin : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.27"), ("function", "conditional"), ("series", "-kin")] }
 
-def fi_A209_hyvansa : LinguisticExample :=
+def fi_A209_hyvansa : Datum :=
   { id := "haspelmath1997_fi_A209_hyvansa"
     source := ⟨"haspelmath-1997", "(A209)"⟩
     reportedIn := none
@@ -2084,7 +2084,7 @@ def fi_A209_hyvansa : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.27"), ("function", "conditional"), ("series", "hyvänsä")] }
 
-def fi_A209_kaan : LinguisticExample :=
+def fi_A209_kaan : Datum :=
   { id := "haspelmath1997_fi_A209_kaan"
     source := ⟨"haspelmath-1997", "(A209)"⟩
     reportedIn := none
@@ -2097,7 +2097,7 @@ def fi_A209_kaan : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.27"), ("function", "conditional"), ("series", "-kaan")] }
 
-def fi_A210 : LinguisticExample :=
+def fi_A210 : Datum :=
   { id := "haspelmath1997_fi_A210"
     source := ⟨"haspelmath-1997", "(A210)"⟩
     reportedIn := none
@@ -2110,7 +2110,7 @@ def fi_A210 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.27"), ("function", "directNeg"), ("series", "-kaan")] }
 
-def fi_A211 : LinguisticExample :=
+def fi_A211 : Datum :=
   { id := "haspelmath1997_fi_A211"
     source := ⟨"haspelmath-1997", "(A211)"⟩
     reportedIn := none
@@ -2123,7 +2123,7 @@ def fi_A211 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.27"), ("function", "indirectNeg"), ("series", "-kaan")] }
 
-def fi_A212 : LinguisticExample :=
+def fi_A212 : Datum :=
   { id := "haspelmath1997_fi_A212"
     source := ⟨"haspelmath-1997", "(A212)"⟩
     reportedIn := none
@@ -2136,7 +2136,7 @@ def fi_A212 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.27"), ("function", "comparative"), ("series", "-kaan")] }
 
-def fi_A213 : LinguisticExample :=
+def fi_A213 : Datum :=
   { id := "haspelmath1997_fi_A213"
     source := ⟨"haspelmath-1997", "(A213)"⟩
     reportedIn := none
@@ -2149,7 +2149,7 @@ def fi_A213 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.27"), ("function", "freeChoice"), ("series", "hyvänsä")] }
 
-def fi_A214 : LinguisticExample :=
+def fi_A214 : Datum :=
   { id := "haspelmath1997_fi_A214"
     source := ⟨"haspelmath-1997", "(A214)"⟩
     reportedIn := none
@@ -2162,7 +2162,7 @@ def fi_A214 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.27"), ("function", "comparative"), ("series", "hyvänsä")] }
 
-def sw_A243a : LinguisticExample :=
+def sw_A243a : Datum :=
   { id := "haspelmath1997_sw_A243a"
     source := ⟨"haspelmath-1997", "(A243a)"⟩
     reportedIn := none
@@ -2175,7 +2175,7 @@ def sw_A243a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.33"), ("function", "specificUnknown"), ("series", "generic noun")] }
 
-def sw_A243b : LinguisticExample :=
+def sw_A243b : Datum :=
   { id := "haspelmath1997_sw_A243b"
     source := ⟨"haspelmath-1997", "(A243b)"⟩
     reportedIn := none
@@ -2188,7 +2188,7 @@ def sw_A243b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.33"), ("function", "specificUnknown"), ("series", "generic noun")] }
 
-def sw_A244 : LinguisticExample :=
+def sw_A244 : Datum :=
   { id := "haspelmath1997_sw_A244"
     source := ⟨"haspelmath-1997", "(A244)"⟩
     reportedIn := none
@@ -2201,7 +2201,7 @@ def sw_A244 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.33"), ("function", "irrealis"), ("series", "generic noun")] }
 
-def sw_A245a : LinguisticExample :=
+def sw_A245a : Datum :=
   { id := "haspelmath1997_sw_A245a"
     source := ⟨"haspelmath-1997", "(A245a)"⟩
     reportedIn := none
@@ -2214,7 +2214,7 @@ def sw_A245a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.33"), ("function", "question"), ("series", "generic noun")] }
 
-def sw_A245b : LinguisticExample :=
+def sw_A245b : Datum :=
   { id := "haspelmath1997_sw_A245b"
     source := ⟨"haspelmath-1997", "(A245b)"⟩
     reportedIn := none
@@ -2227,7 +2227,7 @@ def sw_A245b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.33"), ("function", "conditional"), ("series", "generic noun")] }
 
-def sw_A246 : LinguisticExample :=
+def sw_A246 : Datum :=
   { id := "haspelmath1997_sw_A246"
     source := ⟨"haspelmath-1997", "(A246)"⟩
     reportedIn := none
@@ -2240,7 +2240,7 @@ def sw_A246 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.33"), ("function", "indirectNeg"), ("series", "generic noun")] }
 
-def sw_A247 : LinguisticExample :=
+def sw_A247 : Datum :=
   { id := "haspelmath1997_sw_A247"
     source := ⟨"haspelmath-1997", "(A247)"⟩
     reportedIn := none
@@ -2253,7 +2253,7 @@ def sw_A247 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.33"), ("function", "directNeg"), ("series", "generic noun")] }
 
-def sw_A248 : LinguisticExample :=
+def sw_A248 : Datum :=
   { id := "haspelmath1997_sw_A248"
     source := ⟨"haspelmath-1997", "(A248)"⟩
     reportedIn := none
@@ -2266,7 +2266,7 @@ def sw_A248 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.33"), ("function", "freeChoice"), ("series", "CL-o CL-ote")] }
 
-def sw_A249 : LinguisticExample :=
+def sw_A249 : Datum :=
   { id := "haspelmath1997_sw_A249"
     source := ⟨"haspelmath-1997", "(A249)"⟩
     reportedIn := none
@@ -2279,7 +2279,7 @@ def sw_A249 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.33"), ("function", "directNeg"), ("series", "CL-o CL-ote")] }
 
-def sw_A250a : LinguisticExample :=
+def sw_A250a : Datum :=
   { id := "haspelmath1997_sw_A250a"
     source := ⟨"haspelmath-1997", "(A250a)"⟩
     reportedIn := none
@@ -2292,7 +2292,7 @@ def sw_A250a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.33"), ("function", "question"), ("series", "CL-o CL-ote")] }
 
-def sw_A250b : LinguisticExample :=
+def sw_A250b : Datum :=
   { id := "haspelmath1997_sw_A250b"
     source := ⟨"haspelmath-1997", "(A250b)"⟩
     reportedIn := none
@@ -2305,7 +2305,7 @@ def sw_A250b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.33"), ("function", "conditional"), ("series", "CL-o CL-ote")] }
 
-def ka_A251a : LinguisticExample :=
+def ka_A251a : Datum :=
   { id := "haspelmath1997_ka_A251a"
     source := ⟨"vogt-1971", "p. 47"⟩
     reportedIn := some ⟨"haspelmath-1997", "(A251a)"⟩
@@ -2318,7 +2318,7 @@ def ka_A251a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.34"), ("function", "specificKnown"), ("series", "-γac")] }
 
-def ka_A251b : LinguisticExample :=
+def ka_A251b : Datum :=
   { id := "haspelmath1997_ka_A251b"
     source := ⟨"vogt-1971", "p. 47"⟩
     reportedIn := some ⟨"haspelmath-1997", "(A251b)"⟩
@@ -2331,7 +2331,7 @@ def ka_A251b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.34"), ("function", "specificUnknown"), ("series", "-γac")] }
 
-def ka_A251b_me : LinguisticExample :=
+def ka_A251b_me : Datum :=
   { id := "haspelmath1997_ka_A251b_me"
     source := ⟨"haspelmath-1997", "(A251b)"⟩
     reportedIn := none
@@ -2344,7 +2344,7 @@ def ka_A251b_me : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.34"), ("function", "specificUnknown"), ("series", "-me")] }
 
-def ka_A252a : LinguisticExample :=
+def ka_A252a : Datum :=
   { id := "haspelmath1997_ka_A252a"
     source := ⟨"haspelmath-1997", "(A252a)"⟩
     reportedIn := none
@@ -2357,7 +2357,7 @@ def ka_A252a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.34"), ("function", "irrealis"), ("series", "-me")] }
 
-def ka_A252b : LinguisticExample :=
+def ka_A252b : Datum :=
   { id := "haspelmath1997_ka_A252b"
     source := ⟨"vogt-1971", "p. 47"⟩
     reportedIn := some ⟨"haspelmath-1997", "(A252b)"⟩
@@ -2370,7 +2370,7 @@ def ka_A252b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.34"), ("function", "irrealis"), ("series", "-me")] }
 
-def ka_A253a : LinguisticExample :=
+def ka_A253a : Datum :=
   { id := "haspelmath1997_ka_A253a"
     source := ⟨"vogt-1971", "p. 47"⟩
     reportedIn := some ⟨"haspelmath-1997", "(A253a)"⟩
@@ -2383,7 +2383,7 @@ def ka_A253a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.34"), ("function", "question"), ("series", "-me")] }
 
-def ka_A253a_yac : LinguisticExample :=
+def ka_A253a_yac : Datum :=
   { id := "haspelmath1997_ka_A253a_yac"
     source := ⟨"haspelmath-1997", "(A253a)"⟩
     reportedIn := none
@@ -2396,7 +2396,7 @@ def ka_A253a_yac : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.34"), ("function", "question"), ("series", "-γac")] }
 
-def ka_A253b : LinguisticExample :=
+def ka_A253b : Datum :=
   { id := "haspelmath1997_ka_A253b"
     source := ⟨"haspelmath-1997", "(A253b)"⟩
     reportedIn := none
@@ -2409,7 +2409,7 @@ def ka_A253b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.34"), ("function", "conditional"), ("series", "-me")] }
 
-def ka_A254 : LinguisticExample :=
+def ka_A254 : Datum :=
   { id := "haspelmath1997_ka_A254"
     source := ⟨"haspelmath-1997", "(A254)"⟩
     reportedIn := none
@@ -2422,7 +2422,7 @@ def ka_A254 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.34"), ("function", "indirectNeg"), ("series", "-me"), ("item", "vera-")] }
 
-def ka_A255 : LinguisticExample :=
+def ka_A255 : Datum :=
   { id := "haspelmath1997_ka_A255"
     source := ⟨"haspelmath-1997", "(A255)"⟩
     reportedIn := none
@@ -2435,7 +2435,7 @@ def ka_A255 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.34"), ("function", "comparative"), ("series", "-me")] }
 
-def ka_A256a : LinguisticExample :=
+def ka_A256a : Datum :=
   { id := "haspelmath1997_ka_A256a"
     source := ⟨"tschenkeli-1958", "p. 223"⟩
     reportedIn := some ⟨"haspelmath-1997", "(A256a)"⟩
@@ -2448,7 +2448,7 @@ def ka_A256a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.34"), ("function", "directNeg"), ("series", "ara-")] }
 
-def ka_A256b : LinguisticExample :=
+def ka_A256b : Datum :=
   { id := "haspelmath1997_ka_A256b"
     source := ⟨"haspelmath-1997", "(A256b)"⟩
     reportedIn := none
@@ -2461,7 +2461,7 @@ def ka_A256b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.34"), ("function", "directNeg"), ("series", "ara-")] }
 
-def ka_A256c : LinguisticExample :=
+def ka_A256c : Datum :=
   { id := "haspelmath1997_ka_A256c"
     source := ⟨"vogt-1971", "p. 48"⟩
     reportedIn := some ⟨"haspelmath-1997", "(A256c)"⟩
@@ -2474,7 +2474,7 @@ def ka_A256c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.34"), ("function", "directNeg"), ("item", "nura-")] }
 
-def zh_A264 : LinguisticExample :=
+def zh_A264 : Datum :=
   { id := "haspelmath1997_zh_A264"
     source := ⟨"li-1992", "p. 152"⟩
     reportedIn := some ⟨"haspelmath-1997", "(A264)"⟩
@@ -2487,7 +2487,7 @@ def zh_A264 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.36"), ("function", "irrealis"), ("series", "bare interrogative")] }
 
-def zh_A265a : LinguisticExample :=
+def zh_A265a : Datum :=
   { id := "haspelmath1997_zh_A265a"
     source := ⟨"li-1992", "p. 131"⟩
     reportedIn := some ⟨"haspelmath-1997", "(A265a)"⟩
@@ -2500,7 +2500,7 @@ def zh_A265a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.36"), ("function", "irrealis"), ("series", "bare interrogative")] }
 
-def zh_A265b_le : LinguisticExample :=
+def zh_A265b_le : Datum :=
   { id := "haspelmath1997_zh_A265b_le"
     source := ⟨"li-1992", "p. 133"⟩
     reportedIn := some ⟨"haspelmath-1997", "(A265b)"⟩
@@ -2513,7 +2513,7 @@ def zh_A265b_le : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.36"), ("function", "irrealis"), ("series", "bare interrogative")] }
 
-def zh_A265b_bare : LinguisticExample :=
+def zh_A265b_bare : Datum :=
   { id := "haspelmath1997_zh_A265b_bare"
     source := ⟨"li-1992", "p. 133"⟩
     reportedIn := some ⟨"haspelmath-1997", "(A265b)"⟩
@@ -2526,7 +2526,7 @@ def zh_A265b_bare : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.36"), ("function", "irrealis"), ("series", "bare interrogative")] }
 
-def zh_A266a : LinguisticExample :=
+def zh_A266a : Datum :=
   { id := "haspelmath1997_zh_A266a"
     source := ⟨"li-1992", "p. 128"⟩
     reportedIn := some ⟨"haspelmath-1997", "(A266a)"⟩
@@ -2539,7 +2539,7 @@ def zh_A266a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.36"), ("function", "question"), ("series", "bare interrogative")] }
 
-def zh_A266b : LinguisticExample :=
+def zh_A266b : Datum :=
   { id := "haspelmath1997_zh_A266b"
     source := ⟨"haspelmath-1997", "(A266b)"⟩
     reportedIn := none
@@ -2552,7 +2552,7 @@ def zh_A266b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.36"), ("function", "conditional"), ("series", "bare interrogative")] }
 
-def zh_A267a : LinguisticExample :=
+def zh_A267a : Datum :=
   { id := "haspelmath1997_zh_A267a"
     source := ⟨"li-1992", "p. 127"⟩
     reportedIn := some ⟨"haspelmath-1997", "(A267a)"⟩
@@ -2565,7 +2565,7 @@ def zh_A267a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.36"), ("function", "directNeg"), ("series", "bare interrogative")] }
 
-def zh_A267b : LinguisticExample :=
+def zh_A267b : Datum :=
   { id := "haspelmath1997_zh_A267b"
     source := ⟨"haspelmath-1997", "(A267b)"⟩
     reportedIn := none
@@ -2578,7 +2578,7 @@ def zh_A267b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.36"), ("function", "directNeg"), ("series", "bare interrogative")] }
 
-def zh_A267c : LinguisticExample :=
+def zh_A267c : Datum :=
   { id := "haspelmath1997_zh_A267c"
     source := ⟨"haspelmath-1997", "(A267c)"⟩
     reportedIn := none
@@ -2591,7 +2591,7 @@ def zh_A267c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.36"), ("function", "directNeg"), ("series", "bare interrogative")] }
 
-def zh_A267d_ren : LinguisticExample :=
+def zh_A267d_ren : Datum :=
   { id := "haspelmath1997_zh_A267d_ren"
     source := ⟨"haspelmath-1997", "(A267d)"⟩
     reportedIn := none
@@ -2604,7 +2604,7 @@ def zh_A267d_ren : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.36"), ("function", "directNeg"), ("item", "nǎge")] }
 
-def zh_A267d_bare : LinguisticExample :=
+def zh_A267d_bare : Datum :=
   { id := "haspelmath1997_zh_A267d_bare"
     source := ⟨"haspelmath-1997", "(A267d)"⟩
     reportedIn := none
@@ -2617,7 +2617,7 @@ def zh_A267d_bare : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.36"), ("function", "directNeg"), ("item", "nǎge")] }
 
-def zh_A268_unknown : LinguisticExample :=
+def zh_A268_unknown : Datum :=
   { id := "haspelmath1997_zh_A268_unknown"
     source := ⟨"haspelmath-1997", "(A268)"⟩
     reportedIn := none
@@ -2630,7 +2630,7 @@ def zh_A268_unknown : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.36"), ("function", "specificUnknown"), ("series", "generic noun")] }
 
-def zh_A268_known : LinguisticExample :=
+def zh_A268_known : Datum :=
   { id := "haspelmath1997_zh_A268_known"
     source := ⟨"haspelmath-1997", "(A268)"⟩
     reportedIn := none
@@ -2643,7 +2643,7 @@ def zh_A268_known : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.36"), ("function", "specificKnown"), ("series", "generic noun")] }
 
-def zh_A269a : LinguisticExample :=
+def zh_A269a : Datum :=
   { id := "haspelmath1997_zh_A269a"
     source := ⟨"li-thompson-1981", "p. 529"⟩
     reportedIn := some ⟨"haspelmath-1997", "(A269a)"⟩
@@ -2656,7 +2656,7 @@ def zh_A269a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.36"), ("function", "directNeg"), ("series", "yě")] }
 
-def zh_A269b : LinguisticExample :=
+def zh_A269b : Datum :=
   { id := "haspelmath1997_zh_A269b"
     source := ⟨"li-thompson-1981", "p. 528"⟩
     reportedIn := some ⟨"haspelmath-1997", "(A269b)"⟩
@@ -2669,7 +2669,7 @@ def zh_A269b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.36"), ("function", "directNeg"), ("series", "dōu")] }
 
-def zh_A269c_dou : LinguisticExample :=
+def zh_A269c_dou : Datum :=
   { id := "haspelmath1997_zh_A269c_dou"
     source := ⟨"haspelmath-1997", "(A269c)"⟩
     reportedIn := none
@@ -2682,7 +2682,7 @@ def zh_A269c_dou : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.36"), ("function", "directNeg"), ("series", "dōu")] }
 
-def zh_A269c_ye : LinguisticExample :=
+def zh_A269c_ye : Datum :=
   { id := "haspelmath1997_zh_A269c_ye"
     source := ⟨"haspelmath-1997", "(A269c)"⟩
     reportedIn := none
@@ -2695,7 +2695,7 @@ def zh_A269c_ye : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.36"), ("function", "directNeg"), ("series", "yě")] }
 
-def zh_A269d : LinguisticExample :=
+def zh_A269d : Datum :=
   { id := "haspelmath1997_zh_A269d"
     source := ⟨"haspelmath-1997", "(A269d)"⟩
     reportedIn := none
@@ -2708,7 +2708,7 @@ def zh_A269d : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.36"), ("function", "directNeg"), ("series", "dōu")] }
 
-def zh_A270 : LinguisticExample :=
+def zh_A270 : Datum :=
   { id := "haspelmath1997_zh_A270"
     source := ⟨"haspelmath-1997", "(A270)"⟩
     reportedIn := none
@@ -2721,7 +2721,7 @@ def zh_A270 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.36"), ("function", "freeChoice"), ("series", "rènhé")] }
 
-def zh_A271 : LinguisticExample :=
+def zh_A271 : Datum :=
   { id := "haspelmath1997_zh_A271"
     source := ⟨"haspelmath-1997", "(A271)"⟩
     reportedIn := none
@@ -2734,7 +2734,7 @@ def zh_A271 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.36"), ("function", "comparative"), ("series", "rènhé")] }
 
-def zh_A272 : LinguisticExample :=
+def zh_A272 : Datum :=
   { id := "haspelmath1997_zh_A272"
     source := ⟨"haspelmath-1997", "(A272)"⟩
     reportedIn := none
@@ -2747,7 +2747,7 @@ def zh_A272 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.36"), ("function", "directNeg"), ("series", "rènhé")] }
 
-def zh_A273 : LinguisticExample :=
+def zh_A273 : Datum :=
   { id := "haspelmath1997_zh_A273"
     source := ⟨"haspelmath-1997", "(A273)"⟩
     reportedIn := none
@@ -2760,7 +2760,7 @@ def zh_A273 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.36"), ("function", "indirectNeg"), ("series", "rènhé")] }
 
-def qu_A274a : LinguisticExample :=
+def qu_A274a : Datum :=
   { id := "haspelmath1997_qu_A274a"
     source := ⟨"haspelmath-1997", "(A274a)"⟩
     reportedIn := none
@@ -2773,7 +2773,7 @@ def qu_A274a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.37"), ("function", "specificUnknown"), ("series", "bare interrogative")] }
 
-def qu_A274b : LinguisticExample :=
+def qu_A274b : Datum :=
   { id := "haspelmath1997_qu_A274b"
     source := ⟨"haspelmath-1997", "(A274b)"⟩
     reportedIn := none
@@ -2786,7 +2786,7 @@ def qu_A274b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.37"), ("function", "specificUnknown"), ("series", "bare interrogative")] }
 
-def qu_A275a : LinguisticExample :=
+def qu_A275a : Datum :=
   { id := "haspelmath1997_qu_A275a"
     source := ⟨"haspelmath-1997", "(A275a)"⟩
     reportedIn := none
@@ -2799,7 +2799,7 @@ def qu_A275a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.37"), ("function", "irrealis"), ("series", "-pis")] }
 
-def qu_A275b : LinguisticExample :=
+def qu_A275b : Datum :=
   { id := "haspelmath1997_qu_A275b"
     source := ⟨"haspelmath-1997", "(A275b)"⟩
     reportedIn := none
@@ -2812,7 +2812,7 @@ def qu_A275b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.37"), ("function", "irrealis"), ("series", "-pis")] }
 
-def qu_A276a : LinguisticExample :=
+def qu_A276a : Datum :=
   { id := "haspelmath1997_qu_A276a"
     source := ⟨"haspelmath-1997", "(A276a)"⟩
     reportedIn := none
@@ -2825,7 +2825,7 @@ def qu_A276a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.37"), ("function", "question"), ("series", "-pis")] }
 
-def qu_A276b : LinguisticExample :=
+def qu_A276b : Datum :=
   { id := "haspelmath1997_qu_A276b"
     source := ⟨"haspelmath-1997", "(A276b)"⟩
     reportedIn := none
@@ -2838,7 +2838,7 @@ def qu_A276b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.37"), ("function", "conditional"), ("series", "-pis")] }
 
-def qu_A277 : LinguisticExample :=
+def qu_A277 : Datum :=
   { id := "haspelmath1997_qu_A277"
     source := ⟨"haspelmath-1997", "(A277)"⟩
     reportedIn := none
@@ -2851,7 +2851,7 @@ def qu_A277 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.37"), ("function", "comparative"), ("series", "-pis")] }
 
-def qu_A278 : LinguisticExample :=
+def qu_A278 : Datum :=
   { id := "haspelmath1997_qu_A278"
     source := ⟨"haspelmath-1997", "(A278)"⟩
     reportedIn := none
@@ -2864,7 +2864,7 @@ def qu_A278 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.37"), ("function", "freeChoice"), ("series", "-pis")] }
 
-def qu_A279a : LinguisticExample :=
+def qu_A279a : Datum :=
   { id := "haspelmath1997_qu_A279a"
     source := ⟨"weber-1989", "p. 21"⟩
     reportedIn := some ⟨"haspelmath-1997", "(A279a)"⟩
@@ -2877,7 +2877,7 @@ def qu_A279a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.37"), ("function", "directNeg"), ("series", "-pis")] }
 
-def qu_A279b : LinguisticExample :=
+def qu_A279b : Datum :=
   { id := "haspelmath1997_qu_A279b"
     source := ⟨"haspelmath-1997", "(A279b)"⟩
     reportedIn := none
@@ -2890,7 +2890,7 @@ def qu_A279b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.37"), ("function", "directNeg"), ("series", "-pis")] }
 
-def qu_A280 : LinguisticExample :=
+def qu_A280 : Datum :=
   { id := "haspelmath1997_qu_A280"
     source := ⟨"weber-1989", "p. 340"⟩
     reportedIn := some ⟨"haspelmath-1997", "(A280)"⟩
@@ -2903,7 +2903,7 @@ def qu_A280 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.37"), ("function", "indirectNeg"), ("series", "-pis")] }
 
-def ja_A281_unknown : LinguisticExample :=
+def ja_A281_unknown : Datum :=
   { id := "haspelmath1997_ja_A281_unknown"
     source := ⟨"haspelmath-1997", "(A281)"⟩
     reportedIn := none
@@ -2916,7 +2916,7 @@ def ja_A281_unknown : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.38"), ("function", "specificUnknown"), ("series", "-ka")] }
 
-def ja_A281_known : LinguisticExample :=
+def ja_A281_known : Datum :=
   { id := "haspelmath1997_ja_A281_known"
     source := ⟨"haspelmath-1997", "(A281)"⟩
     reportedIn := none
@@ -2929,7 +2929,7 @@ def ja_A281_known : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.38"), ("function", "specificKnown"), ("series", "-ka")] }
 
-def ja_A282a : LinguisticExample :=
+def ja_A282a : Datum :=
   { id := "haspelmath1997_ja_A282a"
     source := ⟨"haspelmath-1997", "(A282a)"⟩
     reportedIn := none
@@ -2942,7 +2942,7 @@ def ja_A282a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.38"), ("function", "irrealis"), ("series", "-ka")] }
 
-def ja_A282b : LinguisticExample :=
+def ja_A282b : Datum :=
   { id := "haspelmath1997_ja_A282b"
     source := ⟨"ohno-1984", "p. 238"⟩
     reportedIn := some ⟨"haspelmath-1997", "(A282b)"⟩
@@ -2955,7 +2955,7 @@ def ja_A282b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.38"), ("function", "irrealis"), ("series", "-ka")] }
 
-def ja_A283a : LinguisticExample :=
+def ja_A283a : Datum :=
   { id := "haspelmath1997_ja_A283a"
     source := ⟨"mcgloin-1976", "p. 409"⟩
     reportedIn := some ⟨"haspelmath-1997", "(A283a)"⟩
@@ -2968,7 +2968,7 @@ def ja_A283a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.38"), ("function", "question"), ("series", "-ka")] }
 
-def ja_A283a_mo : LinguisticExample :=
+def ja_A283a_mo : Datum :=
   { id := "haspelmath1997_ja_A283a_mo"
     source := ⟨"haspelmath-1997", "(A283a)"⟩
     reportedIn := none
@@ -2981,7 +2981,7 @@ def ja_A283a_mo : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.38"), ("function", "question"), ("series", "-mo")] }
 
-def ja_A283b : LinguisticExample :=
+def ja_A283b : Datum :=
   { id := "haspelmath1997_ja_A283b"
     source := ⟨"mcgloin-1976", "p. 415"⟩
     reportedIn := some ⟨"haspelmath-1997", "(A283b)"⟩
@@ -2994,7 +2994,7 @@ def ja_A283b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.38"), ("function", "conditional"), ("series", "-ka")] }
 
-def ja_A283b_mo : LinguisticExample :=
+def ja_A283b_mo : Datum :=
   { id := "haspelmath1997_ja_A283b_mo"
     source := ⟨"haspelmath-1997", "(A283b)"⟩
     reportedIn := none
@@ -3007,7 +3007,7 @@ def ja_A283b_mo : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.38"), ("function", "conditional"), ("series", "-mo")] }
 
-def ja_A284 : LinguisticExample :=
+def ja_A284 : Datum :=
   { id := "haspelmath1997_ja_A284"
     source := ⟨"haspelmath-1997", "(A284)"⟩
     reportedIn := none
@@ -3020,7 +3020,7 @@ def ja_A284 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.38"), ("function", "comparative"), ("series", "-mo")] }
 
-def ja_A285 : LinguisticExample :=
+def ja_A285 : Datum :=
   { id := "haspelmath1997_ja_A285"
     source := ⟨"haspelmath-1997", "(A285)"⟩
     reportedIn := none
@@ -3033,7 +3033,7 @@ def ja_A285 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.38"), ("function", "directNeg"), ("series", "-mo")] }
 
-def ja_A286 : LinguisticExample :=
+def ja_A286 : Datum :=
   { id := "haspelmath1997_ja_A286"
     source := ⟨"mcgloin-1976", "p. 405"⟩
     reportedIn := some ⟨"haspelmath-1997", "(A286)"⟩
@@ -3046,7 +3046,7 @@ def ja_A286 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.38"), ("function", "indirectNeg"), ("series", "-mo")] }
 
-def ja_A287 : LinguisticExample :=
+def ja_A287 : Datum :=
   { id := "haspelmath1997_ja_A287"
     source := ⟨"haspelmath-1997", "(A287)"⟩
     reportedIn := none
@@ -3059,7 +3059,7 @@ def ja_A287 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.38"), ("function", "freeChoice"), ("series", "-demo")] }
 
-def ko_A288a_bare_unknown : LinguisticExample :=
+def ko_A288a_bare_unknown : Datum :=
   { id := "haspelmath1997_ko_A288a_bare_unknown"
     source := ⟨"haspelmath-1997", "(A288a)"⟩
     reportedIn := none
@@ -3072,7 +3072,7 @@ def ko_A288a_bare_unknown : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.39"), ("function", "specificUnknown"), ("series", "bare interrogative")] }
 
-def ko_A288a_nka_unknown : LinguisticExample :=
+def ko_A288a_nka_unknown : Datum :=
   { id := "haspelmath1997_ko_A288a_nka_unknown"
     source := ⟨"haspelmath-1997", "(A288a)"⟩
     reportedIn := none
@@ -3085,7 +3085,7 @@ def ko_A288a_nka_unknown : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.39"), ("function", "specificUnknown"), ("series", "-nka")] }
 
-def ko_A288a_bare_known : LinguisticExample :=
+def ko_A288a_bare_known : Datum :=
   { id := "haspelmath1997_ko_A288a_bare_known"
     source := ⟨"haspelmath-1997", "(A288a)"⟩
     reportedIn := none
@@ -3098,7 +3098,7 @@ def ko_A288a_bare_known : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.39"), ("function", "specificKnown"), ("series", "bare interrogative")] }
 
-def ko_A288a_nka_known : LinguisticExample :=
+def ko_A288a_nka_known : Datum :=
   { id := "haspelmath1997_ko_A288a_nka_known"
     source := ⟨"haspelmath-1997", "(A288a)"⟩
     reportedIn := none
@@ -3111,7 +3111,7 @@ def ko_A288a_nka_known : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.39"), ("function", "specificKnown"), ("series", "-nka")] }
 
-def ko_A288b_bare : LinguisticExample :=
+def ko_A288b_bare : Datum :=
   { id := "haspelmath1997_ko_A288b_bare"
     source := ⟨"haspelmath-1997", "(A288b)"⟩
     reportedIn := none
@@ -3124,7 +3124,7 @@ def ko_A288b_bare : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.39"), ("function", "specificUnknown"), ("series", "bare interrogative")] }
 
-def ko_A288b_nka : LinguisticExample :=
+def ko_A288b_nka : Datum :=
   { id := "haspelmath1997_ko_A288b_nka"
     source := ⟨"haspelmath-1997", "(A288b)"⟩
     reportedIn := none
@@ -3137,7 +3137,7 @@ def ko_A288b_nka : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.39"), ("function", "specificUnknown"), ("series", "-nka")] }
 
-def ko_A289a_bare : LinguisticExample :=
+def ko_A289a_bare : Datum :=
   { id := "haspelmath1997_ko_A289a_bare"
     source := ⟨"haspelmath-1997", "(A289a)"⟩
     reportedIn := none
@@ -3150,7 +3150,7 @@ def ko_A289a_bare : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.39"), ("function", "irrealis"), ("series", "bare interrogative")] }
 
-def ko_A289a_nka : LinguisticExample :=
+def ko_A289a_nka : Datum :=
   { id := "haspelmath1997_ko_A289a_nka"
     source := ⟨"haspelmath-1997", "(A289a)"⟩
     reportedIn := none
@@ -3163,7 +3163,7 @@ def ko_A289a_nka : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.39"), ("function", "irrealis"), ("series", "-nka")] }
 
-def ko_A289b : LinguisticExample :=
+def ko_A289b : Datum :=
   { id := "haspelmath1997_ko_A289b"
     source := ⟨"martin-lee-1969", "p. 411"⟩
     reportedIn := some ⟨"haspelmath-1997", "(A289b)"⟩
@@ -3176,7 +3176,7 @@ def ko_A289b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.39"), ("function", "irrealis"), ("series", "bare interrogative")] }
 
-def ko_A290a_bare : LinguisticExample :=
+def ko_A290a_bare : Datum :=
   { id := "haspelmath1997_ko_A290a_bare"
     source := ⟨"haspelmath-1997", "(A290a)"⟩
     reportedIn := none
@@ -3189,7 +3189,7 @@ def ko_A290a_bare : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.39"), ("function", "conditional"), ("series", "bare interrogative")] }
 
-def ko_A290a_nka : LinguisticExample :=
+def ko_A290a_nka : Datum :=
   { id := "haspelmath1997_ko_A290a_nka"
     source := ⟨"haspelmath-1997", "(A290a)"⟩
     reportedIn := none
@@ -3202,7 +3202,7 @@ def ko_A290a_nka : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.39"), ("function", "conditional"), ("series", "-nka")] }
 
-def ko_A290a_na : LinguisticExample :=
+def ko_A290a_na : Datum :=
   { id := "haspelmath1997_ko_A290a_na"
     source := ⟨"haspelmath-1997", "(A290a)"⟩
     reportedIn := none
@@ -3215,7 +3215,7 @@ def ko_A290a_na : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.39"), ("function", "conditional"), ("series", "-na")] }
 
-def ko_A290a_tunci : LinguisticExample :=
+def ko_A290a_tunci : Datum :=
   { id := "haspelmath1997_ko_A290a_tunci"
     source := ⟨"haspelmath-1997", "(A290a)"⟩
     reportedIn := none
@@ -3228,7 +3228,7 @@ def ko_A290a_tunci : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.39"), ("function", "conditional"), ("series", "-tunci")] }
 
-def ko_A290b_bare : LinguisticExample :=
+def ko_A290b_bare : Datum :=
   { id := "haspelmath1997_ko_A290b_bare"
     source := ⟨"haspelmath-1997", "(A290b)"⟩
     reportedIn := none
@@ -3241,7 +3241,7 @@ def ko_A290b_bare : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.39"), ("function", "question"), ("series", "bare interrogative")] }
 
-def ko_A290b_nka : LinguisticExample :=
+def ko_A290b_nka : Datum :=
   { id := "haspelmath1997_ko_A290b_nka"
     source := ⟨"haspelmath-1997", "(A290b)"⟩
     reportedIn := none
@@ -3254,7 +3254,7 @@ def ko_A290b_nka : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.39"), ("function", "question"), ("series", "-nka")] }
 
-def ko_A290b_na : LinguisticExample :=
+def ko_A290b_na : Datum :=
   { id := "haspelmath1997_ko_A290b_na"
     source := ⟨"haspelmath-1997", "(A290b)"⟩
     reportedIn := none
@@ -3267,7 +3267,7 @@ def ko_A290b_na : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.39"), ("function", "question"), ("series", "-na")] }
 
-def ko_A290b_tunci : LinguisticExample :=
+def ko_A290b_tunci : Datum :=
   { id := "haspelmath1997_ko_A290b_tunci"
     source := ⟨"haspelmath-1997", "(A290b)"⟩
     reportedIn := none
@@ -3280,7 +3280,7 @@ def ko_A290b_tunci : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.39"), ("function", "question"), ("series", "-tunci")] }
 
-def ko_A291_na : LinguisticExample :=
+def ko_A291_na : Datum :=
   { id := "haspelmath1997_ko_A291_na"
     source := ⟨"haspelmath-1997", "(A291)"⟩
     reportedIn := none
@@ -3293,7 +3293,7 @@ def ko_A291_na : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.39"), ("function", "freeChoice"), ("series", "-na")] }
 
-def ko_A291_tunci : LinguisticExample :=
+def ko_A291_tunci : Datum :=
   { id := "haspelmath1997_ko_A291_tunci"
     source := ⟨"haspelmath-1997", "(A291)"⟩
     reportedIn := none
@@ -3306,7 +3306,7 @@ def ko_A291_tunci : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.39"), ("function", "freeChoice"), ("series", "-tunci")] }
 
-def ko_A291_amu_na : LinguisticExample :=
+def ko_A291_amu_na : Datum :=
   { id := "haspelmath1997_ko_A291_amu_na"
     source := ⟨"haspelmath-1997", "(A291)"⟩
     reportedIn := none
@@ -3319,7 +3319,7 @@ def ko_A291_amu_na : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.39"), ("function", "freeChoice"), ("series", "-na")] }
 
-def ko_A291_amu_tunci : LinguisticExample :=
+def ko_A291_amu_tunci : Datum :=
   { id := "haspelmath1997_ko_A291_amu_tunci"
     source := ⟨"haspelmath-1997", "(A291)"⟩
     reportedIn := none
@@ -3332,7 +3332,7 @@ def ko_A291_amu_tunci : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.39"), ("function", "freeChoice"), ("series", "-tunci")] }
 
-def ko_A292_to : LinguisticExample :=
+def ko_A292_to : Datum :=
   { id := "haspelmath1997_ko_A292_to"
     source := ⟨"haspelmath-1997", "(A292)"⟩
     reportedIn := none
@@ -3345,7 +3345,7 @@ def ko_A292_to : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.39"), ("function", "indirectNeg"), ("series", "-to")] }
 
-def ko_A292_bare : LinguisticExample :=
+def ko_A292_bare : Datum :=
   { id := "haspelmath1997_ko_A292_bare"
     source := ⟨"haspelmath-1997", "(A292)"⟩
     reportedIn := none
@@ -3358,7 +3358,7 @@ def ko_A292_bare : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.39"), ("function", "indirectNeg"), ("series", "bare interrogative")] }
 
-def ko_A292_nka : LinguisticExample :=
+def ko_A292_nka : Datum :=
   { id := "haspelmath1997_ko_A292_nka"
     source := ⟨"haspelmath-1997", "(A292)"⟩
     reportedIn := none
@@ -3371,7 +3371,7 @@ def ko_A292_nka : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.39"), ("function", "indirectNeg"), ("series", "-nka")] }
 
-def ko_A293a_amu : LinguisticExample :=
+def ko_A293a_amu : Datum :=
   { id := "haspelmath1997_ko_A293a_amu"
     source := ⟨"haspelmath-1997", "(A293a)"⟩
     reportedIn := none
@@ -3384,7 +3384,7 @@ def ko_A293a_amu : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.39"), ("function", "directNeg"), ("series", "-to")] }
 
-def ko_A293a_nwukwu : LinguisticExample :=
+def ko_A293a_nwukwu : Datum :=
   { id := "haspelmath1997_ko_A293a_nwukwu"
     source := ⟨"haspelmath-1997", "(A293a)"⟩
     reportedIn := none
@@ -3397,7 +3397,7 @@ def ko_A293a_nwukwu : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.39"), ("function", "directNeg"), ("series", "-to")] }
 
-def ko_A293b : LinguisticExample :=
+def ko_A293b : Datum :=
   { id := "haspelmath1997_ko_A293b"
     source := ⟨"haspelmath-1997", "(A293b)"⟩
     reportedIn := none
@@ -3410,7 +3410,7 @@ def ko_A293b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.39"), ("function", "directNeg"), ("series", "-to")] }
 
-def ko_A294 : LinguisticExample :=
+def ko_A294 : Datum :=
   { id := "haspelmath1997_ko_A294"
     source := ⟨"haspelmath-1997", "(A294)"⟩
     reportedIn := none
@@ -3423,6 +3423,6 @@ def ko_A294 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "A.39"), ("function", "comparative"), ("series", "-to")] }
 
-def all : List LinguisticExample := [en_102a, en_102a_known, en_151a, en_151b, en_154a, en_154a_any, en_154b, en_154b_some, en_44b, en_45b, en_49b, en_50b, en_51b, en_52, en_43b, en_103a, en_34b, de_A1a_etwas, de_A1a_irgend, de_A1b_etwas, de_A1b_irgend, de_A2_etwas, de_A2_irgend, de_A3a_etwas, de_A3a_irgend, de_A3b_irgend, de_A3b_je, de_A3c_etwas, de_A3c_irgend, de_A4_je_etwas, de_A4_je_irgend, de_A4_irgend_etwas, de_A4_irgend_irgend, de_A5, de_A6, de_A7, de_A8, de_A9a_jeder, de_A9a_irgend, de_A9b_jeder, de_A9b_irgend, de_A10a, de_A10b_etwas, de_A10b_irgend, it_A74, it_A75, it_A76, it_A77_qualche, it_A77_nessuno, it_A78, it_A78_nessuno, it_A79_nessuno, it_A79_qualche, it_A80, it_A81, it_A82a, it_A82b, it_A82c, ru_A121, ru_A122a_nibud, ru_A122a_libo, ru_A122b_nibud, ru_A122b_libo, ru_A123a_nibud, ru_A123a_libo, ru_A123b_nibud, ru_A123b_libo, ru_A124a, ru_A124b_nibud, ru_A124b_to, ru_A125_libo, ru_A125_byToNiBylo, ru_A126a_libo, ru_A126a_byToNiBylo, ru_A126b_libo, ru_A126b_byToNiBylo, ru_A127a, ru_A127b, ru_A128_ljuboj, ru_A128_ugodno, ru_A128_byToNiBylo, ru_A129, ru_A130, lv_A138, lv_A139, lv_A140a, lv_A140b, lv_A140c_kaut, lv_A140c_jeb, lv_A141, lv_A142, lv_A143a, lv_A143b, lv_A144, hi_A167_known, hi_A167_unknown, hi_A167_bhii, hi_A167_bhii_unknown, hi_A168_koii, hi_A168_bhii, hi_A169a_koii, hi_A169a_bhii, hi_A169b, hi_A170a_koii, hi_A170a_bhii, hi_A170b_koii, hi_A170b_bhii, hi_A171a_koii, hi_A171a_bhii, hi_A171b_koii, hi_A171b_bhii, hi_A172, hi_A173, tr_A174, tr_A175_bir, tr_A175_herhangi, tr_A176_herhangi, tr_A176_bir, tr_A177a_herhangi, tr_A177a_bir, tr_A177a_hic, tr_A177b_herhangi, tr_A177b_bir, tr_A178_kimse, tr_A178_herhangi, tr_A178_hic, tr_A179_hic, tr_A179_herhangi, tr_A179_bir, tr_A180, tr_A181, hu_A196, hu_A197, hu_A198, hu_A199a, hu_A199a_akar, hu_A199a_bar, hu_A199b, hu_A200, hu_A201_akar, hu_A201_bar, hu_A202_vala, hu_A202_bar, hu_A202_akar, hu_A203_bar, hu_A203_akar, hu_A203_vala, hu_A204, hu_A204_akar, hu_A204_bar, fi_A205a, fi_A205b, fi_A206, fi_A207, fi_A208_kin, fi_A208_kaan, fi_A208_hyvansa, fi_A209_kin, fi_A209_hyvansa, fi_A209_kaan, fi_A210, fi_A211, fi_A212, fi_A213, fi_A214, sw_A243a, sw_A243b, sw_A244, sw_A245a, sw_A245b, sw_A246, sw_A247, sw_A248, sw_A249, sw_A250a, sw_A250b, ka_A251a, ka_A251b, ka_A251b_me, ka_A252a, ka_A252b, ka_A253a, ka_A253a_yac, ka_A253b, ka_A254, ka_A255, ka_A256a, ka_A256b, ka_A256c, zh_A264, zh_A265a, zh_A265b_le, zh_A265b_bare, zh_A266a, zh_A266b, zh_A267a, zh_A267b, zh_A267c, zh_A267d_ren, zh_A267d_bare, zh_A268_unknown, zh_A268_known, zh_A269a, zh_A269b, zh_A269c_dou, zh_A269c_ye, zh_A269d, zh_A270, zh_A271, zh_A272, zh_A273, qu_A274a, qu_A274b, qu_A275a, qu_A275b, qu_A276a, qu_A276b, qu_A277, qu_A278, qu_A279a, qu_A279b, qu_A280, ja_A281_unknown, ja_A281_known, ja_A282a, ja_A282b, ja_A283a, ja_A283a_mo, ja_A283b, ja_A283b_mo, ja_A284, ja_A285, ja_A286, ja_A287, ko_A288a_bare_unknown, ko_A288a_nka_unknown, ko_A288a_bare_known, ko_A288a_nka_known, ko_A288b_bare, ko_A288b_nka, ko_A289a_bare, ko_A289a_nka, ko_A289b, ko_A290a_bare, ko_A290a_nka, ko_A290a_na, ko_A290a_tunci, ko_A290b_bare, ko_A290b_nka, ko_A290b_na, ko_A290b_tunci, ko_A291_na, ko_A291_tunci, ko_A291_amu_na, ko_A291_amu_tunci, ko_A292_to, ko_A292_bare, ko_A292_nka, ko_A293a_amu, ko_A293a_nwukwu, ko_A293b, ko_A294]
+def all : List Datum := [en_102a, en_102a_known, en_151a, en_151b, en_154a, en_154a_any, en_154b, en_154b_some, en_44b, en_45b, en_49b, en_50b, en_51b, en_52, en_43b, en_103a, en_34b, de_A1a_etwas, de_A1a_irgend, de_A1b_etwas, de_A1b_irgend, de_A2_etwas, de_A2_irgend, de_A3a_etwas, de_A3a_irgend, de_A3b_irgend, de_A3b_je, de_A3c_etwas, de_A3c_irgend, de_A4_je_etwas, de_A4_je_irgend, de_A4_irgend_etwas, de_A4_irgend_irgend, de_A5, de_A6, de_A7, de_A8, de_A9a_jeder, de_A9a_irgend, de_A9b_jeder, de_A9b_irgend, de_A10a, de_A10b_etwas, de_A10b_irgend, it_A74, it_A75, it_A76, it_A77_qualche, it_A77_nessuno, it_A78, it_A78_nessuno, it_A79_nessuno, it_A79_qualche, it_A80, it_A81, it_A82a, it_A82b, it_A82c, ru_A121, ru_A122a_nibud, ru_A122a_libo, ru_A122b_nibud, ru_A122b_libo, ru_A123a_nibud, ru_A123a_libo, ru_A123b_nibud, ru_A123b_libo, ru_A124a, ru_A124b_nibud, ru_A124b_to, ru_A125_libo, ru_A125_byToNiBylo, ru_A126a_libo, ru_A126a_byToNiBylo, ru_A126b_libo, ru_A126b_byToNiBylo, ru_A127a, ru_A127b, ru_A128_ljuboj, ru_A128_ugodno, ru_A128_byToNiBylo, ru_A129, ru_A130, lv_A138, lv_A139, lv_A140a, lv_A140b, lv_A140c_kaut, lv_A140c_jeb, lv_A141, lv_A142, lv_A143a, lv_A143b, lv_A144, hi_A167_known, hi_A167_unknown, hi_A167_bhii, hi_A167_bhii_unknown, hi_A168_koii, hi_A168_bhii, hi_A169a_koii, hi_A169a_bhii, hi_A169b, hi_A170a_koii, hi_A170a_bhii, hi_A170b_koii, hi_A170b_bhii, hi_A171a_koii, hi_A171a_bhii, hi_A171b_koii, hi_A171b_bhii, hi_A172, hi_A173, tr_A174, tr_A175_bir, tr_A175_herhangi, tr_A176_herhangi, tr_A176_bir, tr_A177a_herhangi, tr_A177a_bir, tr_A177a_hic, tr_A177b_herhangi, tr_A177b_bir, tr_A178_kimse, tr_A178_herhangi, tr_A178_hic, tr_A179_hic, tr_A179_herhangi, tr_A179_bir, tr_A180, tr_A181, hu_A196, hu_A197, hu_A198, hu_A199a, hu_A199a_akar, hu_A199a_bar, hu_A199b, hu_A200, hu_A201_akar, hu_A201_bar, hu_A202_vala, hu_A202_bar, hu_A202_akar, hu_A203_bar, hu_A203_akar, hu_A203_vala, hu_A204, hu_A204_akar, hu_A204_bar, fi_A205a, fi_A205b, fi_A206, fi_A207, fi_A208_kin, fi_A208_kaan, fi_A208_hyvansa, fi_A209_kin, fi_A209_hyvansa, fi_A209_kaan, fi_A210, fi_A211, fi_A212, fi_A213, fi_A214, sw_A243a, sw_A243b, sw_A244, sw_A245a, sw_A245b, sw_A246, sw_A247, sw_A248, sw_A249, sw_A250a, sw_A250b, ka_A251a, ka_A251b, ka_A251b_me, ka_A252a, ka_A252b, ka_A253a, ka_A253a_yac, ka_A253b, ka_A254, ka_A255, ka_A256a, ka_A256b, ka_A256c, zh_A264, zh_A265a, zh_A265b_le, zh_A265b_bare, zh_A266a, zh_A266b, zh_A267a, zh_A267b, zh_A267c, zh_A267d_ren, zh_A267d_bare, zh_A268_unknown, zh_A268_known, zh_A269a, zh_A269b, zh_A269c_dou, zh_A269c_ye, zh_A269d, zh_A270, zh_A271, zh_A272, zh_A273, qu_A274a, qu_A274b, qu_A275a, qu_A275b, qu_A276a, qu_A276b, qu_A277, qu_A278, qu_A279a, qu_A279b, qu_A280, ja_A281_unknown, ja_A281_known, ja_A282a, ja_A282b, ja_A283a, ja_A283a_mo, ja_A283b, ja_A283b_mo, ja_A284, ja_A285, ja_A286, ja_A287, ko_A288a_bare_unknown, ko_A288a_nka_unknown, ko_A288a_bare_known, ko_A288a_nka_known, ko_A288b_bare, ko_A288b_nka, ko_A289a_bare, ko_A289a_nka, ko_A289b, ko_A290a_bare, ko_A290a_nka, ko_A290a_na, ko_A290a_tunci, ko_A290b_bare, ko_A290b_nka, ko_A290b_na, ko_A290b_tunci, ko_A291_na, ko_A291_tunci, ko_A291_amu_na, ko_A291_amu_tunci, ko_A292_to, ko_A292_bare, ko_A292_nka, ko_A293a_amu, ko_A293a_nwukwu, ko_A293b, ko_A294]
 
 end Haspelmath1997.Examples

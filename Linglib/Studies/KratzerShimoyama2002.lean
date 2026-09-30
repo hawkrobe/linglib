@@ -295,7 +295,7 @@ theorem rows_beck :
 open PolarityItem
 
 /-- `contextOf? r` is the licensing environment a row of the *irgendein* paradigm names. -/
-def contextOf? (r : LinguisticExample) : Option LicensingContext :=
+def contextOf? (r : Datum) : Option LicensingContext :=
   r.parse? "context"
     [("question", .question), ("doubtVerb", .doubtVerb), ("modalPossibility", .modalPossibility),
       ("modalNecessity", .modalNecessity), ("nobody", .nobody), ("negation", .negation)]

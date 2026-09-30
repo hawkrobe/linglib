@@ -17,7 +17,7 @@ namespace Giannakidou2002.Examples
 
 open Data.Examples
 
-def ex1 : LinguisticExample :=
+def ex1 : Datum :=
   { id := "giannakidou2002_ex1"
     source := ⟨"giannakidou-2002", "(1)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex1 : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "until"), ("aspect", "simplePast"), ("eventuality", "stative"), ("licenser", "none"), ("test", "plain")] }
 
-def ex2 : LinguisticExample :=
+def ex2 : Datum :=
   { id := "giannakidou2002_ex2"
     source := ⟨"giannakidou-2002", "(2)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex2 : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "until"), ("aspect", "progressive"), ("eventuality", "eventive"), ("licenser", "none"), ("test", "plain")] }
 
-def ex3 : LinguisticExample :=
+def ex3 : Datum :=
   { id := "giannakidou2002_ex3"
     source := ⟨"giannakidou-2002", "(3)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex3 : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "until"), ("aspect", "simplePast"), ("eventuality", "eventive"), ("licenser", "none"), ("test", "plain")] }
 
-def ex4 : LinguisticExample :=
+def ex4 : Datum :=
   { id := "giannakidou2002_ex4"
     source := ⟨"giannakidou-2002", "(4)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex4 : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "until"), ("aspect", "simplePast"), ("eventuality", "eventive"), ("licenser", "none"), ("test", "plain")] }
 
-def ex8a : LinguisticExample :=
+def ex8a : Datum :=
   { id := "giannakidou2002_ex8a"
     source := ⟨"giannakidou-2002", "(8a)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex8a : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "until"), ("aspect", "simplePast"), ("eventuality", "eventive"), ("licenser", "negation"), ("test", "plain")] }
 
-def ex8b : LinguisticExample :=
+def ex8b : Datum :=
   { id := "giannakidou2002_ex8b"
     source := ⟨"giannakidou-2002", "(8b)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex8b : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "until"), ("aspect", "simplePast"), ("eventuality", "stative"), ("licenser", "negation"), ("test", "plain")] }
 
-def ex22 : LinguisticExample :=
+def ex22 : Datum :=
   { id := "giannakidou2002_ex22"
     source := ⟨"giannakidou-2002", "(22)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex22 : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "until"), ("aspect", "simplePast"), ("eventuality", "stative"), ("licenser", "none"), ("test", "plain")] }
 
-def ex61a : LinguisticExample :=
+def ex61a : Datum :=
   { id := "giannakidou2002_ex61a"
     source := ⟨"giannakidou-2002", "(61a)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex61a : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "until"), ("aspect", "simplePast"), ("eventuality", "stative"), ("licenser", "negation"), ("test", "noEventContinuation")] }
 
-def ex61b : LinguisticExample :=
+def ex61b : Datum :=
   { id := "giannakidou2002_ex61b"
     source := ⟨"giannakidou-2002", "(61b)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex61b : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "until"), ("aspect", "simplePast"), ("eventuality", "stative"), ("licenser", "negation"), ("test", "preposed")] }
 
-def ex32 : LinguisticExample :=
+def ex32 : Datum :=
   { id := "giannakidou2002_ex32"
     source := ⟨"giannakidou-2002", "(32)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex32 : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "mexri"), ("aspect", "imperfective"), ("eventuality", "eventive"), ("licenser", "none"), ("test", "plain")] }
 
-def ex33 : LinguisticExample :=
+def ex33 : Datum :=
   { id := "giannakidou2002_ex33"
     source := ⟨"giannakidou-2002", "(33)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex33 : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "mexri"), ("aspect", "imperfective"), ("eventuality", "stative"), ("licenser", "none"), ("test", "plain")] }
 
-def ex34 : LinguisticExample :=
+def ex34 : Datum :=
   { id := "giannakidou2002_ex34"
     source := ⟨"giannakidou-2002", "(34)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex34 : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "mexri"), ("aspect", "perfective"), ("eventuality", "eventive"), ("licenser", "none"), ("test", "plain")] }
 
-def ex35 : LinguisticExample :=
+def ex35 : Datum :=
   { id := "giannakidou2002_ex35"
     source := ⟨"giannakidou-2002", "(35)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex35 : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "mexri"), ("aspect", "perfective"), ("eventuality", "eventive"), ("licenser", "negation"), ("test", "plain")] }
 
-def ex36 : LinguisticExample :=
+def ex36 : Datum :=
   { id := "giannakidou2002_ex36"
     source := ⟨"giannakidou-2002", "(36)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex36 : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "paraMonon"), ("aspect", "perfective"), ("eventuality", "eventive"), ("licenser", "negation"), ("test", "plain")] }
 
-def ex36pos : LinguisticExample :=
+def ex36pos : Datum :=
   { id := "giannakidou2002_ex36pos"
     source := ⟨"giannakidou-2002", "(36)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex36pos : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "paraMonon"), ("aspect", "perfective"), ("eventuality", "eventive"), ("licenser", "none"), ("test", "plain")] }
 
-def ex37 : LinguisticExample :=
+def ex37 : Datum :=
   { id := "giannakidou2002_ex37"
     source := ⟨"giannakidou-2002", "(37)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex37 : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "paraMonon"), ("aspect", "perfective"), ("eventuality", "stative"), ("licenser", "negation"), ("test", "plain")] }
 
-def ex38 : LinguisticExample :=
+def ex38 : Datum :=
   { id := "giannakidou2002_ex38"
     source := ⟨"giannakidou-2002", "(38)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex38 : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "paraMonon"), ("aspect", "perfective"), ("eventuality", "eventive"), ("licenser", "negation"), ("test", "noEventContinuation")] }
 
-def ex40 : LinguisticExample :=
+def ex40 : Datum :=
   { id := "giannakidou2002_ex40"
     source := ⟨"giannakidou-2002", "(40)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex40 : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "paraMonon"), ("aspect", "perfective"), ("eventuality", "eventive"), ("licenser", "without"), ("test", "plain")] }
 
-def ex41pm : LinguisticExample :=
+def ex41pm : Datum :=
   { id := "giannakidou2002_ex41pm"
     source := ⟨"giannakidou-2002", "(41)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex41pm : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "paraMonon"), ("aspect", "perfect"), ("eventuality", "eventive"), ("licenser", "nonveridical"), ("test", "plain")] }
 
-def ex41mx : LinguisticExample :=
+def ex41mx : Datum :=
   { id := "giannakidou2002_ex41mx"
     source := ⟨"giannakidou-2002", "(41)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex41mx : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "mexri"), ("aspect", "perfect"), ("eventuality", "eventive"), ("licenser", "nonveridical"), ("test", "plain")] }
 
-def ex42pm : LinguisticExample :=
+def ex42pm : Datum :=
   { id := "giannakidou2002_ex42pm"
     source := ⟨"giannakidou-2002", "(42)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex42pm : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "paraMonon"), ("aspect", "perfective"), ("eventuality", "eventive"), ("licenser", "nonveridical"), ("test", "plain")] }
 
-def ex48 : LinguisticExample :=
+def ex48 : Datum :=
   { id := "giannakidou2002_ex48"
     source := ⟨"giannakidou-2002", "(48)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex48 : LinguisticExample :=
     readings := [("The princess was in a state of not-sleeping until midnight.", .acceptable), ("It is not true that the princess slept until midnight. (She woke up earlier than that.)", .acceptable)]
     paperFeatures := [("connective", "mexri"), ("aspect", "imperfective"), ("eventuality", "stative"), ("licenser", "negation"), ("test", "plain")] }
 
-def ex49 : LinguisticExample :=
+def ex49 : Datum :=
   { id := "giannakidou2002_ex49"
     source := ⟨"giannakidou-2002", "(49)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex49 : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "mexri"), ("aspect", "perfective"), ("eventuality", "stative"), ("licenser", "negation"), ("test", "plain")] }
 
-def ex51 : LinguisticExample :=
+def ex51 : Datum :=
   { id := "giannakidou2002_ex51"
     source := ⟨"giannakidou-2002", "(51)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex51 : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "mexri"), ("aspect", "imperfective"), ("eventuality", "stative"), ("licenser", "negation"), ("test", "noEventContinuation")] }
 
-def ex53 : LinguisticExample :=
+def ex53 : Datum :=
   { id := "giannakidou2002_ex53"
     source := ⟨"giannakidou-2002", "(53)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex53 : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "mexri"), ("aspect", "imperfective"), ("eventuality", "stative"), ("licenser", "negation"), ("test", "preposed")] }
 
-def ex57 : LinguisticExample :=
+def ex57 : Datum :=
   { id := "giannakidou2002_ex57"
     source := ⟨"giannakidou-2002", "(57)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex57 : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "paraMonon"), ("aspect", "perfective"), ("eventuality", "stative"), ("licenser", "negation"), ("test", "noEventContinuation")] }
 
-def ex72 : LinguisticExample :=
+def ex72 : Datum :=
   { id := "giannakidou2002_ex72"
     source := ⟨"giannakidou-2002", "(72)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def ex72 : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "prin"), ("aspect", "perfective"), ("eventuality", "eventive"), ("licenser", "negation"), ("test", "noEventContinuation")] }
 
-def ex77 : LinguisticExample :=
+def ex77 : Datum :=
   { id := "giannakidou2002_ex77"
     source := ⟨"giannakidou-2002", "(77a)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def ex77 : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "prin"), ("aspect", "perfective"), ("eventuality", "eventive"), ("licenser", "negation"), ("test", "plain")] }
 
-def ex43 : LinguisticExample :=
+def ex43 : Datum :=
   { id := "giannakidou2002_ex43"
     source := ⟨"giannakidou-2002", "(43)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def ex43 : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "til"), ("aspect", "simplePast"), ("eventuality", "stative"), ("licenser", "none"), ("test", "plain")] }
 
-def ex44 : LinguisticExample :=
+def ex44 : Datum :=
   { id := "giannakidou2002_ex44"
     source := ⟨"giannakidou-2002", "(44)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def ex44 : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "til"), ("aspect", "progressive"), ("eventuality", "eventive"), ("licenser", "none"), ("test", "plain")] }
 
-def ex45 : LinguisticExample :=
+def ex45 : Datum :=
   { id := "giannakidou2002_ex45"
     source := ⟨"giannakidou-2002", "(45)"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def ex45 : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "til"), ("aspect", "simplePast"), ("eventuality", "eventive"), ("licenser", "none"), ("test", "plain")] }
 
-def ex46 : LinguisticExample :=
+def ex46 : Datum :=
   { id := "giannakidou2002_ex46"
     source := ⟨"giannakidou-2002", "(46)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def ex46 : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "fyrrEn"), ("aspect", "simplePast"), ("eventuality", "eventive"), ("licenser", "negation"), ("test", "plain")] }
 
-def ex46pos : LinguisticExample :=
+def ex46pos : Datum :=
   { id := "giannakidou2002_ex46pos"
     source := ⟨"giannakidou-2002", "(46)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def ex46pos : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "fyrrEn"), ("aspect", "simplePast"), ("eventuality", "eventive"), ("licenser", "none"), ("test", "plain")] }
 
-def ex47a : LinguisticExample :=
+def ex47a : Datum :=
   { id := "giannakidou2002_ex47a"
     source := ⟨"giannakidou-2002", "(47a)"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def ex47a : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "tot"), ("aspect", "simplePast"), ("eventuality", "eventive"), ("licenser", "negation"), ("test", "plain")] }
 
-def ex47a2 : LinguisticExample :=
+def ex47a2 : Datum :=
   { id := "giannakidou2002_ex47a2"
     source := ⟨"giannakidou-2002", "(47a)"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def ex47a2 : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "tot"), ("aspect", "simplePast"), ("eventuality", "eventive"), ("licenser", "none"), ("test", "plain")] }
 
-def ex47b : LinguisticExample :=
+def ex47b : Datum :=
   { id := "giannakidou2002_ex47b"
     source := ⟨"giannakidou-2002", "(47b)"⟩
     reportedIn := none
@@ -485,7 +485,7 @@ def ex47b : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "pas"), ("aspect", "simplePast"), ("eventuality", "eventive"), ("licenser", "none"), ("test", "plain")] }
 
-def ex67a : LinguisticExample :=
+def ex67a : Datum :=
   { id := "giannakidou2002_ex67a"
     source := ⟨"giannakidou-2002", "(67a)"⟩
     reportedIn := none
@@ -498,7 +498,7 @@ def ex67a : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "howLong"), ("aspect", "imperfective"), ("eventuality", "stative"), ("licenser", "none")] }
 
-def ex67b : LinguisticExample :=
+def ex67b : Datum :=
   { id := "giannakidou2002_ex67b"
     source := ⟨"giannakidou-2002", "(67b)"⟩
     reportedIn := none
@@ -511,7 +511,7 @@ def ex67b : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "howLong"), ("aspect", "perfective"), ("eventuality", "eventive"), ("licenser", "negation")] }
 
-def ex67c : LinguisticExample :=
+def ex67c : Datum :=
   { id := "giannakidou2002_ex67c"
     source := ⟨"giannakidou-2002", "(67c)"⟩
     reportedIn := none
@@ -524,7 +524,7 @@ def ex67c : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "howLong"), ("aspect", "imperfective"), ("eventuality", "eventive"), ("licenser", "negation")] }
 
-def ex68a : LinguisticExample :=
+def ex68a : Datum :=
   { id := "giannakidou2002_ex68a"
     source := ⟨"giannakidou-2002", "(68a)"⟩
     reportedIn := none
@@ -537,7 +537,7 @@ def ex68a : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "while"), ("aspect", "imperfective"), ("eventuality", "stative"), ("licenser", "none")] }
 
-def ex68b : LinguisticExample :=
+def ex68b : Datum :=
   { id := "giannakidou2002_ex68b"
     source := ⟨"giannakidou-2002", "(68b)"⟩
     reportedIn := none
@@ -550,7 +550,7 @@ def ex68b : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "while"), ("aspect", "perfective"), ("eventuality", "eventive"), ("licenser", "negation")] }
 
-def ex68c : LinguisticExample :=
+def ex68c : Datum :=
   { id := "giannakidou2002_ex68c"
     source := ⟨"giannakidou-2002", "(68c)"⟩
     reportedIn := none
@@ -563,7 +563,7 @@ def ex68c : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "while"), ("aspect", "imperfective"), ("eventuality", "eventive"), ("licenser", "negation")] }
 
-def ex69 : LinguisticExample :=
+def ex69 : Datum :=
   { id := "giannakidou2002_ex69"
     source := ⟨"giannakidou-2002", "(69)"⟩
     reportedIn := none
@@ -576,7 +576,7 @@ def ex69 : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "forAdverbial"), ("aspect", "imperfective"), ("eventuality", "stative"), ("licenser", "none")] }
 
-def ex70b : LinguisticExample :=
+def ex70b : Datum :=
   { id := "giannakidou2002_ex70b"
     source := ⟨"giannakidou-2002", "(70b)"⟩
     reportedIn := none
@@ -589,7 +589,7 @@ def ex70b : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "forAdverbial"), ("aspect", "perfective"), ("eventuality", "eventive"), ("licenser", "negation")] }
 
-def ex70c : LinguisticExample :=
+def ex70c : Datum :=
   { id := "giannakidou2002_ex70c"
     source := ⟨"giannakidou-2002", "(70c)"⟩
     reportedIn := none
@@ -602,7 +602,7 @@ def ex70c : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "forAdverbial"), ("aspect", "imperfective"), ("eventuality", "eventive"), ("licenser", "negation")] }
 
-def ex71a : LinguisticExample :=
+def ex71a : Datum :=
   { id := "giannakidou2002_ex71a"
     source := ⟨"giannakidou-2002", "(71a)"⟩
     reportedIn := none
@@ -615,7 +615,7 @@ def ex71a : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "imperative"), ("aspect", "imperfective"), ("eventuality", "stative"), ("licenser", "none")] }
 
-def ex71b : LinguisticExample :=
+def ex71b : Datum :=
   { id := "giannakidou2002_ex71b"
     source := ⟨"giannakidou-2002", "(71b)"⟩
     reportedIn := none
@@ -628,7 +628,7 @@ def ex71b : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "imperative"), ("aspect", "perfective"), ("eventuality", "eventive"), ("licenser", "none")] }
 
-def ex71c : LinguisticExample :=
+def ex71c : Datum :=
   { id := "giannakidou2002_ex71c"
     source := ⟨"giannakidou-2002", "(71c)"⟩
     reportedIn := none
@@ -641,6 +641,6 @@ def ex71c : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "imperative"), ("aspect", "perfective"), ("eventuality", "eventive"), ("licenser", "negation")] }
 
-def all : List LinguisticExample := [ex1, ex2, ex3, ex4, ex8a, ex8b, ex22, ex61a, ex61b, ex32, ex33, ex34, ex35, ex36, ex36pos, ex37, ex38, ex40, ex41pm, ex41mx, ex42pm, ex48, ex49, ex51, ex53, ex57, ex72, ex77, ex43, ex44, ex45, ex46, ex46pos, ex47a, ex47a2, ex47b, ex67a, ex67b, ex67c, ex68a, ex68b, ex68c, ex69, ex70b, ex70c, ex71a, ex71b, ex71c]
+def all : List Datum := [ex1, ex2, ex3, ex4, ex8a, ex8b, ex22, ex61a, ex61b, ex32, ex33, ex34, ex35, ex36, ex36pos, ex37, ex38, ex40, ex41pm, ex41mx, ex42pm, ex48, ex49, ex51, ex53, ex57, ex72, ex77, ex43, ex44, ex45, ex46, ex46pos, ex47a, ex47a2, ex47b, ex67a, ex67b, ex67c, ex68a, ex68b, ex68c, ex69, ex70b, ex70c, ex71a, ex71b, ex71c]
 
 end Giannakidou2002.Examples

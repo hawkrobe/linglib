@@ -245,7 +245,7 @@ instance (v : Option (Case × Mechanism)) (o : Option Case) : Decidable (Realize
   cases o <;> simp only [Realizes] <;> infer_instance
 
 /-- A row states a yes/no property. -/
-def yes (r : LinguisticExample) (k : String) : Bool := r.feature? k = some "yes"
+def yes (r : Datum) (k : String) : Bool := r.feature? k = some "yes"
 
 /-- An NP of a row's domain: its position, whether it is covert, whether it is adjacent to
     the verb, and the case its gloss shows. -/
@@ -260,7 +260,7 @@ structure Occupant where
 /-- Where a slot is merged: a possessor in the noun phrase, the objects, goal, causee and
     raised subject in the verb phrase, the subject in the clause unless the predicate is
     unaccusative or takes a dative subject. -/
-def Slot.phase (r : LinguisticExample) : Slot → Cat
+def Slot.phase (r : Datum) : Slot → Cat
   | .subject =>
     if yes r "unaccusative" || r.feature? "subjectPosition" = some "internal" then .v else .C
   | .causee | .goal | .raised | .object => .v
@@ -269,7 +269,7 @@ def Slot.phase (r : LinguisticExample) : Slot → Cat
 
 /-- Whether a VP-merged NP shifts to the clause edge: a specific one does, a nonspecific one
     does not, a raised subject always does, and the paper leaves the rest free. -/
-def Slot.shifts (r : LinguisticExample) (s : Slot) : List Bool :=
+def Slot.shifts (r : Datum) (s : Slot) : List Bool :=
   match s.phase r with
   | .v =>
     if s = .raised then [true]
@@ -280,7 +280,7 @@ def Slot.shifts (r : LinguisticExample) (s : Slot) : List Bool :=
   | _ => [false]
 
 /-- The occupants a stated slot contributes, one per shift option. -/
-def Slot.occupants (r : LinguisticExample) (s : Slot) : Option (List Occupant) :=
+def Slot.occupants (r : Datum) (s : Slot) : Option (List Occupant) :=
   ((r.feature? (s.key ++ "Case")).bind parseCase?).map λ c =>
     (s.shifts r).map λ sh =>
       { np := { phase := s.phase r, shifted := sh }, slot := some s,
@@ -289,7 +289,7 @@ def Slot.occupants (r : LinguisticExample) (s : Slot) : Option (List Occupant) :
 /-- The covert agent: forced in a passive with an agent-oriented adverb and in an agentive
     nominalization, excluded when the subject is overt or the predicate unaccusative, and
     otherwise free in a passive or event nominalization. -/
-def agentOptions (r : LinguisticExample) : List (List Occupant) :=
+def agentOptions (r : Datum) : List (List Occupant) :=
   if (r.feature? "subjectCase").isSome || yes r "unaccusative" then [[]]
   else if yes r "agentOrientedAdverb" || r.feature? "construction" = some "agentiveNominal" then
     [[{ np := pro, covert := true }]]
@@ -299,7 +299,7 @@ def agentOptions (r : LinguisticExample) : List (List Occupant) :=
 
 /-- The domains a row may have: the covert agent, then each stated slot under each of its
     shift options. -/
-def candidates (r : LinguisticExample) : List (List Occupant) :=
+def candidates (r : Datum) : List (List Occupant) :=
   (Slot.all.foldr (λ s acc => match s.occupants r with
       | none => acc
       | some vs => vs.flatMap λ o => acc.map (o :: ·)) [[]]).flatMap λ d =>
@@ -308,13 +308,13 @@ def candidates (r : LinguisticExample) : List (List Occupant) :=
 /-- The probes a row's morphology shows: finite T where the verb agrees, the head noun's D
     reaching into the clause where it agrees with the subject, and the possessed noun's D
     where it agrees with its possessor. -/
-def probes (r : LinguisticExample) : List (Cat × Cat) :=
+def probes (r : Datum) : List (Cat × Cat) :=
   (if yes r "verbAgreement" then [(Cat.T, Cat.C)] else []) ++
     (if yes r "headNounAgreement" then [(Cat.D, Cat.C)] else []) ++
     (if yes r "possesseeAgreement" then [(Cat.D, Cat.D)] else [])
 
 /-- The valuations of a domain's occupants. -/
-def derive (g : CaseAssigners) (r : LinguisticExample) (d : List Occupant) :
+def derive (g : CaseAssigners) (r : Datum) (d : List Occupant) :
     Valuation Occupant (Case × Mechanism) :=
   g.assign Occupant.np (probes r) d
 
@@ -329,32 +329,32 @@ instance (o : Occupant) (v : Option (Case × Mechanism)) : Decidable (Licensed o
 /-- T agrees with the NP it values nominative: where a row states the verb's agreement
     target, an overt NP is nominative by Agree exactly when it is that target, so default
     agreement means no NP is. -/
-def Agrees (r : LinguisticExample) (out : Valuation Occupant (Case × Mechanism)) : Prop :=
+def Agrees (r : Datum) (out : Valuation Occupant (Case × Mechanism)) : Prop :=
   (r.feature? "agreesWith").isSome → ∀ p ∈ out, p.1.covert = false →
     (p.2 = some (.nom, .agree) ↔ r.feature? "agreesWith" = p.1.slot.map Slot.key)
 
-instance (r : LinguisticExample) (out : Valuation Occupant (Case × Mechanism)) :
+instance (r : Datum) (out : Valuation Occupant (Case × Mechanism)) :
     Decidable (Agrees r out) := by
   unfold Agrees; infer_instance
 
 /-- A domain derives the row under a grammar: every overt NP gets the case its gloss shows,
     and under the Chomskian half — the Case filter and the case–agreement link — is licensed
     and agreed with accordingly. -/
-def Derives (g : CaseAssigners) (chomskian : Bool) (r : LinguisticExample) (d : List Occupant) :
+def Derives (g : CaseAssigners) (chomskian : Bool) (r : Datum) (d : List Occupant) :
     Prop :=
   (∀ p ∈ derive g r d, p.1.covert = false →
     Realizes p.2 p.1.observed ∧ (chomskian = true → Licensed p.1 p.2)) ∧
   (chomskian = true → Agrees r (derive g r d))
 
-instance (g : CaseAssigners) (chomskian : Bool) (r : LinguisticExample) (d : List Occupant) :
+instance (g : CaseAssigners) (chomskian : Bool) (r : Datum) (d : List Occupant) :
     Decidable (Derives g chomskian r d) := by
   unfold Derives; infer_instance
 
 /-- Some choice of structure derives the row. -/
-def Derivable (g : CaseAssigners) (chomskian : Bool) (r : LinguisticExample) : Prop :=
+def Derivable (g : CaseAssigners) (chomskian : Bool) (r : Datum) : Prop :=
   ∃ d ∈ candidates r, Derives g chomskian r d
 
-instance (g : CaseAssigners) (chomskian : Bool) (r : LinguisticExample) :
+instance (g : CaseAssigners) (chomskian : Bool) (r : Datum) :
     Decidable (Derivable g chomskian r) := by
   unfold Derivable; infer_instance
 

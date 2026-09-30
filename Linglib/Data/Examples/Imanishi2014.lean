@@ -17,7 +17,7 @@ namespace Imanishi2014.Examples
 
 open Data.Examples
 
-def s89 : LinguisticExample :=
+def s89 : Datum :=
   { id := "imanishi2014_s89"
     source := ⟨"imanishi-2014", "(89)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def s89 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3.1"), ("source", "Alexiadou 2001:76"), ("nominalization", "external argument introduced by a preposition")] }
 
-def s91 : LinguisticExample :=
+def s91 : Datum :=
   { id := "imanishi2014_s91"
     source := ⟨"imanishi-2014", "(91)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def s91 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3.1"), ("nominalization", "only the internal argument inside; the agent in a relative clause")] }
 
-def s92 : LinguisticExample :=
+def s92 : Datum :=
   { id := "imanishi2014_s92"
     source := ⟨"imanishi-2014", "(92)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def s92 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3.1"), ("nominalization", "a sole argument is the internal argument")] }
 
-def s93a : LinguisticExample :=
+def s93a : Datum :=
   { id := "imanishi2014_s93a"
     source := ⟨"imanishi-2014", "(93a)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def s93a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3.1"), ("alignment", "S/A=ABS on ajin, O=ERG on the nominalized verb")] }
 
-def s93b : LinguisticExample :=
+def s93b : Datum :=
   { id := "imanishi2014_s93b"
     source := ⟨"imanishi-2014", "(93b)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def s93b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3.1"), ("alignment", "S=ABS on ajin")] }
 
-def s94a : LinguisticExample :=
+def s94a : Datum :=
   { id := "imanishi2014_s94a"
     source := ⟨"imanishi-2014", "(94a)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def s94a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3.1"), ("construction", "embedding verb chäp 'begin'")] }
 
-def s99b : LinguisticExample :=
+def s99b : Datum :=
   { id := "imanishi2014_s99b"
     source := ⟨"imanishi-2014", "(99b)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def s99b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3.1"), ("passivization", "tensed vowel of the root transitive under nominalization")] }
 
-def s100b : LinguisticExample :=
+def s100b : Datum :=
   { id := "imanishi2014_s100b"
     source := ⟨"imanishi-2014", "(100b)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def s100b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3.1"), ("passivization", "tensed vowel of the root transitive under nominalization")] }
 
-def s102b : LinguisticExample :=
+def s102b : Datum :=
   { id := "imanishi2014_s102b"
     source := ⟨"imanishi-2014", "(102b)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def s102b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3.1"), ("passivization", "the passive suffix -x on the derived transitive under nominalization")] }
 
-def s137a : LinguisticExample :=
+def s137a : Datum :=
   { id := "imanishi2014_s137a"
     source := ⟨"imanishi-2014", "(137a)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def s137a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3.3"), ("source", "Coon 2013a:11"), ("alignment", "A=ERG, O=ABS inside the nominalized clause")] }
 
-def s137b : LinguisticExample :=
+def s137b : Datum :=
   { id := "imanishi2014_s137b"
     source := ⟨"imanishi-2014", "(137b)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def s137b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3.3"), ("source", "Coon 2013a:11"), ("alignment", "S=ERG")] }
 
-def s138a : LinguisticExample :=
+def s138a : Datum :=
   { id := "imanishi2014_s138a"
     source := ⟨"imanishi-2014", "(138a)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def s138a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3.3"), ("source", "Mateo Pedro 2009"), ("alignment", "A=ERG, O=ABS, the suffix -on supplying object Case")] }
 
-def s138b : LinguisticExample :=
+def s138b : Datum :=
   { id := "imanishi2014_s138b"
     source := ⟨"imanishi-2014", "(138b)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def s138b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3.3"), ("source", "Mateo Pedro 2009"), ("alignment", "S=ERG")] }
 
-def s181 : LinguisticExample :=
+def s181 : Datum :=
   { id := "imanishi2014_s181"
     source := ⟨"imanishi-2014", "(181)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def s181 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.4.4"), ("source", "England 1983b:265"), ("alignment", "S=ERG in an aspectless temporal clause")] }
 
-def s182 : LinguisticExample :=
+def s182 : Datum :=
   { id := "imanishi2014_s182"
     source := ⟨"imanishi-2014", "(182)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def s182 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.4.4"), ("source", "England 1983b:260"), ("alignment", "double ergative: A and O both ERG")] }
 
-def t178_kaqchikel : LinguisticExample :=
+def t178_kaqchikel : Datum :=
   { id := "imanishi2014_t178_kaqchikel"
     source := ⟨"imanishi-2014", "(178)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def t178_kaqchikel : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.4.3"), ("absolutive", "high"), ("urn", "+"), ("alignment", "S/A=ABS, O=ERG")] }
 
-def t178_tojolabal : LinguisticExample :=
+def t178_tojolabal : Datum :=
   { id := "imanishi2014_t178_tojolabal"
     source := ⟨"imanishi-2014", "(178)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def t178_tojolabal : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.4.3"), ("absolutive", "low"), ("urn", "+"), ("alignment", "S/A=ABS, O=ERG")] }
 
-def t178_chol : LinguisticExample :=
+def t178_chol : Datum :=
   { id := "imanishi2014_t178_chol"
     source := ⟨"imanishi-2014", "(178)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def t178_chol : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.4.3"), ("absolutive", "low"), ("urn", "-"), ("alignment", "S/A=ERG, O=ABS")] }
 
-def t178_qanjobal : LinguisticExample :=
+def t178_qanjobal : Datum :=
   { id := "imanishi2014_t178_qanjobal"
     source := ⟨"imanishi-2014", "(178)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def t178_qanjobal : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.4.3"), ("absolutive", "high"), ("urn", "-"), ("alignment", "S/A=ERG, O=ABS")] }
 
-def t178_chuj : LinguisticExample :=
+def t178_chuj : Datum :=
   { id := "imanishi2014_t178_chuj"
     source := ⟨"imanishi-2014", "(178)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def t178_chuj : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.4.3"), ("absolutive", "high"), ("urn", "-"), ("alignment", "S/A=ERG, O=ABS")] }
 
-def t178_ixil : LinguisticExample :=
+def t178_ixil : Datum :=
   { id := "imanishi2014_t178_ixil"
     source := ⟨"imanishi-2014", "(178)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def t178_ixil : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.4.3"), ("absolutive", "low"), ("urn", "-"), ("alignment", "S/A=ERG, O=ABS")] }
 
-def t178_yucatec : LinguisticExample :=
+def t178_yucatec : Datum :=
   { id := "imanishi2014_t178_yucatec"
     source := ⟨"imanishi-2014", "(178)"⟩
     reportedIn := none
@@ -303,6 +303,6 @@ def t178_yucatec : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.4.3"), ("absolutive", "low"), ("urn", "-"), ("alignment", "S/A=ERG, O=ABS")] }
 
-def all : List LinguisticExample := [s89, s91, s92, s93a, s93b, s94a, s99b, s100b, s102b, s137a, s137b, s138a, s138b, s181, s182, t178_kaqchikel, t178_tojolabal, t178_chol, t178_qanjobal, t178_chuj, t178_ixil, t178_yucatec]
+def all : List Datum := [s89, s91, s92, s93a, s93b, s94a, s99b, s100b, s102b, s137a, s137b, s138a, s138b, s181, s182, t178_kaqchikel, t178_tojolabal, t178_chol, t178_qanjobal, t178_chuj, t178_ixil, t178_yucatec]
 
 end Imanishi2014.Examples

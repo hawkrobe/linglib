@@ -17,7 +17,7 @@ namespace Krapova2010.Examples
 
 open Data.Examples
 
-def ex_56a : LinguisticExample :=
+def ex_56a : Datum :=
   { id := "krapova2010_56a"
     source := ⟨"krapova-2010", "(56a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_56a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "săžaljavam"), ("complementizer", "deto"), ("diagnostic", "detoSelection")] }
 
-def ex_56b : LinguisticExample :=
+def ex_56b : Datum :=
   { id := "krapova2010_56b"
     source := ⟨"krapova-2010", "(56b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_56b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "jad me e"), ("complementizer", "deto"), ("diagnostic", "detoSelection")] }
 
-def ex_57a : LinguisticExample :=
+def ex_57a : Datum :=
   { id := "krapova2010_57a"
     source := ⟨"krapova-2010", "(57a)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_57a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "săžaljavam"), ("complementizer", "deto"), ("diagnostic", "projection"), ("environment", "negation"), ("projective", "yes"), ("person", "1")] }
 
-def ex_57b : LinguisticExample :=
+def ex_57b : Datum :=
   { id := "krapova2010_57b"
     source := ⟨"krapova-2010", "(57b)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_57b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "vinoven săm"), ("complementizer", "deto"), ("diagnostic", "projection"), ("environment", "question"), ("projective", "yes"), ("person", "1")] }
 
-def ex_57c : LinguisticExample :=
+def ex_57c : Datum :=
   { id := "krapova2010_57c"
     source := ⟨"krapova-2010", "(57c)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_57c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "săžaljavam"), ("complementizer", "deto"), ("diagnostic", "contradiction"), ("person", "1")] }
 
-def ex_58a : LinguisticExample :=
+def ex_58a : Datum :=
   { id := "krapova2010_58a"
     source := ⟨"krapova-2010", "(58a)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_58a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "văzmuštavam se"), ("complementizer", "deto"), ("diagnostic", "detoSelection")] }
 
-def ex_58b : LinguisticExample :=
+def ex_58b : Datum :=
   { id := "krapova2010_58b"
     source := ⟨"krapova-2010", "(58b)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_58b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "otkrivam"), ("complementizer", "deto"), ("diagnostic", "detoSelection")] }
 
-def ex_59a : LinguisticExample :=
+def ex_59a : Datum :=
   { id := "krapova2010_59a"
     source := ⟨"krapova-2010", "(59a)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_59a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "săžaljavam"), ("diagnostic", "zaPhrase")] }
 
-def ex_59b : LinguisticExample :=
+def ex_59b : Datum :=
   { id := "krapova2010_59b"
     source := ⟨"krapova-2010", "(59b)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_59b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "vinoven săm"), ("diagnostic", "zaPhrase")] }
 
-def fn46i : LinguisticExample :=
+def fn46i : Datum :=
   { id := "krapova2010_fn46i"
     source := ⟨"krapova-2010", "fn. 46 (i)"⟩
     reportedIn := none
@@ -147,6 +147,6 @@ def fn46i : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "văzmuštavam se"), ("complementizer", "če"), ("diagnostic", "contradiction"), ("person", "1")] }
 
-def all : List LinguisticExample := [ex_56a, ex_56b, ex_57a, ex_57b, ex_57c, ex_58a, ex_58b, ex_59a, ex_59b, fn46i]
+def all : List Datum := [ex_56a, ex_56b, ex_57a, ex_57b, ex_57c, ex_58a, ex_58b, ex_59a, ex_59b, fn46i]
 
 end Krapova2010.Examples

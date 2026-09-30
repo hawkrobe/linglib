@@ -46,7 +46,7 @@ effect is modelled as one additive shift on both cells of a pair.
 namespace RotterLiu2025
 
 open Modality (ModalForce)
-open Data.Examples (LinguisticExample)
+open Data.Examples (Datum)
 open LiuRotter2025 (ShiftObservation vacuityEffect spreadEffect forceKey)
 
 /-! ### The two analyses -/
@@ -114,7 +114,7 @@ theorem not_registerSensitive_of_main_effect (o : ShiftObservation) (c : ℕ) :
 /-! ### The cell means -/
 
 /-- The cell of a context, force, and number. -/
-def findCell (context force number : String) : Option LinguisticExample :=
+def findCell (context force number : String) : Option Datum :=
   Examples.all.find? λ e =>
     decide (e.feature? "context" = some context ∧ e.feature? "force" = some force ∧
       e.feature? "number" = some number)

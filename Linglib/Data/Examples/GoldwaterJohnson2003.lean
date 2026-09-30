@@ -17,7 +17,7 @@ namespace GoldwaterJohnson2003.Examples
 
 open Data.Examples
 
-def gj2003_kala : LinguisticExample :=
+def gj2003_kala : Datum :=
   { id := "gj2003_kala"
     source := ⟨"goldwater-johnson-2003", "Table 2"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def gj2003_kala : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "kala"), ("loser", "ká.loi.den"), ("winnerViolations", "11000001011"), ("loserViolations", "12000001101")] }
 
-def gj2003_naapuri : LinguisticExample :=
+def gj2003_naapuri : Datum :=
   { id := "gj2003_naapuri"
     source := ⟨"goldwater-johnson-2003", "Table 2"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def gj2003_naapuri : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "naapuri"), ("loser", "náa.pu.rèi.den"), ("winnerViolations", "01000100012"), ("loserViolations", "01100000100")] }
 
-def gj2003_ministeri : LinguisticExample :=
+def gj2003_ministeri : Datum :=
   { id := "gj2003_ministeri"
     source := ⟨"goldwater-johnson-2003", "Table 2"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def gj2003_ministeri : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "ministeri"), ("loser", "mí.nis.te.rèi.den"), ("winnerViolations", "12000100013"), ("loserViolations", "12100000101")] }
 
-def gj2003_maailma : LinguisticExample :=
+def gj2003_maailma : Datum :=
   { id := "gj2003_maailma"
     source := ⟨"goldwater-johnson-2003", "Table 2"⟩
     reportedIn := none
@@ -69,6 +69,6 @@ def gj2003_maailma : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "maailma"), ("loser", "máa.il.mòi.den"), ("winnerViolations", "02000001102"), ("loserViolations", "02001000300")] }
 
-def all : List LinguisticExample := [gj2003_kala, gj2003_naapuri, gj2003_ministeri, gj2003_maailma]
+def all : List Datum := [gj2003_kala, gj2003_naapuri, gj2003_ministeri, gj2003_maailma]
 
 end GoldwaterJohnson2003.Examples

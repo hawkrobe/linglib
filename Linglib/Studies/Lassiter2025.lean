@@ -275,7 +275,7 @@ theorem polarity_diagnostic :
 /-! ### The paper's examples -/
 
 /-- The row's shape, read from its `is_lnc` and `content` features. -/
-def shape (row : LinguisticExample) : Shape :=
+def shape (row : Datum) : Shape :=
   if row.feature? "is_lnc" = some "true" then
     .nested <|
       match row.feature? "content" with
@@ -286,7 +286,7 @@ def shape (row : LinguisticExample) : Shape :=
   else .simple
 
 /-- The fragment entry for the row's main conditional marker. -/
-def markerOf (row : LinguisticExample) : Option Marker :=
+def markerOf (row : Datum) : Option Marker :=
   match row.feature? "marker" with
   | some "nara"  => some Japanese.Conditionals.nara
   | some "ra"    => some Japanese.Conditionals.ra
@@ -295,11 +295,11 @@ def markerOf (row : LinguisticExample) : Option Marker :=
   | _ => none
 
 /-- The fragment entry for the row's polarity item. -/
-def itemOf (row : LinguisticExample) : Option PolarityItem :=
+def itemOf (row : Datum) : Option PolarityItem :=
   row.parse? "item" (English.PolarityItems.allPolarityItems.map fun p ↦ (p.form, p))
 
 /-- The position of the row's polarity item. -/
-def positionOf (row : LinguisticExample) : Option Position :=
+def positionOf (row : Datum) : Option Position :=
   match row.feature? "item_position" with
   | some "antecedent" => some (.main .antecedent)
   | some "consequent" => some (.main .consequent)
@@ -308,7 +308,7 @@ def positionOf (row : LinguisticExample) : Option Position :=
   | _ => none
 
 /-- A Boolean feature of the row, when annotated. -/
-def flag? (row : LinguisticExample) (key : String) : Option Bool :=
+def flag? (row : Datum) (key : String) : Option Bool :=
   match row.feature? key with
   | some "true" => some true
   | some "false" => some false
@@ -318,14 +318,14 @@ def flag? (row : LinguisticExample) (key : String) : Option Bool :=
 and any coordinated antecedent have the discourse status the reading needs, that
 *only*-inversion force the hypothetical reading, and that its polarity item be admitted at
 its position. -/
-def demand (row : LinguisticExample) (ct : Reading) : Prop :=
+def demand (row : Datum) (ct : Reading) : Prop :=
   (∀ m ∈ markerOf row, ct ∈ m.readings) ∧
   (∀ g ∈ flag? row "antecedent_given", anchoring (g = true) ct) ∧
   (∀ g ∈ flag? row "coordinated_antecedent_given", anchoring (g = true) ct) ∧
   (flag? row "only_inversion" = some true → ct = .hypothetical) ∧
   (∀ pos ∈ positionOf row, ∀ e ∈ itemOf row, admits ct pos e)
 
-instance (row : LinguisticExample) (ct : Reading) : Decidable (demand row ct) := by
+instance (row : Datum) (ct : Reading) : Decidable (demand row ct) := by
   unfold demand; infer_instance
 
 /-- Every marker and item a row names resolves to a fragment entry. -/

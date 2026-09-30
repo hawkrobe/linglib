@@ -118,7 +118,7 @@ def dialectB (p : PersonalPronoun) : Category :=
 
 /-- The category of a row's proform: the English pronouns' from the Fragment, dialect B's
 *them* reanalyzed, and *one* and Japanese *kare* the NPs of sections 3.1 and 2.3. -/
-def categoryOf (e : LinguisticExample) : Option Category :=
+def categoryOf (e : Datum) : Option Category :=
   match e.feature? "pronoun", e.feature? "dialect" with
   | some "we", _ => some (english English.Pronouns.we)
   | some "us", _ => some (english English.Pronouns.us)

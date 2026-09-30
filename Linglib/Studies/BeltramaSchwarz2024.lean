@@ -63,7 +63,7 @@ namespace BeltramaSchwarz2024
 
 open SocialMeaning
 open Numerals.Precision
-open Data.Examples (LinguisticExample)
+open Data.Examples (Datum)
 
 /-! ### Conditions -/
 
@@ -337,7 +337,7 @@ def parseTask : String → Option TaskType
   | _                    => none
 
 /-- The predicted shift equals the observed direction for a data row. -/
-def rowConfirmsPrediction (e : LinguisticExample) : Bool :=
+def rowConfirmsPrediction (e : Datum) : Bool :=
   match e.paperFeatures.lookup "persona" |>.bind parsePersona,
         e.paperFeatures.lookup "task" |>.bind parseTask,
         e.paperFeatures.lookup "rejectionVsBaseline" with

@@ -17,7 +17,7 @@ namespace Reinhart1976.Examples
 
 open Data.Examples
 
-def ex_11a : LinguisticExample :=
+def ex_11a : Datum :=
   { id := "reinhart1976_11a"
     source := ⟨"reinhart-1976", "(11a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_11a : LinguisticExample :=
     readings := []
     paperFeatures := [("structure", "denied"), ("np1", "0"), ("np2", "110"), ("pronouns", "none")] }
 
-def ex_11b : LinguisticExample :=
+def ex_11b : Datum :=
   { id := "reinhart1976_11b"
     source := ⟨"reinhart-1976", "(11b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_11b : LinguisticExample :=
     readings := []
     paperFeatures := [("structure", "denied"), ("np1", "0"), ("np2", "110"), ("pronouns", "np1")] }
 
-def ex_11c : LinguisticExample :=
+def ex_11c : Datum :=
   { id := "reinhart1976_11c"
     source := ⟨"reinhart-1976", "(11c)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_11c : LinguisticExample :=
     readings := []
     paperFeatures := [("structure", "denied"), ("np1", "0"), ("np2", "110"), ("pronouns", "np2")] }
 
-def ex_11d : LinguisticExample :=
+def ex_11d : Datum :=
   { id := "reinhart1976_11d"
     source := ⟨"reinhart-1976", "(11d)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_11d : LinguisticExample :=
     readings := []
     paperFeatures := [("structure", "denied"), ("np1", "0"), ("np2", "110"), ("pronouns", "both")] }
 
-def IIa : LinguisticExample :=
+def IIa : Datum :=
   { id := "reinhart1976_IIa"
     source := ⟨"reinhart-1976", "(IIa)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def IIa : LinguisticExample :=
     readings := []
     paperFeatures := [("structure", "relative"), ("np1", "02111"), ("np2", "110"), ("pronouns", "np2")] }
 
-def IIb : LinguisticExample :=
+def IIb : Datum :=
   { id := "reinhart1976_IIb"
     source := ⟨"reinhart-1976", "(IIb)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def IIb : LinguisticExample :=
     readings := []
     paperFeatures := [("structure", "relative"), ("np1", "02111"), ("np2", "110"), ("pronouns", "np1")] }
 
-def ex_12a : LinguisticExample :=
+def ex_12a : Datum :=
   { id := "reinhart1976_12a"
     source := ⟨"reinhart-1976", "(12a)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_12a : LinguisticExample :=
     readings := []
     paperFeatures := [("structure", "relativeObject"), ("np1", "0111"), ("np2", "11"), ("pronouns", "np2")] }
 
-def ex_12b : LinguisticExample :=
+def ex_12b : Datum :=
   { id := "reinhart1976_12b"
     source := ⟨"reinhart-1976", "(12b)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_12b : LinguisticExample :=
     readings := []
     paperFeatures := [("structure", "relativeObject"), ("np1", "0111"), ("np2", "11"), ("pronouns", "np1")] }
 
-def ex_12c : LinguisticExample :=
+def ex_12c : Datum :=
   { id := "reinhart1976_12c"
     source := ⟨"reinhart-1976", "(12c)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_12c : LinguisticExample :=
     readings := []
     paperFeatures := [("structure", "relativeObject"), ("np1", "0111"), ("np2", "11"), ("pronouns", "none")] }
 
-def ex_43a : LinguisticExample :=
+def ex_43a : Datum :=
   { id := "reinhart1976_43a"
     source := ⟨"reinhart-1976", "(43a)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_43a : LinguisticExample :=
     readings := []
     paperFeatures := [("structure", "preposedPP"), ("np1", "01"), ("np2", "1"), ("pronouns", "np2")] }
 
-def ex_43b : LinguisticExample :=
+def ex_43b : Datum :=
   { id := "reinhart1976_43b"
     source := ⟨"reinhart-1976", "(43b)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_43b : LinguisticExample :=
     readings := []
     paperFeatures := [("structure", "preposedPP"), ("np1", "01"), ("np2", "1"), ("pronouns", "none")] }
 
-def ex_45 : LinguisticExample :=
+def ex_45 : Datum :=
   { id := "reinhart1976_45"
     source := ⟨"reinhart-1976", "(45)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_45 : LinguisticExample :=
     readings := []
     paperFeatures := [("structure", "preposedPP"), ("np1", "01"), ("np2", "1"), ("pronouns", "np1")] }
 
-def ex_47 : LinguisticExample :=
+def ex_47 : Datum :=
   { id := "reinhart1976_47"
     source := ⟨"reinhart-1976", "(47)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_47 : LinguisticExample :=
     readings := []
     paperFeatures := [("structure", "preposedPP"), ("np1", "010"), ("np2", "21"), ("pronouns", "np2")] }
 
-def ex_44a : LinguisticExample :=
+def ex_44a : Datum :=
   { id := "reinhart1976_44a"
     source := ⟨"reinhart-1976", "(44a)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_44a : LinguisticExample :=
     readings := []
     paperFeatures := [("structure", "sententialPP"), ("np1", "0"), ("np2", "2100"), ("pronouns", "np1")] }
 
-def ex_44b : LinguisticExample :=
+def ex_44b : Datum :=
   { id := "reinhart1976_44b"
     source := ⟨"reinhart-1976", "(44b)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_44b : LinguisticExample :=
     readings := []
     paperFeatures := [("structure", "sententialPP"), ("np1", "0"), ("np2", "2100"), ("pronouns", "none")] }
 
-def ex_46 : LinguisticExample :=
+def ex_46 : Datum :=
   { id := "reinhart1976_46"
     source := ⟨"reinhart-1976", "(46)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_46 : LinguisticExample :=
     readings := []
     paperFeatures := [("structure", "sententialPP"), ("np1", "11"), ("np2", "2100"), ("pronouns", "np1")] }
 
-def ex_48a : LinguisticExample :=
+def ex_48a : Datum :=
   { id := "reinhart1976_48a"
     source := ⟨"reinhart-1976", "(48a)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex_48a : LinguisticExample :=
     readings := []
     paperFeatures := [("structure", "verbalPP"), ("np1", "111"), ("np2", "11310"), ("pronouns", "np1")] }
 
-def ex_51a : LinguisticExample :=
+def ex_51a : Datum :=
   { id := "reinhart1976_51a"
     source := ⟨"reinhart-1976", "(51a)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex_51a : LinguisticExample :=
     readings := []
     paperFeatures := [("structure", "vos"), ("np1", "01"), ("np2", "11"), ("pronouns", "np1")] }
 
-def ex_51b : LinguisticExample :=
+def ex_51b : Datum :=
   { id := "reinhart1976_51b"
     source := ⟨"reinhart-1976", "(51b)"⟩
     reportedIn := none
@@ -264,6 +264,6 @@ def ex_51b : LinguisticExample :=
     readings := []
     paperFeatures := [("structure", "vos"), ("np1", "011"), ("np2", "1"), ("pronouns", "np2")] }
 
-def all : List LinguisticExample := [ex_11a, ex_11b, ex_11c, ex_11d, IIa, IIb, ex_12a, ex_12b, ex_12c, ex_43a, ex_43b, ex_45, ex_47, ex_44a, ex_44b, ex_46, ex_48a, ex_51a, ex_51b]
+def all : List Datum := [ex_11a, ex_11b, ex_11c, ex_11d, IIa, IIb, ex_12a, ex_12b, ex_12c, ex_43a, ex_43b, ex_45, ex_47, ex_44a, ex_44b, ex_46, ex_48a, ex_51a, ex_51b]
 
 end Reinhart1976.Examples

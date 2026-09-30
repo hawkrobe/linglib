@@ -230,7 +230,7 @@ structure Row where
   deriving DecidableEq, Repr
 
 /-- Read a row off an example's paper features. -/
-def Row.ofExample (e : LinguisticExample) : Option Row := do
+def Row.ofDatum (e : Datum) : Option Row := do
   let language ← match e.paperFeatures.lookup "language" with
     | some "english" => some english
     | some "hebrew" => some hebrew
@@ -247,10 +247,10 @@ def Row.ofExample (e : LinguisticExample) : Option Row := do
   pure ⟨language, embedded, nonpast⟩
 
 /-- The rows of (1)–(6) and (12). -/
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- Every example carries the three features. -/
-theorem rows_complete : ∀ e ∈ Examples.all, (Row.ofExample e).isSome = true := by decide
+theorem rows_complete : ∀ e ∈ Examples.all, (Row.ofDatum e).isSome = true := by decide
 
 /-- The typology (11) predicts the paper's judgments: the nonpast reading is available exactly
 where the language provides a zero tense for the embedded morpheme. -/

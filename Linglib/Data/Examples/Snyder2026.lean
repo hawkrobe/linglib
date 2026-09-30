@@ -17,7 +17,7 @@ namespace Snyder2026.Examples
 
 open Data.Examples
 
-def ex_1a : LinguisticExample :=
+def ex_1a : Datum :=
   { id := "snyder2026_1a"
     source := ⟨"snyder-2026", "(1a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_1a : LinguisticExample :=
     readings := []
     paperFeatures := [("function", "predicative")] }
 
-def ex_1b : LinguisticExample :=
+def ex_1b : Datum :=
   { id := "snyder2026_1b"
     source := ⟨"snyder-2026", "(1b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_1b : LinguisticExample :=
     readings := []
     paperFeatures := [("function", "attributive")] }
 
-def ex_1c : LinguisticExample :=
+def ex_1c : Datum :=
   { id := "snyder2026_1c"
     source := ⟨"snyder-2026", "(1c)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_1c : LinguisticExample :=
     readings := []
     paperFeatures := [("function", "quantificational")] }
 
-def ex_1d : LinguisticExample :=
+def ex_1d : Datum :=
   { id := "snyder2026_1d"
     source := ⟨"snyder-2026", "(1d)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_1d : LinguisticExample :=
     readings := []
     paperFeatures := [("function", "specificational")] }
 
-def ex_1e : LinguisticExample :=
+def ex_1e : Datum :=
   { id := "snyder2026_1e"
     source := ⟨"snyder-2026", "(1e)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_1e : LinguisticExample :=
     readings := []
     paperFeatures := [("function", "numeral")] }
 
-def ex_1f : LinguisticExample :=
+def ex_1f : Datum :=
   { id := "snyder2026_1f"
     source := ⟨"snyder-2026", "(1f)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_1f : LinguisticExample :=
     readings := []
     paperFeatures := [("function", "closeAppositive")] }
 
-def ex_4a : LinguisticExample :=
+def ex_4a : Datum :=
   { id := "snyder2026_4a"
     source := ⟨"snyder-2026", "(4a)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_4a : LinguisticExample :=
     readings := []
     paperFeatures := [("function", "taxonomic")] }
 
-def ex_4b : LinguisticExample :=
+def ex_4b : Datum :=
   { id := "snyder2026_4b"
     source := ⟨"snyder-2026", "(4b)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_4b : LinguisticExample :=
     readings := []
     paperFeatures := [("function", "kindRef")] }
 
-def ex_20a : LinguisticExample :=
+def ex_20a : Datum :=
   { id := "snyder2026_20a"
     source := ⟨"snyder-2026", "(20a)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_20a : LinguisticExample :=
     readings := []
     paperFeatures := [("function", "closeAppositive")] }
 
-def ex_20b : LinguisticExample :=
+def ex_20b : Datum :=
   { id := "snyder2026_20b"
     source := ⟨"snyder-2026", "(20b)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_20b : LinguisticExample :=
     readings := []
     paperFeatures := [("function", "closeAppositive")] }
 
-def ex_76g : LinguisticExample :=
+def ex_76g : Datum :=
   { id := "snyder2026_76g"
     source := ⟨"snyder-2026", "(76g)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_76g : LinguisticExample :=
     readings := []
     paperFeatures := [("function", "tokenRef")] }
 
-def ex_76h : LinguisticExample :=
+def ex_76h : Datum :=
   { id := "snyder2026_76h"
     source := ⟨"snyder-2026", "(76h)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_76h : LinguisticExample :=
     readings := []
     paperFeatures := [("function", "tokenPredicate")] }
 
-def ex_83 : LinguisticExample :=
+def ex_83 : Datum :=
   { id := "snyder2026_83"
     source := ⟨"snyder-2026", "(83)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_83 : LinguisticExample :=
     readings := []
     paperFeatures := [("function", "numeral")] }
 
-def ex_94a : LinguisticExample :=
+def ex_94a : Datum :=
   { id := "snyder2026_94a"
     source := ⟨"snyder-2026", "(94a)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_94a : LinguisticExample :=
     readings := []
     paperFeatures := [("function", "taxonomic")] }
 
-def ex_94b : LinguisticExample :=
+def ex_94b : Datum :=
   { id := "snyder2026_94b"
     source := ⟨"snyder-2026", "(94b)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_94b : LinguisticExample :=
     readings := []
     paperFeatures := [("function", "kindRef")] }
 
-def ex_98 : LinguisticExample :=
+def ex_98 : Datum :=
   { id := "snyder2026_98"
     source := ⟨"snyder-2026", "(98)"⟩
     reportedIn := none
@@ -225,6 +225,6 @@ def ex_98 : LinguisticExample :=
     readings := []
     paperFeatures := [("function", "tokenRef")] }
 
-def all : List LinguisticExample := [ex_1a, ex_1b, ex_1c, ex_1d, ex_1e, ex_1f, ex_4a, ex_4b, ex_20a, ex_20b, ex_76g, ex_76h, ex_83, ex_94a, ex_94b, ex_98]
+def all : List Datum := [ex_1a, ex_1b, ex_1c, ex_1d, ex_1e, ex_1f, ex_4a, ex_4b, ex_20a, ex_20b, ex_76g, ex_76h, ex_83, ex_94a, ex_94b, ex_98]
 
 end Snyder2026.Examples

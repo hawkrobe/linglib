@@ -17,7 +17,7 @@ namespace HaninkKoontzGarboden2025.Examples
 
 open Data.Examples
 
-def ex20a : LinguisticExample :=
+def ex20a : Datum :=
   { id := "haninkkoontzgarboden2025_ex20a"
     source := ⟨"hanink-koontz-garboden-2025", "(20a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex20a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("phenomenon", "intransitive")] }
 
-def ex20b : LinguisticExample :=
+def ex20b : Datum :=
   { id := "haninkkoontzgarboden2025_ex20b"
     source := ⟨"hanink-koontz-garboden-2025", "(20b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex20b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("phenomenon", "intransitive")] }
 
-def ex20c : LinguisticExample :=
+def ex20c : Datum :=
   { id := "haninkkoontzgarboden2025_ex20c"
     source := ⟨"hanink-koontz-garboden-2025", "(20c)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex20c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("phenomenon", "intransitive")] }
 
-def ex21a : LinguisticExample :=
+def ex21a : Datum :=
   { id := "haninkkoontzgarboden2025_ex21a"
     source := ⟨"hanink-koontz-garboden-2025", "(21a)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex21a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("phenomenon", "class1"), ("stem", "yasaŋ")] }
 
-def ex21b : LinguisticExample :=
+def ex21b : Datum :=
   { id := "haninkkoontzgarboden2025_ex21b"
     source := ⟨"hanink-koontz-garboden-2025", "(21b)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex21b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("phenomenon", "class1"), ("stem", "bišapuʔ")] }
 
-def ex21c : LinguisticExample :=
+def ex21c : Datum :=
   { id := "haninkkoontzgarboden2025_ex21c"
     source := ⟨"hanink-koontz-garboden-2025", "(21c)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex21c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("phenomenon", "class1"), ("stem", "ihuk’")] }
 
-def ex22a : LinguisticExample :=
+def ex22a : Datum :=
   { id := "haninkkoontzgarboden2025_ex22a"
     source := ⟨"hanink-koontz-garboden-2025", "(22a)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex22a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("phenomenon", "class2"), ("stem", "tamugayʔl")] }
 
-def ex22b : LinguisticExample :=
+def ex22b : Datum :=
   { id := "haninkkoontzgarboden2025_ex22b"
     source := ⟨"hanink-koontz-garboden-2025", "(22b)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex22b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("phenomenon", "class2"), ("stem", "i:yel")] }
 
-def ex22c : LinguisticExample :=
+def ex22c : Datum :=
   { id := "haninkkoontzgarboden2025_ex22c"
     source := ⟨"hanink-koontz-garboden-2025", "(22c)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex22c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("phenomenon", "class2"), ("stem", "ʔnu:š")] }
 
-def ex23 : LinguisticExample :=
+def ex23 : Datum :=
   { id := "haninkkoontzgarboden2025_ex23"
     source := ⟨"hanink-koontz-garboden-2025", "(23)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex23 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("phenomenon", "class2"), ("stem", "i:yel")] }
 
-def ex24a : LinguisticExample :=
+def ex24a : Datum :=
   { id := "haninkkoontzgarboden2025_ex24a"
     source := ⟨"hanink-koontz-garboden-2025", "(24a)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex24a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("phenomenon", "class3"), ("stem", "witwit")] }
 
-def ex24b : LinguisticExample :=
+def ex24b : Datum :=
   { id := "haninkkoontzgarboden2025_ex24b"
     source := ⟨"hanink-koontz-garboden-2025", "(24b)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex24b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("phenomenon", "class3"), ("stem", "k’awk’aw")] }
 
-def ex24c : LinguisticExample :=
+def ex24c : Datum :=
   { id := "haninkkoontzgarboden2025_ex24c"
     source := ⟨"hanink-koontz-garboden-2025", "(24c)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex24c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("phenomenon", "class3"), ("stem", "kaykay")] }
 
-def ex25a : LinguisticExample :=
+def ex25a : Datum :=
   { id := "haninkkoontzgarboden2025_ex25a"
     source := ⟨"hanink-koontz-garboden-2025", "(25a)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex25a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("phenomenon", "class3"), ("stem", "kaykay")] }
 
-def ex25b : LinguisticExample :=
+def ex25b : Datum :=
   { id := "haninkkoontzgarboden2025_ex25b"
     source := ⟨"hanink-koontz-garboden-2025", "(25b)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex25b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("phenomenon", "class3"), ("stem", "kaykay")] }
 
-def ex31 : LinguisticExample :=
+def ex31 : Datum :=
   { id := "haninkkoontzgarboden2025_ex31"
     source := ⟨"hanink-koontz-garboden-2025", "(31)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex31 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2"), ("phenomenon", "possession")] }
 
-def ex32 : LinguisticExample :=
+def ex32 : Datum :=
   { id := "haninkkoontzgarboden2025_ex32"
     source := ⟨"hanink-koontz-garboden-2025", "(32)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex32 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2"), ("phenomenon", "possession")] }
 
-def ex38 : LinguisticExample :=
+def ex38 : Datum :=
   { id := "haninkkoontzgarboden2025_ex38"
     source := ⟨"hanink-koontz-garboden-2025", "(38)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex38 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("phenomenon", "bipartite"), ("stem", "ši:šip")] }
 
-def ex39 : LinguisticExample :=
+def ex39 : Datum :=
   { id := "haninkkoontzgarboden2025_ex39"
     source := ⟨"hanink-koontz-garboden-2025", "(39)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex39 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("phenomenon", "bipartite")] }
 
-def ex41 : LinguisticExample :=
+def ex41 : Datum :=
   { id := "haninkkoontzgarboden2025_ex41"
     source := ⟨"hanink-koontz-garboden-2025", "(41)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex41 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("phenomenon", "bipartite")] }
 
-def ex47 : LinguisticExample :=
+def ex47 : Datum :=
   { id := "haninkkoontzgarboden2025_ex47"
     source := ⟨"hanink-koontz-garboden-2025", "(47)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex47 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("phenomenon", "bipartite"), ("stem", "i:yel")] }
 
-def ex50a : LinguisticExample :=
+def ex50a : Datum :=
   { id := "haninkkoontzgarboden2025_ex50a"
     source := ⟨"jacobsen-1980", "p. 86"⟩
     reportedIn := some ⟨"hanink-koontz-garboden-2025", "(50a)"⟩
@@ -303,7 +303,7 @@ def ex50a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("phenomenon", "bipartite"), ("stem", "ihuk’")] }
 
-def ex50b : LinguisticExample :=
+def ex50b : Datum :=
   { id := "haninkkoontzgarboden2025_ex50b"
     source := ⟨"bochnak-rhomieux-2013", "p. 257"⟩
     reportedIn := some ⟨"hanink-koontz-garboden-2025", "(50b)"⟩
@@ -316,7 +316,7 @@ def ex50b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("phenomenon", "bipartite"), ("stem", "ihuk’")] }
 
-def ex51a : LinguisticExample :=
+def ex51a : Datum :=
   { id := "haninkkoontzgarboden2025_ex51a"
     source := ⟨"hanink-koontz-garboden-2025", "(51a)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex51a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2"), ("phenomenon", "class3"), ("stem", "ši:šip")] }
 
-def ex52a : LinguisticExample :=
+def ex52a : Datum :=
   { id := "haninkkoontzgarboden2025_ex52a"
     source := ⟨"hanink-koontz-garboden-2025", "(52a)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex52a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2"), ("phenomenon", "class3"), ("stem", "k’unk’un")] }
 
-def ex52b : LinguisticExample :=
+def ex52b : Datum :=
   { id := "haninkkoontzgarboden2025_ex52b"
     source := ⟨"hanink-koontz-garboden-2025", "(52b)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex52b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2"), ("phenomenon", "bipartite"), ("stem", "k’unk’un")] }
 
-def ex61a : LinguisticExample :=
+def ex61a : Datum :=
   { id := "haninkkoontzgarboden2025_ex61a"
     source := ⟨"hanink-koontz-garboden-2025", "(61a)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def ex61a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.1"), ("phenomenon", "possession")] }
 
-def ex61c : LinguisticExample :=
+def ex61c : Datum :=
   { id := "haninkkoontzgarboden2025_ex61c"
     source := ⟨"hanink-koontz-garboden-2025", "(61c)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def ex61c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.1"), ("phenomenon", "possession")] }
 
-def ex64 : LinguisticExample :=
+def ex64 : Datum :=
   { id := "haninkkoontzgarboden2025_ex64"
     source := ⟨"hanink-koontz-garboden-2025", "(64)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def ex64 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.1"), ("phenomenon", "possession")] }
 
-def ex65a : LinguisticExample :=
+def ex65a : Datum :=
   { id := "haninkkoontzgarboden2025_ex65a"
     source := ⟨"hanink-koontz-garboden-2025", "(65a)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def ex65a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.1"), ("phenomenon", "concord")] }
 
-def ex65b : LinguisticExample :=
+def ex65b : Datum :=
   { id := "haninkkoontzgarboden2025_ex65b"
     source := ⟨"hanink-2021", "p. 545"⟩
     reportedIn := some ⟨"hanink-koontz-garboden-2025", "(65b)"⟩
@@ -420,7 +420,7 @@ def ex65b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.1"), ("phenomenon", "concord")] }
 
-def ex65c : LinguisticExample :=
+def ex65c : Datum :=
   { id := "haninkkoontzgarboden2025_ex65c"
     source := ⟨"hanink-koontz-garboden-2025", "(65c)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def ex65c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.1"), ("phenomenon", "possession")] }
 
-def ex70 : LinguisticExample :=
+def ex70 : Datum :=
   { id := "haninkkoontzgarboden2025_ex70"
     source := ⟨"hanink-koontz-garboden-2025", "(70)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def ex70 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.2"), ("phenomenon", "possession")] }
 
-def ex71 : LinguisticExample :=
+def ex71 : Datum :=
   { id := "haninkkoontzgarboden2025_ex71"
     source := ⟨"hanink-koontz-garboden-2025", "(71)"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def ex71 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.2"), ("phenomenon", "class3")] }
 
-def ex72 : LinguisticExample :=
+def ex72 : Datum :=
   { id := "haninkkoontzgarboden2025_ex72"
     source := ⟨"hanink-koontz-garboden-2025", "(72)"⟩
     reportedIn := none
@@ -472,6 +472,6 @@ def ex72 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.2"), ("phenomenon", "class3"), ("stem", "ši:šip")] }
 
-def all : List LinguisticExample := [ex20a, ex20b, ex20c, ex21a, ex21b, ex21c, ex22a, ex22b, ex22c, ex23, ex24a, ex24b, ex24c, ex25a, ex25b, ex31, ex32, ex38, ex39, ex41, ex47, ex50a, ex50b, ex51a, ex52a, ex52b, ex61a, ex61c, ex64, ex65a, ex65b, ex65c, ex70, ex71, ex72]
+def all : List Datum := [ex20a, ex20b, ex20c, ex21a, ex21b, ex21c, ex22a, ex22b, ex22c, ex23, ex24a, ex24b, ex24c, ex25a, ex25b, ex31, ex32, ex38, ex39, ex41, ex47, ex50a, ex50b, ex51a, ex52a, ex52b, ex61a, ex61c, ex64, ex65a, ex65b, ex65c, ex70, ex71, ex72]
 
 end HaninkKoontzGarboden2025.Examples

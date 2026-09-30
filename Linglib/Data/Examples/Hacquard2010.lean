@@ -17,7 +17,7 @@ namespace Hacquard2010.Examples
 
 open Data.Examples
 
-def ex11 : LinguisticExample :=
+def ex11 : Datum :=
   { id := "hacquard2010_ex11"
     source := ⟨"hacquard-2010", "(11)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex11 : LinguisticExample :=
     readings := [("root: given Mary's circumstances then, a past necessity to take the train then", .acceptable), ("root evaluated now: given her circumstances now, a necessity to have taken the train then", .unacceptable)]
     paperFeatures := [("section", "3.1"), ("phenomenon", "tense")] }
 
-def ex12 : LinguisticExample :=
+def ex12 : Datum :=
   { id := "hacquard2010_ex12"
     source := ⟨"hacquard-2010", "(12)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex12 : LinguisticExample :=
     readings := [("epistemic over past: given what is known now, it is necessary that Mary was home", .acceptable), ("past over epistemic: given what was known then, it was necessary that Mary was home", .unacceptable)]
     paperFeatures := [("section", "3.1"), ("phenomenon", "tense")] }
 
-def ex13a : LinguisticExample :=
+def ex13a : Datum :=
   { id := "hacquard2010_ex13a"
     source := ⟨"hacquard-2010", "(13a)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex13a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("phenomenon", "tense")] }
 
-def ex13b : LinguisticExample :=
+def ex13b : Datum :=
   { id := "hacquard2010_ex13b"
     source := ⟨"hacquard-2010", "(13b)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex13b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("phenomenon", "tense")] }
 
-def ex13c : LinguisticExample :=
+def ex13c : Datum :=
   { id := "hacquard2010_ex13c"
     source := ⟨"hacquard-2010", "(13c)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex13c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("phenomenon", "tense")] }
 
-def ex14a : LinguisticExample :=
+def ex14a : Datum :=
   { id := "hacquard2010_ex14a"
     source := ⟨"hacquard-2010", "(14a)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex14a : LinguisticExample :=
     readings := [("epistemic", .acceptable), ("deontic or ability", .unacceptable)]
     paperFeatures := [("section", "3.1"), ("phenomenon", "tense")] }
 
-def ex14b : LinguisticExample :=
+def ex14b : Datum :=
   { id := "hacquard2010_ex14b"
     source := ⟨"hacquard-2010", "(14b)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex14b : LinguisticExample :=
     readings := [("deontic or ability", .acceptable), ("epistemic", .unacceptable)]
     paperFeatures := [("section", "3.1"), ("phenomenon", "tense")] }
 
-def ex16 : LinguisticExample :=
+def ex16 : Datum :=
   { id := "hacquard2010_ex16"
     source := ⟨"hacquard-2010", "(16)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex16 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("phenomenon", "actualityEntailment")] }
 
-def ex17 : LinguisticExample :=
+def ex17 : Datum :=
   { id := "hacquard2010_ex17"
     source := ⟨"hacquard-2010", "(17)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex17 : LinguisticExample :=
     readings := [("epistemic", .acceptable), ("root: John managed to take the train, but it is possible he didn't", .unacceptable)]
     paperFeatures := [("section", "3.2"), ("phenomenon", "actualityEntailment")] }
 
-def ex18_19 : LinguisticExample :=
+def ex18_19 : Datum :=
   { id := "hacquard2010_ex18_19"
     source := ⟨"hacquard-2010", "(18)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex18_19 : LinguisticExample :=
     readings := [("epistemic over aspect: some world compatible with what is known holds a past train-taking by Mary", .acceptable), ("aspect over root: an actual past event which in some circumstantial world is a train-taking by Mary", .acceptable)]
     paperFeatures := [("section", "3.2"), ("phenomenon", "actualityEntailment")] }
 
-def ex22 : LinguisticExample :=
+def ex22 : Datum :=
   { id := "hacquard2010_ex22"
     source := ⟨"hacquard-2010", "(22)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex22 : LinguisticExample :=
     readings := [("given Mary's circumstances then, she had to take the train then", .acceptable), ("given Mary's circumstances now, she had to take the train", .unacceptable)]
     paperFeatures := [("section", "4.2"), ("phenomenon", "individualTimePair")] }
 
-def ex23 : LinguisticExample :=
+def ex23 : Datum :=
   { id := "hacquard2010_ex23"
     source := ⟨"hacquard-2010", "(23)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex23 : LinguisticExample :=
     readings := [("given what I know now, it must be the case that Mary was home then", .acceptable), ("given what I knew then, Mary had to be home", .unacceptable)]
     paperFeatures := [("section", "4.2"), ("phenomenon", "individualTimePair")] }
 
-def ex24 : LinguisticExample :=
+def ex24 : Datum :=
   { id := "hacquard2010_ex24"
     source := ⟨"hacquard-2010", "(24)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex24 : LinguisticExample :=
     readings := [("given what John knew at his thinking time, it was possible Mary was home", .acceptable), ("given what John knows now, it was possible Mary was home", .unacceptable)]
     paperFeatures := [("section", "4.2"), ("phenomenon", "individualTimePair")] }
 
-def ex25 : LinguisticExample :=
+def ex25 : Datum :=
   { id := "hacquard2010_ex25"
     source := ⟨"hacquard-2010", "(25)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex25 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2"), ("phenomenon", "locality")] }
 
-def ex26 : LinguisticExample :=
+def ex26 : Datum :=
   { id := "hacquard2010_ex26"
     source := ⟨"hacquard-2010", "(26)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex26 : LinguisticExample :=
     readings := [("speech event: given what I know now, it is possible that John thought Mary had taken the train", .acceptable)]
     paperFeatures := [("section", "4.2"), ("phenomenon", "locality")] }
 
-def ex27 : LinguisticExample :=
+def ex27 : Datum :=
   { id := "hacquard2010_ex27"
     source := ⟨"hacquard-2010", "(27)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex27 : LinguisticExample :=
     readings := [("attitude event: given what John thought yesterday, it was possible that Mary had taken the train", .acceptable), ("speech event: John thought yesterday that it was possible, given what I know, that Mary took the train", .unacceptable)]
     paperFeatures := [("section", "4.2"), ("phenomenon", "locality")] }
 
-def ex28 : LinguisticExample :=
+def ex28 : Datum :=
   { id := "hacquard2010_ex28"
     source := ⟨"hacquard-2010", "(28)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex28 : LinguisticExample :=
     readings := [("VP event: given Mary's circumstances the day before yesterday, it was necessary that she take the train", .acceptable), ("speech event: John thought that it was necessary given what I know that Mary took the train", .unacceptable)]
     paperFeatures := [("section", "4.2"), ("phenomenon", "locality")] }
 
-def ex45a : LinguisticExample :=
+def ex45a : Datum :=
   { id := "hacquard2010_ex45a"
     source := ⟨"hacquard-2010", "(45a)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex45a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3.2"), ("phenomenon", "speechEvent")] }
 
-def ex50 : LinguisticExample :=
+def ex50 : Datum :=
   { id := "hacquard2010_ex50"
     source := ⟨"hacquard-2010", "(50)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex50 : LinguisticExample :=
     readings := [("rain is compatible with what John believes", .acceptable)]
     paperFeatures := [("section", "6.1"), ("phenomenon", "embeddedEpistemic")] }
 
-def ex55 : LinguisticExample :=
+def ex55 : Datum :=
   { id := "hacquard2010_ex55"
     source := ⟨"hacquard-2010", "(55)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex55 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.1.2"), ("phenomenon", "matrixEpistemic")] }
 
-def ex58a : LinguisticExample :=
+def ex58a : Datum :=
   { id := "hacquard2010_ex58a"
     source := ⟨"yalcin-2007", "(58a)"⟩
     reportedIn := some ⟨"hacquard-2010", "(58a)"⟩
@@ -290,7 +290,7 @@ def ex58a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.1.3"), ("phenomenon", "yalcin")] }
 
-def ex59 : LinguisticExample :=
+def ex59 : Datum :=
   { id := "hacquard2010_ex59"
     source := ⟨"hacquard-2010", "(59)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex59 : LinguisticExample :=
     readings := [("epistemic for the subject: it was necessary, last night, given what Mary knew, that she took the train", .unacceptable)]
     paperFeatures := [("section", "6.1.4"), ("phenomenon", "contentLicensing")] }
 
-def ex60a : LinguisticExample :=
+def ex60a : Datum :=
   { id := "hacquard2010_ex60a"
     source := ⟨"hacquard-2010", "(60a)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex60a : LinguisticExample :=
     readings := [("epistemic for the subject: Mary being nice was compatible with what John came to know", .acceptable)]
     paperFeatures := [("section", "6.1.4"), ("phenomenon", "contentLicensing")] }
 
-def ex60b : LinguisticExample :=
+def ex60b : Datum :=
   { id := "hacquard2010_ex60b"
     source := ⟨"hacquard-2010", "(60b)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex60b : LinguisticExample :=
     readings := [("epistemic for the subject: Mary being nice was compatible with what John came to know", .acceptable)]
     paperFeatures := [("section", "6.1.4"), ("phenomenon", "contentLicensing")] }
 
-def ex62 : LinguisticExample :=
+def ex62 : Datum :=
   { id := "hacquard2010_ex62"
     source := ⟨"hacquard-2010", "(62)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex62 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.2"), ("phenomenon", "circumstantial")] }
 
-def ex63 : LinguisticExample :=
+def ex63 : Datum :=
   { id := "hacquard2010_ex63"
     source := ⟨"hacquard-2010", "(63)"⟩
     reportedIn := none
@@ -355,6 +355,6 @@ def ex63 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.2"), ("phenomenon", "circumstantial")] }
 
-def all : List LinguisticExample := [ex11, ex12, ex13a, ex13b, ex13c, ex14a, ex14b, ex16, ex17, ex18_19, ex22, ex23, ex24, ex25, ex26, ex27, ex28, ex45a, ex50, ex55, ex58a, ex59, ex60a, ex60b, ex62, ex63]
+def all : List Datum := [ex11, ex12, ex13a, ex13b, ex13c, ex14a, ex14b, ex16, ex17, ex18_19, ex22, ex23, ex24, ex25, ex26, ex27, ex28, ex45a, ex50, ex55, ex58a, ex59, ex60a, ex60b, ex62, ex63]
 
 end Hacquard2010.Examples

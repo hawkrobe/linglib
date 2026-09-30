@@ -252,7 +252,7 @@ def verbOf : String → Option Verb
   | _ => none
 
 /-- A row's configuration and judgment. -/
-def datum (r : LinguisticExample) : Option (Config × Judgment) := do
+def datum (r : Datum) : Option (Config × Judgment) := do
   let v ← (r.feature? "verb").bind verbOf
   let cls ← classOf v
   let comp ← r.parse? "complementizer" [("oti", oti), ("an", an), ("pu", pu), ("na", na)]

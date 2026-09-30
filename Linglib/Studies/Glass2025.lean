@@ -240,13 +240,13 @@ def verbProfiles : List (String × Profile) :=
    ("renwei", (Mandarin.renwei.toVerb.veridicality?.map Profile.ofVeridicality).getD .nonfactive),
    ("yiwei", yiweiProfile)]
 
-def Row.ofExample (ex : LinguisticExample) : Option Row := do
+def Row.ofDatum (ex : Datum) : Option Row := do
   let profile ← ex.parse? "verb" verbProfiles
   let state ← ex.parse? "state" [("p", .p), ("unsettled", .unsettled), ("notP", .notP)]
   pure ⟨profile, state, ex.judgment⟩
 
 /-- The nine reports of (1), (2), (4), (5) and (7). -/
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- The reports are judged acceptable exactly in the states their profiles admit. -/
 theorem rows_admits : ∀ r ∈ rows, r.judgment = .acceptable ↔ r.profile.Admits r.state := by

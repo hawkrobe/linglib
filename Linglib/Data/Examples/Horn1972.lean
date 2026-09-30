@@ -17,7 +17,7 @@ namespace Horn1972.Examples
 
 open Data.Examples
 
-def ex1_58b_more : LinguisticExample :=
+def ex1_58b_more : Datum :=
   { id := "horn1972_ex1_58b_more"
     source := ⟨"horn-1972", "(1.58b)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex1_58b_more : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.21"), ("scale", "cardinal"), ("construction", "suspension of the upper bound")] }
 
-def ex1_58b_fewer : LinguisticExample :=
+def ex1_58b_fewer : Datum :=
   { id := "horn1972_ex1_58b_fewer"
     source := ⟨"horn-1972", "(1.58b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex1_58b_fewer : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.21"), ("scale", "cardinal"), ("construction", "suspension of the lower bound")] }
 
-def ex1_59a : LinguisticExample :=
+def ex1_59a : Datum :=
   { id := "horn1972_ex1_59a"
     source := ⟨"horn-1972", "(1.59a)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex1_59a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.21"), ("scale", "cardinal"), ("asserts", "at least 3"), ("implicates", "at most 3")] }
 
-def ex1_59b : LinguisticExample :=
+def ex1_59b : Datum :=
   { id := "horn1972_ex1_59b"
     source := ⟨"horn-1972", "(1.59b)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex1_59b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.21"), ("scale", "cardinal"), ("negation", "of the lower bound")] }
 
-def ex1_60a : LinguisticExample :=
+def ex1_60a : Datum :=
   { id := "horn1972_ex1_60a"
     source := ⟨"horn-1972", "(1.60a)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex1_60a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.21"), ("scale", "cardinal"), ("construction", "cancelling the upper bound")] }
 
-def ex1_60b : LinguisticExample :=
+def ex1_60b : Datum :=
   { id := "horn1972_ex1_60b"
     source := ⟨"horn-1972", "(1.60b)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex1_60b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.21"), ("scale", "cardinal"), ("construction", "contradicting the assertion of only")] }
 
-def ex1_63b : LinguisticExample :=
+def ex1_63b : Datum :=
   { id := "horn1972_ex1_63b"
     source := ⟨"horn-1972", "(1.63)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex1_63b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.21"), ("scale", "cardinal"), ("reading", "at least")] }
 
-def ex1_63c : LinguisticExample :=
+def ex1_63c : Datum :=
   { id := "horn1972_ex1_63c"
     source := ⟨"horn-1972", "(1.63)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex1_63c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.21"), ("scale", "cardinal"), ("reading", "exact")] }
 
-def ex1_72a_fact : LinguisticExample :=
+def ex1_72a_fact : Datum :=
   { id := "horn1972_ex1_72a_fact"
     source := ⟨"horn-1972", "(1.72a)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex1_72a_fact : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.22"), ("scale", "warm–hot"), ("construction", "contradicting the implicature")] }
 
-def ex1_72a_susp : LinguisticExample :=
+def ex1_72a_susp : Datum :=
   { id := "horn1972_ex1_72a_susp"
     source := ⟨"horn-1972", "(1.72a)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex1_72a_susp : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.22"), ("scale", "warm–hot"), ("construction", "suspension")] }
 
-def ex1_72b_cold : LinguisticExample :=
+def ex1_72b_cold : Datum :=
   { id := "horn1972_ex1_72b_cold"
     source := ⟨"horn-1972", "(1.72b)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex1_72b_cold : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.22"), ("scale", "cool–cold"), ("construction", "suspension")] }
 
-def ex1_72b_warm : LinguisticExample :=
+def ex1_72b_warm : Datum :=
   { id := "horn1972_ex1_72b_warm"
     source := ⟨"horn-1972", "(1.72b)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex1_72b_warm : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.22"), ("scale", "cool–cold"), ("construction", "suspension across scales")] }
 
-def ex1_73c_hot_warm : LinguisticExample :=
+def ex1_73c_hot_warm : Datum :=
   { id := "horn1972_ex1_73c_hot_warm"
     source := ⟨"horn-1972", "(1.73c)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex1_73c_hot_warm : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.22"), ("scale", "warm–hot"), ("construction", "suspension by a weaker member")] }
 
-def ex1_73a : LinguisticExample :=
+def ex1_73a : Datum :=
   { id := "horn1972_ex1_73a"
     source := ⟨"horn-1972", "(1.73a)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex1_73a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.22"), ("scale", "pretty–beautiful"), ("construction", "asserting the implicature")] }
 
-def ex1_73b : LinguisticExample :=
+def ex1_73b : Datum :=
   { id := "horn1972_ex1_73b"
     source := ⟨"horn-1972", "(1.73b)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex1_73b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.22"), ("scale", "pretty–beautiful"), ("construction", "contradicting the implicature")] }
 
-def ex1_82a : LinguisticExample :=
+def ex1_82a : Datum :=
   { id := "horn1972_ex1_82a"
     source := ⟨"horn-1972", "(1.82a)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex1_82a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.22"), ("scale", "pretty–beautiful"), ("construction", "suspension"), ("intonation", "rising")] }
 
-def ex1_82b : LinguisticExample :=
+def ex1_82b : Datum :=
   { id := "horn1972_ex1_82b"
     source := ⟨"horn-1972", "(1.82b)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex1_82b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.22"), ("construction", "concession"), ("intonation", "falling")] }
 
-def ex1_85a : LinguisticExample :=
+def ex1_85a : Datum :=
   { id := "horn1972_ex1_85a"
     source := ⟨"horn-1972", "(1.85a)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex1_85a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.22"), ("construction", "suspension"), ("polarity item", "positive")] }
 
-def ex1_85b : LinguisticExample :=
+def ex1_85b : Datum :=
   { id := "horn1972_ex1_85b"
     source := ⟨"horn-1972", "(1.85b)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex1_85b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.22"), ("construction", "concession"), ("polarity item", "negative")] }
 
-def ex1_93_ok : LinguisticExample :=
+def ex1_93_ok : Datum :=
   { id := "horn1972_ex1_93_ok"
     source := ⟨"horn-1972", "(1.93)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex1_93_ok : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.23"), ("scale", "seriously–critically–fatally wounded"), ("construction", "suspension")] }
 
-def ex1_93_bad : LinguisticExample :=
+def ex1_93_bad : Datum :=
   { id := "horn1972_ex1_93_bad"
     source := ⟨"horn-1972", "(1.93)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex1_93_bad : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.23"), ("scale", "seriously–critically–fatally wounded"), ("construction", "suspension by a weaker member")] }
 
-def ex2_1a_some_all : LinguisticExample :=
+def ex2_1a_some_all : Datum :=
   { id := "horn1972_ex2_1a_some_all"
     source := ⟨"horn-1972", "(2.1a)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex2_1a_some_all : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.11"), ("scale", "quantifier"), ("construction", "suspension")] }
 
-def ex2_1a_all_some : LinguisticExample :=
+def ex2_1a_all_some : Datum :=
   { id := "horn1972_ex2_1a_all_some"
     source := ⟨"horn-1972", "(2.1a)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex2_1a_all_some : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.11"), ("scale", "quantifier"), ("construction", "suspension by a weaker member")] }
 
-def ex2_1a_many_most : LinguisticExample :=
+def ex2_1a_many_most : Datum :=
   { id := "horn1972_ex2_1a_many_most"
     source := ⟨"horn-1972", "(2.1a)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex2_1a_many_most : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.11"), ("scale", "quantifier"), ("construction", "suspension")] }
 
-def ex2_1b : LinguisticExample :=
+def ex2_1b : Datum :=
   { id := "horn1972_ex2_1b"
     source := ⟨"horn-1972", "(2.1b)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex2_1b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.11"), ("scale", "quantificational adverb"), ("construction", "suspension")] }
 
-def ex2_1e_few : LinguisticExample :=
+def ex2_1e_few : Datum :=
   { id := "horn1972_ex2_1e_few"
     source := ⟨"horn-1972", "(2.1e)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex2_1e_few : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.11"), ("scale", "negative quantifier"), ("construction", "suspension")] }
 
-def ex2_3c : LinguisticExample :=
+def ex2_3c : Datum :=
   { id := "horn1972_ex2_3c"
     source := ⟨"horn-1972", "(2.3c)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def ex2_3c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.11"), ("construction", "or both after a suspender disjunction")] }
 
-def ex2_3a : LinguisticExample :=
+def ex2_3a : Datum :=
   { id := "horn1972_ex2_3a"
     source := ⟨"horn-1972", "(2.3a)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def ex2_3a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.11"), ("construction", "or both after a true disjunction")] }
 
-def ex2_24a_somebody : LinguisticExample :=
+def ex2_24a_somebody : Datum :=
   { id := "horn1972_ex2_24a_somebody"
     source := ⟨"horn-1972", "(2.24a)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def ex2_24a_somebody : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.11"), ("scale", "quantifier"), ("construction", "cancelling the implicature")] }
 
-def ex2_24b_some_not_all : LinguisticExample :=
+def ex2_24b_some_not_all : Datum :=
   { id := "horn1972_ex2_24b_some_not_all"
     source := ⟨"horn-1972", "(2.24b)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def ex2_24b_some_not_all : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.11"), ("scale", "quantifier"), ("construction", "asserting the implicature")] }
 
-def ex2_25a : LinguisticExample :=
+def ex2_25a : Datum :=
   { id := "horn1972_ex2_25a"
     source := ⟨"horn-1972", "(2.25a)"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def ex2_25a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.11"), ("scale", "negative quantifier"), ("construction", "asserting the implicature")] }
 
-def ex2_28a : LinguisticExample :=
+def ex2_28a : Datum :=
   { id := "horn1972_ex2_28a"
     source := ⟨"horn-1972", "(2.28a)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def ex2_28a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.11"), ("scale", "cardinal"), ("negation", "of the lower bound")] }
 
-def ex2_28b : LinguisticExample :=
+def ex2_28b : Datum :=
   { id := "horn1972_ex2_28b"
     source := ⟨"horn-1972", "(2.28b)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def ex2_28b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.11"), ("scale", "cardinal"), ("negation", "external")] }
 
-def ex2_40a : LinguisticExample :=
+def ex2_40a : Datum :=
   { id := "horn1972_ex2_40a"
     source := ⟨"horn-1972", "(2.40a)"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def ex2_40a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.13"), ("ambiguity", "NEG-V vs NEG-Q")] }
 
-def ex2_43a : LinguisticExample :=
+def ex2_43a : Datum :=
   { id := "horn1972_ex2_43a"
     source := ⟨"horn-1972", "(2.43a)"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def ex2_43a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.13"), ("reading", "NEG-V only")] }
 
-def ex2_46 : LinguisticExample :=
+def ex2_46 : Datum :=
   { id := "horn1972_ex2_46"
     source := ⟨"horn-1972", "(2.46)"⟩
     reportedIn := none
@@ -485,7 +485,7 @@ def ex2_46 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.13"), ("scale", "connective"), ("entails", "and entails or"), ("implicates", "or implicates not and")] }
 
-def ex2_47 : LinguisticExample :=
+def ex2_47 : Datum :=
   { id := "horn1972_ex2_47"
     source := ⟨"horn-1972", "(2.47)"⟩
     reportedIn := none
@@ -498,7 +498,7 @@ def ex2_47 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.13"), ("scale", "connective"), ("context", "conditional")] }
 
-def ex2_49b : LinguisticExample :=
+def ex2_49b : Datum :=
   { id := "horn1972_ex2_49b"
     source := ⟨"horn-1972", "(2.49b)"⟩
     reportedIn := none
@@ -511,7 +511,7 @@ def ex2_49b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.13"), ("scale", "connective"), ("construction", "suspension of exclusivity")] }
 
-def ex2_51a : LinguisticExample :=
+def ex2_51a : Datum :=
   { id := "horn1972_ex2_51a"
     source := ⟨"horn-1972", "(2.51a)"⟩
     reportedIn := none
@@ -524,7 +524,7 @@ def ex2_51a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.14"), ("scale", "quantifier"), ("status", "understatement")] }
 
-def ex2_51d : LinguisticExample :=
+def ex2_51d : Datum :=
   { id := "horn1972_ex2_51d"
     source := ⟨"horn-1972", "(2.51d)"⟩
     reportedIn := none
@@ -537,7 +537,7 @@ def ex2_51d : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.14"), ("scale", "quantifier"), ("status", "anomaly")] }
 
-def ex2_52a : LinguisticExample :=
+def ex2_52a : Datum :=
   { id := "horn1972_ex2_52a"
     source := ⟨"horn-1972", "(2.52a)"⟩
     reportedIn := none
@@ -550,7 +550,7 @@ def ex2_52a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.14"), ("scale", "quantifier"), ("status", "anomaly")] }
 
-def ex2_55c : LinguisticExample :=
+def ex2_55c : Datum :=
   { id := "horn1972_ex2_55c"
     source := ⟨"horn-1972", "(2.55c)"⟩
     reportedIn := none
@@ -563,7 +563,7 @@ def ex2_55c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.14"), ("scale", "quantifier"), ("status", "anomaly")] }
 
-def ex2_58a : LinguisticExample :=
+def ex2_58a : Datum :=
   { id := "horn1972_ex2_58a"
     source := ⟨"horn-1972", "(2.58a)"⟩
     reportedIn := none
@@ -576,7 +576,7 @@ def ex2_58a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.14"), ("scale", "quantifier"), ("status", "anomaly")] }
 
-def ex2_58c : LinguisticExample :=
+def ex2_58c : Datum :=
   { id := "horn1972_ex2_58c"
     source := ⟨"horn-1972", "(2.58c)"⟩
     reportedIn := none
@@ -589,7 +589,7 @@ def ex2_58c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.14"), ("scale", "quantifier"), ("status", "understatement")] }
 
-def ex4_49a : LinguisticExample :=
+def ex4_49a : Datum :=
   { id := "horn1972_ex4_49a"
     source := ⟨"horn-1972", "(4.49a)"⟩
     reportedIn := none
@@ -602,7 +602,7 @@ def ex4_49a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.23"), ("connective", "and"), ("lexicalization", "nor = and~")] }
 
-def ex4_49a_prime : LinguisticExample :=
+def ex4_49a_prime : Datum :=
   { id := "horn1972_ex4_49a_prime"
     source := ⟨"horn-1972", "(4.49a')"⟩
     reportedIn := none
@@ -615,7 +615,7 @@ def ex4_49a_prime : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.23"), ("connective", "or"), ("lexicalization", "*nand = or~")] }
 
-def ex4_50a : LinguisticExample :=
+def ex4_50a : Datum :=
   { id := "horn1972_ex4_50a"
     source := ⟨"horn-1972", "(4.50a)"⟩
     reportedIn := none
@@ -628,7 +628,7 @@ def ex4_50a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.23"), ("connective", "both"), ("lexicalization", "neither = both~")] }
 
-def ex4_50a_prime : LinguisticExample :=
+def ex4_50a_prime : Datum :=
   { id := "horn1972_ex4_50a_prime"
     source := ⟨"horn-1972", "(4.50a')"⟩
     reportedIn := none
@@ -641,7 +641,7 @@ def ex4_50a_prime : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.23"), ("connective", "either"), ("lexicalization", "*noth = not both")] }
 
-def ex4_56a : LinguisticExample :=
+def ex4_56a : Datum :=
   { id := "horn1972_ex4_56a"
     source := ⟨"horn-1972", "(4.56a)"⟩
     reportedIn := none
@@ -654,7 +654,7 @@ def ex4_56a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.24"), ("quantifier", "all"), ("compatibility", "incompatible with a lower negation")] }
 
-def ex4_56b : LinguisticExample :=
+def ex4_56b : Datum :=
   { id := "horn1972_ex4_56b"
     source := ⟨"horn-1972", "(4.56b)"⟩
     reportedIn := none
@@ -667,7 +667,7 @@ def ex4_56b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.24"), ("quantifier", "most"), ("compatibility", "incompatible with a lower negation")] }
 
-def ex4_56c : LinguisticExample :=
+def ex4_56c : Datum :=
   { id := "horn1972_ex4_56c"
     source := ⟨"horn-1972", "(4.56c)"⟩
     reportedIn := none
@@ -680,7 +680,7 @@ def ex4_56c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.24"), ("quantifier", "half"), ("compatibility", "compatible with a lower negation")] }
 
-def ex4_56e : LinguisticExample :=
+def ex4_56e : Datum :=
   { id := "horn1972_ex4_56e"
     source := ⟨"horn-1972", "(4.56e)"⟩
     reportedIn := none
@@ -693,7 +693,7 @@ def ex4_56e : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.24"), ("quantifier", "some"), ("compatibility", "compatible with a lower negation")] }
 
-def ex4_57a : LinguisticExample :=
+def ex4_57a : Datum :=
   { id := "horn1972_ex4_57a"
     source := ⟨"horn-1972", "(4.57a)"⟩
     reportedIn := none
@@ -706,7 +706,7 @@ def ex4_57a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.24"), ("quantifier", "many"), ("compatibility", "compatible with a lower negation")] }
 
-def ex4_57a_prime : LinguisticExample :=
+def ex4_57a_prime : Datum :=
   { id := "horn1972_ex4_57a_prime"
     source := ⟨"horn-1972", "(4.57a')"⟩
     reportedIn := none
@@ -719,7 +719,7 @@ def ex4_57a_prime : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.24"), ("quantifier", "not many"), ("compatibility", "incompatible with a lower negation")] }
 
-def ex4_60a : LinguisticExample :=
+def ex4_60a : Datum :=
   { id := "horn1972_ex4_60a"
     source := ⟨"horn-1972", "(4.60a)"⟩
     reportedIn := none
@@ -732,7 +732,7 @@ def ex4_60a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.3"), ("quantifier", "some"), ("implicates", "not all"), ("lexicalization", "~some = none; some~ unlexicalized")] }
 
-def ex4_60b : LinguisticExample :=
+def ex4_60b : Datum :=
   { id := "horn1972_ex4_60b"
     source := ⟨"horn-1972", "(4.60b)"⟩
     reportedIn := none
@@ -745,7 +745,7 @@ def ex4_60b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.3"), ("modal", "possible"), ("implicates", "not necessary"), ("lexicalization", "~possible = impossible; possible~ unlexicalized")] }
 
-def ex4_60f : LinguisticExample :=
+def ex4_60f : Datum :=
   { id := "horn1972_ex4_60f"
     source := ⟨"horn-1972", "(4.60f)"⟩
     reportedIn := none
@@ -758,7 +758,7 @@ def ex4_60f : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.3"), ("connective", "either...or"), ("implicates", "not both"), ("lexicalization", "~(either...or) = neither...nor")] }
 
-def ex4_66a : LinguisticExample :=
+def ex4_66a : Datum :=
   { id := "horn1972_ex4_66a"
     source := ⟨"horn-1972", "(4.66a)"⟩
     reportedIn := none
@@ -771,7 +771,7 @@ def ex4_66a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.3"), ("predicate", "allow"), ("compatibility", "compatible"), ("lexicalization", "~allow = disallow")] }
 
-def ex4_66b : LinguisticExample :=
+def ex4_66b : Datum :=
   { id := "horn1972_ex4_66b"
     source := ⟨"horn-1972", "(4.66b)"⟩
     reportedIn := none
@@ -784,7 +784,7 @@ def ex4_66b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.3"), ("predicate", "prove"), ("compatibility", "incompatible"), ("lexicalization", "prove~ = disprove")] }
 
-def ex4_75 : LinguisticExample :=
+def ex4_75 : Datum :=
   { id := "horn1972_ex4_75"
     source := ⟨"horn-1972", "(4.75)"⟩
     reportedIn := none
@@ -797,6 +797,6 @@ def ex4_75 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.3"), ("predicate", "true"), ("compatibility", "incompatible"), ("lexicalization", "true~ = false; ~true = untrue")] }
 
-def all : List LinguisticExample := [ex1_58b_more, ex1_58b_fewer, ex1_59a, ex1_59b, ex1_60a, ex1_60b, ex1_63b, ex1_63c, ex1_72a_fact, ex1_72a_susp, ex1_72b_cold, ex1_72b_warm, ex1_73c_hot_warm, ex1_73a, ex1_73b, ex1_82a, ex1_82b, ex1_85a, ex1_85b, ex1_93_ok, ex1_93_bad, ex2_1a_some_all, ex2_1a_all_some, ex2_1a_many_most, ex2_1b, ex2_1e_few, ex2_3c, ex2_3a, ex2_24a_somebody, ex2_24b_some_not_all, ex2_25a, ex2_28a, ex2_28b, ex2_40a, ex2_43a, ex2_46, ex2_47, ex2_49b, ex2_51a, ex2_51d, ex2_52a, ex2_55c, ex2_58a, ex2_58c, ex4_49a, ex4_49a_prime, ex4_50a, ex4_50a_prime, ex4_56a, ex4_56b, ex4_56c, ex4_56e, ex4_57a, ex4_57a_prime, ex4_60a, ex4_60b, ex4_60f, ex4_66a, ex4_66b, ex4_75]
+def all : List Datum := [ex1_58b_more, ex1_58b_fewer, ex1_59a, ex1_59b, ex1_60a, ex1_60b, ex1_63b, ex1_63c, ex1_72a_fact, ex1_72a_susp, ex1_72b_cold, ex1_72b_warm, ex1_73c_hot_warm, ex1_73a, ex1_73b, ex1_82a, ex1_82b, ex1_85a, ex1_85b, ex1_93_ok, ex1_93_bad, ex2_1a_some_all, ex2_1a_all_some, ex2_1a_many_most, ex2_1b, ex2_1e_few, ex2_3c, ex2_3a, ex2_24a_somebody, ex2_24b_some_not_all, ex2_25a, ex2_28a, ex2_28b, ex2_40a, ex2_43a, ex2_46, ex2_47, ex2_49b, ex2_51a, ex2_51d, ex2_52a, ex2_55c, ex2_58a, ex2_58c, ex4_49a, ex4_49a_prime, ex4_50a, ex4_50a_prime, ex4_56a, ex4_56b, ex4_56c, ex4_56e, ex4_57a, ex4_57a_prime, ex4_60a, ex4_60b, ex4_60f, ex4_66a, ex4_66b, ex4_75]
 
 end Horn1972.Examples

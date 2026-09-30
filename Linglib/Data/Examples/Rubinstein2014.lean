@@ -17,7 +17,7 @@ namespace Rubinstein2014.Examples
 
 open Data.Examples
 
-def nr_should : LinguisticExample :=
+def nr_should : Datum :=
   { id := "rubinstein2014_nr_should"
     source := ⟨"horn-1978", "p. 198"⟩
     reportedIn := some ⟨"rubinstein-2014", "(31a)"⟩
@@ -30,7 +30,7 @@ def nr_should : LinguisticExample :=
     readings := [("lowerNeg", .acceptable)]
     paperFeatures := [("modal", "should"), ("category", "modalVerb"), ("diagnostic", "negRaising")] }
 
-def nr_ought : LinguisticExample :=
+def nr_ought : Datum :=
   { id := "rubinstein2014_nr_ought"
     source := ⟨"horn-1978", "p. 198"⟩
     reportedIn := some ⟨"rubinstein-2014", "(31a)"⟩
@@ -43,7 +43,7 @@ def nr_ought : LinguisticExample :=
     readings := [("lowerNeg", .acceptable)]
     paperFeatures := [("modal", "ought"), ("category", "modalVerb"), ("diagnostic", "negRaising")] }
 
-def nr_better : LinguisticExample :=
+def nr_better : Datum :=
   { id := "rubinstein2014_nr_better"
     source := ⟨"horn-1978", "p. 198"⟩
     reportedIn := some ⟨"rubinstein-2014", "(31a)"⟩
@@ -56,7 +56,7 @@ def nr_better : LinguisticExample :=
     readings := [("lowerNeg", .acceptable)]
     paperFeatures := [("modal", "better"), ("category", "evaluativeComparative"), ("diagnostic", "negRaising")] }
 
-def nr_good : LinguisticExample :=
+def nr_good : Datum :=
   { id := "rubinstein2014_nr_good"
     source := ⟨"horn-1978", "p. 211"⟩
     reportedIn := some ⟨"rubinstein-2014", "(30)"⟩
@@ -69,7 +69,7 @@ def nr_good : LinguisticExample :=
     readings := [("lowerNeg", .acceptable)]
     paperFeatures := [("modal", "good"), ("category", "evaluativeComparative"), ("diagnostic", "negRaising")] }
 
-def nr_must : LinguisticExample :=
+def nr_must : Datum :=
   { id := "rubinstein2014_nr_must"
     source := ⟨"horn-1978", "p. 198"⟩
     reportedIn := some ⟨"rubinstein-2014", "(31b)"⟩
@@ -82,7 +82,7 @@ def nr_must : LinguisticExample :=
     readings := [("lowerNeg", .unacceptable)]
     paperFeatures := [("modal", "must"), ("category", "modalVerb"), ("diagnostic", "negRaising")] }
 
-def nr_haveTo : LinguisticExample :=
+def nr_haveTo : Datum :=
   { id := "rubinstein2014_nr_haveTo"
     source := ⟨"horn-1978", "p. 198"⟩
     reportedIn := some ⟨"rubinstein-2014", "(31b)"⟩
@@ -95,7 +95,7 @@ def nr_haveTo : LinguisticExample :=
     readings := [("lowerNeg", .unacceptable)]
     paperFeatures := [("modal", "have to"), ("category", "modalVerb"), ("diagnostic", "negRaising")] }
 
-def nr_adif : LinguisticExample :=
+def nr_adif : Datum :=
   { id := "rubinstein2014_nr_adif"
     source := ⟨"rubinstein-2014", "(33)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def nr_adif : LinguisticExample :=
     readings := [("lowerNeg", .acceptable)]
     paperFeatures := [("modal", "adif"), ("category", "evaluativeComparative"), ("diagnostic", "negRaising")] }
 
-def ought_lexical : LinguisticExample :=
+def ought_lexical : Datum :=
   { id := "rubinstein2014_ought_lexical"
     source := ⟨"rubinstein-2014", "(8a)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ought_lexical : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "ought"), ("category", "modalVerb"), ("strategy", "lexical"), ("diagnostic", "test1")] }
 
-def compositional_deberia : LinguisticExample :=
+def compositional_deberia : Datum :=
   { id := "rubinstein2014_compositional_deberia"
     source := ⟨"von-fintel-iatridou-2008", "p. 122"⟩
     reportedIn := some ⟨"rubinstein-2014", "(8b)"⟩
@@ -134,7 +134,7 @@ def compositional_deberia : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "deberia"), ("category", "compositional"), ("strategy", "compositional"), ("diagnostic", "test1")] }
 
-def test1_carix : LinguisticExample :=
+def test1_carix : Datum :=
   { id := "rubinstein2014_test1_carix"
     source := ⟨"rubinstein-2014", "(16a)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def test1_carix : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "carix"), ("category", "modalVerb"), ("diagnostic", "test1")] }
 
-def test2_carix : LinguisticExample :=
+def test2_carix : Datum :=
   { id := "rubinstein2014_test2_carix"
     source := ⟨"rubinstein-2014", "(19)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def test2_carix : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "carix"), ("category", "modalVerb"), ("diagnostic", "test2")] }
 
-def heb_yoter_tov : LinguisticExample :=
+def heb_yoter_tov : Datum :=
   { id := "rubinstein2014_heb_yoter_tov"
     source := ⟨"rubinstein-2014", "(21a)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def heb_yoter_tov : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "tov"), ("category", "evaluativeComparative"), ("strategy", "evaluativeComparative"), ("diagnostic", "test1")] }
 
-def heb_adif : LinguisticExample :=
+def heb_adif : Datum :=
   { id := "rubinstein2014_heb_adif"
     source := ⟨"rubinstein-2014", "(21b)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def heb_adif : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "adif"), ("category", "evaluativeComparative"), ("strategy", "evaluativeComparative"), ("diagnostic", "test1")] }
 
-def heb_kday : LinguisticExample :=
+def heb_kday : Datum :=
   { id := "rubinstein2014_heb_kday"
     source := ⟨"rubinstein-2014", "(21c)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def heb_kday : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "kday"), ("category", "evaluativeComparative"), ("strategy", "evaluativeComparative"), ("diagnostic", "test1")] }
 
-def comp_better : LinguisticExample :=
+def comp_better : Datum :=
   { id := "rubinstein2014_comp_better"
     source := ⟨"rubinstein-2014", "(24)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def comp_better : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "better"), ("category", "evaluativeComparative"), ("pairwise", "true")] }
 
-def nr_carix : LinguisticExample :=
+def nr_carix : Datum :=
   { id := "rubinstein2014_nr_carix"
     source := ⟨"rubinstein-2014", "(57)"⟩
     reportedIn := none
@@ -225,6 +225,6 @@ def nr_carix : LinguisticExample :=
     readings := [("lowerNeg", .acceptable)]
     paperFeatures := [("modal", "carix"), ("category", "modalVerb"), ("diagnostic", "negRaising"), ("hybrid", "true")] }
 
-def all : List LinguisticExample := [nr_should, nr_ought, nr_better, nr_good, nr_must, nr_haveTo, nr_adif, ought_lexical, compositional_deberia, test1_carix, test2_carix, heb_yoter_tov, heb_adif, heb_kday, comp_better, nr_carix]
+def all : List Datum := [nr_should, nr_ought, nr_better, nr_good, nr_must, nr_haveTo, nr_adif, ought_lexical, compositional_deberia, test1_carix, test2_carix, heb_yoter_tov, heb_adif, heb_kday, comp_better, nr_carix]
 
 end Rubinstein2014.Examples

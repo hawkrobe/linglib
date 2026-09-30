@@ -141,7 +141,7 @@ def caseOf : List (String × Case) :=
   [("part", .part), ("acc", .acc), ("nom", .nom), ("gen", .gen)]
 
 /-- A row from the grammar's features. -/
-def Row.ofExample (e : LinguisticExample) : Option Row := do
+def Row.ofDatum (e : Datum) : Option Row := do
   let n ← e.parse? "nominal" nominalOf
   let cl ← e.parse? "clause" clauseOf
   let c ← e.parse? "case" caseOf
@@ -150,7 +150,7 @@ def Row.ofExample (e : LinguisticExample) : Option Row := do
     e.feature? "quantity" == some "definite", n, cl⟩, c⟩
 
 /-- The object-case examples of sections 12.2.2 and 13.3. -/
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- The grammar's examples take the case its rules assign. -/
 theorem rows_agree : ∀ r ∈ rows, r.object.case = r.case := by decide

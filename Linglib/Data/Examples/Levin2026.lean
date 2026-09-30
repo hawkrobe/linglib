@@ -17,7 +17,7 @@ namespace Levin2026.Examples
 
 open Data.Examples
 
-def ex_9 : LinguisticExample :=
+def ex_9 : Datum :=
   { id := "levin2026_9"
     source := ⟨"levin-2026", "(9)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_9 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "push"), ("adjective", "open"), ("sense", "spatial"), ("frame", "intransitive"), ("theme", "projectile")] }
 
-def ex_10a : LinguisticExample :=
+def ex_10a : Datum :=
   { id := "levin2026_10a"
     source := ⟨"levin-2026", "(10a)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_10a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "push"), ("frame", "transitive")] }
 
-def ex_10b : LinguisticExample :=
+def ex_10b : Datum :=
   { id := "levin2026_10b"
     source := ⟨"levin-2026", "(10b)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_10b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "push"), ("frame", "intransitive")] }
 
-def ex_11a : LinguisticExample :=
+def ex_11a : Datum :=
   { id := "levin2026_11a"
     source := ⟨"levin-2026", "(11a)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_11a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "punch"), ("adjective", "open"), ("sense", "spatial"), ("frame", "intransitive"), ("theme", "projectile")] }
 
-def ex_11b_tr : LinguisticExample :=
+def ex_11b_tr : Datum :=
   { id := "levin2026_11b_tr"
     source := ⟨"levin-2026", "(11b)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_11b_tr : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "punch"), ("frame", "transitive")] }
 
-def ex_11b_intr : LinguisticExample :=
+def ex_11b_intr : Datum :=
   { id := "levin2026_11b_intr"
     source := ⟨"levin-2026", "(11b)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_11b_intr : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "punch"), ("frame", "intransitive")] }
 
-def ex_12a : LinguisticExample :=
+def ex_12a : Datum :=
   { id := "levin2026_12a"
     source := ⟨"levin-2026", "(12a)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_12a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "thump"), ("adjective", "closed"), ("sense", "spatial"), ("frame", "intransitive"), ("theme", "projectile")] }
 
-def ex_12b_tr : LinguisticExample :=
+def ex_12b_tr : Datum :=
   { id := "levin2026_12b_tr"
     source := ⟨"levin-2026", "(12b)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_12b_tr : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "thump"), ("adjective", "closed"), ("sense", "spatial"), ("frame", "transitive")] }
 
-def ex_12b_intr : LinguisticExample :=
+def ex_12b_intr : Datum :=
   { id := "levin2026_12b_intr"
     source := ⟨"levin-2026", "(12b)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_12b_intr : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "thump"), ("frame", "intransitive")] }
 
-def ex_13a : LinguisticExample :=
+def ex_13a : Datum :=
   { id := "levin2026_13a"
     source := ⟨"levin-2026", "(13a)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_13a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "pull"), ("adjective", "free"), ("sense", "spatial"), ("frame", "intransitive"), ("theme", "projectile")] }
 
-def ex_13b_tr : LinguisticExample :=
+def ex_13b_tr : Datum :=
   { id := "levin2026_13b_tr"
     source := ⟨"levin-2026", "(13b)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_13b_tr : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "pull"), ("frame", "transitive")] }
 
-def ex_13b_intr : LinguisticExample :=
+def ex_13b_intr : Datum :=
   { id := "levin2026_13b_intr"
     source := ⟨"levin-2026", "(13b)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_13b_intr : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "pull"), ("frame", "intransitive")] }
 
-def ex_14a : LinguisticExample :=
+def ex_14a : Datum :=
   { id := "levin2026_14a"
     source := ⟨"levin-2026", "(14a)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_14a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "freeze"), ("frame", "transitive")] }
 
-def ex_14b : LinguisticExample :=
+def ex_14b : Datum :=
   { id := "levin2026_14b"
     source := ⟨"levin-2026", "(14b)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_14b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "freeze"), ("frame", "intransitive")] }
 
-def ex_15a : LinguisticExample :=
+def ex_15a : Datum :=
   { id := "levin2026_15a"
     source := ⟨"levin-2026", "(15a)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_15a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "freeze"), ("adjective", "solid"), ("sense", "other"), ("frame", "transitive")] }
 
-def ex_15b : LinguisticExample :=
+def ex_15b : Datum :=
   { id := "levin2026_15b"
     source := ⟨"levin-2026", "(15b)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_15b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "freeze"), ("adjective", "solid"), ("sense", "other"), ("frame", "intransitive")] }
 
-def ex_16a : LinguisticExample :=
+def ex_16a : Datum :=
   { id := "levin2026_16a"
     source := ⟨"levin-2026", "(16a)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex_16a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "scrub"), ("frame", "transitive")] }
 
-def ex_16b : LinguisticExample :=
+def ex_16b : Datum :=
   { id := "levin2026_16b"
     source := ⟨"levin-2026", "(16b)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex_16b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "scrub"), ("frame", "intransitive")] }
 
-def ex_16c : LinguisticExample :=
+def ex_16c : Datum :=
   { id := "levin2026_16c"
     source := ⟨"levin-2026", "(16c)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex_16c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "scrub"), ("adjective", "clean"), ("sense", "other"), ("frame", "transitive")] }
 
-def ex_16d : LinguisticExample :=
+def ex_16d : Datum :=
   { id := "levin2026_16d"
     source := ⟨"levin-2026", "(16d)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex_16d : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "scrub"), ("adjective", "clean"), ("sense", "other"), ("frame", "intransitive")] }
 
-def ex_19 : LinguisticExample :=
+def ex_19 : Datum :=
   { id := "levin2026_19"
     source := ⟨"levin-2026", "(19)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex_19 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "push"), ("adjective", "open"), ("sense", "spatial"), ("frame", "transitive")] }
 
-def ex_21 : LinguisticExample :=
+def ex_21 : Datum :=
   { id := "levin2026_21"
     source := ⟨"levin-2026", "(21)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex_21 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "pull"), ("adjective", "free"), ("sense", "spatial"), ("frame", "transitive")] }
 
-def ex_23 : LinguisticExample :=
+def ex_23 : Datum :=
   { id := "levin2026_23"
     source := ⟨"levin-2026", "(23)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex_23 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "slam"), ("adjective", "shut"), ("sense", "spatial"), ("frame", "intransitive"), ("theme", "projectile")] }
 
-def ex_24 : LinguisticExample :=
+def ex_24 : Datum :=
   { id := "levin2026_24"
     source := ⟨"levin-2026", "(24)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex_24 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "smack"), ("adjective", "closed"), ("sense", "spatial"), ("frame", "transitive")] }
 
-def ex_33 : LinguisticExample :=
+def ex_33 : Datum :=
   { id := "levin2026_33"
     source := ⟨"levin-2026", "(33)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex_33 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "fling"), ("adjective", "open"), ("sense", "spatial"), ("frame", "intransitive"), ("theme", "projectile")] }
 
-def ex_34 : LinguisticExample :=
+def ex_34 : Datum :=
   { id := "levin2026_34"
     source := ⟨"levin-2026", "(34)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex_34 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "yank"), ("adjective", "open"), ("sense", "spatial"), ("frame", "intransitive"), ("theme", "projectile")] }
 
-def ex_35 : LinguisticExample :=
+def ex_35 : Datum :=
   { id := "levin2026_35"
     source := ⟨"levin-2026", "(35)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def ex_35 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "scrape"), ("adjective", "open"), ("sense", "spatial"), ("frame", "intransitive"), ("theme", "projectile")] }
 
-def ex_36a : LinguisticExample :=
+def ex_36a : Datum :=
   { id := "levin2026_36a"
     source := ⟨"levin-2026", "(36a)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def ex_36a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "cut"), ("adjective", "open"), ("sense", "other"), ("frame", "transitive")] }
 
-def ex_36b : LinguisticExample :=
+def ex_36b : Datum :=
   { id := "levin2026_36b"
     source := ⟨"levin-2026", "(36b)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def ex_36b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "cut"), ("adjective", "open"), ("sense", "other"), ("frame", "intransitive")] }
 
-def ex_37b : LinguisticExample :=
+def ex_37b : Datum :=
   { id := "levin2026_37b"
     source := ⟨"levin-2026", "(37b)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def ex_37b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "sew"), ("adjective", "shut"), ("sense", "other"), ("frame", "intransitive")] }
 
-def ex_38 : LinguisticExample :=
+def ex_38 : Datum :=
   { id := "levin2026_38"
     source := ⟨"levin-2026", "(38)"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def ex_38 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "pull"), ("adjective", "free"), ("sense", "spatial"), ("frame", "intransitive"), ("theme", "projectile")] }
 
-def ex_39 : LinguisticExample :=
+def ex_39 : Datum :=
   { id := "levin2026_39"
     source := ⟨"levin-2026", "(39)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def ex_39 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "scrape"), ("adjective", "free"), ("sense", "spatial"), ("frame", "intransitive"), ("theme", "projectile")] }
 
-def ex_41 : LinguisticExample :=
+def ex_41 : Datum :=
   { id := "levin2026_41"
     source := ⟨"levin-2026", "(41)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def ex_41 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "pull"), ("adjective", "free"), ("sense", "spatial"), ("frame", "intransitive"), ("theme", "projectile")] }
 
-def ex_42 : LinguisticExample :=
+def ex_42 : Datum :=
   { id := "levin2026_42"
     source := ⟨"levin-2026", "(42)"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def ex_42 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "thrash"), ("adjective", "free"), ("sense", "spatial"), ("frame", "intransitive"), ("theme", "animate")] }
 
-def ex_43 : LinguisticExample :=
+def ex_43 : Datum :=
   { id := "levin2026_43"
     source := ⟨"levin-2026", "(43)"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def ex_43 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "kick"), ("adjective", "free"), ("sense", "spatial"), ("frame", "intransitive"), ("theme", "animate")] }
 
-def ex_44a : LinguisticExample :=
+def ex_44a : Datum :=
   { id := "levin2026_44a"
     source := ⟨"levin-2026", "(44a)"⟩
     reportedIn := none
@@ -485,7 +485,7 @@ def ex_44a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "brush"), ("adjective", "free"), ("sense", "other"), ("frame", "transitive")] }
 
-def ex_44b : LinguisticExample :=
+def ex_44b : Datum :=
   { id := "levin2026_44b"
     source := ⟨"levin-2026", "(44b)"⟩
     reportedIn := none
@@ -498,7 +498,7 @@ def ex_44b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "brush"), ("adjective", "free"), ("sense", "other"), ("frame", "intransitive")] }
 
-def ex_45a : LinguisticExample :=
+def ex_45a : Datum :=
   { id := "levin2026_45a"
     source := ⟨"levin-2026", "(45a)"⟩
     reportedIn := none
@@ -511,7 +511,7 @@ def ex_45a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "wipe"), ("adjective", "free"), ("sense", "other"), ("frame", "transitive")] }
 
-def ex_45b : LinguisticExample :=
+def ex_45b : Datum :=
   { id := "levin2026_45b"
     source := ⟨"levin-2026", "(45b)"⟩
     reportedIn := none
@@ -524,7 +524,7 @@ def ex_45b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "wipe"), ("adjective", "free"), ("sense", "other"), ("frame", "intransitive")] }
 
-def ex_46 : LinguisticExample :=
+def ex_46 : Datum :=
   { id := "levin2026_46"
     source := ⟨"levin-2026", "(46)"⟩
     reportedIn := none
@@ -537,7 +537,7 @@ def ex_46 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "wrench"), ("adjective", "loose"), ("sense", "spatial"), ("frame", "intransitive"), ("theme", "projectile")] }
 
-def ex_47 : LinguisticExample :=
+def ex_47 : Datum :=
   { id := "levin2026_47"
     source := ⟨"levin-2026", "(47)"⟩
     reportedIn := none
@@ -550,7 +550,7 @@ def ex_47 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "pull"), ("adjective", "loose"), ("sense", "spatial"), ("frame", "intransitive"), ("theme", "animate")] }
 
-def ex_48 : LinguisticExample :=
+def ex_48 : Datum :=
   { id := "levin2026_48"
     source := ⟨"levin-2026", "(48)"⟩
     reportedIn := none
@@ -563,7 +563,7 @@ def ex_48 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "smack"), ("adjective", "flat"), ("sense", "spatial"), ("frame", "intransitive"), ("theme", "projectile")] }
 
-def ex_50a : LinguisticExample :=
+def ex_50a : Datum :=
   { id := "levin2026_50a"
     source := ⟨"levin-2026", "(50a)"⟩
     reportedIn := none
@@ -576,7 +576,7 @@ def ex_50a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "pat"), ("adjective", "flat"), ("sense", "other"), ("frame", "transitive")] }
 
-def ex_50b : LinguisticExample :=
+def ex_50b : Datum :=
   { id := "levin2026_50b"
     source := ⟨"levin-2026", "(50b)"⟩
     reportedIn := none
@@ -589,7 +589,7 @@ def ex_50b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "pat"), ("adjective", "flat"), ("sense", "other"), ("frame", "intransitive")] }
 
-def ex_51a : LinguisticExample :=
+def ex_51a : Datum :=
   { id := "levin2026_51a"
     source := ⟨"levin-2026", "(51a)"⟩
     reportedIn := none
@@ -602,7 +602,7 @@ def ex_51a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "paint"), ("adjective", "shut"), ("sense", "spatial"), ("frame", "transitive")] }
 
-def ex_51b : LinguisticExample :=
+def ex_51b : Datum :=
   { id := "levin2026_51b"
     source := ⟨"levin-2026", "(51b)"⟩
     reportedIn := none
@@ -615,7 +615,7 @@ def ex_51b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "paint"), ("adjective", "shut"), ("sense", "spatial"), ("frame", "intransitive")] }
 
-def ex_52b : LinguisticExample :=
+def ex_52b : Datum :=
   { id := "levin2026_52b"
     source := ⟨"levin-2026", "(52b)"⟩
     reportedIn := none
@@ -628,7 +628,7 @@ def ex_52b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "wire"), ("adjective", "shut"), ("sense", "spatial"), ("frame", "intransitive")] }
 
-def ex_53a : LinguisticExample :=
+def ex_53a : Datum :=
   { id := "levin2026_53a"
     source := ⟨"levin-2026", "(53a)"⟩
     reportedIn := none
@@ -641,7 +641,7 @@ def ex_53a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "shovel"), ("adjective", "free"), ("sense", "spatial"), ("frame", "transitive")] }
 
-def ex_53b : LinguisticExample :=
+def ex_53b : Datum :=
   { id := "levin2026_53b"
     source := ⟨"levin-2026", "(53b)"⟩
     reportedIn := none
@@ -654,7 +654,7 @@ def ex_53b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "shovel"), ("adjective", "free"), ("sense", "spatial"), ("frame", "intransitive")] }
 
-def ex_54b : LinguisticExample :=
+def ex_54b : Datum :=
   { id := "levin2026_54b"
     source := ⟨"levin-2026", "(54b)"⟩
     reportedIn := none
@@ -667,7 +667,7 @@ def ex_54b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "lever"), ("adjective", "free"), ("sense", "spatial"), ("frame", "intransitive")] }
 
-def ex_55b : LinguisticExample :=
+def ex_55b : Datum :=
   { id := "levin2026_55b"
     source := ⟨"levin-2026", "(55b)"⟩
     reportedIn := none
@@ -680,7 +680,7 @@ def ex_55b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "nudge"), ("adjective", "loose"), ("sense", "spatial"), ("frame", "intransitive")] }
 
-def ex_56b : LinguisticExample :=
+def ex_56b : Datum :=
   { id := "levin2026_56b"
     source := ⟨"levin-2026", "(56b)"⟩
     reportedIn := none
@@ -693,7 +693,7 @@ def ex_56b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "oil"), ("adjective", "flat"), ("sense", "spatial"), ("frame", "intransitive")] }
 
-def ex_57b : LinguisticExample :=
+def ex_57b : Datum :=
   { id := "levin2026_57b"
     source := ⟨"levin-2026", "(57b)"⟩
     reportedIn := none
@@ -706,7 +706,7 @@ def ex_57b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "yank"), ("adjective", "bald"), ("sense", "other"), ("frame", "intransitive")] }
 
-def ex_58b : LinguisticExample :=
+def ex_58b : Datum :=
   { id := "levin2026_58b"
     source := ⟨"levin-2026", "(58b)"⟩
     reportedIn := none
@@ -719,7 +719,7 @@ def ex_58b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "pull"), ("adjective", "firm"), ("sense", "other"), ("frame", "intransitive")] }
 
-def ex_59b : LinguisticExample :=
+def ex_59b : Datum :=
   { id := "levin2026_59b"
     source := ⟨"levin-2026", "(59b)"⟩
     reportedIn := none
@@ -732,7 +732,7 @@ def ex_59b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "scrape"), ("adjective", "smooth"), ("sense", "other"), ("frame", "intransitive")] }
 
-def ex_60b : LinguisticExample :=
+def ex_60b : Datum :=
   { id := "levin2026_60b"
     source := ⟨"levin-2026", "(60b)"⟩
     reportedIn := none
@@ -745,7 +745,7 @@ def ex_60b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "punch"), ("adjective", "senseless"), ("sense", "other"), ("frame", "intransitive")] }
 
-def ex_70 : LinguisticExample :=
+def ex_70 : Datum :=
   { id := "levin2026_70"
     source := ⟨"levin-2026", "(70)"⟩
     reportedIn := none
@@ -758,7 +758,7 @@ def ex_70 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "push"), ("adjective", "open"), ("sense", "spatial"), ("frame", "intransitive"), ("theme", "projectile")] }
 
-def ex_74 : LinguisticExample :=
+def ex_74 : Datum :=
   { id := "levin2026_74"
     source := ⟨"levin-2026", "(74)"⟩
     reportedIn := none
@@ -771,7 +771,7 @@ def ex_74 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "nail"), ("adjective", "shut"), ("sense", "spatial"), ("frame", "transitive")] }
 
-def ex_75 : LinguisticExample :=
+def ex_75 : Datum :=
   { id := "levin2026_75"
     source := ⟨"levin-2026", "(75)"⟩
     reportedIn := none
@@ -784,7 +784,7 @@ def ex_75 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "nail"), ("adjective", "shut"), ("sense", "spatial"), ("frame", "intransitive"), ("theme", "manipulated")] }
 
-def ex_77 : LinguisticExample :=
+def ex_77 : Datum :=
   { id := "levin2026_77"
     source := ⟨"levin-2026", "(77)"⟩
     reportedIn := none
@@ -797,7 +797,7 @@ def ex_77 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "shovel"), ("adjective", "free"), ("sense", "spatial"), ("frame", "intransitive"), ("theme", "manipulated")] }
 
-def ex_78 : LinguisticExample :=
+def ex_78 : Datum :=
   { id := "levin2026_78"
     source := ⟨"levin-2026", "(78)"⟩
     reportedIn := none
@@ -810,7 +810,7 @@ def ex_78 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "pull"), ("adjective", "free"), ("sense", "spatial"), ("frame", "intransitive"), ("theme", "animate")] }
 
-def ex_79 : LinguisticExample :=
+def ex_79 : Datum :=
   { id := "levin2026_79"
     source := ⟨"levin-2026", "(79)"⟩
     reportedIn := none
@@ -823,7 +823,7 @@ def ex_79 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "pull"), ("adjective", "free"), ("sense", "spatial"), ("frame", "intransitive"), ("theme", "machine")] }
 
-def ex_84a : LinguisticExample :=
+def ex_84a : Datum :=
   { id := "levin2026_84a"
     source := ⟨"levin-2026", "(84a)"⟩
     reportedIn := none
@@ -836,7 +836,7 @@ def ex_84a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "slam"), ("frame", "directed motion"), ("theme", "projectile")] }
 
-def ex_84b : LinguisticExample :=
+def ex_84b : Datum :=
   { id := "levin2026_84b"
     source := ⟨"levin-2026", "(84b)"⟩
     reportedIn := none
@@ -849,7 +849,7 @@ def ex_84b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "scrape"), ("frame", "directed motion"), ("theme", "projectile")] }
 
-def ex_85a : LinguisticExample :=
+def ex_85a : Datum :=
   { id := "levin2026_85a"
     source := ⟨"levin-2026", "(85a)"⟩
     reportedIn := none
@@ -862,7 +862,7 @@ def ex_85a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "bang"), ("frame", "directed motion"), ("theme", "animate")] }
 
-def ex_85b : LinguisticExample :=
+def ex_85b : Datum :=
   { id := "levin2026_85b"
     source := ⟨"levin-2026", "(85b)"⟩
     reportedIn := none
@@ -875,7 +875,7 @@ def ex_85b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "sweep"), ("frame", "directed motion"), ("theme", "natural force")] }
 
-def ex_85c : LinguisticExample :=
+def ex_85c : Datum :=
   { id := "levin2026_85c"
     source := ⟨"levin-2026", "(85c)"⟩
     reportedIn := none
@@ -888,6 +888,6 @@ def ex_85c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "smack"), ("frame", "directed motion"), ("theme", "machine")] }
 
-def all : List LinguisticExample := [ex_9, ex_10a, ex_10b, ex_11a, ex_11b_tr, ex_11b_intr, ex_12a, ex_12b_tr, ex_12b_intr, ex_13a, ex_13b_tr, ex_13b_intr, ex_14a, ex_14b, ex_15a, ex_15b, ex_16a, ex_16b, ex_16c, ex_16d, ex_19, ex_21, ex_23, ex_24, ex_33, ex_34, ex_35, ex_36a, ex_36b, ex_37b, ex_38, ex_39, ex_41, ex_42, ex_43, ex_44a, ex_44b, ex_45a, ex_45b, ex_46, ex_47, ex_48, ex_50a, ex_50b, ex_51a, ex_51b, ex_52b, ex_53a, ex_53b, ex_54b, ex_55b, ex_56b, ex_57b, ex_58b, ex_59b, ex_60b, ex_70, ex_74, ex_75, ex_77, ex_78, ex_79, ex_84a, ex_84b, ex_85a, ex_85b, ex_85c]
+def all : List Datum := [ex_9, ex_10a, ex_10b, ex_11a, ex_11b_tr, ex_11b_intr, ex_12a, ex_12b_tr, ex_12b_intr, ex_13a, ex_13b_tr, ex_13b_intr, ex_14a, ex_14b, ex_15a, ex_15b, ex_16a, ex_16b, ex_16c, ex_16d, ex_19, ex_21, ex_23, ex_24, ex_33, ex_34, ex_35, ex_36a, ex_36b, ex_37b, ex_38, ex_39, ex_41, ex_42, ex_43, ex_44a, ex_44b, ex_45a, ex_45b, ex_46, ex_47, ex_48, ex_50a, ex_50b, ex_51a, ex_51b, ex_52b, ex_53a, ex_53b, ex_54b, ex_55b, ex_56b, ex_57b, ex_58b, ex_59b, ex_60b, ex_70, ex_74, ex_75, ex_77, ex_78, ex_79, ex_84a, ex_84b, ex_85a, ex_85b, ex_85c]
 
 end Levin2026.Examples

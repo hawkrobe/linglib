@@ -212,12 +212,12 @@ def attitude? : String → Option Attitude
   | _ => none
 
 /-- The class of a row's predicate. -/
-def class? (r : LinguisticExample) : Option PredicateClass :=
+def class? (r : Datum) : Option PredicateClass :=
   ((r.feature? "predicate").bind attitude?).bind Attitude.strategy? |>.map classOf
 
 /-- The valence of a row's predicate, or of its manner adverb or veridical preferential where
 the paper's argument turns on valence alone. -/
-def valence? (r : LinguisticExample) : Option Valence :=
+def valence? (r : Datum) : Option Valence :=
   match r.feature? "valence" with
   | some "positive" => some .positive
   | some "negative" => some .negative
@@ -225,18 +225,18 @@ def valence? (r : LinguisticExample) : Option Valence :=
 
 /-- A row holds in its context when it is judged true, where the paper gives a truth value, and
 when it is not infelicitous otherwise. -/
-def Holds (r : LinguisticExample) : Prop :=
+def Holds (r : Datum) : Prop :=
   match r.feature? "truth" with
   | some t => t = "true"
   | none => r.judgment ≠ .unacceptable
 
-instance (r : LinguisticExample) : Decidable (Holds r) := by unfold Holds; split <;> infer_instance
+instance (r : Datum) : Decidable (Holds r) := by unfold Holds; split <;> infer_instance
 
 /-- An interrogative complement composed canonically, as the predicate's argument. -/
-def Argument (r : LinguisticExample) : Prop :=
+def Argument (r : Datum) : Prop :=
   r.feature? "embedding" = some "argument" ∧ r.feature? "clause" ≠ some "declarative"
 
-instance (r : LinguisticExample) : Decidable (Argument r) := by unfold Argument; infer_instance
+instance (r : Datum) : Decidable (Argument r) := by unfold Argument; infer_instance
 
 /-- Every acceptable interrogative complement is under a class 1 or class 2 predicate. -/
 theorem responsive_rows :

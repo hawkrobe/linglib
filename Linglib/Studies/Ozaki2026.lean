@@ -50,10 +50,10 @@ open Data.Examples Ozaki2026.Examples Case DependentCase Minimalist.Voice
 /-! ### The diagnostics -/
 
 /-- The diagnostic an example applies. -/
-def diagnostic (e : LinguisticExample) : Option String := e.feature? "diagnostic"
+def diagnostic (e : Datum) : Option String := e.feature? "diagnostic"
 
 /-- The marking of the source in an example. -/
-def marking (e : LinguisticExample) : Option String := e.feature? "marking"
+def marking (e : Datum) : Option String := e.feature? "marking"
 
 /-- The verdict the argument assigns to each diagnostic: the alternation, the argumenthood
 diagnostics, and the indirect passive succeed, the direct passive and the wh-adjunct fail. -/

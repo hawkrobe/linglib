@@ -103,7 +103,7 @@ structure Row where
   available : Bool
   deriving DecidableEq
 
-def Row.ofExample (ex : LinguisticExample) : Option Row := do
+def Row.ofDatum (ex : Datum) : Option Row := do
   let a ← ex.parse? "adjunct" [("vp", Attachment.vp), ("reason", .reason)]
   let o ← ex.parse? "object"
     [("absent", ObjectStatus.absent), ("null", .null), ("overt", .overt), ("focused", .focused)]
@@ -111,7 +111,7 @@ def Row.ofExample (ex : LinguisticExample) : Option Row := do
   let v ← ex.parse? "available" [("yes", true), ("no", false)]
   pure ⟨⟨a, o, s⟩, v⟩
 
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- The null adjunct reading is available exactly where verb-stranding ellipsis derives it. -/
 theorem rows_predicted : ∀ r ∈ rows, (r.available = true ↔ NullAdjunct r.config) := by decide

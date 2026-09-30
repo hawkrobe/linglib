@@ -17,7 +17,7 @@ namespace HahnDegenFutrell2021.Examples
 
 open Data.Examples
 
-def ex2a : LinguisticExample :=
+def ex2a : Datum :=
   { id := "hahndegenfutrell2021_ex2a"
     source := ⟨"hahn-degen-futrell-2021", "(2a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex2a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("phenomenon", "heavyNPShift")] }
 
-def ex2b : LinguisticExample :=
+def ex2b : Datum :=
   { id := "hahndegenfutrell2021_ex2b"
     source := ⟨"hahn-degen-futrell-2021", "(2b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex2b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("phenomenon", "heavyNPShift")] }
 
-def ex2c : LinguisticExample :=
+def ex2c : Datum :=
   { id := "hahndegenfutrell2021_ex2c"
     source := ⟨"hahn-degen-futrell-2021", "(2c)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex2c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("phenomenon", "heavyNPShift")] }
 
-def ex2d : LinguisticExample :=
+def ex2d : Datum :=
   { id := "hahndegenfutrell2021_ex2d"
     source := ⟨"hahn-degen-futrell-2021", "(2d)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex2d : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("phenomenon", "heavyNPShift")] }
 
-def si1 : LinguisticExample :=
+def si1 : Datum :=
   { id := "hahndegenfutrell2021_si1"
     source := ⟨"hahn-degen-futrell-2021", "SI, Japanese, ordering table row 1"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def si1 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "SI Japanese"), ("phenomenon", "morphemeOrder")] }
 
-def si2 : LinguisticExample :=
+def si2 : Datum :=
   { id := "hahndegenfutrell2021_si2"
     source := ⟨"hahn-degen-futrell-2021", "SI, Japanese, ordering table row 2"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def si2 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "SI Japanese"), ("phenomenon", "morphemeOrder")] }
 
-def si3 : LinguisticExample :=
+def si3 : Datum :=
   { id := "hahndegenfutrell2021_si3"
     source := ⟨"hahn-degen-futrell-2021", "SI, Japanese, ordering table row 3"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def si3 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "SI Japanese"), ("phenomenon", "morphemeOrder")] }
 
-def si4 : LinguisticExample :=
+def si4 : Datum :=
   { id := "hahndegenfutrell2021_si4"
     source := ⟨"hahn-degen-futrell-2021", "SI, Japanese, ordering table row 4"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def si4 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "SI Japanese"), ("phenomenon", "morphemeOrder")] }
 
-def si5 : LinguisticExample :=
+def si5 : Datum :=
   { id := "hahndegenfutrell2021_si5"
     source := ⟨"hahn-degen-futrell-2021", "SI, Japanese, ordering table row 5"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def si5 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "SI Japanese"), ("phenomenon", "morphemeOrder")] }
 
-def si6 : LinguisticExample :=
+def si6 : Datum :=
   { id := "hahndegenfutrell2021_si6"
     source := ⟨"hahn-degen-futrell-2021", "SI, Japanese, ordering table row 6"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def si6 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "SI Japanese"), ("phenomenon", "morphemeOrder")] }
 
-def si7 : LinguisticExample :=
+def si7 : Datum :=
   { id := "hahndegenfutrell2021_si7"
     source := ⟨"hahn-degen-futrell-2021", "SI, Japanese, ordering table row 7"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def si7 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "SI Japanese"), ("phenomenon", "morphemeOrder")] }
 
-def si8 : LinguisticExample :=
+def si8 : Datum :=
   { id := "hahndegenfutrell2021_si8"
     source := ⟨"hahn-degen-futrell-2021", "SI, Japanese, ordering table row 8"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def si8 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "SI Japanese"), ("phenomenon", "morphemeOrder")] }
 
-def si9 : LinguisticExample :=
+def si9 : Datum :=
   { id := "hahndegenfutrell2021_si9"
     source := ⟨"hahn-degen-futrell-2021", "SI, Japanese, ordering table row 9"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def si9 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "SI Japanese"), ("phenomenon", "morphemeOrder")] }
 
-def so1 : LinguisticExample :=
+def so1 : Datum :=
   { id := "hahndegenfutrell2021_so1"
     source := ⟨"demuth-1992", "(13)"⟩
     reportedIn := some ⟨"hahn-degen-futrell-2021", "(2a)"⟩
@@ -199,7 +199,7 @@ def so1 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2"), ("phenomenon", "morphemeOrder")] }
 
-def so2 : LinguisticExample :=
+def so2 : Datum :=
   { id := "hahndegenfutrell2021_so2"
     source := ⟨"demuth-1992", "(41)"⟩
     reportedIn := some ⟨"hahn-degen-futrell-2021", "(2b)"⟩
@@ -212,7 +212,7 @@ def so2 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2"), ("phenomenon", "morphemeOrder")] }
 
-def so3 : LinguisticExample :=
+def so3 : Datum :=
   { id := "hahndegenfutrell2021_so3"
     source := ⟨"demuth-1992", "(15)"⟩
     reportedIn := some ⟨"hahn-degen-futrell-2021", "SI, Sesotho, examples table"⟩
@@ -225,7 +225,7 @@ def so3 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "SI Sesotho"), ("phenomenon", "morphemeOrder")] }
 
-def so4 : LinguisticExample :=
+def so4 : Datum :=
   { id := "hahndegenfutrell2021_so4"
     source := ⟨"demuth-1992", "(26c)"⟩
     reportedIn := some ⟨"hahn-degen-futrell-2021", "SI, Sesotho, examples table"⟩
@@ -238,7 +238,7 @@ def so4 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "SI Sesotho"), ("phenomenon", "morphemeOrder")] }
 
-def so5 : LinguisticExample :=
+def so5 : Datum :=
   { id := "hahndegenfutrell2021_so5"
     source := ⟨"demuth-1992", "(43)"⟩
     reportedIn := some ⟨"hahn-degen-futrell-2021", "SI, Sesotho, examples table"⟩
@@ -251,7 +251,7 @@ def so5 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "SI Sesotho"), ("phenomenon", "morphemeOrder")] }
 
-def so6 : LinguisticExample :=
+def so6 : Datum :=
   { id := "hahndegenfutrell2021_so6"
     source := ⟨"demuth-1992", "(44)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def so6 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "SI Sesotho"), ("phenomenon", "morphemeOrder")] }
 
-def so7 : LinguisticExample :=
+def so7 : Datum :=
   { id := "hahndegenfutrell2021_so7"
     source := ⟨"demuth-1992", "(45)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def so7 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "SI Sesotho"), ("phenomenon", "morphemeOrder")] }
 
-def so8 : LinguisticExample :=
+def so8 : Datum :=
   { id := "hahndegenfutrell2021_so8"
     source := ⟨"demuth-1992", "(29)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def so8 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "SI Sesotho"), ("phenomenon", "morphemeOrder")] }
 
-def so9 : LinguisticExample :=
+def so9 : Datum :=
   { id := "hahndegenfutrell2021_so9"
     source := ⟨"hahn-degen-futrell-2021", "SI, Sesotho, completive footnote"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def so9 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "SI Sesotho"), ("phenomenon", "morphemeOrder")] }
 
-def so10 : LinguisticExample :=
+def so10 : Datum :=
   { id := "hahndegenfutrell2021_so10"
     source := ⟨"hahn-degen-futrell-2021", "SI, Sesotho, stacking footnote"⟩
     reportedIn := none
@@ -316,6 +316,6 @@ def so10 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "SI Sesotho"), ("phenomenon", "morphemeOrder")] }
 
-def all : List LinguisticExample := [ex2a, ex2b, ex2c, ex2d, si1, si2, si3, si4, si5, si6, si7, si8, si9, so1, so2, so3, so4, so5, so6, so7, so8, so9, so10]
+def all : List Datum := [ex2a, ex2b, ex2c, ex2d, si1, si2, si3, si4, si5, si6, si7, si8, si9, so1, so2, so3, so4, so5, so6, so7, so8, so9, so10]
 
 end HahnDegenFutrell2021.Examples

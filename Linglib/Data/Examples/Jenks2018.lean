@@ -17,7 +17,7 @@ namespace Jenks2018.Examples
 
 open Data.Examples
 
-def ex_10a : LinguisticExample :=
+def ex_10a : Datum :=
   { id := "jenks2018_10a"
     source := ⟨"jenks-2018", "(10a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_10a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("environment", "largerSituation"), ("topic", "none"), ("position", "subject"), ("bare", "ok")] }
 
-def ex_10b : LinguisticExample :=
+def ex_10b : Datum :=
   { id := "jenks2018_10b"
     source := ⟨"jenks-2018", "(10b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_10b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("environment", "largerSituation"), ("topic", "none"), ("position", "subject"), ("bare", "ok"), ("marked", "bad")] }
 
-def ex_11a : LinguisticExample :=
+def ex_11a : Datum :=
   { id := "jenks2018_11a"
     source := ⟨"jenks-2018", "(11a)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_11a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("environment", "immediateSituation"), ("topic", "none"), ("position", "object"), ("bare", "ok")] }
 
-def ex_11b : LinguisticExample :=
+def ex_11b : Datum :=
   { id := "jenks2018_11b"
     source := ⟨"jenks-2018", "(11b)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_11b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("environment", "immediateSituation"), ("topic", "none"), ("position", "subject"), ("bare", "ok")] }
 
-def ex_14a : LinguisticExample :=
+def ex_14a : Datum :=
   { id := "jenks2018_14a"
     source := ⟨"jenks-2018", "(14a)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_14a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("environment", "partWholeBridging"), ("topic", "none"), ("position", "object"), ("bare", "ok")] }
 
-def ex_14b : LinguisticExample :=
+def ex_14b : Datum :=
   { id := "jenks2018_14b"
     source := ⟨"jenks-2018", "(14b)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_14b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("environment", "producerBridging"), ("topic", "none"), ("position", "object"), ("bare", "bad"), ("marked", "ok")] }
 
-def ex_15b : LinguisticExample :=
+def ex_15b : Datum :=
   { id := "jenks2018_15b"
     source := ⟨"jenks-2018", "(15b)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_15b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("environment", "anaphoric"), ("topic", "none"), ("position", "object"), ("bare", "bad"), ("marked", "ok")] }
 
-def ex_15c : LinguisticExample :=
+def ex_15c : Datum :=
   { id := "jenks2018_15c"
     source := ⟨"jenks-2018", "(15c)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_15c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("environment", "anaphoric"), ("topic", "none"), ("position", "indirectObject"), ("bare", "bad"), ("marked", "ok")] }
 
-def ex_15d : LinguisticExample :=
+def ex_15d : Datum :=
   { id := "jenks2018_15d"
     source := ⟨"jenks-2018", "(15d)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_15d : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("environment", "anaphoric"), ("topic", "continuing"), ("position", "subject"), ("bare", "ok"), ("marked", "ok")] }
 
-def ex_15e : LinguisticExample :=
+def ex_15e : Datum :=
   { id := "jenks2018_15e"
     source := ⟨"jenks-2018", "(15e)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_15e : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("environment", "anaphoric"), ("topic", "continuing"), ("position", "embeddedSubject"), ("bare", "ok"), ("marked", "ok")] }
 
-def ex_16b : LinguisticExample :=
+def ex_16b : Datum :=
   { id := "jenks2018_16b"
     source := ⟨"jenks-2018", "(16b)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_16b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("environment", "anaphoric"), ("topic", "none"), ("position", "embeddedSubject"), ("marked", "ok")] }
 
-def ex_16c : LinguisticExample :=
+def ex_16c : Datum :=
   { id := "jenks2018_16c"
     source := ⟨"jenks-2018", "(16c)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_16c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("environment", "anaphoric"), ("topic", "none"), ("position", "embeddedSubject"), ("bare", "bad")] }
 
-def ex_18b : LinguisticExample :=
+def ex_18b : Datum :=
   { id := "jenks2018_18b"
     source := ⟨"jenks-2018", "(18b)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_18b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("environment", "donkey"), ("topic", "none"), ("position", "object"), ("marked", "ok")] }
 
-def ex_19 : LinguisticExample :=
+def ex_19 : Datum :=
   { id := "jenks2018_19"
     source := ⟨"jenks-2018", "(19)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_19 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("environment", "donkey"), ("topic", "none"), ("position", "object"), ("bare", "bad")] }
 
-def ex_20 : LinguisticExample :=
+def ex_20 : Datum :=
   { id := "jenks2018_20"
     source := ⟨"jenks-2018", "(20)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_20 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("environment", "donkey"), ("topic", "none"), ("position", "object"), ("bare", "bad"), ("marked", "ok")] }
 
-def ex_49 : LinguisticExample :=
+def ex_49 : Datum :=
   { id := "jenks2018_49"
     source := ⟨"jenks-2018", "(49)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_49 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2"), ("environment", "partWholeBridging"), ("topic", "none"), ("position", "object"), ("bare", "ok"), ("marked", "bad")] }
 
-def ex_51B : LinguisticExample :=
+def ex_51B : Datum :=
   { id := "jenks2018_51B"
     source := ⟨"jenks-2018", "(51B)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex_51B : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3"), ("environment", "anaphoric"), ("topic", "new"), ("position", "subject"), ("bare", "bad"), ("marked", "ok")] }
 
-def ex_51Bp : LinguisticExample :=
+def ex_51Bp : Datum :=
   { id := "jenks2018_51Bp"
     source := ⟨"jenks-2018", "(51B′)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex_51Bp : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3"), ("environment", "anaphoric"), ("topic", "none"), ("position", "object"), ("bare", "bad"), ("marked", "ok")] }
 
-def ex_52b : LinguisticExample :=
+def ex_52b : Datum :=
   { id := "jenks2018_52b"
     source := ⟨"jenks-2018", "(52b)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex_52b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3"), ("environment", "anaphoric"), ("topic", "new"), ("position", "leftDislocated"), ("bare", "bad"), ("marked", "ok")] }
 
-def ex_53 : LinguisticExample :=
+def ex_53 : Datum :=
   { id := "jenks2018_53"
     source := ⟨"jenks-2018", "(53)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex_53 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3"), ("environment", "anaphoric"), ("topic", "continuing"), ("position", "leftDislocated"), ("bare", "ok")] }
 
-def ex_54a : LinguisticExample :=
+def ex_54a : Datum :=
   { id := "jenks2018_54a"
     source := ⟨"jenks-2018", "(54a)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex_54a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.1"), ("environment", "largerSituation"), ("topic", "none"), ("position", "subject"), ("marked", "ok")] }
 
-def ex_54b : LinguisticExample :=
+def ex_54b : Datum :=
   { id := "jenks2018_54b"
     source := ⟨"jenks-2018", "(54b)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex_54b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.1"), ("environment", "largerSituation"), ("topic", "none"), ("position", "subject"), ("marked", "ok")] }
 
-def ex_55b : LinguisticExample :=
+def ex_55b : Datum :=
   { id := "jenks2018_55b"
     source := ⟨"jenks-2018", "(55b)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex_55b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.1"), ("environment", "anaphoric"), ("topic", "none"), ("position", "embeddedSubject"), ("marked", "ok")] }
 
-def ex_56 : LinguisticExample :=
+def ex_56 : Datum :=
   { id := "jenks2018_56"
     source := ⟨"jenks-2018", "(56)"⟩
     reportedIn := none
@@ -329,6 +329,6 @@ def ex_56 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.1"), ("environment", "donkey"), ("topic", "none"), ("position", "object"), ("marked", "ok")] }
 
-def all : List LinguisticExample := [ex_10a, ex_10b, ex_11a, ex_11b, ex_14a, ex_14b, ex_15b, ex_15c, ex_15d, ex_15e, ex_16b, ex_16c, ex_18b, ex_19, ex_20, ex_49, ex_51B, ex_51Bp, ex_52b, ex_53, ex_54a, ex_54b, ex_55b, ex_56]
+def all : List Datum := [ex_10a, ex_10b, ex_11a, ex_11b, ex_14a, ex_14b, ex_15b, ex_15c, ex_15d, ex_15e, ex_16b, ex_16c, ex_18b, ex_19, ex_20, ex_49, ex_51B, ex_51Bp, ex_52b, ex_53, ex_54a, ex_54b, ex_55b, ex_56]
 
 end Jenks2018.Examples

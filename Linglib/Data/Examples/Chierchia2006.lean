@@ -17,7 +17,7 @@ namespace Chierchia2006.Examples
 
 open Data.Examples
 
-def ex2a : LinguisticExample :=
+def ex2a : Datum :=
   { id := "chierchia2006_ex2a"
     source := ⟨"chierchia-2006", "(2a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex2a : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "npiFci"), ("environment", "episodic")] }
 
-def ex2b : LinguisticExample :=
+def ex2b : Datum :=
   { id := "chierchia2006_ex2b"
     source := ⟨"chierchia-2006", "(2b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex2b : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "npiFci"), ("environment", "negation")] }
 
-def ex3 : LinguisticExample :=
+def ex3 : Datum :=
   { id := "chierchia2006_ex3"
     source := ⟨"chierchia-2006", "(3)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex3 : LinguisticExample :=
     readings := [("existential", .acceptable)]
     paperFeatures := [("item", "existentialNpiFci"), ("environment", "future")] }
 
-def ex4 : LinguisticExample :=
+def ex4 : Datum :=
   { id := "chierchia2006_ex4"
     source := ⟨"chierchia-2006", "(4)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex4 : LinguisticExample :=
     readings := [("existential", .acceptable)]
     paperFeatures := [("item", "existentialNpiFci"), ("environment", "episodic")] }
 
-def ex5 : LinguisticExample :=
+def ex5 : Datum :=
   { id := "chierchia2006_ex5"
     source := ⟨"chierchia-2006", "(5)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex5 : LinguisticExample :=
     readings := [("universal", .acceptable)]
     paperFeatures := [("item", "npiFci"), ("environment", "episodicSubtrigged")] }
 
-def ex6 : LinguisticExample :=
+def ex6 : Datum :=
   { id := "chierchia2006_ex6"
     source := ⟨"chierchia-2006", "(6)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex6 : LinguisticExample :=
     readings := [("existential", .acceptable)]
     paperFeatures := [("item", "npiFci"), ("environment", "imperative")] }
 
-def ex8a : LinguisticExample :=
+def ex8a : Datum :=
   { id := "chierchia2006_ex8a"
     source := ⟨"chierchia-2006", "(8a)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex8a : LinguisticExample :=
     readings := [("existential", .acceptable)]
     paperFeatures := [("item", "existentialPureFci"), ("environment", "episodic")] }
 
-def ex8b : LinguisticExample :=
+def ex8b : Datum :=
   { id := "chierchia2006_ex8b"
     source := ⟨"chierchia-2006", "(8b)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex8b : LinguisticExample :=
     readings := [("universal", .acceptable)]
     paperFeatures := [("item", "pureFci"), ("environment", "episodicSubtrigged")] }
 
-def ex10a : LinguisticExample :=
+def ex10a : Datum :=
   { id := "chierchia2006_ex10a"
     source := ⟨"chierchia-2006", "(10a)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex10a : LinguisticExample :=
     readings := [("universal", .acceptable), ("existential", .acceptable)]
     paperFeatures := [("item", "pureFci"), ("environment", "future")] }
 
-def ex10b : LinguisticExample :=
+def ex10b : Datum :=
   { id := "chierchia2006_ex10b"
     source := ⟨"chierchia-2006", "(10b)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex10b : LinguisticExample :=
     readings := [("existential", .acceptable)]
     paperFeatures := [("item", "existentialPureFci"), ("environment", "future")] }
 
-def ex10c : LinguisticExample :=
+def ex10c : Datum :=
   { id := "chierchia2006_ex10c"
     source := ⟨"chierchia-2006", "(10c)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex10c : LinguisticExample :=
     readings := [("universal", .acceptable), ("existential", .acceptable)]
     paperFeatures := [("item", "pureFci"), ("environment", "imperative")] }
 
-def ex10d : LinguisticExample :=
+def ex10d : Datum :=
   { id := "chierchia2006_ex10d"
     source := ⟨"chierchia-2006", "(10d)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex10d : LinguisticExample :=
     readings := [("existential", .acceptable)]
     paperFeatures := [("item", "existentialPureFci"), ("environment", "imperative")] }
 
-def ex10e : LinguisticExample :=
+def ex10e : Datum :=
   { id := "chierchia2006_ex10e"
     source := ⟨"chierchia-2006", "(10e)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex10e : LinguisticExample :=
     readings := [("universal", .acceptable), ("existential", .questionable)]
     paperFeatures := [("item", "pureFci"), ("environment", "possibility")] }
 
-def ex10f : LinguisticExample :=
+def ex10f : Datum :=
   { id := "chierchia2006_ex10f"
     source := ⟨"chierchia-2006", "(10f)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex10f : LinguisticExample :=
     readings := [("existential", .acceptable)]
     paperFeatures := [("item", "existentialPureFci"), ("environment", "possibility")] }
 
-def ex10g : LinguisticExample :=
+def ex10g : Datum :=
   { id := "chierchia2006_ex10g"
     source := ⟨"chierchia-2006", "(10g)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex10g : LinguisticExample :=
     readings := [("universal", .acceptable), ("existential", .questionable)]
     paperFeatures := [("item", "pureFci"), ("environment", "necessity")] }
 
-def ex10h : LinguisticExample :=
+def ex10h : Datum :=
   { id := "chierchia2006_ex10h"
     source := ⟨"chierchia-2006", "(10h)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex10h : LinguisticExample :=
     readings := [("existential", .acceptable)]
     paperFeatures := [("item", "existentialPureFci"), ("environment", "necessity")] }
 
-def ex11a : LinguisticExample :=
+def ex11a : Datum :=
   { id := "chierchia2006_ex11a"
     source := ⟨"chierchia-2006", "(11a)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex11a : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "existentialPureFci"), ("environment", "episodic")] }
 
-def ex11b : LinguisticExample :=
+def ex11b : Datum :=
   { id := "chierchia2006_ex11b"
     source := ⟨"chierchia-2006", "(11b)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex11b : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "existentialPureFci"), ("environment", "episodicSubtrigged")] }
 
-def ex11c : LinguisticExample :=
+def ex11c : Datum :=
   { id := "chierchia2006_ex11c"
     source := ⟨"chierchia-2006", "(11c)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex11c : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "pureFci"), ("environment", "episodic")] }
 
-def ex11d : LinguisticExample :=
+def ex11d : Datum :=
   { id := "chierchia2006_ex11d"
     source := ⟨"chierchia-2006", "(11d)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex11d : LinguisticExample :=
     readings := [("universal", .acceptable)]
     paperFeatures := [("item", "pureFci"), ("environment", "episodicSubtrigged")] }
 
-def ex12 : LinguisticExample :=
+def ex12 : Datum :=
   { id := "chierchia2006_ex12"
     source := ⟨"chierchia-2006", "(12)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex12 : LinguisticExample :=
     readings := [("rhetorical", .acceptable), ("negativePolarity", .unacceptable)]
     paperFeatures := [("item", "pureFci"), ("environment", "negation")] }
 
-def ex13 : LinguisticExample :=
+def ex13 : Datum :=
   { id := "chierchia2006_ex13"
     source := ⟨"chierchia-2006", "(13)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex13 : LinguisticExample :=
     readings := [("rhetorical", .acceptable), ("negativePolarity", .acceptable)]
     paperFeatures := [("item", "pureFci"), ("environment", "negationSubtrigged")] }
 
-def ex14 : LinguisticExample :=
+def ex14 : Datum :=
   { id := "chierchia2006_ex14"
     source := ⟨"chierchia-2006", "(14)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex14 : LinguisticExample :=
     readings := [("rhetorical", .acceptable), ("negativePolarity", .unacceptable)]
     paperFeatures := [("item", "existentialPureFci"), ("environment", "negation")] }
 
-def ex47a : LinguisticExample :=
+def ex47a : Datum :=
   { id := "chierchia2006_ex47a"
     source := ⟨"chierchia-2006", "(47a)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex47a : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "npiFci"), ("environment", "episodic")] }
 
-def ex49a : LinguisticExample :=
+def ex49a : Datum :=
   { id := "chierchia2006_ex49a"
     source := ⟨"chierchia-2006", "(49a)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex49a : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "npiFci"), ("environment", "negation")] }
 
-def ex55a : LinguisticExample :=
+def ex55a : Datum :=
   { id := "chierchia2006_ex55a"
     source := ⟨"chierchia-2006", "(55a)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex55a : LinguisticExample :=
     readings := [("universal", .acceptable)]
     paperFeatures := [("item", "npiFci"), ("environment", "generic")] }
 
-def ex55b : LinguisticExample :=
+def ex55b : Datum :=
   { id := "chierchia2006_ex55b"
     source := ⟨"chierchia-2006", "(55b)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def ex55b : LinguisticExample :=
     readings := [("universal", .acceptable)]
     paperFeatures := [("item", "npiFci"), ("environment", "episodicSubtrigged")] }
 
-def ex64a : LinguisticExample :=
+def ex64a : Datum :=
   { id := "chierchia2006_ex64a"
     source := ⟨"chierchia-2006", "(64a)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def ex64a : LinguisticExample :=
     readings := [("rhetorical", .acceptable), ("negativePolarity", .acceptable)]
     paperFeatures := [("item", "npiFci"), ("environment", "negation")] }
 
-def ex67a : LinguisticExample :=
+def ex67a : Datum :=
   { id := "chierchia2006_ex67a"
     source := ⟨"chierchia-2006", "(67a)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def ex67a : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "npiFci"), ("environment", "episodic")] }
 
-def ex68a : LinguisticExample :=
+def ex68a : Datum :=
   { id := "chierchia2006_ex68a"
     source := ⟨"chierchia-2006", "(68a)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def ex68a : LinguisticExample :=
     readings := [("universal", .acceptable)]
     paperFeatures := [("item", "npiFci"), ("environment", "episodicSubtrigged")] }
 
-def ex69a : LinguisticExample :=
+def ex69a : Datum :=
   { id := "chierchia2006_ex69a"
     source := ⟨"chierchia-2006", "(69a)"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def ex69a : LinguisticExample :=
     readings := [("rhetorical", .acceptable), ("negativePolarity", .unacceptable)]
     paperFeatures := [("item", "pureFci"), ("environment", "negation")] }
 
-def ex71a : LinguisticExample :=
+def ex71a : Datum :=
   { id := "chierchia2006_ex71a"
     source := ⟨"chierchia-2006", "(71a)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def ex71a : LinguisticExample :=
     readings := [("universal", .acceptable)]
     paperFeatures := [("item", "pureFci"), ("environment", "future")] }
 
-def ex77c : LinguisticExample :=
+def ex77c : Datum :=
   { id := "chierchia2006_ex77c"
     source := ⟨"chierchia-2006", "(77c)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def ex77c : LinguisticExample :=
     readings := [("existential", .acceptable)]
     paperFeatures := [("item", "existentialPureFci"), ("environment", "necessity")] }
 
-def ex79a : LinguisticExample :=
+def ex79a : Datum :=
   { id := "chierchia2006_ex79a"
     source := ⟨"chierchia-2006", "(79a)"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def ex79a : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "existentialPureFci"), ("environment", "episodic")] }
 
-def ex83a : LinguisticExample :=
+def ex83a : Datum :=
   { id := "chierchia2006_ex83a"
     source := ⟨"chierchia-2006", "(83a)"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def ex83a : LinguisticExample :=
     readings := [("existential", .acceptable)]
     paperFeatures := [("item", "existentialPureFci"), ("environment", "possibility")] }
 
-def ex86a : LinguisticExample :=
+def ex86a : Datum :=
   { id := "chierchia2006_ex86a"
     source := ⟨"chierchia-2006", "(86a)"⟩
     reportedIn := none
@@ -485,7 +485,7 @@ def ex86a : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "existentialPureFci"), ("environment", "episodic")] }
 
-def ex88a : LinguisticExample :=
+def ex88a : Datum :=
   { id := "chierchia2006_ex88a"
     source := ⟨"chierchia-2006", "(88a)"⟩
     reportedIn := none
@@ -498,7 +498,7 @@ def ex88a : LinguisticExample :=
     readings := [("existential", .acceptable)]
     paperFeatures := [("item", "existentialPureFci"), ("environment", "possibility")] }
 
-def ex90a : LinguisticExample :=
+def ex90a : Datum :=
   { id := "chierchia2006_ex90a"
     source := ⟨"chierchia-2006", "(90a)"⟩
     reportedIn := none
@@ -511,7 +511,7 @@ def ex90a : LinguisticExample :=
     readings := [("negativePolarity", .acceptable), ("rhetorical", .acceptable)]
     paperFeatures := [("item", "existentialNpiFci"), ("environment", "negationNecessity")] }
 
-def ex90b : LinguisticExample :=
+def ex90b : Datum :=
   { id := "chierchia2006_ex90b"
     source := ⟨"chierchia-2006", "(90b)"⟩
     reportedIn := none
@@ -524,7 +524,7 @@ def ex90b : LinguisticExample :=
     readings := [("rhetorical", .acceptable), ("negativePolarity", .unacceptable)]
     paperFeatures := [("item", "existentialPureFci"), ("environment", "negationNecessity")] }
 
-def ex92a : LinguisticExample :=
+def ex92a : Datum :=
   { id := "chierchia2006_ex92a"
     source := ⟨"chierchia-2006", "(92a)"⟩
     reportedIn := none
@@ -537,7 +537,7 @@ def ex92a : LinguisticExample :=
     readings := [("existential", .acceptable), ("universal", .marginal)]
     paperFeatures := [("item", "npiFci"), ("environment", "imperative")] }
 
-def ex92b : LinguisticExample :=
+def ex92b : Datum :=
   { id := "chierchia2006_ex92b"
     source := ⟨"chierchia-2006", "(92b)"⟩
     reportedIn := none
@@ -550,7 +550,7 @@ def ex92b : LinguisticExample :=
     readings := [("existential", .acceptable), ("universal", .marginal)]
     paperFeatures := [("item", "pureFci"), ("environment", "imperative")] }
 
-def ex115 : LinguisticExample :=
+def ex115 : Datum :=
   { id := "chierchia2006_ex115"
     source := ⟨"chierchia-2006", "(115)"⟩
     reportedIn := none
@@ -563,7 +563,7 @@ def ex115 : LinguisticExample :=
     readings := [("existential", .acceptable)]
     paperFeatures := [("item", "existentialPureFci"), ("environment", "necessity")] }
 
-def fn42i : LinguisticExample :=
+def fn42i : Datum :=
   { id := "chierchia2006_fn42i"
     source := ⟨"chierchia-2006", "fn. 42 (i)"⟩
     reportedIn := none
@@ -576,6 +576,6 @@ def fn42i : LinguisticExample :=
     readings := [("existential", .acceptable), ("universal", .unacceptable)]
     paperFeatures := [("item", "existentialNpiFci"), ("environment", "possibility")] }
 
-def all : List LinguisticExample := [ex2a, ex2b, ex3, ex4, ex5, ex6, ex8a, ex8b, ex10a, ex10b, ex10c, ex10d, ex10e, ex10f, ex10g, ex10h, ex11a, ex11b, ex11c, ex11d, ex12, ex13, ex14, ex47a, ex49a, ex55a, ex55b, ex64a, ex67a, ex68a, ex69a, ex71a, ex77c, ex79a, ex83a, ex86a, ex88a, ex90a, ex90b, ex92a, ex92b, ex115, fn42i]
+def all : List Datum := [ex2a, ex2b, ex3, ex4, ex5, ex6, ex8a, ex8b, ex10a, ex10b, ex10c, ex10d, ex10e, ex10f, ex10g, ex10h, ex11a, ex11b, ex11c, ex11d, ex12, ex13, ex14, ex47a, ex49a, ex55a, ex55b, ex64a, ex67a, ex68a, ex69a, ex71a, ex77c, ex79a, ex83a, ex86a, ex88a, ex90a, ex90b, ex92a, ex92b, ex115, fn42i]
 
 end Chierchia2006.Examples

@@ -17,7 +17,7 @@ namespace ArregiPietraszko2021.Examples
 
 open Data.Examples
 
-def ex_6 : LinguisticExample :=
+def ex_6 : Datum :=
   { id := "arregipietraszko2021_6"
     source := ⟨"arregi-pietraszko-2021", "(6)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_6 : LinguisticExample :=
     readings := []
     paperFeatures := [("context", "declarative"), ("verbType", "lexical"), ("finitePosition", "T")] }
 
-def ex_7 : LinguisticExample :=
+def ex_7 : Datum :=
   { id := "arregipietraszko2021_7"
     source := ⟨"arregi-pietraszko-2021", "(7)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_7 : LinguisticExample :=
     readings := []
     paperFeatures := [("context", "declarative"), ("verbType", "lexical"), ("finitePosition", "V")] }
 
-def ex_10a : LinguisticExample :=
+def ex_10a : Datum :=
   { id := "arregipietraszko2021_10a"
     source := ⟨"arregi-pietraszko-2021", "(10a)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_10a : LinguisticExample :=
     readings := []
     paperFeatures := [("context", "negation"), ("verbType", "auxiliary"), ("finitePosition", "T"), ("doSupport", "false")] }
 
-def ex_10b : LinguisticExample :=
+def ex_10b : Datum :=
   { id := "arregipietraszko2021_10b"
     source := ⟨"arregi-pietraszko-2021", "(10b)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_10b : LinguisticExample :=
     readings := []
     paperFeatures := [("context", "negation"), ("verbType", "auxiliary"), ("finitePosition", "T"), ("doSupport", "false")] }
 
-def ex_12 : LinguisticExample :=
+def ex_12 : Datum :=
   { id := "arregipietraszko2021_12"
     source := ⟨"arregi-pietraszko-2021", "(12)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_12 : LinguisticExample :=
     readings := []
     paperFeatures := [("context", "declarative")] }
 
-def ex_13 : LinguisticExample :=
+def ex_13 : Datum :=
   { id := "arregipietraszko2021_13"
     source := ⟨"arregi-pietraszko-2021", "(13)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_13 : LinguisticExample :=
     readings := []
     paperFeatures := [("context", "relative")] }
 
-def ex_16 : LinguisticExample :=
+def ex_16 : Datum :=
   { id := "arregipietraszko2021_16"
     source := ⟨"arregi-pietraszko-2021", "(16)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_16 : LinguisticExample :=
     readings := []
     paperFeatures := [("context", "relative"), ("relPrefixPosition", "T")] }
 
-def ex_19_1 : LinguisticExample :=
+def ex_19_1 : Datum :=
   { id := "arregipietraszko2021_19_1"
     source := ⟨"arregi-pietraszko-2021", "(19)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_19_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "1"), ("linker", "a"), ("augment", "u"), ("agreement", "u"), ("rel", "o")] }
 
-def ex_19_9 : LinguisticExample :=
+def ex_19_9 : Datum :=
   { id := "arregipietraszko2021_19_9"
     source := ⟨"arregi-pietraszko-2021", "(19)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_19_9 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "9"), ("linker", "a"), ("augment", "i"), ("agreement", "i"), ("rel", "e")] }
 
-def ex_19_7 : LinguisticExample :=
+def ex_19_7 : Datum :=
   { id := "arregipietraszko2021_19_7"
     source := ⟨"arregi-pietraszko-2021", "(19)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_19_7 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "7"), ("linker", "a"), ("augment", "i"), ("agreement", "si"), ("rel", "esi")] }
 
-def ex_19_11 : LinguisticExample :=
+def ex_19_11 : Datum :=
   { id := "arregipietraszko2021_19_11"
     source := ⟨"arregi-pietraszko-2021", "(19)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_19_11 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "11"), ("linker", "a"), ("augment", "u"), ("agreement", "lu"), ("rel", "olu")] }
 
-def ex_26 : LinguisticExample :=
+def ex_26 : Datum :=
   { id := "arregipietraszko2021_26"
     source := ⟨"arregi-pietraszko-2021", "(26)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_26 : LinguisticExample :=
     readings := []
     paperFeatures := [("context", "v2"), ("verbType", "lexical"), ("finitePosition", "C"), ("doSupport", "false")] }
 
-def ex_27 : LinguisticExample :=
+def ex_27 : Datum :=
   { id := "arregipietraszko2021_27"
     source := ⟨"arregi-pietraszko-2021", "(27)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_27 : LinguisticExample :=
     readings := []
     paperFeatures := [("context", "declarative"), ("verbType", "lexical"), ("finitePosition", "V")] }
 
-def ex_30 : LinguisticExample :=
+def ex_30 : Datum :=
   { id := "arregipietraszko2021_30"
     source := ⟨"arregi-pietraszko-2021", "(30)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_30 : LinguisticExample :=
     readings := []
     paperFeatures := [("context", "imperativeAff"), ("verbType", "lexical"), ("finitePosition", "C"), ("imperativeForm", "true")] }
 
-def ex_31 : LinguisticExample :=
+def ex_31 : Datum :=
   { id := "arregipietraszko2021_31"
     source := ⟨"arregi-pietraszko-2021", "(31)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_31 : LinguisticExample :=
     readings := []
     paperFeatures := [("context", "imperativeNeg"), ("verbType", "lexical"), ("finitePosition", "T"), ("imperativeForm", "false")] }
 
-def ex_33 : LinguisticExample :=
+def ex_33 : Datum :=
   { id := "arregipietraszko2021_33"
     source := ⟨"arregi-pietraszko-2021", "(33)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_33 : LinguisticExample :=
     readings := []
     paperFeatures := [("context", "imperativeAff"), ("verbType", "lexical"), ("finitePosition", "T"), ("imperativeForm", "true")] }
 
-def ex_34 : LinguisticExample :=
+def ex_34 : Datum :=
   { id := "arregipietraszko2021_34"
     source := ⟨"arregi-pietraszko-2021", "(34)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex_34 : LinguisticExample :=
     readings := []
     paperFeatures := [("context", "imperativeNeg"), ("verbType", "lexical"), ("finitePosition", "T"), ("imperativeForm", "false")] }
 
-def ex_36a : LinguisticExample :=
+def ex_36a : Datum :=
   { id := "arregipietraszko2021_36a"
     source := ⟨"arregi-pietraszko-2021", "(36a)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex_36a : LinguisticExample :=
     readings := []
     paperFeatures := [("context", "negation"), ("verbType", "lexical"), ("finitePosition", "T"), ("doSupport", "true"), ("verbForm", "bare")] }
 
-def ex_36b : LinguisticExample :=
+def ex_36b : Datum :=
   { id := "arregipietraszko2021_36b"
     source := ⟨"arregi-pietraszko-2021", "(36b)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex_36b : LinguisticExample :=
     readings := []
     paperFeatures := [("context", "verum"), ("verbType", "lexical"), ("finitePosition", "T"), ("doSupport", "true"), ("verbForm", "bare")] }
 
-def ex_36c : LinguisticExample :=
+def ex_36c : Datum :=
   { id := "arregipietraszko2021_36c"
     source := ⟨"arregi-pietraszko-2021", "(36c)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex_36c : LinguisticExample :=
     readings := []
     paperFeatures := [("context", "inversion"), ("verbType", "lexical"), ("finitePosition", "C"), ("doSupport", "true"), ("verbForm", "bare")] }
 
-def ex_37a : LinguisticExample :=
+def ex_37a : Datum :=
   { id := "arregipietraszko2021_37a"
     source := ⟨"arregi-pietraszko-2021", "(37a)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex_37a : LinguisticExample :=
     readings := []
     paperFeatures := [("context", "negation"), ("verbType", "auxiliary"), ("finitePosition", "T"), ("doSupport", "false")] }
 
-def ex_37b : LinguisticExample :=
+def ex_37b : Datum :=
   { id := "arregipietraszko2021_37b"
     source := ⟨"arregi-pietraszko-2021", "(37b)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex_37b : LinguisticExample :=
     readings := []
     paperFeatures := [("context", "verum"), ("verbType", "auxiliary"), ("finitePosition", "T"), ("doSupport", "false")] }
 
-def ex_37c : LinguisticExample :=
+def ex_37c : Datum :=
   { id := "arregipietraszko2021_37c"
     source := ⟨"arregi-pietraszko-2021", "(37c)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex_37c : LinguisticExample :=
     readings := []
     paperFeatures := [("context", "inversion"), ("verbType", "auxiliary"), ("finitePosition", "C"), ("doSupport", "false")] }
 
-def fn38 : LinguisticExample :=
+def fn38 : Datum :=
   { id := "arregipietraszko2021_fn38"
     source := ⟨"arregi-pietraszko-2021", "fn. 38"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def fn38 : LinguisticExample :=
     readings := []
     paperFeatures := [("context", "subjectWh"), ("verbType", "lexical"), ("finitePosition", "V"), ("doSupport", "false")] }
 
-def ex_51 : LinguisticExample :=
+def ex_51 : Datum :=
   { id := "arregipietraszko2021_51"
     source := ⟨"arregi-pietraszko-2021", "(51)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex_51 : LinguisticExample :=
     readings := []
     paperFeatures := [("context", "negation"), ("verbType", "lexical"), ("finitePosition", "V"), ("doSupport", "false")] }
 
-def ex_52 : LinguisticExample :=
+def ex_52 : Datum :=
   { id := "arregipietraszko2021_52"
     source := ⟨"arregi-pietraszko-2021", "(52)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex_52 : LinguisticExample :=
     readings := []
     paperFeatures := [("context", "v2"), ("verbType", "lexical"), ("finitePosition", "C"), ("doSupport", "false")] }
 
-def ex_53a : LinguisticExample :=
+def ex_53a : Datum :=
   { id := "arregipietraszko2021_53a"
     source := ⟨"arregi-pietraszko-2021", "(53a)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def ex_53a : LinguisticExample :=
     readings := []
     paperFeatures := [("context", "declarative"), ("verbType", "lexical"), ("finitePosition", "T")] }
 
-def ex_53b : LinguisticExample :=
+def ex_53b : Datum :=
   { id := "arregipietraszko2021_53b"
     source := ⟨"arregi-pietraszko-2021", "(53b)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def ex_53b : LinguisticExample :=
     readings := []
     paperFeatures := [("context", "negation"), ("verbType", "lexical"), ("finitePosition", "T"), ("doSupport", "false")] }
 
-def ex_54 : LinguisticExample :=
+def ex_54 : Datum :=
   { id := "arregipietraszko2021_54"
     source := ⟨"arregi-pietraszko-2021", "(54)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def ex_54 : LinguisticExample :=
     readings := []
     paperFeatures := [("context", "declarative"), ("verbType", "auxiliary"), ("finitePosition", "T")] }
 
-def ex_55 : LinguisticExample :=
+def ex_55 : Datum :=
   { id := "arregipietraszko2021_55"
     source := ⟨"arregi-pietraszko-2021", "(55)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def ex_55 : LinguisticExample :=
     readings := []
     paperFeatures := [("context", "inversion"), ("verbType", "auxiliary"), ("finitePosition", "C"), ("doSupport", "false")] }
 
-def ex_56b : LinguisticExample :=
+def ex_56b : Datum :=
   { id := "arregipietraszko2021_56b"
     source := ⟨"arregi-pietraszko-2021", "(56b)"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def ex_56b : LinguisticExample :=
     readings := []
     paperFeatures := [("context", "inversion"), ("verbType", "lexical"), ("finitePosition", "C"), ("doSupport", "true"), ("verbForm", "infinitive")] }
 
-def ex_57 : LinguisticExample :=
+def ex_57 : Datum :=
   { id := "arregipietraszko2021_57"
     source := ⟨"arregi-pietraszko-2021", "(57)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def ex_57 : LinguisticExample :=
     readings := []
     paperFeatures := [("context", "inversion"), ("verbType", "lexical"), ("finitePosition", "C"), ("doSupport", "true"), ("verbForm", "infinitive")] }
 
-def ex_61 : LinguisticExample :=
+def ex_61 : Datum :=
   { id := "arregipietraszko2021_61"
     source := ⟨"arregi-pietraszko-2021", "(61)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def ex_61 : LinguisticExample :=
     readings := []
     paperFeatures := [("context", "ellipsis"), ("verbType", "lexical"), ("finitePosition", "T"), ("doSupport", "true")] }
 
-def ex_62 : LinguisticExample :=
+def ex_62 : Datum :=
   { id := "arregipietraszko2021_62"
     source := ⟨"arregi-pietraszko-2021", "(62)"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def ex_62 : LinguisticExample :=
     readings := []
     paperFeatures := [("context", "ellipsis"), ("verbType", "lexical"), ("finitePosition", "T"), ("doSupport", "false")] }
 
-def ex_67 : LinguisticExample :=
+def ex_67 : Datum :=
   { id := "arregipietraszko2021_67"
     source := ⟨"arregi-pietraszko-2021", "(67)"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def ex_67 : LinguisticExample :=
     readings := []
     paperFeatures := [("context", "ellipsisV2"), ("verbType", "lexical"), ("finitePosition", "C"), ("doSupport", "true")] }
 
-def ex_70 : LinguisticExample :=
+def ex_70 : Datum :=
   { id := "arregipietraszko2021_70"
     source := ⟨"arregi-pietraszko-2021", "(70)"⟩
     reportedIn := none
@@ -485,7 +485,7 @@ def ex_70 : LinguisticExample :=
     readings := []
     paperFeatures := [("context", "fronting"), ("verbType", "lexical"), ("doSupport", "false"), ("frontedForm", "infinitive")] }
 
-def ex_71 : LinguisticExample :=
+def ex_71 : Datum :=
   { id := "arregipietraszko2021_71"
     source := ⟨"arregi-pietraszko-2021", "(71)"⟩
     reportedIn := none
@@ -498,7 +498,7 @@ def ex_71 : LinguisticExample :=
     readings := []
     paperFeatures := [("context", "fronting"), ("verbType", "lexical"), ("doSupport", "true"), ("frontedForm", "bare")] }
 
-def ex_74a : LinguisticExample :=
+def ex_74a : Datum :=
   { id := "arregipietraszko2021_74a"
     source := ⟨"arregi-pietraszko-2021", "(74a)"⟩
     reportedIn := none
@@ -511,7 +511,7 @@ def ex_74a : LinguisticExample :=
     readings := []
     paperFeatures := [("context", "fronting"), ("verbType", "lexical"), ("doSupport", "false"), ("frontedForm", "infinitive")] }
 
-def ex_74b : LinguisticExample :=
+def ex_74b : Datum :=
   { id := "arregipietraszko2021_74b"
     source := ⟨"arregi-pietraszko-2021", "(74b)"⟩
     reportedIn := none
@@ -524,7 +524,7 @@ def ex_74b : LinguisticExample :=
     readings := []
     paperFeatures := [("context", "fronting"), ("verbType", "lexical"), ("doSupport", "false"), ("frontedForm", "infinitive")] }
 
-def ex_77 : LinguisticExample :=
+def ex_77 : Datum :=
   { id := "arregipietraszko2021_77"
     source := ⟨"arregi-pietraszko-2021", "(77)"⟩
     reportedIn := none
@@ -537,7 +537,7 @@ def ex_77 : LinguisticExample :=
     readings := []
     paperFeatures := [("context", "frontingV2"), ("verbType", "lexical"), ("doSupport", "true"), ("frontedForm", "finite")] }
 
-def ex_80a : LinguisticExample :=
+def ex_80a : Datum :=
   { id := "arregipietraszko2021_80a"
     source := ⟨"arregi-pietraszko-2021", "(80a)"⟩
     reportedIn := none
@@ -550,7 +550,7 @@ def ex_80a : LinguisticExample :=
     readings := []
     paperFeatures := [("context", "frontingV2"), ("verbType", "lexical"), ("doSupport", "false"), ("frontedForm", "pseudoInfinitive")] }
 
-def ex_80b : LinguisticExample :=
+def ex_80b : Datum :=
   { id := "arregipietraszko2021_80b"
     source := ⟨"arregi-pietraszko-2021", "(80b)"⟩
     reportedIn := none
@@ -563,7 +563,7 @@ def ex_80b : LinguisticExample :=
     readings := []
     paperFeatures := [("context", "frontingV2"), ("verbType", "lexical"), ("doSupport", "false"), ("frontedForm", "pseudoInfinitive")] }
 
-def ex_80c : LinguisticExample :=
+def ex_80c : Datum :=
   { id := "arregipietraszko2021_80c"
     source := ⟨"arregi-pietraszko-2021", "(80c)"⟩
     reportedIn := none
@@ -576,7 +576,7 @@ def ex_80c : LinguisticExample :=
     readings := []
     paperFeatures := [("context", "frontingV2"), ("verbType", "lexical"), ("doSupport", "false"), ("frontedForm", "pseudoInfinitive")] }
 
-def ex_82 : LinguisticExample :=
+def ex_82 : Datum :=
   { id := "arregipietraszko2021_82"
     source := ⟨"arregi-pietraszko-2021", "(82)"⟩
     reportedIn := none
@@ -589,7 +589,7 @@ def ex_82 : LinguisticExample :=
     readings := []
     paperFeatures := [("context", "fronting"), ("verbType", "lexical"), ("doSupport", "false"), ("frontedForm", "infinitive")] }
 
-def ex_84 : LinguisticExample :=
+def ex_84 : Datum :=
   { id := "arregipietraszko2021_84"
     source := ⟨"arregi-pietraszko-2021", "(84)"⟩
     reportedIn := none
@@ -602,6 +602,6 @@ def ex_84 : LinguisticExample :=
     readings := []
     paperFeatures := [("context", "fronting"), ("verbType", "lexical"), ("doSupport", "true"), ("frontedForm", "bare")] }
 
-def all : List LinguisticExample := [ex_6, ex_7, ex_10a, ex_10b, ex_12, ex_13, ex_16, ex_19_1, ex_19_9, ex_19_7, ex_19_11, ex_26, ex_27, ex_30, ex_31, ex_33, ex_34, ex_36a, ex_36b, ex_36c, ex_37a, ex_37b, ex_37c, fn38, ex_51, ex_52, ex_53a, ex_53b, ex_54, ex_55, ex_56b, ex_57, ex_61, ex_62, ex_67, ex_70, ex_71, ex_74a, ex_74b, ex_77, ex_80a, ex_80b, ex_80c, ex_82, ex_84]
+def all : List Datum := [ex_6, ex_7, ex_10a, ex_10b, ex_12, ex_13, ex_16, ex_19_1, ex_19_9, ex_19_7, ex_19_11, ex_26, ex_27, ex_30, ex_31, ex_33, ex_34, ex_36a, ex_36b, ex_36c, ex_37a, ex_37b, ex_37c, fn38, ex_51, ex_52, ex_53a, ex_53b, ex_54, ex_55, ex_56b, ex_57, ex_61, ex_62, ex_67, ex_70, ex_71, ex_74a, ex_74b, ex_77, ex_80a, ex_80b, ex_80c, ex_82, ex_84]
 
 end ArregiPietraszko2021.Examples

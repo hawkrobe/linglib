@@ -302,7 +302,7 @@ theorem numeralPl_alternative : equalComplexity lexicon numeralSg numeralPl := b
 /-! ### The rows -/
 
 /-- The subject of a predicative sentence: John, or John and Brad. -/
-def subject? (r : LinguisticExample) : Option (Finset Boy) :=
+def subject? (r : Datum) : Option (Finset Boy) :=
   match r.feature? "subject" with
   | some "atom" => some {.john}
   | some "group" => some {.john, .brad}
@@ -310,7 +310,7 @@ def subject? (r : LinguisticExample) : Option (Finset Boy) :=
 
 /-- The denotation of a predicative sentence's noun phrase over the three boys, from its
     number and numeral. -/
-def denotation? (r : LinguisticExample) : Option (Finset (Finset Boy)) :=
+def denotation? (r : Datum) : Option (Finset (Finset Boy)) :=
   if r.feature? "construction" = some "predicative" then
     let noun := match r.feature? "number" with
       | some "SG" => some (general Finset.univ)

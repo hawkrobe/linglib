@@ -17,7 +17,7 @@ namespace AlbrightHayes2003.Examples
 
 open Data.Examples
 
-def a1_1_bized : LinguisticExample :=
+def a1_1_bized : Datum :=
   { id := "albrighthayes2003_a1_1_bized"
     source := ⟨"albright-hayes-2003", "Table A1, 1. bize"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def a1_1_bized : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "1"), ("stem", "bize"), ("stemRating", "4.57"), ("cell", "both"), ("pastType", "regular"), ("exp1Production", "0.778"), ("exp2Production", "0.571"), ("production", "0.667"), ("rating", "5.30"), ("adjustedRating", "5.32"), ("ruleBased", "6.06"), ("analogical", "5.87")] }
 
-def a1_1_boze : LinguisticExample :=
+def a1_1_boze : Datum :=
   { id := "albrighthayes2003_a1_1_boze"
     source := ⟨"albright-hayes-2003", "Table A1, 1. bize"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def a1_1_boze : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "1"), ("stem", "bize"), ("stemRating", "4.57"), ("cell", "both"), ("pastType", "irregular"), ("exp1Production", "0.056"), ("exp2Production", "0.381"), ("production", "0.231"), ("rating", "4.57"), ("adjustedRating", "4.55"), ("ruleBased", "4.11"), ("analogical", "4.04")] }
 
-def a1_2_dized : LinguisticExample :=
+def a1_2_dized : Datum :=
   { id := "albrighthayes2003_a1_2_dized"
     source := ⟨"albright-hayes-2003", "Table A1, 2. dize"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def a1_2_dized : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "2"), ("stem", "dize"), ("stemRating", "4.62"), ("cell", "both"), ("pastType", "regular"), ("exp1Production", "0.889"), ("exp2Production", "0.762"), ("production", "0.821"), ("rating", "5.42"), ("adjustedRating", "5.42"), ("ruleBased", "6.06"), ("analogical", "5.95"), ("stemIpa", "daɪz")] }
 
-def a1_2_doze : LinguisticExample :=
+def a1_2_doze : Datum :=
   { id := "albrighthayes2003_a1_2_doze"
     source := ⟨"albright-hayes-2003", "Table A1, 2. dize"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def a1_2_doze : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "2"), ("stem", "dize"), ("stemRating", "4.62"), ("cell", "both"), ("pastType", "irregular"), ("exp1Production", "0.111"), ("exp2Production", "0.190"), ("production", "0.154"), ("rating", "5.04"), ("adjustedRating", "5.04"), ("ruleBased", "4.73"), ("analogical", "4.18"), ("stemIpa", "daɪz"), ("ipa", "doz")] }
 
-def a1_3_driced : LinguisticExample :=
+def a1_3_driced : Datum :=
   { id := "albrighthayes2003_a1_3_driced"
     source := ⟨"albright-hayes-2003", "Table A1, 3. drice"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def a1_3_driced : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "3"), ("stem", "drice"), ("stemRating", "3.86"), ("cell", "both"), ("pastType", "regular"), ("exp1Production", "1.000"), ("exp2Production", "0.913"), ("production", "0.953"), ("rating", "6.26"), ("adjustedRating", "6.52"), ("ruleBased", "6.22"), ("analogical", "5.51"), ("island", "voiceless fricative"), ("ruleHits", "352"), ("ruleScope", "352")] }
 
-def a1_3_droce : LinguisticExample :=
+def a1_3_droce : Datum :=
   { id := "albrighthayes2003_a1_3_droce"
     source := ⟨"albright-hayes-2003", "Table A1, 3. drice"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def a1_3_droce : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "3"), ("stem", "drice"), ("stemRating", "3.86"), ("cell", "both"), ("pastType", "irregular"), ("exp1Production", "0.000"), ("exp2Production", "0.087"), ("production", "0.047"), ("rating", "4.48"), ("adjustedRating", "4.31"), ("ruleBased", "5.15"), ("analogical", "4.28")] }
 
-def a1_4_flidged : LinguisticExample :=
+def a1_4_flidged : Datum :=
   { id := "albrighthayes2003_a1_4_flidged"
     source := ⟨"albright-hayes-2003", "Table A1, 4. flidge"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def a1_4_flidged : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "4"), ("stem", "flidge"), ("stemRating", "4.05"), ("cell", "both"), ("pastType", "regular"), ("exp1Production", "0.947"), ("exp2Production", "0.783"), ("production", "0.857"), ("rating", "6.21"), ("adjustedRating", "6.41"), ("ruleBased", "6.16"), ("analogical", "5.46"), ("island", "postalveolar strident"), ("ruleHits", "110"), ("ruleScope", "110")] }
 
-def a1_4_fludge : LinguisticExample :=
+def a1_4_fludge : Datum :=
   { id := "albrighthayes2003_a1_4_fludge"
     source := ⟨"albright-hayes-2003", "Table A1, 4. flidge"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def a1_4_fludge : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "4"), ("stem", "flidge"), ("stemRating", "4.05"), ("cell", "both"), ("pastType", "irregular"), ("exp1Production", "0.000"), ("exp2Production", "0.043"), ("production", "0.024"), ("rating", "4.88"), ("adjustedRating", "4.76"), ("ruleBased", "4.22"), ("analogical", "4.10")] }
 
-def a1_5_froed : LinguisticExample :=
+def a1_5_froed : Datum :=
   { id := "albrighthayes2003_a1_5_froed"
     source := ⟨"albright-hayes-2003", "Table A1, 5. fro"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def a1_5_froed : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "5"), ("stem", "fro"), ("stemRating", "5.84"), ("cell", "both"), ("pastType", "regular"), ("exp1Production", "0.950"), ("exp2Production", "0.833"), ("production", "0.886"), ("rating", "5.83"), ("adjustedRating", "5.50"), ("ruleBased", "5.40"), ("analogical", "6.16"), ("stemIpa", "fro")] }
 
-def a1_5_frew : LinguisticExample :=
+def a1_5_frew : Datum :=
   { id := "albrighthayes2003_a1_5_frew"
     source := ⟨"albright-hayes-2003", "Table A1, 5. fro"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def a1_5_frew : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "5"), ("stem", "fro"), ("stemRating", "5.84"), ("cell", "both"), ("pastType", "irregular"), ("exp1Production", "0.050"), ("exp2Production", "0.125"), ("production", "0.091"), ("rating", "4.33"), ("adjustedRating", "4.57"), ("ruleBased", "4.97"), ("analogical", "4.38"), ("stemIpa", "fro"), ("ipa", "fru")] }
 
-def a1_6_gared : LinguisticExample :=
+def a1_6_gared : Datum :=
   { id := "albrighthayes2003_a1_6_gared"
     source := ⟨"albright-hayes-2003", "Table A1, 6. gare"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def a1_6_gared : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "6"), ("stem", "gare"), ("stemRating", "5.24"), ("cell", "both"), ("pastType", "regular"), ("exp1Production", "1.000"), ("exp2Production", "0.955"), ("production", "0.976"), ("rating", "6.57"), ("adjustedRating", "6.44"), ("ruleBased", "6.02"), ("analogical", "6.27")] }
 
-def a1_6_gore : LinguisticExample :=
+def a1_6_gore : Datum :=
   { id := "albrighthayes2003_a1_6_gore"
     source := ⟨"albright-hayes-2003", "Table A1, 6. gare"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def a1_6_gore : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "6"), ("stem", "gare"), ("stemRating", "5.24"), ("cell", "both"), ("pastType", "irregular"), ("exp1Production", "0.000"), ("exp2Production", "0.000"), ("production", "0.000"), ("rating", "3.39"), ("adjustedRating", "3.49"), ("ruleBased", "4.30"), ("analogical", "4.23")] }
 
-def a1_7_glipped : LinguisticExample :=
+def a1_7_glipped : Datum :=
   { id := "albrighthayes2003_a1_7_glipped"
     source := ⟨"albright-hayes-2003", "Table A1, 7. glip"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def a1_7_glipped : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "7"), ("stem", "glip"), ("stemRating", "4.95"), ("cell", "both"), ("pastType", "regular"), ("exp1Production", "1.000"), ("exp2Production", "0.857"), ("production", "0.925"), ("rating", "5.95"), ("adjustedRating", "5.88"), ("ruleBased", "6.07"), ("analogical", "5.80")] }
 
-def a1_7_glup : LinguisticExample :=
+def a1_7_glup : Datum :=
   { id := "albrighthayes2003_a1_7_glup"
     source := ⟨"albright-hayes-2003", "Table A1, 7. glip"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def a1_7_glup : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "7"), ("stem", "glip"), ("stemRating", "4.95"), ("cell", "both"), ("pastType", "irregular"), ("exp1Production", "0.000"), ("exp2Production", "0.048"), ("production", "0.025"), ("rating", "3.45"), ("adjustedRating", "3.50"), ("ruleBased", "4.02"), ("analogical", "3.97")] }
 
-def a1_8_rifed : LinguisticExample :=
+def a1_8_rifed : Datum :=
   { id := "albrighthayes2003_a1_8_rifed"
     source := ⟨"albright-hayes-2003", "Table A1, 8. rife"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def a1_8_rifed : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "8"), ("stem", "rife"), ("stemRating", "5.61"), ("cell", "both"), ("pastType", "regular"), ("exp1Production", "0.950"), ("exp2Production", "0.762"), ("production", "0.854"), ("rating", "5.95"), ("adjustedRating", "5.69"), ("ruleBased", "6.22"), ("analogical", "5.07"), ("stemIpa", "raɪf")] }
 
-def a1_8_rofe : LinguisticExample :=
+def a1_8_rofe : Datum :=
   { id := "albrighthayes2003_a1_8_rofe"
     source := ⟨"albright-hayes-2003", "Table A1, 8. rife"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def a1_8_rofe : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "8"), ("stem", "rife"), ("stemRating", "5.61"), ("cell", "both"), ("pastType", "irregular"), ("exp1Production", "0.000"), ("exp2Production", "0.190"), ("production", "0.098"), ("rating", "4.14"), ("adjustedRating", "4.33"), ("ruleBased", "4.61"), ("analogical", "4.35"), ("stemIpa", "raɪf"), ("ipa", "rof")] }
 
-def a1_8_riff : LinguisticExample :=
+def a1_8_riff : Datum :=
   { id := "albrighthayes2003_a1_8_riff"
     source := ⟨"albright-hayes-2003", "Table A1, 8. rife"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def a1_8_riff : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "8"), ("stem", "rife"), ("stemRating", "5.61"), ("cell", "both"), ("pastType", "irregular"), ("exp1Production", "0.000"), ("exp2Production", "0.000"), ("production", "0.000"), ("rating", "3.24"), ("adjustedRating", "3.42"), ("ruleBased", "3.94"), ("analogical", "3.90"), ("stemIpa", "raɪf"), ("ipa", "rɪf")] }
 
-def a1_9_stinned : LinguisticExample :=
+def a1_9_stinned : Datum :=
   { id := "albrighthayes2003_a1_9_stinned"
     source := ⟨"albright-hayes-2003", "Table A1, 9. stin"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def a1_9_stinned : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "9"), ("stem", "stin"), ("stemRating", "5.40"), ("cell", "both"), ("pastType", "regular"), ("exp1Production", "0.900"), ("exp2Production", "0.522"), ("production", "0.698"), ("rating", "5.30"), ("adjustedRating", "5.08"), ("ruleBased", "5.83"), ("analogical", "6.02")] }
 
-def a1_9_stun : LinguisticExample :=
+def a1_9_stun : Datum :=
   { id := "albrighthayes2003_a1_9_stun"
     source := ⟨"albright-hayes-2003", "Table A1, 9. stin"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def a1_9_stun : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "9"), ("stem", "stin"), ("stemRating", "5.40"), ("cell", "both"), ("pastType", "irregular"), ("exp1Production", "0.100"), ("exp2Production", "0.261"), ("production", "0.186"), ("rating", "4.78"), ("adjustedRating", "4.94"), ("ruleBased", "4.34"), ("analogical", "4.63")] }
 
-def a1_9_stan : LinguisticExample :=
+def a1_9_stan : Datum :=
   { id := "albrighthayes2003_a1_9_stan"
     source := ⟨"albright-hayes-2003", "Table A1, 9. stin"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def a1_9_stan : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "9"), ("stem", "stin"), ("stemRating", "5.40"), ("cell", "both"), ("pastType", "irregular"), ("exp1Production", "0.000"), ("exp2Production", "0.000"), ("production", "0.000"), ("rating", "2.74"), ("adjustedRating", "2.87"), ("ruleBased", "4.27"), ("analogical", "4.03"), ("ipa", "stæn")] }
 
-def a1_10_stipped : LinguisticExample :=
+def a1_10_stipped : Datum :=
   { id := "albrighthayes2003_a1_10_stipped"
     source := ⟨"albright-hayes-2003", "Table A1, 10. stip"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def a1_10_stipped : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "10"), ("stem", "stip"), ("stemRating", "5.45"), ("cell", "both"), ("pastType", "regular"), ("exp1Production", "1.000"), ("exp2Production", "0.708"), ("production", "0.841"), ("rating", "5.92"), ("adjustedRating", "5.70"), ("ruleBased", "6.07"), ("analogical", "5.88")] }
 
-def a1_10_stup : LinguisticExample :=
+def a1_10_stup : Datum :=
   { id := "albrighthayes2003_a1_10_stup"
     source := ⟨"albright-hayes-2003", "Table A1, 10. stip"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def a1_10_stup : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "10"), ("stem", "stip"), ("stemRating", "5.45"), ("cell", "both"), ("pastType", "irregular"), ("exp1Production", "0.000"), ("exp2Production", "0.083"), ("production", "0.045"), ("rating", "4.50"), ("adjustedRating", "4.66"), ("ruleBased", "4.15"), ("analogical", "4.26"), ("ipa", "stʌp")] }
 
-def a1_11_blafed : LinguisticExample :=
+def a1_11_blafed : Datum :=
   { id := "albrighthayes2003_a1_11_blafed"
     source := ⟨"albright-hayes-2003", "Table A1, 11. blafe"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def a1_11_blafed : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "11"), ("stem", "blafe"), ("stemRating", "3.57"), ("cell", "regOnly"), ("pastType", "regular"), ("exp1Production", "1.000"), ("exp2Production", "0.818"), ("production", "0.892"), ("rating", "6.32"), ("adjustedRating", "6.67"), ("ruleBased", "6.22"), ("analogical", "5.15"), ("island", "voiceless fricative"), ("ruleHits", "352"), ("ruleScope", "352")] }
 
-def a1_11_bleft : LinguisticExample :=
+def a1_11_bleft : Datum :=
   { id := "albrighthayes2003_a1_11_bleft"
     source := ⟨"albright-hayes-2003", "Table A1, 11. blafe"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def a1_11_bleft : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "11"), ("stem", "blafe"), ("stemRating", "3.57"), ("cell", "regOnly"), ("pastType", "irregular"), ("exp1Production", "0.000"), ("exp2Production", "0.045"), ("production", "0.027"), ("rating", "4.09"), ("adjustedRating", "3.86"), ("ruleBased", "3.94"), ("analogical", "3.85")] }
 
-def a1_12_bredged : LinguisticExample :=
+def a1_12_bredged : Datum :=
   { id := "albrighthayes2003_a1_12_bredged"
     source := ⟨"albright-hayes-2003", "Table A1, 12. bredge"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def a1_12_bredged : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "12"), ("stem", "bredge"), ("stemRating", "3.86"), ("cell", "regOnly"), ("pastType", "regular"), ("exp1Production", "0.950"), ("exp2Production", "0.905"), ("production", "0.927"), ("rating", "6.33"), ("adjustedRating", "6.60"), ("ruleBased", "6.16"), ("analogical", "5.85"), ("stemIpa", "brɛdʒ"), ("island", "postalveolar strident"), ("ruleHits", "110"), ("ruleScope", "110")] }
 
-def a1_12_broge : LinguisticExample :=
+def a1_12_broge : Datum :=
   { id := "albrighthayes2003_a1_12_broge"
     source := ⟨"albright-hayes-2003", "Table A1, 12. bredge"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def a1_12_broge : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "12"), ("stem", "bredge"), ("stemRating", "3.86"), ("cell", "regOnly"), ("pastType", "irregular"), ("exp1Production", "0.050"), ("exp2Production", "0.048"), ("production", "0.049"), ("rating", "3.43"), ("adjustedRating", "3.25"), ("ruleBased", "3.94"), ("analogical", "3.85"), ("stemIpa", "brɛdʒ"), ("ipa", "brodʒ")] }
 
-def a1_13_chooled : LinguisticExample :=
+def a1_13_chooled : Datum :=
   { id := "albrighthayes2003_a1_13_chooled"
     source := ⟨"albright-hayes-2003", "Table A1, 13. chool"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def a1_13_chooled : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "13"), ("stem", "chool"), ("stemRating", "3.76"), ("cell", "regOnly"), ("pastType", "regular"), ("exp1Production", "1.000"), ("exp2Production", "0.957"), ("production", "0.977"), ("rating", "6.13"), ("adjustedRating", "6.41"), ("ruleBased", "6.12"), ("analogical", "6.38")] }
 
-def a1_13_chole : LinguisticExample :=
+def a1_13_chole : Datum :=
   { id := "albrighthayes2003_a1_13_chole"
     source := ⟨"albright-hayes-2003", "Table A1, 13. chool"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def a1_13_chole : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "13"), ("stem", "chool"), ("stemRating", "3.76"), ("cell", "regOnly"), ("pastType", "irregular"), ("exp1Production", "0.000"), ("exp2Production", "0.043"), ("production", "0.023"), ("rating", "3.71"), ("adjustedRating", "3.51"), ("ruleBased", "3.94"), ("analogical", "4.05")] }
 
-def a1_14_daped : LinguisticExample :=
+def a1_14_daped : Datum :=
   { id := "albrighthayes2003_a1_14_daped"
     source := ⟨"albright-hayes-2003", "Table A1, 14. dape"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def a1_14_daped : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "14"), ("stem", "dape"), ("stemRating", "5.14"), ("cell", "regOnly"), ("pastType", "regular"), ("exp1Production", "1.000"), ("exp2Production", "0.957"), ("production", "0.976"), ("rating", "6.25"), ("adjustedRating", "6.14"), ("ruleBased", "6.14"), ("analogical", "5.56"), ("island", "nonhigh vowel + p"), ("ruleHits", "83"), ("ruleScope", "83")] }
 
-def a1_14_dapt : LinguisticExample :=
+def a1_14_dapt : Datum :=
   { id := "albrighthayes2003_a1_14_dapt"
     source := ⟨"albright-hayes-2003", "Table A1, 14. dape"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def a1_14_dapt : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "14"), ("stem", "dape"), ("stemRating", "5.14"), ("cell", "regOnly"), ("pastType", "irregular"), ("exp1Production", "0.000"), ("exp2Production", "0.000"), ("production", "0.000"), ("rating", "4.00"), ("adjustedRating", "4.09"), ("ruleBased", "3.94"), ("analogical", "3.85")] }
 
-def a1_15_gezzed : LinguisticExample :=
+def a1_15_gezzed : Datum :=
   { id := "albrighthayes2003_a1_15_gezzed"
     source := ⟨"albright-hayes-2003", "Table A1, 15. gezz"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def a1_15_gezzed : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "15"), ("stem", "gezz"), ("stemRating", "4.19"), ("cell", "regOnly"), ("pastType", "regular"), ("exp1Production", "1.000"), ("exp2Production", "0.955"), ("production", "0.976"), ("rating", "6.61"), ("adjustedRating", "6.79"), ("ruleBased", "6.06"), ("analogical", "5.89"), ("stemIpa", "gɛz")] }
 
-def a1_15_gozz : LinguisticExample :=
+def a1_15_gozz : Datum :=
   { id := "albrighthayes2003_a1_15_gozz"
     source := ⟨"albright-hayes-2003", "Table A1, 15. gezz"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def a1_15_gozz : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "15"), ("stem", "gezz"), ("stemRating", "4.19"), ("cell", "regOnly"), ("pastType", "irregular"), ("exp1Production", "0.000"), ("exp2Production", "0.000"), ("production", "0.000"), ("rating", "2.52"), ("adjustedRating", "2.40"), ("ruleBased", "3.94"), ("analogical", "3.95"), ("stemIpa", "gɛz"), ("ipa", "gaz")] }
 
-def a1_16_naced : LinguisticExample :=
+def a1_16_naced : Datum :=
   { id := "albrighthayes2003_a1_16_naced"
     source := ⟨"albright-hayes-2003", "Table A1, 16. nace"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def a1_16_naced : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "16"), ("stem", "nace"), ("stemRating", "5.00"), ("cell", "regOnly"), ("pastType", "regular"), ("exp1Production", "1.000"), ("exp2Production", "1.000"), ("production", "1.000"), ("rating", "6.57"), ("adjustedRating", "6.50"), ("ruleBased", "6.22"), ("analogical", "5.57"), ("stemIpa", "nes"), ("island", "voiceless fricative"), ("ruleHits", "352"), ("ruleScope", "352")] }
 
-def a1_16_noce : LinguisticExample :=
+def a1_16_noce : Datum :=
   { id := "albrighthayes2003_a1_16_noce"
     source := ⟨"albright-hayes-2003", "Table A1, 16. nace"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def a1_16_noce : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "16"), ("stem", "nace"), ("stemRating", "5.00"), ("cell", "regOnly"), ("pastType", "irregular"), ("exp1Production", "0.000"), ("exp2Production", "0.000"), ("production", "0.000"), ("rating", "2.91"), ("adjustedRating", "2.96"), ("ruleBased", "4.00"), ("analogical", "3.89"), ("stemIpa", "nes"), ("ipa", "nos")] }
 
-def a1_17_spacked : LinguisticExample :=
+def a1_17_spacked : Datum :=
   { id := "albrighthayes2003_a1_17_spacked"
     source := ⟨"albright-hayes-2003", "Table A1, 17. spack"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def a1_17_spacked : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "17"), ("stem", "spack"), ("stemRating", "5.05"), ("cell", "regOnly"), ("pastType", "regular"), ("exp1Production", "1.000"), ("exp2Production", "0.739"), ("production", "0.860"), ("rating", "6.22"), ("adjustedRating", "6.13"), ("ruleBased", "6.01"), ("analogical", "5.79"), ("island", "low unrounded vowel + k"), ("ruleHits", "37"), ("ruleScope", "37")] }
 
-def a1_17_spuck : LinguisticExample :=
+def a1_17_spuck : Datum :=
   { id := "albrighthayes2003_a1_17_spuck"
     source := ⟨"albright-hayes-2003", "Table A1, 17. spack"⟩
     reportedIn := none
@@ -485,7 +485,7 @@ def a1_17_spuck : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "17"), ("stem", "spack"), ("stemRating", "5.05"), ("cell", "regOnly"), ("pastType", "irregular"), ("exp1Production", "0.000"), ("exp2Production", "0.130"), ("production", "0.070"), ("rating", "3.96"), ("adjustedRating", "4.03"), ("ruleBased", "3.94"), ("analogical", "3.85")] }
 
-def a1_18_stired : LinguisticExample :=
+def a1_18_stired : Datum :=
   { id := "albrighthayes2003_a1_18_stired"
     source := ⟨"albright-hayes-2003", "Table A1, 18. stire"⟩
     reportedIn := none
@@ -498,7 +498,7 @@ def a1_18_stired : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "18"), ("stem", "stire"), ("stemRating", "5.62"), ("cell", "regOnly"), ("pastType", "regular"), ("exp1Production", "1.000"), ("exp2Production", "0.818"), ("production", "0.902"), ("rating", "6.00"), ("adjustedRating", "5.74"), ("ruleBased", "6.02"), ("analogical", "6.29")] }
 
-def a1_18_store : LinguisticExample :=
+def a1_18_store : Datum :=
   { id := "albrighthayes2003_a1_18_store"
     source := ⟨"albright-hayes-2003", "Table A1, 18. stire"⟩
     reportedIn := none
@@ -511,7 +511,7 @@ def a1_18_store : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "18"), ("stem", "stire"), ("stemRating", "5.62"), ("cell", "regOnly"), ("pastType", "irregular"), ("exp1Production", "0.000"), ("exp2Production", "0.091"), ("production", "0.049"), ("rating", "3.22"), ("adjustedRating", "3.40"), ("ruleBased", "3.94"), ("analogical", "4.03")] }
 
-def a1_19_teshed : LinguisticExample :=
+def a1_19_teshed : Datum :=
   { id := "albrighthayes2003_a1_19_teshed"
     source := ⟨"albright-hayes-2003", "Table A1, 19. tesh"⟩
     reportedIn := none
@@ -524,7 +524,7 @@ def a1_19_teshed : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "19"), ("stem", "tesh"), ("stemRating", "4.71"), ("cell", "regOnly"), ("pastType", "regular"), ("exp1Production", "1.000"), ("exp2Production", "0.870"), ("production", "0.925"), ("rating", "6.22"), ("adjustedRating", "6.23"), ("ruleBased", "6.22"), ("analogical", "5.59"), ("island", "voiceless fricative"), ("ruleHits", "352"), ("ruleScope", "352")] }
 
-def a1_19_tosh : LinguisticExample :=
+def a1_19_tosh : Datum :=
   { id := "albrighthayes2003_a1_19_tosh"
     source := ⟨"albright-hayes-2003", "Table A1, 19. tesh"⟩
     reportedIn := none
@@ -537,7 +537,7 @@ def a1_19_tosh : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "19"), ("stem", "tesh"), ("stemRating", "4.71"), ("cell", "regOnly"), ("pastType", "irregular"), ("exp1Production", "0.000"), ("exp2Production", "0.000"), ("production", "0.000"), ("rating", "3.13"), ("adjustedRating", "3.12"), ("ruleBased", "3.94"), ("analogical", "3.88")] }
 
-def a1_20_wissed : LinguisticExample :=
+def a1_20_wissed : Datum :=
   { id := "albrighthayes2003_a1_20_wissed"
     source := ⟨"albright-hayes-2003", "Table A1, 20. wiss"⟩
     reportedIn := none
@@ -550,7 +550,7 @@ def a1_20_wissed : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "20"), ("stem", "wiss"), ("stemRating", "5.76"), ("cell", "regOnly"), ("pastType", "regular"), ("exp1Production", "0.950"), ("exp2Production", "0.952"), ("production", "0.951"), ("rating", "6.57"), ("adjustedRating", "6.28"), ("ruleBased", "6.22"), ("analogical", "5.68"), ("island", "voiceless fricative"), ("ruleHits", "352"), ("ruleScope", "352")] }
 
-def a1_20_wus : LinguisticExample :=
+def a1_20_wus : Datum :=
   { id := "albrighthayes2003_a1_20_wus"
     source := ⟨"albright-hayes-2003", "Table A1, 20. wiss"⟩
     reportedIn := none
@@ -563,7 +563,7 @@ def a1_20_wus : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "20"), ("stem", "wiss"), ("stemRating", "5.76"), ("cell", "regOnly"), ("pastType", "irregular"), ("exp1Production", "0.000"), ("exp2Production", "0.048"), ("production", "0.024"), ("rating", "3.35"), ("adjustedRating", "3.56"), ("ruleBased", "3.94"), ("analogical", "3.99"), ("ipa", "wʌs")] }
 
-def a1_21_bligged : LinguisticExample :=
+def a1_21_bligged : Datum :=
   { id := "albrighthayes2003_a1_21_bligged"
     source := ⟨"albright-hayes-2003", "Table A1, 21. blig"⟩
     reportedIn := none
@@ -576,7 +576,7 @@ def a1_21_bligged : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "21"), ("stem", "blig"), ("stemRating", "3.71"), ("cell", "irregOnly"), ("pastType", "regular"), ("exp1Production", "0.941"), ("exp2Production", "0.652"), ("production", "0.775"), ("rating", "5.67"), ("adjustedRating", "5.95"), ("ruleBased", "5.66"), ("analogical", "5.44"), ("island", "g"), ("ruleHits", "41"), ("ruleScope", "42")] }
 
-def a1_21_blug : LinguisticExample :=
+def a1_21_blug : Datum :=
   { id := "albrighthayes2003_a1_21_blug"
     source := ⟨"albright-hayes-2003", "Table A1, 21. blig"⟩
     reportedIn := none
@@ -589,7 +589,7 @@ def a1_21_blug : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "21"), ("stem", "blig"), ("stemRating", "3.71"), ("cell", "irregOnly"), ("pastType", "irregular"), ("exp1Production", "0.000"), ("exp2Production", "0.130"), ("production", "0.075"), ("rating", "4.17"), ("adjustedRating", "3.97"), ("ruleBased", "5.19"), ("analogical", "4.08")] }
 
-def a1_22_chaked : LinguisticExample :=
+def a1_22_chaked : Datum :=
   { id := "albrighthayes2003_a1_22_chaked"
     source := ⟨"albright-hayes-2003", "Table A1, 22. chake"⟩
     reportedIn := none
@@ -602,7 +602,7 @@ def a1_22_chaked : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "22"), ("stem", "chake"), ("stemRating", "5.33"), ("cell", "irregOnly"), ("pastType", "regular"), ("exp1Production", "0.950"), ("exp2Production", "0.818"), ("production", "0.881"), ("rating", "5.74"), ("adjustedRating", "5.55"), ("ruleBased", "4.77"), ("analogical", "5.65")] }
 
-def a1_22_chook : LinguisticExample :=
+def a1_22_chook : Datum :=
   { id := "albrighthayes2003_a1_22_chook"
     source := ⟨"albright-hayes-2003", "Table A1, 22. chake"⟩
     reportedIn := none
@@ -615,7 +615,7 @@ def a1_22_chook : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "22"), ("stem", "chake"), ("stemRating", "5.33"), ("cell", "irregOnly"), ("pastType", "irregular"), ("exp1Production", "0.000"), ("exp2Production", "0.000"), ("production", "0.000"), ("rating", "5.04"), ("adjustedRating", "5.19"), ("ruleBased", "5.13"), ("analogical", "4.17"), ("ipa", "tʃʊk")] }
 
-def a1_23_dritted : LinguisticExample :=
+def a1_23_dritted : Datum :=
   { id := "albrighthayes2003_a1_23_dritted"
     source := ⟨"albright-hayes-2003", "Table A1, 23. drit"⟩
     reportedIn := none
@@ -628,7 +628,7 @@ def a1_23_dritted : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "23"), ("stem", "drit"), ("stemRating", "4.30"), ("cell", "irregOnly"), ("pastType", "regular"), ("exp1Production", "0.842"), ("exp2Production", "0.591"), ("production", "0.707"), ("rating", "4.96"), ("adjustedRating", "5.04"), ("ruleBased", "5.43"), ("analogical", "5.29")] }
 
-def a1_23_drit : LinguisticExample :=
+def a1_23_drit : Datum :=
   { id := "albrighthayes2003_a1_23_drit"
     source := ⟨"albright-hayes-2003", "Table A1, 23. drit"⟩
     reportedIn := none
@@ -641,7 +641,7 @@ def a1_23_drit : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "23"), ("stem", "drit"), ("stemRating", "4.30"), ("cell", "irregOnly"), ("pastType", "irregular"), ("exp1Production", "0.053"), ("exp2Production", "0.091"), ("production", "0.073"), ("rating", "5.13"), ("adjustedRating", "5.07"), ("ruleBased", "4.62"), ("analogical", "4.11")] }
 
-def a1_23_drat : LinguisticExample :=
+def a1_23_drat : Datum :=
   { id := "albrighthayes2003_a1_23_drat"
     source := ⟨"albright-hayes-2003", "Table A1, 23. drit"⟩
     reportedIn := none
@@ -654,7 +654,7 @@ def a1_23_drat : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "23"), ("stem", "drit"), ("stemRating", "4.30"), ("cell", "irregOnly"), ("pastType", "irregular"), ("exp1Production", "0.000"), ("exp2Production", "0.182"), ("production", "0.098"), ("rating", "3.65"), ("adjustedRating", "3.57"), ("ruleBased", "4.06"), ("analogical", "3.99"), ("ipa", "dræt")] }
 
-def a1_24_fleeped : LinguisticExample :=
+def a1_24_fleeped : Datum :=
   { id := "albrighthayes2003_a1_24_fleeped"
     source := ⟨"albright-hayes-2003", "Table A1, 24. fleep"⟩
     reportedIn := none
@@ -667,7 +667,7 @@ def a1_24_fleeped : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "24"), ("stem", "fleep"), ("stemRating", "4.24"), ("cell", "irregOnly"), ("pastType", "regular"), ("exp1Production", "1.000"), ("exp2Production", "0.478"), ("production", "0.721"), ("rating", "5.00"), ("adjustedRating", "5.10"), ("ruleBased", "5.69"), ("analogical", "5.56"), ("stemIpa", "flip")] }
 
-def a1_24_flept : LinguisticExample :=
+def a1_24_flept : Datum :=
   { id := "albrighthayes2003_a1_24_flept"
     source := ⟨"albright-hayes-2003", "Table A1, 24. fleep"⟩
     reportedIn := none
@@ -680,7 +680,7 @@ def a1_24_flept : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "24"), ("stem", "fleep"), ("stemRating", "4.24"), ("cell", "irregOnly"), ("pastType", "irregular"), ("exp1Production", "0.000"), ("exp2Production", "0.435"), ("production", "0.233"), ("rating", "6.09"), ("adjustedRating", "6.02"), ("ruleBased", "5.15"), ("analogical", "4.40"), ("stemIpa", "flip"), ("ipa", "flɛpt")] }
 
-def a1_25_gleeded : LinguisticExample :=
+def a1_25_gleeded : Datum :=
   { id := "albrighthayes2003_a1_25_gleeded"
     source := ⟨"albright-hayes-2003", "Table A1, 25. gleed"⟩
     reportedIn := none
@@ -693,7 +693,7 @@ def a1_25_gleeded : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "25"), ("stem", "gleed"), ("stemRating", "5.29"), ("cell", "irregOnly"), ("pastType", "regular"), ("exp1Production", "0.684"), ("exp2Production", "0.455"), ("production", "0.561"), ("rating", "4.22"), ("adjustedRating", "3.98"), ("ruleBased", "4.36"), ("analogical", "5.15"), ("stemIpa", "glid"), ("ruleHits", "1146"), ("ruleScope", "1234")] }
 
-def a1_25_gled : LinguisticExample :=
+def a1_25_gled : Datum :=
   { id := "albrighthayes2003_a1_25_gled"
     source := ⟨"albright-hayes-2003", "Table A1, 25. gleed"⟩
     reportedIn := none
@@ -706,7 +706,7 @@ def a1_25_gled : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "25"), ("stem", "gleed"), ("stemRating", "5.29"), ("cell", "irregOnly"), ("pastType", "irregular"), ("exp1Production", "0.158"), ("exp2Production", "0.318"), ("production", "0.244"), ("rating", "6.00"), ("adjustedRating", "6.15"), ("ruleBased", "5.07"), ("analogical", "4.53"), ("stemIpa", "glid"), ("ipa", "glɛd"), ("ruleHits", "6"), ("ruleScope", "7")] }
 
-def a1_25_gleed : LinguisticExample :=
+def a1_25_gleed : Datum :=
   { id := "albrighthayes2003_a1_25_gleed"
     source := ⟨"albright-hayes-2003", "Table A1, 25. gleed"⟩
     reportedIn := none
@@ -719,7 +719,7 @@ def a1_25_gleed : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "25"), ("stem", "gleed"), ("stemRating", "5.29"), ("cell", "irregOnly"), ("pastType", "irregular"), ("exp1Production", "0.105"), ("exp2Production", "0.227"), ("production", "0.171"), ("rating", "4.09"), ("adjustedRating", "4.21"), ("ruleBased", "3.94"), ("analogical", "3.99"), ("stemIpa", "glid"), ("ruleHits", "29"), ("ruleScope", "1234")] }
 
-def a1_26_glitted : LinguisticExample :=
+def a1_26_glitted : Datum :=
   { id := "albrighthayes2003_a1_26_glitted"
     source := ⟨"albright-hayes-2003", "Table A1, 26. glit"⟩
     reportedIn := none
@@ -732,7 +732,7 @@ def a1_26_glitted : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "26"), ("stem", "glit"), ("stemRating", "5.25"), ("cell", "irregOnly"), ("pastType", "regular"), ("exp1Production", "0.778"), ("exp2Production", "0.542"), ("production", "0.643"), ("rating", "5.00"), ("adjustedRating", "4.80"), ("ruleBased", "5.43"), ("analogical", "5.37")] }
 
-def a1_26_glit : LinguisticExample :=
+def a1_26_glit : Datum :=
   { id := "albrighthayes2003_a1_26_glit"
     source := ⟨"albright-hayes-2003", "Table A1, 26. glit"⟩
     reportedIn := none
@@ -745,7 +745,7 @@ def a1_26_glit : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "26"), ("stem", "glit"), ("stemRating", "5.25"), ("cell", "irregOnly"), ("pastType", "irregular"), ("exp1Production", "0.167"), ("exp2Production", "0.125"), ("production", "0.143"), ("rating", "5.21"), ("adjustedRating", "5.34"), ("ruleBased", "4.89"), ("analogical", "4.32")] }
 
-def a1_26_glat : LinguisticExample :=
+def a1_26_glat : Datum :=
   { id := "albrighthayes2003_a1_26_glat"
     source := ⟨"albright-hayes-2003", "Table A1, 26. glit"⟩
     reportedIn := none
@@ -758,7 +758,7 @@ def a1_26_glat : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "26"), ("stem", "glit"), ("stemRating", "5.25"), ("cell", "irregOnly"), ("pastType", "irregular"), ("exp1Production", "0.000"), ("exp2Production", "0.167"), ("production", "0.095"), ("rating", "3.75"), ("adjustedRating", "3.86"), ("ruleBased", "4.06"), ("analogical", "3.91"), ("ipa", "glæt")] }
 
-def a1_27_plimmed : LinguisticExample :=
+def a1_27_plimmed : Datum :=
   { id := "albrighthayes2003_a1_27_plimmed"
     source := ⟨"albright-hayes-2003", "Table A1, 27. plim"⟩
     reportedIn := none
@@ -771,7 +771,7 @@ def a1_27_plimmed : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "27"), ("stem", "plim"), ("stemRating", "4.43"), ("cell", "irregOnly"), ("pastType", "regular"), ("exp1Production", "0.950"), ("exp2Production", "0.682"), ("production", "0.810"), ("rating", "6.13"), ("adjustedRating", "6.22"), ("ruleBased", "5.74"), ("analogical", "5.96")] }
 
-def a1_27_plum : LinguisticExample :=
+def a1_27_plum : Datum :=
   { id := "albrighthayes2003_a1_27_plum"
     source := ⟨"albright-hayes-2003", "Table A1, 27. plim"⟩
     reportedIn := none
@@ -784,7 +784,7 @@ def a1_27_plum : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "27"), ("stem", "plim"), ("stemRating", "4.43"), ("cell", "irregOnly"), ("pastType", "irregular"), ("exp1Production", "0.000"), ("exp2Production", "0.136"), ("production", "0.071"), ("rating", "4.17"), ("adjustedRating", "4.12"), ("ruleBased", "4.52"), ("analogical", "4.10")] }
 
-def a1_27_plam : LinguisticExample :=
+def a1_27_plam : Datum :=
   { id := "albrighthayes2003_a1_27_plam"
     source := ⟨"albright-hayes-2003", "Table A1, 27. plim"⟩
     reportedIn := none
@@ -797,7 +797,7 @@ def a1_27_plam : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "27"), ("stem", "plim"), ("stemRating", "4.43"), ("cell", "irregOnly"), ("pastType", "irregular"), ("exp1Production", "0.000"), ("exp2Production", "0.045"), ("production", "0.024"), ("rating", "3.57"), ("adjustedRating", "3.51"), ("ruleBased", "4.21"), ("analogical", "3.92")] }
 
-def a1_28_queeded : LinguisticExample :=
+def a1_28_queeded : Datum :=
   { id := "albrighthayes2003_a1_28_queeded"
     source := ⟨"albright-hayes-2003", "Table A1, 28. queed"⟩
     reportedIn := none
@@ -810,7 +810,7 @@ def a1_28_queeded : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "28"), ("stem", "queed"), ("stemRating", "3.81"), ("cell", "irregOnly"), ("pastType", "regular"), ("exp1Production", "0.700"), ("exp2Production", "0.364"), ("production", "0.524"), ("rating", "4.65"), ("adjustedRating", "4.86"), ("ruleBased", "4.36"), ("analogical", "5.10")] }
 
-def a1_28_qued : LinguisticExample :=
+def a1_28_qued : Datum :=
   { id := "albrighthayes2003_a1_28_qued"
     source := ⟨"albright-hayes-2003", "Table A1, 28. queed"⟩
     reportedIn := none
@@ -823,7 +823,7 @@ def a1_28_qued : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "28"), ("stem", "queed"), ("stemRating", "3.81"), ("cell", "irregOnly"), ("pastType", "irregular"), ("exp1Production", "0.100"), ("exp2Production", "0.318"), ("production", "0.214"), ("rating", "5.35"), ("adjustedRating", "5.19"), ("ruleBased", "4.43"), ("analogical", "4.09")] }
 
-def a1_29_scrided : LinguisticExample :=
+def a1_29_scrided : Datum :=
   { id := "albrighthayes2003_a1_29_scrided"
     source := ⟨"albright-hayes-2003", "Table A1, 29. scride"⟩
     reportedIn := none
@@ -836,7 +836,7 @@ def a1_29_scrided : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "29"), ("stem", "scride"), ("stemRating", "4.05"), ("cell", "irregOnly"), ("pastType", "regular"), ("exp1Production", "0.556"), ("exp2Production", "0.292"), ("production", "0.405"), ("rating", "4.17"), ("adjustedRating", "4.30"), ("ruleBased", "4.58"), ("analogical", "4.89")] }
 
-def a1_29_scrode : LinguisticExample :=
+def a1_29_scrode : Datum :=
   { id := "albrighthayes2003_a1_29_scrode"
     source := ⟨"albright-hayes-2003", "Table A1, 29. scride"⟩
     reportedIn := none
@@ -849,7 +849,7 @@ def a1_29_scrode : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "29"), ("stem", "scride"), ("stemRating", "4.05"), ("cell", "irregOnly"), ("pastType", "irregular"), ("exp1Production", "0.111"), ("exp2Production", "0.250"), ("production", "0.190"), ("rating", "4.39"), ("adjustedRating", "4.26"), ("ruleBased", "4.98"), ("analogical", "4.73")] }
 
-def a1_29_scrid : LinguisticExample :=
+def a1_29_scrid : Datum :=
   { id := "albrighthayes2003_a1_29_scrid"
     source := ⟨"albright-hayes-2003", "Table A1, 29. scride"⟩
     reportedIn := none
@@ -862,7 +862,7 @@ def a1_29_scrid : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "29"), ("stem", "scride"), ("stemRating", "4.05"), ("cell", "irregOnly"), ("pastType", "irregular"), ("exp1Production", "0.000"), ("exp2Production", "0.042"), ("production", "0.024"), ("rating", "3.57"), ("adjustedRating", "3.43"), ("ruleBased", "4.12"), ("analogical", "3.95")] }
 
-def a1_30_splinged : LinguisticExample :=
+def a1_30_splinged : Datum :=
   { id := "albrighthayes2003_a1_30_splinged"
     source := ⟨"albright-hayes-2003", "Table A1, 30. spling"⟩
     reportedIn := none
@@ -875,7 +875,7 @@ def a1_30_splinged : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "30"), ("stem", "spling"), ("stemRating", "4.56"), ("cell", "irregOnly"), ("pastType", "regular"), ("exp1Production", "0.667"), ("exp2Production", "0.368"), ("production", "0.514"), ("rating", "4.36"), ("adjustedRating", "4.34"), ("ruleBased", "5.14"), ("analogical", "5.35"), ("stemIpa", "splɪŋ")] }
 
-def a1_30_splung : LinguisticExample :=
+def a1_30_splung : Datum :=
   { id := "albrighthayes2003_a1_30_splung"
     source := ⟨"albright-hayes-2003", "Table A1, 30. spling"⟩
     reportedIn := none
@@ -888,7 +888,7 @@ def a1_30_splung : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "30"), ("stem", "spling"), ("stemRating", "4.56"), ("cell", "irregOnly"), ("pastType", "irregular"), ("exp1Production", "0.222"), ("exp2Production", "0.421"), ("production", "0.324"), ("rating", "5.45"), ("adjustedRating", "5.45"), ("ruleBased", "5.19"), ("analogical", "5.42"), ("stemIpa", "splɪŋ"), ("ipa", "splʌŋ")] }
 
-def a1_30_splang : LinguisticExample :=
+def a1_30_splang : Datum :=
   { id := "albrighthayes2003_a1_30_splang"
     source := ⟨"albright-hayes-2003", "Table A1, 30. spling"⟩
     reportedIn := none
@@ -901,7 +901,7 @@ def a1_30_splang : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "30"), ("stem", "spling"), ("stemRating", "4.56"), ("cell", "irregOnly"), ("pastType", "irregular"), ("exp1Production", "0.056"), ("exp2Production", "0.158"), ("production", "0.108"), ("rating", "4.50"), ("adjustedRating", "4.48"), ("ruleBased", "4.36"), ("analogical", "4.54"), ("stemIpa", "splɪŋ"), ("ipa", "splæŋ")] }
 
-def a1_31_guded : LinguisticExample :=
+def a1_31_guded : Datum :=
   { id := "albrighthayes2003_a1_31_guded"
     source := ⟨"albright-hayes-2003", "Table A1, 31. gude"⟩
     reportedIn := none
@@ -914,7 +914,7 @@ def a1_31_guded : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "31"), ("stem", "gude"), ("stemRating", "4.25"), ("cell", "neither"), ("pastType", "regular"), ("exp1Production", "0.625"), ("exp2Production", "0.500"), ("production", "0.556"), ("rating", "4.90"), ("adjustedRating", "4.99"), ("ruleBased", "6.07"), ("analogical", "5.26"), ("stemIpa", "gud")] }
 
-def a1_31_gude : LinguisticExample :=
+def a1_31_gude : Datum :=
   { id := "albrighthayes2003_a1_31_gude"
     source := ⟨"albright-hayes-2003", "Table A1, 31. gude"⟩
     reportedIn := none
@@ -927,7 +927,7 @@ def a1_31_gude : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "31"), ("stem", "gude"), ("stemRating", "4.25"), ("cell", "neither"), ("pastType", "irregular"), ("exp1Production", "0.375"), ("exp2Production", "0.300"), ("production", "0.333"), ("rating", "5.55"), ("adjustedRating", "5.48"), ("ruleBased", "3.96"), ("analogical", "3.99"), ("stemIpa", "gud"), ("ipa", "gud")] }
 
-def a1_32_nolded : LinguisticExample :=
+def a1_32_nolded : Datum :=
   { id := "albrighthayes2003_a1_32_nolded"
     source := ⟨"albright-hayes-2003", "Table A1, 32. nold"⟩
     reportedIn := none
@@ -940,7 +940,7 @@ def a1_32_nolded : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "32"), ("stem", "nold"), ("stemRating", "4.10"), ("cell", "neither"), ("pastType", "regular"), ("exp1Production", "0.833"), ("exp2Production", "0.273"), ("production", "0.525"), ("rating", "4.64"), ("adjustedRating", "4.76"), ("ruleBased", "4.78"), ("analogical", "5.54")] }
 
-def a1_32_nold : LinguisticExample :=
+def a1_32_nold : Datum :=
   { id := "albrighthayes2003_a1_32_nold"
     source := ⟨"albright-hayes-2003", "Table A1, 32. nold"⟩
     reportedIn := none
@@ -953,7 +953,7 @@ def a1_32_nold : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "32"), ("stem", "nold"), ("stemRating", "4.10"), ("cell", "neither"), ("pastType", "irregular"), ("exp1Production", "0.167"), ("exp2Production", "0.500"), ("production", "0.350"), ("rating", "6.05"), ("adjustedRating", "5.95"), ("ruleBased", "3.96"), ("analogical", "3.91")] }
 
-def a1_32_neld : LinguisticExample :=
+def a1_32_neld : Datum :=
   { id := "albrighthayes2003_a1_32_neld"
     source := ⟨"albright-hayes-2003", "Table A1, 32. nold"⟩
     reportedIn := none
@@ -966,7 +966,7 @@ def a1_32_neld : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "32"), ("stem", "nold"), ("stemRating", "4.10"), ("cell", "neither"), ("pastType", "irregular"), ("exp1Production", "0.000"), ("exp2Production", "0.182"), ("production", "0.100"), ("rating", "5.14"), ("adjustedRating", "5.03"), ("ruleBased", "3.94"), ("analogical", "4.10")] }
 
-def a1_33_nunged : LinguisticExample :=
+def a1_33_nunged : Datum :=
   { id := "albrighthayes2003_a1_33_nunged"
     source := ⟨"albright-hayes-2003", "Table A1, 33. nung"⟩
     reportedIn := none
@@ -979,7 +979,7 @@ def a1_33_nunged : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "33"), ("stem", "nung"), ("stemRating", "3.21"), ("cell", "neither"), ("pastType", "regular"), ("exp1Production", "0.933"), ("exp2Production", "0.737"), ("production", "0.824"), ("rating", "5.37"), ("adjustedRating", "5.78"), ("ruleBased", "5.14"), ("analogical", "5.97"), ("stemIpa", "nʌŋ")] }
 
-def a1_33_nang : LinguisticExample :=
+def a1_33_nang : Datum :=
   { id := "albrighthayes2003_a1_33_nang"
     source := ⟨"albright-hayes-2003", "Table A1, 33. nung"⟩
     reportedIn := none
@@ -992,7 +992,7 @@ def a1_33_nang : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "33"), ("stem", "nung"), ("stemRating", "3.21"), ("cell", "neither"), ("pastType", "irregular"), ("exp1Production", "0.000"), ("exp2Production", "0.105"), ("production", "0.059"), ("rating", "4.32"), ("adjustedRating", "4.02"), ("ruleBased", "3.94"), ("analogical", "3.89"), ("stemIpa", "nʌŋ"), ("ipa", "næŋ")] }
 
-def a1_34_panked : LinguisticExample :=
+def a1_34_panked : Datum :=
   { id := "albrighthayes2003_a1_34_panked"
     source := ⟨"albright-hayes-2003", "Table A1, 34. pank"⟩
     reportedIn := none
@@ -1005,7 +1005,7 @@ def a1_34_panked : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "34"), ("stem", "pank"), ("stemRating", "5.62"), ("cell", "neither"), ("pastType", "regular"), ("exp1Production", "1.000"), ("exp2Production", "0.810"), ("production", "0.900"), ("rating", "6.30"), ("adjustedRating", "6.05"), ("ruleBased", "5.62"), ("analogical", "5.92")] }
 
-def a1_34_punk : LinguisticExample :=
+def a1_34_punk : Datum :=
   { id := "albrighthayes2003_a1_34_punk"
     source := ⟨"albright-hayes-2003", "Table A1, 34. pank"⟩
     reportedIn := none
@@ -1018,7 +1018,7 @@ def a1_34_punk : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "34"), ("stem", "pank"), ("stemRating", "5.62"), ("cell", "neither"), ("pastType", "irregular"), ("exp1Production", "0.000"), ("exp2Production", "0.143"), ("production", "0.075"), ("rating", "4.00"), ("adjustedRating", "4.19"), ("ruleBased", "3.94"), ("analogical", "3.89")] }
 
-def a1_35_preaked : LinguisticExample :=
+def a1_35_preaked : Datum :=
   { id := "albrighthayes2003_a1_35_preaked"
     source := ⟨"albright-hayes-2003", "Table A1, 35. preak"⟩
     reportedIn := none
@@ -1031,7 +1031,7 @@ def a1_35_preaked : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "35"), ("stem", "preak"), ("stemRating", "4.90"), ("cell", "neither"), ("pastType", "regular"), ("exp1Production", "0.900"), ("exp2Production", "0.792"), ("production", "0.841"), ("rating", "5.83"), ("adjustedRating", "5.77"), ("ruleBased", "5.37"), ("analogical", "5.80"), ("stemIpa", "prik")] }
 
-def a1_35_proke : LinguisticExample :=
+def a1_35_proke : Datum :=
   { id := "albrighthayes2003_a1_35_proke"
     source := ⟨"albright-hayes-2003", "Table A1, 35. preak"⟩
     reportedIn := none
@@ -1044,7 +1044,7 @@ def a1_35_proke : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "35"), ("stem", "preak"), ("stemRating", "4.90"), ("cell", "neither"), ("pastType", "irregular"), ("exp1Production", "0.100"), ("exp2Production", "0.167"), ("production", "0.136"), ("rating", "3.92"), ("adjustedRating", "3.96"), ("ruleBased", "3.98"), ("analogical", "3.93"), ("stemIpa", "prik"), ("ipa", "prok")] }
 
-def a1_35_preck : LinguisticExample :=
+def a1_35_preck : Datum :=
   { id := "albrighthayes2003_a1_35_preck"
     source := ⟨"albright-hayes-2003", "Table A1, 35. preak"⟩
     reportedIn := none
@@ -1057,7 +1057,7 @@ def a1_35_preck : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "35"), ("stem", "preak"), ("stemRating", "4.90"), ("cell", "neither"), ("pastType", "irregular"), ("exp1Production", "0.000"), ("exp2Production", "0.000"), ("production", "0.000"), ("rating", "3.54"), ("adjustedRating", "3.58"), ("ruleBased", "3.94"), ("analogical", "3.98"), ("stemIpa", "prik"), ("ipa", "prɛk")] }
 
-def a1_36_rasked : LinguisticExample :=
+def a1_36_rasked : Datum :=
   { id := "albrighthayes2003_a1_36_rasked"
     source := ⟨"albright-hayes-2003", "Table A1, 36. rask"⟩
     reportedIn := none
@@ -1070,7 +1070,7 @@ def a1_36_rasked : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "36"), ("stem", "rask"), ("stemRating", "5.30"), ("cell", "neither"), ("pastType", "regular"), ("exp1Production", "1.000"), ("exp2Production", "0.870"), ("production", "0.930"), ("rating", "6.42"), ("adjustedRating", "6.26"), ("ruleBased", "5.97"), ("analogical", "6.11")] }
 
-def a1_36_rusk : LinguisticExample :=
+def a1_36_rusk : Datum :=
   { id := "albrighthayes2003_a1_36_rusk"
     source := ⟨"albright-hayes-2003", "Table A1, 36. rask"⟩
     reportedIn := none
@@ -1083,7 +1083,7 @@ def a1_36_rusk : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "36"), ("stem", "rask"), ("stemRating", "5.30"), ("cell", "neither"), ("pastType", "irregular"), ("exp1Production", "0.000"), ("exp2Production", "0.043"), ("production", "0.023"), ("rating", "4.08"), ("adjustedRating", "4.21"), ("ruleBased", "3.94"), ("analogical", "3.85")] }
 
-def a1_37_shilked : LinguisticExample :=
+def a1_37_shilked : Datum :=
   { id := "albrighthayes2003_a1_37_shilked"
     source := ⟨"albright-hayes-2003", "Table A1, 37. shilk"⟩
     reportedIn := none
@@ -1096,7 +1096,7 @@ def a1_37_shilked : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "37"), ("stem", "shilk"), ("stemRating", "4.60"), ("cell", "neither"), ("pastType", "regular"), ("exp1Production", "1.000"), ("exp2Production", "0.950"), ("production", "0.975"), ("rating", "5.79"), ("adjustedRating", "5.82"), ("ruleBased", "5.97"), ("analogical", "5.17"), ("island", "coronal consonant + k"), ("ruleHits", "31"), ("ruleScope", "31")] }
 
-def a1_37_shalk : LinguisticExample :=
+def a1_37_shalk : Datum :=
   { id := "albrighthayes2003_a1_37_shalk"
     source := ⟨"albright-hayes-2003", "Table A1, 37. shilk"⟩
     reportedIn := none
@@ -1109,7 +1109,7 @@ def a1_37_shalk : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "37"), ("stem", "shilk"), ("stemRating", "4.60"), ("cell", "neither"), ("pastType", "irregular"), ("exp1Production", "0.000"), ("exp2Production", "0.000"), ("production", "0.000"), ("rating", "3.67"), ("adjustedRating", "3.64"), ("ruleBased", "3.94"), ("analogical", "4.13"), ("ipa", "ʃælk")] }
 
-def a1_38_tarked : LinguisticExample :=
+def a1_38_tarked : Datum :=
   { id := "albrighthayes2003_a1_38_tarked"
     source := ⟨"albright-hayes-2003", "Table A1, 38. tark"⟩
     reportedIn := none
@@ -1122,7 +1122,7 @@ def a1_38_tarked : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "38"), ("stem", "tark"), ("stemRating", "5.10"), ("cell", "neither"), ("pastType", "regular"), ("exp1Production", "1.000"), ("exp2Production", "0.870"), ("production", "0.930"), ("rating", "6.33"), ("adjustedRating", "6.24"), ("ruleBased", "5.97"), ("analogical", "5.66"), ("island", "coronal consonant + k"), ("ruleHits", "31"), ("ruleScope", "31")] }
 
-def a1_38_tork : LinguisticExample :=
+def a1_38_tork : Datum :=
   { id := "albrighthayes2003_a1_38_tork"
     source := ⟨"albright-hayes-2003", "Table A1, 38. tark"⟩
     reportedIn := none
@@ -1135,7 +1135,7 @@ def a1_38_tork : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "38"), ("stem", "tark"), ("stemRating", "5.10"), ("cell", "neither"), ("pastType", "irregular"), ("exp1Production", "0.000"), ("exp2Production", "0.043"), ("production", "0.023"), ("rating", "3.71"), ("adjustedRating", "3.79"), ("ruleBased", "3.94"), ("analogical", "3.85")] }
 
-def a1_39_teeped : LinguisticExample :=
+def a1_39_teeped : Datum :=
   { id := "albrighthayes2003_a1_39_teeped"
     source := ⟨"albright-hayes-2003", "Table A1, 39. teep"⟩
     reportedIn := none
@@ -1148,7 +1148,7 @@ def a1_39_teeped : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "39"), ("stem", "teep"), ("stemRating", "4.95"), ("cell", "neither"), ("pastType", "regular"), ("exp1Production", "1.000"), ("exp2Production", "0.783"), ("production", "0.884"), ("rating", "5.91"), ("adjustedRating", "5.84"), ("ruleBased", "5.70"), ("analogical", "5.61")] }
 
-def a1_39_tept : LinguisticExample :=
+def a1_39_tept : Datum :=
   { id := "albrighthayes2003_a1_39_tept"
     source := ⟨"albright-hayes-2003", "Table A1, 39. teep"⟩
     reportedIn := none
@@ -1161,7 +1161,7 @@ def a1_39_tept : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "39"), ("stem", "teep"), ("stemRating", "4.95"), ("cell", "neither"), ("pastType", "irregular"), ("exp1Production", "0.000"), ("exp2Production", "0.087"), ("production", "0.047"), ("rating", "4.70"), ("adjustedRating", "4.76"), ("ruleBased", "4.73"), ("analogical", "4.20")] }
 
-def a1_40_trisked : LinguisticExample :=
+def a1_40_trisked : Datum :=
   { id := "albrighthayes2003_a1_40_trisked"
     source := ⟨"albright-hayes-2003", "Table A1, 40. trisk"⟩
     reportedIn := none
@@ -1174,7 +1174,7 @@ def a1_40_trisked : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "40"), ("stem", "trisk"), ("stemRating", "5.14"), ("cell", "neither"), ("pastType", "regular"), ("exp1Production", "1.000"), ("exp2Production", "0.789"), ("production", "0.897"), ("rating", "6.29"), ("adjustedRating", "6.17"), ("ruleBased", "5.97"), ("analogical", "6.05")] }
 
-def a1_40_trask : LinguisticExample :=
+def a1_40_trask : Datum :=
   { id := "albrighthayes2003_a1_40_trask"
     source := ⟨"albright-hayes-2003", "Table A1, 40. trisk"⟩
     reportedIn := none
@@ -1187,7 +1187,7 @@ def a1_40_trask : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "40"), ("stem", "trisk"), ("stemRating", "5.14"), ("cell", "neither"), ("pastType", "irregular"), ("exp1Production", "0.000"), ("exp2Production", "0.105"), ("production", "0.051"), ("rating", "3.76"), ("adjustedRating", "3.85"), ("ruleBased", "3.94"), ("analogical", "4.01"), ("ipa", "træsk")] }
 
-def a1_40_trusk : LinguisticExample :=
+def a1_40_trusk : Datum :=
   { id := "albrighthayes2003_a1_40_trusk"
     source := ⟨"albright-hayes-2003", "Table A1, 40. trisk"⟩
     reportedIn := none
@@ -1200,7 +1200,7 @@ def a1_40_trusk : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "40"), ("stem", "trisk"), ("stemRating", "5.14"), ("cell", "neither"), ("pastType", "irregular"), ("exp1Production", "0.000"), ("exp2Production", "0.053"), ("production", "0.026"), ("rating", "3.62"), ("adjustedRating", "3.71"), ("ruleBased", "3.94"), ("analogical", "3.94")] }
 
-def a1_41_tunked : LinguisticExample :=
+def a1_41_tunked : Datum :=
   { id := "albrighthayes2003_a1_41_tunked"
     source := ⟨"albright-hayes-2003", "Table A1, 41. tunk"⟩
     reportedIn := none
@@ -1213,7 +1213,7 @@ def a1_41_tunked : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "41"), ("stem", "tunk"), ("stemRating", "4.65"), ("cell", "neither"), ("pastType", "regular"), ("exp1Production", "1.000"), ("exp2Production", "0.826"), ("production", "0.907"), ("rating", "5.67"), ("adjustedRating", "5.67"), ("ruleBased", "5.62"), ("analogical", "5.80")] }
 
-def a1_41_tank : LinguisticExample :=
+def a1_41_tank : Datum :=
   { id := "albrighthayes2003_a1_41_tank"
     source := ⟨"albright-hayes-2003", "Table A1, 41. tunk"⟩
     reportedIn := none
@@ -1226,7 +1226,7 @@ def a1_41_tank : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A1"), ("item", "41"), ("stem", "tunk"), ("stemRating", "4.65"), ("cell", "neither"), ("pastType", "irregular"), ("exp1Production", "0.000"), ("exp2Production", "0.087"), ("production", "0.047"), ("rating", "3.92"), ("adjustedRating", "3.91"), ("ruleBased", "3.94"), ("analogical", "3.86")] }
 
-def a2_1_grelled : LinguisticExample :=
+def a2_1_grelled : Datum :=
   { id := "albrighthayes2003_a2_1_grelled"
     source := ⟨"albright-hayes-2003", "Table A2, 1. grell"⟩
     reportedIn := none
@@ -1239,7 +1239,7 @@ def a2_1_grelled : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A2"), ("item", "1"), ("stem", "grell"), ("stemRating", "4.52"), ("cell", "peripheral"), ("pastType", "regular"), ("exp1Production", "1.000"), ("exp2Production", "0.810"), ("production", "0.902"), ("rating", "5.86"), ("adjustedRating", "5.91"), ("ruleBased", "5.86"), ("analogical", "6.17"), ("stemIpa", "grɛl")] }
 
-def a2_1_grelt : LinguisticExample :=
+def a2_1_grelt : Datum :=
   { id := "albrighthayes2003_a2_1_grelt"
     source := ⟨"albright-hayes-2003", "Table A2, 1. grell"⟩
     reportedIn := none
@@ -1252,7 +1252,7 @@ def a2_1_grelt : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A2"), ("item", "1"), ("stem", "grell"), ("stemRating", "4.52"), ("cell", "peripheral"), ("pastType", "irregular"), ("exp1Production", "0.000"), ("exp2Production", "0.143"), ("production", "0.073"), ("rating", "4.90"), ("adjustedRating", "4.88"), ("ruleBased", "4.06"), ("analogical", "5.39"), ("stemIpa", "grɛl"), ("ipa", "grɛlt"), ("set", "burnt")] }
 
-def a2_2_murned : LinguisticExample :=
+def a2_2_murned : Datum :=
   { id := "albrighthayes2003_a2_2_murned"
     source := ⟨"albright-hayes-2003", "Table A2, 2. murn"⟩
     reportedIn := none
@@ -1265,7 +1265,7 @@ def a2_2_murned : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A2"), ("item", "2"), ("stem", "murn"), ("stemRating", "5.43"), ("cell", "peripheral"), ("pastType", "regular"), ("exp1Production", "0.947"), ("exp2Production", "0.957"), ("production", "0.952"), ("rating", "6.57"), ("adjustedRating", "6.38"), ("ruleBased", "6.02"), ("analogical", "6.29"), ("stemIpa", "mərn")] }
 
-def a2_2_murnt : LinguisticExample :=
+def a2_2_murnt : Datum :=
   { id := "albrighthayes2003_a2_2_murnt"
     source := ⟨"albright-hayes-2003", "Table A2, 2. murn"⟩
     reportedIn := none
@@ -1278,7 +1278,7 @@ def a2_2_murnt : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A2"), ("item", "2"), ("stem", "murn"), ("stemRating", "5.43"), ("cell", "peripheral"), ("pastType", "irregular"), ("exp1Production", "0.053"), ("exp2Production", "0.043"), ("production", "0.048"), ("rating", "4.74"), ("adjustedRating", "4.90"), ("ruleBased", "4.60"), ("analogical", "5.23"), ("stemIpa", "mərn"), ("ipa", "mərnt"), ("set", "burnt")] }
 
-def a2_3_scoiled : LinguisticExample :=
+def a2_3_scoiled : Datum :=
   { id := "albrighthayes2003_a2_3_scoiled"
     source := ⟨"albright-hayes-2003", "Table A2, 3. scoil"⟩
     reportedIn := none
@@ -1291,7 +1291,7 @@ def a2_3_scoiled : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A2"), ("item", "3"), ("stem", "scoil"), ("stemRating", "3.84"), ("cell", "peripheral"), ("pastType", "regular"), ("exp1Production", "0.944"), ("exp2Production", "0.947"), ("production", "0.946"), ("rating", "6.45"), ("adjustedRating", "6.72"), ("ruleBased", "5.93"), ("analogical", "6.51"), ("stemIpa", "skɔɪl")] }
 
-def a2_3_scoilt : LinguisticExample :=
+def a2_3_scoilt : Datum :=
   { id := "albrighthayes2003_a2_3_scoilt"
     source := ⟨"albright-hayes-2003", "Table A2, 3. scoil"⟩
     reportedIn := none
@@ -1304,7 +1304,7 @@ def a2_3_scoilt : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A2"), ("item", "3"), ("stem", "scoil"), ("stemRating", "3.84"), ("cell", "peripheral"), ("pastType", "irregular"), ("exp1Production", "0.000"), ("exp2Production", "0.000"), ("production", "0.000"), ("rating", "5.15"), ("adjustedRating", "4.99"), ("ruleBased", "4.01"), ("analogical", "4.91"), ("stemIpa", "skɔɪl"), ("ipa", "skɔɪlt"), ("set", "burnt")] }
 
-def a2_4_shurned : LinguisticExample :=
+def a2_4_shurned : Datum :=
   { id := "albrighthayes2003_a2_4_shurned"
     source := ⟨"albright-hayes-2003", "Table A2, 4. shurn"⟩
     reportedIn := none
@@ -1317,7 +1317,7 @@ def a2_4_shurned : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A2"), ("item", "4"), ("stem", "shurn"), ("stemRating", "5.00"), ("cell", "peripheral"), ("pastType", "regular"), ("exp1Production", "0.947"), ("exp2Production", "0.857"), ("production", "0.900"), ("rating", "6.57"), ("adjustedRating", "6.50"), ("ruleBased", "6.02"), ("analogical", "6.31"), ("stemIpa", "ʃərn")] }
 
-def a2_4_shurnt : LinguisticExample :=
+def a2_4_shurnt : Datum :=
   { id := "albrighthayes2003_a2_4_shurnt"
     source := ⟨"albright-hayes-2003", "Table A2, 4. shurn"⟩
     reportedIn := none
@@ -1330,7 +1330,7 @@ def a2_4_shurnt : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A2"), ("item", "4"), ("stem", "shurn"), ("stemRating", "5.00"), ("cell", "peripheral"), ("pastType", "irregular"), ("exp1Production", "0.000"), ("exp2Production", "0.000"), ("production", "0.000"), ("rating", "4.22"), ("adjustedRating", "4.28"), ("ruleBased", "3.95"), ("analogical", "5.11"), ("stemIpa", "ʃərn"), ("ipa", "ʃərnt"), ("set", "burnt")] }
 
-def a2_5_skelled : LinguisticExample :=
+def a2_5_skelled : Datum :=
   { id := "albrighthayes2003_a2_5_skelled"
     source := ⟨"albright-hayes-2003", "Table A2, 5. skell"⟩
     reportedIn := none
@@ -1343,7 +1343,7 @@ def a2_5_skelled : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A2"), ("item", "5"), ("stem", "skell"), ("stemRating", "5.05"), ("cell", "peripheral"), ("pastType", "regular"), ("exp1Production", "0.944"), ("exp2Production", "0.682"), ("production", "0.800"), ("rating", "6.05"), ("adjustedRating", "5.95"), ("ruleBased", "5.86"), ("analogical", "6.24"), ("stemIpa", "skɛl")] }
 
-def a2_5_skelt : LinguisticExample :=
+def a2_5_skelt : Datum :=
   { id := "albrighthayes2003_a2_5_skelt"
     source := ⟨"albright-hayes-2003", "Table A2, 5. skell"⟩
     reportedIn := none
@@ -1356,7 +1356,7 @@ def a2_5_skelt : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A2"), ("item", "5"), ("stem", "skell"), ("stemRating", "5.05"), ("cell", "peripheral"), ("pastType", "irregular"), ("exp1Production", "0.000"), ("exp2Production", "0.227"), ("production", "0.125"), ("rating", "5.32"), ("adjustedRating", "5.41"), ("ruleBased", "4.06"), ("analogical", "5.23"), ("stemIpa", "skɛl"), ("ipa", "skɛlt"), ("set", "burnt")] }
 
-def a2_6_snelled : LinguisticExample :=
+def a2_6_snelled : Datum :=
   { id := "albrighthayes2003_a2_6_snelled"
     source := ⟨"albright-hayes-2003", "Table A2, 6. snell"⟩
     reportedIn := none
@@ -1369,7 +1369,7 @@ def a2_6_snelled : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A2"), ("item", "6"), ("stem", "snell"), ("stemRating", "5.38"), ("cell", "peripheral"), ("pastType", "regular"), ("exp1Production", "0.947"), ("exp2Production", "0.826"), ("production", "0.881"), ("rating", "6.17"), ("adjustedRating", "5.99"), ("ruleBased", "5.86"), ("analogical", "6.18"), ("stemIpa", "snɛl")] }
 
-def a2_6_snelt : LinguisticExample :=
+def a2_6_snelt : Datum :=
   { id := "albrighthayes2003_a2_6_snelt"
     source := ⟨"albright-hayes-2003", "Table A2, 6. snell"⟩
     reportedIn := none
@@ -1382,7 +1382,7 @@ def a2_6_snelt : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A2"), ("item", "6"), ("stem", "snell"), ("stemRating", "5.38"), ("cell", "peripheral"), ("pastType", "irregular"), ("exp1Production", "0.000"), ("exp2Production", "0.130"), ("production", "0.071"), ("rating", "5.30"), ("adjustedRating", "5.46"), ("ruleBased", "4.06"), ("analogical", "5.25"), ("stemIpa", "snɛl"), ("ipa", "snɛlt"), ("set", "burnt")] }
 
-def a2_6_snold : LinguisticExample :=
+def a2_6_snold : Datum :=
   { id := "albrighthayes2003_a2_6_snold"
     source := ⟨"albright-hayes-2003", "Table A2, 6. snell"⟩
     reportedIn := none
@@ -1395,7 +1395,7 @@ def a2_6_snold : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A2"), ("item", "6"), ("stem", "snell"), ("stemRating", "5.38"), ("cell", "peripheral"), ("pastType", "irregular"), ("exp1Production", "0.000"), ("exp2Production", "0.000"), ("production", "0.000"), ("rating", "2.83"), ("adjustedRating", "2.95"), ("ruleBased", "3.94"), ("analogical", "4.17"), ("stemIpa", "snɛl"), ("ipa", "snold")] }
 
-def a2_7_squilled : LinguisticExample :=
+def a2_7_squilled : Datum :=
   { id := "albrighthayes2003_a2_7_squilled"
     source := ⟨"albright-hayes-2003", "Table A2, 7. squill"⟩
     reportedIn := none
@@ -1408,7 +1408,7 @@ def a2_7_squilled : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A2"), ("item", "7"), ("stem", "squill"), ("stemRating", "4.67"), ("cell", "peripheral"), ("pastType", "regular"), ("exp1Production", "0.895"), ("exp2Production", "0.810"), ("production", "0.850"), ("rating", "5.92"), ("adjustedRating", "5.93"), ("ruleBased", "5.86"), ("analogical", "6.30"), ("stemIpa", "skwɪl")] }
 
-def a2_7_squilt : LinguisticExample :=
+def a2_7_squilt : Datum :=
   { id := "albrighthayes2003_a2_7_squilt"
     source := ⟨"albright-hayes-2003", "Table A2, 7. squill"⟩
     reportedIn := none
@@ -1421,7 +1421,7 @@ def a2_7_squilt : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A2"), ("item", "7"), ("stem", "squill"), ("stemRating", "4.67"), ("cell", "peripheral"), ("pastType", "irregular"), ("exp1Production", "0.000"), ("exp2Production", "0.048"), ("production", "0.025"), ("rating", "5.21"), ("adjustedRating", "5.22"), ("ruleBased", "4.06"), ("analogical", "5.20"), ("stemIpa", "skwɪl"), ("ipa", "skwɪlt"), ("set", "burnt")] }
 
-def a2_8_kived : LinguisticExample :=
+def a2_8_kived : Datum :=
   { id := "albrighthayes2003_a2_8_kived"
     source := ⟨"albright-hayes-2003", "Table A2, 8. kive"⟩
     reportedIn := none
@@ -1434,7 +1434,7 @@ def a2_8_kived : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A2"), ("item", "8"), ("stem", "kive"), ("stemRating", "4.38"), ("cell", "peripheral"), ("pastType", "regular"), ("exp1Production", "0.950"), ("exp2Production", "0.864"), ("production", "0.905"), ("rating", "6.00"), ("adjustedRating", "6.10"), ("ruleBased", "5.58"), ("analogical", "5.87"), ("stemIpa", "kɪv")] }
 
-def a2_8_kave : LinguisticExample :=
+def a2_8_kave : Datum :=
   { id := "albrighthayes2003_a2_8_kave"
     source := ⟨"albright-hayes-2003", "Table A2, 8. kive"⟩
     reportedIn := none
@@ -1447,7 +1447,7 @@ def a2_8_kave : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A2"), ("item", "8"), ("stem", "kive"), ("stemRating", "4.38"), ("cell", "peripheral"), ("pastType", "irregular"), ("exp1Production", "0.000"), ("exp2Production", "0.091"), ("production", "0.048"), ("rating", "4.41"), ("adjustedRating", "4.35"), ("ruleBased", "3.94"), ("analogical", "4.12"), ("stemIpa", "kɪv"), ("ipa", "kev")] }
 
-def a2_9_lummed : LinguisticExample :=
+def a2_9_lummed : Datum :=
   { id := "albrighthayes2003_a2_9_lummed"
     source := ⟨"albright-hayes-2003", "Table A2, 9. lum"⟩
     reportedIn := none
@@ -1460,7 +1460,7 @@ def a2_9_lummed : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A2"), ("item", "9"), ("stem", "lum"), ("stemRating", "4.81"), ("cell", "peripheral"), ("pastType", "regular"), ("exp1Production", "1.000"), ("exp2Production", "0.826"), ("production", "0.905"), ("rating", "6.35"), ("adjustedRating", "6.33"), ("ruleBased", "5.74"), ("analogical", "6.14"), ("stemIpa", "lʌm")] }
 
-def a2_9_lame : LinguisticExample :=
+def a2_9_lame : Datum :=
   { id := "albrighthayes2003_a2_9_lame"
     source := ⟨"albright-hayes-2003", "Table A2, 9. lum"⟩
     reportedIn := none
@@ -1473,7 +1473,7 @@ def a2_9_lame : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A2"), ("item", "9"), ("stem", "lum"), ("stemRating", "4.81"), ("cell", "peripheral"), ("pastType", "irregular"), ("exp1Production", "0.000"), ("exp2Production", "0.000"), ("production", "0.000"), ("rating", "2.87"), ("adjustedRating", "2.88"), ("ruleBased", "3.94"), ("analogical", "3.93"), ("stemIpa", "lʌm"), ("ipa", "lem")] }
 
-def a2_10_pummed : LinguisticExample :=
+def a2_10_pummed : Datum :=
   { id := "albrighthayes2003_a2_10_pummed"
     source := ⟨"albright-hayes-2003", "Table A2, 10. pum"⟩
     reportedIn := none
@@ -1486,7 +1486,7 @@ def a2_10_pummed : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A2"), ("item", "10"), ("stem", "pum"), ("stemRating", "4.81"), ("cell", "peripheral"), ("pastType", "regular"), ("exp1Production", "1.000"), ("exp2Production", "0.826"), ("production", "0.902"), ("rating", "6.17"), ("adjustedRating", "6.15"), ("ruleBased", "5.74"), ("analogical", "6.06"), ("stemIpa", "pʌm")] }
 
-def a2_10_pame : LinguisticExample :=
+def a2_10_pame : Datum :=
   { id := "albrighthayes2003_a2_10_pame"
     source := ⟨"albright-hayes-2003", "Table A2, 10. pum"⟩
     reportedIn := none
@@ -1499,7 +1499,7 @@ def a2_10_pame : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A2"), ("item", "10"), ("stem", "pum"), ("stemRating", "4.81"), ("cell", "peripheral"), ("pastType", "irregular"), ("exp1Production", "0.000"), ("exp2Production", "0.000"), ("production", "0.000"), ("rating", "2.71"), ("adjustedRating", "2.71"), ("ruleBased", "3.94"), ("analogical", "4.01"), ("stemIpa", "pʌm"), ("ipa", "pem")] }
 
-def a2_11_sheed : LinguisticExample :=
+def a2_11_sheed : Datum :=
   { id := "albrighthayes2003_a2_11_sheed"
     source := ⟨"albright-hayes-2003", "Table A2, 11. shee"⟩
     reportedIn := none
@@ -1512,7 +1512,7 @@ def a2_11_sheed : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A2"), ("item", "11"), ("stem", "shee"), ("stemRating", "5.95"), ("cell", "peripheral"), ("pastType", "regular"), ("exp1Production", "1.000"), ("exp2Production", "0.875"), ("production", "0.929"), ("rating", "6.17"), ("adjustedRating", "5.81"), ("ruleBased", "5.94"), ("analogical", "5.89"), ("stemIpa", "ʃi")] }
 
-def a2_11_shaw : LinguisticExample :=
+def a2_11_shaw : Datum :=
   { id := "albrighthayes2003_a2_11_shaw"
     source := ⟨"albright-hayes-2003", "Table A2, 11. shee"⟩
     reportedIn := none
@@ -1525,7 +1525,7 @@ def a2_11_shaw : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A2"), ("item", "11"), ("stem", "shee"), ("stemRating", "5.95"), ("cell", "peripheral"), ("pastType", "irregular"), ("exp1Production", "0.000"), ("exp2Production", "0.000"), ("production", "0.000"), ("rating", "3.25"), ("adjustedRating", "3.50"), ("ruleBased", "3.94"), ("analogical", "4.18"), ("stemIpa", "ʃi"), ("ipa", "ʃɔ")] }
 
-def a2_12_zayed : LinguisticExample :=
+def a2_12_zayed : Datum :=
   { id := "albrighthayes2003_a2_12_zayed"
     source := ⟨"albright-hayes-2003", "Table A2, 12. zay"⟩
     reportedIn := none
@@ -1538,7 +1538,7 @@ def a2_12_zayed : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A2"), ("item", "12"), ("stem", "zay"), ("stemRating", "4.14"), ("cell", "peripheral"), ("pastType", "regular"), ("exp1Production", "0.950"), ("exp2Production", "1.000"), ("production", "0.977"), ("rating", "6.39"), ("adjustedRating", "6.57"), ("ruleBased", "6.13"), ("analogical", "5.99"), ("stemIpa", "ze")] }
 
-def a2_12_zed : LinguisticExample :=
+def a2_12_zed : Datum :=
   { id := "albrighthayes2003_a2_12_zed"
     source := ⟨"albright-hayes-2003", "Table A2, 12. zay"⟩
     reportedIn := none
@@ -1551,7 +1551,7 @@ def a2_12_zed : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A2"), ("item", "12"), ("stem", "zay"), ("stemRating", "4.14"), ("cell", "peripheral"), ("pastType", "irregular"), ("exp1Production", "0.000"), ("exp2Production", "0.000"), ("production", "0.000"), ("rating", "4.39"), ("adjustedRating", "4.28"), ("ruleBased", "3.94"), ("analogical", "4.05"), ("stemIpa", "ze"), ("ipa", "zɛd")] }
 
-def a2_13_chinded : LinguisticExample :=
+def a2_13_chinded : Datum :=
   { id := "albrighthayes2003_a2_13_chinded"
     source := ⟨"albright-hayes-2003", "Table A2, 13. chind"⟩
     reportedIn := none
@@ -1564,7 +1564,7 @@ def a2_13_chinded : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A2"), ("item", "13"), ("stem", "chind"), ("stemRating", "4.62"), ("cell", "peripheral"), ("pastType", "regular"), ("exp1Production", "0.235"), ("exp2Production", "0.368"), ("production", "0.306"), ("rating", "3.89"), ("adjustedRating", "3.84"), ("ruleBased", "4.36"), ("analogical", "5.41"), ("stemIpa", "tʃaɪnd")] }
 
-def a2_13_chound : LinguisticExample :=
+def a2_13_chound : Datum :=
   { id := "albrighthayes2003_a2_13_chound"
     source := ⟨"albright-hayes-2003", "Table A2, 13. chind"⟩
     reportedIn := none
@@ -1577,7 +1577,7 @@ def a2_13_chound : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A2"), ("item", "13"), ("stem", "chind"), ("stemRating", "4.62"), ("cell", "peripheral"), ("pastType", "irregular"), ("exp1Production", "0.000"), ("exp2Production", "0.000"), ("production", "0.000"), ("rating", "4.05"), ("adjustedRating", "4.04"), ("ruleBased", "4.83"), ("analogical", "4.45"), ("stemIpa", "tʃaɪnd"), ("ipa", "tʃaʊnd")] }
 
-def a2_14_fletted : LinguisticExample :=
+def a2_14_fletted : Datum :=
   { id := "albrighthayes2003_a2_14_fletted"
     source := ⟨"albright-hayes-2003", "Table A2, 14. flet"⟩
     reportedIn := none
@@ -1590,7 +1590,7 @@ def a2_14_fletted : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A2"), ("item", "14"), ("stem", "flet"), ("stemRating", "4.24"), ("cell", "peripheral"), ("pastType", "regular"), ("exp1Production", "0.889"), ("exp2Production", "0.368"), ("production", "0.622"), ("rating", "4.50"), ("adjustedRating", "4.58"), ("ruleBased", "5.43"), ("analogical", "5.39"), ("stemIpa", "flɛt")] }
 
-def a2_14_flet : LinguisticExample :=
+def a2_14_flet : Datum :=
   { id := "albrighthayes2003_a2_14_flet"
     source := ⟨"albright-hayes-2003", "Table A2, 14. flet"⟩
     reportedIn := none
@@ -1603,7 +1603,7 @@ def a2_14_flet : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A2"), ("item", "14"), ("stem", "flet"), ("stemRating", "4.24"), ("cell", "peripheral"), ("pastType", "irregular"), ("exp1Production", "0.111"), ("exp2Production", "0.474"), ("production", "0.297"), ("rating", "5.65"), ("adjustedRating", "5.58"), ("ruleBased", "5.22"), ("analogical", "4.30"), ("stemIpa", "flɛt")] }
 
-def a2_15_grynted : LinguisticExample :=
+def a2_15_grynted : Datum :=
   { id := "albrighthayes2003_a2_15_grynted"
     source := ⟨"albright-hayes-2003", "Table A2, 15. gry’nt"⟩
     reportedIn := none
@@ -1616,7 +1616,7 @@ def a2_15_grynted : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A2"), ("item", "15"), ("stem", "gry’nt"), ("stemRating", "5.16"), ("cell", "peripheral"), ("pastType", "regular"), ("exp1Production", "0.842"), ("exp2Production", "0.545"), ("production", "0.683"), ("rating", "5.26"), ("adjustedRating", "5.10"), ("ruleBased", "6.20"), ("analogical", "5.59"), ("stemIpa", "graɪnt")] }
 
-def a2_15_groant : LinguisticExample :=
+def a2_15_groant : Datum :=
   { id := "albrighthayes2003_a2_15_groant"
     source := ⟨"albright-hayes-2003", "Table A2, 15. gry’nt"⟩
     reportedIn := none
@@ -1629,7 +1629,7 @@ def a2_15_groant : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A2"), ("item", "15"), ("stem", "gry’nt"), ("stemRating", "5.16"), ("cell", "peripheral"), ("pastType", "irregular"), ("exp1Production", "0.000"), ("exp2Production", "0.091"), ("production", "0.049"), ("rating", "4.17"), ("adjustedRating", "4.27"), ("ruleBased", "3.94"), ("analogical", "4.07"), ("stemIpa", "graɪnt"), ("ipa", "gront")] }
 
-def a2_15_grount : LinguisticExample :=
+def a2_15_grount : Datum :=
   { id := "albrighthayes2003_a2_15_grount"
     source := ⟨"albright-hayes-2003", "Table A2, 15. gry’nt"⟩
     reportedIn := none
@@ -1642,7 +1642,7 @@ def a2_15_grount : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A2"), ("item", "15"), ("stem", "gry’nt"), ("stemRating", "5.16"), ("cell", "peripheral"), ("pastType", "irregular"), ("exp1Production", "0.053"), ("exp2Production", "0.000"), ("production", "0.024"), ("rating", "3.83"), ("adjustedRating", "3.92"), ("ruleBased", "3.94"), ("analogical", "4.67"), ("stemIpa", "graɪnt"), ("ipa", "graʊnt")] }
 
-def a2_16_rynted : LinguisticExample :=
+def a2_16_rynted : Datum :=
   { id := "albrighthayes2003_a2_16_rynted"
     source := ⟨"albright-hayes-2003", "Table A2, 16. ry’nt"⟩
     reportedIn := none
@@ -1655,7 +1655,7 @@ def a2_16_rynted : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A2"), ("item", "16"), ("stem", "ry’nt"), ("stemRating", "3.00"), ("cell", "peripheral"), ("pastType", "regular"), ("exp1Production", "0.778"), ("exp2Production", "0.250"), ("production", "0.476"), ("rating", "5.00"), ("adjustedRating", "5.46"), ("ruleBased", "6.20"), ("analogical", "5.51"), ("stemIpa", "raɪnt")] }
 
-def a2_16_roant : LinguisticExample :=
+def a2_16_roant : Datum :=
   { id := "albrighthayes2003_a2_16_roant"
     source := ⟨"albright-hayes-2003", "Table A2, 16. ry’nt"⟩
     reportedIn := none
@@ -1668,7 +1668,7 @@ def a2_16_roant : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A2"), ("item", "16"), ("stem", "ry’nt"), ("stemRating", "3.00"), ("cell", "peripheral"), ("pastType", "irregular"), ("exp1Production", "0.056"), ("exp2Production", "0.292"), ("production", "0.190"), ("rating", "4.29"), ("adjustedRating", "3.95"), ("ruleBased", "3.94"), ("analogical", "4.32"), ("stemIpa", "raɪnt"), ("ipa", "ront")] }
 
-def a2_16_rount : LinguisticExample :=
+def a2_16_rount : Datum :=
   { id := "albrighthayes2003_a2_16_rount"
     source := ⟨"albright-hayes-2003", "Table A2, 16. ry’nt"⟩
     reportedIn := none
@@ -1681,7 +1681,7 @@ def a2_16_rount : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A2"), ("item", "16"), ("stem", "ry’nt"), ("stemRating", "3.00"), ("cell", "peripheral"), ("pastType", "irregular"), ("exp1Production", "0.000"), ("exp2Production", "0.042"), ("production", "0.024"), ("rating", "3.71"), ("adjustedRating", "3.36"), ("ruleBased", "3.94"), ("analogical", "4.13"), ("stemIpa", "raɪnt"), ("ipa", "raʊnt")] }
 
-def a2_17_shynted : LinguisticExample :=
+def a2_17_shynted : Datum :=
   { id := "albrighthayes2003_a2_17_shynted"
     source := ⟨"albright-hayes-2003", "Table A2, 17. shy’nt"⟩
     reportedIn := none
@@ -1694,7 +1694,7 @@ def a2_17_shynted : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A2"), ("item", "17"), ("stem", "shy’nt"), ("stemRating", "3.52"), ("cell", "peripheral"), ("pastType", "regular"), ("exp1Production", "0.800"), ("exp2Production", "0.364"), ("production", "0.571"), ("rating", "5.17"), ("adjustedRating", "5.49"), ("ruleBased", "6.20"), ("analogical", "5.49"), ("stemIpa", "ʃaɪnt")] }
 
-def a2_17_shoant : LinguisticExample :=
+def a2_17_shoant : Datum :=
   { id := "albrighthayes2003_a2_17_shoant"
     source := ⟨"albright-hayes-2003", "Table A2, 17. shy’nt"⟩
     reportedIn := none
@@ -1707,7 +1707,7 @@ def a2_17_shoant : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A2"), ("item", "17"), ("stem", "shy’nt"), ("stemRating", "3.52"), ("cell", "peripheral"), ("pastType", "irregular"), ("exp1Production", "0.000"), ("exp2Production", "0.136"), ("production", "0.071"), ("rating", "3.83"), ("adjustedRating", "3.58"), ("ruleBased", "3.94"), ("analogical", "4.23"), ("stemIpa", "ʃaɪnt"), ("ipa", "ʃont")] }
 
-def a2_17_shount : LinguisticExample :=
+def a2_17_shount : Datum :=
   { id := "albrighthayes2003_a2_17_shount"
     source := ⟨"albright-hayes-2003", "Table A2, 17. shy’nt"⟩
     reportedIn := none
@@ -1720,6 +1720,6 @@ def a2_17_shount : LinguisticExample :=
     readings := []
     paperFeatures := [("table", "A2"), ("item", "17"), ("stem", "shy’nt"), ("stemRating", "3.52"), ("cell", "peripheral"), ("pastType", "irregular"), ("exp1Production", "0.000"), ("exp2Production", "0.045"), ("production", "0.024"), ("rating", "3.39"), ("adjustedRating", "3.14"), ("ruleBased", "3.94"), ("analogical", "4.02"), ("stemIpa", "ʃaɪnt"), ("ipa", "ʃaʊnt")] }
 
-def all : List LinguisticExample := [a1_1_bized, a1_1_boze, a1_2_dized, a1_2_doze, a1_3_driced, a1_3_droce, a1_4_flidged, a1_4_fludge, a1_5_froed, a1_5_frew, a1_6_gared, a1_6_gore, a1_7_glipped, a1_7_glup, a1_8_rifed, a1_8_rofe, a1_8_riff, a1_9_stinned, a1_9_stun, a1_9_stan, a1_10_stipped, a1_10_stup, a1_11_blafed, a1_11_bleft, a1_12_bredged, a1_12_broge, a1_13_chooled, a1_13_chole, a1_14_daped, a1_14_dapt, a1_15_gezzed, a1_15_gozz, a1_16_naced, a1_16_noce, a1_17_spacked, a1_17_spuck, a1_18_stired, a1_18_store, a1_19_teshed, a1_19_tosh, a1_20_wissed, a1_20_wus, a1_21_bligged, a1_21_blug, a1_22_chaked, a1_22_chook, a1_23_dritted, a1_23_drit, a1_23_drat, a1_24_fleeped, a1_24_flept, a1_25_gleeded, a1_25_gled, a1_25_gleed, a1_26_glitted, a1_26_glit, a1_26_glat, a1_27_plimmed, a1_27_plum, a1_27_plam, a1_28_queeded, a1_28_qued, a1_29_scrided, a1_29_scrode, a1_29_scrid, a1_30_splinged, a1_30_splung, a1_30_splang, a1_31_guded, a1_31_gude, a1_32_nolded, a1_32_nold, a1_32_neld, a1_33_nunged, a1_33_nang, a1_34_panked, a1_34_punk, a1_35_preaked, a1_35_proke, a1_35_preck, a1_36_rasked, a1_36_rusk, a1_37_shilked, a1_37_shalk, a1_38_tarked, a1_38_tork, a1_39_teeped, a1_39_tept, a1_40_trisked, a1_40_trask, a1_40_trusk, a1_41_tunked, a1_41_tank, a2_1_grelled, a2_1_grelt, a2_2_murned, a2_2_murnt, a2_3_scoiled, a2_3_scoilt, a2_4_shurned, a2_4_shurnt, a2_5_skelled, a2_5_skelt, a2_6_snelled, a2_6_snelt, a2_6_snold, a2_7_squilled, a2_7_squilt, a2_8_kived, a2_8_kave, a2_9_lummed, a2_9_lame, a2_10_pummed, a2_10_pame, a2_11_sheed, a2_11_shaw, a2_12_zayed, a2_12_zed, a2_13_chinded, a2_13_chound, a2_14_fletted, a2_14_flet, a2_15_grynted, a2_15_groant, a2_15_grount, a2_16_rynted, a2_16_roant, a2_16_rount, a2_17_shynted, a2_17_shoant, a2_17_shount]
+def all : List Datum := [a1_1_bized, a1_1_boze, a1_2_dized, a1_2_doze, a1_3_driced, a1_3_droce, a1_4_flidged, a1_4_fludge, a1_5_froed, a1_5_frew, a1_6_gared, a1_6_gore, a1_7_glipped, a1_7_glup, a1_8_rifed, a1_8_rofe, a1_8_riff, a1_9_stinned, a1_9_stun, a1_9_stan, a1_10_stipped, a1_10_stup, a1_11_blafed, a1_11_bleft, a1_12_bredged, a1_12_broge, a1_13_chooled, a1_13_chole, a1_14_daped, a1_14_dapt, a1_15_gezzed, a1_15_gozz, a1_16_naced, a1_16_noce, a1_17_spacked, a1_17_spuck, a1_18_stired, a1_18_store, a1_19_teshed, a1_19_tosh, a1_20_wissed, a1_20_wus, a1_21_bligged, a1_21_blug, a1_22_chaked, a1_22_chook, a1_23_dritted, a1_23_drit, a1_23_drat, a1_24_fleeped, a1_24_flept, a1_25_gleeded, a1_25_gled, a1_25_gleed, a1_26_glitted, a1_26_glit, a1_26_glat, a1_27_plimmed, a1_27_plum, a1_27_plam, a1_28_queeded, a1_28_qued, a1_29_scrided, a1_29_scrode, a1_29_scrid, a1_30_splinged, a1_30_splung, a1_30_splang, a1_31_guded, a1_31_gude, a1_32_nolded, a1_32_nold, a1_32_neld, a1_33_nunged, a1_33_nang, a1_34_panked, a1_34_punk, a1_35_preaked, a1_35_proke, a1_35_preck, a1_36_rasked, a1_36_rusk, a1_37_shilked, a1_37_shalk, a1_38_tarked, a1_38_tork, a1_39_teeped, a1_39_tept, a1_40_trisked, a1_40_trask, a1_40_trusk, a1_41_tunked, a1_41_tank, a2_1_grelled, a2_1_grelt, a2_2_murned, a2_2_murnt, a2_3_scoiled, a2_3_scoilt, a2_4_shurned, a2_4_shurnt, a2_5_skelled, a2_5_skelt, a2_6_snelled, a2_6_snelt, a2_6_snold, a2_7_squilled, a2_7_squilt, a2_8_kived, a2_8_kave, a2_9_lummed, a2_9_lame, a2_10_pummed, a2_10_pame, a2_11_sheed, a2_11_shaw, a2_12_zayed, a2_12_zed, a2_13_chinded, a2_13_chound, a2_14_fletted, a2_14_flet, a2_15_grynted, a2_15_groant, a2_15_grount, a2_16_rynted, a2_16_roant, a2_16_rount, a2_17_shynted, a2_17_shoant, a2_17_shount]
 
 end AlbrightHayes2003.Examples

@@ -17,7 +17,7 @@ namespace Declerck1991.Examples
 
 open Data.Examples
 
-def domainShift1a : LinguisticExample :=
+def domainShift1a : Datum :=
   { id := "declerck1991_domainShift1a"
     source := ⟨"declerck-1991-grammar", "ch. 3 ex (1a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def domainShift1a : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def domainShift1b : LinguisticExample :=
+def domainShift1b : Datum :=
   { id := "declerck1991_domainShift1b"
     source := ⟨"declerck-1991-grammar", "ch. 3 ex (1b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def domainShift1b : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def domainShift3a : LinguisticExample :=
+def domainShift3a : Datum :=
   { id := "declerck1991_domainShift3a"
     source := ⟨"declerck-1991-grammar", "ch. 3 ex (3a)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def domainShift3a : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def modalPastWish : LinguisticExample :=
+def modalPastWish : Datum :=
   { id := "declerck1991_modalPastWish"
     source := ⟨"declerck-1991-grammar", "ch. 2 §3"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def modalPastWish : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def modalPastIfWas : LinguisticExample :=
+def modalPastIfWas : Datum :=
   { id := "declerck1991_modalPastIfWas"
     source := ⟨"declerck-1991-grammar", "ch. 2 §3"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def modalPastIfWas : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def futurePerfect : LinguisticExample :=
+def futurePerfect : Datum :=
   { id := "declerck1991_futurePerfect"
     source := ⟨"declerck-1991-grammar", "ch. 2 §2"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def futurePerfect : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def whenPresent : LinguisticExample :=
+def whenPresent : Datum :=
   { id := "declerck1991_whenPresent"
     source := ⟨"declerck-1991-grammar", "ch. 2 §1"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def whenPresent : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def perfectHaveCome : LinguisticExample :=
+def perfectHaveCome : Datum :=
   { id := "declerck1991_perfectHaveCome"
     source := ⟨"declerck-1991-grammar", "ch. 2 §2"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def perfectHaveCome : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def perfectOverslept : LinguisticExample :=
+def perfectOverslept : Datum :=
   { id := "declerck1991_perfectOverslept"
     source := ⟨"declerck-1991-grammar", "ch. 3 fn 49"⟩
     reportedIn := none
@@ -134,6 +134,6 @@ def perfectOverslept : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def all : List LinguisticExample := [domainShift1a, domainShift1b, domainShift3a, modalPastWish, modalPastIfWas, futurePerfect, whenPresent, perfectHaveCome, perfectOverslept]
+def all : List Datum := [domainShift1a, domainShift1b, domainShift3a, modalPastWish, modalPastIfWas, futurePerfect, whenPresent, perfectHaveCome, perfectOverslept]
 
 end Declerck1991.Examples

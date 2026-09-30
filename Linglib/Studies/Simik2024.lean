@@ -171,21 +171,21 @@ theorem interNPQ_broader_than_english_outer :
 /-! ### The cleaning scenarios (11)–(18) -/
 
 /-- The grid form a row instantiates. -/
-def form? (e : LinguisticExample) : Option CzechPQForm :=
+def form? (e : Datum) : Option CzechPQForm :=
   e.parse? "form"
     [("interPPQ", .interPPQ), ("interNPQ", .interNPQ), ("declPPQ", .declPPQ),
      ("declNPQ", .declNPQ)]
 
 /-- The contextual evidence of a row's scenario. -/
-def evidence? (e : LinguisticExample) : Option SignType :=
+def evidence? (e : Datum) : Option SignType :=
   e.parse? "evidence" [("forP", (1 : SignType)), ("neutral", 0), ("againstP", -1)]
 
 /-- The speaker's prior epistemic bias in a row's scenario. -/
-def epistemic? (e : LinguisticExample) : Option SignType :=
+def epistemic? (e : Datum) : Option SignType :=
   e.parse? "epistemic" [("forP", (1 : SignType)), ("neutral", 0), ("againstP", -1)]
 
 /-- Whether a row's scenario places a contrastive topic clause-initially. -/
-def contrastiveTopic (e : LinguisticExample) : Bool :=
+def contrastiveTopic (e : Datum) : Bool :=
   e.feature? "contrastiveTopic" == some "true"
 
 /-- Table 2 predicts the scenarios: a form is judged infelicitous exactly when its cell
@@ -260,18 +260,18 @@ def Language.particles : Language → List Particle
      Russian.QuestionParticles.neuzeli]
 
 /-- The strategy a quiz row instantiates. -/
-def strategy? (e : LinguisticExample) : Option Strategy :=
+def strategy? (e : Datum) : Option Strategy :=
   e.parse? "strategy"
     [("verbMovement", .verbMovement), ("clauseInitialParticle", .clauseInitialParticle),
      ("verbAttachedParticle", .verbAttachedParticle), ("declarative", .declarative),
      ("intonation", .intonation)]
 
 /-- The polarity of a quiz row. -/
-def polarity? (e : LinguisticExample) : Option Polarity :=
+def polarity? (e : Datum) : Option Polarity :=
   e.parse? "polarity" [("positive", .positive), ("negative", .negative)]
 
 /-- The quiz rows (25)–(34) of a language. -/
-def quizRows (l : Language) : List LinguisticExample :=
+def quizRows (l : Language) : List Datum :=
   Examples.all.filter fun e => e.language == l.glottocode && (e.feature? "strategy").isSome
 
 variable (l : Language)
@@ -524,7 +524,7 @@ theorem nahodou_requires_outer (pol : Polarity) (r : Polarity)
 
 /-- The reading of negation an indefinite diagnoses: the polarity item the outer one, the
 concord item the inner one. -/
-def indefiniteReading? (e : LinguisticExample) : Option Polarity :=
+def indefiniteReading? (e : Datum) : Option Polarity :=
   e.parse? "indefinite" [("ppi", .positive), ("nci", .negative)]
 
 /-- The (43) rows with *náhodou* are acceptable exactly when the particle is licensed by

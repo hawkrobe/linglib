@@ -17,7 +17,7 @@ namespace Thomas2026.Examples
 
 open Data.Examples
 
-def ex_2 : LinguisticExample :=
+def ex_2 : Datum :=
   { id := "thomas2026_2"
     source := ⟨"thomas-2026", "(2)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "too"), ("use_type", "standard"), ("def64_status", "satisfied")] }
 
-def ex_3 : LinguisticExample :=
+def ex_3 : Datum :=
   { id := "thomas2026_3"
     source := ⟨"thomas-2026", "(3)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_3 : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "too"), ("use_type", "standard"), ("def64_status", "antecedent_violation")] }
 
-def ex_5a : LinguisticExample :=
+def ex_5a : Datum :=
   { id := "thomas2026_5a"
     source := ⟨"thomas-2026", "(5a)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_5a : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "too"), ("use_type", "standard"), ("def64_status", "satisfied")] }
 
-def ex_5b : LinguisticExample :=
+def ex_5b : Datum :=
   { id := "thomas2026_5b"
     source := ⟨"thomas-2026", "(5b)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_5b : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "either"), ("use_type", "standard")] }
 
-def ex_11 : LinguisticExample :=
+def ex_11 : Datum :=
   { id := "thomas2026_11"
     source := ⟨"thomas-2026", "(11), (29a)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_11 : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "too"), ("use_type", "standard"), ("def64_status", "prejacent_violation_i")] }
 
-def ex_12 : LinguisticExample :=
+def ex_12 : Datum :=
   { id := "thomas2026_12"
     source := ⟨"thomas-2026", "(12)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_12 : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "too"), ("use_type", "standard"), ("def64_status", "satisfied")] }
 
-def ex_13 : LinguisticExample :=
+def ex_13 : Datum :=
   { id := "thomas2026_13"
     source := ⟨"thomas-2026", "(13)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_13 : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "too"), ("use_type", "standard")] }
 
-def ex_18c : LinguisticExample :=
+def ex_18c : Datum :=
   { id := "thomas2026_18c"
     source := ⟨"thomas-2026", "(18c), (65)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_18c : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "too"), ("use_type", "argumentBuilding"), ("def64_status", "satisfied")] }
 
-def ex_19c : LinguisticExample :=
+def ex_19c : Datum :=
   { id := "thomas2026_19c"
     source := ⟨"thomas-2026", "(19c), (66)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_19c : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "too"), ("use_type", "argumentBuilding"), ("def64_status", "conjunction_violation")] }
 
-def ex_20b : LinguisticExample :=
+def ex_20b : Datum :=
   { id := "thomas2026_20b"
     source := ⟨"thomas-2026", "(20b), (67)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_20b : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "too"), ("use_type", "argumentBuilding"), ("def64_status", "satisfied")] }
 
-def ex_24 : LinguisticExample :=
+def ex_24 : Datum :=
   { id := "thomas2026_24"
     source := ⟨"thomas-2026", "(24), (69)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_24 : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "too"), ("use_type", "standard"), ("def64_status", "satisfied")] }
 
-def ex_25 : LinguisticExample :=
+def ex_25 : Datum :=
   { id := "thomas2026_25"
     source := ⟨"thomas-2026", "(25)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_25 : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "too"), ("use_type", "standard"), ("def64_status", "conjunction_violation")] }
 
-def ex_29bA : LinguisticExample :=
+def ex_29bA : Datum :=
   { id := "thomas2026_29bA"
     source := ⟨"thomas-2026", "(29b A)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_29bA : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "too"), ("use_type", "standard"), ("def64_status", "prejacent_violation_i")] }
 
-def ex_29bA2 : LinguisticExample :=
+def ex_29bA2 : Datum :=
   { id := "thomas2026_29bA2"
     source := ⟨"thomas-2026", "(29b A′)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_29bA2 : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "too"), ("use_type", "argumentBuilding"), ("def64_status", "satisfied")] }
 
-def ex_30A : LinguisticExample :=
+def ex_30A : Datum :=
   { id := "thomas2026_30A"
     source := ⟨"thomas-2026", "(30 A)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_30A : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "too"), ("use_type", "standard"), ("def64_status", "prejacent_violation_ii")] }
 
-def ex_30A2 : LinguisticExample :=
+def ex_30A2 : Datum :=
   { id := "thomas2026_30A2"
     source := ⟨"thomas-2026", "(30 A′)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_30A2 : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "too"), ("use_type", "standard"), ("def64_status", "satisfied")] }
 
-def ex_68 : LinguisticExample :=
+def ex_68 : Datum :=
   { id := "thomas2026_68"
     source := ⟨"thomas-2026", "(68)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex_68 : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "too"), ("use_type", "standard"), ("def64_status", "satisfied")] }
 
-def ex_70 : LinguisticExample :=
+def ex_70 : Datum :=
   { id := "thomas2026_70"
     source := ⟨"thomas-2026", "(70)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex_70 : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "too"), ("use_type", "standard"), ("def64_status", "satisfied")] }
 
-def ex_71 : LinguisticExample :=
+def ex_71 : Datum :=
   { id := "thomas2026_71"
     source := ⟨"thomas-2026", "(71)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex_71 : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "too"), ("use_type", "standard"), ("def64_status", "satisfied")] }
 
-def ex_72 : LinguisticExample :=
+def ex_72 : Datum :=
   { id := "thomas2026_72"
     source := ⟨"thomas-2026", "(72)"⟩
     reportedIn := none
@@ -277,6 +277,6 @@ def ex_72 : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "too"), ("use_type", "standard"), ("def64_status", "conjunction_violation")] }
 
-def all : List LinguisticExample := [ex_2, ex_3, ex_5a, ex_5b, ex_11, ex_12, ex_13, ex_18c, ex_19c, ex_20b, ex_24, ex_25, ex_29bA, ex_29bA2, ex_30A, ex_30A2, ex_68, ex_70, ex_71, ex_72]
+def all : List Datum := [ex_2, ex_3, ex_5a, ex_5b, ex_11, ex_12, ex_13, ex_18c, ex_19c, ex_20b, ex_24, ex_25, ex_29bA, ex_29bA2, ex_30A, ex_30A2, ex_68, ex_70, ex_71, ex_72]
 
 end Thomas2026.Examples

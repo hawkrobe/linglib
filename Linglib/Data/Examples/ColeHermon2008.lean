@@ -17,7 +17,7 @@ namespace ColeHermon2008.Examples
 
 open Data.Examples
 
-def ex7a : LinguisticExample :=
+def ex7a : Datum :=
   { id := "colehermon2008_ex7a"
     source := ⟨"cole-hermon-2008", "(7a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex7a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "extraction"), ("voice", "active"), ("order", "SVO"), ("transitivity", "ditransitive"), ("extracted", "patient"), ("wh", "fronted")] }
 
-def ex7b : LinguisticExample :=
+def ex7b : Datum :=
   { id := "colehermon2008_ex7b"
     source := ⟨"cole-hermon-2008", "(7b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex7b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "extraction"), ("voice", "active"), ("order", "VOS"), ("transitivity", "monotransitive"), ("extracted", "patient"), ("wh", "inSitu")] }
 
-def ex8a : LinguisticExample :=
+def ex8a : Datum :=
   { id := "colehermon2008_ex8a"
     source := ⟨"cole-hermon-2008", "(8a)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex8a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "extraction"), ("voice", "passive"), ("order", "VOS"), ("transitivity", "ditransitive"), ("extracted", "agent"), ("wh", "fronted")] }
 
-def ex8b : LinguisticExample :=
+def ex8b : Datum :=
   { id := "colehermon2008_ex8b"
     source := ⟨"cole-hermon-2008", "(8b)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex8b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "extraction"), ("voice", "passive"), ("order", "VOS"), ("transitivity", "ditransitive"), ("extracted", "agent"), ("wh", "inSitu")] }
 
-def ex9 : LinguisticExample :=
+def ex9 : Datum :=
   { id := "colehermon2008_ex9"
     source := ⟨"cole-hermon-2008", "(9)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex9 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "extraction"), ("voice", "active"), ("order", "VOS"), ("transitivity", "ditransitive"), ("extracted", "goal"), ("wh", "fronted")] }
 
-def ex10 : LinguisticExample :=
+def ex10 : Datum :=
   { id := "colehermon2008_ex10"
     source := ⟨"cole-hermon-2008", "(10)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex10 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "extraction"), ("voice", "passive"), ("order", "VOS"), ("transitivity", "ditransitive"), ("extracted", "goal"), ("wh", "fronted")] }
 
-def ex17 : LinguisticExample :=
+def ex17 : Datum :=
   { id := "colehermon2008_ex17"
     source := ⟨"cole-hermon-2008", "(17)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex17 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "binding"), ("voice", "active"), ("order", "SVO"), ("antecedent", "agent"), ("reflexive", "patient"), ("tableOne", "A")] }
 
-def ex21 : LinguisticExample :=
+def ex21 : Datum :=
   { id := "colehermon2008_ex21"
     source := ⟨"cole-hermon-2008", "(21)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex21 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "binding"), ("voice", "active"), ("order", "SVO"), ("antecedent", "patient"), ("reflexive", "agent"), ("tableOne", "C")] }
 
-def ex37 : LinguisticExample :=
+def ex37 : Datum :=
   { id := "colehermon2008_ex37"
     source := ⟨"cole-hermon-2008", "(37)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex37 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "binding"), ("voice", "passive"), ("order", "SVO"), ("antecedent", "patient"), ("reflexive", "agent"), ("tableOne", "B")] }
 
-def ex43 : LinguisticExample :=
+def ex43 : Datum :=
   { id := "colehermon2008_ex43"
     source := ⟨"cole-hermon-2008", "(43)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex43 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "extraction"), ("voice", "active"), ("order", "VOS"), ("transitivity", "monotransitive"), ("extracted", "patient"), ("wh", "fronted")] }
 
-def ex44 : LinguisticExample :=
+def ex44 : Datum :=
   { id := "colehermon2008_ex44"
     source := ⟨"cole-hermon-2008", "(44)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex44 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "extraction"), ("voice", "active"), ("order", "VOS"), ("transitivity", "monotransitive"), ("extracted", "patient"), ("wh", "inSitu")] }
 
-def ex62 : LinguisticExample :=
+def ex62 : Datum :=
   { id := "colehermon2008_ex62"
     source := ⟨"cole-hermon-2008", "(62)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex62 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "binding"), ("voice", "active"), ("order", "VOS"), ("antecedent", "agent"), ("reflexive", "patient"), ("tableOne", "A")] }
 
-def ex66 : LinguisticExample :=
+def ex66 : Datum :=
   { id := "colehermon2008_ex66"
     source := ⟨"cole-hermon-2008", "(66)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex66 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "binding"), ("voice", "active"), ("order", "SVO"), ("antecedent", "patient"), ("reflexive", "agent"), ("tableOne", "C")] }
 
-def ex67 : LinguisticExample :=
+def ex67 : Datum :=
   { id := "colehermon2008_ex67"
     source := ⟨"cole-hermon-2008", "(67)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex67 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "binding"), ("voice", "passive"), ("order", "VOS"), ("antecedent", "agent"), ("reflexive", "patient"), ("tableOne", "A")] }
 
-def ex68 : LinguisticExample :=
+def ex68 : Datum :=
   { id := "colehermon2008_ex68"
     source := ⟨"cole-hermon-2008", "(68)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex68 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "binding"), ("voice", "passive"), ("order", "VOS"), ("antecedent", "patient"), ("reflexive", "agent"), ("tableOne", "B")] }
 
-def ex85 : LinguisticExample :=
+def ex85 : Datum :=
   { id := "colehermon2008_ex85"
     source := ⟨"cole-hermon-2008", "(85)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex85 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "extraction"), ("voice", "active"), ("order", "SVO"), ("transitivity", "ditransitive"), ("extracted", "patient"), ("wh", "inSitu")] }
 
-def ex87 : LinguisticExample :=
+def ex87 : Datum :=
   { id := "colehermon2008_ex87"
     source := ⟨"cole-hermon-2008", "(87)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex87 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "extraction"), ("voice", "passive"), ("order", "SVO"), ("transitivity", "monotransitive"), ("extracted", "agent"), ("wh", "inSitu")] }
 
-def ex88 : LinguisticExample :=
+def ex88 : Datum :=
   { id := "colehermon2008_ex88"
     source := ⟨"cole-hermon-2008", "(88)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex88 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "extraction"), ("voice", "passive"), ("order", "SVO"), ("transitivity", "monotransitive"), ("extracted", "agent"), ("wh", "fronted")] }
 
-def ex95 : LinguisticExample :=
+def ex95 : Datum :=
   { id := "colehermon2008_ex95"
     source := ⟨"cole-hermon-2008", "(95)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex95 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "binding"), ("voice", "passive"), ("antecedent", "patient"), ("reflexive", "agent")] }
 
-def ex96 : LinguisticExample :=
+def ex96 : Datum :=
   { id := "colehermon2008_ex96"
     source := ⟨"cole-hermon-2008", "(96)"⟩
     reportedIn := none
@@ -277,6 +277,6 @@ def ex96 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "binding"), ("voice", "passive"), ("antecedent", "agent"), ("reflexive", "patient")] }
 
-def all : List LinguisticExample := [ex7a, ex7b, ex8a, ex8b, ex9, ex10, ex17, ex21, ex37, ex43, ex44, ex62, ex66, ex67, ex68, ex85, ex87, ex88, ex95, ex96]
+def all : List Datum := [ex7a, ex7b, ex8a, ex8b, ex9, ex10, ex17, ex21, ex37, ex43, ex44, ex62, ex66, ex67, ex68, ex85, ex87, ex88, ex95, ex96]
 
 end ColeHermon2008.Examples

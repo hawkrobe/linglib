@@ -294,14 +294,14 @@ instance : DecidablePred WeakInFragment := fun _ ↦
 
 /-- An item belongs to the comparative class when it is an evaluative comparative or a modal verb
 the fragment marks as weak necessity. -/
-def InComparativeClass (e : LinguisticExample) : Prop :=
+def InComparativeClass (e : Datum) : Prop :=
   e.feature? "category" = some "evaluativeComparative" ∨ ∃ m ∈ e.feature? "modal", WeakInFragment m
 
 instance : DecidablePred InComparativeClass := fun _ ↦
   inferInstanceAs (Decidable (_ ∨ ∃ _ ∈ _, _))
 
 /-- The neg-raising stimuli. -/
-def negRaisingRows : List LinguisticExample :=
+def negRaisingRows : List Datum :=
   Examples.all.filter fun e ↦ e.feature? "diagnostic" = some "negRaising"
 
 /-- (30)–(33): the lower-negation reading of a negated attitude is available exactly for the
@@ -331,7 +331,7 @@ inductive Strategy
   deriving DecidableEq, Repr
 
 /-- The strategy a row exemplifies. -/
-def strategy? (e : LinguisticExample) : Option Strategy :=
+def strategy? (e : Datum) : Option Strategy :=
   e.parse? "strategy" [("lexical", Strategy.lexical), ("compositional", .compositional),
     ("evaluativeComparative", .evaluativeComparative)]
 

@@ -17,7 +17,7 @@ namespace Roussou2010.Examples
 
 open Data.Examples
 
-def ex1a : LinguisticExample :=
+def ex1a : Datum :=
   { id := "roussou2010_ex1a"
     source := ⟨"roussou-2010", "(1a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex1a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "ksero"), ("complementizer", "oti")] }
 
-def ex1a_an : LinguisticExample :=
+def ex1a_an : Datum :=
   { id := "roussou2010_ex1a-an"
     source := ⟨"roussou-2010", "(1a-an)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex1a_an : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "ksero"), ("complementizer", "an")] }
 
-def ex1b : LinguisticExample :=
+def ex1b : Datum :=
   { id := "roussou2010_ex1b"
     source := ⟨"roussou-2010", "(1b)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex1b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "anarotjeme"), ("complementizer", "an")] }
 
-def ex1b_oti : LinguisticExample :=
+def ex1b_oti : Datum :=
   { id := "roussou2010_ex1b-oti"
     source := ⟨"roussou-2010", "(1b-oti)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex1b_oti : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "anarotjeme"), ("complementizer", "oti")] }
 
-def ex1c : LinguisticExample :=
+def ex1c : Datum :=
   { id := "roussou2010_ex1c"
     source := ⟨"roussou-2010", "(1c)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex1c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "xerome"), ("complementizer", "pu")] }
 
-def ex1c_oti : LinguisticExample :=
+def ex1c_oti : Datum :=
   { id := "roussou2010_ex1c-oti"
     source := ⟨"roussou-2010", "(1c-oti)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex1c_oti : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "xerome"), ("complementizer", "oti")] }
 
-def ex1d : LinguisticExample :=
+def ex1d : Datum :=
   { id := "roussou2010_ex1d"
     source := ⟨"roussou-2010", "(1d)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex1d : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "thelo"), ("complementizer", "na")] }
 
-def ex1d_oti : LinguisticExample :=
+def ex1d_oti : Datum :=
   { id := "roussou2010_ex1d-oti"
     source := ⟨"roussou-2010", "(1d-oti)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex1d_oti : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "thelo"), ("complementizer", "oti")] }
 
-def ex2a : LinguisticExample :=
+def ex2a : Datum :=
   { id := "roussou2010_ex2a"
     source := ⟨"roussou-2010", "(2a)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex2a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "ksero"), ("complementizer", "na")] }
 
-def ex2b_an : LinguisticExample :=
+def ex2b_an : Datum :=
   { id := "roussou2010_ex2b-an"
     source := ⟨"roussou-2010", "(2b-an)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex2b_an : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "ksero"), ("complementizer", "an"), ("negation", "yes")] }
 
-def ex2b_oti : LinguisticExample :=
+def ex2b_oti : Datum :=
   { id := "roussou2010_ex2b-oti"
     source := ⟨"roussou-2010", "(2b-oti)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex2b_oti : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "ksero"), ("complementizer", "oti"), ("negation", "yes")] }
 
-def ex2c_an : LinguisticExample :=
+def ex2c_an : Datum :=
   { id := "roussou2010_ex2c-an"
     source := ⟨"roussou-2010", "(2c-an)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex2c_an : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "ksero"), ("complementizer", "an"), ("question", "yes")] }
 
-def ex2c_oti : LinguisticExample :=
+def ex2c_oti : Datum :=
   { id := "roussou2010_ex2c-oti"
     source := ⟨"roussou-2010", "(2c-oti)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex2c_oti : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "ksero"), ("complementizer", "oti"), ("question", "yes")] }
 
-def ex3a_oti : LinguisticExample :=
+def ex3a_oti : Datum :=
   { id := "roussou2010_ex3a-oti"
     source := ⟨"roussou-2010", "(3a-oti)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex3a_oti : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "pistevo"), ("complementizer", "oti")] }
 
-def ex3a_na : LinguisticExample :=
+def ex3a_na : Datum :=
   { id := "roussou2010_ex3a-na"
     source := ⟨"roussou-2010", "(3a-na)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex3a_na : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "pistevo"), ("complementizer", "na")] }
 
-def ex3b_oti : LinguisticExample :=
+def ex3b_oti : Datum :=
   { id := "roussou2010_ex3b-oti"
     source := ⟨"roussou-2010", "(3b-oti)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex3b_oti : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "pistevo"), ("complementizer", "oti"), ("tense", "past")] }
 
-def ex3b_na : LinguisticExample :=
+def ex3b_na : Datum :=
   { id := "roussou2010_ex3b-na"
     source := ⟨"roussou-2010", "(3b-na)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex3b_na : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "pistevo"), ("complementizer", "na"), ("tense", "past")] }
 
-def ex16a : LinguisticExample :=
+def ex16a : Datum :=
   { id := "roussou2010_ex16a"
     source := ⟨"roussou-2010", "(16a)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex16a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "pistevo"), ("complementizer", "oti"), ("negation", "yes")] }
 
-def ex17_oti : LinguisticExample :=
+def ex17_oti : Datum :=
   { id := "roussou2010_ex17-oti"
     source := ⟨"roussou-2010", "(17-oti)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex17_oti : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "thimame"), ("complementizer", "oti")] }
 
-def ex17_pu : LinguisticExample :=
+def ex17_pu : Datum :=
   { id := "roussou2010_ex17-pu"
     source := ⟨"roussou-2010", "(17-pu)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex17_pu : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "thimameStat"), ("complementizer", "pu")] }
 
-def ex19a : LinguisticExample :=
+def ex19a : Datum :=
   { id := "roussou2010_ex19a"
     source := ⟨"roussou-2010", "(19a)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex19a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "paradhexome"), ("complementizer", "oti"), ("tense", "past")] }
 
-def ex19a_pu : LinguisticExample :=
+def ex19a_pu : Datum :=
   { id := "roussou2010_ex19a-pu"
     source := ⟨"roussou-2010", "(19a-pu)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex19a_pu : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "paradhexome"), ("complementizer", "pu"), ("tense", "past")] }
 
-def ex20a : LinguisticExample :=
+def ex20a : Datum :=
   { id := "roussou2010_ex20a"
     source := ⟨"roussou-2010", "(20a)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex20a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "xerome"), ("complementizer", "pu")] }
 
-def ex20a_oti : LinguisticExample :=
+def ex20a_oti : Datum :=
   { id := "roussou2010_ex20a-oti"
     source := ⟨"roussou-2010", "(20a-oti)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex20a_oti : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "xerome"), ("complementizer", "oti")] }
 
-def ex20b_pu : LinguisticExample :=
+def ex20b_pu : Datum :=
   { id := "roussou2010_ex20b-pu"
     source := ⟨"roussou-2010", "(20b-pu)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex20b_pu : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "anisixo"), ("complementizer", "pu")] }
 
-def ex20b_oti : LinguisticExample :=
+def ex20b_oti : Datum :=
   { id := "roussou2010_ex20b-oti"
     source := ⟨"roussou-2010", "(20b-oti)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex20b_oti : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "anisixo"), ("complementizer", "oti")] }
 
-def ex22a : LinguisticExample :=
+def ex22a : Datum :=
   { id := "roussou2010_ex22a"
     source := ⟨"roussou-2010", "(22a)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def ex22a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "leo"), ("complementizer", "pu"), ("question", "yes"), ("focus", "yes"), ("tense", "past")] }
 
-def ex23c : LinguisticExample :=
+def ex23c : Datum :=
   { id := "roussou2010_ex23c"
     source := ⟨"roussou-2010", "(23c)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def ex23c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "nomizo"), ("complementizer", "na"), ("negation", "yes")] }
 
-def ex23c_star : LinguisticExample :=
+def ex23c_star : Datum :=
   { id := "roussou2010_ex23c-star"
     source := ⟨"roussou-2010", "(23c-star)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def ex23c_star : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "nomizo"), ("complementizer", "na")] }
 
-def ex23d : LinguisticExample :=
+def ex23d : Datum :=
   { id := "roussou2010_ex23d"
     source := ⟨"roussou-2010", "(23d)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def ex23d : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "pistevo"), ("complementizer", "na"), ("tense", "past")] }
 
-def ex25a : LinguisticExample :=
+def ex25a : Datum :=
   { id := "roussou2010_ex25a"
     source := ⟨"roussou-2010", "(25a)"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def ex25a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "ksero"), ("complementizer", "oti")] }
 
-def ex25b : LinguisticExample :=
+def ex25b : Datum :=
   { id := "roussou2010_ex25b"
     source := ⟨"roussou-2010", "(25b)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def ex25b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "ksero"), ("complementizer", "na")] }
 
-def ex26a : LinguisticExample :=
+def ex26a : Datum :=
   { id := "roussou2010_ex26a"
     source := ⟨"roussou-2010", "(26a)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def ex26a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "thimame"), ("complementizer", "na"), ("tense", "past")] }
 
-def ex26a_star : LinguisticExample :=
+def ex26a_star : Datum :=
   { id := "roussou2010_ex26a-star"
     source := ⟨"roussou-2010", "(26a-star)"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def ex26a_star : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "thimame"), ("complementizer", "na"), ("tense", "past"), ("embeddedTense", "past")] }
 
-def ex34 : LinguisticExample :=
+def ex34 : Datum :=
   { id := "roussou2010_ex34"
     source := ⟨"roussou-2010", "(34)"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def ex34 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "ksero"), ("complementizer", "an"), ("negation", "yes")] }
 
-def ex34_star : LinguisticExample :=
+def ex34_star : Datum :=
   { id := "roussou2010_ex34-star"
     source := ⟨"roussou-2010", "(34-star)"⟩
     reportedIn := none
@@ -485,6 +485,6 @@ def ex34_star : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "ksero"), ("complementizer", "an")] }
 
-def all : List LinguisticExample := [ex1a, ex1a_an, ex1b, ex1b_oti, ex1c, ex1c_oti, ex1d, ex1d_oti, ex2a, ex2b_an, ex2b_oti, ex2c_an, ex2c_oti, ex3a_oti, ex3a_na, ex3b_oti, ex3b_na, ex16a, ex17_oti, ex17_pu, ex19a, ex19a_pu, ex20a, ex20a_oti, ex20b_pu, ex20b_oti, ex22a, ex23c, ex23c_star, ex23d, ex25a, ex25b, ex26a, ex26a_star, ex34, ex34_star]
+def all : List Datum := [ex1a, ex1a_an, ex1b, ex1b_oti, ex1c, ex1c_oti, ex1d, ex1d_oti, ex2a, ex2b_an, ex2b_oti, ex2c_an, ex2c_oti, ex3a_oti, ex3a_na, ex3b_oti, ex3b_na, ex16a, ex17_oti, ex17_pu, ex19a, ex19a_pu, ex20a, ex20a_oti, ex20b_pu, ex20b_oti, ex22a, ex23c, ex23c_star, ex23d, ex25a, ex25b, ex26a, ex26a_star, ex34, ex34_star]
 
 end Roussou2010.Examples

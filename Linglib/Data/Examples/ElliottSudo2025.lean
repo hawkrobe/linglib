@@ -17,7 +17,7 @@ namespace ElliottSudo2025.Examples
 
 open Data.Examples
 
-def ex_1 : LinguisticExample :=
+def ex_1 : Datum :=
   { id := "elliottsudo2025_1"
     source := ⟨"kamp-1973", "permission sentences"⟩
     reportedIn := some ⟨"elliott-sudo-2025", "(1)"⟩
@@ -30,7 +30,7 @@ def ex_1 : LinguisticExample :=
     readings := [("implies: you may have coffee and you may have tea", .acceptable)]
     paperFeatures := [("section", "1")] }
 
-def ex_2 : LinguisticExample :=
+def ex_2 : Datum :=
   { id := "elliottsudo2025_2"
     source := ⟨"zimmermann-2000", "epistemic free choice"⟩
     reportedIn := some ⟨"elliott-sudo-2025", "(2)"⟩
@@ -43,7 +43,7 @@ def ex_2 : LinguisticExample :=
     readings := [("implies: it might be here and it might be there", .acceptable)]
     paperFeatures := [("section", "1")] }
 
-def ex_6 : LinguisticExample :=
+def ex_6 : Datum :=
   { id := "elliottsudo2025_6"
     source := ⟨"elliott-sudo-2025", "(6)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_6 : LinguisticExample :=
     readings := [("existential: either no bathroom, or a bathroom in a funny place", .acceptable)]
     paperFeatures := [("section", "2.1")] }
 
-def ex_10a : LinguisticExample :=
+def ex_10a : Datum :=
   { id := "elliottsudo2025_10a"
     source := ⟨"elliott-sudo-2025", "(10a)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_10a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1")] }
 
-def ex_10b : LinguisticExample :=
+def ex_10b : Datum :=
   { id := "elliottsudo2025_10b"
     source := ⟨"elliott-sudo-2025", "(10b)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_10b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1")] }
 
-def ex_11a : LinguisticExample :=
+def ex_11a : Datum :=
   { id := "elliottsudo2025_11a"
     source := ⟨"elliott-sudo-2025", "(11a)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_11a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1")] }
 
-def ex_11b : LinguisticExample :=
+def ex_11b : Datum :=
   { id := "elliottsudo2025_11b"
     source := ⟨"elliott-sudo-2025", "(11b)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_11b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1")] }
 
-def ex_14 : LinguisticExample :=
+def ex_14 : Datum :=
   { id := "elliottsudo2025_14"
     source := ⟨"elliott-sudo-2025", "(14)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_14 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1")] }
 
-def ex_16a : LinguisticExample :=
+def ex_16a : Datum :=
   { id := "elliottsudo2025_16a"
     source := ⟨"elliott-sudo-2025", "(16a)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_16a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1")] }
 
-def ex_18 : LinguisticExample :=
+def ex_18 : Datum :=
   { id := "elliottsudo2025_18"
     source := ⟨"elliott-sudo-2025", "(18)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_18 : LinguisticExample :=
     readings := [("existential: consistent with a credit card he did not pay with", .acceptable), ("universal: every credit card was used to pay", .unacceptable)]
     paperFeatures := [("section", "2.1")] }
 
-def ex_22 : LinguisticExample :=
+def ex_22 : Datum :=
   { id := "elliottsudo2025_22"
     source := ⟨"elliott-sudo-2025", "(22)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_22 : LinguisticExample :=
     readings := [("entails: it's possible that there's no bathroom in this house", .acceptable), ("entails: it's possible that there's a bathroom in this house in a surprising place", .acceptable)]
     paperFeatures := [("section", "2.2")] }
 
-def ex_23 : LinguisticExample :=
+def ex_23 : Datum :=
   { id := "elliottsudo2025_23"
     source := ⟨"elliott-sudo-2025", "(23)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_23 : LinguisticExample :=
     readings := [("entails: you may include no appendix", .acceptable), ("entails: you may include an appendix kept to a single page", .acceptable), ("entails: you may keep it to a single page", .unacceptable)]
     paperFeatures := [("section", "2.2")] }
 
-def ex_42 : LinguisticExample :=
+def ex_42 : Datum :=
   { id := "elliottsudo2025_42"
     source := ⟨"elliott-sudo-2025", "(42)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_42 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3")] }
 
-def ex_51 : LinguisticExample :=
+def ex_51 : Datum :=
   { id := "elliottsudo2025_51"
     source := ⟨"elliott-sudo-2025", "(51)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_51 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3")] }
 
-def ex_52b : LinguisticExample :=
+def ex_52b : Datum :=
   { id := "elliottsudo2025_52b"
     source := ⟨"elliott-sudo-2025", "(52b)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_52b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3")] }
 
-def ex_63 : LinguisticExample :=
+def ex_63 : Datum :=
   { id := "elliottsudo2025_63"
     source := ⟨"elliott-sudo-2025", "(63)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_63 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.4.2")] }
 
-def ex_71 : LinguisticExample :=
+def ex_71 : Datum :=
   { id := "elliottsudo2025_71"
     source := ⟨"elliott-sudo-2025", "(71)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex_71 : LinguisticExample :=
     readings := [("true in the context", .acceptable)]
     paperFeatures := [("section", "3.4.2")] }
 
-def ex_74 : LinguisticExample :=
+def ex_74 : Datum :=
   { id := "elliottsudo2025_74"
     source := ⟨"elliott-sudo-2025", "(74)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex_74 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.5")] }
 
-def ex_78 : LinguisticExample :=
+def ex_78 : Datum :=
   { id := "elliottsudo2025_78"
     source := ⟨"elliott-sudo-2025", "(78)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex_78 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.5")] }
 
-def ex_82 : LinguisticExample :=
+def ex_82 : Datum :=
   { id := "elliottsudo2025_82"
     source := ⟨"elliott-sudo-2025", "(82)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex_82 : LinguisticExample :=
     readings := [("entails: there might be coffee and there might be tea", .acceptable)]
     paperFeatures := [("section", "3.6")] }
 
-def ex_85 : LinguisticExample :=
+def ex_85 : Datum :=
   { id := "elliottsudo2025_85"
     source := ⟨"elliott-sudo-2025", "(85)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex_85 : LinguisticExample :=
     readings := [("entails: no coffee is possible and no tea is possible", .acceptable)]
     paperFeatures := [("section", "3.6")] }
 
-def ex_110 : LinguisticExample :=
+def ex_110 : Datum :=
   { id := "elliottsudo2025_110"
     source := ⟨"elliott-sudo-2025", "(110)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex_110 : LinguisticExample :=
     readings := [("entails: it's possible there's no bathroom, and it's possible there's a bathroom upstairs", .acceptable)]
     paperFeatures := [("section", "5.1")] }
 
-def ex_114 : LinguisticExample :=
+def ex_114 : Datum :=
   { id := "elliottsudo2025_114"
     source := ⟨"elliott-sudo-2025", "(114)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex_114 : LinguisticExample :=
     readings := [("entails: some student read The Master and Margarita", .acceptable), ("entails: some student read The White Guard", .acceptable)]
     paperFeatures := [("section", "5.2")] }
 
-def ex_116 : LinguisticExample :=
+def ex_116 : Datum :=
   { id := "elliottsudo2025_116"
     source := ⟨"elliott-sudo-2025", "(116)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex_116 : LinguisticExample :=
     readings := [("entails: some student didn't read a novel", .acceptable), ("entails: some student read a novel and wrote a report on it", .acceptable)]
     paperFeatures := [("section", "5.2")] }
 
-def ex_118 : LinguisticExample :=
+def ex_118 : Datum :=
   { id := "elliottsudo2025_118"
     source := ⟨"elliott-sudo-2025", "(118)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex_118 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2")] }
 
-def ex_126 : LinguisticExample :=
+def ex_126 : Datum :=
   { id := "elliottsudo2025_126"
     source := ⟨"elliott-sudo-2025", "(126)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex_126 : LinguisticExample :=
     readings := [("entails: if there's no bathroom, this house needs to be renovated", .acceptable), ("entails: if there's a bathroom upstairs, this house needs to be renovated", .acceptable)]
     paperFeatures := [("section", "5.3")] }
 
-def ex_129 : LinguisticExample :=
+def ex_129 : Datum :=
   { id := "elliottsudo2025_129"
     source := ⟨"elliott-sudo-2025", "(129)"⟩
     reportedIn := none
@@ -368,6 +368,6 @@ def ex_129 : LinguisticExample :=
     readings := [("negative free choice with anaphora", .acceptable)]
     paperFeatures := [("section", "5.4")] }
 
-def all : List LinguisticExample := [ex_1, ex_2, ex_6, ex_10a, ex_10b, ex_11a, ex_11b, ex_14, ex_16a, ex_18, ex_22, ex_23, ex_42, ex_51, ex_52b, ex_63, ex_71, ex_74, ex_78, ex_82, ex_85, ex_110, ex_114, ex_116, ex_118, ex_126, ex_129]
+def all : List Datum := [ex_1, ex_2, ex_6, ex_10a, ex_10b, ex_11a, ex_11b, ex_14, ex_16a, ex_18, ex_22, ex_23, ex_42, ex_51, ex_52b, ex_63, ex_71, ex_74, ex_78, ex_82, ex_85, ex_110, ex_114, ex_116, ex_118, ex_126, ex_129]
 
 end ElliottSudo2025.Examples

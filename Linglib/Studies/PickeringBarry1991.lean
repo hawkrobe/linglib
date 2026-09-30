@@ -164,7 +164,7 @@ theorem table2 : ∀ A ∈ sentenceTypes, Nested A.fillerVerb ↔ A.IsNestedCons
   decide
 
 /-- The four sentence types with their analyses. -/
-def rows : List (LinguisticExample × Analysis) :=
+def rows : List (Datum × Analysis) :=
   [(ex44, subjectRelative), (ex45, objectRelative), (ex48, germanSubjectRelative),
    (ex42, piedPiping)]
 

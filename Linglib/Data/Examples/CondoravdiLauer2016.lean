@@ -17,7 +17,7 @@ namespace CondoravdiLauer2016.Examples
 
 open Data.Examples
 
-def cl2016_ex1 : LinguisticExample :=
+def cl2016_ex1 : Datum :=
   { id := "cl2016_ex1"
     source := ⟨"condoravdi-lauer-2016", "(1)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def cl2016_ex1 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "construal"), ("want", "effective"), ("modal", "teleological"), ("interpretation", "anankastic"), ("implication", "means")] }
 
-def cl2016_ex2 : LinguisticExample :=
+def cl2016_ex2 : Datum :=
   { id := "cl2016_ex2"
     source := ⟨"condoravdi-lauer-2016", "(2)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def cl2016_ex2 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "construal"), ("want", "effective"), ("modal", "teleological"), ("interpretation", "anankastic"), ("implication", "means")] }
 
-def cl2016_ex3 : LinguisticExample :=
+def cl2016_ex3 : Datum :=
   { id := "cl2016_ex3"
     source := ⟨"condoravdi-lauer-2016", "(3)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def cl2016_ex3 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "construal"), ("want", "effective"), ("modal", "teleological"), ("interpretation", "anankastic"), ("implication", "means")] }
 
-def cl2016_ex4 : LinguisticExample :=
+def cl2016_ex4 : Datum :=
   { id := "cl2016_ex4"
     source := ⟨"condoravdi-lauer-2016", "(4)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def cl2016_ex4 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "construal"), ("want", "effective"), ("modal", "teleological"), ("interpretation", "anankastic"), ("implication", "means")] }
 
-def cl2016_ex5 : LinguisticExample :=
+def cl2016_ex5 : Datum :=
   { id := "cl2016_ex5"
     source := ⟨"condoravdi-lauer-2016", "(5)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def cl2016_ex5 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "construal"), ("want", "mere"), ("modal", "teleological"), ("interpretation", "nonAnankastic"), ("implication", "none")] }
 
-def cl2016_ex14 : LinguisticExample :=
+def cl2016_ex14 : Datum :=
   { id := "cl2016_ex14"
     source := ⟨"condoravdi-lauer-2016", "(14)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def cl2016_ex14 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "hoboken"), ("truth", "false")] }
 
-def cl2016_ex15 : LinguisticExample :=
+def cl2016_ex15 : Datum :=
   { id := "cl2016_ex15"
     source := ⟨"condoravdi-lauer-2016", "(15)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def cl2016_ex15 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "construal"), ("want", "effective"), ("modal", "teleological"), ("interpretation", "anankastic"), ("implication", "means")] }
 
-def cl2016_ex19a : LinguisticExample :=
+def cl2016_ex19a : Datum :=
   { id := "cl2016_ex19a"
     source := ⟨"condoravdi-lauer-2016", "(19a)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def cl2016_ex19a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "conflict"), ("form", "unconditional")] }
 
-def cl2016_ex19b : LinguisticExample :=
+def cl2016_ex19b : Datum :=
   { id := "cl2016_ex19b"
     source := ⟨"condoravdi-lauer-2016", "(19b)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def cl2016_ex19b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "conflict"), ("form", "unconditional")] }
 
-def cl2016_ex20a : LinguisticExample :=
+def cl2016_ex20a : Datum :=
   { id := "cl2016_ex20a"
     source := ⟨"condoravdi-lauer-2016", "(20a)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def cl2016_ex20a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "conflict"), ("form", "conditional")] }
 
-def cl2016_ex20b : LinguisticExample :=
+def cl2016_ex20b : Datum :=
   { id := "cl2016_ex20b"
     source := ⟨"condoravdi-lauer-2016", "(20b)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def cl2016_ex20b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "conflict"), ("form", "conditional")] }
 
-def cl2016_ex21 : LinguisticExample :=
+def cl2016_ex21 : Datum :=
   { id := "cl2016_ex21"
     source := ⟨"condoravdi-lauer-2016", "(21)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def cl2016_ex21 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "strong")] }
 
-def cl2016_ex28 : LinguisticExample :=
+def cl2016_ex28 : Datum :=
   { id := "cl2016_ex28"
     source := ⟨"condoravdi-lauer-2016", "(28)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def cl2016_ex28 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "construal"), ("want", "effective"), ("modal", "teleological"), ("interpretation", "anankastic"), ("implication", "precondition")] }
 
-def cl2016_ex29a : LinguisticExample :=
+def cl2016_ex29a : Datum :=
   { id := "cl2016_ex29a"
     source := ⟨"condoravdi-lauer-2016", "(29a)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def cl2016_ex29a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "construal"), ("want", "effective"), ("modal", "teleological"), ("interpretation", "nearAnankastic"), ("implication", "strengthenedGoal")] }
 
-def cl2016_ex29b : LinguisticExample :=
+def cl2016_ex29b : Datum :=
   { id := "cl2016_ex29b"
     source := ⟨"condoravdi-lauer-2016", "(29b)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def cl2016_ex29b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "construal"), ("want", "effective"), ("modal", "teleological"), ("interpretation", "nearAnankastic"), ("implication", "strengthenedGoal")] }
 
-def cl2016_ex30 : LinguisticExample :=
+def cl2016_ex30 : Datum :=
   { id := "cl2016_ex30"
     source := ⟨"condoravdi-lauer-2016", "(30)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def cl2016_ex30 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "purpose"), ("implication", "means")] }
 
-def cl2016_ex31 : LinguisticExample :=
+def cl2016_ex31 : Datum :=
   { id := "cl2016_ex31"
     source := ⟨"condoravdi-lauer-2016", "(31)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def cl2016_ex31 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "construal"), ("want", "effective"), ("modal", "teleological"), ("implication", "consequence"), ("interpretation", "nearAnankastic")] }
 
-def cl2016_ex35a : LinguisticExample :=
+def cl2016_ex35a : Datum :=
   { id := "cl2016_ex35a"
     source := ⟨"condoravdi-lauer-2016", "(35a)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def cl2016_ex35a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "purpose"), ("implication", "consequence")] }
 
-def cl2016_ex37 : LinguisticExample :=
+def cl2016_ex37 : Datum :=
   { id := "cl2016_ex37"
     source := ⟨"condoravdi-lauer-2016", "(37)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def cl2016_ex37 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "counterfactual"), ("truth", "false")] }
 
-def cl2016_ex38 : LinguisticExample :=
+def cl2016_ex38 : Datum :=
   { id := "cl2016_ex38"
     source := ⟨"condoravdi-lauer-2016", "(38)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def cl2016_ex38 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "construal"), ("want", "effective"), ("modal", "deontic"), ("interpretation", "nearAnankastic"), ("implication", "consequence")] }
 
-def cl2016_ex39a : LinguisticExample :=
+def cl2016_ex39a : Datum :=
   { id := "cl2016_ex39a"
     source := ⟨"condoravdi-lauer-2016", "(39a)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def cl2016_ex39a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "construal"), ("want", "effective"), ("modal", "teleological"), ("implication", "specialization"), ("interpretation", "nearAnankastic")] }
 
-def cl2016_ex39b : LinguisticExample :=
+def cl2016_ex39b : Datum :=
   { id := "cl2016_ex39b"
     source := ⟨"condoravdi-lauer-2016", "(39b)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def cl2016_ex39b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "purpose"), ("implication", "specialization")] }
 
-def cl2016_ex40a : LinguisticExample :=
+def cl2016_ex40a : Datum :=
   { id := "cl2016_ex40a"
     source := ⟨"condoravdi-lauer-2016", "(40a)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def cl2016_ex40a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "construal"), ("want", "effective"), ("modal", "teleological"), ("implication", "specialization"), ("interpretation", "nearAnankastic")] }
 
-def cl2016_ex40b : LinguisticExample :=
+def cl2016_ex40b : Datum :=
   { id := "cl2016_ex40b"
     source := ⟨"condoravdi-lauer-2016", "(40b)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def cl2016_ex40b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "purpose"), ("implication", "specialization")] }
 
-def cl2016_ex42 : LinguisticExample :=
+def cl2016_ex42 : Datum :=
   { id := "cl2016_ex42"
     source := ⟨"condoravdi-lauer-2016", "(42)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def cl2016_ex42 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "counterfactual")] }
 
-def cl2016_ex43 : LinguisticExample :=
+def cl2016_ex43 : Datum :=
   { id := "cl2016_ex43"
     source := ⟨"condoravdi-lauer-2016", "(43)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def cl2016_ex43 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "vacuity")] }
 
-def cl2016_ex44 : LinguisticExample :=
+def cl2016_ex44 : Datum :=
   { id := "cl2016_ex44"
     source := ⟨"condoravdi-lauer-2016", "(44)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def cl2016_ex44 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "vacuity")] }
 
-def cl2016_ex46 : LinguisticExample :=
+def cl2016_ex46 : Datum :=
   { id := "cl2016_ex46"
     source := ⟨"condoravdi-lauer-2016", "(46)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def cl2016_ex46 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "negation")] }
 
-def cl2016_ex47 : LinguisticExample :=
+def cl2016_ex47 : Datum :=
   { id := "cl2016_ex47"
     source := ⟨"condoravdi-lauer-2016", "(47)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def cl2016_ex47 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "readings"), ("construal", "effective")] }
 
-def cl2016_ex48 : LinguisticExample :=
+def cl2016_ex48 : Datum :=
   { id := "cl2016_ex48"
     source := ⟨"condoravdi-lauer-2016", "(48)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def cl2016_ex48 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "readings"), ("construal", "mere")] }
 
-def cl2016_ex49a : LinguisticExample :=
+def cl2016_ex49a : Datum :=
   { id := "cl2016_ex49a"
     source := ⟨"condoravdi-lauer-2016", "(49a)"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def cl2016_ex49a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "readings"), ("construal", "mere")] }
 
-def cl2016_ex49b : LinguisticExample :=
+def cl2016_ex49b : Datum :=
   { id := "cl2016_ex49b"
     source := ⟨"condoravdi-lauer-2016", "(49b)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def cl2016_ex49b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "readings"), ("construal", "effective")] }
 
-def cl2016_ex52 : LinguisticExample :=
+def cl2016_ex52 : Datum :=
   { id := "cl2016_ex52"
     source := ⟨"condoravdi-lauer-2016", "(52)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def cl2016_ex52 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "incompatibleWants"), ("construal", "mere")] }
 
-def cl2016_ex53 : LinguisticExample :=
+def cl2016_ex53 : Datum :=
   { id := "cl2016_ex53"
     source := ⟨"condoravdi-lauer-2016", "(53)"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def cl2016_ex53 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "incompatibleWants"), ("construal", "mere")] }
 
-def cl2016_ex54 : LinguisticExample :=
+def cl2016_ex54 : Datum :=
   { id := "cl2016_ex54"
     source := ⟨"condoravdi-lauer-2016", "(54)"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def cl2016_ex54 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "incompatibleWants"), ("construal", "mere")] }
 
-def cl2016_ex55 : LinguisticExample :=
+def cl2016_ex55 : Datum :=
   { id := "cl2016_ex55"
     source := ⟨"condoravdi-lauer-2016", "(55)"⟩
     reportedIn := none
@@ -485,7 +485,7 @@ def cl2016_ex55 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "incompatibleWants"), ("construal", "effective")] }
 
-def cl2016_ex56a : LinguisticExample :=
+def cl2016_ex56a : Datum :=
   { id := "cl2016_ex56a"
     source := ⟨"condoravdi-lauer-2016", "(56a)"⟩
     reportedIn := none
@@ -498,7 +498,7 @@ def cl2016_ex56a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "levinson")] }
 
-def cl2016_ex56b : LinguisticExample :=
+def cl2016_ex56b : Datum :=
   { id := "cl2016_ex56b"
     source := ⟨"condoravdi-lauer-2016", "(56b)"⟩
     reportedIn := none
@@ -511,7 +511,7 @@ def cl2016_ex56b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "levinson")] }
 
-def cl2016_ex58 : LinguisticExample :=
+def cl2016_ex58 : Datum :=
   { id := "cl2016_ex58"
     source := ⟨"condoravdi-lauer-2016", "(58)"⟩
     reportedIn := none
@@ -524,7 +524,7 @@ def cl2016_ex58 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "levinson")] }
 
-def cl2016_ex61 : LinguisticExample :=
+def cl2016_ex61 : Datum :=
   { id := "cl2016_ex61"
     source := ⟨"condoravdi-lauer-2016", "(61)"⟩
     reportedIn := none
@@ -537,7 +537,7 @@ def cl2016_ex61 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "readings"), ("construal", "mere")] }
 
-def cl2016_ex62a : LinguisticExample :=
+def cl2016_ex62a : Datum :=
   { id := "cl2016_ex62a"
     source := ⟨"condoravdi-lauer-2016", "(62a)"⟩
     reportedIn := none
@@ -550,7 +550,7 @@ def cl2016_ex62a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "upwardEntailment")] }
 
-def cl2016_ex62b : LinguisticExample :=
+def cl2016_ex62b : Datum :=
   { id := "cl2016_ex62b"
     source := ⟨"condoravdi-lauer-2016", "(62b)"⟩
     reportedIn := none
@@ -563,7 +563,7 @@ def cl2016_ex62b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "upwardEntailment")] }
 
-def cl2016_ex63 : LinguisticExample :=
+def cl2016_ex63 : Datum :=
   { id := "cl2016_ex63"
     source := ⟨"condoravdi-lauer-2016", "(63)"⟩
     reportedIn := none
@@ -576,7 +576,7 @@ def cl2016_ex63 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "upwardEntailment")] }
 
-def cl2016_ex64 : LinguisticExample :=
+def cl2016_ex64 : Datum :=
   { id := "cl2016_ex64"
     source := ⟨"condoravdi-lauer-2016", "(64)"⟩
     reportedIn := none
@@ -589,7 +589,7 @@ def cl2016_ex64 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "upwardEntailment")] }
 
-def cl2016_ex74 : LinguisticExample :=
+def cl2016_ex74 : Datum :=
   { id := "cl2016_ex74"
     source := ⟨"condoravdi-lauer-2016", "(74)"⟩
     reportedIn := none
@@ -602,7 +602,7 @@ def cl2016_ex74 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "normsAntecedent")] }
 
-def cl2016_ex81a : LinguisticExample :=
+def cl2016_ex81a : Datum :=
   { id := "cl2016_ex81a"
     source := ⟨"condoravdi-lauer-2016", "(81a)"⟩
     reportedIn := none
@@ -615,7 +615,7 @@ def cl2016_ex81a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "sobel"), ("member", "first")] }
 
-def cl2016_ex81b : LinguisticExample :=
+def cl2016_ex81b : Datum :=
   { id := "cl2016_ex81b"
     source := ⟨"condoravdi-lauer-2016", "(81b)"⟩
     reportedIn := none
@@ -628,7 +628,7 @@ def cl2016_ex81b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "sobel"), ("member", "second")] }
 
-def cl2016_ex82a : LinguisticExample :=
+def cl2016_ex82a : Datum :=
   { id := "cl2016_ex82a"
     source := ⟨"condoravdi-lauer-2016", "(82a)"⟩
     reportedIn := none
@@ -641,7 +641,7 @@ def cl2016_ex82a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "sobel"), ("member", "first")] }
 
-def cl2016_ex82b : LinguisticExample :=
+def cl2016_ex82b : Datum :=
   { id := "cl2016_ex82b"
     source := ⟨"condoravdi-lauer-2016", "(82b)"⟩
     reportedIn := none
@@ -654,7 +654,7 @@ def cl2016_ex82b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "sobel"), ("member", "second")] }
 
-def cl2016_ex83a : LinguisticExample :=
+def cl2016_ex83a : Datum :=
   { id := "cl2016_ex83a"
     source := ⟨"condoravdi-lauer-2016", "(83a)"⟩
     reportedIn := none
@@ -667,7 +667,7 @@ def cl2016_ex83a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "sobel"), ("member", "first")] }
 
-def cl2016_ex83b : LinguisticExample :=
+def cl2016_ex83b : Datum :=
   { id := "cl2016_ex83b"
     source := ⟨"condoravdi-lauer-2016", "(83b)"⟩
     reportedIn := none
@@ -680,7 +680,7 @@ def cl2016_ex83b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "sobel"), ("member", "second")] }
 
-def cl2016_ex84 : LinguisticExample :=
+def cl2016_ex84 : Datum :=
   { id := "cl2016_ex84"
     source := ⟨"condoravdi-lauer-2016", "(84)"⟩
     reportedIn := none
@@ -693,7 +693,7 @@ def cl2016_ex84 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "sobel"), ("member", "sequence")] }
 
-def cl2016_ex85 : LinguisticExample :=
+def cl2016_ex85 : Datum :=
   { id := "cl2016_ex85"
     source := ⟨"condoravdi-lauer-2016", "(85)"⟩
     reportedIn := none
@@ -706,7 +706,7 @@ def cl2016_ex85 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "sobel"), ("member", "reverse")] }
 
-def cl2016_ex86 : LinguisticExample :=
+def cl2016_ex86 : Datum :=
   { id := "cl2016_ex86"
     source := ⟨"condoravdi-lauer-2016", "(86)"⟩
     reportedIn := none
@@ -719,7 +719,7 @@ def cl2016_ex86 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "sobel"), ("member", "reverse")] }
 
-def cl2016_ex91a : LinguisticExample :=
+def cl2016_ex91a : Datum :=
   { id := "cl2016_ex91a"
     source := ⟨"condoravdi-lauer-2016", "(91a)"⟩
     reportedIn := none
@@ -732,7 +732,7 @@ def cl2016_ex91a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "mood"), ("mood", "indicative")] }
 
-def cl2016_ex91b : LinguisticExample :=
+def cl2016_ex91b : Datum :=
   { id := "cl2016_ex91b"
     source := ⟨"condoravdi-lauer-2016", "(91b)"⟩
     reportedIn := none
@@ -745,7 +745,7 @@ def cl2016_ex91b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "mood"), ("mood", "subjunctive")] }
 
-def cl2016_ex92 : LinguisticExample :=
+def cl2016_ex92 : Datum :=
   { id := "cl2016_ex92"
     source := ⟨"vonstechow-krasikova-penka-2006", "p. 168"⟩
     reportedIn := some ⟨"condoravdi-lauer-2016", "(92)"⟩
@@ -758,7 +758,7 @@ def cl2016_ex92 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "construal"), ("want", "effective"), ("modal", "teleological"), ("interpretation", "anankastic"), ("implication", "means")] }
 
-def cl2016_ex96 : LinguisticExample :=
+def cl2016_ex96 : Datum :=
   { id := "cl2016_ex96"
     source := ⟨"condoravdi-lauer-2016", "(96)"⟩
     reportedIn := none
@@ -771,7 +771,7 @@ def cl2016_ex96 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "strength"), ("modal", "strong"), ("truth", "false")] }
 
-def cl2016_ex97 : LinguisticExample :=
+def cl2016_ex97 : Datum :=
   { id := "cl2016_ex97"
     source := ⟨"condoravdi-lauer-2016", "(97)"⟩
     reportedIn := none
@@ -784,7 +784,7 @@ def cl2016_ex97 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "strength"), ("modal", "weak")] }
 
-def cl2016_ex98a : LinguisticExample :=
+def cl2016_ex98a : Datum :=
   { id := "cl2016_ex98a"
     source := ⟨"condoravdi-lauer-2016", "(98a)"⟩
     reportedIn := none
@@ -797,7 +797,7 @@ def cl2016_ex98a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "mood"), ("mood", "indicative")] }
 
-def cl2016_ex98b : LinguisticExample :=
+def cl2016_ex98b : Datum :=
   { id := "cl2016_ex98b"
     source := ⟨"condoravdi-lauer-2016", "(98b)"⟩
     reportedIn := none
@@ -810,7 +810,7 @@ def cl2016_ex98b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "mood"), ("mood", "subjunctive")] }
 
-def cl2016_ex99 : LinguisticExample :=
+def cl2016_ex99 : Datum :=
   { id := "cl2016_ex99"
     source := ⟨"condoravdi-lauer-2016", "(99)"⟩
     reportedIn := none
@@ -823,7 +823,7 @@ def cl2016_ex99 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "purpose"), ("implication", "consequence")] }
 
-def cl2016_ex100a : LinguisticExample :=
+def cl2016_ex100a : Datum :=
   { id := "cl2016_ex100a"
     source := ⟨"condoravdi-lauer-2016", "(100a)"⟩
     reportedIn := none
@@ -836,7 +836,7 @@ def cl2016_ex100a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "purpose"), ("implication", "precondition")] }
 
-def cl2016_ex100b : LinguisticExample :=
+def cl2016_ex100b : Datum :=
   { id := "cl2016_ex100b"
     source := ⟨"condoravdi-lauer-2016", "(100b)"⟩
     reportedIn := none
@@ -849,7 +849,7 @@ def cl2016_ex100b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "purpose"), ("implication", "precondition")] }
 
-def cl2016_ex101 : LinguisticExample :=
+def cl2016_ex101 : Datum :=
   { id := "cl2016_ex101"
     source := ⟨"condoravdi-lauer-2016", "(101)"⟩
     reportedIn := none
@@ -862,7 +862,7 @@ def cl2016_ex101 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "asymmetry")] }
 
-def cl2016_ex103 : LinguisticExample :=
+def cl2016_ex103 : Datum :=
   { id := "cl2016_ex103"
     source := ⟨"condoravdi-lauer-2016", "(103)"⟩
     reportedIn := none
@@ -875,7 +875,7 @@ def cl2016_ex103 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "asymmetry")] }
 
-def cl2016_ex106a : LinguisticExample :=
+def cl2016_ex106a : Datum :=
   { id := "cl2016_ex106a"
     source := ⟨"condoravdi-lauer-2016", "(106a)"⟩
     reportedIn := none
@@ -888,7 +888,7 @@ def cl2016_ex106a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "construal"), ("want", "effective"), ("modal", "teleological"), ("interpretation", "anankastic"), ("implication", "means")] }
 
-def cl2016_ex106b : LinguisticExample :=
+def cl2016_ex106b : Datum :=
   { id := "cl2016_ex106b"
     source := ⟨"condoravdi-lauer-2016", "(106b)"⟩
     reportedIn := none
@@ -901,7 +901,7 @@ def cl2016_ex106b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "construal"), ("want", "mere"), ("modal", "teleological"), ("interpretation", "nonAnankastic"), ("implication", "none")] }
 
-def cl2016_ex106c : LinguisticExample :=
+def cl2016_ex106c : Datum :=
   { id := "cl2016_ex106c"
     source := ⟨"condoravdi-lauer-2016", "(106c)"⟩
     reportedIn := none
@@ -914,7 +914,7 @@ def cl2016_ex106c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "construal"), ("want", "effective"), ("modal", "speakerTeleological"), ("interpretation", "nonAnankastic"), ("implication", "none")] }
 
-def cl2016_ex107 : LinguisticExample :=
+def cl2016_ex107 : Datum :=
   { id := "cl2016_ex107"
     source := ⟨"condoravdi-lauer-2016", "(107)"⟩
     reportedIn := none
@@ -927,7 +927,7 @@ def cl2016_ex107 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "purpose"), ("implication", "consequence")] }
 
-def cl2016_ex108 : LinguisticExample :=
+def cl2016_ex108 : Datum :=
   { id := "cl2016_ex108"
     source := ⟨"condoravdi-lauer-2016", "(108)"⟩
     reportedIn := none
@@ -940,7 +940,7 @@ def cl2016_ex108 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "vacuity")] }
 
-def cl2016_ex109 : LinguisticExample :=
+def cl2016_ex109 : Datum :=
   { id := "cl2016_ex109"
     source := ⟨"condoravdi-lauer-2016", "(109)"⟩
     reportedIn := none
@@ -953,7 +953,7 @@ def cl2016_ex109 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "construal"), ("want", "effective"), ("modal", "teleological"), ("interpretation", "anankastic"), ("implication", "means")] }
 
-def cl2016_ex110a : LinguisticExample :=
+def cl2016_ex110a : Datum :=
   { id := "cl2016_ex110a"
     source := ⟨"condoravdi-lauer-2016", "(110a)"⟩
     reportedIn := none
@@ -966,7 +966,7 @@ def cl2016_ex110a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "construal"), ("want", "effective"), ("modal", "teleological"), ("interpretation", "anankastic"), ("implication", "precondition")] }
 
-def cl2016_ex110b : LinguisticExample :=
+def cl2016_ex110b : Datum :=
   { id := "cl2016_ex110b"
     source := ⟨"condoravdi-lauer-2016", "(110b)"⟩
     reportedIn := none
@@ -979,7 +979,7 @@ def cl2016_ex110b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "construal"), ("want", "effective"), ("modal", "teleological"), ("interpretation", "anankastic"), ("implication", "precondition")] }
 
-def cl2016_ex111 : LinguisticExample :=
+def cl2016_ex111 : Datum :=
   { id := "cl2016_ex111"
     source := ⟨"condoravdi-lauer-2016", "(111)"⟩
     reportedIn := none
@@ -992,7 +992,7 @@ def cl2016_ex111 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "construal"), ("want", "effective"), ("modal", "teleological"), ("interpretation", "anankastic"), ("implication", "precondition")] }
 
-def cl2016_ex112a : LinguisticExample :=
+def cl2016_ex112a : Datum :=
   { id := "cl2016_ex112a"
     source := ⟨"condoravdi-lauer-2016", "(112a)"⟩
     reportedIn := none
@@ -1005,7 +1005,7 @@ def cl2016_ex112a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "construal"), ("want", "weak"), ("modal", "teleological"), ("interpretation", "nonAnankastic"), ("implication", "none"), ("truth", "false")] }
 
-def cl2016_ex112b : LinguisticExample :=
+def cl2016_ex112b : Datum :=
   { id := "cl2016_ex112b"
     source := ⟨"condoravdi-lauer-2016", "(112b)"⟩
     reportedIn := none
@@ -1018,7 +1018,7 @@ def cl2016_ex112b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "construal"), ("want", "weak"), ("modal", "teleological"), ("interpretation", "nonAnankastic"), ("implication", "none"), ("truth", "false")] }
 
-def cl2016_ex112c : LinguisticExample :=
+def cl2016_ex112c : Datum :=
   { id := "cl2016_ex112c"
     source := ⟨"condoravdi-lauer-2016", "(112c)"⟩
     reportedIn := none
@@ -1031,7 +1031,7 @@ def cl2016_ex112c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "construal"), ("want", "weak"), ("modal", "teleological"), ("interpretation", "nonAnankastic"), ("implication", "none"), ("truth", "false")] }
 
-def cl2016_ex112d : LinguisticExample :=
+def cl2016_ex112d : Datum :=
   { id := "cl2016_ex112d"
     source := ⟨"condoravdi-lauer-2016", "(112d)"⟩
     reportedIn := none
@@ -1044,7 +1044,7 @@ def cl2016_ex112d : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "construal"), ("want", "weak"), ("modal", "teleological"), ("interpretation", "nonAnankastic"), ("implication", "none"), ("truth", "false")] }
 
-def cl2016_ex112e : LinguisticExample :=
+def cl2016_ex112e : Datum :=
   { id := "cl2016_ex112e"
     source := ⟨"condoravdi-lauer-2016", "(112e)"⟩
     reportedIn := none
@@ -1057,6 +1057,6 @@ def cl2016_ex112e : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "construal"), ("want", "weak"), ("modal", "teleological"), ("interpretation", "nonAnankastic"), ("implication", "none"), ("truth", "false")] }
 
-def all : List LinguisticExample := [cl2016_ex1, cl2016_ex2, cl2016_ex3, cl2016_ex4, cl2016_ex5, cl2016_ex14, cl2016_ex15, cl2016_ex19a, cl2016_ex19b, cl2016_ex20a, cl2016_ex20b, cl2016_ex21, cl2016_ex28, cl2016_ex29a, cl2016_ex29b, cl2016_ex30, cl2016_ex31, cl2016_ex35a, cl2016_ex37, cl2016_ex38, cl2016_ex39a, cl2016_ex39b, cl2016_ex40a, cl2016_ex40b, cl2016_ex42, cl2016_ex43, cl2016_ex44, cl2016_ex46, cl2016_ex47, cl2016_ex48, cl2016_ex49a, cl2016_ex49b, cl2016_ex52, cl2016_ex53, cl2016_ex54, cl2016_ex55, cl2016_ex56a, cl2016_ex56b, cl2016_ex58, cl2016_ex61, cl2016_ex62a, cl2016_ex62b, cl2016_ex63, cl2016_ex64, cl2016_ex74, cl2016_ex81a, cl2016_ex81b, cl2016_ex82a, cl2016_ex82b, cl2016_ex83a, cl2016_ex83b, cl2016_ex84, cl2016_ex85, cl2016_ex86, cl2016_ex91a, cl2016_ex91b, cl2016_ex92, cl2016_ex96, cl2016_ex97, cl2016_ex98a, cl2016_ex98b, cl2016_ex99, cl2016_ex100a, cl2016_ex100b, cl2016_ex101, cl2016_ex103, cl2016_ex106a, cl2016_ex106b, cl2016_ex106c, cl2016_ex107, cl2016_ex108, cl2016_ex109, cl2016_ex110a, cl2016_ex110b, cl2016_ex111, cl2016_ex112a, cl2016_ex112b, cl2016_ex112c, cl2016_ex112d, cl2016_ex112e]
+def all : List Datum := [cl2016_ex1, cl2016_ex2, cl2016_ex3, cl2016_ex4, cl2016_ex5, cl2016_ex14, cl2016_ex15, cl2016_ex19a, cl2016_ex19b, cl2016_ex20a, cl2016_ex20b, cl2016_ex21, cl2016_ex28, cl2016_ex29a, cl2016_ex29b, cl2016_ex30, cl2016_ex31, cl2016_ex35a, cl2016_ex37, cl2016_ex38, cl2016_ex39a, cl2016_ex39b, cl2016_ex40a, cl2016_ex40b, cl2016_ex42, cl2016_ex43, cl2016_ex44, cl2016_ex46, cl2016_ex47, cl2016_ex48, cl2016_ex49a, cl2016_ex49b, cl2016_ex52, cl2016_ex53, cl2016_ex54, cl2016_ex55, cl2016_ex56a, cl2016_ex56b, cl2016_ex58, cl2016_ex61, cl2016_ex62a, cl2016_ex62b, cl2016_ex63, cl2016_ex64, cl2016_ex74, cl2016_ex81a, cl2016_ex81b, cl2016_ex82a, cl2016_ex82b, cl2016_ex83a, cl2016_ex83b, cl2016_ex84, cl2016_ex85, cl2016_ex86, cl2016_ex91a, cl2016_ex91b, cl2016_ex92, cl2016_ex96, cl2016_ex97, cl2016_ex98a, cl2016_ex98b, cl2016_ex99, cl2016_ex100a, cl2016_ex100b, cl2016_ex101, cl2016_ex103, cl2016_ex106a, cl2016_ex106b, cl2016_ex106c, cl2016_ex107, cl2016_ex108, cl2016_ex109, cl2016_ex110a, cl2016_ex110b, cl2016_ex111, cl2016_ex112a, cl2016_ex112b, cl2016_ex112c, cl2016_ex112d, cl2016_ex112e]
 
 end CondoravdiLauer2016.Examples

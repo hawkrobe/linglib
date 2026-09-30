@@ -17,7 +17,7 @@ namespace GarassinoJacob2018.Examples
 
 open Data.Examples
 
-def ex1 : LinguisticExample :=
+def ex1 : Datum :=
   { id := "garassinojacob2018_ex1"
     source := ⟨"garassino-jacob-2018", "(1)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex1 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "emphaticDo"), ("antecedent", "explicitNegation"), ("dislocated", "none"), ("relation", "unstated"), ("subquestion", "no")] }
 
-def ex3 : LinguisticExample :=
+def ex3 : Datum :=
   { id := "garassinojacob2018_ex3"
     source := ⟨"hohle-1992", "p. 112"⟩
     reportedIn := some ⟨"garassino-jacob-2018", "(3)"⟩
@@ -43,7 +43,7 @@ def ex3 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "verumAccent"), ("antecedent", "positive"), ("dislocated", "none"), ("relation", "unstated"), ("subquestion", "no")] }
 
-def ex4 : LinguisticExample :=
+def ex4 : Datum :=
   { id := "garassinojacob2018_ex4"
     source := ⟨"garassino-jacob-2018", "(4)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex4 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "verumAccent"), ("antecedent", "inferredNegation"), ("dislocated", "none"), ("relation", "unstated"), ("subquestion", "no")] }
 
-def ex5a : LinguisticExample :=
+def ex5a : Datum :=
   { id := "garassinojacob2018_ex5a"
     source := ⟨"garassino-jacob-2018", "(5a)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex5a : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "embedding"), ("antecedent", "none"), ("dislocated", "none"), ("relation", "unstated"), ("subquestion", "no")] }
 
-def ex5b : LinguisticExample :=
+def ex5b : Datum :=
   { id := "garassinojacob2018_ex5b"
     source := ⟨"garassino-jacob-2018", "(5b)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex5b : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "embedding"), ("antecedent", "none"), ("dislocated", "none"), ("relation", "unstated"), ("subquestion", "no")] }
 
-def ex6 : LinguisticExample :=
+def ex6 : Datum :=
   { id := "garassinojacob2018_ex6"
     source := ⟨"garassino-jacob-2018", "(6)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex6 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "embedding"), ("antecedent", "none"), ("dislocated", "none"), ("relation", "unstated"), ("subquestion", "no")] }
 
-def ex7a : LinguisticExample :=
+def ex7a : Datum :=
   { id := "garassinojacob2018_ex7a"
     source := ⟨"garassino-jacob-2018", "(7a)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex7a : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "juxtaposed"), ("antecedent", "none"), ("dislocated", "none"), ("relation", "unstated"), ("subquestion", "no")] }
 
-def ex7b : LinguisticExample :=
+def ex7b : Datum :=
   { id := "garassinojacob2018_ex7b"
     source := ⟨"garassino-jacob-2018", "(7b)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex7b : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "juxtaposed"), ("antecedent", "none"), ("dislocated", "none"), ("relation", "unstated"), ("subquestion", "no")] }
 
-def ex7c : LinguisticExample :=
+def ex7c : Datum :=
   { id := "garassinojacob2018_ex7c"
     source := ⟨"garassino-jacob-2018", "(7c)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex7c : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "juxtaposed"), ("antecedent", "none"), ("dislocated", "none"), ("relation", "unstated"), ("subquestion", "no")] }
 
-def ex8 : LinguisticExample :=
+def ex8 : Datum :=
   { id := "garassinojacob2018_ex8"
     source := ⟨"garassino-jacob-2018", "(8)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex8 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "ellipticEmbedding"), ("antecedent", "none"), ("dislocated", "none"), ("relation", "unstated"), ("subquestion", "no")] }
 
-def ex9 : LinguisticExample :=
+def ex9 : Datum :=
   { id := "garassinojacob2018_ex9"
     source := ⟨"garassino-jacob-2018", "(9)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex9 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "ellipticEmbedding"), ("antecedent", "explicitNegation"), ("dislocated", "none"), ("relation", "unstated"), ("subquestion", "no")] }
 
-def ex10 : LinguisticExample :=
+def ex10 : Datum :=
   { id := "garassinojacob2018_ex10"
     source := ⟨"garassino-jacob-2018", "(10)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex10 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "ellipticEmbedding"), ("antecedent", "explicitNegation"), ("dislocated", "none"), ("relation", "unstated"), ("subquestion", "no")] }
 
-def ex11 : LinguisticExample :=
+def ex11 : Datum :=
   { id := "garassinojacob2018_ex11"
     source := ⟨"garassino-jacob-2018", "(11)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex11 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "fronting"), ("antecedent", "none"), ("dislocated", "none"), ("relation", "unstated"), ("subquestion", "no")] }
 
-def ex12 : LinguisticExample :=
+def ex12 : Datum :=
   { id := "garassinojacob2018_ex12"
     source := ⟨"garassino-jacob-2018", "(12)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex12 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "fronting"), ("antecedent", "none"), ("dislocated", "none"), ("relation", "unstated"), ("subquestion", "no")] }
 
-def ex13 : LinguisticExample :=
+def ex13 : Datum :=
   { id := "garassinojacob2018_ex13"
     source := ⟨"garassino-jacob-2018", "(13)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex13 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "fronting"), ("antecedent", "modal"), ("dislocated", "none"), ("relation", "unstated"), ("subquestion", "no")] }
 
-def ex14 : LinguisticExample :=
+def ex14 : Datum :=
   { id := "garassinojacob2018_ex14"
     source := ⟨"garassino-jacob-2018", "(14)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex14 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "faireCleft"), ("antecedent", "modal"), ("dislocated", "none"), ("relation", "unstated"), ("subquestion", "no")] }
 
-def ex15 : LinguisticExample :=
+def ex15 : Datum :=
   { id := "garassinojacob2018_ex15"
     source := ⟨"frascarelli-2003", "p. 557"⟩
     reportedIn := some ⟨"garassino-jacob-2018", "(15)"⟩
@@ -238,7 +238,7 @@ def ex15 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "rightDislocation"), ("antecedent", "explicitNegation"), ("dislocated", "object"), ("relation", "unstated"), ("subquestion", "no")] }
 
-def ex16 : LinguisticExample :=
+def ex16 : Datum :=
   { id := "garassinojacob2018_ex16"
     source := ⟨"brunetti-2009", "p. 763"⟩
     reportedIn := some ⟨"garassino-jacob-2018", "(16)"⟩
@@ -251,7 +251,7 @@ def ex16 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "leftDislocation"), ("antecedent", "openQuestion"), ("dislocated", "object"), ("relation", "unstated"), ("subquestion", "no")] }
 
-def ex17 : LinguisticExample :=
+def ex17 : Datum :=
   { id := "garassinojacob2018_ex17"
     source := ⟨"poletto-zanuttini-2013", "p. 124"⟩
     reportedIn := some ⟨"garassino-jacob-2018", "(17)"⟩
@@ -264,7 +264,7 @@ def ex17 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "siChe"), ("antecedent", "explicitQuestion"), ("dislocated", "none"), ("relation", "unstated"), ("subquestion", "no")] }
 
-def ex18 : LinguisticExample :=
+def ex18 : Datum :=
   { id := "garassinojacob2018_ex18"
     source := ⟨"batllori-hernanz-2013", "p. 3"⟩
     reportedIn := some ⟨"garassino-jacob-2018", "(18)"⟩
@@ -277,7 +277,7 @@ def ex18 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "siQue"), ("antecedent", "explicitNegation"), ("dislocated", "none"), ("relation", "unstated"), ("subquestion", "no")] }
 
-def ex19 : LinguisticExample :=
+def ex19 : Datum :=
   { id := "garassinojacob2018_ex19"
     source := ⟨"batllori-hernanz-2013", "pp. 4-5"⟩
     reportedIn := some ⟨"garassino-jacob-2018", "(19)"⟩
@@ -290,7 +290,7 @@ def ex19 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "siQue"), ("antecedent", "positive"), ("dislocated", "subject"), ("relation", "unstated"), ("subquestion", "no")] }
 
-def fn11 : LinguisticExample :=
+def fn11 : Datum :=
   { id := "garassinojacob2018_fn11"
     source := ⟨"garassino-jacob-2018", "fn. 11 (i)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def fn11 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "siParticle"), ("antecedent", "explicitNegation"), ("dislocated", "none"), ("relation", "unstated"), ("subquestion", "no")] }
 
-def ex21 : LinguisticExample :=
+def ex21 : Datum :=
   { id := "garassinojacob2018_ex21"
     source := ⟨"garassino-jacob-2018", "(21)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex21 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "rightDislocation"), ("antecedent", "explicitNegation"), ("dislocated", "object"), ("relation", "unstated"), ("subquestion", "no")] }
 
-def ex22 : LinguisticExample :=
+def ex22 : Datum :=
   { id := "garassinojacob2018_ex22"
     source := ⟨"garassino-jacob-2018", "(22)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex22 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "leftDislocation"), ("antecedent", "explicitNegation"), ("dislocated", "object"), ("relation", "unstated"), ("subquestion", "no")] }
 
-def ex23a : LinguisticExample :=
+def ex23a : Datum :=
   { id := "garassinojacob2018_ex23a"
     source := ⟨"garassino-jacob-2018", "(23a)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex23a : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "leftDislocation"), ("antecedent", "inferredNegation"), ("dislocated", "subject"), ("relation", "analogy"), ("subquestion", "no")] }
 
-def ex23b : LinguisticExample :=
+def ex23b : Datum :=
   { id := "garassinojacob2018_ex23b"
     source := ⟨"garassino-jacob-2018", "(23b)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex23b : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "siOnly"), ("antecedent", "inferredNegation"), ("dislocated", "subject"), ("relation", "analogy"), ("subquestion", "no")] }
 
-def ex23c : LinguisticExample :=
+def ex23c : Datum :=
   { id := "garassinojacob2018_ex23c"
     source := ⟨"garassino-jacob-2018", "(23c)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def ex23c : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "siChe"), ("antecedent", "inferredNegation"), ("dislocated", "subject"), ("relation", "analogy"), ("subquestion", "no")] }
 
-def ex24 : LinguisticExample :=
+def ex24 : Datum :=
   { id := "garassinojacob2018_ex24"
     source := ⟨"garassino-jacob-2018", "(24)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def ex24 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "leftDislocation"), ("antecedent", "explicitNegation"), ("dislocated", "object"), ("relation", "identity"), ("subquestion", "no")] }
 
-def ex25 : LinguisticExample :=
+def ex25 : Datum :=
   { id := "garassinojacob2018_ex25"
     source := ⟨"garassino-jacob-2018", "(25)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def ex25 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "leftDislocation"), ("antecedent", "inferredNegation"), ("dislocated", "object"), ("relation", "identity"), ("subquestion", "no")] }
 
-def ex26 : LinguisticExample :=
+def ex26 : Datum :=
   { id := "garassinojacob2018_ex26"
     source := ⟨"garassino-jacob-2018", "(26)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def ex26 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "leftDislocation"), ("antecedent", "modal"), ("dislocated", "object"), ("relation", "analogy"), ("subquestion", "no")] }
 
-def ex27 : LinguisticExample :=
+def ex27 : Datum :=
   { id := "garassinojacob2018_ex27"
     source := ⟨"garassino-jacob-2018", "(27)"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def ex27 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "leftDislocation"), ("antecedent", "modal"), ("dislocated", "both"), ("relation", "analogy"), ("subquestion", "no")] }
 
-def ex28 : LinguisticExample :=
+def ex28 : Datum :=
   { id := "garassinojacob2018_ex28"
     source := ⟨"garassino-jacob-2018", "(28)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def ex28 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "siQue"), ("antecedent", "explicitNegation"), ("dislocated", "none"), ("relation", "identity"), ("subquestion", "no")] }
 
-def ex29 : LinguisticExample :=
+def ex29 : Datum :=
   { id := "garassinojacob2018_ex29"
     source := ⟨"garassino-jacob-2018", "(29)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def ex29 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "siQue"), ("antecedent", "inferredNegation"), ("dislocated", "adverbial"), ("relation", "identity"), ("subquestion", "no")] }
 
-def ex30 : LinguisticExample :=
+def ex30 : Datum :=
   { id := "garassinojacob2018_ex30"
     source := ⟨"garassino-jacob-2018", "(30)"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def ex30 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "siQue"), ("antecedent", "inferredNegation"), ("dislocated", "subject"), ("relation", "analogy"), ("subquestion", "yes")] }
 
-def ex32 : LinguisticExample :=
+def ex32 : Datum :=
   { id := "garassinojacob2018_ex32"
     source := ⟨"garassino-jacob-2018", "(32)"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def ex32 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "siQue"), ("antecedent", "explicitNegation"), ("dislocated", "none"), ("relation", "analogy"), ("subquestion", "yes")] }
 
-def ex33 : LinguisticExample :=
+def ex33 : Datum :=
   { id := "garassinojacob2018_ex33"
     source := ⟨"garassino-jacob-2018", "(33)"⟩
     reportedIn := none
@@ -485,7 +485,7 @@ def ex33 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "siQue"), ("antecedent", "explicitNegation"), ("dislocated", "none"), ("relation", "analogy"), ("subquestion", "yes")] }
 
-def ex35 : LinguisticExample :=
+def ex35 : Datum :=
   { id := "garassinojacob2018_ex35"
     source := ⟨"garassino-jacob-2018", "(35)"⟩
     reportedIn := none
@@ -498,6 +498,6 @@ def ex35 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "siQue"), ("antecedent", "positive"), ("dislocated", "subject"), ("relation", "unstated"), ("subquestion", "no")] }
 
-def all : List LinguisticExample := [ex1, ex3, ex4, ex5a, ex5b, ex6, ex7a, ex7b, ex7c, ex8, ex9, ex10, ex11, ex12, ex13, ex14, ex15, ex16, ex17, ex18, ex19, fn11, ex21, ex22, ex23a, ex23b, ex23c, ex24, ex25, ex26, ex27, ex28, ex29, ex30, ex32, ex33, ex35]
+def all : List Datum := [ex1, ex3, ex4, ex5a, ex5b, ex6, ex7a, ex7b, ex7c, ex8, ex9, ex10, ex11, ex12, ex13, ex14, ex15, ex16, ex17, ex18, ex19, fn11, ex21, ex22, ex23a, ex23b, ex23c, ex24, ex25, ex26, ex27, ex28, ex29, ex30, ex32, ex33, ex35]
 
 end GarassinoJacob2018.Examples

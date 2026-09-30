@@ -17,7 +17,7 @@ namespace Heim1994a.Examples
 
 open Data.Examples
 
-def s2 : LinguisticExample :=
+def s2 : Datum :=
   { id := "heim1994a_s2"
     source := ⟨"heim-1994-comments", "(2)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def s2 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("lf", "John PAST1 cry"), ("presupposition", "g(1) < t_c")] }
 
-def s5 : LinguisticExample :=
+def s5 : Datum :=
   { id := "heim1994a_s5"
     source := ⟨"heim-1994-comments", "(5)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def s5 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("lf", "(6): (at) some time λ3 [John PAST3 be in Paris]"), ("presupposition", "every time in the restriction precedes t_c")] }
 
-def s11 : LinguisticExample :=
+def s11 : Datum :=
   { id := "heim1994a_s11"
     source := ⟨"heim-1994-comments", "(11)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def s11 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("lf", "(12): John PAST1 believe λ0 [Bill to0 be asleep]"), ("reading", "simultaneous only")] }
 
-def s13a : LinguisticExample :=
+def s13a : Datum :=
   { id := "heim1994a_s13a"
     source := ⟨"heim-1994-comments", "(13a)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def s13a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("ulc", "cannot describe the situation of (13b)")] }
 
-def s13b : LinguisticExample :=
+def s13b : Datum :=
   { id := "heim1994a_s13b"
     source := ⟨"heim-1994-comments", "(13b)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def s13b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2")] }
 
-def s14a : LinguisticExample :=
+def s14a : Datum :=
   { id := "heim1994a_s14a"
     source := ⟨"heim-1994-comments", "(14a)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def s14a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("ulc", "cannot describe the situation of (14b)")] }
 
-def s14b : LinguisticExample :=
+def s14b : Datum :=
   { id := "heim1994a_s14b"
     source := ⟨"heim-1994-comments", "(14b)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def s14b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2")] }
 
-def s19 : LinguisticExample :=
+def s19 : Datum :=
   { id := "heim1994a_s19"
     source := ⟨"heim-1994-comments", "(19)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def s19 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("lf", "(20): John PAST1 believe λ0 [his 40th birthday λ2 [Bill PAST2 be happy]]"), ("presupposition", "(i) John believed the birthday to precede t_c; (ii) he located himself at or after it")] }
 
-def s22 : LinguisticExample :=
+def s22 : Datum :=
   { id := "heim1994a_s22"
     source := ⟨"heim-1994-comments", "(22)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def s22 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2")] }
 
-def s23 : LinguisticExample :=
+def s23 : Datum :=
   { id := "heim1994a_s23"
     source := ⟨"heim-1994-comments", "(23)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def s23 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2")] }
 
-def s24 : LinguisticExample :=
+def s24 : Datum :=
   { id := "heim1994a_s24"
     source := ⟨"heim-1994-comments", "(24)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def s24 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("lf", "(25): PRES1 woll λ0 [John INF0 cry]"), ("entry", "(26): woll shifts the evaluation time forward")] }
 
-def s27 : LinguisticExample :=
+def s27 : Datum :=
   { id := "heim1994a_s27"
     source := ⟨"heim-1994-comments", "(27)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def s27 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("lf", "PRES1 woll λ0 [a man who PRES0 love her λ2 [she INF0 marry t2]]")] }
 
-def s28 : LinguisticExample :=
+def s28 : Datum :=
   { id := "heim1994a_s28"
     source := ⟨"heim-1994-comments", "(28)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def s28 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("lf", "(29) simultaneous, John PAST1 believe λ0 [Bill PAST0 be asleep]; (32) back-shifted through res-movement"), ("readings", "simultaneous; back-shifted")] }
 
-def s34 : LinguisticExample :=
+def s34 : Datum :=
   { id := "heim1994a_s34"
     source := ⟨"heim-1994-comments", "(34)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def s34 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("lf", "(35): a de re report about six o'clock with g_c(1) = 5 o'clock, g_c(2) = 6 o'clock")] }
 
-def s36 : LinguisticExample :=
+def s36 : Datum :=
   { id := "heim1994a_s36"
     source := ⟨"heim-1994-comments", "(36)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def s36 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("lf", "(38): John PAST1 think PRES2 λ3 λ0 [Mary t3 be pregnant]"), ("reading", "double access")] }
 
-def s39 : LinguisticExample :=
+def s39 : Datum :=
   { id := "heim1994a_s39"
     source := ⟨"heim-1994-comments", "(39)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def s39 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("counterexample", "PRES overlapping t_c")] }
 
-def s40 : LinguisticExample :=
+def s40 : Datum :=
   { id := "heim1994a_s40"
     source := ⟨"heim-1994-comments", "(40)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def s40 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("counterexample", "PAST preceding t_c")] }
 
-def s41 : LinguisticExample :=
+def s41 : Datum :=
   { id := "heim1994a_s41"
     source := ⟨"heim-1994-comments", "(41)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def s41 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3")] }
 
-def s42 : LinguisticExample :=
+def s42 : Datum :=
   { id := "heim1994a_s42"
     source := ⟨"heim-1994-comments", "(42)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def s42 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3")] }
 
-def s43 : LinguisticExample :=
+def s43 : Datum :=
   { id := "heim1994a_s43"
     source := ⟨"heim-1994-comments", "(43)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def s43 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("source", "Abusch 1988"), ("lf", "(51)"), ("licensing", "the lowest PAST licensed non-locally by <-decide")] }
 
-def s44 : LinguisticExample :=
+def s44 : Datum :=
   { id := "heim1994a_s44"
     source := ⟨"heim-1994-comments", "(44)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def s44 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("source", "Ogihara 1989"), ("lf", "(52)"), ("licensing", "the lowest PAST licensed non-locally by <-say")] }
 
-def s45 : LinguisticExample :=
+def s45 : Datum :=
   { id := "heim1994a_s45"
     source := ⟨"heim-1994-comments", "(45)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def s45 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("source", "A. Santisteban, p.c.")] }
 
-def s54 : LinguisticExample :=
+def s54 : Datum :=
   { id := "heim1994a_s54"
     source := ⟨"heim-1994-comments", "(54)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def s54 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("lf", "(55): the object NP raised out of the argument of <-be looking for"), ("reading", "transparent only")] }
 
-def s59 : LinguisticExample :=
+def s59 : Datum :=
   { id := "heim1994a_s59"
     source := ⟨"heim-1994-comments", "(59)"⟩
     reportedIn := none
@@ -329,6 +329,6 @@ def s59 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("lf", "(60): John PAST1 <-meet [the man who PAST2 ¬<-live next door]")] }
 
-def all : List LinguisticExample := [s2, s5, s11, s13a, s13b, s14a, s14b, s19, s22, s23, s24, s27, s28, s34, s36, s39, s40, s41, s42, s43, s44, s45, s54, s59]
+def all : List Datum := [s2, s5, s11, s13a, s13b, s14a, s14b, s19, s22, s23, s24, s27, s28, s34, s36, s39, s40, s41, s42, s43, s44, s45, s54, s59]
 
 end Heim1994a.Examples

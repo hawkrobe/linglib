@@ -17,7 +17,7 @@ namespace Baker1985.Examples
 
 open Data.Examples
 
-def chamorro_15a : LinguisticExample :=
+def chamorro_15a : Datum :=
   { id := "baker1985_chamorro_15a"
     source := ⟨"gibson-1980", "(15a)"⟩
     reportedIn := some ⟨"baker-1985", "(15a)"⟩
@@ -30,7 +30,7 @@ def chamorro_15a : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "small"), ("valence", "intransitive"), ("agreesWith", "surface subject"), ("m1", "PL"), ("f1", "man"), ("m2", "small"), ("f2", "dikiki'")] }
 
-def chamorro_15b : LinguisticExample :=
+def chamorro_15b : Datum :=
   { id := "baker1985_chamorro_15b"
     source := ⟨"gibson-1980", "(15b)"⟩
     reportedIn := some ⟨"baker-1985", "(15b)"⟩
@@ -43,7 +43,7 @@ def chamorro_15b : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "spank"), ("valence", "transitive"), ("agreesWith", "surface subject"), ("m1", "IRR"), ("f1", "para"), ("m2", "3PL.SBJ"), ("f2", "u"), ("m3", "PL"), ("f3", "fan"), ("m4", "PASS"), ("f4", "in"), ("m5", "spank"), ("f5", "saolak")] }
 
-def chamorro_15c : LinguisticExample :=
+def chamorro_15c : Datum :=
   { id := "baker1985_chamorro_15c"
     source := ⟨"gibson-1980", "(15c)"⟩
     reportedIn := some ⟨"baker-1985", "(15c)"⟩
@@ -56,7 +56,7 @@ def chamorro_15c : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "eat"), ("valence", "intransitive"), ("agreesWith", "semantic subject"), ("m1", "1SG.SBJ"), ("f1", "hu"), ("m2", "CAUS"), ("f2", "na'"), ("m3", "PL"), ("f3", "fan"), ("m4", "eat"), ("f4", "otchu")] }
 
-def chamorro_25 : LinguisticExample :=
+def chamorro_25 : Datum :=
   { id := "baker1985_chamorro_25"
     source := ⟨"gibson-1980", "(25)"⟩
     reportedIn := some ⟨"baker-1985", "(25)"⟩
@@ -69,7 +69,7 @@ def chamorro_25 : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "spank"), ("valence", "transitive"), ("agreesWith", "intermediate subject"), ("m1", "1SG.SBJ"), ("f1", "hu"), ("m2", "CAUS"), ("f2", "na'"), ("m3", "PL"), ("f3", "fan"), ("m4", "PASS"), ("f4", "in"), ("m5", "spank"), ("f5", "saolak")] }
 
-def quechua_39a : LinguisticExample :=
+def quechua_39a : Datum :=
   { id := "baker1985_quechua_39a"
     source := ⟨"muysken-1981", "(39a)"⟩
     reportedIn := some ⟨"baker-1985", "(39a)"⟩
@@ -82,7 +82,7 @@ def quechua_39a : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "beat"), ("valence", "transitive"), ("links", "agent-patient"), ("m1", "beat"), ("f1", "maqa"), ("m2", "RECP"), ("f2", "naku"), ("m3", "DUR"), ("f3", "ya"), ("m4", "CAUS"), ("f4", "chi"), ("m5", "3SBJ"), ("f5", "n")] }
 
-def quechua_39b : LinguisticExample :=
+def quechua_39b : Datum :=
   { id := "baker1985_quechua_39b"
     source := ⟨"muysken-1981", "(39b)"⟩
     reportedIn := some ⟨"baker-1985", "(39b)"⟩
@@ -95,7 +95,7 @@ def quechua_39b : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "beat"), ("valence", "transitive"), ("links", "causer-patient"), ("m1", "beat"), ("f1", "maqa"), ("m2", "CAUS"), ("f2", "chi"), ("m3", "RECP"), ("f3", "naku"), ("m4", "PL"), ("f4", "rka"), ("m5", "3SBJ"), ("f5", "n")] }
 
-def bemba_49a : LinguisticExample :=
+def bemba_49a : Datum :=
   { id := "baker1985_bemba_49a"
     source := ⟨"givon-1976", "(49a)"⟩
     reportedIn := some ⟨"baker-1985", "(49a)"⟩
@@ -108,7 +108,7 @@ def bemba_49a : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "see"), ("valence", "transitive"), ("links", "agent-patient"), ("m1", "1SG.SBJ.PST"), ("f1", "naa"), ("m2", "see"), ("f2", "mon"), ("m3", "RECP"), ("f3", "an"), ("m4", "CAUS"), ("f4", "ya")] }
 
-def bemba_49b : LinguisticExample :=
+def bemba_49b : Datum :=
   { id := "baker1985_bemba_49b"
     source := ⟨"givon-1976", "(49b)"⟩
     reportedIn := some ⟨"baker-1985", "(49b)"⟩
@@ -121,7 +121,7 @@ def bemba_49b : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "see"), ("valence", "transitive"), ("links", "causer-agent"), ("m1", "3PL.SBJ"), ("f1", "baa"), ("m2", "see"), ("f2", "mon"), ("m3", "CAUS"), ("f3", "eshy"), ("m4", "RECP"), ("f4", "ana")] }
 
-def huichol_55 : LinguisticExample :=
+def huichol_55 : Datum :=
   { id := "baker1985_huichol_55"
     source := ⟨"comrie-1982", "(55)"⟩
     reportedIn := some ⟨"baker-1985", "(55)"⟩
@@ -134,7 +134,7 @@ def huichol_55 : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "buy"), ("valence", "transitive"), ("surfaceSubject", "applied object"), ("m1", "3PL.SBJ"), ("f1", "me"), ("m2", "buy"), ("f2", "puutinanai"), ("m3", "BEN"), ("f3", "ri"), ("m4", "PASS"), ("f4", "yeri")] }
 
-def chimwiini_56c : LinguisticExample :=
+def chimwiini_56c : Datum :=
   { id := "baker1985_chimwiini_56c"
     source := ⟨"kisseberth-abasheikh-1977", "(56c)"⟩
     reportedIn := some ⟨"baker-1985", "(56c)"⟩
@@ -147,7 +147,7 @@ def chimwiini_56c : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "bring"), ("valence", "transitive"), ("surfaceSubject", "applied object"), ("m1", "SP"), ("f1", "∅"), ("m2", "bring"), ("f2", "tet"), ("m3", "APPL"), ("f3", "el"), ("m4", "ASP"), ("f4", "el"), ("m5", "PASS"), ("f5", "a")] }
 
-def chimwiini_56d : LinguisticExample :=
+def chimwiini_56d : Datum :=
   { id := "baker1985_chimwiini_56d"
     source := ⟨"kisseberth-abasheikh-1977", "(56d)"⟩
     reportedIn := some ⟨"baker-1985", "(56d)"⟩
@@ -160,7 +160,7 @@ def chimwiini_56d : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "bring"), ("valence", "transitive"), ("surfaceSubject", "patient"), ("m1", "SP"), ("f1", "chi"), ("m2", "bring"), ("f2", "tet"), ("m3", "APPL"), ("f3", "el"), ("m4", "ASP"), ("f4", "el"), ("m5", "PASS"), ("f5", "a")] }
 
-def kinyarwanda_57c : LinguisticExample :=
+def kinyarwanda_57c : Datum :=
   { id := "baker1985_kinyarwanda_57c"
     source := ⟨"kimenyi-1980", "(57c)"⟩
     reportedIn := some ⟨"baker-1985", "(57c)"⟩
@@ -173,7 +173,7 @@ def kinyarwanda_57c : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "write"), ("valence", "transitive"), ("surfaceSubject", "applied object"), ("m1", "SP"), ("f1", "i"), ("m2", "PRS"), ("f2", "ra"), ("m3", "write"), ("f3", "andik"), ("m4", "INSTR"), ("f4", "iish"), ("m5", "PASS"), ("f5", "w"), ("m6", "ASP"), ("f6", "a")] }
 
-def kinyarwanda_57d : LinguisticExample :=
+def kinyarwanda_57d : Datum :=
   { id := "baker1985_kinyarwanda_57d"
     source := ⟨"kimenyi-1980", "(57d)"⟩
     reportedIn := some ⟨"baker-1985", "(57d)"⟩
@@ -186,6 +186,6 @@ def kinyarwanda_57d : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "write"), ("valence", "transitive"), ("surfaceSubject", "patient"), ("m1", "SP"), ("f1", "i"), ("m2", "PRS"), ("f2", "ra"), ("m3", "write"), ("f3", "andik"), ("m4", "INSTR"), ("f4", "iish"), ("m5", "PASS"), ("f5", "w"), ("m6", "ASP"), ("f6", "a")] }
 
-def all : List LinguisticExample := [chamorro_15a, chamorro_15b, chamorro_15c, chamorro_25, quechua_39a, quechua_39b, bemba_49a, bemba_49b, huichol_55, chimwiini_56c, chimwiini_56d, kinyarwanda_57c, kinyarwanda_57d]
+def all : List Datum := [chamorro_15a, chamorro_15b, chamorro_15c, chamorro_25, quechua_39a, quechua_39b, bemba_49a, bemba_49b, huichol_55, chimwiini_56c, chimwiini_56d, kinyarwanda_57c, kinyarwanda_57d]
 
 end Baker1985.Examples

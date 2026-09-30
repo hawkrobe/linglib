@@ -77,31 +77,31 @@ def kashmiri : AgreementSystem := ⟨.standard, fullProbeStd⟩
 /-! ### The examples -/
 
 /-- The person a feature of an example names. -/
-def person? (e : LinguisticExample) (key : String) : Option Person :=
+def person? (e : Datum) (key : String) : Option Person :=
   e.parse? key [("1", .first), ("2", .second), ("3", .third)]
 
 /-- The agreement system of an example's language. -/
-def system? (e : LinguisticExample) : Option AgreementSystem :=
+def system? (e : Datum) : Option AgreementSystem :=
   [("basq1248", basque), ("nucl1302", basque), ("otta1242", nishnaabemwin),
     ("kash1277", kashmiri)].lookup e.language
 
 /-- The person cyclic Agree gives the core slot in an example. -/
-def value? (e : LinguisticExample) : Option Person := do
+def value? (e : Datum) : Option Person := do
   (← system? e).value (← person? e "ea") (← person? e "ia")
 
 /-- Whether cyclic Agree makes an example's context inverse. -/
-def isInverse? (e : LinguisticExample) : Option Bool := do
+def isInverse? (e : Datum) : Option Bool := do
   (← system? e).isInverse (← person? e "ea") (← person? e "ia")
 
 /-- The Basque paradigm (2), where the core slot tracks the IA in (2a–c) and displaces to the EA
 only when the 3rd-person IA leaves the [u2] residue (2d). -/
-def basqueRows : List LinguisticExample :=
+def basqueRows : List Datum :=
   [Examples.br2009_2a, Examples.br2009_2b, Examples.br2009_2c, Examples.br2009_2d]
 
 /-- The examples the paper annotates with the controller of the core slot. They are the Basque
 paradigm (2) and (3), the Nishnaabemwin paradigm (17) under the [u-3-1-2] probe of the addressee
 geometry, and the Georgian pair (18). -/
-def controllerRows : List LinguisticExample :=
+def controllerRows : List Datum :=
   basqueRows ++ [Examples.br2009_3, Examples.br2009_17a, Examples.br2009_17b,
     Examples.br2009_17c, Examples.br2009_17d, Examples.br2009_18a, Examples.br2009_18b]
 
@@ -133,7 +133,7 @@ theorem basque_not_hierarchy (r : Person → ℕ) (hr : r .first ≠ r .second) 
   omega
 
 /-- The first morph of an example's last word, a prefix. -/
-def slotPrefix? (e : LinguisticExample) : Option Morphology.Morph :=
+def slotPrefix? (e : Datum) : Option Morphology.Morph :=
   e.surfaceTokens.getLast?.map fun w ↦ .pref (String.ofList (w.toList.takeWhile (· ≠ '-')))
 
 /-- The auxiliaries of (2) begin with the Fragment's absolutive prefix for the person cyclic
@@ -173,7 +173,7 @@ def affixSet : Controller → Georgian.AffixSet
   | .ea => .A
 
 /-- The argument cyclic Agree makes the controller of the core slot in an example. -/
-def controller? (e : LinguisticExample) : Option Controller := do
+def controller? (e : Datum) : Option Controller := do
   (← system? e).controller (← person? e "ea") (← person? e "ia")
 
 /-- Second-cycle morphology in (18). The 1st person singular is spelled by the Fragment's Set B

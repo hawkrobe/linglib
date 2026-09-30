@@ -17,7 +17,7 @@ namespace Tham2025.Examples
 
 open Data.Examples
 
-def ex_4a : LinguisticExample :=
+def ex_4a : Datum :=
   { id := "tham2025_4a"
     source := ⟨"tham-2025", "(4a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_4a : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_5a : LinguisticExample :=
+def ex_5a : Datum :=
   { id := "tham2025_5a"
     source := ⟨"tham-2025", "(5a)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_5a : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_9 : LinguisticExample :=
+def ex_9 : Datum :=
   { id := "tham2025_9"
     source := ⟨"tham-2025", "(9)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_9 : LinguisticExample :=
     readings := [("the cracking takes place after five minutes", .acceptable), ("the cracking lasts five minutes", .unacceptable)]
     paperFeatures := [] }
 
-def ex_10a : LinguisticExample :=
+def ex_10a : Datum :=
   { id := "tham2025_10a"
     source := ⟨"tham-2025", "(10a)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_10a : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_10c : LinguisticExample :=
+def ex_10c : Datum :=
   { id := "tham2025_10c"
     source := ⟨"tham-2025", "(10c)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_10c : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_11a : LinguisticExample :=
+def ex_11a : Datum :=
   { id := "tham2025_11a"
     source := ⟨"tham-2025", "(11a)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_11a : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_11b : LinguisticExample :=
+def ex_11b : Datum :=
   { id := "tham2025_11b"
     source := ⟨"tham-2025", "(11b)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_11b : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_12a : LinguisticExample :=
+def ex_12a : Datum :=
   { id := "tham2025_12a"
     source := ⟨"tham-2025", "(12a)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_12a : LinguisticExample :=
     readings := [("the shattering takes place after two minutes", .acceptable), ("the shattering lasts two minutes", .unacceptable)]
     paperFeatures := [] }
 
-def ex_12b : LinguisticExample :=
+def ex_12b : Datum :=
   { id := "tham2025_12b"
     source := ⟨"tham-2025", "(12b)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_12b : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_12c : LinguisticExample :=
+def ex_12c : Datum :=
   { id := "tham2025_12c"
     source := ⟨"tham-2025", "(12c)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_12c : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_13b : LinguisticExample :=
+def ex_13b : Datum :=
   { id := "tham2025_13b"
     source := ⟨"tham-2025", "(13b)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_13b : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_14a : LinguisticExample :=
+def ex_14a : Datum :=
   { id := "tham2025_14a"
     source := ⟨"tham-2025", "(14a)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_14a : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_14b : LinguisticExample :=
+def ex_14b : Datum :=
   { id := "tham2025_14b"
     source := ⟨"tham-2025", "(14b)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_14b : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_15a : LinguisticExample :=
+def ex_15a : Datum :=
   { id := "tham2025_15a"
     source := ⟨"tham-2025", "(15a)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_15a : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_15b : LinguisticExample :=
+def ex_15b : Datum :=
   { id := "tham2025_15b"
     source := ⟨"tham-2025", "(15b)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_15b : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_16 : LinguisticExample :=
+def ex_16 : Datum :=
   { id := "tham2025_16"
     source := ⟨"tham-2025", "(16)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_16 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_17a : LinguisticExample :=
+def ex_17a : Datum :=
   { id := "tham2025_17a"
     source := ⟨"tham-2025", "(17a)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex_17a : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_17b : LinguisticExample :=
+def ex_17b : Datum :=
   { id := "tham2025_17b"
     source := ⟨"tham-2025", "(17b)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex_17b : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_18c : LinguisticExample :=
+def ex_18c : Datum :=
   { id := "tham2025_18c"
     source := ⟨"tham-2025", "(18c)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex_18c : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_19a : LinguisticExample :=
+def ex_19a : Datum :=
   { id := "tham2025_19a"
     source := ⟨"tham-2025", "(19a)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex_19a : LinguisticExample :=
     readings := [("many branching cracks: the quantity dimension", .acceptable)]
     paperFeatures := [] }
 
-def ex_20a : LinguisticExample :=
+def ex_20a : Datum :=
   { id := "tham2025_20a"
     source := ⟨"tham-2025", "(20a)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex_20a : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_21a : LinguisticExample :=
+def ex_21a : Datum :=
   { id := "tham2025_21a"
     source := ⟨"tham-2025", "(21a)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex_21a : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_22b : LinguisticExample :=
+def ex_22b : Datum :=
   { id := "tham2025_22b"
     source := ⟨"tham-2025", "(22b)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex_22b : LinguisticExample :=
     readings := [("many dents: the quantity dimension", .acceptable), ("one serious dent: the quality dimension", .acceptable)]
     paperFeatures := [] }
 
-def ex_23b : LinguisticExample :=
+def ex_23b : Datum :=
   { id := "tham2025_23b"
     source := ⟨"tham-2025", "(23b)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex_23b : LinguisticExample :=
     readings := [("a deep crack: the quality dimension", .acceptable)]
     paperFeatures := [] }
 
-def ex_26 : LinguisticExample :=
+def ex_26 : Datum :=
   { id := "tham2025_26"
     source := ⟨"tham-2025", "(26)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex_26 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_27 : LinguisticExample :=
+def ex_27 : Datum :=
   { id := "tham2025_27"
     source := ⟨"tham-2025", "(27)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex_27 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_28a : LinguisticExample :=
+def ex_28a : Datum :=
   { id := "tham2025_28a"
     source := ⟨"tham-2025", "(28a)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def ex_28a : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_28c : LinguisticExample :=
+def ex_28c : Datum :=
   { id := "tham2025_28c"
     source := ⟨"tham-2025", "(28c)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def ex_28c : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_29 : LinguisticExample :=
+def ex_29 : Datum :=
   { id := "tham2025_29"
     source := ⟨"tham-2025", "(29)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def ex_29 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_30a : LinguisticExample :=
+def ex_30a : Datum :=
   { id := "tham2025_30a"
     source := ⟨"tham-2025", "(30a)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def ex_30a : LinguisticExample :=
     readings := [("many cracks: the quantity dimension", .acceptable), ("one deep crack: the quality dimension", .unacceptable)]
     paperFeatures := [] }
 
-def ex_32 : LinguisticExample :=
+def ex_32 : Datum :=
   { id := "tham2025_32"
     source := ⟨"tham-2025", "(32)"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def ex_32 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_33 : LinguisticExample :=
+def ex_33 : Datum :=
   { id := "tham2025_33"
     source := ⟨"tham-2025", "(33)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def ex_33 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_36b : LinguisticExample :=
+def ex_36b : Datum :=
   { id := "tham2025_36b"
     source := ⟨"tham-2025", "(36b)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def ex_36b : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_37a : LinguisticExample :=
+def ex_37a : Datum :=
   { id := "tham2025_37a"
     source := ⟨"tham-2025", "(37a)"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def ex_37a : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_40a : LinguisticExample :=
+def ex_40a : Datum :=
   { id := "tham2025_40a"
     source := ⟨"tham-2025", "(40a)"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def ex_40a : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_40b : LinguisticExample :=
+def ex_40b : Datum :=
   { id := "tham2025_40b"
     source := ⟨"tham-2025", "(40b)"⟩
     reportedIn := none
@@ -485,7 +485,7 @@ def ex_40b : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_41a : LinguisticExample :=
+def ex_41a : Datum :=
   { id := "tham2025_41a"
     source := ⟨"tham-2025", "(41a)"⟩
     reportedIn := none
@@ -498,7 +498,7 @@ def ex_41a : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_41b : LinguisticExample :=
+def ex_41b : Datum :=
   { id := "tham2025_41b"
     source := ⟨"tham-2025", "(41b)"⟩
     reportedIn := none
@@ -511,7 +511,7 @@ def ex_41b : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_42a : LinguisticExample :=
+def ex_42a : Datum :=
   { id := "tham2025_42a"
     source := ⟨"tham-2025", "(42a)"⟩
     reportedIn := none
@@ -524,7 +524,7 @@ def ex_42a : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_42b : LinguisticExample :=
+def ex_42b : Datum :=
   { id := "tham2025_42b"
     source := ⟨"tham-2025", "(42b)"⟩
     reportedIn := none
@@ -537,7 +537,7 @@ def ex_42b : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_43a : LinguisticExample :=
+def ex_43a : Datum :=
   { id := "tham2025_43a"
     source := ⟨"tham-2025", "(43a)"⟩
     reportedIn := none
@@ -550,7 +550,7 @@ def ex_43a : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_44a : LinguisticExample :=
+def ex_44a : Datum :=
   { id := "tham2025_44a"
     source := ⟨"tham-2025", "(44a)"⟩
     reportedIn := none
@@ -563,7 +563,7 @@ def ex_44a : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_45a : LinguisticExample :=
+def ex_45a : Datum :=
   { id := "tham2025_45a"
     source := ⟨"tham-2025", "(45a)"⟩
     reportedIn := none
@@ -576,7 +576,7 @@ def ex_45a : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_45b : LinguisticExample :=
+def ex_45b : Datum :=
   { id := "tham2025_45b"
     source := ⟨"tham-2025", "(45b)"⟩
     reportedIn := none
@@ -589,7 +589,7 @@ def ex_45b : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_45c : LinguisticExample :=
+def ex_45c : Datum :=
   { id := "tham2025_45c"
     source := ⟨"tham-2025", "(45c)"⟩
     reportedIn := none
@@ -602,6 +602,6 @@ def ex_45c : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def all : List LinguisticExample := [ex_4a, ex_5a, ex_9, ex_10a, ex_10c, ex_11a, ex_11b, ex_12a, ex_12b, ex_12c, ex_13b, ex_14a, ex_14b, ex_15a, ex_15b, ex_16, ex_17a, ex_17b, ex_18c, ex_19a, ex_20a, ex_21a, ex_22b, ex_23b, ex_26, ex_27, ex_28a, ex_28c, ex_29, ex_30a, ex_32, ex_33, ex_36b, ex_37a, ex_40a, ex_40b, ex_41a, ex_41b, ex_42a, ex_42b, ex_43a, ex_44a, ex_45a, ex_45b, ex_45c]
+def all : List Datum := [ex_4a, ex_5a, ex_9, ex_10a, ex_10c, ex_11a, ex_11b, ex_12a, ex_12b, ex_12c, ex_13b, ex_14a, ex_14b, ex_15a, ex_15b, ex_16, ex_17a, ex_17b, ex_18c, ex_19a, ex_20a, ex_21a, ex_22b, ex_23b, ex_26, ex_27, ex_28a, ex_28c, ex_29, ex_30a, ex_32, ex_33, ex_36b, ex_37a, ex_40a, ex_40b, ex_41a, ex_41b, ex_42a, ex_42b, ex_43a, ex_44a, ex_45a, ex_45b, ex_45c]
 
 end Tham2025.Examples

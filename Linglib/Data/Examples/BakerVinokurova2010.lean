@@ -17,7 +17,7 @@ namespace BakerVinokurova2010.Examples
 
 open Data.Examples
 
-def ex_3a : LinguisticExample :=
+def ex_3a : Datum :=
   { id := "bakervinokurova2010_3a"
     source := ⟨"baker-vinokurova-2010", "(3a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_3a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectCase", "NOM")] }
 
-def ex_3b : LinguisticExample :=
+def ex_3b : Datum :=
   { id := "bakervinokurova2010_3b"
     source := ⟨"baker-vinokurova-2010", "(3b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_3b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("possessorCase", "GEN"), ("possesseeAgreement", "yes"), ("subjectCase", "NOM"), ("objectCase", "ACC"), ("objectSpecific", "yes")] }
 
-def ex_3c : LinguisticExample :=
+def ex_3c : Datum :=
   { id := "bakervinokurova2010_3c"
     source := ⟨"baker-vinokurova-2010", "(3c)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_3c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectCase", "NOM"), ("goalCase", "DAT"), ("objectCase", "ACC")] }
 
-def ex_7b : LinguisticExample :=
+def ex_7b : Datum :=
   { id := "bakervinokurova2010_7b"
     source := ⟨"baker-vinokurova-2010", "(7b)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_7b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectCase", "NOM"), ("objectCase", "ACC"), ("objectSpecific", "yes")] }
 
-def ex_7c : LinguisticExample :=
+def ex_7c : Datum :=
   { id := "bakervinokurova2010_7c"
     source := ⟨"baker-vinokurova-2010", "(7c)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_7c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectCase", "NOM"), ("goalCase", "DAT"), ("objectCase", "ACC")] }
 
-def ex_8a : LinguisticExample :=
+def ex_8a : Datum :=
   { id := "bakervinokurova2010_8a"
     source := ⟨"baker-vinokurova-2010", "(8a)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_8a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectCase", "NOM"), ("objectCase", "bare"), ("objectSpecific", "no"), ("objectAdjacent", "yes")] }
 
-def ex_10a : LinguisticExample :=
+def ex_10a : Datum :=
   { id := "bakervinokurova2010_10a"
     source := ⟨"baker-vinokurova-2010", "(10a)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_10a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectCase", "NOM"), ("objectCase", "ACC"), ("objectAdjacent", "no")] }
 
-def ex_10a_bare : LinguisticExample :=
+def ex_10a_bare : Datum :=
   { id := "bakervinokurova2010_10a_bare"
     source := ⟨"baker-vinokurova-2010", "(10a)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_10a_bare : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectCase", "NOM"), ("objectCase", "bare"), ("objectAdjacent", "no")] }
 
-def ex_10b : LinguisticExample :=
+def ex_10b : Datum :=
   { id := "bakervinokurova2010_10b"
     source := ⟨"baker-vinokurova-2010", "(10b)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_10b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectCase", "NOM"), ("objectCase", "bare"), ("objectAdjacent", "yes")] }
 
-def ex_11a : LinguisticExample :=
+def ex_11a : Datum :=
   { id := "bakervinokurova2010_11a"
     source := ⟨"baker-vinokurova-2010", "(11a)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_11a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectCase", "NOM"), ("goalCase", "DAT"), ("objectCase", "bare"), ("objectSpecific", "no"), ("objectAdjacent", "yes")] }
 
-def ex_11b : LinguisticExample :=
+def ex_11b : Datum :=
   { id := "bakervinokurova2010_11b"
     source := ⟨"baker-vinokurova-2010", "(11b)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_11b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectCase", "NOM"), ("goalCase", "DAT"), ("objectCase", "ACC"), ("objectSpecific", "yes")] }
 
-def ex_11b_bare : LinguisticExample :=
+def ex_11b_bare : Datum :=
   { id := "bakervinokurova2010_11b_bare"
     source := ⟨"baker-vinokurova-2010", "(11b)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_11b_bare : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectCase", "NOM"), ("goalCase", "DAT"), ("objectCase", "bare"), ("objectAdjacent", "no")] }
 
-def ex_13 : LinguisticExample :=
+def ex_13 : Datum :=
   { id := "bakervinokurova2010_13"
     source := ⟨"baker-vinokurova-2010", "(13)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_13 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectCase", "NOM"), ("goalCase", "DAT"), ("objectCase", "bare"), ("objectSpecific", "no"), ("objectAdjacent", "yes")] }
 
-def ex_13_acc : LinguisticExample :=
+def ex_13_acc : Datum :=
   { id := "bakervinokurova2010_13_acc"
     source := ⟨"baker-vinokurova-2010", "(13)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_13_acc : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectCase", "NOM"), ("goalCase", "ACC"), ("objectCase", "bare"), ("objectSpecific", "no"), ("objectAdjacent", "yes")] }
 
-def ex_14 : LinguisticExample :=
+def ex_14 : Datum :=
   { id := "bakervinokurova2010_14"
     source := ⟨"baker-vinokurova-2010", "(14)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_14 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectCase", "NOM"), ("objectCase", "ACC"), ("objectSpecific", "yes")] }
 
-def ex_16 : LinguisticExample :=
+def ex_16 : Datum :=
   { id := "bakervinokurova2010_16"
     source := ⟨"baker-vinokurova-2010", "(16)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_16 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectCase", "NOM")] }
 
-def ex_16_dat : LinguisticExample :=
+def ex_16_dat : Datum :=
   { id := "bakervinokurova2010_16_dat"
     source := ⟨"baker-vinokurova-2010", "(16)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex_16_dat : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectCase", "DAT")] }
 
-def ex_16_acc : LinguisticExample :=
+def ex_16_acc : Datum :=
   { id := "bakervinokurova2010_16_acc"
     source := ⟨"baker-vinokurova-2010", "(16)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex_16_acc : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectCase", "ACC")] }
 
-def ex_17 : LinguisticExample :=
+def ex_17 : Datum :=
   { id := "bakervinokurova2010_17"
     source := ⟨"baker-vinokurova-2010", "(17)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex_17 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectPosition", "internal"), ("subjectCase", "DAT"), ("objectCase", "bare"), ("objectAdjacent", "yes")] }
 
-def ex_21a : LinguisticExample :=
+def ex_21a : Datum :=
   { id := "bakervinokurova2010_21a"
     source := ⟨"baker-vinokurova-2010", "(21a)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex_21a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "causative"), ("verbAgreement", "yes"), ("subjectCase", "NOM"), ("causeeCase", "ACC"), ("causeeSpecific", "yes")] }
 
-def ex_21a_dat : LinguisticExample :=
+def ex_21a_dat : Datum :=
   { id := "bakervinokurova2010_21a_dat"
     source := ⟨"baker-vinokurova-2010", "(21a)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex_21a_dat : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "causative"), ("verbAgreement", "yes"), ("subjectCase", "NOM"), ("causeeCase", "DAT"), ("causeeSpecific", "yes")] }
 
-def ex_21b : LinguisticExample :=
+def ex_21b : Datum :=
   { id := "bakervinokurova2010_21b"
     source := ⟨"baker-vinokurova-2010", "(21b)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex_21b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "causative"), ("verbAgreement", "yes"), ("subjectCase", "NOM"), ("causeeCase", "DAT"), ("objectCase", "ACC")] }
 
-def ex_21b_bare : LinguisticExample :=
+def ex_21b_bare : Datum :=
   { id := "bakervinokurova2010_21b_bare"
     source := ⟨"baker-vinokurova-2010", "(21b)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex_21b_bare : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "causative"), ("verbAgreement", "yes"), ("subjectCase", "NOM"), ("causeeCase", "DAT"), ("objectCase", "bare"), ("objectAdjacent", "yes")] }
 
-def ex_23a : LinguisticExample :=
+def ex_23a : Datum :=
   { id := "bakervinokurova2010_23a"
     source := ⟨"baker-vinokurova-2010", "(23a)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex_23a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectCase", "NOM"), ("objectCase", "ACC"), ("objectSpecific", "yes")] }
 
-def ex_23b : LinguisticExample :=
+def ex_23b : Datum :=
   { id := "bakervinokurova2010_23b"
     source := ⟨"baker-vinokurova-2010", "(23b)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex_23b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("unaccusative", "yes"), ("subjectCase", "NOM"), ("subjectAdjacent", "yes")] }
 
-def ex_23b_acc : LinguisticExample :=
+def ex_23b_acc : Datum :=
   { id := "bakervinokurova2010_23b_acc"
     source := ⟨"baker-vinokurova-2010", "(23b)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex_23b_acc : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("unaccusative", "yes"), ("subjectCase", "ACC")] }
 
-def ex_24a : LinguisticExample :=
+def ex_24a : Datum :=
   { id := "bakervinokurova2010_24a"
     source := ⟨"baker-vinokurova-2010", "(24a)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def ex_24a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "passive"), ("verbAgreement", "yes"), ("objectCase", "ACC"), ("objectSpecific", "yes")] }
 
-def ex_24a_nom : LinguisticExample :=
+def ex_24a_nom : Datum :=
   { id := "bakervinokurova2010_24a_nom"
     source := ⟨"baker-vinokurova-2010", "(24a)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def ex_24a_nom : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "passive"), ("verbAgreement", "yes"), ("objectCase", "NOM"), ("objectSpecific", "yes")] }
 
-def ex_24b : LinguisticExample :=
+def ex_24b : Datum :=
   { id := "bakervinokurova2010_24b"
     source := ⟨"baker-vinokurova-2010", "(24b)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def ex_24b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "passive"), ("verbAgreement", "yes"), ("objectCase", "ACC"), ("objectSpecific", "yes")] }
 
-def ex_25a : LinguisticExample :=
+def ex_25a : Datum :=
   { id := "bakervinokurova2010_25a"
     source := ⟨"baker-vinokurova-2010", "(25a)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def ex_25a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "passive"), ("verbAgreement", "yes"), ("agentOrientedAdverb", "yes"), ("objectCase", "NOM"), ("objectSpecific", "yes"), ("objectAdjacent", "no")] }
 
-def ex_25b : LinguisticExample :=
+def ex_25b : Datum :=
   { id := "bakervinokurova2010_25b"
     source := ⟨"baker-vinokurova-2010", "(25b)"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def ex_25b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "passive"), ("verbAgreement", "yes"), ("agentOrientedAdverb", "yes"), ("objectCase", "ACC"), ("objectSpecific", "yes"), ("objectAdjacent", "no")] }
 
-def ex_27 : LinguisticExample :=
+def ex_27 : Datum :=
   { id := "bakervinokurova2010_27"
     source := ⟨"baker-vinokurova-2010", "(27)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def ex_27 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "passive"), ("verbAgreement", "yes"), ("goalCase", "DAT"), ("objectCase", "ACC"), ("objectSpecific", "yes")] }
 
-def ex_27_nom : LinguisticExample :=
+def ex_27_nom : Datum :=
   { id := "bakervinokurova2010_27_nom"
     source := ⟨"baker-vinokurova-2010", "(27)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def ex_27_nom : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "passive"), ("verbAgreement", "yes"), ("goalCase", "DAT"), ("objectCase", "NOM"), ("objectSpecific", "yes")] }
 
-def ex_27_goalnom : LinguisticExample :=
+def ex_27_goalnom : Datum :=
   { id := "bakervinokurova2010_27_goalnom"
     source := ⟨"baker-vinokurova-2010", "(27)"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def ex_27_goalnom : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "passive"), ("verbAgreement", "yes"), ("goalCase", "NOM"), ("objectCase", "bare"), ("objectSpecific", "no"), ("objectAdjacent", "yes")] }
 
-def ex_29a : LinguisticExample :=
+def ex_29a : Datum :=
   { id := "bakervinokurova2010_29a"
     source := ⟨"baker-vinokurova-2010", "(29a)"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def ex_29a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "agentiveNominal"), ("verbAgreement", "no"), ("objectCase", "ACC"), ("objectSpecific", "yes")] }
 
-def ex_29b : LinguisticExample :=
+def ex_29b : Datum :=
   { id := "bakervinokurova2010_29b"
     source := ⟨"baker-vinokurova-2010", "(29b)"⟩
     reportedIn := none
@@ -485,7 +485,7 @@ def ex_29b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "agentiveNominal"), ("verbAgreement", "no"), ("objectCase", "ACC"), ("objectSpecific", "yes")] }
 
-def ex_33a_acc : LinguisticExample :=
+def ex_33a_acc : Datum :=
   { id := "bakervinokurova2010_33a_acc"
     source := ⟨"baker-vinokurova-2010", "(33a)"⟩
     reportedIn := none
@@ -498,7 +498,7 @@ def ex_33a_acc : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "eventNominal"), ("verbAgreement", "no"), ("unaccusative", "yes"), ("subjectCase", "ACC")] }
 
-def ex_34 : LinguisticExample :=
+def ex_34 : Datum :=
   { id := "bakervinokurova2010_34"
     source := ⟨"baker-vinokurova-2010", "(34)"⟩
     reportedIn := none
@@ -511,7 +511,7 @@ def ex_34 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "agentiveNominal"), ("verbAgreement", "no"), ("objectCase", "bare"), ("objectSpecific", "no"), ("objectAdjacent", "yes")] }
 
-def ex_35 : LinguisticExample :=
+def ex_35 : Datum :=
   { id := "bakervinokurova2010_35"
     source := ⟨"baker-vinokurova-2010", "(35)"⟩
     reportedIn := none
@@ -524,7 +524,7 @@ def ex_35 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "agentiveNominal"), ("verbAgreement", "no"), ("goalCase", "DAT"), ("objectCase", "bare"), ("objectSpecific", "no"), ("objectAdjacent", "yes")] }
 
-def ex_37a : LinguisticExample :=
+def ex_37a : Datum :=
   { id := "bakervinokurova2010_37a"
     source := ⟨"baker-vinokurova-2010", "(37a)"⟩
     reportedIn := none
@@ -537,7 +537,7 @@ def ex_37a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectCase", "NOM"), ("raisedCase", "ACC")] }
 
-def ex_37b : LinguisticExample :=
+def ex_37b : Datum :=
   { id := "bakervinokurova2010_37b"
     source := ⟨"baker-vinokurova-2010", "(37b)"⟩
     reportedIn := none
@@ -550,7 +550,7 @@ def ex_37b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectCase", "NOM"), ("raisedCase", "ACC")] }
 
-def ex_39a : LinguisticExample :=
+def ex_39a : Datum :=
   { id := "bakervinokurova2010_39a"
     source := ⟨"baker-vinokurova-2010", "(39a)"⟩
     reportedIn := none
@@ -563,7 +563,7 @@ def ex_39a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectCase", "NOM"), ("raisedCase", "ACC")] }
 
-def ex_39b : LinguisticExample :=
+def ex_39b : Datum :=
   { id := "bakervinokurova2010_39b"
     source := ⟨"baker-vinokurova-2010", "(39b)"⟩
     reportedIn := none
@@ -576,7 +576,7 @@ def ex_39b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectCase", "NOM"), ("raisedCase", "ACC")] }
 
-def ex_40 : LinguisticExample :=
+def ex_40 : Datum :=
   { id := "bakervinokurova2010_40"
     source := ⟨"baker-vinokurova-2010", "(40)"⟩
     reportedIn := none
@@ -589,7 +589,7 @@ def ex_40 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectCase", "NOM"), ("raisedCase", "ACC")] }
 
-def ex_42a : LinguisticExample :=
+def ex_42a : Datum :=
   { id := "bakervinokurova2010_42a"
     source := ⟨"baker-vinokurova-2010", "(42a)"⟩
     reportedIn := none
@@ -602,7 +602,7 @@ def ex_42a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("raisedCase", "NOM")] }
 
-def ex_42a_acc : LinguisticExample :=
+def ex_42a_acc : Datum :=
   { id := "bakervinokurova2010_42a_acc"
     source := ⟨"baker-vinokurova-2010", "(42a)"⟩
     reportedIn := none
@@ -615,7 +615,7 @@ def ex_42a_acc : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("raisedCase", "ACC")] }
 
-def ex_42b : LinguisticExample :=
+def ex_42b : Datum :=
   { id := "bakervinokurova2010_42b"
     source := ⟨"baker-vinokurova-2010", "(42b)"⟩
     reportedIn := none
@@ -628,7 +628,7 @@ def ex_42b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("raisedCase", "NOM")] }
 
-def ex_42b_acc : LinguisticExample :=
+def ex_42b_acc : Datum :=
   { id := "bakervinokurova2010_42b_acc"
     source := ⟨"baker-vinokurova-2010", "(42b)"⟩
     reportedIn := none
@@ -641,7 +641,7 @@ def ex_42b_acc : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("raisedCase", "ACC")] }
 
-def ex_43 : LinguisticExample :=
+def ex_43 : Datum :=
   { id := "bakervinokurova2010_43"
     source := ⟨"baker-vinokurova-2010", "(43)"⟩
     reportedIn := none
@@ -654,7 +654,7 @@ def ex_43 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectCase", "NOM"), ("goalCase", "ACC")] }
 
-def ex_44 : LinguisticExample :=
+def ex_44 : Datum :=
   { id := "bakervinokurova2010_44"
     source := ⟨"baker-vinokurova-2010", "(44)"⟩
     reportedIn := none
@@ -667,7 +667,7 @@ def ex_44 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectCase", "NOM"), ("goalCase", "DAT"), ("raisedCase", "ACC")] }
 
-def ex_44_acc : LinguisticExample :=
+def ex_44_acc : Datum :=
   { id := "bakervinokurova2010_44_acc"
     source := ⟨"baker-vinokurova-2010", "(44)"⟩
     reportedIn := none
@@ -680,7 +680,7 @@ def ex_44_acc : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectCase", "NOM"), ("goalCase", "ACC"), ("raisedCase", "ACC")] }
 
-def ex_50b : LinguisticExample :=
+def ex_50b : Datum :=
   { id := "bakervinokurova2010_50b"
     source := ⟨"baker-vinokurova-2010", "(50b)"⟩
     reportedIn := none
@@ -693,7 +693,7 @@ def ex_50b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "pp"), ("verbAgreement", "yes"), ("subjectCase", "NOM"), ("pObjectCase", "ACC")] }
 
-def ex_51a_acc : LinguisticExample :=
+def ex_51a_acc : Datum :=
   { id := "bakervinokurova2010_51a_acc"
     source := ⟨"baker-vinokurova-2010", "(51a)"⟩
     reportedIn := none
@@ -706,7 +706,7 @@ def ex_51a_acc : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "pp"), ("verbAgreement", "no"), ("pObjectCase", "ACC")] }
 
-def ex_54b : LinguisticExample :=
+def ex_54b : Datum :=
   { id := "bakervinokurova2010_54b"
     source := ⟨"baker-vinokurova-2010", "(54b)"⟩
     reportedIn := none
@@ -719,7 +719,7 @@ def ex_54b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectCase", "NOM"), ("objectCase", "ACC"), ("objectSpecific", "yes"), ("objectAdjacent", "no")] }
 
-def ex_56a : LinguisticExample :=
+def ex_56a : Datum :=
   { id := "bakervinokurova2010_56a"
     source := ⟨"baker-vinokurova-2010", "(56a)"⟩
     reportedIn := none
@@ -732,7 +732,7 @@ def ex_56a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectCase", "NOM"), ("objectCase", "bare"), ("objectSpecific", "no"), ("objectAdjacent", "no")] }
 
-def ex_56b : LinguisticExample :=
+def ex_56b : Datum :=
   { id := "bakervinokurova2010_56b"
     source := ⟨"baker-vinokurova-2010", "(56b)"⟩
     reportedIn := none
@@ -745,7 +745,7 @@ def ex_56b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectCase", "NOM"), ("objectCase", "bare"), ("objectSpecific", "no"), ("objectAdjacent", "no")] }
 
-def ex_57 : LinguisticExample :=
+def ex_57 : Datum :=
   { id := "bakervinokurova2010_57"
     source := ⟨"baker-vinokurova-2010", "(57)"⟩
     reportedIn := none
@@ -758,7 +758,7 @@ def ex_57 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectCase", "NOM"), ("objectCase", "bare"), ("objectSpecific", "no"), ("objectAdjacent", "yes")] }
 
-def ex_61a : LinguisticExample :=
+def ex_61a : Datum :=
   { id := "bakervinokurova2010_61a"
     source := ⟨"baker-vinokurova-2010", "(61a)"⟩
     reportedIn := none
@@ -771,7 +771,7 @@ def ex_61a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "relative"), ("verbAgreement", "no"), ("headNounAgreement", "no"), ("unaccusative", "yes"), ("subjectCase", "bare"), ("subjectSpecific", "no"), ("subjectAdjacent", "yes")] }
 
-def ex_62a : LinguisticExample :=
+def ex_62a : Datum :=
   { id := "bakervinokurova2010_62a"
     source := ⟨"baker-vinokurova-2010", "(62a)"⟩
     reportedIn := none
@@ -784,7 +784,7 @@ def ex_62a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "relative"), ("verbAgreement", "no"), ("headNounAgreement", "no"), ("subjectCase", "bare"), ("objectCase", "bare"), ("objectSpecific", "no"), ("objectAdjacent", "yes")] }
 
-def ex_62c : LinguisticExample :=
+def ex_62c : Datum :=
   { id := "bakervinokurova2010_62c"
     source := ⟨"baker-vinokurova-2010", "(62c)"⟩
     reportedIn := none
@@ -797,7 +797,7 @@ def ex_62c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "relative"), ("verbAgreement", "no"), ("headNounAgreement", "no"), ("subjectCase", "bare"), ("subjectSpecific", "no"), ("subjectAdjacent", "yes")] }
 
-def ex_62d : LinguisticExample :=
+def ex_62d : Datum :=
   { id := "bakervinokurova2010_62d"
     source := ⟨"baker-vinokurova-2010", "(62d)"⟩
     reportedIn := none
@@ -810,7 +810,7 @@ def ex_62d : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "relative"), ("verbAgreement", "no"), ("headNounAgreement", "no"), ("unaccusative", "yes"), ("subjectCase", "bare"), ("subjectSpecific", "yes"), ("subjectAdjacent", "no")] }
 
-def ex_63a : LinguisticExample :=
+def ex_63a : Datum :=
   { id := "bakervinokurova2010_63a"
     source := ⟨"baker-vinokurova-2010", "(63a)"⟩
     reportedIn := none
@@ -823,7 +823,7 @@ def ex_63a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "relative"), ("verbAgreement", "no"), ("headNounAgreement", "yes"), ("subjectCase", "GEN"), ("objectCase", "bare"), ("objectSpecific", "no"), ("objectAdjacent", "yes")] }
 
-def ex_63c : LinguisticExample :=
+def ex_63c : Datum :=
   { id := "bakervinokurova2010_63c"
     source := ⟨"baker-vinokurova-2010", "(63c)"⟩
     reportedIn := none
@@ -836,7 +836,7 @@ def ex_63c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "relative"), ("verbAgreement", "no"), ("headNounAgreement", "yes"), ("subjectCase", "GEN")] }
 
-def ex_63d : LinguisticExample :=
+def ex_63d : Datum :=
   { id := "bakervinokurova2010_63d"
     source := ⟨"baker-vinokurova-2010", "(63d)"⟩
     reportedIn := none
@@ -849,7 +849,7 @@ def ex_63d : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "relative"), ("verbAgreement", "no"), ("headNounAgreement", "yes"), ("unaccusative", "yes"), ("subjectCase", "GEN"), ("subjectSpecific", "yes"), ("subjectAdjacent", "no")] }
 
-def ex_64 : LinguisticExample :=
+def ex_64 : Datum :=
   { id := "bakervinokurova2010_64"
     source := ⟨"baker-vinokurova-2010", "(64)"⟩
     reportedIn := none
@@ -862,7 +862,7 @@ def ex_64 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "relative"), ("verbAgreement", "no"), ("headNounAgreement", "yes"), ("subjectCase", "GEN"), ("possessorCase", "GEN"), ("possesseeAgreement", "yes")] }
 
-def ex_65 : LinguisticExample :=
+def ex_65 : Datum :=
   { id := "bakervinokurova2010_65"
     source := ⟨"baker-vinokurova-2010", "(65)"⟩
     reportedIn := none
@@ -875,7 +875,7 @@ def ex_65 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "passive"), ("verbAgreement", "yes"), ("goalCase", "DAT"), ("objectCase", "ACC"), ("agreesWith", "none")] }
 
-def ex_65_pl : LinguisticExample :=
+def ex_65_pl : Datum :=
   { id := "bakervinokurova2010_65_pl"
     source := ⟨"baker-vinokurova-2010", "(65)"⟩
     reportedIn := none
@@ -888,7 +888,7 @@ def ex_65_pl : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "passive"), ("verbAgreement", "yes"), ("goalCase", "DAT"), ("objectCase", "ACC"), ("agreesWith", "object")] }
 
-def ex_66 : LinguisticExample :=
+def ex_66 : Datum :=
   { id := "bakervinokurova2010_66"
     source := ⟨"baker-vinokurova-2010", "(66)"⟩
     reportedIn := none
@@ -901,7 +901,7 @@ def ex_66 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "passive"), ("verbAgreement", "yes"), ("goalCase", "DAT"), ("objectCase", "NOM"), ("objectSpecific", "yes"), ("agreesWith", "object")] }
 
-def ex_66_sg : LinguisticExample :=
+def ex_66_sg : Datum :=
   { id := "bakervinokurova2010_66_sg"
     source := ⟨"baker-vinokurova-2010", "(66)"⟩
     reportedIn := none
@@ -914,7 +914,7 @@ def ex_66_sg : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "passive"), ("verbAgreement", "yes"), ("goalCase", "DAT"), ("objectCase", "NOM"), ("objectSpecific", "yes"), ("agreesWith", "none")] }
 
-def ex_68a : LinguisticExample :=
+def ex_68a : Datum :=
   { id := "bakervinokurova2010_68a"
     source := ⟨"baker-vinokurova-2010", "(68a)"⟩
     reportedIn := none
@@ -927,7 +927,7 @@ def ex_68a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "nounComplement"), ("verbAgreement", "yes"), ("headNounAgreement", "no"), ("subjectCase", "NOM")] }
 
-def ex_68b : LinguisticExample :=
+def ex_68b : Datum :=
   { id := "bakervinokurova2010_68b"
     source := ⟨"baker-vinokurova-2010", "(68b)"⟩
     reportedIn := none
@@ -940,7 +940,7 @@ def ex_68b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "nounComplement"), ("verbAgreement", "yes"), ("headNounAgreement", "no"), ("subjectCase", "NOM")] }
 
-def ex_68c : LinguisticExample :=
+def ex_68c : Datum :=
   { id := "bakervinokurova2010_68c"
     source := ⟨"baker-vinokurova-2010", "(68c)"⟩
     reportedIn := none
@@ -953,7 +953,7 @@ def ex_68c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "nounComplement"), ("verbAgreement", "no"), ("headNounAgreement", "yes"), ("subjectCase", "GEN")] }
 
-def ex_70 : LinguisticExample :=
+def ex_70 : Datum :=
   { id := "bakervinokurova2010_70"
     source := ⟨"baker-vinokurova-2010", "(70)"⟩
     reportedIn := none
@@ -966,7 +966,7 @@ def ex_70 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "nounComplement"), ("verbAgreement", "no"), ("headNounAgreement", "no"), ("subjectCase", "bare")] }
 
-def ex_71b : LinguisticExample :=
+def ex_71b : Datum :=
   { id := "bakervinokurova2010_71b"
     source := ⟨"baker-vinokurova-2010", "(71b)"⟩
     reportedIn := none
@@ -979,7 +979,7 @@ def ex_71b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "possessive"), ("possessorCase", "GEN"), ("possesseeAgreement", "no")] }
 
-def ex_71c : LinguisticExample :=
+def ex_71c : Datum :=
   { id := "bakervinokurova2010_71c"
     source := ⟨"baker-vinokurova-2010", "(71c)"⟩
     reportedIn := none
@@ -992,7 +992,7 @@ def ex_71c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "possessive"), ("possessorCase", "GEN"), ("possesseeAgreement", "yes")] }
 
-def ex_72a : LinguisticExample :=
+def ex_72a : Datum :=
   { id := "bakervinokurova2010_72a"
     source := ⟨"baker-vinokurova-2010", "(72a)"⟩
     reportedIn := none
@@ -1005,7 +1005,7 @@ def ex_72a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "eventNominal"), ("verbAgreement", "no"), ("headNounAgreement", "no"), ("objectCase", "ACC"), ("objectSpecific", "yes")] }
 
-def ex_72b : LinguisticExample :=
+def ex_72b : Datum :=
   { id := "bakervinokurova2010_72b"
     source := ⟨"baker-vinokurova-2010", "(72b)"⟩
     reportedIn := none
@@ -1018,7 +1018,7 @@ def ex_72b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "eventNominal"), ("verbAgreement", "no"), ("headNounAgreement", "no"), ("subjectCase", "bare"), ("objectCase", "ACC"), ("objectSpecific", "yes")] }
 
-def ex_72c : LinguisticExample :=
+def ex_72c : Datum :=
   { id := "bakervinokurova2010_72c"
     source := ⟨"baker-vinokurova-2010", "(72c)"⟩
     reportedIn := none
@@ -1031,7 +1031,7 @@ def ex_72c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "eventNominal"), ("verbAgreement", "no"), ("headNounAgreement", "yes"), ("subjectCase", "GEN"), ("objectCase", "ACC"), ("objectSpecific", "yes")] }
 
-def ex_75a : LinguisticExample :=
+def ex_75a : Datum :=
   { id := "bakervinokurova2010_75a"
     source := ⟨"baker-vinokurova-2010", "(75a)"⟩
     reportedIn := none
@@ -1044,7 +1044,7 @@ def ex_75a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectPosition", "internal"), ("subjectCase", "DAT"), ("objectCase", "NOM"), ("objectAdjacent", "yes"), ("agreesWith", "object")] }
 
-def ex_75a_pl : LinguisticExample :=
+def ex_75a_pl : Datum :=
   { id := "bakervinokurova2010_75a_pl"
     source := ⟨"baker-vinokurova-2010", "(75a)"⟩
     reportedIn := none
@@ -1057,7 +1057,7 @@ def ex_75a_pl : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "clause"), ("verbAgreement", "yes"), ("subjectPosition", "internal"), ("subjectCase", "DAT"), ("objectCase", "NOM"), ("objectAdjacent", "yes"), ("agreesWith", "subject")] }
 
-def ex_75b : LinguisticExample :=
+def ex_75b : Datum :=
   { id := "bakervinokurova2010_75b"
     source := ⟨"baker-vinokurova-2010", "(75b)"⟩
     reportedIn := none
@@ -1070,7 +1070,7 @@ def ex_75b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "passive"), ("verbAgreement", "yes"), ("objectCase", "ACC"), ("agreesWith", "none")] }
 
-def ex_75b_pl : LinguisticExample :=
+def ex_75b_pl : Datum :=
   { id := "bakervinokurova2010_75b_pl"
     source := ⟨"baker-vinokurova-2010", "(75b)"⟩
     reportedIn := none
@@ -1083,6 +1083,6 @@ def ex_75b_pl : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "passive"), ("verbAgreement", "yes"), ("objectCase", "ACC"), ("agreesWith", "object")] }
 
-def all : List LinguisticExample := [ex_3a, ex_3b, ex_3c, ex_7b, ex_7c, ex_8a, ex_10a, ex_10a_bare, ex_10b, ex_11a, ex_11b, ex_11b_bare, ex_13, ex_13_acc, ex_14, ex_16, ex_16_dat, ex_16_acc, ex_17, ex_21a, ex_21a_dat, ex_21b, ex_21b_bare, ex_23a, ex_23b, ex_23b_acc, ex_24a, ex_24a_nom, ex_24b, ex_25a, ex_25b, ex_27, ex_27_nom, ex_27_goalnom, ex_29a, ex_29b, ex_33a_acc, ex_34, ex_35, ex_37a, ex_37b, ex_39a, ex_39b, ex_40, ex_42a, ex_42a_acc, ex_42b, ex_42b_acc, ex_43, ex_44, ex_44_acc, ex_50b, ex_51a_acc, ex_54b, ex_56a, ex_56b, ex_57, ex_61a, ex_62a, ex_62c, ex_62d, ex_63a, ex_63c, ex_63d, ex_64, ex_65, ex_65_pl, ex_66, ex_66_sg, ex_68a, ex_68b, ex_68c, ex_70, ex_71b, ex_71c, ex_72a, ex_72b, ex_72c, ex_75a, ex_75a_pl, ex_75b, ex_75b_pl]
+def all : List Datum := [ex_3a, ex_3b, ex_3c, ex_7b, ex_7c, ex_8a, ex_10a, ex_10a_bare, ex_10b, ex_11a, ex_11b, ex_11b_bare, ex_13, ex_13_acc, ex_14, ex_16, ex_16_dat, ex_16_acc, ex_17, ex_21a, ex_21a_dat, ex_21b, ex_21b_bare, ex_23a, ex_23b, ex_23b_acc, ex_24a, ex_24a_nom, ex_24b, ex_25a, ex_25b, ex_27, ex_27_nom, ex_27_goalnom, ex_29a, ex_29b, ex_33a_acc, ex_34, ex_35, ex_37a, ex_37b, ex_39a, ex_39b, ex_40, ex_42a, ex_42a_acc, ex_42b, ex_42b_acc, ex_43, ex_44, ex_44_acc, ex_50b, ex_51a_acc, ex_54b, ex_56a, ex_56b, ex_57, ex_61a, ex_62a, ex_62c, ex_62d, ex_63a, ex_63c, ex_63d, ex_64, ex_65, ex_65_pl, ex_66, ex_66_sg, ex_68a, ex_68b, ex_68c, ex_70, ex_71b, ex_71c, ex_72a, ex_72b, ex_72c, ex_75a, ex_75a_pl, ex_75b, ex_75b_pl]
 
 end BakerVinokurova2010.Examples

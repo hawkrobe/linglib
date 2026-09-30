@@ -17,7 +17,7 @@ namespace IppolitoKissWilliams2025.Examples
 
 open Data.Examples
 
-def s1 : LinguisticExample :=
+def s1 : Datum :=
   { id := "ippolitokisswilliams2025_s1"
     source := ⟨"ippolito-kiss-williams-2025", "(1)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def s1 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("use", "exclusive only, focus on Paris")] }
 
-def s2 : LinguisticExample :=
+def s2 : Datum :=
   { id := "ippolitokisswilliams2025_s2"
     source := ⟨"ippolito-kiss-williams-2025", "(2)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def s2 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("clauseType", "declarative"), ("position", "right"), ("particle", "only")] }
 
-def s3a : LinguisticExample :=
+def s3a : Datum :=
   { id := "ippolitokisswilliams2025_s3a"
     source := ⟨"ippolito-kiss-williams-2025", "(3a)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def s3a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("source", "Jespersen 1954"), ("clauseType", "declarative"), ("position", "right"), ("particle", "only")] }
 
-def s3b : LinguisticExample :=
+def s3b : Datum :=
   { id := "ippolitokisswilliams2025_s3b"
     source := ⟨"ippolito-kiss-williams-2025", "(3b)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def s3b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("source", "von Fintel and Iatridou 2019"), ("clauseType", "canonicalWhQ"), ("position", "right"), ("particle", "only")] }
 
-def s3c : LinguisticExample :=
+def s3c : Datum :=
   { id := "ippolitokisswilliams2025_s3c"
     source := ⟨"ippolito-kiss-williams-2025", "(3c)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def s3c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("source", "von Fintel and Iatridou 2019"), ("clauseType", "imperative"), ("position", "right"), ("particle", "only")] }
 
-def s3d : LinguisticExample :=
+def s3d : Datum :=
   { id := "ippolitokisswilliams2025_s3d"
     source := ⟨"ippolito-kiss-williams-2025", "(3d)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def s3d : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("clauseType", "exclamative"), ("position", "right"), ("particle", "only")] }
 
-def s5a : LinguisticExample :=
+def s5a : Datum :=
   { id := "ippolitokisswilliams2025_s5a"
     source := ⟨"ippolito-kiss-williams-2025", "(5a)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def s5a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("clauseType", "canonicalPolarQ"), ("position", "right"), ("particle", "only")] }
 
-def s5b : LinguisticExample :=
+def s5b : Datum :=
   { id := "ippolitokisswilliams2025_s5b"
     source := ⟨"ippolito-kiss-williams-2025", "(5b)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def s5b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("clauseType", "highNegPolarQ"), ("position", "right"), ("particle", "only")] }
 
-def s5c : LinguisticExample :=
+def s5c : Datum :=
   { id := "ippolitokisswilliams2025_s5c"
     source := ⟨"ippolito-kiss-williams-2025", "(5c)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def s5c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("clauseType", "canonicalWhQ"), ("position", "right"), ("particle", "only")] }
 
-def s5d : LinguisticExample :=
+def s5d : Datum :=
   { id := "ippolitokisswilliams2025_s5d"
     source := ⟨"ippolito-kiss-williams-2025", "(5d)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def s5d : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("clauseType", "negRhetoricalWhQ"), ("position", "right"), ("particle", "only")] }
 
-def s5e : LinguisticExample :=
+def s5e : Datum :=
   { id := "ippolitokisswilliams2025_s5e"
     source := ⟨"ippolito-kiss-williams-2025", "(5e)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def s5e : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("clauseType", "posRhetoricalWhQ"), ("position", "right"), ("particle", "only")] }
 
-def s6a : LinguisticExample :=
+def s6a : Datum :=
   { id := "ippolitokisswilliams2025_s6a"
     source := ⟨"ippolito-kiss-williams-2025", "(6a)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def s6a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("clauseType", "canonicalPolarQ"), ("position", "left"), ("particle", "only")] }
 
-def s6b : LinguisticExample :=
+def s6b : Datum :=
   { id := "ippolitokisswilliams2025_s6b"
     source := ⟨"ippolito-kiss-williams-2025", "(6b)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def s6b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("clauseType", "highNegPolarQ"), ("position", "left"), ("particle", "only"), ("interpretation", "committed")] }
 
-def s6c : LinguisticExample :=
+def s6c : Datum :=
   { id := "ippolitokisswilliams2025_s6c"
     source := ⟨"ippolito-kiss-williams-2025", "(6c)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def s6c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("clauseType", "canonicalWhQ"), ("position", "left"), ("particle", "only")] }
 
-def s6d : LinguisticExample :=
+def s6d : Datum :=
   { id := "ippolitokisswilliams2025_s6d"
     source := ⟨"ippolito-kiss-williams-2025", "(6d)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def s6d : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("clauseType", "negRhetoricalWhQ"), ("position", "left"), ("particle", "only"), ("interpretation", "committed")] }
 
-def s6e : LinguisticExample :=
+def s6e : Datum :=
   { id := "ippolitokisswilliams2025_s6e"
     source := ⟨"ippolito-kiss-williams-2025", "(6e)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def s6e : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("clauseType", "posRhetoricalWhQ"), ("position", "left"), ("particle", "only"), ("interpretation", "committed")] }
 
-def s7a : LinguisticExample :=
+def s7a : Datum :=
   { id := "ippolitokisswilliams2025_s7a"
     source := ⟨"ippolito-kiss-williams-2025", "(7a)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def s7a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("clauseType", "imperative"), ("position", "right"), ("particle", "only")] }
 
-def s7b : LinguisticExample :=
+def s7b : Datum :=
   { id := "ippolitokisswilliams2025_s7b"
     source := ⟨"ippolito-kiss-williams-2025", "(7b)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def s7b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("clauseType", "imperative"), ("position", "left"), ("particle", "only")] }
 
-def s7c : LinguisticExample :=
+def s7c : Datum :=
   { id := "ippolitokisswilliams2025_s7c"
     source := ⟨"ippolito-kiss-williams-2025", "(7c)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def s7c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("clauseType", "imperative"), ("position", "both"), ("particle", "only")] }
 
-def s8a : LinguisticExample :=
+def s8a : Datum :=
   { id := "ippolitokisswilliams2025_s8a"
     source := ⟨"ippolito-kiss-williams-2025", "(8a)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def s8a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("clauseType", "exclamative"), ("position", "right"), ("particle", "only")] }
 
-def s8b : LinguisticExample :=
+def s8b : Datum :=
   { id := "ippolitokisswilliams2025_s8b"
     source := ⟨"ippolito-kiss-williams-2025", "(8b)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def s8b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("clauseType", "exclamative"), ("position", "left"), ("particle", "only")] }
 
-def s8c : LinguisticExample :=
+def s8c : Datum :=
   { id := "ippolitokisswilliams2025_s8c"
     source := ⟨"ippolito-kiss-williams-2025", "(8c)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def s8c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("clauseType", "exclamative"), ("position", "both"), ("particle", "only")] }
 
-def s9a : LinguisticExample :=
+def s9a : Datum :=
   { id := "ippolitokisswilliams2025_s9a"
     source := ⟨"ippolito-kiss-williams-2025", "(9a)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def s9a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("particle", "but")] }
 
-def s9b : LinguisticExample :=
+def s9b : Datum :=
   { id := "ippolitokisswilliams2025_s9b"
     source := ⟨"ippolito-kiss-williams-2025", "(9b)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def s9b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("particle", "but")] }
 
-def s17 : LinguisticExample :=
+def s17 : Datum :=
   { id := "ippolitokisswilliams2025_s17"
     source := ⟨"ippolito-kiss-williams-2025", "(17)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def s17 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("clauseType", "declarative"), ("position", "right"), ("particle", "only")] }
 
-def s18 : LinguisticExample :=
+def s18 : Datum :=
   { id := "ippolitokisswilliams2025_s18"
     source := ⟨"ippolito-kiss-williams-2025", "(18)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def s18 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2"), ("clauseType", "canonicalPolarQ"), ("position", "right"), ("particle", "only")] }
 
-def s19a : LinguisticExample :=
+def s19a : Datum :=
   { id := "ippolitokisswilliams2025_s19a"
     source := ⟨"ippolito-kiss-williams-2025", "(19a)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def s19a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2"), ("clauseType", "canonicalPolarQ"), ("position", "right"), ("particle", "only")] }
 
-def s19b : LinguisticExample :=
+def s19b : Datum :=
   { id := "ippolitokisswilliams2025_s19b"
     source := ⟨"ippolito-kiss-williams-2025", "(19b)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def s19b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2"), ("clauseType", "canonicalPolarQ"), ("position", "left"), ("particle", "only")] }
 
-def s20 : LinguisticExample :=
+def s20 : Datum :=
   { id := "ippolitokisswilliams2025_s20"
     source := ⟨"ippolito-kiss-williams-2025", "(20)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def s20 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2"), ("clauseType", "negRhetoricalWhQ"), ("position", "left"), ("particle", "only"), ("interpretation", "committed")] }
 
-def s21 : LinguisticExample :=
+def s21 : Datum :=
   { id := "ippolitokisswilliams2025_s21"
     source := ⟨"ippolito-kiss-williams-2025", "(21)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def s21 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2"), ("clauseType", "highNegPolarQ"), ("position", "left"), ("particle", "only"), ("interpretation", "committed")] }
 
-def s22 : LinguisticExample :=
+def s22 : Datum :=
   { id := "ippolitokisswilliams2025_s22"
     source := ⟨"ippolito-kiss-williams-2025", "(22)"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def s22 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2"), ("clauseType", "highNegPolarQ"), ("position", "left"), ("particle", "only"), ("interpretation", "infoSeeking")] }
 
-def s23a : LinguisticExample :=
+def s23a : Datum :=
   { id := "ippolitokisswilliams2025_s23a"
     source := ⟨"ippolito-kiss-williams-2025", "(23a)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def s23a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3"), ("clauseType", "imperative"), ("position", "right"), ("particle", "only")] }
 
-def s23b : LinguisticExample :=
+def s23b : Datum :=
   { id := "ippolitokisswilliams2025_s23b"
     source := ⟨"ippolito-kiss-williams-2025", "(23b)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def s23b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3"), ("clauseType", "exclamative"), ("position", "right"), ("particle", "only")] }
 
-def s24a : LinguisticExample :=
+def s24a : Datum :=
   { id := "ippolitokisswilliams2025_s24a"
     source := ⟨"ippolito-kiss-williams-2025", "(24a)"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def s24a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("particle", "but/only")] }
 
-def s24b : LinguisticExample :=
+def s24b : Datum :=
   { id := "ippolitokisswilliams2025_s24b"
     source := ⟨"ippolito-kiss-williams-2025", "(24b)"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def s24b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("particle", "but/only")] }
 
-def s25 : LinguisticExample :=
+def s25 : Datum :=
   { id := "ippolitokisswilliams2025_s25"
     source := ⟨"ippolito-kiss-williams-2025", "(25)"⟩
     reportedIn := none
@@ -485,7 +485,7 @@ def s25 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("particle", "only")] }
 
-def s26 : LinguisticExample :=
+def s26 : Datum :=
   { id := "ippolitokisswilliams2025_s26"
     source := ⟨"ippolito-kiss-williams-2025", "(26)"⟩
     reportedIn := none
@@ -498,7 +498,7 @@ def s26 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("particle", "only")] }
 
-def s27a : LinguisticExample :=
+def s27a : Datum :=
   { id := "ippolitokisswilliams2025_s27a"
     source := ⟨"ippolito-kiss-williams-2025", "(27a)"⟩
     reportedIn := none
@@ -511,7 +511,7 @@ def s27a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("particle", "but/only")] }
 
-def s27b : LinguisticExample :=
+def s27b : Datum :=
   { id := "ippolitokisswilliams2025_s27b"
     source := ⟨"ippolito-kiss-williams-2025", "(27b)"⟩
     reportedIn := none
@@ -524,7 +524,7 @@ def s27b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("particle", "but/only")] }
 
-def s28a : LinguisticExample :=
+def s28a : Datum :=
   { id := "ippolitokisswilliams2025_s28a"
     source := ⟨"ippolito-kiss-williams-2025", "(28a)"⟩
     reportedIn := none
@@ -537,7 +537,7 @@ def s28a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("particle", "but/only")] }
 
-def s28b : LinguisticExample :=
+def s28b : Datum :=
   { id := "ippolitokisswilliams2025_s28b"
     source := ⟨"ippolito-kiss-williams-2025", "(28b)"⟩
     reportedIn := none
@@ -550,7 +550,7 @@ def s28b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("particle", "but/only")] }
 
-def s29a : LinguisticExample :=
+def s29a : Datum :=
   { id := "ippolitokisswilliams2025_s29a"
     source := ⟨"ippolito-kiss-williams-2025", "(29a)"⟩
     reportedIn := none
@@ -563,7 +563,7 @@ def s29a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7"), ("clauseType", "declarative"), ("position", "right"), ("particle", "solo che")] }
 
-def s29b : LinguisticExample :=
+def s29b : Datum :=
   { id := "ippolitokisswilliams2025_s29b"
     source := ⟨"ippolito-kiss-williams-2025", "(29b)"⟩
     reportedIn := none
@@ -576,7 +576,7 @@ def s29b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7"), ("clauseType", "declarative"), ("position", "right"), ("particle", "tol'ko")] }
 
-def s29c : LinguisticExample :=
+def s29c : Datum :=
   { id := "ippolitokisswilliams2025_s29c"
     source := ⟨"ippolito-kiss-williams-2025", "(29c)"⟩
     reportedIn := none
@@ -589,7 +589,7 @@ def s29c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7"), ("clauseType", "declarative"), ("position", "right"), ("particle", "csak")] }
 
-def s29d : LinguisticExample :=
+def s29d : Datum :=
   { id := "ippolitokisswilliams2025_s29d"
     source := ⟨"ippolito-kiss-williams-2025", "(29d)"⟩
     reportedIn := none
@@ -602,7 +602,7 @@ def s29d : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7"), ("clauseType", "declarative"), ("position", "right"), ("particle", "zhǐshì")] }
 
-def s30a : LinguisticExample :=
+def s30a : Datum :=
   { id := "ippolitokisswilliams2025_s30a"
     source := ⟨"ippolito-kiss-williams-2025", "(30a)"⟩
     reportedIn := none
@@ -615,7 +615,7 @@ def s30a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7"), ("clauseType", "canonicalPolarQ"), ("position", "right"), ("particle", "tol'ko")] }
 
-def s30b : LinguisticExample :=
+def s30b : Datum :=
   { id := "ippolitokisswilliams2025_s30b"
     source := ⟨"ippolito-kiss-williams-2025", "(30b)"⟩
     reportedIn := none
@@ -628,7 +628,7 @@ def s30b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7"), ("clauseType", "highNegPolarQ"), ("position", "right"), ("particle", "tol'ko")] }
 
-def s30c : LinguisticExample :=
+def s30c : Datum :=
   { id := "ippolitokisswilliams2025_s30c"
     source := ⟨"ippolito-kiss-williams-2025", "(30c)"⟩
     reportedIn := none
@@ -641,7 +641,7 @@ def s30c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7"), ("clauseType", "canonicalWhQ"), ("position", "right"), ("particle", "tol'ko")] }
 
-def s30d : LinguisticExample :=
+def s30d : Datum :=
   { id := "ippolitokisswilliams2025_s30d"
     source := ⟨"ippolito-kiss-williams-2025", "(30d)"⟩
     reportedIn := none
@@ -654,7 +654,7 @@ def s30d : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7"), ("clauseType", "negRhetoricalWhQ"), ("position", "right"), ("particle", "tol'ko")] }
 
-def s30e : LinguisticExample :=
+def s30e : Datum :=
   { id := "ippolitokisswilliams2025_s30e"
     source := ⟨"ippolito-kiss-williams-2025", "(30e)"⟩
     reportedIn := none
@@ -667,7 +667,7 @@ def s30e : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7"), ("clauseType", "imperative"), ("position", "right"), ("particle", "tol'ko")] }
 
-def s30f : LinguisticExample :=
+def s30f : Datum :=
   { id := "ippolitokisswilliams2025_s30f"
     source := ⟨"ippolito-kiss-williams-2025", "(30f)"⟩
     reportedIn := none
@@ -680,7 +680,7 @@ def s30f : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7"), ("clauseType", "exclamative"), ("position", "right"), ("particle", "tol'ko")] }
 
-def s31a : LinguisticExample :=
+def s31a : Datum :=
   { id := "ippolitokisswilliams2025_s31a"
     source := ⟨"ippolito-kiss-williams-2025", "(31a)"⟩
     reportedIn := none
@@ -693,7 +693,7 @@ def s31a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7"), ("clauseType", "canonicalPolarQ"), ("position", "right"), ("particle", "csak")] }
 
-def s31b : LinguisticExample :=
+def s31b : Datum :=
   { id := "ippolitokisswilliams2025_s31b"
     source := ⟨"ippolito-kiss-williams-2025", "(31b)"⟩
     reportedIn := none
@@ -706,7 +706,7 @@ def s31b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7"), ("clauseType", "highNegPolarQ"), ("position", "right"), ("particle", "csak")] }
 
-def s31c : LinguisticExample :=
+def s31c : Datum :=
   { id := "ippolitokisswilliams2025_s31c"
     source := ⟨"ippolito-kiss-williams-2025", "(31c)"⟩
     reportedIn := none
@@ -719,7 +719,7 @@ def s31c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7"), ("clauseType", "canonicalWhQ"), ("position", "right"), ("particle", "csak")] }
 
-def s31d : LinguisticExample :=
+def s31d : Datum :=
   { id := "ippolitokisswilliams2025_s31d"
     source := ⟨"ippolito-kiss-williams-2025", "(31d)"⟩
     reportedIn := none
@@ -732,7 +732,7 @@ def s31d : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7"), ("clauseType", "negRhetoricalWhQ"), ("position", "right"), ("particle", "csak")] }
 
-def s31e : LinguisticExample :=
+def s31e : Datum :=
   { id := "ippolitokisswilliams2025_s31e"
     source := ⟨"ippolito-kiss-williams-2025", "(31e)"⟩
     reportedIn := none
@@ -745,7 +745,7 @@ def s31e : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7"), ("clauseType", "imperative"), ("position", "right"), ("particle", "csak")] }
 
-def s31f : LinguisticExample :=
+def s31f : Datum :=
   { id := "ippolitokisswilliams2025_s31f"
     source := ⟨"ippolito-kiss-williams-2025", "(31f)"⟩
     reportedIn := none
@@ -758,7 +758,7 @@ def s31f : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7"), ("clauseType", "exclamative"), ("position", "right"), ("particle", "csak")] }
 
-def s32a : LinguisticExample :=
+def s32a : Datum :=
   { id := "ippolitokisswilliams2025_s32a"
     source := ⟨"ippolito-kiss-williams-2025", "(32a)"⟩
     reportedIn := none
@@ -771,7 +771,7 @@ def s32a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7"), ("clauseType", "canonicalPolarQ"), ("position", "right"), ("particle", "zhǐshì")] }
 
-def s32b : LinguisticExample :=
+def s32b : Datum :=
   { id := "ippolitokisswilliams2025_s32b"
     source := ⟨"ippolito-kiss-williams-2025", "(32b)"⟩
     reportedIn := none
@@ -784,7 +784,7 @@ def s32b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7"), ("clauseType", "highNegPolarQ"), ("position", "right"), ("particle", "zhǐshì")] }
 
-def s32c : LinguisticExample :=
+def s32c : Datum :=
   { id := "ippolitokisswilliams2025_s32c"
     source := ⟨"ippolito-kiss-williams-2025", "(32c)"⟩
     reportedIn := none
@@ -797,7 +797,7 @@ def s32c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7"), ("clauseType", "canonicalWhQ"), ("position", "right"), ("particle", "zhǐshì")] }
 
-def s32d : LinguisticExample :=
+def s32d : Datum :=
   { id := "ippolitokisswilliams2025_s32d"
     source := ⟨"ippolito-kiss-williams-2025", "(32d)"⟩
     reportedIn := none
@@ -810,7 +810,7 @@ def s32d : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7"), ("clauseType", "negRhetoricalWhQ"), ("position", "right"), ("particle", "zhǐshì")] }
 
-def s32e : LinguisticExample :=
+def s32e : Datum :=
   { id := "ippolitokisswilliams2025_s32e"
     source := ⟨"ippolito-kiss-williams-2025", "(32e)"⟩
     reportedIn := none
@@ -823,7 +823,7 @@ def s32e : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7"), ("clauseType", "imperative"), ("position", "right"), ("particle", "zhǐshì")] }
 
-def s32f : LinguisticExample :=
+def s32f : Datum :=
   { id := "ippolitokisswilliams2025_s32f"
     source := ⟨"ippolito-kiss-williams-2025", "(32f)"⟩
     reportedIn := none
@@ -836,7 +836,7 @@ def s32f : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7"), ("clauseType", "exclamative"), ("position", "right"), ("particle", "zhǐshì")] }
 
-def s33a : LinguisticExample :=
+def s33a : Datum :=
   { id := "ippolitokisswilliams2025_s33a"
     source := ⟨"ippolito-kiss-williams-2025", "(33a)"⟩
     reportedIn := none
@@ -849,7 +849,7 @@ def s33a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7"), ("clauseType", "declarative"), ("position", "right"), ("particle", "solo che")] }
 
-def s33b : LinguisticExample :=
+def s33b : Datum :=
   { id := "ippolitokisswilliams2025_s33b"
     source := ⟨"ippolito-kiss-williams-2025", "(33b)"⟩
     reportedIn := none
@@ -862,7 +862,7 @@ def s33b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7"), ("clauseType", "canonicalPolarQ"), ("position", "right"), ("particle", "solo che")] }
 
-def s33c : LinguisticExample :=
+def s33c : Datum :=
   { id := "ippolitokisswilliams2025_s33c"
     source := ⟨"ippolito-kiss-williams-2025", "(33c)"⟩
     reportedIn := none
@@ -875,7 +875,7 @@ def s33c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7"), ("clauseType", "canonicalWhQ"), ("position", "right"), ("particle", "solo che")] }
 
-def s33d : LinguisticExample :=
+def s33d : Datum :=
   { id := "ippolitokisswilliams2025_s33d"
     source := ⟨"ippolito-kiss-williams-2025", "(33d)"⟩
     reportedIn := none
@@ -888,7 +888,7 @@ def s33d : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7"), ("clauseType", "imperative"), ("position", "right"), ("particle", "solo che")] }
 
-def s33e : LinguisticExample :=
+def s33e : Datum :=
   { id := "ippolitokisswilliams2025_s33e"
     source := ⟨"ippolito-kiss-williams-2025", "(33e)"⟩
     reportedIn := none
@@ -901,6 +901,6 @@ def s33e : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7"), ("clauseType", "exclamative"), ("position", "right"), ("particle", "solo che")] }
 
-def all : List LinguisticExample := [s1, s2, s3a, s3b, s3c, s3d, s5a, s5b, s5c, s5d, s5e, s6a, s6b, s6c, s6d, s6e, s7a, s7b, s7c, s8a, s8b, s8c, s9a, s9b, s17, s18, s19a, s19b, s20, s21, s22, s23a, s23b, s24a, s24b, s25, s26, s27a, s27b, s28a, s28b, s29a, s29b, s29c, s29d, s30a, s30b, s30c, s30d, s30e, s30f, s31a, s31b, s31c, s31d, s31e, s31f, s32a, s32b, s32c, s32d, s32e, s32f, s33a, s33b, s33c, s33d, s33e]
+def all : List Datum := [s1, s2, s3a, s3b, s3c, s3d, s5a, s5b, s5c, s5d, s5e, s6a, s6b, s6c, s6d, s6e, s7a, s7b, s7c, s8a, s8b, s8c, s9a, s9b, s17, s18, s19a, s19b, s20, s21, s22, s23a, s23b, s24a, s24b, s25, s26, s27a, s27b, s28a, s28b, s29a, s29b, s29c, s29d, s30a, s30b, s30c, s30d, s30e, s30f, s31a, s31b, s31c, s31d, s31e, s31f, s32a, s32b, s32c, s32d, s32e, s32f, s33a, s33b, s33c, s33d, s33e]
 
 end IppolitoKissWilliams2025.Examples

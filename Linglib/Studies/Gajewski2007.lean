@@ -475,14 +475,14 @@ structure Row where
   deriving DecidableEq, Repr
 
 /-- The row of an example. -/
-def Row.ofExample (ex : LinguisticExample) : Option Row := do
+def Row.ofDatum (ex : Datum) : Option Row := do
   pure ⟨← ex.parse? "environment" envTable, ex.judgment⟩
 
 /-- Every example of the paper parses to a row. -/
-theorem row_ofExample_isSome : ∀ ex ∈ Examples.all, (Row.ofExample ex).isSome := by decide
+theorem row_ofDatum_isSome : ∀ ex ∈ Examples.all, (Row.ofDatum ex).isSome := by decide
 
 /-- The paper's sentences with strict NPIs. -/
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- (55): a strict NPI is acceptable in an anti-additive environment and unacceptable elsewhere,
 the superlatives aside. -/

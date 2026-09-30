@@ -17,7 +17,7 @@ namespace Haspelmath2025b.Examples
 
 open Data.Examples
 
-def yomaseru : LinguisticExample :=
+def yomaseru : Datum :=
   { id := "haspelmath2025b_yomaseru"
     source := ⟨"haspelmath-2025b", "§2"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def yomaseru : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("form", "ase"), ("contentful", "yes"), ("root", "no")] }
 
-def geology : LinguisticExample :=
+def geology : Datum :=
   { id := "haspelmath2025b_geology"
     source := ⟨"haspelmath-2025b", "§2"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def geology : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("form", "geo"), ("contentful", "yes"), ("root", "no")] }
 
-def hello : LinguisticExample :=
+def hello : Datum :=
   { id := "haspelmath2025b_hello"
     source := ⟨"haspelmath-2025b", "fn. 10"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def hello : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("form", "hello"), ("contentful", "no"), ("root", "no")] }
 
-def zona : LinguisticExample :=
+def zona : Datum :=
   { id := "haspelmath2025b_zona"
     source := ⟨"haspelmath-2025b", "§3"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def zona : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("form", "žon"), ("contentful", "yes"), ("root", "yes"), ("bound", "yes")] }
 
-def zony : LinguisticExample :=
+def zony : Datum :=
   { id := "haspelmath2025b_zony"
     source := ⟨"haspelmath-2025b", "§3"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def zony : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("form", "žon"), ("contentful", "yes"), ("root", "yes"), ("bound", "yes")] }
 
-def zonu : LinguisticExample :=
+def zonu : Datum :=
   { id := "haspelmath2025b_zonu"
     source := ⟨"haspelmath-2025b", "§3"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def zonu : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("form", "žon"), ("contentful", "yes"), ("root", "yes"), ("bound", "yes")] }
 
-def ex5a : LinguisticExample :=
+def ex5a : Datum :=
   { id := "haspelmath2025b_ex5a"
     source := ⟨"haspelmath-2025b", "(5)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex5a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("root", "lauf")] }
 
-def ex5b : LinguisticExample :=
+def ex5b : Datum :=
   { id := "haspelmath2025b_ex5b"
     source := ⟨"haspelmath-2025b", "(5)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex5b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("root", "lauf")] }
 
-def ex5c : LinguisticExample :=
+def ex5c : Datum :=
   { id := "haspelmath2025b_ex5c"
     source := ⟨"haspelmath-2025b", "(5)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex5c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("root", "lauf")] }
 
-def ex5d : LinguisticExample :=
+def ex5d : Datum :=
   { id := "haspelmath2025b_ex5d"
     source := ⟨"haspelmath-2025b", "(5)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex5d : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("root", "lauf")] }
 
-def ex5e : LinguisticExample :=
+def ex5e : Datum :=
   { id := "haspelmath2025b_ex5e"
     source := ⟨"haspelmath-2025b", "(5)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex5e : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("root", "lief")] }
 
-def ex6a : LinguisticExample :=
+def ex6a : Datum :=
   { id := "haspelmath2025b_ex6a"
     source := ⟨"haspelmath-2025b", "(6)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex6a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("root", "katab"), ("skeleton", "k-t-b")] }
 
-def ex6b : LinguisticExample :=
+def ex6b : Datum :=
   { id := "haspelmath2025b_ex6b"
     source := ⟨"haspelmath-2025b", "(6)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex6b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("root", "ktub"), ("skeleton", "k-t-b")] }
 
-def ex6c : LinguisticExample :=
+def ex6c : Datum :=
   { id := "haspelmath2025b_ex6c"
     source := ⟨"haspelmath-2025b", "(6)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex6c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("root", "kaatib"), ("skeleton", "k-t-b")] }
 
-def ex6d : LinguisticExample :=
+def ex6d : Datum :=
   { id := "haspelmath2025b_ex6d"
     source := ⟨"haspelmath-2025b", "(6)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex6d : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("root", "kitaab"), ("skeleton", "k-t-b")] }
 
-def ex8a1 : LinguisticExample :=
+def ex8a1 : Datum :=
   { id := "haspelmath2025b_ex8a1"
     source := ⟨"haspelmath-2025b", "(8)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex8a1 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("rootClass", "action")] }
 
-def ex8a2 : LinguisticExample :=
+def ex8a2 : Datum :=
   { id := "haspelmath2025b_ex8a2"
     source := ⟨"haspelmath-2025b", "(8)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex8a2 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("rootClass", "action")] }
 
-def ex8a3 : LinguisticExample :=
+def ex8a3 : Datum :=
   { id := "haspelmath2025b_ex8a3"
     source := ⟨"haspelmath-2025b", "(8)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex8a3 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("rootClass", "action")] }
 
-def ex8b1 : LinguisticExample :=
+def ex8b1 : Datum :=
   { id := "haspelmath2025b_ex8b1"
     source := ⟨"haspelmath-2025b", "(8)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex8b1 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("rootClass", "object")] }
 
-def ex8b2 : LinguisticExample :=
+def ex8b2 : Datum :=
   { id := "haspelmath2025b_ex8b2"
     source := ⟨"haspelmath-2025b", "(8)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex8b2 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("rootClass", "object")] }
 
-def ex8b3 : LinguisticExample :=
+def ex8b3 : Datum :=
   { id := "haspelmath2025b_ex8b3"
     source := ⟨"haspelmath-2025b", "(8)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex8b3 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("rootClass", "object")] }
 
-def ex8c1 : LinguisticExample :=
+def ex8c1 : Datum :=
   { id := "haspelmath2025b_ex8c1"
     source := ⟨"haspelmath-2025b", "(8)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex8c1 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("rootClass", "property")] }
 
-def ex8c2 : LinguisticExample :=
+def ex8c2 : Datum :=
   { id := "haspelmath2025b_ex8c2"
     source := ⟨"haspelmath-2025b", "(8)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex8c2 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("rootClass", "property")] }
 
-def ex8c3 : LinguisticExample :=
+def ex8c3 : Datum :=
   { id := "haspelmath2025b_ex8c3"
     source := ⟨"haspelmath-2025b", "(8)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex8c3 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("rootClass", "property")] }
 
-def ex12a : LinguisticExample :=
+def ex12a : Datum :=
   { id := "haspelmath2025b_ex12a"
     source := ⟨"haspelmath-2025b", "(12a)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex12a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("rootClass", "object"), ("heterosemy", "sisterRoot")] }
 
-def ex12b : LinguisticExample :=
+def ex12b : Datum :=
   { id := "haspelmath2025b_ex12b"
     source := ⟨"haspelmath-2025b", "(12b)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex12b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("rootClass", "action"), ("heterosemy", "sisterRoot")] }
 
-def ex13a : LinguisticExample :=
+def ex13a : Datum :=
   { id := "haspelmath2025b_ex13a"
     source := ⟨"haspelmath-2025b", "(13a)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def ex13a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("rootClass", "object"), ("heterosemy", "sisterRoot")] }
 
-def ex13b : LinguisticExample :=
+def ex13b : Datum :=
   { id := "haspelmath2025b_ex13b"
     source := ⟨"haspelmath-2025b", "(13b)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def ex13b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("rootClass", "action"), ("heterosemy", "sisterRoot")] }
 
-def ex14a : LinguisticExample :=
+def ex14a : Datum :=
   { id := "haspelmath2025b_ex14a"
     source := ⟨"haspelmath-2025b", "(14a)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def ex14a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("rootClass", "object"), ("heterosemy", "sisterRoot")] }
 
-def ex14b : LinguisticExample :=
+def ex14b : Datum :=
   { id := "haspelmath2025b_ex14b"
     source := ⟨"haspelmath-2025b", "(14b)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def ex14b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("rootClass", "action"), ("heterosemy", "sisterRoot")] }
 
-def ex15a : LinguisticExample :=
+def ex15a : Datum :=
   { id := "haspelmath2025b_ex15a"
     source := ⟨"haspelmath-2025b", "(15a)"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def ex15a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("rootClass", "object"), ("heterosemy", "sisterRoot")] }
 
-def ex15b : LinguisticExample :=
+def ex15b : Datum :=
   { id := "haspelmath2025b_ex15b"
     source := ⟨"haspelmath-2025b", "(15b)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def ex15b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("rootClass", "action"), ("heterosemy", "sisterRoot")] }
 
-def ex18a : LinguisticExample :=
+def ex18a : Datum :=
   { id := "haspelmath2025b_ex18a"
     source := ⟨"haspelmath-2025b", "(18a)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def ex18a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("semantics", "DESIRE"), ("morphosyntax", "N-aff")] }
 
-def ex18b : LinguisticExample :=
+def ex18b : Datum :=
   { id := "haspelmath2025b_ex18b"
     source := ⟨"haspelmath-2025b", "(18b)"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def ex18b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("semantics", "HAVING (DESIRE)"), ("morphosyntax", "A-aff")] }
 
-def laudab : LinguisticExample :=
+def laudab : Datum :=
   { id := "haspelmath2025b_laudab"
     source := ⟨"haspelmath-2025b", "fn. 6"⟩
     reportedIn := none
@@ -472,6 +472,6 @@ def laudab : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("stem", "yes")] }
 
-def all : List LinguisticExample := [yomaseru, geology, hello, zona, zony, zonu, ex5a, ex5b, ex5c, ex5d, ex5e, ex6a, ex6b, ex6c, ex6d, ex8a1, ex8a2, ex8a3, ex8b1, ex8b2, ex8b3, ex8c1, ex8c2, ex8c3, ex12a, ex12b, ex13a, ex13b, ex14a, ex14b, ex15a, ex15b, ex18a, ex18b, laudab]
+def all : List Datum := [yomaseru, geology, hello, zona, zony, zonu, ex5a, ex5b, ex5c, ex5d, ex5e, ex6a, ex6b, ex6c, ex6d, ex8a1, ex8a2, ex8a3, ex8b1, ex8b2, ex8b3, ex8c1, ex8c2, ex8c3, ex12a, ex12b, ex13a, ex13b, ex14a, ex14b, ex15a, ex15b, ex18a, ex18b, laudab]
 
 end Haspelmath2025b.Examples

@@ -334,7 +334,7 @@ structure Row where
   judgment : Data.Examples.Judgment
   deriving DecidableEq
 
-def Row.ofExample (ex : LinguisticExample) : Option Row := do
+def Row.ofDatum (ex : Datum) : Option Row := do
   let ant ← ex.feature? "antecedent"
   let antCat ← ex.feature? "antecedentCat"
   let frag ← ex.feature? "fragment"
@@ -349,7 +349,7 @@ def Row.sign (r : Row) : LocProp Unit :=
   { phon := "", cat := "S", cont := (), cparams := [⟨"x", ""⟩], constits := [r.antecedent] }
 
 /-- The nineteen dialogues of (4), (6), (8)–(13). -/
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- The clausal reading is judged available exactly when the fragment resolves against the
 focussing context with shared content. -/

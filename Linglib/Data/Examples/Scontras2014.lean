@@ -17,7 +17,7 @@ namespace Scontras2014.Examples
 
 open Data.Examples
 
-def ex1 : LinguisticExample :=
+def ex1 : Datum :=
   { id := "scontras2014_ex1"
     source := ⟨"scontras-2014", "(1)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex1 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "grain"), ("nounClass", "atomizer"), ("diagnostic", "selection")] }
 
-def ex2a : LinguisticExample :=
+def ex2a : Datum :=
   { id := "scontras2014_ex2a"
     source := ⟨"scontras-2014", "(2a)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex2a : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "pound"), ("nounClass", "measureTerm"), ("diagnostic", "quantifier")] }
 
-def ex2b : LinguisticExample :=
+def ex2b : Datum :=
   { id := "scontras2014_ex2b"
     source := ⟨"scontras-2014", "(2b)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex2b : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "liter"), ("nounClass", "measureTerm"), ("diagnostic", "quantifier")] }
 
-def ex3 : LinguisticExample :=
+def ex3 : Datum :=
   { id := "scontras2014_ex3"
     source := ⟨"scontras-2014", "(3)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex3 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "grain"), ("nounClass", "atomizer"), ("diagnostic", "quantifier")] }
 
-def ex4a : LinguisticExample :=
+def ex4a : Datum :=
   { id := "scontras2014_ex4a"
     source := ⟨"scontras-2014", "(4a)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex4a : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "slice"), ("nounClass", "atomizer"), ("diagnostic", "modifier")] }
 
-def ex4b : LinguisticExample :=
+def ex4b : Datum :=
   { id := "scontras2014_ex4b"
     source := ⟨"scontras-2014", "(4b)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex4b : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "pound"), ("nounClass", "measureTerm"), ("diagnostic", "modifier")] }
 
-def ex10a : LinguisticExample :=
+def ex10a : Datum :=
   { id := "scontras2014_ex10a"
     source := ⟨"scontras-2014", "(10a)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex10a : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "bucket"), ("nounClass", "containerNoun"), ("diagnostic", "-ful"), ("reading", "container")] }
 
-def ex10b : LinguisticExample :=
+def ex10b : Datum :=
   { id := "scontras2014_ex10b"
     source := ⟨"scontras-2014", "(10b)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex10b : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "bucket"), ("nounClass", "containerNoun"), ("diagnostic", "-ful"), ("reading", "measure")] }
 
-def ex11a : LinguisticExample :=
+def ex11a : Datum :=
   { id := "scontras2014_ex11a"
     source := ⟨"scontras-2014", "(11a)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex11a : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "liter"), ("nounClass", "measureTerm"), ("diagnostic", "-ful"), ("reading", "container")] }
 
-def ex11b : LinguisticExample :=
+def ex11b : Datum :=
   { id := "scontras2014_ex11b"
     source := ⟨"scontras-2014", "(11b)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex11b : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "liter"), ("nounClass", "measureTerm"), ("diagnostic", "-ful"), ("reading", "measure")] }
 
-def ex12a : LinguisticExample :=
+def ex12a : Datum :=
   { id := "scontras2014_ex12a"
     source := ⟨"scontras-2014", "(12a)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex12a : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "grain"), ("nounClass", "atomizer"), ("diagnostic", "-ful"), ("reading", "atomizing")] }
 
-def ex12b : LinguisticExample :=
+def ex12b : Datum :=
   { id := "scontras2014_ex12b"
     source := ⟨"scontras-2014", "(12b)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex12b : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "grain"), ("nounClass", "atomizer"), ("diagnostic", "-ful"), ("reading", "atomizing")] }
 
-def ex13a : LinguisticExample :=
+def ex13a : Datum :=
   { id := "scontras2014_ex13a"
     source := ⟨"scontras-2014", "(13a)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex13a : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "cup"), ("nounClass", "containerNoun"), ("diagnostic", "they"), ("reading", "container")] }
 
-def ex13b : LinguisticExample :=
+def ex13b : Datum :=
   { id := "scontras2014_ex13b"
     source := ⟨"scontras-2014", "(13b)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex13b : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "cup"), ("nounClass", "containerNoun"), ("diagnostic", "they"), ("reading", "measure")] }
 
-def ex14a : LinguisticExample :=
+def ex14a : Datum :=
   { id := "scontras2014_ex14a"
     source := ⟨"scontras-2014", "(14a)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex14a : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "liter"), ("nounClass", "measureTerm"), ("diagnostic", "they"), ("reading", "container")] }
 
-def ex14b : LinguisticExample :=
+def ex14b : Datum :=
   { id := "scontras2014_ex14b"
     source := ⟨"scontras-2014", "(14b)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex14b : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "liter"), ("nounClass", "measureTerm"), ("diagnostic", "they"), ("reading", "measure")] }
 
-def ex15a : LinguisticExample :=
+def ex15a : Datum :=
   { id := "scontras2014_ex15a"
     source := ⟨"scontras-2014", "(15a)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex15a : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "grain"), ("nounClass", "atomizer"), ("diagnostic", "they"), ("reading", "atomizing")] }
 
-def ex15b : LinguisticExample :=
+def ex15b : Datum :=
   { id := "scontras2014_ex15b"
     source := ⟨"scontras-2014", "(15b)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex15b : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "grain"), ("nounClass", "atomizer"), ("diagnostic", "they"), ("reading", "atomizing")] }
 
-def ex16a : LinguisticExample :=
+def ex16a : Datum :=
   { id := "scontras2014_ex16a"
     source := ⟨"scontras-2014", "(16a)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex16a : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "cup"), ("nounClass", "containerNoun"), ("diagnostic", "singularAgreement"), ("reading", "container")] }
 
-def ex16b : LinguisticExample :=
+def ex16b : Datum :=
   { id := "scontras2014_ex16b"
     source := ⟨"scontras-2014", "(16b)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex16b : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "cup"), ("nounClass", "containerNoun"), ("diagnostic", "singularAgreement"), ("reading", "measure")] }
 
-def ex17a : LinguisticExample :=
+def ex17a : Datum :=
   { id := "scontras2014_ex17a"
     source := ⟨"scontras-2014", "(17a)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex17a : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "liter"), ("nounClass", "measureTerm"), ("diagnostic", "singularAgreement"), ("reading", "container")] }
 
-def ex17b : LinguisticExample :=
+def ex17b : Datum :=
   { id := "scontras2014_ex17b"
     source := ⟨"scontras-2014", "(17b)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex17b : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "liter"), ("nounClass", "measureTerm"), ("diagnostic", "singularAgreement"), ("reading", "measure")] }
 
-def ex18a : LinguisticExample :=
+def ex18a : Datum :=
   { id := "scontras2014_ex18a"
     source := ⟨"scontras-2014", "(18a)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex18a : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "grain"), ("nounClass", "atomizer"), ("diagnostic", "singularAgreement"), ("reading", "atomizing")] }
 
-def ex18b : LinguisticExample :=
+def ex18b : Datum :=
   { id := "scontras2014_ex18b"
     source := ⟨"scontras-2014", "(18b)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex18b : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "grain"), ("nounClass", "atomizer"), ("diagnostic", "singularAgreement"), ("reading", "atomizing")] }
 
-def ex19a : LinguisticExample :=
+def ex19a : Datum :=
   { id := "scontras2014_ex19a"
     source := ⟨"scontras-2014", "(19a)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex19a : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "cup"), ("nounClass", "containerNoun"), ("diagnostic", "each"), ("reading", "container")] }
 
-def ex19b : LinguisticExample :=
+def ex19b : Datum :=
   { id := "scontras2014_ex19b"
     source := ⟨"scontras-2014", "(19b)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex19b : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "cup"), ("nounClass", "containerNoun"), ("diagnostic", "each"), ("reading", "measure")] }
 
-def ex20a : LinguisticExample :=
+def ex20a : Datum :=
   { id := "scontras2014_ex20a"
     source := ⟨"scontras-2014", "(20a)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def ex20a : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "liter"), ("nounClass", "measureTerm"), ("diagnostic", "each"), ("reading", "container")] }
 
-def ex20b : LinguisticExample :=
+def ex20b : Datum :=
   { id := "scontras2014_ex20b"
     source := ⟨"scontras-2014", "(20b)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def ex20b : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "liter"), ("nounClass", "measureTerm"), ("diagnostic", "each"), ("reading", "measure")] }
 
-def ex21a : LinguisticExample :=
+def ex21a : Datum :=
   { id := "scontras2014_ex21a"
     source := ⟨"scontras-2014", "(21a)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def ex21a : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "grain"), ("nounClass", "atomizer"), ("diagnostic", "each"), ("reading", "atomizing")] }
 
-def ex21b : LinguisticExample :=
+def ex21b : Datum :=
   { id := "scontras2014_ex21b"
     source := ⟨"scontras-2014", "(21b)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def ex21b : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "grain"), ("nounClass", "atomizer"), ("diagnostic", "each"), ("reading", "atomizing")] }
 
-def ex62 : LinguisticExample :=
+def ex62 : Datum :=
   { id := "scontras2014_ex62"
     source := ⟨"scontras-2014", "(62)"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def ex62 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "grain"), ("nounClass", "atomizer"), ("diagnostic", "intransitive")] }
 
-def ex80a : LinguisticExample :=
+def ex80a : Datum :=
   { id := "scontras2014_ex80a"
     source := ⟨"scontras-2014", "(80a)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def ex80a : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "quantity"), ("nounClass", "atomizer"), ("diagnostic", "selection"), ("reading", "atomizing")] }
 
-def ex80b : LinguisticExample :=
+def ex80b : Datum :=
   { id := "scontras2014_ex80b"
     source := ⟨"scontras-2014", "(80b)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def ex80b : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "quantity"), ("nounClass", "atomizer"), ("diagnostic", "selection"), ("reading", "atomizing")] }
 
-def ex80c : LinguisticExample :=
+def ex80c : Datum :=
   { id := "scontras2014_ex80c"
     source := ⟨"scontras-2014", "(80c)"⟩
     reportedIn := none
@@ -459,6 +459,6 @@ def ex80c : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "quantity"), ("nounClass", "atomizer"), ("diagnostic", "selection"), ("reading", "atomizing")] }
 
-def all : List LinguisticExample := [ex1, ex2a, ex2b, ex3, ex4a, ex4b, ex10a, ex10b, ex11a, ex11b, ex12a, ex12b, ex13a, ex13b, ex14a, ex14b, ex15a, ex15b, ex16a, ex16b, ex17a, ex17b, ex18a, ex18b, ex19a, ex19b, ex20a, ex20b, ex21a, ex21b, ex62, ex80a, ex80b, ex80c]
+def all : List Datum := [ex1, ex2a, ex2b, ex3, ex4a, ex4b, ex10a, ex10b, ex11a, ex11b, ex12a, ex12b, ex13a, ex13b, ex14a, ex14b, ex15a, ex15b, ex16a, ex16b, ex17a, ex17b, ex18a, ex18b, ex19a, ex19b, ex20a, ex20b, ex21a, ex21b, ex62, ex80a, ex80b, ex80c]
 
 end Scontras2014.Examples

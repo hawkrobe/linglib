@@ -17,7 +17,7 @@ namespace LoGuercio2025.Examples
 
 open Data.Examples
 
-def outOfBlue_epithet : LinguisticExample :=
+def outOfBlue_epithet : Datum :=
   { id := "loguercio2025_outOfBlue_epithet"
     source := ⟨"lo-guercio-2025", "(epithet OOTB)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def outOfBlue_epithet : LinguisticExample :=
     readings := []
     paperFeatures := [("aciStatus", "doesNotArise"), ("expressionType", "epithet"), ("licensingMechanism", "outOfBlue")] }
 
-def priorMention_epithet : LinguisticExample :=
+def priorMention_epithet : Datum :=
   { id := "loguercio2025_priorMention_epithet"
     source := ⟨"lo-guercio-2025", "(20a)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def priorMention_epithet : LinguisticExample :=
     readings := []
     paperFeatures := [("aciStatus", "arises"), ("aciTarget", "John (first conjunct)"), ("expressionType", "epithet"), ("licensingMechanism", "priorMention")] }
 
-def subconstituent_epithet : LinguisticExample :=
+def subconstituent_epithet : Datum :=
   { id := "loguercio2025_subconstituent_epithet"
     source := ⟨"lo-guercio-2025", "(epithet subconstituent)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def subconstituent_epithet : LinguisticExample :=
     readings := []
     paperFeatures := [("aciStatus", "arises"), ("aciTarget", "John (matrix subject)"), ("expressionType", "epithet"), ("licensingMechanism", "subconstituent")] }
 
-def outOfBlue_honorific : LinguisticExample :=
+def outOfBlue_honorific : Datum :=
   { id := "loguercio2025_outOfBlue_honorific"
     source := ⟨"lo-guercio-2025", "(Spanish honorific OOTB)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def outOfBlue_honorific : LinguisticExample :=
     readings := []
     paperFeatures := [("aciStatus", "doesNotArise"), ("expressionType", "honorific"), ("licensingMechanism", "outOfBlue"), ("language", "Spanish")] }
 
-def contrastive_honorific : LinguisticExample :=
+def contrastive_honorific : Datum :=
   { id := "loguercio2025_contrastive_honorific"
     source := ⟨"lo-guercio-2025", "(22a)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def contrastive_honorific : LinguisticExample :=
     readings := []
     paperFeatures := [("aciStatus", "arises"), ("aciTarget", "Donato (first segment)"), ("expressionType", "honorific"), ("licensingMechanism", "priorMention"), ("language", "Spanish")] }
 
-def outOfBlue_appositive : LinguisticExample :=
+def outOfBlue_appositive : Datum :=
   { id := "loguercio2025_outOfBlue_appositive"
     source := ⟨"lo-guercio-2025", "(31a)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def outOfBlue_appositive : LinguisticExample :=
     readings := []
     paperFeatures := [("aciStatus", "doesNotArise"), ("expressionType", "appositive"), ("licensingMechanism", "outOfBlue")] }
 
-def priorMention_appositive : LinguisticExample :=
+def priorMention_appositive : Datum :=
   { id := "loguercio2025_priorMention_appositive"
     source := ⟨"lo-guercio-2025", "(31b)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def priorMention_appositive : LinguisticExample :=
     readings := []
     paperFeatures := [("aciStatus", "arises"), ("aciTarget", "Diego (first segment)"), ("expressionType", "appositive"), ("licensingMechanism", "priorMention")] }
 
-def outOfBlue_suppAdverb : LinguisticExample :=
+def outOfBlue_suppAdverb : Datum :=
   { id := "loguercio2025_outOfBlue_suppAdverb"
     source := ⟨"lo-guercio-2025", "(33a)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def outOfBlue_suppAdverb : LinguisticExample :=
     readings := []
     paperFeatures := [("aciStatus", "doesNotArise"), ("expressionType", "supplementaryAdverb"), ("licensingMechanism", "outOfBlue")] }
 
-def priorMention_suppAdverb : LinguisticExample :=
+def priorMention_suppAdverb : Datum :=
   { id := "loguercio2025_priorMention_suppAdverb"
     source := ⟨"lo-guercio-2025", "(supp-adv prior mention)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def priorMention_suppAdverb : LinguisticExample :=
     readings := []
     paperFeatures := [("aciStatus", "arises"), ("aciTarget", "Juan-signup proposition (first conjunct)"), ("expressionType", "supplementaryAdverb"), ("licensingMechanism", "priorMention")] }
 
-def priorMention_emotiveMarker : LinguisticExample :=
+def priorMention_emotiveMarker : Datum :=
   { id := "loguercio2025_priorMention_emotiveMarker"
     source := ⟨"lo-guercio-2025", "(38a)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def priorMention_emotiveMarker : LinguisticExample :=
     readings := []
     paperFeatures := [("aciStatus", "arises"), ("aciTarget", "Juan-signup proposition (first conjunct)"), ("expressionType", "emotiveMarker"), ("licensingMechanism", "priorMention")] }
 
-def registerBlocking : LinguisticExample :=
+def registerBlocking : Datum :=
   { id := "loguercio2025_registerBlocking"
     source := ⟨"lo-guercio-2025", "(28a)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def registerBlocking : LinguisticExample :=
     readings := []
     paperFeatures := [("aciStatus", "doesNotArise"), ("expressionType", "epithet"), ("licensingMechanism", "register"), ("registerContrast", "bastard~motherfucker")] }
 
-def disjunction_independent_of_assertion : LinguisticExample :=
+def disjunction_independent_of_assertion : Datum :=
   { id := "loguercio2025_disjunction_independent_of_assertion"
     source := ⟨"lo-guercio-2025", "(50)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def disjunction_independent_of_assertion : LinguisticExample :=
     readings := []
     paperFeatures := [("aciStatus", "arises"), ("aciTarget", "María"), ("expressionType", "epithet"), ("aciProperty", "independentOfAssertion")] }
 
-def DE_aci_survives : LinguisticExample :=
+def DE_aci_survives : Datum :=
   { id := "loguercio2025_DE_aci_survives"
     source := ⟨"lo-guercio-2025", "(DE-embedding)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def DE_aci_survives : LinguisticExample :=
     readings := []
     paperFeatures := [("aciStatus", "arises"), ("aciTarget", "Juan"), ("expressionType", "epithet"), ("aciProperty", "unaffectedByDE")] }
 
-def cancellation : LinguisticExample :=
+def cancellation : Datum :=
   { id := "loguercio2025_cancellation"
     source := ⟨"lo-guercio-2025", "(ACI cancellation)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def cancellation : LinguisticExample :=
     readings := []
     paperFeatures := [("aciStatus", "cancelled"), ("aciProperty", "cancellable")] }
 
-def reinforcement : LinguisticExample :=
+def reinforcement : Datum :=
   { id := "loguercio2025_reinforcement"
     source := ⟨"lo-guercio-2025", "(ACI reinforcement)"⟩
     reportedIn := none
@@ -212,6 +212,6 @@ def reinforcement : LinguisticExample :=
     readings := []
     paperFeatures := [("aciStatus", "arises"), ("aciProperty", "reinforceable")] }
 
-def all : List LinguisticExample := [outOfBlue_epithet, priorMention_epithet, subconstituent_epithet, outOfBlue_honorific, contrastive_honorific, outOfBlue_appositive, priorMention_appositive, outOfBlue_suppAdverb, priorMention_suppAdverb, priorMention_emotiveMarker, registerBlocking, disjunction_independent_of_assertion, DE_aci_survives, cancellation, reinforcement]
+def all : List Datum := [outOfBlue_epithet, priorMention_epithet, subconstituent_epithet, outOfBlue_honorific, contrastive_honorific, outOfBlue_appositive, priorMention_appositive, outOfBlue_suppAdverb, priorMention_suppAdverb, priorMention_emotiveMarker, registerBlocking, disjunction_independent_of_assertion, DE_aci_survives, cancellation, reinforcement]
 
 end LoGuercio2025.Examples

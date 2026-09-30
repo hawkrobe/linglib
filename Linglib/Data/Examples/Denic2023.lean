@@ -17,7 +17,7 @@ namespace Denic2023.Examples
 
 open Data.Examples
 
-def ex_6 : LinguisticExample :=
+def ex_6 : Datum :=
   { id := "denic2023_6"
     source := ⟨"denic-2023", "(6)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_6 : LinguisticExample :=
     readings := [("distributive", .acceptable), ("ignorance", .marginal)]
     paperFeatures := [("name", "all-20-or"), ("restrictor", "20"), ("disjuncts", "2"), ("preferred", "distributive")] }
 
-def ex_7 : LinguisticExample :=
+def ex_7 : Datum :=
   { id := "denic2023_7"
     source := ⟨"denic-2023", "(7)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_7 : LinguisticExample :=
     readings := [("distributive", .marginal), ("ignorance", .acceptable)]
     paperFeatures := [("name", "all-2-or"), ("restrictor", "2"), ("disjuncts", "2"), ("preferred", "ignorance")] }
 
-def ex_8 : LinguisticExample :=
+def ex_8 : Datum :=
   { id := "denic2023_8"
     source := ⟨"denic-2023", "(8)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_8 : LinguisticExample :=
     readings := [("distributive", .acceptable), ("ignorance", .marginal)]
     paperFeatures := [("name", "simple-disj"), ("restrictor", "4"), ("disjuncts", "2"), ("preferred", "distributive")] }
 
-def ex_9 : LinguisticExample :=
+def ex_9 : Datum :=
   { id := "denic2023_9"
     source := ⟨"denic-2023", "(9)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_9 : LinguisticExample :=
     readings := [("distributive", .marginal), ("ignorance", .acceptable)]
     paperFeatures := [("name", "complex-disj"), ("restrictor", "4"), ("disjuncts", "4"), ("preferred", "ignorance")] }
 
-def ex_12 : LinguisticExample :=
+def ex_12 : Datum :=
   { id := "denic2023_12"
     source := ⟨"denic-2023", "(12)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_12 : LinguisticExample :=
     readings := []
     paperFeatures := [("name", "unembedded"), ("disjuncts", "2")] }
 
-def ex_31 : LinguisticExample :=
+def ex_31 : Datum :=
   { id := "denic2023_31"
     source := ⟨"denic-2023", "(31)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_31 : LinguisticExample :=
     readings := []
     paperFeatures := [("name", "deviant-be"), ("predicate", "identityCopula"), ("singletonDenoting", "yes")] }
 
-def ex_32 : LinguisticExample :=
+def ex_32 : Datum :=
   { id := "denic2023_32"
     source := ⟨"denic-2023", "(32)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_32 : LinguisticExample :=
     readings := []
     paperFeatures := [("name", "non-deviant-called"), ("predicate", "beCalled"), ("singletonDenoting", "no")] }
 
-def ex_33 : LinguisticExample :=
+def ex_33 : Datum :=
   { id := "denic2023_33"
     source := ⟨"denic-2023", "(33)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_33 : LinguisticExample :=
     readings := []
     paperFeatures := [("name", "deviant-write"), ("predicate", "write"), ("singletonDenoting", "yes")] }
 
-def ex_34 : LinguisticExample :=
+def ex_34 : Datum :=
   { id := "denic2023_34"
     source := ⟨"denic-2023", "(34)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_34 : LinguisticExample :=
     readings := []
     paperFeatures := [("name", "non-deviant-read"), ("predicate", "read"), ("singletonDenoting", "no")] }
 
-def ex_35 : LinguisticExample :=
+def ex_35 : Datum :=
   { id := "denic2023_35"
     source := ⟨"denic-2023", "(35)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_35 : LinguisticExample :=
     readings := []
     paperFeatures := [("name", "paraphrase-of-deviant-be")] }
 
-def ex_37a : LinguisticExample :=
+def ex_37a : Datum :=
   { id := "denic2023_37a"
     source := ⟨"denic-2023", "(37a)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_37a : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "singletonDenoting"), ("predicate", "identityCopula")] }
 
-def ex_37b : LinguisticExample :=
+def ex_37b : Datum :=
   { id := "denic2023_37b"
     source := ⟨"denic-2023", "(37b)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_37b : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "singletonDenoting"), ("predicate", "beCalled")] }
 
-def ex_37c : LinguisticExample :=
+def ex_37c : Datum :=
   { id := "denic2023_37c"
     source := ⟨"denic-2023", "(37c)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_37c : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "singletonDenoting"), ("predicate", "write")] }
 
-def ex_37d : LinguisticExample :=
+def ex_37d : Datum :=
   { id := "denic2023_37d"
     source := ⟨"denic-2023", "(37d)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_37d : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "singletonDenoting"), ("predicate", "read")] }
 
-def ex_38 : LinguisticExample :=
+def ex_38 : Datum :=
   { id := "denic2023_38"
     source := ⟨"denic-2023", "(38)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_38 : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "write"), ("singletonDenoting", "no")] }
 
-def ex_41 : LinguisticExample :=
+def ex_41 : Datum :=
   { id := "denic2023_41"
     source := ⟨"magri-2009", ""⟩
     reportedIn := some ⟨"denic-2023", "(41)"⟩
@@ -225,7 +225,7 @@ def ex_41 : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "blindImplicature")] }
 
-def ex_43a : LinguisticExample :=
+def ex_43a : Datum :=
   { id := "denic2023_43a"
     source := ⟨"buccola-haida-2019", ""⟩
     reportedIn := some ⟨"denic-2023", "(43a)"⟩
@@ -238,7 +238,7 @@ def ex_43a : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "blindIgnorance")] }
 
-def ex_43b : LinguisticExample :=
+def ex_43b : Datum :=
   { id := "denic2023_43b"
     source := ⟨"buccola-haida-2019", ""⟩
     reportedIn := some ⟨"denic-2023", "(43b)"⟩
@@ -251,7 +251,7 @@ def ex_43b : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "blindIgnorance")] }
 
-def ex_48 : LinguisticExample :=
+def ex_48 : Datum :=
   { id := "denic2023_48"
     source := ⟨"denic-2023", "(48)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex_48 : LinguisticExample :=
     readings := [("not all of her 20 friends are French", .unacceptable)]
     paperFeatures := [("diagnostic", "symmetry")] }
 
-def ex_55a : LinguisticExample :=
+def ex_55a : Datum :=
   { id := "denic2023_55a"
     source := ⟨"denic-2023", "(55a)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex_55a : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "modalContrast"), ("modal", "necessity")] }
 
-def ex_55b : LinguisticExample :=
+def ex_55b : Datum :=
   { id := "denic2023_55b"
     source := ⟨"denic-2023", "(55b)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex_55b : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "modalContrast"), ("modal", "possibility")] }
 
-def ex_57 : LinguisticExample :=
+def ex_57 : Datum :=
   { id := "denic2023_57"
     source := ⟨"denic-2023", "(57)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex_57 : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "largerDomain"), ("restrictor", "20")] }
 
-def ex_59 : LinguisticExample :=
+def ex_59 : Datum :=
   { id := "denic2023_59"
     source := ⟨"denic-2023", "(59)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex_59 : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "downwardEntailing")] }
 
-def ex_63 : LinguisticExample :=
+def ex_63 : Datum :=
   { id := "denic2023_63"
     source := ⟨"denic-2023", "(63)"⟩
     reportedIn := none
@@ -329,6 +329,6 @@ def ex_63 : LinguisticExample :=
     readings := [("distributive", .marginal), ("ignorance", .acceptable)]
     paperFeatures := [("diagnostic", "priorKnowledge"), ("restrictor", "2"), ("disjuncts", "2"), ("preferred", "ignorance")] }
 
-def all : List LinguisticExample := [ex_6, ex_7, ex_8, ex_9, ex_12, ex_31, ex_32, ex_33, ex_34, ex_35, ex_37a, ex_37b, ex_37c, ex_37d, ex_38, ex_41, ex_43a, ex_43b, ex_48, ex_55a, ex_55b, ex_57, ex_59, ex_63]
+def all : List Datum := [ex_6, ex_7, ex_8, ex_9, ex_12, ex_31, ex_32, ex_33, ex_34, ex_35, ex_37a, ex_37b, ex_37c, ex_37d, ex_38, ex_41, ex_43a, ex_43b, ex_48, ex_55a, ex_55b, ex_57, ex_59, ex_63]
 
 end Denic2023.Examples

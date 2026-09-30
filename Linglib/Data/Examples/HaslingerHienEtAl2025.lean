@@ -17,7 +17,7 @@ namespace HaslingerHienEtAl2025.Examples
 
 open Data.Examples
 
-def ex_71a : LinguisticExample :=
+def ex_71a : Datum :=
   { id := "haslingerhienetal2025_71a"
     source := ⟨"haslinger-etal-2025-nllt", "(71a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_71a : LinguisticExample :=
     readings := []
     paperFeatures := [("structure", "nonOverlap"), ("form", "every")] }
 
-def ex_71b : LinguisticExample :=
+def ex_71b : Datum :=
   { id := "haslingerhienetal2025_71b"
     source := ⟨"haslinger-etal-2025-nllt", "(71b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_71b : LinguisticExample :=
     readings := []
     paperFeatures := [("structure", "bare"), ("form", "alle")] }
 
-def ex_73a : LinguisticExample :=
+def ex_73a : Datum :=
   { id := "haslingerhienetal2025_73a"
     source := ⟨"haslinger-etal-2025-nllt", "(73a)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_73a : LinguisticExample :=
     readings := []
     paperFeatures := [("structure", "nonOverlap"), ("form", "every")] }
 
-def ex_73b : LinguisticExample :=
+def ex_73b : Datum :=
   { id := "haslingerhienetal2025_73b"
     source := ⟨"haslinger-etal-2025-nllt", "(73b)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_73b : LinguisticExample :=
     readings := []
     paperFeatures := [("structure", "atomic"), ("form", "each")] }
 
-def ex_74a : LinguisticExample :=
+def ex_74a : Datum :=
   { id := "haslingerhienetal2025_74a"
     source := ⟨"haslinger-etal-2025-nllt", "(74a)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_74a : LinguisticExample :=
     readings := []
     paperFeatures := [("structure", "bare"), ("form", "alle")] }
 
-def ex_74b : LinguisticExample :=
+def ex_74b : Datum :=
   { id := "haslingerhienetal2025_74b"
     source := ⟨"haslinger-etal-2025-nllt", "(74b)"⟩
     reportedIn := none
@@ -95,6 +95,6 @@ def ex_74b : LinguisticExample :=
     readings := []
     paperFeatures := [("structure", "atomicOnly"), ("form", "jeder")] }
 
-def all : List LinguisticExample := [ex_71a, ex_71b, ex_73a, ex_73b, ex_74a, ex_74b]
+def all : List Datum := [ex_71a, ex_71b, ex_73a, ex_73b, ex_74a, ex_74b]
 
 end HaslingerHienEtAl2025.Examples

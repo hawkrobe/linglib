@@ -17,7 +17,7 @@ namespace Bochnak2015a.Examples
 
 open Data.Examples
 
-def ex10 : LinguisticExample :=
+def ex10 : Datum :=
   { id := "bochnak2015a_ex10"
     source := ⟨"bochnak-2015a", "(10b)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex10 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("force", "necessity"), ("flavor", "deontic")] }
 
-def ex11 : LinguisticExample :=
+def ex11 : Datum :=
   { id := "bochnak2015a_ex11"
     source := ⟨"bochnak-2015a", "(11b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex11 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("force", "necessity"), ("flavor", "deontic")] }
 
-def ex12 : LinguisticExample :=
+def ex12 : Datum :=
   { id := "bochnak2015a_ex12"
     source := ⟨"bochnak-2015a", "(12b)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex12 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("force", "necessity"), ("flavor", "metaphysical")] }
 
-def ex13 : LinguisticExample :=
+def ex13 : Datum :=
   { id := "bochnak2015a_ex13"
     source := ⟨"bochnak-2015a", "(13b)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex13 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("force", "necessity"), ("flavor", "metaphysical")] }
 
-def ex14 : LinguisticExample :=
+def ex14 : Datum :=
   { id := "bochnak2015a_ex14"
     source := ⟨"bochnak-2015a", "(14b)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex14 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("force", "necessity"), ("flavor", "epistemic")] }
 
-def ex15 : LinguisticExample :=
+def ex15 : Datum :=
   { id := "bochnak2015a_ex15"
     source := ⟨"bochnak-2015a", "(15b)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex15 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("force", "necessity"), ("flavor", "bouletic")] }
 
-def ex16 : LinguisticExample :=
+def ex16 : Datum :=
   { id := "bochnak2015a_ex16"
     source := ⟨"bochnak-2015a", "(16b)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex16 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("force", "weak necessity"), ("flavor", "bouletic")] }
 
-def ex17 : LinguisticExample :=
+def ex17 : Datum :=
   { id := "bochnak2015a_ex17"
     source := ⟨"bochnak-2015a", "(17)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex17 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("flavor", "generic")] }
 
-def ex18 : LinguisticExample :=
+def ex18 : Datum :=
   { id := "bochnak2015a_ex18"
     source := ⟨"bochnak-2015a", "(18b)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex18 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("force", "possibility"), ("flavor", "deontic")] }
 
-def ex19 : LinguisticExample :=
+def ex19 : Datum :=
   { id := "bochnak2015a_ex19"
     source := ⟨"bochnak-2015a", "(19b)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex19 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("force", "possibility"), ("flavor", "deontic")] }
 
-def ex20 : LinguisticExample :=
+def ex20 : Datum :=
   { id := "bochnak2015a_ex20"
     source := ⟨"bochnak-2015a", "(20b)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex20 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("force", "possibility"), ("flavor", "metaphysical")] }
 
-def ex21 : LinguisticExample :=
+def ex21 : Datum :=
   { id := "bochnak2015a_ex21"
     source := ⟨"bochnak-2015a", "(21b)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex21 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("force", "possibility"), ("flavor", "epistemic")] }
 
-def ex22 : LinguisticExample :=
+def ex22 : Datum :=
   { id := "bochnak2015a_ex22"
     source := ⟨"bochnak-2015a", "(22b)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex22 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("force", "possibility"), ("flavor", "circumstantial")] }
 
-def ex23 : LinguisticExample :=
+def ex23 : Datum :=
   { id := "bochnak2015a_ex23"
     source := ⟨"bochnak-2015a", "(23b)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex23 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("force", "possibility"), ("flavor", "circumstantial")] }
 
-def ex30 : LinguisticExample :=
+def ex30 : Datum :=
   { id := "bochnak2015a_ex30"
     source := ⟨"bochnak-2015a", "(30b)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex30 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("force", "necessity"), ("flavor", "circumstantial"), ("prejacent", "negated")] }
 
-def ex31 : LinguisticExample :=
+def ex31 : Datum :=
   { id := "bochnak2015a_ex31"
     source := ⟨"bochnak-2015a", "(31b)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex31 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("force", "necessity"), ("flavor", "metaphysical"), ("prejacent", "negated")] }
 
-def ex32 : LinguisticExample :=
+def ex32 : Datum :=
   { id := "bochnak2015a_ex32"
     source := ⟨"bochnak-2015a", "(32b)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex32 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("force", "necessity"), ("flavor", "deontic"), ("prejacent", "negated")] }
 
-def ex33 : LinguisticExample :=
+def ex33 : Datum :=
   { id := "bochnak2015a_ex33"
     source := ⟨"bochnak-2015a", "(33b)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex33 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("force", "possibility"), ("flavor", "metaphysical"), ("prejacent", "negated")] }
 
-def ex34 : LinguisticExample :=
+def ex34 : Datum :=
   { id := "bochnak2015a_ex34"
     source := ⟨"bochnak-2015a", "(34b)"⟩
     reportedIn := none
@@ -264,6 +264,6 @@ def ex34 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("force", "possibility"), ("flavor", "metaphysical"), ("prejacent", "negated")] }
 
-def all : List LinguisticExample := [ex10, ex11, ex12, ex13, ex14, ex15, ex16, ex17, ex18, ex19, ex20, ex21, ex22, ex23, ex30, ex31, ex32, ex33, ex34]
+def all : List Datum := [ex10, ex11, ex12, ex13, ex14, ex15, ex16, ex17, ex18, ex19, ex20, ex21, ex22, ex23, ex30, ex31, ex32, ex33, ex34]
 
 end Bochnak2015a.Examples

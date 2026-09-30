@@ -91,7 +91,7 @@ the rows and not formalized.
 namespace Dendikken1995
 
 open Minimalist
-open Data.Examples (LinguisticExample)
+open Data.Examples (Datum)
 
 /-- The particle's complement is the object of a simplex construction or the inner small clause
 of a complex one, whose predicate is headed by the given lexical category; the infinitival marker
@@ -330,7 +330,7 @@ theorem norwegian_incorporates : Language.incorporates .norwegian = {Voice.passi
 
 /-- The language of a row; both written standards of Norwegian, Bokmål and Nynorsk, count as
 Norwegian. -/
-def languageOf (r : LinguisticExample) : Option Language :=
+def languageOf (r : Datum) : Option Language :=
   match r.language with
   | "stan1293" => some .english
   | "norw1259" | "norw1262" => some .norwegian
@@ -339,7 +339,7 @@ def languageOf (r : LinguisticExample) : Option Language :=
   | _ => none
 
 /-- The particle's complement as a row's `construction` and `predicate` features record it. -/
-def complementOf (r : LinguisticExample) : Option Complement :=
+def complementOf (r : Datum) : Option Complement :=
   match r.feature? "construction", r.feature? "predicate" with
   | some "simplex", _ => some .np
   | some "complex", some "nominal" => some (.sc .nominal)
@@ -349,22 +349,22 @@ def complementOf (r : LinguisticExample) : Option Complement :=
   | _, _ => none
 
 /-- The particle's placement as a row's `placement` feature records it. -/
-def placementOf (r : LinguisticExample) : Option Placement :=
+def placementOf (r : Datum) : Option Placement :=
   r.parse? "placement"
     [("inner", .inner), ("outer", .outer), ("final", .final), ("prefixed", .prefixed)]
 
 /-- The voice of a row's clause, active unless its `voice` feature says passive. -/
-def voiceOf (r : LinguisticExample) : Voice :=
+def voiceOf (r : Datum) : Voice :=
   if r.feature? "voice" = some "passive" then Voice.passive else Voice.active
 
 /-- The row's object is a weak pronoun. -/
-def Weak (r : LinguisticExample) : Prop := r.feature? "object" = some "pronoun"
+def Weak (r : Datum) : Prop := r.feature? "object" = some "pronoun"
 
 /-- The row's particle carries a bare modifier. -/
-def Modified (r : LinguisticExample) : Prop := r.feature? "modifier" = some "right"
+def Modified (r : Datum) : Prop := r.feature? "modifier" = some "right"
 
-instance (r : LinguisticExample) : Decidable (Weak r) := inferInstanceAs (Decidable (_ = _))
-instance (r : LinguisticExample) : Decidable (Modified r) := inferInstanceAs (Decidable (_ = _))
+instance (r : Datum) : Decidable (Weak r) := inferInstanceAs (Decidable (_ = _))
+instance (r : Datum) : Decidable (Modified r) := inferInstanceAs (Decidable (_ = _))
 
 /-- Every English and Norwegian row of the placement paradigms is judged acceptable exactly
 when the calculus derives its placement; the Norwegian rows (70), (73) and (134) pattern with
@@ -408,7 +408,7 @@ theorem rows_prefixed :
 /-- The fragment's verb of a row of Åfarli's (134a) and (135a), Nynorsk *sparke ut*. The rows
 of (134b) and (134c) have none: the grammar's lists do not place *klippe*, and the book spells
 Åfarli's *køyrt* as Bokmål *kjørt*. -/
-def verbOf (r : LinguisticExample) : Option Norwegian.Verb :=
+def verbOf (r : Datum) : Option Norwegian.Verb :=
   match r.reportedIn with
   | some ⟨_, "(134a)"⟩ | some ⟨_, "(135a)"⟩ => some Norwegian.Verbs.Nynorsk.sparkeUt
   | _ => none

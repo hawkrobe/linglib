@@ -17,7 +17,7 @@ namespace Ozaki2026.Examples
 
 open Data.Examples
 
-def ex1_acc : LinguisticExample :=
+def ex1_acc : Datum :=
   { id := "ozaki2026_ex1_acc"
     source := ⟨"ozaki-2026", "(1)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex1_acc : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "hanareru"), ("marking", "acc"), ("diagnostic", "alternation")] }
 
-def ex1_abl : LinguisticExample :=
+def ex1_abl : Datum :=
   { id := "ozaki2026_ex1_abl"
     source := ⟨"ozaki-2026", "(1)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex1_abl : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "hanareru"), ("marking", "abl"), ("diagnostic", "alternation")] }
 
-def ex9_acc : LinguisticExample :=
+def ex9_acc : Datum :=
   { id := "ozaki2026_ex9_acc"
     source := ⟨"ozaki-2026", "(9)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex9_acc : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "deru"), ("marking", "acc"), ("diagnostic", "ellipsis")] }
 
-def ex9_abl : LinguisticExample :=
+def ex9_abl : Datum :=
   { id := "ozaki2026_ex9_abl"
     source := ⟨"ozaki-2026", "(9)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex9_abl : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "deru"), ("marking", "abl"), ("diagnostic", "ellipsis")] }
 
-def ex13_acc : LinguisticExample :=
+def ex13_acc : Datum :=
   { id := "ozaki2026_ex13_acc"
     source := ⟨"ozaki-2026", "(13)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex13_acc : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "hanareru"), ("marking", "acc"), ("diagnostic", "scrambling")] }
 
-def ex13_abl : LinguisticExample :=
+def ex13_abl : Datum :=
   { id := "ozaki2026_ex13_abl"
     source := ⟨"ozaki-2026", "(13)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex13_abl : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "hanareru"), ("marking", "abl"), ("diagnostic", "scrambling")] }
 
-def ex14 : LinguisticExample :=
+def ex14 : Datum :=
   { id := "ozaki2026_ex14"
     source := ⟨"ozaki-2026", "(14)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex14 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "hanareru"), ("marking", "none"), ("diagnostic", "indirect_passive")] }
 
-def ex20 : LinguisticExample :=
+def ex20 : Datum :=
   { id := "ozaki2026_ex20"
     source := ⟨"ozaki-2026", "(20)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex20 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "hanareru"), ("marking", "none"), ("diagnostic", "direct_passive")] }
 
-def ex26_acc : LinguisticExample :=
+def ex26_acc : Datum :=
   { id := "ozaki2026_ex26_acc"
     source := ⟨"ozaki-2026", "(26)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex26_acc : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "hanareru"), ("marking", "acc"), ("diagnostic", "nani_o")] }
 
-def ex26_abl : LinguisticExample :=
+def ex26_abl : Datum :=
   { id := "ozaki2026_ex26_abl"
     source := ⟨"ozaki-2026", "(26)"⟩
     reportedIn := none
@@ -147,6 +147,6 @@ def ex26_abl : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "hanareru"), ("marking", "abl"), ("diagnostic", "nani_o")] }
 
-def all : List LinguisticExample := [ex1_acc, ex1_abl, ex9_acc, ex9_abl, ex13_acc, ex13_abl, ex14, ex20, ex26_acc, ex26_abl]
+def all : List Datum := [ex1_acc, ex1_abl, ex9_acc, ex9_abl, ex13_acc, ex13_abl, ex14, ex20, ex26_acc, ex26_abl]
 
 end Ozaki2026.Examples

@@ -17,7 +17,7 @@ namespace AnandHacquard2013.Examples
 
 open Data.Examples
 
-def ex_1a : LinguisticExample :=
+def ex_1a : Datum :=
   { id := "anandhacquard2013_1a"
     source := ⟨"anand-hacquard-2013", "(1a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_1a : LinguisticExample :=
     readings := [("epistemic", .acceptable)]
     paperFeatures := [("attitude_class", "doxastic"), ("modal_force", "necessity"), ("modal_flavor", "epistemic"), ("anchor", "attitude")] }
 
-def ex_1b : LinguisticExample :=
+def ex_1b : Datum :=
   { id := "anandhacquard2013_1b"
     source := ⟨"anand-hacquard-2013", "(1b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_1b : LinguisticExample :=
     readings := [("epistemic", .acceptable)]
     paperFeatures := [("attitude_class", "argumentative"), ("modal_force", "necessity"), ("modal_flavor", "epistemic"), ("anchor", "attitude")] }
 
-def ex_1c : LinguisticExample :=
+def ex_1c : Datum :=
   { id := "anandhacquard2013_1c"
     source := ⟨"anand-hacquard-2013", "(1c)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_1c : LinguisticExample :=
     readings := [("epistemic", .acceptable)]
     paperFeatures := [("attitude_class", "semifactive"), ("modal_force", "necessity"), ("modal_flavor", "epistemic"), ("anchor", "attitude")] }
 
-def ex_2a : LinguisticExample :=
+def ex_2a : Datum :=
   { id := "anandhacquard2013_2a"
     source := ⟨"anand-hacquard-2013", "(2a)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_2a : LinguisticExample :=
     readings := [("epistemic", .unacceptable)]
     paperFeatures := [("attitude_class", "desiderative"), ("modal_force", "necessity"), ("modal_flavor", "epistemic"), ("anchor", "attitude")] }
 
-def ex_2b : LinguisticExample :=
+def ex_2b : Datum :=
   { id := "anandhacquard2013_2b"
     source := ⟨"anand-hacquard-2013", "(2b)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_2b : LinguisticExample :=
     readings := [("epistemic", .unacceptable)]
     paperFeatures := [("attitude_class", "desiderative"), ("modal_force", "necessity"), ("modal_flavor", "epistemic"), ("anchor", "attitude")] }
 
-def ex_2c : LinguisticExample :=
+def ex_2c : Datum :=
   { id := "anandhacquard2013_2c"
     source := ⟨"anand-hacquard-2013", "(2c)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_2c : LinguisticExample :=
     readings := [("epistemic", .unacceptable)]
     paperFeatures := [("attitude_class", "directive"), ("modal_force", "necessity"), ("modal_flavor", "epistemic"), ("anchor", "attitude")] }
 
-def ex_3a : LinguisticExample :=
+def ex_3a : Datum :=
   { id := "anandhacquard2013_3a"
     source := ⟨"anand-hacquard-2013", "(3a)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_3a : LinguisticExample :=
     readings := [("teleological", .acceptable)]
     paperFeatures := [("attitude_class", "desiderative"), ("modal_force", "necessity"), ("modal_flavor", "teleological"), ("anchor", "attitude")] }
 
-def ex_13 : LinguisticExample :=
+def ex_13 : Datum :=
   { id := "anandhacquard2013_13"
     source := ⟨"anand-hacquard-2013", "(13)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_13 : LinguisticExample :=
     readings := []
     paperFeatures := [("attitude_class", "doxastic"), ("modal_force", "necessity"), ("mood", "indicative"), ("modal_flavor", "epistemic"), ("anchor", "attitude")] }
 
-def ex_14 : LinguisticExample :=
+def ex_14 : Datum :=
   { id := "anandhacquard2013_14"
     source := ⟨"anand-hacquard-2013", "(14)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_14 : LinguisticExample :=
     readings := []
     paperFeatures := [("attitude_class", "argumentative"), ("modal_force", "necessity"), ("mood", "indicative"), ("modal_flavor", "epistemic"), ("anchor", "attitude")] }
 
-def ex_15 : LinguisticExample :=
+def ex_15 : Datum :=
   { id := "anandhacquard2013_15"
     source := ⟨"anand-hacquard-2013", "(15)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_15 : LinguisticExample :=
     readings := []
     paperFeatures := [("attitude_class", "semifactive"), ("modal_force", "necessity"), ("mood", "indicative"), ("modal_flavor", "epistemic"), ("anchor", "attitude")] }
 
-def ex_16 : LinguisticExample :=
+def ex_16 : Datum :=
   { id := "anandhacquard2013_16"
     source := ⟨"anand-hacquard-2013", "(16)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_16 : LinguisticExample :=
     readings := []
     paperFeatures := [("attitude_class", "desiderative"), ("modal_force", "necessity"), ("mood", "subjunctive"), ("modal_flavor", "epistemic"), ("anchor", "attitude")] }
 
-def ex_17 : LinguisticExample :=
+def ex_17 : Datum :=
   { id := "anandhacquard2013_17"
     source := ⟨"anand-hacquard-2013", "(17)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_17 : LinguisticExample :=
     readings := []
     paperFeatures := [("attitude_class", "directive"), ("modal_force", "necessity"), ("mood", "subjunctive"), ("modal_flavor", "epistemic"), ("anchor", "attitude")] }
 
-def ex_18 : LinguisticExample :=
+def ex_18 : Datum :=
   { id := "anandhacquard2013_18"
     source := ⟨"anand-hacquard-2013", "(18)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_18 : LinguisticExample :=
     readings := []
     paperFeatures := [("attitude_class", "emotive_doxastic"), ("modal_force", "possibility"), ("mood", "subjunctive"), ("modal_flavor", "epistemic"), ("anchor", "attitude")] }
 
-def ex_19 : LinguisticExample :=
+def ex_19 : Datum :=
   { id := "anandhacquard2013_19"
     source := ⟨"anand-hacquard-2013", "(19)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_19 : LinguisticExample :=
     readings := []
     paperFeatures := [("attitude_class", "emotive_doxastic"), ("modal_force", "necessity"), ("mood", "subjunctive"), ("modal_flavor", "epistemic"), ("anchor", "attitude")] }
 
-def ex_20 : LinguisticExample :=
+def ex_20 : Datum :=
   { id := "anandhacquard2013_20"
     source := ⟨"anand-hacquard-2013", "(20)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_20 : LinguisticExample :=
     readings := []
     paperFeatures := [("attitude_class", "dubitative"), ("modal_force", "possibility"), ("mood", "subjunctive"), ("modal_flavor", "epistemic"), ("anchor", "attitude")] }
 
-def ex_21 : LinguisticExample :=
+def ex_21 : Datum :=
   { id := "anandhacquard2013_21"
     source := ⟨"anand-hacquard-2013", "(21)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_21 : LinguisticExample :=
     readings := []
     paperFeatures := [("attitude_class", "dubitative"), ("modal_force", "necessity"), ("mood", "subjunctive"), ("modal_flavor", "epistemic"), ("anchor", "attitude")] }
 
-def ex_22 : LinguisticExample :=
+def ex_22 : Datum :=
   { id := "anandhacquard2013_22"
     source := ⟨"anand-hacquard-2013", "(22)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex_22 : LinguisticExample :=
     readings := []
     paperFeatures := [("attitude_class", "desiderative"), ("modal_force", "necessity"), ("mood", "subjunctive"), ("modal_flavor", "epistemic"), ("anchor", "third_party")] }
 
-def ex_23a : LinguisticExample :=
+def ex_23a : Datum :=
   { id := "anandhacquard2013_23a"
     source := ⟨"yalcin-2007", "(23a)"⟩
     reportedIn := some ⟨"anand-hacquard-2013", "(23a)"⟩
@@ -251,7 +251,7 @@ def ex_23a : LinguisticExample :=
     readings := []
     paperFeatures := [("second_conjunct", "belief_predicate")] }
 
-def ex_23b : LinguisticExample :=
+def ex_23b : Datum :=
   { id := "anandhacquard2013_23b"
     source := ⟨"yalcin-2007", "(23b)"⟩
     reportedIn := some ⟨"anand-hacquard-2013", "(23b)"⟩
@@ -264,7 +264,7 @@ def ex_23b : LinguisticExample :=
     readings := []
     paperFeatures := [("second_conjunct", "epistemic_modal"), ("modal_force", "possibility")] }
 
-def ex_30a : LinguisticExample :=
+def ex_30a : Datum :=
   { id := "anandhacquard2013_30a"
     source := ⟨"anand-hacquard-2013", "(30a)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex_30a : LinguisticExample :=
     readings := []
     paperFeatures := [("attitude_class", "argumentative"), ("test", "parenthetical")] }
 
-def ex_30b : LinguisticExample :=
+def ex_30b : Datum :=
   { id := "anandhacquard2013_30b"
     source := ⟨"anand-hacquard-2013", "(30b)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex_30b : LinguisticExample :=
     readings := []
     paperFeatures := [("attitude_class", "doxastic"), ("test", "verb_second"), ("complement_order", "verb_final")] }
 
-def ex_30c : LinguisticExample :=
+def ex_30c : Datum :=
   { id := "anandhacquard2013_30c"
     source := ⟨"anand-hacquard-2013", "(30c)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex_30c : LinguisticExample :=
     readings := []
     paperFeatures := [("attitude_class", "doxastic"), ("test", "verb_second"), ("complement_order", "verb_second")] }
 
-def ex_39 : LinguisticExample :=
+def ex_39 : Datum :=
   { id := "anandhacquard2013_39"
     source := ⟨"anand-hacquard-2013", "(39)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex_39 : LinguisticExample :=
     readings := []
     paperFeatures := [("attitude_class", "desiderative"), ("modal_force", "necessity"), ("modal_flavor", "epistemic"), ("anchor", "third_party")] }
 
-def ex_40 : LinguisticExample :=
+def ex_40 : Datum :=
   { id := "anandhacquard2013_40"
     source := ⟨"kratzer-2009", "(40)"⟩
     reportedIn := some ⟨"anand-hacquard-2013", "(40)"⟩
@@ -329,7 +329,7 @@ def ex_40 : LinguisticExample :=
     readings := []
     paperFeatures := [("attitude_class", "doxastic"), ("modal_force", "possibility"), ("modal_flavor", "epistemic"), ("anchor", "third_party")] }
 
-def ex_42 : LinguisticExample :=
+def ex_42 : Datum :=
   { id := "anandhacquard2013_42"
     source := ⟨"scheffler-2008", "(42)"⟩
     reportedIn := some ⟨"anand-hacquard-2013", "(42)"⟩
@@ -342,7 +342,7 @@ def ex_42 : LinguisticExample :=
     readings := []
     paperFeatures := [("attitude_class", "emotive_doxastic"), ("test", "answer_to_question")] }
 
-def ex_43a : LinguisticExample :=
+def ex_43a : Datum :=
   { id := "anandhacquard2013_43a"
     source := ⟨"scheffler-2008", "(43a)"⟩
     reportedIn := some ⟨"anand-hacquard-2013", "(43a)"⟩
@@ -355,7 +355,7 @@ def ex_43a : LinguisticExample :=
     readings := []
     paperFeatures := [("attitude_class", "emotive_doxastic"), ("test", "certainty_context")] }
 
-def ex_43b : LinguisticExample :=
+def ex_43b : Datum :=
   { id := "anandhacquard2013_43b"
     source := ⟨"scheffler-2008", "(43b)"⟩
     reportedIn := some ⟨"anand-hacquard-2013", "(43b)"⟩
@@ -368,7 +368,7 @@ def ex_43b : LinguisticExample :=
     readings := []
     paperFeatures := [("attitude_class", "desiderative"), ("test", "certainty_context")] }
 
-def ex_44a : LinguisticExample :=
+def ex_44a : Datum :=
   { id := "anandhacquard2013_44a"
     source := ⟨"anand-hacquard-2013", "(44a)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def ex_44a : LinguisticExample :=
     readings := []
     paperFeatures := [("attitude_class", "emotive_doxastic"), ("test", "certainty_context")] }
 
-def ex_44b : LinguisticExample :=
+def ex_44b : Datum :=
   { id := "anandhacquard2013_44b"
     source := ⟨"anand-hacquard-2013", "(44b)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def ex_44b : LinguisticExample :=
     readings := []
     paperFeatures := [("attitude_class", "desiderative"), ("test", "certainty_context")] }
 
-def ex_45 : LinguisticExample :=
+def ex_45 : Datum :=
   { id := "anandhacquard2013_45"
     source := ⟨"falaus-2010", "(45)"⟩
     reportedIn := some ⟨"anand-hacquard-2013", "(45)"⟩
@@ -407,7 +407,7 @@ def ex_45 : LinguisticExample :=
     readings := []
     paperFeatures := [("attitude_class", "desiderative"), ("test", "epistemic_indefinite"), ("indefinite", "vreun")] }
 
-def ex_46 : LinguisticExample :=
+def ex_46 : Datum :=
   { id := "anandhacquard2013_46"
     source := ⟨"falaus-2010", "(46)"⟩
     reportedIn := some ⟨"anand-hacquard-2013", "(46)"⟩
@@ -420,7 +420,7 @@ def ex_46 : LinguisticExample :=
     readings := []
     paperFeatures := [("attitude_class", "emotive_doxastic"), ("test", "epistemic_indefinite"), ("indefinite", "vreun")] }
 
-def ex_60 : LinguisticExample :=
+def ex_60 : Datum :=
   { id := "anandhacquard2013_60"
     source := ⟨"anand-hacquard-2013", "(60)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def ex_60 : LinguisticExample :=
     readings := []
     paperFeatures := [("attitude_class", "dubitative"), ("test", "uncertainty_cancellation"), ("suspender", "in fact")] }
 
-def ex_61a : LinguisticExample :=
+def ex_61a : Datum :=
   { id := "anandhacquard2013_61a"
     source := ⟨"anand-hacquard-2013", "(61a)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def ex_61a : LinguisticExample :=
     readings := []
     paperFeatures := [("attitude_class", "dubitative"), ("test", "uncertainty_cancellation"), ("suspender", "because")] }
 
-def ex_61b : LinguisticExample :=
+def ex_61b : Datum :=
   { id := "anandhacquard2013_61b"
     source := ⟨"anand-hacquard-2013", "(61b)"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def ex_61b : LinguisticExample :=
     readings := []
     paperFeatures := [("test", "uncertainty_cancellation"), ("suspender", "because")] }
 
-def ex_62 : LinguisticExample :=
+def ex_62 : Datum :=
   { id := "anandhacquard2013_62"
     source := ⟨"anand-hacquard-2013", "(62)"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def ex_62 : LinguisticExample :=
     readings := []
     paperFeatures := [("attitude_class", "doxastic"), ("test", "uncertainty_cancellation"), ("suspender", "in fact")] }
 
-def ex_65 : LinguisticExample :=
+def ex_65 : Datum :=
   { id := "anandhacquard2013_65"
     source := ⟨"anand-hacquard-2013", "(65)"⟩
     reportedIn := none
@@ -485,7 +485,7 @@ def ex_65 : LinguisticExample :=
     readings := []
     paperFeatures := [("attitude_class", "doxastic"), ("modal_force", "necessity"), ("mood", "subjunctive"), ("modal_flavor", "epistemic"), ("anchor", "attitude")] }
 
-def ex_66_muss : LinguisticExample :=
+def ex_66_muss : Datum :=
   { id := "anandhacquard2013_66_muss"
     source := ⟨"anand-hacquard-2013", "(66)"⟩
     reportedIn := none
@@ -498,7 +498,7 @@ def ex_66_muss : LinguisticExample :=
     readings := []
     paperFeatures := [("attitude_class", "doxastic"), ("modal_force", "necessity"), ("modal_flavor", "epistemic"), ("anchor", "attitude")] }
 
-def ex_66_koennte : LinguisticExample :=
+def ex_66_koennte : Datum :=
   { id := "anandhacquard2013_66_koennte"
     source := ⟨"anand-hacquard-2013", "(66)"⟩
     reportedIn := none
@@ -511,7 +511,7 @@ def ex_66_koennte : LinguisticExample :=
     readings := []
     paperFeatures := [("attitude_class", "doxastic"), ("modal_force", "possibility"), ("modal_flavor", "epistemic"), ("anchor", "attitude")] }
 
-def ex_67_muss : LinguisticExample :=
+def ex_67_muss : Datum :=
   { id := "anandhacquard2013_67_muss"
     source := ⟨"anand-hacquard-2013", "(67)"⟩
     reportedIn := none
@@ -524,7 +524,7 @@ def ex_67_muss : LinguisticExample :=
     readings := []
     paperFeatures := [("attitude_class", "desiderative"), ("modal_force", "necessity"), ("modal_flavor", "epistemic"), ("anchor", "attitude")] }
 
-def ex_67_koennte : LinguisticExample :=
+def ex_67_koennte : Datum :=
   { id := "anandhacquard2013_67_koennte"
     source := ⟨"anand-hacquard-2013", "(67)"⟩
     reportedIn := none
@@ -537,7 +537,7 @@ def ex_67_koennte : LinguisticExample :=
     readings := []
     paperFeatures := [("attitude_class", "desiderative"), ("modal_force", "possibility"), ("modal_flavor", "epistemic"), ("anchor", "attitude")] }
 
-def ex_68 : LinguisticExample :=
+def ex_68 : Datum :=
   { id := "anandhacquard2013_68"
     source := ⟨"anand-hacquard-2013", "(68)"⟩
     reportedIn := none
@@ -550,7 +550,7 @@ def ex_68 : LinguisticExample :=
     readings := []
     paperFeatures := [("attitude_class", "emotive_doxastic"), ("modal_force", "possibility"), ("modal_flavor", "epistemic"), ("anchor", "attitude")] }
 
-def ex_69 : LinguisticExample :=
+def ex_69 : Datum :=
   { id := "anandhacquard2013_69"
     source := ⟨"anand-hacquard-2013", "(69)"⟩
     reportedIn := none
@@ -563,7 +563,7 @@ def ex_69 : LinguisticExample :=
     readings := []
     paperFeatures := [("attitude_class", "emotive_doxastic"), ("modal_force", "necessity"), ("modal_flavor", "epistemic"), ("anchor", "attitude")] }
 
-def ex_70 : LinguisticExample :=
+def ex_70 : Datum :=
   { id := "anandhacquard2013_70"
     source := ⟨"anand-hacquard-2013", "(70)"⟩
     reportedIn := none
@@ -576,7 +576,7 @@ def ex_70 : LinguisticExample :=
     readings := [("deontic", .acceptable), ("epistemic", .acceptable)]
     paperFeatures := [("attitude_class", "doxastic"), ("modal_force", "necessity"), ("complement", "finite")] }
 
-def ex_71 : LinguisticExample :=
+def ex_71 : Datum :=
   { id := "anandhacquard2013_71"
     source := ⟨"anand-hacquard-2013", "(71)"⟩
     reportedIn := none
@@ -589,7 +589,7 @@ def ex_71 : LinguisticExample :=
     readings := [("deontic", .acceptable), ("epistemic", .unacceptable)]
     paperFeatures := [("attitude_class", "doxastic"), ("modal_force", "necessity"), ("complement", "infinitival")] }
 
-def ex_74 : LinguisticExample :=
+def ex_74 : Datum :=
   { id := "anandhacquard2013_74"
     source := ⟨"anand-hacquard-2013", "(74)"⟩
     reportedIn := none
@@ -602,7 +602,7 @@ def ex_74 : LinguisticExample :=
     readings := []
     paperFeatures := [("attitude_class", "emotive_doxastic"), ("modal_force", "possibility"), ("negation", "under_modal"), ("modal_flavor", "epistemic"), ("anchor", "attitude")] }
 
-def fn24_i : LinguisticExample :=
+def fn24_i : Datum :=
   { id := "anandhacquard2013_fn24_i"
     source := ⟨"anand-hacquard-2013", "fn. 24 (i)"⟩
     reportedIn := none
@@ -615,7 +615,7 @@ def fn24_i : LinguisticExample :=
     readings := []
     paperFeatures := [("attitude_class", "dubitative"), ("modal_force", "necessity"), ("modal_flavor", "epistemic"), ("anchor", "metalinguistic"), ("focus", "contrastive")] }
 
-def fn25_i : LinguisticExample :=
+def fn25_i : Datum :=
   { id := "anandhacquard2013_fn25_i"
     source := ⟨"anand-hacquard-2013", "fn. 25 (i)"⟩
     reportedIn := none
@@ -628,6 +628,6 @@ def fn25_i : LinguisticExample :=
     readings := []
     paperFeatures := [("attitude_class", "emotive_doxastic"), ("modal_force", "necessity"), ("modal_flavor", "epistemic"), ("negation", "over_modal")] }
 
-def all : List LinguisticExample := [ex_1a, ex_1b, ex_1c, ex_2a, ex_2b, ex_2c, ex_3a, ex_13, ex_14, ex_15, ex_16, ex_17, ex_18, ex_19, ex_20, ex_21, ex_22, ex_23a, ex_23b, ex_30a, ex_30b, ex_30c, ex_39, ex_40, ex_42, ex_43a, ex_43b, ex_44a, ex_44b, ex_45, ex_46, ex_60, ex_61a, ex_61b, ex_62, ex_65, ex_66_muss, ex_66_koennte, ex_67_muss, ex_67_koennte, ex_68, ex_69, ex_70, ex_71, ex_74, fn24_i, fn25_i]
+def all : List Datum := [ex_1a, ex_1b, ex_1c, ex_2a, ex_2b, ex_2c, ex_3a, ex_13, ex_14, ex_15, ex_16, ex_17, ex_18, ex_19, ex_20, ex_21, ex_22, ex_23a, ex_23b, ex_30a, ex_30b, ex_30c, ex_39, ex_40, ex_42, ex_43a, ex_43b, ex_44a, ex_44b, ex_45, ex_46, ex_60, ex_61a, ex_61b, ex_62, ex_65, ex_66_muss, ex_66_koennte, ex_67_muss, ex_67_koennte, ex_68, ex_69, ex_70, ex_71, ex_74, fn24_i, fn25_i]
 
 end AnandHacquard2013.Examples

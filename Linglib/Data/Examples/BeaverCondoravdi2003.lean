@@ -17,7 +17,7 @@ namespace BeaverCondoravdi2003.Examples
 
 open Data.Examples
 
-def ex_1 : LinguisticExample :=
+def ex_1 : Datum :=
   { id := "beavercondoravdi2003_1"
     source := ⟨"beaver-condoravdi-2003", "(1)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "before")] }
 
-def ex_2 : LinguisticExample :=
+def ex_2 : Datum :=
   { id := "beavercondoravdi2003_2"
     source := ⟨"beaver-condoravdi-2003", "(2)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "after")] }
 
-def ex_3 : LinguisticExample :=
+def ex_3 : Datum :=
   { id := "beavercondoravdi2003_3"
     source := ⟨"beaver-condoravdi-2003", "(3)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_3 : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "before"), ("phenomenon", "antisymmetry")] }
 
-def ex_5 : LinguisticExample :=
+def ex_5 : Datum :=
   { id := "beavercondoravdi2003_5"
     source := ⟨"beaver-condoravdi-2003", "(5)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_5 : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "after"), ("phenomenon", "antisymmetry")] }
 
-def ex_9 : LinguisticExample :=
+def ex_9 : Datum :=
   { id := "beavercondoravdi2003_9"
     source := ⟨"beaver-condoravdi-2003", "(9)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_9 : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "after"), ("phenomenon", "transitivity")] }
 
-def ex_10 : LinguisticExample :=
+def ex_10 : Datum :=
   { id := "beavercondoravdi2003_10"
     source := ⟨"beaver-condoravdi-2003", "(10)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_10 : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "after"), ("phenomenon", "transitivity")] }
 
-def ex_11 : LinguisticExample :=
+def ex_11 : Datum :=
   { id := "beavercondoravdi2003_11"
     source := ⟨"beaver-condoravdi-2003", "(11)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_11 : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "after"), ("phenomenon", "transitivity")] }
 
-def ex_12 : LinguisticExample :=
+def ex_12 : Datum :=
   { id := "beavercondoravdi2003_12"
     source := ⟨"beaver-condoravdi-2003", "(12)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_12 : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "before"), ("phenomenon", "converseness")] }
 
-def ex_15 : LinguisticExample :=
+def ex_15 : Datum :=
   { id := "beavercondoravdi2003_15"
     source := ⟨"beaver-condoravdi-2003", "(15)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_15 : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "before"), ("phenomenon", "npi-licensing")] }
 
-def ex_16 : LinguisticExample :=
+def ex_16 : Datum :=
   { id := "beavercondoravdi2003_16"
     source := ⟨"beaver-condoravdi-2003", "(16)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_16 : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "after"), ("phenomenon", "npi-licensing")] }
 
-def ex_22 : LinguisticExample :=
+def ex_22 : Datum :=
   { id := "beavercondoravdi2003_22"
     source := ⟨"beaver-condoravdi-2003", "(22)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_22 : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "before"), ("phenomenon", "veridicality"), ("reading", "counterfactual")] }
 
-def ex_23 : LinguisticExample :=
+def ex_23 : Datum :=
   { id := "beavercondoravdi2003_23"
     source := ⟨"beaver-condoravdi-2003", "(23)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_23 : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "before"), ("phenomenon", "veridicality"), ("reading", "counterfactual")] }
 
-def ex_24 : LinguisticExample :=
+def ex_24 : Datum :=
   { id := "beavercondoravdi2003_24"
     source := ⟨"beaver-condoravdi-2003", "(24)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_24 : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "before"), ("phenomenon", "veridicality"), ("reading", "counterfactual")] }
 
-def ex_25 : LinguisticExample :=
+def ex_25 : Datum :=
   { id := "beavercondoravdi2003_25"
     source := ⟨"beaver-condoravdi-2003", "(25)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_25 : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "after"), ("phenomenon", "veridicality")] }
 
-def ex_26 : LinguisticExample :=
+def ex_26 : Datum :=
   { id := "beavercondoravdi2003_26"
     source := ⟨"beaver-condoravdi-2003", "(26)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_26 : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "after"), ("phenomenon", "veridicality")] }
 
-def ex_32 : LinguisticExample :=
+def ex_32 : Datum :=
   { id := "beavercondoravdi2003_32"
     source := ⟨"beaver-condoravdi-2003", "(32)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_32 : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "before"), ("phenomenon", "overgeneration")] }
 
-def ex_34 : LinguisticExample :=
+def ex_34 : Datum :=
   { id := "beavercondoravdi2003_34"
     source := ⟨"beaver-condoravdi-2003", "(34)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex_34 : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "before"), ("phenomenon", "measure-phrase")] }
 
-def ex_42 : LinguisticExample :=
+def ex_42 : Datum :=
   { id := "beavercondoravdi2003_42"
     source := ⟨"beaver-condoravdi-2003", "(42)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex_42 : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "before"), ("phenomenon", "veridicality"), ("reading", "counterfactual")] }
 
-def ex_43 : LinguisticExample :=
+def ex_43 : Datum :=
   { id := "beavercondoravdi2003_43"
     source := ⟨"beaver-condoravdi-2003", "(43)"⟩
     reportedIn := none
@@ -264,6 +264,6 @@ def ex_43 : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "before"), ("phenomenon", "veridicality"), ("reading", "non-committal")] }
 
-def all : List LinguisticExample := [ex_1, ex_2, ex_3, ex_5, ex_9, ex_10, ex_11, ex_12, ex_15, ex_16, ex_22, ex_23, ex_24, ex_25, ex_26, ex_32, ex_34, ex_42, ex_43]
+def all : List Datum := [ex_1, ex_2, ex_3, ex_5, ex_9, ex_10, ex_11, ex_12, ex_15, ex_16, ex_22, ex_23, ex_24, ex_25, ex_26, ex_32, ex_34, ex_42, ex_43]
 
 end BeaverCondoravdi2003.Examples

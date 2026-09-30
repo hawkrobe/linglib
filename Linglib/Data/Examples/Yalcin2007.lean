@@ -17,7 +17,7 @@ namespace Yalcin2007.Examples
 
 open Data.Examples
 
-def ex_1 : LinguisticExample :=
+def ex_1 : Datum :=
   { id := "yalcin2007_1"
     source := ⟨"yalcin-2007", "(5)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("type", "Moore-paradoxical"), ("embedding", "none")] }
 
-def ex_2 : LinguisticExample :=
+def ex_2 : Datum :=
   { id := "yalcin2007_2"
     source := ⟨"yalcin-2007", "(6)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("type", "Moore-paradoxical"), ("embedding", "none")] }
 
-def ex_3 : LinguisticExample :=
+def ex_3 : Datum :=
   { id := "yalcin2007_3"
     source := ⟨"yalcin-2007", "(7)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_3 : LinguisticExample :=
     readings := []
     paperFeatures := [("type", "epistemic contradiction"), ("embedding", "suppose")] }
 
-def ex_4 : LinguisticExample :=
+def ex_4 : Datum :=
   { id := "yalcin2007_4"
     source := ⟨"yalcin-2007", "(8)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_4 : LinguisticExample :=
     readings := []
     paperFeatures := [("type", "epistemic contradiction"), ("embedding", "suppose")] }
 
-def ex_5 : LinguisticExample :=
+def ex_5 : Datum :=
   { id := "yalcin2007_5"
     source := ⟨"yalcin-2007", "(9)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_5 : LinguisticExample :=
     readings := []
     paperFeatures := [("type", "epistemic contradiction"), ("embedding", "suppose")] }
 
-def ex_6 : LinguisticExample :=
+def ex_6 : Datum :=
   { id := "yalcin2007_6"
     source := ⟨"yalcin-2007", "(11)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_6 : LinguisticExample :=
     readings := []
     paperFeatures := [("type", "epistemic contradiction"), ("embedding", "conditional antecedent")] }
 
-def ex_7 : LinguisticExample :=
+def ex_7 : Datum :=
   { id := "yalcin2007_7"
     source := ⟨"yalcin-2007", "(13)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_7 : LinguisticExample :=
     readings := []
     paperFeatures := [("type", "epistemic contradiction"), ("embedding", "conditional antecedent")] }
 
-def ex_8 : LinguisticExample :=
+def ex_8 : Datum :=
   { id := "yalcin2007_8"
     source := ⟨"yalcin-2007", "(14)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_8 : LinguisticExample :=
     readings := []
     paperFeatures := [("type", "Moore-paradoxical"), ("embedding", "suppose")] }
 
-def ex_9 : LinguisticExample :=
+def ex_9 : Datum :=
   { id := "yalcin2007_9"
     source := ⟨"yalcin-2007", "(15)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_9 : LinguisticExample :=
     readings := []
     paperFeatures := [("type", "Moore-paradoxical"), ("embedding", "suppose")] }
 
-def ex_10 : LinguisticExample :=
+def ex_10 : Datum :=
   { id := "yalcin2007_10"
     source := ⟨"yalcin-2007", "(16)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_10 : LinguisticExample :=
     readings := []
     paperFeatures := [("type", "Moore-paradoxical"), ("embedding", "conditional antecedent")] }
 
-def ex_11 : LinguisticExample :=
+def ex_11 : Datum :=
   { id := "yalcin2007_11"
     source := ⟨"yalcin-2007", "(17)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_11 : LinguisticExample :=
     readings := []
     paperFeatures := [("type", "Moore-paradoxical"), ("embedding", "conditional antecedent")] }
 
-def ex_12 : LinguisticExample :=
+def ex_12 : Datum :=
   { id := "yalcin2007_12"
     source := ⟨"yalcin-2007", "(18)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_12 : LinguisticExample :=
     readings := []
     paperFeatures := [("type", "epistemic contradiction"), ("embedding", "conditional antecedent")] }
 
-def ex_13 : LinguisticExample :=
+def ex_13 : Datum :=
   { id := "yalcin2007_13"
     source := ⟨"yalcin-2007", "(19)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_13 : LinguisticExample :=
     readings := [("the modal quantifies over Vann's belief worlds", .acceptable)]
     paperFeatures := [("embedding", "believe")] }
 
-def ex_14 : LinguisticExample :=
+def ex_14 : Datum :=
   { id := "yalcin2007_14"
     source := ⟨"yalcin-2007", "(20)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_14 : LinguisticExample :=
     readings := []
     paperFeatures := [("embedding", "think")] }
 
-def ex_15 : LinguisticExample :=
+def ex_15 : Datum :=
   { id := "yalcin2007_15"
     source := ⟨"yalcin-2007", "(21)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_15 : LinguisticExample :=
     readings := []
     paperFeatures := [("reading", "expert information")] }
 
-def ex_16 : LinguisticExample :=
+def ex_16 : Datum :=
   { id := "yalcin2007_16"
     source := ⟨"yalcin-2007", "(23)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_16 : LinguisticExample :=
     readings := []
     paperFeatures := [("reading", "target information state")] }
 
-def ex_17 : LinguisticExample :=
+def ex_17 : Datum :=
   { id := "yalcin2007_17"
     source := ⟨"yalcin-2007", "(24)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex_17 : LinguisticExample :=
     readings := []
     paperFeatures := [("type", "epistemic contradiction"), ("modal", "must"), ("embedding", "suppose")] }
 
-def ex_18 : LinguisticExample :=
+def ex_18 : Datum :=
   { id := "yalcin2007_18"
     source := ⟨"yalcin-2007", "(25)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex_18 : LinguisticExample :=
     readings := []
     paperFeatures := [("type", "epistemic contradiction"), ("modal", "probability"), ("embedding", "suppose")] }
 
-def ex_19 : LinguisticExample :=
+def ex_19 : Datum :=
   { id := "yalcin2007_19"
     source := ⟨"yalcin-2007", "(26)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex_19 : LinguisticExample :=
     readings := []
     paperFeatures := [("type", "epistemic contradiction"), ("modal", "probability"), ("embedding", "suppose")] }
 
-def ex_20 : LinguisticExample :=
+def ex_20 : Datum :=
   { id := "yalcin2007_20"
     source := ⟨"yalcin-2007", "(27)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex_20 : LinguisticExample :=
     readings := []
     paperFeatures := [("type", "epistemic contradiction"), ("modal", "probability"), ("embedding", "conditional antecedent")] }
 
-def ex_21 : LinguisticExample :=
+def ex_21 : Datum :=
   { id := "yalcin2007_21"
     source := ⟨"yalcin-2007", "(C1)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex_21 : LinguisticExample :=
     readings := []
     paperFeatures := [("consequent", "plain")] }
 
-def ex_22 : LinguisticExample :=
+def ex_22 : Datum :=
   { id := "yalcin2007_22"
     source := ⟨"yalcin-2007", "(C2)"⟩
     reportedIn := none
@@ -303,6 +303,6 @@ def ex_22 : LinguisticExample :=
     readings := []
     paperFeatures := [("consequent", "must")] }
 
-def all : List LinguisticExample := [ex_1, ex_2, ex_3, ex_4, ex_5, ex_6, ex_7, ex_8, ex_9, ex_10, ex_11, ex_12, ex_13, ex_14, ex_15, ex_16, ex_17, ex_18, ex_19, ex_20, ex_21, ex_22]
+def all : List Datum := [ex_1, ex_2, ex_3, ex_4, ex_5, ex_6, ex_7, ex_8, ex_9, ex_10, ex_11, ex_12, ex_13, ex_14, ex_15, ex_16, ex_17, ex_18, ex_19, ex_20, ex_21, ex_22]
 
 end Yalcin2007.Examples

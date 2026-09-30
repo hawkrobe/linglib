@@ -17,7 +17,7 @@ namespace HalleVauxWolfe2000.Examples
 
 open Data.Examples
 
-def ex44a : LinguisticExample :=
+def ex44a : Datum :=
   { id := "hallevauxwolfe2000_ex44a"
     source := ⟨"halle-vaux-wolfe-2000", "(44a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex44a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2.4"), ("phenomenon", "dorsalAssimilation")] }
 
-def ex44a_ii : LinguisticExample :=
+def ex44a_ii : Datum :=
   { id := "hallevauxwolfe2000_ex44a-ii"
     source := ⟨"halle-vaux-wolfe-2000", "(44a-ii)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex44a_ii : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2.4"), ("phenomenon", "dorsalAssimilation")] }
 
-def ex44b : LinguisticExample :=
+def ex44b : Datum :=
   { id := "hallevauxwolfe2000_ex44b"
     source := ⟨"halle-vaux-wolfe-2000", "(44b)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex44b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2.4"), ("phenomenon", "dorsalAssimilation")] }
 
-def ex44b_ii : LinguisticExample :=
+def ex44b_ii : Datum :=
   { id := "hallevauxwolfe2000_ex44b-ii"
     source := ⟨"halle-vaux-wolfe-2000", "(44b-ii)"⟩
     reportedIn := none
@@ -69,6 +69,6 @@ def ex44b_ii : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2.4"), ("phenomenon", "dorsalAssimilation")] }
 
-def all : List LinguisticExample := [ex44a, ex44a_ii, ex44b, ex44b_ii]
+def all : List Datum := [ex44a, ex44a_ii, ex44b, ex44b_ii]
 
 end HalleVauxWolfe2000.Examples

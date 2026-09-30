@@ -17,7 +17,7 @@ namespace HofmeisterSag2010.Examples
 
 open Data.Examples
 
-def ex42a : LinguisticExample :=
+def ex42a : Datum :=
   { id := "hofmeistersag2010_ex42a"
     source := ⟨"hofmeister-sag-2010", "(42a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex42a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("factor", "locality"), ("dependency", "subject")] }
 
-def ex42b : LinguisticExample :=
+def ex42b : Datum :=
   { id := "hofmeistersag2010_ex42b"
     source := ⟨"hofmeister-sag-2010", "(42b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex42b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("factor", "locality"), ("dependency", "object")] }
 
-def ex43 : LinguisticExample :=
+def ex43 : Datum :=
   { id := "hofmeistersag2010_ex43"
     source := ⟨"hofmeister-sag-2010", "(43)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex43 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("factor", "referential load")] }
 
-def ex44a : LinguisticExample :=
+def ex44a : Datum :=
   { id := "hofmeistersag2010_ex44a"
     source := ⟨"hofmeister-sag-2010", "(44a)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex44a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("factor", "clause boundary"), ("complementizer", "that")] }
 
-def ex44b : LinguisticExample :=
+def ex44b : Datum :=
   { id := "hofmeistersag2010_ex44b"
     source := ⟨"hofmeister-sag-2010", "(44b)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex44b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("factor", "clause boundary"), ("complementizer", "if")] }
 
-def ex44c : LinguisticExample :=
+def ex44c : Datum :=
   { id := "hofmeistersag2010_ex44c"
     source := ⟨"hofmeister-sag-2010", "(44c)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex44c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("factor", "clause boundary"), ("complementizer", "who")] }
 
-def ex45a : LinguisticExample :=
+def ex45a : Datum :=
   { id := "hofmeistersag2010_ex45a"
     source := ⟨"hofmeister-sag-2010", "(45a)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex45a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.4"), ("factor", "filler complexity"), ("filler", "simple")] }
 
-def ex45b : LinguisticExample :=
+def ex45b : Datum :=
   { id := "hofmeistersag2010_ex45b"
     source := ⟨"hofmeister-sag-2010", "(45b)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex45b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.4"), ("factor", "filler complexity"), ("filler", "complex")] }
 
-def ex46 : LinguisticExample :=
+def ex46 : Datum :=
   { id := "hofmeistersag2010_ex46"
     source := ⟨"hofmeister-sag-2010", "(46)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex46 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.5"), ("island", "complexNP")] }
 
-def ex48_bareDef : LinguisticExample :=
+def ex48_bareDef : Datum :=
   { id := "hofmeistersag2010_ex48_bareDef"
     source := ⟨"hofmeister-sag-2010", "(48)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex48_bareDef : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("experiment", "1"), ("island", "complexNP"), ("filler", "bare"), ("islandNP", "definite")] }
 
-def ex48_barePl : LinguisticExample :=
+def ex48_barePl : Datum :=
   { id := "hofmeistersag2010_ex48_barePl"
     source := ⟨"hofmeister-sag-2010", "(48)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex48_barePl : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("experiment", "1"), ("island", "complexNP"), ("filler", "bare"), ("islandNP", "plural")] }
 
-def ex48_bareIndef : LinguisticExample :=
+def ex48_bareIndef : Datum :=
   { id := "hofmeistersag2010_ex48_bareIndef"
     source := ⟨"hofmeister-sag-2010", "(48)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex48_bareIndef : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("experiment", "1"), ("island", "complexNP"), ("filler", "bare"), ("islandNP", "indefinite")] }
 
-def ex48_whichDef : LinguisticExample :=
+def ex48_whichDef : Datum :=
   { id := "hofmeistersag2010_ex48_whichDef"
     source := ⟨"hofmeister-sag-2010", "(48)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex48_whichDef : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("experiment", "1"), ("island", "complexNP"), ("filler", "whichN"), ("islandNP", "definite")] }
 
-def ex48_whichPl : LinguisticExample :=
+def ex48_whichPl : Datum :=
   { id := "hofmeistersag2010_ex48_whichPl"
     source := ⟨"hofmeister-sag-2010", "(48)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex48_whichPl : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("experiment", "1"), ("island", "complexNP"), ("filler", "whichN"), ("islandNP", "plural")] }
 
-def ex48_whichIndef : LinguisticExample :=
+def ex48_whichIndef : Datum :=
   { id := "hofmeistersag2010_ex48_whichIndef"
     source := ⟨"hofmeister-sag-2010", "(48)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex48_whichIndef : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("experiment", "1"), ("island", "complexNP"), ("filler", "whichN"), ("islandNP", "indefinite")] }
 
-def ex48_baseline : LinguisticExample :=
+def ex48_baseline : Datum :=
   { id := "hofmeistersag2010_ex48_baseline"
     source := ⟨"hofmeister-sag-2010", "(48)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex48_baseline : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("experiment", "1"), ("island", "none"), ("filler", "whichN")] }
 
-def ex49_bare : LinguisticExample :=
+def ex49_bare : Datum :=
   { id := "hofmeistersag2010_ex49_bare"
     source := ⟨"hofmeister-sag-2010", "(49)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex49_bare : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.1"), ("experiment", "2"), ("island", "embeddedQuestion"), ("filler", "bare")] }
 
-def ex49_which : LinguisticExample :=
+def ex49_which : Datum :=
   { id := "hofmeistersag2010_ex49_which"
     source := ⟨"hofmeister-sag-2010", "(49)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex49_which : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.1"), ("experiment", "2"), ("island", "embeddedQuestion"), ("filler", "whichN")] }
 
-def ex49_baseline : LinguisticExample :=
+def ex49_baseline : Datum :=
   { id := "hofmeistersag2010_ex49_baseline"
     source := ⟨"hofmeister-sag-2010", "(49)"⟩
     reportedIn := none
@@ -264,6 +264,6 @@ def ex49_baseline : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.1"), ("experiment", "2"), ("island", "none"), ("filler", "bare")] }
 
-def all : List LinguisticExample := [ex42a, ex42b, ex43, ex44a, ex44b, ex44c, ex45a, ex45b, ex46, ex48_bareDef, ex48_barePl, ex48_bareIndef, ex48_whichDef, ex48_whichPl, ex48_whichIndef, ex48_baseline, ex49_bare, ex49_which, ex49_baseline]
+def all : List Datum := [ex42a, ex42b, ex43, ex44a, ex44b, ex44c, ex45a, ex45b, ex46, ex48_bareDef, ex48_barePl, ex48_bareIndef, ex48_whichDef, ex48_whichPl, ex48_whichIndef, ex48_baseline, ex49_bare, ex49_which, ex49_baseline]
 
 end HofmeisterSag2010.Examples

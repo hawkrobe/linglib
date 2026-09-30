@@ -114,7 +114,7 @@ structure Stimulus where
   pred : Fin n
   ana : Fin n
   ante : Fin n
-  row : LinguisticExample
+  row : Datum
 
 /-- The stimulus violates the constraint. -/
 def Stimulus.Violates (s : Stimulus) : Prop := OsborneLi2023.Violates s.tree s.pred s.ana s.ante

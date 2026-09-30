@@ -17,7 +17,7 @@ namespace CondoravdiLauer2012.Examples
 
 open Data.Examples
 
-def ex6a : LinguisticExample :=
+def ex6a : Datum :=
   { id := "condoravdilauer2012_ex6a"
     source := ⟨"condoravdi-lauer-2012", "(6a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex6a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "use"), ("group", "directive"), ("use", "command")] }
 
-def ex6b : LinguisticExample :=
+def ex6b : Datum :=
   { id := "condoravdilauer2012_ex6b"
     source := ⟨"condoravdi-lauer-2012", "(6b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex6b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "use"), ("group", "directive"), ("use", "warning")] }
 
-def ex6c : LinguisticExample :=
+def ex6c : Datum :=
   { id := "condoravdilauer2012_ex6c"
     source := ⟨"condoravdi-lauer-2012", "(6c)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex6c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "use"), ("group", "directive"), ("use", "request")] }
 
-def ex6d : LinguisticExample :=
+def ex6d : Datum :=
   { id := "condoravdilauer2012_ex6d"
     source := ⟨"condoravdi-lauer-2012", "(6d)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex6d : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "use"), ("group", "directive"), ("use", "advice")] }
 
-def ex6e : LinguisticExample :=
+def ex6e : Datum :=
   { id := "condoravdilauer2012_ex6e"
     source := ⟨"condoravdi-lauer-2012", "(6e)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex6e : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "use"), ("group", "directive"), ("use", "plea")] }
 
-def ex7a : LinguisticExample :=
+def ex7a : Datum :=
   { id := "condoravdilauer2012_ex7a"
     source := ⟨"condoravdi-lauer-2012", "(7a)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex7a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "use"), ("group", "wish"), ("use", "well-wish")] }
 
-def ex7b : LinguisticExample :=
+def ex7b : Datum :=
   { id := "condoravdilauer2012_ex7b"
     source := ⟨"condoravdi-lauer-2012", "(7b)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex7b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "use"), ("group", "wish"), ("use", "curse")] }
 
-def ex7c : LinguisticExample :=
+def ex7c : Datum :=
   { id := "condoravdilauer2012_ex7c"
     source := ⟨"condoravdi-lauer-2012", "(7c)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex7c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "use"), ("group", "wish"), ("use", "addressee-less wish")] }
 
-def ex7d : LinguisticExample :=
+def ex7d : Datum :=
   { id := "condoravdilauer2012_ex7d"
     source := ⟨"condoravdi-lauer-2012", "(7d)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex7d : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "use"), ("group", "wish"), ("use", "absent wish")] }
 
-def ex8a : LinguisticExample :=
+def ex8a : Datum :=
   { id := "condoravdilauer2012_ex8a"
     source := ⟨"condoravdi-lauer-2012", "(8a)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex8a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "use"), ("group", "permission"), ("use", "permission/concession")] }
 
-def ex8b : LinguisticExample :=
+def ex8b : Datum :=
   { id := "condoravdilauer2012_ex8b"
     source := ⟨"condoravdi-lauer-2012", "(8b)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex8b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "use"), ("group", "permission"), ("use", "offer")] }
 
-def ex8c : LinguisticExample :=
+def ex8c : Datum :=
   { id := "condoravdilauer2012_ex8c"
     source := ⟨"condoravdi-lauer-2012", "(8c)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex8c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "use"), ("group", "permission"), ("use", "invitation")] }
 
-def ex9 : LinguisticExample :=
+def ex9 : Datum :=
   { id := "condoravdilauer2012_ex9"
     source := ⟨"condoravdi-lauer-2012", "(9)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex9 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "use"), ("group", "advice"), ("use", "disinterested advice")] }
 
-def ex10a : LinguisticExample :=
+def ex10a : Datum :=
   { id := "condoravdilauer2012_ex10a"
     source := ⟨"condoravdi-lauer-2012", "(10a)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex10a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "exclusion"), ("description", "promise")] }
 
-def ex10b : LinguisticExample :=
+def ex10b : Datum :=
   { id := "condoravdilauer2012_ex10b"
     source := ⟨"condoravdi-lauer-2012", "(10b)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex10b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "exclusion"), ("description", "claim")] }
 
-def ex10c : LinguisticExample :=
+def ex10c : Datum :=
   { id := "condoravdilauer2012_ex10c"
     source := ⟨"condoravdi-lauer-2012", "(10c)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex10c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "exclusion"), ("description", "claim")] }
 
-def ex11 : LinguisticExample :=
+def ex11 : Datum :=
   { id := "condoravdilauer2012_ex11"
     source := ⟨"portner-2007", "p. 367"⟩
     reportedIn := some ⟨"condoravdi-lauer-2012", "(11)"⟩
@@ -238,7 +238,7 @@ def ex11 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "sequence"), ("second", "imperative"), ("continuation", "conflicting")] }
 
-def ex12 : LinguisticExample :=
+def ex12 : Datum :=
   { id := "condoravdilauer2012_ex12"
     source := ⟨"condoravdi-lauer-2012", "(12)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex12 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "sequence"), ("second", "imperative"), ("continuation", "revising")] }
 
-def ex13 : LinguisticExample :=
+def ex13 : Datum :=
   { id := "condoravdilauer2012_ex13"
     source := ⟨"condoravdi-lauer-2012", "(13)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex13 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "sequence"), ("second", "imperative"), ("continuation", "revising")] }
 
-def ex14 : LinguisticExample :=
+def ex14 : Datum :=
   { id := "condoravdilauer2012_ex14"
     source := ⟨"condoravdi-lauer-2012", "(14)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex14 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "sequence"), ("second", "imperative"), ("continuation", "revising")] }
 
-def ex15 : LinguisticExample :=
+def ex15 : Datum :=
   { id := "condoravdilauer2012_ex15"
     source := ⟨"condoravdi-lauer-2012", "(15)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex15 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "sequence"), ("second", "imperative"), ("continuation", "conflicting")] }
 
-def ex16 : LinguisticExample :=
+def ex16 : Datum :=
   { id := "condoravdilauer2012_ex16"
     source := ⟨"condoravdi-lauer-2012", "(16)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex16 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "sequence"), ("second", "assertion"), ("continuation", "conflicting")] }
 
-def ex17 : LinguisticExample :=
+def ex17 : Datum :=
   { id := "condoravdilauer2012_ex17"
     source := ⟨"condoravdi-lauer-2012", "(17)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex17 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "followUp"), ("use", "directive"), ("denial", "want")] }
 
-def ex18a : LinguisticExample :=
+def ex18a : Datum :=
   { id := "condoravdilauer2012_ex18a"
     source := ⟨"condoravdi-lauer-2012", "(18a)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex18a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "followUp"), ("use", "advice"), ("denial", "deontic")] }
 
-def ex18b : LinguisticExample :=
+def ex18b : Datum :=
   { id := "condoravdilauer2012_ex18b"
     source := ⟨"condoravdi-lauer-2012", "(18b)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex18b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "followUp"), ("use", "advice"), ("denial", "want")] }
 
-def ex18c : LinguisticExample :=
+def ex18c : Datum :=
   { id := "condoravdilauer2012_ex18c"
     source := ⟨"condoravdi-lauer-2012", "(18c)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex18c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "followUp"), ("use", "assertion"), ("denial", "want")] }
 
-def ex21a : LinguisticExample :=
+def ex21a : Datum :=
   { id := "condoravdilauer2012_ex21a"
     source := ⟨"condoravdi-lauer-2012", "(21a)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def ex21a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "followUp"), ("use", "concession"), ("denial", "want")] }
 
-def ex21b : LinguisticExample :=
+def ex21b : Datum :=
   { id := "condoravdilauer2012_ex21b"
     source := ⟨"condoravdi-lauer-2012", "(21b)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def ex21b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "followUp"), ("use", "concession"), ("denial", "pastWant")] }
 
-def ex22 : LinguisticExample :=
+def ex22 : Datum :=
   { id := "condoravdilauer2012_ex22"
     source := ⟨"condoravdi-lauer-2012", "(22)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def ex22 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "followUp"), ("use", "concession"), ("denial", "wish")] }
 
-def ex23a : LinguisticExample :=
+def ex23a : Datum :=
   { id := "condoravdilauer2012_ex23a"
     source := ⟨"schwager-2006", "p. 160"⟩
     reportedIn := some ⟨"condoravdi-lauer-2012", "(23a)"⟩
@@ -407,7 +407,7 @@ def ex23a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "challenge"), ("form", "assertion")] }
 
-def ex23b : LinguisticExample :=
+def ex23b : Datum :=
   { id := "condoravdilauer2012_ex23b"
     source := ⟨"schwager-2006", "p. 160"⟩
     reportedIn := some ⟨"condoravdi-lauer-2012", "(23b)"⟩
@@ -420,7 +420,7 @@ def ex23b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "challenge"), ("form", "imperative")] }
 
-def ex24a : LinguisticExample :=
+def ex24a : Datum :=
   { id := "condoravdilauer2012_ex24a"
     source := ⟨"condoravdi-lauer-2012", "(24a)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def ex24a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "challenge"), ("form", "assertion")] }
 
-def ex24b : LinguisticExample :=
+def ex24b : Datum :=
   { id := "condoravdilauer2012_ex24b"
     source := ⟨"condoravdi-lauer-2012", "(24b)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def ex24b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "challenge"), ("form", "imperative")] }
 
-def ex25 : LinguisticExample :=
+def ex25 : Datum :=
   { id := "condoravdilauer2012_ex25"
     source := ⟨"condoravdi-lauer-2012", "(25)"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def ex25 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "challenge"), ("form", "performative")] }
 
-def ex26 : LinguisticExample :=
+def ex26 : Datum :=
   { id := "condoravdilauer2012_ex26"
     source := ⟨"condoravdi-lauer-2012", "(26)"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def ex26 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "involvement"), ("speaker", "enabling")] }
 
-def ex27 : LinguisticExample :=
+def ex27 : Datum :=
   { id := "condoravdilauer2012_ex27"
     source := ⟨"condoravdi-lauer-2012", "(27)"⟩
     reportedIn := none
@@ -485,7 +485,7 @@ def ex27 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "involvement"), ("speaker", "fulfilling")] }
 
-def ex37 : LinguisticExample :=
+def ex37 : Datum :=
   { id := "condoravdilauer2012_ex37"
     source := ⟨"condoravdi-lauer-2012", "(37)"⟩
     reportedIn := none
@@ -498,7 +498,7 @@ def ex37 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "use"), ("group", "wish"), ("use", "well-wish and exhortation")] }
 
-def ex38a : LinguisticExample :=
+def ex38a : Datum :=
   { id := "condoravdilauer2012_ex38a"
     source := ⟨"condoravdi-lauer-2012", "(38a)"⟩
     reportedIn := none
@@ -511,7 +511,7 @@ def ex38a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "use"), ("group", "magical"), ("use", "magical imperative")] }
 
-def ex38b : LinguisticExample :=
+def ex38b : Datum :=
   { id := "condoravdilauer2012_ex38b"
     source := ⟨"condoravdi-lauer-2012", "(38b)"⟩
     reportedIn := none
@@ -524,7 +524,7 @@ def ex38b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "use"), ("group", "magical"), ("use", "magical imperative")] }
 
-def ex41 : LinguisticExample :=
+def ex41 : Datum :=
   { id := "condoravdilauer2012_ex41"
     source := ⟨"condoravdi-lauer-2012", "(41)"⟩
     reportedIn := none
@@ -537,7 +537,7 @@ def ex41 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "use"), ("group", "permission"), ("use", "offer")] }
 
-def ex40_want : LinguisticExample :=
+def ex40_want : Datum :=
   { id := "condoravdilauer2012_ex40_want"
     source := ⟨"condoravdi-lauer-2012", "(40)"⟩
     reportedIn := none
@@ -550,7 +550,7 @@ def ex40_want : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "followUp"), ("use", "advice"), ("denial", "want")] }
 
-def ex40_wish : LinguisticExample :=
+def ex40_wish : Datum :=
   { id := "condoravdilauer2012_ex40_wish"
     source := ⟨"condoravdi-lauer-2012", "(40)"⟩
     reportedIn := none
@@ -563,6 +563,6 @@ def ex40_wish : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "followUp"), ("use", "advice"), ("denial", "wish")] }
 
-def all : List LinguisticExample := [ex6a, ex6b, ex6c, ex6d, ex6e, ex7a, ex7b, ex7c, ex7d, ex8a, ex8b, ex8c, ex9, ex10a, ex10b, ex10c, ex11, ex12, ex13, ex14, ex15, ex16, ex17, ex18a, ex18b, ex18c, ex21a, ex21b, ex22, ex23a, ex23b, ex24a, ex24b, ex25, ex26, ex27, ex37, ex38a, ex38b, ex41, ex40_want, ex40_wish]
+def all : List Datum := [ex6a, ex6b, ex6c, ex6d, ex6e, ex7a, ex7b, ex7c, ex7d, ex8a, ex8b, ex8c, ex9, ex10a, ex10b, ex10c, ex11, ex12, ex13, ex14, ex15, ex16, ex17, ex18a, ex18b, ex18c, ex21a, ex21b, ex22, ex23a, ex23b, ex24a, ex24b, ex25, ex26, ex27, ex37, ex38a, ex38b, ex41, ex40_want, ex40_wish]
 
 end CondoravdiLauer2012.Examples

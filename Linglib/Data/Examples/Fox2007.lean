@@ -17,7 +17,7 @@ namespace Fox2007.Examples
 
 open Data.Examples
 
-def ex16 : LinguisticExample :=
+def ex16 : Datum :=
   { id := "fox2007_ex16"
     source := ⟨"kamp-1973", "free choice permission"⟩
     reportedIn := some ⟨"fox-2007", "(16)"⟩
@@ -30,7 +30,7 @@ def ex16 : LinguisticExample :=
     readings := [("free choice", .acceptable)]
     paperFeatures := [("quantifier", "possibility"), ("number", "none"), ("connective", "or"), ("scope", "narrow"), ("fc", "yes"), ("status", "accounted")] }
 
-def ex21 : LinguisticExample :=
+def ex21 : Datum :=
   { id := "fox2007_ex21"
     source := ⟨"fox-2007", "(21)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex21 : LinguisticExample :=
     readings := [("free choice", .unacceptable)]
     paperFeatures := [("quantifier", "negatedPossibility"), ("number", "none"), ("connective", "or"), ("scope", "narrow"), ("fc", "no"), ("status", "accounted")] }
 
-def ex25 : LinguisticExample :=
+def ex25 : Datum :=
   { id := "fox2007_ex25"
     source := ⟨"fox-2007", "(25)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex25 : LinguisticExample :=
     readings := [("free choice", .acceptable)]
     paperFeatures := [("quantifier", "negatedNecessity"), ("number", "none"), ("connective", "and"), ("scope", "narrow"), ("fc", "yes"), ("status", "accounted")] }
 
-def ex28a : LinguisticExample :=
+def ex28a : Datum :=
   { id := "fox2007_ex28a"
     source := ⟨"fox-2007", "(28a)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex28a : LinguisticExample :=
     readings := [("free choice", .acceptable)]
     paperFeatures := [("quantifier", "possibility"), ("number", "none"), ("connective", "or"), ("scope", "narrow"), ("fc", "yes"), ("status", "accounted")] }
 
-def ex28b : LinguisticExample :=
+def ex28b : Datum :=
   { id := "fox2007_ex28b"
     source := ⟨"fox-2007", "(28b)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex28b : LinguisticExample :=
     readings := [("free choice", .acceptable)]
     paperFeatures := [("quantifier", "possibility"), ("number", "none"), ("connective", "or"), ("scope", "narrow"), ("fc", "yes"), ("status", "accounted")] }
 
-def ex29a : LinguisticExample :=
+def ex29a : Datum :=
   { id := "fox2007_ex29a"
     source := ⟨"fox-2007", "(29a)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex29a : LinguisticExample :=
     readings := [("free choice", .acceptable)]
     paperFeatures := [("quantifier", "existential"), ("number", "mass"), ("connective", "or"), ("scope", "narrow"), ("fc", "yes"), ("status", "accounted")] }
 
-def ex29b : LinguisticExample :=
+def ex29b : Datum :=
   { id := "fox2007_ex29b"
     source := ⟨"fox-2007", "(29b)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex29b : LinguisticExample :=
     readings := [("free choice", .acceptable)]
     paperFeatures := [("quantifier", "existential"), ("number", "plural"), ("connective", "or"), ("scope", "narrow"), ("fc", "yes"), ("status", "accounted")] }
 
-def ex29c : LinguisticExample :=
+def ex29c : Datum :=
   { id := "fox2007_ex29c"
     source := ⟨"fox-2007", "(29c)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex29c : LinguisticExample :=
     readings := [("free choice", .acceptable)]
     paperFeatures := [("quantifier", "existential"), ("number", "plural"), ("connective", "or"), ("scope", "narrow"), ("fc", "yes"), ("status", "accounted")] }
 
-def ex30a : LinguisticExample :=
+def ex30a : Datum :=
   { id := "fox2007_ex30a"
     source := ⟨"fox-2007", "(30a)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex30a : LinguisticExample :=
     readings := [("free choice", .unacceptable)]
     paperFeatures := [("quantifier", "existential"), ("number", "singular"), ("connective", "or"), ("scope", "narrow"), ("fc", "no"), ("status", "accounted")] }
 
-def ex30c : LinguisticExample :=
+def ex30c : Datum :=
   { id := "fox2007_ex30c"
     source := ⟨"fox-2007", "(30c)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex30c : LinguisticExample :=
     readings := [("free choice", .unacceptable)]
     paperFeatures := [("quantifier", "existential"), ("number", "singular"), ("connective", "or"), ("scope", "narrow"), ("fc", "no"), ("status", "accounted")] }
 
-def ex30d : LinguisticExample :=
+def ex30d : Datum :=
   { id := "fox2007_ex30d"
     source := ⟨"fox-2007", "(30d)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex30d : LinguisticExample :=
     readings := [("free choice", .unacceptable)]
     paperFeatures := [("quantifier", "existential"), ("number", "singular"), ("connective", "or"), ("scope", "narrow"), ("fc", "no"), ("status", "accounted")] }
 
-def ex32 : LinguisticExample :=
+def ex32 : Datum :=
   { id := "fox2007_ex32"
     source := ⟨"fox-2007", "(32)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex32 : LinguisticExample :=
     readings := [("free choice", .acceptable)]
     paperFeatures := [("quantifier", "negatedUniversal"), ("number", "none"), ("connective", "and"), ("scope", "narrow"), ("fc", "yes"), ("status", "accounted")] }
 
-def ex34a : LinguisticExample :=
+def ex34a : Datum :=
   { id := "fox2007_ex34a"
     source := ⟨"fox-2007", "(34a)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex34a : LinguisticExample :=
     readings := [("free choice", .unacceptable)]
     paperFeatures := [("quantifier", "negation"), ("number", "none"), ("connective", "and"), ("scope", "narrow"), ("fc", "no"), ("status", "accounted")] }
 
-def ex34b : LinguisticExample :=
+def ex34b : Datum :=
   { id := "fox2007_ex34b"
     source := ⟨"fox-2007", "(34b)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex34b : LinguisticExample :=
     readings := [("free choice", .unacceptable)]
     paperFeatures := [("quantifier", "negation"), ("number", "none"), ("connective", "and"), ("scope", "narrow"), ("fc", "no"), ("status", "accounted")] }
 
-def ex91a : LinguisticExample :=
+def ex91a : Datum :=
   { id := "fox2007_ex91a"
     source := ⟨"fox-2007", "(91a)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex91a : LinguisticExample :=
     readings := [("free choice", .acceptable)]
     paperFeatures := [("quantifier", "possibility"), ("number", "none"), ("connective", "or"), ("scope", "narrow"), ("fc", "yes"), ("status", "accounted")] }
 
-def ex91b : LinguisticExample :=
+def ex91b : Datum :=
   { id := "fox2007_ex91b"
     source := ⟨"fox-2007", "(91b)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex91b : LinguisticExample :=
     readings := [("free choice", .unacceptable)]
     paperFeatures := [("quantifier", "possibility"), ("number", "none"), ("connective", "or"), ("scope", "wide"), ("fc", "no"), ("status", "accounted")] }
 
-def ex92 : LinguisticExample :=
+def ex92 : Datum :=
   { id := "fox2007_ex92"
     source := ⟨"zimmermann-2000", "free choice disjunction"⟩
     reportedIn := some ⟨"fox-2007", "(92)"⟩
@@ -238,7 +238,7 @@ def ex92 : LinguisticExample :=
     readings := [("free choice", .acceptable)]
     paperFeatures := [("quantifier", "possibility"), ("number", "none"), ("connective", "or"), ("scope", "wide"), ("fc", "yes"), ("status", "open")] }
 
-def ex93a : LinguisticExample :=
+def ex93a : Datum :=
   { id := "fox2007_ex93a"
     source := ⟨"fox-2007", "(93a)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex93a : LinguisticExample :=
     readings := [("free choice", .acceptable)]
     paperFeatures := [("quantifier", "existential"), ("number", "plural"), ("connective", "or"), ("scope", "narrow"), ("fc", "yes"), ("status", "accounted")] }
 
-def ex93b : LinguisticExample :=
+def ex93b : Datum :=
   { id := "fox2007_ex93b"
     source := ⟨"fox-2007", "(93b)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex93b : LinguisticExample :=
     readings := [("free choice", .acceptable)]
     paperFeatures := [("quantifier", "existential"), ("number", "plural"), ("connective", "or"), ("scope", "narrow"), ("fc", "yes"), ("status", "accounted")] }
 
-def ex93c : LinguisticExample :=
+def ex93c : Datum :=
   { id := "fox2007_ex93c"
     source := ⟨"fox-2007", "(93c)"⟩
     reportedIn := none
@@ -277,6 +277,6 @@ def ex93c : LinguisticExample :=
     readings := [("free choice", .unacceptable)]
     paperFeatures := [("quantifier", "existential"), ("number", "plural"), ("connective", "or"), ("scope", "wide"), ("fc", "no"), ("status", "accounted")] }
 
-def all : List LinguisticExample := [ex16, ex21, ex25, ex28a, ex28b, ex29a, ex29b, ex29c, ex30a, ex30c, ex30d, ex32, ex34a, ex34b, ex91a, ex91b, ex92, ex93a, ex93b, ex93c]
+def all : List Datum := [ex16, ex21, ex25, ex28a, ex28b, ex29a, ex29b, ex29c, ex30a, ex30c, ex30d, ex32, ex34a, ex34b, ex91a, ex91b, ex92, ex93a, ex93b, ex93c]
 
 end Fox2007.Examples

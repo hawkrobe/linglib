@@ -17,7 +17,7 @@ namespace Maier2015.Examples
 
 open Data.Examples
 
-def ex_42 : LinguisticExample :=
+def ex_42 : Datum :=
   { id := "maier2015_42"
     source := ⟨"maier-2015", "(42), after Karttunen (1973)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_42 : LinguisticExample :=
     readings := []
     paperFeatures := [("order", "doxasticFirst"), ("attitudes", "believe;hope"), ("trigger", "stop")] }
 
-def ex_7a : LinguisticExample :=
+def ex_7a : Datum :=
   { id := "maier2015_7a"
     source := ⟨"maier-2015", "(7a)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_7a : LinguisticExample :=
     readings := []
     paperFeatures := [("order", "doxasticFirst"), ("attitudes", "believe;hope"), ("trigger", "too")] }
 
-def ex_7b : LinguisticExample :=
+def ex_7b : Datum :=
   { id := "maier2015_7b"
     source := ⟨"maier-2015", "(7b)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_7b : LinguisticExample :=
     readings := []
     paperFeatures := [("order", "parasiticFirst"), ("attitudes", "hope;believe"), ("trigger", "too")] }
 
-def ex_22a : LinguisticExample :=
+def ex_22a : Datum :=
   { id := "maier2015_22a"
     source := ⟨"maier-2015", "(22a)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_22a : LinguisticExample :=
     readings := []
     paperFeatures := [("order", "doxasticFirst"), ("attitudes", "believe;imagine"), ("trigger", "too")] }
 
-def ex_22b : LinguisticExample :=
+def ex_22b : Datum :=
   { id := "maier2015_22b"
     source := ⟨"maier-2015", "(22b)"⟩
     reportedIn := none
@@ -82,6 +82,6 @@ def ex_22b : LinguisticExample :=
     readings := []
     paperFeatures := [("order", "parasiticFirst"), ("attitudes", "imagine;believe"), ("trigger", "too")] }
 
-def all : List LinguisticExample := [ex_42, ex_7a, ex_7b, ex_22a, ex_22b]
+def all : List Datum := [ex_42, ex_7a, ex_7b, ex_22a, ex_22b]
 
 end Maier2015.Examples

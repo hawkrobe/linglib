@@ -17,7 +17,7 @@ namespace AssmannEtAl2023.Examples
 
 open Data.Examples
 
-def ex_1 : LinguisticExample :=
+def ex_1 : Datum :=
   { id := "assmannetal2023_1"
     source := ⟨"assmann-etal-2023", "(1)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_1 : LinguisticExample :=
     readings := [("subject", .acceptable)]
     paperFeatures := [("marking", "a before subject")] }
 
-def ex_2 : LinguisticExample :=
+def ex_2 : Datum :=
   { id := "assmannetal2023_2"
     source := ⟨"assmann-etal-2023", "(2)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_2 : LinguisticExample :=
     readings := [("object", .acceptable), ("verb", .acceptable), ("VP", .acceptable)]
     paperFeatures := [("marking", "a between verb and object")] }
 
-def ex_3 : LinguisticExample :=
+def ex_3 : Datum :=
   { id := "assmannetal2023_3"
     source := ⟨"assmann-etal-2023", "(3)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_3 : LinguisticExample :=
     readings := [("clause", .acceptable)]
     paperFeatures := [("marking", "a clause-final")] }
 
-def ex_5 : LinguisticExample :=
+def ex_5 : Datum :=
   { id := "assmannetal2023_5"
     source := ⟨"assmann-etal-2023", "(5)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_5 : LinguisticExample :=
     readings := [("clause", .acceptable)]
     paperFeatures := [("marking", "a clause-final")] }
 
-def fn4_i : LinguisticExample :=
+def fn4_i : Datum :=
   { id := "assmannetal2023_fn4_i"
     source := ⟨"assmann-etal-2023", "fn. 4 (i)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def fn4_i : LinguisticExample :=
     readings := [("phrase within VP", .acceptable)]
     paperFeatures := [("marking", "a before phrase within VP")] }
 
-def ex_6a : LinguisticExample :=
+def ex_6a : Datum :=
   { id := "assmannetal2023_6a"
     source := ⟨"assmann-etal-2023", "(6a)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_6a : LinguisticExample :=
     readings := [("subject", .acceptable)]
     paperFeatures := [("marking", "le after subject")] }
 
-def ex_6b : LinguisticExample :=
+def ex_6b : Datum :=
   { id := "assmannetal2023_6b"
     source := ⟨"assmann-etal-2023", "(6b)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_6b : LinguisticExample :=
     readings := [("clause", .acceptable)]
     paperFeatures := [("marking", "le after subject")] }
 
-def ex_7 : LinguisticExample :=
+def ex_7 : Datum :=
   { id := "assmannetal2023_7"
     source := ⟨"assmann-etal-2023", "(7)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_7 : LinguisticExample :=
     readings := [("VP", .acceptable), ("object", .acceptable)]
     paperFeatures := [("marking", "ka before object")] }
 
-def ex_8 : LinguisticExample :=
+def ex_8 : Datum :=
   { id := "assmannetal2023_8"
     source := ⟨"assmann-etal-2023", "(8)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_8 : LinguisticExample :=
     readings := [("verb", .acceptable)]
     paperFeatures := [("marking", "kama after VP")] }
 
-def ex_10 : LinguisticExample :=
+def ex_10 : Datum :=
   { id := "assmannetal2023_10"
     source := ⟨"assmann-etal-2023", "(10)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_10 : LinguisticExample :=
     readings := [("subject", .acceptable)]
     paperFeatures := [("marking", "relative form")] }
 
-def ex_11 : LinguisticExample :=
+def ex_11 : Datum :=
   { id := "assmannetal2023_11"
     source := ⟨"assmann-etal-2023", "(11)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_11 : LinguisticExample :=
     readings := [("object", .acceptable), ("verb", .acceptable), ("VP", .acceptable), ("clause", .acceptable)]
     paperFeatures := [("marking", "absolute form")] }
 
-def ex_12 : LinguisticExample :=
+def ex_12 : Datum :=
   { id := "assmannetal2023_12"
     source := ⟨"assmann-etal-2023", "(12)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_12 : LinguisticExample :=
     readings := [("subject", .acceptable)]
     paperFeatures := [("marking", "relative form"), ("particle", "cee after subject")] }
 
-def ex_13 : LinguisticExample :=
+def ex_13 : Datum :=
   { id := "assmannetal2023_13"
     source := ⟨"assmann-etal-2023", "(13)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_13 : LinguisticExample :=
     readings := [("object", .acceptable), ("verb", .acceptable), ("VP", .acceptable), ("clause", .acceptable)]
     paperFeatures := [("marking", "absolute form"), ("particle", "nee clause-final")] }
 
-def ex_14 : LinguisticExample :=
+def ex_14 : Datum :=
   { id := "assmannetal2023_14"
     source := ⟨"assmann-etal-2023", "(14)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_14 : LinguisticExample :=
     readings := [("object", .acceptable)]
     paperFeatures := [("marking", "absolute form"), ("particle", "nee clause-final"), ("agreement", "masculine despite feminine object")] }
 
-def ex_15 : LinguisticExample :=
+def ex_15 : Datum :=
   { id := "assmannetal2023_15"
     source := ⟨"assmann-etal-2023", "(15)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_15 : LinguisticExample :=
     readings := [("part of subject", .acceptable)]
     paperFeatures := [("marking", "relative form"), ("particle", "nee after subject")] }
 
-def ex_17 : LinguisticExample :=
+def ex_17 : Datum :=
   { id := "assmannetal2023_17"
     source := ⟨"assmann-etal-2023", "(17)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_17 : LinguisticExample :=
     readings := [("object", .acceptable)]
     paperFeatures := [("marking", "absolute form"), ("particle", "nee after object")] }
 
-def ex_18a : LinguisticExample :=
+def ex_18a : Datum :=
   { id := "assmannetal2023_18a"
     source := ⟨"assmann-etal-2023", "(18a)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex_18a : LinguisticExample :=
     readings := [("subject", .acceptable)]
     paperFeatures := [("marking", "a")] }
 
-def ex_18b : LinguisticExample :=
+def ex_18b : Datum :=
   { id := "assmannetal2023_18b"
     source := ⟨"assmann-etal-2023", "(18b)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex_18b : LinguisticExample :=
     readings := [("object", .acceptable)]
     paperFeatures := [("marking", "la"), ("movement", "object fronted")] }
 
-def ex_18c : LinguisticExample :=
+def ex_18c : Datum :=
   { id := "assmannetal2023_18c"
     source := ⟨"assmann-etal-2023", "(18c)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex_18c : LinguisticExample :=
     readings := [("verb", .acceptable), ("VP", .acceptable)]
     paperFeatures := [("marking", "dafa")] }
 
-def ex_19 : LinguisticExample :=
+def ex_19 : Datum :=
   { id := "assmannetal2023_19"
     source := ⟨"assmann-etal-2023", "(19)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex_19 : LinguisticExample :=
     readings := [("clause", .acceptable)]
     paperFeatures := [("marking", "ngi"), ("aspect", "imperfective")] }
 
-def ex_20 : LinguisticExample :=
+def ex_20 : Datum :=
   { id := "assmannetal2023_20"
     source := ⟨"assmann-etal-2023", "(20)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex_20 : LinguisticExample :=
     readings := [("clause", .acceptable)]
     paperFeatures := [("marking", "na"), ("aspect", "perfective")] }
 
-def ex_37 : LinguisticExample :=
+def ex_37 : Datum :=
   { id := "assmannetal2023_37"
     source := ⟨"assmann-etal-2023", "(37)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex_37 : LinguisticExample :=
     readings := [("clause", .acceptable)]
     paperFeatures := [("marking", "wa on verb")] }
 
-def ex_38 : LinguisticExample :=
+def ex_38 : Datum :=
   { id := "assmannetal2023_38"
     source := ⟨"assmann-etal-2023", "(38)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex_38 : LinguisticExample :=
     readings := [("verb", .acceptable)]
     paperFeatures := [("marking", "wa on verb")] }
 
-def ex_39 : LinguisticExample :=
+def ex_39 : Datum :=
   { id := "assmannetal2023_39"
     source := ⟨"assmann-etal-2023", "(39)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex_39 : LinguisticExample :=
     readings := [("VP", .acceptable)]
     paperFeatures := [("marking", "wa on verb")] }
 
-def ex_41 : LinguisticExample :=
+def ex_41 : Datum :=
   { id := "assmannetal2023_41"
     source := ⟨"assmann-etal-2023", "(41)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex_41 : LinguisticExample :=
     readings := [("object", .acceptable), ("verb", .acceptable), ("VP", .acceptable), ("subject", .acceptable), ("clause", .acceptable)]
     paperFeatures := [("marking", "none")] }
 
-def ex_53 : LinguisticExample :=
+def ex_53 : Datum :=
   { id := "assmannetal2023_53"
     source := ⟨"assmann-etal-2023", "(53)"⟩
     reportedIn := none
@@ -355,6 +355,6 @@ def ex_53 : LinguisticExample :=
     readings := [("verb", .acceptable), ("object", .unacceptable), ("VP", .unacceptable), ("clause", .unacceptable), ("subject", .unacceptable), ("subject and verb", .acceptable)]
     paperFeatures := [("marking", "nuclear stress on verb")] }
 
-def all : List LinguisticExample := [ex_1, ex_2, ex_3, ex_5, fn4_i, ex_6a, ex_6b, ex_7, ex_8, ex_10, ex_11, ex_12, ex_13, ex_14, ex_15, ex_17, ex_18a, ex_18b, ex_18c, ex_19, ex_20, ex_37, ex_38, ex_39, ex_41, ex_53]
+def all : List Datum := [ex_1, ex_2, ex_3, ex_5, fn4_i, ex_6a, ex_6b, ex_7, ex_8, ex_10, ex_11, ex_12, ex_13, ex_14, ex_15, ex_17, ex_18a, ex_18b, ex_18c, ex_19, ex_20, ex_37, ex_38, ex_39, ex_41, ex_53]
 
 end AssmannEtAl2023.Examples

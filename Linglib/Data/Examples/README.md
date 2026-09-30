@@ -1,9 +1,12 @@
 # `Linglib/Data/Examples/` — typed linguistic example data
 
 One JSON file per source paper (`Charlow2014.json`, `Hofmann2025.json`, ...)
-co-located with the [`Schema.lean`](Schema.lean) they instantiate. Each
-file is a top-level JSON array of example objects: the fields of the
-`LinguisticExample` Lean struct plus four record-only keys (see Schema below).
+co-located with the [`Schema.lean`](Schema.lean) they instantiate. An
+example is what the paper prints under a number; a row is a `Datum`, one
+piece of data the paper reports with an example (Tonhauser and Matthewson
+2016): an expression, the context it is judged in, and the judgment. Each
+file is a top-level JSON array of rows: the fields of the `Datum` Lean
+struct plus four record-only keys (see Schema below).
 
 ## Generator
 
@@ -22,8 +25,8 @@ python3 scripts/export_examples_cldf.py --report          # per-paper rows to ch
 pairs packed onto wrapped lines, one feature/alternative/reading per line)
 and refuses to write if reformatting would change the parsed data. It needs
 a paper name: most JSON files predate the formatter, and reformatting them
-all buries the diff. The generator rejects a key that is not a field of
-`LinguisticExample`.
+all buries the diff. The generator rejects a key that is neither a field of
+`Datum` nor one of the four record-only keys.
 
 Reads `Linglib/Data/Examples/<AuthorYear>.json` and writes a standalone
 auto-generated module at `Linglib/Data/Examples/<AuthorYear>.lean`

@@ -17,7 +17,7 @@ namespace Krifka2013.Examples
 
 open Data.Examples
 
-def ex1a : LinguisticExample :=
+def ex1a : Datum :=
   { id := "krifka2013_ex1a"
     source := ⟨"krifka-2013", "(1a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex1a : LinguisticExample :=
     readings := []
     paperFeatures := [("subject", "barePlural"), ("reading", "definitional")] }
 
-def ex1b : LinguisticExample :=
+def ex1b : Datum :=
   { id := "krifka2013_ex1b"
     source := ⟨"krifka-2013", "(1b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex1b : LinguisticExample :=
     readings := []
     paperFeatures := [("subject", "indefiniteSingular"), ("reading", "definitional")] }
 
-def ex2a : LinguisticExample :=
+def ex2a : Datum :=
   { id := "krifka2013_ex2a"
     source := ⟨"krifka-2013", "(2a)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex2a : LinguisticExample :=
     readings := []
     paperFeatures := [("subject", "barePlural"), ("reading", "descriptive")] }
 
-def ex2b : LinguisticExample :=
+def ex2b : Datum :=
   { id := "krifka2013_ex2b"
     source := ⟨"krifka-2013", "(2b)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex2b : LinguisticExample :=
     readings := []
     paperFeatures := [("subject", "indefiniteSingular"), ("reading", "descriptive")] }
 
-def ex3a : LinguisticExample :=
+def ex3a : Datum :=
   { id := "krifka2013_ex3a"
     source := ⟨"krifka-2013", "(3a)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex3a : LinguisticExample :=
     readings := []
     paperFeatures := [("subject", "indefiniteSingular"), ("reading", "definitional")] }
 
-def ex4a : LinguisticExample :=
+def ex4a : Datum :=
   { id := "krifka2013_ex4a"
     source := ⟨"krifka-2013", "(4a)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex4a : LinguisticExample :=
     readings := []
     paperFeatures := [("subject", "indefiniteSingular"), ("reading", "descriptive")] }
 
-def ex5 : LinguisticExample :=
+def ex5 : Datum :=
   { id := "krifka2013_ex5"
     source := ⟨"krifka-2013", "(5)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex5 : LinguisticExample :=
     readings := []
     paperFeatures := [("subject", "indefiniteSingular"), ("reading", "definitional"), ("rule", "physical")] }
 
-def ex6 : LinguisticExample :=
+def ex6 : Datum :=
   { id := "krifka2013_ex6"
     source := ⟨"krifka-2013", "(6)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex6 : LinguisticExample :=
     readings := []
     paperFeatures := [("subject", "indefiniteSingular"), ("reading", "definitional"), ("rule", "moral")] }
 
-def ex7 : LinguisticExample :=
+def ex7 : Datum :=
   { id := "krifka2013_ex7"
     source := ⟨"krifka-2013", "(7)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex7 : LinguisticExample :=
     readings := []
     paperFeatures := [("subject", "indefiniteSingular"), ("reading", "definitional"), ("rule", "legal")] }
 
-def ex8 : LinguisticExample :=
+def ex8 : Datum :=
   { id := "krifka2013_ex8"
     source := ⟨"krifka-2013", "(8)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex8 : LinguisticExample :=
     readings := []
     paperFeatures := [("subject", "indefiniteSingular"), ("reading", "definitional"), ("rule", "legal")] }
 
-def ex13 : LinguisticExample :=
+def ex13 : Datum :=
   { id := "krifka2013_ex13"
     source := ⟨"krifka-2013", "(13)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex13 : LinguisticExample :=
     readings := [("descriptive", .acceptable), ("definitional", .acceptable)]
     paperFeatures := [("subject", "barePlural")] }
 
-def ex29 : LinguisticExample :=
+def ex29 : Datum :=
   { id := "krifka2013_ex29"
     source := ⟨"krifka-2013", "(29)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex29 : LinguisticExample :=
     readings := []
     paperFeatures := [("subject", "indefiniteSingular"), ("reading", "definitional")] }
 
-def ex37 : LinguisticExample :=
+def ex37 : Datum :=
   { id := "krifka2013_ex37"
     source := ⟨"krifka-2013", "(37)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex37 : LinguisticExample :=
     readings := []
     paperFeatures := [("subject", "indefiniteSingular"), ("reading", "definitional")] }
 
-def ex38 : LinguisticExample :=
+def ex38 : Datum :=
   { id := "krifka2013_ex38"
     source := ⟨"krifka-2013", "(38)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex38 : LinguisticExample :=
     readings := []
     paperFeatures := [("subject", "indefiniteSingular"), ("reading", "definitional")] }
 
-def ex39 : LinguisticExample :=
+def ex39 : Datum :=
   { id := "krifka2013_ex39"
     source := ⟨"krifka-2013", "(39)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex39 : LinguisticExample :=
     readings := []
     paperFeatures := [("subject", "indefiniteSingular")] }
 
-def ex42a : LinguisticExample :=
+def ex42a : Datum :=
   { id := "krifka2013_ex42a"
     source := ⟨"krifka-2013", "(42a)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex42a : LinguisticExample :=
     readings := []
     paperFeatures := [("subject", "indefiniteSingular"), ("reading", "descriptive")] }
 
-def ex42b : LinguisticExample :=
+def ex42b : Datum :=
   { id := "krifka2013_ex42b"
     source := ⟨"krifka-2013", "(42b)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex42b : LinguisticExample :=
     readings := []
     paperFeatures := [("subject", "indefiniteSingular"), ("reading", "definitional")] }
 
-def ex43 : LinguisticExample :=
+def ex43 : Datum :=
   { id := "krifka2013_ex43"
     source := ⟨"krifka-2013", "(43)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex43 : LinguisticExample :=
     readings := []
     paperFeatures := [("subject", "indefiniteSingular"), ("reading", "descriptive")] }
 
-def ex44a : LinguisticExample :=
+def ex44a : Datum :=
   { id := "krifka2013_ex44a"
     source := ⟨"krifka-2013", "(44a)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex44a : LinguisticExample :=
     readings := []
     paperFeatures := [("subject", "indefiniteSingular"), ("reading", "descriptive")] }
 
-def ex44b : LinguisticExample :=
+def ex44b : Datum :=
   { id := "krifka2013_ex44b"
     source := ⟨"krifka-2013", "(44b)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex44b : LinguisticExample :=
     readings := []
     paperFeatures := [("subject", "indefiniteSingular"), ("reading", "descriptive")] }
 
-def ex45a : LinguisticExample :=
+def ex45a : Datum :=
   { id := "krifka2013_ex45a"
     source := ⟨"krifka-2013", "(45a)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex45a : LinguisticExample :=
     readings := []
     paperFeatures := [("subject", "barePlural"), ("reading", "descriptive")] }
 
-def ex45b : LinguisticExample :=
+def ex45b : Datum :=
   { id := "krifka2013_ex45b"
     source := ⟨"krifka-2013", "(45b)"⟩
     reportedIn := none
@@ -303,6 +303,6 @@ def ex45b : LinguisticExample :=
     readings := []
     paperFeatures := [("subject", "indefiniteSingular"), ("reading", "descriptive")] }
 
-def all : List LinguisticExample := [ex1a, ex1b, ex2a, ex2b, ex3a, ex4a, ex5, ex6, ex7, ex8, ex13, ex29, ex37, ex38, ex39, ex42a, ex42b, ex43, ex44a, ex44b, ex45a, ex45b]
+def all : List Datum := [ex1a, ex1b, ex2a, ex2b, ex3a, ex4a, ex5, ex6, ex7, ex8, ex13, ex29, ex37, ex38, ex39, ex42a, ex42b, ex43, ex44a, ex44b, ex45a, ex45b]
 
 end Krifka2013.Examples

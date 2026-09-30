@@ -17,7 +17,7 @@ namespace ChatzikyriakidisEtAl2025.Examples
 
 open Data.Examples
 
-def hobNob : LinguisticExample :=
+def hobNob : Datum :=
   { id := "chatzikyriakidisetal2025_hobNob"
     source := ⟨"geach-1967", "the Hob-Nob sentence"⟩
     reportedIn := some ⟨"chatzikyriakidis-etal-2025", "§2.3.2"⟩
@@ -30,6 +30,6 @@ def hobNob : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def all : List LinguisticExample := [hobNob]
+def all : List Datum := [hobNob]
 
 end ChatzikyriakidisEtAl2025.Examples

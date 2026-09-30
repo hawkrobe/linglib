@@ -17,7 +17,7 @@ namespace HerbstrittFranke2019.Examples
 
 open Data.Examples
 
-def ex1a : LinguisticExample :=
+def ex1a : Datum :=
   { id := "herbstrittfranke2019_ex1a"
     source := ⟨"herbstritt-franke-2019", "(1a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex1a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("expression", "probably")] }
 
-def ex1b : LinguisticExample :=
+def ex1b : Datum :=
   { id := "herbstrittfranke2019_ex1b"
     source := ⟨"herbstritt-franke-2019", "(1b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex1b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("expression", "not certain")] }
 
-def ex1c : LinguisticExample :=
+def ex1c : Datum :=
   { id := "herbstrittfranke2019_ex1c"
     source := ⟨"herbstritt-franke-2019", "(1c)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex1c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("expression", "certainly")] }
 
-def ex2 : LinguisticExample :=
+def ex2 : Datum :=
   { id := "herbstrittfranke2019_ex2"
     source := ⟨"herbstritt-franke-2019", "(2)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex2 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("expression", "definitely likely")] }
 
-def ex3 : LinguisticExample :=
+def ex3 : Datum :=
   { id := "herbstrittfranke2019_ex3"
     source := ⟨"herbstritt-franke-2019", "(3)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex3 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("expression", "might be probable")] }
 
-def ex5a : LinguisticExample :=
+def ex5a : Datum :=
   { id := "herbstrittfranke2019_ex5a"
     source := ⟨"herbstritt-franke-2019", "(5a)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex5a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("expression", "probable")] }
 
-def ex6a : LinguisticExample :=
+def ex6a : Datum :=
   { id := "herbstrittfranke2019_ex6a"
     source := ⟨"herbstritt-franke-2019", "(6a)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex6a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("expression", "certainly probable")] }
 
-def ex11 : LinguisticExample :=
+def ex11 : Datum :=
   { id := "herbstrittfranke2019_ex11"
     source := ⟨"herbstritt-franke-2019", "(11)"⟩
     reportedIn := none
@@ -121,6 +121,6 @@ def ex11 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("expression", "frame")] }
 
-def all : List LinguisticExample := [ex1a, ex1b, ex1c, ex2, ex3, ex5a, ex6a, ex11]
+def all : List Datum := [ex1a, ex1b, ex1c, ex2, ex3, ex5a, ex6a, ex11]
 
 end HerbstrittFranke2019.Examples

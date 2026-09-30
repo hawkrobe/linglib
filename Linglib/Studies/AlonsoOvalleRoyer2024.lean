@@ -227,7 +227,7 @@ def decisionOf : String → Option (Finset World)
 
 /-- A position row is predicted acceptable iff some binder available at its site projects
 the reading's flavor and, when the row gives a scenario, the claim anchored there holds. -/
-def positionPredicted (row : LinguisticExample) : Option Bool := do
+def positionPredicted (row : Datum) : Option Bool := do
   let site ← match row.feature? "position" with
     | some "external" => some Site.external
     | some "internal" => some .internal
@@ -263,7 +263,7 @@ def entryOf : String → Option ModalIndefinite
 the entry has its flavor (or an unremarkable reading), it survives embedding iff the entry's
 component is at-issue, a universal scenario is tolerated iff the entry is not upper-bounded,
 and a predicative position needs a predicative entry. -/
-def entryPredicted (row : LinguisticExample) : Option Bool := do
+def entryPredicted (row : Datum) : Option Bool := do
   let e ← row.feature? "item" >>= entryOf
   if (row.feature? "position").any (· ∈ ["external", "internal", "adjunct"]) then none
   if row.feature? "scenario" == some "universal" then return !e.upperBounded

@@ -110,7 +110,7 @@ theorem licensed_theHell_iff_intervention (hE : h.mechanism.ReachesSpecCP ↔ h.
 /-! ### The data -/
 
 /-- A row's strategy. -/
-def mechanismOf (e : LinguisticExample) : Option WhInterpMechanism :=
+def mechanismOf (e : Datum) : Option WhInterpMechanism :=
   match e.feature? "strategy" with
   | some "full" => some .overtMovement
   | some "partial" => some .partialMovement
@@ -119,11 +119,11 @@ def mechanismOf (e : LinguisticExample) : Option WhInterpMechanism :=
 
 /-- A row's host: its strategy and the number of wh-phrases between the question operator and
 the modifier, both of which the row records. -/
-def hostOf (e : LinguisticExample) : Option Host := do
+def hostOf (e : Datum) : Option Host := do
   pure ⟨← mechanismOf e, ← e.nat? "interveners"⟩
 
 /-- A row's modifier. -/
-def modifierOf (e : LinguisticExample) : Option WhModifier :=
+def modifierOf (e : Datum) : Option WhModifier :=
   match e.feature? "modifier" with
   | some "theHell" => some theHell
   | some "daodi" => some Mandarin.Questions.daodi

@@ -62,7 +62,7 @@ chapter's ability modals.
 
 namespace Kubota2026
 
-open Data.Examples (LinguisticExample)
+open Data.Examples (Datum)
 open Modality (ModalFlavor)
 open ConventionalImplicature (TwoDim)
 open Presupposition (PartialProp)
@@ -130,7 +130,7 @@ def RaisesCounterstance (t : Clause.SentenceType) : Prop := t = .declarative ∨
 instance : DecidablePred RaisesCounterstance := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
 /-- The sentence type of the row's prior move. -/
-def priorMove? (row : LinguisticExample) : Option Clause.SentenceType :=
+def priorMove? (row : Datum) : Option Clause.SentenceType :=
   match row.feature? "priorMove" with
   | some "evaluativeAssertion" => some .declarative
   | some "polarQuestion" => some .polar
@@ -138,12 +138,12 @@ def priorMove? (row : LinguisticExample) : Option Clause.SentenceType :=
   | _ => none
 
 /-- The prediction for a row: felicitous iff its prior move raises a counterstance. -/
-def PredictsFelicitous (row : LinguisticExample) : Prop :=
+def PredictsFelicitous (row : Datum) : Prop :=
   match priorMove? row with
   | some t => RaisesCounterstance t
   | none => False
 
-instance (row : LinguisticExample) : Decidable (PredictsFelicitous row) := by
+instance (row : Datum) : Decidable (PredictsFelicitous row) := by
   unfold PredictsFelicitous
   split <;> infer_instance
 
@@ -177,7 +177,7 @@ instance : DecidablePred IsPriority := λ f => by
   cases f <;> unfold IsPriority <;> infer_instance
 
 /-- The row's modal flavor. -/
-def flavor? (row : LinguisticExample) : Option ModalFlavor :=
+def flavor? (row : Datum) : Option ModalFlavor :=
   match row.feature? "modalFlavor" with
   | some "epistemic" => some .epistemic
   | some "deontic" => some .deontic
@@ -186,12 +186,12 @@ def flavor? (row : LinguisticExample) : Option ModalFlavor :=
   | _ => none
 
 /-- The row's modal is a priority modal. -/
-def PriorityRow (row : LinguisticExample) : Prop :=
+def PriorityRow (row : Datum) : Prop :=
   match flavor? row with
   | some f => IsPriority f
   | none => False
 
-instance (row : LinguisticExample) : Decidable (PriorityRow row) := by
+instance (row : Datum) : Decidable (PriorityRow row) := by
   unfold PriorityRow
   split <;> infer_instance
 

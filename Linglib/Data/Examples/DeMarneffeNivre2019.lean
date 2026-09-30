@@ -17,7 +17,7 @@ namespace DeMarneffeNivre2019.Examples
 
 open Data.Examples
 
-def fig1 : LinguisticExample :=
+def fig1 : Datum :=
   { id := "demarneffenivre2019_fig1"
     source := ⟨"de-marneffe-nivre-2019", "Figure 1"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def fig1 : LinguisticExample :=
     readings := []
     paperFeatures := [("topic", "dependencyTree"), ("projective", "yes")] }
 
-def fig2 : LinguisticExample :=
+def fig2 : Datum :=
   { id := "demarneffenivre2019_fig2"
     source := ⟨"de-marneffe-nivre-2019", "Figure 2"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def fig2 : LinguisticExample :=
     readings := []
     paperFeatures := [("topic", "coordination"), ("projective", "yes")] }
 
-def fig3 : LinguisticExample :=
+def fig3 : Datum :=
   { id := "demarneffenivre2019_fig3"
     source := ⟨"de-marneffe-nivre-2019", "Figure 3"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def fig3 : LinguisticExample :=
     readings := []
     paperFeatures := [("topic", "projectivity"), ("projective", "no")] }
 
-def fig4 : LinguisticExample :=
+def fig4 : Datum :=
   { id := "demarneffenivre2019_fig4"
     source := ⟨"de-marneffe-nivre-2019", "Figure 4"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def fig4 : LinguisticExample :=
     readings := []
     paperFeatures := [("topic", "headChoice"), ("projective", "yes")] }
 
-def ex_1a : LinguisticExample :=
+def ex_1a : Datum :=
   { id := "demarneffenivre2019_1a"
     source := ⟨"de-marneffe-nivre-2019", "(1a)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_1a : LinguisticExample :=
     readings := []
     paperFeatures := [("topic", "wordOrder"), ("adverbialClause", "initial")] }
 
-def ex_1b : LinguisticExample :=
+def ex_1b : Datum :=
   { id := "demarneffenivre2019_1b"
     source := ⟨"de-marneffe-nivre-2019", "(1b)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_1b : LinguisticExample :=
     readings := []
     paperFeatures := [("topic", "wordOrder"), ("adverbialClause", "final")] }
 
-def ex_2a : LinguisticExample :=
+def ex_2a : Datum :=
   { id := "demarneffenivre2019_2a"
     source := ⟨"de-marneffe-nivre-2019", "(2a)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_2a : LinguisticExample :=
     readings := []
     paperFeatures := [("topic", "dependencyLength"), ("particle", "adjacent"), ("preferred", "yes")] }
 
-def ex_2b : LinguisticExample :=
+def ex_2b : Datum :=
   { id := "demarneffenivre2019_2b"
     source := ⟨"de-marneffe-nivre-2019", "(2b)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_2b : LinguisticExample :=
     readings := []
     paperFeatures := [("topic", "dependencyLength"), ("particle", "postposed"), ("preferred", "no")] }
 
-def ex_3a : LinguisticExample :=
+def ex_3a : Datum :=
   { id := "demarneffenivre2019_3a"
     source := ⟨"de-marneffe-nivre-2019", "(3a)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_3a : LinguisticExample :=
     readings := []
     paperFeatures := [("topic", "dependencyLength"), ("particle", "adjacent"), ("preferred", "neither")] }
 
-def ex_3b : LinguisticExample :=
+def ex_3b : Datum :=
   { id := "demarneffenivre2019_3b"
     source := ⟨"de-marneffe-nivre-2019", "(3b)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_3b : LinguisticExample :=
     readings := []
     paperFeatures := [("topic", "dependencyLength"), ("particle", "postposed"), ("preferred", "neither")] }
 
-def ex_4a : LinguisticExample :=
+def ex_4a : Datum :=
   { id := "demarneffenivre2019_4a"
     source := ⟨"gibson-1998", "p. 2"⟩
     reportedIn := some ⟨"de-marneffe-nivre-2019", "(4a)"⟩
@@ -160,7 +160,7 @@ def ex_4a : LinguisticExample :=
     readings := []
     paperFeatures := [("topic", "dependencyLength"), ("relativeClause", "object")] }
 
-def ex_4b : LinguisticExample :=
+def ex_4b : Datum :=
   { id := "demarneffenivre2019_4b"
     source := ⟨"gibson-1998", "p. 2"⟩
     reportedIn := some ⟨"de-marneffe-nivre-2019", "(4b)"⟩
@@ -173,7 +173,7 @@ def ex_4b : LinguisticExample :=
     readings := []
     paperFeatures := [("topic", "dependencyLength"), ("relativeClause", "subject")] }
 
-def ex_5 : LinguisticExample :=
+def ex_5 : Datum :=
   { id := "demarneffenivre2019_5"
     source := ⟨"de-marneffe-nivre-2019", "(5)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_5 : LinguisticExample :=
     readings := []
     paperFeatures := [("topic", "ellipsis")] }
 
-def fig5_en : LinguisticExample :=
+def fig5_en : Datum :=
   { id := "demarneffenivre2019_fig5_en"
     source := ⟨"de-marneffe-nivre-2019", "Figure 5"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def fig5_en : LinguisticExample :=
     readings := []
     paperFeatures := [("topic", "nonverbalPredication"), ("copula", "overt"), ("definiteness", "determiner")] }
 
-def fig5_sv : LinguisticExample :=
+def fig5_sv : Datum :=
   { id := "demarneffenivre2019_fig5_sv"
     source := ⟨"de-marneffe-nivre-2019", "Figure 5"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def fig5_sv : LinguisticExample :=
     readings := []
     paperFeatures := [("topic", "nonverbalPredication"), ("copula", "overt"), ("definiteness", "inflection")] }
 
-def fig5_wsk : LinguisticExample :=
+def fig5_wsk : Datum :=
   { id := "demarneffenivre2019_fig5_wsk"
     source := ⟨"de-marneffe-nivre-2019", "Figure 5"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def fig5_wsk : LinguisticExample :=
     readings := []
     paperFeatures := [("topic", "nonverbalPredication"), ("copula", "zero"), ("definiteness", "determiner")] }
 
-def fig5_ru : LinguisticExample :=
+def fig5_ru : Datum :=
   { id := "demarneffenivre2019_fig5_ru"
     source := ⟨"de-marneffe-nivre-2019", "Figure 5"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def fig5_ru : LinguisticExample :=
     readings := []
     paperFeatures := [("topic", "nonverbalPredication"), ("copula", "zero"), ("definiteness", "unmarked")] }
 
-def fig6_sv : LinguisticExample :=
+def fig6_sv : Datum :=
   { id := "demarneffenivre2019_fig6_sv"
     source := ⟨"de-marneffe-nivre-2019", "Figure 6"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def fig6_sv : LinguisticExample :=
     readings := []
     paperFeatures := [("topic", "annotationSchemes"), ("scheme", "SwedishTreebank")] }
 
-def fig6_da : LinguisticExample :=
+def fig6_da : Datum :=
   { id := "demarneffenivre2019_fig6_da"
     source := ⟨"de-marneffe-nivre-2019", "Figure 6"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def fig6_da : LinguisticExample :=
     readings := []
     paperFeatures := [("topic", "annotationSchemes"), ("scheme", "DanishDependencyTreebank")] }
 
-def fig6_en : LinguisticExample :=
+def fig6_en : Datum :=
   { id := "demarneffenivre2019_fig6_en"
     source := ⟨"de-marneffe-nivre-2019", "Figure 6"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def fig6_en : LinguisticExample :=
     readings := []
     paperFeatures := [("topic", "annotationSchemes"), ("scheme", "StanfordTypedDependencies")] }
 
-def fig7_en : LinguisticExample :=
+def fig7_en : Datum :=
   { id := "demarneffenivre2019_fig7_en"
     source := ⟨"de-marneffe-nivre-2019", "Figure 7"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def fig7_en : LinguisticExample :=
     readings := []
     paperFeatures := [("topic", "parallelism"), ("marking", "functionWords")] }
 
-def fig7_fi : LinguisticExample :=
+def fig7_fi : Datum :=
   { id := "demarneffenivre2019_fig7_fi"
     source := ⟨"de-marneffe-nivre-2019", "Figure 7"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def fig7_fi : LinguisticExample :=
     readings := []
     paperFeatures := [("topic", "parallelism"), ("marking", "case")] }
 
-def fig8 : LinguisticExample :=
+def fig8 : Datum :=
   { id := "demarneffenivre2019_fig8"
     source := ⟨"de-marneffe-nivre-2019", "Figure 8"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def fig8 : LinguisticExample :=
     readings := []
     paperFeatures := [("topic", "nonsyntacticRelations")] }
 
-def fig9 : LinguisticExample :=
+def fig9 : Datum :=
   { id := "demarneffenivre2019_fig9"
     source := ⟨"de-marneffe-nivre-2019", "Figure 9"⟩
     reportedIn := none
@@ -329,6 +329,6 @@ def fig9 : LinguisticExample :=
     readings := []
     paperFeatures := [("topic", "enhancedDependencies")] }
 
-def all : List LinguisticExample := [fig1, fig2, fig3, fig4, ex_1a, ex_1b, ex_2a, ex_2b, ex_3a, ex_3b, ex_4a, ex_4b, ex_5, fig5_en, fig5_sv, fig5_wsk, fig5_ru, fig6_sv, fig6_da, fig6_en, fig7_en, fig7_fi, fig8, fig9]
+def all : List Datum := [fig1, fig2, fig3, fig4, ex_1a, ex_1b, ex_2a, ex_2b, ex_3a, ex_3b, ex_4a, ex_4b, ex_5, fig5_en, fig5_sv, fig5_wsk, fig5_ru, fig6_sv, fig6_da, fig6_en, fig7_en, fig7_fi, fig8, fig9]
 
 end DeMarneffeNivre2019.Examples

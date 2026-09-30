@@ -17,7 +17,7 @@ namespace Embick2015.Examples
 
 open Data.Examples
 
-def latin_present_1sg : LinguisticExample :=
+def latin_present_1sg : Datum :=
   { id := "embick2015_latin_present_1sg"
     source := ⟨"embick-2015", "ch. 4, (40)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def latin_present_1sg : LinguisticExample :=
     readings := []
     paperFeatures := [("tense", "present"), ("person", "1"), ("number", "sg"), ("m1", "laud"), ("m2", "ā"), ("m3", "ō")] }
 
-def latin_present_2sg : LinguisticExample :=
+def latin_present_2sg : Datum :=
   { id := "embick2015_latin_present_2sg"
     source := ⟨"embick-2015", "ch. 4, (40)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def latin_present_2sg : LinguisticExample :=
     readings := []
     paperFeatures := [("tense", "present"), ("person", "2"), ("number", "sg"), ("m1", "laud"), ("m2", "ā"), ("m3", "s")] }
 
-def latin_present_3sg : LinguisticExample :=
+def latin_present_3sg : Datum :=
   { id := "embick2015_latin_present_3sg"
     source := ⟨"embick-2015", "ch. 4, (40)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def latin_present_3sg : LinguisticExample :=
     readings := []
     paperFeatures := [("tense", "present"), ("person", "3"), ("number", "sg"), ("m1", "laud"), ("m2", "ā"), ("m3", "t")] }
 
-def latin_present_1pl : LinguisticExample :=
+def latin_present_1pl : Datum :=
   { id := "embick2015_latin_present_1pl"
     source := ⟨"embick-2015", "ch. 4, (40)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def latin_present_1pl : LinguisticExample :=
     readings := []
     paperFeatures := [("tense", "present"), ("person", "1"), ("number", "pl"), ("m1", "laud"), ("m2", "ā"), ("m3", "mus")] }
 
-def latin_present_2pl : LinguisticExample :=
+def latin_present_2pl : Datum :=
   { id := "embick2015_latin_present_2pl"
     source := ⟨"embick-2015", "ch. 4, (40)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def latin_present_2pl : LinguisticExample :=
     readings := []
     paperFeatures := [("tense", "present"), ("person", "2"), ("number", "pl"), ("m1", "laud"), ("m2", "ā"), ("m3", "tis")] }
 
-def latin_present_3pl : LinguisticExample :=
+def latin_present_3pl : Datum :=
   { id := "embick2015_latin_present_3pl"
     source := ⟨"embick-2015", "ch. 4, (40)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def latin_present_3pl : LinguisticExample :=
     readings := []
     paperFeatures := [("tense", "present"), ("person", "3"), ("number", "pl"), ("m1", "laud"), ("m2", "ā"), ("m3", "nt")] }
 
-def latin_imperfect_1sg : LinguisticExample :=
+def latin_imperfect_1sg : Datum :=
   { id := "embick2015_latin_imperfect_1sg"
     source := ⟨"embick-2015", "ch. 4, (40)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def latin_imperfect_1sg : LinguisticExample :=
     readings := []
     paperFeatures := [("tense", "imperfect"), ("person", "1"), ("number", "sg"), ("m1", "laud"), ("m2", "ā"), ("m3", "bā"), ("m4", "m")] }
 
-def latin_imperfect_2sg : LinguisticExample :=
+def latin_imperfect_2sg : Datum :=
   { id := "embick2015_latin_imperfect_2sg"
     source := ⟨"embick-2015", "ch. 4, (40)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def latin_imperfect_2sg : LinguisticExample :=
     readings := []
     paperFeatures := [("tense", "imperfect"), ("person", "2"), ("number", "sg"), ("m1", "laud"), ("m2", "ā"), ("m3", "bā"), ("m4", "s")] }
 
-def latin_imperfect_3sg : LinguisticExample :=
+def latin_imperfect_3sg : Datum :=
   { id := "embick2015_latin_imperfect_3sg"
     source := ⟨"embick-2015", "ch. 4, (40)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def latin_imperfect_3sg : LinguisticExample :=
     readings := []
     paperFeatures := [("tense", "imperfect"), ("person", "3"), ("number", "sg"), ("m1", "laud"), ("m2", "ā"), ("m3", "bā"), ("m4", "t")] }
 
-def latin_imperfect_1pl : LinguisticExample :=
+def latin_imperfect_1pl : Datum :=
   { id := "embick2015_latin_imperfect_1pl"
     source := ⟨"embick-2015", "ch. 4, (40)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def latin_imperfect_1pl : LinguisticExample :=
     readings := []
     paperFeatures := [("tense", "imperfect"), ("person", "1"), ("number", "pl"), ("m1", "laud"), ("m2", "ā"), ("m3", "bā"), ("m4", "mus")] }
 
-def latin_imperfect_2pl : LinguisticExample :=
+def latin_imperfect_2pl : Datum :=
   { id := "embick2015_latin_imperfect_2pl"
     source := ⟨"embick-2015", "ch. 4, (40)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def latin_imperfect_2pl : LinguisticExample :=
     readings := []
     paperFeatures := [("tense", "imperfect"), ("person", "2"), ("number", "pl"), ("m1", "laud"), ("m2", "ā"), ("m3", "bā"), ("m4", "tis")] }
 
-def latin_imperfect_3pl : LinguisticExample :=
+def latin_imperfect_3pl : Datum :=
   { id := "embick2015_latin_imperfect_3pl"
     source := ⟨"embick-2015", "ch. 4, (40)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def latin_imperfect_3pl : LinguisticExample :=
     readings := []
     paperFeatures := [("tense", "imperfect"), ("person", "3"), ("number", "pl"), ("m1", "laud"), ("m2", "ā"), ("m3", "bā"), ("m4", "nt")] }
 
-def latin_perfect_1sg : LinguisticExample :=
+def latin_perfect_1sg : Datum :=
   { id := "embick2015_latin_perfect_1sg"
     source := ⟨"embick-2015", "ch. 4, (40)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def latin_perfect_1sg : LinguisticExample :=
     readings := []
     paperFeatures := [("tense", "perfect"), ("person", "1"), ("number", "sg"), ("m1", "laud"), ("m2", "ā"), ("m3", "vi"), ("m4", "ī")] }
 
-def latin_perfect_2sg : LinguisticExample :=
+def latin_perfect_2sg : Datum :=
   { id := "embick2015_latin_perfect_2sg"
     source := ⟨"embick-2015", "ch. 4, (40)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def latin_perfect_2sg : LinguisticExample :=
     readings := []
     paperFeatures := [("tense", "perfect"), ("person", "2"), ("number", "sg"), ("m1", "laud"), ("m2", "ā"), ("m3", "vi"), ("m4", "stī")] }
 
-def latin_perfect_3sg : LinguisticExample :=
+def latin_perfect_3sg : Datum :=
   { id := "embick2015_latin_perfect_3sg"
     source := ⟨"embick-2015", "ch. 4, (40)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def latin_perfect_3sg : LinguisticExample :=
     readings := []
     paperFeatures := [("tense", "perfect"), ("person", "3"), ("number", "sg"), ("m1", "laud"), ("m2", "ā"), ("m3", "vi"), ("m4", "t")] }
 
-def latin_perfect_1pl : LinguisticExample :=
+def latin_perfect_1pl : Datum :=
   { id := "embick2015_latin_perfect_1pl"
     source := ⟨"embick-2015", "ch. 4, (40)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def latin_perfect_1pl : LinguisticExample :=
     readings := []
     paperFeatures := [("tense", "perfect"), ("person", "1"), ("number", "pl"), ("m1", "laud"), ("m2", "ā"), ("m3", "vi"), ("m4", "mus")] }
 
-def latin_perfect_2pl : LinguisticExample :=
+def latin_perfect_2pl : Datum :=
   { id := "embick2015_latin_perfect_2pl"
     source := ⟨"embick-2015", "ch. 4, (40)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def latin_perfect_2pl : LinguisticExample :=
     readings := []
     paperFeatures := [("tense", "perfect"), ("person", "2"), ("number", "pl"), ("m1", "laud"), ("m2", "ā"), ("m3", "vi"), ("m4", "stis")] }
 
-def latin_perfect_3pl : LinguisticExample :=
+def latin_perfect_3pl : Datum :=
   { id := "embick2015_latin_perfect_3pl"
     source := ⟨"embick-2015", "ch. 4, (40)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def latin_perfect_3pl : LinguisticExample :=
     readings := []
     paperFeatures := [("tense", "perfect"), ("person", "3"), ("number", "pl"), ("m1", "laud"), ("m2", "ā"), ("m3", "vi"), ("m4", "ērunt")] }
 
-def latin_pluperfect_1sg : LinguisticExample :=
+def latin_pluperfect_1sg : Datum :=
   { id := "embick2015_latin_pluperfect_1sg"
     source := ⟨"embick-2015", "ch. 4, (40)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def latin_pluperfect_1sg : LinguisticExample :=
     readings := []
     paperFeatures := [("tense", "pluperfect"), ("person", "1"), ("number", "sg"), ("m1", "laud"), ("m2", "ā"), ("m3", "vi"), ("m4", "rā"), ("m5", "m")] }
 
-def latin_pluperfect_2sg : LinguisticExample :=
+def latin_pluperfect_2sg : Datum :=
   { id := "embick2015_latin_pluperfect_2sg"
     source := ⟨"embick-2015", "ch. 4, (40)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def latin_pluperfect_2sg : LinguisticExample :=
     readings := []
     paperFeatures := [("tense", "pluperfect"), ("person", "2"), ("number", "sg"), ("m1", "laud"), ("m2", "ā"), ("m3", "vi"), ("m4", "rā"), ("m5", "s")] }
 
-def latin_pluperfect_3sg : LinguisticExample :=
+def latin_pluperfect_3sg : Datum :=
   { id := "embick2015_latin_pluperfect_3sg"
     source := ⟨"embick-2015", "ch. 4, (40)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def latin_pluperfect_3sg : LinguisticExample :=
     readings := []
     paperFeatures := [("tense", "pluperfect"), ("person", "3"), ("number", "sg"), ("m1", "laud"), ("m2", "ā"), ("m3", "vi"), ("m4", "rā"), ("m5", "t")] }
 
-def latin_pluperfect_1pl : LinguisticExample :=
+def latin_pluperfect_1pl : Datum :=
   { id := "embick2015_latin_pluperfect_1pl"
     source := ⟨"embick-2015", "ch. 4, (40)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def latin_pluperfect_1pl : LinguisticExample :=
     readings := []
     paperFeatures := [("tense", "pluperfect"), ("person", "1"), ("number", "pl"), ("m1", "laud"), ("m2", "ā"), ("m3", "vi"), ("m4", "rā"), ("m5", "mus")] }
 
-def latin_pluperfect_2pl : LinguisticExample :=
+def latin_pluperfect_2pl : Datum :=
   { id := "embick2015_latin_pluperfect_2pl"
     source := ⟨"embick-2015", "ch. 4, (40)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def latin_pluperfect_2pl : LinguisticExample :=
     readings := []
     paperFeatures := [("tense", "pluperfect"), ("person", "2"), ("number", "pl"), ("m1", "laud"), ("m2", "ā"), ("m3", "vi"), ("m4", "rā"), ("m5", "tis")] }
 
-def latin_pluperfect_3pl : LinguisticExample :=
+def latin_pluperfect_3pl : Datum :=
   { id := "embick2015_latin_pluperfect_3pl"
     source := ⟨"embick-2015", "ch. 4, (40)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def latin_pluperfect_3pl : LinguisticExample :=
     readings := []
     paperFeatures := [("tense", "pluperfect"), ("person", "3"), ("number", "pl"), ("m1", "laud"), ("m2", "ā"), ("m3", "vi"), ("m4", "rā"), ("m5", "nt")] }
 
-def hungarian_ruha_pl : LinguisticExample :=
+def hungarian_ruha_pl : Datum :=
   { id := "embick2015_hungarian_ruha_pl"
     source := ⟨"embick-2015", "ch. 7, (7)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def hungarian_ruha_pl : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "ruha"), ("poss", "no"), ("plExponent", "k")] }
 
-def hungarian_ruha_plposs : LinguisticExample :=
+def hungarian_ruha_plposs : Datum :=
   { id := "embick2015_hungarian_ruha_plposs"
     source := ⟨"embick-2015", "ch. 7, (7)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def hungarian_ruha_plposs : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "ruha"), ("poss", "yes"), ("plExponent", "ai")] }
 
-def hungarian_kalap_pl : LinguisticExample :=
+def hungarian_kalap_pl : Datum :=
   { id := "embick2015_hungarian_kalap_pl"
     source := ⟨"embick-2015", "ch. 7, (7)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def hungarian_kalap_pl : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "kalap"), ("poss", "no"), ("plExponent", "k")] }
 
-def hungarian_kalap_plposs : LinguisticExample :=
+def hungarian_kalap_plposs : Datum :=
   { id := "embick2015_hungarian_kalap_plposs"
     source := ⟨"embick-2015", "ch. 7, (7)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def hungarian_kalap_plposs : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "kalap"), ("poss", "yes"), ("plExponent", "ai")] }
 
-def hungarian_haz_pl : LinguisticExample :=
+def hungarian_haz_pl : Datum :=
   { id := "embick2015_hungarian_haz_pl"
     source := ⟨"embick-2015", "ch. 7, (7)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def hungarian_haz_pl : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "ház"), ("poss", "no"), ("plExponent", "k")] }
 
-def hungarian_haz_plposs : LinguisticExample :=
+def hungarian_haz_plposs : Datum :=
   { id := "embick2015_hungarian_haz_plposs"
     source := ⟨"embick-2015", "ch. 7, (7)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def hungarian_haz_plposs : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "ház"), ("poss", "yes"), ("plExponent", "ai")] }
 
-def korean_pap : LinguisticExample :=
+def korean_pap : Datum :=
   { id := "embick2015_korean_pap"
     source := ⟨"embick-2015", "ch. 7, (10)"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def korean_pap : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "pap"), ("final", "C"), ("nomExponent", "i")] }
 
-def korean_ai : LinguisticExample :=
+def korean_ai : Datum :=
   { id := "embick2015_korean_ai"
     source := ⟨"embick-2015", "ch. 7, (10)"⟩
     reportedIn := none
@@ -433,6 +433,6 @@ def korean_ai : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "ai"), ("final", "V"), ("nomExponent", "ka")] }
 
-def all : List LinguisticExample := [latin_present_1sg, latin_present_2sg, latin_present_3sg, latin_present_1pl, latin_present_2pl, latin_present_3pl, latin_imperfect_1sg, latin_imperfect_2sg, latin_imperfect_3sg, latin_imperfect_1pl, latin_imperfect_2pl, latin_imperfect_3pl, latin_perfect_1sg, latin_perfect_2sg, latin_perfect_3sg, latin_perfect_1pl, latin_perfect_2pl, latin_perfect_3pl, latin_pluperfect_1sg, latin_pluperfect_2sg, latin_pluperfect_3sg, latin_pluperfect_1pl, latin_pluperfect_2pl, latin_pluperfect_3pl, hungarian_ruha_pl, hungarian_ruha_plposs, hungarian_kalap_pl, hungarian_kalap_plposs, hungarian_haz_pl, hungarian_haz_plposs, korean_pap, korean_ai]
+def all : List Datum := [latin_present_1sg, latin_present_2sg, latin_present_3sg, latin_present_1pl, latin_present_2pl, latin_present_3pl, latin_imperfect_1sg, latin_imperfect_2sg, latin_imperfect_3sg, latin_imperfect_1pl, latin_imperfect_2pl, latin_imperfect_3pl, latin_perfect_1sg, latin_perfect_2sg, latin_perfect_3sg, latin_perfect_1pl, latin_perfect_2pl, latin_perfect_3pl, latin_pluperfect_1sg, latin_pluperfect_2sg, latin_pluperfect_3sg, latin_pluperfect_1pl, latin_pluperfect_2pl, latin_pluperfect_3pl, hungarian_ruha_pl, hungarian_ruha_plposs, hungarian_kalap_pl, hungarian_kalap_plposs, hungarian_haz_pl, hungarian_haz_plposs, korean_pap, korean_ai]
 
 end Embick2015.Examples

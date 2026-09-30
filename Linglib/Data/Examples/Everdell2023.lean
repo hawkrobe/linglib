@@ -17,7 +17,7 @@ namespace Everdell2023.Examples
 
 open Data.Examples
 
-def baig1kia : LinguisticExample :=
+def baig1kia : Datum :=
   { id := "everdell2023_baig1kia"
     source := ⟨"everdell-2023", "Table 5.1"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def baig1kia : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
-def bamgia : LinguisticExample :=
+def bamgia : Datum :=
   { id := "everdell2023_bamgia"
     source := ⟨"everdell-2023", "Table 5.1"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def bamgia : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
-def batbia : LinguisticExample :=
+def batbia : Datum :=
   { id := "everdell2023_batbia"
     source := ⟨"everdell-2023", "Table 5.1"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def batbia : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
-def bannia : LinguisticExample :=
+def bannia : Datum :=
   { id := "everdell2023_bannia"
     source := ⟨"everdell-2023", "Table 5.1"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def bannia : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
-def bhaimu_bhaiku : LinguisticExample :=
+def bhaimu_bhaiku : Datum :=
   { id := "everdell2023_bhaimu_bhaiku"
     source := ⟨"everdell-2023", "Table 5.1"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def bhaimu_bhaiku : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
-def bhaya : LinguisticExample :=
+def bhaya : Datum :=
   { id := "everdell2023_bhaya"
     source := ⟨"everdell-2023", "Table 5.1"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def bhaya : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
-def bhiikchia : LinguisticExample :=
+def bhiikchia : Datum :=
   { id := "everdell2023_bhiikchia"
     source := ⟨"everdell-2023", "Table 5.1"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def bhiikchia : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
-def daya : LinguisticExample :=
+def daya : Datum :=
   { id := "everdell2023_daya"
     source := ⟨"everdell-2023", "Table 5.1"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def daya : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
-def dodhia : LinguisticExample :=
+def dodhia : Datum :=
   { id := "everdell2023_dodhia"
     source := ⟨"everdell-2023", "Table 5.1"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def dodhia : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
-def gakia : LinguisticExample :=
+def gakia : Datum :=
   { id := "everdell2023_gakia"
     source := ⟨"everdell-2023", "Table 5.1"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def gakia : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
-def gisaru : LinguisticExample :=
+def gisaru : Datum :=
   { id := "everdell2023_gisaru"
     source := ⟨"everdell-2023", "Table 5.1"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def gisaru : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
-def g1lhia : LinguisticExample :=
+def g1lhia : Datum :=
   { id := "everdell2023_g1lhia"
     source := ⟨"everdell-2023", "Table 5.1"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def g1lhia : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
-def g1mda : LinguisticExample :=
+def g1mda : Datum :=
   { id := "everdell2023_g1mda"
     source := ⟨"everdell-2023", "Table 5.1"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def g1mda : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
-def imu : LinguisticExample :=
+def imu : Datum :=
   { id := "everdell2023_imu"
     source := ⟨"everdell-2023", "Table 5.1"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def imu : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
-def jibua : LinguisticExample :=
+def jibua : Datum :=
   { id := "everdell2023_jibua"
     source := ⟨"everdell-2023", "Table 5.1"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def jibua : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
-def jidhoora : LinguisticExample :=
+def jidhoora : Datum :=
   { id := "everdell2023_jidhoora"
     source := ⟨"everdell-2023", "Table 5.1"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def jidhoora : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
-def j1kgia : LinguisticExample :=
+def j1kgia : Datum :=
   { id := "everdell2023_j1kgia"
     source := ⟨"everdell-2023", "Table 5.1"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def j1kgia : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
-def j1lhbia : LinguisticExample :=
+def j1lhbia : Datum :=
   { id := "everdell2023_j1lhbia"
     source := ⟨"everdell-2023", "Table 5.1"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def j1lhbia : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
-def j11mia : LinguisticExample :=
+def j11mia : Datum :=
   { id := "everdell2023_j11mia"
     source := ⟨"everdell-2023", "Table 5.1"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def j11mia : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
-def j1plhia : LinguisticExample :=
+def j1plhia : Datum :=
   { id := "everdell2023_j1plhia"
     source := ⟨"everdell-2023", "Table 5.1"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def j1plhia : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
-def jonia : LinguisticExample :=
+def jonia : Datum :=
   { id := "everdell2023_jonia"
     source := ⟨"everdell-2023", "Table 5.1"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def jonia : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
-def juukgia : LinguisticExample :=
+def juukgia : Datum :=
   { id := "everdell2023_juukgia"
     source := ⟨"everdell-2023", "Table 5.1"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def juukgia : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
-def k1kbo : LinguisticExample :=
+def k1kbo : Datum :=
   { id := "everdell2023_k1kbo"
     source := ⟨"everdell-2023", "Table 5.1"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def k1kbo : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
-def kokda : LinguisticExample :=
+def kokda : Datum :=
   { id := "everdell2023_kokda"
     source := ⟨"everdell-2023", "Table 5.1"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def kokda : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
-def koxia : LinguisticExample :=
+def koxia : Datum :=
   { id := "everdell2023_koxia"
     source := ⟨"everdell-2023", "Table 5.1"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def koxia : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "unergative"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
-def kubhabnia : LinguisticExample :=
+def kubhabnia : Datum :=
   { id := "everdell2023_kubhabnia"
     source := ⟨"everdell-2023", "Table 5.1"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def kubhabnia : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
-def maimu : LinguisticExample :=
+def maimu : Datum :=
   { id := "everdell2023_maimu"
     source := ⟨"everdell-2023", "Table 5.1"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def maimu : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
-def m11ya_burn : LinguisticExample :=
+def m11ya_burn : Datum :=
   { id := "everdell2023_m11ya_burn"
     source := ⟨"everdell-2023", "Table 5.1"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def m11ya_burn : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
-def m11ya_ignite : LinguisticExample :=
+def m11ya_ignite : Datum :=
   { id := "everdell2023_m11ya_ignite"
     source := ⟨"everdell-2023", "Table 5.1"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def m11ya_ignite : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
-def m1lhia : LinguisticExample :=
+def m1lhia : Datum :=
   { id := "everdell2023_m1lhia"
     source := ⟨"everdell-2023", "Table 5.1"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def m1lhia : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
-def sasbak : LinguisticExample :=
+def sasbak : Datum :=
   { id := "everdell2023_sasbak"
     source := ⟨"everdell-2023", "Table 5.1"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def sasbak : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
-def ninia : LinguisticExample :=
+def ninia : Datum :=
   { id := "everdell2023_ninia"
     source := ⟨"everdell-2023", "Table 5.1"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def ninia : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
-def oilhia : LinguisticExample :=
+def oilhia : Datum :=
   { id := "everdell2023_oilhia"
     source := ⟨"everdell-2023", "Table 5.1"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def oilhia : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
-def suuduya : LinguisticExample :=
+def suuduya : Datum :=
   { id := "everdell2023_suuduya"
     source := ⟨"everdell-2023", "Table 5.1"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def suuduya : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
-def t1biapu : LinguisticExample :=
+def t1biapu : Datum :=
   { id := "everdell2023_t1biapu"
     source := ⟨"everdell-2023", "Table 5.1"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def t1biapu : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
-def t1sdia : LinguisticExample :=
+def t1sdia : Datum :=
   { id := "everdell2023_t1sdia"
     source := ⟨"everdell-2023", "Table 5.1"⟩
     reportedIn := none
@@ -485,7 +485,7 @@ def t1sdia : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
-def toindhia : LinguisticExample :=
+def toindhia : Datum :=
   { id := "everdell2023_toindhia"
     source := ⟨"everdell-2023", "Table 5.1"⟩
     reportedIn := none
@@ -498,7 +498,7 @@ def toindhia : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
-def toksolhia : LinguisticExample :=
+def toksolhia : Datum :=
   { id := "everdell2023_toksolhia"
     source := ⟨"everdell-2023", "Table 5.1"⟩
     reportedIn := none
@@ -511,7 +511,7 @@ def toksolhia : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
-def torkia : LinguisticExample :=
+def torkia : Datum :=
   { id := "everdell2023_torkia"
     source := ⟨"everdell-2023", "Table 5.1"⟩
     reportedIn := none
@@ -524,7 +524,7 @@ def torkia : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
-def totpokia : LinguisticExample :=
+def totpokia : Datum :=
   { id := "everdell2023_totpokia"
     source := ⟨"everdell-2023", "Table 5.1"⟩
     reportedIn := none
@@ -537,7 +537,7 @@ def totpokia : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
-def tuklhia : LinguisticExample :=
+def tuklhia : Datum :=
   { id := "everdell2023_tuklhia"
     source := ⟨"everdell-2023", "Table 5.1"⟩
     reportedIn := none
@@ -550,7 +550,7 @@ def tuklhia : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "unaccusative"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
-def yaaa : LinguisticExample :=
+def yaaa : Datum :=
   { id := "everdell2023_yaaa"
     source := ⟨"everdell-2023", "Table 5.1"⟩
     reportedIn := none
@@ -563,7 +563,7 @@ def yaaa : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
-def se : LinguisticExample :=
+def se : Datum :=
   { id := "everdell2023_se"
     source := ⟨"everdell-2023", "(276)"⟩
     reportedIn := none
@@ -576,7 +576,7 @@ def se : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
-def iimchu : LinguisticExample :=
+def iimchu : Datum :=
   { id := "everdell2023_iimchu"
     source := ⟨"everdell-2023", "(277)"⟩
     reportedIn := none
@@ -589,7 +589,7 @@ def iimchu : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "agent")] }
 
-def aaya : LinguisticExample :=
+def aaya : Datum :=
   { id := "everdell2023_aaya"
     source := ⟨"everdell-2023", "(281), (313)"⟩
     reportedIn := none
@@ -602,7 +602,7 @@ def aaya : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "motion"), ("objects", "0"), ("entailed", "animateLocative"), ("function", "agent"), ("role", "goal")] }
 
-def bh11ya : LinguisticExample :=
+def bh11ya : Datum :=
   { id := "everdell2023_bh11ya"
     source := ⟨"everdell-2023", "(312)"⟩
     reportedIn := none
@@ -615,7 +615,7 @@ def bh11ya : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "motion"), ("objects", "0"), ("entailed", "animateLocative"), ("function", "agent"), ("role", "location")] }
 
-def bhaya_swallow : LinguisticExample :=
+def bhaya_swallow : Datum :=
   { id := "everdell2023_bhaya_swallow"
     source := ⟨"everdell-2023", "Table 5.2"⟩
     reportedIn := none
@@ -628,7 +628,7 @@ def bhaya_swallow : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "ingestion"), ("objects", "1"), ("entailed", "none"), ("function", "agent")] }
 
-def iya : LinguisticExample :=
+def iya : Datum :=
   { id := "everdell2023_iya"
     source := ⟨"everdell-2023", "Table 5.2"⟩
     reportedIn := none
@@ -641,7 +641,7 @@ def iya : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "ingestion"), ("objects", "1"), ("entailed", "none"), ("function", "agent")] }
 
-def kaaya : LinguisticExample :=
+def kaaya : Datum :=
   { id := "everdell2023_kaaya"
     source := ⟨"everdell-2023", "Table 5.2"⟩
     reportedIn := none
@@ -654,7 +654,7 @@ def kaaya : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "perception"), ("objects", "1"), ("entailed", "none"), ("function", "agent")] }
 
-def namkia : LinguisticExample :=
+def namkia : Datum :=
   { id := "everdell2023_namkia"
     source := ⟨"everdell-2023", "Table 5.2"⟩
     reportedIn := none
@@ -667,7 +667,7 @@ def namkia : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "middle"), ("objects", "1"), ("entailed", "none"), ("function", "agent")] }
 
-def oncho : LinguisticExample :=
+def oncho : Datum :=
   { id := "everdell2023_oncho"
     source := ⟨"everdell-2023", "Table 5.2"⟩
     reportedIn := none
@@ -680,7 +680,7 @@ def oncho : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "middle"), ("objects", "1"), ("entailed", "none"), ("function", "agent")] }
 
-def saabu : LinguisticExample :=
+def saabu : Datum :=
   { id := "everdell2023_saabu"
     source := ⟨"everdell-2023", "Table 5.2"⟩
     reportedIn := none
@@ -693,7 +693,7 @@ def saabu : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "middle"), ("objects", "1"), ("entailed", "none"), ("function", "agent")] }
 
-def t1gia : LinguisticExample :=
+def t1gia : Datum :=
   { id := "everdell2023_t1gia"
     source := ⟨"everdell-2023", "Table 5.2"⟩
     reportedIn := none
@@ -706,7 +706,7 @@ def t1gia : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "perception"), ("objects", "1"), ("entailed", "none"), ("function", "agent")] }
 
-def tulhiina : LinguisticExample :=
+def tulhiina : Datum :=
   { id := "everdell2023_tulhiina"
     source := ⟨"everdell-2023", "Table 5.2"⟩
     reportedIn := none
@@ -719,7 +719,7 @@ def tulhiina : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "middle"), ("objects", "1"), ("entailed", "none"), ("function", "agent")] }
 
-def gara : LinguisticExample :=
+def gara : Datum :=
   { id := "everdell2023_gara"
     source := ⟨"everdell-2023", "(324), (328)"⟩
     reportedIn := none
@@ -732,7 +732,7 @@ def gara : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "implicit"), ("function", "promotion"), ("role", "recipient")] }
 
-def abiaru : LinguisticExample :=
+def abiaru : Datum :=
   { id := "everdell2023_abiaru"
     source := ⟨"everdell-2023", "(329), (330)"⟩
     reportedIn := none
@@ -745,7 +745,7 @@ def abiaru : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "implicit"), ("function", "promotion"), ("role", "recipient")] }
 
-def sopkia : LinguisticExample :=
+def sopkia : Datum :=
   { id := "everdell2023_sopkia"
     source := ⟨"everdell-2023", "(331), (332)"⟩
     reportedIn := none
@@ -758,7 +758,7 @@ def sopkia : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "implicit"), ("function", "promotion"), ("role", "hearer")] }
 
-def iata : LinguisticExample :=
+def iata : Datum :=
   { id := "everdell2023_iata"
     source := ⟨"everdell-2023", "(333)–(337)"⟩
     reportedIn := none
@@ -771,7 +771,7 @@ def iata : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "implicit"), ("function", "promotion"), ("role", "hearer")] }
 
-def ex_1xcho : LinguisticExample :=
+def ex_1xcho : Datum :=
   { id := "everdell2023_1xcho"
     source := ⟨"everdell-2023", "(339)–(341)"⟩
     reportedIn := none
@@ -784,7 +784,7 @@ def ex_1xcho : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "implicit"), ("function", "promotion"), ("role", "possessor")] }
 
-def jotsa : LinguisticExample :=
+def jotsa : Datum :=
   { id := "everdell2023_jotsa"
     source := ⟨"everdell-2023", "(356), (357)"⟩
     reportedIn := none
@@ -797,7 +797,7 @@ def jotsa : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "animateLocative"), ("function", "promotion"), ("role", "goal")] }
 
-def bua_iabu : LinguisticExample :=
+def bua_iabu : Datum :=
   { id := "everdell2023_bua_iabu"
     source := ⟨"everdell-2023", "(363)–(365)"⟩
     reportedIn := none
@@ -810,7 +810,7 @@ def bua_iabu : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "animateLocative"), ("function", "promotion"), ("role", "goal")] }
 
-def baabu : LinguisticExample :=
+def baabu : Datum :=
   { id := "everdell2023_baabu"
     source := ⟨"everdell-2023", "(368)–(371)"⟩
     reportedIn := none
@@ -823,7 +823,7 @@ def baabu : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "animateLocative"), ("function", "promotion"), ("role", "source")] }
 
-def nuina_nuyasa : LinguisticExample :=
+def nuina_nuyasa : Datum :=
   { id := "everdell2023_nuina_nuyasa"
     source := ⟨"everdell-2023", "(372), (373)"⟩
     reportedIn := none
@@ -836,7 +836,7 @@ def nuina_nuyasa : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "animateLocative"), ("function", "promotion"), ("role", "target")] }
 
-def makia : LinguisticExample :=
+def makia : Datum :=
   { id := "everdell2023_makia"
     source := ⟨"everdell-2023", "(374)"⟩
     reportedIn := none
@@ -849,7 +849,7 @@ def makia : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "2"), ("entailed", "none"), ("function", "blocked")] }
 
-def t1kka : LinguisticExample :=
+def t1kka : Datum :=
   { id := "everdell2023_t1kka"
     source := ⟨"everdell-2023", "(375)"⟩
     reportedIn := none
@@ -862,7 +862,7 @@ def t1kka : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "2"), ("entailed", "none"), ("function", "blocked")] }
 
-def bakcha : LinguisticExample :=
+def bakcha : Datum :=
   { id := "everdell2023_bakcha"
     source := ⟨"everdell-2023", "(296), (307)"⟩
     reportedIn := none
@@ -875,7 +875,7 @@ def bakcha : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "denominal"), ("objects", "0"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "recipient")] }
 
-def boikta : LinguisticExample :=
+def boikta : Datum :=
   { id := "everdell2023_boikta"
     source := ⟨"everdell-2023", "(297)"⟩
     reportedIn := none
@@ -888,7 +888,7 @@ def boikta : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "denominal"), ("objects", "0"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "recipient")] }
 
-def asakta : LinguisticExample :=
+def asakta : Datum :=
   { id := "everdell2023_asakta"
     source := ⟨"everdell-2023", "(298)"⟩
     reportedIn := none
@@ -901,7 +901,7 @@ def asakta : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "denominal"), ("objects", "0"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "recipient")] }
 
-def t1maichcha : LinguisticExample :=
+def t1maichcha : Datum :=
   { id := "everdell2023_t1maichcha"
     source := ⟨"everdell-2023", "(299)"⟩
     reportedIn := none
@@ -914,7 +914,7 @@ def t1maichcha : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "denominal"), ("objects", "0"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "recipient")] }
 
-def baiss1na : LinguisticExample :=
+def baiss1na : Datum :=
   { id := "everdell2023_baiss1na"
     source := ⟨"everdell-2023", "Table 5.6"⟩
     reportedIn := none
@@ -927,7 +927,7 @@ def baiss1na : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "deputative")] }
 
-def bakchia : LinguisticExample :=
+def bakchia : Datum :=
   { id := "everdell2023_bakchia"
     source := ⟨"everdell-2023", "Table 5.6"⟩
     reportedIn := none
@@ -940,7 +940,7 @@ def bakchia : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "recipient")] }
 
-def bakuana : LinguisticExample :=
+def bakuana : Datum :=
   { id := "everdell2023_bakuana"
     source := ⟨"everdell-2023", "Table 5.6"⟩
     reportedIn := none
@@ -953,7 +953,7 @@ def bakuana : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "deputative")] }
 
-def bakta : LinguisticExample :=
+def bakta : Datum :=
   { id := "everdell2023_bakta"
     source := ⟨"everdell-2023", "Table 5.6"⟩
     reportedIn := none
@@ -966,7 +966,7 @@ def bakta : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "inanimateLocative"), ("function", "beneficiary"), ("beneficiary", "basic"), ("role", "location")] }
 
-def biaa : LinguisticExample :=
+def biaa : Datum :=
   { id := "everdell2023_biaa"
     source := ⟨"everdell-2023", "Table 5.6"⟩
     reportedIn := none
@@ -979,7 +979,7 @@ def biaa : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "basic")] }
 
-def bulhia : LinguisticExample :=
+def bulhia : Datum :=
   { id := "everdell2023_bulhia"
     source := ⟨"everdell-2023", "Table 5.6"⟩
     reportedIn := none
@@ -992,7 +992,7 @@ def bulhia : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "instrument"), ("function", "beneficiary"), ("beneficiary", "deputative"), ("role", "instrument")] }
 
-def bulhkada : LinguisticExample :=
+def bulhkada : Datum :=
   { id := "everdell2023_bulhkada"
     source := ⟨"everdell-2023", "Table 5.6"⟩
     reportedIn := none
@@ -1005,7 +1005,7 @@ def bulhkada : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "deputative")] }
 
-def bhippioka : LinguisticExample :=
+def bhippioka : Datum :=
   { id := "everdell2023_bhippioka"
     source := ⟨"everdell-2023", "Table 5.6"⟩
     reportedIn := none
@@ -1018,7 +1018,7 @@ def bhippioka : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "deputative")] }
 
-def bh1ika_uika : LinguisticExample :=
+def bh1ika_uika : Datum :=
   { id := "everdell2023_bh1ika_uika"
     source := ⟨"everdell-2023", "Table 5.6"⟩
     reportedIn := none
@@ -1031,7 +1031,7 @@ def bh1ika_uika : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "basic")] }
 
-def bh11ya_uya : LinguisticExample :=
+def bh11ya_uya : Datum :=
   { id := "everdell2023_bh11ya_uya"
     source := ⟨"everdell-2023", "Table 5.6"⟩
     reportedIn := none
@@ -1044,7 +1044,7 @@ def bh11ya_uya : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "recipient")] }
 
-def dagia : LinguisticExample :=
+def dagia : Datum :=
   { id := "everdell2023_dagia"
     source := ⟨"everdell-2023", "Table 5.6"⟩
     reportedIn := none
@@ -1057,7 +1057,7 @@ def dagia : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "deputative")] }
 
-def dabina : LinguisticExample :=
+def dabina : Datum :=
   { id := "everdell2023_dabina"
     source := ⟨"everdell-2023", "Table 5.6"⟩
     reportedIn := none
@@ -1070,7 +1070,7 @@ def dabina : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "instrument"), ("function", "beneficiary"), ("beneficiary", "deputative"), ("role", "instrument")] }
 
-def damuna : LinguisticExample :=
+def damuna : Datum :=
   { id := "everdell2023_damuna"
     source := ⟨"everdell-2023", "Table 5.6"⟩
     reportedIn := none
@@ -1083,7 +1083,7 @@ def damuna : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "recipient")] }
 
-def d11nnia : LinguisticExample :=
+def d11nnia : Datum :=
   { id := "everdell2023_d11nnia"
     source := ⟨"everdell-2023", "Table 5.6"⟩
     reportedIn := none
@@ -1096,7 +1096,7 @@ def d11nnia : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "basic")] }
 
-def dunia : LinguisticExample :=
+def dunia : Datum :=
   { id := "everdell2023_dunia"
     source := ⟨"everdell-2023", "Table 5.6"⟩
     reportedIn := none
@@ -1109,7 +1109,7 @@ def dunia : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "basic")] }
 
-def echkada : LinguisticExample :=
+def echkada : Datum :=
   { id := "everdell2023_echkada"
     source := ⟨"everdell-2023", "Table 5.6"⟩
     reportedIn := none
@@ -1122,7 +1122,7 @@ def echkada : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "deputative")] }
 
-def gaaga : LinguisticExample :=
+def gaaga : Datum :=
   { id := "everdell2023_gaaga"
     source := ⟨"everdell-2023", "Table 5.6"⟩
     reportedIn := none
@@ -1135,7 +1135,7 @@ def gaaga : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "recipient")] }
 
-def gaamu : LinguisticExample :=
+def gaamu : Datum :=
   { id := "everdell2023_gaamu"
     source := ⟨"everdell-2023", "Table 5.6"⟩
     reportedIn := none
@@ -1148,7 +1148,7 @@ def gaamu : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "inanimateLocative"), ("function", "beneficiary"), ("beneficiary", "basic"), ("role", "location")] }
 
-def ikora : LinguisticExample :=
+def ikora : Datum :=
   { id := "everdell2023_ikora"
     source := ⟨"everdell-2023", "Table 5.6"⟩
     reportedIn := none
@@ -1161,7 +1161,7 @@ def ikora : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "basic")] }
 
-def jaina_jaisa : LinguisticExample :=
+def jaina_jaisa : Datum :=
   { id := "everdell2023_jaina_jaisa"
     source := ⟨"everdell-2023", "Table 5.6"⟩
     reportedIn := none
@@ -1174,7 +1174,7 @@ def jaina_jaisa : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "recipient")] }
 
-def jikpata : LinguisticExample :=
+def jikpata : Datum :=
   { id := "everdell2023_jikpata"
     source := ⟨"everdell-2023", "Table 5.6"⟩
     reportedIn := none
@@ -1187,7 +1187,7 @@ def jikpata : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "basic")] }
 
-def jugia : LinguisticExample :=
+def jugia : Datum :=
   { id := "everdell2023_jugia"
     source := ⟨"everdell-2023", "Table 5.6"⟩
     reportedIn := none
@@ -1200,7 +1200,7 @@ def jugia : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "basic")] }
 
-def junmada : LinguisticExample :=
+def junmada : Datum :=
   { id := "everdell2023_junmada"
     source := ⟨"everdell-2023", "Table 5.6"⟩
     reportedIn := none
@@ -1213,7 +1213,7 @@ def junmada : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "recipient")] }
 
-def jupna : LinguisticExample :=
+def jupna : Datum :=
   { id := "everdell2023_jupna"
     source := ⟨"everdell-2023", "Table 5.6"⟩
     reportedIn := none
@@ -1226,7 +1226,7 @@ def jupna : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "inanimateLocative"), ("function", "beneficiary"), ("beneficiary", "deputative"), ("role", "source"), ("paradigm", "1")] }
 
-def juulhia : LinguisticExample :=
+def juulhia : Datum :=
   { id := "everdell2023_juulhia"
     source := ⟨"everdell-2023", "Table 5.6"⟩
     reportedIn := none
@@ -1239,7 +1239,7 @@ def juulhia : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "inanimateLocative"), ("function", "beneficiary"), ("beneficiary", "recipient"), ("role", "location")] }
 
-def kispa : LinguisticExample :=
+def kispa : Datum :=
   { id := "everdell2023_kispa"
     source := ⟨"everdell-2023", "Table 5.6"⟩
     reportedIn := none
@@ -1252,7 +1252,7 @@ def kispa : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "recipient")] }
 
-def k11sa : LinguisticExample :=
+def k11sa : Datum :=
   { id := "everdell2023_k11sa"
     source := ⟨"everdell-2023", "Table 5.6"⟩
     reportedIn := none
@@ -1265,7 +1265,7 @@ def k11sa : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "inanimateLocative"), ("function", "beneficiary"), ("beneficiary", "deputative"), ("role", "goal"), ("paradigm", "4")] }
 
-def k11mpiga : LinguisticExample :=
+def k11mpiga : Datum :=
   { id := "everdell2023_k11mpiga"
     source := ⟨"everdell-2023", "Table 5.6"⟩
     reportedIn := none
@@ -1278,7 +1278,7 @@ def k11mpiga : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "deputative")] }
 
-def k1kbo_tr : LinguisticExample :=
+def k1kbo_tr : Datum :=
   { id := "everdell2023_k1kbo_tr"
     source := ⟨"everdell-2023", "Table 5.6"⟩
     reportedIn := none
@@ -1291,7 +1291,7 @@ def k1kbo_tr : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "deputative")] }
 
-def kuana : LinguisticExample :=
+def kuana : Datum :=
   { id := "everdell2023_kuana"
     source := ⟨"everdell-2023", "Table 5.6"⟩
     reportedIn := none
@@ -1304,7 +1304,7 @@ def kuana : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "deputative")] }
 
-def kuagia : LinguisticExample :=
+def kuagia : Datum :=
   { id := "everdell2023_kuagia"
     source := ⟨"everdell-2023", "Table 5.6"⟩
     reportedIn := none
@@ -1317,7 +1317,7 @@ def kuagia : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "instrument"), ("function", "beneficiary"), ("beneficiary", "recipient"), ("role", "instrument")] }
 
-def kupioka : LinguisticExample :=
+def kupioka : Datum :=
   { id := "everdell2023_kupioka"
     source := ⟨"everdell-2023", "Table 5.6"⟩
     reportedIn := none
@@ -1330,7 +1330,7 @@ def kupioka : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "deputative")] }
 
-def kuupa : LinguisticExample :=
+def kuupa : Datum :=
   { id := "everdell2023_kuupa"
     source := ⟨"everdell-2023", "Table 5.6"⟩
     reportedIn := none
@@ -1343,7 +1343,7 @@ def kuupa : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "deputative")] }
 
-def mukda : LinguisticExample :=
+def mukda : Datum :=
   { id := "everdell2023_mukda"
     source := ⟨"everdell-2023", "Table 5.6"⟩
     reportedIn := none
@@ -1356,7 +1356,7 @@ def mukda : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "deputative")] }
 
-def muaa_kooda : LinguisticExample :=
+def muaa_kooda : Datum :=
   { id := "everdell2023_muaa_kooda"
     source := ⟨"everdell-2023", "Table 5.6"⟩
     reportedIn := none
@@ -1369,7 +1369,7 @@ def muaa_kooda : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "deputative")] }
 
-def saasbia : LinguisticExample :=
+def saasbia : Datum :=
   { id := "everdell2023_saasbia"
     source := ⟨"everdell-2023", "Table 5.6"⟩
     reportedIn := none
@@ -1382,7 +1382,7 @@ def saasbia : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "instrument"), ("function", "beneficiary"), ("beneficiary", "recipient"), ("role", "instrument")] }
 
-def saibhioka : LinguisticExample :=
+def saibhioka : Datum :=
   { id := "everdell2023_saibhioka"
     source := ⟨"everdell-2023", "Table 5.6"⟩
     reportedIn := none
@@ -1395,7 +1395,7 @@ def saibhioka : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "inanimateLocative"), ("function", "beneficiary"), ("beneficiary", "deputative"), ("role", "source")] }
 
-def sarna : LinguisticExample :=
+def sarna : Datum :=
   { id := "everdell2023_sarna"
     source := ⟨"everdell-2023", "Table 5.6"⟩
     reportedIn := none
@@ -1408,7 +1408,7 @@ def sarna : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "deputative")] }
 
-def s11ssa : LinguisticExample :=
+def s11ssa : Datum :=
   { id := "everdell2023_s11ssa"
     source := ⟨"everdell-2023", "Table 5.6"⟩
     reportedIn := none
@@ -1421,7 +1421,7 @@ def s11ssa : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "basic")] }
 
-def sooma : LinguisticExample :=
+def sooma : Datum :=
   { id := "everdell2023_sooma"
     source := ⟨"everdell-2023", "Table 5.6"⟩
     reportedIn := none
@@ -1434,7 +1434,7 @@ def sooma : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "instrument"), ("function", "beneficiary"), ("beneficiary", "deputative"), ("role", "instrument")] }
 
-def suulhga : LinguisticExample :=
+def suulhga : Datum :=
   { id := "everdell2023_suulhga"
     source := ⟨"everdell-2023", "Table 5.6"⟩
     reportedIn := none
@@ -1447,7 +1447,7 @@ def suulhga : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "instrument"), ("function", "beneficiary"), ("beneficiary", "deputative"), ("role", "instrument")] }
 
-def t1bgata : LinguisticExample :=
+def t1bgata : Datum :=
   { id := "everdell2023_t1bgata"
     source := ⟨"everdell-2023", "Table 5.6"⟩
     reportedIn := none
@@ -1460,7 +1460,7 @@ def t1bgata : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "deputative")] }
 
-def uana : LinguisticExample :=
+def uana : Datum :=
   { id := "everdell2023_uana"
     source := ⟨"everdell-2023", "Table 5.6"⟩
     reportedIn := none
@@ -1473,7 +1473,7 @@ def uana : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "deputative")] }
 
-def uana_write : LinguisticExample :=
+def uana_write : Datum :=
   { id := "everdell2023_uana_write"
     source := ⟨"everdell-2023", "Table 5.6"⟩
     reportedIn := none
@@ -1486,7 +1486,7 @@ def uana_write : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "deputative")] }
 
-def umga : LinguisticExample :=
+def umga : Datum :=
   { id := "everdell2023_umga"
     source := ⟨"everdell-2023", "Table 5.6"⟩
     reportedIn := none
@@ -1499,7 +1499,7 @@ def umga : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "recipient")] }
 
-def xiopna : LinguisticExample :=
+def xiopna : Datum :=
   { id := "everdell2023_xiopna"
     source := ⟨"everdell-2023", "Table 5.6"⟩
     reportedIn := none
@@ -1512,7 +1512,7 @@ def xiopna : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("beneficiary", "basic")] }
 
-def jupania_jupakia : LinguisticExample :=
+def jupania_jupakia : Datum :=
   { id := "everdell2023_jupania_jupakia"
     source := ⟨"everdell-2023", "(377)"⟩
     reportedIn := none
@@ -1525,7 +1525,7 @@ def jupania_jupakia : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "blocked"), ("paradigm", "1")] }
 
-def baax : LinguisticExample :=
+def baax : Datum :=
   { id := "everdell2023_baax"
     source := ⟨"everdell-2023", "(381)"⟩
     reportedIn := none
@@ -1538,7 +1538,7 @@ def baax : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "blocked"), ("paradigm", "2")] }
 
-def baasa : LinguisticExample :=
+def baasa : Datum :=
   { id := "everdell2023_baasa"
     source := ⟨"everdell-2023", "(381)"⟩
     reportedIn := none
@@ -1551,7 +1551,7 @@ def baasa : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("paradigm", "2")] }
 
-def daa : LinguisticExample :=
+def daa : Datum :=
   { id := "everdell2023_daa"
     source := ⟨"everdell-2023", "(382)"⟩
     reportedIn := none
@@ -1564,7 +1564,7 @@ def daa : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "blocked"), ("paradigm", "3")] }
 
-def daibu : LinguisticExample :=
+def daibu : Datum :=
   { id := "everdell2023_daibu"
     source := ⟨"everdell-2023", "(382)"⟩
     reportedIn := none
@@ -1577,7 +1577,7 @@ def daibu : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "blocked"), ("paradigm", "3")] }
 
-def daasa : LinguisticExample :=
+def daasa : Datum :=
   { id := "everdell2023_daasa"
     source := ⟨"everdell-2023", "(382)"⟩
     reportedIn := none
@@ -1590,7 +1590,7 @@ def daasa : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "1"), ("entailed", "none"), ("function", "beneficiary"), ("paradigm", "3")] }
 
-def k11k : LinguisticExample :=
+def k11k : Datum :=
   { id := "everdell2023_k11k"
     source := ⟨"everdell-2023", "(383)"⟩
     reportedIn := none
@@ -1603,7 +1603,7 @@ def k11k : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "blocked"), ("paradigm", "4")] }
 
-def k11ka : LinguisticExample :=
+def k11ka : Datum :=
   { id := "everdell2023_k11ka"
     source := ⟨"everdell-2023", "(383)"⟩
     reportedIn := none
@@ -1616,6 +1616,6 @@ def k11ka : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plain"), ("objects", "0"), ("entailed", "none"), ("function", "blocked"), ("paradigm", "4")] }
 
-def all : List LinguisticExample := [baig1kia, bamgia, batbia, bannia, bhaimu_bhaiku, bhaya, bhiikchia, daya, dodhia, gakia, gisaru, g1lhia, g1mda, imu, jibua, jidhoora, j1kgia, j1lhbia, j11mia, j1plhia, jonia, juukgia, k1kbo, kokda, koxia, kubhabnia, maimu, m11ya_burn, m11ya_ignite, m1lhia, sasbak, ninia, oilhia, suuduya, t1biapu, t1sdia, toindhia, toksolhia, torkia, totpokia, tuklhia, yaaa, se, iimchu, aaya, bh11ya, bhaya_swallow, iya, kaaya, namkia, oncho, saabu, t1gia, tulhiina, gara, abiaru, sopkia, iata, ex_1xcho, jotsa, bua_iabu, baabu, nuina_nuyasa, makia, t1kka, bakcha, boikta, asakta, t1maichcha, baiss1na, bakchia, bakuana, bakta, biaa, bulhia, bulhkada, bhippioka, bh1ika_uika, bh11ya_uya, dagia, dabina, damuna, d11nnia, dunia, echkada, gaaga, gaamu, ikora, jaina_jaisa, jikpata, jugia, junmada, jupna, juulhia, kispa, k11sa, k11mpiga, k1kbo_tr, kuana, kuagia, kupioka, kuupa, mukda, muaa_kooda, saasbia, saibhioka, sarna, s11ssa, sooma, suulhga, t1bgata, uana, uana_write, umga, xiopna, jupania_jupakia, baax, baasa, daa, daibu, daasa, k11k, k11ka]
+def all : List Datum := [baig1kia, bamgia, batbia, bannia, bhaimu_bhaiku, bhaya, bhiikchia, daya, dodhia, gakia, gisaru, g1lhia, g1mda, imu, jibua, jidhoora, j1kgia, j1lhbia, j11mia, j1plhia, jonia, juukgia, k1kbo, kokda, koxia, kubhabnia, maimu, m11ya_burn, m11ya_ignite, m1lhia, sasbak, ninia, oilhia, suuduya, t1biapu, t1sdia, toindhia, toksolhia, torkia, totpokia, tuklhia, yaaa, se, iimchu, aaya, bh11ya, bhaya_swallow, iya, kaaya, namkia, oncho, saabu, t1gia, tulhiina, gara, abiaru, sopkia, iata, ex_1xcho, jotsa, bua_iabu, baabu, nuina_nuyasa, makia, t1kka, bakcha, boikta, asakta, t1maichcha, baiss1na, bakchia, bakuana, bakta, biaa, bulhia, bulhkada, bhippioka, bh1ika_uika, bh11ya_uya, dagia, dabina, damuna, d11nnia, dunia, echkada, gaaga, gaamu, ikora, jaina_jaisa, jikpata, jugia, junmada, jupna, juulhia, kispa, k11sa, k11mpiga, k1kbo_tr, kuana, kuagia, kupioka, kuupa, mukda, muaa_kooda, saasbia, saibhioka, sarna, s11ssa, sooma, suulhga, t1bgata, uana, uana_write, umga, xiopna, jupania_jupakia, baax, baasa, daa, daibu, daasa, k11k, k11ka]
 
 end Everdell2023.Examples

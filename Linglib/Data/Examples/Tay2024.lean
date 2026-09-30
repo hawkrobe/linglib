@@ -17,7 +17,7 @@ namespace Tay2024.Examples
 
 open Data.Examples
 
-def ex_41 : LinguisticExample :=
+def ex_41 : Datum :=
   { id := "tay2024_41"
     source := ⟨"tay-2024", "(41), (43)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_41 : LinguisticExample :=
     readings := [("the whole resultative is modified: repeated wakings", .acceptable), ("V1 alone is modified: the baby cried repeatedly until Mother woke once", .questionable)]
     paperFeatures := [] }
 
-def ex_42 : LinguisticExample :=
+def ex_42 : Datum :=
   { id := "tay2024_42"
     source := ⟨"tay-2024", "(42), (44)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_42 : LinguisticExample :=
     readings := [("the whole resultative is modified: repeated wakings", .acceptable), ("V1 alone is modified: the baby cried repeatedly until Mother woke once", .ungrammatical)]
     paperFeatures := [] }
 
-def ex_45 : LinguisticExample :=
+def ex_45 : Datum :=
   { id := "tay2024_45"
     source := ⟨"tay-2024", "(45)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_45 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_46 : LinguisticExample :=
+def ex_46 : Datum :=
   { id := "tay2024_46"
     source := ⟨"tay-2024", "(46)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_46 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_107 : LinguisticExample :=
+def ex_107 : Datum :=
   { id := "tay2024_107"
     source := ⟨"tay-2024", "(107)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_107 : LinguisticExample :=
     readings := []
     paperFeatures := [("externalArgument", "agent")] }
 
-def ex_131 : LinguisticExample :=
+def ex_131 : Datum :=
   { id := "tay2024_131"
     source := ⟨"tay-2024", "(131)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_131 : LinguisticExample :=
     readings := []
     paperFeatures := [("externalArgument", "agent")] }
 
-def ex_132 : LinguisticExample :=
+def ex_132 : Datum :=
   { id := "tay2024_132"
     source := ⟨"tay-2024", "(132)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_132 : LinguisticExample :=
     readings := []
     paperFeatures := [("externalArgument", "agent")] }
 
-def ex_133 : LinguisticExample :=
+def ex_133 : Datum :=
   { id := "tay2024_133"
     source := ⟨"tay-2024", "(133)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_133 : LinguisticExample :=
     readings := []
     paperFeatures := [("externalArgument", "theme")] }
 
-def ex_134 : LinguisticExample :=
+def ex_134 : Datum :=
   { id := "tay2024_134"
     source := ⟨"tay-2024", "(134)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_134 : LinguisticExample :=
     readings := []
     paperFeatures := [("externalArgument", "theme")] }
 
-def ex_137 : LinguisticExample :=
+def ex_137 : Datum :=
   { id := "tay2024_137"
     source := ⟨"tay-2024", "(137)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_137 : LinguisticExample :=
     readings := []
     paperFeatures := [("externalArgument", "agent")] }
 
-def ex_139 : LinguisticExample :=
+def ex_139 : Datum :=
   { id := "tay2024_139"
     source := ⟨"tay-2024", "(139)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_139 : LinguisticExample :=
     readings := []
     paperFeatures := [("externalArgument", "pureCauser")] }
 
-def ex_146 : LinguisticExample :=
+def ex_146 : Datum :=
   { id := "tay2024_146"
     source := ⟨"tay-2024", "(146)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_146 : LinguisticExample :=
     readings := []
     paperFeatures := [("externalArgument", "pureCauser")] }
 
-def ex_148 : LinguisticExample :=
+def ex_148 : Datum :=
   { id := "tay2024_148"
     source := ⟨"tay-2024", "(148)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_148 : LinguisticExample :=
     readings := []
     paperFeatures := [("externalArgument", "pureCauser")] }
 
-def ex_149 : LinguisticExample :=
+def ex_149 : Datum :=
   { id := "tay2024_149"
     source := ⟨"tay-2024", "(149)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_149 : LinguisticExample :=
     readings := []
     paperFeatures := [("externalArgument", "pureCauser")] }
 
-def ex_150 : LinguisticExample :=
+def ex_150 : Datum :=
   { id := "tay2024_150"
     source := ⟨"tay-2024", "(150)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_150 : LinguisticExample :=
     readings := []
     paperFeatures := [("externalArgument", "subjectMatter")] }
 
-def ex_151 : LinguisticExample :=
+def ex_151 : Datum :=
   { id := "tay2024_151"
     source := ⟨"tay-2024", "(151)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_151 : LinguisticExample :=
     readings := []
     paperFeatures := [("externalArgument", "subjectMatter")] }
 
-def ex_202 : LinguisticExample :=
+def ex_202 : Datum :=
   { id := "tay2024_202"
     source := ⟨"tay-2024", "(202)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex_202 : LinguisticExample :=
     readings := []
     paperFeatures := [("externalArgument", "agent")] }
 
-def ex_205 : LinguisticExample :=
+def ex_205 : Datum :=
   { id := "tay2024_205"
     source := ⟨"tay-2024", "(205)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex_205 : LinguisticExample :=
     readings := [("I ate the meal", .acceptable), ("someone else ate the meal I paid for", .acceptable)]
     paperFeatures := [("externalArgument", "theme")] }
 
-def ex_206 : LinguisticExample :=
+def ex_206 : Datum :=
   { id := "tay2024_206"
     source := ⟨"tay-2024", "(206)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex_206 : LinguisticExample :=
     readings := [("the audience sang", .acceptable), ("the performer sang", .acceptable)]
     paperFeatures := [("externalArgument", "theme")] }
 
-def ex_216 : LinguisticExample :=
+def ex_216 : Datum :=
   { id := "tay2024_216"
     source := ⟨"tay-2024", "(216)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex_216 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_217 : LinguisticExample :=
+def ex_217 : Datum :=
   { id := "tay2024_217"
     source := ⟨"tay-2024", "(217)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex_217 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_219 : LinguisticExample :=
+def ex_219 : Datum :=
   { id := "tay2024_219"
     source := ⟨"tay-2024", "(219)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex_219 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_221 : LinguisticExample :=
+def ex_221 : Datum :=
   { id := "tay2024_221"
     source := ⟨"tay-2024", "(221)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex_221 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_224 : LinguisticExample :=
+def ex_224 : Datum :=
   { id := "tay2024_224"
     source := ⟨"tay-2024", "(224)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex_224 : LinguisticExample :=
     readings := [("Mother cries herself awake", .acceptable), ("Mother wakes from someone else crying", .unacceptable)]
     paperFeatures := [] }
 
-def ex_330 : LinguisticExample :=
+def ex_330 : Datum :=
   { id := "tay2024_330"
     source := ⟨"tay-2024", "(330), (349)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex_330 : LinguisticExample :=
     readings := [("the horse became tired", .acceptable), ("Zhangsan became tired", .marginal)]
     paperFeatures := [("externalArgument", "agent")] }
 
-def ex_668 : LinguisticExample :=
+def ex_668 : Datum :=
   { id := "tay2024_668"
     source := ⟨"tay-2024", "(668), (673)"⟩
     reportedIn := none
@@ -355,6 +355,6 @@ def ex_668 : LinguisticExample :=
     readings := []
     paperFeatures := [("externalArgument", "agent")] }
 
-def all : List LinguisticExample := [ex_41, ex_42, ex_45, ex_46, ex_107, ex_131, ex_132, ex_133, ex_134, ex_137, ex_139, ex_146, ex_148, ex_149, ex_150, ex_151, ex_202, ex_205, ex_206, ex_216, ex_217, ex_219, ex_221, ex_224, ex_330, ex_668]
+def all : List Datum := [ex_41, ex_42, ex_45, ex_46, ex_107, ex_131, ex_132, ex_133, ex_134, ex_137, ex_139, ex_146, ex_148, ex_149, ex_150, ex_151, ex_202, ex_205, ex_206, ex_216, ex_217, ex_219, ex_221, ex_224, ex_330, ex_668]
 
 end Tay2024.Examples

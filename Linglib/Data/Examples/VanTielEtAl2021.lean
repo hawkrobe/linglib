@@ -17,7 +17,7 @@ namespace VanTielEtAl2021.Examples
 
 open Data.Examples
 
-def frame : LinguisticExample :=
+def frame : Datum :=
   { id := "vantieletal2021_frame"
     source := ⟨"van-tiel-franke-sauerland-2021", "Exp. 1"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def frame : LinguisticExample :=
     readings := []
     paperFeatures := [("task", "production"), ("words", "17 quantity words, 87% of the data")] }
 
-def all_inference : LinguisticExample :=
+def all_inference : Datum :=
   { id := "vantieletal2021_all_inference"
     source := ⟨"van-tiel-franke-sauerland-2021", "monotonicity"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def all_inference : LinguisticExample :=
     readings := []
     paperFeatures := [("monotonicity", "increasing"), ("inference", "sets to supersets")] }
 
-def no_inference : LinguisticExample :=
+def no_inference : Datum :=
   { id := "vantieletal2021_no_inference"
     source := ⟨"van-tiel-franke-sauerland-2021", "monotonicity"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def no_inference : LinguisticExample :=
     readings := []
     paperFeatures := [("monotonicity", "decreasing"), ("inference", "sets to subsets")] }
 
-def some_good : LinguisticExample :=
+def some_good : Datum :=
   { id := "vantieletal2021_some_good"
     source := ⟨"van-tiel-franke-sauerland-2021", "argumentativity"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def some_good : LinguisticExample :=
     readings := []
     paperFeatures := [("word", "some"), ("argumentative direction", "positive")] }
 
-def some_bad : LinguisticExample :=
+def some_bad : Datum :=
   { id := "vantieletal2021_some_bad"
     source := ⟨"van-tiel-franke-sauerland-2021", "argumentativity"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def some_bad : LinguisticExample :=
     readings := []
     paperFeatures := [("word", "some"), ("argumentative direction", "positive")] }
 
-def few_bad : LinguisticExample :=
+def few_bad : Datum :=
   { id := "vantieletal2021_few_bad"
     source := ⟨"van-tiel-franke-sauerland-2021", "argumentativity"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def few_bad : LinguisticExample :=
     readings := []
     paperFeatures := [("word", "few"), ("argumentative direction", "negative")] }
 
-def few_good : LinguisticExample :=
+def few_good : Datum :=
   { id := "vantieletal2021_few_good"
     source := ⟨"van-tiel-franke-sauerland-2021", "argumentativity"⟩
     reportedIn := none
@@ -108,6 +108,6 @@ def few_good : LinguisticExample :=
     readings := []
     paperFeatures := [("word", "few"), ("argumentative direction", "negative")] }
 
-def all : List LinguisticExample := [frame, all_inference, no_inference, some_good, some_bad, few_bad, few_good]
+def all : List Datum := [frame, all_inference, no_inference, some_good, some_bad, few_bad, few_good]
 
 end VanTielEtAl2021.Examples

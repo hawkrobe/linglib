@@ -17,7 +17,7 @@ namespace FoxPesetsky2005.Examples
 
 open Data.Examples
 
-def ex19a : LinguisticExample :=
+def ex19a : Datum :=
   { id := "foxpesetsky2005_ex19a"
     source := ⟨"fox-pesetsky-2005", "(19a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex19a : LinguisticExample :=
     readings := []
     paperFeatures := [("sketch", "verbToC"), ("intervener", "none")] }
 
-def ex19b : LinguisticExample :=
+def ex19b : Datum :=
   { id := "foxpesetsky2005_ex19b"
     source := ⟨"fox-pesetsky-2005", "(19b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex19b : LinguisticExample :=
     readings := []
     paperFeatures := [("sketch", "embedded"), ("intervener", "none")] }
 
-def ex19c : LinguisticExample :=
+def ex19c : Datum :=
   { id := "foxpesetsky2005_ex19c"
     source := ⟨"fox-pesetsky-2005", "(19c)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex19c : LinguisticExample :=
     readings := []
     paperFeatures := [("sketch", "auxiliary"), ("intervener", "none")] }
 
-def ex23a : LinguisticExample :=
+def ex23a : Datum :=
   { id := "foxpesetsky2005_ex23a"
     source := ⟨"fox-pesetsky-2005", "(23a)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex23a : LinguisticExample :=
     readings := []
     paperFeatures := [("sketch", "intervener"), ("intervener", "firstObject")] }
 
-def ex23b : LinguisticExample :=
+def ex23b : Datum :=
   { id := "foxpesetsky2005_ex23b"
     source := ⟨"fox-pesetsky-2005", "(23b)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex23b : LinguisticExample :=
     readings := []
     paperFeatures := [("sketch", "intervener"), ("intervener", "particle")] }
 
-def ex25a : LinguisticExample :=
+def ex25a : Datum :=
   { id := "foxpesetsky2005_ex25a"
     source := ⟨"fox-pesetsky-2005", "(25a)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex25a : LinguisticExample :=
     readings := []
     paperFeatures := [("sketch", "intervenerFronted"), ("intervener", "firstObject")] }
 
-def ex25b : LinguisticExample :=
+def ex25b : Datum :=
   { id := "foxpesetsky2005_ex25b"
     source := ⟨"fox-pesetsky-2005", "(25b)"⟩
     reportedIn := none
@@ -108,6 +108,6 @@ def ex25b : LinguisticExample :=
     readings := []
     paperFeatures := [("sketch", "intervenerFronted"), ("intervener", "particle")] }
 
-def all : List LinguisticExample := [ex19a, ex19b, ex19c, ex23a, ex23b, ex25a, ex25b]
+def all : List Datum := [ex19a, ex19b, ex19c, ex23a, ex23b, ex25a, ex25b]
 
 end FoxPesetsky2005.Examples

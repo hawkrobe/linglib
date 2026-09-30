@@ -17,7 +17,7 @@ namespace Hohle1992.Examples
 
 open Data.Examples
 
-def ex1b : LinguisticExample :=
+def ex1b : Datum :=
   { id := "hohle1992_ex1b"
     source := ⟨"hohle-1992", "(1b)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex1b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("focus", "content"), ("accent", "object")] }
 
-def ex2b : LinguisticExample :=
+def ex2b : Datum :=
   { id := "hohle1992_ex2b"
     source := ⟨"hohle-1992", "(2b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex2b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("focus", "verum"), ("accent", "finite verb"), ("verbPosition", "second")] }
 
-def ex4a : LinguisticExample :=
+def ex4a : Datum :=
   { id := "hohle1992_ex4a"
     source := ⟨"hohle-1992", "(4a)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex4a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("focus", "verum"), ("accent", "finite verb"), ("verbPosition", "second"), ("verbContent", "temporal auxiliary")] }
 
-def ex5a : LinguisticExample :=
+def ex5a : Datum :=
   { id := "hohle1992_ex5a"
     source := ⟨"hohle-1992", "(5a)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex5a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("focus", "verum"), ("accent", "finite verb"), ("verbPosition", "second"), ("verbContent", "particle verb")] }
 
-def ex6a : LinguisticExample :=
+def ex6a : Datum :=
   { id := "hohle1992_ex6a"
     source := ⟨"hohle-1992", "(6a)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex6a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("focus", "verum"), ("accent", "finite verb"), ("verbPosition", "second"), ("verbContent", "idiom")] }
 
-def ex7a : LinguisticExample :=
+def ex7a : Datum :=
   { id := "hohle1992_ex7a"
     source := ⟨"hohle-1992", "(7a)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex7a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("focus", "verum"), ("accent", "finite verb"), ("clauseType", "polar interrogative")] }
 
-def ex8a : LinguisticExample :=
+def ex8a : Datum :=
   { id := "hohle1992_ex8a"
     source := ⟨"hohle-1992", "(8a)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex8a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("focus", "verum"), ("accent", "finite verb"), ("clauseType", "polar interrogative")] }
 
-def ex9a : LinguisticExample :=
+def ex9a : Datum :=
   { id := "hohle1992_ex9a"
     source := ⟨"hohle-1992", "(9a)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex9a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("focus", "verum"), ("accent", "finite verb"), ("clauseType", "polar interrogative")] }
 
-def ex10a : LinguisticExample :=
+def ex10a : Datum :=
   { id := "hohle1992_ex10a"
     source := ⟨"hohle-1992", "(10a)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex10a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("focus", "verum"), ("accent", "finite verb"), ("clauseType", "wh-interrogative")] }
 
-def ex11a : LinguisticExample :=
+def ex11a : Datum :=
   { id := "hohle1992_ex11a"
     source := ⟨"hohle-1992", "(11a)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex11a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("focus", "verum"), ("accent", "finite verb"), ("clauseType", "wh-interrogative")] }
 
-def ex12a : LinguisticExample :=
+def ex12a : Datum :=
   { id := "hohle1992_ex12a"
     source := ⟨"hohle-1992", "(12a)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex12a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("focus", "verum"), ("accent", "finite verb"), ("clauseType", "wh-interrogative"), ("negation", "in background")] }
 
-def ex45a : LinguisticExample :=
+def ex45a : Datum :=
   { id := "hohle1992_ex45a"
     source := ⟨"hohle-1992", "(45a)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex45a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("focus", "content"), ("embedded", "verb-second")] }
 
-def ex45b : LinguisticExample :=
+def ex45b : Datum :=
   { id := "hohle1992_ex45b"
     source := ⟨"hohle-1992", "(45b)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex45b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("focus", "verum"), ("accent", "finite verb"), ("embedded", "verb-second")] }
 
-def ex47a : LinguisticExample :=
+def ex47a : Datum :=
   { id := "hohle1992_ex47a"
     source := ⟨"hohle-1992", "(47a)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex47a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("focus", "verum"), ("accent", "finite verb"), ("embedded", "verb-second")] }
 
-def ex47b : LinguisticExample :=
+def ex47b : Datum :=
   { id := "hohle1992_ex47b"
     source := ⟨"hohle-1992", "(47b)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex47b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("focus", "verum"), ("accent", "finite verb"), ("embedded", "verb-second")] }
 
-def ex48a : LinguisticExample :=
+def ex48a : Datum :=
   { id := "hohle1992_ex48a"
     source := ⟨"hohle-1992", "(48a)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex48a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2"), ("focus", "verum"), ("accent", "complementizer"), ("verumType", "C")] }
 
-def ex48b : LinguisticExample :=
+def ex48b : Datum :=
   { id := "hohle1992_ex48b"
     source := ⟨"hohle-1992", "(48b)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex48b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2"), ("focus", "verum"), ("accent", "complementizer"), ("verumType", "C")] }
 
-def ex50a : LinguisticExample :=
+def ex50a : Datum :=
   { id := "hohle1992_ex50a"
     source := ⟨"hohle-1992", "(50a)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex50a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2"), ("focus", "verum"), ("accent", "finite verb"), ("verumType", "F")] }
 
-def ex50b : LinguisticExample :=
+def ex50b : Datum :=
   { id := "hohle1992_ex50b"
     source := ⟨"hohle-1992", "(50b)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex50b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2"), ("focus", "verum"), ("accent", "complementizer"), ("verumType", "C")] }
 
-def ex51a : LinguisticExample :=
+def ex51a : Datum :=
   { id := "hohle1992_ex51a"
     source := ⟨"hohle-1992", "(51a)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex51a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2"), ("focus", "verum"), ("accent", "complementizer"), ("verumType", "C")] }
 
-def ex51b : LinguisticExample :=
+def ex51b : Datum :=
   { id := "hohle1992_ex51b"
     source := ⟨"hohle-1992", "(51b)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex51b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2"), ("focus", "verum"), ("accent", "finite verb"), ("verumType", "F")] }
 
-def ex52a : LinguisticExample :=
+def ex52a : Datum :=
   { id := "hohle1992_ex52a"
     source := ⟨"hohle-1992", "(52a)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex52a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2"), ("focus", "verum"), ("accent", "finite verb"), ("verumType", "F")] }
 
-def ex55a : LinguisticExample :=
+def ex55a : Datum :=
   { id := "hohle1992_ex55a"
     source := ⟨"hohle-1992", "(55a)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex55a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.1"), ("focus", "verum"), ("accent", "finite verb"), ("verumType", "F"), ("negation", "in focus"), ("scoping", "negation over VERUM")] }
 
-def ex55b : LinguisticExample :=
+def ex55b : Datum :=
   { id := "hohle1992_ex55b"
     source := ⟨"hohle-1992", "(55b)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex55b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.1"), ("focus", "verum"), ("accent", "complementizer"), ("verumType", "C"), ("negation", "in background"), ("scoping", "VERUM over negation")] }
 
-def ex57a : LinguisticExample :=
+def ex57a : Datum :=
   { id := "hohle1992_ex57a"
     source := ⟨"hohle-1992", "(57a)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex57a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.1"), ("focus", "verum"), ("accent", "finite verb"), ("verumType", "F"), ("negation", "in focus"), ("scoping", "negation over VERUM")] }
 
-def ex58a : LinguisticExample :=
+def ex58a : Datum :=
   { id := "hohle1992_ex58a"
     source := ⟨"hohle-1992", "(58a)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex58a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.1"), ("focus", "verum"), ("accent", "finite verb"), ("verumType", "F"), ("negation", "in focus"), ("scoping", "negation over VERUM")] }
 
-def ex59a : LinguisticExample :=
+def ex59a : Datum :=
   { id := "hohle1992_ex59a"
     source := ⟨"hohle-1992", "(59a)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def ex59a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.1"), ("focus", "verum"), ("accent", "finite verb"), ("verumType", "F"), ("negation", "in focus"), ("scoping", "negation over VERUM"), ("clauseType", "polar interrogative")] }
 
-def ex62a : LinguisticExample :=
+def ex62a : Datum :=
   { id := "hohle1992_ex62a"
     source := ⟨"hohle-1992", "(62a)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def ex62a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.2"), ("focus", "negation"), ("accent", "negation particle")] }
 
-def ex64a : LinguisticExample :=
+def ex64a : Datum :=
   { id := "hohle1992_ex64a"
     source := ⟨"hohle-1992", "(64a)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def ex64a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.3"), ("focus", "verum"), ("accent", "finite verb")] }
 
-def ex64b : LinguisticExample :=
+def ex64b : Datum :=
   { id := "hohle1992_ex64b"
     source := ⟨"hohle-1992", "(64b)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def ex64b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.3"), ("focus", "negation"), ("accent", "negation particle")] }
 
-def ex64c : LinguisticExample :=
+def ex64c : Datum :=
   { id := "hohle1992_ex64c"
     source := ⟨"hohle-1992", "(64c)"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def ex64c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.3"), ("focus", "verum"), ("accent", "finite verb"), ("negation", "in focus")] }
 
-def ex68a : LinguisticExample :=
+def ex68a : Datum :=
   { id := "hohle1992_ex68a"
     source := ⟨"hohle-1992", "(68a)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def ex68a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7"), ("focus", "verum"), ("accent", "finite verb"), ("verbPosition", "second")] }
 
-def ex68b : LinguisticExample :=
+def ex68b : Datum :=
   { id := "hohle1992_ex68b"
     source := ⟨"hohle-1992", "(68b)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def ex68b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7"), ("focus", "none"), ("accent", "finite verb"), ("verbPosition", "final")] }
 
-def ex68c : LinguisticExample :=
+def ex68c : Datum :=
   { id := "hohle1992_ex68c"
     source := ⟨"hohle-1992", "(68c)"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def ex68c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7"), ("focus", "content"), ("accent", "verb particle"), ("verbPosition", "final")] }
 
-def ex70a : LinguisticExample :=
+def ex70a : Datum :=
   { id := "hohle1992_ex70a"
     source := ⟨"hohle-1992", "(70a)"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def ex70a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7"), ("focus", "verum"), ("accent", "finite verb"), ("verbPosition", "second")] }
 
-def ex70b : LinguisticExample :=
+def ex70b : Datum :=
   { id := "hohle1992_ex70b"
     source := ⟨"hohle-1992", "(70b)"⟩
     reportedIn := none
@@ -485,7 +485,7 @@ def ex70b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7"), ("focus", "none"), ("accent", "finite verb"), ("verbPosition", "final")] }
 
-def ex71a : LinguisticExample :=
+def ex71a : Datum :=
   { id := "hohle1992_ex71a"
     source := ⟨"hohle-1992", "(71a)"⟩
     reportedIn := none
@@ -498,7 +498,7 @@ def ex71a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7"), ("focus", "verum"), ("accent", "copula"), ("verbPosition", "second")] }
 
-def ex71b : LinguisticExample :=
+def ex71b : Datum :=
   { id := "hohle1992_ex71b"
     source := ⟨"hohle-1992", "(71b)"⟩
     reportedIn := none
@@ -511,7 +511,7 @@ def ex71b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7"), ("focus", "verum"), ("accent", "copula"), ("verbPosition", "final")] }
 
-def ex72a : LinguisticExample :=
+def ex72a : Datum :=
   { id := "hohle1992_ex72a"
     source := ⟨"hohle-1992", "(72a)"⟩
     reportedIn := none
@@ -524,7 +524,7 @@ def ex72a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7"), ("focus", "verum"), ("accent", "finite verb"), ("verbPosition", "second")] }
 
-def ex72b : LinguisticExample :=
+def ex72b : Datum :=
   { id := "hohle1992_ex72b"
     source := ⟨"hohle-1992", "(72b)"⟩
     reportedIn := none
@@ -537,7 +537,7 @@ def ex72b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7"), ("focus", "verum"), ("accent", "finite verb"), ("verbPosition", "final")] }
 
-def ex77a : LinguisticExample :=
+def ex77a : Datum :=
   { id := "hohle1992_ex77a"
     source := ⟨"hohle-1992", "(77a)"⟩
     reportedIn := none
@@ -550,7 +550,7 @@ def ex77a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "9.1"), ("focus", "verum"), ("accent", "relative particle"), ("verumType", "C"), ("variety", "dialect with relative particle")] }
 
-def ex78a : LinguisticExample :=
+def ex78a : Datum :=
   { id := "hohle1992_ex78a"
     source := ⟨"hohle-1992", "(78a)"⟩
     reportedIn := none
@@ -563,7 +563,7 @@ def ex78a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "9.1"), ("focus", "verum"), ("accent", "complementizer"), ("verumType", "C"), ("variety", "dialect with interrogative particle")] }
 
-def ex79a : LinguisticExample :=
+def ex79a : Datum :=
   { id := "hohle1992_ex79a"
     source := ⟨"hohle-1992", "(79a)"⟩
     reportedIn := none
@@ -576,7 +576,7 @@ def ex79a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "9.1"), ("focus", "verum"), ("accent", "complementizer"), ("verumType", "C"), ("variety", "dialect with interrogative particle")] }
 
-def ex80a : LinguisticExample :=
+def ex80a : Datum :=
   { id := "hohle1992_ex80a"
     source := ⟨"hohle-1992", "(80a)"⟩
     reportedIn := none
@@ -589,7 +589,7 @@ def ex80a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "9.1"), ("focus", "none"), ("accent", "relative pronoun"), ("variety", "dialect with relative particle")] }
 
-def ex81 : LinguisticExample :=
+def ex81 : Datum :=
   { id := "hohle1992_ex81"
     source := ⟨"hohle-1992", "(81)"⟩
     reportedIn := none
@@ -602,7 +602,7 @@ def ex81 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "9.1"), ("focus", "none"), ("accent", "interrogative pronoun"), ("verbPosition", "second")] }
 
-def ex82a : LinguisticExample :=
+def ex82a : Datum :=
   { id := "hohle1992_ex82a"
     source := ⟨"hohle-1992", "(82a)"⟩
     reportedIn := none
@@ -615,7 +615,7 @@ def ex82a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "9.2"), ("focus", "verum"), ("accent", "relative pronoun"), ("verumType", "RW")] }
 
-def ex83a : LinguisticExample :=
+def ex83a : Datum :=
   { id := "hohle1992_ex83a"
     source := ⟨"hohle-1992", "(83a)"⟩
     reportedIn := none
@@ -628,7 +628,7 @@ def ex83a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "9.2"), ("focus", "verum"), ("accent", "interrogative pronoun"), ("verumType", "RW")] }
 
-def ex84a : LinguisticExample :=
+def ex84a : Datum :=
   { id := "hohle1992_ex84a"
     source := ⟨"hohle-1992", "(84a)"⟩
     reportedIn := none
@@ -641,7 +641,7 @@ def ex84a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "9.2"), ("focus", "verum"), ("accent", "relative phrase"), ("verumType", "RW")] }
 
-def ex85a : LinguisticExample :=
+def ex85a : Datum :=
   { id := "hohle1992_ex85a"
     source := ⟨"hohle-1992", "(85a)"⟩
     reportedIn := none
@@ -654,7 +654,7 @@ def ex85a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "9.2"), ("focus", "verum"), ("accent", "interrogative phrase"), ("verumType", "RW")] }
 
-def ex86a : LinguisticExample :=
+def ex86a : Datum :=
   { id := "hohle1992_ex86a"
     source := ⟨"hohle-1992", "(86a)"⟩
     reportedIn := none
@@ -667,7 +667,7 @@ def ex86a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "9.2"), ("focus", "verum"), ("accent", "relative phrase"), ("verumType", "RW")] }
 
-def ex87a : LinguisticExample :=
+def ex87a : Datum :=
   { id := "hohle1992_ex87a"
     source := ⟨"hohle-1992", "(87a)"⟩
     reportedIn := none
@@ -680,6 +680,6 @@ def ex87a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "9.2"), ("focus", "verum"), ("accent", "interrogative phrase"), ("verumType", "RW")] }
 
-def all : List LinguisticExample := [ex1b, ex2b, ex4a, ex5a, ex6a, ex7a, ex8a, ex9a, ex10a, ex11a, ex12a, ex45a, ex45b, ex47a, ex47b, ex48a, ex48b, ex50a, ex50b, ex51a, ex51b, ex52a, ex55a, ex55b, ex57a, ex58a, ex59a, ex62a, ex64a, ex64b, ex64c, ex68a, ex68b, ex68c, ex70a, ex70b, ex71a, ex71b, ex72a, ex72b, ex77a, ex78a, ex79a, ex80a, ex81, ex82a, ex83a, ex84a, ex85a, ex86a, ex87a]
+def all : List Datum := [ex1b, ex2b, ex4a, ex5a, ex6a, ex7a, ex8a, ex9a, ex10a, ex11a, ex12a, ex45a, ex45b, ex47a, ex47b, ex48a, ex48b, ex50a, ex50b, ex51a, ex51b, ex52a, ex55a, ex55b, ex57a, ex58a, ex59a, ex62a, ex64a, ex64b, ex64c, ex68a, ex68b, ex68c, ex70a, ex70b, ex71a, ex71b, ex72a, ex72b, ex77a, ex78a, ex79a, ex80a, ex81, ex82a, ex83a, ex84a, ex85a, ex86a, ex87a]
 
 end Hohle1992.Examples

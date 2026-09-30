@@ -17,7 +17,7 @@ namespace Elliott2025.Examples
 
 open Data.Examples
 
-def ex_6 : LinguisticExample :=
+def ex_6 : Datum :=
   { id := "elliott2025_6"
     source := ⟨"elliott-2025", "(6)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_6 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1")] }
 
-def ex_7 : LinguisticExample :=
+def ex_7 : Datum :=
   { id := "elliott2025_7"
     source := ⟨"elliott-2025", "(7)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_7 : LinguisticExample :=
     readings := [("distributive scope over the disjunction", .acceptable)]
     paperFeatures := [("section", "2.1")] }
 
-def ex_10 : LinguisticExample :=
+def ex_10 : Datum :=
   { id := "elliott2025_10"
     source := ⟨"elliott-2025", "(10)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_10 : LinguisticExample :=
     readings := [("true in the context", .unacceptable)]
     paperFeatures := [("section", "2.2.1")] }
 
-def ex_12 : LinguisticExample :=
+def ex_12 : Datum :=
   { id := "elliott2025_12"
     source := ⟨"elliott-2025", "(12)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_12 : LinguisticExample :=
     readings := [("true in the context", .acceptable)]
     paperFeatures := [("section", "2.2.2")] }
 
-def ex_47 : LinguisticExample :=
+def ex_47 : Datum :=
   { id := "elliott2025_47"
     source := ⟨"elliott-2025", "(47)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_47 : LinguisticExample :=
     readings := [("∃ > if..then > Dist", .acceptable), ("∃ > Dist > if..then", .unacceptable)]
     paperFeatures := [("section", "5")] }
 
-def ex_48a : LinguisticExample :=
+def ex_48a : Datum :=
   { id := "elliott2025_48a"
     source := ⟨"elliott-2025", "(48a)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_48a : LinguisticExample :=
     readings := [("∀ > if..then", .unacceptable)]
     paperFeatures := [("section", "5")] }
 
-def ex_48b : LinguisticExample :=
+def ex_48b : Datum :=
   { id := "elliott2025_48b"
     source := ⟨"elliott-2025", "(48b)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_48b : LinguisticExample :=
     readings := [("no > if..then", .unacceptable)]
     paperFeatures := [("section", "5")] }
 
-def ex_50 : LinguisticExample :=
+def ex_50 : Datum :=
   { id := "elliott2025_50"
     source := ⟨"elliott-2025", "(50)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_50 : LinguisticExample :=
     readings := [("∃ > if..then (exceptional existential scope)", .acceptable)]
     paperFeatures := [("section", "5")] }
 
-def ex_51a : LinguisticExample :=
+def ex_51a : Datum :=
   { id := "elliott2025_51a"
     source := ⟨"elliott-2025", "(51a)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_51a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.1")] }
 
-def ex_51b : LinguisticExample :=
+def ex_51b : Datum :=
   { id := "elliott2025_51b"
     source := ⟨"elliott-2025", "(51b)"⟩
     reportedIn := none
@@ -147,6 +147,6 @@ def ex_51b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.1")] }
 
-def all : List LinguisticExample := [ex_6, ex_7, ex_10, ex_12, ex_47, ex_48a, ex_48b, ex_50, ex_51a, ex_51b]
+def all : List Datum := [ex_6, ex_7, ex_10, ex_12, ex_47, ex_48a, ex_48b, ex_50, ex_51a, ex_51b]
 
 end Elliott2025.Examples

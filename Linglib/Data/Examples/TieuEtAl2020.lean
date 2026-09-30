@@ -17,7 +17,7 @@ namespace TieuEtAl2020.Examples
 
 open Data.Examples
 
-def ex_1a : LinguisticExample :=
+def ex_1a : Datum :=
   { id := "tieuetal2020_1a"
     source := ⟨"tieu-etal-2020", "(1a), (13), (21)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_1a : LinguisticExample :=
     readings := [("more than one giraffe", .acceptable)]
     paperFeatures := [("polarity", "positive")] }
 
-def ex_2a : LinguisticExample :=
+def ex_2a : Datum :=
   { id := "tieuetal2020_2a"
     source := ⟨"tieu-etal-2020", "(2a), (16), (23)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_2a : LinguisticExample :=
     readings := [("not more than one giraffe", .unacceptable), ("not a single giraffe", .acceptable)]
     paperFeatures := [("polarity", "negative")] }
 
-def ex_3a : LinguisticExample :=
+def ex_3a : Datum :=
   { id := "tieuetal2020_3a"
     source := ⟨"tieu-etal-2020", "(3a)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_3a : LinguisticExample :=
     readings := []
     paperFeatures := [("polarity", "downward")] }
 
-def ex_4a : LinguisticExample :=
+def ex_4a : Datum :=
   { id := "tieuetal2020_4a"
     source := ⟨"tieu-etal-2020", "(4a)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_4a : LinguisticExample :=
     readings := []
     paperFeatures := [("polarity", "downward")] }
 
-def ex_8 : LinguisticExample :=
+def ex_8 : Datum :=
   { id := "tieuetal2020_8"
     source := ⟨"tieu-etal-2020", "(8), (18), (26)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_8 : LinguisticExample :=
     readings := []
     paperFeatures := [("polarity", "negative")] }
 
-def ex_14 : LinguisticExample :=
+def ex_14 : Datum :=
   { id := "tieuetal2020_14"
     source := ⟨"tieu-etal-2020", "(14)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_14 : LinguisticExample :=
     readings := []
     paperFeatures := [("polarity", "positive")] }
 
-def ex_17 : LinguisticExample :=
+def ex_17 : Datum :=
   { id := "tieuetal2020_17"
     source := ⟨"tieu-etal-2020", "(17)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_17 : LinguisticExample :=
     readings := []
     paperFeatures := [("polarity", "negative")] }
 
-def ex_27a : LinguisticExample :=
+def ex_27a : Datum :=
   { id := "tieuetal2020_27a"
     source := ⟨"tieu-etal-2020", "(27a)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_27a : LinguisticExample :=
     readings := []
     paperFeatures := [("polarity", "positive"), ("n_acted_on", "one")] }
 
-def ex_27b : LinguisticExample :=
+def ex_27b : Datum :=
   { id := "tieuetal2020_27b"
     source := ⟨"tieu-etal-2020", "(27b)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_27b : LinguisticExample :=
     readings := []
     paperFeatures := [("polarity", "negative"), ("n_acted_on", "one")] }
 
-def ex_29a : LinguisticExample :=
+def ex_29a : Datum :=
   { id := "tieuetal2020_29a"
     source := ⟨"tieu-etal-2020", "(29a)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_29a : LinguisticExample :=
     readings := [("not all of the giraffes", .acceptable)]
     paperFeatures := [("polarity", "positive")] }
 
-def exp1_positive : LinguisticExample :=
+def exp1_positive : Datum :=
   { id := "tieuetal2020_exp1_positive"
     source := ⟨"tieu-etal-2020", "(35), Experiment 1"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def exp1_positive : LinguisticExample :=
     readings := []
     paperFeatures := [("experiment", "1"), ("polarity", "positive"), ("n_acted_on", "one")] }
 
-def exp1_negative : LinguisticExample :=
+def exp1_negative : Datum :=
   { id := "tieuetal2020_exp1_negative"
     source := ⟨"tieu-etal-2020", "(43), Experiment 1"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def exp1_negative : LinguisticExample :=
     readings := []
     paperFeatures := [("experiment", "1"), ("polarity", "negative"), ("n_acted_on", "one")] }
 
-def exp2_si : LinguisticExample :=
+def exp2_si : Datum :=
   { id := "tieuetal2020_exp2_si"
     source := ⟨"tieu-etal-2020", "(47), Experiment 2"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def exp2_si : LinguisticExample :=
     readings := []
     paperFeatures := [("experiment", "2"), ("polarity", "positive"), ("inference", "scalar")] }
 
-def exp3_positive_plural : LinguisticExample :=
+def exp3_positive_plural : Datum :=
   { id := "tieuetal2020_exp3_positive_plural"
     source := ⟨"tieu-etal-2020", "(54), Experiment 3"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def exp3_positive_plural : LinguisticExample :=
     readings := []
     paperFeatures := [("experiment", "3"), ("polarity", "positive"), ("n_acted_on", "one"), ("task", "ternary_reward"), ("preferred_reward", "intermediate")] }
 
-def exp3_negative_plural : LinguisticExample :=
+def exp3_negative_plural : Datum :=
   { id := "tieuetal2020_exp3_negative_plural"
     source := ⟨"tieu-etal-2020", "(54), Experiment 3"⟩
     reportedIn := none
@@ -212,6 +212,6 @@ def exp3_negative_plural : LinguisticExample :=
     readings := []
     paperFeatures := [("experiment", "3"), ("polarity", "negative"), ("n_acted_on", "one"), ("task", "ternary_reward"), ("preferred_reward", "minimal")] }
 
-def all : List LinguisticExample := [ex_1a, ex_2a, ex_3a, ex_4a, ex_8, ex_14, ex_17, ex_27a, ex_27b, ex_29a, exp1_positive, exp1_negative, exp2_si, exp3_positive_plural, exp3_negative_plural]
+def all : List Datum := [ex_1a, ex_2a, ex_3a, ex_4a, ex_8, ex_14, ex_17, ex_27a, ex_27b, ex_29a, exp1_positive, exp1_negative, exp2_si, exp3_positive_plural, exp3_negative_plural]
 
 end TieuEtAl2020.Examples

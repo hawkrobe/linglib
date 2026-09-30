@@ -17,7 +17,7 @@ namespace Coon2019.Examples
 
 open Data.Examples
 
-def ex_4a : LinguisticExample :=
+def ex_4a : Datum :=
   { id := "coon2019_4a"
     source := ⟨"coon-2019", "(4a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_4a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "xik"), ("head", "w"), ("internal", "np"), ("aj", "no")] }
 
-def ex_4b : LinguisticExample :=
+def ex_4b : Datum :=
   { id := "coon2019_4b"
     source := ⟨"coon-2019", "(4b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_4b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "chanhal"), ("head", "w"), ("internal", "none"), ("aj", "no")] }
 
-def ex_4c : LinguisticExample :=
+def ex_4c : Datum :=
   { id := "coon2019_4c"
     source := ⟨"coon-2019", "(4c)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_4c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "chot"), ("head", "w"), ("internal", "none"), ("aj", "no")] }
 
-def ex_7a : LinguisticExample :=
+def ex_7a : Datum :=
   { id := "coon2019_7a"
     source := ⟨"coon-2019", "(7a)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_7a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "way"), ("head", "intransitive"), ("internal", "dp"), ("aj", "no")] }
 
-def ex_7c : LinguisticExample :=
+def ex_7c : Datum :=
   { id := "coon2019_7c"
     source := ⟨"coon-2019", "(7c)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_7c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "b'ey"), ("head", "intransitive"), ("internal", "dp"), ("aj", "no")] }
 
-def ex_10a : LinguisticExample :=
+def ex_10a : Datum :=
   { id := "coon2019_10a"
     source := ⟨"coon-2019", "(10a)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_10a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "chel"), ("head", "transitive"), ("internal", "dp"), ("aj", "no")] }
 
-def ex_10c : LinguisticExample :=
+def ex_10c : Datum :=
   { id := "coon2019_10c"
     source := ⟨"coon-2019", "(10c)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_10c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "jax"), ("head", "transitive"), ("internal", "dp"), ("aj", "no")] }
 
-def ex_11b : LinguisticExample :=
+def ex_11b : Datum :=
   { id := "coon2019_11b"
     source := ⟨"coon-2019", "(11b)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_11b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "derivedTransitive"), ("rootForm", "tz'ib'")] }
 
-def ex_14a : LinguisticExample :=
+def ex_14a : Datum :=
   { id := "coon2019_14a"
     source := ⟨"coon-2019", "(14a)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_14a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "stative"), ("rootForm", "chot")] }
 
-def ex_19a : LinguisticExample :=
+def ex_19a : Datum :=
   { id := "coon2019_19a"
     source := ⟨"coon-2019", "(19a)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_19a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "at'is"), ("head", "w"), ("internal", "none"), ("aj", "no")] }
 
-def ex_19b : LinguisticExample :=
+def ex_19b : Datum :=
   { id := "coon2019_19b"
     source := ⟨"coon-2019", "(19b)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_19b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "patan"), ("head", "w"), ("internal", "none"), ("aj", "no")] }
 
-def ex_22a : LinguisticExample :=
+def ex_22a : Datum :=
   { id := "coon2019_22a"
     source := ⟨"coon-2019", "(22a)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_22a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "kot"), ("head", "w"), ("internal", "none"), ("aj", "no")] }
 
-def ex_23a : LinguisticExample :=
+def ex_23a : Datum :=
   { id := "coon2019_23a"
     source := ⟨"coon-2019", "(23a)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_23a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "chot"), ("head", "w"), ("internal", "none"), ("aj", "no")] }
 
-def ex_26a : LinguisticExample :=
+def ex_26a : Datum :=
   { id := "coon2019_26a"
     source := ⟨"coon-2019", "(26a)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_26a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "xik"), ("head", "transitive"), ("internal", "dp"), ("aj", "no")] }
 
-def ex_26b : LinguisticExample :=
+def ex_26b : Datum :=
   { id := "coon2019_26b"
     source := ⟨"coon-2019", "(26b)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_26b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "xik"), ("head", "w"), ("internal", "np"), ("aj", "no")] }
 
-def ex_28a : LinguisticExample :=
+def ex_28a : Datum :=
   { id := "coon2019_28a"
     source := ⟨"coon-2019", "(28a)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_28a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "man"), ("head", "w"), ("internal", "dp"), ("aj", "no")] }
 
-def ex_28b : LinguisticExample :=
+def ex_28b : Datum :=
   { id := "coon2019_28b"
     source := ⟨"coon-2019", "(28b)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex_28b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "chonh"), ("head", "w"), ("internal", "dp"), ("aj", "no")] }
 
-def ex_28c : LinguisticExample :=
+def ex_28c : Datum :=
   { id := "coon2019_28c"
     source := ⟨"coon-2019", "(28c)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex_28c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "jax"), ("head", "w"), ("internal", "dp"), ("aj", "no")] }
 
-def ex_29a : LinguisticExample :=
+def ex_29a : Datum :=
   { id := "coon2019_29a"
     source := ⟨"coon-2019", "(29a)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex_29a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "kal"), ("head", "w"), ("internal", "dp"), ("aj", "no")] }
 
-def ex_29b : LinguisticExample :=
+def ex_29b : Datum :=
   { id := "coon2019_29b"
     source := ⟨"coon-2019", "(29b)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex_29b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "il"), ("head", "w"), ("internal", "dp"), ("aj", "no")] }
 
-def ex_30 : LinguisticExample :=
+def ex_30 : Datum :=
   { id := "coon2019_30"
     source := ⟨"coon-2019", "(30)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex_30 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "man"), ("head", "w"), ("internal", "np"), ("aj", "no")] }
 
-def ex_31 : LinguisticExample :=
+def ex_31 : Datum :=
   { id := "coon2019_31"
     source := ⟨"coon-2019", "(31)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex_31 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "opacity"), ("rootForm", "man")] }
 
-def ex_34b : LinguisticExample :=
+def ex_34b : Datum :=
   { id := "coon2019_34b"
     source := ⟨"coon-2019", "(34b)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex_34b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "derivedTransitive"), ("rootForm", "way")] }
 
-def ex_35b : LinguisticExample :=
+def ex_35b : Datum :=
   { id := "coon2019_35b"
     source := ⟨"coon-2019", "(35b)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex_35b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "derivedTransitive"), ("rootForm", "tzil")] }
 
-def ex_36b : LinguisticExample :=
+def ex_36b : Datum :=
   { id := "coon2019_36b"
     source := ⟨"coon-2019", "(36b)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex_36b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "adjacency"), ("rootForm", "chonh")] }
 
-def ex_37 : LinguisticExample :=
+def ex_37 : Datum :=
   { id := "coon2019_37"
     source := ⟨"coon-2019", "(37)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex_37 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "chonh"), ("head", "w"), ("internal", "dp"), ("aj", "no")] }
 
-def ex_38 : LinguisticExample :=
+def ex_38 : Datum :=
   { id := "coon2019_38"
     source := ⟨"coon-2019", "(38)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def ex_38 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "chonh"), ("head", "w"), ("internal", "none"), ("aj", "no")] }
 
-def ex_39a : LinguisticExample :=
+def ex_39a : Datum :=
   { id := "coon2019_39a"
     source := ⟨"coon-2019", "(39a)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def ex_39a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "chanhal"), ("head", "w"), ("internal", "np"), ("aj", "no")] }
 
-def ex_39b : LinguisticExample :=
+def ex_39b : Datum :=
   { id := "coon2019_39b"
     source := ⟨"coon-2019", "(39b)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def ex_39b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "chanhal"), ("head", "w"), ("internal", "none"), ("aj", "no")] }
 
-def ex_42a : LinguisticExample :=
+def ex_42a : Datum :=
   { id := "coon2019_42a"
     source := ⟨"coon-2019", "(42a)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def ex_42a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "chonh"), ("head", "transitive"), ("internal", "dp"), ("aj", "no")] }
 
-def ex_42b : LinguisticExample :=
+def ex_42b : Datum :=
   { id := "coon2019_42b"
     source := ⟨"coon-2019", "(42b)"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def ex_42b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "chonh"), ("head", "w"), ("internal", "np"), ("aj", "no")] }
 
-def ex_47a : LinguisticExample :=
+def ex_47a : Datum :=
   { id := "coon2019_47a"
     source := ⟨"coon-2019", "(47a)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def ex_47a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "b'at"), ("head", "intransitive"), ("internal", "dp"), ("aj", "no")] }
 
-def ex_47b : LinguisticExample :=
+def ex_47b : Datum :=
   { id := "coon2019_47b"
     source := ⟨"coon-2019", "(47b)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def ex_47b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "b'at"), ("head", "w"), ("internal", "dp"), ("aj", "no")] }
 
-def ex_48a : LinguisticExample :=
+def ex_48a : Datum :=
   { id := "coon2019_48a"
     source := ⟨"coon-2019", "(48a)"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def ex_48a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "ul"), ("head", "intransitive"), ("internal", "dp"), ("aj", "no")] }
 
-def ex_48b : LinguisticExample :=
+def ex_48b : Datum :=
   { id := "coon2019_48b"
     source := ⟨"coon-2019", "(48b)"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def ex_48b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "ul"), ("head", "w"), ("internal", "np"), ("aj", "no")] }
 
-def ex_54a : LinguisticExample :=
+def ex_54a : Datum :=
   { id := "coon2019_54a"
     source := ⟨"coon-2019", "(54a)"⟩
     reportedIn := none
@@ -485,7 +485,7 @@ def ex_54a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "jax"), ("head", "w"), ("internal", "np"), ("aj", "no")] }
 
-def ex_54b : LinguisticExample :=
+def ex_54b : Datum :=
   { id := "coon2019_54b"
     source := ⟨"coon-2019", "(54b)"⟩
     reportedIn := none
@@ -498,7 +498,7 @@ def ex_54b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "jax"), ("head", "w"), ("internal", "none"), ("aj", "no")] }
 
-def ex_55b : LinguisticExample :=
+def ex_55b : Datum :=
   { id := "coon2019_55b"
     source := ⟨"dayley-1981", "p. 36"⟩
     reportedIn := some ⟨"coon-2019", "(55b)"⟩
@@ -511,7 +511,7 @@ def ex_55b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "mak'"), ("head", "w"), ("internal", "implicit"), ("aj", "yes")] }
 
-def ex_55c : LinguisticExample :=
+def ex_55c : Datum :=
   { id := "coon2019_55c"
     source := ⟨"coon-2019", "(55c)"⟩
     reportedIn := none
@@ -524,7 +524,7 @@ def ex_55c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "man"), ("head", "w"), ("internal", "implicit"), ("aj", "yes")] }
 
-def ex_57b : LinguisticExample :=
+def ex_57b : Datum :=
   { id := "coon2019_57b"
     source := ⟨"coon-2019", "(57b)"⟩
     reportedIn := none
@@ -537,7 +537,7 @@ def ex_57b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "derivedIntransitive"), ("rootForm", "el")] }
 
-def ex_59a : LinguisticExample :=
+def ex_59a : Datum :=
   { id := "coon2019_59a"
     source := ⟨"coon-2019", "(59a)"⟩
     reportedIn := none
@@ -550,7 +550,7 @@ def ex_59a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "man"), ("head", "j"), ("internal", "dp"), ("aj", "no")] }
 
-def ex_60a : LinguisticExample :=
+def ex_60a : Datum :=
   { id := "coon2019_60a"
     source := ⟨"buenrostro-2013", "p. 113"⟩
     reportedIn := some ⟨"coon-2019", "(60a)"⟩
@@ -563,7 +563,7 @@ def ex_60a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "yam"), ("head", "ch"), ("internal", "dp"), ("aj", "yes")] }
 
-def ex_62 : LinguisticExample :=
+def ex_62 : Datum :=
   { id := "coon2019_62"
     source := ⟨"coon-2019", "(62)"⟩
     reportedIn := none
@@ -576,7 +576,7 @@ def ex_62 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "b'o'"), ("head", "ch"), ("internal", "dp"), ("aj", "yes"), ("oblique", "agent")] }
 
-def ex_63a : LinguisticExample :=
+def ex_63a : Datum :=
   { id := "coon2019_63a"
     source := ⟨"coon-2019", "(63a)"⟩
     reportedIn := none
@@ -589,7 +589,7 @@ def ex_63a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "diagnostic"), ("rootForm", "ch'ak"), ("head", "ch"), ("diagnostic", "agentAdverb")] }
 
-def ex_63b : LinguisticExample :=
+def ex_63b : Datum :=
   { id := "coon2019_63b"
     source := ⟨"coon-2019", "(63b)"⟩
     reportedIn := none
@@ -602,7 +602,7 @@ def ex_63b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "diagnostic"), ("rootForm", "ch'ak"), ("head", "ch"), ("diagnostic", "purposeClause")] }
 
-def ex_65a : LinguisticExample :=
+def ex_65a : Datum :=
   { id := "coon2019_65a"
     source := ⟨"buenrostro-2013", "p. 207"⟩
     reportedIn := some ⟨"coon-2019", "(65a)"⟩
@@ -615,7 +615,7 @@ def ex_65a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "b'o'"), ("head", "j"), ("internal", "dp"), ("aj", "no"), ("oblique", "cause")] }
 
-def ex_66a : LinguisticExample :=
+def ex_66a : Datum :=
   { id := "coon2019_66a"
     source := ⟨"coon-2019", "(66a)"⟩
     reportedIn := none
@@ -628,7 +628,7 @@ def ex_66a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "b'o'"), ("head", "ch"), ("internal", "dp"), ("aj", "yes"), ("oblique", "agent")] }
 
-def ex_66b : LinguisticExample :=
+def ex_66b : Datum :=
   { id := "coon2019_66b"
     source := ⟨"coon-2019", "(66b)"⟩
     reportedIn := none
@@ -641,7 +641,7 @@ def ex_66b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "b'o'"), ("head", "j"), ("internal", "dp"), ("aj", "no"), ("oblique", "cause")] }
 
-def ex_67a : LinguisticExample :=
+def ex_67a : Datum :=
   { id := "coon2019_67a"
     source := ⟨"coon-2019", "(67a)"⟩
     reportedIn := none
@@ -654,7 +654,7 @@ def ex_67a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "diagnostic"), ("rootForm", "ch'ak"), ("head", "j"), ("diagnostic", "agentAdverb")] }
 
-def ex_67b : LinguisticExample :=
+def ex_67b : Datum :=
   { id := "coon2019_67b"
     source := ⟨"coon-2019", "(67b)"⟩
     reportedIn := none
@@ -667,7 +667,7 @@ def ex_67b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "diagnostic"), ("rootForm", "ch'ak"), ("head", "j"), ("diagnostic", "purposeClause")] }
 
-def ex_70a : LinguisticExample :=
+def ex_70a : Datum :=
   { id := "coon2019_70a"
     source := ⟨"buenrostro-2013", "p. 207"⟩
     reportedIn := some ⟨"coon-2019", "(70a)"⟩
@@ -680,7 +680,7 @@ def ex_70a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "causer"), ("rootForm", "mak"), ("head", "transitive")] }
 
-def ex_70b : LinguisticExample :=
+def ex_70b : Datum :=
   { id := "coon2019_70b"
     source := ⟨"coon-2019", "(70b)"⟩
     reportedIn := none
@@ -693,7 +693,7 @@ def ex_70b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "mak"), ("head", "j"), ("internal", "dp"), ("aj", "no"), ("oblique", "cause")] }
 
-def ex_71 : LinguisticExample :=
+def ex_71 : Datum :=
   { id := "coon2019_71"
     source := ⟨"coon-2019", "(71)"⟩
     reportedIn := none
@@ -706,7 +706,7 @@ def ex_71 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "isolated"), ("head", "j")] }
 
-def ex_72a : LinguisticExample :=
+def ex_72a : Datum :=
   { id := "coon2019_72a"
     source := ⟨"coon-2019", "(72a)"⟩
     reportedIn := none
@@ -719,7 +719,7 @@ def ex_72a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "tek'"), ("head", "w"), ("internal", "none"), ("aj", "no")] }
 
-def ex_72b : LinguisticExample :=
+def ex_72b : Datum :=
   { id := "coon2019_72b"
     source := ⟨"coon-2019", "(72b)"⟩
     reportedIn := none
@@ -732,7 +732,7 @@ def ex_72b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "tek'"), ("head", "w"), ("internal", "implicit"), ("aj", "yes")] }
 
-def ex_73a : LinguisticExample :=
+def ex_73a : Datum :=
   { id := "coon2019_73a"
     source := ⟨"coon-2019", "(73a)"⟩
     reportedIn := none
@@ -745,7 +745,7 @@ def ex_73a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "b'o'"), ("head", "j"), ("internal", "dp"), ("aj", "no"), ("oblique", "cause")] }
 
-def ex_73b : LinguisticExample :=
+def ex_73b : Datum :=
   { id := "coon2019_73b"
     source := ⟨"coon-2019", "(73b)"⟩
     reportedIn := none
@@ -758,7 +758,7 @@ def ex_73b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "b'o'"), ("head", "ch"), ("internal", "dp"), ("aj", "yes"), ("oblique", "agent")] }
 
-def ex_74a : LinguisticExample :=
+def ex_74a : Datum :=
   { id := "coon2019_74a"
     source := ⟨"coon-2019", "(74a)"⟩
     reportedIn := none
@@ -771,7 +771,7 @@ def ex_74a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "man"), ("head", "ch"), ("internal", "dp"), ("aj", "yes")] }
 
-def ex_75a : LinguisticExample :=
+def ex_75a : Datum :=
   { id := "coon2019_75a"
     source := ⟨"coon-2019", "(75a)"⟩
     reportedIn := none
@@ -784,7 +784,7 @@ def ex_75a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "man"), ("head", "w"), ("internal", "implicit"), ("aj", "yes")] }
 
-def ex_79a : LinguisticExample :=
+def ex_79a : Datum :=
   { id := "coon2019_79a"
     source := ⟨"coon-2019", "(79a)"⟩
     reportedIn := none
@@ -797,7 +797,7 @@ def ex_79a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "jax"), ("head", "transitive"), ("internal", "dp"), ("aj", "no")] }
 
-def ex_79b : LinguisticExample :=
+def ex_79b : Datum :=
   { id := "coon2019_79b"
     source := ⟨"coon-2019", "(79b)"⟩
     reportedIn := none
@@ -810,7 +810,7 @@ def ex_79b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "jax"), ("head", "ch"), ("internal", "dp"), ("aj", "yes")] }
 
-def ex_79c : LinguisticExample :=
+def ex_79c : Datum :=
   { id := "coon2019_79c"
     source := ⟨"coon-2019", "(79c)"⟩
     reportedIn := none
@@ -823,7 +823,7 @@ def ex_79c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "jax"), ("head", "j"), ("internal", "dp"), ("aj", "no")] }
 
-def ex_79d : LinguisticExample :=
+def ex_79d : Datum :=
   { id := "coon2019_79d"
     source := ⟨"coon-2019", "(79d)"⟩
     reportedIn := none
@@ -836,7 +836,7 @@ def ex_79d : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "jax"), ("head", "w"), ("internal", "implicit"), ("aj", "yes")] }
 
-def ex_79e : LinguisticExample :=
+def ex_79e : Datum :=
   { id := "coon2019_79e"
     source := ⟨"coon-2019", "(79e)"⟩
     reportedIn := none
@@ -849,7 +849,7 @@ def ex_79e : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "stem"), ("rootForm", "jax"), ("head", "w"), ("internal", "np"), ("aj", "no")] }
 
-def ex_51a : LinguisticExample :=
+def ex_51a : Datum :=
   { id := "coon2019_51a"
     source := ⟨"coon-2019", "(51a)"⟩
     reportedIn := none
@@ -862,7 +862,7 @@ def ex_51a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "chol"), ("stem", "unaccusative")] }
 
-def ex_51b : LinguisticExample :=
+def ex_51b : Datum :=
   { id := "coon2019_51b"
     source := ⟨"coon-2019", "(51b)"⟩
     reportedIn := none
@@ -875,7 +875,7 @@ def ex_51b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "chol"), ("stem", "agentiveIntransitive")] }
 
-def ex_52a : LinguisticExample :=
+def ex_52a : Datum :=
   { id := "coon2019_52a"
     source := ⟨"coon-2019", "(52a)"⟩
     reportedIn := none
@@ -888,7 +888,7 @@ def ex_52a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "chol"), ("stem", "lightVerb")] }
 
-def ex_53b : LinguisticExample :=
+def ex_53b : Datum :=
   { id := "coon2019_53b"
     source := ⟨"coon-2019", "(53b)"⟩
     reportedIn := none
@@ -901,6 +901,6 @@ def ex_53b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "chol"), ("stem", "lightVerb")] }
 
-def all : List LinguisticExample := [ex_4a, ex_4b, ex_4c, ex_7a, ex_7c, ex_10a, ex_10c, ex_11b, ex_14a, ex_19a, ex_19b, ex_22a, ex_23a, ex_26a, ex_26b, ex_28a, ex_28b, ex_28c, ex_29a, ex_29b, ex_30, ex_31, ex_34b, ex_35b, ex_36b, ex_37, ex_38, ex_39a, ex_39b, ex_42a, ex_42b, ex_47a, ex_47b, ex_48a, ex_48b, ex_54a, ex_54b, ex_55b, ex_55c, ex_57b, ex_59a, ex_60a, ex_62, ex_63a, ex_63b, ex_65a, ex_66a, ex_66b, ex_67a, ex_67b, ex_70a, ex_70b, ex_71, ex_72a, ex_72b, ex_73a, ex_73b, ex_74a, ex_75a, ex_79a, ex_79b, ex_79c, ex_79d, ex_79e, ex_51a, ex_51b, ex_52a, ex_53b]
+def all : List Datum := [ex_4a, ex_4b, ex_4c, ex_7a, ex_7c, ex_10a, ex_10c, ex_11b, ex_14a, ex_19a, ex_19b, ex_22a, ex_23a, ex_26a, ex_26b, ex_28a, ex_28b, ex_28c, ex_29a, ex_29b, ex_30, ex_31, ex_34b, ex_35b, ex_36b, ex_37, ex_38, ex_39a, ex_39b, ex_42a, ex_42b, ex_47a, ex_47b, ex_48a, ex_48b, ex_54a, ex_54b, ex_55b, ex_55c, ex_57b, ex_59a, ex_60a, ex_62, ex_63a, ex_63b, ex_65a, ex_66a, ex_66b, ex_67a, ex_67b, ex_70a, ex_70b, ex_71, ex_72a, ex_72b, ex_73a, ex_73b, ex_74a, ex_75a, ex_79a, ex_79b, ex_79c, ex_79d, ex_79e, ex_51a, ex_51b, ex_52a, ex_53b]
 
 end Coon2019.Examples

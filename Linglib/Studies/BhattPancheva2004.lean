@@ -117,7 +117,7 @@ structure Row where
   deriving DecidableEq, Repr
 
 /-- A row from the paper's features. -/
-def Row.ofExample (e : LinguisticExample) : Option Row := do
+def Row.ofDatum (e : Datum) : Option Row := do
   let site ← match e.feature? "site" with
     | some "low" => some Site.low
     | some "high" => some Site.high
@@ -128,7 +128,7 @@ def Row.ofExample (e : LinguisticExample) : Option Row := do
   some ⟨site, mover = "DegP", narrow = "available", wide = "available"⟩
 
 /-- The extraposition data of Section 5.2, (41) to (46) and (53) to (54). -/
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- (38), the half of (39) countercyclic merger derives: a clause merged above an operator leaves
 the comparison no scope below it, (42), (44), (46), (53b) and (54b). -/

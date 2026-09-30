@@ -17,7 +17,7 @@ namespace Wood2023.Examples
 
 open Data.Examples
 
-def ex_1 : LinguisticExample :=
+def ex_1 : Datum :=
   { id := "wood2023_1"
     source := ⟨"wood-2023", "(6.37)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "þvo")] }
 
-def ex_2 : LinguisticExample :=
+def ex_2 : Datum :=
   { id := "wood2023_2"
     source := ⟨"wood-2023", "(6.37a)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_2 : LinguisticExample :=
     readings := [("complex event", .acceptable)]
     paperFeatures := [("reading", "CEN")] }
 
-def ex_3 : LinguisticExample :=
+def ex_3 : Datum :=
   { id := "wood2023_3"
     source := ⟨"wood-2023", "(6.37c)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_3 : LinguisticExample :=
     readings := [("simple event", .acceptable)]
     paperFeatures := [("reading", "SEN")] }
 
-def ex_4 : LinguisticExample :=
+def ex_4 : Datum :=
   { id := "wood2023_4"
     source := ⟨"wood-2023", "(6.37d)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_4 : LinguisticExample :=
     readings := [("simple entity", .acceptable)]
     paperFeatures := [("reading", "RN")] }
 
-def ex_5 : LinguisticExample :=
+def ex_5 : Datum :=
   { id := "wood2023_5"
     source := ⟨"wood-2023", "(6.38)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_5 : LinguisticExample :=
     readings := []
     paperFeatures := [("prefix", "marg-")] }
 
-def ex_6 : LinguisticExample :=
+def ex_6 : Datum :=
   { id := "wood2023_6"
     source := ⟨"wood-2023", "(6.38a)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_6 : LinguisticExample :=
     readings := [("complex event", .acceptable)]
     paperFeatures := [("prefix", "marg-"), ("reading", "CEN")] }
 
-def ex_7 : LinguisticExample :=
+def ex_7 : Datum :=
   { id := "wood2023_7"
     source := ⟨"wood-2023", "(6.38c)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_7 : LinguisticExample :=
     readings := [("complex event", .acceptable)]
     paperFeatures := [("prefix", "marg-"), ("reading", "CEN")] }
 
-def ex_8 : LinguisticExample :=
+def ex_8 : Datum :=
   { id := "wood2023_8"
     source := ⟨"wood-2023", "(6.38d)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_8 : LinguisticExample :=
     readings := [("simple event", .ungrammatical)]
     paperFeatures := [("prefix", "marg-"), ("reading", "SEN")] }
 
-def ex_9 : LinguisticExample :=
+def ex_9 : Datum :=
   { id := "wood2023_9"
     source := ⟨"wood-2023", "(6.38e)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_9 : LinguisticExample :=
     readings := [("simple entity", .ungrammatical)]
     paperFeatures := [("prefix", "marg-"), ("reading", "RN")] }
 
-def ex_10 : LinguisticExample :=
+def ex_10 : Datum :=
   { id := "wood2023_10"
     source := ⟨"wood-2023", "(6.46)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_10 : LinguisticExample :=
     readings := []
     paperFeatures := [("prefix", "endur-")] }
 
-def ex_11 : LinguisticExample :=
+def ex_11 : Datum :=
   { id := "wood2023_11"
     source := ⟨"wood-2023", "(6.46a)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_11 : LinguisticExample :=
     readings := [("complex event", .acceptable)]
     paperFeatures := [("prefix", "endur-"), ("reading", "CEN")] }
 
-def ex_12 : LinguisticExample :=
+def ex_12 : Datum :=
   { id := "wood2023_12"
     source := ⟨"wood-2023", "(6.46c)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_12 : LinguisticExample :=
     readings := [("simple event", .acceptable)]
     paperFeatures := [("prefix", "endur-"), ("reading", "SEN")] }
 
-def ex_13 : LinguisticExample :=
+def ex_13 : Datum :=
   { id := "wood2023_13"
     source := ⟨"wood-2023", "(6.46d)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_13 : LinguisticExample :=
     readings := [("simple entity", .ungrammatical)]
     paperFeatures := [("prefix", "endur-"), ("reading", "RN")] }
 
-def ex_14 : LinguisticExample :=
+def ex_14 : Datum :=
   { id := "wood2023_14"
     source := ⟨"wood-2023", "(6.52)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_14 : LinguisticExample :=
     readings := [("result", .acceptable)]
     paperFeatures := [("prefix", "endur-"), ("reading", "result RN")] }
 
-def ex_15 : LinguisticExample :=
+def ex_15 : Datum :=
   { id := "wood2023_15"
     source := ⟨"wood-2023", "(4.28a)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_15 : LinguisticExample :=
     readings := []
     paperFeatures := [("preposition", "um"), ("pattern", "1")] }
 
-def ex_16 : LinguisticExample :=
+def ex_16 : Datum :=
   { id := "wood2023_16"
     source := ⟨"wood-2023", "(4.28b)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_16 : LinguisticExample :=
     readings := []
     paperFeatures := [("preposition", "um"), ("pattern", "1")] }
 
-def ex_17 : LinguisticExample :=
+def ex_17 : Datum :=
   { id := "wood2023_17"
     source := ⟨"wood-2023", "(4.50a)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex_17 : LinguisticExample :=
     readings := []
     paperFeatures := [("preposition", "um"), ("pattern", "3")] }
 
-def ex_18 : LinguisticExample :=
+def ex_18 : Datum :=
   { id := "wood2023_18"
     source := ⟨"wood-2023", "(4.50c)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex_18 : LinguisticExample :=
     readings := []
     paperFeatures := [("preposition", "um"), ("pattern", "3")] }
 
-def ex_19 : LinguisticExample :=
+def ex_19 : Datum :=
   { id := "wood2023_19"
     source := ⟨"wood-2023", "(4.12b)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex_19 : LinguisticExample :=
     readings := [("complex event", .acceptable)]
     paperFeatures := [("preposition", "við"), ("pattern", "2"), ("reading", "CEN")] }
 
-def ex_20 : LinguisticExample :=
+def ex_20 : Datum :=
   { id := "wood2023_20"
     source := ⟨"wood-2023", "(6.62a)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex_20 : LinguisticExample :=
     readings := []
     paperFeatures := [("suffix", "-væða")] }
 
-def ex_21 : LinguisticExample :=
+def ex_21 : Datum :=
   { id := "wood2023_21"
     source := ⟨"wood-2023", "(6.63a)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex_21 : LinguisticExample :=
     readings := []
     paperFeatures := [("suffix", "-væðing")] }
 
-def ex_22 : LinguisticExample :=
+def ex_22 : Datum :=
   { id := "wood2023_22"
     source := ⟨"wood-2023", "(6.13c)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex_22 : LinguisticExample :=
     readings := [("simple entity", .ungrammatical)]
     paperFeatures := [("nominal", "að-dá-un"), ("reading", "RN")] }
 
-def ex_23 : LinguisticExample :=
+def ex_23 : Datum :=
   { id := "wood2023_23"
     source := ⟨"wood-2023", "(6.14d)"⟩
     reportedIn := none
@@ -316,6 +316,6 @@ def ex_23 : LinguisticExample :=
     readings := [("simple entity", .acceptable)]
     paperFeatures := [("nominal", "við-vör-un"), ("reading", "RN")] }
 
-def all : List LinguisticExample := [ex_1, ex_2, ex_3, ex_4, ex_5, ex_6, ex_7, ex_8, ex_9, ex_10, ex_11, ex_12, ex_13, ex_14, ex_15, ex_16, ex_17, ex_18, ex_19, ex_20, ex_21, ex_22, ex_23]
+def all : List Datum := [ex_1, ex_2, ex_3, ex_4, ex_5, ex_6, ex_7, ex_8, ex_9, ex_10, ex_11, ex_12, ex_13, ex_14, ex_15, ex_16, ex_17, ex_18, ex_19, ex_20, ex_21, ex_22, ex_23]
 
 end Wood2023.Examples

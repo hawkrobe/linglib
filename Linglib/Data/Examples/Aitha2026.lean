@@ -17,7 +17,7 @@ namespace Aitha2026.Examples
 
 open Data.Examples
 
-def house_nom : LinguisticExample :=
+def house_nom : Datum :=
   { id := "aitha2026_house_nom"
     source := ⟨"aitha-2026", "(1)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def house_nom : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "illu"), ("root", "house"), ("class", "strong"), ("number", "sg"), ("case", "nom"), ("suffix", "ø"), ("suffixKind", "case"), ("prwd", "none"), ("weight", "none"), ("n", "lu")] }
 
-def house_acc : LinguisticExample :=
+def house_acc : Datum :=
   { id := "aitha2026_house_acc"
     source := ⟨"aitha-2026", "(1)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def house_acc : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "illu"), ("root", "house"), ("class", "strong"), ("number", "sg"), ("case", "acc"), ("suffix", "ni"), ("suffixKind", "case"), ("prwd", "internal"), ("weight", "light"), ("n", "ṭi")] }
 
-def house_gen : LinguisticExample :=
+def house_gen : Datum :=
   { id := "aitha2026_house_gen"
     source := ⟨"aitha-2026", "(1)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def house_gen : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "illu"), ("root", "house"), ("class", "strong"), ("number", "sg"), ("case", "gen"), ("suffix", "ø"), ("suffixKind", "case"), ("prwd", "none"), ("weight", "none"), ("n", "ṭi")] }
 
-def house_dat : LinguisticExample :=
+def house_dat : Datum :=
   { id := "aitha2026_house_dat"
     source := ⟨"aitha-2026", "(1)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def house_dat : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "illu"), ("root", "house"), ("class", "strong"), ("number", "sg"), ("case", "dat"), ("suffix", "ki"), ("suffixKind", "case"), ("prwd", "internal"), ("weight", "light"), ("n", "ṭi")] }
 
-def house_p : LinguisticExample :=
+def house_p : Datum :=
   { id := "aitha2026_house_p"
     source := ⟨"aitha-2026", "(1)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def house_p : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "illu"), ("root", "house"), ("class", "strong"), ("number", "sg"), ("case", "p"), ("suffix", "lō"), ("suffixKind", "postposition"), ("prwd", "external"), ("weight", "heavy"), ("n", "ṭi")] }
 
-def town_nom : LinguisticExample :=
+def town_nom : Datum :=
   { id := "aitha2026_town_nom"
     source := ⟨"aitha-2026", "(2)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def town_nom : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "ūru"), ("root", "town"), ("class", "strong"), ("number", "sg"), ("case", "nom"), ("suffix", "ø"), ("suffixKind", "case"), ("prwd", "none"), ("weight", "none"), ("n", "u")] }
 
-def town_dat : LinguisticExample :=
+def town_dat : Datum :=
   { id := "aitha2026_town_dat"
     source := ⟨"aitha-2026", "(2)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def town_dat : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "ūru"), ("root", "town"), ("class", "strong"), ("number", "sg"), ("case", "dat"), ("suffix", "ki"), ("suffixKind", "case"), ("prwd", "internal"), ("weight", "light"), ("n", "i")] }
 
-def husband_nom : LinguisticExample :=
+def husband_nom : Datum :=
   { id := "aitha2026_husband_nom"
     source := ⟨"aitha-2026", "(2)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def husband_nom : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "moguḍu"), ("root", "husband"), ("class", "strong"), ("number", "sg"), ("case", "nom"), ("suffix", "ø"), ("suffixKind", "case"), ("prwd", "none"), ("weight", "none"), ("n", "u")] }
 
-def husband_dat : LinguisticExample :=
+def husband_dat : Datum :=
   { id := "aitha2026_husband_dat"
     source := ⟨"aitha-2026", "(2)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def husband_dat : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "moguḍu"), ("root", "husband"), ("class", "strong"), ("number", "sg"), ("case", "dat"), ("suffix", "ki"), ("suffixKind", "case"), ("prwd", "internal"), ("weight", "light"), ("n", "i")] }
 
-def bow_nom : LinguisticExample :=
+def bow_nom : Datum :=
   { id := "aitha2026_bow_nom"
     source := ⟨"aitha-2026", "(2)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def bow_nom : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "villu"), ("root", "bow"), ("class", "strong"), ("number", "sg"), ("case", "nom"), ("suffix", "ø"), ("suffixKind", "case"), ("prwd", "none"), ("weight", "none"), ("n", "lu")] }
 
-def bow_dat : LinguisticExample :=
+def bow_dat : Datum :=
   { id := "aitha2026_bow_dat"
     source := ⟨"aitha-2026", "(2)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def bow_dat : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "villu"), ("root", "bow"), ("class", "strong"), ("number", "sg"), ("case", "dat"), ("suffix", "ki"), ("suffixKind", "case"), ("prwd", "internal"), ("weight", "light"), ("n", "ṭi")] }
 
-def eye_nom : LinguisticExample :=
+def eye_nom : Datum :=
   { id := "aitha2026_eye_nom"
     source := ⟨"aitha-2026", "(2)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def eye_nom : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "kannu"), ("root", "eye"), ("class", "strong"), ("number", "sg"), ("case", "nom"), ("suffix", "ø"), ("suffixKind", "case"), ("prwd", "none"), ("weight", "none"), ("n", "nu")] }
 
-def eye_dat : LinguisticExample :=
+def eye_dat : Datum :=
   { id := "aitha2026_eye_dat"
     source := ⟨"aitha-2026", "(2)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def eye_dat : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "kannu"), ("root", "eye"), ("class", "strong"), ("number", "sg"), ("case", "dat"), ("suffix", "ki"), ("suffixKind", "case"), ("prwd", "internal"), ("weight", "light"), ("n", "ṭi")] }
 
-def tooth_nom : LinguisticExample :=
+def tooth_nom : Datum :=
   { id := "aitha2026_tooth_nom"
     source := ⟨"aitha-2026", "(2)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def tooth_nom : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "pannu"), ("root", "tooth"), ("class", "strong"), ("number", "sg"), ("case", "nom"), ("suffix", "ø"), ("suffixKind", "case"), ("prwd", "none"), ("weight", "none"), ("n", "nu")] }
 
-def tooth_dat : LinguisticExample :=
+def tooth_dat : Datum :=
   { id := "aitha2026_tooth_dat"
     source := ⟨"aitha-2026", "(2)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def tooth_dat : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "pannu"), ("root", "tooth"), ("class", "strong"), ("number", "sg"), ("case", "dat"), ("suffix", "ki"), ("suffixKind", "case"), ("prwd", "internal"), ("weight", "light"), ("n", "ṭi")] }
 
-def nest_nom : LinguisticExample :=
+def nest_nom : Datum :=
   { id := "aitha2026_nest_nom"
     source := ⟨"aitha-2026", "(2)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def nest_nom : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "gūḍu"), ("root", "nest"), ("class", "strong"), ("number", "sg"), ("case", "nom"), ("suffix", "ø"), ("suffixKind", "case"), ("prwd", "none"), ("weight", "none"), ("n", "ḍu")] }
 
-def nest_dat : LinguisticExample :=
+def nest_dat : Datum :=
   { id := "aitha2026_nest_dat"
     source := ⟨"aitha-2026", "(2)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def nest_dat : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "gūḍu"), ("root", "nest"), ("class", "strong"), ("number", "sg"), ("case", "dat"), ("suffix", "ki"), ("suffixKind", "case"), ("prwd", "internal"), ("weight", "light"), ("n", "ṭi")] }
 
-def stream_nom : LinguisticExample :=
+def stream_nom : Datum :=
   { id := "aitha2026_stream_nom"
     source := ⟨"aitha-2026", "(2)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def stream_nom : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "ēru"), ("root", "stream"), ("class", "strong"), ("number", "sg"), ("case", "nom"), ("suffix", "ø"), ("suffixKind", "case"), ("prwd", "none"), ("weight", "none"), ("n", "ru")] }
 
-def stream_dat : LinguisticExample :=
+def stream_dat : Datum :=
   { id := "aitha2026_stream_dat"
     source := ⟨"aitha-2026", "(2)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def stream_dat : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "ēru"), ("root", "stream"), ("class", "strong"), ("number", "sg"), ("case", "dat"), ("suffix", "ki"), ("suffixKind", "case"), ("prwd", "internal"), ("weight", "light"), ("n", "ṭi")] }
 
-def mouth_nom : LinguisticExample :=
+def mouth_nom : Datum :=
   { id := "aitha2026_mouth_nom"
     source := ⟨"aitha-2026", "(2)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def mouth_nom : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "nōru"), ("root", "mouth"), ("class", "strong"), ("number", "sg"), ("case", "nom"), ("suffix", "ø"), ("suffixKind", "case"), ("prwd", "none"), ("weight", "none"), ("n", "ru")] }
 
-def mouth_dat : LinguisticExample :=
+def mouth_dat : Datum :=
   { id := "aitha2026_mouth_dat"
     source := ⟨"aitha-2026", "(2)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def mouth_dat : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "nōru"), ("root", "mouth"), ("class", "strong"), ("number", "sg"), ("case", "dat"), ("suffix", "ki"), ("suffixKind", "case"), ("prwd", "internal"), ("weight", "light"), ("n", "ṭi")] }
 
-def plough_nom : LinguisticExample :=
+def plough_nom : Datum :=
   { id := "aitha2026_plough_nom"
     source := ⟨"aitha-2026", "(2)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def plough_nom : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "nāgali"), ("root", "plough"), ("class", "strong"), ("number", "sg"), ("case", "nom"), ("suffix", "ø"), ("suffixKind", "case"), ("prwd", "none"), ("weight", "none"), ("n", "li")] }
 
-def plough_dat : LinguisticExample :=
+def plough_dat : Datum :=
   { id := "aitha2026_plough_dat"
     source := ⟨"aitha-2026", "(2)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def plough_dat : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "nāgali"), ("root", "plough"), ("class", "strong"), ("number", "sg"), ("case", "dat"), ("suffix", "ki"), ("suffixKind", "case"), ("prwd", "internal"), ("weight", "light"), ("n", "ṭi")] }
 
-def ghee_nom : LinguisticExample :=
+def ghee_nom : Datum :=
   { id := "aitha2026_ghee_nom"
     source := ⟨"aitha-2026", "(2)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ghee_nom : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "nēyi"), ("root", "ghee"), ("class", "strong"), ("number", "sg"), ("case", "nom"), ("suffix", "ø"), ("suffixKind", "case"), ("prwd", "none"), ("weight", "none"), ("n", "yi")] }
 
-def ghee_dat : LinguisticExample :=
+def ghee_dat : Datum :=
   { id := "aitha2026_ghee_dat"
     source := ⟨"aitha-2026", "(2)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ghee_dat : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "nēyi"), ("root", "ghee"), ("class", "strong"), ("number", "sg"), ("case", "dat"), ("suffix", "ki"), ("suffixKind", "case"), ("prwd", "internal"), ("weight", "light"), ("n", "ti")] }
 
-def well_nom : LinguisticExample :=
+def well_nom : Datum :=
   { id := "aitha2026_well_nom"
     source := ⟨"aitha-2026", "(2)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def well_nom : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "nūyi"), ("root", "well"), ("class", "strong"), ("number", "sg"), ("case", "nom"), ("suffix", "ø"), ("suffixKind", "case"), ("prwd", "none"), ("weight", "none"), ("n", "yi")] }
 
-def well_dat : LinguisticExample :=
+def well_dat : Datum :=
   { id := "aitha2026_well_dat"
     source := ⟨"aitha-2026", "(2)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def well_dat : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "nūyi"), ("root", "well"), ("class", "strong"), ("number", "sg"), ("case", "dat"), ("suffix", "ki"), ("suffixKind", "case"), ("prwd", "internal"), ("weight", "light"), ("n", "ti")] }
 
-def ocean_nom : LinguisticExample :=
+def ocean_nom : Datum :=
   { id := "aitha2026_ocean_nom"
     source := ⟨"aitha-2026", "(8)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def ocean_nom : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "samudram"), ("root", "ocean"), ("class", "weak"), ("number", "sg"), ("case", "nom"), ("suffix", "ø"), ("suffixKind", "case"), ("prwd", "none"), ("weight", "none"), ("n", "am"), ("form", "short")] }
 
-def ocean_acc : LinguisticExample :=
+def ocean_acc : Datum :=
   { id := "aitha2026_ocean_acc"
     source := ⟨"aitha-2026", "(8)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def ocean_acc : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "samudram"), ("root", "ocean"), ("class", "weak"), ("number", "sg"), ("case", "acc"), ("suffix", "ni"), ("suffixKind", "case"), ("prwd", "internal"), ("weight", "light"), ("n", "āni"), ("form", "long")] }
 
-def ocean_gen : LinguisticExample :=
+def ocean_gen : Datum :=
   { id := "aitha2026_ocean_gen"
     source := ⟨"aitha-2026", "(8)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def ocean_gen : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "samudram"), ("root", "ocean"), ("class", "weak"), ("number", "sg"), ("case", "gen"), ("suffix", "ø"), ("suffixKind", "case"), ("prwd", "none"), ("weight", "none"), ("n", "am"), ("form", "short")] }
 
-def ocean_dat : LinguisticExample :=
+def ocean_dat : Datum :=
   { id := "aitha2026_ocean_dat"
     source := ⟨"aitha-2026", "(8)"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def ocean_dat : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "samudram"), ("root", "ocean"), ("class", "weak"), ("number", "sg"), ("case", "dat"), ("suffix", "ki"), ("suffixKind", "case"), ("prwd", "internal"), ("weight", "light"), ("n", "āni"), ("form", "long")] }
 
-def ocean_p : LinguisticExample :=
+def ocean_p : Datum :=
   { id := "aitha2026_ocean_p"
     source := ⟨"aitha-2026", "(8)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def ocean_p : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "samudram"), ("root", "ocean"), ("class", "weak"), ("number", "sg"), ("case", "p"), ("suffix", "lō"), ("suffixKind", "postposition"), ("prwd", "external"), ("weight", "heavy"), ("n", "am"), ("form", "short")] }
 
-def ocean_1sg : LinguisticExample :=
+def ocean_1sg : Datum :=
   { id := "aitha2026_ocean_1sg"
     source := ⟨"aitha-2026", "(13)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def ocean_1sg : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "samudram"), ("root", "ocean"), ("class", "weak"), ("number", "sg"), ("case", "nom"), ("suffix", "ni"), ("suffixKind", "agreement"), ("prwd", "internal"), ("weight", "light"), ("n", "āni"), ("form", "long")] }
 
-def ocean_2sg : LinguisticExample :=
+def ocean_2sg : Datum :=
   { id := "aitha2026_ocean_2sg"
     source := ⟨"aitha-2026", "(14)"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def ocean_2sg : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "samudram"), ("root", "ocean"), ("class", "weak"), ("number", "sg"), ("case", "nom"), ("suffix", "vi"), ("suffixKind", "agreement"), ("prwd", "internal"), ("weight", "light"), ("n", "āni"), ("form", "long")] }
 
-def ocean_3sg : LinguisticExample :=
+def ocean_3sg : Datum :=
   { id := "aitha2026_ocean_3sg"
     source := ⟨"aitha-2026", "(15)"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def ocean_3sg : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "samudram"), ("root", "ocean"), ("class", "weak"), ("number", "sg"), ("case", "nom"), ("suffix", "ø"), ("suffixKind", "agreement"), ("prwd", "none"), ("weight", "none"), ("n", "am"), ("form", "short")] }
 
-def picture_1sg_apc : LinguisticExample :=
+def picture_1sg_apc : Datum :=
   { id := "aitha2026_picture_1sg_apc"
     source := ⟨"aitha-2026", "(16)"⟩
     reportedIn := none
@@ -485,7 +485,7 @@ def picture_1sg_apc : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "citram"), ("root", "picture"), ("class", "weak"), ("number", "sg"), ("case", "nom"), ("suffix", "ni"), ("suffixKind", "agreement"), ("prwd", "internal"), ("weight", "light"), ("n", "āni"), ("form", "long")] }
 
-def ocean_whole_acc : LinguisticExample :=
+def ocean_whole_acc : Datum :=
   { id := "aitha2026_ocean_whole_acc"
     source := ⟨"aitha-2026", "(17)"⟩
     reportedIn := none
@@ -498,7 +498,7 @@ def ocean_whole_acc : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "samudram"), ("root", "ocean"), ("class", "weak"), ("number", "sg"), ("case", "acc"), ("suffix", "antaṭi"), ("suffixKind", "quantifier"), ("prwd", "internal"), ("weight", "heavy"), ("n", "am"), ("form", "short")] }
 
-def ocean_about : LinguisticExample :=
+def ocean_about : Datum :=
   { id := "aitha2026_ocean_about"
     source := ⟨"aitha-2026", "(18)"⟩
     reportedIn := none
@@ -511,7 +511,7 @@ def ocean_about : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "samudram"), ("root", "ocean"), ("class", "weak"), ("number", "sg"), ("case", "p"), ("suffix", "gurinci"), ("suffixKind", "postposition"), ("prwd", "external"), ("weight", "light"), ("n", "am"), ("form", "short")] }
 
-def ocean_infront : LinguisticExample :=
+def ocean_infront : Datum :=
   { id := "aitha2026_ocean_infront"
     source := ⟨"aitha-2026", "(18)"⟩
     reportedIn := none
@@ -524,7 +524,7 @@ def ocean_infront : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "samudram"), ("root", "ocean"), ("class", "weak"), ("number", "sg"), ("case", "p"), ("suffix", "eduru"), ("suffixKind", "postposition"), ("prwd", "external"), ("weight", "light"), ("n", "am"), ("form", "short")] }
 
-def house_1sg : LinguisticExample :=
+def house_1sg : Datum :=
   { id := "aitha2026_house_1sg"
     source := ⟨"aitha-2026", "fn. 6"⟩
     reportedIn := none
@@ -537,7 +537,7 @@ def house_1sg : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "illu"), ("root", "house"), ("class", "strong"), ("number", "sg"), ("case", "nom"), ("suffix", "ni"), ("suffixKind", "agreement"), ("prwd", "internal"), ("weight", "light"), ("n", "lu")] }
 
-def ocean_pl_nom : LinguisticExample :=
+def ocean_pl_nom : Datum :=
   { id := "aitha2026_ocean_pl_nom"
     source := ⟨"aitha-2026", "(39)"⟩
     reportedIn := none
@@ -550,7 +550,7 @@ def ocean_pl_nom : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "samudram"), ("root", "ocean"), ("class", "weak"), ("number", "pl"), ("case", "nom"), ("suffix", "lu"), ("suffixKind", "number"), ("prwd", "internal"), ("weight", "light"), ("n", "ā")] }
 
-def ocean_pl_acc : LinguisticExample :=
+def ocean_pl_acc : Datum :=
   { id := "aitha2026_ocean_pl_acc"
     source := ⟨"aitha-2026", "(39)"⟩
     reportedIn := none
@@ -563,7 +563,7 @@ def ocean_pl_acc : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "samudram"), ("root", "ocean"), ("class", "weak"), ("number", "pl"), ("case", "acc"), ("suffix", "la"), ("suffixKind", "number"), ("prwd", "internal"), ("weight", "light"), ("n", "ā")] }
 
-def ocean_pl_gen : LinguisticExample :=
+def ocean_pl_gen : Datum :=
   { id := "aitha2026_ocean_pl_gen"
     source := ⟨"aitha-2026", "(39)"⟩
     reportedIn := none
@@ -576,7 +576,7 @@ def ocean_pl_gen : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "samudram"), ("root", "ocean"), ("class", "weak"), ("number", "pl"), ("case", "gen"), ("suffix", "la"), ("suffixKind", "number"), ("prwd", "internal"), ("weight", "light"), ("n", "ā")] }
 
-def ocean_pl_dat : LinguisticExample :=
+def ocean_pl_dat : Datum :=
   { id := "aitha2026_ocean_pl_dat"
     source := ⟨"aitha-2026", "(39)"⟩
     reportedIn := none
@@ -589,7 +589,7 @@ def ocean_pl_dat : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "samudram"), ("root", "ocean"), ("class", "weak"), ("number", "pl"), ("case", "dat"), ("suffix", "la"), ("suffixKind", "number"), ("prwd", "internal"), ("weight", "light"), ("n", "ā")] }
 
-def ocean_pl_p : LinguisticExample :=
+def ocean_pl_p : Datum :=
   { id := "aitha2026_ocean_pl_p"
     source := ⟨"aitha-2026", "(39)"⟩
     reportedIn := none
@@ -602,7 +602,7 @@ def ocean_pl_p : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "samudram"), ("root", "ocean"), ("class", "weak"), ("number", "pl"), ("case", "p"), ("suffix", "la"), ("suffixKind", "number"), ("prwd", "internal"), ("weight", "light"), ("n", "ā")] }
 
-def bet_nom : LinguisticExample :=
+def bet_nom : Datum :=
   { id := "aitha2026_bet_nom"
     source := ⟨"aitha-2026", "(6)"⟩
     reportedIn := none
@@ -615,7 +615,7 @@ def bet_nom : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "pandem"), ("root", "bet"), ("class", "weak"), ("number", "sg"), ("case", "nom"), ("suffix", "ø"), ("suffixKind", "case"), ("prwd", "none"), ("weight", "none"), ("n", "em"), ("form", "short")] }
 
-def bet_acc : LinguisticExample :=
+def bet_acc : Datum :=
   { id := "aitha2026_bet_acc"
     source := ⟨"aitha-2026", "(6)"⟩
     reportedIn := none
@@ -628,7 +628,7 @@ def bet_acc : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "pandem"), ("root", "bet"), ("class", "weak"), ("number", "sg"), ("case", "acc"), ("suffix", "ni"), ("suffixKind", "case"), ("prwd", "internal"), ("weight", "light"), ("n", "ǣni"), ("form", "long")] }
 
-def bet_gen : LinguisticExample :=
+def bet_gen : Datum :=
   { id := "aitha2026_bet_gen"
     source := ⟨"aitha-2026", "(6)"⟩
     reportedIn := none
@@ -641,7 +641,7 @@ def bet_gen : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "pandem"), ("root", "bet"), ("class", "weak"), ("number", "sg"), ("case", "gen"), ("suffix", "ø"), ("suffixKind", "case"), ("prwd", "none"), ("weight", "none"), ("n", "em"), ("form", "short")] }
 
-def bet_dat : LinguisticExample :=
+def bet_dat : Datum :=
   { id := "aitha2026_bet_dat"
     source := ⟨"aitha-2026", "(6)"⟩
     reportedIn := none
@@ -654,7 +654,7 @@ def bet_dat : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "pandem"), ("root", "bet"), ("class", "weak"), ("number", "sg"), ("case", "dat"), ("suffix", "ki"), ("suffixKind", "case"), ("prwd", "internal"), ("weight", "light"), ("n", "ǣni"), ("form", "long")] }
 
-def bet_p : LinguisticExample :=
+def bet_p : Datum :=
   { id := "aitha2026_bet_p"
     source := ⟨"aitha-2026", "(6)"⟩
     reportedIn := none
@@ -667,7 +667,7 @@ def bet_p : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "pandem"), ("root", "bet"), ("class", "weak"), ("number", "sg"), ("case", "p"), ("suffix", "lō"), ("suffixKind", "postposition"), ("prwd", "external"), ("weight", "heavy"), ("n", "em"), ("form", "short")] }
 
-def wife_nom : LinguisticExample :=
+def wife_nom : Datum :=
   { id := "aitha2026_wife_nom"
     source := ⟨"aitha-2026", "(7)"⟩
     reportedIn := none
@@ -680,7 +680,7 @@ def wife_nom : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "peḷḷām"), ("root", "wife"), ("class", "weak"), ("number", "sg"), ("case", "nom"), ("suffix", "ø"), ("suffixKind", "case"), ("prwd", "none"), ("weight", "none"), ("n", "ām"), ("form", "short")] }
 
-def wife_acc : LinguisticExample :=
+def wife_acc : Datum :=
   { id := "aitha2026_wife_acc"
     source := ⟨"aitha-2026", "(7)"⟩
     reportedIn := none
@@ -693,7 +693,7 @@ def wife_acc : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "peḷḷām"), ("root", "wife"), ("class", "weak"), ("number", "sg"), ("case", "acc"), ("suffix", "ni"), ("suffixKind", "case"), ("prwd", "internal"), ("weight", "light"), ("n", "āni"), ("form", "long")] }
 
-def wife_gen : LinguisticExample :=
+def wife_gen : Datum :=
   { id := "aitha2026_wife_gen"
     source := ⟨"aitha-2026", "(7)"⟩
     reportedIn := none
@@ -706,7 +706,7 @@ def wife_gen : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "peḷḷām"), ("root", "wife"), ("class", "weak"), ("number", "sg"), ("case", "gen"), ("suffix", "ø"), ("suffixKind", "case"), ("prwd", "none"), ("weight", "none"), ("n", "ām"), ("form", "short")] }
 
-def wife_dat : LinguisticExample :=
+def wife_dat : Datum :=
   { id := "aitha2026_wife_dat"
     source := ⟨"aitha-2026", "(7)"⟩
     reportedIn := none
@@ -719,7 +719,7 @@ def wife_dat : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "peḷḷām"), ("root", "wife"), ("class", "weak"), ("number", "sg"), ("case", "dat"), ("suffix", "ki"), ("suffixKind", "case"), ("prwd", "internal"), ("weight", "light"), ("n", "āni"), ("form", "long")] }
 
-def wife_p : LinguisticExample :=
+def wife_p : Datum :=
   { id := "aitha2026_wife_p"
     source := ⟨"aitha-2026", "(7)"⟩
     reportedIn := none
@@ -732,7 +732,7 @@ def wife_p : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "peḷḷām"), ("root", "wife"), ("class", "weak"), ("number", "sg"), ("case", "p"), ("suffix", "lō"), ("suffixKind", "postposition"), ("prwd", "external"), ("weight", "heavy"), ("n", "ām"), ("form", "short")] }
 
-def those_all_acc : LinguisticExample :=
+def those_all_acc : Datum :=
   { id := "aitha2026_those_all_acc"
     source := ⟨"aitha-2026", "(33)"⟩
     reportedIn := none
@@ -745,7 +745,7 @@ def those_all_acc : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "avi"), ("class", "strong"), ("number", "pl"), ("case", "acc"), ("stem", "obl"), ("intervener", "quantifier")] }
 
-def ocean_whole_acc_sentence : LinguisticExample :=
+def ocean_whole_acc_sentence : Datum :=
   { id := "aitha2026_ocean_whole_acc_sentence"
     source := ⟨"aitha-2026", "(34)"⟩
     reportedIn := none
@@ -758,7 +758,7 @@ def ocean_whole_acc_sentence : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "samudram"), ("root", "ocean"), ("class", "weak"), ("number", "sg"), ("case", "acc"), ("suffix", "antaṭi"), ("suffixKind", "quantifier"), ("prwd", "internal"), ("weight", "heavy"), ("n", "am"), ("form", "short"), ("intervener", "quantifier")] }
 
-def those_all_nom : LinguisticExample :=
+def those_all_nom : Datum :=
   { id := "aitha2026_those_all_nom"
     source := ⟨"aitha-2026", "(35)"⟩
     reportedIn := none
@@ -771,7 +771,7 @@ def those_all_nom : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "avi"), ("class", "strong"), ("number", "pl"), ("case", "nom"), ("stem", "nom"), ("intervener", "quantifier")] }
 
-def those_all_nom_obl : LinguisticExample :=
+def those_all_nom_obl : Datum :=
   { id := "aitha2026_those_all_nom_obl"
     source := ⟨"aitha-2026", "(36)"⟩
     reportedIn := none
@@ -784,6 +784,6 @@ def those_all_nom_obl : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "avi"), ("class", "strong"), ("number", "pl"), ("case", "nom"), ("stem", "obl"), ("intervener", "quantifier")] }
 
-def all : List LinguisticExample := [house_nom, house_acc, house_gen, house_dat, house_p, town_nom, town_dat, husband_nom, husband_dat, bow_nom, bow_dat, eye_nom, eye_dat, tooth_nom, tooth_dat, nest_nom, nest_dat, stream_nom, stream_dat, mouth_nom, mouth_dat, plough_nom, plough_dat, ghee_nom, ghee_dat, well_nom, well_dat, ocean_nom, ocean_acc, ocean_gen, ocean_dat, ocean_p, ocean_1sg, ocean_2sg, ocean_3sg, picture_1sg_apc, ocean_whole_acc, ocean_about, ocean_infront, house_1sg, ocean_pl_nom, ocean_pl_acc, ocean_pl_gen, ocean_pl_dat, ocean_pl_p, bet_nom, bet_acc, bet_gen, bet_dat, bet_p, wife_nom, wife_acc, wife_gen, wife_dat, wife_p, those_all_acc, ocean_whole_acc_sentence, those_all_nom, those_all_nom_obl]
+def all : List Datum := [house_nom, house_acc, house_gen, house_dat, house_p, town_nom, town_dat, husband_nom, husband_dat, bow_nom, bow_dat, eye_nom, eye_dat, tooth_nom, tooth_dat, nest_nom, nest_dat, stream_nom, stream_dat, mouth_nom, mouth_dat, plough_nom, plough_dat, ghee_nom, ghee_dat, well_nom, well_dat, ocean_nom, ocean_acc, ocean_gen, ocean_dat, ocean_p, ocean_1sg, ocean_2sg, ocean_3sg, picture_1sg_apc, ocean_whole_acc, ocean_about, ocean_infront, house_1sg, ocean_pl_nom, ocean_pl_acc, ocean_pl_gen, ocean_pl_dat, ocean_pl_p, bet_nom, bet_acc, bet_gen, bet_dat, bet_p, wife_nom, wife_acc, wife_gen, wife_dat, wife_p, those_all_acc, ocean_whole_acc_sentence, those_all_nom, those_all_nom_obl]
 
 end Aitha2026.Examples

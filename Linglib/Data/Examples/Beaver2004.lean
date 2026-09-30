@@ -17,7 +17,7 @@ namespace Beaver2004.Examples
 
 open Data.Examples
 
-def ex_1 : LinguisticExample :=
+def ex_1 : Datum :=
   { id := "beaver2004_1"
     source := ⟨"beaver-2004", "(1)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_1 : LinguisticExample :=
     readings := [("In (1c), she = Jane and her = Mary", .acceptable)]
     paperFeatures := [("transition", "continue")] }
 
-def ex_2 : LinguisticExample :=
+def ex_2 : Datum :=
   { id := "beaver2004_2"
     source := ⟨"beaver-2004", "(2)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_2 : LinguisticExample :=
     readings := [("He = Jim and the two Marys corefer", .marginal)]
     paperFeatures := [("phenomenon", "rule 1 violation")] }
 
-def ex_5 : LinguisticExample :=
+def ex_5 : Datum :=
   { id := "beaver2004_5"
     source := ⟨"beaver-2004", "(5)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_5 : LinguisticExample :=
     readings := [("She = Jane, her = Mary; the woman = Jane", .acceptable)]
     paperFeatures := [("phenomenon", "definite description resolution")] }
 
-def ex_8 : LinguisticExample :=
+def ex_8 : Datum :=
   { id := "beaver2004_8"
     source := ⟨"beaver-2004", "(8)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_8 : LinguisticExample :=
     readings := [("She = Jane, the young woman = Mary", .acceptable)]
     paperFeatures := [("transition", "continue")] }
 
-def ex_9 : LinguisticExample :=
+def ex_9 : Datum :=
   { id := "beaver2004_9"
     source := ⟨"beaver-2004", "(9)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_9 : LinguisticExample :=
     readings := [("She = Jane, the topic, not the previous subject Mary", .acceptable)]
     paperFeatures := [("transition", "continue")] }
 
-def ex_12 : LinguisticExample :=
+def ex_12 : Datum :=
   { id := "beaver2004_12"
     source := ⟨"beaver-2004", "(12)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_12 : LinguisticExample :=
     readings := [("her = Jane", .acceptable)]
     paperFeatures := [("transition", "retain")] }
 
-def ex_14 : LinguisticExample :=
+def ex_14 : Datum :=
   { id := "beaver2004_14"
     source := ⟨"beaver-2004", "(14)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_14 : LinguisticExample :=
     readings := [("She = Mary, her = Jane", .acceptable)]
     paperFeatures := [("transition", "smooth shift")] }
 
-def ex_16 : LinguisticExample :=
+def ex_16 : Datum :=
   { id := "beaver2004_16"
     source := ⟨"beaver-2004", "(16)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_16 : LinguisticExample :=
     readings := [("it = the present", .acceptable)]
     paperFeatures := [("transition", "rough shift")] }
 
-def ex_23 : LinguisticExample :=
+def ex_23 : Datum :=
   { id := "beaver2004_23"
     source := ⟨"beaver-2004", "(23)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_23 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "rule 1 violation")] }
 
-def ex_24 : LinguisticExample :=
+def ex_24 : Datum :=
   { id := "beaver2004_24"
     source := ⟨"beaver-2004", "(24)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_24 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "text coherence")] }
 
-def ex_25 : LinguisticExample :=
+def ex_25 : Datum :=
   { id := "beaver2004_25"
     source := ⟨"beaver-2004", "(25)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_25 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "text coherence")] }
 
-def ex_28 : LinguisticExample :=
+def ex_28 : Datum :=
   { id := "beaver2004_28"
     source := ⟨"beaver-2004", "(28)"⟩
     reportedIn := none
@@ -173,6 +173,6 @@ def ex_28 : LinguisticExample :=
     readings := [("Stressed HE = Jim (switch reference)", .acceptable)]
     paperFeatures := [("phenomenon", "stressed pronoun")] }
 
-def all : List LinguisticExample := [ex_1, ex_2, ex_5, ex_8, ex_9, ex_12, ex_14, ex_16, ex_23, ex_24, ex_25, ex_28]
+def all : List Datum := [ex_1, ex_2, ex_5, ex_8, ex_9, ex_12, ex_14, ex_16, ex_23, ex_24, ex_25, ex_28]
 
 end Beaver2004.Examples

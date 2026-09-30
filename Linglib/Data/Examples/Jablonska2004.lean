@@ -17,7 +17,7 @@ namespace Jablonska2004.Examples
 
 open Data.Examples
 
-def ex_3a : LinguisticExample :=
+def ex_3a : Datum :=
   { id := "jablonska2004_3a"
     source := ⟨"jablonska-2004", "(3a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_3a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("verbalizer", "low -ej-"), ("layers", "po- in Asp1")] }
 
-def ex_3b : LinguisticExample :=
+def ex_3b : Datum :=
   { id := "jablonska2004_3b"
     source := ⟨"jablonska-2004", "(3b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_3b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("verbalizer", "low -ej-"), ("layers", "po- in Asp1")] }
 
-def ex_3c : LinguisticExample :=
+def ex_3c : Datum :=
   { id := "jablonska2004_3c"
     source := ⟨"jablonska-2004", "(3c)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_3c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("verbalizer", "low -ej-"), ("layers", "po- in Asp1")] }
 
-def ex_3d : LinguisticExample :=
+def ex_3d : Datum :=
   { id := "jablonska2004_3d"
     source := ⟨"jablonska-2004", "(3d)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_3d : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("verbalizer", "low -ej-"), ("layers", "po- in Asp1")] }
 
-def ex_4a : LinguisticExample :=
+def ex_4a : Datum :=
   { id := "jablonska2004_4a"
     source := ⟨"jablonska-2004", "(4a)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_4a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("claim", "degree achievements pass both telicity tests")] }
 
-def ex_4b : LinguisticExample :=
+def ex_4b : Datum :=
   { id := "jablonska2004_4b"
     source := ⟨"jablonska-2004", "(4b)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_4b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("claim", "degree achievements pass both telicity tests")] }
 
-def ex_8a : LinguisticExample :=
+def ex_8a : Datum :=
   { id := "jablonska2004_8a"
     source := ⟨"jablonska-2004", "(8a)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_8a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("scale", "open")] }
 
-def ex_9a : LinguisticExample :=
+def ex_9a : Datum :=
   { id := "jablonska2004_9a"
     source := ⟨"jablonska-2004", "(9a)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_9a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("scale", "closed")] }
 
-def ex_10a_po : LinguisticExample :=
+def ex_10a_po : Datum :=
   { id := "jablonska2004_10a_po"
     source := ⟨"jablonska-2004", "(10a)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_10a_po : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("verbalizer", "low -ej-"), ("layers", "po- in Asp1"), ("reading", "considerable change")] }
 
-def ex_10a_z : LinguisticExample :=
+def ex_10a_z : Datum :=
   { id := "jablonska2004_10a_z"
     source := ⟨"jablonska-2004", "(10a)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_10a_z : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("verbalizer", "low -ej-"), ("layers", "purely perfectivizing prefix in Asp2")] }
 
-def ex_10b_po : LinguisticExample :=
+def ex_10b_po : Datum :=
   { id := "jablonska2004_10b_po"
     source := ⟨"jablonska-2004", "(10b)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_10b_po : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("verbalizer", "low -ej-"), ("layers", "po- in Asp1"), ("reading", "considerable change")] }
 
-def ex_10b_z : LinguisticExample :=
+def ex_10b_z : Datum :=
   { id := "jablonska2004_10b_z"
     source := ⟨"jablonska-2004", "(10b)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_10b_z : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("verbalizer", "low -ej-"), ("layers", "purely perfectivizing prefix in Asp2")] }
 
-def ex_10c_po : LinguisticExample :=
+def ex_10c_po : Datum :=
   { id := "jablonska2004_10c_po"
     source := ⟨"jablonska-2004", "(10c)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_10c_po : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("verbalizer", "low -ej-"), ("layers", "po- in Asp1"), ("reading", "considerable change")] }
 
-def ex_10c_z : LinguisticExample :=
+def ex_10c_z : Datum :=
   { id := "jablonska2004_10c_z"
     source := ⟨"jablonska-2004", "(10c)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_10c_z : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("verbalizer", "low -ej-"), ("layers", "purely perfectivizing prefix in Asp2")] }
 
-def ex_11a : LinguisticExample :=
+def ex_11a : Datum :=
   { id := "jablonska2004_11a"
     source := ⟨"jablonska-2004", "(11a)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_11a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("reading", "considerable change"), ("claim", "upward entailing to (11b)")] }
 
-def ex_11b : LinguisticExample :=
+def ex_11b : Datum :=
   { id := "jablonska2004_11b"
     source := ⟨"jablonska-2004", "(11b)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_11b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("reading", "considerable change")] }
 
-def ex_12a : LinguisticExample :=
+def ex_12a : Datum :=
   { id := "jablonska2004_12a"
     source := ⟨"jablonska-2004", "(12a)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex_12a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("reading", "delimitative"), ("claim", "entails (12b) only by varying the vague 'while'")] }
 
-def ex_12b : LinguisticExample :=
+def ex_12b : Datum :=
   { id := "jablonska2004_12b"
     source := ⟨"jablonska-2004", "(12b)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex_12b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("reading", "delimitative")] }
 
-def ex_14a : LinguisticExample :=
+def ex_14a : Datum :=
   { id := "jablonska2004_14a"
     source := ⟨"jablonska-2004", "(14a)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex_14a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("verbalizer", "semelfactive"), ("claim", "no process part")] }
 
-def ex_14b : LinguisticExample :=
+def ex_14b : Datum :=
   { id := "jablonska2004_14b"
     source := ⟨"jablonska-2004", "(14b)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex_14b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("verbalizer", "low -ej-"), ("claim", "no process part")] }
 
-def ex_14c : LinguisticExample :=
+def ex_14c : Datum :=
   { id := "jablonska2004_14c"
     source := ⟨"jablonska-2004", "(14c)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex_14c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("verbalizer", "stative"), ("claim", "no change of state")] }
 
-def ex_14d : LinguisticExample :=
+def ex_14d : Datum :=
   { id := "jablonska2004_14d"
     source := ⟨"jablonska-2004", "(14d)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex_14d : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("verbalizer", "high -aj-"), ("claim", "no change of state")] }
 
-def ex_17 : LinguisticExample :=
+def ex_17 : Datum :=
   { id := "jablonska2004_17"
     source := ⟨"jablonska-2004", "(17)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex_17 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("claim", "an overt degree quantizes")] }
 
-def ex_23a : LinguisticExample :=
+def ex_23a : Datum :=
   { id := "jablonska2004_23a"
     source := ⟨"jablonska-2004", "(23a)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex_23a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("verbalizer", "low -ej-"), ("reading", "distributive"), ("layers", "po- in Asp1")] }
 
-def ex_23b : LinguisticExample :=
+def ex_23b : Datum :=
   { id := "jablonska2004_23b"
     source := ⟨"jablonska-2004", "(23b)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex_23b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("verbalizer", "low -ej-"), ("reading", "distributive")] }
 
-def ex_24a : LinguisticExample :=
+def ex_24a : Datum :=
   { id := "jablonska2004_24a"
     source := ⟨"jablonska-2004", "(24a)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex_24a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("verbalizer", "high -aj-"), ("layers", "lexical prefix, Secondary Imperfective, po- in Asp3"), ("reading", "distributive")] }
 
-def ex_24b : LinguisticExample :=
+def ex_24b : Datum :=
   { id := "jablonska2004_24b"
     source := ⟨"jablonska-2004", "(24b)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def ex_24b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("verbalizer", "high -aj-"), ("layers", "lexical prefix, po-"), ("claim", "po- selects a [-Perf] predicate (25)")] }
 
-def ex_27a : LinguisticExample :=
+def ex_27a : Datum :=
   { id := "jablonska2004_27a"
     source := ⟨"jablonska-2004", "(27a)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def ex_27a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("verbalizer", "high processual"), ("reading", "delimitative"), ("layers", "po- in Asp1")] }
 
-def ex_27b : LinguisticExample :=
+def ex_27b : Datum :=
   { id := "jablonska2004_27b"
     source := ⟨"jablonska-2004", "(27b)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def ex_27b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("verbalizer", "high processual"), ("reading", "delimitative"), ("layers", "po- in Asp1")] }
 
-def ex_27c : LinguisticExample :=
+def ex_27c : Datum :=
   { id := "jablonska2004_27c"
     source := ⟨"jablonska-2004", "(27c)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def ex_27c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("verbalizer", "high processual"), ("reading", "delimitative"), ("layers", "po- in Asp1")] }
 
-def ex_27d : LinguisticExample :=
+def ex_27d : Datum :=
   { id := "jablonska2004_27d"
     source := ⟨"jablonska-2004", "(27d)"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def ex_27d : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("verbalizer", "high processual"), ("reading", "delimitative"), ("layers", "po- in Asp1")] }
 
-def ex_28a : LinguisticExample :=
+def ex_28a : Datum :=
   { id := "jablonska2004_28a"
     source := ⟨"jablonska-2004", "(28a)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def ex_28a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("verbalizer", "high -aj-"), ("reading", "distributive or delimitative")] }
 
-def ex_28b : LinguisticExample :=
+def ex_28b : Datum :=
   { id := "jablonska2004_28b"
     source := ⟨"jablonska-2004", "(28b)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def ex_28b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("layers", "lexical prefix, Secondary Imperfective, po- in Asp3"), ("reading", "distributive or delimitative")] }
 
-def ex_28c : LinguisticExample :=
+def ex_28c : Datum :=
   { id := "jablonska2004_28c"
     source := ⟨"jablonska-2004", "(28c)"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def ex_28c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("reading", "delimitative only: the external argument is outside the scope of po-")] }
 
-def ex_28d : LinguisticExample :=
+def ex_28d : Datum :=
   { id := "jablonska2004_28d"
     source := ⟨"jablonska-2004", "(28d)"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def ex_28d : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("reading", "distributive or delimitative")] }
 
-def ex_28e : LinguisticExample :=
+def ex_28e : Datum :=
   { id := "jablonska2004_28e"
     source := ⟨"jablonska-2004", "(28e)"⟩
     reportedIn := none
@@ -485,7 +485,7 @@ def ex_28e : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("reading", "distributive with singular subject and object")] }
 
-def ex_30 : LinguisticExample :=
+def ex_30 : Datum :=
   { id := "jablonska2004_30"
     source := ⟨"jablonska-2004", "(30)"⟩
     reportedIn := none
@@ -498,7 +498,7 @@ def ex_30 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3"), ("layers", "lexical prefix valuing Asp1: RT after ET")] }
 
-def ex_31a : LinguisticExample :=
+def ex_31a : Datum :=
   { id := "jablonska2004_31a"
     source := ⟨"jablonska-2004", "(31a)"⟩
     reportedIn := none
@@ -511,7 +511,7 @@ def ex_31a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3"), ("layers", "lexical prefix, Secondary Imperfective"), ("reading", "progressive: RT within ET")] }
 
-def ex_32a : LinguisticExample :=
+def ex_32a : Datum :=
   { id := "jablonska2004_32a"
     source := ⟨"jablonska-2004", "(32a)"⟩
     reportedIn := none
@@ -524,7 +524,7 @@ def ex_32a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3"), ("verbalizer", "high -i-"), ("layers", "Secondary Imperfective on a bare stem"), ("claim", "SI needs a delimited interval (66)")] }
 
-def ex_32b : LinguisticExample :=
+def ex_32b : Datum :=
   { id := "jablonska2004_32b"
     source := ⟨"jablonska-2004", "(32b)"⟩
     reportedIn := none
@@ -537,7 +537,7 @@ def ex_32b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3"), ("layers", "Secondary Imperfective on a bare stem")] }
 
-def ex_33a : LinguisticExample :=
+def ex_33a : Datum :=
   { id := "jablonska2004_33a"
     source := ⟨"jablonska-2004", "(33a)"⟩
     reportedIn := none
@@ -550,7 +550,7 @@ def ex_33a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3"), ("claim", "po- above SI yields a perfective: no phasal complement")] }
 
-def ex_33b : LinguisticExample :=
+def ex_33b : Datum :=
   { id := "jablonska2004_33b"
     source := ⟨"jablonska-2004", "(33b)"⟩
     reportedIn := none
@@ -563,7 +563,7 @@ def ex_33b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3"), ("claim", "no present-tense interpretation")] }
 
-def ex_34a : LinguisticExample :=
+def ex_34a : Datum :=
   { id := "jablonska2004_34a"
     source := ⟨"jablonska-2004", "(34a)"⟩
     reportedIn := none
@@ -576,7 +576,7 @@ def ex_34a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3"), ("layers", "lexical prefix, Secondary Imperfective, po- in Asp3"), ("reading", "delimitative")] }
 
-def ex_34b : LinguisticExample :=
+def ex_34b : Datum :=
   { id := "jablonska2004_34b"
     source := ⟨"jablonska-2004", "(34b)"⟩
     reportedIn := none
@@ -589,7 +589,7 @@ def ex_34b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3"), ("layers", "lexical prefix, Secondary Imperfective, po- in Asp3"), ("reading", "distributive")] }
 
-def ex_39a : LinguisticExample :=
+def ex_39a : Datum :=
   { id := "jablonska2004_39a"
     source := ⟨"jablonska-2004", "(39a)"⟩
     reportedIn := none
@@ -602,7 +602,7 @@ def ex_39a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3"), ("verbalizer", "low inchoative -n-"), ("reading", "distributive"), ("layers", "po- in Asp1")] }
 
-def ex_39b : LinguisticExample :=
+def ex_39b : Datum :=
   { id := "jablonska2004_39b"
     source := ⟨"jablonska-2004", "(39b)"⟩
     reportedIn := none
@@ -615,7 +615,7 @@ def ex_39b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3"), ("verbalizer", "low inchoative -n-"), ("reading", "distributive"), ("layers", "po- in Asp1")] }
 
-def ex_39c : LinguisticExample :=
+def ex_39c : Datum :=
   { id := "jablonska2004_39c"
     source := ⟨"jablonska-2004", "(39c)"⟩
     reportedIn := none
@@ -628,7 +628,7 @@ def ex_39c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3"), ("verbalizer", "low inchoative -n-"), ("reading", "distributive"), ("layers", "po- in Asp1")] }
 
-def ex_39d : LinguisticExample :=
+def ex_39d : Datum :=
   { id := "jablonska2004_39d"
     source := ⟨"jablonska-2004", "(39d)"⟩
     reportedIn := none
@@ -641,7 +641,7 @@ def ex_39d : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3"), ("verbalizer", "low inchoative -n-"), ("reading", "distributive"), ("layers", "po- in Asp1")] }
 
-def ex_42a : LinguisticExample :=
+def ex_42a : Datum :=
   { id := "jablonska2004_42a"
     source := ⟨"jablonska-2004", "(42)"⟩
     reportedIn := none
@@ -654,7 +654,7 @@ def ex_42a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3"), ("layers", "po- over a lexical prefix without SI"), ("claim", "a single Agree with Asp1")] }
 
-def ex_42b : LinguisticExample :=
+def ex_42b : Datum :=
   { id := "jablonska2004_42b"
     source := ⟨"jablonska-2004", "(42)"⟩
     reportedIn := none
@@ -667,7 +667,7 @@ def ex_42b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3"), ("layers", "po- over a lexical prefix without SI"), ("claim", "a single Agree with Asp1")] }
 
-def ex_42c : LinguisticExample :=
+def ex_42c : Datum :=
   { id := "jablonska2004_42c"
     source := ⟨"jablonska-2004", "(42)"⟩
     reportedIn := none
@@ -680,7 +680,7 @@ def ex_42c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3"), ("layers", "po- over a lexical prefix without SI"), ("claim", "a single Agree with Asp1")] }
 
-def ex_43a : LinguisticExample :=
+def ex_43a : Datum :=
   { id := "jablonska2004_43a"
     source := ⟨"jablonska-2004", "(43)"⟩
     reportedIn := none
@@ -693,7 +693,7 @@ def ex_43a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3"), ("layers", "lexical prefix, Secondary Imperfective, po- in Asp3")] }
 
-def ex_43b : LinguisticExample :=
+def ex_43b : Datum :=
   { id := "jablonska2004_43b"
     source := ⟨"jablonska-2004", "(43)"⟩
     reportedIn := none
@@ -706,7 +706,7 @@ def ex_43b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3"), ("layers", "lexical prefix, Secondary Imperfective, po- in Asp3")] }
 
-def ex_44 : LinguisticExample :=
+def ex_44 : Datum :=
   { id := "jablonska2004_44"
     source := ⟨"jablonska-2004", "(44)"⟩
     reportedIn := none
@@ -719,7 +719,7 @@ def ex_44 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3"), ("claim", "the SI morpheme sits below Voice: a verbal passive")] }
 
-def ex_45a : LinguisticExample :=
+def ex_45a : Datum :=
   { id := "jablonska2004_45a"
     source := ⟨"jablonska-2004", "(45)"⟩
     reportedIn := none
@@ -732,7 +732,7 @@ def ex_45a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3.1"), ("verbalizer", "semelfactive"), ("layers", "po- in Asp1"), ("claim", "no continuum to measure")] }
 
-def ex_45b : LinguisticExample :=
+def ex_45b : Datum :=
   { id := "jablonska2004_45b"
     source := ⟨"jablonska-2004", "(45)"⟩
     reportedIn := none
@@ -745,7 +745,7 @@ def ex_45b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3.1"), ("verbalizer", "semelfactive"), ("layers", "po- in Asp1"), ("claim", "no continuum to measure")] }
 
-def ex_45c : LinguisticExample :=
+def ex_45c : Datum :=
   { id := "jablonska2004_45c"
     source := ⟨"jablonska-2004", "(45)"⟩
     reportedIn := none
@@ -758,7 +758,7 @@ def ex_45c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3.1"), ("verbalizer", "semelfactive"), ("layers", "po- in Asp1"), ("claim", "no continuum to measure")] }
 
-def ex_46a : LinguisticExample :=
+def ex_46a : Datum :=
   { id := "jablonska2004_46a"
     source := ⟨"jablonska-2004", "(46a)"⟩
     reportedIn := none
@@ -771,7 +771,7 @@ def ex_46a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3.1"), ("claim", "semelfactives are perfective: no phasal complement")] }
 
-def ex_46b : LinguisticExample :=
+def ex_46b : Datum :=
   { id := "jablonska2004_46b"
     source := ⟨"jablonska-2004", "(46b)"⟩
     reportedIn := none
@@ -784,7 +784,7 @@ def ex_46b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3.1"), ("claim", "semelfactives are perfective: no present reading")] }
 
-def ex_48 : LinguisticExample :=
+def ex_48 : Datum :=
   { id := "jablonska2004_48"
     source := ⟨"jablonska-2004", "(48)"⟩
     reportedIn := none
@@ -797,7 +797,7 @@ def ex_48 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3.1"), ("verbalizer", "semelfactive"), ("layers", "Secondary Imperfective"), ("claim", "no interval for SI")] }
 
-def ex_50a : LinguisticExample :=
+def ex_50a : Datum :=
   { id := "jablonska2004_50a"
     source := ⟨"jablonska-2004", "(50a)"⟩
     reportedIn := none
@@ -810,7 +810,7 @@ def ex_50a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.4"), ("verbalizer", "directed motion"), ("reading", "centrifugal"), ("layers", "po- in Asp1")] }
 
-def ex_50b : LinguisticExample :=
+def ex_50b : Datum :=
   { id := "jablonska2004_50b"
     source := ⟨"jablonska-2004", "(50b)"⟩
     reportedIn := none
@@ -823,7 +823,7 @@ def ex_50b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.4"), ("verbalizer", "directed motion"), ("reading", "centrifugal"), ("layers", "po- in Asp1")] }
 
-def ex_50c : LinguisticExample :=
+def ex_50c : Datum :=
   { id := "jablonska2004_50c"
     source := ⟨"jablonska-2004", "(50c)"⟩
     reportedIn := none
@@ -836,7 +836,7 @@ def ex_50c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.4"), ("verbalizer", "directed motion"), ("reading", "centrifugal"), ("layers", "po- in Asp1")] }
 
-def ex_50d : LinguisticExample :=
+def ex_50d : Datum :=
   { id := "jablonska2004_50d"
     source := ⟨"jablonska-2004", "(50d)"⟩
     reportedIn := none
@@ -849,7 +849,7 @@ def ex_50d : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.4"), ("verbalizer", "directed motion"), ("reading", "centrifugal"), ("layers", "po- in Asp1")] }
 
-def ex_51a : LinguisticExample :=
+def ex_51a : Datum :=
   { id := "jablonska2004_51a"
     source := ⟨"jablonska-2004", "(51a)"⟩
     reportedIn := none
@@ -862,7 +862,7 @@ def ex_51a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.4"), ("verbalizer", "non-directed motion"), ("reading", "delimitative"), ("layers", "po- in Asp1")] }
 
-def ex_51b : LinguisticExample :=
+def ex_51b : Datum :=
   { id := "jablonska2004_51b"
     source := ⟨"jablonska-2004", "(51b)"⟩
     reportedIn := none
@@ -875,7 +875,7 @@ def ex_51b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.4"), ("verbalizer", "non-directed motion"), ("reading", "delimitative"), ("layers", "po- in Asp1")] }
 
-def ex_51c : LinguisticExample :=
+def ex_51c : Datum :=
   { id := "jablonska2004_51c"
     source := ⟨"jablonska-2004", "(51c)"⟩
     reportedIn := none
@@ -888,7 +888,7 @@ def ex_51c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.4"), ("verbalizer", "non-directed motion"), ("reading", "delimitative"), ("layers", "po- in Asp1")] }
 
-def ex_51d : LinguisticExample :=
+def ex_51d : Datum :=
   { id := "jablonska2004_51d"
     source := ⟨"jablonska-2004", "(51d)"⟩
     reportedIn := none
@@ -901,7 +901,7 @@ def ex_51d : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.4"), ("verbalizer", "non-directed motion"), ("reading", "delimitative"), ("layers", "po- in Asp1")] }
 
-def ex_52 : LinguisticExample :=
+def ex_52 : Datum :=
   { id := "jablonska2004_52"
     source := ⟨"jablonska-2004", "(52)"⟩
     reportedIn := none
@@ -914,7 +914,7 @@ def ex_52 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.4"), ("claim", "impersonal passive: unergative")] }
 
-def ex_53 : LinguisticExample :=
+def ex_53 : Datum :=
   { id := "jablonska2004_53"
     source := ⟨"jablonska-2004", "(53)"⟩
     reportedIn := none
@@ -927,7 +927,7 @@ def ex_53 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.4"), ("verbalizer", "low -ej-"), ("reading", "inceptive of a state, not of a becoming")] }
 
-def ex_54a : LinguisticExample :=
+def ex_54a : Datum :=
   { id := "jablonska2004_54a"
     source := ⟨"jablonska-2004", "(54a)"⟩
     reportedIn := none
@@ -940,7 +940,7 @@ def ex_54a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.4"), ("verbalizer", "stative"), ("reading", "inceptive"), ("layers", "po- in Asp1")] }
 
-def ex_54b : LinguisticExample :=
+def ex_54b : Datum :=
   { id := "jablonska2004_54b"
     source := ⟨"jablonska-2004", "(54b)"⟩
     reportedIn := none
@@ -953,7 +953,7 @@ def ex_54b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.4"), ("verbalizer", "stative"), ("reading", "inceptive")] }
 
-def fn21 : LinguisticExample :=
+def fn21 : Datum :=
   { id := "jablonska2004_fn21"
     source := ⟨"jablonska-2004", "fn. 21"⟩
     reportedIn := none
@@ -966,7 +966,7 @@ def fn21 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.4"), ("verbalizer", "stative"), ("reading", "delimitative"), ("layers", "po- in Asp1")] }
 
-def ex_56a : LinguisticExample :=
+def ex_56a : Datum :=
   { id := "jablonska2004_56a"
     source := ⟨"jablonska-2004", "(56a)"⟩
     reportedIn := none
@@ -979,7 +979,7 @@ def ex_56a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("layers", "po- in Asp1, Secondary Imperfective"), ("reading", "attenuative-frequentative")] }
 
-def ex_56b : LinguisticExample :=
+def ex_56b : Datum :=
   { id := "jablonska2004_56b"
     source := ⟨"jablonska-2004", "(56b)"⟩
     reportedIn := none
@@ -992,7 +992,7 @@ def ex_56b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("layers", "po- in Asp1, Secondary Imperfective"), ("reading", "attenuative-frequentative")] }
 
-def ex_56c : LinguisticExample :=
+def ex_56c : Datum :=
   { id := "jablonska2004_56c"
     source := ⟨"jablonska-2004", "(56c)"⟩
     reportedIn := none
@@ -1005,7 +1005,7 @@ def ex_56c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("layers", "po- in Asp1, Secondary Imperfective")] }
 
-def ex_56d : LinguisticExample :=
+def ex_56d : Datum :=
   { id := "jablonska2004_56d"
     source := ⟨"jablonska-2004", "(56d)"⟩
     reportedIn := none
@@ -1018,7 +1018,7 @@ def ex_56d : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("layers", "po- in Asp1, Secondary Imperfective"), ("reading", "attenuative-frequentative")] }
 
-def ex_57a : LinguisticExample :=
+def ex_57a : Datum :=
   { id := "jablonska2004_57a"
     source := ⟨"jablonska-2004", "(57a)"⟩
     reportedIn := none
@@ -1031,7 +1031,7 @@ def ex_57a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("verbalizer", "-a-"), ("layers", "po- in Asp1, Secondary Imperfective"), ("reading", "attenuative-frequentative")] }
 
-def ex_57b : LinguisticExample :=
+def ex_57b : Datum :=
   { id := "jablonska2004_57b"
     source := ⟨"jablonska-2004", "(57b)"⟩
     reportedIn := none
@@ -1044,7 +1044,7 @@ def ex_57b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("verbalizer", "-aj-"), ("layers", "po- in Asp1, Secondary Imperfective"), ("reading", "attenuative-frequentative")] }
 
-def ex_57c : LinguisticExample :=
+def ex_57c : Datum :=
   { id := "jablonska2004_57c"
     source := ⟨"jablonska-2004", "(57c)"⟩
     reportedIn := none
@@ -1057,7 +1057,7 @@ def ex_57c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("verbalizer", "-e-"), ("layers", "po- in Asp1, Secondary Imperfective"), ("reading", "attenuative-frequentative")] }
 
-def ex_57d : LinguisticExample :=
+def ex_57d : Datum :=
   { id := "jablonska2004_57d"
     source := ⟨"jablonska-2004", "(57d)"⟩
     reportedIn := none
@@ -1070,7 +1070,7 @@ def ex_57d : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("verbalizer", "-a-"), ("layers", "po- in Asp1, Secondary Imperfective"), ("reading", "attenuative-frequentative")] }
 
-def ex_58a : LinguisticExample :=
+def ex_58a : Datum :=
   { id := "jablonska2004_58a"
     source := ⟨"jablonska-2004", "(58a)"⟩
     reportedIn := none
@@ -1083,7 +1083,7 @@ def ex_58a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("verbalizer", "-i-"), ("layers", "po- in Asp1, Secondary Imperfective")] }
 
-def ex_58b : LinguisticExample :=
+def ex_58b : Datum :=
   { id := "jablonska2004_58b"
     source := ⟨"jablonska-2004", "(58b)"⟩
     reportedIn := none
@@ -1096,7 +1096,7 @@ def ex_58b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("verbalizer", "-i-"), ("layers", "po- in Asp1, Secondary Imperfective")] }
 
-def ex_58c : LinguisticExample :=
+def ex_58c : Datum :=
   { id := "jablonska2004_58c"
     source := ⟨"jablonska-2004", "(58c)"⟩
     reportedIn := none
@@ -1109,7 +1109,7 @@ def ex_58c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("verbalizer", "-aj-"), ("layers", "po- in Asp1, Secondary Imperfective")] }
 
-def ex_59a : LinguisticExample :=
+def ex_59a : Datum :=
   { id := "jablonska2004_59a"
     source := ⟨"jablonska-2004", "(59a)"⟩
     reportedIn := none
@@ -1122,7 +1122,7 @@ def ex_59a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("verbalizer", "low -ej-"), ("layers", "po- in Asp1, Secondary Imperfective"), ("claim", "low verbalizers denote no interval")] }
 
-def ex_60_bare : LinguisticExample :=
+def ex_60_bare : Datum :=
   { id := "jablonska2004_60_bare"
     source := ⟨"jablonska-2004", "(60)"⟩
     reportedIn := none
@@ -1135,7 +1135,7 @@ def ex_60_bare : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("layers", "Secondary Imperfective"), ("claim", "exceptional: SI without a prefix, fn. 23")] }
 
-def ex_60_po : LinguisticExample :=
+def ex_60_po : Datum :=
   { id := "jablonska2004_60_po"
     source := ⟨"jablonska-2004", "(60)"⟩
     reportedIn := none
@@ -1148,7 +1148,7 @@ def ex_60_po : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("layers", "po- in Asp1, Secondary Imperfective"), ("claim", "the attenuative impression comes from delimitative po- under SI (64)")] }
 
-def ex_61a : LinguisticExample :=
+def ex_61a : Datum :=
   { id := "jablonska2004_61a"
     source := ⟨"jablonska-2004", "(61a)"⟩
     reportedIn := none
@@ -1161,7 +1161,7 @@ def ex_61a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("layers", "po- in Asp1, Secondary Imperfective, po- in Asp3"), ("claim", "the iterated delimited events are not S-summable (36)")] }
 
-def ex_61b : LinguisticExample :=
+def ex_61b : Datum :=
   { id := "jablonska2004_61b"
     source := ⟨"jablonska-2004", "(61b)"⟩
     reportedIn := none
@@ -1174,7 +1174,7 @@ def ex_61b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("layers", "po- in Asp1, Secondary Imperfective, po- in Asp3")] }
 
-def ex_62a : LinguisticExample :=
+def ex_62a : Datum :=
   { id := "jablonska2004_62a"
     source := ⟨"jablonska-2004", "(62a)"⟩
     reportedIn := none
@@ -1187,7 +1187,7 @@ def ex_62a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("layers", "lexical attenuative prefix pod-")] }
 
-def ex_62b : LinguisticExample :=
+def ex_62b : Datum :=
   { id := "jablonska2004_62b"
     source := ⟨"jablonska-2004", "(62b)"⟩
     reportedIn := none
@@ -1200,7 +1200,7 @@ def ex_62b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("layers", "lexical prefix, Secondary Imperfective")] }
 
-def ex_63a : LinguisticExample :=
+def ex_63a : Datum :=
   { id := "jablonska2004_63a"
     source := ⟨"jablonska-2004", "(63a)"⟩
     reportedIn := none
@@ -1213,7 +1213,7 @@ def ex_63a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("claim", "no attenuative reading without SI")] }
 
-def ex_63b : LinguisticExample :=
+def ex_63b : Datum :=
   { id := "jablonska2004_63b"
     source := ⟨"jablonska-2004", "(63b)"⟩
     reportedIn := none
@@ -1226,7 +1226,7 @@ def ex_63b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("verbalizer", "semelfactive")] }
 
-def ex_65a : LinguisticExample :=
+def ex_65a : Datum :=
   { id := "jablonska2004_65a"
     source := ⟨"jablonska-2004", "(65a)"⟩
     reportedIn := none
@@ -1239,7 +1239,7 @@ def ex_65a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("reading", "progressive of an attenuative-frequentative")] }
 
-def ex_65b : LinguisticExample :=
+def ex_65b : Datum :=
   { id := "jablonska2004_65b"
     source := ⟨"jablonska-2004", "(65b)"⟩
     reportedIn := none
@@ -1252,7 +1252,7 @@ def ex_65b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("reading", "habitual only")] }
 
-def ex_67a_pf : LinguisticExample :=
+def ex_67a_pf : Datum :=
   { id := "jablonska2004_67a_pf"
     source := ⟨"jablonska-2004", "(67a)"⟩
     reportedIn := none
@@ -1265,7 +1265,7 @@ def ex_67a_pf : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("layers", "purely perfectivizing prefix in Asp2")] }
 
-def ex_67a_si : LinguisticExample :=
+def ex_67a_si : Datum :=
   { id := "jablonska2004_67a_si"
     source := ⟨"jablonska-2004", "(67a)"⟩
     reportedIn := none
@@ -1278,7 +1278,7 @@ def ex_67a_si : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("layers", "purely perfectivizing prefix, Secondary Imperfective"), ("claim", "no SI of a purely perfectivized stem (68)")] }
 
-def ex_67b_pf : LinguisticExample :=
+def ex_67b_pf : Datum :=
   { id := "jablonska2004_67b_pf"
     source := ⟨"jablonska-2004", "(67b)"⟩
     reportedIn := none
@@ -1291,7 +1291,7 @@ def ex_67b_pf : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("layers", "purely perfectivizing prefix in Asp2")] }
 
-def ex_67b_si : LinguisticExample :=
+def ex_67b_si : Datum :=
   { id := "jablonska2004_67b_si"
     source := ⟨"jablonska-2004", "(67b)"⟩
     reportedIn := none
@@ -1304,7 +1304,7 @@ def ex_67b_si : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("layers", "purely perfectivizing prefix, Secondary Imperfective"), ("claim", "no SI of a purely perfectivized stem (68)")] }
 
-def ex_67c_pf : LinguisticExample :=
+def ex_67c_pf : Datum :=
   { id := "jablonska2004_67c_pf"
     source := ⟨"jablonska-2004", "(67c)"⟩
     reportedIn := none
@@ -1317,7 +1317,7 @@ def ex_67c_pf : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("layers", "purely perfectivizing prefix in Asp2")] }
 
-def ex_67c_si : LinguisticExample :=
+def ex_67c_si : Datum :=
   { id := "jablonska2004_67c_si"
     source := ⟨"jablonska-2004", "(67c)"⟩
     reportedIn := none
@@ -1330,7 +1330,7 @@ def ex_67c_si : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("layers", "purely perfectivizing prefix, Secondary Imperfective"), ("claim", "no SI of a purely perfectivized stem (68)")] }
 
-def ex_69a_pf : LinguisticExample :=
+def ex_69a_pf : Datum :=
   { id := "jablonska2004_69a_pf"
     source := ⟨"jablonska-2004", "(69a)"⟩
     reportedIn := none
@@ -1343,7 +1343,7 @@ def ex_69a_pf : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("layers", "po- as a purely perfectivizing prefix in Asp2")] }
 
-def ex_69a_si : LinguisticExample :=
+def ex_69a_si : Datum :=
   { id := "jablonska2004_69a_si"
     source := ⟨"jablonska-2004", "(69a)"⟩
     reportedIn := none
@@ -1356,7 +1356,7 @@ def ex_69a_si : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("layers", "po- as a purely perfectivizing prefix, Secondary Imperfective")] }
 
-def ex_69b_pf : LinguisticExample :=
+def ex_69b_pf : Datum :=
   { id := "jablonska2004_69b_pf"
     source := ⟨"jablonska-2004", "(69b)"⟩
     reportedIn := none
@@ -1369,7 +1369,7 @@ def ex_69b_pf : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("layers", "po- as a purely perfectivizing prefix in Asp2")] }
 
-def ex_69b_si : LinguisticExample :=
+def ex_69b_si : Datum :=
   { id := "jablonska2004_69b_si"
     source := ⟨"jablonska-2004", "(69b)"⟩
     reportedIn := none
@@ -1382,7 +1382,7 @@ def ex_69b_si : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("layers", "po- as a purely perfectivizing prefix, Secondary Imperfective")] }
 
-def ex_69c_pf : LinguisticExample :=
+def ex_69c_pf : Datum :=
   { id := "jablonska2004_69c_pf"
     source := ⟨"jablonska-2004", "(69c)"⟩
     reportedIn := none
@@ -1395,7 +1395,7 @@ def ex_69c_pf : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("layers", "po- as a purely perfectivizing prefix in Asp2")] }
 
-def ex_69c_si : LinguisticExample :=
+def ex_69c_si : Datum :=
   { id := "jablonska2004_69c_si"
     source := ⟨"jablonska-2004", "(69c)"⟩
     reportedIn := none
@@ -1408,7 +1408,7 @@ def ex_69c_si : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("layers", "po- as a purely perfectivizing prefix, Secondary Imperfective")] }
 
-def ex_71a : LinguisticExample :=
+def ex_71a : Datum :=
   { id := "jablonska2004_71a"
     source := ⟨"jablonska-2004", "(71a)"⟩
     reportedIn := none
@@ -1421,7 +1421,7 @@ def ex_71a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("claim", "English degree achievements take the progressive")] }
 
-def ex_73a : LinguisticExample :=
+def ex_73a : Datum :=
   { id := "jablonska2004_73a"
     source := ⟨"jablonska-2004", "(73a)"⟩
     reportedIn := none
@@ -1434,7 +1434,7 @@ def ex_73a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("verbalizer", "low -ej-"), ("layers", "purely perfectivizing prefix, Secondary Imperfective")] }
 
-def ex_74 : LinguisticExample :=
+def ex_74 : Datum :=
   { id := "jablonska2004_74"
     source := ⟨"jablonska-2004", "(74)"⟩
     reportedIn := none
@@ -1447,7 +1447,7 @@ def ex_74 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("verbalizer", "low -ej-"), ("layers", "po- in Asp1, Secondary Imperfective")] }
 
-def ex_75a : LinguisticExample :=
+def ex_75a : Datum :=
   { id := "jablonska2004_75a"
     source := ⟨"jablonska-2004", "(75a)"⟩
     reportedIn := none
@@ -1460,7 +1460,7 @@ def ex_75a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("verbalizer", "low inchoative -n-"), ("layers", "lexical prefix")] }
 
-def ex_75b : LinguisticExample :=
+def ex_75b : Datum :=
   { id := "jablonska2004_75b"
     source := ⟨"jablonska-2004", "(75b)"⟩
     reportedIn := none
@@ -1473,7 +1473,7 @@ def ex_75b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("verbalizer", "low inchoative -n-"), ("layers", "purely perfectivizing prefix")] }
 
-def ex_76 : LinguisticExample :=
+def ex_76 : Datum :=
   { id := "jablonska2004_76"
     source := ⟨"jablonska-2004", "(76)"⟩
     reportedIn := none
@@ -1486,7 +1486,7 @@ def ex_76 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("verbalizer", "low inchoative -n-"), ("layers", "lexical prefix, Secondary Imperfective")] }
 
-def ex_77 : LinguisticExample :=
+def ex_77 : Datum :=
   { id := "jablonska2004_77"
     source := ⟨"jablonska-2004", "(77)"⟩
     reportedIn := none
@@ -1499,7 +1499,7 @@ def ex_77 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("claim", "the root shifts to the high -aj- class under SI")] }
 
-def ex_78 : LinguisticExample :=
+def ex_78 : Datum :=
   { id := "jablonska2004_78"
     source := ⟨"jablonska-2004", "(78)"⟩
     reportedIn := none
@@ -1512,7 +1512,7 @@ def ex_78 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("layers", "purely perfectivizing prefix, Secondary Imperfective")] }
 
-def ex_79a : LinguisticExample :=
+def ex_79a : Datum :=
   { id := "jablonska2004_79a"
     source := ⟨"jablonska-2004", "(79a)"⟩
     reportedIn := none
@@ -1525,7 +1525,7 @@ def ex_79a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("verbalizer", "semelfactive"), ("layers", "lexical prefix")] }
 
-def ex_79b : LinguisticExample :=
+def ex_79b : Datum :=
   { id := "jablonska2004_79b"
     source := ⟨"jablonska-2004", "(79b)"⟩
     reportedIn := none
@@ -1538,7 +1538,7 @@ def ex_79b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("verbalizer", "semelfactive"), ("layers", "lexical prefix, Secondary Imperfective")] }
 
-def ex_79c : LinguisticExample :=
+def ex_79c : Datum :=
   { id := "jablonska2004_79c"
     source := ⟨"jablonska-2004", "(79c)"⟩
     reportedIn := none
@@ -1551,7 +1551,7 @@ def ex_79c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("verbalizer", "-a-"), ("claim", "the non-semelfactive stem of the same root")] }
 
-def ex_79d : LinguisticExample :=
+def ex_79d : Datum :=
   { id := "jablonska2004_79d"
     source := ⟨"jablonska-2004", "(79d)"⟩
     reportedIn := none
@@ -1564,7 +1564,7 @@ def ex_79d : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("claim", "SI from the non-semelfactive -a- stem of the same root")] }
 
-def ex_80a : LinguisticExample :=
+def ex_80a : Datum :=
   { id := "jablonska2004_80a"
     source := ⟨"jablonska-2004", "(80a)"⟩
     reportedIn := none
@@ -1577,7 +1577,7 @@ def ex_80a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("verbalizer", "directed motion")] }
 
-def ex_80b : LinguisticExample :=
+def ex_80b : Datum :=
   { id := "jablonska2004_80b"
     source := ⟨"jablonska-2004", "(80b)"⟩
     reportedIn := none
@@ -1590,7 +1590,7 @@ def ex_80b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("claim", "SI only through the non-directed stem")] }
 
-def ex_81a : LinguisticExample :=
+def ex_81a : Datum :=
   { id := "jablonska2004_81a"
     source := ⟨"jablonska-2004", "(81a)"⟩
     reportedIn := none
@@ -1603,7 +1603,7 @@ def ex_81a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("verbalizer", "high -i-"), ("layers", "lexical po-")] }
 
-def ex_81b : LinguisticExample :=
+def ex_81b : Datum :=
   { id := "jablonska2004_81b"
     source := ⟨"jablonska-2004", "(81b)"⟩
     reportedIn := none
@@ -1616,7 +1616,7 @@ def ex_81b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("verbalizer", "high -i-"), ("layers", "lexical po-")] }
 
-def ex_81c : LinguisticExample :=
+def ex_81c : Datum :=
   { id := "jablonska2004_81c"
     source := ⟨"jablonska-2004", "(81c)"⟩
     reportedIn := none
@@ -1629,7 +1629,7 @@ def ex_81c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("verbalizer", "high -aj-"), ("layers", "lexical po-")] }
 
-def ex_81d : LinguisticExample :=
+def ex_81d : Datum :=
   { id := "jablonska2004_81d"
     source := ⟨"jablonska-2004", "(81d)"⟩
     reportedIn := none
@@ -1642,7 +1642,7 @@ def ex_81d : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("verbalizer", "-C-"), ("layers", "lexical po-")] }
 
-def ex_81e : LinguisticExample :=
+def ex_81e : Datum :=
   { id := "jablonska2004_81e"
     source := ⟨"jablonska-2004", "(81e)"⟩
     reportedIn := none
@@ -1655,7 +1655,7 @@ def ex_81e : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("verbalizer", "-C- or inchoative"), ("layers", "lexical po-")] }
 
-def ex_81f : LinguisticExample :=
+def ex_81f : Datum :=
   { id := "jablonska2004_81f"
     source := ⟨"jablonska-2004", "(81f)"⟩
     reportedIn := none
@@ -1668,7 +1668,7 @@ def ex_81f : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("verbalizer", "low -ej-"), ("layers", "lexical po-"), ("claim", "an adjectival base has no Result phrase")] }
 
-def ex_82a : LinguisticExample :=
+def ex_82a : Datum :=
   { id := "jablonska2004_82a"
     source := ⟨"jablonska-2004", "(82a)"⟩
     reportedIn := none
@@ -1681,7 +1681,7 @@ def ex_82a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("layers", "lexical po-, Secondary Imperfective")] }
 
-def ex_82b : LinguisticExample :=
+def ex_82b : Datum :=
   { id := "jablonska2004_82b"
     source := ⟨"jablonska-2004", "(82b)"⟩
     reportedIn := none
@@ -1694,7 +1694,7 @@ def ex_82b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("layers", "lexical po-, Secondary Imperfective")] }
 
-def ex_82c : LinguisticExample :=
+def ex_82c : Datum :=
   { id := "jablonska2004_82c"
     source := ⟨"jablonska-2004", "(82c)"⟩
     reportedIn := none
@@ -1707,7 +1707,7 @@ def ex_82c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("layers", "lexical po-, Secondary Imperfective")] }
 
-def ex_82d : LinguisticExample :=
+def ex_82d : Datum :=
   { id := "jablonska2004_82d"
     source := ⟨"jablonska-2004", "(82d)"⟩
     reportedIn := none
@@ -1720,7 +1720,7 @@ def ex_82d : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("layers", "lexical po-, Secondary Imperfective")] }
 
-def ex_83a : LinguisticExample :=
+def ex_83a : Datum :=
   { id := "jablonska2004_83a"
     source := ⟨"jablonska-2004", "(83a)"⟩
     reportedIn := none
@@ -1733,7 +1733,7 @@ def ex_83a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("layers", "lexical po-, Secondary Imperfective, po- in Asp3"), ("reading", "distributive")] }
 
-def ex_83b : LinguisticExample :=
+def ex_83b : Datum :=
   { id := "jablonska2004_83b"
     source := ⟨"jablonska-2004", "(83b)"⟩
     reportedIn := none
@@ -1746,6 +1746,6 @@ def ex_83b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("layers", "lexical po-, Secondary Imperfective, po- in Asp3"), ("reading", "distributive")] }
 
-def all : List LinguisticExample := [ex_3a, ex_3b, ex_3c, ex_3d, ex_4a, ex_4b, ex_8a, ex_9a, ex_10a_po, ex_10a_z, ex_10b_po, ex_10b_z, ex_10c_po, ex_10c_z, ex_11a, ex_11b, ex_12a, ex_12b, ex_14a, ex_14b, ex_14c, ex_14d, ex_17, ex_23a, ex_23b, ex_24a, ex_24b, ex_27a, ex_27b, ex_27c, ex_27d, ex_28a, ex_28b, ex_28c, ex_28d, ex_28e, ex_30, ex_31a, ex_32a, ex_32b, ex_33a, ex_33b, ex_34a, ex_34b, ex_39a, ex_39b, ex_39c, ex_39d, ex_42a, ex_42b, ex_42c, ex_43a, ex_43b, ex_44, ex_45a, ex_45b, ex_45c, ex_46a, ex_46b, ex_48, ex_50a, ex_50b, ex_50c, ex_50d, ex_51a, ex_51b, ex_51c, ex_51d, ex_52, ex_53, ex_54a, ex_54b, fn21, ex_56a, ex_56b, ex_56c, ex_56d, ex_57a, ex_57b, ex_57c, ex_57d, ex_58a, ex_58b, ex_58c, ex_59a, ex_60_bare, ex_60_po, ex_61a, ex_61b, ex_62a, ex_62b, ex_63a, ex_63b, ex_65a, ex_65b, ex_67a_pf, ex_67a_si, ex_67b_pf, ex_67b_si, ex_67c_pf, ex_67c_si, ex_69a_pf, ex_69a_si, ex_69b_pf, ex_69b_si, ex_69c_pf, ex_69c_si, ex_71a, ex_73a, ex_74, ex_75a, ex_75b, ex_76, ex_77, ex_78, ex_79a, ex_79b, ex_79c, ex_79d, ex_80a, ex_80b, ex_81a, ex_81b, ex_81c, ex_81d, ex_81e, ex_81f, ex_82a, ex_82b, ex_82c, ex_82d, ex_83a, ex_83b]
+def all : List Datum := [ex_3a, ex_3b, ex_3c, ex_3d, ex_4a, ex_4b, ex_8a, ex_9a, ex_10a_po, ex_10a_z, ex_10b_po, ex_10b_z, ex_10c_po, ex_10c_z, ex_11a, ex_11b, ex_12a, ex_12b, ex_14a, ex_14b, ex_14c, ex_14d, ex_17, ex_23a, ex_23b, ex_24a, ex_24b, ex_27a, ex_27b, ex_27c, ex_27d, ex_28a, ex_28b, ex_28c, ex_28d, ex_28e, ex_30, ex_31a, ex_32a, ex_32b, ex_33a, ex_33b, ex_34a, ex_34b, ex_39a, ex_39b, ex_39c, ex_39d, ex_42a, ex_42b, ex_42c, ex_43a, ex_43b, ex_44, ex_45a, ex_45b, ex_45c, ex_46a, ex_46b, ex_48, ex_50a, ex_50b, ex_50c, ex_50d, ex_51a, ex_51b, ex_51c, ex_51d, ex_52, ex_53, ex_54a, ex_54b, fn21, ex_56a, ex_56b, ex_56c, ex_56d, ex_57a, ex_57b, ex_57c, ex_57d, ex_58a, ex_58b, ex_58c, ex_59a, ex_60_bare, ex_60_po, ex_61a, ex_61b, ex_62a, ex_62b, ex_63a, ex_63b, ex_65a, ex_65b, ex_67a_pf, ex_67a_si, ex_67b_pf, ex_67b_si, ex_67c_pf, ex_67c_si, ex_69a_pf, ex_69a_si, ex_69b_pf, ex_69b_si, ex_69c_pf, ex_69c_si, ex_71a, ex_73a, ex_74, ex_75a, ex_75b, ex_76, ex_77, ex_78, ex_79a, ex_79b, ex_79c, ex_79d, ex_80a, ex_80b, ex_81a, ex_81b, ex_81c, ex_81d, ex_81e, ex_81f, ex_82a, ex_82b, ex_82c, ex_82d, ex_83a, ex_83b]
 
 end Jablonska2004.Examples

@@ -17,7 +17,7 @@ namespace Huijsmans2025.Examples
 
 open Data.Examples
 
-def ex37 : LinguisticExample :=
+def ex37 : Datum :=
   { id := "huijsmans2025_ex37"
     source := ⟨"huijsmans-2025", "(37)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex37 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("modal", "seems"), ("timing", "evidence acquired after the event")] }
 
-def ex38 : LinguisticExample :=
+def ex38 : Datum :=
   { id := "huijsmans2025_ex38"
     source := ⟨"huijsmans-2025", "(38)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex38 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("modal", "should"), ("timing", "evidence acquired before the event")] }
 
-def ex40 : LinguisticExample :=
+def ex40 : Datum :=
   { id := "huijsmans2025_ex40"
     source := ⟨"huijsmans-2025", "(40)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex40 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2"), ("modal", "səm"), ("timing", "MBT < PrejT")] }
 
-def ex41 : LinguisticExample :=
+def ex41 : Datum :=
   { id := "huijsmans2025_ex41"
     source := ⟨"huijsmans-2025", "(41)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex41 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2"), ("modal", "will"), ("timing", "MBT < PrejT")] }
 
-def ex42 : LinguisticExample :=
+def ex42 : Datum :=
   { id := "huijsmans2025_ex42"
     source := ⟨"huijsmans-2025", "(42)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex42 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2"), ("modal", "səm"), ("timing", "MBT < PrejT")] }
 
-def ex43 : LinguisticExample :=
+def ex43 : Datum :=
   { id := "huijsmans2025_ex43"
     source := ⟨"huijsmans-2025", "(43)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex43 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2"), ("modal", "will"), ("timing", "MBT < PrejT")] }
 
-def ex44 : LinguisticExample :=
+def ex44 : Datum :=
   { id := "huijsmans2025_ex44"
     source := ⟨"huijsmans-2025", "(44)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex44 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2"), ("modal", "səm"), ("timing", "MBT < PrejT")] }
 
-def ex45 : LinguisticExample :=
+def ex45 : Datum :=
   { id := "huijsmans2025_ex45"
     source := ⟨"huijsmans-2025", "(45)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex45 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2"), ("modal", "will"), ("timing", "MBT < PrejT")] }
 
-def ex46 : LinguisticExample :=
+def ex46 : Datum :=
   { id := "huijsmans2025_ex46"
     source := ⟨"huijsmans-2025", "(46)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex46 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2"), ("modal", "səm"), ("timing", "MBT < PrejT but ET < EAT"), ("role", "wedge against the EAT analysis")] }
 
-def ex47 : LinguisticExample :=
+def ex47 : Datum :=
   { id := "huijsmans2025_ex47"
     source := ⟨"huijsmans-2025", "(47)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex47 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2"), ("modal", "will"), ("timing", "MBT < PrejT but ET < EAT"), ("role", "wedge against the EAT analysis")] }
 
-def ex48 : LinguisticExample :=
+def ex48 : Datum :=
   { id := "huijsmans2025_ex48"
     source := ⟨"huijsmans-2025", "(48)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex48 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2"), ("modal", "səm"), ("timing", "MBT < PrejT but ET < EAT")] }
 
-def ex49 : LinguisticExample :=
+def ex49 : Datum :=
   { id := "huijsmans2025_ex49"
     source := ⟨"huijsmans-2025", "(49)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex49 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2"), ("modal", "will"), ("timing", "MBT < PrejT but ET < EAT")] }
 
-def ex50 : LinguisticExample :=
+def ex50 : Datum :=
   { id := "huijsmans2025_ex50"
     source := ⟨"huijsmans-2025", "(50)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex50 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2"), ("modal", "č̓ɛ"), ("timing", "PrejT ≤ MBT")] }
 
-def ex51 : LinguisticExample :=
+def ex51 : Datum :=
   { id := "huijsmans2025_ex51"
     source := ⟨"huijsmans-2025", "(51)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex51 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2"), ("modal", "must"), ("timing", "PrejT ≤ MBT")] }
 
-def ex52 : LinguisticExample :=
+def ex52 : Datum :=
   { id := "huijsmans2025_ex52"
     source := ⟨"huijsmans-2025", "(52)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex52 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2"), ("modal", "č̓ɛ"), ("timing", "PrejT ≤ MBT")] }
 
-def ex53 : LinguisticExample :=
+def ex53 : Datum :=
   { id := "huijsmans2025_ex53"
     source := ⟨"huijsmans-2025", "(53)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex53 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2"), ("modal", "must"), ("timing", "PrejT ≤ MBT")] }
 
-def ex54 : LinguisticExample :=
+def ex54 : Datum :=
   { id := "huijsmans2025_ex54"
     source := ⟨"huijsmans-2025", "(54)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex54 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2"), ("modal", "č̓ɛ"), ("timing", "PrejT ≤ MBT")] }
 
-def ex55 : LinguisticExample :=
+def ex55 : Datum :=
   { id := "huijsmans2025_ex55"
     source := ⟨"huijsmans-2025", "(55)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex55 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2"), ("modal", "must"), ("timing", "PrejT ≤ MBT")] }
 
-def ex56 : LinguisticExample :=
+def ex56 : Datum :=
   { id := "huijsmans2025_ex56"
     source := ⟨"huijsmans-2025", "(56)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex56 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2"), ("modal", "č̓ɛ"), ("timing", "no evidence")] }
 
-def ex57 : LinguisticExample :=
+def ex57 : Datum :=
   { id := "huijsmans2025_ex57"
     source := ⟨"huijsmans-2025", "(57)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex57 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2"), ("modal", "č̓ɛ"), ("timing", "evidence before and at PrejT")] }
 
-def ex58 : LinguisticExample :=
+def ex58 : Datum :=
   { id := "huijsmans2025_ex58"
     source := ⟨"huijsmans-2025", "(58)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex58 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2"), ("modal", "must"), ("timing", "evidence before and at PrejT")] }
 
-def ex59 : LinguisticExample :=
+def ex59 : Datum :=
   { id := "huijsmans2025_ex59"
     source := ⟨"huijsmans-2025", "(59)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex59 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2"), ("modal", "səm or č̓ɛ"), ("timing", "the smell may be set aside")] }
 
-def ex60 : LinguisticExample :=
+def ex60 : Datum :=
   { id := "huijsmans2025_ex60"
     source := ⟨"huijsmans-2025", "(60)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex60 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2"), ("modal", "will or must"), ("timing", "the smell may be set aside")] }
 
-def ex68 : LinguisticExample :=
+def ex68 : Datum :=
   { id := "huijsmans2025_ex68"
     source := ⟨"huijsmans-2025", "(68)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex68 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("perspective", "past"), ("orientation", "future"), ("environment", "embedded")] }
 
-def ex69 : LinguisticExample :=
+def ex69 : Datum :=
   { id := "huijsmans2025_ex69"
     source := ⟨"huijsmans-2025", "(69)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex69 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("perspective", "past"), ("orientation", "future"), ("environment", "narrative")] }
 
-def ex70 : LinguisticExample :=
+def ex70 : Datum :=
   { id := "huijsmans2025_ex70"
     source := ⟨"huijsmans-2025", "(70)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex70 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("orientation", "present")] }
 
-def ex71 : LinguisticExample :=
+def ex71 : Datum :=
   { id := "huijsmans2025_ex71"
     source := ⟨"huijsmans-2025", "(71)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def ex71 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("orientation", "future")] }
 
-def ex75 : LinguisticExample :=
+def ex75 : Datum :=
   { id := "huijsmans2025_ex75"
     source := ⟨"huijsmans-2025", "(75)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def ex75 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("modal", "would"), ("perspective", "past")] }
 
-def ex76 : LinguisticExample :=
+def ex76 : Datum :=
   { id := "huijsmans2025_ex76"
     source := ⟨"huijsmans-2025", "(76)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def ex76 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("modal", "will"), ("orientation", "present")] }
 
-def ex77 : LinguisticExample :=
+def ex77 : Datum :=
   { id := "huijsmans2025_ex77"
     source := ⟨"huijsmans-2025", "(77)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def ex77 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("modal", "will"), ("orientation", "future")] }
 
-def ex91 : LinguisticExample :=
+def ex91 : Datum :=
   { id := "huijsmans2025_ex91"
     source := ⟨"huijsmans-2025", "(91)"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def ex91 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("modal", "č̓ɛ"), ("orientation", "present")] }
 
-def ex92 : LinguisticExample :=
+def ex92 : Datum :=
   { id := "huijsmans2025_ex92"
     source := ⟨"huijsmans-2025", "(92)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def ex92 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("modal", "č̓ɛ"), ("orientation", "past")] }
 
-def ex93 : LinguisticExample :=
+def ex93 : Datum :=
   { id := "huijsmans2025_ex93"
     source := ⟨"huijsmans-2025", "(93)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def ex93 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("modal", "č̓ɛ over səm"), ("timing", "two presuppositions")] }
 
-def ex97 : LinguisticExample :=
+def ex97 : Datum :=
   { id := "huijsmans2025_ex97"
     source := ⟨"huijsmans-2025", "(97)"⟩
     reportedIn := none
@@ -459,6 +459,6 @@ def ex97 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("modal", "will"), ("pragmatics", "Maximize Presupposition")] }
 
-def all : List LinguisticExample := [ex37, ex38, ex40, ex41, ex42, ex43, ex44, ex45, ex46, ex47, ex48, ex49, ex50, ex51, ex52, ex53, ex54, ex55, ex56, ex57, ex58, ex59, ex60, ex68, ex69, ex70, ex71, ex75, ex76, ex77, ex91, ex92, ex93, ex97]
+def all : List Datum := [ex37, ex38, ex40, ex41, ex42, ex43, ex44, ex45, ex46, ex47, ex48, ex49, ex50, ex51, ex52, ex53, ex54, ex55, ex56, ex57, ex58, ex59, ex60, ex68, ex69, ex70, ex71, ex75, ex76, ex77, ex91, ex92, ex93, ex97]
 
 end Huijsmans2025.Examples

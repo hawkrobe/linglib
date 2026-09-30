@@ -78,7 +78,7 @@ structure Row where
   generic : Option Judgment
   deriving DecidableEq, Repr
 
-def Row.ofExample (ex : LinguisticExample) : Option Row := do
+def Row.ofDatum (ex : Datum) : Option Row := do
   let subject ← ex.parse? "subject" [("bareName", Subject.bareName),
     ("modifiedName", .modifiedName), ("pluralName", .pluralName), ("quotedName", .quotedName),
     ("definiteName", .definiteName), ("definiteCommon", .definiteCommon),
@@ -91,7 +91,7 @@ def Row.ofExample (ex : LinguisticExample) : Option Row := do
     ("kindLevel", .kindLevel)]
   pure ⟨subject, context, qadv, level, ex.readings.lookup "generic"⟩
 
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- Out of the blue, a bare name has no acceptable generic reading. -/
 theorem recalcitrance : ∀ r ∈ rows, r.subject = .bareName → r.context = .outOfTheBlue →

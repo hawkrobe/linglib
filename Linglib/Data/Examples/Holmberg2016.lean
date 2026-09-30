@@ -17,7 +17,7 @@ namespace Holmberg2016.Examples
 
 open Data.Examples
 
-def en_neutral_yes : LinguisticExample :=
+def en_neutral_yes : Datum :=
   { id := "holmberg2016_en_neutral_yes"
     source := ⟨"holmberg-2016", "§1.1"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def en_neutral_yes : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.1"), ("question", "neutral"), ("answer", "yes"), ("confirms", "p")] }
 
-def en_neutral_no : LinguisticExample :=
+def en_neutral_no : Datum :=
   { id := "holmberg2016_en_neutral_no"
     source := ⟨"holmberg-2016", "§1.1"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def en_neutral_no : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.1"), ("question", "neutral"), ("answer", "no"), ("confirms", "not p")] }
 
-def fi_verb_echo : LinguisticExample :=
+def fi_verb_echo : Datum :=
   { id := "holmberg2016_fi_verb_echo"
     source := ⟨"holmberg-2016", "§1.2"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def fi_verb_echo : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.2"), ("question", "neutral"), ("answer", "verb echo"), ("confirms", "p")] }
 
-def sv_neg_nej : LinguisticExample :=
+def sv_neg_nej : Datum :=
   { id := "holmberg2016_sv_neg_nej"
     source := ⟨"holmberg-2016", "§1.3"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def sv_neg_nej : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.3"), ("question", "negative bias"), ("negation", "middle"), ("answer", "nej"), ("confirms", "not p"), ("system", "polarityBased")] }
 
-def yue_neg_hai : LinguisticExample :=
+def yue_neg_hai : Datum :=
   { id := "holmberg2016_yue_neg_hai"
     source := ⟨"holmberg-2016", "§1.3"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def yue_neg_hai : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.3"), ("question", "negative bias"), ("answer", "hai"), ("confirms", "not p"), ("system", "truthBased")] }
 
-def en_neg_yes_bare : LinguisticExample :=
+def en_neg_yes_bare : Datum :=
   { id := "holmberg2016_en_neg_yes_bare"
     source := ⟨"holmberg-2016", "§1.3"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def en_neg_yes_bare : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.3"), ("question", "negative bias"), ("answer", "yes"), ("intended", "p")] }
 
-def en_neg_yes_long : LinguisticExample :=
+def en_neg_yes_long : Datum :=
   { id := "holmberg2016_en_neg_yes_long"
     source := ⟨"holmberg-2016", "§1.3"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def en_neg_yes_long : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.3"), ("question", "negative bias"), ("answer", "yes + VP-ellipsis"), ("confirms", "p")] }
 
-def sv_neutral_ja : LinguisticExample :=
+def sv_neutral_ja : Datum :=
   { id := "holmberg2016_sv_neutral_ja"
     source := ⟨"holmberg-2016", "§1.3"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def sv_neutral_ja : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.3"), ("question", "neutral"), ("answer", "ja"), ("confirms", "p")] }
 
-def sv_neg_ja : LinguisticExample :=
+def sv_neg_ja : Datum :=
   { id := "holmberg2016_sv_neg_ja"
     source := ⟨"holmberg-2016", "§1.3"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def sv_neg_ja : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.3"), ("question", "negative bias"), ("negation", "middle"), ("answer", "ja"), ("intended", "p")] }
 
-def sv_neg_jo : LinguisticExample :=
+def sv_neg_jo : Datum :=
   { id := "holmberg2016_sv_neg_jo"
     source := ⟨"holmberg-2016", "§1.3"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def sv_neg_jo : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.3"), ("question", "negative bias"), ("negation", "middle"), ("answer", "jo"), ("confirms", "p"), ("particle", "polarity reversing")] }
 
-def yue_neg_hai_intended_p : LinguisticExample :=
+def yue_neg_hai_intended_p : Datum :=
   { id := "holmberg2016_yue_neg_hai_intended_p"
     source := ⟨"holmberg-2016", "§1.3"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def yue_neg_hai_intended_p : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.3"), ("question", "negative bias"), ("answer", "hai"), ("intended", "p")] }
 
-def yue_neg_mhai : LinguisticExample :=
+def yue_neg_mhai : Datum :=
   { id := "holmberg2016_yue_neg_mhai"
     source := ⟨"holmberg-2016", "§1.3"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def yue_neg_mhai : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.3"), ("question", "negative bias"), ("answer", "m hai"), ("confirms", "p"), ("system", "truthBased")] }
 
-def en_tell_me : LinguisticExample :=
+def en_tell_me : Datum :=
   { id := "holmberg2016_en_tell_me"
     source := ⟨"holmberg-2016", "§2.1"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def en_tell_me : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("question", "explicit disjunction"), ("answer", "yes")] }
 
-def en_tea_or_not : LinguisticExample :=
+def en_tea_or_not : Datum :=
   { id := "holmberg2016_en_tea_or_not"
     source := ⟨"holmberg-2016", "§2.1"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def en_tea_or_not : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("question", "explicit disjunction"), ("answer", "yes")] }
 
-def en_tea : LinguisticExample :=
+def en_tea : Datum :=
   { id := "holmberg2016_en_tea"
     source := ⟨"holmberg-2016", "§2.1"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def en_tea : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("question", "neutral"), ("answer", "yes"), ("confirms", "p")] }
 
-def en_maybe : LinguisticExample :=
+def en_maybe : Datum :=
   { id := "holmberg2016_en_maybe"
     source := ⟨"holmberg-2016", "§3.1"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def en_maybe : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("question", "neutral"), ("answer", "modified polarity")] }
 
-def en_maybe_not : LinguisticExample :=
+def en_maybe_not : Datum :=
   { id := "holmberg2016_en_maybe_not"
     source := ⟨"holmberg-2016", "§3.1"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def en_maybe_not : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("question", "neutral"), ("answer", "modified polarity")] }
 
-def fi_luin : LinguisticExample :=
+def fi_luin : Datum :=
   { id := "holmberg2016_fi_luin"
     source := ⟨"holmberg-2016", "§3.1"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def fi_luin : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("question", "neutral"), ("answer", "verb echo"), ("confirms", "p")] }
 
-def fi_en : LinguisticExample :=
+def fi_en : Datum :=
   { id := "holmberg2016_fi_en"
     source := ⟨"holmberg-2016", "§3.1"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def fi_en : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("question", "neutral"), ("answer", "inflected negation"), ("confirms", "not p")] }
 
-def en_not_pass : LinguisticExample :=
+def en_not_pass : Datum :=
   { id := "holmberg2016_en_not_pass"
     source := ⟨"holmberg-2016", "§3.2"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def en_not_pass : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("question", "negative bias"), ("answer", "no")] }
 
-def fi_hajotti : LinguisticExample :=
+def fi_hajotti : Datum :=
   { id := "holmberg2016_fi_hajotti"
     source := ⟨"holmberg-2016", "§3.2"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def fi_hajotti : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("question", "neutral"), ("answer", "verb echo")] }
 
-def fi_rikkoi : LinguisticExample :=
+def fi_rikkoi : Datum :=
   { id := "holmberg2016_fi_rikkoi"
     source := ⟨"holmberg-2016", "§3.2"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def fi_rikkoi : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("question", "neutral"), ("answer", "verb echo with a synonym")] }
 
-def en_coffee_not_yes : LinguisticExample :=
+def en_coffee_not_yes : Datum :=
   { id := "holmberg2016_en_coffee_not_yes"
     source := ⟨"holmberg-2016", "§3.3"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def en_coffee_not_yes : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("question", "negative bias"), ("answer", "yes"), ("intended", "p")] }
 
-def en_coffee_not_yes_i_do : LinguisticExample :=
+def en_coffee_not_yes_i_do : Datum :=
   { id := "holmberg2016_en_coffee_not_yes_i_do"
     source := ⟨"holmberg-2016", "§3.3"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def en_coffee_not_yes_i_do : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("question", "negative bias"), ("answer", "yes + VP-ellipsis"), ("confirms", "p")] }
 
-def fi_juo : LinguisticExample :=
+def fi_juo : Datum :=
   { id := "holmberg2016_fi_juo"
     source := ⟨"holmberg-2016", "§3.3"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def fi_juo : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("question", "negative bias"), ("answer", "bare verb echo"), ("intended", "p")] }
 
-def fi_juo_se : LinguisticExample :=
+def fi_juo_se : Datum :=
   { id := "holmberg2016_fi_juo_se"
     source := ⟨"holmberg-2016", "§3.3"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def fi_juo_se : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("question", "negative bias"), ("answer", "verb echo + subject"), ("confirms", "p")] }
 
-def fr_oui : LinguisticExample :=
+def fr_oui : Datum :=
   { id := "holmberg2016_fr_oui"
     source := ⟨"holmberg-2016", "§3.3"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def fr_oui : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("question", "neutral"), ("answer", "oui"), ("confirms", "p")] }
 
-def fr_neg_oui : LinguisticExample :=
+def fr_neg_oui : Datum :=
   { id := "holmberg2016_fr_neg_oui"
     source := ⟨"holmberg-2016", "§3.3"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def fr_neg_oui : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("question", "negative bias"), ("negation", "middle"), ("answer", "oui"), ("intended", "p")] }
 
-def fr_neg_si : LinguisticExample :=
+def fr_neg_si : Datum :=
   { id := "holmberg2016_fr_neg_si"
     source := ⟨"holmberg-2016", "§3.3"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def fr_neg_si : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("question", "negative bias"), ("negation", "middle"), ("answer", "si"), ("confirms", "p"), ("particle", "polarity reversing")] }
 
-def ja_neutral : LinguisticExample :=
+def ja_neutral : Datum :=
   { id := "holmberg2016_ja_neutral"
     source := ⟨"holmberg-2016", "§4.1"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def ja_neutral : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("question", "neutral"), ("answer", "un / uun")] }
 
-def ja_neg_un : LinguisticExample :=
+def ja_neg_un : Datum :=
   { id := "holmberg2016_ja_neg_un"
     source := ⟨"holmberg-2016", "§4.1"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def ja_neg_un : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("question", "negative bias"), ("negation", "low"), ("answer", "un"), ("confirms", "not p"), ("system", "truthBased")] }
 
-def ja_neg_uun : LinguisticExample :=
+def ja_neg_uun : Datum :=
   { id := "holmberg2016_ja_neg_uun"
     source := ⟨"holmberg-2016", "§4.1"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def ja_neg_uun : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("question", "negative bias"), ("negation", "low"), ("answer", "uun"), ("confirms", "p"), ("system", "truthBased")] }
 
-def sv_neg_tired_nej : LinguisticExample :=
+def sv_neg_tired_nej : Datum :=
   { id := "holmberg2016_sv_neg_tired_nej"
     source := ⟨"holmberg-2016", "§4.1"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def sv_neg_tired_nej : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("question", "negative bias"), ("negation", "middle"), ("answer", "nej"), ("confirms", "not p"), ("system", "polarityBased")] }
 
-def en_neg_coffee_yes_he_does : LinguisticExample :=
+def en_neg_coffee_yes_he_does : Datum :=
   { id := "holmberg2016_en_neg_coffee_yes_he_does"
     source := ⟨"holmberg-2016", "§4.1"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def en_neg_coffee_yes_he_does : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("question", "negative bias"), ("answer", "yes + VP-ellipsis"), ("confirms", "p"), ("system", "polarityBased")] }
 
-def en_not_yes_low : LinguisticExample :=
+def en_not_yes_low : Datum :=
   { id := "holmberg2016_en_not_yes_low"
     source := ⟨"holmberg-2016", "§4.3"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def en_not_yes_low : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.3"), ("question", "negative bias"), ("negation", "low"), ("answer", "yes"), ("confirms", "not p"), ("variety", "low reading of not")] }
 
-def en_not_no : LinguisticExample :=
+def en_not_no : Datum :=
   { id := "holmberg2016_en_not_no"
     source := ⟨"holmberg-2016", "§4.3"⟩
     reportedIn := none
@@ -485,7 +485,7 @@ def en_not_no : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.3"), ("question", "negative bias"), ("negation", "middle"), ("answer", "no"), ("confirms", "not p")] }
 
-def en_isnt_either : LinguisticExample :=
+def en_isnt_either : Datum :=
   { id := "holmberg2016_en_isnt_either"
     source := ⟨"holmberg-2016", "§4.3"⟩
     reportedIn := none
@@ -498,7 +498,7 @@ def en_isnt_either : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.3"), ("question", "negative bias"), ("negation", "-n't with NPI"), ("variety", "tolerant")] }
 
-def en_sometimes_yes : LinguisticExample :=
+def en_sometimes_yes : Datum :=
   { id := "holmberg2016_en_sometimes_yes"
     source := ⟨"holmberg-2016", "§4.3"⟩
     reportedIn := none
@@ -511,7 +511,7 @@ def en_sometimes_yes : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.3"), ("question", "negative bias"), ("negation", "low"), ("answer", "yes"), ("confirms", "not p")] }
 
-def en_sometimes_no : LinguisticExample :=
+def en_sometimes_no : Datum :=
   { id := "holmberg2016_en_sometimes_no"
     source := ⟨"holmberg-2016", "§4.3"⟩
     reportedIn := none
@@ -524,7 +524,7 @@ def en_sometimes_no : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.3"), ("question", "negative bias"), ("negation", "low"), ("answer", "no"), ("confirms", "p")] }
 
-def en_purposely : LinguisticExample :=
+def en_purposely : Datum :=
   { id := "holmberg2016_en_purposely"
     source := ⟨"holmberg-2016", "§4.3"⟩
     reportedIn := none
@@ -537,7 +537,7 @@ def en_purposely : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.3"), ("question", "negative bias"), ("negation", "low"), ("answer", "yes"), ("confirms", "not p")] }
 
-def en_two_negations : LinguisticExample :=
+def en_two_negations : Datum :=
   { id := "holmberg2016_en_two_negations"
     source := ⟨"holmberg-2016", "§4.3"⟩
     reportedIn := none
@@ -550,7 +550,7 @@ def en_two_negations : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.3"), ("negation", "middle and low")] }
 
-def en_two_middle : LinguisticExample :=
+def en_two_middle : Datum :=
   { id := "holmberg2016_en_two_middle"
     source := ⟨"holmberg-2016", "§4.3"⟩
     reportedIn := none
@@ -563,7 +563,7 @@ def en_two_middle : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.3"), ("negation", "two middle negations")] }
 
-def en_is_not_coming_yes : LinguisticExample :=
+def en_is_not_coming_yes : Datum :=
   { id := "holmberg2016_en_is_not_coming_yes"
     source := ⟨"holmberg-2016", "§4.3"⟩
     reportedIn := none
@@ -576,7 +576,7 @@ def en_is_not_coming_yes : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.3"), ("question", "negative bias"), ("answer", "yes"), ("confirms", "not p")] }
 
-def en_no_he_is : LinguisticExample :=
+def en_no_he_is : Datum :=
   { id := "holmberg2016_en_no_he_is"
     source := ⟨"holmberg-2016", "§4.3"⟩
     reportedIn := none
@@ -589,7 +589,7 @@ def en_no_he_is : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.3"), ("question", "negative bias"), ("answer", "no + clause"), ("confirms", "p")] }
 
-def en_delicious_no_it_is : LinguisticExample :=
+def en_delicious_no_it_is : Datum :=
   { id := "holmberg2016_en_delicious_no_it_is"
     source := ⟨"holmberg-2016", "§4.3"⟩
     reportedIn := none
@@ -602,7 +602,7 @@ def en_delicious_no_it_is : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.3"), ("question", "positive bias"), ("negation", "high"), ("answer", "no + clause")] }
 
-def sv_kommit_ja : LinguisticExample :=
+def sv_kommit_ja : Datum :=
   { id := "holmberg2016_sv_kommit_ja"
     source := ⟨"holmberg-2016", "§4.5"⟩
     reportedIn := none
@@ -615,7 +615,7 @@ def sv_kommit_ja : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.5"), ("question", "negative bias"), ("negation", "middle"), ("answer", "ja")] }
 
-def sv_kommit_nej : LinguisticExample :=
+def sv_kommit_nej : Datum :=
   { id := "holmberg2016_sv_kommit_nej"
     source := ⟨"holmberg-2016", "§4.5"⟩
     reportedIn := none
@@ -628,7 +628,7 @@ def sv_kommit_nej : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.5"), ("question", "negative bias"), ("negation", "middle"), ("answer", "nej"), ("confirms", "not p")] }
 
-def sv_inte_inte : LinguisticExample :=
+def sv_inte_inte : Datum :=
   { id := "holmberg2016_sv_inte_inte"
     source := ⟨"holmberg-2016", "§4.5"⟩
     reportedIn := none
@@ -641,7 +641,7 @@ def sv_inte_inte : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.5"), ("negation", "double")] }
 
-def sv_nangang_ja : LinguisticExample :=
+def sv_nangang_ja : Datum :=
   { id := "holmberg2016_sv_nangang_ja"
     source := ⟨"holmberg-2016", "§4.5"⟩
     reportedIn := none
@@ -654,7 +654,7 @@ def sv_nangang_ja : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.5"), ("question", "negative bias"), ("negation", "middle behind an adverb"), ("answer", "ja"), ("confirms", "not p")] }
 
-def sv_nangang_nej : LinguisticExample :=
+def sv_nangang_nej : Datum :=
   { id := "holmberg2016_sv_nangang_nej"
     source := ⟨"holmberg-2016", "§4.5"⟩
     reportedIn := none
@@ -667,7 +667,7 @@ def sv_nangang_nej : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.5"), ("question", "negative bias"), ("negation", "middle behind an adverb"), ("answer", "nej"), ("confirms", "p")] }
 
-def sv_kommit_jo : LinguisticExample :=
+def sv_kommit_jo : Datum :=
   { id := "holmberg2016_sv_kommit_jo"
     source := ⟨"holmberg-2016", "§4.5"⟩
     reportedIn := none
@@ -680,7 +680,7 @@ def sv_kommit_jo : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.5"), ("question", "negative bias"), ("negation", "middle"), ("answer", "jo"), ("confirms", "p"), ("particle", "polarity reversing")] }
 
-def nl_jawel : LinguisticExample :=
+def nl_jawel : Datum :=
   { id := "holmberg2016_nl_jawel"
     source := ⟨"holmberg-2016", "§4.5"⟩
     reportedIn := none
@@ -693,7 +693,7 @@ def nl_jawel : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.5"), ("question", "negative bias"), ("answer", "jawel"), ("confirms", "p"), ("particle", "affirmative plus particle")] }
 
-def fi_tulee : LinguisticExample :=
+def fi_tulee : Datum :=
   { id := "holmberg2016_fi_tulee"
     source := ⟨"holmberg-2016", "§4.4"⟩
     reportedIn := none
@@ -706,7 +706,7 @@ def fi_tulee : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.4"), ("question", "negative bias"), ("answer", "no + clause"), ("confirms", "p")] }
 
-def sv_road_ambiguous : LinguisticExample :=
+def sv_road_ambiguous : Datum :=
   { id := "holmberg2016_sv_road_ambiguous"
     source := ⟨"holmberg-2016", "§4.8"⟩
     reportedIn := none
@@ -719,7 +719,7 @@ def sv_road_ambiguous : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.8"), ("question", "negative or positive bias")] }
 
-def sv_road_high : LinguisticExample :=
+def sv_road_high : Datum :=
   { id := "holmberg2016_sv_road_high"
     source := ⟨"holmberg-2016", "§4.8"⟩
     reportedIn := none
@@ -732,7 +732,7 @@ def sv_road_high : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.8"), ("question", "positive bias"), ("negation", "high")] }
 
-def en_road_not : LinguisticExample :=
+def en_road_not : Datum :=
   { id := "holmberg2016_en_road_not"
     source := ⟨"holmberg-2016", "§4.8"⟩
     reportedIn := none
@@ -745,7 +745,7 @@ def en_road_not : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.8"), ("question", "negative bias"), ("negation", "middle")] }
 
-def en_road_isnt : LinguisticExample :=
+def en_road_isnt : Datum :=
   { id := "holmberg2016_en_road_isnt"
     source := ⟨"holmberg-2016", "§4.8"⟩
     reportedIn := none
@@ -758,7 +758,7 @@ def en_road_isnt : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.8"), ("question", "positive bias"), ("negation", "high")] }
 
-def en_road_so_it_is : LinguisticExample :=
+def en_road_so_it_is : Datum :=
   { id := "holmberg2016_en_road_so_it_is"
     source := ⟨"holmberg-2016", "§4.8"⟩
     reportedIn := none
@@ -771,7 +771,7 @@ def en_road_so_it_is : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.8"), ("question", "neutral"), ("answer", "agreement")] }
 
-def en_tag_so_it_is : LinguisticExample :=
+def en_tag_so_it_is : Datum :=
   { id := "holmberg2016_en_tag_so_it_is"
     source := ⟨"holmberg-2016", "§4.8"⟩
     reportedIn := none
@@ -784,7 +784,7 @@ def en_tag_so_it_is : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.8"), ("question", "tag"), ("answer", "agreement")] }
 
-def en_tag_at_all : LinguisticExample :=
+def en_tag_at_all : Datum :=
   { id := "holmberg2016_en_tag_at_all"
     source := ⟨"holmberg-2016", "§4.8"⟩
     reportedIn := none
@@ -797,7 +797,7 @@ def en_tag_at_all : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.8"), ("question", "tag"), ("NPI", "at all")] }
 
-def en_statement_no : LinguisticExample :=
+def en_statement_no : Datum :=
   { id := "holmberg2016_en_statement_no"
     source := ⟨"holmberg-2016", "§4.8"⟩
     reportedIn := none
@@ -810,6 +810,6 @@ def en_statement_no : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.8"), ("question", "statement"), ("answer", "no")] }
 
-def all : List LinguisticExample := [en_neutral_yes, en_neutral_no, fi_verb_echo, sv_neg_nej, yue_neg_hai, en_neg_yes_bare, en_neg_yes_long, sv_neutral_ja, sv_neg_ja, sv_neg_jo, yue_neg_hai_intended_p, yue_neg_mhai, en_tell_me, en_tea_or_not, en_tea, en_maybe, en_maybe_not, fi_luin, fi_en, en_not_pass, fi_hajotti, fi_rikkoi, en_coffee_not_yes, en_coffee_not_yes_i_do, fi_juo, fi_juo_se, fr_oui, fr_neg_oui, fr_neg_si, ja_neutral, ja_neg_un, ja_neg_uun, sv_neg_tired_nej, en_neg_coffee_yes_he_does, en_not_yes_low, en_not_no, en_isnt_either, en_sometimes_yes, en_sometimes_no, en_purposely, en_two_negations, en_two_middle, en_is_not_coming_yes, en_no_he_is, en_delicious_no_it_is, sv_kommit_ja, sv_kommit_nej, sv_inte_inte, sv_nangang_ja, sv_nangang_nej, sv_kommit_jo, nl_jawel, fi_tulee, sv_road_ambiguous, sv_road_high, en_road_not, en_road_isnt, en_road_so_it_is, en_tag_so_it_is, en_tag_at_all, en_statement_no]
+def all : List Datum := [en_neutral_yes, en_neutral_no, fi_verb_echo, sv_neg_nej, yue_neg_hai, en_neg_yes_bare, en_neg_yes_long, sv_neutral_ja, sv_neg_ja, sv_neg_jo, yue_neg_hai_intended_p, yue_neg_mhai, en_tell_me, en_tea_or_not, en_tea, en_maybe, en_maybe_not, fi_luin, fi_en, en_not_pass, fi_hajotti, fi_rikkoi, en_coffee_not_yes, en_coffee_not_yes_i_do, fi_juo, fi_juo_se, fr_oui, fr_neg_oui, fr_neg_si, ja_neutral, ja_neg_un, ja_neg_uun, sv_neg_tired_nej, en_neg_coffee_yes_he_does, en_not_yes_low, en_not_no, en_isnt_either, en_sometimes_yes, en_sometimes_no, en_purposely, en_two_negations, en_two_middle, en_is_not_coming_yes, en_no_he_is, en_delicious_no_it_is, sv_kommit_ja, sv_kommit_nej, sv_inte_inte, sv_nangang_ja, sv_nangang_nej, sv_kommit_jo, nl_jawel, fi_tulee, sv_road_ambiguous, sv_road_high, en_road_not, en_road_isnt, en_road_so_it_is, en_tag_so_it_is, en_tag_at_all, en_statement_no]
 
 end Holmberg2016.Examples

@@ -350,16 +350,16 @@ structure Row where
   judgment : Data.Examples.Judgment
 
 /-- A row from an example. -/
-def Row.ofExample (ex : LinguisticExample) : Option Row := do
+def Row.ofDatum (ex : Datum) : Option Row := do
   pure ⟨← ex.parse? "grammar" grammarTable,
     ⟨← ex.parse? "extracted" extractedTable, ← ex.parse? "subject" subjectTable,
       ← ex.parse? "lowAgent" lowAgentTable, ← ex.parse? "prefix" prefixTable⟩,
     ex.judgment⟩
 
-theorem row_ofExample_isSome : ∀ ex ∈ Examples.all, (Row.ofExample ex).isSome := by decide
+theorem row_ofDatum_isSome : ∀ ex ∈ Examples.all, (Row.ofDatum ex).isSome := by decide
 
 /-- The rows of the six grammars. -/
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- Every row: the surface form is grammatical exactly when some derivation the grammar
 generates has it. -/

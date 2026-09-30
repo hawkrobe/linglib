@@ -17,7 +17,7 @@ namespace Glass2025.Examples
 
 open Data.Examples
 
-def ex_1a : LinguisticExample :=
+def ex_1a : Datum :=
   { id := "glass2025_1a"
     source := ⟨"glass-2025", "(1a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_1a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "know"), ("state", "p")] }
 
-def ex_2a_p : LinguisticExample :=
+def ex_2a_p : Datum :=
   { id := "glass2025_2a_p"
     source := ⟨"glass-2025", "(2a)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_2a_p : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "think"), ("state", "p")] }
 
-def ex_2a_unsettled : LinguisticExample :=
+def ex_2a_unsettled : Datum :=
   { id := "glass2025_2a_unsettled"
     source := ⟨"glass-2025", "(2a)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_2a_unsettled : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "think"), ("state", "unsettled")] }
 
-def ex_2a_notP : LinguisticExample :=
+def ex_2a_notP : Datum :=
   { id := "glass2025_2a_notP"
     source := ⟨"glass-2025", "(2a)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_2a_notP : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "think"), ("state", "notP")] }
 
-def ex_4_notP : LinguisticExample :=
+def ex_4_notP : Datum :=
   { id := "glass2025_4_notP"
     source := ⟨"glass-2023", "(4)"⟩
     reportedIn := some ⟨"glass-2025", "(4)"⟩
@@ -82,7 +82,7 @@ def ex_4_notP : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "yiwei"), ("state", "notP")] }
 
-def ex_4_p : LinguisticExample :=
+def ex_4_p : Datum :=
   { id := "glass2025_4_p"
     source := ⟨"glass-2023", "(4)"⟩
     reportedIn := some ⟨"glass-2025", "(4)"⟩
@@ -95,7 +95,7 @@ def ex_4_p : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "yiwei"), ("state", "p")] }
 
-def ex_5_notP : LinguisticExample :=
+def ex_5_notP : Datum :=
   { id := "glass2025_5_notP"
     source := ⟨"glass-2023", "(5)"⟩
     reportedIn := some ⟨"glass-2025", "(5)"⟩
@@ -108,7 +108,7 @@ def ex_5_notP : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "renwei"), ("state", "notP")] }
 
-def ex_5_unsettled : LinguisticExample :=
+def ex_5_unsettled : Datum :=
   { id := "glass2025_5_unsettled"
     source := ⟨"glass-2023", "(5)"⟩
     reportedIn := some ⟨"glass-2025", "(5)"⟩
@@ -121,7 +121,7 @@ def ex_5_unsettled : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "renwei"), ("state", "unsettled")] }
 
-def ex_7 : LinguisticExample :=
+def ex_7 : Datum :=
   { id := "glass2025_7"
     source := ⟨"glass-2023", "(7)"⟩
     reportedIn := some ⟨"glass-2025", "(7)"⟩
@@ -134,6 +134,6 @@ def ex_7 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "yiwei"), ("state", "unsettled")] }
 
-def all : List LinguisticExample := [ex_1a, ex_2a_p, ex_2a_unsettled, ex_2a_notP, ex_4_notP, ex_4_p, ex_5_notP, ex_5_unsettled, ex_7]
+def all : List Datum := [ex_1a, ex_2a_p, ex_2a_unsettled, ex_2a_notP, ex_4_notP, ex_4_p, ex_5_notP, ex_5_unsettled, ex_7]
 
 end Glass2025.Examples

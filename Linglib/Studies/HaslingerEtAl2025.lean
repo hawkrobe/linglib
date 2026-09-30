@@ -95,7 +95,7 @@ theorem determiner_maximal : ∀ i : Item, i.IsDeterminer → i.class.isMaximal 
 
 /-- The classification an example row's judgments in (3) determine: distributive if false
 in the cumulative scenario (3b), maximal if false in the exception scenario (3c). -/
-def classOfExample (ex : LinguisticExample) : Option DistMaxClass := do
+def classOfDatum (ex : Datum) : Option DistMaxClass := do
   let b ← ex.feature? "trueIn3b"
   let c ← ex.feature? "trueIn3c"
   pure <| match b == "no", c == "no" with
@@ -109,10 +109,10 @@ of the blue included. -/
 theorem class_of_rows :
     ∀ p ∈ [(Item.jederDP, Examples.ex1), (.jederDistance, Examples.ex2), (.alle, Examples.ex4a),
       (.numeralIndefinite, Examples.ex4b), (.definitePlural, Examples.ex4c)],
-      classOfExample p.2 = some p.1.class := by
+      classOfDatum p.2 = some p.1.class := by
   decide
 
-theorem jeweils_maximal_out_of_the_blue : classOfExample Examples.ex22a = some .distMax := by
+theorem jeweils_maximal_out_of_the_blue : classOfDatum Examples.ex22a = some .distMax := by
   decide
 
 /-! ### The magnets scenario of (23) -/

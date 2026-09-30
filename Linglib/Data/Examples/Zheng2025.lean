@@ -17,7 +17,7 @@ namespace Zheng2025.Examples
 
 open Data.Examples
 
-def ex1 : LinguisticExample :=
+def ex1 : Datum :=
   { id := "zheng2025_ex1"
     source := ⟨"zheng-2025", "(1)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex1 : LinguisticExample :=
     readings := []
     paperFeatures := [("evidential_bias", "true"), ("epistemic_bias", "true"), ("unexpected_evidence", "true")] }
 
-def ex2 : LinguisticExample :=
+def ex2 : Datum :=
   { id := "zheng2025_ex2"
     source := ⟨"zheng-2025", "(2)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex2 : LinguisticExample :=
     readings := []
     paperFeatures := [("evidential_bias", "true"), ("epistemic_bias", "true"), ("unexpected_evidence", "true")] }
 
-def ex3 : LinguisticExample :=
+def ex3 : Datum :=
   { id := "zheng2025_ex3"
     source := ⟨"zheng-2025", "(3)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex3 : LinguisticExample :=
     readings := []
     paperFeatures := [("evidential_bias", "true"), ("epistemic_bias", "false"), ("unexpected_evidence", "true")] }
 
-def ex4b : LinguisticExample :=
+def ex4b : Datum :=
   { id := "zheng2025_ex4b"
     source := ⟨"xu-2018", "p. 449"⟩
     reportedIn := some ⟨"zheng-2025", "(4b)"⟩
@@ -69,7 +69,7 @@ def ex4b : LinguisticExample :=
     readings := []
     paperFeatures := [("evidential_bias", "false"), ("epistemic_bias", "true"), ("unexpected_evidence", "false")] }
 
-def ex5_ctx1 : LinguisticExample :=
+def ex5_ctx1 : Datum :=
   { id := "zheng2025_ex5_ctx1"
     source := ⟨"zheng-2025", "(5) ctx 1"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex5_ctx1 : LinguisticExample :=
     readings := []
     paperFeatures := [("evidential_bias", "true"), ("epistemic_bias", "false"), ("unexpected_evidence", "true")] }
 
-def ex5_ctx2 : LinguisticExample :=
+def ex5_ctx2 : Datum :=
   { id := "zheng2025_ex5_ctx2"
     source := ⟨"zheng-2025", "(5) ctx 2"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex5_ctx2 : LinguisticExample :=
     readings := []
     paperFeatures := [("evidential_bias", "false"), ("epistemic_bias", "false"), ("unexpected_evidence", "false")] }
 
-def ex5_ctx3 : LinguisticExample :=
+def ex5_ctx3 : Datum :=
   { id := "zheng2025_ex5_ctx3"
     source := ⟨"zheng-2025", "(5) ctx 3"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex5_ctx3 : LinguisticExample :=
     readings := []
     paperFeatures := [("evidential_bias", "false"), ("epistemic_bias", "true"), ("unexpected_evidence", "false")] }
 
-def ex6_ctx1 : LinguisticExample :=
+def ex6_ctx1 : Datum :=
   { id := "zheng2025_ex6_ctx1"
     source := ⟨"zheng-2025", "(6) ctx 1"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex6_ctx1 : LinguisticExample :=
     readings := []
     paperFeatures := [("evidential_bias", "true"), ("epistemic_bias", "true"), ("unexpected_evidence", "true")] }
 
-def ex6_ctx2 : LinguisticExample :=
+def ex6_ctx2 : Datum :=
   { id := "zheng2025_ex6_ctx2"
     source := ⟨"zheng-2025", "(6) ctx 2"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex6_ctx2 : LinguisticExample :=
     readings := []
     paperFeatures := [("evidential_bias", "true"), ("epistemic_bias", "false"), ("unexpected_evidence", "false")] }
 
-def ex4a : LinguisticExample :=
+def ex4a : Datum :=
   { id := "zheng2025_ex4a"
     source := ⟨"xu-2018", "p. 449"⟩
     reportedIn := some ⟨"zheng-2025", "(4a)"⟩
@@ -147,7 +147,7 @@ def ex4a : LinguisticExample :=
     readings := []
     paperFeatures := [("evidential_bias", "false"), ("epistemic_bias", "true"), ("unexpected_evidence", "false")] }
 
-def ex12a : LinguisticExample :=
+def ex12a : Datum :=
   { id := "zheng2025_ex12a"
     source := ⟨"xu-2012", "p. 510"⟩
     reportedIn := some ⟨"zheng-2025", "(12a)"⟩
@@ -160,7 +160,7 @@ def ex12a : LinguisticExample :=
     readings := []
     paperFeatures := [("clause_type", "declarative")] }
 
-def ex12b : LinguisticExample :=
+def ex12b : Datum :=
   { id := "zheng2025_ex12b"
     source := ⟨"xu-2012", "p. 512"⟩
     reportedIn := some ⟨"zheng-2025", "(12b)"⟩
@@ -173,6 +173,6 @@ def ex12b : LinguisticExample :=
     readings := []
     paperFeatures := [("clause_type", "wh-question")] }
 
-def all : List LinguisticExample := [ex1, ex2, ex3, ex4b, ex5_ctx1, ex5_ctx2, ex5_ctx3, ex6_ctx1, ex6_ctx2, ex4a, ex12a, ex12b]
+def all : List Datum := [ex1, ex2, ex3, ex4b, ex5_ctx1, ex5_ctx2, ex5_ctx3, ex6_ctx1, ex6_ctx2, ex4a, ex12a, ex12b]
 
 end Zheng2025.Examples

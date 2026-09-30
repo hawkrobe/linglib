@@ -17,7 +17,7 @@ namespace Major2024.Examples
 
 open Data.Examples
 
-def ex_2 : LinguisticExample :=
+def ex_2 : Datum :=
   { id := "major2024_2"
     source := ⟨"major-2024", "ex. (2)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "dep-clause"), ("matrixVerb", "oyla- 'think'")] }
 
-def ex_38 : LinguisticExample :=
+def ex_38 : Datum :=
   { id := "major2024_38"
     source := ⟨"major-2024", "ex. (38)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_38 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "dep-clause"), ("matrixVerb", "warqira- 'scream'")] }
 
-def ex_39a : LinguisticExample :=
+def ex_39a : Datum :=
   { id := "major2024_39a"
     source := ⟨"major-2024", "ex. (39a)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_39a : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "subcategorization"), ("verb", "de- 'say'")] }
 
-def ex_39b : LinguisticExample :=
+def ex_39b : Datum :=
   { id := "major2024_39b"
     source := ⟨"major-2024", "ex. (39b)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_39b : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "subcategorization"), ("verb", "warqira- 'scream'")] }
 
-def ex_40a : LinguisticExample :=
+def ex_40a : Datum :=
   { id := "major2024_40a"
     source := ⟨"major-2024", "ex. (40a)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_40a : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "subcategorization"), ("verb", "de- 'say'")] }
 
-def ex_40b : LinguisticExample :=
+def ex_40b : Datum :=
   { id := "major2024_40b"
     source := ⟨"major-2024", "ex. (40b)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_40b : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "subcategorization"), ("verb", "warqira- 'scream'")] }
 
-def ex_41a : LinguisticExample :=
+def ex_41a : Datum :=
   { id := "major2024_41a"
     source := ⟨"major-2024", "ex. (41a)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_41a : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "subcategorization-persistence"), ("construction", "dep + scream")] }
 
-def ex_41b : LinguisticExample :=
+def ex_41b : Datum :=
   { id := "major2024_41b"
     source := ⟨"major-2024", "ex. (41b)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_41b : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "subcategorization-persistence"), ("construction", "dep + scream")] }
 
-def ex_49a : LinguisticExample :=
+def ex_49a : Datum :=
   { id := "major2024_49a"
     source := ⟨"major-2024", "ex. (49a)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_49a : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "subject-position"), ("clauseType", "participial")] }
 
-def ex_49b : LinguisticExample :=
+def ex_49b : Datum :=
   { id := "major2024_49b"
     source := ⟨"major-2024", "ex. (49b)"⟩
     reportedIn := none
@@ -147,6 +147,6 @@ def ex_49b : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "subject-position"), ("clauseType", "dep")] }
 
-def all : List LinguisticExample := [ex_2, ex_38, ex_39a, ex_39b, ex_40a, ex_40b, ex_41a, ex_41b, ex_49a, ex_49b]
+def all : List Datum := [ex_2, ex_38, ex_39a, ex_39b, ex_40a, ex_40b, ex_41a, ex_41b, ex_49a, ex_49b]
 
 end Major2024.Examples

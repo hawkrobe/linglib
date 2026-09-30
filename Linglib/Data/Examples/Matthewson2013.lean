@@ -17,7 +17,7 @@ namespace Matthewson2013.Examples
 
 open Data.Examples
 
-def ex22 : LinguisticExample :=
+def ex22 : Datum :=
   { id := "matthewson2013_ex22"
     source := ⟨"matthewson-2013", "(22)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex22 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "ima('a)"), ("perspective", "present"), ("orientation", "present"), ("prospective", "false"), ("figure", "4")] }
 
-def ex29 : LinguisticExample :=
+def ex29 : Datum :=
   { id := "matthewson2013_ex29"
     source := ⟨"matthewson-2013", "(29)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex29 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "ima('a)"), ("perspective", "present"), ("orientation", "past"), ("prospective", "false"), ("figure", "4"), ("force", "necessity"), ("flavor", "epistemic")] }
 
-def ex30 : LinguisticExample :=
+def ex30 : Datum :=
   { id := "matthewson2013_ex30"
     source := ⟨"matthewson-2013", "(30)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex30 : LinguisticExample :=
     readings := [("possibly not", .acceptable)]
     paperFeatures := [("section", "3.1"), ("modal", "ima('a)"), ("negated", "true")] }
 
-def ex37 : LinguisticExample :=
+def ex37 : Datum :=
   { id := "matthewson2013_ex37"
     source := ⟨"matthewson-2013", "(37)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex37 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "ima('a)"), ("perspective", "past"), ("orientation", "present"), ("prospective", "false"), ("figure", "4")] }
 
-def ex38a : LinguisticExample :=
+def ex38a : Datum :=
   { id := "matthewson2013_ex38a"
     source := ⟨"matthewson-2013", "(38a)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex38a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "ima('a)"), ("perspective", "present"), ("orientation", "present"), ("prospective", "false")] }
 
-def ex38b : LinguisticExample :=
+def ex38b : Datum :=
   { id := "matthewson2013_ex38b"
     source := ⟨"matthewson-2013", "(38b)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex38b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "ima('a)"), ("perspective", "present"), ("orientation", "future"), ("prospective", "true")] }
 
-def ex39a : LinguisticExample :=
+def ex39a : Datum :=
   { id := "matthewson2013_ex39a"
     source := ⟨"matthewson-2013", "(39a)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex39a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "ima('a)"), ("perspective", "present"), ("orientation", "past"), ("prospective", "false")] }
 
-def ex40a : LinguisticExample :=
+def ex40a : Datum :=
   { id := "matthewson2013_ex40a"
     source := ⟨"matthewson-2013", "(40a)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex40a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "ima('a)"), ("perspective", "present"), ("orientation", "past"), ("prospective", "true")] }
 
-def ex41a : LinguisticExample :=
+def ex41a : Datum :=
   { id := "matthewson2013_ex41a"
     source := ⟨"matthewson-2013", "(41a)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex41a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "ima('a)"), ("perspective", "present"), ("orientation", "past"), ("prospective", "false")] }
 
-def ex42a : LinguisticExample :=
+def ex42a : Datum :=
   { id := "matthewson2013_ex42a"
     source := ⟨"matthewson-2013", "(42a)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex42a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "ima('a)"), ("perspective", "present"), ("orientation", "past"), ("prospective", "true")] }
 
-def ex39b : LinguisticExample :=
+def ex39b : Datum :=
   { id := "matthewson2013_ex39b"
     source := ⟨"matthewson-2013", "(39b)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex39b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "ima('a)"), ("perspective", "present"), ("orientation", "present"), ("prospective", "false")] }
 
-def ex40b : LinguisticExample :=
+def ex40b : Datum :=
   { id := "matthewson2013_ex40b"
     source := ⟨"matthewson-2013", "(40b)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex40b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "ima('a)"), ("perspective", "present"), ("orientation", "present"), ("prospective", "true")] }
 
-def ex41b : LinguisticExample :=
+def ex41b : Datum :=
   { id := "matthewson2013_ex41b"
     source := ⟨"matthewson-2013", "(41b)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex41b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "ima('a)"), ("perspective", "present"), ("orientation", "present"), ("prospective", "false")] }
 
-def ex42b : LinguisticExample :=
+def ex42b : Datum :=
   { id := "matthewson2013_ex42b"
     source := ⟨"matthewson-2013", "(42b)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex42b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "ima('a)"), ("perspective", "present"), ("orientation", "present"), ("prospective", "true")] }
 
-def ex39c : LinguisticExample :=
+def ex39c : Datum :=
   { id := "matthewson2013_ex39c"
     source := ⟨"matthewson-2013", "(39c)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex39c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "ima('a)"), ("perspective", "present"), ("orientation", "future"), ("prospective", "false")] }
 
-def ex40c : LinguisticExample :=
+def ex40c : Datum :=
   { id := "matthewson2013_ex40c"
     source := ⟨"matthewson-2013", "(40c)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex40c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "ima('a)"), ("perspective", "present"), ("orientation", "future"), ("prospective", "true")] }
 
-def ex41c : LinguisticExample :=
+def ex41c : Datum :=
   { id := "matthewson2013_ex41c"
     source := ⟨"matthewson-2013", "(41c)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex41c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "ima('a)"), ("perspective", "present"), ("orientation", "future"), ("prospective", "false")] }
 
-def ex42c : LinguisticExample :=
+def ex42c : Datum :=
   { id := "matthewson2013_ex42c"
     source := ⟨"matthewson-2013", "(42c)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex42c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "ima('a)"), ("perspective", "present"), ("orientation", "future"), ("prospective", "true")] }
 
-def ex43a : LinguisticExample :=
+def ex43a : Datum :=
   { id := "matthewson2013_ex43a"
     source := ⟨"matthewson-2013", "(43a)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex43a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "ima('a)"), ("perspective", "past"), ("orientation", "past"), ("prospective", "false"), ("figure", "4")] }
 
-def ex43a_prime : LinguisticExample :=
+def ex43a_prime : Datum :=
   { id := "matthewson2013_ex43a_prime"
     source := ⟨"matthewson-2013", "(43a')"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex43a_prime : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "ima('a)"), ("perspective", "past"), ("orientation", "past"), ("prospective", "true")] }
 
-def ex44 : LinguisticExample :=
+def ex44 : Datum :=
   { id := "matthewson2013_ex44"
     source := ⟨"matthewson-2013", "(44)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex44 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "ima('a)"), ("perspective", "past"), ("orientation", "future"), ("prospective", "true"), ("figure", "4")] }
 
-def ex44_prime : LinguisticExample :=
+def ex44_prime : Datum :=
   { id := "matthewson2013_ex44_prime"
     source := ⟨"matthewson-2013", "(44')"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex44_prime : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "ima('a)"), ("perspective", "past"), ("orientation", "future"), ("prospective", "false")] }
 
-def ex47a : LinguisticExample :=
+def ex47a : Datum :=
   { id := "matthewson2013_ex47a"
     source := ⟨"matthewson-2013", "(47a)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex47a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "g̱at"), ("perspective", "past"), ("orientation", "past"), ("prospective", "false"), ("figure", "4")] }
 
-def ex48a : LinguisticExample :=
+def ex48a : Datum :=
   { id := "matthewson2013_ex48a"
     source := ⟨"matthewson-2013", "(48a)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex48a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "g̱at"), ("perspective", "past"), ("orientation", "past"), ("prospective", "true")] }
 
-def ex47b : LinguisticExample :=
+def ex47b : Datum :=
   { id := "matthewson2013_ex47b"
     source := ⟨"matthewson-2013", "(47b)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex47b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "g̱at"), ("perspective", "past"), ("orientation", "present"), ("prospective", "false"), ("figure", "4")] }
 
-def ex48b : LinguisticExample :=
+def ex48b : Datum :=
   { id := "matthewson2013_ex48b"
     source := ⟨"matthewson-2013", "(48b)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex48b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "g̱at"), ("perspective", "past"), ("orientation", "present"), ("prospective", "true")] }
 
-def ex47c : LinguisticExample :=
+def ex47c : Datum :=
   { id := "matthewson2013_ex47c"
     source := ⟨"matthewson-2013", "(47c)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def ex47c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "g̱at"), ("perspective", "past"), ("orientation", "future"), ("prospective", "false")] }
 
-def ex48c : LinguisticExample :=
+def ex48c : Datum :=
   { id := "matthewson2013_ex48c"
     source := ⟨"matthewson-2013", "(48c)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def ex48c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("modal", "g̱at"), ("perspective", "past"), ("orientation", "future"), ("prospective", "true"), ("figure", "4")] }
 
-def ex53 : LinguisticExample :=
+def ex53 : Datum :=
   { id := "matthewson2013_ex53"
     source := ⟨"matthewson-2013", "(53)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def ex53 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("modal", "da'aḵhlxw"), ("perspective", "present"), ("orientation", "future"), ("prospective", "true")] }
 
-def ex53_prime : LinguisticExample :=
+def ex53_prime : Datum :=
   { id := "matthewson2013_ex53_prime"
     source := ⟨"matthewson-2013", "(53')"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def ex53_prime : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("modal", "da'aḵhlxw"), ("perspective", "present"), ("orientation", "future"), ("prospective", "false")] }
 
-def ex56 : LinguisticExample :=
+def ex56 : Datum :=
   { id := "matthewson2013_ex56"
     source := ⟨"matthewson-2013", "(56)"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def ex56 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("modal", "da'aḵhlxw"), ("perspective", "past"), ("orientation", "future"), ("prospective", "true")] }
 
-def ex56_prime : LinguisticExample :=
+def ex56_prime : Datum :=
   { id := "matthewson2013_ex56_prime"
     source := ⟨"matthewson-2013", "(56')"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def ex56_prime : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("modal", "da'aḵhlxw"), ("perspective", "past"), ("orientation", "future"), ("prospective", "false")] }
 
-def ex62 : LinguisticExample :=
+def ex62 : Datum :=
   { id := "matthewson2013_ex62"
     source := ⟨"matthewson-2013", "(62)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def ex62 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("modal", "da'aḵhlxw"), ("perspective", "past"), ("orientation", "future"), ("prospective", "true"), ("actualityEntailment", "false")] }
 
-def ex63a : LinguisticExample :=
+def ex63a : Datum :=
   { id := "matthewson2013_ex63a"
     source := ⟨"matthewson-2013", "(63a)"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def ex63a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("modal", "da'aḵhlxw"), ("force", "possibility"), ("flavor", "bouletic")] }
 
-def ex64 : LinguisticExample :=
+def ex64 : Datum :=
   { id := "matthewson2013_ex64"
     source := ⟨"matthewson-2013", "(64)"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def ex64 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("modal", "da'aḵhlxw"), ("force", "possibility"), ("flavor", "teleological")] }
 
-def ex65 : LinguisticExample :=
+def ex65 : Datum :=
   { id := "matthewson2013_ex65"
     source := ⟨"matthewson-2013", "(65)"⟩
     reportedIn := none
@@ -485,7 +485,7 @@ def ex65 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("modal", "da'aḵhlxw"), ("force", "possibility"), ("flavor", "deontic")] }
 
-def ex66 : LinguisticExample :=
+def ex66 : Datum :=
   { id := "matthewson2013_ex66"
     source := ⟨"matthewson-2013", "(66)"⟩
     reportedIn := none
@@ -498,7 +498,7 @@ def ex66 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("modal", "da'aḵhlxw"), ("force", "necessity"), ("flavor", "circumstantial")] }
 
-def ex73 : LinguisticExample :=
+def ex73 : Datum :=
   { id := "matthewson2013_ex73"
     source := ⟨"matthewson-2013", "(73)"⟩
     reportedIn := none
@@ -511,7 +511,7 @@ def ex73 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2"), ("modal", "anooḵ"), ("perspective", "past"), ("orientation", "future"), ("prospective", "true")] }
 
-def ex73_prime : LinguisticExample :=
+def ex73_prime : Datum :=
   { id := "matthewson2013_ex73_prime"
     source := ⟨"matthewson-2013", "(73')"⟩
     reportedIn := none
@@ -524,7 +524,7 @@ def ex73_prime : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2"), ("modal", "anooḵ"), ("perspective", "past"), ("orientation", "future"), ("prospective", "false")] }
 
-def ex79 : LinguisticExample :=
+def ex79 : Datum :=
   { id := "matthewson2013_ex79"
     source := ⟨"matthewson-2013", "(79)"⟩
     reportedIn := none
@@ -537,7 +537,7 @@ def ex79 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2"), ("modal", "anooḵ"), ("force", "possibility"), ("flavor", "pure circumstantial")] }
 
-def ex80 : LinguisticExample :=
+def ex80 : Datum :=
   { id := "matthewson2013_ex80"
     source := ⟨"matthewson-2013", "(80)"⟩
     reportedIn := none
@@ -550,7 +550,7 @@ def ex80 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2"), ("modal", "anooḵ"), ("force", "necessity"), ("flavor", "deontic")] }
 
-def ex83 : LinguisticExample :=
+def ex83 : Datum :=
   { id := "matthewson2013_ex83"
     source := ⟨"matthewson-2013", "(83)"⟩
     reportedIn := none
@@ -563,7 +563,7 @@ def ex83 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.3"), ("modal", "sgi"), ("perspective", "present"), ("orientation", "future"), ("prospective", "true"), ("flavor", "deontic")] }
 
-def ex83_prime : LinguisticExample :=
+def ex83_prime : Datum :=
   { id := "matthewson2013_ex83_prime"
     source := ⟨"matthewson-2013", "(83')"⟩
     reportedIn := none
@@ -576,7 +576,7 @@ def ex83_prime : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.3"), ("modal", "sgi"), ("perspective", "present"), ("orientation", "future"), ("prospective", "false"), ("flavor", "deontic")] }
 
-def ex86a : LinguisticExample :=
+def ex86a : Datum :=
   { id := "matthewson2013_ex86a"
     source := ⟨"matthewson-2013", "(86a)"⟩
     reportedIn := none
@@ -589,7 +589,7 @@ def ex86a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.3"), ("modal", "sgi"), ("force", "necessity"), ("flavor", "circumstantial")] }
 
-def ex89 : LinguisticExample :=
+def ex89 : Datum :=
   { id := "matthewson2013_ex89"
     source := ⟨"matthewson-2013", "(89)"⟩
     reportedIn := none
@@ -602,7 +602,7 @@ def ex89 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.3"), ("modal", "sgi"), ("force", "necessity"), ("flavor", "teleological")] }
 
-def ex90 : LinguisticExample :=
+def ex90 : Datum :=
   { id := "matthewson2013_ex90"
     source := ⟨"matthewson-2013", "(90)"⟩
     reportedIn := none
@@ -615,7 +615,7 @@ def ex90 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.3"), ("modal", "sgi"), ("force", "weak necessity"), ("flavor", "teleological")] }
 
-def ex91 : LinguisticExample :=
+def ex91 : Datum :=
   { id := "matthewson2013_ex91"
     source := ⟨"matthewson-2013", "(91)"⟩
     reportedIn := none
@@ -628,7 +628,7 @@ def ex91 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.3"), ("modal", "sgi"), ("flavor", "bouletic")] }
 
-def ex92 : LinguisticExample :=
+def ex92 : Datum :=
   { id := "matthewson2013_ex92"
     source := ⟨"matthewson-2013", "(92)"⟩
     reportedIn := none
@@ -641,7 +641,7 @@ def ex92 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.3"), ("modal", "sgi"), ("force", "necessity"), ("flavor", "bouletic")] }
 
-def ex95a : LinguisticExample :=
+def ex95a : Datum :=
   { id := "matthewson2013_ex95a"
     source := ⟨"matthewson-2013", "(95a)"⟩
     reportedIn := none
@@ -654,7 +654,7 @@ def ex95a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.3"), ("test", "sneeze"), ("modal", "dim")] }
 
-def ex96 : LinguisticExample :=
+def ex96 : Datum :=
   { id := "matthewson2013_ex96"
     source := ⟨"matthewson-2013", "(96)"⟩
     reportedIn := none
@@ -667,7 +667,7 @@ def ex96 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.3"), ("test", "sneeze"), ("modal", "sgi"), ("force", "necessity"), ("flavor", "pure circumstantial")] }
 
-def ex100a : LinguisticExample :=
+def ex100a : Datum :=
   { id := "matthewson2013_ex100a"
     source := ⟨"matthewson-2013", "(100a)"⟩
     reportedIn := none
@@ -680,7 +680,7 @@ def ex100a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.3"), ("modal", "sgi"), ("force", "necessity"), ("flavor", "pure circumstantial")] }
 
-def ex100b : LinguisticExample :=
+def ex100b : Datum :=
   { id := "matthewson2013_ex100b"
     source := ⟨"matthewson-2013", "(100b)"⟩
     reportedIn := none
@@ -693,6 +693,6 @@ def ex100b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.3"), ("modal", "sgi"), ("force", "necessity"), ("flavor", "pure circumstantial")] }
 
-def all : List LinguisticExample := [ex22, ex29, ex30, ex37, ex38a, ex38b, ex39a, ex40a, ex41a, ex42a, ex39b, ex40b, ex41b, ex42b, ex39c, ex40c, ex41c, ex42c, ex43a, ex43a_prime, ex44, ex44_prime, ex47a, ex48a, ex47b, ex48b, ex47c, ex48c, ex53, ex53_prime, ex56, ex56_prime, ex62, ex63a, ex64, ex65, ex66, ex73, ex73_prime, ex79, ex80, ex83, ex83_prime, ex86a, ex89, ex90, ex91, ex92, ex95a, ex96, ex100a, ex100b]
+def all : List Datum := [ex22, ex29, ex30, ex37, ex38a, ex38b, ex39a, ex40a, ex41a, ex42a, ex39b, ex40b, ex41b, ex42b, ex39c, ex40c, ex41c, ex42c, ex43a, ex43a_prime, ex44, ex44_prime, ex47a, ex48a, ex47b, ex48b, ex47c, ex48c, ex53, ex53_prime, ex56, ex56_prime, ex62, ex63a, ex64, ex65, ex66, ex73, ex73_prime, ex79, ex80, ex83, ex83_prime, ex86a, ex89, ex90, ex91, ex92, ex95a, ex96, ex100a, ex100b]
 
 end Matthewson2013.Examples

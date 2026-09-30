@@ -17,7 +17,7 @@ namespace AhnKocabDavidson2026.Examples
 
 open Data.Examples
 
-def ex9 : LinguisticExample :=
+def ex9 : Datum :=
   { id := "ahnkocabdavidson2026_ex9"
     source := ⟨"ahn-kocab-davidson-2026", "(9)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex9 : LinguisticExample :=
     readings := []
     paperFeatures := [("locus", "false"), ("resolved", "true"), ("condition", "consultant"), ("verb", "DANCE")] }
 
-def ex10a : LinguisticExample :=
+def ex10a : Datum :=
   { id := "ahnkocabdavidson2026_ex10a"
     source := ⟨"ahn-kocab-davidson-2026", "(10a)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex10a : LinguisticExample :=
     readings := []
     paperFeatures := [("locus", "false"), ("resolved", "false"), ("condition", "consultant"), ("verb", "DANCE")] }
 
-def ex10b : LinguisticExample :=
+def ex10b : Datum :=
   { id := "ahnkocabdavidson2026_ex10b"
     source := ⟨"ahn-kocab-davidson-2026", "(10b)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex10b : LinguisticExample :=
     readings := []
     paperFeatures := [("locus", "true"), ("resolved", "false"), ("condition", "consultant"), ("verb", "DANCE")] }
 
-def ex11a : LinguisticExample :=
+def ex11a : Datum :=
   { id := "ahnkocabdavidson2026_ex11a"
     source := ⟨"ahn-kocab-davidson-2026", "(11a)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex11a : LinguisticExample :=
     readings := []
     paperFeatures := [("locus", "false"), ("resolved", "false"), ("condition", "consultant"), ("verb", "PUSH")] }
 
-def ex11b : LinguisticExample :=
+def ex11b : Datum :=
   { id := "ahnkocabdavidson2026_ex11b"
     source := ⟨"ahn-kocab-davidson-2026", "(11b)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex11b : LinguisticExample :=
     readings := []
     paperFeatures := [("locus", "true"), ("resolved", "false"), ("condition", "consultant"), ("verb", "PUSH")] }
 
-def ex11c : LinguisticExample :=
+def ex11c : Datum :=
   { id := "ahnkocabdavidson2026_ex11c"
     source := ⟨"ahn-kocab-davidson-2026", "(11c)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex11c : LinguisticExample :=
     readings := []
     paperFeatures := [("locus", "false"), ("resolved", "true"), ("condition", "consultant"), ("verb", "PUSH")] }
 
-def ex18 : LinguisticExample :=
+def ex18 : Datum :=
   { id := "ahnkocabdavidson2026_ex18"
     source := ⟨"ahn-kocab-davidson-2026", "(18)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex18 : LinguisticExample :=
     readings := []
     paperFeatures := [("locus", "false"), ("resolved", "true"), ("condition", "consultant"), ("verb", "DANCE")] }
 
-def ex19 : LinguisticExample :=
+def ex19 : Datum :=
   { id := "ahnkocabdavidson2026_ex19"
     source := ⟨"ahn-kocab-davidson-2026", "(19)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex19 : LinguisticExample :=
     readings := []
     paperFeatures := [("locus", "true"), ("resolved", "true"), ("condition", "consultant"), ("verb", "DANCE")] }
 
-def ex20 : LinguisticExample :=
+def ex20 : Datum :=
   { id := "ahnkocabdavidson2026_ex20"
     source := ⟨"ahn-kocab-davidson-2026", "(20)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex20 : LinguisticExample :=
     readings := []
     paperFeatures := [("locus", "false"), ("resolved", "true"), ("condition", "consultant"), ("verb", "DANCE")] }
 
-def ex20null : LinguisticExample :=
+def ex20null : Datum :=
   { id := "ahnkocabdavidson2026_ex20null"
     source := ⟨"ahn-kocab-davidson-2026", "(20), null argument"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex20null : LinguisticExample :=
     readings := []
     paperFeatures := [("locus", "false"), ("resolved", "false"), ("condition", "consultant"), ("verb", "DANCE")] }
 
-def ex21 : LinguisticExample :=
+def ex21 : Datum :=
   { id := "ahnkocabdavidson2026_ex21"
     source := ⟨"ahn-kocab-davidson-2026", "(21)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex21 : LinguisticExample :=
     readings := []
     paperFeatures := [("locus", "true"), ("resolved", "false"), ("condition", "consultant"), ("verb", "DANCE")] }
 
-def a1_1_one_noLocus : LinguisticExample :=
+def a1_1_one_noLocus : Datum :=
   { id := "ahnkocabdavidson2026_a1_1_one_noLocus"
     source := ⟨"ahn-kocab-davidson-2026", "Appendix A1, 1. DANCE [1,-locus]"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def a1_1_one_noLocus : LinguisticExample :=
     readings := []
     paperFeatures := [("locus", "false"), ("resolved", "true"), ("condition", "number"), ("verb", "DANCE")] }
 
-def a1_1_one_locus : LinguisticExample :=
+def a1_1_one_locus : Datum :=
   { id := "ahnkocabdavidson2026_a1_1_one_locus"
     source := ⟨"ahn-kocab-davidson-2026", "Appendix A1, 1. DANCE [1,+locus]"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def a1_1_one_locus : LinguisticExample :=
     readings := []
     paperFeatures := [("locus", "true"), ("resolved", "true"), ("condition", "number"), ("verb", "DANCE")] }
 
-def a1_1_two_noLocus : LinguisticExample :=
+def a1_1_two_noLocus : Datum :=
   { id := "ahnkocabdavidson2026_a1_1_two_noLocus"
     source := ⟨"ahn-kocab-davidson-2026", "Appendix A1, 1. DANCE [2,-locus]"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def a1_1_two_noLocus : LinguisticExample :=
     readings := []
     paperFeatures := [("locus", "false"), ("resolved", "false"), ("condition", "number"), ("verb", "DANCE")] }
 
-def a1_1_two_locus : LinguisticExample :=
+def a1_1_two_locus : Datum :=
   { id := "ahnkocabdavidson2026_a1_1_two_locus"
     source := ⟨"ahn-kocab-davidson-2026", "Appendix A1, 1. DANCE [2,+locus]"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def a1_1_two_locus : LinguisticExample :=
     readings := []
     paperFeatures := [("locus", "true"), ("resolved", "false"), ("condition", "number"), ("verb", "DANCE")] }
 
-def a1_2_one_noLocus : LinguisticExample :=
+def a1_2_one_noLocus : Datum :=
   { id := "ahnkocabdavidson2026_a1_2_one_noLocus"
     source := ⟨"ahn-kocab-davidson-2026", "Appendix A1, 2. FALL [1,-locus]"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def a1_2_one_noLocus : LinguisticExample :=
     readings := []
     paperFeatures := [("locus", "false"), ("resolved", "true"), ("condition", "number"), ("verb", "FALL")] }
 
-def a1_2_one_locus : LinguisticExample :=
+def a1_2_one_locus : Datum :=
   { id := "ahnkocabdavidson2026_a1_2_one_locus"
     source := ⟨"ahn-kocab-davidson-2026", "Appendix A1, 2. FALL [1,+locus]"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def a1_2_one_locus : LinguisticExample :=
     readings := []
     paperFeatures := [("locus", "true"), ("resolved", "true"), ("condition", "number"), ("verb", "FALL")] }
 
-def a1_2_two_noLocus : LinguisticExample :=
+def a1_2_two_noLocus : Datum :=
   { id := "ahnkocabdavidson2026_a1_2_two_noLocus"
     source := ⟨"ahn-kocab-davidson-2026", "Appendix A1, 2. FALL [2,-locus]"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def a1_2_two_noLocus : LinguisticExample :=
     readings := []
     paperFeatures := [("locus", "false"), ("resolved", "false"), ("condition", "number"), ("verb", "FALL")] }
 
-def a1_2_two_locus : LinguisticExample :=
+def a1_2_two_locus : Datum :=
   { id := "ahnkocabdavidson2026_a1_2_two_locus"
     source := ⟨"ahn-kocab-davidson-2026", "Appendix A1, 2. FALL [2,+locus]"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def a1_2_two_locus : LinguisticExample :=
     readings := []
     paperFeatures := [("locus", "true"), ("resolved", "false"), ("condition", "number"), ("verb", "FALL")] }
 
-def a1_3_one_noLocus : LinguisticExample :=
+def a1_3_one_noLocus : Datum :=
   { id := "ahnkocabdavidson2026_a1_3_one_noLocus"
     source := ⟨"ahn-kocab-davidson-2026", "Appendix A1, 3. JUMP [1,-locus]"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def a1_3_one_noLocus : LinguisticExample :=
     readings := []
     paperFeatures := [("locus", "false"), ("resolved", "true"), ("condition", "number"), ("verb", "JUMP")] }
 
-def a1_3_one_locus : LinguisticExample :=
+def a1_3_one_locus : Datum :=
   { id := "ahnkocabdavidson2026_a1_3_one_locus"
     source := ⟨"ahn-kocab-davidson-2026", "Appendix A1, 3. JUMP [1,+locus]"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def a1_3_one_locus : LinguisticExample :=
     readings := []
     paperFeatures := [("locus", "true"), ("resolved", "true"), ("condition", "number"), ("verb", "JUMP")] }
 
-def a1_3_two_noLocus : LinguisticExample :=
+def a1_3_two_noLocus : Datum :=
   { id := "ahnkocabdavidson2026_a1_3_two_noLocus"
     source := ⟨"ahn-kocab-davidson-2026", "Appendix A1, 3. JUMP [2,-locus]"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def a1_3_two_noLocus : LinguisticExample :=
     readings := []
     paperFeatures := [("locus", "false"), ("resolved", "false"), ("condition", "number"), ("verb", "JUMP")] }
 
-def a1_3_two_locus : LinguisticExample :=
+def a1_3_two_locus : Datum :=
   { id := "ahnkocabdavidson2026_a1_3_two_locus"
     source := ⟨"ahn-kocab-davidson-2026", "Appendix A1, 3. JUMP [2,+locus]"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def a1_3_two_locus : LinguisticExample :=
     readings := []
     paperFeatures := [("locus", "true"), ("resolved", "false"), ("condition", "number"), ("verb", "JUMP")] }
 
-def a1_4_one_noLocus : LinguisticExample :=
+def a1_4_one_noLocus : Datum :=
   { id := "ahnkocabdavidson2026_a1_4_one_noLocus"
     source := ⟨"ahn-kocab-davidson-2026", "Appendix A1, 4. RUN [1,-locus]"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def a1_4_one_noLocus : LinguisticExample :=
     readings := []
     paperFeatures := [("locus", "false"), ("resolved", "true"), ("condition", "number"), ("verb", "RUN")] }
 
-def a1_4_one_locus : LinguisticExample :=
+def a1_4_one_locus : Datum :=
   { id := "ahnkocabdavidson2026_a1_4_one_locus"
     source := ⟨"ahn-kocab-davidson-2026", "Appendix A1, 4. RUN [1,+locus]"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def a1_4_one_locus : LinguisticExample :=
     readings := []
     paperFeatures := [("locus", "true"), ("resolved", "true"), ("condition", "number"), ("verb", "RUN")] }
 
-def a1_4_two_noLocus : LinguisticExample :=
+def a1_4_two_noLocus : Datum :=
   { id := "ahnkocabdavidson2026_a1_4_two_noLocus"
     source := ⟨"ahn-kocab-davidson-2026", "Appendix A1, 4. RUN [2,-locus]"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def a1_4_two_noLocus : LinguisticExample :=
     readings := []
     paperFeatures := [("locus", "false"), ("resolved", "false"), ("condition", "number"), ("verb", "RUN")] }
 
-def a1_4_two_locus : LinguisticExample :=
+def a1_4_two_locus : Datum :=
   { id := "ahnkocabdavidson2026_a1_4_two_locus"
     source := ⟨"ahn-kocab-davidson-2026", "Appendix A1, 4. RUN [2,+locus]"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def a1_4_two_locus : LinguisticExample :=
     readings := []
     paperFeatures := [("locus", "true"), ("resolved", "false"), ("condition", "number"), ("verb", "RUN")] }
 
-def a1_5_narr_noLocus : LinguisticExample :=
+def a1_5_narr_noLocus : Datum :=
   { id := "ahnkocabdavidson2026_a1_5_narr_noLocus"
     source := ⟨"ahn-kocab-davidson-2026", "Appendix A1, 5. VISIT [+narr,-locus]"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def a1_5_narr_noLocus : LinguisticExample :=
     readings := []
     paperFeatures := [("locus", "false"), ("resolved", "true"), ("condition", "narrative"), ("verb", "VISIT")] }
 
-def a1_5_noNarr_noLocus : LinguisticExample :=
+def a1_5_noNarr_noLocus : Datum :=
   { id := "ahnkocabdavidson2026_a1_5_noNarr_noLocus"
     source := ⟨"ahn-kocab-davidson-2026", "Appendix A1, 5. VISIT [-narr,-locus]"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def a1_5_noNarr_noLocus : LinguisticExample :=
     readings := []
     paperFeatures := [("locus", "false"), ("resolved", "false"), ("condition", "narrative"), ("verb", "VISIT")] }
 
-def a1_5_narr_locus : LinguisticExample :=
+def a1_5_narr_locus : Datum :=
   { id := "ahnkocabdavidson2026_a1_5_narr_locus"
     source := ⟨"ahn-kocab-davidson-2026", "Appendix A1, 5. VISIT [+narr,+locus]"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def a1_5_narr_locus : LinguisticExample :=
     readings := []
     paperFeatures := [("locus", "true"), ("resolved", "true"), ("condition", "narrative"), ("verb", "VISIT")] }
 
-def a1_5_noNarr_locus : LinguisticExample :=
+def a1_5_noNarr_locus : Datum :=
   { id := "ahnkocabdavidson2026_a1_5_noNarr_locus"
     source := ⟨"ahn-kocab-davidson-2026", "Appendix A1, 5. VISIT [-narr,+locus]"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def a1_5_noNarr_locus : LinguisticExample :=
     readings := []
     paperFeatures := [("locus", "true"), ("resolved", "false"), ("condition", "narrative"), ("verb", "VISIT")] }
 
-def a1_6_narr_noLocus : LinguisticExample :=
+def a1_6_narr_noLocus : Datum :=
   { id := "ahnkocabdavidson2026_a1_6_narr_noLocus"
     source := ⟨"ahn-kocab-davidson-2026", "Appendix A1, 6. YELL [+narr,-locus]"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def a1_6_narr_noLocus : LinguisticExample :=
     readings := []
     paperFeatures := [("locus", "false"), ("resolved", "true"), ("condition", "narrative"), ("verb", "YELL")] }
 
-def a1_6_narr_locus : LinguisticExample :=
+def a1_6_narr_locus : Datum :=
   { id := "ahnkocabdavidson2026_a1_6_narr_locus"
     source := ⟨"ahn-kocab-davidson-2026", "Appendix A1, 6. YELL [+narr,+locus]"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def a1_6_narr_locus : LinguisticExample :=
     readings := []
     paperFeatures := [("locus", "true"), ("resolved", "true"), ("condition", "narrative"), ("verb", "YELL")] }
 
-def a1_6_noNarr_noLocus : LinguisticExample :=
+def a1_6_noNarr_noLocus : Datum :=
   { id := "ahnkocabdavidson2026_a1_6_noNarr_noLocus"
     source := ⟨"ahn-kocab-davidson-2026", "Appendix A1, 6. YELL [-narr,-locus]"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def a1_6_noNarr_noLocus : LinguisticExample :=
     readings := []
     paperFeatures := [("locus", "false"), ("resolved", "false"), ("condition", "narrative"), ("verb", "YELL")] }
 
-def a1_6_noNarr_locus : LinguisticExample :=
+def a1_6_noNarr_locus : Datum :=
   { id := "ahnkocabdavidson2026_a1_6_noNarr_locus"
     source := ⟨"ahn-kocab-davidson-2026", "Appendix A1, 6. YELL [-narr,+locus]"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def a1_6_noNarr_locus : LinguisticExample :=
     readings := []
     paperFeatures := [("locus", "true"), ("resolved", "false"), ("condition", "narrative"), ("verb", "YELL")] }
 
-def a1_7_narr_noLocus : LinguisticExample :=
+def a1_7_narr_noLocus : Datum :=
   { id := "ahnkocabdavidson2026_a1_7_narr_noLocus"
     source := ⟨"ahn-kocab-davidson-2026", "Appendix A1, 7. HELP [+narr,-locus]"⟩
     reportedIn := none
@@ -485,7 +485,7 @@ def a1_7_narr_noLocus : LinguisticExample :=
     readings := []
     paperFeatures := [("locus", "false"), ("resolved", "true"), ("condition", "narrative"), ("verb", "HELP")] }
 
-def a1_7_narr_locus : LinguisticExample :=
+def a1_7_narr_locus : Datum :=
   { id := "ahnkocabdavidson2026_a1_7_narr_locus"
     source := ⟨"ahn-kocab-davidson-2026", "Appendix A1, 7. HELP [+narr,+locus]"⟩
     reportedIn := none
@@ -498,7 +498,7 @@ def a1_7_narr_locus : LinguisticExample :=
     readings := []
     paperFeatures := [("locus", "true"), ("resolved", "true"), ("condition", "narrative"), ("verb", "HELP")] }
 
-def a1_7_noNarr_noLocus : LinguisticExample :=
+def a1_7_noNarr_noLocus : Datum :=
   { id := "ahnkocabdavidson2026_a1_7_noNarr_noLocus"
     source := ⟨"ahn-kocab-davidson-2026", "Appendix A1, 7. HELP [-narr,-locus]"⟩
     reportedIn := none
@@ -511,7 +511,7 @@ def a1_7_noNarr_noLocus : LinguisticExample :=
     readings := []
     paperFeatures := [("locus", "false"), ("resolved", "false"), ("condition", "narrative"), ("verb", "HELP")] }
 
-def a1_7_noNarr_locus : LinguisticExample :=
+def a1_7_noNarr_locus : Datum :=
   { id := "ahnkocabdavidson2026_a1_7_noNarr_locus"
     source := ⟨"ahn-kocab-davidson-2026", "Appendix A1, 7. HELP [-narr,+locus]"⟩
     reportedIn := none
@@ -524,7 +524,7 @@ def a1_7_noNarr_locus : LinguisticExample :=
     readings := []
     paperFeatures := [("locus", "true"), ("resolved", "false"), ("condition", "narrative"), ("verb", "HELP")] }
 
-def a1_8_narr_noLocus : LinguisticExample :=
+def a1_8_narr_noLocus : Datum :=
   { id := "ahnkocabdavidson2026_a1_8_narr_noLocus"
     source := ⟨"ahn-kocab-davidson-2026", "Appendix A1, 8. ASK [+narr,-locus]"⟩
     reportedIn := none
@@ -537,7 +537,7 @@ def a1_8_narr_noLocus : LinguisticExample :=
     readings := []
     paperFeatures := [("locus", "false"), ("resolved", "true"), ("condition", "narrative"), ("verb", "ASK")] }
 
-def a1_8_narr_locus : LinguisticExample :=
+def a1_8_narr_locus : Datum :=
   { id := "ahnkocabdavidson2026_a1_8_narr_locus"
     source := ⟨"ahn-kocab-davidson-2026", "Appendix A1, 8. ASK [+narr,+locus]"⟩
     reportedIn := none
@@ -550,7 +550,7 @@ def a1_8_narr_locus : LinguisticExample :=
     readings := []
     paperFeatures := [("locus", "true"), ("resolved", "true"), ("condition", "narrative"), ("verb", "ASK")] }
 
-def a1_8_noNarr_noLocus : LinguisticExample :=
+def a1_8_noNarr_noLocus : Datum :=
   { id := "ahnkocabdavidson2026_a1_8_noNarr_noLocus"
     source := ⟨"ahn-kocab-davidson-2026", "Appendix A1, 8. ASK [-narr,-locus]"⟩
     reportedIn := none
@@ -563,7 +563,7 @@ def a1_8_noNarr_noLocus : LinguisticExample :=
     readings := []
     paperFeatures := [("locus", "false"), ("resolved", "false"), ("condition", "narrative"), ("verb", "ASK")] }
 
-def a1_8_noNarr_locus : LinguisticExample :=
+def a1_8_noNarr_locus : Datum :=
   { id := "ahnkocabdavidson2026_a1_8_noNarr_locus"
     source := ⟨"ahn-kocab-davidson-2026", "Appendix A1, 8. ASK [-narr,+locus]"⟩
     reportedIn := none
@@ -576,7 +576,7 @@ def a1_8_noNarr_locus : LinguisticExample :=
     readings := []
     paperFeatures := [("locus", "true"), ("resolved", "false"), ("condition", "narrative"), ("verb", "ASK")] }
 
-def a1_9_inanimate_noLocus : LinguisticExample :=
+def a1_9_inanimate_noLocus : Datum :=
   { id := "ahnkocabdavidson2026_a1_9_inanimate_noLocus"
     source := ⟨"ahn-kocab-davidson-2026", "Appendix A1, 9. PUNCH [-animate,-locus]"⟩
     reportedIn := none
@@ -589,7 +589,7 @@ def a1_9_inanimate_noLocus : LinguisticExample :=
     readings := []
     paperFeatures := [("locus", "false"), ("resolved", "true"), ("condition", "animacy"), ("verb", "PUNCH")] }
 
-def a1_9_inanimate_locus : LinguisticExample :=
+def a1_9_inanimate_locus : Datum :=
   { id := "ahnkocabdavidson2026_a1_9_inanimate_locus"
     source := ⟨"ahn-kocab-davidson-2026", "Appendix A1, 9. PUNCH [-animate,+locus]"⟩
     reportedIn := none
@@ -602,7 +602,7 @@ def a1_9_inanimate_locus : LinguisticExample :=
     readings := []
     paperFeatures := [("locus", "true"), ("resolved", "true"), ("condition", "animacy"), ("verb", "PUNCH")] }
 
-def a1_9_animate_noLocus : LinguisticExample :=
+def a1_9_animate_noLocus : Datum :=
   { id := "ahnkocabdavidson2026_a1_9_animate_noLocus"
     source := ⟨"ahn-kocab-davidson-2026", "Appendix A1, 9. PUNCH [+animate,-locus]"⟩
     reportedIn := none
@@ -615,7 +615,7 @@ def a1_9_animate_noLocus : LinguisticExample :=
     readings := []
     paperFeatures := [("locus", "false"), ("resolved", "false"), ("condition", "animacy"), ("verb", "PUNCH")] }
 
-def a1_9_animate_locus : LinguisticExample :=
+def a1_9_animate_locus : Datum :=
   { id := "ahnkocabdavidson2026_a1_9_animate_locus"
     source := ⟨"ahn-kocab-davidson-2026", "Appendix A1, 9. PUNCH [+animate,+locus]"⟩
     reportedIn := none
@@ -628,7 +628,7 @@ def a1_9_animate_locus : LinguisticExample :=
     readings := []
     paperFeatures := [("locus", "true"), ("resolved", "false"), ("condition", "animacy"), ("verb", "PUNCH")] }
 
-def a1_10_inanimate_noLocus : LinguisticExample :=
+def a1_10_inanimate_noLocus : Datum :=
   { id := "ahnkocabdavidson2026_a1_10_inanimate_noLocus"
     source := ⟨"ahn-kocab-davidson-2026", "Appendix A1, 10. KICK [-animate,-locus]"⟩
     reportedIn := none
@@ -641,7 +641,7 @@ def a1_10_inanimate_noLocus : LinguisticExample :=
     readings := []
     paperFeatures := [("locus", "false"), ("resolved", "true"), ("condition", "animacy"), ("verb", "KICK")] }
 
-def a1_10_inanimate_locus : LinguisticExample :=
+def a1_10_inanimate_locus : Datum :=
   { id := "ahnkocabdavidson2026_a1_10_inanimate_locus"
     source := ⟨"ahn-kocab-davidson-2026", "Appendix A1, 10. KICK [-animate,+locus]"⟩
     reportedIn := none
@@ -654,7 +654,7 @@ def a1_10_inanimate_locus : LinguisticExample :=
     readings := []
     paperFeatures := [("locus", "true"), ("resolved", "true"), ("condition", "animacy"), ("verb", "KICK")] }
 
-def a1_10_animate_noLocus : LinguisticExample :=
+def a1_10_animate_noLocus : Datum :=
   { id := "ahnkocabdavidson2026_a1_10_animate_noLocus"
     source := ⟨"ahn-kocab-davidson-2026", "Appendix A1, 10. KICK [+animate,-locus]"⟩
     reportedIn := none
@@ -667,7 +667,7 @@ def a1_10_animate_noLocus : LinguisticExample :=
     readings := []
     paperFeatures := [("locus", "false"), ("resolved", "false"), ("condition", "animacy"), ("verb", "KICK")] }
 
-def a1_10_animate_locus : LinguisticExample :=
+def a1_10_animate_locus : Datum :=
   { id := "ahnkocabdavidson2026_a1_10_animate_locus"
     source := ⟨"ahn-kocab-davidson-2026", "Appendix A1, 10. KICK [+animate,+locus]"⟩
     reportedIn := none
@@ -680,7 +680,7 @@ def a1_10_animate_locus : LinguisticExample :=
     readings := []
     paperFeatures := [("locus", "true"), ("resolved", "false"), ("condition", "animacy"), ("verb", "KICK")] }
 
-def a1_11_inanimate_noLocus : LinguisticExample :=
+def a1_11_inanimate_noLocus : Datum :=
   { id := "ahnkocabdavidson2026_a1_11_inanimate_noLocus"
     source := ⟨"ahn-kocab-davidson-2026", "Appendix A1, 11. PUSH [-animate,-locus]"⟩
     reportedIn := none
@@ -693,7 +693,7 @@ def a1_11_inanimate_noLocus : LinguisticExample :=
     readings := []
     paperFeatures := [("locus", "false"), ("resolved", "true"), ("condition", "animacy"), ("verb", "PUSH")] }
 
-def a1_11_inanimate_locus : LinguisticExample :=
+def a1_11_inanimate_locus : Datum :=
   { id := "ahnkocabdavidson2026_a1_11_inanimate_locus"
     source := ⟨"ahn-kocab-davidson-2026", "Appendix A1, 11. PUSH [-animate,+locus]"⟩
     reportedIn := none
@@ -706,7 +706,7 @@ def a1_11_inanimate_locus : LinguisticExample :=
     readings := []
     paperFeatures := [("locus", "true"), ("resolved", "true"), ("condition", "animacy"), ("verb", "PUSH")] }
 
-def a1_11_animate_noLocus : LinguisticExample :=
+def a1_11_animate_noLocus : Datum :=
   { id := "ahnkocabdavidson2026_a1_11_animate_noLocus"
     source := ⟨"ahn-kocab-davidson-2026", "Appendix A1, 11. PUSH [+animate,-locus]"⟩
     reportedIn := none
@@ -719,7 +719,7 @@ def a1_11_animate_noLocus : LinguisticExample :=
     readings := []
     paperFeatures := [("locus", "false"), ("resolved", "false"), ("condition", "animacy"), ("verb", "PUSH")] }
 
-def a1_11_animate_locus : LinguisticExample :=
+def a1_11_animate_locus : Datum :=
   { id := "ahnkocabdavidson2026_a1_11_animate_locus"
     source := ⟨"ahn-kocab-davidson-2026", "Appendix A1, 11. PUSH [+animate,+locus]"⟩
     reportedIn := none
@@ -732,7 +732,7 @@ def a1_11_animate_locus : LinguisticExample :=
     readings := []
     paperFeatures := [("locus", "true"), ("resolved", "false"), ("condition", "animacy"), ("verb", "PUSH")] }
 
-def a1_12_inanimate_noLocus : LinguisticExample :=
+def a1_12_inanimate_noLocus : Datum :=
   { id := "ahnkocabdavidson2026_a1_12_inanimate_noLocus"
     source := ⟨"ahn-kocab-davidson-2026", "Appendix A1, 12. TAKE-PICTURE [-animate,-locus]"⟩
     reportedIn := none
@@ -745,7 +745,7 @@ def a1_12_inanimate_noLocus : LinguisticExample :=
     readings := []
     paperFeatures := [("locus", "false"), ("resolved", "true"), ("condition", "animacy"), ("verb", "TAKE-PICTURE")] }
 
-def a1_12_inanimate_locus : LinguisticExample :=
+def a1_12_inanimate_locus : Datum :=
   { id := "ahnkocabdavidson2026_a1_12_inanimate_locus"
     source := ⟨"ahn-kocab-davidson-2026", "Appendix A1, 12. TAKE-PICTURE [-animate,+locus]"⟩
     reportedIn := none
@@ -758,7 +758,7 @@ def a1_12_inanimate_locus : LinguisticExample :=
     readings := []
     paperFeatures := [("locus", "true"), ("resolved", "true"), ("condition", "animacy"), ("verb", "TAKE-PICTURE")] }
 
-def a1_12_animate_noLocus : LinguisticExample :=
+def a1_12_animate_noLocus : Datum :=
   { id := "ahnkocabdavidson2026_a1_12_animate_noLocus"
     source := ⟨"ahn-kocab-davidson-2026", "Appendix A1, 12. TAKE-PICTURE [+animate,-locus]"⟩
     reportedIn := none
@@ -771,7 +771,7 @@ def a1_12_animate_noLocus : LinguisticExample :=
     readings := []
     paperFeatures := [("locus", "false"), ("resolved", "false"), ("condition", "animacy"), ("verb", "TAKE-PICTURE")] }
 
-def a1_12_animate_locus : LinguisticExample :=
+def a1_12_animate_locus : Datum :=
   { id := "ahnkocabdavidson2026_a1_12_animate_locus"
     source := ⟨"ahn-kocab-davidson-2026", "Appendix A1, 12. TAKE-PICTURE [+animate,+locus]"⟩
     reportedIn := none
@@ -784,6 +784,6 @@ def a1_12_animate_locus : LinguisticExample :=
     readings := []
     paperFeatures := [("locus", "true"), ("resolved", "false"), ("condition", "animacy"), ("verb", "TAKE-PICTURE")] }
 
-def all : List LinguisticExample := [ex9, ex10a, ex10b, ex11a, ex11b, ex11c, ex18, ex19, ex20, ex20null, ex21, a1_1_one_noLocus, a1_1_one_locus, a1_1_two_noLocus, a1_1_two_locus, a1_2_one_noLocus, a1_2_one_locus, a1_2_two_noLocus, a1_2_two_locus, a1_3_one_noLocus, a1_3_one_locus, a1_3_two_noLocus, a1_3_two_locus, a1_4_one_noLocus, a1_4_one_locus, a1_4_two_noLocus, a1_4_two_locus, a1_5_narr_noLocus, a1_5_noNarr_noLocus, a1_5_narr_locus, a1_5_noNarr_locus, a1_6_narr_noLocus, a1_6_narr_locus, a1_6_noNarr_noLocus, a1_6_noNarr_locus, a1_7_narr_noLocus, a1_7_narr_locus, a1_7_noNarr_noLocus, a1_7_noNarr_locus, a1_8_narr_noLocus, a1_8_narr_locus, a1_8_noNarr_noLocus, a1_8_noNarr_locus, a1_9_inanimate_noLocus, a1_9_inanimate_locus, a1_9_animate_noLocus, a1_9_animate_locus, a1_10_inanimate_noLocus, a1_10_inanimate_locus, a1_10_animate_noLocus, a1_10_animate_locus, a1_11_inanimate_noLocus, a1_11_inanimate_locus, a1_11_animate_noLocus, a1_11_animate_locus, a1_12_inanimate_noLocus, a1_12_inanimate_locus, a1_12_animate_noLocus, a1_12_animate_locus]
+def all : List Datum := [ex9, ex10a, ex10b, ex11a, ex11b, ex11c, ex18, ex19, ex20, ex20null, ex21, a1_1_one_noLocus, a1_1_one_locus, a1_1_two_noLocus, a1_1_two_locus, a1_2_one_noLocus, a1_2_one_locus, a1_2_two_noLocus, a1_2_two_locus, a1_3_one_noLocus, a1_3_one_locus, a1_3_two_noLocus, a1_3_two_locus, a1_4_one_noLocus, a1_4_one_locus, a1_4_two_noLocus, a1_4_two_locus, a1_5_narr_noLocus, a1_5_noNarr_noLocus, a1_5_narr_locus, a1_5_noNarr_locus, a1_6_narr_noLocus, a1_6_narr_locus, a1_6_noNarr_noLocus, a1_6_noNarr_locus, a1_7_narr_noLocus, a1_7_narr_locus, a1_7_noNarr_noLocus, a1_7_noNarr_locus, a1_8_narr_noLocus, a1_8_narr_locus, a1_8_noNarr_noLocus, a1_8_noNarr_locus, a1_9_inanimate_noLocus, a1_9_inanimate_locus, a1_9_animate_noLocus, a1_9_animate_locus, a1_10_inanimate_noLocus, a1_10_inanimate_locus, a1_10_animate_noLocus, a1_10_animate_locus, a1_11_inanimate_noLocus, a1_11_inanimate_locus, a1_11_animate_noLocus, a1_11_animate_locus, a1_12_inanimate_noLocus, a1_12_inanimate_locus, a1_12_animate_noLocus, a1_12_animate_locus]
 
 end AhnKocabDavidson2026.Examples

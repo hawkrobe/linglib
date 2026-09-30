@@ -17,7 +17,7 @@ namespace Storment2026.Examples
 
 open Data.Examples
 
-def ex1a : LinguisticExample :=
+def ex1a : Datum :=
   { id := "storment2026_ex1a"
     source := ⟨"storment-2026", "(1a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex1a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "qi")] }
 
-def ex4 : LinguisticExample :=
+def ex4 : Datum :=
   { id := "storment2026_ex4"
     source := ⟨"storment-2026", "(4)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex4 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "qi")] }
 
-def ex7 : LinguisticExample :=
+def ex7 : Datum :=
   { id := "storment2026_ex7"
     source := ⟨"storment-2026", "(7)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex7 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "preposedQuote")] }
 
-def ex10 : LinguisticExample :=
+def ex10 : Datum :=
   { id := "storment2026_ex10"
     source := ⟨"storment-2026", "(10)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex10 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "qi"), ("material", "vpAdjunct"), ("position", "afterAgent")] }
 
-def ex12 : LinguisticExample :=
+def ex12 : Datum :=
   { id := "storment2026_ex12"
     source := ⟨"storment-2026", "(12)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex12 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "qi"), ("material", "vpAdjunct"), ("position", "beforeAgent")] }
 
-def ex14 : LinguisticExample :=
+def ex14 : Datum :=
   { id := "storment2026_ex14"
     source := ⟨"storment-2026", "(14)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex14 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "qi"), ("material", "vpAdjunct"), ("heavyNPShift", "yes")] }
 
-def ex15 : LinguisticExample :=
+def ex15 : Datum :=
   { id := "storment2026_ex15"
     source := ⟨"storment-2026", "(15)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex15 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "qi"), ("material", "vpAdjunct"), ("position", "afterAgent")] }
 
-def ex16 : LinguisticExample :=
+def ex16 : Datum :=
   { id := "storment2026_ex16"
     source := ⟨"storment-2026", "(16)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex16 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "qi"), ("material", "vpAdjunct"), ("position", "beforeAgent")] }
 
-def ex19 : LinguisticExample :=
+def ex19 : Datum :=
   { id := "storment2026_ex19"
     source := ⟨"storment-2026", "(19)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex19 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "qi"), ("material", "vpAdjunct"), ("position", "afterAgent")] }
 
-def ex20 : LinguisticExample :=
+def ex20 : Datum :=
   { id := "storment2026_ex20"
     source := ⟨"storment-2026", "(20)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex20 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "qi"), ("material", "vpAdjunct"), ("position", "beforeAgent")] }
 
-def ex25a : LinguisticExample :=
+def ex25a : Datum :=
   { id := "storment2026_ex25a"
     source := ⟨"storment-2026", "(25a)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex25a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "qi"), ("material", "vpAdjunct"), ("position", "afterAgent")] }
 
-def ex25b : LinguisticExample :=
+def ex25b : Datum :=
   { id := "storment2026_ex25b"
     source := ⟨"storment-2026", "(25b)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex25b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "qi"), ("material", "vpAdjunct"), ("position", "beforeAgent")] }
 
-def ex26a : LinguisticExample :=
+def ex26a : Datum :=
   { id := "storment2026_ex26a"
     source := ⟨"storment-2026", "(26a)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex26a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "qi"), ("material", "vpComplement"), ("position", "beforeAgent")] }
 
-def ex26b : LinguisticExample :=
+def ex26b : Datum :=
   { id := "storment2026_ex26b"
     source := ⟨"storment-2026", "(26b)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex26b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "qi"), ("material", "vpComplement"), ("position", "afterAgent")] }
 
-def ex29a : LinguisticExample :=
+def ex29a : Datum :=
   { id := "storment2026_ex29a"
     source := ⟨"storment-2026", "(29a)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex29a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "qi"), ("material", "vpComplement"), ("position", "beforeAgent")] }
 
-def ex29b : LinguisticExample :=
+def ex29b : Datum :=
   { id := "storment2026_ex29b"
     source := ⟨"storment-2026", "(29b)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex29b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "qi"), ("material", "vpComplement"), ("position", "afterAgent")] }
 
-def ex11 : LinguisticExample :=
+def ex11 : Datum :=
   { id := "storment2026_ex11"
     source := ⟨"storment-2026", "(11)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex11 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "qi"), ("material", "vpAdjunct"), ("position", "afterAgent")] }
 
-def ex13 : LinguisticExample :=
+def ex13 : Datum :=
   { id := "storment2026_ex13"
     source := ⟨"storment-2026", "(13)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex13 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "qi"), ("material", "vpAdjunct"), ("position", "beforeAgent")] }
 
-def ex17 : LinguisticExample :=
+def ex17 : Datum :=
   { id := "storment2026_ex17"
     source := ⟨"storment-2026", "(17)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex17 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "qi"), ("material", "vpAdjunct"), ("position", "afterAgent")] }
 
-def ex18 : LinguisticExample :=
+def ex18 : Datum :=
   { id := "storment2026_ex18"
     source := ⟨"storment-2026", "(18)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex18 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "qi"), ("material", "vpAdjunct"), ("position", "beforeAgent")] }
 
-def ex21 : LinguisticExample :=
+def ex21 : Datum :=
   { id := "storment2026_ex21"
     source := ⟨"storment-2026", "(21)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex21 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "qi"), ("material", "vpAdjunct"), ("position", "afterAgent")] }
 
-def ex22 : LinguisticExample :=
+def ex22 : Datum :=
   { id := "storment2026_ex22"
     source := ⟨"storment-2026", "(22)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex22 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "qi"), ("material", "vpAdjunct"), ("position", "beforeAgent")] }
 
-def ex27 : LinguisticExample :=
+def ex27 : Datum :=
   { id := "storment2026_ex27"
     source := ⟨"storment-2026", "(27)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex27 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "qi"), ("material", "vpComplement"), ("position", "beforeAgent")] }
 
-def ex28 : LinguisticExample :=
+def ex28 : Datum :=
   { id := "storment2026_ex28"
     source := ⟨"storment-2026", "(28)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex28 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "qi"), ("material", "vpComplement"), ("position", "afterAgent")] }
 
-def ex36 : LinguisticExample :=
+def ex36 : Datum :=
   { id := "storment2026_ex36"
     source := ⟨"storment-2026", "(36)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex36 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "qi"), ("diagnostic", "agreement"), ("subjectMarker", "SM17")] }
 
-def ex36_sm10 : LinguisticExample :=
+def ex36_sm10 : Datum :=
   { id := "storment2026_ex36_sm10"
     source := ⟨"storment-2026", "(36)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex36_sm10 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "qi"), ("diagnostic", "agreement"), ("subjectMarker", "SM10")] }
 
-def ex38 : LinguisticExample :=
+def ex38 : Datum :=
   { id := "storment2026_ex38"
     source := ⟨"storment-2026", "(38)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def ex38 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "qi"), ("diagnostic", "agreement"), ("subjectMarker", "SM17")] }
 
-def ex38_ke : LinguisticExample :=
+def ex38_ke : Datum :=
   { id := "storment2026_ex38_ke"
     source := ⟨"storment-2026", "(38)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def ex38_ke : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "qi"), ("diagnostic", "agreement"), ("subjectMarker", "SM.1SG")] }
 
-def ex40 : LinguisticExample :=
+def ex40 : Datum :=
   { id := "storment2026_ex40"
     source := ⟨"storment-2026", "(40)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def ex40 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "qi"), ("diagnostic", "agreement"), ("agreement", "plural")] }
 
-def ex40_sg : LinguisticExample :=
+def ex40_sg : Datum :=
   { id := "storment2026_ex40_sg"
     source := ⟨"storment-2026", "(40)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def ex40_sg : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "qi"), ("diagnostic", "agreement"), ("agreement", "singular")] }
 
-def ex62a : LinguisticExample :=
+def ex62a : Datum :=
   { id := "storment2026_ex62a"
     source := ⟨"storment-2026", "(62a)"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def ex62a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "qi"), ("diagnostic", "parasiticGap")] }
 
-def ex62b : LinguisticExample :=
+def ex62b : Datum :=
   { id := "storment2026_ex62b"
     source := ⟨"storment-2026", "(62b)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def ex62b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "preposedQuote"), ("diagnostic", "parasiticGap")] }
 
-def ex64 : LinguisticExample :=
+def ex64 : Datum :=
   { id := "storment2026_ex64"
     source := ⟨"storment-2026", "(64)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def ex64 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "preposedQuote"), ("diagnostic", "agreement"), ("agreement", "plural")] }
 
-def ex64_sg : LinguisticExample :=
+def ex64_sg : Datum :=
   { id := "storment2026_ex64_sg"
     source := ⟨"storment-2026", "(64)"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def ex64_sg : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "preposedQuote"), ("diagnostic", "agreement"), ("agreement", "singular")] }
 
-def ex65 : LinguisticExample :=
+def ex65 : Datum :=
   { id := "storment2026_ex65"
     source := ⟨"storment-2026", "(65)"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def ex65 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "preposedQuote"), ("diagnostic", "agreement"), ("subjectMarker", "SM.3SG.PST")] }
 
-def ex65_ga : LinguisticExample :=
+def ex65_ga : Datum :=
   { id := "storment2026_ex65_ga"
     source := ⟨"storment-2026", "(65)"⟩
     reportedIn := none
@@ -485,7 +485,7 @@ def ex65_ga : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "preposedQuote"), ("diagnostic", "agreement"), ("subjectMarker", "SM17.PST")] }
 
-def ex67a : LinguisticExample :=
+def ex67a : Datum :=
   { id := "storment2026_ex67a"
     source := ⟨"storment-2026", "(67a)"⟩
     reportedIn := none
@@ -498,7 +498,7 @@ def ex67a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "qi"), ("diagnostic", "raising")] }
 
-def ex69a : LinguisticExample :=
+def ex69a : Datum :=
   { id := "storment2026_ex69a"
     source := ⟨"storment-2026", "(69a)"⟩
     reportedIn := none
@@ -511,7 +511,7 @@ def ex69a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "preposedQuote"), ("diagnostic", "raising")] }
 
-def ex77 : LinguisticExample :=
+def ex77 : Datum :=
   { id := "storment2026_ex77"
     source := ⟨"storment-2026", "(77)"⟩
     reportedIn := none
@@ -524,7 +524,7 @@ def ex77 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "qi"), ("diagnostic", "raising"), ("subjectMarker", "SM17")] }
 
-def ex87 : LinguisticExample :=
+def ex87 : Datum :=
   { id := "storment2026_ex87"
     source := ⟨"storment-2026", "(87)"⟩
     reportedIn := none
@@ -537,7 +537,7 @@ def ex87 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "qi"), ("diagnostic", "conjointDisjoint"), ("verbForm", "conjoint")] }
 
-def ex87_disj : LinguisticExample :=
+def ex87_disj : Datum :=
   { id := "storment2026_ex87_disj"
     source := ⟨"storment-2026", "(87)"⟩
     reportedIn := none
@@ -550,7 +550,7 @@ def ex87_disj : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "qi"), ("diagnostic", "conjointDisjoint"), ("verbForm", "disjoint")] }
 
-def ex88 : LinguisticExample :=
+def ex88 : Datum :=
   { id := "storment2026_ex88"
     source := ⟨"storment-2026", "(88)"⟩
     reportedIn := none
@@ -563,7 +563,7 @@ def ex88 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "qi"), ("diagnostic", "quoteCategory")] }
 
-def ex89 : LinguisticExample :=
+def ex89 : Datum :=
   { id := "storment2026_ex89"
     source := ⟨"storment-2026", "(89)"⟩
     reportedIn := none
@@ -576,7 +576,7 @@ def ex89 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "qi"), ("diagnostic", "quoteCategory")] }
 
-def ex90 : LinguisticExample :=
+def ex90 : Datum :=
   { id := "storment2026_ex90"
     source := ⟨"storment-2026", "(90)"⟩
     reportedIn := none
@@ -589,7 +589,7 @@ def ex90 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "qi"), ("diagnostic", "quoteCategory")] }
 
-def ex92 : LinguisticExample :=
+def ex92 : Datum :=
   { id := "storment2026_ex92"
     source := ⟨"storment-2026", "(92)"⟩
     reportedIn := none
@@ -602,7 +602,7 @@ def ex92 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "qi"), ("diagnostic", "quoteCategory")] }
 
-def ex93a : LinguisticExample :=
+def ex93a : Datum :=
   { id := "storment2026_ex93a"
     source := ⟨"storment-2026", "(93a)"⟩
     reportedIn := none
@@ -615,7 +615,7 @@ def ex93a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "li"), ("diagnostic", "quoteCategory")] }
 
-def ex96a : LinguisticExample :=
+def ex96a : Datum :=
   { id := "storment2026_ex96a"
     source := ⟨"storment-2026", "(96a)"⟩
     reportedIn := none
@@ -628,7 +628,7 @@ def ex96a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "qi"), ("diagnostic", "quoteCategory")] }
 
-def ex97a : LinguisticExample :=
+def ex97a : Datum :=
   { id := "storment2026_ex97a"
     source := ⟨"storment-2026", "(97a)"⟩
     reportedIn := none
@@ -641,7 +641,7 @@ def ex97a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "qi"), ("diagnostic", "quoteCategory")] }
 
-def ex123 : LinguisticExample :=
+def ex123 : Datum :=
   { id := "storment2026_ex123"
     source := ⟨"storment-2026", "(123)"⟩
     reportedIn := none
@@ -654,7 +654,7 @@ def ex123 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "canonical")] }
 
-def ex125 : LinguisticExample :=
+def ex125 : Datum :=
   { id := "storment2026_ex125"
     source := ⟨"storment-2026", "(125)"⟩
     reportedIn := none
@@ -667,7 +667,7 @@ def ex125 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "qi"), ("smuggledDPs", "2")] }
 
-def ex127 : LinguisticExample :=
+def ex127 : Datum :=
   { id := "storment2026_ex127"
     source := ⟨"storment-2026", "(127)"⟩
     reportedIn := none
@@ -680,7 +680,7 @@ def ex127 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "qi"), ("smuggledDPs", "2")] }
 
-def ex129 : LinguisticExample :=
+def ex129 : Datum :=
   { id := "storment2026_ex129"
     source := ⟨"storment-2026", "(129)"⟩
     reportedIn := none
@@ -693,7 +693,7 @@ def ex129 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "qi"), ("smuggledDPs", "1")] }
 
-def ex126 : LinguisticExample :=
+def ex126 : Datum :=
   { id := "storment2026_ex126"
     source := ⟨"storment-2026", "(126)"⟩
     reportedIn := none
@@ -706,7 +706,7 @@ def ex126 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "qi"), ("smuggledDPs", "2")] }
 
-def ex130 : LinguisticExample :=
+def ex130 : Datum :=
   { id := "storment2026_ex130"
     source := ⟨"storment-2026", "(130)"⟩
     reportedIn := none
@@ -719,7 +719,7 @@ def ex130 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "qi"), ("smuggledDPs", "1")] }
 
-def ex134a : LinguisticExample :=
+def ex134a : Datum :=
   { id := "storment2026_ex134a"
     source := ⟨"storment-2026", "(134a)"⟩
     reportedIn := none
@@ -732,7 +732,7 @@ def ex134a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "li"), ("smuggledDPs", "2")] }
 
-def ex135 : LinguisticExample :=
+def ex135 : Datum :=
   { id := "storment2026_ex135"
     source := ⟨"storment-2026", "(135)"⟩
     reportedIn := none
@@ -745,7 +745,7 @@ def ex135 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "li"), ("smuggledDPs", "2")] }
 
-def ex55 : LinguisticExample :=
+def ex55 : Datum :=
   { id := "storment2026_ex55"
     source := ⟨"storment-2026", "(55)"⟩
     reportedIn := none
@@ -758,7 +758,7 @@ def ex55 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "li")] }
 
-def ex136a : LinguisticExample :=
+def ex136a : Datum :=
   { id := "storment2026_ex136a"
     source := ⟨"storment-2026", "(136a)"⟩
     reportedIn := none
@@ -771,7 +771,7 @@ def ex136a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "li")] }
 
-def ex138 : LinguisticExample :=
+def ex138 : Datum :=
   { id := "storment2026_ex138"
     source := ⟨"storment-2026", "(138)"⟩
     reportedIn := none
@@ -784,6 +784,6 @@ def ex138 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "li"), ("diagnostic", "raising"), ("subjectMarker", "SM17")] }
 
-def all : List LinguisticExample := [ex1a, ex4, ex7, ex10, ex12, ex14, ex15, ex16, ex19, ex20, ex25a, ex25b, ex26a, ex26b, ex29a, ex29b, ex11, ex13, ex17, ex18, ex21, ex22, ex27, ex28, ex36, ex36_sm10, ex38, ex38_ke, ex40, ex40_sg, ex62a, ex62b, ex64, ex64_sg, ex65, ex65_ga, ex67a, ex69a, ex77, ex87, ex87_disj, ex88, ex89, ex90, ex92, ex93a, ex96a, ex97a, ex123, ex125, ex127, ex129, ex126, ex130, ex134a, ex135, ex55, ex136a, ex138]
+def all : List Datum := [ex1a, ex4, ex7, ex10, ex12, ex14, ex15, ex16, ex19, ex20, ex25a, ex25b, ex26a, ex26b, ex29a, ex29b, ex11, ex13, ex17, ex18, ex21, ex22, ex27, ex28, ex36, ex36_sm10, ex38, ex38_ke, ex40, ex40_sg, ex62a, ex62b, ex64, ex64_sg, ex65, ex65_ga, ex67a, ex69a, ex77, ex87, ex87_disj, ex88, ex89, ex90, ex92, ex93a, ex96a, ex97a, ex123, ex125, ex127, ex129, ex126, ex130, ex134a, ex135, ex55, ex136a, ex138]
 
 end Storment2026.Examples

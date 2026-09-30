@@ -17,7 +17,7 @@ namespace Greco2020.Examples
 
 open Data.Examples
 
-def ex_2 : LinguisticExample :=
+def ex_2 : Datum :=
   { id := "greco2020_2"
     source := ⟨"greco-2020", "(2)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "baseline"), ("requirement", "any")] }
 
-def ex_9a : LinguisticExample :=
+def ex_9a : Datum :=
   { id := "greco2020_9a"
     source := ⟨"greco-2020", "(9a)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_9a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "weak NPI"), ("requirement", "negScope"), ("polarity", "weak NPI")] }
 
-def ex_9b : LinguisticExample :=
+def ex_9b : Datum :=
   { id := "greco2020_9b"
     source := ⟨"greco-2020", "(9b)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_9b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "n-word"), ("requirement", "negScope"), ("polarity", "n-word")] }
 
-def ex_9c : LinguisticExample :=
+def ex_9c : Datum :=
   { id := "greco2020_9c"
     source := ⟨"greco-2020", "(9c)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_9c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "strong NPI"), ("requirement", "negScope"), ("polarity", "strong NPI")] }
 
-def ex_9d : LinguisticExample :=
+def ex_9d : Datum :=
   { id := "greco2020_9d"
     source := ⟨"greco-2020", "(9d)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_9d : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "not-also conjunction"), ("requirement", "negScope"), ("polarity", "not-also conjunction")] }
 
-def ex_23a : LinguisticExample :=
+def ex_23a : Datum :=
   { id := "greco2020_23a"
     source := ⟨"greco-2020", "(23a)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_23a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "al-word"), ("requirement", "negScope")] }
 
-def ex_24b : LinguisticExample :=
+def ex_24b : Datum :=
   { id := "greco2020_24b"
     source := ⟨"greco-2020", "(24b)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_24b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "PPI"), ("requirement", "noNegScope")] }
 
-def ex_17a : LinguisticExample :=
+def ex_17a : Datum :=
   { id := "greco2020_17a"
     source := ⟨"greco-2020", "(17a)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_17a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "fronted topic"), ("requirement", "any")] }
 
-def ex_17b : LinguisticExample :=
+def ex_17b : Datum :=
   { id := "greco2020_17b"
     source := ⟨"greco-2020", "(17b)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_17b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "fronted contrastive focus"), ("requirement", "freeFocP")] }
 
-def ex_18a : LinguisticExample :=
+def ex_18a : Datum :=
   { id := "greco2020_18a"
     source := ⟨"greco-2020", "(18a)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_18a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "in-situ topic"), ("requirement", "any")] }
 
-def ex_18b : LinguisticExample :=
+def ex_18b : Datum :=
   { id := "greco2020_18b"
     source := ⟨"greco-2020", "(18b)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_18b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "in-situ focus"), ("requirement", "freeFocP")] }
 
-def ex_53a : LinguisticExample :=
+def ex_53a : Datum :=
   { id := "greco2020_53a"
     source := ⟨"greco-2020", "(53a)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_53a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "hanging topic"), ("requirement", "any")] }
 
-def ex_53c : LinguisticExample :=
+def ex_53c : Datum :=
   { id := "greco2020_53c"
     source := ⟨"greco-2020", "(53c)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_53c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "scene-setting topic"), ("requirement", "any")] }
 
-def ex_54 : LinguisticExample :=
+def ex_54 : Datum :=
   { id := "greco2020_54"
     source := ⟨"greco-2020", "(54)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_54 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "mirative fronting"), ("requirement", "freeFocP")] }
 
-def ex_55 : LinguisticExample :=
+def ex_55 : Datum :=
   { id := "greco2020_55"
     source := ⟨"greco-2020", "(55)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_55 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "quantifier fronting"), ("requirement", "freeFocP")] }
 
-def ex_56 : LinguisticExample :=
+def ex_56 : Datum :=
   { id := "greco2020_56"
     source := ⟨"greco-2020", "(56B)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_56 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "anaphoric anteposition"), ("requirement", "freeFocP")] }
 
-def ex_57c : LinguisticExample :=
+def ex_57c : Datum :=
   { id := "greco2020_57c"
     source := ⟨"greco-2020", "(57c)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex_57c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "solo in situ"), ("requirement", "any")] }
 
-def ex_57d : LinguisticExample :=
+def ex_57d : Datum :=
   { id := "greco2020_57d"
     source := ⟨"greco-2020", "(57d)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex_57d : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "solo fronted"), ("requirement", "freeFocP")] }
 
-def ex_26 : LinguisticExample :=
+def ex_26 : Datum :=
   { id := "greco2020_26"
     source := ⟨"greco-2020", "(26B)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex_26 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "answer to a propositional question"), ("requirement", "activeFocP")] }
 
-def ex_27 : LinguisticExample :=
+def ex_27 : Datum :=
   { id := "greco2020_27"
     source := ⟨"greco-2020", "(27B)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex_27 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "answer to an entity question"), ("requirement", "freeFocP")] }
 
-def ex_21 : LinguisticExample :=
+def ex_21 : Datum :=
   { id := "greco2020_21"
     source := ⟨"greco-2020", "(21)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex_21 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "expletive e"), ("requirement", "activeFocP")] }
 
-def ex_74b : LinguisticExample :=
+def ex_74b : Datum :=
   { id := "greco2020_74b"
     source := ⟨"greco-2020", "(74b)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex_74b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "presuppositional mica"), ("requirement", "any")] }
 
-def ex_76a : LinguisticExample :=
+def ex_76a : Datum :=
   { id := "greco2020_76a"
     source := ⟨"greco-2020", "(76a)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex_76a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "wh-element"), ("requirement", "freeFocP")] }
 
-def ex_77 : LinguisticExample :=
+def ex_77 : Datum :=
   { id := "greco2020_77"
     source := ⟨"greco-2020", "(77)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex_77 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "quantifier raising"), ("requirement", "freeFocP")] }
 
-def ex_60 : LinguisticExample :=
+def ex_60 : Datum :=
   { id := "greco2020_60"
     source := ⟨"greco-2020", "(60)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex_60 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "phrasal negator no"), ("requirement", "phrasalNegator")] }
 
-def ex_61a : LinguisticExample :=
+def ex_61a : Datum :=
   { id := "greco2020_61a"
     source := ⟨"greco-2020", "(61a)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex_61a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "past participle clause"), ("requirement", "noTP")] }
 
-def ex_64 : LinguisticExample :=
+def ex_64 : Datum :=
   { id := "greco2020_64"
     source := ⟨"greco-2020", "(64)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def ex_64 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "Aux-to-Comp"), ("requirement", "negScope")] }
 
-def ex_72b : LinguisticExample :=
+def ex_72b : Datum :=
   { id := "greco2020_72b"
     source := ⟨"greco-2020", "(72b)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def ex_72b : LinguisticExample :=
     readings := [("Luke thinks that Mary did not get off the train!", .unacceptable), ("Luke thinks that Mary got off the train!", .acceptable)]
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "NEG-raising reading"), ("requirement", "negScope"), ("reading", "Luke thinks that Mary did not get off the train!")] }
 
-def ex_81a : LinguisticExample :=
+def ex_81a : Datum :=
   { id := "greco2020_81a"
     source := ⟨"greco-2020", "(81a)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def ex_81a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "indirect question"), ("requirement", "embedded")] }
 
-def ex_81b : LinguisticExample :=
+def ex_81b : Datum :=
   { id := "greco2020_81b"
     source := ⟨"greco-2020", "(81b)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def ex_81b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "factive predicate"), ("requirement", "embedded")] }
 
-def ex_81c : LinguisticExample :=
+def ex_81c : Datum :=
   { id := "greco2020_81c"
     source := ⟨"greco-2020", "(81c)"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def ex_81c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "bridge verb"), ("requirement", "embedded")] }
 
-def ex_83B : LinguisticExample :=
+def ex_83B : Datum :=
   { id := "greco2020_83B"
     source := ⟨"greco-2020", "(83B)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def ex_83B : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "embedded focus"), ("phenomenon", "embedded DP focus"), ("focus", "DP")] }
 
-def ex_83B2 : LinguisticExample :=
+def ex_83B2 : Datum :=
   { id := "greco2020_83B2"
     source := ⟨"greco-2020", "(83B′)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def ex_83B2 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "embedded focus"), ("phenomenon", "embedded whole-TP focus"), ("focus", "TP")] }
 
-def ex_84B : LinguisticExample :=
+def ex_84B : Datum :=
   { id := "greco2020_84B"
     source := ⟨"greco-2020", "(84B)"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def ex_84B : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "embedded focus"), ("phenomenon", "embedded DP focus"), ("focus", "DP")] }
 
-def ex_84B2 : LinguisticExample :=
+def ex_84B2 : Datum :=
   { id := "greco2020_84B2"
     source := ⟨"greco-2020", "(84B′)"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def ex_84B2 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "embedded focus"), ("phenomenon", "embedded whole-TP focus"), ("focus", "TP")] }
 
-def ex_85B : LinguisticExample :=
+def ex_85B : Datum :=
   { id := "greco2020_85B"
     source := ⟨"greco-2020", "(85B)"⟩
     reportedIn := none
@@ -485,7 +485,7 @@ def ex_85B : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "embedded focus"), ("phenomenon", "embedded DP focus"), ("focus", "DP")] }
 
-def ex_85B2 : LinguisticExample :=
+def ex_85B2 : Datum :=
   { id := "greco2020_85B2"
     source := ⟨"greco-2020", "(85B′)"⟩
     reportedIn := none
@@ -498,7 +498,7 @@ def ex_85B2 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "embedded focus"), ("phenomenon", "embedded whole-TP focus"), ("focus", "TP")] }
 
-def ex_86a : LinguisticExample :=
+def ex_86a : Datum :=
   { id := "greco2020_86a"
     source := ⟨"greco-2020", "(86a)"⟩
     reportedIn := none
@@ -511,7 +511,7 @@ def ex_86a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "preverbal subject"), ("requirement", "any")] }
 
-def ex_86b : LinguisticExample :=
+def ex_86b : Datum :=
   { id := "greco2020_86b"
     source := ⟨"greco-2020", "(86b)"⟩
     reportedIn := none
@@ -524,7 +524,7 @@ def ex_86b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "postverbal subject"), ("requirement", "any")] }
 
-def ex_31B : LinguisticExample :=
+def ex_31B : Datum :=
   { id := "greco2020_31B"
     source := ⟨"greco-2020", "(31B)"⟩
     reportedIn := none
@@ -537,7 +537,7 @@ def ex_31B : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "answer to a question"), ("diagnostic", "answerhood")] }
 
-def ex_31B2 : LinguisticExample :=
+def ex_31B2 : Datum :=
   { id := "greco2020_31B2"
     source := ⟨"greco-2020", "(31B′)"⟩
     reportedIn := none
@@ -550,7 +550,7 @@ def ex_31B2 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "NRQ"), ("phenomenon", "answer to a question"), ("diagnostic", "answerhood")] }
 
-def ex_34a : LinguisticExample :=
+def ex_34a : Datum :=
   { id := "greco2020_34a"
     source := ⟨"greco-2020", "(34a)"⟩
     reportedIn := none
@@ -563,7 +563,7 @@ def ex_34a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "NRQ"), ("phenomenon", "dopo tutto"), ("diagnostic", "dopo tutto")] }
 
-def ex_34b : LinguisticExample :=
+def ex_34b : Datum :=
   { id := "greco2020_34b"
     source := ⟨"greco-2020", "(34b)"⟩
     reportedIn := none
@@ -576,7 +576,7 @@ def ex_34b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "dopo tutto"), ("diagnostic", "dopo tutto")] }
 
-def ex_35a : LinguisticExample :=
+def ex_35a : Datum :=
   { id := "greco2020_35a"
     source := ⟨"greco-2020", "(35a)"⟩
     reportedIn := none
@@ -589,7 +589,7 @@ def ex_35a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "NRQ"), ("phenomenon", "wh-element"), ("diagnostic", "wh")] }
 
-def ex_35b : LinguisticExample :=
+def ex_35b : Datum :=
   { id := "greco2020_35b"
     source := ⟨"greco-2020", "(35b)"⟩
     reportedIn := none
@@ -602,7 +602,7 @@ def ex_35b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "wh-element"), ("diagnostic", "wh")] }
 
-def ex_40a : LinguisticExample :=
+def ex_40a : Datum :=
   { id := "greco2020_40a"
     source := ⟨"greco-2020", "(40a)"⟩
     reportedIn := none
@@ -615,7 +615,7 @@ def ex_40a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "ENE"), ("phenomenon", "factive embedding"), ("diagnostic", "factive embedding")] }
 
-def ex_40b : LinguisticExample :=
+def ex_40b : Datum :=
   { id := "greco2020_40b"
     source := ⟨"greco-2020", "(40b)"⟩
     reportedIn := none
@@ -628,7 +628,7 @@ def ex_40b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "Sneg"), ("phenomenon", "factive embedding"), ("diagnostic", "factive embedding")] }
 
-def ex_41B : LinguisticExample :=
+def ex_41B : Datum :=
   { id := "greco2020_41B"
     source := ⟨"greco-2020", "(41B)"⟩
     reportedIn := none
@@ -641,7 +641,7 @@ def ex_41B : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "ENE"), ("phenomenon", "answer to a question"), ("diagnostic", "answerhood")] }
 
-def ex_42a : LinguisticExample :=
+def ex_42a : Datum :=
   { id := "greco2020_42a"
     source := ⟨"greco-2020", "(42a)"⟩
     reportedIn := none
@@ -654,6 +654,6 @@ def ex_42a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "ENE"), ("phenomenon", "wh-element"), ("diagnostic", "wh")] }
 
-def all : List LinguisticExample := [ex_2, ex_9a, ex_9b, ex_9c, ex_9d, ex_23a, ex_24b, ex_17a, ex_17b, ex_18a, ex_18b, ex_53a, ex_53c, ex_54, ex_55, ex_56, ex_57c, ex_57d, ex_26, ex_27, ex_21, ex_74b, ex_76a, ex_77, ex_60, ex_61a, ex_64, ex_72b, ex_81a, ex_81b, ex_81c, ex_83B, ex_83B2, ex_84B, ex_84B2, ex_85B, ex_85B2, ex_86a, ex_86b, ex_31B, ex_31B2, ex_34a, ex_34b, ex_35a, ex_35b, ex_40a, ex_40b, ex_41B, ex_42a]
+def all : List Datum := [ex_2, ex_9a, ex_9b, ex_9c, ex_9d, ex_23a, ex_24b, ex_17a, ex_17b, ex_18a, ex_18b, ex_53a, ex_53c, ex_54, ex_55, ex_56, ex_57c, ex_57d, ex_26, ex_27, ex_21, ex_74b, ex_76a, ex_77, ex_60, ex_61a, ex_64, ex_72b, ex_81a, ex_81b, ex_81c, ex_83B, ex_83B2, ex_84B, ex_84B2, ex_85B, ex_85B2, ex_86a, ex_86b, ex_31B, ex_31B2, ex_34a, ex_34b, ex_35a, ex_35b, ex_40a, ex_40b, ex_41B, ex_42a]
 
 end Greco2020.Examples

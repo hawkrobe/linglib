@@ -17,7 +17,7 @@ namespace WangDavidson2026.Examples
 
 open Data.Examples
 
-def ex_1 : LinguisticExample :=
+def ex_1 : Datum :=
   { id := "wangdavidson2026_1"
     source := ⟨"wang-davidson-2026", "(1a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("presupposition", "John has a violin"), ("projection", "projects")] }
 
-def ex_2 : LinguisticExample :=
+def ex_2 : Datum :=
   { id := "wangdavidson2026_2"
     source := ⟨"wang-davidson-2026", "(1b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("presupposition", "John has a violin"), ("projection", "projects"), ("direction", "right-to-left")] }
 
-def ex_3 : LinguisticExample :=
+def ex_3 : Datum :=
   { id := "wangdavidson2026_3"
     source := ⟨"wang-davidson-2026", "(1c)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_3 : LinguisticExample :=
     readings := []
     paperFeatures := [("presupposition", "John has a violin"), ("projection", "filtered"), ("direction", "left-to-right")] }
 
-def ex_4 : LinguisticExample :=
+def ex_4 : Datum :=
   { id := "wangdavidson2026_4"
     source := ⟨"wang-davidson-2026", "(13)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_4 : LinguisticExample :=
     readings := [("inclusive", .acceptable), ("exclusive", .marginal)]
     paperFeatures := [("task", "norming"), ("monotonicity", "UE")] }
 
-def ex_5 : LinguisticExample :=
+def ex_5 : Datum :=
   { id := "wangdavidson2026_5"
     source := ⟨"wang-davidson-2026", "(15)"⟩
     reportedIn := none
@@ -82,6 +82,6 @@ def ex_5 : LinguisticExample :=
     readings := []
     paperFeatures := [("condition", "PSFIRST"), ("monotonicity", "DE"), ("trigger", "jie"), ("context", "explicitly ignorant")] }
 
-def all : List LinguisticExample := [ex_1, ex_2, ex_3, ex_4, ex_5]
+def all : List Datum := [ex_1, ex_2, ex_3, ex_4, ex_5]
 
 end WangDavidson2026.Examples

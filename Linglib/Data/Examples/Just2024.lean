@@ -17,7 +17,7 @@ namespace Just2024.Examples
 
 open Data.Examples
 
-def ex_2a : LinguisticExample :=
+def ex_2a : Datum :=
   { id := "just2024_2a"
     source := ⟨"just-2024", "(2a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_2a : LinguisticExample :=
     readings := []
     paperFeatures := [("role", "P"), ("indexed", "false"), ("condition", "indefinite")] }
 
-def ex_2b : LinguisticExample :=
+def ex_2b : Datum :=
   { id := "just2024_2b"
     source := ⟨"just-2024", "(2b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_2b : LinguisticExample :=
     readings := []
     paperFeatures := [("role", "P"), ("indexed", "true"), ("condition", "topical")] }
 
-def ex_3 : LinguisticExample :=
+def ex_3 : Datum :=
   { id := "just2024_3"
     source := ⟨"just-2024", "(3)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_3 : LinguisticExample :=
     readings := []
     paperFeatures := [("role", "P"), ("indexed", "true"), ("condition", "definite")] }
 
-def ex_4a : LinguisticExample :=
+def ex_4a : Datum :=
   { id := "just2024_4a"
     source := ⟨"just-2024", "(4a)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_4a : LinguisticExample :=
     readings := []
     paperFeatures := [("role", "P"), ("indexed", "false")] }
 
-def ex_4b : LinguisticExample :=
+def ex_4b : Datum :=
   { id := "just2024_4b"
     source := ⟨"just-2024", "(4b)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_4b : LinguisticExample :=
     readings := []
     paperFeatures := [("role", "P"), ("indexed", "true"), ("condition", "animate")] }
 
-def ex_4c : LinguisticExample :=
+def ex_4c : Datum :=
   { id := "just2024_4c"
     source := ⟨"just-2024", "(4c)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_4c : LinguisticExample :=
     readings := []
     paperFeatures := [("role", "P"), ("indexed", "true"), ("condition", "animate")] }
 
-def ex_5a : LinguisticExample :=
+def ex_5a : Datum :=
   { id := "just2024_5a"
     source := ⟨"just-2024", "(5a)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_5a : LinguisticExample :=
     readings := []
     paperFeatures := [("role", "P"), ("indexed", "true"), ("condition", "animate")] }
 
-def ex_5b : LinguisticExample :=
+def ex_5b : Datum :=
   { id := "just2024_5b"
     source := ⟨"just-2024", "(5b)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_5b : LinguisticExample :=
     readings := []
     paperFeatures := [("role", "P"), ("indexed", "false"), ("condition", "focus")] }
 
-def ex_6a : LinguisticExample :=
+def ex_6a : Datum :=
   { id := "just2024_6a"
     source := ⟨"just-2024", "(6a)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_6a : LinguisticExample :=
     readings := []
     paperFeatures := [("role", "A"), ("indexed", "true"), ("condition", "topical")] }
 
-def ex_6b : LinguisticExample :=
+def ex_6b : Datum :=
   { id := "just2024_6b"
     source := ⟨"just-2024", "(6b)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_6b : LinguisticExample :=
     readings := []
     paperFeatures := [("role", "A"), ("indexed", "false"), ("condition", "focus")] }
 
-def ex_6c : LinguisticExample :=
+def ex_6c : Datum :=
   { id := "just2024_6c"
     source := ⟨"just-2024", "(6c)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_6c : LinguisticExample :=
     readings := []
     paperFeatures := [("role", "A"), ("indexed", "false"), ("condition", "focus")] }
 
-def ex_7a : LinguisticExample :=
+def ex_7a : Datum :=
   { id := "just2024_7a"
     source := ⟨"just-2024", "(7a)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_7a : LinguisticExample :=
     readings := []
     paperFeatures := [("role", "A"), ("indexed", "true"), ("condition", "pronominal")] }
 
-def ex_7b : LinguisticExample :=
+def ex_7b : Datum :=
   { id := "just2024_7b"
     source := ⟨"just-2024", "(7b)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_7b : LinguisticExample :=
     readings := []
     paperFeatures := [("role", "A"), ("indexed", "false"), ("condition", "lexical")] }
 
-def ex_7c : LinguisticExample :=
+def ex_7c : Datum :=
   { id := "just2024_7c"
     source := ⟨"just-2024", "(7c)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_7c : LinguisticExample :=
     readings := []
     paperFeatures := [("role", "A"), ("indexed", "true"), ("condition", "lexical")] }
 
-def ex_8a : LinguisticExample :=
+def ex_8a : Datum :=
   { id := "just2024_8a"
     source := ⟨"just-2024", "(8a)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_8a : LinguisticExample :=
     readings := []
     paperFeatures := [("role", "A"), ("indexed", "true"), ("condition", "predicateFocus")] }
 
-def ex_8b : LinguisticExample :=
+def ex_8b : Datum :=
   { id := "just2024_8b"
     source := ⟨"just-2024", "(8b)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_8b : LinguisticExample :=
     readings := []
     paperFeatures := [("role", "A"), ("indexed", "false"), ("condition", "otherFocus")] }
 
-def ex_8c : LinguisticExample :=
+def ex_8c : Datum :=
   { id := "just2024_8c"
     source := ⟨"just-2024", "(8c)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex_8c : LinguisticExample :=
     readings := []
     paperFeatures := [("role", "A"), ("indexed", "false"), ("condition", "focus")] }
 
-def ex_8d : LinguisticExample :=
+def ex_8d : Datum :=
   { id := "just2024_8d"
     source := ⟨"just-2024", "(8d)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex_8d : LinguisticExample :=
     readings := []
     paperFeatures := [("role", "A"), ("indexed", "true"), ("condition", "otherFocus")] }
 
-def ex_9a : LinguisticExample :=
+def ex_9a : Datum :=
   { id := "just2024_9a"
     source := ⟨"just-2024", "(9a)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex_9a : LinguisticExample :=
     readings := []
     paperFeatures := [("role", "A"), ("indexed", "false"), ("condition", "inanimate")] }
 
-def ex_9b : LinguisticExample :=
+def ex_9b : Datum :=
   { id := "just2024_9b"
     source := ⟨"just-2024", "(9b)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex_9b : LinguisticExample :=
     readings := []
     paperFeatures := [("role", "A"), ("indexed", "true"), ("condition", "animate")] }
 
-def ex_10a : LinguisticExample :=
+def ex_10a : Datum :=
   { id := "just2024_10a"
     source := ⟨"just-2024", "(10a)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex_10a : LinguisticExample :=
     readings := []
     paperFeatures := [("role", "A"), ("indexed", "false")] }
 
-def ex_10b : LinguisticExample :=
+def ex_10b : Datum :=
   { id := "just2024_10b"
     source := ⟨"just-2024", "(10b)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex_10b : LinguisticExample :=
     readings := []
     paperFeatures := [("role", "A"), ("indexed", "true"), ("condition", "topical")] }
 
-def ex_10c : LinguisticExample :=
+def ex_10c : Datum :=
   { id := "just2024_10c"
     source := ⟨"just-2024", "(10c)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex_10c : LinguisticExample :=
     readings := []
     paperFeatures := [("role", "A"), ("indexed", "false"), ("condition", "otherFocus")] }
 
-def ex_10d : LinguisticExample :=
+def ex_10d : Datum :=
   { id := "just2024_10d"
     source := ⟨"just-2024", "(10d)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex_10d : LinguisticExample :=
     readings := []
     paperFeatures := [("role", "A"), ("indexed", "false"), ("condition", "focus")] }
 
-def ex_12a : LinguisticExample :=
+def ex_12a : Datum :=
   { id := "just2024_12a"
     source := ⟨"just-2024", "(12a)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex_12a : LinguisticExample :=
     readings := []
     paperFeatures := [("role", "A"), ("indexed", "true"), ("condition", "predicateFocus")] }
 
-def ex_12b : LinguisticExample :=
+def ex_12b : Datum :=
   { id := "just2024_12b"
     source := ⟨"just-2024", "(12b)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex_12b : LinguisticExample :=
     readings := []
     paperFeatures := [("role", "A"), ("indexed", "false"), ("condition", "focus")] }
 
-def ex_13a_A : LinguisticExample :=
+def ex_13a_A : Datum :=
   { id := "just2024_13a_A"
     source := ⟨"just-2024", "(13a)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def ex_13a_A : LinguisticExample :=
     readings := []
     paperFeatures := [("role", "A"), ("indexed", "true"), ("condition", "topical")] }
 
-def ex_13a_P : LinguisticExample :=
+def ex_13a_P : Datum :=
   { id := "just2024_13a_P"
     source := ⟨"just-2024", "(13a)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def ex_13a_P : LinguisticExample :=
     readings := []
     paperFeatures := [("role", "P"), ("indexed", "true"), ("condition", "definite")] }
 
-def ex_13b_A : LinguisticExample :=
+def ex_13b_A : Datum :=
   { id := "just2024_13b_A"
     source := ⟨"just-2024", "(13b)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def ex_13b_A : LinguisticExample :=
     readings := []
     paperFeatures := [("role", "A"), ("indexed", "false"), ("condition", "focus")] }
 
-def ex_13b_P : LinguisticExample :=
+def ex_13b_P : Datum :=
   { id := "just2024_13b_P"
     source := ⟨"just-2024", "(13b)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def ex_13b_P : LinguisticExample :=
     readings := []
     paperFeatures := [("role", "P"), ("indexed", "true"), ("condition", "definite")] }
 
-def ex_13c_P : LinguisticExample :=
+def ex_13c_P : Datum :=
   { id := "just2024_13c_P"
     source := ⟨"just-2024", "(13c)"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def ex_13c_P : LinguisticExample :=
     readings := []
     paperFeatures := [("role", "P"), ("indexed", "false"), ("condition", "focus")] }
 
-def ex_13c_A : LinguisticExample :=
+def ex_13c_A : Datum :=
   { id := "just2024_13c_A"
     source := ⟨"just-2024", "(13c)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def ex_13c_A : LinguisticExample :=
     readings := []
     paperFeatures := [("role", "A"), ("indexed", "true"), ("condition", "topical")] }
 
-def t1_a1_p2 : LinguisticExample :=
+def t1_a1_p2 : Datum :=
   { id := "just2024_t1_a1_p2"
     source := ⟨"just-2024", "Table 1"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def t1_a1_p2 : LinguisticExample :=
     readings := []
     paperFeatures := [("aPerson", "1"), ("pPerson", "2"), ("indexed", "P")] }
 
-def t1_a1_p3 : LinguisticExample :=
+def t1_a1_p3 : Datum :=
   { id := "just2024_t1_a1_p3"
     source := ⟨"just-2024", "Table 1"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def t1_a1_p3 : LinguisticExample :=
     readings := []
     paperFeatures := [("aPerson", "1"), ("pPerson", "3"), ("indexed", "A")] }
 
-def t1_a2_p1 : LinguisticExample :=
+def t1_a2_p1 : Datum :=
   { id := "just2024_t1_a2_p1"
     source := ⟨"just-2024", "Table 1"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def t1_a2_p1 : LinguisticExample :=
     readings := []
     paperFeatures := [("aPerson", "2"), ("pPerson", "1"), ("indexed", "A")] }
 
-def t1_a2_p3 : LinguisticExample :=
+def t1_a2_p3 : Datum :=
   { id := "just2024_t1_a2_p3"
     source := ⟨"just-2024", "Table 1"⟩
     reportedIn := none
@@ -485,7 +485,7 @@ def t1_a2_p3 : LinguisticExample :=
     readings := []
     paperFeatures := [("aPerson", "2"), ("pPerson", "3"), ("indexed", "A")] }
 
-def t1_a3_p1 : LinguisticExample :=
+def t1_a3_p1 : Datum :=
   { id := "just2024_t1_a3_p1"
     source := ⟨"just-2024", "Table 1"⟩
     reportedIn := none
@@ -498,7 +498,7 @@ def t1_a3_p1 : LinguisticExample :=
     readings := []
     paperFeatures := [("aPerson", "3"), ("pPerson", "1"), ("indexed", "AP")] }
 
-def t1_a3_p2 : LinguisticExample :=
+def t1_a3_p2 : Datum :=
   { id := "just2024_t1_a3_p2"
     source := ⟨"just-2024", "Table 1"⟩
     reportedIn := none
@@ -511,7 +511,7 @@ def t1_a3_p2 : LinguisticExample :=
     readings := []
     paperFeatures := [("aPerson", "3"), ("pPerson", "2"), ("indexed", "AP")] }
 
-def t1_a3_p3 : LinguisticExample :=
+def t1_a3_p3 : Datum :=
   { id := "just2024_t1_a3_p3"
     source := ⟨"just-2024", "Table 1"⟩
     reportedIn := none
@@ -524,6 +524,6 @@ def t1_a3_p3 : LinguisticExample :=
     readings := []
     paperFeatures := [("aPerson", "3"), ("pPerson", "3"), ("indexed", "A")] }
 
-def all : List LinguisticExample := [ex_2a, ex_2b, ex_3, ex_4a, ex_4b, ex_4c, ex_5a, ex_5b, ex_6a, ex_6b, ex_6c, ex_7a, ex_7b, ex_7c, ex_8a, ex_8b, ex_8c, ex_8d, ex_9a, ex_9b, ex_10a, ex_10b, ex_10c, ex_10d, ex_12a, ex_12b, ex_13a_A, ex_13a_P, ex_13b_A, ex_13b_P, ex_13c_P, ex_13c_A, t1_a1_p2, t1_a1_p3, t1_a2_p1, t1_a2_p3, t1_a3_p1, t1_a3_p2, t1_a3_p3]
+def all : List Datum := [ex_2a, ex_2b, ex_3, ex_4a, ex_4b, ex_4c, ex_5a, ex_5b, ex_6a, ex_6b, ex_6c, ex_7a, ex_7b, ex_7c, ex_8a, ex_8b, ex_8c, ex_8d, ex_9a, ex_9b, ex_10a, ex_10b, ex_10c, ex_10d, ex_12a, ex_12b, ex_13a_A, ex_13a_P, ex_13b_A, ex_13b_P, ex_13c_P, ex_13c_A, t1_a1_p2, t1_a1_p3, t1_a2_p1, t1_a2_p3, t1_a3_p1, t1_a3_p2, t1_a3_p3]
 
 end Just2024.Examples

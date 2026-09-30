@@ -148,7 +148,7 @@ structure ClausalRow where
   accepted : Bool
   deriving DecidableEq, Repr
 
-def ClausalRow.ofExample (ex : LinguisticExample) : Option ClausalRow := do
+def ClausalRow.ofDatum (ex : Datum) : Option ClausalRow := do
   guard (ex.paperFeatures.lookup "construction" = some "clausal")
   let relation ← ex.paperFeatures.lookup "relation" >>= Relation.ofString
   let verb ← ex.paperFeatures.lookup "verb"
@@ -161,19 +161,19 @@ structure PPRow where
   accepted : Bool
   deriving DecidableEq, Repr
 
-def PPRow.ofExample (ex : LinguisticExample) : Option PPRow := do
+def PPRow.ofDatum (ex : Datum) : Option PPRow := do
   guard (ex.paperFeatures.lookup "construction" = some "attributiveC")
   let relation ← ex.paperFeatures.lookup "relation" >>= Relation.ofString
   pure ⟨relation, ex.judgment = .acceptable⟩
 
-def clausalRows : List ClausalRow := Examples.all.filterMap ClausalRow.ofExample
+def clausalRows : List ClausalRow := Examples.all.filterMap ClausalRow.ofDatum
 
-def ppRows : List PPRow := Examples.all.filterMap PPRow.ofExample
+def ppRows : List PPRow := Examples.all.filterMap PPRow.ofDatum
 
 /-- Every example is a clausal row or an attributive row. -/
 theorem rows_cover :
     ∀ ex ∈ Examples.all,
-      (ClausalRow.ofExample ex).isSome ∨
+      (ClausalRow.ofDatum ex).isSome ∨
         ex.paperFeatures.lookup "construction" ≠ some "clausal" := by
   decide
 

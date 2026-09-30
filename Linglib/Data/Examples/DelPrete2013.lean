@@ -17,7 +17,7 @@ namespace DelPrete2013.Examples
 
 open Data.Examples
 
-def ex_1 : LinguisticExample :=
+def ex_1 : Datum :=
   { id := "delprete2013_1"
     source := ⟨"del-prete-2013", "(1)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_1 : LinguisticExample :=
     readings := [("HAB", .acceptable), ("PROG", .acceptable)]
     paperFeatures := [("object", "definite"), ("qAdverb", "none"), ("soe", "none")] }
 
-def ex_2a : LinguisticExample :=
+def ex_2a : Datum :=
   { id := "delprete2013_2a"
     source := ⟨"del-prete-2013", "(2a)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_2a : LinguisticExample :=
     readings := [("HAB", .acceptable), ("PROG", .acceptable)]
     paperFeatures := [("object", "singularIndefinite"), ("qAdverb", "none"), ("soe", "individual")] }
 
-def ex_2b : LinguisticExample :=
+def ex_2b : Datum :=
   { id := "delprete2013_2b"
     source := ⟨"del-prete-2013", "(2b)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_2b : LinguisticExample :=
     readings := [("HAB", .unacceptable), ("PROG", .acceptable)]
     paperFeatures := [("object", "singularIndefinite"), ("qAdverb", "none"), ("soe", "individual")] }
 
-def ex_3 : LinguisticExample :=
+def ex_3 : Datum :=
   { id := "delprete2013_3"
     source := ⟨"del-prete-2013", "(3)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_3 : LinguisticExample :=
     readings := [("HAB", .acceptable)]
     paperFeatures := [("object", "kindIndefinite"), ("qAdverb", "none"), ("soe", "kind")] }
 
-def ex_4a : LinguisticExample :=
+def ex_4a : Datum :=
   { id := "delprete2013_4a"
     source := ⟨"del-prete-2013", "(4a)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_4a : LinguisticExample :=
     readings := [("HAB", .acceptable)]
     paperFeatures := [("object", "none"), ("qAdverb", "none"), ("soe", "none")] }
 
-def ex_4b : LinguisticExample :=
+def ex_4b : Datum :=
   { id := "delprete2013_4b"
     source := ⟨"del-prete-2013", "(4b)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_4b : LinguisticExample :=
     readings := [("HAB", .acceptable)]
     paperFeatures := [("object", "none"), ("qAdverb", "sempre"), ("soe", "none")] }
 
-def ex_6 : LinguisticExample :=
+def ex_6 : Datum :=
   { id := "delprete2013_6"
     source := ⟨"del-prete-2013", "(6)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_6 : LinguisticExample :=
     readings := [("HAB", .acceptable)]
     paperFeatures := [("object", "none"), ("qAdverb", "sempre"), ("soe", "none")] }
 
-def ex_8 : LinguisticExample :=
+def ex_8 : Datum :=
   { id := "delprete2013_8"
     source := ⟨"del-prete-2013", "(8)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_8 : LinguisticExample :=
     readings := [("HAB", .acceptable)]
     paperFeatures := [("object", "singularIndefinite"), ("qAdverb", "sempre"), ("soe", "none")] }
 
-def ex_9b : LinguisticExample :=
+def ex_9b : Datum :=
   { id := "delprete2013_9b"
     source := ⟨"del-prete-2013", "(9b)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_9b : LinguisticExample :=
     readings := [("HAB", .acceptable)]
     paperFeatures := [("object", "negativeKindIndefinite"), ("qAdverb", "none"), ("soe", "none")] }
 
-def ex_11 : LinguisticExample :=
+def ex_11 : Datum :=
   { id := "delprete2013_11"
     source := ⟨"del-prete-2013", "(11)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_11 : LinguisticExample :=
     readings := [("HAB", .acceptable), ("PROG", .unacceptable)]
     paperFeatures := [("object", "barePlural"), ("qAdverb", "none"), ("soe", "kind")] }
 
-def ex_12 : LinguisticExample :=
+def ex_12 : Datum :=
   { id := "delprete2013_12"
     source := ⟨"del-prete-2013", "(12)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_12 : LinguisticExample :=
     readings := [("HAB", .acceptable), ("PROG", .unacceptable)]
     paperFeatures := [("object", "kindIndefinite"), ("qAdverb", "none"), ("soe", "kind")] }
 
-def ex_13 : LinguisticExample :=
+def ex_13 : Datum :=
   { id := "delprete2013_13"
     source := ⟨"del-prete-2013", "(13)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_13 : LinguisticExample :=
     readings := [("HAB", .acceptable)]
     paperFeatures := [("object", "barePlural"), ("qAdverb", "none"), ("soe", "kind")] }
 
-def ex_14 : LinguisticExample :=
+def ex_14 : Datum :=
   { id := "delprete2013_14"
     source := ⟨"del-prete-2013", "(14)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_14 : LinguisticExample :=
     readings := [("HAB", .acceptable)]
     paperFeatures := [("object", "kindIndefinite"), ("qAdverb", "none"), ("soe", "kind")] }
 
-def fn11 : LinguisticExample :=
+def fn11 : Datum :=
   { id := "delprete2013_fn11"
     source := ⟨"del-prete-2013", "footnote 11 (i)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def fn11 : LinguisticExample :=
     readings := [("HAB", .acceptable), ("PROG", .acceptable)]
     paperFeatures := [("object", "barePlural"), ("qAdverb", "none"), ("soe", "kind")] }
 
-def ex_17 : LinguisticExample :=
+def ex_17 : Datum :=
   { id := "delprete2013_17"
     source := ⟨"del-prete-2013", "(17)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_17 : LinguisticExample :=
     readings := [("PROG", .acceptable)]
     paperFeatures := [("object", "singularIndefinite"), ("qAdverb", "none"), ("soe", "none")] }
 
-def ex_19 : LinguisticExample :=
+def ex_19 : Datum :=
   { id := "delprete2013_19"
     source := ⟨"del-prete-2013", "(19)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_19 : LinguisticExample :=
     readings := [("HAB", .acceptable)]
     paperFeatures := [("object", "definite"), ("qAdverb", "ogni"), ("soe", "none")] }
 
-def ex_20 : LinguisticExample :=
+def ex_20 : Datum :=
   { id := "delprete2013_20"
     source := ⟨"del-prete-2013", "(20)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex_20 : LinguisticExample :=
     readings := [("HAB", .acceptable)]
     paperFeatures := [("object", "definite"), ("qAdverb", "ogni"), ("soe", "none")] }
 
-def fn29 : LinguisticExample :=
+def fn29 : Datum :=
   { id := "delprete2013_fn29"
     source := ⟨"del-prete-2013", "footnote 29 (i)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def fn29 : LinguisticExample :=
     readings := [("PROG", .questionable)]
     paperFeatures := [("object", "barePlural"), ("qAdverb", "none"), ("soe", "kind")] }
 
-def fn31 : LinguisticExample :=
+def fn31 : Datum :=
   { id := "delprete2013_fn31"
     source := ⟨"del-prete-2013", "footnote 31 (i)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def fn31 : LinguisticExample :=
     readings := [("HAB", .acceptable)]
     paperFeatures := [("object", "singularIndefinite"), ("qAdverb", "sempre"), ("soe", "none")] }
 
-def tennis : LinguisticExample :=
+def tennis : Datum :=
   { id := "delprete2013_tennis"
     source := ⟨"del-prete-2013", "§4"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def tennis : LinguisticExample :=
     readings := [("HAB", .acceptable)]
     paperFeatures := [("object", "none"), ("qAdverb", "none"), ("soe", "none")] }
 
-def frequentative : LinguisticExample :=
+def frequentative : Datum :=
   { id := "delprete2013_frequentative"
     source := ⟨"del-prete-2013", "§4.3"⟩
     reportedIn := none
@@ -290,6 +290,6 @@ def frequentative : LinguisticExample :=
     readings := []
     paperFeatures := [("object", "barePlural"), ("qAdverb", "none"), ("soe", "kind")] }
 
-def all : List LinguisticExample := [ex_1, ex_2a, ex_2b, ex_3, ex_4a, ex_4b, ex_6, ex_8, ex_9b, ex_11, ex_12, ex_13, ex_14, fn11, ex_17, ex_19, ex_20, fn29, fn31, tennis, frequentative]
+def all : List Datum := [ex_1, ex_2a, ex_2b, ex_3, ex_4a, ex_4b, ex_6, ex_8, ex_9b, ex_11, ex_12, ex_13, ex_14, fn11, ex_17, ex_19, ex_20, fn29, fn31, tennis, frequentative]
 
 end DelPrete2013.Examples

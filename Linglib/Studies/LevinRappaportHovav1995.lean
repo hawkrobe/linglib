@@ -222,17 +222,17 @@ unergative resultative pattern, the X's way construction and a cognate object in
 unergative verb, the unaccusative resultative pattern an unaccusative one (§4.1.1, §4.1.2,
 §4.1.4). Locative inversion and there-insertion rows are data, not diagnostics: chapter 6
 finds unergative verbs in locative inversion too. -/
-def diagnosticOf (ex : LinguisticExample) : Option Bool :=
+def diagnosticOf (ex : Datum) : Option Bool :=
   ex.parse? "diagnostic" [("resultativeUnergativePattern", true), ("wayConstruction", true),
     ("cognateObject", true), ("resultativeUnaccusativePattern", false)]
 
 /-- The class of a row's verb, by the book's section number. -/
-def classOf (ex : LinguisticExample) : Option LevinClass :=
+def classOf (ex : Datum) : Option LevinClass :=
   (ex.feature? "class").bind LevinClass.ofNumberString?
 
 /-- The construal of a row's verb: its characterization in the class with the row's
 agentivity. -/
-def construalOf (ex : LinguisticExample) : List Characterization :=
+def construalOf (ex : Datum) : List Characterization :=
   match classOf ex, ex.parse? "agentive" [("yes", true), ("no", false)] with
   | some c, some a => (characterizations c).filter (·.immediateCause = a)
   | _, _ => []

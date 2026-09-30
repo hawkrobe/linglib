@@ -17,7 +17,7 @@ namespace Longobardi2001.Examples
 
 open Data.Examples
 
-def ex_6a : LinguisticExample :=
+def ex_6a : Datum :=
   { id := "longobardi2001_6a"
     source := ⟨"longobardi-2001", "(6a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_6a : LinguisticExample :=
     readings := [("Ex", .acceptable), ("Gen", .unacceptable)]
     paperFeatures := [("nominal", "bareNoun"), ("environment", "episodic"), ("position", "subject")] }
 
-def ex_6b : LinguisticExample :=
+def ex_6b : Datum :=
   { id := "longobardi2001_6b"
     source := ⟨"longobardi-2001", "(6b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_6b : LinguisticExample :=
     readings := [("Ex", .marginal), ("Gen", .acceptable)]
     paperFeatures := [("nominal", "bareNoun"), ("environment", "habitual"), ("position", "subject")] }
 
-def ex_6c : LinguisticExample :=
+def ex_6c : Datum :=
   { id := "longobardi2001_6c"
     source := ⟨"longobardi-2001", "(6c)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_6c : LinguisticExample :=
     readings := [("Ex", .marginal), ("Gen", .acceptable)]
     paperFeatures := [("nominal", "bareNoun"), ("environment", "adverbial"), ("position", "subject")] }
 
-def ex_7 : LinguisticExample :=
+def ex_7 : Datum :=
   { id := "longobardi2001_7"
     source := ⟨"longobardi-2001", "(7)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_7 : LinguisticExample :=
     readings := [("Ex", .unacceptable), ("Gen", .acceptable)]
     paperFeatures := [("nominal", "bareNoun"), ("environment", "iLevelA"), ("position", "subject")] }
 
-def ex_8a : LinguisticExample :=
+def ex_8a : Datum :=
   { id := "longobardi2001_8a"
     source := ⟨"longobardi-2001", "(8a)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_8a : LinguisticExample :=
     readings := [("Ex", .unacceptable), ("Gen", .acceptable)]
     paperFeatures := [("nominal", "bareNoun"), ("environment", "iLevelA"), ("position", "subject")] }
 
-def ex_8b : LinguisticExample :=
+def ex_8b : Datum :=
   { id := "longobardi2001_8b"
     source := ⟨"longobardi-2001", "(8b)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_8b : LinguisticExample :=
     readings := [("Ex", .unacceptable), ("Gen", .questionable)]
     paperFeatures := [("nominal", "bareNoun"), ("environment", "iLevelB"), ("position", "subject")] }
 
-def ex_9b : LinguisticExample :=
+def ex_9b : Datum :=
   { id := "longobardi2001_9b"
     source := ⟨"longobardi-2001", "(9b)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_9b : LinguisticExample :=
     readings := [("Ex", .unacceptable), ("Gen", .questionable)]
     paperFeatures := [("nominal", "bareNoun"), ("environment", "iLevelB"), ("position", "subject")] }
 
-def ex_10a : LinguisticExample :=
+def ex_10a : Datum :=
   { id := "longobardi2001_10a"
     source := ⟨"longobardi-2001", "(10a)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_10a : LinguisticExample :=
     readings := [("Ex", .unacceptable), ("Gen", .acceptable)]
     paperFeatures := [("nominal", "bareNoun"), ("environment", "iLevelA"), ("position", "subject")] }
 
-def ex_10b : LinguisticExample :=
+def ex_10b : Datum :=
   { id := "longobardi2001_10b"
     source := ⟨"longobardi-2001", "(10b)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_10b : LinguisticExample :=
     readings := [("Ex", .unacceptable), ("Gen", .questionable)]
     paperFeatures := [("nominal", "bareNoun"), ("environment", "iLevelB"), ("position", "subject")] }
 
-def ex_12 : LinguisticExample :=
+def ex_12 : Datum :=
   { id := "longobardi2001_12"
     source := ⟨"longobardi-2001", "(12)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_12 : LinguisticExample :=
     readings := [("Ex", .acceptable), ("Gen", .acceptable)]
     paperFeatures := [("nominal", "bareNoun"), ("environment", "habitual"), ("position", "subject")] }
 
-def ex_13a : LinguisticExample :=
+def ex_13a : Datum :=
   { id := "longobardi2001_13a"
     source := ⟨"longobardi-2001", "(13a)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_13a : LinguisticExample :=
     readings := [("Ex", .ungrammatical), ("Gen", .ungrammatical)]
     paperFeatures := [("nominal", "bareNoun"), ("environment", "kindLevel"), ("position", "subject")] }
 
-def ex_13b : LinguisticExample :=
+def ex_13b : Datum :=
   { id := "longobardi2001_13b"
     source := ⟨"longobardi-2001", "(13b)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_13b : LinguisticExample :=
     readings := [("Ex", .ungrammatical), ("Gen", .ungrammatical)]
     paperFeatures := [("nominal", "bareNoun"), ("environment", "kindLevel"), ("position", "subject")] }
 
-def ex_13c : LinguisticExample :=
+def ex_13c : Datum :=
   { id := "longobardi2001_13c"
     source := ⟨"longobardi-2001", "(13c)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_13c : LinguisticExample :=
     readings := [("Ex", .ungrammatical), ("Gen", .ungrammatical)]
     paperFeatures := [("nominal", "bareNoun"), ("environment", "kindLevel"), ("position", "subject")] }
 
-def ex_21a : LinguisticExample :=
+def ex_21a : Datum :=
   { id := "longobardi2001_21a"
     source := ⟨"longobardi-2001", "(21a)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_21a : LinguisticExample :=
     readings := [("Ex", .acceptable), ("Gen", .unacceptable)]
     paperFeatures := [("nominal", "bareNoun"), ("environment", "episodic"), ("position", "subject")] }
 
-def ex_21b : LinguisticExample :=
+def ex_21b : Datum :=
   { id := "longobardi2001_21b"
     source := ⟨"longobardi-2001", "(21b)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_21b : LinguisticExample :=
     readings := [("Ex", .acceptable), ("Gen", .unacceptable)]
     paperFeatures := [("nominal", "bareNoun"), ("environment", "episodic"), ("position", "subject")] }
 
-def ex_15a : LinguisticExample :=
+def ex_15a : Datum :=
   { id := "longobardi2001_15a"
     source := ⟨"longobardi-2001", "(15a)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_15a : LinguisticExample :=
     readings := [("Ex", .acceptable), ("Gen", .unacceptable)]
     paperFeatures := [("nominal", "overtIndefinite"), ("environment", "episodic"), ("position", "subject")] }
 
-def ex_15b : LinguisticExample :=
+def ex_15b : Datum :=
   { id := "longobardi2001_15b"
     source := ⟨"longobardi-2001", "(15b)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex_15b : LinguisticExample :=
     readings := [("Ex", .marginal), ("Gen", .acceptable)]
     paperFeatures := [("nominal", "overtIndefinite"), ("environment", "habitual"), ("position", "subject")] }
 
-def ex_15c : LinguisticExample :=
+def ex_15c : Datum :=
   { id := "longobardi2001_15c"
     source := ⟨"longobardi-2001", "(15c)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex_15c : LinguisticExample :=
     readings := [("Ex", .marginal), ("Gen", .acceptable)]
     paperFeatures := [("nominal", "overtIndefinite"), ("environment", "adverbial"), ("position", "subject")] }
 
-def ex_16 : LinguisticExample :=
+def ex_16 : Datum :=
   { id := "longobardi2001_16"
     source := ⟨"longobardi-2001", "(16)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex_16 : LinguisticExample :=
     readings := [("Ex", .unacceptable), ("Gen", .acceptable)]
     paperFeatures := [("nominal", "overtIndefinite"), ("environment", "iLevelA"), ("position", "subject")] }
 
-def ex_17a : LinguisticExample :=
+def ex_17a : Datum :=
   { id := "longobardi2001_17a"
     source := ⟨"longobardi-2001", "(17a)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex_17a : LinguisticExample :=
     readings := [("Ex", .unacceptable), ("Gen", .acceptable)]
     paperFeatures := [("nominal", "overtIndefinite"), ("environment", "iLevelA"), ("position", "subject")] }
 
-def ex_17b : LinguisticExample :=
+def ex_17b : Datum :=
   { id := "longobardi2001_17b"
     source := ⟨"longobardi-2001", "(17b)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex_17b : LinguisticExample :=
     readings := [("Ex", .unacceptable), ("Gen", .questionable)]
     paperFeatures := [("nominal", "overtIndefinite"), ("environment", "iLevelB"), ("position", "subject")] }
 
-def ex_18b : LinguisticExample :=
+def ex_18b : Datum :=
   { id := "longobardi2001_18b"
     source := ⟨"longobardi-2001", "(18b)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex_18b : LinguisticExample :=
     readings := [("Ex", .unacceptable), ("Gen", .questionable)]
     paperFeatures := [("nominal", "overtIndefinite"), ("environment", "iLevelB"), ("position", "subject")] }
 
-def ex_20a : LinguisticExample :=
+def ex_20a : Datum :=
   { id := "longobardi2001_20a"
     source := ⟨"longobardi-2001", "(20a)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex_20a : LinguisticExample :=
     readings := [("Ex", .ungrammatical), ("Gen", .ungrammatical)]
     paperFeatures := [("nominal", "overtIndefinite"), ("environment", "kindLevel"), ("position", "subject")] }
 
-def ex_20b : LinguisticExample :=
+def ex_20b : Datum :=
   { id := "longobardi2001_20b"
     source := ⟨"longobardi-2001", "(20b)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex_20b : LinguisticExample :=
     readings := [("Ex", .ungrammatical), ("Gen", .ungrammatical)]
     paperFeatures := [("nominal", "overtIndefinite"), ("environment", "kindLevel"), ("position", "subject")] }
 
-def ex_26 : LinguisticExample :=
+def ex_26 : Datum :=
   { id := "longobardi2001_26"
     source := ⟨"longobardi-2001", "(26)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex_26 : LinguisticExample :=
     readings := [("Ex", .acceptable), ("Gen", .unacceptable)]
     paperFeatures := [("nominal", "bareNoun"), ("environment", "episodic"), ("position", "object")] }
 
-def ex_27 : LinguisticExample :=
+def ex_27 : Datum :=
   { id := "longobardi2001_27"
     source := ⟨"longobardi-2001", "(27)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex_27 : LinguisticExample :=
     readings := [("Ex", .acceptable), ("Gen", .acceptable)]
     paperFeatures := [("nominal", "bareNoun"), ("environment", "habitual"), ("position", "object")] }
 
-def ex_28 : LinguisticExample :=
+def ex_28 : Datum :=
   { id := "longobardi2001_28"
     source := ⟨"longobardi-2001", "(28)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def ex_28 : LinguisticExample :=
     readings := [("Ex", .unacceptable), ("Gen", .acceptable)]
     paperFeatures := [("nominal", "bareNoun"), ("environment", "iLevelA"), ("position", "object")] }
 
-def ex_29 : LinguisticExample :=
+def ex_29 : Datum :=
   { id := "longobardi2001_29"
     source := ⟨"longobardi-2001", "(29)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def ex_29 : LinguisticExample :=
     readings := [("Ex", .ungrammatical), ("Gen", .ungrammatical)]
     paperFeatures := [("nominal", "bareNoun"), ("environment", "kindLevel"), ("position", "object")] }
 
-def ex_30a : LinguisticExample :=
+def ex_30a : Datum :=
   { id := "longobardi2001_30a"
     source := ⟨"longobardi-2001", "(30a)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def ex_30a : LinguisticExample :=
     readings := [("Ex", .acceptable), ("Gen", .unacceptable)]
     paperFeatures := [("nominal", "overtIndefinite"), ("environment", "episodic"), ("position", "object")] }
 
-def ex_30b : LinguisticExample :=
+def ex_30b : Datum :=
   { id := "longobardi2001_30b"
     source := ⟨"longobardi-2001", "(30b)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def ex_30b : LinguisticExample :=
     readings := [("Ex", .acceptable), ("Gen", .acceptable)]
     paperFeatures := [("nominal", "overtIndefinite"), ("environment", "habitual"), ("position", "object")] }
 
-def ex_30c : LinguisticExample :=
+def ex_30c : Datum :=
   { id := "longobardi2001_30c"
     source := ⟨"longobardi-2001", "(30c)"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def ex_30c : LinguisticExample :=
     readings := [("Ex", .unacceptable), ("Gen", .acceptable)]
     paperFeatures := [("nominal", "overtIndefinite"), ("environment", "iLevelA"), ("position", "object")] }
 
-def ex_30d : LinguisticExample :=
+def ex_30d : Datum :=
   { id := "longobardi2001_30d"
     source := ⟨"longobardi-2001", "(30d)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def ex_30d : LinguisticExample :=
     readings := [("Ex", .ungrammatical), ("Gen", .ungrammatical)]
     paperFeatures := [("nominal", "overtIndefinite"), ("environment", "kindLevel"), ("position", "object")] }
 
-def ex_48a : LinguisticExample :=
+def ex_48a : Datum :=
   { id := "longobardi2001_48a"
     source := ⟨"longobardi-2001", "(48a), the translation of (6a)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def ex_48a : LinguisticExample :=
     readings := [("Ex", .acceptable), ("Gen", .acceptable)]
     paperFeatures := [("nominal", "bareNoun"), ("environment", "episodic"), ("position", "subject")] }
 
-def ex_21a_en : LinguisticExample :=
+def ex_21a_en : Datum :=
   { id := "longobardi2001_21a_en"
     source := ⟨"longobardi-2001", "(21a), English translation"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def ex_21a_en : LinguisticExample :=
     readings := [("Ex", .acceptable), ("Gen", .acceptable)]
     paperFeatures := [("nominal", "bareNoun"), ("environment", "episodic"), ("position", "subject")] }
 
-def ex_48b : LinguisticExample :=
+def ex_48b : Datum :=
   { id := "longobardi2001_48b"
     source := ⟨"longobardi-2001", "(48b), the translation of (13a)"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def ex_48b : LinguisticExample :=
     readings := [("Ex", .unacceptable), ("Gen", .acceptable)]
     paperFeatures := [("nominal", "bareNoun"), ("environment", "kindLevel"), ("position", "subject")] }
 
-def ex_48c : LinguisticExample :=
+def ex_48c : Datum :=
   { id := "longobardi2001_48c"
     source := ⟨"longobardi-2001", "(48c), the translation of (8b)"⟩
     reportedIn := none
@@ -485,7 +485,7 @@ def ex_48c : LinguisticExample :=
     readings := [("Ex", .unacceptable), ("Gen", .acceptable)]
     paperFeatures := [("nominal", "bareNoun"), ("environment", "iLevelB"), ("position", "subject")] }
 
-def ex_48d : LinguisticExample :=
+def ex_48d : Datum :=
   { id := "longobardi2001_48d"
     source := ⟨"longobardi-2001", "(48d), the translation of (26)"⟩
     reportedIn := none
@@ -498,7 +498,7 @@ def ex_48d : LinguisticExample :=
     readings := [("Ex", .acceptable), ("Gen", .acceptable)]
     paperFeatures := [("nominal", "bareNoun"), ("environment", "episodic"), ("position", "object")] }
 
-def ex_48e : LinguisticExample :=
+def ex_48e : Datum :=
   { id := "longobardi2001_48e"
     source := ⟨"longobardi-2001", "(48e), the translation of (29)"⟩
     reportedIn := none
@@ -511,7 +511,7 @@ def ex_48e : LinguisticExample :=
     readings := [("Ex", .unacceptable), ("Gen", .acceptable)]
     paperFeatures := [("nominal", "bareNoun"), ("environment", "kindLevel"), ("position", "object")] }
 
-def ex_34a : LinguisticExample :=
+def ex_34a : Datum :=
   { id := "longobardi2001_34a"
     source := ⟨"longobardi-2001", "(34a)"⟩
     reportedIn := none
@@ -524,7 +524,7 @@ def ex_34a : LinguisticExample :=
     readings := [("Gen", .acceptable)]
     paperFeatures := [("nominal", "definite"), ("environment", "episodic"), ("position", "subject")] }
 
-def ex_34b : LinguisticExample :=
+def ex_34b : Datum :=
   { id := "longobardi2001_34b"
     source := ⟨"longobardi-2001", "(34b)"⟩
     reportedIn := none
@@ -537,7 +537,7 @@ def ex_34b : LinguisticExample :=
     readings := [("Gen", .acceptable)]
     paperFeatures := [("nominal", "definite"), ("environment", "kindLevel"), ("position", "subject")] }
 
-def ex_34c : LinguisticExample :=
+def ex_34c : Datum :=
   { id := "longobardi2001_34c"
     source := ⟨"longobardi-2001", "(34c)"⟩
     reportedIn := none
@@ -550,7 +550,7 @@ def ex_34c : LinguisticExample :=
     readings := [("Gen", .acceptable)]
     paperFeatures := [("nominal", "definite"), ("environment", "kindLevel"), ("position", "subject")] }
 
-def ex_34d : LinguisticExample :=
+def ex_34d : Datum :=
   { id := "longobardi2001_34d"
     source := ⟨"longobardi-2001", "(34d)"⟩
     reportedIn := none
@@ -563,7 +563,7 @@ def ex_34d : LinguisticExample :=
     readings := [("Gen", .acceptable)]
     paperFeatures := [("nominal", "definite"), ("environment", "kindLevel"), ("position", "subject")] }
 
-def ex_34e : LinguisticExample :=
+def ex_34e : Datum :=
   { id := "longobardi2001_34e"
     source := ⟨"longobardi-2001", "(34e)"⟩
     reportedIn := none
@@ -576,7 +576,7 @@ def ex_34e : LinguisticExample :=
     readings := [("Gen", .acceptable)]
     paperFeatures := [("nominal", "definite"), ("environment", "episodic"), ("position", "subject")] }
 
-def ex_34f : LinguisticExample :=
+def ex_34f : Datum :=
   { id := "longobardi2001_34f"
     source := ⟨"longobardi-2001", "(34f)"⟩
     reportedIn := none
@@ -589,7 +589,7 @@ def ex_34f : LinguisticExample :=
     readings := [("Gen", .acceptable)]
     paperFeatures := [("nominal", "definite"), ("environment", "episodic"), ("position", "subject")] }
 
-def ex_35a : LinguisticExample :=
+def ex_35a : Datum :=
   { id := "longobardi2001_35a"
     source := ⟨"longobardi-2001", "(35a)"⟩
     reportedIn := none
@@ -602,7 +602,7 @@ def ex_35a : LinguisticExample :=
     readings := [("Gen", .acceptable)]
     paperFeatures := [("nominal", "definite"), ("environment", "iLevelB"), ("position", "subject")] }
 
-def ex_35b : LinguisticExample :=
+def ex_35b : Datum :=
   { id := "longobardi2001_35b"
     source := ⟨"longobardi-2001", "(35b)"⟩
     reportedIn := none
@@ -615,7 +615,7 @@ def ex_35b : LinguisticExample :=
     readings := [("Gen", .acceptable)]
     paperFeatures := [("nominal", "definite"), ("environment", "iLevelB"), ("position", "subject")] }
 
-def ex_36a : LinguisticExample :=
+def ex_36a : Datum :=
   { id := "longobardi2001_36a"
     source := ⟨"longobardi-2001", "(36a)"⟩
     reportedIn := none
@@ -628,7 +628,7 @@ def ex_36a : LinguisticExample :=
     readings := [("Gen", .acceptable)]
     paperFeatures := [("nominal", "definite"), ("environment", "episodic"), ("position", "object")] }
 
-def ex_36b : LinguisticExample :=
+def ex_36b : Datum :=
   { id := "longobardi2001_36b"
     source := ⟨"longobardi-2001", "(36b)"⟩
     reportedIn := none
@@ -641,7 +641,7 @@ def ex_36b : LinguisticExample :=
     readings := [("Gen", .acceptable)]
     paperFeatures := [("nominal", "definite"), ("environment", "habitual"), ("position", "object")] }
 
-def ex_36c : LinguisticExample :=
+def ex_36c : Datum :=
   { id := "longobardi2001_36c"
     source := ⟨"longobardi-2001", "(36c)"⟩
     reportedIn := none
@@ -654,7 +654,7 @@ def ex_36c : LinguisticExample :=
     readings := [("Gen", .acceptable)]
     paperFeatures := [("nominal", "definite"), ("environment", "iLevelA"), ("position", "object")] }
 
-def ex_36d : LinguisticExample :=
+def ex_36d : Datum :=
   { id := "longobardi2001_36d"
     source := ⟨"longobardi-2001", "(36d)"⟩
     reportedIn := none
@@ -667,7 +667,7 @@ def ex_36d : LinguisticExample :=
     readings := [("Gen", .acceptable)]
     paperFeatures := [("nominal", "definite"), ("environment", "kindLevel"), ("position", "object")] }
 
-def ex_22 : LinguisticExample :=
+def ex_22 : Datum :=
   { id := "longobardi2001_22"
     source := ⟨"longobardi-2001", "(22)"⟩
     reportedIn := none
@@ -680,7 +680,7 @@ def ex_22 : LinguisticExample :=
     readings := [("species", .acceptable), ("distributive", .acceptable)]
     paperFeatures := [("nominal", "bareNoun"), ("environment", "kindAnaphora"), ("position", "subject")] }
 
-def ex_24 : LinguisticExample :=
+def ex_24 : Datum :=
   { id := "longobardi2001_24"
     source := ⟨"longobardi-2001", "(24)"⟩
     reportedIn := none
@@ -693,7 +693,7 @@ def ex_24 : LinguisticExample :=
     readings := [("species", .unacceptable), ("distributive", .acceptable)]
     paperFeatures := [("nominal", "bareNoun"), ("environment", "kindAnaphora"), ("position", "subject")] }
 
-def ex_25a : LinguisticExample :=
+def ex_25a : Datum :=
   { id := "longobardi2001_25a"
     source := ⟨"longobardi-2001", "(25a)"⟩
     reportedIn := none
@@ -706,7 +706,7 @@ def ex_25a : LinguisticExample :=
     readings := [("species", .unacceptable), ("distributive", .acceptable)]
     paperFeatures := [("nominal", "overtIndefinite"), ("environment", "kindAnaphora"), ("position", "subject")] }
 
-def ex_25b : LinguisticExample :=
+def ex_25b : Datum :=
   { id := "longobardi2001_25b"
     source := ⟨"longobardi-2001", "(25b)"⟩
     reportedIn := none
@@ -719,7 +719,7 @@ def ex_25b : LinguisticExample :=
     readings := [("species", .unacceptable), ("distributive", .acceptable)]
     paperFeatures := [("nominal", "overtIndefinite"), ("environment", "kindAnaphora"), ("position", "subject")] }
 
-def ex_37 : LinguisticExample :=
+def ex_37 : Datum :=
   { id := "longobardi2001_37"
     source := ⟨"longobardi-2001", "(37)"⟩
     reportedIn := none
@@ -732,7 +732,7 @@ def ex_37 : LinguisticExample :=
     readings := [("species", .acceptable), ("distributive", .acceptable)]
     paperFeatures := [("nominal", "definite"), ("environment", "kindAnaphora"), ("position", "subject")] }
 
-def ex_63a : LinguisticExample :=
+def ex_63a : Datum :=
   { id := "longobardi2001_63a"
     source := ⟨"longobardi-2001", "(63a)"⟩
     reportedIn := none
@@ -745,7 +745,7 @@ def ex_63a : LinguisticExample :=
     readings := [("Ex", .ungrammatical), ("Gen", .ungrammatical)]
     paperFeatures := [("nominal", "bareNoun"), ("environment", "kindLevel"), ("position", "subject")] }
 
-def ex_63b : LinguisticExample :=
+def ex_63b : Datum :=
   { id := "longobardi2001_63b"
     source := ⟨"longobardi-2001", "(63b)"⟩
     reportedIn := none
@@ -758,7 +758,7 @@ def ex_63b : LinguisticExample :=
     readings := [("Ex", .acceptable), ("Gen", .unacceptable)]
     paperFeatures := [("nominal", "bareNoun"), ("environment", "episodic"), ("position", "subject")] }
 
-def ex_64a : LinguisticExample :=
+def ex_64a : Datum :=
   { id := "longobardi2001_64a"
     source := ⟨"longobardi-2001", "(64a)"⟩
     reportedIn := none
@@ -771,7 +771,7 @@ def ex_64a : LinguisticExample :=
     readings := [("Gen", .acceptable)]
     paperFeatures := [("nominal", "definite"), ("environment", "kindLevel"), ("position", "subject")] }
 
-def ex_64b : LinguisticExample :=
+def ex_64b : Datum :=
   { id := "longobardi2001_64b"
     source := ⟨"longobardi-2001", "(64b)"⟩
     reportedIn := none
@@ -784,7 +784,7 @@ def ex_64b : LinguisticExample :=
     readings := [("Gen", .ungrammatical)]
     paperFeatures := [("nominal", "definite"), ("environment", "episodic"), ("position", "subject")] }
 
-def ex_65a : LinguisticExample :=
+def ex_65a : Datum :=
   { id := "longobardi2001_65a"
     source := ⟨"longobardi-2001", "(65a)"⟩
     reportedIn := none
@@ -797,7 +797,7 @@ def ex_65a : LinguisticExample :=
     readings := []
     paperFeatures := [("nominal", "properName"), ("article", "absent")] }
 
-def ex_65b : LinguisticExample :=
+def ex_65b : Datum :=
   { id := "longobardi2001_65b"
     source := ⟨"longobardi-2001", "(65b)"⟩
     reportedIn := none
@@ -810,6 +810,6 @@ def ex_65b : LinguisticExample :=
     readings := []
     paperFeatures := [("nominal", "properName"), ("article", "absent")] }
 
-def all : List LinguisticExample := [ex_6a, ex_6b, ex_6c, ex_7, ex_8a, ex_8b, ex_9b, ex_10a, ex_10b, ex_12, ex_13a, ex_13b, ex_13c, ex_21a, ex_21b, ex_15a, ex_15b, ex_15c, ex_16, ex_17a, ex_17b, ex_18b, ex_20a, ex_20b, ex_26, ex_27, ex_28, ex_29, ex_30a, ex_30b, ex_30c, ex_30d, ex_48a, ex_21a_en, ex_48b, ex_48c, ex_48d, ex_48e, ex_34a, ex_34b, ex_34c, ex_34d, ex_34e, ex_34f, ex_35a, ex_35b, ex_36a, ex_36b, ex_36c, ex_36d, ex_22, ex_24, ex_25a, ex_25b, ex_37, ex_63a, ex_63b, ex_64a, ex_64b, ex_65a, ex_65b]
+def all : List Datum := [ex_6a, ex_6b, ex_6c, ex_7, ex_8a, ex_8b, ex_9b, ex_10a, ex_10b, ex_12, ex_13a, ex_13b, ex_13c, ex_21a, ex_21b, ex_15a, ex_15b, ex_15c, ex_16, ex_17a, ex_17b, ex_18b, ex_20a, ex_20b, ex_26, ex_27, ex_28, ex_29, ex_30a, ex_30b, ex_30c, ex_30d, ex_48a, ex_21a_en, ex_48b, ex_48c, ex_48d, ex_48e, ex_34a, ex_34b, ex_34c, ex_34d, ex_34e, ex_34f, ex_35a, ex_35b, ex_36a, ex_36b, ex_36c, ex_36d, ex_22, ex_24, ex_25a, ex_25b, ex_37, ex_63a, ex_63b, ex_64a, ex_64b, ex_65a, ex_65b]
 
 end Longobardi2001.Examples

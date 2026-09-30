@@ -47,7 +47,7 @@ domain of a null site is the category of its head, `Minimalist.Cat`.
 namespace Landau2026
 
 open Anaphor (Depth)
-open Data.Examples (LinguisticExample)
+open Data.Examples (Datum)
 
 /-! ### Sites and dependencies -/
 
@@ -159,14 +159,14 @@ def barriers : List (String × Finset Confound) := [("true", ∅), ("false", {.i
 
 /-- The site of a row: its recorded depth, and the island confound when extraction out of its
 domain is unavailable. -/
-def site? (e : LinguisticExample) : Option Site := do
+def site? (e : Datum) : Option Site := do
   pure ⟨← e.parse? "depth" depths, ← e.parse? "extractionAvailable" barriers⟩
 
-def hebrewData : List LinguisticExample :=
+def hebrewData : List Datum :=
   [Examples.hebrewEN, Examples.hebrewENP, Examples.hebrewNCA_DP, Examples.hebrewAE,
     Examples.hebrewNCA_PP, Examples.hebrewPPE]
 
-def mixedAnaphorData : List LinguisticExample :=
+def mixedAnaphorData : List Datum :=
   [Examples.englishDoSo, Examples.dutchDatDoen, Examples.danishDet, Examples.koreanNullObj]
 
 /-- Every row records a depth and whether its domain is an island, so each theorem below speaks

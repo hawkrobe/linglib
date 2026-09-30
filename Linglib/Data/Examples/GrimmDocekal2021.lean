@@ -17,7 +17,7 @@ namespace GrimmDocekal2021.Examples
 
 open Data.Examples
 
-def ex_9b : LinguisticExample :=
+def ex_9b : Datum :=
   { id := "grimmdocekal2021_9b"
     source := ⟨"grimm-docekal-2021", "(9b)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_9b : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "derivedAggregate"), ("numeral", "none"), ("operation", "pluralization")] }
 
-def ex_10a : LinguisticExample :=
+def ex_10a : Datum :=
   { id := "grimmdocekal2021_10a"
     source := ⟨"grimm-docekal-2021", "(10a)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_10a : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "ordinary"), ("numeral", "simple"), ("operation", "simpleCardinal")] }
 
-def ex_10b : LinguisticExample :=
+def ex_10b : Datum :=
   { id := "grimmdocekal2021_10b"
     source := ⟨"grimm-docekal-2021", "(10b)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_10b : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "derivedAggregate"), ("numeral", "simple"), ("operation", "simpleCardinal")] }
 
-def ex_11 : LinguisticExample :=
+def ex_11 : Datum :=
   { id := "grimmdocekal2021_11"
     source := ⟨"grimm-docekal-2021", "(11)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_11 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "derivedAggregate"), ("numeral", "none"), ("operation", "vagueQuantifier")] }
 
-def ex_12 : LinguisticExample :=
+def ex_12 : Datum :=
   { id := "grimmdocekal2021_12"
     source := ⟨"grimm-docekal-2021", "(12)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_12 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "derivedAggregate"), ("numeral", "none"), ("operation", "packaging")] }
 
-def ex_13a : LinguisticExample :=
+def ex_13a : Datum :=
   { id := "grimmdocekal2021_13a"
     source := ⟨"grimm-docekal-2021", "(13a)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_13a : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "ordinary"), ("numeral", "none"), ("operation", "derivation")] }
 
-def ex_13b : LinguisticExample :=
+def ex_13b : Datum :=
   { id := "grimmdocekal2021_13b"
     source := ⟨"grimm-docekal-2021", "(13b)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_13b : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "ordinary"), ("numeral", "none"), ("operation", "derivation")] }
 
-def ex_13c : LinguisticExample :=
+def ex_13c : Datum :=
   { id := "grimmdocekal2021_13c"
     source := ⟨"grimm-docekal-2021", "(13c)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_13c : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "ordinary"), ("numeral", "none"), ("operation", "derivation")] }
 
-def ex_15b : LinguisticExample :=
+def ex_15b : Datum :=
   { id := "grimmdocekal2021_15b"
     source := ⟨"grimm-docekal-2021", "(15b)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_15b : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "animate"), ("numeral", "group"), ("operation", "none")] }
 
-def ex_17 : LinguisticExample :=
+def ex_17 : Datum :=
   { id := "grimmdocekal2021_17"
     source := ⟨"grimm-docekal-2021", "(17)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_17 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "animate"), ("numeral", "group"), ("operation", "outerCardinal")] }
 
-def ex_18 : LinguisticExample :=
+def ex_18 : Datum :=
   { id := "grimmdocekal2021_18"
     source := ⟨"grimm-docekal-2021", "(18)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_18 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "animate"), ("numeral", "group"), ("operation", "vagueQuantifier")] }
 
-def ex_19 : LinguisticExample :=
+def ex_19 : Datum :=
   { id := "grimmdocekal2021_19"
     source := ⟨"grimm-docekal-2021", "(19)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_19 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "animate"), ("numeral", "group"), ("operation", "universal")] }
 
-def ex_20a : LinguisticExample :=
+def ex_20a : Datum :=
   { id := "grimmdocekal2021_20a"
     source := ⟨"grimm-docekal-2021", "(20a)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_20a : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "multiple"), ("numeral", "aggregate"), ("operation", "none")] }
 
-def ex_20b : LinguisticExample :=
+def ex_20b : Datum :=
   { id := "grimmdocekal2021_20b"
     source := ⟨"grimm-docekal-2021", "(20b)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_20b : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "multiple"), ("numeral", "aggregate"), ("operation", "none")] }
 
-def ex_20c : LinguisticExample :=
+def ex_20c : Datum :=
   { id := "grimmdocekal2021_20c"
     source := ⟨"grimm-docekal-2021", "(20c)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_20c : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "multiple"), ("numeral", "aggregate"), ("operation", "none")] }
 
-def ex_20d : LinguisticExample :=
+def ex_20d : Datum :=
   { id := "grimmdocekal2021_20d"
     source := ⟨"grimm-docekal-2021", "(20d)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_20d : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "multiple"), ("numeral", "aggregate"), ("operation", "none")] }
 
-def ex_24a : LinguisticExample :=
+def ex_24a : Datum :=
   { id := "grimmdocekal2021_24a"
     source := ⟨"grimm-docekal-2021", "(24a)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex_24a : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "derivedAggregate"), ("numeral", "aggregate"), ("operation", "none")] }
 
-def ex_24b : LinguisticExample :=
+def ex_24b : Datum :=
   { id := "grimmdocekal2021_24b"
     source := ⟨"grimm-docekal-2021", "(24b)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex_24b : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "multiple"), ("numeral", "aggregate"), ("operation", "none"), ("context", "portion")] }
 
-def ex_24b_simple : LinguisticExample :=
+def ex_24b_simple : Datum :=
   { id := "grimmdocekal2021_24b_simple"
     source := ⟨"grimm-docekal-2021", "(24b)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex_24b_simple : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "multiple"), ("numeral", "simple"), ("operation", "simpleCardinal"), ("context", "portion")] }
 
-def ex_25a : LinguisticExample :=
+def ex_25a : Datum :=
   { id := "grimmdocekal2021_25a"
     source := ⟨"grimm-docekal-2021", "(25a)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex_25a : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "ordinary"), ("numeral", "aggregate"), ("operation", "none")] }
 
-def ex_25b : LinguisticExample :=
+def ex_25b : Datum :=
   { id := "grimmdocekal2021_25b"
     source := ⟨"grimm-docekal-2021", "(25b)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex_25b : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "ordinary"), ("numeral", "aggregate"), ("operation", "none")] }
 
-def ex_25c : LinguisticExample :=
+def ex_25c : Datum :=
   { id := "grimmdocekal2021_25c"
     source := ⟨"grimm-docekal-2021", "(25c)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex_25c : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "ordinary"), ("numeral", "aggregate"), ("operation", "none")] }
 
-def ex_26a : LinguisticExample :=
+def ex_26a : Datum :=
   { id := "grimmdocekal2021_26a"
     source := ⟨"grimm-docekal-2021", "(26a)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex_26a : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "pluraleTantum"), ("numeral", "aggregate"), ("operation", "universal")] }
 
-def ex_26b : LinguisticExample :=
+def ex_26b : Datum :=
   { id := "grimmdocekal2021_26b"
     source := ⟨"grimm-docekal-2021", "(26b)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex_26b : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "multiple"), ("numeral", "aggregate"), ("operation", "universal")] }
 
-def ex_26c : LinguisticExample :=
+def ex_26c : Datum :=
   { id := "grimmdocekal2021_26c"
     source := ⟨"grimm-docekal-2021", "(26c)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex_26c : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "multiple"), ("numeral", "aggregate"), ("operation", "universal")] }
 
-def ex_27a : LinguisticExample :=
+def ex_27a : Datum :=
   { id := "grimmdocekal2021_27a"
     source := ⟨"grimm-docekal-2021", "(27a)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex_27a : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "multiple"), ("numeral", "aggregate"), ("operation", "outerCardinal")] }
 
-def ex_27b : LinguisticExample :=
+def ex_27b : Datum :=
   { id := "grimmdocekal2021_27b"
     source := ⟨"grimm-docekal-2021", "(27b)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def ex_27b : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "pluraleTantum"), ("numeral", "aggregate"), ("operation", "outerCardinal")] }
 
-def ex_27c : LinguisticExample :=
+def ex_27c : Datum :=
   { id := "grimmdocekal2021_27c"
     source := ⟨"grimm-docekal-2021", "(27c)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def ex_27c : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "multiple"), ("numeral", "aggregate"), ("operation", "outerCardinal")] }
 
-def ex_28a : LinguisticExample :=
+def ex_28a : Datum :=
   { id := "grimmdocekal2021_28a"
     source := ⟨"grimm-docekal-2021", "(28a)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def ex_28a : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "abstract"), ("numeral", "taxonomic"), ("operation", "none")] }
 
-def ex_28b : LinguisticExample :=
+def ex_28b : Datum :=
   { id := "grimmdocekal2021_28b"
     source := ⟨"grimm-docekal-2021", "(28b)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def ex_28b : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "substance"), ("numeral", "taxonomic"), ("operation", "none")] }
 
-def ex_28c : LinguisticExample :=
+def ex_28c : Datum :=
   { id := "grimmdocekal2021_28c"
     source := ⟨"grimm-docekal-2021", "(28c)"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def ex_28c : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "ordinary"), ("numeral", "taxonomic"), ("operation", "none")] }
 
-def ex_28d : LinguisticExample :=
+def ex_28d : Datum :=
   { id := "grimmdocekal2021_28d"
     source := ⟨"grimm-docekal-2021", "(28d)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def ex_28d : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "substance"), ("numeral", "taxonomic"), ("operation", "none")] }
 
-def ex_32a : LinguisticExample :=
+def ex_32a : Datum :=
   { id := "grimmdocekal2021_32a"
     source := ⟨"grimm-docekal-2021", "(32a)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def ex_32a : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "substance"), ("numeral", "taxonomic"), ("operation", "universal")] }
 
-def ex_32b : LinguisticExample :=
+def ex_32b : Datum :=
   { id := "grimmdocekal2021_32b"
     source := ⟨"grimm-docekal-2021", "(32b)"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def ex_32b : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "abstract"), ("numeral", "taxonomic"), ("operation", "universal")] }
 
-def ex_32c : LinguisticExample :=
+def ex_32c : Datum :=
   { id := "grimmdocekal2021_32c"
     source := ⟨"grimm-docekal-2021", "(32c)"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def ex_32c : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "substance"), ("numeral", "taxonomic"), ("operation", "universal")] }
 
-def ex_33a : LinguisticExample :=
+def ex_33a : Datum :=
   { id := "grimmdocekal2021_33a"
     source := ⟨"grimm-docekal-2021", "(33a)"⟩
     reportedIn := none
@@ -485,7 +485,7 @@ def ex_33a : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "substance"), ("numeral", "taxonomic"), ("operation", "outerCardinal")] }
 
-def ex_33b : LinguisticExample :=
+def ex_33b : Datum :=
   { id := "grimmdocekal2021_33b"
     source := ⟨"grimm-docekal-2021", "(33b)"⟩
     reportedIn := none
@@ -498,7 +498,7 @@ def ex_33b : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "abstract"), ("numeral", "taxonomic"), ("operation", "outerCardinal")] }
 
-def ex_33c : LinguisticExample :=
+def ex_33c : Datum :=
   { id := "grimmdocekal2021_33c"
     source := ⟨"grimm-docekal-2021", "(33c)"⟩
     reportedIn := none
@@ -511,7 +511,7 @@ def ex_33c : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "substance"), ("numeral", "taxonomic"), ("operation", "outerCardinal")] }
 
-def ex_34 : LinguisticExample :=
+def ex_34 : Datum :=
   { id := "grimmdocekal2021_34"
     source := ⟨"grimm-docekal-2021", "(34)"⟩
     reportedIn := none
@@ -524,7 +524,7 @@ def ex_34 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "ordinary"), ("numeral", "none"), ("operation", "grinding")] }
 
-def ex_35 : LinguisticExample :=
+def ex_35 : Datum :=
   { id := "grimmdocekal2021_35"
     source := ⟨"grimm-docekal-2021", "(35)"⟩
     reportedIn := none
@@ -537,7 +537,7 @@ def ex_35 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "ordinary"), ("numeral", "none"), ("operation", "grinding")] }
 
-def ex_36b : LinguisticExample :=
+def ex_36b : Datum :=
   { id := "grimmdocekal2021_36b"
     source := ⟨"grimm-docekal-2021", "(36b)"⟩
     reportedIn := none
@@ -550,7 +550,7 @@ def ex_36b : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "substance"), ("numeral", "simple"), ("operation", "simpleCardinal"), ("context", "episodic"), ("reading", "taxonomic")] }
 
-def ex_37a : LinguisticExample :=
+def ex_37a : Datum :=
   { id := "grimmdocekal2021_37a"
     source := ⟨"grimm-docekal-2021", "(37a)"⟩
     reportedIn := none
@@ -563,7 +563,7 @@ def ex_37a : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "substance"), ("numeral", "none"), ("operation", "pluralization"), ("context", "generic"), ("reading", "taxonomic")] }
 
-def ex_37b : LinguisticExample :=
+def ex_37b : Datum :=
   { id := "grimmdocekal2021_37b"
     source := ⟨"grimm-docekal-2021", "(37b)"⟩
     reportedIn := none
@@ -576,7 +576,7 @@ def ex_37b : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "substance"), ("numeral", "none"), ("operation", "pluralization"), ("context", "generic"), ("reading", "taxonomic")] }
 
-def ex_38a : LinguisticExample :=
+def ex_38a : Datum :=
   { id := "grimmdocekal2021_38a"
     source := ⟨"grimm-docekal-2021", "(38a)"⟩
     reportedIn := none
@@ -589,7 +589,7 @@ def ex_38a : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "substance"), ("numeral", "simple"), ("operation", "simpleCardinal"), ("context", "generic"), ("reading", "taxonomic")] }
 
-def ex_39 : LinguisticExample :=
+def ex_39 : Datum :=
   { id := "grimmdocekal2021_39"
     source := ⟨"grimm-docekal-2021", "(39)"⟩
     reportedIn := none
@@ -602,7 +602,7 @@ def ex_39 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "ordinary"), ("numeral", "none"), ("operation", "pluralization"), ("context", "generic"), ("reading", "taxonomic")] }
 
-def ex_40a : LinguisticExample :=
+def ex_40a : Datum :=
   { id := "grimmdocekal2021_40a"
     source := ⟨"grimm-docekal-2021", "(40a)"⟩
     reportedIn := none
@@ -615,7 +615,7 @@ def ex_40a : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "substance"), ("numeral", "simple"), ("operation", "simpleCardinal"), ("context", "generic"), ("reading", "taxonomic")] }
 
-def ex_40b : LinguisticExample :=
+def ex_40b : Datum :=
   { id := "grimmdocekal2021_40b"
     source := ⟨"grimm-docekal-2021", "(40b)"⟩
     reportedIn := none
@@ -628,7 +628,7 @@ def ex_40b : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "substance"), ("numeral", "simple"), ("operation", "simpleCardinal"), ("context", "episodic"), ("reading", "taxonomic")] }
 
-def ex_40c : LinguisticExample :=
+def ex_40c : Datum :=
   { id := "grimmdocekal2021_40c"
     source := ⟨"grimm-docekal-2021", "(40c)"⟩
     reportedIn := none
@@ -641,7 +641,7 @@ def ex_40c : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "substance"), ("numeral", "taxonomic"), ("operation", "none"), ("context", "generic"), ("reading", "taxonomic")] }
 
-def ex_40d : LinguisticExample :=
+def ex_40d : Datum :=
   { id := "grimmdocekal2021_40d"
     source := ⟨"grimm-docekal-2021", "(40d)"⟩
     reportedIn := none
@@ -654,7 +654,7 @@ def ex_40d : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "substance"), ("numeral", "taxonomic"), ("operation", "none"), ("context", "episodic"), ("reading", "taxonomic")] }
 
-def ex_52a : LinguisticExample :=
+def ex_52a : Datum :=
   { id := "grimmdocekal2021_52a"
     source := ⟨"grimm-docekal-2021", "(52a)"⟩
     reportedIn := none
@@ -667,7 +667,7 @@ def ex_52a : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "unique"), ("numeral", "taxonomic"), ("operation", "none")] }
 
-def ex_52b : LinguisticExample :=
+def ex_52b : Datum :=
   { id := "grimmdocekal2021_52b"
     source := ⟨"grimm-docekal-2021", "(52b)"⟩
     reportedIn := none
@@ -680,7 +680,7 @@ def ex_52b : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "proper"), ("numeral", "taxonomic"), ("operation", "none")] }
 
-def ex_68 : LinguisticExample :=
+def ex_68 : Datum :=
   { id := "grimmdocekal2021_68"
     source := ⟨"grimm-docekal-2021", "(68)"⟩
     reportedIn := none
@@ -693,7 +693,7 @@ def ex_68 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "ordinary"), ("numeral", "aggregate"), ("operation", "none")] }
 
-def ex_69 : LinguisticExample :=
+def ex_69 : Datum :=
   { id := "grimmdocekal2021_69"
     source := ⟨"grimm-docekal-2021", "(69)"⟩
     reportedIn := none
@@ -706,6 +706,6 @@ def ex_69 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "substance"), ("numeral", "aggregate"), ("operation", "packaging")] }
 
-def all : List LinguisticExample := [ex_9b, ex_10a, ex_10b, ex_11, ex_12, ex_13a, ex_13b, ex_13c, ex_15b, ex_17, ex_18, ex_19, ex_20a, ex_20b, ex_20c, ex_20d, ex_24a, ex_24b, ex_24b_simple, ex_25a, ex_25b, ex_25c, ex_26a, ex_26b, ex_26c, ex_27a, ex_27b, ex_27c, ex_28a, ex_28b, ex_28c, ex_28d, ex_32a, ex_32b, ex_32c, ex_33a, ex_33b, ex_33c, ex_34, ex_35, ex_36b, ex_37a, ex_37b, ex_38a, ex_39, ex_40a, ex_40b, ex_40c, ex_40d, ex_52a, ex_52b, ex_68, ex_69]
+def all : List Datum := [ex_9b, ex_10a, ex_10b, ex_11, ex_12, ex_13a, ex_13b, ex_13c, ex_15b, ex_17, ex_18, ex_19, ex_20a, ex_20b, ex_20c, ex_20d, ex_24a, ex_24b, ex_24b_simple, ex_25a, ex_25b, ex_25c, ex_26a, ex_26b, ex_26c, ex_27a, ex_27b, ex_27c, ex_28a, ex_28b, ex_28c, ex_28d, ex_32a, ex_32b, ex_32c, ex_33a, ex_33b, ex_33c, ex_34, ex_35, ex_36b, ex_37a, ex_37b, ex_38a, ex_39, ex_40a, ex_40b, ex_40c, ex_40d, ex_52a, ex_52b, ex_68, ex_69]
 
 end GrimmDocekal2021.Examples

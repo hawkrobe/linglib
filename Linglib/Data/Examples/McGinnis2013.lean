@@ -17,7 +17,7 @@ namespace McGinnis2013.Examples
 
 open Data.Examples
 
-def ex_17a : LinguisticExample :=
+def ex_17a : Datum :=
   { id := "mcginnis2013_17a"
     source := ⟨"mcginnis-2013", "(2), (17a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_17a : LinguisticExample :=
     readings := []
     paperFeatures := [("subjPerson", "3"), ("subjNumber", "sg"), ("objPerson", "2"), ("objNumber", "pl"), ("objCase", "dat"), ("screeve", "aorist"), ("prefix", "g"), ("suffix1", "a"), ("suffix2", "t")] }
 
-def ex_17b : LinguisticExample :=
+def ex_17b : Datum :=
   { id := "mcginnis2013_17b"
     source := ⟨"mcginnis-2013", "(3a), (17b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_17b : LinguisticExample :=
     readings := []
     paperFeatures := [("subjPerson", "3"), ("subjNumber", "pl"), ("objPerson", "2"), ("objNumber", "sg"), ("objCase", "dat"), ("screeve", "aorist"), ("prefix", "g"), ("suffix1", "es")] }
 
-def ex_3b : LinguisticExample :=
+def ex_3b : Datum :=
   { id := "mcginnis2013_3b"
     source := ⟨"mcginnis-2013", "(3b), (17b)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_3b : LinguisticExample :=
     readings := []
     paperFeatures := [("subjPerson", "3"), ("subjNumber", "pl"), ("objPerson", "2"), ("objNumber", "pl"), ("objCase", "dat"), ("screeve", "aorist"), ("prefix", "g"), ("suffix1", "es"), ("suffix2", "t")] }
 
-def ex_5c : LinguisticExample :=
+def ex_5c : Datum :=
   { id := "mcginnis2013_5c"
     source := ⟨"mcginnis-2013", "(5c)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_5c : LinguisticExample :=
     readings := []
     paperFeatures := [("subjPerson", "3"), ("subjNumber", "sg"), ("objPerson", "2"), ("objNumber", "sg"), ("objCase", "dat"), ("screeve", "aorist"), ("prefix", "g"), ("suffix1", "a")] }
 
-def ex_6a : LinguisticExample :=
+def ex_6a : Datum :=
   { id := "mcginnis2013_6a"
     source := ⟨"mcginnis-2013", "(6a)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_6a : LinguisticExample :=
     readings := []
     paperFeatures := [("subjPerson", "1"), ("subjNumber", "sg"), ("objPerson", "3"), ("objNumber", "pl"), ("objCase", "dat"), ("screeve", "aorist"), ("prefix", "v"), ("suffix1", "es")] }
 
-def ex_6b_we : LinguisticExample :=
+def ex_6b_we : Datum :=
   { id := "mcginnis2013_6b_we"
     source := ⟨"mcginnis-2013", "(6b), (11b), (22b)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_6b_we : LinguisticExample :=
     readings := []
     paperFeatures := [("subjPerson", "1"), ("subjNumber", "pl"), ("objPerson", "3"), ("objNumber", "sg"), ("objCase", "dat"), ("screeve", "aorist"), ("prefix", "v"), ("suffix1", "e"), ("suffix2", "t")] }
 
-def ex_6b_i : LinguisticExample :=
+def ex_6b_i : Datum :=
   { id := "mcginnis2013_6b_i"
     source := ⟨"mcginnis-2013", "(6b)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_6b_i : LinguisticExample :=
     readings := []
     paperFeatures := [("subjPerson", "1"), ("subjNumber", "sg"), ("objPerson", "3"), ("objNumber", "pl"), ("objCase", "dat"), ("screeve", "aorist"), ("prefix", "v"), ("suffix1", "e"), ("suffix2", "t")] }
 
-def ex_6c : LinguisticExample :=
+def ex_6c : Datum :=
   { id := "mcginnis2013_6c"
     source := ⟨"mcginnis-2013", "(6c), (22a)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_6c : LinguisticExample :=
     readings := []
     paperFeatures := [("subjPerson", "1"), ("subjNumber", "sg"), ("objPerson", "3"), ("objNumber", "sg"), ("objCase", "dat"), ("screeve", "aorist"), ("prefix", "v"), ("suffix1", "e")] }
 
-def ex_18a : LinguisticExample :=
+def ex_18a : Datum :=
   { id := "mcginnis2013_18a"
     source := ⟨"mcginnis-2013", "(12), (18a)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_18a : LinguisticExample :=
     readings := []
     paperFeatures := [("subjPerson", "3"), ("subjNumber", "sg"), ("objPerson", "2"), ("objNumber", "sg"), ("objCase", "dat"), ("screeve", "optative"), ("prefix", "g"), ("suffix1", "o"), ("suffix2", "s")] }
 
-def ex_18b : LinguisticExample :=
+def ex_18b : Datum :=
   { id := "mcginnis2013_18b"
     source := ⟨"mcginnis-2013", "(15), (18b)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_18b : LinguisticExample :=
     readings := []
     paperFeatures := [("subjPerson", "3"), ("subjNumber", "sg"), ("objPerson", "2"), ("objNumber", "pl"), ("objCase", "dat"), ("screeve", "optative"), ("prefix", "g"), ("suffix1", "o"), ("suffix2", "t")] }
 
-def ex_18b_st : LinguisticExample :=
+def ex_18b_st : Datum :=
   { id := "mcginnis2013_18b_st"
     source := ⟨"mcginnis-2013", "(15), (18b)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_18b_st : LinguisticExample :=
     readings := []
     paperFeatures := [("subjPerson", "3"), ("subjNumber", "sg"), ("objPerson", "2"), ("objNumber", "pl"), ("objCase", "dat"), ("screeve", "optative"), ("prefix", "g"), ("suffix1", "o"), ("suffix2", "s"), ("suffix3", "t")] }
 
-def ex_18b_ts : LinguisticExample :=
+def ex_18b_ts : Datum :=
   { id := "mcginnis2013_18b_ts"
     source := ⟨"mcginnis-2013", "(15), (18b)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_18b_ts : LinguisticExample :=
     readings := []
     paperFeatures := [("subjPerson", "3"), ("subjNumber", "sg"), ("objPerson", "2"), ("objNumber", "pl"), ("objCase", "dat"), ("screeve", "optative"), ("prefix", "g"), ("suffix1", "o"), ("suffix2", "t"), ("suffix3", "s")] }
 
-def ex_21 : LinguisticExample :=
+def ex_21 : Datum :=
   { id := "mcginnis2013_21"
     source := ⟨"mcginnis-2013", "(21)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_21 : LinguisticExample :=
     readings := []
     paperFeatures := [("subjPerson", "2"), ("subjNumber", "pl"), ("objPerson", "1"), ("objNumber", "pl"), ("objCase", "dat"), ("screeve", "aorist"), ("prefix", "gv"), ("suffix1", "e"), ("suffix2", "t")] }
 
-def ex_23a : LinguisticExample :=
+def ex_23a : Datum :=
   { id := "mcginnis2013_23a"
     source := ⟨"mcginnis-2013", "(23a)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_23a : LinguisticExample :=
     readings := []
     paperFeatures := [("subjPerson", "3"), ("subjNumber", "sg"), ("objPerson", "1"), ("objNumber", "sg"), ("objCase", "dat"), ("screeve", "aorist"), ("prefix", "m"), ("suffix1", "a")] }
 
-def ex_23b : LinguisticExample :=
+def ex_23b : Datum :=
   { id := "mcginnis2013_23b"
     source := ⟨"mcginnis-2013", "(23b)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_23b : LinguisticExample :=
     readings := []
     paperFeatures := [("subjPerson", "3"), ("subjNumber", "sg"), ("objPerson", "1"), ("objNumber", "pl"), ("objCase", "dat"), ("screeve", "aorist"), ("prefix", "gv"), ("suffix1", "a")] }
 
-def ex_23b_t : LinguisticExample :=
+def ex_23b_t : Datum :=
   { id := "mcginnis2013_23b_t"
     source := ⟨"mcginnis-2013", "(23b)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_23b_t : LinguisticExample :=
     readings := []
     paperFeatures := [("subjPerson", "3"), ("subjNumber", "sg"), ("objPerson", "1"), ("objNumber", "pl"), ("objCase", "dat"), ("screeve", "aorist"), ("prefix", "gv"), ("suffix1", "a"), ("suffix2", "t")] }
 
-def ex_26 : LinguisticExample :=
+def ex_26 : Datum :=
   { id := "mcginnis2013_26"
     source := ⟨"mcginnis-2013", "(26)"⟩
     reportedIn := none
@@ -238,6 +238,6 @@ def ex_26 : LinguisticExample :=
     readings := []
     paperFeatures := [("subjPerson", "3"), ("subjNumber", "pl"), ("objPerson", "1"), ("objNumber", "pl"), ("objCase", "dat"), ("screeve", "aorist"), ("prefix", "gv"), ("suffix1", "es")] }
 
-def all : List LinguisticExample := [ex_17a, ex_17b, ex_3b, ex_5c, ex_6a, ex_6b_we, ex_6b_i, ex_6c, ex_18a, ex_18b, ex_18b_st, ex_18b_ts, ex_21, ex_23a, ex_23b, ex_23b_t, ex_26]
+def all : List Datum := [ex_17a, ex_17b, ex_3b, ex_5c, ex_6a, ex_6b_we, ex_6b_i, ex_6c, ex_18a, ex_18b, ex_18b_st, ex_18b_ts, ex_21, ex_23a, ex_23b, ex_23b_t, ex_26]
 
 end McGinnis2013.Examples

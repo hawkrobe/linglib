@@ -85,7 +85,7 @@ abbrev Meaning := Finset ForceFlavor
 /-! ### The paper's examples -/
 
 /-- The force-flavor pair a row's annotation records. -/
-def Examples.forceFlavor (e : Data.Examples.LinguisticExample) : Option ForceFlavor := do
+def Examples.forceFlavor (e : Data.Examples.Datum) : Option ForceFlavor := do
   let fo ← match e.paperFeatures.lookup "force" with
     | some "weak" => some ModalForce.possibility
     | some "strong" => some ModalForce.necessity

@@ -17,7 +17,7 @@ namespace Filip2012.Examples
 
 open Data.Examples
 
-def ex_1a_in : LinguisticExample :=
+def ex_1a_in : Datum :=
   { id := "filip2012_1a_in"
     source := ⟨"filip-2012", "(1a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_1a_in : LinguisticExample :=
     readings := []
     paperFeatures := [("verbClass", "telic"), ("object", "none"), ("adverbial", "in")] }
 
-def ex_1a_for : LinguisticExample :=
+def ex_1a_for : Datum :=
   { id := "filip2012_1a_for"
     source := ⟨"filip-2012", "(1a)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_1a_for : LinguisticExample :=
     readings := []
     paperFeatures := [("verbClass", "telic"), ("object", "none"), ("adverbial", "for")] }
 
-def ex_1b_in : LinguisticExample :=
+def ex_1b_in : Datum :=
   { id := "filip2012_1b_in"
     source := ⟨"filip-2012", "(1b)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_1b_in : LinguisticExample :=
     readings := []
     paperFeatures := [("verbClass", "atelic"), ("object", "none"), ("adverbial", "in")] }
 
-def ex_1b_for : LinguisticExample :=
+def ex_1b_for : Datum :=
   { id := "filip2012_1b_for"
     source := ⟨"filip-2012", "(1b)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_1b_for : LinguisticExample :=
     readings := []
     paperFeatures := [("verbClass", "atelic"), ("object", "none"), ("adverbial", "for")] }
 
-def ex_25a_in : LinguisticExample :=
+def ex_25a_in : Datum :=
   { id := "filip2012_25a_in"
     source := ⟨"filip-2012", "(25a)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_25a_in : LinguisticExample :=
     readings := []
     paperFeatures := [("verbClass", "incremental"), ("object", "quantized"), ("adverbial", "in")] }
 
-def ex_25a_for : LinguisticExample :=
+def ex_25a_for : Datum :=
   { id := "filip2012_25a_for"
     source := ⟨"filip-2012", "(25a)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_25a_for : LinguisticExample :=
     readings := []
     paperFeatures := [("verbClass", "incremental"), ("object", "quantized"), ("adverbial", "for")] }
 
-def ex_25b_in : LinguisticExample :=
+def ex_25b_in : Datum :=
   { id := "filip2012_25b_in"
     source := ⟨"filip-2012", "(25b)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_25b_in : LinguisticExample :=
     readings := []
     paperFeatures := [("verbClass", "incremental"), ("object", "cumulative"), ("adverbial", "in")] }
 
-def ex_25b_for : LinguisticExample :=
+def ex_25b_for : Datum :=
   { id := "filip2012_25b_for"
     source := ⟨"filip-2012", "(25b)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_25b_for : LinguisticExample :=
     readings := []
     paperFeatures := [("verbClass", "incremental"), ("object", "cumulative"), ("adverbial", "for")] }
 
-def ex_26a_in : LinguisticExample :=
+def ex_26a_in : Datum :=
   { id := "filip2012_26a_in"
     source := ⟨"filip-2012", "(26a)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_26a_in : LinguisticExample :=
     readings := []
     paperFeatures := [("verbClass", "atelic"), ("object", "quantized"), ("adverbial", "in")] }
 
-def ex_26a_for : LinguisticExample :=
+def ex_26a_for : Datum :=
   { id := "filip2012_26a_for"
     source := ⟨"filip-2012", "(26a)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_26a_for : LinguisticExample :=
     readings := []
     paperFeatures := [("verbClass", "atelic"), ("object", "quantized"), ("adverbial", "for")] }
 
-def ex_26b_in : LinguisticExample :=
+def ex_26b_in : Datum :=
   { id := "filip2012_26b_in"
     source := ⟨"filip-2012", "(26b)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_26b_in : LinguisticExample :=
     readings := []
     paperFeatures := [("verbClass", "atelic"), ("object", "cumulative"), ("adverbial", "in")] }
 
-def ex_26b_for : LinguisticExample :=
+def ex_26b_for : Datum :=
   { id := "filip2012_26b_for"
     source := ⟨"filip-2012", "(26b)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_26b_for : LinguisticExample :=
     readings := []
     paperFeatures := [("verbClass", "atelic"), ("object", "cumulative"), ("adverbial", "for")] }
 
-def ex_31a_for : LinguisticExample :=
+def ex_31a_for : Datum :=
   { id := "filip2012_31a_for"
     source := ⟨"filip-2012", "(31a)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_31a_for : LinguisticExample :=
     readings := []
     paperFeatures := [("verbClass", "incremental"), ("object", "quantized"), ("adverbial", "for")] }
 
-def ex_37a_for : LinguisticExample :=
+def ex_37a_for : Datum :=
   { id := "filip2012_37a_for"
     source := ⟨"filip-2012", "(37a)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_37a_for : LinguisticExample :=
     readings := []
     paperFeatures := [("verbClass", "telic"), ("object", "quantized"), ("adverbial", "for")] }
 
-def ex_37a_in : LinguisticExample :=
+def ex_37a_in : Datum :=
   { id := "filip2012_37a_in"
     source := ⟨"filip-2012", "(37a)"⟩
     reportedIn := none
@@ -212,6 +212,6 @@ def ex_37a_in : LinguisticExample :=
     readings := []
     paperFeatures := [("verbClass", "telic"), ("object", "quantized"), ("adverbial", "in")] }
 
-def all : List LinguisticExample := [ex_1a_in, ex_1a_for, ex_1b_in, ex_1b_for, ex_25a_in, ex_25a_for, ex_25b_in, ex_25b_for, ex_26a_in, ex_26a_for, ex_26b_in, ex_26b_for, ex_31a_for, ex_37a_for, ex_37a_in]
+def all : List Datum := [ex_1a_in, ex_1a_for, ex_1b_in, ex_1b_for, ex_25a_in, ex_25a_for, ex_25b_in, ex_25b_for, ex_26a_in, ex_26a_for, ex_26b_in, ex_26b_for, ex_31a_for, ex_37a_for, ex_37a_in]
 
 end Filip2012.Examples

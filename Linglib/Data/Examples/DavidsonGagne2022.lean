@@ -17,7 +17,7 @@ namespace DavidsonGagne2022.Examples
 
 open Data.Examples
 
-def ex_32a : LinguisticExample :=
+def ex_32a : Datum :=
   { id := "davidsongagne2022_32a"
     source := ⟨"davidson-gagne-2022", "(32a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_32a : LinguisticExample :=
     readings := [("contextual", .acceptable), ("widened", .unacceptable)]
     paperFeatures := [("section", "4"), ("heightOn", "quantifier"), ("height", "neutral"), ("quantifier", "FS(ALL)"), ("realization", "simultaneous")] }
 
-def ex_32b : LinguisticExample :=
+def ex_32b : Datum :=
   { id := "davidsongagne2022_32b"
     source := ⟨"davidson-gagne-2022", "(32b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_32b : LinguisticExample :=
     readings := [("contextual", .unacceptable), ("widened", .acceptable)]
     paperFeatures := [("section", "4"), ("heightOn", "quantifier"), ("height", "high"), ("quantifier", "FS(ALL)"), ("realization", "simultaneous")] }
 
-def ex_14a : LinguisticExample :=
+def ex_14a : Datum :=
   { id := "davidsongagne2022_14a"
     source := ⟨"davidson-gagne-2022", "(14a)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_14a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("heightOn", "pronoun"), ("height", "neutral"), ("locus", "implicit")] }
 
-def ex_14b : LinguisticExample :=
+def ex_14b : Datum :=
   { id := "davidsongagne2022_14b"
     source := ⟨"davidson-gagne-2022", "(14b)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_14b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("heightOn", "pronoun"), ("height", "high"), ("locus", "implicit")] }
 
-def ex_15a : LinguisticExample :=
+def ex_15a : Datum :=
   { id := "davidsongagne2022_15a"
     source := ⟨"davidson-gagne-2022", "(15a)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_15a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("heightOn", "pronoun"), ("height", "neutral"), ("levels", "3")] }
 
-def ex_15b : LinguisticExample :=
+def ex_15b : Datum :=
   { id := "davidsongagne2022_15b"
     source := ⟨"davidson-gagne-2022", "(15b)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_15b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("heightOn", "pronoun"), ("height", "mid"), ("levels", "3")] }
 
-def ex_15c : LinguisticExample :=
+def ex_15c : Datum :=
   { id := "davidsongagne2022_15c"
     source := ⟨"davidson-gagne-2022", "(15c)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_15c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("heightOn", "pronoun"), ("height", "high"), ("levels", "3")] }
 
-def ex_16a : LinguisticExample :=
+def ex_16a : Datum :=
   { id := "davidsongagne2022_16a"
     source := ⟨"davidson-gagne-2022", "(16a)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_16a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("heightOn", "pronoun"), ("height", "neutral"), ("levels", "2")] }
 
-def ex_16b : LinguisticExample :=
+def ex_16b : Datum :=
   { id := "davidsongagne2022_16b"
     source := ⟨"davidson-gagne-2022", "(16b)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_16b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("heightOn", "pronoun"), ("height", "high"), ("levels", "2")] }
 
-def ex_17a : LinguisticExample :=
+def ex_17a : Datum :=
   { id := "davidsongagne2022_17a"
     source := ⟨"davidson-gagne-2022", "(17a)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_17a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("heightOn", "none"), ("locusOn", "pronoun"), ("verb", "LIKE"), ("verbClass", "plain")] }
 
-def ex_17b : LinguisticExample :=
+def ex_17b : Datum :=
   { id := "davidsongagne2022_17b"
     source := ⟨"davidson-gagne-2022", "(17b)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_17b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("heightOn", "none"), ("locusOn", "verb"), ("verb", "LIKE"), ("verbClass", "plain")] }
 
-def ex_18a : LinguisticExample :=
+def ex_18a : Datum :=
   { id := "davidsongagne2022_18a"
     source := ⟨"davidson-gagne-2022", "(18a)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_18a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("heightOn", "none"), ("locusOn", "verb"), ("verb", "INFORM"), ("verbClass", "directional")] }
 
-def ex_18b : LinguisticExample :=
+def ex_18b : Datum :=
   { id := "davidsongagne2022_18b"
     source := ⟨"davidson-gagne-2022", "(18b)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_18b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("heightOn", "none"), ("locusOn", "verb"), ("verb", "INFORM"), ("verbClass", "directional")] }
 
-def ex_18c : LinguisticExample :=
+def ex_18c : Datum :=
   { id := "davidsongagne2022_18c"
     source := ⟨"davidson-gagne-2022", "(18c)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_18c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("heightOn", "none"), ("locusOn", "verb"), ("verb", "INFORM"), ("verbClass", "directional")] }
 
-def ex_21a : LinguisticExample :=
+def ex_21a : Datum :=
   { id := "davidsongagne2022_21a"
     source := ⟨"davidson-gagne-2022", "(21a)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_21a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("heightOn", "verb"), ("height", "neutral"), ("verb", "LIKE"), ("verbClass", "plain")] }
 
-def ex_21b : LinguisticExample :=
+def ex_21b : Datum :=
   { id := "davidsongagne2022_21b"
     source := ⟨"davidson-gagne-2022", "(21b)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_21b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("heightOn", "pronoun"), ("height", "neutral"), ("verb", "LIKE"), ("verbClass", "plain")] }
 
-def ex_21c : LinguisticExample :=
+def ex_21c : Datum :=
   { id := "davidsongagne2022_21c"
     source := ⟨"davidson-gagne-2022", "(21c)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex_21c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("heightOn", "verb"), ("height", "high"), ("verb", "LIKE"), ("verbClass", "plain")] }
 
-def ex_21d : LinguisticExample :=
+def ex_21d : Datum :=
   { id := "davidsongagne2022_21d"
     source := ⟨"davidson-gagne-2022", "(21d)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex_21d : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("heightOn", "pronoun"), ("height", "high"), ("verb", "LIKE"), ("verbClass", "plain")] }
 
-def ex_22a : LinguisticExample :=
+def ex_22a : Datum :=
   { id := "davidsongagne2022_22a"
     source := ⟨"davidson-gagne-2022", "(22a)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex_22a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("heightOn", "verb"), ("height", "neutral"), ("verb", "INFORM"), ("verbClass", "directional")] }
 
-def ex_22b : LinguisticExample :=
+def ex_22b : Datum :=
   { id := "davidsongagne2022_22b"
     source := ⟨"davidson-gagne-2022", "(22b)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex_22b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("heightOn", "verb"), ("height", "high"), ("verb", "INFORM"), ("verbClass", "directional")] }
 
-def ex_23a : LinguisticExample :=
+def ex_23a : Datum :=
   { id := "davidsongagne2022_23a"
     source := ⟨"davidson-gagne-2022", "(23a)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex_23a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("heightOn", "verb"), ("height", "neutral"), ("verb", "PICK-FROM"), ("verbClass", "directional")] }
 
-def ex_23b : LinguisticExample :=
+def ex_23b : Datum :=
   { id := "davidsongagne2022_23b"
     source := ⟨"davidson-gagne-2022", "(23b)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex_23b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("heightOn", "verb"), ("height", "high"), ("verb", "PICK-FROM"), ("verbClass", "directional")] }
 
-def ex_24a : LinguisticExample :=
+def ex_24a : Datum :=
   { id := "davidsongagne2022_24a"
     source := ⟨"davidson-gagne-2022", "(24a)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex_24a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("heightOn", "verb"), ("height", "neutral"), ("verb", "GIVE-OUT"), ("verbClass", "directional"), ("levels", "3")] }
 
-def ex_24b : LinguisticExample :=
+def ex_24b : Datum :=
   { id := "davidsongagne2022_24b"
     source := ⟨"davidson-gagne-2022", "(24b)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex_24b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("heightOn", "verb"), ("height", "mid"), ("verb", "GIVE-OUT"), ("verbClass", "directional"), ("levels", "3")] }
 
-def ex_24c : LinguisticExample :=
+def ex_24c : Datum :=
   { id := "davidsongagne2022_24c"
     source := ⟨"davidson-gagne-2022", "(24c)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex_24c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("heightOn", "verb"), ("height", "high"), ("verb", "GIVE-OUT"), ("verbClass", "directional"), ("levels", "3")] }
 
-def ex_25 : LinguisticExample :=
+def ex_25 : Datum :=
   { id := "davidsongagne2022_25"
     source := ⟨"davidson-gagne-2022", "(25)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex_25 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("heightOn", "verb"), ("height", "neutral"), ("verb", "PICK"), ("verbClass", "directional"), ("anaphora", "locus")] }
 
-def ex_26 : LinguisticExample :=
+def ex_26 : Datum :=
   { id := "davidsongagne2022_26"
     source := ⟨"davidson-gagne-2022", "(26)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def ex_26 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("heightOn", "verb"), ("height", "high"), ("verb", "PICK"), ("verbClass", "directional"), ("anaphora", "locus")] }
 
-def ex_27 : LinguisticExample :=
+def ex_27 : Datum :=
   { id := "davidsongagne2022_27"
     source := ⟨"davidson-gagne-2022", "(27)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def ex_27 : LinguisticExample :=
     readings := [("widened", .unacceptable), ("physical", .marginal)]
     paperFeatures := [("section", "3.3"), ("heightOn", "noun"), ("height", "high")] }
 
-def ex_28 : LinguisticExample :=
+def ex_28 : Datum :=
   { id := "davidsongagne2022_28"
     source := ⟨"davidson-gagne-2022", "(28)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def ex_28 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("heightOn", "quantifier"), ("height", "high"), ("quantifier", "SOMETHING"), ("realization", "simultaneous")] }
 
-def ex_33a : LinguisticExample :=
+def ex_33a : Datum :=
   { id := "davidsongagne2022_33a"
     source := ⟨"davidson-gagne-2022", "(33a)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def ex_33a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("heightOn", "quantifier"), ("height", "neutral"), ("quantifier", "NONEsym"), ("realization", "simultaneous")] }
 
-def ex_33b : LinguisticExample :=
+def ex_33b : Datum :=
   { id := "davidsongagne2022_33b"
     source := ⟨"davidson-gagne-2022", "(33b)"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def ex_33b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("heightOn", "quantifier"), ("height", "high"), ("quantifier", "NONEsym"), ("realization", "simultaneous")] }
 
-def ex_34a : LinguisticExample :=
+def ex_34a : Datum :=
   { id := "davidsongagne2022_34a"
     source := ⟨"davidson-gagne-2022", "(34a)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def ex_34a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("heightOn", "quantifier"), ("height", "neutral"), ("quantifier", "NONEsym"), ("realization", "simultaneous"), ("levels", "3")] }
 
-def ex_34b : LinguisticExample :=
+def ex_34b : Datum :=
   { id := "davidsongagne2022_34b"
     source := ⟨"davidson-gagne-2022", "(34b)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def ex_34b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("heightOn", "quantifier"), ("height", "mid"), ("quantifier", "NONEsym"), ("realization", "simultaneous"), ("levels", "3")] }
 
-def ex_34c : LinguisticExample :=
+def ex_34c : Datum :=
   { id := "davidsongagne2022_34c"
     source := ⟨"davidson-gagne-2022", "(34c)"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def ex_34c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("heightOn", "quantifier"), ("height", "high"), ("quantifier", "NONEsym"), ("realization", "simultaneous"), ("levels", "3")] }
 
-def ex_35neutral : LinguisticExample :=
+def ex_35neutral : Datum :=
   { id := "davidsongagne2022_35neutral"
     source := ⟨"davidson-gagne-2022", "(35)"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def ex_35neutral : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("heightOn", "quantifier"), ("height", "neutral"), ("quantifier", "NONEsym"), ("realization", "simultaneous"), ("bound", "typically")] }
 
-def ex_35high : LinguisticExample :=
+def ex_35high : Datum :=
   { id := "davidsongagne2022_35high"
     source := ⟨"davidson-gagne-2022", "(35)"⟩
     reportedIn := none
@@ -485,7 +485,7 @@ def ex_35high : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("heightOn", "quantifier"), ("height", "high"), ("quantifier", "NONEsym"), ("realization", "simultaneous"), ("bound", "typically")] }
 
-def ex_36a : LinguisticExample :=
+def ex_36a : Datum :=
   { id := "davidsongagne2022_36a"
     source := ⟨"davidson-gagne-2022", "(36a)"⟩
     reportedIn := none
@@ -498,7 +498,7 @@ def ex_36a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("heightOn", "quantifier"), ("height", "neutral"), ("quantifier", "SOMEONE"), ("realization", "simultaneous"), ("bound", "typically")] }
 
-def ex_36b : LinguisticExample :=
+def ex_36b : Datum :=
   { id := "davidsongagne2022_36b"
     source := ⟨"davidson-gagne-2022", "(36b)"⟩
     reportedIn := none
@@ -511,7 +511,7 @@ def ex_36b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("heightOn", "quantifier"), ("height", "high"), ("quantifier", "SOMEONE"), ("realization", "simultaneous"), ("bound", "typically")] }
 
-def ex_37a : LinguisticExample :=
+def ex_37a : Datum :=
   { id := "davidsongagne2022_37a"
     source := ⟨"davidson-gagne-2022", "(37a)"⟩
     reportedIn := none
@@ -524,7 +524,7 @@ def ex_37a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("heightOn", "pronoun"), ("height", "neutral"), ("quantifier", "FEW"), ("realization", "sequential")] }
 
-def ex_37b : LinguisticExample :=
+def ex_37b : Datum :=
   { id := "davidsongagne2022_37b"
     source := ⟨"davidson-gagne-2022", "(37b)"⟩
     reportedIn := none
@@ -537,7 +537,7 @@ def ex_37b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("heightOn", "pronoun"), ("height", "high"), ("quantifier", "FEW"), ("realization", "sequential")] }
 
-def ex_38a : LinguisticExample :=
+def ex_38a : Datum :=
   { id := "davidsongagne2022_38a"
     source := ⟨"davidson-gagne-2022", "(38a)"⟩
     reportedIn := none
@@ -550,7 +550,7 @@ def ex_38a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("heightOn", "quantifier"), ("height", "high"), ("quantifier", "FS(ALL)"), ("realization", "both")] }
 
-def ex_39a_none : LinguisticExample :=
+def ex_39a_none : Datum :=
   { id := "davidsongagne2022_39a_none"
     source := ⟨"davidson-gagne-2022", "(39a)"⟩
     reportedIn := none
@@ -563,7 +563,7 @@ def ex_39a_none : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("heightOn", "quantifier"), ("height", "high"), ("quantifier", "NONEsym"), ("realization", "simultaneous")] }
 
-def ex_39a_each : LinguisticExample :=
+def ex_39a_each : Datum :=
   { id := "davidsongagne2022_39a_each"
     source := ⟨"davidson-gagne-2022", "(39a)"⟩
     reportedIn := none
@@ -576,7 +576,7 @@ def ex_39a_each : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("heightOn", "pronoun"), ("height", "high"), ("quantifier", "EACH"), ("realization", "sequential")] }
 
-def ex_39b_one : LinguisticExample :=
+def ex_39b_one : Datum :=
   { id := "davidsongagne2022_39b_one"
     source := ⟨"davidson-gagne-2022", "(39b)"⟩
     reportedIn := none
@@ -589,7 +589,7 @@ def ex_39b_one : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("heightOn", "quantifier"), ("height", "high"), ("quantifier", "ONE"), ("realization", "simultaneous")] }
 
-def ex_39b_two : LinguisticExample :=
+def ex_39b_two : Datum :=
   { id := "davidsongagne2022_39b_two"
     source := ⟨"davidson-gagne-2022", "(39b)"⟩
     reportedIn := none
@@ -602,7 +602,7 @@ def ex_39b_two : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("heightOn", "quantifier"), ("height", "high"), ("quantifier", "TWO"), ("realization", "simultaneous")] }
 
-def ex_39b_many : LinguisticExample :=
+def ex_39b_many : Datum :=
   { id := "davidsongagne2022_39b_many"
     source := ⟨"davidson-gagne-2022", "(39b)"⟩
     reportedIn := none
@@ -615,7 +615,7 @@ def ex_39b_many : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("heightOn", "pronoun"), ("height", "high"), ("quantifier", "MANY"), ("realization", "sequential")] }
 
-def ex_54a : LinguisticExample :=
+def ex_54a : Datum :=
   { id := "davidsongagne2022_54a"
     source := ⟨"davidson-gagne-2022", "(54a)"⟩
     reportedIn := none
@@ -628,7 +628,7 @@ def ex_54a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.2"), ("heightOn", "quantifier"), ("height", "neutral"), ("levels", "3")] }
 
-def ex_54b : LinguisticExample :=
+def ex_54b : Datum :=
   { id := "davidsongagne2022_54b"
     source := ⟨"davidson-gagne-2022", "(54b)"⟩
     reportedIn := none
@@ -641,7 +641,7 @@ def ex_54b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.2"), ("heightOn", "quantifier"), ("height", "mid"), ("levels", "3")] }
 
-def ex_54c : LinguisticExample :=
+def ex_54c : Datum :=
   { id := "davidsongagne2022_54c"
     source := ⟨"davidson-gagne-2022", "(54c)"⟩
     reportedIn := none
@@ -654,6 +654,6 @@ def ex_54c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.2"), ("heightOn", "quantifier"), ("height", "high"), ("levels", "3")] }
 
-def all : List LinguisticExample := [ex_32a, ex_32b, ex_14a, ex_14b, ex_15a, ex_15b, ex_15c, ex_16a, ex_16b, ex_17a, ex_17b, ex_18a, ex_18b, ex_18c, ex_21a, ex_21b, ex_21c, ex_21d, ex_22a, ex_22b, ex_23a, ex_23b, ex_24a, ex_24b, ex_24c, ex_25, ex_26, ex_27, ex_28, ex_33a, ex_33b, ex_34a, ex_34b, ex_34c, ex_35neutral, ex_35high, ex_36a, ex_36b, ex_37a, ex_37b, ex_38a, ex_39a_none, ex_39a_each, ex_39b_one, ex_39b_two, ex_39b_many, ex_54a, ex_54b, ex_54c]
+def all : List Datum := [ex_32a, ex_32b, ex_14a, ex_14b, ex_15a, ex_15b, ex_15c, ex_16a, ex_16b, ex_17a, ex_17b, ex_18a, ex_18b, ex_18c, ex_21a, ex_21b, ex_21c, ex_21d, ex_22a, ex_22b, ex_23a, ex_23b, ex_24a, ex_24b, ex_24c, ex_25, ex_26, ex_27, ex_28, ex_33a, ex_33b, ex_34a, ex_34b, ex_34c, ex_35neutral, ex_35high, ex_36a, ex_36b, ex_37a, ex_37b, ex_38a, ex_39a_none, ex_39a_each, ex_39b_one, ex_39b_two, ex_39b_many, ex_54a, ex_54b, ex_54c]
 
 end DavidsonGagne2022.Examples

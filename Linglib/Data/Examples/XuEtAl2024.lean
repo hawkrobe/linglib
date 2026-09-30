@@ -17,7 +17,7 @@ namespace XuEtAl2024.Examples
 
 open Data.Examples
 
-def ex_1 : LinguisticExample :=
+def ex_1 : Datum :=
   { id := "xuetal2024_1"
     source := ⟨"xu-etal-2024", "Table 1"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "reuse"), ("interval", "1940+")] }
 
-def ex_2 : LinguisticExample :=
+def ex_2 : Datum :=
   { id := "xuetal2024_2"
     source := ⟨"xu-etal-2024", "Table 1"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "reuse"), ("interval", "1940+")] }
 
-def ex_3 : LinguisticExample :=
+def ex_3 : Datum :=
   { id := "xuetal2024_3"
     source := ⟨"xu-etal-2024", "Table 1"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_3 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "reuse"), ("interval", "1940+")] }
 
-def ex_4 : LinguisticExample :=
+def ex_4 : Datum :=
   { id := "xuetal2024_4"
     source := ⟨"xu-etal-2024", "Table 1"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_4 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "compound"), ("interval", "1900+")] }
 
-def ex_5 : LinguisticExample :=
+def ex_5 : Datum :=
   { id := "xuetal2024_5"
     source := ⟨"xu-etal-2024", "Table 1"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_5 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "compound"), ("interval", "1940+")] }
 
-def ex_6 : LinguisticExample :=
+def ex_6 : Datum :=
   { id := "xuetal2024_6"
     source := ⟨"xu-etal-2024", "Table 1"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_6 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "compound"), ("interval", "1980+")] }
 
-def ex_7 : LinguisticExample :=
+def ex_7 : Datum :=
   { id := "xuetal2024_7"
     source := ⟨"xu-etal-2024", "Table 1"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_7 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "reuse"), ("interval", "1900+")] }
 
-def ex_8 : LinguisticExample :=
+def ex_8 : Datum :=
   { id := "xuetal2024_8"
     source := ⟨"xu-etal-2024", "Table 1"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_8 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "reuse"), ("interval", "1920+")] }
 
-def ex_9 : LinguisticExample :=
+def ex_9 : Datum :=
   { id := "xuetal2024_9"
     source := ⟨"xu-etal-2024", "Table 1"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_9 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "reuse"), ("interval", "1960+")] }
 
-def ex_10 : LinguisticExample :=
+def ex_10 : Datum :=
   { id := "xuetal2024_10"
     source := ⟨"xu-etal-2024", "Table 1"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_10 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "compound"), ("interval", "1900+")] }
 
-def ex_11 : LinguisticExample :=
+def ex_11 : Datum :=
   { id := "xuetal2024_11"
     source := ⟨"xu-etal-2024", "Table 1"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_11 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "compound"), ("interval", "1900+")] }
 
-def ex_12 : LinguisticExample :=
+def ex_12 : Datum :=
   { id := "xuetal2024_12"
     source := ⟨"xu-etal-2024", "Table 1"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_12 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "compound"), ("interval", "1940+")] }
 
-def ex_13 : LinguisticExample :=
+def ex_13 : Datum :=
   { id := "xuetal2024_13"
     source := ⟨"xu-etal-2024", "Table 1"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_13 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "reuse"), ("interval", "1900+")] }
 
-def ex_14 : LinguisticExample :=
+def ex_14 : Datum :=
   { id := "xuetal2024_14"
     source := ⟨"xu-etal-2024", "Table 1"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_14 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "reuse"), ("interval", "1920+")] }
 
-def ex_15 : LinguisticExample :=
+def ex_15 : Datum :=
   { id := "xuetal2024_15"
     source := ⟨"xu-etal-2024", "Table 1"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_15 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "reuse"), ("interval", "1940+")] }
 
-def ex_16 : LinguisticExample :=
+def ex_16 : Datum :=
   { id := "xuetal2024_16"
     source := ⟨"xu-etal-2024", "Table 1"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_16 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "compound"), ("interval", "1900+")] }
 
-def ex_17 : LinguisticExample :=
+def ex_17 : Datum :=
   { id := "xuetal2024_17"
     source := ⟨"xu-etal-2024", "Table 1"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex_17 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "compound"), ("interval", "1900+")] }
 
-def ex_18 : LinguisticExample :=
+def ex_18 : Datum :=
   { id := "xuetal2024_18"
     source := ⟨"xu-etal-2024", "Table 1"⟩
     reportedIn := none
@@ -251,6 +251,6 @@ def ex_18 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "compound"), ("interval", "1920+")] }
 
-def all : List LinguisticExample := [ex_1, ex_2, ex_3, ex_4, ex_5, ex_6, ex_7, ex_8, ex_9, ex_10, ex_11, ex_12, ex_13, ex_14, ex_15, ex_16, ex_17, ex_18]
+def all : List Datum := [ex_1, ex_2, ex_3, ex_4, ex_5, ex_6, ex_7, ex_8, ex_9, ex_10, ex_11, ex_12, ex_13, ex_14, ex_15, ex_16, ex_17, ex_18]
 
 end XuEtAl2024.Examples

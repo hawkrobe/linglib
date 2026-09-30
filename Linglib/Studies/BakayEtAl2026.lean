@@ -298,7 +298,7 @@ theorem not_privileged_second {s : Structure} (hs : s ≠ .indirectObject) :
 /-! ### The paper's stimuli -/
 
 /-- The structure a row records, by its distractor or its second noun phrase. -/
-def structure? (x : LinguisticExample) : Option Structure :=
+def structure? (x : Datum) : Option Structure :=
   x.parse? "distractor" [("possessor in subject", .possessorInSubject),
       ("possessor in adjunct", .possessorInAdjunct),
       ("postpositional adjunct", .postpositionalAdjunct)] <|>

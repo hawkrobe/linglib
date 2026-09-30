@@ -17,7 +17,7 @@ namespace CaoWhiteLassiter2025.Examples
 
 open Data.Examples
 
-def cwl2025_ex3a : LinguisticExample :=
+def cwl2025_ex3a : Datum :=
   { id := "cwl2025_ex3a"
     source := ⟨"cao-white-lassiter-2025", "(3a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def cwl2025_ex3a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "cause"), ("dimension", "interchangeability"), ("pair", "fables_cat"), ("attested", "true")] }
 
-def cwl2025_ex3b : LinguisticExample :=
+def cwl2025_ex3b : Datum :=
   { id := "cwl2025_ex3b"
     source := ⟨"cao-white-lassiter-2025", "(3b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def cwl2025_ex3b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "make"), ("dimension", "interchangeability"), ("pair", "fables_cat"), ("attested", "true")] }
 
-def cwl2025_ex3c : LinguisticExample :=
+def cwl2025_ex3c : Datum :=
   { id := "cwl2025_ex3c"
     source := ⟨"cao-white-lassiter-2025", "(3c)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def cwl2025_ex3c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "force"), ("dimension", "interchangeability"), ("pair", "fables_cat"), ("attested", "true")] }
 
-def cwl2025_ex4a : LinguisticExample :=
+def cwl2025_ex4a : Datum :=
   { id := "cwl2025_ex4a"
     source := ⟨"cao-white-lassiter-2025", "(4a)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def cwl2025_ex4a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "cause"), ("dimension", "interchangeability"), ("pair", "cancer"), ("attested", "true")] }
 
-def cwl2025_ex4b : LinguisticExample :=
+def cwl2025_ex4b : Datum :=
   { id := "cwl2025_ex4b"
     source := ⟨"cao-white-lassiter-2025", "(4b)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def cwl2025_ex4b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "make"), ("dimension", "interchangeability"), ("pair", "cancer")] }
 
-def cwl2025_ex4c : LinguisticExample :=
+def cwl2025_ex4c : Datum :=
   { id := "cwl2025_ex4c"
     source := ⟨"cao-white-lassiter-2025", "(4c)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def cwl2025_ex4c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "force"), ("dimension", "interchangeability"), ("pair", "cancer")] }
 
-def cwl2025_ex5a : LinguisticExample :=
+def cwl2025_ex5a : Datum :=
   { id := "cwl2025_ex5a"
     source := ⟨"cao-white-lassiter-2025", "(5a)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def cwl2025_ex5a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "cause"), ("dimension", "gradability"), ("pair", "gym_mention")] }
 
-def cwl2025_ex5b : LinguisticExample :=
+def cwl2025_ex5b : Datum :=
   { id := "cwl2025_ex5b"
     source := ⟨"cao-white-lassiter-2025", "(5b)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def cwl2025_ex5b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "make"), ("dimension", "gradability"), ("pair", "gym_mention")] }
 
-def cwl2025_ex5c : LinguisticExample :=
+def cwl2025_ex5c : Datum :=
   { id := "cwl2025_ex5c"
     source := ⟨"cao-white-lassiter-2025", "(5c)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def cwl2025_ex5c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "force"), ("dimension", "gradability"), ("pair", "gym_mention")] }
 
-def cwl2025_ex6a : LinguisticExample :=
+def cwl2025_ex6a : Datum :=
   { id := "cwl2025_ex6a"
     source := ⟨"cao-white-lassiter-2025", "(6a)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def cwl2025_ex6a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "cause"), ("dimension", "gradability"), ("pair", "gym_criticize")] }
 
-def cwl2025_ex6b : LinguisticExample :=
+def cwl2025_ex6b : Datum :=
   { id := "cwl2025_ex6b"
     source := ⟨"cao-white-lassiter-2025", "(6b)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def cwl2025_ex6b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "make"), ("dimension", "gradability"), ("pair", "gym_criticize")] }
 
-def cwl2025_ex6c : LinguisticExample :=
+def cwl2025_ex6c : Datum :=
   { id := "cwl2025_ex6c"
     source := ⟨"cao-white-lassiter-2025", "(6c)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def cwl2025_ex6c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "force"), ("dimension", "gradability"), ("pair", "gym_criticize")] }
 
-def cwl2025_ex7a : LinguisticExample :=
+def cwl2025_ex7a : Datum :=
   { id := "cwl2025_ex7a"
     source := ⟨"cao-white-lassiter-2025", "(7a)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def cwl2025_ex7a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "cause"), ("dimension", "gradability"), ("pair", "gym_hostage")] }
 
-def cwl2025_ex7b : LinguisticExample :=
+def cwl2025_ex7b : Datum :=
   { id := "cwl2025_ex7b"
     source := ⟨"cao-white-lassiter-2025", "(7b)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def cwl2025_ex7b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "make"), ("dimension", "gradability"), ("pair", "gym_hostage")] }
 
-def cwl2025_ex7c : LinguisticExample :=
+def cwl2025_ex7c : Datum :=
   { id := "cwl2025_ex7c"
     source := ⟨"cao-white-lassiter-2025", "(7c)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def cwl2025_ex7c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "force"), ("dimension", "gradability"), ("pair", "gym_hostage")] }
 
-def cwl2025_ex8a : LinguisticExample :=
+def cwl2025_ex8a : Datum :=
   { id := "cwl2025_ex8a"
     source := ⟨"cao-white-lassiter-2025", "(8a)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def cwl2025_ex8a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "make"), ("dimension", "alternatives"), ("pair", "car")] }
 
-def cwl2025_ex8b : LinguisticExample :=
+def cwl2025_ex8b : Datum :=
   { id := "cwl2025_ex8b"
     source := ⟨"cao-white-lassiter-2025", "(8b)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def cwl2025_ex8b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "force"), ("dimension", "alternatives"), ("pair", "car")] }
 
-def cwl2025_ex9a : LinguisticExample :=
+def cwl2025_ex9a : Datum :=
   { id := "cwl2025_ex9a"
     source := ⟨"cao-white-lassiter-2025", "(9a)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def cwl2025_ex9a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "cause"), ("dimension", "intention"), ("pair", "dance_intent")] }
 
-def cwl2025_ex9b : LinguisticExample :=
+def cwl2025_ex9b : Datum :=
   { id := "cwl2025_ex9b"
     source := ⟨"cao-white-lassiter-2025", "(9b)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def cwl2025_ex9b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "make"), ("dimension", "intention"), ("pair", "dance_intent")] }
 
-def cwl2025_ex9c : LinguisticExample :=
+def cwl2025_ex9c : Datum :=
   { id := "cwl2025_ex9c"
     source := ⟨"cao-white-lassiter-2025", "(9c)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def cwl2025_ex9c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "force"), ("dimension", "intention"), ("pair", "dance_intent")] }
 
-def cwl2025_ex10a : LinguisticExample :=
+def cwl2025_ex10a : Datum :=
   { id := "cwl2025_ex10a"
     source := ⟨"cao-white-lassiter-2025", "(10a)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def cwl2025_ex10a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "cause"), ("dimension", "intention"), ("pair", "dance_accident")] }
 
-def cwl2025_ex10b : LinguisticExample :=
+def cwl2025_ex10b : Datum :=
   { id := "cwl2025_ex10b"
     source := ⟨"cao-white-lassiter-2025", "(10b)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def cwl2025_ex10b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "make"), ("dimension", "intention"), ("pair", "dance_accident")] }
 
-def cwl2025_ex10c : LinguisticExample :=
+def cwl2025_ex10c : Datum :=
   { id := "cwl2025_ex10c"
     source := ⟨"cao-white-lassiter-2025", "(10c)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def cwl2025_ex10c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "force"), ("dimension", "intention"), ("pair", "dance_accident")] }
 
-def cwl2025_ex11a : LinguisticExample :=
+def cwl2025_ex11a : Datum :=
   { id := "cwl2025_ex11a"
     source := ⟨"cao-white-lassiter-2025", "(11a)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def cwl2025_ex11a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "make"), ("dimension", "sufficiency"), ("pair", "plank")] }
 
-def cwl2025_ex11b : LinguisticExample :=
+def cwl2025_ex11b : Datum :=
   { id := "cwl2025_ex11b"
     source := ⟨"cao-white-lassiter-2025", "(11b)"⟩
     reportedIn := none
@@ -342,6 +342,6 @@ def cwl2025_ex11b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "let"), ("dimension", "sufficiency"), ("pair", "plank")] }
 
-def all : List LinguisticExample := [cwl2025_ex3a, cwl2025_ex3b, cwl2025_ex3c, cwl2025_ex4a, cwl2025_ex4b, cwl2025_ex4c, cwl2025_ex5a, cwl2025_ex5b, cwl2025_ex5c, cwl2025_ex6a, cwl2025_ex6b, cwl2025_ex6c, cwl2025_ex7a, cwl2025_ex7b, cwl2025_ex7c, cwl2025_ex8a, cwl2025_ex8b, cwl2025_ex9a, cwl2025_ex9b, cwl2025_ex9c, cwl2025_ex10a, cwl2025_ex10b, cwl2025_ex10c, cwl2025_ex11a, cwl2025_ex11b]
+def all : List Datum := [cwl2025_ex3a, cwl2025_ex3b, cwl2025_ex3c, cwl2025_ex4a, cwl2025_ex4b, cwl2025_ex4c, cwl2025_ex5a, cwl2025_ex5b, cwl2025_ex5c, cwl2025_ex6a, cwl2025_ex6b, cwl2025_ex6c, cwl2025_ex7a, cwl2025_ex7b, cwl2025_ex7c, cwl2025_ex8a, cwl2025_ex8b, cwl2025_ex9a, cwl2025_ex9b, cwl2025_ex9c, cwl2025_ex10a, cwl2025_ex10b, cwl2025_ex10c, cwl2025_ex11a, cwl2025_ex11b]
 
 end CaoWhiteLassiter2025.Examples

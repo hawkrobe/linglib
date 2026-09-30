@@ -177,7 +177,7 @@ theorem precedes_adverb_floatingQ (h : Height) :
   cases h <;> decide
 
 /-- A row's clause type, verb, diagnostic, and attested order, read from its features. -/
-def interpret (r : LinguisticExample) : Option (Clause × Verb × Diagnostic × Bool) := do
+def interpret (r : Datum) : Option (Clause × Verb × Diagnostic × Bool) := do
   let language ← match r.language with
     | "stan1290" => some Language.french
     | "stan1293" => some Language.english
@@ -204,12 +204,12 @@ def interpret (r : LinguisticExample) : Option (Clause × Verb × Diagnostic × 
 
 /-- A row is predicted: it is excluded exactly when no admitted height puts the verb on the
 attested side of the diagnostic element. -/
-def Predicted (r : LinguisticExample) : Prop :=
+def Predicted (r : Datum) : Prop :=
   match interpret r with
   | some (c, v, d, b) => r.judgment ≠ .unacceptable ↔ ∃ h, Admits c v h ∧ precedes h d = b
   | none => False
 
-instance (r : LinguisticExample) : Decidable (Predicted r) := by
+instance (r : Datum) : Decidable (Predicted r) := by
   unfold Predicted; split <;> infer_instance
 
 /-- The paradigm (2) to (39): every row is predicted. -/

@@ -17,7 +17,7 @@ namespace VanTielEtAl2016.Examples
 
 open Data.Examples
 
-def cheap_free : LinguisticExample :=
+def cheap_free : Datum :=
   { id := "vantieletal2016_cheap_free"
     source := ⟨"van-tiel-geurts-2016", "Table 3, Appendix A"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def cheap_free : LinguisticExample :=
     readings := []
     paperFeatures := [("scale", "cheap, free"), ("stronger term", "free"), ("class", "adjective"), ("bounded", "yes")] }
 
-def sometimes_always : LinguisticExample :=
+def sometimes_always : Datum :=
   { id := "vantieletal2016_sometimes_always"
     source := ⟨"van-tiel-geurts-2016", "Table 3, Appendix A"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def sometimes_always : LinguisticExample :=
     readings := []
     paperFeatures := [("scale", "sometimes, always"), ("stronger term", "always"), ("class", "adverb"), ("bounded", "yes")] }
 
-def some_all : LinguisticExample :=
+def some_all : Datum :=
   { id := "vantieletal2016_some_all"
     source := ⟨"van-tiel-geurts-2016", "Table 3, Appendix A"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def some_all : LinguisticExample :=
     readings := []
     paperFeatures := [("scale", "some, all"), ("stronger term", "all"), ("class", "quantifier"), ("bounded", "yes")] }
 
-def possible_certain : LinguisticExample :=
+def possible_certain : Datum :=
   { id := "vantieletal2016_possible_certain"
     source := ⟨"van-tiel-geurts-2016", "Table 3, Appendix A"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def possible_certain : LinguisticExample :=
     readings := []
     paperFeatures := [("scale", "possible, certain"), ("stronger term", "certain"), ("class", "adjective"), ("bounded", "yes")] }
 
-def may_will : LinguisticExample :=
+def may_will : Datum :=
   { id := "vantieletal2016_may_will"
     source := ⟨"van-tiel-geurts-2016", "Table 3, Appendix A"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def may_will : LinguisticExample :=
     readings := []
     paperFeatures := [("scale", "may, will"), ("stronger term", "will"), ("class", "auxiliary verb"), ("bounded", "yes")] }
 
-def difficult_impossible : LinguisticExample :=
+def difficult_impossible : Datum :=
   { id := "vantieletal2016_difficult_impossible"
     source := ⟨"van-tiel-geurts-2016", "Table 3, Appendix A"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def difficult_impossible : LinguisticExample :=
     readings := []
     paperFeatures := [("scale", "difficult, impossible"), ("stronger term", "impossible"), ("class", "adjective"), ("bounded", "yes")] }
 
-def rare_extinct : LinguisticExample :=
+def rare_extinct : Datum :=
   { id := "vantieletal2016_rare_extinct"
     source := ⟨"van-tiel-geurts-2016", "Table 3, Appendix A"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def rare_extinct : LinguisticExample :=
     readings := []
     paperFeatures := [("scale", "rare, extinct"), ("stronger term", "extinct"), ("class", "adjective"), ("bounded", "yes")] }
 
-def may_haveto : LinguisticExample :=
+def may_haveto : Datum :=
   { id := "vantieletal2016_may_haveto"
     source := ⟨"van-tiel-geurts-2016", "Table 3, Appendix A"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def may_haveto : LinguisticExample :=
     readings := []
     paperFeatures := [("scale", "may, have to"), ("stronger term", "have to"), ("class", "auxiliary verb"), ("bounded", "yes")] }
 
-def warm_hot : LinguisticExample :=
+def warm_hot : Datum :=
   { id := "vantieletal2016_warm_hot"
     source := ⟨"van-tiel-geurts-2016", "Table 3, Appendix A"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def warm_hot : LinguisticExample :=
     readings := []
     paperFeatures := [("scale", "warm, hot"), ("stronger term", "hot"), ("class", "adjective"), ("bounded", "no")] }
 
-def few_none : LinguisticExample :=
+def few_none : Datum :=
   { id := "vantieletal2016_few_none"
     source := ⟨"van-tiel-geurts-2016", "Table 3, Appendix A"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def few_none : LinguisticExample :=
     readings := []
     paperFeatures := [("scale", "few, none"), ("stronger term", "none"), ("class", "quantifier"), ("bounded", "yes")] }
 
-def low_depleted : LinguisticExample :=
+def low_depleted : Datum :=
   { id := "vantieletal2016_low_depleted"
     source := ⟨"van-tiel-geurts-2016", "Table 3, Appendix A"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def low_depleted : LinguisticExample :=
     readings := []
     paperFeatures := [("scale", "low, depleted"), ("stronger term", "depleted"), ("class", "adjective"), ("bounded", "yes")] }
 
-def hard_unsolvable : LinguisticExample :=
+def hard_unsolvable : Datum :=
   { id := "vantieletal2016_hard_unsolvable"
     source := ⟨"van-tiel-geurts-2016", "Table 3, Appendix A"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def hard_unsolvable : LinguisticExample :=
     readings := []
     paperFeatures := [("scale", "hard, unsolvable"), ("stronger term", "unsolvable"), ("class", "adjective"), ("bounded", "yes")] }
 
-def allowed_obligatory : LinguisticExample :=
+def allowed_obligatory : Datum :=
   { id := "vantieletal2016_allowed_obligatory"
     source := ⟨"van-tiel-geurts-2016", "Table 3, Appendix A"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def allowed_obligatory : LinguisticExample :=
     readings := []
     paperFeatures := [("scale", "allowed, obligatory"), ("stronger term", "obligatory"), ("class", "adjective"), ("bounded", "yes")] }
 
-def scarce_unavailable : LinguisticExample :=
+def scarce_unavailable : Datum :=
   { id := "vantieletal2016_scarce_unavailable"
     source := ⟨"van-tiel-geurts-2016", "Table 3, Appendix A"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def scarce_unavailable : LinguisticExample :=
     readings := []
     paperFeatures := [("scale", "scarce, unavailable"), ("stronger term", "unavailable"), ("class", "adjective"), ("bounded", "yes")] }
 
-def try_succeed : LinguisticExample :=
+def try_succeed : Datum :=
   { id := "vantieletal2016_try_succeed"
     source := ⟨"van-tiel-geurts-2016", "Table 3, Appendix A"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def try_succeed : LinguisticExample :=
     readings := []
     paperFeatures := [("scale", "try, succeed"), ("stronger term", "succeed"), ("class", "main verb"), ("bounded", "yes")] }
 
-def palatable_delicious : LinguisticExample :=
+def palatable_delicious : Datum :=
   { id := "vantieletal2016_palatable_delicious"
     source := ⟨"van-tiel-geurts-2016", "Table 3, Appendix A"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def palatable_delicious : LinguisticExample :=
     readings := []
     paperFeatures := [("scale", "palatable, delicious"), ("stronger term", "delicious"), ("class", "adjective"), ("bounded", "no")] }
 
-def memorable_unforgettable : LinguisticExample :=
+def memorable_unforgettable : Datum :=
   { id := "vantieletal2016_memorable_unforgettable"
     source := ⟨"van-tiel-geurts-2016", "Table 3, Appendix A"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def memorable_unforgettable : LinguisticExample :=
     readings := []
     paperFeatures := [("scale", "memorable, unforgettable"), ("stronger term", "unforgettable"), ("class", "adjective"), ("bounded", "yes")] }
 
-def like_love : LinguisticExample :=
+def like_love : Datum :=
   { id := "vantieletal2016_like_love"
     source := ⟨"van-tiel-geurts-2016", "Table 3, Appendix A"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def like_love : LinguisticExample :=
     readings := []
     paperFeatures := [("scale", "like, love"), ("stronger term", "love"), ("class", "main verb"), ("bounded", "no")] }
 
-def good_perfect : LinguisticExample :=
+def good_perfect : Datum :=
   { id := "vantieletal2016_good_perfect"
     source := ⟨"van-tiel-geurts-2016", "Table 3, Appendix A"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def good_perfect : LinguisticExample :=
     readings := []
     paperFeatures := [("scale", "good, perfect"), ("stronger term", "perfect"), ("class", "adjective"), ("bounded", "yes")] }
 
-def good_excellent : LinguisticExample :=
+def good_excellent : Datum :=
   { id := "vantieletal2016_good_excellent"
     source := ⟨"van-tiel-geurts-2016", "Table 3, Appendix A"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def good_excellent : LinguisticExample :=
     readings := []
     paperFeatures := [("scale", "good, excellent"), ("stronger term", "excellent"), ("class", "adjective"), ("bounded", "no")] }
 
-def cool_cold : LinguisticExample :=
+def cool_cold : Datum :=
   { id := "vantieletal2016_cool_cold"
     source := ⟨"van-tiel-geurts-2016", "Table 3, Appendix A"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def cool_cold : LinguisticExample :=
     readings := []
     paperFeatures := [("scale", "cool, cold"), ("stronger term", "cold"), ("class", "adjective"), ("bounded", "no")] }
 
-def hungry_starving : LinguisticExample :=
+def hungry_starving : Datum :=
   { id := "vantieletal2016_hungry_starving"
     source := ⟨"van-tiel-geurts-2016", "Table 3, Appendix A"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def hungry_starving : LinguisticExample :=
     readings := []
     paperFeatures := [("scale", "hungry, starving"), ("stronger term", "starving"), ("class", "adjective"), ("bounded", "no")] }
 
-def adequate_good : LinguisticExample :=
+def adequate_good : Datum :=
   { id := "vantieletal2016_adequate_good"
     source := ⟨"van-tiel-geurts-2016", "Table 3, Appendix A"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def adequate_good : LinguisticExample :=
     readings := []
     paperFeatures := [("scale", "adequate, good"), ("stronger term", "good"), ("class", "adjective"), ("bounded", "no")] }
 
-def unsettling_horrific : LinguisticExample :=
+def unsettling_horrific : Datum :=
   { id := "vantieletal2016_unsettling_horrific"
     source := ⟨"van-tiel-geurts-2016", "Table 3, Appendix A"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def unsettling_horrific : LinguisticExample :=
     readings := []
     paperFeatures := [("scale", "unsettling, horrific"), ("stronger term", "horrific"), ("class", "adjective"), ("bounded", "no")] }
 
-def dislike_loathe : LinguisticExample :=
+def dislike_loathe : Datum :=
   { id := "vantieletal2016_dislike_loathe"
     source := ⟨"van-tiel-geurts-2016", "Table 3, Appendix A"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def dislike_loathe : LinguisticExample :=
     readings := []
     paperFeatures := [("scale", "dislike, loathe"), ("stronger term", "loathe"), ("class", "main verb"), ("bounded", "no")] }
 
-def believe_know : LinguisticExample :=
+def believe_know : Datum :=
   { id := "vantieletal2016_believe_know"
     source := ⟨"van-tiel-geurts-2016", "Table 3, Appendix A"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def believe_know : LinguisticExample :=
     readings := []
     paperFeatures := [("scale", "believe, know"), ("stronger term", "know"), ("class", "main verb"), ("bounded", "yes")] }
 
-def start_finish : LinguisticExample :=
+def start_finish : Datum :=
   { id := "vantieletal2016_start_finish"
     source := ⟨"van-tiel-geurts-2016", "Table 3, Appendix A"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def start_finish : LinguisticExample :=
     readings := []
     paperFeatures := [("scale", "start, finish"), ("stronger term", "finish"), ("class", "main verb"), ("bounded", "yes")] }
 
-def participate_win : LinguisticExample :=
+def participate_win : Datum :=
   { id := "vantieletal2016_participate_win"
     source := ⟨"van-tiel-geurts-2016", "Table 3, Appendix A"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def participate_win : LinguisticExample :=
     readings := []
     paperFeatures := [("scale", "participate, win"), ("stronger term", "win"), ("class", "main verb"), ("bounded", "yes")] }
 
-def wary_scared : LinguisticExample :=
+def wary_scared : Datum :=
   { id := "vantieletal2016_wary_scared"
     source := ⟨"van-tiel-geurts-2016", "Table 3, Appendix A"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def wary_scared : LinguisticExample :=
     readings := []
     paperFeatures := [("scale", "wary, scared"), ("stronger term", "scared"), ("class", "adjective"), ("bounded", "no")] }
 
-def old_ancient : LinguisticExample :=
+def old_ancient : Datum :=
   { id := "vantieletal2016_old_ancient"
     source := ⟨"van-tiel-geurts-2016", "Table 3, Appendix A"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def old_ancient : LinguisticExample :=
     readings := []
     paperFeatures := [("scale", "old, ancient"), ("stronger term", "ancient"), ("class", "adjective"), ("bounded", "no")] }
 
-def big_enormous : LinguisticExample :=
+def big_enormous : Datum :=
   { id := "vantieletal2016_big_enormous"
     source := ⟨"van-tiel-geurts-2016", "Table 3, Appendix A"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def big_enormous : LinguisticExample :=
     readings := []
     paperFeatures := [("scale", "big, enormous"), ("stronger term", "enormous"), ("class", "adjective"), ("bounded", "no")] }
 
-def snug_tight : LinguisticExample :=
+def snug_tight : Datum :=
   { id := "vantieletal2016_snug_tight"
     source := ⟨"van-tiel-geurts-2016", "Table 3, Appendix A"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def snug_tight : LinguisticExample :=
     readings := []
     paperFeatures := [("scale", "snug, tight"), ("stronger term", "tight"), ("class", "adjective"), ("bounded", "no")] }
 
-def attractive_stunning : LinguisticExample :=
+def attractive_stunning : Datum :=
   { id := "vantieletal2016_attractive_stunning"
     source := ⟨"van-tiel-geurts-2016", "Table 3, Appendix A"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def attractive_stunning : LinguisticExample :=
     readings := []
     paperFeatures := [("scale", "attractive, stunning"), ("stronger term", "stunning"), ("class", "adjective"), ("bounded", "no")] }
 
-def special_unique : LinguisticExample :=
+def special_unique : Datum :=
   { id := "vantieletal2016_special_unique"
     source := ⟨"van-tiel-geurts-2016", "Table 3, Appendix A"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def special_unique : LinguisticExample :=
     readings := []
     paperFeatures := [("scale", "special, unique"), ("stronger term", "unique"), ("class", "adjective"), ("bounded", "yes")] }
 
-def pretty_beautiful : LinguisticExample :=
+def pretty_beautiful : Datum :=
   { id := "vantieletal2016_pretty_beautiful"
     source := ⟨"van-tiel-geurts-2016", "Table 3, Appendix A"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def pretty_beautiful : LinguisticExample :=
     readings := []
     paperFeatures := [("scale", "pretty, beautiful"), ("stronger term", "beautiful"), ("class", "adjective"), ("bounded", "no")] }
 
-def intelligent_brilliant : LinguisticExample :=
+def intelligent_brilliant : Datum :=
   { id := "vantieletal2016_intelligent_brilliant"
     source := ⟨"van-tiel-geurts-2016", "Table 3, Appendix A"⟩
     reportedIn := none
@@ -485,7 +485,7 @@ def intelligent_brilliant : LinguisticExample :=
     readings := []
     paperFeatures := [("scale", "intelligent, brilliant"), ("stronger term", "brilliant"), ("class", "adjective"), ("bounded", "no")] }
 
-def funny_hilarious : LinguisticExample :=
+def funny_hilarious : Datum :=
   { id := "vantieletal2016_funny_hilarious"
     source := ⟨"van-tiel-geurts-2016", "Table 3, Appendix A"⟩
     reportedIn := none
@@ -498,7 +498,7 @@ def funny_hilarious : LinguisticExample :=
     readings := []
     paperFeatures := [("scale", "funny, hilarious"), ("stronger term", "hilarious"), ("class", "adjective"), ("bounded", "no")] }
 
-def dark_black : LinguisticExample :=
+def dark_black : Datum :=
   { id := "vantieletal2016_dark_black"
     source := ⟨"van-tiel-geurts-2016", "Table 3, Appendix A"⟩
     reportedIn := none
@@ -511,7 +511,7 @@ def dark_black : LinguisticExample :=
     readings := []
     paperFeatures := [("scale", "dark, black"), ("stronger term", "black"), ("class", "adjective"), ("bounded", "yes")] }
 
-def small_tiny : LinguisticExample :=
+def small_tiny : Datum :=
   { id := "vantieletal2016_small_tiny"
     source := ⟨"van-tiel-geurts-2016", "Table 3, Appendix A"⟩
     reportedIn := none
@@ -524,7 +524,7 @@ def small_tiny : LinguisticExample :=
     readings := []
     paperFeatures := [("scale", "small, tiny"), ("stronger term", "tiny"), ("class", "adjective"), ("bounded", "no")] }
 
-def ugly_hideous : LinguisticExample :=
+def ugly_hideous : Datum :=
   { id := "vantieletal2016_ugly_hideous"
     source := ⟨"van-tiel-geurts-2016", "Table 3, Appendix A"⟩
     reportedIn := none
@@ -537,7 +537,7 @@ def ugly_hideous : LinguisticExample :=
     readings := []
     paperFeatures := [("scale", "ugly, hideous"), ("stronger term", "hideous"), ("class", "adjective"), ("bounded", "no")] }
 
-def silly_ridiculous : LinguisticExample :=
+def silly_ridiculous : Datum :=
   { id := "vantieletal2016_silly_ridiculous"
     source := ⟨"van-tiel-geurts-2016", "Table 3, Appendix A"⟩
     reportedIn := none
@@ -550,7 +550,7 @@ def silly_ridiculous : LinguisticExample :=
     readings := []
     paperFeatures := [("scale", "silly, ridiculous"), ("stronger term", "ridiculous"), ("class", "adjective"), ("bounded", "no")] }
 
-def tired_exhausted : LinguisticExample :=
+def tired_exhausted : Datum :=
   { id := "vantieletal2016_tired_exhausted"
     source := ⟨"van-tiel-geurts-2016", "Table 3, Appendix A"⟩
     reportedIn := none
@@ -563,7 +563,7 @@ def tired_exhausted : LinguisticExample :=
     readings := []
     paperFeatures := [("scale", "tired, exhausted"), ("stronger term", "exhausted"), ("class", "adjective"), ("bounded", "no")] }
 
-def content_happy : LinguisticExample :=
+def content_happy : Datum :=
   { id := "vantieletal2016_content_happy"
     source := ⟨"van-tiel-geurts-2016", "Table 3, Appendix A"⟩
     reportedIn := none
@@ -576,6 +576,6 @@ def content_happy : LinguisticExample :=
     readings := []
     paperFeatures := [("scale", "content, happy"), ("stronger term", "happy"), ("class", "adjective"), ("bounded", "no")] }
 
-def all : List LinguisticExample := [cheap_free, sometimes_always, some_all, possible_certain, may_will, difficult_impossible, rare_extinct, may_haveto, warm_hot, few_none, low_depleted, hard_unsolvable, allowed_obligatory, scarce_unavailable, try_succeed, palatable_delicious, memorable_unforgettable, like_love, good_perfect, good_excellent, cool_cold, hungry_starving, adequate_good, unsettling_horrific, dislike_loathe, believe_know, start_finish, participate_win, wary_scared, old_ancient, big_enormous, snug_tight, attractive_stunning, special_unique, pretty_beautiful, intelligent_brilliant, funny_hilarious, dark_black, small_tiny, ugly_hideous, silly_ridiculous, tired_exhausted, content_happy]
+def all : List Datum := [cheap_free, sometimes_always, some_all, possible_certain, may_will, difficult_impossible, rare_extinct, may_haveto, warm_hot, few_none, low_depleted, hard_unsolvable, allowed_obligatory, scarce_unavailable, try_succeed, palatable_delicious, memorable_unforgettable, like_love, good_perfect, good_excellent, cool_cold, hungry_starving, adequate_good, unsettling_horrific, dislike_loathe, believe_know, start_finish, participate_win, wary_scared, old_ancient, big_enormous, snug_tight, attractive_stunning, special_unique, pretty_beautiful, intelligent_brilliant, funny_hilarious, dark_black, small_tiny, ugly_hideous, silly_ridiculous, tired_exhausted, content_happy]
 
 end VanTielEtAl2016.Examples

@@ -17,7 +17,7 @@ namespace Pylkkanen2008.Examples
 
 open Data.Examples
 
-def ex19a : LinguisticExample :=
+def ex19a : Datum :=
   { id := "pylkkanen2008_ex19a"
     source := ⟨"pylkkanen-2008", "(19a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex19a : LinguisticExample :=
     readings := []
     paperFeatures := [("test", "baseline"), ("relation", "recipient")] }
 
-def ex19b : LinguisticExample :=
+def ex19b : Datum :=
   { id := "pylkkanen2008_ex19b"
     source := ⟨"pylkkanen-2008", "(19b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex19b : LinguisticExample :=
     readings := []
     paperFeatures := [("test", "baseline"), ("relation", "recipient")] }
 
-def ex19c : LinguisticExample :=
+def ex19c : Datum :=
   { id := "pylkkanen2008_ex19c"
     source := ⟨"pylkkanen-2008", "(19c)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex19c : LinguisticExample :=
     readings := []
     paperFeatures := [("test", "baseline"), ("relation", "recipient")] }
 
-def ex19d : LinguisticExample :=
+def ex19d : Datum :=
   { id := "pylkkanen2008_ex19d"
     source := ⟨"pylkkanen-2008", "(19d)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex19d : LinguisticExample :=
     readings := []
     paperFeatures := [("test", "baseline"), ("relation", "benefactive")] }
 
-def ex19e : LinguisticExample :=
+def ex19e : Datum :=
   { id := "pylkkanen2008_ex19e"
     source := ⟨"pylkkanen-2008", "(19e)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex19e : LinguisticExample :=
     readings := []
     paperFeatures := [("test", "baseline"), ("relation", "benefactive")] }
 
-def ex19f : LinguisticExample :=
+def ex19f : Datum :=
   { id := "pylkkanen2008_ex19f"
     source := ⟨"pylkkanen-2008", "(19f)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex19f : LinguisticExample :=
     readings := []
     paperFeatures := [("test", "baseline"), ("relation", "benefactive")] }
 
-def ex20a : LinguisticExample :=
+def ex20a : Datum :=
   { id := "pylkkanen2008_ex20a"
     source := ⟨"pylkkanen-2008", "(20a)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex20a : LinguisticExample :=
     readings := []
     paperFeatures := [("test", "unergative")] }
 
-def ex20b : LinguisticExample :=
+def ex20b : Datum :=
   { id := "pylkkanen2008_ex20b"
     source := ⟨"pylkkanen-2008", "(20b)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex20b : LinguisticExample :=
     readings := []
     paperFeatures := [("test", "static")] }
 
-def ex21a : LinguisticExample :=
+def ex21a : Datum :=
   { id := "pylkkanen2008_ex21a"
     source := ⟨"pylkkanen-2008", "(21a)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex21a : LinguisticExample :=
     readings := []
     paperFeatures := [("test", "unergative")] }
 
-def ex21b : LinguisticExample :=
+def ex21b : Datum :=
   { id := "pylkkanen2008_ex21b"
     source := ⟨"pylkkanen-2008", "(21b)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex21b : LinguisticExample :=
     readings := []
     paperFeatures := [("test", "static")] }
 
-def ex22a : LinguisticExample :=
+def ex22a : Datum :=
   { id := "pylkkanen2008_ex22a"
     source := ⟨"pylkkanen-2008", "(22a)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex22a : LinguisticExample :=
     readings := []
     paperFeatures := [("test", "unergative")] }
 
-def ex22b : LinguisticExample :=
+def ex22b : Datum :=
   { id := "pylkkanen2008_ex22b"
     source := ⟨"pylkkanen-2008", "(22b)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex22b : LinguisticExample :=
     readings := []
     paperFeatures := [("test", "static")] }
 
-def ex23a : LinguisticExample :=
+def ex23a : Datum :=
   { id := "pylkkanen2008_ex23a"
     source := ⟨"pylkkanen-2008", "(23a)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex23a : LinguisticExample :=
     readings := []
     paperFeatures := [("test", "unergative")] }
 
-def ex23b : LinguisticExample :=
+def ex23b : Datum :=
   { id := "pylkkanen2008_ex23b"
     source := ⟨"pylkkanen-2008", "(23b)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex23b : LinguisticExample :=
     readings := []
     paperFeatures := [("test", "static")] }
 
-def ex24a : LinguisticExample :=
+def ex24a : Datum :=
   { id := "pylkkanen2008_ex24a"
     source := ⟨"pylkkanen-2008", "(24a)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex24a : LinguisticExample :=
     readings := []
     paperFeatures := [("test", "unergative")] }
 
-def ex24b : LinguisticExample :=
+def ex24b : Datum :=
   { id := "pylkkanen2008_ex24b"
     source := ⟨"pylkkanen-2008", "(24b)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex24b : LinguisticExample :=
     readings := []
     paperFeatures := [("test", "static")] }
 
-def ex25a : LinguisticExample :=
+def ex25a : Datum :=
   { id := "pylkkanen2008_ex25a"
     source := ⟨"pylkkanen-2008", "(25a)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex25a : LinguisticExample :=
     readings := []
     paperFeatures := [("test", "unergative")] }
 
-def ex25b : LinguisticExample :=
+def ex25b : Datum :=
   { id := "pylkkanen2008_ex25b"
     source := ⟨"pylkkanen-2008", "(25b)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex25b : LinguisticExample :=
     readings := []
     paperFeatures := [("test", "static")] }
 
-def ex26a : LinguisticExample :=
+def ex26a : Datum :=
   { id := "pylkkanen2008_ex26a"
     source := ⟨"pylkkanen-2008", "(26a)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex26a : LinguisticExample :=
     readings := []
     paperFeatures := [("test", "depictiveObject")] }
 
-def ex26b : LinguisticExample :=
+def ex26b : Datum :=
   { id := "pylkkanen2008_ex26b"
     source := ⟨"pylkkanen-2008", "(26b)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex26b : LinguisticExample :=
     readings := []
     paperFeatures := [("test", "depictiveApplied")] }
 
-def ex40a : LinguisticExample :=
+def ex40a : Datum :=
   { id := "pylkkanen2008_ex40a"
     source := ⟨"pylkkanen-2008", "(40a)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex40a : LinguisticExample :=
     readings := []
     paperFeatures := [("test", "depictiveApplied")] }
 
-def ex43a : LinguisticExample :=
+def ex43a : Datum :=
   { id := "pylkkanen2008_ex43a"
     source := ⟨"pylkkanen-2008", "(43a)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex43a : LinguisticExample :=
     readings := []
     paperFeatures := [("test", "depictiveApplied")] }
 
-def ex12 : LinguisticExample :=
+def ex12 : Datum :=
   { id := "pylkkanen2008_ex12"
     source := ⟨"pylkkanen-2008", "(12)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex12 : LinguisticExample :=
     readings := []
     paperFeatures := [("test", "baseline"), ("relation", "source")] }
 
-def ex82a : LinguisticExample :=
+def ex82a : Datum :=
   { id := "pylkkanen2008_ex82a"
     source := ⟨"pylkkanen-2008", "(82a)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex82a : LinguisticExample :=
     readings := []
     paperFeatures := [("test", "baseline"), ("relation", "source"), ("construction", "possessorDative")] }
 
-def ex120a : LinguisticExample :=
+def ex120a : Datum :=
   { id := "pylkkanen2008_ex120a"
     source := ⟨"pylkkanen-2008", "(120a)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex120a : LinguisticExample :=
     readings := []
     paperFeatures := [("test", "baseline"), ("relation", "source"), ("construction", "adversityGapped")] }
 
-def ex121a : LinguisticExample :=
+def ex121a : Datum :=
   { id := "pylkkanen2008_ex121a"
     source := ⟨"pylkkanen-2008", "(121a)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex121a : LinguisticExample :=
     readings := []
     paperFeatures := [("test", "baseline"), ("relation", "malefactive"), ("construction", "adversityGapless")] }
 
-def ex95 : LinguisticExample :=
+def ex95 : Datum :=
   { id := "pylkkanen2008_ex95"
     source := ⟨"pylkkanen-2008", "(95)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def ex95 : LinguisticExample :=
     readings := []
     paperFeatures := [("test", "rootCausativeUnergative")] }
 
-def ex96 : LinguisticExample :=
+def ex96 : Datum :=
   { id := "pylkkanen2008_ex96"
     source := ⟨"pylkkanen-2008", "(96)"⟩
     reportedIn := none
@@ -381,6 +381,6 @@ def ex96 : LinguisticExample :=
     readings := []
     paperFeatures := [("test", "rootCausativeUnergative")] }
 
-def all : List LinguisticExample := [ex19a, ex19b, ex19c, ex19d, ex19e, ex19f, ex20a, ex20b, ex21a, ex21b, ex22a, ex22b, ex23a, ex23b, ex24a, ex24b, ex25a, ex25b, ex26a, ex26b, ex40a, ex43a, ex12, ex82a, ex120a, ex121a, ex95, ex96]
+def all : List Datum := [ex19a, ex19b, ex19c, ex19d, ex19e, ex19f, ex20a, ex20b, ex21a, ex21b, ex22a, ex22b, ex23a, ex23b, ex24a, ex24b, ex25a, ex25b, ex26a, ex26b, ex40a, ex43a, ex12, ex82a, ex120a, ex121a, ex95, ex96]
 
 end Pylkkanen2008.Examples

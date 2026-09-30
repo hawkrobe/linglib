@@ -17,7 +17,7 @@ namespace Allotey2021.Examples
 
 open Data.Examples
 
-def ex_2a : LinguisticExample :=
+def ex_2a : Datum :=
   { id := "allotey2021_2a"
     source := ⟨"allotey-2021", "(2a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_2a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "tao"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "subject")] }
 
-def ex_2b : LinguisticExample :=
+def ex_2b : Datum :=
   { id := "allotey2021_2b"
     source := ⟨"allotey-2021", "(2b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_2b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "tao"), ("complementizer", "none"), ("embeddedSubject", "null"), ("control", "subject"), ("diagnostic", "nullSubject")] }
 
-def ex_3a : LinguisticExample :=
+def ex_3a : Datum :=
   { id := "allotey2021_3a"
     source := ⟨"allotey-2021", "(3a)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_3a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "sumɔ"), ("complementizer", "none"), ("embeddedSubject", "pronoun"), ("control", "subject")] }
 
-def ex_3b : LinguisticExample :=
+def ex_3b : Datum :=
   { id := "allotey2021_3b"
     source := ⟨"allotey-2021", "(3b)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_3b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "sumɔ"), ("complementizer", "none"), ("embeddedSubject", "null"), ("control", "subject"), ("diagnostic", "nullSubject")] }
 
-def ex_16 : LinguisticExample :=
+def ex_16 : Datum :=
   { id := "allotey2021_16"
     source := ⟨"allotey-2021", "(16)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_16 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "hiɛ-kã-nɔ"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "subject")] }
 
-def ex_34 : LinguisticExample :=
+def ex_34 : Datum :=
   { id := "allotey2021_34"
     source := ⟨"allotey-2021", "(34)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_34 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "tao"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "subject"), ("irrealisMarker", "present")] }
 
-def ex_35 : LinguisticExample :=
+def ex_35 : Datum :=
   { id := "allotey2021_35"
     source := ⟨"allotey-2021", "(35)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_35 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "hiɛ-kã-nɔ"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "subject")] }
 
-def ex_36 : LinguisticExample :=
+def ex_36 : Datum :=
   { id := "allotey2021_36"
     source := ⟨"allotey-2021", "(36)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_36 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "mia-mi-hiɛ"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "subject")] }
 
-def ex_37 : LinguisticExample :=
+def ex_37 : Datum :=
   { id := "allotey2021_37"
     source := ⟨"allotey-2021", "(37)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_37 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "hiɛ-kpa-nɔ"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "subject"), ("person", "2"), ("number", "singular")] }
 
-def ex_38 : LinguisticExample :=
+def ex_38 : Datum :=
   { id := "allotey2021_38"
     source := ⟨"allotey-2021", "(38)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_38 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "hiɛ-kpa-nɔ"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "subject"), ("person", "2"), ("number", "plural")] }
 
-def ex_39 : LinguisticExample :=
+def ex_39 : Datum :=
   { id := "allotey2021_39"
     source := ⟨"allotey-2021", "(39)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_39 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "nyɛ"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "subject"), ("person", "3"), ("number", "plural")] }
 
-def ex_40 : LinguisticExample :=
+def ex_40 : Datum :=
   { id := "allotey2021_40"
     source := ⟨"allotey-2021", "(40)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_40 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "sumɔ"), ("complementizer", "none"), ("embeddedSubject", "null"), ("diagnostic", "nullSubject")] }
 
-def ex_41 : LinguisticExample :=
+def ex_41 : Datum :=
   { id := "allotey2021_41"
     source := ⟨"allotey-2021", "(41)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_41 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "tao"), ("complementizer", "ni"), ("embeddedSubject", "null"), ("diagnostic", "nullSubject")] }
 
-def ex_42a : LinguisticExample :=
+def ex_42a : Datum :=
   { id := "allotey2021_42a"
     source := ⟨"allotey-2021", "(42a)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_42a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "kai"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "subject"), ("diagnostic", "lexicalSubject")] }
 
-def ex_42b : LinguisticExample :=
+def ex_42b : Datum :=
   { id := "allotey2021_42b"
     source := ⟨"allotey-2021", "(42b)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_42b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "kai"), ("complementizer", "ni"), ("embeddedSubject", "lexical"), ("diagnostic", "lexicalSubject")] }
 
-def ex_42c : LinguisticExample :=
+def ex_42c : Datum :=
   { id := "allotey2021_42c"
     source := ⟨"allotey-2021", "(42c)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_42c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "kai"), ("complementizer", "ni"), ("embeddedSubject", "lexical"), ("diagnostic", "lexicalSubject")] }
 
-def ex_43 : LinguisticExample :=
+def ex_43 : Datum :=
   { id := "allotey2021_43"
     source := ⟨"allotey-2021", "(43)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex_43 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "kai"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "subject")] }
 
-def ex_44 : LinguisticExample :=
+def ex_44 : Datum :=
   { id := "allotey2021_44"
     source := ⟨"allotey-2021", "(44)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex_44 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "wa"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "object")] }
 
-def ex_45a : LinguisticExample :=
+def ex_45a : Datum :=
   { id := "allotey2021_45a"
     source := ⟨"allotey-2021", "(45a)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex_45a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "hiɛ-kpa-nɔ"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "subject"), ("diagnostic", "cCommand"), ("person", "3"), ("number", "plural"), ("antecedent", "cCommanding")] }
 
-def ex_45b : LinguisticExample :=
+def ex_45b : Datum :=
   { id := "allotey2021_45b"
     source := ⟨"allotey-2021", "(45b)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex_45b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "hiɛ-kpa-nɔ"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("diagnostic", "cCommand"), ("person", "3"), ("number", "singular"), ("antecedent", "nonCCommanding")] }
 
-def ex_46a : LinguisticExample :=
+def ex_46a : Datum :=
   { id := "allotey2021_46a"
     source := ⟨"allotey-2021", "(46a)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex_46a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "kai"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "subject"), ("diagnostic", "cCommand"), ("person", "3"), ("number", "singular"), ("antecedent", "cCommanding")] }
 
-def ex_46b : LinguisticExample :=
+def ex_46b : Datum :=
   { id := "allotey2021_46b"
     source := ⟨"allotey-2021", "(46b)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex_46b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "kai"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("diagnostic", "cCommand"), ("person", "3"), ("number", "plural"), ("antecedent", "nonCCommanding")] }
 
-def ex_47 : LinguisticExample :=
+def ex_47 : Datum :=
   { id := "allotey2021_47"
     source := ⟨"allotey-2021", "(47)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex_47 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "hiɛ-kpa-nɔ"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "subject"), ("diagnostic", "longDistance"), ("antecedent", "local")] }
 
-def ex_48 : LinguisticExample :=
+def ex_48 : Datum :=
   { id := "allotey2021_48"
     source := ⟨"allotey-2021", "(48)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex_48 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "tao"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "subject"), ("diagnostic", "longDistance"), ("antecedent", "local")] }
 
-def ex_49 : LinguisticExample :=
+def ex_49 : Datum :=
   { id := "allotey2021_49"
     source := ⟨"allotey-2021", "(49)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex_49 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "hiɛ-kpa-nɔ"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "subject"), ("diagnostic", "longDistance"), ("antecedent", "local")] }
 
-def ex_49b : LinguisticExample :=
+def ex_49b : Datum :=
   { id := "allotey2021_49b"
     source := ⟨"allotey-2021", "(49)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex_49b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "hiɛ-kpa-nɔ"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("diagnostic", "longDistance"), ("antecedent", "longDistance")] }
 
-def ex_52 : LinguisticExample :=
+def ex_52 : Datum :=
   { id := "allotey2021_52"
     source := ⟨"allotey-2021", "(52)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def ex_52 : LinguisticExample :=
     readings := [("sloppy", .acceptable), ("strict", .unacceptable)]
     paperFeatures := [("verb", "kplɛnɔ"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "subject"), ("diagnostic", "ellipsis")] }
 
-def ex_53 : LinguisticExample :=
+def ex_53 : Datum :=
   { id := "allotey2021_53"
     source := ⟨"allotey-2021", "(53)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def ex_53 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "kpã-gbɛ"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "subject"), ("diagnostic", "deSe")] }
 
-def ex_54 : LinguisticExample :=
+def ex_54 : Datum :=
   { id := "allotey2021_54"
     source := ⟨"allotey-2021", "(54)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def ex_54 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "wa"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "object")] }
 
-def ex_55 : LinguisticExample :=
+def ex_55 : Datum :=
   { id := "allotey2021_55"
     source := ⟨"allotey-2021", "(55)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def ex_55 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "kenya"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "object")] }
 
-def ex_56 : LinguisticExample :=
+def ex_56 : Datum :=
   { id := "allotey2021_56"
     source := ⟨"allotey-2021", "(56)"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def ex_56 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "dai"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "object")] }
 
-def ex_57 : LinguisticExample :=
+def ex_57 : Datum :=
   { id := "allotey2021_57"
     source := ⟨"allotey-2021", "(57)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def ex_57 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "laka"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "object")] }
 
-def ex_58 : LinguisticExample :=
+def ex_58 : Datum :=
   { id := "allotey2021_58"
     source := ⟨"allotey-2021", "(58)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def ex_58 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "laka"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "object")] }
 
-def ex_59 : LinguisticExample :=
+def ex_59 : Datum :=
   { id := "allotey2021_59"
     source := ⟨"allotey-2021", "(59)"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def ex_59 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "bi"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "object")] }
 
-def ex_64 : LinguisticExample :=
+def ex_64 : Datum :=
   { id := "allotey2021_64"
     source := ⟨"allotey-2021", "(64)"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def ex_64 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "kai"), ("complementizer", "ni"), ("embeddedSubject", "lexical"), ("diagnostic", "lexicalSubject")] }
 
-def ex_74 : LinguisticExample :=
+def ex_74 : Datum :=
   { id := "allotey2021_74"
     source := ⟨"allotey-2021", "(74)"⟩
     reportedIn := none
@@ -485,7 +485,7 @@ def ex_74 : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "1"), ("number", "singular"), ("form", "clipped")] }
 
-def ex_78 : LinguisticExample :=
+def ex_78 : Datum :=
   { id := "allotey2021_78"
     source := ⟨"allotey-2021", "(78)"⟩
     reportedIn := none
@@ -498,7 +498,7 @@ def ex_78 : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "1"), ("number", "singular"), ("irrealisMarker", "present"), ("clauseContext", "future")] }
 
-def ex_79 : LinguisticExample :=
+def ex_79 : Datum :=
   { id := "allotey2021_79"
     source := ⟨"allotey-2021", "(79)"⟩
     reportedIn := none
@@ -511,7 +511,7 @@ def ex_79 : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "1"), ("number", "singular"), ("diagnostic", "agreement")] }
 
-def ex_80 : LinguisticExample :=
+def ex_80 : Datum :=
   { id := "allotey2021_80"
     source := ⟨"allotey-2021", "(80)"⟩
     reportedIn := none
@@ -524,7 +524,7 @@ def ex_80 : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "2"), ("number", "singular"), ("diagnostic", "agreement")] }
 
-def ex_81 : LinguisticExample :=
+def ex_81 : Datum :=
   { id := "allotey2021_81"
     source := ⟨"allotey-2021", "(81)"⟩
     reportedIn := none
@@ -537,7 +537,7 @@ def ex_81 : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "3"), ("number", "singular"), ("diagnostic", "agreement")] }
 
-def ex_85 : LinguisticExample :=
+def ex_85 : Datum :=
   { id := "allotey2021_85"
     source := ⟨"allotey-2021", "(85)"⟩
     reportedIn := none
@@ -550,7 +550,7 @@ def ex_85 : LinguisticExample :=
     readings := []
     paperFeatures := [("clauseContext", "subjunctive"), ("subjectTone", "none"), ("verbTone", "high"), ("irrealisVowel", "present")] }
 
-def ex_86 : LinguisticExample :=
+def ex_86 : Datum :=
   { id := "allotey2021_86"
     source := ⟨"allotey-2021", "(86)"⟩
     reportedIn := none
@@ -563,7 +563,7 @@ def ex_86 : LinguisticExample :=
     readings := []
     paperFeatures := [("clauseContext", "subjunctive"), ("subjectTone", "high"), ("verbTone", "high"), ("irrealisVowel", "present")] }
 
-def ex_87 : LinguisticExample :=
+def ex_87 : Datum :=
   { id := "allotey2021_87"
     source := ⟨"allotey-2021", "(87)"⟩
     reportedIn := none
@@ -576,7 +576,7 @@ def ex_87 : LinguisticExample :=
     readings := []
     paperFeatures := [("clauseContext", "subjunctive"), ("subjectTone", "high"), ("verbTone", "low")] }
 
-def ex_88 : LinguisticExample :=
+def ex_88 : Datum :=
   { id := "allotey2021_88"
     source := ⟨"allotey-2021", "(88)"⟩
     reportedIn := none
@@ -589,7 +589,7 @@ def ex_88 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "tao"), ("complementizer", "none"), ("embeddedSubject", "pronoun"), ("control", "subject"), ("irrealisMarker", "present"), ("verbTone", "low"), ("diagnostic", "tone"), ("clauseContext", "control")] }
 
-def ex_88b : LinguisticExample :=
+def ex_88b : Datum :=
   { id := "allotey2021_88b"
     source := ⟨"allotey-2021", "(88)"⟩
     reportedIn := none
@@ -602,7 +602,7 @@ def ex_88b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "tao"), ("complementizer", "none"), ("embeddedSubject", "pronoun"), ("control", "subject"), ("irrealisMarker", "present"), ("verbTone", "high"), ("diagnostic", "tone"), ("clauseContext", "control")] }
 
-def ex_89a : LinguisticExample :=
+def ex_89a : Datum :=
   { id := "allotey2021_89a"
     source := ⟨"allotey-2021", "(89a)"⟩
     reportedIn := none
@@ -615,7 +615,7 @@ def ex_89a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "kai"), ("complementizer", "ake"), ("irrealisMarker", "absent"), ("diagnostic", "implicative")] }
 
-def ex_89b : LinguisticExample :=
+def ex_89b : Datum :=
   { id := "allotey2021_89b"
     source := ⟨"allotey-2021", "(89b)"⟩
     reportedIn := none
@@ -628,7 +628,7 @@ def ex_89b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "nyɛ"), ("complementizer", "none"), ("irrealisMarker", "absent"), ("diagnostic", "implicative")] }
 
-def ex_89c : LinguisticExample :=
+def ex_89c : Datum :=
   { id := "allotey2021_89c"
     source := ⟨"allotey-2021", "(89c)"⟩
     reportedIn := none
@@ -641,7 +641,7 @@ def ex_89c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "kplɛnɔ"), ("complementizer", "ni"), ("irrealisMarker", "present"), ("diagnostic", "implicative"), ("control", "subject")] }
 
-def ex_89d : LinguisticExample :=
+def ex_89d : Datum :=
   { id := "allotey2021_89d"
     source := ⟨"allotey-2021", "(89d)"⟩
     reportedIn := none
@@ -654,7 +654,7 @@ def ex_89d : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "kpaŋ"), ("complementizer", "ni"), ("irrealisMarker", "present"), ("diagnostic", "implicative"), ("control", "subject")] }
 
-def ex_92 : LinguisticExample :=
+def ex_92 : Datum :=
   { id := "allotey2021_92"
     source := ⟨"allotey-2021", "(92)"⟩
     reportedIn := none
@@ -667,7 +667,7 @@ def ex_92 : LinguisticExample :=
     readings := [("controlled", .acceptable), ("free", .unacceptable)]
     paperFeatures := [("verb", "sumɔ"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "subject"), ("irrealisMarker", "present"), ("diagnostic", "obviation")] }
 
-def ex_93 : LinguisticExample :=
+def ex_93 : Datum :=
   { id := "allotey2021_93"
     source := ⟨"allotey-2021", "(93)"⟩
     reportedIn := none
@@ -680,7 +680,7 @@ def ex_93 : LinguisticExample :=
     readings := []
     paperFeatures := [("clauseContext", "imperative"), ("subjectTone", "none"), ("verbTone", "high"), ("irrealisVowel", "present")] }
 
-def ex_94 : LinguisticExample :=
+def ex_94 : Datum :=
   { id := "allotey2021_94"
     source := ⟨"allotey-2021", "(94)"⟩
     reportedIn := none
@@ -693,7 +693,7 @@ def ex_94 : LinguisticExample :=
     readings := []
     paperFeatures := [("clauseContext", "imperative"), ("subjectTone", "high"), ("verbTone", "high"), ("irrealisVowel", "present")] }
 
-def ex_95 : LinguisticExample :=
+def ex_95 : Datum :=
   { id := "allotey2021_95"
     source := ⟨"allotey-2021", "(95)"⟩
     reportedIn := none
@@ -706,7 +706,7 @@ def ex_95 : LinguisticExample :=
     readings := []
     paperFeatures := [("clauseContext", "future"), ("person", "1"), ("number", "singular")] }
 
-def ex_96 : LinguisticExample :=
+def ex_96 : Datum :=
   { id := "allotey2021_96"
     source := ⟨"allotey-2021", "(96)"⟩
     reportedIn := none
@@ -719,7 +719,7 @@ def ex_96 : LinguisticExample :=
     readings := []
     paperFeatures := [("clauseContext", "future"), ("subjectTone", "low"), ("verbTone", "low"), ("irrealisVowel", "present")] }
 
-def ex_96b : LinguisticExample :=
+def ex_96b : Datum :=
   { id := "allotey2021_96b"
     source := ⟨"allotey-2021", "(96)"⟩
     reportedIn := none
@@ -732,7 +732,7 @@ def ex_96b : LinguisticExample :=
     readings := []
     paperFeatures := [("clauseContext", "future"), ("subjectTone", "high"), ("verbTone", "low"), ("irrealisVowel", "present")] }
 
-def ex_97a : LinguisticExample :=
+def ex_97a : Datum :=
   { id := "allotey2021_97a"
     source := ⟨"allotey-2021", "(97a)"⟩
     reportedIn := none
@@ -745,7 +745,7 @@ def ex_97a : LinguisticExample :=
     readings := []
     paperFeatures := [("clauseContext", "conditional"), ("subjectTone", "low"), ("verbTone", "low"), ("irrealisVowel", "present")] }
 
-def ex_97b : LinguisticExample :=
+def ex_97b : Datum :=
   { id := "allotey2021_97b"
     source := ⟨"allotey-2021", "(97b)"⟩
     reportedIn := none
@@ -758,7 +758,7 @@ def ex_97b : LinguisticExample :=
     readings := []
     paperFeatures := [("clauseContext", "conditional"), ("subjectTone", "low"), ("verbTone", "low"), ("irrealisVowel", "present")] }
 
-def ex_100 : LinguisticExample :=
+def ex_100 : Datum :=
   { id := "allotey2021_100"
     source := ⟨"allotey-2021", "(100)"⟩
     reportedIn := none
@@ -771,7 +771,7 @@ def ex_100 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "tao"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "subject"), ("clauseContext", "control"), ("irrealisMarker", "present"), ("subjectTone", "high"), ("verbTone", "low"), ("irrealisVowel", "absent")] }
 
-def ex_101 : LinguisticExample :=
+def ex_101 : Datum :=
   { id := "allotey2021_101"
     source := ⟨"allotey-2021", "(101)"⟩
     reportedIn := none
@@ -784,7 +784,7 @@ def ex_101 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "tao"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("embeddedTAM", "future"), ("diagnostic", "tense")] }
 
-def ex_102 : LinguisticExample :=
+def ex_102 : Datum :=
   { id := "allotey2021_102"
     source := ⟨"allotey-2021", "(102)"⟩
     reportedIn := none
@@ -797,7 +797,7 @@ def ex_102 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "hiɛ-kpa-nɔ"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "subject"), ("clauseContext", "control"), ("irrealisMarker", "present"), ("subjectTone", "high"), ("verbTone", "low"), ("irrealisVowel", "absent")] }
 
-def ex_103 : LinguisticExample :=
+def ex_103 : Datum :=
   { id := "allotey2021_103"
     source := ⟨"allotey-2021", "(103)"⟩
     reportedIn := none
@@ -810,7 +810,7 @@ def ex_103 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "hiɛ-kpa-nɔ"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "subject"), ("clauseContext", "control"), ("irrealisMarker", "present"), ("subjectTone", "high"), ("verbTone", "low"), ("irrealisVowel", "absent")] }
 
-def ex_104 : LinguisticExample :=
+def ex_104 : Datum :=
   { id := "allotey2021_104"
     source := ⟨"allotey-2021", "(104)"⟩
     reportedIn := none
@@ -823,7 +823,7 @@ def ex_104 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "le"), ("complementizer", "keji"), ("diagnostic", "cSelection")] }
 
-def ex_104b : LinguisticExample :=
+def ex_104b : Datum :=
   { id := "allotey2021_104b"
     source := ⟨"allotey-2021", "(104)"⟩
     reportedIn := none
@@ -836,7 +836,7 @@ def ex_104b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "le"), ("complementizer", "ake"), ("diagnostic", "cSelection")] }
 
-def ex_104c : LinguisticExample :=
+def ex_104c : Datum :=
   { id := "allotey2021_104c"
     source := ⟨"allotey-2021", "(104)"⟩
     reportedIn := none
@@ -849,7 +849,7 @@ def ex_104c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "le"), ("complementizer", "ni"), ("diagnostic", "cSelection")] }
 
-def ex_105 : LinguisticExample :=
+def ex_105 : Datum :=
   { id := "allotey2021_105"
     source := ⟨"allotey-2021", "(105)"⟩
     reportedIn := none
@@ -862,7 +862,7 @@ def ex_105 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "kplɛnɔ"), ("complementizer", "ni"), ("embeddedSubject", "lexical"), ("clauseContext", "subjunctive"), ("diagnostic", "cSelection")] }
 
-def ex_105b : LinguisticExample :=
+def ex_105b : Datum :=
   { id := "allotey2021_105b"
     source := ⟨"allotey-2021", "(105)"⟩
     reportedIn := none
@@ -875,7 +875,7 @@ def ex_105b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "kplɛnɔ"), ("complementizer", "ake"), ("embeddedSubject", "lexical"), ("clauseContext", "subjunctive"), ("diagnostic", "cSelection")] }
 
-def ex_105c : LinguisticExample :=
+def ex_105c : Datum :=
   { id := "allotey2021_105c"
     source := ⟨"allotey-2021", "(105)"⟩
     reportedIn := none
@@ -888,7 +888,7 @@ def ex_105c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "kplɛnɔ"), ("complementizer", "keji"), ("embeddedSubject", "lexical"), ("clauseContext", "subjunctive"), ("diagnostic", "cSelection")] }
 
-def ex_106 : LinguisticExample :=
+def ex_106 : Datum :=
   { id := "allotey2021_106"
     source := ⟨"allotey-2021", "(106)"⟩
     reportedIn := none
@@ -901,7 +901,7 @@ def ex_106 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "kpaŋ"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "subject"), ("irrealisMarker", "present"), ("diagnostic", "cSelection")] }
 
-def ex_106b : LinguisticExample :=
+def ex_106b : Datum :=
   { id := "allotey2021_106b"
     source := ⟨"allotey-2021", "(106)"⟩
     reportedIn := none
@@ -914,7 +914,7 @@ def ex_106b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "kpaŋ"), ("complementizer", "ake"), ("embeddedSubject", "pronoun"), ("diagnostic", "cSelection")] }
 
-def ex_106c : LinguisticExample :=
+def ex_106c : Datum :=
   { id := "allotey2021_106c"
     source := ⟨"allotey-2021", "(106)"⟩
     reportedIn := none
@@ -927,7 +927,7 @@ def ex_106c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "kpaŋ"), ("complementizer", "keji"), ("embeddedSubject", "pronoun"), ("diagnostic", "cSelection")] }
 
-def ex_107 : LinguisticExample :=
+def ex_107 : Datum :=
   { id := "allotey2021_107"
     source := ⟨"allotey-2021", "(107)"⟩
     reportedIn := none
@@ -940,7 +940,7 @@ def ex_107 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "kai"), ("complementizer", "ake"), ("diagnostic", "focus")] }
 
-def ex_108 : LinguisticExample :=
+def ex_108 : Datum :=
   { id := "allotey2021_108"
     source := ⟨"allotey-2021", "(108)"⟩
     reportedIn := none
@@ -953,7 +953,7 @@ def ex_108 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "le"), ("complementizer", "keji"), ("diagnostic", "focus")] }
 
-def ex_109 : LinguisticExample :=
+def ex_109 : Datum :=
   { id := "allotey2021_109"
     source := ⟨"allotey-2021", "(109)"⟩
     reportedIn := none
@@ -966,7 +966,7 @@ def ex_109 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "kplɛnɔ"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "subject"), ("irrealisMarker", "present"), ("embeddedTAM", "none"), ("diagnostic", "tense")] }
 
-def ex_110 : LinguisticExample :=
+def ex_110 : Datum :=
   { id := "allotey2021_110"
     source := ⟨"allotey-2021", "(110)"⟩
     reportedIn := none
@@ -979,7 +979,7 @@ def ex_110 : LinguisticExample :=
     readings := [("free", .acceptable)]
     paperFeatures := [("verb", "dwɛŋ"), ("complementizer", "ake"), ("embeddedSubject", "pronoun"), ("subjectTone", "low"), ("verbTone", "low"), ("diagnostic", "tone")] }
 
-def ex_111 : LinguisticExample :=
+def ex_111 : Datum :=
   { id := "allotey2021_111"
     source := ⟨"allotey-2021", "(111)"⟩
     reportedIn := none
@@ -992,7 +992,7 @@ def ex_111 : LinguisticExample :=
     readings := [("free", .acceptable)]
     paperFeatures := [("verb", "dwɛŋ"), ("complementizer", "ake"), ("embeddedSubject", "pronoun"), ("subjectTone", "low"), ("embeddedTAM", "future"), ("diagnostic", "tone")] }
 
-def ex_112 : LinguisticExample :=
+def ex_112 : Datum :=
   { id := "allotey2021_112"
     source := ⟨"allotey-2021", "(112)"⟩
     reportedIn := none
@@ -1005,7 +1005,7 @@ def ex_112 : LinguisticExample :=
     readings := [("controlled", .acceptable), ("free", .unacceptable)]
     paperFeatures := [("verb", "dwɛŋ"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "subject"), ("irrealisMarker", "present"), ("subjectTone", "high"), ("diagnostic", "tone")] }
 
-def ex_114b : LinguisticExample :=
+def ex_114b : Datum :=
   { id := "allotey2021_114b"
     source := ⟨"allotey-2021", "(114b)"⟩
     reportedIn := none
@@ -1018,7 +1018,7 @@ def ex_114b : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "npi"), ("negation", "local")] }
 
-def ex_115a : LinguisticExample :=
+def ex_115a : Datum :=
   { id := "allotey2021_115a"
     source := ⟨"allotey-2021", "(115a)"⟩
     reportedIn := none
@@ -1031,7 +1031,7 @@ def ex_115a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "kɛɛ"), ("complementizer", "ake"), ("diagnostic", "npi"), ("negation", "embedded")] }
 
-def ex_115b : LinguisticExample :=
+def ex_115b : Datum :=
   { id := "allotey2021_115b"
     source := ⟨"allotey-2021", "(115b)"⟩
     reportedIn := none
@@ -1044,7 +1044,7 @@ def ex_115b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "kai"), ("complementizer", "ake"), ("diagnostic", "npi"), ("negation", "embedded")] }
 
-def ex_116a : LinguisticExample :=
+def ex_116a : Datum :=
   { id := "allotey2021_116a"
     source := ⟨"allotey-2021", "(116a)"⟩
     reportedIn := none
@@ -1057,7 +1057,7 @@ def ex_116a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "kɛɛ"), ("complementizer", "ake"), ("diagnostic", "npi"), ("negation", "matrix")] }
 
-def ex_116b : LinguisticExample :=
+def ex_116b : Datum :=
   { id := "allotey2021_116b"
     source := ⟨"allotey-2021", "(116b)"⟩
     reportedIn := none
@@ -1070,7 +1070,7 @@ def ex_116b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "kai"), ("complementizer", "ake"), ("diagnostic", "npi"), ("negation", "matrix")] }
 
-def ex_117a : LinguisticExample :=
+def ex_117a : Datum :=
   { id := "allotey2021_117a"
     source := ⟨"allotey-2021", "(117a)"⟩
     reportedIn := none
@@ -1083,7 +1083,7 @@ def ex_117a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "kai"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "subject"), ("irrealisMarker", "present"), ("diagnostic", "npi"), ("negation", "matrix")] }
 
-def ex_117b : LinguisticExample :=
+def ex_117b : Datum :=
   { id := "allotey2021_117b"
     source := ⟨"allotey-2021", "(117b)"⟩
     reportedIn := none
@@ -1096,7 +1096,7 @@ def ex_117b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "kɛɛ"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "object"), ("irrealisMarker", "present"), ("diagnostic", "npi"), ("negation", "matrix")] }
 
-def ex_118 : LinguisticExample :=
+def ex_118 : Datum :=
   { id := "allotey2021_118"
     source := ⟨"allotey-2021", "(118)"⟩
     reportedIn := none
@@ -1109,7 +1109,7 @@ def ex_118 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "tao"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "subject"), ("irrealisMarker", "present"), ("subjectTone", "high"), ("diagnostic", "tense")] }
 
-def ex_119a : LinguisticExample :=
+def ex_119a : Datum :=
   { id := "allotey2021_119a"
     source := ⟨"allotey-2021", "(119a)"⟩
     reportedIn := none
@@ -1122,7 +1122,7 @@ def ex_119a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "tao"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "subject"), ("irrealisMarker", "present"), ("embeddedTAM", "none"), ("diagnostic", "tense")] }
 
-def ex_119b : LinguisticExample :=
+def ex_119b : Datum :=
   { id := "allotey2021_119b"
     source := ⟨"allotey-2021", "(119b)"⟩
     reportedIn := none
@@ -1135,7 +1135,7 @@ def ex_119b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "tao"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "subject"), ("irrealisMarker", "present"), ("embeddedTAM", "none"), ("diagnostic", "tense")] }
 
-def ex_121a : LinguisticExample :=
+def ex_121a : Datum :=
   { id := "allotey2021_121a"
     source := ⟨"allotey-2021", "(121a)"⟩
     reportedIn := none
@@ -1148,7 +1148,7 @@ def ex_121a : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "negation"), ("clauseType", "finite"), ("negationPosition", "postverbal")] }
 
-def ex_121b : LinguisticExample :=
+def ex_121b : Datum :=
   { id := "allotey2021_121b"
     source := ⟨"allotey-2021", "(121b)"⟩
     reportedIn := none
@@ -1161,7 +1161,7 @@ def ex_121b : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "negation"), ("clauseType", "finite"), ("negationPosition", "postverbal")] }
 
-def ex_121c : LinguisticExample :=
+def ex_121c : Datum :=
   { id := "allotey2021_121c"
     source := ⟨"allotey-2021", "(121c)"⟩
     reportedIn := none
@@ -1174,7 +1174,7 @@ def ex_121c : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "negation"), ("clauseType", "finite"), ("negationPosition", "postverbal")] }
 
-def ex_122a : LinguisticExample :=
+def ex_122a : Datum :=
   { id := "allotey2021_122a"
     source := ⟨"allotey-2021", "(122a)"⟩
     reportedIn := none
@@ -1187,7 +1187,7 @@ def ex_122a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "kplɛnɔ"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "subject"), ("irrealisMarker", "present"), ("diagnostic", "negation"), ("clauseType", "control"), ("negationPosition", "preverbal")] }
 
-def ex_122b : LinguisticExample :=
+def ex_122b : Datum :=
   { id := "allotey2021_122b"
     source := ⟨"allotey-2021", "(122b)"⟩
     reportedIn := none
@@ -1200,7 +1200,7 @@ def ex_122b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "tao"), ("complementizer", "ni"), ("embeddedSubject", "pronoun"), ("control", "subject"), ("irrealisMarker", "present"), ("diagnostic", "negation"), ("clauseType", "control"), ("negationPosition", "preverbal")] }
 
-def ex_123a : LinguisticExample :=
+def ex_123a : Datum :=
   { id := "allotey2021_123a"
     source := ⟨"allotey-2021", "(123a)"⟩
     reportedIn := none
@@ -1213,7 +1213,7 @@ def ex_123a : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "agreement")] }
 
-def ex_123b : LinguisticExample :=
+def ex_123b : Datum :=
   { id := "allotey2021_123b"
     source := ⟨"allotey-2021", "(123b)"⟩
     reportedIn := none
@@ -1226,7 +1226,7 @@ def ex_123b : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "agreement")] }
 
-def ex_124 : LinguisticExample :=
+def ex_124 : Datum :=
   { id := "allotey2021_124"
     source := ⟨"allotey-2021", "(124)"⟩
     reportedIn := none
@@ -1239,6 +1239,6 @@ def ex_124 : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "negation"), ("clauseType", "finite"), ("negationPosition", "postverbal")] }
 
-def all : List LinguisticExample := [ex_2a, ex_2b, ex_3a, ex_3b, ex_16, ex_34, ex_35, ex_36, ex_37, ex_38, ex_39, ex_40, ex_41, ex_42a, ex_42b, ex_42c, ex_43, ex_44, ex_45a, ex_45b, ex_46a, ex_46b, ex_47, ex_48, ex_49, ex_49b, ex_52, ex_53, ex_54, ex_55, ex_56, ex_57, ex_58, ex_59, ex_64, ex_74, ex_78, ex_79, ex_80, ex_81, ex_85, ex_86, ex_87, ex_88, ex_88b, ex_89a, ex_89b, ex_89c, ex_89d, ex_92, ex_93, ex_94, ex_95, ex_96, ex_96b, ex_97a, ex_97b, ex_100, ex_101, ex_102, ex_103, ex_104, ex_104b, ex_104c, ex_105, ex_105b, ex_105c, ex_106, ex_106b, ex_106c, ex_107, ex_108, ex_109, ex_110, ex_111, ex_112, ex_114b, ex_115a, ex_115b, ex_116a, ex_116b, ex_117a, ex_117b, ex_118, ex_119a, ex_119b, ex_121a, ex_121b, ex_121c, ex_122a, ex_122b, ex_123a, ex_123b, ex_124]
+def all : List Datum := [ex_2a, ex_2b, ex_3a, ex_3b, ex_16, ex_34, ex_35, ex_36, ex_37, ex_38, ex_39, ex_40, ex_41, ex_42a, ex_42b, ex_42c, ex_43, ex_44, ex_45a, ex_45b, ex_46a, ex_46b, ex_47, ex_48, ex_49, ex_49b, ex_52, ex_53, ex_54, ex_55, ex_56, ex_57, ex_58, ex_59, ex_64, ex_74, ex_78, ex_79, ex_80, ex_81, ex_85, ex_86, ex_87, ex_88, ex_88b, ex_89a, ex_89b, ex_89c, ex_89d, ex_92, ex_93, ex_94, ex_95, ex_96, ex_96b, ex_97a, ex_97b, ex_100, ex_101, ex_102, ex_103, ex_104, ex_104b, ex_104c, ex_105, ex_105b, ex_105c, ex_106, ex_106b, ex_106c, ex_107, ex_108, ex_109, ex_110, ex_111, ex_112, ex_114b, ex_115a, ex_115b, ex_116a, ex_116b, ex_117a, ex_117b, ex_118, ex_119a, ex_119b, ex_121a, ex_121b, ex_121c, ex_122a, ex_122b, ex_123a, ex_123b, ex_124]
 
 end Allotey2021.Examples

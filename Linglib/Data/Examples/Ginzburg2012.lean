@@ -17,7 +17,7 @@ namespace Ginzburg2012.Examples
 
 open Data.Examples
 
-def ex_22a : LinguisticExample :=
+def ex_22a : Datum :=
   { id := "ginzburg2012_22a"
     source := ⟨"ginzburg-2012", "(22a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_22a : LinguisticExample :=
     readings := [("short answer: Does Bo admire Bo?", .acceptable), ("clausal confirmation: Are you asking who Bo (of all people) admires?", .acceptable), ("intended content: Who do you mean 'Bo'?", .acceptable)]
     paperFeatures := [("speaker", "addressee")] }
 
-def ex_22b : LinguisticExample :=
+def ex_22b : Datum :=
   { id := "ginzburg2012_22b"
     source := ⟨"ginzburg-2012", "(22b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_22b : LinguisticExample :=
     readings := [("short answer: Does Bo admire Bo?", .acceptable), ("self-correction: Did I say 'Bo'?", .acceptable)]
     paperFeatures := [("speaker", "original speaker")] }
 
-def ex_23a : LinguisticExample :=
+def ex_23a : Datum :=
   { id := "ginzburg2012_23a"
     source := ⟨"ginzburg-2012", "(23a)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_23a : LinguisticExample :=
     readings := [("Why own a parakeet?", .acceptable), ("Why are you asking which members of this audience own a parakeet?", .unacceptable)]
     paperFeatures := [("turn", "kept")] }
 
-def ex_23b : LinguisticExample :=
+def ex_23b : Datum :=
   { id := "ginzburg2012_23b"
     source := ⟨"ginzburg-2012", "(23b)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_23b : LinguisticExample :=
     readings := [("Why are you asking which members of this audience own a parakeet?", .acceptable), ("Why own a parakeet?", .unacceptable)]
     paperFeatures := [("turn", "taken")] }
 
-def ex_23c : LinguisticExample :=
+def ex_23c : Datum :=
   { id := "ginzburg2012_23c"
     source := ⟨"ginzburg-2012", "(23c)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_23c : LinguisticExample :=
     readings := []
     paperFeatures := [("turn", "kept")] }
 
-def ex_54 : LinguisticExample :=
+def ex_54 : Datum :=
   { id := "ginzburg2012_54"
     source := ⟨"ginzburg-2012", "(54)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_54 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_65 : LinguisticExample :=
+def ex_65 : Datum :=
   { id := "ginzburg2012_65"
     source := ⟨"ginzburg-2012", "(65)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_65 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_67 : LinguisticExample :=
+def ex_67 : Datum :=
   { id := "ginzburg2012_67"
     source := ⟨"ginzburg-2012", "(67)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_67 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_78 : LinguisticExample :=
+def ex_78 : Datum :=
   { id := "ginzburg2012_78"
     source := ⟨"ginzburg-2012", "(78)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_78 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_95 : LinguisticExample :=
+def ex_95 : Datum :=
   { id := "ginzburg2012_95"
     source := ⟨"ginzburg-2012", "(95)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_95 : LinguisticExample :=
     readings := []
     paperFeatures := [("genre", "CasualChat")] }
 
-def ch6_90 : LinguisticExample :=
+def ch6_90 : Datum :=
   { id := "ginzburg2012_ch6_90"
     source := ⟨"ginzburg-2012", "Ch. 6 (90)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ch6_90 : LinguisticExample :=
     readings := []
     paperFeatures := [("ccur", "Parameter Focussing")] }
 
-def ex_24a : LinguisticExample :=
+def ex_24a : Datum :=
   { id := "ginzburg2012_24a"
     source := ⟨"ginzburg-2012", "(24a)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_24a : LinguisticExample :=
     readings := []
     paperFeatures := [("repair", "other-initiated")] }
 
-def ex_24b : LinguisticExample :=
+def ex_24b : Datum :=
   { id := "ginzburg2012_24b"
     source := ⟨"ginzburg-2012", "(24b)"⟩
     reportedIn := none
@@ -186,6 +186,6 @@ def ex_24b : LinguisticExample :=
     readings := []
     paperFeatures := [("repair", "self-initiated")] }
 
-def all : List LinguisticExample := [ex_22a, ex_22b, ex_23a, ex_23b, ex_23c, ex_54, ex_65, ex_67, ex_78, ex_95, ch6_90, ex_24a, ex_24b]
+def all : List Datum := [ex_22a, ex_22b, ex_23a, ex_23b, ex_23c, ex_54, ex_65, ex_67, ex_78, ex_95, ch6_90, ex_24a, ex_24b]
 
 end Ginzburg2012.Examples

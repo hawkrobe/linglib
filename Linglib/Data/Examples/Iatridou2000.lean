@@ -17,7 +17,7 @@ namespace Iatridou2000.Examples
 
 open Data.Examples
 
-def ex1a : LinguisticExample :=
+def ex1a : Datum :=
   { id := "iatridou2000_ex1a"
     source := ⟨"iatridou-2000", "(1a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex1a : LinguisticExample :=
     readings := [("present-CF (car absent now)", .acceptable)]
     paperFeatures := [("construction", "wish"), ("cf_type", "presCF")] }
 
-def ex1b : LinguisticExample :=
+def ex1b : Datum :=
   { id := "iatridou2000_ex1b"
     source := ⟨"iatridou-2000", "(1b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex1b : LinguisticExample :=
     readings := [("past-CF (no car as student)", .acceptable)]
     paperFeatures := [("construction", "wish"), ("cf_type", "pastCF")] }
 
-def ex2a : LinguisticExample :=
+def ex2a : Datum :=
   { id := "iatridou2000_ex2a"
     source := ⟨"iatridou-2000", "(2a)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex2a : LinguisticExample :=
     readings := [("present-CF (he is not smart and not rich)", .acceptable)]
     paperFeatures := [("construction", "conditional"), ("cf_type", "presCF")] }
 
-def ex2b : LinguisticExample :=
+def ex2b : Datum :=
   { id := "iatridou2000_ex2b"
     source := ⟨"iatridou-2000", "(2b)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex2b : LinguisticExample :=
     readings := [("past-CF (he was not smart and not rich)", .acceptable)]
     paperFeatures := [("construction", "conditional"), ("cf_type", "pastCF")] }
 
-def en_flv : LinguisticExample :=
+def en_flv : Datum :=
   { id := "iatridou2000_en_flv"
     source := ⟨"iatridou-2000", "(62a)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def en_flv : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "conditional"), ("cf_type", "flv"), ("past_layers", "1"), ("impf", "no"), ("subj", "no")] }
 
-def en_presCF : LinguisticExample :=
+def en_presCF : Datum :=
   { id := "iatridou2000_en_presCF"
     source := ⟨"iatridou-2000", "(61)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def en_presCF : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "conditional"), ("cf_type", "presCF"), ("past_layers", "1"), ("impf", "no"), ("subj", "no")] }
 
-def en_pastCF : LinguisticExample :=
+def en_pastCF : Datum :=
   { id := "iatridou2000_en_pastCF"
     source := ⟨"iatridou-2000", "(48c)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def en_pastCF : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "conditional"), ("cf_type", "pastCF"), ("past_layers", "2"), ("impf", "no"), ("subj", "no")] }
 
-def gr_flv : LinguisticExample :=
+def gr_flv : Datum :=
   { id := "iatridou2000_gr_flv"
     source := ⟨"iatridou-2000", "(8)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def gr_flv : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "conditional"), ("cf_type", "flv"), ("past_layers", "1"), ("impf", "yes"), ("subj", "no")] }
 
-def gr_pastCF : LinguisticExample :=
+def gr_pastCF : Datum :=
   { id := "iatridou2000_gr_pastCF"
     source := ⟨"iatridou-2000", "(5)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def gr_pastCF : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "conditional"), ("cf_type", "pastCF"), ("past_layers", "2"), ("impf", "yes"), ("subj", "no")] }
 
-def fr_flv : LinguisticExample :=
+def fr_flv : Datum :=
   { id := "iatridou2000_fr_flv"
     source := ⟨"iatridou-2000", "(100)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def fr_flv : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "conditional"), ("cf_type", "flv"), ("past_layers", "1"), ("impf", "yes"), ("subj", "no")] }
 
-def fr_presCF : LinguisticExample :=
+def fr_presCF : Datum :=
   { id := "iatridou2000_fr_presCF"
     source := ⟨"iatridou-2000", "(101)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def fr_presCF : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "conditional"), ("cf_type", "presCF"), ("past_layers", "1"), ("impf", "yes"), ("subj", "no")] }
 
-def fr_pastCF : LinguisticExample :=
+def fr_pastCF : Datum :=
   { id := "iatridou2000_fr_pastCF"
     source := ⟨"iatridou-2000", "(102)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def fr_pastCF : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "conditional"), ("cf_type", "pastCF"), ("past_layers", "2"), ("impf", "yes"), ("subj", "no")] }
 
-def ex7 : LinguisticExample :=
+def ex7 : Datum :=
   { id := "iatridou2000_ex7"
     source := ⟨"iatridou-2000", "(7)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex7 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("construction", "conditional"), ("cf_type", "fnv"), ("past_layers", "0"), ("impf", "no")] }
 
-def ex10a : LinguisticExample :=
+def ex10a : Datum :=
   { id := "iatridou2000_ex10a"
     source := ⟨"iatridou-2000", "(10a)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex10a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("cf_type", "fnv")] }
 
-def ex10b : LinguisticExample :=
+def ex10b : Datum :=
   { id := "iatridou2000_ex10b"
     source := ⟨"iatridou-2000", "(10b)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex10b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("cf_type", "flv"), ("implicature", "the actual world is more likely to become a not-p world")] }
 
-def ex11 : LinguisticExample :=
+def ex11 : Datum :=
   { id := "iatridou2000_ex11"
     source := ⟨"iatridou-2000", "(11)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex11 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("cf_type", "flv"), ("implicature", "survives negation")] }
 
-def ex13b : LinguisticExample :=
+def ex13b : Datum :=
   { id := "iatridou2000_ex13b"
     source := ⟨"iatridou-2000", "(13b)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex13b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("cf_type", "flv"), ("adverbial", "future-oriented"), ("impf", "yes")] }
 
-def ex20 : LinguisticExample :=
+def ex20 : Datum :=
   { id := "iatridou2000_ex20"
     source := ⟨"iatridou-2000", "(20)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex20 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("construction", "epistemic conditional"), ("past_layers", "1 real"), ("impf", "no")] }
 
-def ex21b : LinguisticExample :=
+def ex21b : Datum :=
   { id := "iatridou2000_ex21b"
     source := ⟨"iatridou-2000", "(21b)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex21b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("adverbial", "future-oriented"), ("impf", "no")] }
 
-def ex21c : LinguisticExample :=
+def ex21c : Datum :=
   { id := "iatridou2000_ex21c"
     source := ⟨"iatridou-2000", "(21c)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex21c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("adverbial", "past-oriented"), ("impf", "no")] }
 
-def ex47a : LinguisticExample :=
+def ex47a : Datum :=
   { id := "iatridou2000_ex47a"
     source := ⟨"iatridou-2000", "(47a)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex47a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("cf_type", "presCF"), ("aktionsart", "stage-level stative")] }
 
-def ex47b : LinguisticExample :=
+def ex47b : Datum :=
   { id := "iatridou2000_ex47b"
     source := ⟨"iatridou-2000", "(47b)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex47b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("cf_type", "presCF"), ("aktionsart", "individual-level stative")] }
 
-def ex47d : LinguisticExample :=
+def ex47d : Datum :=
   { id := "iatridou2000_ex47d"
     source := ⟨"iatridou-2000", "(47d)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex47d : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("cf_type", "presCF"), ("aktionsart", "individual-level stative")] }
 
-def ex48a : LinguisticExample :=
+def ex48a : Datum :=
   { id := "iatridou2000_ex48a"
     source := ⟨"iatridou-2000", "(48a)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex48a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("pluperfect", "temporal")] }
 
-def ex48b : LinguisticExample :=
+def ex48b : Datum :=
   { id := "iatridou2000_ex48b"
     source := ⟨"iatridou-2000", "(48b)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex48b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("past", "temporal")] }
 
-def ex53 : LinguisticExample :=
+def ex53 : Datum :=
   { id := "iatridou2000_ex53"
     source := ⟨"iatridou-2000", "(53)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex53 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("past", "topic time precedes utterance time"), ("situation", "may include utterance time")] }
 
-def ex54 : LinguisticExample :=
+def ex54 : Datum :=
   { id := "iatridou2000_ex54"
     source := ⟨"iatridou-2000", "(54)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def ex54 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("past", "topic time precedes utterance time"), ("situation", "stage-level, not extended")] }
 
-def ex59 : LinguisticExample :=
+def ex59 : Datum :=
   { id := "iatridou2000_ex59"
     source := ⟨"iatridou-2000", "(59)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def ex59 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("past", "topic time excludes utterance time"), ("situation", "includes both")] }
 
-def ex60a : LinguisticExample :=
+def ex60a : Datum :=
   { id := "iatridou2000_ex60a"
     source := ⟨"iatridou-2000", "(60a)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def ex60a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("cf_type", "flv"), ("reading", "feature over worlds")] }
 
-def ex60b : LinguisticExample :=
+def ex60b : Datum :=
   { id := "iatridou2000_ex60b"
     source := ⟨"iatridou-2000", "(60b)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def ex60b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("construction", "epistemic conditional"), ("reading", "feature over times")] }
 
-def ex62b : LinguisticExample :=
+def ex62b : Datum :=
   { id := "iatridou2000_ex62b"
     source := ⟨"iatridou-2000", "(62b)"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def ex62b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("cf_type", "flv"), ("aktionsart", "telic")] }
 
-def ex63a : LinguisticExample :=
+def ex63a : Datum :=
   { id := "iatridou2000_ex63a"
     source := ⟨"iatridou-2000", "(63a)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def ex63a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("cf_type", "presCF"), ("aktionsart", "individual-level stative")] }
 
-def ex63b : LinguisticExample :=
+def ex63b : Datum :=
   { id := "iatridou2000_ex63b"
     source := ⟨"iatridou-2000", "(63b)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def ex63b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("cf_type", "presCF"), ("aktionsart", "individual-level stative")] }
 
-def ex64a : LinguisticExample :=
+def ex64a : Datum :=
   { id := "iatridou2000_ex64a"
     source := ⟨"iatridou-2000", "(64a)"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def ex64a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("cf_type", "flv"), ("aktionsart", "stage-level stative")] }
 
-def ex64b : LinguisticExample :=
+def ex64b : Datum :=
   { id := "iatridou2000_ex64b"
     source := ⟨"iatridou-2000", "(64b)"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def ex64b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("cf_type", "presCF"), ("aktionsart", "stage-level stative")] }
 
-def ex65 : LinguisticExample :=
+def ex65 : Datum :=
   { id := "iatridou2000_ex65"
     source := ⟨"iatridou-2000", "(65)"⟩
     reportedIn := none
@@ -485,7 +485,7 @@ def ex65 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("tense", "present"), ("aktionsart", "telic"), ("evaluation", "future")] }
 
-def ex66 : LinguisticExample :=
+def ex66 : Datum :=
   { id := "iatridou2000_ex66"
     source := ⟨"iatridou-2000", "(66)"⟩
     reportedIn := none
@@ -498,7 +498,7 @@ def ex66 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("tense", "present"), ("aktionsart", "individual-level stative"), ("evaluation", "now")] }
 
-def ex67a : LinguisticExample :=
+def ex67a : Datum :=
   { id := "iatridou2000_ex67a"
     source := ⟨"iatridou-2000", "(67a)"⟩
     reportedIn := none
@@ -511,7 +511,7 @@ def ex67a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("tense", "present"), ("aktionsart", "stage-level stative"), ("evaluation", "future")] }
 
-def ex67b : LinguisticExample :=
+def ex67b : Datum :=
   { id := "iatridou2000_ex67b"
     source := ⟨"iatridou-2000", "(67b)"⟩
     reportedIn := none
@@ -524,7 +524,7 @@ def ex67b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("tense", "present"), ("aktionsart", "stage-level stative"), ("evaluation", "now")] }
 
-def ex68a : LinguisticExample :=
+def ex68a : Datum :=
   { id := "iatridou2000_ex68a"
     source := ⟨"iatridou-2000", "(68a)"⟩
     reportedIn := none
@@ -537,7 +537,7 @@ def ex68a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("cf_type", "flv"), ("speaker", "agnostic about the antecedent")] }
 
-def ex69b : LinguisticExample :=
+def ex69b : Datum :=
   { id := "iatridou2000_ex69b"
     source := ⟨"iatridou-2000", "(69b)"⟩
     reportedIn := none
@@ -550,7 +550,7 @@ def ex69b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("cf_type", "presCF"), ("speaker", "believes the antecedent false")] }
 
-def ex74 : LinguisticExample :=
+def ex74 : Datum :=
   { id := "iatridou2000_ex74"
     source := ⟨"iatridou-2000", "(74)"⟩
     reportedIn := none
@@ -563,7 +563,7 @@ def ex74 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("impf", "yes"), ("reading", "stage-level stative, not inchoative")] }
 
-def ex75 : LinguisticExample :=
+def ex75 : Datum :=
   { id := "iatridou2000_ex75"
     source := ⟨"iatridou-2000", "(75)"⟩
     reportedIn := none
@@ -576,7 +576,7 @@ def ex75 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("cf_type", "presCF"), ("impf", "yes")] }
 
-def ex79 : LinguisticExample :=
+def ex79 : Datum :=
   { id := "iatridou2000_ex79"
     source := ⟨"iatridou-2000", "(79)"⟩
     reportedIn := none
@@ -589,7 +589,7 @@ def ex79 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("cf_type", "flv"), ("impf", "yes"), ("reading", "ongoing")] }
 
-def ex97a : LinguisticExample :=
+def ex97a : Datum :=
   { id := "iatridou2000_ex97a"
     source := ⟨"iatridou-2000", "(97a)"⟩
     reportedIn := none
@@ -602,7 +602,7 @@ def ex97a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.1"), ("mood", "dubitative subjunctive"), ("paradigm", "past and present subjunctive")] }
 
-def ex98 : LinguisticExample :=
+def ex98 : Datum :=
   { id := "iatridou2000_ex98"
     source := ⟨"iatridou-2000", "(98)"⟩
     reportedIn := none
@@ -615,7 +615,7 @@ def ex98 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.1"), ("mood", "dubitative subjunctive"), ("paradigm", "nonpast subjunctive only")] }
 
-def ex99 : LinguisticExample :=
+def ex99 : Datum :=
   { id := "iatridou2000_ex99"
     source := ⟨"iatridou-2000", "(99)"⟩
     reportedIn := none
@@ -628,6 +628,6 @@ def ex99 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.1"), ("mood", "past indicative"), ("paradigm", "nonpast subjunctive only")] }
 
-def all : List LinguisticExample := [ex1a, ex1b, ex2a, ex2b, en_flv, en_presCF, en_pastCF, gr_flv, gr_pastCF, fr_flv, fr_presCF, fr_pastCF, ex7, ex10a, ex10b, ex11, ex13b, ex20, ex21b, ex21c, ex47a, ex47b, ex47d, ex48a, ex48b, ex53, ex54, ex59, ex60a, ex60b, ex62b, ex63a, ex63b, ex64a, ex64b, ex65, ex66, ex67a, ex67b, ex68a, ex69b, ex74, ex75, ex79, ex97a, ex98, ex99]
+def all : List Datum := [ex1a, ex1b, ex2a, ex2b, en_flv, en_presCF, en_pastCF, gr_flv, gr_pastCF, fr_flv, fr_presCF, fr_pastCF, ex7, ex10a, ex10b, ex11, ex13b, ex20, ex21b, ex21c, ex47a, ex47b, ex47d, ex48a, ex48b, ex53, ex54, ex59, ex60a, ex60b, ex62b, ex63a, ex63b, ex64a, ex64b, ex65, ex66, ex67a, ex67b, ex68a, ex69b, ex74, ex75, ex79, ex97a, ex98, ex99]
 
 end Iatridou2000.Examples

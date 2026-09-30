@@ -17,7 +17,7 @@ namespace Barker1995.Examples
 
 open Data.Examples
 
-def ch2_39c : LinguisticExample :=
+def ch2_39c : Datum :=
   { id := "barker1995_ch2_39c"
     source := ⟨"barker-1995", "Ch. 2 (39c)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ch2_39c : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "uniqueness")] }
 
-def ch2_44b : LinguisticExample :=
+def ch2_44b : Datum :=
   { id := "barker1995_ch2_44b"
     source := ⟨"barker-1995", "Ch. 2 (44b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ch2_44b : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "maximality")] }
 
-def ch2_46 : LinguisticExample :=
+def ch2_46 : Datum :=
   { id := "barker1995_ch2_46"
     source := ⟨"barker-1995", "Ch. 2 (46)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ch2_46 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "uniqueness relative to cases")] }
 
-def ch2_47b : LinguisticExample :=
+def ch2_47b : Datum :=
   { id := "barker1995_ch2_47b"
     source := ⟨"barker-1995", "Ch. 2 (47b)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ch2_47b : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "uniqueness relative to cases")] }
 
-def ch2_50a : LinguisticExample :=
+def ch2_50a : Datum :=
   { id := "barker1995_ch2_50a"
     source := ⟨"barker-1995", "Ch. 2 (50a)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ch2_50a : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "novel reference"), ("possession", "lexical")] }
 
-def ch2_50b : LinguisticExample :=
+def ch2_50b : Datum :=
   { id := "barker1995_ch2_50b"
     source := ⟨"barker-1995", "Ch. 2 (50b)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ch2_50b : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "novel reference"), ("possession", "extrinsic")] }
 
-def ch2_53a : LinguisticExample :=
+def ch2_53a : Datum :=
   { id := "barker1995_ch2_53a"
     source := ⟨"barker-1995", "Ch. 2 (53a)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ch2_53a : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "novel reference"), ("possession", "conventional")] }
 
-def ch2_53b : LinguisticExample :=
+def ch2_53b : Datum :=
   { id := "barker1995_ch2_53b"
     source := ⟨"barker-1995", "Ch. 2 (53b)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ch2_53b : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "novel reference"), ("possession", "extrinsic")] }
 
-def ch4_1 : LinguisticExample :=
+def ch4_1 : Datum :=
   { id := "barker1995_ch4_1"
     source := ⟨"barker-1995", "Ch. 4 (1)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ch4_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "proportion")] }
 
-def ch4_6 : LinguisticExample :=
+def ch4_6 : Datum :=
   { id := "barker1995_ch4_6"
     source := ⟨"barker-1995", "Ch. 4 (6)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ch4_6 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "asymmetric quantification")] }
 
-def ch4_7 : LinguisticExample :=
+def ch4_7 : Datum :=
   { id := "barker1995_ch4_7"
     source := ⟨"barker-1995", "Ch. 4 (7)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ch4_7 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "asymmetric quantification")] }
 
-def ch4_10 : LinguisticExample :=
+def ch4_10 : Datum :=
   { id := "barker1995_ch4_10"
     source := ⟨"barker-1995", "Ch. 4 (10)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ch4_10 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "proportion")] }
 
-def ch4_11 : LinguisticExample :=
+def ch4_11 : Datum :=
   { id := "barker1995_ch4_11"
     source := ⟨"barker-1995", "Ch. 4 (11)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ch4_11 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "narrowing")] }
 
-def ch4_12c : LinguisticExample :=
+def ch4_12c : Datum :=
   { id := "barker1995_ch4_12c"
     source := ⟨"barker-1995", "Ch. 4 (12c)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ch4_12c : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "narrowing")] }
 
-def ch4_62 : LinguisticExample :=
+def ch4_62 : Datum :=
   { id := "barker1995_ch4_62"
     source := ⟨"barker-1995", "Ch. 4 (62)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ch4_62 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "perspective paradox")] }
 
-def ch4_63 : LinguisticExample :=
+def ch4_63 : Datum :=
   { id := "barker1995_ch4_63"
     source := ⟨"barker-1995", "Ch. 4 (63)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ch4_63 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "lexical vs extrinsic")] }
 
-def ch4_72 : LinguisticExample :=
+def ch4_72 : Datum :=
   { id := "barker1995_ch4_72"
     source := ⟨"barker-1995", "Ch. 4 (72)"⟩
     reportedIn := none
@@ -238,6 +238,6 @@ def ch4_72 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "perspective paradox")] }
 
-def all : List LinguisticExample := [ch2_39c, ch2_44b, ch2_46, ch2_47b, ch2_50a, ch2_50b, ch2_53a, ch2_53b, ch4_1, ch4_6, ch4_7, ch4_10, ch4_11, ch4_12c, ch4_62, ch4_63, ch4_72]
+def all : List Datum := [ch2_39c, ch2_44b, ch2_46, ch2_47b, ch2_50a, ch2_50b, ch2_53a, ch2_53b, ch4_1, ch4_6, ch4_7, ch4_10, ch4_11, ch4_12c, ch4_62, ch4_63, ch4_72]
 
 end Barker1995.Examples

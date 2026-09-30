@@ -17,7 +17,7 @@ namespace IoninMatushansky2006.Examples
 
 open Data.Examples
 
-def s1a : LinguisticExample :=
+def s1a : Datum :=
   { id := "ioninmatushansky2006_s1a"
     source := ⟨"ionin-matushansky-2006", "(1a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def s1a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("operation", "multiplication")] }
 
-def s1b : LinguisticExample :=
+def s1b : Datum :=
   { id := "ioninmatushansky2006_s1b"
     source := ⟨"ionin-matushansky-2006", "(1b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def s1b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("operation", "multiplication")] }
 
-def s2a : LinguisticExample :=
+def s2a : Datum :=
   { id := "ioninmatushansky2006_s2a"
     source := ⟨"ionin-matushansky-2006", "(2a)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def s2a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("operation", "addition")] }
 
-def s2b : LinguisticExample :=
+def s2b : Datum :=
   { id := "ioninmatushansky2006_s2b"
     source := ⟨"ionin-matushansky-2006", "(2b)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def s2b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("operation", "addition")] }
 
-def s2c : LinguisticExample :=
+def s2c : Datum :=
   { id := "ioninmatushansky2006_s2c"
     source := ⟨"ionin-matushansky-2006", "(2c)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def s2c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("source", "Hurford 2003"), ("operation", "addition")] }
 
-def s3a : LinguisticExample :=
+def s3a : Datum :=
   { id := "ioninmatushansky2006_s3a"
     source := ⟨"ionin-matushansky-2006", "(3a)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def s3a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("claim", "the same four as in four books")] }
 
-def s3b : LinguisticExample :=
+def s3b : Datum :=
   { id := "ioninmatushansky2006_s3b"
     source := ⟨"ionin-matushansky-2006", "(3b)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def s3b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("claim", "the same four as in four hundred books")] }
 
-def s14 : LinguisticExample :=
+def s14 : Datum :=
   { id := "ioninmatushansky2006_s14"
     source := ⟨"ionin-matushansky-2006", "(14)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def s14 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3"), ("claim", "cardinals combine with determiners, so are not determiners")] }
 
-def s20 : LinguisticExample :=
+def s20 : Datum :=
   { id := "ioninmatushansky2006_s20"
     source := ⟨"ionin-matushansky-2006", "(20)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def s20 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("source", "Nelson and Toivonen 2000"), ("claim", "the lexical xNP is morphologically singular")] }
 
-def s21 : LinguisticExample :=
+def s21 : Datum :=
   { id := "ioninmatushansky2006_s21"
     source := ⟨"ionin-matushansky-2006", "(21)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def s21 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("source", "Mittendorf and Sadler 2005"), ("claim", "the lexical xNP is morphologically singular")] }
 
-def s24a : LinguisticExample :=
+def s24a : Datum :=
   { id := "ioninmatushansky2006_s24a"
     source := ⟨"ionin-matushansky-2006", "(24a)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def s24a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("claim", "counting dissimilar entities is odd")] }
 
-def s24b : LinguisticExample :=
+def s24b : Datum :=
   { id := "ioninmatushansky2006_s24b"
     source := ⟨"ionin-matushansky-2006", "(24b)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def s24b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("claim", "rescued by the shared property of being human")] }
 
-def s26a : LinguisticExample :=
+def s26a : Datum :=
   { id := "ioninmatushansky2006_s26a"
     source := ⟨"ionin-matushansky-2006", "(26a)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def s26a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("claim", "plural marking on a multiple")] }
 
-def s26b : LinguisticExample :=
+def s26b : Datum :=
   { id := "ioninmatushansky2006_s26b"
     source := ⟨"ionin-matushansky-2006", "(26b)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def s26b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("claim", "plural marking on a multiple")] }
 
-def s26c : LinguisticExample :=
+def s26c : Datum :=
   { id := "ioninmatushansky2006_s26c"
     source := ⟨"ionin-matushansky-2006", "(26c)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def s26c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("claim", "plural marking on a multiple")] }
 
-def s27a : LinguisticExample :=
+def s27a : Datum :=
   { id := "ioninmatushansky2006_s27a"
     source := ⟨"ionin-matushansky-2006", "(27a)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def s27a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("claim", "measure noun singular")] }
 
-def s27b : LinguisticExample :=
+def s27b : Datum :=
   { id := "ioninmatushansky2006_s27b"
     source := ⟨"ionin-matushansky-2006", "(27b)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def s27b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("claim", "cardinal singular")] }
 
-def s28 : LinguisticExample :=
+def s28 : Datum :=
   { id := "ioninmatushansky2006_s28"
     source := ⟨"ionin-matushansky-2006", "(28)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def s28 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("claim", "semantic concord throughout in Russian")] }
 
-def s37a : LinguisticExample :=
+def s37a : Datum :=
   { id := "ioninmatushansky2006_s37a"
     source := ⟨"ionin-matushansky-2006", "(37a)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def s37a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.4"), ("claim", "overgeneration: only multiples serve as complements")] }
 
-def s37b : LinguisticExample :=
+def s37b : Datum :=
   { id := "ioninmatushansky2006_s37b"
     source := ⟨"ionin-matushansky-2006", "(37b)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def s37b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.4"), ("claim", "overgeneration: only multiples serve as complements")] }
 
-def s38a : LinguisticExample :=
+def s38a : Datum :=
   { id := "ioninmatushansky2006_s38a"
     source := ⟨"ionin-matushansky-2006", "(38a)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def s38a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("operation", "coordination as addition")] }
 
-def s38b : LinguisticExample :=
+def s38b : Datum :=
   { id := "ioninmatushansky2006_s38b"
     source := ⟨"ionin-matushansky-2006", "(38b)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def s38b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("source", "Saeed 1999"), ("operation", "coordination as addition")] }
 
-def s38c : LinguisticExample :=
+def s38c : Datum :=
   { id := "ioninmatushansky2006_s38c"
     source := ⟨"ionin-matushansky-2006", "(38c)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def s38c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("operation", "coordination as addition")] }
 
-def s45 : LinguisticExample :=
+def s45 : Datum :=
   { id := "ioninmatushansky2006_s45"
     source := ⟨"ionin-matushansky-2006", "(45)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def s45 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("source", "Hurford 1975:198"), ("claim", "the lexical xNP inside the complex cardinal; subtraction by a preposition")] }
 
-def s53a : LinguisticExample :=
+def s53a : Datum :=
   { id := "ioninmatushansky2006_s53a"
     source := ⟨"ionin-matushansky-2006", "(53a)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def s53a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2"), ("claim", "split reading of coordinated plural predicates")] }
 
-def s53b : LinguisticExample :=
+def s53b : Datum :=
   { id := "ioninmatushansky2006_s53b"
     source := ⟨"ionin-matushansky-2006", "(53b)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def s53b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2"), ("claim", "full split reading")] }
 
-def s54 : LinguisticExample :=
+def s54 : Datum :=
   { id := "ioninmatushansky2006_s54"
     source := ⟨"ionin-matushansky-2006", "(54)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def s54 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2"), ("readings", "joint: each a friend and a colleague; split: each a friend or a colleague")] }
 
-def s56 : LinguisticExample :=
+def s56 : Datum :=
   { id := "ioninmatushansky2006_s56"
     source := ⟨"ionin-matushansky-2006", "(56)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def s56 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2.1"), ("readings", "joint (56a) absent; split (56b) must be a full split")] }
 
-def s57a : LinguisticExample :=
+def s57a : Datum :=
   { id := "ioninmatushansky2006_s57a"
     source := ⟨"ionin-matushansky-2006", "(57a)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def s57a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2.1"), ("claim", "no overlap in the overt coordination")] }
 
-def s57b : LinguisticExample :=
+def s57b : Datum :=
   { id := "ioninmatushansky2006_s57b"
     source := ⟨"ionin-matushansky-2006", "(57b)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def s57b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2.1"), ("claim", "no overlap with different lexical xNPs")] }
 
-def s57c : LinguisticExample :=
+def s57c : Datum :=
   { id := "ioninmatushansky2006_s57c"
     source := ⟨"ionin-matushansky-2006", "(57c)"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def s57c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2.1"), ("claim", "no overlap without cardinals")] }
 
-def s58a : LinguisticExample :=
+def s58a : Datum :=
   { id := "ioninmatushansky2006_s58a"
     source := ⟨"ionin-matushansky-2006", "(58a)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def s58a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2.1"), ("claim", "no overlap in measurements")] }
 
-def s58b : LinguisticExample :=
+def s58b : Datum :=
   { id := "ioninmatushansky2006_s58b"
     source := ⟨"ionin-matushansky-2006", "(58b)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def s58b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2.1"), ("claim", "no overlap in money")] }
 
-def s59 : LinguisticExample :=
+def s59 : Datum :=
   { id := "ioninmatushansky2006_s59"
     source := ⟨"ionin-matushansky-2006", "(59)"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def s59 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2.1"), ("source", "Hofweber 2005"), ("claim", "and as 'in addition to' outside cardinals")] }
 
-def s61a : LinguisticExample :=
+def s61a : Datum :=
   { id := "ioninmatushansky2006_s61a"
     source := ⟨"ionin-matushansky-2006", "(61a)"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def s61a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2.2"), ("claim", "overlap available: joint appointments may count twice")] }
 
-def s61b : LinguisticExample :=
+def s61b : Datum :=
   { id := "ioninmatushansky2006_s61b"
     source := ⟨"ionin-matushansky-2006", "(61b)"⟩
     reportedIn := none
@@ -485,7 +485,7 @@ def s61b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2.2"), ("claim", "overlap available: five deans may be among the ten professors")] }
 
-def s63 : LinguisticExample :=
+def s63 : Datum :=
   { id := "ioninmatushansky2006_s63"
     source := ⟨"ionin-matushansky-2006", "(63)"⟩
     reportedIn := none
@@ -498,7 +498,7 @@ def s63 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2.2"), ("claim", "marginal overlap under different implicit restrictions, with stress on the conjunction")] }
 
-def s72a : LinguisticExample :=
+def s72a : Datum :=
   { id := "ioninmatushansky2006_s72a"
     source := ⟨"ionin-matushansky-2006", "(72a)"⟩
     reportedIn := none
@@ -511,7 +511,7 @@ def s72a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("claim", "cardinals as arguments in arithmetic")] }
 
-def s74a : LinguisticExample :=
+def s74a : Datum :=
   { id := "ioninmatushansky2006_s74a"
     source := ⟨"ionin-matushansky-2006", "(74a)"⟩
     reportedIn := none
@@ -524,7 +524,7 @@ def s74a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("claim", "cardinal as singular term")] }
 
-def s74b : LinguisticExample :=
+def s74b : Datum :=
   { id := "ioninmatushansky2006_s74b"
     source := ⟨"ionin-matushansky-2006", "(74b)"⟩
     reportedIn := none
@@ -537,7 +537,7 @@ def s74b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("claim", "xNP-internal cardinal, the basic use")] }
 
-def s75c : LinguisticExample :=
+def s75c : Datum :=
   { id := "ioninmatushansky2006_s75c"
     source := ⟨"ionin-matushansky-2006", "(75c)"⟩
     reportedIn := none
@@ -550,6 +550,6 @@ def s75c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("source", "Hofweber 2005"), ("claim", "plural agreement: implicit quantification over an elided xNP")] }
 
-def all : List LinguisticExample := [s1a, s1b, s2a, s2b, s2c, s3a, s3b, s14, s20, s21, s24a, s24b, s26a, s26b, s26c, s27a, s27b, s28, s37a, s37b, s38a, s38b, s38c, s45, s53a, s53b, s54, s56, s57a, s57b, s57c, s58a, s58b, s59, s61a, s61b, s63, s72a, s74a, s74b, s75c]
+def all : List Datum := [s1a, s1b, s2a, s2b, s2c, s3a, s3b, s14, s20, s21, s24a, s24b, s26a, s26b, s26c, s27a, s27b, s28, s37a, s37b, s38a, s38b, s38c, s45, s53a, s53b, s54, s56, s57a, s57b, s57c, s58a, s58b, s59, s61a, s61b, s63, s72a, s74a, s74b, s75c]
 
 end IoninMatushansky2006.Examples

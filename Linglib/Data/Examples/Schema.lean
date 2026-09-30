@@ -9,23 +9,26 @@ public import Mathlib.Tactic.TypeStar
 public import Linglib.Data.Examples.Judgment
 
 /-!
-# CLDF examples
+# Data from examples
 
-This file defines the type of example data, aligned with the Examples component of the
-Cross-Linguistic Data Formats [forkel-etal-2018] in version 1.3 [forkel-etal-2024], and the lookups
-a study makes on a paper's examples. The datum is an utterance with its interlinear gloss and
-the judgment the paper reports; it is the sentence-level counterpart of `Data/Forms/`.
+This file defines the data a study reads off a paper's examples, and the lookups it makes on
+them. An example is what the paper prints under a number; a `Datum` is one piece of data the paper
+reports with it in the sense of [tonhauser-matthewson-2016]: an expression (the example, or one
+alternant of it), the context it is judged in, and the judgment, less the information about the
+speakers that papers seldom give. A datum is a row of the Examples component of the
+Cross-Linguistic Data Formats [forkel-etal-2018] in version 1.3 [forkel-etal-2024], and the
+sentence-level counterpart of `Data/Forms/`.
 
 ## Main definitions
 
-* `Data.Examples.LinguisticExample`: a row of the `ExampleTable`, with the judgment layer
-  (`judgment`, `alternatives`, `readings`) and the paper's own columns (`paperFeatures`).
+* `Data.Examples.Datum`: a piece of data about an example, with the judgment layer (`judgment`,
+  `alternatives`, `readings`) and the paper's own columns (`paperFeatures`).
 * `Data.Examples.SourceRef`: a reference to a paper, a bibkey with a locator.
-* `Data.Examples.LinguisticExample.feature?`, `Data.Examples.LinguisticExample.features`: the first
+* `Data.Examples.Datum.feature?`, `Data.Examples.Datum.features`: the first
   value and every value of a key of `paperFeatures`.
-* `Data.Examples.LinguisticExample.parse?`: the first value of a key read through a table.
-* `Data.Examples.digits?`, `Data.Examples.LinguisticExample.nat?`,
-  `Data.Examples.LinguisticExample.int?`: numerals.
+* `Data.Examples.Datum.parse?`: the first value of a key read through a table.
+* `Data.Examples.digits?`, `Data.Examples.Datum.nat?`,
+  `Data.Examples.Datum.int?`: numerals.
 
 ## Main statements
 
@@ -53,13 +56,13 @@ the judgment the paper reports; it is the sentence-level counterpart of `Data/Fo
   stored: whether a gloss also aligns morpheme by morpheme (Rule 2) is a property of the pairs.
 * Translations are into English, the default of CLDF's `Meta_Language_ID`, which is therefore not
   stored.
-* A discourse is one example: `primaryText` joins its utterances with single spaces, and the
+* A discourse is one datum: `primaryText` joins its utterances with single spaces, and the
   judgment is of the last utterance in the context of the others.
-* `paperFeatures` are the paper's own columns: what the paper states about the example, such as
+* `paperFeatures` are the paper's own columns: what the paper states about the datum, such as
   the cell of its design or the class it assigns. The results a paper prints for an experiment
   belong in `Data/Experiments/`, and an analysis the formaliser derives belongs in the study. A key
-  repeats when the example bears the property twice (two indefinite series in one clause), so the
-  list is not a map: `feature?` reads the first value, `features` every value.
+  repeats when the expression bears the property twice (two indefinite series in one clause), so
+  the list is not a map: `feature?` reads the first value, `features` every value.
 * Studies decide propositions over rows, so every lookup reduces in the kernel. `digits?` reads a
   numeral by a fold over its characters because `String.toNat?` is well-founded recursive and
   does not.
@@ -75,6 +78,7 @@ the judgment the paper reports; it is the sentence-level counterpart of `Data/Fo
 
 * [forkel-etal-2018]
 * [forkel-etal-2024]
+* [tonhauser-matthewson-2016]
 * [comrie-haspelmath-bickel-2008]
 -/
 
@@ -93,32 +97,33 @@ structure SourceRef where
   paperLabel : String
   deriving DecidableEq, Repr
 
-/-- A `LinguisticExample` is the part of a row of a CLDF `ExampleTable` that theorems read: an
-example of a language with its gloss, the judgment its source reports, the forms and readings the
-source judges with it, and the source's own classifications of it. -/
-structure LinguisticExample where
+/-- A `Datum` is a piece of data a paper reports with one of its examples
+[tonhauser-matthewson-2016]: an expression of a language with its gloss, the context it is judged
+in, the judgment, the forms and readings the paper judges with it, and the paper's own
+classifications of it. It is the part of a row of a CLDF `ExampleTable` that theorems read. -/
+structure Datum where
   /-- The `ID` column holds a stable identifier keyed to the paper, `{authoryear}_{label}`. -/
   id : String
   /-- The paper that introduced the example. -/
   source : SourceRef
   /-- The paper whose data file holds the row, when it only reports an example from `source`. -/
   reportedIn : Option SourceRef := none
-  /-- The `Language_ID` column holds the Glottocode of the language of the example; empty for a
-  constructed string of no language. -/
+  /-- The `Language_ID` column holds the Glottocode of the language of the expression; empty for
+  a constructed string of no language. -/
   language : Glottocode
-  /-- The `Primary_Text` column holds the example without judgment marks. -/
+  /-- The `Primary_Text` column holds the expression without judgment marks. -/
   primaryText : String
   /-- The `Analyzed_Word` and `Gloss` columns paired, each word with its gloss; empty when the
   source gives no gloss. -/
   glossedTokens : List (String × String)
   /-- The scenario the source gives for the judgment; empty when it gives none. -/
   context : String
-  /-- The judgment the source reports for the example. -/
+  /-- The judgment the source reports for the expression in the context. -/
   judgment : Judgment
   /-- The other forms the source judges in the same frame, each a whole sentence, with their
   judgments. -/
   alternatives : List (String × Judgment) := []
-  /-- The readings the source distinguishes for the example, each with its judgment. -/
+  /-- The readings the source distinguishes for the expression, each with its judgment. -/
   readings : List (String × Judgment) := []
   /-- The paper's own columns, as key-value pairs. -/
   paperFeatures : List (String × String) := []
@@ -130,9 +135,9 @@ def digits? (cs : List Char) : Option ℕ :=
     some (cs.foldl (fun n c ↦ 10 * n + (c.toNat - '0'.toNat)) 0)
   else none
 
-namespace LinguisticExample
+namespace Datum
 
-variable (e : LinguisticExample) (key : String)
+variable (e : Datum) (key : String)
 
 /-- `e.surfaceTokens` is the `Analyzed_Word` column, the words of `e.glossedTokens`. -/
 def surfaceTokens : List String := e.glossedTokens.map Prod.fst
@@ -180,6 +185,6 @@ theorem head?_features : (e.features key).head? = e.feature? key := by
 theorem feature?_eq_none : e.feature? key = none ↔ ∀ v, (key, v) ∉ e.paperFeatures := by
   rw [← head?_features, List.head?_eq_none_iff, features_eq_nil]
 
-end LinguisticExample
+end Datum
 
 end Data.Examples

@@ -329,7 +329,7 @@ def addresseeTable : List (String × Bool) := [("neutral", true), ("informed", f
 def credenceTable : List (String × CredenceLevel) :=
   [("zero", .zero), ("low", .low), ("moderate", .moderate), ("high", .high)]
 
-def Row.ofExample (ex : LinguisticExample) : Option Row := do
+def Row.ofDatum (ex : Datum) : Option Row := do
   let form ← ex.parse? "form" formTable
   let evidence ← ex.parse? "evidence" boolTable
   let addresseeNeutral ← ex.parse? "addressee" addresseeTable
@@ -337,9 +337,9 @@ def Row.ofExample (ex : LinguisticExample) : Option Row := do
   let hi ← ex.parse? "credenceMax" credenceTable
   pure ⟨form, ⟨evidence, addresseeNeutral, lo, hi⟩, ex.judgment⟩
 
-theorem row_ofExample_isSome : ∀ ex ∈ Examples.all, (Row.ofExample ex).isSome := by decide
+theorem row_ofDatum_isSome : ∀ ex ∈ Examples.all, (Row.ofDatum ex).isSome := by decide
 
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- The account reproduces every judgment of §6. -/
 theorem rows_felicitous :

@@ -243,11 +243,11 @@ def glossCase? (g : String) : Option German.Zurich.Case :=
   else if ".DAT".toList <:+ g.toList then some .dat else none
 
 /-- `objectCases e` lists the cases the glosses of the clause `e` mark on its noun phrases. -/
-def objectCases (e : LinguisticExample) : List German.Zurich.Case :=
+def objectCases (e : Datum) : List German.Zurich.Case :=
   e.glossedTokens.filterMap (glossCase? ·.2)
 
 /-- `requiredCases e` lists the cases the verbs of the clause `e` require of their objects. -/
-def requiredCases (e : LinguisticExample) : List German.Zurich.Case :=
+def requiredCases (e : Datum) : List German.Zurich.Case :=
   e.glossedTokens.flatMap fun t ↦ (verbs.find? (t.1 ∈ ·.forms)).elim [] (·.objects)
 
 /-- As note 4 observes, every clause of the paper has as many objects as its verbs require. -/

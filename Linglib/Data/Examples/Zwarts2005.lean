@@ -17,7 +17,7 @@ namespace Zwarts2005.Examples
 
 open Data.Examples
 
-def ex_1a : LinguisticExample :=
+def ex_1a : Datum :=
   { id := "zwarts2005_1a"
     source := ⟨"zwarts-2005", "(1a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_1a : LinguisticExample :=
     readings := []
     paperFeatures := [("aspect", "atelic")] }
 
-def ex_1b : LinguisticExample :=
+def ex_1b : Datum :=
   { id := "zwarts2005_1b"
     source := ⟨"zwarts-2005", "(1b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_1b : LinguisticExample :=
     readings := []
     paperFeatures := [("aspect", "telic"), ("preposition", "to")] }
 
-def ex_1c : LinguisticExample :=
+def ex_1c : Datum :=
   { id := "zwarts2005_1c"
     source := ⟨"zwarts-2005", "(1c)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_1c : LinguisticExample :=
     readings := []
     paperFeatures := [("aspect", "atelic"), ("preposition", "towards")] }
 
-def ex_12a : LinguisticExample :=
+def ex_12a : Datum :=
   { id := "zwarts2005_12a"
     source := ⟨"zwarts-2005", "(12a)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_12a : LinguisticExample :=
     readings := []
     paperFeatures := [("preposition", "away from")] }
 
-def ex_23a : LinguisticExample :=
+def ex_23a : Datum :=
   { id := "zwarts2005_23a"
     source := ⟨"zwarts-2005", "(23a)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_23a : LinguisticExample :=
     readings := []
     paperFeatures := [("aspect", "telic"), ("preposition", "to")] }
 
-def ex_23b : LinguisticExample :=
+def ex_23b : Datum :=
   { id := "zwarts2005_23b"
     source := ⟨"zwarts-2005", "(23b)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_23b : LinguisticExample :=
     readings := []
     paperFeatures := [("aspect", "telic"), ("preposition", "over")] }
 
-def ex_23c : LinguisticExample :=
+def ex_23c : Datum :=
   { id := "zwarts2005_23c"
     source := ⟨"zwarts-2005", "(23c)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_23c : LinguisticExample :=
     readings := []
     paperFeatures := [("aspect", "telic"), ("preposition", "out of")] }
 
-def ex_30a : LinguisticExample :=
+def ex_30a : Datum :=
   { id := "zwarts2005_30a"
     source := ⟨"zwarts-2005", "(30a)"⟩
     reportedIn := none
@@ -121,6 +121,6 @@ def ex_30a : LinguisticExample :=
     readings := []
     paperFeatures := [("preposition", "to")] }
 
-def all : List LinguisticExample := [ex_1a, ex_1b, ex_1c, ex_12a, ex_23a, ex_23b, ex_23c, ex_30a]
+def all : List Datum := [ex_1a, ex_1b, ex_1c, ex_12a, ex_23a, ex_23b, ex_23c, ex_30a]
 
 end Zwarts2005.Examples

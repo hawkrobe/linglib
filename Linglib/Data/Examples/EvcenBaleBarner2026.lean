@@ -17,7 +17,7 @@ namespace EvcenBaleBarner2026.Examples
 
 open Data.Examples
 
-def ex_1a : LinguisticExample :=
+def ex_1a : Datum :=
   { id := "evcenbalebarner2026_1a"
     source := ⟨"evcen-bale-barner-2026", "(1a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_1a : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_1b : LinguisticExample :=
+def ex_1b : Datum :=
   { id := "evcenbalebarner2026_1b"
     source := ⟨"evcen-bale-barner-2026", "(1b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_1b : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_1c : LinguisticExample :=
+def ex_1c : Datum :=
   { id := "evcenbalebarner2026_1c"
     source := ⟨"evcen-bale-barner-2026", "(1c)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_1c : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_2a : LinguisticExample :=
+def ex_2a : Datum :=
   { id := "evcenbalebarner2026_2a"
     source := ⟨"evcen-bale-barner-2026", "(2a)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_2a : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_2b : LinguisticExample :=
+def ex_2b : Datum :=
   { id := "evcenbalebarner2026_2b"
     source := ⟨"evcen-bale-barner-2026", "(2b)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_2b : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_2c : LinguisticExample :=
+def ex_2c : Datum :=
   { id := "evcenbalebarner2026_2c"
     source := ⟨"evcen-bale-barner-2026", "(2c)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_2c : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_3a : LinguisticExample :=
+def ex_3a : Datum :=
   { id := "evcenbalebarner2026_3a"
     source := ⟨"evcen-bale-barner-2026", "(3a)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_3a : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_3b : LinguisticExample :=
+def ex_3b : Datum :=
   { id := "evcenbalebarner2026_3b"
     source := ⟨"evcen-bale-barner-2026", "(3b)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_3b : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_3c : LinguisticExample :=
+def ex_3c : Datum :=
   { id := "evcenbalebarner2026_3c"
     source := ⟨"evcen-bale-barner-2026", "(3c)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_3c : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def exp1_antecedent : LinguisticExample :=
+def exp1_antecedent : Datum :=
   { id := "evcenbalebarner2026_exp1_antecedent"
     source := ⟨"evcen-bale-barner-2026", "Experiment 1, antecedent-focused"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def exp1_antecedent : LinguisticExample :=
     readings := []
     paperFeatures := [("qud", "antecedentFocused"), ("tested", "all"), ("response", "no")] }
 
-def exp1_consequent : LinguisticExample :=
+def exp1_consequent : Datum :=
   { id := "evcenbalebarner2026_exp1_consequent"
     source := ⟨"evcen-bale-barner-2026", "Experiment 1, consequent-focused"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def exp1_consequent : LinguisticExample :=
     readings := []
     paperFeatures := [("qud", "consequentFocused"), ("tested", "all"), ("response", "cantTell")] }
 
-def exp1_neutral : LinguisticExample :=
+def exp1_neutral : Datum :=
   { id := "evcenbalebarner2026_exp1_neutral"
     source := ⟨"evcen-bale-barner-2026", "Experiment 1, neutral"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def exp1_neutral : LinguisticExample :=
     readings := []
     paperFeatures := [("qud", "neutral"), ("tested", "all"), ("response", "cantTell")] }
 
-def exp3_full : LinguisticExample :=
+def exp3_full : Datum :=
   { id := "evcenbalebarner2026_exp3_full"
     source := ⟨"evcen-bale-barner-2026", "Experiment 3, full knowledge"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def exp3_full : LinguisticExample :=
     readings := []
     paperFeatures := [("qud", "antecedentFocused"), ("tested", "all"), ("response", "no")] }
 
-def exp3_partial : LinguisticExample :=
+def exp3_partial : Datum :=
   { id := "evcenbalebarner2026_exp3_partial"
     source := ⟨"evcen-bale-barner-2026", "Experiment 3, partial knowledge"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def exp3_partial : LinguisticExample :=
     readings := []
     paperFeatures := [("qud", "antecedentFocused"), ("tested", "two"), ("response", "cantTell")] }
 
-def exp2_optimal : LinguisticExample :=
+def exp2_optimal : Datum :=
   { id := "evcenbalebarner2026_exp2_optimal"
     source := ⟨"evcen-bale-barner-2026", "Experiment 2, optimally informative"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def exp2_optimal : LinguisticExample :=
     readings := []
     paperFeatures := [("answerType", "optimallyInformative"), ("response", "no")] }
 
-def exp2_overly : LinguisticExample :=
+def exp2_overly : Datum :=
   { id := "evcenbalebarner2026_exp2_overly"
     source := ⟨"evcen-bale-barner-2026", "Experiment 2, overly informative"⟩
     reportedIn := none
@@ -225,6 +225,6 @@ def exp2_overly : LinguisticExample :=
     readings := []
     paperFeatures := [("answerType", "overlyInformative"), ("response", "no")] }
 
-def all : List LinguisticExample := [ex_1a, ex_1b, ex_1c, ex_2a, ex_2b, ex_2c, ex_3a, ex_3b, ex_3c, exp1_antecedent, exp1_consequent, exp1_neutral, exp3_full, exp3_partial, exp2_optimal, exp2_overly]
+def all : List Datum := [ex_1a, ex_1b, ex_1c, ex_2a, ex_2b, ex_2c, ex_3a, ex_3b, ex_3c, exp1_antecedent, exp1_consequent, exp1_neutral, exp3_full, exp3_partial, exp2_optimal, exp2_overly]
 
 end EvcenBaleBarner2026.Examples

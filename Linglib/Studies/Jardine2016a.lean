@@ -68,13 +68,13 @@ structure Row where
 def tbuString (s : String) : List TBU := s.toList.map λ c => if c = 'H' then .H else .O
 
 /-- A row from the paper's features. -/
-def Row.ofExample (e : LinguisticExample) : Option Row := do
+def Row.ofDatum (e : Datum) : Option Row := do
   let u ← e.feature? "underlying"
   let s ← e.feature? "surface"
   some ⟨tbuString u, tbuString s⟩
 
 /-- The plateauing data of Section 2.2: Luganda (8) to (12), Zulu (18b) and Saramaccan (21). -/
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- The map (36) reproduces every row: no change with at most one H, a plateau between the
 outermost Hs otherwise. -/

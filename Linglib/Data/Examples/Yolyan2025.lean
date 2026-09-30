@@ -17,7 +17,7 @@ namespace Yolyan2025.Examples
 
 open Data.Examples
 
-def ex_2_11a_1 : LinguisticExample :=
+def ex_2_11a_1 : Datum :=
   { id := "yolyan2025_2_11a_1"
     source := ⟨"yolyan-2025", "Example 2.11 (a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_2_11a_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("underlying_form", "/bá-ka-fik-a/"), ("spreading", "unbounded"), ("tone_skeleton_input", "HLLL"), ("tone_skeleton_output", "HHHH")] }
 
-def ex_2_11a_2 : LinguisticExample :=
+def ex_2_11a_2 : Datum :=
   { id := "yolyan2025_2_11a_2"
     source := ⟨"yolyan-2025", "Example 2.11 (a)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_2_11a_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("underlying_form", "/bá-ka-mu-londolol-a/"), ("spreading", "unbounded")] }
 
-def ex_2_11b_1 : LinguisticExample :=
+def ex_2_11b_1 : Datum :=
   { id := "yolyan2025_2_11b_1"
     source := ⟨"yolyan-2025", "Example 2.11 (b)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_2_11b_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("underlying_form", "/bá-ka-pat-a kó/"), ("spreading", "bounded"), ("tone_skeleton_input", "HLLLH"), ("tone_skeleton_output", "HHHLH")] }
 
-def ex_2_11b_2 : LinguisticExample :=
+def ex_2_11b_2 : Datum :=
   { id := "yolyan2025_2_11b_2"
     source := ⟨"yolyan-2025", "Example 2.11 (b)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_2_11b_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("underlying_form", "/bá-ka-londolol-a kó/"), ("spreading", "bounded")] }
 
-def ex_2_11c : LinguisticExample :=
+def ex_2_11c : Datum :=
   { id := "yolyan2025_2_11c"
     source := ⟨"yolyan-2025", "Example 2.11 (c)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_2_11c : LinguisticExample :=
     readings := []
     paperFeatures := [("underlying_form", "/u-ku-tul-a/"), ("spreading", "none"), ("tone_skeleton_input", "LLLL"), ("tone_skeleton_output", "LLLL")] }
 
-def ex_2_12a_1 : LinguisticExample :=
+def ex_2_12a_1 : Datum :=
   { id := "yolyan2025_2_12a_1"
     source := ⟨"yolyan-2025", "Example 2.12 (a)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_2_12a_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("root_atr", "+"), ("blocking", "none")] }
 
-def ex_2_12a_2 : LinguisticExample :=
+def ex_2_12a_2 : Datum :=
   { id := "yolyan2025_2_12a_2"
     source := ⟨"yolyan-2025", "Example 2.12 (a)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_2_12a_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("root_atr", "+"), ("blocking", "none")] }
 
-def ex_2_12b_1 : LinguisticExample :=
+def ex_2_12b_1 : Datum :=
   { id := "yolyan2025_2_12b_1"
     source := ⟨"yolyan-2025", "Example 2.12 (b)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_2_12b_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("root_atr", "-"), ("blocking", "none")] }
 
-def ex_2_12b_2 : LinguisticExample :=
+def ex_2_12b_2 : Datum :=
   { id := "yolyan2025_2_12b_2"
     source := ⟨"yolyan-2025", "Example 2.12 (b)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_2_12b_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("root_atr", "-"), ("blocking", "none")] }
 
-def ex_2_12c_1 : LinguisticExample :=
+def ex_2_12c_1 : Datum :=
   { id := "yolyan2025_2_12c_1"
     source := ⟨"yolyan-2025", "Example 2.12 (c)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_2_12c_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("root_atr", "+"), ("blocking", "none"), ("initial_high", "yes")] }
 
-def ex_2_12c_2 : LinguisticExample :=
+def ex_2_12c_2 : Datum :=
   { id := "yolyan2025_2_12c_2"
     source := ⟨"yolyan-2025", "Example 2.12 (c)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_2_12c_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("root_atr", "+"), ("blocking", "conditional"), ("initial_high", "yes")] }
 
-def ex_2_12c_3 : LinguisticExample :=
+def ex_2_12c_3 : Datum :=
   { id := "yolyan2025_2_12c_3"
     source := ⟨"yolyan-2025", "Example 2.12 (c)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_2_12c_3 : LinguisticExample :=
     readings := []
     paperFeatures := [("root_atr", "+"), ("blocking", "conditional"), ("initial_high", "yes")] }
 
-def ex_2_12c_4 : LinguisticExample :=
+def ex_2_12c_4 : Datum :=
   { id := "yolyan2025_2_12c_4"
     source := ⟨"yolyan-2025", "Example 2.12 (c)"⟩
     reportedIn := none
@@ -186,6 +186,6 @@ def ex_2_12c_4 : LinguisticExample :=
     readings := []
     paperFeatures := [("root_atr", "+"), ("blocking", "none"), ("initial_high", "no")] }
 
-def all : List LinguisticExample := [ex_2_11a_1, ex_2_11a_2, ex_2_11b_1, ex_2_11b_2, ex_2_11c, ex_2_12a_1, ex_2_12a_2, ex_2_12b_1, ex_2_12b_2, ex_2_12c_1, ex_2_12c_2, ex_2_12c_3, ex_2_12c_4]
+def all : List Datum := [ex_2_11a_1, ex_2_11a_2, ex_2_11b_1, ex_2_11b_2, ex_2_11c, ex_2_12a_1, ex_2_12a_2, ex_2_12b_1, ex_2_12b_2, ex_2_12c_1, ex_2_12c_2, ex_2_12c_3, ex_2_12c_4]
 
 end Yolyan2025.Examples

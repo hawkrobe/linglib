@@ -17,7 +17,7 @@ namespace JackendoffAudring2020.Examples
 
 open Data.Examples
 
-def ex_6a : LinguisticExample :=
+def ex_6a : Datum :=
   { id := "jackendoffaudring2020_6a"
     source := ⟨"jackendoff-audring-2020", "(6a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_6a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.4.4"), ("relation", "sister words"), ("claim", "the second member is built on the first in form, the first on the second in meaning")] }
 
-def ex_6b : LinguisticExample :=
+def ex_6b : Datum :=
   { id := "jackendoffaudring2020_6b"
     source := ⟨"jackendoff-audring-2020", "(6b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_6b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.4.4"), ("relation", "sister words"), ("claim", "the second member is built on the first in form, the first on the second in meaning")] }
 
-def ex_6c : LinguisticExample :=
+def ex_6c : Datum :=
   { id := "jackendoffaudring2020_6c"
     source := ⟨"jackendoff-audring-2020", "(6c)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_6c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.4.4"), ("relation", "sister words"), ("claim", "the second member is built on the first in form, the first on the second in meaning")] }
 
-def ex_6d : LinguisticExample :=
+def ex_6d : Datum :=
   { id := "jackendoffaudring2020_6d"
     source := ⟨"jackendoff-audring-2020", "(6d)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_6d : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.4.4"), ("relation", "sister words"), ("claim", "the second member is built on the first in form, the first on the second in meaning")] }
 
-def ex_4a : LinguisticExample :=
+def ex_4a : Datum :=
   { id := "jackendoffaudring2020_4a"
     source := ⟨"jackendoff-audring-2020", "(4a)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_4a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.4.4"), ("relation", "sister words"), ("claim", "neither member inherits from the other")] }
 
-def ex_4b : LinguisticExample :=
+def ex_4b : Datum :=
   { id := "jackendoffaudring2020_4b"
     source := ⟨"jackendoff-audring-2020", "(4b)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_4b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.4.4"), ("relation", "sister words"), ("claim", "neither member inherits from the other")] }
 
-def ex_4c : LinguisticExample :=
+def ex_4c : Datum :=
   { id := "jackendoffaudring2020_4c"
     source := ⟨"jackendoff-audring-2020", "(4c)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_4c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.4.4"), ("relation", "sister words"), ("claim", "neither member inherits from the other")] }
 
-def ex_4d : LinguisticExample :=
+def ex_4d : Datum :=
   { id := "jackendoffaudring2020_4d"
     source := ⟨"jackendoff-audring-2020", "(4d)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_4d : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.4.4"), ("relation", "sister words"), ("claim", "neither member inherits from the other")] }
 
-def ex_44a_1 : LinguisticExample :=
+def ex_44a_1 : Datum :=
   { id := "jackendoffaudring2020_44a_1"
     source := ⟨"jackendoff-audring-2020", "(44a)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_44a_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.8.2"), ("relation", "sister schemas"), ("freeForm", "yes")] }
 
-def ex_44a_2 : LinguisticExample :=
+def ex_44a_2 : Datum :=
   { id := "jackendoffaudring2020_44a_2"
     source := ⟨"jackendoff-audring-2020", "(44a)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_44a_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.8.2"), ("relation", "sister schemas"), ("freeForm", "yes")] }
 
-def ex_44a_3 : LinguisticExample :=
+def ex_44a_3 : Datum :=
   { id := "jackendoffaudring2020_44a_3"
     source := ⟨"jackendoff-audring-2020", "(44a)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_44a_3 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.8.2"), ("relation", "sister schemas"), ("freeForm", "yes")] }
 
-def ex_44a_4 : LinguisticExample :=
+def ex_44a_4 : Datum :=
   { id := "jackendoffaudring2020_44a_4"
     source := ⟨"jackendoff-audring-2020", "(44a)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_44a_4 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.8.2"), ("relation", "sister schemas"), ("freeForm", "yes")] }
 
-def ex_44a_5 : LinguisticExample :=
+def ex_44a_5 : Datum :=
   { id := "jackendoffaudring2020_44a_5"
     source := ⟨"jackendoff-audring-2020", "(44a)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_44a_5 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.8.2"), ("relation", "sister schemas"), ("freeForm", "yes")] }
 
-def ex_44b_1 : LinguisticExample :=
+def ex_44b_1 : Datum :=
   { id := "jackendoffaudring2020_44b_1"
     source := ⟨"jackendoff-audring-2020", "(44b)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_44b_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.8.2"), ("relation", "sister schemas"), ("freeForm", "no")] }
 
-def ex_44b_2 : LinguisticExample :=
+def ex_44b_2 : Datum :=
   { id := "jackendoffaudring2020_44b_2"
     source := ⟨"jackendoff-audring-2020", "(44b)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_44b_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.8.2"), ("relation", "sister schemas"), ("freeForm", "no")] }
 
-def ex_44b_3 : LinguisticExample :=
+def ex_44b_3 : Datum :=
   { id := "jackendoffaudring2020_44b_3"
     source := ⟨"jackendoff-audring-2020", "(44b)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_44b_3 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.8.2"), ("relation", "sister schemas"), ("freeForm", "no")] }
 
-def trumpism : LinguisticExample :=
+def trumpism : Datum :=
   { id := "jackendoffaudring2020_trumpism"
     source := ⟨"jackendoff-audring-2020", "§4.8.2"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def trumpism : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.8.2"), ("claim", "the sister relation is open-ended")] }
 
-def cynic : LinguisticExample :=
+def cynic : Datum :=
   { id := "jackendoffaudring2020_cynic"
     source := ⟨"jackendoff-audring-2020", "§4.8.2"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def cynic : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.8.2"), ("claim", "the expected regular form is blocked by a lexical competitor")] }
 
-def casuist : LinguisticExample :=
+def casuist : Datum :=
   { id := "jackendoffaudring2020_casuist"
     source := ⟨"jackendoff-audring-2020", "§4.8.2"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def casuist : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.8.2"), ("claim", "the expected regular form is blocked by a lexical competitor")] }
 
-def ex_48a_1 : LinguisticExample :=
+def ex_48a_1 : Datum :=
   { id := "jackendoffaudring2020_48a_1"
     source := ⟨"jackendoff-audring-2020", "(48a)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex_48a_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.8.2"), ("relation", "sister schemas"), ("productive", "yes")] }
 
-def ex_48a_2 : LinguisticExample :=
+def ex_48a_2 : Datum :=
   { id := "jackendoffaudring2020_48a_2"
     source := ⟨"jackendoff-audring-2020", "(48a)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex_48a_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.8.2"), ("relation", "sister schemas"), ("productive", "yes")] }
 
-def ex_48a_3 : LinguisticExample :=
+def ex_48a_3 : Datum :=
   { id := "jackendoffaudring2020_48a_3"
     source := ⟨"jackendoff-audring-2020", "(48a)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex_48a_3 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.8.2"), ("relation", "sister schemas"), ("productive", "yes")] }
 
-def ex_48b_1 : LinguisticExample :=
+def ex_48b_1 : Datum :=
   { id := "jackendoffaudring2020_48b_1"
     source := ⟨"jackendoff-audring-2020", "(48b)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex_48b_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.8.2"), ("relation", "sister schemas"), ("productive", "no")] }
 
-def ex_48b_2 : LinguisticExample :=
+def ex_48b_2 : Datum :=
   { id := "jackendoffaudring2020_48b_2"
     source := ⟨"jackendoff-audring-2020", "(48b)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex_48b_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.8.2"), ("relation", "sister schemas"), ("productive", "no")] }
 
-def ex_48b_3 : LinguisticExample :=
+def ex_48b_3 : Datum :=
   { id := "jackendoffaudring2020_48b_3"
     source := ⟨"jackendoff-audring-2020", "(48b)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex_48b_3 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.8.2"), ("relation", "sister schemas"), ("productive", "no")] }
 
-def ex_48b_vivid : LinguisticExample :=
+def ex_48b_vivid : Datum :=
   { id := "jackendoffaudring2020_48b_vivid"
     source := ⟨"jackendoff-audring-2020", "§4.8.2"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex_48b_vivid : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.8.2"), ("claim", "the -id ~ -or schemas are nonproductive")] }
 
-def ex_48b_vigor : LinguisticExample :=
+def ex_48b_vigor : Datum :=
   { id := "jackendoffaudring2020_48b_vigor"
     source := ⟨"jackendoff-audring-2020", "§4.8.2"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def ex_48b_vigor : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.8.2"), ("claim", "the -id ~ -or schemas are nonproductive")] }
 
-def ex_19a : LinguisticExample :=
+def ex_19a : Datum :=
   { id := "jackendoffaudring2020_19a"
     source := ⟨"jackendoff-audring-2020", "(19a)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def ex_19a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3"), ("cell", "present"), ("stem", "walk")] }
 
-def ex_19b : LinguisticExample :=
+def ex_19b : Datum :=
   { id := "jackendoffaudring2020_19b"
     source := ⟨"jackendoff-audring-2020", "(19b)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def ex_19b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3"), ("cell", "present 3 singular"), ("stem", "walk")] }
 
-def ex_19c : LinguisticExample :=
+def ex_19c : Datum :=
   { id := "jackendoffaudring2020_19c"
     source := ⟨"jackendoff-audring-2020", "(19c)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def ex_19c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3"), ("cell", "past"), ("stem", "walk")] }
 
-def ex_19d : LinguisticExample :=
+def ex_19d : Datum :=
   { id := "jackendoffaudring2020_19d"
     source := ⟨"jackendoff-audring-2020", "(19d)"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def ex_19d : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3"), ("cell", "infinitive"), ("stem", "walk")] }
 
-def ex_19e : LinguisticExample :=
+def ex_19e : Datum :=
   { id := "jackendoffaudring2020_19e"
     source := ⟨"jackendoff-audring-2020", "(19e)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def ex_19e : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3"), ("cell", "present participle"), ("stem", "walk")] }
 
-def ex_19f : LinguisticExample :=
+def ex_19f : Datum :=
   { id := "jackendoffaudring2020_19f"
     source := ⟨"jackendoff-audring-2020", "(19f)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def ex_19f : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3"), ("cell", "past participle"), ("stem", "walk")] }
 
-def ex_24 : LinguisticExample :=
+def ex_24 : Datum :=
   { id := "jackendoffaudring2020_24"
     source := ⟨"jackendoff-audring-2020", "(24)"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def ex_24 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3"), ("alternation", "ɪ/æ"), ("relation", "sister entries")] }
 
-def t51_drink : LinguisticExample :=
+def t51_drink : Datum :=
   { id := "jackendoffaudring2020_t51_drink"
     source := ⟨"jackendoff-audring-2020", "Table 5.1"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def t51_drink : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3"), ("alternation", "ɪ/æ"), ("instances", "begin, ring, (shrink), sing, sink, sit, (spit), spring, (stink), swim")] }
 
-def t51_cling : LinguisticExample :=
+def t51_cling : Datum :=
   { id := "jackendoffaudring2020_t51_cling"
     source := ⟨"jackendoff-audring-2020", "Table 5.1"⟩
     reportedIn := none
@@ -485,7 +485,7 @@ def t51_cling : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3"), ("alternation", "ɪ/ʌ"), ("instances", "dig, fling, (shrink), sling, slink, spin, stick, sting, (stink), string, swing, win, wring")] }
 
-def t51_eat : LinguisticExample :=
+def t51_eat : Datum :=
   { id := "jackendoffaudring2020_t51_eat"
     source := ⟨"jackendoff-audring-2020", "Table 5.1"⟩
     reportedIn := none
@@ -498,7 +498,7 @@ def t51_eat : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3"), ("alternation", "i/ej"), ("instances", "")] }
 
-def t51_hang : LinguisticExample :=
+def t51_hang : Datum :=
   { id := "jackendoffaudring2020_t51_hang"
     source := ⟨"jackendoff-audring-2020", "Table 5.1"⟩
     reportedIn := none
@@ -511,7 +511,7 @@ def t51_hang : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3"), ("alternation", "æ/ʌ"), ("claim", "alternates in the opposite direction from run/ran")] }
 
-def t51_run : LinguisticExample :=
+def t51_run : Datum :=
   { id := "jackendoffaudring2020_t51_run"
     source := ⟨"jackendoff-audring-2020", "Table 5.1"⟩
     reportedIn := none
@@ -524,7 +524,7 @@ def t51_run : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3"), ("alternation", "ʌ/æ")] }
 
-def ex_41_1sg : LinguisticExample :=
+def ex_41_1sg : Datum :=
   { id := "jackendoffaudring2020_41_1sg"
     source := ⟨"jackendoff-audring-2020", "(41)"⟩
     reportedIn := none
@@ -537,7 +537,7 @@ def ex_41_1sg : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.4.4"), ("cell", "present 1 sg"), ("stem", "sprechen")] }
 
-def ex_41_2sg : LinguisticExample :=
+def ex_41_2sg : Datum :=
   { id := "jackendoffaudring2020_41_2sg"
     source := ⟨"jackendoff-audring-2020", "(41)"⟩
     reportedIn := none
@@ -550,7 +550,7 @@ def ex_41_2sg : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.4.4"), ("cell", "present 2 sg"), ("stem", "sprechen")] }
 
-def ex_41_3sg : LinguisticExample :=
+def ex_41_3sg : Datum :=
   { id := "jackendoffaudring2020_41_3sg"
     source := ⟨"jackendoff-audring-2020", "(41)"⟩
     reportedIn := none
@@ -563,7 +563,7 @@ def ex_41_3sg : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.4.4"), ("cell", "present 3 sg"), ("stem", "sprechen")] }
 
-def ex_41_1pl : LinguisticExample :=
+def ex_41_1pl : Datum :=
   { id := "jackendoffaudring2020_41_1pl"
     source := ⟨"jackendoff-audring-2020", "(41)"⟩
     reportedIn := none
@@ -576,7 +576,7 @@ def ex_41_1pl : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.4.4"), ("cell", "present 1 pl"), ("stem", "sprechen")] }
 
-def ex_41_2pl : LinguisticExample :=
+def ex_41_2pl : Datum :=
   { id := "jackendoffaudring2020_41_2pl"
     source := ⟨"jackendoff-audring-2020", "(41)"⟩
     reportedIn := none
@@ -589,7 +589,7 @@ def ex_41_2pl : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.4.4"), ("cell", "present 2 pl"), ("stem", "sprechen")] }
 
-def ex_41_3pl : LinguisticExample :=
+def ex_41_3pl : Datum :=
   { id := "jackendoffaudring2020_41_3pl"
     source := ⟨"jackendoff-audring-2020", "(41)"⟩
     reportedIn := none
@@ -602,7 +602,7 @@ def ex_41_3pl : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.4.4"), ("cell", "present 3 pl"), ("stem", "sprechen")] }
 
-def ex_42 : LinguisticExample :=
+def ex_42 : Datum :=
   { id := "jackendoffaudring2020_42"
     source := ⟨"jackendoff-audring-2020", "(42)"⟩
     reportedIn := none
@@ -615,7 +615,7 @@ def ex_42 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.4.4"), ("alternation", "ɛ/a"), ("relation", "stem and past tense stem")] }
 
-def ex_43 : LinguisticExample :=
+def ex_43 : Datum :=
   { id := "jackendoffaudring2020_43"
     source := ⟨"jackendoff-audring-2020", "(43)"⟩
     reportedIn := none
@@ -628,7 +628,7 @@ def ex_43 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.4.4"), ("cell", "present 3 sg"), ("claim", "a special schema for the errant present-tense vowel")] }
 
-def ex_44a : LinguisticExample :=
+def ex_44a : Datum :=
   { id := "jackendoffaudring2020_44a"
     source := ⟨"jackendoff-audring-2020", "(44a)"⟩
     reportedIn := none
@@ -641,7 +641,7 @@ def ex_44a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.4.4"), ("cells", "present 2/3 sg"), ("instances", "26")] }
 
-def ex_44b : LinguisticExample :=
+def ex_44b : Datum :=
   { id := "jackendoffaudring2020_44b"
     source := ⟨"jackendoff-audring-2020", "(44b)"⟩
     reportedIn := none
@@ -654,7 +654,7 @@ def ex_44b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.4.4"), ("cells", "present 2/3 sg"), ("instances", "18")] }
 
-def ex_44c : LinguisticExample :=
+def ex_44c : Datum :=
   { id := "jackendoffaudring2020_44c"
     source := ⟨"jackendoff-audring-2020", "(44c)"⟩
     reportedIn := none
@@ -667,7 +667,7 @@ def ex_44c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.4.4"), ("cells", "present 2/3 sg"), ("instances", "6")] }
 
-def ex_44d : LinguisticExample :=
+def ex_44d : Datum :=
   { id := "jackendoffaudring2020_44d"
     source := ⟨"jackendoff-audring-2020", "(44d)"⟩
     reportedIn := none
@@ -680,7 +680,7 @@ def ex_44d : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.4.4"), ("cells", "present 2/3 sg"), ("instances", "2")] }
 
-def ex_44e : LinguisticExample :=
+def ex_44e : Datum :=
   { id := "jackendoffaudring2020_44e"
     source := ⟨"jackendoff-audring-2020", "(44e)"⟩
     reportedIn := none
@@ -693,7 +693,7 @@ def ex_44e : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.4.4"), ("cells", "present 2/3 sg"), ("instances", "1")] }
 
-def ex_56_take : LinguisticExample :=
+def ex_56_take : Datum :=
   { id := "jackendoffaudring2020_56_take"
     source := ⟨"jackendoff-audring-2020", "§5.6"⟩
     reportedIn := none
@@ -706,7 +706,7 @@ def ex_56_take : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.6"), ("claim", "one past tense across a main verb, idioms, a light verb and complex verbs")] }
 
-def ex_56_do : LinguisticExample :=
+def ex_56_do : Datum :=
   { id := "jackendoffaudring2020_56_do"
     source := ⟨"jackendoff-audring-2020", "§5.6"⟩
     reportedIn := none
@@ -719,7 +719,7 @@ def ex_56_do : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.6"), ("claim", "one past tense across a light verb, an anaphor, an idiom, a complex verb and a meaningless auxiliary")] }
 
-def ex_56_go : LinguisticExample :=
+def ex_56_go : Datum :=
   { id := "jackendoffaudring2020_56_go"
     source := ⟨"jackendoff-audring-2020", "§5.6"⟩
     reportedIn := none
@@ -732,7 +732,7 @@ def ex_56_go : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.6"), ("claim", "suppletion shared across idioms")] }
 
-def ex_56_draw : LinguisticExample :=
+def ex_56_draw : Datum :=
   { id := "jackendoffaudring2020_56_draw"
     source := ⟨"jackendoff-audring-2020", "§5.6"⟩
     reportedIn := none
@@ -745,7 +745,7 @@ def ex_56_draw : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.6"), ("claim", "one past tense across readings")] }
 
-def ex_56_staan : LinguisticExample :=
+def ex_56_staan : Datum :=
   { id := "jackendoffaudring2020_56_staan"
     source := ⟨"jackendoff-audring-2020", "§5.6"⟩
     reportedIn := none
@@ -758,7 +758,7 @@ def ex_56_staan : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.6"), ("claim", "a prefixed verb inflects like its base")] }
 
-def ex_56_stehen : LinguisticExample :=
+def ex_56_stehen : Datum :=
   { id := "jackendoffaudring2020_56_stehen"
     source := ⟨"jackendoff-audring-2020", "§5.6"⟩
     reportedIn := none
@@ -771,7 +771,7 @@ def ex_56_stehen : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.6"), ("claim", "a prefixed verb inflects like its base")] }
 
-def ex_56_ring : LinguisticExample :=
+def ex_56_ring : Datum :=
   { id := "jackendoffaudring2020_56_ring"
     source := ⟨"jackendoff-audring-2020", "§5.6"⟩
     reportedIn := none
@@ -784,7 +784,7 @@ def ex_56_ring : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.6"), ("claim", "homophonous verbs that inflect differently are different verbs")] }
 
-def ex_56_zeggen : LinguisticExample :=
+def ex_56_zeggen : Datum :=
   { id := "jackendoffaudring2020_56_zeggen"
     source := ⟨"jackendoff-audring-2020", "§5.6"⟩
     reportedIn := none
@@ -797,7 +797,7 @@ def ex_56_zeggen : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.6"), ("claim", "homophonous verbs that inflect differently are different verbs")] }
 
-def ex_60a : LinguisticExample :=
+def ex_60a : Datum :=
   { id := "jackendoffaudring2020_60a"
     source := ⟨"jackendoff-audring-2020", "(60a)"⟩
     reportedIn := none
@@ -810,7 +810,7 @@ def ex_60a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.6"), ("relation", "sister words"), ("claim", "morphosyntax and phonology shared, semantics not")] }
 
-def ex_60b : LinguisticExample :=
+def ex_60b : Datum :=
   { id := "jackendoffaudring2020_60b"
     source := ⟨"jackendoff-audring-2020", "(60b)"⟩
     reportedIn := none
@@ -823,7 +823,7 @@ def ex_60b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.6"), ("relation", "sister words"), ("claim", "morphosyntax and phonology shared, semantics not")] }
 
-def ex_61 : LinguisticExample :=
+def ex_61 : Datum :=
   { id := "jackendoffaudring2020_61"
     source := ⟨"jackendoff-audring-2020", "(61)"⟩
     reportedIn := none
@@ -836,7 +836,7 @@ def ex_61 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.6"), ("claim", "the past tense retains the relational link")] }
 
-def ex_62 : LinguisticExample :=
+def ex_62 : Datum :=
   { id := "jackendoffaudring2020_62"
     source := ⟨"jackendoff-audring-2020", "(62)"⟩
     reportedIn := none
@@ -849,6 +849,6 @@ def ex_62 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.6"), ("claim", "the verbal stem is linked with the other manifestations of draw")] }
 
-def all : List LinguisticExample := [ex_6a, ex_6b, ex_6c, ex_6d, ex_4a, ex_4b, ex_4c, ex_4d, ex_44a_1, ex_44a_2, ex_44a_3, ex_44a_4, ex_44a_5, ex_44b_1, ex_44b_2, ex_44b_3, trumpism, cynic, casuist, ex_48a_1, ex_48a_2, ex_48a_3, ex_48b_1, ex_48b_2, ex_48b_3, ex_48b_vivid, ex_48b_vigor, ex_19a, ex_19b, ex_19c, ex_19d, ex_19e, ex_19f, ex_24, t51_drink, t51_cling, t51_eat, t51_hang, t51_run, ex_41_1sg, ex_41_2sg, ex_41_3sg, ex_41_1pl, ex_41_2pl, ex_41_3pl, ex_42, ex_43, ex_44a, ex_44b, ex_44c, ex_44d, ex_44e, ex_56_take, ex_56_do, ex_56_go, ex_56_draw, ex_56_staan, ex_56_stehen, ex_56_ring, ex_56_zeggen, ex_60a, ex_60b, ex_61, ex_62]
+def all : List Datum := [ex_6a, ex_6b, ex_6c, ex_6d, ex_4a, ex_4b, ex_4c, ex_4d, ex_44a_1, ex_44a_2, ex_44a_3, ex_44a_4, ex_44a_5, ex_44b_1, ex_44b_2, ex_44b_3, trumpism, cynic, casuist, ex_48a_1, ex_48a_2, ex_48a_3, ex_48b_1, ex_48b_2, ex_48b_3, ex_48b_vivid, ex_48b_vigor, ex_19a, ex_19b, ex_19c, ex_19d, ex_19e, ex_19f, ex_24, t51_drink, t51_cling, t51_eat, t51_hang, t51_run, ex_41_1sg, ex_41_2sg, ex_41_3sg, ex_41_1pl, ex_41_2pl, ex_41_3pl, ex_42, ex_43, ex_44a, ex_44b, ex_44c, ex_44d, ex_44e, ex_56_take, ex_56_do, ex_56_go, ex_56_draw, ex_56_staan, ex_56_stehen, ex_56_ring, ex_56_zeggen, ex_60a, ex_60b, ex_61, ex_62]
 
 end JackendoffAudring2020.Examples

@@ -90,11 +90,11 @@ def alternationOfString : String → Option DiathesisAlternation
   | _ => none
 
 /-- The class recorded on a row, by the book's section number. -/
-def classOf (e : LinguisticExample) : Option LevinClass :=
+def classOf (e : Datum) : Option LevinClass :=
   (e.feature? "levin_class").bind LevinClass.ofNumberString?
 
 /-- The alternation recorded on a row. -/
-def alternationOf (e : LinguisticExample) : Option DiathesisAlternation :=
+def alternationOf (e : Datum) : Option DiathesisAlternation :=
   (e.feature? "alternation").bind alternationOfString
 
 /-- Every categorical row whose alternation the class's Part II page tests agrees with the

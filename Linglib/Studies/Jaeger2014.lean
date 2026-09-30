@@ -838,7 +838,7 @@ structure Row where
   deriving DecidableEq
 
 /-- A row from the paper's features. -/
-def Row.ofExample (e : LinguisticExample) : Option Row := do
+def Row.ofDatum (e : Datum) : Option Row := do
   let signal : Fin 2 ← match e.feature? "signal" with
     | some "f" => some 0
     | some "f'" => some 1
@@ -850,7 +850,7 @@ def Row.ofExample (e : LinguisticExample) : Option Row := do
   some ⟨signal, world⟩
 
 /-- The two synonyms of (4). -/
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- Every pragmatically rationalizable receiver reads each form of (4) as the world the paper
 reports: the regular stop for the cheap form, the abnormal one for the costly form. -/

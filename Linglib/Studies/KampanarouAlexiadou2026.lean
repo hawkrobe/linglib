@@ -124,7 +124,7 @@ def formOf : List (String × Form) :=
   [("common", .common), ("pronoun", .pronoun), ("properName", .properName)]
 
 /-- A row of the `possessive` group, from the paper's features. -/
-def Row.ofExample (e : LinguisticExample) : Option Row := do
+def Row.ofDatum (e : Datum) : Option Row := do
   guard (e.feature? "group" = some "possessive")
   let rel ← e.parse? "relation" relationOf
   let form ← e.parse? "possessor" formOf
@@ -133,7 +133,7 @@ def Row.ofExample (e : LinguisticExample) : Option Row := do
     e.judgment⟩
 
 /-- The possessive data of Sections 2, 3 and 5. -/
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- Part-whole and source relations alternate whenever the possessor is a common noun, (5), (14). -/
 theorem partitive_alternates :
@@ -190,14 +190,14 @@ structure Stacked where
   judgment : Judgment
 
 /-- A row of the `stacking` group. -/
-def Stacked.ofExample (e : LinguisticExample) : Option Stacked := do
+def Stacked.ofDatum (e : Datum) : Option Stacked := do
   guard (e.feature? "group" = some "stacking")
   let i ← e.parse? "inner" markingOf
   let o ← e.parse? "outer" markingOf
   some ⟨i, o, e.judgment⟩
 
 /-- The recursive possessives of Section 5. -/
-def stacked : List Stacked := Examples.all.filterMap Stacked.ofExample
+def stacked : List Stacked := Examples.all.filterMap Stacked.ofDatum
 
 /-- Only the innermost possessor alternates: the phrase is acceptable exactly when the outer
 possessor keeps its genitive. -/
@@ -270,14 +270,14 @@ structure DerivedRow where
 def varietyOf : List (String × Variety) := [("smg", .smg), ("grevena", .grevena)]
 
 /-- A row of the `derived` group. -/
-def DerivedRow.ofExample (e : LinguisticExample) : Option DerivedRow := do
+def DerivedRow.ofDatum (e : Datum) : Option DerivedRow := do
   guard (e.feature? "group" = some "derived")
   let v ← e.parse? "variety" varietyOf
   some ⟨v, ⟨e.parse? "theme" markingOf, e.parse? "agent" markingOf,
     e.feature? "aspectual" == some "yes"⟩, e.judgment⟩
 
 /-- The derived nominals of Sections 2, 4 and 6. -/
-def derivedRows : List DerivedRow := Examples.all.filterMap DerivedRow.ofExample
+def derivedRows : List DerivedRow := Examples.all.filterMap DerivedRow.ofDatum
 
 /-- The Standard Modern Greek rows are acceptable exactly when well-formed: (7), (8), (30) and
 (33) to (36). -/
@@ -317,14 +317,14 @@ structure ScopeRow where
   surface : Bool
 
 /-- A row of the `scope` group. -/
-def ScopeRow.ofExample (e : LinguisticExample) : Option ScopeRow := do
+def ScopeRow.ofDatum (e : Datum) : Option ScopeRow := do
   guard (e.feature? "group" = some "scope")
   let m ← e.parse? "marking" markingOf
   let r ← e.parse? "relation" relationOf
   some ⟨m, r, decide (e.readings.lookup "surface" = some .acceptable)⟩
 
 /-- The scope data of Section 7. -/
-def scopeRows : List ScopeRow := Examples.all.filterMap ScopeRow.ofExample
+def scopeRows : List ScopeRow := Examples.all.filterMap ScopeRow.ofDatum
 
 /-- Surface scope is available exactly for a complement possessor: the inalienable genitive (38a)
 and both apo-PPs (39), not the alienable genitive (38b). -/

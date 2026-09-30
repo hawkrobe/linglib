@@ -17,7 +17,7 @@ namespace Sidner1979.Examples
 
 open Data.Examples
 
-def ex_22 : LinguisticExample :=
+def ex_22 : Datum :=
   { id := "sidner1979_22"
     source := ⟨"sidner-1979", "(22)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_22 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "expectedFocus"), ("form", "plain"), ("expectedFocus", "my sister")] }
 
-def ex_23 : LinguisticExample :=
+def ex_23 : Datum :=
   { id := "sidner1979_23"
     source := ⟨"sidner-1979", "(23)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_23 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "expectedFocus"), ("form", "thereInsertion"), ("expectedFocus", "an old man")] }
 
-def ex_24 : LinguisticExample :=
+def ex_24 : Datum :=
   { id := "sidner1979_24"
     source := ⟨"sidner-1979", "(24)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_24 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "expectedFocus"), ("form", "plain"), ("expectedFocus", "her dog")] }
 
-def d2 : LinguisticExample :=
+def d2 : Datum :=
   { id := "sidner1979_d2"
     source := ⟨"sidner-1979", "D2 (chapter 4)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def d2 : LinguisticExample :=
     readings := [("it = Hilda's house", .acceptable)]
     paperFeatures := [("phenomenon", "recencyRule")] }
 
-def d7 : LinguisticExample :=
+def d7 : Datum :=
   { id := "sidner1979_d7"
     source := ⟨"sidner-1979", "D7 (chapter 4)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def d7 : LinguisticExample :=
     readings := [("it = the necklace", .acceptable)]
     paperFeatures := [("phenomenon", "nonAgentPronoun")] }
 
-def d8 : LinguisticExample :=
+def d8 : Datum :=
   { id := "sidner1979_d8"
     source := ⟨"sidner-1979", "D8 (chapter 4)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def d8 : LinguisticExample :=
     readings := [("he = Max", .acceptable)]
     paperFeatures := [("phenomenon", "agentPronoun")] }
 
-def d9 : LinguisticExample :=
+def d9 : Datum :=
   { id := "sidner1979_d9"
     source := ⟨"sidner-1979", "D9 (chapter 4)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def d9 : LinguisticExample :=
     readings := [("he = Jeff throughout", .acceptable)]
     paperFeatures := [("phenomenon", "animateDiscourseFocusRule")] }
 
-def d14a : LinguisticExample :=
+def d14a : Datum :=
   { id := "sidner1979_d14a"
     source := ⟨"sidner-1979", "D14 (chapter 4), 2a"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def d14a : LinguisticExample :=
     readings := [("he = my dog, him = the vet", .acceptable)]
     paperFeatures := [("phenomenon", "actorAndDiscourseFocus")] }
 
-def d14b : LinguisticExample :=
+def d14b : Datum :=
   { id := "sidner1979_d14b"
     source := ⟨"sidner-1979", "D14 (chapter 4), 2b"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def d14b : LinguisticExample :=
     readings := [("he = the vet, him = my dog", .acceptable)]
     paperFeatures := [("phenomenon", "actorAndDiscourseFocus")] }
 
-def d25 : LinguisticExample :=
+def d25 : Datum :=
   { id := "sidner1979_d25"
     source := ⟨"sidner-1979", "D25 (chapter 2)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def d25 : LinguisticExample :=
     readings := [("they = the strawberries", .acceptable)]
     paperFeatures := [("phenomenon", "focusConfirmation")] }
 
-def d35 : LinguisticExample :=
+def d35 : Datum :=
   { id := "sidner1979_d35"
     source := ⟨"sidner-1979", "D35 (chapter 2)"⟩
     reportedIn := none
@@ -160,6 +160,6 @@ def d35 : LinguisticExample :=
     readings := [("they in the fourth sentence = the ice cream cones", .acceptable)]
     paperFeatures := [("phenomenon", "focusMovement")] }
 
-def all : List LinguisticExample := [ex_22, ex_23, ex_24, d2, d7, d8, d9, d14a, d14b, d25, d35]
+def all : List Datum := [ex_22, ex_23, ex_24, d2, d7, d8, d9, d14a, d14b, d25, d35]
 
 end Sidner1979.Examples

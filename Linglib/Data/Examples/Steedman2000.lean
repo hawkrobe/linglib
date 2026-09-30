@@ -17,7 +17,7 @@ namespace Steedman2000.Examples
 
 open Data.Examples
 
-def ex_96 : LinguisticExample :=
+def ex_96 : Datum :=
   { id := "steedman2000_96"
     source := ⟨"steedman-2000", "(96)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_96 : LinguisticExample :=
     readings := [("surface", .acceptable), ("inverse", .acceptable)]
     paperFeatures := [("wordOrder", "verbRaising")] }
 
-def ex_97 : LinguisticExample :=
+def ex_97 : Datum :=
   { id := "steedman2000_97"
     source := ⟨"steedman-2000", "(97)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_97 : LinguisticExample :=
     readings := [("surface", .acceptable), ("inverse", .unacceptable)]
     paperFeatures := [("wordOrder", "verbProjectionRaising")] }
 
-def ex_98a : LinguisticExample :=
+def ex_98a : Datum :=
   { id := "steedman2000_98a"
     source := ⟨"steedman-2000", "(98a)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_98a : LinguisticExample :=
     readings := [("surface", .acceptable), ("inverse", .acceptable)]
     paperFeatures := [("wordOrder", "verbRaising")] }
 
-def ex_98b : LinguisticExample :=
+def ex_98b : Datum :=
   { id := "steedman2000_98b"
     source := ⟨"steedman-2000", "(98b)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_98b : LinguisticExample :=
     readings := [("surface", .acceptable), ("inverse", .unacceptable)]
     paperFeatures := [("wordOrder", "verbProjectionRaising")] }
 
-def ex_99a : LinguisticExample :=
+def ex_99a : Datum :=
   { id := "steedman2000_99a"
     source := ⟨"steedman-2000", "(99a)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_99a : LinguisticExample :=
     readings := [("surface", .acceptable), ("inverse", .acceptable)]
     paperFeatures := [("wordOrder", "verbRaising")] }
 
-def ex_99b : LinguisticExample :=
+def ex_99b : Datum :=
   { id := "steedman2000_99b"
     source := ⟨"steedman-2000", "(99b)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_99b : LinguisticExample :=
     readings := [("surface", .acceptable), ("inverse", .unacceptable)]
     paperFeatures := [("wordOrder", "verbProjectionRaising")] }
 
-def ex_100a : LinguisticExample :=
+def ex_100a : Datum :=
   { id := "steedman2000_100a"
     source := ⟨"steedman-2000", "(100a)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_100a : LinguisticExample :=
     readings := [("surface", .acceptable), ("inverse", .acceptable)]
     paperFeatures := [("wordOrder", "verbRaising")] }
 
-def ex_100b : LinguisticExample :=
+def ex_100b : Datum :=
   { id := "steedman2000_100b"
     source := ⟨"steedman-2000", "(100b)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_100b : LinguisticExample :=
     readings := [("surface", .acceptable), ("inverse", .unacceptable)]
     paperFeatures := [("wordOrder", "verbProjectionRaising")] }
 
-def ch7_4 : LinguisticExample :=
+def ch7_4 : Datum :=
   { id := "steedman2000_ch7_4"
     source := ⟨"steedman-2000", "ch. 7 (4)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ch7_4 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "gapping"), ("wordOrder", "SOV"), ("gappingDirection", "backward")] }
 
-def ch7_5 : LinguisticExample :=
+def ch7_5 : Datum :=
   { id := "steedman2000_ch7_5"
     source := ⟨"steedman-2000", "ch. 7 (5)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ch7_5 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "gapping"), ("wordOrder", "SOV"), ("gappingDirection", "forward")] }
 
-def ch7_11 : LinguisticExample :=
+def ch7_11 : Datum :=
   { id := "steedman2000_ch7_11"
     source := ⟨"steedman-2000", "ch. 7 (11)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ch7_11 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "gapping"), ("wordOrder", "SOV"), ("gappingDirection", "backward")] }
 
-def ch7_19 : LinguisticExample :=
+def ch7_19 : Datum :=
   { id := "steedman2000_ch7_19"
     source := ⟨"steedman-2000", "ch. 7 (19)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ch7_19 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "gapping"), ("wordOrder", "VSO"), ("gappingDirection", "forward")] }
 
-def ch7_20 : LinguisticExample :=
+def ch7_20 : Datum :=
   { id := "steedman2000_ch7_20"
     source := ⟨"steedman-2000", "ch. 7 (20)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ch7_20 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "gapping"), ("wordOrder", "VSO"), ("gappingDirection", "backward")] }
 
-def ch7_21 : LinguisticExample :=
+def ch7_21 : Datum :=
   { id := "steedman2000_ch7_21"
     source := ⟨"steedman-2000", "ch. 7 (21)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ch7_21 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "gapping"), ("wordOrder", "VSO"), ("gappingDirection", "forward")] }
 
-def ch7_41 : LinguisticExample :=
+def ch7_41 : Datum :=
   { id := "steedman2000_ch7_41"
     source := ⟨"steedman-2000", "ch. 7 (41)/(62)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ch7_41 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "gapping"), ("wordOrder", "SVO"), ("gappingDirection", "forward")] }
 
-def ch7_63 : LinguisticExample :=
+def ch7_63 : Datum :=
   { id := "steedman2000_ch7_63"
     source := ⟨"steedman-2000", "ch. 7 (63)"⟩
     reportedIn := none
@@ -225,6 +225,6 @@ def ch7_63 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "gapping"), ("wordOrder", "SVO"), ("gappingDirection", "backward")] }
 
-def all : List LinguisticExample := [ex_96, ex_97, ex_98a, ex_98b, ex_99a, ex_99b, ex_100a, ex_100b, ch7_4, ch7_5, ch7_11, ch7_19, ch7_20, ch7_21, ch7_41, ch7_63]
+def all : List Datum := [ex_96, ex_97, ex_98a, ex_98b, ex_99a, ex_99b, ex_100a, ex_100b, ch7_4, ch7_5, ch7_11, ch7_19, ch7_20, ch7_21, ch7_41, ch7_63]
 
 end Steedman2000.Examples

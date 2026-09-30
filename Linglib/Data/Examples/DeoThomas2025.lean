@@ -17,7 +17,7 @@ namespace DeoThomas2025.Examples
 
 open Data.Examples
 
-def ex_1a : LinguisticExample :=
+def ex_1a : Datum :=
   { id := "deothomas2025_1a"
     source := ⟨"deo-thomas-2025", "(1a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_1a : LinguisticExample :=
     readings := []
     paperFeatures := [("flavor", "complementExclusion"), ("only", "yes")] }
 
-def ex_1b : LinguisticExample :=
+def ex_1b : Datum :=
   { id := "deothomas2025_1b"
     source := ⟨"deo-thomas-2025", "(1b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_1b : LinguisticExample :=
     readings := []
     paperFeatures := [("flavor", "rankOrder"), ("only", "yes")] }
 
-def ex_2d : LinguisticExample :=
+def ex_2d : Datum :=
   { id := "deothomas2025_2d"
     source := ⟨"deo-thomas-2025", "(2d)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_2d : LinguisticExample :=
     readings := []
     paperFeatures := [("flavor", "minimalSufficiency"), ("only", "no")] }
 
-def ex_3a : LinguisticExample :=
+def ex_3a : Datum :=
   { id := "deothomas2025_3a"
     source := ⟨"deo-thomas-2025", "(3a)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_3a : LinguisticExample :=
     readings := []
     paperFeatures := [("flavor", "complementExclusion"), ("only", "yes"), ("case", "37a")] }
 
-def ex_3b : LinguisticExample :=
+def ex_3b : Datum :=
   { id := "deothomas2025_3b"
     source := ⟨"deo-thomas-2025", "(3b)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_3b : LinguisticExample :=
     readings := []
     paperFeatures := [("flavor", "rankOrder"), ("only", "yes"), ("case", "37a")] }
 
-def ex_4a : LinguisticExample :=
+def ex_4a : Datum :=
   { id := "deothomas2025_4a"
     source := ⟨"beaver-clark-2008", "p. 252"⟩
     reportedIn := some ⟨"deo-thomas-2025", "(4a)"⟩
@@ -95,7 +95,7 @@ def ex_4a : LinguisticExample :=
     readings := []
     paperFeatures := [("flavor", "exclusive"), ("only", "yes")] }
 
-def ex_4b : LinguisticExample :=
+def ex_4b : Datum :=
   { id := "deothomas2025_4b"
     source := ⟨"beaver-clark-2008", "p. 252"⟩
     reportedIn := some ⟨"deo-thomas-2025", "(4b)"⟩
@@ -108,7 +108,7 @@ def ex_4b : LinguisticExample :=
     readings := []
     paperFeatures := [("flavor", "exclusive"), ("only", "yes")] }
 
-def ex_5a : LinguisticExample :=
+def ex_5a : Datum :=
   { id := "deothomas2025_5a"
     source := ⟨"deo-thomas-2025", "(5a)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_5a : LinguisticExample :=
     readings := []
     paperFeatures := [("flavor", "emphatic"), ("only", "no")] }
 
-def ex_5b : LinguisticExample :=
+def ex_5b : Datum :=
   { id := "deothomas2025_5b"
     source := ⟨"deo-thomas-2025", "(5b)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_5b : LinguisticExample :=
     readings := []
     paperFeatures := [("flavor", "emphatic")] }
 
-def ex_6a : LinguisticExample :=
+def ex_6a : Datum :=
   { id := "deothomas2025_6a"
     source := ⟨"deo-thomas-2025", "(6a)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_6a : LinguisticExample :=
     readings := []
     paperFeatures := [("flavor", "emphatic")] }
 
-def ex_6b : LinguisticExample :=
+def ex_6b : Datum :=
   { id := "deothomas2025_6b"
     source := ⟨"deo-thomas-2025", "(6b)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_6b : LinguisticExample :=
     readings := []
     paperFeatures := [("flavor", "emphatic")] }
 
-def ex_7a : LinguisticExample :=
+def ex_7a : Datum :=
   { id := "deothomas2025_7a"
     source := ⟨"thomas-deo-2020", "corpus example"⟩
     reportedIn := some ⟨"deo-thomas-2025", "(7a)"⟩
@@ -173,7 +173,7 @@ def ex_7a : LinguisticExample :=
     readings := []
     paperFeatures := [("flavor", "precisifyingEquality")] }
 
-def ex_7b : LinguisticExample :=
+def ex_7b : Datum :=
   { id := "deothomas2025_7b"
     source := ⟨"thomas-deo-2020", "corpus example"⟩
     reportedIn := some ⟨"deo-thomas-2025", "(7b)"⟩
@@ -186,7 +186,7 @@ def ex_7b : LinguisticExample :=
     readings := []
     paperFeatures := [("flavor", "precisifyingEquality")] }
 
-def ex_8a : LinguisticExample :=
+def ex_8a : Datum :=
   { id := "deothomas2025_8a"
     source := ⟨"deo-thomas-2025", "(8a)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_8a : LinguisticExample :=
     readings := []
     paperFeatures := [("flavor", "precisifyingEquality")] }
 
-def ex_8b : LinguisticExample :=
+def ex_8b : Datum :=
   { id := "deothomas2025_8b"
     source := ⟨"deo-thomas-2025", "(8b)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_8b : LinguisticExample :=
     readings := []
     paperFeatures := [("flavor", "precisifyingEquality")] }
 
-def ex_9a : LinguisticExample :=
+def ex_9a : Datum :=
   { id := "deothomas2025_9a"
     source := ⟨"deo-thomas-2025", "(9a)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_9a : LinguisticExample :=
     readings := []
     paperFeatures := [("flavor", "precisifyingProximity"), ("only", "no"), ("case", "37a")] }
 
-def ex_9b : LinguisticExample :=
+def ex_9b : Datum :=
   { id := "deothomas2025_9b"
     source := ⟨"deo-thomas-2025", "(9b)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex_9b : LinguisticExample :=
     readings := []
     paperFeatures := [("flavor", "precisifyingProximity")] }
 
-def ex_9c : LinguisticExample :=
+def ex_9c : Datum :=
   { id := "deothomas2025_9c"
     source := ⟨"deo-thomas-2025", "(9c)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex_9c : LinguisticExample :=
     readings := []
     paperFeatures := [("flavor", "precisifyingProximity")] }
 
-def ex_10a : LinguisticExample :=
+def ex_10a : Datum :=
   { id := "deothomas2025_10a"
     source := ⟨"deo-thomas-2025", "(10a)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex_10a : LinguisticExample :=
     readings := []
     paperFeatures := [("flavor", "precisifyingProximity")] }
 
-def ex_10b : LinguisticExample :=
+def ex_10b : Datum :=
   { id := "deothomas2025_10b"
     source := ⟨"deo-thomas-2025", "(10b)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex_10b : LinguisticExample :=
     readings := []
     paperFeatures := [("flavor", "precisifyingProximity")] }
 
-def ex_11a : LinguisticExample :=
+def ex_11a : Datum :=
   { id := "deothomas2025_11a"
     source := ⟨"deo-thomas-2025", "(11a)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex_11a : LinguisticExample :=
     readings := []
     paperFeatures := [("flavor", "precisifyingEquality"), ("domain", "temporal")] }
 
-def ex_11b : LinguisticExample :=
+def ex_11b : Datum :=
   { id := "deothomas2025_11b"
     source := ⟨"deo-thomas-2025", "(11b)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex_11b : LinguisticExample :=
     readings := []
     paperFeatures := [("flavor", "precisifyingEquality"), ("domain", "temporal")] }
 
-def ex_11c : LinguisticExample :=
+def ex_11c : Datum :=
   { id := "deothomas2025_11c"
     source := ⟨"deo-thomas-2025", "(11c)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex_11c : LinguisticExample :=
     readings := []
     paperFeatures := [("flavor", "precisifyingProximity"), ("domain", "temporal")] }
 
-def ex_12a : LinguisticExample :=
+def ex_12a : Datum :=
   { id := "deothomas2025_12a"
     source := ⟨"deo-thomas-2025", "(12a)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex_12a : LinguisticExample :=
     readings := []
     paperFeatures := [("flavor", "precisifyingEquality"), ("domain", "spatial")] }
 
-def ex_12b : LinguisticExample :=
+def ex_12b : Datum :=
   { id := "deothomas2025_12b"
     source := ⟨"deo-thomas-2025", "(12b)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex_12b : LinguisticExample :=
     readings := []
     paperFeatures := [("flavor", "precisifyingProximity"), ("domain", "spatial")] }
 
-def ex_13a : LinguisticExample :=
+def ex_13a : Datum :=
   { id := "deothomas2025_13a"
     source := ⟨"deo-thomas-2025", "(13a)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex_13a : LinguisticExample :=
     readings := []
     paperFeatures := [("flavor", "minimalSufficiency"), ("only", "no")] }
 
-def ex_13b : LinguisticExample :=
+def ex_13b : Datum :=
   { id := "deothomas2025_13b"
     source := ⟨"deo-thomas-2025", "(13b)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def ex_13b : LinguisticExample :=
     readings := []
     paperFeatures := [("flavor", "minimalSufficiency"), ("only", "no")] }
 
-def ex_14 : LinguisticExample :=
+def ex_14 : Datum :=
   { id := "deothomas2025_14"
     source := ⟨"wiegand-2018", "p. 419"⟩
     reportedIn := some ⟨"deo-thomas-2025", "(14)"⟩
@@ -381,7 +381,7 @@ def ex_14 : LinguisticExample :=
     readings := []
     paperFeatures := [("flavor", "unexplanatory"), ("only", "no"), ("case", "37b")] }
 
-def ex_15a : LinguisticExample :=
+def ex_15a : Datum :=
   { id := "deothomas2025_15a"
     source := ⟨"warstadt-2020", "§2"⟩
     reportedIn := some ⟨"deo-thomas-2025", "(15a)"⟩
@@ -394,7 +394,7 @@ def ex_15a : LinguisticExample :=
     readings := []
     paperFeatures := [("flavor", "unexplanatory")] }
 
-def ex_15b : LinguisticExample :=
+def ex_15b : Datum :=
   { id := "deothomas2025_15b"
     source := ⟨"warstadt-2020", "§2"⟩
     reportedIn := some ⟨"deo-thomas-2025", "(15b)"⟩
@@ -407,7 +407,7 @@ def ex_15b : LinguisticExample :=
     readings := []
     paperFeatures := [("flavor", "unexplanatory")] }
 
-def ex_16a : LinguisticExample :=
+def ex_16a : Datum :=
   { id := "deothomas2025_16a"
     source := ⟨"deo-thomas-2025", "(16a)"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def ex_16a : LinguisticExample :=
     readings := []
     paperFeatures := [("flavor", "weakExplanation"), ("only", "no")] }
 
-def ex_16b : LinguisticExample :=
+def ex_16b : Datum :=
   { id := "deothomas2025_16b"
     source := ⟨"deo-thomas-2025", "(16b)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def ex_16b : LinguisticExample :=
     readings := []
     paperFeatures := [("flavor", "weakExplanation"), ("only", "no")] }
 
-def ex_17a : LinguisticExample :=
+def ex_17a : Datum :=
   { id := "deothomas2025_17a"
     source := ⟨"warstadt-2020", "p. 376"⟩
     reportedIn := some ⟨"deo-thomas-2025", "(17a)"⟩
@@ -446,7 +446,7 @@ def ex_17a : LinguisticExample :=
     readings := []
     paperFeatures := [("flavor", "unelaboratory"), ("only", "no"), ("case", "37c")] }
 
-def ex_17b : LinguisticExample :=
+def ex_17b : Datum :=
   { id := "deothomas2025_17b"
     source := ⟨"warstadt-2020", "p. 376"⟩
     reportedIn := some ⟨"deo-thomas-2025", "(17b)"⟩
@@ -459,7 +459,7 @@ def ex_17b : LinguisticExample :=
     readings := []
     paperFeatures := [("flavor", "unelaboratory"), ("only", "no"), ("case", "37c")] }
 
-def ex_17c : LinguisticExample :=
+def ex_17c : Datum :=
   { id := "deothomas2025_17c"
     source := ⟨"warstadt-2020", "p. 376"⟩
     reportedIn := some ⟨"deo-thomas-2025", "(17c)"⟩
@@ -472,7 +472,7 @@ def ex_17c : LinguisticExample :=
     readings := []
     paperFeatures := [("flavor", "unelaboratory"), ("only", "no"), ("case", "37c")] }
 
-def ex_18a : LinguisticExample :=
+def ex_18a : Datum :=
   { id := "deothomas2025_18a"
     source := ⟨"wiegand-2018", "p. 423"⟩
     reportedIn := some ⟨"deo-thomas-2025", "(18a)"⟩
@@ -485,7 +485,7 @@ def ex_18a : LinguisticExample :=
     readings := []
     paperFeatures := [("flavor", "counterexpectational"), ("only", "no"), ("case", "37a")] }
 
-def ex_18b : LinguisticExample :=
+def ex_18b : Datum :=
   { id := "deothomas2025_18b"
     source := ⟨"wiegand-2018", "p. 423"⟩
     reportedIn := some ⟨"deo-thomas-2025", "(18b)"⟩
@@ -498,7 +498,7 @@ def ex_18b : LinguisticExample :=
     readings := []
     paperFeatures := [("flavor", "counterexpectational"), ("only", "no"), ("case", "37a")] }
 
-def ex_41 : LinguisticExample :=
+def ex_41 : Datum :=
   { id := "deothomas2025_41"
     source := ⟨"deo-thomas-2025", "(41)"⟩
     reportedIn := none
@@ -511,7 +511,7 @@ def ex_41 : LinguisticExample :=
     readings := []
     paperFeatures := [("flavor", "rankOrder")] }
 
-def ex_47 : LinguisticExample :=
+def ex_47 : Datum :=
   { id := "deothomas2025_47"
     source := ⟨"deo-thomas-2025", "(47)"⟩
     reportedIn := none
@@ -524,7 +524,7 @@ def ex_47 : LinguisticExample :=
     readings := []
     paperFeatures := [("flavor", "unelaboratory"), ("case", "37c")] }
 
-def ex_51 : LinguisticExample :=
+def ex_51 : Datum :=
   { id := "deothomas2025_51"
     source := ⟨"deo-thomas-2025", "(51)"⟩
     reportedIn := none
@@ -537,7 +537,7 @@ def ex_51 : LinguisticExample :=
     readings := []
     paperFeatures := [("flavor", "precisifyingProximity")] }
 
-def ex_52 : LinguisticExample :=
+def ex_52 : Datum :=
   { id := "deothomas2025_52"
     source := ⟨"deo-thomas-2025", "(52)"⟩
     reportedIn := none
@@ -550,7 +550,7 @@ def ex_52 : LinguisticExample :=
     readings := []
     paperFeatures := [("flavor", "precisifyingProximity"), ("focus", "just"), ("case", "37a")] }
 
-def ex_53a : LinguisticExample :=
+def ex_53a : Datum :=
   { id := "deothomas2025_53a"
     source := ⟨"deo-thomas-2025", "(53a)"⟩
     reportedIn := none
@@ -563,7 +563,7 @@ def ex_53a : LinguisticExample :=
     readings := []
     paperFeatures := [("flavor", "precisifyingProximity"), ("focus", "just")] }
 
-def ex_53b : LinguisticExample :=
+def ex_53b : Datum :=
   { id := "deothomas2025_53b"
     source := ⟨"deo-thomas-2025", "(53b)"⟩
     reportedIn := none
@@ -576,7 +576,7 @@ def ex_53b : LinguisticExample :=
     readings := []
     paperFeatures := [("flavor", "unelaboratory"), ("focus", "cheaper")] }
 
-def ex_55 : LinguisticExample :=
+def ex_55 : Datum :=
   { id := "deothomas2025_55"
     source := ⟨"deo-thomas-2025", "(55)"⟩
     reportedIn := none
@@ -589,7 +589,7 @@ def ex_55 : LinguisticExample :=
     readings := []
     paperFeatures := [("flavor", "precisifyingEquality"), ("case", "37a")] }
 
-def ex_56 : LinguisticExample :=
+def ex_56 : Datum :=
   { id := "deothomas2025_56"
     source := ⟨"deo-thomas-2025", "(56)"⟩
     reportedIn := none
@@ -602,7 +602,7 @@ def ex_56 : LinguisticExample :=
     readings := []
     paperFeatures := [("flavor", "precisifyingProximity"), ("domain", "temporal"), ("case", "37a")] }
 
-def ex_58a : LinguisticExample :=
+def ex_58a : Datum :=
   { id := "deothomas2025_58a"
     source := ⟨"deo-thomas-2025", "(58a)"⟩
     reportedIn := none
@@ -615,7 +615,7 @@ def ex_58a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "roughlySpeaking"), ("adjective", "extreme")] }
 
-def ex_58b : LinguisticExample :=
+def ex_58b : Datum :=
   { id := "deothomas2025_58b"
     source := ⟨"deo-thomas-2025", "(58b)"⟩
     reportedIn := none
@@ -628,7 +628,7 @@ def ex_58b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "roughlySpeaking"), ("adjective", "maximumStandard")] }
 
-def ex_59 : LinguisticExample :=
+def ex_59 : Datum :=
   { id := "deothomas2025_59"
     source := ⟨"deo-thomas-2025", "(59)"⟩
     reportedIn := none
@@ -641,7 +641,7 @@ def ex_59 : LinguisticExample :=
     readings := []
     paperFeatures := [("flavor", "emphatic")] }
 
-def ex_60a : LinguisticExample :=
+def ex_60a : Datum :=
   { id := "deothomas2025_60a"
     source := ⟨"deo-thomas-2025", "(60a)"⟩
     reportedIn := none
@@ -654,7 +654,7 @@ def ex_60a : LinguisticExample :=
     readings := []
     paperFeatures := [("flavor", "emphatic"), ("adjective", "maximumStandard")] }
 
-def ex_60b : LinguisticExample :=
+def ex_60b : Datum :=
   { id := "deothomas2025_60b"
     source := ⟨"deo-thomas-2025", "(60b)"⟩
     reportedIn := none
@@ -667,7 +667,7 @@ def ex_60b : LinguisticExample :=
     readings := []
     paperFeatures := [("flavor", "emphatic"), ("adjective", "maximumStandard")] }
 
-def ex_61 : LinguisticExample :=
+def ex_61 : Datum :=
   { id := "deothomas2025_61"
     source := ⟨"deo-thomas-2025", "(61)"⟩
     reportedIn := none
@@ -680,7 +680,7 @@ def ex_61 : LinguisticExample :=
     readings := []
     paperFeatures := [("flavor", "emphatic")] }
 
-def ex_62 : LinguisticExample :=
+def ex_62 : Datum :=
   { id := "deothomas2025_62"
     source := ⟨"deo-thomas-2025", "(62)"⟩
     reportedIn := none
@@ -693,7 +693,7 @@ def ex_62 : LinguisticExample :=
     readings := []
     paperFeatures := [("flavor", "emphatic")] }
 
-def ex_63a : LinguisticExample :=
+def ex_63a : Datum :=
   { id := "deothomas2025_63a"
     source := ⟨"deo-thomas-2025", "(63a)"⟩
     reportedIn := none
@@ -706,7 +706,7 @@ def ex_63a : LinguisticExample :=
     readings := []
     paperFeatures := [("flavor", "complementExclusion"), ("response", "denial")] }
 
-def ex_63b : LinguisticExample :=
+def ex_63b : Datum :=
   { id := "deothomas2025_63b"
     source := ⟨"deo-thomas-2025", "(63b)"⟩
     reportedIn := none
@@ -719,7 +719,7 @@ def ex_63b : LinguisticExample :=
     readings := []
     paperFeatures := [("flavor", "complementExclusion"), ("response", "negation")] }
 
-def ex_64a : LinguisticExample :=
+def ex_64a : Datum :=
   { id := "deothomas2025_64a"
     source := ⟨"deo-thomas-2025", "(64a)"⟩
     reportedIn := none
@@ -732,7 +732,7 @@ def ex_64a : LinguisticExample :=
     readings := []
     paperFeatures := [("flavor", "emphatic"), ("response", "denial")] }
 
-def ex_64b : LinguisticExample :=
+def ex_64b : Datum :=
   { id := "deothomas2025_64b"
     source := ⟨"deo-thomas-2025", "(64b)"⟩
     reportedIn := none
@@ -745,7 +745,7 @@ def ex_64b : LinguisticExample :=
     readings := []
     paperFeatures := [("flavor", "minimalSufficiency"), ("response", "denial")] }
 
-def ex_65 : LinguisticExample :=
+def ex_65 : Datum :=
   { id := "deothomas2025_65"
     source := ⟨"deo-thomas-2025", "(65)"⟩
     reportedIn := none
@@ -758,6 +758,6 @@ def ex_65 : LinguisticExample :=
     readings := []
     paperFeatures := [("flavor", "emphatic"), ("response", "faultlessDisagreement")] }
 
-def all : List LinguisticExample := [ex_1a, ex_1b, ex_2d, ex_3a, ex_3b, ex_4a, ex_4b, ex_5a, ex_5b, ex_6a, ex_6b, ex_7a, ex_7b, ex_8a, ex_8b, ex_9a, ex_9b, ex_9c, ex_10a, ex_10b, ex_11a, ex_11b, ex_11c, ex_12a, ex_12b, ex_13a, ex_13b, ex_14, ex_15a, ex_15b, ex_16a, ex_16b, ex_17a, ex_17b, ex_17c, ex_18a, ex_18b, ex_41, ex_47, ex_51, ex_52, ex_53a, ex_53b, ex_55, ex_56, ex_58a, ex_58b, ex_59, ex_60a, ex_60b, ex_61, ex_62, ex_63a, ex_63b, ex_64a, ex_64b, ex_65]
+def all : List Datum := [ex_1a, ex_1b, ex_2d, ex_3a, ex_3b, ex_4a, ex_4b, ex_5a, ex_5b, ex_6a, ex_6b, ex_7a, ex_7b, ex_8a, ex_8b, ex_9a, ex_9b, ex_9c, ex_10a, ex_10b, ex_11a, ex_11b, ex_11c, ex_12a, ex_12b, ex_13a, ex_13b, ex_14, ex_15a, ex_15b, ex_16a, ex_16b, ex_17a, ex_17b, ex_17c, ex_18a, ex_18b, ex_41, ex_47, ex_51, ex_52, ex_53a, ex_53b, ex_55, ex_56, ex_58a, ex_58b, ex_59, ex_60a, ex_60b, ex_61, ex_62, ex_63a, ex_63b, ex_64a, ex_64b, ex_65]
 
 end DeoThomas2025.Examples

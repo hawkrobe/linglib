@@ -17,7 +17,7 @@ namespace KrizChemla2015.Examples
 
 open Data.Examples
 
-def every_C2_gap : LinguisticExample :=
+def every_C2_gap : Datum :=
   { id := "krizchemla2015_every_C2_gap"
     source := ⟨"kriz-chemla-2015", "Exp. C2, (19) E-every+GAP"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def every_C2_gap : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "every"), ("embedding", "E-every"), ("condition", "GAP"), ("experiment", "C2"), ("gap_detected", "true"), ("display", "9929")] }
 
-def no_C2_gap : LinguisticExample :=
+def no_C2_gap : Datum :=
   { id := "krizchemla2015_no_C2_gap"
     source := ⟨"kriz-chemla-2015", "Exp. C2, (20) E-no+GAP"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def no_C2_gap : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "no"), ("embedding", "E-no"), ("condition", "GAP"), ("experiment", "C2"), ("gap_detected", "true"), ("gap_size", "small_but_robust"), ("display", "0070")] }
 
-def every_C2_true : LinguisticExample :=
+def every_C2_true : Datum :=
   { id := "krizchemla2015_every_C2_true"
     source := ⟨"kriz-chemla-2015", "Exp. C2, (19) E-every+true condition"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def every_C2_true : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "every"), ("embedding", "E-every"), ("condition", "TRUE"), ("experiment", "C2"), ("display", "9999")] }
 
-def every_C2_false : LinguisticExample :=
+def every_C2_false : Datum :=
   { id := "krizchemla2015_every_C2_false"
     source := ⟨"kriz-chemla-2015", "Exp. C2, (19) E-every+false condition"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def every_C2_false : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "every"), ("embedding", "E-every"), ("condition", "FALSE"), ("experiment", "C2"), ("display", "9770")] }
 
-def no_C2_true : LinguisticExample :=
+def no_C2_true : Datum :=
   { id := "krizchemla2015_no_C2_true"
     source := ⟨"kriz-chemla-2015", "Exp. C2, (20) E-no+true condition"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def no_C2_true : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "no"), ("embedding", "E-no"), ("condition", "TRUE"), ("experiment", "C2"), ("display", "0000")] }
 
-def no_C2_false : LinguisticExample :=
+def no_C2_false : Datum :=
   { id := "krizchemla2015_no_C2_false"
     source := ⟨"kriz-chemla-2015", "Exp. C2, (20) E-no+false condition"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def no_C2_false : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "no"), ("embedding", "E-no"), ("condition", "FALSE"), ("experiment", "C2"), ("display", "5009")] }
 
-def exactlyTwo_C3_gap : LinguisticExample :=
+def exactlyTwo_C3_gap : Datum :=
   { id := "krizchemla2015_exactlyTwo_C3_gap"
     source := ⟨"kriz-chemla-2015", "Exp. C3, (24) E-exactly+GAP"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def exactlyTwo_C3_gap : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "exactlyTwo"), ("embedding", "E-exactly"), ("condition", "GAP"), ("experiment", "C3"), ("gap_detected", "true"), ("display", "9200")] }
 
-def exactlyTwo_C3_gap_q : LinguisticExample :=
+def exactlyTwo_C3_gap_q : Datum :=
   { id := "krizchemla2015_exactlyTwo_C3_gap_q"
     source := ⟨"kriz-chemla-2015", "Exp. C3, (24) E-exactly+GAP?"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def exactlyTwo_C3_gap_q : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "exactlyTwo"), ("embedding", "E-exactly"), ("condition", "GAP?"), ("experiment", "C3"), ("gap_detected", "false"), ("classical_value", "false"), ("display", "9202")] }
 
-def exactlyTwo_C4_gap_qq : LinguisticExample :=
+def exactlyTwo_C4_gap_qq : Datum :=
   { id := "krizchemla2015_exactlyTwo_C4_gap_qq"
     source := ⟨"kriz-chemla-2015", "Exp. C4, (24) E-exactly+GAP??"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def exactlyTwo_C4_gap_qq : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "exactlyTwo"), ("embedding", "E-exactly"), ("condition", "GAP??"), ("experiment", "C4"), ("gap_detected", "true"), ("display", "9209")] }
 
-def exactlyTwo_C3_true : LinguisticExample :=
+def exactlyTwo_C3_true : Datum :=
   { id := "krizchemla2015_exactlyTwo_C3_true"
     source := ⟨"kriz-chemla-2015", "Exp. C3, (24) E-exactly+true condition"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def exactlyTwo_C3_true : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "exactlyTwo"), ("embedding", "E-exactly"), ("condition", "TRUE"), ("experiment", "C3"), ("display", "9900")] }
 
-def exactlyTwo_C3_false : LinguisticExample :=
+def exactlyTwo_C3_false : Datum :=
   { id := "krizchemla2015_exactlyTwo_C3_false"
     source := ⟨"kriz-chemla-2015", "Exp. C3, (24) E-exactly+false condition"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def exactlyTwo_C3_false : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "exactlyTwo"), ("embedding", "E-exactly"), ("condition", "FALSE"), ("experiment", "C3"), ("display", "4000")] }
 
-def pos_A1_all : LinguisticExample :=
+def pos_A1_all : Datum :=
   { id := "krizchemla2015_pos_A1_all"
     source := ⟨"kriz-chemla-2015", "Exp. A1, the+E-∅, 9/9 target-color display"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def pos_A1_all : LinguisticExample :=
     readings := []
     paperFeatures := [("polarity", "positive"), ("condition", "ALL"), ("embedding", "unembedded")] }
 
-def pos_A1_none : LinguisticExample :=
+def pos_A1_none : Datum :=
   { id := "krizchemla2015_pos_A1_none"
     source := ⟨"kriz-chemla-2015", "Exp. A1, the+E-∅, 0/9 target-color display"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def pos_A1_none : LinguisticExample :=
     readings := []
     paperFeatures := [("polarity", "positive"), ("condition", "NONE"), ("embedding", "unembedded")] }
 
-def pos_A1_gap : LinguisticExample :=
+def pos_A1_gap : Datum :=
   { id := "krizchemla2015_pos_A1_gap"
     source := ⟨"kriz-chemla-2015", "Exp. A1, the+E-∅, mixed display"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def pos_A1_gap : LinguisticExample :=
     readings := []
     paperFeatures := [("polarity", "positive"), ("condition", "GAP"), ("embedding", "unembedded"), ("gap_detected", "true")] }
 
-def neg_A1_all : LinguisticExample :=
+def neg_A1_all : Datum :=
   { id := "krizchemla2015_neg_A1_all"
     source := ⟨"kriz-chemla-2015", "Exp. A1, the+E-neg, 9/9 target-color display"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def neg_A1_all : LinguisticExample :=
     readings := []
     paperFeatures := [("polarity", "negative"), ("condition", "ALL"), ("embedding", "unembedded")] }
 
-def neg_A1_none : LinguisticExample :=
+def neg_A1_none : Datum :=
   { id := "krizchemla2015_neg_A1_none"
     source := ⟨"kriz-chemla-2015", "Exp. A1, the+E-neg, 0/9 target-color display"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def neg_A1_none : LinguisticExample :=
     readings := []
     paperFeatures := [("polarity", "negative"), ("condition", "NONE"), ("embedding", "unembedded")] }
 
-def neg_A1_gap : LinguisticExample :=
+def neg_A1_gap : Datum :=
   { id := "krizchemla2015_neg_A1_gap"
     source := ⟨"kriz-chemla-2015", "Exp. A1, the+E-neg, mixed display"⟩
     reportedIn := none
@@ -238,6 +238,6 @@ def neg_A1_gap : LinguisticExample :=
     readings := []
     paperFeatures := [("polarity", "negative"), ("condition", "GAP"), ("embedding", "unembedded"), ("gap_detected", "true")] }
 
-def all : List LinguisticExample := [every_C2_gap, no_C2_gap, every_C2_true, every_C2_false, no_C2_true, no_C2_false, exactlyTwo_C3_gap, exactlyTwo_C3_gap_q, exactlyTwo_C4_gap_qq, exactlyTwo_C3_true, exactlyTwo_C3_false, pos_A1_all, pos_A1_none, pos_A1_gap, neg_A1_all, neg_A1_none, neg_A1_gap]
+def all : List Datum := [every_C2_gap, no_C2_gap, every_C2_true, every_C2_false, no_C2_true, no_C2_false, exactlyTwo_C3_gap, exactlyTwo_C3_gap_q, exactlyTwo_C4_gap_qq, exactlyTwo_C3_true, exactlyTwo_C3_false, pos_A1_all, pos_A1_none, pos_A1_gap, neg_A1_all, neg_A1_none, neg_A1_gap]
 
 end KrizChemla2015.Examples

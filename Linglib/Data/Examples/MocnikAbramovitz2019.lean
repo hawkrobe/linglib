@@ -17,7 +17,7 @@ namespace MocnikAbramovitz2019.Examples
 
 open Data.Examples
 
-def ex2 : LinguisticExample :=
+def ex2 : Datum :=
   { id := "mocnikabramovitz2019_ex2"
     source := ⟨"mocnik-abramovitz-2019", "(2)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex2 : LinguisticExample :=
     readings := [("says", .acceptable), ("thinks", .acceptable), ("allows", .acceptable), ("hopes", .acceptable), ("fears", .acceptable), ("knows", .unacceptable), ("imagines", .unacceptable), ("wishes", .unacceptable)]
     paperFeatures := [("section", "1")] }
 
-def ex4 : LinguisticExample :=
+def ex4 : Datum :=
   { id := "mocnikabramovitz2019_ex4"
     source := ⟨"mocnik-abramovitz-2019", "(4)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex4 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2")] }
 
-def ex5 : LinguisticExample :=
+def ex5 : Datum :=
   { id := "mocnikabramovitz2019_ex5"
     source := ⟨"mocnik-abramovitz-2019", "(5)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex5 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2")] }
 
-def ex6 : LinguisticExample :=
+def ex6 : Datum :=
   { id := "mocnikabramovitz2019_ex6"
     source := ⟨"mocnik-abramovitz-2019", "(6)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex6 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2")] }
 
-def ex7 : LinguisticExample :=
+def ex7 : Datum :=
   { id := "mocnikabramovitz2019_ex7"
     source := ⟨"mocnik-abramovitz-2019", "(7)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex7 : LinguisticExample :=
     readings := [("said", .acceptable), ("allowed", .acceptable)]
     paperFeatures := [("section", "2")] }
 
-def ex8a : LinguisticExample :=
+def ex8a : Datum :=
   { id := "mocnikabramovitz2019_ex8a"
     source := ⟨"mocnik-abramovitz-2019", "(8a)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex8a : LinguisticExample :=
     readings := [("necessity", .unacceptable), ("possibility", .acceptable)]
     paperFeatures := [("section", "2")] }
 
-def ex8b : LinguisticExample :=
+def ex8b : Datum :=
   { id := "mocnikabramovitz2019_ex8b"
     source := ⟨"mocnik-abramovitz-2019", "(8b)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex8b : LinguisticExample :=
     readings := [("the thought of (8a)", .acceptable), ("the ball is half white and half black", .unacceptable)]
     paperFeatures := [("section", "2")] }
 
-def ex9a : LinguisticExample :=
+def ex9a : Datum :=
   { id := "mocnikabramovitz2019_ex9a"
     source := ⟨"mocnik-abramovitz-2019", "(9a)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex9a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2")] }
 
-def ex14a : LinguisticExample :=
+def ex14a : Datum :=
   { id := "mocnikabramovitz2019_ex14a"
     source := ⟨"mocnik-abramovitz-2019", "(14a)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex14a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3")] }
 
-def ex14b : LinguisticExample :=
+def ex14b : Datum :=
   { id := "mocnikabramovitz2019_ex14b"
     source := ⟨"mocnik-abramovitz-2019", "(14b)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex14b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3")] }
 
-def ex20 : LinguisticExample :=
+def ex20 : Datum :=
   { id := "mocnikabramovitz2019_ex20"
     source := ⟨"mocnik-abramovitz-2019", "(20)"⟩
     reportedIn := none
@@ -160,6 +160,6 @@ def ex20 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4")] }
 
-def all : List LinguisticExample := [ex2, ex4, ex5, ex6, ex7, ex8a, ex8b, ex9a, ex14a, ex14b, ex20]
+def all : List Datum := [ex2, ex4, ex5, ex6, ex7, ex8a, ex8b, ex9a, ex14a, ex14b, ex20]
 
 end MocnikAbramovitz2019.Examples

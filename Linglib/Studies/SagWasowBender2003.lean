@@ -46,7 +46,7 @@ namespace SagWasowBender2003
 open HPSG.RSRL HPSG.Construction Data.Examples
 
 /-- The rows on a topic. -/
-def probing (t : String) : List LinguisticExample :=
+def probing (t : String) : List Datum :=
   Examples.all.filter fun x ↦ decide (x.feature? "topic" = some t)
 
 /-! ### Binding theory -/

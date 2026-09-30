@@ -17,7 +17,7 @@ namespace LeBruynDeSwart2022.Examples
 
 open Data.Examples
 
-def boeken_niet_uitgelezen : LinguisticExample :=
+def boeken_niet_uitgelezen : Datum :=
   { id := "lebruyndeswart2022_boeken_niet_uitgelezen"
     source := ⟨"le-bruyn-de-swart-2022", "(35)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def boeken_niet_uitgelezen : LinguisticExample :=
     readings := [("wide_scope", .acceptable), ("narrow_scope", .unacceptable)]
     paperFeatures := [("position", "scrambled")] }
 
-def boeken_gehaat : LinguisticExample :=
+def boeken_gehaat : Datum :=
   { id := "lebruyndeswart2022_boeken_gehaat"
     source := ⟨"le-bruyn-de-swart-2022", "(36b)"⟩
     reportedIn := none
@@ -43,6 +43,6 @@ def boeken_gehaat : LinguisticExample :=
     readings := [("kind_reference", .acceptable)]
     paperFeatures := [("position", "scrambled")] }
 
-def all : List LinguisticExample := [boeken_niet_uitgelezen, boeken_gehaat]
+def all : List Datum := [boeken_niet_uitgelezen, boeken_gehaat]
 
 end LeBruynDeSwart2022.Examples

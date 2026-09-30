@@ -17,7 +17,7 @@ namespace Embick2021.Examples
 
 open Data.Examples
 
-def ex_6c : LinguisticExample :=
+def ex_6c : Datum :=
   { id := "embick2021_6c"
     source := ⟨"embick-2021", "(6c)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_6c : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "DESTROY"), ("rootClass", "agentive"), ("construction", "derivedNominal"), ("h1", "n"), ("h1exp", "-tion")] }
 
-def ex_6d : LinguisticExample :=
+def ex_6d : Datum :=
   { id := "embick2021_6d"
     source := ⟨"embick-2021", "(6d)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_6d : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "DESTROY"), ("rootClass", "agentive"), ("construction", "gerund"), ("h1", "v"), ("h1exp", ""), ("h2", "voice"), ("h2exp", ""), ("h3", "n"), ("h3exp", "-ing")] }
 
-def ex_7c : LinguisticExample :=
+def ex_7c : Datum :=
   { id := "embick2021_7c"
     source := ⟨"embick-2021", "(7c)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_7c : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "GROW"), ("rootClass", "nonagentive"), ("construction", "derivedNominal"), ("h1", "n"), ("h1exp", "-th")] }
 
-def ex_7d : LinguisticExample :=
+def ex_7d : Datum :=
   { id := "embick2021_7d"
     source := ⟨"embick-2021", "(7d)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_7d : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "GROW"), ("rootClass", "nonagentive"), ("construction", "gerund"), ("h1", "v"), ("h1exp", ""), ("h2", "voice"), ("h2exp", ""), ("h3", "n"), ("h3exp", "-ing")] }
 
-def bent : LinguisticExample :=
+def bent : Datum :=
   { id := "embick2021_bent"
     source := ⟨"embick-2021", "§5, structure (15)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def bent : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "BEND"), ("construction", "inflected"), ("h1", "v"), ("h1exp", ""), ("h2", "T"), ("h2exp", "-t")] }
 
-def broken : LinguisticExample :=
+def broken : Datum :=
   { id := "embick2021_broken"
     source := ⟨"embick-2021", "§5, structure (15)"⟩
     reportedIn := none
@@ -95,6 +95,6 @@ def broken : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "BREAK"), ("construction", "inflected"), ("h1", "v"), ("h1exp", ""), ("h2", "aspect"), ("h2exp", "-en")] }
 
-def all : List LinguisticExample := [ex_6c, ex_6d, ex_7c, ex_7d, bent, broken]
+def all : List Datum := [ex_6c, ex_6d, ex_7c, ex_7d, bent, broken]
 
 end Embick2021.Examples

@@ -17,7 +17,7 @@ namespace BhattPancheva2004.Examples
 
 open Data.Examples
 
-def bp2004_22 : LinguisticExample :=
+def bp2004_22 : Datum :=
   { id := "bp2004_22"
     source := ⟨"bhatt-pancheva-2004", "(22)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def bp2004_22 : LinguisticExample :=
     readings := [("every > -er", .acceptable), ("-er > every", .unacceptable)]
     paperFeatures := [("section", "4.1"), ("claim", "the reading (22b), -er over every, is unavailable")] }
 
-def bp2004_23a : LinguisticExample :=
+def bp2004_23a : Datum :=
   { id := "bp2004_23a"
     source := ⟨"bhatt-pancheva-2004", "(23a)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def bp2004_23a : LinguisticExample :=
     readings := [("every > -er", .acceptable), ("-er > every", .unacceptable)]
     paperFeatures := [("section", "4.1")] }
 
-def bp2004_23b : LinguisticExample :=
+def bp2004_23b : Datum :=
   { id := "bp2004_23b"
     source := ⟨"bhatt-pancheva-2004", "(23b)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def bp2004_23b : LinguisticExample :=
     readings := [("every > -er", .acceptable), ("-er > every", .unacceptable)]
     paperFeatures := [("section", "4.1")] }
 
-def bp2004_27a : LinguisticExample :=
+def bp2004_27a : Datum :=
   { id := "bp2004_27a"
     source := ⟨"bhatt-pancheva-2004", "(27a)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def bp2004_27a : LinguisticExample :=
     readings := [("-er > require", .acceptable), ("require > -er", .acceptable)]
     paperFeatures := [("section", "4.2"), ("verb", "require")] }
 
-def bp2004_27b : LinguisticExample :=
+def bp2004_27b : Datum :=
   { id := "bp2004_27b"
     source := ⟨"bhatt-pancheva-2004", "(27b)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def bp2004_27b : LinguisticExample :=
     readings := [("-er > allow", .acceptable), ("allow > -er", .acceptable)]
     paperFeatures := [("section", "4.2"), ("verb", "allow")] }
 
-def bp2004_27c : LinguisticExample :=
+def bp2004_27c : Datum :=
   { id := "bp2004_27c"
     source := ⟨"bhatt-pancheva-2004", "(27c)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def bp2004_27c : LinguisticExample :=
     readings := [("-er > require", .acceptable), ("require > -er", .acceptable)]
     paperFeatures := [("section", "4.2"), ("verb", "require")] }
 
-def bp2004_27d : LinguisticExample :=
+def bp2004_27d : Datum :=
   { id := "bp2004_27d"
     source := ⟨"bhatt-pancheva-2004", "(27d)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def bp2004_27d : LinguisticExample :=
     readings := [("-er > allow", .acceptable), ("allow > -er", .acceptable)]
     paperFeatures := [("section", "4.2"), ("verb", "allow")] }
 
-def bp2004_30a : LinguisticExample :=
+def bp2004_30a : Datum :=
   { id := "bp2004_30a"
     source := ⟨"bhatt-pancheva-2004", "(30a)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def bp2004_30a : LinguisticExample :=
     readings := [("-er > require", .acceptable), ("require > -er", .acceptable)]
     paperFeatures := [("section", "4.2"), ("verb", "require"), ("claim", "the two scopes are truth-conditionally equivalent")] }
 
-def bp2004_30b : LinguisticExample :=
+def bp2004_30b : Datum :=
   { id := "bp2004_30b"
     source := ⟨"bhatt-pancheva-2004", "(30b)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def bp2004_30b : LinguisticExample :=
     readings := [("-er > allow", .acceptable), ("allow > -er", .acceptable)]
     paperFeatures := [("section", "4.2"), ("verb", "allow"), ("claim", "the two scopes are truth-conditionally equivalent")] }
 
-def bp2004_34a : LinguisticExample :=
+def bp2004_34a : Datum :=
   { id := "bp2004_34a"
     source := ⟨"bhatt-pancheva-2004", "(34a)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def bp2004_34a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("coreference", "him = John"), ("claim", "string-vacuous high attachment is blocked by minimal attachment")] }
 
-def bp2004_34b : LinguisticExample :=
+def bp2004_34b : Datum :=
   { id := "bp2004_34b"
     source := ⟨"bhatt-pancheva-2004", "(34b)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def bp2004_34b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("coreference", "him = John"), ("claim", "the degree clause is merged late outside the pronoun's c-command domain")] }
 
-def bp2004_35 : LinguisticExample :=
+def bp2004_35 : Datum :=
   { id := "bp2004_35"
     source := ⟨"bhatt-pancheva-2004", "(35)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def bp2004_35 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("coreference", "him = John"), ("claim", "the complement of a nominal cannot be merged late")] }
 
-def bp2004_40 : LinguisticExample :=
+def bp2004_40 : Datum :=
   { id := "bp2004_40"
     source := ⟨"bhatt-pancheva-2004", "(40)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def bp2004_40 : LinguisticExample :=
     readings := [("before > every", .acceptable), ("every > before", .acceptable)]
     paperFeatures := [("section", "5.2")] }
 
-def bp2004_41 : LinguisticExample :=
+def bp2004_41 : Datum :=
   { id := "bp2004_41"
     source := ⟨"bhatt-pancheva-2004", "(41)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def bp2004_41 : LinguisticExample :=
     readings := [("before > every", .acceptable), ("every > before", .acceptable)]
     paperFeatures := [("section", "5.2"), ("site", "low"), ("mover", "DP")] }
 
-def bp2004_42 : LinguisticExample :=
+def bp2004_42 : Datum :=
   { id := "bp2004_42"
     source := ⟨"bhatt-pancheva-2004", "(42)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def bp2004_42 : LinguisticExample :=
     readings := [("before > every", .unacceptable), ("every > before", .acceptable)]
     paperFeatures := [("section", "5.2"), ("site", "high"), ("mover", "DP"), ("narrow_scope", "unavailable"), ("wide_scope", "available")] }
 
-def bp2004_43 : LinguisticExample :=
+def bp2004_43 : Datum :=
   { id := "bp2004_43"
     source := ⟨"bhatt-pancheva-2004", "(43)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def bp2004_43 : LinguisticExample :=
     readings := [("before > -er", .acceptable), ("-er > before", .unacceptable)]
     paperFeatures := [("section", "5.2"), ("site", "low"), ("mover", "DegP"), ("narrow_scope", "available"), ("wide_scope", "unavailable")] }
 
-def bp2004_44 : LinguisticExample :=
+def bp2004_44 : Datum :=
   { id := "bp2004_44"
     source := ⟨"bhatt-pancheva-2004", "(44)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def bp2004_44 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2"), ("site", "high"), ("mover", "DegP"), ("claim", "the position of the degree clause presupposes high scope for -er, which the Heim-Kennedy Constraint excludes")] }
 
-def bp2004_45 : LinguisticExample :=
+def bp2004_45 : Datum :=
   { id := "bp2004_45"
     source := ⟨"bhatt-pancheva-2004", "(45)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def bp2004_45 : LinguisticExample :=
     readings := [("before > -er d-many books", .acceptable), ("-er d-many books > before", .acceptable), ("-er > before > d-many books", .unacceptable)]
     paperFeatures := [("section", "5.2"), ("site", "low"), ("mover", "DP"), ("narrow_scope", "available"), ("wide_scope", "available")] }
 
-def bp2004_46 : LinguisticExample :=
+def bp2004_46 : Datum :=
   { id := "bp2004_46"
     source := ⟨"bhatt-pancheva-2004", "(46)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def bp2004_46 : LinguisticExample :=
     readings := [("before > -er d-many books", .unacceptable), ("-er d-many books > before", .acceptable), ("-er > before > d-many books", .unacceptable)]
     paperFeatures := [("section", "5.2"), ("site", "high"), ("mover", "DP"), ("narrow_scope", "unavailable"), ("wide_scope", "available")] }
 
-def bp2004_48a : LinguisticExample :=
+def bp2004_48a : Datum :=
   { id := "bp2004_48a"
     source := ⟨"bhatt-pancheva-2004", "(48a)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def bp2004_48a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2"), ("claim", "the two degree abstractions need not cross")] }
 
-def bp2004_48b : LinguisticExample :=
+def bp2004_48b : Datum :=
   { id := "bp2004_48b"
     source := ⟨"bhatt-pancheva-2004", "(48b)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def bp2004_48b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2"), ("claim", "result clauses follow comparative clauses")] }
 
-def bp2004_50a : LinguisticExample :=
+def bp2004_50a : Datum :=
   { id := "bp2004_50a"
     source := ⟨"bhatt-pancheva-2004", "(50a)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def bp2004_50a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2"), ("claim", "crossing degree abstractions, excluded by the Heim-Kennedy Constraint")] }
 
-def bp2004_50b : LinguisticExample :=
+def bp2004_50b : Datum :=
   { id := "bp2004_50b"
     source := ⟨"bhatt-pancheva-2004", "(50b)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def bp2004_50b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2"), ("claim", "result clauses follow comparative clauses")] }
 
-def bp2004_53a : LinguisticExample :=
+def bp2004_53a : Datum :=
   { id := "bp2004_53a"
     source := ⟨"bhatt-pancheva-2004", "(53a)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def bp2004_53a : LinguisticExample :=
     readings := [("required > fewer", .acceptable), ("fewer > required", .unacceptable)]
     paperFeatures := [("section", "5.2"), ("site", "low"), ("mover", "DegP"), ("narrow_scope", "available"), ("wide_scope", "unavailable")] }
 
-def bp2004_53b : LinguisticExample :=
+def bp2004_53b : Datum :=
   { id := "bp2004_53b"
     source := ⟨"bhatt-pancheva-2004", "(53b)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def bp2004_53b : LinguisticExample :=
     readings := [("required > fewer", .unacceptable), ("fewer > required", .acceptable)]
     paperFeatures := [("section", "5.2"), ("site", "high"), ("mover", "DegP"), ("narrow_scope", "unavailable"), ("wide_scope", "available")] }
 
-def bp2004_54a : LinguisticExample :=
+def bp2004_54a : Datum :=
   { id := "bp2004_54a"
     source := ⟨"bhatt-pancheva-2004", "(54a)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def bp2004_54a : LinguisticExample :=
     readings := [("required > exactly 5 more", .acceptable), ("exactly 5 more > required", .unacceptable)]
     paperFeatures := [("section", "5.2"), ("site", "low"), ("mover", "DegP"), ("narrow_scope", "available"), ("wide_scope", "unavailable")] }
 
-def bp2004_54b : LinguisticExample :=
+def bp2004_54b : Datum :=
   { id := "bp2004_54b"
     source := ⟨"bhatt-pancheva-2004", "(54b)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def bp2004_54b : LinguisticExample :=
     readings := [("required > exactly 5 more", .unacceptable), ("exactly 5 more > required", .acceptable)]
     paperFeatures := [("section", "5.2"), ("site", "high"), ("mover", "DegP"), ("narrow_scope", "unavailable"), ("wide_scope", "available")] }
 
-def bp2004_60 : LinguisticExample :=
+def bp2004_60 : Datum :=
   { id := "bp2004_60"
     source := ⟨"bhatt-pancheva-2004", "(60)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def bp2004_60 : LinguisticExample :=
     readings := [("tell > -er, elided VP: work d-hard", .acceptable), ("tell > -er, elided VP: tell her to work d-hard", .unacceptable), ("-er > tell, elided VP: work d-hard", .acceptable), ("-er > tell, elided VP: tell her to work d-hard", .acceptable)]
     paperFeatures := [("section", "6.1")] }
 
-def bp2004_61 : LinguisticExample :=
+def bp2004_61 : Datum :=
   { id := "bp2004_61"
     source := ⟨"bhatt-pancheva-2004", "(61)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def bp2004_61 : LinguisticExample :=
     readings := [("tell > -er, elided VP: work d-hard", .acceptable), ("-er > tell, elided VP: work d-hard", .acceptable)]
     paperFeatures := [("section", "6.1")] }
 
-def bp2004_63 : LinguisticExample :=
+def bp2004_63 : Datum :=
   { id := "bp2004_63"
     source := ⟨"bhatt-pancheva-2004", "(63)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def bp2004_63 : LinguisticExample :=
     readings := [("tell > -er, elided VP: work d-hard", .unacceptable), ("tell > -er, elided VP: tell her to work d-hard", .unacceptable), ("-er > tell, elided VP: work d-hard", .acceptable), ("-er > tell, elided VP: tell her to work d-hard", .acceptable)]
     paperFeatures := [("section", "6.2"), ("coreference", "her = Mary")] }
 
-def bp2004_64a : LinguisticExample :=
+def bp2004_64a : Datum :=
   { id := "bp2004_64a"
     source := ⟨"bhatt-pancheva-2004", "(64a)"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def bp2004_64a : LinguisticExample :=
     readings := [("tell > -er", .unacceptable), ("-er > tell", .acceptable)]
     paperFeatures := [("section", "6.2"), ("coreference", "her = Mary")] }
 
-def bp2004_64b : LinguisticExample :=
+def bp2004_64b : Datum :=
   { id := "bp2004_64b"
     source := ⟨"bhatt-pancheva-2004", "(64b)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def bp2004_64b : LinguisticExample :=
     readings := [("tell > -er", .acceptable), ("-er > tell", .acceptable)]
     paperFeatures := [("section", "6.2"), ("coreference", "her = Mary")] }
 
-def bp2004_85 : LinguisticExample :=
+def bp2004_85 : Datum :=
   { id := "bp2004_85"
     source := ⟨"bhatt-pancheva-2004", "(85)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def bp2004_85 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7.2"), ("claim", "the set of degrees to which Bill is tall is a proper subset of the set to which John is tall")] }
 
-def bp2004_91a : LinguisticExample :=
+def bp2004_91a : Datum :=
   { id := "bp2004_91a"
     source := ⟨"bhatt-pancheva-2004", "(91a)"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def bp2004_91a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7.4"), ("coreference", "he = John"), ("claim", "the complement of rumor cannot be merged late")] }
 
-def bp2004_91b : LinguisticExample :=
+def bp2004_91b : Datum :=
   { id := "bp2004_91b"
     source := ⟨"bhatt-pancheva-2004", "(91b)"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def bp2004_91b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7.4"), ("coreference", "him = John"), ("claim", "the complement of -er can be merged late")] }
 
-def bp2004_93a : LinguisticExample :=
+def bp2004_93a : Datum :=
   { id := "bp2004_93a"
     source := ⟨"bhatt-pancheva-2004", "(93a)"⟩
     reportedIn := none
@@ -485,7 +485,7 @@ def bp2004_93a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "8")] }
 
-def bp2004_93b : LinguisticExample :=
+def bp2004_93b : Datum :=
   { id := "bp2004_93b"
     source := ⟨"bhatt-pancheva-2004", "(93b)"⟩
     reportedIn := none
@@ -498,6 +498,6 @@ def bp2004_93b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "8")] }
 
-def all : List LinguisticExample := [bp2004_22, bp2004_23a, bp2004_23b, bp2004_27a, bp2004_27b, bp2004_27c, bp2004_27d, bp2004_30a, bp2004_30b, bp2004_34a, bp2004_34b, bp2004_35, bp2004_40, bp2004_41, bp2004_42, bp2004_43, bp2004_44, bp2004_45, bp2004_46, bp2004_48a, bp2004_48b, bp2004_50a, bp2004_50b, bp2004_53a, bp2004_53b, bp2004_54a, bp2004_54b, bp2004_60, bp2004_61, bp2004_63, bp2004_64a, bp2004_64b, bp2004_85, bp2004_91a, bp2004_91b, bp2004_93a, bp2004_93b]
+def all : List Datum := [bp2004_22, bp2004_23a, bp2004_23b, bp2004_27a, bp2004_27b, bp2004_27c, bp2004_27d, bp2004_30a, bp2004_30b, bp2004_34a, bp2004_34b, bp2004_35, bp2004_40, bp2004_41, bp2004_42, bp2004_43, bp2004_44, bp2004_45, bp2004_46, bp2004_48a, bp2004_48b, bp2004_50a, bp2004_50b, bp2004_53a, bp2004_53b, bp2004_54a, bp2004_54b, bp2004_60, bp2004_61, bp2004_63, bp2004_64a, bp2004_64b, bp2004_85, bp2004_91a, bp2004_91b, bp2004_93a, bp2004_93b]
 
 end BhattPancheva2004.Examples

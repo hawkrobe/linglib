@@ -17,7 +17,7 @@ namespace Corbett1998.Examples
 
 open Data.Examples
 
-def s1 : LinguisticExample :=
+def s1 : Datum :=
   { id := "corbett1998_s1"
     source := ⟨"corbett-1998", "§1"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def s1 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_1 : LinguisticExample :=
+def ex_1 : Datum :=
   { id := "corbett1998_1"
     source := ⟨"corbett-1998", "(1)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("gender", "masc"), ("number", "sg"), ("ending", "yj")] }
 
-def ex_2 : LinguisticExample :=
+def ex_2 : Datum :=
   { id := "corbett1998_2"
     source := ⟨"corbett-1998", "(2)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("gender", "fem"), ("number", "sg"), ("ending", "aja")] }
 
-def ex_3 : LinguisticExample :=
+def ex_3 : Datum :=
   { id := "corbett1998_3"
     source := ⟨"corbett-1998", "(3)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_3 : LinguisticExample :=
     readings := []
     paperFeatures := [("gender", "neut"), ("number", "sg"), ("ending", "oe")] }
 
-def ex_4 : LinguisticExample :=
+def ex_4 : Datum :=
   { id := "corbett1998_4"
     source := ⟨"corbett-1998", "(4)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_4 : LinguisticExample :=
     readings := []
     paperFeatures := [("gender", "masc"), ("number", "pl"), ("ending", "ye")] }
 
-def ex_5 : LinguisticExample :=
+def ex_5 : Datum :=
   { id := "corbett1998_5"
     source := ⟨"corbett-1998", "(5)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_5 : LinguisticExample :=
     readings := []
     paperFeatures := [("gender", "masc"), ("number", "sg"), ("case", "loc")] }
 
-def s2_3a : LinguisticExample :=
+def s2_3a : Datum :=
   { id := "corbett1998_s2_3a"
     source := ⟨"corbett-1998", "§2.3"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def s2_3a : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "1")] }
 
-def s2_3b : LinguisticExample :=
+def s2_3b : Datum :=
   { id := "corbett1998_s2_3b"
     source := ⟨"corbett-1998", "§2.3"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def s2_3b : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "2")] }
 
-def s2_3c : LinguisticExample :=
+def s2_3c : Datum :=
   { id := "corbett1998_s2_3c"
     source := ⟨"corbett-1998", "§2.3"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def s2_3c : LinguisticExample :=
     readings := []
     paperFeatures := [("person", "3")] }
 
-def ex_6 : LinguisticExample :=
+def ex_6 : Datum :=
   { id := "corbett1998_6"
     source := ⟨"corbett-1998", "(6)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_6 : LinguisticExample :=
     readings := []
     paperFeatures := [("gender", "I"), ("adjective", "akek"), ("demonstrative", "e-pe")] }
 
-def ex_7 : LinguisticExample :=
+def ex_7 : Datum :=
   { id := "corbett1998_7"
     source := ⟨"corbett-1998", "(7)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_7 : LinguisticExample :=
     readings := []
     paperFeatures := [("gender", "II"), ("adjective", "akuk"), ("demonstrative", "u-pe")] }
 
-def ex_8 : LinguisticExample :=
+def ex_8 : Datum :=
   { id := "corbett1998_8"
     source := ⟨"corbett-1998", "(8)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_8 : LinguisticExample :=
     readings := []
     paperFeatures := [("gender", "III"), ("adjective", "akak"), ("demonstrative", "e-pe")] }
 
-def ex_9 : LinguisticExample :=
+def ex_9 : Datum :=
   { id := "corbett1998_9"
     source := ⟨"corbett-1998", "(9)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_9 : LinguisticExample :=
     readings := []
     paperFeatures := [("gender", "IV"), ("adjective", "akik"), ("demonstrative", "i-pe")] }
 
-def ex_10 : LinguisticExample :=
+def ex_10 : Datum :=
   { id := "corbett1998_10"
     source := ⟨"corbett-1998", "(10)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_10 : LinguisticExample :=
     readings := []
     paperFeatures := [("gender", "II"), ("slots", "4")] }
 
-def ex_11 : LinguisticExample :=
+def ex_11 : Datum :=
   { id := "corbett1998_11"
     source := ⟨"corbett-1998", "(11)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_11 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "ìnan"), ("number", "sg"), ("article", "kii"), ("verb", "y")] }
 
-def ex_12 : LinguisticExample :=
+def ex_12 : Datum :=
   { id := "corbett1998_12"
     source := ⟨"corbett-1998", "(12)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_12 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "inán"), ("number", "sg"), ("article", "tii"), ("verb", "t")] }
 
-def ex_13 : LinguisticExample :=
+def ex_13 : Datum :=
   { id := "corbett1998_13"
     source := ⟨"corbett-1998", "(13)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex_13 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "ìnan"), ("number", "pl"), ("article", "tii"), ("verb", "y")] }
 
-def ex_14 : LinguisticExample :=
+def ex_14 : Datum :=
   { id := "corbett1998_14"
     source := ⟨"corbett-1998", "(14)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex_14 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "inán"), ("number", "pl"), ("article", "kii"), ("verb", "y")] }
 
-def s3_2a : LinguisticExample :=
+def s3_2a : Datum :=
   { id := "corbett1998_s3_2a"
     source := ⟨"corbett-1998", "§3.2"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def s3_2a : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "nin"), ("number", "sg"), ("article", "kii")] }
 
-def s3_2b : LinguisticExample :=
+def s3_2b : Datum :=
   { id := "corbett1998_s3_2b"
     source := ⟨"corbett-1998", "§3.2"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def s3_2b : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "nin"), ("number", "pl"), ("article", "kii")] }
 
-def s4a : LinguisticExample :=
+def s4a : Datum :=
   { id := "corbett1998_s4a"
     source := ⟨"corbett-1998", "§4"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def s4a : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "caseMarkedNoun"), ("gender", "III")] }
 
-def s4b : LinguisticExample :=
+def s4b : Datum :=
   { id := "corbett1998_s4b"
     source := ⟨"corbett-1998", "§4"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def s4b : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "caseMarkedNoun"), ("gender", "III")] }
 
-def ex_15 : LinguisticExample :=
+def ex_15 : Datum :=
   { id := "corbett1998_15"
     source := ⟨"corbett-1998", "(15)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex_15 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "pronoun"), ("gender", "II")] }
 
-def ex_16 : LinguisticExample :=
+def ex_16 : Datum :=
   { id := "corbett1998_16"
     source := ⟨"corbett-1998", "(16)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex_16 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "pronoun"), ("gender", "III")] }
 
-def ex_17 : LinguisticExample :=
+def ex_17 : Datum :=
   { id := "corbett1998_17"
     source := ⟨"corbett-1998", "(17)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex_17 : LinguisticExample :=
     readings := []
     paperFeatures := [("finiteVerb", "number,person"), ("participle", "number,gender")] }
 
-def ex_18 : LinguisticExample :=
+def ex_18 : Datum :=
   { id := "corbett1998_18"
     source := ⟨"corbett-1998", "(18)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex_18 : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunct1", "ma-lalanje"), ("conjunct2", "ma-samba"), ("prefix", "a")] }
 
-def ex_19 : LinguisticExample :=
+def ex_19 : Datum :=
   { id := "corbett1998_19"
     source := ⟨"corbett-1998", "(19)"⟩
     reportedIn := none
@@ -368,6 +368,6 @@ def ex_19 : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunct1", "a-mphaka"), ("conjunct2", "ma-lalanje"), ("prefix", "a")] }
 
-def all : List LinguisticExample := [s1, ex_1, ex_2, ex_3, ex_4, ex_5, s2_3a, s2_3b, s2_3c, ex_6, ex_7, ex_8, ex_9, ex_10, ex_11, ex_12, ex_13, ex_14, s3_2a, s3_2b, s4a, s4b, ex_15, ex_16, ex_17, ex_18, ex_19]
+def all : List Datum := [s1, ex_1, ex_2, ex_3, ex_4, ex_5, s2_3a, s2_3b, s2_3c, ex_6, ex_7, ex_8, ex_9, ex_10, ex_11, ex_12, ex_13, ex_14, s3_2a, s3_2b, s4a, s4b, ex_15, ex_16, ex_17, ex_18, ex_19]
 
 end Corbett1998.Examples

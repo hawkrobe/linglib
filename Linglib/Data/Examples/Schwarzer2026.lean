@@ -17,7 +17,7 @@ namespace Schwarzer2026.Examples
 
 open Data.Examples
 
-def ex11a : LinguisticExample :=
+def ex11a : Datum :=
   { id := "schwarzer2026_ex11a"
     source := ⟨"schwarzer-2026", "(11a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex11a : LinguisticExample :=
     readings := []
     paperFeatures := [("experiment", "1"), ("verb", "beenden"), ("selectsCP", "no"), ("complement", "dass"), ("position", "postverbal")] }
 
-def ex11b : LinguisticExample :=
+def ex11b : Datum :=
   { id := "schwarzer2026_ex11b"
     source := ⟨"schwarzer-2026", "(11b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex11b : LinguisticExample :=
     readings := []
     paperFeatures := [("experiment", "1"), ("verb", "beenden"), ("selectsCP", "no"), ("complement", "coord"), ("position", "postverbal"), ("order", "dpFirst")] }
 
-def ex12a : LinguisticExample :=
+def ex12a : Datum :=
   { id := "schwarzer2026_ex12a"
     source := ⟨"schwarzer-2026", "(12a)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex12a : LinguisticExample :=
     readings := []
     paperFeatures := [("experiment", "1"), ("verb", "veranlassen"), ("selectsCP", "yes"), ("complement", "dass"), ("position", "postverbal")] }
 
-def ex12b : LinguisticExample :=
+def ex12b : Datum :=
   { id := "schwarzer2026_ex12b"
     source := ⟨"schwarzer-2026", "(12b)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex12b : LinguisticExample :=
     readings := []
     paperFeatures := [("experiment", "1"), ("verb", "veranlassen"), ("selectsCP", "yes"), ("complement", "coord"), ("position", "postverbal"), ("order", "dpFirst")] }
 
-def ex16a : LinguisticExample :=
+def ex16a : Datum :=
   { id := "schwarzer2026_ex16a"
     source := ⟨"schwarzer-2026", "(16a)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex16a : LinguisticExample :=
     readings := []
     paperFeatures := [("experiment", "2"), ("verb", "beenden"), ("selectsCP", "no"), ("complement", "coord"), ("position", "preverbal"), ("order", "dpFirst")] }
 
-def ex16b : LinguisticExample :=
+def ex16b : Datum :=
   { id := "schwarzer2026_ex16b"
     source := ⟨"schwarzer-2026", "(16b)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex16b : LinguisticExample :=
     readings := []
     paperFeatures := [("experiment", "2"), ("verb", "beenden"), ("selectsCP", "no"), ("complement", "coord"), ("position", "preverbal"), ("order", "cpFirst")] }
 
-def ex17a : LinguisticExample :=
+def ex17a : Datum :=
   { id := "schwarzer2026_ex17a"
     source := ⟨"schwarzer-2026", "(17a)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex17a : LinguisticExample :=
     readings := []
     paperFeatures := [("experiment", "2"), ("verb", "beenden"), ("selectsCP", "no"), ("complement", "coord"), ("position", "postverbal"), ("order", "dpFirst")] }
 
-def ex17b : LinguisticExample :=
+def ex17b : Datum :=
   { id := "schwarzer2026_ex17b"
     source := ⟨"schwarzer-2026", "(17b)"⟩
     reportedIn := none
@@ -121,6 +121,6 @@ def ex17b : LinguisticExample :=
     readings := []
     paperFeatures := [("experiment", "2"), ("verb", "beenden"), ("selectsCP", "no"), ("complement", "coord"), ("position", "postverbal"), ("order", "cpFirst")] }
 
-def all : List LinguisticExample := [ex11a, ex11b, ex12a, ex12b, ex16a, ex16b, ex17a, ex17b]
+def all : List Datum := [ex11a, ex11b, ex12a, ex12b, ex16a, ex16b, ex17a, ex17b]
 
 end Schwarzer2026.Examples

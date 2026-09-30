@@ -214,7 +214,7 @@ def kindOf : String → Option NegatorKind
   | _ => none
 
 /-- A row from the paper's features. -/
-def Row.ofExample (e : LinguisticExample) : Option Row := do
+def Row.ofDatum (e : Datum) : Option Row := do
   let l ← languageOf e.language
   let c ← (e.feature? "concept").bind conceptOf
   let n ← e.feature? "negator"
@@ -222,7 +222,7 @@ def Row.ofExample (e : LinguisticExample) : Option Row := do
   some ⟨l, c, n, k, (e.feature? "entrenched").map (· == "high")⟩
 
 /-- The examples of Sections 1, 2 and 6. -/
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- Mandarin's negator tracks the trigger, Sections 6.1.1 and 6.1.2: the imperative negator
 exactly under *fear* and the deontic negator exactly under the *regret* class. -/

@@ -17,7 +17,7 @@ namespace Stankova2026.Examples
 
 open Data.Examples
 
-def ex6a : LinguisticExample :=
+def ex6a : Datum :=
   { id := "stankova2026_ex6a"
     source := ⟨"stankova-2026", "ex. 6a"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex6a : LinguisticExample :=
     readings := []
     paperFeatures := [("negation", "inner"), ("diagnostic", "nciLicensed")] }
 
-def ex6b : LinguisticExample :=
+def ex6b : Datum :=
   { id := "stankova2026_ex6b"
     source := ⟨"stankova-2026", "ex. 6b"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex6b : LinguisticExample :=
     readings := []
     paperFeatures := [("negation", "outer"), ("diagnostic", "nciLicensed")] }
 
-def ex7a : LinguisticExample :=
+def ex7a : Datum :=
   { id := "stankova2026_ex7a"
     source := ⟨"stankova-2026", "ex. 7a"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex7a : LinguisticExample :=
     readings := []
     paperFeatures := [("negation", "medial"), ("diagnostic", "ppiOutscoping")] }
 
-def ex7b : LinguisticExample :=
+def ex7b : Datum :=
   { id := "stankova2026_ex7b"
     source := ⟨"stankova-2026", "ex. 7b"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex7b : LinguisticExample :=
     readings := []
     paperFeatures := [("negation", "outer"), ("diagnostic", "ppiOutscoping")] }
 
-def ex11 : LinguisticExample :=
+def ex11 : Datum :=
   { id := "stankova2026_ex11"
     source := ⟨"stankova-2026", "ex. 11"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex11 : LinguisticExample :=
     readings := []
     paperFeatures := [("negation", "outer"), ("diagnostic", "nahodou")] }
 
-def ex15a : LinguisticExample :=
+def ex15a : Datum :=
   { id := "stankova2026_ex15a"
     source := ⟨"stankova-2026", "ex. 15a"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex15a : LinguisticExample :=
     readings := []
     paperFeatures := [("negation", "inner"), ("diagnostic", "fakt")] }
 
-def ex15d : LinguisticExample :=
+def ex15d : Datum :=
   { id := "stankova2026_ex15d"
     source := ⟨"stankova-2026", "ex. 15d"⟩
     reportedIn := none
@@ -108,6 +108,6 @@ def ex15d : LinguisticExample :=
     readings := []
     paperFeatures := [("negation", "outer"), ("diagnostic", "fakt")] }
 
-def all : List LinguisticExample := [ex6a, ex6b, ex7a, ex7b, ex11, ex15a, ex15d]
+def all : List Datum := [ex6a, ex6b, ex7a, ex7b, ex11, ex15a, ex15d]
 
 end Stankova2026.Examples

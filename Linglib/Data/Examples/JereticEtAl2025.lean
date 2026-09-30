@@ -17,7 +17,7 @@ namespace JereticEtAl2025.Examples
 
 open Data.Examples
 
-def jeretic2025_1a : LinguisticExample :=
+def jeretic2025_1a : Datum :=
   { id := "jeretic2025_1a"
     source := ⟨"jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025", "(1a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def jeretic2025_1a : LinguisticExample :=
     readings := []
     paperFeatures := [("language", "english"), ("slot", "universal"), ("dual", "false")] }
 
-def jeretic2025_1c : LinguisticExample :=
+def jeretic2025_1c : Datum :=
   { id := "jeretic2025_1c"
     source := ⟨"jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025", "(1c)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def jeretic2025_1c : LinguisticExample :=
     readings := []
     paperFeatures := [("language", "english"), ("slot", "universal"), ("dual", "true")] }
 
-def jeretic2025_2a : LinguisticExample :=
+def jeretic2025_2a : Datum :=
   { id := "jeretic2025_2a"
     source := ⟨"jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025", "(2a)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def jeretic2025_2a : LinguisticExample :=
     readings := []
     paperFeatures := [("language", "french"), ("slot", "universal"), ("dual", "false")] }
 
-def jeretic2025_2b : LinguisticExample :=
+def jeretic2025_2b : Datum :=
   { id := "jeretic2025_2b"
     source := ⟨"jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025", "(2b)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def jeretic2025_2b : LinguisticExample :=
     readings := []
     paperFeatures := [("language", "french"), ("slot", "universal"), ("dual", "true")] }
 
-def jeretic2025_6a : LinguisticExample :=
+def jeretic2025_6a : Datum :=
   { id := "jeretic2025_6a"
     source := ⟨"jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025", "(6a)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def jeretic2025_6a : LinguisticExample :=
     readings := []
     paperFeatures := [("language", "english"), ("slot", "negative"), ("dual", "false")] }
 
-def jeretic2025_6a_neither : LinguisticExample :=
+def jeretic2025_6a_neither : Datum :=
   { id := "jeretic2025_6a_neither"
     source := ⟨"jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025", "(6a)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def jeretic2025_6a_neither : LinguisticExample :=
     readings := []
     paperFeatures := [("language", "english"), ("slot", "negative"), ("dual", "true")] }
 
-def jeretic2025_6b : LinguisticExample :=
+def jeretic2025_6b : Datum :=
   { id := "jeretic2025_6b"
     source := ⟨"jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025", "(6b)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def jeretic2025_6b : LinguisticExample :=
     readings := []
     paperFeatures := [("language", "french"), ("slot", "negative"), ("dual", "false")] }
 
-def jeretic2025_6c : LinguisticExample :=
+def jeretic2025_6c : Datum :=
   { id := "jeretic2025_6c"
     source := ⟨"jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025", "(6c)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def jeretic2025_6c : LinguisticExample :=
     readings := []
     paperFeatures := [("language", "german"), ("slot", "negative"), ("dual", "false")] }
 
-def jeretic2025_7a : LinguisticExample :=
+def jeretic2025_7a : Datum :=
   { id := "jeretic2025_7a"
     source := ⟨"jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025", "(7a)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def jeretic2025_7a : LinguisticExample :=
     readings := []
     paperFeatures := [("language", "icelandic"), ("slot", "which"), ("dual", "true")] }
 
-def jeretic2025_7b : LinguisticExample :=
+def jeretic2025_7b : Datum :=
   { id := "jeretic2025_7b"
     source := ⟨"jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025", "(7b)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def jeretic2025_7b : LinguisticExample :=
     readings := []
     paperFeatures := [("language", "icelandic"), ("slot", "which"), ("dual", "false")] }
 
-def jeretic2025_8a : LinguisticExample :=
+def jeretic2025_8a : Datum :=
   { id := "jeretic2025_8a"
     source := ⟨"jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025", "(8a)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def jeretic2025_8a : LinguisticExample :=
     readings := []
     paperFeatures := [("language", "japanese"), ("slot", "which"), ("dual", "true")] }
 
-def jeretic2025_8b : LinguisticExample :=
+def jeretic2025_8b : Datum :=
   { id := "jeretic2025_8b"
     source := ⟨"jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025", "(8b)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def jeretic2025_8b : LinguisticExample :=
     readings := []
     paperFeatures := [("language", "japanese"), ("slot", "which"), ("dual", "false")] }
 
-def jeretic2025_9a : LinguisticExample :=
+def jeretic2025_9a : Datum :=
   { id := "jeretic2025_9a"
     source := ⟨"jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025", "(9a)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def jeretic2025_9a : LinguisticExample :=
     readings := []
     paperFeatures := [("language", "japanese"), ("slot", "each"), ("dual", "true")] }
 
-def jeretic2025_9b : LinguisticExample :=
+def jeretic2025_9b : Datum :=
   { id := "jeretic2025_9b"
     source := ⟨"jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025", "(9b)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def jeretic2025_9b : LinguisticExample :=
     readings := []
     paperFeatures := [("language", "japanese"), ("slot", "each"), ("dual", "false")] }
 
-def jeretic2025_10a : LinguisticExample :=
+def jeretic2025_10a : Datum :=
   { id := "jeretic2025_10a"
     source := ⟨"jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025", "(10a)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def jeretic2025_10a : LinguisticExample :=
     readings := []
     paperFeatures := [("language", "japanese"), ("slot", "one"), ("dual", "true")] }
 
-def jeretic2025_10b : LinguisticExample :=
+def jeretic2025_10b : Datum :=
   { id := "jeretic2025_10b"
     source := ⟨"jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025", "(10b)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def jeretic2025_10b : LinguisticExample :=
     readings := []
     paperFeatures := [("language", "japanese"), ("slot", "one"), ("dual", "false")] }
 
-def jeretic2025_11a : LinguisticExample :=
+def jeretic2025_11a : Datum :=
   { id := "jeretic2025_11a"
     source := ⟨"jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025", "(11a)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def jeretic2025_11a : LinguisticExample :=
     readings := []
     paperFeatures := [("language", "english"), ("slot", "which"), ("dual", "false")] }
 
-def jeretic2025_11b : LinguisticExample :=
+def jeretic2025_11b : Datum :=
   { id := "jeretic2025_11b"
     source := ⟨"jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025", "(11b)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def jeretic2025_11b : LinguisticExample :=
     readings := []
     paperFeatures := [("language", "english"), ("slot", "each"), ("dual", "false")] }
 
-def jeretic2025_11c : LinguisticExample :=
+def jeretic2025_11c : Datum :=
   { id := "jeretic2025_11c"
     source := ⟨"jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025", "(11c)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def jeretic2025_11c : LinguisticExample :=
     readings := []
     paperFeatures := [("language", "english"), ("slot", "one"), ("dual", "false")] }
 
-def jeretic2025_12a : LinguisticExample :=
+def jeretic2025_12a : Datum :=
   { id := "jeretic2025_12a"
     source := ⟨"jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025", "(12a)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def jeretic2025_12a : LinguisticExample :=
     readings := []
     paperFeatures := [("language", "french"), ("slot", "which"), ("dual", "false")] }
 
-def jeretic2025_12b : LinguisticExample :=
+def jeretic2025_12b : Datum :=
   { id := "jeretic2025_12b"
     source := ⟨"jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025", "(12b)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def jeretic2025_12b : LinguisticExample :=
     readings := []
     paperFeatures := [("language", "french"), ("slot", "each"), ("dual", "false")] }
 
-def jeretic2025_12c : LinguisticExample :=
+def jeretic2025_12c : Datum :=
   { id := "jeretic2025_12c"
     source := ⟨"jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025", "(12c)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def jeretic2025_12c : LinguisticExample :=
     readings := []
     paperFeatures := [("language", "french"), ("slot", "one"), ("dual", "false")] }
 
-def jeretic2025_80a : LinguisticExample :=
+def jeretic2025_80a : Datum :=
   { id := "jeretic2025_80a"
     source := ⟨"jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025", "(80a)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def jeretic2025_80a : LinguisticExample :=
     readings := []
     paperFeatures := [("language", "english"), ("slot", "always"), ("dual", "false")] }
 
-def jeretic2025_80b : LinguisticExample :=
+def jeretic2025_80b : Datum :=
   { id := "jeretic2025_80b"
     source := ⟨"jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025", "(80b)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def jeretic2025_80b : LinguisticExample :=
     readings := []
     paperFeatures := [("language", "english"), ("slot", "always"), ("dual", "true")] }
 
-def jeretic2025_81a : LinguisticExample :=
+def jeretic2025_81a : Datum :=
   { id := "jeretic2025_81a"
     source := ⟨"jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025", "(81a)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def jeretic2025_81a : LinguisticExample :=
     readings := []
     paperFeatures := [("language", "french"), ("slot", "always"), ("dual", "false")] }
 
-def jeretic2025_83a : LinguisticExample :=
+def jeretic2025_83a : Datum :=
   { id := "jeretic2025_83a"
     source := ⟨"jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025", "(83a)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def jeretic2025_83a : LinguisticExample :=
     readings := []
     paperFeatures := [("language", "german"), ("slot", "always"), ("dual", "false")] }
 
-def jeretic2025_83b : LinguisticExample :=
+def jeretic2025_83b : Datum :=
   { id := "jeretic2025_83b"
     source := ⟨"jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025", "(83b)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def jeretic2025_83b : LinguisticExample :=
     readings := []
     paperFeatures := [("language", "japanese"), ("slot", "always"), ("dual", "false")] }
 
-def jeretic2025_85 : LinguisticExample :=
+def jeretic2025_85 : Datum :=
   { id := "jeretic2025_85"
     source := ⟨"jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025", "(85)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def jeretic2025_85 : LinguisticExample :=
     readings := []
     paperFeatures := [("language", "japanese"), ("slot", "always"), ("dual", "true")] }
 
-def jeretic2025_36 : LinguisticExample :=
+def jeretic2025_36 : Datum :=
   { id := "jeretic2025_36"
     source := ⟨"jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025", "(36)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def jeretic2025_36 : LinguisticExample :=
     readings := []
     paperFeatures := [("slot", "definite"), ("dual", "true")] }
 
-def jeretic2025_25a : LinguisticExample :=
+def jeretic2025_25a : Datum :=
   { id := "jeretic2025_25a"
     source := ⟨"jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025", "(25a)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def jeretic2025_25a : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "25")] }
 
-def jeretic2025_25b : LinguisticExample :=
+def jeretic2025_25b : Datum :=
   { id := "jeretic2025_25b"
     source := ⟨"jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025", "(25b)"⟩
     reportedIn := none
@@ -420,6 +420,6 @@ def jeretic2025_25b : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "25")] }
 
-def all : List LinguisticExample := [jeretic2025_1a, jeretic2025_1c, jeretic2025_2a, jeretic2025_2b, jeretic2025_6a, jeretic2025_6a_neither, jeretic2025_6b, jeretic2025_6c, jeretic2025_7a, jeretic2025_7b, jeretic2025_8a, jeretic2025_8b, jeretic2025_9a, jeretic2025_9b, jeretic2025_10a, jeretic2025_10b, jeretic2025_11a, jeretic2025_11b, jeretic2025_11c, jeretic2025_12a, jeretic2025_12b, jeretic2025_12c, jeretic2025_80a, jeretic2025_80b, jeretic2025_81a, jeretic2025_83a, jeretic2025_83b, jeretic2025_85, jeretic2025_36, jeretic2025_25a, jeretic2025_25b]
+def all : List Datum := [jeretic2025_1a, jeretic2025_1c, jeretic2025_2a, jeretic2025_2b, jeretic2025_6a, jeretic2025_6a_neither, jeretic2025_6b, jeretic2025_6c, jeretic2025_7a, jeretic2025_7b, jeretic2025_8a, jeretic2025_8b, jeretic2025_9a, jeretic2025_9b, jeretic2025_10a, jeretic2025_10b, jeretic2025_11a, jeretic2025_11b, jeretic2025_11c, jeretic2025_12a, jeretic2025_12b, jeretic2025_12c, jeretic2025_80a, jeretic2025_80b, jeretic2025_81a, jeretic2025_83a, jeretic2025_83b, jeretic2025_85, jeretic2025_36, jeretic2025_25a, jeretic2025_25b]
 
 end JereticEtAl2025.Examples

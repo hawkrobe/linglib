@@ -17,7 +17,7 @@ namespace OsborneLi2023.Examples
 
 open Data.Examples
 
-def ex2a : LinguisticExample :=
+def ex2a : Datum :=
   { id := "osborneli2023_ex2a"
     source := ⟨"osborne-li-2023", "(2a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex2a : LinguisticExample :=
     readings := [("him = Max (co-valued)", .questionable), ("him = external referent", .acceptable)]
     paperFeatures := [("coordinateSubject", "true"), ("coVValuedPair", "him;Max"), ("paperSection", "1"), ("paperMeanScore", "2.38"), ("paperNRespondents", "60")] }
 
-def ex3a : LinguisticExample :=
+def ex3a : Datum :=
   { id := "osborneli2023_ex3a"
     source := ⟨"osborne-li-2023", "(3a)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex3a : LinguisticExample :=
     readings := [("himself = John", .marginal)]
     paperFeatures := [("coordinateSubject", "true"), ("coVValuedPair", "himself;John"), ("anaphorType", "reflexive"), ("paperSection", "3"), ("paperMeanScore", "2.15"), ("paperNRespondents", "60")] }
 
-def ex3b : LinguisticExample :=
+def ex3b : Datum :=
   { id := "osborneli2023_ex3b"
     source := ⟨"osborne-li-2023", "(3b)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex3b : LinguisticExample :=
     readings := [("him = John (co-valued)", .questionable)]
     paperFeatures := [("coordinateSubject", "true"), ("coVValuedPair", "him;John"), ("paperSection", "3"), ("paperMeanScore", "2.43"), ("paperNRespondents", "60")] }
 
-def ex5a : LinguisticExample :=
+def ex5a : Datum :=
   { id := "osborneli2023_ex5a"
     source := ⟨"osborne-li-2023", "(5a)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex5a : LinguisticExample :=
     readings := [("him = John", .questionable)]
     paperFeatures := [("coordinateSubject", "true"), ("coordinator", "both...and"), ("coVValuedPair", "him;John"), ("paperSection", "3"), ("paperMeanScore", "3.20"), ("paperNRespondents", "60")] }
 
-def ex6a : LinguisticExample :=
+def ex6a : Datum :=
   { id := "osborneli2023_ex6a"
     source := ⟨"osborne-li-2023", "(6a)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex6a : LinguisticExample :=
     readings := [("him = Bill", .questionable)]
     paperFeatures := [("coordinateSubject", "true"), ("construction", "raising-to-object"), ("coVValuedPair", "him;Bill"), ("paperSection", "3"), ("paperMeanScore", "2.42"), ("paperNRespondents", "60")] }
 
-def ex9a : LinguisticExample :=
+def ex9a : Datum :=
   { id := "osborneli2023_ex9a"
     source := ⟨"osborne-li-2023", "(9a)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex9a : LinguisticExample :=
     readings := [("himself = Max", .acceptable)]
     paperFeatures := [("coordinateSubject", "false"), ("coVValuedPair", "himself;Max"), ("paperSection", "3"), ("paperMeanScore", "1.28"), ("paperNRespondents", "60")] }
 
-def ex9b : LinguisticExample :=
+def ex9b : Datum :=
   { id := "osborneli2023_ex9b"
     source := ⟨"osborne-li-2023", "(9b)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex9b : LinguisticExample :=
     readings := [("him = Max", .questionable), ("him = external referent", .acceptable)]
     paperFeatures := [("coordinateSubject", "false"), ("coVValuedPair", "him;Max"), ("paperSection", "3"), ("paperMeanScore", "2.92"), ("paperNRespondents", "60")] }
 
-def ex11a : LinguisticExample :=
+def ex11a : Datum :=
   { id := "osborneli2023_ex11a"
     source := ⟨"osborne-li-2023", "(11a)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex11a : LinguisticExample :=
     readings := [("his = Max", .acceptable)]
     paperFeatures := [("coordinateSubject", "true"), ("coVValuedPair", "his;Max"), ("anaphorType", "possessive"), ("paperSection", "3"), ("paperMeanScore", "1.20"), ("paperNRespondents", "60")] }
 
-def ex11e : LinguisticExample :=
+def ex11e : Datum :=
   { id := "osborneli2023_ex11e"
     source := ⟨"osborne-li-2023", "(11e)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex11e : LinguisticExample :=
     readings := [("object Max ≠ subject Max", .acceptable), ("object Max = subject Max (same individual)", .marginal)]
     paperFeatures := [("coordinateSubject", "true"), ("coVValuedPair", "Max;Max"), ("anaphorType", "R-expression"), ("paperSection", "3"), ("paperMeanScore", "1.47"), ("paperNRespondents", "100")] }
 
-def ex20b : LinguisticExample :=
+def ex20b : Datum :=
   { id := "osborneli2023_ex20b"
     source := ⟨"osborne-li-2023", "(20b)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex20b : LinguisticExample :=
     readings := [("her = Hillary", .questionable)]
     paperFeatures := [("coordinateSubject", "true"), ("construction", "raising-with-experiencer"), ("coVValuedPair", "her;Hillary"), ("paperSection", "3"), ("paperMeanScore", "2.68"), ("paperNRespondents", "60")] }
 
-def ex24a : LinguisticExample :=
+def ex24a : Datum :=
   { id := "osborneli2023_ex24a"
     source := ⟨"osborne-li-2023", "(24a)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex24a : LinguisticExample :=
     readings := [("himself = John", .acceptable)]
     paperFeatures := [("coordinateObject", "true"), ("coVValuedPair", "himself;John"), ("paperSection", "3"), ("paperMeanScore", "1.14"), ("paperNRespondents", "60")] }
 
-def ex25c : LinguisticExample :=
+def ex25c : Datum :=
   { id := "osborneli2023_ex25c"
     source := ⟨"osborne-li-2023", "(25c)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex25c : LinguisticExample :=
     readings := [("her = Jane", .ungrammatical)]
     paperFeatures := [("coordinateSubject", "false"), ("coVValuedPair", "her;Jane"), ("paperSection", "3"), ("paperMeanScore", "3.20"), ("paperNRespondents", "40")] }
 
-def ex28d : LinguisticExample :=
+def ex28d : Datum :=
   { id := "osborneli2023_ex28d"
     source := ⟨"osborne-li-2023", "(28d)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex28d : LinguisticExample :=
     readings := [("him = John", .acceptable)]
     paperFeatures := [("coordinateObject", "true"), ("construction", "raising-to-object"), ("coVValuedPair", "him;John"), ("paperSection", "3"), ("paperMeanScore", "1.40"), ("paperNRespondents", "60")] }
 
-def ex55a : LinguisticExample :=
+def ex55a : Datum :=
   { id := "osborneli2023_ex55a"
     source := ⟨"osborne-li-2023", "(55a)"⟩
     reportedIn := none
@@ -199,6 +199,6 @@ def ex55a : LinguisticExample :=
     readings := [("her = Sophy", .acceptable)]
     paperFeatures := [("coordinateSubject", "true"), ("coVValuedPair", "her;Sophy"), ("paperSection", "6"), ("isCounterexample", "true"), ("paperMeanScore", "1.43"), ("paperNRespondents", "40")] }
 
-def all : List LinguisticExample := [ex2a, ex3a, ex3b, ex5a, ex6a, ex9a, ex9b, ex11a, ex11e, ex20b, ex24a, ex25c, ex28d, ex55a]
+def all : List Datum := [ex2a, ex3a, ex3b, ex5a, ex6a, ex9a, ex9b, ex11a, ex11e, ex20b, ex24a, ex25c, ex28d, ex55a]
 
 end OsborneLi2023.Examples

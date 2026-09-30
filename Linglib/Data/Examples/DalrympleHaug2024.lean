@@ -17,7 +17,7 @@ namespace DalrympleHaug2024.Examples
 
 open Data.Examples
 
-def ex_1 : LinguisticExample :=
+def ex_1 : Datum :=
   { id := "dalrymplehaug2024_1"
     source := ⟨"dalrymple-haug-2024", "(1)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_1 : LinguisticExample :=
     readings := [("narrow", .acceptable), ("wide", .acceptable)]
     paperFeatures := [("section", "1"), ("antecedent", "plural pronoun")] }
 
-def ex_10 : LinguisticExample :=
+def ex_10 : Datum :=
   { id := "dalrymplehaug2024_10"
     source := ⟨"dalrymple-haug-2024", "(10)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_10 : LinguisticExample :=
     readings := [("narrow", .unacceptable), ("wide", .acceptable)]
     paperFeatures := [("section", "2"), ("antecedent", "bound singular null pronoun")] }
 
-def ex_11 : LinguisticExample :=
+def ex_11 : Datum :=
   { id := "dalrymplehaug2024_11"
     source := ⟨"dalrymple-haug-2024", "(11)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_11 : LinguisticExample :=
     readings := [("narrow", .acceptable), ("wide", .unacceptable)]
     paperFeatures := [("section", "2"), ("antecedent", "plural reflexive")] }
 
-def ex_12 : LinguisticExample :=
+def ex_12 : Datum :=
   { id := "dalrymplehaug2024_12"
     source := ⟨"dalrymple-haug-2024", "(12)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_12 : LinguisticExample :=
     readings := [("narrow", .acceptable), ("wide", .unacceptable)]
     paperFeatures := [("section", "3"), ("antecedent", "collective conjunct")] }
 
-def ex_13 : LinguisticExample :=
+def ex_13 : Datum :=
   { id := "dalrymplehaug2024_13"
     source := ⟨"dalrymple-haug-2024", "(13)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_13 : LinguisticExample :=
     readings := [("wide", .acceptable)]
     paperFeatures := [("section", "4"), ("antecedent", "PRO, partial-control verb")] }
 
-def ex_14 : LinguisticExample :=
+def ex_14 : Datum :=
   { id := "dalrymplehaug2024_14"
     source := ⟨"dalrymple-haug-2024", "(14)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_14 : LinguisticExample :=
     readings := [("narrow", .acceptable), ("wide", .acceptable)]
     paperFeatures := [("section", "4"), ("antecedent", "PRO, collective controller")] }
 
-def ex_15a : LinguisticExample :=
+def ex_15a : Datum :=
   { id := "dalrymplehaug2024_15a"
     source := ⟨"dalrymple-haug-2024", "(15a)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_15a : LinguisticExample :=
     readings := [("narrow", .acceptable)]
     paperFeatures := [("section", "4"), ("antecedent", "PRO, partial control"), ("attested", "web")] }
 
-def ex_15b : LinguisticExample :=
+def ex_15b : Datum :=
   { id := "dalrymplehaug2024_15b"
     source := ⟨"dalrymple-haug-2024", "(15b)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_15b : LinguisticExample :=
     readings := [("narrow", .acceptable)]
     paperFeatures := [("section", "4"), ("antecedent", "PRO, partial control"), ("attested", "web")] }
 
-def ex_16a : LinguisticExample :=
+def ex_16a : Datum :=
   { id := "dalrymplehaug2024_16a"
     source := ⟨"dalrymple-haug-2024", "(16a)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_16a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("antecedent", "PRO, exhaustive-control verb")] }
 
-def ex_16b : LinguisticExample :=
+def ex_16b : Datum :=
   { id := "dalrymplehaug2024_16b"
     source := ⟨"dalrymple-haug-2024", "(16b)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_16b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("antecedent", "PRO, exhaustive-control verb")] }
 
-def ex_17 : LinguisticExample :=
+def ex_17 : Datum :=
   { id := "dalrymplehaug2024_17"
     source := ⟨"dalrymple-haug-2024", "(17)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_17 : LinguisticExample :=
     readings := [("narrow", .unacceptable), ("wide", .acceptable)]
     paperFeatures := [("section", "4"), ("antecedent", "PRO, exhaustive control, distributive controller")] }
 
-def ex_18a : LinguisticExample :=
+def ex_18a : Datum :=
   { id := "dalrymplehaug2024_18a"
     source := ⟨"dalrymple-haug-2024", "(18a)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_18a : LinguisticExample :=
     readings := [("narrow", .acceptable), ("wide", .unacceptable)]
     paperFeatures := [("section", "5"), ("antecedent", "matrix distributor")] }
 
-def ex_18b : LinguisticExample :=
+def ex_18b : Datum :=
   { id := "dalrymplehaug2024_18b"
     source := ⟨"dalrymple-haug-2024", "(18b)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_18b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("antecedent", "distributor, simple sentence")] }
 
-def ex_19a : LinguisticExample :=
+def ex_19a : Datum :=
   { id := "dalrymplehaug2024_19a"
     source := ⟨"dalrymple-haug-2024", "(19a)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_19a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("antecedent", "distributor, simple sentence"), ("attested", "web")] }
 
-def ex_19b : LinguisticExample :=
+def ex_19b : Datum :=
   { id := "dalrymplehaug2024_19b"
     source := ⟨"dalrymple-haug-2024", "(19b)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_19b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("antecedent", "distributor, simple sentence"), ("attested", "web")] }
 
-def ex_20a : LinguisticExample :=
+def ex_20a : Datum :=
   { id := "dalrymplehaug2024_20a"
     source := ⟨"dalrymple-haug-2024", "(20a)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_20a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("antecedent", "distributor 'each of them', simple sentence"), ("attested", "web")] }
 
-def ex_20b : LinguisticExample :=
+def ex_20b : Datum :=
   { id := "dalrymplehaug2024_20b"
     source := ⟨"dalrymple-haug-2024", "(20b)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex_20b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("antecedent", "distributor 'each of them', simple sentence"), ("attested", "web")] }
 
-def ex_21a : LinguisticExample :=
+def ex_21a : Datum :=
   { id := "dalrymplehaug2024_21a"
     source := ⟨"dalrymple-haug-2024", "(21a)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex_21a : LinguisticExample :=
     readings := [("internal", .acceptable), ("external", .acceptable)]
     paperFeatures := [("section", "5"), ("diagnostic", "internal reading of 'different'")] }
 
-def ex_21b : LinguisticExample :=
+def ex_21b : Datum :=
   { id := "dalrymplehaug2024_21b"
     source := ⟨"dalrymple-haug-2024", "(21b)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex_21b : LinguisticExample :=
     readings := [("internal", .unacceptable), ("external", .acceptable)]
     paperFeatures := [("section", "5"), ("diagnostic", "internal reading of 'different'")] }
 
-def ex_22 : LinguisticExample :=
+def ex_22 : Datum :=
   { id := "dalrymplehaug2024_22"
     source := ⟨"dalrymple-haug-2024", "(22)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex_22 : LinguisticExample :=
     readings := [("internal", .acceptable)]
     paperFeatures := [("section", "5"), ("diagnostic", "internal reading of 'different'")] }
 
-def ex_23a : LinguisticExample :=
+def ex_23a : Datum :=
   { id := "dalrymplehaug2024_23a"
     source := ⟨"dalrymple-haug-2024", "(23a)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex_23a : LinguisticExample :=
     readings := [("internal", .acceptable)]
     paperFeatures := [("section", "5"), ("diagnostic", "internal reading of 'different'"), ("attested", "web")] }
 
-def ex_23b : LinguisticExample :=
+def ex_23b : Datum :=
   { id := "dalrymplehaug2024_23b"
     source := ⟨"dalrymple-haug-2024", "(23b)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex_23b : LinguisticExample :=
     readings := [("internal", .acceptable)]
     paperFeatures := [("section", "5"), ("diagnostic", "internal reading of 'different'"), ("attested", "web")] }
 
-def ex_24a : LinguisticExample :=
+def ex_24a : Datum :=
   { id := "dalrymplehaug2024_24a"
     source := ⟨"dalrymple-haug-2024", "(24a)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex_24a : LinguisticExample :=
     readings := [("narrow", .acceptable)]
     paperFeatures := [("section", "5"), ("antecedent", "distributor in the complement clause"), ("attested", "web")] }
 
-def ex_24b : LinguisticExample :=
+def ex_24b : Datum :=
   { id := "dalrymplehaug2024_24b"
     source := ⟨"dalrymple-haug-2024", "(24b)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex_24b : LinguisticExample :=
     readings := [("narrow", .acceptable)]
     paperFeatures := [("section", "5"), ("antecedent", "distributor in the complement clause"), ("attested", "web")] }
 
-def ex_25 : LinguisticExample :=
+def ex_25 : Datum :=
   { id := "dalrymplehaug2024_25"
     source := ⟨"dalrymple-haug-2024", "(25)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex_25 : LinguisticExample :=
     readings := [("wide", .acceptable)]
     paperFeatures := [("section", "5"), ("antecedent", "distributor in the complement clause"), ("attested", "web")] }
 
-def ex_26a : LinguisticExample :=
+def ex_26a : Datum :=
   { id := "dalrymplehaug2024_26a"
     source := ⟨"dalrymple-haug-2024", "(26a)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex_26a : LinguisticExample :=
     readings := [("wide", .acceptable)]
     paperFeatures := [("section", "5"), ("antecedent", "matrix distributor"), ("attested", "web")] }
 
-def ex_26b : LinguisticExample :=
+def ex_26b : Datum :=
   { id := "dalrymplehaug2024_26b"
     source := ⟨"dalrymple-haug-2024", "(26b)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def ex_26b : LinguisticExample :=
     readings := [("wide", .acceptable)]
     paperFeatures := [("section", "5"), ("antecedent", "matrix distributor 'neither of them'"), ("attested", "web")] }
 
-def ex_28 : LinguisticExample :=
+def ex_28 : Datum :=
   { id := "dalrymplehaug2024_28"
     source := ⟨"dalrymple-haug-2024", "(28)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def ex_28 : LinguisticExample :=
     readings := [("narrow", .acceptable), ("wide", .unacceptable)]
     paperFeatures := [("section", "6"), ("antecedent", "logophor")] }
 
-def ex_31 : LinguisticExample :=
+def ex_31 : Datum :=
   { id := "dalrymplehaug2024_31"
     source := ⟨"dalrymple-haug-2024", "(31)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def ex_31 : LinguisticExample :=
     readings := [("bound logophor", .acceptable)]
     paperFeatures := [("section", "6"), ("antecedent", "logophor, no reciprocal")] }
 
-def ex_32 : LinguisticExample :=
+def ex_32 : Datum :=
   { id := "dalrymplehaug2024_32"
     source := ⟨"dalrymple-haug-2024", "(32)"⟩
     reportedIn := none
@@ -407,6 +407,6 @@ def ex_32 : LinguisticExample :=
     readings := [("wide", .acceptable)]
     paperFeatures := [("section", "6"), ("antecedent", "ordinary plural pronoun")] }
 
-def all : List LinguisticExample := [ex_1, ex_10, ex_11, ex_12, ex_13, ex_14, ex_15a, ex_15b, ex_16a, ex_16b, ex_17, ex_18a, ex_18b, ex_19a, ex_19b, ex_20a, ex_20b, ex_21a, ex_21b, ex_22, ex_23a, ex_23b, ex_24a, ex_24b, ex_25, ex_26a, ex_26b, ex_28, ex_31, ex_32]
+def all : List Datum := [ex_1, ex_10, ex_11, ex_12, ex_13, ex_14, ex_15a, ex_15b, ex_16a, ex_16b, ex_17, ex_18a, ex_18b, ex_19a, ex_19b, ex_20a, ex_20b, ex_21a, ex_21b, ex_22, ex_23a, ex_23b, ex_24a, ex_24b, ex_25, ex_26a, ex_26b, ex_28, ex_31, ex_32]
 
 end DalrympleHaug2024.Examples

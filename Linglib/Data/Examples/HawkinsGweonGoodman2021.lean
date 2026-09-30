@@ -17,7 +17,7 @@ namespace HawkinsGweonGoodman2021.Examples
 
 open Data.Examples
 
-def item1 : LinguisticExample :=
+def item1 : Datum :=
   { id := "hawkinsgweongoodman2021_item1"
     source := ⟨"keysar-etal-2003", "Table 1, item 1"⟩
     reportedIn := some ⟨"hawkins-gweon-goodman-2021", "Table 1, item 1"⟩
@@ -30,7 +30,7 @@ def item1 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("target", "sunglasses"), ("hiddenDistractor", "glasses case"), ("condition", "scripted")] }
 
-def item2 : LinguisticExample :=
+def item2 : Datum :=
   { id := "hawkinsgweongoodman2021_item2"
     source := ⟨"keysar-etal-2003", "Table 1, item 2"⟩
     reportedIn := some ⟨"hawkins-gweon-goodman-2021", "Table 1, item 2"⟩
@@ -43,7 +43,7 @@ def item2 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("target", "block (3rd row)"), ("hiddenDistractor", "block (4th row)"), ("condition", "scripted")] }
 
-def item3 : LinguisticExample :=
+def item3 : Datum :=
   { id := "hawkinsgweongoodman2021_item3"
     source := ⟨"keysar-etal-2003", "Table 1, item 3"⟩
     reportedIn := some ⟨"hawkins-gweon-goodman-2021", "Table 1, item 3"⟩
@@ -56,7 +56,7 @@ def item3 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("target", "cassette"), ("hiddenDistractor", "Scotch tape"), ("condition", "scripted")] }
 
-def item4 : LinguisticExample :=
+def item4 : Datum :=
   { id := "hawkinsgweongoodman2021_item4"
     source := ⟨"keysar-etal-2003", "Table 1, item 4"⟩
     reportedIn := some ⟨"hawkins-gweon-goodman-2021", "Table 1, item 4"⟩
@@ -69,7 +69,7 @@ def item4 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("target", "medium cup"), ("hiddenDistractor", "large cup"), ("condition", "scripted")] }
 
-def item5 : LinguisticExample :=
+def item5 : Datum :=
   { id := "hawkinsgweongoodman2021_item5"
     source := ⟨"keysar-etal-2003", "Table 1, item 5"⟩
     reportedIn := some ⟨"hawkins-gweon-goodman-2021", "Table 1, item 5"⟩
@@ -82,7 +82,7 @@ def item5 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("target", "round hairbrush"), ("hiddenDistractor", "flat hairbrush"), ("condition", "scripted")] }
 
-def item6 : LinguisticExample :=
+def item6 : Datum :=
   { id := "hawkinsgweongoodman2021_item6"
     source := ⟨"keysar-etal-2003", "Table 1, item 6"⟩
     reportedIn := some ⟨"hawkins-gweon-goodman-2021", "Table 1, item 6"⟩
@@ -95,7 +95,7 @@ def item6 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("target", "board eraser"), ("hiddenDistractor", "pencil eraser"), ("condition", "scripted")] }
 
-def item7 : LinguisticExample :=
+def item7 : Datum :=
   { id := "hawkinsgweongoodman2021_item7"
     source := ⟨"keysar-etal-2003", "Table 1, item 7"⟩
     reportedIn := some ⟨"hawkins-gweon-goodman-2021", "Table 1, item 7"⟩
@@ -108,7 +108,7 @@ def item7 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("target", "medium candle"), ("hiddenDistractor", "small candle"), ("condition", "scripted")] }
 
-def item8 : LinguisticExample :=
+def item8 : Datum :=
   { id := "hawkinsgweongoodman2021_item8"
     source := ⟨"keysar-etal-2003", "Table 1, item 8"⟩
     reportedIn := some ⟨"hawkins-gweon-goodman-2021", "Table 1, item 8"⟩
@@ -121,7 +121,7 @@ def item8 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("target", "computer mouse"), ("hiddenDistractor", "toy mouse"), ("condition", "scripted")] }
 
-def shape : LinguisticExample :=
+def shape : Datum :=
   { id := "hawkinsgweongoodman2021_shape"
     source := ⟨"hawkins-gweon-goodman-2021", "§2.4"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def shape : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.4"), ("features", "shape"), ("speaker", "egocentric")] }
 
-def shapeColor : LinguisticExample :=
+def shapeColor : Datum :=
   { id := "hawkinsgweongoodman2021_shapeColor"
     source := ⟨"hawkins-gweon-goodman-2021", "§2.4"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def shapeColor : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.4"), ("features", "shape, color")] }
 
-def full : LinguisticExample :=
+def full : Datum :=
   { id := "hawkinsgweongoodman2021_full"
     source := ⟨"hawkins-gweon-goodman-2021", "§2.4"⟩
     reportedIn := none
@@ -160,6 +160,6 @@ def full : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.4"), ("features", "shape, color, texture")] }
 
-def all : List LinguisticExample := [item1, item2, item3, item4, item5, item6, item7, item8, shape, shapeColor, full]
+def all : List Datum := [item1, item2, item3, item4, item5, item6, item7, item8, shape, shapeColor, full]
 
 end HawkinsGweonGoodman2021.Examples

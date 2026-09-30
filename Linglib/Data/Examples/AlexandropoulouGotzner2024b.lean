@@ -17,7 +17,7 @@ namespace AlexandropoulouGotzner2024b.Examples
 
 open Data.Examples
 
-def ag2024b_1 : LinguisticExample :=
+def ag2024b_1 : Datum :=
   { id := "ag2024b_1"
     source := ⟨"alexandropoulou-gotzner-2024b", "(1)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ag2024b_1 : LinguisticExample :=
     readings := [("My apartment is small", .acceptable)]
     paperFeatures := [("adjective", "large"), ("adjectiveType", "relative"), ("strength", "weak"), ("polarity", "positive"), ("negation", "negated"), ("relation", "implicates")] }
 
-def ag2024b_2 : LinguisticExample :=
+def ag2024b_2 : Datum :=
   { id := "ag2024b_2"
     source := ⟨"alexandropoulou-gotzner-2024b", "(2)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ag2024b_2 : LinguisticExample :=
     readings := [("My apartment is large", .unacceptable)]
     paperFeatures := [("adjective", "small"), ("adjectiveType", "relative"), ("strength", "weak"), ("polarity", "negative"), ("negation", "negated"), ("relation", "does_not_implicate")] }
 
-def ag2024b_5a : LinguisticExample :=
+def ag2024b_5a : Datum :=
   { id := "ag2024b_5a"
     source := ⟨"alexandropoulou-gotzner-2024b", "(5a)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ag2024b_5a : LinguisticExample :=
     readings := [("The apartment is dirty", .acceptable)]
     paperFeatures := [("adjective", "clean"), ("adjectiveType", "absolute"), ("strength", "weak"), ("polarity", "positive"), ("negation", "negated"), ("relation", "entails")] }
 
-def ag2024b_5b : LinguisticExample :=
+def ag2024b_5b : Datum :=
   { id := "ag2024b_5b"
     source := ⟨"alexandropoulou-gotzner-2024b", "(5b)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ag2024b_5b : LinguisticExample :=
     readings := [("The apartment is clean", .acceptable)]
     paperFeatures := [("adjective", "dirty"), ("adjectiveType", "absolute"), ("strength", "weak"), ("polarity", "negative"), ("negation", "negated"), ("relation", "entails")] }
 
-def ag2024b_6a : LinguisticExample :=
+def ag2024b_6a : Datum :=
   { id := "ag2024b_6a"
     source := ⟨"alexandropoulou-gotzner-2024b", "(6a)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ag2024b_6a : LinguisticExample :=
     readings := [("The apartment is small", .unacceptable)]
     paperFeatures := [("adjective", "large"), ("adjectiveType", "relative"), ("strength", "weak"), ("polarity", "positive"), ("negation", "negated"), ("relation", "does_not_entail")] }
 
-def ag2024b_6b : LinguisticExample :=
+def ag2024b_6b : Datum :=
   { id := "ag2024b_6b"
     source := ⟨"alexandropoulou-gotzner-2024b", "(6b)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ag2024b_6b : LinguisticExample :=
     readings := [("The apartment is large", .unacceptable)]
     paperFeatures := [("adjective", "small"), ("adjectiveType", "relative"), ("strength", "weak"), ("polarity", "negative"), ("negation", "negated"), ("relation", "does_not_entail")] }
 
-def ag2024b_7a : LinguisticExample :=
+def ag2024b_7a : Datum :=
   { id := "ag2024b_7a"
     source := ⟨"alexandropoulou-gotzner-2024b", "(7a)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ag2024b_7a : LinguisticExample :=
     readings := [("The apartment is dirty", .unacceptable)]
     paperFeatures := [("adjective", "clean"), ("modifier", "very"), ("adjectiveType", "absolute"), ("strength", "weak"), ("polarity", "positive"), ("negation", "negated"), ("relation", "does_not_entail")] }
 
-def ag2024b_7b : LinguisticExample :=
+def ag2024b_7b : Datum :=
   { id := "ag2024b_7b"
     source := ⟨"alexandropoulou-gotzner-2024b", "(7b)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ag2024b_7b : LinguisticExample :=
     readings := [("The apartment is filthy", .unacceptable), ("The apartment is dirty", .unacceptable)]
     paperFeatures := [("adjective", "pristine"), ("adjectiveType", "absolute"), ("strength", "strong"), ("polarity", "positive"), ("negation", "negated"), ("relation", "does_not_entail")] }
 
-def ag2024b_9 : LinguisticExample :=
+def ag2024b_9 : Datum :=
   { id := "ag2024b_9"
     source := ⟨"alexandropoulou-gotzner-2024b", "(9)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ag2024b_9 : LinguisticExample :=
     readings := [("The apartment is large but not gigantic", .acceptable)]
     paperFeatures := [("adjective", "large"), ("adjectiveType", "relative"), ("strength", "weak"), ("polarity", "positive"), ("negation", "nonNegated"), ("relation", "implicates")] }
 
-def ag2024b_10 : LinguisticExample :=
+def ag2024b_10 : Datum :=
   { id := "ag2024b_10"
     source := ⟨"alexandropoulou-gotzner-2024b", "(10)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ag2024b_10 : LinguisticExample :=
     readings := [("My apartment is small", .acceptable)]
     paperFeatures := [("adjective", "large"), ("adjectiveType", "relative"), ("strength", "weak"), ("polarity", "positive"), ("negation", "negated"), ("relation", "implicates"), ("inference", "negative_strengthening")] }
 
-def ag2024b_11 : LinguisticExample :=
+def ag2024b_11 : Datum :=
   { id := "ag2024b_11"
     source := ⟨"alexandropoulou-gotzner-2024b", "(11)"⟩
     reportedIn := none
@@ -160,6 +160,6 @@ def ag2024b_11 : LinguisticExample :=
     readings := [("My apartment is neither large nor small", .acceptable)]
     paperFeatures := [("adjective", "small"), ("adjectiveType", "relative"), ("strength", "weak"), ("polarity", "negative"), ("negation", "negated"), ("relation", "implicates"), ("inference", "middling")] }
 
-def all : List LinguisticExample := [ag2024b_1, ag2024b_2, ag2024b_5a, ag2024b_5b, ag2024b_6a, ag2024b_6b, ag2024b_7a, ag2024b_7b, ag2024b_9, ag2024b_10, ag2024b_11]
+def all : List Datum := [ag2024b_1, ag2024b_2, ag2024b_5a, ag2024b_5b, ag2024b_6a, ag2024b_6b, ag2024b_7a, ag2024b_7b, ag2024b_9, ag2024b_10, ag2024b_11]
 
 end AlexandropoulouGotzner2024b.Examples

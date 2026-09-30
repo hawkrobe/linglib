@@ -213,7 +213,7 @@ structure Row where
   grammatical : Bool
   deriving DecidableEq
 
-def Row.ofExample (ex : LinguisticExample) : Option Row := do
+def Row.ofDatum (ex : Datum) : Option Row := do
   let s ← ex.parse? "size" [("cP", diSize), ("aP", aSize), ("vP", ComplementSize.vP)]
   let d ← ex.parse? "diagnostic" [("belief", Diagnostic.belief), ("intention", .intention),
     ("truthAssessable", .truthAssessable), ("subjectControl", .subjectControl),
@@ -222,7 +222,7 @@ def Row.ofExample (ex : LinguisticExample) : Option Row := do
   let g ← ex.parse? "grammatical" [("yes", true), ("no", false)]
   pure ⟨s, d, g⟩
 
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- The paper's sentences are grammatical exactly where complement size predicts. -/
 theorem rows_predicted : ∀ r ∈ rows, (r.grammatical = true ↔ r.diagnostic.Predicted r.size) := by

@@ -17,7 +17,7 @@ namespace Grano2024.Examples
 
 open Data.Examples
 
-def ex_1a_sbjv : LinguisticExample :=
+def ex_1a_sbjv : Datum :=
   { id := "grano2024_1a_sbjv"
     source := ⟨"villalta-2008", "p. 470"⟩
     reportedIn := some ⟨"grano-2024", "(1a)"⟩
@@ -30,7 +30,7 @@ def ex_1a_sbjv : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "want"), ("complement", "subjunctive")] }
 
-def ex_1a_ind : LinguisticExample :=
+def ex_1a_ind : Datum :=
   { id := "grano2024_1a_ind"
     source := ⟨"villalta-2008", "p. 470"⟩
     reportedIn := some ⟨"grano-2024", "(1a)"⟩
@@ -43,7 +43,7 @@ def ex_1a_ind : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "want"), ("complement", "indicative")] }
 
-def ex_1b : LinguisticExample :=
+def ex_1b : Datum :=
   { id := "grano2024_1b"
     source := ⟨"villalta-2008", "p. 470"⟩
     reportedIn := some ⟨"grano-2024", "(1b)"⟩
@@ -56,7 +56,7 @@ def ex_1b : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "want"), ("complement", "infinitive")] }
 
-def ex_2a_sbjv : LinguisticExample :=
+def ex_2a_sbjv : Datum :=
   { id := "grano2024_2a_sbjv"
     source := ⟨"grano-2024", "(2a)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_2a_sbjv : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "want"), ("complement", "subjunctive")] }
 
-def ex_2a_ind : LinguisticExample :=
+def ex_2a_ind : Datum :=
   { id := "grano2024_2a_ind"
     source := ⟨"grano-2024", "(2a)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_2a_ind : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "want"), ("complement", "indicative")] }
 
-def ex_2b : LinguisticExample :=
+def ex_2b : Datum :=
   { id := "grano2024_2b"
     source := ⟨"grano-2024", "(2b)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_2b : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "want"), ("complement", "infinitive")] }
 
-def ex_3a_sbjv : LinguisticExample :=
+def ex_3a_sbjv : Datum :=
   { id := "grano2024_3a_sbjv"
     source := ⟨"portner-rubinstein-2020", "p. 380"⟩
     reportedIn := some ⟨"grano-2024", "(3a)"⟩
@@ -108,7 +108,7 @@ def ex_3a_sbjv : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "want"), ("complement", "subjunctive")] }
 
-def ex_3a_ind : LinguisticExample :=
+def ex_3a_ind : Datum :=
   { id := "grano2024_3a_ind"
     source := ⟨"portner-rubinstein-2020", "p. 380"⟩
     reportedIn := some ⟨"grano-2024", "(3a)"⟩
@@ -121,7 +121,7 @@ def ex_3a_ind : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "want"), ("complement", "indicative")] }
 
-def ex_3b : LinguisticExample :=
+def ex_3b : Datum :=
   { id := "grano2024_3b"
     source := ⟨"portner-rubinstein-2020", "p. 380"⟩
     reportedIn := some ⟨"grano-2024", "(3b)"⟩
@@ -134,7 +134,7 @@ def ex_3b : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "want"), ("complement", "infinitive")] }
 
-def ex_4a_sbjv : LinguisticExample :=
+def ex_4a_sbjv : Datum :=
   { id := "grano2024_4a_sbjv"
     source := ⟨"portner-rubinstein-2020", "p. 382"⟩
     reportedIn := some ⟨"grano-2024", "(4a)"⟩
@@ -147,7 +147,7 @@ def ex_4a_sbjv : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "want"), ("complement", "subjunctive")] }
 
-def ex_4a_ind : LinguisticExample :=
+def ex_4a_ind : Datum :=
   { id := "grano2024_4a_ind"
     source := ⟨"portner-rubinstein-2020", "p. 382"⟩
     reportedIn := some ⟨"grano-2024", "(4a)"⟩
@@ -160,7 +160,7 @@ def ex_4a_ind : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "want"), ("complement", "indicative")] }
 
-def ex_4b : LinguisticExample :=
+def ex_4b : Datum :=
   { id := "grano2024_4b"
     source := ⟨"portner-rubinstein-2020", "p. 382"⟩
     reportedIn := some ⟨"grano-2024", "(4b)"⟩
@@ -173,7 +173,7 @@ def ex_4b : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "want"), ("complement", "infinitive")] }
 
-def ex_5_sbjv : LinguisticExample :=
+def ex_5_sbjv : Datum :=
   { id := "grano2024_5_sbjv"
     source := ⟨"giannakidou-mari-2021", "p. 142"⟩
     reportedIn := some ⟨"grano-2024", "(5)"⟩
@@ -186,7 +186,7 @@ def ex_5_sbjv : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "want"), ("complement", "subjunctive")] }
 
-def ex_5_ind : LinguisticExample :=
+def ex_5_ind : Datum :=
   { id := "grano2024_5_ind"
     source := ⟨"giannakidou-mari-2021", "p. 142"⟩
     reportedIn := some ⟨"grano-2024", "(5)"⟩
@@ -199,7 +199,7 @@ def ex_5_ind : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "want"), ("complement", "indicative")] }
 
-def ex_6a : LinguisticExample :=
+def ex_6a : Datum :=
   { id := "grano2024_6a"
     source := ⟨"grano-2024", "(6a)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_6a : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "want"), ("complement", "subjunctive")] }
 
-def ex_6b : LinguisticExample :=
+def ex_6b : Datum :=
   { id := "grano2024_6b"
     source := ⟨"grano-2024", "(6b)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_6b : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "want"), ("complement", "indicative")] }
 
-def ex_6c : LinguisticExample :=
+def ex_6c : Datum :=
   { id := "grano2024_6c"
     source := ⟨"grano-2024", "(6c)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex_6c : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "want"), ("complement", "indicative")] }
 
-def ex_7a : LinguisticExample :=
+def ex_7a : Datum :=
   { id := "grano2024_7a"
     source := ⟨"grano-2024", "(7a)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex_7a : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "want"), ("complement", "infinitive")] }
 
-def ex_7b : LinguisticExample :=
+def ex_7b : Datum :=
   { id := "grano2024_7b"
     source := ⟨"grano-2024", "(7b)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex_7b : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "want"), ("complement", "forTo")] }
 
-def ex_8a : LinguisticExample :=
+def ex_8a : Datum :=
   { id := "grano2024_8a"
     source := ⟨"grano-2024", "(8a)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex_8a : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "want"), ("complement", "indicative")] }
 
-def ex_8b : LinguisticExample :=
+def ex_8b : Datum :=
   { id := "grano2024_8b"
     source := ⟨"grano-2024", "(8b)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex_8b : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "want"), ("complement", "indicative")] }
 
-def ex_9_sbjv : LinguisticExample :=
+def ex_9_sbjv : Datum :=
   { id := "grano2024_9_sbjv"
     source := ⟨"villalta-2008", "p. 511"⟩
     reportedIn := some ⟨"grano-2024", "(9)"⟩
@@ -303,7 +303,7 @@ def ex_9_sbjv : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "hope"), ("complement", "subjunctive")] }
 
-def ex_9_ind : LinguisticExample :=
+def ex_9_ind : Datum :=
   { id := "grano2024_9_ind"
     source := ⟨"villalta-2008", "p. 511"⟩
     reportedIn := some ⟨"grano-2024", "(9)"⟩
@@ -316,7 +316,7 @@ def ex_9_ind : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "hope"), ("complement", "indicative")] }
 
-def ex_10_sbjv : LinguisticExample :=
+def ex_10_sbjv : Datum :=
   { id := "grano2024_10_sbjv"
     source := ⟨"grano-2024", "(10)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex_10_sbjv : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "hope"), ("complement", "subjunctive")] }
 
-def ex_10_ind : LinguisticExample :=
+def ex_10_ind : Datum :=
   { id := "grano2024_10_ind"
     source := ⟨"grano-2024", "(10)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex_10_ind : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "hope"), ("complement", "indicative")] }
 
-def ex_11_sbjv : LinguisticExample :=
+def ex_11_sbjv : Datum :=
   { id := "grano2024_11_sbjv"
     source := ⟨"portner-rubinstein-2020", "p. 381"⟩
     reportedIn := some ⟨"grano-2024", "(11)"⟩
@@ -355,7 +355,7 @@ def ex_11_sbjv : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "hope"), ("complement", "subjunctive")] }
 
-def ex_11_ind : LinguisticExample :=
+def ex_11_ind : Datum :=
   { id := "grano2024_11_ind"
     source := ⟨"portner-rubinstein-2020", "p. 381"⟩
     reportedIn := some ⟨"grano-2024", "(11)"⟩
@@ -368,7 +368,7 @@ def ex_11_ind : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "hope"), ("complement", "indicative")] }
 
-def ex_12_sbjv : LinguisticExample :=
+def ex_12_sbjv : Datum :=
   { id := "grano2024_12_sbjv"
     source := ⟨"portner-rubinstein-2020", "p. 382"⟩
     reportedIn := some ⟨"grano-2024", "(12)"⟩
@@ -381,7 +381,7 @@ def ex_12_sbjv : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "hope"), ("complement", "subjunctive")] }
 
-def ex_12_ind : LinguisticExample :=
+def ex_12_ind : Datum :=
   { id := "grano2024_12_ind"
     source := ⟨"portner-rubinstein-2020", "p. 382"⟩
     reportedIn := some ⟨"grano-2024", "(12)"⟩
@@ -394,7 +394,7 @@ def ex_12_ind : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "hope"), ("complement", "indicative")] }
 
-def ex_13_sbjv : LinguisticExample :=
+def ex_13_sbjv : Datum :=
   { id := "grano2024_13_sbjv"
     source := ⟨"giannakidou-mari-2021", "p. 32"⟩
     reportedIn := some ⟨"grano-2024", "(13)"⟩
@@ -407,7 +407,7 @@ def ex_13_sbjv : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "hope"), ("complement", "subjunctive")] }
 
-def ex_13_ind : LinguisticExample :=
+def ex_13_ind : Datum :=
   { id := "grano2024_13_ind"
     source := ⟨"giannakidou-mari-2021", "p. 32"⟩
     reportedIn := some ⟨"grano-2024", "(13)"⟩
@@ -420,7 +420,7 @@ def ex_13_ind : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "hope"), ("complement", "indicative")] }
 
-def ex_14a : LinguisticExample :=
+def ex_14a : Datum :=
   { id := "grano2024_14a"
     source := ⟨"grano-2024", "(14a)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def ex_14a : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "hope"), ("complement", "subjunctive")] }
 
-def ex_14b : LinguisticExample :=
+def ex_14b : Datum :=
   { id := "grano2024_14b"
     source := ⟨"grano-2024", "(14b)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def ex_14b : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "hope"), ("complement", "indicative")] }
 
-def ex_15a : LinguisticExample :=
+def ex_15a : Datum :=
   { id := "grano2024_15a"
     source := ⟨"grano-2024", "(15a)"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def ex_15a : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "hope"), ("complement", "infinitive")] }
 
-def ex_15b : LinguisticExample :=
+def ex_15b : Datum :=
   { id := "grano2024_15b"
     source := ⟨"grano-2024", "(15b)"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def ex_15b : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "hope"), ("complement", "forTo")] }
 
-def ex_16 : LinguisticExample :=
+def ex_16 : Datum :=
   { id := "grano2024_16"
     source := ⟨"grano-2024", "(16)"⟩
     reportedIn := none
@@ -485,7 +485,7 @@ def ex_16 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "hope"), ("complement", "indicative")] }
 
-def ex_17 : LinguisticExample :=
+def ex_17 : Datum :=
   { id := "grano2024_17"
     source := ⟨"grano-2024", "(17)"⟩
     reportedIn := none
@@ -498,7 +498,7 @@ def ex_17 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "intend"), ("complement", "infinitive")] }
 
-def ex_18 : LinguisticExample :=
+def ex_18 : Datum :=
   { id := "grano2024_18"
     source := ⟨"grano-2024", "(18)"⟩
     reportedIn := none
@@ -511,7 +511,7 @@ def ex_18 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "intend"), ("complement", "infinitive")] }
 
-def ex_19 : LinguisticExample :=
+def ex_19 : Datum :=
   { id := "grano2024_19"
     source := ⟨"grano-2024", "(19)"⟩
     reportedIn := none
@@ -524,7 +524,7 @@ def ex_19 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "intend"), ("complement", "infinitive")] }
 
-def ex_20 : LinguisticExample :=
+def ex_20 : Datum :=
   { id := "grano2024_20"
     source := ⟨"grano-2024", "(20)"⟩
     reportedIn := none
@@ -537,7 +537,7 @@ def ex_20 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "intend"), ("complement", "infinitive")] }
 
-def ex_21 : LinguisticExample :=
+def ex_21 : Datum :=
   { id := "grano2024_21"
     source := ⟨"grano-2024", "(21)"⟩
     reportedIn := none
@@ -550,7 +550,7 @@ def ex_21 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "intend"), ("complement", "infinitive")] }
 
-def ex_22_sbjv : LinguisticExample :=
+def ex_22_sbjv : Datum :=
   { id := "grano2024_22_sbjv"
     source := ⟨"giannakidou-mari-2021", "p. 210"⟩
     reportedIn := some ⟨"grano-2024", "(22)"⟩
@@ -563,7 +563,7 @@ def ex_22_sbjv : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "intend"), ("complement", "subjunctive")] }
 
-def ex_22_ind : LinguisticExample :=
+def ex_22_ind : Datum :=
   { id := "grano2024_22_ind"
     source := ⟨"giannakidou-mari-2021", "p. 210"⟩
     reportedIn := some ⟨"grano-2024", "(22)"⟩
@@ -576,7 +576,7 @@ def ex_22_ind : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "intend"), ("complement", "indicative")] }
 
-def ex_23a : LinguisticExample :=
+def ex_23a : Datum :=
   { id := "grano2024_23a"
     source := ⟨"grano-2024", "(23a)"⟩
     reportedIn := none
@@ -589,7 +589,7 @@ def ex_23a : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "intend"), ("complement", "subjunctive")] }
 
-def ex_23b : LinguisticExample :=
+def ex_23b : Datum :=
   { id := "grano2024_23b"
     source := ⟨"grano-2024", "(23b)"⟩
     reportedIn := none
@@ -602,7 +602,7 @@ def ex_23b : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "intend"), ("complement", "indicative")] }
 
-def ex_24a : LinguisticExample :=
+def ex_24a : Datum :=
   { id := "grano2024_24a"
     source := ⟨"grano-2024", "(24a)"⟩
     reportedIn := none
@@ -615,7 +615,7 @@ def ex_24a : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "intend"), ("complement", "forTo")] }
 
-def ex_24b : LinguisticExample :=
+def ex_24b : Datum :=
   { id := "grano2024_24b"
     source := ⟨"grano-2024", "(24b)"⟩
     reportedIn := none
@@ -628,7 +628,7 @@ def ex_24b : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "intend"), ("complement", "subjunctive")] }
 
-def ex_25_sbjv : LinguisticExample :=
+def ex_25_sbjv : Datum :=
   { id := "grano2024_25_sbjv"
     source := ⟨"grano-2024", "(25)"⟩
     reportedIn := none
@@ -641,7 +641,7 @@ def ex_25_sbjv : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "intend"), ("complement", "subjunctive")] }
 
-def ex_25_ind : LinguisticExample :=
+def ex_25_ind : Datum :=
   { id := "grano2024_25_ind"
     source := ⟨"grano-2024", "(25)"⟩
     reportedIn := none
@@ -654,7 +654,7 @@ def ex_25_ind : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "intend"), ("complement", "indicative")] }
 
-def ex_25_fut : LinguisticExample :=
+def ex_25_fut : Datum :=
   { id := "grano2024_25_fut"
     source := ⟨"grano-2024", "(25)"⟩
     reportedIn := none
@@ -667,7 +667,7 @@ def ex_25_fut : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "intend"), ("complement", "indicative")] }
 
-def ex_26_sbjv : LinguisticExample :=
+def ex_26_sbjv : Datum :=
   { id := "grano2024_26_sbjv"
     source := ⟨"grano-2024", "(26)"⟩
     reportedIn := none
@@ -680,7 +680,7 @@ def ex_26_sbjv : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "intend"), ("complement", "subjunctive")] }
 
-def ex_26_ind : LinguisticExample :=
+def ex_26_ind : Datum :=
   { id := "grano2024_26_ind"
     source := ⟨"grano-2024", "(26)"⟩
     reportedIn := none
@@ -693,7 +693,7 @@ def ex_26_ind : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "intend"), ("complement", "indicative")] }
 
-def ex_26_fut : LinguisticExample :=
+def ex_26_fut : Datum :=
   { id := "grano2024_26_fut"
     source := ⟨"grano-2024", "(26)"⟩
     reportedIn := none
@@ -706,7 +706,7 @@ def ex_26_fut : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "intend"), ("complement", "indicative")] }
 
-def ex_27_sbjv : LinguisticExample :=
+def ex_27_sbjv : Datum :=
   { id := "grano2024_27_sbjv"
     source := ⟨"grano-2024", "(27)"⟩
     reportedIn := none
@@ -719,7 +719,7 @@ def ex_27_sbjv : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "intend"), ("complement", "subjunctive")] }
 
-def ex_27_ind : LinguisticExample :=
+def ex_27_ind : Datum :=
   { id := "grano2024_27_ind"
     source := ⟨"grano-2024", "(27)"⟩
     reportedIn := none
@@ -732,7 +732,7 @@ def ex_27_ind : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "intend"), ("complement", "indicative")] }
 
-def ex_28_sbjv : LinguisticExample :=
+def ex_28_sbjv : Datum :=
   { id := "grano2024_28_sbjv"
     source := ⟨"grano-2024", "(28)"⟩
     reportedIn := none
@@ -745,7 +745,7 @@ def ex_28_sbjv : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "intend"), ("complement", "subjunctive")] }
 
-def ex_28_ind : LinguisticExample :=
+def ex_28_ind : Datum :=
   { id := "grano2024_28_ind"
     source := ⟨"grano-2024", "(28)"⟩
     reportedIn := none
@@ -758,7 +758,7 @@ def ex_28_ind : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "intend"), ("complement", "indicative")] }
 
-def ex_36 : LinguisticExample :=
+def ex_36 : Datum :=
   { id := "grano2024_36"
     source := ⟨"grano-2024", "(36)"⟩
     reportedIn := none
@@ -771,7 +771,7 @@ def ex_36 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "causative"), ("complement", "infinitive")] }
 
-def ex_37 : LinguisticExample :=
+def ex_37 : Datum :=
   { id := "grano2024_37"
     source := ⟨"grano-2024", "(37)"⟩
     reportedIn := none
@@ -784,7 +784,7 @@ def ex_37 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "causative"), ("complement", "infinitive")] }
 
-def ex_38 : LinguisticExample :=
+def ex_38 : Datum :=
   { id := "grano2024_38"
     source := ⟨"grano-2024", "(38)"⟩
     reportedIn := none
@@ -797,7 +797,7 @@ def ex_38 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "causative"), ("complement", "infinitive")] }
 
-def ex_39 : LinguisticExample :=
+def ex_39 : Datum :=
   { id := "grano2024_39"
     source := ⟨"grano-2024", "(39)"⟩
     reportedIn := none
@@ -810,7 +810,7 @@ def ex_39 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "causative"), ("complement", "infinitive")] }
 
-def ex_40_sbjv : LinguisticExample :=
+def ex_40_sbjv : Datum :=
   { id := "grano2024_40_sbjv"
     source := ⟨"grano-2024", "(40)"⟩
     reportedIn := none
@@ -823,7 +823,7 @@ def ex_40_sbjv : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "causative"), ("complement", "subjunctive")] }
 
-def ex_40_ind : LinguisticExample :=
+def ex_40_ind : Datum :=
   { id := "grano2024_40_ind"
     source := ⟨"grano-2024", "(40)"⟩
     reportedIn := none
@@ -836,7 +836,7 @@ def ex_40_ind : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "causative"), ("complement", "indicative")] }
 
-def ex_41_sbjv : LinguisticExample :=
+def ex_41_sbjv : Datum :=
   { id := "grano2024_41_sbjv"
     source := ⟨"grano-2024", "(41)"⟩
     reportedIn := none
@@ -849,7 +849,7 @@ def ex_41_sbjv : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "causative"), ("complement", "subjunctive")] }
 
-def ex_41_ind : LinguisticExample :=
+def ex_41_ind : Datum :=
   { id := "grano2024_41_ind"
     source := ⟨"grano-2024", "(41)"⟩
     reportedIn := none
@@ -862,7 +862,7 @@ def ex_41_ind : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "causative"), ("complement", "indicative")] }
 
-def ex_42a_sbjv : LinguisticExample :=
+def ex_42a_sbjv : Datum :=
   { id := "grano2024_42a_sbjv"
     source := ⟨"grano-2024", "(42a)"⟩
     reportedIn := none
@@ -875,7 +875,7 @@ def ex_42a_sbjv : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "causative"), ("complement", "subjunctive")] }
 
-def ex_42a_ind : LinguisticExample :=
+def ex_42a_ind : Datum :=
   { id := "grano2024_42a_ind"
     source := ⟨"grano-2024", "(42a)"⟩
     reportedIn := none
@@ -888,7 +888,7 @@ def ex_42a_ind : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "causative"), ("complement", "indicative")] }
 
-def ex_42b_sbjv : LinguisticExample :=
+def ex_42b_sbjv : Datum :=
   { id := "grano2024_42b_sbjv"
     source := ⟨"grano-2024", "(42b)"⟩
     reportedIn := none
@@ -901,7 +901,7 @@ def ex_42b_sbjv : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "causative"), ("complement", "subjunctive")] }
 
-def ex_42b_ind : LinguisticExample :=
+def ex_42b_ind : Datum :=
   { id := "grano2024_42b_ind"
     source := ⟨"grano-2024", "(42b)"⟩
     reportedIn := none
@@ -914,7 +914,7 @@ def ex_42b_ind : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "causative"), ("complement", "indicative")] }
 
-def ex_45a : LinguisticExample :=
+def ex_45a : Datum :=
   { id := "grano2024_45a"
     source := ⟨"grano-2024", "(45a)"⟩
     reportedIn := none
@@ -927,7 +927,7 @@ def ex_45a : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "causative"), ("complement", "subjunctive")] }
 
-def ex_45b : LinguisticExample :=
+def ex_45b : Datum :=
   { id := "grano2024_45b"
     source := ⟨"grano-2024", "(45b)"⟩
     reportedIn := none
@@ -940,7 +940,7 @@ def ex_45b : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "causative"), ("complement", "indicative")] }
 
-def ex_46a : LinguisticExample :=
+def ex_46a : Datum :=
   { id := "grano2024_46a"
     source := ⟨"grano-2024", "(46a)"⟩
     reportedIn := none
@@ -953,7 +953,7 @@ def ex_46a : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "causative"), ("complement", "subjunctive")] }
 
-def ex_46b : LinguisticExample :=
+def ex_46b : Datum :=
   { id := "grano2024_46b"
     source := ⟨"grano-2024", "(46b)"⟩
     reportedIn := none
@@ -966,7 +966,7 @@ def ex_46b : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "causative"), ("complement", "indicative")] }
 
-def ex_47a : LinguisticExample :=
+def ex_47a : Datum :=
   { id := "grano2024_47a"
     source := ⟨"grano-2024", "(47a)"⟩
     reportedIn := none
@@ -979,7 +979,7 @@ def ex_47a : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "causative"), ("complement", "bareInfinitive")] }
 
-def ex_47b : LinguisticExample :=
+def ex_47b : Datum :=
   { id := "grano2024_47b"
     source := ⟨"grano-2024", "(47b)"⟩
     reportedIn := none
@@ -992,7 +992,7 @@ def ex_47b : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "causative"), ("complement", "indicative")] }
 
-def ex_49a_want : LinguisticExample :=
+def ex_49a_want : Datum :=
   { id := "grano2024_49a_want"
     source := ⟨"portner-rubinstein-2020", "p. 357"⟩
     reportedIn := some ⟨"grano-2024", "(49a)"⟩
@@ -1005,7 +1005,7 @@ def ex_49a_want : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "want"), ("complement", "infinitive"), ("diagnostic", "realism")] }
 
-def ex_49a_hope : LinguisticExample :=
+def ex_49a_hope : Datum :=
   { id := "grano2024_49a_hope"
     source := ⟨"portner-rubinstein-2020", "p. 357"⟩
     reportedIn := some ⟨"grano-2024", "(49a)"⟩
@@ -1018,7 +1018,7 @@ def ex_49a_hope : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "hope"), ("complement", "infinitive"), ("diagnostic", "realism")] }
 
-def ex_50a : LinguisticExample :=
+def ex_50a : Datum :=
   { id := "grano2024_50a"
     source := ⟨"portner-rubinstein-2020", "p. 357"⟩
     reportedIn := some ⟨"grano-2024", "(50a)"⟩
@@ -1031,7 +1031,7 @@ def ex_50a : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "want"), ("complement", "infinitive"), ("diagnostic", "consistency")] }
 
-def ex_50b : LinguisticExample :=
+def ex_50b : Datum :=
   { id := "grano2024_50b"
     source := ⟨"portner-rubinstein-2020", "p. 357"⟩
     reportedIn := some ⟨"grano-2024", "(50b)"⟩
@@ -1044,7 +1044,7 @@ def ex_50b : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "hope"), ("complement", "infinitive"), ("diagnostic", "consistency")] }
 
-def ex_51a : LinguisticExample :=
+def ex_51a : Datum :=
   { id := "grano2024_51a"
     source := ⟨"grano-2024", "(51a)"⟩
     reportedIn := none
@@ -1057,7 +1057,7 @@ def ex_51a : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "intend"), ("complement", "infinitive"), ("diagnostic", "realism")] }
 
-def ex_52 : LinguisticExample :=
+def ex_52 : Datum :=
   { id := "grano2024_52"
     source := ⟨"grano-2024", "(52)"⟩
     reportedIn := none
@@ -1070,7 +1070,7 @@ def ex_52 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "intend"), ("complement", "infinitive"), ("diagnostic", "consistency")] }
 
-def ex_53 : LinguisticExample :=
+def ex_53 : Datum :=
   { id := "grano2024_53"
     source := ⟨"grano-2024", "(53)"⟩
     reportedIn := none
@@ -1083,7 +1083,7 @@ def ex_53 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "intend"), ("complement", "infinitive"), ("diagnostic", "realism")] }
 
-def ex_54 : LinguisticExample :=
+def ex_54 : Datum :=
   { id := "grano2024_54"
     source := ⟨"grano-2024", "(54)"⟩
     reportedIn := none
@@ -1096,7 +1096,7 @@ def ex_54 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "intend"), ("complement", "infinitive"), ("diagnostic", "consistency")] }
 
-def ex_63 : LinguisticExample :=
+def ex_63 : Datum :=
   { id := "grano2024_63"
     source := ⟨"giannakidou-mari-2021", "p. 203"⟩
     reportedIn := some ⟨"grano-2024", "(63)"⟩
@@ -1109,7 +1109,7 @@ def ex_63 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "want"), ("complement", "forTo"), ("diagnostic", "consistency")] }
 
-def ex_64 : LinguisticExample :=
+def ex_64 : Datum :=
   { id := "grano2024_64"
     source := ⟨"giannakidou-mari-2021", "p. 206"⟩
     reportedIn := some ⟨"grano-2024", "(64)"⟩
@@ -1122,7 +1122,7 @@ def ex_64 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "hope"), ("complement", "indicative"), ("diagnostic", "consistency")] }
 
-def ex_65 : LinguisticExample :=
+def ex_65 : Datum :=
   { id := "grano2024_65"
     source := ⟨"giannakidou-mari-2021", "p. 203"⟩
     reportedIn := some ⟨"grano-2024", "(65)"⟩
@@ -1135,7 +1135,7 @@ def ex_65 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "want"), ("complement", "infinitive"), ("diagnostic", "monotonicity")] }
 
-def ex_66 : LinguisticExample :=
+def ex_66 : Datum :=
   { id := "grano2024_66"
     source := ⟨"giannakidou-mari-2021", "p. 206"⟩
     reportedIn := some ⟨"grano-2024", "(66)"⟩
@@ -1148,7 +1148,7 @@ def ex_66 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "hope"), ("complement", "infinitive"), ("diagnostic", "monotonicity")] }
 
-def ex_67 : LinguisticExample :=
+def ex_67 : Datum :=
   { id := "grano2024_67"
     source := ⟨"grano-2024", "(67)"⟩
     reportedIn := none
@@ -1161,7 +1161,7 @@ def ex_67 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "intend"), ("complement", "infinitive"), ("diagnostic", "monotonicity")] }
 
-def ex_90_aim : LinguisticExample :=
+def ex_90_aim : Datum :=
   { id := "grano2024_90_aim"
     source := ⟨"grano-2024", "(90)"⟩
     reportedIn := none
@@ -1174,7 +1174,7 @@ def ex_90_aim : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "intentionRigid"), ("complement", "infinitive")] }
 
-def ex_90_try : LinguisticExample :=
+def ex_90_try : Datum :=
   { id := "grano2024_90_try"
     source := ⟨"grano-2024", "(90)"⟩
     reportedIn := none
@@ -1187,7 +1187,7 @@ def ex_90_try : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "intentionRigid"), ("complement", "infinitive")] }
 
-def ex_91_aim : LinguisticExample :=
+def ex_91_aim : Datum :=
   { id := "grano2024_91_aim"
     source := ⟨"grano-2024", "(91)"⟩
     reportedIn := none
@@ -1200,7 +1200,7 @@ def ex_91_aim : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "intentionRigid"), ("complement", "indicative")] }
 
-def ex_91_try : LinguisticExample :=
+def ex_91_try : Datum :=
   { id := "grano2024_91_try"
     source := ⟨"grano-2024", "(91)"⟩
     reportedIn := none
@@ -1213,7 +1213,7 @@ def ex_91_try : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "intentionRigid"), ("complement", "indicative")] }
 
-def ex_92 : LinguisticExample :=
+def ex_92 : Datum :=
   { id := "grano2024_92"
     source := ⟨"grano-2024", "(92)"⟩
     reportedIn := none
@@ -1226,7 +1226,7 @@ def ex_92 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plan"), ("complement", "infinitive"), ("reading", "intention")] }
 
-def ex_93 : LinguisticExample :=
+def ex_93 : Datum :=
   { id := "grano2024_93"
     source := ⟨"grano-2024", "(93)"⟩
     reportedIn := none
@@ -1239,7 +1239,7 @@ def ex_93 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plan"), ("complement", "indicative"), ("reading", "foresee")] }
 
-def ex_94 : LinguisticExample :=
+def ex_94 : Datum :=
   { id := "grano2024_94"
     source := ⟨"grano-2024", "(94)"⟩
     reportedIn := none
@@ -1252,7 +1252,7 @@ def ex_94 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plan"), ("complement", "indicative"), ("reading", "foresee")] }
 
-def ex_96a : LinguisticExample :=
+def ex_96a : Datum :=
   { id := "grano2024_96a"
     source := ⟨"grano-2024", "(96a)"⟩
     reportedIn := none
@@ -1265,7 +1265,7 @@ def ex_96a : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "hybrid"), ("complement", "infinitive"), ("reading", "intention")] }
 
-def ex_96b : LinguisticExample :=
+def ex_96b : Datum :=
   { id := "grano2024_96b"
     source := ⟨"grano-2024", "(96b)"⟩
     reportedIn := none
@@ -1278,7 +1278,7 @@ def ex_96b : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "hybrid"), ("complement", "infinitive"), ("reading", "intention")] }
 
-def ex_97a : LinguisticExample :=
+def ex_97a : Datum :=
   { id := "grano2024_97a"
     source := ⟨"grano-2024", "(97a)"⟩
     reportedIn := none
@@ -1291,7 +1291,7 @@ def ex_97a : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "hybrid"), ("complement", "indicative"), ("reading", "belief")] }
 
-def ex_97b : LinguisticExample :=
+def ex_97b : Datum :=
   { id := "grano2024_97b"
     source := ⟨"grano-2024", "(97b)"⟩
     reportedIn := none
@@ -1304,7 +1304,7 @@ def ex_97b : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "hybrid"), ("complement", "indicative"), ("reading", "belief")] }
 
-def ex_98a : LinguisticExample :=
+def ex_98a : Datum :=
   { id := "grano2024_98a"
     source := ⟨"grano-2024", "(98a)"⟩
     reportedIn := none
@@ -1317,7 +1317,7 @@ def ex_98a : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "commissive"), ("complement", "infinitive"), ("reading", "intention")] }
 
-def ex_99a : LinguisticExample :=
+def ex_99a : Datum :=
   { id := "grano2024_99a"
     source := ⟨"grano-2024", "(99a)"⟩
     reportedIn := none
@@ -1330,7 +1330,7 @@ def ex_99a : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "commissive"), ("complement", "indicative"), ("reading", "assertion")] }
 
-def ex_100 : LinguisticExample :=
+def ex_100 : Datum :=
   { id := "grano2024_100"
     source := ⟨"giannakidou-mari-2021", "p. 211"⟩
     reportedIn := some ⟨"grano-2024", "(100)"⟩
@@ -1343,7 +1343,7 @@ def ex_100 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "hybrid"), ("complement", "subjunctive"), ("reading", "intention")] }
 
-def ex_101 : LinguisticExample :=
+def ex_101 : Datum :=
   { id := "grano2024_101"
     source := ⟨"giannakidou-mari-2021", "p. 212"⟩
     reportedIn := some ⟨"grano-2024", "(101)"⟩
@@ -1356,7 +1356,7 @@ def ex_101 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "hybrid"), ("complement", "indicative"), ("reading", "belief")] }
 
-def ex_102 : LinguisticExample :=
+def ex_102 : Datum :=
   { id := "grano2024_102"
     source := ⟨"grano-2024", "(102)"⟩
     reportedIn := none
@@ -1369,7 +1369,7 @@ def ex_102 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "hybrid"), ("complement", "subjunctive"), ("reading", "intention")] }
 
-def ex_103 : LinguisticExample :=
+def ex_103 : Datum :=
   { id := "grano2024_103"
     source := ⟨"grano-2024", "(103)"⟩
     reportedIn := none
@@ -1382,7 +1382,7 @@ def ex_103 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "hybrid"), ("complement", "indicative"), ("reading", "belief")] }
 
-def ex_104 : LinguisticExample :=
+def ex_104 : Datum :=
   { id := "grano2024_104"
     source := ⟨"grano-2024", "(104)"⟩
     reportedIn := none
@@ -1395,7 +1395,7 @@ def ex_104 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "hybrid"), ("complement", "infinitive"), ("reading", "intention")] }
 
-def ex_105 : LinguisticExample :=
+def ex_105 : Datum :=
   { id := "grano2024_105"
     source := ⟨"grano-2024", "(105)"⟩
     reportedIn := none
@@ -1408,7 +1408,7 @@ def ex_105 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "hybrid"), ("complement", "indicative"), ("reading", "belief")] }
 
-def ex_106 : LinguisticExample :=
+def ex_106 : Datum :=
   { id := "grano2024_106"
     source := ⟨"grano-2024", "(106)"⟩
     reportedIn := none
@@ -1421,7 +1421,7 @@ def ex_106 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "commissive"), ("complement", "infinitive"), ("reading", "intention")] }
 
-def ex_107a : LinguisticExample :=
+def ex_107a : Datum :=
   { id := "grano2024_107a"
     source := ⟨"grano-2024", "(107a)"⟩
     reportedIn := none
@@ -1434,7 +1434,7 @@ def ex_107a : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "commissive"), ("complement", "indicative"), ("reading", "assertion")] }
 
-def ex_107b : LinguisticExample :=
+def ex_107b : Datum :=
   { id := "grano2024_107b"
     source := ⟨"grano-2024", "(107b)"⟩
     reportedIn := none
@@ -1447,7 +1447,7 @@ def ex_107b : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "commissive"), ("complement", "indicative"), ("reading", "assertion")] }
 
-def ex_112_plan : LinguisticExample :=
+def ex_112_plan : Datum :=
   { id := "grano2024_112_plan"
     source := ⟨"grano-2024", "(112)"⟩
     reportedIn := none
@@ -1460,7 +1460,7 @@ def ex_112_plan : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plan"), ("complement", "infinitive"), ("reading", "intention"), ("construction", "anankastic")] }
 
-def ex_112_hope : LinguisticExample :=
+def ex_112_hope : Datum :=
   { id := "grano2024_112_hope"
     source := ⟨"grano-2024", "(112)"⟩
     reportedIn := none
@@ -1473,7 +1473,7 @@ def ex_112_hope : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "hope"), ("complement", "infinitive"), ("reading", "intention"), ("construction", "anankastic")] }
 
-def ex_113_plan : LinguisticExample :=
+def ex_113_plan : Datum :=
   { id := "grano2024_113_plan"
     source := ⟨"grano-2024", "(113)"⟩
     reportedIn := none
@@ -1486,7 +1486,7 @@ def ex_113_plan : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "plan"), ("complement", "indicative"), ("reading", "intention"), ("construction", "anankastic")] }
 
-def ex_113_hope : LinguisticExample :=
+def ex_113_hope : Datum :=
   { id := "grano2024_113_hope"
     source := ⟨"grano-2024", "(113)"⟩
     reportedIn := none
@@ -1499,7 +1499,7 @@ def ex_113_hope : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "hope"), ("complement", "indicative"), ("reading", "intention"), ("construction", "anankastic")] }
 
-def ex_115a : LinguisticExample :=
+def ex_115a : Datum :=
   { id := "grano2024_115a"
     source := ⟨"grano-2024", "(115a)"⟩
     reportedIn := none
@@ -1512,7 +1512,7 @@ def ex_115a : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "aspectual"), ("complement", "infinitive")] }
 
-def ex_115b : LinguisticExample :=
+def ex_115b : Datum :=
   { id := "grano2024_115b"
     source := ⟨"grano-2024", "(115b)"⟩
     reportedIn := none
@@ -1525,7 +1525,7 @@ def ex_115b : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "aspectual"), ("complement", "gerund")] }
 
-def ex_116 : LinguisticExample :=
+def ex_116 : Datum :=
   { id := "grano2024_116"
     source := ⟨"grano-2024", "(116)"⟩
     reportedIn := none
@@ -1538,7 +1538,7 @@ def ex_116 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "aspectual"), ("complement", "indicative")] }
 
-def ex_117 : LinguisticExample :=
+def ex_117 : Datum :=
   { id := "grano2024_117"
     source := ⟨"grano-2024", "(117)"⟩
     reportedIn := none
@@ -1551,7 +1551,7 @@ def ex_117 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "aspectual"), ("complement", "infinitive")] }
 
-def ex_118 : LinguisticExample :=
+def ex_118 : Datum :=
   { id := "grano2024_118"
     source := ⟨"grano-2024", "(118)"⟩
     reportedIn := none
@@ -1564,7 +1564,7 @@ def ex_118 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "aspectual"), ("complement", "indicative")] }
 
-def ex_119 : LinguisticExample :=
+def ex_119 : Datum :=
   { id := "grano2024_119"
     source := ⟨"grano-2024", "(119)"⟩
     reportedIn := none
@@ -1577,7 +1577,7 @@ def ex_119 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "aspectual"), ("complement", "subjunctive")] }
 
-def ex_120 : LinguisticExample :=
+def ex_120 : Datum :=
   { id := "grano2024_120"
     source := ⟨"grano-2024", "(120)"⟩
     reportedIn := none
@@ -1590,7 +1590,7 @@ def ex_120 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "memory"), ("complement", "gerund"), ("reading", "event")] }
 
-def ex_121 : LinguisticExample :=
+def ex_121 : Datum :=
   { id := "grano2024_121"
     source := ⟨"grano-2024", "(121)"⟩
     reportedIn := none
@@ -1603,7 +1603,7 @@ def ex_121 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "memory"), ("complement", "indicative"), ("reading", "proposition")] }
 
-def ex_122 : LinguisticExample :=
+def ex_122 : Datum :=
   { id := "grano2024_122"
     source := ⟨"giannakidou-mari-2021", "p. 38"⟩
     reportedIn := some ⟨"grano-2024", "(122)"⟩
@@ -1616,7 +1616,7 @@ def ex_122 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "memory"), ("complement", "subjunctive"), ("reading", "event")] }
 
-def ex_123 : LinguisticExample :=
+def ex_123 : Datum :=
   { id := "grano2024_123"
     source := ⟨"giannakidou-mari-2021", "p. 37"⟩
     reportedIn := some ⟨"grano-2024", "(123)"⟩
@@ -1629,7 +1629,7 @@ def ex_123 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "memory"), ("complement", "indicative"), ("reading", "proposition")] }
 
-def ex_124 : LinguisticExample :=
+def ex_124 : Datum :=
   { id := "grano2024_124"
     source := ⟨"grano-2024", "(124)"⟩
     reportedIn := none
@@ -1642,7 +1642,7 @@ def ex_124 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "perception"), ("complement", "bareInfinitive"), ("reading", "event")] }
 
-def ex_125 : LinguisticExample :=
+def ex_125 : Datum :=
   { id := "grano2024_125"
     source := ⟨"grano-2024", "(125)"⟩
     reportedIn := none
@@ -1655,7 +1655,7 @@ def ex_125 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "perception"), ("complement", "indicative"), ("reading", "proposition")] }
 
-def ex_126 : LinguisticExample :=
+def ex_126 : Datum :=
   { id := "grano2024_126"
     source := ⟨"giannakidou-mari-2021", "p. 178"⟩
     reportedIn := some ⟨"grano-2024", "(126)"⟩
@@ -1668,7 +1668,7 @@ def ex_126 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "perception"), ("complement", "subjunctive"), ("reading", "event")] }
 
-def ex_127 : LinguisticExample :=
+def ex_127 : Datum :=
   { id := "grano2024_127"
     source := ⟨"giannakidou-mari-2021", "p. 178"⟩
     reportedIn := some ⟨"grano-2024", "(127)"⟩
@@ -1681,7 +1681,7 @@ def ex_127 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "perception"), ("complement", "indicative"), ("reading", "proposition")] }
 
-def ex_128a : LinguisticExample :=
+def ex_128a : Datum :=
   { id := "grano2024_128a"
     source := ⟨"grano-2024", "(128a)"⟩
     reportedIn := none
@@ -1694,7 +1694,7 @@ def ex_128a : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "want"), ("complement", "forTo")] }
 
-def ex_128b : LinguisticExample :=
+def ex_128b : Datum :=
   { id := "grano2024_128b"
     source := ⟨"grano-2024", "(128b)"⟩
     reportedIn := none
@@ -1707,6 +1707,6 @@ def ex_128b : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "want"), ("complement", "indicative")] }
 
-def all : List LinguisticExample := [ex_1a_sbjv, ex_1a_ind, ex_1b, ex_2a_sbjv, ex_2a_ind, ex_2b, ex_3a_sbjv, ex_3a_ind, ex_3b, ex_4a_sbjv, ex_4a_ind, ex_4b, ex_5_sbjv, ex_5_ind, ex_6a, ex_6b, ex_6c, ex_7a, ex_7b, ex_8a, ex_8b, ex_9_sbjv, ex_9_ind, ex_10_sbjv, ex_10_ind, ex_11_sbjv, ex_11_ind, ex_12_sbjv, ex_12_ind, ex_13_sbjv, ex_13_ind, ex_14a, ex_14b, ex_15a, ex_15b, ex_16, ex_17, ex_18, ex_19, ex_20, ex_21, ex_22_sbjv, ex_22_ind, ex_23a, ex_23b, ex_24a, ex_24b, ex_25_sbjv, ex_25_ind, ex_25_fut, ex_26_sbjv, ex_26_ind, ex_26_fut, ex_27_sbjv, ex_27_ind, ex_28_sbjv, ex_28_ind, ex_36, ex_37, ex_38, ex_39, ex_40_sbjv, ex_40_ind, ex_41_sbjv, ex_41_ind, ex_42a_sbjv, ex_42a_ind, ex_42b_sbjv, ex_42b_ind, ex_45a, ex_45b, ex_46a, ex_46b, ex_47a, ex_47b, ex_49a_want, ex_49a_hope, ex_50a, ex_50b, ex_51a, ex_52, ex_53, ex_54, ex_63, ex_64, ex_65, ex_66, ex_67, ex_90_aim, ex_90_try, ex_91_aim, ex_91_try, ex_92, ex_93, ex_94, ex_96a, ex_96b, ex_97a, ex_97b, ex_98a, ex_99a, ex_100, ex_101, ex_102, ex_103, ex_104, ex_105, ex_106, ex_107a, ex_107b, ex_112_plan, ex_112_hope, ex_113_plan, ex_113_hope, ex_115a, ex_115b, ex_116, ex_117, ex_118, ex_119, ex_120, ex_121, ex_122, ex_123, ex_124, ex_125, ex_126, ex_127, ex_128a, ex_128b]
+def all : List Datum := [ex_1a_sbjv, ex_1a_ind, ex_1b, ex_2a_sbjv, ex_2a_ind, ex_2b, ex_3a_sbjv, ex_3a_ind, ex_3b, ex_4a_sbjv, ex_4a_ind, ex_4b, ex_5_sbjv, ex_5_ind, ex_6a, ex_6b, ex_6c, ex_7a, ex_7b, ex_8a, ex_8b, ex_9_sbjv, ex_9_ind, ex_10_sbjv, ex_10_ind, ex_11_sbjv, ex_11_ind, ex_12_sbjv, ex_12_ind, ex_13_sbjv, ex_13_ind, ex_14a, ex_14b, ex_15a, ex_15b, ex_16, ex_17, ex_18, ex_19, ex_20, ex_21, ex_22_sbjv, ex_22_ind, ex_23a, ex_23b, ex_24a, ex_24b, ex_25_sbjv, ex_25_ind, ex_25_fut, ex_26_sbjv, ex_26_ind, ex_26_fut, ex_27_sbjv, ex_27_ind, ex_28_sbjv, ex_28_ind, ex_36, ex_37, ex_38, ex_39, ex_40_sbjv, ex_40_ind, ex_41_sbjv, ex_41_ind, ex_42a_sbjv, ex_42a_ind, ex_42b_sbjv, ex_42b_ind, ex_45a, ex_45b, ex_46a, ex_46b, ex_47a, ex_47b, ex_49a_want, ex_49a_hope, ex_50a, ex_50b, ex_51a, ex_52, ex_53, ex_54, ex_63, ex_64, ex_65, ex_66, ex_67, ex_90_aim, ex_90_try, ex_91_aim, ex_91_try, ex_92, ex_93, ex_94, ex_96a, ex_96b, ex_97a, ex_97b, ex_98a, ex_99a, ex_100, ex_101, ex_102, ex_103, ex_104, ex_105, ex_106, ex_107a, ex_107b, ex_112_plan, ex_112_hope, ex_113_plan, ex_113_hope, ex_115a, ex_115b, ex_116, ex_117, ex_118, ex_119, ex_120, ex_121, ex_122, ex_123, ex_124, ex_125, ex_126, ex_127, ex_128a, ex_128b]
 
 end Grano2024.Examples

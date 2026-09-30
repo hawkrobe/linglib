@@ -17,7 +17,7 @@ namespace Anttila1997.Examples
 
 open Data.Examples
 
-def ex_1a_puiden : LinguisticExample :=
+def ex_1a_puiden : Datum :=
   { id := "anttila1997_1a_puiden"
     source := ⟨"anttila-1997", "(1a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex_1a_puiden : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "puu"), ("gloss", "tree"), ("syllables", "1"), ("variant", "strong")] }
 
-def ex_1a_potilaiden : LinguisticExample :=
+def ex_1a_potilaiden : Datum :=
   { id := "anttila1997_1a_potilaiden"
     source := ⟨"anttila-1997", "(1a)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex_1a_potilaiden : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "potilas"), ("gloss", "patient"), ("syllables", "3"), ("variant", "strong"), ("final_syllable", "heavy")] }
 
-def ex_1b_kalojen : LinguisticExample :=
+def ex_1b_kalojen : Datum :=
   { id := "anttila1997_1b_kalojen"
     source := ⟨"anttila-1997", "(1b)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex_1b_kalojen : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "kala"), ("gloss", "fish"), ("syllables", "2"), ("variant", "weak")] }
 
-def ex_1b_margariinien : LinguisticExample :=
+def ex_1b_margariinien : Datum :=
   { id := "anttila1997_1b_margariinien"
     source := ⟨"anttila-1997", "(1b)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex_1b_margariinien : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "margariini"), ("gloss", "margarine"), ("syllables", "4"), ("variant", "weak")] }
 
-def ex_1c_naapureiden : LinguisticExample :=
+def ex_1c_naapureiden : Datum :=
   { id := "anttila1997_1c_naapureiden"
     source := ⟨"anttila-1997", "(1c)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex_1c_naapureiden : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "naapuri"), ("gloss", "neighbor"), ("syllables", "3"), ("variant", "strong")] }
 
-def ex_1c_reaganeiden : LinguisticExample :=
+def ex_1c_reaganeiden : Datum :=
   { id := "anttila1997_1c_reaganeiden"
     source := ⟨"anttila-1997", "(1c)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex_1c_reaganeiden : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "Reagani"), ("gloss", "Reagan"), ("syllables", "3"), ("variant", "strong")] }
 
-def ex_1c_moskeijoiden : LinguisticExample :=
+def ex_1c_moskeijoiden : Datum :=
   { id := "anttila1997_1c_moskeijoiden"
     source := ⟨"anttila-1997", "(1c)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex_1c_moskeijoiden : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "moskeija"), ("gloss", "mosque"), ("syllables", "3"), ("variant", "strong")] }
 
-def ex_1c_ministereiden : LinguisticExample :=
+def ex_1c_ministereiden : Datum :=
   { id := "anttila1997_1c_ministereiden"
     source := ⟨"anttila-1997", "(1c)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex_1c_ministereiden : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "ministeri"), ("gloss", "minister"), ("syllables", "4"), ("variant", "strong")] }
 
-def ex_3a_maiden : LinguisticExample :=
+def ex_3a_maiden : Datum :=
   { id := "anttila1997_3a_maiden"
     source := ⟨"anttila-1997", "(3a)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ex_3a_maiden : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "maa"), ("gloss", "land"), ("syllables", "1"), ("variant", "strong")] }
 
-def ex_3a_teiden : LinguisticExample :=
+def ex_3a_teiden : Datum :=
   { id := "anttila1997_3a_teiden"
     source := ⟨"anttila-1997", "(3a)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ex_3a_teiden : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "tie"), ("gloss", "road"), ("syllables", "1"), ("variant", "strong")] }
 
-def ex_3b_lasien : LinguisticExample :=
+def ex_3b_lasien : Datum :=
   { id := "anttila1997_3b_lasien"
     source := ⟨"anttila-1997", "(3b)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex_3b_lasien : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "lasi"), ("gloss", "glass"), ("syllables", "2"), ("variant", "weak")] }
 
-def ex_3c_palttoiden : LinguisticExample :=
+def ex_3c_palttoiden : Datum :=
   { id := "anttila1997_3c_palttoiden"
     source := ⟨"anttila-1997", "(3c)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex_3c_palttoiden : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "palttoo"), ("gloss", "coat"), ("syllables", "2"), ("variant", "strong"), ("final_syllable", "heavy")] }
 
-def ex_3c_varkaiden : LinguisticExample :=
+def ex_3c_varkaiden : Datum :=
   { id := "anttila1997_3c_varkaiden"
     source := ⟨"anttila-1997", "(3c)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ex_3c_varkaiden : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "varas"), ("gloss", "thief"), ("syllables", "2"), ("variant", "strong"), ("final_syllable", "heavy")] }
 
-def ex_6a_lemmikkien : LinguisticExample :=
+def ex_6a_lemmikkien : Datum :=
   { id := "anttila1997_6a_lemmikkien"
     source := ⟨"anttila-1997", "(6a)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ex_6a_lemmikkien : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "lemmikki"), ("gloss", "pet"), ("syllables", "3"), ("variant", "weak")] }
 
-def ex_6a_sihteerien : LinguisticExample :=
+def ex_6a_sihteerien : Datum :=
   { id := "anttila1997_6a_sihteerien"
     source := ⟨"anttila-1997", "(6a)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ex_6a_sihteerien : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "sihteeri"), ("gloss", "secretary"), ("syllables", "3"), ("variant", "weak")] }
 
-def ex_6a_naapurien : LinguisticExample :=
+def ex_6a_naapurien : Datum :=
   { id := "anttila1997_6a_naapurien"
     source := ⟨"anttila-1997", "(6a)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ex_6a_naapurien : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "naapuri"), ("gloss", "neighbor"), ("syllables", "3"), ("variant", "weak")] }
 
-def ex_6b_korjaamojen : LinguisticExample :=
+def ex_6b_korjaamojen : Datum :=
   { id := "anttila1997_6b_korjaamojen"
     source := ⟨"anttila-1997", "(6b)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ex_6b_korjaamojen : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "korjaamo"), ("gloss", "repair shop"), ("syllables", "3"), ("variant", "weak")] }
 
-def ex_6b_fyysikkojen : LinguisticExample :=
+def ex_6b_fyysikkojen : Datum :=
   { id := "anttila1997_6b_fyysikkojen"
     source := ⟨"anttila-1997", "(6b)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ex_6b_fyysikkojen : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "fyysikko"), ("gloss", "physicist"), ("syllables", "3"), ("variant", "weak")] }
 
-def ex_6b_lokeroiden : LinguisticExample :=
+def ex_6b_lokeroiden : Datum :=
   { id := "anttila1997_6b_lokeroiden"
     source := ⟨"anttila-1997", "(6b)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ex_6b_lokeroiden : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "lokero"), ("gloss", "compartment"), ("syllables", "3"), ("variant", "strong")] }
 
-def ex_6c_sairaaloiden : LinguisticExample :=
+def ex_6c_sairaaloiden : Datum :=
   { id := "anttila1997_6c_sairaaloiden"
     source := ⟨"anttila-1997", "(6c)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def ex_6c_sairaaloiden : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "sairaala"), ("gloss", "hospital"), ("syllables", "3"), ("variant", "strong")] }
 
-def ex_6c_kameroiden : LinguisticExample :=
+def ex_6c_kameroiden : Datum :=
   { id := "anttila1997_6c_kameroiden"
     source := ⟨"anttila-1997", "(6c)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def ex_6c_kameroiden : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "kamera"), ("gloss", "camera"), ("syllables", "3"), ("variant", "strong")] }
 
-def ex_6c_mansikoiden : LinguisticExample :=
+def ex_6c_mansikoiden : Datum :=
   { id := "anttila1997_6c_mansikoiden"
     source := ⟨"anttila-1997", "(6c)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def ex_6c_mansikoiden : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "mansikka"), ("gloss", "strawberry"), ("syllables", "3"), ("variant", "strong")] }
 
-def ex_33_maiden : LinguisticExample :=
+def ex_33_maiden : Datum :=
   { id := "anttila1997_33_maiden"
     source := ⟨"anttila-1997", "(33)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def ex_33_maiden : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "maa"), ("gloss", "land"), ("syllables", "1"), ("variant", "strong")] }
 
-def ex_35_kalojen : LinguisticExample :=
+def ex_35_kalojen : Datum :=
   { id := "anttila1997_35_kalojen"
     source := ⟨"anttila-1997", "(35)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def ex_35_kalojen : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "kala"), ("gloss", "fish"), ("syllables", "2"), ("variant", "weak")] }
 
-def ex_37_maailmoiden : LinguisticExample :=
+def ex_37_maailmoiden : Datum :=
   { id := "anttila1997_37_maailmoiden"
     source := ⟨"anttila-1997", "(37)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def ex_37_maailmoiden : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "maailma"), ("gloss", "world"), ("syllables", "3"), ("variant", "strong")] }
 
-def ex_39_ministerien : LinguisticExample :=
+def ex_39_ministerien : Datum :=
   { id := "anttila1997_39_ministerien"
     source := ⟨"anttila-1997", "(39)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex_39_ministerien : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "ministeri"), ("gloss", "minister"), ("syllables", "4"), ("variant", "weak")] }
 
-def ex_40_margariinien : LinguisticExample :=
+def ex_40_margariinien : Datum :=
   { id := "anttila1997_40_margariinien"
     source := ⟨"anttila-1997", "(40)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def ex_40_margariinien : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "margariini"), ("gloss", "margarine"), ("syllables", "4"), ("variant", "weak")] }
 
-def ex_42_aleksantereiden : LinguisticExample :=
+def ex_42_aleksantereiden : Datum :=
   { id := "anttila1997_42_aleksantereiden"
     source := ⟨"anttila-1997", "(42)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def ex_42_aleksantereiden : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "Aleksanteri"), ("gloss", "Alexander"), ("syllables", "5"), ("variant", "strong")] }
 
-def ex_43_koordinaatistoiden : LinguisticExample :=
+def ex_43_koordinaatistoiden : Datum :=
   { id := "anttila1997_43_koordinaatistoiden"
     source := ⟨"anttila-1997", "(43)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def ex_43_koordinaatistoiden : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "koordinaatisto"), ("gloss", "coordinate grid"), ("syllables", "5"), ("variant", "strong")] }
 
-def ex_44_italiaanojen : LinguisticExample :=
+def ex_44_italiaanojen : Datum :=
   { id := "anttila1997_44_italiaanojen"
     source := ⟨"anttila-1997", "(44)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def ex_44_italiaanojen : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "italiaano"), ("gloss", "Italian"), ("syllables", "5"), ("variant", "weak")] }
 
-def ex_46_intellektuellien : LinguisticExample :=
+def ex_46_intellektuellien : Datum :=
   { id := "anttila1997_46_intellektuellien"
     source := ⟨"anttila-1997", "(46)"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def ex_46_intellektuellien : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "intellektuelli"), ("gloss", "intellectual"), ("syllables", "6"), ("variant", "weak")] }
 
-def ex_47_eksistentialistien : LinguisticExample :=
+def ex_47_eksistentialistien : Datum :=
   { id := "anttila1997_47_eksistentialistien"
     source := ⟨"anttila-1997", "(47)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def ex_47_eksistentialistien : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "eksistentialisti"), ("gloss", "existentialist"), ("syllables", "7"), ("variant", "weak")] }
 
-def ex_48a_kamerojen : LinguisticExample :=
+def ex_48a_kamerojen : Datum :=
   { id := "anttila1997_48a_kamerojen"
     source := ⟨"anttila-1997", "(48a)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def ex_48a_kamerojen : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "kamera"), ("gloss", "camera"), ("syllables", "3"), ("variant", "weak"), ("motif", "l.ta"), ("obs_pct", "0.6")] }
 
-def ex_48a_kameroiden : LinguisticExample :=
+def ex_48a_kameroiden : Datum :=
   { id := "anttila1997_48a_kameroiden"
     source := ⟨"anttila-1997", "(48a)"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def ex_48a_kameroiden : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "kamera"), ("gloss", "camera"), ("syllables", "3"), ("variant", "strong"), ("motif", "l.taa"), ("obs_pct", "99.4")] }
 
-def ex_48b_sairaalojen : LinguisticExample :=
+def ex_48b_sairaalojen : Datum :=
   { id := "anttila1997_48b_sairaalojen"
     source := ⟨"anttila-1997", "(48b)"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def ex_48b_sairaalojen : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "sairaala"), ("gloss", "hospital"), ("syllables", "3"), ("variant", "weak"), ("motif", "h.ta"), ("obs_pct", "49.5")] }
 
-def ex_48b_sairaaloiden : LinguisticExample :=
+def ex_48b_sairaaloiden : Datum :=
   { id := "anttila1997_48b_sairaaloiden"
     source := ⟨"anttila-1997", "(48b)"⟩
     reportedIn := none
@@ -485,7 +485,7 @@ def ex_48b_sairaaloiden : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "sairaala"), ("gloss", "hospital"), ("syllables", "3"), ("variant", "strong"), ("motif", "h.taa"), ("obs_pct", "50.5")] }
 
-def ex_48c_naapurien : LinguisticExample :=
+def ex_48c_naapurien : Datum :=
   { id := "anttila1997_48c_naapurien"
     source := ⟨"anttila-1997", "(48c)"⟩
     reportedIn := none
@@ -498,7 +498,7 @@ def ex_48c_naapurien : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "naapuri"), ("gloss", "neighbor"), ("syllables", "3"), ("variant", "weak"), ("motif", "l.ti"), ("obs_pct", "63.1")] }
 
-def ex_48c_naapureiden : LinguisticExample :=
+def ex_48c_naapureiden : Datum :=
   { id := "anttila1997_48c_naapureiden"
     source := ⟨"anttila-1997", "(48c)"⟩
     reportedIn := none
@@ -511,7 +511,7 @@ def ex_48c_naapureiden : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "naapuri"), ("gloss", "neighbor"), ("syllables", "3"), ("variant", "strong"), ("motif", "l.tii"), ("obs_pct", "36.9")] }
 
-def ex_48d_korjaamojen : LinguisticExample :=
+def ex_48d_korjaamojen : Datum :=
   { id := "anttila1997_48d_korjaamojen"
     source := ⟨"anttila-1997", "(48d)"⟩
     reportedIn := none
@@ -524,7 +524,7 @@ def ex_48d_korjaamojen : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "korjaamo"), ("gloss", "repair shop"), ("syllables", "3"), ("variant", "weak"), ("motif", "h.to"), ("obs_pct", "82.2")] }
 
-def ex_48d_korjaamoiden : LinguisticExample :=
+def ex_48d_korjaamoiden : Datum :=
   { id := "anttila1997_48d_korjaamoiden"
     source := ⟨"anttila-1997", "(48d)"⟩
     reportedIn := none
@@ -537,7 +537,7 @@ def ex_48d_korjaamoiden : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "korjaamo"), ("gloss", "repair shop"), ("syllables", "3"), ("variant", "strong"), ("motif", "h.too"), ("obs_pct", "17.8")] }
 
-def ex_531a_kameroiden : LinguisticExample :=
+def ex_531a_kameroiden : Datum :=
   { id := "anttila1997_531a_kameroiden"
     source := ⟨"anttila-1997", "(53) 1a"⟩
     reportedIn := none
@@ -550,7 +550,7 @@ def ex_531a_kameroiden : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "kamera"), ("gloss", "camera"), ("syllables", "3"), ("variant", "strong"), ("motif", "l.taa"), ("pred_pct", "100"), ("obs_pct", "99.4"), ("count", "720")] }
 
-def ex_531b_kamerojen : LinguisticExample :=
+def ex_531b_kamerojen : Datum :=
   { id := "anttila1997_531b_kamerojen"
     source := ⟨"anttila-1997", "(53) 1b"⟩
     reportedIn := none
@@ -563,7 +563,7 @@ def ex_531b_kamerojen : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "kamera"), ("gloss", "camera"), ("syllables", "3"), ("variant", "weak"), ("motif", "l.ta"), ("pred_pct", "0"), ("obs_pct", "0.6"), ("count", "4")] }
 
-def ex_532a_heteroiden : LinguisticExample :=
+def ex_532a_heteroiden : Datum :=
   { id := "anttila1997_532a_heteroiden"
     source := ⟨"anttila-1997", "(53) 2a"⟩
     reportedIn := none
@@ -576,7 +576,7 @@ def ex_532a_heteroiden : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "hetero"), ("gloss", "hetero"), ("syllables", "3"), ("variant", "strong"), ("motif", "l.too"), ("pred_pct", "100"), ("obs_pct", "99.5"), ("count", "389")] }
 
-def ex_532b_heterojen : LinguisticExample :=
+def ex_532b_heterojen : Datum :=
   { id := "anttila1997_532b_heterojen"
     source := ⟨"anttila-1997", "(53) 2b"⟩
     reportedIn := none
@@ -589,7 +589,7 @@ def ex_532b_heterojen : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "hetero"), ("gloss", "hetero"), ("syllables", "3"), ("variant", "weak"), ("motif", "l.to"), ("pred_pct", "0"), ("obs_pct", "0.5"), ("count", "2")] }
 
-def ex_533a_naapureiden : LinguisticExample :=
+def ex_533a_naapureiden : Datum :=
   { id := "anttila1997_533a_naapureiden"
     source := ⟨"anttila-1997", "(53) 3a"⟩
     reportedIn := none
@@ -602,7 +602,7 @@ def ex_533a_naapureiden : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "naapuri"), ("gloss", "neighbor"), ("syllables", "3"), ("variant", "strong"), ("motif", "l.tii"), ("pred_pct", "33"), ("obs_pct", "36.9"), ("count", "215")] }
 
-def ex_533b_naapurien : LinguisticExample :=
+def ex_533b_naapurien : Datum :=
   { id := "anttila1997_533b_naapurien"
     source := ⟨"anttila-1997", "(53) 3b"⟩
     reportedIn := none
@@ -615,7 +615,7 @@ def ex_533b_naapurien : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "naapuri"), ("gloss", "neighbor"), ("syllables", "3"), ("variant", "weak"), ("motif", "l.ti"), ("pred_pct", "67"), ("obs_pct", "63.1"), ("count", "368")] }
 
-def ex_534a_maailmoiden : LinguisticExample :=
+def ex_534a_maailmoiden : Datum :=
   { id := "anttila1997_534a_maailmoiden"
     source := ⟨"anttila-1997", "(53) 4a"⟩
     reportedIn := none
@@ -628,7 +628,7 @@ def ex_534a_maailmoiden : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "maailma"), ("gloss", "world"), ("syllables", "3"), ("variant", "strong"), ("motif", "h.taa"), ("pred_pct", "50"), ("obs_pct", "50.5"), ("count", "46")] }
 
-def ex_534b_maailmojen : LinguisticExample :=
+def ex_534b_maailmojen : Datum :=
   { id := "anttila1997_534b_maailmojen"
     source := ⟨"anttila-1997", "(53) 4b"⟩
     reportedIn := none
@@ -641,7 +641,7 @@ def ex_534b_maailmojen : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "maailma"), ("gloss", "world"), ("syllables", "3"), ("variant", "weak"), ("motif", "h.ta"), ("pred_pct", "50"), ("obs_pct", "49.5"), ("count", "45")] }
 
-def ex_535a_korjaamoiden : LinguisticExample :=
+def ex_535a_korjaamoiden : Datum :=
   { id := "anttila1997_535a_korjaamoiden"
     source := ⟨"anttila-1997", "(53) 5a"⟩
     reportedIn := none
@@ -654,7 +654,7 @@ def ex_535a_korjaamoiden : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "korjaamo"), ("gloss", "repair shop"), ("syllables", "3"), ("variant", "strong"), ("motif", "h.too"), ("pred_pct", "20"), ("obs_pct", "17.8"), ("count", "76")] }
 
-def ex_535b_korjaamojen : LinguisticExample :=
+def ex_535b_korjaamojen : Datum :=
   { id := "anttila1997_535b_korjaamojen"
     source := ⟨"anttila-1997", "(53) 5b"⟩
     reportedIn := none
@@ -667,7 +667,7 @@ def ex_535b_korjaamojen : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "korjaamo"), ("gloss", "repair shop"), ("syllables", "3"), ("variant", "weak"), ("motif", "h.to"), ("pred_pct", "80"), ("obs_pct", "82.2"), ("count", "350")] }
 
-def ex_536a_poliiseiden : LinguisticExample :=
+def ex_536a_poliiseiden : Datum :=
   { id := "anttila1997_536a_poliiseiden"
     source := ⟨"anttila-1997", "(53) 6a"⟩
     reportedIn := none
@@ -680,7 +680,7 @@ def ex_536a_poliiseiden : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "poliisi"), ("gloss", "police"), ("syllables", "3"), ("variant", "strong"), ("motif", "h.tii"), ("pred_pct", "0"), ("obs_pct", "1.6"), ("count", "13")] }
 
-def ex_536b_poliisien : LinguisticExample :=
+def ex_536b_poliisien : Datum :=
   { id := "anttila1997_536b_poliisien"
     source := ⟨"anttila-1997", "(53) 6b"⟩
     reportedIn := none
@@ -693,7 +693,7 @@ def ex_536b_poliisien : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "poliisi"), ("gloss", "police"), ("syllables", "3"), ("variant", "weak"), ("motif", "h.ti"), ("pred_pct", "100"), ("obs_pct", "98.4"), ("count", "806")] }
 
-def ex_541a_taiteilijoiden : LinguisticExample :=
+def ex_541a_taiteilijoiden : Datum :=
   { id := "anttila1997_541a_taiteilijoiden"
     source := ⟨"anttila-1997", "(54) 1a"⟩
     reportedIn := none
@@ -706,7 +706,7 @@ def ex_541a_taiteilijoiden : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "taiteilija"), ("gloss", "artist"), ("syllables", "4"), ("variant", "strong"), ("motif", "l.taa"), ("pred_pct", "100"), ("obs_pct", "100"), ("count", "276")] }
 
-def ex_542a_luetteloiden : LinguisticExample :=
+def ex_542a_luetteloiden : Datum :=
   { id := "anttila1997_542a_luetteloiden"
     source := ⟨"anttila-1997", "(54) 2a"⟩
     reportedIn := none
@@ -719,7 +719,7 @@ def ex_542a_luetteloiden : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "luettelo"), ("gloss", "catalogue"), ("syllables", "4"), ("variant", "strong"), ("motif", "l.too"), ("pred_pct", "100"), ("obs_pct", "100"), ("count", "25")] }
 
-def ex_543a_ministereiden : LinguisticExample :=
+def ex_543a_ministereiden : Datum :=
   { id := "anttila1997_543a_ministereiden"
     source := ⟨"anttila-1997", "(54) 3a"⟩
     reportedIn := none
@@ -732,7 +732,7 @@ def ex_543a_ministereiden : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "ministeri"), ("gloss", "minister"), ("syllables", "4"), ("variant", "strong"), ("motif", "l.tii"), ("pred_pct", "33"), ("obs_pct", "14.3"), ("count", "39")] }
 
-def ex_543b_ministerien : LinguisticExample :=
+def ex_543b_ministerien : Datum :=
   { id := "anttila1997_543b_ministerien"
     source := ⟨"anttila-1997", "(54) 3b"⟩
     reportedIn := none
@@ -745,7 +745,7 @@ def ex_543b_ministerien : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "ministeri"), ("gloss", "minister"), ("syllables", "4"), ("variant", "weak"), ("motif", "l.ti"), ("pred_pct", "67"), ("obs_pct", "85.7"), ("count", "234")] }
 
-def ex_544b_luonnehdintojen : LinguisticExample :=
+def ex_544b_luonnehdintojen : Datum :=
   { id := "anttila1997_544b_luonnehdintojen"
     source := ⟨"anttila-1997", "(54) 4b"⟩
     reportedIn := none
@@ -758,7 +758,7 @@ def ex_544b_luonnehdintojen : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "luonnehdinto"), ("gloss", "characterization"), ("syllables", "4"), ("variant", "weak"), ("motif", "h.ta"), ("pred_pct", "100"), ("obs_pct", "100"), ("count", "1")] }
 
-def ex_545b_edustustojen : LinguisticExample :=
+def ex_545b_edustustojen : Datum :=
   { id := "anttila1997_545b_edustustojen"
     source := ⟨"anttila-1997", "(54) 5b"⟩
     reportedIn := none
@@ -771,7 +771,7 @@ def ex_545b_edustustojen : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "edustusto"), ("gloss", "delegation"), ("syllables", "4"), ("variant", "weak"), ("motif", "h.to"), ("pred_pct", "100"), ("obs_pct", "100"), ("count", "84")] }
 
-def ex_546b_margariinien : LinguisticExample :=
+def ex_546b_margariinien : Datum :=
   { id := "anttila1997_546b_margariinien"
     source := ⟨"anttila-1997", "(54) 6b"⟩
     reportedIn := none
@@ -784,7 +784,7 @@ def ex_546b_margariinien : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "margariini"), ("gloss", "margarine"), ("syllables", "4"), ("variant", "weak"), ("motif", "h.ti"), ("pred_pct", "100"), ("obs_pct", "100"), ("count", "736")] }
 
-def ex_551a_ajattelijoiden : LinguisticExample :=
+def ex_551a_ajattelijoiden : Datum :=
   { id := "anttila1997_551a_ajattelijoiden"
     source := ⟨"anttila-1997", "(55) 1a"⟩
     reportedIn := none
@@ -797,7 +797,7 @@ def ex_551a_ajattelijoiden : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "ajattelija"), ("gloss", "thinker"), ("syllables", "5"), ("variant", "strong"), ("motif", "l.taa"), ("pred_pct", "100"), ("obs_pct", "100"), ("count", "101")] }
 
-def ex_552a_televisioiden : LinguisticExample :=
+def ex_552a_televisioiden : Datum :=
   { id := "anttila1997_552a_televisioiden"
     source := ⟨"anttila-1997", "(55) 2a"⟩
     reportedIn := none
@@ -810,7 +810,7 @@ def ex_552a_televisioiden : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "televisio"), ("gloss", "television"), ("syllables", "5"), ("variant", "strong"), ("motif", "l.too"), ("pred_pct", "100"), ("obs_pct", "100"), ("count", "41")] }
 
-def ex_553a_aleksantereiden : LinguisticExample :=
+def ex_553a_aleksantereiden : Datum :=
   { id := "anttila1997_553a_aleksantereiden"
     source := ⟨"anttila-1997", "(55) 3a"⟩
     reportedIn := none
@@ -823,7 +823,7 @@ def ex_553a_aleksantereiden : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "Aleksanteri"), ("gloss", "Alexander"), ("syllables", "5"), ("variant", "strong"), ("motif", "l.tii"), ("pred_pct", "33"), ("obs_pct", "11.8"), ("count", "2")] }
 
-def ex_553b_aleksanterien : LinguisticExample :=
+def ex_553b_aleksanterien : Datum :=
   { id := "anttila1997_553b_aleksanterien"
     source := ⟨"anttila-1997", "(55) 3b"⟩
     reportedIn := none
@@ -836,7 +836,7 @@ def ex_553b_aleksanterien : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "Aleksanteri"), ("gloss", "Alexander"), ("syllables", "5"), ("variant", "weak"), ("motif", "l.ti"), ("pred_pct", "67"), ("obs_pct", "88.2"), ("count", "15")] }
 
-def ex_554b_evankelistojen : LinguisticExample :=
+def ex_554b_evankelistojen : Datum :=
   { id := "anttila1997_554b_evankelistojen"
     source := ⟨"anttila-1997", "(55) 4b"⟩
     reportedIn := none
@@ -849,7 +849,7 @@ def ex_554b_evankelistojen : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "evankelisto"), ("gloss", "evangelist"), ("syllables", "5"), ("variant", "weak"), ("motif", "l.h.ta"), ("pred_pct", "100"), ("obs_pct", "100"), ("count", "2")] }
 
-def ex_555b_italiaanojen : LinguisticExample :=
+def ex_555b_italiaanojen : Datum :=
   { id := "anttila1997_555b_italiaanojen"
     source := ⟨"anttila-1997", "(55) 5b"⟩
     reportedIn := none
@@ -862,7 +862,7 @@ def ex_555b_italiaanojen : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "italiaano"), ("gloss", "Italian"), ("syllables", "5"), ("variant", "weak"), ("motif", "l.h.to"), ("pred_pct", "100"), ("obs_pct", "100"), ("count", "1")] }
 
-def ex_555c_koordinaatistoiden : LinguisticExample :=
+def ex_555c_koordinaatistoiden : Datum :=
   { id := "anttila1997_555c_koordinaatistoiden"
     source := ⟨"anttila-1997", "(55) 5c"⟩
     reportedIn := none
@@ -875,7 +875,7 @@ def ex_555c_koordinaatistoiden : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "koordinaatisto"), ("gloss", "coordinate grid"), ("syllables", "5"), ("variant", "strong"), ("motif", "h.h.too"), ("pred_pct", "20"), ("obs_pct", "20"), ("count", "2")] }
 
-def ex_555d_koordinaatistojen : LinguisticExample :=
+def ex_555d_koordinaatistojen : Datum :=
   { id := "anttila1997_555d_koordinaatistojen"
     source := ⟨"anttila-1997", "(55) 5d"⟩
     reportedIn := none
@@ -888,7 +888,7 @@ def ex_555d_koordinaatistojen : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "koordinaatisto"), ("gloss", "coordinate grid"), ("syllables", "5"), ("variant", "weak"), ("motif", "h.h.to"), ("pred_pct", "80"), ("obs_pct", "80"), ("count", "8")] }
 
-def ex_556b_sosialistien : LinguisticExample :=
+def ex_556b_sosialistien : Datum :=
   { id := "anttila1997_556b_sosialistien"
     source := ⟨"anttila-1997", "(55) 6b"⟩
     reportedIn := none
@@ -901,7 +901,7 @@ def ex_556b_sosialistien : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "sosialisti"), ("gloss", "socialist"), ("syllables", "5"), ("variant", "weak"), ("motif", "l.h.ti"), ("pred_pct", "100"), ("obs_pct", "100"), ("count", "99")] }
 
-def ex_556d_avantgardistien : LinguisticExample :=
+def ex_556d_avantgardistien : Datum :=
   { id := "anttila1997_556d_avantgardistien"
     source := ⟨"anttila-1997", "(55) 6d"⟩
     reportedIn := none
@@ -914,6 +914,6 @@ def ex_556d_avantgardistien : LinguisticExample :=
     readings := []
     paperFeatures := [("stem", "avantgardisti"), ("gloss", "avant-gardist"), ("syllables", "5"), ("variant", "weak"), ("motif", "h.h.ti"), ("pred_pct", "100"), ("obs_pct", "100"), ("count", "2")] }
 
-def all : List LinguisticExample := [ex_1a_puiden, ex_1a_potilaiden, ex_1b_kalojen, ex_1b_margariinien, ex_1c_naapureiden, ex_1c_reaganeiden, ex_1c_moskeijoiden, ex_1c_ministereiden, ex_3a_maiden, ex_3a_teiden, ex_3b_lasien, ex_3c_palttoiden, ex_3c_varkaiden, ex_6a_lemmikkien, ex_6a_sihteerien, ex_6a_naapurien, ex_6b_korjaamojen, ex_6b_fyysikkojen, ex_6b_lokeroiden, ex_6c_sairaaloiden, ex_6c_kameroiden, ex_6c_mansikoiden, ex_33_maiden, ex_35_kalojen, ex_37_maailmoiden, ex_39_ministerien, ex_40_margariinien, ex_42_aleksantereiden, ex_43_koordinaatistoiden, ex_44_italiaanojen, ex_46_intellektuellien, ex_47_eksistentialistien, ex_48a_kamerojen, ex_48a_kameroiden, ex_48b_sairaalojen, ex_48b_sairaaloiden, ex_48c_naapurien, ex_48c_naapureiden, ex_48d_korjaamojen, ex_48d_korjaamoiden, ex_531a_kameroiden, ex_531b_kamerojen, ex_532a_heteroiden, ex_532b_heterojen, ex_533a_naapureiden, ex_533b_naapurien, ex_534a_maailmoiden, ex_534b_maailmojen, ex_535a_korjaamoiden, ex_535b_korjaamojen, ex_536a_poliiseiden, ex_536b_poliisien, ex_541a_taiteilijoiden, ex_542a_luetteloiden, ex_543a_ministereiden, ex_543b_ministerien, ex_544b_luonnehdintojen, ex_545b_edustustojen, ex_546b_margariinien, ex_551a_ajattelijoiden, ex_552a_televisioiden, ex_553a_aleksantereiden, ex_553b_aleksanterien, ex_554b_evankelistojen, ex_555b_italiaanojen, ex_555c_koordinaatistoiden, ex_555d_koordinaatistojen, ex_556b_sosialistien, ex_556d_avantgardistien]
+def all : List Datum := [ex_1a_puiden, ex_1a_potilaiden, ex_1b_kalojen, ex_1b_margariinien, ex_1c_naapureiden, ex_1c_reaganeiden, ex_1c_moskeijoiden, ex_1c_ministereiden, ex_3a_maiden, ex_3a_teiden, ex_3b_lasien, ex_3c_palttoiden, ex_3c_varkaiden, ex_6a_lemmikkien, ex_6a_sihteerien, ex_6a_naapurien, ex_6b_korjaamojen, ex_6b_fyysikkojen, ex_6b_lokeroiden, ex_6c_sairaaloiden, ex_6c_kameroiden, ex_6c_mansikoiden, ex_33_maiden, ex_35_kalojen, ex_37_maailmoiden, ex_39_ministerien, ex_40_margariinien, ex_42_aleksantereiden, ex_43_koordinaatistoiden, ex_44_italiaanojen, ex_46_intellektuellien, ex_47_eksistentialistien, ex_48a_kamerojen, ex_48a_kameroiden, ex_48b_sairaalojen, ex_48b_sairaaloiden, ex_48c_naapurien, ex_48c_naapureiden, ex_48d_korjaamojen, ex_48d_korjaamoiden, ex_531a_kameroiden, ex_531b_kamerojen, ex_532a_heteroiden, ex_532b_heterojen, ex_533a_naapureiden, ex_533b_naapurien, ex_534a_maailmoiden, ex_534b_maailmojen, ex_535a_korjaamoiden, ex_535b_korjaamojen, ex_536a_poliiseiden, ex_536b_poliisien, ex_541a_taiteilijoiden, ex_542a_luetteloiden, ex_543a_ministereiden, ex_543b_ministerien, ex_544b_luonnehdintojen, ex_545b_edustustojen, ex_546b_margariinien, ex_551a_ajattelijoiden, ex_552a_televisioiden, ex_553a_aleksantereiden, ex_553b_aleksanterien, ex_554b_evankelistojen, ex_555b_italiaanojen, ex_555c_koordinaatistoiden, ex_555d_koordinaatistojen, ex_556b_sosialistien, ex_556d_avantgardistien]
 
 end Anttila1997.Examples

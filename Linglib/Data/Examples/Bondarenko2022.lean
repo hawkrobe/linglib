@@ -17,7 +17,7 @@ namespace Bondarenko2022.Examples
 
 open Data.Examples
 
-def ch2_105 : LinguisticExample :=
+def ch2_105 : Datum :=
   { id := "bondarenko2022_ch2_105"
     source := ⟨"bondarenko-2022", "§2.2.3 ex. (105)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ch2_105 : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "truth-predicates"), ("nounSort", "content")] }
 
-def ch2_106 : LinguisticExample :=
+def ch2_106 : Datum :=
   { id := "bondarenko2022_ch2_106"
     source := ⟨"bondarenko-2022", "§2.2.3 ex. (106)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ch2_106 : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "truth-predicates"), ("nounSort", "content")] }
 
-def ch2_107 : LinguisticExample :=
+def ch2_107 : Datum :=
   { id := "bondarenko2022_ch2_107"
     source := ⟨"bondarenko-2022", "§2.2.3 ex. (107)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ch2_107 : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "truth-predicates"), ("nounSort", "situation")] }
 
-def ch2_108 : LinguisticExample :=
+def ch2_108 : Datum :=
   { id := "bondarenko2022_ch2_108"
     source := ⟨"bondarenko-2022", "§2.2.3 ex. (108)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ch2_108 : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "occurrence-predicates"), ("nounSort", "situation")] }
 
-def ch2_109 : LinguisticExample :=
+def ch2_109 : Datum :=
   { id := "bondarenko2022_ch2_109"
     source := ⟨"bondarenko-2022", "§2.2.3 ex. (109)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ch2_109 : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "occurrence-predicates"), ("nounSort", "content")] }
 
-def ch2_110 : LinguisticExample :=
+def ch2_110 : Datum :=
   { id := "bondarenko2022_ch2_110"
     source := ⟨"bondarenko-2022", "§2.2.3 ex. (110)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ch2_110 : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "occurrence-predicates"), ("nounSort", "situation")] }
 
-def ch2_111 : LinguisticExample :=
+def ch2_111 : Datum :=
   { id := "bondarenko2022_ch2_111"
     source := ⟨"bondarenko-2022", "§2.2.3 ex. (111)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ch2_111 : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "situation-only-predicate-notice"), ("nounSort", "content")] }
 
-def ch2_112 : LinguisticExample :=
+def ch2_112 : Datum :=
   { id := "bondarenko2022_ch2_112"
     source := ⟨"bondarenko-2022", "§2.2.3 ex. (112)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ch2_112 : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "situation-only-predicate-notice"), ("nounSort", "situation")] }
 
-def ch2_120a : LinguisticExample :=
+def ch2_120a : Datum :=
   { id := "bondarenko2022_ch2_120a"
     source := ⟨"bondarenko-2022", "§2.2.3 ex. (120a)"⟩
     reportedIn := none
@@ -134,7 +134,7 @@ def ch2_120a : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "substitution"), ("role", "premise-a")] }
 
-def ch2_120b : LinguisticExample :=
+def ch2_120b : Datum :=
   { id := "bondarenko2022_ch2_120b"
     source := ⟨"bondarenko-2022", "§2.2.3 ex. (120b)"⟩
     reportedIn := none
@@ -147,7 +147,7 @@ def ch2_120b : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "substitution"), ("role", "premise-b")] }
 
-def ch2_120c : LinguisticExample :=
+def ch2_120c : Datum :=
   { id := "bondarenko2022_ch2_120c"
     source := ⟨"bondarenko-2022", "§2.2.3 ex. (120c)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ch2_120c : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "substitution"), ("role", "conclusion")] }
 
-def ch2_121a : LinguisticExample :=
+def ch2_121a : Datum :=
   { id := "bondarenko2022_ch2_121a"
     source := ⟨"bondarenko-2022", "§2.2.3 ex. (121a)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ch2_121a : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "substitution"), ("nounSort", "content"), ("role", "premise-a")] }
 
-def ch2_121b : LinguisticExample :=
+def ch2_121b : Datum :=
   { id := "bondarenko2022_ch2_121b"
     source := ⟨"bondarenko-2022", "§2.2.3 ex. (121b)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def ch2_121b : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "substitution"), ("role", "premise-b")] }
 
-def ch2_121c : LinguisticExample :=
+def ch2_121c : Datum :=
   { id := "bondarenko2022_ch2_121c"
     source := ⟨"bondarenko-2022", "§2.2.3 ex. (121c)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def ch2_121c : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "substitution"), ("nounSort", "content"), ("role", "conclusion"), ("inference", "invalid")] }
 
-def ch2_122a : LinguisticExample :=
+def ch2_122a : Datum :=
   { id := "bondarenko2022_ch2_122a"
     source := ⟨"bondarenko-2022", "§2.2.3 ex. (122a)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def ch2_122a : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "substitution"), ("nounSort", "situation"), ("role", "premise-a")] }
 
-def ch2_122b : LinguisticExample :=
+def ch2_122b : Datum :=
   { id := "bondarenko2022_ch2_122b"
     source := ⟨"bondarenko-2022", "§2.2.3 ex. (122b)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def ch2_122b : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "substitution"), ("role", "premise-b")] }
 
-def ch2_122c : LinguisticExample :=
+def ch2_122c : Datum :=
   { id := "bondarenko2022_ch2_122c"
     source := ⟨"bondarenko-2022", "§2.2.3 ex. (122c)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def ch2_122c : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "substitution"), ("nounSort", "situation"), ("role", "conclusion"), ("inference", "valid")] }
 
-def ch4_30 : LinguisticExample :=
+def ch4_30 : Datum :=
   { id := "bondarenko2022_ch4_30"
     source := ⟨"bondarenko-2022", "§4.3.1 ex. (30)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def ch4_30 : LinguisticExample :=
     readings := []
     paperFeatures := [("clauseType", "Cont-CP"), ("shape", "bare gɘ-žɘ clause")] }
 
-def ch4_31 : LinguisticExample :=
+def ch4_31 : Datum :=
   { id := "bondarenko2022_ch4_31"
     source := ⟨"bondarenko-2022", "§4.3.1 ex. (31)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def ch4_31 : LinguisticExample :=
     readings := []
     paperFeatures := [("clauseType", "Sit-CP"), ("shape", "nominalized participial clause")] }
 
-def ch4_32 : LinguisticExample :=
+def ch4_32 : Datum :=
   { id := "bondarenko2022_ch4_32"
     source := ⟨"bondarenko-2022", "§4.3.1 ex. (32)"⟩
     reportedIn := none
@@ -277,6 +277,6 @@ def ch4_32 : LinguisticExample :=
     readings := []
     paperFeatures := [("clauseType", "Cont-CP"), ("shape", "nominalized gɘ-participial clause")] }
 
-def all : List LinguisticExample := [ch2_105, ch2_106, ch2_107, ch2_108, ch2_109, ch2_110, ch2_111, ch2_112, ch2_120a, ch2_120b, ch2_120c, ch2_121a, ch2_121b, ch2_121c, ch2_122a, ch2_122b, ch2_122c, ch4_30, ch4_31, ch4_32]
+def all : List Datum := [ch2_105, ch2_106, ch2_107, ch2_108, ch2_109, ch2_110, ch2_111, ch2_112, ch2_120a, ch2_120b, ch2_120c, ch2_121a, ch2_121b, ch2_121c, ch2_122a, ch2_122b, ch2_122c, ch4_30, ch4_31, ch4_32]
 
 end Bondarenko2022.Examples

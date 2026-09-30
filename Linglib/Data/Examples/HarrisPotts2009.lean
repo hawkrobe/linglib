@@ -17,7 +17,7 @@ namespace HarrisPotts2009.Examples
 
 open Data.Examples
 
-def ex2a : LinguisticExample :=
+def ex2a : Datum :=
   { id := "harrispotts2009_ex2a"
     source := ⟨"harris-potts-2009", "(2a)"⟩
     reportedIn := none
@@ -30,7 +30,7 @@ def ex2a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("construction", "nominalAppositive")] }
 
-def ex2b : LinguisticExample :=
+def ex2b : Datum :=
   { id := "harrispotts2009_ex2b"
     source := ⟨"harris-potts-2009", "(2b)"⟩
     reportedIn := none
@@ -43,7 +43,7 @@ def ex2b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("construction", "appositiveRelative")] }
 
-def ex2c : LinguisticExample :=
+def ex2c : Datum :=
   { id := "harrispotts2009_ex2c"
     source := ⟨"harris-potts-2009", "(2c)"⟩
     reportedIn := none
@@ -56,7 +56,7 @@ def ex2c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("construction", "epithet")] }
 
-def ex3a : LinguisticExample :=
+def ex3a : Datum :=
   { id := "harrispotts2009_ex3a"
     source := ⟨"harris-potts-2009", "(3a)"⟩
     reportedIn := none
@@ -69,7 +69,7 @@ def ex3a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("construction", "appositiveRelative")] }
 
-def ex4 : LinguisticExample :=
+def ex4 : Datum :=
   { id := "harrispotts2009_ex4"
     source := ⟨"harris-potts-2009", "(4)"⟩
     reportedIn := none
@@ -82,7 +82,7 @@ def ex4 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("construction", "appositiveRelative"), ("embedded", "yes"), ("orientation", "speaker")] }
 
-def ex5 : LinguisticExample :=
+def ex5 : Datum :=
   { id := "harrispotts2009_ex5"
     source := ⟨"harris-potts-2009", "(5)"⟩
     reportedIn := none
@@ -95,7 +95,7 @@ def ex5 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("construction", "conjunction"), ("embedded", "yes"), ("orientation", "subject")] }
 
-def ex6 : LinguisticExample :=
+def ex6 : Datum :=
   { id := "harrispotts2009_ex6"
     source := ⟨"harris-potts-2009", "(6)"⟩
     reportedIn := none
@@ -108,7 +108,7 @@ def ex6 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("construction", "epithet"), ("embedded", "yes"), ("orientation", "speaker")] }
 
-def ex7 : LinguisticExample :=
+def ex7 : Datum :=
   { id := "harrispotts2009_ex7"
     source := ⟨"harris-potts-2009", "(7)"⟩
     reportedIn := none
@@ -121,7 +121,7 @@ def ex7 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("construction", "nominalAppositive"), ("embedded", "yes"), ("orientation", "subject")] }
 
-def ex8 : LinguisticExample :=
+def ex8 : Datum :=
   { id := "harrispotts2009_ex8"
     source := ⟨"amaral-roberts-smith-2007", ""⟩
     reportedIn := some ⟨"harris-potts-2009", "(8)"⟩
@@ -134,7 +134,7 @@ def ex8 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("construction", "appositiveRelative"), ("embedded", "yes"), ("orientation", "subject")] }
 
-def ex9 : LinguisticExample :=
+def ex9 : Datum :=
   { id := "harrispotts2009_ex9"
     source := ⟨"amaral-roberts-smith-2007", ""⟩
     reportedIn := some ⟨"harris-potts-2009", "(9)"⟩
@@ -147,7 +147,7 @@ def ex9 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("construction", "expressiveAdjective"), ("embedded", "yes"), ("orientation", "subject")] }
 
-def ex11 : LinguisticExample :=
+def ex11 : Datum :=
   { id := "harrispotts2009_ex11"
     source := ⟨"harris-potts-2009", "(11)"⟩
     reportedIn := none
@@ -160,7 +160,7 @@ def ex11 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("construction", "expressiveAdjective"), ("embedded", "no"), ("orientation", "subject")] }
 
-def ex12 : LinguisticExample :=
+def ex12 : Datum :=
   { id := "harrispotts2009_ex12"
     source := ⟨"harris-potts-2009", "(12)"⟩
     reportedIn := none
@@ -173,7 +173,7 @@ def ex12 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("construction", "epithet"), ("embedded", "no"), ("orientation", "subject")] }
 
-def exA1_embedded : LinguisticExample :=
+def exA1_embedded : Datum :=
   { id := "harrispotts2009_exA1-embedded"
     source := ⟨"harris-potts-2009", "(A.1)"⟩
     reportedIn := none
@@ -186,7 +186,7 @@ def exA1_embedded : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("construction", "nominalAppositive"), ("embedded", "yes"), ("experiment", "1"), ("item", "1")] }
 
-def exA1_unembedded : LinguisticExample :=
+def exA1_unembedded : Datum :=
   { id := "harrispotts2009_exA1-unembedded"
     source := ⟨"harris-potts-2009", "(A.1)"⟩
     reportedIn := none
@@ -199,7 +199,7 @@ def exA1_unembedded : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("construction", "nominalAppositive"), ("embedded", "no"), ("experiment", "1"), ("item", "1")] }
 
-def exA2_embedded : LinguisticExample :=
+def exA2_embedded : Datum :=
   { id := "harrispotts2009_exA2-embedded"
     source := ⟨"harris-potts-2009", "(A.2)"⟩
     reportedIn := none
@@ -212,7 +212,7 @@ def exA2_embedded : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("construction", "nominalAppositive"), ("embedded", "yes"), ("experiment", "1"), ("item", "2")] }
 
-def exA2_unembedded : LinguisticExample :=
+def exA2_unembedded : Datum :=
   { id := "harrispotts2009_exA2-unembedded"
     source := ⟨"harris-potts-2009", "(A.2)"⟩
     reportedIn := none
@@ -225,7 +225,7 @@ def exA2_unembedded : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("construction", "nominalAppositive"), ("embedded", "no"), ("experiment", "1"), ("item", "2")] }
 
-def exA3_embedded : LinguisticExample :=
+def exA3_embedded : Datum :=
   { id := "harrispotts2009_exA3-embedded"
     source := ⟨"harris-potts-2009", "(A.3)"⟩
     reportedIn := none
@@ -238,7 +238,7 @@ def exA3_embedded : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("construction", "appositiveRelative"), ("embedded", "yes"), ("experiment", "1"), ("item", "3")] }
 
-def exA3_unembedded : LinguisticExample :=
+def exA3_unembedded : Datum :=
   { id := "harrispotts2009_exA3-unembedded"
     source := ⟨"harris-potts-2009", "(A.3)"⟩
     reportedIn := none
@@ -251,7 +251,7 @@ def exA3_unembedded : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("construction", "appositiveRelative"), ("embedded", "no"), ("experiment", "1"), ("item", "3")] }
 
-def exA4_embedded : LinguisticExample :=
+def exA4_embedded : Datum :=
   { id := "harrispotts2009_exA4-embedded"
     source := ⟨"harris-potts-2009", "(A.4)"⟩
     reportedIn := none
@@ -264,7 +264,7 @@ def exA4_embedded : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("construction", "nominalAppositive"), ("embedded", "yes"), ("experiment", "1"), ("item", "4")] }
 
-def exA4_unembedded : LinguisticExample :=
+def exA4_unembedded : Datum :=
   { id := "harrispotts2009_exA4-unembedded"
     source := ⟨"harris-potts-2009", "(A.4)"⟩
     reportedIn := none
@@ -277,7 +277,7 @@ def exA4_unembedded : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("construction", "nominalAppositive"), ("embedded", "no"), ("experiment", "1"), ("item", "4")] }
 
-def exA5_embedded : LinguisticExample :=
+def exA5_embedded : Datum :=
   { id := "harrispotts2009_exA5-embedded"
     source := ⟨"harris-potts-2009", "(A.5)"⟩
     reportedIn := none
@@ -290,7 +290,7 @@ def exA5_embedded : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("construction", "appositiveRelative"), ("embedded", "yes"), ("experiment", "1"), ("item", "5")] }
 
-def exA5_unembedded : LinguisticExample :=
+def exA5_unembedded : Datum :=
   { id := "harrispotts2009_exA5-unembedded"
     source := ⟨"harris-potts-2009", "(A.5)"⟩
     reportedIn := none
@@ -303,7 +303,7 @@ def exA5_unembedded : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("construction", "appositiveRelative"), ("embedded", "no"), ("experiment", "1"), ("item", "5")] }
 
-def exA6_embedded : LinguisticExample :=
+def exA6_embedded : Datum :=
   { id := "harrispotts2009_exA6-embedded"
     source := ⟨"harris-potts-2009", "(A.6)"⟩
     reportedIn := none
@@ -316,7 +316,7 @@ def exA6_embedded : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("construction", "nominalAppositive"), ("embedded", "yes"), ("experiment", "1"), ("item", "6")] }
 
-def exA6_unembedded : LinguisticExample :=
+def exA6_unembedded : Datum :=
   { id := "harrispotts2009_exA6-unembedded"
     source := ⟨"harris-potts-2009", "(A.6)"⟩
     reportedIn := none
@@ -329,7 +329,7 @@ def exA6_unembedded : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("construction", "nominalAppositive"), ("embedded", "no"), ("experiment", "1"), ("item", "6")] }
 
-def exA7_embedded : LinguisticExample :=
+def exA7_embedded : Datum :=
   { id := "harrispotts2009_exA7-embedded"
     source := ⟨"harris-potts-2009", "(A.7)"⟩
     reportedIn := none
@@ -342,7 +342,7 @@ def exA7_embedded : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("construction", "appositiveRelative"), ("embedded", "yes"), ("experiment", "1"), ("item", "7")] }
 
-def exA7_unembedded : LinguisticExample :=
+def exA7_unembedded : Datum :=
   { id := "harrispotts2009_exA7-unembedded"
     source := ⟨"harris-potts-2009", "(A.7)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def exA7_unembedded : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("construction", "appositiveRelative"), ("embedded", "no"), ("experiment", "1"), ("item", "7")] }
 
-def exA8_embedded : LinguisticExample :=
+def exA8_embedded : Datum :=
   { id := "harrispotts2009_exA8-embedded"
     source := ⟨"harris-potts-2009", "(A.8)"⟩
     reportedIn := none
@@ -368,7 +368,7 @@ def exA8_embedded : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("construction", "nominalAppositive"), ("embedded", "yes"), ("experiment", "1"), ("item", "8")] }
 
-def exA8_unembedded : LinguisticExample :=
+def exA8_unembedded : Datum :=
   { id := "harrispotts2009_exA8-unembedded"
     source := ⟨"harris-potts-2009", "(A.8)"⟩
     reportedIn := none
@@ -381,7 +381,7 @@ def exA8_unembedded : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("construction", "nominalAppositive"), ("embedded", "no"), ("experiment", "1"), ("item", "8")] }
 
-def exB1_positive : LinguisticExample :=
+def exB1_positive : Datum :=
   { id := "harrispotts2009_exB1-positive"
     source := ⟨"harris-potts-2009", "(B.1)"⟩
     reportedIn := none
@@ -394,7 +394,7 @@ def exB1_positive : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("construction", "epithet"), ("embedded", "no"), ("experiment", "2"), ("item", "1"), ("contextPolarity", "positive"), ("epithet", "the jerk")] }
 
-def exB1_negative : LinguisticExample :=
+def exB1_negative : Datum :=
   { id := "harrispotts2009_exB1-negative"
     source := ⟨"harris-potts-2009", "(B.1)"⟩
     reportedIn := none
@@ -407,7 +407,7 @@ def exB1_negative : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("construction", "epithet"), ("embedded", "no"), ("experiment", "2"), ("item", "1"), ("contextPolarity", "negative"), ("epithet", "the jerk")] }
 
-def exB2_positive : LinguisticExample :=
+def exB2_positive : Datum :=
   { id := "harrispotts2009_exB2-positive"
     source := ⟨"harris-potts-2009", "(B.2)"⟩
     reportedIn := none
@@ -420,7 +420,7 @@ def exB2_positive : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("construction", "epithet"), ("embedded", "no"), ("experiment", "2"), ("item", "2"), ("contextPolarity", "positive"), ("epithet", "the idiot")] }
 
-def exB2_negative : LinguisticExample :=
+def exB2_negative : Datum :=
   { id := "harrispotts2009_exB2-negative"
     source := ⟨"harris-potts-2009", "(B.2)"⟩
     reportedIn := none
@@ -433,7 +433,7 @@ def exB2_negative : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("construction", "epithet"), ("embedded", "no"), ("experiment", "2"), ("item", "2"), ("contextPolarity", "negative"), ("epithet", "the idiot")] }
 
-def exB3_positive : LinguisticExample :=
+def exB3_positive : Datum :=
   { id := "harrispotts2009_exB3-positive"
     source := ⟨"harris-potts-2009", "(B.3)"⟩
     reportedIn := none
@@ -446,7 +446,7 @@ def exB3_positive : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("construction", "epithet"), ("embedded", "no"), ("experiment", "2"), ("item", "3"), ("contextPolarity", "positive"), ("epithet", "the stooge")] }
 
-def exB3_negative : LinguisticExample :=
+def exB3_negative : Datum :=
   { id := "harrispotts2009_exB3-negative"
     source := ⟨"harris-potts-2009", "(B.3)"⟩
     reportedIn := none
@@ -459,7 +459,7 @@ def exB3_negative : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("construction", "epithet"), ("embedded", "no"), ("experiment", "2"), ("item", "3"), ("contextPolarity", "negative"), ("epithet", "the stooge")] }
 
-def exB4_positive : LinguisticExample :=
+def exB4_positive : Datum :=
   { id := "harrispotts2009_exB4-positive"
     source := ⟨"harris-potts-2009", "(B.4)"⟩
     reportedIn := none
@@ -472,7 +472,7 @@ def exB4_positive : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("construction", "epithet"), ("embedded", "no"), ("experiment", "2"), ("item", "4"), ("contextPolarity", "positive"), ("epithet", "the idiot")] }
 
-def exB4_negative : LinguisticExample :=
+def exB4_negative : Datum :=
   { id := "harrispotts2009_exB4-negative"
     source := ⟨"harris-potts-2009", "(B.4)"⟩
     reportedIn := none
@@ -485,7 +485,7 @@ def exB4_negative : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("construction", "epithet"), ("embedded", "no"), ("experiment", "2"), ("item", "4"), ("contextPolarity", "negative"), ("epithet", "the idiot")] }
 
-def exB5_positive : LinguisticExample :=
+def exB5_positive : Datum :=
   { id := "harrispotts2009_exB5-positive"
     source := ⟨"harris-potts-2009", "(B.5)"⟩
     reportedIn := none
@@ -498,7 +498,7 @@ def exB5_positive : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("construction", "epithet"), ("embedded", "no"), ("experiment", "2"), ("item", "5"), ("contextPolarity", "positive"), ("epithet", "the twerp")] }
 
-def exB5_negative : LinguisticExample :=
+def exB5_negative : Datum :=
   { id := "harrispotts2009_exB5-negative"
     source := ⟨"harris-potts-2009", "(B.5)"⟩
     reportedIn := none
@@ -511,7 +511,7 @@ def exB5_negative : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("construction", "epithet"), ("embedded", "no"), ("experiment", "2"), ("item", "5"), ("contextPolarity", "negative"), ("epithet", "the twerp")] }
 
-def exB6_positive : LinguisticExample :=
+def exB6_positive : Datum :=
   { id := "harrispotts2009_exB6-positive"
     source := ⟨"harris-potts-2009", "(B.6)"⟩
     reportedIn := none
@@ -524,7 +524,7 @@ def exB6_positive : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("construction", "epithet"), ("embedded", "no"), ("experiment", "2"), ("item", "6"), ("contextPolarity", "positive"), ("epithet", "the skinflint")] }
 
-def exB6_negative : LinguisticExample :=
+def exB6_negative : Datum :=
   { id := "harrispotts2009_exB6-negative"
     source := ⟨"harris-potts-2009", "(B.6)"⟩
     reportedIn := none
@@ -537,7 +537,7 @@ def exB6_negative : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("construction", "epithet"), ("embedded", "no"), ("experiment", "2"), ("item", "6"), ("contextPolarity", "negative"), ("epithet", "the skinflint")] }
 
-def exB7_positive : LinguisticExample :=
+def exB7_positive : Datum :=
   { id := "harrispotts2009_exB7-positive"
     source := ⟨"harris-potts-2009", "(B.7)"⟩
     reportedIn := none
@@ -550,7 +550,7 @@ def exB7_positive : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("construction", "epithet"), ("embedded", "no"), ("experiment", "2"), ("item", "7"), ("contextPolarity", "positive"), ("epithet", "the jerk")] }
 
-def exB7_negative : LinguisticExample :=
+def exB7_negative : Datum :=
   { id := "harrispotts2009_exB7-negative"
     source := ⟨"harris-potts-2009", "(B.7)"⟩
     reportedIn := none
@@ -563,7 +563,7 @@ def exB7_negative : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("construction", "epithet"), ("embedded", "no"), ("experiment", "2"), ("item", "7"), ("contextPolarity", "negative"), ("epithet", "the jerk")] }
 
-def exB8_positive : LinguisticExample :=
+def exB8_positive : Datum :=
   { id := "harrispotts2009_exB8-positive"
     source := ⟨"harris-potts-2009", "(B.8)"⟩
     reportedIn := none
@@ -576,7 +576,7 @@ def exB8_positive : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("construction", "epithet"), ("embedded", "no"), ("experiment", "2"), ("item", "8"), ("contextPolarity", "positive"), ("epithet", "the cretin")] }
 
-def exB8_negative : LinguisticExample :=
+def exB8_negative : Datum :=
   { id := "harrispotts2009_exB8-negative"
     source := ⟨"harris-potts-2009", "(B.8)"⟩
     reportedIn := none
@@ -589,7 +589,7 @@ def exB8_negative : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("construction", "epithet"), ("embedded", "no"), ("experiment", "2"), ("item", "8"), ("contextPolarity", "negative"), ("epithet", "the cretin")] }
 
-def exB9_positive : LinguisticExample :=
+def exB9_positive : Datum :=
   { id := "harrispotts2009_exB9-positive"
     source := ⟨"harris-potts-2009", "(B.9)"⟩
     reportedIn := none
@@ -602,7 +602,7 @@ def exB9_positive : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("construction", "epithet"), ("embedded", "no"), ("experiment", "2"), ("item", "9"), ("contextPolarity", "positive"), ("epithet", "the creep")] }
 
-def exB9_negative : LinguisticExample :=
+def exB9_negative : Datum :=
   { id := "harrispotts2009_exB9-negative"
     source := ⟨"harris-potts-2009", "(B.9)"⟩
     reportedIn := none
@@ -615,7 +615,7 @@ def exB9_negative : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("construction", "epithet"), ("embedded", "no"), ("experiment", "2"), ("item", "9"), ("contextPolarity", "negative"), ("epithet", "the creep")] }
 
-def ex17 : LinguisticExample :=
+def ex17 : Datum :=
   { id := "harrispotts2009_ex17"
     source := ⟨"harris-potts-2009", "(17)"⟩
     reportedIn := none
@@ -628,7 +628,7 @@ def ex17 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("construction", "appositiveRelative"), ("embedded", "yes")] }
 
-def ex22a : LinguisticExample :=
+def ex22a : Datum :=
   { id := "harrispotts2009_ex22a"
     source := ⟨"harris-potts-2009", "(22a)"⟩
     reportedIn := none
@@ -641,7 +641,7 @@ def ex22a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("construction", "appositiveRelative"), ("embedded", "yes"), ("orientation", "speaker")] }
 
-def ex23a : LinguisticExample :=
+def ex23a : Datum :=
   { id := "harrispotts2009_ex23a"
     source := ⟨"harris-potts-2009", "(23a)"⟩
     reportedIn := none
@@ -654,7 +654,7 @@ def ex23a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("construction", "appositiveRelative"), ("embedded", "yes"), ("orientation", "subject")] }
 
-def ex25a : LinguisticExample :=
+def ex25a : Datum :=
   { id := "harrispotts2009_ex25a"
     source := ⟨"harris-potts-2009", "(25a)"⟩
     reportedIn := none
@@ -667,7 +667,7 @@ def ex25a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("construction", "appositiveRelative"), ("embedded", "yes")] }
 
-def ex25b : LinguisticExample :=
+def ex25b : Datum :=
   { id := "harrispotts2009_ex25b"
     source := ⟨"harris-potts-2009", "(25b)"⟩
     reportedIn := none
@@ -680,6 +680,6 @@ def ex25b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("construction", "appositiveRelative"), ("embedded", "yes")] }
 
-def all : List LinguisticExample := [ex2a, ex2b, ex2c, ex3a, ex4, ex5, ex6, ex7, ex8, ex9, ex11, ex12, exA1_embedded, exA1_unembedded, exA2_embedded, exA2_unembedded, exA3_embedded, exA3_unembedded, exA4_embedded, exA4_unembedded, exA5_embedded, exA5_unembedded, exA6_embedded, exA6_unembedded, exA7_embedded, exA7_unembedded, exA8_embedded, exA8_unembedded, exB1_positive, exB1_negative, exB2_positive, exB2_negative, exB3_positive, exB3_negative, exB4_positive, exB4_negative, exB5_positive, exB5_negative, exB6_positive, exB6_negative, exB7_positive, exB7_negative, exB8_positive, exB8_negative, exB9_positive, exB9_negative, ex17, ex22a, ex23a, ex25a, ex25b]
+def all : List Datum := [ex2a, ex2b, ex2c, ex3a, ex4, ex5, ex6, ex7, ex8, ex9, ex11, ex12, exA1_embedded, exA1_unembedded, exA2_embedded, exA2_unembedded, exA3_embedded, exA3_unembedded, exA4_embedded, exA4_unembedded, exA5_embedded, exA5_unembedded, exA6_embedded, exA6_unembedded, exA7_embedded, exA7_unembedded, exA8_embedded, exA8_unembedded, exB1_positive, exB1_negative, exB2_positive, exB2_negative, exB3_positive, exB3_negative, exB4_positive, exB4_negative, exB5_positive, exB5_negative, exB6_positive, exB6_negative, exB7_positive, exB7_negative, exB8_positive, exB8_negative, exB9_positive, exB9_negative, ex17, ex22a, ex23a, ex25a, ex25b]
 
 end HarrisPotts2009.Examples

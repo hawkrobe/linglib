@@ -294,11 +294,11 @@ theorem context_tracks_bias_strength :
 Typed stimuli live in `Data.Examples.Stankova2026`; each is paired here
 with the negation reading and Table 1 diagnostic the paper assigns. -/
 
-open Data.Examples (LinguisticExample)
+open Data.Examples (Datum)
 
 /-- The paper's polarity/particle examples with their negation reading
 and tested diagnostic. -/
-def analyzedExamples : List (LinguisticExample × Position × Diagnostic) :=
+def analyzedExamples : List (Datum × Position × Diagnostic) :=
   [ (Examples.ex6a,  .inner,  .nciLicensed)
   , (Examples.ex6b,  .outer,  .nciLicensed)
   , (Examples.ex7a,  .medial, .ppiOutscoping)
@@ -316,7 +316,7 @@ theorem examples_match_table1 :
 /-- [stankova-2025]'s positive-evidence stimulus ((14): V1 negative PQ
 after evidence for p) with the bias-profile cell it occupies. -/
 def biasCheckedExamples :
-    List (LinguisticExample × SignType × SignType × CzechPQForm) :=
+    List (Datum × SignType × SignType × CzechPQForm) :=
   [ (StankovaSimik2025.Examples.ex14, 1, 0, .interNPQ) ]
 
 /-- The bias profile predicts the positive-evidence stimulus — the form
