@@ -43,7 +43,7 @@ condition's (`pointwise_divergence`).
 
 ## Main definitions
 
-* `Display`, `cell`: a display as a list of trivalent values, one per boy.
+* `Display`, `cell`, `displayOf?`: a display as a list of trivalent values, one per boy.
 * `resolve`, `resolutions`, `holds`: bivalent resolutions of a display and a number tree on them.
 * `reading`, `someReading`, `allReading`: the some- and all-substituted variants.
 * `supervaluation`, `globalExh`, `globalConstrual`, `universalPresupposition`, `pointwise`: the
@@ -119,6 +119,25 @@ abbrev Display := List Trivalent
 plural over the nine, true when all are, false when none are, and a gap otherwise. -/
 def cell (n : ℕ) : Trivalent :=
   Homogeneity.barePlural (fun j m ↦ j < m) (Finset.range 9) n
+
+/-- A cell is true, designated at K3, when all nine objects are found. -/
+theorem designated_k3_cell (n : ℕ) : designated .k3 (cell n) ↔ 9 ≤ n := by
+  rw [Trivalent.designated_k3_iff, cell, Homogeneity.barePlural,
+    Trivalent.supervaluation_eq_true_iff]
+  exact ⟨fun h ↦ h 8 (by simp), fun h j hj ↦ by simp at hj; omega⟩
+
+/-- A cell is non-false, designated at LP, when at least one object is found. -/
+theorem designated_lp_cell (n : ℕ) : designated .lp (cell n) ↔ 1 ≤ n := by
+  rw [Trivalent.designated_lp_iff, Ne, cell, Homogeneity.barePlural,
+    Trivalent.supervaluation_eq_false_iff]
+  simp only [Finset.mem_range, not_and, not_forall, not_not, exists_prop]
+  exact ⟨fun h ↦ by obtain ⟨j, -, hj⟩ := h ⟨0, by simp⟩; omega,
+    fun h _ ↦ ⟨0, by omega, h⟩⟩
+
+/-- The display recorded on a row, read cell by cell from its digits. -/
+def displayOf? (e : LinguisticExample) : Option Display :=
+  (e.feature? "display").bind fun s ↦
+    s.toList.mapM fun ch ↦ if ch.isDigit then some (cell (ch.toNat - '0'.toNat)) else none
 
 /-- A number tree holds of a resolution according to how many boys it resolves out of and into
 the scope. -/
@@ -200,6 +219,14 @@ instance [DecidableRel q] (δ : Designation) : Decidable (reading q d δ) :=
   inferInstanceAs (Decidable (holds q _))
 
 variable {q d}
+
+/-- The universal quantifier holds of a resolution when every boy is in the scope. -/
+theorem reading_all (δ : Designation) : reading NumberTree.all d δ ↔ ∀ v ∈ d, designated δ v := by
+  simp [reading, holds, resolve, NumberTree.all, List.count_eq_zero]
+
+/-- The negative quantifier holds of a resolution when no boy is in the scope. -/
+theorem reading_no (δ : Designation) : reading NumberTree.no d δ ↔ ∀ v ∈ d, ¬ designated δ v := by
+  simp [reading, holds, resolve, NumberTree.no, List.count_eq_zero]
 
 /-- On a display without partial cells the two resolutions coincide. -/
 theorem someReading_iff_allReading (h : ∀ v ∈ d, v.isDefined) :
@@ -480,14 +507,13 @@ structure Datum where
   observed : Trivalent
   deriving Repr
 
-/-- Read a row: the display cell by cell from its digits, a clear condition as its clear value,
-and a gap-family condition as recorded (`HomogeneityGap.gapTruth`). -/
+/-- Read a row: its display, a clear condition as its clear value, and a gap-family condition as
+recorded (`HomogeneityGap.gapTruth`). -/
 def Datum.ofExample (e : LinguisticExample) : Option Datum := do
   let op ← e.parse? "operator" [("every", .every), ("no", .no), ("exactlyTwo", .exactlyTwo)]
   let c ← e.parse? "condition" [("TRUE", .clearlyTrue), ("FALSE", .clearlyFalse),
     ("GAP", .gap), ("GAP?", .gapQ), ("GAP??", .gapQQ)]
-  let s ← e.feature? "display"
-  let d ← s.toList.mapM fun ch ↦ if ch.isDigit then some (cell (ch.toNat - '0'.toNat)) else none
+  let d ← displayOf? e
   let observed ← match c with
     | .clearlyTrue => some .true
     | .clearlyFalse => some .false
