@@ -34,7 +34,7 @@ spatio-temporal relations (§6.3).
   Meaning Hypothesis ((219), fn. 15).
 
 The six-scheme entailment lattice ((28)) and the WR-as-cumulation identity ((120),
-`weakReciprocity_iff_cumulative_strict`) live in `Plurality/Reciprocal.lean` and are
+`weakReciprocity_iff_liftRel`) live in `Plurality/Reciprocal.lean` and are
 consumed here. The convergence with [haug-dalrymple-2020] on presuppositional
 distinctness is housed in `Studies/HaugDalrymple2020.lean` (the later paper draws the
 comparison); the trivalent divergence from [sternefeld-1998] is noted at
@@ -120,7 +120,7 @@ end
 /-! ### Situation-based Weak Reciprocity
 
 (120)'s bivalent collapse — WR is `**` of the strict-distinct relation — is the
-substrate theorem `weakReciprocity_iff_cumulative_strict`, shared with
+substrate theorem `weakReciprocity_iff_liftRel`, shared with
 [sternefeld-1998]'s (26b); the two analyses differ only trivalently, where
 [sternefeld-1998] asserts distinctness and [beck-2001] presupposes it ((113), the
 distinct-subgroups effect of §4.3.2). What remains of the paper's own reading

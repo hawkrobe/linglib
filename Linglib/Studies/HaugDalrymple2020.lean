@@ -4,6 +4,7 @@ public import Mathlib.Data.Finset.Powerset
 public import Mathlib.Data.Set.Card
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Semantics.Dynamic.PPCDRT
+public import Linglib.Semantics.Plurality.Cumulativity
 public import Linglib.Semantics.Plurality.Reciprocal
 public import Linglib.Semantics.Supervaluation
 
@@ -333,27 +334,26 @@ theorem value_ofDep_right (h : u ≠ v) (D : SetRel E E) : value v (ofDep u v D)
 /-- §2.1, (12): cumulative readings are the default. A state satisfying `P(u, v)` relates the
 values of `u` to the values of `v` cumulatively in the sense of [beck-sauerland-2000], and any
 two pluralities so related are the values of such a state. -/
-theorem cumulative_iff_exists_relCond (h : u ≠ v) {x y : Finset E} :
-    x.Nonempty ∧ Cumulative P x y ↔
-      ∃ S : PluralAssign ℕ E, value u S = ↑x ∧ value v S = ↑y ∧ relCond P u v S ∅ := by
-  rw [cumulative_iff_exists_dom_cod]
+theorem cumulative_iff_exists_relCond (h : u ≠ v) {x y : Set E} :
+    x.Nonempty ∧ Set.LiftRel P x y ↔
+      ∃ S : PluralAssign ℕ E, value u S = x ∧ value v S = y ∧ relCond P u v S ∅ := by
+  rw [Set.liftRel_iff_exists_dom_cod]
   constructor
-  · rintro ⟨⟨a, ha⟩, D, hD, hdom, hcod⟩
-    obtain ⟨b, hab⟩ : a ∈ D.dom := hdom ▸ Finset.mem_coe.2 ha
-    exact ⟨ofDep u v D, (value_ofDep_left h D).trans hdom, (value_ofDep_right h D).trans hcod,
-      relCond_ofDep h hD ⟨_, hab⟩⟩
-  · rintro ⟨S, hu, hv, hS⟩
+  · rintro ⟨⟨a, ha⟩, D, hD, rfl, rfl⟩
+    obtain ⟨b, hab⟩ := ha
+    exact ⟨ofDep u v D, value_ofDep_left h D, value_ofDep_right h D, relCond_ofDep h hD ⟨_, hab⟩⟩
+  · rintro ⟨S, rfl, rfl, hS⟩
     obtain ⟨hP, hdom, hcod⟩ := dep_of_relCond hS
     obtain ⟨s, hs⟩ := hS.1
     obtain ⟨a, -, ha, -⟩ := hS.2 s hs
-    exact ⟨⟨a, Finset.mem_coe.1 (hu ▸ ⟨s, hs, ha⟩)⟩, dep u v S, hP, hdom.trans hu, hcod.trans hv⟩
+    exact ⟨⟨a, s, hs, ha⟩, dep u v S, hP, hdom, hcod⟩
 
 /-- §4.1, (75): the cumulation operator `**` that [sternefeld-1998] applies to the predicate and
 the pointwise conditions of Plural CDRT give the same truth conditions. -/
 theorem cumulation_iff_exists_relCond [DecidableEq E] (h : u ≠ v) {x y : Finset E} :
     Cumulation (Relation.Map P ({·}) ({·})) x y ↔
-      ∃ S : PluralAssign ℕ E, value u S = ↑x ∧ value v S = ↑y ∧ relCond P u v S ∅ :=
-  (cumulation_map_singleton P x y).trans (cumulative_iff_exists_relCond h)
+      ∃ S : PluralAssign ℕ E, value u S = ↑x ∧ value v S = ↑y ∧ relCond P u v S ∅ := by
+  rw [cumulation_map_singleton, ← Finset.coe_nonempty, cumulative_iff_exists_relCond h]
 
 /-- The DRS of a reciprocal sentence whose antecedent denotes `X`, as in (40b) and (125b): the
 antecedent `u'` sums to `X`, `P` relates `u'` to the reciprocal `u` in every state, and `u` is
@@ -389,7 +389,8 @@ conjoined, which is Langendoen's comparison of *the women pointed at each other*
 released the prisoners* (§1). -/
 theorem weakReciprocity_iff_exists_reciprocalDRS {u' : ℕ} (h : u ≠ u') {X : Finset E} :
     X.Nonempty ∧ WeakReciprocity P X ↔ ∃ S, ReciprocalDRS P ↑X u u' S := by
-  rw [weakReciprocity_iff_cumulative_strict, cumulative_iff_exists_relCond h.symm]
+  rw [weakReciprocity_iff_liftRel, ← Finset.coe_nonempty,
+    cumulative_iff_exists_relCond h.symm]
   simp only [reciprocalDRS_iff]
 
 /-- §4.1, (76): [sternefeld-1998]'s weak reciprocal, `**` of `P` with non-identity conjoined
@@ -399,7 +400,7 @@ theorem cumulation_iff_exists_reciprocalDRS [DecidableEq E] {u' : ℕ} (h : u �
     {X : Finset E} :
     Cumulation (Relation.Map (fun a b ↦ P a b ∧ a ≠ b) ({·}) ({·})) X X ↔
       ∃ S, ReciprocalDRS P ↑X u u' S := by
-  rw [cumulation_map_singleton, ← weakReciprocity_iff_cumulative_strict,
+  rw [cumulation_map_singleton, ← weakReciprocity_iff_liftRel,
     weakReciprocity_iff_exists_reciprocalDRS h]
 
 /-- §2.4, §4.5: whatever the verb, the dependency between the antecedent and a reciprocal

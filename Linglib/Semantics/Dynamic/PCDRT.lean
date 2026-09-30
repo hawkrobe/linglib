@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.Dynamic.CDRT
 public import Linglib.Logic.Assignment
-public import Mathlib.Logic.Relator
+public import Linglib.Core.Data.Set.Functor
 
 /-!
 # Plural CDRT
@@ -13,16 +13,19 @@ assignments and whose columns are drefs: a dref stores the set of its values in 
 rows store the dependencies between the values of different drefs. A dref takes the dummy value ★
 in the rows where it has none; here its register holds an `Option E` and ★ is `none`.
 
-Every CDRT update lifts to plural states cumulatively, each input row having a successor among
-the output rows and each output row a predecessor among the input rows. This is how dref
-introduction `[u]` lifts to plural states, and the lift is a functor. Atomic conditions hold
-distributively of the rows where their drefs have values. Structured inclusion selects a subset
-of a dref's values by discarding rows, so the subset keeps exactly the superset's dependencies.
-On plural partial assignments a dref's cells are the operator `restrict` of `PluralAssign`.
+Every CDRT update lifts to plural states cumulatively: the lift is the relation lifting
+`Set.LiftRel` of the update, which is the cumulation `**` of [beck-sauerland-2000], each input row
+having a successor among the output rows and each output row a predecessor among the input rows.
+This is how dref introduction `[u]` lifts to plural states, and the lift is a functor. Atomic
+conditions hold distributively of the rows where their drefs have values. Structured inclusion
+selects a subset of a dref's values by discarding rows, so the subset keeps exactly the
+superset's dependencies. On plural partial assignments a dref's cells are the operator
+`restrict` of `PluralAssign`.
 
 ## Main definitions
 
-* `Update.cumul`: the cumulative lift of an update to plural states.
+* `Update.cumul`: the cumulative lift of an update to plural states, `Set.LiftRel` of its
+  relation.
 * `PCDRT.value`, `PCDRT.cell`, `PCDRT.dep`: a dref's values, the rows where it has a given
   one, and the pairs of values two drefs have in a row.
 * `PCDRT.intro`: dref introduction `[u]`.
@@ -32,8 +35,6 @@ On plural partial assignments a dref's cells are the operator `restrict` of `Plu
 ## Main results
 
 * `Update.cumul_id`, `Update.cumul_comp`: the lift is a functor.
-* `Update.mem_cumul_iff_biTotal`: the lift relates two states exactly when the update is
-  bitotal between their rows.
 * `Update.cumul_test`: a lifted test checks every row.
 * `PCDRT.dom_dep`, `PCDRT.cod_dep`: where every row valuing one dref values the other, the
   dependency's domain and codomain are the two drefs' values.
@@ -43,11 +44,16 @@ On plural partial assignments a dref's cells are the operator `restrict` of `Plu
 
 ## References
 
-* [van-den-berg-1996]
-* [brasoveanu-2007]
-* [brasoveanu-2010]
-* [haug-dalrymple-2020]
-* [spector-2025]
+* [M. H. van den Berg, *Some aspects of the internal structure of discourse: the dynamics of
+  nominal anaphora* (1996)][van-den-berg-1996]
+* [A. Brasoveanu, *Structured nominal and modal reference* (2007)][brasoveanu-2007]
+* [A. Brasoveanu, *Decomposing modal quantification* (2010)][brasoveanu-2010]
+* [S. Beck and U. Sauerland, *Cumulation is needed: A reply to Winter (2000)*
+  (2000)][beck-sauerland-2000]
+* [D. T. T. Haug and M. Dalrymple, *Reciprocity: Anaphora, scope, and quantification*
+  (2020)][haug-dalrymple-2020]
+* [B. Spector, *Trivalence and transparency: A non-dynamic approach to anaphora*
+  (2025)][spector-2025]
 -/
 
 @[expose] public section
@@ -58,64 +64,31 @@ open SetRel
 
 variable {S : Type*} {D D₁ D₂ : Update S} {I J : Set S}
 
-/-- The cumulative lift of an update to plural states ([brasoveanu-2010] (18)): every input
-row has a `D`-successor among the output rows, and every output row a `D`-predecessor among the
-input rows. -/
-def cumul (D : Update S) : Update (Set S) :=
-  {(I, J) | (∀ i ∈ I, ∃ j ∈ J, i ~[D] j) ∧ ∀ j ∈ J, ∃ i ∈ I, i ~[D] j}
+/-- The cumulative lift of an update to plural states ([brasoveanu-2010] (18)): the relation
+lifting `Set.LiftRel` of the update, which is cumulation `**` in the sense of
+[beck-sauerland-2000]. Every input row has a `D`-successor among the output rows, and every output
+row a `D`-predecessor among the input rows. -/
+def cumul (D : Update S) : Update (Set S) := {(I, J) | Set.LiftRel (· ~[D] ·) I J}
 
-theorem mem_cumul_iff_subset : I ~[cumul D] J ↔ I ⊆ D.preimage J ∧ J ⊆ D.image I :=
-  Iff.rfl
-
-/-- The lift relates `I` to `J` when `D` restricted to their rows is bitotal. -/
-theorem mem_cumul_iff_biTotal :
-    I ~[cumul D] J ↔ Relator.BiTotal fun (i : I) (j : J) ↦ i.1 ~[D] j.1 := by
-  simp [cumul, Relator.BiTotal, Relator.LeftTotal, Relator.RightTotal]
+theorem mem_cumul : I ~[cumul D] J ↔ Set.LiftRel (· ~[D] ·) I J := Iff.rfl
 
 theorem cumul_id : cumul (SetRel.id : Update S) = SetRel.id := by
   ext ⟨I, J⟩
-  refine ⟨fun ⟨h₁, h₂⟩ ↦ Set.Subset.antisymm (fun i hi ↦ ?_) (fun j hj ↦ ?_), ?_⟩
-  · obtain ⟨j, hj, rfl⟩ := h₁ i hi
-    exact hj
-  · obtain ⟨i, hi, rfl⟩ := h₂ j hj
-    exact hi
-  · rintro (rfl : I = J)
-    exact ⟨fun i hi ↦ ⟨i, hi, rfl⟩, fun j hj ↦ ⟨j, hj, rfl⟩⟩
+  exact Set.liftRel_eq
 
 /-- The lift preserves sequencing: a path through the intermediate rows gives the intermediate
 state. -/
 theorem cumul_comp (D₁ D₂ : Update S) : cumul (D₁ ○ D₂) = cumul D₁ ○ cumul D₂ := by
   ext ⟨I, J⟩
-  constructor
-  · rintro ⟨h₁, h₂⟩
-    refine ⟨{k | ∃ i ∈ I, ∃ j ∈ J, i ~[D₁] k ∧ k ~[D₂] j}, ⟨fun i hi ↦ ?_, ?_⟩, ?_, ?_⟩
-    · obtain ⟨j, hj, k, hik, hkj⟩ := h₁ i hi
-      exact ⟨k, ⟨i, hi, j, hj, hik, hkj⟩, hik⟩
-    · rintro k ⟨i, hi, _, _, hik, _⟩
-      exact ⟨i, hi, hik⟩
-    · rintro k ⟨_, _, j, hj, _, hkj⟩
-      exact ⟨j, hj, hkj⟩
-    · intro j hj
-      obtain ⟨i, hi, k, hik, hkj⟩ := h₂ j hj
-      exact ⟨k, ⟨i, hi, j, hj, hik, hkj⟩, hkj⟩
-  · rintro ⟨K, ⟨hIK, hKI⟩, hKJ, hJK⟩
-    refine ⟨fun i hi ↦ ?_, fun j hj ↦ ?_⟩
-    · obtain ⟨k, hk, hik⟩ := hIK i hi
-      obtain ⟨j, hj, hkj⟩ := hKJ k hk
-      exact ⟨j, hj, k, hik, hkj⟩
-    · obtain ⟨k, hk, hkj⟩ := hJK j hj
-      obtain ⟨i, hi, hik⟩ := hKI k hk
-      exact ⟨i, hi, k, hik, hkj⟩
+  exact Set.liftRel_comp
 
-theorem cumul_mono (h : D₁ ⊆ D₂) : cumul D₁ ⊆ cumul D₂ := by
-  rintro ⟨I, J⟩ ⟨h₁, h₂⟩
-  exact ⟨fun i hi ↦ (h₁ i hi).imp fun _ ⟨hj, hD⟩ ↦ ⟨hj, h hD⟩,
-    fun j hj ↦ (h₂ j hj).imp fun _ ⟨hi, hD⟩ ↦ ⟨hi, h hD⟩⟩
+theorem cumul_mono (h : D₁ ⊆ D₂) : cumul D₁ ⊆ cumul D₂ :=
+  fun _ hp ↦ Set.LiftRel.imp (fun hD ↦ h hD) hp
 
 /-- A lifted test checks its condition at every row ([brasoveanu-2010] (22)). -/
 theorem cumul_test (C : Condition S) : cumul (test C) = test {I | I ⊆ C} := by
   ext ⟨I, J⟩
-  simp only [cumul, test, Set.mem_ofPred_eq]
+  simp only [cumul, Set.LiftRel, test, Set.mem_ofPred_eq]
   constructor
   · rintro ⟨h₁, h₂⟩
     have hIJ : I ⊆ J := fun i hi ↦ by obtain ⟨j, hj, rfl, -⟩ := h₁ i hi; exact hj
