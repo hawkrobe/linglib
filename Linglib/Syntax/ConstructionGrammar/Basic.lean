@@ -115,7 +115,21 @@ inductive GrammaticalFunction where
   | comp
   /-- Direct object. -/
   | obj
+  /-- Second object, the second NP of a ditransitive ([goldberg-1995], p. 48). -/
+  | obj2
+  /-- Oblique, a PP or AP complement, as the caused-motion goal is ([goldberg-1995], p. 53). -/
+  | obl
   deriving DecidableEq, Repr
+
+/-- A direct grammatical relation, SUBJ, OBJ or OBJ2: the functions that "correspond to
+'core,' 'nuclear,' or 'direct' arguments" ([goldberg-1995], p. 49). -/
+def GrammaticalFunction.IsDirect : GrammaticalFunction → Prop
+  | .subj | .obj | .obj2 => True
+  | .comp | .obl => False
+
+instance : DecidablePred GrammaticalFunction.IsDirect
+  | .subj | .obj | .obj2 => isTrue trivial
+  | .comp | .obl => isFalse id
 
 /-- An index for unification across slots, [kay-fillmore-1999]'s #1 and #2: values bearing one
 index are unified. -/
@@ -144,7 +158,7 @@ structure Slot (Lex : Type*) where
   isHead : Bool := false
   /-- Bar level of the position (`some .zero` = a word-level slot) -/
   level : Option BarLevel := none
-  /-- Grammatical function (subj, comp, obj) — [kay-fillmore-1999] -/
+  /-- Grammatical function ([kay-fillmore-1999]) -/
   gf : Option GrammaticalFunction := none
   /-- The index of the slot's semantics. -/
   refIdx : Option RefIndex := none
