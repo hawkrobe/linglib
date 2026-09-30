@@ -3,36 +3,31 @@ module
 public import Mathlib.Data.Finset.Basic
 public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Logic.Relation
-public import Mathlib.Basic.Rel
+public import Linglib.Core.Data.Set.Functor
 public import Linglib.Semantics.Mereology
 
 /-!
 # Cumulative predication
 
-This file defines the cumulative operator `**` on relations between individuals. In the
-coverage form of [beck-sauerland-2000], `**R` holds of two finite pluralities when every atom
-of the first is `R`-related to some atom of the second and conversely; in the closure form of
-[krifka-1986] and [sternefeld-1998], `**R` is the smallest relation containing `R` and closed
-under componentwise sum, which is Link's `*` on the product semilattice. The two agree on
-nonempty finite sets of individuals.
+This file relates the two forms of the cumulative operator `**` on relations between
+individuals. In the coverage form of [beck-sauerland-2000], `**R` holds of two pluralities when
+every member of the first is `R`-related to some member of the second and conversely: this is
+the relation lifting `Set.LiftRel R` of `Linglib/Core/Data/Set/Functor.lean`, and over a
+singleton it is distribution (`Set.liftRel_singleton_right`), the number effect of
+[johnston-2023]. In the closure form of [krifka-1986] and [sternefeld-1998], `**R` is the
+smallest relation containing `R` and closed under componentwise sum, which is Link's `*` on the
+product semilattice. The two agree on nonempty finite sets of individuals.
 
 ## Definitions
 
-* `Plurality.Cumulativity.Cumulative R x y`: bidirectional coverage of `x` and `y` by `R`.
 * `Plurality.Cumulativity.Cumulation R x y`: the closure form, on any pair of
   join-semilattices.
 
 ## Main results
 
-* `Plurality.Cumulativity.cumulative_iff_subset_preimage_image`: coverage is inclusion of `x`
-  in the `SetRel.preimage` of `y` and of `y` in the `SetRel.image` of `x`.
-* `Plurality.Cumulativity.cumulative_iff_exists_dom_cod`: coverage is a subrelation of `R` with
-  domain `x` and codomain `y`.
-* `Plurality.Cumulativity.Cumulative.union`, `Plurality.Cumulativity.singleton_right_cumulative`:
-  coverage is closed under componentwise union and collapses to distribution over a singleton.
 * `Plurality.Cumulativity.cumulation_iff_of_cum`: a cumulative relation is its own cumulation.
 * `Plurality.Cumulativity.cumulation_map_singleton`: on finite sets, the closure form of a
-  relation between individuals is coverage of a nonempty pair.
+  relation between individuals is the coverage form, `Set.LiftRel`, of a nonempty pair.
 
 ## References
 
@@ -41,79 +36,12 @@ nonempty finite sets of individuals.
 * [S. Beck and U. Sauerland, *Cumulation is needed: A reply to Winter (2000)*
   (2000)][beck-sauerland-2000]
 * [G. Link, *The logical analysis of plurals and mass terms* (1983)][link-1983]
+* [W. Johnston, *Pair-list answers to questions with plural definites* (2023)][johnston-2023]
 -/
 
 @[expose] public section
 
 namespace Plurality.Cumulativity
-
-variable {A B : Type*} {R : A → B → Prop} {x : Finset A} {y : Finset B}
-
-/-! ### Coverage form -/
-
-/-- Bidirectional coverage: every atom of `x` is `R`-related to some atom of `y` and every atom
-of `y` to some atom of `x` ([beck-sauerland-2000]). -/
-def Cumulative (R : A → B → Prop) (x : Finset A) (y : Finset B) : Prop :=
-  (∀ a ∈ x, ∃ b ∈ y, R a b) ∧ (∀ b ∈ y, ∃ a ∈ x, R a b)
-
-instance (R : A → B → Prop) [DecidableRel R] (x : Finset A) (y : Finset B) :
-    Decidable (Cumulative R x y) := by
-  unfold Cumulative; infer_instance
-
-theorem cumulative_iff_subset_preimage_image :
-    Cumulative R x y ↔
-      (x : Set A) ⊆ SetRel.preimage {p | R p.1 p.2} y ∧
-        (y : Set B) ⊆ SetRel.image {p | R p.1 p.2} x :=
-  Iff.rfl
-
-/-- Coverage is having a subrelation of `R` whose domain is exactly `x` and whose codomain is
-exactly `y`. -/
-theorem cumulative_iff_exists_dom_cod :
-    Cumulative R x y ↔ ∃ D : SetRel A B, D ⊆ {p | R p.1 p.2} ∧ D.dom = x ∧ D.cod = y := by
-  refine ⟨fun ⟨hl, hr⟩ ↦ ⟨{p | p.1 ∈ x ∧ p.2 ∈ y ∧ R p.1 p.2}, fun _ h ↦ h.2.2,
-    Set.ext fun a ↦ ⟨fun ⟨_, ha, _⟩ ↦ ha, fun ha ↦ ?_⟩,
-    Set.ext fun b ↦ ⟨fun ⟨_, _, hb, _⟩ ↦ hb, fun hb ↦ ?_⟩⟩, ?_⟩
-  · obtain ⟨b, hb, hab⟩ := hl a ha
-    exact ⟨b, ha, hb, hab⟩
-  · obtain ⟨a, ha, hab⟩ := hr b hb
-    exact ⟨a, ha, hb, hab⟩
-  · rintro ⟨D, hD, hdom, hcod⟩
-    refine ⟨fun a ha ↦ ?_, fun b hb ↦ ?_⟩
-    · rw [← Finset.mem_coe, ← hdom] at ha
-      obtain ⟨b, hab⟩ := ha
-      exact ⟨b, by rw [← Finset.mem_coe, ← hcod]; exact ⟨a, hab⟩, hD hab⟩
-    · rw [← Finset.mem_coe, ← hcod] at hb
-      obtain ⟨a, hab⟩ := hb
-      exact ⟨a, by rw [← Finset.mem_coe, ← hdom]; exact ⟨b, hab⟩, hD hab⟩
-
-@[simp]
-theorem cumulative_singleton (R : A → B → Prop) (a : A) (b : B) :
-    Cumulative R {a} {b} ↔ R a b := by
-  simp [Cumulative]
-
-/-- Coverage is closed under componentwise union. -/
-theorem Cumulative.union [DecidableEq A] [DecidableEq B] {x' : Finset A} {y' : Finset B}
-    (h : Cumulative R x y) (h' : Cumulative R x' y') : Cumulative R (x ∪ x') (y ∪ y') := by
-  refine ⟨λ a ha => ?_, λ b hb => ?_⟩
-  · rcases Finset.mem_union.1 ha with ha | ha
-    · obtain ⟨b, hb, hab⟩ := h.1 a ha
-      exact ⟨b, Finset.mem_union_left _ hb, hab⟩
-    · obtain ⟨b, hb, hab⟩ := h'.1 a ha
-      exact ⟨b, Finset.mem_union_right _ hb, hab⟩
-  · rcases Finset.mem_union.1 hb with hb | hb
-    · obtain ⟨a, ha, hab⟩ := h.2 b hb
-      exact ⟨a, Finset.mem_union_left _ ha, hab⟩
-    · obtain ⟨a, ha, hab⟩ := h'.2 b hb
-      exact ⟨a, Finset.mem_union_right _ ha, hab⟩
-
-/-- Over a singleton right argument, coverage of a nonempty plurality is distribution: the
-number effect of [johnston-2023]. -/
-theorem singleton_right_cumulative (hne : x.Nonempty) (b : B) :
-    Cumulative R x {b} ↔ ∀ a ∈ x, R a b := by
-  simp only [Cumulative, Finset.mem_singleton, exists_eq_left, forall_eq]
-  refine ⟨And.left, λ h => ⟨h, ?_⟩⟩
-  obtain ⟨a, ha⟩ := hne
-  exact ⟨a, ha, h a ha⟩
 
 /-! ### Closure form
 
@@ -140,7 +68,7 @@ theorem Cumulation.sup (h : Cumulation R x y) (h' : Cumulation R x' y') :
 
 theorem Cumulation.mono (hRS : ∀ x y, R x y → S x y) (h : Cumulation R x y) :
     Cumulation S x y :=
-  algClosure_mono (P := Function.uncurry R) (λ p => hRS p.1 p.2) _ h
+  algClosure_mono (P := Function.uncurry R) (fun p ↦ hRS p.1 p.2) _ h
 
 /-- A cumulative relation is its own cumulation. -/
 theorem cumulation_iff_of_cum (hR : CUM (Function.uncurry R)) : Cumulation R x y ↔ R x y :=
@@ -160,45 +88,51 @@ variable {A B : Type*} [DecidableEq A] [DecidableEq B]
 bidirectional coverage of a nonempty pair: the closure form of [krifka-1986] and the coverage
 form of [beck-sauerland-2000] agree away from the empty pair. -/
 theorem cumulation_map_singleton (R : A → B → Prop) (x : Finset A) (y : Finset B) :
-    Cumulation (Relation.Map R ({·}) ({·})) x y ↔ x.Nonempty ∧ Cumulative R x y := by
+    Cumulation (Relation.Map R ({·}) ({·})) x y ↔ x.Nonempty ∧ Set.LiftRel R ↑x ↑y := by
   constructor
   · suffices ∀ p : Finset A × Finset B,
         AlgClosure (Function.uncurry (Relation.Map R ({·}) ({·}))) p →
-          p.1.Nonempty ∧ Cumulative R p.1 p.2 from this (x, y)
+          p.1.Nonempty ∧ Set.LiftRel R ↑p.1 ↑p.2 from this (x, y)
     intro p h
     induction h with
     | @base p h =>
       obtain ⟨x, y⟩ := p
       change ∃ a b, R a b ∧ ({a} : Finset A) = x ∧ ({b} : Finset B) = y at h
       obtain ⟨a, b, hab, rfl, rfl⟩ := h
-      exact ⟨Finset.singleton_nonempty a, (cumulative_singleton R a b).2 hab⟩
-    | sum _ _ ih ih' => exact ⟨ih.1.mono Finset.subset_union_left, ih.2.union ih'.2⟩
+      refine ⟨Finset.singleton_nonempty a, ?_⟩
+      rw [Finset.coe_singleton, Finset.coe_singleton, Set.liftRel_singleton]
+      exact hab
+    | sum _ _ ih ih' =>
+      refine ⟨ih.1.mono Finset.subset_union_left, ?_⟩
+      rw [Prod.fst_sup, Prod.snd_sup, Finset.sup_eq_union, Finset.sup_eq_union,
+        Finset.coe_union, Finset.coe_union]
+      exact ih.2.union ih'.2
   · rintro ⟨hx, hl, hr⟩
-    have : Nonempty B := hx.elim λ a ha => (hl a ha).elim λ b _ => ⟨b⟩
-    have : Nonempty A := hx.elim λ a _ => ⟨a⟩
+    have : Nonempty B := hx.elim fun a ha ↦ (hl a ha).elim fun b _ ↦ ⟨b⟩
+    have : Nonempty A := hx.elim fun a _ ↦ ⟨a⟩
     choose! f hf hRf using hl
     choose! g hg hRg using hr
-    have hy : y.Nonempty := hx.elim λ a ha => ⟨f a, hf a ha⟩
-    have key : x.sup' hx (λ a => ({a}, {f a})) ⊔ y.sup' hy (λ b => ({g b}, {b})) = (x, y) := by
-      refine le_antisymm (sup_le ((Finset.sup'_le_iff _ _).2 λ a ha => ?_)
-        ((Finset.sup'_le_iff _ _).2 λ b hb => ?_))
-        (Prod.le_def.2 ⟨Finset.subset_iff.2 λ a ha => ?_, Finset.subset_iff.2 λ b hb => ?_⟩)
+    have hy : y.Nonempty := hx.elim fun a ha ↦ ⟨f a, hf a ha⟩
+    have key : x.sup' hx (fun a ↦ ({a}, {f a})) ⊔ y.sup' hy (fun b ↦ ({g b}, {b})) = (x, y) := by
+      refine le_antisymm (sup_le ((Finset.sup'_le_iff _ _).2 fun a ha ↦ ?_)
+        ((Finset.sup'_le_iff _ _).2 fun b hb ↦ ?_))
+        (Prod.le_def.2 ⟨Finset.subset_iff.2 fun a ha ↦ ?_, Finset.subset_iff.2 fun b hb ↦ ?_⟩)
       · exact Prod.le_def.2
           ⟨Finset.singleton_subset_iff.2 ha, Finset.singleton_subset_iff.2 (hf a ha)⟩
       · exact Prod.le_def.2
           ⟨Finset.singleton_subset_iff.2 (hg b hb), Finset.singleton_subset_iff.2 hb⟩
       · have hle :=
-          Prod.le_def.1 (Finset.le_sup' (λ a => (({a} : Finset A), ({f a} : Finset B))) ha)
+          Prod.le_def.1 (Finset.le_sup' (fun a ↦ (({a} : Finset A), ({f a} : Finset B))) ha)
         rw [Prod.fst_sup, Finset.sup_eq_union]
         exact Finset.mem_union_left _ (Finset.singleton_subset_iff.1 hle.1)
       · have hle :=
-          Prod.le_def.1 (Finset.le_sup' (λ b => (({g b} : Finset A), ({b} : Finset B))) hb)
+          Prod.le_def.1 (Finset.le_sup' (fun b ↦ (({g b} : Finset A), ({b} : Finset B))) hb)
         rw [Prod.snd_sup, Finset.sup_eq_union]
         exact Finset.mem_union_right _ (Finset.singleton_subset_iff.1 hle.2)
     show AlgClosure _ (x, y)
     rw [← key]
-    exact AlgClosure.sum (algClosure_finsetSup' hx λ a ha => .base ⟨a, f a, hRf a ha, rfl, rfl⟩)
-      (algClosure_finsetSup' hy λ b hb => .base ⟨g b, b, hRg b hb, rfl, rfl⟩)
+    exact AlgClosure.sum (algClosure_finsetSup' hx fun a ha ↦ .base ⟨a, f a, hRf a ha, rfl, rfl⟩)
+      (algClosure_finsetSup' hy fun b hb ↦ .base ⟨g b, b, hRg b hb, rfl, rfl⟩)
 
 end Finset
 

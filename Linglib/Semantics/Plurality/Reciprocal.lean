@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Logic.Relation
 public import Mathlib.Order.Partition.Finpartition
-public import Linglib.Semantics.Plurality.Cumulativity
+public import Linglib.Core.Data.Set.Functor
 
 /-!
 # Reciprocal predicates
@@ -32,8 +32,8 @@ conditions fixing the extension of `R` on `X`, and locates each in the lattice o
 * `Reciprocal.strong_imp_weak`, `Reciprocal.intermediate_imp_weak`,
   `Reciprocal.partitionedStrong_imp_weak`, `Reciprocal.oneWay_imp_inclusiveAlternative`: the
   schemes are ordered by entailment on sets of two or more members.
-* `Reciprocal.weakReciprocity_iff_cumulative_strict`: weak reciprocity is the cumulation of `R`
-  with non-identity conjoined in.
+* `Reciprocal.weakReciprocity_iff_liftRel`: weak reciprocity is the cumulation of `R` with
+  non-identity conjoined in, the relation lifting `Set.LiftRel` of that relation.
 * `Reciprocal.PairwiseConfig.partitionedStrong`, `Reciprocal.RingConfig.oneWayWeak`,
   `Reciprocal.ChainConfig.inclusiveAlternativeOrdering`: the place of each configuration in the
   lattice. The chain, ring and radial configurations are not symmetric.
@@ -63,8 +63,6 @@ scheme is a hypothesis of the entailments rather than a conjunct of the definiti
 @[expose] public section
 
 namespace Reciprocal
-
-open _root_.Plurality.Cumulativity
 
 variable {A : Type*} {R : A → A → Prop} {X : Finset A}
 
@@ -174,15 +172,13 @@ theorem oneWay_imp_inclusiveAlternative (hOWR : OneWayWeakReciprocity R X) :
 
 /-! ### Cumulation -/
 
-/-- Weak Reciprocity is `**` of the relation with non-identity conjoined into it, the bivalent
-common ground of [beck-2001] and [sternefeld-1998]. -/
-theorem weakReciprocity_iff_cumulative_strict (R : A → A → Prop) (X : Finset A) :
-    WeakReciprocity R X ↔ Cumulative (λ a b => R a b ∧ a ≠ b) X X := Iff.rfl
+/-- Weak Reciprocity is `**` of the relation with non-identity conjoined into it, in the coverage
+form `Set.LiftRel`: the bivalent common ground of [beck-2001] and [sternefeld-1998]. -/
+theorem weakReciprocity_iff_liftRel (R : A → A → Prop) (X : Finset A) :
+    WeakReciprocity R X ↔ Set.LiftRel (fun a b ↦ R a b ∧ a ≠ b) ↑X ↑X := Iff.rfl
 
-theorem weakReciprocity_imp_cumulative (R : A → A → Prop) (X : Finset A)
-    (hWR : WeakReciprocity R X) : Cumulative R X X :=
-  ⟨λ x hx => let ⟨y, hy, hRxy, _⟩ := hWR.1 x hx; ⟨y, hy, hRxy⟩,
-   λ y hy => let ⟨x, hx, hRxy, _⟩ := hWR.2 y hy; ⟨x, hx, hRxy⟩⟩
+theorem WeakReciprocity.liftRel (hWR : WeakReciprocity R X) : Set.LiftRel R ↑X ↑X :=
+  ((weakReciprocity_iff_liftRel R X).1 hWR).imp And.left
 
 /-! ### Configurations
 

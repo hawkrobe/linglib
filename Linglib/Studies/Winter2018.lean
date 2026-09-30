@@ -1,5 +1,6 @@
 module
 
+public import Mathlib.Algebra.BigOperators.Group.Finset.Sigma
 public import Linglib.Semantics.Plurality.Reciprocal
 public import Linglib.Data.Examples.Winter2018
 

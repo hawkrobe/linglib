@@ -2,6 +2,7 @@ module
 
 public import Linglib.Logic.Team.Kripke
 public import Mathlib.Data.Finset.Lattice.Union
+public import Linglib.Core.Data.Set.Functor
 
 /-!
 # Bisimulation for modal team logics
@@ -17,7 +18,9 @@ these carrier lemmas.
 ## Main declarations
 
 * `WorldBisim k M w M' w'`: bounded `k`-bisimulation between pointed worlds.
-* `StateBisim k M s M' s'`: its lift to teams, by back/forth partnership.
+* `StateBisim k M s M' s'`: its lift to teams, by back/forth partnership, the relation lifting
+  `Set.LiftRel` of world bisimulation; the modal clause of world bisimulation is the same lifting
+  over the accessible worlds.
 * `StateBisim.biUnionAccess`, `StateBisim.splitPreserve`,
   `StateBisim.possWitness`: the transport lemmas.
 
@@ -39,24 +42,20 @@ variable {W W' Atom : Type*}
 /-- Bounded-depth bisimulation between pointed worlds across two
     `KripkeModel`s (Definition 3.1 of [aloni-anttila-yang-2024]). At
     depth 0, requires only that atoms match. At depth `k+1`, additionally
-    requires the standard back/forth conditions on accessibility relating
-    depth-`k` bisimilar successors. -/
+    requires the back/forth conditions on accessibility, the relation lifting
+    of depth-`k` bisimilarity to the accessible worlds. -/
 def WorldBisim : ℕ → KripkeModel W Atom → W → KripkeModel W' Atom → W' → Prop
   | 0,     M, w, M', w' => ∀ p : Atom, M.val p w = M'.val p w'
   | k + 1, M, w, M', w' =>
       (∀ p : Atom, M.val p w = M'.val p w') ∧
-      (∀ v ∈ M.access w, ∃ v' ∈ M'.access w', WorldBisim k M v M' v') ∧
-      (∀ v' ∈ M'.access w', ∃ v ∈ M.access w, WorldBisim k M v M' v')
+      Set.LiftRel (WorldBisim k M · M' ·) ↑(M.access w) ↑(M'.access w')
 
 /-- World bisimulation is reflexive at every depth. -/
 theorem WorldBisim.refl (k : ℕ) (M : KripkeModel W Atom) (w : W) :
     WorldBisim k M w M w := by
   induction k generalizing w with
   | zero => intro _; rfl
-  | succ k ih =>
-    refine ⟨fun _ => rfl, ?_, ?_⟩
-    · intro v hv; exact ⟨v, hv, ih v⟩
-    · intro v hv; exact ⟨v, hv, ih v⟩
+  | succ k ih => exact ⟨fun _ => rfl, Set.liftRel_refl_of_refl_on fun v _ => ih v⟩
 
 /-- World bisimulation is symmetric (swap models). -/
 theorem WorldBisim.symm {k : ℕ} {M : KripkeModel W Atom} {w : W}
@@ -64,16 +63,7 @@ theorem WorldBisim.symm {k : ℕ} {M : KripkeModel W Atom} {w : W}
     WorldBisim k M w M' w' → WorldBisim k M' w' M w := by
   induction k generalizing w w' with
   | zero => intro h p; exact (h p).symm
-  | succ k ih =>
-    intro h
-    obtain ⟨hp, hforth, hback⟩ := h
-    refine ⟨fun p => (hp p).symm, ?_, ?_⟩
-    · intro v' hv'
-      obtain ⟨v, hv, hbisim⟩ := hback v' hv'
-      exact ⟨v, hv, ih hbisim⟩
-    · intro v hv
-      obtain ⟨v', hv', hbisim⟩ := hforth v hv
-      exact ⟨v', hv', ih hbisim⟩
+  | succ k ih => exact fun ⟨hp, h⟩ => ⟨fun p => (hp p).symm, (Set.liftRel_swap.2 h).imp ih⟩
 
 /-- Bisimilarity at depth `k+1` implies bisimilarity at depth `k`:
     higher depths are stricter. -/
@@ -81,18 +71,8 @@ theorem WorldBisim.mono_succ {k : ℕ} {M : KripkeModel W Atom} {w : W}
     {M' : KripkeModel W' Atom} {w' : W'} :
     WorldBisim (k + 1) M w M' w' → WorldBisim k M w M' w' := by
   induction k generalizing w w' with
-  | zero =>
-    intro h; exact h.1
-  | succ n ih =>
-    intro h
-    obtain ⟨hp, hforth, hback⟩ := h
-    refine ⟨hp, ?_, ?_⟩
-    · intro v hv
-      obtain ⟨v', hv', hbisim⟩ := hforth v hv
-      exact ⟨v', hv', ih hbisim⟩
-    · intro v' hv'
-      obtain ⟨v, hv, hbisim⟩ := hback v' hv'
-      exact ⟨v, hv, ih hbisim⟩
+  | zero => exact fun h => h.1
+  | succ n ih => exact fun ⟨hp, h⟩ => ⟨hp, h.imp ih⟩
 
 /-- Bisimilarity is monotone in depth: `m ≤ n → WorldBisim n → WorldBisim m`. -/
 theorem WorldBisim.mono_le {m n : ℕ} (hmn : m ≤ n)
@@ -110,27 +90,21 @@ theorem WorldBisim.mono_le {m n : ℕ} (hmn : m ≤ n)
     bisimulation from points to teams. -/
 def StateBisim (k : ℕ) (M : KripkeModel W Atom) (s : Finset W)
     (M' : KripkeModel W' Atom) (s' : Finset W') : Prop :=
-  (∀ w ∈ s, ∃ w' ∈ s', WorldBisim k M w M' w') ∧
-  (∀ w' ∈ s', ∃ w ∈ s, WorldBisim k M w M' w')
+  Set.LiftRel (WorldBisim k M · M' ·) ↑s ↑s'
 
 theorem StateBisim.refl (k : ℕ) (M : KripkeModel W Atom) (s : Finset W) :
     StateBisim k M s M s :=
-  ⟨fun w hw => ⟨w, hw, WorldBisim.refl k M w⟩,
-   fun w hw => ⟨w, hw, WorldBisim.refl k M w⟩⟩
+  Set.liftRel_refl_of_refl_on fun w _ => WorldBisim.refl k M w
 
 theorem StateBisim.symm {k : ℕ} {M : KripkeModel W Atom} {s : Finset W}
     {M' : KripkeModel W' Atom} {s' : Finset W'} :
     StateBisim k M s M' s' → StateBisim k M' s' M s :=
-  fun ⟨hforth, hback⟩ =>
-    ⟨fun w' hw' => let ⟨w, hw, hb⟩ := hback w' hw'; ⟨w, hw, hb.symm⟩,
-     fun w hw => let ⟨w', hw', hb⟩ := hforth w hw; ⟨w', hw', hb.symm⟩⟩
+  fun h => (Set.liftRel_swap.2 h).imp WorldBisim.symm
 
 theorem StateBisim.mono_succ {k : ℕ} {M : KripkeModel W Atom} {s : Finset W}
     {M' : KripkeModel W' Atom} {s' : Finset W'} :
     StateBisim (k + 1) M s M' s' → StateBisim k M s M' s' :=
-  fun ⟨hforth, hback⟩ =>
-    ⟨fun w hw => let ⟨w', hw', hb⟩ := hforth w hw; ⟨w', hw', hb.mono_succ⟩,
-     fun w' hw' => let ⟨w, hw, hb⟩ := hback w' hw'; ⟨w, hw, hb.mono_succ⟩⟩
+  fun h => h.imp WorldBisim.mono_succ
 
 theorem StateBisim.mono_le {m n : ℕ} (hmn : m ≤ n)
     {M : KripkeModel W Atom} {s : Finset W} {M' : KripkeModel W' Atom}
@@ -149,7 +123,7 @@ theorem WorldBisim.val_eq {k : ℕ} {M : KripkeModel W Atom} {w : W}
     M.val p w = M'.val p w' :=
   match k, h with
   | 0, h => h p
-  | _ + 1, ⟨h, _, _⟩ => h p
+  | _ + 1, ⟨h, _⟩ => h p
 
 /-- World bisim at depth `k+1` yields state bisim of the accessibility
     images at depth `k` — the singleton form of Lemma 3.7(i). -/
@@ -157,14 +131,13 @@ theorem WorldBisim.accessStateBisim {k : ℕ} {M : KripkeModel W Atom} {w : W}
     {M' : KripkeModel W' Atom} {w' : W'}
     (h : WorldBisim (k + 1) M w M' w') :
     StateBisim k M (M.access w) M' (M'.access w') :=
-  ⟨fun v hv => h.2.1 v hv, fun v' hv' => h.2.2 v' hv'⟩
+  h.2
 
 /-- State bisim preserves nonemptiness. -/
 theorem StateBisim.nonempty_iff {k : ℕ} {M : KripkeModel W Atom} {s : Finset W}
     {M' : KripkeModel W' Atom} {s' : Finset W'}
-    (h : StateBisim k M s M' s') : s.Nonempty ↔ s'.Nonempty :=
-  ⟨fun ⟨w, hw⟩ => let ⟨w', hw', _⟩ := h.1 w hw; ⟨w', hw'⟩,
-   fun ⟨w', hw'⟩ => let ⟨w, hw, _⟩ := h.2 w' hw'; ⟨w, hw⟩⟩
+    (h : StateBisim k M s M' s') : s.Nonempty ↔ s'.Nonempty := by
+  simpa using Set.LiftRel.nonempty_iff h
 
 /-- State bisim preserves emptiness. -/
 theorem StateBisim.eq_empty_iff {k : ℕ} {M : KripkeModel W Atom} {s : Finset W}
@@ -204,19 +177,8 @@ theorem StateBisim.biUnionAccess {k : ℕ} {M : KripkeModel W Atom} {s : Finset 
     {M' : KripkeModel W' Atom} {s' : Finset W'}
     (h : StateBisim (k + 1) M s M' s') :
     StateBisim k M (s.biUnion M.access) M' (s'.biUnion M'.access) := by
-  refine ⟨?_, ?_⟩
-  · intro v hv
-    rw [Finset.mem_biUnion] at hv
-    obtain ⟨w, hw, hvw⟩ := hv
-    obtain ⟨w', hw', hbw⟩ := h.1 w hw
-    obtain ⟨v', hv', hbv⟩ := hbw.accessStateBisim.1 v hvw
-    exact ⟨v', Finset.mem_biUnion.mpr ⟨w', hw', hv'⟩, hbv⟩
-  · intro v' hv'
-    rw [Finset.mem_biUnion] at hv'
-    obtain ⟨w', hw', hvw'⟩ := hv'
-    obtain ⟨w, hw, hbw⟩ := h.2 w' hw'
-    obtain ⟨v, hv, hbv⟩ := hbw.accessStateBisim.2 v' hvw'
-    exact ⟨v, Finset.mem_biUnion.mpr ⟨w, hw, hv⟩, hbv⟩
+  rw [StateBisim, Finset.coe_biUnion, Finset.coe_biUnion]
+  exact Set.LiftRel.biUnion h fun _ _ _ _ hb => hb.accessStateBisim
 
 /-- Lemma 3.7(ii): state bisim preserves binary team splits. Given
     `s = t ∪ u` and `s ⇌_k s'`, there are `t'`, `u'` with `s' = t' ∪ u'`,

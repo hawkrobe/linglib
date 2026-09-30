@@ -4,7 +4,7 @@ public import Linglib.Data.Examples.Guerrini2026
 public import Linglib.Logic.Modal.Defs
 public import Linglib.Semantics.Genericity.NominalMappingParameter
 public import Linglib.Semantics.Plurality.Basic
-public import Linglib.Semantics.Plurality.Cumulativity
+public import Linglib.Core.Data.Set.Functor
 
 /-!
 # Guerrini (2026): Distributive Kind Predication
@@ -50,7 +50,7 @@ formalized, since they need a trivalent `Gen` and a mood licensing substrate.
 
 namespace Guerrini2026
 
-open ModalLogic Plurality Plurality.Cumulativity Genericity
+open ModalLogic Plurality Genericity
 
 variable {Atom W : Type*} (R : W → W → Prop) (k : W → Finset Atom) (P : Atom → W → Prop) {w : W}
 
@@ -97,13 +97,13 @@ variable {Loc : Type*} (S : Atom → Loc → Prop) (locs : Finset Loc)
 
 /-- (74b): Cumulative Kind Predication, [beck-sauerland-2000]'s cumulative operator relating
 the kind's sum at the evaluation world to the locations. -/
-abbrev cumulativeKindPred (w : W) : Prop := Cumulative S (k w) locs
+abbrev cumulativeKindPred (w : W) : Prop := Set.LiftRel S ↑(k w) ↑locs
 
 /-- (74c): the cumulative operator below `Gen`, which then ranges over the sub-pluralities of the
 kind: every nonempty sample of the kind at every accessible world relates cumulatively to the
 locations. -/
 def cumulativeBelowGen (w : W) : Prop :=
-  □[R] (λ v => ∀ X ⊆ k v, X.Nonempty → Cumulative S X locs) w
+  □[R] (λ v => ∀ X ⊆ k v, X.Nonempty → Set.LiftRel S ↑X ↑locs) w
 
 /-- (74c) is the strong reading: taken at a singleton sample, it makes every member of the kind
 relate to every location, so it is false of elephants and Africa and Asia. -/

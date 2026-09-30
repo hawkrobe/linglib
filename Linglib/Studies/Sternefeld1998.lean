@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.Plurality.Algebra
+public import Linglib.Semantics.Plurality.Cumulativity
 public import Linglib.Semantics.Plurality.Reciprocal
 
 /-!
@@ -77,7 +78,7 @@ variable [DecidableEq α] [DecidableEq β]
 
 /-- Weak distributivity (2b) is `⟨A, B⟩ ∈ **R` (26a) between nonempty pluralities. -/
 theorem cumulation_map_iff (R : α → β → Prop) {A : Finset α} (hA : A.Nonempty) (B : Finset β) :
-    Cumulation (Relation.Map R ({·}) ({·})) A B ↔ Cumulative R A B :=
+    Cumulation (Relation.Map R ({·}) ({·})) A B ↔ Set.LiftRel R ↑A ↑B :=
   (cumulation_map_singleton R A B).trans (and_iff_right hA)
 
 /-- Weak reciprocity (6), (26b): the reciprocal NP denotes the others, and non-identity is
@@ -90,7 +91,7 @@ over pluralities. -/
 theorem wr_of_weakReciprocity {R : Finset α → Finset α → Prop} {A : Finset α}
     (hA : A.Nonempty) (h : WeakReciprocity (λ a b => R {a} {b}) A) : WR R A := by
   have := (cumulation_map_singleton (λ a b => R {a} {b} ∧ a ≠ b) A A).2
-    ⟨hA, (weakReciprocity_iff_cumulative_strict _ _).1 h⟩
+    ⟨hA, (weakReciprocity_iff_liftRel _ _).1 h⟩
   refine this.mono ?_
   rintro x y ⟨a, b, ⟨hab, hne⟩, rfl, rfl⟩
   exact ⟨hab, Finset.singleton_injective.ne hne⟩
@@ -107,7 +108,7 @@ theorem wr_map_iff (R : α → α → Prop) {A : Finset α} (hA : A.Nonempty) :
     · rintro ⟨a, b, ⟨hab, hne⟩, rfl, rfl⟩
       exact ⟨⟨a, b, hab, rfl, rfl⟩, Finset.singleton_injective.ne hne⟩
   rw [WR, this, cumulation_map_singleton, and_iff_right hA,
-    weakReciprocity_iff_cumulative_strict]
+    weakReciprocity_iff_liftRel]
 
 /-! ### Langendoen's model
 
