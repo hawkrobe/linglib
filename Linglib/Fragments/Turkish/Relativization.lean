@@ -22,27 +22,17 @@ stressed pronoun for objects of comparison, the latter with reduced acceptabilit
 
 namespace Turkish
 
-open RelativeClause
+/-- The participial suffixes of a prenominal clause, *-(y)En* and *-DIK*: the relativized
+position is left empty from subjects through obliques, and a pronominal element is retained at
+genitives and, marginally, objects of comparison. -/
+def relParticiple : Relativizer where
+  form := "-(y)En/-DIK"
+  placement := .preNominal
+  realize
+    | .subject | .directObject | .indirectObject | .oblique => {.gap}
+    | .genitive | .objComparison => {.resumptive}
 
-/-- The prenominal participial clause leaves the relativized position empty and relativizes
-subjects through obliques. -/
-def relParticiple : Marker :=
-  { form := "-(y)En/-DIK"
-  , npRel := .gap
-  , bearsCaseMarking := false
-  , placement := .preNominal
-  , positions := {.subject, .directObject, .indirectObject, .oblique} }
-
-/-- The prenominal participial clause with a retained pronominal element relativizes genitives
-and, marginally, objects of comparison. -/
-def relRetention : Marker :=
-  { form := "-(y)En/-DIK + pronoun"
-  , npRel := .resumptive
-  , bearsCaseMarking := true
-  , placement := .preNominal
-  , positions := {.genitive, .objComparison} }
-
-/-- The Turkish relative-clause markers. -/
-def relMarkers : List Marker := [relParticiple, relRetention]
+/-- The Turkish relativizers. -/
+def relativizers : List Relativizer := [relParticiple]
 
 end Turkish

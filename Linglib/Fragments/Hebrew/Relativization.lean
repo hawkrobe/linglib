@@ -18,7 +18,7 @@ objects, a movement copy, is the matter of the studies of resumption.
 
 ## Main definitions
 
-* `Hebrew.relSheGap`, `Hebrew.relSheResumptive`, `Hebrew.relMarkers`: the two strategies.
+* `Hebrew.relShe`, `Hebrew.relativizers`: the relativizer *she-*.
 
 ## References
 
@@ -29,21 +29,18 @@ objects, a movement copy, is the matter of the studies of resumption.
 
 namespace Hebrew
 
-open RelativeClause
+/-- The complementizer *she-*: the relativized position is left empty at the subject, left
+empty or filled by a personal pronoun at the direct object, and filled by a personal pronoun
+from the indirect object down to the object of comparison. -/
+def relShe : Relativizer where
+  form := "she-"
+  placement := .postNominal
+  realize
+    | .subject => {.gap}
+    | .directObject => {.gap, .resumptive}
+    | _ => {.resumptive}
 
-/-- *she-* with the relativized position left empty, relativizing subjects and direct
-objects. -/
-def relSheGap : Marker :=
-  { form := "she-", npRel := .gap, bearsCaseMarking := false, placement := .postNominal,
-    positions := {.subject, .directObject} }
-
-/-- *she-* with a personal pronoun in the relativized position, relativizing everything from
-direct objects down to objects of comparison. -/
-def relSheResumptive : Marker :=
-  { form := "she-", npRel := .resumptive, bearsCaseMarking := true, placement := .postNominal,
-    positions := {.directObject, .indirectObject, .oblique, .genitive, .objComparison} }
-
-/-- The relative-clause markers. -/
-def relMarkers : List Marker := [relSheGap, relSheResumptive]
+/-- The relativizers. -/
+def relativizers : List Relativizer := [relShe]
 
 end Hebrew

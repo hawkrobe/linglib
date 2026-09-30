@@ -22,27 +22,25 @@ finds *the man who Mary is taller than* "rather uncomfortable". The data are
 
 namespace English.Relativization
 
-open RelativeClause
-
 /-- The complementizer *that*, or no marker at all, leaves the relativized position empty and
 relativizes subjects and direct objects. -/
-def relThat : Marker :=
-  { form := "that/∅"
-  , npRel := .gap
-  , bearsCaseMarking := false
-  , placement := .postNominal
-  , positions := {.subject, .directObject} }
+def relThat : Relativizer where
+  form := "that/∅"
+  placement := .postNominal
+  realize
+    | .subject | .directObject => {.gap}
+    | _ => ∅
 
 /-- The relative pronouns *who*, *whom*, *which* and *whose* code the relativized position and
 relativize everything from indirect objects down. -/
-def relWhom : Marker :=
-  { form := "who/whom/which/whose"
-  , npRel := .relPronoun
-  , bearsCaseMarking := true
-  , placement := .postNominal
-  , positions := {.indirectObject, .oblique, .genitive, .objComparison} }
+def relWhom : Relativizer where
+  form := "who/whom/which/whose"
+  placement := .postNominal
+  realize
+    | .indirectObject | .oblique | .genitive | .objComparison => {.relPronoun}
+    | _ => ∅
 
-/-- The English relative-clause markers. -/
-def relMarkers : List Marker := [relThat, relWhom]
+/-- The English relativizers. -/
+def relativizers : List Relativizer := [relThat, relWhom]
 
 end English.Relativization

@@ -21,8 +21,7 @@ gap it is a movement copy without person, the analysis of `Studies/Scott2021.lea
 
 ## Main definitions
 
-* `Swahili.amba`, `Swahili.ambaBound`, `Swahili.ambaMovement`, `Swahili.relMarkers`: the
-  relative markers
+* `Swahili.amba`, `Swahili.relativizers`: the relativizer *amba*
 * `Swahili.pronoun`, `Swahili.resumptive`: the full and the resumptive pronouns by person and
   number
 * `Swahili.NounClass.concord?`: the relative concord of classes 1 to 10
@@ -31,8 +30,6 @@ gap it is a movement copy without person, the analysis of `Studies/Scott2021.lea
 
 ## Main results
 
-* `Swahili.amba_isPrimary`, `Swahili.amba_isContinuous`: *amba* with a gap is the primary
-  strategy and relativizes a contiguous segment of the hierarchy
 * `Swahili.resumptive_third`: the third person resumptives are the concords of classes 1 and 2
 * `Swahili.Preposition.triggersResumption`: the monosyllables trigger resumption and the
   trisyllable does not
@@ -53,36 +50,25 @@ gap it is a movement copy without person, the analysis of `Studies/Scott2021.lea
 
 namespace Swahili
 
-open RelativeClause Agreement Morphology
+open Agreement Morphology
 
 /-! ### The amba relative clause -/
 
 /-- The complementizer *amba* with the relative concord of the head's class. A relativized
-subject or direct object leaves a gap, and the verb agrees with both. -/
-def amba : Marker :=
-  { form := "amba", npRel := .gap, bearsCaseMarking := false, placement := .postNominal,
-    positions := {.subject, .directObject} }
+subject or direct object leaves a gap, and the verb agrees with both. The object of a
+monosyllabic preposition is resumed by a pronoun suffixed to it, a bound pronoun, the only
+option inside an adjunct island, or a movement copy without person, diagnosed by parasitic
+gaps. -/
+def amba : Relativizer where
+  form := "amba"
+  placement := .postNominal
+  realize
+    | .subject | .directObject => {.gap}
+    | .oblique => {.resumptiveBound, .resumptiveMovement}
+    | _ => ∅
 
-/-- *amba* with a bound resumptive pronoun on the object of a monosyllabic preposition, the
-only option inside an adjunct island. -/
-def ambaBound : Marker :=
-  { form := "amba", npRel := .resumptiveBound, bearsCaseMarking := true,
-    placement := .postNominal, positions := {.oblique} }
-
-/-- *amba* with a movement resumptive on the object of a monosyllabic preposition, a copy
-without person, diagnosed by parasitic gaps. -/
-def ambaMovement : Marker :=
-  { form := "amba", npRel := .resumptiveMovement, bearsCaseMarking := true,
-    placement := .postNominal, positions := {.oblique} }
-
-/-- The relative markers. -/
-def relMarkers : List Marker := [amba, ambaBound, ambaMovement]
-
-/-- *amba* with a gap is the primary strategy. -/
-theorem amba_isPrimary : amba.IsPrimary := by decide
-
-/-- *amba* with a gap relativizes a contiguous segment of the hierarchy. -/
-theorem amba_isContinuous : amba.IsContinuous := by decide
+/-- The relativizers. -/
+def relativizers : List Relativizer := [amba]
 
 /-! ### Pronouns -/
 

@@ -39,70 +39,31 @@ ex. 125–128.
 
 namespace Yoruba
 
-open RelativeClause
+/-- The introducer *tí* (high tone, [awobuluyi-1978] §6.18), with what occupies the relativized
+position by position:
 
-/-- §6.19: Subject relativization. The relativized subject is replaced by the
-    high-tone third-person singular pronoun `ó`.
-    E.g. `Ọkùnrin tí ó pè mí` 'the man who called me'; [keenan-comrie-1979]'s
-    example 127 attests the same pattern. WALS F122A codes Yoruba as
-    `pronounRetention` on the same source.
-    `bearsCaseMarking := false` per [keenan-comrie-1979]'s analysis of
-    `ó` as verb agreement (K&C 1977 Table 1 p. 79 codes Yoruba's SU-strategy
-    as -case). -/
-def relTiSubject : Marker :=
-  { form := "tí + ó"
-  , npRel := .resumptive
-  , bearsCaseMarking := false
-  , placement := .postNominal
-  , positions := {.subject} }
+* §6.19, subject: the high-tone third person singular pronoun *ó*, *Ọkùnrin tí ó pè mí* 'the man
+  who called me', the pattern of [keenan-comrie-1979]'s example 127. [keenan-comrie-1979]
+  analyse *ó* as verb agreement, which [keenan-comrie-1977] exclude from pronoun retention
+  (p. 92); it is recorded here as Awobuluyi describes it, a pronoun.
+* §6.20, direct object: dropped completely, *Ọkùnrin tí mo rí* 'the man I saw'.
+* §6.21–6.22, indirect object and oblique: the prepositions *fi*, *ti*, *bá*, *fún* and *sí* drop
+  their object (§6.21), *Ọbẹ tí mo fi gé e* 'the knife I cut it with'; the preposition *ní*
+  triggers restructuring, the object dropped and repositioned, with *tí* inserted for place
+  nouns and exceptions for *wà* and *gbé* (§6.22). The gap is recorded.
+* §6.23, genitive: the qualifier is replaced by *rẹ̀* (singular) or *wọn* (plural), *Ọmọ tí olè
+  jí ìwé rẹ̀* 'the child whose books were stolen'. Retention is obligatory
+  ([keenan-comrie-1979]'s example 126 rejects the gap), and the genitive is the lowest
+  relativizable position. -/
+def relTi : Relativizer where
+  form := "tí"
+  placement := .postNominal
+  realize
+    | .subject | .genitive => {.resumptive}
+    | .directObject | .indirectObject | .oblique => {.gap}
+    | .objComparison => ∅
 
-/-- §6.20: Direct object relativization. The relativized object is dropped
-    completely (gap strategy).
-    E.g. `Ọkùnrin tí mo rí` 'the man I saw'. -/
-def relTiObject : Marker :=
-  { form := "tí + ∅"
-  , npRel := .gap
-  , bearsCaseMarking := false
-  , placement := .postNominal
-  , positions := {.directObject} }
-
-/-- §6.21–6.22: Oblique relativization. Awobuluyi splits this into two
-    sub-cases: the prepositions `fi`, `ti`, `bá`, `fún`, `sí` drop their
-    object completely (gap, §6.21); the preposition `ní` triggers complex
-    restructuring (drop + repositioning, with `tí` insertion for place
-    nouns and exceptions for `wà`/`gbé`, §6.22). The single-cell
-    `Marker.npRel` cannot encode the split, so we record the
-    dominant pattern (`gap`); the `ní` case is described here.
-    E.g. `Ọbẹ tí mo fi gé e` 'the knife I cut it with'. -/
-def relTiOblique : Marker :=
-  { form := "tí + ∅ (5 preps); tí + restructuring (ní)"
-  , npRel := .gap
-  , bearsCaseMarking := false
-  , placement := .postNominal
-  , positions := {.indirectObject, .oblique} }
-
-/-- §6.23: Genitive relativization. The relativized genitive qualifier is
-    replaced by `rẹ̀` (singular) or `wọn` (plural) — pronoun retention.
-    E.g. `Ọmọ tí olè jí ìwé rẹ̀` 'the child whose books were stolen';
-    `Àwọn tí olè jí ìwé wọn` 'those whose books were stolen'.
-    `bearsCaseMarking := true` per K&C 1977 Table 1 p. 79 (Strategy 2: postnom,
-    +case, GEN=+). The genitive-form pronouns `rẹ̀`/`wọn` are morphologically
-    distinct from subject `ó` and object `i`/`un`/`ó`, so per Awobuluyi §2.21's
-    polymorphic-noun classification they encode their case role lexically.
-    Retention is obligatory ([keenan-comrie-1979]'s example 126 rejects the gap),
-    and the genitive is the lowest relativizable position; WALS does not code
-    Yoruba on F123A. -/
-def relTiGenitive : Marker :=
-  { form := "tí + rẹ̀/wọn"
-  , npRel := .resumptive
-  , bearsCaseMarking := true
-  , placement := .postNominal
-  , positions := {.genitive} }
-
-/-- All Yoruba relative clause markers, anchored to [awobuluyi-1978]
-    §6.19–6.23 + [keenan-comrie-1979] ex. 125–128. All four share the
-    introducer `tí` (high tone, §6.18). -/
-def relMarkers : List Marker :=
-  [relTiSubject, relTiObject, relTiOblique, relTiGenitive]
+/-- The Yoruba relativizers. -/
+def relativizers : List Relativizer := [relTi]
 
 end Yoruba

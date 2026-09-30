@@ -18,9 +18,9 @@ frameworks differ in how they derive the gap abstraction (a Minimalist trace, an
 HPSG `SLASH` discharge, a CCG type-raised argument) but converge on this
 denotation.
 
-This is the **semantic half of the `RelativeClause` API**; the classification half
-(`Realization`, `Position`, `NPRel`, …) lives in `Syntax/Clause/Relative.lean`,
-sharing the root `RelativeClause` namespace without either importing the other.
+The typological side of relative clauses, the relativizers of a language and what they leave
+at each relativized position (`Relativizer`, `Relativization.Position`,
+`Relativization.NPRel`), lives in `Syntax/Clause/Relative.lean`; neither file imports the other.
 
 ## Main declarations
 

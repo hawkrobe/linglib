@@ -29,8 +29,8 @@ Head, the strategy realizing it, the relativized position and the clause's posit
 `RC.overtHead` and `RC.Reconstructs` follow from the derivation, and `RC.WellFormed` is deletion
 under identity, from which `bigger_head_no_gap_deletion` derives the wh-pronoun or resumptive for
 a Head bigger than `dP`. The three worked examples — English *that* on an object, English *to
-whom* on an oblique and Hebrew *she-* with a resumptive on a genitive — relativize a position
-the English and Hebrew Fragments' markers cover, with the NP_rel type the marker records. The
+whom* on an oblique and Hebrew *she-* with a resumptive on a genitive — each realize their
+position with an NP_rel type the English and Hebrew Fragments' relativizers record there. The
 tree geometry of Spec,CP and the `dP`/DP cartography is not modelled, and PRO and verb-coding
 are approximated in the substrate's inventory of NP_rel types.
 
@@ -44,7 +44,7 @@ are approximated in the substrate's inventory of NP_rel types.
 
 namespace Cinque2020
 
-open RelativeClause
+open Relativization
 
 /-! ### The two derivations (§1.5) -/
 
@@ -178,8 +178,8 @@ def englishThatObject : RC :=
 /-- Its realization, a direct-object gap, is what the English Fragment's *that* attests. -/
 theorem englishThatObject_attested :
     englishThatObject.WellFormed ∧ ¬ englishThatObject.Reconstructs ∧
-      englishThatObject.position ∈ English.Relativization.relThat.positions ∧
-      englishThatObject.strategy.toNPRel = English.Relativization.relThat.npRel := by
+      englishThatObject.strategy.toNPRel ∈
+        English.Relativization.relThat.realize englishThatObject.position := by
   decide
 
 /-- *The man to whom I spoke*: the internal Head, a DP inside a PP, is bigger than `dP`, so it is
@@ -191,8 +191,8 @@ def englishWhomOblique : RC :=
 attests. -/
 theorem englishWhomOblique_attested :
     englishWhomOblique.WellFormed ∧
-      englishWhomOblique.position ∈ English.Relativization.relWhom.positions ∧
-      englishWhomOblique.strategy.toNPRel = English.Relativization.relWhom.npRel := by
+      englishWhomOblique.strategy.toNPRel ∈
+        English.Relativization.relWhom.realize englishWhomOblique.position := by
   decide
 
 /-- Hebrew *she-* with a resumptive at the genitive: the internal Head, a DP inside a DP, is
@@ -200,12 +200,11 @@ replaced by a proform. -/
 def hebrewResumptiveGenitive : RC :=
   ⟨.restrictive, .matching, .inside .DP, .resumptive, .genitive, .postNominal⟩
 
-/-- Its realization, a genitive resumptive, is what the Hebrew Fragment's *she-* with a pronoun
-attests. -/
+/-- Its realization, a genitive resumptive, is what the Hebrew Fragment's *she-* attests. -/
 theorem hebrewResumptiveGenitive_attested :
     hebrewResumptiveGenitive.WellFormed ∧
-      hebrewResumptiveGenitive.position ∈ Hebrew.relSheResumptive.positions ∧
-      hebrewResumptiveGenitive.strategy.toNPRel = Hebrew.relSheResumptive.npRel := by
+      hebrewResumptiveGenitive.strategy.toNPRel ∈
+        Hebrew.relShe.realize hebrewResumptiveGenitive.position := by
   decide
 
 end Cinque2020

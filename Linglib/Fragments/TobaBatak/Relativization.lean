@@ -25,26 +25,24 @@ paper's reason for stating the Hierarchy Constraints per strategy. The data are
 
 namespace TobaBatak
 
-open RelativeClause
-
 /-- The relativizer *na* leaves the relativized position empty and relativizes subjects only. -/
-def relGap : Marker :=
-  { form := "na"
-  , npRel := .gap
-  , bearsCaseMarking := false
-  , placement := .postNominal
-  , positions := {.subject} }
+def relNa : Relativizer where
+  form := "na"
+  placement := .postNominal
+  realize
+    | .subject => {.gap}
+    | _ => ∅
 
-/-- The marker *ima na* with a retained personal pronoun relativizes indirect objects, obliques
-and genitives. -/
-def relResumptive : Marker :=
-  { form := "ima na + pronoun"
-  , npRel := .resumptive
-  , bearsCaseMarking := true
-  , placement := .postNominal
-  , positions := {.indirectObject, .oblique, .genitive} }
+/-- The relativizer *ima na*, with a personal pronoun retained in the relativized position,
+relativizes indirect objects, obliques and genitives. -/
+def relImaNa : Relativizer where
+  form := "ima na"
+  placement := .postNominal
+  realize
+    | .indirectObject | .oblique | .genitive => {.resumptive}
+    | _ => ∅
 
-/-- The Toba Batak relative-clause markers. -/
-def relMarkers : List Marker := [relGap, relResumptive]
+/-- The Toba Batak relativizers. -/
+def relativizers : List Relativizer := [relNa, relImaNa]
 
 end TobaBatak

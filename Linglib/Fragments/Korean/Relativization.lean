@@ -22,27 +22,18 @@ be dropped: the possessive pronoun is retained, as in *chaki-ij lä-ka chongmyə
 
 namespace Korean
 
-open RelativeClause
+/-- The adnominal suffix of a prenominal clause, *-(n)ɨn*, *-n* or *-l*: the relativized position
+is dropped from subjects through obliques, and at a genitive the possessive pronoun is
+retained. -/
+def relAdnominal : Relativizer where
+  form := "-(n)ɨn, -n, -l"
+  placement := .preNominal
+  realize
+    | .subject | .directObject | .indirectObject | .oblique => {.gap}
+    | .genitive => {.resumptive}
+    | .objComparison => ∅
 
-/-- The adnominal clause with the relativized position dropped relativizes subjects, direct
-objects, indirect objects and obliques. -/
-def relAdnominal : Marker :=
-  { form := "-(n)ɨn, -n, -l"
-  , npRel := .gap
-  , bearsCaseMarking := false
-  , placement := .preNominal
-  , positions := {.subject, .directObject, .indirectObject, .oblique} }
-
-/-- The adnominal clause with the possessive pronoun retained is the only way to relativize a
-genitive. -/
-def relGenitive : Marker :=
-  { form := "-(ɨ)n + retained pronoun"
-  , npRel := .resumptive
-  , bearsCaseMarking := true
-  , placement := .preNominal
-  , positions := {.genitive} }
-
-/-- The Korean relative-clause markers. -/
-def relMarkers : List Marker := [relAdnominal, relGenitive]
+/-- The Korean relativizers. -/
+def relativizers : List Relativizer := [relAdnominal]
 
 end Korean

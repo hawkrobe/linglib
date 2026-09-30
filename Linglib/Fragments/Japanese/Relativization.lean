@@ -22,26 +22,17 @@ retained, and only when the relativized position is a genitive. The data are
 
 namespace Japanese
 
-open RelativeClause
+/-- The zero relativizer of the unmarked prenominal clause: the relativized position is left
+empty from subjects through genitives, and at a genitive a pronoun may instead be retained. -/
+def relZero : Relativizer where
+  form := "∅"
+  placement := .preNominal
+  realize
+    | .subject | .directObject | .indirectObject | .oblique => {.gap}
+    | .genitive => {.gap, .resumptive}
+    | .objComparison => ∅
 
-/-- The unmarked prenominal clause leaves the relativized position empty and relativizes subjects
-through genitives. -/
-def relGap : Marker :=
-  { form := "∅"
-  , npRel := .gap
-  , bearsCaseMarking := false
-  , placement := .preNominal
-  , positions := {.subject, .directObject, .indirectObject, .oblique, .genitive} }
-
-/-- The unmarked prenominal clause with a retained pronoun relativizes genitives only. -/
-def relRetention : Marker :=
-  { form := "∅ + pronoun"
-  , npRel := .resumptive
-  , bearsCaseMarking := true
-  , placement := .preNominal
-  , positions := {.genitive} }
-
-/-- The Japanese relative-clause markers. -/
-def relMarkers : List Marker := [relGap, relRetention]
+/-- The Japanese relativizers. -/
+def relativizers : List Relativizer := [relZero]
 
 end Japanese
