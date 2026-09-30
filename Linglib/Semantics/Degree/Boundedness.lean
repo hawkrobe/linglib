@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Algebra.Order.Ring.Int
 public import Mathlib.Order.Directed
-public import Mathlib.Order.Interval.Set.Defs
+public import Mathlib.Order.Interval.Set.Basic
 public import Mathlib.Order.WithBot
 public import Mathlib.Tactic.DeriveFintype
 
@@ -38,6 +38,9 @@ endpoint rules out the contextual standard, and a totally closed scale prefers i
 * `Boundedness.ofOrder_orderDual`: the order dual has the dual boundedness.
 * `Boundedness.ofOrder_Ici`: a ray upward has a least degree adjoined.
 * `Boundedness.ofOrder_Iic`: a ray downward has a greatest degree adjoined.
+* `Boundedness.ofOrder_Icc`, `Boundedness.ofOrder_Ioo`, `Boundedness.ofOrder_Ioc`: a closed
+  interval is totally closed, and an open or half-open interval of a dense order is open or upper
+  closed.
 * `Boundedness.ofOrder_degreeShape`: every boundedness is that of a linear order.
 * `Boundedness.admits_withMin_iff`: a scale with a least degree adjoined admits the minimum
   standard, and the maximum exactly when the original scale has one.
@@ -213,6 +216,25 @@ theorem ofOrder_Iic [IsCodirectedOrder D] : ofOrder (Set.Iic a) = (ofOrder D).wi
   exact le_trans (hm ⟨c, hca⟩) hcx
 
 end Ray
+
+section Interval
+variable {D : Type*} [Preorder D] {a b : D}
+
+/-- A closed interval is a totally closed scale, as the probability scale `[0, 1]` is. -/
+theorem ofOrder_Icc (h : a ≤ b) : ofOrder (Set.Icc a b) = closed :=
+  ext (iff_of_true (hasMin_ofOrder.2 ⟨⟨a, le_rfl, h⟩, fun x ↦ x.2.1⟩) trivial)
+    (iff_of_true (hasMax_ofOrder.2 ⟨⟨b, h, le_rfl⟩, fun x ↦ x.2.2⟩) trivial)
+
+/-- An open interval of a dense order is a totally open scale. -/
+theorem ofOrder_Ioo [DenselyOrdered D] : ofOrder (Set.Ioo a b) = open_ :=
+  ext (iff_of_false not_hasMin_ofOrder id) (iff_of_false not_hasMax_ofOrder id)
+
+/-- A half-open interval `(a, b]` of a dense order is an upper closed scale. -/
+theorem ofOrder_Ioc [DenselyOrdered D] (h : a < b) : ofOrder (Set.Ioc a b) = upperClosed :=
+  ext (iff_of_false not_hasMin_ofOrder id)
+    (iff_of_true (hasMax_ofOrder.2 ⟨⟨b, h, le_rfl⟩, fun x ↦ x.2.2⟩) trivial)
+
+end Interval
 
 /-! ### A linear order of each shape -/
 
