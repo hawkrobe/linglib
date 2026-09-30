@@ -8,13 +8,38 @@
     "language": "mode1248",
     "primaryText": "episkevasame to pomolo apo tin porta",
     "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "We fixed the handle of the door.",
+    "glossedTokens": [
+      [
+        "episkevasame",
+        "fix.PST.1PL"
+      ],
+      [
+        "to",
+        "DEF.SG.ACC"
+      ],
+      [
+        "pomolo",
+        "handle.SG.ACC"
+      ],
+      [
+        "apo",
+        "of"
+      ],
+      [
+        "tin",
+        "DEF.SG.ACC"
+      ],
+      [
+        "porta",
+        "door.SG.ACC"
+      ]
+    ],
+    "translation": "We fixed the door's handle / the handle of the door.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
       {
-        "form": "tis portas",
+        "form": "episkevasame to pomolo tis portas",
         "judgment": "acceptable"
       }
     ],
@@ -53,7 +78,8 @@
         "no"
       ]
     ],
-    "comment": ""
+    "comment": "The paper prints the genitive and the apo-PP as alternants, genitive first: tis portas /apo tin porta.",
+    "verified": "page-image"
   },
   {
     "id": "ka2026_5b",
@@ -64,13 +90,38 @@
     "language": "mode1248",
     "primaryText": "vrasame to nero apo tin piji",
     "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "We boiled the water of the spring.",
+    "glossedTokens": [
+      [
+        "vrasame",
+        "boil.PST.1PL"
+      ],
+      [
+        "to",
+        "DEF.SG.ACC"
+      ],
+      [
+        "nero",
+        "water.SG.ACC"
+      ],
+      [
+        "apo",
+        "of"
+      ],
+      [
+        "tin",
+        "DEF.SG.ACC"
+      ],
+      [
+        "piji",
+        "spring.SG.ACC"
+      ]
+    ],
+    "translation": "We boiled the spring's water / the water of the spring.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
       {
-        "form": "tis pijis",
+        "form": "vrasame to nero tis pijis",
         "judgment": "acceptable"
       }
     ],
@@ -109,7 +160,8 @@
         "no"
       ]
     ],
-    "comment": ""
+    "comment": "The paper prints the genitive and the apo-PP as alternants, genitive first: tis pijis /apo tin piji.",
+    "verified": "page-image"
   },
   {
     "id": "ka2026_5c",
@@ -118,15 +170,40 @@
       "paperLabel": "(5c)"
     },
     "language": "mode1248",
-    "primaryText": "?blextike i ura apo to aloɣo",
+    "primaryText": "blextike i ura apo to aloɣo",
     "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "The tail of the horse tangled.",
+    "glossedTokens": [
+      [
+        "blextike",
+        "tangle.PST.3SG"
+      ],
+      [
+        "i",
+        "DEF.SG.NOM"
+      ],
+      [
+        "ura",
+        "tail.SG.NOM"
+      ],
+      [
+        "apo",
+        "of"
+      ],
+      [
+        "to",
+        "DEF.SG.ACC"
+      ],
+      [
+        "aloɣo",
+        "horse.SG.ACC"
+      ]
+    ],
+    "translation": "The horse's tail / The tail of the horse tangled.",
     "context": "",
     "judgment": "marginal",
     "alternatives": [
       {
-        "form": "tu aloɣu",
+        "form": "blextike i ura tu aloɣu",
         "judgment": "acceptable"
       }
     ],
@@ -165,7 +242,8 @@
         "no"
       ]
     ],
-    "comment": ""
+    "comment": "The paper prints the genitive and the apo-PP as alternants, genitive first: tu aloɣu /? apo to aloɣo.",
+    "verified": "page-image"
   },
   {
     "id": "ka2026_6a",
@@ -174,9 +252,34 @@
       "paperLabel": "(6a)"
     },
     "language": "mode1248",
-    "primaryText": "#kalesame ton aðerfo apo ta koritsja",
+    "primaryText": "kalesame ton aðerfo apo ta koritsja",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "kalesame",
+        "invite.PST.1PL"
+      ],
+      [
+        "ton",
+        "DEF.SG.ACC"
+      ],
+      [
+        "aðerfo",
+        "brother.SG.ACC"
+      ],
+      [
+        "apo",
+        "of"
+      ],
+      [
+        "ta",
+        "DEF.PL.ACC"
+      ],
+      [
+        "koritsja",
+        "girl.PL.ACC"
+      ]
+    ],
     "translation": "We invited the brother of the girls.",
     "context": "",
     "judgment": "unacceptable",
@@ -216,7 +319,8 @@
         "no"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ka2026_6b",
@@ -225,9 +329,34 @@
       "paperLabel": "(6b)"
     },
     "language": "mode1248",
-    "primaryText": "#eksisa to molivi apo ti ðaskala",
+    "primaryText": "eksisa to molivi apo ti ðaskala",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "eksisa",
+        "sharpen.PST.1SG"
+      ],
+      [
+        "to",
+        "DEF.SG.ACC"
+      ],
+      [
+        "molivi",
+        "pencil.SG.ACC"
+      ],
+      [
+        "apo",
+        "of"
+      ],
+      [
+        "ti",
+        "DEF.SG.ACC"
+      ],
+      [
+        "ðaskala",
+        "teacher.SG.ACC"
+      ]
+    ],
     "translation": "I sharpened the pencil of the teacher.",
     "context": "",
     "judgment": "unacceptable",
@@ -267,7 +396,8 @@
         "no"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ka2026_9a_book",
@@ -276,9 +406,30 @@
       "paperLabel": "(9a)"
     },
     "language": "mode1248",
-    "primaryText": "#evapsa to vivlio apo sena",
+    "primaryText": "evapsa to vivlio apo sena",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "evapsa",
+        "paint.PST.1SG"
+      ],
+      [
+        "to",
+        "DEF.SG.ACC"
+      ],
+      [
+        "vivlio",
+        "book.SG.ACC"
+      ],
+      [
+        "apo",
+        "of"
+      ],
+      [
+        "sena",
+        "2SG.ACC"
+      ]
+    ],
     "translation": "I painted your book.",
     "context": "",
     "judgment": "unacceptable",
@@ -318,7 +469,8 @@
         "no"
       ]
     ],
-    "comment": "Acceptable only if apo sena denotes the book's sender or donor."
+    "comment": "Acceptable only if apo sena denotes the book's sender or donor. The paper prints to vivlio /ta matja 'book/eyes' as alternants in one example with one translation, 'I painted your book/eyes.' The paper gives the translation as intended (int.).",
+    "verified": "page-image"
   },
   {
     "id": "ka2026_9a_eyes",
@@ -327,9 +479,30 @@
       "paperLabel": "(9a)"
     },
     "language": "mode1248",
-    "primaryText": "#evapsa ta matja apo sena",
+    "primaryText": "evapsa ta matja apo sena",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "evapsa",
+        "paint.PST.1SG"
+      ],
+      [
+        "ta",
+        "DEF.PL.ACC"
+      ],
+      [
+        "matja",
+        "eye.PL.ACC"
+      ],
+      [
+        "apo",
+        "of"
+      ],
+      [
+        "sena",
+        "2SG.ACC"
+      ]
+    ],
     "translation": "I painted your eyes.",
     "context": "",
     "judgment": "unacceptable",
@@ -369,7 +542,8 @@
         "no"
       ]
     ],
-    "comment": ""
+    "comment": "The paper prints to vivlio /ta matja 'book/eyes' as alternants in one example with one translation, 'I painted your book/eyes.' The paper gives the translation as intended (int.).",
+    "verified": "page-image"
   },
   {
     "id": "ka2026_10a_shoulder",
@@ -378,9 +552,34 @@
       "paperLabel": "(10a)"
     },
     "language": "mode1248",
-    "primaryText": "#travmatistike o omos apo ti Fani",
+    "primaryText": "travmatistike o omos apo ti Fani",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "travmatistike",
+        "get.hurt.PST.3SG"
+      ],
+      [
+        "o",
+        "DEF.SG.NOM"
+      ],
+      [
+        "omos",
+        "shoulder.SG.NOM"
+      ],
+      [
+        "apo",
+        "of"
+      ],
+      [
+        "ti",
+        "DEF.ACC"
+      ],
+      [
+        "Fani",
+        "Fani.ACC"
+      ]
+    ],
     "translation": "Fani's shoulder got injured.",
     "context": "",
     "judgment": "unacceptable",
@@ -420,7 +619,8 @@
         "no"
       ]
     ],
-    "comment": "Acceptable only with apo ti Fani read as a by-phrase."
+    "comment": "Acceptable only with apo ti Fani read as a by-phrase. The paper prints o omos /i mama 'shoulder/mom' as alternants in one example with one translation, 'Fani's shoulder/mom got injured/hurt.' The paper gives the translation as intended (int.).",
+    "verified": "page-image"
   },
   {
     "id": "ka2026_10a_mom",
@@ -429,9 +629,34 @@
       "paperLabel": "(10a)"
     },
     "language": "mode1248",
-    "primaryText": "#travmatistike i mama apo ti Fani",
+    "primaryText": "travmatistike i mama apo ti Fani",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "travmatistike",
+        "get.hurt.PST.3SG"
+      ],
+      [
+        "i",
+        "DEF.SG.NOM"
+      ],
+      [
+        "mama",
+        "mom.SG.NOM"
+      ],
+      [
+        "apo",
+        "of"
+      ],
+      [
+        "ti",
+        "DEF.ACC"
+      ],
+      [
+        "Fani",
+        "Fani.ACC"
+      ]
+    ],
     "translation": "Fani's mom got hurt.",
     "context": "",
     "judgment": "unacceptable",
@@ -471,7 +696,8 @@
         "no"
       ]
     ],
-    "comment": ""
+    "comment": "The paper prints o omos /i mama 'shoulder/mom' as alternants in one example with one translation, 'Fani's shoulder/mom got injured/hurt.' The paper gives the translation as intended (int.).",
+    "verified": "page-image"
   },
   {
     "id": "ka2026_11a",
@@ -480,9 +706,34 @@
       "paperLabel": "(11a)"
     },
     "language": "mode1248",
-    "primaryText": "??alaksa to xalaki apo tin porta",
+    "primaryText": "alaksa to xalaki apo tin porta",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "alaksa",
+        "change.PST.1SG"
+      ],
+      [
+        "to",
+        "DEF.SG.ACC"
+      ],
+      [
+        "xalaki",
+        "mat-DIM.SG.ACC"
+      ],
+      [
+        "apo",
+        "of"
+      ],
+      [
+        "tin",
+        "DEF.SG.ACC"
+      ],
+      [
+        "porta",
+        "door.SG.ACC"
+      ]
+    ],
     "translation": "I changed the small mat of the door.",
     "context": "",
     "judgment": "questionable",
@@ -522,7 +773,8 @@
         "no"
       ]
     ],
-    "comment": "The relation between a mat and a door is not part-whole."
+    "comment": "The relation between a mat and a door is not part-whole. The paper glosses xalaki 'mat-DIM.SG.ACC' here and 'mat.DIM.SG.ACC' in (11b).",
+    "verified": "page-image"
   },
   {
     "id": "ka2026_11b",
@@ -533,7 +785,32 @@
     "language": "mode1248",
     "primaryText": "alaksa to xalaki apo tis portes",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "alaksa",
+        "change.PST.1SG"
+      ],
+      [
+        "to",
+        "DEF.SG.ACC"
+      ],
+      [
+        "xalaki",
+        "mat.DIM.SG.ACC"
+      ],
+      [
+        "apo",
+        "of"
+      ],
+      [
+        "tis",
+        "DEF.PL.ACC"
+      ],
+      [
+        "portes",
+        "door.PL.ACC"
+      ]
+    ],
     "translation": "I changed the small mat of the doors.",
     "context": "",
     "judgment": "acceptable",
@@ -573,7 +850,8 @@
         "no"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ka2026_fn5",
@@ -584,7 +862,36 @@
     "language": "mode1248",
     "primaryText": "alaksa to xalaki apo tin brostini porta",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "alaksa",
+        "change.PST.1SG"
+      ],
+      [
+        "to",
+        "DEF.SG.ACC"
+      ],
+      [
+        "xalaki",
+        "mat.DIM.SG.ACC"
+      ],
+      [
+        "apo",
+        "of"
+      ],
+      [
+        "tin",
+        "DEF.SG.ACC"
+      ],
+      [
+        "brostini",
+        "front"
+      ],
+      [
+        "porta",
+        "door.SG.ACC"
+      ]
+    ],
     "translation": "I changed the small mat of the front door.",
     "context": "",
     "judgment": "acceptable",
@@ -624,7 +931,8 @@
         "no"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ka2026_14a",
@@ -633,13 +941,39 @@
       "paperLabel": "(14a)"
     },
     "language": "mode1248",
-    "primaryText": "i epikalipsi apo ta sokolatakia",
+    "primaryText": "i epikalipsi apo ta sokolat-akia",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "i",
+        "DEF.SG.NOM"
+      ],
+      [
+        "epikalipsi",
+        "coating.SG.NOM"
+      ],
+      [
+        "apo",
+        "of"
+      ],
+      [
+        "ta",
+        "DEF.PL.ACC"
+      ],
+      [
+        "sokolat-akia",
+        "chocolate-DIM.PL.ACC"
+      ]
+    ],
     "translation": "the coating of chocolates",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "alternatives": [
+      {
+        "form": "i epikalipsi ton sokolat-akion",
+        "judgment": "ungrammatical"
+      }
+    ],
     "readings": [],
     "paperFeatures": [
       [
@@ -675,7 +1009,8 @@
         "yes"
       ]
     ],
-    "comment": "The genitive sokolatakion is a paradigm gap."
+    "comment": "The paper stars the genitive, a paradigm gap, beside the apo-PP: ton *sokolat-akion /apo ta sokolat-akia.",
+    "verified": "page-image"
   },
   {
     "id": "ka2026_14b",
@@ -684,13 +1019,39 @@
       "paperLabel": "(14b)"
     },
     "language": "mode1248",
-    "primaryText": "to trixoma apo to katsikaki",
+    "primaryText": "to trixoma apo to katsik-aki",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "to",
+        "DEF.SG.NOM"
+      ],
+      [
+        "trixoma",
+        "fur.SG.NOM"
+      ],
+      [
+        "apo",
+        "of"
+      ],
+      [
+        "to",
+        "DEF.SG.ACC"
+      ],
+      [
+        "katsik-aki",
+        "goat-DIM.SG.ACC"
+      ]
+    ],
     "translation": "the little goat's fur",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "alternatives": [
+      {
+        "form": "to trixoma tu katsik-akiu",
+        "judgment": "ungrammatical"
+      }
+    ],
     "readings": [],
     "paperFeatures": [
       [
@@ -726,7 +1087,8 @@
         "yes"
       ]
     ],
-    "comment": "The genitive katsikakiu is a paradigm gap."
+    "comment": "The paper stars the genitive, a paradigm gap, beside the apo-PP: tu *katsik-akiu / apo to katsik-aki. The paper glosses katsik-aki 'goat-DIM.PL.ACC', a misprint for SG beside to 'DEF.SG.ACC'.",
+    "verified": "page-image"
   },
   {
     "id": "ka2026_15a",
@@ -735,13 +1097,47 @@
       "paperLabel": "(15a)"
     },
     "language": "mode1248",
-    "primaryText": "#petai psila to baloni apo to aɣoraki",
+    "primaryText": "petai psila to baloni apo to aɣor-aki",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "petai",
+        "fly.3SG"
+      ],
+      [
+        "psila",
+        "high"
+      ],
+      [
+        "to",
+        "DEF.NOM"
+      ],
+      [
+        "baloni",
+        "balloon.NOM"
+      ],
+      [
+        "apo",
+        "of"
+      ],
+      [
+        "to",
+        "DEF.SG.ACC"
+      ],
+      [
+        "aɣor-aki",
+        "boy-DIM.SG.ACC"
+      ]
+    ],
     "translation": "The little boy's balloon flies high.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "alternatives": [
+      {
+        "form": "petai psila to baloni tu aɣor-akiu",
+        "judgment": "ungrammatical"
+      }
+    ],
     "readings": [],
     "paperFeatures": [
       [
@@ -777,7 +1173,8 @@
         "yes"
       ]
     ],
-    "comment": "The genitive aɣorakiu is a paradigm gap."
+    "comment": "The paper stars the genitive, a paradigm gap, beside the apo-PP: tu *aɣor-akiu / #apo to aɣor-aki. The paper gives the translation as intended (int.).",
+    "verified": "page-image"
   },
   {
     "id": "ka2026_15b",
@@ -786,13 +1183,43 @@
       "paperLabel": "(15b)"
     },
     "language": "mode1248",
-    "primaryText": "#efije o babas apo to peðaki",
+    "primaryText": "efije o babas apo to peð-aki",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "efije",
+        "leave.PST.3SG"
+      ],
+      [
+        "o",
+        "DEF.NOM"
+      ],
+      [
+        "babas",
+        "dad.SG.NOM"
+      ],
+      [
+        "apo",
+        "of"
+      ],
+      [
+        "to",
+        "DEF.SG.ACC"
+      ],
+      [
+        "peð-aki",
+        "kid-DIM.SG.ACC"
+      ]
+    ],
     "translation": "The little kid's dad left.",
     "context": "",
     "judgment": "unacceptable",
-    "alternatives": [],
+    "alternatives": [
+      {
+        "form": "efije o babas tu peð-akiu",
+        "judgment": "ungrammatical"
+      }
+    ],
     "readings": [],
     "paperFeatures": [
       [
@@ -828,7 +1255,8 @@
         "yes"
       ]
     ],
-    "comment": "The genitive peðakiu is a paradigm gap."
+    "comment": "The paper stars the genitive, a paradigm gap, beside the apo-PP: tu *peð-akiu / #apo to peð-aki. The paper gives the translation as intended (int.).",
+    "verified": "page-image"
   },
   {
     "id": "ka2026_28",
@@ -837,10 +1265,82 @@
       "paperLabel": "(28)"
     },
     "language": "mode1248",
-    "primaryText": "o babas apo to isixo peðaki ðen ipe pola",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "The father of the quiet kid didn't say much.",
+    "primaryText": "o babas apo to isixo peð-aki ðen ipe pola. o babas apo to zoiro peð-aki olo miluse.",
+    "discourseSegments": [
+      "o babas apo to isixo peð-aki ðen ipe pola.",
+      "o babas apo to zoiro peð-aki olo miluse."
+    ],
+    "glossedTokens": [
+      [
+        "o",
+        "DEF.SG.NOM"
+      ],
+      [
+        "babas",
+        "dad.SG.NOM"
+      ],
+      [
+        "apo",
+        "of"
+      ],
+      [
+        "to",
+        "DEF.SG.ACC"
+      ],
+      [
+        "isixo",
+        "quiet"
+      ],
+      [
+        "peð-aki",
+        "kid-DIM.SG.ACC"
+      ],
+      [
+        "ðen",
+        "NEG"
+      ],
+      [
+        "ipe",
+        "say.PST.3SG"
+      ],
+      [
+        "pola",
+        "much"
+      ],
+      [
+        "o",
+        "DEF.SG.NOM"
+      ],
+      [
+        "babas",
+        "dad.SG.NOM"
+      ],
+      [
+        "apo",
+        "of"
+      ],
+      [
+        "to",
+        "DEF.SG.ACC"
+      ],
+      [
+        "zoiro",
+        "naughty"
+      ],
+      [
+        "peð-aki",
+        "kid-DIM.SG.ACC"
+      ],
+      [
+        "olo",
+        "continuously"
+      ],
+      [
+        "miluse",
+        "talk.PST.3SG"
+      ]
+    ],
+    "translation": "The father of the quiet kid didn't say much. The father of the naughty kid was talking a lot.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -879,7 +1379,8 @@
         "no"
       ]
     ],
-    "comment": "Reported as more acceptable for some speakers, including a reviewer; unmarked in the paper."
+    "comment": "Reported as more acceptable for some speakers, including a reviewer; unmarked in the paper. Repeated from footnote 8 (i). The paper glosses the first babas 'dad.SGNOM' here and 'dad.SG.NOM' in the footnote.",
+    "verified": "page-image"
   },
   {
     "id": "ka2026_25a",
@@ -890,7 +1391,36 @@
     "language": "mode1248",
     "primaryText": "episkevasa to stiriɣma tu poðju tu trapezju",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "episkevasa",
+        "fix.PST.1SG"
+      ],
+      [
+        "to",
+        "DEF.SG.ACC"
+      ],
+      [
+        "stiriɣma",
+        "support.SG.ACC"
+      ],
+      [
+        "tu",
+        "DEF.SG.GEN"
+      ],
+      [
+        "poðju",
+        "leg.SG.GEN"
+      ],
+      [
+        "tu",
+        "DEF.SG.GEN"
+      ],
+      [
+        "trapezju",
+        "table.SG.GEN"
+      ]
+    ],
     "translation": "I fixed the table's leg support.",
     "context": "",
     "judgment": "acceptable",
@@ -914,7 +1444,8 @@
         "genitive"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ka2026_25b",
@@ -923,9 +1454,46 @@
       "paperLabel": "(25b)"
     },
     "language": "mode1248",
-    "primaryText": "???episkevasa to stiriɣma apo to poði apo to trapezi",
+    "primaryText": "episkevasa to stiriɣma apo to poði apo to trapezi",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "episkevasa",
+        "fix.PST.1SG"
+      ],
+      [
+        "to",
+        "DEF.SG.ACC"
+      ],
+      [
+        "stiriɣma",
+        "support.SG.ACC"
+      ],
+      [
+        "apo",
+        "of"
+      ],
+      [
+        "to",
+        "DEF.SG.ACC"
+      ],
+      [
+        "poði",
+        "leg.SG.ACC"
+      ],
+      [
+        "apo",
+        "of"
+      ],
+      [
+        "to",
+        "DEF.SG.ACC"
+      ],
+      [
+        "trapezi",
+        "table.SG.ACC"
+      ]
+    ],
     "translation": "I fixed the support of the leg of the table.",
     "context": "",
     "judgment": "questionable",
@@ -949,7 +1517,8 @@
         "apo"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ka2026_27a",
@@ -960,7 +1529,40 @@
     "language": "mode1248",
     "primaryText": "episkevasa to stiriɣma apo to poði tu trapezju",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "episkevasa",
+        "fix.PST.1SG"
+      ],
+      [
+        "to",
+        "DEF.SG.ACC"
+      ],
+      [
+        "stiriɣma",
+        "support.SG.ACC"
+      ],
+      [
+        "apo",
+        "of"
+      ],
+      [
+        "to",
+        "DEF.SG.ACC"
+      ],
+      [
+        "poði",
+        "leg.SG.ACC"
+      ],
+      [
+        "tu",
+        "DEF.SG.GEN"
+      ],
+      [
+        "trapezju",
+        "table.SG.GEN"
+      ]
+    ],
     "translation": "I fixed the support of the table's leg.",
     "context": "",
     "judgment": "acceptable",
@@ -984,7 +1586,8 @@
         "genitive"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ka2026_27b",
@@ -993,9 +1596,42 @@
       "paperLabel": "(27b)"
     },
     "language": "mode1248",
-    "primaryText": "???episkevasa to stiriɣma tu poðju apo to trapezi",
+    "primaryText": "episkevasa to stiriɣma tu poðju apo to trapezi",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "episkevasa",
+        "fix.PST.1SG"
+      ],
+      [
+        "to",
+        "DEF.SG.ACC"
+      ],
+      [
+        "stiriɣma",
+        "support.SG.ACC"
+      ],
+      [
+        "tu",
+        "DEF.SG.GEN"
+      ],
+      [
+        "poðju",
+        "leg.SG.GEN"
+      ],
+      [
+        "apo",
+        "of"
+      ],
+      [
+        "to",
+        "DEF.SG.ACC"
+      ],
+      [
+        "trapezi",
+        "table.SG.ACC"
+      ]
+    ],
     "translation": "I fixed the support of the leg of the table.",
     "context": "",
     "judgment": "questionable",
@@ -1019,7 +1655,8 @@
         "apo"
       ]
     ],
-    "comment": ""
+    "comment": "The paper gives the translation as intended (int.).",
+    "verified": "page-image"
   },
   {
     "id": "ka2026_7a",
@@ -1030,13 +1667,50 @@
     "language": "mode1248",
     "primaryText": "xriazode tria lepta ja to vrasimo apo ta zimarika",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "xriazode",
+        "need.3PL"
+      ],
+      [
+        "tria",
+        "three"
+      ],
+      [
+        "lepta",
+        "minutes"
+      ],
+      [
+        "ja",
+        "for"
+      ],
+      [
+        "to",
+        "DEF.ACC"
+      ],
+      [
+        "vrasimo",
+        "boiling.ACC"
+      ],
+      [
+        "apo",
+        "of"
+      ],
+      [
+        "ta",
+        "DEF.PL.ACC"
+      ],
+      [
+        "zimarika",
+        "pasta.PL.ACC"
+      ]
+    ],
     "translation": "Three minutes are needed for the boiling of the pasta.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
       {
-        "form": "ton zimarikon",
+        "form": "xriazode tria lepta ja to vrasimo ton zimarikon",
         "judgment": "acceptable"
       }
     ],
@@ -1067,7 +1741,8 @@
         "no"
       ]
     ],
-    "comment": "Degraded for some speakers, including one author and one reviewer."
+    "comment": "Degraded for some speakers, including one author and one reviewer. The paper prints the genitive and the apo-PP as alternants, genitive first: ton zimarikon/ apo ta zimarika.",
+    "verified": "page-image"
   },
   {
     "id": "ka2026_8a",
@@ -1076,10 +1751,51 @@
       "paperLabel": "(8a)"
     },
     "language": "mode1248",
-    "primaryText": "i metafrasi tu miθistorimatos apo to Jani",
+    "primaryText": "kratise ena xrono i metafrasi tu miθistorimatos apo to Jani",
     "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "The novel's translation by John",
+    "glossedTokens": [
+      [
+        "kratise",
+        "last.PST.3SG"
+      ],
+      [
+        "ena",
+        "one"
+      ],
+      [
+        "xrono",
+        "year.SG.ACC"
+      ],
+      [
+        "i",
+        "DEF.SG.NOM"
+      ],
+      [
+        "metafrasi",
+        "translation.SG.NOM"
+      ],
+      [
+        "tu",
+        "DEF.SG.GEN"
+      ],
+      [
+        "miθistorimatos",
+        "novel.SG.GEN"
+      ],
+      [
+        "apo",
+        "of"
+      ],
+      [
+        "to",
+        "DEF.SG.ACC"
+      ],
+      [
+        "Jani",
+        "John.ACC"
+      ]
+    ],
+    "translation": "The novel's translation by John lasted one year.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -1110,7 +1826,8 @@
         "no"
       ]
     ],
-    "comment": ""
+    "comment": "The paper prints the frame kratise ena xrono… 'lasted one year' once, above (8a)-(8d).",
+    "verified": "page-image"
   },
   {
     "id": "ka2026_8b",
@@ -1119,10 +1836,43 @@
       "paperLabel": "(8b)"
     },
     "language": "mode1248",
-    "primaryText": "i metafrasi apo to miθistorima",
+    "primaryText": "kratise ena xrono i metafrasi apo to miθistorima",
     "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "The translation of the novel",
+    "glossedTokens": [
+      [
+        "kratise",
+        "last.PST.3SG"
+      ],
+      [
+        "ena",
+        "one"
+      ],
+      [
+        "xrono",
+        "year.SG.ACC"
+      ],
+      [
+        "i",
+        "DEF.SG.NOM"
+      ],
+      [
+        "metafrasi",
+        "translation.SG.NOM"
+      ],
+      [
+        "apo",
+        "of"
+      ],
+      [
+        "to",
+        "DEF.SG.ACC"
+      ],
+      [
+        "miθistorima",
+        "novel.SG.ACC"
+      ]
+    ],
+    "translation": "The translation of the novel lasted one year.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -1153,7 +1903,8 @@
         "no"
       ]
     ],
-    "comment": ""
+    "comment": "The paper prints the frame kratise ena xrono… 'lasted one year' once, above (8a)-(8d).",
+    "verified": "page-image"
   },
   {
     "id": "ka2026_8c",
@@ -1162,10 +1913,51 @@
       "paperLabel": "(8c)"
     },
     "language": "mode1248",
-    "primaryText": "#i metafrasi apo to miθistorima tu Jani",
+    "primaryText": "kratise ena xrono i metafrasi apo to miθistorima tu Jani",
     "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "The translation of John's novel",
+    "glossedTokens": [
+      [
+        "kratise",
+        "last.PST.3SG"
+      ],
+      [
+        "ena",
+        "one"
+      ],
+      [
+        "xrono",
+        "year.SG.ACC"
+      ],
+      [
+        "i",
+        "DEF.SG.NOM"
+      ],
+      [
+        "metafrasi",
+        "translation.SG.NOM"
+      ],
+      [
+        "apo",
+        "of"
+      ],
+      [
+        "to",
+        "DEF.SG.ACC"
+      ],
+      [
+        "miθistorima",
+        "novel.SG.ACC."
+      ],
+      [
+        "tu",
+        "DEF.SG.GEN"
+      ],
+      [
+        "Jani",
+        "John.GEN"
+      ]
+    ],
+    "translation": "The translation of John's novel lasted one year.",
     "context": "",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -1196,7 +1988,8 @@
         "no"
       ]
     ],
-    "comment": "Acceptable only with John as the novel's author."
+    "comment": "Acceptable only with John as the novel's author. The paper prints the frame kratise ena xrono… 'lasted one year' once, above (8a)-(8d). The paper glosses miθistorima 'novel.SG.ACC.', with a stray period.",
+    "verified": "page-image"
   },
   {
     "id": "ka2026_8d",
@@ -1205,10 +1998,55 @@
       "paperLabel": "(8d)"
     },
     "language": "mode1248",
-    "primaryText": "*i metafrasi apo to miθistorima apo to Jani",
+    "primaryText": "kratise ena xrono i metafrasi apo to miθistorima apo to Jani",
     "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "The translation of the novel of John",
+    "glossedTokens": [
+      [
+        "kratise",
+        "last.PST.3SG"
+      ],
+      [
+        "ena",
+        "one"
+      ],
+      [
+        "xrono",
+        "year.SG.ACC"
+      ],
+      [
+        "i",
+        "DEF.SG.NOM"
+      ],
+      [
+        "metafrasi",
+        "translation.SG.NOM"
+      ],
+      [
+        "apo",
+        "of"
+      ],
+      [
+        "to",
+        "DEF.SG.ACC"
+      ],
+      [
+        "miθistorima",
+        "novel.SG.ACC"
+      ],
+      [
+        "apo",
+        "of"
+      ],
+      [
+        "to",
+        "DEF.SG.ACC"
+      ],
+      [
+        "Jani",
+        "John.ACC"
+      ]
+    ],
+    "translation": "The translation of the novel of John lasted one year.",
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [],
@@ -1239,7 +2077,8 @@
         "no"
       ]
     ],
-    "comment": ""
+    "comment": "The paper prints the frame kratise ena xrono… 'lasted one year' once, above (8a)-(8d).",
+    "verified": "page-image"
   },
   {
     "id": "ka2026_12",
@@ -1250,7 +2089,40 @@
     "language": "mode1248",
     "primaryText": "i piriɣrafi ap tun ðimarxu ap ta piðja",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "i",
+        "DEF.SG.NOM"
+      ],
+      [
+        "piriɣrafi",
+        "description.SG.NOM"
+      ],
+      [
+        "ap",
+        "of"
+      ],
+      [
+        "tun",
+        "DEF.SG.ACC"
+      ],
+      [
+        "ðimarxu",
+        "mayor.SG.ACC"
+      ],
+      [
+        "ap",
+        "of"
+      ],
+      [
+        "ta",
+        "DEF.PL.ACC"
+      ],
+      [
+        "piðja",
+        "kid.PL.ACC"
+      ]
+    ],
     "translation": "the description of the mayor of the kids",
     "context": "",
     "judgment": "acceptable",
@@ -1282,7 +2154,8 @@
         "no"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ka2026_30a",
@@ -1293,7 +2166,36 @@
     "language": "mode1248",
     "primaryText": "i katastrofi tis polis apo tus varvarus",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "i",
+        "DEF.SG.NOM"
+      ],
+      [
+        "katastrofi",
+        "destruction.SG.NOM"
+      ],
+      [
+        "tis",
+        "DEF.SG.GEN"
+      ],
+      [
+        "polis",
+        "city.SG.GEN"
+      ],
+      [
+        "apo",
+        "by"
+      ],
+      [
+        "tus",
+        "DEF.PL.ACC"
+      ],
+      [
+        "varvarus",
+        "barbarian.PL.ACC"
+      ]
+    ],
     "translation": "the destruction of the city by the barbarians",
     "context": "",
     "judgment": "acceptable",
@@ -1325,7 +2227,8 @@
         "no"
       ]
     ],
-    "comment": ""
+    "comment": "Repeated from (4b).",
+    "verified": "page-image"
   },
   {
     "id": "ka2026_33b",
@@ -1334,15 +2237,36 @@
       "paperLabel": "(33b)"
     },
     "language": "mode1248",
-    "primaryText": "?to kolibi apo tus aθlites",
+    "primaryText": "to kolibi apo tus aθlites",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "to",
+        "DEF.SG.NOM"
+      ],
+      [
+        "kolibi",
+        "swimming.SG.NOM"
+      ],
+      [
+        "apo",
+        "of"
+      ],
+      [
+        "tus",
+        "DEF.PL.ACC"
+      ],
+      [
+        "aθlites",
+        "athlete.PL.ACC"
+      ]
+    ],
     "translation": "the swimming of the athletes",
     "context": "",
     "judgment": "marginal",
     "alternatives": [
       {
-        "form": "ton aθliton",
+        "form": "to kolibi ton aθliton",
         "judgment": "acceptable"
       }
     ],
@@ -1373,7 +2297,8 @@
         "no"
       ]
     ],
-    "comment": ""
+    "comment": "The paper prints the genitive and the apo-PP as alternants, genitive first: ton aθliton/ ?apo tus aθlites.",
+    "verified": "page-image"
   },
   {
     "id": "ka2026_34a",
@@ -1382,9 +2307,42 @@
       "paperLabel": "(34a)"
     },
     "language": "mode1248",
-    "primaryText": "*i kinisi apo tus planites ja ekatomiria xronja",
+    "primaryText": "i kinisi apo tus planites ja ekatomiria xronja",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "i",
+        "DEF.SG.NOM"
+      ],
+      [
+        "kinisi",
+        "movement.SG.NOM"
+      ],
+      [
+        "apo",
+        "of"
+      ],
+      [
+        "tus",
+        "DEF.PL.ACC"
+      ],
+      [
+        "planites",
+        "planet.PL.ACC"
+      ],
+      [
+        "ja",
+        "for"
+      ],
+      [
+        "ekatomiria",
+        "million.PL.ACC"
+      ],
+      [
+        "xronja",
+        "year.PL.ACC"
+      ]
+    ],
     "translation": "the movement of the planets for millions of years",
     "context": "",
     "judgment": "ungrammatical",
@@ -1416,7 +2374,8 @@
         "yes"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ka2026_35a",
@@ -1427,7 +2386,36 @@
     "language": "mode1248",
     "primaryText": "i kinisi ton planiton ja ekatomiria xronja",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "i",
+        "DEF.SG.NOM"
+      ],
+      [
+        "kinisi",
+        "movement.SG.NOM"
+      ],
+      [
+        "ton",
+        "DEF.PL.GEN"
+      ],
+      [
+        "planiton",
+        "planet.PL.GEN"
+      ],
+      [
+        "ja",
+        "for"
+      ],
+      [
+        "ekatomiria",
+        "million.PL.ACC"
+      ],
+      [
+        "xronja",
+        "year.PL.ACC"
+      ]
+    ],
     "translation": "the planets' movement for millions of years",
     "context": "",
     "judgment": "acceptable",
@@ -1459,7 +2447,8 @@
         "yes"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "ka2026_36a",
@@ -1470,7 +2459,32 @@
     "language": "mode1248",
     "primaryText": "meletun tis kinisis apo tus planites",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "meletun",
+        "study.3PL"
+      ],
+      [
+        "tis",
+        "DEF.PL.ACC"
+      ],
+      [
+        "kinisis",
+        "movement.PL.ACC"
+      ],
+      [
+        "apo",
+        "of"
+      ],
+      [
+        "tus",
+        "DEF.PL.ACC"
+      ],
+      [
+        "planites",
+        "planet.PL.ACC"
+      ]
+    ],
     "translation": "They study the movements of the planets.",
     "context": "",
     "judgment": "acceptable",
@@ -1502,7 +2516,8 @@
         "no"
       ]
     ],
-    "comment": "The pluralized head nominal diagnoses the result reading."
+    "comment": "The pluralized head nominal diagnoses the result reading.",
+    "verified": "page-image"
   },
   {
     "id": "ka2026_38a",
@@ -1513,7 +2528,28 @@
     "language": "mode1248",
     "primaryText": "espase ena poði kaθe trapezju",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "espase",
+        "break.PST.3SG"
+      ],
+      [
+        "ena",
+        "a"
+      ],
+      [
+        "poði",
+        "leg.SG.ACC"
+      ],
+      [
+        "kaθe",
+        "each"
+      ],
+      [
+        "trapezju",
+        "table.SG.GEN"
+      ]
+    ],
     "translation": "A leg of each table broke.",
     "context": "",
     "judgment": "acceptable",
@@ -1546,7 +2582,8 @@
         "partWhole"
       ]
     ],
-    "comment": ""
+    "comment": "The paper gives the translation as literal (lit.).",
+    "verified": "page-image"
   },
   {
     "id": "ka2026_38b",
@@ -1557,7 +2594,28 @@
     "language": "mode1248",
     "primaryText": "espase ena pexniði kaθe peðju",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "espase",
+        "break.PST.3SG"
+      ],
+      [
+        "ena",
+        "a"
+      ],
+      [
+        "pexniði",
+        "toy.SG.ACC"
+      ],
+      [
+        "kaθe",
+        "each"
+      ],
+      [
+        "peðju",
+        "kid.SG.GEN"
+      ]
+    ],
     "translation": "A toy of each kid broke.",
     "context": "",
     "judgment": "acceptable",
@@ -1590,7 +2648,8 @@
         "ownership"
       ]
     ],
-    "comment": ""
+    "comment": "The paper gives the translation as literal (lit.).",
+    "verified": "page-image"
   },
   {
     "id": "ka2026_39a",
@@ -1601,7 +2660,32 @@
     "language": "mode1248",
     "primaryText": "espase ena poði apo kaθe trapezi",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "espase",
+        "break.PST.3SG"
+      ],
+      [
+        "ena",
+        "a"
+      ],
+      [
+        "poði",
+        "leg.SG.ACC"
+      ],
+      [
+        "apo",
+        "of"
+      ],
+      [
+        "kaθe",
+        "each"
+      ],
+      [
+        "trapezi",
+        "table.SG.ACC"
+      ]
+    ],
     "translation": "A leg of each table broke.",
     "context": "",
     "judgment": "acceptable",
@@ -1634,7 +2718,8 @@
         "partWhole"
       ]
     ],
-    "comment": ""
+    "comment": "The paper gives the translation as literal (lit.).",
+    "verified": "page-image"
   },
   {
     "id": "ka2026_39b",
@@ -1645,7 +2730,32 @@
     "language": "mode1248",
     "primaryText": "espase ena pexniði apo kaθe peði",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "espase",
+        "break.PST.3SG"
+      ],
+      [
+        "ena",
+        "a"
+      ],
+      [
+        "pexniði",
+        "toy.SG.ACC"
+      ],
+      [
+        "apo",
+        "of"
+      ],
+      [
+        "kaθe",
+        "each"
+      ],
+      [
+        "peði",
+        "kid.SG.ACC"
+      ]
+    ],
     "translation": "A toy of each kid broke.",
     "context": "",
     "judgment": "acceptable",
@@ -1678,6 +2788,7 @@
         "ownership"
       ]
     ],
-    "comment": ""
+    "comment": "The paper gives the translation as literal (lit.).",
+    "verified": "page-image"
   }
 ]
