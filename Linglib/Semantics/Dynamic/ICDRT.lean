@@ -1,7 +1,6 @@
 module
 
-public import Linglib.Semantics.Dynamic.CDRT
-public import Linglib.Semantics.Dynamic.Lookup
+public import Linglib.Semantics.Dynamic.RegisterStructure
 
 /-!
 # Intensional CDRT
@@ -27,7 +26,6 @@ context, local entailment, and maximization over a propositional dref, CDRT's `U
 * `ICDRT.pred`: predication `R_φ(υ)` relative to a local context.
 * `ICDRT.incl`, `ICDRT.eqCompl`: the conditions `φ₁ ⋐ φ₂` and `φ₁ ≡ φ̄₂`.
 * `ICDRT.localEntailment`: `υ` has a referent throughout `φ`.
-* The `HasFiberedLookup Option` instance: lookup of an individual concept at a world.
 
 ## Main results
 
@@ -111,11 +109,6 @@ def updateProp (g : State W E) (p : PVar) (s : Set W) : State W E :=
   simp [updateIndiv, Function.update_of_ne h]
 
 end State
-
-/-- Lookup returns an individual concept's value at a world, `none` where it has no referent:
-the `Option` family of `HasFiberedLookup`. -/
-instance : HasFiberedLookup Option (State W E) IVar W E where
-  iLookup i v w := i.indiv v w
 
 /-! ### Registers and variable update -/
 

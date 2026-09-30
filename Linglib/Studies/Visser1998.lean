@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Logic.Assignment
 public import Linglib.Semantics.Dynamic.DPL.Context
 public import Mathlib.Data.Set.Piecewise
 

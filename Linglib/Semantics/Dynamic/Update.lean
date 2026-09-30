@@ -2,6 +2,7 @@ module
 
 public import Mathlib.Algebra.Group.Defs
 public import Mathlib.Basic.Rel
+public import Linglib.Core.Data.Set.Functor
 public import Mathlib.Tactic.TypeStar
 public import Mathlib.Tactic.ByContra
 public import Mathlib.Tactic.Use
@@ -28,6 +29,8 @@ is in `Collapse.lean`.
   condition, and the conditions `D.domᶜ`, `D₁.core D₂.dom`, and `D₁.dom ∪ D₂.dom`.
 * `Update.IsTest`: updates that never change the state.
 * `Update.maxBy`: the outputs of an update at which a valuation is locally maximal.
+* `Update.cumul`: the cumulative lift of an update to plural states, `Set.LiftRel` of its
+  relation.
 * `CCP.guard`, `CCP.might`, `CCP.must`, `CCP.negTest`: whole-state tests.
 * `CCP.IsEliminative`, `CCP.IsTest`, `CCP.IsDistributive`,
   `CCP.IsClassical`: the classification of transformers.
@@ -72,6 +75,8 @@ studies. [groenendijk-stokhof-1991]'s entailment notions live in
 * [J. van Benthem, *Essays in Logical Semantics*][van-benthem-1986]
 * [D. Rothschild and S. Yalcin, *Three Notions of Dynamicness in Language*][rothschild-yalcin-2016]
 * [A. Gillies, *On Groenendijk and Stokhof's "Dynamic Predicate Logic"*][gillies-2022]
+* [A. Brasoveanu, *Decomposing Modal Quantification*][brasoveanu-2010]
+* [S. Beck and U. Sauerland, *Cumulation Is Needed: A Reply to Winter (2000)*][beck-sauerland-2000]
 -/
 
 @[expose] public section
@@ -250,6 +255,45 @@ theorem maxBy_eq_self {α : Type*} [Preorder α] {f : S → α}
   refine ⟨And.left, fun hD ↦ ⟨hD, fun k hk hlt ↦ ?_⟩⟩
   rw [h i j hD, h i k hk] at hlt
   exact lt_irrefl _ hlt
+
+/-! ### The plural lift -/
+
+variable {I J : Set S}
+
+/-- The cumulative lift of an update to plural states ([brasoveanu-2010] (18)): the relation
+lifting `Set.LiftRel` of the update, which is cumulation `**` in the sense of
+[beck-sauerland-2000]. Every input row has a `D`-successor among the output rows, and every output
+row a `D`-predecessor among the input rows. -/
+def cumul (D : Update S) : Update (Set S) := {(I, J) | Set.LiftRel (· ~[D] ·) I J}
+
+theorem mem_cumul : I ~[cumul D] J ↔ Set.LiftRel (· ~[D] ·) I J := Iff.rfl
+
+theorem cumul_id : cumul (SetRel.id : Update S) = SetRel.id := by
+  ext ⟨I, J⟩
+  exact Set.liftRel_eq
+
+/-- The lift preserves sequencing: a path through the intermediate rows gives the intermediate
+state. -/
+theorem cumul_comp (D₁ D₂ : Update S) : cumul (D₁ ○ D₂) = cumul D₁ ○ cumul D₂ := by
+  ext ⟨I, J⟩
+  exact Set.liftRel_comp
+
+theorem cumul_mono (h : D₁ ⊆ D₂) : cumul D₁ ⊆ cumul D₂ :=
+  fun _ hp ↦ Set.LiftRel.imp (fun hD ↦ h hD) hp
+
+/-- A lifted test checks its condition at every row ([brasoveanu-2010] (22)). -/
+theorem cumul_test (C : Condition S) : cumul (test C) = test {I | I ⊆ C} := by
+  ext ⟨I, J⟩
+  simp only [cumul, Set.LiftRel, test, Set.mem_ofPred_eq]
+  constructor
+  · rintro ⟨h₁, h₂⟩
+    have hIJ : I ⊆ J := fun i hi ↦ by obtain ⟨j, hj, rfl, -⟩ := h₁ i hi; exact hj
+    have hJI : J ⊆ I := fun j hj ↦ by obtain ⟨i, hi, rfl, -⟩ := h₂ j hj; exact hi
+    refine ⟨Set.Subset.antisymm hIJ hJI, fun i hi ↦ ?_⟩
+    obtain ⟨j, -, rfl, hC⟩ := h₁ i (hJI hi)
+    exact hC
+  · rintro ⟨rfl, hC⟩
+    exact ⟨fun i hi ↦ ⟨i, hi, rfl, hC hi⟩, fun j hj ↦ ⟨j, hj, rfl, hC hj⟩⟩
 
 end Update
 

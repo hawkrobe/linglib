@@ -1,8 +1,7 @@
 module
 
-public import Linglib.Semantics.Dynamic.CDRT
+public import Linglib.Semantics.Dynamic.RegisterStructure
 public import Linglib.Logic.Assignment
-public import Linglib.Core.Data.Set.Functor
 
 /-!
 # Plural CDRT
@@ -24,8 +23,6 @@ superset's dependencies. On plural partial assignments a dref's cells are the op
 
 ## Main definitions
 
-* `Update.cumul`: the cumulative lift of an update to plural states, `Set.LiftRel` of its
-  relation.
 * `PCDRT.value`, `PCDRT.cell`, `PCDRT.dep`: a dref's values, the rows where it has a given
   one, and the pairs of values two drefs have in a row.
 * `PCDRT.intro`: dref introduction `[u]`.
@@ -34,8 +31,6 @@ superset's dependencies. On plural partial assignments a dref's cells are the op
 
 ## Main results
 
-* `Update.cumul_id`, `Update.cumul_comp`: the lift is a functor.
-* `Update.cumul_test`: a lifted test checks every row.
 * `PCDRT.dom_dep`, `PCDRT.cod_dep`: where every row valuing one dref values the other, the
   dependency's domain and codomain are the two drefs' values.
 * `PCDRT.value_eq_of_fixes`: a dref an update fixes keeps its values under the lifted update.
@@ -57,49 +52,6 @@ superset's dependencies. On plural partial assignments a dref's cells are the op
 -/
 
 @[expose] public section
-
-namespace DynamicSemantics.Update
-
-open SetRel
-
-variable {S : Type*} {D D₁ D₂ : Update S} {I J : Set S}
-
-/-- The cumulative lift of an update to plural states ([brasoveanu-2010] (18)): the relation
-lifting `Set.LiftRel` of the update, which is cumulation `**` in the sense of
-[beck-sauerland-2000]. Every input row has a `D`-successor among the output rows, and every output
-row a `D`-predecessor among the input rows. -/
-def cumul (D : Update S) : Update (Set S) := {(I, J) | Set.LiftRel (· ~[D] ·) I J}
-
-theorem mem_cumul : I ~[cumul D] J ↔ Set.LiftRel (· ~[D] ·) I J := Iff.rfl
-
-theorem cumul_id : cumul (SetRel.id : Update S) = SetRel.id := by
-  ext ⟨I, J⟩
-  exact Set.liftRel_eq
-
-/-- The lift preserves sequencing: a path through the intermediate rows gives the intermediate
-state. -/
-theorem cumul_comp (D₁ D₂ : Update S) : cumul (D₁ ○ D₂) = cumul D₁ ○ cumul D₂ := by
-  ext ⟨I, J⟩
-  exact Set.liftRel_comp
-
-theorem cumul_mono (h : D₁ ⊆ D₂) : cumul D₁ ⊆ cumul D₂ :=
-  fun _ hp ↦ Set.LiftRel.imp (fun hD ↦ h hD) hp
-
-/-- A lifted test checks its condition at every row ([brasoveanu-2010] (22)). -/
-theorem cumul_test (C : Condition S) : cumul (test C) = test {I | I ⊆ C} := by
-  ext ⟨I, J⟩
-  simp only [cumul, Set.LiftRel, test, Set.mem_ofPred_eq]
-  constructor
-  · rintro ⟨h₁, h₂⟩
-    have hIJ : I ⊆ J := fun i hi ↦ by obtain ⟨j, hj, rfl, -⟩ := h₁ i hi; exact hj
-    have hJI : J ⊆ I := fun j hj ↦ by obtain ⟨i, hi, rfl, -⟩ := h₂ j hj; exact hi
-    refine ⟨Set.Subset.antisymm hIJ hJI, fun i hi ↦ ?_⟩
-    obtain ⟨j, -, rfl, hC⟩ := h₁ i (hJI hi)
-    exact hC
-  · rintro ⟨rfl, hC⟩
-    exact ⟨fun i hi ↦ ⟨i, hi, rfl, hC hi⟩, fun j hj ↦ ⟨j, hj, rfl, hC hj⟩⟩
-
-end DynamicSemantics.Update
 
 namespace PCDRT
 

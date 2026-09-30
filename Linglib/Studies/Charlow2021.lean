@@ -1,6 +1,7 @@
 module
 
-public import Linglib.Semantics.Dynamic.CDRT
+public import Linglib.Logic.Assignment
+public import Linglib.Semantics.Dynamic.RegisterStructure
 public import Linglib.Semantics.Dynamic.Update
 public import Mathlib.Control.Monad.Cont
 public import Linglib.Semantics.Mereology

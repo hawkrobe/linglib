@@ -6,7 +6,6 @@ public import Mathlib.Algebra.Group.Defs
 
 /-!
 # Bilateral Update Semantics
-[elliott-sudo-2025], [krahmer-muskens-1995]
 
 Bilateral Update Semantics (BUS, [elliott-sudo-2025]'s formulation, with
 [krahmer-muskens-1995]'s bilateral DRT as ancestor): update semantics
@@ -15,21 +14,15 @@ validating Double Negation Elimination (negation swaps the dimensions)
 and cross-disjunct anaphora.
 
 States are Heimian (the paper's Def. 3.1): sets of world-assignment
-pairs whose assignments are `Part E`-valued — `⊥` is the paper's `∗`,
-so definedness is per-possibility and non-uniform.
-This is strictly more expressive than the indexed `State` of `State.lean`:
-a uniform base cannot represent partially familiar states, on which the
-paper's separation of assertability (54) from Heimian familiarity rests.
+pairs whose assignments are `Part E`-valued, the carrier of `State.lean`'s
+information states. `⊥` is the paper's `∗`, so definedness is
+per-possibility and need not be uniform, which the paper's separation of
+assertability (54) from Heimian familiarity needs. Subsistence (Def. 3.3,
+after [groenendijk-stokhof-veltman-1996]), familiarity (Def. 3.2) and random
+assignment (43) are `State.lean`'s.
 
 ## Main definitions
 
-- subsistence (Def. 3.3, after [groenendijk-stokhof-veltman-1996]),
-  rendered as the lower closure: membership for points, `≤` of
-  closures for states.
-- `State.Familiar`: familiarity (Def. 3.2) — defined at every possibility,
-  values free; worldly information (Def. 3.1's 𝒲) is the image
-  `Possibility.world '' s`.
-- `randomAssign`: the paper's `s[εₓ]` (43); novelty is not encoded.
 - `BilateralDen` with `atom`, `pred1`, `pred2`, `neg` (`~`), `conj`
   (`⊙`, (61)), `disj` (`⊕`, (64)), `exists_` ((44)–(45)), `forall_`.
 - `unknownUpdate` (`s[φ]?`, (53)) and `assertable` ((54)).
@@ -41,9 +34,7 @@ paper's separation of assertability (54) from Heimian familiarity rests.
 - `partition`, `partition_assertable`: every possibility subsists
   positively, subsists negatively, or is unknown.
 - `de_morgan_disj`, `de_morgan_conj`: de Morgan's laws, unlike in
-  standard dynamic semantics. (Descendance, subsistence, `State.Familiar`,
-  and random assignment now live at the root, in `State.lean` — this
-  file's vocabulary became the module's.)
+  standard dynamic semantics.
 - `egli`: Egli's theorem for the positive dimension, definitionally.
 
 ## Implementation notes
@@ -55,13 +46,18 @@ discriminate. The paper overloads `≺` for possibility-in-state and
 state-in-state subsistence (their fn. on (73)); here both are the
 lower closure — membership for points, `≤` of closures for states.
 
-The empirical comparison against full ICDRT is in
-`Studies/Hofmann2025.lean`; against PLA in `Studies/Dekker2012.lean`.
+## References
+
+* [P. D. Elliott and Y. Sudo, *Free choice with anaphora* (2025)][elliott-sudo-2025]
+* [E. Krahmer and R. Muskens, *Negation and disjunction in discourse representation theory*
+  (1995)][krahmer-muskens-1995]
+* [J. Groenendijk, M. Stokhof and F. Veltman, *Coreference and modality*
+  (1996)][groenendijk-stokhof-veltman-1996]
 -/
 
 @[expose] public section
 
-namespace DynamicSemantics
+open DynamicSemantics
 
 variable {W V E : Type*}
 
@@ -325,5 +321,3 @@ theorem pred2_negative_eliminative (P : E → E → W → Prop) (t₁ t₂ : V) 
   (CCP.isClassical_up _).1
 
 end BilateralDen
-
-end DynamicSemantics

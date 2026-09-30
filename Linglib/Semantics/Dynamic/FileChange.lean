@@ -63,7 +63,7 @@ later propositional presentation of the theory.
 
 @[expose] public section
 
-namespace DynamicSemantics
+open DynamicSemantics
 
 /-- A file change potential ([heim-1982]): a partial update of referential
 information states. Partiality is presupposition (`PartialUpdate.Admits`); Heim numbers her
@@ -268,5 +268,3 @@ theorem neg_eq_partial_neg [DecidableEq V] {X : Finset V} (hF : State.UniformAt 
     ((hφ _ (Part.get_mem _)).mem_lowerClosure (hF p hp))
 
 end FCP
-
-end DynamicSemantics
