@@ -1,0 +1,211 @@
+module
+
+public import Eval.Projection.Account
+public import Eval.Projection.Map
+public import Mathlib.Tactic.IntervalCases
+
+/-!
+# Scoring the accounts on Chemla & Schlenker (2012)
+
+The inferential experiments of [chemla-schlenker-2012] rate, for *if*-, *or*- and *unless*-sentences
+with *too*, whether the conditional or the unconditional presupposition follows. Subjects infer the
+presupposition a sentence is predicted to carry (the paper's §2.3.1), so an account predicts the
+unconditional inference from a target sentence when every context that accepts the sentence
+entails the unconditional presupposition, and the conditional one otherwise (`predicted`). The
+observation of a cell is the inference endorsed more in it (`observed`), and the verdict compares
+the two (`verdict`).
+
+Every account accepts a target sentence iff the context entails `if p, q`, except that the
+incremental accounts, which coincide on the fragment (`Eval.Projection.edges`), require the
+unconditional `q` in the inverse order (`accepts_target_iff`). The conditional inference is
+endorsed more in every tested cell of both experiments. So every incremental account is wrong on
+each inverse-order sentence and right on each canonical one, and every other account, the
+symmetric ones and Limited Symmetry, is right on all (`verdict_eq`).
+
+## References
+
+* [chemla-schlenker-2012]
+* [schlenker-2009]
+* [kalomoiros-2023]
+-/
+
+@[expose] public section
+
+namespace Eval.Projection.ChemlaSchlenker2012
+
+open Presupposition Account SyntacticEnvironment Kalomoiros2023
+open _root_.ChemlaSchlenker2012 (Construction Order Inference target experiment1Inferences
+  experiment4Inferences)
+
+/-- The incremental accounts. -/
+def incremental : List Account :=
+  [dynamic, filtering, transparencyIncremental, satisfactionIncremental, kleeneIncremental,
+    supervaluationIncremental]
+
+/-! ### Acceptance of the target sentences -/
+
+variable {W : Type} (I : Fin 3 → Set W) {C : Set W}
+
+/-- The target sentences carry one trigger. -/
+theorem occurrences_target (k : Construction) (o : Order) :
+    ((target (0 : Fin 3) 1 2 k o).occurrences.map Prod.snd).Nodup := by
+  cases k <;> cases o <;> simp [target, _root_.ChemlaSchlenker2012.unlessThen, Formula.occurrences]
+
+private theorem accepts_iff_superI {a : Account} (ha : a ∈ incremental) (F : Formula (Fin 3)) :
+    a.Accepts I C F ↔ Schlenker2009.SuperI I C F := by
+  have hf : a.Stronger filtering ∧ filtering.Stronger a := by
+    simp only [incremental, List.mem_cons, List.not_mem_nil, or_false] at ha
+    rcases ha with rfl | rfl | rfl | rfl | rfl | rfl
+    · exact ⟨dynamic_stronger_filtering, filtering_stronger_dynamic⟩
+    · exact ⟨.refl _, .refl _⟩
+    · exact ⟨transparencyIncremental_stronger_dynamic.trans dynamic_stronger_filtering,
+        filtering_stronger_dynamic.trans dynamic_stronger_transparencyIncremental⟩
+    · exact ⟨(satisfactionIncremental_stronger_transparencyIncremental.trans
+          transparencyIncremental_stronger_dynamic).trans dynamic_stronger_filtering,
+        (filtering_stronger_dynamic.trans dynamic_stronger_transparencyIncremental).trans
+          transparencyIncremental_stronger_satisfactionIncremental⟩
+    · exact ⟨kleeneIncremental_stronger_filtering, filtering_stronger_kleeneIncremental⟩
+    · exact ⟨supervaluationIncremental_stronger_filtering,
+        filtering_stronger_supervaluationIncremental⟩
+  exact ⟨fun h ↦ filtering_stronger_supervaluationIncremental _ _ I C F (hf.1 _ _ I C F h),
+    fun h ↦ hf.2 _ _ I C F (supervaluationIncremental_stronger_filtering _ _ I C F h)⟩
+
+open SyntacticEnvironment Kalomoiros2023 in
+/-- Evaluate Limited Symmetry at every parse point of a concrete environment. -/
+local macro "ls_points" : tactic =>
+  `(tactic| (intro n hn
+             simp only [rightItems_cons, rightItems_nil, Step.rightItems, Connective.rightItems]
+               at hn
+             interval_cases n <;>
+               simp_all [funs, stepFuns, evalB, val, Formula.truth, Step.rightItems,
+                 Connective.rightItems, compat, Connective.eval]))
+
+private theorem transpS_target (k : Construction) (o : Order) :
+    Schlenker2009.TranspS I C (target 0 1 2 k o) ↔ C ⊆ {w | w ∈ I 0 → w ∈ I 1} := by
+  have tf (K : SyntacticEnvironment (Fin 3)) :
+      ∀ f ∈ ({K.truth I} : Set (Set W → Set W)), IsTruthFunctional f :=
+    fun _ hf ↦ hf ▸ isTruthFunctional_truth I K
+  cases k <;> cases o <;>
+    simp only [Schlenker2009.TranspS, target, _root_.ChemlaSchlenker2012.unlessThen,
+      Formula.occurrences, List.map_cons, List.map_nil, List.nil_append, List.singleton_append,
+      List.append_nil, List.forall_mem_cons, List.not_mem_nil, IsEmpty.forall_iff, implies_true,
+      and_true] <;>
+    rw [transparent_iff_subset (tf _)] <;>
+    simp [Set.subset_def, DependsAt, SyntacticEnvironment.truth, Step.truth, Connective.eval,
+      Formula.truth]
+
+private theorem transpLS_target (k : Construction) (o : Order) :
+    TranspLS I C (target 0 1 2 k o) ↔ C ⊆ {w | w ∈ I 0 → w ∈ I 1} := by
+  cases k <;> cases o <;>
+    rw [transpLS_of_occurrences I (a := 2) rfl] <;>
+    dsimp only [List.nil_append, List.cons_append] <;>
+    rw [transpLSAt_iff_funs] <;>
+    refine forall₂_congr fun w _ ↦ ?_ <;>
+    (by_cases hq : w ∈ I 1
+     · simp [hq]
+     · by_cases hp : w ∈ I 0
+       · refine iff_of_false (fun h ↦ ?_) (by simp [hp, hq])
+         have := h hq _ le_rfl
+         simp [rightItems, funs, stepFuns, evalB, val, Formula.truth, Step.rightItems,
+           Connective.rightItems, hp] at this
+       · refine iff_of_true (fun _ ↦ ?_) (by simp [hp])
+         ls_points)
+
+/-- Every account accepts a target sentence iff the context entails the conditional
+presupposition `if p, q`, except that an incremental account requires the unconditional `q` in
+the inverse order. -/
+theorem accepts_target_iff (a : Account) (k : Construction) (o : Order) :
+    a.Accepts I C (target 0 1 2 k o) ↔
+      C ⊆ (if a ∈ incremental ∧ o = .inverse then I 1 else {w | w ∈ I 0 → w ∈ I 1}) := by
+  by_cases ha : a ∈ incremental
+  · rw [accepts_iff_superI I ha]
+    cases o
+    · simpa using _root_.ChemlaSchlenker2012.superI_canonical I k
+    · simpa [ha] using _root_.ChemlaSchlenker2012.superI_inverse I k
+  · simp only [ha, false_and, ite_false]
+    have hsuper : Schlenker2009.SuperS I C (target 0 1 2 k o) ↔
+        C ⊆ {w | w ∈ I 0 → w ∈ I 1} := by
+      cases o
+      · exact _root_.ChemlaSchlenker2012.superS_canonical I k
+      · exact _root_.ChemlaSchlenker2012.superS_inverse I k
+    cases a <;> simp [incremental] at ha
+    · exact transpS_target I k o
+    · exact (Schlenker2009.satS_iff_transpS I C _).trans (transpS_target I k o)
+    · refine Iff.trans ?_ hsuper
+      exact forall₂_congr fun w _ ↦
+        (Schlenker2009.superDefined_iff_of_nodup I (occurrences_target k o)).symm
+    · exact hsuper
+    · exact transpLS_target I k o
+
+/-! ### Predictions, observations and verdicts -/
+
+open Classical in
+/-- The inference an account predicts from the target sentence of a cell: the unconditional
+presupposition when every context that accepts the sentence entails it, the conditional one
+otherwise. -/
+noncomputable def predicted (a : Account) (k : Construction) (o : Order) : Inference :=
+  if ∀ (W : Type) (I : Fin 3 → Set W) (C : Set W), a.Accepts I C (target 0 1 2 k o) → C ⊆ I 1
+  then .unconditional else .conditional
+
+theorem predicted_eq (a : Account) (k : Construction) (o : Order) :
+    predicted a k o = if a ∈ incremental ∧ o = .inverse then .unconditional else .conditional := by
+  unfold predicted
+  by_cases h : a ∈ incremental ∧ o = .inverse
+  · simp only [h, and_self, ite_true]
+    refine ite_eq_left fun W I C hC ↦ ?_
+    simpa [h] using (accepts_target_iff I a k o).1 hC
+  · simp only [h, ite_false]
+    refine ite_eq_right fun hall ↦ ?_
+    have hacc : a.Accepts (fun _ : Fin 3 ↦ (∅ : Set Unit)) Set.univ (target 0 1 2 k o) :=
+      (accepts_target_iff _ a k o).2 (by simp [h])
+    exact (hall Unit _ _ hacc (Set.mem_univ ())).elim
+
+/-- The inference endorsed more in a cell, among rows recording the mean rating of an inference in
+a cell, if the cell was tested and the two means differ. -/
+def observedIn {R : Type} (rows : List R) (cell : R → Construction × Order)
+    (inference : R → Inference) (mean : R → ℚ) (k : Construction) (o : Order) :
+    Option Inference :=
+  match rows.find? (fun r ↦ cell r = (k, o) ∧ inference r = .conditional),
+      rows.find? (fun r ↦ cell r = (k, o) ∧ inference r = .unconditional) with
+  | some c, some u =>
+    if mean u < mean c then some .conditional
+    else if mean c < mean u then some .unconditional else none
+  | _, _ => none
+
+/-- The inference endorsed more in a cell of Experiment 1 (Table 4). -/
+def observed1 : Construction → Order → Option Inference :=
+  observedIn experiment1Inferences (fun r ↦ (r.construction, r.order)) (·.inference)
+    (·.mean.toRat)
+
+/-- The inference endorsed more in a cell of Experiment 4 (Table 7). -/
+def observed4 : Construction → Order → Option Inference :=
+  observedIn experiment4Inferences (fun r ↦ (r.construction, r.order)) (·.inference)
+    (·.mean.toRat)
+
+/-- The verdict on an account in a cell of an experiment. -/
+noncomputable def verdict (observed : Construction → Order → Option Inference) (a : Account)
+    (k : Construction) (o : Order) : Eval.Verdict :=
+  .of (some (predicted a k o)) (observed k o)
+
+/-- Tables 4 and 7: in both experiments the conditional inference is endorsed more in every
+tested cell, and the *unless*-sentence in the canonical order was not tested. -/
+theorem observed_eq (k : Construction) (o : Order) :
+    observed1 k o = observed4 k o ∧
+      observed1 k o = if k = .unlessSentence ∧ o = .canonical then none else some .conditional := by
+  cases k <;> cases o <;> decide +kernel
+
+/-- The scoreboard on both inferential experiments: every incremental account is wrong on each
+inverse-order sentence and right on each canonical one, and every other account is right on all. -/
+theorem verdict_eq (a : Account) (k : Construction) (o : Order) :
+    verdict observed1 a k o = verdict observed4 a k o ∧
+      verdict observed1 a k o =
+        if k = .unlessSentence ∧ o = .canonical then .silent
+        else if a ∈ incremental ∧ o = .inverse then .wrong else .correct := by
+  obtain ⟨h14, h1⟩ := observed_eq k o
+  refine ⟨by simp only [verdict, h14], ?_⟩
+  simp only [verdict, h1, predicted_eq]
+  by_cases hk : k = .unlessSentence ∧ o = .canonical
+  · simp [hk, Eval.Verdict.of]
+  · by_cases ha : a ∈ incremental ∧ o = .inverse <;> simp [hk, ha, Eval.Verdict.of]
+
+end Eval.Projection.ChemlaSchlenker2012
