@@ -28,6 +28,8 @@ anaphoric relations are distinguished ([higginbotham-1985], [williams-1991]):
 * `PPCDRT.eqClass`: the class of a state under distribution.
 * `PPCDRT.bindingCond`, `PPCDRT.groupIdentityCond`, `PPCDRT.reciprocityCond`,
   `PPCDRT.underspecifiedCond`: the anaphoric relations.
+* `PPCDRT.extend`, `PPCDRT.introPartial`: partial dref introduction on assignments and on plural
+  states.
 
 ## Main results
 
@@ -38,6 +40,8 @@ anaphoric relations are distinguished ([higginbotham-1985], [williams-1991]):
 * `PPCDRT.binding_implies_groupIdentity`, `PPCDRT.reciprocity_excludes_binding`: binding and
   reciprocity against group identity.
 * `PPCDRT.nontrivial_value_of_reciprocityCond`: a reciprocal's antecedent denotes a plurality.
+* `PPCDRT.mem_extend_iff_covBy`: introducing a dref is a covering step of the extension order.
+* `PPCDRT.introPartial_subset_intro`: partial introduction refines Plural CDRT's.
 
 ## References
 
@@ -100,7 +104,7 @@ def groupIdentityCond : PPDRSCond E := fun S Δ ↦
 identity, with the two drefs distinct in every state where both are defined. -/
 def reciprocityCond : PPDRSCond E := fun S Δ ↦
   groupIdentityCond uAnaph uAnt S Δ ∧
-    ∀ s ∈ S, ∀ a b, s uAnaph = some a → s uAnt = some b → a ≠ b
+    ∀ s ∈ S, ∀ a b : E, s uAnaph = ↑a → s uAnt = ↑b → a ≠ b
 
 /-- The underspecified reflexive/reciprocal ([haug-dalrymple-2020] (79b)): group identity
 without distinctness, admitting reflexive, reciprocal and mixed construals ([murray-2008],
@@ -130,7 +134,7 @@ theorem binding_implies_groupIdentity (h : bindingCond uAnaph uAnt S ∅) :
 /-- Reciprocity excludes binding once some state defines the anaphor: distinctness there
 contradicts pointwise equality. Without such a state both drefs may be undefined throughout, and
 binding and reciprocity hold together vacuously. -/
-theorem reciprocity_excludes_binding (hdef : ∃ s ∈ S, ∃ d, s uAnaph = some d)
+theorem reciprocity_excludes_binding (hdef : ∃ s ∈ S, ∃ d : E, s uAnaph = ↑d)
     (h : reciprocityCond uAnaph uAnt S Δ) : ¬ bindingCond uAnaph uAnt S Δ := fun hb ↦
   let ⟨s, hs, d, hd⟩ := hdef
   h.2 s hs d d hd ((hb s hs).symm.trans hd) rfl
@@ -144,7 +148,7 @@ variable {uAnaph uAnt S Δ}
 a property of the dependency between antecedent and anaphor: its domain and codomain coincide,
 and it is irreflexive. This is [haug-dalrymple-2020]'s gloss of (39), cumulative identity across
 states combined with distinctness within each. -/
-theorem reciprocityCond_empty_iff (hdef : ∀ s ∈ S, (s uAnaph).isSome ↔ (s uAnt).isSome) :
+theorem reciprocityCond_empty_iff (hdef : ∀ s ∈ S, s uAnaph ≠ ⊥ ↔ s uAnt ≠ ⊥) :
     reciprocityCond uAnaph uAnt S ∅ ↔
       (dep uAnt uAnaph S).dom = (dep uAnt uAnaph S).cod ∧ (dep uAnt uAnaph S).IsIrrefl := by
   rw [reciprocityCond, groupIdentityCond_empty,
@@ -158,8 +162,58 @@ theorem reciprocityCond_empty_iff (hdef : ∀ s ∈ S, (s uAnaph).isSome ↔ (s 
 anaphor's value lies among the antecedent's by group identity and differs from the antecedent's
 value there. This holds under any distribution. -/
 theorem nontrivial_value_of_reciprocityCond (h : reciprocityCond uAnaph uAnt S Δ)
-    {s : PartialAssign ℕ E} (hs : s ∈ S) {a b : E} (ha : s uAnaph = some a)
-    (hb : s uAnt = some b) : (value uAnt S).Nontrivial :=
+    {s : PartialAssign ℕ E} (hs : s ∈ S) {a b : E} (ha : s uAnaph = ↑a)
+    (hb : s uAnt = ↑b) : (value uAnt S).Nontrivial :=
   ⟨a, h.1 s hs ▸ ⟨s, self_mem_eqClass S Δ hs, ha⟩, b, ⟨s, hs, hb⟩, h.2 s hs a b ha hb⟩
+
+/-! ### Partial dref introduction -/
+
+section Introduction
+
+open DynamicSemantics SetRel
+
+variable {Var D : Type*} {u : Var} {i o : PartialAssign Var D}
+
+/-- Partial dref introduction `i[u]o` ([haug-dalrymple-2020] (20)): `i` leaves `u` unvalued, `o`
+values it, and the two agree on every other dref. -/
+def extend (u : Var) : Update (PartialAssign Var D) :=
+  {p | p.1 u = ⊥ ∧ p.2 u ≠ ⊥ ∧ ∀ v ≠ u, p.1 v = p.2 v}
+
+theorem mem_extend : i ~[extend u] o ↔ i u = ⊥ ∧ o u ≠ ⊥ ∧ ∀ v ≠ u, i v = o v :=
+  Iff.rfl
+
+/-- Introducing `u` is a covering step of the extension order, the one that values `u`. -/
+theorem mem_extend_iff_covBy : i ~[extend u] o ↔ i ⋖ o ∧ i u ≠ o u := by
+  refine ⟨fun ⟨hi, ho, h⟩ ↦ ⟨PartialAssign.covBy_iff.2 ⟨u, hi, ho, h⟩,
+    fun he ↦ ho (he.symm.trans hi)⟩,
+    fun ⟨hcov, hne⟩ ↦ ?_⟩
+  obtain ⟨x, hi, ho, h⟩ := PartialAssign.covBy_iff.1 hcov
+  obtain rfl : x = u := by_contra fun hxu ↦ hne (h u (Ne.symm hxu))
+  exact ⟨hi, ho, h⟩
+
+/-- Partial introduction is a random assignment that genuinely values `u`. -/
+theorem extend_subset_randomAssign [DecidableEq Var] :
+    extend u ⊆ Update.randomAssign (S := PartialAssign Var D) u := by
+  rintro ⟨i, o⟩ ⟨-, -, h⟩
+  refine (Update.mem_randomAssign (g := i) (h := o) (x := u)).2 ⟨o u, funext fun v ↦ ?_⟩
+  by_cases hv : v = u
+  · subst hv
+    simp
+  · rw [Function.update_of_ne hv]
+    exact (h v hv).symm
+
+/-- Partial dref introduction on plural states ([haug-dalrymple-2020] (6), after
+[dotlacil-2013]): every input row has an extension at `u` among the output rows, every output row
+extends some input row, and the output state is nonempty. It refines Plural CDRT's `PCDRT.intro`
+(`introPartial_subset_intro`) in two ways: every output row values `u`, where a random assignment
+may leave it ★, and the output is nonempty. -/
+def introPartial (u : Var) : Update (PluralAssign Var D) :=
+  {p | p.2.Nonempty ∧ p ∈ Update.cumul (extend u)}
+
+theorem introPartial_subset_intro [DecidableEq Var] :
+    introPartial u ⊆ PCDRT.intro (S := PartialAssign Var D) (E := D) u :=
+  fun _ hp ↦ Update.cumul_mono extend_subset_randomAssign hp.2
+
+end Introduction
 
 end PPCDRT

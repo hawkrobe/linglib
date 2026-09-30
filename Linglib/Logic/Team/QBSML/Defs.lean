@@ -74,13 +74,13 @@ variable [DecidableEq Var]
     mathlib's `Function.update`). -/
 def Index.update (i : Index W Var Domain) (x : Var) (d : Domain) :
     Index W Var Domain :=
-  (i.world, Function.update i.assign x (some d))
+  (i.world, Function.update i.assign x ↑d)
 
 @[simp] theorem Index.world_update (i : Index W Var Domain) (x : Var)
     (d : Domain) : (i.update x d).world = i.world := rfl
 
 @[simp] theorem Index.assign_update (i : Index W Var Domain) (x : Var)
-    (d : Domain) : (i.update x d).assign = Function.update i.assign x (some d) :=
+    (d : Domain) : (i.update x d).assign = Function.update i.assign x ↑d :=
   rfl
 
 end Update
@@ -545,9 +545,9 @@ variable [Fintype Domain]
 def eval (M : Model W Domain Const Pred) :
     Bool → Formula Var Const Pred → Finset (Index W Var Domain) → Prop
   | true,  .pred P x, s =>
-      s ∈ Team.flat fun i ↦ ∃ d, i.assign x = some d ∧ M.relInterp₁ (predSymb P) i.world d
+      s ∈ Team.flat fun i ↦ ∃ d : Domain, i.assign x = ↑d ∧ M.relInterp₁ (predSymb P) i.world d
   | false, .pred P x, s =>
-      s ∈ Team.flat fun i ↦ ∃ d, i.assign x = some d ∧ ¬ M.relInterp₁ (predSymb P) i.world d
+      s ∈ Team.flat fun i ↦ ∃ d : Domain, i.assign x = ↑d ∧ ¬ M.relInterp₁ (predSymb P) i.world d
   | true,  .predc P c, s =>
       s ∈ Team.flat fun i ↦
         M.relInterp₁ (predSymb P) i.world (M.constInterp ((Language.monadic Pred).con c) i.world)

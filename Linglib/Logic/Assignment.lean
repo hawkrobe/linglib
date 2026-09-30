@@ -2,6 +2,7 @@ module
 
 public import Mathlib.Logic.Function.Basic
 public import Mathlib.Data.Set.Basic
+public import Linglib.Core.Order.Flat
 
 /-!
 # Variable assignments
@@ -18,21 +19,25 @@ semantics, [van-den-berg-1996], [brasoveanu-2008],
 
 * `Assignment E`: total assignments `ℕ → E`, on the Heim–Kratzer
   ℕ-register.
-* `PartialAssign Var D`: partial assignments `Var → Option D`.
+* `PartialAssign Var D`: partial assignments `Var → Flat D`, ordered by extension;
+  `PartialAssign.covBy_iff`: one assignment covers another when it values exactly one more
+  variable.
 * `PluralAssign Var D`: sets of partial assignments, with the
   [spector-2025] operators `restrict`, `SingularAt`, `Singular`.
 
 ## Implementation notes
 
-* `PartialAssign` is the decidable counterpart of mathlib's partial
-  functions `Var →. D`: `Part`-valued partiality would forfeit
+* `PartialAssign` takes values in `Flat D`, the decidable counterpart of
+  mathlib's partial values `Part D` with the same order
+  (`Flat.le_iff_ofOption_le`): `Part`-valued partiality would forfeit
   `DecidableEq` on assignments, which `Finset`-state systems (QBSML) and
-  `decide`-checked studies need.
+  `decide`-checked studies need. The pointwise order is extension, `⊥` is
+  the assignment valuing nothing, `g x = ⊥` says `x` is unvalued and
+  `g x = ↑d` that it has the value `d`; there is no wrapper predicate.
 * Update is mathlib's `Function.update`; `PartialAssign.update` only
-  fuses the `some` (cf. `Finsupp.update`), and its lemmas are one-step
-  consequences of the `Function.update_*` laws. Definedness is
-  `(g x).isSome` — there is no wrapper predicate. The Heim–Kratzer
-  notation `g[n ↦ x]` for total update is `Assignment`-scoped, declared below.
+  fuses the coercion (cf. `Finsupp.update`), and its lemmas are one-step
+  consequences of the `Function.update_*` laws. The Heim–Kratzer notation
+  `g[n ↦ x]` for total update is `Assignment`-scoped, declared below.
 * Use these names only for the variable-binding role — the state that
   quantifiers `update` and free variables look up. A `ℕ → E` that is not
   variable-binding state (interpretation tables, lookup arrays) should
@@ -59,37 +64,52 @@ end Assignment
 
 /-! ### Partial assignments -/
 
-/-- Partial assignment: `g x = none` means `x` is unvalued. Trivalent
-    systems read the gap as the third value; state-based systems
-    (`QBSML.Index`) carry one per world–assignment index. -/
-abbrev PartialAssign (Var D : Type*) := Var → Option D
+/-- Partial assignment: `g x = ⊥` means `x` is unvalued, and the pointwise
+    order of `Flat` is extension. Trivalent systems read the gap as the
+    third value; state-based systems (`QBSML.Index`) carry one per
+    world–assignment index. -/
+abbrev PartialAssign (Var D : Type*) := Var → Flat D
 
 namespace PartialAssign
 
-variable {Var D : Type*} [DecidableEq Var]
+variable {Var D : Type*} {g h : PartialAssign Var D}
 
-/-- The assignment valuing no variables. -/
-def empty : PartialAssign Var D := fun _ => none
+/-- `h` extends `g` when it keeps every value `g` has. -/
+theorem le_iff_forall_eq_of_ne_bot : g ≤ h ↔ ∀ x, g x ≠ ⊥ → g x = h x := by
+  refine Pi.le_def.trans (forall_congr' fun x ↦ ⟨fun hx hne ↦ Flat.eq_of_le hx fun _ ↦ hne,
+    fun hx ↦ ?_⟩)
+  rcases eq_or_ne (g x) ⊥ with h0 | hne
+  · rw [h0]; exact bot_le
+  · exact (hx hne).le
 
-/-- Update at `x`: `Function.update` with the value wrapped in `some`. -/
+/-- One assignment covers another when it values exactly one more variable and agrees
+elsewhere: `Pi.covBy_iff` at the flat order of height one. -/
+theorem covBy_iff : g ⋖ h ↔ ∃ x, g x = ⊥ ∧ h x ≠ ⊥ ∧ ∀ y ≠ x, g y = h y := by
+  simp only [Pi.covBy_iff, Flat.covBy_iff, and_assoc]
+
+variable [DecidableEq Var]
+
+/-- Update at `x`: `Function.update` with the value coerced into `Flat`. -/
 def update (g : PartialAssign Var D) (x : Var) (d : D) :
     PartialAssign Var D :=
-  Function.update g x (some d)
+  Function.update g x ↑d
 
 @[simp] theorem update_at (g : PartialAssign Var D) (x : Var) (d : D) :
-    g.update x d x = some d :=
+    g.update x d x = ↑d :=
   Function.update_self ..
 
 @[simp] theorem update_ne (g : PartialAssign Var D) {x y : Var} (d : D)
     (h : y ≠ x) : g.update x d y = g y :=
   Function.update_of_ne h ..
 
-/-- Updating at `x` to its existing value is a no-op — the
-    partial-assignment face of `Function.update_eq_self`, for proofs that
-    recover the witness as `(g x).get`. -/
-theorem update_self {g : PartialAssign Var D} {x : Var} {a : D}
-    (h : g x = some a) : g.update x a = g := by
+/-- Updating at `x` to its existing value is a no-op, the partial-assignment
+    face of `Function.update_eq_self`. -/
+theorem update_self {x : Var} {a : D} (h : g x = ↑a) : g.update x a = g := by
   rw [update, ← h]; exact Function.update_eq_self x g
+
+/-- Valuing an unvalued variable is a covering step of the extension order. -/
+theorem covBy_update {x : Var} (hx : g x = ⊥) (d : D) : g ⋖ g.update x d :=
+  covBy_iff.2 ⟨x, hx, by simp, fun _ hy ↦ (update_ne g d hy).symm⟩
 
 end PartialAssign
 
@@ -110,10 +130,10 @@ variable {Var D : Type*}
     `G_{x=a}`). -/
 def restrict (G : PluralAssign Var D) (x : Var) (a : D) :
     PluralAssign Var D :=
-  {g ∈ G | g x = some a}
+  {g ∈ G | g x = ↑a}
 
 @[simp] theorem mem_restrict {G : PluralAssign Var D} {x : Var} {a : D}
-    {g : PartialAssign Var D} : g ∈ G.restrict x a ↔ g ∈ G ∧ g x = some a :=
+    {g : PartialAssign Var D} : g ∈ G.restrict x a ↔ g ∈ G ∧ g x = ↑a :=
   Iff.rfl
 
 /-- `G` assigns `x` uniquely to `d`: some assignment maps `x` to `d`, and
@@ -121,7 +141,7 @@ def restrict (G : PluralAssign Var D) (x : Var) (a : D) :
     leaving `x` unvalued may coexist — only the valued rows must agree,
     which is the reading Spector's static reuse needs. -/
 def SingularAt (G : PluralAssign Var D) (x : Var) (d : D) : Prop :=
-  (∃ g ∈ G, g x = some d) ∧ ∀ g ∈ G, (g x).isSome → g x = some d
+  (∃ g ∈ G, g x = ↑d) ∧ ∀ g ∈ G, g x ≠ ⊥ → g x = ↑d
 
 /-- `G` assigns `x` uniquely to some value — [spector-2025]'s `atomic(x)`. -/
 def Singular (G : PluralAssign Var D) (x : Var) : Prop :=
@@ -130,9 +150,7 @@ def Singular (G : PluralAssign Var D) (x : Var) : Prop :=
 theorem SingularAt.unique {G : PluralAssign Var D} {x : Var} {d d' : D}
     (h : G.SingularAt x d) (h' : G.SingularAt x d') : d = d' := by
   obtain ⟨⟨g, hg, hgd⟩, -⟩ := h
-  have := h'.2 g hg (by simp [hgd])
-  rw [hgd] at this
-  exact Option.some_inj.1 this
+  exact Flat.coe_inj.1 (hgd.symm.trans (h'.2 g hg (hgd ▸ Flat.coe_ne_bot)))
 
 theorem SingularAt.singular {G : PluralAssign Var D} {x : Var} {d : D}
     (h : G.SingularAt x d) : G.Singular x :=
@@ -140,21 +158,21 @@ theorem SingularAt.singular {G : PluralAssign Var D} {x : Var} {d : D}
 
 theorem SingularAt.eq_of_mem_restrict {G : PluralAssign Var D} {x : Var} {d a : D}
     {g : PartialAssign Var D} (h : G.SingularAt x d) (hg : g ∈ G.restrict x a) : a = d :=
-  Option.some_inj.1 (hg.2.symm.trans (h.2 g hg.1 (by simp [hg.2])))
+  Flat.coe_inj.1 (hg.2.symm.trans (h.2 g hg.1 (hg.2 ▸ Flat.coe_ne_bot)))
 
 @[simp] theorem singularAt_singleton {g : PartialAssign Var D} {x : Var} {d : D} :
-    ({g} : PluralAssign Var D).SingularAt x d ↔ g x = some d :=
-  ⟨λ h => by obtain ⟨⟨g', hg', hd⟩, -⟩ := h; exact (hg' : g' = g) ▸ hd,
-    λ h => ⟨⟨g, rfl, h⟩, λ g' (hg' : g' = g) _ => hg' ▸ h⟩⟩
+    ({g} : PluralAssign Var D).SingularAt x d ↔ g x = ↑d :=
+  ⟨fun h ↦ by obtain ⟨⟨g', hg', hd⟩, -⟩ := h; exact (hg' : g' = g) ▸ hd,
+    fun h ↦ ⟨⟨g, rfl, h⟩, fun g' (hg' : g' = g) _ ↦ hg' ▸ h⟩⟩
 
 /-- A nonempty restriction of `G` to `x = a` assigns `x` uniquely to `a`. -/
 theorem singularAt_restrict {G : PluralAssign Var D} {x : Var} {a : D}
     (h : (G.restrict x a).Nonempty) : (G.restrict x a).SingularAt x a :=
-  ⟨h.imp λ _ hg => ⟨hg, hg.2⟩, λ _ hg _ => hg.2⟩
+  ⟨h.imp fun _ hg ↦ ⟨hg, hg.2⟩, fun _ hg _ ↦ hg.2⟩
 
 theorem singularAt_restrict_iff {G : PluralAssign Var D} {x : Var} {a d : D} :
     (G.restrict x a).SingularAt x d ↔ (G.restrict x a).Nonempty ∧ d = a :=
-  ⟨λ h => ⟨h.1.imp λ _ hg => hg.1, h.unique (singularAt_restrict ⟨_, h.1.choose_spec.1⟩)⟩,
-    λ ⟨hne, hd⟩ => hd.symm ▸ singularAt_restrict hne⟩
+  ⟨fun h ↦ ⟨h.1.imp fun _ hg ↦ hg.1, h.unique (singularAt_restrict ⟨_, h.1.choose_spec.1⟩)⟩,
+    fun ⟨hne, hd⟩ ↦ hd.symm ▸ singularAt_restrict hne⟩
 
 end PluralAssign

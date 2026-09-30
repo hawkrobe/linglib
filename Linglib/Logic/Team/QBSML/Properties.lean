@@ -486,8 +486,8 @@ theorem neFree_of_toFormula? [DecidableEq Var] :
 
 /-- Updating an index's assignment refines the matching valuation update. -/
 private lemma update_refines [DecidableEq Var] {i : Index W Var Domain} {v : Var → Domain}
-    (hv : ∀ y, i.assign y = some (v y)) (x : Var) (d : Domain) :
-    ∀ y, (i.update x d).assign y = some (Function.update v x d y) := by
+    (hv : ∀ y, i.assign y = ↑(v y)) (x : Var) (d : Domain) :
+    ∀ y, (i.update x d).assign y = ↑(Function.update v x d y) := by
   intro y
   rw [Index.assign_update]
   by_cases hy : y = x
@@ -512,7 +512,7 @@ private theorem support_and_antiSupport_singleton_realizeAt
     ∀ {φ : Formula Var Const Pred} {ψ : ((Language.monadic Pred)[[Const]]).Formula Var},
       φ.toFormula? = some ψ →
       ∀ {i : Index W Var Domain} {v : Var → Domain},
-        (∀ y, i.assign y = some (v y)) →
+        (∀ y, i.assign y = ↑(v y)) →
         (support M φ {i} ↔ ψ.RealizeAt M.interp i.world v) ∧
         (antiSupport M φ {i} ↔ ¬ ψ.RealizeAt M.interp i.world v) := by
   intro φ
@@ -528,7 +528,7 @@ private theorem support_and_antiSupport_singleton_realizeAt
     · constructor
       · intro h
         obtain ⟨d, hd, hP⟩ := h i (Finset.mem_singleton_self i)
-        rw [hv x, Option.some.injEq] at hd
+        rw [hv x, Flat.coe_inj] at hd
         rw [hd]
         exact hP
       · intro h j hj
@@ -538,7 +538,7 @@ private theorem support_and_antiSupport_singleton_realizeAt
     · constructor
       · intro h hP
         obtain ⟨d, hd, hnP⟩ := h i (Finset.mem_singleton_self i)
-        rw [hv x, Option.some.injEq] at hd
+        rw [hv x, Flat.coe_inj] at hd
         exact hnP (hd ▸ hP)
       · intro h j hj
         rw [Finset.mem_singleton] at hj
@@ -741,7 +741,7 @@ private theorem support_and_antiSupport_singleton_realizeAt
 theorem support_singleton_iff_realizeAt (M : Model W Domain Const Pred)
     {φ : Formula Var Const Pred} {ψ : ((Language.monadic Pred)[[Const]]).Formula Var}
     (hψ : φ.toFormula? = some ψ) {i : Index W Var Domain}
-    {v : Var → Domain} (hv : ∀ y, i.assign y = some (v y)) :
+    {v : Var → Domain} (hv : ∀ y, i.assign y = ↑(v y)) :
     support M φ {i} ↔ ψ.RealizeAt M.interp i.world v :=
   (support_and_antiSupport_singleton_realizeAt M hψ hv).1
 
@@ -750,7 +750,7 @@ theorem support_singleton_iff_realizeAt (M : Model W Domain Const Pred)
 theorem antiSupport_singleton_iff_realizeAt (M : Model W Domain Const Pred)
     {φ : Formula Var Const Pred} {ψ : ((Language.monadic Pred)[[Const]]).Formula Var}
     (hψ : φ.toFormula? = some ψ) {i : Index W Var Domain}
-    {v : Var → Domain} (hv : ∀ y, i.assign y = some (v y)) :
+    {v : Var → Domain} (hv : ∀ y, i.assign y = ↑(v y)) :
     antiSupport M φ {i} ↔ ¬ ψ.RealizeAt M.interp i.world v :=
   (support_and_antiSupport_singleton_realizeAt M hψ hv).2
 
@@ -762,7 +762,7 @@ theorem support_iff_forall_realizeAt (M : Model W Domain Const Pred)
     {φ : Formula Var Const Pred} {ψ : ((Language.monadic Pred)[[Const]]).Formula Var}
     (hψ : φ.toFormula? = some ψ) (s : Finset (Index W Var Domain))
     (v : Index W Var Domain → Var → Domain)
-    (hv : ∀ i ∈ s, ∀ y, i.assign y = some (v i y)) :
+    (hv : ∀ i ∈ s, ∀ y, i.assign y = ↑(v i y)) :
     support M φ s ↔ ∀ i ∈ s, ψ.RealizeAt M.interp i.world (v i) := by
   rw [support_iff_forall_singleton (neFree_of_toFormula? hψ)]
   exact forall₂_congr fun i hi =>
@@ -890,7 +890,7 @@ private theorem support_and_antiSupport_singleton_realize
       {τ : ModalFormula ((Language.monadic Pred)[[Const]]) Var},
       φ.toModal? = some τ →
       ∀ {i : Index W Var Domain} {v : Var → Domain},
-        (∀ y, i.assign y = some (v y)) →
+        (∀ y, i.assign y = ↑(v y)) →
         (support M φ {i} ↔ τ.Realize M i.world v) ∧
         (antiSupport M φ {i} ↔ ¬ τ.Realize M i.world v) := by
   intro φ
@@ -907,7 +907,7 @@ private theorem support_and_antiSupport_singleton_realize
     · constructor
       · intro h
         obtain ⟨d, hd, hP⟩ := h i (Finset.mem_singleton_self i)
-        rw [hv x, Option.some.injEq] at hd
+        rw [hv x, Flat.coe_inj] at hd
         rw [hd]
         exact hP
       · intro h j hj
@@ -917,7 +917,7 @@ private theorem support_and_antiSupport_singleton_realize
     · constructor
       · intro h hP
         obtain ⟨d, hd, hnP⟩ := h i (Finset.mem_singleton_self i)
-        rw [hv x, Option.some.injEq] at hd
+        rw [hv x, Flat.coe_inj] at hd
         exact hnP (hd ▸ hP)
       · intro h j hj
         rw [Finset.mem_singleton] at hj
@@ -1164,7 +1164,7 @@ theorem support_singleton_iff_realize (M : Model W Domain Const Pred)
     {φ : Formula Var Const Pred}
     {τ : ModalFormula ((Language.monadic Pred)[[Const]]) Var}
     (hτ : φ.toModal? = some τ) {i : Index W Var Domain}
-    {v : Var → Domain} (hv : ∀ y, i.assign y = some (v y)) :
+    {v : Var → Domain} (hv : ∀ y, i.assign y = ↑(v y)) :
     support M φ {i} ↔ τ.Realize M i.world v :=
   (support_and_antiSupport_singleton_realize M hτ hv).1
 
@@ -1174,7 +1174,7 @@ theorem antiSupport_singleton_iff_realize (M : Model W Domain Const Pred)
     {φ : Formula Var Const Pred}
     {τ : ModalFormula ((Language.monadic Pred)[[Const]]) Var}
     (hτ : φ.toModal? = some τ) {i : Index W Var Domain}
-    {v : Var → Domain} (hv : ∀ y, i.assign y = some (v y)) :
+    {v : Var → Domain} (hv : ∀ y, i.assign y = ↑(v y)) :
     antiSupport M φ {i} ↔ ¬ τ.Realize M i.world v :=
   (support_and_antiSupport_singleton_realize M hτ hv).2
 
@@ -1188,7 +1188,7 @@ theorem support_iff_forall_realize (M : Model W Domain Const Pred)
     {τ : ModalFormula ((Language.monadic Pred)[[Const]]) Var}
     (hτ : φ.toModal? = some τ) (s : Finset (Index W Var Domain))
     (v : Index W Var Domain → Var → Domain)
-    (hv : ∀ i ∈ s, ∀ y, i.assign y = some (v i y)) :
+    (hv : ∀ i ∈ s, ∀ y, i.assign y = ↑(v i y)) :
     support M φ s ↔ ∀ i ∈ s, τ.Realize M i.world (v i) := by
   rw [support_iff_forall_singleton (neFree_of_toModal? hτ)]
   exact forall₂_congr fun i hi =>

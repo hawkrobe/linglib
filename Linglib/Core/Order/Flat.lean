@@ -1,5 +1,6 @@
 module
 
+public import Mathlib.Order.Cover
 public import Mathlib.Order.OmegaCompletePartialOrder
 public import Linglib.Core.Order.PartialUnify
 
@@ -33,6 +34,7 @@ The order skeleton follows the `WithBot` mold (`Mathlib/Order/TypeTags.lean`,
   `PartialOrder`, `OrderBot`, `SemilatticeInf`, `OmegaCompletePartialOrder`,
   and `PartialUnify` instances
 * `Flat.coe_le_coe`, `Flat.not_coe_le_bot` — the order, characterized
+* `Flat.covBy_iff` — the covers, from `⊥` to a committed value: the order has height one
 * `Flat.coe_inf_coe`, `Flat.disjoint_coe_coe`, `Flat.not_disjoint_iff`,
   `Flat.compat_coe_coe` — the meet, disjointness and compatibility of committed slots
 * `Flat.unbotD` — the value, or a default at `⊥`, as `WithBot.unbotD`
@@ -216,6 +218,24 @@ theorem eq_of_le (h : x ≤ y) (hyx : y ≠ ⊥ → x ≠ ⊥) : x = y := by
     | bot => rfl
     | coe a => exact absurd (hyx coe_ne_bot) (by simp)
   | refl => rfl
+
+/-! ### Covering -/
+
+/-- The flat order has height one: its covers are the steps from `⊥` to a committed value. -/
+theorem covBy_iff : x ⋖ y ↔ x = ⊥ ∧ y ≠ ⊥ := by
+  constructor
+  · intro h
+    rcases le_def.1 h.1.le with rfl | ⟨a, rfl, rfl⟩
+    · exact ⟨rfl, fun hy ↦ h.1.ne hy.symm⟩
+    · exact absurd rfl h.1.ne
+  · rintro ⟨rfl, hy⟩
+    refine ⟨bot_lt_iff_ne_bot.2 hy, fun z hz hzy ↦ ?_⟩
+    rcases le_def.1 hzy.le with rfl | ⟨a, rfl, rfl⟩
+    · exact lt_irrefl _ hz
+    · exact lt_irrefl _ hzy
+
+@[simp] theorem bot_covBy_coe (a : α) : (⊥ : Flat α) ⋖ a :=
+  covBy_iff.2 ⟨rfl, coe_ne_bot⟩
 
 /-- The flat order is `Part`'s order, along `Part.ofOption`. -/
 theorem le_iff_ofOption_le :
@@ -460,21 +480,20 @@ instance [DecidableEq α] : PartialUnify (Flat α) where
 
 /-- Two slots are compatible exactly when their committed values coincide;
 an uncommitted slot is a wildcard. -/
-theorem compat_iff [DecidableEq α] :
-    Compat x y ↔ ∀ a : α, x = ↑a → ∀ b : α, y = ↑b → a = b := by
-  rw [compat_iff_unify_ne_top]
-  show Flat.unify x y ≠ ⊤ ↔ _
-  match x, y with
-  | ⊥, y => exact iff_of_true WithTop.coe_ne_top (fun a ha ↦ absurd ha bot_ne_coe)
-  | (a : α), ⊥ => exact iff_of_true WithTop.coe_ne_top (fun _ _ b hb ↦ absurd hb bot_ne_coe)
-  | (a : α), (b : α) =>
-    rw [unify_coe_coe]
-    by_cases hab : a = b
-    · subst hab
-      exact iff_of_true (by rw [ite_eq_left rfl]; exact WithTop.coe_ne_top)
-        (fun a' ha' b' hb' ↦ (coe_inj.mp ha').symm.trans (coe_inj.mp hb'))
-    · rw [ite_eq_right hab]
-      exact iff_of_false (fun h ↦ h rfl) (fun h ↦ hab (h a rfl b rfl))
+theorem compat_iff : Compat x y ↔ ∀ a : α, x = ↑a → ∀ b : α, y = ↑b → a = b := by
+  refine ⟨fun ⟨u, hu⟩ a ha b hb ↦ ?_, fun h ↦ ?_⟩
+  · have hx := hu (Set.mem_insert x {y})
+    have hy := hu (Set.mem_insert_of_mem x rfl)
+    subst ha hb
+    exact coe_inj.1 ((coe_le_iff.1 hx).symm.trans (coe_le_iff.1 hy))
+  · rcases eq_or_ne x ⊥ with rfl | hx
+    · exact bot_compat y
+    rcases eq_or_ne y ⊥ with rfl | hy
+    · exact compat_bot x
+    obtain ⟨a, rfl⟩ := ne_bot_iff_exists.1 hx
+    obtain ⟨b, rfl⟩ := ne_bot_iff_exists.1 hy
+    obtain rfl := h a rfl b rfl
+    exact compat_self _
 
 /-- On compatible slots, unification is the priority union: agreeing
 commitments collapse and `⊥` defers, so the biased and unbiased merges

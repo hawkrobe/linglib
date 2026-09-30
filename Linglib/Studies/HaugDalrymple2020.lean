@@ -51,8 +51,10 @@ allows (`maximizesAnaphora_iff`), hence Strong Reciprocity when the verb allows 
   the `Δ` its DRS induces. The `max` operator of (97) is likewise replaced by the static
   readings it yields.
 * A DRS is true when some output state satisfies its conditions. `relCond` asks every state to
-  value its discourse referents, which the partial introduction (20) guarantees; this is not
-  `PCDRT.intro`, whose random assignment may leave a referent undefined.
+  value its discourse referents, which the partial introduction (6), (20) guarantees: the states
+  `PPCDRT.introPartial` reaches from the empty state `{⊥}` are exactly those whose rows value
+  the introduced drefs (`introPartial_comp_iff`), and truth reached from `{⊥}` agrees with truth
+  at some state (`weakReciprocity_iff_exists_introPartial`).
 * `ReciprocalDRS` fixes the antecedent's plurality, `∪u' = X`, as a definite antecedent does;
   (125b) has the pointwise restrictor `boy(u₁)` instead. `boysKnow` takes `X` to be the
   three boys.
@@ -64,9 +66,9 @@ allows (`maximizesAnaphora_iff`), hence Strong Reciprocity when the verb allows 
 
 ## TODO
 
-* The dynamic DRS relations `I[u]O`, `δ_u` and `max^u` of (6), (14), (20) and (97), so that
-  the sample states are derived from the DRSs rather than transcribed, and truth is truth from
-  the empty input state.
+* The distribution and maximization relations `δ_u` and `max^u` of (14) and (97), so that the
+  sample states are derived from the DRSs rather than transcribed; introduction, (6) and (20),
+  is `PPCDRT.introPartial`.
 * With the pointwise restrictor `∪u' ⊆ A` of (125b) in place of `∪u' = X`, Maximize Anaphora
   selects the states whose dependency is full on a maximal weakly reciprocal subset of `A`,
   the shape of the reference sets of §5 (`IsRefSet`).
@@ -122,13 +124,13 @@ abbrev w : ℕ := 5
 
 /-- A row of a sample state, from its defined discourse referents. -/
 def row {E : Type*} (l : List (ℕ × E)) : PartialAssign ℕ E :=
-  fun u ↦ (l.find? (·.1 == u)).map Prod.snd
+  fun u ↦ (l.find? (·.1 == u)).elim ⊥ fun p ↦ ↑p.2
 
-theorem row_pair_left {E : Type*} (u v : ℕ) (a b : E) : row [(u, a), (v, b)] u = some a := by
+theorem row_pair_left {E : Type*} (u v : ℕ) (a b : E) : row [(u, a), (v, b)] u = ↑a := by
   simp [row]
 
 theorem row_pair_right {E : Type*} {u v : ℕ} (h : u ≠ v) (a b : E) :
-    row [(u, a), (v, b)] v = some b := by
+    row [(u, a), (v, b)] v = ↑b := by
   simp [row, h]
 
 /-- The plural information state with the given rows. -/
@@ -143,36 +145,36 @@ theorem bindingCond_ofRows : bindingCond u u' (ofRows rows) Δ ↔ ∀ s ∈ row
 
 theorem groupIdentityCond_ofRows (hΔ : ∀ v, v ∈ Δ ↔ v ∈ Δl) :
     groupIdentityCond u u' (ofRows rows) Δ ↔
-      ∀ s ∈ rows, ∀ d, (∃ t ∈ rows, (∀ v ∈ Δl, t v = s v) ∧ t u = some d) ↔
-        ∃ t ∈ rows, t u' = some d := by
+      ∀ s ∈ rows, ∀ d : Ind, (∃ t ∈ rows, (∀ v ∈ Δl, t v = s v) ∧ t u = ↑d) ↔
+        ∃ t ∈ rows, t u' = ↑d := by
   simp [groupIdentityCond, eqClass, ofRows, value, Set.ext_iff, hΔ, and_assoc]
 
 theorem distinct_ofRows :
-    (∀ s ∈ ofRows rows, ∀ a b, s u = some a → s u' = some b → a ≠ b) ↔
-      ∀ s ∈ rows, ∀ a b, s u = some a → s u' = some b → a ≠ b := by
+    (∀ s ∈ ofRows rows, ∀ a b : Ind, s u = ↑a → s u' = ↑b → a ≠ b) ↔
+      ∀ s ∈ rows, ∀ a b : Ind, s u = ↑a → s u' = ↑b → a ≠ b := by
   simp [ofRows]
 
 theorem reciprocityCond_ofRows (hΔ : ∀ v, v ∈ Δ ↔ v ∈ Δl) :
     reciprocityCond u u' (ofRows rows) Δ ↔
-      (∀ s ∈ rows, ∀ d, (∃ t ∈ rows, (∀ v ∈ Δl, t v = s v) ∧ t u = some d) ↔
-        ∃ t ∈ rows, t u' = some d) ∧
-      ∀ s ∈ rows, ∀ a b, s u = some a → s u' = some b → a ≠ b :=
+      (∀ s ∈ rows, ∀ d : Ind, (∃ t ∈ rows, (∀ v ∈ Δl, t v = s v) ∧ t u = ↑d) ↔
+        ∃ t ∈ rows, t u' = ↑d) ∧
+      ∀ s ∈ rows, ∀ a b : Ind, s u = ↑a → s u' = ↑b → a ≠ b :=
   and_congr (groupIdentityCond_ofRows hΔ) distinct_ofRows
 
 theorem mem_dep_ofRows {a b : Ind} :
-    (a, b) ∈ dep u u' (ofRows rows) ↔ ∃ s ∈ rows, s u = some a ∧ s u' = some b := by
+    (a, b) ∈ dep u u' (ofRows rows) ↔ ∃ s ∈ rows, s u = ↑a ∧ s u' = ↑b := by
   simp [dep, ofRows]
 
 theorem mem_dep_eqClass_ofRows (hΔ : ∀ v, v ∈ Δ ↔ v ∈ Δl) {s : PartialAssign ℕ Ind}
     {a b : Ind} :
     (a, b) ∈ dep u u' (eqClass (ofRows rows) Δ s) ↔
-      ∃ t ∈ rows, (∀ v ∈ Δl, t v = s v) ∧ t u = some a ∧ t u' = some b := by
+      ∃ t ∈ rows, (∀ v ∈ Δl, t v = s v) ∧ t u = ↑a ∧ t u' = ↑b := by
   simp [dep, eqClass, ofRows, hΔ, and_assoc]
 
 /-- The values of `u` summed over the `Δ`-class of `s`, as a finset. -/
 def sumRows (rows : List (PartialAssign ℕ Ind)) (Δl : List ℕ) (s : PartialAssign ℕ Ind)
     (u : ℕ) : Finset Ind :=
-  Finset.univ.filter fun d ↦ ∃ t ∈ rows, (∀ v ∈ Δl, t v = s v) ∧ t u = some d
+  Finset.univ.filter fun d ↦ ∃ t ∈ rows, (∀ v ∈ Δl, t v = s v) ∧ t u = ↑d
 
 theorem coe_sumRows (hΔ : ∀ v, v ∈ Δ ↔ v ∈ Δl) (s : PartialAssign ℕ Ind) :
     (↑(sumRows rows Δl s u) : Set Ind) =
@@ -205,12 +207,12 @@ theorem atomsCond_ofRows {rows : List (PartialAssign ℕ Ind)} {Δ : Set ℕ} {�
 `u` and `v` values that `P` relates. Distribution does not reach individual discourse
 referents, so `Δ` is idle. -/
 def relCond {E : Type*} (P : E → E → Prop) (u v : ℕ) : PPDRSCond E := fun S _ ↦
-  S.Nonempty ∧ ∀ s ∈ S, ∃ a b, s u = some a ∧ s v = some b ∧ P a b
+  S.Nonempty ∧ ∀ s ∈ S, ∃ a b : E, s u = ↑a ∧ s v = ↑b ∧ P a b
 
 theorem relCond_ofRows {P : Ind → Ind → Prop} {rows : List (PartialAssign ℕ Ind)} {Δ : Set ℕ}
     {u v : ℕ} :
     relCond P u v (ofRows rows) Δ ↔
-      rows ≠ [] ∧ ∀ s ∈ rows, ∃ a b, s u = some a ∧ s v = some b ∧ P a b :=
+      rows ≠ [] ∧ ∀ s ∈ rows, ∃ a b : Ind, s u = ↑a ∧ s v = ↑b ∧ P a b :=
   and_congr ⟨fun ⟨_, hs⟩ ↦ List.ne_nil_of_mem hs, List.exists_mem_of_ne_nil _⟩ Iff.rfl
 
 /-- Group identity read inside the distribution operator of (14), summing both sides over
@@ -221,8 +223,8 @@ def distributedGroupIdentityCond (uAnaph uAnt : ℕ) : PPDRSCond Ind := fun S Δ
 theorem distributedGroupIdentityCond_ofRows {rows : List (PartialAssign ℕ Ind)} {Δ : Set ℕ}
     {Δl : List ℕ} {u u' : ℕ} (hΔ : ∀ v, v ∈ Δ ↔ v ∈ Δl) :
     distributedGroupIdentityCond u u' (ofRows rows) Δ ↔
-      ∀ s ∈ rows, ∀ d, (∃ t ∈ rows, (∀ v ∈ Δl, t v = s v) ∧ t u = some d) ↔
-        ∃ t ∈ rows, (∀ v ∈ Δl, t v = s v) ∧ t u' = some d := by
+      ∀ s ∈ rows, ∀ d : Ind, (∃ t ∈ rows, (∀ v ∈ Δl, t v = s v) ∧ t u = ↑d) ↔
+        ∃ t ∈ rows, (∀ v ∈ Δl, t v = s v) ∧ t u' = ↑d := by
   simp [distributedGroupIdentityCond, eqClass, ofRows, value, Set.ext_iff, hΔ,
     and_assoc]
 
@@ -288,10 +290,10 @@ theorem dep_ofDep (h : u ≠ v) (D : SetRel E E) : dep u v (ofDep u v D) = D := 
   ext ⟨a, b⟩
   refine ⟨?_, fun hab ↦ ⟨_, ⟨(a, b), hab, rfl⟩, row_pair_left u v a b, row_pair_right h a b⟩⟩
   rintro ⟨_, ⟨⟨a', b'⟩, hab, rfl⟩, ha, hb⟩
-  change row [(u, a'), (v, b')] u = some a at ha
-  change row [(u, a'), (v, b')] v = some b at hb
-  rw [row_pair_left, Option.some_inj] at ha
-  rw [row_pair_right h, Option.some_inj] at hb
+  change row [(u, a'), (v, b')] u = ↑a at ha
+  change row [(u, a'), (v, b')] v = ↑b at hb
+  rw [row_pair_left, Flat.coe_inj] at ha
+  rw [row_pair_right h, Flat.coe_inj] at hb
   subst ha hb
   exact hab
 
@@ -307,28 +309,28 @@ theorem dep_of_relCond {Δ : Set ℕ} (hS : relCond P u v S Δ) :
     dep u v S ⊆ {p | P p.1 p.2} ∧ (dep u v S).dom = value u S ∧ (dep u v S).cod = value v S := by
   obtain ⟨-, hP⟩ := hS
   refine ⟨?_, dom_dep fun s hs _ ↦ ?_, cod_dep fun s hs _ ↦ ?_⟩
-  · rintro ⟨a, b⟩ ⟨s, hs, (ha : s u = some a), (hb : s v = some b)⟩
+  · rintro ⟨a, b⟩ ⟨s, hs, (ha : s u = ↑a), (hb : s v = ↑b)⟩
     obtain ⟨a', b', ha', hb', hab⟩ := hP s hs
-    rw [ha', Option.some_inj] at ha
-    rw [hb', Option.some_inj] at hb
+    rw [ha', Flat.coe_inj] at ha
+    rw [hb', Flat.coe_inj] at hb
     exact ha ▸ hb ▸ hab
   · obtain ⟨-, b, -, hb, -⟩ := hP s hs
-    show (s v).isSome
+    show s v ≠ ⊥
     simp [hb]
   · obtain ⟨a, -, ha, -, -⟩ := hP s hs
-    show (s u).isSome
+    show s u ≠ ⊥
     simp [ha]
 
 theorem value_ofDep_left (h : u ≠ v) (D : SetRel E E) : value u (ofDep u v D) = D.dom := by
   rw [← dom_dep (v := v), dep_ofDep h]
   rintro _ ⟨p, -, rfl⟩ -
-  show (row _ v).isSome
+  show row _ v ≠ ⊥
   simp [row_pair_right h]
 
 theorem value_ofDep_right (h : u ≠ v) (D : SetRel E E) : value v (ofDep u v D) = D.cod := by
   rw [← cod_dep (u := u), dep_ofDep h]
   rintro _ ⟨p, -, rfl⟩ -
-  show (row _ u).isSome
+  show row _ u ≠ ⊥
   simp [row_pair_left]
 
 /-- §2.1, (12): cumulative readings are the default. A state satisfying `P(u, v)` relates the
@@ -378,8 +380,8 @@ theorem reciprocalDRS_iff {X : Set E} {u' : ℕ} :
     · obtain ⟨a, b, ha, hb, hab, -⟩ := hP s hs
       exact ⟨a, b, ha, hb, hab⟩
     · obtain ⟨a', b', ha', hb', -, hne'⟩ := hP s hs
-      rw [ha', Option.some_inj] at ha
-      rw [hb', Option.some_inj] at hb
+      rw [ha', Flat.coe_inj] at ha
+      rw [hb', Flat.coe_inj] at hb
       exact ha ▸ hb ▸ hne'.symm
 
 /-- §2.4: "This proposal, like Dotlačil's, makes Weak Reciprocity the basic reading." Some state
@@ -403,11 +405,99 @@ theorem cumulation_iff_exists_reciprocalDRS [DecidableEq E] {u' : ℕ} (h : u �
   rw [cumulation_map_singleton, ← weakReciprocity_iff_liftRel,
     weakReciprocity_iff_exists_reciprocalDRS h]
 
+section Truth
+
+open SetRel
+
+variable {u' : ℕ} {O : PluralAssign ℕ E}
+
+/-- (6), (20): introducing `u'` and then `u` at the empty state `{⊥}` reaches exactly the
+nonempty states whose rows value `u'` and `u` and nothing else. -/
+theorem introPartial_comp_iff (h : u ≠ u') :
+    ({⊥} : PluralAssign ℕ E) ~[introPartial u' ○ introPartial u] O ↔
+      O.Nonempty ∧ ∀ o ∈ O, ∀ v, o v ≠ ⊥ ↔ v = u' ∨ v = u := by
+  constructor
+  · rintro ⟨K, ⟨-, -, hK⟩, hO, -, hback⟩
+    refine ⟨hO, fun o ho v ↦ ?_⟩
+    obtain ⟨k, hk, hext⟩ := hback o ho
+    obtain ⟨-, hou, hko⟩ := mem_extend.1 hext
+    obtain ⟨_, rfl, hext'⟩ := hK k hk
+    obtain ⟨-, hku', hk'⟩ := mem_extend.1 hext'
+    by_cases hvu : v = u
+    · subst hvu
+      exact iff_of_true hou (Or.inr rfl)
+    rw [← hko v hvu]
+    by_cases hvu' : v = u'
+    · subst hvu'
+      exact iff_of_true hku' (Or.inl rfl)
+    rw [← hk' v hvu']
+    simp [hvu, hvu']
+  · rintro ⟨⟨o₀, ho₀⟩, hdom⟩
+    have hdef : ∀ o ∈ O, o u' ≠ ⊥ ∧ o u ≠ ⊥ := fun o ho ↦
+      ⟨(hdom o ho u').2 (Or.inl rfl), (hdom o ho u).2 (Or.inr rfl)⟩
+    set k : PartialAssign ℕ E → PartialAssign ℕ E := fun o ↦ Function.update ⊥ u' (o u')
+    have hk : ∀ o ∈ O, (⊥ : PartialAssign ℕ E) ~[extend u'] k o := fun o ho ↦
+      mem_extend.2 ⟨rfl, by simpa [k] using (hdef o ho).1,
+        fun v hv ↦ by simp [k, Function.update_of_ne hv]⟩
+    have hko : ∀ o ∈ O, k o ~[extend u] o := fun o ho ↦ by
+      refine mem_extend.2 ⟨by simp [k, Function.update_of_ne h], (hdef o ho).2, fun v hv ↦ ?_⟩
+      by_cases hvu' : v = u'
+      · subst hvu'
+        simp [k]
+      · have : o v = ⊥ := not_not.1 fun hne ↦ ((hdom o ho v).1 hne).elim hvu' hv
+        simp [k, Function.update_of_ne hvu', this]
+    refine ⟨k '' O, ⟨⟨_, o₀, ho₀, rfl⟩, fun i hi ↦ ?_, ?_⟩, ⟨o₀, ho₀⟩, ?_, ?_⟩
+    · obtain rfl := hi
+      exact ⟨_, ⟨o₀, ho₀, rfl⟩, hk o₀ ho₀⟩
+    · rintro _ ⟨o, ho, rfl⟩
+      exact ⟨⊥, rfl, hk o ho⟩
+    · rintro _ ⟨o, ho, rfl⟩
+      exact ⟨o, ho, hko o ho⟩
+    · exact fun o ho ↦ ⟨k o, ⟨o, ho, rfl⟩, hko o ho⟩
+
+/-- Truth from the empty state: the DRS of *the Xs `P` each other*, entered by introducing `u'`
+and `u` at `{⊥}` ((6), (20)), has an output verifying it exactly when `X` is weakly reciprocal
+under `P`. A verifying state restricted to its `u'` and `u` columns is reachable and still
+verifies the DRS. -/
+theorem weakReciprocity_iff_exists_introPartial (h : u ≠ u') {X : Finset E} :
+    X.Nonempty ∧ WeakReciprocity P X ↔
+      ∃ O, ({⊥} : PluralAssign ℕ E) ~[introPartial u' ○ introPartial u] O ∧
+        ReciprocalDRS P ↑X u u' O := by
+  rw [weakReciprocity_iff_exists_reciprocalDRS h]
+  refine ⟨fun ⟨S, hS⟩ ↦ ?_, fun ⟨O, _, hO⟩ ↦ ⟨O, hO⟩⟩
+  obtain ⟨hX, hX', hne, hP⟩ := reciprocalDRS_iff.1 hS
+  set r : PartialAssign ℕ E → PartialAssign ℕ E := fun s v ↦ if v = u' ∨ v = u then s v else ⊥
+  have hr : ∀ s v, (v = u' ∨ v = u) → r s v = s v := fun _ _ hv ↦ ite_eq_left hv
+  have hval : ∀ w, (w = u' ∨ w = u) → value w (r '' S) = value w S := fun w hw ↦ by
+    ext x
+    constructor
+    · rintro ⟨_, ⟨s, hs, rfl⟩, hx⟩
+      exact ⟨s, hs, (hr s w hw).symm.trans hx⟩
+    · rintro ⟨s, hs, hx⟩
+      exact ⟨r s, ⟨s, hs, rfl⟩, (hr s w hw).trans hx⟩
+  refine ⟨r '' S, (introPartial_comp_iff h).2 ⟨hne.image r, ?_⟩,
+    reciprocalDRS_iff.2 ⟨(hval u' (.inl rfl)).trans hX, (hval u (.inr rfl)).trans hX',
+      hne.image r, ?_⟩⟩
+  · rintro _ ⟨s, hs, rfl⟩ v
+    obtain ⟨a, b, ha, hb, -⟩ := hP s hs
+    by_cases hv : v = u' ∨ v = u
+    · rw [hr s v hv]
+      refine iff_of_true ?_ hv
+      rcases hv with rfl | rfl
+      · rw [ha]; exact Flat.coe_ne_bot
+      · rw [hb]; exact Flat.coe_ne_bot
+    · simp [r, hv]
+  · rintro _ ⟨s, hs, rfl⟩
+    obtain ⟨a, b, ha, hb, hab⟩ := hP s hs
+    exact ⟨a, b, (hr s u' (.inl rfl)).trans ha, (hr s u (.inr rfl)).trans hb, hab⟩
+
+end Truth
+
 /-- §2.4, §4.5: whatever the verb, the dependency between the antecedent and a reciprocal
 without distribution is weakly reciprocal on the antecedent's plurality. The forks of (92),
 whose verb takes `∪u₂` collectively, are "a special case of weak reciprocity" in this sense. -/
 theorem weakReciprocity_dep_of_reciprocityCond {u' : ℕ} {X : Finset E}
-    (hdef : ∀ s ∈ S, (s u).isSome ↔ (s u').isSome) (hX : value u' S = ↑X)
+    (hdef : ∀ s ∈ S, s u ≠ ⊥ ↔ s u' ≠ ⊥) (hX : value u' S = ↑X)
     (h : reciprocityCond u u' S ∅) : WeakReciprocity (fun a b ↦ (a, b) ∈ dep u' u S) X := by
   obtain ⟨hdc, hirr⟩ := (reciprocityCond_empty_iff hdef).1 h
   have hdom : (dep u' u S).dom = ↑X := (dom_dep fun s hs ↦ (hdef s hs).2).trans hX
@@ -499,11 +589,11 @@ within the class, where distinctness excludes it. -/
 theorem no_low_reciprocal_under_binding {E : Type*} {S : PluralAssign ℕ E} {Δ : Set ℕ}
     {v₁ v₂ v₃ : ℕ} (hΔ : v₁ ∈ Δ) (hb : bindingCond v₂ v₁ S Δ)
     (hr : reciprocityCond v₃ v₂ S Δ) {s : PartialAssign ℕ E} (hs : s ∈ S) {d : E}
-    (hd : s v₂ = some d) : False := by
+    (hd : s v₂ = ↑d) : False := by
   have hmem : d ∈ value v₂ S := ⟨s, hs, hd⟩
   rw [← hr.1 s hs] at hmem
   obtain ⟨t, ⟨ht, hcls⟩, ht₃⟩ := hmem
-  have ht₂ : t v₂ = some d := by rw [hb t ht, hcls v₁ hΔ, ← hb s hs, hd]
+  have ht₂ : t v₂ = ↑d := by rw [hb t ht, hcls v₁ hΔ, ← hb s hs, hd]
   exact hr.2 t ht d d ht₃ ht₂ rfl
 
 /-- (69) distributed over two accessible worlds: the reciprocal lifted above `◇`. -/
@@ -853,7 +943,7 @@ theorem classmates_pairwise :
     (∀ a ∈ trio, ∀ b ∈ trio, a ≠ b → (a, b) ∈ dep u₁ u₂ (ofRows classmates) ∧
       (a, b) ∈ dep u₂ u₄ (ofRows classmates)) ∧
       ¬ ∃ s ∈ classmates,
-        s u₁ = some .tracy ∧ s u₂ = some .chris ∧ s u₄ = some .matty := by
+        s u₁ = ↑Ind.tracy ∧ s u₂ = ↑Ind.chris ∧ s u₄ = ↑Ind.matty := by
   simp only [mem_dep_ofRows]
   decide
 
@@ -873,7 +963,7 @@ theorem praised_wide :
     bindingCond u₂ u₁ (ofRows praisedWide) ∅ ∧
       reciprocityCond u₃ u₂ (ofRows praisedWide) ∅ ∧
       ∀ s ∈ praisedWide, ∀ d,
-        d ∈ sumRows praisedWide [w] s u₃ ↔ d ∈ trio ∧ some d ≠ s u₁ := by
+        d ∈ sumRows praisedWide [w] s u₃ ↔ d ∈ trio ∧ ↑d ≠ s u₁ := by
   rw [bindingCond_ofRows, reciprocityCond_ofRows mem_empty]
   decide
 

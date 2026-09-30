@@ -279,7 +279,7 @@ private theorem exi_poss_atom_of_subset_extendUniversal
   obtain ⟨d', hassign, hmem⟩ := hsupp j₀ hj₀
   rw [← hupd] at hassign hmem
   simp only [Index.assign_update, Function.update_self,
-    Option.some.injEq] at hassign
+    Flat.coe_inj] at hassign
   rw [← hassign] at hmem
   rw [Index.world_update] at hmem
   -- hmem : d ∈ M.relInterp₁ P i₀.world

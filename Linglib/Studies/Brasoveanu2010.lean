@@ -22,8 +22,8 @@ women and structured inclusion (66) keeps it.
 
 ## Implementation notes
 
-* A row is an assignment `Dref → Option E`, CDRT's canonical register structure at `Option E`,
-  and the dummy individual ★ is `none`.
+* A row is an assignment `Dref → Flat E`, CDRT's canonical register structure at `Flat E`,
+  and the dummy individual ★ is `⊥`.
 * Predication is interpreted distributively over the rows where its drefs have values ((30),
   (34)); this is `PCDRT.atom` and `PCDRT.atom₂`.
 
@@ -58,14 +58,14 @@ inductive Dref where
 variable {E : Type*}
 
 /-- A row of a plural info state: an individual or ★ for each dref. -/
-abbrev Row (E : Type*) := Dref → Option E
+abbrev Row (E : Type*) := Dref → Flat E
 
 /-- A property, type `et`: a dref to an update. -/
 abbrev Pred (E : Type*) := Dref → Update (Set (Row E))
 
 /-- The dummy assignment `i★`, which assigns ★ to every dref; `{i★}` is the dummy info state
 (28), which holds no anaphoric information. -/
-def iStar : Row E := fun _ ↦ none
+def iStar : Row E := ⊥
 
 /-- (26), (30): a noun or intransitive verb is a test that its argument satisfies it. -/
 def noun (P : E → Prop) : Pred E := fun v ↦ test (atom P v)
@@ -109,8 +109,8 @@ theorem wolfDiscourse_true_iff (wolf comeIn : E → Prop) (eat : E → E → Pro
     refine ⟨x, hwolf.2 x (by simp [hx]), hcome.2 x (by simp [hx]), ?_⟩
     simpa [h1, h2] using heat p hp
   · rintro ⟨x, hw, hc, he⟩
-    set i₁ : Row E := Function.update iStar .u (some x)
-    set i₂ : Row E := Function.update i₁ .u' (some harvey)
+    set i₁ : Row E := Function.update iStar .u ↑x
+    set i₂ : Row E := Function.update i₁ .u' ↑harvey
     have hv₁ : value Dref.u {i₁} = {x} := value_singleton_of_eq (by simp [i₁])
     have hv₂ : value Dref.u' {i₂} = {harvey} := value_singleton_of_eq (by simp [i₂])
     have hd : dep Dref.u Dref.u' {i₂} = {(x, harvey)} :=
@@ -152,25 +152,25 @@ inductive Ind where
 open Ind
 
 /-- A row of (64) from its `u₁`, `u₂` and `u₃` values. -/
-def row (a b c : Option Ind) : Dref₃ → Option Ind
+def row (a b c : Flat Ind) : Dref₃ → Flat Ind
   | .u₁ => a
   | .u₂ => b
   | .u₃ => c
 
 /-- (64) with the value-inclusion column: `u₃` holds `α₁, α₃, α₁, α₂`. -/
-def valueCol : Set (Dref₃ → Option Ind) :=
+def valueCol : Set (Dref₃ → Flat Ind) :=
   {row α₁ β₁ α₁, row α₂ β₂ α₃, row α₃ β₃ α₁, row α₄ β₄ α₂}
 
 /-- (64) with the structured column: `u₃` holds `α₁, α₂, ★, α₄`. -/
-def structCol : Set (Dref₃ → Option Ind) :=
-  {row α₁ β₁ α₁, row α₂ β₂ α₂, row α₃ β₃ none, row α₄ β₄ α₄}
+def structCol : Set (Dref₃ → Flat Ind) :=
+  {row α₁ β₁ α₁, row α₂ β₂ α₂, row α₃ β₃ ⊥, row α₄ β₄ α₄}
 
 /-- Both columns store a subset of the conventions (65). -/
 theorem value_subset_valueCol : value Dref₃.u₃ valueCol ⊆ value Dref₃.u₁ valueCol := by
   rintro x ⟨i, hi, hx⟩
   simp only [valueCol, Set.mem_insert_iff, Set.mem_singleton_iff] at hi
   rcases hi with rfl | rfl | rfl | rfl <;>
-    simp only [RegisterStructure.val_apply, row, Option.some.injEq] at hx <;> subst hx
+    simp only [RegisterStructure.val_apply, row, Flat.coe_inj] at hx <;> subst hx
   exacts [⟨row α₁ β₁ α₁, by simp [valueCol], rfl⟩, ⟨row α₃ β₃ α₁, by simp [valueCol], rfl⟩,
     ⟨row α₁ β₁ α₁, by simp [valueCol], rfl⟩, ⟨row α₂ β₂ α₃, by simp [valueCol], rfl⟩]
 
@@ -178,7 +178,7 @@ theorem value_subset_structCol : value Dref₃.u₃ structCol ⊆ value Dref₃.
   rintro x ⟨i, hi, hx⟩
   simp only [structCol, Set.mem_insert_iff, Set.mem_singleton_iff] at hi
   rcases hi with rfl | rfl | rfl | rfl <;> simp only [RegisterStructure.val_apply, row,
-    Option.some.injEq, reduceCtorEq] at hx <;> subst hx
+    Flat.coe_inj, Flat.bot_ne_coe] at hx <;> subst hx
   exacts [⟨row α₁ β₁ α₁, by simp [structCol], rfl⟩, ⟨row α₂ β₂ α₂, by simp [structCol], rfl⟩,
     ⟨row α₄ β₄ α₄, by simp [structCol], rfl⟩]
 
@@ -203,7 +203,7 @@ theorem structCol_structSubAll : structCol ∈ structSubAll Dref₃.u₃ Dref₃
   · obtain ⟨k, hk, hkx⟩ := hx
     simp only [structCol, Set.mem_insert_iff, Set.mem_singleton_iff] at hi hk
     rcases hi with rfl | rfl | rfl | rfl <;> rcases hk with rfl | rfl | rfl | rfl <;>
-      simp only [RegisterStructure.val_apply, row, Option.some.injEq, reduceCtorEq] at hix hkx ⊢ <;>
+      simp only [RegisterStructure.val_apply, row, Flat.coe_inj, Flat.bot_ne_coe] at hix hkx ⊢ <;>
       subst_vars <;> simp_all
 
 /-- The structured column keeps the dependency between conventions and women. -/
