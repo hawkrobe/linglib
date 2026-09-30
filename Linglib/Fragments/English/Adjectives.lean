@@ -15,11 +15,14 @@ pair's `pos` and `neg`.
 ## References
 
 * [kennedy-2007]
+* [kennedy-mcnally-2005]
 * [bobaljik-2012]
 * [tham-2025]
 * [beltrama-2025]
 * [nouwen-2024]
 * [cariani-santorio-wellwood-2024]
+* [goodman-2024]
+* [lassiter-2017]
 * [rappaport-hovav-2014]
 * [rotstein-winter-2004]
 -/
@@ -282,8 +285,15 @@ def smart : GradableAdjective :=
   { form := "smart", dimension := some .intelligence, comparison := .synthetic "smarter" "smartest"
   , antonymForm := some "dumb", antonymRelation := some .contrary }
 
+/-- *Confident* is relative on the upper-closed confidence scale. [cariani-santorio-wellwood-2024]
+give it the ordering of *certain* with a contextual contrast state below *certain*'s maximal
+states ((40), Figure 3), so that *confident but not certain* (65a) is consistent while
+*completely confident* (69a) reaches the maximum. [goodman-2024]'s non-extremity makes its
+threshold non-maximal in many ordinary contexts, on the evidence of *confident that p, and even
+more confident that p or q* (3). Interpretive Economy ([kennedy-2007] (66)) would give it the
+maximum of the scale, so the standard is lexical. -/
 def confident : GradableAdjective :=
-  { form := "confident", dimension := some .confidence
+  { form := "confident", dimension := some .confidence, lexicalStandard := some .contextual
   , comparison := .periphrastic "more confident" "most confident" }
 
 def confidence : AntonymPair :=
