@@ -3,7 +3,6 @@ module
 public import Mathlib.Data.Fintype.Prod
 public import Linglib.Semantics.Exhaustification.InnocentExclusion
 public import Linglib.Semantics.Quantification.Basic
-public import Linglib.Semantics.Genericity.SortedOntology
 public import Linglib.Data.Examples.Magri2009
 
 /-!
@@ -66,7 +65,7 @@ competes with GEN, which presupposes homogeneity, so *#John is always tall* is o
 
 namespace Magri2009
 
-open Exhaustification Quantifier Set Genericity.SortedOntology
+open Exhaustification Quantifier Set
 
 /-! ### Blind strengthening and oddness (§3.2) -/
 
@@ -359,12 +358,6 @@ theorem existential_odd {N : E → Prop} (hck : ∀ f ∈ Wck, Permanent live f)
     Odd Wck (alts N D fun d t ↦ C t ∧ live d t) (narrowSome N D) :=
   odd_narrowSome hD (fun f hf x _ i _ hxi _ hj ↦ hck f hf x ⟨i, hxi⟩ _ hj.2) h
 
-/-- Common knowledge about a predicate of either level (§4): an individual-level predicate is
-permanent (70), a stage-level predicate is not constrained. -/
-def ck (live : E → T → Prop) : PredicateLevel → Set (E → T → Prop)
-  | .individualLevel => {f | Permanent live f}
-  | .stageLevel => univ
-
 end IndividualLevel
 
 /-! #### The world (98) -/
@@ -413,27 +406,21 @@ theorem world98_mem : world98 ∈ narrowSome (fun _ ↦ True) (fun _ ↦ True) \
     mem_iUnion, not_exists]
   decide
 
-/-- The existential reading of a bare plural subject is odd for a predicate of level `l`, in the
-model of (98). -/
-def ExistentialOdd (l : PredicateLevel) : Prop :=
-  Odd (ck lifespan l) alts98 (narrowSome (fun _ ↦ True) fun _ ↦ True)
+/-- The existential reading of a bare plural subject is odd against the common knowledge `Wck`
+about its predicate, in the model of (98). -/
+def ExistentialOdd (Wck : Set (Fireman → Fin 3 → Prop)) : Prop :=
+  Odd Wck alts98 (narrowSome (fun _ ↦ True) fun _ ↦ True)
 
-/-- (84b): the existential reading of *Firemen are tall* is odd. -/
-theorem existentialOdd_individualLevel : ExistentialOdd .individualLevel :=
+/-- (84b): the existential reading of *Firemen are tall* is odd, since common knowledge makes an
+individual-level predicate permanent (70). -/
+theorem existentialOdd_permanent : ExistentialOdd {f | Permanent lifespan f} :=
   existential_odd (fun _ h ↦ h) ⟨0, trivial⟩ ⟨_, world98_mem⟩
 
-/-- (84a): the existential reading of *Firemen are available* is fine: the world (98) is
-compatible with common knowledge about a stage-level predicate. -/
-theorem not_existentialOdd_stageLevel : ¬ ExistentialOdd .stageLevel := by
+/-- (84a): the existential reading of *Firemen are available* is fine, since common knowledge
+does not constrain a stage-level predicate and the world (98) is compatible with it. -/
+theorem not_existentialOdd_univ : ¬ ExistentialOdd univ := by
   rw [ExistentialOdd, alts98, alts, odd_insert_range_iff ⟨_, world98_mem⟩]
   exact fun h ↦ world98_mem.2 (h ⟨world98_mem.1, trivial⟩)
-
-/-- The existential reading of a bare plural subject is odd exactly for an individual-level
-predicate. -/
-theorem existentialOdd_iff {l : PredicateLevel} : ExistentialOdd l ↔ l = .individualLevel := by
-  cases l
-  · simpa using not_existentialOdd_stageLevel
-  · simpa using existentialOdd_individualLevel
 
 end World98
 
@@ -494,24 +481,32 @@ section GermanWordOrder
 
 open Data.Examples
 
-/-- The predicate level of a row ([carlson-1977]), read from its `predicate_level` feature. -/
-def predicateLevelOf (row : LinguisticExample) : Option PredicateLevel :=
+/-- Common knowledge about the predicate of a row, by (70) from the level ([carlson-1977]) its
+`predicate_level` feature records: an individual-level predicate is permanent, a stage-level one
+unconstrained. -/
+def commonKnowledgeOf (row : LinguisticExample) : Option (Set (Fireman → Fin 3 → Prop)) :=
   match row.feature? "predicate_level" with
-  | some "individual" => some .individualLevel
-  | some "stage" => some .stageLevel
+  | some "individual" => some {f | Permanent lifespan f}
+  | some "stage" => some univ
   | _ => none
+
+private theorem exists_existentialOdd_iff (row : LinguisticExample) :
+    (∃ Wck ∈ commonKnowledgeOf row, ExistentialOdd Wck) ↔
+      row.feature? "predicate_level" = some "individual" := by
+  unfold commonKnowledgeOf
+  split <;> simp_all [existentialOdd_permanent, not_existentialOdd_univ]
 
 /-- A row of (8) is predicted odd when its bare plural subject sits to the right of *ja doch*,
 where it has only the existential reading (§4.5.1), and that reading is odd for its predicate,
 (128), (129). -/
 def PredictedOdd (row : LinguisticExample) : Prop :=
-  row.feature? "position" = some "right" ∧ ∃ l ∈ predicateLevelOf row, ExistentialOdd l
+  row.feature? "position" = some "right" ∧ ∃ Wck ∈ commonKnowledgeOf row, ExistentialOdd Wck
 
 /-- (8), (125): a row is acceptable exactly when it is not predicted odd; only (8c), with the
 individual-level *intelligent* and its subject to the right of *ja doch*, is odd. -/
 theorem word_order_rows :
     ∀ row ∈ Examples.all, (row.judgment = .acceptable ↔ ¬ PredictedOdd row) := by
-  simp only [PredictedOdd, existentialOdd_iff]
+  simp only [PredictedOdd, exists_existentialOdd_iff]
   decide
 
 end GermanWordOrder
