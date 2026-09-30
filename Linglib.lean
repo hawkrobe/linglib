@@ -938,7 +938,6 @@ import Linglib.Semantics.Attitudes.Desire.ExpectedValue
 import Linglib.Semantics.Attitudes.Desire.Preferential
 import Linglib.Semantics.Attitudes.Distributivity
 import Linglib.Semantics.Attitudes.Doxastic
-import Linglib.Semantics.Attitudes.EpistemicThreshold
 import Linglib.Semantics.Attitudes.Factivity
 import Linglib.Semantics.Attitudes.Preference
 import Linglib.Semantics.Causation.Implicative

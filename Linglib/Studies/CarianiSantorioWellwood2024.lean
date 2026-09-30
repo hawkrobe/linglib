@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Degree.Background
-public import Linglib.Semantics.Attitudes.EpistemicThreshold
+public import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
 
 /-!
 # Cariani, Santorio and Wellwood 2024: confidence reports
@@ -33,18 +33,18 @@ comparative does not entail the positive form (§3.2, §4.3;
 `Degree.maxComparative_and_not_mem_image`).
 
 The conjunction fallacy (52) is consistent with the semantics, since the ordering ranks states
-and not their contents (`exists_conjunctionFallacy`), while a threshold on probabilistic
-credence, the off-the-shelf alternative of §2, validates conjunction elimination, so no such
-threshold reproduces the confidence of a holder who commits the fallacy
-(`image_Ici_ne_setOf_meetsThreshold`). *Certain* entails *confident* because its contrast
+and not their contents (`exists_conjunctionFallacy`), while a threshold on a probability
+measure, the off-the-shelf alternative of §2 on the scalar semantics of [lassiter-2017],
+validates conjunction elimination, so no such threshold reproduces the confidence of a holder who
+commits the fallacy (`image_Ici_ne_ge_over`). *Certain* entails *confident* because its contrast
 state is maximal (`image_Ici_subset_image_Ici_of_isMax`), and the entailment is asymmetric
 whenever *confident*'s contrast state is not (`not_image_Ici_subset_image_Ici`).
 
 ## Main results
 
 * `maxComparative_theme_iff`: with one state per theme the comparative (47) compares measures.
-* `exists_conjunctionFallacy`, `image_Ici_ne_setOf_meetsThreshold`: (52a) and (52b) are true
-  together on some total ordering, and on no threshold of probabilistic credence.
+* `exists_conjunctionFallacy`, `image_Ici_ne_ge_over`: (52a) and (52b) are true together on
+  some total ordering, and on no threshold of a probability measure.
 * `image_Ici_subset_image_Ici_of_isMax`, `not_image_Ici_subset_image_Ici`: *certain* entails
   *confident* asymmetrically (65), (66).
 * `Ici_eq_setOf_isMax`: the region above a maximal contrast state (71) is the set of maximal
@@ -85,7 +85,7 @@ The paper states no semantics for *doubt*, so (63c) is not formalized.
 * [cariani-santorio-wellwood-2023]
 * [wellwood-2015]
 * [tversky-kahneman-1983]
-* [lassiter-goodman-2017]
+* [lassiter-2017]
 -/
 
 @[expose] public section
@@ -93,7 +93,8 @@ The paper states no semantics for *doubt*, so (63c) is not formalized.
 namespace CarianiSantorioWellwood2024
 
 open Set Degree
-open EpistemicThreshold (IsProbabilistic meetsThreshold prob_conjunction_elim)
+open MeasureTheory
+open scoped ENNReal
 
 variable {S W D : Type*} [Preorder S] [Preorder D] {θ : S → Set W} {μ : S → D}
 
@@ -128,12 +129,12 @@ theorem exists_conjunctionFallacy {φ ψ : Set W} (h : ¬ φ ⊆ ψ) :
 
 /-- A holder confident of a conjunction but not of its conjunct is confident of no set of
 propositions that the threshold account of §2 (7) delivers: whatever the threshold, the
-propositions whose probabilistic credence meets it are closed under conjunction elimination. -/
-theorem image_Ici_ne_setOf_meetsThreshold {E : Type*} {cr : E → Set W → ℚ}
-    (hcr : IsProbabilistic cr) (t : ℚ) (a : E) {c : S} {φ ψ : Set W} (h₁ : φ ∩ ψ ∈ θ '' Ici c)
-    (h₂ : φ ∉ θ '' Ici c) :
-    θ '' Ici c ≠ {p | meetsThreshold cr t a p} := fun h ↦
-  h₂ ((Set.ext_iff.1 h φ).2 (prob_conjunction_elim hcr t a φ ψ ((Set.ext_iff.1 h _).1 h₁)))
+propositions whose probability meets it are closed under conjunction elimination, since a
+measure is monotone. -/
+theorem image_Ici_ne_ge_over [MeasurableSpace W] (P : Measure W) (t : ℝ≥0∞) {c : S}
+    {φ ψ : Set W} (h₁ : φ ∩ ψ ∈ θ '' Ici c) (h₂ : φ ∉ θ '' Ici c) :
+    θ '' Ici c ≠ Comparison.ge.over P t :=
+  fun h ↦ h₂ (h ▸ Comparison.mem_ge_over_of_le P (h ▸ h₁) (measure_mono inter_subset_left))
 
 /-! ### *Certain* and *confident* (§5.2) -/
 
