@@ -3,10 +3,10 @@
     "id": "allotey2021_2a",
     "source": {"bibkey": "allotey-2021", "paperLabel": "(2a)"},
     "language": "gaaa1244",
-    "primaryText": "Mii tao ni mai na bo",
+    "primaryText": "Mi tao (ni) ma na bo",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Mii", "1.SG"], ["tao", "want"], ["ni", "C"], ["mai", "1.SG"], ["na", "see.INF"],
+      ["Mi", "1.SG"], ["tao", "want"], ["(ni)", "C"], ["ma", "1.SG"], ["na", "see.INF"],
       ["bo", "2.SG"]
     ],
     "translation": "I want to see you",
@@ -20,7 +20,8 @@
       ["embeddedSubject", "pronoun"],
       ["control", "subject"]
     ],
-    "comment": "The complementizer is optional."
+    "comment": "The paper prints the complementizer in parentheses, (ni): it is optional.",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_2b",
@@ -43,7 +44,8 @@
       ["control", "subject"],
       ["diagnostic", "nullSubject"]
     ],
-    "comment": "Null PRO in the embedded subject position."
+    "comment": "Null PRO in the embedded subject position. The paper prints the null subject as ø, glossed [PRO], after tao.",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_3a",
@@ -65,7 +67,8 @@
       ["embeddedSubject", "pronoun"],
       ["control", "subject"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_3b",
@@ -88,7 +91,8 @@
       ["control", "subject"],
       ["diagnostic", "nullSubject"]
     ],
-    "comment": ""
+    "comment": "The paper prints the null subject as ø, glossed [PRO], after sumɔ-ɔɔ.",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_16",
@@ -111,23 +115,24 @@
       ["embeddedSubject", "pronoun"],
       ["control", "subject"]
     ],
-    "comment": "The complementizer is obligatory here."
+    "comment": "The complementizer is obligatory here.",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_34",
     "source": {"bibkey": "allotey-2021", "paperLabel": "(34)"},
     "language": "gaaa1244",
-    "primaryText": "Mi-i tao ni ma na bo",
+    "primaryText": "Mi-i tao (ni) ma na bo",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Mi-i", "1.SG-PROG"], ["tao", "want"], ["ni", "C"], ["ma", "1.SG"], ["na", "see.INF"],
-      ["bo", "2.SG"]
+      ["Mi-i", "1.SG-PROG"], ["tao", "want"], ["(ni)", "C"], ["ma", "1.SG"], ["na", "see.INF"],
+      ["bo", "you"]
     ],
     "translation": "I want to see you",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "Mi-i tao ni na bo", "judgment": "ungrammatical"}
+      {"form": "Mi-i tao (ni) na bo", "judgment": "ungrammatical"}
     ],
     "readings": [],
     "paperFeatures": [
@@ -137,7 +142,8 @@
       ["control", "subject"],
       ["irrealisMarker", "present"]
     ],
-    "comment": "The complementizer is optional; the embedded 1.SG is the irrealis portmanteau má."
+    "comment": "The paper prints the complementizer in parentheses, (ni): it is optional. It prints ma /*ø '1.SG/*[PRO]'.",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_35",
@@ -160,7 +166,8 @@
       ["embeddedSubject", "pronoun"],
       ["control", "subject"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_36",
@@ -183,7 +190,8 @@
       ["embeddedSubject", "pronoun"],
       ["control", "subject"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_37",
@@ -195,7 +203,7 @@
       ["O", "2.SG"], ["hiɛ-kpa-nɔ", "face-stop-upon"], ["ni", "C"], ["o", "2.SG"],
       ["kɔ", "take.INF"], ["aspaatere", "shoe"], ["lɛ", "DET"]
     ],
-    "translation": "You forgot to pick up the shoe.",
+    "translation": "You forgot to pick (up) the shoe.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -208,7 +216,8 @@
       ["person", "2"],
       ["number", "singular"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_38",
@@ -233,16 +242,17 @@
       ["person", "2"],
       ["number", "plural"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_39",
     "source": {"bibkey": "allotey-2021", "paperLabel": "(39)"},
     "language": "gaaa1244",
-    "primaryText": "Gbekebii lɛ nye ni amɛ he shia",
+    "primaryText": "Gbekebii lɛ nye (ni) ame he shia",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Gbekebii", "children"], ["lɛ", "DET"], ["nye", "managed"], ["ni", "C"], ["amɛ", "3.PL"],
+      ["Gbekebii", "Children"], ["lɛ", "DET"], ["nye", "managed"], ["(ni)", "C"], ["ame", "3.PL"],
       ["he", "buy.INF"], ["shia", "home"]
     ],
     "translation": "The children managed to buy a home.",
@@ -258,7 +268,8 @@
       ["person", "3"],
       ["number", "plural"]
     ],
-    "comment": "The complementizer is optional."
+    "comment": "The paper prints the complementizer in parentheses, (ni): it is optional. It glosses nye 'manged', a misprint for 'managed'.",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_40",
@@ -267,7 +278,7 @@
     "primaryText": "Dida sumɔ-ɔɔ na bo",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Dida", "Father"], ["sumɔ-ɔɔ", "like-NEG"], ["na", "see.INF"], ["bo", "2.SG"]
+      ["Dida", "Father"], ["sumɔ-ɔɔ", "like-NEG"], ["na", "see.INF"], ["bo", "you"]
     ],
     "translation": "Father is reluctant to see you",
     "context": "",
@@ -280,16 +291,17 @@
       ["embeddedSubject", "null"],
       ["diagnostic", "nullSubject"]
     ],
-    "comment": ""
+    "comment": "The paper prints the null subject as ø, glossed [PRO], after sumɔ-ɔɔ.",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_41",
     "source": {"bibkey": "allotey-2021", "paperLabel": "(41)"},
     "language": "gaaa1244",
-    "primaryText": "Mi-i tao ni na bo",
+    "primaryText": "Mi-i tao (ni) na bo",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Mi-i", "1.SG-PROG"], ["tao", "want"], ["ni", "C"], ["na", "see.INF"], ["bo", "2.SG"]
+      ["Mi-i", "1.SG-PROG"], ["tao", "want"], ["(ni)", "C"], ["na", "see.INF"], ["bo", "you"]
     ],
     "translation": "I want to see you",
     "context": "",
@@ -302,7 +314,8 @@
       ["embeddedSubject", "null"],
       ["diagnostic", "nullSubject"]
     ],
-    "comment": ""
+    "comment": "The paper prints the null subject as ø, glossed [PRO], after (ni).",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_42a",
@@ -317,7 +330,9 @@
     "translation": "Ameele remembered to buy a book",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "alternatives": [
+      {"form": "E kai ni e-he wolo", "judgment": "acceptable"}
+    ],
     "readings": [],
     "paperFeatures": [
       ["verb", "kai"],
@@ -326,7 +341,8 @@
       ["control", "subject"],
       ["diagnostic", "lexicalSubject"]
     ],
-    "comment": "A pronoun or a lexical noun may be the matrix subject."
+    "comment": "A pronoun or a lexical noun may be the matrix subject. The paper prints E /Ameele '3.SG /Ameele' as alternant matrix subjects.",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_42b",
@@ -338,7 +354,7 @@
       ["Ameele", "Ameele"], ["kai", "remember"], ["ni", "C"], ["Ameele-he", "Ameele-buy"],
       ["wolo", "book"]
     ],
-    "translation": "Ameele remembered to buy a book",
+    "translation": "",
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [],
@@ -349,7 +365,8 @@
       ["embeddedSubject", "lexical"],
       ["diagnostic", "lexicalSubject"]
     ],
-    "comment": "Out whether the embedded noun refers to the matrix subject or to a third party."
+    "comment": "Out whether the embedded noun refers to the matrix subject or to a third party.",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_42c",
@@ -361,7 +378,7 @@
       ["E", "3.SG"], ["kai", "remember"], ["ni", "C"], ["Ameele-he", "Ameele-buy"],
       ["wolo", "book"]
     ],
-    "translation": "She remembered for Ameele to buy a book",
+    "translation": "",
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [],
@@ -372,7 +389,8 @@
       ["embeddedSubject", "lexical"],
       ["diagnostic", "lexicalSubject"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_43",
@@ -395,7 +413,8 @@
       ["embeddedSubject", "pronoun"],
       ["control", "subject"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_44",
@@ -418,17 +437,18 @@
       ["embeddedSubject", "pronoun"],
       ["control", "object"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_45a",
     "source": {"bibkey": "allotey-2021", "paperLabel": "(45a)"},
     "language": "gaaa1244",
-    "primaryText": "Jojo gbekɛbii lɛ hiɛkpano ni amɛ sha tsɛnsii lɛ",
+    "primaryText": "Jojo gbekɛbii lɛ hiɛkpano ni ame sha tsɛnsii lɛ",
     "discourseSegments": [],
     "glossedTokens": [
       ["Jojo", "Jojo"], ["gbekɛbii", "children"], ["lɛ", "DET"], ["hiɛkpano", "forgot"],
-      ["ni", "C"], ["amɛ", "3.PL"], ["sha", "wash.INF"], ["tsɛnsii", "utensils"], ["lɛ", "DET"]
+      ["ni", "C"], ["ame", "3.PL"], ["sha", "wash.INF"], ["tsɛnsii", "utensils"], ["lɛ", "DET"]
     ],
     "translation": "Jojo's children forgot to wash the utensils.",
     "context": "",
@@ -445,7 +465,8 @@
       ["number", "plural"],
       ["antecedent", "cCommanding"]
     ],
-    "comment": "The pronoun is coindexed with the whole possessive phrase, not the possessor Jojo."
+    "comment": "The pronoun is coindexed with the whole possessive phrase, not the possessor Jojo.",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_45b",
@@ -471,7 +492,8 @@
       ["number", "singular"],
       ["antecedent", "nonCCommanding"]
     ],
-    "comment": "Singular pronoun coindexed with the possessor Jojo."
+    "comment": "Singular pronoun coindexed with the possessor Jojo. The paper prints e*/ame '3SG/3.PL' in one example.",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_46a",
@@ -483,7 +505,7 @@
       ["Gbekɛbii", "children"], ["lɛ", "DET"], ["papa", "father"], ["kai", "remembered"],
       ["ni", "C"], ["e-he", "3.SG-buy.INF"], ["woji", "books"], ["lɛ", "DET"]
     ],
-    "translation": "The children's father remembered to buy the books.",
+    "translation": "The children's father remembered to buy the book.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -498,19 +520,20 @@
       ["number", "singular"],
       ["antecedent", "cCommanding"]
     ],
-    "comment": ""
+    "comment": "The paper translates 'the book' though it glosses woji 'books'.",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_46b",
     "source": {"bibkey": "allotey-2021", "paperLabel": "(46b)"},
     "language": "gaaa1244",
-    "primaryText": "Gbekɛbii lɛ papa kai ni amɛ-he woji lɛ",
+    "primaryText": "Gbekɛbii lɛ papa kai ni ame-he woji lɛ",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Gbekɛbii", "children"], ["lɛ", "DET"], ["papa", "father"], ["kai", "remembered"],
-      ["ni", "C"], ["amɛ-he", "3.PL-buy.INF"], ["woji", "books"], ["lɛ", "DET"]
+      ["Gbekɛbii", "Children"], ["lɛ", "DET"], ["papa", "father"], ["kai", "remembered"],
+      ["ni", "C"], ["ame-he", "3.PL-buy.INF"], ["woji", "books"], ["lɛ", "DET"]
     ],
-    "translation": "The children's father remembered to buy the books.",
+    "translation": "The children's father remembered to buy the book.",
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [],
@@ -524,7 +547,8 @@
       ["number", "plural"],
       ["antecedent", "nonCCommanding"]
     ],
-    "comment": ""
+    "comment": "The paper prints *ame/e '3.PL/3.SG' in one example. The paper translates 'the book' though it glosses woji 'books'.",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_47",
@@ -534,7 +558,7 @@
     "discourseSegments": [],
     "glossedTokens": [
       ["Jojo", "Jojo"], ["kɛɛ", "said"], ["akɛ", "C"], ["Debo", "Debo"], ["hiekpano", "forgot"],
-      ["ni", "C"], ["e-he", "3.SG-buy.INF"], ["wolo", "book"], ["lɛ", "DET"]
+      ["ni", "C"], ["e-he", "3-buy.INF"], ["wolo", "book"], ["lɛ", "DET"]
     ],
     "translation": "Jojo said that Debo forgot to buy the book.",
     "context": "",
@@ -549,7 +573,8 @@
       ["diagnostic", "longDistance"],
       ["antecedent", "local"]
     ],
-    "comment": "The embedded pronoun refers to Debo, the local subject, not to Jojo."
+    "comment": "The embedded pronoun refers to Debo, the local subject, not to Jojo.",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_48",
@@ -558,7 +583,7 @@
     "primaryText": "Aku kɛɛ akɛ e-tao ni e-ya skul gbi ko",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Aku", "Aku"], ["kɛɛ", "said"], ["akɛ", "C"], ["e-tao", "3.SG-want"], ["ni", "C"],
+      ["Aku", "Aku"], ["kɛɛ", "said"], ["akɛ", "C"], ["e-tao", "3.SG-want.INF"], ["ni", "C"],
       ["e-ya", "3.SG-go.INF"], ["skul", "school"], ["gbi", "day"], ["ko", "certain"]
     ],
     "translation": "Aku said she wants to go to school one day",
@@ -574,7 +599,8 @@
       ["diagnostic", "longDistance"],
       ["antecedent", "local"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_49",
@@ -599,7 +625,8 @@
       ["diagnostic", "longDistance"],
       ["antecedent", "local"]
     ],
-    "comment": "The embedded pronoun must be third person, matching the closest antecedent Debo."
+    "comment": "The embedded pronoun must be third person, matching the closest antecedent Debo.",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_49b",
@@ -607,7 +634,10 @@
     "language": "gaaa1244",
     "primaryText": "Mi kɛɛ akɛ Debo hiekpano ni ma he wolo lɛ",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Mi", "1.SG"], ["kɛɛ", "say"], ["akɛ", "C"], ["Debo", "Debo"], ["hiekpano", "forgot"],
+      ["ni", "C"], ["ma", "1.SG"], ["he", "buy.INF"], ["wolo", "book"], ["lɛ", "DET"]
+    ],
     "translation": "I said that Debo forgot to buy the book",
     "context": "",
     "judgment": "ungrammatical",
@@ -620,7 +650,8 @@
       ["diagnostic", "longDistance"],
       ["antecedent", "longDistance"]
     ],
-    "comment": "The embedded first person cannot take the matrix subject as antecedent."
+    "comment": "The embedded first person cannot take the matrix subject as antecedent. The paper prints e/*ma '3.SG/*1.SG' in one example; the translation is the example's.",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_52",
@@ -629,9 +660,8 @@
     "primaryText": "Mary kplɛ̃no ni e-ya paati lɛ ni Pite hu kplɛ̃no",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Mary", "Mary"], ["kplɛ̃no", "agreed"], ["ni", "C"], ["e-ya", "3.SG-go"],
-      ["paati", "party"], ["lɛ", "DET"], ["ni", "and"], ["Pite", "Pite"], ["hu", "also"],
-      ["kplɛ̃no", "agreed"]
+      ["Mary", "Mary"], ["kplɛ̃no", "agreed"], ["ni", "C"], ["e-ya", "3-go"], ["paati", "party"],
+      ["lɛ", "DET"], ["ni", "and"], ["Pite", "Pite"], ["hu", "also"], ["kplɛ̃no", "agreed"]
     ],
     "translation": "Mary agreed to go to the party and Peter also (agreed to go to the party).",
     "context": "",
@@ -648,7 +678,8 @@
       ["control", "subject"],
       ["diagnostic", "ellipsis"]
     ],
-    "comment": "In the elided clause the pronoun refers to Peter only: sloppy reading."
+    "comment": "In the elided clause the pronoun refers to Peter only: sloppy reading. The paper prints the elided clause struck through: [ni e-ya paati lɛ].",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_53",
@@ -661,7 +692,7 @@
       ["jweremɔ", "prize"], ["lɛ", "DET"]
     ],
     "translation": "Ajele expects to win the prize.",
-    "context": "Ajele Thompson has been nominated for a prize without knowing it. She sees a notice reading 'Ayele Tomson is nominated for the Anisha prize', does not recognize the misspelled name as her own, and comes to believe that Ayele will win.",
+    "context": "Imagine a scenario where Ajele Thompson has been nominated to win a prize but has no knowledge of this. Ajele comes to a notice that reads “Ayele Tomson is nominated for the Anisha prize”. Ajele anticipates that Ayele will win the prize, not knowing that she is the one nominated for the prize, but her name was misspelled. Ajele comes to believe that Ayele will win the prize.",
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
@@ -672,7 +703,8 @@
       ["control", "subject"],
       ["diagnostic", "deSe"]
     ],
-    "comment": "Infelicitous in the context: the attitude holder does not self-ascribe winning."
+    "comment": "Infelicitous in the context: the attitude holder does not self-ascribe winning. The paper translates '#Ajele expects PRO to win the prize'.",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_54",
@@ -681,7 +713,7 @@
     "primaryText": "Mi wa Ama ni e-ya skul",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Mi", "1.SG"], ["wa", "help"], ["Ama", "Ama"], ["ni", "C"], ["e-ya", "3.SG-go.INF"],
+      ["Mi", "1.SG"], ["wa", "help"], ["Ama", "Ama"], ["ni", "C"], ["e-ya", "3.SG.INF-go"],
       ["skul", "school"]
     ],
     "translation": "I helped Ama to go to school.",
@@ -695,7 +727,8 @@
       ["embeddedSubject", "pronoun"],
       ["control", "object"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_55",
@@ -707,7 +740,7 @@
       ["Mi", "1.SG"], ["kenya", "urge.PST"], ["Kofi", "Kofi"], ["ni", "C"],
       ["e-saa", "3.SG-tidy.INF"], ["shiã", "house"], ["lɛ", "DET"]
     ],
-    "translation": "I urged Kofi to clean the house.",
+    "translation": "I urged/encouraged Kofi to clean the house.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -718,7 +751,8 @@
       ["embeddedSubject", "pronoun"],
       ["control", "object"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_56",
@@ -741,7 +775,8 @@
       ["embeddedSubject", "pronoun"],
       ["control", "object"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_57",
@@ -751,9 +786,9 @@
     "discourseSegments": [],
     "glossedTokens": [
       ["Mi", "1.SG"], ["laka", "persuaded"], ["Kojo", "Kojo"], ["ni", "C"],
-      ["e-kpa", "3.SG-stop.INF"], ["akpeteshi", "alcohol"], ["nu-mɔ", "drink-NMLZ"]
+      ["e-kpa", "3.SG-stop.INF"], ["akpeteshi", "alcohol"], ["nu-mɔ", "drink-NML"]
     ],
-    "translation": "I persuaded Kojo to stop drinking alcohol.",
+    "translation": "I persuaded Kojo to stop drinking (alcohol).",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -764,7 +799,8 @@
       ["embeddedSubject", "pronoun"],
       ["control", "object"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_58",
@@ -776,7 +812,7 @@
       ["Mi", "1.SG"], ["laka", "coaxed"], ["Aku", "Aku"], ["ni", "C"], ["e-ja", "3.SG-share.INF"],
       ["e-sikilitei", "3.SG.POSS-sweets"], ["lɛ", "DET"]
     ],
-    "translation": "I coaxed Aku to share her sweets",
+    "translation": "I coaxed Aku into sharing her sweets/I coaxed Aku to share her sweets",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -787,7 +823,8 @@
       ["embeddedSubject", "pronoun"],
       ["control", "object"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_59",
@@ -796,8 +833,8 @@
     "primaryText": "Mi bi Ayele ni e-ta mi adesa",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Mi", "1.SG"], ["bi", "asked"], ["Ayele", "Ayele"], ["ni", "C"], ["e-ta", "3.SG-tell.INF"],
-      ["mi", "me"], ["adesa", "story"]
+      ["Mi", "1.SG"], ["bi", "asked"], ["Ayele", "Ayele"], ["ni", "C"], ["e-ta", "3.SG.INF-tell"],
+      ["mi", "me"], ["adesa", "a.story"]
     ],
     "translation": "I asked Ayele to tell me a story.",
     "context": "",
@@ -810,7 +847,8 @@
       ["embeddedSubject", "pronoun"],
       ["control", "object"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_64",
@@ -833,7 +871,8 @@
       ["embeddedSubject", "lexical"],
       ["diagnostic", "lexicalSubject"]
     ],
-    "comment": "The Movement Theory of Control would pronounce a lexical copy here."
+    "comment": "The Movement Theory of Control would pronounce a lexical copy here. The paper glosses the embedded Ameele '3.SG', a slip from (42a).",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_74",
@@ -854,7 +893,8 @@
       ["number", "singular"],
       ["form", "clipped"]
     ],
-    "comment": "Past-tense clipped variant of mi."
+    "comment": "Past-tense clipped variant of mi.",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_78",
@@ -876,7 +916,8 @@
       ["irrealisMarker", "present"],
       ["clauseContext", "future"]
     ],
-    "comment": "The irrealis marker merged with the first-person pronoun."
+    "comment": "The irrealis marker merged with the first-person pronoun.",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_79",
@@ -899,7 +940,8 @@
       ["number", "singular"],
       ["diagnostic", "agreement"]
     ],
-    "comment": "The verb is invariant across subjects: no subject agreement on the verb."
+    "comment": "The verb is invariant across subjects: no subject agreement on the verb.",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_80",
@@ -922,7 +964,8 @@
       ["number", "singular"],
       ["diagnostic", "agreement"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_81",
@@ -933,7 +976,7 @@
     "glossedTokens": [
       ["E", "3.SG"], ["tee", "went"], ["skul", "school"], ["mra", "early"]
     ],
-    "translation": "She went to school early",
+    "translation": "They went to school early",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
@@ -945,7 +988,8 @@
       ["number", "singular"],
       ["diagnostic", "agreement"]
     ],
-    "comment": ""
+    "comment": "The paper prints E/Amɛ '3.SG/3PL' with one translation, 'They went to school early'.",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_85",
@@ -954,7 +998,7 @@
     "primaryText": "Hejɔlɛ á-hã́ nyɛ",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Hejɔlɛ", "peace"], ["á-hã́", "IRR-give.SBJV"], ["nyɛ", "2.PL"]
+      ["Hejɔlɛ", "Peace"], ["á-hã́", "IRR-give.SBJV"], ["nyɛ", "2.PL"]
     ],
     "translation": "Peace be unto you",
     "context": "",
@@ -967,7 +1011,8 @@
       ["verbTone", "high"],
       ["irrealisVowel", "present"]
     ],
-    "comment": "Lexical subject: the irrealis marker is a prefix on the verb plus a high tone on the verb."
+    "comment": "Lexical subject: the irrealis marker is a prefix on the verb plus a high tone on the verb.",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_86",
@@ -978,7 +1023,7 @@
     "glossedTokens": [
       ["É", "3.SG.IRR"], ["shí", "leave.SBJV"], ["biɛ", "here"]
     ],
-    "translation": "He ought to leave",
+    "translation": "He ought to/needs to /should leave",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -989,7 +1034,8 @@
       ["verbTone", "high"],
       ["irrealisVowel", "present"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_87",
@@ -998,7 +1044,7 @@
     "primaryText": "Amɛ́ bi lɛ",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Amɛ́", "3.PL.SBJV"], ["bi", "ask"], ["lɛ", "her"]
+      ["Amɛ́", "3.PL.SBJV"], ["bi", "ask.SBJV/*#PST"], ["lɛ", "her"]
     ],
     "translation": "They should ask her",
     "context": "",
@@ -1010,7 +1056,8 @@
       ["subjectTone", "high"],
       ["verbTone", "low"]
     ],
-    "comment": "High tone on the pronoun without the high tone on the verb: neither the subjunctive nor a past reading survives."
+    "comment": "High tone on the pronoun without the high tone on the verb: neither the subjunctive nor a past reading survives.",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_88",
@@ -1019,7 +1066,7 @@
     "primaryText": "Mi-i tao má na bo",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Mi-i", "1.SG-PROG"], ["tao", "want"], ["má", "1.SG.IRR"], ["na", "see"], ["bo", "2.SG"]
+      ["Mi-i", "1.SG-PROG"], ["tao", "want"], ["má", "1.SG.SBJV"], ["na", "see"], ["bo", "you"]
     ],
     "translation": "I want to see you.",
     "context": "",
@@ -1036,7 +1083,8 @@
       ["diagnostic", "tone"],
       ["clauseContext", "control"]
     ],
-    "comment": "A high tone on the embedded bare verb, as in a true subjunctive, is ungrammatical."
+    "comment": "A high tone on the embedded bare verb, as in a true subjunctive, is ungrammatical.",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_88b",
@@ -1044,7 +1092,9 @@
     "language": "gaaa1244",
     "primaryText": "Mi-i tao má ná bo",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Mi-i", "1.SG-PROG"], ["tao", "want"], ["má", "1.SG.SBJV"], ["ná", "see"], ["bo", "you"]
+    ],
     "translation": "I want to see you.",
     "context": "",
     "judgment": "ungrammatical",
@@ -1060,7 +1110,8 @@
       ["diagnostic", "tone"],
       ["clauseContext", "control"]
     ],
-    "comment": "A high tone on the embedded verb, as in a true subjunctive."
+    "comment": "A high tone on the embedded verb, as in a true subjunctive. The paper prints na/*ná in one example.",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_89a",
@@ -1085,7 +1136,8 @@
       ["irrealisMarker", "absent"],
       ["diagnostic", "implicative"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_89b",
@@ -1110,7 +1162,8 @@
       ["irrealisMarker", "absent"],
       ["diagnostic", "implicative"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_89c",
@@ -1136,7 +1189,8 @@
       ["diagnostic", "implicative"],
       ["control", "subject"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_89d",
@@ -1162,7 +1216,8 @@
       ["diagnostic", "implicative"],
       ["control", "subject"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_92",
@@ -1190,7 +1245,8 @@
       ["irrealisMarker", "present"],
       ["diagnostic", "obviation"]
     ],
-    "comment": "The embedded pronoun must be coreferential with Aku: no obviation, unlike a subjunctive."
+    "comment": "The embedded pronoun must be coreferential with Aku: no obviation, unlike a subjunctive.",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_93",
@@ -1199,7 +1255,7 @@
     "primaryText": "Yà-á shia",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Yà-á", "go-IRR"], ["shia", "home"]
+      ["Yà-á", "Go-IRR"], ["shia", "home"]
     ],
     "translation": "Go home!",
     "context": "",
@@ -1212,7 +1268,8 @@
       ["verbTone", "high"],
       ["irrealisVowel", "present"]
     ],
-    "comment": "The reduplicated final vowel carries the irrealis high tone."
+    "comment": "The reduplicated final vowel carries the irrealis high tone.",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_94",
@@ -1221,7 +1278,7 @@
     "primaryText": "Wɔ́ yá",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Wɔ́", "1.PL.IRR"], ["yá", "go.IRR"]
+      ["Wɔ́", "1.PL"], ["yá", "go"]
     ],
     "translation": "Let's go!",
     "context": "",
@@ -1234,7 +1291,8 @@
       ["verbTone", "high"],
       ["irrealisVowel", "present"]
     ],
-    "comment": "Without the high tone on both pronoun and verb the imperative reading is lost."
+    "comment": "Without the high tone on both pronoun and verb the imperative reading is lost. The paper prints Wɔ́ yá! with the gloss '1.PL go!'.",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_95",
@@ -1243,7 +1301,7 @@
     "primaryText": "Má ya shiã mra ŋmɛnɛ",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Má", "1.SG.IRR"], ["ya", "go"], ["shiã", "home"], ["mra", "early"], ["ŋmɛnɛ", "today"]
+      ["Má", "1.IRR"], ["ya", "go"], ["shiã", "home"], ["mra", "early"], ["ŋmɛnɛ", "today"]
     ],
     "translation": "I will go home early today",
     "context": "",
@@ -1255,7 +1313,8 @@
       ["person", "1"],
       ["number", "singular"]
     ],
-    "comment": "The portmanteau future is permitted with the first-person pronoun only."
+    "comment": "The portmanteau future is permitted with the first-person pronoun only.",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_96",
@@ -1277,7 +1336,8 @@
       ["verbTone", "low"],
       ["irrealisVowel", "present"]
     ],
-    "comment": "The irrealis marker is realized only inside the future prefix."
+    "comment": "The irrealis marker is realized only inside the future prefix.",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_96b",
@@ -1285,7 +1345,9 @@
     "language": "gaaa1244",
     "primaryText": "É bàá-sla wɔ wɔ́",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["É", "3.SG.IRR"], ["bàá-sla", "FUT-visit"], ["wɔ", "us"], ["wɔ́", "tomorrow"]
+    ],
     "translation": "She will visit us tomorrow",
     "context": "",
     "judgment": "ungrammatical",
@@ -1297,7 +1359,8 @@
       ["verbTone", "low"],
       ["irrealisVowel", "present"]
     ],
-    "comment": "A high tone on the future subject."
+    "comment": "A high tone on the future subject. The paper prints E/*É '3.SG/*3.SG.IRR' in one example.",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_97a",
@@ -1320,7 +1383,8 @@
       ["verbTone", "low"],
       ["irrealisVowel", "present"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_97b",
@@ -1329,7 +1393,7 @@
     "primaryText": "Kɛ mi ye lɛ má jo",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Kɛ", "COND"], ["mi", "1.SG"], ["ye", "win"], ["lɛ", "DET"], ["má", "1.SG.IRR"],
+      ["Kɛ", "COND."], ["mi", "1.SG"], ["ye", "win"], ["lɛ", "DET"], ["má", "1.IRR"],
       ["jo", "dance"]
     ],
     "translation": "If I win, I will dance",
@@ -1345,17 +1409,18 @@
       ["verbTone", "low"],
       ["irrealisVowel", "present"]
     ],
-    "comment": ""
+    "comment": "The paper prints má/mi- bàá '1.IRR/1-FUT' in one example.",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_100",
     "source": {"bibkey": "allotey-2021", "paperLabel": "(100)"},
     "language": "gaaa1244",
-    "primaryText": "Mi-i tao ni má na bo",
+    "primaryText": "Mi-i tao (ni) má na bo",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Mi-i", "1.SG-PROG"], ["tao", "want"], ["ni", "C"], ["má", "1.SG.IRR"], ["na", "see.INF"],
-      ["bo", "2.SG"]
+      ["Mi-i", "1.SG-PROG"], ["tao", "want"], ["(ni)", "C"], ["má", "1.IRR"], ["na", "see.INF"],
+      ["bo", "you"]
     ],
     "translation": "I want to see you",
     "context": "",
@@ -1373,17 +1438,18 @@
       ["verbTone", "low"],
       ["irrealisVowel", "absent"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_101",
     "source": {"bibkey": "allotey-2021", "paperLabel": "(101)"},
     "language": "gaaa1244",
-    "primaryText": "Mi-i tao ni mi baa-na bo",
+    "primaryText": "Mi-i tao (ni) mi baa-na bo",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Mi-i", "1.SG-PROG"], ["tao", "want"], ["ni", "C"], ["mi", "1.SG"], ["baa-na", "FUT-see"],
-      ["bo", "2.SG"]
+      ["Mi-i", "1.SG-PROG"], ["tao", "want"], ["(ni)", "C"], ["mi", "1.SG"], ["baa-na", "FUT-see"],
+      ["bo", "you"]
     ],
     "translation": "I want to see you",
     "context": "",
@@ -1397,7 +1463,8 @@
       ["embeddedTAM", "future"],
       ["diagnostic", "tense"]
     ],
-    "comment": "Future tense cannot be encoded in the embedded control clause."
+    "comment": "Future tense cannot be encoded in the embedded control clause. The paper stars baa-na inside the example.",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_102",
@@ -1409,7 +1476,7 @@
       ["O", "2.SG"], ["hiɛ-kpa-nɔ", "face-stop-upon"], ["ni", "C"], ["ó", "2.IRR"],
       ["kɔ", "take.INF"], ["aspaatere", "shoe"], ["lɛ", "DET"]
     ],
-    "translation": "You forgot to pick up the shoe.",
+    "translation": "You forgot to pick (up) the shoe.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
@@ -1427,7 +1494,8 @@
       ["verbTone", "low"],
       ["irrealisVowel", "absent"]
     ],
-    "comment": ""
+    "comment": "The paper prints (*baa-)kɔ in one example.",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_103",
@@ -1457,17 +1525,18 @@
       ["verbTone", "low"],
       ["irrealisVowel", "absent"]
     ],
-    "comment": ""
+    "comment": "The paper translates 'You forgot to close the door', a slip for 'She' beside È '3.SG'; it prints (*baa-)ŋa in one example.",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_104",
     "source": {"bibkey": "allotey-2021", "paperLabel": "(104)"},
     "language": "gaaa1244",
-    "primaryText": "Mi tao ni mà le kɛji amɛ bàá-ba a-lo",
+    "primaryText": "Mi tao (ni) mà le kɛji amɛ bàá-ba a-lo",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Mi", "1.SG"], ["tao", "want"], ["ni", "C"], ["mà", "1.SG.IRR"], ["le", "know"],
-      ["kɛji", "COND"], ["amɛ", "3.PL"], ["bàá-ba", "FUT-come"], ["a-lo", "IMP-not"]
+      ["Mi", "1.SG"], ["tao", "want"], ["(ni)", "C"], ["mà", "1.IRR"], ["le", "know"],
+      ["kɛji", "COND."], ["amɛ", "3.PL"], ["bàá-ba", "FUT-come"], ["a-lo", "IMP-not"]
     ],
     "translation": "I want to know if they will be coming or not.",
     "context": "",
@@ -1479,15 +1548,19 @@
       ["complementizer", "keji"],
       ["diagnostic", "cSelection"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_104b",
     "source": {"bibkey": "allotey-2021", "paperLabel": "(104)"},
     "language": "gaaa1244",
-    "primaryText": "Mi tao ni mà le akɛ amɛ bàá-ba a-lo",
+    "primaryText": "Mi tao (ni) mà le akɛ amɛ bàá-ba a-lo",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Mi", "1.SG"], ["tao", "want"], ["(ni)", "C"], ["mà", "1.IRR"], ["le", "know"],
+      ["akɛ", "C"], ["amɛ", "3.PL"], ["bàá-ba", "FUT-come"], ["a-lo", "IMP-not"]
+    ],
     "translation": "I want to know if they will be coming or not.",
     "context": "",
     "judgment": "unacceptable",
@@ -1498,15 +1571,19 @@
       ["complementizer", "ake"],
       ["diagnostic", "cSelection"]
     ],
-    "comment": "akɛ is used by beginners; not felicitous."
+    "comment": "akɛ is used by beginners; not felicitous. The paper prints kɛji/#akɛ/*ni 'COND./C/C' in one example.",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_104c",
     "source": {"bibkey": "allotey-2021", "paperLabel": "(104)"},
     "language": "gaaa1244",
-    "primaryText": "Mi tao ni mà le ni amɛ bàá-ba a-lo",
+    "primaryText": "Mi tao (ni) mà le ni amɛ bàá-ba a-lo",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Mi", "1.SG"], ["tao", "want"], ["(ni)", "C"], ["mà", "1.IRR"], ["le", "know"], ["ni", "C"],
+      ["amɛ", "3.PL"], ["bàá-ba", "FUT-come"], ["a-lo", "IMP-not"]
+    ],
     "translation": "I want to know if they will be coming or not.",
     "context": "",
     "judgment": "ungrammatical",
@@ -1517,7 +1594,8 @@
       ["complementizer", "ni"],
       ["diagnostic", "cSelection"]
     ],
-    "comment": ""
+    "comment": "The paper prints kɛji/#akɛ/*ni 'COND./C/C' in one example.",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_105",
@@ -1541,7 +1619,8 @@
       ["clauseContext", "subjunctive"],
       ["diagnostic", "cSelection"]
     ],
-    "comment": "A true subjunctive complement with a lexical subject; ni or akɛ introduces it."
+    "comment": "A true subjunctive complement with a lexical subject; ni or akɛ introduces it.",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_105b",
@@ -1549,7 +1628,10 @@
     "language": "gaaa1244",
     "primaryText": "Osa kplɛnɔ akɛ Taki á-tsɛ́ Momo",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Osa", "Osa"], ["kplɛnɔ", "agreed"], ["akɛ", "C"], ["Taki", "Taki"],
+      ["á-tsɛ́", "IRR-call.SBJV"], ["Momo", "Momo"]
+    ],
     "translation": "Osa agreed that Taki should call Momo",
     "context": "",
     "judgment": "acceptable",
@@ -1562,7 +1644,8 @@
       ["clauseContext", "subjunctive"],
       ["diagnostic", "cSelection"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_105c",
@@ -1570,7 +1653,10 @@
     "language": "gaaa1244",
     "primaryText": "Osa kplɛnɔ kɛji Taki á-tsɛ́ Momo",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Osa", "Osa"], ["kplɛnɔ", "agreed"], ["kɛji", "COND"], ["Taki", "Taki"],
+      ["á-tsɛ́", "IRR-call.SBJV"], ["Momo", "Momo"]
+    ],
     "translation": "Osa agreed that Taki should call Momo",
     "context": "",
     "judgment": "ungrammatical",
@@ -1583,7 +1669,8 @@
       ["clauseContext", "subjunctive"],
       ["diagnostic", "cSelection"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_106",
@@ -1608,7 +1695,8 @@
       ["irrealisMarker", "present"],
       ["diagnostic", "cSelection"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_106b",
@@ -1616,7 +1704,10 @@
     "language": "gaaa1244",
     "primaryText": "Osa kpaŋ akɛ é-tsɛ Momo",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Osa", "Osa"], ["kpaŋ", "decided"], ["akɛ", "C"], ["é-tsɛ", "3.IRR-call.INF"],
+      ["Momo", "Momo"]
+    ],
     "translation": "Osa decided to call Momo",
     "context": "",
     "judgment": "ungrammatical",
@@ -1628,7 +1719,8 @@
       ["embeddedSubject", "pronoun"],
       ["diagnostic", "cSelection"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_106c",
@@ -1636,7 +1728,10 @@
     "language": "gaaa1244",
     "primaryText": "Osa kpaŋ kɛji é-tsɛ Momo",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Osa", "Osa"], ["kpaŋ", "decided"], ["kɛji", "COND"], ["é-tsɛ", "3.IRR-call.INF"],
+      ["Momo", "Momo"]
+    ],
     "translation": "Osa decided to call Momo",
     "context": "",
     "judgment": "ungrammatical",
@@ -1648,7 +1743,8 @@
       ["embeddedSubject", "pronoun"],
       ["diagnostic", "cSelection"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_107",
@@ -1672,7 +1768,8 @@
       ["complementizer", "ake"],
       ["diagnostic", "focus"]
     ],
-    "comment": "Focus fronting inside an akɛ-clause; ungrammatical under ni."
+    "comment": "Focus fronting inside an akɛ-clause; ungrammatical under ni.",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_108",
@@ -1696,7 +1793,8 @@
       ["complementizer", "keji"],
       ["diagnostic", "focus"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_109",
@@ -1725,7 +1823,8 @@
       ["embeddedTAM", "none"],
       ["diagnostic", "tense"]
     ],
-    "comment": "A future reading without overt future marking; overt future or past marking is out."
+    "comment": "A future reading without overt future marking; overt future or past marking is out.",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_110",
@@ -1754,7 +1853,8 @@
       ["verbTone", "low"],
       ["diagnostic", "tone"]
     ],
-    "comment": "Free reference of the low-tone embedded subject."
+    "comment": "Free reference of the low-tone embedded subject.",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_111",
@@ -1769,7 +1869,9 @@
     "translation": "Aku thought they will buy the book",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "alternatives": [
+      {"form": "Aku dwɛŋ ni amɛ̀ baa-hè wolo", "judgment": "acceptable"}
+    ],
     "readings": [
       {"name": "free", "judgment": "acceptable"}
     ],
@@ -1781,7 +1883,8 @@
       ["embeddedTAM", "future"],
       ["diagnostic", "tone"]
     ],
-    "comment": ""
+    "comment": "The paper prints akɛ/ni unmarked, though it argues that ni-clauses take no overt tense.",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_112",
@@ -1790,7 +1893,7 @@
     "primaryText": "Aku dwɛŋ ni é hè wolo",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Aku", "Aku"], ["dwɛŋ", "think"], ["ni", "C"], ["é", "3.IRR"], ["hè", "buy"],
+      ["Aku", "Aku"], ["dwɛŋ", "think"], ["ni", "C"], ["é", "3.SG"], ["hè", "buy"],
       ["wolo", "book"]
     ],
     "translation": "Aku thought to buy a book",
@@ -1813,7 +1916,8 @@
       ["subjectTone", "high"],
       ["diagnostic", "tone"]
     ],
-    "comment": "The high-tone subject must be anaphoric to Aku."
+    "comment": "The high-tone subject must be anaphoric to Aku. The paper prints ni/(*akɛ) and é/(*amɛ̀) '3.SG/3PL' in one example.",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_114b",
@@ -1833,7 +1937,8 @@
       ["diagnostic", "npi"],
       ["negation", "local"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_115a",
@@ -1856,7 +1961,8 @@
       ["diagnostic", "npi"],
       ["negation", "embedded"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_115b",
@@ -1879,7 +1985,8 @@
       ["diagnostic", "npi"],
       ["negation", "embedded"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_116a",
@@ -1902,7 +2009,8 @@
       ["diagnostic", "npi"],
       ["negation", "matrix"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_116b",
@@ -1925,7 +2033,8 @@
       ["diagnostic", "npi"],
       ["negation", "matrix"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_117a",
@@ -1951,7 +2060,8 @@
       ["diagnostic", "npi"],
       ["negation", "matrix"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_117b",
@@ -1977,7 +2087,8 @@
       ["diagnostic", "npi"],
       ["negation", "matrix"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_118",
@@ -1986,7 +2097,7 @@
     "primaryText": "Aku tao ni é na bo",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Aku", "Aku"], ["tao", "want"], ["ni", "C"], ["é", "3.IRR"], ["na", "see"], ["bo", "2.SG"]
+      ["Aku", "Aku"], ["tao", "want"], ["ni", "C"], ["é", "3.IRR"], ["na", "see"], ["bo", "you"]
     ],
     "translation": "Aku wanted to see you",
     "context": "",
@@ -2004,7 +2115,8 @@
       ["subjectTone", "high"],
       ["diagnostic", "tense"]
     ],
-    "comment": "A low-tone embedded pronoun and verb, the past-tense shape, is ungrammatical."
+    "comment": "A low-tone embedded pronoun and verb, the past-tense shape, is ungrammatical. The paper prints é/*è '3.IRR/3' in one example.",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_119a",
@@ -2014,7 +2126,7 @@
     "discourseSegments": [],
     "glossedTokens": [
       ["Aku", "Aku"], ["mii-tao", "PROG-want"], ["ni", "C"], ["é", "3.IRR"], ["na", "see"],
-      ["bo", "2.SG"]
+      ["bo", "you"]
     ],
     "translation": "Aku wants to see you",
     "context": "",
@@ -2032,7 +2144,8 @@
       ["embeddedTAM", "none"],
       ["diagnostic", "tense"]
     ],
-    "comment": ""
+    "comment": "The paper prints (*mii-)na 'PROG-see' in one example.",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_119b",
@@ -2042,7 +2155,7 @@
     "discourseSegments": [],
     "glossedTokens": [
       ["Aku", "Aku"], ["baa-tao", "FUT-want"], ["ni", "C"], ["é", "3.IRR"], ["na", "see"],
-      ["bo", "2.SG"]
+      ["bo", "you"]
     ],
     "translation": "Aku will want to see you",
     "context": "",
@@ -2060,7 +2173,8 @@
       ["embeddedTAM", "none"],
       ["diagnostic", "tense"]
     ],
-    "comment": ""
+    "comment": "The paper prints (*baa-)na 'FUT-see' in one example.",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_121a",
@@ -2081,7 +2195,8 @@
       ["clauseType", "finite"],
       ["negationPosition", "postverbal"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_121b",
@@ -2102,7 +2217,8 @@
       ["clauseType", "finite"],
       ["negationPosition", "postverbal"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_121c",
@@ -2123,7 +2239,8 @@
       ["clauseType", "finite"],
       ["negationPosition", "postverbal"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_122a",
@@ -2135,7 +2252,7 @@
       ["Jojo", "Jojo"], ["kplɛnɔ", "agreed"], ["ni", "C"], ["é", "3.IRR"], ["ka", "NEG"],
       ["he", "buy"], ["wolo", "book"], ["lɛ", "DET"]
     ],
-    "translation": "Jojo agreed not to buy the book",
+    "translation": "Jojo agreed not to buy the book / to not buy the book",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
@@ -2152,7 +2269,8 @@
       ["clauseType", "control"],
       ["negationPosition", "preverbal"]
     ],
-    "comment": ""
+    "comment": "The paper translates 'John agreed…', a slip for Jojo; it prints he-(*ka) in one example.",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_122b",
@@ -2162,7 +2280,7 @@
     "discourseSegments": [],
     "glossedTokens": [
       ["Aku", "Aku"], ["tao", "want"], ["ni", "C"], ["é", "3.IRR"], ["ka", "NEG"], ["na", "see"],
-      ["bo", "2.SG"]
+      ["bo", "you"]
     ],
     "translation": "Aku wanted to not see you",
     "context": "",
@@ -2181,7 +2299,8 @@
       ["clauseType", "control"],
       ["negationPosition", "preverbal"]
     ],
-    "comment": ""
+    "comment": "The paper prints na-(*ka) in one example.",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_123a",
@@ -2202,7 +2321,8 @@
     "paperFeatures": [
       ["diagnostic", "agreement"]
     ],
-    "comment": "A subject pronoun cannot double a lexical subject: it is not an agreement marker."
+    "comment": "A subject pronoun cannot double a lexical subject: it is not an agreement marker. The paper prints (*e) '(3.SG)' in one example.",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_123b",
@@ -2223,7 +2343,8 @@
     "paperFeatures": [
       ["diagnostic", "agreement"]
     ],
-    "comment": ""
+    "comment": "The paper prints (*e) '(3.SG)' in one example.",
+    "verified": "page-image"
   },
   {
     "id": "allotey2021_124",
@@ -2244,6 +2365,7 @@
       ["clauseType", "finite"],
       ["negationPosition", "postverbal"]
     ],
-    "comment": ""
+    "comment": "The paper translates 'John did not buy the book', a slip for Jojo.",
+    "verified": "page-image"
   }
 ]
