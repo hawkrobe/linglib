@@ -220,7 +220,7 @@
     "primaryText": "This girl is my sister Susan. #That other girl is my sister Susan too.",
     "discourseSegments": [
       "This girl is my sister Susan.",
-      "#That other girl is my sister Susan too."
+      "That other girl is my sister Susan too."
     ],
     "glossedTokens": [],
     "translation": "",
@@ -264,7 +264,7 @@
     "primaryText": "John wrote this book. #Peter wrote this book too.",
     "discourseSegments": [
       "John wrote this book.",
-      "#Peter wrote this book too."
+      "Peter wrote this book too."
     ],
     "glossedTokens": [],
     "translation": "",

@@ -508,7 +508,7 @@
     "source": {"bibkey": "coon-2019", "paperLabel": "(31)"},
     "language": "chuj1250",
     "primaryText": "Ix-in-man-w-i onh. Yaxto anh.",
-    "discourseSegments": ["Ix-in-man-w-i onh.", "#Yaxto anh."],
+    "discourseSegments": ["Ix-in-man-w-i onh.", "Yaxto anh."],
     "glossedTokens": [
       ["Ix-in-man-w-i", "PFV-B1S-buy-AG-IV"],
       ["onh", "avocado"],

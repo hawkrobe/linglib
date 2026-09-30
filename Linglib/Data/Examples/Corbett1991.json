@@ -1082,7 +1082,7 @@
       "It sails again on Friday."
     ],
     "glossedTokens": [],
-    "translation": "The Canberra, which has just docked, is a fine ship. It sails again on Friday.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -1117,7 +1117,7 @@
       "She's a fine ship."
     ],
     "glossedTokens": [],
-    "translation": "I sailed on the Canberra. She's a fine ship.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -1149,7 +1149,7 @@
     "primaryText": "The Canberra, who is a fine ship...",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "The Canberra, who is a fine ship...",
+    "translation": "",
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [],

@@ -10,7 +10,7 @@
       "B: Bo?"
     ],
     "glossedTokens": [],
-    "translation": "A: Who does Bo admire? B: Bo?",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -35,7 +35,7 @@
       "A: Bo?"
     ],
     "glossedTokens": [],
-    "translation": "A: Who does Bo admire? Bo?",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -59,7 +59,7 @@
       "A: Why?"
     ],
     "glossedTokens": [],
-    "translation": "A: Which members of this audience own a parakeet? Why?",
+    "translation": "",
     "context": "A keeps the turn.",
     "judgment": "acceptable",
     "alternatives": [],
@@ -83,7 +83,7 @@
       "B: Why?"
     ],
     "glossedTokens": [],
-    "translation": "A: Which members of this audience own a parakeet? B: Why?",
+    "translation": "",
     "context": "B takes the turn.",
     "judgment": "acceptable",
     "alternatives": [],
@@ -107,7 +107,7 @@
       "A: Why am I asking this question?"
     ],
     "glossedTokens": [],
-    "translation": "A: Which members of this audience own a parakeet? Why am I asking this question?",
+    "translation": "",
     "context": "A keeps the turn.",
     "judgment": "acceptable",
     "alternatives": [],
@@ -132,7 +132,7 @@
       "B: Mike (is coming) too."
     ],
     "glossedTokens": [],
-    "translation": "A: Hi. B: Hi. A: Who's coming tomorrow? B: Several colleagues of mine (are coming). A: I see. B: Mike (is coming) too.",
+    "translation": "",
     "context": "Taking place conversation-initially.",
     "judgment": "acceptable",
     "alternatives": [],
@@ -154,7 +154,7 @@
       "A: OK."
     ],
     "glossedTokens": [],
-    "translation": "A: Who should we invite for tomorrow? B: Who will agree to come? A: Helen and Jelle and Fran and maybe Sunil. B: (a) I see. (b) So, Jelle I think. A: OK.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -173,7 +173,7 @@
       "B: Yes."
     ],
     "glossedTokens": [],
-    "translation": "A: (a) Bo is now in Essen, (b) is he? B: Yes.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -194,7 +194,7 @@
       "B: Tomorrow or the day after most likely."
     ],
     "glossedTokens": [],
-    "translation": "A: (1a) Who will Max be inviting? (1b) When will these guests be arriving? B: Mary and Bill. A: Aha. B: Tomorrow or the day after most likely.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -215,7 +215,7 @@
       "B: Bye."
     ],
     "glossedTokens": [],
-    "translation": "A: Hi. B: I'm off. A: OK. B: Bye.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -238,7 +238,7 @@
       "B: Ah, no."
     ],
     "glossedTokens": [],
-    "translation": "A: Is George here? B: Is WHO here? A: George Sand. B: Ah, no.",
+    "translation": "",
     "context": "B is unsure about the intended reference of 'George'.",
     "judgment": "acceptable",
     "alternatives": [],
@@ -260,7 +260,7 @@
       "A: Your cousin."
     ],
     "glossedTokens": [],
-    "translation": "A: Did Bo leave? B: Bo? A: Your cousin.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],

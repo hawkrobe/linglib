@@ -5,7 +5,7 @@
     "language": "stan1293",
     "primaryText": "Ayka wondered, “Polina likes her job?”",
     "glossedTokens": [],
-    "translation": "Ayka wondered, “Polina likes her job?”",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -23,7 +23,7 @@
     "language": "stan1293",
     "primaryText": "Ayka claimed, “Polina likes her job?”",
     "glossedTokens": [],
-    "translation": "Ayka claimed, “Polina likes her job?”",
+    "translation": "",
     "context": "",
     "judgment": "unacceptable",
     "paperFeatures": [
@@ -41,7 +41,7 @@
     "language": "stan1293",
     "primaryText": "Ayka whispered, “Polina likes her job?”",
     "glossedTokens": [],
-    "translation": "Ayka whispered, “Polina likes her job?”",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -59,7 +59,7 @@
     "language": "stan1293",
     "primaryText": "Ayka shouted, “Does Polina like her job?”",
     "glossedTokens": [],
-    "translation": "Ayka shouted, “Does Polina like her job?”",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -77,7 +77,7 @@
     "language": "stan1293",
     "primaryText": "Then Polina asked me, “Are you married?”",
     "glossedTokens": [],
-    "translation": "Then Polina asked me, “Are you married?”",
+    "translation": "",
     "context": "Ayka is talking to Bertrand about a conversation she had with Polina.",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -95,7 +95,7 @@
     "language": "stan1293",
     "primaryText": "Ayka said, “Polina likes her job.”",
     "glossedTokens": [],
-    "translation": "Ayka said, “Polina likes her job.”",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -113,7 +113,7 @@
     "language": "stan1293",
     "primaryText": "I asked Ayka how she felt about the faculty meeting, and she said, *emits guttural howl of frustration*",
     "glossedTokens": [],
-    "translation": "I asked Ayka how she felt about the faculty meeting, and she said, *emits guttural howl of frustration*",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -129,7 +129,7 @@
     "language": "stan1293",
     "primaryText": "Ayka said, *performs enthusiastic karate gestures*",
     "glossedTokens": [],
-    "translation": "Ayka said, *performs enthusiastic karate gestures*",
+    "translation": "",
     "context": "",
     "judgment": "unacceptable",
     "paperFeatures": [
@@ -145,7 +145,7 @@
     "language": "stan1293",
     "primaryText": "Ayka said, “Does Polina like her job?”",
     "glossedTokens": [],
-    "translation": "Ayka said, “Does Polina like her job?”",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -163,7 +163,7 @@
     "language": "stan1293",
     "primaryText": "I asked Ayka for the wifi password, and she said, “x231&$8o.”",
     "glossedTokens": [],
-    "translation": "I asked Ayka for the wifi password, and she said, “x231&$8o.”",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -179,7 +179,7 @@
     "language": "stan1293",
     "primaryText": "Ayka yelled, “POLINA LIKES HER JOB!”",
     "glossedTokens": [],
-    "translation": "Ayka yelled, “POLINA LIKES HER JOB!”",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -197,7 +197,7 @@
     "language": "stan1293",
     "primaryText": "Ayka yelled, [in a hoarse whisper] “Polina likes her job.”",
     "glossedTokens": [],
-    "translation": "Ayka yelled, [in a hoarse whisper] “Polina likes her job.”",
+    "translation": "",
     "context": "",
     "judgment": "unacceptable",
     "paperFeatures": [
@@ -215,7 +215,7 @@
     "language": "stan1293",
     "primaryText": "Ayka whispered, “POLINA LIKES HER JOB.”",
     "glossedTokens": [],
-    "translation": "Ayka whispered, “POLINA LIKES HER JOB.”",
+    "translation": "",
     "context": "",
     "judgment": "unacceptable",
     "paperFeatures": [
@@ -233,7 +233,7 @@
     "language": "stan1293",
     "primaryText": "Ayka whispered, [in a hoarse whisper] “Polina likes her job.”",
     "glossedTokens": [],
-    "translation": "Ayka whispered, [in a hoarse whisper] “Polina likes her job.”",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -251,7 +251,7 @@
     "language": "stan1293",
     "primaryText": "Ayka said, “Polina likes her job?”",
     "glossedTokens": [],
-    "translation": "Ayka said, “Polina likes her job?”",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -269,7 +269,7 @@
     "language": "stan1293",
     "primaryText": "Ayka yelled, “POLINA LIKES HER JOB?”",
     "glossedTokens": [],
-    "translation": "Ayka yelled, “POLINA LIKES HER JOB?”",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -287,7 +287,7 @@
     "language": "stan1293",
     "primaryText": "Ayka asserted, “Polina likes her job?”",
     "glossedTokens": [],
-    "translation": "Ayka asserted, “Polina likes her job?”",
+    "translation": "",
     "context": "",
     "judgment": "unacceptable",
     "paperFeatures": [
@@ -305,7 +305,7 @@
     "language": "stan1293",
     "primaryText": "Ayka asked, “Polina likes her job?”",
     "glossedTokens": [],
-    "translation": "Ayka asked, “Polina likes her job?”",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [

@@ -5,7 +5,7 @@
     "language": "stan1293",
     "primaryText": "Suppose it's possible the keys are in the drawer but they can't be.",
     "glossedTokens": [],
-    "translation": "Suppose it's possible the keys are in the drawer but they can't be.",
+    "translation": "",
     "context": "Flat-footed conjunction of 'possible phi' with 'can't phi', embedded under suppose.",
     "judgment": "unacceptable",
     "paperFeatures": [
@@ -21,7 +21,7 @@
     "language": "stan1293",
     "primaryText": "Dinner must be ready.",
     "glossedTokens": [],
-    "translation": "Dinner must be ready.",
+    "translation": "",
     "context": "Phil has cooked the dinner, checking all the food himself, and knows it is ready.",
     "judgment": "unacceptable",
     "alternatives": [
@@ -41,7 +41,7 @@
     "language": "stan1293",
     "primaryText": "Dinner must be ready.",
     "glossedTokens": [],
-    "translation": "Dinner must be ready.",
+    "translation": "",
     "context": "Meryl followed the recipe's instructions but has not checked everything herself and wonders whether anything more was planned.",
     "judgment": "acceptable",
     "alternatives": [

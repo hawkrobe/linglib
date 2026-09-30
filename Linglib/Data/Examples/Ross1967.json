@@ -5,7 +5,7 @@
     "language": "stan1293",
     "primaryText": "Who does Phineas know a girl who is jealous of?",
     "glossedTokens": [],
-    "translation": "Who does Phineas know a girl who is jealous of?",
+    "translation": "",
     "context": "",
     "judgment": "ungrammatical",
     "paperFeatures": [
@@ -20,7 +20,7 @@
     "language": "stan1293",
     "primaryText": "The hat which I believed the claim that Otto was wearing is red.",
     "glossedTokens": [],
-    "translation": "The hat which I believed the claim that Otto was wearing is red.",
+    "translation": "",
     "context": "",
     "judgment": "ungrammatical",
     "paperFeatures": [
@@ -35,7 +35,7 @@
     "language": "stan1293",
     "primaryText": "The hat which I believed that Otto was wearing is red.",
     "glossedTokens": [],
-    "translation": "The hat which I believed that Otto was wearing is red.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -49,7 +49,7 @@
     "language": "stan1293",
     "primaryText": "What sofa will he put the chair between some table and?",
     "glossedTokens": [],
-    "translation": "What sofa will he put the chair between some table and?",
+    "translation": "",
     "context": "",
     "judgment": "ungrammatical",
     "paperFeatures": [
@@ -64,7 +64,7 @@
     "language": "stan1293",
     "primaryText": "The lute which Henry plays and sings madrigals is warped.",
     "glossedTokens": [],
-    "translation": "The lute which Henry plays and sings madrigals is warped.",
+    "translation": "",
     "context": "",
     "judgment": "ungrammatical",
     "paperFeatures": [
@@ -79,7 +79,7 @@
     "language": "stan1293",
     "primaryText": "Which trombone did the nurse polish and the plumber computed my tax?",
     "glossedTokens": [],
-    "translation": "Which trombone did the nurse polish and the plumber computed my tax?",
+    "translation": "",
     "context": "",
     "judgment": "ungrammatical",
     "paperFeatures": [
@@ -94,7 +94,7 @@
     "language": "stan1293",
     "primaryText": "The boy whose guardian's employer we elected president ratted on us.",
     "glossedTokens": [],
-    "translation": "The boy whose guardian's employer we elected president ratted on us.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -108,7 +108,7 @@
     "language": "stan1293",
     "primaryText": "The boy whose guardian's we elected employer president ratted on us.",
     "glossedTokens": [],
-    "translation": "The boy whose guardian's we elected employer president ratted on us.",
+    "translation": "",
     "context": "",
     "judgment": "ungrammatical",
     "paperFeatures": [
@@ -123,7 +123,7 @@
     "language": "stan1293",
     "primaryText": "The boy whose we elected guardian's employer president ratted on us.",
     "glossedTokens": [],
-    "translation": "The boy whose we elected guardian's employer president ratted on us.",
+    "translation": "",
     "context": "",
     "judgment": "ungrammatical",
     "paperFeatures": [
@@ -138,7 +138,7 @@
     "language": "stan1293",
     "primaryText": "The teacher who the reporters expected that the principal would fire is a crusty old battleax.",
     "glossedTokens": [],
-    "translation": "The teacher who the reporters expected that the principal would fire is a crusty old battleax.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -152,7 +152,7 @@
     "language": "stan1293",
     "primaryText": "The teacher who that the principal would fire was expected by the reporters is a crusty old battleax.",
     "glossedTokens": [],
-    "translation": "The teacher who that the principal would fire was expected by the reporters is a crusty old battleax.",
+    "translation": "",
     "context": "",
     "judgment": "ungrammatical",
     "paperFeatures": [
@@ -167,7 +167,7 @@
     "language": "stan1293",
     "primaryText": "The teacher who it was expected by the reporters that the principal would fire is a crusty old battleax.",
     "glossedTokens": [],
-    "translation": "The teacher who it was expected by the reporters that the principal would fire is a crusty old battleax.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -181,7 +181,7 @@
     "language": "stan1293",
     "primaryText": "Of which cars were the hoods damaged by the explosion?",
     "glossedTokens": [],
-    "translation": "Of which cars were the hoods damaged by the explosion?",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -195,7 +195,7 @@
     "language": "stan1293",
     "primaryText": "My father, the man he works with in Boston is going to tell the police that that traffic expert has set that traffic light on the corner of Murk Street far too slow.",
     "glossedTokens": [],
-    "translation": "My father, the man he works with in Boston is going to tell the police that that traffic expert has set that traffic light on the corner of Murk Street far too slow.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -210,7 +210,7 @@
     "language": "stan1293",
     "primaryText": "This guitar, I've sung folksongs and accompanied myself on it all my life.",
     "glossedTokens": [],
-    "translation": "This guitar, I've sung folksongs and accompanied myself on it all my life.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -225,7 +225,7 @@
     "language": "stan1293",
     "primaryText": "My father, that he's lived here all his life is well-known to the cops.",
     "glossedTokens": [],
-    "translation": "My father, that he's lived here all his life is well-known to the cops.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -240,7 +240,7 @@
     "language": "stan1293",
     "primaryText": "My wife, somebody stole her handbag last night.",
     "glossedTokens": [],
-    "translation": "My wife, somebody stole her handbag last night.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [

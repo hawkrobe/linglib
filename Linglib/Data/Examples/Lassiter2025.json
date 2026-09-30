@@ -6,7 +6,7 @@
     "language": "stan1293",
     "primaryText": "If Kripke was there if Strawson was, then Anscomb was there",
     "glossedTokens": [],
-    "translation": "If Kripke was there if Strawson was, then Anscomb was there",
+    "translation": "",
     "context": "Said of a conference the addressee doesn't know much about.",
     "judgment": "unacceptable",
     "paperFeatures": [
@@ -25,7 +25,7 @@
     "language": "stan1293",
     "primaryText": "If he is so unhappy, he should leave",
     "glossedTokens": [],
-    "translation": "If he is so unhappy, he should leave",
+    "translation": "",
     "context": "Alf: Bill is unhappy here.",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -44,7 +44,7 @@
     "language": "stan1293",
     "primaryText": "If Kripke was there if Strawson was, then Anscomb was there too",
     "glossedTokens": [],
-    "translation": "If Kripke was there if Strawson was, then Anscomb was there too",
+    "translation": "",
     "context": "Alf: Kripke was there if Strawson was.",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -62,7 +62,7 @@
     "language": "stan1293",
     "primaryText": "Aha. If Mary came if John did, they are friends",
     "glossedTokens": [],
-    "translation": "Aha. If Mary came if John did, they are friends",
+    "translation": "",
     "context": "Neither Alf nor Barbara was at the party. Alf: Mary came to the party if John did.",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -80,7 +80,7 @@
     "language": "stan1293",
     "primaryText": "If you'll cancel the camping trip if it rains, you're not from Scotland",
     "glossedTokens": [],
-    "translation": "If you'll cancel the camping trip if it rains, you're not from Scotland",
+    "translation": "",
     "context": "Carl: We'll cancel the camping trip if it rains.",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -98,7 +98,7 @@
     "language": "stan1293",
     "primaryText": "Given that/Since you'll cancel the camping trip if it rains, you're not from Scotland",
     "glossedTokens": [],
-    "translation": "Given that/Since you'll cancel the camping trip if it rains, you're not from Scotland",
+    "translation": "",
     "context": "Carl: We'll cancel the camping trip if it rains.",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -204,7 +204,7 @@
     "language": "stan1293",
     "primaryText": "If Mary was rather pleased if Bill was involved, her expectations are too low",
     "glossedTokens": [],
-    "translation": "If Mary was rather pleased if Bill was involved, her expectations are too low",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -224,7 +224,7 @@
     "language": "stan1293",
     "primaryText": "If Mary lifted a finger if Bill was involved, the job got done",
     "glossedTokens": [],
-    "translation": "If Mary lifted a finger if Bill was involved, the job got done",
+    "translation": "",
     "context": "",
     "judgment": "unacceptable",
     "paperFeatures": [
@@ -244,7 +244,7 @@
     "language": "stan1293",
     "primaryText": "Mary lifted a finger if Bill was involved",
     "glossedTokens": [],
-    "translation": "Mary lifted a finger if Bill was involved",
+    "translation": "",
     "context": "",
     "judgment": "unacceptable",
     "paperFeatures": [
@@ -264,7 +264,7 @@
     "language": "stan1293",
     "primaryText": "If Mary was pleased if Bill lifted a finger to help, her expectations are too low",
     "glossedTokens": [],
-    "translation": "If Mary was pleased if Bill lifted a finger to help, her expectations are too low",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -284,7 +284,7 @@
     "language": "stan1293",
     "primaryText": "If Bill is so unhappy, and if Mary loses her job, they'll be in trouble",
     "glossedTokens": [],
-    "translation": "If Bill is so unhappy, and if Mary loses her job, they'll be in trouble",
+    "translation": "",
     "context": "Ed and Fran have no idea whether Mary's job is at risk. Ed: Bill is very unhappy here.",
     "judgment": "unacceptable",
     "paperFeatures": [
@@ -303,7 +303,7 @@
     "language": "stan1293",
     "primaryText": "If John came if Mary did, and if the food was bad, it was a lousy party",
     "glossedTokens": [],
-    "translation": "If John came if Mary did, and if the food was bad, it was a lousy party",
+    "translation": "",
     "context": "Alf: John came to the party if Mary did. Barbara: The food wasn't very good.",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -322,7 +322,7 @@
     "language": "stan1293",
     "primaryText": "If John came if Mary did, and if the food was bad, it was a lousy party",
     "glossedTokens": [],
-    "translation": "If John came if Mary did, and if the food was bad, it was a lousy party",
+    "translation": "",
     "context": "Alf: John came to the party if Mary did. Barbara: I have no idea about the food — sometimes it's great, sometimes it's terrible.",
     "judgment": "marginal",
     "paperFeatures": [
@@ -341,7 +341,7 @@
     "language": "stan1293",
     "primaryText": "Only if you have the courage to follow your heart will you succeed on the path of love",
     "glossedTokens": [],
-    "translation": "Only if you have the courage to follow your heart will you succeed on the path of love",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -359,7 +359,7 @@
     "language": "stan1293",
     "primaryText": "Only if the chocolate manufacturers are pleased are they not satisfied",
     "glossedTokens": [],
-    "translation": "Only if the chocolate manufacturers are pleased are they not satisfied",
+    "translation": "",
     "context": "The chocolate manufacturers looked with pleasure at the statistics. If the chocolate manufacturers are pleased, they are not satisfied.",
     "judgment": "unacceptable",
     "paperFeatures": [
@@ -378,7 +378,7 @@
     "language": "stan1293",
     "primaryText": "If Mary was distressed if Bill left, Sue will be annoyed",
     "glossedTokens": [],
-    "translation": "If Mary was distressed if Bill left, Sue will be annoyed",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -396,7 +396,7 @@
     "language": "stan1293",
     "primaryText": "Only if Mary was distressed if Bill left will Sue be annoyed",
     "glossedTokens": [],
-    "translation": "Only if Mary was distressed if Bill left will Sue be annoyed",
+    "translation": "",
     "context": "",
     "judgment": "unacceptable",
     "paperFeatures": [
@@ -414,7 +414,7 @@
     "language": "stan1293",
     "primaryText": "Only if the game is canceled if it rains are the organizers too nervous",
     "glossedTokens": [],
-    "translation": "Only if the game is canceled if it rains are the organizers too nervous",
+    "translation": "",
     "context": "",
     "judgment": "unacceptable",
     "paperFeatures": [
@@ -432,7 +432,7 @@
     "language": "stan1293",
     "primaryText": "If the boss rarely yells at employees if they make a mistake, I'm going to be happier working here",
     "glossedTokens": [],
-    "translation": "If the boss rarely yells at employees if they make a mistake, I'm going to be happier working here",
+    "translation": "",
     "context": "I don't know how things work in my new workplace, but I hope people are kinder than in my previous one.",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -450,7 +450,7 @@
     "language": "stan1293",
     "primaryText": "If Bill is obliged to stop writing if the timer has gone off, he's breaking the rules by continuing",
     "glossedTokens": [],
-    "translation": "If Bill is obliged to stop writing if the timer has gone off, he's breaking the rules by continuing",
+    "translation": "",
     "context": "I don't know what the rules of this test are, but it seems like something's not right here.",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -468,7 +468,7 @@
     "language": "stan1293",
     "primaryText": "If a female bear attacks if a human approaches, she has cubs",
     "glossedTokens": [],
-    "translation": "If a female bear attacks if a human approaches, she has cubs",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -486,7 +486,7 @@
     "language": "stan1293",
     "primaryText": "If this switch will fail if it is submerged in water, it will be discarded",
     "glossedTokens": [],
-    "translation": "If this switch will fail if it is submerged in water, it will be discarded",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -504,7 +504,7 @@
     "language": "stan1293",
     "primaryText": "If this material becomes soft if it gets hot, it is not suited for our purposes",
     "glossedTokens": [],
-    "translation": "If this material becomes soft if it gets hot, it is not suited for our purposes",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [

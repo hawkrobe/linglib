@@ -5,7 +5,7 @@
     "language": "stan1293",
     "primaryText": "Mary is allowed to eat ice cream or cake.",
     "glossedTokens": [],
-    "translation": "Mary is allowed to eat ice cream or cake.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "readings": [
@@ -24,7 +24,7 @@
     "language": "stan1293",
     "primaryText": "John isn't allowed to eat ice cream or cake.",
     "glossedTokens": [],
-    "translation": "John isn't allowed to eat ice cream or cake.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "readings": [
@@ -41,7 +41,7 @@
     "language": "stan1293",
     "primaryText": "Mary is allowed to eat ice cream or cake, and John isn't allowed to eat ice cream or cake.",
     "glossedTokens": [],
-    "translation": "Mary is allowed to eat ice cream or cake, and John isn't allowed to eat ice cream or cake.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "readings": [
@@ -59,7 +59,7 @@
     "language": "stan1293",
     "primaryText": "Mary solved some of the problems, and John didn't solve some of the problems.",
     "glossedTokens": [],
-    "translation": "Mary solved some of the problems, and John didn't solve some of the problems.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "readings": [
@@ -77,7 +77,7 @@
     "language": "stan1293",
     "primaryText": "a or b",
     "glossedTokens": [],
-    "translation": "a or b",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "readings": [
@@ -96,7 +96,7 @@
     "language": "stan1293",
     "primaryText": "◇(a or b)",
     "glossedTokens": [],
-    "translation": "◇(a or b)",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "readings": [
@@ -115,7 +115,7 @@
     "language": "stan1293",
     "primaryText": "We are only allowed to eat [ice cream or cake]F.",
     "glossedTokens": [],
-    "translation": "We are only allowed to eat [ice cream or cake]F.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "readings": [
@@ -134,7 +134,7 @@
     "language": "stan1293",
     "primaryText": "Are we only allowed to eat [ice cream or cake]F?",
     "glossedTokens": [],
-    "translation": "Are we only allowed to eat [ice cream or cake]F?",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "readings": [
@@ -153,7 +153,7 @@
     "language": "stan1293",
     "primaryText": "Are we allowed to eat ice cream or cake?",
     "glossedTokens": [],
-    "translation": "Are we allowed to eat ice cream or cake?",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "readings": [
@@ -171,7 +171,7 @@
     "language": "stan1293",
     "primaryText": "Every boy is allowed to eat ice cream or cake.",
     "glossedTokens": [],
-    "translation": "Every boy is allowed to eat ice cream or cake.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "readings": [
@@ -190,7 +190,7 @@
     "language": "stan1293",
     "primaryText": "No student is required to solve both problem A and problem B.",
     "glossedTokens": [],
-    "translation": "No student is required to solve both problem A and problem B.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "readings": [
@@ -209,7 +209,7 @@
     "language": "stan1293",
     "primaryText": "Every girl is allowed to eat ice cream or cake on her birthday. Interestingly, no boy is allowed to eat ice cream or cake on his birthday.",
     "glossedTokens": [],
-    "translation": "Every girl is allowed to eat ice cream or cake on her birthday. Interestingly, no boy is allowed to eat ice cream or cake on his birthday.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "readings": [
@@ -228,7 +228,7 @@
     "language": "stan1293",
     "primaryText": "Every one of these people is singing or dancing.",
     "glossedTokens": [],
-    "translation": "Every one of these people is singing or dancing.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "readings": [
@@ -247,7 +247,7 @@
     "language": "stan1293",
     "primaryText": "You are required to solve problem A or problem B.",
     "glossedTokens": [],
-    "translation": "You are required to solve problem A or problem B.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "readings": [
@@ -265,7 +265,7 @@
     "language": "stan1293",
     "primaryText": "The teacher is OK with every student either talking to Mary or to Sue.",
     "glossedTokens": [],
-    "translation": "The teacher is OK with every student either talking to Mary or to Sue.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "readings": [
@@ -283,7 +283,7 @@
     "language": "stan1293",
     "primaryText": "Every kid ate ice cream or cake.",
     "glossedTokens": [],
-    "translation": "Every kid ate ice cream or cake.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "readings": [
@@ -301,7 +301,7 @@
     "language": "stan1293",
     "primaryText": "Betty can balance a fishing rod on her nose or on her chin.",
     "glossedTokens": [],
-    "translation": "Betty can balance a fishing rod on her nose or on her chin.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "readings": [
@@ -320,7 +320,7 @@
     "language": "stan1293",
     "primaryText": "If you eat ice cream or cake, you will feel guilty.",
     "glossedTokens": [],
-    "translation": "If you eat ice cream or cake, you will feel guilty.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "readings": [
@@ -339,7 +339,7 @@
     "language": "stan1293",
     "primaryText": "If you eat an apple, an orange, or a pear, you will be healthy.",
     "glossedTokens": [],
-    "translation": "If you eat an apple, an orange, or a pear, you will be healthy.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "readings": [
@@ -358,7 +358,7 @@
     "language": "stan1293",
     "primaryText": "Everyone will feel guilty if they eat ice cream or cake.",
     "glossedTokens": [],
-    "translation": "Everyone will feel guilty if they eat ice cream or cake.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "readings": [
@@ -376,7 +376,7 @@
     "language": "stan1293",
     "primaryText": "It's not true that you will feel guilty if you eat ice cream or cake.",
     "glossedTokens": [],
-    "translation": "It's not true that you will feel guilty if you eat ice cream or cake.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "readings": [
@@ -394,7 +394,7 @@
     "language": "stan1293",
     "primaryText": "If Spain had fought with the Axis or with the Allies, it would have been with the Axis.",
     "glossedTokens": [],
-    "translation": "If Spain had fought with the Axis or with the Allies, it would have been with the Axis.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "readings": [
@@ -412,7 +412,7 @@
     "language": "stan1293",
     "primaryText": "If Spain had fought with the Axis or with the Allies, Hitler would have been pleased.",
     "glossedTokens": [],
-    "translation": "If Spain had fought with the Axis or with the Allies, Hitler would have been pleased.",
+    "translation": "",
     "context": "",
     "judgment": "unacceptable",
     "readings": [
@@ -430,7 +430,7 @@
     "language": "stan1293",
     "primaryText": "If switch A or switch B were down, the light would be off.",
     "glossedTokens": [],
-    "translation": "If switch A or switch B were down, the light would be off.",
+    "translation": "",
     "context": "Both switches are up and the light is on; with exactly one switch down the light would be off; with both down it would be on.",
     "judgment": "acceptable",
     "readings": [],
@@ -445,7 +445,7 @@
     "language": "stan1293",
     "primaryText": "If switch A and switch B were not both up, the light would be off.",
     "glossedTokens": [],
-    "translation": "If switch A and switch B were not both up, the light would be off.",
+    "translation": "",
     "context": "Both switches are up and the light is on; with exactly one switch down the light would be off; with both down it would be on.",
     "judgment": "questionable",
     "readings": [],
@@ -460,7 +460,7 @@
     "language": "stan1293",
     "primaryText": "If switch A or switch B or both were down, the light would be off.",
     "glossedTokens": [],
-    "translation": "If switch A or switch B or both were down, the light would be off.",
+    "translation": "",
     "context": "Both switches are up and the light is on; with exactly one switch down the light would be off; with both down it would be on.",
     "judgment": "unacceptable",
     "readings": [],
@@ -475,7 +475,7 @@
     "language": "stan1293",
     "primaryText": "Most students in linguistics or philosophy took Advanced Syntax.",
     "glossedTokens": [],
-    "translation": "Most students in linguistics or philosophy took Advanced Syntax.",
+    "translation": "",
     "context": "35 of the 40 linguistics students and 2 of the 30 philosophy students took Advanced Syntax; no student is in both.",
     "judgment": "questionable",
     "readings": [
@@ -493,7 +493,7 @@
     "language": "stan1293",
     "primaryText": "Some boys are allowed to eat ice cream or cake.",
     "glossedTokens": [],
-    "translation": "Some boys are allowed to eat ice cream or cake.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "readings": [
@@ -510,7 +510,7 @@
     "language": "stan1293",
     "primaryText": "Not every student is required to solve both problem A and problem B.",
     "glossedTokens": [],
-    "translation": "Not every student is required to solve both problem A and problem B.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "readings": [
@@ -529,7 +529,7 @@
     "language": "stan1293",
     "primaryText": "Some girls are allowed to eat ice cream or cake on their birthday. Interestingly, no boys are allowed to eat ice cream or cake on their birthday.",
     "glossedTokens": [],
-    "translation": "Some girls are allowed to eat ice cream or cake on their birthday. Interestingly, no boys are allowed to eat ice cream or cake on their birthday.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "readings": [

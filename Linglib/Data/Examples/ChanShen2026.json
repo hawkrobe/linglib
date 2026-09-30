@@ -5,7 +5,7 @@
     "language": "stan1293",
     "primaryText": "Who loves what the hell?",
     "glossedTokens": [],
-    "translation": "Who loves what the hell?",
+    "translation": "",
     "context": "",
     "judgment": "unacceptable",
     "paperFeatures": [
@@ -21,7 +21,7 @@
     "language": "stan1293",
     "primaryText": "Who the hell loves what?",
     "glossedTokens": [],
-    "translation": "Who the hell loves what?",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -273,7 +273,7 @@
     "language": "stan1293",
     "primaryText": "Who the hell is in love with who?",
     "glossedTokens": [],
-    "translation": "Who the hell is in love with who?",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -290,7 +290,7 @@
     "language": "stan1293",
     "primaryText": "Who is in love with who the hell?",
     "glossedTokens": [],
-    "translation": "Who is in love with who the hell?",
+    "translation": "",
     "context": "",
     "judgment": "unacceptable",
     "paperFeatures": [

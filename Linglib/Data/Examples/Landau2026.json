@@ -111,7 +111,7 @@
       "Led Zeppelin, I did."
     ],
     "glossedTokens": [],
-    "translation": "Deep Purple, I never bought their records. Led Zeppelin, I did.",
+    "translation": "",
     "context": "VP-ellipsis, surface anaphor: left-dislocated constituent binds a resumptive possessive inside the elided VP. Contrastive baseline for do so.",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -132,7 +132,7 @@
       "Led Zeppelin, I did so."
     ],
     "glossedTokens": [],
-    "translation": "Deep Purple, I never bought their records. Led Zeppelin, I did so.",
+    "translation": "",
     "context": "do so, deep VP anaphor: left-dislocation with resumptive binding into do so is ungrammatical.",
     "judgment": "ungrammatical",
     "paperFeatures": [

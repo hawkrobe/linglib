@@ -13,7 +13,7 @@
       "He then won a dancing competition."
     ],
     "glossedTokens": [],
-    "translation": "John had a great evening last night. He had a great meal. He ate salmon. He devoured lots of cheese. He then won a dancing competition.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -38,7 +38,7 @@
       "It was a beautiful pink."
     ],
     "glossedTokens": [],
-    "translation": "John had a great evening last night. He had a great meal. He ate salmon. He devoured lots of cheese. He then won a dancing competition. It was a beautiful pink.",
+    "translation": "",
     "context": "",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -61,7 +61,7 @@
       "but he rented it."
     ],
     "glossedTokens": [],
-    "translation": "John bought an apartment but he rented it.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -82,7 +82,7 @@
       "It is red."
     ],
     "glossedTokens": [],
-    "translation": "John drives a car. It is red.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -104,7 +104,7 @@
       "then it's red."
     ],
     "glossedTokens": [],
-    "translation": "If a farmer doesn't drive a car then it's red.",
+    "translation": "",
     "context": "",
     "judgment": "unacceptable",
     "alternatives": [],

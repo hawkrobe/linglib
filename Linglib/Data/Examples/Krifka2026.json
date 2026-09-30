@@ -7,7 +7,7 @@
     "primaryText": "John killed a spider because they are ugly.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "John killed a spider because they are ugly.",
+    "translation": "",
     "context": "Kind anaphora to an object-referring antecedent, with a number mismatch between the singular antecedent and the plural anaphor.",
     "judgment": "acceptable",
     "alternatives": [],
@@ -26,7 +26,7 @@
     "primaryText": "John drank some milk even though he is allergic to it.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "John drank some milk even though he is allergic to it.",
+    "translation": "",
     "context": "Kind anaphora to a mass antecedent.",
     "judgment": "acceptable",
     "alternatives": [],
@@ -49,7 +49,7 @@
       "But Mary owns one."
     ],
     "glossedTokens": [],
-    "translation": "John doesn't own a dog. He is afraid of them. But Mary owns one.",
+    "translation": "",
     "context": "Kind anaphora and one-anaphora reach a concept introduced under negation.",
     "judgment": "acceptable",
     "alternatives": [],
@@ -73,7 +73,7 @@
       "But John bought some."
     ],
     "glossedTokens": [],
-    "translation": "Mary didn't buy any milk. She cannot digest it. But John bought some.",
+    "translation": "",
     "context": "Kind anaphora and some-anaphora reach a mass concept introduced under negation.",
     "judgment": "acceptable",
     "alternatives": [],
@@ -96,7 +96,7 @@
       "It is friendly."
     ],
     "glossedTokens": [],
-    "translation": "John doesn't own a dog. It is friendly.",
+    "translation": "",
     "context": "An entity pronoun cannot reach a referent introduced under negation.",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -119,7 +119,7 @@
       "He has a phobia against them."
     ],
     "glossedTokens": [],
-    "translation": "John noticed a spider in the bathroom. He has a phobia against them.",
+    "translation": "",
     "context": "A count antecedent, singular or plural, requires the plural kind anaphor.",
     "judgment": "acceptable",
     "alternatives": [
@@ -143,7 +143,7 @@
       "He is allergic against it."
     ],
     "glossedTokens": [],
-    "translation": "John noticed mold in the bathroom. He is allergic against it.",
+    "translation": "",
     "context": "A mass antecedent requires the singular kind anaphor.",
     "judgment": "acceptable",
     "alternatives": [
@@ -167,7 +167,7 @@
       "I am allergic against it."
     ],
     "glossedTokens": [],
-    "translation": "There is a lot of pollen in the air. I am allergic against it.",
+    "translation": "",
     "context": "The same individuals under a mass noun take the singular kind anaphor.",
     "judgment": "acceptable",
     "alternatives": [
@@ -191,7 +191,7 @@
       "I am allergic against them."
     ],
     "glossedTokens": [],
-    "translation": "There are a lot of pollen grains in the air. I am allergic against them.",
+    "translation": "",
     "context": "The same individuals under a count noun take the plural kind anaphor.",
     "judgment": "acceptable",
     "alternatives": [
@@ -215,7 +215,7 @@
       "He is afraid of them."
     ],
     "glossedTokens": [],
-    "translation": "John didn't get a dog from the animal shelter downtown. He is afraid of them.",
+    "translation": "",
     "context": "Kind anaphora: John is afraid of dogs, since dogs from the shelter downtown do not form a kind.",
     "judgment": "acceptable",
     "alternatives": [],
@@ -240,7 +240,7 @@
       "But Mary got one."
     ],
     "glossedTokens": [],
-    "translation": "John didn't get a dog from the animal shelter downtown. But Mary got one.",
+    "translation": "",
     "context": "Concept anaphora: Mary got a dog from the shelter downtown, the full property of the antecedent.",
     "judgment": "acceptable",
     "alternatives": [],

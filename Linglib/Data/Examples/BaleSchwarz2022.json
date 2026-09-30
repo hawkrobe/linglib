@@ -5,7 +5,7 @@
     "language": "stan1293",
     "primaryText": "The sample weighs 0.9 grams.",
     "glossedTokens": [],
-    "translation": "The sample weighs 0.9 grams.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -21,7 +21,7 @@
     "language": "stan1293",
     "primaryText": "The sample weighs 0.9 grams per milliliter.",
     "glossedTokens": [],
-    "translation": "The sample weighs 0.9 grams per milliliter.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -39,7 +39,7 @@
     "language": "stan1293",
     "primaryText": "This cube weighs what that cube weighs.",
     "glossedTokens": [],
-    "translation": "This cube weighs what that cube weighs.",
+    "translation": "",
     "context": "This cube weighs 1 kg while that cube weighs 2 kg.",
     "judgment": "acceptable",
     "readings": [
@@ -57,7 +57,7 @@
     "language": "stan1293",
     "primaryText": "This cube weighs more than that cube weighs.",
     "glossedTokens": [],
-    "translation": "This cube weighs more than that cube weighs.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "readings": [
@@ -75,7 +75,7 @@
     "language": "stan1293",
     "primaryText": "What does this cube weigh?",
     "glossedTokens": [],
-    "translation": "What does this cube weigh?",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "readings": [
@@ -93,7 +93,7 @@
     "language": "stan1293",
     "primaryText": "The mixture contains 0.9 grams of salt.",
     "glossedTokens": [],
-    "translation": "The mixture contains 0.9 grams of salt.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -110,7 +110,7 @@
     "language": "stan1293",
     "primaryText": "The mixture contains 0.8 milliliters of salt.",
     "glossedTokens": [],
-    "translation": "The mixture contains 0.8 milliliters of salt.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -127,7 +127,7 @@
     "language": "stan1293",
     "primaryText": "The mixture contains 0.1 grams per milliliter of salt.",
     "glossedTokens": [],
-    "translation": "The mixture contains 0.1 grams per milliliter of salt.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
@@ -148,7 +148,7 @@
     "language": "stan1293",
     "primaryText": "How much salt does the mixture contain?",
     "glossedTokens": [],
-    "translation": "How much salt does the mixture contain?",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "readings": [
@@ -167,7 +167,7 @@
     "language": "stan1293",
     "primaryText": "Amy knows how much salt the mixture contains.",
     "glossedTokens": [],
-    "translation": "Amy knows how much salt the mixture contains.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "readings": [
@@ -186,7 +186,7 @@
     "language": "stan1293",
     "primaryText": "The mixture contains 0.1 kilograms per liter of salt.",
     "glossedTokens": [],
-    "translation": "The mixture contains 0.1 kilograms per liter of salt.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -204,7 +204,7 @@
     "language": "stan1293",
     "primaryText": "The 5 milliliter sample of mixture contained 0.1 grams of salt per milliliter.",
     "glossedTokens": [],
-    "translation": "The 5 milliliter sample of mixture contained 0.1 grams of salt per milliliter.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -224,7 +224,7 @@
     "language": "stan1293",
     "primaryText": "The 5 milliliter sample of mixture contained 0.1 grams of salt per liter.",
     "glossedTokens": [],
-    "translation": "The 5 milliliter sample of mixture contained 0.1 grams of salt per liter.",
+    "translation": "",
     "context": "",
     "judgment": "unacceptable",
     "paperFeatures": [
@@ -244,7 +244,7 @@
     "language": "stan1293",
     "primaryText": "The 0.1 milliliter sample of mixture contained 0.1 grams of salt per milliliter.",
     "glossedTokens": [],
-    "translation": "The 0.1 milliliter sample of mixture contained 0.1 grams of salt per milliliter.",
+    "translation": "",
     "context": "",
     "judgment": "unacceptable",
     "paperFeatures": [
@@ -264,7 +264,7 @@
     "language": "stan1293",
     "primaryText": "The monograph by Dole contained more than 3 typos per page.",
     "glossedTokens": [],
-    "translation": "The monograph by Dole contained more than 3 typos per page.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -280,7 +280,7 @@
     "language": "stan1293",
     "primaryText": "The paragraph by Dole contained more than 3 typos per line.",
     "glossedTokens": [],
-    "translation": "The paragraph by Dole contained more than 3 typos per line.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -296,7 +296,7 @@
     "language": "stan1293",
     "primaryText": "The paragraph by Dole contained more than 3 typos per page.",
     "glossedTokens": [],
-    "translation": "The paragraph by Dole contained more than 3 typos per page.",
+    "translation": "",
     "context": "",
     "judgment": "unacceptable",
     "paperFeatures": [
@@ -312,7 +312,7 @@
     "language": "stan1293",
     "primaryText": "The 5 milliliter portion of solution weighed 0.9 grams per milliliter.",
     "glossedTokens": [],
-    "translation": "The 5 milliliter portion of solution weighed 0.9 grams per milliliter.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -332,7 +332,7 @@
     "language": "stan1293",
     "primaryText": "The 5 milliliter portion of solution weighed 0.9 kilograms per liter.",
     "glossedTokens": [],
-    "translation": "The 5 milliliter portion of solution weighed 0.9 kilograms per liter.",
+    "translation": "",
     "context": "",
     "judgment": "unacceptable",
     "paperFeatures": [
@@ -352,7 +352,7 @@
     "language": "stan1293",
     "primaryText": "The 0.1 milliliter portion of solution weighed 0.9 grams per milliliter.",
     "glossedTokens": [],
-    "translation": "The 0.1 milliliter portion of solution weighed 0.9 grams per milliliter.",
+    "translation": "",
     "context": "",
     "judgment": "unacceptable",
     "paperFeatures": [
@@ -372,7 +372,7 @@
     "language": "stan1293",
     "primaryText": "The sample's density is 0.9 grams per milliliter.",
     "glossedTokens": [],
-    "translation": "The sample's density is 0.9 grams per milliliter.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -389,7 +389,7 @@
     "language": "stan1293",
     "primaryText": "The sample's density is 0.9 grams.",
     "glossedTokens": [],
-    "translation": "The sample's density is 0.9 grams.",
+    "translation": "",
     "context": "",
     "judgment": "unacceptable",
     "paperFeatures": [
@@ -405,7 +405,7 @@
     "language": "stan1293",
     "primaryText": "The sample's density is 0.9 grams for every cubic centimeter.",
     "glossedTokens": [],
-    "translation": "The sample's density is 0.9 grams for every cubic centimeter.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -422,7 +422,7 @@
     "language": "stan1293",
     "primaryText": "London's population density is 968 people for every km².",
     "glossedTokens": [],
-    "translation": "London's population density is 968 people for every km².",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [

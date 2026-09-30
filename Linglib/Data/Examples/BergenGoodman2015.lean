@@ -25,7 +25,7 @@ def stressed_subject : LinguisticExample :=
     primaryText := "BOB went to the movies."
     discourseSegments := []
     glossedTokens := []
-    translation := "BOB went to the movies."
+    translation := ""
     context := "Q: Who went to the movies? (CAPS = prosodic stress)"
     judgment := .acceptable
     alternatives := []
@@ -41,7 +41,7 @@ def unstressed_subject : LinguisticExample :=
     primaryText := "Bob went to the movies."
     discourseSegments := []
     glossedTokens := []
-    translation := "Bob went to the movies."
+    translation := ""
     context := "Q: Who went to the movies?"
     judgment := .acceptable
     alternatives := []

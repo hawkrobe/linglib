@@ -6,7 +6,7 @@
       "paperLabel": "§1.1"
     },
     "language": "stan1293",
-    "primaryText": "Is John coming? — Yes.",
+    "primaryText": "Is John coming? Yes.",
     "discourseSegments": [
       "Is John coming?",
       "Yes."
@@ -44,7 +44,7 @@
       "paperLabel": "§1.1"
     },
     "language": "stan1293",
-    "primaryText": "Is John coming? — No.",
+    "primaryText": "Is John coming? No.",
     "discourseSegments": [
       "Is John coming?",
       "No."
@@ -82,7 +82,7 @@
       "paperLabel": "§1.2"
     },
     "language": "finn1318",
-    "primaryText": "Tul-i-vat-ko lapset kotiin? — Tul-i-vat.",
+    "primaryText": "Tul-i-vat-ko lapset kotiin? Tul-i-vat.",
     "discourseSegments": [
       "Tul-i-vat-ko lapset kotiin?",
       "Tul-i-vat."
@@ -120,7 +120,7 @@
       "paperLabel": "§1.3"
     },
     "language": "swed1254",
-    "primaryText": "Dricker Johan inte kaffe? — Nej.",
+    "primaryText": "Dricker Johan inte kaffe? Nej.",
     "discourseSegments": [
       "Dricker Johan inte kaffe?",
       "Nej."
@@ -166,7 +166,7 @@
       "paperLabel": "§1.3"
     },
     "language": "cant1236",
-    "primaryText": "John m jam gaafe? — hai",
+    "primaryText": "John m jam gaafe? hai",
     "discourseSegments": [
       "John m jam gaafe?",
       "hai"
@@ -208,7 +208,7 @@
       "paperLabel": "§1.3"
     },
     "language": "stan1293",
-    "primaryText": "Does he not drink coffee? — Yes.",
+    "primaryText": "Does he not drink coffee? Yes.",
     "discourseSegments": [
       "Does he not drink coffee?",
       "Yes."
@@ -246,7 +246,7 @@
       "paperLabel": "§1.3"
     },
     "language": "stan1293",
-    "primaryText": "Does he not drink coffee? — Yes he does.",
+    "primaryText": "Does he not drink coffee? Yes he does.",
     "discourseSegments": [
       "Does he not drink coffee?",
       "Yes he does."
@@ -284,7 +284,7 @@
       "paperLabel": "§1.3"
     },
     "language": "swed1254",
-    "primaryText": "Vill han ha kaffe? — Ja.",
+    "primaryText": "Vill han ha kaffe? Ja.",
     "discourseSegments": [
       "Vill han ha kaffe?",
       "Ja."
@@ -322,7 +322,7 @@
       "paperLabel": "§1.3"
     },
     "language": "swed1254",
-    "primaryText": "Vill han inte ha kaffe? — Ja.",
+    "primaryText": "Vill han inte ha kaffe? Ja.",
     "discourseSegments": [
       "Vill han inte ha kaffe?",
       "Ja."
@@ -364,7 +364,7 @@
       "paperLabel": "§1.3"
     },
     "language": "swed1254",
-    "primaryText": "Vill han inte ha kaffe? — Jo.",
+    "primaryText": "Vill han inte ha kaffe? Jo.",
     "discourseSegments": [
       "Vill han inte ha kaffe?",
       "Jo."
@@ -410,7 +410,7 @@
       "paperLabel": "§1.3"
     },
     "language": "cant1236",
-    "primaryText": "keoi m jam gaafe? — hai",
+    "primaryText": "keoi m jam gaafe? hai",
     "discourseSegments": [
       "keoi m jam gaafe?",
       "hai"
@@ -448,7 +448,7 @@
       "paperLabel": "§1.3"
     },
     "language": "cant1236",
-    "primaryText": "keoi m jam gaafe? — m hai",
+    "primaryText": "keoi m jam gaafe? m hai",
     "discourseSegments": [
       "keoi m jam gaafe?",
       "m hai"
@@ -490,7 +490,7 @@
       "paperLabel": "§2.1"
     },
     "language": "stan1293",
-    "primaryText": "Tell me which of the following alternative statements is true: You want tea or you do not want tea. — Yes.",
+    "primaryText": "Tell me which of the following alternative statements is true: You want tea or you do not want tea. Yes.",
     "discourseSegments": [
       "Tell me which of the following alternative statements is true: You want tea or you do not want tea.",
       "Yes."
@@ -524,7 +524,7 @@
       "paperLabel": "§2.1"
     },
     "language": "stan1293",
-    "primaryText": "Do you want tea or do you not want tea? — Yes.",
+    "primaryText": "Do you want tea or do you not want tea? Yes.",
     "discourseSegments": [
       "Do you want tea or do you not want tea?",
       "Yes."
@@ -558,7 +558,7 @@
       "paperLabel": "§2.1"
     },
     "language": "stan1293",
-    "primaryText": "Do you want tea? — Yes.",
+    "primaryText": "Do you want tea? Yes.",
     "discourseSegments": [
       "Do you want tea?",
       "Yes."
@@ -596,7 +596,7 @@
       "paperLabel": "§3.1"
     },
     "language": "stan1293",
-    "primaryText": "Does John like this book? — Maybe.",
+    "primaryText": "Does John like this book? Maybe.",
     "discourseSegments": [
       "Does John like this book?",
       "Maybe."
@@ -630,7 +630,7 @@
       "paperLabel": "§3.1"
     },
     "language": "stan1293",
-    "primaryText": "Does John like this book? — Maybe not.",
+    "primaryText": "Does John like this book? Maybe not.",
     "discourseSegments": [
       "Does John like this book?",
       "Maybe not."
@@ -664,7 +664,7 @@
       "paperLabel": "§3.1"
     },
     "language": "finn1318",
-    "primaryText": "Lui-t-ko sinä tämän kirjan? — Lui-n.",
+    "primaryText": "Lui-t-ko sinä tämän kirjan? Lui-n.",
     "discourseSegments": [
       "Lui-t-ko sinä tämän kirjan?",
       "Lui-n."
@@ -702,7 +702,7 @@
       "paperLabel": "§3.1"
     },
     "language": "finn1318",
-    "primaryText": "Lui-t-ko sinä tämän kirjan? — E-n (lukenut).",
+    "primaryText": "Lui-t-ko sinä tämän kirjan? E-n (lukenut).",
     "discourseSegments": [
       "Lui-t-ko sinä tämän kirjan?",
       "E-n (lukenut)."
@@ -740,7 +740,7 @@
       "paperLabel": "§3.2"
     },
     "language": "stan1293",
-    "primaryText": "Did John not pass the exam? — No.",
+    "primaryText": "Did John not pass the exam? No.",
     "discourseSegments": [
       "Did John not pass the exam?",
       "No."
@@ -774,7 +774,7 @@
       "paperLabel": "§3.2"
     },
     "language": "finn1318",
-    "primaryText": "Hajoti-ko Marja ruukun? — Hajotti.",
+    "primaryText": "Hajoti-ko Marja ruukun? Hajotti.",
     "discourseSegments": [
       "Hajoti-ko Marja ruukun?",
       "Hajotti."
@@ -808,7 +808,7 @@
       "paperLabel": "§3.2"
     },
     "language": "finn1318",
-    "primaryText": "Hajoti-ko Marja ruukun? — Rikkoi.",
+    "primaryText": "Hajoti-ko Marja ruukun? Rikkoi.",
     "discourseSegments": [
       "Hajoti-ko Marja ruukun?",
       "Rikkoi."
@@ -842,7 +842,7 @@
       "paperLabel": "§3.3"
     },
     "language": "stan1293",
-    "primaryText": "Do you not drink coffee? — Yes.",
+    "primaryText": "Do you not drink coffee? Yes.",
     "discourseSegments": [
       "Do you not drink coffee?",
       "Yes."
@@ -880,7 +880,7 @@
       "paperLabel": "§3.3"
     },
     "language": "stan1293",
-    "primaryText": "Do you not drink coffee? — Yes, I do.",
+    "primaryText": "Do you not drink coffee? Yes, I do.",
     "discourseSegments": [
       "Do you not drink coffee?",
       "Yes, I do."
@@ -918,7 +918,7 @@
       "paperLabel": "§3.3"
     },
     "language": "finn1318",
-    "primaryText": "Ei-kö Jussi juo kahvia? — Juo.",
+    "primaryText": "Ei-kö Jussi juo kahvia? Juo.",
     "discourseSegments": [
       "Ei-kö Jussi juo kahvia?",
       "Juo."
@@ -956,7 +956,7 @@
       "paperLabel": "§3.3"
     },
     "language": "finn1318",
-    "primaryText": "Ei-kö Jussi juo kahvia? — Juo se.",
+    "primaryText": "Ei-kö Jussi juo kahvia? Juo se.",
     "discourseSegments": [
       "Ei-kö Jussi juo kahvia?",
       "Juo se."
@@ -994,7 +994,7 @@
       "paperLabel": "§3.3"
     },
     "language": "stan1290",
-    "primaryText": "Tu es fatigué? — Oui.",
+    "primaryText": "Tu es fatigué? Oui.",
     "discourseSegments": [
       "Tu es fatigué?",
       "Oui."
@@ -1032,7 +1032,7 @@
       "paperLabel": "§3.3"
     },
     "language": "stan1290",
-    "primaryText": "Tu n'es pas fatigué? — Oui.",
+    "primaryText": "Tu n'es pas fatigué? Oui.",
     "discourseSegments": [
       "Tu n'es pas fatigué?",
       "Oui."
@@ -1074,7 +1074,7 @@
       "paperLabel": "§3.3"
     },
     "language": "stan1290",
-    "primaryText": "Tu n'es pas fatigué? — Si.",
+    "primaryText": "Tu n'es pas fatigué? Si.",
     "discourseSegments": [
       "Tu n'es pas fatigué?",
       "Si."
@@ -1120,7 +1120,7 @@
       "paperLabel": "§4.1"
     },
     "language": "nucl1643",
-    "primaryText": "Kimi tukarete? — Un. / Uun.",
+    "primaryText": "Kimi tukarete? Un. / Uun.",
     "discourseSegments": [
       "Kimi tukarete?",
       "Un. / Uun."
@@ -1154,7 +1154,7 @@
       "paperLabel": "§4.1"
     },
     "language": "nucl1643",
-    "primaryText": "Kimi tukarete nai? — Un (tukarete nai).",
+    "primaryText": "Kimi tukarete nai? Un (tukarete nai).",
     "discourseSegments": [
       "Kimi tukarete nai?",
       "Un (tukarete nai)."
@@ -1200,7 +1200,7 @@
       "paperLabel": "§4.1"
     },
     "language": "nucl1643",
-    "primaryText": "Kare-wa koohii-o noma nai no? — Uun, nomu yo.",
+    "primaryText": "Kare-wa koohii-o noma nai no? Uun, nomu yo.",
     "discourseSegments": [
       "Kare-wa koohii-o noma nai no?",
       "Uun, nomu yo."
@@ -1246,7 +1246,7 @@
       "paperLabel": "§4.1"
     },
     "language": "swed1254",
-    "primaryText": "Är du inte trött? — Nej (jag är inte trött).",
+    "primaryText": "Är du inte trött? Nej (jag är inte trött).",
     "discourseSegments": [
       "Är du inte trött?",
       "Nej (jag är inte trött)."
@@ -1292,7 +1292,7 @@
       "paperLabel": "§4.1"
     },
     "language": "stan1293",
-    "primaryText": "Does he not drink coffee? — Yes he does.",
+    "primaryText": "Does he not drink coffee? Yes he does.",
     "discourseSegments": [
       "Does he not drink coffee?",
       "Yes he does."
@@ -1334,7 +1334,7 @@
       "paperLabel": "§4.3"
     },
     "language": "stan1293",
-    "primaryText": "Does he not drink coffee? — Yes.",
+    "primaryText": "Does he not drink coffee? Yes.",
     "discourseSegments": [
       "Does he not drink coffee?",
       "Yes."
@@ -1380,7 +1380,7 @@
       "paperLabel": "§4.3"
     },
     "language": "stan1293",
-    "primaryText": "Does he not drink coffee? — No.",
+    "primaryText": "Does he not drink coffee? No.",
     "discourseSegments": [
       "Does he not drink coffee?",
       "No."
@@ -1422,7 +1422,7 @@
       "paperLabel": "§4.3"
     },
     "language": "stan1293",
-    "primaryText": "Isn't John coming, either? — ",
+    "primaryText": "Isn't John coming, either? ",
     "discourseSegments": [
       "Isn't John coming, either?",
       ""
@@ -1460,7 +1460,7 @@
       "paperLabel": "§4.3"
     },
     "language": "stan1293",
-    "primaryText": "Does John sometimes not show up on time for work? — Yes.",
+    "primaryText": "Does John sometimes not show up on time for work? Yes.",
     "discourseSegments": [
       "Does John sometimes not show up on time for work?",
       "Yes."
@@ -1502,7 +1502,7 @@
       "paperLabel": "§4.3"
     },
     "language": "stan1293",
-    "primaryText": "Does John sometimes not show up on time for work? — No.",
+    "primaryText": "Does John sometimes not show up on time for work? No.",
     "discourseSegments": [
       "Does John sometimes not show up on time for work?",
       "No."
@@ -1544,7 +1544,7 @@
       "paperLabel": "§4.3"
     },
     "language": "stan1293",
-    "primaryText": "Did you purposely not dress up for that occasion? — Yes.",
+    "primaryText": "Did you purposely not dress up for that occasion? Yes.",
     "discourseSegments": [
       "Did you purposely not dress up for that occasion?",
       "Yes."
@@ -1586,7 +1586,7 @@
       "paperLabel": "§4.3"
     },
     "language": "stan1293",
-    "primaryText": "You can't not like her. — ",
+    "primaryText": "You can't not like her. ",
     "discourseSegments": [
       "You can't not like her.",
       ""
@@ -1616,7 +1616,7 @@
       "paperLabel": "§4.3"
     },
     "language": "stan1293",
-    "primaryText": "Cats don't not typically like rotten food. — ",
+    "primaryText": "Cats don't not typically like rotten food. ",
     "discourseSegments": [
       "Cats don't not typically like rotten food.",
       ""
@@ -1646,7 +1646,7 @@
       "paperLabel": "§4.3"
     },
     "language": "stan1293",
-    "primaryText": "Is John not coming? — Yes.",
+    "primaryText": "Is John not coming? Yes.",
     "discourseSegments": [
       "Is John not coming?",
       "Yes."
@@ -1684,7 +1684,7 @@
       "paperLabel": "§4.3"
     },
     "language": "stan1293",
-    "primaryText": "Is he not coming? — No, he is.",
+    "primaryText": "Is he not coming? No, he is.",
     "discourseSegments": [
       "Is he not coming?",
       "No, he is."
@@ -1722,7 +1722,7 @@
       "paperLabel": "§4.3"
     },
     "language": "stan1293",
-    "primaryText": "Isn't this cake delicious? — No, it is.",
+    "primaryText": "Isn't this cake delicious? No, it is.",
     "discourseSegments": [
       "Isn't this cake delicious?",
       "No, it is."
@@ -1760,7 +1760,7 @@
       "paperLabel": "§4.5"
     },
     "language": "swed1254",
-    "primaryText": "Har Johan inte kommit? — Ja.",
+    "primaryText": "Har Johan inte kommit? Ja.",
     "discourseSegments": [
       "Har Johan inte kommit?",
       "Ja."
@@ -1798,7 +1798,7 @@
       "paperLabel": "§4.5"
     },
     "language": "swed1254",
-    "primaryText": "Har Johan inte kommit? — Nej.",
+    "primaryText": "Har Johan inte kommit? Nej.",
     "discourseSegments": [
       "Har Johan inte kommit?",
       "Nej."
@@ -1840,7 +1840,7 @@
       "paperLabel": "§4.5"
     },
     "language": "swed1254",
-    "primaryText": "Du kan inte inte gå i kyrkan. — ",
+    "primaryText": "Du kan inte inte gå i kyrkan. ",
     "discourseSegments": [
       "Du kan inte inte gå i kyrkan.",
       ""
@@ -1870,7 +1870,7 @@
       "paperLabel": "§4.5"
     },
     "language": "swed1254",
-    "primaryText": "Har Johan nångång inte kommit i tid? — Ja.",
+    "primaryText": "Har Johan nångång inte kommit i tid? Ja.",
     "discourseSegments": [
       "Har Johan nångång inte kommit i tid?",
       "Ja."
@@ -1912,7 +1912,7 @@
       "paperLabel": "§4.5"
     },
     "language": "swed1254",
-    "primaryText": "Har Johan nångång inte kommit i tid? — Nej.",
+    "primaryText": "Har Johan nångång inte kommit i tid? Nej.",
     "discourseSegments": [
       "Har Johan nångång inte kommit i tid?",
       "Nej."
@@ -1954,7 +1954,7 @@
       "paperLabel": "§4.5"
     },
     "language": "swed1254",
-    "primaryText": "Har Johan inte kommit? — Jo.",
+    "primaryText": "Har Johan inte kommit? Jo.",
     "discourseSegments": [
       "Har Johan inte kommit?",
       "Jo."
@@ -2000,7 +2000,7 @@
       "paperLabel": "§4.5"
     },
     "language": "dutc1256",
-    "primaryText": "Is je broer niet naar Parijs gegaan? — Jawel.",
+    "primaryText": "Is je broer niet naar Parijs gegaan? Jawel.",
     "discourseSegments": [
       "Is je broer niet naar Parijs gegaan?",
       "Jawel."
@@ -2042,7 +2042,7 @@
       "paperLabel": "§4.4"
     },
     "language": "finn1318",
-    "primaryText": "Ei-kö Jussi tule-kaan mukaan? — Ei, kyllä se tulee.",
+    "primaryText": "Ei-kö Jussi tule-kaan mukaan? Ei, kyllä se tulee.",
     "discourseSegments": [
       "Ei-kö Jussi tule-kaan mukaan?",
       "Ei, kyllä se tulee."
@@ -2080,7 +2080,7 @@
       "paperLabel": "§4.8"
     },
     "language": "swed1254",
-    "primaryText": "Är det här inte vägen till Lund? — ",
+    "primaryText": "Är det här inte vägen till Lund? ",
     "discourseSegments": [
       "Är det här inte vägen till Lund?",
       ""
@@ -2110,7 +2110,7 @@
       "paperLabel": "§4.8"
     },
     "language": "swed1254",
-    "primaryText": "Är inte det här vägen till Lund? — ",
+    "primaryText": "Är inte det här vägen till Lund? ",
     "discourseSegments": [
       "Är inte det här vägen till Lund?",
       ""
@@ -2144,7 +2144,7 @@
       "paperLabel": "§4.8"
     },
     "language": "stan1293",
-    "primaryText": "Is this not the road to Lund? — ",
+    "primaryText": "Is this not the road to Lund? ",
     "discourseSegments": [
       "Is this not the road to Lund?",
       ""
@@ -2178,7 +2178,7 @@
       "paperLabel": "§4.8"
     },
     "language": "stan1293",
-    "primaryText": "Isn't this the road to Lund? — ",
+    "primaryText": "Isn't this the road to Lund? ",
     "discourseSegments": [
       "Isn't this the road to Lund?",
       ""
@@ -2212,7 +2212,7 @@
       "paperLabel": "§4.8"
     },
     "language": "stan1293",
-    "primaryText": "Is this the road to Lund? — So it is.",
+    "primaryText": "Is this the road to Lund? So it is.",
     "discourseSegments": [
       "Is this the road to Lund?",
       "So it is."
@@ -2246,7 +2246,7 @@
       "paperLabel": "§4.8"
     },
     "language": "stan1293",
-    "primaryText": "This is the road to Lund, isn't it? — So it is.",
+    "primaryText": "This is the road to Lund, isn't it? So it is.",
     "discourseSegments": [
       "This is the road to Lund, isn't it?",
       "So it is."
@@ -2280,7 +2280,7 @@
       "paperLabel": "§4.8"
     },
     "language": "stan1293",
-    "primaryText": "This is reasonable at all, isn't it? — ",
+    "primaryText": "This is reasonable at all, isn't it? ",
     "discourseSegments": [
       "This is reasonable at all, isn't it?",
       ""
@@ -2314,7 +2314,7 @@
       "paperLabel": "§4.8"
     },
     "language": "stan1293",
-    "primaryText": "This is the road to Lund. — No.",
+    "primaryText": "This is the road to Lund. No.",
     "discourseSegments": [
       "This is the road to Lund.",
       "No."

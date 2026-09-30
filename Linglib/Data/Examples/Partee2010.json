@@ -8,7 +8,7 @@
       ["A", "INDEF"], ["fake", "fake"], ["gun", "gun"], ["is", "be.PRS.3SG"], ["not", "NEG"],
       ["a", "INDEF"], ["gun", "gun"]
     ],
-    "translation": "A fake gun is not a gun.",
+    "translation": "",
     "context": "Cited as an apparently-true privative entailment (the prima facie evidence for the privative class).",
     "judgment": "acceptable",
     "readings": [],
@@ -23,7 +23,7 @@
       ["Is", "be.PRS.3SG"], ["that", "DEM"], ["gun", "gun"], ["real", "real"], ["or", "or"],
       ["fake", "fake"]
     ],
-    "translation": "Is that gun real or fake?",
+    "translation": "",
     "context": "The 'gun puzzle': for this question to be well-formed, 'gun' must include both real and fake guns. Direct evidence that the noun's denotation coerces to include the adjective's extension.",
     "judgment": "acceptable",
     "readings": [],
@@ -121,7 +121,7 @@
       ["that", "DEM"], ["fur", "fur"], ["is", "be.PRS.3SG"], ["fake", "fake"], ["or", "or"],
       ["real", "real"]
     ],
-    "translation": "I don't care whether that fur is fake or real.",
+    "translation": "",
     "context": "Generalization of the (10b) gun-puzzle to 'fur'. The polar disjunction 'fake or real' presupposes that 'fur' covers both fake and real fur; otherwise 'real' would be redundant. Direct evidence of NVP-licensed coercion of the noun extension.",
     "judgment": "acceptable",
     "readings": [],
@@ -136,7 +136,7 @@
     "glossedTokens": [
       ["a", "INDEF"], ["midget", "midget"], ["giant", "giant"]
     ],
-    "translation": "a midget giant (a giant, but an exceptionally small one)",
+    "translation": "",
     "context": "Test case for HPP (Head Primacy Principle): the head 'giant' fixes the local domain; the modifier 'midget' is interpreted relative to that domain, yielding 'small for a giant'. Compare (19a) 'giant midget' = a midget who is exceptionally large.",
     "judgment": "acceptable",
     "readings": [],
@@ -151,7 +151,7 @@
     "glossedTokens": [
       ["Knives", "knife.PL"], ["are", "be.PRS.3PL"], ["sharp", "sharp"]
     ],
-    "translation": "Knives are sharp.",
+    "translation": "",
     "context": "Test case for NVP (Non-Vacuity Principle). Generic predication: 'sharp' would be redundant if 'knife' presupposed sharpness; NVP forces a reading where some knives are not sharp, so the generic claim is non-vacuous.",
     "judgment": "acceptable",
     "readings": [],
@@ -166,7 +166,7 @@
       ["How", "how"], ["many", "many"], ["poets", "poet.PL"], ["are", "be.PRS.3PL"],
       ["buried", "bury.PASS.PTCP"], ["in", "in"], ["Amherst", "Amherst"]
     ],
-    "translation": "How many poets are buried in Amherst?",
+    "translation": "",
     "context": "Demonstrates context-shift of the noun 'poet' independent of any adjective. With predicate 'buried', 'poets' presupposes dead poets; with 'live in' or similar present-tense, 'poets' presupposes living poets. Shows N's extension is itself adjustable, supporting the coercion mechanism Partee invokes for privatives.",
     "judgment": "acceptable",
     "readings": [],
@@ -246,7 +246,7 @@
       ["that", "DEM"], ["fur", "fur"], ["is", "be.PRS.3SG"], ["fake", "fake"], ["fur", "fur"],
       ["or", "or"], ["real", "real"], ["fur", "fur"]
     ],
-    "translation": "I don't care whether that fur is fake fur or real fur.",
+    "translation": "",
     "context": "Explicit form of the fur disjunction, with both 'fake fur' and 'real fur' as full NPs. The acceptability shows the noun 'fur' uncontroversially covers both extensions.",
     "judgment": "acceptable",
     "readings": [],
@@ -261,7 +261,7 @@
     "glossedTokens": [
       ["a", "INDEF"], ["giant", "giant"], ["midget", "midget"]
     ],
-    "translation": "a giant midget (a midget, but an exceptionally large one)",
+    "translation": "",
     "context": "HPP pair-mate of (19b): with 'midget' as head, the local domain is midgets; 'giant' shifts to 'large for a midget'. Same words, opposite interpretations.",
     "judgment": "acceptable",
     "readings": [],
@@ -277,7 +277,7 @@
       ["This", "DEM"], ["is", "be.PRS.3SG"], ["a", "INDEF"], ["sharp", "sharp"],
       ["knife", "knife"]
     ],
-    "translation": "This is a sharp knife.",
+    "translation": "",
     "context": "Episodic predication mate of the generic (21b). Both can be true together; 'sharp' is not redundant in (21a) because NVP requires the local domain of knives to contain both sharp and non-sharp instances.",
     "judgment": "acceptable",
     "readings": [],
@@ -292,7 +292,7 @@
       ["How", "how"], ["many", "many"], ["poets", "poet.PL"], ["are", "be.PRS.3PL"],
       ["there", "EXIST"], ["in", "in"], ["Amherst", "Amherst"]
     ],
-    "translation": "How many poets are there in Amherst?",
+    "translation": "",
     "context": "Existential predicate companion of (22b). With 'are there', 'poets' presupposes living poets, contrasting with (22b) where 'are buried' presupposes dead poets. Same noun, context-shifted extension.",
     "judgment": "acceptable",
     "readings": [],

@@ -45,7 +45,7 @@
     "primaryText": "They're furious but it's unclear who.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "They're furious but it's unclear who.",
+    "translation": "",
     "context": "The argument/nonargument PP contrast: (12a) 'who(m)' with sprouted PP is fine, (12b) pied-piped 'who at' is fine, but the bare sluice fails because the argument-marking preposition 'at' (selected by 'furious') is within the argument domain, has no antecedent source, and fails the Structural Identity Condition.",
     "judgment": "ungrammatical",
     "alternatives": [
@@ -66,7 +66,7 @@
     "primaryText": "He is very loyal, but I don't know who.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "He is very loyal, but I don't know who.",
+    "translation": "",
     "context": "Sluicing fails completely when the argument domain itself has no match: no vP in the antecedent whose argument domain matches 'who [he is loyal to]'.",
     "judgment": "ungrammatical",
     "alternatives": [],

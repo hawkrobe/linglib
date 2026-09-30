@@ -31,7 +31,7 @@
         "present.PL"
       ]
     ],
-    "translation": "Every boy found his presents.",
+    "translation": "",
     "context": "Four boys, each with nine presents to find; three boys found all their presents, one boy found some but not all (Table 13 gap displays, e.g. 9929).",
     "judgment": "acceptable",
     "alternatives": [],
@@ -96,7 +96,7 @@
         "present.PL"
       ]
     ],
-    "translation": "No boy found his presents.",
+    "translation": "",
     "context": "Four boys, each with nine presents; one boy found some but not all of his presents, the others found none (Table 13 gap displays, e.g. 0070).",
     "judgment": "acceptable",
     "alternatives": [],
@@ -165,7 +165,7 @@
         "present.PL"
       ]
     ],
-    "translation": "Every boy found his presents.",
+    "translation": "",
     "context": "Four boys, each with nine presents; every boy found all nine of his (Table 13 display 9999).",
     "judgment": "acceptable",
     "alternatives": [],
@@ -226,7 +226,7 @@
         "present.PL"
       ]
     ],
-    "translation": "Every boy found his presents.",
+    "translation": "",
     "context": "Four boys; one boy found none of his presents, and two others found some but not all (Table 13 false displays, e.g. 9770).",
     "judgment": "acceptable",
     "alternatives": [],
@@ -287,7 +287,7 @@
         "present.PL"
       ]
     ],
-    "translation": "No boy found his presents.",
+    "translation": "",
     "context": "Four boys; no boy found any of his presents (Table 13 display 0000).",
     "judgment": "acceptable",
     "alternatives": [],
@@ -348,7 +348,7 @@
         "present.PL"
       ]
     ],
-    "translation": "No boy found his presents.",
+    "translation": "",
     "context": "Four boys; one boy found all nine of his presents, another found five (Table 13 replacement displays, e.g. 5009).",
     "judgment": "acceptable",
     "alternatives": [],
@@ -425,7 +425,7 @@
         "present.PL"
       ]
     ],
-    "translation": "Exactly 2 of the 4 boys found their presents.",
+    "translation": "",
     "context": "Four boys; exactly two of them found some of their presents (in at most one case all of them), the other two found none (Table 13 gap displays, e.g. 9200, 3300).",
     "judgment": "acceptable",
     "alternatives": [],
@@ -506,7 +506,7 @@
         "present.PL"
       ]
     ],
-    "translation": "Exactly 2 of the 4 boys found their presents.",
+    "translation": "",
     "context": "Four boys; one boy found all his presents; two boys each found some (not all) of theirs; one boy found none (Table 13 gap? displays, e.g. 9202).",
     "judgment": "acceptable",
     "alternatives": [],
@@ -591,7 +591,7 @@
         "present.PL"
       ]
     ],
-    "translation": "Exactly 2 of the 4 boys found their presents.",
+    "translation": "",
     "context": "Four boys; exactly two boys each found all their presents; a third boy found some (not all) of his; the fourth found none (Table 13 gap?? displays, e.g. 9209).",
     "judgment": "acceptable",
     "alternatives": [],
@@ -672,7 +672,7 @@
         "present.PL"
       ]
     ],
-    "translation": "Exactly 2 of the 4 boys found their presents.",
+    "translation": "",
     "context": "Four boys; exactly two boys found all nine of their presents, the other two found none (Table 13 displays, e.g. 9900).",
     "judgment": "acceptable",
     "alternatives": [],
@@ -749,7 +749,7 @@
         "present.PL"
       ]
     ],
-    "translation": "Exactly 2 of the 4 boys found their presents.",
+    "translation": "",
     "context": "Four boys; one boy found some but not all of his presents, the others found none (Table 13 false displays, e.g. 4000).",
     "judgment": "acceptable",
     "alternatives": [],
@@ -806,7 +806,7 @@
         "blue"
       ]
     ],
-    "translation": "The triangles are blue.",
+    "translation": "",
     "context": "Nine triangles in the display; all nine are blue.",
     "judgment": "acceptable",
     "alternatives": [],
@@ -855,7 +855,7 @@
         "blue"
       ]
     ],
-    "translation": "The triangles are blue.",
+    "translation": "",
     "context": "Nine triangles in the display; none is blue.",
     "judgment": "acceptable",
     "alternatives": [],
@@ -904,7 +904,7 @@
         "blue"
       ]
     ],
-    "translation": "The triangles are blue.",
+    "translation": "",
     "context": "Nine triangles in the display; four are blue, five are another color.",
     "judgment": "acceptable",
     "alternatives": [],
@@ -957,7 +957,7 @@
         "blue"
       ]
     ],
-    "translation": "The triangles aren't blue.",
+    "translation": "",
     "context": "Nine triangles in the display; all nine are blue.",
     "judgment": "acceptable",
     "alternatives": [],
@@ -1006,7 +1006,7 @@
         "blue"
       ]
     ],
-    "translation": "The triangles aren't blue.",
+    "translation": "",
     "context": "Nine triangles in the display; none is blue.",
     "judgment": "acceptable",
     "alternatives": [],
@@ -1055,7 +1055,7 @@
         "blue"
       ]
     ],
-    "translation": "The triangles aren't blue.",
+    "translation": "",
     "context": "Nine triangles in the display; four are blue, five are another color.",
     "judgment": "acceptable",
     "alternatives": [],
