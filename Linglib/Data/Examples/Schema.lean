@@ -5,7 +5,6 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Mathlib.Data.Nat.Digits.Defs
 public import Mathlib.Tactic.TypeStar
 public import Linglib.Data.Examples.Judgment
 
@@ -56,7 +55,10 @@ translation and the judgment the paper reports; it is the sentence-level counter
   repeats when the example bears the property twice (two indefinite series in one clause), so the
   list is not a map: `feature?` reads the first value, `features` every value.
 * Studies decide propositions over rows, so every lookup reduces in the kernel. `digits?` reads a
-  numeral by `Nat.ofDigits` because `String.toNat?` is well-founded recursive and does not.
+  numeral by a fold over its characters because `String.toNat?` is well-founded recursive and
+  does not.
+* The file imports no tactic library: every module with example data imports it, and names such
+  a library brings into scope (mathlib's root `Tree`) would reach every study that reads rows.
 
 ## TODO
 
@@ -127,7 +129,7 @@ structure LinguisticExample where
 /-- `digits? cs` is the number that the nonempty string of decimal digits `cs` denotes. -/
 def digits? (cs : List Char) : Option ℕ :=
   if cs ≠ [] ∧ cs.all Char.isDigit then
-    some (Nat.ofDigits 10 (cs.map fun c ↦ c.toNat - '0'.toNat).reverse)
+    some (cs.foldl (fun n c ↦ 10 * n + (c.toNat - '0'.toNat)) 0)
   else none
 
 namespace LinguisticExample
