@@ -35,7 +35,8 @@ the participants share the sub-utterance's content, the constituent reading does
 
 * Signs are the substrate's `LocProp`, whose `constits` name the parameter each sub-utterance
   contributes; contents are opaque, so existential generalization takes the binder as an argument
-  and the running example writes contents as strings.
+  and the running example writes contents as strings. A contextual parameter is its index: the
+  restrictions of (28) are not represented, and grounding asks only for a value.
 * The information state keeps the components that (82) displays: LATEST-MOVE as a sign with its
   assignment, PENDING, MAX-QUD and SAL-UTT; the FACTS update (81) and the grounding conditions
   (80) are not modelled.
@@ -64,10 +65,10 @@ variable {V Cont : Type}
 /-- A contextual assignment: values for parameter indices. -/
 abbrev Assignment (V : Type) := List (String × V)
 
-/-- `f` resolves the parameter `c`. -/
-def Assignment.Resolves (f : Assignment V) (c : CParam) : Prop := c.index ∈ f.map Prod.fst
+/-- `f` resolves the parameter with index `i`. -/
+def Assignment.Resolves (f : Assignment V) (i : String) : Prop := i ∈ f.map Prod.fst
 
-instance (f : Assignment V) (c : CParam) : Decidable (f.Resolves c) :=
+instance (f : Assignment V) (i : String) : Decidable (f.Resolves i) :=
   inferInstanceAs (Decidable (_ ∈ _))
 
 /-- `f` grounds `σ`: it resolves every contextual parameter of the sign. -/
@@ -77,8 +78,8 @@ instance (f : Assignment V) (σ : LocProp Cont) : Decidable (Grounds f σ) :=
   inferInstanceAs (Decidable (∀ c ∈ _, _))
 
 /-- The parameters of `σ` that `f` leaves unresolved. -/
-def unresolved (f : Assignment V) (σ : LocProp Cont) : CParamSet :=
-  σ.cparams.filter (λ c => !decide (f.Resolves c))
+def unresolved (f : Assignment V) (σ : LocProp Cont) : List String :=
+  σ.cparams.filter fun i ↦ !decide (f.Resolves i)
 
 theorem grounds_iff (f : Assignment V) (σ : LocProp Cont) :
     Grounds f σ ↔ unresolved f σ = [] := by
@@ -105,15 +106,15 @@ structure Clarification (Cont : Type) where
 /-- The sub-utterance contributing the contextual parameter `i` of `σ`: the left-hand side the
 coercion rules share. -/
 def constitOf (σ : LocProp Cont) (i : String) : Option SubUtterance :=
-  if i ∈ σ.cparams.map CParam.index then σ.constits.find? (λ u => decide (u.cont = i)) else none
+  if i ∈ σ.cparams then σ.constits.find? (fun u ↦ decide (u.cont = i)) else none
 
 /-- Parameter focussing: MAX-QUD is the content with `i` abstracted, `?i.p`. -/
 def parameterFocussing (σ : LocProp Cont) (i : String) : Option (Clarification Cont) :=
-  (constitOf σ i).map λ u => ⟨u, .focus i σ.cont⟩
+  (constitOf σ i).map fun u ↦ ⟨u, .focus i σ.cont⟩
 
 /-- Parameter identification: MAX-QUD asks what the speaker meant by the sub-utterance. -/
 def parameterIdentification (σ : LocProp Cont) (i : String) : Option (Clarification Cont) :=
-  (constitOf σ i).map λ u => ⟨u, .meaning u⟩
+  (constitOf σ i).map fun u ↦ ⟨u, .meaning u⟩
 
 /-- The two operations differ only in MAX-QUD: they make the same sub-utterance salient. -/
 theorem salUtt_parameterFocussing (σ : LocProp Cont) (i : String) :
@@ -125,11 +126,11 @@ theorem salUtt_parameterFocussing (σ : LocProp Cont) (i : String) :
 content becomes `bind i p`, the content with `i` existentially bound with widest scope. -/
 def existentialGeneralization (bind : String → Cont → Cont) (σ : LocProp Cont) (i : String) :
     LocProp Cont :=
-  { σ with cparams := σ.cparams.filter (λ c => decide (c.index ≠ i)), cont := bind i σ.cont }
+  { σ with cparams := σ.cparams.filter (fun c ↦ decide (c ≠ i)), cont := bind i σ.cont }
 
 /-- An assignment resolving every parameter but `i` grounds the generalized sign. -/
 theorem grounds_existentialGeneralization {bind : String → Cont → Cont} {σ : LocProp Cont}
-    {i : String} {f : Assignment V} (h : ∀ c ∈ σ.cparams, c.index ≠ i → f.Resolves c) :
+    {i : String} {f : Assignment V} (h : ∀ c ∈ σ.cparams, c ≠ i → f.Resolves c) :
     Grounds f (existentialGeneralization bind σ i) := by
   intro c hc
   simp only [existentialGeneralization, List.mem_filter, decide_eq_true_eq] at hc
@@ -138,20 +139,19 @@ theorem grounds_existentialGeneralization {bind : String → Cont → Cont} {σ 
 /-- The clarification potential of a sign: the clarification contexts its coercion operations make
 available, one of each kind per contextual parameter. -/
 def potential (σ : LocProp Cont) : List (Clarification Cont) :=
-  σ.cparams.filterMap (λ c => parameterFocussing σ c.index) ++
-    σ.cparams.filterMap (λ c => parameterIdentification σ c.index)
+  σ.cparams.filterMap (parameterFocussing σ) ++ σ.cparams.filterMap (parameterIdentification σ)
 
 /-- The Hybrid Content Hypothesis as the paper argues it from (19)–(20): "Jill is the president"
 and "She is the president", with the same content, differ in clarification potential, because the
 potential reads the sub-utterances. -/
 theorem potential_ne_of_constits (p : Cont) :
     ∃ σ σ' : LocProp Cont, σ.cont = σ'.cont ∧ potential σ ≠ potential σ' :=
-  ⟨{ phon := "Jill is the president", cat := "S", cont := p, cparams := [⟨"j", "named(Jill)(j)"⟩],
+  ⟨{ phon := "Jill is the president", cat := "S", cont := p, cparams := ["j"],
       constits := [⟨"Jill", "NP", "j"⟩] },
-    { phon := "She is the president", cat := "S", cont := p, cparams := [⟨"j", "demonstrated(j)"⟩],
+    { phon := "She is the president", cat := "S", cont := p, cparams := ["j"],
       constits := [⟨"She", "NP", "j"⟩] },
-    rfl, λ h => by
-      have := congrArg (λ l => l.head?.map Clarification.salUtt) h
+    rfl, fun h ↦ by
+      have := congrArg (fun l ↦ l.head?.map Clarification.salUtt) h
       change some (⟨"Jill", "NP", "j"⟩ : SubUtterance) = some ⟨"She", "NP", "j"⟩ at this
       exact absurd this (by decide)⟩
 
@@ -184,21 +184,21 @@ abbrev Coercion (Cont : Type) := LocProp Cont → String → Option (Clarificati
 values the coercion specifies for the parameter `i`. -/
 def IS.clarify (s : IS V Cont) (coe : Coercion Cont) (i : String) : Option (IS V Cont) :=
   match s.pending with
-  | σ :: _ => (coe σ i).map λ c => { s with maxQud := some c.maxQud, salUtt := some c.salUtt }
+  | σ :: _ => (coe σ i).map fun c ↦ { s with maxQud := some c.maxQud, salUtt := some c.salUtt }
   | [] => none
 
 /-- Protocol (84b): the coercion applied to the sign of LATEST-MOVE, by which the speaker of an
 utterance comprehends a clarification of it. -/
 def IS.backtrack (s : IS V Cont) (coe : Coercion Cont) (i : String) : Option (IS V Cont) :=
-  s.latestMove.bind λ m =>
-    (coe m.1 i).map λ c => { s with maxQud := some c.maxQud, salUtt := some c.salUtt }
+  s.latestMove.bind fun m ↦
+    (coe m.1 i).map fun c ↦ { s with maxQud := some c.maxQud, salUtt := some c.salUtt }
 
 /-- A coercion reads only the sign, so the speaker backtracking over her latest move and the
 addressee clarifying the same sign, pending for him, reach the same clarification context. -/
 theorem backtrack_eq_clarify {s s' : IS V Cont} {σ : LocProp Cont} (coe : Coercion Cont)
     (i : String) (hs : s.latestMove.map Prod.fst = some σ) (hs' : s'.pending.head? = some σ) :
-    (s.backtrack coe i).map (λ t => (t.maxQud, t.salUtt)) =
-      (s'.clarify coe i).map (λ t => (t.maxQud, t.salUtt)) := by
+    (s.backtrack coe i).map (fun t ↦ (t.maxQud, t.salUtt)) =
+      (s'.clarify coe i).map (fun t ↦ (t.maxQud, t.salUtt)) := by
   obtain ⟨⟨τ, f⟩, hm, hτ⟩ := Option.map_eq_some_iff.1 hs
   cases hτ
   obtain ⟨ρ, rest, hp⟩ : ∃ ρ rest, s'.pending = ρ :: rest := by
@@ -227,8 +227,7 @@ def clause : SubUtterance := ⟨"Did Bo leave", "S", "ask(i,j,?.leave(b,t))"⟩
 the addressee and the utterance time (28), (32). -/
 def σ : LocProp String :=
   { phon := "did bo leave", cat := "V[+fin]", cont := "ask(i,j,?.leave(b,t))",
-    cparams := [⟨"b", "named(Bo)(b)"⟩, ⟨"t", "precedes(t,k)"⟩, ⟨"i", "spkr(i)"⟩,
-      ⟨"j", "addr(j)"⟩, ⟨"k", "utt-time(k)"⟩],
+    cparams := ["b", "t", "i", "j", "k"],
     constits := [did, bo, leave, clause] }
 
 /-- A's assignment (82b). -/
@@ -240,7 +239,7 @@ def fB : Assignment String := [("t", "T0"), ("i", "A"), ("j", "B"), ("k", "T1"),
 
 theorem grounds_fA : Grounds fA σ := by decide
 
-theorem unresolved_fB : unresolved fB σ = [⟨"b", "named(Bo)(b)"⟩] := by decide
+theorem unresolved_fB : unresolved fB σ = ["b"] := by decide
 
 /-- (54): focussing on `b` makes "Bo" salient and asks who, named Bo, A is asking about. -/
 theorem focussing_b : parameterFocussing σ "b" = some ⟨bo, .focus "b" σ.cont⟩ := by decide
@@ -278,8 +277,8 @@ theorem differ :
 "Bo?" as a clarification of her utterance. -/
 theorem backtrack :
     ((initial.ground fA).bind (·.backtrack parameterFocussing "b")).map
-        (λ s => (s.maxQud, s.salUtt)) =
-      (initial.clarify parameterFocussing "b").map (λ s => (s.maxQud, s.salUtt)) := by
+        (fun s ↦ (s.maxQud, s.salUtt)) =
+      (initial.clarify parameterFocussing "b").map (fun s ↦ (s.maxQud, s.salUtt)) := by
   decide
 
 end Ex32
@@ -346,7 +345,7 @@ def Row.ofDatum (ex : Datum) : Option Row := do
 /-- The sign of the row's first turn as far as the clarification reads it: the sub-utterance
 contributing the parameter `x`. -/
 def Row.sign (r : Row) : LocProp Unit :=
-  { phon := "", cat := "S", cont := (), cparams := [⟨"x", ""⟩], constits := [r.antecedent] }
+  { phon := "", cat := "S", cont := (), cparams := ["x"], constits := [r.antecedent] }
 
 /-- The nineteen dialogues of (4), (6), (8)–(13). -/
 def rows : List Row := Examples.all.filterMap Row.ofDatum
