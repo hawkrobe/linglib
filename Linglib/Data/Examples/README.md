@@ -13,6 +13,9 @@ python3 scripts/gen_examples.py --all          # regenerate every paper
 python3 scripts/gen_examples.py --check        # verify modules match JSON (CI)
 python3 scripts/gen_examples.py --fmt <AuthorYear>  # rewrite one JSON in canonical format
 python3 scripts/check_examples.py              # study literals vs rows, bibkeys (CI)
+python3 scripts/export_examples_cldf.py --validate <dir>  # CLDF export + validation (CI; needs pycldf)
+python3 scripts/export_examples_cldf.py --sync-languages  # rebuild languages.csv from Glottolog
+python3 scripts/export_examples_cldf.py --report          # per-paper rows to check against sources
 ```
 
 `--fmt` emits the canonical format (2-space indent, schema key order, gloss
@@ -37,10 +40,10 @@ field reference:
 
 | Field | Type | Notes |
 |---|---|---|
-| `id` | string | `<authoryear>_<local>`, e.g. `"charlow2014_donkey1"` |
+| `id` | string | `<authoryear>_<local>`, e.g. `"charlow2014_donkey1"`; only `[A-Za-z0-9_-]` (a CLDF identifier: write `(3.1)` as `3_1`, a prime as `_prime`) |
 | `source` | `{bibkey, paperLabel}` | **originating** paper (e.g. `geach-1962` for the donkey) |
 | `reportedIn` | `{bibkey, paperLabel}` or `null` | citing paper whose file holds the row, when different from `source` |
-| `language` | string (Glottocode) | e.g. `"stan1293"` for Standard English |
+| `language` | string (Glottocode) | e.g. `"stan1293"` for Standard English; must be in `languages.csv`; `""` only for a constructed string of no language (a formal-language pattern) |
 | `primaryText` | string | surface form; for a discourse, its utterances joined by single spaces |
 | `discourseSegments` | array of strings | empty `[]` for a single sentence; the utterances of a discourse, in order |
 | `glossedTokens` | array of 2-string arrays | `[[surface, gloss], ...]`. Empty `[]` if no IGT (e.g., English-glossed-as-English) |
@@ -57,6 +60,24 @@ Translations are English, so there is no metalanguage field. CLDF's
 aligned by construction, and morpheme alignment is a property of the pairs.
 Printed results (ratings, rates, statistics) go to `Data/Experiments/`, not
 `paperFeatures`.
+
+## Languages
+
+`languages.csv` is the language table of the data: one Glottolog row (name, level, macroarea,
+coordinates) for each Glottocode the examples use, from Glottolog 5.3. The generator rejects a
+`language` not listed there. A new language is added by writing its Glottocode in the JSON and
+running `scripts/export_examples_cldf.py --sync-languages`, which fails on a code Glottolog does
+not have. Use the code of the variety the source names: a dialect Glottolog lists under its own
+code, otherwise the language; a family code only for a claim about the family.
+
+## CLDF export
+
+`scripts/export_examples_cldf.py` writes the data as a CLDF dataset (Generic module, CLDF 1.3):
+an `ExampleTable` with the judgment as CLDF's `Grammaticality_Judgement` mark (`?`, `??`, `#`,
+`*`), the Leipzig conformance derived from the gloss pairs, and `bibkey[locator]` sources; a
+`LanguageTable` from `languages.csv`; a `ContributionTable` of the data files; and the cited
+entries of `references.bib`. CI runs it with `--validate`, which fails on any issue the CLDF
+validator reports and on any bib entry a BibTeX parser rejects.
 
 ## One sentence per row
 

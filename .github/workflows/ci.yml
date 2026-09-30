@@ -27,6 +27,18 @@ jobs:
       - name: Check generated WALS data (imported features only, in sync)
         run: python3 scripts/gen_wals.py --check
 
+      - name: Check generated example data
+        run: python3 scripts/gen_examples.py --check
+
+      - name: Check example literals in studies
+        run: python3 scripts/check_examples.py
+
+      - name: Validate example data as CLDF
+        run: |
+          python3 -m venv "$RUNNER_TEMP/cldf-venv"
+          "$RUNNER_TEMP/cldf-venv/bin/pip" install --quiet pycldf==2.1.1
+          "$RUNNER_TEMP/cldf-venv/bin/python" scripts/export_examples_cldf.py --validate "$RUNNER_TEMP/cldf-examples"
+
       - name: Install elan
         run: |
           curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y --default-toolchain none

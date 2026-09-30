@@ -114,7 +114,7 @@ def ex_5 : LinguisticExample :=
     comment := "The preposition governs the locative, which noun and adjective both take: covariance imposed on both alike, not agreement." }
 
 def s2_3a : LinguisticExample :=
-  { id := "corbett1998_s2.3a"
+  { id := "corbett1998_s2_3a"
     source := ⟨"corbett-1998", "§2.3"⟩
     reportedIn := none
     language := "russ1263"
@@ -130,7 +130,7 @@ def s2_3a : LinguisticExample :=
     comment := "Person is inherent to the pronoun and marked on the verb." }
 
 def s2_3b : LinguisticExample :=
-  { id := "corbett1998_s2.3b"
+  { id := "corbett1998_s2_3b"
     source := ⟨"corbett-1998", "§2.3"⟩
     reportedIn := none
     language := "russ1263"
@@ -146,7 +146,7 @@ def s2_3b : LinguisticExample :=
     comment := "" }
 
 def s2_3c : LinguisticExample :=
-  { id := "corbett1998_s2.3c"
+  { id := "corbett1998_s2_3c"
     source := ⟨"corbett-1998", "§2.3"⟩
     reportedIn := none
     language := "russ1263"
@@ -306,7 +306,7 @@ def ex_14 : LinguisticExample :=
     comment := "-hii is -kii after a vowel other than i." }
 
 def s3_2a : LinguisticExample :=
-  { id := "corbett1998_s3.2a"
+  { id := "corbett1998_s3_2a"
     source := ⟨"corbett-1998", "§3.2"⟩
     reportedIn := none
     language := "soma1255"
@@ -322,7 +322,7 @@ def s3_2a : LinguisticExample :=
     comment := "" }
 
 def s3_2b : LinguisticExample :=
-  { id := "corbett1998_s3.2b"
+  { id := "corbett1998_s3_2b"
     source := ⟨"corbett-1998", "§3.2"⟩
     reportedIn := none
     language := "soma1255"

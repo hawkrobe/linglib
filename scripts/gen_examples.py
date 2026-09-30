@@ -25,7 +25,7 @@ object's fields mirror the `LinguisticExample` Lean struct:
     "id": "charlow2014_donkey1",
     "source":     {"bibkey": "geach-1962", "paperLabel": "ch. III, ..."},
     "reportedIn": {"bibkey": "charlow-2014", "paperLabel": "Ch. 2"},  // optional
-    "language": "stan1293",                  // Glottocode
+    "language": "stan1293",                  // Glottocode; "" for a constructed string
     "primaryText": "...",
     "discourseSegments": [],                 // empty for single-sentence
     "glossedTokens": [["Every", "every"], ...],  // pairs as 2-arrays
@@ -41,8 +41,10 @@ object's fields mirror the `LinguisticExample` Lean struct:
 
 Behavior:
 - Errors out (exit 1) if the JSON file doesn't exist.
-- Errors out on schema violations (a key that is not a field, unknown
-  judgment value, malformed gloss pair, missing id or source.bibkey).
+- Errors out on schema violations (a key that is not a field, an id outside
+  the CLDF identifier characters `[A-Za-z0-9_-]`, a language that is neither
+  empty nor a Glottocode of `languages.csv`, unknown judgment value,
+  malformed gloss pair, missing id or source.bibkey).
 - Idempotent: re-running on unchanged JSON produces no diff.
 - `--check` regenerates in-memory and exits 1 on any drift (CI guard);
   writes nothing.
@@ -53,7 +55,9 @@ Behavior:
 Dependencies: pure stdlib (json module).
 """
 
+import csv
 import json
+import re
 import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -61,6 +65,16 @@ from check_module_frontier import as_module_if_possible  # noqa: E402
 
 ROOT       = Path(__file__).resolve().parent.parent
 JSON_DIR   = ROOT / "Linglib" / "Data" / "Examples"
+LANGUAGES  = JSON_DIR / "languages.csv"
+
+
+def known_languages() -> set[str]:
+    """The Glottocodes of `languages.csv`, the example data's language table."""
+    with open(LANGUAGES, encoding="utf-8") as f:
+        return {row["ID"] for row in csv.DictReader(f)}
+
+
+KNOWN_LANGUAGES = known_languages()
 
 VALID_JUDGMENTS = {
     "acceptable", "marginal", "questionable", "unacceptable", "ungrammatical",
@@ -203,6 +217,8 @@ def emit_example(ex: dict, author_year_lower: str) -> str:
     ex_id   = (ex.get("id") or "").strip()
     if not ex_id:
         raise ValueError("example missing required `id`")
+    if not re.fullmatch(r"[A-Za-z0-9_-]+", ex_id):
+        raise ValueError(f"id {ex_id!r}: a CLDF identifier uses only [A-Za-z0-9_-]")
     where   = f"example {ex_id!r}"
     local   = lean_identifier(ex_id, author_year_lower)
     unknown = [k for k in ex if k not in KEY_ORDER]
@@ -212,6 +228,10 @@ def emit_example(ex: dict, author_year_lower: str) -> str:
     src         = emit_source_ref(ex.get("source") or {}, where + ".source")
     reported_in = emit_reported_in(ex.get("reportedIn"), where)
     language    = (ex.get("language") or "").strip()
+    if language and language not in KNOWN_LANGUAGES:
+        raise ValueError(
+            f"{where}: language {language!r} is not in {LANGUAGES.relative_to(ROOT)}; if it is a "
+            f"Glottocode, add it with scripts/export_examples_cldf.py --sync-languages")
     primary     = ex.get("primaryText") or ""
     discourse   = emit_string_list(ex.get("discourseSegments", []), where + ".discourseSegments")
     glossed     = emit_glossed_tokens(ex.get("glossedTokens", []), where)

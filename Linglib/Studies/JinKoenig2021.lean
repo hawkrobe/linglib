@@ -182,7 +182,7 @@ structure Row where
 def languageOf : String → Option Language
   | "stan1293" => some .english
   | "stan1290" => some .french
-  | "" => some .januubi
+  | "gulf1241" => some .januubi
   | "mand1415" => some .mandarin
   | "zarm1239" => some .zarmaSonrai
   | _ => none

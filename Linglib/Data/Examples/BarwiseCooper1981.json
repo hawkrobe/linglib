@@ -282,7 +282,7 @@
     "comment": ""
   },
   {
-    "id": "barwisecooper1981_37'a",
+    "id": "barwisecooper1981_37_prime_a",
     "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "(37'a)"},
     "language": "stan1293",
     "primaryText": "There is no man that loves Mary.",
@@ -298,7 +298,7 @@
     "comment": ""
   },
   {
-    "id": "barwisecooper1981_37''a",
+    "id": "barwisecooper1981_37_prime_prime_a",
     "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "(37''a)"},
     "language": "stan1293",
     "primaryText": "No one that loves Mary is a man.",
@@ -313,7 +313,7 @@
     "comment": "The symmetric form: restrictor and scope switched."
   },
   {
-    "id": "barwisecooper1981_4.10-32a",
+    "id": "barwisecooper1981_4_10-32a",
     "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "§4.10 (32a)"},
     "language": "stan1293",
     "primaryText": "A man and three women could lift this piano.",
@@ -328,7 +328,7 @@
     "comment": ""
   },
   {
-    "id": "barwisecooper1981_4.10-32b",
+    "id": "barwisecooper1981_4_10-32b",
     "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "§4.10 (32b)"},
     "language": "stan1293",
     "primaryText": "No man and few women could lift this piano.",
@@ -343,7 +343,7 @@
     "comment": ""
   },
   {
-    "id": "barwisecooper1981_4.10-32c",
+    "id": "barwisecooper1981_4_10-32c",
     "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "§4.10 (32c)"},
     "language": "stan1293",
     "primaryText": "*John and no woman could lift this piano.",
@@ -358,7 +358,7 @@
     "comment": ""
   },
   {
-    "id": "barwisecooper1981_4.10-33a",
+    "id": "barwisecooper1981_4_10-33a",
     "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "§4.10 (33a)"},
     "language": "stan1293",
     "primaryText": "John was invited and no woman was, so he went home alone again.",
@@ -373,7 +373,7 @@
     "comment": ""
   },
   {
-    "id": "barwisecooper1981_4.10-33a'",
+    "id": "barwisecooper1981_4_10-33a_prime",
     "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "§4.10 (33a')"},
     "language": "stan1293",
     "primaryText": "*John and no woman was invited, so he went home alone again.",
@@ -388,7 +388,7 @@
     "comment": ""
   },
   {
-    "id": "barwisecooper1981_4.10-35a",
+    "id": "barwisecooper1981_4_10-35a",
     "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "§4.10 (35a)"},
     "language": "stan1293",
     "primaryText": "John but no woman was invited.",
@@ -403,7 +403,7 @@
     "comment": ""
   },
   {
-    "id": "barwisecooper1981_4.10-36a",
+    "id": "barwisecooper1981_4_10-36a",
     "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "§4.10 (36a)"},
     "language": "stan1293",
     "primaryText": "*John but a woman was invited.",
@@ -418,7 +418,7 @@
     "comment": ""
   },
   {
-    "id": "barwisecooper1981_4.10-37a",
+    "id": "barwisecooper1981_4_10-37a",
     "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "§4.10 (37a)"},
     "language": "stan1293",
     "primaryText": "John and a woman and three children were invited.",
@@ -433,7 +433,7 @@
     "comment": ""
   },
   {
-    "id": "barwisecooper1981_4.10-37b",
+    "id": "barwisecooper1981_4_10-37b",
     "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "§4.10 (37b)"},
     "language": "stan1293",
     "primaryText": "*John but no woman but three children were invited.",

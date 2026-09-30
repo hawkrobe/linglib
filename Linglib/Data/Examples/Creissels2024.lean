@@ -18,7 +18,7 @@ namespace Creissels2024.Examples
 open Data.Examples
 
 def ex_1_13a : LinguisticExample :=
-  { id := "creissels2024_1.13a"
+  { id := "creissels2024_1_13a"
     source := ⟨"creissels-2024", "ch. 1 (13a)"⟩
     reportedIn := none
     language := "mand1436"
@@ -34,7 +34,7 @@ def ex_1_13a : LinguisticExample :=
     comment := "" }
 
 def ex_1_13b : LinguisticExample :=
-  { id := "creissels2024_1.13b"
+  { id := "creissels2024_1_13b"
     source := ⟨"creissels-2024", "ch. 1 (13b)"⟩
     reportedIn := none
     language := "mand1436"
@@ -50,7 +50,7 @@ def ex_1_13b : LinguisticExample :=
     comment := "The name is a postpositional phrase, so the clause has S and X, not A and P." }
 
 def ex_1_22a : LinguisticExample :=
-  { id := "creissels2024_1.22a"
+  { id := "creissels2024_1_22a"
     source := ⟨"creissels-2024", "ch. 1 (22a)"⟩
     reportedIn := none
     language := "basq1248"
@@ -66,7 +66,7 @@ def ex_1_22a : LinguisticExample :=
     comment := "" }
 
 def ex_1_22b : LinguisticExample :=
-  { id := "creissels2024_1.22b"
+  { id := "creissels2024_1_22b"
     source := ⟨"creissels-2024", "ch. 1 (22b)"⟩
     reportedIn := none
     language := "basq1248"
@@ -82,7 +82,7 @@ def ex_1_22b : LinguisticExample :=
     comment := "" }
 
 def ex_1_22c : LinguisticExample :=
-  { id := "creissels2024_1.22c"
+  { id := "creissels2024_1_22c"
     source := ⟨"creissels-2024", "ch. 1 (22c)"⟩
     reportedIn := none
     language := "basq1248"
@@ -98,7 +98,7 @@ def ex_1_22c : LinguisticExample :=
     comment := "" }
 
 def ex_1_23a : LinguisticExample :=
-  { id := "creissels2024_1.23a"
+  { id := "creissels2024_1_23a"
     source := ⟨"creissels-2024", "ch. 1 (23a)"⟩
     reportedIn := none
     language := "russ1263"
@@ -114,7 +114,7 @@ def ex_1_23a : LinguisticExample :=
     comment := "" }
 
 def ex_1_23b : LinguisticExample :=
-  { id := "creissels2024_1.23b"
+  { id := "creissels2024_1_23b"
     source := ⟨"creissels-2024", "ch. 1 (23b)"⟩
     reportedIn := none
     language := "russ1263"
@@ -130,7 +130,7 @@ def ex_1_23b : LinguisticExample :=
     comment := "" }
 
 def ex_1_23c : LinguisticExample :=
-  { id := "creissels2024_1.23c"
+  { id := "creissels2024_1_23c"
     source := ⟨"creissels-2024", "ch. 1 (23c)"⟩
     reportedIn := none
     language := "russ1263"
@@ -146,7 +146,7 @@ def ex_1_23c : LinguisticExample :=
     comment := "" }
 
 def ex_1_24a : LinguisticExample :=
-  { id := "creissels2024_1.24a"
+  { id := "creissels2024_1_24a"
     source := ⟨"creissels-2024", "ch. 1 (24a)"⟩
     reportedIn := none
     language := "avar1256"
@@ -162,7 +162,7 @@ def ex_1_24a : LinguisticExample :=
     comment := "" }
 
 def ex_1_24b : LinguisticExample :=
-  { id := "creissels2024_1.24b"
+  { id := "creissels2024_1_24b"
     source := ⟨"creissels-2024", "ch. 1 (24b)"⟩
     reportedIn := none
     language := "avar1256"
@@ -178,7 +178,7 @@ def ex_1_24b : LinguisticExample :=
     comment := "" }
 
 def ex_1_24c : LinguisticExample :=
-  { id := "creissels2024_1.24c"
+  { id := "creissels2024_1_24c"
     source := ⟨"creissels-2024", "ch. 1 (24c)"⟩
     reportedIn := none
     language := "avar1256"
@@ -194,7 +194,7 @@ def ex_1_24c : LinguisticExample :=
     comment := "" }
 
 def ex_8_1a : LinguisticExample :=
-  { id := "creissels2024_8.1a"
+  { id := "creissels2024_8_1a"
     source := ⟨"creissels-2024", "ch. 8 (1a)"⟩
     reportedIn := none
     language := "tswa1253"
@@ -210,7 +210,7 @@ def ex_8_1a : LinguisticExample :=
     comment := "" }
 
 def ex_8_1b : LinguisticExample :=
-  { id := "creissels2024_8.1b"
+  { id := "creissels2024_8_1b"
     source := ⟨"creissels-2024", "ch. 8 (1b)"⟩
     reportedIn := none
     language := "tswa1253"
@@ -226,7 +226,7 @@ def ex_8_1b : LinguisticExample :=
     comment := "The index is printed cl1; (6c) prints cl11 for the same form." }
 
 def ex_8_2a : LinguisticExample :=
-  { id := "creissels2024_8.2a"
+  { id := "creissels2024_8_2a"
     source := ⟨"creissels-2024", "ch. 8 (2a)"⟩
     reportedIn := none
     language := "bamb1269"
@@ -242,7 +242,7 @@ def ex_8_2a : LinguisticExample :=
     comment := "" }
 
 def ex_8_2b : LinguisticExample :=
-  { id := "creissels2024_8.2b"
+  { id := "creissels2024_8_2b"
     source := ⟨"creissels-2024", "ch. 8 (2b)"⟩
     reportedIn := none
     language := "bamb1269"
@@ -258,7 +258,7 @@ def ex_8_2b : LinguisticExample :=
     comment := "No verbal marking: a flexivalency alternation the book describes in the same terms as the Tswana passive (1), with the agent optionally an oblique." }
 
 def ex_8_3a : LinguisticExample :=
-  { id := "creissels2024_8.3a"
+  { id := "creissels2024_8_3a"
     source := ⟨"creissels-2024", "ch. 8 (3a)"⟩
     reportedIn := none
     language := "bamb1269"
@@ -274,7 +274,7 @@ def ex_8_3a : LinguisticExample :=
     comment := "" }
 
 def ex_8_3b : LinguisticExample :=
-  { id := "creissels2024_8.3b"
+  { id := "creissels2024_8_3b"
     source := ⟨"creissels-2024", "ch. 8 (3b)"⟩
     reportedIn := none
     language := "bamb1269"
@@ -290,7 +290,7 @@ def ex_8_3b : LinguisticExample :=
     comment := "The completive positive is marked differently in transitive and intransitive constructions independently of any valency alternation; the suffix is not voice marking." }
 
 def ex_8_4a : LinguisticExample :=
-  { id := "creissels2024_8.4a"
+  { id := "creissels2024_8_4a"
     source := ⟨"creissels-2024", "ch. 8 (4a)"⟩
     reportedIn := none
     language := "basq1248"
@@ -306,7 +306,7 @@ def ex_8_4a : LinguisticExample :=
     comment := "" }
 
 def ex_8_4b : LinguisticExample :=
-  { id := "creissels2024_8.4b"
+  { id := "creissels2024_8_4b"
     source := ⟨"creissels-2024", "ch. 8 (4b)"⟩
     reportedIn := none
     language := "basq1248"
@@ -322,7 +322,7 @@ def ex_8_4b : LinguisticExample :=
     comment := "Auxiliary selection registers the presence of an ergative slot, not the alternation: P-ambitransitivity, not equipollent voice marking." }
 
 def ex_8_5a : LinguisticExample :=
-  { id := "creissels2024_8.5a"
+  { id := "creissels2024_8_5a"
     source := ⟨"creissels-2024", "ch. 8 (5a)"⟩
     reportedIn := none
     language := "haus1257"
@@ -338,7 +338,7 @@ def ex_8_5a : LinguisticExample :=
     comment := "" }
 
 def ex_8_5b : LinguisticExample :=
-  { id := "creissels2024_8.5b"
+  { id := "creissels2024_8_5b"
     source := ⟨"creissels-2024", "ch. 8 (5b)"⟩
     reportedIn := none
     language := "haus1257"
@@ -354,7 +354,7 @@ def ex_8_5b : LinguisticExample :=
     comment := "Neither stem is derived from the other: equipollent marking, the construction without the beneficiary taken as initial by semantic markedness." }
 
 def ex_8_6a : LinguisticExample :=
-  { id := "creissels2024_8.6a"
+  { id := "creissels2024_8_6a"
     source := ⟨"creissels-2024", "ch. 8 (6a)"⟩
     reportedIn := none
     language := "tswa1253"
@@ -370,7 +370,7 @@ def ex_8_6a : LinguisticExample :=
     comment := "" }
 
 def ex_8_6b : LinguisticExample :=
-  { id := "creissels2024_8.6b"
+  { id := "creissels2024_8_6b"
     source := ⟨"creissels-2024", "ch. 8 (6b)"⟩
     reportedIn := none
     language := "tswa1253"
@@ -386,7 +386,7 @@ def ex_8_6b : LinguisticExample :=
     comment := "" }
 
 def ex_8_6c : LinguisticExample :=
-  { id := "creissels2024_8.6c"
+  { id := "creissels2024_8_6c"
     source := ⟨"creissels-2024", "ch. 8 (6c)"⟩
     reportedIn := none
     language := "tswa1253"
@@ -402,7 +402,7 @@ def ex_8_6c : LinguisticExample :=
     comment := "" }
 
 def ex_8_6d : LinguisticExample :=
-  { id := "creissels2024_8.6d"
+  { id := "creissels2024_8_6d"
     source := ⟨"creissels-2024", "ch. 8 (6d)"⟩
     reportedIn := none
     language := "tswa1253"
@@ -418,7 +418,7 @@ def ex_8_6d : LinguisticExample :=
     comment := "The initial A is coded as P: still a core term, so not denucleativized." }
 
 def ex_8_13a : LinguisticExample :=
-  { id := "creissels2024_8.13a"
+  { id := "creissels2024_8_13a"
     source := ⟨"creissels-2024", "ch. 8 (13a)"⟩
     reportedIn := none
     language := "tswa1253"
@@ -434,7 +434,7 @@ def ex_8_13a : LinguisticExample :=
     comment := "" }
 
 def ex_8_13b : LinguisticExample :=
-  { id := "creissels2024_8.13b"
+  { id := "creissels2024_8_13b"
     source := ⟨"creissels-2024", "ch. 8 (13b)"⟩
     reportedIn := none
     language := "tswa1253"
@@ -450,7 +450,7 @@ def ex_8_13b : LinguisticExample :=
     comment := "The same suffix as in P-applicativization; the instrument takes over the A role and the initial A cannot be expressed, understood as non-specific." }
 
 def ex_8_14a : LinguisticExample :=
-  { id := "creissels2024_8.14a"
+  { id := "creissels2024_8_14a"
     source := ⟨"creissels-2024", "ch. 8 (14a)"⟩
     reportedIn := none
     language := "tswa1253"
@@ -466,7 +466,7 @@ def ex_8_14a : LinguisticExample :=
     comment := "" }
 
 def ex_8_14b : LinguisticExample :=
-  { id := "creissels2024_8.14b"
+  { id := "creissels2024_8_14b"
     source := ⟨"creissels-2024", "ch. 8 (14b)"⟩
     reportedIn := none
     language := "tswa1253"
@@ -482,7 +482,7 @@ def ex_8_14b : LinguisticExample :=
     comment := "The index is printed cl1; (6c) prints cl11 for the same form." }
 
 def ex_8_14c : LinguisticExample :=
-  { id := "creissels2024_8.14c"
+  { id := "creissels2024_8_14c"
     source := ⟨"creissels-2024", "ch. 8 (14c)"⟩
     reportedIn := none
     language := "tswa1253"
@@ -498,7 +498,7 @@ def ex_8_14c : LinguisticExample :=
     comment := "P keeps its coding; the A/S index slot holds an expletive." }
 
 def ex_8_14d : LinguisticExample :=
-  { id := "creissels2024_8.14d"
+  { id := "creissels2024_8_14d"
     source := ⟨"creissels-2024", "ch. 8 (14d)"⟩
     reportedIn := none
     language := "tswa1253"
@@ -514,7 +514,7 @@ def ex_8_14d : LinguisticExample :=
     comment := "" }
 
 def ex_8_14e : LinguisticExample :=
-  { id := "creissels2024_8.14e"
+  { id := "creissels2024_8_14e"
     source := ⟨"creissels-2024", "ch. 8 (14e)"⟩
     reportedIn := none
     language := "tswa1253"
@@ -530,7 +530,7 @@ def ex_8_14e : LinguisticExample :=
     comment := "Literally 'There will be cried'." }
 
 def ex_8_15a : LinguisticExample :=
-  { id := "creissels2024_8.15a"
+  { id := "creissels2024_8_15a"
     source := ⟨"creissels-2024", "ch. 8 (15a)"⟩
     reportedIn := none
     language := "koyr1240"
@@ -546,7 +546,7 @@ def ex_8_15a : LinguisticExample :=
     comment := "" }
 
 def ex_8_15b : LinguisticExample :=
-  { id := "creissels2024_8.15b"
+  { id := "creissels2024_8_15b"
     source := ⟨"creissels-2024", "ch. 8 (15b)"⟩
     reportedIn := none
     language := "koyr1240"
@@ -562,7 +562,7 @@ def ex_8_15b : LinguisticExample :=
     comment := "The causee takes the dative postposition." }
 
 def ex_8_15c : LinguisticExample :=
-  { id := "creissels2024_8.15c"
+  { id := "creissels2024_8_15c"
     source := ⟨"creissels-2024", "ch. 8 (15c)"⟩
     reportedIn := none
     language := "koyr1240"
@@ -578,7 +578,7 @@ def ex_8_15c : LinguisticExample :=
     comment := "" }
 
 def ex_8_16a : LinguisticExample :=
-  { id := "creissels2024_8.16a"
+  { id := "creissels2024_8_16a"
     source := ⟨"creissels-2024", "ch. 8 (16a)"⟩
     reportedIn := none
     language := "hung1274"
@@ -594,7 +594,7 @@ def ex_8_16a : LinguisticExample :=
     comment := "" }
 
 def ex_8_16b : LinguisticExample :=
-  { id := "creissels2024_8.16b"
+  { id := "creissels2024_8_16b"
     source := ⟨"creissels-2024", "ch. 8 (16b)"⟩
     reportedIn := none
     language := "hung1274"
@@ -610,7 +610,7 @@ def ex_8_16b : LinguisticExample :=
     comment := "The preverb also bounds the event; in (17) it changes aktionsart alone." }
 
 def ex_8_18a : LinguisticExample :=
-  { id := "creissels2024_8.18a"
+  { id := "creissels2024_8_18a"
     source := ⟨"creissels-2024", "ch. 8 (18a)"⟩
     reportedIn := none
     language := "mand1436"
@@ -626,7 +626,7 @@ def ex_8_18a : LinguisticExample :=
     comment := "" }
 
 def ex_8_18b : LinguisticExample :=
-  { id := "creissels2024_8.18b"
+  { id := "creissels2024_8_18b"
     source := ⟨"creissels-2024", "ch. 8 (18b)"⟩
     reportedIn := none
     language := "mand1436"
@@ -642,7 +642,7 @@ def ex_8_18b : LinguisticExample :=
     comment := "" }
 
 def ex_8_19a : LinguisticExample :=
-  { id := "creissels2024_8.19a"
+  { id := "creissels2024_8_19a"
     source := ⟨"creissels-2024", "ch. 8 (19a)"⟩
     reportedIn := none
     language := "tswa1253"
@@ -658,7 +658,7 @@ def ex_8_19a : LinguisticExample :=
     comment := "" }
 
 def ex_8_19b : LinguisticExample :=
-  { id := "creissels2024_8.19b"
+  { id := "creissels2024_8_19b"
     source := ⟨"creissels-2024", "ch. 8 (19b)"⟩
     reportedIn := none
     language := "tswa1253"
@@ -674,7 +674,7 @@ def ex_8_19b : LinguisticExample :=
     comment := "" }
 
 def ex_8_21a : LinguisticExample :=
-  { id := "creissels2024_8.21a"
+  { id := "creissels2024_8_21a"
     source := ⟨"creissels-2024", "ch. 8 (21a)"⟩
     reportedIn := none
     language := "cent2127"
@@ -690,7 +690,7 @@ def ex_8_21a : LinguisticExample :=
     comment := "" }
 
 def ex_8_21b : LinguisticExample :=
-  { id := "creissels2024_8.21b"
+  { id := "creissels2024_8_21b"
     source := ⟨"creissels-2024", "ch. 8 (21b)"⟩
     reportedIn := none
     language := "cent2127"
@@ -706,7 +706,7 @@ def ex_8_21b : LinguisticExample :=
     comment := "" }
 
 def ex_8_23a : LinguisticExample :=
-  { id := "creissels2024_8.23a"
+  { id := "creissels2024_8_23a"
     source := ⟨"creissels-2024", "ch. 8 (23a)"⟩
     reportedIn := none
     language := "band1340"
@@ -722,7 +722,7 @@ def ex_8_23a : LinguisticExample :=
     comment := "" }
 
 def ex_8_23b : LinguisticExample :=
-  { id := "creissels2024_8.23b"
+  { id := "creissels2024_8_23b"
     source := ⟨"creissels-2024", "ch. 8 (23b)"⟩
     reportedIn := none
     language := "band1340"
@@ -738,7 +738,7 @@ def ex_8_23b : LinguisticExample :=
     comment := "The two participant roles are cumulated by the single S term." }
 
 def ex_8_24a : LinguisticExample :=
-  { id := "creissels2024_8.24a"
+  { id := "creissels2024_8_24a"
     source := ⟨"creissels-2024", "ch. 8 (24a)"⟩
     reportedIn := none
     language := "band1340"
@@ -754,7 +754,7 @@ def ex_8_24a : LinguisticExample :=
     comment := "" }
 
 def ex_8_24b : LinguisticExample :=
-  { id := "creissels2024_8.24b"
+  { id := "creissels2024_8_24b"
     source := ⟨"creissels-2024", "ch. 8 (24b)"⟩
     reportedIn := none
     language := "band1340"
@@ -770,7 +770,7 @@ def ex_8_24b : LinguisticExample :=
     comment := "" }
 
 def ex_8_27a : LinguisticExample :=
-  { id := "creissels2024_8.27a"
+  { id := "creissels2024_8_27a"
     source := ⟨"creissels-2024", "ch. 8 (27a)"⟩
     reportedIn := none
     language := "cent2127"
@@ -786,7 +786,7 @@ def ex_8_27a : LinguisticExample :=
     comment := "" }
 
 def ex_8_27b : LinguisticExample :=
-  { id := "creissels2024_8.27b"
+  { id := "creissels2024_8_27b"
     source := ⟨"creissels-2024", "ch. 8 (27b)"⟩
     reportedIn := none
     language := "cent2127"
@@ -802,7 +802,7 @@ def ex_8_27b : LinguisticExample :=
     comment := "" }
 
 def ex_8_28a : LinguisticExample :=
-  { id := "creissels2024_8.28a"
+  { id := "creissels2024_8_28a"
     source := ⟨"creissels-2024", "ch. 8 (28a)"⟩
     reportedIn := none
     language := "tswa1253"
@@ -818,7 +818,7 @@ def ex_8_28a : LinguisticExample :=
     comment := "" }
 
 def ex_8_28b : LinguisticExample :=
-  { id := "creissels2024_8.28b"
+  { id := "creissels2024_8_28b"
     source := ⟨"creissels-2024", "ch. 8 (28b)"⟩
     reportedIn := none
     language := "tswa1253"
@@ -834,7 +834,7 @@ def ex_8_28b : LinguisticExample :=
     comment := "The destination cannot be expressed with the underived verb." }
 
 def ex_8_33a : LinguisticExample :=
-  { id := "creissels2024_8.33a"
+  { id := "creissels2024_8_33a"
     source := ⟨"creissels-2024", "ch. 8 (33a)"⟩
     reportedIn := none
     language := "cadd1256"
@@ -850,7 +850,7 @@ def ex_8_33a : LinguisticExample :=
     comment := "" }
 
 def ex_8_33b : LinguisticExample :=
-  { id := "creissels2024_8.33b"
+  { id := "creissels2024_8_33b"
     source := ⟨"creissels-2024", "ch. 8 (33b)"⟩
     reportedIn := none
     language := "cadd1256"
@@ -866,7 +866,7 @@ def ex_8_33b : LinguisticExample :=
     comment := "" }
 
 def ex_8_38a : LinguisticExample :=
-  { id := "creissels2024_8.38a"
+  { id := "creissels2024_8_38a"
     source := ⟨"creissels-2024", "ch. 8 (38a)"⟩
     reportedIn := none
     language := "tswa1253"
@@ -882,7 +882,7 @@ def ex_8_38a : LinguisticExample :=
     comment := "" }
 
 def ex_8_38b : LinguisticExample :=
-  { id := "creissels2024_8.38b"
+  { id := "creissels2024_8_38b"
     source := ⟨"creissels-2024", "ch. 8 (38b)"⟩
     reportedIn := none
     language := "tswa1253"
@@ -898,7 +898,7 @@ def ex_8_38b : LinguisticExample :=
     comment := "" }
 
 def ex_8_38c : LinguisticExample :=
-  { id := "creissels2024_8.38c"
+  { id := "creissels2024_8_38c"
     source := ⟨"creissels-2024", "ch. 8 (38c)"⟩
     reportedIn := none
     language := "tswa1253"
@@ -914,7 +914,7 @@ def ex_8_38c : LinguisticExample :=
     comment := "" }
 
 def ex_8_38d : LinguisticExample :=
-  { id := "creissels2024_8.38d"
+  { id := "creissels2024_8_38d"
     source := ⟨"creissels-2024", "ch. 8 (38d)"⟩
     reportedIn := none
     language := "tswa1253"
@@ -930,7 +930,7 @@ def ex_8_38d : LinguisticExample :=
     comment := "" }
 
 def ex_8_38e : LinguisticExample :=
-  { id := "creissels2024_8.38e"
+  { id := "creissels2024_8_38e"
     source := ⟨"creissels-2024", "ch. 8 (38e)"⟩
     reportedIn := none
     language := "tswa1253"
@@ -946,7 +946,7 @@ def ex_8_38e : LinguisticExample :=
     comment := "The initial A is not mentioned but could be coded as a third P." }
 
 def ex_8_38f : LinguisticExample :=
-  { id := "creissels2024_8.38f"
+  { id := "creissels2024_8_38f"
     source := ⟨"creissels-2024", "ch. 8 (38f)"⟩
     reportedIn := none
     language := "tswa1253"
@@ -962,7 +962,7 @@ def ex_8_38f : LinguisticExample :=
     comment := "Literally 'Mpho will be written.to a letter': the applied P takes A coding and the construction stays transitive." }
 
 def ex_8_38g : LinguisticExample :=
-  { id := "creissels2024_8.38g"
+  { id := "creissels2024_8_38g"
     source := ⟨"creissels-2024", "ch. 8 (38g)"⟩
     reportedIn := none
     language := "tswa1253"
@@ -978,7 +978,7 @@ def ex_8_38g : LinguisticExample :=
     comment := "Literally 'I will be made to write a letter': the initial A regains A coding." }
 
 def ex_8_38h : LinguisticExample :=
-  { id := "creissels2024_8.38h"
+  { id := "creissels2024_8_38h"
     source := ⟨"creissels-2024", "ch. 8 (38h)"⟩
     reportedIn := none
     language := "tswa1253"
@@ -994,7 +994,7 @@ def ex_8_38h : LinguisticExample :=
     comment := "Literally 'Mpho will be made written.to a letter'." }
 
 def ex_8_39a : LinguisticExample :=
-  { id := "creissels2024_8.39a"
+  { id := "creissels2024_8_39a"
     source := ⟨"creissels-2024", "ch. 8 (39a)"⟩
     reportedIn := none
     language := "clas1250"
@@ -1010,7 +1010,7 @@ def ex_8_39a : LinguisticExample :=
     comment := "" }
 
 def ex_8_39b : LinguisticExample :=
-  { id := "creissels2024_8.39b"
+  { id := "creissels2024_8_39b"
     source := ⟨"creissels-2024", "ch. 8 (39b)"⟩
     reportedIn := none
     language := "clas1250"
@@ -1026,7 +1026,7 @@ def ex_8_39b : LinguisticExample :=
     comment := "" }
 
 def ex_8_39c : LinguisticExample :=
-  { id := "creissels2024_8.39c"
+  { id := "creissels2024_8_39c"
     source := ⟨"creissels-2024", "ch. 8 (39c)"⟩
     reportedIn := none
     language := "clas1250"
@@ -1042,7 +1042,7 @@ def ex_8_39c : LinguisticExample :=
     comment := "Antipassivization of a double-P construction: the derived construction stays transitive." }
 
 def ex_8_39d : LinguisticExample :=
-  { id := "creissels2024_8.39d"
+  { id := "creissels2024_8_39d"
     source := ⟨"creissels-2024", "ch. 8 (39d)"⟩
     reportedIn := none
     language := "clas1250"
@@ -1058,7 +1058,7 @@ def ex_8_39d : LinguisticExample :=
     comment := "Literally 'You are made to eat the meat'; 'they' is non-specific. UNVERIFIED: the meat's P status follows the analysis of Tswana (38f); the verb shows no P index." }
 
 def ex_8_39e : LinguisticExample :=
-  { id := "creissels2024_8.39e"
+  { id := "creissels2024_8_39e"
     source := ⟨"creissels-2024", "ch. 8 (39e)"⟩
     reportedIn := none
     language := "clas1250"
@@ -1074,7 +1074,7 @@ def ex_8_39e : LinguisticExample :=
     comment := "" }
 
 def ex_8_47a : LinguisticExample :=
-  { id := "creissels2024_8.47a"
+  { id := "creissels2024_8_47a"
     source := ⟨"creissels-2024", "ch. 8 (47a)"⟩
     reportedIn := none
     language := "bali1278"
@@ -1090,7 +1090,7 @@ def ex_8_47a : LinguisticExample :=
     comment := "Agent voice, derived by prefixing a nasal to the patient-voice form." }
 
 def ex_8_47b : LinguisticExample :=
-  { id := "creissels2024_8.47b"
+  { id := "creissels2024_8_47b"
     source := ⟨"creissels-2024", "ch. 8 (47b)"⟩
     reportedIn := none
     language := "bali1278"
@@ -1106,7 +1106,7 @@ def ex_8_47b : LinguisticExample :=
     comment := "Patient voice: the pivot is the preverbal phrase." }
 
 def ex_8_48a : LinguisticExample :=
-  { id := "creissels2024_8.48a"
+  { id := "creissels2024_8_48a"
     source := ⟨"creissels-2024", "ch. 8 (48a)"⟩
     reportedIn := none
     language := "taga1270"
@@ -1122,7 +1122,7 @@ def ex_8_48a : LinguisticExample :=
     comment := "Agent voice." }
 
 def ex_8_48b : LinguisticExample :=
-  { id := "creissels2024_8.48b"
+  { id := "creissels2024_8_48b"
     source := ⟨"creissels-2024", "ch. 8 (48b)"⟩
     reportedIn := none
     language := "taga1270"
@@ -1138,7 +1138,7 @@ def ex_8_48b : LinguisticExample :=
     comment := "Patient voice; the system has no basic voice, and the agent voice is taken as initial for the comparison only." }
 
 def ex_8_48c : LinguisticExample :=
-  { id := "creissels2024_8.48c"
+  { id := "creissels2024_8_48c"
     source := ⟨"creissels-2024", "ch. 8 (48c)"⟩
     reportedIn := none
     language := "taga1270"
@@ -1154,7 +1154,7 @@ def ex_8_48c : LinguisticExample :=
     comment := "Locative voice." }
 
 def ex_8_48d : LinguisticExample :=
-  { id := "creissels2024_8.48d"
+  { id := "creissels2024_8_48d"
     source := ⟨"creissels-2024", "ch. 8 (48d)"⟩
     reportedIn := none
     language := "taga1270"
@@ -1170,7 +1170,7 @@ def ex_8_48d : LinguisticExample :=
     comment := "Conveyance voice." }
 
 def ex_8_48e : LinguisticExample :=
-  { id := "creissels2024_8.48e"
+  { id := "creissels2024_8_48e"
     source := ⟨"creissels-2024", "ch. 8 (48e)"⟩
     reportedIn := none
     language := "taga1270"
@@ -1186,7 +1186,7 @@ def ex_8_48e : LinguisticExample :=
     comment := "Instrumental voice." }
 
 def ex_8_50a : LinguisticExample :=
-  { id := "creissels2024_8.50a"
+  { id := "creissels2024_8_50a"
     source := ⟨"creissels-2024", "ch. 8 (50a)"⟩
     reportedIn := none
     language := "bali1278"
@@ -1202,7 +1202,7 @@ def ex_8_50a : LinguisticExample :=
     comment := "" }
 
 def ex_8_50b : LinguisticExample :=
-  { id := "creissels2024_8.50b"
+  { id := "creissels2024_8_50b"
     source := ⟨"creissels-2024", "ch. 8 (50b)"⟩
     reportedIn := none
     language := "bali1278"
@@ -1218,7 +1218,7 @@ def ex_8_50b : LinguisticExample :=
     comment := "" }
 
 def ex_8_51a : LinguisticExample :=
-  { id := "creissels2024_8.51a"
+  { id := "creissels2024_8_51a"
     source := ⟨"creissels-2024", "ch. 8 (51a)"⟩
     reportedIn := none
     language := "bali1278"
@@ -1234,7 +1234,7 @@ def ex_8_51a : LinguisticExample :=
     comment := "" }
 
 def ex_8_51b : LinguisticExample :=
-  { id := "creissels2024_8.51b"
+  { id := "creissels2024_8_51b"
     source := ⟨"creissels-2024", "ch. 8 (51b)"⟩
     reportedIn := none
     language := "bali1278"
@@ -1250,7 +1250,7 @@ def ex_8_51b : LinguisticExample :=
     comment := "The initial P is denucleativized: valency is unchanged although a participant is nucleativized." }
 
 def ex_12_2a : LinguisticExample :=
-  { id := "creissels2024_12.2a"
+  { id := "creissels2024_12_2a"
     source := ⟨"creissels-2024", "ch. 12 (2a)"⟩
     reportedIn := none
     language := "tswa1253"
@@ -1266,7 +1266,7 @@ def ex_12_2a : LinguisticExample :=
     comment := "" }
 
 def ex_12_2b : LinguisticExample :=
-  { id := "creissels2024_12.2b"
+  { id := "creissels2024_12_2b"
     source := ⟨"creissels-2024", "ch. 12 (2b)"⟩
     reportedIn := none
     language := "tswa1253"
@@ -1282,7 +1282,7 @@ def ex_12_2b : LinguisticExample :=
     comment := "" }
 
 def ex_12_3a : LinguisticExample :=
-  { id := "creissels2024_12.3a"
+  { id := "creissels2024_12_3a"
     source := ⟨"creissels-2024", "ch. 12 (3a)"⟩
     reportedIn := none
     language := "tswa1253"
@@ -1298,7 +1298,7 @@ def ex_12_3a : LinguisticExample :=
     comment := "The same suffix as the causative of (2): 'The woman brought the food' implies 'The woman came'. Chapter 12 counts this use as causativization in the broad sense, portative derivation being a variety of it." }
 
 def ex_12_3b : LinguisticExample :=
-  { id := "creissels2024_12.3b"
+  { id := "creissels2024_12_3b"
     source := ⟨"creissels-2024", "ch. 12 (3b)"⟩
     reportedIn := none
     language := "tswa1253"
@@ -1314,7 +1314,7 @@ def ex_12_3b : LinguisticExample :=
     comment := "" }
 
 def ex_12_3c : LinguisticExample :=
-  { id := "creissels2024_12.3c"
+  { id := "creissels2024_12_3c"
     source := ⟨"creissels-2024", "ch. 12 (3c)"⟩
     reportedIn := none
     language := "tswa1253"

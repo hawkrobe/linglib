@@ -18,7 +18,7 @@ namespace Cysouw2003.Examples
 open Data.Examples
 
 def fig3_6 : LinguisticExample :=
-  { id := "cysouw2003_fig3.6"
+  { id := "cysouw2003_fig3_6"
     source := ⟨"cysouw-2003", "Fig. 3.6"⟩
     reportedIn := none
     language := "ilok1237"
@@ -34,7 +34,7 @@ def fig3_6 : LinguisticExample :=
     comment := "Fig. 3.6, the singular/group display of Thomas (1955)'s Ilocano pronouns; Ilocano is named a Maranao-type case in §4.5.2." }
 
 def ex_3_15 : LinguisticExample :=
-  { id := "cysouw2003_3.15"
+  { id := "cysouw2003_3_15"
     source := ⟨"cysouw-2003", "(3.15)"⟩
     reportedIn := none
     language := "bard1255"
@@ -50,7 +50,7 @@ def ex_3_15 : LinguisticExample :=
     comment := "" }
 
 def ex_3_16 : LinguisticExample :=
-  { id := "cysouw2003_3.16"
+  { id := "cysouw2003_3_16"
     source := ⟨"cysouw-2003", "(3.16)"⟩
     reportedIn := none
     language := "kuni1267"
@@ -66,7 +66,7 @@ def ex_3_16 : LinguisticExample :=
     comment := "" }
 
 def ex_3_17 : LinguisticExample :=
-  { id := "cysouw2003_3.17"
+  { id := "cysouw2003_3_17"
     source := ⟨"cysouw-2003", "(3.17)"⟩
     reportedIn := none
     language := "tiwi1244"
@@ -82,7 +82,7 @@ def ex_3_17 : LinguisticExample :=
     comment := "Lee (1987)'s paradigm; Osborne (1974) records a separate augmented inclusive ngagha." }
 
 def ex_3_18 : LinguisticExample :=
-  { id := "cysouw2003_3.18"
+  { id := "cysouw2003_3_18"
     source := ⟨"cysouw-2003", "(3.18)"⟩
     reportedIn := none
     language := "yaou1238"
@@ -98,7 +98,7 @@ def ex_3_18 : LinguisticExample :=
     comment := "" }
 
 def ex_3_19 : LinguisticExample :=
-  { id := "cysouw2003_3.19"
+  { id := "cysouw2003_3_19"
     source := ⟨"cysouw-2003", "(3.19)"⟩
     reportedIn := none
     language := "goon1238"
@@ -114,7 +114,7 @@ def ex_3_19 : LinguisticExample :=
     comment := "" }
 
 def ex_3_20 : LinguisticExample :=
-  { id := "cysouw2003_3.20"
+  { id := "cysouw2003_3_20"
     source := ⟨"cysouw-2003", "(3.20)"⟩
     reportedIn := none
     language := "tiwi1244"
@@ -130,7 +130,7 @@ def ex_3_20 : LinguisticExample :=
     comment := "" }
 
 def ex_3_21 : LinguisticExample :=
-  { id := "cysouw2003_3.21"
+  { id := "cysouw2003_3_21"
     source := ⟨"cysouw-2003", "(3.21)"⟩
     reportedIn := none
     language := "kuni1267"
@@ -146,7 +146,7 @@ def ex_3_21 : LinguisticExample :=
     comment := "" }
 
 def ex_3_22 : LinguisticExample :=
-  { id := "cysouw2003_3.22"
+  { id := "cysouw2003_3_22"
     source := ⟨"cysouw-2003", "(3.22)"⟩
     reportedIn := none
     language := "bina1277"
@@ -162,7 +162,7 @@ def ex_3_22 : LinguisticExample :=
     comment := "The book's one exception to addressee inclusion implication I (3.23)." }
 
 def ex_4_1 : LinguisticExample :=
-  { id := "cysouw2003_4.1"
+  { id := "cysouw2003_4_1"
     source := ⟨"cysouw-2003", "(4.1)"⟩
     reportedIn := none
     language := "lati1261"
@@ -178,7 +178,7 @@ def ex_4_1 : LinguisticExample :=
     comment := "" }
 
 def ex_4_2 : LinguisticExample :=
-  { id := "cysouw2003_4.2"
+  { id := "cysouw2003_4_2"
     source := ⟨"cysouw-2003", "(4.2)"⟩
     reportedIn := none
     language := "sinh1246"
@@ -194,7 +194,7 @@ def ex_4_2 : LinguisticExample :=
     comment := "Third person reference by demonstratives, drawn as one block." }
 
 def ex_4_3 : LinguisticExample :=
-  { id := "cysouw2003_4.3"
+  { id := "cysouw2003_4_3"
     source := ⟨"cysouw-2003", "(4.3)"⟩
     reportedIn := none
     language := "sout2830"
@@ -210,7 +210,7 @@ def ex_4_3 : LinguisticExample :=
     comment := "Rottland (1982)'s reconstruction." }
 
 def ex_4_4 : LinguisticExample :=
-  { id := "cysouw2003_4.4"
+  { id := "cysouw2003_4_4"
     source := ⟨"cysouw-2003", "(4.4)"⟩
     reportedIn := none
     language := "chic1270"
@@ -226,7 +226,7 @@ def ex_4_4 : LinguisticExample :=
     comment := "" }
 
 def ex_4_5 : LinguisticExample :=
-  { id := "cysouw2003_4.5"
+  { id := "cysouw2003_4_5"
     source := ⟨"cysouw-2003", "(4.5)"⟩
     reportedIn := none
     language := "nuuc1236"
@@ -242,7 +242,7 @@ def ex_4_5 : LinguisticExample :=
     comment := "" }
 
 def ex_4_6 : LinguisticExample :=
-  { id := "cysouw2003_4.6"
+  { id := "cysouw2003_4_6"
     source := ⟨"cysouw-2003", "(4.6)"⟩
     reportedIn := none
     language := "cent2117"
@@ -258,7 +258,7 @@ def ex_4_6 : LinguisticExample :=
     comment := "" }
 
 def ex_4_7 : LinguisticExample :=
-  { id := "cysouw2003_4.7"
+  { id := "cysouw2003_4_7"
     source := ⟨"cysouw-2003", "(4.7)"⟩
     reportedIn := none
     language := "beri1254"
@@ -274,7 +274,7 @@ def ex_4_7 : LinguisticExample :=
     comment := "" }
 
 def ex_4_8 : LinguisticExample :=
-  { id := "cysouw2003_4.8"
+  { id := "cysouw2003_4_8"
     source := ⟨"cysouw-2003", "(4.8)"⟩
     reportedIn := none
     language := "kuma1280"
@@ -290,7 +290,7 @@ def ex_4_8 : LinguisticExample :=
     comment := "" }
 
 def ex_4_9 : LinguisticExample :=
-  { id := "cysouw2003_4.9"
+  { id := "cysouw2003_4_9"
     source := ⟨"cysouw-2003", "(4.9)"⟩
     reportedIn := none
     language := "mand1446"
@@ -306,7 +306,7 @@ def ex_4_9 : LinguisticExample :=
     comment := "" }
 
 def ex_4_12 : LinguisticExample :=
-  { id := "cysouw2003_4.12"
+  { id := "cysouw2003_4_12"
     source := ⟨"cysouw-2003", "(4.12)"⟩
     reportedIn := none
     language := "xokl1240"
@@ -322,7 +322,7 @@ def ex_4_12 : LinguisticExample :=
     comment := "Footnote 11 doubts the classification: Wiesemann (1986b) records number in the second and third person." }
 
 def ex_4_13 : LinguisticExample :=
-  { id := "cysouw2003_4.13"
+  { id := "cysouw2003_4_13"
     source := ⟨"cysouw-2003", "(4.13)"⟩
     reportedIn := none
     language := "turk1308"
@@ -338,7 +338,7 @@ def ex_4_13 : LinguisticExample :=
     comment := "" }
 
 def ex_4_15 : LinguisticExample :=
-  { id := "cysouw2003_4.15"
+  { id := "cysouw2003_4_15"
     source := ⟨"cysouw-2003", "(4.15)"⟩
     reportedIn := none
     language := "mari1440"
@@ -354,7 +354,7 @@ def ex_4_15 : LinguisticExample :=
     comment := "" }
 
 def ex_4_17 : LinguisticExample :=
-  { id := "cysouw2003_4.17"
+  { id := "cysouw2003_4_17"
     source := ⟨"cysouw-2003", "(4.17)"⟩
     reportedIn := none
     language := "salt1242"
@@ -370,7 +370,7 @@ def ex_4_17 : LinguisticExample :=
     comment := "The inclusive cells are printed with a query mark: no inclusive use of na is attested in the grammar. 'Probably identical to the Maricopa structure'." }
 
 def ex_4_19 : LinguisticExample :=
-  { id := "cysouw2003_4.19"
+  { id := "cysouw2003_4_19"
     source := ⟨"cysouw-2003", "(4.19)"⟩
     reportedIn := none
     language := "stan1293"
@@ -386,7 +386,7 @@ def ex_4_19 : LinguisticExample :=
     comment := "Horizontal homophony in the second person only." }
 
 def ex_4_20 : LinguisticExample :=
-  { id := "cysouw2003_4.20"
+  { id := "cysouw2003_4_20"
     source := ⟨"cysouw-2003", "(4.20)"⟩
     reportedIn := none
     language := "xokl1240"
@@ -402,7 +402,7 @@ def ex_4_20 : LinguisticExample :=
     comment := "" }
 
 def ex_4_21 : LinguisticExample :=
-  { id := "cysouw2003_4.21"
+  { id := "cysouw2003_4_21"
     source := ⟨"cysouw-2003", "(4.21)"⟩
     reportedIn := none
     language := "ainu1240"
@@ -418,7 +418,7 @@ def ex_4_21 : LinguisticExample :=
     comment := "Singular distinguished from non-singular in the second person only." }
 
 def ex_4_22 : LinguisticExample :=
-  { id := "cysouw2003_4.22"
+  { id := "cysouw2003_4_22"
     source := ⟨"cysouw-2003", "(4.22)"⟩
     reportedIn := none
     language := "nort2920"
@@ -434,7 +434,7 @@ def ex_4_22 : LinguisticExample :=
     comment := "" }
 
 def ex_4_23 : LinguisticExample :=
-  { id := "cysouw2003_4.23"
+  { id := "cysouw2003_4_23"
     source := ⟨"cysouw-2003", "(4.23)"⟩
     reportedIn := none
     language := "darg1241"
@@ -450,7 +450,7 @@ def ex_4_23 : LinguisticExample :=
     comment := "Gubden is a dialectal variant of Dargi." }
 
 def ex_4_24 : LinguisticExample :=
-  { id := "cysouw2003_4.24"
+  { id := "cysouw2003_4_24"
     source := ⟨"cysouw-2003", "(4.24)"⟩
     reportedIn := none
     language := "bign1238"
@@ -466,7 +466,7 @@ def ex_4_24 : LinguisticExample :=
     comment := "Horizontal homophony in the first and second person, not the third." }
 
 def ex_4_25 : LinguisticExample :=
-  { id := "cysouw2003_4.25"
+  { id := "cysouw2003_4_25"
     source := ⟨"cysouw-2003", "(4.25)"⟩
     reportedIn := none
     language := "nucl1622"
@@ -482,7 +482,7 @@ def ex_4_25 : LinguisticExample :=
     comment := "Horizontal homophony in the first person only." }
 
 def ex_4_26 : LinguisticExample :=
-  { id := "cysouw2003_4.26"
+  { id := "cysouw2003_4_26"
     source := ⟨"cysouw-2003", "(4.26)"⟩
     reportedIn := none
     language := "vani1248"
@@ -498,7 +498,7 @@ def ex_4_26 : LinguisticExample :=
     comment := "Diagonal homophony: first singular with second non-singular." }
 
 def ex_4_27 : LinguisticExample :=
-  { id := "cysouw2003_4.27"
+  { id := "cysouw2003_4_27"
     source := ⟨"cysouw-2003", "(4.27)"⟩
     reportedIn := none
     language := "suki1245"
@@ -514,7 +514,7 @@ def ex_4_27 : LinguisticExample :=
     comment := "Diagonal homophony: second singular with first non-singular." }
 
 def ex_4_28 : LinguisticExample :=
-  { id := "cysouw2003_4.28"
+  { id := "cysouw2003_4_28"
     source := ⟨"cysouw-2003", "(4.28)"⟩
     reportedIn := none
     language := "clas1250"
@@ -530,7 +530,7 @@ def ex_4_28 : LinguisticExample :=
     comment := "Diagonal homophony as in Suki plus third-person horizontal homophony." }
 
 def ex_4_29 : LinguisticExample :=
-  { id := "cysouw2003_4.29"
+  { id := "cysouw2003_4_29"
     source := ⟨"cysouw-2003", "(4.29)"⟩
     reportedIn := none
     language := "stan1288"
@@ -546,7 +546,7 @@ def ex_4_29 : LinguisticExample :=
     comment := "Spanish-type singular homophony with a split non-singular." }
 
 def ex_4_30 : LinguisticExample :=
-  { id := "cysouw2003_4.30"
+  { id := "cysouw2003_4_30"
     source := ⟨"cysouw-2003", "(4.30)"⟩
     reportedIn := none
     language := "icel1247"
@@ -562,7 +562,7 @@ def ex_4_30 : LinguisticExample :=
     comment := "" }
 
 def ex_4_31 : LinguisticExample :=
-  { id := "cysouw2003_4.31"
+  { id := "cysouw2003_4_31"
     source := ⟨"cysouw-2003", "(4.31)"⟩
     reportedIn := none
     language := "sici1248"
@@ -578,7 +578,7 @@ def ex_4_31 : LinguisticExample :=
     comment := "San Fratello dialect; singular homophony combined with horizontal homophony." }
 
 def ex_4_32 : LinguisticExample :=
-  { id := "cysouw2003_4.32"
+  { id := "cysouw2003_4_32"
     source := ⟨"cysouw-2003", "(4.32)"⟩
     reportedIn := none
     language := "ital1282"
@@ -594,7 +594,7 @@ def ex_4_32 : LinguisticExample :=
     comment := "The 3+3 cell is printed -am (the ending is -ano); the structure is unaffected." }
 
 def ex_4_33 : LinguisticExample :=
-  { id := "cysouw2003_4.33"
+  { id := "cysouw2003_4_33"
     source := ⟨"cysouw-2003", "(4.33)"⟩
     reportedIn := none
     language := "slav1253"
@@ -610,7 +610,7 @@ def ex_4_33 : LinguisticExample :=
     comment := "Slavey variant." }
 
 def ex_4_34 : LinguisticExample :=
-  { id := "cysouw2003_4.34"
+  { id := "cysouw2003_4_34"
     source := ⟨"cysouw-2003", "(4.34)"⟩
     reportedIn := none
     language := "awap1236"
@@ -626,7 +626,7 @@ def ex_4_34 : LinguisticExample :=
     comment := "" }
 
 def ex_4_35 : LinguisticExample :=
-  { id := "cysouw2003_4.35"
+  { id := "cysouw2003_4_35"
     source := ⟨"cysouw-2003", "(4.35)"⟩
     reportedIn := none
     language := "tetu1245"
@@ -642,7 +642,7 @@ def ex_4_35 : LinguisticExample :=
     comment := "Fehan dialect of Tetun." }
 
 def ex_4_36 : LinguisticExample :=
-  { id := "cysouw2003_4.36"
+  { id := "cysouw2003_4_36"
     source := ⟨"cysouw-2003", "(4.36)"⟩
     reportedIn := none
     language := "tomm1242"
@@ -658,7 +658,7 @@ def ex_4_36 : LinguisticExample :=
     comment := "Tommo-so variant." }
 
 def ex_4_37 : LinguisticExample :=
-  { id := "cysouw2003_4.37"
+  { id := "cysouw2003_4_37"
     source := ⟨"cysouw-2003", "(4.37)"⟩
     reportedIn := none
     language := "hait1244"
@@ -674,7 +674,7 @@ def ex_4_37 : LinguisticExample :=
     comment := "" }
 
 def ex_4_38 : LinguisticExample :=
-  { id := "cysouw2003_4.38"
+  { id := "cysouw2003_4_38"
     source := ⟨"cysouw-2003", "(4.38)"⟩
     reportedIn := none
     language := "svan1243"
@@ -690,7 +690,7 @@ def ex_4_38 : LinguisticExample :=
     comment := "Singular homophony mirroring the non-singular homophony." }
 
 def ex_4_39 : LinguisticExample :=
-  { id := "cysouw2003_4.39"
+  { id := "cysouw2003_4_39"
     source := ⟨"cysouw-2003", "(4.39)"⟩
     reportedIn := none
     language := "wask1241"
@@ -706,7 +706,7 @@ def ex_4_39 : LinguisticExample :=
     comment := "" }
 
 def ex_4_40 : LinguisticExample :=
-  { id := "cysouw2003_4.40"
+  { id := "cysouw2003_4_40"
     source := ⟨"cysouw-2003", "(4.40)"⟩
     reportedIn := none
     language := "lakk1252"
@@ -722,7 +722,7 @@ def ex_4_40 : LinguisticExample :=
     comment := "" }
 
 def ex_4_41 : LinguisticExample :=
-  { id := "cysouw2003_4.41"
+  { id := "cysouw2003_4_41"
     source := ⟨"cysouw-2003", "(4.41)"⟩
     reportedIn := none
     language := "nezp1238"
@@ -738,7 +738,7 @@ def ex_4_41 : LinguisticExample :=
     comment := "" }
 
 def ex_4_42 : LinguisticExample :=
-  { id := "cysouw2003_4.42"
+  { id := "cysouw2003_4_42"
     source := ⟨"cysouw-2003", "(4.42)"⟩
     reportedIn := none
     language := "dong1288"
@@ -754,7 +754,7 @@ def ex_4_42 : LinguisticExample :=
     comment := "" }
 
 def ex_4_43 : LinguisticExample :=
-  { id := "cysouw2003_4.43"
+  { id := "cysouw2003_4_43"
     source := ⟨"cysouw-2003", "(4.43)"⟩
     reportedIn := none
     language := "arhu1242"
@@ -770,7 +770,7 @@ def ex_4_43 : LinguisticExample :=
     comment := "" }
 
 def ex_4_44 : LinguisticExample :=
-  { id := "cysouw2003_4.44"
+  { id := "cysouw2003_4_44"
     source := ⟨"cysouw-2003", "(4.44)"⟩
     reportedIn := none
     language := "usar1243"
@@ -786,7 +786,7 @@ def ex_4_44 : LinguisticExample :=
     comment := "" }
 
 def ex_4_45 : LinguisticExample :=
-  { id := "cysouw2003_4.45"
+  { id := "cysouw2003_4_45"
     source := ⟨"cysouw-2003", "(4.45)"⟩
     reportedIn := none
     language := "darg1241"
@@ -802,7 +802,7 @@ def ex_4_45 : LinguisticExample :=
     comment := "Literary Dargi; an optional suffix -ya can disambiguate the second person plural." }
 
 def ex_4_46 : LinguisticExample :=
-  { id := "cysouw2003_4.46"
+  { id := "cysouw2003_4_46"
     source := ⟨"cysouw-2003", "(4.46)"⟩
     reportedIn := none
     language := "nezp1238"
@@ -818,7 +818,7 @@ def ex_4_46 : LinguisticExample :=
     comment := "" }
 
 def ex_4_47 : LinguisticExample :=
-  { id := "cysouw2003_4.47"
+  { id := "cysouw2003_4_47"
     source := ⟨"cysouw-2003", "(4.47)"⟩
     reportedIn := none
     language := "guar1293"
@@ -834,7 +834,7 @@ def ex_4_47 : LinguisticExample :=
     comment := "" }
 
 def ex_4_48 : LinguisticExample :=
-  { id := "cysouw2003_4.48"
+  { id := "cysouw2003_4_48"
     source := ⟨"cysouw-2003", "(4.48)"⟩
     reportedIn := none
     language := "nucl1347"
@@ -850,7 +850,7 @@ def ex_4_48 : LinguisticExample :=
     comment := "" }
 
 def ex_4_49 : LinguisticExample :=
-  { id := "cysouw2003_4.49"
+  { id := "cysouw2003_4_49"
     source := ⟨"cysouw-2003", "(4.49)"⟩
     reportedIn := none
     language := "mori1278"
@@ -866,7 +866,7 @@ def ex_4_49 : LinguisticExample :=
     comment := "" }
 
 def ex_4_50 : LinguisticExample :=
-  { id := "cysouw2003_4.50"
+  { id := "cysouw2003_4_50"
     source := ⟨"cysouw-2003", "(4.50)"⟩
     reportedIn := none
     language := "sout2940"
@@ -882,7 +882,7 @@ def ex_4_50 : LinguisticExample :=
     comment := "" }
 
 def ex_4_51 : LinguisticExample :=
-  { id := "cysouw2003_4.51"
+  { id := "cysouw2003_4_51"
     source := ⟨"cysouw-2003", "(4.51)"⟩
     reportedIn := none
     language := "komb1274"
@@ -898,7 +898,7 @@ def ex_4_51 : LinguisticExample :=
     comment := "" }
 
 def ex_4_52 : LinguisticExample :=
-  { id := "cysouw2003_4.52"
+  { id := "cysouw2003_4_52"
     source := ⟨"cysouw-2003", "(4.52)"⟩
     reportedIn := none
     language := "chit1248"
@@ -914,7 +914,7 @@ def ex_4_52 : LinguisticExample :=
     comment := "" }
 
 def ex_4_53 : LinguisticExample :=
-  { id := "cysouw2003_4.53"
+  { id := "cysouw2003_4_53"
     source := ⟨"cysouw-2003", "(4.53)"⟩
     reportedIn := none
     language := "leng1262"
@@ -930,7 +930,7 @@ def ex_4_53 : LinguisticExample :=
     comment := "" }
 
 def ex_4_54 : LinguisticExample :=
-  { id := "cysouw2003_4.54"
+  { id := "cysouw2003_4_54"
     source := ⟨"cysouw-2003", "(4.54)"⟩
     reportedIn := none
     language := "gahr1239"
@@ -946,7 +946,7 @@ def ex_4_54 : LinguisticExample :=
     comment := "" }
 
 def ex_4_55 : LinguisticExample :=
-  { id := "cysouw2003_4.55"
+  { id := "cysouw2003_4_55"
     source := ⟨"cysouw-2003", "(4.55)"⟩
     reportedIn := none
     language := "kory1246"
@@ -962,7 +962,7 @@ def ex_4_55 : LinguisticExample :=
     comment := "" }
 
 def ex_4_56 : LinguisticExample :=
-  { id := "cysouw2003_4.56"
+  { id := "cysouw2003_4_56"
     source := ⟨"cysouw-2003", "(4.56)"⟩
     reportedIn := none
     language := "darg1241"
@@ -978,7 +978,7 @@ def ex_4_56 : LinguisticExample :=
     comment := "Megeb is a Dargwa variety (Helmbrecht 1996); the structure recurs in Kiwai, Awa-Pit and the independent pronouns of Qawesqar." }
 
 def ex_4_57 : LinguisticExample :=
-  { id := "cysouw2003_4.57"
+  { id := "cysouw2003_4_57"
     source := ⟨"cysouw-2003", "(4.57)"⟩
     reportedIn := none
     language := "gads1258"
@@ -994,7 +994,7 @@ def ex_4_57 : LinguisticExample :=
     comment := "" }
 
 def ex_4_58 : LinguisticExample :=
-  { id := "cysouw2003_4.58"
+  { id := "cysouw2003_4_58"
     source := ⟨"cysouw-2003", "(4.58)"⟩
     reportedIn := none
     language := "icel1247"
@@ -1010,7 +1010,7 @@ def ex_4_58 : LinguisticExample :=
     comment := "" }
 
 def ex_4_59 : LinguisticExample :=
-  { id := "cysouw2003_4.59"
+  { id := "cysouw2003_4_59"
     source := ⟨"cysouw-2003", "(4.59)"⟩
     reportedIn := none
     language := "omie1241"
@@ -1026,7 +1026,7 @@ def ex_4_59 : LinguisticExample :=
     comment := "" }
 
 def ex_4_60 : LinguisticExample :=
-  { id := "cysouw2003_4.60"
+  { id := "cysouw2003_4_60"
     source := ⟨"cysouw-2003", "(4.60)"⟩
     reportedIn := none
     language := "orok1269"
@@ -1042,7 +1042,7 @@ def ex_4_60 : LinguisticExample :=
     comment := "" }
 
 def ex_4_61 : LinguisticExample :=
-  { id := "cysouw2003_4.61"
+  { id := "cysouw2003_4_61"
     source := ⟨"cysouw-2003", "(4.61)"⟩
     reportedIn := none
     language := "bagi1246"
@@ -1058,7 +1058,7 @@ def ex_4_61 : LinguisticExample :=
     comment := "" }
 
 def ex_4_62 : LinguisticExample :=
-  { id := "cysouw2003_4.62"
+  { id := "cysouw2003_4_62"
     source := ⟨"cysouw-2003", "(4.62)"⟩
     reportedIn := none
     language := "midd1321"
@@ -1074,7 +1074,7 @@ def ex_4_62 : LinguisticExample :=
     comment := "" }
 
 def ex_4_63 : LinguisticExample :=
-  { id := "cysouw2003_4.63"
+  { id := "cysouw2003_4_63"
     source := ⟨"cysouw-2003", "(4.63)"⟩
     reportedIn := none
     language := "stan1295"
@@ -1090,7 +1090,7 @@ def ex_4_63 : LinguisticExample :=
     comment := "Diagonal homophony between third singular and second plural." }
 
 def ex_4_64 : LinguisticExample :=
-  { id := "cysouw2003_4.64"
+  { id := "cysouw2003_4_64"
     source := ⟨"cysouw-2003", "(4.64)"⟩
     reportedIn := none
     language := "unaa1239"
@@ -1106,7 +1106,7 @@ def ex_4_64 : LinguisticExample :=
     comment := "" }
 
 def ex_4_65 : LinguisticExample :=
-  { id := "cysouw2003_4.65"
+  { id := "cysouw2003_4_65"
     source := ⟨"cysouw-2003", "(4.65)"⟩
     reportedIn := none
     language := "dutc1256"
@@ -1122,7 +1122,7 @@ def ex_4_65 : LinguisticExample :=
     comment := "Standard Dutch without inversion." }
 
 def ex_4_66 : LinguisticExample :=
-  { id := "cysouw2003_4.66"
+  { id := "cysouw2003_4_66"
     source := ⟨"cysouw-2003", "(4.66)"⟩
     reportedIn := none
     language := "wask1241"
@@ -1138,7 +1138,7 @@ def ex_4_66 : LinguisticExample :=
     comment := "" }
 
 def ex_4_67 : LinguisticExample :=
-  { id := "cysouw2003_4.67"
+  { id := "cysouw2003_4_67"
     source := ⟨"cysouw-2003", "(4.67)"⟩
     reportedIn := none
     language := "olde1238"
@@ -1154,7 +1154,7 @@ def ex_4_67 : LinguisticExample :=
     comment := "" }
 
 def ex_4_68 : LinguisticExample :=
-  { id := "cysouw2003_4.68"
+  { id := "cysouw2003_4_68"
     source := ⟨"cysouw-2003", "(4.68)"⟩
     reportedIn := none
     language := "stan1293"
@@ -1170,7 +1170,7 @@ def ex_4_68 : LinguisticExample :=
     comment := "The no-we paradigm that refutes the strong universal 'we' (3.7)." }
 
 def ex_4_69 : LinguisticExample :=
-  { id := "cysouw2003_4.69"
+  { id := "cysouw2003_4_69"
     source := ⟨"cysouw-2003", "(4.69)"⟩
     reportedIn := none
     language := "gras1249"
@@ -1186,7 +1186,7 @@ def ex_4_69 : LinguisticExample :=
     comment := "" }
 
 def ex_4_70 : LinguisticExample :=
-  { id := "cysouw2003_4.70"
+  { id := "cysouw2003_4_70"
     source := ⟨"cysouw-2003", "(4.70)"⟩
     reportedIn := none
     language := "mara1404"
@@ -1202,7 +1202,7 @@ def ex_4_70 : LinguisticExample :=
     comment := "" }
 
 def ex_4_71 : LinguisticExample :=
-  { id := "cysouw2003_4.71"
+  { id := "cysouw2003_4_71"
     source := ⟨"cysouw-2003", "(4.71)"⟩
     reportedIn := none
     language := "wand1278"
@@ -1218,7 +1218,7 @@ def ex_4_71 : LinguisticExample :=
     comment := "" }
 
 def ex_4_72 : LinguisticExample :=
-  { id := "cysouw2003_4.72"
+  { id := "cysouw2003_4_72"
     source := ⟨"cysouw-2003", "(4.72)"⟩
     reportedIn := none
     language := "tupi1276"
@@ -1234,7 +1234,7 @@ def ex_4_72 : LinguisticExample :=
     comment := "Jensen (1990)'s reconstruction." }
 
 def ex_4_73 : LinguisticExample :=
-  { id := "cysouw2003_4.73"
+  { id := "cysouw2003_4_73"
     source := ⟨"cysouw-2003", "(4.73)"⟩
     reportedIn := none
     language := "toda1252"
@@ -1250,7 +1250,7 @@ def ex_4_73 : LinguisticExample :=
     comment := "" }
 
 def ex_4_74 : LinguisticExample :=
-  { id := "cysouw2003_4.74"
+  { id := "cysouw2003_4_74"
     source := ⟨"cysouw-2003", "(4.74)"⟩
     reportedIn := none
     language := "macu1260"
@@ -1266,7 +1266,7 @@ def ex_4_74 : LinguisticExample :=
     comment := "" }
 
 def ex_4_75 : LinguisticExample :=
-  { id := "cysouw2003_4.75"
+  { id := "cysouw2003_4_75"
     source := ⟨"cysouw-2003", "(4.75)"⟩
     reportedIn := none
     language := "ngiz1242"
@@ -1282,7 +1282,7 @@ def ex_4_75 : LinguisticExample :=
     comment := "" }
 
 def ex_4_76 : LinguisticExample :=
-  { id := "cysouw2003_4.76"
+  { id := "cysouw2003_4_76"
     source := ⟨"cysouw-2003", "(4.76)"⟩
     reportedIn := none
     language := "ainu1240"
@@ -1298,7 +1298,7 @@ def ex_4_76 : LinguisticExample :=
     comment := "" }
 
 def ex_4_77 : LinguisticExample :=
-  { id := "cysouw2003_4.77"
+  { id := "cysouw2003_4_77"
     source := ⟨"cysouw-2003", "(4.77)"⟩
     reportedIn := none
     language := "kwak1269"
@@ -1314,7 +1314,7 @@ def ex_4_77 : LinguisticExample :=
     comment := "The exclusive suffix's superscripts are approximated." }
 
 def ex_4_78 : LinguisticExample :=
-  { id := "cysouw2003_4.78"
+  { id := "cysouw2003_4_78"
     source := ⟨"cysouw-2003", "(4.78)"⟩
     reportedIn := none
     language := "apal1257"
@@ -1330,7 +1330,7 @@ def ex_4_78 : LinguisticExample :=
     comment := "" }
 
 def ex_4_79 : LinguisticExample :=
-  { id := "cysouw2003_4.79"
+  { id := "cysouw2003_4_79"
     source := ⟨"cysouw-2003", "(4.79)"⟩
     reportedIn := none
     language := "maxa1247"
@@ -1346,7 +1346,7 @@ def ex_4_79 : LinguisticExample :=
     comment := "" }
 
 def ex_4_80 : LinguisticExample :=
-  { id := "cysouw2003_4.80"
+  { id := "cysouw2003_4_80"
     source := ⟨"cysouw-2003", "(4.80)"⟩
     reportedIn := none
     language := "achi1257"
@@ -1362,7 +1362,7 @@ def ex_4_80 : LinguisticExample :=
     comment := "Familiar forms." }
 
 def ex_4_81 : LinguisticExample :=
-  { id := "cysouw2003_4.81"
+  { id := "cysouw2003_4_81"
     source := ⟨"cysouw-2003", "(4.81)"⟩
     reportedIn := none
     language := "svan1243"
@@ -1378,7 +1378,7 @@ def ex_4_81 : LinguisticExample :=
     comment := "" }
 
 def ex_4_82 : LinguisticExample :=
-  { id := "cysouw2003_4.82"
+  { id := "cysouw2003_4_82"
     source := ⟨"cysouw-2003", "(4.82)"⟩
     reportedIn := none
     language := "high1276"
@@ -1394,7 +1394,7 @@ def ex_4_82 : LinguisticExample :=
     comment := "Number is marked by a separate suffix -táʔm, not part of the paradigm (footnote 43)." }
 
 def ex_4_85 : LinguisticExample :=
-  { id := "cysouw2003_4.85"
+  { id := "cysouw2003_4_85"
     source := ⟨"cysouw-2003", "(4.85)"⟩
     reportedIn := none
     language := "hoch1243"
@@ -1410,7 +1410,7 @@ def ex_4_85 : LinguisticExample :=
     comment := "" }
 
 def ex_4_86 : LinguisticExample :=
-  { id := "cysouw2003_4.86"
+  { id := "cysouw2003_4_86"
     source := ⟨"cysouw-2003", "(4.86)"⟩
     reportedIn := none
     language := "maca1260"
@@ -1426,7 +1426,7 @@ def ex_4_86 : LinguisticExample :=
     comment := "One of several allophonic variants." }
 
 def ex_4_87 : LinguisticExample :=
-  { id := "cysouw2003_4.87"
+  { id := "cysouw2003_4_87"
     source := ⟨"cysouw-2003", "(4.87)"⟩
     reportedIn := none
     language := "nucl1633"
@@ -1442,7 +1442,7 @@ def ex_4_87 : LinguisticExample :=
     comment := "" }
 
 def ex_4_88 : LinguisticExample :=
-  { id := "cysouw2003_4.88"
+  { id := "cysouw2003_4_88"
     source := ⟨"cysouw-2003", "(4.88)"⟩
     reportedIn := none
     language := "salt1242"
@@ -1458,7 +1458,7 @@ def ex_4_88 : LinguisticExample :=
     comment := "" }
 
 def ex_4_89 : LinguisticExample :=
-  { id := "cysouw2003_4.89"
+  { id := "cysouw2003_4_89"
     source := ⟨"cysouw-2003", "(4.89)"⟩
     reportedIn := none
     language := "svan1243"
@@ -1474,7 +1474,7 @@ def ex_4_89 : LinguisticExample :=
     comment := "" }
 
 def ex_4_90 : LinguisticExample :=
-  { id := "cysouw2003_4.90"
+  { id := "cysouw2003_4_90"
     source := ⟨"cysouw-2003", "(4.90)"⟩
     reportedIn := none
     language := "chra1242"
@@ -1490,7 +1490,7 @@ def ex_4_90 : LinguisticExample :=
     comment := "" }
 
 def ex_4_91a : LinguisticExample :=
-  { id := "cysouw2003_4.91a"
+  { id := "cysouw2003_4_91a"
     source := ⟨"cysouw-2003", "(4.91a)"⟩
     reportedIn := none
     language := "warr1258"
@@ -1506,7 +1506,7 @@ def ex_4_91a : LinguisticExample :=
     comment := "Horizontal homophony in the first person only." }
 
 def ex_4_91b : LinguisticExample :=
-  { id := "cysouw2003_4.91b"
+  { id := "cysouw2003_4_91b"
     source := ⟨"cysouw-2003", "(4.91b)"⟩
     reportedIn := none
     language := "warr1258"
@@ -1522,7 +1522,7 @@ def ex_4_91b : LinguisticExample :=
     comment := "Horizontal homophony in the first and second person, not the third." }
 
 def ex_4_92 : LinguisticExample :=
-  { id := "cysouw2003_4.92"
+  { id := "cysouw2003_4_92"
     source := ⟨"cysouw-2003", "(4.92)"⟩
     reportedIn := none
     language := "chip1241"
@@ -1538,7 +1538,7 @@ def ex_4_92 : LinguisticExample :=
     comment := "The prefixes alone (4.92a); obligatory number suffixes disambiguate seven categories (4.92b)." }
 
 def ex_4_93 : LinguisticExample :=
-  { id := "cysouw2003_4.93"
+  { id := "cysouw2003_4_93"
     source := ⟨"cysouw-2003", "(4.93)"⟩
     reportedIn := none
     language := "tiwi1244"
@@ -1554,7 +1554,7 @@ def ex_4_93 : LinguisticExample :=
     comment := "" }
 
 def ex_4_94 : LinguisticExample :=
-  { id := "cysouw2003_4.94"
+  { id := "cysouw2003_4_94"
     source := ⟨"cysouw-2003", "(4.94)"⟩
     reportedIn := none
     language := "sanu1240"
@@ -1570,7 +1570,7 @@ def ex_4_94 : LinguisticExample :=
     comment := "" }
 
 def ex_4_96 : LinguisticExample :=
-  { id := "cysouw2003_4.96"
+  { id := "cysouw2003_4_96"
     source := ⟨"cysouw-2003", "(4.96)"⟩
     reportedIn := none
     language := "sanm1287"
@@ -1586,7 +1586,7 @@ def ex_4_96 : LinguisticExample :=
     comment := "The prefixes alone (4.96a); number suffixes distinguish all eight categories (4.96b)." }
 
 def ex_4_97 : LinguisticExample :=
-  { id := "cysouw2003_4.97"
+  { id := "cysouw2003_4_97"
     source := ⟨"cysouw-2003", "(4.97)"⟩
     reportedIn := none
     language := "lena1238"
@@ -1602,7 +1602,7 @@ def ex_4_97 : LinguisticExample :=
     comment := "" }
 
 def ex_4_98 : LinguisticExample :=
-  { id := "cysouw2003_4.98"
+  { id := "cysouw2003_4_98"
     source := ⟨"cysouw-2003", "(4.98)"⟩
     reportedIn := none
     language := "kisa1266"
@@ -1618,7 +1618,7 @@ def ex_4_98 : LinguisticExample :=
     comment := "" }
 
 def ex_4_99 : LinguisticExample :=
-  { id := "cysouw2003_4.99"
+  { id := "cysouw2003_4_99"
     source := ⟨"cysouw-2003", "(4.99)"⟩
     reportedIn := none
     language := "udih1248"
@@ -1634,7 +1634,7 @@ def ex_4_99 : LinguisticExample :=
     comment := "" }
 
 def ex_4_100 : LinguisticExample :=
-  { id := "cysouw2003_4.100"
+  { id := "cysouw2003_4_100"
     source := ⟨"cysouw-2003", "(4.100)"⟩
     reportedIn := none
     language := "tiwi1244"
@@ -1650,7 +1650,7 @@ def ex_4_100 : LinguisticExample :=
     comment := "Minimal and augmented inclusive distinguished." }
 
 def ex_4_101 : LinguisticExample :=
-  { id := "cysouw2003_4.101"
+  { id := "cysouw2003_4_101"
     source := ⟨"cysouw-2003", "(4.101)"⟩
     reportedIn := none
     language := "shus1248"
@@ -1666,7 +1666,7 @@ def ex_4_101 : LinguisticExample :=
     comment := "" }
 
 def ex_4_102 : LinguisticExample :=
-  { id := "cysouw2003_4.102"
+  { id := "cysouw2003_4_102"
     source := ⟨"cysouw-2003", "(4.102)"⟩
     reportedIn := none
     language := "waiw1244"
@@ -1682,7 +1682,7 @@ def ex_4_102 : LinguisticExample :=
     comment := "" }
 
 def ex_4_104 : LinguisticExample :=
-  { id := "cysouw2003_4.104"
+  { id := "cysouw2003_4_104"
     source := ⟨"cysouw-2003", "(4.104)"⟩
     reportedIn := none
     language := "kuna1268"
@@ -1698,7 +1698,7 @@ def ex_4_104 : LinguisticExample :=
     comment := "" }
 
 def ex_4_105 : LinguisticExample :=
-  { id := "cysouw2003_4.105"
+  { id := "cysouw2003_4_105"
     source := ⟨"cysouw-2003", "(4.105)"⟩
     reportedIn := none
     language := "nort2954"

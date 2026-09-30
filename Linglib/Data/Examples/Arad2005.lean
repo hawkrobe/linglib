@@ -466,7 +466,7 @@ def ex_40c_hishpritz : LinguisticExample :=
     comment := "Chapter 7 §7.5, reported from Bat-El 1994: the base's consonant clusters are kept together." }
 
 def ex_6b_fn2_musgar : LinguisticExample :=
-  { id := "arad2005_6b)fn2_musgar"
+  { id := "arad2005_6b_fn2_musgar"
     source := ⟨"arad-2005", "(6b) fn. 2"⟩
     reportedIn := none
     language := "hebr1245"
@@ -482,7 +482,7 @@ def ex_6b_fn2_musgar : LinguisticExample :=
     comment := "Chapter 7, footnote 2: the passive of the denominal verb." }
 
 def Ch7_2a_shemen : LinguisticExample :=
-  { id := "arad2005_Ch7(2a_shemen"
+  { id := "arad2005_Ch7_2a_shemen"
     source := ⟨"arad-2005", "Ch. 7 (2a)"⟩
     reportedIn := none
     language := "hebr1245"
@@ -498,7 +498,7 @@ def Ch7_2a_shemen : LinguisticExample :=
     comment := "Chapter 7: Multiple Contextualized Meaning of the root across patterns." }
 
 def Ch7_2b_shamenet : LinguisticExample :=
-  { id := "arad2005_Ch7(2b_shamenet"
+  { id := "arad2005_Ch7_2b_shamenet"
     source := ⟨"arad-2005", "Ch. 7 (2b)"⟩
     reportedIn := none
     language := "hebr1245"
@@ -514,7 +514,7 @@ def Ch7_2b_shamenet : LinguisticExample :=
     comment := "Chapter 7: Multiple Contextualized Meaning of the root across patterns." }
 
 def Ch7_2c_shuman : LinguisticExample :=
-  { id := "arad2005_Ch7(2c_shuman"
+  { id := "arad2005_Ch7_2c_shuman"
     source := ⟨"arad-2005", "Ch. 7 (2c)"⟩
     reportedIn := none
     language := "hebr1245"
@@ -530,7 +530,7 @@ def Ch7_2c_shuman : LinguisticExample :=
     comment := "Chapter 7: Multiple Contextualized Meaning of the root across patterns." }
 
 def Ch7_2d_shamen : LinguisticExample :=
-  { id := "arad2005_Ch7(2d_shamen"
+  { id := "arad2005_Ch7_2d_shamen"
     source := ⟨"arad-2005", "Ch. 7 (2d)"⟩
     reportedIn := none
     language := "hebr1245"
@@ -546,7 +546,7 @@ def Ch7_2d_shamen : LinguisticExample :=
     comment := "Chapter 7: Multiple Contextualized Meaning of the root across patterns." }
 
 def Ch7_2e_hishmin : LinguisticExample :=
-  { id := "arad2005_Ch7(2e_hishmin"
+  { id := "arad2005_Ch7_2e_hishmin"
     source := ⟨"arad-2005", "Ch. 7 (2e)"⟩
     reportedIn := none
     language := "hebr1245"
@@ -562,7 +562,7 @@ def Ch7_2e_hishmin : LinguisticExample :=
     comment := "Chapter 7: Multiple Contextualized Meaning of the root across patterns." }
 
 def Ch7_2f_shimen : LinguisticExample :=
-  { id := "arad2005_Ch7(2f_shimen"
+  { id := "arad2005_Ch7_2f_shimen"
     source := ⟨"arad-2005", "Ch. 7 (2f)"⟩
     reportedIn := none
     language := "hebr1245"
@@ -578,7 +578,7 @@ def Ch7_2f_shimen : LinguisticExample :=
     comment := "Chapter 7: Multiple Contextualized Meaning of the root across patterns." }
 
 def Ch7_3a_xashav : LinguisticExample :=
-  { id := "arad2005_Ch7(3a_xashav"
+  { id := "arad2005_Ch7_3a_xashav"
     source := ⟨"arad-2005", "Ch. 7 (3a)"⟩
     reportedIn := none
     language := "hebr1245"
@@ -594,7 +594,7 @@ def Ch7_3a_xashav : LinguisticExample :=
     comment := "Chapter 7: Multiple Contextualized Meaning of the root across patterns." }
 
 def Ch7_3b_xishev : LinguisticExample :=
-  { id := "arad2005_Ch7(3b_xishev"
+  { id := "arad2005_Ch7_3b_xishev"
     source := ⟨"arad-2005", "Ch. 7 (3b)"⟩
     reportedIn := none
     language := "hebr1245"
@@ -610,7 +610,7 @@ def Ch7_3b_xishev : LinguisticExample :=
     comment := "Chapter 7: Multiple Contextualized Meaning of the root across patterns." }
 
 def Ch7_3c_hexshiv : LinguisticExample :=
-  { id := "arad2005_Ch7(3c_hexshiv"
+  { id := "arad2005_Ch7_3c_hexshiv"
     source := ⟨"arad-2005", "Ch. 7 (3c)"⟩
     reportedIn := none
     language := "hebr1245"
@@ -626,7 +626,7 @@ def Ch7_3c_hexshiv : LinguisticExample :=
     comment := "Chapter 7: Multiple Contextualized Meaning of the root across patterns." }
 
 def Ch7_3d_hitxashev : LinguisticExample :=
-  { id := "arad2005_Ch7(3d_hitxashev"
+  { id := "arad2005_Ch7_3d_hitxashev"
     source := ⟨"arad-2005", "Ch. 7 (3d)"⟩
     reportedIn := none
     language := "hebr1245"
@@ -642,7 +642,7 @@ def Ch7_3d_hitxashev : LinguisticExample :=
     comment := "Chapter 7: Multiple Contextualized Meaning of the root across patterns." }
 
 def Ch7_3e_maxshev : LinguisticExample :=
-  { id := "arad2005_Ch7(3e_maxshev"
+  { id := "arad2005_Ch7_3e_maxshev"
     source := ⟨"arad-2005", "Ch. 7 (3e)"⟩
     reportedIn := none
     language := "hebr1245"
@@ -658,7 +658,7 @@ def Ch7_3e_maxshev : LinguisticExample :=
     comment := "Chapter 7: Multiple Contextualized Meaning of the root across patterns." }
 
 def Ch7_3f_maxshava : LinguisticExample :=
-  { id := "arad2005_Ch7(3f_maxshava"
+  { id := "arad2005_Ch7_3f_maxshava"
     source := ⟨"arad-2005", "Ch. 7 (3f)"⟩
     reportedIn := none
     language := "hebr1245"
@@ -674,7 +674,7 @@ def Ch7_3f_maxshava : LinguisticExample :=
     comment := "Chapter 7: Multiple Contextualized Meaning of the root across patterns." }
 
 def Ch7_3g_xashivut : LinguisticExample :=
-  { id := "arad2005_Ch7(3g_xashivut"
+  { id := "arad2005_Ch7_3g_xashivut"
     source := ⟨"arad-2005", "Ch. 7 (3g)"⟩
     reportedIn := none
     language := "hebr1245"
@@ -690,7 +690,7 @@ def Ch7_3g_xashivut : LinguisticExample :=
     comment := "Chapter 7: Multiple Contextualized Meaning of the root across patterns." }
 
 def Ch7_3h_xeshbon : LinguisticExample :=
-  { id := "arad2005_Ch7(3h_xeshbon"
+  { id := "arad2005_Ch7_3h_xeshbon"
     source := ⟨"arad-2005", "Ch. 7 (3h)"⟩
     reportedIn := none
     language := "hebr1245"
@@ -706,7 +706,7 @@ def Ch7_3h_xeshbon : LinguisticExample :=
     comment := "Chapter 7: Multiple Contextualized Meaning of the root across patterns." }
 
 def Ch7_3i_taxshiv : LinguisticExample :=
-  { id := "arad2005_Ch7(3i_taxshiv"
+  { id := "arad2005_Ch7_3i_taxshiv"
     source := ⟨"arad-2005", "Ch. 7 (3i)"⟩
     reportedIn := none
     language := "hebr1245"
@@ -722,7 +722,7 @@ def Ch7_3i_taxshiv : LinguisticExample :=
     comment := "Chapter 7: Multiple Contextualized Meaning of the root across patterns." }
 
 def Ch7_4a_qalat : LinguisticExample :=
-  { id := "arad2005_Ch7(4a_qalat"
+  { id := "arad2005_Ch7_4a_qalat"
     source := ⟨"arad-2005", "Ch. 7 (4a)"⟩
     reportedIn := none
     language := "hebr1245"
@@ -738,7 +738,7 @@ def Ch7_4a_qalat : LinguisticExample :=
     comment := "Chapter 7: Multiple Contextualized Meaning of the root across patterns." }
 
 def Ch7_4b_hiqlit : LinguisticExample :=
-  { id := "arad2005_Ch7(4b_hiqlit"
+  { id := "arad2005_Ch7_4b_hiqlit"
     source := ⟨"arad-2005", "Ch. 7 (4b)"⟩
     reportedIn := none
     language := "hebr1245"
@@ -754,7 +754,7 @@ def Ch7_4b_hiqlit : LinguisticExample :=
     comment := "Chapter 7: Multiple Contextualized Meaning of the root across patterns." }
 
 def Ch7_4c_miqlat : LinguisticExample :=
-  { id := "arad2005_Ch7(4c_miqlat"
+  { id := "arad2005_Ch7_4c_miqlat"
     source := ⟨"arad-2005", "Ch. 7 (4c)"⟩
     reportedIn := none
     language := "hebr1245"
@@ -770,7 +770,7 @@ def Ch7_4c_miqlat : LinguisticExample :=
     comment := "Chapter 7: Multiple Contextualized Meaning of the root across patterns." }
 
 def Ch7_4d_maqlet : LinguisticExample :=
-  { id := "arad2005_Ch7(4d_maqlet"
+  { id := "arad2005_Ch7_4d_maqlet"
     source := ⟨"arad-2005", "Ch. 7 (4d)"⟩
     reportedIn := none
     language := "hebr1245"
@@ -786,7 +786,7 @@ def Ch7_4d_maqlet : LinguisticExample :=
     comment := "Chapter 7: Multiple Contextualized Meaning of the root across patterns." }
 
 def Ch7_4e_taqlit : LinguisticExample :=
-  { id := "arad2005_Ch7(4e_taqlit"
+  { id := "arad2005_Ch7_4e_taqlit"
     source := ⟨"arad-2005", "Ch. 7 (4e)"⟩
     reportedIn := none
     language := "hebr1245"
@@ -802,7 +802,7 @@ def Ch7_4e_taqlit : LinguisticExample :=
     comment := "Chapter 7: Multiple Contextualized Meaning of the root across patterns." }
 
 def Ch7_4f_qaletet : LinguisticExample :=
-  { id := "arad2005_Ch7(4f_qaletet"
+  { id := "arad2005_Ch7_4f_qaletet"
     source := ⟨"arad-2005", "Ch. 7 (4f)"⟩
     reportedIn := none
     language := "hebr1245"
@@ -818,7 +818,7 @@ def Ch7_4f_qaletet : LinguisticExample :=
     comment := "Chapter 7: Multiple Contextualized Meaning of the root across patterns." }
 
 def Ch7_4g_qelet : LinguisticExample :=
-  { id := "arad2005_Ch7(4g_qelet"
+  { id := "arad2005_Ch7_4g_qelet"
     source := ⟨"arad-2005", "Ch. 7 (4g)"⟩
     reportedIn := none
     language := "hebr1245"
@@ -834,7 +834,7 @@ def Ch7_4g_qelet : LinguisticExample :=
     comment := "Chapter 7: Multiple Contextualized Meaning of the root across patterns." }
 
 def Ch7_5a_sagar : LinguisticExample :=
-  { id := "arad2005_Ch7(5a_sagar"
+  { id := "arad2005_Ch7_5a_sagar"
     source := ⟨"arad-2005", "Ch. 7 (5a)"⟩
     reportedIn := none
     language := "hebr1245"
@@ -850,7 +850,7 @@ def Ch7_5a_sagar : LinguisticExample :=
     comment := "Chapter 7: Multiple Contextualized Meaning of the root across patterns." }
 
 def Ch7_5b_hisgir : LinguisticExample :=
-  { id := "arad2005_Ch7(5b_hisgir"
+  { id := "arad2005_Ch7_5b_hisgir"
     source := ⟨"arad-2005", "Ch. 7 (5b)"⟩
     reportedIn := none
     language := "hebr1245"
@@ -866,7 +866,7 @@ def Ch7_5b_hisgir : LinguisticExample :=
     comment := "Chapter 7: Multiple Contextualized Meaning of the root across patterns." }
 
 def Ch7_5c_histager : LinguisticExample :=
-  { id := "arad2005_Ch7(5c_histager"
+  { id := "arad2005_Ch7_5c_histager"
     source := ⟨"arad-2005", "Ch. 7 (5c)"⟩
     reportedIn := none
     language := "hebr1245"
@@ -882,7 +882,7 @@ def Ch7_5c_histager : LinguisticExample :=
     comment := "Chapter 7: Multiple Contextualized Meaning of the root across patterns." }
 
 def Ch7_5d_seger : LinguisticExample :=
-  { id := "arad2005_Ch7(5d_seger"
+  { id := "arad2005_Ch7_5d_seger"
     source := ⟨"arad-2005", "Ch. 7 (5d)"⟩
     reportedIn := none
     language := "hebr1245"
@@ -898,7 +898,7 @@ def Ch7_5d_seger : LinguisticExample :=
     comment := "Chapter 7: Multiple Contextualized Meaning of the root across patterns." }
 
 def Ch7_5e_sograyim : LinguisticExample :=
-  { id := "arad2005_Ch7(5e_sograyim"
+  { id := "arad2005_Ch7_5e_sograyim"
     source := ⟨"arad-2005", "Ch. 7 (5e)"⟩
     reportedIn := none
     language := "hebr1245"
@@ -914,7 +914,7 @@ def Ch7_5e_sograyim : LinguisticExample :=
     comment := "Chapter 7: Multiple Contextualized Meaning of the root across patterns." }
 
 def Ch7_5f_misgeret : LinguisticExample :=
-  { id := "arad2005_Ch7(5f_misgeret"
+  { id := "arad2005_Ch7_5f_misgeret"
     source := ⟨"arad-2005", "Ch. 7 (5f)"⟩
     reportedIn := none
     language := "hebr1245"
@@ -930,7 +930,7 @@ def Ch7_5f_misgeret : LinguisticExample :=
     comment := "Chapter 7: Multiple Contextualized Meaning of the root across patterns." }
 
 def Ch7_6a_misgeret : LinguisticExample :=
-  { id := "arad2005_Ch7(6a_misgeret"
+  { id := "arad2005_Ch7_6a_misgeret"
     source := ⟨"arad-2005", "Ch. 7 (6a)"⟩
     reportedIn := none
     language := "hebr1245"
@@ -946,7 +946,7 @@ def Ch7_6a_misgeret : LinguisticExample :=
     comment := "Chapter 7 (6): the root-derived noun." }
 
 def Ch7_6b_misger : LinguisticExample :=
-  { id := "arad2005_Ch7(6b_misger"
+  { id := "arad2005_Ch7_6b_misger"
     source := ⟨"arad-2005", "Ch. 7 (6b)"⟩
     reportedIn := none
     language := "hebr1245"

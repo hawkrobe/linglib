@@ -18,7 +18,7 @@ namespace Corbett2000.Examples
 open Data.Examples
 
 def ex_2_1 : LinguisticExample :=
-  { id := "corbett2000_2.1"
+  { id := "corbett2000_2_1"
     source := ⟨"corbett-2000", "ch. 2 (1)"⟩
     reportedIn := none
     language := "bais1246"
@@ -34,7 +34,7 @@ def ex_2_1 : LinguisticExample :=
     comment := "The general form is outside the number system." }
 
 def ex_2_2 : LinguisticExample :=
-  { id := "corbett2000_2.2"
+  { id := "corbett2000_2_2"
     source := ⟨"corbett-2000", "ch. 2 (2)"⟩
     reportedIn := none
     language := "bais1246"
@@ -50,7 +50,7 @@ def ex_2_2 : LinguisticExample :=
     comment := "" }
 
 def ex_2_3 : LinguisticExample :=
-  { id := "corbett2000_2.3"
+  { id := "corbett2000_2_3"
     source := ⟨"corbett-2000", "ch. 2 (3)"⟩
     reportedIn := none
     language := "bais1246"
@@ -66,7 +66,7 @@ def ex_2_3 : LinguisticExample :=
     comment := "" }
 
 def ex_2_4 : LinguisticExample :=
-  { id := "corbett2000_2.4"
+  { id := "corbett2000_2_4"
     source := ⟨"corbett-2000", "ch. 2 (4)"⟩
     reportedIn := none
     language := "bais1246"
@@ -82,7 +82,7 @@ def ex_2_4 : LinguisticExample :=
     comment := "" }
 
 def ex_2_8 : LinguisticExample :=
-  { id := "corbett2000_2.8"
+  { id := "corbett2000_2_8"
     source := ⟨"corbett-2000", "ch. 2 (8)"⟩
     reportedIn := none
     language := "pula1262"
@@ -98,7 +98,7 @@ def ex_2_8 : LinguisticExample :=
     comment := "The suffixless form of a Fouta Jalon noun expresses general meaning." }
 
 def ex_2_9 : LinguisticExample :=
-  { id := "corbett2000_2.9"
+  { id := "corbett2000_2_9"
     source := ⟨"corbett-2000", "ch. 2 (9)"⟩
     reportedIn := none
     language := "pula1262"
@@ -114,7 +114,7 @@ def ex_2_9 : LinguisticExample :=
     comment := "" }
 
 def ex_2_10 : LinguisticExample :=
-  { id := "corbett2000_2.10"
+  { id := "corbett2000_2_10"
     source := ⟨"corbett-2000", "ch. 2 (10)"⟩
     reportedIn := none
     language := "pula1262"
@@ -130,7 +130,7 @@ def ex_2_10 : LinguisticExample :=
     comment := "The unsuffixed form would be one syllable, so the singular expresses the general meaning." }
 
 def ex_2_13 : LinguisticExample :=
-  { id := "corbett2000_2.13"
+  { id := "corbett2000_2_13"
     source := ⟨"corbett-2000", "ch. 2 (13)"⟩
     reportedIn := none
     language := "nucl1643"
@@ -146,7 +146,7 @@ def ex_2_13 : LinguisticExample :=
     comment := "Without marking the noun does not specify number; inu-tati makes the plural clear." }
 
 def ex_2_14 : LinguisticExample :=
-  { id := "corbett2000_2.14"
+  { id := "corbett2000_2_14"
     source := ⟨"corbett-2000", "ch. 2 (14)"⟩
     reportedIn := none
     language := "even1260"
@@ -162,7 +162,7 @@ def ex_2_14 : LinguisticExample :=
     comment := "" }
 
 def ex_2_15 : LinguisticExample :=
-  { id := "corbett2000_2.15"
+  { id := "corbett2000_2_15"
     source := ⟨"corbett-2000", "ch. 2 (15)"⟩
     reportedIn := none
     language := "even1260"
@@ -178,7 +178,7 @@ def ex_2_15 : LinguisticExample :=
     comment := "" }
 
 def ex_2_16 : LinguisticExample :=
-  { id := "corbett2000_2.16"
+  { id := "corbett2000_2_16"
     source := ⟨"corbett-2000", "ch. 2 (16)"⟩
     reportedIn := none
     language := "taga1270"
@@ -194,7 +194,7 @@ def ex_2_16 : LinguisticExample :=
     comment := "The clitic indicates plurality; its absence leaves singular or general meaning." }
 
 def ex_2_32 : LinguisticExample :=
-  { id := "corbett2000_2.32"
+  { id := "corbett2000_2_32"
     source := ⟨"corbett-2000", "ch. 2 (32)"⟩
     reportedIn := none
     language := "slov1268"
@@ -210,7 +210,7 @@ def ex_2_32 : LinguisticExample :=
     comment := "Two feet, and the dual is not required: the Slovene dual is facultative for nouns." }
 
 def ex_2_33 : LinguisticExample :=
-  { id := "corbett2000_2.33"
+  { id := "corbett2000_2_33"
     source := ⟨"corbett-2000", "ch. 2 (33)"⟩
     reportedIn := none
     language := "long1395"
@@ -226,7 +226,7 @@ def ex_2_33 : LinguisticExample :=
     comment := "The plural subject pronoun ara stands for the dual once the number is established." }
 
 def ex_2_34 : LinguisticExample :=
-  { id := "corbett2000_2.34"
+  { id := "corbett2000_2_34"
     source := ⟨"corbett-2000", "ch. 2 (34)"⟩
     reportedIn := none
     language := "pira1253"
@@ -242,7 +242,7 @@ def ex_2_34 : LinguisticExample :=
     comment := "The third person pronoun has no plural form: Pirahã has no number category." }
 
 def ex_2_35 : LinguisticExample :=
-  { id := "corbett2000_2.35"
+  { id := "corbett2000_2_35"
     source := ⟨"corbett-2000", "ch. 2 (35)"⟩
     reportedIn := none
     language := "pira1253"
@@ -258,7 +258,7 @@ def ex_2_35 : LinguisticExample :=
     comment := "Plurality is expressed by conjoining pronouns." }
 
 def ex_2_23 : LinguisticExample :=
-  { id := "corbett2000_2.23"
+  { id := "corbett2000_2_23"
     source := ⟨"corbett-2000", "ch. 2 (23)"⟩
     reportedIn := none
     language := "surs1246"
@@ -274,7 +274,7 @@ def ex_2_23 : LinguisticExample :=
     comment := "The form labelled quadral is used of four and more, and with dyad terms: a greater paucal." }
 
 def ex_3_2 : LinguisticExample :=
-  { id := "corbett2000_3.2"
+  { id := "corbett2000_3_2"
     source := ⟨"corbett-2000", "ch. 3 (2)"⟩
     reportedIn := none
     language := "slav1253"
@@ -290,7 +290,7 @@ def ex_3_2 : LinguisticExample :=
     comment := "" }
 
 def ex_3_3 : LinguisticExample :=
-  { id := "corbett2000_3.3"
+  { id := "corbett2000_3_3"
     source := ⟨"corbett-2000", "ch. 3 (3)"⟩
     reportedIn := none
     language := "slav1253"
@@ -306,7 +306,7 @@ def ex_3_3 : LinguisticExample :=
     comment := "" }
 
 def ex_3_4 : LinguisticExample :=
-  { id := "corbett2000_3.4"
+  { id := "corbett2000_3_4"
     source := ⟨"corbett-2000", "ch. 3 (4)"⟩
     reportedIn := none
     language := "slav1253"
@@ -322,7 +322,7 @@ def ex_3_4 : LinguisticExample :=
     comment := "Dogs are treated as honorary humans." }
 
 def ex_3_5 : LinguisticExample :=
-  { id := "corbett2000_3.5"
+  { id := "corbett2000_3_5"
     source := ⟨"corbett-2000", "ch. 3 (5)"⟩
     reportedIn := none
     language := "gunw1252"
@@ -338,7 +338,7 @@ def ex_3_5 : LinguisticExample :=
     comment := "The human object's number is coded on the verb, not on the noun." }
 
 def ex_3_6 : LinguisticExample :=
-  { id := "corbett2000_3.6"
+  { id := "corbett2000_3_6"
     source := ⟨"corbett-2000", "ch. 3 (6)"⟩
     reportedIn := none
     language := "gunw1252"
@@ -354,7 +354,7 @@ def ex_3_6 : LinguisticExample :=
     comment := "The verb keeps the minimal form for a non-human object however many dogs." }
 
 def ex_3_7 : LinguisticExample :=
-  { id := "corbett2000_3.7"
+  { id := "corbett2000_3_7"
     source := ⟨"corbett-2000", "ch. 3 (7)"⟩
     reportedIn := none
     language := "nucl1622"
@@ -370,7 +370,7 @@ def ex_3_7 : LinguisticExample :=
     comment := "" }
 
 def ex_3_8 : LinguisticExample :=
-  { id := "corbett2000_3.8"
+  { id := "corbett2000_3_8"
     source := ⟨"corbett-2000", "ch. 3 (8)"⟩
     reportedIn := none
     language := "nucl1622"
@@ -386,7 +386,7 @@ def ex_3_8 : LinguisticExample :=
     comment := "" }
 
 def ex_3_9 : LinguisticExample :=
-  { id := "corbett2000_3.9"
+  { id := "corbett2000_3_9"
     source := ⟨"corbett-2000", "ch. 3 (9)"⟩
     reportedIn := none
     language := "nucl1622"
@@ -402,7 +402,7 @@ def ex_3_9 : LinguisticExample :=
     comment := "" }
 
 def ex_3_10 : LinguisticExample :=
-  { id := "corbett2000_3.10"
+  { id := "corbett2000_3_10"
     source := ⟨"corbett-2000", "ch. 3 (10)"⟩
     reportedIn := none
     language := "nucl1622"
@@ -418,7 +418,7 @@ def ex_3_10 : LinguisticExample :=
     comment := "" }
 
 def ex_3_11 : LinguisticExample :=
-  { id := "corbett2000_3.11"
+  { id := "corbett2000_3_11"
     source := ⟨"corbett-2000", "ch. 3 (11)"⟩
     reportedIn := none
     language := "nucl1622"
@@ -434,7 +434,7 @@ def ex_3_11 : LinguisticExample :=
     comment := "Genders III and IV, the inanimates, have no distinct plural." }
 
 def ex_3_12 : LinguisticExample :=
-  { id := "corbett2000_3.12"
+  { id := "corbett2000_3_12"
     source := ⟨"corbett-2000", "ch. 3 (12)"⟩
     reportedIn := none
     language := "nucl1622"
@@ -450,7 +450,7 @@ def ex_3_12 : LinguisticExample :=
     comment := "" }
 
 def ex_3_13 : LinguisticExample :=
-  { id := "corbett2000_3.13"
+  { id := "corbett2000_3_13"
     source := ⟨"corbett-2000", "ch. 3 (13)"⟩
     reportedIn := none
     language := "stan1293"
@@ -466,7 +466,7 @@ def ex_3_13 : LinguisticExample :=
     comment := "" }
 
 def ex_3_14 : LinguisticExample :=
-  { id := "corbett2000_3.14"
+  { id := "corbett2000_3_14"
     source := ⟨"corbett-2000", "ch. 3 (14)"⟩
     reportedIn := none
     language := "stan1293"
@@ -482,7 +482,7 @@ def ex_3_14 : LinguisticExample :=
     comment := "The noun does not mark number; its agreements are regular." }
 
 def ex_3_15 : LinguisticExample :=
-  { id := "corbett2000_3.15"
+  { id := "corbett2000_3_15"
     source := ⟨"corbett-2000", "ch. 3 (15)"⟩
     reportedIn := none
     language := "stan1293"
@@ -498,7 +498,7 @@ def ex_3_15 : LinguisticExample :=
     comment := "The grammatical reversal of sheep, regular in marking and irregular in agreement, is claimed impossible." }
 
 def ex_3_17 : LinguisticExample :=
-  { id := "corbett2000_3.17"
+  { id := "corbett2000_3_17"
     source := ⟨"corbett-2000", "ch. 3 (17)"⟩
     reportedIn := none
     language := "stan1293"
@@ -514,7 +514,7 @@ def ex_3_17 : LinguisticExample :=
     comment := "Hunted animals take a zero plural in some circumstances." }
 
 def ex_3_18 : LinguisticExample :=
-  { id := "corbett2000_3.18"
+  { id := "corbett2000_3_18"
     source := ⟨"corbett-2000", "ch. 3 (18)"⟩
     reportedIn := none
     language := "stan1293"
@@ -530,7 +530,7 @@ def ex_3_18 : LinguisticExample :=
     comment := "" }
 
 def ex_3_19 : LinguisticExample :=
-  { id := "corbett2000_3.19"
+  { id := "corbett2000_3_19"
     source := ⟨"corbett-2000", "ch. 3 (19)"⟩
     reportedIn := none
     language := "stan1293"
@@ -546,7 +546,7 @@ def ex_3_19 : LinguisticExample :=
     comment := "" }
 
 def ex_3_20 : LinguisticExample :=
-  { id := "corbett2000_3.20"
+  { id := "corbett2000_3_20"
     source := ⟨"corbett-2000", "ch. 3 (20)"⟩
     reportedIn := none
     language := "stan1293"
@@ -562,7 +562,7 @@ def ex_3_20 : LinguisticExample :=
     comment := "The reflexive shows that you distinguishes singular and plural by agreement." }
 
 def ex_3_21 : LinguisticExample :=
-  { id := "corbett2000_3.21"
+  { id := "corbett2000_3_21"
     source := ⟨"corbett-2000", "ch. 3 (21)"⟩
     reportedIn := none
     language := "muna1247"
@@ -578,7 +578,7 @@ def ex_3_21 : LinguisticExample :=
     comment := "" }
 
 def ex_3_22 : LinguisticExample :=
-  { id := "corbett2000_3.22"
+  { id := "corbett2000_3_22"
     source := ⟨"corbett-2000", "ch. 3 (22)"⟩
     reportedIn := none
     language := "muna1247"
@@ -594,7 +594,7 @@ def ex_3_22 : LinguisticExample :=
     comment := "An inanimate noun with a plural marker takes singular agreement." }
 
 def ex_3_23 : LinguisticExample :=
-  { id := "corbett2000_3.23"
+  { id := "corbett2000_3_23"
     source := ⟨"corbett-2000", "ch. 3 (23)"⟩
     reportedIn := none
     language := "muna1247"
@@ -610,7 +610,7 @@ def ex_3_23 : LinguisticExample :=
     comment := "" }
 
 def ex_3_24 : LinguisticExample :=
-  { id := "corbett2000_3.24"
+  { id := "corbett2000_3_24"
     source := ⟨"corbett-2000", "ch. 3 (24)"⟩
     reportedIn := none
     language := "miya1266"
@@ -626,7 +626,7 @@ def ex_3_24 : LinguisticExample :=
     comment := "" }
 
 def ex_3_25 : LinguisticExample :=
-  { id := "corbett2000_3.25"
+  { id := "corbett2000_3_25"
     source := ⟨"corbett-2000", "ch. 3 (25)"⟩
     reportedIn := none
     language := "miya1266"
@@ -642,7 +642,7 @@ def ex_3_25 : LinguisticExample :=
     comment := "" }
 
 def ex_3_26 : LinguisticExample :=
-  { id := "corbett2000_3.26"
+  { id := "corbett2000_3_26"
     source := ⟨"corbett-2000", "ch. 3 (26)"⟩
     reportedIn := none
     language := "miya1266"
@@ -658,7 +658,7 @@ def ex_3_26 : LinguisticExample :=
     comment := "The higher group takes plural agreement, sheep included: níykin təmakwìy." }
 
 def ex_3_27 : LinguisticExample :=
-  { id := "corbett2000_3.27"
+  { id := "corbett2000_3_27"
     source := ⟨"corbett-2000", "ch. 3 (27)"⟩
     reportedIn := none
     language := "miya1266"
@@ -674,7 +674,7 @@ def ex_3_27 : LinguisticExample :=
     comment := "A plural-marked inanimate takes agreement in gender, not number." }
 
 def ex_3_28 : LinguisticExample :=
-  { id := "corbett2000_3.28"
+  { id := "corbett2000_3_28"
     source := ⟨"corbett-2000", "ch. 3 (28)"⟩
     reportedIn := none
     language := "miya1266"
@@ -690,7 +690,7 @@ def ex_3_28 : LinguisticExample :=
     comment := "" }
 
 def ex_4_1 : LinguisticExample :=
-  { id := "corbett2000_4.1"
+  { id := "corbett2000_4_1"
     source := ⟨"corbett-2000", "ch. 4 (1)"⟩
     reportedIn := none
     language := "hebr1245"
@@ -706,7 +706,7 @@ def ex_4_1 : LinguisticExample :=
     comment := "" }
 
 def ex_4_2 : LinguisticExample :=
-  { id := "corbett2000_4.2"
+  { id := "corbett2000_4_2"
     source := ⟨"corbett-2000", "ch. 4 (2)"⟩
     reportedIn := none
     language := "hebr1245"
@@ -722,7 +722,7 @@ def ex_4_2 : LinguisticExample :=
     comment := "The minor dual takes plural agreement: dual and plural pattern together." }
 
 def ex_4_3 : LinguisticExample :=
-  { id := "corbett2000_4.3"
+  { id := "corbett2000_4_3"
     source := ⟨"corbett-2000", "ch. 4 (3)"⟩
     reportedIn := none
     language := "hebr1245"
@@ -738,7 +738,7 @@ def ex_4_3 : LinguisticExample :=
     comment := "" }
 
 def ex_4_4 : LinguisticExample :=
-  { id := "corbett2000_4.4"
+  { id := "corbett2000_4_4"
     source := ⟨"corbett-2000", "ch. 4 (4)"⟩
     reportedIn := none
     language := "hung1274"
@@ -754,7 +754,7 @@ def ex_4_4 : LinguisticExample :=
     comment := "" }
 
 def ex_4_5 : LinguisticExample :=
-  { id := "corbett2000_4.5"
+  { id := "corbett2000_4_5"
     source := ⟨"corbett-2000", "ch. 4 (5)"⟩
     reportedIn := none
     language := "hung1274"
@@ -770,7 +770,7 @@ def ex_4_5 : LinguisticExample :=
     comment := "" }
 
 def ex_4_6 : LinguisticExample :=
-  { id := "corbett2000_4.6"
+  { id := "corbett2000_4_6"
     source := ⟨"corbett-2000", "ch. 4 (6)"⟩
     reportedIn := none
     language := "hung1274"
@@ -786,7 +786,7 @@ def ex_4_6 : LinguisticExample :=
     comment := "The associative is a category distinct from number." }
 
 def ex_4_12 : LinguisticExample :=
-  { id := "corbett2000_4.12"
+  { id := "corbett2000_4_12"
     source := ⟨"corbett-2000", "ch. 4 (12)"⟩
     reportedIn := none
     language := "cent2127"
@@ -802,7 +802,7 @@ def ex_4_12 : LinguisticExample :=
     comment := "" }
 
 def ex_4_13 : LinguisticExample :=
-  { id := "corbett2000_4.13"
+  { id := "corbett2000_4_13"
     source := ⟨"corbett-2000", "ch. 4 (13)"⟩
     reportedIn := none
     language := "cent2127"
@@ -818,7 +818,7 @@ def ex_4_13 : LinguisticExample :=
     comment := "" }
 
 def ex_4_14 : LinguisticExample :=
-  { id := "corbett2000_4.14"
+  { id := "corbett2000_4_14"
     source := ⟨"corbett-2000", "ch. 4 (14)"⟩
     reportedIn := none
     language := "cent2127"
@@ -834,7 +834,7 @@ def ex_4_14 : LinguisticExample :=
     comment := "The associative combines with the dual as with the plural, its morpheme -nku- separate from the number morphemes -k and -t." }
 
 def ex_4_15 : LinguisticExample :=
-  { id := "corbett2000_4.15"
+  { id := "corbett2000_4_15"
     source := ⟨"corbett-2000", "ch. 4 (15)"⟩
     reportedIn := none
     language := "cent2127"
@@ -850,7 +850,7 @@ def ex_4_15 : LinguisticExample :=
     comment := "" }
 
 def ex_4_27 : LinguisticExample :=
-  { id := "corbett2000_4.27"
+  { id := "corbett2000_4_27"
     source := ⟨"corbett-2000", "ch. 4 (27)"⟩
     reportedIn := none
     language := "astu1245"
@@ -866,7 +866,7 @@ def ex_4_27 : LinguisticExample :=
     comment := "" }
 
 def ex_4_28 : LinguisticExample :=
-  { id := "corbett2000_4.28"
+  { id := "corbett2000_4_28"
     source := ⟨"corbett-2000", "ch. 4 (28)"⟩
     reportedIn := none
     language := "astu1245"
@@ -882,7 +882,7 @@ def ex_4_28 : LinguisticExample :=
     comment := "" }
 
 def ex_4_29 : LinguisticExample :=
-  { id := "corbett2000_4.29"
+  { id := "corbett2000_4_29"
     source := ⟨"corbett-2000", "ch. 4 (29)"⟩
     reportedIn := none
     language := "astu1245"
@@ -898,7 +898,7 @@ def ex_4_29 : LinguisticExample :=
     comment := "The article agrees in gender, the postnominal adjective in mass." }
 
 def ex_4_30 : LinguisticExample :=
-  { id := "corbett2000_4.30"
+  { id := "corbett2000_4_30"
     source := ⟨"corbett-2000", "ch. 4 (30)"⟩
     reportedIn := none
     language := "astu1245"
@@ -914,7 +914,7 @@ def ex_4_30 : LinguisticExample :=
     comment := "" }
 
 def ex_5_21 : LinguisticExample :=
-  { id := "corbett2000_5.21"
+  { id := "corbett2000_5_21"
     source := ⟨"corbett-2000", "ch. 5 (21)"⟩
     reportedIn := none
     language := "kiow1266"
@@ -930,7 +930,7 @@ def ex_5_21 : LinguisticExample :=
     comment := "" }
 
 def ex_5_22 : LinguisticExample :=
-  { id := "corbett2000_5.22"
+  { id := "corbett2000_5_22"
     source := ⟨"corbett-2000", "ch. 5 (22)"⟩
     reportedIn := none
     language := "kiow1266"
@@ -946,7 +946,7 @@ def ex_5_22 : LinguisticExample :=
     comment := "" }
 
 def ex_5_23 : LinguisticExample :=
-  { id := "corbett2000_5.23"
+  { id := "corbett2000_5_23"
     source := ⟨"corbett-2000", "ch. 5 (23)"⟩
     reportedIn := none
     language := "kiow1266"
@@ -962,7 +962,7 @@ def ex_5_23 : LinguisticExample :=
     comment := "The verb's object marking distinguishes singular, dual and inverse." }
 
 def ex_5_40 : LinguisticExample :=
-  { id := "corbett2000_5.40"
+  { id := "corbett2000_5_40"
     source := ⟨"corbett-2000", "ch. 5 (40)"⟩
     reportedIn := none
     language := "hopi1249"
@@ -978,7 +978,7 @@ def ex_5_40 : LinguisticExample :=
     comment := "" }
 
 def ex_5_41 : LinguisticExample :=
-  { id := "corbett2000_5.41"
+  { id := "corbett2000_5_41"
     source := ⟨"corbett-2000", "ch. 5 (41)"⟩
     reportedIn := none
     language := "hopi1249"
@@ -994,7 +994,7 @@ def ex_5_41 : LinguisticExample :=
     comment := "" }
 
 def ex_5_42 : LinguisticExample :=
-  { id := "corbett2000_5.42"
+  { id := "corbett2000_5_42"
     source := ⟨"corbett-2000", "ch. 5 (42)"⟩
     reportedIn := none
     language := "hopi1249"
@@ -1010,7 +1010,7 @@ def ex_5_42 : LinguisticExample :=
     comment := "Plural pronoun and singular verb construct the dual." }
 
 def ex_5_43 : LinguisticExample :=
-  { id := "corbett2000_5.43"
+  { id := "corbett2000_5_43"
     source := ⟨"corbett-2000", "ch. 5 (43)"⟩
     reportedIn := none
     language := "zuni1245"
@@ -1026,7 +1026,7 @@ def ex_5_43 : LinguisticExample :=
     comment := "" }
 
 def ex_5_44 : LinguisticExample :=
-  { id := "corbett2000_5.44"
+  { id := "corbett2000_5_44"
     source := ⟨"corbett-2000", "ch. 5 (44)"⟩
     reportedIn := none
     language := "zuni1245"
@@ -1042,7 +1042,7 @@ def ex_5_44 : LinguisticExample :=
     comment := "" }
 
 def ex_5_45 : LinguisticExample :=
-  { id := "corbett2000_5.45"
+  { id := "corbett2000_5_45"
     source := ⟨"corbett-2000", "ch. 5 (45)"⟩
     reportedIn := none
     language := "zuni1245"
@@ -1058,7 +1058,7 @@ def ex_5_45 : LinguisticExample :=
     comment := "The dual marker dropped: plural pronoun and unmarked verb construct the dual." }
 
 def ex_5_46 : LinguisticExample :=
-  { id := "corbett2000_5.46"
+  { id := "corbett2000_5_46"
     source := ⟨"corbett-2000", "ch. 5 (46)"⟩
     reportedIn := none
     language := "zuni1245"
@@ -1074,7 +1074,7 @@ def ex_5_46 : LinguisticExample :=
     comment := "Singular pronoun with plural verb is ungrammatical in any interpretation." }
 
 def ex_5_47 : LinguisticExample :=
-  { id := "corbett2000_5.47"
+  { id := "corbett2000_5_47"
     source := ⟨"corbett-2000", "ch. 5 (47)"⟩
     reportedIn := none
     language := "zuni1245"
@@ -1090,7 +1090,7 @@ def ex_5_47 : LinguisticExample :=
     comment := "" }
 
 def ex_5_48 : LinguisticExample :=
-  { id := "corbett2000_5.48"
+  { id := "corbett2000_5_48"
     source := ⟨"corbett-2000", "ch. 5 (48)"⟩
     reportedIn := none
     language := "zuni1245"
@@ -1106,7 +1106,7 @@ def ex_5_48 : LinguisticExample :=
     comment := "Constructed number with nouns too." }
 
 def ex_5_49 : LinguisticExample :=
-  { id := "corbett2000_5.49"
+  { id := "corbett2000_5_49"
     source := ⟨"corbett-2000", "ch. 5 (49)"⟩
     reportedIn := none
     language := "zuni1245"
@@ -1122,7 +1122,7 @@ def ex_5_49 : LinguisticExample :=
     comment := "" }
 
 def ex_6_1 : LinguisticExample :=
-  { id := "corbett2000_6.1"
+  { id := "corbett2000_6_1"
     source := ⟨"corbett-2000", "ch. 6 (1)"⟩
     reportedIn := none
     language := "russ1263"
@@ -1138,7 +1138,7 @@ def ex_6_1 : LinguisticExample :=
     comment := "Number on the noun, by agreement in the noun phrase, and on the verb: type B." }
 
 def ex_6_2 : LinguisticExample :=
-  { id := "corbett2000_6.2"
+  { id := "corbett2000_6_2"
     source := ⟨"corbett-2000", "ch. 6 (2)"⟩
     reportedIn := none
     language := "amel1241"
@@ -1154,7 +1154,7 @@ def ex_6_2 : LinguisticExample :=
     comment := "Number must be indicated on the verb and may be on the noun: type C." }
 
 def ex_6_4 : LinguisticExample :=
-  { id := "corbett2000_6.4"
+  { id := "corbett2000_6_4"
     source := ⟨"corbett-2000", "ch. 6 (4)"⟩
     reportedIn := none
     language := "bais1246"
@@ -1170,7 +1170,7 @@ def ex_6_4 : LinguisticExample :=
     comment := "" }
 
 def ex_6_5 : LinguisticExample :=
-  { id := "corbett2000_6.5"
+  { id := "corbett2000_6_5"
     source := ⟨"corbett-2000", "ch. 6 (5)"⟩
     reportedIn := none
     language := "bais1246"
@@ -1186,7 +1186,7 @@ def ex_6_5 : LinguisticExample :=
     comment := "" }
 
 def ex_6_6 : LinguisticExample :=
-  { id := "corbett2000_6.6"
+  { id := "corbett2000_6_6"
     source := ⟨"corbett-2000", "ch. 6 (6)"⟩
     reportedIn := none
     language := "bais1246"
@@ -1202,7 +1202,7 @@ def ex_6_6 : LinguisticExample :=
     comment := "Paucal nouns take the form the plural pronoun takes." }
 
 def ex_6_7 : LinguisticExample :=
-  { id := "corbett2000_6.7"
+  { id := "corbett2000_6_7"
     source := ⟨"corbett-2000", "ch. 6 (7)"⟩
     reportedIn := none
     language := "bais1246"
@@ -1218,7 +1218,7 @@ def ex_6_7 : LinguisticExample :=
     comment := "" }
 
 def ex_6_8 : LinguisticExample :=
-  { id := "corbett2000_6.8"
+  { id := "corbett2000_6_8"
     source := ⟨"corbett-2000", "ch. 6 (8)"⟩
     reportedIn := none
     language := "bais1246"
@@ -1234,7 +1234,7 @@ def ex_6_8 : LinguisticExample :=
     comment := "" }
 
 def ex_6_9 : LinguisticExample :=
-  { id := "corbett2000_6.9"
+  { id := "corbett2000_6_9"
     source := ⟨"corbett-2000", "ch. 6 (9)"⟩
     reportedIn := none
     language := "bais1246"
@@ -1250,7 +1250,7 @@ def ex_6_9 : LinguisticExample :=
     comment := "" }
 
 def ex_6_10 : LinguisticExample :=
-  { id := "corbett2000_6.10"
+  { id := "corbett2000_6_10"
     source := ⟨"corbett-2000", "ch. 6 (10)"⟩
     reportedIn := none
     language := "bais1246"
@@ -1266,7 +1266,7 @@ def ex_6_10 : LinguisticExample :=
     comment := "Paucal nouns take the form the plural pronoun takes." }
 
 def ex_6_11 : LinguisticExample :=
-  { id := "corbett2000_6.11"
+  { id := "corbett2000_6_11"
     source := ⟨"corbett-2000", "ch. 6 (11)"⟩
     reportedIn := none
     language := "bais1246"
@@ -1282,7 +1282,7 @@ def ex_6_11 : LinguisticExample :=
     comment := "" }
 
 def ex_6_12 : LinguisticExample :=
-  { id := "corbett2000_6.12"
+  { id := "corbett2000_6_12"
     source := ⟨"corbett-2000", "ch. 6 (12)"⟩
     reportedIn := none
     language := "stan1293"
@@ -1298,7 +1298,7 @@ def ex_6_12 : LinguisticExample :=
     comment := "A clause as controller has no number; the verb takes the default singular." }
 
 def ex_6_14 : LinguisticExample :=
-  { id := "corbett2000_6.14"
+  { id := "corbett2000_6_14"
     source := ⟨"corbett-2000", "ch. 6 (14)"⟩
     reportedIn := none
     language := "kiow1266"
@@ -1314,7 +1314,7 @@ def ex_6_14 : LinguisticExample :=
     comment := "Kiowa uses the plural as the default number." }
 
 def ex_6_15 : LinguisticExample :=
-  { id := "corbett2000_6.15"
+  { id := "corbett2000_6_15"
     source := ⟨"corbett-2000", "ch. 6 (15)"⟩
     reportedIn := none
     language := "norw1258"
@@ -1330,7 +1330,7 @@ def ex_6_15 : LinguisticExample :=
     comment := "Singular default agreement with a plural noun read generically." }
 
 def ex_6_16 : LinguisticExample :=
-  { id := "corbett2000_6.16"
+  { id := "corbett2000_6_16"
     source := ⟨"corbett-2000", "ch. 6 (16)"⟩
     reportedIn := none
     language := "hebr1245"
@@ -1346,7 +1346,7 @@ def ex_6_16 : LinguisticExample :=
     comment := "" }
 
 def ex_6_17 : LinguisticExample :=
-  { id := "corbett2000_6.17"
+  { id := "corbett2000_6_17"
     source := ⟨"corbett-2000", "ch. 6 (17)"⟩
     reportedIn := none
     language := "stan1293"
@@ -1362,7 +1362,7 @@ def ex_6_17 : LinguisticExample :=
     comment := "British English; singular in form, plural in agreement." }
 
 def ex_6_19a : LinguisticExample :=
-  { id := "corbett2000_6.19a"
+  { id := "corbett2000_6_19a"
     source := ⟨"corbett-2000", "ch. 6 (19)"⟩
     reportedIn := none
     language := "stan1293"
@@ -1378,7 +1378,7 @@ def ex_6_19a : LinguisticExample :=
     comment := "" }
 
 def ex_6_19b : LinguisticExample :=
-  { id := "corbett2000_6.19b"
+  { id := "corbett2000_6_19b"
     source := ⟨"corbett-2000", "ch. 6 (19)"⟩
     reportedIn := none
     language := "stan1293"
@@ -1394,7 +1394,7 @@ def ex_6_19b : LinguisticExample :=
     comment := "" }
 
 def ex_6_20a : LinguisticExample :=
-  { id := "corbett2000_6.20a"
+  { id := "corbett2000_6_20a"
     source := ⟨"corbett-2000", "ch. 6 (20)"⟩
     reportedIn := none
     language := "stan1293"
@@ -1410,7 +1410,7 @@ def ex_6_20a : LinguisticExample :=
     comment := "" }
 
 def ex_6_20b : LinguisticExample :=
-  { id := "corbett2000_6.20b"
+  { id := "corbett2000_6_20b"
     source := ⟨"corbett-2000", "ch. 6 (20)"⟩
     reportedIn := none
     language := "stan1293"
@@ -1426,7 +1426,7 @@ def ex_6_20b : LinguisticExample :=
     comment := "" }
 
 def ex_6_21a : LinguisticExample :=
-  { id := "corbett2000_6.21a"
+  { id := "corbett2000_6_21a"
     source := ⟨"corbett-2000", "ch. 6 (21)"⟩
     reportedIn := none
     language := "stan1293"
@@ -1442,7 +1442,7 @@ def ex_6_21a : LinguisticExample :=
     comment := "" }
 
 def ex_6_21b : LinguisticExample :=
-  { id := "corbett2000_6.21b"
+  { id := "corbett2000_6_21b"
     source := ⟨"corbett-2000", "ch. 6 (21)"⟩
     reportedIn := none
     language := "stan1293"
@@ -1458,7 +1458,7 @@ def ex_6_21b : LinguisticExample :=
     comment := "" }
 
 def ex_6_22a : LinguisticExample :=
-  { id := "corbett2000_6.22a"
+  { id := "corbett2000_6_22a"
     source := ⟨"corbett-2000", "ch. 6 (22)"⟩
     reportedIn := none
     language := "stan1293"
@@ -1474,7 +1474,7 @@ def ex_6_22a : LinguisticExample :=
     comment := "" }
 
 def ex_6_22b : LinguisticExample :=
-  { id := "corbett2000_6.22b"
+  { id := "corbett2000_6_22b"
     source := ⟨"corbett-2000", "ch. 6 (22)"⟩
     reportedIn := none
     language := "stan1293"
@@ -1490,7 +1490,7 @@ def ex_6_22b : LinguisticExample :=
     comment := "Speakers of American English admit the plural here too." }
 
 def ex_6_23 : LinguisticExample :=
-  { id := "corbett2000_6.23"
+  { id := "corbett2000_6_23"
     source := ⟨"corbett-2000", "ch. 6 (23)"⟩
     reportedIn := none
     language := "samo1305"
@@ -1506,7 +1506,7 @@ def ex_6_23 : LinguisticExample :=
     comment := "The article is singular, the verb plural." }
 
 def ex_6_24 : LinguisticExample :=
-  { id := "corbett2000_6.24"
+  { id := "corbett2000_6_24"
     source := ⟨"corbett-2000", "ch. 6 (24)"⟩
     reportedIn := none
     language := "samo1305"
@@ -1522,7 +1522,7 @@ def ex_6_24 : LinguisticExample :=
     comment := "" }
 
 def ex_6_25 : LinguisticExample :=
-  { id := "corbett2000_6.25"
+  { id := "corbett2000_6_25"
     source := ⟨"corbett-2000", "ch. 6 (25)"⟩
     reportedIn := none
     language := "russ1263"
@@ -1538,7 +1538,7 @@ def ex_6_25 : LinguisticExample :=
     comment := "Talitsk dialect: associative meaning by plural agreement alone." }
 
 def ex_6_26 : LinguisticExample :=
-  { id := "corbett2000_6.26"
+  { id := "corbett2000_6_26"
     source := ⟨"corbett-2000", "ch. 6 (26)"⟩
     reportedIn := none
     language := "russ1263"
@@ -1554,7 +1554,7 @@ def ex_6_26 : LinguisticExample :=
     comment := "Syntactic agreement of the attributive modifier, semantic in the predicate." }
 
 def ex_6_28 : LinguisticExample :=
-  { id := "corbett2000_6.28"
+  { id := "corbett2000_6_28"
     source := ⟨"corbett-2000", "ch. 6 (28)"⟩
     reportedIn := none
     language := "mace1250"
@@ -1570,7 +1570,7 @@ def ex_6_28 : LinguisticExample :=
     comment := "Honorific vie: the finite verb and participle plural, the adjective singular." }
 
 def ex_6_28v : LinguisticExample :=
-  { id := "corbett2000_6.28v"
+  { id := "corbett2000_6_28v"
     source := ⟨"corbett-2000", "ch. 6 (28)"⟩
     reportedIn := none
     language := "mace1250"
@@ -1586,7 +1586,7 @@ def ex_6_28v : LinguisticExample :=
     comment := "" }
 
 def ex_6_29 : LinguisticExample :=
-  { id := "corbett2000_6.29"
+  { id := "corbett2000_6_29"
     source := ⟨"corbett-2000", "ch. 6 (29)"⟩
     reportedIn := none
     language := "mace1250"
@@ -1602,7 +1602,7 @@ def ex_6_29 : LinguisticExample :=
     comment := "" }
 
 def ex_6_29v : LinguisticExample :=
-  { id := "corbett2000_6.29v"
+  { id := "corbett2000_6_29v"
     source := ⟨"corbett-2000", "ch. 6 (29)"⟩
     reportedIn := none
     language := "mace1250"
@@ -1618,7 +1618,7 @@ def ex_6_29v : LinguisticExample :=
     comment := "The plural adjective is the less preferred variant." }
 
 def ex_6_30 : LinguisticExample :=
-  { id := "corbett2000_6.30"
+  { id := "corbett2000_6_30"
     source := ⟨"corbett-2000", "ch. 6 (30)"⟩
     reportedIn := none
     language := "mace1250"
@@ -1634,7 +1634,7 @@ def ex_6_30 : LinguisticExample :=
     comment := "" }
 
 def ex_6_31 : LinguisticExample :=
-  { id := "corbett2000_6.31"
+  { id := "corbett2000_6_31"
     source := ⟨"corbett-2000", "ch. 6 (31)"⟩
     reportedIn := none
     language := "russ1263"
@@ -1650,7 +1650,7 @@ def ex_6_31 : LinguisticExample :=
     comment := "Agreement with the nearest conjunct, which is also the first." }
 
 def ex_6_32 : LinguisticExample :=
-  { id := "corbett2000_6.32"
+  { id := "corbett2000_6_32"
     source := ⟨"corbett-2000", "ch. 6 (32)"⟩
     reportedIn := none
     language := "kash1274"
@@ -1666,7 +1666,7 @@ def ex_6_32 : LinguisticExample :=
     comment := "With the controller preceding, the nearest conjunct is the last." }
 
 def ex_6_33 : LinguisticExample :=
-  { id := "corbett2000_6.33"
+  { id := "corbett2000_6_33"
     source := ⟨"corbett-2000", "ch. 6 (33)"⟩
     reportedIn := none
     language := "slov1268"
@@ -1682,7 +1682,7 @@ def ex_6_33 : LinguisticExample :=
     comment := "Agreement with the first, most distant conjunct; resolution would give the masculine plural." }
 
 def ex_6_34 : LinguisticExample :=
-  { id := "corbett2000_6.34"
+  { id := "corbett2000_6_34"
     source := ⟨"corbett-2000", "ch. 6 (34)"⟩
     reportedIn := none
     language := "slov1268"
@@ -1698,7 +1698,7 @@ def ex_6_34 : LinguisticExample :=
     comment := "The dual cannot agree with one conjunct: agreement with all." }
 
 def ex_6_35 : LinguisticExample :=
-  { id := "corbett2000_6.35"
+  { id := "corbett2000_6_35"
     source := ⟨"corbett-2000", "ch. 6 (35)"⟩
     reportedIn := none
     language := "slov1268"
@@ -1714,7 +1714,7 @@ def ex_6_35 : LinguisticExample :=
     comment := "" }
 
 def ex_6_36 : LinguisticExample :=
-  { id := "corbett2000_6.36"
+  { id := "corbett2000_6_36"
     source := ⟨"corbett-2000", "ch. 6 (36)"⟩
     reportedIn := none
     language := "slov1268"
@@ -1730,7 +1730,7 @@ def ex_6_36 : LinguisticExample :=
     comment := "" }
 
 def ex_6_37 : LinguisticExample :=
-  { id := "corbett2000_6.37"
+  { id := "corbett2000_6_37"
     source := ⟨"corbett-2000", "ch. 6 (37)"⟩
     reportedIn := none
     language := "slov1268"
@@ -1746,7 +1746,7 @@ def ex_6_37 : LinguisticExample :=
     comment := "" }
 
 def ex_6_38 : LinguisticExample :=
-  { id := "corbett2000_6.38"
+  { id := "corbett2000_6_38"
     source := ⟨"corbett-2000", "ch. 6 (38)"⟩
     reportedIn := none
     language := "russ1263"
@@ -1762,7 +1762,7 @@ def ex_6_38 : LinguisticExample :=
     comment := "Resolution in attributive position, the less favoured option in Russian." }
 
 def ex_6_39 : LinguisticExample :=
-  { id := "corbett2000_6.39"
+  { id := "corbett2000_6_39"
     source := ⟨"corbett-2000", "ch. 6 (39)"⟩
     reportedIn := none
     language := "russ1263"
@@ -1778,7 +1778,7 @@ def ex_6_39 : LinguisticExample :=
     comment := "Singular attributive agreement with plural predicate agreement." }
 
 def ex_6_40a : LinguisticExample :=
-  { id := "corbett2000_6.40a"
+  { id := "corbett2000_6_40a"
     source := ⟨"corbett-2000", "ch. 6 (40)"⟩
     reportedIn := none
     language := "hung1274"
@@ -1794,7 +1794,7 @@ def ex_6_40a : LinguisticExample :=
     comment := "The plural is preferred." }
 
 def ex_6_40b : LinguisticExample :=
-  { id := "corbett2000_6.40b"
+  { id := "corbett2000_6_40b"
     source := ⟨"corbett-2000", "ch. 6 (40)"⟩
     reportedIn := none
     language := "hung1274"
@@ -1810,7 +1810,7 @@ def ex_6_40b : LinguisticExample :=
     comment := "" }
 
 def ex_6_41a : LinguisticExample :=
-  { id := "corbett2000_6.41a"
+  { id := "corbett2000_6_41a"
     source := ⟨"corbett-2000", "ch. 6 (41)"⟩
     reportedIn := none
     language := "hung1274"
@@ -1826,7 +1826,7 @@ def ex_6_41a : LinguisticExample :=
     comment := "" }
 
 def ex_6_41b : LinguisticExample :=
-  { id := "corbett2000_6.41b"
+  { id := "corbett2000_6_41b"
     source := ⟨"corbett-2000", "ch. 6 (41)"⟩
     reportedIn := none
     language := "hung1274"
@@ -1842,7 +1842,7 @@ def ex_6_41b : LinguisticExample :=
     comment := "Without animate conjuncts resolution is not possible." }
 
 def ex_6_42a : LinguisticExample :=
-  { id := "corbett2000_6.42a"
+  { id := "corbett2000_6_42a"
     source := ⟨"corbett-2000", "ch. 6 (42)"⟩
     reportedIn := none
     language := "moro1292"
@@ -1858,7 +1858,7 @@ def ex_6_42a : LinguisticExample :=
     comment := "" }
 
 def ex_6_42b : LinguisticExample :=
-  { id := "corbett2000_6.42b"
+  { id := "corbett2000_6_42b"
     source := ⟨"corbett-2000", "ch. 6 (42)"⟩
     reportedIn := none
     language := "moro1292"
@@ -1874,7 +1874,7 @@ def ex_6_42b : LinguisticExample :=
     comment := "" }
 
 def ex_6_43a : LinguisticExample :=
-  { id := "corbett2000_6.43a"
+  { id := "corbett2000_6_43a"
     source := ⟨"corbett-2000", "ch. 6 (43)"⟩
     reportedIn := none
     language := "moro1292"
@@ -1890,7 +1890,7 @@ def ex_6_43a : LinguisticExample :=
     comment := "" }
 
 def ex_6_43b : LinguisticExample :=
-  { id := "corbett2000_6.43b"
+  { id := "corbett2000_6_43b"
     source := ⟨"corbett-2000", "ch. 6 (43)"⟩
     reportedIn := none
     language := "moro1292"
@@ -1906,7 +1906,7 @@ def ex_6_43b : LinguisticExample :=
     comment := "With the controller preceding, only agreement with all conjuncts is possible." }
 
 def ex_6_44a : LinguisticExample :=
-  { id := "corbett2000_6.44a"
+  { id := "corbett2000_6_44a"
     source := ⟨"corbett-2000", "ch. 6 (44)"⟩
     reportedIn := none
     language := "moro1292"
@@ -1922,7 +1922,7 @@ def ex_6_44a : LinguisticExample :=
     comment := "Inanimate conjuncts too: resolution is required by precedence alone." }
 
 def ex_6_44b : LinguisticExample :=
-  { id := "corbett2000_6.44b"
+  { id := "corbett2000_6_44b"
     source := ⟨"corbett-2000", "ch. 6 (44)"⟩
     reportedIn := none
     language := "moro1292"
@@ -1938,7 +1938,7 @@ def ex_6_44b : LinguisticExample :=
     comment := "" }
 
 def ex_6_45 : LinguisticExample :=
-  { id := "corbett2000_6.45"
+  { id := "corbett2000_6_45"
     source := ⟨"corbett-2000", "ch. 6 (45)"⟩
     reportedIn := none
     language := "afar1241"
@@ -1954,7 +1954,7 @@ def ex_6_45 : LinguisticExample :=
     comment := "The feminine singular is the default, the nearest conjunct being absolutive; the plural is resolution." }
 
 def ex_6_46 : LinguisticExample :=
-  { id := "corbett2000_6.46"
+  { id := "corbett2000_6_46"
     source := ⟨"corbett-2000", "ch. 6 (46)"⟩
     reportedIn := none
     language := "afar1241"
@@ -1970,7 +1970,7 @@ def ex_6_46 : LinguisticExample :=
     comment := "" }
 
 def ex_6_49 : LinguisticExample :=
-  { id := "corbett2000_6.49"
+  { id := "corbett2000_6_49"
     source := ⟨"corbett-2000", "ch. 6 (49)"⟩
     reportedIn := none
     language := "afar1241"
@@ -1986,7 +1986,7 @@ def ex_6_49 : LinguisticExample :=
     comment := "" }
 
 def ex_6_50 : LinguisticExample :=
-  { id := "corbett2000_6.50"
+  { id := "corbett2000_6_50"
     source := ⟨"corbett-2000", "ch. 6 (50)"⟩
     reportedIn := none
     language := "afar1241"
@@ -2002,7 +2002,7 @@ def ex_6_50 : LinguisticExample :=
     comment := "Resolution is less certain with non-human animates." }
 
 def ex_6_51 : LinguisticExample :=
-  { id := "corbett2000_6.51"
+  { id := "corbett2000_6_51"
     source := ⟨"corbett-2000", "ch. 6 (51)"⟩
     reportedIn := none
     language := "afar1241"
@@ -2018,7 +2018,7 @@ def ex_6_51 : LinguisticExample :=
     comment := "With inanimates the default is the norm." }
 
 def ex_6_52 : LinguisticExample :=
-  { id := "corbett2000_6.52"
+  { id := "corbett2000_6_52"
     source := ⟨"corbett-2000", "ch. 6 (52)"⟩
     reportedIn := none
     language := "bela1254"
@@ -2034,7 +2034,7 @@ def ex_6_52 : LinguisticExample :=
     comment := "Comitative: agreement with the head alone." }
 
 def ex_6_53 : LinguisticExample :=
-  { id := "corbett2000_6.53"
+  { id := "corbett2000_6_53"
     source := ⟨"corbett-2000", "ch. 6 (53)"⟩
     reportedIn := none
     language := "bela1254"

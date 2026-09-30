@@ -628,7 +628,7 @@
     "comment": "Plural -((j)a)i- before the first singular possessive -m."
   },
   {
-    "id": "embick2015_hungarian_ház_pl",
+    "id": "embick2015_hungarian_haz_pl",
     "source": {"bibkey": "embick-2015", "paperLabel": "ch. 7, (7)"},
     "language": "hung1274",
     "primaryText": "ház-ak",
@@ -647,7 +647,7 @@
     "comment": "Plural -(V)k with no possessive following."
   },
   {
-    "id": "embick2015_hungarian_ház_plposs",
+    "id": "embick2015_hungarian_haz_plposs",
     "source": {"bibkey": "embick-2015", "paperLabel": "ch. 7, (7)"},
     "language": "hung1274",
     "primaryText": "ház-ai-m",

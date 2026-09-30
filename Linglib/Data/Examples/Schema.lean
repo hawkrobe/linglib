@@ -38,9 +38,12 @@ translation and the judgment the paper reports; it is the sentence-level counter
 
 * Per-paper data lives in `Linglib/Data/Examples/{AuthorYear}.json` and is compiled by
   `scripts/gen_examples.py` into `Linglib/Data/Examples/{AuthorYear}.lean`, declaring
-  `namespace {AuthorYear}.Examples`. The JSON keys are the field names.
-* `language` is a Glottocode rather than a foreign key into a `LanguageTable`, as in
-  `Data/Forms/`.
+  `namespace {AuthorYear}.Examples`. The JSON keys are the field names, and `id` uses only the
+  characters of a CLDF identifier. `scripts/export_examples_cldf.py` writes the data as a CLDF
+  dataset, which CI validates.
+* `language` is a Glottocode, which the generator checks against `languages.csv`, the language
+  table of the data drawn from Glottolog; it is empty for a constructed string that belongs to no
+  language, such as a pattern of a formal language.
 * `glossedTokens` pairs each analysed word with its gloss, so the word-by-word alignment of Rule 1
   of [comrie-haspelmath-bickel-2008] holds by construction. CLDF's `LGR_Conformance` column is not
   stored: whether a gloss also aligns morpheme by morpheme (Rule 2) is a property of the pairs.
@@ -99,7 +102,8 @@ structure LinguisticExample where
   source : SourceRef
   /-- The paper whose data file holds the row, when it only reports an example from `source`. -/
   reportedIn : Option SourceRef := none
-  /-- The `Language_ID` column holds the Glottocode of the language of the example. -/
+  /-- The `Language_ID` column holds the Glottocode of the language of the example; empty for a
+  constructed string of no language. -/
   language : Glottocode
   /-- The `Primary_Text` column holds the example without judgment marks. -/
   primaryText : String

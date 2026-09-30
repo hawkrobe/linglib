@@ -705,8 +705,8 @@ def zmt1985_68a : LinguisticExample :=
     paperFeatures := [("verb", "óska (transitive)"), ("voice", "passive"), ("cases", "gen"), ("test", "passive"), ("tested", "theme")]
     comment := "" }
 
-def zmt1985_68a' : LinguisticExample :=
-  { id := "zmt1985_68a'"
+def zmt1985_68a_prime : LinguisticExample :=
+  { id := "zmt1985_68a_prime"
     source := ⟨"zaenen-maling-thrainsson-1985", "(68a')"⟩
     reportedIn := none
     language := "icel1247"
@@ -737,6 +737,6 @@ def zmt1985_68c : LinguisticExample :=
     paperFeatures := [("verb", "óska"), ("voice", "passive"), ("cases", "dat gen"), ("test", "passive"), ("tested", "goal")]
     comment := "" }
 
-def all : List LinguisticExample := [zmt1985_8a, zmt1985_8b, zmt1985_9a, zmt1985_11a, zmt1985_11b, zmt1985_13, zmt1985_29a, zmt1985_37a, zmt1985_37b, zmt1985_37c, zmt1985_37d, zmt1985_37e, zmt1985_42a, zmt1985_42b, zmt1985_42c, zmt1985_44a, zmt1985_44b, zmt1985_64a, zmt1985_66b, zmt1985_66c, zmt1985_14b, zmt1985_14d, zmt1985_16, zmt1985_18a, zmt1985_21a, zmt1985_21c, zmt1985_23b, zmt1985_23d, zmt1985_25a, zmt1985_25c, zmt1985_27a, zmt1985_27b, zmt1985_29b, zmt1985_30, zmt1985_31, zmt1985_32a, zmt1985_33b, zmt1985_34, zmt1985_35, zmt1985_36a, zmt1985_45a, zmt1985_45b, zmt1985_68a, zmt1985_68a', zmt1985_68c]
+def all : List LinguisticExample := [zmt1985_8a, zmt1985_8b, zmt1985_9a, zmt1985_11a, zmt1985_11b, zmt1985_13, zmt1985_29a, zmt1985_37a, zmt1985_37b, zmt1985_37c, zmt1985_37d, zmt1985_37e, zmt1985_42a, zmt1985_42b, zmt1985_42c, zmt1985_44a, zmt1985_44b, zmt1985_64a, zmt1985_66b, zmt1985_66c, zmt1985_14b, zmt1985_14d, zmt1985_16, zmt1985_18a, zmt1985_21a, zmt1985_21c, zmt1985_23b, zmt1985_23d, zmt1985_25a, zmt1985_25c, zmt1985_27a, zmt1985_27b, zmt1985_29b, zmt1985_30, zmt1985_31, zmt1985_32a, zmt1985_33b, zmt1985_34, zmt1985_35, zmt1985_36a, zmt1985_45a, zmt1985_45b, zmt1985_68a, zmt1985_68a_prime, zmt1985_68c]
 
 end ZaenenMalingThrainsson1985.Examples

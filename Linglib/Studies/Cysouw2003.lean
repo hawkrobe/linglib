@@ -505,7 +505,7 @@ theorem rows_splitInclusive_not_specializedExclusive :
 
 /-- The strong universal 'we' fails: the English inflection has no 'we'. -/
 theorem english_inflection_noWe :
-    ∃ r ∈ rows, r.id = "cysouw2003_4.68" ∧ r.syncretism.HasClusivity .noWe := by
+    ∃ r ∈ rows, r.id = "cysouw2003_4_68" ∧ r.syncretism.HasClusivity .noWe := by
   decide +kernel
 
 /-- The Homophony Implication over the printed paradigms: singular homophony only in
@@ -557,7 +557,7 @@ have given up a singular and a group opposition, then the Latin, Mandara and Mar
 types. -/
 theorem explicitness_rungs :
     ∃ waskia ∈ rows, ∃ una ∈ rows,
-      waskia.id = "cysouw2003_4.66" ∧ una.id = "cysouw2003_4.64" ∧
+      waskia.id = "cysouw2003_4_66" ∧ una.id = "cysouw2003_4_64" ∧
       waskia.syncretism.explicitness = ↑Opposition.singular ∧
       una.syncretism.explicitness = ↑Opposition.group ∧
       Kind.latin.pattern.explicitness = ↑Opposition.inclusiveExclusive ∧
@@ -574,7 +574,7 @@ def englishSubject : Category → Finset String :=
 
 /-- The English pronouns have the structure of the paradigm the book prints for them. -/
 theorem english_pronouns :
-    ∃ r ∈ rows, r.id = "cysouw2003_4.19" ∧ syncretism englishSubject = r.syncretism := by
+    ∃ r ∈ rows, r.id = "cysouw2003_4_19" ∧ syncretism englishSubject = r.syncretism := by
   decide +kernel
 
 /-- Horizontal homophony in the second person only: the English pronouns break the horizontal
