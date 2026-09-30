@@ -15,7 +15,9 @@ contextual standard, absolute adjectives an endpoint, minimum (*wet*, *bent*) or
 (*full*, *dry*) (Section 3.1). Four diagnostics separate the two (Section 3.2): definite
 descriptions pick out the one object that stands out only for relative adjectives; the Sorites
 second premise is judged false for absolutes; comparatives entail the positive form for
-absolutes, in the direction the standard fixes, and not at all for relatives; and maximizers and
+absolutes, in the direction the standard fixes, and not at all for relatives; the denial of a
+minimum-standard adjective asserts its maximum-standard antonym (47), as every contradictory pair
+of the English fragment bears out (`fragment_contradictory_pairs_complementary`); and maximizers and
 minimizers distribute by the endpoints of the adjective's scale, the antonym using the same scale
 with the ends exchanged (61). Interpretive Economy (66) derives the standard from scale
 structure: an endpoint standard is available exactly where the scale has that endpoint, and a
@@ -73,6 +75,20 @@ theorem not_maxStandardPos_of_lt_top [OrderTop D] {μ : Entity → D} {x : Entit
 theorem not_minStandardPos_iff [OrderBot D] (μ : Entity → D) (x : Entity) :
     ¬ MinStandardPos μ x ↔ μ x = ⊥ :=
   not_lt.trans le_bot_iff
+
+open Aristotelian in
+/-- (47): *the door is not open* entails *the door is closed*. A minimum standard and the maximum
+standard of the antonym, which measures on the dual scale, split the domain between them, since
+the minimum of the one is the maximum of the other. -/
+theorem isContradictory_minStandardPos_maxStandardPos_dual [OrderBot D] (μ : Entity → D) :
+    IsContradictory {x | MinStandardPos μ x} {x | MaxStandardPos (OrderDual.toDual ∘ μ) x} := by
+  have : {x | MaxStandardPos (OrderDual.toDual ∘ μ) x} = {x | MinStandardPos μ x}ᶜ := by
+    ext x
+    simp only [Set.mem_ofPred_eq, Set.mem_compl_iff, not_minStandardPos_iff, MaxStandardPos,
+      Function.comp]
+    exact OrderDual.toDual.injective.eq_iff
+  rw [this]
+  exact isCompl_compl
 
 /-! ### Comparatives (§3.2, (49)–(52)) -/
 
@@ -148,6 +164,15 @@ theorem fragment_pairs_table61 :
     Licenses .minimizer bent.scaleType ∧ ¬ Licenses .maximizer bent.scaleType ∧
     Licenses .maximizer straight.scaleType ∧
     ¬ Licenses .maximizer tall.scaleType ∧ ¬ Licenses .minimizer short.scaleType := by
+  decide
+
+open English.Adjectives in
+/-- (47) across the Fragment: every contradictory pair takes complementary standards, the
+minimum on one pole and the maximum on the other, while the relative pair *tall*/*short* takes
+neither. -/
+theorem fragment_contradictory_pairs_complementary :
+    (∀ p ∈ pairs, p.relation = .contradictory → p.ComplementaryStandards) ∧
+      ¬ height.ComplementaryStandards := by
   decide
 
 /-! ### Interpretive Economy (§4.2–§4.3) -/

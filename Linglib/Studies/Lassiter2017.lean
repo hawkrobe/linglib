@@ -77,9 +77,6 @@ expected value over an equiprobable domain of four worlds indexed by the truth v
 * The certainty scales of Analyses 2 and 3 (§5.1.6, §5.1.7), the first a half-open interval
   (`Degree.Boundedness.ofOrder_Ioc`) or a log transform.
 * The experiment of §6.5 as `Data/Experiments`, and the modifier judgments of §4.2 as examples.
-* The English fragment puts *possible* on `ScalarDimension.possibility`, tagged open without a
-  cited source, so Interpretive Economy makes it relative; §5.2.5 makes it a minimum-standard
-  adjective on the probability scale.
 
 ## References
 
@@ -219,6 +216,14 @@ theorem mem_possible_iff_minStandardPos :
     A ∈ possible P ↔ Kennedy2007.MinStandardPos (likelihood P) A := by
   rw [mem_possible_iff, Kennedy2007.MinStandardPos, ← Subtype.coe_lt_coe, coe_likelihood,
     Set.Icc.coe_bot]
+
+/-- The English fragment agrees: its *possible* takes the minimum standard and its *impossible*
+the maximum of the dual (§5.2.5). The fragment's possibility scale is only lower closed; the
+maximum of the probability scale is the book's claim that *possible* shares the scale of
+*likely*. -/
+example : English.Adjectives.possible.standard = .minEndpoint ∧
+    English.Adjectives.impossible.standard = .maxEndpoint := by
+  decide
 
 /-- Certainty entails likelihood (§5.1.4). -/
 theorem certain_subset_likely (hθ : θ < 1) : certain P ⊆ likely P θ :=
