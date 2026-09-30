@@ -221,8 +221,8 @@ end DerivedSpecificity
 
 /-- A construction: a learned pairing of form and meaning. The meaning
 pole is typed by the domain that owns the construction — a composition
-rule, a `MeaningComponents` contribution, a presupposition — with `Unit`
-for a purely formal record or a defective, form-only construction. -/
+rule, a presupposition — with `Unit` for a purely formal record or a
+defective, form-only construction. -/
 structure Construction (Sem : Type*) where
   /-- The form pole. -/
   form : TypedForm String

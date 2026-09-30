@@ -919,7 +919,6 @@ import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Semantics.ArgumentStructure.EventStructure
 import Linglib.Semantics.ArgumentStructure.LevinClass
 import Linglib.Semantics.ArgumentStructure.LevinTheory
-import Linglib.Semantics.ArgumentStructure.MeaningComponents
 import Linglib.Semantics.ArgumentStructure.ParticipantType
 import Linglib.Semantics.ArgumentStructure.PersistenceLevel
 import Linglib.Semantics.ArgumentStructure.Projection

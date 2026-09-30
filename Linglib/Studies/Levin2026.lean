@@ -3,7 +3,6 @@ module
 public import Linglib.Core.Order.Interval
 public import Linglib.Semantics.ArgumentStructure.LevinClass.Members
 public import Linglib.Semantics.ArgumentStructure.LevinClass.Properties
-public import Linglib.Studies.Goldberg1995
 public import Linglib.Fragments.English.Adjectives
 public import Linglib.Data.Examples.Levin2026
 
@@ -28,9 +27,10 @@ can (`Theme.SelfEnergetic`), since a change of state properly contained in the c
 requires the cause to be expressed, the Proper Containment Condition of Rappaport Hovav and
 Levin (`CauseRequired`). Neither the verb nor the adjective suffices alone, and a sentence of
 the paper is acceptable exactly when the three conditions meet or the verb alternates by
-itself (`acceptable_iff_licensed`). Fusing the meaning of a manner verb with that of the
-resultative predicts the alternation for every such verb, *The tub scrubbed clean* included, so
-the restrictions are not those of the construction (`fusion_overgenerates`).
+itself (`acceptable_iff_licensed`). Neo-constructional approaches, on which a verb's lexical
+properties do not constrain its distribution, expect every verb in every resultative pattern, and
+must explain why such intransitive resultatives are not more pervasive: *The tub scrubbed clean*
+is unacceptable (footnote 7, (16); `exists_unacceptable_intransitive_resultative`).
 
 ## Implementation notes
 
@@ -48,14 +48,13 @@ kind of the subject is recorded for the rows whose subject the paper discusses.
 * [rappaport-hovav-levin-2012]
 * [rappaport-hovav-2014]
 * [levin-1993]
-* [goldberg-1995]
 -/
 
 @[expose] public section
 
 namespace Levin2026
 
-open Data.Examples ArgumentStructure ConstructionGrammar
+open Data.Examples ArgumentStructure
 
 /-! ### The proper containment condition -/
 
@@ -298,14 +297,13 @@ theorem exertingForce_not_all_pushPull :
       v ∈ LevinClass.members .throw := by
   decide +kernel
 
-/-- The resultative makes the alternation available but does not restrict it, since the meaning of a
-manner verb of contact and motion is predicted to alternate in the resultative, and the paper
-has unacceptable intransitive resultatives with manner verbs. -/
-theorem fusion_overgenerates :
-    Goldberg1995.predictedAlternationInConstruction .hit Goldberg1995.resultative
-      .causativeInchoative = true ∧
+/-- Neo-constructional approaches "do not take a verb's lexical properties to constrain its
+distribution, so any verb would be expected to appear in all resultative patterns" (footnote 7),
+but a verb outside the paper's lists is unacceptable in the intransitive resultative, as in (16d)
+*The tub scrubbed clean*. -/
+theorem exists_unacceptable_intransitive_resultative :
     ∃ d ∈ data, d.verb = .other ∧ d.frame = .intransitive ∧ d.result.isSome ∧
-      d.judgment ≠ .acceptable :=
-  ⟨Goldberg1995.manner_verb_alternates_in_resultative _ rfl, by decide +kernel⟩
+      d.judgment ≠ .acceptable := by
+  decide +kernel
 
 end Levin2026

@@ -3,7 +3,6 @@ module
 public import Mathlib.Tactic.DeriveFintype
 public import Mathlib.Data.Fintype.Sum
 public import Linglib.Syntax.ConstructionGrammar.Constructicon
-public import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
 
 /-!
 # Goldberg (1995): Constructions
@@ -14,9 +13,7 @@ argument structure constructions, contribute meaning of their own, and a verb in
 fuses its meaning with the construction's. The constructions of the book's first chapter are the
 ditransitive (*X CAUSES Y to RECEIVE Z*), the caused-motion (*X CAUSES Y to MOVE Z*), the
 resultative (*X CAUSES Y to BECOME Z*), the intransitive motion (*X MOVES Y*) and the conative
-(*X DIRECTS ACTION at Y*). A manner verb such as *push* lacks change of state and causation, but in
-the resultative it acquires both, so the causative alternation is predicted for it there and not
-alone (`manner_verb_alternates_in_resultative`, `manner_verb_no_alternation`).
+(*X DIRECTS ACTION at Y*).
 
 The constructions form a network of normal-mode inheritance links (§3.3, `network`). The
 extensions of the polysemous ditransitive state no syntax of their own and inherit the central
@@ -27,107 +24,76 @@ extension of caused motion.
 
 ## Implementation notes
 
-A meaning pole records the meaning components of [levin-1993] that the construction adds beyond
-the verb, fused with the verb's by componentwise disjunction (`MeaningComponents.fuse`), an
-approximation of the book's fusion of roles. The ditransitive's reception and the conative's
-directed action are not among those components, so the ditransitive records only its causation
-and the conative nothing. The forms are sequences of single-word slots, where the book states
-argument frames over grammatical functions of phrases.
+The forms are sequences of single-word slots, where the book states argument frames over
+grammatical functions of phrases.
+
+## TODO
+
+The meaning poles are `Unit`: the constructions' semantics, *X CAUSES Y to RECEIVE Z* and the
+rest, and the fusion of a verb's participant roles with a construction's argument roles are not
+modelled.
 
 ## References
 
 * [goldberg-1995]
-* [levin-1993]
 -/
 
 @[expose] public section
 
 namespace Goldberg1995
 
-open ConstructionGrammar ArgumentStructure
+open ConstructionGrammar
 
 /-! ### The argument structure constructions -/
 
 /-- The ditransitive, [Subj V Obj Obj₂]: *X CAUSES Y to RECEIVE Z* (*Pat faxed Bill the
 letter*). -/
-def ditransitive : Construction MeaningComponents :=
+def ditransitive : Construction Unit :=
   { form :=
       [ { filler := .open_ .NOUN }
       , { filler := .open_ .VERB, isHead := true }
       , { filler := .open_ .NOUN }
       , { filler := .open_ .NOUN } ]
-  , meaning := { changeOfState := false, contact := false, motion := false, causation := true } }
+  , meaning := () }
 
 /-- The caused-motion construction, [Subj V Obj Obl]: *X CAUSES Y to MOVE Z*, *Z* a directional
 (*Pat sneezed the napkin off the table*). A verb such as *sneeze*, lexicalizing neither motion nor
 causation, acquires both from the construction. -/
-def causedMotion : Construction MeaningComponents :=
+def causedMotion : Construction Unit :=
   { form :=
       [ { filler := .open_ .NOUN }
       , { filler := .open_ .VERB, isHead := true }
       , { filler := .open_ .NOUN }
       , { filler := .open_ .ADP } ]
-  , meaning := { changeOfState := false, contact := false, motion := true, causation := true } }
+  , meaning := () }
 
 /-- The resultative, [Subj V Obj Xcomp]: *X CAUSES Y to BECOME Z* (*She hammered the metal
-flat*). A manner verb such as *push*, lexicalizing neither change of state nor causation,
-acquires both from the construction. -/
-def resultative : Construction MeaningComponents :=
+flat*). -/
+def resultative : Construction Unit :=
   { form :=
       [ { filler := .open_ .NOUN }
       , { filler := .open_ .VERB, isHead := true }
       , { filler := .open_ .NOUN }
       , { filler := .open_ .ADJ } ]
-  , meaning := { changeOfState := true, contact := false, motion := false, causation := true } }
+  , meaning := () }
 
 /-- The intransitive motion construction, [Subj V Obl]: *X MOVES Y* (*The fly buzzed into the
 room*). -/
-def intransitiveMotion : Construction MeaningComponents :=
+def intransitiveMotion : Construction Unit :=
   { form :=
       [ { filler := .open_ .NOUN }
       , { filler := .open_ .VERB, isHead := true }
       , { filler := .open_ .ADP } ]
-  , meaning := { changeOfState := false, contact := false, motion := true, causation := false } }
+  , meaning := () }
 
 /-- The conative, [Subj V Obl_at]: *X DIRECTS ACTION at Y* (*Sam kicked at Bill*). The at-phrase
 marks the target without entailing contact. -/
-def conative : Construction MeaningComponents :=
+def conative : Construction Unit :=
   { form :=
       [ { filler := .open_ .NOUN }
       , { filler := .open_ .VERB, isHead := true }
       , { filler := .open_ .ADP } ]
-  , meaning := .none }
-
-/-! ### Fusion -/
-
-/-- The meaning of a verb in a construction: the verb's meaning components fused with the
-construction's meaning pole. -/
-def composedMeaning (verbMC : MeaningComponents) (cxn : Construction MeaningComponents) :
-    MeaningComponents :=
-  verbMC.fuse cxn.meaning
-
-/-- Whether an alternation is predicted for a verb in a construction. -/
-def predictedAlternationInConstruction (verbMC : MeaningComponents)
-    (cxn : Construction MeaningComponents) (alt : DiathesisAlternation) : Bool :=
-  (composedMeaning verbMC cxn).predictedAlternation alt
-
-/-- A construction that adds nothing leaves the verb's meaning as it is. -/
-theorem composedMeaning_of_meaning_eq_none (mc : MeaningComponents)
-    {cxn : Construction MeaningComponents} (h : cxn.meaning = .none) :
-    composedMeaning mc cxn = mc := by
-  rw [composedMeaning, h, MeaningComponents.fuse_none_right]
-
-/-- A manner verb, with neither change of state nor causation, does not alternate alone. -/
-theorem manner_verb_no_alternation (mc : MeaningComponents) (hCoS : mc.changeOfState = false) :
-    mc.predictedAlternation .causativeInchoative = false := by
-  simp [MeaningComponents.predictedAlternation, hCoS]
-
-/-- In the resultative, any verb that specifies no instrument alternates: the construction adds
-the change of state and causation the verb lacks. -/
-theorem manner_verb_alternates_in_resultative (mc : MeaningComponents)
-    (hInstr : mc.instrumentSpec = false) :
-    predictedAlternationInConstruction mc resultative .causativeInchoative = true :=
-  (fuse_cos_caus_enables mc resultative.meaning rfl rfl hInstr rfl).1
+  , meaning := () }
 
 /-! ### The network (§3.3) -/
 
@@ -159,7 +125,7 @@ inductive Node where
   deriving DecidableEq, Fintype
 
 /-- The construction at each node; the senses of the ditransitive share its form. -/
-def construction : Node → Construction MeaningComponents
+def construction : Node → Construction Unit
   | .ditransitive _ => ditransitive
   | .causedMotion => causedMotion
   | .intransitiveMotion => intransitiveMotion
@@ -172,7 +138,7 @@ links" (§3.7, p. 99). Each extension of the ditransitive inherits from the cent
 polysemy link (pp. 75–77), intransitive motion from caused motion by a subpart link (p. 78), and
 the resultative from caused motion by a metaphorical link, change of state as change of location
 (pp. 81–84). The conative is in the book's inventory (p. 4) but in no link. -/
-def network : Constructicon Node MeaningComponents where
+def network : Constructicon Node Unit where
   cxn := construction
   mothers
     | .ditransitive .actual => []

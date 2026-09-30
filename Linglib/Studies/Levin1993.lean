@@ -1,5 +1,7 @@
 module
 
+public import Mathlib.Order.UpperLower.Basic
+public import Linglib.Core.Order.Interval
 public import Linglib.Semantics.ArgumentStructure.LevinClass.Properties
 public import Linglib.Semantics.ArgumentStructure.LevinClass.Members
 public import Linglib.Syntax.Voice.Basic
@@ -15,8 +17,17 @@ alternations follows from its meaning, so verbs fall into semantically coherent 
 share an alternation profile (`ArgumentStructure.LevinClass.Participates`). The book's
 opening quadruple *break*, *cut*, *hit*, *touch* takes four distinct profiles across the
 causative/inchoative, middle, conative, and body-part possessor ascension alternations, one
-class each (`quadruple_profiles_distinct`), and on the quadruple the Introduction's component
-prediction agrees with the class pages of Part II (`quadruple_prediction_matches`). Every
+class each (`quadruple_profiles_distinct`). The Introduction explains the profiles by four
+components of verb meaning, "motion, contact, change of state, and causation"
+(`MeaningComponent`), to which each of the four alternations is sensitive (`sensitivity`): the
+body-part possessor ascension alternation needs contact and the conative contact and motion, the
+middle causation of a change of state, and the causative/inchoative a pure change of state, one
+whose meaning does not specify how the change comes about. Only the last condition is lost when a
+meaning involves more components (`isUpperSet_sensitivity`,
+`not_isUpperSet_sensitivity_causativeInchoative`), and the components of the Introduction's
+characterizations of the four verbs meet the conditions exactly where the class pages of Part II
+attest the alternations (`quadruple_mem_sensitivity_of_participates`,
+`quadruple_prediction_matches`). Every
 categorical alternation judgment among the book's examples in `Data/Examples/Levin1993.json`
 agrees with the profile of the verb's class (`participation_matches_profile`). The
 alternations that pair two argument frames are frame-pair schemas (`schema?`), and every
@@ -29,6 +40,14 @@ Rows record the verb's class by the book's section number and the alternation by
 `classOf` and `alternationOf` read them into the substrate's enumerations. A row's
 participation in its alternation is its judgment: an acceptable row attests the alternation, a
 starred row denies it, and a marginal row is categorical in neither direction.
+
+The Introduction's conditions are necessary ones: a verb shows the body-part possessor ascension
+alternation "only if its meaning involves the notion of contact" (p. 8), and the
+causative/inchoative "is found only with verbs of pure change of state" (p. 10). Each is an
+interval of sets of components, and an alternation for which the Introduction states no
+condition has the whole lattice. A pure change of state may carry a cause, as *break* does "when
+transitive" (p. 9), so the causative/inchoative's interval runs from the change of state to the
+change of state with its cause.
 
 ## References
 
@@ -90,8 +109,46 @@ theorem participation_matches_profile :
 
 /-! ### The Introduction's quadruple
 
-*break*, *cut*, *hit* and *touch* are told apart by the four diagnostic alternations, and on
-these four classes the Introduction's component prediction agrees with Part II. -/
+*break*, *cut*, *hit* and *touch* are told apart by the four diagnostic alternations (p. 7), and
+the Introduction explains the difference by the components of their meanings (pp. 7–10). -/
+
+/-- A component of verb meaning to which diathesis alternations are sensitive: "the notions of
+motion, contact, change of state, and causation" (p. 10). -/
+inductive MeaningComponent where
+  | motion
+  | contact
+  | changeOfState
+  | causation
+  deriving DecidableEq, Fintype, Repr
+
+open MeaningComponent
+
+/-- The sets of meaning components of the verbs that can show an alternation (p. 10):
+body-part possessor ascension "is sensitive to the notion of contact", the conative "to both
+contact and motion", the middle "is found with verbs whose meaning involves causing a change of
+state", and the causative/inchoative "is found only with verbs of pure change of state". -/
+def sensitivity : DiathesisAlternation → NonemptyInterval (Finset MeaningComponent)
+  | .bodyPartPossessorAscension => ⟨({contact}, ⊤), le_top⟩
+  | .conative => ⟨({contact, motion}, ⊤), le_top⟩
+  | .middle => ⟨({changeOfState, causation}, ⊤), le_top⟩
+  | .causativeInchoative => ⟨({changeOfState}, {changeOfState, causation}), by decide⟩
+  | _ => ⊤
+
+/-- Every alternation but the causative/inchoative is open to a verb whose meaning involves more
+components than one it is open to, as the middle is to verbs of causing a change of state
+"whether or not their meaning also specifies how this change of state comes about" (p. 10). -/
+theorem isUpperSet_sensitivity {a : DiathesisAlternation} (ha : a ≠ .causativeInchoative) :
+    IsUpperSet (sensitivity a : Set (Finset MeaningComponent)) := by
+  have : (sensitivity a).snd = ⊤ := by cases a <;> first | exact absurd rfl ha | rfl
+  rw [NonemptyInterval.coe_def, this, Set.Icc_top]
+  exact isUpperSet_Ici _
+
+/-- The causative/inchoative is not open to a verb that adds a means, such as contact, to a pure
+change of state (pp. 9–10). -/
+theorem not_isUpperSet_sensitivity_causativeInchoative :
+    ¬ IsUpperSet (sensitivity .causativeInchoative : Set (Finset MeaningComponent)) := fun h ↦
+  absurd (SetLike.mem_coe.1 <| h (a := {changeOfState}) (b := {changeOfState, contact})
+    (by decide) (SetLike.mem_coe.2 (by decide))) (by decide)
 
 /-- The four diagnostic alternations of the Introduction. -/
 def diagnosticAlternations : List DiathesisAlternation :=
@@ -104,12 +161,26 @@ theorem quadruple_profiles_distinct :
       diagnosticAlternations.map fun a ↦ decide (c.Participates a)).Pairwise (· ≠ ·) := by
   decide +kernel
 
-/-- On the quadruple, the Introduction's component prediction matches the class pages for
-every diagnostic alternation. -/
+/-- The quadruple's classes with the meaning components of the Introduction's
+characterizations (p. 10): "*touch* is a pure verb of contact, *hit* is a verb of contact by
+motion, *cut* is a verb of causing a change of state by moving something into contact with the
+entity that changes state, and *break* is a pure verb of change of state", with the notion of cause
+it has "when transitive" (p. 9), since *cut* and *break* are "both verbs of causing a change of
+state" (p. 9). -/
+def quadruple : List (LevinClass × Finset MeaningComponent) :=
+  [(.break_, {changeOfState, causation}), (.cut, {changeOfState, causation, contact, motion}),
+    (.hit, {contact, motion}), (.touch, {contact})]
+
+/-- The Introduction's conditions are necessary on the quadruple: every alternation a class
+page of Part II attests is open to the class's meaning components. -/
+theorem quadruple_mem_sensitivity_of_participates :
+    ∀ p ∈ quadruple, ∀ a : DiathesisAlternation, p.1.Participates a → p.2 ∈ sensitivity a := by
+  decide +kernel
+
+/-- On the diagnostic alternations the conditions also suffice: the quadruple's meaning
+components predict the class pages exactly. -/
 theorem quadruple_prediction_matches :
-    ∀ p ∈ [(LevinClass.break_, MeaningComponents.break_), (.cut, .cut), (.hit, .hit),
-      (.touch, .touch)], ∀ a ∈ diagnosticAlternations,
-      p.2.predictedAlternation a = decide (p.1.Participates a) := by
+    ∀ p ∈ quadruple, ∀ a ∈ diagnosticAlternations, (p.2 ∈ sensitivity a ↔ p.1.Participates a) := by
   decide +kernel
 
 /-! ### Frame-pair schemas of the alternations
