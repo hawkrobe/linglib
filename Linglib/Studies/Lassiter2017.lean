@@ -1,39 +1,92 @@
 module
 
+public import Mathlib.Order.LatticeIntervals
+public import Mathlib.Data.Fin.VecNotation
+public import Mathlib.Tactic.FinCases
 public import Linglib.Semantics.Attitudes.Desire.ExpectedValue
+public import Linglib.Studies.Kennedy2007
+public import Linglib.Studies.Lassiter2015
 
 /-!
 # Lassiter (2017): Graded Modality
 
-This file formalizes the scalar semantics of *good* and *ought* in chapters 7 and 8 of
-[lassiter-2017]. Goodness is expected value, the probability-weighted average of world
-values over a proposition (`Desire.ExpectedValue.expectedValue`); it is an interval scale
-and intermediate on disjoint unions. *Ought* is constrained rather than defined
-(`Constraints`): Sloman's Principle relates it to goodness (an obligatory proposition is
-strictly better than each of its alternatives, after [sloman-1970]), the Smith Principle
-restricts agglomeration to exhaustive pairs, and Weakening closes obligation under
-disjunction.
+This file formalizes chapters 4 to 8 of [lassiter-2017].
 
-Sloman's Principle alone excludes conflicting oughts, `ought φ` together with `ought ¬φ`
-(`Constraints.not_compl`), and the Smith Principle carries the Smith argument from
-`ought (M ∨ S)` and `ought ¬M` to `ought S` (`Smith.ought_S`), on a sample model that meets
-the Sloman requirements of all three. On [cariani-2016]'s four-world counter-model to
-Weakening, where `A` and `B` each beat their negations in expected value but `A ∨ B` ties
-with its negation, Sloman's Principle and Weakening together make `ought A` and `ought B`
-incompatible (`Cariani.not_ought_and`). The scalar reading of *ought* as a threshold on an
-intermediate scale derives Weakening and, given ought-exclusivity, the Smith Principle; both
+Chapters 4 to 6 place the epistemic adjectives and auxiliaries on one scale. *Likely* and
+*probable* measure a proposition by its probability, on a scale bounded below by the likelihood
+of a contradiction and above by that of a tautology (`likelihood_univ`, `ofOrder_probability`),
+and they are relative adjectives on it. *Certain* takes the scale's maximum as its standard and
+*possible* its minimum, so the three are [kennedy-2007]'s three positive forms on one closed
+scale (`mem_likely_iff_relativePos`, `mem_certain_iff_maxStandardPos`,
+`mem_possible_iff_minStandardPos`). A relative adjective on a closed scale is what Kennedy's
+Interpretive Economy excludes, `Degree.Boundedness.Admits`, and what the book's own typology
+(4.58) allows: *likely* is the counter-example of p. 82
+(`coherent_and_not_admits_contextual_probability`). The distribution of *completely* and
+*slightly*, which Kennedy reads off the scale, the book reads off the positive form (§4.2.9);
+Kennedy's licensing is the book's quantified over the standards Interpretive Economy admits
+(`licenses_iff_exists_admits`), so the two disagree exactly on adjectives like *likely*, which
+license neither (`not_licensesPos_contextual`).
+
+The auxiliaries are thresholds on the same scale (6.29), [lassiter-2015]'s `probMust` and
+`probMight`, and at threshold one they are the adjectives *certain* and *possible*
+(`mem_possible_iff_not_mem_certain_compl`). The ordering of the five thresholds of p. 152 makes
+every item entail every weaker one (`antitone_pos`), and the strong theory, a *must* at
+probability one, conflicts with that ordering (`not_strictMono_of_strong`), as does a *might* at
+probability zero (`not_strictMono_of_might_zero`); with a positive threshold *might* is strictly
+stronger than *possible* (`exists_mem_possible_not_mem_might`).
+
+Chapters 7 and 8 give the scalar semantics of *good* and *ought*. Goodness is expected value, the
+probability-weighted average of world values over a proposition
+(`Desire.ExpectedValue.expectedValue`); it is an interval scale and intermediate on disjoint
+unions. *Ought* is constrained rather than defined (`Constraints`): Sloman's Principle relates it
+to goodness (an obligatory proposition is strictly better than each of its alternatives, after
+[sloman-1970]), the Smith Principle restricts agglomeration to exhaustive pairs, and Weakening
+closes obligation under disjunction. Sloman's Principle alone excludes conflicting oughts,
+`ought φ` together with `ought ¬φ` (`Constraints.not_compl`), and the Smith Principle carries the
+Smith argument from `ought (M ∨ S)` and `ought ¬M` to `ought S` (`Smith.ought_S`), on a sample
+model that meets the Sloman requirements of all three. On [cariani-2016]'s four-world
+counter-model to Weakening, where `A` and `B` each beat their negations in expected value but
+`A ∨ B` ties with its negation, Sloman's Principle and Weakening together make `ought A` and
+`ought B` incompatible (`Cariani.not_ought_and`). The scalar reading of *ought* as a threshold on
+an intermediate scale derives Weakening and, given ought-exclusivity, the Smith Principle; both
 derivations live with the expected-value substrate.
 
 ## Implementation notes
 
-The goodness scale and the alternative sets of the constraint set are parameters; the
-consequences take the needed alternative memberships as hypotheses, the polar sets `{φ, ¬φ}`
-being the book's weakest choice. The counter-model instantiates the scale by expected value
-over an equiprobable domain of four worlds indexed by the truth values of `A` and `B`.
+Probabilities are finitely additive measures valued in `ℚ`, as in [lassiter-2015], and the
+probability scale is the closed unit interval. The p. 82 claim that the likelihood scale, if
+connected, is isomorphic to a finitely additive probability holds of these measures by
+construction; its measurement-theoretic direction, from the axioms listed on p. 97 to a measure,
+is not formalized, and the tower's own representation theorem uses [scott-1964]'s cancellation
+condition rather than those axioms. The book states the threshold ordering twice: strictly on
+p. 152, θ_possible < θ_might < θ_likely < θ_must < θ_certain, which `StrictMono` records, and on
+p. 156 with θ_possible = θ_might. That the Disjunctive Inference fails on the probability scale,
+and that *more likely than* does not entail *might*, are [lassiter-2015]'s
+`Lassiter2015.prob_refutes_rightUnion` and `Lassiter2015.weak_refutes_moreLikely_might`.
+
+For chapters 7 and 8, the goodness scale and the alternative sets of the constraint set are
+parameters; the consequences take the needed alternative memberships as hypotheses, the polar
+sets `{φ, ¬φ}` being the book's weakest choice. The counter-model instantiates the scale by
+expected value over an equiprobable domain of four worlds indexed by the truth values of `A` and
+`B`.
+
+## TODO
+
+* The measurement-theoretic representation of p. 82 and p. 97, and its generalization to sets of
+  measures when connectedness fails.
+* The certainty scales of Analyses 2 and 3 (§5.1.6, §5.1.7), the first a half-open interval
+  (`Degree.Boundedness.ofOrder_Ioc`) or a log transform.
+* The experiment of §6.5 as `Data/Experiments`, and the modifier judgments of §4.2 as examples.
+* The English fragment puts *possible* on `ScalarDimension.possibility`, tagged open without a
+  cited source, so Interpretive Economy makes it relative; §5.2.5 makes it a minimum-standard
+  adjective on the probability scale.
 
 ## References
 
 * [lassiter-2017]
+* [kennedy-2007]
+* [lassiter-2015]
+* [scott-1964]
 * [cariani-2016]
 * [sloman-1970]
 -/
@@ -41,6 +94,276 @@ over an equiprobable domain of four worlds indexed by the truth values of `A` an
 @[expose] public section
 
 namespace Lassiter2017
+
+/-! ### Chapter 4: the likelihood scale -/
+
+/-- The probability scale, the closed unit interval, on which *likely* and *probable* measure
+propositions (§4.1). -/
+abbrev Probability : Type := Set.Icc (0 : ℚ) 1
+
+section Scale
+
+open ComparativeProbability
+
+variable {W : Type*} (P : FinAddMeasure ℚ W)
+
+/-- A proposition's degree of likelihood is its probability. -/
+def likelihood (A : Set W) : Probability := ⟨P A, P.nonneg A, P.mu_le_one A⟩
+
+@[simp] theorem coe_likelihood (A : Set W) : (likelihood P A : ℚ) = P A := rfl
+
+/-- Nothing is likelier than a tautology (p. 84). -/
+@[simp] theorem likelihood_univ : likelihood P Set.univ = ⊤ := Subtype.ext (by simp)
+
+/-- Nothing is less likely than a contradiction (p. 84). -/
+@[simp] theorem likelihood_empty : likelihood P ∅ = ⊥ := Subtype.ext (by simp)
+
+end Scale
+
+/-- The probability scale is totally closed (p. 82, p. 97). -/
+theorem ofOrder_probability : Degree.Boundedness.ofOrder Probability = .closed :=
+  Degree.Boundedness.ofOrder_Icc zero_le_one
+
+/-! ### Two typologies of standards (§4.2.4–§4.2.6) -/
+
+section Typology
+
+open Degree
+
+/-- (4.58): the constraints the meaning of a positive standard puts on its scale. A minimum or
+maximum standard needs its endpoint, and a contextual standard fits any scale. Interpretive
+Economy, `Boundedness.Admits`, is (4.59): the same with the contextual standard confined to open
+scales. -/
+def Coherent (b : Boundedness) (s : PositiveStandard) : Prop := s = .contextual ∨ b.Admits s
+
+/-- What Interpretive Economy admits is coherent. -/
+theorem coherent_of_admits {b : Boundedness} {s : PositiveStandard} (h : b.Admits s) :
+    Coherent b s :=
+  .inr h
+
+/-- The two typologies part exactly at a contextual standard on a scale with an endpoint. -/
+theorem coherent_and_not_admits_contextual {b : Boundedness} (hb : b ≠ .open_) :
+    Coherent b .contextual ∧ ¬ b.Admits .contextual :=
+  ⟨.inl rfl, Boundedness.not_admits_contextual_of_ne_open hb⟩
+
+/-- On the probability scale a contextual standard is coherent and Interpretive Economy excludes
+it: a relative *likely* is the counter-example of p. 82. -/
+theorem coherent_and_not_admits_contextual_probability :
+    Coherent (Boundedness.ofOrder Probability) .contextual ∧
+      ¬ (Boundedness.ofOrder Probability).Admits .contextual :=
+  coherent_and_not_admits_contextual (by rw [ofOrder_probability]; decide)
+
+/-- The open-interval alternative of §4.2.6 keeps Interpretive Economy by making the scale
+`(0, 1)`, which is open, at the cost of a degree for the tautology. -/
+theorem ofOrder_Ioo_zero_one :
+    Boundedness.ofOrder (Set.Ioo (0 : ℚ) 1) = .open_ ∧ (1 : ℚ) ∉ Set.Ioo (0 : ℚ) 1 :=
+  ⟨Boundedness.ofOrder_Ioo, fun h ↦ lt_irrefl _ h.2⟩
+
+/-- The book's licensing of maximizers and minimizers (§4.2.9): *completely* takes the positive
+form of a maximum adjective and *slightly* that of a minimum adjective, whatever the scale. -/
+def LicensesPos : Kennedy2007.DegreeModifier → PositiveStandard → Prop
+  | .maximizer, s => s = .maxEndpoint
+  | .minimizer, s => s = .minEndpoint
+
+/-- [kennedy-2007]'s licensing by the scale is the book's licensing by the positive form,
+quantified over the standards Interpretive Economy admits on the scale. -/
+theorem licenses_iff_exists_admits (m : Kennedy2007.DegreeModifier) (b : Boundedness) :
+    Kennedy2007.Licenses m b ↔ ∃ s, b.Admits s ∧ LicensesPos m s := by
+  cases m <;> cases b <;> simp [Kennedy2007.Licenses, LicensesPos, Boundedness.Admits,
+    Boundedness.HasMin, Boundedness.HasMax]
+
+/-- A relative adjective licenses neither modifier, whatever its scale, which is why
+*completely likely* and *slightly likely* lack a degree reading on a closed scale
+((4.62), (4.63)), where Kennedy's licensing predicts one. -/
+theorem not_licensesPos_contextual (m : Kennedy2007.DegreeModifier) :
+    ¬ LicensesPos m .contextual := by
+  cases m <;> simp [LicensesPos]
+
+end Typology
+
+/-! ### The epistemic adjectives on one scale (§4.2.2, §5.1.5, §5.2.5) -/
+
+section Adjectives
+
+open ComparativeProbability Degree
+
+variable {W : Type*} (P : FinAddMeasure ℚ W) {A : Set W} {θ : ℚ}
+
+/-- *Likely* and *probable*: a relative adjective, true above a contextual threshold. -/
+def likely (θ : ℚ) : Set (Set W) := Comparison.gt.over P θ
+
+/-- *Certain* and *sure* (§5.1.5): the maximum standard of the probability scale. -/
+def certain : Set (Set W) := Comparison.ge.over P 1
+
+/-- *Possible* (§5.2.5): the minimum standard of the probability scale. -/
+def possible : Set (Set W) := Comparison.gt.over P 0
+
+theorem mem_certain_iff : A ∈ certain P ↔ P A = 1 :=
+  ⟨fun h ↦ le_antisymm (P.mu_le_one A) h, fun h ↦ h.ge⟩
+
+theorem mem_possible_iff : A ∈ possible P ↔ 0 < P A := Iff.rfl
+
+/-- *Likely* is [kennedy-2007]'s relative positive form on the probability scale. -/
+theorem mem_likely_iff_relativePos (θ : Probability) :
+    A ∈ likely P θ ↔ Kennedy2007.RelativePos (likelihood P) θ A :=
+  Iff.rfl
+
+/-- *Certain* is Kennedy's maximum-standard positive form on the probability scale. -/
+theorem mem_certain_iff_maxStandardPos :
+    A ∈ certain P ↔ Kennedy2007.MaxStandardPos (likelihood P) A := by
+  rw [mem_certain_iff, Kennedy2007.MaxStandardPos, Subtype.ext_iff, coe_likelihood,
+    Set.Icc.coe_top]
+
+/-- *Possible* is Kennedy's minimum-standard positive form on the probability scale. -/
+theorem mem_possible_iff_minStandardPos :
+    A ∈ possible P ↔ Kennedy2007.MinStandardPos (likelihood P) A := by
+  rw [mem_possible_iff, Kennedy2007.MinStandardPos, ← Subtype.coe_lt_coe, coe_likelihood,
+    Set.Icc.coe_bot]
+
+/-- Certainty entails likelihood (§5.1.4). -/
+theorem certain_subset_likely (hθ : θ < 1) : certain P ⊆ likely P θ :=
+  fun _ h ↦ lt_of_lt_of_le hθ h
+
+/-- Likelihood entails possibility (§5.2.3). -/
+theorem likely_subset_possible (hθ : 0 ≤ θ) : likely P θ ⊆ possible P :=
+  fun _ h ↦ lt_of_le_of_lt hθ h
+
+/-- *Certain* and *possible* are [lassiter-2015]'s *must* and *might* at threshold one, the
+strong auxiliaries (p. 156), and so duals: `A` is possible iff its negation is not certain. -/
+theorem mem_possible_iff_not_mem_certain_compl : A ∈ possible P ↔ Aᶜ ∉ certain P := by
+  have h := Lassiter2015.probMight_iff_not_probMust_compl P 1 A
+  rwa [Lassiter2015.probMight, sub_self] at h
+
+/-- (4.51b): *n percent A* compares the degree with the scale's maximum. -/
+def percent (n : ℚ) : Set (Set W) := {A | P A / P Set.univ = n / 100}
+
+/-- *n percent likely* is interpretable because the maximum is a degree of the scale
+(p. 121–122). -/
+theorem mem_percent_iff (n : ℚ) : A ∈ percent P n ↔ P A = n / 100 := by
+  simp [percent]
+
+/-- *Fifty percent likely* is "exactly as likely as not" (p. 103). -/
+theorem mem_percent_fifty_iff : A ∈ percent P 50 ↔ P A = P Aᶜ := by
+  rw [mem_percent_iff]
+  have := P.mu_compl A
+  constructor <;> intro h <;> linarith
+
+end Adjectives
+
+/-! ### Chapter 6: the thresholds -/
+
+/-- The five epistemic items of the ordering on p. 152, weakest first. -/
+inductive EpistemicItem
+  | possible | might | likely | must | certain
+  deriving DecidableEq
+
+namespace EpistemicItem
+
+/-- The rank of an item in the strength ordering. -/
+def rank : EpistemicItem → Fin 5
+  | .possible => 0 | .might => 1 | .likely => 2 | .must => 3 | .certain => 4
+
+theorem rank_injective : Function.Injective rank := fun a b h ↦ by
+  cases a <;> cases b <;> first | rfl | exact absurd h (by decide)
+
+instance : LinearOrder EpistemicItem := LinearOrder.lift' rank rank_injective
+
+/-- (6.29): *must* and *certain* compare the probability weakly with their thresholds, *might*,
+*likely* and *possible* strictly. -/
+def comparison : EpistemicItem → Degree.Comparison
+  | .must | .certain => .ge
+  | .possible | .might | .likely => .gt
+
+end EpistemicItem
+
+section Thresholds
+
+open ComparativeProbability Degree
+
+variable {W : Type*} (P : FinAddMeasure ℚ W) (θ : EpistemicItem → ℚ) {A : Set W}
+
+/-- The positive form of an item under a profile of thresholds. -/
+def pos (i : EpistemicItem) : Set (Set W) := i.comparison.over P (θ i)
+
+theorem mem_pos_iff (i : EpistemicItem) : A ∈ pos P θ i ↔ i.comparison.rel (P A) (θ i) :=
+  Comparison.mem_over _ _ _ _
+
+/-- (6.29a) is [lassiter-2015]'s *must*. -/
+theorem mem_pos_must_iff : A ∈ pos P θ .must ↔ Lassiter2015.probMust P (θ .must) A := Iff.rfl
+
+/-- (6.29b) with the duality `θ_might = 1 − θ_must` of p. 156 is [lassiter-2015]'s *might*, so
+*might* `A` holds iff *must* `¬A` fails. -/
+theorem mem_pos_might_iff (hdual : θ .might = 1 - θ .must) :
+    A ∈ pos P θ .might ↔ Aᶜ ∉ pos P θ .must := by
+  have h := Lassiter2015.probMight_iff_not_probMust_compl P (θ .must) A
+  rw [Lassiter2015.probMight, ← hdual] at h
+  exact h
+
+/-- At threshold one *certain* is its positive form. -/
+theorem pos_certain (h : θ .certain = 1) : pos P θ .certain = certain P := by
+  simp [pos, EpistemicItem.comparison, certain, h]
+
+/-- At threshold zero *possible* is its positive form. -/
+theorem pos_possible (h : θ .possible = 0) : pos P θ .possible = possible P := by
+  simp [pos, EpistemicItem.comparison, possible, h]
+
+/-- The ordering of p. 152 makes the positive forms antitone in strength: *certain* entails
+*must* (§6.1), *must* entails *likely* (6.14), *likely* entails *might* (6.18), and *might*
+entails *possible* (§6.5). -/
+theorem antitone_pos (hθ : StrictMono θ) : Antitone (pos P θ) := by
+  intro i j hij A hA
+  rw [mem_pos_iff] at hA ⊢
+  rcases hij.lt_or_eq with h | rfl
+  · have hlt : θ i < θ j := hθ h
+    cases i <;> cases j <;>
+      simp only [EpistemicItem.comparison, Comparison.rel_ge, Comparison.rel_gt] at hA ⊢ <;>
+      first | exact absurd h (by decide) | linarith
+  · exact hA
+
+/-- (6.16): *must* `A` leaves `¬A` at most `1 − θ_must` likely, so above one half `A` is more
+likely than its negation. -/
+theorem compl_lt_of_mem_must {θ' : ℚ} (hθ : 1 / 2 < θ') (h : A ∈ Comparison.ge.over P θ') :
+    P Aᶜ < P A := by
+  have := P.mu_compl A
+  change θ' ≤ P A at h
+  linarith
+
+/-- (6.19): what is more likely than not is a *might*, given `θ_might ≤ 1/2`. -/
+theorem mem_might_of_compl_lt {θ' : ℚ} (hθ : θ' ≤ 1 / 2) (h : P Aᶜ < P A) :
+    A ∈ Comparison.gt.over P θ' := by
+  have := P.mu_compl A
+  change θ' < P A
+  linarith
+
+/-- p. 164: under the dualities of *must* and *might* and of *certain* and *possible*, *certain*
+is stronger than *must* iff *might* is stronger than *possible*. -/
+theorem must_lt_certain_iff_possible_lt_might (hmm : θ .might = 1 - θ .must)
+    (hcp : θ .possible = 1 - θ .certain) : θ .must < θ .certain ↔ θ .possible < θ .might := by
+  constructor <;> intro h <;> linarith
+
+/-- The strong theory, a *must* at probability one, conflicts with the ordering of p. 152 when
+no threshold exceeds the tautology's degree: *must* cannot then be weaker than *certain*
+(§6.1). -/
+theorem not_strictMono_of_strong (h : θ .must = 1) (hc : θ .certain ≤ 1) : ¬ StrictMono θ :=
+  fun hθ ↦ (hθ (show EpistemicItem.must < .certain by decide)).not_ge (h ▸ hc)
+
+/-- Likewise a *might* at probability zero cannot be stronger than *possible* (p. 152). -/
+theorem not_strictMono_of_might_zero (h : θ .might = 0) (hp : 0 ≤ θ .possible) :
+    ¬ StrictMono θ :=
+  fun hθ ↦ (hθ (show EpistemicItem.possible < .might by decide)).not_ge (h ▸ hp)
+
+end Thresholds
+
+open ComparativeProbability in
+/-- With a positive threshold, *might* is strictly stronger than *possible* (§6.5): a
+proposition of probability exactly `θ` is possible and not a *might*. -/
+theorem exists_mem_possible_not_mem_might {θ : ℚ} (h0 : 0 < θ) (h1 : θ ≤ 1) :
+    ∃ (P : FinAddMeasure ℚ (Fin 2)) (A : Set (Fin 2)),
+      A ∈ possible P ∧ A ∉ Degree.Comparison.gt.over P θ := by
+  refine ⟨.ofFintype ![θ, 1 - θ] (fun i ↦ by fin_cases i <;> simp <;> linarith)
+    (by simp [Fin.sum_univ_two]), {0}, ?_, ?_⟩
+  · simp [possible, Degree.Comparison.mem_over, Degree.Comparison.rel, h0]
+  · simp [Degree.Comparison.mem_over, Degree.Comparison.rel]
 
 open Desire.ExpectedValue Core.DecisionTheory
 
@@ -119,7 +442,7 @@ theorem sloman :
     goodness prior value (M ∪ S)ᶜ < goodness prior value (M ∪ S) ∧
       goodness prior value M < goodness prior value Mᶜ ∧
       goodness prior value Sᶜ < goodness prior value S := by
-  simp [-Finset.sum_const]; norm_num
+  norm_num [-Finset.sum_const]
 
 /-- The Smith argument: the Smith Principle agglomerates the exhaustive premises to
 `ought S`. -/
