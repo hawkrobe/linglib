@@ -5,7 +5,9 @@
     "language": "kaqc1270",
     "primaryText": "X-at-ki-tz'ët.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["X-at-ki-tz'ët", "COM-B2SG-A3PL-see"]
+    ],
     "translation": "They saw you.",
     "context": "",
     "judgment": "acceptable",
@@ -19,7 +21,8 @@
       ["object", "2"],
       ["verb", "full"]
     ],
-    "comment": "Full agreement transitive: Set A cross-references the subject, Set B the object."
+    "comment": "Full agreement transitive: Set A cross-references the subject, Set B the object.",
+    "verified": "page-image"
   },
   {
     "id": "erlewine2016_9",
@@ -27,7 +30,9 @@
     "language": "kaqc1270",
     "primaryText": "X-a-wär.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["X-a-wär", "COM-B2SG-sleep"]
+    ],
     "translation": "You slept.",
     "context": "",
     "judgment": "acceptable",
@@ -40,7 +45,8 @@
       ["subject", "2"],
       ["verb", "full"]
     ],
-    "comment": "Intransitive: Set B cross-references the subject; no Set A."
+    "comment": "Intransitive: Set B cross-references the subject; no Set A.",
+    "verified": "page-image"
   },
   {
     "id": "erlewine2016_14a",
@@ -48,7 +54,9 @@
     "language": "kaqc1270",
     "primaryText": "Achike x-∅-tj-ö ri wäy?",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Achike", "who"], ["x-∅-tj-ö", "COM-B3SG-eat-AF"], ["ri", "the"], ["wäy", "tortilla"]
+    ],
     "translation": "Who ate the tortilla?",
     "context": "",
     "judgment": "acceptable",
@@ -63,7 +71,8 @@
       ["object", "3"],
       ["verb", "AF"]
     ],
-    "comment": "Subject wh-question: AF required."
+    "comment": "Subject wh-question: AF required.",
+    "verified": "page-image"
   },
   {
     "id": "erlewine2016_14b",
@@ -71,7 +80,9 @@
     "language": "kaqc1270",
     "primaryText": "Achike x-∅-u-tëj ri a Juan?",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Achike", "what"], ["x-∅-u-tëj", "COM-B3SG-A3SG-eat"], ["ri a Juan", "Juan"]
+    ],
     "translation": "What did Juan eat?",
     "context": "",
     "judgment": "acceptable",
@@ -86,16 +97,20 @@
       ["object", "3"],
       ["verb", "full"]
     ],
-    "comment": "Object wh-question: no AF."
+    "comment": "Object wh-question: no AF.",
+    "verified": "page-image"
   },
   {
     "id": "erlewine2016_18a_emb",
     "source": {"bibkey": "erlewine-2016", "paperLabel": "(18a), embedded clause, preprint numbering"},
     "language": "kaqc1270",
-    "primaryText": "[chin x-oj-tz'et-ö roj]",
+    "primaryText": "Achike n-∅-a-b'ij rat chin x-oj-tz'et-ö roj?",
     "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "(who do you say) saw us",
+    "glossedTokens": [
+      ["Achike", "who"], ["n-∅-a-b'ij", "INC-B3SG-A2SG-say"], ["rat", "2sg"], ["chin", "that"],
+      ["x-oj-tz'et-ö", "COM-B1PL-see-AF"], ["roj", "1pl"]
+    ],
+    "translation": "Who do you say saw us?",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -109,16 +124,20 @@
       ["object", "1"],
       ["verb", "AF"]
     ],
-    "comment": "Long-distance subject extraction: AF on the embedded verb, whose subject makes the too-local first step to the embedded Spec,CP; Set B cross-references the first-plural object."
+    "comment": "Long-distance subject extraction: AF on the embedded verb, whose subject makes the too-local first step to the embedded Spec,CP; Set B cross-references the first-plural object. The paper prints (18a) as one sentence; this row's features describe its embedded clause.",
+    "verified": "page-image"
   },
   {
     "id": "erlewine2016_18a_mat",
     "source": {"bibkey": "erlewine-2016", "paperLabel": "(18a), matrix clause, preprint numbering"},
     "language": "kaqc1270",
-    "primaryText": "Achike n-∅-a-b'ij rat [chin …]?",
+    "primaryText": "Achike n-∅-a-b'ij rat chin x-oj-tz'et-ö roj?",
     "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "Who do you say (saw us)?",
+    "glossedTokens": [
+      ["Achike", "who"], ["n-∅-a-b'ij", "INC-B3SG-A2SG-say"], ["rat", "2sg"], ["chin", "that"],
+      ["x-oj-tz'et-ö", "COM-B1PL-see-AF"], ["roj", "1pl"]
+    ],
+    "translation": "Who do you say saw us?",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -131,16 +150,20 @@
       ["object", "3"],
       ["verb", "full"]
     ],
-    "comment": "The matrix verb's own subject has not moved; the embedded CP counts as its third-singular Set B target."
+    "comment": "The matrix verb's own subject has not moved; the embedded CP counts as its third-singular Set B target. The paper prints (18a) as one sentence; this row's features describe its matrix clause.",
+    "verified": "page-image"
   },
   {
     "id": "erlewine2016_18b",
     "source": {"bibkey": "erlewine-2016", "paperLabel": "(18b), matrix clause, preprint numbering"},
     "language": "kaqc1270",
-    "primaryText": "Achike n-a-b'i-n rat [chin x-oj-tz'et-ö roj]?",
+    "primaryText": "Achike n-a-b'i-n rat chin x-oj-tz'et-ö roj?",
     "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "Who do you say saw us?",
+    "glossedTokens": [
+      ["Achike", "who"], ["n-a-b'i-n", "INC-B2SG-say-AF"], ["rat", "2sg"], ["chin", "that"],
+      ["x-oj-tz'et-ö", "COM-B1PL-see-AF"], ["roj", "1pl"]
+    ],
+    "translation": "",
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [],
@@ -153,16 +176,20 @@
       ["object", "3"],
       ["verb", "AF"]
     ],
-    "comment": "AF on the matrix verb is impossible: AF affects the verb whose subject is extracted, not a verb adjacent to the moved subject."
+    "comment": "AF on the matrix verb is impossible: AF affects the verb whose subject is extracted, not a verb adjacent to the moved subject.",
+    "verified": "page-image"
   },
   {
     "id": "erlewine2016_18c",
     "source": {"bibkey": "erlewine-2016", "paperLabel": "(18c), embedded clause, preprint numbering"},
     "language": "kaqc1270",
-    "primaryText": "Achike n-∅-a-b'ij rat [chin x-oj-r-tz'ët roj]?",
+    "primaryText": "Achike n-∅-a-b'ij rat chin x-oj-r-tz'ët roj?",
     "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "Who do you say saw us?",
+    "glossedTokens": [
+      ["Achike", "who"], ["n-∅-a-b'ij", "INC-B3SG-A2SG-say"], ["rat", "2sg"], ["chin", "that"],
+      ["x-oj-r-tz'ët", "COM-B1PL-A3SG-see"], ["roj", "1pl"]
+    ],
+    "translation": "",
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [],
@@ -176,7 +203,8 @@
       ["object", "1"],
       ["verb", "full"]
     ],
-    "comment": "The full-agreement embedded verb is impossible under long-distance subject extraction."
+    "comment": "The full-agreement embedded verb is impossible under long-distance subject extraction. The paper glosses the matrix verb INC-B2sg-A2sg-say, a misprint for B3sg as in (18a).",
+    "verified": "page-image"
   },
   {
     "id": "erlewine2016_27b",
@@ -184,7 +212,10 @@
     "language": "kaqc1270",
     "primaryText": "Achike kanqtzij x-∅-u-tëj ri wäy?",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Achike", "who"], ["kanqtzij", "actually"], ["x-∅-u-tëj", "COM-B3SG-A3SG-eat"],
+      ["ri", "the"], ["wäy", "tortilla"]
+    ],
     "translation": "Who actually ate the tortilla?",
     "context": "",
     "judgment": "acceptable",
@@ -199,7 +230,8 @@
       ["object", "3"],
       ["verb", "full"]
     ],
-    "comment": "An intervening adverb projects AdvP between TP and CP; the subject's movement is long enough and AF is not used."
+    "comment": "An intervening adverb projects AdvP between TP and CP; the subject's movement is long enough and AF is not used.",
+    "verified": "page-image"
   },
   {
     "id": "erlewine2016_27c",
@@ -207,8 +239,11 @@
     "language": "kaqc1270",
     "primaryText": "Achike kanqtzij x-∅-tj-ö ri wäy?",
     "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "Who actually ate the tortilla?",
+    "glossedTokens": [
+      ["Achike", "who"], ["kanqtzij", "actually"], ["x-∅-tj-ö", "COM-B3SG-eat-AF"], ["ri", "the"],
+      ["wäy", "tortilla"]
+    ],
+    "translation": "",
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [],
@@ -222,7 +257,8 @@
       ["object", "3"],
       ["verb", "AF"]
     ],
-    "comment": "With the adverb, AF is ungrammatical."
+    "comment": "With the adverb, AF is ungrammatical.",
+    "verified": "page-image"
   },
   {
     "id": "erlewine2016_28a",
@@ -230,7 +266,10 @@
     "language": "kaqc1270",
     "primaryText": "ri achin ri n-∅-tj-ö wäy",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["ri", "the"], ["achin", "man"], ["ri", "RC"], ["n-∅-tj-ö", "NONPAST-B3SG-eat-AF"],
+      ["wäy", "tortilla"]
+    ],
     "translation": "the man who eats tortillas",
     "context": "",
     "judgment": "acceptable",
@@ -245,7 +284,8 @@
       ["object", "3"],
       ["verb", "AF"]
     ],
-    "comment": "Subject relative: AF required."
+    "comment": "Subject relative: AF required.",
+    "verified": "page-image"
   },
   {
     "id": "erlewine2016_28a_full",
@@ -253,8 +293,11 @@
     "language": "kaqc1270",
     "primaryText": "ri achin ri n-∅-u-tëj wäy",
     "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "the man who eats tortillas",
+    "glossedTokens": [
+      ["ri", "the"], ["achin", "man"], ["ri", "RC"], ["n-∅-u-tëj", "NONPAST-B3SG-A3SG-eat"],
+      ["wäy", "tortilla"]
+    ],
+    "translation": "",
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [],
@@ -268,7 +311,8 @@
       ["object", "3"],
       ["verb", "full"]
     ],
-    "comment": ""
+    "comment": "The paper prints the two verbs as alternants, *n-∅-u-tëj / ✓n-∅-tj-ö; its translation goes with the grammatical one.",
+    "verified": "page-image"
   },
   {
     "id": "erlewine2016_28b",
@@ -276,7 +320,10 @@
     "language": "kaqc1270",
     "primaryText": "ri achin ri nojel mul n-∅-u-tëj wäy",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["ri", "the"], ["achin", "man"], ["ri", "RC"], ["nojel", "all"], ["mul", "time"],
+      ["n-∅-u-tëj", "NONPAST-B3SG-A3SG-eat"], ["wäy", "tortilla"]
+    ],
     "translation": "the man who always eats tortillas",
     "context": "",
     "judgment": "acceptable",
@@ -291,7 +338,8 @@
       ["object", "3"],
       ["verb", "full"]
     ],
-    "comment": "The temporal modifier between the relative marker and the verb obviates AF."
+    "comment": "The temporal modifier between the relative marker and the verb obviates AF.",
+    "verified": "page-image"
   },
   {
     "id": "erlewine2016_28b_af",
@@ -299,8 +347,11 @@
     "language": "kaqc1270",
     "primaryText": "ri achin ri nojel mul n-∅-tj-ö wäy",
     "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "the man who always eats tortillas",
+    "glossedTokens": [
+      ["ri", "the"], ["achin", "man"], ["ri", "RC"], ["nojel", "all"], ["mul", "time"],
+      ["n-∅-tj-ö", "NONPAST-B3SG-eat-AF"], ["wäy", "tortilla"]
+    ],
+    "translation": "",
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [],
@@ -314,7 +365,8 @@
       ["object", "3"],
       ["verb", "AF"]
     ],
-    "comment": ""
+    "comment": "The paper prints the two verbs as alternants, ✓n-∅-u-tëj / *n-∅-tj-ö; its translation goes with the grammatical one.",
+    "verified": "page-image"
   },
   {
     "id": "erlewine2016_29a",
@@ -322,7 +374,9 @@
     "language": "kaqc1270",
     "primaryText": "Achike k'o x-∅-tz'et-ö?",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Achike", "who"], ["k'o", "∃"], ["x-∅-tz'et-ö", "COM-B3SG-see-AF"]
+    ],
     "translation": "Who did someone see?",
     "context": "",
     "judgment": "acceptable",
@@ -337,7 +391,8 @@
       ["object", "3"],
       ["verb", "AF"]
     ],
-    "comment": "Object wh-question with a subject existential: the subject k'o moves to the lower, immediately preverbal CP and AF is required; the object moves on to the higher CP."
+    "comment": "Object wh-question with a subject existential: the subject k'o moves to the lower, immediately preverbal CP and AF is required; the object moves on to the higher CP.",
+    "verified": "page-image"
   },
   {
     "id": "erlewine2016_29a_other",
@@ -345,7 +400,9 @@
     "language": "kaqc1270",
     "primaryText": "Achike k'o x-∅-tz'et-ö?",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Achike", "who"], ["k'o", "∃"], ["x-∅-tz'et-ö", "COM-B3SG-see-AF"]
+    ],
     "translation": "Who saw someone?",
     "context": "",
     "judgment": "ungrammatical",
@@ -360,7 +417,8 @@
       ["object", "3"],
       ["verb", "AF"]
     ],
-    "comment": "With the subject in the higher CP, AF is impossible."
+    "comment": "With the subject in the higher CP, AF is impossible.",
+    "verified": "page-image"
   },
   {
     "id": "erlewine2016_29b",
@@ -368,7 +426,9 @@
     "language": "kaqc1270",
     "primaryText": "Achike k'o x-∅-u-tz'ët?",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Achike", "who"], ["k'o", "∃"], ["x-∅-u-tz'ët", "COM-B3SG-A3SG-see"]
+    ],
     "translation": "Who saw someone?",
     "context": "",
     "judgment": "acceptable",
@@ -383,7 +443,8 @@
       ["object", "3"],
       ["verb", "full"]
     ],
-    "comment": "Subject wh-question with an object existential: the object moves first to the lower CP, the subject crosses it, and AF is not used."
+    "comment": "Subject wh-question with an object existential: the object moves first to the lower CP, the subject crosses it, and AF is not used.",
+    "verified": "page-image"
   },
   {
     "id": "erlewine2016_29b_other",
@@ -391,7 +452,9 @@
     "language": "kaqc1270",
     "primaryText": "Achike k'o x-∅-u-tz'ët?",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Achike", "who"], ["k'o", "∃"], ["x-∅-u-tz'ët", "COM-B3SG-A3SG-see"]
+    ],
     "translation": "Who did someone see?",
     "context": "",
     "judgment": "ungrammatical",
@@ -406,7 +469,8 @@
       ["object", "3"],
       ["verb", "full"]
     ],
-    "comment": "With the subject in the immediately preverbal CP, the full-agreement form is impossible."
+    "comment": "With the subject in the immediately preverbal CP, the full-agreement form is impossible.",
+    "verified": "page-image"
   },
   {
     "id": "erlewine2016_53",
@@ -414,7 +478,9 @@
     "language": "kaqc1270",
     "primaryText": "Achike x-∅-a-tz'ët rat?",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Achike", "who"], ["x-∅-a-tz'ët", "COM-B3SG-A2SG-see"], ["rat", "you"]
+    ],
     "translation": "Who saw you?",
     "context": "",
     "judgment": "ungrammatical",
@@ -429,7 +495,8 @@
       ["object", "2"],
       ["verb", "full"]
     ],
-    "comment": "The derivation with the A probe targeting the object is unavailable: the object sits in the lower phase, so the full-agreement verb cannot express subject extraction. The string is grammatical as 'Who did you see?'."
+    "comment": "The derivation with the A probe targeting the object is unavailable: the object sits in the lower phase, so the full-agreement verb cannot express subject extraction. The string is grammatical as 'Who did you see?'.",
+    "verified": "page-image"
   },
   {
     "id": "erlewine2016_64a",
@@ -437,7 +504,10 @@
     "language": "kaqc1270",
     "primaryText": "Ri a Pedro x-∅-u-ch'äk ri premio.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Ri a Pedro", "Pedro"], ["x-∅-u-ch'äk", "COM-B3SG-A3SG-win"], ["ri", "the"],
+      ["premio", "prize"]
+    ],
     "translation": "Pedro won the prize.",
     "context": "",
     "judgment": "acceptable",
@@ -452,7 +522,8 @@
       ["object", "3"],
       ["verb", "full"]
     ],
-    "comment": "A preverbal subject without AF is a topic in Spec,TopP above CP; its movement crosses TP and CP."
+    "comment": "A preverbal subject without AF is a topic in Spec,TopP above CP; its movement crosses TP and CP.",
+    "verified": "page-image"
   },
   {
     "id": "erlewine2016_64b",
@@ -460,7 +531,10 @@
     "language": "kaqc1270",
     "primaryText": "(Ja) ri a Pedro x-∅-ch'ak-ö ri premio.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["(Ja)", "FOC"], ["ri a Pedro", "Pedro"], ["x-∅-ch'ak-ö", "COM-B3SG-win-AF"], ["ri", "the"],
+      ["premio", "prize"]
+    ],
     "translation": "It's Pedro that won the prize.",
     "context": "",
     "judgment": "acceptable",
@@ -475,7 +549,8 @@
       ["object", "3"],
       ["verb", "AF"]
     ],
-    "comment": "The focused subject moves to Spec,CP and AF is required."
+    "comment": "The focused subject moves to Spec,CP and AF is required.",
+    "verified": "page-image"
   },
   {
     "id": "erlewine2016_72a",
@@ -483,11 +558,16 @@
     "language": "kaqc1270",
     "primaryText": "Ja rat x-at-axa-n ri achin.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Ja", "FOC"], ["rat", "you"], ["x-at-axa-n", "COM-B2SG-hear-AF"], ["ri", "the"],
+      ["achin", "man"]
+    ],
     "translation": "It was YOU that heard the man.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "alternatives": [
+      {"form": "Ja rat x-∅-axa-n ri achin.", "judgment": "ungrammatical"}
+    ],
     "readings": [],
     "paperFeatures": [
       ["clause", "transitive"],
@@ -498,7 +578,8 @@
       ["object", "3"],
       ["verb", "AF"]
     ],
-    "comment": "Set B on the AF verb cross-references the second-singular subject, the participant argument."
+    "comment": "Set B on the AF verb cross-references the second-singular subject, the participant argument. The paper prints x-{✓at/*∅}-axa-n and cites Preminger (2011, exx 21–22) for (72).",
+    "verified": "page-image"
   },
   {
     "id": "erlewine2016_72b",
@@ -506,11 +587,15 @@
     "language": "kaqc1270",
     "primaryText": "Ja ri achin x-at-axa-n rat.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Ja", "FOC"], ["ri achin", "the man"], ["x-at-axa-n", "COM-B2SG-hear-AF"], ["rat", "you"]
+    ],
     "translation": "It was THE MAN that heard you.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "alternatives": [
+      {"form": "Ja ri achin x-∅-axa-n rat.", "judgment": "ungrammatical"}
+    ],
     "readings": [],
     "paperFeatures": [
       ["clause", "transitive"],
@@ -521,7 +606,8 @@
       ["object", "2"],
       ["verb", "AF"]
     ],
-    "comment": "Set B on the AF verb cross-references the second-singular object, the participant argument."
+    "comment": "Set B on the AF verb cross-references the second-singular object, the participant argument. The paper prints x-{✓at/*∅}-axa-n and cites Preminger (2011, exx 21–22) for (72).",
+    "verified": "page-image"
   },
   {
     "id": "erlewine2016_77a",
@@ -529,7 +615,9 @@
     "language": "kaqc1270",
     "primaryText": "Ja yïn x-at-in-tz'ët rat.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Ja", "FOC"], ["yïn", "me"], ["x-at-in-tz'ët", "COM-B2SG-A1SG-see"], ["rat", "you"]
+    ],
     "translation": "It was ME that saw you.",
     "context": "",
     "judgment": "acceptable",
@@ -544,7 +632,8 @@
       ["object", "2"],
       ["verb", "full"]
     ],
-    "comment": "Both arguments are participants: the full-agreement transitive appears even under subject extraction."
+    "comment": "Both arguments are participants: the full-agreement transitive appears even under subject extraction. The paper prints x-at-in-tzët, without the apostrophe of tz'ët elsewhere.",
+    "verified": "page-image"
   },
   {
     "id": "erlewine2016_77b",
@@ -552,8 +641,10 @@
     "language": "kaqc1270",
     "primaryText": "Ja yïn x-i-tz'et-ö rat.",
     "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "It was ME that saw you.",
+    "glossedTokens": [
+      ["Ja", "FOC"], ["yïn", "me"], ["x-i-tz'et-ö", "COM-B1SG-see-AF"], ["rat", "you"]
+    ],
+    "translation": "",
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [],
@@ -567,7 +658,8 @@
       ["object", "2"],
       ["verb", "AF"]
     ],
-    "comment": "AF would leave a participant argument un-cross-referenced."
+    "comment": "AF would leave a participant argument un-cross-referenced.",
+    "verified": "page-image"
   },
   {
     "id": "erlewine2016_78a",
@@ -575,7 +667,9 @@
     "language": "kaqc1270",
     "primaryText": "Ja ri a Juan x-a-tz'et-ö rat.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Ja", "FOC"], ["ri a Juan", "Juan"], ["x-a-tz'et-ö", "COM-B2SG-see-AF"], ["rat", "you"]
+    ],
     "translation": "It was JUAN that saw you.",
     "context": "",
     "judgment": "acceptable",
@@ -590,7 +684,8 @@
       ["object", "2"],
       ["verb", "AF"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "erlewine2016_78b",
@@ -598,8 +693,10 @@
     "language": "kaqc1270",
     "primaryText": "Ja ri a Juan x-a-r-tz'ët rat.",
     "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "It was JUAN that saw you.",
+    "glossedTokens": [
+      ["Ja", "FOC"], ["ri a Juan", "Juan"], ["x-a-r-tz'ët", "COM-B2SG-A3SG-see"], ["rat", "you"]
+    ],
+    "translation": "",
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [],
@@ -613,7 +710,8 @@
       ["object", "2"],
       ["verb", "full"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "erlewine2016_79a",
@@ -621,7 +719,9 @@
     "language": "kaqc1270",
     "primaryText": "Ja yïn x-i-tz'et-ö ri a Juan.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Ja", "FOC"], ["yïn", "me"], ["x-i-tz'et-ö", "COM-B1SG-see-AF"], ["ri a Juan", "Juan"]
+    ],
     "translation": "It was ME that saw Juan.",
     "context": "",
     "judgment": "acceptable",
@@ -636,7 +736,8 @@
       ["object", "3"],
       ["verb", "AF"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "erlewine2016_79b",
@@ -644,8 +745,10 @@
     "language": "kaqc1270",
     "primaryText": "Ja yïn x-∅-in-tz'ët ri a Juan.",
     "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "It was ME that saw Juan.",
+    "glossedTokens": [
+      ["Ja", "FOC"], ["yïn", "me"], ["x-∅-in-tz'ët", "COM-B3SG-A1SG-see"], ["ri a Juan", "Juan"]
+    ],
+    "translation": "",
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [],
@@ -659,7 +762,8 @@
       ["object", "3"],
       ["verb", "full"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "erlewine2016_87b",
@@ -667,7 +771,9 @@
     "language": "popt1235",
     "primaryText": "Mac xc-ach 7il-ni?",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Mac", "who"], ["xc-ach", "COM-B2SG"], ["7il-ni", "see-AF"]
+    ],
     "translation": "Who saw you?",
     "context": "",
     "judgment": "acceptable",
@@ -682,7 +788,8 @@
       ["object", "2"],
       ["verb", "AF"]
     ],
-    "comment": "Popti' (Grinevald Craig 1979): Set B on the AF verb strictly cross-references the object."
+    "comment": "Popti' (Grinevald Craig 1979): Set B on the AF verb strictly cross-references the object. The paper cites Grinevald Craig (1979, pp. 11–12); 7 is a glottal stop.",
+    "verified": "page-image"
   },
   {
     "id": "erlewine2016_88b",
@@ -690,7 +797,9 @@
     "language": "popt1235",
     "primaryText": "Ha-ch x-∅-7il-ni naj.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Ha-ch", "FOC-2sg"], ["x-∅-7il-ni", "COM-B3SG-see-AF"], ["naj", "3sg"]
+    ],
     "translation": "It is YOU that saw him.",
     "context": "",
     "judgment": "ungrammatical",
@@ -705,7 +814,8 @@
       ["object", "3"],
       ["verb", "AF"]
     ],
-    "comment": "Popti': a participant subject cannot be left un-cross-referenced, and Set B cannot target it, so AF is impossible."
+    "comment": "Popti': a participant subject cannot be left un-cross-referenced, and Set B cannot target it, so AF is impossible. The paper cites Grinevald Craig (1979, p. 13) and gives the translation as intended.",
+    "verified": "page-image"
   },
   {
     "id": "erlewine2016_88c",
@@ -713,7 +823,9 @@
     "language": "popt1235",
     "primaryText": "Ha-ch x-∅-aw-(7)il naj.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Ha-ch", "FOC-2sg"], ["x-∅-aw-(7)il", "COM-B3SG-A2SG-see"], ["naj", "3sg"]
+    ],
     "translation": "It is YOU that saw him.",
     "context": "",
     "judgment": "acceptable",
@@ -728,7 +840,8 @@
       ["object", "3"],
       ["verb", "full"]
     ],
-    "comment": "Popti': the full-agreement transitive under subject extraction whenever the subject is a participant."
+    "comment": "Popti': the full-agreement transitive under subject extraction whenever the subject is a participant. The paper cites Grinevald Craig (1979, p. 13).",
+    "verified": "page-image"
   },
   {
     "id": "erlewine2016_91a",
@@ -736,7 +849,9 @@
     "language": "west2635",
     "primaryText": "Ja'-in ∅-ij-on-toj naj unin.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Ja'-in", "FOC-1sg"], ["∅-ij-on-toj", "B3SG-back.carry-AF-DIR"], ["naj unin", "boy"]
+    ],
     "translation": "It's I who carried the boy.",
     "context": "",
     "judgment": "acceptable",
@@ -751,7 +866,8 @@
       ["object", "3"],
       ["verb", "AF"]
     ],
-    "comment": "Akatek (Zavala 1997): AF regardless of the arguments' person; the participant subject goes un-cross-referenced."
+    "comment": "Akatek (Zavala 1997): AF regardless of the arguments' person; the participant subject goes un-cross-referenced. The paper cites Zavala (1997, p. 452); naj is a nominal classifier.",
+    "verified": "page-image"
   },
   {
     "id": "erlewine2016_91b",
@@ -759,8 +875,10 @@
     "language": "west2635",
     "primaryText": "Ja'-in ∅-w-ij-toj naj unin.",
     "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "It's I who carried the boy.",
+    "glossedTokens": [
+      ["Ja'-in", "FOC-1sg"], ["∅-w-ij-toj", "B3SG-A1SG-back.carry-DIR"], ["naj unin", "boy"]
+    ],
+    "translation": "",
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [],
@@ -774,7 +892,8 @@
       ["object", "3"],
       ["verb", "full"]
     ],
-    "comment": ""
+    "comment": "The paper cites Zavala (1997, p. 452).",
+    "verified": "page-image"
   },
   {
     "id": "erlewine2016_93",
@@ -782,7 +901,9 @@
     "language": "chol1282",
     "primaryText": "Maxki tyi y-il-ä-yety?",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Maxki", "who"], ["tyi", "ASP"], ["y-il-ä-yety", "A3-see-TV-B2"]
+    ],
     "translation": "Who saw you?",
     "context": "",
     "judgment": "acceptable",
@@ -797,6 +918,7 @@
       ["object", "2"],
       ["verb", "full"]
     ],
-    "comment": "Ch'ol (Coon et al. 2014): a Mayan language without AF; transitive subjects extract with the full-agreement verb."
+    "comment": "Ch'ol (Coon et al. 2014): a Mayan language without AF; transitive subjects extract with the full-agreement verb. The paper cites Coon et al. (to appear).",
+    "verified": "page-image"
   }
 ]
