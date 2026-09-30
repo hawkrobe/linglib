@@ -272,6 +272,11 @@ def hand : Verb := .mkRegular {
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.send} }
 
+/-- "mail" — transitive, ditransitive, or with a *to*-phrase (*Paul mailed a letter*). -/
+def mail : Verb := .mkRegular {
+  form := "mail"
+  frames := [ArgumentFrame.np, ArgumentFrame.np_np, ArgumentFrame.np_pp (some Adpositions.to_)] }
+
 /-- "lend" — alternates DOC/PP. Neither argument implicit. -/
 def lend : Verb where
   form := "lend"

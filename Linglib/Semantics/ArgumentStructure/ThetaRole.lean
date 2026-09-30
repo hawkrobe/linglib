@@ -5,19 +5,21 @@ public import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 /-!
 # Theta roles as proto-role clusters
 
-Dowty replaces the traditional list of thematic roles by two cluster concepts, the Proto-Agent
-and Proto-Patient entailments, and reads the familiar role types off combinations of them: an
-agent is volitional, sentient, causing, and moving; an experiencer is sentient without volition
-or causation; an instrument causes and moves without volition or sentience; a theme changes,
-measures out the event, and depends on it, and a patient is the causally affected theme; a
-source or goal has no defining entailment at all. This file carries those labels, the profile
-each names, and the classifier that reads a label off a profile, so that a label is a derived
-classification of an argument's entailment profile and never a stored primitive.
+Dowty replaces the traditional list of thematic roles by two cluster concepts, the Proto-Agent and
+Proto-Patient entailments, and reads the familiar role types off combinations of them: an agent is
+volitional, sentient, causing, and moving; an experiencer is sentient without volition or causation;
+an instrument causes and moves without volition or sentience; a theme changes, measures out the
+event, and depends on it, and a patient is the causally affected theme; a source or goal has no
+defining entailment at all. The recipient of a transfer, for which Primus proposes a Recipient
+Proto-role of its own, has none here either. This file carries those labels, the profile each names,
+and the classifier that reads a label off a profile, so that a label is a derived classification of
+an argument's entailment profile and never a stored primitive.
 
 ## Main declarations
 
-* `ArgumentStructure.ThetaRole`: the eight traditional labels.
-* `ThetaRole.canonicalProfile`: the entailments a label combines, `⊥` for source and goal;
+* `ArgumentStructure.ThetaRole`: the nine traditional labels.
+* `ThetaRole.canonicalProfile`: the entailments a label combines, `⊥` for source, goal and
+  recipient;
   `ThetaRole.IsDefined` says a label has defining entailments.
 * `EntailmentProfile.toRole`: the label of a profile, with `toRole_eq_some_agent_iff` and its
   siblings characterizing each label and `toRole_canonicalProfile` recovering a defined label
@@ -36,6 +38,7 @@ Dowty's role hierarchies follow from the selection principle over these profiles
 
 * [dowty-1991]
 * [levin-rappaport-hovav-2005]
+* [primus-1999]
 -/
 
 @[expose] public section
@@ -52,14 +55,18 @@ inductive ThetaRole where
   | source
   | instrument
   | stimulus
+  /-- The recipient of a transfer, for which [primus-1999] introduces a Recipient Proto-role
+  ([levin-rappaport-hovav-2005], p. 60). -/
+  | recipient
   deriving DecidableEq, Repr, Fintype
 
 namespace ThetaRole
 
-/-- The entailments a label combines, in Dowty's reading of the traditional roles: the agent
-all four core Proto-Agent entailments, the experiencer sentience, the stimulus causation, the
-instrument causation and movement, the theme change with incremental theme and dependent
-existence, the patient the causally affected theme, and the source and goal nothing. -/
+/-- `canonicalProfile r` is the set of entailments the label `r` combines in Dowty's reading of the
+traditional roles, the agent all four core Proto-Agent entailments, the experiencer sentience, the
+stimulus causation, the instrument causation and movement, the theme change with incremental theme
+and dependent existence, the patient the causally affected theme, and the source, goal and recipient
+nothing. -/
 def canonicalProfile : ThetaRole → EntailmentProfile
   | .agent => { volition := true, sentience := true, causation := true, movement := true }
   | .experiencer => { sentience := true }
@@ -69,16 +76,19 @@ def canonicalProfile : ThetaRole → EntailmentProfile
   | .patient =>
     { changeOfState := true, incrementalTheme := true, causallyAffected := true,
       dependentExistence := true }
-  | .goal | .source => ⊥
+  | .goal | .source | .recipient => ⊥
 
-/-- A label is defined by proto-role entailments; source and goal are not. -/
-def IsDefined (r : ThetaRole) : Prop := r ≠ .source ∧ r ≠ .goal
+/-- A label is defined by proto-role entailments; source, goal and recipient are not. -/
+def IsDefined (r : ThetaRole) : Prop := r ≠ .source ∧ r ≠ .goal ∧ r ≠ .recipient
 
-instance : DecidablePred IsDefined := fun r ↦ inferInstanceAs (Decidable (r ≠ .source ∧ r ≠ .goal))
+instance : DecidablePred IsDefined := fun r ↦
+  inferInstanceAs (Decidable (r ≠ .source ∧ r ≠ .goal ∧ r ≠ .recipient))
 
 @[simp] theorem canonicalProfile_source : canonicalProfile .source = ⊥ := rfl
 
 @[simp] theorem canonicalProfile_goal : canonicalProfile .goal = ⊥ := rfl
+
+@[simp] theorem canonicalProfile_recipient : canonicalProfile .recipient = ⊥ := rfl
 
 /-- A label has defining entailments iff its profile is not empty. -/
 theorem isDefined_iff_canonicalProfile_ne_bot (r : ThetaRole) :
@@ -100,9 +110,9 @@ end ThetaRole
 
 namespace EntailmentProfile
 
-/-- The label of a profile: agent if volitional, else experiencer if sentient and not causing,
-else instrument or stimulus if causing according to movement, else patient if causally
-affected, else theme if changing, measuring out the event, depending on it, or moving, and
+/-- `p.toRole` is the label of the profile `p`, agent if volitional, else experiencer if sentient
+and not causing, else instrument or stimulus if causing according to movement, else patient if
+causally affected, else theme if changing, measuring out the event, depending on it, or moving, and
 otherwise none. -/
 def toRole (p : EntailmentProfile) : Option ThetaRole :=
   if p.volition then some .agent
@@ -141,16 +151,21 @@ theorem toRole_eq_some_theme_iff : p.toRole = some .theme ↔
         (p.changeOfState || p.incrementalTheme || p.dependentExistence || p.movement) = true := by
   unfold toRole; split_ifs <;> simp_all
 
-/-- Source and goal are never read off a profile: they are not defined by entailments. -/
+/-- Source, goal and recipient are never read off a profile: they are not defined by
+entailments. -/
 theorem toRole_ne_some_source : p.toRole ≠ some .source := by
   unfold toRole; split_ifs <;> simp
 
 theorem toRole_ne_some_goal : p.toRole ≠ some .goal := by
   unfold toRole; split_ifs <;> simp
 
+theorem toRole_ne_some_recipient : p.toRole ≠ some .recipient := by
+  unfold toRole; split_ifs <;> simp
+
 /-- A label read off a profile is a defined one. -/
 theorem isDefined_of_toRole_eq_some {r : ThetaRole} (h : p.toRole = some r) : r.IsDefined :=
-  ⟨fun hr ↦ toRole_ne_some_source (hr ▸ h), fun hr ↦ toRole_ne_some_goal (hr ▸ h)⟩
+  ⟨fun hr ↦ toRole_ne_some_source (hr ▸ h), fun hr ↦ toRole_ne_some_goal (hr ▸ h),
+    fun hr ↦ toRole_ne_some_recipient (hr ▸ h)⟩
 
 theorem causation_of_toRole_eq_some_stimulus (h : p.toRole = some .stimulus) :
     p.causation = true :=
@@ -163,7 +178,7 @@ namespace ThetaRole
 /-- The classifier recovers every defined label from its canonical profile. -/
 theorem toRole_canonicalProfile {r : ThetaRole} (h : r.IsDefined) :
     r.canonicalProfile.toRole = some r := by
-  cases r <;> first | rfl | exact absurd rfl h.1 | exact absurd rfl h.2
+  cases r <;> first | rfl | exact absurd rfl h.1 | exact absurd rfl h.2.1 | exact absurd rfl h.2.2
 
 /-- Distinct defined labels have distinct canonical profiles. -/
 theorem canonicalProfile_injOn : Set.InjOn canonicalProfile {r | r.IsDefined} := by
