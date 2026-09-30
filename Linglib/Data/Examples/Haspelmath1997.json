@@ -32,7 +32,8 @@
         "some (determiner)"
       ]
     ],
-    "comment": "Determiner some marks the referent as unknown to the speaker, unlike someone and something."
+    "comment": "Determiner some marks the referent as unknown to the speaker, unlike someone and something. The book prints the continuation in parentheses: (*and I know which one).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_en_102a_known",
@@ -45,7 +46,7 @@
       "paperLabel": "(102a)"
     },
     "language": "stan1293",
-    "primaryText": "John is looking for some book on reserve, and I know which one.",
+    "primaryText": "John is looking for some book on reserve and I know which one.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -67,7 +68,8 @@
         "some (determiner)"
       ]
     ],
-    "comment": "The continuation presupposes that the speaker can identify the referent."
+    "comment": "The continuation presupposes that the speaker can identify the referent. The book prints the continuation in parentheses: (*and I know which one).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_en_151a",
@@ -91,7 +93,7 @@
     "paperFeatures": [
       [
         "section",
-        "4.3.1"
+        "4.7.4"
       ],
       [
         "function",
@@ -102,7 +104,8 @@
         "some-"
       ]
     ],
-    "comment": "The speaker expects a positive answer, so some is used."
+    "comment": "The speaker expects a positive answer, so some is used. The context is the reason the book prints in parentheses after the question.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_en_151b",
@@ -126,7 +129,7 @@
     "paperFeatures": [
       [
         "section",
-        "4.3.1"
+        "4.7.4"
       ],
       [
         "function",
@@ -137,7 +140,8 @@
         "any-"
       ]
     ],
-    "comment": "The speaker expects a negative answer, so only any can be used."
+    "comment": "The speaker expects a negative answer, so only any can be used. The context is the reason the book prints in parentheses after the question.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_en_154a",
@@ -161,7 +165,7 @@
     "paperFeatures": [
       [
         "section",
-        "4.3.1"
+        "4.7.4"
       ],
       [
         "function",
@@ -172,7 +176,8 @@
         "some-"
       ]
     ],
-    "comment": ""
+    "comment": "The context paraphrases the book's prose on conditional promises and warnings.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_en_154a_any",
@@ -196,7 +201,7 @@
     "paperFeatures": [
       [
         "section",
-        "4.3.1"
+        "4.7.4"
       ],
       [
         "function",
@@ -207,7 +212,8 @@
         "any-"
       ]
     ],
-    "comment": ""
+    "comment": "The context paraphrases the book's prose on conditional promises and warnings. The book stars this alternative inside the example.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_en_154b",
@@ -231,7 +237,7 @@
     "paperFeatures": [
       [
         "section",
-        "4.3.1"
+        "4.7.4"
       ],
       [
         "function",
@@ -242,7 +248,8 @@
         "any-"
       ]
     ],
-    "comment": ""
+    "comment": "The context paraphrases the book's prose on conditional promises and warnings.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_en_154b_some",
@@ -266,7 +273,7 @@
     "paperFeatures": [
       [
         "section",
-        "4.3.1"
+        "4.7.4"
       ],
       [
         "function",
@@ -277,7 +284,8 @@
         "some-"
       ]
     ],
-    "comment": ""
+    "comment": "The context paraphrases the book's prose on conditional promises and warnings. The book stars this alternative inside the example.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_en_44b",
@@ -297,7 +305,7 @@
     "paperFeatures": [
       [
         "section",
-        "3.1.4"
+        "3.2.2"
       ],
       [
         "function",
@@ -308,7 +316,8 @@
         "any-"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_en_45b",
@@ -328,7 +337,7 @@
     "paperFeatures": [
       [
         "section",
-        "3.1.4"
+        "3.2.2"
       ],
       [
         "function",
@@ -339,7 +348,8 @@
         "any-"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_en_49b",
@@ -359,7 +369,7 @@
     "paperFeatures": [
       [
         "section",
-        "3.1.4"
+        "3.2.2"
       ],
       [
         "function",
@@ -370,7 +380,8 @@
         "any-"
       ]
     ],
-    "comment": "The complement of an implicitly negative verb."
+    "comment": "The complement of an implicitly negative verb.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_en_50b",
@@ -390,7 +401,7 @@
     "paperFeatures": [
       [
         "section",
-        "3.1.4"
+        "3.2.2"
       ],
       [
         "function",
@@ -401,7 +412,8 @@
         "any-"
       ]
     ],
-    "comment": "The argument of an implicitly negative adposition."
+    "comment": "The argument of an implicitly negative adposition.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_en_51b",
@@ -421,7 +433,7 @@
     "paperFeatures": [
       [
         "section",
-        "3.1.4"
+        "3.2.2"
       ],
       [
         "function",
@@ -432,7 +444,8 @@
         "any-"
       ]
     ],
-    "comment": "The standard of comparison of inequality."
+    "comment": "The standard of comparison of inequality.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_en_52",
@@ -452,7 +465,7 @@
     "paperFeatures": [
       [
         "section",
-        "3.1.4"
+        "3.2.2"
       ],
       [
         "function",
@@ -463,7 +476,8 @@
         "any-"
       ]
     ],
-    "comment": "The standard of comparison of equality."
+    "comment": "The standard of comparison of equality.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_en_43b",
@@ -483,7 +497,7 @@
     "paperFeatures": [
       [
         "section",
-        "3.1.4"
+        "3.2.2"
       ],
       [
         "function",
@@ -494,7 +508,8 @@
         "any-"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_en_103a",
@@ -525,7 +540,8 @@
         "any-"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_en_34b",
@@ -545,7 +561,7 @@
     "paperFeatures": [
       [
         "section",
-        "3.1.3"
+        "3.2.1"
       ],
       [
         "function",
@@ -556,7 +572,8 @@
         "no-"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_de_A1a_etwas",
@@ -587,7 +604,8 @@
         "etwas-"
       ]
     ],
-    "comment": "The etwas-series can always be replaced by the irgend-series, except in the specific-known function."
+    "comment": "The etwas-series can always be replaced by the irgend-series, except in the specific-known function.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_de_A1a_irgend",
@@ -618,7 +636,8 @@
         "irgend-"
       ]
     ],
-    "comment": "The etwas-series can always be replaced by the irgend-series, except in the specific-known function."
+    "comment": "The etwas-series can always be replaced by the irgend-series, except in the specific-known function. The book stars this alternative inside the example; the translation is the example's.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_de_A1b_etwas",
@@ -649,7 +668,8 @@
         "etwas-"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_de_A1b_irgend",
@@ -680,7 +700,8 @@
         "irgend-"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_de_A2_etwas",
@@ -711,7 +732,8 @@
         "etwas-"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_de_A2_irgend",
@@ -742,7 +764,8 @@
         "irgend-"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_de_A3a_etwas",
@@ -773,7 +796,8 @@
         "etwas-"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_de_A3a_irgend",
@@ -804,7 +828,8 @@
         "irgend-"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_de_A3b_irgend",
@@ -835,7 +860,8 @@
         "irgend-"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_de_A3b_je",
@@ -866,7 +892,8 @@
         "je"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_de_A3c_etwas",
@@ -897,7 +924,8 @@
         "etwas-"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_de_A3c_irgend",
@@ -928,7 +956,8 @@
         "irgend-"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_de_A4_je_etwas",
@@ -963,7 +992,8 @@
         "etwas-"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_de_A4_je_irgend",
@@ -998,7 +1028,8 @@
         "irgend-"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_de_A4_irgend_etwas",
@@ -1033,7 +1064,8 @@
         "etwas-"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_de_A4_irgend_irgend",
@@ -1064,7 +1096,8 @@
         "irgend-"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_de_A5",
@@ -1099,7 +1132,8 @@
         "je"
       ]
     ],
-    "comment": "Only the irgend-series and je are possible in the comparative; the irgend-indefinite must be stressed."
+    "comment": "Only the irgend-series and je are possible in the comparative; the irgend-indefinite must be stressed.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_de_A6",
@@ -1130,7 +1164,8 @@
         "irgend-"
       ]
     ],
-    "comment": "Stressed; jeder is generally preferred."
+    "comment": "Stressed; jeder is generally preferred.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_de_A7",
@@ -1161,7 +1196,8 @@
         "jeder"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_de_A8",
@@ -1192,7 +1228,8 @@
         "jeder"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_de_A9a_jeder",
@@ -1223,7 +1260,8 @@
         "jeder"
       ]
     ],
-    "comment": "The indirect-negation use is what makes jeder an indefinite rather than only a distributive universal."
+    "comment": "The indirect-negation use is what makes jeder an indefinite rather than only a distributive universal.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_de_A9a_irgend",
@@ -1254,7 +1292,8 @@
         "irgend-"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_de_A9b_jeder",
@@ -1285,7 +1324,8 @@
         "jeder"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_de_A9b_irgend",
@@ -1316,7 +1356,8 @@
         "irgend-"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_de_A10a",
@@ -1347,7 +1388,8 @@
         "n-"
       ]
     ],
-    "comment": "The n-series does not co-occur with verbal negation."
+    "comment": "The n-series does not co-occur with verbal negation.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_de_A10b_etwas",
@@ -1378,7 +1420,8 @@
         "n-"
       ]
     ],
-    "comment": "The second indefinite, in the scope of niemandem, is from the etwas-series."
+    "comment": "The second indefinite, in the scope of niemandem, is from the etwas-series.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_de_A10b_irgend",
@@ -1409,7 +1452,8 @@
         "n-"
       ]
     ],
-    "comment": "The second indefinite, in the scope of niemandem, is from the irgend-series."
+    "comment": "The second indefinite, in the scope of niemandem, is from the irgend-series.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_it_A74",
@@ -1440,7 +1484,8 @@
         "qualche-"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_it_A75",
@@ -1471,7 +1516,8 @@
         "qualche-"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_it_A76",
@@ -1502,7 +1548,8 @@
         "qualche-"
       ]
     ],
-    "comment": "Imperative. The book's translation reads 'Buy something for your niece.'"
+    "comment": "Imperative. The book's translation reads 'Buy something for your niece.'",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_it_A77_qualche",
@@ -1533,7 +1580,8 @@
         "qualche-"
       ]
     ],
-    "comment": "The nessuno-series is possible in questions but not in conditionals."
+    "comment": "The nessuno-series is possible in questions but not in conditionals.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_it_A77_nessuno",
@@ -1564,7 +1612,8 @@
         "nessuno"
       ]
     ],
-    "comment": "The nessuno-series is possible in questions but not in conditionals."
+    "comment": "The nessuno-series is possible in questions but not in conditionals.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_it_A78",
@@ -1595,7 +1644,8 @@
         "qualche-"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_it_A78_nessuno",
@@ -1626,7 +1676,8 @@
         "nessuno"
       ]
     ],
-    "comment": "The nessuno-series is possible in questions but not in conditionals."
+    "comment": "The nessuno-series is possible in questions but not in conditionals. The book stars this alternative inside the example; the translation is the example's.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_it_A79_nessuno",
@@ -1657,7 +1708,8 @@
         "nessuno"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_it_A79_qualche",
@@ -1688,7 +1740,8 @@
         "qualche-"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_it_A80",
@@ -1719,7 +1772,8 @@
         "-unque"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_it_A81",
@@ -1750,7 +1804,8 @@
         "-unque"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_it_A82a",
@@ -1781,7 +1836,8 @@
         "nessuno"
       ]
     ],
-    "comment": "Postverbal negative pronoun with verbal negation."
+    "comment": "Postverbal negative pronoun with verbal negation.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_it_A82b",
@@ -1817,7 +1873,8 @@
         "nessuno"
       ]
     ],
-    "comment": "Preverbal negative pronoun without verbal negation."
+    "comment": "Preverbal negative pronoun without verbal negation.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_it_A82c",
@@ -1848,7 +1905,8 @@
         "nessuno"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ru_A121",
@@ -1879,7 +1937,8 @@
         "-to"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ru_A122a_nibud",
@@ -1910,7 +1969,8 @@
         "-nibud'"
       ]
     ],
-    "comment": "Imperative."
+    "comment": "Imperative.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ru_A122a_libo",
@@ -1941,7 +2001,8 @@
         "-libo"
       ]
     ],
-    "comment": "Imperative."
+    "comment": "Imperative.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ru_A122b_nibud",
@@ -1972,7 +2033,8 @@
         "-nibud'"
       ]
     ],
-    "comment": "Future."
+    "comment": "Future.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ru_A122b_libo",
@@ -2003,7 +2065,8 @@
         "-libo"
       ]
     ],
-    "comment": "Future."
+    "comment": "Future.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ru_A123a_nibud",
@@ -2034,7 +2097,8 @@
         "-nibud'"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ru_A123a_libo",
@@ -2065,7 +2129,8 @@
         "-libo"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ru_A123b_nibud",
@@ -2096,7 +2161,8 @@
         "-nibud'"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ru_A123b_libo",
@@ -2127,7 +2193,8 @@
         "-libo"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ru_A124a",
@@ -2158,7 +2225,8 @@
         "-to"
       ]
     ],
-    "comment": "In an irrealis context the -to-series tends strongly towards the specific reading."
+    "comment": "In an irrealis context the -to-series tends strongly towards the specific reading.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ru_A124b_nibud",
@@ -2189,7 +2257,8 @@
         "-nibud'"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ru_A124b_to",
@@ -2220,7 +2289,8 @@
         "-to"
       ]
     ],
-    "comment": "The non-specific reading of -to seems possible, but -nibud' is clearly preferred."
+    "comment": "The non-specific reading of -to seems possible, but -nibud' is clearly preferred.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ru_A125_libo",
@@ -2251,7 +2321,8 @@
         "-libo"
       ]
     ],
-    "comment": "-nibud' is not possible in the comparative or indirect-negation functions."
+    "comment": "-nibud' is not possible in the comparative or indirect-negation functions.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ru_A125_byToNiBylo",
@@ -2282,7 +2353,8 @@
         "by to ni bylo"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ru_A126a_libo",
@@ -2313,7 +2385,8 @@
         "-libo"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ru_A126a_byToNiBylo",
@@ -2344,7 +2417,8 @@
         "by to ni bylo"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ru_A126b_libo",
@@ -2375,7 +2449,8 @@
         "-libo"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ru_A126b_byToNiBylo",
@@ -2406,7 +2481,8 @@
         "by to ni bylo"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ru_A127a",
@@ -2437,7 +2513,8 @@
         "by to ni bylo"
       ]
     ],
-    "comment": "An emphatic variant in conditionals."
+    "comment": "An emphatic variant in conditionals.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ru_A127b",
@@ -2468,7 +2545,8 @@
         "by to ni bylo"
       ]
     ],
-    "comment": "The by to ni bylo-series is not possible in questions."
+    "comment": "The by to ni bylo-series is not possible in questions.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ru_A128_ljuboj",
@@ -2499,7 +2577,8 @@
         "ljuboj"
       ]
     ],
-    "comment": "The determiner ljuboj or the ugodno-series."
+    "comment": "The determiner ljuboj or the ugodno-series.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ru_A128_ugodno",
@@ -2530,7 +2609,8 @@
         "ugodno"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ru_A128_byToNiBylo",
@@ -2561,7 +2641,8 @@
         "by to ni bylo"
       ]
     ],
-    "comment": "The by to ni bylo-series is only marginally possible for free choice."
+    "comment": "The by to ni bylo-series is only marginally possible for free choice.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ru_A129",
@@ -2592,7 +2673,8 @@
         "ni-"
       ]
     ],
-    "comment": "Only the ni-series is possible under direct negation."
+    "comment": "Only the ni-series is possible under direct negation.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ru_A130",
@@ -2623,7 +2705,8 @@
         "koe-"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_lv_A138",
@@ -2671,7 +2754,8 @@
         "kaut"
       ]
     ],
-    "comment": "The book labels the function specific, which the figure of the language does not split; the row takes specific unknown."
+    "comment": "The book labels the function specific, which the figure of the language does not split; the row takes specific unknown.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_lv_A139",
@@ -2715,7 +2799,8 @@
         "kaut"
       ]
     ],
-    "comment": "An imperative."
+    "comment": "An imperative.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_lv_A140a",
@@ -2771,7 +2856,8 @@
         "kaut"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_lv_A140b",
@@ -2831,7 +2917,8 @@
         "kāds (bare interrogative)"
       ]
     ],
-    "comment": "The bare interrogative kāds is used as an indefinite."
+    "comment": "The bare interrogative kāds is used as an indefinite.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_lv_A140c_kaut",
@@ -2891,7 +2978,8 @@
         "kaut"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_lv_A140c_jeb",
@@ -2947,7 +3035,8 @@
         "jeb-"
       ]
     ],
-    "comment": "The jeb-series is excluded from conditionals."
+    "comment": "The jeb-series is excluded from conditionals. The book stars this alternative inside the example; the translation is the example's.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_lv_A141",
@@ -2995,7 +3084,8 @@
         "jeb-"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_lv_A142",
@@ -3055,7 +3145,8 @@
         "jeb-"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_lv_A143a",
@@ -3099,7 +3190,8 @@
         "jeb-"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_lv_A143b",
@@ -3151,7 +3243,8 @@
         "kāds (bare interrogative)"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_lv_A144",
@@ -3195,7 +3288,8 @@
         "ne-"
       ]
     ],
-    "comment": "The ne-series co-occurs with verbal negation."
+    "comment": "The ne-series co-occurs with verbal negation.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_hi_A167_known",
@@ -3267,7 +3361,8 @@
         "koii"
       ]
     ],
-    "comment": "The heading is specific-known/unknown."
+    "comment": "The heading is specific-known/unknown.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_hi_A167_unknown",
@@ -3335,7 +3430,8 @@
         "koii"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_hi_A167_bhii",
@@ -3411,7 +3507,8 @@
         "bhii"
       ]
     ],
-    "comment": "The book stars bhii before both continuations."
+    "comment": "The book stars bhii before both continuations. The book stars this alternative inside the example; the translation is the example's.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_hi_A167_bhii_unknown",
@@ -3483,7 +3580,8 @@
         "bhii"
       ]
     ],
-    "comment": "The book stars bhii before both continuations."
+    "comment": "The book stars bhii before both continuations. The book stars this alternative inside the example; the translation is the example's.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_hi_A168_koii",
@@ -3551,7 +3649,8 @@
         "koii"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_hi_A168_bhii",
@@ -3623,7 +3722,8 @@
         "bhii"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_hi_A169a_koii",
@@ -3660,7 +3760,7 @@
         "is"
       ]
     ],
-    "translation": "No one is at home.",
+    "translation": "No one (at all) is at home.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -3679,7 +3779,8 @@
         "koii"
       ]
     ],
-    "comment": "Under direct negation the bhii-series seems to be preferred."
+    "comment": "Under direct negation the bhii-series seems to be preferred.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_hi_A169a_bhii",
@@ -3720,7 +3821,7 @@
         "is"
       ]
     ],
-    "translation": "No one at all is at home.",
+    "translation": "No one (at all) is at home.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -3739,7 +3840,8 @@
         "bhii"
       ]
     ],
-    "comment": "Under direct negation the bhii-series seems to be preferred."
+    "comment": "Under direct negation the bhii-series seems to be preferred.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_hi_A169b",
@@ -3791,7 +3893,8 @@
         "koii"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_hi_A170a_koii",
@@ -3828,7 +3931,7 @@
         "is"
       ]
     ],
-    "translation": "She wants to phone someone (specific or non-specific).",
+    "translation": "She wants to phone someone (specific/non-specific).",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -3847,7 +3950,8 @@
         "koii"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_hi_A170a_bhii",
@@ -3888,7 +3992,7 @@
         "is"
       ]
     ],
-    "translation": "She wants to phone someone (non-specific).",
+    "translation": "She wants to phone someone (specific/non-specific).",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -3907,7 +4011,8 @@
         "bhii"
       ]
     ],
-    "comment": "In irrealis contexts the bhii-series is always non-specific."
+    "comment": "In irrealis contexts the bhii-series is always non-specific.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_hi_A170b_koii",
@@ -3951,7 +4056,8 @@
         "koii"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_hi_A170b_bhii",
@@ -3999,7 +4105,8 @@
         "bhii"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_hi_A171a_koii",
@@ -4051,7 +4158,8 @@
         "koii"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_hi_A171a_bhii",
@@ -4107,7 +4215,8 @@
         "bhii"
       ]
     ],
-    "comment": "The bhii-series is more emphatic in questions and conditionals."
+    "comment": "The bhii-series is more emphatic in questions and conditionals. The book glosses this kisii-ko 'someone'.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_hi_A171b_koii",
@@ -4144,7 +4253,7 @@
         "tell"
       ]
     ],
-    "translation": "If anybody calls, tell me.",
+    "translation": "If anybody (at all) calls, tell me.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -4163,7 +4272,8 @@
         "koii"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_hi_A171b_bhii",
@@ -4204,7 +4314,7 @@
         "tell"
       ]
     ],
-    "translation": "If anybody at all calls, tell me.",
+    "translation": "If anybody (at all) calls, tell me.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -4223,7 +4333,8 @@
         "bhii"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_hi_A172",
@@ -4307,7 +4418,8 @@
         "bhii"
       ]
     ],
-    "comment": "The comparative and free-choice functions are expressed only by the bhii-series."
+    "comment": "The comparative and free-choice functions are expressed only by the bhii-series.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_hi_A173",
@@ -4371,7 +4483,8 @@
         "bhii"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_tr_A174",
@@ -4431,7 +4544,8 @@
         "bir-"
       ]
     ],
-    "comment": "Only the bir-series is possible in the specific-known function."
+    "comment": "Only the bir-series is possible in the specific-known function.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_tr_A175_bir",
@@ -4491,7 +4605,8 @@
         "bir-"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_tr_A175_herhangi",
@@ -4555,7 +4670,8 @@
         "herhangi"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_tr_A176_herhangi",
@@ -4607,7 +4723,8 @@
         "herhangi"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_tr_A176_bir",
@@ -4655,7 +4772,8 @@
         "bir-"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_tr_A177a_herhangi",
@@ -4707,7 +4825,8 @@
         "herhangi"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_tr_A177a_bir",
@@ -4755,7 +4874,8 @@
         "bir-"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_tr_A177a_hic",
@@ -4807,7 +4927,8 @@
         "hiç"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_tr_A177b_herhangi",
@@ -4867,7 +4988,8 @@
         "herhangi"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_tr_A177b_bir",
@@ -4923,7 +5045,8 @@
         "bir-"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_tr_A178_kimse",
@@ -4971,7 +5094,8 @@
         "kimse"
       ]
     ],
-    "comment": "Kimse is an isolated indefinite outside the three series."
+    "comment": "Kimse is an isolated indefinite outside the three series.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_tr_A178_herhangi",
@@ -5023,7 +5147,8 @@
         "herhangi"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_tr_A178_hic",
@@ -5075,7 +5200,8 @@
         "hiç"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_tr_A179_hic",
@@ -5123,7 +5249,8 @@
         "hiç"
       ]
     ],
-    "comment": "The hiç-indefinites are the most usual form and always co-occur with verbal negation."
+    "comment": "The hiç-indefinites are the most usual form and always co-occur with verbal negation.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_tr_A179_herhangi",
@@ -5171,7 +5298,8 @@
         "herhangi"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_tr_A179_bir",
@@ -5215,7 +5343,8 @@
         "bir-"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_tr_A180",
@@ -5267,7 +5396,8 @@
         "herhangi"
       ]
     ],
-    "comment": "Only the herhangi-series is possible in the free-choice and comparative functions."
+    "comment": "Only the herhangi-series is possible in the free-choice and comparative functions.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_tr_A181",
@@ -5327,7 +5457,8 @@
         "herhangi"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_hu_A196",
@@ -5371,7 +5502,8 @@
         "vala-"
       ]
     ],
-    "comment": "The book prints 'tolál-koz-t-unk'."
+    "comment": "The book prints 'tolál-koz-t-unk'.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_hu_A197",
@@ -5439,7 +5571,8 @@
         "vala-"
       ]
     ],
-    "comment": "New Testament, Mark 9:38."
+    "comment": "New Testament, Mark 9:38.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_hu_A198",
@@ -5487,7 +5620,8 @@
         "vala-"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_hu_A199a",
@@ -5531,7 +5665,8 @@
         "sem-"
       ]
     ],
-    "comment": "The sem-series can only be used under direct negation."
+    "comment": "The sem-series can only be used under direct negation.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_hu_A199a_akar",
@@ -5575,7 +5710,8 @@
         "akár-"
       ]
     ],
-    "comment": ""
+    "comment": "The book stars this alternative inside the example; the translation is the example's.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_hu_A199a_bar",
@@ -5619,7 +5755,8 @@
         "bár-"
       ]
     ],
-    "comment": ""
+    "comment": "The book stars this alternative inside the example; the translation is the example's.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_hu_A199b",
@@ -5667,7 +5804,8 @@
         "sem-"
       ]
     ],
-    "comment": "New Testament, Mark 16:8."
+    "comment": "New Testament, Mark 16:8.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_hu_A200",
@@ -5707,7 +5845,8 @@
         "akár-"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_hu_A201_akar",
@@ -5767,7 +5906,8 @@
         "akár-"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_hu_A201_bar",
@@ -5827,7 +5967,8 @@
         "bár-"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_hu_A202_vala",
@@ -5883,7 +6024,8 @@
         "vala-"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_hu_A202_bar",
@@ -5939,7 +6081,8 @@
         "bár-"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_hu_A202_akar",
@@ -5995,7 +6138,8 @@
         "akár-"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_hu_A203_bar",
@@ -6047,7 +6191,8 @@
         "bár-"
       ]
     ],
-    "comment": "The akár- and bár-series have an emphatic value in conditionals. The book prints 'hal-asz'."
+    "comment": "The akár- and bár-series have an emphatic value in conditionals. The book prints 'hal-asz'.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_hu_A203_akar",
@@ -6099,7 +6244,8 @@
         "akár-"
       ]
     ],
-    "comment": "The akár- and bár-series have an emphatic value in conditionals. The book prints 'hal-asz'."
+    "comment": "The akár- and bár-series have an emphatic value in conditionals. The book prints 'hal-asz'.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_hu_A203_vala",
@@ -6132,7 +6278,7 @@
         "up"
       ]
     ],
-    "translation": "If you hear anything, wake me up.",
+    "translation": "If you hear anything (at all), wake me up.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -6151,7 +6297,8 @@
         "vala-"
       ]
     ],
-    "comment": "The book prints 'hal-asz'."
+    "comment": "The book prints 'hal-asz'.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_hu_A204",
@@ -6191,7 +6338,8 @@
         "vala-"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_hu_A204_akar",
@@ -6231,7 +6379,8 @@
         "akár-"
       ]
     ],
-    "comment": "The akár- and bár-series cannot be used in questions."
+    "comment": "The akár- and bár-series cannot be used in questions. The book stars this alternative inside the example; the translation is the example's.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_hu_A204_bar",
@@ -6271,7 +6420,8 @@
         "bár-"
       ]
     ],
-    "comment": "The akár- and bár-series cannot be used in questions."
+    "comment": "The akár- and bár-series cannot be used in questions. The book stars this alternative inside the example; the translation is the example's.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_fi_A205a",
@@ -6327,7 +6477,8 @@
         "-kin"
       ]
     ],
-    "comment": "The -kin-series is excluded from the specific-known function."
+    "comment": "The -kin-series is excluded from the specific-known function.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_fi_A205b",
@@ -6375,7 +6526,8 @@
         "eräs"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_fi_A206",
@@ -6435,7 +6587,8 @@
         "-kin"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_fi_A207",
@@ -6507,7 +6660,8 @@
         "-kin"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_fi_A208_kin",
@@ -6547,7 +6701,8 @@
         "-kin"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_fi_A208_kaan",
@@ -6587,7 +6742,8 @@
         "-kaan"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_fi_A208_hyvansa",
@@ -6631,7 +6787,8 @@
         "hyvänsä"
       ]
     ],
-    "comment": "The hyvänsä-series is impossible in questions."
+    "comment": "The hyvänsä-series is impossible in questions. The book stars this alternative inside the example; the translation is the example's.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_fi_A209_kin",
@@ -6683,7 +6840,8 @@
         "-kin"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_fi_A209_hyvansa",
@@ -6739,7 +6897,8 @@
         "hyvänsä"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_fi_A209_kaan",
@@ -6791,7 +6950,8 @@
         "-kaan"
       ]
     ],
-    "comment": "The -kaan-series is impossible in conditionals."
+    "comment": "The -kaan-series is impossible in conditionals. The book stars this alternative inside the example; the translation is the example's.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_fi_A210",
@@ -6843,7 +7003,8 @@
         "-kaan"
       ]
     ],
-    "comment": "With verbal negation. The book glosses mitä-än as 'when-INDEF' here."
+    "comment": "With verbal negation. The book glosses mitä-än as 'when-INDEF' here.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_fi_A211",
@@ -6895,7 +7056,8 @@
         "-kaan"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_fi_A212",
@@ -6959,7 +7121,8 @@
         "-kaan"
       ]
     ],
-    "comment": "The standard of comparison of inequality. The book prints 'mielyttävä-mpi'."
+    "comment": "The standard of comparison of inequality. The book prints 'mielyttävä-mpi'.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_fi_A213",
@@ -7015,7 +7178,8 @@
         "hyvänsä"
       ]
     ],
-    "comment": "The book prints 'natkaista'."
+    "comment": "The book prints 'natkaista'.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_fi_A214",
@@ -7079,7 +7243,8 @@
         "hyvänsä"
       ]
     ],
-    "comment": "The standard of equative comparison only, as the map predicts from the conditional use."
+    "comment": "The standard of equative comparison only, as the map predicts from the conditional use.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_sw_A243a",
@@ -7119,7 +7284,8 @@
         "generic noun"
       ]
     ],
-    "comment": "New Testament, Luke 8:46; the book labels the example simply specific."
+    "comment": "New Testament, Luke 8:46; the book labels the example simply specific.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_sw_A243b",
@@ -7167,7 +7333,8 @@
         "generic noun"
       ]
     ],
-    "comment": "The book labels the example simply specific."
+    "comment": "The book labels the example simply specific.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_sw_A244",
@@ -7223,7 +7390,8 @@
         "generic noun"
       ]
     ],
-    "comment": "New Testament, John 13:29."
+    "comment": "New Testament, John 13:29.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_sw_A245a",
@@ -7263,7 +7431,8 @@
         "generic noun"
       ]
     ],
-    "comment": "New Testament, Mark 8:23."
+    "comment": "New Testament, Mark 8:23.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_sw_A245b",
@@ -7331,7 +7500,8 @@
         "generic noun"
       ]
     ],
-    "comment": "New Testament, Matthew 21:3."
+    "comment": "New Testament, Matthew 21:3.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_sw_A246",
@@ -7399,7 +7569,8 @@
         "generic noun"
       ]
     ],
-    "comment": "New Testament, John 9:32."
+    "comment": "New Testament, John 9:32.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_sw_A247",
@@ -7447,7 +7618,8 @@
         "generic noun"
       ]
     ],
-    "comment": "New Testament, Mark 16:8; bare generic nouns only postverbally under direct negation."
+    "comment": "New Testament, Mark 16:8; bare generic nouns only postverbally under direct negation.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_sw_A248",
@@ -7499,7 +7671,8 @@
         "CL-o CL-ote"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_sw_A249",
@@ -7547,7 +7720,8 @@
         "CL-o CL-ote"
       ]
     ],
-    "comment": "New Testament, John 11:49."
+    "comment": "New Testament, John 11:49.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_sw_A250a",
@@ -7607,7 +7781,8 @@
         "CL-o CL-ote"
       ]
     ],
-    "comment": "New Testament, Hebrews 1:5; a rhetorical question, with emphatic value."
+    "comment": "New Testament, Hebrews 1:5; a rhetorical question, with emphatic value.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_sw_A250b",
@@ -7667,7 +7842,8 @@
         "CL-o CL-ote"
       ]
     ],
-    "comment": "New Testament, John 14:14."
+    "comment": "New Testament, John 14:14.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ka_A251a",
@@ -7719,7 +7895,8 @@
         "-γac"
       ]
     ],
-    "comment": "The -γac-series is restricted to specific functions."
+    "comment": "The -γac-series is restricted to specific functions.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ka_A251b",
@@ -7767,7 +7944,8 @@
         "-γac"
       ]
     ],
-    "comment": "The -γac-series is restricted to the specific functions."
+    "comment": "The -γac-series is restricted to the specific functions.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ka_A251b_me",
@@ -7811,7 +7989,8 @@
         "-me"
       ]
     ],
-    "comment": "The -γac-series is restricted to the specific functions. The starred variant is the book's addition to the example it quotes."
+    "comment": "The -γac-series is restricted to the specific functions. The starred variant is the book's addition to the example it quotes. The book stars this alternative inside the example; the translation is the example's.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ka_A252a",
@@ -7851,7 +8030,8 @@
         "-me"
       ]
     ],
-    "comment": "In all non-emphatic non-specific functions, including indirect negation and comparative, the -me-series is used."
+    "comment": "In all non-emphatic non-specific functions, including indirect negation and comparative, the -me-series is used.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ka_A252b",
@@ -7907,7 +8087,8 @@
         "-me"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ka_A253a",
@@ -7951,7 +8132,8 @@
         "-me"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ka_A253a_yac",
@@ -7991,7 +8173,8 @@
         "-γac"
       ]
     ],
-    "comment": "The -γac-series is restricted to the specific functions. The starred variant is the book's addition to the example it quotes."
+    "comment": "The -γac-series is restricted to the specific functions. The starred variant is the book's addition to the example it quotes. The book stars this alternative inside the example; the translation is the example's.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ka_A253b",
@@ -8039,7 +8222,8 @@
         "-me"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ka_A254",
@@ -8107,7 +8291,8 @@
         "vera-"
       ]
     ],
-    "comment": "In all non-emphatic non-specific functions, including indirect negation and comparative, the -me-series is used."
+    "comment": "In all non-emphatic non-specific functions, including indirect negation and comparative, the -me-series is used.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ka_A255",
@@ -8171,7 +8356,8 @@
         "-me"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ka_A256a",
@@ -8231,7 +8417,8 @@
         "ara-"
       ]
     ],
-    "comment": "In the direct-negation function, one of the three negative series (ara-, vera-, nura-) is used, normally together with verbal negation (though this may optionally be omitted)."
+    "comment": "In the direct-negation function, one of the three negative series (ara-, vera-, nura-) is used, normally together with verbal negation (though this may optionally be omitted).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ka_A256b",
@@ -8275,7 +8462,8 @@
         "ara-"
       ]
     ],
-    "comment": "One of the three negative series, normally with verbal negation."
+    "comment": "One of the three negative series, normally with verbal negation.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ka_A256c",
@@ -8323,7 +8511,8 @@
         "nura-"
       ]
     ],
-    "comment": "Ar is the unmarked negator, ver contains an additional semantic component of possibility, and nu is used in prohibitive sentences."
+    "comment": "Ar is the unmarked negator, ver contains an additional semantic component of possibility, and nu is used in prohibitive sentences.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_zh_A264",
@@ -8383,7 +8572,8 @@
         "bare interrogative"
       ]
     ],
-    "comment": "Imperative."
+    "comment": "Imperative.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_zh_A265a",
@@ -8435,7 +8625,8 @@
         "bare interrogative"
       ]
     ],
-    "comment": "A context of uncertainty or inference."
+    "comment": "A context of uncertainty or inference.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_zh_A265b_le",
@@ -8491,7 +8682,8 @@
         "bare interrogative"
       ]
     ],
-    "comment": "No function heading is printed over (A265); it follows the prose 'bare interrogatives are also used in contexts of uncertainty and inference' after the irrealis example (A264)."
+    "comment": "No function heading is printed over (A265); it follows the prose 'bare interrogatives are also used in contexts of uncertainty and inference' after the irrealis example (A264).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_zh_A265b_bare",
@@ -8543,7 +8735,8 @@
         "bare interrogative"
       ]
     ],
-    "comment": "No function heading is printed over (A265); it follows the prose 'bare interrogatives are also used in contexts of uncertainty and inference' after the irrealis example (A264)."
+    "comment": "No function heading is printed over (A265); it follows the prose 'bare interrogatives are also used in contexts of uncertainty and inference' after the irrealis example (A264).",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_zh_A266a",
@@ -8595,7 +8788,8 @@
         "bare interrogative"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_zh_A266b",
@@ -8626,7 +8820,8 @@
         "bare interrogative"
       ]
     ],
-    "comment": "The book's gloss line is incomplete (only 'you if want what ... press'; dehuà, língr, zhòu, xíngle are unglossed), so no glossed tokens are given."
+    "comment": "The book's gloss line is incomplete (only 'you if want what ... press'; dehuà, língr, zhòu, xíngle are unglossed), so no glossed tokens are given.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_zh_A267a",
@@ -8690,7 +8885,8 @@
         "bare interrogative"
       ]
     ],
-    "comment": "In the direct-negation function, only shénme is perfect, shéi being less acceptable, and nǎge (N) 'which (N)' is unacceptable."
+    "comment": "In the direct-negation function, only shénme is perfect, shéi being less acceptable, and nǎge (N) 'which (N)' is unacceptable.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_zh_A267b",
@@ -8738,7 +8934,8 @@
         "bare interrogative"
       ]
     ],
-    "comment": "Under direct negation only shénme is perfect; shéi is less acceptable."
+    "comment": "Under direct negation only shénme is perfect; shéi is less acceptable.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_zh_A267c",
@@ -8786,7 +8983,8 @@
         "bare interrogative"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_zh_A267d_ren",
@@ -8838,7 +9036,8 @@
         "nǎge"
       ]
     ],
-    "comment": "In the direct-negation function, only shénme is perfect, shéi being less acceptable, and nǎge (N) 'which (N)' is unacceptable."
+    "comment": "In the direct-negation function, only shénme is perfect, shéi being less acceptable, and nǎge (N) 'which (N)' is unacceptable.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_zh_A267d_bare",
@@ -8886,7 +9085,8 @@
         "nǎge"
       ]
     ],
-    "comment": "In the direct-negation function, only shénme is perfect, shéi being less acceptable, and nǎge (N) 'which (N)' is unacceptable."
+    "comment": "In the direct-negation function, only shénme is perfect, shéi being less acceptable, and nǎge (N) 'which (N)' is unacceptable.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_zh_A268_unknown",
@@ -8958,7 +9158,8 @@
         "generic noun"
       ]
     ],
-    "comment": "Bare interrogatives are not admissible in specific contexts that lack an element of uncertainty."
+    "comment": "Bare interrogatives are not admissible in specific contexts that lack an element of uncertainty.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_zh_A268_known",
@@ -9030,7 +9231,8 @@
         "generic noun"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_zh_A269a",
@@ -9082,7 +9284,8 @@
         "yě"
       ]
     ],
-    "comment": "The dōu- and yě-series are used interchangeably in the direct-negation function."
+    "comment": "The dōu- and yě-series are used interchangeably in the direct-negation function.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_zh_A269b",
@@ -9134,7 +9337,8 @@
         "dōu"
       ]
     ],
-    "comment": "The dōu- and yě-series occur only preverbally and are used interchangeably."
+    "comment": "The dōu- and yě-series occur only preverbally and are used interchangeably.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_zh_A269c_dou",
@@ -9190,7 +9394,8 @@
         "dōu"
       ]
     ],
-    "comment": "The dōu- and yě-series are used interchangeably in the direct-negation function."
+    "comment": "The dōu- and yě-series are used interchangeably in the direct-negation function.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_zh_A269c_ye",
@@ -9246,7 +9451,8 @@
         "yě"
       ]
     ],
-    "comment": "The dōu- and yě-series are used interchangeably in the direct-negation function."
+    "comment": "The dōu- and yě-series are used interchangeably in the direct-negation function.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_zh_A269d",
@@ -9290,7 +9496,8 @@
         "dōu"
       ]
     ],
-    "comment": "The book prints 'Shèi-dōu'."
+    "comment": "The book prints 'Shèi-dōu'.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_zh_A270",
@@ -9346,7 +9553,8 @@
         "rènhé"
       ]
     ],
-    "comment": "Mainly in conjunction with the adverb dōu."
+    "comment": "Mainly in conjunction with the adverb dōu.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_zh_A271",
@@ -9414,7 +9622,8 @@
         "rènhé"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_zh_A272",
@@ -9478,7 +9687,8 @@
         "rènhé"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_zh_A273",
@@ -9538,7 +9748,8 @@
         "rènhé"
       ]
     ],
-    "comment": "The book prints 'xiǎngxin'."
+    "comment": "The book prints 'xiǎngxin'.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_qu_A274a",
@@ -9590,7 +9801,8 @@
         "bare interrogative"
       ]
     ],
-    "comment": "The bare interrogative pronouns are used in the specific-unknown function."
+    "comment": "The bare interrogative pronouns are used in the specific-unknown function.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_qu_A274b",
@@ -9638,7 +9850,8 @@
         "bare interrogative"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_qu_A275a",
@@ -9686,7 +9899,8 @@
         "-pis"
       ]
     ],
-    "comment": "Imperative."
+    "comment": "Imperative.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_qu_A275b",
@@ -9730,7 +9944,8 @@
         "-pis"
       ]
     ],
-    "comment": "The -pis-series is used in all non-specific functions."
+    "comment": "The -pis-series is used in all non-specific functions.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_qu_A276a",
@@ -9770,7 +9985,8 @@
         "-pis"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_qu_A276b",
@@ -9814,7 +10030,8 @@
         "-pis"
       ]
     ],
-    "comment": "The middle segment of rika-rnin-qa is hard to read in the scan and may be -min-."
+    "comment": "UNVERIFIED: the middle segment of rika-rnin-qa, which the scan does not settle; it may be -min-.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_qu_A277",
@@ -9866,7 +10083,8 @@
         "-pis"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_qu_A278",
@@ -9914,7 +10132,8 @@
         "-pis"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_qu_A279a",
@@ -9962,7 +10181,8 @@
         "-pis"
       ]
     ],
-    "comment": "The -pis-series is also used in the negative functions."
+    "comment": "The -pis-series is also used in the negative functions.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_qu_A279b",
@@ -10010,7 +10230,8 @@
         "-pis"
       ]
     ],
-    "comment": "The scope of negation is marked by the discontinuous negators."
+    "comment": "The scope of negation is marked by the discontinuous negators.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_qu_A280",
@@ -10062,7 +10283,8 @@
         "-pis"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ja_A281_unknown",
@@ -10115,7 +10337,7 @@
         "know-NEG-PRES"
       ]
     ],
-    "translation": "Someone called; I don't know who.",
+    "translation": "Someone called, I don't know who.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -10134,7 +10356,8 @@
         "-ka"
       ]
     ],
-    "comment": "Specific unknown and specific known alike."
+    "comment": "Specific unknown and specific known alike.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ja_A281_known",
@@ -10191,7 +10414,7 @@
         "try:IMPV"
       ]
     ],
-    "translation": "Someone called; guess who!",
+    "translation": "Someone called, guess who!",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -10210,7 +10433,8 @@
         "-ka"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ja_A282a",
@@ -10258,7 +10482,8 @@
         "-ka"
       ]
     ],
-    "comment": "Hortative."
+    "comment": "Hortative.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ja_A282b",
@@ -10306,7 +10531,8 @@
         "-ka"
       ]
     ],
-    "comment": "Distributive."
+    "comment": "Distributive.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ja_A283a",
@@ -10358,7 +10584,8 @@
         "-ka"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ja_A283a_mo",
@@ -10406,7 +10633,8 @@
         "-mo"
       ]
     ],
-    "comment": "The starred variant is the book's addition to the example it quotes."
+    "comment": "The starred variant is the book's addition to the example it quotes. The book stars this alternative inside the example; the translation is the example's.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ja_A283b",
@@ -10474,7 +10702,8 @@
         "-ka"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ja_A283b_mo",
@@ -10538,7 +10767,8 @@
         "-mo"
       ]
     ],
-    "comment": "The starred variant is the book's addition to the example it quotes."
+    "comment": "The starred variant is the book's addition to the example it quotes. The book stars this alternative inside the example; the translation is the example's.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ja_A284",
@@ -10598,7 +10828,8 @@
         "-mo"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ja_A285",
@@ -10646,7 +10877,8 @@
         "-mo"
       ]
     ],
-    "comment": "With verbal negation."
+    "comment": "With verbal negation.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ja_A286",
@@ -10702,7 +10934,8 @@
         "-mo"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ja_A287",
@@ -10742,7 +10975,8 @@
         "-demo"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ko_A288a_bare_unknown",
@@ -10782,7 +11016,8 @@
         "bare interrogative"
       ]
     ],
-    "comment": "Specific unknown and specific known alike."
+    "comment": "Specific unknown and specific known alike. The book translates 'Somebody called. (I didn't catch her name./Guess who.)'; the contexts take its two continuations.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ko_A288a_nka_unknown",
@@ -10822,7 +11057,8 @@
         "-nka"
       ]
     ],
-    "comment": "Specific unknown and specific known alike."
+    "comment": "Specific unknown and specific known alike. The book translates 'Somebody called. (I didn't catch her name./Guess who.)'; the contexts take its two continuations.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ko_A288a_bare_known",
@@ -10862,7 +11098,8 @@
         "bare interrogative"
       ]
     ],
-    "comment": "Specific unknown and specific known alike."
+    "comment": "Specific unknown and specific known alike. The book translates 'Somebody called. (I didn't catch her name./Guess who.)'; the contexts take its two continuations.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ko_A288a_nka_known",
@@ -10902,7 +11139,8 @@
         "-nka"
       ]
     ],
-    "comment": "Specific unknown and specific known alike."
+    "comment": "Specific unknown and specific known alike. The book translates 'Somebody called. (I didn't catch her name./Guess who.)'; the contexts take its two continuations.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ko_A288b_bare",
@@ -10950,7 +11188,8 @@
         "bare interrogative"
       ]
     ],
-    "comment": "The heading is specific known/unknown."
+    "comment": "The heading is specific known/unknown.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ko_A288b_nka",
@@ -10998,7 +11237,8 @@
         "-nka"
       ]
     ],
-    "comment": "The heading is specific known/unknown."
+    "comment": "The heading is specific known/unknown.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ko_A289a_bare",
@@ -11042,7 +11282,8 @@
         "bare interrogative"
       ]
     ],
-    "comment": "Imperative."
+    "comment": "Imperative.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ko_A289a_nka",
@@ -11086,7 +11327,8 @@
         "-nka"
       ]
     ],
-    "comment": "Imperative."
+    "comment": "Imperative.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ko_A289b",
@@ -11130,7 +11372,8 @@
         "bare interrogative"
       ]
     ],
-    "comment": "Hortative."
+    "comment": "Hortative.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ko_A290a_bare",
@@ -11190,7 +11433,8 @@
         "bare interrogative"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ko_A290a_nka",
@@ -11250,7 +11494,8 @@
         "-nka"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ko_A290a_na",
@@ -11310,7 +11555,8 @@
         "-na"
       ]
     ],
-    "comment": "The free-choice series are excluded."
+    "comment": "The free-choice series are excluded. The book stars this alternative inside the example; the translation is the example's.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ko_A290a_tunci",
@@ -11370,7 +11616,8 @@
         "-tunci"
       ]
     ],
-    "comment": "The free-choice series are excluded."
+    "comment": "The free-choice series are excluded. The book stars this alternative inside the example; the translation is the example's.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ko_A290b_bare",
@@ -11414,7 +11661,8 @@
         "bare interrogative"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ko_A290b_nka",
@@ -11458,7 +11706,8 @@
         "-nka"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ko_A290b_na",
@@ -11502,7 +11751,8 @@
         "-na"
       ]
     ],
-    "comment": "The free-choice series are excluded."
+    "comment": "The free-choice series are excluded. The book stars this alternative inside the example; the translation is the example's.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ko_A290b_tunci",
@@ -11546,7 +11796,8 @@
         "-tunci"
       ]
     ],
-    "comment": "The free-choice series are excluded."
+    "comment": "The free-choice series are excluded. The book stars this alternative inside the example; the translation is the example's.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ko_A291_na",
@@ -11598,7 +11849,8 @@
         "-na"
       ]
     ],
-    "comment": "The -na- and -tunci-series are used interchangeably in the free-choice function."
+    "comment": "The -na- and -tunci-series are used interchangeably in the free-choice function.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ko_A291_tunci",
@@ -11650,7 +11902,8 @@
         "-tunci"
       ]
     ],
-    "comment": "The -na- and -tunci-series are used interchangeably in the free-choice function."
+    "comment": "The -na- and -tunci-series are used interchangeably in the free-choice function.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ko_A291_amu_na",
@@ -11702,7 +11955,8 @@
         "-na"
       ]
     ],
-    "comment": "The -na- and -tunci-series are used interchangeably in the free-choice function."
+    "comment": "The -na- and -tunci-series are used interchangeably in the free-choice function.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ko_A291_amu_tunci",
@@ -11754,7 +12008,8 @@
         "-tunci"
       ]
     ],
-    "comment": "The -na- and -tunci-series are used interchangeably in the free-choice function."
+    "comment": "The -na- and -tunci-series are used interchangeably in the free-choice function.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ko_A292_to",
@@ -11802,7 +12057,8 @@
         "-to"
       ]
     ],
-    "comment": "Under indirect negation the bare interrogatives and the -nka-series are also possible."
+    "comment": "Under indirect negation the bare interrogatives and the -nka-series are also possible.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ko_A292_bare",
@@ -11850,7 +12106,8 @@
         "bare interrogative"
       ]
     ],
-    "comment": "Under indirect negation the bare interrogatives and the -nka-series are also possible."
+    "comment": "Under indirect negation the bare interrogatives and the -nka-series are also possible.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ko_A292_nka",
@@ -11898,7 +12155,8 @@
         "-nka"
       ]
     ],
-    "comment": "Under indirect negation the bare interrogatives and the -nka-series are also possible."
+    "comment": "Under indirect negation the bare interrogatives and the -nka-series are also possible.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ko_A293a_amu",
@@ -11950,7 +12208,8 @@
         "-to"
       ]
     ],
-    "comment": "With verbal negation."
+    "comment": "With verbal negation.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ko_A293a_nwukwu",
@@ -12002,7 +12261,8 @@
         "-to"
       ]
     ],
-    "comment": "With verbal negation."
+    "comment": "With verbal negation.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ko_A293b",
@@ -12054,7 +12314,8 @@
         "-to"
       ]
     ],
-    "comment": "In the direct-negation function, it co-occurs with verbal negation."
+    "comment": "In the direct-negation function, it co-occurs with verbal negation.",
+    "verified": "page-image"
   },
   {
     "id": "haspelmath1997_ko_A294",
@@ -12114,6 +12375,7 @@
         "-to"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]
