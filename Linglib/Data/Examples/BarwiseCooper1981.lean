@@ -305,8 +305,8 @@ def ex_37a : LinguisticExample :=
     paperFeatures := [("determiner", "no")]
     comment := "" }
 
-def ex_37'a : LinguisticExample :=
-  { id := "barwisecooper1981_37'a"
+def ex_37_prime_a : LinguisticExample :=
+  { id := "barwisecooper1981_37_prime_a"
     source := ⟨"barwise-cooper-1981", "(37'a)"⟩
     reportedIn := none
     language := "stan1293"
@@ -321,8 +321,8 @@ def ex_37'a : LinguisticExample :=
     paperFeatures := [("determiner", "no"), ("construction", "there-sentence")]
     comment := "" }
 
-def ex_37''a : LinguisticExample :=
-  { id := "barwisecooper1981_37''a"
+def ex_37_prime_prime_a : LinguisticExample :=
+  { id := "barwisecooper1981_37_prime_prime_a"
     source := ⟨"barwise-cooper-1981", "(37''a)"⟩
     reportedIn := none
     language := "stan1293"
@@ -338,7 +338,7 @@ def ex_37''a : LinguisticExample :=
     comment := "The symmetric form: restrictor and scope switched." }
 
 def ex_4_10_32a : LinguisticExample :=
-  { id := "barwisecooper1981_4.10-32a"
+  { id := "barwisecooper1981_4_10-32a"
     source := ⟨"barwise-cooper-1981", "§4.10 (32a)"⟩
     reportedIn := none
     language := "stan1293"
@@ -354,7 +354,7 @@ def ex_4_10_32a : LinguisticExample :=
     comment := "" }
 
 def ex_4_10_32b : LinguisticExample :=
-  { id := "barwisecooper1981_4.10-32b"
+  { id := "barwisecooper1981_4_10-32b"
     source := ⟨"barwise-cooper-1981", "§4.10 (32b)"⟩
     reportedIn := none
     language := "stan1293"
@@ -370,7 +370,7 @@ def ex_4_10_32b : LinguisticExample :=
     comment := "" }
 
 def ex_4_10_32c : LinguisticExample :=
-  { id := "barwisecooper1981_4.10-32c"
+  { id := "barwisecooper1981_4_10-32c"
     source := ⟨"barwise-cooper-1981", "§4.10 (32c)"⟩
     reportedIn := none
     language := "stan1293"
@@ -386,7 +386,7 @@ def ex_4_10_32c : LinguisticExample :=
     comment := "" }
 
 def ex_4_10_33a : LinguisticExample :=
-  { id := "barwisecooper1981_4.10-33a"
+  { id := "barwisecooper1981_4_10-33a"
     source := ⟨"barwise-cooper-1981", "§4.10 (33a)"⟩
     reportedIn := none
     language := "stan1293"
@@ -401,8 +401,8 @@ def ex_4_10_33a : LinguisticExample :=
     paperFeatures := [("conjunction", "sentential")]
     comment := "" }
 
-def ex_4_10_33a' : LinguisticExample :=
-  { id := "barwisecooper1981_4.10-33a'"
+def ex_4_10_33a_prime : LinguisticExample :=
+  { id := "barwisecooper1981_4_10-33a_prime"
     source := ⟨"barwise-cooper-1981", "§4.10 (33a')"⟩
     reportedIn := none
     language := "stan1293"
@@ -418,7 +418,7 @@ def ex_4_10_33a' : LinguisticExample :=
     comment := "" }
 
 def ex_4_10_35a : LinguisticExample :=
-  { id := "barwisecooper1981_4.10-35a"
+  { id := "barwisecooper1981_4_10-35a"
     source := ⟨"barwise-cooper-1981", "§4.10 (35a)"⟩
     reportedIn := none
     language := "stan1293"
@@ -434,7 +434,7 @@ def ex_4_10_35a : LinguisticExample :=
     comment := "" }
 
 def ex_4_10_36a : LinguisticExample :=
-  { id := "barwisecooper1981_4.10-36a"
+  { id := "barwisecooper1981_4_10-36a"
     source := ⟨"barwise-cooper-1981", "§4.10 (36a)"⟩
     reportedIn := none
     language := "stan1293"
@@ -450,7 +450,7 @@ def ex_4_10_36a : LinguisticExample :=
     comment := "" }
 
 def ex_4_10_37a : LinguisticExample :=
-  { id := "barwisecooper1981_4.10-37a"
+  { id := "barwisecooper1981_4_10-37a"
     source := ⟨"barwise-cooper-1981", "§4.10 (37a)"⟩
     reportedIn := none
     language := "stan1293"
@@ -466,7 +466,7 @@ def ex_4_10_37a : LinguisticExample :=
     comment := "" }
 
 def ex_4_10_37b : LinguisticExample :=
-  { id := "barwisecooper1981_4.10-37b"
+  { id := "barwisecooper1981_4_10-37b"
     source := ⟨"barwise-cooper-1981", "§4.10 (37b)"⟩
     reportedIn := none
     language := "stan1293"
@@ -785,6 +785,6 @@ def ex_47 : LinguisticExample :=
     paperFeatures := [("determiner", "quite a few")]
     comment := "Not accepted as a paraphrase of (46): quite a few is not used as the dual of many." }
 
-def all : List LinguisticExample := [ex_6a, ex_6b, ex_6c, ex_6d, ex_21, ex_22, ex_23, ex_24a, ex_24c, ex_30, ex_31, ex_32, ex_33, ex_34, ex_35a, ex_35b, ex_36b, ex_37a, ex_37'a, ex_37''a, ex_4_10_32a, ex_4_10_32b, ex_4_10_32c, ex_4_10_33a, ex_4_10_33a', ex_4_10_35a, ex_4_10_36a, ex_4_10_37a, ex_4_10_37b, ex_40a, ex_40b, ex_40c, ex_40d, ex_40e, ex_41a, ex_41b, ex_41c, ex_41d, ex_41e, ex_41f, ex_41g, ex_42, ex_43, ex_44a, ex_44b, ex_44c, ex_46, ex_47]
+def all : List LinguisticExample := [ex_6a, ex_6b, ex_6c, ex_6d, ex_21, ex_22, ex_23, ex_24a, ex_24c, ex_30, ex_31, ex_32, ex_33, ex_34, ex_35a, ex_35b, ex_36b, ex_37a, ex_37_prime_a, ex_37_prime_prime_a, ex_4_10_32a, ex_4_10_32b, ex_4_10_32c, ex_4_10_33a, ex_4_10_33a_prime, ex_4_10_35a, ex_4_10_36a, ex_4_10_37a, ex_4_10_37b, ex_40a, ex_40b, ex_40c, ex_40d, ex_40e, ex_41a, ex_41b, ex_41c, ex_41d, ex_41e, ex_41f, ex_41g, ex_42, ex_43, ex_44a, ex_44b, ex_44c, ex_46, ex_47]
 
 end BarwiseCooper1981.Examples

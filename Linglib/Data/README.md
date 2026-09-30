@@ -36,7 +36,9 @@ Linglib/Data/
 
 See [`Examples/README.md`](Examples/README.md). Per-paper JSON; the generator
 writes a module per paper that studies import. JSON (not CSV) because the
-schema has nested fields.
+schema has nested fields. `scripts/export_examples_cldf.py` exports the whole
+set as a CLDF dataset, validated in CI, with its languages in
+`Examples/languages.csv` (Glottolog 5.3).
 
 ### Forms — CLDF word-level data
 

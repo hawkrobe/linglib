@@ -18,7 +18,7 @@ namespace Corbett1991.Examples
 open Data.Examples
 
 def ex_3_1 : LinguisticExample :=
-  { id := "corbett1991_3.1"
+  { id := "corbett1991_3_1"
     source := ⟨"corbett-1991", "ch. 3 (1)"⟩
     reportedIn := none
     language := "russ1263"
@@ -34,7 +34,7 @@ def ex_3_1 : LinguisticExample :=
     comment := "The diminutive suffix moves gorod 'town' into declension II without changing its masculine gender: the assignment rules disregard affective suffixes." }
 
 def ex_3_2 : LinguisticExample :=
-  { id := "corbett1991_3.2"
+  { id := "corbett1991_3_2"
     source := ⟨"corbett-1991", "ch. 3 (2)"⟩
     reportedIn := none
     language := "swah1253"
@@ -50,7 +50,7 @@ def ex_3_2 : LinguisticExample :=
     comment := "Adjective, numeral and verb carry the class 7 prefix ki-, as does the noun: overt gender." }
 
 def ex_3_3 : LinguisticExample :=
-  { id := "corbett1991_3.3"
+  { id := "corbett1991_3_3"
     source := ⟨"corbett-1991", "ch. 3 (3)"⟩
     reportedIn := none
     language := "swah1253"
@@ -66,7 +66,7 @@ def ex_3_3 : LinguisticExample :=
     comment := "" }
 
 def ex_3_4 : LinguisticExample :=
-  { id := "corbett1991_3.4"
+  { id := "corbett1991_3_4"
     source := ⟨"corbett-1991", "ch. 3 (4)"⟩
     reportedIn := none
     language := "swah1253"
@@ -82,7 +82,7 @@ def ex_3_4 : LinguisticExample :=
     comment := "The noun prefix m- and the verbal prefix a- differ: prefixes on the noun do not always match the agreement forms." }
 
 def ex_3_5 : LinguisticExample :=
-  { id := "corbett1991_3.5"
+  { id := "corbett1991_3_5"
     source := ⟨"corbett-1991", "ch. 3 (5)"⟩
     reportedIn := none
     language := "swah1253"
@@ -98,7 +98,7 @@ def ex_3_5 : LinguisticExample :=
     comment := "A class 7 prefix on the noun with class 1 agreements: the noun is in gender 1/2 by the agreements it takes, whatever its prefix." }
 
 def ex_3_6 : LinguisticExample :=
-  { id := "corbett1991_3.6"
+  { id := "corbett1991_3_6"
     source := ⟨"corbett-1991", "ch. 3 (6)"⟩
     reportedIn := none
     language := "swah1253"
@@ -114,7 +114,7 @@ def ex_3_6 : LinguisticExample :=
     comment := "Morphologically 7/8, but an animate, so 1/2 concords: the semantic rule takes precedence over the morphological rules." }
 
 def ex_3_7 : LinguisticExample :=
-  { id := "corbett1991_3.7"
+  { id := "corbett1991_3_7"
     source := ⟨"corbett-1991", "ch. 3 (7)"⟩
     reportedIn := none
     language := "swah1253"
@@ -130,7 +130,7 @@ def ex_3_7 : LinguisticExample :=
     comment := "Starred; acceptable only if the hippopotamus is a toy, that is, not animate." }
 
 def ex_6_1 : LinguisticExample :=
-  { id := "corbett1991_6.1"
+  { id := "corbett1991_6_1"
     source := ⟨"corbett-1991", "ch. 6 (1)"⟩
     reportedIn := none
     language := "stan1290"
@@ -146,7 +146,7 @@ def ex_6_1 : LinguisticExample :=
     comment := "Same morphosyntactic form, domain and target: garçon and jardin take identical agreements and belong to one agreement class." }
 
 def ex_6_2 : LinguisticExample :=
-  { id := "corbett1991_6.2"
+  { id := "corbett1991_6_2"
     source := ⟨"corbett-1991", "ch. 6 (2)"⟩
     reportedIn := none
     language := "stan1290"
@@ -162,7 +162,7 @@ def ex_6_2 : LinguisticExample :=
     comment := "" }
 
 def ex_6_3 : LinguisticExample :=
-  { id := "corbett1991_6.3"
+  { id := "corbett1991_6_3"
     source := ⟨"corbett-1991", "ch. 6 (3)"⟩
     reportedIn := none
     language := "stan1290"
@@ -178,7 +178,7 @@ def ex_6_3 : LinguisticExample :=
     comment := "" }
 
 def ex_6_4 : LinguisticExample :=
-  { id := "corbett1991_6.4"
+  { id := "corbett1991_6_4"
     source := ⟨"corbett-1991", "ch. 6 (4)"⟩
     reportedIn := none
     language := "stan1290"
@@ -194,7 +194,7 @@ def ex_6_4 : LinguisticExample :=
     comment := "femme and fleur form the second agreement class." }
 
 def ex_6_5 : LinguisticExample :=
-  { id := "corbett1991_6.5"
+  { id := "corbett1991_6_5"
     source := ⟨"corbett-1991", "ch. 6 (5)"⟩
     reportedIn := none
     language := "roma1327"
@@ -210,7 +210,7 @@ def ex_6_5 : LinguisticExample :=
     comment := "" }
 
 def ex_6_6 : LinguisticExample :=
-  { id := "corbett1991_6.6"
+  { id := "corbett1991_6_6"
     source := ⟨"corbett-1991", "ch. 6 (6)"⟩
     reportedIn := none
     language := "roma1327"
@@ -226,7 +226,7 @@ def ex_6_6 : LinguisticExample :=
     comment := "" }
 
 def ex_6_7 : LinguisticExample :=
-  { id := "corbett1991_6.7"
+  { id := "corbett1991_6_7"
     source := ⟨"corbett-1991", "ch. 6 (7)"⟩
     reportedIn := none
     language := "roma1327"
@@ -242,7 +242,7 @@ def ex_6_7 : LinguisticExample :=
     comment := "" }
 
 def ex_6_8 : LinguisticExample :=
-  { id := "corbett1991_6.8"
+  { id := "corbett1991_6_8"
     source := ⟨"corbett-1991", "ch. 6 (8)"⟩
     reportedIn := none
     language := "roma1327"
@@ -258,7 +258,7 @@ def ex_6_8 : LinguisticExample :=
     comment := "" }
 
 def ex_6_9 : LinguisticExample :=
-  { id := "corbett1991_6.9"
+  { id := "corbett1991_6_9"
     source := ⟨"corbett-1991", "ch. 6 (9)"⟩
     reportedIn := none
     language := "roma1327"
@@ -274,7 +274,7 @@ def ex_6_9 : LinguisticExample :=
     comment := "scaun takes the same form as bărbat in the singular and as fată in the plural: three agreement classes with two target genders in each number." }
 
 def ex_6_10 : LinguisticExample :=
-  { id := "corbett1991_6.10"
+  { id := "corbett1991_6_10"
     source := ⟨"corbett-1991", "ch. 6 (10)"⟩
     reportedIn := none
     language := "roma1327"
@@ -290,7 +290,7 @@ def ex_6_10 : LinguisticExample :=
     comment := "" }
 
 def ex_6_11 : LinguisticExample :=
-  { id := "corbett1991_6.11"
+  { id := "corbett1991_6_11"
     source := ⟨"corbett-1991", "ch. 6 (11)"⟩
     reportedIn := none
     language := "roma1326"
@@ -306,7 +306,7 @@ def ex_6_11 : LinguisticExample :=
     comment := "Surselvan; predicative adjectives take -s for masculine, -a for feminine controllers." }
 
 def ex_6_12 : LinguisticExample :=
-  { id := "corbett1991_6.12"
+  { id := "corbett1991_6_12"
     source := ⟨"corbett-1991", "ch. 6 (12)"⟩
     reportedIn := none
     language := "roma1326"
@@ -322,7 +322,7 @@ def ex_6_12 : LinguisticExample :=
     comment := "" }
 
 def ex_6_13 : LinguisticExample :=
-  { id := "corbett1991_6.13"
+  { id := "corbett1991_6_13"
     source := ⟨"corbett-1991", "ch. 6 (13)"⟩
     reportedIn := none
     language := "roma1326"
@@ -338,7 +338,7 @@ def ex_6_13 : LinguisticExample :=
     comment := "The -Ø form occurs with controllers unspecified for gender and number and never with a noun-headed controller: a neutral target gender, one of the two non-lexical genders." }
 
 def ex_6_14 : LinguisticExample :=
-  { id := "corbett1991_6.14"
+  { id := "corbett1991_6_14"
     source := ⟨"corbett-1991", "ch. 6 (14)"⟩
     reportedIn := none
     language := "nyan1308"
@@ -354,7 +354,7 @@ def ex_6_14 : LinguisticExample :=
     comment := "Chichewa: the locative prefix mu- on the verb is a minor target gender with no nouns regularly assigned to a corresponding controller gender." }
 
 def ex_6_15 : LinguisticExample :=
-  { id := "corbett1991_6.15"
+  { id := "corbett1991_6_15"
     source := ⟨"corbett-1991", "ch. 6 (15)"⟩
     reportedIn := none
     language := "russ1263"
@@ -370,7 +370,7 @@ def ex_6_15 : LinguisticExample :=
     comment := "Nominative, accusative and genitive: the noun itself takes -u in the accusative, yet the masculine modifier shows accusative-genitive syncretism, so animacy is not a case change on the whole phrase but a subgender." }
 
 def ex_6_16 : LinguisticExample :=
-  { id := "corbett1991_6.16"
+  { id := "corbett1991_6_16"
     source := ⟨"corbett-1991", "ch. 6 (16)"⟩
     reportedIn := none
     language := "nort2699"
@@ -386,7 +386,7 @@ def ex_6_16 : LinguisticExample :=
     comment := "Kolami: the numerals 'two', 'three' and 'four' have a form for female humans beside the male-human and other forms, but they alone do: overdifferentiated targets, which do not induce a third gender." }
 
 def ex_6_17 : LinguisticExample :=
-  { id := "corbett1991_6.17"
+  { id := "corbett1991_6_17"
     source := ⟨"corbett-1991", "ch. 6 (17)"⟩
     reportedIn := none
     language := "nort2699"
@@ -402,7 +402,7 @@ def ex_6_17 : LinguisticExample :=
     comment := "" }
 
 def ex_6_18 : LinguisticExample :=
-  { id := "corbett1991_6.18"
+  { id := "corbett1991_6_18"
     source := ⟨"corbett-1991", "ch. 6 (18)"⟩
     reportedIn := none
     language := "nort2699"
@@ -418,7 +418,7 @@ def ex_6_18 : LinguisticExample :=
     comment := "" }
 
 def ex_6_19 : LinguisticExample :=
-  { id := "corbett1991_6.19"
+  { id := "corbett1991_6_19"
     source := ⟨"corbett-1991", "ch. 6 (19)"⟩
     reportedIn := none
     language := "russ1263"
@@ -434,7 +434,7 @@ def ex_6_19 : LinguisticExample :=
     comment := "More common than the feminine." }
 
 def ex_6_20 : LinguisticExample :=
-  { id := "corbett1991_6.20"
+  { id := "corbett1991_6_20"
     source := ⟨"corbett-1991", "ch. 6 (20)"⟩
     reportedIn := none
     language := "russ1263"
@@ -450,7 +450,7 @@ def ex_6_20 : LinguisticExample :=
     comment := "" }
 
 def ex_6_21 : LinguisticExample :=
-  { id := "corbett1991_6.21"
+  { id := "corbett1991_6_21"
     source := ⟨"corbett-1991", "ch. 6 (21)"⟩
     reportedIn := none
     language := "russ1263"
@@ -466,7 +466,7 @@ def ex_6_21 : LinguisticExample :=
     comment := "" }
 
 def ex_6_22 : LinguisticExample :=
-  { id := "corbett1991_6.22"
+  { id := "corbett1991_6_22"
     source := ⟨"corbett-1991", "ch. 6 (22)"⟩
     reportedIn := none
     language := "russ1263"
@@ -482,7 +482,7 @@ def ex_6_22 : LinguisticExample :=
     comment := "In the predicate the feminine is somewhat more common." }
 
 def ex_6_23 : LinguisticExample :=
-  { id := "corbett1991_6.23"
+  { id := "corbett1991_6_23"
     source := ⟨"corbett-1991", "ch. 6 (23)"⟩
     reportedIn := none
     language := "russ1263"
@@ -498,7 +498,7 @@ def ex_6_23 : LinguisticExample :=
     comment := "Masculine and feminine agreement with one and the same noun at once: only the notion of consistent agreement pattern separates the two." }
 
 def ex_6_24 : LinguisticExample :=
-  { id := "corbett1991_6.24"
+  { id := "corbett1991_6_24"
     source := ⟨"corbett-1991", "ch. 6 (24)"⟩
     reportedIn := none
     language := "stan1293"
@@ -514,7 +514,7 @@ def ex_6_24 : LinguisticExample :=
     comment := "Boat nouns take the neuter pattern." }
 
 def ex_6_25 : LinguisticExample :=
-  { id := "corbett1991_6.25"
+  { id := "corbett1991_6_25"
     source := ⟨"corbett-1991", "ch. 6 (25)"⟩
     reportedIn := none
     language := "stan1293"
@@ -530,7 +530,7 @@ def ex_6_25 : LinguisticExample :=
     comment := "" }
 
 def ex_6_26 : LinguisticExample :=
-  { id := "corbett1991_6.26"
+  { id := "corbett1991_6_26"
     source := ⟨"corbett-1991", "ch. 6 (26)"⟩
     reportedIn := none
     language := "stan1293"
@@ -546,7 +546,7 @@ def ex_6_26 : LinguisticExample :=
     comment := "Boat nouns take agreements from two consistent patterns without taking all the forms of both." }
 
 def ex_6_27 : LinguisticExample :=
-  { id := "corbett1991_6.27"
+  { id := "corbett1991_6_27"
     source := ⟨"corbett-1991", "ch. 6 (27)"⟩
     reportedIn := none
     language := "mbaa1245"
@@ -562,7 +562,7 @@ def ex_6_27 : LinguisticExample :=
     comment := "Mba: the optional animate marker beside class 1 agreement." }
 
 def ex_6_28 : LinguisticExample :=
-  { id := "corbett1991_6.28"
+  { id := "corbett1991_6_28"
     source := ⟨"corbett-1991", "ch. 6 (28)"⟩
     reportedIn := none
     language := "mbaa1245"
@@ -578,7 +578,7 @@ def ex_6_28 : LinguisticExample :=
     comment := "For an inanimate taking the same numeral form the optional element is not available." }
 
 def ex_6_29 : LinguisticExample :=
-  { id := "corbett1991_6.29"
+  { id := "corbett1991_6_29"
     source := ⟨"corbett-1991", "ch. 6 (29)"⟩
     reportedIn := none
     language := "mbaa1245"
@@ -594,7 +594,7 @@ def ex_6_29 : LinguisticExample :=
     comment := "" }
 
 def ex_6_30 : LinguisticExample :=
-  { id := "corbett1991_6.30"
+  { id := "corbett1991_6_30"
     source := ⟨"corbett-1991", "ch. 6 (30)"⟩
     reportedIn := none
     language := "mbaa1245"
@@ -610,7 +610,7 @@ def ex_6_30 : LinguisticExample :=
     comment := "Class 5 agreement as in (29), but no animate marker: attributive agreement and the optional marker together yield eleven agreement classes." }
 
 def ex_8_1 : LinguisticExample :=
-  { id := "corbett1991_8.1"
+  { id := "corbett1991_8_1"
     source := ⟨"corbett-1991", "ch. 8 (1)"⟩
     reportedIn := none
     language := "stan1290"
@@ -626,7 +626,7 @@ def ex_8_1 : LinguisticExample :=
     comment := "Hermant, quoted by Grevisse; the predicate ombrageuse is feminine too." }
 
 def ex_8_2 : LinguisticExample :=
-  { id := "corbett1991_8.2"
+  { id := "corbett1991_8_2"
     source := ⟨"corbett-1991", "ch. 8 (2)"⟩
     reportedIn := none
     language := "stan1290"
@@ -642,7 +642,7 @@ def ex_8_2 : LinguisticExample :=
     comment := "" }
 
 def ex_8_3 : LinguisticExample :=
-  { id := "corbett1991_8.3"
+  { id := "corbett1991_8_3"
     source := ⟨"corbett-1991", "ch. 8 (3)"⟩
     reportedIn := none
     language := "stan1290"
@@ -658,7 +658,7 @@ def ex_8_3 : LinguisticExample :=
     comment := "Voltaire, quoted by Grevisse: the feminine pronoun though the king is addressed." }
 
 def ex_8_4 : LinguisticExample :=
-  { id := "corbett1991_8.4"
+  { id := "corbett1991_8_4"
     source := ⟨"corbett-1991", "ch. 8 (4)"⟩
     reportedIn := none
     language := "stan1290"
@@ -674,7 +674,7 @@ def ex_8_4 : LinguisticExample :=
     comment := "J. and J. Tharaud, quoted by Grevisse: a masculine pronoun, possible only here." }
 
 def ex_8_5 : LinguisticExample :=
-  { id := "corbett1991_8.5"
+  { id := "corbett1991_8_5"
     source := ⟨"corbett-1991", "ch. 8 (5)"⟩
     reportedIn := none
     language := "stan1295"
@@ -690,7 +690,7 @@ def ex_8_5 : LinguisticExample :=
     comment := "Attributive modifier and relative pronoun neuter." }
 
 def ex_8_6 : LinguisticExample :=
-  { id := "corbett1991_8.6"
+  { id := "corbett1991_8_6"
     source := ⟨"corbett-1991", "ch. 8 (6)"⟩
     reportedIn := none
     language := "stan1295"
@@ -706,7 +706,7 @@ def ex_8_6 : LinguisticExample :=
     comment := "The personal pronoun allows both the neuter and the feminine; the older the girl, the likelier the feminine." }
 
 def ex_8_10 : LinguisticExample :=
-  { id := "corbett1991_8.10"
+  { id := "corbett1991_8_10"
     source := ⟨"corbett-1991", "ch. 8 (10)"⟩
     reportedIn := none
     language := "stan1288"
@@ -722,7 +722,7 @@ def ex_8_10 : LinguisticExample :=
     comment := "" }
 
 def ex_8_11 : LinguisticExample :=
-  { id := "corbett1991_8.11"
+  { id := "corbett1991_8_11"
     source := ⟨"corbett-1991", "ch. 8 (11)"⟩
     reportedIn := none
     language := "stan1288"
@@ -738,7 +738,7 @@ def ex_8_11 : LinguisticExample :=
     comment := "" }
 
 def ex_8_12a : LinguisticExample :=
-  { id := "corbett1991_8.12a"
+  { id := "corbett1991_8_12a"
     source := ⟨"corbett-1991", "ch. 8 (12)"⟩
     reportedIn := none
     language := "stan1288"
@@ -754,7 +754,7 @@ def ex_8_12a : LinguisticExample :=
     comment := "The compound relative el cual is masculine." }
 
 def ex_8_12b : LinguisticExample :=
-  { id := "corbett1991_8.12b"
+  { id := "corbett1991_8_12b"
     source := ⟨"corbett-1991", "ch. 8 (12)"⟩
     reportedIn := none
     language := "stan1288"
@@ -770,7 +770,7 @@ def ex_8_12b : LinguisticExample :=
     comment := "The personal pronoun continuing (12) is masculine." }
 
 def ex_8_13 : LinguisticExample :=
-  { id := "corbett1991_8.13"
+  { id := "corbett1991_8_13"
     source := ⟨"corbett-1991", "ch. 8 (13)"⟩
     reportedIn := none
     language := "goan1235"
@@ -786,7 +786,7 @@ def ex_8_13 : LinguisticExample :=
     comment := "Konkani: neuter agreement for young or relatively younger females is the new semantic agreement; the possessive keeps the feminine." }
 
 def ex_8_14 : LinguisticExample :=
-  { id := "corbett1991_8.14"
+  { id := "corbett1991_8_14"
     source := ⟨"corbett-1991", "ch. 8 (14)"⟩
     reportedIn := none
     language := "russ1263"
@@ -802,7 +802,7 @@ def ex_8_14 : LinguisticExample :=
     comment := "Panov's survey: of 3,835 respondents 16.9 per cent chose the feminine (15)." }
 
 def ex_8_15 : LinguisticExample :=
-  { id := "corbett1991_8.15"
+  { id := "corbett1991_8_15"
     source := ⟨"corbett-1991", "ch. 8 (15)"⟩
     reportedIn := none
     language := "russ1263"
@@ -818,7 +818,7 @@ def ex_8_15 : LinguisticExample :=
     comment := "" }
 
 def ex_8_16 : LinguisticExample :=
-  { id := "corbett1991_8.16"
+  { id := "corbett1991_8_16"
     source := ⟨"corbett-1991", "ch. 8 (16)"⟩
     reportedIn := none
     language := "russ1263"
@@ -834,7 +834,7 @@ def ex_8_16 : LinguisticExample :=
     comment := "" }
 
 def ex_8_17 : LinguisticExample :=
-  { id := "corbett1991_8.17"
+  { id := "corbett1991_8_17"
     source := ⟨"corbett-1991", "ch. 8 (17)"⟩
     reportedIn := none
     language := "russ1263"
@@ -850,7 +850,7 @@ def ex_8_17 : LinguisticExample :=
     comment := "Of 3,806 respondents 51.7 per cent chose the feminine." }
 
 def ex_8_18 : LinguisticExample :=
-  { id := "corbett1991_8.18"
+  { id := "corbett1991_8_18"
     source := ⟨"corbett-1991", "ch. 8 (18)"⟩
     reportedIn := none
     language := "russ1263"
@@ -866,7 +866,7 @@ def ex_8_18 : LinguisticExample :=
     comment := "The masculine pronoun is possible even here, though the feminine is what we would normally expect." }
 
 def ex_8_19 : LinguisticExample :=
-  { id := "corbett1991_8.19"
+  { id := "corbett1991_8_19"
     source := ⟨"corbett-1991", "ch. 8 (19)"⟩
     reportedIn := none
     language := "sout1528"
@@ -882,7 +882,7 @@ def ex_8_19 : LinguisticExample :=
     comment := "Andrić; feminine attributive and predicate with a plural gazda-type noun." }
 
 def ex_8_20 : LinguisticExample :=
-  { id := "corbett1991_8.20"
+  { id := "corbett1991_8_20"
     source := ⟨"corbett-1991", "ch. 8 (20)"⟩
     reportedIn := none
     language := "sout1528"
@@ -898,7 +898,7 @@ def ex_8_20 : LinguisticExample :=
     comment := "Masculine attributive and preposed predicate." }
 
 def ex_8_21 : LinguisticExample :=
-  { id := "corbett1991_8.21"
+  { id := "corbett1991_8_21"
     source := ⟨"corbett-1991", "ch. 8 (21)"⟩
     reportedIn := none
     language := "poli1260"
@@ -914,7 +914,7 @@ def ex_8_21 : LinguisticExample :=
     comment := "Ewa Jaworska's judgments; the predicate is non-masculine personal too." }
 
 def ex_8_22 : LinguisticExample :=
-  { id := "corbett1991_8.22"
+  { id := "corbett1991_8_22"
     source := ⟨"corbett-1991", "ch. 8 (22)"⟩
     reportedIn := none
     language := "poli1260"
@@ -930,7 +930,7 @@ def ex_8_22 : LinguisticExample :=
     comment := "The relative pronoun was accepted only in the non-masculine personal form." }
 
 def ex_8_23 : LinguisticExample :=
-  { id := "corbett1991_8.23"
+  { id := "corbett1991_8_23"
     source := ⟨"corbett-1991", "ch. 8 (23)"⟩
     reportedIn := none
     language := "poli1260"
@@ -946,7 +946,7 @@ def ex_8_23 : LinguisticExample :=
     comment := "The anaphoric personal pronoun is masculine personal." }
 
 def ex_8_24 : LinguisticExample :=
-  { id := "corbett1991_8.24"
+  { id := "corbett1991_8_24"
     source := ⟨"corbett-1991", "ch. 8 (24)"⟩
     reportedIn := none
     language := "russ1263"
@@ -962,7 +962,7 @@ def ex_8_24 : LinguisticExample :=
     comment := "Nominative: both forms." }
 
 def ex_8_25 : LinguisticExample :=
-  { id := "corbett1991_8.25"
+  { id := "corbett1991_8_25"
     source := ⟨"corbett-1991", "ch. 8 (25)"⟩
     reportedIn := none
     language := "russ1263"
@@ -978,7 +978,7 @@ def ex_8_25 : LinguisticExample :=
     comment := "In the oblique cases syntactic agreement is normal; the feminine is less common than in the nominative." }
 
 def ex_8_26 : LinguisticExample :=
-  { id := "corbett1991_8.26"
+  { id := "corbett1991_8_26"
     source := ⟨"corbett-1991", "ch. 8 (26)"⟩
     reportedIn := none
     language := "sout1528"
@@ -994,7 +994,7 @@ def ex_8_26 : LinguisticExample :=
     comment := "Stacked attributives: the further target shows semantic agreement." }
 
 def ex_8_27 : LinguisticExample :=
-  { id := "corbett1991_8.27"
+  { id := "corbett1991_8_27"
     source := ⟨"corbett-1991", "ch. 8 (27)"⟩
     reportedIn := none
     language := "nyan1308"
@@ -1010,7 +1010,7 @@ def ex_8_27 : LinguisticExample :=
     comment := "ngwazi has the morphology of gender 9/10 and denotes a human." }
 
 def ex_8_28 : LinguisticExample :=
-  { id := "corbett1991_8.28"
+  { id := "corbett1991_8_28"
     source := ⟨"corbett-1991", "ch. 8 (28)"⟩
     reportedIn := none
     language := "nyan1308"
@@ -1026,7 +1026,7 @@ def ex_8_28 : LinguisticExample :=
     comment := "" }
 
 def ex_8_29 : LinguisticExample :=
-  { id := "corbett1991_8.29"
+  { id := "corbett1991_8_29"
     source := ⟨"corbett-1991", "ch. 8 (29)"⟩
     reportedIn := none
     language := "nyan1308"
@@ -1042,7 +1042,7 @@ def ex_8_29 : LinguisticExample :=
     comment := "" }
 
 def ex_8_30 : LinguisticExample :=
-  { id := "corbett1991_8.30"
+  { id := "corbett1991_8_30"
     source := ⟨"corbett-1991", "ch. 8 (30)"⟩
     reportedIn := none
     language := "nyan1308"
@@ -1058,7 +1058,7 @@ def ex_8_30 : LinguisticExample :=
     comment := "" }
 
 def ex_8_31 : LinguisticExample :=
-  { id := "corbett1991_8.31"
+  { id := "corbett1991_8_31"
     source := ⟨"corbett-1991", "ch. 8 (31)"⟩
     reportedIn := none
     language := "sout1528"
@@ -1074,7 +1074,7 @@ def ex_8_31 : LinguisticExample :=
     comment := "Parallel predicates: the nearer feminine, the further masculine." }
 
 def ex_8_35 : LinguisticExample :=
-  { id := "corbett1991_8.35"
+  { id := "corbett1991_8_35"
     source := ⟨"corbett-1991", "ch. 8 (35)"⟩
     reportedIn := none
     language := "stan1290"
@@ -1090,7 +1090,7 @@ def ex_8_35 : LinguisticExample :=
     comment := "No antecedent: the deictic pronoun takes the gender of the basic-level term, table, feminine." }
 
 def ex_8_36 : LinguisticExample :=
-  { id := "corbett1991_8.36"
+  { id := "corbett1991_8_36"
     source := ⟨"corbett-1991", "ch. 8 (36)"⟩
     reportedIn := none
     language := "stan1290"
@@ -1106,7 +1106,7 @@ def ex_8_36 : LinguisticExample :=
     comment := "bureau 'desk' is masculine." }
 
 def ex_8_38 : LinguisticExample :=
-  { id := "corbett1991_8.38"
+  { id := "corbett1991_8_38"
     source := ⟨"corbett-1991", "ch. 8 (38)"⟩
     reportedIn := none
     language := "stan1295"
@@ -1122,7 +1122,7 @@ def ex_8_38 : LinguisticExample :=
     comment := "Bosch: stressed pronouns must denote male and female, so the sentence is out with the nut and the bolt." }
 
 def ex_8_39 : LinguisticExample :=
-  { id := "corbett1991_8.39"
+  { id := "corbett1991_8_39"
     source := ⟨"corbett-1991", "ch. 8 (39)"⟩
     reportedIn := none
     language := "stan1295"
@@ -1138,7 +1138,7 @@ def ex_8_39 : LinguisticExample :=
     comment := "" }
 
 def ex_8_40 : LinguisticExample :=
-  { id := "corbett1991_8.40"
+  { id := "corbett1991_8_40"
     source := ⟨"corbett-1991", "ch. 8 (40)"⟩
     reportedIn := none
     language := "nyan1308"
@@ -1154,7 +1154,7 @@ def ex_8_40 : LinguisticExample :=
     comment := "" }
 
 def ex_8_41 : LinguisticExample :=
-  { id := "corbett1991_8.41"
+  { id := "corbett1991_8_41"
     source := ⟨"corbett-1991", "ch. 8 (41)"⟩
     reportedIn := none
     language := "nyan1308"
@@ -1170,7 +1170,7 @@ def ex_8_41 : LinguisticExample :=
     comment := "" }
 
 def ex_8_42 : LinguisticExample :=
-  { id := "corbett1991_8.42"
+  { id := "corbett1991_8_42"
     source := ⟨"corbett-1991", "ch. 8 (42)"⟩
     reportedIn := none
     language := "nyan1308"
@@ -1186,7 +1186,7 @@ def ex_8_42 : LinguisticExample :=
     comment := "" }
 
 def ex_8_43 : LinguisticExample :=
-  { id := "corbett1991_8.43"
+  { id := "corbett1991_8_43"
     source := ⟨"corbett-1991", "ch. 8 (43)"⟩
     reportedIn := none
     language := "nyan1308"
@@ -1202,7 +1202,7 @@ def ex_8_43 : LinguisticExample :=
     comment := "" }
 
 def ex_8_44 : LinguisticExample :=
-  { id := "corbett1991_8.44"
+  { id := "corbett1991_8_44"
     source := ⟨"corbett-1991", "ch. 8 (44)"⟩
     reportedIn := none
     language := "nyan1308"
@@ -1218,7 +1218,7 @@ def ex_8_44 : LinguisticExample :=
     comment := "Gender 1/2 forms of the object pronoun and marker are possible when the target is sufficiently separated from the controller; the 12/13 forms remain available." }
 
 def ex_8_45 : LinguisticExample :=
-  { id := "corbett1991_8.45"
+  { id := "corbett1991_8_45"
     source := ⟨"corbett-1991", "ch. 8 (45)"⟩
     reportedIn := none
     language := "nyan1308"
@@ -1234,7 +1234,7 @@ def ex_8_45 : LinguisticExample :=
     comment := "With chitsilu, morphologically 7/8, the switch to semantic agreement is not possible at this distance." }
 
 def ex_8_46 : LinguisticExample :=
-  { id := "corbett1991_8.46"
+  { id := "corbett1991_8_46"
     source := ⟨"corbett-1991", "ch. 8 (46)"⟩
     reportedIn := none
     language := "nyan1308"
@@ -1250,7 +1250,7 @@ def ex_8_46 : LinguisticExample :=
     comment := "Further removed from the antecedent, semantic agreement becomes possible." }
 
 def ex_8_47 : LinguisticExample :=
-  { id := "corbett1991_8.47"
+  { id := "corbett1991_8_47"
     source := ⟨"corbett-1991", "ch. 8 (47)"⟩
     reportedIn := none
     language := "swah1253"
@@ -1266,7 +1266,7 @@ def ex_8_47 : LinguisticExample :=
     comment := "Morphologically 9/10 and animate: class 1 verb agreement, but the attributive possessive may take syntactic class 9 agreement." }
 
 def ex_8_48 : LinguisticExample :=
-  { id := "corbett1991_8.48"
+  { id := "corbett1991_8_48"
     source := ⟨"corbett-1991", "ch. 8 (48)"⟩
     reportedIn := none
     language := "swah1253"
@@ -1282,7 +1282,7 @@ def ex_8_48 : LinguisticExample :=
     comment := "" }
 
 def ex_8_49 : LinguisticExample :=
-  { id := "corbett1991_8.49"
+  { id := "corbett1991_8_49"
     source := ⟨"corbett-1991", "ch. 8 (49)"⟩
     reportedIn := none
     language := "swah1253"
@@ -1298,7 +1298,7 @@ def ex_8_49 : LinguisticExample :=
     comment := "With another modifier intervening, the possessive takes animate concord." }
 
 def ex_8_50 : LinguisticExample :=
-  { id := "corbett1991_8.50"
+  { id := "corbett1991_8_50"
     source := ⟨"corbett-1991", "ch. 8 (50)"⟩
     reportedIn := none
     language := "swah1253"
@@ -1314,7 +1314,7 @@ def ex_8_50 : LinguisticExample :=
     comment := "" }
 
 def ex_8_51 : LinguisticExample :=
-  { id := "corbett1991_8.51"
+  { id := "corbett1991_8_51"
     source := ⟨"corbett-1991", "ch. 8 (51)"⟩
     reportedIn := none
     language := "swah1253"
@@ -1330,7 +1330,7 @@ def ex_8_51 : LinguisticExample :=
     comment := "Acceptable but not preferred in urban Swahili, where w-angu is preferred: for those speakers ng'ombe is in gender 1/2, for the others a hybrid." }
 
 def ex_8_52a : LinguisticExample :=
-  { id := "corbett1991_8.52a"
+  { id := "corbett1991_8_52a"
     source := ⟨"corbett-1991", "ch. 8 (52)"⟩
     reportedIn := none
     language := "kimb1241"
@@ -1346,7 +1346,7 @@ def ex_8_52a : LinguisticExample :=
     comment := "Kimbundu, Mbaka dialect." }
 
 def ex_8_52b : LinguisticExample :=
-  { id := "corbett1991_8.52b"
+  { id := "corbett1991_8_52b"
     source := ⟨"corbett-1991", "ch. 8 (52)"⟩
     reportedIn := none
     language := "kimb1241"
@@ -1362,7 +1362,7 @@ def ex_8_52b : LinguisticExample :=
     comment := "" }
 
 def ex_8_53a : LinguisticExample :=
-  { id := "corbett1991_8.53a"
+  { id := "corbett1991_8_53a"
     source := ⟨"corbett-1991", "ch. 8 (53)"⟩
     reportedIn := none
     language := "kimb1241"
@@ -1378,7 +1378,7 @@ def ex_8_53a : LinguisticExample :=
     comment := "" }
 
 def ex_8_53b : LinguisticExample :=
-  { id := "corbett1991_8.53b"
+  { id := "corbett1991_8_53b"
     source := ⟨"corbett-1991", "ch. 8 (53)"⟩
     reportedIn := none
     language := "kimb1241"
@@ -1394,7 +1394,7 @@ def ex_8_53b : LinguisticExample :=
     comment := "" }
 
 def ex_8_54a : LinguisticExample :=
-  { id := "corbett1991_8.54a"
+  { id := "corbett1991_8_54a"
     source := ⟨"corbett-1991", "ch. 8 (54)"⟩
     reportedIn := none
     language := "kami1256"
@@ -1410,7 +1410,7 @@ def ex_8_54a : LinguisticExample :=
     comment := "Kami: semantic agreement is obligatory in the predicate." }
 
 def ex_8_54b : LinguisticExample :=
-  { id := "corbett1991_8.54b"
+  { id := "corbett1991_8_54b"
     source := ⟨"corbett-1991", "ch. 8 (54)"⟩
     reportedIn := none
     language := "kami1256"
@@ -1426,7 +1426,7 @@ def ex_8_54b : LinguisticExample :=
     comment := "Syntactic agreement of the predicate was not accepted." }
 
 def ex_8_55 : LinguisticExample :=
-  { id := "corbett1991_8.55"
+  { id := "corbett1991_8_55"
     source := ⟨"corbett-1991", "ch. 8 (55)"⟩
     reportedIn := none
     language := "kami1256"
@@ -1442,7 +1442,7 @@ def ex_8_55 : LinguisticExample :=
     comment := "For attributives other than the possessive both forms are accepted; the possessive dz-angu is syntactic only, a finer division of the hierarchy." }
 
 def ex_8_56 : LinguisticExample :=
-  { id := "corbett1991_8.56"
+  { id := "corbett1991_8_56"
     source := ⟨"corbett-1991", "ch. 8 (56)"⟩
     reportedIn := none
     language := "mako1251"
@@ -1458,7 +1458,7 @@ def ex_8_56 : LinguisticExample :=
     comment := "Makonde, Mawia dialect: nouns formerly in 9/10 take the class 2 prefix in the plural, morphological adjustment to the new gender." }
 
 def ex_9_1 : LinguisticExample :=
-  { id := "corbett1991_9.1"
+  { id := "corbett1991_9_1"
     source := ⟨"corbett-1991", "ch. 9 (1)"⟩
     reportedIn := none
     language := "czec1258"
@@ -1474,7 +1474,7 @@ def ex_9_1 : LinguisticExample :=
     comment := "Person resolution: first person takes precedence over second." }
 
 def ex_9_2 : LinguisticExample :=
-  { id := "corbett1991_9.2"
+  { id := "corbett1991_9_2"
     source := ⟨"corbett-1991", "ch. 9 (2)"⟩
     reportedIn := none
     language := "czec1258"
@@ -1490,7 +1490,7 @@ def ex_9_2 : LinguisticExample :=
     comment := "" }
 
 def ex_9_3 : LinguisticExample :=
-  { id := "corbett1991_9.3"
+  { id := "corbett1991_9_3"
     source := ⟨"corbett-1991", "ch. 9 (3)"⟩
     reportedIn := none
     language := "czec1258"
@@ -1506,7 +1506,7 @@ def ex_9_3 : LinguisticExample :=
     comment := "No first person conjunct: the second person determines the form." }
 
 def ex_9_4 : LinguisticExample :=
-  { id := "corbett1991_9.4"
+  { id := "corbett1991_9_4"
     source := ⟨"corbett-1991", "ch. 9 (4)"⟩
     reportedIn := none
     language := "slov1268"
@@ -1522,7 +1522,7 @@ def ex_9_4 : LinguisticExample :=
     comment := "Two singulars conjoined take the dual." }
 
 def ex_9_5 : LinguisticExample :=
-  { id := "corbett1991_9.5"
+  { id := "corbett1991_9_5"
     source := ⟨"corbett-1991", "ch. 9 (5)"⟩
     reportedIn := none
     language := "slov1268"
@@ -1538,7 +1538,7 @@ def ex_9_5 : LinguisticExample :=
     comment := "" }
 
 def ex_9_6 : LinguisticExample :=
-  { id := "corbett1991_9.6"
+  { id := "corbett1991_9_6"
     source := ⟨"corbett-1991", "ch. 9 (6)"⟩
     reportedIn := none
     language := "slov1268"
@@ -1554,7 +1554,7 @@ def ex_9_6 : LinguisticExample :=
     comment := "" }
 
 def ex_9_7 : LinguisticExample :=
-  { id := "corbett1991_9.7"
+  { id := "corbett1991_9_7"
     source := ⟨"corbett-1991", "ch. 9 (7)"⟩
     reportedIn := none
     language := "swah1253"
@@ -1570,7 +1570,7 @@ def ex_9_7 : LinguisticExample :=
     comment := "The verb agrees with the nearer conjunct only: no resolution." }
 
 def ex_9_8 : LinguisticExample :=
-  { id := "corbett1991_9.8"
+  { id := "corbett1991_9_8"
     source := ⟨"corbett-1991", "ch. 9 (8)"⟩
     reportedIn := none
     language := "swah1253"
@@ -1586,7 +1586,7 @@ def ex_9_8 : LinguisticExample :=
     comment := "Reversing the conjuncts changes the agreement: again the nearer conjunct." }
 
 def ex_9_10 : LinguisticExample :=
-  { id := "corbett1991_9.10"
+  { id := "corbett1991_9_10"
     source := ⟨"corbett-1991", "ch. 9 (10)"⟩
     reportedIn := none
     language := "sout1528"
@@ -1602,7 +1602,7 @@ def ex_9_10 : LinguisticExample :=
     comment := "Andrić: with the target preceding, the verb agrees with the nearer feminine conjunct; the resolved form would be masculine." }
 
 def ex_9_12 : LinguisticExample :=
-  { id := "corbett1991_9.12"
+  { id := "corbett1991_9_12"
     source := ⟨"corbett-1991", "ch. 9 (12)"⟩
     reportedIn := none
     language := "slov1268"
@@ -1618,7 +1618,7 @@ def ex_9_12 : LinguisticExample :=
     comment := "Lenček: agreement with the first conjunct, not the nearer; the resolved form would be the masculine dual." }
 
 def ex_9_14 : LinguisticExample :=
-  { id := "corbett1991_9.14"
+  { id := "corbett1991_9_14"
     source := ⟨"corbett-1991", "ch. 9 (14)"⟩
     reportedIn := none
     language := "tami1289"
@@ -1634,7 +1634,7 @@ def ex_9_14 : LinguisticExample :=
     comment := "" }
 
 def ex_9_15 : LinguisticExample :=
-  { id := "corbett1991_9.15"
+  { id := "corbett1991_9_15"
     source := ⟨"corbett-1991", "ch. 9 (15)"⟩
     reportedIn := none
     language := "tami1289"
@@ -1650,7 +1650,7 @@ def ex_9_15 : LinguisticExample :=
     comment := "" }
 
 def ex_9_16 : LinguisticExample :=
-  { id := "corbett1991_9.16"
+  { id := "corbett1991_9_16"
     source := ⟨"corbett-1991", "ch. 9 (16)"⟩
     reportedIn := none
     language := "tami1289"
@@ -1666,7 +1666,7 @@ def ex_9_16 : LinguisticExample :=
     comment := "" }
 
 def ex_9_17 : LinguisticExample :=
-  { id := "corbett1991_9.17"
+  { id := "corbett1991_9_17"
     source := ⟨"corbett-1991", "ch. 9 (17)"⟩
     reportedIn := none
     language := "tami1289"
@@ -1682,7 +1682,7 @@ def ex_9_17 : LinguisticExample :=
     comment := "" }
 
 def ex_9_18 : LinguisticExample :=
-  { id := "corbett1991_9.18"
+  { id := "corbett1991_9_18"
     source := ⟨"corbett-1991", "ch. 9 (18)"⟩
     reportedIn := none
     language := "tami1289"
@@ -1698,7 +1698,7 @@ def ex_9_18 : LinguisticExample :=
     comment := "A rational conjoined with a non-rational: an alternative construction must be used, though some speakers allow the rational plural colloquially." }
 
 def ex_9_19 : LinguisticExample :=
-  { id := "corbett1991_9.19"
+  { id := "corbett1991_9_19"
     source := ⟨"corbett-1991", "ch. 9 (19)"⟩
     reportedIn := none
     language := "telu1262"
@@ -1714,7 +1714,7 @@ def ex_9_19 : LinguisticExample :=
     comment := "Telugu: the rational plural, as in Tamil." }
 
 def ex_9_22 : LinguisticExample :=
-  { id := "corbett1991_9.22"
+  { id := "corbett1991_9_22"
     source := ⟨"corbett-1991", "ch. 9 (22)"⟩
     reportedIn := none
     language := "telu1262"
@@ -1730,7 +1730,7 @@ def ex_9_22 : LinguisticExample :=
     comment := "" }
 
 def ex_9_23 : LinguisticExample :=
-  { id := "corbett1991_9.23"
+  { id := "corbett1991_9_23"
     source := ⟨"corbett-1991", "ch. 9 (23)"⟩
     reportedIn := none
     language := "telu1262"
@@ -1746,7 +1746,7 @@ def ex_9_23 : LinguisticExample :=
     comment := "Not uncommon colloquially, though a different construction is more common." }
 
 def ex_9_24 : LinguisticExample :=
-  { id := "corbett1991_9.24"
+  { id := "corbett1991_9_24"
     source := ⟨"corbett-1991", "ch. 9 (24)"⟩
     reportedIn := none
     language := "arch1244"
@@ -1762,7 +1762,7 @@ def ex_9_24 : LinguisticExample :=
     comment := "" }
 
 def ex_9_25 : LinguisticExample :=
-  { id := "corbett1991_9.25"
+  { id := "corbett1991_9_25"
     source := ⟨"corbett-1991", "ch. 9 (25)"⟩
     reportedIn := none
     language := "arch1244"
@@ -1778,7 +1778,7 @@ def ex_9_25 : LinguisticExample :=
     comment := "A gender III conjunct does not affect the agreement." }
 
 def ex_9_26 : LinguisticExample :=
-  { id := "corbett1991_9.26"
+  { id := "corbett1991_9_26"
     source := ⟨"corbett-1991", "ch. 9 (26)"⟩
     reportedIn := none
     language := "arch1244"
@@ -1794,7 +1794,7 @@ def ex_9_26 : LinguisticExample :=
     comment := "" }
 
 def ex_9_27 : LinguisticExample :=
-  { id := "corbett1991_9.27"
+  { id := "corbett1991_9_27"
     source := ⟨"corbett-1991", "ch. 9 (27)"⟩
     reportedIn := none
     language := "arch1244"
@@ -1810,7 +1810,7 @@ def ex_9_27 : LinguisticExample :=
     comment := "An inanimate conjunct too: the significant factor is a conjunct denoting a rational." }
 
 def ex_9_28 : LinguisticExample :=
-  { id := "corbett1991_9.28"
+  { id := "corbett1991_9_28"
     source := ⟨"corbett-1991", "ch. 9 (28)"⟩
     reportedIn := none
     language := "arch1244"
@@ -1826,7 +1826,7 @@ def ex_9_28 : LinguisticExample :=
     comment := "" }
 
 def ex_9_29 : LinguisticExample :=
-  { id := "corbett1991_9.29"
+  { id := "corbett1991_9_29"
     source := ⟨"corbett-1991", "ch. 9 (29)"⟩
     reportedIn := none
     language := "arch1244"
@@ -1842,7 +1842,7 @@ def ex_9_29 : LinguisticExample :=
     comment := "" }
 
 def ex_9_30 : LinguisticExample :=
-  { id := "corbett1991_9.30"
+  { id := "corbett1991_9_30"
     source := ⟨"corbett-1991", "ch. 9 (30)"⟩
     reportedIn := none
     language := "arch1244"
@@ -1858,7 +1858,7 @@ def ex_9_30 : LinguisticExample :=
     comment := "xalq' 'people' takes gender III agreement in the singular yet resolves as a rational: the rules are semantic, not gender-based." }
 
 def ex_9_31 : LinguisticExample :=
-  { id := "corbett1991_9.31"
+  { id := "corbett1991_9_31"
     source := ⟨"corbett-1991", "ch. 9 (31)"⟩
     reportedIn := none
     language := "gand1255"
@@ -1874,7 +1874,7 @@ def ex_9_31 : LinguisticExample :=
     comment := "Givón's Luganda data: only one conjunct is in gender 1/2, yet class 2 resolves." }
 
 def ex_9_32 : LinguisticExample :=
-  { id := "corbett1991_9.32"
+  { id := "corbett1991_9_32"
     source := ⟨"corbett-1991", "ch. 9 (32)"⟩
     reportedIn := none
     language := "gand1255"
@@ -1890,7 +1890,7 @@ def ex_9_32 : LinguisticExample :=
     comment := "No conjunct in gender 1/2: the class 2 form is semantically motivated." }
 
 def ex_9_33 : LinguisticExample :=
-  { id := "corbett1991_9.33"
+  { id := "corbett1991_9_33"
     source := ⟨"corbett-1991", "ch. 9 (33)"⟩
     reportedIn := none
     language := "gand1255"
@@ -1906,7 +1906,7 @@ def ex_9_33 : LinguisticExample :=
     comment := "" }
 
 def ex_9_34 : LinguisticExample :=
-  { id := "corbett1991_9.34"
+  { id := "corbett1991_9_34"
     source := ⟨"corbett-1991", "ch. 9 (34)"⟩
     reportedIn := none
     language := "gand1255"
@@ -1922,7 +1922,7 @@ def ex_9_34 : LinguisticExample :=
     comment := "Human and non-human conjoined with the class 8 form: unnatural; the comitative construction (36) is preferred." }
 
 def ex_9_35 : LinguisticExample :=
-  { id := "corbett1991_9.35"
+  { id := "corbett1991_9_35"
     source := ⟨"corbett-1991", "ch. 9 (35)"⟩
     reportedIn := none
     language := "gand1255"
@@ -1938,7 +1938,7 @@ def ex_9_35 : LinguisticExample :=
     comment := "" }
 
 def ex_9_36 : LinguisticExample :=
-  { id := "corbett1991_9.36"
+  { id := "corbett1991_9_36"
     source := ⟨"corbett-1991", "ch. 9 (36)"⟩
     reportedIn := none
     language := "gand1255"
@@ -1954,7 +1954,7 @@ def ex_9_36 : LinguisticExample :=
     comment := "The comitative: a simple subject, and resolution is avoided." }
 
 def ex_9_37 : LinguisticExample :=
-  { id := "corbett1991_9.37"
+  { id := "corbett1991_9_37"
     source := ⟨"corbett-1991", "ch. 9 (37)"⟩
     reportedIn := none
     language := "bemb1257"
@@ -1970,7 +1970,7 @@ def ex_9_37 : LinguisticExample :=
     comment := "Chibemba: the same rules." }
 
 def ex_9_38 : LinguisticExample :=
-  { id := "corbett1991_9.38"
+  { id := "corbett1991_9_38"
     source := ⟨"corbett-1991", "ch. 9 (38)"⟩
     reportedIn := none
     language := "bemb1257"
@@ -1986,7 +1986,7 @@ def ex_9_38 : LinguisticExample :=
     comment := "" }
 
 def ex_9_39 : LinguisticExample :=
-  { id := "corbett1991_9.39"
+  { id := "corbett1991_9_39"
     source := ⟨"corbett-1991", "ch. 9 (39)"⟩
     reportedIn := none
     language := "nyan1308"
@@ -2002,7 +2002,7 @@ def ex_9_39 : LinguisticExample :=
     comment := "Two plural nouns of gender 5/6 with the plural form of that gender: no number resolution and so no gender resolution, agreement with the nearest conjunct." }
 
 def ex_9_40 : LinguisticExample :=
-  { id := "corbett1991_9.40"
+  { id := "corbett1991_9_40"
     source := ⟨"corbett-1991", "ch. 9 (40)"⟩
     reportedIn := none
     language := "nyan1308"
@@ -2018,7 +2018,7 @@ def ex_9_40 : LinguisticExample :=
     comment := "" }
 
 def ex_9_41 : LinguisticExample :=
-  { id := "corbett1991_9.41"
+  { id := "corbett1991_9_41"
     source := ⟨"corbett-1991", "ch. 9 (41)"⟩
     reportedIn := none
     language := "nyan1308"
@@ -2034,7 +2034,7 @@ def ex_9_41 : LinguisticExample :=
     comment := "Plural nouns of different genders taking the same target gender form: that form is used, so the rule refers to target genders." }
 
 def ex_9_42 : LinguisticExample :=
-  { id := "corbett1991_9.42"
+  { id := "corbett1991_9_42"
     source := ⟨"corbett-1991", "ch. 9 (42)"⟩
     reportedIn := none
     language := "nyan1308"
@@ -2050,7 +2050,7 @@ def ex_9_42 : LinguisticExample :=
     comment := "Even a human and a non-human conjoined." }
 
 def ex_9_43 : LinguisticExample :=
-  { id := "corbett1991_9.43"
+  { id := "corbett1991_9_43"
     source := ⟨"corbett-1991", "ch. 9 (43)"⟩
     reportedIn := none
     language := "stan1290"
@@ -2066,7 +2066,7 @@ def ex_9_43 : LinguisticExample :=
     comment := "Grevisse." }
 
 def ex_9_44 : LinguisticExample :=
-  { id := "corbett1991_9.44"
+  { id := "corbett1991_9_44"
     source := ⟨"corbett-1991", "ch. 9 (44)"⟩
     reportedIn := none
     language := "stan1290"
@@ -2082,7 +2082,7 @@ def ex_9_44 : LinguisticExample :=
     comment := "" }
 
 def ex_9_45 : LinguisticExample :=
-  { id := "corbett1991_9.45"
+  { id := "corbett1991_9_45"
     source := ⟨"corbett-1991", "ch. 9 (45)"⟩
     reportedIn := none
     language := "stan1290"
@@ -2098,7 +2098,7 @@ def ex_9_45 : LinguisticExample :=
     comment := "" }
 
 def ex_9_46 : LinguisticExample :=
-  { id := "corbett1991_9.46"
+  { id := "corbett1991_9_46"
     source := ⟨"corbett-1991", "ch. 9 (46)"⟩
     reportedIn := none
     language := "stan1290"
@@ -2114,7 +2114,7 @@ def ex_9_46 : LinguisticExample :=
     comment := "The rules apply alike to animates and inanimates." }
 
 def ex_9_47 : LinguisticExample :=
-  { id := "corbett1991_9.47"
+  { id := "corbett1991_9_47"
     source := ⟨"corbett-1991", "ch. 9 (47)"⟩
     reportedIn := none
     language := "slov1268"
@@ -2130,7 +2130,7 @@ def ex_9_47 : LinguisticExample :=
     comment := "Lenček's Slovene data." }
 
 def ex_9_48 : LinguisticExample :=
-  { id := "corbett1991_9.48"
+  { id := "corbett1991_9_48"
     source := ⟨"corbett-1991", "ch. 9 (48)"⟩
     reportedIn := none
     language := "slov1268"
@@ -2146,7 +2146,7 @@ def ex_9_48 : LinguisticExample :=
     comment := "" }
 
 def ex_9_49 : LinguisticExample :=
-  { id := "corbett1991_9.49"
+  { id := "corbett1991_9_49"
     source := ⟨"corbett-1991", "ch. 9 (49)"⟩
     reportedIn := none
     language := "slov1268"
@@ -2162,7 +2162,7 @@ def ex_9_49 : LinguisticExample :=
     comment := "" }
 
 def ex_9_50 : LinguisticExample :=
-  { id := "corbett1991_9.50"
+  { id := "corbett1991_9_50"
     source := ⟨"corbett-1991", "ch. 9 (50)"⟩
     reportedIn := none
     language := "slov1268"
@@ -2178,7 +2178,7 @@ def ex_9_50 : LinguisticExample :=
     comment := "Two neuter singulars take a masculine dual." }
 
 def ex_9_51 : LinguisticExample :=
-  { id := "corbett1991_9.51"
+  { id := "corbett1991_9_51"
     source := ⟨"corbett-1991", "ch. 9 (51)"⟩
     reportedIn := none
     language := "slov1268"
@@ -2194,7 +2194,7 @@ def ex_9_51 : LinguisticExample :=
     comment := "" }
 
 def ex_9_52 : LinguisticExample :=
-  { id := "corbett1991_9.52"
+  { id := "corbett1991_9_52"
     source := ⟨"corbett-1991", "ch. 9 (52)"⟩
     reportedIn := none
     language := "slov1268"
@@ -2210,7 +2210,7 @@ def ex_9_52 : LinguisticExample :=
     comment := "All conjuncts neuter, yet the masculine plural: number resolution, triggered by the singular conjuncts, brings gender resolution with it." }
 
 def ex_9_53 : LinguisticExample :=
-  { id := "corbett1991_9.53"
+  { id := "corbett1991_9_53"
     source := ⟨"corbett-1991", "ch. 9 (53)"⟩
     reportedIn := none
     language := "slov1268"
@@ -2226,7 +2226,7 @@ def ex_9_53 : LinguisticExample :=
     comment := "" }
 
 def ex_9_54 : LinguisticExample :=
-  { id := "corbett1991_9.54"
+  { id := "corbett1991_9_54"
     source := ⟨"corbett-1991", "ch. 9 (54)"⟩
     reportedIn := none
     language := "sout1528"
@@ -2242,7 +2242,7 @@ def ex_9_54 : LinguisticExample :=
     comment := "Andrić: neuter plurals only, so no number resolution and no gender resolution; the neuter plural is agreement with the nearer conjunct." }
 
 def ex_9_55 : LinguisticExample :=
-  { id := "corbett1991_9.55"
+  { id := "corbett1991_9_55"
     source := ⟨"corbett-1991", "ch. 9 (55)"⟩
     reportedIn := none
     language := "sout1528"
@@ -2258,7 +2258,7 @@ def ex_9_55 : LinguisticExample :=
     comment := "Feminine and neuter plurals with a masculine predicate: conjuncts requiring different target gender forms trigger gender resolution on their own." }
 
 def ex_9_56 : LinguisticExample :=
-  { id := "corbett1991_9.56"
+  { id := "corbett1991_9_56"
     source := ⟨"corbett-1991", "ch. 9 (56)"⟩
     reportedIn := none
     language := "icel1247"
@@ -2274,7 +2274,7 @@ def ex_9_56 : LinguisticExample :=
     comment := "Icelandic: the neuter plural for any mixture of genders." }
 
 def ex_9_57 : LinguisticExample :=
-  { id := "corbett1991_9.57"
+  { id := "corbett1991_9_57"
     source := ⟨"corbett-1991", "ch. 9 (57)"⟩
     reportedIn := none
     language := "icel1247"
@@ -2290,7 +2290,7 @@ def ex_9_57 : LinguisticExample :=
     comment := "" }
 
 def ex_9_58 : LinguisticExample :=
-  { id := "corbett1991_9.58"
+  { id := "corbett1991_9_58"
     source := ⟨"corbett-1991", "ch. 9 (58)"⟩
     reportedIn := none
     language := "poli1260"
@@ -2306,7 +2306,7 @@ def ex_9_58 : LinguisticExample :=
     comment := "" }
 
 def ex_9_59 : LinguisticExample :=
-  { id := "corbett1991_9.59"
+  { id := "corbett1991_9_59"
     source := ⟨"corbett-1991", "ch. 9 (59)"⟩
     reportedIn := none
     language := "poli1260"
@@ -2322,7 +2322,7 @@ def ex_9_59 : LinguisticExample :=
     comment := "" }
 
 def ex_9_60 : LinguisticExample :=
-  { id := "corbett1991_9.60"
+  { id := "corbett1991_9_60"
     source := ⟨"corbett-1991", "ch. 9 (60)"⟩
     reportedIn := none
     language := "poli1260"
@@ -2338,7 +2338,7 @@ def ex_9_60 : LinguisticExample :=
     comment := "Rex is a dog: no masculine personal conjunct, yet the masculine personal form for almost all of Zieniukowa's informants, by the optional rules." }
 
 def ex_9_61 : LinguisticExample :=
-  { id := "corbett1991_9.61"
+  { id := "corbett1991_9_61"
     source := ⟨"corbett-1991", "ch. 9 (61)"⟩
     reportedIn := none
     language := "poli1260"
@@ -2354,7 +2354,7 @@ def ex_9_61 : LinguisticExample :=
     comment := "Two masculine animates: the masculine personal form for the majority, the non-masculine personal for seven informants." }
 
 def ex_9_62 : LinguisticExample :=
-  { id := "corbett1991_9.62"
+  { id := "corbett1991_9_62"
     source := ⟨"corbett-1991", "ch. 9 (62)"⟩
     reportedIn := none
     language := "poli1260"
@@ -2370,7 +2370,7 @@ def ex_9_62 : LinguisticExample :=
     comment := "Informants were equally divided between the masculine personal and the non-masculine personal form." }
 
 def ex_9_63 : LinguisticExample :=
-  { id := "corbett1991_9.63"
+  { id := "corbett1991_9_63"
     source := ⟨"corbett-1991", "ch. 9 (63)"⟩
     reportedIn := none
     language := "lati1261"
@@ -2386,7 +2386,7 @@ def ex_9_63 : LinguisticExample :=
     comment := "Kühner and Stegmann: persons of mixed gender take the masculine." }
 
 def ex_9_64 : LinguisticExample :=
-  { id := "corbett1991_9.64"
+  { id := "corbett1991_9_64"
     source := ⟨"corbett-1991", "ch. 9 (64)"⟩
     reportedIn := none
     language := "lati1261"
@@ -2402,7 +2402,7 @@ def ex_9_64 : LinguisticExample :=
     comment := "Mixed gender without persons takes the neuter." }
 
 def ex_9_65 : LinguisticExample :=
-  { id := "corbett1991_9.65"
+  { id := "corbett1991_9_65"
     source := ⟨"corbett-1991", "ch. 9 (65)"⟩
     reportedIn := none
     language := "roma1327"
@@ -2418,7 +2418,7 @@ def ex_9_65 : LinguisticExample :=
     comment := "Mallinson's Romanian data." }
 
 def ex_9_66 : LinguisticExample :=
-  { id := "corbett1991_9.66"
+  { id := "corbett1991_9_66"
     source := ⟨"corbett-1991", "ch. 9 (66)"⟩
     reportedIn := none
     language := "roma1327"
@@ -2434,7 +2434,7 @@ def ex_9_66 : LinguisticExample :=
     comment := "" }
 
 def ex_9_67 : LinguisticExample :=
-  { id := "corbett1991_9.67"
+  { id := "corbett1991_9_67"
     source := ⟨"corbett-1991", "ch. 9 (67)"⟩
     reportedIn := none
     language := "roma1327"
@@ -2450,7 +2450,7 @@ def ex_9_67 : LinguisticExample :=
     comment := "" }
 
 def ex_9_68 : LinguisticExample :=
-  { id := "corbett1991_9.68"
+  { id := "corbett1991_9_68"
     source := ⟨"corbett-1991", "ch. 9 (68)"⟩
     reportedIn := none
     language := "roma1327"
@@ -2466,7 +2466,7 @@ def ex_9_68 : LinguisticExample :=
     comment := "Gruiţă's examples with personal pronouns: for mixed genders of inanimates the feminine." }
 
 def ex_9_69 : LinguisticExample :=
-  { id := "corbett1991_9.69"
+  { id := "corbett1991_9_69"
     source := ⟨"corbett-1991", "ch. 9 (69)"⟩
     reportedIn := none
     language := "roma1327"
@@ -2482,7 +2482,7 @@ def ex_9_69 : LinguisticExample :=
     comment := "" }
 
 def ex_9_70 : LinguisticExample :=
-  { id := "corbett1991_9.70"
+  { id := "corbett1991_9_70"
     source := ⟨"corbett-1991", "ch. 9 (70)"⟩
     reportedIn := none
     language := "roma1327"
@@ -2498,7 +2498,7 @@ def ex_9_70 : LinguisticExample :=
     comment := "" }
 
 def ex_9_71 : LinguisticExample :=
-  { id := "corbett1991_9.71"
+  { id := "corbett1991_9_71"
     source := ⟨"corbett-1991", "ch. 9 (71)"⟩
     reportedIn := none
     language := "roma1327"
@@ -2514,7 +2514,7 @@ def ex_9_71 : LinguisticExample :=
     comment := "" }
 
 def ex_9_72 : LinguisticExample :=
-  { id := "corbett1991_9.72"
+  { id := "corbett1991_9_72"
     source := ⟨"corbett-1991", "ch. 9 (72)"⟩
     reportedIn := none
     language := "roma1327"
@@ -2530,7 +2530,7 @@ def ex_9_72 : LinguisticExample :=
     comment := "" }
 
 def ex_9_73 : LinguisticExample :=
-  { id := "corbett1991_9.73"
+  { id := "corbett1991_9_73"
     source := ⟨"corbett-1991", "ch. 9 (73)"⟩
     reportedIn := none
     language := "roma1327"
@@ -2546,7 +2546,7 @@ def ex_9_73 : LinguisticExample :=
     comment := "" }
 
 def ex_9_74 : LinguisticExample :=
-  { id := "corbett1991_9.74"
+  { id := "corbett1991_9_74"
     source := ⟨"corbett-1991", "ch. 9 (74)"⟩
     reportedIn := none
     language := "sout1528"
@@ -2562,7 +2562,7 @@ def ex_9_74 : LinguisticExample :=
     comment := "Andrić: feminine and neuter conjoined take the masculine." }
 
 def ex_9_75 : LinguisticExample :=
-  { id := "corbett1991_9.75"
+  { id := "corbett1991_9_75"
     source := ⟨"corbett-1991", "ch. 9 (75)"⟩
     reportedIn := none
     language := "sout1528"
@@ -2578,7 +2578,7 @@ def ex_9_75 : LinguisticExample :=
     comment := "Neuters conjoined take the masculine plural." }
 
 def ex_9_76 : LinguisticExample :=
-  { id := "corbett1991_9.76"
+  { id := "corbett1991_9_76"
     source := ⟨"corbett-1991", "ch. 9 (76)"⟩
     reportedIn := none
     language := "sout1528"
@@ -2594,7 +2594,7 @@ def ex_9_76 : LinguisticExample :=
     comment := "All conjuncts feminine: feminine agreement, as in Slovene." }
 
 def ex_9_77 : LinguisticExample :=
-  { id := "corbett1991_9.77"
+  { id := "corbett1991_9_77"
     source := ⟨"corbett-1991", "ch. 9 (77)"⟩
     reportedIn := none
     language := "sout1528"
@@ -2610,7 +2610,7 @@ def ex_9_77 : LinguisticExample :=
     comment := "Gudkov: a masculine predicate with feminine conjuncts, one of the -Ø declension; all such examples denote inanimates, so the condition is semantic." }
 
 def ex_9_78 : LinguisticExample :=
-  { id := "corbett1991_9.78"
+  { id := "corbett1991_9_78"
     source := ⟨"corbett-1991", "ch. 9 (78)"⟩
     reportedIn := none
     language := "sout1528"
@@ -2626,7 +2626,7 @@ def ex_9_78 : LinguisticExample :=
     comment := "Popović: feminine nouns in -a with masculine agreement, inanimates again." }
 
 def ex_9_79 : LinguisticExample :=
-  { id := "corbett1991_9.79"
+  { id := "corbett1991_9_79"
     source := ⟨"corbett-1991", "ch. 9 (79)"⟩
     reportedIn := none
     language := "ojib1241"
@@ -2642,7 +2642,7 @@ def ex_9_79 : LinguisticExample :=
     comment := "Delisle's Ojibwa data: grammatically animate nouns conjoined take animate agreement." }
 
 def ex_9_80 : LinguisticExample :=
-  { id := "corbett1991_9.80"
+  { id := "corbett1991_9_80"
     source := ⟨"corbett-1991", "ch. 9 (80)"⟩
     reportedIn := none
     language := "ojib1241"
@@ -2658,7 +2658,7 @@ def ex_9_80 : LinguisticExample :=
     comment := "" }
 
 def ex_9_81 : LinguisticExample :=
-  { id := "corbett1991_9.81"
+  { id := "corbett1991_9_81"
     source := ⟨"corbett-1991", "ch. 9 (81)"⟩
     reportedIn := none
     language := "ojib1241"
@@ -2674,7 +2674,7 @@ def ex_9_81 : LinguisticExample :=
     comment := "Animate and inanimate may not be conjoined, whatever the verb form." }
 
 def ex_9_82 : LinguisticExample :=
-  { id := "corbett1991_9.82"
+  { id := "corbett1991_9_82"
     source := ⟨"corbett-1991", "ch. 9 (82)"⟩
     reportedIn := none
     language := "ojib1241"
@@ -2690,7 +2690,7 @@ def ex_9_82 : LinguisticExample :=
     comment := "" }
 
 def ex_9_83 : LinguisticExample :=
-  { id := "corbett1991_9.83"
+  { id := "corbett1991_9_83"
     source := ⟨"corbett-1991", "ch. 9 (83)"⟩
     reportedIn := none
     language := "ojib1241"
@@ -2706,7 +2706,7 @@ def ex_9_83 : LinguisticExample :=
     comment := "A younger speaker accepts a grammatically animate but biologically inanimate noun conjoined with an inanimate, with inanimate subject agreement." }
 
 def ex_9_84 : LinguisticExample :=
-  { id := "corbett1991_9.84"
+  { id := "corbett1991_9_84"
     source := ⟨"corbett-1991", "ch. 9 (84)"⟩
     reportedIn := none
     language := "ojib1241"

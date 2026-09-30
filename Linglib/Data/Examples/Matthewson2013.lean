@@ -321,8 +321,8 @@ def ex43a : LinguisticExample :=
     paperFeatures := [("section", "3.3"), ("modal", "ima('a)"), ("perspective", "past"), ("orientation", "past"), ("prospective", "false"), ("figure", "4")]
     comment := "" }
 
-def ex43a' : LinguisticExample :=
-  { id := "matthewson2013_ex43a'"
+def ex43a_prime : LinguisticExample :=
+  { id := "matthewson2013_ex43a_prime"
     source := ⟨"matthewson-2013", "(43a')"⟩
     reportedIn := none
     language := "gitx1241"
@@ -353,8 +353,8 @@ def ex44 : LinguisticExample :=
     paperFeatures := [("section", "3.3"), ("modal", "ima('a)"), ("perspective", "past"), ("orientation", "future"), ("prospective", "true"), ("figure", "4")]
     comment := "" }
 
-def ex44' : LinguisticExample :=
-  { id := "matthewson2013_ex44'"
+def ex44_prime : LinguisticExample :=
+  { id := "matthewson2013_ex44_prime"
     source := ⟨"matthewson-2013", "(44')"⟩
     reportedIn := none
     language := "gitx1241"
@@ -481,8 +481,8 @@ def ex53 : LinguisticExample :=
     paperFeatures := [("section", "4.1"), ("modal", "da'aḵhlxw"), ("perspective", "present"), ("orientation", "future"), ("prospective", "true")]
     comment := "" }
 
-def ex53' : LinguisticExample :=
-  { id := "matthewson2013_ex53'"
+def ex53_prime : LinguisticExample :=
+  { id := "matthewson2013_ex53_prime"
     source := ⟨"matthewson-2013", "(53')"⟩
     reportedIn := none
     language := "gitx1241"
@@ -513,8 +513,8 @@ def ex56 : LinguisticExample :=
     paperFeatures := [("section", "4.1"), ("modal", "da'aḵhlxw"), ("perspective", "past"), ("orientation", "future"), ("prospective", "true")]
     comment := "" }
 
-def ex56' : LinguisticExample :=
-  { id := "matthewson2013_ex56'"
+def ex56_prime : LinguisticExample :=
+  { id := "matthewson2013_ex56_prime"
     source := ⟨"matthewson-2013", "(56')"⟩
     reportedIn := none
     language := "gitx1241"
@@ -625,8 +625,8 @@ def ex73 : LinguisticExample :=
     paperFeatures := [("section", "4.2"), ("modal", "anooḵ"), ("perspective", "past"), ("orientation", "future"), ("prospective", "true")]
     comment := "" }
 
-def ex73' : LinguisticExample :=
-  { id := "matthewson2013_ex73'"
+def ex73_prime : LinguisticExample :=
+  { id := "matthewson2013_ex73_prime"
     source := ⟨"matthewson-2013", "(73')"⟩
     reportedIn := none
     language := "gitx1241"
@@ -689,8 +689,8 @@ def ex83 : LinguisticExample :=
     paperFeatures := [("section", "4.3"), ("modal", "sgi"), ("perspective", "present"), ("orientation", "future"), ("prospective", "true"), ("flavor", "deontic")]
     comment := "" }
 
-def ex83' : LinguisticExample :=
-  { id := "matthewson2013_ex83'"
+def ex83_prime : LinguisticExample :=
+  { id := "matthewson2013_ex83_prime"
     source := ⟨"matthewson-2013", "(83')"⟩
     reportedIn := none
     language := "gitx1241"
@@ -849,6 +849,6 @@ def ex100b : LinguisticExample :=
     paperFeatures := [("section", "4.3"), ("modal", "sgi"), ("force", "necessity"), ("flavor", "pure circumstantial")]
     comment := "" }
 
-def all : List LinguisticExample := [ex22, ex29, ex30, ex37, ex38a, ex38b, ex39a, ex40a, ex41a, ex42a, ex39b, ex40b, ex41b, ex42b, ex39c, ex40c, ex41c, ex42c, ex43a, ex43a', ex44, ex44', ex47a, ex48a, ex47b, ex48b, ex47c, ex48c, ex53, ex53', ex56, ex56', ex62, ex63a, ex64, ex65, ex66, ex73, ex73', ex79, ex80, ex83, ex83', ex86a, ex89, ex90, ex91, ex92, ex95a, ex96, ex100a, ex100b]
+def all : List LinguisticExample := [ex22, ex29, ex30, ex37, ex38a, ex38b, ex39a, ex40a, ex41a, ex42a, ex39b, ex40b, ex41b, ex42b, ex39c, ex40c, ex41c, ex42c, ex43a, ex43a_prime, ex44, ex44_prime, ex47a, ex48a, ex47b, ex48b, ex47c, ex48c, ex53, ex53_prime, ex56, ex56_prime, ex62, ex63a, ex64, ex65, ex66, ex73, ex73_prime, ex79, ex80, ex83, ex83_prime, ex86a, ex89, ex90, ex91, ex92, ex95a, ex96, ex100a, ex100b]
 
 end Matthewson2013.Examples

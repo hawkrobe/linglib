@@ -252,7 +252,7 @@ def verbTable : List (String × Bool) := [("AF", true), ("full", false)]
 
 /-- The grammars by glottocode. -/
 def grammarTable : List (String × Grammar) :=
-  [("kaqc1270", kaqchikel), ("popt1235", popti), ("akat1248", akatek), ("chol1282", chol)]
+  [("kaqc1270", kaqchikel), ("popt1235", popti), ("west2635", akatek), ("chol1282", chol)]
 
 /-- A row: the clause, its language's grammar, whether the attested form bears the AF suffix,
 and the judgment. -/

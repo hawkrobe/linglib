@@ -465,8 +465,8 @@ def hungarian_kalap_plposs : LinguisticExample :=
     paperFeatures := [("root", "kalap"), ("poss", "yes"), ("plExponent", "ai")]
     comment := "Plural -((j)a)i- before the first singular possessive -m." }
 
-def hungarian_ház_pl : LinguisticExample :=
-  { id := "embick2015_hungarian_ház_pl"
+def hungarian_haz_pl : LinguisticExample :=
+  { id := "embick2015_hungarian_haz_pl"
     source := ⟨"embick-2015", "ch. 7, (7)"⟩
     reportedIn := none
     language := "hung1274"
@@ -481,8 +481,8 @@ def hungarian_ház_pl : LinguisticExample :=
     paperFeatures := [("root", "ház"), ("poss", "no"), ("plExponent", "k")]
     comment := "Plural -(V)k with no possessive following." }
 
-def hungarian_ház_plposs : LinguisticExample :=
-  { id := "embick2015_hungarian_ház_plposs"
+def hungarian_haz_plposs : LinguisticExample :=
+  { id := "embick2015_hungarian_haz_plposs"
     source := ⟨"embick-2015", "ch. 7, (7)"⟩
     reportedIn := none
     language := "hung1274"
@@ -529,6 +529,6 @@ def korean_ai : LinguisticExample :=
     paperFeatures := [("root", "ai"), ("final", "V"), ("nomExponent", "ka")]
     comment := "Nominative allomorph conditioned by the final segment of the host (§7.2.2)." }
 
-def all : List LinguisticExample := [latin_present_1sg, latin_present_2sg, latin_present_3sg, latin_present_1pl, latin_present_2pl, latin_present_3pl, latin_imperfect_1sg, latin_imperfect_2sg, latin_imperfect_3sg, latin_imperfect_1pl, latin_imperfect_2pl, latin_imperfect_3pl, latin_perfect_1sg, latin_perfect_2sg, latin_perfect_3sg, latin_perfect_1pl, latin_perfect_2pl, latin_perfect_3pl, latin_pluperfect_1sg, latin_pluperfect_2sg, latin_pluperfect_3sg, latin_pluperfect_1pl, latin_pluperfect_2pl, latin_pluperfect_3pl, hungarian_ruha_pl, hungarian_ruha_plposs, hungarian_kalap_pl, hungarian_kalap_plposs, hungarian_ház_pl, hungarian_ház_plposs, korean_pap, korean_ai]
+def all : List LinguisticExample := [latin_present_1sg, latin_present_2sg, latin_present_3sg, latin_present_1pl, latin_present_2pl, latin_present_3pl, latin_imperfect_1sg, latin_imperfect_2sg, latin_imperfect_3sg, latin_imperfect_1pl, latin_imperfect_2pl, latin_imperfect_3pl, latin_perfect_1sg, latin_perfect_2sg, latin_perfect_3sg, latin_perfect_1pl, latin_perfect_2pl, latin_perfect_3pl, latin_pluperfect_1sg, latin_pluperfect_2sg, latin_pluperfect_3sg, latin_pluperfect_1pl, latin_pluperfect_2pl, latin_pluperfect_3pl, hungarian_ruha_pl, hungarian_ruha_plposs, hungarian_kalap_pl, hungarian_kalap_plposs, hungarian_haz_pl, hungarian_haz_plposs, korean_pap, korean_ai]
 
 end Embick2015.Examples
