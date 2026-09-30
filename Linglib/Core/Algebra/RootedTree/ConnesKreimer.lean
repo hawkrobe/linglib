@@ -332,6 +332,25 @@ theorem coeff_of' (F G : Forest T) [Decidable (F = G)] :
 theorem ext_coeff (h : ∀ F, p.coeff F = q.coeff F) : p = q :=
   ext (AddMonoidAlgebra.coeff_inj.mp (Finsupp.ext h))
 
+/-- The coefficient of `F` in the formal sum of a multiset of forests is its multiplicity. -/
+theorem coeff_sum_map_of' [DecidableEq T] (s : Multiset (Forest T)) (F : Forest T) :
+    ((s.map (of' (R := R))).sum).coeff F = s.count F := by
+  induction s using Multiset.induction with
+  | empty => simp
+  | cons G s ih =>
+    rw [Multiset.map_cons, Multiset.sum_cons, coeff_add, ih, coeff_of', Multiset.count_cons]
+    split_ifs <;> subst_vars <;> simp_all [add_comm]
+
+/-- In characteristic zero a multiset of forests is determined by its formal sum. -/
+theorem sum_map_of'_injective [CharZero R] :
+    Function.Injective fun s : Multiset (Forest T) ↦ (s.map (of' (R := R))).sum := by
+  classical
+  intro s t h
+  ext F
+  have := congrArg (coeff · F) h
+  simp only [coeff_sum_map_of'] at this
+  exact_mod_cast this
+
 variable (R) in
 /-- `coeff` bundled as a linear functional (`Polynomial.lcoeff` analogue). -/
 def lcoeff (F : Forest T) : ConnesKreimer R T →ₗ[R] R where

@@ -25,7 +25,7 @@ calculus of [oudom-guin-2008]).
 * `ConnesKreimer.pairing_product_assoc` — Foissy coassociativity of Δ^ρ
   pushed back through the duality: the two GL triple products pair
   equally against everything (associativity up to separation, closed in
-  `GrossmanLarson/Monoid.lean`).
+  `GrossmanLarson/Algebra.lean`).
 * The `IsAdmissibleCuts cutSummandsN` model instance for the `WithCuts`
   carrier (coassociativity and counit laws from `Coproduct/Pruning.lean`).
 
@@ -174,7 +174,7 @@ theorem pairing_gl_eq_pairing_coproduct_Rho
             Algebra.TensorProduct.one_def,
           pairing₂_tmul_tmul, pairing_one_right, pairing_one_right,
           pairing_one_right]
-      rw [counit_gl_mul]
+      rw [counit_product]
       exact mul_comm _ _
     · obtain ⟨C', rfl⟩ := Multiset.exists_cons_of_mem hT
       rcases Multiset.empty_or_exists_mem C' with hC'0 | ⟨T₂, hT₂⟩
@@ -286,7 +286,7 @@ Foissy coassociativity of Δ^ρ (`Coproduct/Pruning.lean`) transports back
 through the duality: pairing the two GL triple products against an
 arbitrary element yields the two sides of coassociativity. Separation
 over a characteristic-zero domain and the descent to any `CommSemiring`
-live in `GrossmanLarson/Monoid.lean`. -/
+live in `GrossmanLarson/Algebra.lean`. -/
 
 /-- One duality application under `assoc ∘ rTensor Δ^ρ` (crossed
     orientation: the inner coproduct expansion produces `y ⋆ x`). -/
