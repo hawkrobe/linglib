@@ -29,7 +29,7 @@ Belief is the same operator over a KD45 frame (`ModalLogic.IsKD45Frame`), with t
 
 * `knows_of_everyoneKnows`, `everyoneKnows_of_commonKnowledge`,
   `distributedKnowledge_of_knows`: the hierarchy `C_G ≤ E_G ≤ Kᵢ ≤ D_G`, each by restricting
-  accessibility (`ModalLogic.box_restrict`).
+  accessibility (`ModalLogic.box_restrict`), with `knows_of_commonKnowledge` the composite.
 * `commonKnowledge_iff_forall_iterate`: `C_G` as the infinite conjunction of iterated `E_G`.
 
 ## References
@@ -80,6 +80,9 @@ theorem everyoneKnows_of_commonKnowledge (h : commonKnowledge Rs G φ w) :
     everyoneKnows Rs G φ w :=
   box_restrict φ (fun _ _ => TransGen.single) w h
 
+theorem knows_of_commonKnowledge (hi : i ∈ G) (h : commonKnowledge Rs G φ w) : knows Rs i φ w :=
+  knows_of_everyoneKnows hi (everyoneKnows_of_commonKnowledge h)
+
 theorem distributedKnowledge_of_knows (hi : i ∈ G) (h : knows Rs i φ w) :
     distributedKnowledge Rs G φ w :=
   box_restrict φ (iInf₂_le (f := fun i (_ : i ∈ G) => Rs i) i hi) w h
@@ -105,5 +108,12 @@ variable {W E : Type*}
 among `G` ([stalnaker-2002]). -/
 def GroundedIn (cg : Filter W) (Rs : E → W → W → Prop) (G : Set E) : Prop :=
   ∀ w, w ∈ cg.ker ↔ ∀ p ∈ cg, ModalLogic.Epistemic.commonKnowledge Rs G (· ∈ p) w
+
+/-- An accepted proposition of a grounded common ground is common knowledge throughout its
+context set. -/
+theorem GroundedIn.commonKnowledge {cg : Filter W} {Rs : E → W → W → Prop} {G : Set E}
+    (h : cg.GroundedIn Rs G) {w : W} (hw : w ∈ cg.ker) {p : Set W} (hp : p ∈ cg) :
+    ModalLogic.Epistemic.commonKnowledge Rs G (· ∈ p) w :=
+  (h w).1 hw p hp
 
 end Filter
