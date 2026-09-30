@@ -72,14 +72,14 @@ theorem IsLocalContext.unique {C : Set W} {env : Set (α → Set W)} {x y : α}
     (hx : IsLocalContext C env x) (hy : IsLocalContext C env y) : x = y :=
   IsLeast.unique hx hy
 
-/-- The presupposition of `p` in the gap of `env` is satisfied in `C` when the local context
-exists and entails it. -/
-def Satisfied (C : Set W) (env : Set (Set W → Set W)) (p : PartialProp W) : Prop :=
-  ∃ x, IsLocalContext C env x ∧ p.Admits x
+/-- A presupposition `P` on the gap of `env` is satisfied in `C` when the local context exists
+and entails it. -/
+def Satisfied (C : Set W) (env : Set (α → Set W)) (P : α) : Prop :=
+  ∃ x, IsLocalContext C env x ∧ x ≤ P
 
-theorem satisfied_iff {C x : Set W} {env : Set (Set W → Set W)} (h : IsLocalContext C env x)
-    (p : PartialProp W) : Satisfied C env p ↔ p.Admits x :=
-  ⟨fun ⟨_, hy, hp⟩ ↦ h.unique hy ▸ hp, fun hp ↦ ⟨x, h, hp⟩⟩
+theorem satisfied_iff {C : Set W} {env : Set (α → Set W)} {x : α} (h : IsLocalContext C env x)
+    (P : α) : Satisfied C env P ↔ x ≤ P :=
+  ⟨fun ⟨_, hy, hP⟩ ↦ h.unique hy ▸ hP, fun hP ↦ ⟨x, h, hP⟩⟩
 
 /-! ### Truth-functional environments -/
 
@@ -127,8 +127,8 @@ theorem isLocalContext_of_isTruthFunctional (henv : ∀ f ∈ env, IsTruthFuncti
 
 /-- For truth-functional continuations, a presupposition is satisfied in its local context iff it
 is a transparent restriction. -/
-theorem satisfied_iff_transparent (henv : ∀ f ∈ env, IsTruthFunctional f) (p : PartialProp W) :
-    Satisfied C env p ↔ Transparent C env p.presup := by
+theorem satisfied_iff_transparent (henv : ∀ f ∈ env, IsTruthFunctional f) (P : Set W) :
+    Satisfied C env P ↔ Transparent C env P := by
   rw [satisfied_iff (isLocalContext_of_isTruthFunctional henv), transparent_iff_subset henv]
 
 end TruthFunctional
