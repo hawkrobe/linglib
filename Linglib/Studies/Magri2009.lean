@@ -3,7 +3,7 @@ module
 public import Mathlib.Data.Fintype.Prod
 public import Linglib.Semantics.Exhaustification.InnocentExclusion
 public import Linglib.Semantics.Quantification.Basic
-public import Linglib.Semantics.Genericity.SortedOntology
+public import Linglib.Semantics.Genericity.PredicateLevel
 public import Linglib.Data.Examples.Magri2009
 
 /-!
@@ -66,7 +66,8 @@ competes with GEN, which presupposes homogeneity, so *#John is always tall* is o
 
 namespace Magri2009
 
-open Exhaustification Quantifier Set Genericity.SortedOntology
+open Exhaustification Quantifier Set
+open Genericity (PredicateLevel)
 
 /-! ### Blind strengthening and oddness (§3.2) -/
 

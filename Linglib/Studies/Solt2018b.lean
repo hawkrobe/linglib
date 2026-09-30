@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.Degree.Aggregation
 public import Linglib.Semantics.Degree.Measure.Basic
-public import Linglib.Semantics.Genericity.SortedOntology
+public import Linglib.Semantics.Genericity.PredicateLevel
 public import Mathlib.Algebra.Order.Field.Basic
 
 /-!
@@ -59,7 +59,8 @@ Solt's other 2018 paper, the multidimensionality chapter [solt-2018a], is formal
 
 namespace Solt2018b
 
-open Degree Degree.Aggregation Genericity.SortedOntology
+open Degree Degree.Aggregation
+open Genericity (PredicateLevel)
 
 variable {α : Type*} (μ : α → ℚ)
 
