@@ -23,15 +23,12 @@ def strong_dominant : LinguisticExample :=
     reportedIn := some ⟨"kanazawa-1994", "UNVERIFIED strong reading dominant out of the blue"⟩
     language := "stan1293"
     primaryText := "Every farmer who owns a donkey beats it."
-    discourseSegments := []
     glossedTokens := []
-    translation := ""
     context := "Out of the blue"
     judgment := .acceptable
     alternatives := []
     readings := [("strong/universal", .acceptable), ("weak/existential", .acceptable)]
-    paperFeatures := [("preferred_reading", "strong"), ("quantifier_monotonicity", "upward")]
-    comment := "Migrated from Phenomena/Anaphora/DonkeyAnaphora.lean strongDominant. Kanazawa 1994's monotonicity generalization: with upward-entailing 'every' out of the blue, both readings are available but the strong reading dominates." }
+    paperFeatures := [("preferred_reading", "strong"), ("quantifier_monotonicity", "upward")] }
 
 def all : List LinguisticExample := [strong_dominant]
 

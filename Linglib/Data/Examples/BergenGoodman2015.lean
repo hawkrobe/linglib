@@ -23,15 +23,12 @@ def stressed_subject : LinguisticExample :=
     reportedIn := none
     language := "stan1293"
     primaryText := "BOB went to the movies."
-    discourseSegments := []
     glossedTokens := []
-    translation := ""
     context := "Q: Who went to the movies? (CAPS = prosodic stress)"
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("stress", "subject"), ("reading", "exhaustive")]
-    comment := "Migrated from Phenomena/Focus/ProsodicExhaustivity.lean stressedSubject. Stress on the subject signals exhaustive knowledge: only Bob went. Modeled by the noisy-channel Prosody model in Studies/BergenGoodman2015.lean (stress halves the rate at which the subject is misheard)." }
+    paperFeatures := [("stress", "subject"), ("reading", "exhaustive")] }
 
 def unstressed_subject : LinguisticExample :=
   { id := "bergengoodman2015_unstressed_subject"
@@ -39,15 +36,12 @@ def unstressed_subject : LinguisticExample :=
     reportedIn := none
     language := "stan1293"
     primaryText := "Bob went to the movies."
-    discourseSegments := []
     glossedTokens := []
-    translation := ""
     context := "Q: Who went to the movies?"
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("stress", "none"), ("reading", "nonExhaustive")]
-    comment := "Migrated from Phenomena/Focus/ProsodicExhaustivity.lean unstressedSubject. Without stress the answer is compatible with others having gone too." }
+    paperFeatures := [("stress", "none"), ("reading", "nonExhaustive")] }
 
 def all : List LinguisticExample := [stressed_subject, unstressed_subject]
 

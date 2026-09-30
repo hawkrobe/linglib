@@ -2,8 +2,8 @@
 
 One JSON file per source paper (`Charlow2014.json`, `Hofmann2025.json`, ...)
 co-located with the [`Schema.lean`](Schema.lean) they instantiate. Each
-file is a top-level JSON array of example objects mirroring the
-`LinguisticExample` Lean struct.
+file is a top-level JSON array of example objects: the fields of the
+`LinguisticExample` Lean struct plus four record-only keys (see Schema below).
 
 ## Generator
 
@@ -36,9 +36,9 @@ edited by hand; the JSON is the source of truth.
 ## Schema
 
 See `Linglib/Data/Examples/Schema.lean` for the canonical type. Quick
-field reference:
+key reference:
 
-| Field | Type | Notes |
+| Key | Type | Notes |
 |---|---|---|
 | `id` | string | `<authoryear>_<local>`, e.g. `"charlow2014_donkey1"`; only `[A-Za-z0-9_-]` (a CLDF identifier: write `(3.1)` as `3_1`, a prime as `_prime`) |
 | `source` | `{bibkey, paperLabel}` | **originating** paper (e.g. `geach-1962` for the donkey) |
@@ -54,7 +54,11 @@ field reference:
 | `readings` | array of `{name, judgment}` | multiple LFs / scope readings (e.g., donkey strong vs weak) |
 | `paperFeatures` | array of `[key, value]` | what the paper states about the example (its design cell, the class it assigns); a key repeats when the example bears the property twice |
 | `comment` | string | analyst notes |
-| `verified` | `"page-image"` or `"text-layer"`, optional | how the row was last checked against its source; not a Lean field |
+| `verified` | `"page-image"` or `"text-layer"`, optional | how the row was last checked against its source |
+
+`discourseSegments`, `translation`, `comment` and `verified` are the source's record, not Lean
+fields: no theorem reads them, and every field of the Lean row is paid for when a kernel `decide`
+reduces it. The generator validates them and the CLDF export carries them.
 
 Translations are English, so there is no metalanguage field. CLDF's
 `LGR_Conformance` is not recorded either: `glossedTokens` pairs are word

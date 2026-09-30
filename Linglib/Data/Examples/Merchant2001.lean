@@ -23,15 +23,12 @@ def german_case_match : LinguisticExample :=
     reportedIn := none
     language := "stan1295"
     primaryText := "Er will jemandem schmeicheln, aber sie wissen nicht, wem."
-    discourseSegments := []
     glossedTokens := [("Er", "he.NOM"), ("will", "want.PRS.3SG"), ("jemandem", "someone.DAT"), ("schmeicheln", "flatter.INF"), ("aber", "but"), ("sie", "they"), ("wissen", "know.PRS.3PL"), ("nicht", "NEG"), ("wem", "who.DAT")]
-    translation := "He wants to flatter someone, but they don't know who."
     context := "Sluicing: the wh-remnant must bear the case its correlate bears in the antecedent. The verb schmeicheln 'flatter' assigns dative."
     judgment := .acceptable
     alternatives := [("Er will jemandem schmeicheln, aber sie wissen nicht, wen.", .ungrammatical)]
     readings := []
-    paperFeatures := [("phenomenon", "sluicing"), ("whPhraseCase", "dative"), ("innerAntecedentCase", "dative")]
-    comment := "Migrated from Phenomena/Ellipsis/Sluicing.lean germanCaseMatch/germanCaseMismatch: dative 'wem' matches dative 'jemandem' (grammatical); the accusative variant 'wen' in alternatives mismatches and is ungrammatical. UNVERIFIED provenance: this German case-matching paradigm is standardly attributed to Ross 1969 (no bib entry; not cited here), reported in Merchant 2001; the prior Lean file sourced it only as 'Merchant (2001)'." }
+    paperFeatures := [("phenomenon", "sluicing"), ("whPhraseCase", "dative"), ("innerAntecedentCase", "dative")] }
 
 def all : List LinguisticExample := [german_case_match]
 

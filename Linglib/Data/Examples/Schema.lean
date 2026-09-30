@@ -13,9 +13,8 @@ public import Linglib.Data.Examples.Judgment
 
 This file defines the type of example data, aligned with the Examples component of the
 Cross-Linguistic Data Formats [forkel-etal-2018] in version 1.3 [forkel-etal-2024], and the lookups
-a study makes on a paper's examples. The datum is an utterance with its interlinear gloss, its
-translation and the judgment the paper reports; it is the sentence-level counterpart of
-`Data/Forms/`.
+a study makes on a paper's examples. The datum is an utterance with its interlinear gloss and
+the judgment the paper reports; it is the sentence-level counterpart of `Data/Forms/`.
 
 ## Main definitions
 
@@ -39,9 +38,13 @@ translation and the judgment the paper reports; it is the sentence-level counter
 * Per-paper data lives in `Linglib/Data/Examples/{AuthorYear}.json` and is compiled by
   `scripts/gen_examples.py` into `Linglib/Data/Examples/{AuthorYear}.lean`, declaring
   `namespace {AuthorYear}.Examples`. The JSON keys are the field names, and `id` uses only the
-  characters of a CLDF identifier. One further key, `verified`, records how the row was last
-  checked against its source; it is provenance, exported to CLDF but not a field. `scripts/export_examples_cldf.py` writes the data as a CLDF
+  characters of a CLDF identifier. `scripts/export_examples_cldf.py` writes the data as a CLDF
   dataset, which CI validates.
+* Four JSON keys are the source's record and not fields, since no theorem reads them and every
+  field is paid for when a kernel `decide` reduces a row: `translation` (`Translated_Text`, empty
+  for an English example), `discourseSegments` (the utterances of a discourse), `comment`, and
+  `verified` (how the row was last checked against its source). The generator validates them and
+  the CLDF export carries them.
 * `language` is a Glottocode, which the generator checks against `languages.csv`, the language
   table of the data drawn from Glottolog; it is empty for a constructed string that belongs to no
   language, such as a pattern of a formal language.
@@ -49,10 +52,9 @@ translation and the judgment the paper reports; it is the sentence-level counter
   of [comrie-haspelmath-bickel-2008] holds by construction. CLDF's `LGR_Conformance` column is not
   stored: whether a gloss also aligns morpheme by morpheme (Rule 2) is a property of the pairs.
 * Translations are into English, the default of CLDF's `Meta_Language_ID`, which is therefore not
-  stored; `translation` is empty when the example is itself English.
-* A discourse is one example: `discourseSegments` are its utterances in order, `primaryText` is
-  their concatenation with single spaces, and the judgment is of the last utterance in the context
-  of the others.
+  stored.
+* A discourse is one example: `primaryText` joins its utterances with single spaces, and the
+  judgment is of the last utterance in the context of the others.
 * `paperFeatures` are the paper's own columns: what the paper states about the example, such as
   the cell of its design or the class it assigns. The results a paper prints for an experiment
   belong in `Data/Experiments/`, and an analysis the formaliser derives belongs in the study. A key
@@ -66,10 +68,8 @@ translation and the judgment the paper reports; it is the sentence-level counter
 
 ## TODO
 
-* 266 rows in 29 papers with `discourseSegments` do not have their concatenation as
-  `primaryText`: some give only the last utterance (RoelofsenFarkas2015, FarkasBruce2010), some
-  join the utterances with a dash (Holmberg2016), and some keep a judgment mark in a segment
-  (CoppockBeaver2015).
+* 86 rows in 21 papers with `discourseSegments` do not have their concatenation as
+  `primaryText` (the `discourse` column of `scripts/export_examples_cldf.py --report`).
 
 ## References
 
@@ -93,9 +93,9 @@ structure SourceRef where
   paperLabel : String
   deriving DecidableEq, Repr
 
-/-- A `LinguisticExample` is a row of a CLDF `ExampleTable`: an example of a language with its
-gloss, its translation, the judgment its source reports, the forms and readings the source judges
-with it, and the source's own classifications of it. -/
+/-- A `LinguisticExample` is the part of a row of a CLDF `ExampleTable` that theorems read: an
+example of a language with its gloss, the judgment its source reports, the forms and readings the
+source judges with it, and the source's own classifications of it. -/
 structure LinguisticExample where
   /-- The `ID` column holds a stable identifier keyed to the paper, `{authoryear}_{label}`. -/
   id : String
@@ -108,14 +108,9 @@ structure LinguisticExample where
   language : Glottocode
   /-- The `Primary_Text` column holds the example without judgment marks. -/
   primaryText : String
-  /-- The utterances of a discourse, in order; empty for a single sentence. -/
-  discourseSegments : List String := []
   /-- The `Analyzed_Word` and `Gloss` columns paired, each word with its gloss; empty when the
   source gives no gloss. -/
   glossedTokens : List (String × String)
-  /-- The `Translated_Text` column holds the source's English translation; empty for an English
-  example. -/
-  translation : String
   /-- The scenario the source gives for the judgment; empty when it gives none. -/
   context : String
   /-- The judgment the source reports for the example. -/
@@ -127,8 +122,6 @@ structure LinguisticExample where
   readings : List (String × Judgment) := []
   /-- The paper's own columns, as key-value pairs. -/
   paperFeatures : List (String × String) := []
-  /-- The `Comment` column holds free-text notes. -/
-  comment : String
   deriving DecidableEq, Repr
 
 /-- `digits? cs` is the number that the nonempty string of decimal digits `cs` denotes. -/

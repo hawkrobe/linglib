@@ -23,15 +23,12 @@ def ex_1 : LinguisticExample :=
     reportedIn := none
     language := "kala1399"
     primaryText := "ajunngitsuliurviginnittuartuunngilaq"
-    discourseSegments := []
     glossedTokens := [("aju-", "be.good"), ("nngit-", "NEG"), ("su-", "PART"), ("liur-", "make"), ("vigi-", "have.as.place.of"), ("nnit-", "ANTIP"), ("tuar-", "all.the.time"), ("tu-", "PART"), ("u-", "be"), ("nngil-", "NEG"), ("aq", "3SG.IND")]
-    translation := "He is not (much of) a benefactor."
     context := ""
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("phenomenon", "polysynthesis"), ("complexity", "enumerative")]
-    comment := "West Greenlandic, cited from Fortescue as a word packaging what English expresses phrasally." }
+    paperFeatures := [("phenomenon", "polysynthesis"), ("complexity", "enumerative")] }
 
 def all : List LinguisticExample := [ex_1]
 

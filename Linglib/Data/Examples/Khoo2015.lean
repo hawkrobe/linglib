@@ -23,15 +23,12 @@ def control : LinguisticExample :=
     reportedIn := none
     language := "stan1293"
     primaryText := "Jim is at home right now."
-    discourseSegments := []
     glossedTokens := []
-    translation := ""
     context := "A non-modal assertion in the control vignette; participants rated on a 7-point scale either whether what the speaker said is false or whether they would respond 'No, ...'."
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := []
-    comment := "" }
+    paperFeatures := [] }
 
 def modal : LinguisticExample :=
   { id := "khoo2015_modal"
@@ -39,15 +36,12 @@ def modal : LinguisticExample :=
     reportedIn := none
     language := "stan1293"
     primaryText := "Fat Tony might be dead."
-    discourseSegments := []
     glossedTokens := []
-    translation := ""
     context := "Smith, having examined evidence consistent with Fat Tony's death, asserts the epistemic might-claim; Beth knows Fat Tony is alive; participants rated on a 7-point scale either whether what Smith said is false or whether they would respond 'No, ...'."
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := []
-    comment := "" }
+    paperFeatures := [] }
 
 def all : List LinguisticExample := [control, modal]
 

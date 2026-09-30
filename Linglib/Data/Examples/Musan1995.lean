@@ -23,15 +23,12 @@ def ex2a : LinguisticExample :=
     reportedIn := none
     language := "stan1293"
     primaryText := "Gregory was silent."
-    discourseSegments := []
     glossedTokens := []
-    translation := ""
     context := "Past tense with a stage-level predicate (`silent`). Does NOT implicate that Gregory is dead — silence is a temporary state; the sentence is felicitous regardless of Gregory's current existence."
     judgment := .acceptable
     alternatives := []
     readings := [("no-lifetime-implicature (stage-level)", .acceptable)]
-    paperFeatures := []
-    comment := "Musan 1995 (dissertation) ex (2a) p. 11, Introduction. First half of the (2a)/(2b) minimal pair that establishes the lifetime-effects diagnostic: stage-level predicates do not implicate the subject's death." }
+    paperFeatures := [] }
 
 def ex2b : LinguisticExample :=
   { id := "musan1995_ex2b"
@@ -39,15 +36,12 @@ def ex2b : LinguisticExample :=
     reportedIn := none
     language := "stan1293"
     primaryText := "Gregory was from America."
-    discourseSegments := []
     glossedTokens := []
-    translation := ""
     context := "Past tense with an individual-level predicate (`from America` — a permanent origin/property). IMPLICATES that Gregory is dead. The lifetime effect: past tense + individual-level predicate → subject's lifetime has ended."
     judgment := .acceptable
     alternatives := []
     readings := [("lifetime-implicature (Gregory is dead)", .acceptable)]
-    paperFeatures := []
-    comment := "Musan 1995 ex (2b) p. 11. Second half of the minimal pair. The implicature is not part of the truth conditions but a strong inference from past tense + individual-level predicate composition. Central to the dissertation's argument that NP temporal interpretation depends on the predicate's lexical aspect." }
+    paperFeatures := [] }
 
 def all : List LinguisticExample := [ex2a, ex2b]
 
