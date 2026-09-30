@@ -79,6 +79,11 @@ instance : HasCommonGround (Filter W) W := ⟨id⟩
 
 @[simp] theorem HasCommonGround.commonGround_filter (f : Filter W) : commonGround f = f := rfl
 
+/-- A bare context set is the principal common ground. -/
+instance : HasCommonGround (Set W) W := ⟨principal⟩
+
+@[simp] theorem HasCommonGround.commonGround_set (s : Set W) : commonGround s = 𝓟 s := rfl
+
 /-! ### Stalnakerian assertion -/
 
 /-- A discourse state with a Stalnakerian `assert`: the projected common ground grows by
