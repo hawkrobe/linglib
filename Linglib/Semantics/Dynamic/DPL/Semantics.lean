@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Dynamic.CDRT
+public import Linglib.Semantics.Dynamic.RegisterStructure
 public import Linglib.Semantics.Dynamic.DPL.Syntax
 public import Mathlib.ModelTheory.Semantics
 

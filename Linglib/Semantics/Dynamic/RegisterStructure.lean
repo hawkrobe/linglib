@@ -1,0 +1,187 @@
+module
+
+public import Linglib.Logic.CylindricAlgebra
+public import Linglib.Semantics.Dynamic.Update
+public import Mathlib.Data.Set.Function
+
+/-!
+# Register structures
+
+A register structure makes states updatable at registers: a carrier `R` of registers with a
+value function `val` and register-wise update `extend`, subject to [muskens-1996]'s register
+axioms. AX1 ("having enough states") is skolemized as `extend`, and AX3 keeps distinct registers
+independent. The canonical model is a function type, whose coordinates are the registers and whose
+update is `Function.update`. Over a register structure, random assignment `[r]`, the random reset of
+[groenendijk-stokhof-1991], and the dynamic quantifiers are defined once for every system that
+stores discourse referents in registers.
+
+## Main definitions
+
+* `RegisterStructure R S E`, with its canonical instance at `V → E`.
+* `Update.randomAssign`, `Update.dexists`, `Update.dforall`: random assignment and the dynamic
+  quantifiers.
+* `Update.Fixes`, `Update.maxAt`: an update leaves a register unchanged, and the spine's
+  `Update.maxBy` at a register's value.
+
+## Main results
+
+* `Update.fixes_randomAssign_of_ne`: a random assignment fixes every other register.
+* `Update.maxAt_eq_of_fixes`: maximizing a register an update fixes is vacuous.
+* `Update.mem_randomAssign`, `Update.mem_randomAssign_iff_eqOn`, `Update.dom_dexists`: at the
+  canonical register structure a random assignment is `Function.update` at an arbitrary value,
+  agreement off the register, and, under the weakest precondition, cylindrification
+  ([henkin-monk-tarski-1971]).
+
+## References
+
+* [R. Muskens, *Combining Montague semantics and discourse representation* (1996)][muskens-1996]
+* [J. Groenendijk and M. Stokhof, *Dynamic predicate logic* (1991)][groenendijk-stokhof-1991]
+* [L. Henkin, J. D. Monk and A. Tarski, *Cylindric algebras, part I*
+  (1971)][henkin-monk-tarski-1971]
+-/
+
+@[expose] public section
+
+namespace DynamicSemantics
+
+/-- Muskens' register structure: a carrier of registers (his type `π`)
+with a value function (his `V`) and register-wise update. `extend`
+skolemizes AX1 — for each state, register, and individual there is a
+state that differs at most there — and the second law confines the
+difference to the updated register. -/
+class RegisterStructure (R S : Type*) (E : outParam Type*) where
+  /-- The value of a register in a state (Muskens' `V`). -/
+  val : R → S → E
+  /-- Update a state at a register (AX1's witness). -/
+  extend : S → R → E → S
+  /-- The updated register holds the new value. -/
+  val_extend_self : ∀ (i : S) (r : R) (e : E), val r (extend i r e) = e
+  /-- Other registers are untouched. -/
+  val_extend_of_ne : ∀ (i : S) (r r' : R) (e : E), r' ≠ r →
+    val r' (extend i r e) = val r' i
+
+/-- The canonical register structure: registers are the coordinates of a
+function type, update is `Function.update`. -/
+instance {V E : Type*} [DecidableEq V] : RegisterStructure V (V → E) E where
+  val v g := g v
+  extend g v e := Function.update g v e
+  val_extend_self _ _ _ := Function.update_self ..
+  val_extend_of_ne _ _ _ _ h := Function.update_of_ne h ..
+
+namespace Update
+
+open SetRel
+
+variable {R S E : Type*} [RegisterStructure R S E]
+
+/-- Random assignment: `[r]` introduces the register `r` with an
+arbitrary value. -/
+def randomAssign (r : R) : Update S :=
+  {(a, b) | ∃ e : E, b = RegisterStructure.extend a r e}
+
+/-- Existential update: `∃r(D) = [r]; D`. -/
+def dexists (r : R) (D : Update S) : Update S :=
+  randomAssign r ○ D
+
+/-- Universal condition: `∀r(D)` holds iff `D` has an output from every
+`r`-variant — [groenendijk-stokhof-1991]'s clause for the universal. -/
+def dforall (r : R) (D : Update S) : Condition S :=
+  impl (randomAssign r) D
+
+/-- The weakest precondition of a random assignment quantifies over the values of the
+register. -/
+theorem preimage_randomAssign (r : R) (t : Condition S) :
+    (randomAssign r).preimage t = {i | ∃ e : E, RegisterStructure.extend i r e ∈ t} := by
+  ext i
+  exact ⟨fun ⟨_, hj, e, he⟩ => ⟨e, he ▸ hj⟩, fun ⟨e, he⟩ => ⟨_, he, e, rfl⟩⟩
+
+/-- A DRS `[r | C]`: introduce `r`, then test `C`. -/
+theorem mem_dexists_test {r : R} {C : Condition S} {i j : S} :
+    i ~[dexists r (test C)] j ↔ i ~[randomAssign r] j ∧ j ∈ C :=
+  ⟨fun ⟨_, h, rfl, hC⟩ ↦ ⟨h, hC⟩, fun ⟨h, hC⟩ ↦ ⟨j, h, rfl, hC⟩⟩
+
+/-! ### Frame conditions and maximization -/
+
+/-- `D` fixes the register `r`: no output of `D` changes its value. -/
+def Fixes (r : R) (D : Update S) : Prop :=
+  ∀ i j, i ~[D] j → RegisterStructure.val r j = RegisterStructure.val r i
+
+theorem Fixes.comp {r : R} {D₁ D₂ : Update S} (h₁ : Fixes r D₁) (h₂ : Fixes r D₂) :
+    Fixes r (D₁ ○ D₂) :=
+  fun _ _ ⟨k, hk, hj⟩ ↦ (h₂ k _ hj).trans (h₁ _ k hk)
+
+theorem fixes_id (r : R) : Fixes r (SetRel.id : Update S) :=
+  fun _ _ h ↦ SetRel.mem_id.mp h ▸ rfl
+
+theorem fixes_test (r : R) (C : Condition S) : Fixes r (test C) :=
+  fun _ _ h ↦ h.1 ▸ rfl
+
+/-- A random assignment fixes every other register (AX3). -/
+theorem fixes_randomAssign_of_ne {r r' : R} (h : r' ≠ r) : Fixes r' (randomAssign (S := S) r) :=
+  fun _ _ ⟨e, he⟩ ↦ he ▸ RegisterStructure.val_extend_of_ne _ r r' e h
+
+/-- Maximization over a register: the outputs of `D` at which no other output gives `r` a
+strictly greater value. -/
+abbrev maxAt [Preorder E] (r : R) (D : Update S) : Update S :=
+  maxBy (RegisterStructure.val r) D
+
+theorem Fixes.maxBy {α : Type*} [Preorder α] {r : R} {f : S → α} {D : Update S}
+    (h : Fixes r D) : Fixes r (maxBy f D) :=
+  fun _ _ hD ↦ h _ _ hD.1
+
+/-- Maximizing a register an update fixes is vacuous: every output agrees with the input
+there, so none is strictly greater. -/
+theorem maxAt_eq_of_fixes [Preorder E] {r : R} {D : Update S} (h : Fixes r D) :
+    maxAt r D = D :=
+  maxBy_eq_self h
+
+end Update
+
+namespace Update
+
+open SetRel CylindricAlgebra
+
+variable {V E : Type*} [DecidableEq V] {g h : V → E} {x : V}
+
+@[simp] theorem _root_.DynamicSemantics.RegisterStructure.extend_eq_update (e : E) :
+    RegisterStructure.extend g x e = Function.update g x e := rfl
+
+@[simp] theorem _root_.DynamicSemantics.RegisterStructure.val_apply :
+    RegisterStructure.val x g = g x := rfl
+
+/-- At the canonical register structure, random assignment is
+`Function.update` at an arbitrary value. -/
+theorem mem_randomAssign : g ~[randomAssign x] h ↔ ∃ e, h = Function.update g x e := Iff.rfl
+
+/-- At the canonical register structure, random assignment at `x` is
+agreement off `x`. -/
+theorem mem_randomAssign_iff_eqOn : g ~[randomAssign x] h ↔ Set.EqOn g h {x}ᶜ :=
+  ⟨by rintro ⟨e, rfl⟩ v hv; exact (Function.update_of_ne hv e g).symm,
+    fun hk => ⟨h x, (Function.update_eq_iff.mpr ⟨rfl, fun _ hv => hk hv⟩).symm⟩⟩
+
+/-- At the canonical register structure, an existential runs its scope from some variant of the
+input at `x`. -/
+theorem mem_dexists {D : Update (V → E)} :
+    g ~[dexists x D] h ↔ ∃ e, Function.update g x e ~[D] h :=
+  ⟨by rintro ⟨_, ⟨e, rfl⟩, hD⟩; exact ⟨e, hD⟩, fun ⟨e, hD⟩ => ⟨_, ⟨e, rfl⟩, hD⟩⟩
+
+/-- At the canonical register structure, a universal holds when its scope has an output from
+every variant of the input at `x`. -/
+theorem mem_dforall {D : Update (V → E)} :
+    g ∈ dforall x D ↔ ∀ e, Function.update g x e ∈ D.dom :=
+  ⟨fun hall e => hall ⟨e, rfl⟩, by rintro hall _ ⟨e, rfl⟩; exact hall e⟩
+
+/-- The weakest precondition of a random assignment is cylindrification
+([henkin-monk-tarski-1971]). -/
+theorem preimage_randomAssign_eq_cyl (t : Condition (V → E)) :
+    (randomAssign x).preimage t = cyl x t :=
+  preimage_randomAssign x t
+
+/-- An existential is true where the cylindrification of its scope's truth set is. -/
+theorem dom_dexists (D : Update (V → E)) : (dexists x D).dom = cyl x D.dom := by
+  rw [← preimage_randomAssign_eq_cyl, ← preimage_univ_right, ← preimage_univ_right, dexists,
+    preimage_comp]
+
+end Update
+
+end DynamicSemantics

@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Logic.Assignment
 public import Linglib.Logic.CylindricAlgebra
 public import Linglib.Semantics.Dynamic.DPL.FirstOrder
 public import Linglib.Semantics.Dynamic.DRS.Dynamics
