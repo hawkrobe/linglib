@@ -1,45 +1,51 @@
 module
 
+public import Linglib.Semantics.Presupposition.SyntacticEnvironment
 public import Linglib.Semantics.Presupposition.BeliefEmbedding
 public import Linglib.Studies.Heim1983
 
 /-!
 # Schlenker (2009): Local Contexts
 
-This file formalizes the paper's definition of local contexts and the projection results it
-derives from it. A restriction on the denotation of an expression is transparent in a syntactic
-environment, relative to a context set, when conjoining it to any denotation of the
-expression's type changes the truth value at no world of the context, whatever the sentence's
-continuation turns out to be (`Transparent`). The local context is the bottom element of the
-transparent restrictions (`IsLocalContext`), and a presupposition is satisfied when the local
-context exists and entails it (`Satisfied`). Environments are represented semantically, as the
-set of frames sending the gap's denotation to the sentence's, one per good final; the
-incremental theory quantifies over every good final, so an initial conjunct or disjunct faces a
-frame for every possible continuation (`initial`).
+This file formalizes the paper's theory of local contexts for the propositional fragment of its
+language L, following the definitions and theorems of its Appendix C. A restriction on the
+denotation of an expression is transparent in a syntactic environment, relative to a context set,
+when conjoining it to any denotation of the expression's type changes the truth value at no world
+of the context (`Presupposition.Transparent`). The incremental theory consults every good final of
+the string up to the expression, the symmetric theory only the actual sentence. The local context
+is the least transparent restriction, and a presupposition is satisfied when its local context
+entails it. The paper's Transparency theory (C.8, `TranspI`, `TranspS`) requires the presupposition
+itself to be transparent at every trigger; local satisfaction (C.17, `SatI`, `SatS`) requires the
+local context to entail it.
 
-Every propositional environment is pointwise, computing the sentence's truth value at a world
-from the gap's truth value there, and for such environments the local context always exists: it
-is the set of context worlds at which some frame depends on the gap
-(`isLocalContext_pointwise`). Negation, an initial conjunct or disjunct, and an antecedent thus
-take the global context as local context; the second conjunct and the consequent take the
-context updated with the first clause, and the second disjunct the context updated with the
-first disjunct's negation. These are [karttunen-1974-presupposition]'s local contexts
-(`Presupposition.Connective.localContext`), which [heim-1983] and [beaver-2001] build into
-their update rules, derived here from bivalent meanings alone. Belief reports use
-two-dimensional denotations: the local context of the complement of *believe* is the set of
-pairs of an utterance world in the context and a world doxastically accessible from it
-(`isLocalContext_believe`), which is the substrate's `BeliefLocalCtx.atWorld`. On the King
-conditional of [heim-1983], satisfaction in the derived local contexts is admittance by
-Heim's context change potential, an instance of the paper's general equivalence with the
-dynamic system.
+In the propositional fragment every local context exists, and the incremental local context of any
+position is [karttunen-1974-presupposition]'s (`isLocalContext_goodFinals`): an argument of negation
+and the first argument of a connective take the global context, and the second argument of a
+conjunction or a conditional takes the context updated with the first, the second disjunct the
+context updated with the first disjunct's negation (the paper's (18)–(33)). The two theories are
+then equivalent (C.21, `satI_iff_transpI`, `satS_iff_transpS`), the incremental one predicts
+presuppositions at least as strong as the symmetric one (C.20, `SatI.satS`), and incremental
+Transparency is admittance by the dynamic semantics of [heim-1983], with [beaver-2001]'s
+disjunction (Theorem 1 of C.9, `transpI_iff_admits`; its update clause is `Formula.ccp_get`), so
+that incremental satisfaction is too (C.22, `satI_iff_admits`). The examples (20)–(32) of the
+paper follow. Belief reports use two-dimensional denotations: the local context of the complement
+of *believe* is the set of pairs of an utterance world in the context and a world doxastically
+accessible from it (`isLocalContext_believe`), which is the substrate's `BeliefLocalCtx.atWorld`.
 
 ## Implementation notes
 
-The paper defines transparency over strings and good finals; here an environment is the set
-of frames those finals denote, and the paper's assumption that every proposition is denoted
-appears as the frame for a tautologous continuation, which is what forces the local context
-of an initial constituent to include the whole context. Conditionals are material, as in the
-paper. Uniqueness of the bottom element is `IsLeast.unique`.
+* Only the propositional fragment of L is formalized. Theorem 2 of C.9 and C.23 need quantifiers.
+* The continuations a theory consults at a gap are represented by the set of functions from the
+  gap's truth set to the sentence's, one for each continuation (`goodFinals` for the incremental
+  theory, the actual sentence for the symmetric one). A good final replaces the material after the
+  gap; for the first argument of a conjunction or a disjunction the connective follows the gap in
+  the string and is itself free (`SyntacticEnvironment.SameInitialString`).
+* The paper quantifies over the expressions that may fill the gap and assumes that every
+  proposition is denoted (C.3); here the gap's denotation ranges over all propositions.
+* C.22's conditions Non-Triviality and Constancy concern quantificational clauses and domains, so
+  they hold trivially in the propositional fragment and are omitted. Since local contexts exist
+  there (C.16), the general definition of satisfaction (C.18) agrees with the special one (C.19)
+  and only the special one is defined.
 
 ## References
 
@@ -54,133 +60,164 @@ paper. Uniqueness of the bottom element is `IsLeast.unique`.
 
 namespace Schlenker2009
 
-open Presupposition
-open Presupposition.BeliefEmbedding
-open Heim1983
+open Presupposition Presupposition.BeliefEmbedding Heim1983 DynamicSemantics
 
-variable {W α : Type*} [SemilatticeInf α]
+variable {Atom W : Type*} (I : Atom → Set W)
 
-/-- A syntactic environment `a _ b` for a gap of type `α`, as the set of frames
-`d ↦ ⟦a d b'⟧` over the good finals `b'`. -/
-abbrev Environment (α W : Type*) := Set (α → Set W)
+/-! ### Transparency and local satisfaction -/
 
-/-- (14): a restriction `x` on the gap of `env` is transparent in the context `C` when
-restricting any denotation `d` by it changes the truth value at no world of `C`, for every
-good final. -/
-def Transparent (C : Set W) (env : Environment α W) (x : α) : Prop :=
-  ∀ f ∈ env, ∀ d : α, ∀ w ∈ C, w ∈ f (x ⊓ d) ↔ w ∈ f d
+/-- The incremental theory consults at a gap one continuation for each good final (C.8.i, C.10). -/
+def goodFinals (K : SyntacticEnvironment Atom) : Set (Set W → Set W) :=
+  (·.truth I) '' {K' | K.SameInitialString K'}
 
-/-- (15): the local context of the gap of `env` in `C` is the bottom element of its
-transparent restrictions. -/
-def IsLocalContext (C : Set W) (env : Environment α W) (x : α) : Prop :=
-  IsLeast {x | Transparent C env x} x
+/-- C.8.i: a formula satisfies incremental Transparency in `C` when at every trigger the
+presupposition is a transparent restriction for every good final. -/
+def TranspI (C : Set W) (F : Formula Atom) : Prop :=
+  ∀ o ∈ F.occurrences, Transparent C (goodFinals I o.1) (I o.2.1)
 
-theorem IsLocalContext.unique {C : Set W} {env : Environment α W} {x y : α}
-    (hx : IsLocalContext C env x) (hy : IsLocalContext C env y) : x = y :=
-  IsLeast.unique hx hy
+/-- C.8.ii: a formula satisfies symmetric Transparency in `C` when at every trigger the
+presupposition is a transparent restriction for the actual sentence. -/
+def TranspS (C : Set W) (F : Formula Atom) : Prop :=
+  ∀ o ∈ F.occurrences, Transparent C {o.1.truth I} (I o.2.1)
 
-/-- (16): the presupposition of `p` in the gap of `env` is satisfied in `C` when the local
-context exists and entails it. -/
-def Satisfied (C : Set W) (env : Environment (Set W) W) (p : PartialProp W) : Prop :=
-  ∃ x, IsLocalContext C env x ∧ p.Admits x
+/-- C.17: incremental local satisfaction: at every trigger, the incremental local context entails
+the presupposition. -/
+def SatI (C : Set W) (F : Formula Atom) : Prop :=
+  ∀ o ∈ F.occurrences, Satisfied C (goodFinals I o.1) ⟨(· ∈ I o.2.1), (· ∈ I o.2.2)⟩
 
-theorem satisfied_iff {C x : Set W} {env : Environment (Set W) W} (h : IsLocalContext C env x)
-    (p : PartialProp W) : Satisfied C env p ↔ p.Admits x :=
-  ⟨λ ⟨_, hy, hp⟩ => h.unique hy ▸ hp, λ hp => ⟨x, h, hp⟩⟩
+/-- C.17: symmetric local satisfaction: at every trigger, the symmetric local context entails the
+presupposition. -/
+def SatS (C : Set W) (F : Formula Atom) : Prop :=
+  ∀ o ∈ F.occurrences, Satisfied C {o.1.truth I} ⟨(· ∈ I o.2.1), (· ∈ I o.2.2)⟩
 
-/-! ### Propositional environments (§2.3.1) -/
+theorem isTruthFunctional_of_mem_goodFinals {K : SyntacticEnvironment Atom}
+    {f : Set W → Set W} (hf : f ∈ goodFinals I K) : IsTruthFunctional f := by
+  obtain ⟨K', -, rfl⟩ := hf
+  exact SyntacticEnvironment.isTruthFunctional_truth I K'
 
-/-- A pointwise frame computes the sentence's truth value at each world from the gap's truth
-value at that world. -/
-def pointwise (φ : W → Prop → Prop) : Set W → Set W := λ d => {w | φ w (w ∈ d)}
+theorem isTruthFunctional_of_mem_singleton {K : SyntacticEnvironment Atom}
+    {f : Set W → Set W} (hf : f ∈ ({K.truth I} : Set (Set W → Set W))) : IsTruthFunctional f :=
+  hf ▸ SyntacticEnvironment.isTruthFunctional_truth I K
 
-/-- The local context of a pointwise environment always exists: it is the set of context
-worlds at which some frame depends on the gap's truth value. -/
-theorem isLocalContext_pointwise (C : Set W) (Φ : Set (W → Prop → Prop)) :
-    IsLocalContext C (pointwise '' Φ) (C ∩ {w | ∃ φ ∈ Φ, ¬ (φ w True ↔ φ w False)}) := by
-  constructor
-  · rintro _ ⟨φ, hφ, rfl⟩ d w hw
-    by_cases hx : ∃ φ ∈ Φ, ¬ (φ w True ↔ φ w False)
-    · simp [pointwise, hw, hx]
-    · have hφw : φ w True ↔ φ w False := by
-        by_contra h
-        exact hx ⟨φ, hφ, h⟩
-      by_cases hd : w ∈ d <;> simp [pointwise, hd, hx, hφw]
-  · rintro x hx w ⟨hw, φ, hφ, hφw⟩
-    by_contra hwx
-    have h := hx _ ⟨φ, hφ, rfl⟩ Set.univ w hw
-    simp [pointwise, hwx] at h
-    exact hφw h.symm
+/-! ### Local contexts in the propositional fragment -/
 
-/-- When some frame depends on the gap at every context world, the local context is the global
-context. -/
-theorem isLocalContext_of_forall (C : Set W) (Φ : Set (W → Prop → Prop))
-    (h : C ⊆ {w | ∃ φ ∈ Φ, ¬ (φ w True ↔ φ w False)}) : IsLocalContext C (pointwise '' Φ) C := by
-  have := isLocalContext_pointwise C Φ
-  rwa [Set.inter_eq_left.2 h] at this
+/-- C.16 with §2.3: the incremental local context of any gap is
+[karttunen-1974-presupposition]'s. -/
+theorem isLocalContext_goodFinals [Nonempty Atom] (K : SyntacticEnvironment Atom) (C : Set W) :
+    IsLocalContext C (goodFinals I K) (K.localContext I C) := by
+  have h := isLocalContext_of_isTruthFunctional (C := C) (env := goodFinals I K) fun _ hf ↦
+    isTruthFunctional_of_mem_goodFinals I hf
+  rwa [show {w | ∃ f ∈ goodFinals I K, DependsAt f w} = K.localContext I Set.univ from
+    Set.ext fun w ↦ Set.exists_mem_image.trans
+      (SyntacticEnvironment.exists_dependsAt_iff I K w),
+    ← SyntacticEnvironment.localContext_eq_inter] at h
 
-/-- `(not _)`: the only good final is the closing bracket. -/
-def negation : Environment (Set W) W := pointwise '' {λ _ b => ¬ b}
-
-/-- `( _`: a good final conjoins or disjoins any proposition. -/
-def initial : Environment (Set W) W :=
-  pointwise '' (Set.range (λ h : Set W => λ w b => b ∧ w ∈ h) ∪
-    Set.range (λ h : Set W => λ w b => b ∨ w ∈ h))
-
-/-- `(p and _)`. -/
-def conjunct (p : W → Prop) : Environment (Set W) W := pointwise '' {λ w b => p w ∧ b}
-
-/-- `(if _ .`: a good final supplies any consequent. -/
-def antecedent : Environment (Set W) W :=
-  pointwise '' Set.range (λ h : Set W => λ w b => b → w ∈ h)
-
-/-- `(if p . _)`. -/
-def consequent (p : W → Prop) : Environment (Set W) W := pointwise '' {λ w b => p w → b}
-
-/-- `(p or _)`. -/
-def disjunct (p : W → Prop) : Environment (Set W) W := pointwise '' {λ w b => p w ∨ b}
+/-- (18), (27): the first argument of a connective takes the global context. -/
+theorem isLocalContext_left [Nonempty Atom] (c : Connective) (G : Formula Atom) (C : Set W) :
+    IsLocalContext C (goodFinals I [.left c G]) C :=
+  isLocalContext_goodFinals I _ C
 
 /-- (21): negation is a hole. -/
-theorem isLocalContext_negation (C : Set W) :
-    IsLocalContext C negation C :=
-  isLocalContext_of_forall C _ λ _ _ => ⟨_, rfl, by simp⟩
+theorem isLocalContext_not [Nonempty Atom] (C : Set W) :
+    IsLocalContext C (goodFinals I [(.not : SyntacticEnvironment.Step Atom)]) C :=
+  isLocalContext_goodFinals I _ C
 
-/-- (18): an initial conjunct or disjunct takes the global context. -/
-theorem isLocalContext_initial (C : Set W) : IsLocalContext C initial C :=
-  isLocalContext_of_forall C _ λ _ _ => ⟨_, Or.inl ⟨Set.univ, rfl⟩, by simp⟩
+/-- (24), (30), (33): the second argument of a conjunction or a conditional takes the context
+updated with the first, the second disjunct the context updated with the first's negation. -/
+theorem isLocalContext_right [Nonempty Atom] (c : Connective) (F : Formula Atom) (C : Set W) :
+    IsLocalContext C (goodFinals I [.right c F]) (c.localContext C (F.truth I)) :=
+  isLocalContext_goodFinals I _ C
 
-/-- (24): the second conjunct takes the context updated with the first. -/
-theorem isLocalContext_conjunct (C : Set W) (p : PartialProp W) :
-    IsLocalContext C (conjunct p.assertion) (Connective.conj.localContext C p.assertion) := by
-  show IsLocalContext C _ (C ∩ {w | p.assertion w})
-  simpa [conjunct] using
-    isLocalContext_pointwise C {λ w b => p.assertion w ∧ b}
+/-! ### Transparency, satisfaction and dynamic semantics -/
 
-/-- (27): an antecedent takes the global context. -/
-theorem isLocalContext_antecedent (C : Set W) : IsLocalContext C antecedent C :=
-  isLocalContext_of_forall C _ λ _ _ => ⟨_, ⟨∅, rfl⟩, by simp⟩
+/-- C.21 (incremental): local satisfaction is Transparency. -/
+theorem satI_iff_transpI (C : Set W) (F : Formula Atom) : SatI I C F ↔ TranspI I C F :=
+  forall₂_congr fun _ _ ↦
+    satisfied_iff_transparent (fun _ hf ↦ isTruthFunctional_of_mem_goodFinals I hf) _
 
-/-- (30): the consequent takes the context updated with the antecedent. -/
-theorem isLocalContext_consequent (C : Set W) (p : PartialProp W) :
-    IsLocalContext C (consequent p.assertion) (Connective.cond.localContext C p.assertion) := by
-  show IsLocalContext C _ (C ∩ {w | p.assertion w})
-  simpa [consequent] using
-    isLocalContext_pointwise C {λ w b => p.assertion w → b}
+/-- C.21 (symmetric): local satisfaction is Transparency. -/
+theorem satS_iff_transpS (C : Set W) (F : Formula Atom) : SatS I C F ↔ TranspS I C F :=
+  forall₂_congr fun _ _ ↦
+    satisfied_iff_transparent (fun _ hf ↦ isTruthFunctional_of_mem_singleton I hf) _
 
-/-- (33): the second disjunct takes the context updated with the first disjunct's negation. -/
-theorem isLocalContext_disjunct (C : Set W) (p : PartialProp W) :
-    IsLocalContext C (disjunct p.assertion) (Connective.disj.localContext C p.assertion) := by
-  show IsLocalContext C _ (C ∩ {w | ¬ p.assertion w})
-  simpa [disjunct] using
-    isLocalContext_pointwise C {λ w b => p.assertion w ∨ b}
+theorem TranspI.transpS {C : Set W} {F : Formula Atom} (h : TranspI I C F) : TranspS I C F :=
+  fun o ho ↦ (h o ho).anti <| Set.singleton_subset_iff.2 <|
+    Set.mem_image_of_mem (·.truth I) (SyntacticEnvironment.SameInitialString.refl o.1)
+
+/-- C.20: incremental satisfaction predicts presuppositions at least as strong as symmetric
+satisfaction. -/
+theorem SatI.satS {C : Set W} {F : Formula Atom} (h : SatI I C F) : SatS I C F :=
+  (satS_iff_transpS I C F).2 (TranspI.transpS I ((satI_iff_transpI I C F).1 h))
+
+/-- Theorem 1 of C.9: incremental Transparency is admittance by the formula's context change
+potential, which updates the context to its worlds at which the formula is true
+(`Formula.ccp_get`). -/
+theorem transpI_iff_admits (C : Set W) (F : Formula Atom) :
+    TranspI I C F ↔ (F.ccp I).Admits C := by
+  rw [Formula.admits_ccp_iff]
+  have henv {K : SyntacticEnvironment Atom} : ∀ f ∈ goodFinals I K, IsTruthFunctional f :=
+    fun _ hf ↦ isTruthFunctional_of_mem_goodFinals I hf
+  have hdep [Nonempty Atom] (K : SyntacticEnvironment Atom) (w : W) :
+      (∃ f ∈ goodFinals I K, DependsAt f w) ↔ w ∈ K.localContext I Set.univ :=
+    Set.exists_mem_image.trans (SyntacticEnvironment.exists_dependsAt_iff I K w)
+  refine ⟨fun h w hw ↦ (Formula.filter_presup_iff I F w).2 fun o ho hl ↦ ?_,
+    fun h o ho ↦ (transparent_iff_subset henv).2 fun w ⟨hw, hl⟩ ↦ ?_⟩
+  · have : Nonempty Atom := ⟨o.2.1⟩
+    exact (transparent_iff_subset henv).1 (h o ho) ⟨hw, (hdep o.1 w).2 hl⟩
+  · have : Nonempty Atom := ⟨o.2.1⟩
+    exact (Formula.filter_presup_iff I F w).1 (h hw) o ho ((hdep o.1 w).1 hl)
+
+/-- C.22: incremental satisfaction is admittance by the formula's context change potential. -/
+theorem satI_iff_admits (C : Set W) (F : Formula Atom) : SatI I C F ↔ (F.ccp I).Admits C :=
+  (satI_iff_transpI I C F).trans (transpI_iff_admits I C F)
+
+/-! ### Examples (§2.3) -/
+
+variable {p p' q q' : Atom} {C : Set W}
+
+/-- (20): `(pp' and q)` and `(pp' or q)` presuppose `p`. -/
+theorem satI_initial_iff {c : Connective} (hc : c ≠ .cond) :
+    SatI I C (.bin c (.trigger p p') (.atom q)) ↔ C ⊆ I p := by
+  rw [satI_iff_admits, Formula.admits_ccp_iff]
+  cases c <;> simp_all [Set.subset_def, Formula.filter, Connective.filter, PartialProp.andFilter,
+    PartialProp.orFilter] <;> exact Iff.rfl
+
+/-- (23): `(not pp')` presupposes `p`. -/
+theorem satI_not_iff : SatI I C (.not (.trigger p p')) ↔ C ⊆ I p := by
+  rw [satI_iff_admits, Formula.admits_ccp_iff]
+  rfl
+
+/-- (26): `(p and qq')` presupposes `(if p . q)`. -/
+theorem satI_and_iff :
+    SatI I C (.bin .conj (.atom p) (.trigger q q')) ↔
+      C ⊆ (Formula.bin .cond (.atom p) (.atom q)).truth I := by
+  rw [satI_iff_admits, Formula.admits_ccp_iff]
+  simp [Set.subset_def, Formula.filter, Formula.truth, Connective.filter, Connective.eval,
+    PartialProp.andFilter]
+  exact Iff.rfl
+
+/-- (29): `(if pp' . q)` presupposes `p`. -/
+theorem satI_if_iff : SatI I C (.bin .cond (.trigger p p') (.atom q)) ↔ C ⊆ I p := by
+  rw [satI_iff_admits, Formula.admits_ccp_iff]
+  simp [Set.subset_def, Formula.filter, Connective.filter, PartialProp.impFilter]
+  exact Iff.rfl
+
+/-- (32): `(if p . qq')` presupposes `(if p . q)`. -/
+theorem satI_then_iff :
+    SatI I C (.bin .cond (.atom p) (.trigger q q')) ↔
+      C ⊆ (Formula.bin .cond (.atom p) (.atom q)).truth I := by
+  rw [satI_iff_admits, Formula.admits_ccp_iff]
+  simp [Set.subset_def, Formula.filter, Formula.truth, Connective.filter, Connective.eval,
+    PartialProp.impFilter]
+  exact Iff.rfl
 
 /-! ### Belief reports (§3.1.2) -/
 
 /-- `(believe _)` with two-dimensional denotations, sets of pairs of an utterance world and a
 world of evaluation: the report holds at the utterance world when the complement holds at
 every world the agent's beliefs there allow. -/
-def believe (dox : W → W → Prop) : Environment (Set (W × W)) W :=
-  {λ d => {w₀ | ∀ w, dox w₀ w → (w₀, w) ∈ d}}
+def believe (dox : W → W → Prop) : Set (Set (W × W) → Set W) :=
+  {fun d ↦ {w₀ | ∀ w, dox w₀ w → (w₀, w) ∈ d}}
 
 /-- (52): the local context of the complement of *believe* pairs each utterance world of the
 context with the worlds the agent's beliefs there allow, the substrate's
@@ -190,32 +227,23 @@ theorem isLocalContext_believe {Agent : Type*} (blc : BeliefLocalCtx W Agent) :
       {q | q.2 ∈ blc.atWorld q.1} := by
   constructor
   · rintro _ rfl d w₀ hw₀
-    exact ⟨λ h w hw => (h w hw).2, λ h w hw => ⟨⟨hw₀, hw⟩, h w hw⟩⟩
+    exact ⟨fun h w hw ↦ (h w hw).2, fun h w hw ↦ ⟨⟨hw₀, hw⟩, h w hw⟩⟩
   · rintro x hx ⟨w₀, w⟩ ⟨hw₀, hw⟩
-    exact ((hx _ rfl Set.univ w₀ hw₀).2 λ _ _ => trivial) w hw |>.1
+    exact ((hx _ rfl Set.univ w₀ hw₀).2 fun _ _ ↦ trivial) w hw |>.1
 
 /-! ### The King conditional ([heim-1983]) -/
 
 variable {king son bald : W → Prop}
 
-/-- Satisfaction in the derived local contexts of the antecedent and the consequent of "If the
-king has a son, the king's son is bald" is admittance by Heim's context change potential:
-both hold iff the context entails a king. -/
-theorem king_satisfied_iff_admits (C : Set W) :
-    Satisfied C antecedent (kingHasSon king son) ∧
-        Satisfied C (consequent (kingHasSon king son).assertion) (kingsSonBald king son bald) ↔
+/-- "If the king has a son, the king's son is bald": incremental satisfaction is admittance by
+Heim's context change potential, both holding iff the context entails a king. -/
+theorem satI_king_iff_admits {k s ks b : Atom} (hk : I k = {w | king w}) (hs : I s = {w | son w})
+    (hks : I ks = {w | king w ∧ son w}) (C : Set W) :
+    SatI I C (.bin .cond (.trigger k s) (.trigger ks b)) ↔
       (ifKingHasSon king son bald).Admits C := by
-  rw [satisfied_iff (isLocalContext_antecedent C), satisfied_iff (isLocalContext_consequent C
-    (kingHasSon king son)), king_admits_iff]
-  exact ⟨λ h => h.1, λ h => ⟨h, λ w hw => ⟨h w hw.1, hw.2⟩⟩⟩
-
-/-- The derived local contexts agree with the Karttunen filtering conditional
-(`PartialProp.impFilter`): a conditional's presuppositions are satisfied in them iff the
-context satisfies the presupposition of the filtering connective. -/
-theorem satisfied_iff_impFilter (C : Set W) (p q : PartialProp W) :
-    Satisfied C antecedent p ∧ Satisfied C (consequent p.assertion) q ↔
-      (PartialProp.impFilter p q).Admits C := by
-  rw [satisfied_iff (isLocalContext_antecedent C), satisfied_iff (isLocalContext_consequent C p),
-    PartialProp.admits_impFilter]
+  rw [satI_iff_admits, king_admits_iff, Formula.admits_ccp_iff]
+  simp only [Formula.filter, Connective.filter, PartialProp.impFilter, PartialProp.Admits,
+    hk, hs, hks, Set.subset_def, Set.mem_ofPred_eq]
+  exact ⟨fun h w hw ↦ (h w hw).1, fun h w hw ↦ ⟨h w hw, fun hsn ↦ ⟨h w hw, hsn⟩⟩⟩
 
 end Schlenker2009
