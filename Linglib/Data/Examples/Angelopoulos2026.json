@@ -24,7 +24,8 @@
       ["verb", "leo"],
       ["position", "internal_argument"]
     ],
-    "comment": "Paper prints 'oti/*pu' in one example; the pu variant is expanded into alternatives. OTI/PU are the paper's placeholder glosses for the complementizers (fn. 1). Verbs of saying and belief take oti, not pu."
+    "comment": "Paper prints 'oti/*pu' in one example; the pu variant is expanded into alternatives. OTI/PU are the paper's placeholder glosses for the complementizers (fn. 1). Verbs of saying and belief take oti, not pu.",
+    "verified": "page-image"
   },
   {
     "id": "angelopoulos2026_1b",
@@ -50,7 +51,8 @@
       ["verb", "metaniono"],
       ["position", "internal_argument"]
     ],
-    "comment": "Paper prints 'pu/*oti' in one example; the oti variant is expanded into alternatives. Emotive factive verbs take pu, not oti."
+    "comment": "Paper prints 'pu/*oti' in one example; the oti variant is expanded into alternatives. Emotive factive verbs take pu, not oti.",
+    "verified": "page-image"
   },
   {
     "id": "angelopoulos2026_31a",
@@ -71,7 +73,8 @@
       ["diagnostic", "P-ban"],
       ["verb", "δjafono 'disagree'"]
     ],
-    "comment": "δjafono 'disagree' takes a PP complement headed by me 'with'."
+    "comment": "δjafono 'disagree' takes a PP complement headed by me 'with'.",
+    "verified": "page-image"
   },
   {
     "id": "angelopoulos2026_31b",
@@ -95,7 +98,8 @@
       ["complementizer", "oti"],
       ["position", "internal_argument"]
     ],
-    "comment": "δjafono 'disagree' also takes a bare oti-clause complement."
+    "comment": "δjafono 'disagree' also takes a bare oti-clause complement.",
+    "verified": "page-image"
   },
   {
     "id": "angelopoulos2026_31c",
@@ -119,7 +123,8 @@
       ["complementizer", "oti"],
       ["position", "p_complement"]
     ],
-    "comment": "Translation marked 'intended:' in the paper. The oti-clause cannot combine with the P me: like T, P cannot host light-noun incorporation."
+    "comment": "Translation marked 'intended:' in the paper. The oti-clause cannot combine with the P me: like T, P cannot host light-noun incorporation.",
+    "verified": "page-image"
   },
   {
     "id": "angelopoulos2026_32a",
@@ -140,7 +145,8 @@
       ["diagnostic", "P-ban"],
       ["verb", "metaniono"]
     ],
-    "comment": "metanjono 'regret' takes a PP complement headed by ja 'for'."
+    "comment": "metanjono 'regret' takes a PP complement headed by ja 'for'.",
+    "verified": "page-image"
   },
   {
     "id": "angelopoulos2026_32b",
@@ -163,7 +169,8 @@
       ["verb", "metaniono"],
       ["position", "internal_argument"]
     ],
-    "comment": "metanjono 'regret' also takes a bare pu-clause complement."
+    "comment": "metanjono 'regret' also takes a bare pu-clause complement.",
+    "verified": "page-image"
   },
   {
     "id": "angelopoulos2026_32c",
@@ -187,7 +194,8 @@
       ["position", "p_complement"],
       ["confound", "p_ban"]
     ],
-    "comment": "Translation marked 'intended:' in the paper. The pu-clause cannot combine with the P ja."
+    "comment": "Translation marked 'intended:' in the paper. The pu-clause cannot combine with the P ja.",
+    "verified": "page-image"
   },
   {
     "id": "angelopoulos2026_33a",
@@ -211,7 +219,8 @@
       ["diagnostic", "truth-predicates"],
       ["nounSort", "content"]
     ],
-    "comment": "Paper prints 'aliθis/lanθasmeni' in one example; expanded here. Content nouns combine with 'true'/'mistaken'."
+    "comment": "Paper prints 'aliθis/lanθasmeni' in one example; expanded here. Content nouns combine with 'true'/'mistaken'.",
+    "verified": "page-image"
   },
   {
     "id": "angelopoulos2026_33b",
@@ -235,7 +244,8 @@
       ["diagnostic", "truth-predicates"],
       ["nounSort", "situation"]
     ],
-    "comment": "Marked # in the paper (scoping over both predicate variants): situation nouns do not combine with 'true'/'mistaken'."
+    "comment": "Marked # in the paper (scoping over both predicate variants): situation nouns do not combine with 'true'/'mistaken'.",
+    "verified": "page-image"
   },
   {
     "id": "angelopoulos2026_34a",
@@ -263,7 +273,8 @@
       ["diagnostic", "occurrence-predicates"],
       ["nounSort", "content"]
     ],
-    "comment": "Marked # in the paper. Paper prints the six content nouns 'fimes/ iδees/ proiδopiisis/ pepiθisis/ ipoθesis/ θeories' (rumors/ideas/warnings/beliefs/hypotheses/theories) as one slash-list; expanded here. Content nouns do not combine with simveni 'happen'."
+    "comment": "Marked # in the paper. Paper prints the six content nouns 'fimes/ iδees/ proiδopiisis/ pepiθisis/ ipoθesis/ θeories' (rumors/ideas/warnings/beliefs/hypotheses/theories) as one slash-list; expanded here. Content nouns do not combine with simveni 'happen'.",
+    "verified": "page-image"
   },
   {
     "id": "angelopoulos2026_34b",
@@ -287,7 +298,8 @@
       ["diagnostic", "occurrence-predicates"],
       ["nounSort", "situation"]
     ],
-    "comment": "Paper prints 'periptosis/ katastasis' glossed 'situations.F.PL.NOM/ cases.F.PL.NOM' — transcribed verbatim, though the gloss order looks swapped relative to (35b), where periptosi = 'case' and katastasi = 'situation'. Situation nouns combine with simveni 'happen'."
+    "comment": "Paper prints 'periptosis/ katastasis' glossed 'situations.F.PL.NOM/ cases.F.PL.NOM' — transcribed verbatim, though the gloss order looks swapped relative to (35b), where periptosi = 'case' and katastasi = 'situation'. Situation nouns combine with simveni 'happen'.",
+    "verified": "page-image"
   },
   {
     "id": "angelopoulos2026_3a",
@@ -314,7 +326,8 @@
       ["position", "internal_argument"],
       ["diagnostic", "clitic-doubling"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "angelopoulos2026_3b",
@@ -340,16 +353,21 @@
       ["position", "internal_argument"],
       ["diagnostic", "clitic-doubling"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "angelopoulos2026_4a",
     "source": {"bibkey": "angelopoulos-2026", "paperLabel": "ex. (4a)"},
     "reportedIn": null,
     "language": "mode1248",
-    "primaryText": "I Maria mas eksijise kala oti i Ji ine stroéili.",
+    "primaryText": "I Maria mas eksijise kala oti i Ji ine stroɟili.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["I", "the.F.SG.NOM"], ["Maria", "Maria.F.SG.NOM"], ["mas", "us.1PL.DAT"],
+      ["eksijise", "explained.3SG"], ["kala", "well"], ["oti", "OTI"], ["i", "the.F.SG.NOM"],
+      ["Ji", "Earth.F.SG.NOM"], ["ine", "be.3SG"], ["stroɟili", "round.F.SG.NOM"]
+    ],
     "translation": "Maria explained well that the Earth is round.",
     "context": "",
     "judgment": "acceptable",
@@ -363,16 +381,22 @@
       ["position", "internal_argument"],
       ["composition", "predicate_modification"]
     ],
-    "comment": ""
+    "comment": "The paper brackets the oti-clause.",
+    "verified": "page-image"
   },
   {
     "id": "angelopoulos2026_4b",
     "source": {"bibkey": "angelopoulos-2026", "paperLabel": "ex. (4b)"},
     "reportedIn": null,
     "language": "mode1248",
-    "primaryText": "I Maria mas eksijise kala to oti i Ji ine stroéili.",
+    "primaryText": "I Maria mas eksijise kala to oti i Ji ine stroɟili.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["I", "the.F.SG.NOM"], ["Maria", "Maria.F.SG.NOM"], ["mas", "us.1PL.DAT"],
+      ["eksijise", "explained.3SG"], ["kala", "well"], ["to", "the.N.SG.ACC"], ["oti", "OTI"],
+      ["i", "the.F.SG.NOM"], ["Ji", "Earth.F.SG.NOM"], ["ine", "be.3SG"],
+      ["stroɟili", "round.F.SG.NOM"]
+    ],
     "translation": "Maria explained the fact that the Earth is round.",
     "context": "",
     "judgment": "acceptable",
@@ -386,16 +410,22 @@
       ["nominalized", "yes"],
       ["composition", "functional_application"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "angelopoulos2026_4c",
     "source": {"bibkey": "angelopoulos-2026", "paperLabel": "ex. (4c)"},
     "reportedIn": null,
     "language": "mode1248",
-    "primaryText": "I Maria mas to eksijise kala oti i Ji ine stroéili.",
+    "primaryText": "I Maria mas to eksijise kala oti i Ji ine stroɟili.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["I", "the.F.SG.NOM"], ["Maria", "Maria.F.SG.NOM"], ["mas", "us.1PL.DAT"],
+      ["to", "3SG.N.ACC"], ["eksijise", "explained.3SG"], ["kala", "well"], ["oti", "OTI"],
+      ["i", "the.F.SG.NOM"], ["Ji", "Earth.F.SG.NOM"], ["ine", "be.3SG"],
+      ["stroɟili", "round.F.SG.NOM"]
+    ],
     "translation": "Maria explained well that the Earth is round.",
     "context": "",
     "judgment": "acceptable",
@@ -410,21 +440,26 @@
       ["diagnostic", "clitic-doubling"],
       ["composition", "predicate_modification"]
     ],
-    "comment": "Clitic-doubled bare oti-clause keeps the explanans reading: an internal argument composing as a modifier."
+    "comment": "Clitic-doubled bare oti-clause keeps the explanans reading: an internal argument composing as a modifier.",
+    "verified": "page-image"
   },
   {
     "id": "angelopoulos2026_6a",
     "source": {"bibkey": "angelopoulos-2026", "paperLabel": "ex. (6a)"},
     "reportedIn": null,
     "language": "mode1248",
-    "primaryText": "Oti i Ji ine stroéili tis eksijiθike tis δonatas.",
+    "primaryText": "Oti i Ji ine stroɟili tis eksijiθike tis δonatas.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Oti", "OTI"], ["i", "the.F.SG.NOM"], ["Ji", "Earth.F.SG.NOM"], ["ine", "be.3SG"],
+      ["stroɟili", "round.F.SG.NOM"], ["tis", "3SG.F.DAT"], ["eksijiθike", "was.explained.3SG"],
+      ["tis", "the.F.SG.DAT"], ["δonatas", "δonata.F.SG.DAT"]
+    ],
     "translation": "That the Earth is round was explained to Donata.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "Oti i Ji ine stroéili eksijiθike tis δonatas.", "judgment": "ungrammatical"}
+      {"form": "Oti i Ji ine stroɟili eksijiθike tis δonatas.", "judgment": "ungrammatical"}
     ],
     "readings": [
       {"name": "explanans", "judgment": "acceptable"}
@@ -435,7 +470,8 @@
       ["position", "derived_subject"],
       ["diagnostic", "passivization"]
     ],
-    "comment": "The dative intervenes unless clitic-doubled, as for DP themes."
+    "comment": "The dative intervenes unless clitic-doubled, as for DP themes. The paper prints *(tis): without the clitic the example is out.",
+    "verified": "page-image"
   },
   {
     "id": "angelopoulos2026_11a",
@@ -444,7 +480,10 @@
     "language": "mode1248",
     "primaryText": "Oti eçis filus δixni pola ja sena.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Oti", "OTI"], ["eçis", "have.2SG"], ["filus", "friends.M.PL.ACC"], ["δixni", "show.3SG"],
+      ["pola", "a lot"], ["ja", "for"], ["sena", "you.2SG.ACC"]
+    ],
     "translation": "That you have friends shows a lot about you.",
     "context": "",
     "judgment": "ungrammatical",
@@ -454,7 +493,8 @@
       ["complementizer", "oti"],
       ["position", "external_argument"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "angelopoulos2026_12a",
@@ -463,7 +503,10 @@
     "language": "mode1248",
     "primaryText": "Pu eçis filus δixni pola ja sena.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Pu", "PU"], ["eçis", "have.2SG"], ["filus", "friends.M.PL.ACC"], ["δixni", "show.3SG"],
+      ["pola", "a lot"], ["ja", "for"], ["sena", "you.2SG.ACC"]
+    ],
     "translation": "That you have friends shows a lot about you.",
     "context": "",
     "judgment": "ungrammatical",
@@ -473,18 +516,19 @@
       ["complementizer", "pu"],
       ["position", "external_argument"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "angelopoulos2026_14a",
     "source": {"bibkey": "angelopoulos-2026", "paperLabel": "ex. (14a)"},
     "reportedIn": null,
     "language": "mode1248",
-    "primaryText": "δen tus arese pu efiGan xoris enimerosi.",
+    "primaryText": "δen tus arese pu efiɣan xoris enimerosi.",
     "discourseSegments": [],
     "glossedTokens": [
       ["δen", "not"], ["tus", "3PL.DAT"], ["arese", "like.3SG"], ["pu", "PU"],
-      ["efiGan", "left.3PL"], ["xoris", "without"], ["enimerosi", "update"]
+      ["efiɣan", "left.3PL"], ["xoris", "without"], ["enimerosi", "update"]
     ],
     "translation": "They did not like that they left without an update.",
     "context": "",
@@ -496,16 +540,20 @@
       ["complementizer", "pu"],
       ["position", "internal_argument"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "angelopoulos2026_14b",
     "source": {"bibkey": "angelopoulos-2026", "paperLabel": "ex. (14b)"},
     "reportedIn": null,
     "language": "mode1248",
-    "primaryText": "Pu efiGan xoris enimerosi δen tus arese.",
+    "primaryText": "Pu efiɣan xoris enimerosi δen tus arese.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Pu", "PU"], ["efiɣan", "left.3PL"], ["xoris", "without"], ["enimerosi", "update"],
+      ["δen", "not"], ["tus", "3PL.DAT"], ["arese", "like.3SG"]
+    ],
     "translation": "That they left without an update, they did not like.",
     "context": "",
     "judgment": "acceptable",
@@ -516,7 +564,8 @@
       ["complementizer", "pu"],
       ["position", "derived_subject"]
     ],
-    "comment": "Preverbal pu-clause of a Class III experiencer verb: a derived subject, rated 4.2/5 against 4.6/5 postverbal (fn. 8)."
+    "comment": "Preverbal pu-clause of a Class III experiencer verb: a derived subject, rated 4.2/5 against 4.6/5 postverbal (fn. 8).",
+    "verified": "page-image"
   },
   {
     "id": "angelopoulos2026_19c",
@@ -529,7 +578,7 @@
       ["θimose", "was.angry.3SG"], ["pu", "PU"], ["apoliun", "fired.3PL"],
       ["prosopiko", "personnel.N.SG.ACC"]
     ],
-    "translation": "She was angry about the fact that they fired personnel.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
@@ -542,24 +591,25 @@
       ["position", "internal_argument"],
       ["diagnostic", "manner-adverb"]
     ],
-    "comment": ""
+    "comment": "The paper translates only the starred variant with apotoma, intended: 'She was abruptly angry about the fact that they fired personnel.'",
+    "verified": "page-image"
   },
   {
     "id": "angelopoulos2026_20c",
     "source": {"bibkey": "angelopoulos-2026", "paperLabel": "ex. (20c)"},
     "reportedIn": null,
     "language": "mode1248",
-    "primaryText": "Metanjose pu aGorase mavro pukamiso.",
+    "primaryText": "Metanjose pu aɣorase mavro pukamiso.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Metanjose", "regretted.3SG"], ["pu", "PU"], ["aGorase", "bought.3SG"],
+      ["Metanjose", "regretted.3SG"], ["pu", "PU"], ["aɣorase", "bought.3SG"],
       ["mavro", "black.N.SG.ACC"], ["pukamiso", "shirt.N.SG.ACC"]
     ],
-    "translation": "She regretted that she bought a black shirt.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "Metanjose efkola pu aGorase mavro pukamiso.", "judgment": "ungrammatical"}
+      {"form": "Metanjose efkola pu aɣorase mavro pukamiso.", "judgment": "ungrammatical"}
     ],
     "readings": [],
     "paperFeatures": [
@@ -568,7 +618,8 @@
       ["position", "internal_argument"],
       ["diagnostic", "manner-adverb"]
     ],
-    "comment": ""
+    "comment": "The paper translates only the starred variant with efkola, intended: 'She was in a state of regret easily that she bought a black shirt.'",
+    "verified": "page-image"
   },
   {
     "id": "angelopoulos2026_21a",
@@ -581,7 +632,7 @@
       ["Iksere", "knew.3SG"], ["oti", "OTI"], ["prepi", "must.3SG"], ["na", "na"],
       ["alaksi", "change.3SG"], ["stratijiki", "strategy.F.SG.ACC"]
     ],
-    "translation": "She knew that she must change strategy.",
+    "translation": "She knew (*easily) that she must change strategy.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
@@ -594,21 +645,28 @@
       ["position", "internal_argument"],
       ["diagnostic", "manner-adverb"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "angelopoulos2026_21b",
     "source": {"bibkey": "angelopoulos-2026", "paperLabel": "ex. (21b)"},
     "reportedIn": null,
     "language": "mode1248",
-    "primaryText": "Arketos kosmos δen siniδitopii efkola oti i periGrafiki kanones ine δjaforetiki apo tus riθmistikus.",
+    "primaryText": "Arketos kosmos δen siniδitopii (efkola) oti i periɣrafiki kanones ine δjaforetiki apo tus riθmistikus.",
     "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "People do not realize easily that descriptive rules are different from prescriptive ones.",
+    "glossedTokens": [
+      ["Arketos", "many.M.SG.NOM"], ["kosmos", "people.M.SG.NOM"], ["δen", "not"],
+      ["siniδitopii", "realize.3SG"], ["(efkola)", "easily"], ["oti", "OTI"],
+      ["i", "the.M.PL.NOM"], ["periɣrafiki", "descriptive.M.PL.NOM"],
+      ["kanones", "rules.M.PL.NOM"], ["ine", "be.3PL"], ["δjaforetiki", "different.M.PL.NOM"],
+      ["apo", "from"], ["tus", "the.M.PL.ACC"], ["riθmistikus", "prescriptive.M.PL.ACC"]
+    ],
+    "translation": "People do not understand/realize easily that descriptive rules are different from prescriptive ones.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "Arketos kosmos δen katalaveni efkola oti i periGrafiki kanones ine δjaforetiki apo tus riθmistikus.", "judgment": "acceptable"}
+      {"form": "Arketos kosmos δen katalaveni (efkola) oti i periɣrafiki kanones ine δjaforetiki apo tus riθmistikus.", "judgment": "acceptable"}
     ],
     "readings": [],
     "paperFeatures": [
@@ -618,18 +676,19 @@
       ["diagnostic", "manner-adverb"],
       ["confound", "manner_adverb"]
     ],
-    "comment": "Eventive oti-selectors accept manner adverbs."
+    "comment": "Eventive oti-selectors accept manner adverbs. The paper prints siniδitopii/ katalaveni 'realize.3SG understand.3SG' and (efkola).",
+    "verified": "page-image"
   },
   {
     "id": "angelopoulos2026_22a",
     "source": {"bibkey": "angelopoulos-2026", "paperLabel": "ex. (22a)"},
     "reportedIn": null,
     "language": "mode1248",
-    "primaryText": "θimame me δiskolia oti milises sti Maria.",
+    "primaryText": "θimame me δiskolia oti milises s-ti Maria.",
     "discourseSegments": [],
     "glossedTokens": [
       ["θimame", "remember.1SG"], ["me", "with"], ["δiskolia", "difficulty"], ["oti", "OTI"],
-      ["milises", "talk.2SG"], ["sti", "to-the.F.SG.ACC"], ["Maria", "Maria.F.SG.ACC"]
+      ["milises", "talk.2SG"], ["s-ti", "to-the.F.SG.ACC"], ["Maria", "Maria.F.SG.ACC"]
     ],
     "translation": "I remember, with difficulty, that you talked to Mary.",
     "context": "",
@@ -642,18 +701,19 @@
       ["diagnostic", "manner-adverb"],
       ["confound", "manner_adverb"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "angelopoulos2026_22b",
     "source": {"bibkey": "angelopoulos-2026", "paperLabel": "ex. (22b)"},
     "reportedIn": null,
     "language": "mode1248",
-    "primaryText": "θimame me δiskolia pu milises sti Maria.",
+    "primaryText": "θimame me δiskolia pu milises s-ti Maria.",
     "discourseSegments": [],
     "glossedTokens": [
       ["θimame", "remember.1SG"], ["me", "with"], ["δiskolia", "difficulty"], ["pu", "PU"],
-      ["milises", "talk.2SG"], ["sti", "to-the.F.SG.ACC"], ["Maria", "Maria.F.SG.ACC"]
+      ["milises", "talk.2SG"], ["s-ti", "to-the.F.SG.ACC"], ["Maria", "Maria.F.SG.ACC"]
     ],
     "translation": "I remember, with difficulty, that you talked to Mary.",
     "context": "",
@@ -666,7 +726,8 @@
       ["diagnostic", "manner-adverb"],
       ["confound", "manner_adverb"]
     ],
-    "comment": "Roussou 2019 (7): the pu-sense is stative and rejects the manner PP."
+    "comment": "Roussou 2019 (7): the pu-sense is stative and rejects the manner PP.",
+    "verified": "page-image"
   },
   {
     "id": "angelopoulos2026_23c",
@@ -679,7 +740,7 @@
       ["θimose", "got.angry.3SG"], ["pu", "PU"], ["psifistike", "was.voted.3SG"],
       ["o", "the.M.SG.NOM"], ["nomos", "law.M.SG.NOM"]
     ],
-    "translation": "She got angry that the law was voted.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
@@ -692,21 +753,22 @@
       ["position", "internal_argument"],
       ["diagnostic", "in-adverbial"]
     ],
-    "comment": ""
+    "comment": "The paper translates the example with the starred modifier: 'She got angry within five minutes that the law was voted.'",
+    "verified": "page-image"
   },
   {
     "id": "angelopoulos2026_35a",
     "source": {"bibkey": "angelopoulos-2026", "paperLabel": "ex. (35a)"},
     "reportedIn": null,
     "language": "mode1248",
-    "primaryText": "Akuse ti fimi oti i Ji ine stroéili.",
+    "primaryText": "Akuse ti fimi oti i Ji ine stroɟili.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "She heard the rumor that the earth is round.",
+    "translation": "She heard the rumor/idea/news/fact that the earth is round.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "Akuse ti fimi pu i Ji ine stroéili.", "judgment": "ungrammatical"}
+      {"form": "Akuse ti fimi pu i Ji ine stroɟili.", "judgment": "ungrammatical"}
     ],
     "readings": [],
     "paperFeatures": [
@@ -714,7 +776,8 @@
       ["nounSort", "content"],
       ["diagnostic", "noun-complement"]
     ],
-    "comment": "Also with iδea 'idea', neo 'news', jeGonos 'fact'."
+    "comment": "Also with iδea 'idea', neo 'news', jeɣonos 'fact'. The paper prints fimi/iδea/neo/jeɣonos and oti/*pu in one example.",
+    "verified": "page-image"
   },
   {
     "id": "angelopoulos2026_35b",
@@ -724,7 +787,7 @@
     "primaryText": "Afora tin periptosi pu o pateras ine apon.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "It concerns the case that the father is absent.",
+    "translation": "It concerns the case/circumstance/situation that the father is absent.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
@@ -736,7 +799,8 @@
       ["nounSort", "situation"],
       ["diagnostic", "noun-complement"]
     ],
-    "comment": "Also with peristasi 'circumstance', katastasi 'situation'."
+    "comment": "Also with peristasi 'circumstance', katastasi 'situation'. The paper prints periptosi/peristasi/katastasi and pu/*oti in one example.",
+    "verified": "page-image"
   },
   {
     "id": "angelopoulos2026_36a",
@@ -746,7 +810,7 @@
     "primaryText": "I pisti oti i maskes ine pali ipoxreotikes ine aliθis.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "The belief that masks are obligatory again is true.",
+    "translation": "The belief that masks are obligatory again is true/mistaken.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -756,7 +820,8 @@
       ["nounSort", "content"],
       ["diagnostic", "truth-predicates"]
     ],
-    "comment": "The nominalization of an oti-selecting verb patterns with content nouns; 'mistaken' likewise."
+    "comment": "The nominalization of an oti-selecting verb patterns with content nouns; 'mistaken' likewise.",
+    "verified": "page-image"
   },
   {
     "id": "angelopoulos2026_37a",
@@ -766,7 +831,7 @@
     "primaryText": "I stenaxorja tus pu efije i Maria ine aliθis.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Their sadness that Maria left is true.",
+    "translation": "Their sadness that Maria left is true/mistaken.",
     "context": "",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -776,14 +841,15 @@
       ["nounSort", "situation"],
       ["diagnostic", "truth-predicates"]
     ],
-    "comment": "The nominalization of a pu-selecting verb patterns with situation nouns."
+    "comment": "The nominalization of a pu-selecting verb patterns with situation nouns.",
+    "verified": "page-image"
   },
   {
     "id": "angelopoulos2026_38a",
     "source": {"bibkey": "angelopoulos-2026", "paperLabel": "ex. (38a)"},
     "reportedIn": null,
     "language": "mode1248",
-    "primaryText": "θimude oti i Gata efaje to psari, ala i Gata δen to içe fai stin praGmatikotita.",
+    "primaryText": "θimude oti i ɣata efaje to psari, ala i ɣata δen to içe fai s-tin praɣmatikotita.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "They remember that the cat had eaten the fish but the cat had actually not eaten it.",
@@ -797,14 +863,15 @@
       ["diagnostic", "factivity"],
       ["confound", "factivity_continuation"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "angelopoulos2026_38b",
     "source": {"bibkey": "angelopoulos-2026", "paperLabel": "ex. (38b)"},
     "reportedIn": null,
     "language": "mode1248",
-    "primaryText": "θimude pu i Gata efaje to psari, ala i Gata δen to içe fai stin praGmatikotita.",
+    "primaryText": "θimude pu i ɣata efaje to psari, ala i ɣata δen to içe fai s-tin praɣmatikotita.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "They remember that the cat had eaten the fish but the cat had actually not eaten it.",
@@ -818,16 +885,20 @@
       ["diagnostic", "factivity"],
       ["confound", "factivity_continuation"]
     ],
-    "comment": "The continuation contradicts the presupposition the pu-clause carries."
+    "comment": "The continuation contradicts the presupposition the pu-clause carries.",
+    "verified": "page-image"
   },
   {
     "id": "angelopoulos2026_fn14_i",
     "source": {"bibkey": "angelopoulos-2026", "paperLabel": "fn. 14 (i)"},
     "reportedIn": null,
     "language": "mode1248",
-    "primaryText": "Içe simvi oti kanume laθos.",
+    "primaryText": "Içe simvi oti kanume lathos.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Içe", "had.3SG"], ["simvi", "happened.3SG"], ["oti", "OTI"], ["kanume", "make.1PL"],
+      ["lathos", "mistake.N.SG.ACC"]
+    ],
     "translation": "It had happened that we make a mistake.",
     "context": "",
     "judgment": "ungrammatical",
@@ -839,7 +910,8 @@
       ["verb", "simveni"],
       ["complementizer", "oti"]
     ],
-    "comment": "Occurrence verbs describe situations (no oti) and are eventive (no pu); only na remains."
+    "comment": "Occurrence verbs describe situations (no oti) and are eventive (no pu); only na remains. The paper prints the complementizers in small capitals in the example line, OTI/PU, and writes lathos with th.",
+    "verified": "page-image"
   },
   {
     "id": "angelopoulos2026_43a",
@@ -848,7 +920,10 @@
     "language": "mode1248",
     "primaryText": "To oti eçis filus δixni pola ja sena.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["To", "the"], ["oti", "OTI"], ["eçis", "have.2SG"], ["filus", "friends.M.PL.ACC"],
+      ["δixni", "show.3SG"], ["pola", "a lot"], ["ja", "for"], ["sena", "you.2SG.ACC"]
+    ],
     "translation": "That you have friends shows a lot about you.",
     "context": "",
     "judgment": "acceptable",
@@ -859,7 +934,8 @@
       ["position", "external_argument"],
       ["nominalized", "yes"]
     ],
-    "comment": "Nominalization with to rescues the external-argument position for oti-clauses."
+    "comment": "Nominalization with to rescues the external-argument position for oti-clauses.",
+    "verified": "page-image"
   },
   {
     "id": "angelopoulos2026_44a",
@@ -868,7 +944,10 @@
     "language": "mode1248",
     "primaryText": "To pu eçis filus δixni pola ja sena.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["To", "the"], ["pu", "PU"], ["eçis", "have.2SG"], ["filus", "friends.M.PL.ACC"],
+      ["δixni", "show.3SG"], ["pola", "a lot"], ["ja", "for"], ["sena", "you.2SG.ACC"]
+    ],
     "translation": "That you have friends shows a lot about you.",
     "context": "",
     "judgment": "ungrammatical",
@@ -879,6 +958,7 @@
       ["position", "external_argument"],
       ["nominalized", "yes"]
     ],
-    "comment": "pu-clauses do not nominalize: Greek has no silent situation noun."
+    "comment": "pu-clauses do not nominalize: Greek has no silent situation noun.",
+    "verified": "page-image"
   }
 ]
