@@ -653,7 +653,8 @@ def ngombe : Hybrid FinePosition := λ
 /-- The Bantu hybrids of §8.3 by the names the rows use. -/
 def fineHybridNames : List (String × Hybrid FinePosition) :=
   [("rafiki", rafiki),
-    ("ng'ombe", ngombe)]
+    ("ng'ombe", ngombe),
+    ("mbudzi", ngombe)]
 
 /-- The Bantu hybrids respect the finer hierarchy. -/
 theorem fineHybrids_respectHierarchy : ∀ h ∈ fineHybridNames, RespectsHierarchy h.2 := by
