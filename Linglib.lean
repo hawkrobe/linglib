@@ -2061,7 +2061,6 @@ import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Syntax.Minimalist.Workspace.Basic
 import Linglib.Syntax.Minimalist.Workspace.TraceMeasures
 import Linglib.Syntax.Negation
-import Linglib.Syntax.Question
 import Linglib.Syntax.Reciprocal
 import Linglib.Syntax.Tree.Basic
 import Linglib.Syntax.Tree.Cat

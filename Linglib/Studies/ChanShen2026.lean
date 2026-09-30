@@ -3,6 +3,7 @@ module
 public import Linglib.Data.Examples.ChanShen2026
 public import Linglib.Fragments.Mandarin.Questions
 public import Linglib.Fragments.Singlish.Questions
+public import Linglib.Syntax.Minimalist.WhDependency
 
 /-!
 # Chan and Shen (2026): Conditions on *wh-the-hell* licensing
@@ -18,8 +19,9 @@ C, which ascribes its negative attitude (surprise, ignorance, doubt of every ans
 ([chou-2012]); and as a modifier adjoined to the wh-head it moves only with the wh-phrase
 ([merchant-2002]). Full and partial movement put the wh-phrase in matrix Spec-CP, the latter
 by a covert second step, while an in-situ wh-phrase is bound unselectively and never leaves
-([sato-ngui-2017], with the island facts of [cole-hermon-1998]'s Malay). Mandarin *daodi*
-moves on its own and so tolerates an in-situ host.
+(`dependency`, after [sato-ngui-2017]); the island facts, with [cole-hermon-1998]'s Malay, admit
+no other assignment of dependencies to positions (`island_rows_iff`). Mandarin *daodi* moves on
+its own and so tolerates an in-situ host.
 
 The intervention account of [den-dikken-giannakidou-2002] licenses *the-hell* in the
 immediate scope of the question operator ([linebarger-1987]) and so admits Singlish in-situ
@@ -34,6 +36,7 @@ partial-movement order. The paper's Table 5 is the three accounts against the da
 * [merchant-2002]
 * [sato-2013]
 * [sato-ngui-2017]
+* [huang-1982]
 * [cole-hermon-1998]
 * [pesetsky-1987]
 * [martin-2020]
@@ -51,28 +54,44 @@ partial-movement order. The paper's Table 5 is the three accounts against the da
 namespace ChanShen2026
 
 open WhModifier Singlish.Questions
+open Minimalist (WhDependency)
 
-/-- The wh-phrase hosting the modifier: how it is interpreted, and how many wh-phrases stand
+/-- Where a question pronounces its wh-phrase, the strategy a row records: in matrix Spec-CP
+(full wh-movement), in an intermediate Spec-CP (partial movement), or in situ. -/
+inductive Position where
+  | matrix
+  | intermediate
+  | inSitu
+  deriving DecidableEq, Repr, Fintype
+
+/-- The wh-phrase hosting the modifier: where it is pronounced, and how many wh-phrases stand
 between the question operator and it. -/
 structure Host where
-  mechanism : WhInterpMechanism
+  position : Position
   interveners : ℕ := 0
   deriving DecidableEq
+
+/-- The analysis of [sato-ngui-2017] the paper adopts (§3.1): a wh-phrase pronounced in situ is
+bound unselectively, and one pronounced in a Spec-CP moves to matrix Spec-CP, covertly from an
+intermediate one, which binding cannot target ((14)). -/
+def dependency : Position → WhDependency
+  | .inSitu => .binding
+  | .matrix | .intermediate => .movement
 
 /-! ### Negative attitude ascription (§3.2–3.3) -/
 
 /-- The modifier's point-of-view feature is checked in matrix Spec-CP, so it is licensed iff it
-gets there: with its host, or on its own. -/
+gets there: with its host, when the host moves there, or on its own. -/
 def Licensed (m : WhModifier) (h : Host) : Prop :=
-  WhModifier.Licensed m h.mechanism.ReachesSpecCP
+  WhModifier.Licensed m (dependency h.position = .movement)
 
 instance (m : WhModifier) (h : Host) : Decidable (Licensed m h) :=
   inferInstanceAs (Decidable (WhModifier.Licensed _ _))
 
 variable (h : Host)
 
-/-- *The-hell* is licensed iff its host reaches matrix Spec-CP ((20), (21), (24)). -/
-theorem licensed_theHell_iff : Licensed theHell h ↔ h.mechanism.ReachesSpecCP :=
+/-- *The-hell* is licensed iff its host moves to matrix Spec-CP ((20), (21), (24)). -/
+theorem licensed_theHell_iff : Licensed theHell h ↔ dependency h.position = .movement :=
   licensed_iff_of_parasitic _ rfl
 
 /-- *Daodi* is licensed whatever its host does ((19)). -/
@@ -80,9 +99,8 @@ theorem licensed_daodi : Licensed Mandarin.Questions.daodi h :=
   licensed_of_independent _ rfl
 
 /-- Across the three strategies, *the-hell* is out exactly in situ ((3a–c)). -/
-theorem licensed_theHell_strategies :
-    ∀ m ∈ strategies, Licensed theHell ⟨m, 0⟩ ↔ m ≠ .unselectiveBinding := by
-  decide
+theorem licensed_theHell_strategies (p : Position) : Licensed theHell ⟨p, 0⟩ ↔ p ≠ .inSitu := by
+  cases p <;> decide
 
 /-! ### Rival accounts (§3.4) -/
 
@@ -94,53 +112,48 @@ instance : Decidable (Intervention.Licensed h) := inferInstanceAs (Decidable (_ 
 
 /-- [vu-lohiniva-2020]: *the-hell* is base-generated in the specifier of a matrix attitude
 phrase, whose [+wh] feature the nearest wh-phrase checks by moving there before the pair moves
-to Spec-CP; a *wh-the-hell* string therefore surfaces only under overt movement to the matrix
-clause. -/
-def AttP.Licensed : Prop := h.mechanism = .overtMovement
+to Spec-CP; a *wh-the-hell* string therefore surfaces only with the wh-phrase pronounced in matrix
+Spec-CP. -/
+def AttP.Licensed : Prop := h.position = .matrix
 
 instance : Decidable (AttP.Licensed h) := inferInstanceAs (Decidable (_ = _))
 
 /-- In English a wh-phrase stays in situ only in a multiple question, under the fronted one, so
 in situ and intervened coincide and ascription agrees with intervention ((1), (25)–(26)); the
 two part only where a single question leaves its wh-phrase in situ. -/
-theorem licensed_theHell_iff_intervention (hE : h.mechanism.ReachesSpecCP ↔ h.interveners = 0) :
+theorem licensed_theHell_iff_intervention
+    (hE : dependency h.position = .movement ↔ h.interveners = 0) :
     Licensed theHell h ↔ Intervention.Licensed h :=
   (licensed_theHell_iff h).trans hE
 
 /-! ### The data -/
 
-/-- A row's strategy. -/
-def mechanismOf (e : Datum) : Option WhInterpMechanism :=
-  match e.feature? "strategy" with
-  | some "full" => some .overtMovement
-  | some "partial" => some .partialMovement
-  | some "inSitu" => some .unselectiveBinding
-  | _ => none
+/-- A row's strategy: the position of its wh-phrase. -/
+def positionOf (e : Datum) : Option Position :=
+  e.parse? "strategy" [("full", .matrix), ("partial", .intermediate), ("inSitu", .inSitu)]
 
-/-- A row's host: its strategy and the number of wh-phrases between the question operator and
-the modifier, both of which the row records. -/
+/-- A row's host: the position of its wh-phrase and the number of wh-phrases between the
+question operator and the modifier, both of which the row records. -/
 def hostOf (e : Datum) : Option Host := do
-  pure ⟨← mechanismOf e, ← e.nat? "interveners"⟩
+  pure ⟨← positionOf e, ← e.nat? "interveners"⟩
 
 /-- A row's modifier. -/
 def modifierOf (e : Datum) : Option WhModifier :=
-  match e.feature? "modifier" with
-  | some "theHell" => some theHell
-  | some "daodi" => some Mandarin.Questions.daodi
-  | _ => none
+  e.parse? "modifier" [("theHell", theHell), ("daodi", Mandarin.Questions.daodi)]
 
 /-- Every row with a modifier records its host, so the statements over `hostOf` below range over
 all of them. -/
 theorem hostOf_isSome : ∀ e ∈ Examples.all, (modifierOf e).isSome → (hostOf e).isSome := by
   decide
 
-/-- Extraction from a complex NP fails exactly under an island-sensitive mechanism: the covert
-step of partial movement crosses the island, unselective binding does not ((11), (15), Malay
-(17)). -/
-theorem island_rows :
-    ∀ e ∈ Examples.all, e.feature? "island" = some "complexNP" →
-      ∀ m ∈ mechanismOf e, (m.IslandSensitive ↔ e.judgment ≠ .acceptable) := by
-  decide
+/-- Extraction from a complex NP fails exactly where the wh-phrase moves, since islands constrain
+movement, the covert step of partial movement included, and not binding ((11), (15), Malay
+(17)). Of all assignments of dependencies to positions only `dependency` fits: covert movement
+of an in-situ wh-phrase ([huang-1982]) would cross the island too. -/
+theorem island_rows_iff (f : Position → WhDependency) :
+    (∀ e ∈ Examples.all, e.feature? "island" = some "complexNP" →
+      ∀ p ∈ positionOf e, (f p = .movement ↔ e.judgment ≠ .acceptable)) ↔ f = dependency := by
+  revert f; decide
 
 /-- Ascription predicts every modifier row: English (1), (25)–(26), the experiment's (4) and
 (6), the subject question (22), and Mandarin (19). -/
@@ -154,13 +167,13 @@ intervenes, yet *the-hell* is out. -/
 theorem intervention_rows :
     ∀ e ∈ Examples.all, e.feature? "modifier" = some "theHell" → ∀ h ∈ hostOf e,
       ((Intervention.Licensed h ↔ e.judgment = .acceptable) ↔
-        (h.mechanism.ReachesSpecCP ∨ h.interveners ≠ 0)) := by
+        (dependency h.position = .movement ∨ h.interveners ≠ 0)) := by
   decide
 
 /-- The attitude phrase is right except under partial movement ((6d)). -/
 theorem attP_rows :
     ∀ e ∈ Examples.all, e.feature? "modifier" = some "theHell" → ∀ h ∈ hostOf e,
-      ((AttP.Licensed h ↔ e.judgment = .acceptable) ↔ h.mechanism ≠ .partialMovement) := by
+      ((AttP.Licensed h ↔ e.judgment = .acceptable) ↔ h.position ≠ .intermediate) := by
   decide
 
 end ChanShen2026

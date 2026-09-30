@@ -34,7 +34,9 @@ Each candidate is a planar syntactic object with the chains of `Linearization/Ch
 at two positions is shared, a moved wh-phrase leaves the traces of its head at the vP edge and its
 base position, and the coordinator is left out, so a string is its conjuncts' words. The predictions
 decide: the pronounced strings, the unbound traces that carry the paired reading, the asterisks, and
-the costs the winners beat.
+the costs the winners beat. A language's multiple-wh-fronting parameter is the set of phase
+categories whose asterisks PF cannot interpret, so each object's asterisks that reach PF
+(`pfAsterisks`) settle its convergence in every language at once.
 
 ## References
 
@@ -157,20 +159,22 @@ conjunct's wh-phrase, the copy that vehicle change reads as an E-type pronoun (f
 def Paired (t : PlanarSyntacticObject) : Prop :=
   ∃ x ∈ unboundTraces t, x.2 = what ∧ x.1.head? = some 1
 
-instance : DecidablePred Paired := λ _ => inferInstanceAs (Decidable (∃ _ ∈ _, _))
-
+instance : DecidablePred Paired := fun _ ↦ inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
 /-! ### The multiple-wh-fronting parameter (27) by language -/
 
-/-- In English variety A the asterisk lands on both phase edges, so multiple sluicing crashes. -/
-def englishA : MWFParameter := .nonFrontsBothEdges
-/-- In English variety B the asterisk lands on the vP edge only, so multiple sluicing converges. -/
-def englishB : MWFParameter := .nonFrontsVPOnly
+/-- In English variety A several wh-specifiers are banned at both phase edges, so multiple
+sluicing crashes. -/
+def englishA : Finset Cat := {.v, .C}
+/-- In English variety B they are banned at the vP edge only, so multiple sluicing converges. -/
+def englishB : Finset Cat := {.v}
 /-- German and Greek lack multiple wh-fronting (30) but have multiple sluicing (31). -/
-def german : MWFParameter := .nonFrontsVPOnly
-def greek : MWFParameter := .nonFrontsVPOnly
-def bulgarian : MWFParameter := .fronts
-def romanian : MWFParameter := .fronts
+def german : Finset Cat := {.v}
+def greek : Finset Cat := {.v}
+/-- Russian moves all its wh-phrases, where English moves one (after (29)). -/
+def russian : Finset Cat := ∅
+/-- Romanian, where bulk sharing derives coordinated wh-questions (footnote 14). -/
+def romanian : Finset Cat := ∅
 
 /-! ### Coordinated wh-questions (§3.1) -/
 
@@ -197,12 +201,18 @@ theorem cwh_beats_nullC : planarCost cwh < planarCost cwhNullC := by decide
 theorem cwhEmbedded_beats_twoC :
     planarCost cwhEmbedded < planarCost cwhEmbeddedTwoC := by decide
 
-/-- The shared C′ sends both wh-phrases through one vP edge, asterisked in English and
-pronounced. -/
-theorem cwhBulk_crashes : ¬ Converges cwhBulk englishA ∧ ¬ Converges cwhBulk englishB := by decide
+/-- Of the three phase edges of the bulk-sharing object, the two CP edges host one wh-phrase each
+and the shared vP edge both, and its asterisk reaches PF ((37b)). -/
+theorem pfAsterisks_cwhBulk : pfAsterisks cwhBulk = {.v} := by decide
+/-- So bulk sharing crashes in English. -/
+theorem cwhBulk_crashes :
+    ¬ Disjoint englishA (pfAsterisks cwhBulk) ∧ ¬ Disjoint englishB (pfAsterisks cwhBulk) := by
+  rw [pfAsterisks_cwhBulk]; decide
 /-- In a multiple-wh-fronting language the same object converges (footnote 14). -/
-theorem cwhBulk_converges_romanian : Converges cwhBulk romanian := by decide
-theorem cwh_converges : Converges cwh englishA ∧ Converges cwh englishB := by decide
+theorem cwhBulk_converges_romanian : Disjoint romanian (pfAsterisks cwhBulk) :=
+  Finset.disjoint_empty_left _
+/-- Non-bulk sharing leaves one wh-phrase at each edge, so it converges in every language. -/
+theorem pfAsterisks_cwh : pfAsterisks cwh = ∅ := by decide
 
 /-! ### Coordinated sluices (§3.2) -/
 
@@ -213,22 +223,29 @@ theorem cs_beats_ellipsis : planarCost cs < planarCost csEllipsis := by decide
 theorem cs_beats_twoC : planarCost cs < planarCost csTwoC := by decide
 
 /-- The shared vP edge hosts two wh-specifiers, the asterisk of (26b). -/
-theorem cs_asterisked :
-    ∃ p ∈ vertices cs.val, IsAsterisked cs englishA p ∧ IsAsterisked cs englishB p := by decide
-/-- Elided, the asterisked edge never reaches PF. -/
-theorem cs_converges : Converges cs englishA ∧ Converges cs englishB := by decide
+theorem v_mem_asterisked_cs : v ∈ asterisked cs := by decide
+/-- Elided, the asterisked edge never reaches PF, so the coordinated sluice converges in every
+language. -/
+theorem pfAsterisks_cs : pfAsterisks cs = ∅ := by decide
 
-/-- A multiple question crashes in English and converges in Bulgarian. -/
+/-- Both phase edges of a multiple question reach PF with two wh-specifiers ((28b)). -/
+theorem pfAsterisks_multipleQuestion : pfAsterisks (multipleQuestion c) = {.v, .C} := by decide
+/-- So a multiple question crashes in English and converges in Russian. -/
 theorem multipleQuestion_crashes :
-    ¬ Converges (multipleQuestion c) englishA ∧ ¬ Converges (multipleQuestion c) englishB := by
-  decide
-theorem multipleQuestion_converges_bulgarian : Converges (multipleQuestion c) bulgarian := by decide
-/-- Multiple sluicing elides the vP edge but not the CP edge, so variety B, German and Greek
-converge and variety A does not. -/
+    ¬ Disjoint englishA (pfAsterisks (multipleQuestion c)) ∧
+      ¬ Disjoint englishB (pfAsterisks (multipleQuestion c)) := by
+  rw [pfAsterisks_multipleQuestion]; decide
+theorem multipleQuestion_converges_russian : Disjoint russian (pfAsterisks (multipleQuestion c)) :=
+  Finset.disjoint_empty_left _
+/-- Multiple sluicing elides the vP edge but not the CP edge ((29b)). -/
+theorem pfAsterisks_multipleSluice : pfAsterisks (multipleQuestion cE) = {.C} := by decide
+/-- So variety B, German and Greek converge and variety A does not. -/
 theorem multipleSluicing :
-    Converges (multipleQuestion cE) englishB ∧ Converges (multipleQuestion cE) german ∧
-      Converges (multipleQuestion cE) greek ∧ ¬ Converges (multipleQuestion cE) englishA := by
-  decide
+    Disjoint englishB (pfAsterisks (multipleQuestion cE)) ∧
+      Disjoint german (pfAsterisks (multipleQuestion cE)) ∧
+      Disjoint greek (pfAsterisks (multipleQuestion cE)) ∧
+      ¬ Disjoint englishA (pfAsterisks (multipleQuestion cE)) := by
+  rw [pfAsterisks_multipleSluice]; decide
 
 /-! ### Pronunciation Economy (§5, §6.1) -/
 

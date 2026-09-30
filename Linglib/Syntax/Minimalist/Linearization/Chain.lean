@@ -7,7 +7,6 @@ module
 
 public import Linglib.Syntax.Minimalist.Linearization.Replay
 public import Linglib.Syntax.Minimalist.Economy.Basic
-public import Linglib.Syntax.Question
 public import Linglib.Core.Data.RoseTree.Get
 
 /-!
@@ -25,12 +24,15 @@ token is pronounced once, at its last occurrence, so shared material follows all
 ([merchant-2001]), and since a shared token is one token, eliding either of its occurrences
 silences it everywhere. An [E] head applies once per distinct complement, and an application that
 silences no pronounceable token an earlier one had not already silenced is vacuous, the
-configuration [citko-gracanin-yuksek-2025]'s Pronunciation Economy bans. A `v` or `C` projection
-whose edge hosts several wh-specifiers, wh-tokens or their traces, receives the asterisk of the
-multiple-wh-fronting parameter and crashes at PF unless its head is silenced. The cost of the
-object is read off its terms, the distinct subtrees as MCB's `subtrees` taken each once: the lexical
-leaves are the items drawn and the internal vertices the Merges, so a shared constituent is built
-once.
+configuration [citko-gracanin-yuksek-2025]'s Pronunciation Economy bans. A projection whose edge
+hosts several wh-specifiers, wh-tokens or their traces, receives an asterisk, which PF cannot
+interpret unless the head is silenced or the language fronts several wh-phrases to an edge of that
+category. A language's multiple-wh-fronting parameter is thus the set of phase categories whose
+asterisks PF cannot interpret, and the object converges under it iff the set is disjoint from the
+categories of the asterisks that reach PF (`pfAsterisks`), which makes convergence antitone in
+the parameter. The cost of the object is read off its terms, the distinct subtrees as MCB's
+`subtrees` taken each once: the lexical leaves are the items drawn and the internal vertices the
+Merges, so a shared constituent is built once.
 
 ## Main definitions
 
@@ -38,8 +40,17 @@ once.
 * `terms`: the distinct subtrees, a shared constituent's once.
 * `elidedDomains`, `IsSilenced`, `pfPhon`: pronunciation under [E].
 * `IsVacuous`, `PronunciationEconomy`: the ban on vacuous ellipsis.
-* `projection`, `phaseAt`, `IsAsterisked`, `Converges`: the multiple-wh-fronting asterisk.
+* `projection`, `asterisked`, `pfAsterisks`: the multiple-wh-fronting asterisk.
 * `planarCost`: the object's `DerivationCost`.
+
+## Implementation notes
+
+[citko-gracanin-yuksek-2025] state the parameter as (27), an asterisk on every phase edge with
+several wh-specifiers in a language without multiple wh-fronting, refine it after (29) by which
+phase edges count, and mention in a footnote the alternative statement used here: every such
+edge receives an asterisk, which PF can interpret in a language with multiple wh-fronting. Which
+categories head phases is the analysis's choice (`Phase`), so a parameter is any `Finset Cat`;
+the paper's are `∅`, `{v}` and `{v, C}`.
 
 ## References
 
@@ -163,16 +174,15 @@ instance : Decidable (PronunciationEconomy t) := inferInstanceAs (Decidable (∀
 
 /-! ### Phase edges and the multiple-wh-fronting asterisk -/
 
-/-- `projection c t` finds the specifiers and head of the projection of a head of category `c`.
-Going down the right spine, the specifiers are the left daughters above the head, which is the first
-selecting item met; the result is `none` when that item has another category or the spine ends
-first. -/
-def projection (c : Cat) : RoseTree Vertex → Option (List (RoseTree Vertex) × LIToken)
+/-- `projection t` finds the specifiers and head of the projection at the root of `t`. Going down
+the right spine, the specifiers are the left daughters above the head, which is the first
+selecting item met; the result is `none` when the spine ends first. -/
+def projection : RoseTree Vertex → Option (List (RoseTree Vertex) × LIToken)
   | .node (.inr none) [.node (.inl tok) [], r] =>
       if tok.item.outerSel = [] then
-        (projection c r).map fun x ↦ (.node (.inl tok) [] :: x.1, x.2)
-      else if tok.item.outerCat = c then some ([], tok) else none
-  | .node (.inr none) [l, r] => (projection c r).map fun x ↦ (l :: x.1, x.2)
+        (projection r).map fun x ↦ (.node (.inl tok) [] :: x.1, x.2)
+      else some ([], tok)
+  | .node (.inr none) [l, r] => (projection r).map fun x ↦ (l :: x.1, x.2)
   | _ => none
 
 /-- The head of a constituent is the token or trace at a leaf, else the first selecting item down
@@ -191,27 +201,17 @@ def IsWhSpecifier (s : RoseTree Vertex) : Prop :=
 instance (s : RoseTree Vertex) : Decidable (IsWhSpecifier s) :=
   inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
-/-- `phaseAt t p` is the phase at `p`, a `v` or `C` projection, with its edge, specifiers and
-head. -/
-def phaseAt (p : List ℕ) : Option (PhaseEdge × List (RoseTree Vertex) × LIToken) :=
-  (subtreeAt t.val p).bind fun s ↦
-    ((projection .v s).map fun x ↦ (PhaseEdge.vP, x)).or
-      ((projection .C s).map fun x ↦ (PhaseEdge.CP, x))
+/-- The heads of the projections whose edges host several wh-specifiers, each of which receives an
+asterisk ([citko-gracanin-yuksek-2025] (27)). -/
+def asterisked : List LIToken :=
+  (vertices t.val).filterMap fun p ↦ ((subtreeAt t.val p).bind projection).bind fun x ↦
+    if 1 < x.1.countP (decide <| IsWhSpecifier ·) then some x.2 else none
 
-/-- The phase at `p` receives the asterisk of the parameter ([citko-gracanin-yuksek-2025] (27))
-when its edge hosts more wh-specifiers than the parameter allows there. -/
-def IsAsterisked (param : MWFParameter) (p : List ℕ) : Prop :=
-  ∃ x ∈ (phaseAt t p).toList, param.EdgeAsterisk x.1 (x.2.1.countP (decide <| IsWhSpecifier ·))
-
-instance (param : MWFParameter) (p : List ℕ) : Decidable (IsAsterisked t param p) :=
-  inferInstanceAs (Decidable (∃ _ ∈ _, _))
-
-/-- The object converges at PF when the head of every asterisked phase is silenced. -/
-def Converges (param : MWFParameter) : Prop :=
-  ∀ p ∈ vertices t.val, IsAsterisked t param p → ∀ x ∈ (phaseAt t p).toList, IsSilenced t x.2.2
-
-instance (param : MWFParameter) : Decidable (Converges t param) :=
-  inferInstanceAs (Decidable (∀ _ ∈ _, _))
+/-- The categories of the asterisked projections whose heads reach PF unsilenced. The object
+converges at PF under a multiple-wh-fronting parameter, the categories of the phases whose
+asterisks PF cannot interpret, iff the parameter is disjoint from them. -/
+def pfAsterisks : Finset Cat :=
+  (((asterisked t).filter (¬ IsSilenced t ·)).map (·.item.outerCat)).toFinset
 
 /-! ### Cost -/
 

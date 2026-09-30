@@ -4,6 +4,7 @@ public import Linglib.Semantics.Reference.Definiteness
 public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Syntax.Minimalist.Linearization.Cyclic
 public import Linglib.Syntax.Minimalist.Phase.Domain
+public import Linglib.Syntax.Minimalist.WhDependency
 public import Linglib.Data.Examples.ShenHuang2026
 public import Linglib.Data.Examples.DaviesDubinsky2003
 public import Mathlib.Data.Finset.Card
@@ -50,18 +51,13 @@ namespace ShenHuang2026
 
 open Reference Minimalist Minimalist.Linearization ArgumentStructure
 
-/-- How a wh-dependency is established: overt movement of the wh-phrase, which binds its
-trace, or unselective binding of an in-situ wh-phrase by an operator, a question operator or
-existential closure, after [li-1992]. -/
-inductive Dependency
-  | movement | binding
-  deriving DecidableEq, Repr, Fintype
-
-/-- A cell of the factorial design (20), (21): the dependency, the definiteness of the object
-DP the wh-element sits in, the demonstrative being specific, and whether the main verb is a verb
-of creation. -/
+/-- A cell of the factorial design (20), (21): the dependency, overt movement of the wh-phrase,
+which binds its trace, or unselective binding of an in-situ wh-phrase by an operator, a question
+operator or existential closure, after [li-1992]; the definiteness of the object DP the
+wh-element sits in, the demonstrative being specific; and whether the main verb is a verb of
+creation. -/
 structure Config where
-  dependency : Dependency
+  dependency : WhDependency
   object : Definiteness
   creation : Bool
   deriving DecidableEq, Repr
@@ -170,25 +166,25 @@ def combined : Finset Constraint := {.pic, .specificity}
 
 /-- An indefinite object violates nothing under any account: it is neither a phase nor
 specific. -/
-theorem violations_indefinite (account : Finset Constraint) (d : Dependency) (v : Bool) :
+theorem violations_indefinite (account : Finset Constraint) (d : WhDependency) (v : Bool) :
     violations account ⟨d, .indefinite, v⟩ = 0 :=
   Finset.card_eq_zero.mpr (Finset.filter_eq_empty_iff.mpr fun k _ ↦ by
     cases k <;> cases d <;> cases v <;> decide)
 
 /-- An account predicts a definite island effect for a dependency and a verb class when the
 definite object violates more of its constraints than the indefinite one. -/
-def IslandEffect (account : Finset Constraint) (d : Dependency) (v : Bool) : Prop :=
+def IslandEffect (account : Finset Constraint) (d : WhDependency) (v : Bool) : Prop :=
   violations account ⟨d, .indefinite, v⟩ < violations account ⟨d, .definite, v⟩
 
 /-- An account predicts a verb-of-creation effect for a dependency when a verb of creation
 lowers the count for a definite object; an indefinite one violates nothing either way. -/
-def VOCEffect (account : Finset Constraint) (d : Dependency) : Prop :=
+def VOCEffect (account : Finset Constraint) (d : WhDependency) : Prop :=
   violations account ⟨d, .definite, true⟩ < violations account ⟨d, .definite, false⟩
 
-instance (account : Finset Constraint) (d : Dependency) (v : Bool) :
+instance (account : Finset Constraint) (d : WhDependency) (v : Bool) :
     Decidable (IslandEffect account d v) := inferInstanceAs (Decidable (_ < _))
 
-instance (account : Finset Constraint) (d : Dependency) : Decidable (VOCEffect account d) :=
+instance (account : Finset Constraint) (d : WhDependency) : Decidable (VOCEffect account d) :=
   inferInstanceAs (Decidable (_ < _))
 
 /-- The pattern Experiments 1 and 2 found (Table 2): a definite island for every dependency and
@@ -222,7 +218,7 @@ theorem observed_iff (account : Finset Constraint) : Observed account ↔ accoun
 
 /-- The configuration an example's features record. -/
 def Config.ofDatum (ex : Datum) : Option Config := do
-  let d ← ex.parse? "dependency" [("movement", Dependency.movement), ("binding", .binding)]
+  let d ← ex.parse? "dependency" [("movement", WhDependency.movement), ("binding", .binding)]
   let o ← ex.parse? "object" [("definite", Definiteness.definite), ("indefinite", .indefinite)]
   let v ← ex.parse? "creation" [("yes", true), ("no", false)]
   pure ⟨d, o, v⟩
@@ -290,7 +286,7 @@ def IsVerbOfCreation (v : English.Verbs.Verb) : Prop :=
 instance : DecidablePred IsVerbOfCreation := fun v ↦ inferInstanceAs (Decidable (v.form ∈ _))
 
 /-- The configuration of an item whose main verb is a Fragment entry. -/
-def Config.ofVerb (d : Dependency) (o : Definiteness) (v : English.Verbs.Verb) : Config :=
+def Config.ofVerb (d : WhDependency) (o : Definiteness) (v : English.Verbs.Verb) : Config :=
   ⟨d, o, decide (IsVerbOfCreation v)⟩
 
 /-- (25): *read that book about* violates both constraints and *write that book about* the
