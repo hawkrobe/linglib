@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Presupposition.Basic
+public import Linglib.Semantics.Presupposition.Trivalent
 public import Linglib.Semantics.Dynamic.Partial
 
 /-!
@@ -24,20 +24,21 @@ which the formula is classically true (`Formula.admits_ccp_iff`, `Formula.ccp_ge
 
 * `Presupposition.Formula`: atoms, triggers, negation and the binary connectives.
 * `Presupposition.Formula.truth`: the classical meaning at an interpretation of the atoms.
-* `Presupposition.Formula.filter`, `Presupposition.Formula.ccp`: the filtering and dynamic
-  evaluations.
+* `Presupposition.Formula.strong`, `Presupposition.Formula.filter`, `Presupposition.Formula.ccp`:
+  the Strong Kleene, filtering and dynamic evaluations.
 
 ## Implementation notes
 
 The interpretation of the atoms is a function to `Set W`. [schlenker-2009]'s Expressivity (C.3),
 that every proposition is denoted by an atom, is not built in: the theories that need it quantify
 over propositions where the paper quantifies over expressions. The conditional is material, as in
-the paper.
+the paper, and its Strong Kleene clause is by interdefinability from negation and disjunction.
 
 ## References
 
 * [schlenker-2009]
 * [kalomoiros-2023]
+* [karttunen-1974-presupposition]
 * [peters-1979]
 * [heim-1983]
 * [beaver-2001]
@@ -60,6 +61,12 @@ def eval : Connective → Prop → Prop → Prop
   | conj, a, b => a ∧ b
   | cond, a, b => a → b
   | disj, a, b => a ∨ b
+
+/-- The Strong Kleene connectives; the conditional is `¬p ∨ q`. -/
+def strong : Connective → PartialProp W → PartialProp W → PartialProp W
+  | conj, p, q => p.andStrong q
+  | cond, p, q => p.neg.orStrong q
+  | disj, p, q => p.orStrong q
 
 /-- [peters-1979]'s filtering connectives, the Middle Kleene tables. -/
 def filter : Connective → PartialProp W → PartialProp W → PartialProp W
@@ -98,6 +105,13 @@ def truth : Formula Atom → Set W
   | not F => (truth F)ᶜ
   | bin c F G => {w | c.eval (w ∈ truth F) (w ∈ truth G)}
 
+/-- The Strong Kleene evaluation: a trigger is defined where its presupposition holds. -/
+def strong : Formula Atom → PartialProp W
+  | atom p => ⟨fun _ ↦ True, (· ∈ I p)⟩
+  | trigger p p' => ⟨(· ∈ I p), (· ∈ I p')⟩
+  | not F => (strong F).neg
+  | bin c F G => c.strong (strong F) (strong G)
+
 /-- The evaluation by the filtering connectives. -/
 def filter : Formula Atom → PartialProp W
   | atom p => ⟨fun _ ↦ True, (· ∈ I p)⟩
@@ -131,6 +145,29 @@ theorem filter_assertion_iff {F : Formula Atom} {w : W} (h : (F.filter I).presup
       · have hG := ihG (h.2 a)
         exact ⟨fun h' ↦ h'.elim (fun a' ↦ absurd a' a) (fun b ↦ Or.inr (hG.1 b)),
           fun h' ↦ h'.elim (fun t ↦ absurd (hF.2 t) a) (fun t ↦ Or.inr (hG.2 t))⟩
+
+/-- Every formula contains an atom or a trigger. -/
+theorem nonempty_atom : Formula Atom → Nonempty Atom
+  | atom p => ⟨p⟩
+  | trigger p _ => ⟨p⟩
+  | not F => nonempty_atom F
+  | bin _ F _ => nonempty_atom F
+
+/-- The filtering presupposition of a binary formula: the first argument's presupposition, and the
+second's wherever the world is in the second argument's local context
+([karttunen-1974-presupposition]). -/
+theorem filter_presup_bin {c : Connective} {F G : Formula Atom} {w : W} :
+    ((bin c F G).filter I).presup w ↔
+      (F.filter I).presup w ∧
+        (w ∈ c.localContext Set.univ (F.truth I) → (G.filter I).presup w) := by
+  have assert (hp : (F.filter I).presup w) := filter_assertion_iff I hp
+  cases c
+  · exact ⟨fun ⟨hp, h⟩ ↦ ⟨hp, fun hc ↦ h ((assert hp).2 hc.2)⟩,
+      fun ⟨hp, h⟩ ↦ ⟨hp, fun ha ↦ h ⟨trivial, (assert hp).1 ha⟩⟩⟩
+  · exact ⟨fun ⟨hp, h⟩ ↦ ⟨hp, fun hc ↦ h ((assert hp).2 hc.2)⟩,
+      fun ⟨hp, h⟩ ↦ ⟨hp, fun ha ↦ h ⟨trivial, (assert hp).1 ha⟩⟩⟩
+  · exact ⟨fun ⟨hp, h⟩ ↦ ⟨hp, fun hc ↦ h fun ha ↦ hc.2 ((assert hp).1 ha)⟩,
+      fun ⟨hp, h⟩ ↦ ⟨hp, fun hn ↦ h ⟨trivial, fun ht ↦ hn ((assert hp).2 ht)⟩⟩⟩
 
 private theorem ccp_spec (F : Formula Atom) : ∀ C : Set W,
     ((F.ccp I).Admits C → (F.filter I).Admits C) ∧

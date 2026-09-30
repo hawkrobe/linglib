@@ -147,28 +147,47 @@ theorem localContext_eq_inter (I : Atom → Set W) (K : SyntacticEnvironment Ato
     rw [localContext_cons, localContext_cons, Step.localContext_eq_inter, ih,
       Step.localContext_eq_inter I s (localContext I K Set.univ), Set.inter_assoc]
 
-/-- `SameInitialString K K'`: `K'` keeps the material of `K` before the gap and replaces what
-follows it, so that it is `K` with another good final. The first argument of a conjunction or a
-disjunction is followed by the connective, which may be replaced by either; *if* precedes its
-antecedent. -/
-inductive SameInitialString : SyntacticEnvironment Atom → SyntacticEnvironment Atom → Prop
-  | nil : SameInitialString [] []
-  | not {K K' : SyntacticEnvironment Atom} :
-      SameInitialString K K' → SameInitialString (.not :: K) (.not :: K')
-  | right {K K' : SyntacticEnvironment Atom} (c : Connective) (F : Formula Atom) :
-      SameInitialString K K' → SameInitialString (.right c F :: K) (.right c F :: K')
-  | left {K K' : SyntacticEnvironment Atom} {c c' : Connective} (hc : c = .cond ↔ c' = .cond)
-      (G G' : Formula Atom) :
-      SameInitialString K K' → SameInitialString (.left c G :: K) (.left c' G' :: K')
+/-- Two steps have the same initial string when a good final may turn one into the other: it may
+replace the second argument of a first argument, and the connective unless it is *if*, which
+precedes its antecedent. -/
+inductive Step.SameInitialString : Step Atom → Step Atom → Prop
+  | not : Step.SameInitialString .not .not
+  | right (c : Connective) (F : Formula Atom) : Step.SameInitialString (.right c F) (.right c F)
+  | left {c c' : Connective} (hc : c = .cond ↔ c' = .cond) (G G' : Formula Atom) :
+      Step.SameInitialString (.left c G) (.left c' G')
 
-@[refl] theorem SameInitialString.refl (K : SyntacticEnvironment Atom) : SameInitialString K K := by
-  induction K with
-  | nil => exact .nil
-  | cons s K ih =>
-    cases s with
-    | not => exact .not ih
-    | right c F => exact .right c F ih
-    | left c G => exact .left Iff.rfl G G ih
+@[refl] theorem Step.SameInitialString.refl : ∀ s : Step Atom, s.SameInitialString s
+  | .not => .not
+  | .right c F => .right c F
+  | .left _ G => .left Iff.rfl G G
+
+/-- `SameInitialString K K'`: `K'` keeps the material of `K` before the gap and replaces what
+follows it, so that it is `K` with another good final. -/
+def SameInitialString (K K' : SyntacticEnvironment Atom) : Prop :=
+  List.Forall₂ Step.SameInitialString K K'
+
+@[refl] theorem SameInitialString.refl (K : SyntacticEnvironment Atom) : SameInitialString K K :=
+  List.forall₂_same.2 fun s _ ↦ .refl s
+
+/-- A good final of `K ++ [s]` is a good final of `K` inside a good final of the outermost step. -/
+theorem sameInitialString_append_singleton {K L : SyntacticEnvironment Atom} {s : Step Atom} :
+    SameInitialString (K ++ [s]) L ↔
+      ∃ K' s', L = K' ++ [s'] ∧ SameInitialString K K' ∧ s.SameInitialString s' := by
+  induction K generalizing L with
+  | nil =>
+    simp only [List.nil_append, SameInitialString, List.forall₂_cons_left_iff,
+      List.forall₂_nil_left_iff]
+    constructor
+    · rintro ⟨s', _, hs, rfl, rfl⟩; exact ⟨[], s', rfl, rfl, hs⟩
+    · rintro ⟨K', s', rfl, rfl, hs⟩; exact ⟨s', [], hs, rfl, rfl⟩
+  | cons t K ih =>
+    simp only [List.cons_append, SameInitialString, List.forall₂_cons_left_iff] at ih ⊢
+    constructor
+    · rintro ⟨t', L', ht, hL, rfl⟩
+      obtain ⟨K', s', rfl, hK, hs⟩ := ih.1 hL
+      exact ⟨t' :: K', s', rfl, ⟨t', K', ht, hK, rfl⟩, hs⟩
+    · rintro ⟨K', s', rfl, ⟨t', K'', ht, hK, rfl⟩, hs⟩
+      exact ⟨t', K'' ++ [s'], ht, ih.2 ⟨K'', s', rfl, hK, hs⟩, rfl⟩
 
 end SyntacticEnvironment
 
@@ -199,6 +218,18 @@ theorem fill_of_mem_occurrences {F : Formula Atom} {o : SyntacticEnvironment Ato
     · rw [fill_append, ihG ho']; rfl
 
 end Formula
+
+/-- The material after the gap of an environment contains no trigger. -/
+def SyntacticEnvironment.TriggerFreeFinal (K : SyntacticEnvironment Atom) : Prop :=
+  ∀ c G, SyntacticEnvironment.Step.left c G ∈ K → G.occurrences = []
+
+theorem SyntacticEnvironment.triggerFreeFinal_append {K K' : SyntacticEnvironment Atom} :
+    (K ++ K').TriggerFreeFinal ↔ K.TriggerFreeFinal ∧ K'.TriggerFreeFinal := by
+  simp only [TriggerFreeFinal, List.mem_append, or_imp, forall_and]
+
+theorem SyntacticEnvironment.triggerFreeFinal_singleton {s : Step Atom} :
+    TriggerFreeFinal [s] ↔ ∀ c G, s = .left c G → G.occurrences = [] := by
+  simp only [TriggerFreeFinal, List.mem_singleton, eq_comm]
 
 /-! ### Karttunen's local contexts from the good finals -/
 
@@ -251,12 +282,14 @@ private theorem mem_localContext_of_dependsAt {K K' : SyntacticEnvironment Atom}
     w ∈ K.localContext I Set.univ := by
   induction h with
   | nil => trivial
-  | not _ ih => exact ih ((dependsAt_truth_cons I).1 hw).2
-  | right c F _ ih =>
-    obtain ⟨hs, hK⟩ := (dependsAt_truth_cons I).1 hw
+  | cons hs _ ih =>
+    obtain ⟨hs', hK⟩ := (dependsAt_truth_cons I).1 hw
     rw [localContext_cons, Step.localContext_eq_inter]
-    exact ⟨ih hK, (dependsAt_right_iff I c F w).1 hs⟩
-  | left _ _ _ _ ih => exact ih ((dependsAt_truth_cons I).1 hw).2
+    refine ⟨ih hK, ?_⟩
+    cases hs with
+    | not => trivial
+    | right c F => exact (dependsAt_right_iff I c F w).1 hs'
+    | left => trivial
 
 /-- Some good final makes the truth value at `w` depend on the gap of `K` iff `w` is in
 [karttunen-1974-presupposition]'s local context of the gap. -/
@@ -271,14 +304,15 @@ theorem exists_dependsAt_iff [Nonempty Atom] (K : SyntacticEnvironment Atom) (w 
     obtain ⟨K', hK', hdep⟩ := ih hw.1
     cases s with
     | not =>
-      exact ⟨.not :: K', .not hK',
+      exact ⟨.not :: K', .cons .not hK',
         (dependsAt_truth_cons I).2 ⟨by simp [DependsAt, Step.truth], hdep⟩⟩
     | right c F =>
-      exact ⟨.right c F :: K', .right c F hK',
+      exact ⟨.right c F :: K', .cons (.right c F) hK',
         (dependsAt_truth_cons I).2 ⟨(dependsAt_right_iff I c F w).2 hw.2, hdep⟩⟩
     | left c G =>
       obtain ⟨G', hG'⟩ := exists_dependsAt_left I c w
-      exact ⟨.left c G' :: K', .left Iff.rfl G G' hK', (dependsAt_truth_cons I).2 ⟨hG', hdep⟩⟩
+      exact ⟨.left c G' :: K', .cons (.left Iff.rfl G G') hK',
+        (dependsAt_truth_cons I).2 ⟨hG', hdep⟩⟩
 
 end SyntacticEnvironment
 
@@ -306,14 +340,6 @@ theorem Formula.filter_presup_iff (I : Atom → Set W) (F : Formula Atom) (w : W
       refine ⟨fun h hc o ho hl ↦ h o ho ?_, fun h o ho hl ↦ ?_⟩
       · rw [localContext_eq_inter]; exact ⟨hc, hl⟩
       · rw [localContext_eq_inter] at hl; exact h hl.1 o ho hl.2
-    rw [hG]
-    have assert {w} (hw : (F.filter I).presup w) := filter_assertion_iff I hw
-    cases c
-    · exact ⟨fun ⟨hp, h⟩ ↦ ⟨hp, fun hc ↦ h ((assert hp).2 hc.2)⟩,
-        fun ⟨hp, h⟩ ↦ ⟨hp, fun ha ↦ h ⟨trivial, (assert hp).1 ha⟩⟩⟩
-    · exact ⟨fun ⟨hp, h⟩ ↦ ⟨hp, fun hc ↦ h ((assert hp).2 hc.2)⟩,
-        fun ⟨hp, h⟩ ↦ ⟨hp, fun ha ↦ h ⟨trivial, (assert hp).1 ha⟩⟩⟩
-    · exact ⟨fun ⟨hp, h⟩ ↦ ⟨hp, fun hc ↦ h fun ha ↦ hc.2 ((assert hp).1 ha)⟩,
-        fun ⟨hp, h⟩ ↦ ⟨hp, fun hn ↦ h ⟨trivial, fun ht ↦ hn ((assert hp).2 ht)⟩⟩⟩
+    rw [hG, filter_presup_bin]
 
 end Presupposition
