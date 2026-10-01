@@ -2,6 +2,7 @@ module
 
 public import Linglib.Core.Algebra.RootedTree.Coproduct.Pruning
 public import Linglib.Core.Algebra.RootedTree.Coproduct.WithCuts
+public import Linglib.Syntax.Minimalist.Workspace.TraceCut
 public import Mathlib.LinearAlgebra.TensorProduct.Basic
 public import Mathlib.RingTheory.TensorProduct.Maps
 

@@ -13,18 +13,11 @@ public import Linglib.Core.RingTheory.Bialgebra.Primitive
 open RoseTree UnorderedTree
 
 /-!
-# Dual-primitive functionals on the Connes-Kreimer bialgebra
-[marcolli-chomsky-berwick-2025]
+# Dual-primitive functionals on the Connes–Kreimer bialgebra
 
-Substrate for [marcolli-chomsky-berwick-2025]'s Lemma 1.7.3 (book pp. 78-79):
-the insertion Lie algebra is the Lie algebra of primitive elements in the dual
-Hopf algebra of the Hopf algebra of workspaces. This file proves the
-dual-primitives side on the Connes-Kreimer bialgebra with the Δ^ρ
-(deletion-remainder) coproduct, specializing the general
-`Bialgebra.dualPrimitives` theory of `Core/RingTheory/Bialgebra/Primitive`.
-
-The paper's dual-basis functional `δ_T` is `lcoeff R {T}`; the cut count
-`countSingleCutsRho` lives with `cutSummandsN` in `Coproduct/Pruning`.
+The single-tree delta functionals `δ_T = lcoeff R {T}` are dual primitives of the Connes–Kreimer
+bialgebra with the pruning coproduct, so they span a Lie subalgebra of the dual
+(`Bialgebra.dualPrimitives`), and the bracket of two of them counts single cuts.
 
 ## Main results
 
@@ -32,12 +25,16 @@ The paper's dual-basis functional `δ_T` is `lcoeff R {T}`; the cut count
   delta `δ_T` is a dual primitive.
 * `ConnesKreimer.lie_lcoeff_singleton_apply_ofTree`: the explicit
   count form `⁅δ_{T₁}, δ_{T₂}⁆ (ofTree T) = countSingleCutsRho T T₁ T₂ −
-  countSingleCutsRho T T₂ T₁`, the Δ^ρ analog of the book's
-  `c^T_{T₁,T₂} − c^T_{T₂,T₁}`. The Δ^c (trace-leaf) version follows via the
-  strip machinery in `Coproduct/Deletion.lean`.
+  countSingleCutsRho T T₂ T₁`.
 
-Not yet stated: the Lie algebra isomorphism with the insertion Lie
-algebra on trees; this file proves the dual-primitives side only.
+## TODO
+
+The Lie algebra isomorphism with the insertion Lie algebra on trees, which the Grossman–Larson
+duality (`GrossmanLarson.ιLie`, `Coproduct/PruningDuality.lean`) should give.
+
+## References
+
+* [connes-kreimer-1998]
 -/
 
 
@@ -52,9 +49,7 @@ variable {R : Type*} [CommRing R] {α : Type*} (T T₁ T₂ : UnorderedTree α)
 
 variable [DecidableEq α]
 
-/-- The single-tree delta `δ_T = lcoeff R {T}` is a dual primitive: the
-bialgebraic content of [marcolli-chomsky-berwick-2025]'s observation (book
-p. 79) that primitives in the dual are exactly the single-tree deltas. -/
+/-- The single-tree delta `δ_T = lcoeff R {T}` is a dual primitive. -/
 theorem lcoeff_singleton_isDualPrimitive :
     IsDualPrimitive R (lcoeff R ({T} : Forest (UnorderedTree α))) := by
   classical
@@ -91,9 +86,8 @@ theorem lcoeff_singleton_isDualPrimitive :
   intro x y
   simpa using LinearMap.congr_fun (LinearMap.congr_fun key x) y
 
-/-- [marcolli-chomsky-berwick-2025] Lemma 1.7.3, membership form: single-tree
-deltas lie in the Lie subalgebra of dual primitives (so their brackets do too,
-by `LieSubalgebra.lie_mem`). -/
+/-- Single-tree deltas lie in the Lie subalgebra of dual primitives, so their brackets do too
+(`LieSubalgebra.lie_mem`). -/
 theorem toConv_lcoeff_singleton_mem_dualPrimitives :
     toConv (lcoeff R ({T} : Forest (UnorderedTree α))) ∈
       dualPrimitives R (ConnesKreimer R (UnorderedTree α)) :=
@@ -109,7 +103,8 @@ theorem convMul_lcoeff_singleton_apply_ofTree :
         (ofTree T) =
       countSingleCutsRho T T₁ T₂ := by
   classical
-  rw [LinearMap.convMul_apply, coalgebra_comul_apply, comulAlgHomN_apply_ofTree, comulTreeN, comulTreeNG]
+  rw [LinearMap.convMul_apply, coalgebra_comul_apply, comulAlgHomN_apply_ofTree,
+      comulTreeN, comulTreeNG]
   simp only [map_add, map_multiset_sum, Multiset.map_map, Function.comp_apply,
     TensorProduct.map_tmul, LinearMap.mul'_apply, ofTree, lcoeff_apply, ← of'_zero,
     coeff_of', Multiset.singleton_inj, ite_zero_mul_ite_zero, one_mul,
@@ -123,11 +118,8 @@ theorem convMul_lcoeff_singleton_apply_ofTree :
     by_cases h : q.1 = ({T₁} : Forest (UnorderedTree α)) ∧ q.2 = T₂ <;> simp [h, add_comm]
 
 /-- The commutator of two single-tree delta functionals, evaluated at a tree
-`T`, is the antisymmetrized count of single Δ^ρ cuts of `T` with cut forest
-`{T₁}` and remainder `T₂`. This is Lemma 1.7.3 of
-[marcolli-chomsky-berwick-2025] in Δ^ρ form; the book's
-`c^T_{T₁,T₂} − c^T_{T₂,T₁}` is stated for the trace-leaf coproduct `Δ^c`,
-which agrees under the trace-erasure projection (`eraseTracesAlgHom`). -/
+`T`, is the antisymmetrized count of single pruning cuts of `T` with crown `{T₁}` and trunk
+`T₂`. -/
 theorem lie_lcoeff_singleton_apply_ofTree :
     ⁅toConv (lcoeff R {T₁}), toConv (lcoeff R ({T₂} : Forest (UnorderedTree α)))⁆
         (ofTree T) =

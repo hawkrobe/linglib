@@ -18,9 +18,7 @@ The admissible-cut, root-component pruning coproduct on unordered rooted
 trees ([marcolli-chomsky-berwick-2025] Definition 1.2.6 and Lemma
 1.2.11 — per their Remark 1.2.9, the Connes-Kreimer Hopf-algebra
 coproduct of [foissy-introduction-hopf-algebras-trees]), with the
-Hochschild 1-cocycle property of grafting and the counit laws. Δ^ρ
-deletes cut subtrees outright, unlike the trace variant Δ^c
-(`Coproduct/Trace.lean`), which leaves marker leaves.
+Hochschild 1-cocycle property of grafting and the counit laws.
 
 ## Main definitions
 
@@ -94,7 +92,7 @@ noncomputable def comulForestN :
       comulForestN (R := R) F * comulForestN (R := R) G :=
   comulForestNG_add _ F G
 
-/-- Recursive formula: `comulForestN (T ::ₘ F) = comulTreeN T * comulForestN F`. -/
+/-- `comulForestN` is multiplicative, `comulForestN (T ::ₘ F) = comulTreeN T * comulForestN F`. -/
 @[simp] theorem comulForestN_cons (T : UnorderedTree α) (F : Forest (UnorderedTree α)) :
     comulForestN (R := R) (T ::ₘ F) =
       comulTreeN (R := R) T * comulForestN (R := R) F :=
@@ -135,7 +133,7 @@ coassociativity (§A.7-δ): the subalgebra `A := {x | (Δ ⊗ id)(Δ x) =
 
 /-! ### B+_a as a linear map -/
 
-/-- The **B+_a linear map**: linearly extend the smart constructor `UnorderedTree.node a`
+/-- The grafting map `B+_a` extends the smart constructor `UnorderedTree.node a` linearly
     to an `R`-linear endomorphism of `ConnesKreimer R (UnorderedTree α)`,
     sending the basis element `of' F` to `ofTree (UnorderedTree.node a F)`. -/
 noncomputable def bPlusLin (a : α) :
@@ -466,7 +464,7 @@ noncomputable def coassocRHS :
   (Algebra.TensorProduct.map (AlgHom.id R (ConnesKreimer R (UnorderedTree α)))
     (comulAlgHomN (R := R) (α := α))).comp comulAlgHomN
 
-/-- The **Foissy coassociativity subalgebra**: elements where the two
+/-- The coassociativity subalgebra holds the elements on which the two
     sides of coassociativity agree. By Foissy's argument it contains every
     tree (`ofTree_mem_coassocSubalg`), hence is all of `H`. -/
 noncomputable def coassocSubalg : Subalgebra R (ConnesKreimer R (UnorderedTree α)) :=
@@ -483,7 +481,7 @@ both sides are R-linear in `x : H`, it extends to arbitrary `x` via
 `ConnesKreimer.lhom_ext` (all linear maps out of `H = R[Forest]` are determined
 by their action on basis vectors `of' F = ConnesKreimer.single F 1`). -/
 
-/-- The cocycle, extended to arbitrary `x : H` via linearity. -/
+/-- The cocycle law holds for arbitrary `x : H`, by linearity. -/
 theorem comulAlgHomN_bPlusLin_cocycle_general (a : α)
     (x : ConnesKreimer R (UnorderedTree α)) :
     comulAlgHomN (bPlusLin (R := R) a x) =
@@ -506,10 +504,12 @@ theorem comulAlgHomN_bPlusLin_cocycle_general (a : α)
     show comulAlgHomN.toLinearMap (bPlusLin a (ConnesKreimer.single F r)) =
          (TensorProduct.mk R _ _).flip 1 (bPlusLin a (ConnesKreimer.single F r)) +
          LinearMap.lTensor _ (bPlusLin a) (comulAlgHomN.toLinearMap (ConnesKreimer.single F r))
-    have hr : ConnesKreimer.single F r = (r : R) • (of' F : ConnesKreimer R (UnorderedTree α)) := ConnesKreimer.smul_single_one F r
+    have hr : ConnesKreimer.single F r = (r : R) • (of' F : ConnesKreimer R (UnorderedTree α)) :=
+      ConnesKreimer.smul_single_one F r
     rw [hr]
     -- Force re-elaboration through Module-flavored smul:
-    change comulAlgHomN.toLinearMap (bPlusLin a ((r : R) • (of' F : ConnesKreimer R (UnorderedTree α)))) =
+    change comulAlgHomN.toLinearMap
+        (bPlusLin a ((r : R) • (of' F : ConnesKreimer R (UnorderedTree α)))) =
            (TensorProduct.mk R _ _).flip 1
               (bPlusLin a ((r : R) • (of' F : ConnesKreimer R (UnorderedTree α)))) +
            LinearMap.lTensor _ (bPlusLin a)
@@ -529,7 +529,8 @@ theorem comulAlgHomN_bPlusLin_cocycle_general (a : α)
               (comulAlgHomN (of' F)) =
            (LinearMap.lTensor _ (bPlusLin (R := R) a))
               (comulAlgHomN ((r : R) • (of' F : ConnesKreimer R (UnorderedTree α))))
-    rw [_root_.map_smul (comulAlgHomN (R := R) (α := α)), (LinearMap.lTensor _ (bPlusLin (R := R) a)).map_smul]
+    rw [_root_.map_smul (comulAlgHomN (R := R) (α := α)),
+        (LinearMap.lTensor _ (bPlusLin (R := R) a)).map_smul]
   exact congr($heq x)
 
 /-! ### Closure of `coassocSubalg` under `B+_a`
@@ -691,7 +692,7 @@ theorem bPlus_mem_coassocSubalg (a : α) (x : ConnesKreimer R (UnorderedTree α)
 
 /-! ### Tree induction: every `ofTree T` is in `coassocSubalg` -/
 
-/-- Helper: `of' F` is in `coassocSubalg` whenever every `ofTree T` for `T ∈ F` is.
+/-- `of' F` is in `coassocSubalg` whenever every `ofTree T` for `T ∈ F` is.
     By Multiset.induction on F using `of'_singleton`, `of'_zero`, `of'_add`, plus
     subalgebra closure under * and 1. -/
 private theorem of'_mem_coassocSubalg_of_trees (F : Forest (UnorderedTree α))
@@ -699,7 +700,8 @@ private theorem of'_mem_coassocSubalg_of_trees (F : Forest (UnorderedTree α))
     of' (R := R) F ∈ coassocSubalg (R := R) (α := α) := by
   induction F using Multiset.induction with
   | empty =>
-    rw [show ((0 : Forest (UnorderedTree α)) : Forest (UnorderedTree α)) = (0 : Forest (UnorderedTree α)) from rfl,
+    rw [show ((0 : Forest (UnorderedTree α)) : Forest (UnorderedTree α))
+        = (0 : Forest (UnorderedTree α)) from rfl,
         of'_zero]
     exact one_mem _
   | cons T F' ih =>
@@ -744,7 +746,9 @@ theorem ofTree_mem_coassocSubalg (T : UnorderedTree α) :
     have hT'_depth : T'.height < (UnorderedTree.mk (RoseTree.node a children)).height := by
       have := UnorderedTree.height_lt_of_mem T'
         (Multiset.ofList (children.map UnorderedTree.mk)) hT' a
-      rw [show (UnorderedTree.node a (Multiset.ofList (children.map UnorderedTree.mk)) : UnorderedTree α) =
+      rw [show
+          (UnorderedTree.node a (Multiset.ofList (children.map UnorderedTree.mk)) :
+            UnorderedTree α) =
           UnorderedTree.mk (RoseTree.node a children) from
           UnorderedTree.node_mk_tree_list a children] at this
       exact this

@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Algebra.RootedTree.Coproduct.Trace
+public import Linglib.Syntax.Minimalist.Workspace.TraceCoproduct
 
 @[expose] public section
 
@@ -13,7 +13,6 @@ open RoseTree UnorderedTree
 
 /-!
 # Edge-count grading of the Δ^c bialgebra
-[marcolli-chomsky-berwick-2025]
 
 The graded subspaces of `ConnesKreimer R (UnorderedTree (α ⊕ β))` under the
 edge-count grading (the summed `UnorderedTree.numEdges` of a forest),
@@ -24,6 +23,10 @@ TODO: once mathlib's graded coalgebra/bialgebra API lands
 (leanprover-community/mathlib4#39849), restate `gradedPiece` as a
 `DirectSum.Decomposition` and this file's content as a `GradedBialgebra`
 instance (with connectedness feeding the graded Hopf upgrade).
+
+## References
+
+* [marcolli-chomsky-berwick-2025]
 -/
 
 namespace ConnesKreimer
@@ -49,7 +52,7 @@ product half is edge-count additivity over disjoint union
 machinery is `cutSummandsCN_numEdges`
 (`Core/Combinatorics/RootedTree/Cut.lean`). -/
 
-/-- **Graded piece V_n**: the subspace of `ConnesKreimer R (UnorderedTree X)`
+/-- The graded piece `V_n` is the subspace of `ConnesKreimer R (UnorderedTree X)`
     spanned by forests with exactly `n` edges. -/
 noncomputable def gradedPiece (X : Type*) (n : ℕ) :
     Submodule R (ConnesKreimer R (UnorderedTree X)) :=
@@ -69,7 +72,7 @@ private noncomputable def gradedTensorSpan (n : ℕ) :
     (F₁.map UnorderedTree.numEdges).sum + (F₂.map UnorderedTree.numEdges).sum = n ∧
     y = ConnesKreimer.of' F₁ ⊗ₜ[R] ConnesKreimer.of' F₂}
 
-/-- Multiplicativity of the graded tensor spans: degrees add. -/
+/-- The graded tensor spans are multiplicative, with degrees adding. -/
 private theorem gradedTensorSpan_mul {m k : ℕ}
     {u v : ConnesKreimer R (UnorderedTree (α ⊕ β)) ⊗[R]
       ConnesKreimer R (UnorderedTree (α ⊕ β))}

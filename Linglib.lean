@@ -22,12 +22,9 @@ import Linglib.Core.Algebra.RootedTree.BirkhoffFactorizationSemiring
 import Linglib.Core.Algebra.RootedTree.BirkhoffLaurent
 import Linglib.Core.Algebra.RootedTree.Bud
 import Linglib.Core.Algebra.RootedTree.ConnesKreimer
-import Linglib.Core.Algebra.RootedTree.Coproduct.Deletion
 import Linglib.Core.Algebra.RootedTree.Coproduct.WithCuts
 import Linglib.Core.Algebra.RootedTree.Coproduct.Pruning
 import Linglib.Core.Algebra.RootedTree.Coproduct.PruningDuality
-import Linglib.Core.Algebra.RootedTree.Coproduct.Trace
-import Linglib.Core.Algebra.RootedTree.Coproduct.TraceGrading
 import Linglib.Core.Algebra.RootedTree.GrossmanLarson.Basic
 import Linglib.Core.Algebra.RootedTree.GrossmanLarson.Pairing
 import Linglib.Core.Algebra.RootedTree.GrossmanLarson.PairingMul
@@ -36,7 +33,6 @@ import Linglib.Core.Algebra.RootedTree.PreLie.Graft
 import Linglib.Core.Algebra.RootedTree.PreLie.InsertSum
 import Linglib.Core.Algebra.RootedTree.PreLie.Insertion
 import Linglib.Core.Algebra.RootedTree.PreLie.InsertionUnordered
-import Linglib.Core.Algebra.RootedTree.Primitive
 import Linglib.Core.Algebra.RotaBaxter
 import Linglib.Core.Algebra.RotaBaxterLaurent
 import Linglib.Core.Algebra.Group.IdempotentPower
@@ -52,8 +48,6 @@ import Linglib.Core.Combinatorics.RootedTree.Conservation
 import Linglib.Core.Combinatorics.RootedTree.ContractUnary
 import Linglib.Core.Combinatorics.RootedTree.Cut
 import Linglib.Core.Combinatorics.RootedTree.CutAvoiding
-import Linglib.Core.Combinatorics.RootedTree.CutFilterMap
-import Linglib.Core.Combinatorics.RootedTree.DoubleCut
 import Linglib.Core.Combinatorics.SetFamily.FourFunctions
 import Linglib.Core.Computability.Bimachine
 import Linglib.Core.Computability.ContextFreeGrammar.InterRegular

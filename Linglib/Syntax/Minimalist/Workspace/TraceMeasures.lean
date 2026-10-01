@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Combinatorics.RootedTree.Conservation
+public import Linglib.Syntax.Minimalist.Workspace.TraceConservation
 
 /-!
 # Trace-aware size measures of workspaces
@@ -14,7 +14,8 @@ A workspace `F` on the carrier `UnorderedTree (α ⊕ β)`, with `Sum.inr` marki
 by its number of components `Multiset.card F`, its number of accessible terms, which are the
 non-root vertices `(F.map UnorderedTree.numEdges).sum`, and its number of vertices, the
 summed `numNodes`, which is `card F` plus the summed `numEdges`. Under the trace-preserving
-coproduct a cut leaves a trace leaf that is not an accessible term, so the trace-aware count discounts trace leaves:
+coproduct a cut leaves a trace leaf that is not an accessible term,
+so the trace-aware count discounts trace leaves:
 `accessibleCount T = numEdges T − traceLeafCount T` on a tree, summed over a forest, and
 `accessibleSize F = card F + accessibleCount F`. The extraction identities say how a Δ^c cut of
 a lexical-rooted object splits its accessible terms between crown and trunk, one contraction per
