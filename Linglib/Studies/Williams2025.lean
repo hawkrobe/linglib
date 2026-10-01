@@ -1,7 +1,10 @@
 module
 
 public import Linglib.Semantics.Aspect.Viewpoint
+public import Linglib.Semantics.Events.PreExistence
 public import Linglib.Studies.White2014
+public import Linglib.Fragments.English.Verbs.Attitude
+public import Linglib.Fragments.English.Verbs.Implicative
 public import Linglib.Data.Examples.Williams2025
 
 /-!
@@ -28,8 +31,8 @@ complements do not (`not_needsMod_anterior_aspP`). Under the plan modal (37) the
 is that the plan holds and began before the forgetting ((39): `preEx_mod_iff`). Since
 pre-existence entails the complement at the forgetting (`PreEx.closure`), the presupposition is
 modal exactly when the modal heads the complement. White's Modalized Complement Analysis
-modalizes the gerund and infinitive frames alike, while the infinitive frame hosts both a
-complement that needs the modal and one that does not (`mca_overgenerates`). The judgments are
+modalizes every nonfinite frame of *forget*, while the infinitive frame hosts both a complement
+that needs the modal and one that does not (`mca_overgenerates`). The judgments are
 `Williams2025.Examples`.
 
 ## Implementation notes
@@ -42,10 +45,11 @@ complement that needs the modal and one that does not (`mca_overgenerates`). The
 * mathlib orders intervals by inclusion: the paper's `τ(e) ⊆ t` is `e.τ ≤ t`, its `t' < t` in
   (30a) and (30b) is `t'.precedes t`, the `t ≤ t'` of (37) is `t.isBefore t'`, and `LB` is
   `.fst`.
-* (28b) as printed binds the complement's time existentially, and so bound it cannot tell the
-  plain infinitive from the anterior complements (`exists_anterior_iff`). The derivations (32),
-  (34) and (36) evaluate the complement at the attitude holder's subjective now, which `PreEx`
-  takes to be the run time of the forgetting.
+* Pre-existence is `Event.PreExists` of `Semantics/Events/PreExistence.lean`, shared with
+  [bondarenko-2020]. (28b) as printed binds the complement's time existentially, and so bound it
+  cannot tell the plain infinitive from the anterior complements (`exists_anterior_iff`). The
+  derivations (32), (34) and (36) evaluate the complement at the attitude holder's subjective
+  now, which `PreEx` takes to be the run time of the forgetting.
 * (30a) and (30b) are printed as one formula, so (32) and (34) are one theorem. The paper
   implements the perfect after [kratzer-1998], and (30b) prints it as strict precedence, not the
   `ViewpointType.perfect` relation, whose intervals may touch.
@@ -61,8 +65,8 @@ complement that needs the modal and one that does not (`mca_overgenerates`). The
   presupposition (5b), which the paper leaves to future work, nor the implicative entailment of
   *forgot to* ([karttunen-1971]), which it sets aside (fn. 1).
 * The English fragment has an implicative *forget* taking an infinitive and a factive one taking
-  a finite clause, `English.Verbs.forget` and `English.Verbs.forget_rog`; Williams' uniformity
-  hypothesis takes them to be one verb.
+  a finite clause or a gerund, `English.Verbs.forget` and `English.Verbs.forget_rog`; Williams'
+  uniformity hypothesis takes them to be one verb. `mca_overgenerates` reads their frames.
 
 ## References
 
@@ -116,7 +120,7 @@ def mod (plan : Event T → NonemptyInterval T → W → Set W) (C : Complement 
 /-- Pre-existence (28b) at the forgetting `e`: the complement describes an event at the
 subjective now, the run time of `e`, that starts before `e` does. -/
 def PreEx (C : Complement W T) (e : Event T) (w : W) : Prop :=
-  ∃ e'', C w e.τ e'' ∧ e''.τ.fst < e.τ.fst
+  Event.PreExists Event.τ (C w e.τ) e.τ.fst
 
 /-- A complement needs the modal when it contradicts pre-existence at every forgetting, so that
 without the modal the sentence is a presupposition failure (§5). -/
@@ -128,8 +132,7 @@ variable {P : W → Event T → Prop} {C : Complement W T}
 
 /-- Factivity from pre-existence: the complement holds at the forgetting. -/
 theorem PreEx.closure (h : PreEx C e w) : C.closure w e.τ :=
-  let ⟨e'', hC, _⟩ := h
-  ⟨e'', hC⟩
+  Event.PreExists.exists h
 
 /-- (28b) as printed, `∃ e'' t, C w t e'' ∧ e''.τ.fst < e.τ.fst`, binds the complement's time,
 and an existentially bound time absorbs the anterior shift. -/
@@ -151,12 +154,11 @@ theorem precedes_of_anterior_aspP (h : anterior (aspP P) w t e) : e.τ.precedes 
 holding at the forgetting. -/
 theorem preEx_anterior_aspP_iff :
     PreEx (anterior (aspP P)) e w ↔ (anterior (aspP P)).closure w e.τ :=
-  ⟨PreEx.closure, fun ⟨e'', h⟩ ↦
-    ⟨e'', h, e''.τ.fst_le_snd.trans_lt (precedes_of_anterior_aspP h)⟩⟩
+  Event.preExists_iff_exists_of_precedes fun _ ↦ precedes_of_anterior_aspP
 
 /-- (36): a plain infinitive contradicts pre-existence. -/
 theorem not_preEx_aspP : ¬ PreEx (aspP P) e w :=
-  fun ⟨_, ⟨hle, _⟩, hlt⟩ ↦ hlt.not_ge hle.1
+  Event.not_preExists_of_le fun _ h ↦ h.1
 
 /-- (39): under the modal, the presupposition is that the plan holds and began before the
 forgetting. -/
@@ -183,13 +185,15 @@ theorem not_needsMod_mod {s : Event T} (hs : mod plan C w t s) (hlt : s.τ.fst <
 
 /-! ### Against the Modalized Complement Analysis, §3.1 -/
 
-/-- [white-2014] modalizes the gerund and the infinitive frames alike, but the infinitive frame
-hosts the plain infinitive, which needs the modal, and the perfect infinitive, which like the
-gerund does not: whether the modal heads a complement is not a matter of its frame. -/
+/-- [white-2014] modalizes the infinitive of the implicative *forget* and the gerund of the
+factive one alike, but the infinitive frame hosts the plain infinitive, which needs the modal,
+and the perfect infinitive, which like the gerund does not: whether the modal heads a complement
+is not a matter of its frame. -/
 theorem mca_overgenerates [NoMaxOrder T] (h : P w e) :
-    White2014.Modalized .gerund ∧ White2014.Modalized .infinitival ∧
+    (∀ fr ∈ English.Verbs.forget.frames, White2014.Modalized fr) ∧
+      (∃ fr ∈ English.Verbs.forget_rog.frames, White2014.Modalized fr) ∧
       NeedsMod (aspP P) ∧ ¬ NeedsMod (anterior (aspP P)) :=
-  ⟨by decide, by decide, needsMod_aspP P, not_needsMod_anterior_aspP h⟩
+  ⟨by decide, ⟨.gerund, by decide, by decide⟩, needsMod_aspP P, not_needsMod_anterior_aspP h⟩
 
 /-! ### The *began* tests, (19) and (21)
 
