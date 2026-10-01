@@ -32,16 +32,23 @@ and scope when its restrictor is idle on the context, and empties the context ot
 The paper's predictions follow. An indefinite keeps the points whose variable is a witness, so a
 later definite or pronoun finds it familiar (`update_indef_then_the`, `update_indef_then_it`),
 while a negated indefinite updates as a negated existential and licenses no pronoun, (19)
-(`update_neg_indef_atom₁`, `update_null_neg_indef_then_it`). The three renderings of open scope
-in (20) keep the same points (`update_ex20a`, `update_ex20b`, `update_ex20c`) without being
-logically equivalent. Double negation leaves both dimensions unchanged, so the doubly negated
-indefinites of [karttunen-1976] license definites, and the bathroom disjunction keeps the points
-with no F that is G and those whose `x` is an F, a G and an H (`truthSet_bathroom`).
+(`truthSet_neg_indef_atom₁`, `update_null_neg_indef_then_it`). The three renderings of open scope
+in (20) are true and satt at the same indices (`truthSet_ex20a`, `truthSet_ex20b`,
+`truthSet_ex20c`) without being logically equivalent. Double negation leaves both dimensions
+unchanged, so the doubly negated indefinites of [karttunen-1976] license definites, and the
+bathroom disjunction is true and satt where there is no F that is G and where `x` is an F, a G
+and an H (`truthSet_bathroom`).
 
-Footnote 20 of the paper extends the bound equivalences of (20) to any formulae free in `x`. Three
-of the six bound entailments hold for all formulae; the other three need the restrictor's truth to
-value `x`, as every atom with `x` among its arguments does, and fail for the restrictor
-`¬ɜy(⊤y, R(x, y))` (`not_boundEntails_ex20b_ex20a`).
+Footnote 20 of the paper extends the bound equivalences of (20) to any substitution instances of
+`Fx`, `Gx`, `Hx` by formulae free in `x`. Three of the six bound entailments hold for all
+formulae. The other three need the restrictor's truth to value `x`, as the truth of every atom
+with `x` among its arguments does; this is the assumption the paper's argument on p. 1108
+leaves tacit. Two of them, those into (20-c), still hold for all formulae at the points of the
+context, where the pronoun's familiarity bound values `x` (`realize_ex20c_of_realize_ex20a`,
+`realize_ex20c_of_realize_ex20b`). The third fails at a point of the null context for the
+restrictor `¬ɜy(⊤y, R(x, y))`, which is free in `x` but true where `x` is unvalued
+(`not_boundEntails_ex20b_ex20a`). Whether the footnote meant to admit such formulae the paper
+leaves open; the refutation is of its literal wording.
 
 ## Main definitions
 
@@ -234,45 +241,84 @@ theorem realize_conj_of_satt_indef (hs : (indef x p q).Satt I c g w)
     (hr : (indef x p q).Realize I g w) : p.Realize I g w ∧ q.Realize I g w :=
   (hs.2 hr).1
 
+/-! ### The calculus of truth sets
+
+The points at which a formula is true and satt at a context, `(p.toPartialProp I c).truthSet`,
+decompose along the connectives; updating a context intersects it with this set
+(`update_eq_inter_truthSet`). -/
+
+/-- A conjunction is true and satt where its left conjunct is, at the context, and its right
+conjunct is, at the left conjunct's local context. -/
+theorem truthSet_conj : ((conj p q).toPartialProp I c).truthSet =
+    (p.toPartialProp I c).truthSet ∩ (q.toPartialProp I (update I c p)).truthSet := by
+  ext
+  simp only [mem_truthSet_toPartialProp, satt_conj, realize_conj, Set.mem_inter_iff]
+  tauto
+
+/-- An indefinite is true and satt where its body is and the indefinite is true. -/
+theorem truthSet_indef : ((indef x p q).toPartialProp I c).truthSet =
+    {i ∈ ((conj p q).toPartialProp I c).truthSet | (indef x p q).Realize I i.1 i.2} := by
+  ext ⟨g, w⟩
+  exact ⟨fun ⟨hs, hr⟩ ↦ ⟨⟨(hs.2 hr).2, (hs.2 hr).1⟩, hr⟩,
+    fun ⟨⟨hs, hr⟩, hi⟩ ↦ ⟨⟨⟨g, hs⟩, fun _ ↦ ⟨hr, hs⟩⟩, hi⟩⟩
+
+/-- An indefinite whose restrictor values its variable is true and satt where its body is. -/
+theorem truthSet_indef_of_ne_bot (hp : ∀ g w, p.Realize I g w → g x ≠ ⊥) :
+    ((indef x p q).toPartialProp I c).truthSet = ((conj p q).toPartialProp I c).truthSet := by
+  rw [truthSet_indef]
+  exact Set.sep_eq_self_iff_mem_true.2 fun _ hi ↦
+    realize_indef_of_ne_bot (hp _ _ hi.2.1) hi.2.1 hi.2.2
+
+/-- A definite whose restrictor is idle on the context is true and satt where its restrictor is
+true and its scope true and satt. -/
+theorem truthSet_iota_of_update_eq (h : update I c p = c) :
+    ((iota x p q).toPartialProp I c).truthSet =
+      {i | p.Realize I i.1 i.2} ∩ (q.toPartialProp I c).truthSet := by
+  ext
+  simp only [mem_truthSet_toPartialProp, satt_iota, h, realize_iota, Set.mem_inter_iff,
+    Set.mem_ofPred_eq, true_and]
+  tauto
+
+/-- A definite whose restrictor is not idle on the context is satt nowhere: the familiarity bound
+holds at all points of a context or at none (p. 1104). -/
+theorem truthSet_iota_eq_empty (h : update I c p ≠ c) :
+    ((iota x p q).toPartialProp I c).truthSet = ∅ :=
+  Set.eq_empty_of_forall_notMem fun _ hi ↦ h ((satt_iota (x := x) (q := q)).1 hi.1).1
+
+/-- Double negation changes neither dimension of a meaning (p. 1109). -/
+@[simp] theorem toPartialProp_neg_neg : (neg (neg p)).toPartialProp I c = p.toPartialProp I c := by
+  ext i <;> simp [toPartialProp]
+
 /-! ### The update calculus -/
 
 /-- A conjunction updates in sequence, the reason the paper's points carry over to sequences
 (fn. 20). -/
 theorem update_conj : update I c (conj p q) = update I (update I c p) q := by
-  ext i
-  simp only [mem_update, realize_conj, satt_conj]
-  tauto
+  rw [update_eq_inter_truthSet, truthSet_conj, ← Set.inter_assoc, ← update_eq_inter_truthSet,
+    ← update_eq_inter_truthSet]
 
 /-- An indefinite updates as its body does, at the points where it is true. -/
 theorem update_indef :
     update I c (indef x p q) = {i ∈ update I c (conj p q) | (indef x p q).Realize I i.1 i.2} := by
-  ext ⟨g, w⟩
-  exact ⟨fun ⟨hc, hr, hs⟩ ↦ ⟨⟨hc, (hs.2 hr).1, (hs.2 hr).2⟩, hr⟩,
-    fun ⟨⟨hc, hr, hs⟩, hi⟩ ↦ ⟨hc, hi, ⟨g, hs⟩, fun _ ↦ ⟨hr, hs⟩⟩⟩
+  rw [update_eq_inter_truthSet, truthSet_indef, update_eq_inter_truthSet]
+  exact Set.ext fun _ ↦ and_assoc.symm
 
 /-- An indefinite whose restrictor values its variable updates as its body. -/
 theorem update_indef_of_ne_bot (hp : ∀ g w, p.Realize I g w → g x ≠ ⊥) :
     update I c (indef x p q) = update I c (conj p q) := by
-  rw [update_indef]
-  exact Set.sep_eq_self_iff_mem_true.2 fun _ hi ↦
-    realize_indef_of_ne_bot (hp _ _ hi.2.1.1) hi.2.1.1 hi.2.1.2
+  rw [update_eq_inter_truthSet, truthSet_indef_of_ne_bot hp, ← update_eq_inter_truthSet]
 
 /-- A definite whose restrictor is idle on the context updates as the conjunction of its
 restrictor and scope. -/
 theorem update_iota_of_update_eq (h : update I c p = c) :
     update I c (iota x p q) = update I c (conj p q) := by
-  ext ⟨g, w⟩
-  rw [mem_update, mem_update, satt_iota, satt_conj, realize_iota, realize_conj]
-  constructor
-  · rintro ⟨hc, hr, -, hq⟩
-    exact ⟨hc, hr, (h.ge hc).2.2, hq hr.1⟩
-  · rintro ⟨hc, hr, -, hq⟩
-    exact ⟨hc, hr, h, fun _ ↦ hq⟩
+  have hp : c ⊆ {i | p.Realize I i.1 i.2} := fun i hi ↦ (h.ge hi).2.1
+  rw [update_conj, h, update_eq_inter_truthSet, truthSet_iota_of_update_eq h,
+    ← Set.inter_assoc, Set.inter_eq_left.2 hp, ← update_eq_inter_truthSet]
 
-/-- A definite whose restrictor is not idle on the context empties it: the familiarity bound
-holds at all points of a context or at none (p. 1104). -/
-theorem update_iota_eq_empty (h : update I c p ≠ c) : update I c (iota x p q) = ∅ :=
-  Set.eq_empty_of_forall_notMem fun _ hi ↦ h (satt_iota.1 hi.2.2).1
+/-- A definite whose restrictor is not idle on the context empties it (p. 1104). -/
+theorem update_iota_eq_empty (h : update I c p ≠ c) : update I c (iota x p q) = ∅ := by
+  rw [update_eq_inter_truthSet, truthSet_iota_eq_empty h, Set.inter_empty]
 
 /-- A pronoun whose variable is unvalued at some point of the context empties it. -/
 theorem update_iota_top_eq_empty (h : ∃ i ∈ c, i.1 x = ⊥) :
@@ -280,12 +326,8 @@ theorem update_iota_top_eq_empty (h : ∃ i ∈ c, i.1 x = ⊥) :
   obtain ⟨i, hi, hx⟩ := h
   exact update_iota_eq_empty fun he ↦ (he.ge hi).2.1 hx
 
-/-- Double negation changes neither dimension of a meaning (p. 1109). -/
-@[simp] theorem toPartialProp_neg_neg : (neg (neg p)).toPartialProp I c = p.toPartialProp I c := by
-  ext i <;> simp [toPartialProp]
-
 @[simp] theorem update_neg_neg : update I c (neg (neg p)) = update I c p := by
-  ext; simp
+  rw [update_eq_inter_truthSet, toPartialProp_neg_neg, ← update_eq_inter_truthSet]
 
 /-! ### One-place atoms -/
 
@@ -296,19 +338,37 @@ def atom₁ (R : L.Relations 1) (x : V) : Formula L V := atom R ![x]
 def extension (I : W → L.Structure E) (R : L.Relations 1) (w : W) : Set E :=
   {a | (I w).RelMap R ![a]}
 
-/-- The points of `c` at which `x` has a value in `S`, as given at the point's world. -/
-def valuedIn (c : Set (PartialAssign V E × W)) (x : V) (S : W → Set E) :
-    Set (PartialAssign V E × W) :=
-  {i ∈ c | ∃ a ∈ S i.2, i.1 x = a}
+/-- The points at which `x` has a value in `S`, as given at the point's world. -/
+def valuedIn (x : V) (S : W → Set E) : Set (PartialAssign V E × W) :=
+  {i | ∃ a ∈ S i.2, i.1 x = a}
 
-variable {S : W → Set E} {R : L.Relations 1}
+variable {S T : W → Set E} {R : L.Relations 1}
 
 @[simp] theorem mem_extension {a : E} : a ∈ extension I R w ↔ (I w).RelMap R ![a] := Iff.rfl
 
 omit [DecidableEq V] in
 @[simp] theorem mem_valuedIn {i : PartialAssign V E × W} :
-    i ∈ valuedIn c x S ↔ i ∈ c ∧ ∃ a ∈ S i.2, i.1 x = a :=
+    i ∈ valuedIn x S ↔ ∃ a ∈ S i.2, i.1 x = a :=
   Iff.rfl
+
+omit [DecidableEq V] in
+theorem valuedIn_inter_valuedIn : valuedIn x S ∩ valuedIn x T = valuedIn x (S ⊓ T) := by
+  ext ⟨g, w⟩
+  simp only [Set.mem_inter_iff, mem_valuedIn, Pi.inf_apply, Set.inf_eq_inter]
+  constructor
+  · rintro ⟨⟨a, hS, ha⟩, b, hT, hb⟩
+    obtain rfl : b = a := Flat.coe_injective (hb.symm.trans ha)
+    exact ⟨b, ⟨hS, hT⟩, ha⟩
+  · rintro ⟨a, ⟨hS, hT⟩, ha⟩
+    exact ⟨⟨a, hS, ha⟩, a, hT, ha⟩
+
+omit [DecidableEq V] in
+theorem valuedIn_mono (h : S ≤ T) : valuedIn x S ⊆ valuedIn x T :=
+  fun _ ⟨a, ha, hx⟩ ↦ ⟨a, h _ ha, hx⟩
+
+omit [DecidableEq V] in
+theorem ne_bot_of_mem_valuedIn {i : PartialAssign V E × W} (h : i ∈ valuedIn x S) : i.1 x ≠ ⊥ :=
+  Flat.ne_bot_iff_exists.2 (h.imp fun _ ↦ And.right)
 
 @[simp] theorem realize_atom₁ : (atom₁ R x).Realize I g w ↔ ∃ a ∈ extension I R w, g x = a := by
   refine ⟨fun ⟨es, h, hR⟩ ↦ ⟨es 0, ?_, h 0⟩, fun ⟨a, ha, hx⟩ ↦ ⟨![a], fun i ↦ ?_, ha⟩⟩
@@ -318,38 +378,32 @@ omit [DecidableEq V] in
 @[simp] theorem satt_atom₁ : (atom₁ R x).Satt I c g w ↔ g x ≠ ⊥ := by
   simp [atom₁]
 
-theorem ne_bot_of_realize_atom₁ (h : (atom₁ R x).Realize I g w) : g x ≠ ⊥ := by
-  obtain ⟨a, -, ha⟩ := realize_atom₁.1 h
-  exact Flat.ne_bot_iff_exists.2 ⟨a, ha⟩
+theorem ne_bot_of_realize_atom₁ (h : (atom₁ R x).Realize I g w) : g x ≠ ⊥ :=
+  ne_bot_of_mem_valuedIn (S := extension I R) (i := (g, w)) (realize_atom₁.1 h)
 
-theorem update_atom₁ : update I c (atom₁ R x) = valuedIn c x (extension I R) := by
-  ext ⟨g, w⟩
-  simp only [mem_update, realize_atom₁, satt_atom₁, mem_valuedIn]
-  exact ⟨fun ⟨hc, h, _⟩ ↦ ⟨hc, h⟩,
-    fun ⟨hc, a, ha, hx⟩ ↦ ⟨hc, ⟨a, ha, hx⟩, Flat.ne_bot_iff_exists.2 ⟨a, hx⟩⟩⟩
+theorem setOf_realize_atom₁ : {i | (atom₁ R x).Realize I i.1 i.2} = valuedIn x (extension I R) :=
+  Set.ext fun _ ↦ realize_atom₁
 
-theorem update_valuedIn_atom₁ :
-    update I (valuedIn c x S) (atom₁ R x) = valuedIn c x (S ⊓ extension I R) := by
-  rw [update_atom₁]
-  ext ⟨g, w⟩
-  simp only [mem_valuedIn, Pi.inf_apply, Set.inf_eq_inter, Set.mem_inter_iff]
-  constructor
-  · rintro ⟨⟨hc, a, hS, ha⟩, b, hR, hb⟩
-    obtain rfl : b = a := Flat.coe_injective (hb.symm.trans ha)
-    exact ⟨hc, b, ⟨hS, hR⟩, ha⟩
-  · rintro ⟨hc, a, ⟨hS, hR⟩, ha⟩
-    exact ⟨⟨hc, a, hS, ha⟩, a, hR, ha⟩
+theorem truthSet_atom₁ : ((atom₁ R x).toPartialProp I c).truthSet = valuedIn x (extension I R) := by
+  ext
+  rw [mem_truthSet_toPartialProp, satt_atom₁, realize_atom₁]
+  exact ⟨And.right, fun h ↦ ⟨ne_bot_of_mem_valuedIn h, h⟩⟩
+
+theorem truthSet_top : ((top x : Formula L V).toPartialProp I c).truthSet = {i | i.1 x ≠ ⊥} :=
+  Set.ext fun _ ↦ and_self_iff
+
+theorem update_atom₁ : update I c (atom₁ R x) = c ∩ valuedIn x (extension I R) := by
+  rw [update_eq_inter_truthSet, truthSet_atom₁]
 
 /-- An atom true throughout a context is idle on it. -/
-theorem update_valuedIn_atom₁_of_le (h : S ≤ extension I R) :
-    update I (valuedIn c x S) (atom₁ R x) = valuedIn c x S := by
-  rw [update_valuedIn_atom₁, inf_eq_left.2 h]
+theorem update_atom₁_of_subset (h : c ⊆ valuedIn x (extension I R)) :
+    update I c (atom₁ R x) = c := by
+  rw [update_atom₁, Set.inter_eq_left.2 h]
 
 /-- A pronoun restrictor is idle on a context that values its variable throughout. -/
-theorem update_valuedIn_top : update I (valuedIn c x S) (top x) = valuedIn c x S :=
-  update_subset.antisymm fun _ hi ↦
-    have hx := Flat.ne_bot_iff_exists.2 (hi.2.imp fun _ ↦ And.right)
-    ⟨hi, hx, hx⟩
+theorem update_top_of_subset (h : c ⊆ valuedIn x S) : update I c (top x) = c := by
+  have hx : c ⊆ {i | i.1 x ≠ ⊥} := fun i hi ↦ ne_bot_of_mem_valuedIn (h hi)
+  rw [update_eq_inter_truthSet, truthSet_top, Set.inter_eq_left.2 hx]
 
 end Formula
 
@@ -364,12 +418,17 @@ section Updating
 
 variable (F G H : L.Relations 1)
 
+theorem truthSet_indef_atom₁ :
+    ((indef x (atom₁ F x) (atom₁ G x)).toPartialProp I c).truthSet =
+      valuedIn x (extension I F ⊓ extension I G) := by
+  rw [truthSet_indef_of_ne_bot fun _ _ ↦ ne_bot_of_realize_atom₁, truthSet_conj, truthSet_atom₁,
+    truthSet_atom₁, valuedIn_inter_valuedIn]
+
 /-- Updating with `ɜx(Fx, Gx)` keeps the points whose `x` is an `F` and a `G` (p. 1103). -/
 theorem update_indef_atom₁ :
     update I c (indef x (atom₁ F x) (atom₁ G x)) =
-      valuedIn c x (extension I F ⊓ extension I G) := by
-  rw [update_indef_of_ne_bot fun _ _ ↦ ne_bot_of_realize_atom₁, update_conj, update_atom₁ (c := c),
-    update_valuedIn_atom₁]
+      c ∩ valuedIn x (extension I F ⊓ extension I G) := by
+  rw [update_eq_inter_truthSet, truthSet_indef_atom₁]
 
 /-- The null context does not admit `ɜx(Fx, Gx)` in Stalnaker's sense once some world has an
 `F` that is `G`: the point of the empty assignment there violates the witness bound. This is why
@@ -384,49 +443,77 @@ theorem not_admits_indef_atom₁ (h : ∃ w, (extension I F w ∩ extension I G 
     ⟨a, realize_atom₁.2 ⟨a, hF, by simp⟩, realize_atom₁.2 ⟨a, hG, by simp⟩⟩
   exact ne_bot_of_realize_atom₁ (realize_conj_of_satt_indef hs hr).1 rfl
 
+/-- After `ɜx(Fx, Gx)`, the definite `ιx(Fx, Hx)` is familiar, and true and satt where `x` is an
+`F` and an `H` (p. 1104). -/
+theorem truthSet_iota_after_indef_atom₁ :
+    ((iota x (atom₁ F x) (atom₁ H x)).toPartialProp I
+        (update I c (indef x (atom₁ F x) (atom₁ G x)))).truthSet =
+      valuedIn x (extension I F ⊓ extension I H) := by
+  have hc : update I c (indef x (atom₁ F x) (atom₁ G x)) ⊆ valuedIn x (extension I F) := by
+    rw [update_indef_atom₁]
+    exact fun i hi ↦ valuedIn_mono inf_le_left hi.2
+  rw [truthSet_iota_of_update_eq (update_atom₁_of_subset hc), setOf_realize_atom₁,
+    truthSet_atom₁, valuedIn_inter_valuedIn]
+
+/-- After `ɜx(Fx, Gx)`, the pronoun `ιx(⊤x, Hx)` is familiar, and true and satt where `x` is an
+`H` (p. 1104). -/
+theorem truthSet_iota_top_after_indef_atom₁ :
+    ((iota x (top x) (atom₁ H x)).toPartialProp I
+        (update I c (indef x (atom₁ F x) (atom₁ G x)))).truthSet =
+      valuedIn x (extension I H) := by
+  have hc : update I c (indef x (atom₁ F x) (atom₁ G x)) ⊆ valuedIn x (extension I F) := by
+    rw [update_indef_atom₁]
+    exact fun i hi ↦ valuedIn_mono inf_le_left hi.2
+  rw [truthSet_iota_of_update_eq (update_top_of_subset hc), truthSet_atom₁]
+  exact Set.inter_eq_right.2 fun _ hi ↦ ne_bot_of_mem_valuedIn hi
+
 /-- *There is a cat. The cat is tabby.* keeps the points whose `x` is a cat that exists and is
 tabby (p. 1104). -/
 theorem update_indef_then_the :
     update I (update I c (indef x (atom₁ F x) (atom₁ G x))) (iota x (atom₁ F x) (atom₁ H x)) =
-      valuedIn c x (extension I F ⊓ extension I G ⊓ extension I H) := by
-  rw [update_indef_atom₁, update_iota_of_update_eq (update_valuedIn_atom₁_of_le inf_le_left),
-    update_conj, update_valuedIn_atom₁_of_le inf_le_left, update_valuedIn_atom₁]
+      c ∩ valuedIn x (extension I F ⊓ extension I G ⊓ extension I H) := by
+  rw [update_eq_inter_truthSet, truthSet_iota_after_indef_atom₁, update_indef_atom₁,
+    Set.inter_assoc, valuedIn_inter_valuedIn, ← inf_inf_distrib_left, ← inf_assoc]
 
 /-- *There is a cat. It is tabby.* keeps the same points (p. 1104). -/
 theorem update_indef_then_it :
     update I (update I c (indef x (atom₁ F x) (atom₁ G x))) (iota x (top x) (atom₁ H x)) =
-      valuedIn c x (extension I F ⊓ extension I G ⊓ extension I H) := by
-  rw [update_indef_atom₁, update_iota_of_update_eq update_valuedIn_top, update_conj,
-    update_valuedIn_top, update_valuedIn_atom₁]
+      c ∩ valuedIn x (extension I F ⊓ extension I G ⊓ extension I H) := by
+  rw [update_eq_inter_truthSet, truthSet_iota_top_after_indef_atom₁, update_indef_atom₁,
+    Set.inter_assoc, valuedIn_inter_valuedIn]
 
 /-! ### Negated indefinites (§5.5) -/
 
-/-- A negated indefinite updates as the negated existential (pp. 1106–1107): it keeps the points
-whose world has no `F` that is `G`. -/
-theorem update_neg_indef_atom₁ [Nonempty E] :
-    update I c (neg (indef x (atom₁ F x) (atom₁ G x))) =
-      {i ∈ c | extension I F i.2 ∩ extension I G i.2 = ∅} := by
+/-- A negated indefinite is true and satt where the negated existential is true
+(pp. 1106–1107): at the worlds with no `F` that is `G`. -/
+theorem truthSet_neg_indef_atom₁ [Nonempty E] :
+    ((neg (indef x (atom₁ F x) (atom₁ G x))).toPartialProp I c).truthSet =
+      {i | extension I F i.2 ∩ extension I G i.2 = ∅} := by
   have key : ∀ g w, (indef x (atom₁ F x) (atom₁ G x)).Realize I g w ↔
       (extension I F w ∩ extension I G w).Nonempty := fun g w ↦ by
     simp [Set.Nonempty]
   obtain ⟨e⟩ := ‹Nonempty E›
   ext ⟨g, w⟩
-  simp only [mem_update, realize_neg, satt_neg, Set.mem_ofPred_eq, key,
+  simp only [mem_truthSet_toPartialProp, realize_neg, satt_neg, Set.mem_ofPred_eq, key,
     Set.not_nonempty_iff_eq_empty]
-  refine ⟨fun ⟨hc, hr, _⟩ ↦ ⟨hc, hr⟩, fun ⟨hc, hr⟩ ↦ ⟨hc, hr, ⟨fun _ ↦ e, ?_⟩, fun h ↦ ?_⟩⟩
+  refine ⟨fun ⟨_, hr⟩ ↦ hr, fun hr ↦ ⟨⟨⟨fun _ ↦ e, ?_⟩, fun h ↦ ?_⟩, hr⟩⟩
   · simp
   · exact absurd ((key g w).1 h) (Set.not_nonempty_iff_eq_empty.2 hr)
 
 /-- (19) *We don't have a cat. # She is a tabby.* Updating the null context with a negated
 indefinite and then a pronoun on its variable leaves no point, once some world has no `F` that is
 `G` (p. 1106). -/
-theorem update_null_neg_indef_then_it [Nonempty E]
-    (h : ∃ w, extension I F w ∩ extension I G w = ∅) :
+theorem update_null_neg_indef_then_it (h : ∃ w, extension I F w ∩ extension I G w = ∅) :
     update I (update I Set.univ (neg (indef x (atom₁ F x) (atom₁ G x))))
       (iota x (top x) (atom₁ H x)) = ∅ := by
+  cases isEmpty_or_nonempty E
+  · refine Set.subset_eq_empty (update_subset.trans fun i hi ↦ ?_) rfl
+    obtain ⟨⟨g', hg', -⟩, -⟩ := hi.2.2
+    obtain ⟨a, -⟩ := Flat.ne_bot_iff_exists.1 (satt_atom₁.1 hg')
+    exact isEmptyElim a
   obtain ⟨w, hw⟩ := h
   refine update_iota_top_eq_empty ⟨(⊥, w), ?_, rfl⟩
-  rw [update_neg_indef_atom₁]
+  rw [update_eq_inter_truthSet, truthSet_neg_indef_atom₁]
   exact ⟨Set.mem_univ _, hw⟩
 
 end Updating
@@ -522,26 +609,50 @@ theorem boundEquiv_ex20a_ex20c (hF : ∀ g w, F.Realize I g w → g x ≠ ⊥) :
     BoundEquiv I (ex20a x F G H) (ex20c x F G H) :=
   ⟨boundEntails_ex20a_ex20c hF, boundEntails_ex20c_ex20a⟩
 
+/-- At a point of its context, (20-a) bound-entails (20-c) for any formulae: the pronoun's
+familiarity bound values `x` throughout the local context of the indefinite, which contains the
+point. -/
+theorem realize_ex20c_of_realize_ex20a (hc : (g, w) ∈ c) (hs : (ex20a x F G H).Satt I c g w)
+    (hs' : (ex20c x F G H).Satt I c g w) (hr : (ex20a x F G H).Realize I g w) :
+    (ex20c x F G H).Realize I g w := by
+  obtain ⟨hFg, hG, hH⟩ := realize_conj_of_satt_indef hs hr
+  obtain ⟨a, haF, haG, haH⟩ := hr
+  obtain ⟨⟨g', hg'F, hg'G, -⟩, hw⟩ := hs
+  have hmem : (g, w) ∈ update I c (indef x F G) :=
+    ⟨hc, ⟨a, haF, haG⟩, ⟨g', hg'F, hg'G⟩, fun _ ↦
+      ⟨⟨hFg, hG⟩, (hw ⟨a, haF, haG, haH⟩).2.1, (hw ⟨a, haF, haG, haH⟩).2.2.1⟩⟩
+  exact ⟨⟨a, haF, haG⟩, ((satt_iota.1 hs'.2).1.ge hmem).2.1, hH⟩
+
+/-- At a point of its context, (20-b) bound-entails (20-c) for any formulae. -/
+theorem realize_ex20c_of_realize_ex20b (hc : (g, w) ∈ c) (hs : (ex20b x F G H).Satt I c g w)
+    (hs' : (ex20c x F G H).Satt I c g w) (hr : (ex20b x F G H).Realize I g w) :
+    (ex20c x F G H).Realize I g w :=
+  ⟨hr.1, ((satt_iota.1 hs'.2).1.ge ⟨hc, hr.1, hs.1⟩).2.1, hr.2.2⟩
+
 variable (F G H : L.Relations 1)
 
-/-- Updating with (20-a) keeps the points whose `x` is an `F`, a `G` and an `H` (p. 1108). -/
-theorem update_ex20a :
-    update I c (ex20a x (atom₁ F x) (atom₁ G x) (atom₁ H x)) =
-      valuedIn c x (extension I F ⊓ extension I G ⊓ extension I H) := by
-  rw [ex20a, update_indef_of_ne_bot fun _ _ ↦ ne_bot_of_realize_atom₁, update_conj, update_conj,
-    update_atom₁ (c := c), update_valuedIn_atom₁, update_valuedIn_atom₁]
+/-- (20-a) is true and satt exactly where `x` is an `F`, a `G` and an `H` (p. 1108). -/
+theorem truthSet_ex20a :
+    ((ex20a x (atom₁ F x) (atom₁ G x) (atom₁ H x)).toPartialProp I c).truthSet =
+      valuedIn x (extension I F ⊓ extension I G ⊓ extension I H) := by
+  rw [ex20a, truthSet_indef_of_ne_bot fun _ _ ↦ ne_bot_of_realize_atom₁, truthSet_conj,
+    truthSet_conj, truthSet_atom₁, truthSet_atom₁, truthSet_atom₁, ← Set.inter_assoc,
+    valuedIn_inter_valuedIn, valuedIn_inter_valuedIn]
 
-/-- Updating with (20-b) keeps the same points (p. 1108). -/
-theorem update_ex20b :
-    update I c (ex20b x (atom₁ F x) (atom₁ G x) (atom₁ H x)) =
-      valuedIn c x (extension I F ⊓ extension I G ⊓ extension I H) := by
-  rw [ex20b, update_conj, update_indef_then_the]
+/-- So is (20-b) (p. 1108). -/
+theorem truthSet_ex20b :
+    ((ex20b x (atom₁ F x) (atom₁ G x) (atom₁ H x)).toPartialProp I c).truthSet =
+      valuedIn x (extension I F ⊓ extension I G ⊓ extension I H) := by
+  rw [ex20b, truthSet_conj, truthSet_indef_atom₁, truthSet_iota_after_indef_atom₁,
+    valuedIn_inter_valuedIn, ← inf_inf_distrib_left, ← inf_assoc]
 
-/-- Updating with (20-c) keeps the same points (p. 1108). -/
-theorem update_ex20c :
-    update I c (ex20c x (atom₁ F x) (atom₁ G x) (atom₁ H x)) =
-      valuedIn c x (extension I F ⊓ extension I G ⊓ extension I H) := by
-  rw [ex20c, update_conj, update_indef_then_it]
+/-- So is (20-c) (p. 1108). Hence, as footnote 23 has it, any one of (20-a)–(20-c) is satt and
+true where all three are, and updating with any of them has the same effect. -/
+theorem truthSet_ex20c :
+    ((ex20c x (atom₁ F x) (atom₁ G x) (atom₁ H x)).toPartialProp I c).truthSet =
+      valuedIn x (extension I F ⊓ extension I G ⊓ extension I H) := by
+  rw [ex20c, truthSet_conj, truthSet_indef_atom₁, truthSet_iota_top_after_indef_atom₁,
+    valuedIn_inter_valuedIn]
 
 /-- The formulations of (20) are not logically equivalent (p. 1108): at a point whose world has
 an `F` that is `G` and `H` but whose `x` is not an `H`, (20-a) is true and (20-b) is false. -/
@@ -578,7 +689,7 @@ the case that Susie doesn't have a child. The child is at boarding school.* (p. 
 theorem update_neg_neg_indef_then_the :
     update I (update I c (neg (neg (indef x (atom₁ F x) (atom₁ G x)))))
         (iota x (atom₁ F x) (atom₁ H x)) =
-      valuedIn c x (extension I F ⊓ extension I G ⊓ extension I H) := by
+      c ∩ valuedIn x (extension I F ⊓ extension I G ⊓ extension I H) := by
   rw [update_neg_neg, update_indef_then_the]
 
 /-- The bathroom disjunction *Either Susie doesn't have a child, or the child is at boarding
@@ -588,11 +699,12 @@ theorem truthSet_bathroom [Nonempty E] :
     ((disj (neg (indef x (atom₁ F x) (atom₁ G x))) (iota x (atom₁ F x) (atom₁ H x))).toPartialProp
         I c).truthSet =
       {i | extension I F i.2 ∩ extension I G i.2 = ∅} ∪
-        valuedIn Set.univ x (extension I F ⊓ extension I G ⊓ extension I H) := by
+        valuedIn x (extension I F ⊓ extension I G ⊓ extension I H) := by
   obtain ⟨e⟩ := ‹Nonempty E›
   have hι : ∀ g w, (iota x (atom₁ F x) (atom₁ H x)).Satt I
       (update I c (neg (neg (indef x (atom₁ F x) (atom₁ G x))))) g w := fun g w ↦ by
-    rw [update_neg_neg, satt_iota, update_indef_atom₁, update_valuedIn_atom₁_of_le inf_le_left]
+    rw [update_neg_neg, satt_iota, update_atom₁_of_subset fun i hi ↦ by
+      rw [update_indef_atom₁] at hi; exact valuedIn_mono inf_le_left hi.2]
     exact ⟨rfl, fun h ↦ satt_atom₁.2 (ne_bot_of_realize_atom₁ h)⟩
   have hex : ∀ g w, (indef x (atom₁ F x) (atom₁ G x)).Realize I g w ↔
       (extension I F w ∩ extension I G w).Nonempty := fun g w ↦ by
@@ -600,8 +712,7 @@ theorem truthSet_bathroom [Nonempty E] :
   ext ⟨g, w⟩
   simp only [mem_truthSet_toPartialProp, satt_disj, hι, and_true, satt_neg, satt_indef,
     satt_conj, satt_atom₁, realize_disj, realize_neg, realize_conj, realize_iota, hex,
-    Set.mem_union, Set.mem_ofPred_eq, mem_valuedIn, Set.mem_univ, true_and,
-    ← Set.not_nonempty_iff_eq_empty]
+    Set.mem_union, Set.mem_ofPred_eq, mem_valuedIn, ← Set.not_nonempty_iff_eq_empty]
   simp only [show ∃ g' : PartialAssign V E, g' x ≠ ⊥ ∧ g' x ≠ ⊥ from ⟨fun _ ↦ e, by simp⟩,
     true_and]
   obtain hgx | ⟨b, hgx⟩ := (em (g x = ⊥)).imp_right Flat.ne_bot_iff_exists.1
@@ -705,11 +816,16 @@ theorem not_boundEntails_ex20b_ex20a :
   fun h ↦ Bool.noConfusion <| (realize_ex20a_iff true).1 <|
     h Set.univ (⊥, true) (holds_ex20b _ _).1 (satt_ex20a _ _) (holds_ex20b Set.univ _).2
 
+/-- (20-a) does not bound-entail (20-c) for the same restrictor. The refuting index is a point
+outside its context, the empty one; at points of the context the entailment holds
+(`realize_ex20c_of_realize_ex20a`). -/
 theorem not_boundEntails_ex20a_ex20c :
     ¬ BoundEntails I₂ (ex20a 0 F₀ F₀ H₀) (ex20c 0 F₀ F₀ H₀) :=
   fun h ↦ not_realize_ex20c false <|
     h ∅ (⊥, false) (satt_ex20a _ _) (satt_ex20c _) ((realize_ex20a_iff false).2 rfl)
 
+/-- Nor does (20-b) bound-entail (20-c), again at a point outside the empty context
+(`realize_ex20c_of_realize_ex20b`). -/
 theorem not_boundEntails_ex20b_ex20c :
     ¬ BoundEntails I₂ (ex20b 0 F₀ F₀ H₀) (ex20c 0 F₀ F₀ H₀) :=
   fun h ↦ not_realize_ex20c true <|
