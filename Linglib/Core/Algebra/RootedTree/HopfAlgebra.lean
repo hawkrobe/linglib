@@ -15,13 +15,12 @@ public import Mathlib.RingTheory.HopfAlgebra.Convolution
 
 The pruning bialgebra on `ConnesKreimer R (UnorderedTree α)` (`Coproduct/Pruning.lean`) is a Hopf
 algebra over any commutative ring: the Connes–Kreimer Hopf algebra of nonplanar, not necessarily
-binary, rooted trees ([connes-kreimer-1998]; [marcolli-chomsky-berwick-2025] Lemma 1.2.11).
+binary, rooted trees.
 
 The antipode is the inductive formula `S(x) = −x − Σ S(x′) · x″` of a graded connected bialgebra
-([marcolli-chomsky-berwick-2025] (1.2.12); [foissy-introduction-hopf-algebras-trees] §1.3,
-Lemma 2). As the algebra is commutative, the antipode is an algebra map, so it is determined by
-its values on trees. Summing over every admissible cut `(F, T')` of a tree `T` (crown forest `F`,
-trunk `T'`), including the empty cut `(0, T)` that supplies the `−T` term,
+(Foissy's notes, §1.3, Lemma 2). As the algebra is commutative, the antipode is an algebra map,
+so it is determined by its values on trees. Summing over every admissible cut `(F, T')` of a tree
+`T` (crown forest `F`, trunk `T'`), including the empty cut `(0, T)` that supplies the `−T` term,
 
   `S(T) = −Σ_{(F, T')} (Π_{t ∈ F} S(t)) · T'`.
 
@@ -39,8 +38,8 @@ trunk `T'`), including the empty cut `(0, T)` that supplies the `−T` term,
 
 ## Implementation notes
 
-[marcolli-chomsky-berwick-2025] work over `ℚ`; the construction needs only a commutative ring
-(for the negation), and the bialgebra only a commutative semiring.
+The construction needs only a commutative ring (for the negation), and the bialgebra only a
+commutative semiring.
 
 The recursion descends on `UnorderedTree.numNodes`, the grading by weight: every crown tree has
 fewer vertices than `T` (`cutSummandsN_crown_numNodes_lt`). The recursion makes `S` a left
@@ -59,7 +58,6 @@ the recursion `R(T) = −T − Σ_{F ≠ 0} F · R(T')` on the trunk; the two ag
 
 * [connes-kreimer-1998]
 * [foissy-introduction-hopf-algebras-trees]
-* [marcolli-chomsky-berwick-2025]
 -/
 
 @[expose] public section
@@ -70,7 +68,7 @@ namespace ConnesKreimer
 
 variable {R : Type*} [CommRing R] {α : Type*}
 
-/-- The antipode on a tree ([marcolli-chomsky-berwick-2025] (1.2.12)), summed over all cuts:
+/-- The antipode on a tree, summed over all cuts,
 `S(T) = −Σ_{(F, T') ∈ cutSummandsN T} (Π_{t ∈ F} S(t)) · T'`. -/
 noncomputable def antipodeTreeN (T : UnorderedTree α) : ConnesKreimer R (UnorderedTree α) :=
   -((cutSummandsN T).attach.map fun p ↦
@@ -87,7 +85,7 @@ theorem antipodeTreeN_unfold (T : UnorderedTree α) :
     fun p : Forest (UnorderedTree α) × UnorderedTree α ↦
       (p.1.map (antipodeTreeN (R := R))).prod * ofTree p.2)
 
-/-- The antipode as an algebra map: `antipodeTreeN` extended multiplicatively to forests. -/
+/-- The antipode as an algebra map extends `antipodeTreeN` multiplicatively to forests. -/
 noncomputable def antipodeAlgHomN :
     ConnesKreimer R (UnorderedTree α) →ₐ[R] ConnesKreimer R (UnorderedTree α) :=
   aeval antipodeTreeN
@@ -119,7 +117,7 @@ private theorem antipodeRightTreeN_unfold (T : UnorderedTree α) :
   exact congrArg (fun s ↦ -ofTree T - s.sum) (Multiset.attach_map_val' _
     fun p : Forest (UnorderedTree α) × UnorderedTree α ↦ of' p.1 * antipodeRightTreeN (R := R) p.2)
 
-/-- `S ⋆ id = 1`: on a tree, the summands of `(S ⊗ id) Δ T` are those of `−S(T)`. An input to
+/-- `S ⋆ id = 1`, since on a tree the summands of `(S ⊗ id) Δ T` are those of `−S(T)`. An input to
 the instance; afterwards this is `AlgHom.antipode_id_cancel`. -/
 theorem antipodeAlgHomN_convMul_id :
     toConv (antipodeAlgHomN (R := R) (α := α)) * toConv (AlgHom.id R _) = 1 := by
@@ -127,7 +125,7 @@ theorem antipodeAlgHomN_convMul_id :
   simp [AlgHom.convMul_apply, coalgebra_comul_apply, coalgebra_counit_apply, comulTreeN,
     comulTreeNG, map_multiset_sum, Multiset.map_map, antipodeTreeN_unfold T]
 
-/-- `id ⋆ R = 1`: the empty cut contributes `R(T)`, which cancels the rest. -/
+/-- `id ⋆ R = 1`, since the empty cut contributes `R(T)`, which cancels the rest. -/
 private theorem id_convMul_aeval_antipodeRightTreeN :
     toConv (AlgHom.id R _) * toConv (aeval (antipodeRightTreeN (R := R) (α := α))) = 1 := by
   refine ofConv_injective (algHom_ext_ofTree fun T ↦ ?_)
@@ -140,7 +138,7 @@ private theorem id_convMul_aeval_antipodeRightTreeN :
     counit_ofTree, map_zero]
   abel
 
-/-- `id ⋆ S = 1`: `S` is also a right inverse, since it equals the right antipode. An input to
+/-- `id ⋆ S = 1`, since `S` equals the right antipode. An input to
 the instance; afterwards this is `LinearMap.id_mul_antipode`. -/
 theorem id_convMul_antipodeAlgHomN :
     toConv (AlgHom.id R _) * toConv (antipodeAlgHomN (R := R) (α := α)) = 1 :=

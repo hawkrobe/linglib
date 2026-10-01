@@ -14,11 +14,8 @@ open RoseTree UnorderedTree
 /-!
 # The pruning coproduct Δ^ρ
 
-The admissible-cut, root-component pruning coproduct on unordered rooted
-trees ([marcolli-chomsky-berwick-2025] Definition 1.2.6 and Lemma
-1.2.11 — per their Remark 1.2.9, the Connes-Kreimer Hopf-algebra
-coproduct of [foissy-introduction-hopf-algebras-trees]), with the
-Hochschild 1-cocycle property of grafting and the counit laws.
+The Connes–Kreimer coproduct on unordered rooted trees, summing over admissible cuts that prune
+the cut subtrees, with the Hochschild 1-cocycle property of grafting and the counit laws.
 
 ## Main definitions
 
@@ -37,26 +34,27 @@ Hochschild 1-cocycle property of grafting and the counit laws.
 * `ConnesKreimer.comulAlgHomN_coassoc_algHom`, `comulRhoN_coassoc` —
   coassociativity, by Foissy's subalgebra argument
   ([foissy-introduction-hopf-algebras-trees]; [grinberg-reiner-2020]).
-* `ConnesKreimer.instBialgebraRho` — the Δ^ρ `Bialgebra`
-  ([marcolli-chomsky-berwick-2025] Lemma 1.2.11), over any `CommSemiring`.
+* `ConnesKreimer.instBialgebraRho` — the Δ^ρ `Bialgebra`, over any `CommSemiring`.
 
 ## Implementation notes
 
 `B+` only well-defines on unordered children
 (`Multiset (UnorderedTree α) → UnorderedTree α`); on planar trees it would need
 a canonical ordering — hence the cocycle and everything downstream live
-at the `UnorderedTree` level. The clean-coassoc route through the cocycle
-does not generalize to Δ^c (B+ is not a 1-cocycle for the trace
-variant, which instead uses the direct double-cut bijection).
+at the `UnorderedTree` level.
 
 The GL/CK duality theorem lives downstream in
 `Coproduct/PruningDuality.lean` (its proof needs the B⁻ calculus of
 `BMinus.lean`, which imports this file); the full `HopfAlgebra`
 instance is in `HopfAlgebra.lean`.
 
-## Status
-
 `[UPSTREAM]` candidate.
+
+## References
+
+* [connes-kreimer-1998]
+* [foissy-introduction-hopf-algebras-trees]
+* [grinberg-reiner-2020]
 -/
 
 namespace ConnesKreimer
@@ -118,7 +116,7 @@ noncomputable def comulAlgHomN :
 `B+_a : Forest (UnorderedTree α) → UnorderedTree α` is the smart constructor
 `UnorderedTree.node a`. Linearly extended to `bPlusLin a : H →ₗ[R] H` (sending
 basis element `of' F` to `ofTree (UnorderedTree.node a F)`), it satisfies
-the **Hochschild 1-cocycle** property (Foissy / MCB §1.2.11):
+the Hochschild 1-cocycle property:
 
   Δ^ρ ∘ B+_a = (·) ⊗ 1 ∘ B+_a + (id ⊗ B+_a) ∘ Δ^ρ
 
@@ -790,8 +788,8 @@ theorem comulRhoN_coassoc :
 
 end CoassocFoissy
 
-/-- The Δ^ρ **`Bialgebra`** on `ConnesKreimer R (UnorderedTree α)`
-    ([marcolli-chomsky-berwick-2025] Lemma 1.2.11), over any `CommSemiring`. -/
+/-- The pruning coproduct makes `ConnesKreimer R (UnorderedTree α)` a bialgebra over any
+    commutative semiring. -/
 noncomputable instance instBialgebraRho :
     Bialgebra R (ConnesKreimer R (UnorderedTree α)) :=
   Bialgebra.ofAlgHom (A := ConnesKreimer R (UnorderedTree α)) comulAlgHomN counit

@@ -44,6 +44,11 @@ to `ConnesKreimer` values; `toFinsuppAlgEquiv` is the bridge for wholesale
 transport.
 
 `[UPSTREAM]` candidate.
+
+## References
+
+* [connes-kreimer-1998]
+* [foissy-introduction-hopf-algebras-trees]
 -/
 
 @[expose] public section
@@ -180,7 +185,7 @@ instance instAlgebra : Algebra R (ConnesKreimer R T) where
     (algebraMap R (ConnesKreimer R T) r).toFinsupp
       = algebraMap R (AddMonoidAlgebra R (Forest T)) r := rfl
 
-/-- Coefficient lookup: a Connes-Kreimer element is a function from forests
+/-- A Connes-Kreimer element is a function from forests
     to coefficients. -/
 instance instFunLike : FunLike (ConnesKreimer R T) (Forest T) R where
   coe p := ⇑p.toFinsupp.coeff
@@ -235,7 +240,7 @@ def toFinsuppAlgEquiv :
 
 /-! ## Basis embeddings -/
 
-/-- Basis vector: coefficient `r` on the forest `F`. -/
+/-- `single F r` is the basis vector with coefficient `r` on the forest `F`. -/
 def single (F : Forest T) (r : R) : ConnesKreimer R T :=
   ⟨.single F r⟩
 
@@ -246,7 +251,8 @@ theorem smul_single_one (F : Forest T) (r : R) :
     single F r = r • single F (1 : R) := by
   ext; simp
 
-/-- Linear induction: prove `p` at `0`, under `+`, and on every `single`. -/
+/-- To prove `p` for every element it suffices to prove it at `0`, under `+`, and on every
+    `single`. -/
 @[elab_as_elim]
 theorem induction_linear {p : ConnesKreimer R T → Prop} (x : ConnesKreimer R T)
     (zero : p 0) (add : ∀ f g, p f → p g → p (f + g))
@@ -254,12 +260,12 @@ theorem induction_linear {p : ConnesKreimer R T → Prop} (x : ConnesKreimer R T
   AddMonoidAlgebra.induction_linear (motive := fun y => p (⟨y⟩ : ConnesKreimer R T)) x.toFinsupp
     zero (fun f g hf hg => add ⟨f⟩ ⟨g⟩ hf hg) single
 
-/-- **Bare embedding**: a forest as the basis vector `single F 1`. -/
+/-- `of' F` is the forest `F` as the basis vector `single F 1`. -/
 def of' (F : Forest T) : ConnesKreimer R T := single F 1
 
-/-- **MonoidHom embedding**: `Multiplicative (Forest T) →* ConnesKreimer R T`,
-    multiplicative by construction as `AddMonoidAlgebra.of` transported through
-    the wrapper equivalence. -/
+/-- `of` embeds forests as a monoid homomorphism
+    `Multiplicative (Forest T) →* ConnesKreimer R T`, multiplicative by construction as
+    `AddMonoidAlgebra.of` transported through the wrapper equivalence. -/
 def of : Multiplicative (Forest T) →* ConnesKreimer R T :=
   (toFinsuppAlgEquiv (R := R) (T := T)).symm.toAlgHom.toMonoidHom'.comp
     (AddMonoidAlgebra.of R (Forest T))
@@ -282,7 +288,7 @@ theorem of_apply (F : Multiplicative (Forest T)) :
     (of' (R := R) (0 : Forest T) : ConnesKreimer R T) = 1 :=
   ext (by simp [toFinsupp_of', AddMonoidAlgebra.one_def])
 
-/-- Headline algebraic fact: forest disjoint union ↔ algebra product. -/
+/-- Disjoint union of forests is the product of the algebra. -/
 @[simp] theorem of'_add (F G : Forest T) :
     (of' (R := R) (F + G) : ConnesKreimer R T)
       = of' (R := R) F * of' (R := R) G :=
@@ -484,7 +490,7 @@ analogue), wrapper-native over `AddMonoidAlgebra.map`. -/
 section Map
 variable {S : Type*} [CommSemiring S] (f : R →+* S)
 
-/-- Base change along `f : R →+* S`: apply `f` to each coefficient
+/-- Base change along `f : R →+* S` applies `f` to each coefficient
     (`Polynomial.map` analogue). -/
 def map (p : ConnesKreimer R T) : ConnesKreimer S T :=
   ⟨AddMonoidAlgebra.map f p.toFinsupp⟩
@@ -562,8 +568,8 @@ def basisSingleOne :
 The counit ε : ConnesKreimer R T → R extracts the coefficient of the
 empty forest, packaged as an algebra hom. -/
 
-/-- The **counit** on `ConnesKreimer R T`: the coefficient of the empty forest, as the
-    algebra hom sending every tree to `0`. -/
+/-- The counit takes the coefficient of the empty forest; it is the algebra homomorphism
+    sending every tree to `0`. -/
 def counit : ConnesKreimer R T →ₐ[R] R :=
   aeval fun _ ↦ 0
 

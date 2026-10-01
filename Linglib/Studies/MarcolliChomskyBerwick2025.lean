@@ -55,6 +55,30 @@ and Form Copy restricts the object to the diagonal on which they are one
 (`theMan_mem_copyRel`), while *a book*, not structurally identical to *the man*, is no copy of it
 (`not_mem_copyRel_aBook`).
 
+## Correspondence with the book
+
+The book's algebra lives in `Core/` and in `Syntax/Minimalist/Workspace/`:
+
+* Definitions 1.2.6 and 1.2.8 (admissible cuts, the coproducts `Δ^ω`): `ConnesKreimer.cutSummandsN`
+  and `comulAlgHomN` for `Δ^ρ`, which Remark 1.2.9 identifies with the Connes–Kreimer coproduct;
+  `cutSummandsCN` and `comulCAlgHomN` for `Δ^c`.
+* Lemma 1.2.10: `ConnesKreimer.comulCN_coassoc` and the edge grading of `Workspace/TraceGrading`.
+* Lemma 1.2.11 and (1.2.12): `ConnesKreimer.instBialgebraRho`, the `HopfAlgebra` instance, and
+  `antipodeTreeN`.
+* The comparison of `Δ^d` with `Δ^ρ` displayed before (1.3.10):
+  `ConnesKreimer.comulDN_embedInl_eq_comulAlgHomN`.
+* Definition 1.6.2's degree `#L`: `UnorderedTree.numLeaves`; Lemma 1.6.3:
+  `ConnesKreimer.cutSummandsCN_numNodes`.
+* Lemma 1.7.3, for `Δ^ρ`: `ConnesKreimer.lcoeff_singleton_isDualPrimitive` and
+  `lie_lcoeff_singleton_apply_ofTree`.
+* Definitions 3.1.1 and 3.1.2: `RotaBaxter`, `RotaBaxterSemiring`; Remark 3.2.2: `RotaBaxter.id`.
+* Definitions 3.1.3, 3.1.5 and 3.1.6, Proposition 3.1.7, Remark 3.1.8:
+  `ConnesKreimer.birkhoffMinus`, `birkhoffPrepTree`, `birkhoffPlus`, `birkhoffPlus_eq_convMul`,
+  `birkhoffFactorization`; Proposition 3.1.9:
+  `ConnesKreimer.SemiringRenorm.birkhoffFactorization_ofTree`.
+* Proposition 3.5.2 and (3.5.4): `LaurentSeries.rotaBaxterPolar`; Proposition 3.5.6:
+  `ConnesKreimer.polarHahn_birkhoffPlus_of'`.
+
 ## Implementation notes
 
 The equation carries its initial term, `X = x t + 𝔐(X, X)`. The book writes `X = 𝔐(X, X)` and

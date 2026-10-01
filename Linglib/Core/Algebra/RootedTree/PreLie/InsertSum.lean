@@ -41,15 +41,10 @@ children that descends the product to `UnorderedTree`.
 The pre-Lie identity holds only once children are unordered: grafting `S₁` and then `S₂` at one
 vertex makes the new children `[S₂, S₁]`, where grafting both at once makes them `[S₁, S₂]`.
 
-The product of Marcolli, Chomsky and Berwick's insertion Lie algebra is a different operation:
-it inserts a binary tree by subdividing an edge of another binary tree, not by grafting at a
-vertex.
-
 ## References
 
 * [chapoton-livernet-2001]
 * [foissy-2021]
-* [marcolli-chomsky-berwick-2025]
 -/
 
 @[expose] public section

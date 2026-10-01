@@ -16,46 +16,42 @@ public import Mathlib.RingTheory.HopfAlgebra.Convolution
 open RoseTree UnorderedTree
 
 /-!
-# Birkhoff factorization on the Connes–Kreimer Hopf algebra  `[UPSTREAM]`
+# Birkhoff factorization on the Connes–Kreimer Hopf algebra
 
-[marcolli-chomsky-berwick-2025]'s renormalization of a character (Prop. 3.1.7): given a character
-`φ : H → ℛ` from the Hopf algebra `H` of nonplanar rooted trees into a commutative algebra `ℛ`
-carrying a weight-`-1` Rota–Baxter operator `R`, the **Bogolyubov recursion** splits `φ` into a
-"meaningless part" `φ₋` and a renormalized, consistency-checked part `φ₊`. This is the algebraic
-core of the "single map that recursively modifies an assignment of semantic values so as to
-incorporate the consistency checking over all substructures."
+Given a linear map `φ : H → ℛ` from the Connes–Kreimer Hopf algebra `H` into a commutative algebra
+`ℛ` with a Rota–Baxter operator `R` of weight `-1`, the Bogolyubov recursion splits `φ` into a
+negative part `φ₋` and a renormalized part `φ₊`. For a character `φ` they satisfy the algebraic
+Birkhoff factorization `φ = (φ₋ ∘ S) ⋆ φ₊`, with `S` the antipode and `⋆` the convolution.
 
-The negative part `φ₋` is built by the *same* `cutSummandsN`/weight recursion as the Hopf antipode
-`antipodeTreeN`, with two substitutions: the canonical embedding `ofTree rem` becomes the character
-value `φ (ofTree rem) ∈ ℛ`, and the bare negation becomes `−R`. Indeed `antipodeTreeN` is the
-`R = id`, canonical-character specialization of this recursion (`S(x) = −x − Σ S(x′)·x″`),
-proved here as `birkhoffMinusTree_id_eq_antipodeTreeN`.
-
-For a genuine character `φ : H →ₐ[R] ℛ` (a *multiplicative* assignment, Def. 3.1.3) the two parts
-satisfy the full factorization `φ = (φ₋ ∘ S) ⋆ φ₊` (Def. 3.1.5), proved in `birkhoffFactorization`.
-We work in the character convolution monoid `WithConv (H →ₐ[R] ℛ)`; per Rem. 3.1.4 the target `ℛ`
-carries no coproduct, so this is *not* mathlib's `AlgHom.convGroup` (target-bialgebra) — the
-convolution inverse `φ₋ ∘ S` of the character `φ₋` is read off directly from the antipode law
-(`antipodeComp_convMul_self`).
+The negative part is built by the same recursion over cuts as the antipode `antipodeTreeN`, with
+the character value `φ (ofTree rem)` in place of `ofTree rem` and `−R` in place of negation; at
+`R = id` and `φ = id` it is the antipode (`birkhoffMinusTree_id_eq_antipodeTreeN`).
 
 ## Main definitions
 
-- `birkhoffMinusTree φ R T` / `birkhoffMinus φ R`: the Bogolyubov negative part `φ₋` on a tree, and
-  as an algebra hom `H →ₐ[R] ℛ` into `range R = ℛ₋`.
-- `birkhoffPlusTree φ R T` / `birkhoffPlus φ R`: the renormalized part `φ₊ = (1 − R)(φ̃)` on a tree,
-  and as an algebra hom `H →ₐ[R] ℛ` into `range (1 − R) = ℛ₊`.
+* `ConnesKreimer.birkhoffMinusTree`, `ConnesKreimer.birkhoffMinus`: the negative part `φ₋`, on a
+  tree and as an algebra homomorphism.
+* `ConnesKreimer.birkhoffPlusTree`, `ConnesKreimer.birkhoffPlus`: the renormalized part
+  `φ₊ = (1 − R)(φ̃)`, on a tree and as an algebra homomorphism.
 
 ## Main results
 
-- `birkhoffFactorization_ofTree`: `φ₊ = φ₋ ⋆ φ` on generators (Def. 3.1.6), for any linear `φ`.
-- `birkhoffPlus_eq_convMul`: `φ₊ = φ₋ ⋆ φ` on *all* of `H`, for a character `φ` (Def. 3.1.6).
-- `birkhoffFactorization`: `φ = (φ₋ ∘ S) ⋆ φ₊` for a character `φ` (Def. 3.1.5, eq. (3.1.4)).
-- `birkhoffMinusTree_id_eq_antipodeTreeN`: the `R = id` counterterm is the Hopf antipode.
+* `ConnesKreimer.birkhoffFactorization_ofTree`: `φ₊ = φ₋ ⋆ φ` on generators, for any linear `φ`.
+* `ConnesKreimer.birkhoffPlus_eq_convMul`: `φ₊ = φ₋ ⋆ φ` on all of `H`, for a character `φ`.
+* `ConnesKreimer.birkhoffFactorization`: `φ = (φ₋ ∘ S) ⋆ φ₊` for a character `φ`.
+* `ConnesKreimer.birkhoffMinusTree_id_eq_antipodeTreeN`: at `R = id` the negative part is the
+  antipode.
+
+## Implementation notes
+
+The factorization is stated in the convolution monoid of characters `WithConv (H →ₐ[R] ℛ)`. The
+target carries no coproduct, so this is not mathlib's `AlgHom.convGroup`; the convolution inverse
+`φ₋ ∘ S` of `φ₋` comes from the antipode law (`antipodeComp_convMul_self`).
 
 ## References
 
-[marcolli-chomsky-berwick-2025] (Def. 3.1.1, Def. 3.1.3, Rem. 3.1.4, Def. 3.1.5, Def. 3.1.6,
-Prop. 3.1.7, Rem. 3.1.8)
+* [connes-kreimer-2000]
+* [ebrahimi-fard-guo-kreimer-2004]
 -/
 
 namespace ConnesKreimer
@@ -65,8 +61,8 @@ open scoped TensorProduct
 variable {R ℛ : Type*} [CommRing R] [CommRing ℛ] [Algebra R ℛ] {α : Type*}
   (φ : ConnesKreimer R (UnorderedTree α) →ₗ[R] ℛ) (RB : RotaBaxter R ℛ (-1))
 
-/-- **The Bogolyubov negative part `φ₋` on a single tree** ([marcolli-chomsky-berwick-2025]
-    Prop. 3.1.7): `φ₋(T) = −R(Σ_{(cf,rem) ∈ cutSummandsN T} (Π_{Tᵢ ∈ cf} φ₋(Tᵢ)) · φ(ofTree rem))`.
+/-- The Bogolyubov negative part on a tree,
+    `φ₋(T) = −R(Σ_{(cf,rem) ∈ cutSummandsN T} (Π_{Tᵢ ∈ cf} φ₋(Tᵢ)) · φ(ofTree rem))`.
     Models `antipodeTreeN` with the character value `φ(ofTree rem)` in place of `ofTree rem` and
     the Rota–Baxter `−R` in place of bare negation; well-founded on `T.numNodes`. -/
 noncomputable def birkhoffMinusTree (T : UnorderedTree α) : ℛ :=
@@ -75,8 +71,8 @@ noncomputable def birkhoffMinusTree (T : UnorderedTree α) : ℛ :=
 termination_by T.numNodes
 decreasing_by exact cutSummandsN_crown_numNodes_lt p.2 t.2
 
-/-- **`φ₋` as an algebra hom** `H →ₐ[R] ℛ`: `birkhoffMinusTree` extended multiplicatively to
-    forests. -/
+/-- The negative part `φ₋` as an algebra homomorphism, `birkhoffMinusTree` extended
+    multiplicatively to forests. -/
 noncomputable def birkhoffMinus : ConnesKreimer R (UnorderedTree α) →ₐ[R] ℛ :=
   aeval (birkhoffMinusTree φ RB)
 
@@ -92,13 +88,13 @@ noncomputable def birkhoffMinus : ConnesKreimer R (UnorderedTree α) →ₐ[R] �
 
 /-! ### The Bogolyubov preparation and the renormalized part -/
 
-/-- **The Bogolyubov preparation `φ̃`** ([marcolli-chomsky-berwick-2025] Rem. 3.1.8):
+/-- The Bogolyubov preparation
     `φ̃(T) = Σ_{(cf,rem) ∈ cutSummandsN T} (Π_{Tᵢ ∈ cf} φ₋(Tᵢ)) · φ(ofTree rem)`, of which the
     negative part is `φ₋(T) = −R(φ̃(T))` and the renormalized part is `φ₊(T) = (1−R)(φ̃(T))`. -/
 noncomputable def birkhoffPrepTree (T : UnorderedTree α) : ℛ :=
   ((cutSummandsN T).map fun p ↦ (p.1.map (birkhoffMinusTree φ RB)).prod * φ (ofTree p.2)).sum
 
-/-- `φ₋(T) = −R(φ̃(T))`: the negative part is `−R` applied to the Bogolyubov preparation. -/
+/-- The negative part is `−R` applied to the Bogolyubov preparation, `φ₋(T) = −R(φ̃(T))`. -/
 theorem birkhoffMinusTree_eq_neg_op_prep (T : UnorderedTree α) :
     birkhoffMinusTree φ RB T = -RB.op (birkhoffPrepTree φ RB T) := by
   rw [birkhoffMinusTree]
@@ -107,21 +103,19 @@ theorem birkhoffMinusTree_eq_neg_op_prep (T : UnorderedTree α) :
     fun p : Forest (UnorderedTree α) × UnorderedTree α ↦
       (p.1.map (birkhoffMinusTree φ RB)).prod * φ (ofTree p.2))
 
-/-- **The renormalized part `φ₊` on a single tree** ([marcolli-chomsky-berwick-2025] Prop. 3.1.7):
-    `φ₊(T) = (1−R)(φ̃(T)) = φ̃(T) − R(φ̃(T))` — the consistency-checked value. -/
+/-- The renormalized part on a tree, `φ₊(T) = (1−R)(φ̃(T)) = φ̃(T) − R(φ̃(T))`. -/
 noncomputable def birkhoffPlusTree (T : UnorderedTree α) : ℛ :=
   birkhoffPrepTree φ RB T - RB.op (birkhoffPrepTree φ RB T)
 
-/-- `φ₊(T) = φ̃(T) + φ₋(T)`: the renormalized and negative parts recover the preparation. -/
+/-- The renormalized and negative parts recover the preparation, `φ₊(T) = φ̃(T) + φ₋(T)`. -/
 theorem birkhoffPlusTree_eq_prep_add_minus (T : UnorderedTree α) :
     birkhoffPlusTree φ RB T = birkhoffPrepTree φ RB T + birkhoffMinusTree φ RB T := by
   rw [birkhoffPlusTree, birkhoffMinusTree_eq_neg_op_prep]; ring
 
 /-! ### `φ₊` as an algebra hom (the renormalized character) -/
 
-/-- **`φ₊` as an algebra hom** `H →ₐ[R] ℛ`: `birkhoffPlusTree` extended multiplicatively to
-    forests, the renormalized character `φ₊ : H → R₊` of [marcolli-chomsky-berwick-2025]
-    Prop. 3.1.7 (an algebra hom into `range (1 − R)`). -/
+/-- The renormalized character `φ₊`, `birkhoffPlusTree` extended multiplicatively to forests,
+    an algebra homomorphism into `range (1 − R)`. -/
 noncomputable def birkhoffPlus : ConnesKreimer R (UnorderedTree α) →ₐ[R] ℛ :=
   aeval (birkhoffPlusTree φ RB)
 
@@ -137,9 +131,9 @@ noncomputable def birkhoffPlus : ConnesKreimer R (UnorderedTree α) →ₐ[R] �
 
 /-! ### The Birkhoff factorization `φ₊ = φ₋ ⋆ φ` -/
 
-/-- **Birkhoff factorization on generators** ([marcolli-chomsky-berwick-2025] Def. 3.1.6,
-    `φ₊ = φ₋ ⋆ φ`): on each tree generator the convolution `φ₋ ⋆ φ` — written explicitly as
-    `mul' ∘ (φ₋ ⊗ φ) ∘ comul` (`LinearMap.convMul_apply`) — recovers the renormalized part `φ₊`.
+/-- The Birkhoff factorization `φ₊ = φ₋ ⋆ φ` on generators. On each tree the convolution
+    `φ₋ ⋆ φ`, written as `mul' ∘ (φ₋ ⊗ φ) ∘ comul` (`LinearMap.convMul_apply`), recovers the
+    renormalized part `φ₊`.
     Needs `φ` unital (`φ 1 = 1`), as characters are.
 
     Proof route: `comulAlgHomN (ofTree T) = comulTreeN T = ofTree T ⊗ 1 + Σ_{(cf,rem) ∈
@@ -161,18 +155,17 @@ theorem birkhoffFactorization_ofTree (hφ : φ 1 = 1) (T : UnorderedTree α) :
 
 /-! ### The `R = id` specialization recovers the Hopf antipode
 
-[marcolli-chomsky-berwick-2025] Prop. 3.1.7 builds `φ₋` by the *same* `cutSummandsN`/weight
-recursion as the Hopf antipode `antipodeTreeN` (the inductive antipode of §1.2), with two
+The Bogolyubov recursion builds `φ₋` by the *same* `cutSummandsN`/weight
+recursion as the Hopf antipode `antipodeTreeN`, with two
 substitutions: the character value `φ (ofTree rem)` in place of the canonical embedding
 `ofTree rem`, and the Rota–Baxter `−R` in place of bare negation. Taking the trivial
 regularization `R = id` (`RotaBaxter.id`, weight `-1`) together with the canonical character
 `φ = id` (the identity `H →ₗ[R] H`, which fixes `ofTree rem`) collapses *both* substitutions, so
-the Bogolyubov negative part of the identity character is exactly the antipode. This is the
-algebraic content of the book's remark that the antipode "is like a group inverse": `S = id⁻¹`
-in the convolution group, recovered here as the `R = id` Birkhoff counterterm. -/
+the Bogolyubov negative part of the identity character is exactly the antipode, the convolution
+inverse `S = id⁻¹`. -/
 
-/-- **`R = id`, `φ = id` recovers the antipode on a tree.** The Bogolyubov negative part `φ₋`
-    (Prop. 3.1.7) of the identity character `id : H →ₗ[R] H` under the trivial weight-`-1`
+/-- At `R = id` and `φ = id`, the negative part on a tree is the antipode. The Bogolyubov
+    negative part `φ₋` of the identity character `id : H →ₗ[R] H` under the trivial weight-`-1`
     Rota–Baxter operator `RotaBaxter.id` coincides with the Hopf antipode `antipodeTreeN`. -/
 theorem birkhoffMinusTree_id_eq_antipodeTreeN (T : UnorderedTree α) :
     birkhoffMinusTree (LinearMap.id : ConnesKreimer R (UnorderedTree α) →ₗ[R] _)
@@ -190,7 +183,7 @@ theorem birkhoffMinusTree_id_eq_antipodeTreeN (T : UnorderedTree α) :
 termination_by T.numNodes
 decreasing_by exact cutSummandsN_crown_numNodes_lt hp hT_i
 
-/-- **`R = id`, `φ = id` recovers the antipode as an algebra hom.** The forest-level Bogolyubov
+/-- At `R = id` and `φ = id`, the negative part is the antipode. The forest-level Bogolyubov
     negative part `φ₋` of the identity character under `RotaBaxter.id` is the Hopf antipode
     `antipodeAlgHomN`. Lifts `birkhoffMinusTree_id_eq_antipodeTreeN` through the shared
     `ConnesKreimer.lift`. -/
@@ -203,23 +196,23 @@ theorem birkhoffMinus_id_eq_antipodeAlgHomN :
   exact congrArg Multiset.prod (Multiset.map_congr rfl
     (fun T _ => birkhoffMinusTree_id_eq_antipodeTreeN T))
 
-/-! ### The full Birkhoff factorization `φ = (φ₋ ∘ S) ⋆ φ₊`  (MCB Def. 3.1.5)
+/-! ### The full Birkhoff factorization `φ = (φ₋ ∘ S) ⋆ φ₊`
 
-[marcolli-chomsky-berwick-2025] Def. 3.1.5 calls `φ = (φ₋ ∘ S) ⋆ φ₊` *the* Birkhoff factorization
-of a character `φ : H → R` (`S` the antipode, `⋆` the convolution). The keystone above proves the
-*semiring-form* `φ₊ = φ₋ ⋆ φ` (Def. 3.1.6) on generators; over a ring the two forms are equivalent,
+The Birkhoff factorization of a character `φ : H → R` is `φ = (φ₋ ∘ S) ⋆ φ₊` (`S` the antipode,
+`⋆` the convolution). The keystone above proves the form `φ₊ = φ₋ ⋆ φ` on generators, which also
+makes sense over a semiring; over a ring the two forms are equivalent,
 because the antipode-composite `φ₋ ∘ S` is the convolution inverse of the character `φ₋`. We work in
-the convolution monoid `WithConv (H →ₐ[R] R)` of characters. Per Rem. 3.1.4 the target `R` carries
+the convolution monoid `WithConv (H →ₐ[R] R)` of characters. The target `R` carries
 no coproduct, so this is *not* mathlib's `AlgHom.convGroup` (which requires the target to be a
 bialgebra) — the inverse of a single character is read off directly from the antipode law. -/
 
 section Factorization
 
-/-- **The convolution inverse of a character is `character ∘ S`.** For a character
+/-- The convolution inverse of a character `ψ` is `ψ ∘ S`. For a character
     `ψ : H →ₐ[R] R`, the antipode-composite `ψ ∘ S` is its left convolution inverse in the
     character monoid `WithConv (H →ₐ[R] R)`. The one-character specialization of the antipode law
-    (`AlgHom.antipode_id_cancel`), transported along `ψ` by `comp_convMul_distrib`. Per Rem. 3.1.4
-    it needs only `H` Hopf and `R` a commutative algebra — `R` carries no coproduct. -/
+    (`AlgHom.antipode_id_cancel`), transported along `ψ` by `comp_convMul_distrib`. It needs only
+    `H` Hopf and `R` a commutative algebra; `R` carries no coproduct. -/
 theorem antipodeComp_convMul_self (ψ : ConnesKreimer R (UnorderedTree α) →ₐ[R] ℛ) :
     WithConv.toConv (ψ.comp (HopfAlgebra.antipodeAlgHom R (ConnesKreimer R (UnorderedTree α))))
         * WithConv.toConv ψ
@@ -234,7 +227,7 @@ theorem antipodeComp_convMul_self (ψ : ConnesKreimer R (UnorderedTree α) →�
     Subsingleton.elim (ψ.comp (Algebra.ofId R (ConnesKreimer R (UnorderedTree α))))
       (Algebra.ofId R ℛ)]
 
-/-- **The convolution `φ₋ ⋆ φ` on a tree generator is the renormalized value `φ₊(T)`.** Restates
+/-- The convolution `φ₋ ⋆ φ` on a tree generator is the renormalized value `φ₊(T)`. Restates
     the keystone `birkhoffFactorization_ofTree` as a value in the character monoid, for a character
     `φ : H →ₐ[R] R` (unital via `map_one`). -/
 theorem convMul_birkhoffMinus_apply_ofTree (φ : ConnesKreimer R (UnorderedTree α) →ₐ[R] ℛ)
@@ -243,9 +236,8 @@ theorem convMul_birkhoffMinus_apply_ofTree (φ : ConnesKreimer R (UnorderedTree 
       = birkhoffPlusTree φ.toLinearMap RB T := by
   exact birkhoffFactorization_ofTree φ.toLinearMap RB (map_one φ) T
 
-/-- **The full Birkhoff factorization `φ₊ = φ₋ ⋆ φ`** ([marcolli-chomsky-berwick-2025] Def. 3.1.6)
-    on *all* of `H` for a character `φ : H →ₐ[R] R`: the renormalized character `φ₊` (the
-    multiplicative `(1 − R)(φ̃)`) is the convolution `φ₋ ⋆ φ`. Lifts the keystone (which holds on
+/-- For a character `φ : H →ₐ[R] R`, the renormalized character `φ₊`, the multiplicative
+    `(1 − R)(φ̃)`, is the convolution `φ₋ ⋆ φ` on all of `H`. Lifts the keystone (which holds on
     generators for any linear `φ`) to all forests via the multiplicativity of a character. -/
 theorem birkhoffPlus_eq_convMul (φ : ConnesKreimer R (UnorderedTree α) →ₐ[R] ℛ) :
     WithConv.toConv (birkhoffMinus φ.toLinearMap RB) * WithConv.toConv φ
@@ -263,11 +255,9 @@ theorem birkhoffPlus_eq_convMul (φ : ConnesKreimer R (UnorderedTree α) →ₐ[
     exact congrArg (· * birkhoffPlus φ.toLinearMap RB (of' F'))
       (convMul_birkhoffMinus_apply_ofTree RB φ T)
 
-/-- **The Birkhoff factorization `φ = (φ₋ ∘ S) ⋆ φ₊`** ([marcolli-chomsky-berwick-2025] Def. 3.1.5,
-    eq. (3.1.4)): every character `φ : H →ₐ[R] R` factors through its Bogolyubov counterterm `φ₋`
-    (via the antipode `S`) and renormalized part `φ₊ = birkhoffPlus`. The "meaningless" `φ₋` and
-    "meaningful" `φ₊` of [marcolli-chomsky-berwick-2025]'s syntax–semantics interface. Derived from
-    `birkhoffPlus_eq_convMul` (Def. 3.1.6 on all `H`) and the character-inverse law
+/-- The Birkhoff factorization `φ = (φ₋ ∘ S) ⋆ φ₊`. Every character `φ : H →ₐ[R] R` factors
+    through its Bogolyubov counterterm `φ₋` (via the antipode `S`) and its renormalized part
+    `φ₊ = birkhoffPlus`. Derived from `birkhoffPlus_eq_convMul` and the character-inverse law
     `antipodeComp_convMul_self`, by associativity in the character monoid. -/
 theorem birkhoffFactorization (φ : ConnesKreimer R (UnorderedTree α) →ₐ[R] ℛ) :
     WithConv.toConv φ
