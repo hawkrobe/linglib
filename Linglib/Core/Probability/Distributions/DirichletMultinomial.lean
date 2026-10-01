@@ -181,7 +181,7 @@ theorem polyaUrn_real_singleton {n : ℕ} (s : Fin n → α) :
 
 /-- The sequence drawn from a Pólya urn is exchangeable ([pitman-2006] Exercise 2.2.2). -/
 theorem exchangeable_polyaUrn (n : ℕ) : Exchangeable (polyaUrn θ n) :=
-  exchangeable_of_measure_singleton fun s i j ↦ by
+  exchangeable_of_measure_singleton fun s σ ↦ by
     rw [polyaUrn_singleton hθ, polyaUrn_singleton hθ, countVec_comp_perm]
 
 theorem isProbabilityMeasure_dirichletMultinomial (n : ℕ) :
