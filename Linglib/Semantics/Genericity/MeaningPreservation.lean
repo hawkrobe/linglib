@@ -1,679 +1,166 @@
 module
 
-public import Linglib.Semantics.Genericity.Kind
 public import Linglib.Semantics.Genericity.NominalMappingParameter
-public meta import Linglib.Semantics.Genericity.NominalMappingParameter
-public import Linglib.Semantics.Plurality.MassCount
+
+/-!
+# Meaning Preservation
+
+This file defines Meaning Preservation, the ranking of covert type shifts that decides which of
+the shifts available to a bare nominal it takes. [chierchia-1998] restricts covert type shifting
+in two ways: the Blocking Principle bars a shift that a determiner of the language lexicalizes,
+and Meaning Preservation ranks the shifts, so that a bare nominal takes the highest-ranked of
+those available to it. Both rankings in the literature have two tiers, and a two-tier ranking is
+the predicate of its upper tier, `Prop` ordered by implication. A shift applies when it is
+`MaximalFor` the ranking among the available shifts, that is, when it is available and in the
+upper tier unless no available shift is.
+
+Chierchia ranks ∩ alone above ι and ∃ (`MeaningPreservation.chierchia`), (39b) in
+[dayal-2004]'s rendering. [dayal-2004] revises the ranking to {∩, ι} > ∃
+(`MeaningPreservation.dayal`), (39c), on Chierchia's own rationale that ∩ is preferred because it
+changes the type without introducing quantificational force, which holds of ι as well. The two
+rankings choose alike wherever no definite shift is available, as in a language whose definite
+article blocks ι and ι^x (`maximalFor_chierchia_iff_dayal`), and part ways where ι is available:
+under Dayal's ranking ι applies whenever it is unblocked (`maximalFor_dayal_iota`), under
+Chierchia's only where ∩ is undefined (`maximalFor_chierchia_iota`).
+
+## Main definitions
+
+* `Available` — the covert shifts available to a bare nominal: defined for it
+  and not blocked
+* `MeaningPreservation.chierchia`, `MeaningPreservation.dayal` — the two rankings
+
+## Main results
+
+* `maximalFor_chierchia_iff`, `maximalFor_dayal_iff` — which available shifts each ranking selects
+* `maximalFor_dayal_down`, `maximalFor_dayal_iota`, `maximalFor_dayal_exists` — under Dayal's
+  ranking ∩ and ι apply wherever available and ∃ only as a last resort
+* `maximalFor_chierchia_down`, `maximalFor_chierchia_iota`, `maximalFor_chierchia_exists` — under
+  Chierchia's ranking ι and ∃ apply only where ∩ is undefined
+* `maximalFor_chierchia_iff_dayal` — the rankings agree where no definite shift is available
+
+## Implementation notes
+
+ι^x, the anaphoric definite of [jenks-2018], postdates both rankings, and [moroney-2021] is the
+first to make it a covert shift. It introduces no quantificational force, so `dayal` ranks it
+with ∩ and ι, and `chierchia` ranks it with ι.
+
+## References
+
+* [chierchia-1998]
+* [dayal-2004]
+* [jenks-2018]
+* [moroney-2021]
+-/
 
 @[expose] public section
-/-
-# Kind Reference and Number Marking
 
-Formalizes Dayal's "Number Marking and (In)definiteness in Kind Terms"
-which extends Chierchia's NMP analysis with:
+open Genericity
 
-1. Meaning Preservation Ranking: {∩, ι} > ∃
-2. Number morphology constraints on instantiation sets
-3. Taxonomic readings of common nouns
-4. Singular kinds ("the dodo", "the lion")
+namespace Determiner.Inventory
 
-## Core Insight
+/-- A covert shift is available to a bare nominal in a language with the determiners `ds` when it
+is defined for the nominal, ∩ only where `down` holds, and no determiner blocks it. ∩ is defined
+for a plural or a mass noun (`DownDefined`), but not for a singular count noun, nor for a
+property anchored to particular entities such as *parts of this machine* ([dayal-2004]'s
+fn. 1). -/
+def Available (ds : Inventory) (down : Prop) (τ : CovertShift) : Prop :=
+  (τ = .down → down) ∧ ¬ ds.Blocks τ
 
-Type-shifting operations are RANKED by meaning preservation:
-- ∩ (kind formation) and ι (definite) preserve all semantic content
-- ∃ (indefinite/existential) loses information
+instance (ds : Inventory) (down : Prop) [Decidable down] : DecidablePred (ds.Available down) :=
+  fun _ ↦ by unfold Available; infer_instance
 
-When multiple type-shifts are available, choose the one that preserves
-the most meaning. This derives cross-linguistic patterns.
-
-## Innovation: Singular Kinds
-
-"The dodo is extinct" - grammatically singular but about a kind.
-
-Analysis: ι can apply to kinds directly when the instantiation set is:
-- Singleton: only one salient instance (unique species)
-- Inaccessible: no actual instances to distinguish (extinct species)
-
-Number morphology (sg/pl) constrains the instantiation set, not the
-denotation type. Singular morphology requires that instances are
-"conceptualized as a single entity."
-
-## Related substrate
-
-Singular kinds with one salient instance correspond to the discrete
-Mendia kind-formation (each instance is its own equivalence class). For
-the general framework — kinds formed by partitioning a domain via a
-salient equivalence relation — see
-`Semantics/Genericity/Subkinds.lean` ([mendia-2020]).
-Carlson's Disjointness Condition (subkinds of a context-relative
-partition are disjoint) is derived there.
-
--/
+end Determiner.Inventory
 
 namespace Genericity.MeaningPreservation
 
-
-variable (World Atom : Type)
-
--- Type-Shifting Operations (with Ranking)
-
-
-/--
-Meaning Preservation Ranking ([dayal-2004]: 408)
-
-{∩, ι} > ∃
-
-The key insight: ∩ and ι both preserve the full semantic content
-of the property, while ∃ introduces existential quantification
-that "loses" some information.
-
-∩P preserves P's intension (the full function from worlds to extensions)
-ιP preserves P's intension (picks unique satisfier per world)
-∃P only preserves existence of some satisfier (loses identity)
--/
-def meaningPreservationRank : CovertShift → Nat
-  | .down          => 1 -- Highest rank (most preserving)
-  | .iota          => 1 -- Same rank as ∩
-  | .iotaAnaphoric => 1 -- Same rank as ι: preserves full semantic content
-  | .exists        => 2 -- Lower rank (less preserving)
-
-/-- Type shifts with equal rank are equally preferred -/
-def equallyPreferred (t1 t2 : CovertShift) : Bool :=
-  meaningPreservationRank t1 == meaningPreservationRank t2
-
-/-- t1 is more preferred than t2 if it has lower rank -/
-def morePreferred (t1 t2 : CovertShift) : Bool :=
-  meaningPreservationRank t1 < meaningPreservationRank t2
-
--- Verify the ranking
-example : morePreferred .down .exists = true := rfl
-example : morePreferred .iota .exists = true := rfl
-example : equallyPreferred .down .iota = true := rfl
-
--- Instantiation Sets and Number
-
-/--
-Instantiation set of a kind at a world.
-
-The instantiation set is the collection of actual instances of the kind.
-For "dog-kind" at world w, this is the set of all dogs in w.
-
-Key insight: Number morphology constrains the instantiation set:
-- Singular: instantiation set is singleton OR inaccessible
-- Plural: instantiation set has multiple accessible members
-
-For computational purposes, we represent this abstractly.
--/
-structure InstantiationSet where
-  /-- Count of instances (0 = empty, 1 = singleton, >1 = multiple) -/
-  count : Nat
-  /-- Whether instances are "accessible" (epistemically available) -/
-  accessible : Bool
-  deriving Repr, DecidableEq
-
-/--
-Accessibility of instantiation sets.
-
-An instantiation set is "inaccessible" when:
-1. The kind is extinct (no actual instances exist)
-2. The instances are not salient/distinguishable in context
-3. The kind is treated as atomic (collective reading)
-
-Inaccessible instantiation sets allow singular morphology even for kinds
-with "conceptually plural" members.
--/
-def InstantiationSet.isSingleton (is : InstantiationSet) : Bool :=
-  is.count ≤ 1
-
-def InstantiationSet.allowsSingular (is : InstantiationSet) : Bool :=
-  !is.accessible || is.isSingleton
-
-def InstantiationSet.allowsPlural (is : InstantiationSet) : Bool :=
-  is.accessible
-
--- Number Morphology
-
-/--
-Number feature on nominals.
-
-Key insight from Dayal: Number is NOT about semantic plurality vs singularity.
-It's about whether the instantiation set is conceptualized as:
-- Atomic/unitary (singular)
-- Non-atomic/multiple (plural)
--/
-inductive NumberFeature where
-  | sg      -- Singular: atomic instantiation set
-  | pl      -- Plural: non-atomic instantiation set
-  | mass    -- Mass: no number distinction
-  | neutral -- Number-neutral: no obligatory number marking (Shan, Serbian).
-              -- Both ι and ∩ are available; context disambiguates.
-              -- [moroney-2021] §2.1: Shan nouns are genuinely number-neutral,
-              -- not underlyingly singular or plural.
-  deriving DecidableEq, Repr
-
-/--
-License for singular morphology on kinds.
--/
-inductive SingularLicense where
-  /-- Singleton instantiation set (unique in context) -/
-  | singleton
-  /-- Inaccessible instantiation set (extinct, collective) -/
-  | inaccessible
-  /-- Taxonomic reading (sub-kinds, not individuals) -/
-  | taxonomic
-  deriving DecidableEq, Repr
-
-/--
-Singular Kinds ([dayal-2004]: 411-423)
-
-Grammatically singular but denoting kinds:
-- "The lion is a predator" (taxonomic)
-- "The dodo is extinct" (no living instances)
-- "The computer has revolutionized communication" (collective)
-
-These are possible when the instantiation set is:
-1. Singleton (unique species/type in context)
-2. Inaccessible (extinct, conceptualized as atomic)
-
-The ι operator applies to KIND-LEVEL properties, not individual-level.
--/
-structure SingularKind where
-  /-- The underlying kind -/
-  kind : String  -- Simplified from Kind World Atom
-  /-- Why singular is allowed -/
-  singularLicense : SingularLicense
-  deriving Repr
-
--- Taxonomic Readings
-
-/--
-Taxonomic readings ([dayal-2004]: 426-433)
-
-Common nouns can denote:
-1. Properties of INDIVIDUALS: dog(x) = "x is a dog individual"
-2. Properties of SUB-KINDS: dog(k) = "k is a dog sub-kind"
-
-Example: "The dog evolved from the wolf"
-- Individual reading: Some specific dog evolved (anomalous)
-- Taxonomic reading: Dog-kind evolved from wolf-kind (natural)
-
-The taxonomic reading treats sub-kinds as the "atoms" of predication.
--/
-inductive CNDenotation where
-  /-- Property of individuals: λx. P(x) -/
-  | individual
-  /-- Property of sub-kinds: λk. P(k) where k ranges over sub-kinds -/
-  | taxonomic
-  deriving DecidableEq, Repr
-
-/--
-When a CN has a taxonomic reading, "the CN" can be singular even when
-the kind has multiple sub-kinds.
-
-"The dog" (taxonomic) = ιk[dog-kind(k)] where k ranges over basic-level kinds
-
-The uniqueness is at the TAXONOMIC level (one dog-kind), not the instance level.
--/
-def taxonomicIota (kindName : String) : String :=
-  s!"ιk[{kindName}-kind(k)]"
-
-/--
-Taxonomic hierarchy: kinds can have sub-kinds.
-
-"Dogs" can mean:
-- All dog individuals (individual reading)
-- All dog breeds (taxonomic reading)
-
-The taxonomic reading explains why some kind-level predicates work with
-"the NP" even when there are many instances.
--/
-structure TaxonomicHierarchy where
-  /-- The super-kind -/
-  superKind : String
-  /-- Sub-kinds (breeds, species, etc.) -/
-  subKinds : List String
-
--- Example: Dog has sub-kinds
-def dogTaxonomy : TaxonomicHierarchy :=
-  { superKind := "dog"
-  , subKinds := ["poodle", "labrador", "beagle", "collie"] }
-
--- Extended Type-Shifting with Dayal's Constraints
-
-/--
-Type-shift availability given number and blocking.
-
-Dayal's system: type-shifts are constrained by:
-1. Meaning preservation ranking: prefer ∩/ι over ∃
-2. Number morphology: sg requires singleton/inaccessible instantiation
-3. Blocking: overt D blocks covert equivalent
-4. ∩ definedness: requires kind-compatible property
--/
-structure TypeShiftContext where
-  /-- Number feature on the NP -/
-  number : NumberFeature
-  /-- Is ∩ defined (is this a kind-compatible property)? -/
-  downDefined : Bool
-  /-- Is ι blocked by an overt definite article? -/
-  iotaBlocked : Bool
-  /-- Is ι^x blocked by an overt demonstrative or strong article?
-      [moroney-2021] §4.3: ι^x is blocked when an overt form
-      (demonstrative, strong article) duplicates its anaphoric function. -/
-  iotaAnaphoricBlocked : Bool
-  /-- Is ∃ blocked by an overt indefinite article? -/
-  existsBlocked : Bool
-  /-- Is the instantiation set accessible? -/
-  instantiationAccessible : Bool
-  deriving Repr
-
-/--
-Available type-shifts given context.
-
-Returns shifts in preference order (most preferred first).
--/
-def availableShifts (ctx : TypeShiftContext) : List CovertShift :=
-  let shifts := []
-  -- ∩ is available if defined and number is compatible.
-  -- For .neutral (Shan), ∩ is available (bare nouns can be kind-denoting).
-  let shifts := if ctx.downDefined &&
-                   (ctx.number == .pl || ctx.number == .mass ||
-                    ctx.number == .neutral ||
-                    !ctx.instantiationAccessible)
-                then shifts ++ [.down]
-                else shifts
-  -- ι is available if not blocked and number is sg or neutral.
-  -- For .neutral (Shan), ι is available (bare nouns can be definite).
-  let shifts := if !ctx.iotaBlocked &&
-                   (ctx.number == .sg || ctx.number == .neutral ||
-                    !ctx.instantiationAccessible)
-                then shifts ++ [.iota]
-                else shifts
-  -- ι^x is available if not blocked and number is sg or neutral.
-  -- [moroney-2021] §4.3 (anaphoric iota): anaphoric iota for discourse-familiar referents.
-  let shifts := if !ctx.iotaAnaphoricBlocked &&
-                   (ctx.number == .sg || ctx.number == .neutral ||
-                    !ctx.instantiationAccessible)
-                then shifts ++ [.iotaAnaphoric]
-                else shifts
-  -- ∃ is available if not blocked (but lower preference)
-  let shifts := if !ctx.existsBlocked
-                then shifts ++ [.exists]
-                else shifts
-  shifts
-
-/--
-Select the best available type-shift.
-
-Follows Meaning Preservation: choose highest-ranked available shift.
--/
-def selectShift (ctx : TypeShiftContext) : Option CovertShift :=
-  (availableShifts ctx).head?
-
--- ============================================================================
--- Intensional Type-CovertShift Denotations ([moroney-2021] §2.2, §4.3)
--- ============================================================================
-
-/-! ## Intensional Semantics of Type-Shifts
-
-The `CovertShift` enum above classifies type-shifts abstractly; the
-`availableShifts`/`selectShift` functions determine which are available.
-What's been missing is the *intensional denotation* of each shift.
-
-Bare nouns have base type `⟨s,⟨e,t⟩⟩` — they denote properties across
-possible worlds ([moroney-2021] §2.2; [chierchia-1998]). Each
-type-shift converts this intensional property into a different semantic type:
-
-- ∩ (`.down`): `⟨s,⟨e,t⟩⟩ → e` — kind formation (Chierchia's ∩)
-- ι (`.iota`): `⟨s,⟨e,t⟩⟩ × s → e` — unique definite, world-relative
-- ι^x (`.iotaAnaphoric`): `⟨s,⟨e,t⟩⟩ × ⟨e,t⟩ × s → e` — anaphoric definite
-- ∃ (`.exists`): `⟨s,⟨e,t⟩⟩ × s → Prop` — existential closure at a world
-
-These connect the abstract shift-selection machinery to Chierchia's `down`
-operator and to the Russellian iota (`Reference.russellIota`) lifted by
-`Presupposition.PartialProp.presupOfReferent`.
--/
-
-section IntensionalDenotations
-
-variable {World Atom : Type}
-
-/-- ∩-shift (kind formation): maps an intensional property to its kind
-    individual. This IS `Property.down`. -/
-abbrev shiftDown (P : Property World Atom) :
-    Kind World Atom :=
-  P.down
-
-/-- ι-shift (unique definite): at world w, returns the unique satisfier
-    of P(w) if one exists. This is the world-relative definite description.
-
-    [moroney-2021] §2.2: Shan bare nouns get this reading when the
-    context supplies a unique referent. -/
-def shiftIota (P : Property World Atom) (w : World)
-    (unique : ∃! x, x ∈ P w) : Individual Atom :=
-  Classical.choose unique.exists
-
-/-- ι^x-shift (anaphoric definite): at world w, returns the unique
-    satisfier of P(w) ∧ Q(w) where Q is the anaphoric restrictor.
-
-    [moroney-2021] §4.3: ι^x P Q = ιx[P(x) ∧ Q(x)]. Shan bare
-    nouns get this reading in anaphoric contexts (narrative continuations,
-    relational bridging); demonstrative-noun phrases optionally reinforce it. -/
-def shiftIotaAnaphoric (P : Property World Atom)
-    (Q : Individual Atom → Prop) (w : World)
-    (unique : ∃! x, x ∈ P w ∧ Q x) : Individual Atom :=
-  Classical.choose unique.exists
-
-/-- ∃-shift (existential closure): at world w, existentially closes over
-    P(w). This is `DPP` restricted to a predicate.
-
-    [moroney-2021] §2.3: the existential reading of Shan bare nouns
-    arises via DPP at vP, yielding obligatory low scope w.r.t. negation. -/
-def shiftExists (P : Property World Atom) (w : World)
-    (predicate : Individual Atom → Prop) : Prop :=
-  ∃ x, x ∈ P w ∧ predicate x
-
-/-- ∩ and ι are both rank-1 shifts (meaning-preserving). ∃ is rank-2
-    (meaning-losing). This is why Shan bare nouns default to definite/kind
-    readings rather than existential — Meaning Preservation selects the
-    highest-ranked available shift. -/
-theorem rank_1_preferred_over_exists :
-    meaningPreservationRank .down < meaningPreservationRank .exists ∧
-    meaningPreservationRank .iota < meaningPreservationRank .exists ∧
-    meaningPreservationRank .iotaAnaphoric < meaningPreservationRank .exists :=
-  ⟨by decide, by decide, by decide⟩
-
-end IntensionalDenotations
-
--- Cross-Linguistic Kind Reference Patterns
-
-/--
-Language-specific parameters for kind reference ([dayal-2004]: 433-445).
-
-Languages differ in:
-1. Whether they have definite/indefinite articles
-2. Whether bare nominals can denote kinds
-3. Whether singular kinds require "the"
--/
-structure KindReferenceParams where
-  /-- Does this language have a definite article? -/
-  hasDefiniteArticle : Bool
-  /-- Does this language have an indefinite article? -/
-  hasIndefiniteArticle : Bool
-  /-- Can bare nominals denote kinds (∩ unblocked)? -/
-  bareKindsOK : Bool
-  /-- Can singular kinds use "the"? -/
-  definiteSingularKinds : Bool
-  /-- Can plural kinds use "the"? -/
-  definitePluralKinds : Bool
-  deriving Repr
-
-/--
-English kind reference:
-- Bare plurals for kinds: "Dogs are mammals"
-- "The" for singular kinds: "The lion is a predator"
-- "The" for plural kinds is marked: ?"The dogs are mammals"
--/
-def englishKindRef : KindReferenceParams :=
-  { hasDefiniteArticle := true
-  , hasIndefiniteArticle := true
-  , bareKindsOK := true  -- For plurals only
-  , definiteSingularKinds := true
-  , definitePluralKinds := false }
-
-/--
-Romance (French, Italian, Spanish) kind reference:
-- Definite article required for kinds: "Les chiens sont des mammifères"
-- Both singular and plural kinds use definite article
-- Bare nominals restricted to special contexts
--/
-def romanceKindRef : KindReferenceParams :=
-  { hasDefiniteArticle := true
-  , hasIndefiniteArticle := true
-  , bareKindsOK := false
-  , definiteSingularKinds := true
-  , definitePluralKinds := true }
-
-/--
-Determiner-less languages (Hindi, Russian, Chinese) kind reference:
-- Bare nominals freely denote kinds
-- No definite/indefinite distinction in morphology
-- All interpretations available in context
--/
-def determinerlessKindRef : KindReferenceParams :=
-  { hasDefiniteArticle := false
-  , hasIndefiniteArticle := false
-  , bareKindsOK := true
-  , definiteSingularKinds := false  -- N/A
-  , definitePluralKinds := false }  -- N/A
-
-/--
-German kind reference (intermediate):
-- Bare plurals OK for kinds: "Hunde sind Säugetiere"
-- Definite optional for plural/mass kinds
-- Similar to English but with more flexibility
--/
-def germanKindRef : KindReferenceParams :=
-  { hasDefiniteArticle := true
-  , hasIndefiniteArticle := true
-  , bareKindsOK := true
-  , definiteSingularKinds := true
-  , definitePluralKinds := true }  -- Optional
-
--- Derived Kind Predication (DKP) - Extended
-
-/--
-DKP (Derived Kind Predication) - Dayal's version.
-
-When an object-level predicate applies to a kind, introduce existential
-quantification over instances:
-
-  P(k) = ∃x[∪k(x) ∧ P(x)]
-
-Key insight: DKP is only invoked when NECESSARY.
-If the predicate is kind-level, no coercion needed.
--/
-inductive PredicateType where
-  /-- Kind-level predicates: extinct, widespread, evolve -/
-  | kindLevel
-  /-- Object-level predicates: bark, be in the garden -/
-  | objectLevel
-  deriving DecidableEq, Repr
-
-/-- Does this predicate require DKP when applied to a kind? -/
-def requiresDKP : PredicateType → Bool
-  | .kindLevel => false
-  | .objectLevel => true
-
-/--
-Kind-level predicates ([dayal-2004]: 401-403):
-- be extinct, be widespread, be rare
-- evolve, originate, die out
-- be invented, be discovered
-
-These directly predicate of kinds without coercion.
--/
-def isKindLevelPredicate : String → Prop
-  | "extinct" | "widespread" | "rare" | "common" => True
-  | "evolve" | "originate" | "die_out" => True
-  | "invented" | "discovered" => True
-  | _ => False
-
-instance : DecidablePred isKindLevelPredicate := fun s => by
-  unfold isKindLevelPredicate
-  split <;> infer_instance
-
--- Well-Established Kinds
-
-/--
-Well-established kinds ([dayal-2004]: 417-420)
-
-For ι to apply to a kind (giving "the NP"), the kind must be
-"well-established" - a recognized natural class.
-
-- "The lion is a predator" - lion is well-established kind ✓
-- *"The lion sitting here is a predator" - not a natural kind ✗
-
-This explains why modified NPs resist the singular kind reading.
--/
-def isWellEstablishedKind : String → Prop
-  | "lion" | "tiger" | "dog" | "cat" => True
-  | "dodo" | "mammoth" | "dinosaur" => True  -- Extinct kinds
-  | "computer" | "telephone" | "automobile" => True  -- Artifacts
-  | "wheel" | "printing_press" => True  -- Inventions
-  | _ => False
-
-instance : DecidablePred isWellEstablishedKind := fun s => by
-  unfold isWellEstablishedKind
-  split <;> infer_instance
-
-/--
-Why modification blocks singular kind reading:
-
-"The tall lion" cannot mean "the lion-kind" because:
-1. "Tall lion" does not denote a well-established kind
-2. Modification restricts the extension, breaking kind status
-3. ι must apply at object-level → definite description of individual
--/
-structure ModificationEffect where
-  /-- Base noun (well-established kind) -/
-  base : String
-  /-- Modifier -/
-  modifier : String
-  /-- Result is still a well-established kind? -/
-  stillKind : Bool := false
-
-def modificationBlocksKind : ModificationEffect :=
-  { base := "lion"
-  , modifier := "tall"
-  , stillKind := false }
-
--- Grounding Theorems
-
-/-- Meaning preservation ranking is transitive -/
-theorem ranking_transitive (t1 t2 t3 : CovertShift)
-    (h1 : morePreferred t1 t2 = true)
-    (h2 : morePreferred t2 t3 = true) :
-    morePreferred t1 t3 = true := by
-  simp only [morePreferred] at *
-  cases t1 <;> cases t2 <;> cases t3 <;> simp_all [meaningPreservationRank]
-
-/-- ∩, ι, and ι^x are always preferred over ∃ -/
-theorem down_preferred_over_exists : morePreferred .down .exists = true := rfl
-theorem iota_preferred_over_exists : morePreferred .iota .exists = true := rfl
-theorem iotaAnaphoric_preferred_over_exists :
-    morePreferred .iotaAnaphoric .exists = true := rfl
-
-/-- ι and ι^x are equally preferred (both rank 1). -/
-theorem iota_iotaAnaphoric_equal :
-    equallyPreferred .iota .iotaAnaphoric = true := rfl
-
-/-- English bare plurals use ∩ (most preferred available shift) -/
-theorem english_bare_plural_uses_down :
-    let ctx : TypeShiftContext := {
-      number := .pl
-      downDefined := true
-      iotaBlocked := true
-      iotaAnaphoricBlocked := true
-      existsBlocked := true
-      instantiationAccessible := true
-    }
-    selectShift ctx = some .down := rfl
-
-/-- English singular kinds use ι -/
-theorem english_singular_kind_uses_iota :
-    let ctx : TypeShiftContext := {
-      number := .sg
-      downDefined := false  -- ∩ undefined for singular count
-      iotaBlocked := false  -- "the" makes ι available
-      iotaAnaphoricBlocked := true  -- Anaphoric use requires "that"
-      existsBlocked := true
-      instantiationAccessible := false  -- Inaccessible allows singular
-    }
-    selectShift ctx = some .iota := rfl
-
-/-! ### Dayal's contexts from Chierchia's parameters
-
-Dayal's framework generalizes Chierchia's: where the Blocking Principle and the definedness of ∩
-decide whether a bare argument is licensed at all, `selectShift` decides which shift it takes. -/
-
-/-- The number feature of a nominal: mass, singular, plural, or number-neutral for a general
-number form, every other count value counting as plural. -/
-def numberFeature : MassCount → Number → NumberFeature
-  | .mass, _ => .mass
-  | .count, .general => .neutral
-  | .count, .singular => .sg
-  | .count, _ => .pl
-
-/-- The type-shift context of a bare nominal in a language with the determiners `ds`: ∩ is
-defined as `DownDefined` says, and each shift is blocked as the Blocking Principle decides. -/
-def chierchiaToContext (ds : Determiner.Inventory) (nt : MassCount) (num : Number)
-    (instantiationAccessible : Bool := true) : TypeShiftContext :=
-  { number := numberFeature nt num
-    downDefined := decide (DownDefined nt num)
-    iotaBlocked := decide (ds.Blocks .iota)
-    iotaAnaphoricBlocked := decide (ds.Blocks .iotaAnaphoric)
-    existsBlocked := decide (ds.Blocks .exists)
-    instantiationAccessible }
-
-variable {ds : Determiner.Inventory} {num : Number}
-
-/-- Where Chierchia licenses a bare plural, ι and ∃ blocked and ∩ defined, Dayal selects ∩. -/
-theorem selectShift_plural (hι : ds.Blocks .iota) (hex : ds.Blocks .exists) :
-    selectShift (chierchiaToContext ds .count .plural) = some .down := by
-  simp [selectShift, availableShifts, chierchiaToContext, numberFeature, DownDefined, hι, hex]
-
-/-- Where Chierchia rules out a bare singular count noun, ∩ undefined and ι, ι^x and ∃ blocked,
-Dayal selects no shift. -/
-theorem selectShift_singular (hι : ds.Blocks .iota) (hx : ds.Blocks .iotaAnaphoric)
-    (hex : ds.Blocks .exists) :
-    selectShift (chierchiaToContext ds .count .singular) = none := by
-  simp [selectShift, availableShifts, chierchiaToContext, numberFeature, DownDefined, hι, hx, hex]
-
-/-- A bare mass noun takes ∩ in either framework, whatever the determiners block. -/
-theorem selectShift_mass : selectShift (chierchiaToContext ds .mass num) = some .down := by
-  cases h : decide (ds.Blocks .exists) <;>
-    simp [selectShift, availableShifts, chierchiaToContext, numberFeature, DownDefined, h]
-
-/--
-Meaning Preservation explains Chierchia's blocking.
-
-When both ∩ and ∃ are available, Dayal selects ∩ (more meaning-preserving).
-This derives Chierchia's observation that bare plurals prefer kind readings.
--/
-theorem meaning_preservation_derives_kind_preference :
-    let ctx : TypeShiftContext := {
-      number := .pl
-      downDefined := true
-      iotaBlocked := true
-      iotaAnaphoricBlocked := true
-      existsBlocked := false  -- ∃ available but not preferred
-      instantiationAccessible := true
-    }
-    selectShift ctx = some .down  -- ∩ selected over ∃
-    := rfl
-
--- Examples
-
--- "Dogs are mammals" - bare plural kind reference
-#check englishKindRef.bareKindsOK  -- true
-
--- "The dodo is extinct" - singular kind (inaccessible instantiation)
-#check SingularKind.mk "dodo" .inaccessible
-
--- "The lion is a predator" - singular kind (taxonomic)
-#check SingularKind.mk "lion" .taxonomic
-
-#guard morePreferred .down .exists
-
--- French requires definite for kinds
-#check romanceKindRef.definitePluralKinds  -- true
-
-/-!
-## Related Theory
-
-- `Semantics/Lexical/Noun/Kind/NMP.lean` - Chierchia's NMP, ∩/∪ operators, DKP
-- `Semantics/Genericity/Basic.lean` - GEN operator for generic readings
-
--/
+/-- An index is maximal for a predicate `T`, ordered by implication, among those satisfying `P`
+exactly when it satisfies `T` or none of them does. -/
+private theorem maximalFor_prop_iff {ι : Type*} {P T : ι → Prop} {i : ι} :
+    MaximalFor P T i ↔ P i ∧ (T i ∨ ∀ j, P j → ¬ T j) :=
+  ⟨fun ⟨hi, h⟩ ↦ ⟨hi, or_iff_not_imp_left.2 fun hT _ hj hTj ↦ hT (h hj (fun _ ↦ hTj) hTj)⟩,
+    fun ⟨hi, h⟩ ↦ ⟨hi, fun j hj _ hTj ↦ h.resolve_right fun h' ↦ h' j hj hTj⟩⟩
+
+/-- [chierchia-1998]'s Meaning Preservation, ∩ > {ι, ∃}, puts kind formation alone in the upper
+tier. -/
+def chierchia (τ : CovertShift) : Prop := τ = .down
+
+/-- [dayal-2004]'s Revised Meaning Preservation, {∩, ι} > ∃, puts every shift in the upper tier
+but ∃, the one that introduces quantificational force. -/
+def dayal (τ : CovertShift) : Prop := τ ≠ .exists
+
+variable {A : CovertShift → Prop} {τ : CovertShift}
+
+/-- Under Chierchia's ranking an available shift applies when it is ∩ or ∩ is unavailable. -/
+theorem maximalFor_chierchia_iff :
+    MaximalFor A chierchia τ ↔ A τ ∧ (τ = .down ∨ ¬ A .down) := by
+  rw [maximalFor_prop_iff]
+  exact and_congr_right fun _ ↦ or_congr_right
+    ⟨fun h hd ↦ h _ hd rfl, fun h _ hj hd ↦ h (hd ▸ hj)⟩
+
+/-- Under Dayal's ranking an available shift applies when it is not ∃ or only ∃ is available. -/
+theorem maximalFor_dayal_iff :
+    MaximalFor A dayal τ ↔ A τ ∧ (τ ≠ .exists ∨ ∀ σ, A σ → σ = .exists) := by
+  simp [maximalFor_prop_iff, dayal]
+
+instance [DecidablePred A] : DecidablePred (MaximalFor A chierchia) := fun _ ↦
+  decidable_of_iff _ maximalFor_chierchia_iff.symm
+
+instance [DecidablePred A] : DecidablePred (MaximalFor A dayal) := fun _ ↦
+  decidable_of_iff _ maximalFor_dayal_iff.symm
+
+open Determiner.Inventory
+
+variable {ds : Determiner.Inventory} {down : Prop}
+
+/-- Under Dayal's ranking ∩ applies wherever it is defined, since no determiner blocks it. -/
+@[simp] theorem maximalFor_dayal_down : MaximalFor (ds.Available down) dayal .down ↔ down := by
+  simp [maximalFor_dayal_iff, Available, not_blocks_down]
+
+/-- Under Dayal's ranking ι applies wherever it is unblocked, whether or not ∩ is defined. -/
+@[simp] theorem maximalFor_dayal_iota :
+    MaximalFor (ds.Available down) dayal .iota ↔ ¬ ds.Blocks .iota := by
+  simp [maximalFor_dayal_iff, Available]
+
+/-- Under Dayal's ranking ∃ is a last resort, applying only where ∩ is undefined and ι and ι^x
+are blocked. -/
+@[simp] theorem maximalFor_dayal_exists :
+    MaximalFor (ds.Available down) dayal .exists ↔
+      ¬ ds.Blocks .exists ∧ ¬ down ∧ ds.Blocks .iota ∧ ds.Blocks .iotaAnaphoric := by
+  simp only [maximalFor_dayal_iff, Available, ne_eq, not_true_eq_false, false_or]
+  refine ⟨fun ⟨⟨_, h⟩, h'⟩ ↦ ⟨h, fun hd ↦ ?_, not_not.1 fun hι ↦ ?_, not_not.1 fun hx ↦ ?_⟩,
+    fun ⟨h, hd, hι, hx⟩ ↦ ⟨⟨nofun, h⟩, fun σ ⟨hσ, hb⟩ ↦ ?_⟩⟩
+  · exact absurd (h' .down ⟨fun _ ↦ hd, ds.not_blocks_down⟩) nofun
+  · exact absurd (h' .iota ⟨nofun, hι⟩) nofun
+  · exact absurd (h' .iotaAnaphoric ⟨nofun, hx⟩) nofun
+  · cases σ <;> simp_all
+
+/-- Under Chierchia's ranking, too, ∩ applies wherever it is defined. -/
+@[simp] theorem maximalFor_chierchia_down :
+    MaximalFor (ds.Available down) chierchia .down ↔ down := by
+  simp [maximalFor_chierchia_iff, Available,
+    not_blocks_down]
+
+/-- Under Chierchia's ranking ι applies only where it is unblocked and ∩ undefined, so kind
+formation pre-empts the definite. -/
+@[simp] theorem maximalFor_chierchia_iota :
+    MaximalFor (ds.Available down) chierchia .iota ↔ ¬ ds.Blocks .iota ∧ ¬ down := by
+  simp [maximalFor_chierchia_iff, Available,
+    not_blocks_down]
+
+/-- Under Chierchia's ranking ∃ applies wherever it is unblocked and ∩ undefined, whether or not
+ι is available. -/
+@[simp] theorem maximalFor_chierchia_exists :
+    MaximalFor (ds.Available down) chierchia .exists ↔ ¬ ds.Blocks .exists ∧ ¬ down := by
+  simp [maximalFor_chierchia_iff, Available,
+    not_blocks_down]
+
+/-- Where the determiners block ι and ι^x, as a definite article used anaphorically does, the two
+rankings select the same shifts. -/
+theorem maximalFor_chierchia_iff_dayal (hι : ds.Blocks .iota) (hx : ds.Blocks .iotaAnaphoric) :
+    MaximalFor (ds.Available down) chierchia τ ↔ MaximalFor (ds.Available down) dayal τ := by
+  cases τ
+  case iotaAnaphoric =>
+    simp [maximalFor_chierchia_iff, maximalFor_dayal_iff, Available, hx]
+  all_goals simp [hι, hx]
 
 end Genericity.MeaningPreservation

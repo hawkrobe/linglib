@@ -2,7 +2,6 @@ module
 
 public import Linglib.Data.Examples.Jenks2018
 public import Linglib.Semantics.Reference.Description
-public import Linglib.Semantics.Genericity.MeaningPreservation
 public import Linglib.Fragments.English.Determiners
 public import Linglib.Fragments.Mandarin.Determiners
 public import Linglib.Fragments.Cantonese.Determiners
@@ -18,7 +17,9 @@ demonstrative supplying the index of ι^x, (22). The distribution follows from t
 over a language's declared determiner inventory. The Blocking Principle, (23), makes the covert
 ι available exactly when no overt determiner marks uniqueness (`IotaAvailable`), which is how
 Mandarin bare nouns can be definite and Cantonese ones, whose [Clf-N] marks both
-presuppositions, cannot (`selectShift_mandarin`). Index!, (50), an instance of Maximize
+presuppositions, cannot (`iotaAvailable_mandarin`, `not_iotaAvailable_cantonese`). ι^x is never
+a covert shift, since its domain restriction must be present in the syntax, Section 4.2, so an
+anaphoric definite needs the overt demonstrative. Index!, (50), an instance of Maximize
 Presupposition, requires the indexed form wherever an index is available, so bare nouns are
 excluded from anaphoric, donkey and producer-product bridging environments and demonstratives
 from the unique ones (`BareLicit`, `MarkedLicit`); and a bare anaphoric subject survives as a
@@ -50,7 +51,6 @@ fragments derive, marked-unique being the unattested fourth (`table2`).
 namespace Jenks2018
 
 open Reference Determiner Semantics Semantics.Composition
-  Genericity.MeaningPreservation
 
 /-! ### Environments and principles -/
 
@@ -117,21 +117,9 @@ theorem not_bareLicit_of_indexAvailable {inv : Inventory} {env : Environment} {t
 
 /-! ### Type-shifting under blocking -/
 
-/-- The type-shift context a declared inventory induces: each covert shift is blocked by an
-overt exponent of its meaning, (23). -/
-def shiftContext (inv : Inventory) : TypeShiftContext where
-  number := .neutral
-  downDefined := false
-  iotaBlocked := decide (inv.Marks .uniqueness)
-  iotaAnaphoricBlocked := decide (inv.Marks .familiarity)
-  existsBlocked := decide (inv.Realizes .indefinite)
-  instantiationAccessible := true
-
-/-- Mandarin bare nouns type-shift by ι, and ι^x is unavailable to them: bare nouns are unique
-definites and never anaphoric ones. -/
-theorem selectShift_mandarin :
-    selectShift (shiftContext Mandarin.Determiners.inventory) = some .iota ∧
-      .iotaAnaphoric ∉ availableShifts (shiftContext Mandarin.Determiners.inventory) := by
+/-- Mandarin has no overt exponent of uniqueness, so its bare nouns are unique definites by the
+covert ι. -/
+theorem iotaAvailable_mandarin : IotaAvailable Mandarin.Determiners.inventory := by
   decide
 
 /-- Cantonese [Clf-N] marks uniqueness, so its bare nouns have no definite shift. -/

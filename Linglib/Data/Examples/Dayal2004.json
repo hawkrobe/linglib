@@ -1,0 +1,520 @@
+[
+  {
+    "id": "dayal2004_6a_bare",
+    "source": {"bibkey": "dayal-2004", "paperLabel": "(6a)"},
+    "language": "stan1293",
+    "primaryText": "Dogs are widespread.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "1"],
+      ["number", "plural"],
+      ["form", "bare"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "dayal2004_6a_def",
+    "source": {"bibkey": "dayal-2004", "paperLabel": "(6a)"},
+    "language": "stan1293",
+    "primaryText": "The dogs are widespread.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "1"],
+      ["number", "plural"],
+      ["form", "definite"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "dayal2004_14a",
+    "source": {"bibkey": "dayal-2004", "paperLabel": "(14a)"},
+    "language": "hind1269",
+    "primaryText": "kutta aam janvar hai",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["kutta", "dog"], ["aam", "common"], ["janvar", "animal"], ["hai", "is"]
+    ],
+    "translation": "The dog is a common animal.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "2.2"],
+      ["number", "singular"],
+      ["form", "bare"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "dayal2004_14b",
+    "source": {"bibkey": "dayal-2004", "paperLabel": "(14b)"},
+    "language": "hind1269",
+    "primaryText": "kutte yehaaN aam haiN",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["kutte", "dogs"], ["yehaaN", "here"], ["aam", "common"], ["haiN", "are"]
+    ],
+    "translation": "Dogs are common here.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "2.2"],
+      ["number", "plural"],
+      ["form", "bare"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "dayal2004_15a",
+    "source": {"bibkey": "dayal-2004", "paperLabel": "(15a)"},
+    "language": "russ1263",
+    "primaryText": "chelovek proizoshel ot obez’jani",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["chelovek", "man"], ["proizoshel", "evolved"], ["ot", "from"], ["obez’jani", "ape"]
+    ],
+    "translation": "Man has evolved from apes.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "2.2"],
+      ["number", "singular"],
+      ["form", "bare"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "dayal2004_15b",
+    "source": {"bibkey": "dayal-2004", "paperLabel": "(15b)"},
+    "language": "russ1263",
+    "primaryText": "Ljudi proizoshli ot obez’jan",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ljudi", "men"], ["proizoshli", "evolved"], ["ot", "from"], ["obez’jan", "apes"]
+    ],
+    "translation": "Men have evolved from apes.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "2.2"],
+      ["number", "plural"],
+      ["form", "bare"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "dayal2004_16",
+    "source": {"bibkey": "dayal-2004", "paperLabel": "(16)"},
+    "language": "mand1415",
+    "primaryText": "Gou juezhong le",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Gou", "dog"], ["juezhong", "extinct"], ["le", "Asp"]
+    ],
+    "translation": "Dogs are extinct.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "2.2"],
+      ["number", "general"],
+      ["form", "bare"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "dayal2004_46a_def",
+    "source": {"bibkey": "dayal-2004", "paperLabel": "(46a)"},
+    "language": "stan1293",
+    "primaryText": "The dinosaur is extinct.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.1"],
+      ["number", "singular"],
+      ["form", "definite"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "dayal2004_46a_bare",
+    "source": {"bibkey": "dayal-2004", "paperLabel": "(46a)"},
+    "language": "stan1293",
+    "primaryText": "Dinosaur is extinct.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.1"],
+      ["number", "singular"],
+      ["form", "bare"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "dayal2004_46b_def",
+    "source": {"bibkey": "dayal-2004", "paperLabel": "(46b)"},
+    "language": "stan1293",
+    "primaryText": "Babbage invented the computer.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.1"],
+      ["number", "singular"],
+      ["form", "definite"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "dayal2004_46b_bare",
+    "source": {"bibkey": "dayal-2004", "paperLabel": "(46b)"},
+    "language": "stan1293",
+    "primaryText": "Babbage invented computer.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.1"],
+      ["number", "singular"],
+      ["form", "bare"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "dayal2004_46c_bare",
+    "source": {"bibkey": "dayal-2004", "paperLabel": "(46c)"},
+    "language": "stan1293",
+    "primaryText": "Water is becoming scarce.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.1"],
+      ["number", "mass"],
+      ["form", "bare"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "dayal2004_46c_def",
+    "source": {"bibkey": "dayal-2004", "paperLabel": "(46c)"},
+    "language": "stan1293",
+    "primaryText": "The water is becoming scarce.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.1"],
+      ["number", "mass"],
+      ["form", "definite"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "dayal2004_46d_bare",
+    "source": {"bibkey": "dayal-2004", "paperLabel": "(46d)"},
+    "language": "stan1293",
+    "primaryText": "Gold is rare.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.1"],
+      ["number", "mass"],
+      ["form", "bare"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "dayal2004_46d_def",
+    "source": {"bibkey": "dayal-2004", "paperLabel": "(46d)"},
+    "language": "stan1293",
+    "primaryText": "The gold is rare.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.1"],
+      ["number", "mass"],
+      ["form", "definite"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "dayal2004_78a_def",
+    "source": {"bibkey": "dayal-2004", "paperLabel": "(78a)"},
+    "language": "ital1282",
+    "primaryText": "Il cane é diffuso",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Il", "the"], ["cane", "dog"], ["é", "is"], ["diffuso", "widespread"]
+    ],
+    "translation": "The dog is widespread.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "4.2"],
+      ["number", "singular"],
+      ["form", "definite"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "dayal2004_78a_bare",
+    "source": {"bibkey": "dayal-2004", "paperLabel": "(78a)"},
+    "language": "ital1282",
+    "primaryText": "cane é diffuso",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["cane", "dog"], ["é", "is"], ["diffuso", "widespread"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "4.2"],
+      ["number", "singular"],
+      ["form", "bare"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "dayal2004_78b_def",
+    "source": {"bibkey": "dayal-2004", "paperLabel": "(78b)"},
+    "language": "ital1282",
+    "primaryText": "I cani sono diffusi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["I", "the"], ["cani", "dogs"], ["sono", "are"], ["diffusi", "widespread"]
+    ],
+    "translation": "The dogs are widespread.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "4.2"],
+      ["number", "plural"],
+      ["form", "definite"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "dayal2004_78b_bare",
+    "source": {"bibkey": "dayal-2004", "paperLabel": "(78b)"},
+    "language": "ital1282",
+    "primaryText": "cani sono diffusi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["cani", "dogs"], ["sono", "are"], ["diffusi", "widespread"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "4.2"],
+      ["number", "plural"],
+      ["form", "bare"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "dayal2004_86a_def",
+    "source": {"bibkey": "dayal-2004", "paperLabel": "(86a)"},
+    "language": "stan1295",
+    "primaryText": "Die Pandabären sind vom Aussterben bedroht.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Pandas are facing extinction.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "4.3"],
+      ["number", "plural"],
+      ["form", "definite"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "dayal2004_86a_bare",
+    "source": {"bibkey": "dayal-2004", "paperLabel": "(86a)"},
+    "language": "stan1295",
+    "primaryText": "Pandabären sind vom Aussterben bedroht.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Pandas are facing extinction.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "4.3"],
+      ["number", "plural"],
+      ["form", "bare"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "dayal2004_86b_def",
+    "source": {"bibkey": "dayal-2004", "paperLabel": "(86b)"},
+    "language": "stan1295",
+    "primaryText": "Das Gold steigt im Preis.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Gold is getting more expensive.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "4.3"],
+      ["number", "mass"],
+      ["form", "definite"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "dayal2004_86b_bare",
+    "source": {"bibkey": "dayal-2004", "paperLabel": "(86b)"},
+    "language": "stan1295",
+    "primaryText": "Gold steigt im Preis.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Gold is getting more expensive.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "4.3"],
+      ["number", "mass"],
+      ["form", "bare"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "dayal2004_87a_def",
+    "source": {"bibkey": "dayal-2004", "paperLabel": "(87a)"},
+    "language": "stan1295",
+    "primaryText": "Der Pandabär ist vom Aussterben bedroht.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The Panda is facing extinction.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "4.3"],
+      ["number", "singular"],
+      ["form", "definite"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "dayal2004_87a_bare",
+    "source": {"bibkey": "dayal-2004", "paperLabel": "(87a)"},
+    "language": "stan1295",
+    "primaryText": "Pandabär ist vom Aussterben bedroht.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The Panda is facing extinction.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "4.3"],
+      ["number", "singular"],
+      ["form", "bare"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  }
+]
