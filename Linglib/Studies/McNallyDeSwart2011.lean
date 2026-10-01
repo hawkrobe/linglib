@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Semantics.Genericity.Subkinds
 public import Linglib.Fragments.Dutch.Adjectives
 
 /-!
@@ -10,15 +9,13 @@ This file formalizes the analysis of [mcnally-deswart-2011] of the three ways Du
 to abstract objects such as colours, illustrated with *rood* 'red': the uninflected nominal
 *het rood* and the derived *de roodheid* denote kinds, sets of subkinds, while the inflected
 *het rode van de aardbeien* denotes a trope, the entity correlate of a relational property
-instantiated in one bearer. The uninflected nominal of a root is the subkind of the shade
-partition its root determines, so distinct roots denote disjoint kinds, the disjointness
-condition of [carlson-1977] (`uninflectedNominal`, `uninflectedNominal_disjoint`); the
-derived nominal, the noun in *-heid* of the root (`Dutch.Adjectives.heid`), denotes the same
-kind (`derivedNominal`); the inflectional suffix is not a
-category-changing nominalizer but a valence-increasing operator turning the adjective into a
-relation between an object and its aspect, which the determiner *het*, the nominalization
-operator of [chierchia-1984] when it embeds an adjective phrase, reifies as a trope
-(`inflectAdjective`, `inflectedWithHet`). The three forms differ in what the determiner
+instantiated in one bearer. The uninflected nominal of a root denotes the set of its subkinds,
+the shades of the colour (`uninflectedNominal`); the derived nominal, the noun in *-heid* of
+the root (`Dutch.Adjectives.heid`), denotes the same kind (`derivedNominal`); the inflectional
+suffix is not a category-changing nominalizer but a valence-increasing operator turning the
+adjective into a relation between an object and its aspect, which the determiner *het*, the
+nominalization operator of [chierchia-1984] when it embeds an adjective phrase, reifies as a
+trope (`inflectAdjective`, `inflectedWithHet`). The three forms differ in what the determiner
 embeds and in what they denote, and the paper's distributional diagnostics follow from those
 two coordinates: adjectival modification and determiners other than *het* need a noun, and
 generic use needs a kind, so the inflected form alone fails all three (`Form`,
@@ -27,10 +24,10 @@ inflected form are named for later comparison (`InflectedAnalysis`).
 
 ## Implementation notes
 
-The roots and their forms come from the Dutch adjective fragment, and the subkind relation is
-the salient equivalence relation of `Semantics/Genericity/Subkinds`; the model is extensional,
-so the kind denoted by the derived nominal coincides with the uninflected one. The trope is
-the pair of the aspect property and its bearer. The paper's observation that the inflected
+The roots and their forms come from the Dutch adjective fragment, and the paper's primitive
+subkind relation is modelled as sharing a root; the model is extensional, so the kind denoted
+by the derived nominal coincides with the uninflected one. The trope is the pair of the aspect
+property and its bearer. The paper's observation that the inflected
 construction is rare with concrete adjectives, and its extension to Dutch nominalized
 infinitives and Spanish *lo*-nominals, are described in prose.
 
@@ -40,15 +37,11 @@ infinitives and Spanish *lo*-nominals, are described in prose.
   Abstract Objects* (2011)][mcnally-deswart-2011]
 * [G. Chierchia, *Topics in the Syntax and Semantics of Infinitives and Gerunds*
   (1984)][chierchia-1984]
-* [G. N. Carlson, *A Unified Analysis of the English Bare Plural* (1977)][carlson-1977]
 -/
 
 @[expose] public section
 
 namespace McNallyDeSwart2011
-
-open Genericity.Subkinds
-open Dutch.Adjectives (rood roze)
 
 /-! ### Kinds: the uninflected and derived nominals -/
 
@@ -59,26 +52,12 @@ structure Shade where
   idx : ℕ
   deriving DecidableEq, Repr
 
-/-- The kind-forming relation on shades: sharing a root. -/
-def kfShade : Setoid Shade where
-  r s₁ s₂ := s₁.root = s₂.root
-  iseqv := ⟨fun _ ↦ rfl, Eq.symm, Eq.trans⟩
+/-- The uninflected noun *rood* (19): the set of subkinds, the shades, of the colour. -/
+def uninflectedNominal (a : Dutch.Adjectives.Adjective) : Set Shade := {s | s.root = a}
 
-/-- The canonical shade of a root. -/
-def canonicalShade (a : Dutch.Adjectives.Adjective) : Shade := ⟨a, 0⟩
-
-/-- The uninflected nominal *het rood* (19): the set of subkinds, the shades, of the colour. -/
-def uninflectedNominal (a : Dutch.Adjectives.Adjective) : Set Shade :=
-  subkindOf kfShade (canonicalShade a)
-
-theorem mem_uninflectedNominal (a : Dutch.Adjectives.Adjective) (s : Shade) :
+@[simp] theorem mem_uninflectedNominal {a : Dutch.Adjectives.Adjective} {s : Shade} :
     s ∈ uninflectedNominal a ↔ s.root = a :=
-  ⟨Eq.symm, Eq.symm⟩
-
-/-- Distinct roots denote disjoint kinds, the disjointness condition of [carlson-1977]. -/
-theorem uninflectedNominal_disjoint {a₁ a₂ : Dutch.Adjectives.Adjective} (h : a₁ ≠ a₂) :
-    Disjoint (uninflectedNominal a₁) (uninflectedNominal a₂) :=
-  disjointness_condition kfShade (a := canonicalShade a₁) (b := canonicalShade a₂) h
+  Iff.rfl
 
 /-- A prepositional modifier (20) restricts the kind by a contextual relation to the
 complement's entity. -/
@@ -86,13 +65,9 @@ def ppModifier {Entity : Type*} (R : Shade → Entity → Prop) (s : Entity) (P 
     Set Shade :=
   {x | x ∈ P ∧ R x s}
 
-/-- The derived nominal *de roodheid* (24), the noun in *-heid* of the root, denotes the kind of
-the root. -/
+/-- The derived noun *roodheid* (24), the noun in *-heid* of the root, denotes the kind of the
+root. -/
 def derivedNominal (a : Dutch.Adjectives.Adjective) : Set Shade := uninflectedNominal a
-
-/-- *rood* and *roze* denote disjoint kinds, so *roodheid* and *rozeheid* would. -/
-theorem derivedNominal_rood_roze : Disjoint (derivedNominal rood) (derivedNominal roze) :=
-  uninflectedNominal_disjoint (by decide)
 
 /-! ### The trope: the inflected form -/
 
