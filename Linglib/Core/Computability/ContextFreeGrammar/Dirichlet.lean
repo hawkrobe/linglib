@@ -18,8 +18,8 @@ predictive rule distribution is the PCFG of normalised posterior pseudo-counts.
 ## Main definitions
 
 * `DirichletPCFG G`: positive pseudo-counts on the rules of `G`.
-* `DirichletPCFG.lhsUrn`, `DirichletPCFG.lhsFactor`, `DirichletPCFG.corpusProb`: the Pólya urn
-  at a nonterminal, its likelihood of the corpus counts there, and the corpus probability.
+* `DirichletPCFG.lhsFactor`, `DirichletPCFG.corpusProb`: the Pólya-urn likelihood of the corpus
+  counts at a nonterminal, and the corpus probability.
 * `DirichletPCFG.posterior`: the conjugate update by a corpus.
 * `DirichletPCFG.predictive`, `DirichletPCFG.predictivePCFG`: the posterior predictive
   probability of a rule, as a real and as a PCFG.
@@ -62,18 +62,14 @@ open RoseTree (corpusRuleCount corpusRuleCount_zero corpusRuleCount_add)
 
 variable (M : DirichletPCFG G)
 
-/-- The Pólya urn over the rules with left-hand side `a`, with `M`'s pseudo-counts. -/
-noncomputable def lhsUrn (a : G.NT) : PolyaUrn (G.RulesWithLHS a) where
-  pseudo := λ ⟨r, _⟩ => M.pseudo r
-  pseudo_pos := λ ⟨r, hr⟩ => M.pseudo_pos r (Finset.mem_filter.mp hr).1
-
 /-- The corpus counts of the rules with left-hand side `a`. -/
 def lhsCounts (a : G.NT) (D : Multiset (RoseTree (Symbol T G.NT))) : G.RulesWithLHS a → ℕ :=
   λ ⟨r, _⟩ => corpusRuleCount r D
 
-/-- The Pólya-urn likelihood of the corpus counts at nonterminal `a`. -/
+/-- The likelihood of the corpus counts at nonterminal `a` under the Pólya urn over the rules
+with left-hand side `a`, weighted by `M`'s pseudo-counts. -/
 noncomputable def lhsFactor (a : G.NT) (D : Multiset (RoseTree (Symbol T G.NT))) : ℝ :=
-  (M.lhsUrn a).seqProb (lhsCounts a D)
+  polyaUrnProb (fun r : G.RulesWithLHS a ↦ M.pseudo r) (lhsCounts a D)
 
 /-- The probability of a corpus with the rule weights integrated out: the product over the
 nonterminals the grammar expands of the Pólya-urn likelihood there. -/
@@ -89,20 +85,19 @@ theorem nonempty_rulesWithLHS_of_mem_image {a : G.NT} (ha : a ∈ G.rules.image 
 theorem lhsFactor_pos {a : G.NT} (ha : a ∈ G.rules.image (·.input))
     (D : Multiset (RoseTree (Symbol T G.NT))) : 0 < M.lhsFactor a D :=
   have := nonempty_rulesWithLHS_of_mem_image ha
-  (M.lhsUrn a).seqProb_pos _
+  polyaUrnProb_pos (fun ⟨r, hr⟩ ↦ M.pseudo_pos r (Finset.mem_filter.mp hr).1) _
 
 theorem corpusProb_nonneg (D : Multiset (RoseTree (Symbol T G.NT))) : 0 ≤ M.corpusProb D :=
   Finset.prod_nonneg λ _ ha => (M.lhsFactor_pos ha D).le
 
 @[simp]
-theorem lhsCounts_zero (a : G.NT) : lhsCounts (G := G) a 0 = λ _ => 0 := by
+theorem lhsCounts_zero (a : G.NT) : lhsCounts (G := G) a 0 = 0 := by
   funext ⟨r, _⟩
   simp [lhsCounts]
 
 @[simp]
-theorem lhsFactor_zero (a : G.NT) [Nonempty (G.RulesWithLHS a)] : M.lhsFactor a 0 = 1 := by
-  rw [lhsFactor, lhsCounts_zero]
-  exact (M.lhsUrn a).seqProb_zero
+theorem lhsFactor_zero (a : G.NT) : M.lhsFactor a 0 = 1 := by
+  rw [lhsFactor, lhsCounts_zero, polyaUrnProb_zero]
 
 @[simp]
 theorem corpusProb_zero : M.corpusProb 0 = 1 :=

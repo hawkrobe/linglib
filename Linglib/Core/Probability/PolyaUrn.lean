@@ -1,479 +1,208 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 module
 
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
-public import Mathlib.RingTheory.Polynomial.Pochhammer
-public import Mathlib.Basic.Real.Basic
-public import Mathlib.Algebra.BigOperators.Fin
-public import Mathlib.Tactic.FieldSimp
 public import Mathlib.Algebra.BigOperators.Field
-public import Mathlib.Algebra.Order.BigOperators.GroupWithZero.Finset
+public import Mathlib.Algebra.BigOperators.Fin
+public import Mathlib.Algebra.Order.BigOperators.Ring.Finset
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.RingTheory.Polynomial.Pochhammer
 
 /-!
-# Pólya urn (per-sequence likelihood)
+# The Pólya urn
 
-[odonnell-2015]
+An urn holds balls of the colours in `α` with positive weights `θ c`. Draws are made one at a
+time; after `n` draws in which colour `c` came up `x c` times, the next draw is colour `c` with
+probability
 
-A *Pólya urn* over an alphabet `α` is a sequential sampling
-scheme governed by strictly-positive pseudo-counts
-`π : α → ℝ`. The first draw is categorical with weights
-`π_i / Σ π`; the `(N + 1)`-th draw conditional on previous counts
-`x_1, …` is categorical with weights `(π_i + x_i) / (Σ π + Σ x)` — a
-preferential-attachment dynamic, finite-`K` variant of the
-power-law-tail dynamic that the Pitman–Yor process exhibits in the
-unbounded-alphabet limit.
+  `(θ c + x c) / (∑ θ + n)`,
 
-By Dirichlet–Categorical conjugacy, drawing `θ ~ Dirichlet(π)` then
-sampling i.i.d. from `Categorical(θ)` and integrating out `θ` yields
-the same exchangeable sequence law (the de Finetti representation
-theorem guarantees that *some* mixing measure exists; identifying it
-as Dirichlet is conjugacy + integration). The probability of any
-specific draw sequence with counts `x_1, …, x_K` has the closed form
-of [odonnell-2015] §3.1.3:
+the prediction rule of [pitman-2006] Exercise 2.2.2, `polyaUrnPredictive`. Multiplying these
+probabilities along a sequence gives the probability of the sequence, which depends only on its
+count vector `x`:
 
-```
-P(seq | π) = ∏ (π_i)_{x_i} / (Σ π)_{Σ x}
-```
+  `polyaUrnProb θ x = ∏ c, (θ c)_{x c} / (∑ θ)_{∑ x}`
 
-in rising factorials `(a)_n = a (a + 1) ⋯ (a + n − 1)` (`ascPochhammer`), equivalently a ratio of
-Gamma values since `Γ(a + n) / Γ(a) = (a)_n`. The rising-factorial form keeps the identity
-algebraic: no analysis is imported.
+in rising factorials `(a)_m = a (a + 1) ⋯ (a + m - 1)` (`ascPochhammer`). The drawn sequence is
+exchangeable, with Dirichlet-distributed limiting frequencies ([pitman-2006] Exercise 2.2.2).
 
-This file gives only the closed-form per-sequence likelihood
-`seqProb` — the form `DirichletPCFG` and the adaptor and fragment
-grammars of `ODonnell2015` actually use (a corpus IS a labeled
-derivation sequence, not a draw from the unlabeled-count
-distribution). The sequence law and the count-vector law — the
-"Dirichlet–multinomial distribution" — live in the sibling file
-`DirichletMultinomial.lean`, which carries the measure-theory imports.
-
-The sequential sampler enters through `seqProb_countVec_cons`: prepending a draw
-multiplies the sequence likelihood by the Pólya predictive of that draw.
-
-## Type-polymorphic alphabet
-
-The alphabet `α` is an arbitrary type; operations require
-`[Fintype α]` (so that `∑ i, ...` and `∏ i, ...` are well-defined),
-and theorems requiring positivity of the total pseudo-count
-additionally need `[Nonempty α]`. The previous `Fin K`-indexed shape
-is the special case `α = Fin K` (with `[NeZero K]` equivalent to
-`[Nonempty (Fin K)]`); the polymorphic shape composes cleanly with
-`Finset`-restricted alphabets needed by per-LHS PCFG factors.
-
-## Relationship to `pitmanYor`
-
-The Pólya urn is often described as the "finite-K Chinese Restaurant
-Process". This is correct sequentially but misleading
-distributionally: the labeled count distribution
-`PolyaUrn.dirichletMultinomial` (sibling file) is *not equal* at any
-finite `K` to the partition distribution `pitmanYor 0 θ`.
-The two agree only in the limit `K → ∞` with
-symmetric pseudo-counts `π_i = b/K` (Blackwell & MacQueen 1973;
-Ferguson 1973). The bridge is therefore a limit theorem, not a
-finite equality, and is not yet formalized — the labeled→unlabeled
-pushforward to `Measure (Nat.Partition N)` (the natural target type
-for such a bridge) is also deferred.
+This file is measure-free: the law of the sequence, its exchangeability and the
+Dirichlet–multinomial distribution of the counts are in
+`Linglib.Core.Probability.Distributions.DirichletMultinomial`.
 
 ## Main definitions
 
-- `PolyaUrn α` — pseudo-counts on `α` (the Dirichlet hyperparameters).
-- `PolyaUrn.total` — the sum `Σ π_i`.
-- `PolyaUrn.posterior` — the conjugate update by observed counts.
-- `PolyaUrn.seqProb` — closed-form per-sequence likelihood
-  ([odonnell-2015] §3.1.3, depending only on counts).
-- `PolyaUrn.countVec` — the count vector of a draw sequence, the urn's sufficient statistic;
-  `seqProb_countVec_cons` is the urn scheme (likelihood × predictive).
+* `ProbabilityTheory.countVec s`: how often each colour occurs in the sequence `s`.
+* `ProbabilityTheory.polyaUrnPredictive θ x c`: the probability of drawing `c` next.
+* `ProbabilityTheory.polyaUrnProb θ x`: the probability of a sequence with count vector `x`.
+
+## Main results
+
+* `ProbabilityTheory.polyaUrnProb_update_succ`, `ProbabilityTheory.polyaUrnProb_countVec_snoc`:
+  drawing colour `c` multiplies the probability by the probability of drawing `c`.
+* `ProbabilityTheory.polyaUrnProb_add`: conjugacy; after the counts `x`, the urn with weights
+  `θ + x` gives the probability of the further counts `y`.
+* `ProbabilityTheory.sum_polyaUrnPredictive`: the prediction rule is a probability.
+
+## Implementation notes
+
+The weights are a plain function `θ : α → ℝ`, positivity being a hypothesis of the results that
+need it, and updating them by observed counts is the sum `θ + x`. The identities between
+`polyaUrnProb` and `polyaUrnPredictive` hold without hypotheses.
+
+The partition of the draws generated by the symmetric urn with `m` colours of weight `κ` is the
+Pitman–Yor partition with discount `-κ` and concentration `m κ` ([pitman-2006] Exercise 2.2.5
+and p. 61); as `κ → 0` with `m κ` tending to a concentration `c > 0` it tends to the
+discount-`0` partition, generated by the Blackwell–MacQueen urn ([pitman-2006] Exercise 2.2.6 and
+p. 61). Neither is formalized here.
 
 ## References
 
-- [odonnell-2015] — Pólya-urn closed form for the Dirichlet PCFG (§3.1.3).
-- Blackwell, D. & MacQueen, J. B. (1973). "Ferguson distributions via
-  Pólya urn schemes". *The Annals of Statistics* 1(2): 353–355.
-- Ferguson, T. S. (1973). "A Bayesian analysis of some nonparametric
-  problems". *The Annals of Statistics* 1(2): 209–230.
+* [pitman-2006]
 -/
 
 @[expose] public section
 
+open Finset
+
 namespace ProbabilityTheory
 
+variable {α : Type*}
 
-/--
-A Pólya urn scheme over the alphabet `α`, parameterized by
-strictly-positive pseudo-counts. In the de Finetti representation
-the pseudo-counts are the Dirichlet hyperparameters: i.i.d. draws
-from `Categorical(θ)` for `θ ~ Dirichlet(pseudo)` have the same
-exchangeable sequence law as the Pólya urn.
--/
-@[ext]
-structure PolyaUrn (α : Type*) where
-  /-- Per-color pseudo-count (the Dirichlet hyperparameter). -/
-  pseudo : α → ℝ
-  /-- Pseudo-counts are strictly positive. -/
-  pseudo_pos : ∀ i, 0 < pseudo i
+/-! ### Count vectors -/
 
-namespace PolyaUrn
+section CountVec
 
-section Posterior
+variable [DecidableEq α] {n : ℕ}
 
-variable {α : Type*} (u : PolyaUrn α)
+/-- The count vector of a sequence: how often each colour occurs in it. -/
+def countVec (s : Fin n → α) (c : α) : ℕ :=
+  #{i | s i = c}
 
-/-- The conjugate update of the urn by observed counts `x`: each colour's pseudo-count grows by
-its count. The Dirichlet mixing measure stays Dirichlet under categorical data, so the update
-stays inside `PolyaUrn α`. -/
-def posterior (x : α → ℕ) : PolyaUrn α where
-  pseudo i := u.pseudo i + x i
-  pseudo_pos i := add_pos_of_pos_of_nonneg (u.pseudo_pos i) (Nat.cast_nonneg _)
-
-@[simp] theorem posterior_zero : u.posterior 0 = u := by
-  ext i
-  simp [posterior]
-
-theorem posterior_add (x y : α → ℕ) : u.posterior (x + y) = (u.posterior x).posterior y := by
-  ext i
-  simp [posterior, add_assoc]
-
-end Posterior
-
-variable {α : Type*} [Fintype α] (u : PolyaUrn α)
-
-/-- The total pseudo-count `Σ π_i`. Strictly positive when `α` is nonempty. -/
-def total : ℝ := ∑ i, u.pseudo i
-
-theorem total_pos [Nonempty α] : 0 < u.total :=
-  Finset.sum_pos (fun i _ => u.pseudo_pos i) Finset.univ_nonempty
-
-/--
-Closed-form *per-sequence likelihood* (not the count law — see
-`PolyaUrn.dirichletMultinomial` for that): probability that a draw
-sequence with counts `x` was emitted by the urn `u`, in rising factorials,
-
-```
-P(seq | π) = ∏ (π_i)_{x_i} / (Σ π)_{Σ x} .
-```
-
-Depends only on the counts (not the order), which is what makes the
-recursive stochastic equations defining `DirichletPCFG` and the adaptor
-and fragment grammars of `ODonnell2015` well-defined as marginals over draw order — *partition
-exchangeability* in the EPPF sense, distinct from but implied by
-exchangeability proper of the joint sequence law.
-
-To convert to the count-vector mass, multiply by the multinomial
-coefficient `(∑ x_i)! / ∏ (x_i!)` (`dirichletMultinomial_real_singleton`).
--/
-noncomputable def seqProb (x : α → ℕ) : ℝ :=
-  (∏ i, (ascPochhammer ℝ (x i)).eval (u.pseudo i)) / (ascPochhammer ℝ (∑ i, x i)).eval u.total
-
-/-- The empty count vector — no draws — has per-sequence likelihood `1`. -/
-theorem seqProb_zero : u.seqProb (fun _ => 0) = 1 := by
-  simp [seqProb]
-
-/--
-**Pólya urn predictive recurrence.** Incrementing the count at color `c`
-by 1 multiplies `seqProb` by the Pólya predictive factor
-`(π_c + x_c) / (Σπ + Σx)`:
-
-```
-seqProb (x with x_c := x_c + 1) = seqProb x · (π_c + x_c) / (Σπ + Σx)
-```
-
-This is the discrete-time recursion underlying the Dirichlet–Multinomial
-normalization; it is the rising-factorial recurrence `(a)_{n+1} = (a)_n (a + n)` at the
-colour `c` and at the total.
--/
-theorem seqProb_succ [Nonempty α] [DecidableEq α] (x : α → ℕ) (c : α) :
-    u.seqProb (Function.update x c (x c + 1)) =
-      u.seqProb x * (u.pseudo c + x c) / (u.total + ∑ i, (x i : ℝ)) := by
-  have hsum : ∑ i, Function.update x c (x c + 1) i = (∑ i, x i) + 1 := by
-    rw [Finset.sum_update_of_mem (Finset.mem_univ c), Finset.sdiff_singleton_eq_erase,
-      ← Finset.add_sum_erase _ _ (Finset.mem_univ c)]
-    ring
-  have hprod : ∏ i, (ascPochhammer ℝ (Function.update x c (x c + 1) i)).eval (u.pseudo i) =
-      (∏ i, (ascPochhammer ℝ (x i)).eval (u.pseudo i)) * (u.pseudo c + x c) := by
-    rw [← Finset.mul_prod_erase Finset.univ _ (Finset.mem_univ c),
-      ← Finset.mul_prod_erase Finset.univ (fun i => (ascPochhammer ℝ (x i)).eval (u.pseudo i))
-        (Finset.mem_univ c),
-      Function.update_self, ascPochhammer_succ_eval,
-      Finset.prod_congr rfl fun i hi => by rw [Function.update_of_ne (Finset.ne_of_mem_erase hi)]]
-    ring
-  have hden : (ascPochhammer ℝ (∑ i, x i)).eval u.total ≠ 0 :=
-    (ascPochhammer_pos _ _ u.total_pos).ne'
-  have hS : u.total + ∑ i, (x i : ℝ) ≠ 0 :=
-    (add_pos_of_pos_of_nonneg u.total_pos (Finset.sum_nonneg fun _ _ => Nat.cast_nonneg _)).ne'
-  unfold seqProb
-  rw [hsum, hprod, ascPochhammer_succ_eval, Nat.cast_sum]
-  field_simp
-
-omit [Fintype α] in
-/-- The count vector of a draw sequence: how often each colour was drawn. The urn's
-sufficient statistic — `seqProb` depends on a sequence only through it. -/
-def countVec [DecidableEq α] {N : ℕ} (seq : Fin N → α) (c : α) : ℕ :=
-  (Finset.univ.filter (seq · = c)).card
-
-omit [Fintype α] in
-@[simp] theorem countVec_zero [DecidableEq α] (seq : Fin 0 → α) : countVec seq = fun _ => 0 := by
+@[simp]
+theorem countVec_zero (s : Fin 0 → α) : countVec s = 0 := by
   funext c; simp [countVec]
 
-omit [Fintype α] in
 /-- Prepending a draw increments its colour's count. -/
-theorem countVec_cons [DecidableEq α] {N : ℕ} (c : α) (seq : Fin N → α) :
-    countVec (Fin.cons c seq) = Function.update (countVec seq) c (countVec seq c + 1) := by
+theorem countVec_cons (c : α) (s : Fin n → α) :
+    countVec (Fin.cons c s : Fin (n + 1) → α) =
+      Function.update (countVec s) c (countVec s c + 1) := by
   funext d
-  unfold countVec
-  simp only [Finset.card_filter, Fin.sum_univ_succ, Fin.cons_zero, Fin.cons_succ]
-  by_cases hcd : d = c
-  · subst hcd; simp [add_comm]
-  · simp [Function.update_of_ne hcd, Ne.symm hcd]
+  simp only [countVec, card_filter, Fin.sum_univ_succ, Fin.cons_zero, Fin.cons_succ]
+  obtain rfl | hd := eq_or_ne d c
+  · simp [add_comm]
+  · simp [Function.update_of_ne hd, Ne.symm hd, countVec]
 
-omit [Fintype α] in
-/-- Count-vector identity: appending color `c` to a length-`N` sequence
-increments the count at `c` by 1 and leaves other counts unchanged. -/
-private lemma snoc_count_eq [DecidableEq α] {N : ℕ}
-    (seq' : Fin N → α) (c : α) :
-    (fun d => (Finset.univ.filter (fun i : Fin (N+1) => Fin.snoc seq' c i = d)).card) =
-      Function.update (fun d => (Finset.univ.filter (fun i : Fin N => seq' i = d)).card) c
-        ((Finset.univ.filter (fun i : Fin N => seq' i = c)).card + 1) := by
-  funext d
-  have card_eq : ∀ (M : ℕ) (g : Fin M → α),
-      ((Finset.univ : Finset (Fin M)).filter (fun i => g i = d)).card =
-        ∑ i : Fin M, if g i = d then 1 else 0 := by
-    intro M g
-    rw [Finset.card_filter]
-  by_cases hcd : d = c
-  · subst hcd
-    rw [Function.update_self, card_eq, card_eq, Fin.sum_univ_castSucc]
-    simp only [Fin.snoc_castSucc, Fin.snoc_last, ite_true]
-  · rw [Function.update_of_ne hcd, card_eq, card_eq, Fin.sum_univ_castSucc]
-    simp only [Fin.snoc_castSucc, Fin.snoc_last]
-    rw [ite_eq_right (fun h => hcd h.symm), add_zero]
-
-omit [Fintype α] in
 /-- Appending a draw increments its colour's count. -/
-theorem countVec_snoc [DecidableEq α] {N : ℕ} (seq : Fin N → α) (c : α) :
-    countVec (Fin.snoc seq c) = Function.update (countVec seq) c (countVec seq c + 1) :=
-  snoc_count_eq seq c
+theorem countVec_snoc (c : α) (s : Fin n → α) :
+    countVec (Fin.snoc s c : Fin (n + 1) → α) =
+      Function.update (countVec s) c (countVec s c + 1) := by
+  funext d
+  simp only [countVec, card_filter, Fin.sum_univ_castSucc, Fin.snoc_castSucc, Fin.snoc_last]
+  obtain rfl | hd := eq_or_ne d c
+  · simp
+  · simp [Function.update_of_ne hd, Ne.symm hd, countVec]
 
-/-- The total count of a length-`N` sequence equals `N`. -/
-lemma sum_counts_eq_length [DecidableEq α] {N : ℕ} (seq : Fin N → α) :
-    ∑ d : α, countVec seq d = N := by
-  show ∑ d : α, ((Finset.univ : Finset (Fin N)).filter (fun i => seq i = d)).card = N
-  simp_rw [Finset.card_filter]
-  rw [Finset.sum_comm]
-  have : ∀ i : Fin N, ∑ d : α, (if seq i = d then 1 else 0 : ℕ) = 1 := by
-    intro i
-    rw [Finset.sum_eq_single (seq i)]
-    · simp
-    · intros b _ hb; rw [ite_eq_right (Ne.symm hb)]
-    · intro h; exact absurd (Finset.mem_univ _) h
-  simp_rw [this]
-  simp
+/-- Permuting a sequence does not change its counts. -/
+theorem countVec_comp_perm (s : Fin n → α) (σ : Equiv.Perm (Fin n)) :
+    countVec (s ∘ σ) = countVec s := by
+  funext c
+  exact card_bij (fun i _ ↦ σ i) (by simp) (fun _ _ _ _ h ↦ σ.injective h)
+    (fun j hj ↦ ⟨σ.symm j, by simpa using hj, by simp⟩)
 
-/-- `seqProb` summed over all length-`N` sequences equals 1. The Polya urn
-defines a probability distribution over sequences; this identity says the
-total mass is 1. Proved by induction on `N` using `seqProb_succ`. -/
-theorem sum_seqProb_eq_one [Nonempty α] [DecidableEq α] (N : ℕ) :
-    ∑ seq : Fin N → α, u.seqProb (countVec seq) = 1 := by
-  show (∑ seq : Fin N → α, u.seqProb (fun c => (Finset.univ.filter (seq · = c)).card)) = 1
-  induction N with
-  | zero =>
-    -- Only one sequence: `Fin.elim0`. Show its count vector is `fun _ => 0`,
-    -- then close via `seqProb_zero`.
-    have hcounts : ∀ (seq : Fin 0 → α),
-        (fun c => ((Finset.univ : Finset (Fin 0)).filter (seq · = c)).card) =
-          (fun _ : α => 0) := by
-      intro seq
-      funext c
-      have : ((Finset.univ : Finset (Fin 0)).filter (fun i => seq i = c)) = ∅ := by
-        apply Finset.eq_empty_of_forall_notMem
-        intro i; exact Fin.elim0 i
-      rw [this, Finset.card_empty]
-    have hunique : (Finset.univ : Finset (Fin 0 → α)) = {Fin.elim0} := by
-      rw [Finset.eq_singleton_iff_unique_mem]
-      refine ⟨Finset.mem_univ _, fun seq _ => ?_⟩
-      funext i; exact Fin.elim0 i
-    rw [hunique, Finset.sum_singleton, hcounts, u.seqProb_zero]
-  | succ N ih =>
-    -- Decompose `Fin (N+1) → α` via `Fin.snocEquiv` (prefix + last element).
-    have step1 :
-        (∑ seq : Fin (N+1) → α,
-            u.seqProb (fun c => (Finset.univ.filter (seq · = c)).card)) =
-        ∑ p : α × (Fin N → α),
-            u.seqProb (fun c =>
-              (Finset.univ.filter
-                ((Fin.snoc p.2 p.1 : Fin (N+1) → α) · = c)).card) := by
-      apply Fintype.sum_equiv
-        (Fin.snocEquiv (fun _ : Fin (N+1) => α) :
-          α × (Fin N → α) ≃ (Fin (N+1) → α)).symm
-      intro seq
-      congr 1
-      funext c
-      congr 1
-      apply Finset.filter_congr
-      intro i _
-      have hsnoc : Fin.snoc (((Fin.snocEquiv (fun _ : Fin (N+1) => α)).symm seq).2)
-            (((Fin.snocEquiv (fun _ : Fin (N+1) => α)).symm seq).1) = seq := by
-        show Fin.snoc (Fin.init seq) (seq (Fin.last N)) = seq
-        exact Fin.snoc_init_self seq
-      rw [hsnoc]
-    rw [step1, Fintype.sum_prod_type]
-    -- Apply `snoc_count_eq` to rewrite the count of `Fin.snoc seq' c` as
-    -- `Function.update (count seq') c (count seq' c + 1)`.
-    have step2 : ∀ (c : α) (seq' : Fin N → α),
-        u.seqProb (fun d => (Finset.univ.filter
-            ((Fin.snoc seq' c : Fin (N+1) → α) · = d)).card) =
-        u.seqProb (Function.update
-            (fun d => (Finset.univ.filter (seq' · = d)).card) c
-            ((Finset.univ.filter (seq' · = c)).card + 1)) := by
-      intro c seq'
-      rw [snoc_count_eq seq' c]
-    simp_rw [step2]
-    -- Apply the predictive recurrence `seqProb_succ`.
-    simp_rw [u.seqProb_succ]
-    -- Replace `∑ i, count seq' i` by `N` via `sum_counts_eq_length`.
-    have step3 : ∀ (seq' : Fin N → α),
-        (∑ i, ((fun d => (Finset.univ.filter (seq' · = d)).card) i : ℝ)) = N := by
-      intro seq'
-      rw [show (∑ i, ((fun d => (Finset.univ.filter (seq' · = d)).card) i : ℝ)) =
-            ((∑ i, (Finset.univ.filter (seq' · = i)).card : ℕ) : ℝ) by push_cast; rfl]
-      congr 1
-      exact_mod_cast sum_counts_eq_length seq'
-    simp_rw [step3]
-    -- Swap the outer-c and inner-seq' sums, then sum the predictive factor
-    -- `(π_c + count seq' c) / (total + N)` over `c` to get 1.
-    rw [Finset.sum_comm]
-    have step4 : ∀ (seq' : Fin N → α),
-        (∑ c : α, u.seqProb (fun d => (Finset.univ.filter (seq' · = d)).card) *
-              (u.pseudo c + ((Finset.univ.filter (seq' · = c)).card : ℝ)) /
-              (u.total + N)) =
-          u.seqProb (fun d => (Finset.univ.filter (seq' · = d)).card) := by
-      intro seq'
-      have h_total_pos : 0 < u.total := u.total_pos
-      have h_denom_pos : 0 < u.total + (N : ℝ) := by
-        have : (0 : ℝ) ≤ N := Nat.cast_nonneg _
-        linarith
-      have h_denom_ne : u.total + (N : ℝ) ≠ 0 := h_denom_pos.ne'
-      rw [show (∑ c : α, u.seqProb (fun d => (Finset.univ.filter (seq' · = d)).card) *
-                  (u.pseudo c + ((Finset.univ.filter (seq' · = c)).card : ℝ)) /
-                  (u.total + N)) =
-              u.seqProb (fun d => (Finset.univ.filter (seq' · = d)).card) *
-                (∑ c : α, (u.pseudo c + ((Finset.univ.filter (seq' · = c)).card : ℝ))) /
-                (u.total + N) from ?_]
-      · have sum_eq :
-            (∑ c : α, (u.pseudo c + ((Finset.univ.filter (seq' · = c)).card : ℝ))) =
-              u.total + N := by
-          rw [Finset.sum_add_distrib]
-          rw [show (∑ c : α, ((Finset.univ.filter (seq' · = c)).card : ℝ)) = (N : ℝ) from ?_]
-          · rfl
-          · exact_mod_cast sum_counts_eq_length seq'
-        rw [sum_eq]
-        field_simp
-      · rw [Finset.mul_sum, ← Finset.sum_div]
-    simp_rw [step4]
-    exact ih
+/-- The counts of a sequence of `n` draws add up to `n`. -/
+theorem sum_countVec [Fintype α] (s : Fin n → α) : ∑ c, countVec s c = n := by
+  simp only [countVec]
+  rw [← card_eq_sum_card_fiberwise (f := s) (t := univ) fun _ _ ↦ mem_univ _, card_univ,
+    Fintype.card_fin]
 
-/--
-Per-sequence Pólya likelihood is strictly positive on nonempty
-alphabets. Used by downstream consumers (`DirichletPCFG`, `ODonnell2015.AdaptorGrammar`)
-to derive nonnegativity of corpus probabilities.
--/
-theorem seqProb_pos [Nonempty α] (x : α → ℕ) : 0 < u.seqProb x :=
-  div_pos (Finset.prod_pos fun i _ => ascPochhammer_pos _ _ (u.pseudo_pos i))
-    (ascPochhammer_pos _ _ u.total_pos)
+end CountVec
 
--- Symmetric Polya urn: convenience constructor
+/-! ### The prediction rule and the probability of a sequence -/
 
-variable [Nonempty α]
+variable [Fintype α] (θ : α → ℝ)
 
-omit [Nonempty α] in
-/-- Construct a symmetric Polya urn with concentration `c` on every color.
-The Dirichlet-conjugate prior `Dirichlet(c, c, …, c)` underlying any
-"all colors equally a priori" scheme. -/
-def symmetric (c : ℝ) (hc : 0 < c) : PolyaUrn α where
-  pseudo _ := c
-  pseudo_pos _ := hc
+/-- The probability that the urn with weights `θ` draws colour `c` after draws with counts `x`:
+`(θ c + x c) / (∑ θ + ∑ x)` ([pitman-2006] Exercise 2.2.2). -/
+noncomputable def polyaUrnPredictive (x : α → ℕ) (c : α) : ℝ :=
+  (θ c + x c) / (∑ i, θ i + ∑ i, (x i : ℝ))
 
--- Predictive distribution: P(next draw = i | observed counts)
+/-- The probability that the urn with weights `θ` draws a given sequence with counts `x`. -/
+noncomputable def polyaUrnProb (x : α → ℕ) : ℝ :=
+  (∏ c, (ascPochhammer ℝ (x c)).eval (θ c)) / (ascPochhammer ℝ (∑ c, x c)).eval (∑ c, θ c)
 
-/-- The Polya predictive: probability that the next draw is color `i`,
-given observed counts. Closed form
-`(π_i + counts i) / (∑ π_j + ∑ counts)` follows from the ratio
-`seqProb (counts + e_i) / seqProb counts` via `(a)_{n+1} = (a)_n (a + n)`. -/
-noncomputable def predictive (u : PolyaUrn α) (counts : α → ℕ) (i : α) : ℝ :=
-  (u.pseudo i + counts i) / (u.total + ∑ j, (counts j : ℝ))
+@[simp]
+theorem polyaUrnProb_zero : polyaUrnProb θ 0 = 1 := by
+  simp [polyaUrnProb]
 
-omit [Nonempty α] in
-/-- The Polya predictive at zero counts is `pseudo i / total` —
-proportional to the pseudo-counts. -/
-theorem predictive_zero (u : PolyaUrn α) (i : α) :
-    u.predictive (fun _ => 0) i = u.pseudo i / u.total := by
-  unfold predictive
-  simp only [Nat.cast_zero, add_zero, Finset.sum_const_zero]
+/-- The first draw is proportional to the weights. -/
+theorem polyaUrnPredictive_zero (c : α) : polyaUrnPredictive θ 0 c = θ c / ∑ i, θ i := by
+  simp [polyaUrnPredictive]
 
-/-- For a symmetric urn, the predictive at zero counts is uniform `1/K`. -/
-theorem predictive_zero_symmetric (c : ℝ) (hc : 0 < c) (i : α) :
-    (symmetric (α := α) c hc).predictive (fun _ => 0) i =
-      1 / (Fintype.card α : ℝ) := by
-  rw [predictive_zero]
-  simp only [symmetric, total]
-  rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
-  field_simp
+/-- Drawing colour `c` multiplies the probability of the sequence by the probability of drawing
+`c`: the rising-factorial recursion `(a)_{m + 1} = (a)_m (a + m)` at `c` and at the total. -/
+theorem polyaUrnProb_update_succ [DecidableEq α] (x : α → ℕ) (c : α) :
+    polyaUrnProb θ (Function.update x c (x c + 1)) =
+      polyaUrnProb θ x * polyaUrnPredictive θ x c := by
+  have hsum : ∑ i, Function.update x c (x c + 1) i = ∑ i, x i + 1 := by
+    rw [sum_update_of_mem (mem_univ c), sdiff_singleton_eq_erase, ← add_sum_erase _ _ (mem_univ c)]
+    ring
+  have hprod : ∏ i, (ascPochhammer ℝ (Function.update x c (x c + 1) i)).eval (θ i) =
+      (∏ i, (ascPochhammer ℝ (x i)).eval (θ i)) * (θ c + x c) := by
+    rw [← mul_prod_erase univ _ (mem_univ c), ← mul_prod_erase univ
+        (fun i ↦ (ascPochhammer ℝ (x i)).eval (θ i)) (mem_univ c), Function.update_self,
+      ascPochhammer_succ_eval, prod_congr rfl fun i hi ↦ by
+        rw [Function.update_of_ne (ne_of_mem_erase hi)]]
+    ring
+  rw [polyaUrnProb, polyaUrnProb, polyaUrnPredictive, hsum, hprod, ascPochhammer_succ_eval,
+    div_mul_div_comm, Nat.cast_sum]
 
-/-- The urn scheme: prepending a draw multiplies the sequence likelihood by the predictive
-probability of that draw given the counts so far. -/
-theorem seqProb_countVec_cons [DecidableEq α] (c : α) {N : ℕ} (seq : Fin N → α) :
-    u.seqProb (countVec (Fin.cons c seq)) =
-      u.seqProb (countVec seq) * u.predictive (countVec seq) c := by
-  rw [countVec_cons, seqProb_succ, predictive, mul_div_assoc]
+/-- Appending colour `c` to a sequence multiplies its probability by the probability of drawing
+`c`. -/
+theorem polyaUrnProb_countVec_snoc [DecidableEq α] (c : α) {n : ℕ} (s : Fin n → α) :
+    polyaUrnProb θ (countVec (Fin.snoc s c : Fin (n + 1) → α)) =
+      polyaUrnProb θ (countVec s) * polyaUrnPredictive θ (countVec s) c := by
+  rw [countVec_snoc, polyaUrnProb_update_succ]
 
-/-- Polya predictive monotonicity: a color with a higher previous count
-gets higher predictive probability (the "rich get richer" /
-preferential-attachment property). -/
-theorem predictive_mono [DecidableEq α] (u : PolyaUrn α)
-    (counts₁ counts₂ : α → ℕ) (i : α)
-    (h_eq : ∀ j ≠ i, counts₁ j = counts₂ j)
-    (h_le : counts₁ i ≤ counts₂ i) :
-    u.predictive counts₁ i ≤ u.predictive counts₂ i := by
-  unfold predictive
-  set a₁ : ℝ := u.pseudo i + counts₁ i
-  set S₁ : ℝ := ∑ j, (counts₁ j : ℝ)
-  set S₂ : ℝ := ∑ j, (counts₂ j : ℝ)
-  have hSnonneg : ∀ (counts : α → ℕ), 0 ≤ ∑ j, (counts j : ℝ) :=
-    fun _ => Finset.sum_nonneg (fun _ _ => Nat.cast_nonneg _)
-  have hb₁_pos : 0 < u.total + S₁ := by linarith [u.total_pos, hSnonneg counts₁]
-  have hδ : S₂ - S₁ = (counts₂ i : ℝ) - (counts₁ i : ℝ) := by
-    simp only [S₁, S₂]
-    rw [← Finset.sum_sub_distrib]
-    have hpoint : ∀ j,
-        ((counts₂ j : ℝ) - (counts₁ j : ℝ)) =
-          if j = i then (counts₂ i : ℝ) - (counts₁ i : ℝ) else 0 := by
-      intro j
-      by_cases hji : j = i
-      · rw [hji, ite_eq_left rfl]
-      · rw [ite_eq_right hji, h_eq j hji, sub_self]
-    rw [Finset.sum_congr rfl (fun j _ => hpoint j), Finset.sum_ite_eq' Finset.univ i]
-    simp
-  have hδ_nonneg : 0 ≤ (counts₂ i : ℝ) - (counts₁ i : ℝ) := by
-    have : (counts₁ i : ℝ) ≤ counts₂ i := by exact_mod_cast h_le
-    linarith
-  have hcounts₁_le_sum : (counts₁ i : ℝ) ≤ S₁ := by
-    simp only [S₁]
-    exact Finset.single_le_sum (f := fun j => (counts₁ j : ℝ))
-      (fun _ _ => Nat.cast_nonneg _) (Finset.mem_univ i)
-  have hpseudo_le_total : u.pseudo i ≤ u.total := by
-    simp only [total]
-    exact Finset.single_le_sum (f := u.pseudo)
-      (fun j _ => (u.pseudo_pos j).le) (Finset.mem_univ i)
-  have h_a₁_le_b₁ : a₁ ≤ u.total + S₁ := by simp only [a₁]; linarith
-  have h_a₂ : u.pseudo i + ↑(counts₂ i) =
-      a₁ + ((counts₂ i : ℝ) - (counts₁ i : ℝ)) := by simp only [a₁]; ring
-  have h_b₂ : u.total + S₂ = (u.total + S₁) + ((counts₂ i : ℝ) - (counts₁ i : ℝ)) := by
-    have := hδ; linarith
-  rw [h_a₂, h_b₂]
-  set δ : ℝ := (counts₂ i : ℝ) - (counts₁ i : ℝ)
-  have hb₁δ_pos : 0 < u.total + S₁ + δ := by linarith
-  rw [div_le_div_iff₀ hb₁_pos hb₁δ_pos]
-  nlinarith [h_a₁_le_b₁, hδ_nonneg]
+/-- Prepending colour `c` to a sequence multiplies its probability by the probability of drawing
+`c` first given the rest; the counts do not see the order. -/
+theorem polyaUrnProb_countVec_cons [DecidableEq α] (c : α) {n : ℕ} (s : Fin n → α) :
+    polyaUrnProb θ (countVec (Fin.cons c s : Fin (n + 1) → α)) =
+      polyaUrnProb θ (countVec s) * polyaUrnPredictive θ (countVec s) c := by
+  rw [countVec_cons, polyaUrnProb_update_succ]
 
-end PolyaUrn
+/-- **Conjugacy.** The probability of counts `x + y` is the probability of `x` times the
+probability of `y` under the urn whose weights are raised by `x`. -/
+theorem polyaUrnProb_add (x y : α → ℕ) :
+    polyaUrnProb θ (x + y) = polyaUrnProb θ x * polyaUrnProb (θ + fun c ↦ (x c : ℝ)) y := by
+  have hasc (a : ℝ) (m k : ℕ) : (ascPochhammer ℝ (m + k)).eval a =
+      (ascPochhammer ℝ m).eval a * (ascPochhammer ℝ k).eval (a + m) := by
+    rw [← ascPochhammer_mul, Polynomial.eval_mul, Polynomial.eval_comp, Polynomial.eval_add,
+      Polynomial.eval_X, Polynomial.eval_natCast]
+  simp only [polyaUrnProb, Pi.add_apply, sum_add_distrib, hasc, prod_mul_distrib, Nat.cast_sum]
+  rw [div_mul_div_comm]
+
+variable {θ}
+
+theorem polyaUrnPredictive_nonneg (hθ : ∀ i, 0 ≤ θ i) (x : α → ℕ) (c : α) :
+    0 ≤ polyaUrnPredictive θ x c :=
+  div_nonneg (add_nonneg (hθ c) (Nat.cast_nonneg _))
+    (add_nonneg (sum_nonneg fun i _ ↦ hθ i) (sum_nonneg fun _ _ ↦ Nat.cast_nonneg _))
+
+/-- The prediction rule is a probability on the colours. -/
+theorem sum_polyaUrnPredictive [Nonempty α] (hθ : ∀ i, 0 < θ i) (x : α → ℕ) :
+    ∑ c, polyaUrnPredictive θ x c = 1 := by
+  have h : 0 < ∑ i, θ i + ∑ i, (x i : ℝ) :=
+    add_pos_of_pos_of_nonneg (sum_pos (fun i _ ↦ hθ i) univ_nonempty)
+      (sum_nonneg fun _ _ ↦ Nat.cast_nonneg _)
+  simp only [polyaUrnPredictive, ← sum_div, sum_add_distrib]
+  exact div_self h.ne'
+
+theorem polyaUrnProb_pos [Nonempty α] (hθ : ∀ i, 0 < θ i) (x : α → ℕ) : 0 < polyaUrnProb θ x :=
+  div_pos (prod_pos fun i _ ↦ ascPochhammer_pos _ _ (hθ i))
+    (ascPochhammer_pos _ _ (sum_pos (fun i _ ↦ hθ i) univ_nonempty))
 
 end ProbabilityTheory
