@@ -322,7 +322,7 @@ def names : List (String × Kind) :=
    ("Nez Perce", .nezPerce), ("Kombai", .kombai), ("Omie", .omie)]
 
 /-- The paradigmatic structure of the named kind. -/
-abbrev pattern (k : Kind) : Structure := syncretism k.labels
+abbrev pattern (k : Kind) : Structure := Setoid.ker k.labels
 
 /-- The type of each named structure's first person complex, as the book files them: the
 Maricopa type has no 'we', the Sierra Popoluca type only an inclusive, the Maranao type a
@@ -422,7 +422,7 @@ structure Row where
 namespace Row
 
 /-- The paradigmatic structure of the row. -/
-abbrev syncretism (r : Row) : Structure := Morphology.syncretism r.forms
+abbrev syncretism (r : Row) : Structure := Setoid.ker r.forms
 
 /-- The row's pattern of the first person complex. -/
 abbrev wePattern (r : Row) : Clusivity.Pattern := r.syncretism.wePattern
@@ -574,20 +574,20 @@ def englishSubject : Category → Finset String :=
 
 /-- The English pronouns have the structure of the paradigm the book prints for them. -/
 theorem english_pronouns :
-    ∃ r ∈ rows, r.id = "cysouw2003_4_19" ∧ syncretism englishSubject = r.syncretism := by
+    ∃ r ∈ rows, r.id = "cysouw2003_4_19" ∧ Setoid.ker englishSubject = r.syncretism := by
   decide +kernel
 
 /-- Horizontal homophony in the second person only: the English pronouns break the horizontal
 hierarchy. -/
 theorem english_not_respectsHorizontalHierarchy :
-    ¬ Structure.RespectsHorizontalHierarchy (syncretism englishSubject) := by decide +kernel
+    ¬ Structure.RespectsHorizontalHierarchy (Setoid.ker englishSubject) := by decide +kernel
 
 /-- The Tagalog *ang* series is a Maranao-type paradigm. -/
-theorem tagalog_maranao : syncretism Tagalog.ang = Kind.maranao.pattern := by decide +kernel
+theorem tagalog_maranao : Setoid.ker Tagalog.ang = Kind.maranao.pattern := by decide +kernel
 
 /-- The Tagalog *ang* series is of the minimal-augmented type. -/
 theorem tagalog_minimalAugmented :
-    Structure.HasClusivity (syncretism Tagalog.ang) .minimalAugmented := by
+    Structure.HasClusivity (Setoid.ker Tagalog.ang) .minimalAugmented := by
   decide +kernel
 
 end Cysouw2003

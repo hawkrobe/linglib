@@ -99,9 +99,9 @@ def russian : List Series :=
 /-- The syncretism patterns of Table 1 from the paradigms' coverage of the map: English AAA,
 Yakut ABB and Latin AAB. -/
 theorem map_syncretism :
-    syncretism (pattern english) = syncretism Paradigm.aaa ∧
-      syncretism (pattern yakut) = syncretism Paradigm.abb ∧
-      syncretism (pattern latin) = syncretism Paradigm.aab := by
+    Setoid.ker (pattern english) = Setoid.ker Paradigm.aaa ∧
+      Setoid.ker (pattern yakut) = Setoid.ker Paradigm.abb ∧
+      Setoid.ker (pattern latin) = Setoid.ker Paradigm.aab := by
   decide
 
 /-- Russian's ABC is the Elsewhere Principle at work: *-to* covers the non-specific function
@@ -110,7 +110,7 @@ the specific unknown layer, gives it to the smaller match *-nibud'*. -/
 theorem russian_elsewhere :
     pattern russian 0 = none ∧
       spellout (lexicon russian) = ![some "kto-nibud'", some "kto-to", some "koe-kto"] ∧
-      syncretism (spellout (lexicon russian)) = syncretism Paradigm.abc := by
+      Setoid.ker (spellout (lexicon russian)) = Setoid.ker Paradigm.abc := by
   decide
 
 /-- Kannada's paradigm has a gap at the specific known layer. -/
