@@ -38,9 +38,10 @@ kind-term judgments of (6a), (14) to (16), (46), (78), (86) and (87a) row by row
 
 ## Implementation notes
 
-* Availability and the two rankings are the theory layer's
-  (`Semantics/Genericity/MeaningPreservation.lean`). Whether ∩ is defined is a hypothesis, since it
-  fails for plural properties anchored to particular entities, fn. 1.
+* Availability is the theory layer's (`Semantics/Genericity/MeaningPreservation.lean`), and each
+  ranking is written as the predicate of its upper tier, Chierchia's `(· = .down)` and Dayal's
+  `(· ≠ .exists)`. Whether ∩ is defined is a hypothesis, since it fails for plural properties
+  anchored to particular entities, fn. 1.
 * The substrate's `Determiner.Inventory.Blocks` ignores the domain clause of the Blocking
   Principle, (39a): English *a* takes only singulars and so leaves ∃ open to a bare plural, but
   `Blocks .exists` holds of the English inventory outright. The bare-plural theorems therefore take
@@ -71,7 +72,7 @@ kind-term judgments of (6a), (14) to (16), (46), (78), (86) and (87a) row by row
 
 namespace Dayal2004
 
-open Genericity Genericity.MeaningPreservation Determiner
+open Genericity Determiner
 
 /-! ### Revised Meaning Preservation (Section 2.5) -/
 
@@ -80,15 +81,16 @@ variable {ds : Inventory} {down : Prop}
 /-- Wherever ι is unblocked, as in a language without articles, a bare nominal for which ∩ is
 defined is a kind or a definite, ∩ and ι both applying, and never an indefinite, (39c). -/
 theorem kind_and_definite (hι : ¬ ds.Blocks .iota) (hdown : down) :
-    MaximalFor (ds.Available down) dayal .down ∧ MaximalFor (ds.Available down) dayal .iota ∧
-      ¬ MaximalFor (ds.Available down) dayal .exists := by
+    MaximalFor (ds.Available down) (· ≠ .exists) .down ∧
+      MaximalFor (ds.Available down) (· ≠ .exists) .iota ∧
+      ¬ MaximalFor (ds.Available down) (· ≠ .exists) .exists := by
   simp [hι, hdown]
 
 /-- Under Chierchia's ranking kind formation pre-empts the definite, so a bare nominal for which ∩
 is defined could not be a definite, against (17) and (18), where Hindi, Russian and Chinese bare
 nominals are kinds and definites alike. -/
 theorem chierchia_not_definite (hdown : down) :
-    ¬ MaximalFor (ds.Available down) chierchia .iota := by
+    ¬ MaximalFor (ds.Available down) (· = .down) .iota := by
   simp [hdown]
 
 /-- Where ∩ is undefined, as for *is mashiin ke TukRe* 'parts of this machine', ι still outranks
@@ -96,16 +98,17 @@ theorem chierchia_not_definite (hdown : down) :
 existential reading, (45); Chierchia's ranking would let ∃ apply beside ι. -/
 theorem definite_not_indefinite (hι : ¬ ds.Blocks .iota) (hex : ¬ ds.Blocks .exists)
     (hdown : ¬ down) :
-    MaximalFor (ds.Available down) dayal .iota ∧ ¬ MaximalFor (ds.Available down) dayal .exists ∧
-      MaximalFor (ds.Available down) chierchia .exists := by
+    MaximalFor (ds.Available down) (· ≠ .exists) .iota ∧
+      ¬ MaximalFor (ds.Available down) (· ≠ .exists) .exists ∧
+      MaximalFor (ds.Available down) (· = .down) .exists := by
   simp [hι, hex, hdown]
 
 /-- English *the* blocks ι and, being used anaphorically, ι^x, so the two rankings choose alike for
 English bare nominals and (43) and (44) do not decide between them. -/
 theorem english_chierchia_iff_dayal (down : Prop) (τ : CovertShift) :
-    MaximalFor (English.Determiners.inventory.Available down) chierchia τ ↔
-      MaximalFor (English.Determiners.inventory.Available down) dayal τ :=
-  maximalFor_chierchia_iff_dayal (by decide) (by decide)
+    MaximalFor (English.Determiners.inventory.Available down) (· = .down) τ ↔
+      MaximalFor (English.Determiners.inventory.Available down) (· ≠ .exists) τ :=
+  CovertShift.maximalFor_available_eq_down_iff_ne_exists (by decide) (by decide)
 
 /-- With ι and ι^x blocked and ∃ open, ∃ applies exactly where ∩ is undefined. So an English bare
 plural like *parts of this machine* shifts by ∃ and interacts in scope with negation, (43), while
@@ -114,14 +117,14 @@ a language with a definite but no indefinite article, as p. 443 predicts, which 
 (91) support and Doron's (94) contradicts. -/
 theorem exists_iff_not_down (hι : ds.Blocks .iota) (hx : ds.Blocks .iotaAnaphoric)
     (hex : ¬ ds.Blocks .exists) :
-    MaximalFor (ds.Available down) dayal .exists ↔ ¬ down := by
+    MaximalFor (ds.Available down) (· ≠ .exists) .exists ↔ ¬ down := by
   simp [hι, hx, hex]
 
 /-- An English bare singular has no shift, (88a), since ∩ is undefined for it, *the* blocks ι and
 ι^x, and *a* blocks ∃. -/
 theorem english_bare_singular :
     ∀ τ, ¬ MaximalFor (English.Determiners.inventory.Available (DownDefined .count .singular))
-      dayal τ := by
+      (· ≠ .exists) τ := by
   decide
 
 /-! ### Singular kinds (Section 3.4) -/
