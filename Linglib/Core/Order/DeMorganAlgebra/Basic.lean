@@ -5,54 +5,56 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Mathlib.Order.Hom.Basic
-public import Linglib.Core.Order.DeMorganAlgebra.Defs
+public import Linglib.Core.Order.InvolutiveCompl
 
 /-!
-# Involutive complements: instances
+# De Morgan and Kleene algebras
 
-`Prod` and `Pi` instances for `InvolutiveCompl` and `IsKleene`, over mathlib's pointwise
-`Prod.instCompl` and `Pi.instCompl`, and the involution bundled as an
-order isomorphism `α ≃o αᵒᵈ`, the `Defs`/`Basic` split mathlib uses for `BooleanAlgebra`. There
-is no `OrderDual` instance yet: its complement would have to agree with the one mathlib's
-`OrderDual.instBiheytingAlgebra` gives the dual of a Boolean algebra, the one place a genuine
-`Compl` diamond can arise.
+This file defines Kleene's law for lattices with an involutive complement. A *De Morgan algebra*
+is a bounded distributive lattice with an involutive complement, written
+`[DistribLattice α] [BoundedOrder α] [InvolutiveCompl α]` and needing no class of its own. A
+*Kleene algebra* adds Kleene's law `a ⊓ aᶜ ≤ b ⊔ bᶜ`, that contradictions lie below excluded
+middles; Kalman's "normal" lattices with involution are the distributive lattices satisfying it,
+with or without bounds. Every Boolean algebra is a Kleene algebra, the law degenerating through
+`⊥`, and the three-element chain `Trivalent` is the canonical non-Boolean example.
+
+"Kleene algebra" here is the lattice notion, not the regular-expression star-semiring of
+mathlib's root `KleeneAlgebra`. Kalman's construction of Kleene algebras from distributive
+lattices is in `Core/Order/DeMorganAlgebra/Kalman.lean`.
+
+## Main definitions
+
+* `IsKleene`: the Kleene law, a Prop mixin over `[Lattice α] [InvolutiveCompl α]`.
+
+## Main results
+
+* `BooleanAlgebra.toIsKleene`: every Boolean algebra is a Kleene algebra.
+* `Prod` and `Pi` instances of `IsKleene`.
+
+## References
+
+* [kalman-1958]
 -/
 
 @[expose] public section
 
-open OrderDual
-
 variable {α β : Type*}
 
-/-! ### Prod -/
+/-- **Kleene's law** says that contradictions lie below excluded middles. [kalman-1958]'s
+"normal" i-lattices are the distributive lattices with an involution satisfying it; with bounds
+they are the Kleene algebras, the lattice notion. -/
+class IsKleene (α : Type*) [Lattice α] [InvolutiveCompl α] : Prop where
+  /-- The Kleene law. -/
+  inf_compl_le_sup_compl (a b : α) : a ⊓ aᶜ ≤ b ⊔ bᶜ
 
-instance [LE α] [LE β] [InvolutiveCompl α] [InvolutiveCompl β] : InvolutiveCompl (α × β) where
-  compl_compl p := Prod.ext (InvolutiveCompl.compl_compl p.1) (InvolutiveCompl.compl_compl p.2)
-  compl_le_compl h := ⟨InvolutiveCompl.compl_le_compl h.1, InvolutiveCompl.compl_le_compl h.2⟩
+/-- Every Boolean algebra satisfies the Kleene law, which degenerates through `⊥`. -/
+instance (priority := 100) BooleanAlgebra.toIsKleene [BooleanAlgebra α] : IsKleene α :=
+  ⟨fun a _ ↦ (BooleanAlgebra.inf_compl_le_bot a).trans _root_.bot_le⟩
 
 instance [Lattice α] [Lattice β] [InvolutiveCompl α] [InvolutiveCompl β] [IsKleene α]
     [IsKleene β] : IsKleene (α × β) :=
   ⟨fun a b ↦ ⟨IsKleene.inf_compl_le_sup_compl a.1 b.1, IsKleene.inf_compl_le_sup_compl a.2 b.2⟩⟩
 
-/-! ### Pi -/
-
-instance {ι : Type*} {π : ι → Type*} [∀ i, LE (π i)] [∀ i, InvolutiveCompl (π i)] :
-    InvolutiveCompl (∀ i, π i) where
-  compl_compl f := funext fun i ↦ InvolutiveCompl.compl_compl (f i)
-  compl_le_compl h i := InvolutiveCompl.compl_le_compl (h i)
-
 instance {ι : Type*} {π : ι → Type*} [∀ i, Lattice (π i)] [∀ i, InvolutiveCompl (π i)]
     [∀ i, IsKleene (π i)] : IsKleene (∀ i, π i) :=
   ⟨fun f g i ↦ IsKleene.inf_compl_le_sup_compl (f i) (g i)⟩
-
-/-! ### The involution as an order isomorphism -/
-
-/-- The involution bundled as an order isomorphism onto the order dual. Upstream this is mathlib's
-`OrderIso.compl`, generalized from `BooleanAlgebra` to `InvolutiveCompl`. -/
-def InvolutiveCompl.complOrderIso (α : Type*) [LE α] [InvolutiveCompl α] : α ≃o αᵒᵈ where
-  toFun a := toDual aᶜ
-  invFun a := (ofDual a)ᶜ
-  left_inv := InvolutiveCompl.compl_compl
-  right_inv a := congrArg toDual (InvolutiveCompl.compl_compl (ofDual a))
-  map_rel_iff' {a b} := InvolutiveCompl.compl_le_compl_iff_le (α := α) (a := b) (b := a)

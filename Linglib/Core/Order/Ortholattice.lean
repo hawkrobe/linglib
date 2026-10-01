@@ -7,7 +7,7 @@ module
 
 public import Mathlib.Order.BooleanAlgebra.Basic
 public import Mathlib.Order.ModularLattice
-public import Linglib.Core.Order.DeMorganAlgebra.Defs
+public import Linglib.Core.Order.InvolutiveCompl
 
 /-!
 # Orthocomplemented and orthomodular lattices
@@ -31,7 +31,7 @@ form an ortholattice that is not orthomodular.
 ## Main definitions
 
 * `IsOrtholattice α`: the Prop mixin over `[Lattice α] [BoundedOrder α] [InvolutiveCompl α]`
-  (the involutive antitone `ᶜ` of `Core/Order/DeMorganAlgebra/Defs.lean`) adding
+  (the involutive antitone `ᶜ` of `Core/Order/InvolutiveCompl.lean`) adding
   non-contradiction.
 * `IsOrthomodularLattice α`: an ortholattice satisfying the orthomodular law.
 * `DistribLattice.booleanAlgebraOfOrthocomplemented`: a distributive ortholattice is a Boolean

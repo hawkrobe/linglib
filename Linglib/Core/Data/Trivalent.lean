@@ -11,7 +11,7 @@ public import Mathlib.Order.BoundedOrder.Basic
 public import Mathlib.Order.Hom.BoundedLattice
 public import Mathlib.Order.MinMax
 public import Mathlib.Basic.Sign.Defs
-public import Linglib.Core.Order.DeMorganAlgebra.Defs
+public import Linglib.Core.Order.DeMorganAlgebra.Basic
 
 /-!
 # Three-valued truth
@@ -24,7 +24,7 @@ connective families — Weak Kleene ([bochvar-1937]), Middle Kleene ([peters-197
 conditional assertion ([belnap-1970]) — and the partiality operators ∂ and 𝒜 of
 [beaver-krahmer-2001].
 
-The upstreamable algebra is the `IsKleene` mixin (`Core/Order/DeMorganAlgebra/Defs.lean`), of
+The upstreamable algebra is the `IsKleene` mixin (`Core/Order/DeMorganAlgebra/Basic.lean`), of
 which `Trivalent` is the canonical non-Boolean instance. The dedicated carrier with
 truth-named constructors is this library's ergonomic choice; the name follows the
 `Boolean` precedent — an adjective nominalized as its truth-value type — with the
@@ -152,7 +152,7 @@ theorem inf_neg_le_sup_neg (a b : Trivalent) : a ⊓ neg a ≤ b ⊔ neg b := by
   cases a <;> cases b <;> decide
 
 /-- `neg` is the involutive antitone complement of the chain. The `ᶜ` notation gives access to
-the `InvolutiveCompl` API (`Core/Order/DeMorganAlgebra/Defs.lean`); `neg` remains the simp-normal
+the `InvolutiveCompl` API (`Core/Order/InvolutiveCompl.lean`); `neg` remains the simp-normal
 form. -/
 instance : InvolutiveCompl Trivalent where
   compl := neg
