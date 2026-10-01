@@ -2,7 +2,6 @@ module
 
 public import Linglib.Fragments.Latin.Case
 public import Linglib.Fragments.Latin.Gender
-public import Linglib.Morphology.Paradigm.Basic
 
 /-!
 # Latin noun declension
@@ -45,7 +44,6 @@ The genders of the four nouns whose columns the table leaves unlabelled are the 
 
 namespace Latin.Declension
 
-open Morphology
 
 /-- The declensions, the third split into consonant stems and i-stems. -/
 inductive Class where
@@ -173,37 +171,38 @@ theorem not_injective :
 
 /-- A neuter does not distinguish nominative and accusative in either number. -/
 theorem nom_acc_syncretic_of_neuter :
-    ∀ n ∈ nouns, n.IsNeuter → syncretism n.singular .nom .acc ∧ syncretism n.plural .nom .acc := by
+    ∀ n ∈ nouns, n.IsNeuter →
+      n.singular .nom = n.singular .acc ∧ n.plural .nom = n.plural .acc := by
   decide
 
 /-- No plural distinguishes dative and ablative. -/
-theorem plural_dat_abl_syncretic : ∀ n ∈ nouns, syncretism n.plural .dat .abl := by
+theorem plural_dat_abl_syncretic : ∀ n ∈ nouns, n.plural .dat = n.plural .abl := by
   decide
 
 /-- The singular fails to distinguish dative and ablative in the second declension and the
 i-stems, and nowhere else. -/
 theorem singular_dat_abl_syncretic_iff :
     ∀ n ∈ nouns,
-      syncretism n.singular .dat .abl ↔ n.cls = .second ∨ n.cls = .thirdI := by
+      n.singular .dat = n.singular .abl ↔ n.cls = .second ∨ n.cls = .thirdI := by
   decide
 
 /-- The vocative singular differs from the nominative in the non-neuters of the second
 declension, and nowhere else. -/
 theorem singular_nom_voc_syncretic_iff :
     ∀ n ∈ nouns,
-      syncretism n.singular .nom .voc ↔ ¬ (n.cls = .second ∧ ¬ n.IsNeuter) := by
+      n.singular .nom = n.singular .voc ↔ ¬ (n.cls = .second ∧ ¬ n.IsNeuter) := by
   decide
 
 /-- No plural distinguishes nominative and vocative. -/
-theorem plural_nom_voc_syncretic : ∀ n ∈ nouns, syncretism n.plural .nom .voc := by
+theorem plural_nom_voc_syncretic : ∀ n ∈ nouns, n.plural .nom = n.plural .voc := by
   decide
 
 /-- The plurals of the consonant stems, the u-stems and the ē-stems do not distinguish
 nominative and accusative, and with its consonant-stem accusative neither does *cīvis*. -/
 theorem plural_nom_acc_syncretic :
     (∀ n ∈ nouns, n.cls = .thirdConsonant ∨ n.cls = .fourth ∨ n.cls = .fifth →
-      syncretism n.plural .nom .acc) ∧
-    syncretism civis.variant.plural .nom .acc := by
+      n.plural .nom = n.plural .acc) ∧
+    civis.variant.plural .nom = civis.variant.plural .acc := by
   decide
 
 end Latin.Declension

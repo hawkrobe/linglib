@@ -9,7 +9,9 @@ public import Linglib.Core.Data.Setoid.Basic
 
 The morphologist's primary observable: a **paradigm** assigns a surface
 form to each of `n` linearly ordered cells; its **syncretism** is the
-kernel setoid of that assignment (`syncretism`). One type serves both
+kernel setoid of that assignment, `Setoid.ker p`, whose classes are the cells
+sharing a form, decidable over finitely many cells by the instances of
+`Core/Data/Setoid/Basic.lean`. One type serves both
 research lines that consume it — realization-pattern typology (*ABA and
 contiguity, `Morphology/Paradigm/Contiguity.lean`) and paradigm-cell
 information theory (implicative structure and complexity,
@@ -21,7 +23,6 @@ paradigms over graded cells.
 ## Main declarations
 
 * `Paradigm n F` — assignment of a form to each of the `n` cells
-* `syncretism` — the kernel setoid of a form assignment, `Setoid.ker`
 * `formsAt` — the form assignment of an inventory: the forms its items offer for each cell
 * `ParadigmSystem n Form` — paradigms with frequency weights, organized
   by inflection class
@@ -43,18 +44,6 @@ each cell. The single carrier for realization patterns
 `ParadigmSystem`). -/
 abbrev Paradigm (n : ℕ) (F : Type*) := Fin n → F
 
-/-- The **syncretism** relation of a form assignment `p`: two cells are
-syncretic iff `p` assigns them the same form. Exactly the kernel setoid
-`Setoid.ker p`; its equivalence classes are the syncretism patterns, and
-two assignments have the same pattern iff their syncretisms agree. -/
-abbrev syncretism {Cell F : Type*} (p : Cell → F) : Setoid Cell := Setoid.ker p
-
-/-- Two form assignments have the same syncretism pattern iff they identify
-the same pairs of cells. -/
-theorem syncretism_eq_iff {Cell F G : Type*} {p : Cell → F} {q : Cell → G} :
-    syncretism p = syncretism q ↔ ∀ a b, p a = p b ↔ q a = q b := by
-  simp only [syncretism, Setoid.ext_iff, Setoid.ker_def]
-
 /-! ### The paradigm of an inventory -/
 
 section FormsAt
@@ -64,7 +53,7 @@ variable {ι Cell F : Type*} [DecidableEq Cell] [DecidableEq F]
 
 /-- The forms an inventory `I` offers for the cell `c`, where the item `i` has the form `form i`
 and realizes the cells `cells i`. A cell no item realizes gets `∅` and an overabundant cell
-several forms, and `syncretism (formsAt cells form I)` relates the cells the inventory does not
+several forms, and `Setoid.ker (formsAt cells form I)` relates the cells the inventory does not
 distinguish. -/
 def formsAt (cells : ι → Finset Cell) (form : ι → F) (I : Finset ι) (c : Cell) : Finset F :=
   (I.filter (c ∈ cells ·)).image form

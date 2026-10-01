@@ -3,7 +3,6 @@ module
 public import Linglib.Fragments.Slavic.Czech.Case
 public import Linglib.Fragments.Slavic.Czech.Gender
 public import Linglib.Fragments.Slavic.Czech.Phonology
-public import Linglib.Morphology.Paradigm.Basic
 public import Linglib.Syntax.Number.Basic
 public import Mathlib.Data.Fintype.Sets
 public import Mathlib.Data.Fintype.Prod
@@ -331,7 +330,7 @@ def Class.formsOn (k : Class) (s : List String) (σ : Cell) : List (List String)
 numeral or plural noun paradigms have distinct vocative forms (vocative = nominative)"
 (p. 465). -/
 theorem voc_eq_nom_plural (k : Class) :
-    Morphology.syncretism k.endings (.of .voc .plural) (.of .nom .plural) := by
+    k.endings (.of .voc .plural) = k.endings (.of .nom .plural) := by
   cases k <;> decide
 
 /-- "In the plural, the animacy opposition is expressed only in the existence of a distinctive
@@ -361,7 +360,7 @@ inanimates and the neuter o-stems, whose dative is *-u* and locative *-ě*, "A n
 development within the case system" being "the spread of dative–locative syncretism in singular
 noun classes" (p. 465). -/
 theorem dat_loc_singular_iff (k : Class) :
-    Morphology.syncretism k.singularEndings .dat .loc ↔
+    k.singularEndings .dat = k.singularEndings .loc ↔
       k ≠ .hrad ∧ k ≠ .mesto := by
   cases k <;> decide
 

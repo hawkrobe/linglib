@@ -22,7 +22,7 @@ person-case constraint and resolved agreement ([adamson-zompi-2025]).
   number the pronoun contributes to interpretation
 * `PersonalPronoun.IsOrdinary` — the pronoun denotes what its agreement features realize
 * `PersonalPronoun.paradigm` — the forms an inventory offers for each referential category,
-  whose `Morphology.syncretism` is the inventory's person-number syncretism
+  whose kernel `Setoid.ker` is the inventory's person-number syncretism
 
 ## Main results
 

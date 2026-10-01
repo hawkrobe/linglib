@@ -70,26 +70,26 @@ open English.Adjectives
 /-- The English Fragment shows only AAA and ABB. -/
 theorem english_patterns :
     ∀ e ∈ allEntries,
-      syncretism e.comparison.suppletion = syncretism Paradigm.aaa ∨
-        syncretism e.comparison.suppletion = syncretism Paradigm.abb := by
+      Setoid.ker e.comparison.suppletion = Setoid.ker Paradigm.aaa ∨
+        Setoid.ker e.comparison.suppletion = Setoid.ker Paradigm.abb := by
   decide
 
 /-- The Latin Fragment shows only the attested patterns of (191). -/
 theorem latin_patterns :
     ∀ e ∈ Latin.Adjectives.allEntries,
-      syncretism e.comparison.suppletion = syncretism Paradigm.aaa ∨
-        syncretism e.comparison.suppletion = syncretism Paradigm.abb ∨
-        syncretism e.comparison.suppletion = syncretism Paradigm.abc := by
+      Setoid.ker e.comparison.suppletion = Setoid.ker Paradigm.aaa ∨
+        Setoid.ker e.comparison.suppletion = Setoid.ker Paradigm.abb ∨
+        Setoid.ker e.comparison.suppletion = Setoid.ker Paradigm.abc := by
   decide
 
 /-- Latin shows all three: *longus*, *parvus*, *bonus*. -/
 theorem latin_all_three :
     (∃ e ∈ Latin.Adjectives.allEntries,
-        syncretism e.comparison.suppletion = syncretism Paradigm.aaa) ∧
+        Setoid.ker e.comparison.suppletion = Setoid.ker Paradigm.aaa) ∧
       (∃ e ∈ Latin.Adjectives.allEntries,
-        syncretism e.comparison.suppletion = syncretism Paradigm.abb) ∧
+        Setoid.ker e.comparison.suppletion = Setoid.ker Paradigm.abb) ∧
       ∃ e ∈ Latin.Adjectives.allEntries,
-        syncretism e.comparison.suppletion = syncretism Paradigm.abc := by
+        Setoid.ker e.comparison.suppletion = Setoid.ker Paradigm.abc := by
   decide
 
 /-- CSG1 (1): in a contiguous pattern a suppletive comparative, whose root differs from the
@@ -135,18 +135,18 @@ superlative, since the superlative contains its context. -/
 theorem czech_bad_realize : realize czechBad = ![some "špatn", some "hor", some "hor"] := by
   decide
 
-theorem czech_bad_abb : syncretism (realize czechBad) = syncretism Paradigm.abb := by decide
+theorem czech_bad_abb : Setoid.ker (realize czechBad) = Setoid.ker Paradigm.abb := by decide
 
 /-- English GOOD (203): *bett-* under CMPR, elsewhere *good*. -/
 def englishGood : List (SpanRule 3 String) := [⟨"good", 0, none⟩, ⟨"bett", 0, some 1⟩]
 
-theorem english_good_abb : syncretism (realize englishGood) = syncretism Paradigm.abb := by decide
+theorem english_good_abb : Setoid.ker (realize englishGood) = Setoid.ker Paradigm.abb := by decide
 
 /-- English BAD (194): *worse* as a √ROOT+CMPR portmanteau, elsewhere
 *bad*. -/
 def englishBad : List (SpanRule 3 String) := [⟨"bad", 0, none⟩, ⟨"worse", 1, none⟩]
 
-theorem english_bad_abb : syncretism (realize englishBad) = syncretism Paradigm.abb := by decide
+theorem english_bad_abb : Setoid.ker (realize englishBad) = Setoid.ker Paradigm.abb := by decide
 
 /-- Welsh GOOD (198): *gor-* under SPRL and *gwell*, both √ROOT+CMPR
 portmanteaus, elsewhere *da*. -/
@@ -155,7 +155,7 @@ def welshGood : List (SpanRule 3 String) :=
 
 /-- *da, gwell, gor-au*: ABC, since the superlative exponent is a
 portmanteau. -/
-theorem welsh_good_abc : syncretism (realize welshGood) = syncretism Paradigm.abc := by decide
+theorem welsh_good_abc : Setoid.ker (realize welshGood) = Setoid.ker Paradigm.abc := by decide
 
 /-- Latin GOOD (204): *opt-* a √ROOT+CMPR portmanteau under SPRL, *mel-* a
 root allomorph under CMPR, elsewhere *bon*. Since *opt-* expones the CMPR
@@ -166,7 +166,7 @@ def latinBonus : List (SpanRule 3 String) :=
 theorem latin_bonus_realize : realize latinBonus = ![some "bon", some "mel", some "opt"] := by
   decide
 
-theorem latin_realize_abc : syncretism (realize latinBonus) = syncretism Paradigm.abc := by decide
+theorem latin_realize_abc : Setoid.ker (realize latinBonus) = Setoid.ker Paradigm.abc := by decide
 
 /-- Latin satisfies every condition the CSG2 derivation uses. -/
 theorem latin_wellformed :
@@ -199,7 +199,7 @@ ABA has one, accidental homophony, closed by Antihomophony ((44)). -/
 def aabContextual : List (SpanRule 3 String) := [⟨"good", 0, none⟩, ⟨"bett", 0, some 2⟩]
 
 theorem aabContextual_realizes_aab :
-    syncretism (realize aabContextual) = syncretism Paradigm.aab := by decide
+    Setoid.ker (realize aabContextual) = Setoid.ker Paradigm.aab := by decide
 
 /-- Its context skips the comparative: adjacency excludes it. -/
 theorem aabContextual_not_adjacent : ¬ Adjacent aabContextual := by decide
@@ -208,7 +208,7 @@ theorem aabContextual_not_adjacent : ¬ Adjacent aabContextual := by decide
 counterpart — *\*da – da-ch – gor-au*. -/
 def welshAAB : List (SpanRule 3 String) := [⟨"da", 0, none⟩, ⟨"gor", 1, some 2⟩]
 
-theorem welshAAB_realizes_aab : syncretism (realize welshAAB) = syncretism Paradigm.aab := by decide
+theorem welshAAB_realizes_aab : Setoid.ker (realize welshAAB) = Setoid.ker Paradigm.aab := by decide
 
 /-- The node [GOOD, CMPR] has a context-sensitive rule and no context-free
 one: (202) excludes it. -/
@@ -225,7 +225,7 @@ homophonous with the positive yields surface ABA. -/
 def fakeAba : List (SpanRule 3 String) :=
   [⟨"A", 0, none⟩, ⟨"B", 0, some 1⟩, ⟨"A", 0, some 2⟩]
 
-theorem fakeAba_realizes_aba : syncretism (realize fakeAba) = syncretism Paradigm.aba := by decide
+theorem fakeAba_realizes_aba : Setoid.ker (realize fakeAba) = Setoid.ker Paradigm.aba := by decide
 
 theorem fakeAba_not_antihomophonous : ¬ Antihomophonous fakeAba := by decide
 

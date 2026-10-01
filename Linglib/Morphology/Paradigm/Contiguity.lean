@@ -30,7 +30,7 @@ insertion mechanism.
 Over three cells the five syncretism patterns are named as
 [bobaljik-2012] names the degree patterns (`Paradigm.aaa`, `Paradigm.abb`,
 `Paradigm.abc`, `Paradigm.aba`, `Paradigm.aab`); ABA is the one contiguity
-excludes (`isContiguous_iff_syncretism_ne_aba`). Theory-laden derivations
+excludes (`isContiguous_iff_ker_ne_ker_aba`). Theory-laden derivations
 of contiguity (vocabulary insertion under the Elsewhere Condition over
 containment hierarchies) live in
 `Morphology/Exponence/Containment/Contiguity.lean`.
@@ -42,7 +42,7 @@ containment hierarchies) live in
 * `FeasiblyMonotone`, `isContiguous_iff_feasiblyMonotone` —
   [graf-2019]'s monotonicity reconstruction of *ABA
 * `IsContiguous.comp_monotone`, `isContiguous_comp_left` — composition API
-* `Paradigm.aaa` … `Paradigm.aab`, `isContiguous_iff_syncretism_ne_aba` —
+* `Paradigm.aaa` … `Paradigm.aab`, `isContiguous_iff_ker_ne_ker_aba` —
   the three-cell patterns and the one contiguity excludes
 
 ## References
@@ -114,7 +114,7 @@ end Preorder
 The five syncretism patterns of a three-cell chain, as form-class indices,
 named as [bobaljik-2012] names the degree patterns over positive <
 comparative < superlative. A concrete paradigm has a pattern when its
-`syncretism` is the pattern's. ABA is the pattern contiguity excludes; AAB
+syncretism, the kernel `Setoid.ker`, is the pattern's. ABA is the pattern contiguity excludes; AAB
 is contiguous, and its exclusion for degree is a vocabulary-level matter
 (`Morphology/Exponence/Containment/Contiguity.lean`). -/
 
@@ -152,9 +152,9 @@ theorem isContiguous_fin_three_iff (p : Paradigm 3 F) :
 
 /-- A three-cell paradigm has the ABA pattern iff its outer cells agree and
 its middle cell differs. -/
-theorem syncretism_eq_aba_iff (p : Paradigm 3 F) :
-    syncretism p = syncretism Paradigm.aba ↔ p 0 = p 2 ∧ p 0 ≠ p 1 := by
-  rw [syncretism_eq_iff]
+theorem ker_eq_ker_aba_iff (p : Paradigm 3 F) :
+    Setoid.ker p = Setoid.ker Paradigm.aba ↔ p 0 = p 2 ∧ p 0 ≠ p 1 := by
+  simp only [Setoid.ext_iff, Setoid.ker_def]
   refine ⟨fun h ↦ ⟨(h 0 2).mpr rfl, fun h01 ↦ absurd ((h 0 1).mp h01) (by decide)⟩, ?_⟩
   rintro ⟨h02, h01⟩ a b
   have h12 : p 1 ≠ p 2 := fun h ↦ h01 (h02.trans h.symm)
@@ -169,9 +169,9 @@ theorem syncretism_eq_aba_iff (p : Paradigm 3 F) :
     | exact iff_of_false h12.symm (by decide)
 
 /-- ABA is the only three-cell pattern contiguity excludes. -/
-theorem isContiguous_iff_syncretism_ne_aba (p : Paradigm 3 F) :
-    IsContiguous p ↔ syncretism p ≠ syncretism Paradigm.aba := by
-  rw [isContiguous_fin_three_iff, ne_eq, syncretism_eq_aba_iff, not_and, not_not]
+theorem isContiguous_iff_ker_ne_ker_aba (p : Paradigm 3 F) :
+    IsContiguous p ↔ Setoid.ker p ≠ Setoid.ker Paradigm.aba := by
+  rw [isContiguous_fin_three_iff, ne_eq, ker_eq_ker_aba_iff, not_and, not_not]
 
 /-! ### Graf's monotonicity reconstruction
 

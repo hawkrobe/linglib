@@ -9,13 +9,12 @@ public import Mathlib.Data.Set.Subsingleton
 # Morphomes: syncretism classes with no natural characterization
 
 A realization map `p : Cell → F` assigns a form to each paradigm cell. Its
-**syncretism** relation — cells receiving the same form — is the kernel
-setoid `Morphology.syncretism p` of `Morphology/Paradigm/Basic.lean`, and
-the syncretism classes are its equivalence classes. A **morphome** ([aronoff-1994] coined the term) is a
-systematic syncretism that does not define a natural class; [herce-2023]
-adopts the working definition "a systematic morphological syncretism which
-does not define a (syntactically or semantically) natural class" (Trommer
-2016, quoted approvingly).
+**syncretism** relation — cells receiving the same form — is the kernel setoid
+`Setoid.ker p`, and the syncretism classes are its equivalence classes. A
+**morphome** ([aronoff-1994] coined the term) is a systematic syncretism that
+does not define a natural class; [herce-2023] adopts the working definition "a
+systematic morphological syncretism which does not define a (syntactically or
+semantically) natural class" (Trommer 2016, quoted approvingly).
 
 Naturalness is a **parameter** `Natural : Set Cell → Prop`, not stipulated
 here. [herce-2023] operationalizes a natural class as one "coextensive with
@@ -61,8 +60,8 @@ variable {Cell F : Type*}
 def syncretismClass (p : Cell → F) (a : Cell) : Set Cell := {x | p x = p a}
 
 theorem syncretismClass_mem_classes (p : Cell → F) (a : Cell) :
-    syncretismClass p a ∈ (syncretism p).classes :=
-  Setoid.mem_classes (syncretism p) a
+    syncretismClass p a ∈ (Setoid.ker p).classes :=
+  Setoid.mem_classes (Setoid.ker p) a
 
 /-- The cells `p` realizes as the form `f`: the syncretism class of any cell realized as `f`,
 as a `Finset`. -/
@@ -83,7 +82,7 @@ grouping visible only in the realization, with no phonological, syntactic,
 or semantic characterization ([aronoff-1994]'s "morphology by itself").
 `Natural` is a parameter (see the module docstring). -/
 def IsMorphome (p : Cell → F) (Natural : Set Cell → Prop) (c : Set Cell) : Prop :=
-  c ∈ (syncretism p).classes ∧ c.Nontrivial ∧ ¬ Natural c
+  c ∈ (Setoid.ker p).classes ∧ c.Nontrivial ∧ ¬ Natural c
 
 /-- The syncretism class of `a` is a morphome once it is nontrivial and
 unnatural — the shape a concrete paradigm instantiates. -/
