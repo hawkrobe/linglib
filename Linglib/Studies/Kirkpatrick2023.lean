@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Semantics.Genericity.Normality
 public import Linglib.Studies.Veltman1996
 
 /-!
@@ -10,25 +11,29 @@ generic Sobel sequences: a generic followed by a statement of its exceptions, (1
 and judged true, while the reverse order, (2), is infelicitous and sounds contradictory. Static
 theories assign each generic a truth value on its own, so the truth of a sequence is a
 conjunction invariant under reordering and the contrast is invisible to them, §3
-(`static_perm`). The dynamic theory of (24) evaluates a generic against a modal horizon, the set
-of salient individuals, which the generic first expands with the normal instances of its
-restrictor when none is yet salient (`GenericSentence.update`), and the generic is true when
-every salient instance of its restrictor satisfies its scope (`GenericSentence.holds`). In a
-Sobel sequence the exceptions are abnormal for the general and so absent from its horizon, while
-the reverse order puts them on the horizon first, where the general finds them and no longer
-expands: the two orders come apart exactly as the paper predicts (`SobelPair.order_sensitive`),
-and a mixed sequence like (12) survives because each generic's restrictor excludes the
-individuals the other made salient (`lions_both_orders`). Appendix A's comparison with
-[veltman-1996] is checked on his eight worlds: the frame presented by accepted rules is
-insensitive to their order, so his theory predicts the reverse sequence consistent
-(`veltman_reverse_consistent`).
+(`static_perm`). The theory builds on the normality-based semantics (22), on which a generic is
+true when every normal instance of its restrictor satisfies its matrix: the normality functor of
+(21) is a `Genericity.Normality` and (22) is its generic. The dynamic theory of (24) evaluates a
+generic against a modal horizon, the set of salient individuals, which the generic first expands
+with the normal instances of its restrictor when none is yet salient (`update`), and the generic
+is true when every salient instance of its restrictor satisfies its matrix (`holds`). This is
+again a generic, under the normality whose normal instances of a restrictor are those on the
+updated horizon (`horizon`), and discourse-initially it is the static generic (22)
+(`holds_empty`). In a Sobel sequence the exceptions are abnormal for the general and so absent
+from its horizon, while the reverse order puts them on the horizon first, where the general
+finds them and no longer expands: the two orders come apart exactly as the paper predicts
+(`SobelPair.order_sensitive`). The ravens of (25) and (28) are ranked by how they are coloured,
+the albino abnormal (`ravenNormality`), and a mixed sequence like (29) survives because each
+generic's restrictor excludes the individuals the other made salient (`lions_both_orders`).
+Appendix A's comparison with [veltman-1996] is checked on his eight worlds: the frame presented
+by accepted rules is insensitive to their order, so his theory predicts the reverse sequence
+consistent (`veltman_reverse_consistent`).
 
 ## Implementation notes
 
-* (24) is taken at a single world: the dispositional orbit is a point, the modal horizon a
-  finite set of individuals, and the normality functor of (21) the field `normal` of a
-  sentence, with its inclusion in the restrictor as a proof field. The arguments of §5 are
-  pointwise in the accessible world and survive the restriction.
+* (24) is taken at a single world: the dispositional orbit is a point, so the normality functor
+  of (21) is a normality at a single index and the modal horizon a set of individuals. The
+  arguments of §5 are pointwise in the accessible world and survive the restriction.
 * The contextual variable C of (20) is folded into the restrictor, as (26) and (31) do.
 
 ## References
@@ -42,76 +47,75 @@ insensitive to their order, so his theory predicts the reverse sequence consiste
 
 namespace Kirkpatrick2023
 
-variable {E : Type*} [DecidableEq E]
+open Genericity Set
 
-/-- A generic Gen[φ][ψ], (20), with the normal instances of its restrictor, the value of the
-normality functor of (21), which lie within the restrictor. -/
+variable {E : Type*}
+
+/-- A generic Gen[φ][ψ], (20): its restrictor, with the contextual variable folded in, and its
+matrix. -/
 structure GenericSentence (E : Type*) where
-  restrictor : E → Prop
-  scope : E → Prop
-  normal : Finset E
-  normal_restrictor : ∀ e ∈ normal, restrictor e
-  [decRestrictor : DecidablePred restrictor]
-  [decScope : DecidablePred scope]
+  /-- The restrictor. -/
+  restrictor : Set E
+  /-- The matrix. -/
+  scope : Set E
 
-attribute [instance] GenericSentence.decRestrictor GenericSentence.decScope
+variable (N : Normality Unit E)
 
-namespace GenericSentence
+/-- The context change potential (24a): a generic presupposes a salient instance of its
+restrictor and, failing that, expands the horizon by the normal instances (21). -/
+def update (R σ : Set E) : Set E := σ ∪ {x | x ∈ N.normal () R ∧ ∀ y ∈ σ, y ∉ R}
 
-variable (g : GenericSentence E) (σ : Finset E)
+/-- The normality of the dynamic generic: at a horizon, the normal instances of a restrictor are
+its instances on the horizon the generic updates. -/
+def horizon : Normality (Set E) E := ⟨fun σ R ↦ update N R σ ∩ R, fun _ _ ↦ inter_subset_right⟩
 
-/-- The context change potential of (24): a generic presupposes a salient instance of its
-restrictor and, failing that, expands the horizon by the normal instances. -/
-def update : Finset E := if ∃ e ∈ σ, g.restrictor e then σ else σ ∪ g.normal
+/-- The truth conditions (24b): every salient instance of the restrictor on the updated horizon
+satisfies the matrix. -/
+def holds (g : GenericSentence E) (σ : Set E) : Prop := σ ∈ (horizon N).gen g.restrictor g.scope
 
-/-- The truth conditions of (24): every salient instance of the restrictor on the expanded
-horizon satisfies the scope. -/
-def holds : Prop := ∀ e ∈ g.update σ, g.restrictor e → g.scope e
+variable {N} {R σ : Set E}
 
-instance : Decidable (g.holds σ) := by unfold holds; infer_instance
+theorem update_of_exists (h : ∃ y ∈ σ, y ∈ R) : update N R σ = σ := by
+  obtain ⟨y, hy, hyR⟩ := h
+  exact union_eq_left.2 fun _ hx ↦ (hx.2 y hy hyR).elim
 
-theorem update_of_exists (h : ∃ e ∈ σ, g.restrictor e) : g.update σ = σ := ite_eq_left h
+theorem update_of_forall (h : ∀ y ∈ σ, y ∉ R) : update N R σ = σ ∪ N.normal () R :=
+  congrArg (σ ∪ ·) (ext fun _ ↦ ⟨And.left, fun hx ↦ ⟨hx, h⟩⟩)
 
-theorem update_of_forall (h : ∀ e ∈ σ, ¬ g.restrictor e) : g.update σ = σ ∪ g.normal :=
-  ite_eq_right λ ⟨e, he, hr⟩ => h e he hr
+theorem update_empty : update N R ∅ = N.normal () R := by
+  rw [update_of_forall fun _ h ↦ (notMem_empty _ h).elim, empty_union]
 
 /-- Expansion is one-way, fn. 24: the horizon never shrinks. -/
-theorem subset_update : σ ⊆ g.update σ := by
-  unfold update; split_ifs <;> simp
+theorem subset_update : σ ⊆ update N R σ := subset_union_left
 
 /-- A second assertion of the same generic expands nothing. -/
-theorem update_update : g.update (g.update σ) = g.update σ := by
-  by_cases h : ∃ e ∈ σ, g.restrictor e
-  · rw [update_of_exists g σ h, update_of_exists g σ h]
-  · have h' : ∀ e ∈ σ, ¬ g.restrictor e := λ e he hr => h ⟨e, he, hr⟩
-    rw [update_of_forall g σ h']
-    rcases g.normal.eq_empty_or_nonempty with hn | ⟨e, he⟩
-    · rw [hn, Finset.union_empty, update_of_forall g σ h', hn, Finset.union_empty]
-    · exact update_of_exists _ _ ⟨e, Finset.mem_union_right _ he, g.normal_restrictor e he⟩
+theorem update_update : update N R (update N R σ) = update N R σ := by
+  by_cases h : ∃ y ∈ σ, y ∈ R
+  · rw [update_of_exists h, update_of_exists h]
+  · push Not at h
+    rw [update_of_forall h]
+    rcases (N.normal () R).eq_empty_or_nonempty with he | ⟨e, he⟩
+    · rw [he, union_empty, update_of_forall h, he, union_empty]
+    · exact update_of_exists ⟨e, Or.inr he, N.normal_subset () R he⟩
 
-/-- Discourse-initial truth, (23) and (26): against an empty horizon a generic is true iff its
-normal instances satisfy its scope. -/
-theorem holds_empty : g.holds ∅ ↔ ∀ e ∈ g.normal, g.scope e := by
-  rw [holds, update_of_forall g ∅ (by simp), Finset.empty_union]
-  exact ⟨λ h e he => h e he (g.normal_restrictor e he), λ h e he _ => h e he⟩
+variable (N) in
+/-- Discourse-initial truth, (23) and (26): against an empty horizon the dynamic generic is the
+static generic (22) of the normality functor. -/
+theorem holds_empty (g : GenericSentence E) : holds N g ∅ ↔ () ∈ N.gen g.restrictor g.scope := by
+  rw [holds, Normality.mem_gen, Normality.mem_gen]
+  change update N _ ∅ ∩ _ ⊆ _ ↔ _
+  rw [update_empty, inter_eq_left.2 (N.normal_subset () _)]
 
-end GenericSentence
-
+variable (N) in
 /-- A sequence of generics is consistent from a horizon when each is true against the horizon
 its predecessors have expanded, §5. -/
-def ConsistentFrom : Finset E → List (GenericSentence E) → Prop
+def ConsistentFrom : Set E → List (GenericSentence E) → Prop
   | _, [] => True
-  | σ, g :: gs => g.holds σ ∧ ConsistentFrom (g.update σ) gs
+  | σ, g :: gs => holds N g σ ∧ ConsistentFrom (update N g.restrictor σ) gs
 
-instance decidableConsistentFrom :
-    ∀ (σ : Finset E) (gs : List (GenericSentence E)), Decidable (ConsistentFrom σ gs)
-  | _, [] => isTrue trivial
-  | σ, g :: gs =>
-    haveI := decidableConsistentFrom (g.update σ) gs
-    inferInstanceAs (Decidable (g.holds σ ∧ ConsistentFrom (g.update σ) gs))
-
+variable (N) in
 /-- Consistency from the empty discourse-initial horizon, §5.1. -/
-abbrev Consistent (gs : List (GenericSentence E)) : Prop := ConsistentFrom ∅ gs
+abbrev Consistent (gs : List (GenericSentence E)) : Prop := ConsistentFrom N ∅ gs
 
 /-! ### Static theories, §3 -/
 
@@ -122,70 +126,74 @@ this form. -/
 abbrev Static (truth : GenericSentence E → Prop) (gs : List (GenericSentence E)) : Prop :=
   ∀ g ∈ gs, truth g
 
-omit [DecidableEq E] in
 /-- §3.4: no static semantics is sensitive to the order of a sequence. -/
 theorem static_perm (truth : GenericSentence E → Prop) {gs gs' : List (GenericSentence E)}
     (h : gs.Perm gs') : Static truth gs ↔ Static truth gs' :=
-  ⟨λ hs g hg => hs g (h.mem_iff.2 hg), λ hs g hg => hs g (h.mem_iff.1 hg)⟩
+  ⟨fun hs g hg ↦ hs g (h.mem_iff.2 hg), fun hs g hg ↦ hs g (h.mem_iff.1 hg)⟩
 
 /-! ### Generic Sobel sequences, §5 -/
 
 /-- Two generics true on their own, the second of which finds no instance of its restrictor
 among the first's normal instances, are consistent in that order: the second expands the
 horizon and is evaluated on its own normal instances. -/
-theorem consistent_pair {g₁ g₂ : GenericSentence E} (h₁ : g₁.holds ∅) (h₂ : g₂.holds ∅)
-    (hdis : ∀ e ∈ g₁.normal, ¬ g₂.restrictor e) : Consistent [g₁, g₂] := by
-  refine ⟨h₁, ?_, trivial⟩
-  rw [GenericSentence.holds, g₁.update_of_forall ∅ (by simp), Finset.empty_union,
-    g₂.update_of_forall _ hdis]
-  intro e he hr
-  rcases Finset.mem_union.1 he with he | he
-  · exact absurd hr (hdis e he)
-  · exact g₂.holds_empty.1 h₂ e he
+theorem consistent_pair {g₁ g₂ : GenericSentence E} (h₁ : holds N g₁ ∅) (h₂ : holds N g₂ ∅)
+    (hdis : ∀ e ∈ N.normal () g₁.restrictor, e ∉ g₂.restrictor) : Consistent N [g₁, g₂] := by
+  refine ⟨h₁, fun x ⟨hx, hxR⟩ ↦ ?_, trivial⟩
+  change x ∈ update N _ (update N _ ∅) at hx
+  rw [update_empty, update_of_forall hdis] at hx
+  exact hx.elim (fun hx ↦ (hdis x hx hxR).elim) ((holds_empty N g₂).1 h₂ ·)
 
 /-- §5.3: two generics true on their own whose restrictors exclude each other's normal
 instances are consistent in both orders, each expanding the horizon in turn. -/
-theorem consistent_both_orders {g₁ g₂ : GenericSentence E} (h₁ : g₁.holds ∅) (h₂ : g₂.holds ∅)
-    (h₁₂ : ∀ e ∈ g₁.normal, ¬ g₂.restrictor e) (h₂₁ : ∀ e ∈ g₂.normal, ¬ g₁.restrictor e) :
-    Consistent [g₁, g₂] ∧ Consistent [g₂, g₁] :=
+theorem consistent_both_orders {g₁ g₂ : GenericSentence E} (h₁ : holds N g₁ ∅)
+    (h₂ : holds N g₂ ∅) (h₁₂ : ∀ e ∈ N.normal () g₁.restrictor, e ∉ g₂.restrictor)
+    (h₂₁ : ∀ e ∈ N.normal () g₂.restrictor, e ∉ g₁.restrictor) :
+    Consistent N [g₁, g₂] ∧ Consistent N [g₂, g₁] :=
   ⟨consistent_pair h₁ h₂ h₁₂, consistent_pair h₂ h₁ h₂₁⟩
 
+variable (N) in
 /-- A pair of generics forming a Sobel sequence in the order general, exception, (1): the
-exception's restrictor picks out a subkind of the general's, §5.2, its scope contradicts the
+exception's restrictor picks out a subkind of the general's, §5.2, its matrix contradicts the
 general's, and the general's normal instances are not exceptions. -/
-structure SobelPair (E : Type*) where
+structure SobelPair (N : Normality Unit E) where
+  /-- The general. -/
   general : GenericSentence E
+  /-- The exception. -/
   exception : GenericSentence E
-  sub : ∀ e, exception.restrictor e → general.restrictor e
-  contra : ∀ e, exception.scope e → ¬ general.scope e
-  abnormal : ∀ e ∈ general.normal, ¬ exception.restrictor e
+  sub : exception.restrictor ⊆ general.restrictor
+  contra : Disjoint exception.scope general.scope
+  abnormal : ∀ e ∈ N.normal () general.restrictor, e ∉ exception.restrictor
 
 namespace SobelPair
 
-variable (p : SobelPair E)
+variable (p : SobelPair N)
 
 /-- §5.1: a Sobel sequence whose generics are each true on their own is consistent, the
 exceptions being absent from the general's horizon. -/
-theorem consistent (hg : p.general.holds ∅) (he : p.exception.holds ∅) :
-    Consistent [p.general, p.exception] :=
+theorem consistent (hg : holds N p.general ∅) (he : holds N p.exception ∅) :
+    Consistent N [p.general, p.exception] :=
   consistent_pair hg he p.abnormal
 
 /-- §5.2: the reverse order is inconsistent once there is an exception: it is salient when the
-general is evaluated, satisfies the general's restrictor, and contradicts its scope. -/
-theorem reverse_inconsistent (he : p.exception.holds ∅) (hne : p.exception.normal.Nonempty) :
-    ¬ Consistent [p.exception, p.general] := by
+general is evaluated, satisfies the general's restrictor, and contradicts its matrix. -/
+theorem reverse_inconsistent (he : holds N p.exception ∅)
+    (hne : (N.normal () p.exception.restrictor).Nonempty) :
+    ¬ Consistent N [p.exception, p.general] := by
   obtain ⟨e, he'⟩ := hne
-  have hr : p.general.restrictor e := p.sub e (p.exception.normal_restrictor e he')
+  have hr : e ∈ p.general.restrictor := p.sub (N.normal_subset () _ he')
   rintro ⟨-, hgen, -⟩
-  rw [GenericSentence.holds, p.exception.update_of_forall ∅ (by simp), Finset.empty_union,
-    p.general.update_of_exists _ ⟨e, he', hr⟩] at hgen
-  exact p.contra e (p.exception.holds_empty.1 he e he') (hgen e he' hr)
+  have hσ : update N p.exception.restrictor ∅ = N.normal () p.exception.restrictor :=
+    update_empty
+  have hmem : e ∈ update N p.general.restrictor (update N p.exception.restrictor ∅) := by
+    rw [hσ, update_of_exists ⟨e, he', hr⟩]
+    exact he'
+  exact p.contra.ne_of_mem ((holds_empty N _).1 he he') (hgen ⟨hmem, hr⟩) rfl
 
 /-- The order sensitivity of §5: the same two generics, each true on its own, are consistent
 in the Sobel order and inconsistent in the reverse. -/
-theorem order_sensitive (hg : p.general.holds ∅) (he : p.exception.holds ∅)
-    (hne : p.exception.normal.Nonempty) :
-    Consistent [p.general, p.exception] ∧ ¬ Consistent [p.exception, p.general] :=
+theorem order_sensitive (hg : holds N p.general ∅) (he : holds N p.exception ∅)
+    (hne : (N.normal () p.exception.restrictor).Nonempty) :
+    Consistent N [p.general, p.exception] ∧ ¬ Consistent N [p.exception, p.general] :=
   ⟨p.consistent hg he, p.reverse_inconsistent he hne⟩
 
 end SobelPair
@@ -199,35 +207,66 @@ inductive Raven
   | albino
   deriving DecidableEq
 
+/-- How abnormally a raven is coloured: the albino is, the others are not. -/
+def Raven.rank : Raven → ℕ
+  | .albino => 1
+  | _ => 0
+
+/-- The normality functor (21) on ravens: the normal instances of a property are its
+best-coloured instances. -/
+def ravenNormality : Normality Unit Raven :=
+  .ofOrdering (fun _ ↦ univ) fun _ ↦ Preorder.lift Raven.rank
+
 /-- Black ravens: all but the albino. -/
-def Raven.black (x : Raven) : Prop := x ≠ .albino
+def Raven.black : Set Raven := {x | x ≠ .albino}
 
-instance : DecidablePred Raven.black := λ x => inferInstanceAs (Decidable (x ≠ .albino))
-
-/-- *Ravens are black*, (20a): every raven is coloured in some way, and the normal ones are
-the normally coloured ones. -/
-def ravensAreBlack : GenericSentence Raven :=
-  ⟨λ _ => True, Raven.black, {.normal₁, .normal₂}, by decide⟩
+/-- *Ravens are black*, (20a): every raven is coloured in some way. -/
+def ravensAreBlack : GenericSentence Raven := ⟨univ, Raven.black⟩
 
 /-- *Albino ravens aren't black*. -/
-def albinoRavensArentBlack : GenericSentence Raven :=
-  ⟨(· = .albino), λ x => ¬ x.black, {.albino}, by decide⟩
+def albinoRavensArentBlack : GenericSentence Raven := ⟨{.albino}, Raven.blackᶜ⟩
+
+/-- The normal ravens are not albino. -/
+theorem ne_albino_of_mem_normal {x : Raven} (hx : x ∈ ravenNormality.normal () univ) :
+    x ≠ .albino := by
+  rintro rfl
+  have h := (Preorder.mem_minimals_iff.1 hx).2
+    (show Raven.normal₁ ∈ (univ : Set Raven) ∩ univ from ⟨trivial, trivial⟩)
+    (show Raven.rank .normal₁ ≤ Raven.rank .albino by decide)
+  exact absurd (h : Raven.rank .albino ≤ Raven.rank .normal₁) (by decide)
+
+/-- The normal albino ravens are the albino. -/
+theorem mem_normal_albino {x : Raven} :
+    x ∈ ravenNormality.normal () {.albino} ↔ x = .albino :=
+  ⟨fun hx ↦ (Preorder.mem_minimals_iff.1 hx).1.2, fun hx ↦ hx ▸ Preorder.mem_minimals_iff.2
+    ⟨⟨trivial, rfl⟩, fun _ hb _ ↦ hb.2 ▸ (Preorder.lift Raven.rank).le_refl _⟩⟩
 
 /-- Albino ravens are ravens, are not black, and are abnormal as ravens. -/
-def ravenPair : SobelPair Raven :=
-  ⟨ravensAreBlack, albinoRavensArentBlack, by intro e; cases e <;> decide,
-    by intro e; cases e <;> decide, by decide⟩
+def ravenPair : SobelPair ravenNormality :=
+  ⟨ravensAreBlack, albinoRavensArentBlack, subset_univ _, disjoint_compl_left,
+    fun _ he ↦ ne_albino_of_mem_normal he⟩
+
+theorem holds_ravensAreBlack : holds ravenNormality ravensAreBlack ∅ :=
+  (holds_empty _ _).2 fun _ hx ↦ ne_albino_of_mem_normal hx
+
+theorem holds_albinoRavensArentBlack : holds ravenNormality albinoRavensArentBlack ∅ :=
+  (holds_empty _ _).2 fun _ hx ↦ (mem_normal_albino.1 hx ▸ not_not.2 rfl : _)
 
 /-- (25) and (28): *Ravens are black; but albino ravens aren't* is consistent and its reverse
 is not, though each generic is true on its own. -/
 theorem ravens_order_sensitive :
-    Consistent [ravensAreBlack, albinoRavensArentBlack] ∧
-      ¬ Consistent [albinoRavensArentBlack, ravensAreBlack] :=
-  ravenPair.order_sensitive (by decide) (by decide) ⟨.albino, by decide⟩
+    Consistent ravenNormality [ravensAreBlack, albinoRavensArentBlack] ∧
+      ¬ Consistent ravenNormality [albinoRavensArentBlack, ravensAreBlack] :=
+  ravenPair.order_sensitive holds_ravensAreBlack holds_albinoRavensArentBlack
+    ⟨.albino, mem_normal_albino.2 rfl⟩
 
 /-- A static semantics accepts the reverse order, §3.1. -/
-theorem ravens_static : Static (·.holds ∅) [albinoRavensArentBlack, ravensAreBlack] := by
-  decide
+theorem ravens_static :
+    Static (holds ravenNormality · ∅) [albinoRavensArentBlack, ravensAreBlack] := by
+  intro g hg
+  simp only [List.mem_cons, List.not_mem_nil, or_false] at hg
+  rcases hg with rfl | rfl
+  exacts [holds_albinoRavensArentBlack, holds_ravensAreBlack]
 
 /-! ### Mixed generics, (12) -/
 
@@ -237,20 +276,20 @@ inductive Lion
   | female
   deriving DecidableEq
 
-/-- *Lions have manes*, (31): the restrictor is lions with some male sexually selected trait,
-the normal such lion the male. -/
-def lionsHaveManes : GenericSentence Lion := ⟨(· = .male), (· = .male), {.male}, by decide⟩
+/-- *Lions have manes*, (31): the restrictor is lions with some male sexually selected trait. -/
+def lionsHaveManes : GenericSentence Lion := ⟨{.male}, {.male}⟩
 
 /-- *Lions give birth to live young*, (32): the restrictor is lions that produce offspring in
-some way, the normal such lion the female. -/
-def lionsGiveBirth : GenericSentence Lion :=
-  ⟨(· = .female), (· = .female), {.female}, by decide⟩
+some way. -/
+def lionsGiveBirth : GenericSentence Lion := ⟨{.female}, {.female}⟩
 
-/-- (29): the mixed sequence is consistent in both orders, since each generic's restrictor
-excludes the lions the other makes salient. -/
+/-- (29): the mixed sequence is consistent in both orders, every instance of each restrictor
+being normal, since each generic's restrictor excludes the lions the other makes salient. -/
 theorem lions_both_orders :
-    Consistent [lionsHaveManes, lionsGiveBirth] ∧ Consistent [lionsGiveBirth, lionsHaveManes] :=
-  consistent_both_orders (by decide) (by decide) (by decide) (by decide)
+    Consistent ⊤ [lionsHaveManes, lionsGiveBirth] ∧ Consistent ⊤ [lionsGiveBirth, lionsHaveManes] :=
+  consistent_both_orders ((holds_empty _ _).2 (Normality.mem_gen_top.2 subset_rfl))
+    ((holds_empty _ _).2 (Normality.mem_gen_top.2 subset_rfl))
+    (by rintro _ rfl; exact Lion.noConfusion) (by rintro _ rfl; exact Lion.noConfusion)
 
 /-! ### Appendix A: Veltman (1996) -/
 

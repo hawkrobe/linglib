@@ -50,9 +50,9 @@ select disjoint normal cases (`Normality.disjoint_normal_of_disjoint`).
 
 * The probabilistic generic of [cohen-1999a] and [tessler-goodman-2019], a threshold on the
   conditional probability of the matrix given the restrictor, on mathlib measures.
-* The generics of `Studies/Kirkpatrick2023`, `Studies/KadmonLandman1993` and
-  `Studies/DelPrete2013` on `Normality`, and the homogeneity presupposition of GEN of
-  `Studies/Magri2009` beside `Conditional.homogeneityCounterfactual`.
+* The generics of `Studies/KadmonLandman1993` and `Studies/DelPrete2013` on `Normality`, and
+  the homogeneity presupposition of GEN of `Studies/Magri2009` beside
+  `Conditional.homogeneityCounterfactual`.
 
 ## References
 
