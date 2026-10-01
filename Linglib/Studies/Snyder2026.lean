@@ -1,8 +1,8 @@
 module
 
-public import Linglib.Semantics.Genericity.Subkinds
 public import Linglib.Data.Examples.Snyder2026
 public import Mathlib.Data.Fintype.Basic
+public import Mathlib.Data.Setoid.Basic
 
 /-!
 # Snyder (2026): Numbers as Kinds
@@ -42,6 +42,9 @@ carries its semantic function, and every function is attested (`functions_attest
 * Sharvy's definite is a partial operation over a finite domain, undefined when no or more
   than one entity satisfies the restriction; the Identification Problem is worked on a domain
   with one token per number system.
+* Tokens of *two* are classified by their number system (`kfTWO`), which on these tokens agrees
+  with section 4.3's partition by the number a token represents; the subkinds of TWO are the
+  classes, as kind individuals in the quotient.
 
 ## References
 
@@ -55,8 +58,6 @@ carries its semantic function, and every function is attested (`functions_attest
 @[expose] public section
 
 namespace Snyder2026
-
-open Genericity.Subkinds
 
 /-! ### The three polymorphic analyses and the semantic functions -/
 
@@ -215,14 +216,13 @@ structure TwoToken where
 
 /-- The kind formation for TWO: tokens are equivalent when they belong to the same number
 system, and each class is a subkind of TWO. -/
-def kfTWO : Setoid TwoToken where
-  r t₁ t₂ := t₁.system = t₂.system
-  iseqv := ⟨λ _ => rfl, Eq.symm, Eq.trans⟩
+abbrev kfTWO : Setoid TwoToken := Setoid.ker TwoToken.system
 
-/-- Distinct number systems give distinct subkinds of TWO. -/
-theorem subkinds_distinct {s₁ s₂ : MathSystem} (h : s₁ ≠ s₂) :
-    subkindOf kfTWO ⟨s₁, 0⟩ ≠ subkindOf kfTWO ⟨s₂, 0⟩ :=
-  subkindOf_ne kfTWO h
+/-- Tokens of distinct number systems instantiate distinct subkinds of TWO, the distinctness of
+twos from different systems that section 3.4 draws from the Disjointness Condition. -/
+theorem subkinds_distinct {t₁ t₂ : TwoToken} (h : t₁.system ≠ t₂.system) :
+    (⟦t₁⟧ : Quotient kfTWO) ≠ ⟦t₂⟧ :=
+  fun e ↦ h (Quotient.exact e)
 
 section Sharvy
 
@@ -307,14 +307,12 @@ structure RedToken where
   deriving DecidableEq
 
 /-- The kind formation for RED: tokens are equivalent when they are of the same shade. -/
-def kfRed : Setoid RedToken where
-  r t₁ t₂ := t₁.shade = t₂.shade
-  iseqv := ⟨λ _ => rfl, Eq.symm, Eq.trans⟩
+abbrev kfRed : Setoid RedToken := Setoid.ker RedToken.shade
 
-/-- Distinct shades are distinct subkinds of RED, the taxonomy under (94). -/
-theorem red_subkinds_distinct {s₁ s₂ : Shade} (h : s₁ ≠ s₂) :
-    subkindOf kfRed ⟨s₁, 0⟩ ≠ subkindOf kfRed ⟨s₂, 0⟩ :=
-  subkindOf_ne kfRed h
+/-- Tokens of distinct shades instantiate distinct subkinds of RED, the taxonomy under (94). -/
+theorem red_subkinds_distinct {t₁ t₂ : RedToken} (h : t₁.shade ≠ t₂.shade) :
+    (⟦t₁⟧ : Quotient kfRed) ≠ ⟦t₂⟧ :=
+  fun e ↦ h (Quotient.exact e)
 
 /-! ### The examples -/
 

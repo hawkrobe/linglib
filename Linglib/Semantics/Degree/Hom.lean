@@ -14,7 +14,7 @@ public import Linglib.Semantics.Degree.Measure.Dimensioned
 /-!
 # Morphisms between gradability representations
 [kamp-1975] [klein-1980] [kennedy-1999] [kennedy-2007] [scontras-2014] [bale-schwarz-2022]
-[cresswell-1976] [bale-2008] [cariani-santorio-wellwood-2023]
+[cresswell-1976] [bale-2008] [cariani-santorio-wellwood-2023] [mendia-2020]
 
 The maps between the framework objects for gradable predicates, with their faithfulness
 theorems — the degree-semantic analogue of the representation maps in
@@ -57,7 +57,8 @@ threshold induces (`exists_isUpperSet_forall_ne_preimage`).
 * `Comparison.ge_over_eq_Ici`: a threshold above a contrast state is the degree-threshold
   positive form at its degree.
 * `cresswellSetoid_le_iff`, `factors_through_cresswellDegree`: Cresswell's degrees are the
-  antisymmetrization of the comparison.
+  antisymmetrization of the comparison; on an equivalence relation the construction returns
+  its classes (`cresswellSetoid_setoid`).
 * `universalDegree_lt_iff`: Bale's universal scale.
 * `maxComparative_comp`, `positive_not_natural`: which operators are natural in the scale.
 -/
@@ -352,6 +353,13 @@ theorem cresswellSetoid_le_iff {E : Type*} [Preorder E] (a b : E) :
   · intro ⟨hab, hba⟩
     exact ⟨fun c => ⟨hba.trans, hab.trans⟩,
            fun c => ⟨(le_trans · hab), (le_trans · hba)⟩⟩
+
+/-- On an equivalence relation, φ-indistinguishability is the relation itself: the construction
+returns the cells of a partition as well as degrees, [mendia-2020]'s (17)–(18). -/
+theorem cresswellSetoid_setoid {E : Type*} (s : Setoid E) : cresswellSetoid s = s :=
+  Setoid.ext fun _ b ↦ ⟨fun h ↦ (h.1 b).2 (s.refl' b), fun h ↦
+    ⟨fun _ ↦ ⟨s.trans' (s.symm' h), s.trans' h⟩,
+      fun _ ↦ ⟨(s.trans' · h), (s.trans' · (s.symm' h))⟩⟩⟩
 
 /-- [bale-2008]'s universal-degree homomorphism on a finite scale: the
     relative position of `d`, valued in an order-isomorphic *model* of
