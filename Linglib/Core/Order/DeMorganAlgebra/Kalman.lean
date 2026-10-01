@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Order.DeMorganAlgebra.Defs
+public import Linglib.Core.Order.DeMorganAlgebra.Basic
 public import Mathlib.Order.Hom.BoundedLattice
 public import Mathlib.Order.LatticeIntervals
 

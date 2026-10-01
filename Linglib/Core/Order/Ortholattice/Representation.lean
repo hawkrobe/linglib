@@ -16,16 +16,16 @@ ortholattice from an orthogonality relation in `Core/Order/Concept.lean`.
 ## Main definitions
 
 * `JoinDense V`: every element of `L` is the least upper bound of the elements of `V` below it.
-* `IsOrtholattice.Orthogonal V`: the orthogonality relation `a ≤ bᶜ` on the nonzero
+* `InvolutiveCompl.Orthogonal V`: the orthogonality relation `a ≤ bᶜ` on the nonzero
   elements of `V`.
-* `IsOrtholattice.represent V`: the concept of the points below an element.
+* `InvolutiveCompl.represent V`: the concept of the points below an element.
 
 ## Main results
 
-* `IsOrtholattice.represent_le_iff`, `represent_inf`, `represent_compl`,
+* `InvolutiveCompl.represent_le_iff`, `represent_inf`, `represent_compl`,
   `represent_sup`: `represent V` is an ortholattice embedding for any join-dense `V`.
-* `IsOrtholattice.representation`: for a complete ortholattice it is an isomorphism.
-* `IsOrtholattice.representationFinite`: a well-founded ortholattice is represented on
+* `InvolutiveCompl.representation`: for a complete ortholattice it is an isomorphism.
+* `InvolutiveCompl.representationFinite`: a well-founded ortholattice is represented on
   its join-irreducibles.
 
 ## Implementation notes
@@ -57,7 +57,7 @@ theorem joinDense_supIrred {L : Type*} [SemilatticeSup L] [OrderBot L] [WellFoun
   rw [← hs]
   exact Finset.sup_le fun b hb ↦ hu ⟨hsIrred hb, hs ▸ Finset.le_sup hb⟩
 
-namespace IsOrtholattice
+namespace InvolutiveCompl
 
 variable {L : Type*} [Lattice L] [BoundedOrder L] [InvolutiveCompl L]
 
@@ -231,4 +231,4 @@ def representationFinite [WellFoundedLT L] :
 
 end Iso
 
-end IsOrtholattice
+end InvolutiveCompl

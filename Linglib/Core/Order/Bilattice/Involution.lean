@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Order.Bilattice.Defs
-public import Linglib.Core.Order.DeMorganAlgebra.Defs
+public import Linglib.Core.Order.InvolutiveCompl
 public import Mathlib.Order.Hom.Basic
 
 /-!

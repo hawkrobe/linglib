@@ -34,7 +34,7 @@ algebraic completeness.
 
 @[expose] public section
 
-open Order Set IsOrtholattice
+open Order Set InvolutiveCompl
 
 universe u
 

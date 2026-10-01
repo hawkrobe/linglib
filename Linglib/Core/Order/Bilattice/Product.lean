@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Order.Bilattice.Representation
-public import Linglib.Core.Order.DeMorganAlgebra.Defs
+public import Linglib.Core.Order.InvolutiveCompl
 public import Linglib.Core.Order.Hom.Basic
 public import Mathlib.Data.Fintype.Prod
 
