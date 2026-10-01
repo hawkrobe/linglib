@@ -5,6 +5,7 @@ public import Linglib.Semantics.Polarity.Licensing
 public import Linglib.Semantics.Polarity.Item
 public import Linglib.Logic.Natural.Strawson.Basic
 public import Linglib.Semantics.Supervaluation
+public import Linglib.Semantics.Genericity.Normality
 public import Linglib.Studies.Ladusaw1979
 public import Linglib.Data.Examples.KadmonLandman1993
 public import Mathlib.Data.Set.Basic
@@ -27,8 +28,9 @@ held constant, so *sorry* licenses and *glad* does not (`sorry_licenses_any`,
 only by a metalinguistic denial of its presupposition; and conditional antecedents strengthen once
 the implicit restriction is fixed (`widening_satisfies_conditional_strengthening`). The paper's
 judgments follow this classification row by row (`rows_agree`). Section 4 models the generic
-restriction as a vague property set (`VagueRestriction`): widening along a dimension makes the
-quantifier universal with respect to it (`any_cn_dimensionally_universal`), domain vagueness is
+restriction as a vague property set (`VagueRestriction`), each precisification of which induces
+the normality of GEN (`precisificationNormality`, `genericTrue`): widening along a dimension makes
+the quantifier universal with respect to it (`any_cn_dimensionally_universal`), domain vagueness is
 what lets a generic tolerate exceptions (`domain_vague_allows_exceptions`), and *almost* modifies
 domain-precise universals and dimensionally universal noun phrases (`almost_rows`). On a finite
 precisification space the two truth notions are [fine-1975]'s super-truth and borderline status
@@ -363,28 +365,35 @@ theorem widenAlong_precise_eq_empty {Property : Type*}
 
 /-! ### Generic quantification as vague universality
 
-K&L §4.1.1: a generic is a universal restricted by a vague property set —
-"An owl hunts mice" is ∀ ↾ X_owl(Owl)(Hunts mice), (159). The
-traditional GEN operator's hidden normalcy parameter
-(`Semantics/Genericity/Generics.lean`) is, on this view, a choice of
-precisification; exception tolerance is the freedom to choose another. -/
+K&L §4.1.1: a generic is a universal restricted by a vague set of properties, "An owl hunts mice"
+being ∀ ↾ X_owl(Owl)(Hunts mice), (158) and (159), which (161) glosses as *all normal owls hunt
+mice*, with what counts as normal inherently vague. The vague set plays the part of GEN's
+normality: a precisification induces a `Genericity.Normality`, whose normal owls are the owls
+with its properties, and the generic under a precisification is GEN under that normality.
+Exception tolerance is the freedom to choose another precisification. -/
 
-/-- Trivalent under one precisification: every entity in the induced domain
-satisfies the scope. -/
-def genericTrue {Property Entity : Type*} (apply : Property → Set Entity)
+/-- The normality a precisification induces, (161): the normal instances of a restrictor are
+those with every property of the precisification. -/
+def precisificationNormality {Property Entity : Type*} (apply : Property → Set Entity) :
+    Genericity.Normality (Set Property) Entity :=
+  .ofAccess (domainOf · apply)
+
+/-- (159) under one precisification: every instance of the restrictor with the precisified
+properties satisfies the scope, GEN under the normality the precisification induces. -/
+def genericTrue {Property Entity : Type*} (apply : Property → Set Entity) (R : Set Entity)
     (scope : Entity → Prop) (v : Set Property) : Prop :=
-  ∀ e ∈ domainOf v apply, scope e
+  v ∈ (precisificationNormality apply).gen R {e | scope e}
 
 /-- Supervaluationist truth: true under every precisification. -/
 def genericSuperTrue {Property Entity : Type*} (X : VagueRestriction Property)
-    (apply : Property → Set Entity) (scope : Entity → Prop) : Prop :=
-  ∀ v ∈ X.precisifications, genericTrue apply scope v
+    (apply : Property → Set Entity) (R : Set Entity) (scope : Entity → Prop) : Prop :=
+  ∀ v ∈ X.precisifications, genericTrue apply R scope v
 
 /-- Subvaluationist truth: true under some precisification — the
 exception-tolerant reading. -/
 def genericSubTrue {Property Entity : Type*} (X : VagueRestriction Property)
-    (apply : Property → Set Entity) (scope : Entity → Prop) : Prop :=
-  ∃ v ∈ X.precisifications, genericTrue apply scope v
+    (apply : Property → Set Entity) (R : Set Entity) (scope : Entity → Prop) : Prop :=
+  ∃ v ∈ X.precisifications, genericTrue apply R scope v
 
 /-- Domain vagueness yields two precisifications with different domains —
 the room generics need for legitimate exceptions. -/
@@ -405,11 +414,11 @@ them — an apparent counterexample may fall outside the domain under the
 operative precisification. -/
 theorem domain_vagueness_explains_gen_exceptions {Property Entity : Type*}
     (X : VagueRestriction Property) (apply : Property → Set Entity)
-    (scope : Entity → Prop) (hVague : isDomainVague X apply)
-    (hSub : genericSubTrue X apply scope) :
+    (R : Set Entity) (scope : Entity → Prop) (hVague : isDomainVague X apply)
+    (hSub : genericSubTrue X apply R scope) :
     ∃ v₁ ∈ X.precisifications, ∃ v₂ ∈ X.precisifications,
       domainOf v₁ apply ≠ domainOf v₂ apply ∧
-      genericTrue apply scope v₁ := by
+      genericTrue apply R scope v₁ := by
   obtain ⟨v₁, hv₁m, v₂, hv₂m, hne⟩ := domain_vague_allows_exceptions X apply hVague
   obtain ⟨vg, hvgm, hvgt⟩ := hSub
   by_cases h : domainOf vg apply = domainOf v₁ apply
@@ -448,10 +457,10 @@ theorem VagueRestriction.mem_toSpecSpace {Property : Type*}
 [fine-1975]'s super-truth. -/
 theorem genericSuperTrue_iff_superTrue {Property Entity : Type*}
     (X : VagueRestriction Property) (apply : Property → Set Entity)
-    (scope : Entity → Prop) [DecidablePred (genericTrue apply scope)]
+    (R : Set Entity) (scope : Entity → Prop) [DecidablePred (genericTrue apply R scope)]
     (V : Finset (Set Property)) (hV : ↑V = X.precisifications) :
-    genericSuperTrue X apply scope ↔
-      superTrue (genericTrue apply scope) (X.toSpecSpace V hV) = Trivalent.true := by
+    genericSuperTrue X apply R scope ↔
+      superTrue (genericTrue apply R scope) (X.toSpecSpace V hV) = Trivalent.true := by
   rw [superTrue_true_iff]
   exact ⟨λ h v hv => h v (VagueRestriction.mem_toSpecSpace.mp hv),
          λ h v hv => h v (VagueRestriction.mem_toSpecSpace.mpr hv)⟩
@@ -462,10 +471,10 @@ exactly one whose supervaluation status is indefinite: assertable for K&L,
 borderline for [fine-1975]. -/
 theorem genericSubTrue_not_superTrue_iff_indet {Property Entity : Type*}
     (X : VagueRestriction Property) (apply : Property → Set Entity)
-    (scope : Entity → Prop) [DecidablePred (genericTrue apply scope)]
+    (R : Set Entity) (scope : Entity → Prop) [DecidablePred (genericTrue apply R scope)]
     (V : Finset (Set Property)) (hV : ↑V = X.precisifications) :
-    genericSubTrue X apply scope ∧ ¬genericSuperTrue X apply scope ↔
-      superTrue (genericTrue apply scope) (X.toSpecSpace V hV) = Trivalent.indet := by
+    genericSubTrue X apply R scope ∧ ¬genericSuperTrue X apply R scope ↔
+      superTrue (genericTrue apply R scope) (X.toSpecSpace V hV) = Trivalent.indet := by
   rw [superTrue_indet_iff]
   constructor
   · rintro ⟨⟨v, hv, hvt⟩, hns⟩
