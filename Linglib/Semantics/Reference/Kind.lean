@@ -7,41 +7,37 @@ public import Mathlib.Order.SupClosed
 /-!
 # Kinds
 
-This file defines the kinds of [chierchia-1998]. Individuals form a join semilattice ordered by
-part-of, (9): Link's model of nonempty sets of atoms is one instance
-(`Plurality.Algebra.Individual`), but every law below uses only the order. A property assigns
-each situation a set of individuals, and a kind is an individual concept, at each situation the
-totality of its instances. A kind may lack instances at a situation, where its concept is
-undefined (p. 349), so a kind is a partial function (`Kind`). The operator ∪ takes a kind to the
-property of being part of its totality, (15), the principal ideal below the totality where the
-kind is defined and nothing elsewhere (`Kind.up`, `Kind.up_eq_Iic`, `Kind.up_eq_empty`). The
-operator ∩ takes a property to its largest member at each situation, undefined where there is
-none, (16) with the ι of (11a) (`Kind.down`, `Kind.mem_down`): it is an intensionalized ι
-(p. 392), and [krifka-2003] and [krifka-2026] define the same operator. The two are inverse in the
-sense of (17): ∩∪d = d for any kind (`Kind.down_up`), and ∪∩P = P for a property whose extensions
-are closed downward, the mass case, wherever ∩P is defined (`Kind.up_down`). A finite nonempty
-cumulative extension has a largest member, [krifka-2026]'s sufficient condition
-(`Kind.down_dom_of_supClosed`).
+A kind is an individual concept: at each situation it picks out the totality of the kind's
+instances, the largest individual they make up. Where a kind has no instances its concept is
+undefined, so `Kind S E` is a partial function from situations to individuals. Individuals need
+only an order, part-of; Link's nonempty sets of atoms (`Plurality.Algebra.Individual`) are one
+model.
 
-Derived Kind Predication, (31c), applies an object-level predicate to a kind as the existential
-over its instances, `Quantifier.GQ.some (k.up s)`, and a kind takes no scope, as a name takes
-none, §4.2, by `Quantifier.NP.individual_compl`.
+A property is a function from situations to sets of individuals. The property `Kind.up k` holds
+of the parts of the kind's totality, and the kind `Kind.down P` picks out the largest member of
+`P` at each situation that has one. Chierchia writes these operators ∪ and ∩ and shows that they
+are inverse on kinds and on properties closed downward.
 
 ## Main definitions
 
-* `Reference.Kind`: kinds, partial individual concepts.
-* `Reference.Kind.up`, `Reference.Kind.down`: ∪ and ∩.
+* `Reference.Kind`: kinds as partial individual concepts (p. 349).
+* `Reference.Kind.up`: ∪, (15).
+* `Reference.Kind.down`: ∩, (16), built on the ι of (11a).
 
 ## Main results
 
-* `Reference.Kind.up_eq_Iic`, `Reference.Kind.up_eq_empty`: ∪, (15).
-* `Reference.Kind.mem_down`: ∩ is the largest member, (16).
-* `Reference.Kind.down_up`, `Reference.Kind.up_down`: (17a), (17b).
-* `Reference.Kind.down_dom_of_supClosed`: a finite cumulative extension has a kind.
+* `Reference.Kind.up_eq_Iic`, `Reference.Kind.up_eq_empty`: ∪ is an interval or empty.
+* `Reference.Kind.mem_down`: ∩ picks out the largest member.
+* `Reference.Kind.down_up`: (17a), ∩∪d = d.
+* `Reference.Kind.up_down`: (17b), ∪∩P = P for the mass case (p. 351).
+* `Reference.Kind.down_dom_of_supClosed`: Krifka's sufficient condition for ∩, finite case.
 
 ## Implementation notes
 
-A property is a function from situations to sets of individuals, written out as `S → Set E`.
+A property is written out as `S → Set E` rather than named. Chierchia calls ∩ an
+intensionalized ι (p. 392), and Krifka's ∩ is the same operator. Derived Kind Predication,
+(31c), is `Quantifier.GQ.some (k.up s)`, and a kind takes no scope, as a name takes none (§4.2),
+by `Quantifier.NP.individual_compl`; neither needs a definition here.
 
 ## TODO
 
@@ -61,20 +57,20 @@ namespace Reference
 
 variable {S E : Type*}
 
-/-- A kind: a partial individual concept, at each situation the totality of its instances where
-it has any. -/
+/-- A kind is a partial individual concept, which sends each situation where the kind has
+instances to their totality. -/
 abbrev Kind (S E : Type*) := S →. E
 
 section Preorder
 
 variable [Preorder E]
 
-/-- ∪, (15): the property of being part of a kind's totality, empty where the kind is
+/-- `k.up s` is the set of parts of the totality of `k` at `s`; it is empty where `k` is
 undefined. -/
 def Kind.up (k : Kind S E) (s : S) : Set E := {x | ∃ d ∈ k s, x ≤ d}
 
-/-- ∩, (16): at each situation the largest member of the extension, undefined where there is
-none. -/
+/-- `Kind.down P` sends each situation to the largest member of `P` there and is undefined where
+`P` has no largest member. -/
 noncomputable def Kind.down (P : S → Set E) : Kind S E :=
   fun s ↦ ⟨∃ d, IsGreatest (P s) d, fun h ↦ h.choose⟩
 
@@ -107,7 +103,7 @@ theorem Kind.mem_down : d ∈ Kind.down P s ↔ IsGreatest (P s) d := by
   simp only [Kind.down, Part.mem_mk_iff]
   exact ⟨fun ⟨h, hd⟩ ↦ hd ▸ h.choose_spec, fun h ↦ ⟨⟨d, h⟩, (Exists.choose_spec ⟨d, h⟩).unique h⟩⟩
 
-/-- (17a): ∩∪d = d for any kind. -/
+/-- The kind of the property of a kind is that kind. -/
 theorem Kind.down_up (k : Kind S E) : Kind.down k.up = k := by
   funext s
   refine Part.ext fun d ↦ ?_
@@ -117,8 +113,8 @@ theorem Kind.down_up (k : Kind S E) : Kind.down k.up = k := by
   rw [Kind.up_eq_Iic hd]
   exact isGreatest_Iic
 
-/-- (17b): ∪∩P = P for a property whose extensions are closed downward, as the extension of a
-mass noun is (p. 351), wherever ∩P is defined at the situations where `P` has instances. -/
+/-- If each extension of `P` is closed downward and has a largest member wherever it is
+nonempty, then the property of the kind of `P` is `P`. -/
 theorem Kind.up_down (hP : ∀ s, IsLowerSet (P s))
     (hk : ∀ s, (P s).Nonempty → (Kind.down P s).Dom) : (Kind.down P).up = P := by
   funext s
@@ -135,8 +131,8 @@ section SemilatticeSup
 
 variable [SemilatticeSup E] {P : S → Set E} {s : S}
 
-/-- A finite, nonempty, cumulative extension has a largest member, the sum of its members, so ∩
-is defined there ([krifka-2026]'s sufficient condition, finite case). -/
+/-- A finite, nonempty, cumulative extension has a largest member, the sum of its members, so
+`Kind.down` is defined there. -/
 theorem Kind.down_dom_of_supClosed (hfin : (P s).Finite) (hne : (P s).Nonempty)
     (hcum : SupClosed (P s)) : (Kind.down P s).Dom :=
   have ht : hfin.toFinset.Nonempty := hfin.toFinset_nonempty.2 hne

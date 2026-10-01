@@ -5,12 +5,11 @@ public import Linglib.Semantics.Mereology
 /-!
 # Link's algebra of plurals
 
-This file defines the operators of [link-1983] on a join-semilattice `E` of individuals: the
-plural closure `*P` of a predicate, the proper plural `⊕P`, distributivity and invariance of
-predicates, the distributive operator `D` and reciprocal operator `DJR` of [link-1987], and the
-materialization homomorphism from individuals to portions of matter with its material part and
-material equivalence. It proves Link's theorems relating them, and the collapse of `*` on finite
-sets of individuals to distribution over members.
+Link models plural and mass reference with a join semilattice `E` of individuals, in which
+`x ⊔ y` is the sum of `x` and `y`. The plural closure `*P` of a predicate holds of the sums of
+its members, and the proper plural `⊕P` holds of the sums that are not atoms. A materialization
+sends each individual to the matter it is made of and preserves sums. On finite sets of
+individuals, `*` reduces to distribution over members.
 
 ## Definitions
 
@@ -19,8 +18,8 @@ sets of individuals to distribution over members.
 * `Plurality.Algebra.properPlural P`: the non-atomic elements of `*P`.
 * `Plurality.Algebra.IsDistr P`: `P` holds of atoms only.
 * `Plurality.Algebra.Inv h P`: `P` does not distinguish `h`-equivalent individuals.
-* `Plurality.Algebra.D P x`, `Plurality.Algebra.DJR R x`: every atomic part of `x` satisfies
-  `P`; every two distinct atomic parts of `x` are `R`-related.
+* `Plurality.Algebra.D P x`, `Plurality.Algebra.DJR R x`: Link's 1987 distributive and
+  reciprocal operators.
 * `Plurality.Algebra.Materialization E M`: a `SupHom E M`, with `Plurality.Algebra.mPart` and
   `Plurality.Algebra.mEquiv` the preorder and equivalence it induces on `E`.
 * `Plurality.Algebra.AtomJoinPrime E`: an atom below a sum lies below a summand.
@@ -35,16 +34,16 @@ sets of individuals to distribution over members.
   of two distinct atoms of a distributive predicate is a proper plural, and proper plurals are
   closed under sum.
 * `Plurality.Algebra.star_image_singleton`: on finite sets of individuals, taken as singletons,
-  `*` holds of exactly the nonempty subsets.
+  `*` holds of exactly the nonempty subsets, Sternefeld's identification of `*P` with `D P` (15).
 
 ## Implementation notes
 
-Link's carrier is a complete join-semilattice with atoms and without a bottom; only
+Link's model is a complete join semilattice with atoms and without a bottom; only
 `SemilatticeSup E` and `Mereology.Atom` are used here. The complete atomic Boolean algebra of
-later presentations ([landman-2000], [champollion-2017]) is a stronger assumption, entering only
-through `AtomJoinPrime`. The set-based ontology of [schwarzschild-1996], where an individual is
-its singleton and sum is union, is the `Finset α` instance of the `Finset` section; Link's own
-model, whose individuals are the nonempty sets of atoms, has no bottom (`Individual`).
+Landman and Champollion is a stronger assumption, which enters only through `AtomJoinPrime`.
+Schwarzschild's set-based ontology, where an individual is its singleton and sum is union, is
+the `Finset α` instance; Link's own model of nonempty sets of atoms has no bottom (`Individual`).
+On finite sets, `DJR` is `Reciprocal.StrongReciprocity`.
 
 ## References
 
@@ -69,10 +68,10 @@ variable {E : Type*} [SemilatticeSup E] {P Q : E → Prop} {x y : E}
 
 /-! ### Predicate operators -/
 
-/-- The plural closure `*P`: the closure of `P` under sum. -/
+/-- The plural closure `*P` of `P` is its closure under sum. -/
 abbrev star (P : E → Prop) : E → Prop := AlgClosure P
 
-/-- The proper plural `⊕P`: the non-atomic elements of `*P` (D.12). -/
+/-- The proper plural `⊕P` holds of the elements of `*P` that are not atoms (D.12). -/
 def properPlural (P : E → Prop) (x : E) : Prop :=
   star P x ∧ ¬ Atom x
 
@@ -84,27 +83,26 @@ def IsDistr (P : E → Prop) : Prop :=
 def Inv {M : Type*} (h : E → M) (P : E → Prop) : Prop :=
   ∀ x y, h x = h y → (P x ↔ P y)
 
-/-- The distributive operator `D`: every atomic part of `x` satisfies `P` ([link-1987];
-[champollion-2019]). -/
+/-- The distributive operator `D P` holds of `x` when every atomic part of `x` satisfies `P`. -/
 def D (P : E → Prop) (x : E) : Prop :=
   ∀ y ≤ x, Atom y → P y
 
 theorem D_of_atom (hx : Atom x) (hP : P x) : D P x :=
-  λ _ hle hy => (hx.eq hle hy.not_isBot) ▸ hP
+  fun _ hle hy ↦ (hx.eq hle hy.not_isBot) ▸ hP
 
 theorem D_mono (h : ∀ x, P x → Q x) (hD : D P x) : D Q x :=
-  λ y hle hy => h y (hD y hle hy)
+  fun y hle hy ↦ h y (hD y hle hy)
 
-/-- The reciprocal operator `DJR`: every two distinct atomic parts of `x` are `R`-related
-([link-1987]); on finite sets this is `Reciprocal.StrongReciprocity`. -/
+/-- The reciprocal operator `DJR R` holds of `x` when every two distinct atomic parts of `x` are
+`R`-related. -/
 def DJR (R : E → E → Prop) (x : E) : Prop :=
   ∀ y ≤ x, ∀ z ≤ x, Atom y → Atom z → y ≠ z → R y z
 
 theorem DJR_mono {R S : E → E → Prop} (h : ∀ y z, R y z → S y z) (hR : DJR R x) : DJR S x :=
-  λ y hy z hz ha hb hne => h y z (hR y hy z hz ha hb hne)
+  fun y hy z hz ha hb hne ↦ h y z (hR y hy z hz ha hb hne)
 
 theorem DJR_and {R S : E → E → Prop} :
-    DJR (λ y z => R y z ∧ S y z) x ↔ DJR R x ∧ DJR S x := by
+    DJR (fun y z ↦ R y z ∧ S y z) x ↔ DJR R x ∧ DJR S x := by
   simp only [DJR, imp_and, forall_and]
 
 /-! ### Materialization -/
@@ -113,16 +111,16 @@ section Constitution
 
 variable {M : Type*} [SemilatticeSup M]
 
-/-- Materialization (D.22): a sum-preserving map from individuals to their portions of
-matter, a `SupHom`. -/
+/-- A materialization (D.22) is a sum-preserving map from individuals to their portions of
+matter. -/
 abbrev Materialization (E M : Type*) [SemilatticeSup E] [SemilatticeSup M] :=
   SupHom E M
 
-/-- Material part (D.23): the matter of `x` is part of the matter of `y`. -/
+/-- `x` is a material part of `y` (D.23) when the matter of `x` is part of the matter of `y`. -/
 def mPart (h : Materialization E M) (x y : E) : Prop :=
   h x ≤ h y
 
-/-- Material equivalence (D.24): `x` and `y` are made of the same matter. -/
+/-- `x` and `y` are materially equivalent (D.24) when they are made of the same matter. -/
 def mEquiv (h : Materialization E M) (x y : E) : Prop :=
   h x = h y
 
@@ -131,7 +129,7 @@ theorem mPart_of_le (h : Materialization E M) (hxy : x ≤ y) : mPart h x y :=
   OrderHomClass.mono h hxy
 
 theorem equivalence_mEquiv (h : Materialization E M) : Equivalence (mEquiv h) :=
-  ⟨λ _ => rfl, Eq.symm, Eq.trans⟩
+  ⟨fun _ ↦ rfl, Eq.symm, Eq.trans⟩
 
 theorem mEquiv_iff (h : Materialization E M) : mEquiv h x y ↔ mPart h x y ∧ mPart h y x :=
   le_antisymm_iff
@@ -150,7 +148,7 @@ theorem star_iff_of_atom (hx : Atom x) : star P x ↔ P x :=
 
 /-- No element of a distributive predicate is a proper plural (T.6). -/
 theorem IsDistr.not_properPlural (hP : IsDistr P) (hx : P x) : ¬ properPlural P x :=
-  λ h => h.2 (hP x hx)
+  fun h ↦ h.2 (hP x hx)
 
 /-- The sum of two distinct atoms of a distributive predicate is a proper plural. -/
 theorem IsDistr.properPlural_sup (hP : IsDistr P) (hx : P x) (hy : P y) (hne : x ≠ y) :
@@ -160,18 +158,19 @@ theorem IsDistr.properPlural_sup (hP : IsDistr P) (hx : P x) (hy : P y) (hne : x
 /-- Proper plurals are closed under sum. -/
 theorem cum_properPlural : CUM (properPlural P) := by
   rintro x ⟨hx, hx'⟩ y ⟨hy, hy'⟩
-  refine ⟨.sum hx hy, λ h => ?_⟩
+  refine ⟨.sum hx hy, fun h ↦ ?_⟩
   by_cases hx0 : IsBot x
   · rw [sup_eq_right.mpr (hx0 _)] at h
     exact hy' h
   · exact hx' ((h.eq le_sup_left hx0) ▸ h)
 
-/-- Atoms are join-prime: an atom below a sum lies below a summand, as in a Boolean algebra. -/
+/-- Atoms are join-prime when an atom below a sum lies below one of the summands, as in a
+Boolean algebra. -/
 def AtomJoinPrime (E : Type*) [SemilatticeSup E] : Prop :=
   ∀ (a : E), Atom a → ∀ (x y : E), a ≤ x ⊔ y → a ≤ x ∨ a ≤ y
 
-/-- Link's distributive inference: with join-prime atoms, every atomic part of an element of
-`*P` satisfies a distributive `P`. -/
+/-- If atoms are join-prime, every atomic part of an element of `*P` satisfies a distributive
+`P`. -/
 theorem IsDistr.of_star_of_atom_le (hP : IsDistr P) (hJP : AtomJoinPrime E) (h : star P x)
     (hy : Atom y) (hle : y ≤ x) : P y := by
   induction h with
@@ -180,15 +179,13 @@ theorem IsDistr.of_star_of_atom_le (hP : IsDistr P) (hJP : AtomJoinPrime E) (h :
 
 /-! ### Sets of individuals
 
-On the set-based ontology of [schwarzschild-1996], pluralities are finite sets of individuals,
-an individual is its singleton, and sum is union. -/
+In Schwarzschild's set-based ontology, pluralities are finite sets of individuals, an
+individual is its singleton, and sum is union. -/
 
 section Finset
 variable {α : Type*} [DecidableEq α]
 
-/-- `*` of a set of individuals, taken as singletons, holds of exactly its nonempty subsets;
-this is [sternefeld-1998]'s identification of `*P` with `D P` for a `P` true of individuals
-only (15). -/
+/-- `*` of a set of individuals, taken as singletons, holds of exactly its nonempty subsets. -/
 theorem star_image_singleton (S : Set α) (x : Finset α) :
     star (· ∈ ({·} : α → Finset α) '' S) x ↔ x.Nonempty ∧ ↑x ⊆ S := by
   constructor
@@ -200,12 +197,12 @@ theorem star_image_singleton (S : Set α) (x : Finset α) :
       rw [Finset.sup_eq_union, Finset.coe_union]
       exact Set.union_subset ih.2 ih'.2
   · rintro ⟨hx, hS⟩
-    have key : x.sup' hx (λ a => ({a} : Finset α)) = x :=
-      le_antisymm ((Finset.sup'_le_iff _ _).2 λ a ha => Finset.singleton_subset_iff.2 ha)
-        (Finset.subset_iff.2 λ a ha =>
-          Finset.singleton_subset_iff.1 (Finset.le_sup' (λ a => ({a} : Finset α)) ha))
+    have key : x.sup' hx (fun a ↦ ({a} : Finset α)) = x :=
+      le_antisymm ((Finset.sup'_le_iff _ _).2 fun a ha ↦ Finset.singleton_subset_iff.2 ha)
+        (Finset.subset_iff.2 fun a ha ↦
+          Finset.singleton_subset_iff.1 (Finset.le_sup' (fun a ↦ ({a} : Finset α)) ha))
     rw [← key]
-    exact algClosure_finsetSup' hx λ a ha => .base ⟨a, hS ha, rfl⟩
+    exact algClosure_finsetSup' hx fun a ha ↦ .base ⟨a, hS ha, rfl⟩
 
 /-- `*` of a predicate true of individuals only holds of the nonempty pluralities all of
 whose members satisfy it. -/
@@ -235,12 +232,12 @@ section Link
 
 variable {α : Type*}
 
-/-- An individual of Link's model: a nonempty set of atoms. -/
+/-- An individual of Link's model is a nonempty set of atoms. -/
 abbrev Individual (α : Type*) := {s : Set α // s.Nonempty}
 
 instance : SemilatticeSup (Individual α) := Subtype.semilatticeSup fun _ _ hx _ ↦ hx.inl
 
-/-- The atomic individual of an atom, its singleton. -/
+/-- The atomic individual `Individual.atom a` is the singleton of `a`. -/
 def Individual.atom (a : α) : Individual α := ⟨{a}, Set.singleton_nonempty a⟩
 
 end Link

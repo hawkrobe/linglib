@@ -9,21 +9,25 @@ public import Linglib.Semantics.Plurality.MassCount
 /-!
 # Krifka (2026): Anaphora for Concepts, Kinds, and Parts in Dynamic Interpretation
 
-This file formalizes [krifka-2026]'s account of anaphora to concepts, kinds and parts. The head
-noun of a DP introduces a discourse referent anchored to a concept, a property carrying a
-morphosyntactic count feature, and the kind pronouns pick it up: *it* takes a mass concept to
-its kind by the down operator of [chierchia-1998], *they* takes a count concept to the kind of
-its plural closure (`they`), which is why *a spider* is resumed by *them* and *mold* by *it*; on
-a cumulative concept the closure is absorbed, so the two coincide (`they_eq_it_of_supClosed`),
-and on a singular count concept with several instances only the closed kind is defined
-(`spider_no_kind`, `spiders_kind`). Concept discourse referents are presupposed in the input
-assignment, like the referents of names, so they escape anaphoric islands: negation is a test,
-and a test returns its input assignment, so a concept referent survives it while an entity
-referent introduced under the negation does not (`concept_entity_asymmetry`). The anaphors
-differ in what they presuppose: the empty NP and the kind pronoun a concept referent, the
-partitive PP an entity referent, so after *John doesn't own a dog* the kind pronoun *them* is
-interpretable and a partitive is not (`anaphora_after_negation`). The paper's derivation of
-*John doesn't own a dog* is run on a two-entity model (`doesntOwnADog`).
+Krifka treats the head noun of a DP as introducing a discourse referent for a concept, a
+property with a count feature. The kind pronouns take that concept to a kind: *it* takes a mass
+concept to its kind, and *they* takes a count concept to the kind of its plural closure, so *a
+spider* is resumed by *them* and *mold* by *it*. Concept referents are presupposed by the input
+assignment, as the referents of names are, so they survive negation, which is a test, while an
+entity referent introduced under negation does not. After *John doesn't own a dog*, the kind
+pronoun *them* is therefore interpretable and a partitive is not.
+
+## Main results
+
+* `Krifka2026.they_eq_it_of_supClosed`: on a cumulative concept the two pronouns coincide.
+* `Krifka2026.spider_no_kind`, `Krifka2026.spiders_kind`: a singular count concept with two
+  instances has only the closed kind.
+* `Krifka2026.concept_entity_asymmetry`: a concept referent survives negation and an entity
+  referent does not.
+* `Krifka2026.anaphora_after_negation`: after negation the kind pronoun and the empty NP are
+  interpretable and the partitive is not.
+* `Krifka2026.doesntOwnADog_g₀`, `Krifka2026.them_after_doesntOwnADog`: the paper's derivation
+  of *John doesn't own a dog* on a two-entity model.
 
 ## Implementation notes
 
@@ -65,19 +69,19 @@ section Kinds
 
 variable [SemilatticeSup E]
 
-/-- *it* (17a): the kind of a concept, ∩ of (13b). -/
+/-- *it* (17a) denotes the kind of a concept, ∩ as in (13b). -/
 noncomputable def it (P : World → Set E) : Kind World E := Kind.down P
 
-/-- *they* (17b): the kind of the plural closure (14) of a concept. -/
+/-- *they* (17b) denotes the kind of the plural closure (14) of a concept. -/
 noncomputable def they (P : World → Set E) : Kind World E := Kind.down fun w ↦ supClosure (P w)
 
-/-- The kind pronoun the count feature selects. -/
+/-- `pronoun f` is the kind pronoun that the count feature `f` selects. -/
 noncomputable def pronoun : MassCount → (World → Set E) → Kind World E
   | .mass => it
   | .count => they
 
-/-- Absorption: on a cumulative concept the closure changes nothing, so *they* and *it* would
-denote the same kind ((16), (18d)); only the feature keeps *it* off a count concept. -/
+/-- On a cumulative concept the plural closure changes nothing, so *they* and *it* denote the
+same kind ((16), (18d)). -/
 theorem they_eq_it_of_supClosed {P : World → Set E} (h : ∀ w, SupClosed (P w)) :
     they P = it P := by
   unfold they it
@@ -85,7 +89,7 @@ theorem they_eq_it_of_supClosed {P : World → Set E} (h : ∀ w, SupClosed (P w
 
 end Kinds
 
-/-- Two spiders, as a property of individuals over two atoms. -/
+/-- The concept *spider* holds of the two atoms of a two-atom model. -/
 def spider : Unit → Set (Individual Bool) :=
   fun _ ↦ {Individual.atom true, Individual.atom false}
 
@@ -98,7 +102,7 @@ theorem spider_no_kind : ¬ (it spider ()).Dom := by
   · exact Bool.noConfusion (Set.mem_singleton_iff.1 (h₂ (Set.mem_singleton false)))
   · exact Bool.noConfusion (Set.mem_singleton_iff.1 (h₁ (Set.mem_singleton true)))
 
-/-- The kind of its plural closure is the sum of the two spiders (15b). -/
+/-- The kind of the plural closure of *spider* is the sum of the two spiders (15b). -/
 theorem spiders_kind : Individual.atom true ⊔ Individual.atom false ∈ they spider () := by
   rw [they, Kind.mem_down]
   refine ⟨supClosed_supClosure (subset_supClosure (Set.mem_insert _ _))
@@ -111,8 +115,8 @@ theorem spiders_kind : Individual.atom true ⊔ Individual.atom false ∈ they s
 
 /-! ### Concept discourse referents and anaphoric islands -/
 
-/-- The values a discourse referent can be anchored to (§4): an entity, a concept with its
-count feature, a kind, or an index; `undef` marks an index outside the assignment's domain. -/
+/-- A discourse referent is anchored to an entity, a concept with its count feature, a kind, or
+an index (§4); `undef` marks an index outside the assignment's domain. -/
 inductive DRefVal (World E : Type*)
   | entity (x : E)
   | concept (P : World → Set E) (f : MassCount)
@@ -120,11 +124,11 @@ inductive DRefVal (World E : Type*)
   | index (w : World)
   | undef
 
-/-- Heterogeneous assignments. -/
+/-- A heterogeneous assignment sends each index to a discourse-referent value. -/
 abbrev HAssign (World E : Type*) := Assignment (DRefVal World E)
 
-/-- Existential introduction of an entity referent at `n`, as by an indexed determiner (40c);
-what falls under what is left to the body. -/
+/-- `entityIntro n body` introduces an entity referent at `n` existentially, as an indexed
+determiner does (40c), and leaves its restriction to `body`. -/
 def entityIntro (n : ℕ) (body : Update (HAssign World E)) : Update (HAssign World E) :=
   {(g, h) | ∃ x : E, Function.update g n (.entity x) ~[body] h}
 
@@ -146,8 +150,8 @@ theorem entity_trapped_by_test {n : ℕ} {C : Condition (HAssign World E)}
     {g h : HAssign World E} (hNovel : g n = .undef) (hTest : g ~[test C] h) : h n = .undef :=
   (test_apply_eq hTest n).trans hNovel
 
-/-- The asymmetry under negation (45): the concept referent persists, the entity referent does
-not; both are the one fact about tests, the asymmetry lying in where the two conditions sit. -/
+/-- Under negation the concept referent persists and the entity referent does not (45); the
+asymmetry lies only in where the two referents are introduced. -/
 theorem concept_entity_asymmetry {nC nE : ℕ} {P : World → Set E} {f : MassCount}
     {φ : Update (HAssign World E)} {g h : HAssign World E}
     (hPresup : g nC = .concept P f) (hNovel : g nE = .undef) (hNeg : g ~[test (neg φ)] h) :
@@ -190,26 +194,26 @@ end Anaphors
 
 /-! ### *John doesn't own a dog* -/
 
-/-- The entities of the model. -/
+/-- The model has two entities, John and Mary. -/
 inductive Ent
   | john
   | mary
   deriving DecidableEq
 
-/-- The concept *dog*, with no instances. -/
+/-- The concept *dog* has no instances. -/
 def dog : Unit → Set (Individual Ent) := fun _ ↦ ∅
 
-/-- The input assignment of (44e): John at 1, the count concept *dog* at 2. -/
+/-- The input assignment of (44e) sends 1 to John and 2 to the count concept *dog*. -/
 def g₀ : HAssign Unit (Individual Ent)
   | 1 => .entity (Individual.atom .john)
   | 2 => .concept dog .count
   | _ => .undef
 
-/-- *own [a₃ [dog]₂]* (44c): a referent at 3 falling under the concept at 2. -/
+/-- *own [a₃ [dog]₂]* (44c) introduces a referent at 3 that falls under the concept at 2. -/
 def ownADog : Update (HAssign Unit (Individual Ent)) :=
   entityIntro 3 (test {g | ∃ P f x, g 2 = .concept P f ∧ g 3 = .entity x ∧ x ∈ P ()})
 
-/-- *John₁ doesn't own [a₃ [dog]₂]* (44e): the VP negation is the test of the negated update. -/
+/-- *John₁ doesn't own [a₃ [dog]₂]* (44e) is the VP negation, the test of the negated update. -/
 def doesntOwnADog : Update (HAssign Unit (Individual Ent)) := test (neg ownADog)
 
 /-- The negated sentence holds in the model, there being no dogs, and returns the input. -/
