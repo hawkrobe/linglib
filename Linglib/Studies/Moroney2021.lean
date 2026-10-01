@@ -45,7 +45,7 @@ and refers to it if it is close (`demDenotation`, her (147)–(148)).
 namespace Moroney2021
 
 open Reference
-open Genericity Genericity.MeaningPreservation
+open Genericity
 open Mereology (CUM)
 
 /-! ### Type-shift selection -/
@@ -54,16 +54,16 @@ open Mereology (CUM)
 English bare singular has no shift available at all, since *the* blocks ι and ι^x, *a* blocks ∃,
 and ∩ is undefined for a singular count noun. -/
 theorem shan_iota_english_none :
-    MaximalFor (Shan.Determiners.inventory.Available False) dayal .iota ∧
+    MaximalFor (Shan.Determiners.inventory.Available False) (· ≠ .exists) .iota ∧
       ∀ τ, ¬ English.Determiners.inventory.Available (DownDefined .count .singular) τ := by
   decide
 
 /-- With a kind-compatible predicate ∩, ι and ι^x are all maximal, which is the kind and definite
 ambiguity of Shan bare nouns. -/
 theorem shan_kind_ambiguity :
-    MaximalFor (Shan.Determiners.inventory.Available True) dayal .down ∧
-      MaximalFor (Shan.Determiners.inventory.Available True) dayal .iota ∧
-      MaximalFor (Shan.Determiners.inventory.Available True) dayal .iotaAnaphoric := by
+    MaximalFor (Shan.Determiners.inventory.Available True) (· ≠ .exists) .down ∧
+      MaximalFor (Shan.Determiners.inventory.Available True) (· ≠ .exists) .iota ∧
+      MaximalFor (Shan.Determiners.inventory.Available True) (· ≠ .exists) .iotaAnaphoric := by
   decide
 
 /-- Shan blocks no ι^x, so bare nouns reach anaphoric definiteness; Thai's demonstrative marks
@@ -79,7 +79,7 @@ reading arises only through existential closure at vP, whence the missing high-s
 existential. -/
 theorem shan_exists_is_last_resort :
     Shan.Determiners.inventory.Available False .exists ∧
-      ¬ MaximalFor (Shan.Determiners.inventory.Available False) dayal .exists := by
+      ¬ MaximalFor (Shan.Determiners.inventory.Available False) (· ≠ .exists) .exists := by
   decide
 
 /-! ### The typology, derived per language -/
