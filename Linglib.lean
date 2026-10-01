@@ -41,7 +41,6 @@ import Linglib.Core.Algebra.RootedTree.Primitive
 import Linglib.Core.Algebra.RotaBaxter
 import Linglib.Core.Algebra.RotaBaxterLaurent
 import Linglib.Core.Algebra.Group.IdempotentPower
-import Linglib.Core.Algebra.Semigroup.Pseudovariety
 import Linglib.Core.Analysis.Convex.Function
 import Linglib.Core.Analysis.LeastSquares
 import Linglib.Core.Analysis.SpecialFunctions.Sigmoid
@@ -78,10 +77,8 @@ import Linglib.Core.Computability.Subsequential
 import Linglib.Core.Computability.SyntacticMonoid
 import Linglib.Core.Computability.SyntacticSemigroup
 import Linglib.Core.Computability.TransitionMonoid
-import Linglib.Core.Computability.Variety.Correspondence
 import Linglib.Core.Computability.Variety.Langs
 import Linglib.Core.Computability.Variety.Definite
-import Linglib.Core.Computability.Variety.SemigroupLangs
 import Linglib.Core.Data.Fin.Tuple.Basic
 import Linglib.Core.Data.Fin.VecNotation
 import Linglib.Core.Data.Fintype.ExistsUnique

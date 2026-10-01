@@ -8,6 +8,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Algebra.Group.Aperiodic
+public import Linglib.Core.Algebra.Group.LocallyTrivial
 public import Linglib.Core.Algebra.Group.Subquotient
 public import Linglib.Core.GroupTheory.Congruence.Hom
 public import Mathlib.Algebra.Group.Pi.Lemmas
@@ -18,33 +19,40 @@ public import Mathlib.GroupTheory.Congruence.Hom
 public import Mathlib.Order.CompleteLattice.Defs
 
 /-!
-# Pseudovarieties of finite monoids
+# Pseudovarieties of finite monoids and semigroups
 
-This file defines pseudovarieties of finite monoids. A *pseudovariety* is a class of finite monoids
-closed under submonoids, quotients and finite direct products, the empty product being the trivial
-monoid. Pseudovarieties are the algebraic side of Eilenberg's variety theorem, which matches them
-with the varieties of regular languages.
+This file defines pseudovarieties of finite monoids and of finite semigroups. A *pseudovariety* is
+a class of finite monoids, or of finite semigroups, closed under submonoids or subsemigroups,
+quotients and finite direct products, the empty product being the trivial one. Pseudovarieties are
+the algebraic side of Eilenberg's variety theorem, which matches the monoid ones with the
+varieties of regular languages and the semigroup ones with the varieties of languages of nonempty
+words.
 
 ## Main definitions
 
-* `Monoid.Pseudovariety`: a class of finite monoids closed under submonoids, quotients and
-  products.
+* `Monoid.Pseudovariety`, `Semigroup.Pseudovariety`: classes of finite monoids, respectively
+  semigroups, closed under substructures, quotients and products.
 * `Monoid.Pseudovariety.generated`: the least pseudovariety containing a class of finite monoids.
 * `Monoid.aperiodicVariety`: the pseudovariety of finite aperiodic monoids.
+* `Semigroup.definiteVariety`, `Semigroup.reverseDefiniteVariety`,
+  `Semigroup.locallyTrivialVariety`: the pseudovarieties **D**, **K** and **LI**.
 
 ## Main results
 
 * `Monoid.Pseudovariety.pi_mem`: closure under finite dependent products.
-* `Monoid.Pseudovariety.mem_quotient_of_le`, `mem_quotient_ker`, `mem_quotient_inf`: closure
-  properties of quotients by congruences.
-* The pseudovarieties form a complete lattice, with infimum the intersection.
+* `Monoid.Pseudovariety.mem_quotient_of_le`, `mem_quotient_ker`, `mem_quotient_inf` and their
+  semigroup counterparts: closure properties of quotients by congruences.
+* The pseudovarieties of finite monoids form a complete lattice, with infimum the intersection.
 
 ## Implementation notes
 
-`mem` is a total predicate on `Type u` monoids that implies finiteness (`finite_of_mem`), so the
-order on pseudovarieties is inclusion of classes of finite monoids and is antisymmetric. The
-structure lives in a fixed universe `u`, like mathlib's `MorphismProperty`; concrete
-pseudovarieties such as `aperiodicVariety` are universe-polymorphic definitions.
+`mem` is a total predicate on `Type u` monoids or semigroups that implies finiteness
+(`finite_of_mem`), so the order on pseudovarieties is inclusion of classes of finite structures and
+is antisymmetric. The structures live in a fixed universe `u`, like mathlib's `MorphismProperty`;
+concrete pseudovarieties are universe-polymorphic definitions. The semigroup pseudovarieties
+**D**, **K** and **LI** have no monoid counterpart, since their conditions at the idempotent `1`
+force triviality; the pseudovariety **N** of nilpotent semigroups is the intersection of **D** and
+**K** and is not bundled.
 
 ## References
 
@@ -204,3 +212,104 @@ def aperiodicVariety : Pseudovariety.{u} where
     aperiodicVariety.mem M ↔ Finite M ∧ IsAperiodic M := Iff.rfl
 
 end Monoid
+
+namespace Semigroup
+
+/-- A *pseudovariety of finite semigroups* is a class of finite semigroups closed under
+subsemigroups, quotients and finite products, with closure phrased through injective and surjective
+`MulHom`s. -/
+structure Pseudovariety where
+  /-- The semigroups belonging to the pseudovariety. -/
+  mem : ∀ (S : Type u) [Semigroup S], Prop
+  /-- Every member is finite. -/
+  finite_of_mem : ∀ {S : Type u} [Semigroup S], mem S → Finite S
+  /-- The domain of an injective homomorphism into a member is a member. -/
+  sub : ∀ {S T : Type u} [Semigroup S] [Semigroup T] {f : S →ₙ* T},
+    Function.Injective f → mem T → mem S
+  /-- The codomain of a surjective homomorphism from a member is a member. -/
+  quot : ∀ {S T : Type u} [Semigroup S] [Semigroup T] {f : S →ₙ* T},
+    Function.Surjective f → mem S → mem T
+  /-- The product of two members is a member. -/
+  prod : ∀ {S T : Type u} [Semigroup S] [Semigroup T], mem S → mem T → mem (S × T)
+  /-- The trivial semigroup is a member. -/
+  memUnit : mem PUnit.{u + 1}
+
+namespace Pseudovariety
+
+variable (V : Pseudovariety.{u})
+
+@[ext] theorem ext {V W : Pseudovariety.{u}}
+    (h : ∀ (S : Type u) [Semigroup S], V.mem S ↔ W.mem S) : V = W := by
+  obtain ⟨Vm, _, _, _, _, _⟩ := V
+  obtain ⟨Wm, _, _, _, _, _⟩ := W
+  obtain rfl : Vm = Wm := funext fun S ↦ funext fun _ ↦ propext (h S)
+  rfl
+
+instance : PartialOrder Pseudovariety.{u} where
+  le V W := ∀ (S : Type u) [Semigroup S], V.mem S → W.mem S
+  le_refl _ _ _ h := h
+  le_trans _ _ _ h₁ h₂ S _ h := h₂ S (h₁ S h)
+  le_antisymm _ _ h₁ h₂ := ext fun S _ ↦ ⟨h₁ S, h₂ S⟩
+
+theorem mem_of_mulEquiv {S T : Type u} [Semigroup S] [Semigroup T] (e : S ≃* T) (h : V.mem S) :
+    V.mem T :=
+  V.quot (f := e.toMulHom) e.surjective h
+
+/-- Membership of a quotient descends along a coarsening of congruences. -/
+theorem mem_quotient_of_le {S : Type u} [Semigroup S] {c d : Con S} (h : c ≤ d)
+    (hc : V.mem c.Quotient) : V.mem d.Quotient :=
+  V.quot (Con.mapMulHom_surjective c d h) hc
+
+/-- The quotient by the kernel of a homomorphism into a member is a member. -/
+theorem mem_quotient_ker {S T : Type u} [Semigroup S] [Semigroup T] (f : S →ₙ* T)
+    (h : V.mem T) : V.mem (Con.ker f).Quotient :=
+  V.sub (Con.kerLiftMulHom_injective f) h
+
+/-- The quotient by the meet of two congruences is a member when both quotients are. -/
+theorem mem_quotient_inf {S : Type u} [Semigroup S] {c d : Con S} (hc : V.mem c.Quotient)
+    (hd : V.mem d.Quotient) : V.mem (c ⊓ d).Quotient := by
+  have h : Con.ker (c.mkMulHom.prod d.mkMulHom) ≤ c ⊓ d := by
+    rw [Con.ker_prodMulHom, Con.ker_mkMulHom_eq, Con.ker_mkMulHom_eq]
+  exact V.mem_quotient_of_le h (V.mem_quotient_ker _ (V.prod hc hd))
+
+end Pseudovariety
+
+/-! ### The bundled pseudovarieties -/
+
+/-- The pseudovariety **D** of definite semigroups. -/
+def definiteVariety : Pseudovariety.{u} where
+  mem S _ := Finite S ∧ IsDefinite S
+  finite_of_mem h := h.1
+  sub hf h := have := h.1; ⟨.of_injective _ hf, h.2.of_injective hf⟩
+  quot hf h := have := h.1; ⟨.of_surjective _ hf, h.2.of_surjective hf⟩
+  prod hS hT := have := hS.1; have := hT.1; ⟨inferInstance, hS.2.prod hT.2⟩
+  memUnit := ⟨inferInstance, fun _ _ _ ↦ rfl⟩
+
+/-- The pseudovariety **K** of reverse definite semigroups. -/
+def reverseDefiniteVariety : Pseudovariety.{u} where
+  mem S _ := Finite S ∧ IsReverseDefinite S
+  finite_of_mem h := h.1
+  sub hf h := have := h.1; ⟨.of_injective _ hf, h.2.of_injective hf⟩
+  quot hf h := have := h.1; ⟨.of_surjective _ hf, h.2.of_surjective hf⟩
+  prod hS hT := have := hS.1; have := hT.1; ⟨inferInstance, hS.2.prod hT.2⟩
+  memUnit := ⟨inferInstance, fun _ _ _ ↦ rfl⟩
+
+/-- The pseudovariety **LI** of locally trivial semigroups. -/
+def locallyTrivialVariety : Pseudovariety.{u} where
+  mem S _ := Finite S ∧ IsLocallyTrivial S
+  finite_of_mem h := h.1
+  sub hf h := have := h.1; ⟨.of_injective _ hf, h.2.of_injective hf⟩
+  quot hf h := have := h.1; ⟨.of_surjective _ hf, h.2.of_surjective hf⟩
+  prod hS hT := have := hS.1; have := hT.1; ⟨inferInstance, hS.2.prod hT.2⟩
+  memUnit := ⟨inferInstance, fun _ _ _ ↦ rfl⟩
+
+@[simp] theorem mem_definiteVariety {S : Type u} [Semigroup S] :
+    definiteVariety.mem S ↔ Finite S ∧ IsDefinite S := Iff.rfl
+
+@[simp] theorem mem_reverseDefiniteVariety {S : Type u} [Semigroup S] :
+    reverseDefiniteVariety.mem S ↔ Finite S ∧ IsReverseDefinite S := Iff.rfl
+
+@[simp] theorem mem_locallyTrivialVariety {S : Type u} [Semigroup S] :
+    locallyTrivialVariety.mem S ↔ Finite S ∧ IsLocallyTrivial S := Iff.rfl
+
+end Semigroup
