@@ -1,0 +1,447 @@
+[
+  {
+    "id": "williams2025_4",
+    "source": {"bibkey": "williams-2025", "paperLabel": "(4)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John forgot that he stopped by the flower shop.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["complement", "finite clause"],
+      ["reading", "cognition"],
+      ["presupposition", "John stopped by the flower shop"]
+    ],
+    "comment": "Also (1) and (3). The cognition reading; (4a) is its presupposition.",
+    "verified": "page-image"
+  },
+  {
+    "id": "williams2025_5",
+    "source": {"bibkey": "williams-2025", "paperLabel": "(5)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John forgot to stop by the flower shop.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["complement", "plain infinitive"],
+      ["reading", "psych-action"],
+      ["presupposition", "John was supposed to stop by the flower shop"],
+      ["presupposition", "If John stopped by the flowershop, it is because he remembered to do it."]
+    ],
+    "comment": "Also (2), which does not presuppose that John stopped. (5a) is the modalized presupposition, (5b) the necessity and sufficiency presupposition, which the paper leaves to future work.",
+    "verified": "page-image"
+  },
+  {
+    "id": "williams2025_7a",
+    "source": {"bibkey": "williams-2025", "paperLabel": "(7a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John forgot stopping by the flowershop but he did not have to stop by the flowershop.",
+    "discourseSegments": [
+      "John forgot stopping by the flowershop",
+      "but he did not have to stop by the flowershop."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["complement", "PRO-ing gerund"],
+      ["test", "contradiction"],
+      ["denied", "obligation"]
+    ],
+    "comment": "The continuation is printed after an ellipsis, as a test continuing the sentence. Does not presuppose that John had to stop by the flowershop.",
+    "verified": "page-image"
+  },
+  {
+    "id": "williams2025_8a",
+    "source": {"bibkey": "williams-2025", "paperLabel": "(8a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John forgot having stopped by the flower shop but he did not have to stop by the flower shop",
+    "discourseSegments": [
+      "John forgot having stopped by the flower shop",
+      "but he did not have to stop by the flower shop"
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["complement", "perfect gerund"],
+      ["test", "contradiction"],
+      ["denied", "obligation"]
+    ],
+    "comment": "The continuation is printed after an ellipsis, as a test continuing the sentence. Does not presuppose that John had to stop by the flowershop.",
+    "verified": "page-image"
+  },
+  {
+    "id": "williams2025_9a",
+    "source": {"bibkey": "williams-2025", "paperLabel": "(9a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John forgot stopping by the flower shop but he didn't stop by the flower shop",
+    "discourseSegments": [
+      "John forgot stopping by the flower shop",
+      "but he didn't stop by the flower shop"
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["complement", "PRO-ing gerund"],
+      ["test", "contradiction"],
+      ["denied", "event"]
+    ],
+    "comment": "The continuation is printed after an ellipsis, as a test continuing the sentence. Presupposes that John stopped by the flower shop.",
+    "verified": "page-image"
+  },
+  {
+    "id": "williams2025_10a",
+    "source": {"bibkey": "williams-2025", "paperLabel": "(10a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John forgot having stopped by the flower shop but he didn't stop by the flower shop",
+    "discourseSegments": [
+      "John forgot having stopped by the flower shop",
+      "but he didn't stop by the flower shop"
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["complement", "perfect gerund"],
+      ["test", "contradiction"],
+      ["denied", "event"]
+    ],
+    "comment": "The continuation is printed after an ellipsis, as a test continuing the sentence. Presupposes that John stopped by the flower shop.",
+    "verified": "page-image"
+  },
+  {
+    "id": "williams2025_11a",
+    "source": {"bibkey": "williams-2025", "paperLabel": "(11a)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "Juan olvidó que pasó por la floristería pero no tenía por qué pasar por la floristería",
+    "discourseSegments": [
+      "Juan olvidó que pasó por la floristería",
+      "pero no tenía por qué pasar por la floristería"
+    ],
+    "glossedTokens": [
+      ["Juan", "Juan"], ["olvidó", "forgot"], ["que", "that"], ["pasó", "he.passed"],
+      ["por", "by"], ["la", "the"], ["floristería", "flowershop"], ["pero", "but"], ["no", "NEG"],
+      ["tenía", "have.to"], ["por", "for"], ["qué", "that"], ["pasar", "to.pass"], ["por", "by"],
+      ["la", "the"], ["floristería", "flowershop"]
+    ],
+    "translation": "John forgot that he stopped by the flowershop but he didn't have to stop by the flowershop",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["complement", "finite clause"],
+      ["test", "contradiction"],
+      ["denied", "obligation"]
+    ],
+    "comment": "The continuation is printed after an ellipsis, as a test continuing the sentence. The paper glosses and translates (11) and (11a) separately. Does not presuppose that Juan had to stop by the flower shop.",
+    "verified": "page-image"
+  },
+  {
+    "id": "williams2025_12a",
+    "source": {"bibkey": "williams-2025", "paperLabel": "(12a)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "Juan olvidó pasar por la floristería pero no tenía por qué pasar por la floristería",
+    "discourseSegments": [
+      "Juan olvidó pasar por la floristería",
+      "pero no tenía por qué pasar por la floristería"
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["complement", "plain infinitive"],
+      ["test", "contradiction"],
+      ["denied", "obligation"]
+    ],
+    "comment": "The continuation is printed after an ellipsis, as a test continuing the sentence. Presupposes Juan had to stop by the flower shop.",
+    "verified": "page-image"
+  },
+  {
+    "id": "williams2025_13a",
+    "source": {"bibkey": "williams-2025", "paperLabel": "(13a)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "Juan olvidó haber pasado por la floristería pero no tenía por qué pasar por la floristería",
+    "discourseSegments": [
+      "Juan olvidó haber pasado por la floristería",
+      "pero no tenía por qué pasar por la floristería"
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["complement", "perfect infinitive"],
+      ["test", "contradiction"],
+      ["denied", "obligation"]
+    ],
+    "comment": "The continuation is printed after an ellipsis, as a test continuing the sentence. Does not presuppose Juan had to stop by the flower shop.",
+    "verified": "page-image"
+  },
+  {
+    "id": "williams2025_14a",
+    "source": {"bibkey": "williams-2025", "paperLabel": "(14a)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "Juan olvidó haber pasado por la floristería pero no pasó por la floristería",
+    "discourseSegments": [
+      "Juan olvidó haber pasado por la floristería",
+      "pero no pasó por la floristería"
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["complement", "perfect infinitive"],
+      ["test", "contradiction"],
+      ["denied", "event"]
+    ],
+    "comment": "The continuation is printed after an ellipsis, as a test continuing the sentence. Presupposes Juan stopped by the flower shop.",
+    "verified": "page-image"
+  },
+  {
+    "id": "williams2025_fn5_i",
+    "source": {"bibkey": "williams-2025", "paperLabel": "fn. 5 (i)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John forgot to have stopped by the flower shop.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [
+      {"form": "John claimed to have stopped by the flower shop.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["complement", "perfect infinitive"]
+    ],
+    "comment": "English bans perfect infinitives with forget; printed as John {*forgot/claimed}.",
+    "verified": "page-image"
+  },
+  {
+    "id": "williams2025_18a",
+    "source": {"bibkey": "williams-2025", "paperLabel": "(18a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "On Tuesday, Mary forgot that she called back her twin. On Monday, Mary began to call back her twin.",
+    "discourseSegments": [
+      "On Tuesday, Mary forgot that she called back her twin.",
+      "On Monday, Mary began to call back her twin."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["complement", "finite clause"],
+      ["test", "pre-existence"]
+    ],
+    "comment": "The embedded event must start before the forgetting.",
+    "verified": "page-image"
+  },
+  {
+    "id": "williams2025_18b",
+    "source": {"bibkey": "williams-2025", "paperLabel": "(18b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "On Tuesday, Mary forgot that she called back her twin. On Wednesday, Mary began to call back her twin.",
+    "discourseSegments": [
+      "On Tuesday, Mary forgot that she called back her twin.",
+      "On Wednesday, Mary began to call back her twin."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["complement", "finite clause"],
+      ["test", "pre-existence"]
+    ],
+    "comment": "The embedded event must start before the forgetting.",
+    "verified": "page-image"
+  },
+  {
+    "id": "williams2025_19a",
+    "source": {"bibkey": "williams-2025", "paperLabel": "(19a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "On Tuesday, Mary forgot calling back her twin. On Monday, Mary began to call back her twin.",
+    "discourseSegments": [
+      "On Tuesday, Mary forgot calling back her twin.",
+      "On Monday, Mary began to call back her twin."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["complement", "PRO-ing gerund"],
+      ["test", "pre-existence"]
+    ],
+    "comment": "The embedded event must start before the forgetting.",
+    "verified": "page-image"
+  },
+  {
+    "id": "williams2025_19b",
+    "source": {"bibkey": "williams-2025", "paperLabel": "(19b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "On Tuesday, Mary forgot calling back her twin. On Wednesday, Mary began to call back her twin.",
+    "discourseSegments": [
+      "On Tuesday, Mary forgot calling back her twin.",
+      "On Wednesday, Mary began to call back her twin."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["complement", "PRO-ing gerund"],
+      ["test", "pre-existence"]
+    ],
+    "comment": "The embedded event must start before the forgetting.",
+    "verified": "page-image"
+  },
+  {
+    "id": "williams2025_20a",
+    "source": {"bibkey": "williams-2025", "paperLabel": "(20a)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "María olvidó haber devuelto la llamada a su gemela. El lunes, María comenzó a devolverle la llamada a su gemela.",
+    "discourseSegments": [
+      "María olvidó haber devuelto la llamada a su gemela.",
+      "El lunes, María comenzó a devolverle la llamada a su gemela."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["complement", "perfect infinitive"],
+      ["test", "pre-existence"]
+    ],
+    "comment": "The embedded event must start before the forgetting.",
+    "verified": "page-image"
+  },
+  {
+    "id": "williams2025_20b",
+    "source": {"bibkey": "williams-2025", "paperLabel": "(20b)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "María olvidó haber devuelto la llamada a su gemela. El miércoles, María comenzó a devolverle la llamada a su gemela.",
+    "discourseSegments": [
+      "María olvidó haber devuelto la llamada a su gemela.",
+      "El miércoles, María comenzó a devolverle la llamada a su gemela."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["complement", "perfect infinitive"],
+      ["test", "pre-existence"]
+    ],
+    "comment": "The embedded event must start before the forgetting.",
+    "verified": "page-image"
+  },
+  {
+    "id": "williams2025_21a",
+    "source": {"bibkey": "williams-2025", "paperLabel": "(21a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "On Tuesday, Mary forgot to call back her twin. On Monday, Mary's twin told her to call her back.",
+    "discourseSegments": [
+      "On Tuesday, Mary forgot to call back her twin.",
+      "On Monday, Mary's twin told her to call her back."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["complement", "plain infinitive"],
+      ["test", "pre-existence"]
+    ],
+    "comment": "Printed with indices: Mary₁'s twin₂ told her₁ to call her₂ back. The obligation, not the call, must start before the forgetting.",
+    "verified": "page-image"
+  },
+  {
+    "id": "williams2025_21b",
+    "source": {"bibkey": "williams-2025", "paperLabel": "(21b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "On Tuesday, Mary forgot to call back her twin. On Wednesday, Mary's twin told her to call her back.",
+    "discourseSegments": [
+      "On Tuesday, Mary forgot to call back her twin.",
+      "On Wednesday, Mary's twin told her to call her back."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["complement", "plain infinitive"],
+      ["test", "pre-existence"]
+    ],
+    "comment": "Printed with indices: Mary₁'s twin₂ told her₁ to call her₂ back. The obligation, not the call, must start before the forgetting.",
+    "verified": "page-image"
+  }
+]
