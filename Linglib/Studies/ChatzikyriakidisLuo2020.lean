@@ -33,8 +33,8 @@ carrier, all five laws hold.
 ## Main statements
 
 * `range_sigma_comp`: intersective modification meets the noun's extension with the adjective's.
-* `not_forall_nonempty_sub_sigma`: subsective modification need not respect subtyping.
-* `forall_does_iff_injective`: law (A1) holds on a noun exactly when its embedding is injective.
+* `not_forall_nonempty_hom_sigma`: subsective modification need not respect subtyping.
+* `forall_does_iff_mono`: law (A1) holds on a noun exactly when its embedding is a monomorphism.
 * `not_doesNot_comp_heq`, `not_forall_doesNot_of_sub_heq`, `not_exists_doesNot_of_sub_heq`: laws
   (A3), (A4) and (A5) fail for `HEq`.
 * `three₀_iff_two_lt_card`: three objects distinct under an identity criterion satisfy a predicate
@@ -42,12 +42,12 @@ carrier, all five laws hold.
 
 ## Implementation notes
 
-* Nouns are types embedded in a carrier of objects, as in [chatzikyriakidis-luo-2017]. The book's
-  universe has no such carrier; here it supplies the heterogeneous equality, under which two
-  objects are equal when their images are. This equality identifies an object with its image under
-  a coercion, the axiom that [xue-luo-chatzikyriakidis-2018] add to prove (A3)–(A5).
-* Coercions are explicit maps commuting with the embeddings rather than `Coe` instances, so that
-  statements quantify over nouns.
+* As in [chatzikyriakidis-luo-2017], a noun is an object of `Over Obj`, a type embedded in a type
+  `Obj` of all objects, and a coercion is a morphism of `Over Obj`. The book's universe has no such
+  `Obj`; here it supplies the heterogeneous equality, under which two objects are equal when their
+  images are. This equality identifies an object with its image under a coercion, the axiom that
+  [xue-luo-chatzikyriakidis-2018] add to prove (A3)–(A5).
+* Coercions are morphisms rather than `Coe` instances, so that statements quantify over nouns.
 * By propositional extensionality every modal collection `Prop → Prop` respects logical
   equivalence, the property for which the book rejects the belief contexts of [ranta-1994].
 
@@ -56,7 +56,7 @@ carrier, all five laws hold.
 * Gradable, multidimensional and adverbial modification.
 * Dot-types for copredication, and counting under copredication.
 * Negative occurrences (Definition 7.2) and dependent event types.
-* A universe without a carrier, with coercions along a directed order.
+* A universe without the type `Obj`, with coercions along a directed order.
 
 ## References
 
@@ -75,7 +75,7 @@ carrier, all five laws hold.
 
 namespace ChatzikyriakidisLuo2020
 
-open ChatzikyriakidisLuo2017
+open CategoryTheory TypeCat ChatzikyriakidisLuo2017
 
 universe u
 
@@ -84,58 +84,40 @@ variable {Obj : Type u}
 /-! ### Σ-types and coercive subtyping -/
 
 /-- The Σ-type of the objects of `A` satisfying `P`, located through `A` ((2.41), (3.21)). -/
-def sigma (A : CN Obj) (P : A.carrier → Prop) : CN Obj where
-  carrier := {x // P x}
-  embed x := A.embed x
+def sigma (A : Over Obj) (P : A.left → Prop) : Over Obj :=
+  Over.mk (↾fun x : {x // P x} ↦ A.hom x.1)
 
 /-- The first projection, which makes a modified noun a subtype of the noun ((2.42), (3.33)). -/
-def sigmaFst (A : CN Obj) (P : A.carrier → Prop) : Sub (sigma A P) A :=
-  ⟨Subtype.val, fun _ ↦ rfl⟩
+def sigmaFst (A : Over Obj) (P : A.left → Prop) : sigma A P ⟶ A :=
+  Over.homMk (↾Subtype.val)
 
 /-- A Σ-type embeds injectively when its noun does, since by proof irrelevance two of its objects
 are equal when their first projections are (p. 69). -/
-theorem sigma_embed_injective {A : CN Obj} (hA : Function.Injective A.embed)
-    (P : A.carrier → Prop) : Function.Injective (sigma A P).embed :=
-  hA.comp Subtype.val_injective
+instance mono_sigma_hom (A : Over Obj) (P : A.left → Prop) [Mono A.hom] : Mono (sigma A P).hom :=
+  (mono_iff_injective _).2 fun _ _ h ↦ Subtype.ext ((mono_iff_injective A.hom).1 ‹_› h)
 
-/-- `A ≤ B` iff there is a coercion from `A` to `B`. -/
-scoped instance : Preorder (CN Obj) where
-  le A B := Nonempty (Sub A B)
-  le_refl _ := ⟨⟨id, fun _ ↦ rfl⟩⟩
-  le_trans _ _ _ := fun ⟨s⟩ ⟨t⟩ ↦ ⟨⟨t.ι ∘ s.ι, fun a ↦ (t.comm _).trans (s.comm a)⟩⟩
+variable {A B C : Over Obj}
 
-variable {A B C : CN Obj}
+/-- Coercions into a noun with a monic embedding are unique, as coherence requires (p. 40). -/
+theorem subsingleton_hom [Mono B.hom] : Subsingleton (A ⟶ B) :=
+  ⟨fun s t ↦ Over.OverMorphism.ext ((cancel_mono B.hom).1 ((Over.w s).trans (Over.w t).symm))⟩
 
-/-- Coercions into an injectively embedded noun are unique, as coherence requires (p. 40). -/
-theorem subsingleton_sub (hB : Function.Injective B.embed) : Subsingleton (Sub A B) :=
-  ⟨fun ⟨ι, hι⟩ ⟨κ, hκ⟩ ↦ by
-    obtain rfl : ι = κ := funext fun a ↦ hB ((hι a).trans (hκ a).symm)
-    rfl⟩
-
-/-- A coercion out of an injectively embedded noun is injective. -/
-theorem sub_injective (hA : Function.Injective A.embed) (s : Sub A B) :
-    Function.Injective s.ι :=
-  fun x y h ↦ hA ((s.comm x).symm.trans ((congrArg B.embed h).trans (s.comm y)))
+/-- A coercion out of a noun with a monic embedding is monic. -/
+theorem mono_left [Mono A.hom] (s : A ⟶ B) : Mono s.left :=
+  mono_of_mono_fac (Over.w s)
 
 /-! ### Adjectival modification -/
 
-/-- Modification by a Π-polymorphic adjective is subsective in the subtyping order ((3.94),
-(3.105)). -/
-theorem isSubsective_sigma (adj : (A : CN Obj) → A.carrier → Prop) :
-    Modifier.isSubsective fun A ↦ sigma A (adj A) :=
-  fun A ↦ ⟨sigmaFst A (adj A)⟩
-
 /-- Intersective modification respects subtyping, so a black cat is a black object (3.91). -/
-def sigmaMap (s : Sub A B) (adj : Obj → Prop) :
-    Sub (sigma A (adj ∘ A.embed)) (sigma B (adj ∘ B.embed)) where
-  ι x := ⟨s.ι x.1, by simpa only [Function.comp_apply, s.comm] using x.2⟩
-  comm x := s.comm x.1
+def sigmaMap (s : A ⟶ B) (adj : Obj → Prop) :
+    sigma A (adj ∘ A.hom) ⟶ sigma B (adj ∘ B.hom) :=
+  Over.homMk (↾fun x ↦ ⟨s.left x.1, by simpa using x.2⟩) (by ext x; exact over_w_apply s x.1)
 
 /-- The extension of an intersectively modified noun is the meet of the noun's extension with the
 adjective's, the intersective class of [kamp-1975] ((3.92)–(3.97)). -/
-theorem range_sigma_comp (A : CN Obj) (adj : Obj → Prop) :
-    Set.range (sigma A (adj ∘ A.embed)).embed =
-      Modifier.intersective {o | adj o} (Set.range A.embed) := by
+theorem range_sigma_comp (A : Over Obj) (adj : Obj → Prop) :
+    Set.range (sigma A (adj ∘ A.hom)).hom =
+      Modifier.intersective {o | adj o} (Set.range A.hom) := by
   ext o
   constructor
   · rintro ⟨⟨a, ha⟩, rfl⟩
@@ -145,12 +127,12 @@ theorem range_sigma_comp (A : CN Obj) (adj : Obj → Prop) :
 
 /-- Since the instances of a Π-polymorphic adjective at two nouns are unrelated, a subtyping
 need not lift to the modified nouns (3.101). -/
-theorem not_forall_nonempty_sub_sigma :
-    ¬ ∀ (A B : CN Bool) (_ : Sub A B) (adj : (C : CN Bool) → C.carrier → Prop),
-      Nonempty (Sub (sigma A (adj A)) (sigma B (adj B))) := fun h ↦ by
-  obtain ⟨s⟩ := h ⟨PUnit, fun _ ↦ true⟩ ⟨Bool, id⟩ ⟨fun _ ↦ true, fun _ ↦ rfl⟩
-    (fun C _ ↦ Subsingleton C.carrier)
-  exact Bool.noConfusion ((s.ι ⟨PUnit.unit, inferInstance⟩).2.elim true false)
+theorem not_forall_nonempty_hom_sigma :
+    ¬ ∀ (A B : Over Bool) (_ : A ⟶ B) (adj : (C : Over Bool) → C.left → Prop),
+      Nonempty (sigma A (adj A) ⟶ sigma B (adj B)) := fun h ↦ by
+  obtain ⟨s⟩ := h (Over.mk (↾fun _ : PUnit ↦ true)) (Over.mk (𝟙 Bool))
+    (Over.homMk (↾fun _ ↦ true)) (fun C _ ↦ Subsingleton C.left)
+  exact Bool.noConfusion ((s.left ⟨PUnit.unit, ⟨fun _ _ ↦ rfl⟩⟩).2.elim true false)
 
 section Privative
 
@@ -158,129 +140,127 @@ section Privative
 [partee-2010] proposes. -/
 
 /-- The disjoint union of two nouns, as in the type of guns `G = G_R + G_F` (3.110). -/
-def sum (A B : CN Obj) : CN Obj := ⟨A.carrier ⊕ B.carrier, Sum.elim A.embed B.embed⟩
+def sum (A B : Over Obj) : Over Obj := Over.mk (↾Sum.elim A.hom B.hom)
 
-variable {GR GF : CN Obj}
+variable {GR GF : Over Obj}
 
 /-- A gun is real when it comes from the real guns (3.111). -/
-def IsReal : (sum GR GF).carrier → Prop := Sum.elim (fun _ ↦ True) (fun _ ↦ False)
+def IsReal : (sum GR GF).left → Prop := Sum.elim (fun _ ↦ True) (fun _ ↦ False)
 
 /-- A gun is fake when it comes from the fake guns (3.112). -/
-def IsFake : (sum GR GF).carrier → Prop := Sum.elim (fun _ ↦ False) (fun _ ↦ True)
+def IsFake : (sum GR GF).left → Prop := Sum.elim (fun _ ↦ False) (fun _ ↦ True)
 
 /-- Every gun is real or fake (3.120). -/
-theorem isReal_or_isFake (g : (sum GR GF).carrier) : IsReal g ∨ IsFake g := by
+theorem isReal_or_isFake (g : (sum GR GF).left) : IsReal g ∨ IsFake g := by
   cases g <;> simp [IsReal, IsFake]
 
 /-- A gun is real exactly when it is not fake (p. 71). -/
-theorem isReal_iff_not_isFake (g : (sum GR GF).carrier) : IsReal g ↔ ¬ IsFake g := by
+theorem isReal_iff_not_isFake (g : (sum GR GF).left) : IsReal g ↔ ¬ IsFake g := by
   cases g <;> simp [IsReal, IsFake]
 
 /-- A fake gun is not a real gun (3.121). -/
-theorem not_isReal_sigmaFst (f : (sigma (sum GR GF) IsFake).carrier) :
-    ¬ IsReal ((sigmaFst (sum GR GF) IsFake).ι f) :=
+theorem not_isReal_sigmaFst (f : (sigma (sum GR GF) IsFake).left) :
+    ¬ IsReal ((sigmaFst (sum GR GF) IsFake).left f) :=
   (isReal_iff_not_isFake f.1).1.mt (not_not_intro f.2)
 
 /-- When no object is both a real and a fake gun, fake guns and real guns have disjoint
 extensions, so *fake* is privative relative to *real gun* (p. 72). -/
-theorem disjoint_range_isFake (h : Function.Injective (sum GR GF).embed) :
-    Disjoint (Set.range (sigma (sum GR GF) IsFake).embed)
-      (Set.range (sigma (sum GR GF) IsReal).embed) := by
+theorem disjoint_range_isFake [Mono (sum GR GF).hom] :
+    Disjoint (Set.range (sigma (sum GR GF) IsFake).hom)
+      (Set.range (sigma (sum GR GF) IsReal).hom) := by
   rw [Set.disjoint_left]
   rintro _ ⟨f, rfl⟩ ⟨r, hr⟩
-  exact (isReal_iff_not_isFake f.1).1 (h hr ▸ r.2) f.2
+  have h : r.1 = f.1 := (mono_iff_injective (sum GR GF).hom).1 ‹_› hr
+  exact (isReal_iff_not_isFake f.1).1 (h ▸ r.2) f.2
 
 end Privative
 
 /-! ### Propositional forms of judgements -/
 
 /-- The operator NOT, read "`b` does not `P`", defined from heterogeneous equality as equality of
-images in the carrier ((7.5), (7.11)). -/
-def DoesNot (A : CN Obj) (P : A.carrier → Prop) (B : CN Obj) (b : B.carrier) : Prop :=
-  ∀ x, A.embed x = B.embed b → ¬ P x
+images in `Obj` ((7.5), (7.11)). -/
+def DoesNot (A : Over Obj) (P : A.left → Prop) (B : Over Obj) (b : B.left) : Prop :=
+  ∀ x, A.hom x = B.hom b → ¬ P x
 
 /-- The operator IS, the propositional form of the judgement that `y` is an `X` (7.7). -/
-def Is (X : CN Obj) (y : B.carrier) : Prop := ¬ DoesNot X (p X) B y
+def Is (X : Over Obj) (y : B.left) : Prop := ¬ DoesNot X (p X) B y
 
 /-- The operator DO, the propositional form of applying `P` to `y` (7.9). -/
-def Does (P : A.carrier → Prop) (y : B.carrier) : Prop := ¬ DoesNot A P B y
+def Does (P : A.left → Prop) (y : B.left) : Prop := ¬ DoesNot A P B y
 
-theorem does_iff {P : A.carrier → Prop} {y : B.carrier} :
-    Does P y ↔ ∃ x, A.embed x = B.embed y ∧ P x := by
+theorem does_iff {P : A.left → Prop} {y : B.left} :
+    Does P y ↔ ∃ x, A.hom x = B.hom y ∧ P x := by
   simp [Does, DoesNot]
 
-theorem is_iff {y : B.carrier} : Is A y ↔ ∃ x, A.embed x = B.embed y := by
+theorem is_iff {y : B.left} : Is A y ↔ ∃ x, A.hom x = B.hom y := by
   simp [Is, DoesNot, p]
 
 /-- IS holds of every object of its own noun (p. 64). -/
-theorem is_self (a : A.carrier) : Is A a := is_iff.2 ⟨a, rfl⟩
+theorem is_self (a : A.left) : Is A a := is_iff.2 ⟨a, rfl⟩
 
-/-- Law (A1) holds on a noun exactly when its embedding is injective (p. 153). -/
-theorem forall_does_iff_injective :
-    (∀ (P : A.carrier → Prop) x, Does P x ↔ P x) ↔ Function.Injective A.embed := by
+/-- Law (A1) holds on a noun exactly when its embedding is a monomorphism (p. 153). -/
+theorem forall_does_iff_mono : (∀ (P : A.left → Prop) x, Does P x ↔ P x) ↔ Mono A.hom := by
+  rw [mono_iff_injective]
   refine ⟨fun h x y hxy ↦ (h (· = y) x).1 (does_iff.2 ⟨y, hxy.symm, rfl⟩), fun hA P x ↦ ?_⟩
   rw [does_iff]
   exact ⟨fun ⟨y, hy, hP⟩ ↦ hA hy ▸ hP, fun hP ↦ ⟨x, rfl, hP⟩⟩
 
 /-- If `P` implies `Q`, not doing `Q` implies not doing `P`, which is law (A2). -/
-theorem doesNot_mono {P Q : A.carrier → Prop} (h : ∀ x, P x → Q x) (y : B.carrier)
+theorem doesNot_mono {P Q : A.left → Prop} (h : ∀ x, P x → Q x) (y : B.left)
     (hQ : DoesNot A Q B y) : DoesNot A P B y :=
   fun x hx hP ↦ hQ x hx (h x hP)
 
 /-- Along a coercion, not doing `P` as a `B` implies not doing it as an `A`, which is law (A3). -/
-theorem doesNot_comp (s : Sub A B) (P : B.carrier → Prop) (z : C.carrier)
-    (h : DoesNot B P C z) : DoesNot A (P ∘ s.ι) C z :=
-  fun x hx ↦ h (s.ι x) ((s.comm x).trans hx)
+theorem doesNot_comp (s : A ⟶ B) (P : B.left → Prop) (z : C.left)
+    (h : DoesNot B P C z) : DoesNot A (P ∘ s.left) C z :=
+  fun x hx ↦ h (s.left x) ((over_w_apply s x).trans hx)
 
 /-- What no `B` does, no `A` does, which is law (A4). -/
-theorem forall_doesNot_of_sub (s : Sub A B) (P : C.carrier → Prop)
-    (h : ∀ y, DoesNot C P B y) (x : A.carrier) : DoesNot C P A x :=
-  fun w hw ↦ h (s.ι x) w (hw.trans (s.comm x).symm)
+theorem forall_doesNot_of_hom (s : A ⟶ B) (P : C.left → Prop)
+    (h : ∀ y, DoesNot C P B y) (x : A.left) : DoesNot C P A x :=
+  fun w hw ↦ h (s.left x) w (hw.trans (over_w_apply s x).symm)
 
 /-- What some `A` does not do, some `B` does not do, which is law (A5). -/
-theorem exists_doesNot_of_sub (s : Sub A B) (P : C.carrier → Prop)
+theorem exists_doesNot_of_hom (s : A ⟶ B) (P : C.left → Prop)
     (h : ∃ x, DoesNot C P A x) : ∃ y, DoesNot C P B y :=
   let ⟨x, hx⟩ := h
-  ⟨s.ι x, fun w hw ↦ hx w (hw.trans (s.comm x))⟩
+  ⟨s.left x, fun w hw ↦ hx w (hw.trans (over_w_apply s x))⟩
 
 /-- IS respects subtyping, as in the inference from "Teddy is a man" to "Teddy is a human"
 (p. 154). -/
-theorem is_of_sub (s : Sub A B) {z : C.carrier} (h : Is A z) : Is B z :=
+theorem is_of_hom (s : A ⟶ B) {z : C.left} (h : Is A z) : Is B z :=
   fun hB ↦ h (doesNot_comp s (p B) z hB)
 
-/-- The negation operator of [chatzikyriakidis-luo-2017] is NOT with its object read in the
-carrier. -/
-theorem standardNeg_not_iff (P : A.carrier → Prop) (b : B.carrier) :
-    (standardNeg Obj).not A P (B.embed b) ↔ DoesNot A P B b :=
+/-- The negation operator of [chatzikyriakidis-luo-2017] is NOT with its object read in `Obj`. -/
+theorem standardNeg_not_iff (P : A.left → Prop) (b : B.left) :
+    (standardNeg Obj).not A P (B.hom b) ↔ DoesNot A P B b :=
   Iff.rfl
 
 /-- Two nouns are disjoint when no inhabited noun is a subtype of both (Definition 7.1). -/
-def TypeDisjoint (A B : CN Obj) : Prop :=
-  ∀ C : CN Obj, Sub C A → Sub C B → IsEmpty C.carrier
+def TypeDisjoint (A B : Over Obj) : Prop :=
+  ∀ C : Over Obj, (C ⟶ A) → (C ⟶ B) → IsEmpty C.left
 
 /-- Two nouns are disjoint exactly when no object of the second is an object of the first, so that
 "John is not a table" holds of every man ((3.66), (3.71)). -/
-theorem typeDisjoint_iff : TypeDisjoint A B ↔ ∀ b : B.carrier, ¬ Is A b := by
-  refine ⟨fun h b hb ↦ ?_, fun h C s t ↦ ⟨fun c ↦ h (t.ι c) (is_iff.2 ⟨s.ι c, ?_⟩)⟩⟩
+theorem typeDisjoint_iff : TypeDisjoint A B ↔ ∀ b : B.left, ¬ Is A b := by
+  refine ⟨fun h b hb ↦ ?_, fun h C s t ↦ ⟨fun c ↦ h (t.left c) (is_iff.2 ⟨s.left c, ?_⟩)⟩⟩
   · obtain ⟨a, ha⟩ := is_iff.1 hb
-    exact (h ⟨PUnit, fun _ ↦ B.embed b⟩ ⟨fun _ ↦ a, fun _ ↦ ha⟩ ⟨fun _ ↦ b, fun _ ↦ rfl⟩).false
-      PUnit.unit
-  · exact (s.comm c).trans (t.comm c).symm
+    exact (h (Over.mk (↾fun _ : PUnit.{u + 1} ↦ B.hom b))
+      (Over.homMk (↾fun _ ↦ a) (by ext; exact ha)) (Over.homMk (↾fun _ ↦ b))).false PUnit.unit
+  · exact (over_w_apply s c).trans (over_w_apply t c).symm
 
 /-- No coercion leads from an inhabited noun to a disjoint one, so `talk(t)` is ill-typed for a
 table `t` ((3.5)–(3.7)). -/
-theorem isEmpty_sub_of_typeDisjoint (h : TypeDisjoint A B) [Nonempty A.carrier] :
-    IsEmpty (Sub A B) :=
-  ⟨fun s ↦ (h A ⟨id, fun _ ↦ rfl⟩ s).false (Classical.arbitrary _)⟩
+theorem isEmpty_hom_of_typeDisjoint (h : TypeDisjoint A B) [Nonempty A.left] : IsEmpty (A ⟶ B) :=
+  ⟨fun s ↦ (h A (𝟙 A) s).false (Classical.arbitrary _)⟩
 
 /-- An object is an alleged `M` when someone's collection of allegations contains that it is an
 `M` (3.125). -/
-def Alleged {Hum : CN Obj} (H : Hum.carrier → Prop → Prop) (M : CN Obj) (x : Hum.carrier) :
-    Prop :=
+def Alleged {Hum : Over Obj} (H : Hum.left → Prop → Prop) (M : Over Obj) (x : Hum.left) : Prop :=
   ∃ h, H h (Is M x)
 
 /-- An alleged `M` need not be an `M`, and an `M` may be alleged (3.122). -/
-theorem alleged_noncommittal {Hum M : CN Obj} {x y : Hum.carrier} (hx : ¬ Is M x) (hy : Is M y) :
+theorem alleged_noncommittal {Hum M : Over Obj} {x y : Hum.left} (hx : ¬ Is M x) (hy : Is M y) :
     (∃ H, Alleged H M x ∧ ¬ Is M x) ∧ ∃ H, Alleged H M y ∧ Is M y :=
   ⟨⟨fun _ _ ↦ True, ⟨x, trivial⟩, hx⟩, ⟨fun _ q ↦ q, ⟨y, hy⟩, hy⟩⟩
 
@@ -345,21 +325,21 @@ section Setoid
 
 /-- A sub-setoid is a subtype whose identity criterion is the restriction of the supertype's
 (Definition 5.2). -/
-structure SubSetoid (A B : CN Obj) (sA : Setoid A.carrier) (sB : Setoid B.carrier) where
+structure SubSetoid (A B : Over Obj) (sA : Setoid A.left) (sB : Setoid B.left) where
   /-- The coercion from `A` to `B`. -/
-  sub : Sub A B
+  sub : A ⟶ B
   /-- The identity criterion of `A` is that of `B` restricted along the coercion. -/
-  comap_eq : sA = Setoid.comap sub.ι sB
+  comap_eq : sA = Setoid.comap sub.left sB
 
 /-- `Three₀ B sB P` holds when three objects of `B`, pairwise distinct under `sB`, satisfy `P`
 (Definition 5.3). -/
-def Three₀ (B : CN Obj) (sB : Setoid B.carrier) (P : B.carrier → Prop) : Prop :=
+def Three₀ (B : Over Obj) (sB : Setoid B.left) (P : B.left → Prop) : Prop :=
   ∃ x y z, ¬ sB x y ∧ ¬ sB y z ∧ ¬ sB x z ∧ P x ∧ P y ∧ P z
 
 /-- If men inherit the identity criterion of humans, three men who talk are three humans who talk
 (5.26). -/
-theorem three₀_of_subSetoid {sA : Setoid A.carrier} {sB : Setoid B.carrier}
-    (h : SubSetoid A B sA sB) (P : B.carrier → Prop) (hA : Three₀ A sA (P ∘ h.sub.ι)) :
+theorem three₀_of_subSetoid {sA : Setoid A.left} {sB : Setoid B.left}
+    (h : SubSetoid A B sA sB) (P : B.left → Prop) (hA : Three₀ A sA (P ∘ h.sub.left)) :
     Three₀ B sB P := by
   obtain ⟨s, rfl⟩ := h
   obtain ⟨x, y, z, hxy, hyz, hxz, hx, hy, hz⟩ := hA
@@ -367,8 +347,8 @@ theorem three₀_of_subSetoid {sA : Setoid A.carrier} {sB : Setoid B.carrier}
 
 /-- For a predicate respecting the identity criterion, `Three₀` holds exactly when more than two
 identity classes satisfy it (p. 110). -/
-theorem three₀_iff_two_lt_card (sB : Setoid B.carrier) [Fintype B.carrier] [DecidableRel sB]
-    (P : B.carrier → Prop) [DecidablePred P] (hP : ∀ x y, sB x y → (P x ↔ P y)) :
+theorem three₀_iff_two_lt_card (sB : Setoid B.left) [Fintype B.left] [DecidableRel sB]
+    (P : B.left → Prop) [DecidablePred P] (hP : ∀ x y, sB x y → (P x ↔ P y)) :
     Three₀ B sB P ↔
       2 < Fintype.card {q : Quotient sB // Quotient.lift P (fun x y h ↦ propext (hP x y h)) q} := by
   rw [Fintype.two_lt_card_iff]
