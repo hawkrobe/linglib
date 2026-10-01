@@ -60,14 +60,14 @@ is the special case `α = Fin K` (with `[NeZero K]` equivalent to
 `[Nonempty (Fin K)]`); the polymorphic shape composes cleanly with
 `Finset`-restricted alphabets needed by per-LHS PCFG factors.
 
-## Relationship to `PitmanYor`
+## Relationship to `pitmanYor`
 
 The Pólya urn is often described as the "finite-K Chinese Restaurant
 Process". This is correct sequentially but misleading
 distributionally: the labeled count distribution
 `PolyaUrn.dirichletMultinomial` (sibling file) is *not equal* at any
-finite `K` to the partition distribution `PitmanYor.partitionProb`
-at `discount = 0`. The two agree only in the limit `K → ∞` with
+finite `K` to the partition distribution `pitmanYor 0 θ`.
+The two agree only in the limit `K → ∞` with
 symmetric pseudo-counts `π_i = b/K` (Blackwell & MacQueen 1973;
 Ferguson 1973). The bridge is therefore a limit theorem, not a
 finite equality, and is not yet formalized — the labeled→unlabeled
