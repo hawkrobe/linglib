@@ -24,6 +24,7 @@ sets of individuals to distribution over members.
 * `Plurality.Algebra.Materialization E M`: a `SupHom E M`, with `Plurality.Algebra.mPart` and
   `Plurality.Algebra.mEquiv` the preorder and equivalence it induces on `E`.
 * `Plurality.Algebra.AtomJoinPrime E`: an atom below a sum lies below a summand.
+* `Plurality.Algebra.Individual α`: Link's model, the nonempty sets of atoms under union.
 
 ## Main results
 
@@ -42,7 +43,8 @@ Link's carrier is a complete join-semilattice with atoms and without a bottom; o
 `SemilatticeSup E` and `Mereology.Atom` are used here. The complete atomic Boolean algebra of
 later presentations ([landman-2000], [champollion-2017]) is a stronger assumption, entering only
 through `AtomJoinPrime`. The set-based ontology of [schwarzschild-1996], where an individual is
-its singleton and sum is union, is the `Finset α` instance of the last section.
+its singleton and sum is union, is the `Finset α` instance of the `Finset` section; Link's own
+model, whose individuals are the nonempty sets of atoms, has no bottom (`Individual`).
 
 ## References
 
@@ -223,5 +225,24 @@ theorem star_iff_of_subset_range_singleton {P : Finset α → Prop}
   exact Iff.rfl
 
 end Finset
+
+/-! ### Link's model
+
+An individual is a nonempty set of atoms, an atom its singleton, and sum is union. The empty set
+is no individual, so the carrier has no bottom. -/
+
+section Link
+
+variable {α : Type*}
+
+/-- An individual of Link's model: a nonempty set of atoms. -/
+abbrev Individual (α : Type*) := {s : Set α // s.Nonempty}
+
+instance : SemilatticeSup (Individual α) := Subtype.semilatticeSup fun _ _ hx _ ↦ hx.inl
+
+/-- The atomic individual of an atom, its singleton. -/
+def Individual.atom (a : α) : Individual α := ⟨{a}, Set.singleton_nonempty a⟩
+
+end Link
 
 end Plurality.Algebra

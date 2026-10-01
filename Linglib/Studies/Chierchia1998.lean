@@ -1,6 +1,9 @@
 module
 
 public import Linglib.Semantics.Genericity.NominalMappingParameter
+public import Linglib.Semantics.Genericity.Normality
+public import Linglib.Semantics.Quantification.Basic
+public import Linglib.Semantics.Reference.Kind
 public import Linglib.Fragments.Mandarin.Nouns
 public import Linglib.Fragments.Mandarin.Determiners
 public import Linglib.Fragments.Japanese.Classifiers
@@ -12,7 +15,9 @@ public import Linglib.Fragments.English.Determiners
 /-!
 # Chierchia (1998): Reference to kinds across languages
 
-This file formalizes the typological half of [chierchia-1998]. The Nominal Mapping Parameter sets
+This file formalizes the typological half of [chierchia-1998] and its account of bare plurals in
+generic and episodic sentences; the kinds themselves, with ∩ and ∪, are `Reference.Kind`. The
+Nominal Mapping Parameter sets
 whether a language's nouns denote kinds, predicates, or either: Chinese and Japanese are
 [+arg, −pred], the Romance languages [−arg, +pred], English and most of Germanic [+arg, +pred]
 (`Language.nominalMapping`). In a [+arg, −pred] language every noun is kind-denoting, so its
@@ -26,15 +31,28 @@ admits exactly the bare nominals kind formation is defined for, so English has b
 bare mass nouns but no bare singular count nouns. Each language's blocking is derived from its
 determiner inventory by `Determiner.Inventory.Blocks`.
 
+A bare plural denotes its kind, and its instances, ∪ of the kind, meet one of two quantifiers,
+§4.1. In an episodic sentence derived kind predication, (31c), applies the verb to the kind as
+the existential over its instances, `Quantifier.GQ.some`, (32b). In a generic sentence the
+instances enter the restriction of the generic operator, the conditional over normal cases of
+`Genericity.Normality`, which binds them with the situations, (38b) (`dogsBark`); with an object
+fronted into the restriction and the subject left in the scope, the object is read universally
+and the subject existentially, Diesing's generalization, (39b) (`computersRoute`). The
+universal reading entails the existential one at any situation with a normal instance
+(`some_up_of_mem_dogsBark`).
+
 ## Main definitions
 
 * `Language.nominalMapping` — the setting of the parameter in each sampled language
+* `dogsBark`, `computersRoute` — the generic logical forms (38b) and (39b)
 
 ## Main results
 
 * `hasClassifiers_iff` — the classifier languages of the sample are the [+arg, −pred] ones
 * `argOnly_blocks_nothing`, `predOnly_blocks_iota` — blocking at the sampled languages
 * `english_licensesBare_iff` — English admits exactly the bare nominals ∩ is defined for
+* `some_up_of_mem_dogsBark` — the generic reading of a bare plural entails its existential
+  reading at a situation with a normal instance
 
 ## References
 
@@ -125,5 +143,48 @@ nouns. -/
 theorem english_licensesBare_iff (nt : MassCount) (num : Number) :
     (nominalMapping .english).LicensesBare (determiners .english) nt num ↔ DownDefined nt num :=
   NominalMapping.licensesBare_iff_downDefined (by decide) (by decide)
+
+/-! ### Bare plurals in generic and episodic sentences, §4.1 -/
+
+section Generic
+
+open Reference Genericity
+
+variable {S E : Type*} [PartialOrder E]
+
+/-- (38b): *Dogs bark*, `Gn x, s [∪∩dog(x) ∧ C(x, s)] [bark(x, s)]`: the instances of the kind
+enter the restriction of the generic operator, which binds them with the situations. -/
+def dogsBark (N : Normality S (E × S)) (dog : S → Set E) (C : Set (E × S))
+    (bark : E → S → Prop) : Set S :=
+  N.gen ({p | p.1 ∈ (Kind.down dog).up p.2} ∩ C) {p | bark p.1 p.2}
+
+/-- (39b): *Computers route modern planes* with the object fronted into the restriction of the
+generic operator and the subject reconstructed into its scope, where derived kind predication
+reads it existentially. -/
+def computersRoute (N : Normality S (E × S)) (computer plane : S → Set E) (C : Set (E × S))
+    (route : E → E → S → Prop) : Set S :=
+  N.gen ({p | p.1 ∈ (Kind.down plane).up p.2} ∩ C)
+    {p | Quantifier.GQ.some ((Kind.down computer).up p.2) (route · p.1 p.2)}
+
+/-- Diesing's generalization, p. 368, for (39b): the fronted bare plural is universal over the
+normal cases of the restriction, and the one in the scope existential over the instances of its
+kind at each. -/
+theorem mem_computersRoute {N : Normality S (E × S)} {computer plane : S → Set E}
+    {C : Set (E × S)} {route : E → E → S → Prop} {s : S} :
+    s ∈ computersRoute N computer plane C route ↔
+      ∀ p ∈ N.normal s ({p | p.1 ∈ (Kind.down plane).up p.2} ∩ C),
+        ∃ x ∈ (Kind.down computer).up p.2, route x p.1 p.2 :=
+  Iff.rfl
+
+/-- The generic reading of a bare plural, (38b), entails its episodic reading by derived kind
+predication, (31c), at any situation where the kind has a normal instance: if dogs bark, then
+some dog barks wherever a normal dog is. -/
+theorem some_up_of_mem_dogsBark {N : Normality S (E × S)} {dog : S → Set E} {C : Set (E × S)}
+    {bark : E → S → Prop} {s s' : S} {x : E} (h : s ∈ dogsBark N dog C bark)
+    (hx : (x, s') ∈ N.normal s ({p | p.1 ∈ (Kind.down dog).up p.2} ∩ C)) :
+    Quantifier.GQ.some ((Kind.down dog).up s') (bark · s') :=
+  ⟨x, (N.normal_subset s _ hx).1, h hx⟩
+
+end Generic
 
 end Chierchia1998

@@ -1,6 +1,8 @@
 module
 
-public import Linglib.Semantics.Genericity.Kind
+public import Linglib.Semantics.Reference.Kind
+public import Linglib.Semantics.Plurality.Algebra
+public import Linglib.Semantics.Quantification.NP
 public import Linglib.Data.Examples.LeBruynDeSwart2022
 
 /-!
@@ -16,19 +18,21 @@ delivers narrow scope, whereas the flexible type shifting of [krifka-2003], whic
 bare plural shift directly to an existential by a local type repair, delivers the wide scope
 reading at the scrambled position.
 
-The two derivations coincide below negation (`krifkaUnscrambled`) and part company above it:
-Chierchia's is position-invariant (`Genericity.chierchia_position_invariant`),
-while Krifka's scrambled reading is wide and its narrow reading false exactly when some book
-was finished and some was not (`krifkaScrambled_and_not_unscrambled_iff`), the situation
-the paper's attested example describes. On that two-book model the kind shift cannot deliver
-the attested reading (`chierchia_not_wide`).
+On the kinds approach the bare plural denotes its kind, and derived kind predication introduces
+the existential over the kind's instances where the kind meets the verb, below negation, (38);
+scrambling the kind over negation changes nothing, a kind being scopeless as a name is
+(`chierchiaScrambled_iff`). Krifka's existential shift makes the bare plural a quantifier, which
+takes scope: narrow in place, (40), wide when scrambled, (41). On a two-book model of the
+attested example (35), one book finished and one not, the scrambled existential is true and both
+narrow readings false (`books_example`).
 
 ## Implementation notes
 
-Existential closure is the substrate's `Genericity.existsClose` over a finite
-domain, shared by both derivations so that they differ only in where negation sits; the
-compositional detail of the paper's derivations (38) and (41) is not represented. The
-attested examples are rows of `Data/Examples/LeBruynDeSwart2022.json`.
+* Individuals are Link's nonempty sets of atoms, `Plurality.Algebra.Individual`, so no empty
+  plurality satisfies a distributive predicate vacuously. Both derivations quantify over all
+  pluralities of books, the instances of the kind; the plural noun's own extension, without the
+  atoms, would change no truth value on the model.
+* The attested examples are rows of `Data/Examples/LeBruynDeSwart2022.json`.
 
 ## References
 
@@ -41,56 +45,55 @@ attested examples are rows of `Data/Examples/LeBruynDeSwart2022.json`.
 
 namespace LeBruynDeSwart2022
 
-open Genericity
+open Reference Plurality.Algebra Quantifier
 
-variable {Entity : Type*} (dom : List Entity) (P Q : Entity → Prop)
-
-/-- Krifka's existential shift at the unscrambled position, below negation (the derivation
-of the paper's (40)): `¬ ∃ x ∈ dom, P x ∧ Q x`. -/
-def krifkaUnscrambled : Prop := ¬ existsClose dom P Q
-
-/-- Krifka's existential shift at the scrambled position, above negation (the derivation of
-the paper's (41)): `∃ x ∈ dom, P x ∧ ¬ Q x`. -/
-def krifkaScrambled : Prop := existsClose dom P λ x => ¬ Q x
-
-/-- Below negation the kind shift and the existential shift agree. -/
-theorem chierchiaDerivUnscrambled_eq :
-    chierchiaDerivUnscrambled dom P Q = krifkaUnscrambled dom P Q := rfl
-
-/-- The scrambled bare plural takes wide scope while its narrow reading fails exactly when
-the domain holds both a `P` that is `Q` and one that is not. -/
-theorem krifkaScrambled_and_not_unscrambled_iff :
-    krifkaScrambled dom P Q ∧ ¬ krifkaUnscrambled dom P Q ↔
-      (∃ x ∈ dom, P x ∧ ¬ Q x) ∧ ∃ x ∈ dom, P x ∧ Q x := by
-  simp [krifkaScrambled, krifkaUnscrambled, existsClose]
-
-/-- Whenever some `P` is `Q`, the kind shift's scrambled reading is false: derived kind
-predication keeps the existential below negation at either position. -/
-theorem chierchia_not_wide (h : ∃ x ∈ dom, P x ∧ Q x) : ¬ chierchiaDerivScrambled dom P Q :=
-  not_not.mpr h
-
-/-! ### The attested example
-
-*Het klopt dat ik boeken niet heb uitgelezen* (`Examples.boeken_niet_uitgelezen`): with two
-books, one finished and one not, the scrambled bare plural is true on the wide scope reading
-and false on the narrow one. -/
-
-/-- The books of the attested example. -/
+/-- The books of the attested example (35). -/
 inductive Book
   | finished
   | unfinished
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Nonempty
 
-/-- Both books were read. -/
-def read : Book → Prop := (· = .finished)
+/-- *books*: every plurality of books, singular or plural. -/
+def books : Unit → Set (Individual Book) := fun _ ↦ Set.univ
 
-/-- Krifka's shift at the scrambled position gives the attested wide scope reading, and the
-narrow reading, on which no book was finished, is false; the kind shift gives only the
-latter. -/
-theorem books :
-    krifkaScrambled [Book.finished, .unfinished] (λ _ => True) read ∧
-      ¬ krifkaUnscrambled [Book.finished, .unfinished] (λ _ => True) read ∧
-      ¬ chierchiaDerivScrambled [Book.finished, .unfinished] (λ _ => True) read := by
-  unfold krifkaScrambled krifkaUnscrambled chierchiaDerivScrambled read; decide
+/-- Read to the end, distributively: every book of the plurality was finished. -/
+def read (x : Individual Book) : Prop := x.1 ⊆ {Book.finished}
+
+/-- Krifka's existential shift in place, as in (40): no book was read. -/
+def krifkaUnscrambled : Prop := ¬ GQ.some (books ()) read
+
+/-- Krifka's existential shift scrambled over negation, (41): some book was not read. -/
+def krifkaScrambled : Prop := GQ.some (books ()) readᶜ
+
+/-- The kinds approach, (38): the bare plural shifts to its kind, and derived kind predication
+introduces the existential over its instances where the kind meets the verb, below negation. -/
+def chierchiaUnscrambled : Prop := ¬ GQ.some ((Kind.down books).up ()) read
+
+/-- The kinds approach with the kind scrambled over negation, abstracting over a kind-level
+trace. -/
+def chierchiaScrambled : Prop :=
+  NP.individual (Kind.down books) (fun k : Kind Unit (Individual Book) ↦ GQ.some (k.up ()) read)ᶜ
+
+/-- Scrambling a kind over negation changes nothing: a kind takes no scope, as a name takes none
+([chierchia-1998] §4.2), so the kinds approach gives narrow scope at either position. -/
+theorem chierchiaScrambled_iff : chierchiaScrambled ↔ chierchiaUnscrambled :=
+  NP.individual_compl _ _
+
+theorem not_read_unfinished : ¬ read (Individual.atom .unfinished) := fun h ↦
+  Book.noConfusion (Set.mem_singleton_iff.1 (h (Set.mem_singleton _)))
+
+theorem read_finished : read (Individual.atom .finished) := subset_rfl
+
+/-- (35) on the two-book model, one book finished and one not: Krifka's scrambled existential
+gives the attested reading, and the narrow readings, his in place and the kinds approach's at
+either position, are false. -/
+theorem books_example : krifkaScrambled ∧ ¬ krifkaUnscrambled ∧ ¬ chierchiaScrambled := by
+  refine ⟨⟨Individual.atom .unfinished, trivial, not_read_unfinished⟩,
+    not_not.2 ⟨Individual.atom .finished, trivial, read_finished⟩, ?_⟩
+  rw [chierchiaScrambled_iff, chierchiaUnscrambled, not_not]
+  have hd : (⟨Set.univ, Set.univ_nonempty⟩ : Individual Book) ∈ Kind.down books () :=
+    Kind.mem_down.2 ⟨trivial, fun x _ ↦ (Set.subset_univ x.1 : x ≤ _)⟩
+  exact ⟨Individual.atom .finished,
+    ⟨_, hd, (Set.subset_univ _ : Individual.atom Book.finished ≤ _)⟩, read_finished⟩
 
 end LeBruynDeSwart2022
