@@ -49,6 +49,7 @@ scenario verdicts (24)–(30) are checked in `rows_agree`.
 namespace AlonsoOvalleMenendezBenito2010
 
 open Presupposition Exhaustification ModalLogic
+open SetRel
 
 variable {E W : Type*}
 
@@ -80,12 +81,12 @@ theorem algún_not_of_singleton {f : Finset E → Finset E} (hf : ∀ P, f P ⊆
 
 /-! ### Non-uniqueness (§5) -/
 
-variable (R : W → W → Prop) (w : W) (D : Finset E) (Q : W → E → Prop) [∀ v, DecidablePred (Q v)]
+variable (R : SetRel W W) (w : W) (D : Finset E) (Q : W → E → Prop) [∀ v, DecidablePred (Q v)]
 
 /-- Ignorance with respect to number: the number of witnesses varies across the accessible
 worlds. -/
 def NumberIgnorance : Prop :=
-  ∃ v, R w v ∧ ∃ v', R w v' ∧ (witnesses D Q v).card ≠ (witnesses D Q v').card
+  ∃ v, w ~[R] v ∧ ∃ v', w ~[R] v' ∧ (witnesses D Q v).card ≠ (witnesses D Q v').card
 
 theorem modalVariation_of_numberIgnorance (h : NumberIgnorance R w D Q) :
     ModalVariation R w D Q :=
@@ -97,7 +98,7 @@ competitor (77) unassertable, a true claim conveys ignorance of number. -/
 theorem numberIgnorance_of_competition (hc : □[R] (claim Q D) w)
     (h₁ : ¬ □[R] (fun v => (witnesses D Q v).card = 1) w)
     (h₂ : ¬ □[R] (fun v => 2 ≤ (witnesses D Q v).card) w) : NumberIgnorance R w D Q := by
-  simp only [box, not_forall] at h₁ h₂
+  simp only [Box, not_forall] at h₁ h₂
   obtain ⟨v, hv, h₁⟩ := h₁
   obtain ⟨v', hv', h₂⟩ := h₂
   refine ⟨v, hv, v', hv', fun h => ?_⟩
@@ -109,7 +110,7 @@ world, so ignorance of number conflicts with the common ground. -/
 theorem not_numberIgnorance_of_uniqueness (hU : Uniqueness R w D Q) (h : □[R] (claim Q D) w) :
     ¬ NumberIgnorance R w D Q := by
   rintro ⟨v, hv, v', hv', hne⟩
-  have one : ∀ v, R w v → (witnesses D Q v).card = 1 := fun v hv =>
+  have one : ∀ v, w ~[R] v → (witnesses D Q v).card = 1 := fun v hv =>
     le_antisymm (hU v hv) (Finset.card_pos.2 ((claim_iff_witnesses_nonempty D Q v).1 (h v hv)))
   exact hne ((one v hv).trans (one v' hv').symm)
 
@@ -127,10 +128,10 @@ instance (w : Room) : DecidablePred (inRoom w) := fun r => inferInstanceAs (Deci
 abbrev house : Finset Room := {.bedroom, .livingRoom, .bathroom, .kitchen}
 
 /-- Pedro's epistemic alternatives: what he takes to be possible, from any world. -/
-def epist (A : Finset Room) : Room → Room → Prop := fun _ r => r ∈ A
+def epist (A : Finset Room) : SetRel Room Room := .ofSuccessors fun _ ↦ ↑A
 
-instance (A : Finset Room) : DecidableRel (epist A) :=
-  fun _ r => inferInstanceAs (Decidable (r ∈ A))
+instance (A : Finset Room) (w r : Room) : Decidable (w ~[epist A] r) :=
+  inferInstanceAs (Decidable (r ∈ A))
 
 /-- (15): the bathroom and the kitchen are ruled out. -/
 abbrev pedro15 : Finset Room := {.bedroom, .livingRoom}
@@ -148,9 +149,11 @@ def hires (w c : Candidate) : Prop := w = c
 instance (w : Candidate) : DecidablePred (hires w) := fun c => inferInstanceAs (Decidable (w = c))
 
 /-- The permitted hires, from any world. -/
-def permitted : Candidate → Candidate → Prop := fun _ c => c ∈ ({.phdA, .phdB} : Finset Candidate)
+def permitted : SetRel Candidate Candidate :=
+  .ofSuccessors fun _ ↦ ↑({.phdA, .phdB} : Finset Candidate)
 
-instance : DecidableRel permitted := fun _ c => inferInstanceAs (Decidable (c ∈ _))
+instance (w c : Candidate) : Decidable (w ~[permitted] c) :=
+  inferInstanceAs (Decidable (c ∈ ({.phdA, .phdB} : Finset Candidate)))
 
 /-- In (15) Modal Variation holds without Free Choice; the singleton competitors are all
 false (59b) and carry their anti-exhaustivity implicatures (68b), while the widening
@@ -175,8 +178,8 @@ def predicted (row : Datum) : Option Bool :=
   | some "hiring29", some d => verdictIn permitted Finset.univ hires d
   | _, _ => none
 where
-  verdictIn {E W : Type} [DecidableEq E] [DecidableEq W] [Fintype W] (R : W → W → Prop)
-      [DecidableRel R] (D : Finset E) (Q : W → E → Prop) [∀ v, DecidablePred (Q v)] :
+  verdictIn {E W : Type} [DecidableEq E] [DecidableEq W] [Fintype W] (R : SetRel W W)
+      [∀ x y, Decidable (x ~[R] y)] (D : Finset E) (Q : W → E → Prop) [∀ v, DecidablePred (Q v)] :
       String → Option Bool
     | "algún" => some (decide (∀ w, ModalVariation R w D Q))
     | "cualquiera" => some (decide (∀ w, FreeChoice R w D Q))

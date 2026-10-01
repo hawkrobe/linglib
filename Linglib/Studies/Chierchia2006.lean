@@ -62,6 +62,7 @@ are `Exhaustification.dMinAlts`, the subdomains containing a possible witness, (
 namespace Chierchia2006
 
 open Exhaustification ModalLogic Indefinite
+open SetRel
 
 /-! ### The lexicon of polarity-sensitive items, (94) -/
 
@@ -188,7 +189,7 @@ theorem properlyStrengthens_oMinus {a b : E} {w : W} (ha : a ∈ D) (hb : b ∈ 
 
 /-- Under a possibility modal, the antiexhaustive enrichment is the free-choice distribution:
 some possible witness is possible, and every possible witness is a possibility, (93c)–(93d). -/
-theorem oMinus_diamond_dMinAlts_iff (R : W → W → Prop) (w : W) :
+theorem oMinus_diamond_dMinAlts_iff (R : SetRel W W) (w : W) :
     oMinus ((◇[R] ·) '' dMinAlts D P) (◇[R] (existsIn D P)) w ↔
       ◇[R] (existsIn D P) w ∧ ∀ a ∈ D, (∃ v, P a v) → ◇[R] (P a) w := by
   constructor
@@ -237,7 +238,7 @@ theorem oMinus_exactlyOne_eq_empty {a b : E} (ha : a ∈ D) (hb : b ∈ D) (hab 
   exact hab ((huniq x (by simp) hPx).trans (huniq y (by simp) hPy).symm)
 
 /-- The worlds accessible from the evaluation world `0` in the model of (85). -/
-def accessible : Fin 3 → Fin 3 → Prop := λ w v => w = 0 ∧ v ≠ 0
+def accessible : SetRel (Fin 3) (Fin 3) := {p | p.1 = 0 ∧ p.2 ≠ 0}
 
 /-- Doctor `d` is married exactly in world `d + 1`, the distribution of (85). -/
 def married : Fin 2 → Set (Fin 3) := λ d w => w = d.succ

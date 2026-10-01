@@ -64,7 +64,7 @@ def believes : CCP.Partial W :=
 `a` believes `p`. -/
 theorem admits_believes_ofPartialProp :
     (believes Dox a (ofPartialProp p)).Admits c ↔
-      ∀ w ∈ c, ModalLogic.box (Dox a) p.presup w :=
+      ∀ w ∈ c, ModalLogic.Box (.ofSuccessors (Dox a)) p.presup w :=
   Iff.rfl
 
 /-- Karttunen's rule (3) on atomic complements: definedness on each `Dox_a(w)` is admittance in
@@ -77,8 +77,9 @@ theorem admits_believes_iff :
 with the partial proposition that presupposes that `a` believes `φ`'s presupposition and asserts
 that `a` believes its assertion. -/
 theorem believes_ofPartialProp :
-    believes Dox a (ofPartialProp p) =
-      ofPartialProp ⟨ModalLogic.box (Dox a) p.presup, ModalLogic.box (Dox a) p.assertion⟩ := by
+    believes Dox a (ofPartialProp p) = ofPartialProp
+      ⟨ModalLogic.Box (.ofSuccessors (Dox a)) p.presup,
+        ModalLogic.Box (.ofSuccessors (Dox a)) p.assertion⟩ := by
   funext c
   refine Part.ext' Iff.rfl fun h _ ↦ Set.ext fun w ↦ ?_
   simp only [believes, mem_ofPartialProp_self, Set.mem_ofPred_eq, ofPartialProp_get]

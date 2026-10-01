@@ -22,7 +22,7 @@ creates are well placed. The semantics is the theory-layer `MinimalCovering`.
   `truth_dia_conj_neg_subset`: Independence is strictly stronger than Diversity, the gap witnessed
   by `Figures.diversity_without_independence` (Figure 1).
 * `truth_necessity_bang`, `truth_possibility_bang`: over `!φ` the modals are the orthodox
-  `ModalLogic.box` and `ModalLogic.diamond` (§6); `box_bang_disj`: the flexibility of (16)–(17).
+  `ModalLogic.Box` and `ModalLogic.Diamond` (§6); `box_bang_disj`: the flexibility of (16)–(17).
 * `Unilateral.not_dia_disj`, `Unilateral.dia_right`, `Unilateral.box_neg_disj`: the unilateral
   semantics of §6 invalidates Impossibility Distribution and duality (§7), and
   `Unilateral.not_box_disj`, `Unilateral.box_right` Unnecessity Distribution.
@@ -138,13 +138,13 @@ theorem truth_dia_conj_neg_subset (p q : At) :
 domains). -/
 theorem truth_necessity_bang (φ : BilatInqProp W) :
     truth (necessity R (bang φ)) =
-      {w | (R w).Nonempty ∧ ModalLogic.box (fun w v ↦ v ∈ R w) (· ∈ truth φ) w} :=
+      {w | (R w).Nonempty ∧ ModalLogic.Box (.ofSuccessors R) (· ∈ truth φ) w} :=
   truth_necessity_of_alt_eq_singleton R _ (alt_bang_pro φ)
 
 /-- Over `!φ`, possibility is the orthodox existential modal over the relevant worlds (§6). -/
 theorem truth_possibility_bang (φ : BilatInqProp W) :
     truth (possibility R (bang φ)) =
-      {w | ModalLogic.diamond (fun w v ↦ v ∈ R w) (· ∈ truth φ) w} := by
+      {w | ModalLogic.Diamond (.ofSuccessors R) (· ∈ truth φ) w} := by
   rw [truth_possibility_of_alt_eq_singleton R _ (alt_bang_pro φ)]
   rfl
 

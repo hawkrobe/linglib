@@ -51,6 +51,7 @@ anti-exhaustification analysis of disjunctive mention-all answers are not modell
 namespace Xiang2022
 
 open Question ModalLogic Exhaustification Set
+open scoped SetRel
 
 variable {W α : Type*}
 
@@ -109,22 +110,22 @@ theorem ansP_eq_singleton {P : α → Set W} {w : W} {p : Set W}
 /-- Relativized Exhaustivity for the question `O ∘ P` built from the non-modalized `P` by the
 operator `O` over the accessibility `R`: at every accessible world verifying one of the
 modalized question's true short answers, `P` satisfies Dayal's presupposition. -/
-def RelExh (O : Set W → Set W) (R : W → W → Prop) (P : α → Set W) (w : W) : Prop :=
-  ∀ v, R w v → (∃ a, w ∈ O (P a) ∧ v ∈ P a) → DEP P v
+def RelExh (O : Set W → Set W) (R : SetRel W W) (P : α → Set W) (w : W) : Prop :=
+  ∀ v, w ~[R] v → (∃ a, w ∈ O (P a) ∧ v ∈ P a) → DEP P v
 
 /-- The generalization for existential modals: the mention-some readings satisfy Relativized
 Exhaustivity exactly when the non-modalized question satisfies Dayal's presupposition at every
 accessible world where some short answer is true. -/
-theorem relExh_poss_iff (R : W → W → Prop) (P : α → Set W) (w : W) :
-    RelExh (poss R) R P w ↔ ∀ v, R w v → (trueShort P v).Nonempty → DEP P v :=
+theorem relExh_poss_iff (R : SetRel W W) (P : α → Set W) (w : W) :
+    RelExh R.preimage R P w ↔ ∀ v, w ~[R] v → (trueShort P v).Nonempty → DEP P v :=
   forall₂_congr λ v hv => imp_congr_left
-    ⟨λ ⟨a, _, ha⟩ => ⟨a, ha⟩, λ ⟨a, ha⟩ => ⟨a, ⟨v, hv, ha⟩, ha⟩⟩
+    ⟨fun ⟨a, _, ha⟩ ↦ ⟨a, ha⟩, fun ⟨a, ha⟩ ↦ ⟨a, ⟨v, ha, hv⟩, ha⟩⟩
 
 /-- For a non-modalized question, over the identity relation on which both modals are the
 identity, Relativized Exhaustivity is Dayal's presupposition wherever the question has a true
 answer. -/
 theorem relExh_id_iff (P : α → Set W) (w : W) :
-    RelExh id Eq P w ↔ ((trueShort P w).Nonempty → DEP P w) := by
+    RelExh id .id P w ↔ ((trueShort P w).Nonempty → DEP P w) := by
   simp [RelExh, Set.Nonempty]
 
 /-! ### Local exhaustification -/
@@ -147,8 +148,8 @@ theorem dep_localExh {P : α → Set W} {w : W} (h : (trueShort (localExh P) w).
 
 /-- The exhaustified mention-some reading of a *can*-question satisfies Relativized
 Exhaustivity over any accessibility relation: the uniqueness it presupposes is existential. -/
-theorem relExh_poss_localExh (R : W → W → Prop) (P : α → Set W) (w : W) :
-    RelExh (poss R) R (localExh P) w :=
+theorem relExh_poss_localExh (R : SetRel W W) (P : α → Set W) (w : W) :
+    RelExh R.preimage R (localExh P) w :=
   (relExh_poss_iff R _ w).2 λ _ _ h => dep_localExh h
 
 /-! ### The committee scenario -/
@@ -164,21 +165,19 @@ def chair : Fin 2 → Set CW
 
 /-- The modal base: the evaluation world accesses both alternatives, each of which accesses
 only itself. -/
-def chairR : CW → CW → Prop
-  | 0, v => v ≠ 0
-  | w, v => w = v
+def chairR : SetRel CW CW := {p | if p.1 = 0 then p.2 ≠ 0 else p.1 = p.2}
 
 /-- Under the base, *x can chair* holds at the evaluation world and at `x`'s own world. -/
-theorem poss_localExh_chair (a : Fin 2) : poss chairR (localExh chair a) = {0, a.succ} := by
+theorem poss_localExh_chair (a : Fin 2) : chairR.preimage (localExh chair a) = {0, a.succ} := by
   ext w; fin_cases a <;> fin_cases w <;> simp [localExh, exh, chair, chairR]
 
 /-- The exhaustified mention-some reading of *Who can chair the committee?* has both short
 answers max-informative, satisfies Relativized Exhaustivity, and violates Dayal's
 presupposition. -/
 theorem chair_scenario :
-    ansS (poss chairR ∘ localExh chair) 0 = univ ∧
-      RelExh (poss chairR) chairR (localExh chair) 0 ∧
-        ¬ DEP (poss chairR ∘ localExh chair) 0 := by
+    ansS (chairR.preimage ∘ localExh chair) 0 = univ ∧
+      RelExh chairR.preimage chairR (localExh chair) 0 ∧
+        ¬ DEP (chairR.preimage ∘ localExh chair) 0 := by
   refine ⟨eq_univ_of_forall λ a => ⟨by simp [poss_localExh_chair], λ b _ hle => ?_⟩,
     relExh_poss_localExh _ _ _, ?_⟩
   · fin_cases a <;> fin_cases b <;> simp [poss_localExh_chair, subset_def] at hle ⊢
@@ -225,10 +224,9 @@ theorem range_assign : range assign = disjClosure assigned := by
 
 /-- The modal base: world `0` accesses the uniqueness-violating world `3`, world `4` does
 not. -/
-def assignR : AW → AW → Prop
-  | 0, v => v ∈ ({1, 2, 3} : Set AW)
-  | 4, v => v ∈ ({1, 2} : Set AW)
-  | w, v => w = v
+def assignR : SetRel AW AW :=
+  {p | if p.1 = 0 then p.2 ∈ ({1, 2, 3} : Set AW)
+    else if p.1 = 4 then p.2 ∈ ({1, 2} : Set AW) else p.1 = p.2}
 
 /-- The first-order question satisfies Dayal's presupposition exactly at the worlds assigning
 one chapter. -/
@@ -245,13 +243,13 @@ theorem dep_assign_iff (v : AW) : DEP assign v ↔ v = 1 ∨ v = 2 := by
 is its only true answer, while Relativized Exhaustivity fails there and holds at world 4:
 the local-uniqueness inference of *Which chapter do we have to assign?*. -/
 theorem assign_scenario :
-    DEP (nec assignR ∘ assign) 0 ∧ ¬ RelExh (nec assignR) assignR assign 0 ∧
-      RelExh (nec assignR) assignR assign 4 := by
-  have h0 : nec assignR (assign 0) = {1, 3} := by
+    DEP (assignR.core ∘ assign) 0 ∧ ¬ RelExh assignR.core assignR assign 0 ∧
+      RelExh assignR.core assignR assign 4 := by
+  have h0 : assignR.core (assign 0) = {1, 3} := by
     ext w; fin_cases w <;> simp [assignR, assign, assigned]
-  have h1 : nec assignR (assign 1) = {2, 3} := by
+  have h1 : assignR.core (assign 1) = {2, 3} := by
     ext w; fin_cases w <;> simp [assignR, assign, assigned]
-  have h2 : nec assignR (assign 2) = univ := by
+  have h2 : assignR.core (assign 2) = univ := by
     ext w; fin_cases w <;> simp [assignR, assign, assigned]
   refine ⟨(dep_iff _ _).2 ⟨2, by simp [h2], λ b hb => by
     fin_cases b <;> simp [h0, h1, h2] at hb ⊢⟩, λ h => ?_, λ v hv _ => ?_⟩
@@ -263,7 +261,7 @@ theorem assign_scenario :
 Relativized Exhaustivity fails at world 0, whose accessible world 3 assigns both chapters,
 and holds at world 4, the universal local-uniqueness inference. -/
 theorem assign_can_scenario :
-    ¬ RelExh (poss assignR) assignR assigned 0 ∧ RelExh (poss assignR) assignR assigned 4 := by
+    ¬ RelExh assignR.preimage assignR assigned 0 ∧ RelExh assignR.preimage assignR assigned 4 := by
   simp only [relExh_poss_iff, dep_assigned_iff]
   exact ⟨λ h => by simpa using h 3 (by simp [assignR]) ⟨0, by simp [assigned]⟩,
     λ v hv _ => by simpa [assignR] using hv⟩

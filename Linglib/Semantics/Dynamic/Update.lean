@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Algebra.Group.Defs
-public import Mathlib.Basic.Rel
+public import Linglib.Core.Relation.SetRel
 public import Linglib.Core.Data.Set.Functor
 public import Mathlib.Tactic.TypeStar
 public import Mathlib.Tactic.ByContra
@@ -137,10 +137,6 @@ theorem mem_test_iff_left : i ~[test C] j ↔ i = j ∧ i ∈ C :=
 /-- Negation is the core of the empty condition. -/
 theorem neg_eq_core_empty (D : Update S) : neg D = D.core ∅ := by
   ext; simp [neg]
-
-/-- The core of a complement is the complement of the preimage. -/
-theorem core_compl (D : Update S) (t : Condition S) : D.core tᶜ = (D.preimage t)ᶜ := by
-  ext; simp only [mem_core, Set.mem_compl_iff, mem_preimage]; grind
 
 /-! ### The update monoid -/
 

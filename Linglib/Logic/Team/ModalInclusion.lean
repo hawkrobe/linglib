@@ -141,7 +141,7 @@ def Formula.InclFree : Formula Atom → Prop
 
 open scoped ModalLogic in
 /-- Classical Kripke truth of a MIL formula at a world, with `◇` and `□` the shared
-    `ModalLogic.diamond` and `ModalLogic.box`; an inclusion atom is true at every world. -/
+    `ModalLogic.Diamond` and `ModalLogic.Box`; an inclusion atom is true at every world. -/
 def Realize (M : KripkeModel W Atom) : Formula Atom → W → Prop
   | .atom p, w => M.val p w = true
   | .bot, _ => False
@@ -149,8 +149,8 @@ def Realize (M : KripkeModel W Atom) : Formula Atom → W → Prop
   | .neg ψ, w => ¬ Realize M ψ w
   | .conj ψ₁ ψ₂, w => Realize M ψ₁ w ∧ Realize M ψ₂ w
   | .disj ψ₁ ψ₂, w => Realize M ψ₁ w ∨ Realize M ψ₂ w
-  | .poss ψ, w => ◇[M.Accessible] (Realize M ψ) w
-  | .nec ψ, w => □[M.Accessible] (Realize M ψ) w
+  | .poss ψ, w => ◇[M.accessible] (Realize M ψ) w
+  | .nec ψ, w => □[M.accessible] (Realize M ψ) w
 
 theorem realize_poss {M : KripkeModel W Atom} {ψ : Formula Atom} {w : W} :
     Realize M (.poss ψ) w ↔ ∃ v ∈ M.access w, Realize M ψ v := Iff.rfl

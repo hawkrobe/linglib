@@ -15,7 +15,7 @@ public import Linglib.Logic.Modal.Basic
 Basic semantic lemmas for `Temporal` satisfaction: the satisfaction-clause `@[simp]`
 lemmas, the dual operators (`M`/`dia`/`Fut`/`Pst`), the modality hierarchy `box ⊃ N ⊃ A`, and the
 fact that historical necessity `N` and the all-worlds `box` are **S5** modalities. Since `sat`'s
-`G`/`H`/`N`/`box` clauses are `ModalLogic.box` Kripke modalities, the hierarchy and S5 axioms
+`G`/`H`/`N`/`box` clauses are `ModalLogic.Box` Kripke modalities, the hierarchy and S5 axioms
 are *derived from modal correspondence theory* (`box_T`/`box_four`/`box_restrict`) rather than
 re-proved — `N` is S5 because `∼ₜ` is an equivalence, `box` because the universal relation is
 ([von-kutschera-1997] A4, A5).
@@ -38,6 +38,7 @@ variable {T : Type*} {World : Type*} {Atom : Type*} [LinearOrder T]
   (F : TWFrame T World) (V : Atom → T → World → Prop)
 
 open ModalLogic (box_T box_four box_restrict box_isIndicial IsIndicial)
+open scoped ModalLogic
 
 /-! ### Satisfaction clauses -/
 
@@ -83,18 +84,18 @@ open ModalLogic (box_T box_four box_restrict box_isIndicial IsIndicial)
 
 /-! ### The modality hierarchy `box ⊃ N ⊃ A` and S5, from modal correspondence
 
-`N` and `box` are `ModalLogic.box` modalities, so the hierarchy and S5 axioms come from modal
+`N` and `box` are `ModalLogic.Box` modalities, so the hierarchy and S5 axioms come from modal
 correspondence theory: `box ⊃ N` from `box_restrict` (the universal relation contains `∼ₜ`); the `T`
 axioms from reflexivity (`box_T`); the `4` axioms from transitivity (`box_four`); the `5` axioms from
 euclideanness of `∼ₜ`. -/
 
 theorem sat_box_imp_N {a : OForm Atom} {t : T} {w : World} :
     F.sat V (.box a) t w → F.sat V (.N a) t w :=
-  fun h => box_restrict _ (fun _ _ _ => trivial) _ h
+  fun h => box_restrict _ (Set.subset_univ _) _ h
 
 theorem sat_N_imp_self {a : OForm Atom} {t : T} {w : World} :
     F.sat V (.N a) t w → F.sat V a t w := by
-  have : Std.Refl (F.sim t) := ⟨(F.sim_equiv t).refl⟩
+  have : SetRel.IsRefl {(w, w') | F.sim t w w'} := ⟨(F.sim_equiv t).refl⟩
   exact fun h => box_T h
 
 theorem sat_box_imp_self {a : OForm Atom} {t : T} {w : World} :
@@ -103,7 +104,7 @@ theorem sat_box_imp_self {a : OForm Atom} {t : T} {w : World} :
 
 theorem sat_N_imp_N_N {a : OForm Atom} {t : T} {w : World} :
     F.sat V (.N a) t w → F.sat V (.N (.N a)) t w := by
-  have : IsTrans World (F.sim t) := ⟨fun _ _ _ => (F.sim_equiv t).trans⟩
+  have : SetRel.IsTrans {(w, w') | F.sim t w w'} := ⟨fun _ _ _ => (F.sim_equiv t).trans⟩
   exact fun h => box_four h
 
 theorem sat_box_imp_box_box {a : OForm Atom} {t : T} {w : World} :
@@ -124,11 +125,11 @@ theorem sat_dia_imp_box_dia {a : OForm Atom} {t : T} {w : World} :
   obtain ⟨w₀, ha⟩ := h
   exact ⟨w₀, ha⟩
 
-/-- Historical necessity `N` is a Kripke (indicial) modality — `ModalLogic.box` over `∼ₜ`,
+/-- Historical necessity `N` is a Kripke (indicial) modality — `ModalLogic.Box` over `∼ₜ`,
     [gallin-1975]'s indicial necessity. (`G`/`H` are tense over the time order, not world-PropOps,
     so they fall outside this world-indexed classification.) -/
-theorem N_isIndicial (t : T) : IsIndicial (ModalLogic.box (F.sim t)) :=
-  box_isIndicial (F.sim t)
+theorem N_isIndicial (t : T) : IsIndicial □[{(w, w') | F.sim t w w'}] :=
+  box_isIndicial _
 
 /-! ### The temporal adjunctions `Fut ⊣ H`, `Pst ⊣ G`
 

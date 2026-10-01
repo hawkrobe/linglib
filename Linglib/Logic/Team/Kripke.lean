@@ -1,6 +1,7 @@
 module
 
 public import Mathlib.Data.Finset.Basic
+public import Linglib.Logic.Modal.Defs
 
 /-!
 # Kripke models
@@ -9,8 +10,8 @@ This file defines `KripkeModel`, the finite Kripke carrier — successor
 `Finset`s and a `Bool` valuation — that the team-semantic modal logics
 (BSML, QBSML, modal dependence and inclusion logic, InqML) evaluate on.
 It is the decidable specialization of the relational primitives of
-`Logic/Modal/Defs.lean`: `KripkeModel.Accessible` is the successor
-function as the `W → W → Prop` relation those primitives take.
+`Logic/Modal/Defs.lean`: `KripkeModel.accessible` is the successor
+function as the `SetRel W W` those primitives take.
 
 The file also states Aloni's two conditions on the accessibility relation relative to a team
 ([aloni-2022] Definition 5), which distinguish epistemic from deontic modals: indisputability,
@@ -36,13 +37,19 @@ structure KripkeModel (W : Type*) (Atom : Type*) where
 
 variable {W : Type*} {Atom : Type*}
 
+open SetRel in
 /-- The accessibility relation of `M`: `v` is accessible from `w` when `v ∈ M.access w`.
-    This is the relation that `box` and `diamond` of `Logic/Modal/Defs.lean` take. -/
-def KripkeModel.Accessible (M : KripkeModel W Atom) (w v : W) : Prop :=
-  v ∈ M.access w
+This is the relation that `□` and `◇` of `Logic/Modal/Defs.lean` take. -/
+def KripkeModel.accessible (M : KripkeModel W Atom) : SetRel W W :=
+  .ofSuccessors fun w ↦ ↑(M.access w)
 
-instance [DecidableEq W] (M : KripkeModel W Atom) : DecidableRel M.Accessible :=
-  fun w v ↦ inferInstanceAs (Decidable (v ∈ M.access w))
+open SetRel in
+@[simp] theorem KripkeModel.mem_accessible {M : KripkeModel W Atom} {w v : W} :
+    w ~[M.accessible] v ↔ v ∈ M.access w := .rfl
+
+open SetRel in
+instance [DecidableEq W] (M : KripkeModel W Atom) (w v : W) : Decidable (w ~[M.accessible] v) :=
+  inferInstanceAs (Decidable (v ∈ M.access w))
 
 end ModalLogic
 

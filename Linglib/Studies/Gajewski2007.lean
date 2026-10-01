@@ -48,7 +48,7 @@ complement projects into the subject's beliefs whatever the attitude ([karttunen
 
 ## Implementation notes
 
-* Propositions are sets of worlds and attitudes relational boxes (`ModalLogic.box`). An
+* Propositions are sets of worlds and attitudes relational boxes (`ModalLogic.Box`). An
   environment is the truth set of its sentence, presupposition included, as a function of the
   proposition in the NPI's clause, and its anti-additivity is `NaturalLogic.IsAntiAdditive` of
   that function: standard entailment, which Appendix 1 argues is the relevant notion.
@@ -84,6 +84,7 @@ complement projects into the subject's beliefs whatever the attitude ([karttunen
 namespace Gajewski2007
 
 open Presupposition PartialProp ModalLogic NaturalLogic
+open SetRel
 
 variable {W : Type*}
 
@@ -94,18 +95,18 @@ the complement is settled throughout the modal base and that the complement's pr
 throughout the heritage base `H`, and asserts the complement throughout the modal base. *Think*
 has its beliefs as both bases, *want* its desires as modal base and its beliefs as heritage
 base. -/
-def nrp (R H : W → W → Prop) (φ : PartialProp W) : PartialProp W where
+def nrp (R H : SetRel W W) (φ : PartialProp W) : PartialProp W where
   presup w := □[H] φ.presup w ∧ (□[R] (fun u ↦ φ.holds u) w ∨ □[R] (fun u ↦ ¬ φ.holds u) w)
   assertion w := □[R] (fun u ↦ φ.holds u) w
 
-variable {R H : W → W → Prop} {φ : PartialProp W} {w : W}
+variable {R H : SetRel W W} {φ : PartialProp W} {w : W}
 
 /-- (60)–(61): a negated neg-raising predicate, presupposition included, holds exactly when the
 complement's presupposition holds throughout the heritage base, the modal base is nonempty, and the
 complement fails throughout it. -/
 theorem holds_neg_nrp :
     (neg (nrp R H φ)).holds w ↔
-      □[H] φ.presup w ∧ (∃ u, R w u) ∧ □[R] (fun u ↦ ¬ φ.holds u) w := by
+      □[H] φ.presup w ∧ (∃ u, w ~[R] u) ∧ □[R] (fun u ↦ ¬ φ.holds u) w := by
   refine ⟨fun ⟨⟨hH, hEM⟩, hna⟩ ↦ ⟨hH, ?_, hEM.resolve_left hna⟩,
     fun ⟨hH, ⟨u, hu⟩, hbox⟩ ↦ ⟨⟨hH, .inr hbox⟩, fun hall ↦ hbox u hu (hall u hu)⟩⟩
   by_contra hne
@@ -115,7 +116,7 @@ theorem holds_neg_nrp :
 /-- When the complement's presupposition projects into the predicate's own modal base, as with
 *think*, the negation passes through the predicate onto the complement (§3.3.1). -/
 theorem holds_neg_nrp_self :
-    (neg (nrp R R φ)).holds w ↔ (∃ u, R w u) ∧ □[R] (fun u ↦ (neg φ).holds u) w := by
+    (neg (nrp R R φ)).holds w ↔ (∃ u, w ~[R] u) ∧ □[R] (fun u ↦ (neg φ).holds u) w := by
   rw [holds_neg_nrp]
   refine ⟨fun ⟨hH, hne, hb⟩ ↦ ⟨hne, fun u hu ↦ ⟨hH u hu, fun ha ↦ hb u hu ⟨hH u hu, ha⟩⟩⟩,
     fun ⟨hne, hb⟩ ↦ ⟨fun u hu ↦ (hb u hu).1, hne, fun u hu h ↦ (hb u hu).2 h.2⟩⟩
@@ -124,50 +125,50 @@ theorem holds_neg_nrp_self :
 
 /-- Universal quantification with existential import over the successors of a world, as a function
 on propositions: the EVERY of (92) and (110). -/
-def every (R : W → W → Prop) (s : Set W) : Set W := {w | (∃ u, R w u) ∧ □[R] (· ∈ s) w}
+def every (R : SetRel W W) (s : Set W) : Set W := {w | (∃ u, w ~[R] u) ∧ □[R] (· ∈ s) w}
 
 /-- (92a): universal quantification over an anti-additive environment is anti-additive. -/
 theorem isAntiAdditive_every {V : Type*} {g : Set V → Set W} (hg : IsAntiAdditive g) :
     IsAntiAdditive (every R ∘ g) := by
   rw [isAntiAdditive_iff_mem] at hg ⊢
   intro p q x
-  simp only [Function.comp_apply, every, box, Set.mem_ofPred_eq, hg]
+  simp only [Function.comp_apply, every, Box, Set.mem_ofPred_eq, hg]
   exact ⟨fun ⟨hne, h⟩ ↦ ⟨⟨hne, fun u hu ↦ (h u hu).1⟩, hne, fun u hu ↦ (h u hu).2⟩,
     fun ⟨⟨hne, h₁⟩, _, h₂⟩ ↦ ⟨hne, fun u hu ↦ ⟨h₁ u hu, h₂ u hu⟩⟩⟩
 
 /-- The environment of a negated neg-raising predicate. -/
-def negNR (R H : W → W → Prop) (p : Set W) : Set W :=
+def negNR (R H : SetRel W W) (p : Set W) : Set W :=
   (neg (nrp R H (ofProp (· ∈ p)))).truthSet
 
 /-- (61): a negated neg-raising predicate is the universal over the negated complement. -/
-theorem negNR_eq (R H : W → W → Prop) (p : Set W) : negNR R H p = every R pᶜ := by
+theorem negNR_eq (R H : SetRel W W) (p : Set W) : negNR R H p = every R pᶜ := by
   ext w
   simp only [negNR, mem_truthSet, holds_neg_nrp, every]
-  simp [ofProp, holds, box]
+  simp [ofProp, holds, Box]
 
 /-- (1): *Bill doesn't think Mary is here* entails *Bill thinks Mary is not here*. -/
-theorem negNR_subset (R H : W → W → Prop) (p : Set W) : negNR R H p ⊆ {w | □[R] (· ∉ p) w} :=
+theorem negNR_subset (R H : SetRel W W) (p : Set W) : negNR R H p ⊆ {w | □[R] (· ∉ p) w} :=
   fun _ hw ↦ ((negNR_eq R H p).subset hw).2
 
 /-- (62)–(64): a negated neg-raising predicate is anti-additive. -/
-theorem isAntiAdditive_negNR (R H : W → W → Prop) : IsAntiAdditive (negNR R H) := by
+theorem isAntiAdditive_negNR (R H : SetRel W W) : IsAntiAdditive (negNR R H) := by
   rw [show negNR R H = every R ∘ compl from funext (negNR_eq R H)]
   exact isAntiAdditive_every isAntiAdditive_compl
 
 /-- The environment of a negated universal without neg-raising: *didn't claim*, *not every*,
 *not required*, *not certain*. -/
-def negUniversal (R : W → W → Prop) (p : Set W) : Set W := {w | ¬ □[R] (· ∈ p) w}
+def negUniversal (R : SetRel W W) (p : Set W) : Set W := {w | ¬ □[R] (· ∈ p) w}
 
 /-- (2): *Bill didn't say that Mary is here* does not entail *Bill said that Mary isn't here*. -/
 theorem not_negUniversal_subset :
-    ¬ ∀ (W : Type) (R : W → W → Prop) (p : Set W), negUniversal R p ⊆ {w | □[R] (· ∉ p) w} :=
-  fun h ↦ h Bool (fun _ _ ↦ True) {true}
-    (show true ∈ negUniversal (fun _ _ ↦ True) {true} from fun hb ↦ by simpa using hb false trivial)
+    ¬ ∀ (W : Type) (R : SetRel W W) (p : Set W), negUniversal R p ⊆ {w | □[R] (· ∉ p) w} :=
+  fun h ↦ h Bool .univ {true}
+    (show true ∈ negUniversal .univ {true} from fun hb ↦ by simpa using hb false trivial)
     true trivial rfl
 
 /-- (51b), (53), (65): a negated universal is not anti-additive. -/
 theorem not_isAntiAdditive_negUniversal :
-    ¬ IsAntiAdditive (negUniversal (fun _ _ : Bool ↦ True)) := by
+    ¬ IsAntiAdditive (negUniversal (.univ : SetRel Bool Bool)) := by
   rw [isAntiAdditive_iff_mem]
   intro h
   refine (h {true} {false} true).2 ⟨fun hb ↦ by simpa using hb false trivial,
@@ -175,14 +176,14 @@ theorem not_isAntiAdditive_negUniversal :
   cases v <;> simp
 
 /-- The environment of a negated existential: *not a single*, *not allowed*, *can't*. -/
-def negExistential (R : W → W → Prop) (p : Set W) : Set W := {w | ¬ ◇[R] (· ∈ p) w}
+def negExistential (R : SetRel W W) (p : Set W) : Set W := {w | ¬ ◇[R] (· ∈ p) w}
 
 /-- (51a), (52), (71): a negated existential is anti-additive. -/
-theorem isAntiAdditive_negExistential (R : W → W → Prop) :
+theorem isAntiAdditive_negExistential (R : SetRel W W) :
     IsAntiAdditive (negExistential R) := by
   rw [isAntiAdditive_iff_mem]
   intro p q x
-  simp only [negExistential, diamond, Set.mem_ofPred_eq, Set.mem_union]
+  simp only [negExistential, Diamond, Set.mem_ofPred_eq, Set.mem_union]
   refine ⟨fun h ↦ ⟨fun ⟨u, hu, hp⟩ ↦ h ⟨u, hu, .inl hp⟩, fun ⟨u, hu, hq⟩ ↦ h ⟨u, hu, .inr hq⟩⟩,
     ?_⟩
   rintro ⟨h₁, h₂⟩ ⟨u, hu, hp | hq⟩
@@ -190,28 +191,28 @@ theorem isAntiAdditive_negExistential (R : W → W → Prop) :
 
 /-- The environment of a neg-raising predicate under stressed negation, fn. 7 (ii): the assertion
 operator cancels the excluded middle. -/
-def negNRStressed (R : W → W → Prop) (p : Set W) : Set W :=
+def negNRStressed (R : SetRel W W) (p : Set W) : Set W :=
   (negExt (nrp R R (ofProp (· ∈ p)))).truthSet
 
 /-- §2.1.3: without its presupposition a negated neg-raising predicate is a negated universal. -/
-theorem negNRStressed_eq (R : W → W → Prop) : negNRStressed R = negUniversal R := by
+theorem negNRStressed_eq (R : SetRel W W) : negNRStressed R = negUniversal R := by
   ext p w
   simp only [negNRStressed, negUniversal, mem_truthSet, negExt, Set.mem_ofPred_eq]
-  simp only [holds, neg, truthOp, nrp, ofProp, box]
+  simp only [holds, neg, truthOp, nrp, ofProp, Box]
   refine ⟨fun ⟨_, h⟩ hall ↦ h ⟨⟨fun _ _ ↦ trivial, .inl fun u hu ↦ ⟨trivial, hall u hu⟩⟩,
     fun u hu ↦ ⟨trivial, hall u hu⟩⟩, fun h ↦ ⟨trivial, fun ⟨_, hall⟩ ↦ h fun u hu ↦ (hall u hu).2⟩⟩
 
 /-- The environment of negated *know*, a factive universal without neg-raising, built from the
 substrate's negated factive. -/
-def negKnow (R : W → W → Prop) (p : Set W) : Set W :=
-  (negFactive (ofProp (· ∈ p)) (box R)).truthSet
+def negKnow (R : SetRel W W) (p : Set W) : Set W :=
+  (negFactive (ofProp (· ∈ p)) (Box R)).truthSet
 
 /-- (58b): negated *know* is not anti-additive. -/
-theorem not_isAntiAdditive_negKnow : ¬ IsAntiAdditive (negKnow (W := Fin 3) fun _ _ ↦ True) := by
+theorem not_isAntiAdditive_negKnow : ¬ IsAntiAdditive (negKnow (W := Fin 3) .univ) := by
   rw [isAntiAdditive_iff_mem]
   intro h
   have := (h {0, 1} {0, 2} 0).2
-  simp only [negKnow, mem_truthSet, holds, negFactive, ofProp, box, Set.mem_insert_iff,
+  simp only [negKnow, mem_truthSet, holds, negFactive, ofProp, Box, Set.mem_insert_iff,
     Set.mem_singleton_iff, Set.mem_union] at this
   revert this
   decide
@@ -220,14 +221,14 @@ theorem not_isAntiAdditive_negKnow : ¬ IsAntiAdditive (negKnow (W := Fin 3) fun
 
 /-- (83): *no one thinks p*, with the excluded middle projecting universally from the scope of
 the quantifier ([heim-1983]). -/
-def noOneNR {E : Type*} (O : Set E) (B : E → W → W → Prop) (p : Set W) : Set W :=
+def noOneNR {E : Type*} (O : Set E) (B : E → SetRel W W) (p : Set W) : Set W :=
   (negExistsPartial (· ∈ O) fun x ↦ nrp (B x) (B x) (ofProp (· ∈ p))).truthSet
 
 /-- (87)–(89): *no one thinks p* is *everyone thinks not-p*. -/
-theorem noOneNR_eq {E : Type*} (O : Set E) (B : E → W → W → Prop) (p : Set W) :
+theorem noOneNR_eq {E : Type*} (O : Set E) (B : E → SetRel W W) (p : Set W) :
     noOneNR O B p = {w | ∀ x ∈ O, w ∈ every (B x) pᶜ} := by
   ext w
-  simp only [noOneNR, mem_truthSet, holds, negExistsPartial, nrp, ofProp, box, every,
+  simp only [noOneNR, mem_truthSet, holds, negExistsPartial, nrp, ofProp, Box, every,
     Set.mem_ofPred_eq, not_exists, not_and, Set.mem_compl_iff, true_and]
   refine ⟨fun ⟨hp, ha⟩ x hx ↦ ?_, fun h ↦ ⟨fun x hx ↦ ⟨fun _ _ ↦ trivial, .inr (h x hx).2⟩,
     fun x hx hall ↦ (h x hx).1.elim fun u hu ↦ (h x hx).2 u hu (hall u hu)⟩⟩
@@ -238,7 +239,7 @@ theorem noOneNR_eq {E : Type*} (O : Set E) (B : E → W → W → Prop) (p : Set
     exact ha x hx fun u hu ↦ absurd ⟨u, hu⟩ hne
 
 /-- (90): *no one thinks* is anti-additive. -/
-theorem isAntiAdditive_noOneNR {E : Type*} (O : Set E) (B : E → W → W → Prop) :
+theorem isAntiAdditive_noOneNR {E : Type*} (O : Set E) (B : E → SetRel W W) :
     IsAntiAdditive (noOneNR O B) := by
   have hB x := isAntiAdditive_iff_mem.1 (isAntiAdditive_every (R := B x) isAntiAdditive_compl)
   rw [isAntiAdditive_iff_mem]
@@ -250,25 +251,25 @@ theorem isAntiAdditive_noOneNR {E : Type*} (O : Set E) (B : E → W → W → Pr
 /-! ### Stacked neg-raising predicates (§3.2–3.3) -/
 
 /-- The environment of a negated neg-raising predicate over another. -/
-def negStack (R₁ H₁ R₂ H₂ : W → W → Prop) (p : Set W) : Set W :=
+def negStack (R₁ H₁ R₂ H₂ : SetRel W W) (p : Set W) : Set W :=
   (neg (nrp R₁ H₁ (nrp R₂ H₂ (ofProp (· ∈ p))))).truthSet
 
 /-- (107)–(110): under a predicate whose heritage base is its modal base, such as *think*, the
 negation goes all the way down. -/
-theorem negStack_self_eq (R₁ R₂ H₂ : W → W → Prop) (p : Set W) :
+theorem negStack_self_eq (R₁ R₂ H₂ : SetRel W W) (p : Set W) :
     negStack R₁ R₁ R₂ H₂ p = every R₁ (every R₂ pᶜ) := by
   ext w
-  simp only [negStack, mem_truthSet, holds_neg_nrp_self, every, box, Set.mem_ofPred_eq]
+  simp only [negStack, mem_truthSet, holds_neg_nrp_self, every, Box, Set.mem_ofPred_eq]
   exact and_congr_right fun _ ↦ forall₂_congr fun u _ ↦ Set.ext_iff.1 (negNR_eq R₂ H₂ p) u
 
 /-- (95): *I don't believe Bill wanted Harry to die* entails *I believe Bill wanted Harry not to
 die*. -/
-theorem negStack_self_subset (R₁ R₂ H₂ : W → W → Prop) (p : Set W) :
+theorem negStack_self_subset (R₁ R₂ H₂ : SetRel W W) (p : Set W) :
     negStack R₁ R₁ R₂ H₂ p ⊆ {w | □[R₁] (□[R₂] (· ∉ p)) w} := fun _ hw ↦
   fun u hu ↦ (((negStack_self_eq R₁ R₂ H₂ p).subset hw).2 u hu).2
 
 /-- (97a): *not think want* is anti-additive. -/
-theorem isAntiAdditive_negStack_self (R₁ R₂ H₂ : W → W → Prop) :
+theorem isAntiAdditive_negStack_self (R₁ R₂ H₂ : SetRel W W) :
     IsAntiAdditive (negStack R₁ R₁ R₂ H₂) := by
   rw [show negStack R₁ R₁ R₂ H₂ = every R₁ ∘ (every R₂ ∘ compl) from
     funext (negStack_self_eq R₁ R₂ H₂)]
@@ -277,12 +278,12 @@ theorem isAntiAdditive_negStack_self (R₁ R₂ H₂ : W → W → Prop) :
 /-- (111)–(113): when the inner predicate's heritage base is its modal base, the negated stack
 holds exactly when the inner subject is settled throughout the outer heritage base, the outer modal
 base is nonempty, and the inner predicate fails throughout it. -/
-theorem negStack_eq (R₁ H₁ R₂ : W → W → Prop) (p : Set W) :
-    negStack R₁ H₁ R₂ R₂ p = {w | (∀ u, H₁ w u → □[R₂] (· ∈ p) u ∨ □[R₂] (· ∉ p) u) ∧
-      (∃ u, R₁ w u) ∧ □[R₁] (fun u ↦ ¬ □[R₂] (· ∈ p) u) w} := by
+theorem negStack_eq (R₁ H₁ R₂ : SetRel W W) (p : Set W) :
+    negStack R₁ H₁ R₂ R₂ p = {w | (∀ u, w ~[H₁] u → □[R₂] (· ∈ p) u ∨ □[R₂] (· ∉ p) u) ∧
+      (∃ u, w ~[R₁] u) ∧ □[R₁] (fun u ↦ ¬ □[R₂] (· ∈ p) u) w} := by
   ext w
   simp only [negStack, mem_truthSet, holds_neg_nrp, Set.mem_ofPred_eq]
-  simp only [holds, nrp, ofProp, box, true_and, implies_true]
+  simp only [holds, nrp, ofProp, Box, true_and, implies_true]
   exact and_congr_right fun _ ↦ and_congr_right fun _ ↦ forall₂_congr fun u _ ↦
     ⟨fun h hall ↦ h ⟨.inl hall, hall⟩, fun h ⟨_, hall⟩ ↦ h hall⟩
 
@@ -291,25 +292,26 @@ worlds `2` and `3` possible, and at John's belief world `1` Fred is settled, con
 `4`. -/
 
 /-- John's desire alternatives in the frame. -/
-abbrev desJohn : Fin 5 → Fin 5 → Prop := fun w u ↦ w = 0 ∧ u = 0
+abbrev desJohn : SetRel (Fin 5) (Fin 5) := {p | p.1 = 0 ∧ p.2 = 0}
 
 /-- John's belief alternatives in the frame. -/
-abbrev belJohn : Fin 5 → Fin 5 → Prop := fun w u ↦ w = 0 ∧ u = 1
+abbrev belJohn : SetRel (Fin 5) (Fin 5) := {p | p.1 = 0 ∧ p.2 = 1}
 
 /-- Fred's belief alternatives in the frame. -/
-abbrev belFred : Fin 5 → Fin 5 → Prop := fun w u ↦ (w = 0 ∧ (u = 2 ∨ u = 3)) ∨ (w = 1 ∧ u = 4)
+abbrev belFred : SetRel (Fin 5) (Fin 5) :=
+  {p | (p.1 = 0 ∧ (p.2 = 2 ∨ p.2 = 3)) ∨ (p.1 = 1 ∧ p.2 = 4)}
 
 /-- Fred is settled at John's belief world about any proposition. -/
 private theorem belFred_settled (s : Set (Fin 5)) :
-    ∀ u, belJohn 0 u → □[belFred] (· ∈ s) u ∨ □[belFred] (· ∉ s) u := by
+    ∀ u, 0 ~[belJohn] u → □[belFred] (· ∈ s) u ∨ □[belFred] (· ∉ s) u := by
   rintro u ⟨-, rfl⟩
   by_cases h : (4 : Fin 5) ∈ s
   · refine .inl fun v hv ↦ ?_
     rcases hv with ⟨h', -⟩ | ⟨-, rfl⟩
-    exacts [absurd h' (by decide), h]
+    exacts [by simp at h', h]
   · refine .inr fun v hv ↦ ?_
     rcases hv with ⟨h', -⟩ | ⟨-, rfl⟩
-    exacts [absurd h' (by decide), h]
+    exacts [by simp at h', h]
 
 /-- At John's desire world Fred believes no proposition excluding `2` or `3`. -/
 private theorem belFred_not_box {s : Set (Fin 5)} {x : Fin 5} (hx : x = 2 ∨ x = 3) (hxs : x ∉ s) :
@@ -340,7 +342,7 @@ theorem not_isAntiAdditive_negStack :
   rcases hv with ⟨-, rfl | rfl⟩ | ⟨h', -⟩
   · simp
   · simp
-  · exact absurd h' (by decide)
+  · simp at h'
 
 /-! ### Strawson anti-additivity (Appendix 1) -/
 
@@ -390,15 +392,15 @@ inductive Env
 def Env.AntiAdditive : Env → Prop
   | .positive => ∀ W : Type, IsAntiAdditive (id : Set W → Set W)
   | .negation => ∀ W : Type, IsAntiAdditive (compl : Set W → Set W)
-  | .notSome => ∀ (W : Type) (R : W → W → Prop), IsAntiAdditive (negExistential R)
-  | .notEvery => ∀ (W : Type) (R : W → W → Prop), IsAntiAdditive (negUniversal R)
-  | .notThink => ∀ (W : Type) (R H : W → W → Prop), IsAntiAdditive (negNR R H)
-  | .notThinkStressed => ∀ (W : Type) (R : W → W → Prop), IsAntiAdditive (negNRStressed R)
-  | .notKnow => ∀ (W : Type) (R : W → W → Prop), IsAntiAdditive (negKnow R)
+  | .notSome => ∀ (W : Type) (R : SetRel W W), IsAntiAdditive (negExistential R)
+  | .notEvery => ∀ (W : Type) (R : SetRel W W), IsAntiAdditive (negUniversal R)
+  | .notThink => ∀ (W : Type) (R H : SetRel W W), IsAntiAdditive (negNR R H)
+  | .notThinkStressed => ∀ (W : Type) (R : SetRel W W), IsAntiAdditive (negNRStressed R)
+  | .notKnow => ∀ (W : Type) (R : SetRel W W), IsAntiAdditive (negKnow R)
   | .noOneThinks =>
-      ∀ (W E : Type) (O : Set E) (B : E → W → W → Prop), IsAntiAdditive (noOneNR O B)
-  | .notThinkWant => ∀ (W : Type) (B R H : W → W → Prop), IsAntiAdditive (negStack B B R H)
-  | .notWantThink => ∀ (W : Type) (D B R : W → W → Prop), IsAntiAdditive (negStack D B R R)
+      ∀ (W E : Type) (O : Set E) (B : E → SetRel W W), IsAntiAdditive (noOneNR O B)
+  | .notThinkWant => ∀ (W : Type) (B R H : SetRel W W), IsAntiAdditive (negStack B B R H)
+  | .notWantThink => ∀ (W : Type) (D B R : SetRel W W), IsAntiAdditive (negStack D B R R)
   | .only => ∀ (W ι : Type) (x : ι),
       IsAntiAdditive fun P : ι → Set W ↦ (NaturalLogic.only x P).truthSet
   | .adversative =>

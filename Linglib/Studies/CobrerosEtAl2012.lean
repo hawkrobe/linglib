@@ -71,7 +71,7 @@ the conditional defined classically. The universally quantified principles appea
 instances, which the paper notes changes nothing (§3.6). Identity, which the paper adds in
 §2.3.1, is not represented. Consequence quantifies over T-models of every domain in the
 universe of `C` (`TModels`), as the paper's does; the atomic strict and tolerant clauses are
-`ModalLogic.box` and `ModalLogic.diamond` along `∼_P`, so Lemma 1's atomic case is the T axiom.
+`ModalLogic.Box` and `ModalLogic.Diamond` along `∼_P`, so Lemma 1's atomic case is the T axiom.
 
 ## References
 
@@ -89,7 +89,8 @@ universe u
 
 namespace CobrerosEtAl2012
 
-open ModalLogic (IsKTBFrame box diamond box_T)
+open ModalLogic (IsKTBFrame Box Diamond box_T)
+open scoped SetRel
 open scoped ModalLogic Trivalent.Formula
 open Consequence (IsDual MixedConsequence isTrans_mixedConsequence mixedConsequence_cons_cons_iff
   mixedConsequence_iff_dual mixedConsequence_nil_singleton mixedConsequence_singleton_nil
@@ -106,7 +107,7 @@ structure TModel (Pred C : Type*) (D : Type*) where
   /-- The classical extension of each predicate. -/
   interp : Pred → D → Prop
   /-- The indifference relation `∼_P` of each predicate. -/
-  sim : Pred → D → D → Prop
+  sim : Pred → SetRel D D
   sim_ktb : ∀ P, IsKTBFrame (sim P)
 
 variable {Pred : Type*} {C : Type u} {D : Type*}
@@ -168,7 +169,7 @@ namespace TModel
 holds somewhere in it, `◇`; negation swaps to the dual mode; similarity statements are classical
 in every mode (Remark 2). -/
 def Realize (M : TModel Pred C D) : Mode → Formula Pred C → Prop
-  | _, .atom (.sim P a b) => M.sim P (M.const a) (M.const b)
+  | _, .atom (.sim P a b) => (M.const a) ~[M.sim P] (M.const b)
   | .classical, .atom (.pred P a) => M.interp P (M.const a)
   | .strict, .atom (.pred P a) => □[M.sim P] (M.interp P) (M.const a)
   | .tolerant, .atom (.pred P a) => ◇[M.sim P] (M.interp P) (M.const a)
@@ -178,7 +179,7 @@ def Realize (M : TModel Pred C D) : Mode → Formula Pred C → Prop
 variable (M : TModel Pred C D)
 
 @[simp] theorem realize_sim (m : Mode) (P : Pred) (a b : C) :
-    M.Realize m (.atom (.sim P a b)) ↔ M.sim P (M.const a) (M.const b) := by cases m <;> rfl
+    M.Realize m (.atom (.sim P a b)) ↔ (M.const a) ~[M.sim P] (M.const b) := by cases m <;> rfl
 
 @[simp] theorem realize_classical_pred (P : Pred) (a : C) :
     M.Realize .classical (.atom (.pred P a)) ↔ M.interp P (M.const a) := Iff.rfl
@@ -218,9 +219,9 @@ variable (M : TModel Pred C D)
   | nil => simp
   | cons δ Δ ih => simp [ih, or_assoc]
 
-instance decidableRealize [Fintype D] [∀ P, DecidableRel (M.sim P)]
+instance decidableRealize [Fintype D] [∀ P x y, Decidable (x ~[M.sim P] y)]
     [∀ P, DecidablePred (M.interp P)] : ∀ (m : Mode) (φ : Formula Pred C), Decidable (M.Realize m φ)
-  | _, .atom (.sim P a b) => inferInstanceAs (Decidable (M.sim P (M.const a) (M.const b)))
+  | _, .atom (.sim P a b) => inferInstanceAs (Decidable ((M.const a) ~[M.sim P] (M.const b)))
   | .classical, .atom (.pred P a) => inferInstanceAs (Decidable (M.interp P (M.const a)))
   | .strict, .atom (.pred P a) =>
     inferInstanceAs (Decidable (□[M.sim P] (M.interp P) (M.const a)))
@@ -238,7 +239,7 @@ theorem realize_mono (φ : Formula Pred C) : Monotone (M.Realize · φ) := by
     induction φ with
     | atom α =>
       cases α with
-      | pred P a => exact ⟨box_T, fun h ↦ ⟨M.const a, Std.Refl.refl _, h⟩⟩
+      | pred P a => exact ⟨box_T, fun h ↦ ⟨M.const a, (M.sim P).refl _, h⟩⟩
       | sim => exact ⟨id, id⟩
     | neg ψ ih => exact ⟨fun h hc ↦ h (ih.2 hc), fun h hs ↦ h (ih.1 hs)⟩
     | conj ψ χ ihψ ihχ =>
@@ -274,14 +275,14 @@ theorem realize_disj_neg {m : Mode} (hm : m ≠ .strict) (φ : Formula Pred C) :
 def Borderline (P : Pred) (d : D) : Prop :=
   ◇[M.sim P] (M.interp P) d ∧ ¬ □[M.sim P] (M.interp P) d
 
-instance [Fintype D] [∀ P, DecidableRel (M.sim P)] [∀ P, DecidablePred (M.interp P)]
+instance [Fintype D] [∀ P x y, Decidable (x ~[M.sim P] y)] [∀ P, DecidablePred (M.interp P)]
     (P : Pred) (d : D) : Decidable (M.Borderline P d) :=
   inferInstanceAs (Decidable (_ ∧ ¬ _))
 
 /-- A borderline case is one indifferent both from a `P` and from a non-`P` individual (p. 365). -/
-theorem borderline_iff (P : Pred) (d : D) :
-    M.Borderline P d ↔ (∃ e, M.sim P d e ∧ M.interp P e) ∧ ∃ e, M.sim P d e ∧ ¬ M.interp P e := by
-  simp [Borderline, box, diamond]
+theorem borderline_iff (P : Pred) (d : D) : M.Borderline P d ↔
+    (∃ e, d ~[M.sim P] e ∧ M.interp P e) ∧ ∃ e, d ~[M.sim P] e ∧ ¬ M.interp P e := by
+  simp [Borderline, Box, Diamond]
 
 /-- A borderline case is tolerantly both `P` and `¬P` (Definition 10). -/
 theorem borderline_iff_realize_conj_neg (P : Pred) (a : C) :
@@ -306,9 +307,9 @@ theorem Borderline.exists_ne {P : Pred} {d : D} (h : M.Borderline P d) :
   obtain ⟨⟨e₁, h₁, hP₁⟩, e₂, h₂, hP₂⟩ := (M.borderline_iff P d).1 h
   by_cases hd : M.interp P d
   · exact ⟨e₂, fun he ↦ hP₂ (he ▸ hd),
-      (M.borderline_iff P e₂).2 ⟨⟨d, Std.Symm.symm _ _ h₂, hd⟩, e₂, Std.Refl.refl _, hP₂⟩⟩
+      (M.borderline_iff P e₂).2 ⟨⟨d, (M.sim P).symm h₂, hd⟩, e₂, (M.sim P).refl _, hP₂⟩⟩
   · exact ⟨e₁, fun he ↦ hd (he ▸ hP₁),
-      (M.borderline_iff P e₁).2 ⟨⟨e₁, Std.Refl.refl _, hP₁⟩, d, Std.Symm.symm _ _ h₁, hd⟩⟩
+      (M.borderline_iff P e₁).2 ⟨⟨e₁, (M.sim P).refl _, hP₁⟩, d, (M.sim P).symm h₁, hd⟩⟩
 
 end TModel
 
@@ -413,7 +414,7 @@ theorem tolerance_valid (P : Pred) (a b : C) : Valid .tolerant (tolerance P a b)
   simp only [TModels.Realize, tolerance, TModel.realize_imp, TModel.realize_conj,
     TModel.realize_sim, Mode.dual_tolerant, TModel.realize_strict_pred,
     TModel.realize_tolerant_pred]
-  exact fun ⟨hs, hab⟩ ↦ ⟨M.const b, Std.Refl.refl _, hs _ hab⟩
+  exact fun ⟨hs, hab⟩ ↦ ⟨M.const b, (M.sim P).refl _, hs _ hab⟩
 
 /-- `{Pa, a I_P b} ⊨ˢᶜ Pb` (§3.4). -/
 theorem sc_one_step (P : Pred) (a b : C) :
@@ -431,7 +432,7 @@ theorem ct_one_step (P : Pred) (a b : C) :
     simp only [TModels.Realize, List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp,
       forall_eq,
       TModel.realize_classical_pred, TModel.realize_sim] at h
-    exact ⟨M.const a, Std.Symm.symm _ _ h.2, h.1⟩
+    exact ⟨M.const a, (M.sim P).symm h.2, h.1⟩
 
 /-- Each step of a sorites is `st`-valid (§3.6). -/
 theorem st_one_step (P : Pred) (a b : C) :
@@ -446,7 +447,7 @@ theorem st_two_step (P : Pred) (a b c : C) :
     simp only [TModels.Realize, List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp,
       forall_eq,
       TModel.realize_strict_pred, TModel.realize_sim] at h
-    exact ⟨M.const b, Std.Symm.symm _ _ h.2.2, h.1 _ h.2.1⟩
+    exact ⟨M.const b, (M.sim P).symm h.2.2, h.1 _ h.2.1⟩
 
 /-! ### The restricted vocabulary -/
 
@@ -464,7 +465,7 @@ variable (M : TModel Pred C D)
 /-- The T-model of Lemma 2: `M` with identity as every indifference relation. -/
 def identity : TModel Pred C D :=
   { M with
-    sim := fun _ ↦ Eq
+    sim := fun _ ↦ .id
     sim_ktb := fun _ ↦ { refl := fun _ ↦ rfl, symm := fun _ _ ↦ Eq.symm } }
 
 /-- **Lemma 2**: in an identity model every mode agrees with classical truth. -/
@@ -473,7 +474,7 @@ theorem identity_realize (m : Mode) (φ : Formula Pred C) :
   induction φ generalizing m with
   | atom α =>
     cases α with
-    | pred P a => cases m <;> simp [identity, box, diamond]
+    | pred P a => cases m <;> simp [identity, Box, Diamond, SetRel.mem_id]
     | sim P a b => simp
   | neg ψ ih => simp [ih]
   | conj ψ χ ihψ ihχ => simp [ihψ, ihχ]
@@ -508,7 +509,7 @@ extra one alone falling outside every predicate, so that every predication is bo
 def allBorderline (Pred C : Type*) : TModel Pred C (Option C) where
   const := some
   interp _ d := d.isSome
-  sim _ _ _ := True
+  sim _ := .univ
   sim_ktb _ := { refl := fun _ ↦ trivial, symm := fun _ _ _ ↦ trivial }
 
 /-- **Lemma 3**: in `allBorderline` nothing restricted is strictly true and everything restricted
@@ -563,7 +564,7 @@ noncomputable def toMV (M : TModel Pred C D) : Trivalent.Model (Atom Pred C)
   | .pred P a =>
     if □[M.sim P] (M.interp P) (M.const a) then .true
     else if ◇[M.sim P] (M.interp P) (M.const a) then .indet else .false
-  | .sim P a b => if M.sim P (M.const a) (M.const b) then .true else .false
+  | .sim P a b => if (M.const a) ~[M.sim P] (M.const b) then .true else .false
 
 /-- **Lemma 4**: tolerant truth is LP-truth and strict truth K3-truth in `toMV M`. -/
 theorem TModel.realize_toMV (M : TModel Pred C D) (φ : Formula Pred C) :
@@ -576,7 +577,7 @@ theorem TModel.realize_toMV (M : TModel Pred C D) (φ : Formula Pred C) :
         Trivalent.Formula.realize_atom, Trivalent.designated_lp_iff, Trivalent.designated_k3_iff,
         toMV]
       split_ifs with hs ht
-      · exact ⟨iff_of_true ⟨_, Std.Refl.refl _, box_T hs⟩ (by decide), iff_of_true hs rfl⟩
+      · exact ⟨iff_of_true ⟨_, (M.sim P).refl _, box_T hs⟩ (by decide), iff_of_true hs rfl⟩
       · exact ⟨iff_of_true ht (by decide), iff_of_false hs (by decide)⟩
       · exact ⟨iff_of_false ht (fun h ↦ h rfl), iff_of_false hs (by decide)⟩
     | sim P a b =>
@@ -599,7 +600,7 @@ def ofMV (v : Trivalent.Model (Atom Pred C)) : TModel Pred C (C × Bool) where
   interp P
     | (a, false) => v (.pred P a) = .true
     | (a, true) => v (.pred P a) ≠ .false
-  sim _ x y := x.1 = y.1
+  sim _ := {p | p.1.1 = p.2.1}
   sim_ktb _ := { refl := fun _ ↦ rfl, symm := fun _ _ ↦ Eq.symm }
 
 /-- **Lemma 5**: on the restricted vocabulary, LP-truth in `v` is tolerant truth and K3-truth
@@ -612,11 +613,13 @@ theorem ofMV_realize (v : Trivalent.Model (Atom Pred C)) (hφ : IsRestricted φ)
     | pred P a =>
       simp only [TModel.realize_tolerant_pred, TModel.realize_strict_pred,
         Trivalent.Formula.realize_atom, Trivalent.designated_lp_iff, Trivalent.designated_k3_iff,
-        ofMV, box, diamond]
+        ofMV, Box, Diamond]
       refine ⟨⟨?_, fun h ↦ ⟨(a, true), rfl, h⟩⟩, ⟨fun h ↦ h (a, false) rfl, ?_⟩⟩
-      · rintro ⟨⟨b, i⟩, rfl, h⟩
+      · rintro ⟨⟨b, i⟩, hb, h⟩
+        obtain rfl : a = b := hb
         cases i <;> simp_all
-      · rintro h ⟨b, i⟩ rfl
+      · rintro h ⟨b, i⟩ hb
+        obtain rfl : a = b := hb
         cases i <;> simp [h]
     | sim P a b => exact hφ.elim
   | neg ψ ih =>
@@ -653,7 +656,7 @@ from `a` to another constant fails in it classically. -/
 def cutAt (a : C) : TModel Pred C C where
   const := id
   interp _ d := d = a
-  sim _ _ _ := True
+  sim _ := .univ
   sim_ktb _ := { refl := fun _ ↦ trivial, symm := fun _ _ _ ↦ trivial }
 
 /-- **Lemma 10**: the deduction theorem holds for `⊨ᵐⁿ` iff `m = d(n)`, so for `st`, `cc` and
@@ -669,7 +672,7 @@ theorem deductionTheorem_iff {m n : Mode} [Nonempty Pred] [Nontrivial C] :
   have hbot (x : Mode) (φ : Formula Pred C) :
       Consequence x n [φ] [.neg (.atom (.sim P a a))] ↔ Unsat x φ := by
     simp [Unsat, TModels.Realize, fun M : TModels Pred C ↦
-      (Std.Refl.refl _ : M.2.sim P (M.2.const a) (M.2.const a))]
+      ((M.2.sim P).refl _ : M.2.const a ~[M.2.sim P] M.2.const a)]
   have key (φ : Formula Pred C) : Unsat m φ ↔ Unsat n.dual φ :=
     (hbot m φ).symm.trans <| (h φ _ [] []).trans <|
       (Consequence.iff_valid_imp rfl).symm.trans (hbot n.dual φ)
@@ -707,11 +710,11 @@ neighbours, the first `i` classically `P`. `series 4 2` is the four-element mode
 def series (n i : ℕ) : TModel Unit (Fin n) (Fin n) where
   const := id
   interp _ x := x.val < i
-  sim _ x y := x.val ≤ y.val + 1 ∧ y.val ≤ x.val + 1
+  sim _ := {p | p.1.val ≤ p.2.val + 1 ∧ p.2.val ≤ p.1.val + 1}
   sim_ktb _ := { refl := fun _ ↦ ⟨Nat.le_succ _, Nat.le_succ _⟩, symm := fun _ _ ↦ And.symm }
 
-instance (n i : ℕ) (P : Unit) : DecidableRel ((series n i).sim P) :=
-  fun x y ↦ inferInstanceAs (Decidable (x.val ≤ y.val + 1 ∧ y.val ≤ x.val + 1))
+instance (n i : ℕ) (P : Unit) (x y : Fin n) : Decidable (x ~[(series n i).sim P] y) :=
+  inferInstanceAs (Decidable (x.val ≤ y.val + 1 ∧ y.val ≤ x.val + 1))
 
 instance (n i : ℕ) (P : Unit) : DecidablePred ((series n i).interp P) :=
   fun x ↦ inferInstanceAs (Decidable (x.val < i))
@@ -720,7 +723,7 @@ variable {n i : ℕ}
 
 theorem series_realize_tolerant (hi : 0 < i) (x : Fin n) :
     (series n i).Realize .tolerant (.atom (.pred () x)) ↔ x.val ≤ i := by
-  simp only [TModel.realize_tolerant_pred, diamond, series, id]
+  simp only [TModel.realize_tolerant_pred, Diamond, series, id, Set.mem_ofPred_eq]
   refine ⟨fun ⟨y, ⟨h₁, _⟩, h₃⟩ ↦ by omega, fun h ↦ ?_⟩
   rcases Nat.lt_or_ge x.val i with hx | hx
   · exact ⟨x, ⟨Nat.le_succ _, Nat.le_succ _⟩, hx⟩
@@ -728,7 +731,7 @@ theorem series_realize_tolerant (hi : 0 < i) (x : Fin n) :
 
 theorem series_realize_strict (hin : i < n) (x : Fin n) :
     (series n i).Realize .strict (.atom (.pred () x)) ↔ x.val + 1 < i := by
-  simp only [TModel.realize_strict_pred, box, series, id]
+  simp only [TModel.realize_strict_pred, Box, series, id, Set.mem_ofPred_eq]
   refine ⟨fun h ↦ ?_, fun h y ⟨_, h₂⟩ ↦ by omega⟩
   by_cases hx : x.val + 1 < n
   · simpa using h ⟨x.val + 1, hx⟩ ⟨Nat.le_succ_of_le (Nat.le_succ _), le_rfl⟩
@@ -825,8 +828,8 @@ theorem not_isTrans_ct :
   refine mixedConsequence_singleton_right.2 fun ⟨_, M⟩ h ↦ ?_ <;>
   simp only [TModels.Realize, List.forall_mem_singleton, TModel.realize_conj,
     TModel.realize_classical_pred, TModel.realize_tolerant_pred, TModel.realize_sim] at h ⊢
-  exacts [⟨⟨M.const 1, Std.Symm.symm _ _ h.2.1, h.1⟩, h.2.2⟩,
-    ⟨M.const 2, Std.Symm.symm _ _ h.2, h.1⟩]
+  exacts [⟨⟨M.const 1, (M.sim ()).symm h.2.1, h.1⟩, h.2.2⟩,
+    ⟨M.const 2, (M.sim ()).symm h.2, h.1⟩]
 
 /-- `sc` is not transitive (§3.4.1): along `a, b, c` of the four-element model,
 `Pa ∧ a I_P b ∧ b I_P c ⊨ˢᶜ Pb ∧ b I_P c` and `Pb ∧ b I_P c ⊨ˢᶜ Pc` but
@@ -855,8 +858,8 @@ theorem not_isTrans_st :
   refine mixedConsequence_singleton_right.2 fun ⟨_, M⟩ h ↦ ?_ <;>
   simp only [TModels.Realize, List.forall_mem_singleton, TModel.realize_conj,
     TModel.realize_strict_pred, TModel.realize_tolerant_pred, TModel.realize_sim] at h ⊢
-  exacts [⟨⟨M.const 1, Std.Refl.refl _, h.1 _ h.2.1⟩, h.2.2⟩,
-    ⟨M.const 2, Std.Symm.symm _ _ h.2.2, h.1 _ h.2.1⟩]
+  exacts [⟨⟨M.const 1, (M.sim ()).refl _, h.1 _ h.2.1⟩, h.2.2⟩,
+    ⟨M.const 2, (M.sim ()).symm h.2.2, h.1 _ h.2.1⟩]
 
 /-- On the sorites language the transitive relations among the nine are exactly those whose
 conclusion standard is at most their premise standard: `tc`, `cs` and `ts` besides the unmixed

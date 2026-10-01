@@ -171,7 +171,7 @@ inductive Provable : OForm Atom → Prop where
 /-! ### Soundness -/
 
 open TWFrame
-open ModalLogic (box_four self_imp_box_flip_diamond)
+open ModalLogic (box_four)
 
 /-- **Soundness of `TW`** ([von-kutschera-1997]): every `TW`-provable formula is T × W-valid. -/
 theorem soundness {a : OForm Atom} (h : Provable a) : Valid.{u, v} a := by
@@ -192,10 +192,10 @@ theorem soundness {a : OForm Atom} (h : Provable a) : Valid.{u, v} a := by
       simp only [sat_imp, sat_and, sat_box]; exact fun h w' => h.1 w' (h.2 w')
   | a1c _ =>
       simp only [sat_imp, sat_H, sat_Fut]
-      exact fun ha => self_imp_box_flip_diamond (· < ·) (fun t' => F.sat V _ t' w) t ha
+      exact fun ha t' ht' => ⟨t, ht', ha⟩
   | a1d _ =>
       simp only [sat_imp, sat_G, sat_Pst]
-      exact fun ha => self_imp_box_flip_diamond (· > ·) (fun t' => F.sat V _ t' w) t ha
+      exact fun ha t' ht' => ⟨t, ht', ha⟩
   | a2 _ =>
       simp only [sat_imp]; exact fun h => box_four h
   | a3a _ | a3b _ =>

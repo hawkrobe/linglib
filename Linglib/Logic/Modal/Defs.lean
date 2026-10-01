@@ -1,21 +1,25 @@
 module
 
-public import Mathlib.Basic.Logic.Basic
-public import Mathlib.Logic.Relation
-public import Mathlib.Logic.Relator
-public import Mathlib.Order.Defs.Unbundled
-public import Mathlib.Order.PropInstances
+public import Linglib.Core.Relation.SetRel
 
 /-!
 # Modal operators and frame conditions
 
-This file defines the relational `box`/`diamond` of Kripke semantics,
-the frame conditions of modal correspondence theory for accessibility
-relations `W → W → Prop`, and the per-axiom correspondences (K, T, D, B,
-4, 5) connecting them; the `Set`-valued mathlib counterparts of the
-operators are `Rel.core` and `Rel.preimage`. Along a composite relation, `Relation.Comp R S`,
-necessity is necessity nested in necessity and possibility possibility nested in possibility
-(`box_comp`, `diamond_comp`).
+This file defines the relational necessity and possibility of Kripke semantics over an
+accessibility relation `R : SetRel W' W`, as operators on propositions `W → Prop`: `□[R] p w`
+holds when `p` holds at every `R`-successor of `w`, `◇[R] p w` when it holds at some. They are
+mathlib's `SetRel.core` and `SetRel.preimage` read on predicates (`box_iff_mem_core`,
+`diamond_iff_mem_preimage`), in the way `Filter.Eventually` reads a filter on predicates, so
+propositions stated as sets use the mathlib operators directly. Of the frame conditions of
+correspondence theory, reflexivity, symmetry and transitivity are mathlib's `SetRel.IsRefl`,
+`SetRel.IsSymm` and `SetRel.IsTrans`; this file adds seriality and the Euclidean property and
+proves the axioms K, T, D, B, 4, 5 and Alt₁ over their frames, each axiom defining its frame
+condition. Along a composite relation necessity nests in necessity (`box_comp`).
+
+## Main definitions
+
+* `ModalLogic.Box`, `ModalLogic.Diamond`, with notation `□[R]` and `◇[R]`.
+* `ModalLogic.IsSerial`, `ModalLogic.IsEuclidean`: the frame conditions of D and 5.
 
 ## References
 
@@ -27,189 +31,190 @@ necessity is necessity nested in necessity and possibility possibility nested in
 
 namespace ModalLogic
 
-variable {W : Type*} (R : W → W → Prop)
+open SetRel
 
 /-! ### Box and diamond -/
 
-/-- Restricted necessity: `box R p w` holds iff `p v` for all `v`
-    accessible from `w`. -/
-def box (p : W → Prop) (w : W) : Prop :=
-  ∀ v, R w v → p v
+section Operators
 
-/-- Restricted possibility: `diamond R p w` holds iff `p v` for some `v`
-    accessible from `w`. Dual of `box`. -/
-def diamond (p : W → Prop) (w : W) : Prop :=
-  ∃ v, R w v ∧ p v
+variable {W W' : Type*} (R : SetRel W' W) (p : W → Prop) (w : W')
 
-@[inherit_doc] scoped notation:max "□[" R "]" => box R
-@[inherit_doc] scoped notation:max "◇[" R "]" => diamond R
+/-- Necessity along `R`: `p` holds at every `R`-successor of `w`. -/
+def Box : Prop := ∀ v, w ~[R] v → p v
 
-/-! ### Duality -/
+/-- Possibility along `R`: `p` holds at some `R`-successor of `w`. -/
+def Diamond : Prop := ∃ v, w ~[R] v ∧ p v
 
-@[simp] theorem not_box (p : W → Prop) (w : W) :
-    ¬ □[R] p w ↔ ◇[R] (fun v => ¬ p v) w := by
-  simp [box, diamond, not_forall]
+@[inherit_doc] scoped notation:max "□[" R "]" => Box R
+@[inherit_doc] scoped notation:max "◇[" R "]" => Diamond R
 
-@[simp] theorem not_diamond (p : W → Prop) (w : W) :
-    ¬ ◇[R] p w ↔ □[R] (fun v => ¬ p v) w := by
-  simp [box, diamond, not_and]
+variable {R p w}
 
+/-- Necessity on predicates is the mathlib core on sets. -/
+theorem box_iff_mem_core : □[R] p w ↔ w ∈ R.core {v | p v} := .rfl
+
+/-- Possibility on predicates is the mathlib preimage on sets. -/
+theorem diamond_iff_mem_preimage : ◇[R] p w ↔ w ∈ R.preimage {v | p v} :=
+  exists_congr fun _ ↦ and_comm
+
+@[simp] theorem not_box : ¬ □[R] p w ↔ ◇[R] (fun v ↦ ¬ p v) w := by
+  simp [Box, Diamond, not_forall]
+
+@[simp] theorem not_diamond : ¬ ◇[R] p w ↔ □[R] (fun v ↦ ¬ p v) w := by
+  simp [Box, Diamond, not_and]
+
+variable (R) in
 /-- Necessity distributes over conjunction ([hintikka-1962]'s
 `a believes A and B ↔ a believes A and a believes B`). -/
-theorem box_and (p q : W → Prop) (w : W) :
-    □[R] (fun v => p v ∧ q v) w ↔ □[R] p w ∧ □[R] q w := by
-  simp only [box, imp_and, forall_and]
+theorem box_and (q : W → Prop) : □[R] (fun v ↦ p v ∧ q v) w ↔ □[R] p w ∧ □[R] q w := by
+  simp only [Box, imp_and, forall_and]
 
-/-- Necessity along a composite relation is necessity nested in necessity. -/
-theorem box_comp (S : W → W → Prop) (p : W → Prop) :
-    □[Relation.Comp R S] p = □[R] (□[S] p) :=
-  funext fun _ ↦ propext ⟨fun h _ hv _ hu ↦ h _ ⟨_, hv, hu⟩, fun h _ ⟨_, hv, hu⟩ ↦ h _ hv _ hu⟩
-
-/-- Possibility along a composite relation is possibility nested in possibility. -/
-theorem diamond_comp (S : W → W → Prop) (p : W → Prop) :
-    ◇[Relation.Comp R S] p = ◇[R] (◇[S] p) :=
-  funext fun _ ↦ propext ⟨fun ⟨u, ⟨v, hv, hu⟩, hp⟩ ↦ ⟨v, hv, u, hu, hp⟩,
-    fun ⟨v, hv, u, hu, hp⟩ ↦ ⟨u, ⟨v, hv, hu⟩, hp⟩⟩
+variable (R) in
+/-- Necessity along a union of relations is necessity along each. -/
+theorem box_iUnion {ι : Sort*} (R : ι → SetRel W' W) : □[⋃ i, R i] p w ↔ ∀ i, □[R i] p w := by
+  simp only [Box, Set.mem_iUnion, forall_exists_index]
+  exact forall_comm
 
 /-- Necessity depends only on the worlds accessed: two worlds accessing the same worlds
 carry the same box. -/
-theorem box_congr_left {R : W → W → Prop} {p : W → Prop} {w w' : W}
-    (h : ∀ v, R w v ↔ R w' v) : □[R] p w ↔ □[R] p w' :=
-  forall_congr' fun v => imp_congr_left (h v)
+theorem box_congr_left {w'' : W'} (h : ∀ v, w ~[R] v ↔ w'' ~[R] v) : □[R] p w ↔ □[R] p w'' :=
+  forall_congr' fun v ↦ imp_congr_left (h v)
+
+end Operators
+
+variable {W : Type*} (R : SetRel W W)
+
+/-- Necessity along a composite relation is necessity nested in necessity. -/
+theorem box_comp (S : SetRel W W) (p : W → Prop) : □[R ○ S] p = □[R] (□[S] p) :=
+  funext fun _ ↦ propext ⟨fun h _ hv _ hu ↦ h _ ⟨_, hv, hu⟩, fun h _ ⟨_, hv, hu⟩ ↦ h _ hv _ hu⟩
+
+/-- Possibility along a composite relation is possibility nested in possibility. -/
+theorem diamond_comp (S : SetRel W W) (p : W → Prop) : ◇[R ○ S] p = ◇[R] (◇[S] p) :=
+  funext fun _ ↦ propext ⟨fun ⟨u, ⟨v, hv, hu⟩, hp⟩ ↦ ⟨v, hv, u, hu, hp⟩,
+    fun ⟨v, hv, u, hu, hp⟩ ↦ ⟨u, ⟨v, hv, hu⟩, hp⟩⟩
 
 /-! ### Frame conditions -/
 
 /-- `R` is **serial** if every world accesses at least one world. -/
 class IsSerial : Prop where
-  serial : Relator.LeftTotal R
+  serial : ∀ w, ∃ v, w ~[R] v
 
-/-- `R` is **Euclidean** if from any pair of `R`-successors of `w`, each is
-    an `R`-successor of the other. -/
+/-- `R` is **Euclidean** if any two `R`-successors of a world access each other. -/
 class IsEuclidean : Prop where
-  eucl : ∀ w v u, R w v → R w u → R v u
-
-/-! ### Frame implications and instances -/
+  eucl : ∀ w v u, w ~[R] v → w ~[R] u → v ~[R] u
 
 variable {R}
 
-instance : Std.Refl (⊤ : W → W → Prop) := ⟨fun _ => trivial⟩
-instance : IsEuclidean (⊤ : W → W → Prop) := ⟨fun _ _ _ _ _ => trivial⟩
-
-/-- A composite of reflexive relations is reflexive. -/
-instance {S : W → W → Prop} [hR : Std.Refl R] [hS : Std.Refl S] :
-    Std.Refl (Relation.Comp R S) where
-  refl w := ⟨w, hR.refl w, hS.refl w⟩
-
-/-- A composite of serial relations is serial. -/
-instance {S : W → W → Prop} [hR : IsSerial R] [hS : IsSerial S] :
-    IsSerial (Relation.Comp R S) where
-  serial w := let ⟨v, hv⟩ := hR.serial w; let ⟨u, hu⟩ := hS.serial v; ⟨u, v, hv, hu⟩
+instance : IsEuclidean (.univ : SetRel W W) := ⟨fun _ _ _ _ _ ↦ trivial⟩
 
 /-- Reflexive relations are serial. -/
-instance [hR : Std.Refl R] : IsSerial R where serial w := ⟨w, hR.refl w⟩
+instance [R.IsRefl] : IsSerial R := ⟨fun w ↦ ⟨w, R.rfl⟩⟩
 
-/-- Reflexive + Euclidean implies symmetric. -/
-instance [hR : Std.Refl R] [hE : IsEuclidean R] : Std.Symm R where
-  symm w v hwv := hE.eucl w v w hwv (hR.refl w)
+/-- A composite of serial relations is serial. -/
+instance {S : SetRel W W} [IsSerial R] [IsSerial S] : IsSerial (R ○ S) where
+  serial w := let ⟨v, hv⟩ := IsSerial.serial (R := R) w; let ⟨u, hu⟩ := IsSerial.serial (R := S) v
+    ⟨u, v, hv, hu⟩
 
-/-- Reflexive + Euclidean implies transitive. -/
-instance [hR : Std.Refl R] [hE : IsEuclidean R] : IsTrans W R where
-  trans w v u hwv hvu := hE.eucl v w u (hE.eucl w v w hwv (hR.refl w)) hvu
+/-- Reflexive and Euclidean implies symmetric. -/
+instance [R.IsRefl] [IsEuclidean R] : R.IsSymm where
+  symm w v h := IsEuclidean.eucl w v w h R.rfl
 
-/-- Symmetric + transitive implies euclidean. -/
-instance [hS : Std.Symm R] [hT : IsTrans W R] : IsEuclidean R where
-  eucl w v u hwv hwu := hT.trans v w u (hS.symm w v hwv) hwu
+/-- Reflexive and Euclidean implies transitive. -/
+instance [R.IsRefl] [IsEuclidean R] : R.IsTrans where
+  trans w v u hwv hvu := IsEuclidean.eucl v w u (IsEuclidean.eucl w v w hwv R.rfl) hvu
 
-variable {p q : W → Prop} {w : W}
+/-- Symmetric and transitive implies Euclidean. -/
+instance [R.IsSymm] [R.IsTrans] : IsEuclidean R where
+  eucl _ _ _ hwv hwu := R.trans (R.symm hwv) hwu
 
 /-! ### Axiom correspondence -/
 
+variable {p q : W → Prop} {w : W}
+
 /-- **K**: `□(p → q) → □p → □q`, over any relation. -/
-theorem box_K (hpq : □[R] (fun v => p v → q v) w) (hp : □[R] p w) : □[R] q w :=
-  fun v hwv => hpq v hwv (hp v hwv)
+theorem box_K (hpq : □[R] (fun v ↦ p v → q v) w) (hp : □[R] p w) : □[R] q w :=
+  fun v hwv ↦ hpq v hwv (hp v hwv)
 
 /-- **T**: over a reflexive relation, `□p → p`. -/
-theorem box_T [Std.Refl R] (h : □[R] p w) : p w :=
-  h w (Std.Refl.refl w)
+theorem box_T [R.IsRefl] (h : □[R] p w) : p w := h w R.rfl
 
 /-- **D**: over a serial relation, `□p → ◇p`. -/
-theorem box_D [hS : IsSerial R] (h : □[R] p w) : ◇[R] p w :=
-  let ⟨v, hwv⟩ := hS.serial w; ⟨v, hwv, h v hwv⟩
+theorem box_D [IsSerial R] (h : □[R] p w) : ◇[R] p w :=
+  let ⟨v, hwv⟩ := IsSerial.serial (R := R) w; ⟨v, hwv, h v hwv⟩
 
-/-- Necessity along `R` gives possibility along any relation that overlaps `R` at the world:
-`□[R] p → ◇[S] p` when some `R`-accessible world is `S`-accessible. `box_D` is the case `S = R`. -/
-theorem diamond_of_box {S : W → W → Prop} (h : ◇[R] (S w) w) (hp : □[R] p w) : ◇[S] p w :=
+/-- Necessity along `R` gives possibility along a relation sharing an `R`-successor of the
+world: `box_D` is the case `S = R`. -/
+theorem diamond_of_box {S : SetRel W W} (h : ◇[R] (w ~[S] ·) w) (hp : □[R] p w) : ◇[S] p w :=
   let ⟨v, hR, hS⟩ := h; ⟨v, hS, hp v hR⟩
 
 /-- **B**: over a symmetric relation, `p → □◇p`. -/
-theorem box_B [Std.Symm R] (h : p w) : □[R] (◇[R] p) w :=
-  fun v hwv => ⟨w, Std.Symm.symm w v hwv, h⟩
+theorem box_B [R.IsSymm] (h : p w) : □[R] (◇[R] p) w := fun _ hwv ↦ ⟨w, R.symm hwv, h⟩
 
 /-- **4**: over a transitive relation, `□p → □□p`. -/
-theorem box_four [IsTrans W R] (h : □[R] p w) : □[R] (□[R] p) w :=
-  fun v hwv u hvu => h u (IsTrans.trans w v u hwv hvu)
+theorem box_four [R.IsTrans] (h : □[R] p w) : □[R] (□[R] p) w :=
+  fun _ hwv u hvu ↦ h u (R.trans hwv hvu)
 
 /-- **5**: over a Euclidean relation, `◇p → □◇p`. -/
-theorem box_five [hE : IsEuclidean R] (h : ◇[R] p w) : □[R] (◇[R] p) w :=
+theorem box_five [IsEuclidean R] (h : ◇[R] p w) : □[R] (◇[R] p) w :=
   let ⟨u, hwu, hpu⟩ := h
-  fun v hwv => ⟨u, hE.eucl w v u hwv hwu, hpu⟩
+  fun v hwv ↦ ⟨u, IsEuclidean.eucl w v u hwv hwu, hpu⟩
 
 /-- Over a Euclidean relation, `◇□p → □p`: what is possibly necessary is necessary. -/
-theorem box_of_diamond_box [hE : IsEuclidean R] (h : ◇[R] (□[R] p) w) : □[R] p w :=
+theorem box_of_diamond_box [IsEuclidean R] (h : ◇[R] (□[R] p) w) : □[R] p w :=
   let ⟨u, hwu, hpu⟩ := h
-  fun v hwv => hpu v (hE.eucl w u v hwu hwv)
+  fun v hwv ↦ hpu v (IsEuclidean.eucl w u v hwu hwv)
 
 /-- Over a serial transitive relation, `□p → ◇□p`. -/
-theorem diamond_box_of_box [IsSerial R] [IsTrans W R] (h : □[R] p w) : ◇[R] (□[R] p) w :=
+theorem diamond_box_of_box [IsSerial R] [R.IsTrans] (h : □[R] p w) : ◇[R] (□[R] p) w :=
   box_D (box_four h)
 
 /-! ### Frame definability
 
-Each axiom, read as an inequality between operators on `W → Prop`,
-characterizes its frame condition. -/
+Each axiom, read as an inequality between operators on `W → Prop`, characterizes its frame
+condition. -/
 
 /-- **T** defines reflexivity. -/
-theorem box_T_iff : box R ≤ id ↔ Std.Refl R where
-  mp h := ⟨fun w => h (R w) w fun _ hv => hv⟩
-  mpr hR _ w h := h w (hR.refl w)
+theorem box_T_iff : Box R ≤ id ↔ R.IsRefl where
+  mp h := ⟨fun w ↦ h (w ~[R] ·) w fun _ hv ↦ hv⟩
+  mpr _ _ _ := box_T
 
 /-- **D** defines seriality. -/
-theorem box_D_iff : box R ≤ diamond R ↔ IsSerial R where
-  mp h := ⟨fun w => let ⟨v, hv, _⟩ := h (fun _ => True) w fun _ _ => trivial; ⟨v, hv⟩⟩
-  mpr hS _ w h := let ⟨v, hwv⟩ := hS.serial w; ⟨v, hwv, h v hwv⟩
+theorem box_D_iff : Box R ≤ Diamond R ↔ IsSerial R where
+  mp h := ⟨fun w ↦ let ⟨v, hv, _⟩ := h (fun _ ↦ True) w fun _ _ ↦ trivial; ⟨v, hv⟩⟩
+  mpr _ _ _ := box_D
 
 /-- **B** defines symmetry. -/
-theorem box_B_iff : id ≤ box R ∘ diamond R ↔ Std.Symm R where
-  mp h := ⟨fun w v hwv => match h (· = w) w rfl v hwv with | ⟨_, hvw, rfl⟩ => hvw⟩
-  mpr hS _ w h v hwv := ⟨w, hS.symm w v hwv, h⟩
+theorem box_B_iff : id ≤ Box R ∘ Diamond R ↔ R.IsSymm where
+  mp h := ⟨fun w v hwv ↦ match h (· = w) w rfl v hwv with | ⟨_, hvw, rfl⟩ => hvw⟩
+  mpr _ _ _ := box_B
 
 /-- **4** defines transitivity. -/
-theorem box_four_iff : box R ≤ box R ∘ box R ↔ IsTrans W R where
-  mp h := ⟨fun w v u hwv hvu => h (R w) w (fun _ hv => hv) v hwv u hvu⟩
-  mpr hT _ w h v hwv u hvu := h u (hT.trans w v u hwv hvu)
+theorem box_four_iff : Box R ≤ Box R ∘ Box R ↔ R.IsTrans where
+  mp h := ⟨fun w _ _ hwv hvu ↦ h (w ~[R] ·) w (fun _ hv ↦ hv) _ hwv _ hvu⟩
+  mpr _ _ _ := box_four
 
 /-- **5** defines the Euclidean property. -/
-theorem box_five_iff : diamond R ≤ box R ∘ diamond R ↔ IsEuclidean R where
-  mp h := ⟨fun w v u hwv hwu =>
-    match h (· = u) w ⟨u, hwu, rfl⟩ v hwv with | ⟨_, hvu, rfl⟩ => hvu⟩
-  mpr hE _ w h v hwv := let ⟨u, hwu, hpu⟩ := h; ⟨u, hE.eucl w v u hwv hwu, hpu⟩
+theorem box_five_iff : Diamond R ≤ Box R ∘ Diamond R ↔ IsEuclidean R where
+  mp h := ⟨fun w v u hwv hwu ↦ match h (· = u) w ⟨u, hwu, rfl⟩ v hwv with | ⟨_, hvu, rfl⟩ => hvu⟩
+  mpr _ _ _ := box_five
 
 /-- **Alt₁** at a world: `◇p → □p` for every `p` at `w` iff `w` sees at most one world. -/
 theorem diamond_le_box_at_iff :
-    (∀ p : W → Prop, ◇[R] p w → □[R] p w) ↔ ∀ ⦃v⦄, R w v → ∀ ⦃u⦄, R w u → v = u where
-  mp h v hv u hu := (h (· = v) ⟨v, hv, rfl⟩ u hu).symm
+    (∀ p : W → Prop, ◇[R] p w → □[R] p w) ↔ ∀ ⦃v⦄, w ~[R] v → ∀ ⦃u⦄, w ~[R] u → v = u where
+  mp h v hv _ hu := (h (· = v) ⟨v, hv, rfl⟩ _ hu).symm
   mpr h _ := fun ⟨_, hu, hpu⟩ _ hv ↦ h hu hv ▸ hpu
 
 /-- **Alt₁** defines partial functionality. -/
-theorem diamond_le_box_iff : diamond R ≤ box R ↔ ∀ w ⦃v⦄, R w v → ∀ ⦃u⦄, R w u → v = u :=
+theorem diamond_le_box_iff :
+    Diamond R ≤ Box R ↔ ∀ w ⦃v⦄, w ~[R] v → ∀ ⦃u⦄, w ~[R] u → v = u :=
   ⟨fun h _ ↦ diamond_le_box_at_iff.1 fun p ↦ h p _,
-    fun h p w ↦ diamond_le_box_at_iff.2 (h w) p⟩
+    fun h p _ ↦ diamond_le_box_at_iff.2 (h _) p⟩
 
 /-- The excluded middle for every `p` at `w`, `□p ∨ □¬p`, holds iff `w` sees at most one
 world. -/
 theorem box_or_box_not_at_iff :
     (∀ p : W → Prop, □[R] p w ∨ □[R] (fun v ↦ ¬ p v) w) ↔
-      ∀ ⦃v⦄, R w v → ∀ ⦃u⦄, R w u → v = u := by
+      ∀ ⦃v⦄, w ~[R] v → ∀ ⦃u⦄, w ~[R] u → v = u := by
   rw [← diamond_le_box_at_iff]
   refine forall_congr' fun p ↦ ?_
   rw [← not_diamond, or_comm, or_iff_not_imp_left, not_not]
@@ -218,7 +223,7 @@ theorem box_or_box_not_at_iff :
 one world. -/
 theorem box_not_of_not_box_at_iff :
     (∀ p : W → Prop, ¬ □[R] p w → □[R] (fun v ↦ ¬ p v) w) ↔
-      ∀ ⦃v⦄, R w v → ∀ ⦃u⦄, R w u → v = u := by
+      ∀ ⦃v⦄, w ~[R] v → ∀ ⦃u⦄, w ~[R] u → v = u := by
   rw [← box_or_box_not_at_iff]
   exact forall_congr' fun p ↦ (or_iff_not_imp_left).symm
 

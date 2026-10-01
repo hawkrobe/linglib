@@ -34,7 +34,7 @@ full uncertainty.
 ## Implementation notes
 
 The Boolean algebra is `Finset (Fin 2)`, so every claim about the Scale is decidable; the
-general truth conditions of embedded propositions are `Orthologic.mem_nec_embed` and
+general truth conditions of embedded propositions are `Orthologic.mem_core_embed` and
 `Orthologic.mem_diamond_embed`. The paper contrasts its symmetric Wittgenstein's Law with the
 order asymmetry of dynamic semantics, whose side is `Veltman1996.consistent_might_neg` beside
 `Veltman1996.not_consistent_up_might_neg`; no theorem here conjoins the two.
@@ -91,7 +91,7 @@ theorem compat_iff : ∀ x y : Poss, frame.compat x y ↔ x = y ∨
 
 /-- `x2` accesses `x1` and `x3`, `x4` accesses `x3` and `x5`, and every possibility accesses
 itself (Figure 12 and Example 5.3). -/
-theorem access_iff : ∀ x y : Poss, access x y ↔ x = y ∨
+theorem access_iff : ∀ x y : Poss, (x, y) ∈ access ↔ x = y ∨
     (x, y) ∈ [(x2, x1), (x2, x3), (x4, x3), (x4, x5)] := by
   decide
 
@@ -102,10 +102,10 @@ abbrev P : Set Poss := embed ({0} : Coin)
 abbrev nP : Set Poss := orthoNeg frame P
 
 /-- `bP` is `□p`. -/
-abbrev bP : Set Poss := ModalLogic.nec access P
+abbrev bP : Set Poss := access.core P
 
 /-- `bnP` is `□¬p`. -/
-abbrev bnP : Set Poss := ModalLogic.nec access nP
+abbrev bnP : Set Poss := access.core nP
 
 /-- `dP` is `◇p`. -/
 abbrev dP : Set Poss := diamond frame access P

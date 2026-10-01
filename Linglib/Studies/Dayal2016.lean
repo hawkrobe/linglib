@@ -90,10 +90,10 @@ abbrev World := Place × Place
 def isAt (x : Place) : Set World := {w | w.1 = x}
 
 /-- John's doxastic alternatives: the worlds where Mary is where he thinks she is. -/
-def believes (w v : World) : Prop := v.1 = w.2
+def believes : SetRel World World := {p | p.2.1 = p.1.2}
 
 /-- *John thinks that q*: the [hintikka-1962] box over `believes`. -/
-def think (q : Set World) : Set World := {w | ModalLogic.box believes (· ∈ q) w}
+def think (q : Set World) : Set World := {w | ModalLogic.Box believes (· ∈ q) w}
 
 /-- (36a): the Hamblin set of *Where is Mary?*. -/
 def whereMary : Set (Set World) := range isAt

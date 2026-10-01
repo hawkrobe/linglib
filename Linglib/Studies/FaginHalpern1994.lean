@@ -10,7 +10,7 @@ public import Mathlib.Order.FixedPoints
 
 This file formalizes the Kripke structures for knowledge and probability of
 [fagin-halpern-1994] and the probabilistic common knowledge of its Section 5. A `KripkeProb`
-adds to the accessibility relations of multi-agent epistemic logic (`ModalLogic.Epistemic`) a
+adds to the accessibility relations of multi-agent epistemic logic (`Logic/Modal/Epistemic`) a
 probability space for each agent at each state: a sample space `S_{i,s}` of states and a
 probability measure `μ_{i,s}` carried by it. The probability formula `w_i(φ) ≥ b`, "according
 to agent `i`, `φ` holds with probability at least `b`", is the set of states `AtLeast b i φ`.
@@ -66,7 +66,7 @@ paper's `C_G^{1/2} p` is empty (`fig1_commonProb`).
 
 namespace FaginHalpern1994
 
-open MeasureTheory ModalLogic ModalLogic.Epistemic ProbabilityTheory
+open MeasureTheory ModalLogic ProbabilityTheory SetRel
 open scoped ENNReal
 
 /-- A Kripke structure for knowledge and probability `(S, π, 𝒦₁, …, 𝒦ₙ, 𝒫)`: accessibility
@@ -74,7 +74,7 @@ relations and, for each agent at each state, a probability space on a sample spa
 The valuation `π` is the ambient `Set W`. -/
 structure KripkeProb (E W : Type*) [MeasurableSpace W] where
   /-- Agent `i` considers `t` possible at `s`. -/
-  access : E → W → W → Prop
+  access : E → SetRel W W
   /-- The sample space `S_{i,s}`. -/
   sample : E → W → Set W
   /-- The probability measure `μ_{i,s}`. -/
@@ -107,7 +107,7 @@ theorem AtLeast.mono (h : φ ⊆ ψ) : M.AtLeast b i φ ⊆ M.AtLeast b i ψ :=
 /-! ### Conditions relating knowledge and probability -/
 
 /-- CONS: the sample space lies within the states the agent considers possible. -/
-def CONS (M : KripkeProb E W) : Prop := ∀ i s, M.sample i s ⊆ {t | M.access i s t}
+def CONS (M : KripkeProb E W) : Prop := ∀ i s, M.sample i s ⊆ {t | s ~[M.access i] t}
 
 /-- OBJ: all agents have the same probability space at each state. -/
 def OBJ (M : KripkeProb E W) : Prop :=
@@ -115,7 +115,7 @@ def OBJ (M : KripkeProb E W) : Prop :=
 
 /-- SDP: the probability space is determined by the agent's information cell. -/
 def SDP (M : KripkeProb E W) : Prop :=
-  ∀ i s t, M.access i s t → M.sample i s = M.sample i t ∧ M.prob i s = M.prob i t
+  ∀ i s t, s ~[M.access i] t → M.sample i s = M.sample i t ∧ M.prob i s = M.prob i t
 
 /-- UNIF: the probability space is the same at every state of the sample space. -/
 def UNIF (M : KripkeProb E W) : Prop :=
@@ -140,9 +140,9 @@ theorem real_eq_zero_of_subset_compl_sample (h : φ ⊆ (M.sample i s)ᶜ) :
   simp [measureReal_def, measure_mono_null h (M.prob_compl_sample i s)]
 
 /-- Axiom W7, `K_i φ ⇒ (w_i(φ) = 1)`, sound under CONS. -/
-theorem real_eq_one_of_knows (hc : M.CONS) (h : knows M.access i φ s) :
+theorem real_eq_one_of_knows (hc : M.CONS) (h : s ∈ (M.access i).core φ) :
     (M.prob i s).real φ = 1 :=
-  real_eq_one_of_sample_subset λ t ht => h t (hc i s ht)
+  real_eq_one_of_sample_subset fun _ ht ↦ h (hc i s ht)
 
 /-- Under UNIF an `i`-probability formula has one truth value across `S_{i,s}`. -/
 theorem UNIF.mem_atLeast_iff (hu : M.UNIF) (ht : t ∈ M.sample i s) :
@@ -164,18 +164,18 @@ theorem UNIF.real_atLeast_eq_zero (hu : M.UNIF) (hs : s ∉ M.AtLeast b i φ) :
   real_eq_zero_of_subset_compl_sample λ _ ht hts => hs ((hu.mem_atLeast_iff hts).1 ht)
 
 /-- Under SDP an `i`-probability formula has one truth value across `𝒦_i(s)`. -/
-theorem SDP.mem_atLeast_iff (hs : M.SDP) (h : M.access i s t) :
+theorem SDP.mem_atLeast_iff (hs : M.SDP) (h : s ~[M.access i] t) :
     t ∈ M.AtLeast b i φ ↔ s ∈ M.AtLeast b i φ := by
   simp only [AtLeast, Set.mem_ofPred_eq, (hs i s t h).2]
 
 /-- Axiom W10 for a positive `i`-probability formula, sound under SDP. -/
 theorem SDP.knows_atLeast (hsdp : M.SDP) (h : s ∈ M.AtLeast b i φ) :
-    knows M.access i (M.AtLeast b i φ) s :=
+    s ∈ (M.access i).core (M.AtLeast b i φ) :=
   λ _ ht => (hsdp.mem_atLeast_iff ht).2 h
 
 /-- Axiom W10 for the negation of an `i`-probability formula, sound under SDP. -/
 theorem SDP.knows_compl_atLeast (hsdp : M.SDP) (h : s ∉ M.AtLeast b i φ) :
-    knows M.access i (M.AtLeast b i φ)ᶜ s :=
+    s ∈ (M.access i).core (M.AtLeast b i φ)ᶜ :=
   λ _ ht h' => h ((hsdp.mem_atLeast_iff ht).1 h')
 
 /-- Miller's principle `w_i(φ) ≥ b · w_i(w_i(φ) ≥ b)`, which UNIF validates. -/
@@ -189,18 +189,18 @@ theorem UNIF.miller (hu : M.UNIF) (b : ℝ) (i : E) (φ : Set W) (s : W) :
 
 /-- `E_G^b φ`: every member of `G` knows that their probability of `φ` is at least `b`. -/
 def EveryoneProb (M : KripkeProb E W) (G : Set E) (b : ℝ) (φ : Set W) : Set W :=
-  {s | ∀ i ∈ G, knows M.access i (M.AtLeast b i φ) s}
+  {s | ∀ i ∈ G, s ∈ (M.access i).core (M.AtLeast b i φ)}
 
 theorem EveryoneProb.mono (h : φ ⊆ ψ) : M.EveryoneProb G b φ ⊆ M.EveryoneProb G b ψ :=
-  λ _ hs i hi _ ht => AtLeast.mono h (hs i hi _ ht)
+  fun _ hs i hi _ ht ↦ AtLeast.mono h (hs i hi ht)
 
 /-- With a reflexive accessibility and a positive threshold nobody assigns `∅` probability
 `b`. -/
-theorem everyoneProb_empty [∀ i, Std.Refl (M.access i)] (hG : G.Nonempty) (hb : 0 < b) :
+theorem everyoneProb_empty [∀ i, (M.access i).IsRefl] (hG : G.Nonempty) (hb : 0 < b) :
     M.EveryoneProb G b ∅ = ∅ := by
   obtain ⟨i, hi⟩ := hG
   refine Set.eq_empty_of_forall_notMem λ s hs => hb.not_ge ?_
-  have h1 : b ≤ (M.prob i s).real ∅ := hs i hi s (Std.Refl.refl s)
+  have h1 : b ≤ (M.prob i s).real ∅ := hs i hi ((M.access i).refl s)
   simpa using h1
 
 /-- The operator `X ↦ E_G^b (φ ∩ X)` whose greatest fixed point is `C_G^b φ`. -/
@@ -254,7 +254,7 @@ theorem commonProb_subset_everyoneProb_inter [DiscreteMeasurableSpace W] :
   intro s hs i hi t ht
   have hk : ∀ k, ENNReal.ofReal b ≤ M.prob i t (φ ∩ M.F G b φ (k + 1)) := λ k =>
     (ENNReal.ofReal_le_iff_le_toReal (measure_ne_top _ _)).2
-      (Set.mem_iInter.1 hs (k + 1) i hi t ht)
+      (Set.mem_iInter.1 hs (k + 1) i hi ht)
   have hanti : Antitone λ k => φ ∩ M.F G b φ (k + 1) :=
     λ _ _ h => Set.inter_subset_inter_right _ (M.F_antitone G b φ (Nat.succ_le_succ h))
   show b ≤ (M.prob i t).real (φ ∩ ⋂ k, M.F G b φ (k + 1))
@@ -313,7 +313,7 @@ private theorem fig1Weight_eq_zero :
 
 /-- The Kripke structure `M` of Figure 1. -/
 noncomputable def fig1 : KripkeProb (Fin 2) (Fin 4) where
-  access i s t := fig1Cell i s = fig1Cell i t
+  access i := {p | fig1Cell i p.1 = fig1Cell i p.2}
   sample i s := {t | fig1Cell i s = fig1Cell i t}
   prob i s := Kernel.ofWeights (λ s t => (fig1Weight i s t : ℝ≥0∞)) s
   isProbabilityMeasure i s :=
@@ -325,11 +325,11 @@ noncomputable def fig1 : KripkeProb (Fin 2) (Fin 4) where
     measure_mono_null (λ t ht => by simpa using fig1Weight_eq_zero i s t ht)
       (Kernel.ofWeights_apply_setOf_eq_zero _ s)
 
-instance (i : Fin 2) : Std.Refl (fig1.access i) := ⟨λ _ => rfl⟩
+instance (i : Fin 2) : (fig1.access i).IsRefl := ⟨fun _ ↦ rfl⟩
 
 /-- Every threshold comparison in `fig1` is an inequality between weight sums. -/
 theorem fig1_atLeast_iff (i : Fin 2) (t : Fin 4) (p : Fin 4 → Prop) [DecidablePred p] :
-    fig1.AtLeast (1 / 2) i {u | p u} t ↔
+    t ∈ fig1.AtLeast (1 / 2) i {u | p u} ↔
       ∑ u, fig1Weight i t u ≤ 2 * ∑ u with p u, fig1Weight i t u := by
   have hpos : (0 : ℝ) < ∑ u, (fig1Weight i t u : ℝ) := by exact_mod_cast fig1Weight_pos i t
   show (1 / 2 : ℝ) ≤ (Kernel.ofWeights (λ s t => (fig1Weight i s t : ℝ≥0∞)) t).real {u | p u} ↔ _
@@ -341,7 +341,7 @@ theorem fig1_atLeast_iff (i : Fin 2) (t : Fin 4) (p : Fin 4 → Prop) [Decidable
 /-- `E_G^{1/2} p` holds at `s₁` alone: (b) and (c) of the paper's check. -/
 theorem fig1_everyoneProb : fig1.EveryoneProb Set.univ (1 / 2) fig1P = {0} := by
   ext s
-  simp only [EveryoneProb, Set.mem_ofPred_eq, Set.mem_univ, true_implies, knows, box, fig1P,
+  simp only [EveryoneProb, Set.mem_ofPred_eq, Set.mem_univ, true_implies, mem_core, fig1P,
     fig1_atLeast_iff, Set.mem_singleton_iff]
   show (∀ i t, fig1Cell i s = fig1Cell i t → _) ↔ _
   revert s; decide
@@ -349,7 +349,7 @@ theorem fig1_everyoneProb : fig1.EveryoneProb Set.univ (1 / 2) fig1P = {0} := by
 theorem fig1_everyoneProb_singleton : fig1.EveryoneProb Set.univ (1 / 2) {0} = {0} := by
   show fig1.EveryoneProb Set.univ (1 / 2) {u | u = 0} = {0}
   ext s
-  simp only [EveryoneProb, Set.mem_ofPred_eq, Set.mem_univ, true_implies, knows, box,
+  simp only [EveryoneProb, Set.mem_ofPred_eq, Set.mem_univ, true_implies, mem_core,
     fig1_atLeast_iff, Set.mem_singleton_iff]
   show (∀ i t, fig1Cell i s = fig1Cell i t → _) ↔ _
   revert s; decide

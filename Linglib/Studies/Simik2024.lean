@@ -41,7 +41,7 @@ between evidence for the prejacent and a prior against it (`razveProfile`), inva
 across inner and outer negation (`razveProfile_negation_invariant`), and is a root
 phenomenon while *li* embeds (`razve_root_li_embedded`). The chapter's Czech FALSUM
 (`falsumCz`) presupposes only epistemic possibility of the prejacent, weaker than
-[repp-2013]'s operator, the necessity `□[Relation.Comp epi conv] (p ∉ cg ·)` along the
+[repp-2013]'s operator, the necessity `□[epi ○ conv] (p ∉ cg ·)` along the
 knowledge and conversational goals of its bearer (`assertion_of_falsum`), and licenses the particle
 *náhodou* under outer negation alone (`NahodouLicensed`, `nahodou_examples`).
 
@@ -474,12 +474,14 @@ def razveKin : List Particle :=
 
 section Falsum
 
-variable {W : Type*} (epi conv : W → W → Prop) (cg : W → Filter W) (p : Set W)
+open scoped SetRel
+
+variable {W : Type*} (epi conv : SetRel W W) (cg : W → Filter W) (p : Set W)
 
 /-- The chapter's Czech FALSUM (44): defined when the attitude holder considers the
 prejacent possible, and true when it is not in the common ground. -/
 def falsumCz : Presupposition.PartialProp W where
-  presup := ModalLogic.diamond epi (· ∈ p)
+  presup := ModalLogic.Diamond epi (· ∈ p)
   assertion := fun w => p ∉ cg w
 
 /-- The question (45) over the Czech FALSUM: whether the prejacent is outside the common
@@ -489,15 +491,15 @@ def falsumCzQuestion : Question W := polar {w | p ∉ cg w}
 /-- The commitment of the Czech operator is weak: its presupposition is epistemic
 possibility, the dual of necessity. -/
 theorem falsumCz_presup_iff (w : W) :
-    (falsumCz epi cg p).presup w ↔ ¬ ModalLogic.box epi (· ∉ p) w := by
-  simp [falsumCz, ModalLogic.box, ModalLogic.diamond]
+    (falsumCz epi cg p).presup w ↔ ¬ ModalLogic.Box epi (· ∉ p) w := by
+  simp [falsumCz, ModalLogic.Box, ModalLogic.Diamond]
 
-/-- [repp-2013]'s FALSUM (22b), `□[Relation.Comp epi conv] (p ∉ cg ·)`, entails the Czech
+/-- [repp-2013]'s FALSUM (22b), `□[epi ○ conv] (p ∉ cg ·)`, entails the Czech
 assertion when the bearer's knowledge-then-goals relation is reflexive, as it is for reflexive
 `epi` and `conv`; reflexive `conv`, every world satisfying the bearer's conversational goals, is
 an idealization. -/
-theorem assertion_of_falsum [Std.Refl (Relation.Comp epi conv)] {w : W}
-    (h : □[Relation.Comp epi conv] (p ∉ cg ·) w) : (falsumCz epi cg p).assertion w :=
+theorem assertion_of_falsum [(epi ○ conv).IsRefl] {w : W}
+    (h : □[epi ○ conv] (p ∉ cg ·) w) : (falsumCz epi cg p).assertion w :=
   ModalLogic.box_T h
 
 end Falsum

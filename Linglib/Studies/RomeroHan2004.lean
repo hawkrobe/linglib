@@ -17,7 +17,7 @@ negation from one assumption: preposing negation contributes the conversational 
 VERUM, FOR-SURE-CG (43), true at a world when the proposition is in the common ground at every world
 satisfying the conversational goals of an individual `x` at every world conforming to the knowledge
 of `x`, `x` being the addressee, or the addressee and the speaker together. With `epi` and `conv`
-the accessibility relations of `x`, it is the necessity `□[Relation.Comp epi conv] (p ∈ cg ·)`,
+the accessibility relations of `x`, it is the necessity `□[epi ○ conv] (p ∈ cg ·)`,
 which `ModalLogic.box_comp` unfolds into the paper's two quantifiers. A question over VERUM
 partitions on certainty about adding the proposition to the common ground rather than on the
 proposition, `denotation_eq`, a meta-conversational move licit only under a prior bias; the paper's
@@ -60,7 +60,9 @@ open scoped ModalLogic
 open Question (polar polar_compl)
 open Set (Iic)
 
-variable {W : Type*} (epi conv : W → W → Prop) (cg : W → Filter W) (p : Set W)
+open scoped SetRel
+
+variable {W : Type*} (epi conv : SetRel W W) (cg : W → Filter W) (p : Set W)
 
 /-! ### The four VERUM questions -/
 
@@ -90,8 +92,8 @@ instance : DecidablePred Form.Doubt := λ f => by cases f <;> unfold Form.Doubt 
 
 /-- The cell a form pronounces: VERUM of the prejacent, or its complement. -/
 def pronounced (f : Form) : Set W :=
-  if f.Doubt then {w | □[Relation.Comp epi conv] (prejacent p f ∈ cg ·) w}ᶜ
-  else {w | □[Relation.Comp epi conv] (prejacent p f ∈ cg ·) w}
+  if f.Doubt then {w | □[epi ○ conv] (prejacent p f ∈ cg ·) w}ᶜ
+  else {w | □[epi ○ conv] (prejacent p f ∈ cg ·) w}
 
 /-- The question denoted: the polar question over the pronounced cell. -/
 def denotation (f : Form) : Question W := polar (pronounced epi conv cg p f)
@@ -100,7 +102,7 @@ def denotation (f : Form) : Question W := polar (pronounced epi conv cg p f)
 (74), whichever cell it pronounces. -/
 theorem denotation_eq (f : Form) :
     denotation epi conv cg p f =
-      polar {w | □[Relation.Comp epi conv] (prejacent p f ∈ cg ·) w} := by
+      polar {w | □[epi ○ conv] (prejacent p f ∈ cg ·) w} := by
   unfold denotation pronounced
   split_ifs <;> simp
 

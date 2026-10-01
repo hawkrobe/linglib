@@ -63,6 +63,7 @@ diagnostics of sections 3 and 3.1 are predicted by the heads the complement reac
 namespace FuscoSgrizzi2026
 
 open Modality Minimalist Italian.Verbs Event
+open scoped SetRel
 
 section Semantics
 
@@ -82,7 +83,7 @@ accessible worlds. -/
 theorem aP_emptyBackground (circumstances : V → ModalBase W) (causeStar : V → V → W → Prop)
     (P : W → V → Prop) (s : V) (w : W) :
     aP circumstances (fun _ ↦ emptyBackground) causeStar P s w ↔
-      Grano2024.sbjvCausal (fun s w' ↦ ModalBase.Accessible (circumstances s) w w') causeStar P s :=
+      Grano2024.sbjvCausal (fun s w' ↦ w ~[(circumstances s).accessible] w') causeStar P s :=
   necessity_empty_iff_simple ..
 
 /-- The head *di* (26) is necessity over the state's content worlds of a proposition. -/
@@ -121,7 +122,7 @@ def intentionReport : Prop :=
 the intended event throughout the state's inertia worlds. -/
 theorem intention_causal (h : intentionReport F circumstances inertia causeStar P x y e w) :
     ∃ s, F.cause e s ∧
-      ∀ w', BestAccessible (circumstances s) (inertia s) w w' → causedClosure causeStar s P w' :=
+      ∀ w', w ~[bestAccessible (circumstances s) (inertia s)] w' → causedClosure causeStar s P w' :=
   let ⟨s, _, _, _, hc, _, _, ha⟩ := h
   ⟨s, hc, ha⟩
 
@@ -132,7 +133,7 @@ theorem intention_future {T : Type*} [Preorder T] (τ : V → T)
     (hτ : ∀ s e' w', causeStar s e' w' → τ s < τ e')
     (h : intentionReport F circumstances inertia causeStar P x y e w) :
     ∃ s, F.cause e s ∧
-      ∀ w', BestAccessible (circumstances s) (inertia s) w w' → ∃ e', τ s < τ e' ∧ P w' e' :=
+      ∀ w', w ~[bestAccessible (circumstances s) (inertia s)] w' → ∃ e', τ s < τ e' ∧ P w' e' :=
   let ⟨s, hc, ha⟩ := intention_causal F circumstances inertia causeStar P x y e w h
   ⟨s, hc, fun w' hw' ↦ let ⟨e', hce, hP⟩ := ha w' hw'; ⟨e', hτ s e' w' hce, hP⟩⟩
 

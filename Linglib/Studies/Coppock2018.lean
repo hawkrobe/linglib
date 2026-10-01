@@ -93,8 +93,9 @@ conditions on the three verbs are checked.
 namespace Coppock2018
 
 open Trivalent ModalLogic
+open SetRel
 
-variable {W Ω : Type*} (ρ : Ω → W) (R : Ω → Ω → Prop) (p : Prop3 Ω) (C : Set Ω)
+variable {W Ω : Type*} (ρ : Ω → W) (R : SetRel Ω Ω) (p : Prop3 Ω) (C : Set Ω)
 
 /-! ### Refinement and objective propositions (§3.1)
 
@@ -263,14 +264,14 @@ box over outlooks with the proposition's truth as valuation. -/
 
 /-- An agent with accessibility `R` accepts `p` at `o`: `p` is true at every accessible
 outlook. -/
-def Accepts : Ω → Prop := box R (p · = .true)
+def Accepts : Ω → Prop := □[R] (p · = .true)
 
 /-- An agent with accessibility `R` rejects `p` at `o`: `p` is false at every accessible
 outlook, which is stronger than not accepting it. -/
-def Rejects : Ω → Prop := box R (p · = .false)
+def Rejects : Ω → Prop := □[R] (p · = .false)
 
 /-- Two agents disagree about `p` at `o` when one accepts it and the other rejects it. -/
-def DisagreeAt (R₁ R₂ : Ω → Ω → Prop) (o : Ω) : Prop := Accepts R₁ p o ∧ Rejects R₂ p o
+def DisagreeAt (R₁ R₂ : SetRel Ω Ω) (o : Ω) : Prop := Accepts R₁ p o ∧ Rejects R₂ p o
 
 /-- An agent is opinionated about `p` at `o` when they accept or reject it; the paper's (38)
 denies opinionatedness without contradiction. -/
@@ -279,7 +280,7 @@ def Opinionated (o : Ω) : Prop := Accepts R p o ∨ Rejects R p o
 /-- An accessibility relation is a matter of fact when it depends on an outlook only through
 the world it refines: the paper's assumption that whether an agent holds a belief is settled
 by worlds. -/
-def ObjectiveRel : Prop := ∀ o o' o'', ρ o = ρ o' → (R o o'' ↔ R o' o'')
+def ObjectiveRel : Prop := ∀ o o' o'', ρ o = ρ o' → (o ~[R] o'' ↔ o' ~[R] o'')
 
 /-- Acceptance under a factual accessibility relation is constant across a refinement class,
 so disagreement at an outlook is disagreement at its world. -/
@@ -289,13 +290,13 @@ theorem accepts_iff_of_objectiveRel (hR : ObjectiveRel ρ R) {o o' : Ω} (h : ρ
 
 section Decidability
 
-variable [Fintype Ω] [DecidableRel R] (o : Ω)
+variable [Fintype Ω] [∀ x y, Decidable (x ~[R] y)] (o : Ω)
 
-instance : Decidable (Accepts R p o) := by unfold Accepts box; infer_instance
+instance : Decidable (Accepts R p o) := by unfold Accepts Box; infer_instance
 
-instance : Decidable (Rejects R p o) := by unfold Rejects box; infer_instance
+instance : Decidable (Rejects R p o) := by unfold Rejects Box; infer_instance
 
-instance (R₂ : Ω → Ω → Prop) [DecidableRel R₂] : Decidable (DisagreeAt p R R₂ o) := by
+instance (R₂ : SetRel Ω Ω) [∀ x y, Decidable (x ~[R₂] y)] : Decidable (DisagreeAt p R R₂ o) := by
   unfold DisagreeAt; infer_instance
 
 instance : Decidable (Opinionated R p o) := by unfold Opinionated; infer_instance
@@ -396,16 +397,18 @@ coordinate, and then settled by the objective one. -/
 def caresNotIdiot : Prop3 Outlook := λ o => if o.1 then ofBool o.2 else .indet
 
 /-- Agent `a` reaches the tasty outlook of the current world. -/
-def accessA : Outlook → Outlook → Prop := λ o o' => o' = (.true, o.2)
+def accessA : SetRel Outlook Outlook := {p | p.2 = (.true, p.1.2)}
 
-instance : DecidableRel accessA := λ _ _ => by unfold accessA; infer_instance
+instance (o o' : Outlook) : Decidable (o ~[accessA] o') :=
+  inferInstanceAs (Decidable (o' = (.true, o.2)))
 
 /-- Agent `b` reaches the non-tasty outlook from the singer world and both tasty outlooks
 from the other. -/
-def accessB : Outlook → Outlook → Prop :=
-  λ o o' => (o.2 = .true → o' = (.false, .true)) ∧ (o.2 = .false → o'.1 = .true)
+def accessB : SetRel Outlook Outlook :=
+  {p | (p.1.2 = .true → p.2 = (.false, .true)) ∧ (p.1.2 = .false → p.2.1 = .true)}
 
-instance : DecidableRel accessB := λ _ _ => by unfold accessB; infer_instance
+instance (o o' : Outlook) : Decidable (o ~[accessB] o') :=
+  inferInstanceAs (Decidable ((o.2 = .true → o' = (.false, .true)) ∧ (o.2 = .false → o'.1 = .true)))
 
 theorem objectiveRel_accessA : ObjectiveRel world accessA := by decide
 

@@ -151,16 +151,16 @@ theorem bound_free_collapse {O : (S → Prop) → S → Prop} {s₀ : S} (hO : I
 /-- A situation quantifier separates the bound and free construals. The witness has two
 situations, a restrictor whose extension varies, and a function tracking its situation. -/
 theorem bound_free_diverge_box :
-    ∃ (S E : Type) (R : S → S → Prop) (f : SkolemCF S E) (P : S → E → Prop) (VP : E → S → Prop)
-      (s₀ : S), box R (fun s ↦ VP (f.applyIntensionAt .bound s s₀ P) s) s₀ ∧
-        ¬ box R (fun s ↦ VP (f.applyIntensionAt .free s s₀ P) s) s₀ :=
-  ⟨Bool, Bool, ⊤, fun s _ ↦ s, fun s x ↦ x = s, fun x s ↦ x = s, false, fun _ _ ↦ rfl,
+    ∃ (S E : Type) (R : SetRel S S) (f : SkolemCF S E) (P : S → E → Prop) (VP : E → S → Prop)
+      (s₀ : S), Box R (fun s ↦ VP (f.applyIntensionAt .bound s s₀ P) s) s₀ ∧
+        ¬ Box R (fun s ↦ VP (f.applyIntensionAt .free s s₀ P) s) s₀ :=
+  ⟨Bool, Bool, .univ, fun s _ ↦ s, fun s x ↦ x = s, fun x s ↦ x = s, false, fun _ _ ↦ rfl,
     fun h ↦ Bool.noConfusion (h true trivial)⟩
 
-/-- `box` is not extensional, so the operator side of the dichotomy is genuine. -/
+/-- `Box` is not extensional, so the operator side of the dichotomy is genuine. -/
 theorem box_not_isExtensionalAt :
-    ∃ (S : Type) (R : S → S → Prop) (s₀ : S), ¬ IsExtensionalAt (box R) s₀ :=
-  ⟨Bool, ⊤, false, not_isExtensionalAt_iff_exists_witness.mpr
+    ∃ (S : Type) (R : SetRel S S) (s₀ : S), ¬ IsExtensionalAt (Box R) s₀ :=
+  ⟨Bool, .univ, false, not_isExtensionalAt_iff_exists_witness.mpr
     ⟨fun s ↦ s = s, fun s ↦ false = s, rfl,
       fun h ↦ Bool.noConfusion ((iff_of_eq h).mp (fun _ _ ↦ rfl) true trivial)⟩⟩
 

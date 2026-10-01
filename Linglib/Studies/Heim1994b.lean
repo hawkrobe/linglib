@@ -23,9 +23,10 @@ equivalence for any predicate (`structured_eq_gs`).
 
 ## Implementation notes
 
-Belief is the substrate's epistemic box over doxastic alternatives, so "x believes p in w"
-is `knows Dox x p w`. A Karttunen intension is any `W → Set (Set W)`; the property the
-redundancy proof uses, that every member of the answer set at a world is true there, is
+Belief is the box over doxastic alternatives, on propositions as sets mathlib's
+`SetRel.core`, so "x believes p in w" is `w ∈ (Dox x).core p`. A Karttunen intension is any
+`W → Set (Set W)`; the property the redundancy proof uses, that every member of the answer set
+at a world is true there, is
 `IsKarttunen`. The exhaustiveness failure of the actual analysis (§2) and the two divergences
 of §7 are shown on two-individual, two-world models rather than stated over arbitrary
 models, as the paper's scenarios are. The answers in the two senses (15)–(16) are the
@@ -44,7 +45,8 @@ is a subset (`strongAnswer_subset_ans₂`); the ambiguity of *answer* in (17)–
 
 namespace Heim1994b
 
-open ModalLogic.Epistemic Question
+open Question
+open scoped SetRel
 
 variable {W E : Type*}
 
@@ -68,29 +70,29 @@ theorem isKarttunen_whichK (S C : W → E → Prop) : IsKarttunen (whichK S C) :
   rintro w p ⟨x, -, hC, rfl⟩
   exact hC
 
-variable (Dox : E → W → Set W) (x : E) (w : W)
+variable (Dox : E → SetRel W W) (x : E) (w : W)
 
 /-- (4) The simplified Karttunen analysis: `x` believes the intersection of the true
     answers. -/
-def simplifiedKnow (q : W → Set (Set W)) : Prop := knows Dox x (⋂₀ q w) w
+def simplifiedKnow (q : W → Set (Set W)) : Prop := w ∈ (Dox x).core (⋂₀ q w)
 
 /-- (5) The actual Karttunen analysis: (i) as in (4), and (ii) if the answer set is empty,
     `x` believes that it is empty. -/
 def actualKnow (q : W → Set (Set W)) : Prop :=
-  knows Dox x (⋂₀ q w) w ∧ (q w = ∅ → knows Dox x {w' | q w' = ∅} w)
+  w ∈ (Dox x).core (⋂₀ q w) ∧ (q w = ∅ → w ∈ (Dox x).core {w' | q w' = ∅})
 
 /-- (9) The generalized Karttunen analysis: `x` believes that the answer set is what it is. -/
-def generalizedKnow (q : W → Set (Set W)) : Prop := knows Dox x {w' | q w' = q w} w
+def generalizedKnow (q : W → Set (Set W)) : Prop := w ∈ (Dox x).core {w' | q w' = q w}
 
 /-- (14) [groenendijk-stokhof-1982]'s analysis, over an intension that is a proposition at
     each world. -/
-def gsKnow (r : W → Set W) : Prop := knows Dox x (r w) w
+def gsKnow (r : W → Set W) : Prop := w ∈ (Dox x).core (r w)
 
 variable {Dox x w}
 
 /-- (7): with an empty answer set, believing it empty is believing it to be what it is. -/
 theorem actualKnow_iff {q : W → Set (Set W)} (h : q w = ∅) :
-    actualKnow Dox x w q ↔ knows Dox x (⋂₀ q w) w ∧ generalizedKnow Dox x w q := by
+    actualKnow Dox x w q ↔ w ∈ (Dox x).core (⋂₀ q w) ∧ generalizedKnow Dox x w q := by
   simp only [actualKnow, generalizedKnow, h, forall_const]
 
 /-- §4: clause (i) of (8) is redundant given clause (ii): every proposition in `q w'` is
@@ -99,7 +101,7 @@ theorem actualKnow_iff {q : W → Set (Set W)} (h : q w = ∅) :
 theorem simplifiedKnow_of_generalizedKnow {q : W → Set (Set W)} (hq : IsKarttunen q)
     (h : generalizedKnow Dox x w q) : simplifiedKnow Dox x w q := by
   intro w' hw'
-  have e : q w' = q w := h w' hw'
+  have e : q w' = q w := h hw'
   exact Set.mem_sInter.2 λ p hp => hq w' p (e ▸ hp)
 
 /-- Hence (8) and (9) are equivalent, and the generalized analysis implies the actual one. -/
@@ -192,7 +194,7 @@ only in the world `true`. In the world `false`, John is agnostic about Mary. -/
 def called : Bool → Bool → Prop := λ w y => y = true ∨ w = true
 
 /-- John's doxastic alternatives: every world, at every world. -/
-def agnostic : Unit → Bool → Set Bool := λ _ _ => Set.univ
+def agnostic : Unit → SetRel Bool Bool := fun _ ↦ Set.univ
 
 /-- The actual analysis makes (1) true at `false`, where Mary did not call: the only true
     answer, that Bill called, is believed, and the answer set is not empty. -/
@@ -213,7 +215,7 @@ theorem not_generalizedKnow_called :
     ¬ generalizedKnow agnostic () false (whichK (λ _ _ => True) called) := by
   intro h
   have e : whichK (λ _ _ => True) called true = whichK (λ _ _ => True) called false :=
-    h true trivial
+    @h true trivial
   have hm : {w' | called w' false} ∈ whichK (λ _ _ => True) called true :=
     ⟨false, trivial, Or.inr rfl, rfl⟩
   rw [e] at hm
@@ -267,7 +269,7 @@ theorem self_divergence :
     rw [whichK_const_true (S := oneStudent) ⟨w', rfl⟩,
       whichK_const_true (S := oneStudent) ⟨true, rfl⟩]
   · intro h
-    have := h false trivial true
+    have := @h false trivial true
     simp [oneStudent] at this
 
 /-- In the world `true` both Bill and Sue are students, in `false` only Bill is. -/
@@ -289,7 +291,7 @@ theorem spouse_divergence :
     rw [whichK_const_true (S := student) ⟨true, Or.inl rfl⟩,
       whichK_const_true (S := student) ⟨true, Or.inl rfl⟩]
   · intro h
-    have := h false trivial false
+    have := @h false trivial false
     simp [student, livesWithSpouse] at this
 
 /-! ### Structured propositions (§8) -/

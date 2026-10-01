@@ -54,6 +54,7 @@ monotonicity of the five quantifiers (`rows_predicted_mainstream`).
 namespace GeurtsPouscoulous2009
 
 open Quantifier Quantifier.GQ Quantifier.NP ModalLogic
+open SetRel
 
 variable {W : Type*}
 
@@ -73,19 +74,16 @@ theorem so_pair {φ ψ : Set W} (h : ψ ⊂ φ) : so φ {φ, ψ} = φ \ ψ := by
 
 /-- The parse with the operator below the belief verb, on which the agent believes *some* and
 believes *not all*. -/
-theorem local_reading (R : W → W → Prop) {some all : Set W} (h : all ⊂ some) :
-    box R (so some {some, all}) = λ w => box R some w ∧ box R allᶜ w := by
-  rw [so_pair h]
-  funext w
-  exact propext ⟨λ hb => ⟨λ v hv => (hb v hv).1, λ v hv => (hb v hv).2⟩,
-    λ ⟨h₁, h₂⟩ v hv => ⟨h₁ v hv, h₂ v hv⟩⟩
+theorem local_reading (R : SetRel W W) {some all : Set W} (h : all ⊂ some) :
+    R.core (so some {some, all}) = R.core some ∩ R.core allᶜ := by
+  rw [so_pair h, Set.sdiff_eq, core_inter]
 
 /-- The Gricean derivation of a seemingly local inference, on which the parse with the operator
 above the belief verb says the agent believes *some* and does not believe *all*, and an agent
 opinionated on *all* then believes *not all*, which is the local reading. -/
-theorem local_of_global_of_opinionated (R : W → W → Prop) {some all : Set W} (h : all ⊂ some)
-    {w : W} (h₃₁ : box R some w) (h₃₂ : ¬ box R all w) (h₃₃ : box R all w ∨ box R allᶜ w) :
-    box R (so some {some, all}) w := by
+theorem local_of_global_of_opinionated (R : SetRel W W) {some all : Set W} (h : all ⊂ some)
+    {w : W} (h₃₁ : w ∈ R.core some) (h₃₂ : w ∉ R.core all)
+    (h₃₃ : w ∈ R.core all ∨ w ∈ R.core allᶜ) : w ∈ R.core (so some {some, all}) := by
   rw [local_reading R h]
   exact ⟨h₃₁, h₃₃.resolve_left h₃₂⟩
 
