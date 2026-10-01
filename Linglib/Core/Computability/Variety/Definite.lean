@@ -9,7 +9,7 @@ module
 
 public import Linglib.Core.Algebra.Group.Idempotent
 public import Linglib.Core.Computability.Definite
-public import Linglib.Core.Computability.Variety.SemigroupLangs
+public import Linglib.Core.Computability.Variety.Langs
 
 /-!
 # Definite languages and the pseudovarieties **D**, **K** and **LI**

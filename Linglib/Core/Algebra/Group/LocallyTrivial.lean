@@ -3,52 +3,42 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 
-[UPSTREAM] candidate: `Mathlib.Algebra.Group.Semigroup.Pseudovariety`.
+[UPSTREAM] candidate: `Mathlib.Algebra.Group.LocallyTrivial`.
 -/
 module
 
 public import Linglib.Core.Algebra.Group.IdempotentPower
-public import Linglib.Core.GroupTheory.Congruence.Hom
 public import Mathlib.Algebra.Group.Prod
-public import Mathlib.Algebra.Group.PUnit
 
 /-!
-# Pseudovarieties of finite semigroups
+# Definite and locally trivial semigroups
 
-This file defines pseudovarieties of finite semigroups and the three pseudovarieties **D**, **K**
-and **LI**. A *pseudovariety* is a class of finite semigroups closed under subsemigroups,
-quotients and finite direct products. It is the semigroup counterpart of `Monoid.Pseudovariety`,
-and the two are not interchangeable: **D**, **K** and **LI** collapse over monoids, since their
-defining conditions applied to the idempotent `1` force triviality.
-
-Following Eilenberg, the conditions are stated on idempotents: a semigroup is in **D** when
-`s * e = e`, in **K** when `e * s = e`, and in **LI** when `e * s * e = e`, for every idempotent `e`
-and every `s`. Each is equivalent to an equation on all sufficiently long products.
+This file defines three conditions on a semigroup, each stated on its idempotents. A semigroup is
+*definite* when every idempotent `e` satisfies `s * e = e`, *reverse definite* when `e * s = e`,
+and *locally trivial* when `e * s * e = e`, for every `s`. Definite and reverse definite semigroups
+are locally trivial. In a finite semigroup each condition is equivalent to an equation on all
+sufficiently long products, which is the form in which these semigroups recognize the definite,
+reverse definite and generalized definite languages.
 
 ## Main definitions
 
-* `Semigroup.Pseudovariety`: a class of finite semigroups closed under subsemigroups, quotients
-  and products.
-* `Semigroup.IsDefinite`, `Semigroup.IsReverseDefinite`, `Semigroup.IsLocallyTrivial`: the
-  conditions defining **D**, **K** and **LI**.
-* `Semigroup.definiteVariety`, `Semigroup.reverseDefiniteVariety`,
-  `Semigroup.locallyTrivialVariety`: the bundled pseudovarieties.
+* `Semigroup.IsDefinite`, `Semigroup.IsReverseDefinite`, `Semigroup.IsLocallyTrivial`: the three
+  conditions.
 
 ## Main results
 
+* `Semigroup.IsDefinite.of_injective`, `.of_surjective`, `.prod` and their mirrors: closure under
+  subsemigroups, quotients and products.
 * `Semigroup.IsDefinite.mul_map_eq`, `Semigroup.IsReverseDefinite.map_mul_eq`,
-  `Semigroup.IsLocallyTrivial.map_mul_map_eq`: in a finite semigroup of the pseudovariety, every
-  product of at least `|S|` elements is a right zero, a left zero, respectively absorbs anything
-  placed between two copies of it.
+  `Semigroup.IsLocallyTrivial.map_mul_map_eq`: in a finite semigroup satisfying the condition,
+  every product of at least `|S|` elements is a right zero, a left zero, respectively absorbs
+  anything placed between two copies of it.
 * `Semigroup.IsDefinite.of_mul_map_eq` and its two mirrors: the converse, for any bound.
 
 ## Implementation notes
 
-`mem` is a total predicate on `Type u` semigroups that implies finiteness, mirroring
-`Monoid.Pseudovariety`, so the order on pseudovarieties is inclusion of classes of finite
-semigroups. The pseudovariety **N** of nilpotent semigroups is the intersection of **D** and **K**
-and is not bundled. The long-product characterizations are Propositions XI.4.15–XI.4.17 of
-[pin-mfa].
+Pin calls definite semigroups *righty trivial* and reverse definite ones *lefty trivial*. The
+long-product characterizations are Propositions XI.4.15–XI.4.17 of [pin-mfa].
 
 ## References
 
@@ -58,72 +48,9 @@ and is not bundled. The long-product characterizations are Propositions XI.4.15�
 
 @[expose] public section
 
-universe u
-
 namespace Semigroup
 
-/-- A *pseudovariety of finite semigroups* is a class of finite semigroups closed under
-subsemigroups, quotients and finite products, with closure phrased through injective and surjective
-`MulHom`s. -/
-structure Pseudovariety where
-  /-- The semigroups belonging to the pseudovariety. -/
-  mem : ∀ (S : Type u) [Semigroup S], Prop
-  /-- Every member is finite. -/
-  finite_of_mem : ∀ {S : Type u} [Semigroup S], mem S → Finite S
-  /-- The domain of an injective homomorphism into a member is a member. -/
-  sub : ∀ {S T : Type u} [Semigroup S] [Semigroup T] {f : S →ₙ* T},
-    Function.Injective f → mem T → mem S
-  /-- The codomain of a surjective homomorphism from a member is a member. -/
-  quot : ∀ {S T : Type u} [Semigroup S] [Semigroup T] {f : S →ₙ* T},
-    Function.Surjective f → mem S → mem T
-  /-- The product of two members is a member. -/
-  prod : ∀ {S T : Type u} [Semigroup S] [Semigroup T], mem S → mem T → mem (S × T)
-  /-- The trivial semigroup is a member. -/
-  memUnit : mem PUnit.{u + 1}
-
-namespace Pseudovariety
-
-variable (V : Pseudovariety.{u})
-
-@[ext] theorem ext {V W : Pseudovariety.{u}}
-    (h : ∀ (S : Type u) [Semigroup S], V.mem S ↔ W.mem S) : V = W := by
-  obtain ⟨Vm, _, _, _, _, _⟩ := V
-  obtain ⟨Wm, _, _, _, _, _⟩ := W
-  obtain rfl : Vm = Wm := funext fun S ↦ funext fun _ ↦ propext (h S)
-  rfl
-
-instance : PartialOrder Pseudovariety.{u} where
-  le V W := ∀ (S : Type u) [Semigroup S], V.mem S → W.mem S
-  le_refl _ _ _ h := h
-  le_trans _ _ _ h₁ h₂ S _ h := h₂ S (h₁ S h)
-  le_antisymm _ _ h₁ h₂ := ext fun S _ ↦ ⟨h₁ S, h₂ S⟩
-
-theorem mem_of_mulEquiv {S T : Type u} [Semigroup S] [Semigroup T] (e : S ≃* T) (h : V.mem S) :
-    V.mem T :=
-  V.quot (f := e.toMulHom) e.surjective h
-
-/-- Membership of a quotient descends along a coarsening of congruences. -/
-theorem mem_quotient_of_le {S : Type u} [Semigroup S] {c d : Con S} (h : c ≤ d)
-    (hc : V.mem c.Quotient) : V.mem d.Quotient :=
-  V.quot (Con.mapMulHom_surjective c d h) hc
-
-/-- The quotient by the kernel of a homomorphism into a member is a member. -/
-theorem mem_quotient_ker {S T : Type u} [Semigroup S] [Semigroup T] (f : S →ₙ* T)
-    (h : V.mem T) : V.mem (Con.ker f).Quotient :=
-  V.sub (Con.kerLiftMulHom_injective f) h
-
-/-- The quotient by the meet of two congruences is a member when both quotients are. -/
-theorem mem_quotient_inf {S : Type u} [Semigroup S] {c d : Con S} (hc : V.mem c.Quotient)
-    (hd : V.mem d.Quotient) : V.mem (c ⊓ d).Quotient := by
-  have h : Con.ker (c.mkMulHom.prod d.mkMulHom) ≤ c ⊓ d := by
-    rw [Con.ker_prodMulHom, Con.ker_mkMulHom_eq, Con.ker_mkMulHom_eq]
-  exact V.mem_quotient_of_le h (V.mem_quotient_ker _ (V.prod hc hd))
-
-end Pseudovariety
-
 variable {S T : Type*} [Semigroup S] [Semigroup T]
-
-/-! ### The conditions defining `D`, `K` and `LI` -/
 
 /-- A semigroup is *definite* when every idempotent `e` absorbs on the left, `s * e = e`. -/
 def IsDefinite (S : Type*) [Semigroup S] : Prop :=
@@ -272,43 +199,5 @@ theorem IsLocallyTrivial.isIdempotentElem_map (h : IsLocallyTrivial S)
     simp only [mul_assoc], h e he]
 
 end LongProducts
-
-/-! ### The bundled pseudovarieties -/
-
-/-- The pseudovariety **D** of definite semigroups. -/
-def definiteVariety : Pseudovariety.{u} where
-  mem S _ := Finite S ∧ IsDefinite S
-  finite_of_mem h := h.1
-  sub hf h := have := h.1; ⟨.of_injective _ hf, h.2.of_injective hf⟩
-  quot hf h := have := h.1; ⟨.of_surjective _ hf, h.2.of_surjective hf⟩
-  prod hS hT := have := hS.1; have := hT.1; ⟨inferInstance, hS.2.prod hT.2⟩
-  memUnit := ⟨inferInstance, fun _ _ _ ↦ rfl⟩
-
-/-- The pseudovariety **K** of reverse definite semigroups. -/
-def reverseDefiniteVariety : Pseudovariety.{u} where
-  mem S _ := Finite S ∧ IsReverseDefinite S
-  finite_of_mem h := h.1
-  sub hf h := have := h.1; ⟨.of_injective _ hf, h.2.of_injective hf⟩
-  quot hf h := have := h.1; ⟨.of_surjective _ hf, h.2.of_surjective hf⟩
-  prod hS hT := have := hS.1; have := hT.1; ⟨inferInstance, hS.2.prod hT.2⟩
-  memUnit := ⟨inferInstance, fun _ _ _ ↦ rfl⟩
-
-/-- The pseudovariety **LI** of locally trivial semigroups. -/
-def locallyTrivialVariety : Pseudovariety.{u} where
-  mem S _ := Finite S ∧ IsLocallyTrivial S
-  finite_of_mem h := h.1
-  sub hf h := have := h.1; ⟨.of_injective _ hf, h.2.of_injective hf⟩
-  quot hf h := have := h.1; ⟨.of_surjective _ hf, h.2.of_surjective hf⟩
-  prod hS hT := have := hS.1; have := hT.1; ⟨inferInstance, hS.2.prod hT.2⟩
-  memUnit := ⟨inferInstance, fun _ _ _ ↦ rfl⟩
-
-@[simp] theorem mem_definiteVariety {S : Type u} [Semigroup S] :
-    definiteVariety.mem S ↔ Finite S ∧ IsDefinite S := Iff.rfl
-
-@[simp] theorem mem_reverseDefiniteVariety {S : Type u} [Semigroup S] :
-    reverseDefiniteVariety.mem S ↔ Finite S ∧ IsReverseDefinite S := Iff.rfl
-
-@[simp] theorem mem_locallyTrivialVariety {S : Type u} [Semigroup S] :
-    locallyTrivialVariety.mem S ↔ Finite S ∧ IsLocallyTrivial S := Iff.rfl
 
 end Semigroup

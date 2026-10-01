@@ -8,30 +8,36 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Computability.SyntacticMonoid
+public import Linglib.Core.Computability.SyntacticSemigroup
 public import Linglib.Core.Algebra.Group.Pseudovariety
 public import Mathlib.Order.BooleanSubalgebra
 
 /-!
 # The languages of a pseudovariety
 
-This file defines, for a pseudovariety `V` of finite monoids, the languages whose syntactic monoid
-lies in `V`, and proves that over each alphabet they form a Boolean algebra closed under quotients
-and inverse homomorphisms. These closure properties make `V.langs` a variety of languages, the
-language side of Eilenberg's variety theorem.
+This file defines the languages of a pseudovariety: for a pseudovariety `V` of finite monoids, the
+languages whose syntactic monoid lies in `V`, and for a pseudovariety of finite semigroups, the
+languages whose syntactic semigroup lies in `V`. Over each alphabet these languages form a Boolean
+algebra closed under quotients and inverse homomorphisms of free monoids, respectively free
+semigroups. These are Eilenberg's `*`-varieties and `+`-varieties of languages.
 
 ## Main definitions
 
-* `Monoid.Pseudovariety.langs`: the languages whose syntactic monoid lies in `V`.
+* `Monoid.Pseudovariety.langs`, `Semigroup.Pseudovariety.langs`: the languages of a pseudovariety.
 * `Monoid.Pseudovariety.toBooleanSubalgebra`: the languages of `V` over an alphabet, as a Boolean
   subalgebra.
 
 ## Main results
 
-* `Monoid.Pseudovariety.langs_of_recognizes`: a language recognized by a member of `V` lies in
-  `V.langs`.
-* `Monoid.Pseudovariety.langs_leftQuotient`, `langs_rightQuotient`, `langs_comap`: closure under
-  quotients and inverse homomorphisms.
+* `Monoid.Pseudovariety.langs_of_recognizes`, `Semigroup.Pseudovariety.langs_of_recognizes`: a
+  language recognized by a member of `V` lies in `V.langs`.
+* `langs_leftQuotient`, `langs_rightQuotient`, `langs_comap` on both sides: closure under quotients
+  and inverse homomorphisms.
+
+## Implementation notes
+
+A free semigroup has no erasing homomorphisms, so the semigroup side is closed only under inverse
+images of homomorphisms between free semigroups.
 
 ## References
 
@@ -115,3 +121,74 @@ def toBooleanSubalgebra (α : Type u) : BooleanSubalgebra (Language α) where
 @[simp] theorem mem_toBooleanSubalgebra : L ∈ V.toBooleanSubalgebra α ↔ V.langs L := Iff.rfl
 
 end Monoid.Pseudovariety
+
+namespace Semigroup.Pseudovariety
+
+open Language FreeSemigroup
+
+variable (V : Pseudovariety.{u}) {α : Type u} {L M : Language α}
+
+/-- The languages of a pseudovariety `V` are those whose syntactic semigroup lies in `V`. -/
+def langs (L : Language α) : Prop := V.mem L.SyntacticSemigroup
+
+theorem langs_isRegular (h : V.langs L) : L.IsRegular :=
+  .of_finite_syntacticSemigroup (V.finite_of_mem h)
+
+theorem langs_iff : V.langs L ↔ L.IsRegular ∧ V.mem L.SyntacticSemigroup :=
+  ⟨fun h ↦ ⟨V.langs_isRegular h, h⟩, And.right⟩
+
+variable {V} in
+/-- The languages of `V` are upward closed in the order of syntactic congruences. -/
+theorem langs_of_syntacticSemigroupCon_le (h : V.langs L)
+    (hle : L.syntacticSemigroupCon ≤ M.syntacticSemigroupCon) : V.langs M :=
+  V.mem_quotient_of_le hle h
+
+/-- A language recognized by a member of `V` lies in `V.langs`. -/
+theorem langs_of_recognizes {T : Type u} [Semigroup T] (hT : V.mem T)
+    {η : FreeSemigroup α →ₙ* T} (h : L.RecognizesSemigroup η) : V.langs L :=
+  V.mem_quotient_of_le (ker_le_syntacticSemigroupCon_of_recognizes h) (V.mem_quotient_ker η hT)
+
+theorem langs_compl (h : V.langs L) : V.langs Lᶜ := by
+  show V.mem (syntacticSemigroupCon Lᶜ).Quotient
+  rw [syntacticSemigroupCon_compl]
+  exact h
+
+theorem langs_inf (hL : V.langs L) (hM : V.langs M) : V.langs (L ⊓ M) :=
+  V.mem_quotient_of_le inf_syntacticSemigroupCon_le_syntacticSemigroupCon_inf
+    (V.mem_quotient_inf hL hM)
+
+theorem langs_sup (hL : V.langs L) (hM : V.langs M) : V.langs (L ⊔ M) := by
+  rw [show L ⊔ M = (Lᶜ ⊓ Mᶜ)ᶜ by rw [compl_inf, compl_compl, compl_compl]]
+  exact V.langs_compl (V.langs_inf (V.langs_compl hL) (V.langs_compl hM))
+
+theorem langs_univ : V.langs (⊤ : Language α) :=
+  V.langs_of_recognizes V.memUnit (η := (1 : FreeSemigroup α →ₙ* PUnit.{u + 1}))
+    (recognizesSemigroup_iff.mpr ⟨Set.univ, fun _ ↦ iff_of_true trivial (Set.mem_univ _)⟩)
+
+theorem langs_bot : V.langs (⊥ : Language α) := by
+  simpa using V.langs_compl V.langs_univ
+
+/-- The languages of `V` are closed under inverse homomorphisms of free semigroups. A free
+semigroup has no erasing homomorphisms, which is the difference from the monoid case. -/
+theorem langs_comap {β : Type u} {Lb : Language β} (h : V.langs Lb)
+    (φ : FreeSemigroup α →ₙ* FreeSemigroup β) :
+    V.langs {w : List α | ∃ u : FreeSemigroup α,
+      u.toFreeMonoid.toList = w ∧ (φ u).toFreeMonoid.toList ∈ Lb} := by
+  refine V.langs_of_recognizes h (η := Lb.toSyntacticSemigroup.comp φ)
+    (recognizesSemigroup_iff.mpr ⟨{m | ∃ u : FreeSemigroup β,
+      Lb.toSyntacticSemigroup u = m ∧ u.toFreeMonoid.toList ∈ Lb}, fun w ↦ ⟨?_, ?_⟩⟩)
+  · rintro ⟨u, hu, hmem⟩
+    obtain rfl : u = w := toFreeMonoid_injective (FreeMonoid.toList.injective hu)
+    exact ⟨φ u, rfl, hmem⟩
+  · rintro ⟨v, hv, hmem⟩
+    exact ⟨w, rfl, (SyntacticEquiv.mem_iff (toSyntacticSemigroup_eq_iff.mp hv)).mp hmem⟩
+
+variable {V}
+
+theorem langs_leftQuotient (h : V.langs L) (u : List α) : V.langs (L.leftQuotient u) :=
+  langs_of_syntacticSemigroupCon_le h (L.syntacticSemigroupCon_le_leftQuotient u)
+
+theorem langs_rightQuotient (h : V.langs L) (u : List α) : V.langs (L.rightQuotient u) :=
+  langs_of_syntacticSemigroupCon_le h (L.syntacticSemigroupCon_le_rightQuotient u)
+
+end Semigroup.Pseudovariety
