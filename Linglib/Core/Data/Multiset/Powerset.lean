@@ -24,6 +24,7 @@ quotient `(∑ᵢ kᵢ)! / ∏ᵢ kᵢ!`.)
 
 ## Main results
 
+* `Multiset.powersetCard_eq_filter`: `powersetCard n` is the `n`-element slice of `powerset`.
 * `Multiset.powerset_add`: `(F + G).powerset` as a bind/map product of the summands'
   powersets — the `+` analogue of `Multiset.powerset_cons`.
 * `Multiset.powerset_powerset_pair_swap`: the two iteration orders over nested
@@ -49,7 +50,18 @@ namespace Multiset
 
 variable {α : Type*}
 
-/-- `powerset` of a sum, as a bind/map product over the summands' powersets: each
+/-- `powersetCard n s` is the slice of `powerset s` with `n` elements
+(`Finset.powersetCard_eq_filter` analogue). -/
+theorem powersetCard_eq_filter {n : ℕ} {s : Multiset α} :
+    powersetCard n s = s.powerset.filter fun t ↦ card t = n := by
+  induction s using Multiset.induction generalizing n with
+  | empty => cases n <;> simp [powersetCard_zero_left, filter_singleton]
+  | cons a s ih =>
+    cases n with
+    | zero => simp [powersetCard_zero_left, filter_map, ← ih]
+    | succ n => simp [powersetCard_cons, filter_map, ← ih]
+
+/-- The `powerset` of a sum is a bind/map product over the summands' powersets, since each
     sub-multiset of `F + G` splits (with multiplicity) into a sub-multiset of `F` plus a
     sub-multiset of `G`. The `+` analogue of `powerset_cons`. -/
 theorem powerset_add (F G : Multiset α) :
@@ -85,7 +97,7 @@ theorem bind_revzip_sublists'_swap {β : Type*} (l : List α)
     ← Multiset.map_coe, Multiset.bind_map]
   rfl
 
-/-- Nested splits reassociate: splitting the second bucket of every split enumerates the same
+/-- Nested splits reassociate. Splitting the second bucket of every split enumerates the same
 ordered triples as splitting the first bucket. -/
 theorem bind_revzip_sublists'_assoc {β : Type*} (l : List α)
     (K : List α → List α → List α → Multiset β) :
@@ -109,8 +121,8 @@ theorem bind_bind_bind_comm {β γ δ : Type*} (m : Multiset α) (n : α → Mul
       o.bind fun c => m.bind fun a => (n a).bind fun b => f a b c :=
   (Multiset.bind_congr fun a _ => Multiset.bind_bind (n a) o).trans (Multiset.bind_bind m o)
 
-/-- A bucket handed to a chooser `S`, then the rest split: the same triples as splitting first
-and handing the second part's first bucket to `S`. -/
+/-- Handing a bucket to a chooser `S` and then splitting the rest gives the same triples as
+splitting first and handing the second part's first bucket to `S`. -/
 theorem bind_revzip_sublists'_bind_assoc {β γ : Type*} (l : List α) (S : List α → Multiset β)
     (F : β → List α → List α → Multiset γ) :
     (l.sublists'.revzip : Multiset (List α × List α)).bind (fun p => (S p.1).bind fun a =>
@@ -216,7 +228,8 @@ theorem powerset_powerset_pair_swap (F : Multiset α) :
       refine bind_congr fun F₁' _ => ?_
       rw [map_map]; rfl
     rw [h_lhs_part2, h_lhs_part3, ih]
-    -- Now LHS = RHS_for_s + (RHS_for_s).map (p ↦ (p.1, a ::ₘ p.2)) + (RHS_for_s).map (p ↦ (a ::ₘ p.1, p.2))
+    -- Now LHS = RHS_for_s + (RHS_for_s).map (p ↦ (p.1, a ::ₘ p.2))
+    --         + (RHS_for_s).map (p ↦ (a ::ₘ p.1, p.2))
     -- Compute RHS for (a ::ₘ s) similarly.
     -- RHS = ((a ::ₘ s).powerset.bind fun A => ((a ::ₘ s) - A).powerset.map (fun B => (A, B)))
     --     = s.powerset.bind ... [a ∉ A case]
@@ -262,8 +275,8 @@ theorem powerset_powerset_pair_swap (F : Multiset α) :
     -- Both sides are now base + second-slot lift + first-slot lift; `abel` reorders.
     abel
 
-/-- Workhorse for `count_powerset_of_le` and `count_powerset`: the product may be taken
-    over any fixed `Finset` containing the supports of both multisets. -/
+/-- The product in `count_powerset_of_le` and `count_powerset` may be taken over any fixed
+    `Finset` containing the supports of both multisets. -/
 private theorem count_powerset_subset {S : Finset α} {t s : Multiset α} (ht : t.toFinset ⊆ S)
     (hs : s.toFinset ⊆ S) : t.powerset.count s = ∏ x ∈ S, (t.count x).choose (s.count x) := by
   induction t using Multiset.induction_on generalizing s hs with

@@ -9,15 +9,26 @@ public import Mathlib.Algebra.BigOperators.Ring.Multiset
 public import Mathlib.Data.Multiset.Bind
 
 /-!
-# Sums over multiset cartesian products
+# Products over filters and cartesian products of multisets
 
-`[UPSTREAM]` candidate: the `Multiset` analogue of `Finset.sum_mul_sum`,
-absent from mathlib.
+`[UPSTREAM]` candidates, absent from mathlib: the `Multiset` analogues of `Finset.prod_filter`
+and `Finset.sum_mul_sum`.
 -/
 
 @[expose] public section
 
 namespace Multiset
+
+/-- The product over a filter is the product of the indicator (`Finset.prod_filter`
+analogue). -/
+@[to_additive /-- The sum over a filter is the sum of the indicator (`Finset.sum_filter`
+analogue). -/]
+theorem prod_map_filter {ι M : Type*} [CommMonoid M] (p : ι → Prop) [DecidablePred p]
+    (f : ι → M) (s : Multiset ι) :
+    ((s.filter p).map f).prod = (s.map fun a ↦ if p a then f a else 1).prod := by
+  induction s using Multiset.induction with
+  | empty => simp
+  | cons a s ih => by_cases h : p a <;> simp [h, ih]
 
 /-- Sum of a pointwise product over a cartesian product factors as a
     product of sums. -/

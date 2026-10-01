@@ -18,6 +18,8 @@ multiplicities*; this file computes those multiplicities: `(u, v)` occurs
 
 ## Main results
 
+* `Multiset.filter_card_fst_eq_antidiagonal`: the splits whose first part has `k` elements
+  are indexed by `powersetCard k`.
 * `Multiset.powerset_partition_swap`: a partition sum over `C.powerset` is invariant
   under the involution `C₁ ↦ C - C₁`.
 * `Multiset.count_antidiagonal`: the closed form for `(antidiagonal w).count (u, v)`.
@@ -44,21 +46,19 @@ theorem antidiagonal_coe_sublists' (l : List α) :
   rw [antidiagonal_coe', powersetAux', List.revzip_map]
   rfl
 
-/-- `antidiagonal` is invariant under `Prod.swap`: commutativity of `+` permutes the
-    ordered splits. -/
-theorem antidiagonal_swap (s : Multiset α) :
-    s.antidiagonal.map Prod.swap = s.antidiagonal := by
-  induction s using Multiset.induction_on with
-  | empty => rfl
-  | cons a t ih =>
-    simp only [Multiset.antidiagonal_cons, Multiset.map_add, Multiset.map_map,
-      ← Prod.map_comp_swap, ← Multiset.map_map _ Prod.swap, ih, add_comm]
-
 variable [DecidableEq α]
+
+/-- The splits of `s` whose first part has `k` elements are the `k`-element sub-multisets of `s`
+paired with their complements (`Finset.HasAntidiagonal.filter_fst_eq_antidiagonal` analogue). -/
+theorem filter_card_fst_eq_antidiagonal (s : Multiset α) (k : ℕ) :
+    (s.antidiagonal.filter fun p ↦ card p.1 = k) = (s.powersetCard k).map fun t ↦ (t, s - t) := by
+  rw [← map_swap_antidiagonal, antidiagonal_eq_map_powerset, map_map, filter_map,
+    powersetCard_eq_filter]
+  rfl
 
 /-- Reindex a partition-sum over `C.powerset` by the involution `C₁ ↦ C - C₁`: summing
     `f C₁ (C - C₁)` equals summing `f (C - C₁) C₁`. Specialisation of
-    `antidiagonal_swap` to the `(C₁, C - C₁)` parametrisation. -/
+    `map_swap_antidiagonal` to the `(C₁, C - C₁)` parametrisation. -/
 theorem powerset_partition_swap {β : Type*} [AddCommMonoid β] (C : Multiset α)
     (f : Multiset α → Multiset α → β) :
     (C.powerset.map fun C₁ => f C₁ (C - C₁)).sum =
@@ -72,12 +72,12 @@ theorem powerset_partition_swap {β : Type*} [AddCommMonoid β] (C : Multiset α
   have h_lift_rhs : (C.powerset.map fun C₁ => f (C - C₁) C₁).sum =
       (C.antidiagonal.map fun p => f p.1 p.2).sum := by
     rw [antidiagonal_eq_map_powerset, map_map]; rfl
-  -- The two antidiagonal forms agree by `antidiagonal_swap`.
+  -- The two antidiagonal forms agree by `map_swap_antidiagonal`.
   have h_swap : (C.antidiagonal.map fun p => f p.2 p.1).sum =
       (C.antidiagonal.map fun p => f p.1 p.2).sum := by
     conv_lhs => rw [show (fun p : Multiset α × Multiset α => f p.2 p.1) =
                       ((fun p => f p.1 p.2) ∘ Prod.swap) from funext fun _ => rfl,
-                    ← map_map _ Prod.swap, antidiagonal_swap]
+                    ← map_map _ Prod.swap, map_swap_antidiagonal]
   rw [h_lift_lhs, h_swap, ← h_lift_rhs]
 
 /-- The multiplicity of `(s, t)` in `antidiagonal (s + t)` is the number of ways to
@@ -88,8 +88,8 @@ theorem count_antidiagonal_eq_count_powerset (s t : Multiset α) :
       show (s, t) = (s + t - t, t) by rw [Multiset.add_sub_cancel_right]]
   exact count_map_eq_count' _ _ (fun _ _ h => congrArg Prod.snd h) t
 
-/-- Closed form for the multiplicities of `Multiset.antidiagonal`: an ordered split
-    `(u, v)` of `w` occurs `∏ x, (w.count x).choose (v.count x)` times. -/
+/-- An ordered split `(u, v)` of `w` occurs `∏ x, (w.count x).choose (v.count x)` times in
+    `Multiset.antidiagonal w`, and a pair with `u + v ≠ w` does not occur. -/
 theorem count_antidiagonal (u v w : Multiset α) :
     (antidiagonal w).count (u, v) =
       if u + v = w then ∏ x ∈ w.toFinset, (w.count x).choose (v.count x) else 0 := by
@@ -101,7 +101,7 @@ theorem count_antidiagonal (u v w : Multiset α) :
 /-- The antidiagonal multiplicity is symmetric in the two slots. -/
 theorem count_antidiagonal_swap (u v w : Multiset α) :
     (antidiagonal w).count (u, v) = (antidiagonal w).count (v, u) := by
-  conv_lhs => rw [← antidiagonal_swap w]
+  conv_lhs => rw [← map_swap_antidiagonal w]
   exact count_map_eq_count' _ _ Prod.swap_injective (v, u)
 
 end Multiset

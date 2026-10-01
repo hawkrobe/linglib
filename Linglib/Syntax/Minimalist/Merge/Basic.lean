@@ -87,8 +87,8 @@ theorem gammaMatch_apply_singleton (S S' : UnorderedTree α)
 `deltaMatch S S' = gammaMatch S S' ⊗ id` lifts the matching projection to act on
 the left channel of the coproduct output. -/
 
-/-- The matching operator δ_{S,S'} on tensored coproduct output: applies
-    `gammaMatch S S'` to the left channel and identity to the right. -/
+/-- The matching operator δ_{S,S'} on tensored coproduct output applies
+    `gammaMatch S S'` to the left channel and the identity to the right. -/
 noncomputable def deltaMatch (S S' : UnorderedTree α) :
     (ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) →ₗ[R]
       (ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) :=
@@ -115,7 +115,7 @@ noncomputable def graftBinaryAt (lbl : α) (S S' : UnorderedTree α) :
     (fun F => if F = ({S, S'} : Forest (UnorderedTree α))
       then of' ({UnorderedTree.node lbl {S, S'}} : Forest (UnorderedTree α)) else 0)
 
-/-- **B grafts on basis vectors**: on `of' F`, returns
+/-- On a basis vector `of' F`, `graftBinaryAt` returns
     `of' {UnorderedTree.node lbl {S, S'}}` if `F = {S, S'}`, and `0` otherwise.
     Same shape as `gammaMatch_apply_singleton` with a different target. -/
 theorem graftBinaryAt_apply_singleton (lbl : α) (S S' : UnorderedTree α)
@@ -140,19 +140,12 @@ The chain:
 When no admissible cut produces `{S, S'}` as its cut forest, all terms are
 killed by `δ_{S,S'}` and `mergeOp lbl S S' F = 0`. -/
 
-/-- Multiplication on `ConnesKreimer R (UnorderedTree α)` lifted to a linear map.
-    Wraps mathlib's `Algebra.TensorProduct.lmul'`. -/
-noncomputable def mulLin :
-    ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α) →ₗ[R]
-      ConnesKreimer R (UnorderedTree α) :=
-  (Algebra.TensorProduct.lmul' (S := ConnesKreimer R (UnorderedTree α)) R).toLinearMap
-
 /-- **Post-coproduct chain** `⊔ ∘ (B ⊗ id) ∘ δ_{S,S'}` as a single named linear
     map. `mergeOp` factors as `mergePost lbl S S' ∘ comulAlgHomN.toLinearMap`. -/
 noncomputable def mergePost (lbl : α) (S S' : UnorderedTree α) :
     ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α) →ₗ[R]
       ConnesKreimer R (UnorderedTree α) :=
-  mulLin (R := R) (α := α)
+  LinearMap.mul' R (ConnesKreimer R (UnorderedTree α))
     ∘ₗ TensorProduct.map (graftBinaryAt (R := R) lbl S S') LinearMap.id
     ∘ₗ deltaMatch (R := R) S S'
 
@@ -187,8 +180,7 @@ theorem mergePost_basis_tensor (lbl : α) (S S' : UnorderedTree α)
   · subst hF
     rw [ite_eq_left rfl, TensorProduct.map_tmul, LinearMap.id_apply,
         graftBinaryAt_apply_singleton, ite_eq_left rfl, ite_eq_left rfl]
-    show Algebra.TensorProduct.lmul' (S := ConnesKreimer R (UnorderedTree α)) R _ = _
-    exact Algebra.TensorProduct.lmul'_apply_tmul _ _
+    exact LinearMap.mul'_apply
   · rw [ite_eq_right hF, TensorProduct.zero_tmul, ite_eq_right hF]
     simp only [map_zero]
 
@@ -290,10 +282,7 @@ theorem mergePost_right_one_tmul (lbl : α) (S S' : UnorderedTree α)
         TensorProduct.map_tmul, LinearMap.id_apply, TensorProduct.map_tmul,
         LinearMap.id_apply, TensorProduct.map_tmul, LinearMap.id_apply,
         TensorProduct.map_tmul, LinearMap.id_apply]
-    show Algebra.TensorProduct.lmul' (S := ConnesKreimer R (UnorderedTree α)) R _
-       = Algebra.TensorProduct.lmul' (S := ConnesKreimer R (UnorderedTree α)) R _ * _
-    rw [Algebra.TensorProduct.lmul'_apply_tmul,
-        Algebra.TensorProduct.lmul'_apply_tmul, mul_assoc]
+    rw [LinearMap.mul'_apply, LinearMap.mul'_apply, mul_assoc]
   | add z1 z2 ih1 ih2 =>
     rw [add_mul]
     simp only [map_add]
@@ -337,8 +326,8 @@ theorem gammaMatchSingle_apply_singleton (β : UnorderedTree α)
       if F = ({β} : Forest (UnorderedTree α)) then of' F else 0 := by
   rw [gammaMatchSingle, ConnesKreimer.linearLift_of']
 
-/-- The matching operator `δ_{β, 1}` on tensored coproduct output: applies
-    `gammaMatchSingle β` to the left channel, identity to the right. -/
+/-- The matching operator `δ_{β, 1}` on tensored coproduct output applies
+    `gammaMatchSingle β` to the left channel and the identity to the right. -/
 noncomputable def deltaMatchSingle (β : UnorderedTree α) :
     (ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) →ₗ[R]
       (ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) :=
@@ -349,7 +338,7 @@ noncomputable def deltaMatchSingle (β : UnorderedTree α) :
 noncomputable def mergePostUnit (β : UnorderedTree α) :
     ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α) →ₗ[R]
       ConnesKreimer R (UnorderedTree α) :=
-  mulLin (R := R) (α := α) ∘ₗ deltaMatchSingle (R := R) β
+  LinearMap.mul' R (ConnesKreimer R (UnorderedTree α)) ∘ₗ deltaMatchSingle (R := R) β
 
 /-- The "Merge-with-unit" operator `M_{β, 1}` per
     [marcolli-chomsky-berwick-2025] Prop 1.4.2 (book p. 50). The first half of
@@ -379,13 +368,11 @@ theorem mergePostUnit_basis_tensor (β : UnorderedTree α)
   by_cases hF : F = ({β} : Forest (UnorderedTree α))
   · subst hF
     rw [ite_eq_left rfl, ite_eq_left rfl]
-    show Algebra.TensorProduct.lmul' (S := ConnesKreimer R (UnorderedTree α)) R _ = _
-    exact Algebra.TensorProduct.lmul'_apply_tmul _ _
+    exact LinearMap.mul'_apply
   · rw [ite_eq_right hF, TensorProduct.zero_tmul, ite_eq_right hF]
-    show Algebra.TensorProduct.lmul' (S := ConnesKreimer R (UnorderedTree α)) R 0 = 0
     exact map_zero _
 
-/-- **Sanity check**: `mergeOpUnit β` on the empty workspace `(1 : ConnesKreimer
+/-- `mergeOpUnit β` on the empty workspace `(1 : ConnesKreimer
     R (UnorderedTree α))` is zero. `1 = of' 0` is the multiplicative unit / empty
     workspace; `δ_{β, 1}` projects on `{β} ≠ 0`, so all cuts are killed.
     Confirms M-C-B's caveat: `M_{β, 1}` requires β to be present. -/

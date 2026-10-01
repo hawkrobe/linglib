@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Algebra.RootedTree.BirkhoffFactorizationSemiring
+public import Linglib.Core.Algebra.RootedTree.Coproduct.Primitive
 public import Linglib.Syntax.Minimalist.Linearization.Externalization
 public import Linglib.Syntax.Minimalist.SyntacticObject.Selection
 public import Linglib.Syntax.Minimalist.FormCopy
@@ -35,6 +36,11 @@ Merge, the head-side convention flipping the yield, and exocentric elimination, 
 nouns determining no head and hence no order. The framework itself is the `Syntax/Minimalist/`
 theory layer; the examples are kernel-checked against it.
 
+FormSet (§1.16) groups components of a workspace under a new root. Definition 1.16.1 writes it as
+`⊔ ∘ (B ⊗ id) ∘ Π_(k) ∘ Δ_P`, where the primitive coproduct `Δ_P` splits a workspace in every way,
+so `FS^(k)(F)` sums `B(S) ⊔ (F - S)` over the `k`-component subworkspaces `S` (`formSet_of'`). On
+workspaces of syntactic objects it lands in the extended workspaces of (1.16.3) (`map_formSet_le`).
+
 The book's syntax–semantics interface (Chapter 3) replaces per-feature checking by a single
 recursive map, the Birkhoff renormalization of a character of the Connes–Kreimer Hopf algebra
 of the syntactic object. The Boolean parsing semiring `Consistency` of §3.5 is the target,
@@ -58,6 +64,10 @@ supplies `X₁ = x` as an initial condition, but `𝔐(X, X)` has no degree-one 
 `TreeAlgebra` is spanned by the forests of unlabelled trees, not only by the binary trees of `𝔗`.
 `V(𝔗)` is the span of the single binary trees in it, and every term of the solution lies there.
 
+`formSet` is defined for every `k` on all forests, with the root label of `B` a parameter.
+Definition 1.16.1 takes `k ≥ 3` and the domain `V(𝔉_{SO₀})` of workspaces of syntactic objects;
+`map_formSet_le` is stated on that domain, with the bare root label of the syntactic objects.
+
 The proof of Proposition 1.10.2 prints `X₄ = 2{x{x{xx}}} + {{xx}{xx}}`. Its recursion gives
 `𝔐(X₁, X₃) + 𝔐(X₂, X₂) + 𝔐(X₃, X₁) = 4{x{x{xx}}} + {{xx}{xx}}` (`planarSum_four`), and four is
 the number of planar embeddings that the proof says the coefficient counts: the five planar binary
@@ -74,6 +84,10 @@ is `P(t) = 1 + t²`, while the book writes `P(X) = X²` next to its requirement 
 Lemma 1.10.1 identifies `𝔗` with the free nonassociative commutative magma on one generator; the
 link to the syntactic-object carrier, the free commutative magma on the lexical items, is not
 stated.
+
+Lemma 1.16.5 extends the coproducts `Δ^ω` to extended workspaces by excluding the cuts of edges at
+a root of valence at least three, so that Merge does not undo the grouping FormSet builds
+(§1.16.2). It is not formalized.
 
 The book's section locators (§1.12.1, §1.13, §1.13.2) are transcribed from an earlier
 version of this file and are UNVERIFIED against the published text.
@@ -290,6 +304,71 @@ private def exoNN : SyntacticObject :=
 example : exoNN.linearize .initial = none := by decide
 example : exoNN.linearize .final = none := by decide
 
+/-! ### FormSet (§1.16) -/
+
+section FormSet
+
+open scoped TensorProduct
+
+variable {R : Type*} [CommSemiring R] {α : Type*}
+
+/-- FormSet `FS^(k) = ⊔ ∘ (B ⊗ id) ∘ Π_(k) ∘ Δ_P` (Definition 1.16.1, (1.16.2)) splits the
+workspace by the primitive coproduct, keeps the terms whose left factor has `k` components,
+grafts those under a new root labelled `a`, and multiplies back. -/
+noncomputable def formSet (a : α) (k : ℕ) :
+    ConnesKreimer R (UnorderedTree α) →ₗ[R] ConnesKreimer R (UnorderedTree α) :=
+  LinearMap.mul' R _ ∘ₗ (bPlusLin a).rTensor _ ∘ₗ (homogeneousComponent k).rTensor _ ∘ₗ
+    comulPrim.toLinearMap
+
+variable [DecidableEq α]
+
+/-- FormSet groups `k` components of a workspace in every way, summing `B(S) ⊔ (F - S)` over
+the `k`-component subworkspaces `S` of `F`, counted with multiplicity (Remark 1.16.4). -/
+theorem formSet_of' (a : α) (k : ℕ) (F : Forest (UnorderedTree α)) :
+    formSet (R := R) a k (of' F) =
+      ((F.powersetCard k).map fun S ↦ of' (.node a S ::ₘ (F - S))).sum := by
+  rw [formSet, LinearMap.comp_apply, LinearMap.comp_apply, LinearMap.comp_apply,
+    AlgHom.toLinearMap_apply, rTensor_homogeneousComponent_comulPrim_of', map_multiset_sum,
+    map_multiset_sum, Multiset.map_map, Multiset.map_map]
+  refine congrArg Multiset.sum (Multiset.map_congr rfl fun S _ ↦ ?_)
+  simp [bPlusLin_of', ← of'_singleton, ← of'_add, Multiset.singleton_add]
+
+/-- With fewer than `k` components there is nothing to group. -/
+theorem formSet_of'_of_card_lt (a : α) {k : ℕ} {F : Forest (UnorderedTree α)}
+    (h : F.card < k) : formSet (R := R) a k (of' F) = 0 := by
+  rw [formSet_of', Multiset.powersetCard_eq_empty _ h, Multiset.map_zero, Multiset.sum_zero]
+
+/-- With exactly `k` components FormSet groups the whole workspace, as in the unbounded
+unstructured sequences of p. 144. -/
+theorem formSet_of'_card (a : α) (F : Forest (UnorderedTree α)) :
+    formSet (R := R) a F.card (of' F) = ofTree (.node a F) := by
+  simp [formSet_of']
+
+/-- A forest is an extended workspace, in `𝔉̃ᴿ` of (1.16.3), when each component is a syntactic
+object or a bare root of any valence over syntactic objects, binary below that root. -/
+def IsExtendedWorkspace (G : Forest (UnorderedTree Vertex)) : Prop :=
+  ∀ T ∈ G, IsSyntacticObject T ∨
+    ∃ S : Forest (UnorderedTree Vertex), T = .node (.inr none) S ∧ ∀ T' ∈ S, IsSyntacticObject T'
+
+/-- On workspaces of syntactic objects, the range of FormSet lies in the span of the extended
+workspaces (Definition 1.16.1). -/
+theorem map_formSet_le (k : ℕ) :
+    (Submodule.span R (of' '' {F | ∀ T ∈ F, IsSyntacticObject T})).map
+        (formSet (.inr none) k) ≤
+      Submodule.span R (of' '' {G | IsExtendedWorkspace G}) := by
+  rw [Submodule.map_span_le]
+  rintro _ ⟨F, hF, rfl⟩
+  rw [formSet_of']
+  refine multiset_sum_mem _ fun x hx ↦ ?_
+  obtain ⟨S, hS, rfl⟩ := Multiset.mem_map.mp hx
+  refine Submodule.subset_span ⟨_, fun T hT ↦ ?_, rfl⟩
+  rw [Multiset.mem_powersetCard] at hS
+  rcases Multiset.mem_cons.mp hT with rfl | hT
+  · exact .inr ⟨S, rfl, fun T' hT' ↦ hF T' (Multiset.mem_of_le hS.1 hT')⟩
+  · exact .inl (hF T (Multiset.mem_of_le (Multiset.sub_le_self F S) hT))
+
+end FormSet
+
 /-! ### Feature consistency as Birkhoff renormalization (Chapter 3) -/
 
 /-- The Boolean consistency semiring of §3.5, the two-element idempotent commutative semiring
@@ -446,7 +525,7 @@ noncomputable def triedToRead : SyntacticObject :=
   merge theMan (merge (leaf (tok .V [.T] "tried" 2)) (merge (leaf (tok .T [.V] "to" 3))
     (merge theMan' (merge (leaf (tok .V [.D] "read" 6)) aBook))))
 
-/-- The two inscriptions of *the man* are repetitions: structurally identical, distinct tokens. -/
+/-- The two inscriptions of *the man* are repetitions, structurally identical distinct tokens. -/
 theorem theMan_isRepetition : IsRepetition theMan theMan' := by
   refine ⟨by simp [StructurallyIdentical, theMan, theMan', tok], fun h ↦ ?_⟩
   have : immediatelyContains theMan' (leaf (tok .D [.N] "the" 0)) := h ▸ by simp [theMan]
@@ -457,7 +536,8 @@ the diagonal `Diag₁,₄` of (3.8.5). -/
 theorem theMan_mem_copyRel : (theMan, theMan') ∈ triedToRead.copyRel :=
   mk_mem_copyRel_merge (by simp [containsOrEq_iff_eq_or_contains]) theMan_isRepetition.1
 
-/-- *a book* is no copy of *the man*: Form Copy relates only structurally identical inscriptions. -/
+/-- *a book* is no copy of *the man*, since Form Copy relates only structurally identical
+inscriptions. -/
 theorem not_mem_copyRel_aBook : (theMan, aBook) ∉ triedToRead.copyRel := fun h ↦ by
   have := h.2
   simp only [StructurallyIdentical, theMan, aBook, erase_merge, erase_leaf, tok] at this
