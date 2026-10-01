@@ -150,16 +150,25 @@ namespace SyntacticObject
 
 variable (side : ConventionDir)
 
+/-- The linearization state of a trace: silent, and saturated as `traceState` has it, a copy of
+    the phrase its token heads. -/
+def traceLinearizationState : Option LIToken → LinearizationState side
+  | some tok => .of tok [] []
+  | none => .of (mkTraceToken 0) [] []
+
 /-- The head function's value on a syntactic object: the `liftFun` of pronounced
-    lexical leaves and the silent, saturated trace. -/
+    lexical leaves and the silent, saturated traces. -/
 def linearizationState (s : SyntacticObject) : LinearizationState side :=
-  liftFun (fun tok => .of tok tok.item.outerSel [tok]) (.of (mkTraceToken 0) [] []) s
+  liftFun (fun tok => .of tok tok.item.outerSel [tok]) (traceLinearizationState side) s
 
 @[simp] theorem linearizationState_leaf (tok : LIToken) :
     (SyntacticObject.leaf tok).linearizationState side = .of tok tok.item.outerSel [tok] := rfl
 
 @[simp] theorem linearizationState_trace :
     trace.linearizationState side = .of (mkTraceToken 0) [] [] := rfl
+
+@[simp] theorem linearizationState_traceOf (tok : LIToken) :
+    (traceOf tok).linearizationState side = .of tok [] [] := rfl
 
 @[simp] theorem linearizationState_node (l r : SyntacticObject) :
     (merge l r).linearizationState side =
@@ -169,7 +178,7 @@ def linearizationState (s : SyntacticObject) : LinearizationState side :=
 /-- The head function as a morphism of magmas ([marcolli-chomsky-berwick-2025]
     §1.13's algebraic frame): Merge multiplies constituents, `h` multiplies states. -/
 noncomputable def headHom : SyntacticObject →ₙ* LinearizationState side :=
-  lift (fun tok => .of tok tok.item.outerSel [tok]) (.of (mkTraceToken 0) [] [])
+  lift (fun tok => .of tok tok.item.outerSel [tok]) (traceLinearizationState side)
 
 @[simp] theorem headHom_apply (s : SyntacticObject) :
     headHom side s = s.linearizationState side := rfl

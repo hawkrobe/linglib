@@ -12,27 +12,24 @@ public import Linglib.Syntax.Minimalist.SyntacticObject.Build
 /-!
 # Phase theory on the `SyntacticObject` carrier
 
-[marcolli-chomsky-berwick-2025] §1.14 (Def 1.14.1–1.14.4); [chomsky-2000].
+The phases of [marcolli-chomsky-berwick-2025] §1.14, after [chomsky-2000], on the unordered
+carrier. A phase head is identified by the selection head (`SyntacticObject.outerCatC`): the
+selector projects, so the test needs no planar convention. The phase of a head, its interior and
+its edge are filters over the term API (`terms`, `accessibleTerms`, `containsOrEq`,
+`cCommandsIn`) and the selection head, so every notion is decidable, and the interior of a phase
+is its head's c-command domain, the complement domain.
 
-**P3b — phase-head identification**: derived from the **selection-driven head**
-(`SyntacticObject.outerCatC`, #800) — the projecting head's outer category. Because the head is
-the *selector* (Lemma 1.13.7), the test is **convention-independent** (the carrier
-is unordered anyway).
+## Implementation notes
 
-**P3c-2 — the structural phase domain** (Def 1.14.2–1.14.3), grounded **directly in
-MCB** rather than the legacy section-based `phaseComplementZ`/`complementInPlanar`
-walk (which carried a `side` parameter and a non-commutative `<|>` fallback — a
-section artifact with no place on the unordered carrier). MCB states everything in
-terms of **subtrees, containment, and the head's sister** — exactly the invariant,
-decidable P2 substrate (`terms`/`accessibleTerms`/`containsOrEq`/`areSistersIn`/`cCommandsIn`,
-#797–798) and the selection head (`selHead`, #800). So the whole phase domain is a
-**filter over the already-lifted term API** — no section, no `Quot.out`, no fresh
-`Perm` proof, and every notion `decide`s.
+The selection head is a partial head function, as MCB's are: a specifier and its sister, two
+saturated phrases, have none. The maximal projection of a phase head therefore stops below a
+specifier, which is outside the phase and its edge; MCB state the phase for objects in the domain
+of the head function.
 
-The keystone identity: the **interior Φ°_ℓ (Def 1.14.3) is the phase head's
-c-command domain**, `{T_v ∈ Acc(T) | T_v ⊆ T_{s_ℓ}} = accessibleTerms.filter (cCommandsIn …
-(leaf ℓ))` — the standard "complement domain = head's c-command domain" falling
-out of the formalization.
+## References
+
+* [marcolli-chomsky-berwick-2025]
+* [chomsky-2000]
 -/
 
 @[expose] public section
