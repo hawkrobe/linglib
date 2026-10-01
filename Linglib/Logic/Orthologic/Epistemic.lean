@@ -29,7 +29,7 @@ The law is what forces ortholattices on the account. In a Boolean algebra it mak
 * `Orthologic.WittgensteinLaw.disjoint_diamondHom_iterate`: with T, `a ∧ ◇ⁿ¬a = 0` for every `n`.
 * `Orthologic.diamondHom_le_box_diamondHom`: 4 and `a ≤ □◇a` give 5, `◇a ≤ □◇a`.
 * `Orthologic.wittgensteinLaw_iff_diamondHom_compl_le`, `Orthologic.WittgensteinLaw.eq_id`: the
-  collapse in a Boolean algebra.
+  collapse when `ᶜ` is a pseudocomplement, as in a Boolean algebra.
 
 ## Implementation notes
 
@@ -110,7 +110,7 @@ end WittgensteinLaw
 
 section T
 
-variable [OrthocomplementedLattice L] (hT : ∀ a, box a ≤ a)
+variable [IsOrtholattice L] (hT : ∀ a, box a ≤ a)
 include hT
 
 /-- Over T, Wittgenstein's Law is equivalent to the principle of Lemma 3.25 that a proposition
@@ -119,19 +119,19 @@ Lemma 3.25). -/
 theorem wittgensteinLaw_iff_eq_bot : WittgensteinLaw box ↔ ∀ a, box a = ⊥ → a = ⊥ := by
   refine ⟨fun hW _ ↦ hW.eq_bot_of_box_eq_bot, fun h ↦ wittgensteinLaw_iff.mpr fun a ↦ ?_⟩
   refine disjoint_iff.mpr (h _ (le_bot_iff.mp ?_))
-  rw [map_inf, ← OrthocomplementedLattice.inf_compl_eq_bot (box a)]
-  exact inf_le_inf_left _ (hT _)
+  rw [map_inf]
+  exact ((IsOrtholattice.disjoint_compl_right (box a)).mono_right (hT _)).le_bot
 
 /-- Generalized Wittgenstein sentences are contradictions, since with T `a ∧ ◇ⁿ¬a = 0` for every
 `n`, here in the form `a ⊓ ¬□ⁿa = ⊥` ([holliday-mandelkern-2024] Fact 3.28, algebraically). -/
 theorem WittgensteinLaw.disjoint_compl_box_iterate (hW : WittgensteinLaw box) :
     ∀ n (a : L), Disjoint a (box^[n] a)ᶜ
-  | 0, a => (OrthocomplementedLattice.isCompl_compl a).disjoint
+  | 0, a => IsOrtholattice.disjoint_compl_right a
   | n + 1, a => by
     rw [Function.iterate_succ_apply, disjoint_iff]
     refine hW.eq_bot_of_box_eq_bot (le_bot_iff.mp ?_)
-    rw [map_inf, ← (disjoint_compl_box_iterate hW n (box a)).eq_bot]
-    exact inf_le_inf_left _ (hT _)
+    rw [map_inf]
+    exact ((disjoint_compl_box_iterate hW n (box a)).mono_right (hT _)).le_bot
 
 /-- This is Fact 3.28 in the paper's form `a ∧ ◇ⁿ¬a = 0`. -/
 theorem WittgensteinLaw.disjoint_diamondHom_iterate (hW : WittgensteinLaw box) (n : ℕ) (a : L) :
@@ -141,23 +141,35 @@ theorem WittgensteinLaw.disjoint_diamondHom_iterate (hW : WittgensteinLaw box) (
 
 end T
 
-section BooleanAlgebra
+section Pseudocomplement
 
-variable {B : Type*} [BooleanAlgebra B] {box : InfTopHom B B}
+/-! ### The collapse under pseudocomplementation
 
-/-- In a Boolean algebra Wittgenstein's Law says that `◇¬a` entails `¬a`, so treating `p ∧ ◇¬p`
-as a contradiction collapses `might` ([holliday-mandelkern-2024] §1). -/
-theorem wittgensteinLaw_iff_diamondHom_compl_le :
+The hypothesis `hp` says that `ᶜ` is a pseudocomplement, `a ⊓ b = ⊥ → b ≤ aᶜ`. It holds in every
+Boolean algebra (`Disjoint.le_compl_left`), and in an ortholattice it is equivalent to
+distributivity (`IsOrtholattice.inf_sup_le_iff_le_compl_of_disjoint`). -/
+
+variable (hp : ∀ a b : L, Disjoint a b → b ≤ aᶜ)
+include hp
+
+/-- When `ᶜ` is a pseudocomplement, as in a Boolean algebra, Wittgenstein's Law says that `◇¬a`
+entails `¬a`, so treating `p ∧ ◇¬p` as a contradiction collapses `might`
+([holliday-mandelkern-2024] §1). -/
+theorem wittgensteinLaw_iff_diamondHom_compl_le [IsOrtholattice L] :
     WittgensteinLaw box ↔ ∀ a, diamondHom box aᶜ ≤ aᶜ := by
-  simp only [wittgensteinLaw_iff, disjoint_compl_right_iff, diamondHom_apply, compl_compl,
-    compl_le_compl_iff_le]
+  rw [wittgensteinLaw_iff]
+  refine forall_congr' fun a ↦ ⟨fun h ↦ ?_, fun h ↦ ?_⟩
+  · simpa only [diamondHom_apply, InvolutiveCompl.compl_compl] using hp _ _ h
+  · simpa only [diamondHom_apply, InvolutiveCompl.compl_compl] using
+      (IsOrtholattice.disjoint_compl_right a).mono_right h
 
-/-- A Boolean algebra has no non-trivial epistemic modality, since with T Wittgenstein's Law
-makes `□` the identity. -/
+/-- When `ᶜ` is a pseudocomplement, with T Wittgenstein's Law makes `□` the identity, so a Boolean
+algebra has no non-trivial epistemic modality. -/
 theorem WittgensteinLaw.eq_id (hW : WittgensteinLaw box) (hT : ∀ a, box a ≤ a) :
-    box = InfTopHom.id B :=
-  InfTopHom.ext fun a ↦ le_antisymm (hT a) (disjoint_compl_right_iff.mp (hW.disjoint_compl_box a))
+    box = InfTopHom.id L :=
+  InfTopHom.ext fun a ↦ (hT a).antisymm <|
+    InvolutiveCompl.compl_le_compl_iff_le.mp (hp _ _ (hW.disjoint_compl_box a))
 
-end BooleanAlgebra
+end Pseudocomplement
 
 end Orthologic

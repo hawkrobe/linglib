@@ -34,7 +34,7 @@ algebraic completeness.
 
 @[expose] public section
 
-open Order Set OrthocomplementedLattice
+open Order Set IsOrtholattice
 
 universe u
 
@@ -70,8 +70,8 @@ theorem support_setOf_eq_coe_eval (F : CompatFrame S) (V : Var → F.Regular) (�
 
 /-! ### Frame consequence, soundness, completeness -/
 
-/-- Semantic consequence over compatibility frames: in every model, every possibility supporting
-    `φ` supports `ψ` ([holliday-mandelkern-2024] Definition 4.18). -/
+/-- `ψ` is a semantic consequence of `φ` over compatibility frames when in every model every
+    possibility supporting `φ` supports `ψ` ([holliday-mandelkern-2024] Definition 4.18). -/
 def FrameConsequence (φ ψ : Formula Var) : Prop :=
   ∀ {S : Type u} (F : CompatFrame S) (V : Var → F.Regular) (s : S),
     Support F V s φ → Support F V s ψ
@@ -97,7 +97,7 @@ theorem frame_sound {φ ψ : Formula Var} (h : φ ⊢ ψ) : φ ⊨ᶠ ψ :=
     when neither lies below the complement of the other ([holliday-mandelkern-2024]
     Theorem 4.13). -/
 def CompatFrame.ofOrtholattice {L : Type*} [Lattice L] [BoundedOrder L] [InvolutiveCompl L]
-    [OrthocomplementedLattice L] (V : Set L) : CompatFrame (Point V) where
+    [IsOrtholattice L] (V : Set L) : CompatFrame (Point V) where
   compat a b := ¬ Orthogonal V a b
   compat_refl := ⟨fun a ↦ Std.Irrefl.irrefl (r := Orthogonal V) a⟩
   compat_symm := ⟨fun _ _ h h' ↦ h (Std.Symm.symm _ _ h')⟩
@@ -105,12 +105,12 @@ def CompatFrame.ofOrtholattice {L : Type*} [Lattice L] [BoundedOrder L] [Involut
   ortho_iff _ _ := not_not.symm
 
 @[simp] theorem CompatFrame.ofOrtholattice_compat {L : Type*} [Lattice L] [BoundedOrder L]
-    [InvolutiveCompl L] [OrthocomplementedLattice L] {V : Set L} {a b : Point V} :
+    [InvolutiveCompl L] [IsOrtholattice L] {V : Set L} {a b : Point V} :
     (CompatFrame.ofOrtholattice V).compat a b ↔ ¬ a.1 ≤ b.1ᶜ := Iff.rfl
 
 /-- `Formula.eval` commutes with the representation embedding `represent V₀`. -/
 theorem eval_map {L : Type u} [Lattice L] [BoundedOrder L] [InvolutiveCompl L]
-    [OrthocomplementedLattice L] {V₀ : Set L} (hV : JoinDense V₀) (v : Var → L) (φ : Formula Var) :
+    [IsOrtholattice L] {V₀ : Set L} (hV : JoinDense V₀) (v : Var → L) (φ : Formula Var) :
     Formula.eval (fun p ↦ represent V₀ (v p)) φ = represent V₀ (Formula.eval v φ) := by
   induction φ with
   | top => simp only [Formula.eval, represent_top hV]

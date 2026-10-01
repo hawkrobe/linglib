@@ -199,12 +199,9 @@ instance : InvolutiveCompl (LindenbaumTarski F) where
     mk_le_mk.mpr (IsOrthologic.compl_le_compl (mk_le_mk.mp h))
 
 /-- The Lindenbaum–Tarski algebra of an orthologic is an ortholattice. -/
-instance : OrthocomplementedLattice (LindenbaumTarski F) where
+instance : IsOrtholattice (LindenbaumTarski F) where
   inf_compl_le_bot a := Quotient.inductionOn a fun φ ↦
     mk_le_mk.mpr (IsOrthologic.inf_compl_le φ _)
-  top_le_sup_compl a := Quotient.inductionOn a fun φ ↦ mk_le_mk.mpr <|
-    (IsOrthologic.le_compl_compl _).trans
-      (IsOrthologic.compl_le_compl (IsOrthologic.inf_compl_le φᶜ _))
 
 end LindenbaumTarski
 
@@ -264,7 +261,7 @@ def Formula.eval (v : Var → L) : Formula Var → L
 
 /-- Derivable consequences hold in every ortholattice under every valuation
     ([holliday-mandelkern-2024] Theorem 3.13, soundness). -/
-theorem sound [OrthocomplementedLattice L] {φ ψ : Formula Var} (h : φ ⊢ ψ) (v : Var → L) :
+theorem sound [IsOrtholattice L] {φ ψ : Formula Var} (h : φ ⊢ ψ) (v : Var → L) :
     Formula.eval v φ ≤ Formula.eval v ψ := by
   induction h with
   | top_intro φ => exact le_top
@@ -273,7 +270,7 @@ theorem sound [OrthocomplementedLattice L] {φ ψ : Formula Var} (h : φ ⊢ ψ)
   | and_le_right φ ψ => exact inf_le_right
   | le_negNeg φ => exact (InvolutiveCompl.compl_compl _).ge
   | negNeg_le φ => exact (InvolutiveCompl.compl_compl _).le
-  | contradiction φ ψ => exact (OrthocomplementedLattice.inf_compl_eq_bot _).le.trans bot_le
+  | contradiction φ ψ => exact (IsOrtholattice.inf_compl_eq_bot _).le.trans bot_le
   | trans _ _ ih₁ ih₂ => exact ih₁.trans ih₂
   | le_and _ _ ih₁ ih₂ => exact le_inf ih₁ ih₂
   | neg_le_neg _ ih => exact InvolutiveCompl.compl_le_compl ih
@@ -299,7 +296,7 @@ universe u
     suffice. -/
 theorem complete {Var : Type u} {φ ψ : Formula Var}
     (h : ∀ {L : Type u} [Lattice L] [BoundedOrder L] [InvolutiveCompl L]
-      [OrthocomplementedLattice L] (v : Var → L), Formula.eval v φ ≤ Formula.eval v ψ) :
+      [IsOrtholattice L] (v : Var → L), Formula.eval v φ ≤ Formula.eval v ψ) :
     φ ⊢ ψ := by
   have key := h (L := LindenbaumTarski (Formula Var)) Formula.canonicalVal
   rwa [Formula.eval_canonicalVal, Formula.eval_canonicalVal, LindenbaumTarski.mk_le_mk] at key
@@ -308,7 +305,7 @@ theorem complete {Var : Type u} {φ ψ : Formula Var}
     Theorem 3.13). -/
 theorem derivable_iff {Var : Type u} {φ ψ : Formula Var} :
     φ ⊢ ψ ↔ ∀ {L : Type u} [Lattice L] [BoundedOrder L] [InvolutiveCompl L]
-      [OrthocomplementedLattice L] (v : Var → L), Formula.eval v φ ≤ Formula.eval v ψ :=
+      [IsOrtholattice L] (v : Var → L), Formula.eval v φ ≤ Formula.eval v ψ :=
   ⟨fun h _ _ _ _ _ v ↦ sound h v, complete⟩
 
 end Orthologic

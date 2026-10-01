@@ -6,60 +6,51 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Order.BooleanAlgebra.Basic
-public import Mathlib.Order.CompleteLattice.Basic
-public import Mathlib.Order.Disjoint
+public import Mathlib.Order.ModularLattice
 public import Linglib.Core.Order.DeMorganAlgebra.Defs
 
 /-!
-# Orthocomplemented Lattices
+# Orthocomplemented and orthomodular lattices
 
-An *orthocomplemented lattice* (or *ortholattice*) is a bounded lattice
-equipped with an involutive, order-reversing complement satisfying
-non-contradiction and excluded middle. It is the structural dual of a
-`HeytingAlgebra`: where Heyting drops the law of excluded middle but
-retains distributivity, ortholattices keep excluded middle but drop
-distributivity: a distributive ortholattice is a Boolean algebra.
+This file defines orthocomplemented lattices, or ortholattices, and orthomodular lattices. An
+*ortholattice* is a bounded lattice with an involutive, order-reversing complement `ᶜ` satisfying
+non-contradiction, `a ⊓ aᶜ = ⊥`, and so, by De Morgan, excluded middle, `a ⊔ aᶜ = ⊤`.
 
-The canonical examples are:
-- closed subspaces of an inner-product space (orthocomplement = orthogonal
-  complement), the propositions of quantum mechanics in [birkhoff-von-neumann-1936];
-- the `◇`-regular subsets of a compatibility frame ([holliday-mandelkern-2024]).
+Heyting algebras and ortholattices weaken Boolean algebras in opposite directions. A Heyting
+algebra keeps distributivity and the pseudocomplement law `a ⊓ b = ⊥ → b ≤ aᶜ` but gives up the
+involution; an ortholattice keeps the involution and the complement laws but gives up
+distributivity. Holliday and Mandelkern show that in an ortholattice distributivity and the
+pseudocomplement law are equivalent, and that either makes it a Boolean algebra.
+
+An ortholattice is *orthomodular* when `a ≤ b` implies `b = a ⊔ (aᶜ ⊓ b)`. Every modular
+ortholattice, and so every Boolean algebra, is orthomodular. The motivating example is the lattice
+of closed subspaces of a Hilbert space, Birkhoff and von Neumann's propositions of quantum
+mechanics. The regular propositions of Holliday and Mandelkern's epistemic compatibility frames
+form an ortholattice that is not orthomodular.
 
 ## Main definitions
 
-* `OrthocomplementedLattice α`: the Prop mixin over `[Lattice α] [BoundedOrder α]
-  [InvolutiveCompl α]` (the shared involutive antitone `ᶜ`, `Core/Order/DeMorganAlgebra/Defs.lean`)
-  adding non-contradiction and excluded middle. A complete ortholattice is
-  `[CompleteLattice α] [InvolutiveCompl α] [OrthocomplementedLattice α]`.
+* `IsOrtholattice α`: the Prop mixin over `[Lattice α] [BoundedOrder α] [InvolutiveCompl α]`
+  (the involutive antitone `ᶜ` of `Core/Order/DeMorganAlgebra/Defs.lean`) adding
+  non-contradiction.
+* `IsOrthomodularLattice α`: an ortholattice satisfying the orthomodular law.
+* `DistribLattice.booleanAlgebraOfOrthocomplemented`: a distributive ortholattice is a Boolean
+  algebra with `ᶜ` as its complement.
 
 ## Main results
 
-* De Morgan laws (`compl_sup`, `compl_inf`), `compl_injective`, `compl_surjective`,
-  `compl_le_compl_iff_le`: inherited from `InvolutiveCompl` (use those names).
-* `BooleanAlgebra.toOrthocomplementedLattice`: every `BooleanAlgebra` is orthocomplemented.
-* `OrthocomplementedLattice.toComplementedLattice`: every ortholattice is a `ComplementedLattice`
-  (the existential mathlib mixin; the complement here is a chosen function).
-
-## What fails (relative to `BooleanAlgebra`)
-
-Ortholattices need not satisfy:
-- **distributivity**: `a ⊓ (b ⊔ c) = (a ⊓ b) ⊔ (a ⊓ c)`;
-- **pseudocomplementation**: `a ⊓ b = ⊥ → b ≤ aᶜ`;
-- **orthomodularity**: `a ≤ b → b = a ⊔ (aᶜ ⊓ b)`.
-
-Imposing distributivity collapses the typeclass to `BooleanAlgebra`;
-imposing orthomodularity yields *orthomodular lattices* (the algebra of
-quantum-mechanical propositions). Concrete counterexamples to all three
-appear in `Linglib.Studies.HollidayMandelkern2024`.
+* `IsOrtholattice.inf_sup_le_iff_le_compl_of_disjoint`: an ortholattice is distributive iff its
+  orthocomplement is a pseudocomplement.
+* `IsModularLattice.toIsOrthomodularLattice`: a modular ortholattice is orthomodular.
+* `isOrthomodularLattice_iff_sup_compl_inf_sup`: the equational form of the orthomodular law.
 
 ## TODO
 
-Upstream candidate for `Mathlib/Order/Ortholattice.lean`. The natural
-mathlib consumer is the lattice of closed subspaces of a Hilbert space
-(via `Mathlib.Analysis.InnerProductSpace.Orthogonal`), which currently
-provides every ingredient (`Submodule.orthogonal`, `inf_orthogonal_eq_bot`,
-`le_orthogonal_orthogonal`) but stops short of packaging an
-`OrthocomplementedLattice` instance because the class is missing.
+Upstream candidate for `Mathlib/Order/Ortholattice.lean`. The mathlib instance is the lattice of
+closed subspaces of a Hilbert space, in `Mathlib/Analysis/InnerProductSpace/Projection/`:
+`ClosedSubmodule.orthogonal` is an `InvolutiveCompl` by `ClosedSubmodule.orthogonal_orthogonal_eq`
+and `ClosedSubmodule.orthogonal_le`, non-contradiction is `ClosedSubmodule.inf_orthogonal_eq_bot`,
+and orthomodularity is `Submodule.sup_orthogonal_inf_of_hasOrthogonalProjection`.
 
 ## References
 
@@ -69,48 +60,143 @@ provides every ingredient (`Submodule.orthogonal`, `inf_orthogonal_eq_bot`,
 
 @[expose] public section
 
-/-- An **orthocomplementation**: the involutive complement is a complement, satisfying
-non-contradiction (`a ⊓ aᶜ ≤ ⊥`) and excluded middle (`⊤ ≤ a ⊔ aᶜ`). A lattice with one is an
-orthocomplemented lattice, or ortholattice; this is the sibling of mathlib's `ComplementedLattice`
-with the complement chosen by `ᶜ`.
+variable {α : Type*}
 
-Every `BooleanAlgebra` is an ortholattice. The converse fails: ortholattices need not be
-distributive. -/
-class OrthocomplementedLattice (α : Type*) [Lattice α] [BoundedOrder α] [InvolutiveCompl α] :
-    Prop where
-  /-- Non-contradiction: `a ⊓ aᶜ ≤ ⊥`. -/
+/-- An **ortholattice** is a bounded lattice whose involutive complement satisfies
+non-contradiction, `a ⊓ aᶜ ≤ ⊥` ([holliday-mandelkern-2024] Definition 3.3). It is the sibling of
+mathlib's `ComplementedLattice` with the complement chosen by `ᶜ`. Excluded middle follows by De
+Morgan, `IsOrtholattice.top_le_sup_compl`. -/
+class IsOrtholattice (α : Type*) [Lattice α] [BoundedOrder α] [InvolutiveCompl α] : Prop where
+  /-- Every element is disjoint from its complement, `a ⊓ aᶜ ≤ ⊥`. -/
   protected inf_compl_le_bot (a : α) : a ⊓ aᶜ ≤ ⊥
-  /-- Excluded middle: `⊤ ≤ a ⊔ aᶜ`. -/
-  protected top_le_sup_compl (a : α) : ⊤ ≤ a ⊔ aᶜ
 
-namespace OrthocomplementedLattice
+namespace IsOrtholattice
 
 /- The involutive-antitone consequences (De Morgan, injectivity, `le_compl_comm`, ...) are
 inherited from the shared base: use the `InvolutiveCompl.*` names. -/
 
-variable {α : Type*} [Lattice α] [BoundedOrder α] [InvolutiveCompl α] [OrthocomplementedLattice α]
+variable [Lattice α] [BoundedOrder α] [InvolutiveCompl α] [IsOrtholattice α] {a b : α}
 
 @[simp]
 protected theorem inf_compl_eq_bot (a : α) : a ⊓ aᶜ = ⊥ :=
-  le_antisymm (OrthocomplementedLattice.inf_compl_le_bot a) bot_le
+  le_bot_iff.1 (IsOrtholattice.inf_compl_le_bot a)
+
+/-- Excluded middle, the De Morgan dual of non-contradiction. -/
+protected theorem top_le_sup_compl (a : α) : ⊤ ≤ a ⊔ aᶜ := by
+  rw [← InvolutiveCompl.compl_le_compl_iff_le, InvolutiveCompl.compl_sup,
+    InvolutiveCompl.compl_compl, InvolutiveCompl.compl_top, inf_comm]
+  exact IsOrtholattice.inf_compl_le_bot a
 
 @[simp]
 protected theorem sup_compl_eq_top (a : α) : a ⊔ aᶜ = ⊤ :=
-  le_antisymm le_top (OrthocomplementedLattice.top_le_sup_compl a)
+  top_le_iff.1 (IsOrtholattice.top_le_sup_compl a)
 
-protected theorem isCompl_compl (a : α) : IsCompl a aᶜ where
-  disjoint := disjoint_iff.mpr (OrthocomplementedLattice.inf_compl_eq_bot a)
-  codisjoint := codisjoint_iff.mpr (OrthocomplementedLattice.sup_compl_eq_top a)
+protected theorem isCompl_compl (a : α) : IsCompl a aᶜ :=
+  .of_eq (IsOrtholattice.inf_compl_eq_bot a) (IsOrtholattice.sup_compl_eq_top a)
 
-end OrthocomplementedLattice
+protected theorem disjoint_compl_right (a : α) : Disjoint a aᶜ :=
+  (IsOrtholattice.isCompl_compl a).disjoint
+
+/-- Orthogonal elements are disjoint. The converse is the pseudocomplement law, which holds only
+in Boolean algebras (`IsOrtholattice.inf_sup_le_iff_le_compl_of_disjoint`). -/
+protected theorem disjoint_of_le_compl (h : a ≤ bᶜ) : Disjoint a b :=
+  (IsOrtholattice.disjoint_compl_right b).symm.mono_left h
+
+/-! ### Distributivity and pseudocomplementation -/
+
+/-- Under the pseudocomplement law disjunctive syllogism holds, the first step of the proof of
+[holliday-mandelkern-2024] Proposition 3.7. -/
+private theorem sup_inf_compl_le (h : ∀ a b : α, Disjoint a b → b ≤ aᶜ) (a b : α) :
+    (a ⊔ b) ⊓ aᶜ ≤ b := by
+  have : Disjoint bᶜ ((a ⊔ b) ⊓ aᶜ) := by
+    rw [disjoint_iff, inf_comm bᶜ, inf_assoc, ← InvolutiveCompl.compl_sup,
+      IsOrtholattice.inf_compl_eq_bot]
+  simpa only [InvolutiveCompl.compl_compl] using h _ _ this
+
+/-- An ortholattice is distributive iff its orthocomplement is a pseudocomplement, that is, iff
+`a ⊓ b = ⊥` implies `b ≤ aᶜ` ([holliday-mandelkern-2024] Proposition 3.7). -/
+theorem inf_sup_le_iff_le_compl_of_disjoint :
+    (∀ a b c : α, a ⊓ (b ⊔ c) ≤ a ⊓ b ⊔ a ⊓ c) ↔ ∀ a b : α, Disjoint a b → b ≤ aᶜ := by
+  refine ⟨fun hd a b h ↦ ?_, fun h a b c ↦ ?_⟩
+  · calc b = b ⊓ (a ⊔ aᶜ) := by rw [IsOrtholattice.sup_compl_eq_top, inf_top_eq]
+      _ ≤ b ⊓ a ⊔ b ⊓ aᶜ := hd b a aᶜ
+      _ ≤ aᶜ := sup_le (h.symm.eq_bot.le.trans bot_le) inf_le_right
+  · have hb : a ⊓ (b ⊔ c) ⊓ (a ⊓ b)ᶜ ≤ bᶜ := by
+      have := sup_inf_compl_le h aᶜ bᶜ
+      rw [InvolutiveCompl.compl_compl] at this
+      rw [InvolutiveCompl.compl_inf]
+      exact (le_inf inf_le_right (inf_le_left.trans inf_le_left)).trans this
+    have hc : a ⊓ (b ⊔ c) ⊓ (a ⊓ b)ᶜ ≤ a ⊓ c := le_inf (inf_le_left.trans inf_le_left)
+      ((le_inf (inf_le_left.trans inf_le_right) hb).trans (sup_inf_compl_le h b c))
+    have := h ((a ⊓ b)ᶜ ⊓ (a ⊓ c)ᶜ) (a ⊓ (b ⊔ c)) <| disjoint_iff.2 <| le_bot_iff.1 <| by
+      rw [inf_comm ((a ⊓ b)ᶜ ⊓ (a ⊓ c)ᶜ), ← inf_assoc]
+      exact (inf_le_inf_right _ hc).trans (IsOrtholattice.inf_compl_eq_bot _).le
+    rwa [InvolutiveCompl.compl_inf, InvolutiveCompl.compl_compl, InvolutiveCompl.compl_compl]
+      at this
+
+end IsOrtholattice
 
 /-- Every ortholattice is complemented, with `ᶜ` as the chosen complement. -/
-instance (priority := 100) OrthocomplementedLattice.toComplementedLattice {α : Type*} [Lattice α]
-    [BoundedOrder α] [InvolutiveCompl α] [OrthocomplementedLattice α] : ComplementedLattice α :=
-  ⟨fun a ↦ ⟨aᶜ, OrthocomplementedLattice.isCompl_compl a⟩⟩
+instance (priority := 100) IsOrtholattice.toComplementedLattice [Lattice α] [BoundedOrder α]
+    [InvolutiveCompl α] [IsOrtholattice α] : ComplementedLattice α :=
+  ⟨fun a ↦ ⟨aᶜ, IsOrtholattice.isCompl_compl a⟩⟩
 
-/-- Every Boolean algebra is orthocomplemented. The converse fails: ortholattices need not be
-distributive. -/
-instance (priority := 100) BooleanAlgebra.toOrthocomplementedLattice {α : Type*}
-    [BooleanAlgebra α] : OrthocomplementedLattice α :=
-  ⟨BooleanAlgebra.inf_compl_le_bot, BooleanAlgebra.top_le_sup_compl⟩
+/-- Every Boolean algebra is orthocomplemented. -/
+instance (priority := 100) BooleanAlgebra.toIsOrtholattice [BooleanAlgebra α] : IsOrtholattice α :=
+  ⟨BooleanAlgebra.inf_compl_le_bot⟩
+
+/-- A distributive ortholattice is a Boolean algebra with `ᶜ` as its complement
+([holliday-mandelkern-2024] Proposition 3.7). Unlike `DistribLattice.booleanAlgebraOfComplemented`
+it uses no choice; it is not an instance, since a Boolean algebra would get a second structure. -/
+@[instance_reducible]
+def DistribLattice.booleanAlgebraOfOrthocomplemented [DistribLattice α] [BoundedOrder α]
+    [InvolutiveCompl α] [IsOrtholattice α] : BooleanAlgebra α where
+  __ := ‹DistribLattice α›
+  __ := ‹BoundedOrder α›
+  compl := compl
+  inf_compl_le_bot := IsOrtholattice.inf_compl_le_bot
+  top_le_sup_compl := IsOrtholattice.top_le_sup_compl
+
+/-! ### Orthomodular lattices -/
+
+/-- An **orthomodular lattice** is an ortholattice in which `a ≤ b` implies
+`b = a ⊔ (aᶜ ⊓ b)` ([holliday-mandelkern-2024] Definition 3.5). We only require `≤`, since the
+other inequality holds in every lattice. -/
+class IsOrthomodularLattice (α : Type*) [Lattice α] [BoundedOrder α] [InvolutiveCompl α] : Prop
+    extends IsOrtholattice α where
+  /-- If `a ≤ b`, then `b ≤ a ⊔ (aᶜ ⊓ b)`. -/
+  protected le_sup_compl_inf_of_le {a b : α} : a ≤ b → b ≤ a ⊔ aᶜ ⊓ b
+
+section IsOrthomodularLattice
+
+variable [Lattice α] [BoundedOrder α] [InvolutiveCompl α]
+
+/-- A modular ortholattice is orthomodular ([holliday-mandelkern-2024] footnote 4), and so,
+through `DistribLattice`, is every Boolean algebra. -/
+instance (priority := 100) IsModularLattice.toIsOrthomodularLattice [IsOrtholattice α]
+    [IsModularLattice α] : IsOrthomodularLattice α where
+  le_sup_compl_inf_of_le {a _} h := by
+    simpa only [IsOrtholattice.sup_compl_eq_top, top_inf_eq] using
+      IsModularLattice.sup_inf_le_assoc_of_le aᶜ h
+
+/-- The orthomodular law in the equational form of [holliday-mandelkern-2024] Definition 3.5. -/
+theorem isOrthomodularLattice_iff_sup_compl_inf_sup [IsOrtholattice α] :
+    IsOrthomodularLattice α ↔ ∀ a b : α, a ⊔ aᶜ ⊓ (a ⊔ b) = a ⊔ b := by
+  refine ⟨fun _ a b ↦ ?_, fun h ↦ { le_sup_compl_inf_of_le := fun {a b} hab ↦ ?_ }⟩
+  · exact le_antisymm (sup_le le_sup_left inf_le_right)
+      (IsOrthomodularLattice.le_sup_compl_inf_of_le le_sup_left)
+  · simpa only [sup_of_le_right hab] using (h a b).ge
+
+variable [IsOrthomodularLattice α] {a b : α}
+
+theorem sup_compl_inf_of_le (h : a ≤ b) : a ⊔ aᶜ ⊓ b = b :=
+  le_antisymm (sup_le h inf_le_right) (IsOrthomodularLattice.le_sup_compl_inf_of_le h)
+
+theorem sup_compl_inf_sup (a b : α) : a ⊔ aᶜ ⊓ (a ⊔ b) = a ⊔ b :=
+  sup_compl_inf_of_le le_sup_left
+
+/-- In an orthomodular lattice `a ≤ b` is an equality as soon as `b` is disjoint from `aᶜ`. -/
+theorem eq_of_le_of_disjoint_compl (h : a ≤ b) (hd : Disjoint aᶜ b) : a = b := by
+  rw [← sup_compl_inf_of_le h, hd.eq_bot, sup_bot_eq]
+
+end IsOrthomodularLattice
