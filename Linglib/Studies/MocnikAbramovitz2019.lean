@@ -63,6 +63,7 @@ non-veridical *believe* of [hintikka-1962] (`Frame.ivek_doxastic_identity_iff_ho
 namespace MocnikAbramovitz2019
 
 open Modality ModalLogic
+open scoped SetRel
 
 variable {W E : Type*}
 
@@ -117,20 +118,20 @@ inductive Flavor
 /-- For a holder at a world, the worlds compatible with what the holder believes and with what
 the holder says. -/
 structure Frame (W E : Type*) where
-  belief : E → W → W → Prop
-  sayings : E → W → W → Prop
+  belief : E → SetRel W W
+  sayings : E → SetRel W W
 
 namespace Frame
 
 /-- The accessibility relation a flavor selects. -/
-def access (F : Frame W E) : Flavor → E → W → W → Prop
+def access (F : Frame W E) : Flavor → E → SetRel W W
   | .doxastic => F.belief
   | .assertive => F.sayings
 
 /-- The entry (15) of *ivək* on a flavor and a cover: some admitted selection from the holder's
 domain maps it into the complement. -/
 def ivek (F : Frame W E) (φ : Flavor) (c : Cover) (p : W → Prop) (x : E) (w : W) : Prop :=
-  Holds c {v | F.access φ x w v} p
+  Holds c {v | w ~[F.access φ x] v} p
 
 variable {F : Frame W E} {φ : Flavor} {x : E} {w : W}
 
@@ -154,8 +155,8 @@ theorem ivek_doxastic_identity_iff_holdsAt :
 
 /-- On the identity cover *ivək* of two complements that are incompatible over a nonempty
 domain is contradictory: Option 1 of (12) for (6), and the necessity reading of (8a). -/
-theorem not_ivek_identity_and (h : ∃ v, F.access φ x w v)
-    (hpq : ∀ v, F.access φ x w v → p v → ¬ q v) :
+theorem not_ivek_identity_and (h : ∃ v, w ~[F.access φ x] v)
+    (hpq : ∀ v, w ~[F.access φ x] v → p v → ¬ q v) :
     ¬ (F.ivek φ .identity p x w ∧ F.ivek φ .identity q x w) := by
   rintro ⟨hp, hq⟩
   obtain ⟨v, hv⟩ := h
@@ -165,14 +166,14 @@ theorem not_ivek_identity_and (h : ∃ v, F.access φ x w v)
 Option 2 of (12) for (6), and the possibility reading of (8a). -/
 theorem ivek_all_and_iff :
     F.ivek φ .all p x w ∧ F.ivek φ .all q x w ↔
-      (∃ v, F.access φ x w v ∧ p v) ∧ ∃ v, F.access φ x w v ∧ q v :=
+      (∃ v, w ~[F.access φ x] v ∧ p v) ∧ ∃ v, w ~[F.access φ x] v ∧ q v :=
   and_congr ivek_all_iff ivek_all_iff
 
 /-- (8b) on the identity cover, the felicitous Option 1 of (13): the holder's beliefs leave
 open that the ball is not white and that it is not black. -/
 theorem ex8b_identity_iff {white black : W → Prop} :
     ¬ F.ivek φ .identity white x w ∧ ¬ F.ivek φ .identity black x w ↔
-      (∃ v, F.access φ x w v ∧ ¬ white v) ∧ ∃ v, F.access φ x w v ∧ ¬ black v := by
+      (∃ v, w ~[F.access φ x] v ∧ ¬ white v) ∧ ∃ v, w ~[F.access φ x] v ∧ ¬ black v := by
   simp only [ivek_identity_iff, not_box]
   rfl
 
@@ -185,8 +186,8 @@ theorem ex8b_all_iff {white black : W → Prop} :
 
 /-- In the context of (8), where the ball is white or black in every world the domain admits,
 the full-cover reading of (8b) is false: the infelicitous Option 2 of (13). -/
-theorem ex8b_all_false {white black : W → Prop} (h : ∃ v, F.access φ x w v)
-    (hctx : ∀ v, F.access φ x w v → white v ∨ black v) :
+theorem ex8b_all_false {white black : W → Prop} (h : ∃ v, w ~[F.access φ x] v)
+    (hctx : ∀ v, w ~[F.access φ x] v → white v ∨ black v) :
     ¬ (¬ F.ivek φ .all white x w ∧ ¬ F.ivek φ .all black x w) := by
   rw [ex8b_all_iff]
   obtain ⟨v, hv⟩ := h
@@ -197,7 +198,7 @@ theorem ex8b_all_false {white black : W → Prop} (h : ∃ v, F.access φ x w v)
 
 /-- One *ivək* over two clauses that contradict each other, as in (20), is false on every
 reading over a nonempty domain, the one flavor holding of both. -/
-theorem not_ivek_and_not (h : ∃ v, F.access φ x w v) (c : Cover) :
+theorem not_ivek_and_not (h : ∃ v, w ~[F.access φ x] v) (c : Cover) :
     ¬ F.ivek φ c (fun v ↦ p v ∧ ¬ p v) x w := by
   cases c
   · obtain ⟨v, hv⟩ := h
@@ -209,10 +210,10 @@ end Frame
 /-- (14): the two *ivək*s of a discourse, set to the assertive and the doxastic flavor, say that
 the students study well and think that they study badly, on nonempty domains. -/
 theorem ex14_consistent : ∃ (F : Frame Bool Unit) (p : Bool → Prop),
-    (∃ v, F.sayings () true v) ∧ (∃ v, F.belief () true v) ∧
+    (∃ v, true ~[F.sayings ()] v) ∧ (∃ v, true ~[F.belief ()] v) ∧
       F.ivek .assertive .identity p () true ∧
       F.ivek .doxastic .identity (fun v ↦ ¬ p v) () true :=
-  ⟨⟨fun _ _ v ↦ v = false, fun _ _ v ↦ v = true⟩, (· = true), ⟨true, rfl⟩, ⟨false, rfl⟩,
+  ⟨⟨fun _ ↦ {p | p.2 = false}, fun _ ↦ {p | p.2 = true}⟩, (· = true), ⟨true, rfl⟩, ⟨false, rfl⟩,
     Frame.ivek_identity_iff.2 fun _ hv ↦ hv,
     Frame.ivek_identity_iff.2 fun _ (hv : _ = false) hp ↦ Bool.false_ne_true (hv ▸ hp)⟩
 

@@ -136,8 +136,8 @@ non-quantificational semantics may fare better on the neg-raising facts. -/
 theorem vfiWeak_negRaises_iff (f : ModalBase W) (g g' : OrderingSource W) (w : W) :
     (∀ p : W → Prop, ¬ weakNecessity f g g' p w → weakNecessity f g g' (fun w' ↦ ¬ p w') w) ↔
       (bestAmong (bestWorlds f g w) (g' w)).Subsingleton :=
-  ModalLogic.box_not_of_not_box_at_iff (R := fun _ v ↦ v ∈ bestAmong (bestWorlds f g w) (g' w))
-    (w := w)
+  ModalLogic.box_not_of_not_box_at_iff
+    (R := .ofSuccessors fun _ ↦ bestAmong (bestWorlds f g w) (g' w)) (w := w)
 
 /-! ### Scope under negation ((18)–(20)) -/
 

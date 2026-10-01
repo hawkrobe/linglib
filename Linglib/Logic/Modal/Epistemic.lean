@@ -2,102 +2,63 @@ module
 
 public import Linglib.Discourse.CommonGround
 public import Linglib.Logic.Modal.Basic
-public import Mathlib.Order.CompleteLattice.Basic
 
 /-!
 # Multi-agent epistemic logic
 
-This file defines the group knowledge operators of [fagin-halpern-moses-vardi-1995] over
-agent-indexed accessibility relations `Rs : E → W → W → Prop`: individual knowledge `Kᵢ` is
-`box (Rs i)`, everyone-knows `E_G` is `box` over the union `⨆ i ∈ G, Rs i`, distributed
-knowledge `D_G` is `box` over the intersection `⨅ i ∈ G, Rs i`, and common knowledge `C_G` is
-`box` over the transitive closure of the union — `φ` holds at every world reachable by a
-chain of members' accessibility ([lederman-2014] Appendix 2.B's construction). The
-infinite-conjunction form `E_G φ ∧ E_G (E_G φ) ∧ ⋯` is the
-theorem `commonKnowledge_iff_forall_iterate`, an instance of `ModalLogic.box_transGen_iff`.
-Belief is the same operator over a KD45 frame (`ModalLogic.IsKD45Frame`), with the D, 4, and
-5 laws `ModalLogic.box_D`, `ModalLogic.box_four`, and `ModalLogic.box_five`.
+The group knowledge operators of [fagin-halpern-moses-vardi-1995] over agent-indexed
+accessibility `Rs : E → SetRel W W` are boxes along lattice combinations of the agents'
+relations: agent `i` knows `p` at `w` when `□[Rs i] p w`, everyone in `G` knows it when
+`□[⋃ i ∈ G, Rs i] p w`, it is distributed knowledge when `□[⋂ i ∈ G, Rs i] p w`, and the
+hierarchy `C_G ≤ E_G ≤ Kᵢ ≤ D_G` is antitonicity in the relation (`ModalLogic.box_restrict`).
+Common knowledge is the box along the transitive closure of the union: `p` holds at every world
+reachable by a chain of members' accessibility ([lederman-2014] Appendix 2.B's construction),
+equivalently the infinite conjunction `E_G p ∧ E_G (E_G p) ∧ ⋯`
+(`commonKnowledge_iff_forall_iterate`). Belief is the same operator over a KD45 frame
+(`ModalLogic.IsKD45Frame`).
 
 ## Main definitions
 
-* `knows`, `everyoneKnows`, `distributedKnowledge`, `commonKnowledge`: `Kᵢ`, `E_G`, `D_G`,
-  `C_G`.
+* `ModalLogic.CommonKnowledge`: `C_G`.
 * `Filter.GroundedIn`: a common ground whose context set is exactly what is common
   knowledge ([stalnaker-2002]).
-
-## Main results
-
-* `knows_of_everyoneKnows`, `everyoneKnows_of_commonKnowledge`,
-  `distributedKnowledge_of_knows`: the hierarchy `C_G ≤ E_G ≤ Kᵢ ≤ D_G`, each by restricting
-  accessibility (`ModalLogic.box_restrict`), with `knows_of_commonKnowledge` the composite.
-* `commonKnowledge_iff_forall_iterate`: `C_G` as the infinite conjunction of iterated `E_G`.
 
 ## References
 
 * [fagin-halpern-moses-vardi-1995] — group knowledge and its reachability semantics
 * [halpern-2003] — the same operators in the uncertainty setting
 * [fagin-halpern-1994] — the probabilistic extension, `Studies/FaginHalpern1994.lean`
-* [hintikka-1962] — knowledge as `box`
+* [hintikka-1962] — knowledge as `□`
 * [stalnaker-2002] — common ground as common knowledge
 -/
 
 @[expose] public section
 
-namespace ModalLogic.Epistemic
+namespace ModalLogic
 
-open ModalLogic Relation
+open SetRel
 
-variable {W E : Type*} {Rs : E → W → W → Prop} {i : E} {G : Set E} {φ : W → Prop} {w : W}
+variable {W E : Type*} {Rs : E → SetRel W W} {i : E} {G : Set E} {p : W → Prop} {w : W}
 
-/-- Agent `i` knows `φ` at `w`: `φ` holds at every world `i` considers possible. -/
-def knows (Rs : E → W → W → Prop) (i : E) (φ : W → Prop) (w : W) : Prop := box (Rs i) φ w
+variable (Rs G) in
+/-- Common knowledge among `G`: `p` holds at every world reachable from `w` by a chain of
+members' accessibility. -/
+def CommonKnowledge (p : W → Prop) (w : W) : Prop := □[transGen (⋃ i ∈ G, Rs i)] p w
 
-/-- Everyone in `G` knows `φ` at `w`: `box` over the union of the members' accessibility. -/
-def everyoneKnows (Rs : E → W → W → Prop) (G : Set E) (φ : W → Prop) (w : W) : Prop :=
-  box (⨆ i ∈ G, Rs i) φ w
+/-- What is common knowledge is known by every member. -/
+theorem box_of_commonKnowledge (hi : i ∈ G) (h : CommonKnowledge Rs G p w) : □[Rs i] p w :=
+  box_restrict p ((Set.subset_biUnion_of_mem (u := Rs) hi).trans subset_transGen) w h
 
-/-- Distributed knowledge: what `G` would know by pooling its information, `box` over the
-intersection of the members' accessibility. -/
-def distributedKnowledge (Rs : E → W → W → Prop) (G : Set E) (φ : W → Prop) (w : W) : Prop :=
-  box (⨅ i ∈ G, Rs i) φ w
-
-/-- Common knowledge: `φ` holds at every world reachable from `w` by a chain of members'
-accessibility. -/
-def commonKnowledge (Rs : E → W → W → Prop) (G : Set E) (φ : W → Prop) (w : W) : Prop :=
-  box (TransGen (⨆ i ∈ G, Rs i)) φ w
-
-theorem everyoneKnows_iff : everyoneKnows Rs G φ w ↔ ∀ i ∈ G, knows Rs i φ w := by
-  simp only [everyoneKnows, knows, box, iSup_apply, iSup_Prop_eq, exists_prop,
-    forall_exists_index, and_imp]
-  exact ⟨fun h i hi v hv => h v i hi hv, fun h v i hi hv => h i hi v hv⟩
-
-/-! ### The knowledge hierarchy -/
-
-theorem knows_of_everyoneKnows (hi : i ∈ G) (h : everyoneKnows Rs G φ w) : knows Rs i φ w :=
-  box_restrict φ (le_iSup₂ (f := fun i (_ : i ∈ G) => Rs i) i hi) w h
-
-theorem everyoneKnows_of_commonKnowledge (h : commonKnowledge Rs G φ w) :
-    everyoneKnows Rs G φ w :=
-  box_restrict φ (fun _ _ => TransGen.single) w h
-
-theorem knows_of_commonKnowledge (hi : i ∈ G) (h : commonKnowledge Rs G φ w) : knows Rs i φ w :=
-  knows_of_everyoneKnows hi (everyoneKnows_of_commonKnowledge h)
-
-theorem distributedKnowledge_of_knows (hi : i ∈ G) (h : knows Rs i φ w) :
-    distributedKnowledge Rs G φ w :=
-  box_restrict φ (iInf₂_le (f := fun i (_ : i ∈ G) => Rs i) i hi) w h
-
-/-- Common knowledge is veridical once some member's accessibility is reflexive. -/
-theorem commonKnowledge_imp (hi : i ∈ G) [hR : Std.Refl (Rs i)]
-    (h : commonKnowledge Rs G φ w) : φ w :=
-  h w (TransGen.single (le_iSup₂ (f := fun i (_ : i ∈ G) => Rs i) i hi w w (hR.refl w)))
-
-/-- Common knowledge is the infinite conjunction `E_G φ ∧ E_G (E_G φ) ∧ ⋯`. -/
+/-- Common knowledge is the infinite conjunction `E_G p ∧ E_G (E_G p) ∧ ⋯`. -/
 theorem commonKnowledge_iff_forall_iterate :
-    commonKnowledge Rs G φ w ↔ ∀ n, (everyoneKnows Rs G)^[n + 1] φ w :=
+    CommonKnowledge Rs G p w ↔ ∀ n, (□[⋃ i ∈ G, Rs i])^[n + 1] p w :=
   box_transGen_iff _
 
-end ModalLogic.Epistemic
+/-- Common knowledge is veridical once some member's accessibility is reflexive. -/
+theorem commonKnowledge_imp (hi : i ∈ G) [(Rs i).IsRefl] (h : CommonKnowledge Rs G p w) : p w :=
+  box_T (box_of_commonKnowledge hi h)
+
+end ModalLogic
 
 namespace Filter
 
@@ -106,14 +67,14 @@ variable {W E : Type*}
 /-- A common ground `cg : Filter W` is grounded in common knowledge when its context set
 `cg.ker` is exactly the set of worlds where each accepted proposition is common knowledge
 among `G` ([stalnaker-2002]). -/
-def GroundedIn (cg : Filter W) (Rs : E → W → W → Prop) (G : Set E) : Prop :=
-  ∀ w, w ∈ cg.ker ↔ ∀ p ∈ cg, ModalLogic.Epistemic.commonKnowledge Rs G (· ∈ p) w
+def GroundedIn (cg : Filter W) (Rs : E → SetRel W W) (G : Set E) : Prop :=
+  ∀ w, w ∈ cg.ker ↔ ∀ p ∈ cg, ModalLogic.CommonKnowledge Rs G (· ∈ p) w
 
 /-- An accepted proposition of a grounded common ground is common knowledge throughout its
 context set. -/
-theorem GroundedIn.commonKnowledge {cg : Filter W} {Rs : E → W → W → Prop} {G : Set E}
+theorem GroundedIn.commonKnowledge {cg : Filter W} {Rs : E → SetRel W W} {G : Set E}
     (h : cg.GroundedIn Rs G) {w : W} (hw : w ∈ cg.ker) {p : Set W} (hp : p ∈ cg) :
-    ModalLogic.Epistemic.commonKnowledge Rs G (· ∈ p) w :=
+    ModalLogic.CommonKnowledge Rs G (· ∈ p) w :=
   (h w).1 hw p hp
 
 end Filter

@@ -42,7 +42,7 @@ class Anchor (α : Type*) (I : outParam Type*) where
 
 namespace Anchor
 
-open scoped ModalLogic
+open scoped ModalLogic SetRel
 
 variable {α I E : Type*} [Anchor α I]
 
@@ -65,13 +65,13 @@ def existsClosure (verb : E → α → I → Prop) (agent : E) (q : I → Prop)
 /-- The doxastic clause-selecting verb of [moulton-2015]: the agent is
     related to `x` at `i` iff every index accessible from `i` is a projection
     index of `x` (Dox ⊆ proj). -/
-def ofAccessibility (R : E → I → I → Prop) : E → α → I → Prop :=
-  fun agent x i => ∀ i', R agent i i' → proj x i'
+def ofAccessibility (R : E → SetRel I I) : E → α → I → Prop :=
+  fun agent x i => ∀ i', i ~[R agent] i' → proj x i'
 
 /-- For a surjective projection, an existentially closed report with the
     accessibility-based verb is the classical universal modal of
     [hintikka-1962]. -/
-theorem existsClosure_ofAccessibility (R : E → I → I → Prop) (a : E)
+theorem existsClosure_ofAccessibility (R : E → SetRel I I) (a : E)
     (q : I → Prop) (i : I) (hp : Function.Surjective (proj : α → I → Prop)) :
     existsClosure (ofAccessibility (α := α) R) a q i ↔ □[R a] q i :=
   ⟨fun ⟨_, hsub, hc⟩ v hv => hc ▸ hsub v hv,

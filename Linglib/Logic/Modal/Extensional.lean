@@ -8,8 +8,9 @@ public import Mathlib.Logic.Function.Basic
 An operator `O` on intensions `W → α` is *extensional at* `w` when its value at `w` depends on
 its argument only through the argument's extension at `w`, i.e. `O · w` factors through
 evaluation at `w`. The pointwise connectives are extensional; quantifiers over indices such as
-`ModalLogic.box` are not. Extensionality is closed under the pointwise connectives and under
-composition, so scope-inertness lifts through a whole stack of extensional operators.
+the Kripke box `ModalLogic.Box R` are not. Extensionality is closed under the pointwise
+connectives and under composition, so scope-inertness lifts through a whole stack of extensional
+operators.
 
 ## Main definitions
 

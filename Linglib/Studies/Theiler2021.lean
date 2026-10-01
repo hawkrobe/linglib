@@ -202,13 +202,13 @@ def recipient (f : Force) : Discourse.Role := f.authority.other
 /-- The modalized felicity condition (73): the speaker considers it possible that `φ`, that
 learning an instantiation of the highlighted property is a precondition for proceeding, holds
 necessarily for the recipient, over the interlocutors' doxastic accessibility relations. -/
-def Felicity (acc : Discourse.Role → W → W → Prop) (f : Force) (φ : W → Prop) :
+def Felicity (acc : Discourse.Role → SetRel W W) (f : Force) (φ : W → Prop) :
     W → Prop :=
   ◇[acc .speaker] (□[acc (recipient f)] φ)
 
 /-- In a question the recipient is the speaker, and over a doxastic frame possible necessity is
 necessity: the modalized condition is the felicity condition (19). -/
-theorem felicity_question (acc : Discourse.Role → W → W → Prop) [IsKD45Frame (acc .speaker)]
+theorem felicity_question (acc : Discourse.Role → SetRel W W) [IsKD45Frame (acc .speaker)]
     (φ : W → Prop) : Felicity acc .interrogative φ = □[acc .speaker] φ :=
   funext λ _ => propext (diamond_box_iff (acc .speaker))
 

@@ -8,9 +8,10 @@ public import Linglib.Logic.Modal.Basic
 
 This file defines necessity and possibility over a modal base and an ordering source,
 [kratzer-1981]'s operators, as the box and diamond of `Logic.Modal` over the accessibility
-relations the two backgrounds induce. Simple necessity quantifies over the accessible worlds
-(`ModalBase.Accessible`, `simpleNecessity`), and necessity over the best accessible worlds
-(`BestAccessible`, `necessity`). The paper's own definition needs no Limit Assumption. Human
+relations the two backgrounds induce, each the relation of a set-valued function
+(`SetRel.ofSuccessors`). Simple necessity quantifies over the accessible worlds
+(`ModalBase.accessible`, `simpleNecessity`), and necessity over the best accessible worlds
+(`bestAccessible`, `necessity`). The paper's own definition needs no Limit Assumption. Human
 necessity asks each accessible world to see, at least as good, a witness below which only
 `p`-worlds occur (`humanNecessity`), and it is universal quantification over the best worlds
 exactly under the Limit Assumption (`humanNecessity_iff_necessity`), which every finite frame
@@ -38,7 +39,7 @@ necessity, and slight possibility, is not formalized.
 
 namespace Modality
 
-open ModalLogic
+open ModalLogic SetRel
 
 variable {W : Type*}
 
@@ -46,41 +47,46 @@ variable {W : Type*}
 
 /-- Under a modal base, `w'` is accessible from `w` when it satisfies every premise of `f w`,
 Kratzer's `w' ∈ ⋂f(w)`. -/
-def ModalBase.Accessible (f : ModalBase W) (w w' : W) : Prop :=
-  w' ∈ f.accessibleWorlds w
+def ModalBase.accessible (f : ModalBase W) : SetRel W W := .ofSuccessors f.accessibleWorlds
 
 /-- Under a modal base and an ordering source, `w'` is best-accessible from `w` when it is among
 the best worlds accessible from `w`. -/
-def BestAccessible (f : ModalBase W) (g : OrderingSource W) (w w' : W) : Prop :=
-  w' ∈ bestWorlds f g w
+def bestAccessible (f : ModalBase W) (g : OrderingSource W) : SetRel W W :=
+  .ofSuccessors (bestWorlds f g)
+
+@[simp] theorem ModalBase.mem_accessible {f : ModalBase W} {w w' : W} :
+    w ~[f.accessible] w' ↔ w' ∈ f.accessibleWorlds w := .rfl
+
+@[simp] theorem mem_bestAccessible {f : ModalBase W} {g : OrderingSource W} {w w' : W} :
+    w ~[bestAccessible f g] w' ↔ w' ∈ bestWorlds f g w := .rfl
 
 /-- With the empty ordering source, best-world accessibility is base accessibility. -/
-theorem bestAccessible_emptyBackground (f : ModalBase W) (w w' : W) :
-    BestAccessible f (emptyBackground (W := W)) w w' ↔ f.Accessible w w' := by
-  rw [BestAccessible, ModalBase.Accessible, bestWorlds_emptyBackground]
+theorem bestAccessible_emptyBackground (f : ModalBase W) :
+    bestAccessible f (emptyBackground (W := W)) = f.accessible :=
+  congrArg ofSuccessors (funext (bestWorlds_emptyBackground f))
 
 /-! ### Operators -/
 
 /-- Simple necessity holds when `p` holds at every accessible world,
 `⟦must⟧_f(p)(w) = ∀w' ∈ ⋂f(w). p(w')`, Definition 5 of [kratzer-1977]. -/
 def simpleNecessity (f : ModalBase W) (p : W → Prop) (w : W) : Prop :=
-  box f.Accessible p w
+  □[f.accessible] p w
 
 /-- Simple possibility holds when `p` holds at some accessible world,
 `⟦can⟧_f(p)(w) = ∃w' ∈ ⋂f(w). p(w')`, Definition 6 of [kratzer-1977]. -/
 def simplePossibility (f : ModalBase W) (p : W → Prop) (w : W) : Prop :=
-  diamond f.Accessible p w
+  ◇[f.accessible] p w
 
 /-- Necessity with an ordering source holds when `p` holds at every best world,
 `⟦must⟧_{f,g}(p)(w) = ∀w' ∈ Best(f,g,w). p(w')`, the Limit Assumption form of
 `humanNecessity`. -/
 def necessity (f : ModalBase W) (g : OrderingSource W) (p : W → Prop) (w : W) : Prop :=
-  box (BestAccessible f g) p w
+  □[bestAccessible f g] p w
 
 /-- Possibility with an ordering source holds when `p` holds at some best world,
 `⟦can⟧_{f,g}(p)(w) = ∃w' ∈ Best(f,g,w). p(w')`. -/
 def possibility (f : ModalBase W) (g : OrderingSource W) (p : W → Prop) (w : W) : Prop :=
-  diamond (BestAccessible f g) p w
+  ◇[bestAccessible f g] p w
 
 /-! ### Human necessity
 
@@ -139,7 +145,7 @@ theorem humanPossibility_iff_possibility {f : ModalBase W} {g : OrderingSource W
     {p : W → Prop} {w : W} (hlim : LimitAssumption f g w) :
     humanPossibility f g p w ↔ possibility f g p w := by
   rw [humanPossibility, humanNecessity_iff_necessity hlim, necessity, possibility, not_box]
-  simp [diamond]
+  simp [Diamond]
 
 /-- With the empty ordering source, human necessity is simple necessity, [kratzer-1981]'s
 equivalence for arbitrary `f` and empty `g`. -/
@@ -179,7 +185,7 @@ theorem simpleNecessity_iff_followsFrom (f : ModalBase W) (p : W → Prop) (w : 
 [kratzer-1977]. -/
 theorem simplePossibility_iff_isCompatibleWith (f : ModalBase W) (p : W → Prop) (w : W) :
     simplePossibility f p w ↔ IsCompatibleWith p (f w) :=
-  isCompatibleWith_iff_exists.symm
+  (simplePossibility_iff f p w).trans isCompatibleWith_iff_exists.symm
 
 /-- Necessity with an empty ordering source is simple necessity. -/
 theorem necessity_empty_iff_simple (f : ModalBase W) (p : W → Prop) (w : W) :
@@ -205,11 +211,11 @@ theorem not_necessity_cons {f : ModalBase W} {g : OrderingSource W} {p q r : W �
     (hur : ¬ r u) : ¬ necessity f (fun v ↦ p :: g v) r w :=
   fun h ↦ hur (h u (mem_bestWorlds_cons hq hpq hu huq))
 
-/-! ### Frame conditions on `ModalBase.Accessible` -/
+/-! ### Frame conditions on `ModalBase.accessible` -/
 
 /-- A realistic modal base gives reflexive accessibility. -/
 theorem ConvBackground.IsRealistic.refl {f : ModalBase W} (h : f.IsRealistic) :
-    Std.Refl f.Accessible :=
+    f.accessible.IsRefl :=
   ⟨fun w ↦ h w⟩
 
 /-- Over a realistic base the evaluation world is itself accessible. -/
@@ -219,11 +225,11 @@ theorem ConvBackground.IsRealistic.mem_accessibleWorlds {f : ModalBase W} (h : f
 
 /-- A realistic base gives serial accessibility. -/
 theorem ConvBackground.IsRealistic.isSerial {f : ModalBase W} (h : f.IsRealistic) :
-    IsSerial f.Accessible :=
+    IsSerial f.accessible :=
   ⟨fun w ↦ ⟨w, h.refl.refl w⟩⟩
 
 /-- A modal base is realistic exactly when its accessibility relation is reflexive. -/
-theorem isRealistic_iff_refl {f : ModalBase W} : f.IsRealistic ↔ Std.Refl f.Accessible :=
+theorem isRealistic_iff_refl {f : ModalBase W} : f.IsRealistic ↔ f.accessible.IsRefl :=
   ⟨ConvBackground.IsRealistic.refl, fun h w ↦ h.refl w⟩
 
 /-- A modal base is realistic exactly when simple necessity over it is veridical, what must be
@@ -234,13 +240,13 @@ theorem isRealistic_iff_simpleNecessity_le_id {f : ModalBase W} :
 
 /-- Under the empty modal base, every world is accessible. -/
 theorem accessible_emptyBackground (w w' : W) :
-    ModalBase.Accessible (emptyBackground (W := W)) w w' :=
+    w ~[ModalBase.accessible (emptyBackground (W := W))] w' :=
   fun _ hq ↦ (List.not_mem_nil hq).elim
 
 /-- Under a singleton modal base, accessibility is the sole premise. -/
 theorem accessible_singleton (p : W → Prop) (w w' : W) :
-    ModalBase.Accessible (fun _ ↦ [p]) w w' ↔ p w' := by
-  rw [ModalBase.Accessible, ModalBase.accessibleWorlds, propIntersection_singleton]
+    w ~[ModalBase.accessible (fun _ ↦ [p])] w' ↔ p w' := by
+  rw [ModalBase.mem_accessible, ModalBase.accessibleWorlds, propIntersection_singleton]
   rfl
 
 /-- Under the empty modal base, the accessible worlds are all the worlds. -/
@@ -251,11 +257,11 @@ theorem accessibleWorlds_emptyBackground (w : W) :
 /-! ### Modal axioms -/
 
 /-- Modal duality, `□p ↔ ¬◇¬p`, is the box-diamond duality (`ModalLogic.not_diamond`), since
-`necessity = box (BestAccessible f g)`. -/
+`necessity` is `□[bestAccessible f g]`. -/
 theorem duality (f : ModalBase W) (g : OrderingSource W) (p : W → Prop) (w : W) :
     necessity f g p w ↔ ¬ possibility f g (fun w' ↦ ¬ p w') w := by
   rw [necessity, possibility, not_diamond]
-  simp [box]
+  simp [Box]
 
 /-- Necessity distributes over implication, the K axiom `□(p → q) → □p → □q`. -/
 theorem necessity_K (f : ModalBase W) (g : OrderingSource W) (p q : W → Prop) (w : W)

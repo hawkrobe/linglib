@@ -59,6 +59,7 @@ the accessible worlds agree on the standard's degree.
 namespace Buring2007
 
 open ModalLogic
+open SetRel
 
 /-! ### The comparative and the degree negation -/
 
@@ -214,7 +215,7 @@ theorem reading_not_synonymous :
 section Modal
 
 variable {W D : Type*} [LinearOrder D] {Q : (W → Prop) → Prop} {μ : W → D} {c : D}
-  {R : W → W → Prop} {w : W}
+  {R : SetRel W W} {w : W}
 
 /-- The degree negation outside the modal: the than-clause denotes the degrees the standard reaches
 under the modal, and the less-comparative asserts that the subject's positive extent is included in
@@ -242,10 +243,10 @@ theorem negationInside_iff (hQ : Monotone Q) :
   by_contra hdc
   exact h (hQ (fun v hv => hv.trans_le (not_lt.mp hdc)) hd)
 
-theorem monotone_box (R : W → W → Prop) (w : W) : Monotone fun p : W → Prop => □[R] p w :=
+theorem monotone_box (R : SetRel W W) (w : W) : Monotone fun p : W → Prop => □[R] p w :=
   fun _ _ h hp v hv => h v (hp v hv)
 
-theorem monotone_diamond (R : W → W → Prop) (w : W) :
+theorem monotone_diamond (R : SetRel W W) (w : W) :
     Monotone fun p : W → Prop => ◇[R] p w :=
   fun _ _ h hp => hp.imp fun _ hv => ⟨hv.1, h _ hv.2⟩
 
@@ -291,8 +292,8 @@ theorem inside_entails_outside_diamond [IsSerial R] :
 drawbridge is shorter than a permitted moat is wide without being shorter than every one. -/
 theorem inside_not_entails_outside :
     ∃ (μ : Bool → ℕ) (c : ℕ),
-      negationInside (fun p => □[fun _ _ => True] p true) μ c ∧
-        ¬ negationOutside (fun p => □[fun _ _ => True] p true) μ c := by
+      negationInside (fun p => □[.univ] p true) μ c ∧
+        ¬ negationOutside (fun p => □[.univ] p true) μ c := by
   refine ⟨fun b => if b then 40 else 30, 35, ?_, ?_⟩
   · rw [negationInside_box]
     exact ⟨true, trivial, by decide⟩
@@ -301,7 +302,7 @@ theorem inside_not_entails_outside :
 
 /-- The two readings coincide when the accessible worlds agree on the standard's degree, which is
 why a than-clause without a modal cannot tell the analyses apart. -/
-theorem analyses_agree_of_uniform [IsSerial R] (h : ∀ v u, R w v → R w u → μ v = μ u) :
+theorem analyses_agree_of_uniform [IsSerial R] (h : ∀ v u, w ~[R] v → w ~[R] u → μ v = μ u) :
     negationOutside (fun p => □[R] p w) μ c ↔ negationInside (fun p => □[R] p w) μ c := by
   rw [negationOutside_box, negationInside_box]
   refine ⟨box_D, fun ⟨v, hv, hcv⟩ u hu => ?_⟩

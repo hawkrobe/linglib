@@ -44,7 +44,7 @@ doxastic counterpart in Section 5.10, close the file.
 
 namespace Hintikka1962
 
-open ModalLogic
+open ModalLogic SetRel
 
 /-- The formulas of Section 1.6: atomic sentences, negation, conjunction, disjunction and the
 epistemic operators `K a` ("a knows that"), `P a` ("it is possible, for all that a knows,
@@ -228,16 +228,16 @@ satisfiability in a model yields defensibility. -/
 /-- A possible-worlds model of the epistemic language. -/
 structure Model (V A W : Type*) where
   /-- Epistemic alternativeness. -/
-  epi : A → W → W → Prop
+  epi : A → SetRel W W
   /-- Doxastic alternativeness. -/
-  dox : A → W → W → Prop
+  dox : A → SetRel W W
   /-- Valuation of the atomic sentences. -/
   val : V → W → Prop
-  epi_refl : ∀ a, Std.Refl (epi a)
-  epi_trans : ∀ a, IsTrans W (epi a)
+  epi_refl : ∀ a, (epi a).IsRefl
+  epi_trans : ∀ a, (epi a).IsTrans
   dox_serial : ∀ a, IsSerial (dox a)
-  dox_trans : ∀ a, IsTrans W (dox a)
-  dox_le_epi : ∀ a, dox a ≤ epi a
+  dox_trans : ∀ a, (dox a).IsTrans
+  dox_le_epi : ∀ a, dox a ⊆ epi a
 
 namespace Model
 
@@ -266,17 +266,17 @@ theorem isModelSet_truthSet (w : W) : IsModelSet (M.truthSet w) where
   neg_and h := not_and_or.mp h
   neg_or h := not_or.mp h
   know h := h w ((M.epi_refl _).refl w)
-  neg_know h := (not_box _ _ _).mp h
-  neg_poss h := (not_diamond _ _ _).mp h
-  neg_believe h := (not_box _ _ _).mp h
-  neg_compat h := (not_diamond _ _ _).mp h
+  neg_know h := not_box.mp h
+  neg_poss h := not_diamond.mp h
+  neg_believe h := not_box.mp h
+  neg_compat h := not_diamond.mp h
 
 /-- The truth sets of a model, with alternativeness inherited from the worlds, form a model
 system. -/
 def toModelSystem : ModelSystem V A where
   sets := Set.range M.truthSet
-  epi a μ ν := ∃ w v, M.truthSet w = μ ∧ M.truthSet v = ν ∧ M.epi a w v
-  dox a μ ν := ∃ w v, M.truthSet w = μ ∧ M.truthSet v = ν ∧ M.dox a w v
+  epi a μ ν := ∃ w v, M.truthSet w = μ ∧ M.truthSet v = ν ∧ w ~[M.epi a] v
+  dox a μ ν := ∃ w v, M.truthSet w = μ ∧ M.truthSet v = ν ∧ w ~[M.dox a] v
   isModelSet := by rintro ⟨_, w, rfl⟩; exact M.isModelSet_truthSet w
   P_star := by
     rintro a p ⟨_, w, rfl⟩ ⟨v, hv, hp⟩
@@ -311,7 +311,7 @@ def toModelSystem : ModelSystem V A where
     exact λ u hvu => h' u ((M.dox_trans a).trans _ _ _ hwv hvu)
   dox_le_epi := by
     rintro a μ ν ⟨w, v, hw, hv, hwv⟩
-    exact ⟨w, v, hw, hv, M.dox_le_epi a w v hwv⟩
+    exact ⟨w, v, hw, hv, M.dox_le_epi a hwv⟩
 
 theorem defensible_of_subset_truthSet {Γ : Set (Formula V A)} {w : W}
     (h : Γ ⊆ M.truthSet w) : Defensible Γ :=
@@ -326,7 +326,7 @@ theorem not_virtuallyImplies_of_sat {p q : Formula V A} {w : W} (h : M.Sat (p �
 
 section Decidable
 
-variable [Fintype W] [∀ a, DecidableRel (M.epi a)] [∀ a, DecidableRel (M.dox a)]
+variable [Fintype W] [∀ a w v, Decidable (w ~[M.epi a] v)] [∀ a w v, Decidable (w ~[M.dox a] v)]
   [∀ v, DecidablePred (M.val v)]
 
 /-- Satisfaction is decidable over finitely many worlds. -/
@@ -385,14 +385,14 @@ local notation "𝐩" => (Formula.atom () : Formula Unit (Fin 2))
 `1` and the epistemic alternatives are all three worlds, each other world being its own only
 alternative; the atom holds at `0` and `1`. -/
 abbrev mK : Model Unit (Fin 2) (Fin 3) where
-  epi _ w v := w = v ∨ w = 0
-  dox _ w v := (w = 0 ∧ v = 1) ∨ (w ≠ 0 ∧ w = v)
+  epi _ := {p | p.1 = p.2 ∨ p.1 = 0}
+  dox _ := {p | (p.1 = 0 ∧ p.2 = 1) ∨ (p.1 ≠ 0 ∧ p.1 = p.2)}
   val _ w := w ≠ 2
   epi_refl _ := ⟨by decide +revert⟩
   epi_trans _ := ⟨by decide +revert⟩
   dox_serial _ := ⟨λ _ => by decide +revert⟩
   dox_trans _ := ⟨by decide +revert⟩
-  dox_le_epi a := by intro w v h; revert a w v h; decide
+  dox_le_epi a := by rintro ⟨w, v⟩ h; revert a w v h; decide
 
 /-- (C.BK) rejected: `B a p` does not virtually imply `K a (P a p)`. -/
 theorem not_virtuallyImplies_B_K_P : ¬ VirtuallyImplies (B 0 𝐩) (K 0 (P 0 𝐩)) :=
@@ -428,14 +428,14 @@ local notation "𝐩" => (Formula.atom () : Formula Unit (Fin 2))
 from the other worlds only `1`; agent `1` always considers only `0` possible; knowledge is
 trivial; the atom holds at `0` and `1`. -/
 abbrev mB : Model Unit (Fin 2) (Fin 3) where
-  epi _ _ _ := True
-  dox a w v := (a = 0 ∧ ((w = 0 ∧ v ≠ 0) ∨ (w ≠ 0 ∧ v = 1))) ∨ (a = 1 ∧ v = 0)
+  epi _ := .univ
+  dox a := {p | (a = 0 ∧ ((p.1 = 0 ∧ p.2 ≠ 0) ∨ (p.1 ≠ 0 ∧ p.2 = 1))) ∨ (a = 1 ∧ p.2 = 0)}
   val _ w := w ≠ 2
   epi_refl _ := ⟨λ _ => trivial⟩
   epi_trans _ := ⟨λ _ _ _ _ _ => trivial⟩
   dox_serial _ := ⟨λ _ => by decide +revert⟩
   dox_trans _ := ⟨by decide +revert⟩
-  dox_le_epi _ _ _ _ := trivial
+  dox_le_epi _ _ _ := trivial
 
 /-- (27): belief is not transmissible, `B a (B b p)` does not virtually imply `B a p`
 (Section 4.3). -/
@@ -459,8 +459,8 @@ defensible unless the believer is the person spoken about. -/
 true in the first; every agent believes only the second, except `a`, who believes only the
 first. -/
 def mooreModel : Model V A Bool where
-  epi _ _ _ := True
-  dox c _ v := (c = a ∧ v = false) ∨ (c ≠ a ∧ v = true)
+  epi _ := .univ
+  dox c := {p | (c = a ∧ p.2 = false) ∨ (c ≠ a ∧ p.2 = true)}
   val _ w := w = true
   epi_refl _ := ⟨λ _ => trivial⟩
   epi_trans _ := ⟨λ _ _ _ _ _ => trivial⟩
@@ -469,7 +469,7 @@ def mooreModel : Model V A Bool where
     · exact ⟨false, Or.inl ⟨h, rfl⟩⟩
     · exact ⟨true, Or.inr ⟨h, rfl⟩⟩⟩
   dox_trans _ := ⟨λ _ _ _ _ h => h⟩
-  dox_le_epi _ _ _ _ := trivial
+  dox_le_epi _ _ _ := trivial
 
 /-- (8) is defensible: the world `true` of `mooreModel a` satisfies `p ⋏ ∼B a p`. -/
 theorem defensible_moore (v : V) : Defensible {(atom v : Formula V A) ⋏ ∼B a (atom v)} :=
@@ -592,25 +592,25 @@ local notation "𝐩" => (Formula.atom () : Formula Unit (Fin 2))
 /-- A model in which every world is epistemically possible from every world while only world
 `1`, where the atom holds, is doxastically possible. -/
 abbrev mKB : Model Unit (Fin 2) (Fin 3) where
-  epi _ _ _ := True
-  dox _ _ v := v = 1
+  epi _ := .univ
+  dox _ := {p | p.2 = 1}
   val _ w := w = 1
   epi_refl _ := ⟨λ _ => trivial⟩
   epi_trans _ := ⟨λ _ _ _ _ _ => trivial⟩
   dox_serial _ := ⟨λ _ => ⟨1, rfl⟩⟩
   dox_trans _ := ⟨λ _ _ _ _ h => h⟩
-  dox_le_epi _ _ _ _ := trivial
+  dox_le_epi _ _ _ := trivial
 
 /-- A model in which agent `0` knows whether the atom holds and agent `1` does not. -/
 abbrev mWhether : Model Unit (Fin 2) (Fin 3) where
-  epi a w v := (a = 0 ∧ w = v) ∨ a = 1
-  dox _ w v := w = v
+  epi a := {p | (a = 0 ∧ p.1 = p.2) ∨ a = 1}
+  dox _ := {p | p.1 = p.2}
   val _ w := w = 1
   epi_refl _ := ⟨by decide +revert⟩
   epi_trans _ := ⟨by decide +revert⟩
   dox_serial _ := ⟨λ w => ⟨w, rfl⟩⟩
   dox_trans _ := ⟨λ _ _ _ h h' => h.trans h'⟩
-  dox_le_epi a := by intro w v h; revert a w v h; decide
+  dox_le_epi a := by rintro ⟨w, v⟩ h; revert a w v h; decide
 
 /-- (43): "he knows whether p although I don't" is epistemically defensible (Section 4.13). -/
 theorem defensible_K_knowsWhether :

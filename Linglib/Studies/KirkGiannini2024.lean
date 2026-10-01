@@ -59,9 +59,9 @@ structure Model (W Expr Speaker Utt : Type*) where
   quot : Expr → W → Speaker → W → Prop
   /-- R: `utter s u q w` iff `s` produces the utterance `u` of `q` at `w`. -/
   utter : Speaker → Utt → Expr → W → Prop
-  /-- Accessibility of ⧫, `□[M.appropriate]`: `appropriate w v` iff `v` is among the worlds
+  /-- Accessibility of ⧫, `□[M.appropriate]`: `w ~[appropriate] v` iff `v` is among the worlds
   characterizing what is or would be appropriate at `w`. -/
-  appropriate : W → W → Prop
+  appropriate : SetRel W W
 
 variable {W Expr Speaker Utt : Type*} (M : Model W Expr Speaker Utt) (wc : W) (sx : Speaker)
   (ux : Utt)

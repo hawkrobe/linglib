@@ -53,6 +53,7 @@ while the single-operator LFs (143)–(146) are too weak or too strong (`single_
 namespace AlonsoOvalleMoghiseh2025a
 
 open Exhaustification ModalLogic Finset
+open scoped SetRel
 
 /-! ### The two-book model (§3) -/
 
@@ -107,9 +108,10 @@ instance : DecidableEq Modal := instDecidableEqProd
 instance : Fintype Modal := instFintypeProd Base Buy
 
 /-- Accessibility: an accessible world has the same modal base and lies in it. -/
-def acc (m m' : Modal) : Prop := m'.1 = m.1 ∧ m'.2 ∈ m.1.1
+def acc : SetRel Modal Modal := {p | p.2.1 = p.1.1 ∧ p.2.2 ∈ p.1.1.1}
 
-instance : DecidableRel acc := fun m m' => inferInstanceAs (Decidable (m'.1 = m.1 ∧ m'.2 ∈ m.1.1))
+instance (m m' : Modal) : Decidable (m ~[acc] m') :=
+  inferInstanceAs (Decidable (m'.1 = m.1 ∧ m'.2 ∈ m.1.1))
 
 /-- The modal world with base `A` and actual buy-world `v`. -/
 def world (A : Finset Buy) (v : Buy) (h : A.Nonempty := by decide) : Modal := (⟨A, h⟩, v)
@@ -251,10 +253,10 @@ def buys₅ (v : Buy₅) (i : Fin 5) : Prop := i ∈ v
 instance (v : Buy₅) : DecidablePred (buys₅ v) := fun i => inferInstanceAs (Decidable (i ∈ v))
 
 /-- Accessibility from any world to the scenario's possibilities. -/
-def scenarioAcc (A : Finset Buy₅) : Buy₅ → Buy₅ → Prop := fun _ v => v ∈ A
+def scenarioAcc (A : Finset Buy₅) : SetRel Buy₅ Buy₅ := .ofSuccessors fun _ ↦ ↑A
 
-instance (A : Finset Buy₅) : DecidableRel (scenarioAcc A) :=
-  fun _ v => inferInstanceAs (Decidable (v ∈ A))
+instance (A : Finset Buy₅) (u v : Buy₅) : Decidable (u ~[scenarioAcc A] v) :=
+  inferInstanceAs (Decidable (v ∈ A))
 
 /-- The possibilities a row's `scenario` feature names. -/
 def scenario : String → Option (Finset Buy₅)

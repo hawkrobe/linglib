@@ -78,7 +78,7 @@ not formalized, and the paper's examples are not yet rows of `Data/Examples`.
 
 namespace Ney2026
 
-open Set Discourse Order ModalLogic ModalLogic.Epistemic
+open Set Discourse Order ModalLogic SetRel
 
 /-! ### Conceptions of reasonableness -/
 
@@ -98,8 +98,8 @@ theorem exists_mem_upperPolar_iUnion_not_mem :
 /-- A conversation about one use of a supplementive, with worlds `W`, hearers `H` and candidate
 semantic values `E`. -/
 structure Model (W H E : Type*) where
-  /-- `belief a w v`: at `w`, for all `a` knows, the world is `v`. -/
-  belief : Role → W → W → Prop
+  /-- `w ~[belief a] v`: at `w`, for all `a` knows, the world is `v`. -/
+  belief : Role → SetRel W W
   /-- `recognizes h e`: hearer `h` would recognise an intention to make `e` the semantic value. -/
   recognizes : H → E → Prop
   /-- `a`'s conception of reasonableness at `w`, restricted to the use: the referents such that,
@@ -158,16 +158,16 @@ def recognized (w : W) : Set E := M.intends w ∩ {e | M.recognizes (M.addressee
 addressee is reasonable and that `o` is a semantic value, it is common ground that the addressee
 recognises the intention to refer to `o`. -/
 theorem commonKnowledge_mem_recognized
-    (two : commonKnowledge M.belief univ (fun v ↦ M.addressee v ∈ M.reasonable v) w)
-    (twoStar : commonKnowledge M.belief univ (o ∈ M.semanticValues ·) w) :
-    commonKnowledge M.belief univ (o ∈ M.recognized ·) w :=
+    (two : CommonKnowledge M.belief univ (fun v ↦ M.addressee v ∈ M.reasonable v) w)
+    (twoStar : CommonKnowledge M.belief univ (o ∈ M.semanticValues ·) w) :
+    CommonKnowledge M.belief univ (o ∈ M.recognized ·) w :=
   fun v hv ↦ ⟨(twoStar v hv).1, (twoStar v hv).2 (two v hv)⟩
 
 /-- ⟨THREE⟩ is incompatible with (iib) ([ney-2026] p. 322): a common-ground recognition of the
 intention makes the intention common ground. -/
 theorem commonKnowledge_mem_intends
-    (three : commonKnowledge M.belief univ (o ∈ M.recognized ·) w) :
-    commonKnowledge M.belief univ (o ∈ M.intends ·) w :=
+    (three : CommonKnowledge M.belief univ (o ∈ M.recognized ·) w) :
+    CommonKnowledge M.belief univ (o ∈ M.intends ·) w :=
   fun v hv ↦ (three v hv).1
 
 /-! ### The response -/
@@ -175,16 +175,16 @@ theorem commonKnowledge_mem_intends
 /-- If it is not common ground that `a`'s conception licenses `o`, it is not common ground that
 `o` is a semantic value (iia): ⟨TWO*⟩ fails ([ney-2026] pp. 325–326). -/
 theorem not_commonKnowledge_mem_semanticValues (a : Role)
-    (h : ¬ commonKnowledge M.belief univ (o ∈ M.conception a ·) w) :
-    ¬ commonKnowledge M.belief univ (o ∈ M.semanticValues ·) w :=
+    (h : ¬ CommonKnowledge M.belief univ (o ∈ M.conception a ·) w) :
+    ¬ CommonKnowledge M.belief univ (o ∈ M.semanticValues ·) w :=
   fun hv ↦ h fun v h' ↦ (M.mem_semanticValues.1 (hv v h')).2 a
 
 /-- If it is not common ground that the speaker's conception licenses `o`, it is not common
 ground that she intends `o` (iib): she can deny the intention by denying the conception
 ([ney-2026] p. 326). -/
 theorem not_commonKnowledge_mem_intends
-    (h : ¬ commonKnowledge M.belief univ (o ∈ M.conception .speaker ·) w) :
-    ¬ commonKnowledge M.belief univ (o ∈ M.intends ·) w :=
+    (h : ¬ CommonKnowledge M.belief univ (o ∈ M.conception .speaker ·) w) :
+    ¬ CommonKnowledge M.belief univ (o ∈ M.intends ·) w :=
   fun hi ↦ h fun v h' ↦ M.intends_subset_conception v (hi v h')
 
 end Model
@@ -199,7 +199,7 @@ theorem isIntent_mem {E : Type*} (C : Set E) : IsIntent (fun (h : Set E) e ↦ e
 abbrev World := Finset Role
 
 /-- Each interlocutor knows whether she holds the conception and nothing about the other. -/
-def privately (a : Role) (w v : World) : Prop := a ∈ w ↔ a ∈ v
+def privately (a : Role) : SetRel World World := {p | a ∈ p.1 ↔ a ∈ p.2}
 
 instance (a : Role) : IsS5Frame (privately a) where
   refl _ := Iff.rfl
@@ -243,53 +243,53 @@ theorem mem_semanticValues : hispanicImmigrants ∈ insinuation.semanticValues .
 
 /-- The speaker does not know the addressee shares her conception ([ney-2026] p. 326). -/
 theorem not_knows_speaker :
-    ¬ knows insinuation.belief .speaker (hispanicImmigrants ∈ insinuation.conception .addressee ·)
+    ¬ □[insinuation.belief .speaker] (hispanicImmigrants ∈ insinuation.conception .addressee ·)
       .univ :=
   fun h ↦ by simpa [insinuation] using h {.speaker} (by simp [insinuation, privately])
 
 /-- The addressee does not know the speaker shares hers ([ney-2026] p. 326). -/
 theorem not_knows_addressee :
-    ¬ knows insinuation.belief .addressee (hispanicImmigrants ∈ insinuation.conception .speaker ·)
+    ¬ □[insinuation.belief .addressee] (hispanicImmigrants ∈ insinuation.conception .speaker ·)
       .univ :=
   fun h ↦ by simpa [insinuation] using h {.addressee} (by simp [insinuation, privately])
 
 /-- The speaker knows that the addressee recognises the unavowed intention, an individual
 belief ([ney-2026] p. 325). -/
 theorem knows_mem_recognized :
-    knows insinuation.belief .speaker (hispanicImmigrants ∈ insinuation.recognized ·) .univ :=
+    □[insinuation.belief .speaker] (hispanicImmigrants ∈ insinuation.recognized ·) .univ :=
   fun v hv ↦ by
-    have hs : .speaker ∈ v := (show privately .speaker .univ v from hv).1 (Finset.mem_univ _)
+    have hs : .speaker ∈ v := (show (.univ, v) ∈ privately .speaker from hv).1 (Finset.mem_univ _)
     simp [insinuation, Model.recognized, hs]
 
 /-- For all the addressee knows, the speaker does not know that the addressee recognises the
 unavowed intention ([ney-2026] p. 325). -/
 theorem not_knows_knows_mem_recognized :
-    ¬ knows insinuation.belief .addressee
-      (knows insinuation.belief .speaker (hispanicImmigrants ∈ insinuation.recognized ·)) .univ :=
+    ¬ □[insinuation.belief .addressee]
+      (□[insinuation.belief .speaker] (hispanicImmigrants ∈ insinuation.recognized ·)) .univ :=
   fun h ↦ by
     simpa [insinuation, Model.recognized] using h {.addressee} (by simp [insinuation, privately])
       {.addressee} (by simp [insinuation, privately])
 
 /-- ⟨TWO⟩: it is common ground that the addressee is reasonable ([ney-2026] p. 325). -/
 theorem commonKnowledge_two :
-    commonKnowledge insinuation.belief univ
+    CommonKnowledge insinuation.belief univ
       (fun v ↦ insinuation.addressee v ∈ insinuation.reasonable v) .univ :=
   fun _ _ ↦ mem_iUnion.2 ⟨.addressee, fun _ he ↦ by
     rcases he with he | he <;> simp [insinuation, he]⟩
 
 /-- (iia): it is not common ground that the unavowed referent is a semantic value. -/
 theorem not_commonKnowledge_mem_semanticValues :
-    ¬ commonKnowledge insinuation.belief univ (hispanicImmigrants ∈ insinuation.semanticValues ·)
+    ¬ CommonKnowledge insinuation.belief univ (hispanicImmigrants ∈ insinuation.semanticValues ·)
       .univ :=
   Model.not_commonKnowledge_mem_semanticValues _ .addressee <|
-    mt (knows_of_commonKnowledge (mem_univ .speaker)) not_knows_speaker
+    mt (box_of_commonKnowledge (mem_univ .speaker)) not_knows_speaker
 
 /-- (iib): it is not common ground that the speaker intended it. -/
 theorem not_commonKnowledge_mem_intends :
-    ¬ commonKnowledge insinuation.belief univ (hispanicImmigrants ∈ insinuation.intends ·)
+    ¬ CommonKnowledge insinuation.belief univ (hispanicImmigrants ∈ insinuation.intends ·)
       .univ :=
   Model.not_commonKnowledge_mem_intends _ <|
-    mt (knows_of_commonKnowledge (mem_univ .addressee)) not_knows_addressee
+    mt (box_of_commonKnowledge (mem_univ .addressee)) not_knows_addressee
 
 /-- (iib) for any `Filter` common ground grounded in the interlocutors' common knowledge whose
 context set contains the actual world. -/
@@ -330,7 +330,7 @@ def lennon : Model World (Set LennonReferent) LennonReferent where
 not ⟨TWO⟩, separates insinuative reference from ordinary reliance on a reasonable hearer
 ([ney-2026] p. 324). -/
 theorem lennon_commonKnowledge_mem_recognized :
-    commonKnowledge lennon.belief univ (house ∈ lennon.recognized ·) .univ :=
+    CommonKnowledge lennon.belief univ (house ∈ lennon.recognized ·) .univ :=
   lennon.commonKnowledge_mem_recognized
     (fun _ _ ↦ mem_iUnion.2 ⟨.speaker, fun _ ↦ id⟩) fun _ _ ↦ by simp [lennon]
 

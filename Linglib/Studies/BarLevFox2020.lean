@@ -50,7 +50,7 @@ excluded into included.
 
 namespace BarLevFox2020
 
-open Exhaustification ModalLogic Presupposition
+open Exhaustification ModalLogic Presupposition SetRel
 
 variable {W : Type*}
 
@@ -58,39 +58,40 @@ variable {W : Type*}
 
 section FreeChoice
 
-variable (R : W → W → Prop) (a b : Set W)
+variable (R : SetRel W W) (a b : Set W)
 
 /-- The alternatives of `◇(a ∨ b)`: the disjunction replaced by its disjuncts and their
 conjunction. -/
-def fcAlts : Set (Set W) := {poss R (a ∪ b), poss R a, poss R b, poss R (a ∩ b)}
+def fcAlts : Set (Set W) := {R.preimage (a ∪ b), R.preimage a, R.preimage b, R.preimage (a ∩ b)}
 
 variable {R a b}
 
-variable (h₁ : ∃ w ∈ poss R a, w ∉ poss R b) (h₂ : ∃ w ∈ poss R b, w ∉ poss R a)
-  (h : ∃ w ∈ poss R a ∩ poss R b, w ∉ poss R (a ∩ b))
+variable (h₁ : ∃ w ∈ R.preimage a, w ∉ R.preimage b) (h₂ : ∃ w ∈ R.preimage b, w ∉ R.preimage a)
+  (h : ∃ w ∈ R.preimage a ∩ R.preimage b, w ∉ R.preimage (a ∩ b))
 include h₁ h₂ h
 
 /-- Free choice: given a world permitting only `a`, one permitting only `b`, and one
 permitting each but not both, `◇(a ∨ b)` strengthens to `◇a ∧ ◇b ∧ ¬◇(a ∧ b)`. -/
-theorem freeChoice :
-    exhIEII (fcAlts R a b) (poss R (a ∪ b)) = (poss R a ∩ poss R b) \ poss R (a ∩ b) := by
-  rw [fcAlts, exhIEII_pair poss_union.le
-    (h₁.imp fun _ h ↦ ⟨⟨poss_mono Set.subset_union_left h.1, h.1⟩,
-      fun h' ↦ h.2 (h'.elim id (fun h' ↦ (poss_inter_subset h').2))⟩)
-    (h₂.imp fun _ h ↦ ⟨⟨poss_mono Set.subset_union_right h.1, h.1⟩,
-      fun h' ↦ h.2 (h'.elim id (fun h' ↦ (poss_inter_subset h').1))⟩)
-    (h.imp fun _ h ↦ ⟨⟨⟨poss_mono Set.subset_union_left h.1.1, h.1.1⟩, h.1.2⟩, h.2⟩),
-    Set.inter_assoc, Set.inter_eq_right.2 fun _ h ↦ poss_mono Set.subset_union_left h.1]
+theorem freeChoice : exhIEII (fcAlts R a b) (R.preimage (a ∪ b)) =
+    (R.preimage a ∩ R.preimage b) \ R.preimage (a ∩ b) := by
+  rw [fcAlts, exhIEII_pair (preimage_union ..).le
+    (h₁.imp fun _ h ↦ ⟨⟨preimage_mono Set.subset_union_left h.1, h.1⟩,
+      fun h' ↦ h.2 (h'.elim id (fun h' ↦ (preimage_inter_subset _ h').2))⟩)
+    (h₂.imp fun _ h ↦ ⟨⟨preimage_mono Set.subset_union_right h.1, h.1⟩,
+      fun h' ↦ h.2 (h'.elim id (fun h' ↦ (preimage_inter_subset _ h').1))⟩)
+    (h.imp fun _ h ↦ ⟨⟨⟨preimage_mono Set.subset_union_left h.1.1, h.1.1⟩, h.1.2⟩, h.2⟩),
+    Set.inter_assoc, Set.inter_eq_right.2 fun _ h ↦ preimage_mono Set.subset_union_left h.1]
 
 /-- The includable alternatives of `◇(a ∨ b)` are the prejacent and the disjunct
 alternatives. -/
-theorem II_fcAlts : II (fcAlts R a b) (poss R (a ∪ b)) = {poss R (a ∪ b), poss R a, poss R b} :=
-  II_pair poss_union.le
-    (h₁.imp fun _ h ↦ ⟨⟨poss_mono Set.subset_union_left h.1, h.1⟩,
-      fun h' ↦ h.2 (h'.elim id (fun h' ↦ (poss_inter_subset h').2))⟩)
-    (h₂.imp fun _ h ↦ ⟨⟨poss_mono Set.subset_union_right h.1, h.1⟩,
-      fun h' ↦ h.2 (h'.elim id (fun h' ↦ (poss_inter_subset h').1))⟩)
-    (h.imp fun _ h ↦ ⟨⟨⟨poss_mono Set.subset_union_left h.1.1, h.1.1⟩, h.1.2⟩, h.2⟩)
+theorem II_fcAlts :
+    II (fcAlts R a b) (R.preimage (a ∪ b)) = {R.preimage (a ∪ b), R.preimage a, R.preimage b} :=
+  II_pair (preimage_union ..).le
+    (h₁.imp fun _ h ↦ ⟨⟨preimage_mono Set.subset_union_left h.1, h.1⟩,
+      fun h' ↦ h.2 (h'.elim id (fun h' ↦ (preimage_inter_subset _ h').2))⟩)
+    (h₂.imp fun _ h ↦ ⟨⟨preimage_mono Set.subset_union_right h.1, h.1⟩,
+      fun h' ↦ h.2 (h'.elim id (fun h' ↦ (preimage_inter_subset _ h').1))⟩)
+    (h.imp fun _ h ↦ ⟨⟨⟨preimage_mono Set.subset_union_left h.1.1, h.1.1⟩, h.1.2⟩, h.2⟩)
 
 omit h₁ h₂ h in
 /-- Without the modal the conjunctive alternative is the conjunction of the disjunct
@@ -118,12 +119,13 @@ def only (ALT : Set (Set W)) (φ : Set W) : PartialProp W where
   assertion w := φ w ∧ ∀ q, IsInnocentlyExcludable ALT φ q → ¬ q w
 
 /-- Free choice under `only` is presupposed: `only ◇(a ∨ b)` presupposes `◇a` and `◇b`. -/
-theorem only_presup {R : W → W → Prop} {a b : Set W} (h₁ : ∃ w ∈ poss R a, w ∉ poss R b)
-    (h₂ : ∃ w ∈ poss R b, w ∉ poss R a) (h : ∃ w ∈ poss R a ∩ poss R b, w ∉ poss R (a ∩ b))
-    (w : W) : (only (fcAlts R a b) (poss R (a ∪ b))).presup w ↔ w ∈ poss R a ∩ poss R b := by
+theorem only_presup {R : SetRel W W} {a b : Set W} (h₁ : ∃ w ∈ R.preimage a, w ∉ R.preimage b)
+    (h₂ : ∃ w ∈ R.preimage b, w ∉ R.preimage a)
+    (h : ∃ w ∈ R.preimage a ∩ R.preimage b, w ∉ R.preimage (a ∩ b)) (w : W) :
+    (only (fcAlts R a b) (R.preimage (a ∪ b))).presup w ↔ w ∈ R.preimage a ∩ R.preimage b := by
   simp only [only, II_fcAlts h₁ h₂ h, Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp,
     forall_eq]
-  exact ⟨fun h ↦ ⟨h.2.1, h.2.2⟩, fun h ↦ ⟨poss_mono Set.subset_union_left h.1, h.1, h.2⟩⟩
+  exact ⟨fun h ↦ ⟨h.2.1, h.2.2⟩, fun h ↦ ⟨preimage_mono Set.subset_union_left h.1, h.1, h.2⟩⟩
 
 /-! ### Simplification of disjunctive antecedents -/
 
@@ -366,14 +368,14 @@ theorem universalFreeChoice (hB : ∀ x, B x ⊆ P x ∩ Q x)
 
 section Negative
 
-variable (R : W → W → Prop) (p q : D → Set W)
+variable (R : SetRel W W) (p q : D → Set W)
 
 /-- The alternatives of `¬∃x □(px ∧ qx)`, *no student is required to solve both* (46): the
 conjunction replaced by its conjuncts and their disjunction, *no* by *not every*. -/
 def negativeUniversalAlts : Set (Set W) :=
-  {(⋃ x, nec R (p x ∩ q x))ᶜ, (⋃ x, nec R (p x))ᶜ, (⋃ x, nec R (q x))ᶜ,
-    (⋃ x, nec R (p x ∪ q x))ᶜ, (⋂ x, nec R (p x ∩ q x))ᶜ, (⋂ x, nec R (p x))ᶜ,
-    (⋂ x, nec R (q x))ᶜ, (⋂ x, nec R (p x ∪ q x))ᶜ}
+  {(⋃ x, R.core (p x ∩ q x))ᶜ, (⋃ x, R.core (p x))ᶜ, (⋃ x, R.core (q x))ᶜ,
+    (⋃ x, R.core (p x ∪ q x))ᶜ, (⋂ x, R.core (p x ∩ q x))ᶜ, (⋂ x, R.core (p x))ᶜ,
+    (⋂ x, R.core (q x))ᶜ, (⋂ x, R.core (p x ∪ q x))ᶜ}
 
 variable {R p q}
 
@@ -381,19 +383,19 @@ variable {R p q}
 entailment pattern of universal free choice, so with the corresponding worlds it strengthens
 to `¬∃x □px ∧ ¬∃x □qx ∧ ∀x □(px ∨ qx)`. -/
 theorem negativeUniversalFreeChoice
-    (h₁ : ∃ w, (∀ x, w ∉ nec R (p x)) ∧ ∀ x, w ∈ nec R (q x))
-    (h₂ : ∃ w, (∀ x, w ∉ nec R (q x)) ∧ ∀ x, w ∈ nec R (p x))
-    (h₃ : ∃ w, (∀ x, w ∈ nec R (p x ∪ q x)) ∧ (∀ x, w ∉ nec R (p x ∩ q x)) ∧
-      (∃ x, w ∈ nec R (p x)) ∧ (∃ x, w ∈ nec R (q x)) ∧ (∃ x, w ∉ nec R (p x)) ∧
-      ∃ x, w ∉ nec R (q x))
-    (h : ∃ w, (∀ x, w ∉ nec R (p x)) ∧ (∀ x, w ∉ nec R (q x)) ∧ ∀ x, w ∈ nec R (p x ∪ q x)) :
-    exhIEII (negativeUniversalAlts R p q) (⋃ x, nec R (p x ∩ q x))ᶜ =
-      ((⋃ x, nec R (p x))ᶜ ∩ (⋃ x, nec R (q x))ᶜ) ∩ ⋂ x, nec R (p x ∪ q x) := by
+    (h₁ : ∃ w, (∀ x, w ∉ R.core (p x)) ∧ ∀ x, w ∈ R.core (q x))
+    (h₂ : ∃ w, (∀ x, w ∉ R.core (q x)) ∧ ∀ x, w ∈ R.core (p x))
+    (h₃ : ∃ w, (∀ x, w ∈ R.core (p x ∪ q x)) ∧ (∀ x, w ∉ R.core (p x ∩ q x)) ∧
+      (∃ x, w ∈ R.core (p x)) ∧ (∃ x, w ∈ R.core (q x)) ∧ (∃ x, w ∉ R.core (p x)) ∧
+      ∃ x, w ∉ R.core (q x))
+    (h : ∃ w, (∀ x, w ∉ R.core (p x)) ∧ (∀ x, w ∉ R.core (q x)) ∧ ∀ x, w ∈ R.core (p x ∪ q x)) :
+    exhIEII (negativeUniversalAlts R p q) (⋃ x, R.core (p x ∩ q x))ᶜ =
+      ((⋃ x, R.core (p x))ᶜ ∩ (⋃ x, R.core (q x))ᶜ) ∩ ⋂ x, R.core (p x ∪ q x) := by
   obtain ⟨x₀⟩ := ‹Nonempty D›
-  have hpq : ∀ {w : W} {x : D}, w ∉ nec R (p x) → w ∉ nec R (p x ∩ q x) :=
-    fun h h' ↦ h fun v hv ↦ (h' v hv).1
-  have hqp : ∀ {w : W} {x : D}, w ∉ nec R (q x) → w ∉ nec R (p x ∩ q x) :=
-    fun h h' ↦ h fun v hv ↦ (h' v hv).2
+  have hpq : ∀ {w : W} {x : D}, w ∉ R.core (p x) → w ∉ R.core (p x ∩ q x) :=
+    fun h h' ↦ h fun v hv ↦ (h' hv).1
+  have hqp : ∀ {w : W} {x : D}, w ∉ R.core (q x) → w ∉ R.core (p x ∩ q x) :=
+    fun h h' ↦ h fun v hv ↦ (h' hv).2
   rw [negativeUniversalAlts, exhIEII_quantified ?_ ?_ ?_ ?_ ?_]
   · ext w
     simp only [Set.mem_sdiff, Set.mem_inter_iff, Set.mem_union, Set.mem_compl_iff,
@@ -406,28 +408,28 @@ theorem negativeUniversalFreeChoice
         ⟨x₀, hPQ x₀⟩, hPQ⟩
   · intro w hw
     simp only [Set.mem_compl_iff, Set.mem_iInter, Set.mem_iUnion, not_exists, not_forall] at hw ⊢
-    by_cases hp : ∀ x, w ∉ nec R (p x)
+    by_cases hp : ∀ x, w ∉ R.core (p x)
     · exact Or.inl ⟨hp, ⟨x₀, hw x₀⟩, ⟨x₀, hp x₀⟩⟩
     push Not at hp
     obtain ⟨y, hy⟩ := hp
-    by_cases hq : ∀ x, w ∉ nec R (q x)
+    by_cases hq : ∀ x, w ∉ R.core (q x)
     · exact Or.inr (Or.inl ⟨hq, ⟨x₀, hw x₀⟩, ⟨x₀, hq x₀⟩⟩)
     push Not at hq
     obtain ⟨z, hz⟩ := hq
-    exact Or.inr (Or.inr ⟨⟨x₀, hw x₀⟩, ⟨z, fun h ↦ hw z fun v hv ↦ ⟨h v hv, hz v hv⟩⟩,
-      ⟨y, fun h ↦ hw y fun v hv ↦ ⟨hy v hv, h v hv⟩⟩⟩)
+    exact Or.inr (Or.inr ⟨⟨x₀, hw x₀⟩, ⟨z, fun h ↦ hw z fun v hv ↦ ⟨h hv, hz hv⟩⟩,
+      ⟨y, fun h ↦ hw y fun v hv ↦ ⟨hy hv, h hv⟩⟩⟩)
   · obtain ⟨w, hP, hQ⟩ := h₁
     refine ⟨w, ?_⟩
     simp only [Set.mem_compl_iff, Set.mem_iInter, Set.mem_iUnion, not_exists, not_forall, not_not]
     exact ⟨fun x ↦ hpq (hP x), hP, ⟨x₀, hpq (hP x₀)⟩, ⟨x₀, hP x₀⟩, ⟨x₀, hQ x₀⟩,
-      ⟨x₀, nec_mono Set.subset_union_right (hQ x₀)⟩, hQ,
-      fun x ↦ nec_mono Set.subset_union_right (hQ x)⟩
+      ⟨x₀, core_mono Set.subset_union_right (hQ x₀)⟩, hQ,
+      fun x ↦ core_mono Set.subset_union_right (hQ x)⟩
   · obtain ⟨w, hQ, hP⟩ := h₂
     refine ⟨w, ?_⟩
     simp only [Set.mem_compl_iff, Set.mem_iInter, Set.mem_iUnion, not_exists, not_forall, not_not]
     exact ⟨fun x ↦ hqp (hQ x), hQ, ⟨x₀, hqp (hQ x₀)⟩, ⟨x₀, hQ x₀⟩, ⟨x₀, hP x₀⟩,
-      ⟨x₀, nec_mono Set.subset_union_left (hP x₀)⟩, hP,
-      fun x ↦ nec_mono Set.subset_union_left (hP x)⟩
+      ⟨x₀, core_mono Set.subset_union_left (hP x₀)⟩, hP,
+      fun x ↦ core_mono Set.subset_union_left (hP x)⟩
   · obtain ⟨w, hPQ, hB, ⟨y, hy⟩, ⟨z, hz⟩, ⟨y', hy'⟩, ⟨z', hz'⟩⟩ := h₃
     refine ⟨w, ?_⟩
     simp only [Set.mem_compl_iff, Set.mem_iInter, Set.mem_iUnion, not_exists, not_forall, not_not]
@@ -442,12 +444,13 @@ end Negative
 
 section OverUniversal
 
-variable (R : W → W → Prop) (p q : D → Set W)
+variable (R : SetRel W W) (p q : D → Set W)
 
 /-- The alternatives of `◇∀x(px ∨ qx)` (55). -/
 def overUniversalAlts : Set (Set W) :=
-  {poss R (⋂ x, p x ∪ q x), poss R (⋂ x, p x), poss R (⋂ x, q x), poss R (⋂ x, p x ∩ q x),
-    poss R (⋃ x, p x ∪ q x), poss R (⋃ x, p x), poss R (⋃ x, q x), poss R (⋃ x, p x ∩ q x)}
+  {R.preimage (⋂ x, p x ∪ q x), R.preimage (⋂ x, p x), R.preimage (⋂ x, q x),
+    R.preimage (⋂ x, p x ∩ q x), R.preimage (⋃ x, p x ∪ q x), R.preimage (⋃ x, p x),
+    R.preimage (⋃ x, q x), R.preimage (⋃ x, p x ∩ q x)}
 
 variable {R p q}
 
@@ -455,60 +458,60 @@ variable {R p q}
 given the corresponding worlds, `◇∀x(px ∨ qx)` strengthens to `◇∀x px ∧ ◇∀x qx ∧ ¬◇∃x(px ∧ qx)`,
 although `◇∀` does not distribute over disjunction. -/
 theorem freeChoiceOverUniversal
-    (h₁ : ∃ w ∈ poss R (⋂ x, p x), w ∉ poss R (⋃ x, q x))
-    (h₂ : ∃ w ∈ poss R (⋂ x, q x), w ∉ poss R (⋃ x, p x))
-    (h₃ : ∃ w ∈ poss R (⋂ x, p x ∪ q x) ∩ poss R (⋃ x, p x) ∩ poss R (⋃ x, q x),
-      w ∉ poss R (⋂ x, p x) ∪ poss R (⋂ x, q x) ∪ poss R (⋃ x, p x ∩ q x))
-    (h : ∃ w ∈ poss R (⋂ x, p x) ∩ poss R (⋂ x, q x), w ∉ poss R (⋃ x, p x ∩ q x)) :
-    exhIEII (overUniversalAlts R p q) (poss R (⋂ x, p x ∪ q x)) =
-      (poss R (⋂ x, p x) ∩ poss R (⋂ x, q x)) \ poss R (⋃ x, p x ∩ q x) := by
+    (h₁ : ∃ w ∈ R.preimage (⋂ x, p x), w ∉ R.preimage (⋃ x, q x))
+    (h₂ : ∃ w ∈ R.preimage (⋂ x, q x), w ∉ R.preimage (⋃ x, p x))
+    (h₃ : ∃ w ∈ R.preimage (⋂ x, p x ∪ q x) ∩ R.preimage (⋃ x, p x) ∩ R.preimage (⋃ x, q x),
+      w ∉ R.preimage (⋂ x, p x) ∪ R.preimage (⋂ x, q x) ∪ R.preimage (⋃ x, p x ∩ q x))
+    (h : ∃ w ∈ R.preimage (⋂ x, p x) ∩ R.preimage (⋂ x, q x), w ∉ R.preimage (⋃ x, p x ∩ q x)) :
+    exhIEII (overUniversalAlts R p q) (R.preimage (⋂ x, p x ∪ q x)) =
+      (R.preimage (⋂ x, p x) ∩ R.preimage (⋂ x, q x)) \ R.preimage (⋃ x, p x ∩ q x) := by
   obtain ⟨x₀⟩ := ‹Nonempty D›
-  have hφ : poss R (⋂ x, p x) ⊆ poss R (⋂ x, p x ∪ q x) :=
-    poss_mono (Set.iInter_mono fun x ↦ Set.subset_union_left)
-  have hφ' : poss R (⋂ x, q x) ⊆ poss R (⋂ x, p x ∪ q x) :=
-    poss_mono (Set.iInter_mono fun x ↦ Set.subset_union_right)
-  have he : poss R (⋂ x, p x) ⊆ poss R (⋃ x, p x ∪ q x) :=
-    poss_mono fun w h ↦ Set.mem_iUnion.2 ⟨x₀, Or.inl (Set.mem_iInter.1 h x₀)⟩
-  have he₁ : poss R (⋂ x, p x) ⊆ poss R (⋃ x, p x) :=
-    poss_mono fun w h ↦ Set.mem_iUnion.2 ⟨x₀, Set.mem_iInter.1 h x₀⟩
-  have he₂ : poss R (⋂ x, q x) ⊆ poss R (⋃ x, q x) :=
-    poss_mono fun w h ↦ Set.mem_iUnion.2 ⟨x₀, Set.mem_iInter.1 h x₀⟩
-  have hsb : poss R (⋂ x, p x ∩ q x) ⊆ poss R (⋃ x, p x ∩ q x) :=
-    poss_mono fun w h ↦ Set.mem_iUnion.2 ⟨x₀, Set.mem_iInter.1 h x₀⟩
-  have hbp : poss R (⋃ x, p x ∩ q x) ⊆ poss R (⋃ x, p x) :=
-    poss_mono (Set.iUnion_mono fun x ↦ Set.inter_subset_left)
-  have hbq : poss R (⋃ x, p x ∩ q x) ⊆ poss R (⋃ x, q x) :=
-    poss_mono (Set.iUnion_mono fun x ↦ Set.inter_subset_right)
+  have hφ : R.preimage (⋂ x, p x) ⊆ R.preimage (⋂ x, p x ∪ q x) :=
+    preimage_mono (Set.iInter_mono fun x ↦ Set.subset_union_left)
+  have hφ' : R.preimage (⋂ x, q x) ⊆ R.preimage (⋂ x, p x ∪ q x) :=
+    preimage_mono (Set.iInter_mono fun x ↦ Set.subset_union_right)
+  have he : R.preimage (⋂ x, p x) ⊆ R.preimage (⋃ x, p x ∪ q x) :=
+    preimage_mono fun w h ↦ Set.mem_iUnion.2 ⟨x₀, Or.inl (Set.mem_iInter.1 h x₀)⟩
+  have he₁ : R.preimage (⋂ x, p x) ⊆ R.preimage (⋃ x, p x) :=
+    preimage_mono fun w h ↦ Set.mem_iUnion.2 ⟨x₀, Set.mem_iInter.1 h x₀⟩
+  have he₂ : R.preimage (⋂ x, q x) ⊆ R.preimage (⋃ x, q x) :=
+    preimage_mono fun w h ↦ Set.mem_iUnion.2 ⟨x₀, Set.mem_iInter.1 h x₀⟩
+  have hsb : R.preimage (⋂ x, p x ∩ q x) ⊆ R.preimage (⋃ x, p x ∩ q x) :=
+    preimage_mono fun w h ↦ Set.mem_iUnion.2 ⟨x₀, Set.mem_iInter.1 h x₀⟩
+  have hbp : R.preimage (⋃ x, p x ∩ q x) ⊆ R.preimage (⋃ x, p x) :=
+    preimage_mono (Set.iUnion_mono fun x ↦ Set.inter_subset_left)
+  have hbq : R.preimage (⋃ x, p x ∩ q x) ⊆ R.preimage (⋃ x, q x) :=
+    preimage_mono (Set.iUnion_mono fun x ↦ Set.inter_subset_right)
   rw [overUniversalAlts, exhIEII_quantified ?_ ?_ ?_ ?_ ?_]
   · ext w
     simp only [Set.mem_sdiff, Set.mem_inter_iff, Set.mem_union, not_or]
     exact ⟨fun h ↦ ⟨⟨h.1.1.1.1.1.2, h.1.1.1.1.2⟩, h.2.2⟩,
       fun h ↦ ⟨⟨⟨⟨⟨⟨hφ h.1.1, h.1.1⟩, h.1.2⟩, he h.1.1⟩, he₁ h.1.1⟩, he₂ h.1.2⟩,
         fun h' ↦ h.2 (hsb h'), h.2⟩⟩
-  · rintro w ⟨v, hv, hvpq⟩
+  · rintro w ⟨v, hvpq, hv⟩
     have hvpq' := fun x ↦ Set.mem_iInter.1 hvpq x
     by_cases hq : ∀ x, v ∉ q x
-    · exact Or.inl ⟨⟨v, hv, Set.mem_iInter.2 fun x ↦ (hvpq' x).resolve_right (hq x)⟩,
-        ⟨v, hv, Set.mem_iUnion.2 ⟨x₀, hvpq' x₀⟩⟩,
-        ⟨v, hv, Set.mem_iUnion.2 ⟨x₀, (hvpq' x₀).resolve_right (hq x₀)⟩⟩⟩
+    · exact Or.inl ⟨⟨v, Set.mem_iInter.2 fun x ↦ (hvpq' x).resolve_right (hq x), hv⟩,
+        ⟨v, Set.mem_iUnion.2 ⟨x₀, hvpq' x₀⟩, hv⟩,
+        ⟨v, Set.mem_iUnion.2 ⟨x₀, (hvpq' x₀).resolve_right (hq x₀)⟩, hv⟩⟩
     push Not at hq
     obtain ⟨y, hy⟩ := hq
     by_cases hp : ∀ x, v ∉ p x
-    · exact Or.inr (Or.inl ⟨⟨v, hv, Set.mem_iInter.2 fun x ↦ (hvpq' x).resolve_left (hp x)⟩,
-        ⟨v, hv, Set.mem_iUnion.2 ⟨x₀, hvpq' x₀⟩⟩, ⟨v, hv, Set.mem_iUnion.2 ⟨y, hy⟩⟩⟩)
+    · exact Or.inr (Or.inl ⟨⟨v, Set.mem_iInter.2 fun x ↦ (hvpq' x).resolve_left (hp x), hv⟩,
+        ⟨v, Set.mem_iUnion.2 ⟨x₀, hvpq' x₀⟩, hv⟩, ⟨v, Set.mem_iUnion.2 ⟨y, hy⟩, hv⟩⟩)
     push Not at hp
     obtain ⟨z, hz⟩ := hp
-    exact Or.inr (Or.inr ⟨⟨v, hv, Set.mem_iUnion.2 ⟨x₀, hvpq' x₀⟩⟩,
-      ⟨v, hv, Set.mem_iUnion.2 ⟨z, hz⟩⟩, ⟨v, hv, Set.mem_iUnion.2 ⟨y, hy⟩⟩⟩)
+    exact Or.inr (Or.inr ⟨⟨v, Set.mem_iUnion.2 ⟨x₀, hvpq' x₀⟩, hv⟩,
+      ⟨v, Set.mem_iUnion.2 ⟨z, hz⟩, hv⟩, ⟨v, Set.mem_iUnion.2 ⟨y, hy⟩, hv⟩⟩)
   · obtain ⟨w, hP, hQ⟩ := h₁
     exact ⟨w, hφ hP, hP, he hP, he₁ hP, fun h ↦ hQ (he₂ h), fun h ↦ hQ (hbq (hsb h)), hQ,
       fun h ↦ hQ (hbq h)⟩
   · obtain ⟨w, hQ, hP⟩ := h₂
-    exact ⟨w, hφ' hQ, hQ, poss_mono (Set.iUnion_mono fun x ↦ Set.subset_union_right) (he₂ hQ),
+    exact ⟨w, hφ' hQ, hQ, preimage_mono (Set.iUnion_mono fun x ↦ Set.subset_union_right) (he₂ hQ),
       he₂ hQ, fun h ↦ hP (he₁ h), fun h ↦ hP (hbp (hsb h)), hP, fun h ↦ hP (hbp h)⟩
   · obtain ⟨w, ⟨⟨hPQ, hP⟩, hQ⟩, hn⟩ := h₃
     simp only [Set.mem_union, not_or] at hn
-    exact ⟨w, hPQ, poss_mono (Set.iUnion_mono fun x ↦ Set.subset_union_left) hP, hP, hQ, hn.1.1,
+    exact ⟨w, hPQ, preimage_mono (Set.iUnion_mono fun x ↦ Set.subset_union_left) hP, hP, hQ, hn.1.1,
       hn.1.2, fun h ↦ hn.2 (hsb h), hn.2⟩
   · obtain ⟨w, ⟨hP, hQ⟩, hB⟩ := h
     exact ⟨w, hφ hP, hP, hQ, he hP, he₁ hP, he₂ hQ, fun h ↦ hB (hsb h), hB⟩

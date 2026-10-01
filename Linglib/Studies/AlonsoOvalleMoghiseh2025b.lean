@@ -49,6 +49,7 @@ removes (`modal_gq`, (58)–(63)); collective predicates need pluralities in the
 namespace AlonsoOvalleMoghiseh2025b
 
 open Quantifier Quantifier.GQ Quantifier.NP Question Finset
+open scoped SetRel
 
 /-! ### Entities, worlds, and answers -/
 
@@ -173,10 +174,10 @@ theorem farsi :
 abbrev Base := {A : Finset World // A.Nonempty}
 
 /-- The accessibility of *must*, relating a deontic world to the buy-worlds it permits. -/
-def permits (A : Base) (v : World) : Prop := v ∈ A.1
+def permits : SetRel Base World := .ofSuccessors fun A ↦ ↑A.1
 
 /-- Every buy-world is the sole world some deontic world permits. -/
-theorem permits_singleton (v : World) : ∃ A : Base, ∀ u, permits A u ↔ u = v :=
+theorem permits_singleton (v : World) : ∃ A : Base, ∀ u, A ~[permits] u ↔ u = v :=
   ⟨⟨{v}, Finset.singleton_nonempty v⟩, fun _ => Finset.mem_singleton⟩
 
 /-- The scenario of (59), where Forood must buy one of two things and either is permitted. -/

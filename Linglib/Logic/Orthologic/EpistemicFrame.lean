@@ -23,7 +23,7 @@ epistemic ortholattice, and `B` embeds into it.
 ## Main results
 
 * `Orthologic.refines_iff`: refinement is componentwise.
-* `Orthologic.mem_nec_embed`, `Orthologic.mem_diamond_embed`: `b` must be the case at `(a, i)`
+* `Orthologic.mem_core_embed`, `Orthologic.mem_diamond_embed`: `b` must be the case at `(a, i)`
   iff `i ≤ b`, and might be iff `a ⊓ b ≠ ⊥`.
 * `Orthologic.eB_le_iff`, `Orthologic.eB_compl`: the embedding is an order embedding preserving
   `⊤`, `⊥`, meets and complements.
@@ -39,6 +39,8 @@ epistemic ortholattice, and `B` embeds into it.
 @[expose] public section
 
 namespace Orthologic
+
+open SetRel ModalLogic
 
 variable {B : Type*} [BooleanAlgebra B]
 
@@ -69,12 +71,13 @@ def compat : Prop := x.truth ⊓ y.truth ≠ ⊥ ∧ x.truth ≤ y.info ∧ y.tr
 
 /-- A possibility accesses another when both components of the target lie between the
 components of the source ([holliday-mandelkern-2024] Definition 5.1.3). -/
-def access : Prop := x.truth ≤ y.truth ∧ y.info ≤ x.info
+def access : SetRel (Possibility B) (Possibility B) :=
+  {p | p.1.truth ≤ p.2.truth ∧ p.2.info ≤ p.1.info}
 
 instance [DecidableEq B] [DecidableLE B] : Decidable (compat x y) :=
   inferInstanceAs (Decidable (_ ∧ _ ∧ _))
 
-instance [DecidableEq B] [DecidableLE B] : Decidable (access x y) :=
+instance [DecidableEq B] [DecidableLE B] : Decidable (x ~[access] y) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
 /-- `diag a` is the possibility `(a, a)`, which knows everything it settles. -/
@@ -91,7 +94,7 @@ theorem compat_diag_info : compat x (diag x.info x.info_ne_bot) :=
   ⟨by simp only [diag_truth, inf_of_le_left x.truth_le_info]; exact x.truth_ne_bot,
     x.truth_le_info, le_rfl⟩
 
-theorem access_diag_info : access x (diag x.info x.info_ne_bot) := ⟨x.truth_le_info, le_rfl⟩
+theorem access_diag_info : x ~[access] diag x.info x.info_ne_bot := ⟨x.truth_le_info, le_rfl⟩
 
 end Possibility
 
@@ -105,7 +108,7 @@ def epistemicFrame (B : Type*) [BooleanAlgebra B] : CompatFrame (Possibility B) 
     x.truth_le_info⟩⟩
   compat_symm := ⟨fun _ _ h ↦ ⟨by rw [inf_comm]; exact h.1, h.2.2, h.2.1⟩⟩
 
-instance : Std.Refl (access (B := B)) := ⟨fun _ ↦ ⟨le_rfl, le_rfl⟩⟩
+instance : (access (B := B)).IsRefl := ⟨fun _ ↦ ⟨le_rfl, le_rfl⟩⟩
 
 /-- Epistemic access is R-regular, witnessed by `(a ⊔ d, a ⊔ d)` ([holliday-mandelkern-2024]
 Theorem 5.7.1). -/
@@ -171,9 +174,9 @@ instance [DecidableLE B] (b : B) : DecidablePred (embed b) :=
   fun x ↦ inferInstanceAs (Decidable (x.truth ≤ b))
 
 /-- `b` must be the case at `(a, i)` iff `i ≤ b`. [holliday-mandelkern-2024] Lemma 5.8.2. -/
-theorem mem_nec_embed {b : B} {x : Possibility B} :
-    x ∈ ModalLogic.nec access (embed b) ↔ x.info ≤ b :=
-  ⟨fun h ↦ h _ x.access_diag_info, fun h y hy ↦ (y.truth_le_info.trans hy.2).trans h⟩
+theorem mem_core_embed {b : B} {x : Possibility B} :
+    x ∈ access.core (embed b) ↔ x.info ≤ b :=
+  ⟨fun h ↦ h x.access_diag_info, fun h y hy ↦ (y.truth_le_info.trans hy.2).trans h⟩
 
 /-- `b` might be the case at `(a, i)` iff `a ⊓ b ≠ ⊥`. [holliday-mandelkern-2024] Lemma 5.8.3. -/
 theorem mem_diamond_embed {b : B} {x : Possibility B} :
@@ -181,14 +184,14 @@ theorem mem_diamond_embed {b : B} {x : Possibility B} :
   constructor
   · intro h
     have := h _ x.compat_diag_truth
-    simp only [ModalLogic.mem_nec, not_forall] at this
+    simp only [mem_core, not_forall] at this
     obtain ⟨y', ⟨-, hy'a⟩, hy'⟩ := this
     simp only [mem_orthoNeg, not_forall, not_not] at hy'
     obtain ⟨y'', ⟨hne, -, -⟩, hy''⟩ := hy'
     exact ne_bot_of_le_ne_bot hne (inf_le_inf (y'.truth_le_info.trans hy'a) hy'')
   · intro h x' ⟨_, hx', _⟩ hbox
     have hle : x.truth ⊓ b ≤ x'.info := inf_le_left.trans hx'
-    refine hbox ⟨(x'.truth ⊔ x.truth ⊓ b, x'.info), ne_bot_of_le_ne_bot x'.truth_ne_bot
+    refine @hbox ⟨(x'.truth ⊔ x.truth ⊓ b, x'.info), ne_bot_of_le_ne_bot x'.truth_ne_bot
       le_sup_left, sup_le x'.truth_le_info hle⟩ ⟨le_sup_left, le_rfl⟩
       ⟨(x.truth ⊓ b, x'.info), h, hle⟩ ⟨?_, sup_le x'.truth_le_info hle, hle⟩ inf_le_right
     show (x'.truth ⊔ x.truth ⊓ b) ⊓ (x.truth ⊓ b) ≠ ⊥
@@ -294,16 +297,16 @@ theorem not_diamond_embed_subset {b : B} (hb : b ≠ ⊥) (hb' : b ≠ ⊤) :
 
 /-! ### The epistemic extension is S5 -/
 
-instance : IsTrans (Possibility B) access := ⟨fun _ _ _ h h' ↦ ⟨h.1.trans h'.1, h'.2.trans h.2⟩⟩
+instance : (access (B := B)).IsTrans := ⟨fun _ _ _ h h' ↦ ⟨h.1.trans h'.1, h'.2.trans h.2⟩⟩
 
 /-- Whatever is the case must be possible, `U ⊆ □◇U` for every set `U`, witnessed by
 `(a ⊔ a'', a ⊔ a'')` for `(a, i) ∈ U` (the proof of [holliday-mandelkern-2024]
 Theorem 5.7.3). -/
-theorem subset_nec_diamond (U : Set (Possibility B)) :
-    U ⊆ ModalLogic.nec access (diamond (epistemicFrame B) access U) := by
+theorem subset_core_diamond (U : Set (Possibility B)) :
+    U ⊆ access.core (diamond (epistemicFrame B) access U) := by
   intro x hx x' hxx' x'' hc hbox
   have hne : x.truth ⊔ x''.truth ≠ ⊥ := ne_bot_of_le_ne_bot x.truth_ne_bot le_sup_left
-  refine hbox (diag _ hne) ⟨le_sup_right, sup_le (hxx'.1.trans hc.2.1) x''.truth_le_info⟩ x
+  refine @hbox (diag _ hne) ⟨le_sup_right, sup_le (hxx'.1.trans hc.2.1) x''.truth_le_info⟩ x
     ⟨?_, sup_le x.truth_le_info (hc.2.2.trans hxx'.2), le_sup_left⟩ hx
   simp only [diag_truth, inf_of_le_right (le_sup_left : x.truth ≤ x.truth ⊔ x''.truth)]
   exact x.truth_ne_bot
@@ -315,6 +318,6 @@ theorem diamondHom_necHom_le (U : (epistemicFrame B).Regular) :
       (epistemicFrame B).necHom access (diamondHom ((epistemicFrame B).necHom access) U) := by
   refine diamondHom_le_box_diamondHom (CompatFrame.necHom_le_necHom_necHom access) (fun V ↦ ?_) U
   rw [← SetLike.coe_subset_coe, CompatFrame.coe_necHom, CompatFrame.coe_diamondHom_necHom]
-  exact subset_nec_diamond (V : Set (Possibility B))
+  exact subset_core_diamond (V : Set (Possibility B))
 
 end Orthologic

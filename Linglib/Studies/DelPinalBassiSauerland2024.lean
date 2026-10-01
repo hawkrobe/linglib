@@ -52,77 +52,80 @@ namespace DelPinalBassiSauerland2024
 
 open Presupposition
 open Exhaustification Exhaustification.Presuppositional BarLevFox2020 ModalLogic
+open SetRel
+open scoped ModalLogic
 
 /-! ### `pex^{IE+II}` on `◇(p ∨ q)`, §2 -/
 
 section FreeChoice
 
-variable {W : Type*} (R : W → W → Prop) (a b : Set W)
+variable {W : Type*} (R : SetRel W W) (a b : Set W)
 
 /-- (14): `pex^{IE+II}[◇(p ∨ q)]`. -/
-def pexFC : PartialProp W := pexIEII_full (fcAlts R a b) (poss R (a ∪ b))
+def pexFC : PartialProp W := pexIEII_full (fcAlts R a b) (R.preimage (a ∪ b))
 
-variable {R a b} (h₁ : ∃ w ∈ poss R a, w ∉ poss R b) (h₂ : ∃ w ∈ poss R b, w ∉ poss R a)
-  (h : ∃ w ∈ poss R a ∩ poss R b, w ∉ poss R (a ∩ b)) {w : W}
+variable {R a b} (h₁ : ∃ w ∈ R.preimage a, w ∉ R.preimage b)
+  (h₂ : ∃ w ∈ R.preimage b, w ∉ R.preimage a)
+  (h : ∃ w ∈ R.preimage a ∩ R.preimage b, w ∉ R.preimage (a ∩ b)) {w : W}
 include h₁ h₂ h
 
-theorem poss_left_mem_II : IsInnocentlyIncludable (fcAlts R a b) (poss R (a ∪ b)) (poss R a) := by
+theorem poss_left_mem_II :
+    IsInnocentlyIncludable (fcAlts R a b) (R.preimage (a ∪ b)) (R.preimage a) := by
   rw [IsInnocentlyIncludable, II_fcAlts h₁ h₂ h]; simp
 
-theorem poss_right_mem_II : IsInnocentlyIncludable (fcAlts R a b) (poss R (a ∪ b)) (poss R b) := by
+theorem poss_right_mem_II :
+    IsInnocentlyIncludable (fcAlts R a b) (R.preimage (a ∪ b)) (R.preimage b) := by
   rw [IsInnocentlyIncludable, II_fcAlts h₁ h₂ h]; simp
 
 /-- (14): the presupposed homogeneity `◇p ↔ ◇q` with the asserted `◇(p ∨ q)` gives free
 choice. -/
-theorem pex_fc (hw : (pexFC R a b).holds w) : w ∈ poss R a ∧ w ∈ poss R b := by
-  have hiff : w ∈ poss R a ↔ w ∈ poss R b :=
-    hw.1.2 (poss R a) ⟨poss_left_mem_II h₁ h₂ h, by simp [fcAlts]⟩ (poss R b)
+theorem pex_fc (hw : (pexFC R a b).holds w) : w ∈ R.preimage a ∧ w ∈ R.preimage b := by
+  have hiff : w ∈ R.preimage a ↔ w ∈ R.preimage b :=
+    hw.1.2 (R.preimage a) ⟨poss_left_mem_II h₁ h₂ h, by simp [fcAlts]⟩ (R.preimage b)
       ⟨poss_right_mem_II h₁ h₂ h, by simp [fcAlts]⟩
-  rcases poss_union.le hw.2 with hA | hB
+  rcases (preimage_union ..).le hw.2 with hA | hB
   exacts [⟨hA, hiff.1 hA⟩, ⟨hiff.2 hB, hB⟩]
 
 omit h₁ h₂ h in
 /-- (16): negation denies the prejacent and leaves the presupposition, so `¬pex[◇(p ∨ q)]`
 is double prohibition. -/
 theorem pex_double_prohibition (hw : (pexFC R a b).neg.holds w) :
-    w ∉ poss R a ∧ w ∉ poss R b :=
-  ⟨λ hA => hw.2 (poss_union.ge (.inl hA)), λ hB => hw.2 (poss_union.ge (.inr hB))⟩
+    w ∉ R.preimage a ∧ w ∉ R.preimage b :=
+  ⟨fun hA ↦ hw.2 ((preimage_union ..).ge (.inl hA)),
+    fun hB ↦ hw.2 ((preimage_union ..).ge (.inr hB))⟩
 
 omit h₁ h₂ h in
 /-- (19a): `¬□(T ∧ B)` is `◇(¬T ∨ ¬B)`, whose alternatives `¬□T`, `¬□B`, `¬□(T ∨ B)` have the
 structure of those of `◇(p ∨ q)`, so `pex^{IE+II}` gives negative free choice. -/
-theorem pex_negative_fc {T B : Set W} (h₁ : ∃ w ∈ poss R Tᶜ, w ∉ poss R Bᶜ)
-    (h₂ : ∃ w ∈ poss R Bᶜ, w ∉ poss R Tᶜ)
-    (h : ∃ w ∈ poss R Tᶜ ∩ poss R Bᶜ, w ∉ poss R (Tᶜ ∩ Bᶜ)) (hw : (pexFC R Tᶜ Bᶜ).holds w) :
-    w ∉ nec R T ∧ w ∉ nec R B := by
-  simpa only [← compl_nec, Set.mem_compl_iff] using pex_fc h₁ h₂ h hw
+theorem pex_negative_fc {T B : Set W} (h₁ : ∃ w ∈ R.preimage Tᶜ, w ∉ R.preimage Bᶜ)
+    (h₂ : ∃ w ∈ R.preimage Bᶜ, w ∉ R.preimage Tᶜ)
+    (h : ∃ w ∈ R.preimage Tᶜ ∩ R.preimage Bᶜ, w ∉ R.preimage (Tᶜ ∩ Bᶜ))
+    (hw : (pexFC R Tᶜ Bᶜ).holds w) :
+    w ∉ R.core T ∧ w ∉ R.core B := by
+  simpa only [preimage_compl, Set.mem_compl_iff] using pex_fc h₁ h₂ h hw
 
 end FreeChoice
 
 section NegativeFreeChoice
 
-variable {W : Type*} (R : W → W → Prop) (T B : Set W)
+variable {W : Type*} (R : SetRel W W) (T B : Set W)
 
 /-- The alternatives of `□(T ∧ B)`: the conjunction replaced by its conjuncts and their
 disjunction. -/
-def necAlts : Set (Set W) := {nec R (T ∩ B), nec R T, nec R B, nec R (T ∪ B)}
+def necAlts : Set (Set W) := {R.core (T ∩ B), R.core T, R.core B, R.core (T ∪ B)}
 
 /-- (20): `pex^{IE+II}[□(T ∧ B)]`. -/
-def pexNec : PartialProp W := pexIEII_full (necAlts R T B) (nec R (T ∩ B))
+def pexNec : PartialProp W := pexIEII_full (necAlts R T B) (R.core (T ∩ B))
 
 variable {R T B}
 
-theorem nec_inter : nec R (T ∩ B) = nec R T ∩ nec R B :=
-  Set.ext λ _ => ⟨λ h => ⟨λ v hv => (h v hv).1, λ v hv => (h v hv).2⟩,
-    λ h v hv => ⟨h.1 v hv, h.2 v hv⟩⟩
-
 /-- Every alternative of `□(T ∧ B)` is entailed by it, so none is excludable and, given a
 world where it holds, `□T` and `□B` are includable. -/
-theorem nec_mem_II (hsat : ∃ w, w ∈ nec R (T ∩ B)) :
-    nec R T ∈ II (necAlts R T B) (nec R (T ∩ B)) ∧
-      nec R B ∈ II (necAlts R T B) (nec R (T ∩ B)) := by
+theorem nec_mem_II (hsat : ∃ w, w ∈ R.core (T ∩ B)) :
+    R.core T ∈ II (necAlts R T B) (R.core (T ∩ B)) ∧
+      R.core B ∈ II (necAlts R T B) (R.core (T ∩ B)) := by
   obtain ⟨w₀, hw₀⟩ := hsat
-  have hsub : ∀ q ∈ necAlts R T B, nec R (T ∩ B) ⊆ q := by
+  have hsub : ∀ q ∈ necAlts R T B, R.core (T ∩ B) ⊆ q := by
     intro q hq
     simp only [necAlts, Set.mem_insert_iff, Set.mem_singleton_iff] at hq
     rcases hq with rfl | rfl | rfl | rfl
@@ -132,23 +135,23 @@ theorem nec_mem_II (hsat : ∃ w, w ∈ nec R (T ∩ B)) :
     · exact box_mono R (Set.inter_subset_left.trans Set.subset_union_left)
   have hfin : (necAlts R T B).Finite :=
     ((Set.finite_singleton _).insert _).insert _ |>.insert _
-  have hcell : cell (necAlts R T B) (nec R (T ∩ B)) w₀ :=
+  have hcell : cell (necAlts R T B) (R.core (T ∩ B)) w₀ :=
     ⟨hw₀, λ q hq => absurd hq (not_isInnocentlyExcludable_of_phi_subset hfin ⟨w₀, hw₀⟩
       (hsub q hq.1)), λ r hr => hsub r hr.1 hw₀⟩
   exact ⟨mem_II_of_cell_witness _ _ (by simp [necAlts]) w₀ hcell
-      (hsub (nec R T) (by simp [necAlts]) hw₀),
+      (hsub (R.core T) (by simp [necAlts]) hw₀),
     mem_II_of_cell_witness _ _ (by simp [necAlts]) w₀ hcell
-      (hsub (nec R B) (by simp [necAlts]) hw₀)⟩
+      (hsub (R.core B) (by simp [necAlts]) hw₀)⟩
 
 /-- (20): `¬pex^{IE+II}[□(T ∧ B)]` gives negative free choice, the homogeneity `□T ↔ □B`
 projecting out of the negation of the strong prejacent. -/
-theorem pex_negative_fc_under_neg (hsat : ∃ w, w ∈ nec R (T ∩ B)) {w : W}
-    (hw : (pexNec R T B).neg.holds w) : w ∉ nec R T ∧ w ∉ nec R B := by
+theorem pex_negative_fc_under_neg (hsat : ∃ w, w ∈ R.core (T ∩ B)) {w : W}
+    (hw : (pexNec R T B).neg.holds w) : w ∉ R.core T ∧ w ∉ R.core B := by
   obtain ⟨hT, hB⟩ := nec_mem_II hsat
-  have hiff : w ∈ nec R T ↔ w ∈ nec R B :=
-    hw.1.2 (nec R T) ⟨hT, by simp [necAlts]⟩ (nec R B) ⟨hB, by simp [necAlts]⟩
-  have hne : w ∉ nec R (T ∩ B) := hw.2
-  rw [nec_inter] at hne
+  have hiff : w ∈ R.core T ↔ w ∈ R.core B :=
+    hw.1.2 (R.core T) ⟨hT, by simp [necAlts]⟩ (R.core B) ⟨hB, by simp [necAlts]⟩
+  have hne : w ∉ R.core (T ∩ B) := hw.2
+  rw [SetRel.core_inter] at hne
   exact ⟨λ h => hne ⟨h, hiff.1 h⟩, λ h => hne ⟨hiff.2 h, h⟩⟩
 
 end NegativeFreeChoice
@@ -157,36 +160,36 @@ end NegativeFreeChoice
 
 section NegativeFactive
 
-variable {W : Type*} {R : W → W → Prop} {a b : Set W}
-  (h₁ : ∃ w ∈ poss R a, w ∉ poss R b) (h₂ : ∃ w ∈ poss R b, w ∉ poss R a)
-  (h : ∃ w ∈ poss R a ∩ poss R b, w ∉ poss R (a ∩ b)) {w : W}
+variable {W : Type*} {R : SetRel W W} {a b : Set W}
+  (h₁ : ∃ w ∈ R.preimage a, w ∉ R.preimage b) (h₂ : ∃ w ∈ R.preimage b, w ∉ R.preimage a)
+  (h : ∃ w ∈ R.preimage a ∩ R.preimage b, w ∉ R.preimage (a ∩ b)) {w : W}
 include h₁ h₂ h
 
 /-- (21a): under a negative factive the whole `pex` output is presupposed, so free choice is
 presupposed. -/
 theorem fc_presupposed_under_neg_factive (believes : (W → Prop) → W → Prop)
     (hw : (PartialProp.negFactive (pexFC R a b) believes).presup w) :
-    w ∈ poss R a ∧ w ∈ poss R b :=
+    w ∈ R.preimage a ∧ w ∈ R.preimage b :=
   pex_fc h₁ h₂ h hw
 
 omit h₁ h₂ h in
 /-- (21b): the factive's assertion denies belief in the prejacent `◇(p ∨ q)`, hence belief in
 either disjunct. -/
-theorem pex_unaware_target (R' : W → W → Prop)
-    (hw : (PartialProp.negFactive (pexFC R a b) (box R')).assertion w) :
-    ¬ box R' (poss R a) w ∧ ¬ box R' (poss R b) w :=
-  ⟨λ hA => hw (box_mono R' (λ _ hv => poss_union.ge (.inl hv)) w hA),
-   λ hB => hw (box_mono R' (λ _ hv => poss_union.ge (.inr hv)) w hB)⟩
+theorem pex_unaware_target (R' : SetRel W W)
+    (hw : (PartialProp.negFactive (pexFC R a b) (Box R')).assertion w) :
+    ¬ □[R'] (· ∈ R.preimage a) w ∧ ¬ □[R'] (· ∈ R.preimage b) w :=
+  ⟨fun hA ↦ hw (box_mono R' (fun _ hv ↦ (preimage_union ..).ge (.inl hv)) w hA),
+   fun hB ↦ hw (box_mono R' (fun _ hv ↦ (preimage_union ..).ge (.inr hv)) w hB)⟩
 
 /-- (24a): with a flat `exh` complement the factive only denies belief in the exhaustified
 conjunction, which an attitude holder who believes Olivia can take Logic but not Algebra
 satisfies, so the target that he believes neither is missed. -/
 theorem exh_unaware_too_weak :
-    ∃ R' : W → W → Prop, box R' (poss R a) w ∧
-      ¬ box R' (exhIEII (fcAlts R a b) (poss R (a ∪ b))) w := by
+    ∃ R' : SetRel W W, □[R'] (· ∈ R.preimage a) w ∧
+      ¬ □[R'] (· ∈ exhIEII (fcAlts R a b) (R.preimage (a ∪ b))) w := by
   obtain ⟨w₁, hw₁a, hw₁b⟩ := id h₁
-  refine ⟨λ _ v => v = w₁, λ _ hv => hv ▸ hw₁a, λ hbox => ?_⟩
-  have := hbox w₁ rfl
+  refine ⟨.ofSuccessors fun _ ↦ {w₁}, fun v (hv : v = w₁) ↦ hv ▸ hw₁a, fun hbox ↦ ?_⟩
+  have := hbox w₁ (Set.mem_singleton w₁)
   rw [freeChoice h₁ h₂ h] at this
   exact hw₁b this.1.2
 
@@ -196,46 +199,47 @@ end NegativeFactive
 
 section Filtering
 
-variable {W : Type*} {R : W → W → Prop} {a b A B : Set W} (hA : a ⊆ A) (hB : b ⊆ B)
+variable {W : Type*} {R : SetRel W W} {a b A B : Set W} (hA : a ⊆ A) (hB : b ⊆ B)
 include hA hB
 
 /-- (53c): in `¬pex[◇(a ∨ b)] ∨ C`, with `C` presupposing `◇A ∧ ◇B` for `a ⊆ A` and `b ⊆ B`,
 the presupposition is satisfied in `C`'s local context once the first disjunct's own
 presupposition is in the global context: the negation of the first disjunct is free choice
 for `a` and `b`. So the disjunction rule (45) filters it. -/
-theorem filtering (h₁ : ∃ w ∈ poss R a, w ∉ poss R b) (h₂ : ∃ w ∈ poss R b, w ∉ poss R a)
-    (h : ∃ w ∈ poss R a ∩ poss R b, w ∉ poss R (a ∩ b)) {c : Set W}
+theorem filtering (h₁ : ∃ w ∈ R.preimage a, w ∉ R.preimage b)
+    (h₂ : ∃ w ∈ R.preimage b, w ∉ R.preimage a)
+    (h : ∃ w ∈ R.preimage a ∩ R.preimage b, w ∉ R.preimage (a ∩ b)) {c : Set W}
     (hc : c ⊆ (pexFC R a b).presup) (C : W → Prop) :
-    PartialProp.Admits ⟨λ w => w ∈ poss R A ∧ w ∈ poss R B, C⟩
+    PartialProp.Admits ⟨fun w ↦ w ∈ R.preimage A ∧ w ∈ R.preimage B, C⟩
       (Connective.disj.localContext c (pexFC R a b).neg.assertion) := by
   intro w ⟨hcw, hna⟩
   have hfc := pex_fc h₁ h₂ h ⟨hc hcw, not_not.1 hna⟩
-  exact ⟨poss_mono hA hfc.1, poss_mono hB hfc.2⟩
+  exact ⟨preimage_mono hA hfc.1, preimage_mono hB hfc.2⟩
 
 omit hA hB in
 /-- (46c): without exhaustification under the negation the antecedent of the conditional
 presupposition is only `◇(a ∨ b)`, which does not entail `◇A ∧ ◇B`: a world permitting `a`
 but not `B` refutes it. -/
-theorem no_filtering_without_pex (hw : ∃ w ∈ poss R a, w ∉ poss R B) :
-    ¬ ∀ w, w ∈ poss R (a ∪ b) → w ∈ poss R A ∧ w ∈ poss R B :=
-  λ hall => let ⟨w, hwa, hwB⟩ := hw; hwB (hall w (poss_mono Set.subset_union_left hwa)).2
+theorem no_filtering_without_pex (hw : ∃ w ∈ R.preimage a, w ∉ R.preimage B) :
+    ¬ ∀ w, w ∈ R.preimage (a ∪ b) → w ∈ R.preimage A ∧ w ∈ R.preimage B :=
+  fun hall ↦ let ⟨w, hwa, hwB⟩ := hw; hwB (hall w (preimage_mono Set.subset_union_left hwa)).2
 
 omit hA hB in
 /-- (47): a flat `exh` under the negation filters but loses double prohibition, since the
 negated exhaustified disjunction is compatible with permitting `a`. -/
-theorem exh_loses_double_prohibition (h₁ : ∃ w ∈ poss R a, w ∉ poss R b)
-    (h₂ : ∃ w ∈ poss R b, w ∉ poss R a)
-    (h : ∃ w ∈ poss R a ∩ poss R b, w ∉ poss R (a ∩ b)) :
-    ∃ w, w ∉ exhIEII (fcAlts R a b) (poss R (a ∪ b)) ∧ w ∈ poss R a := by
+theorem exh_loses_double_prohibition (h₁ : ∃ w ∈ R.preimage a, w ∉ R.preimage b)
+    (h₂ : ∃ w ∈ R.preimage b, w ∉ R.preimage a)
+    (h : ∃ w ∈ R.preimage a ∩ R.preimage b, w ∉ R.preimage (a ∩ b)) :
+    ∃ w, w ∉ exhIEII (fcAlts R a b) (R.preimage (a ∪ b)) ∧ w ∈ R.preimage a := by
   obtain ⟨w₁, hw₁a, hw₁b⟩ := id h₁
   exact ⟨w₁, λ hex => by rw [freeChoice h₁ h₂ h] at hex; exact hw₁b hex.1.2, hw₁a⟩
 
 /-- (57c): in `pex[□(A ∧ B)] ∨ C`, with `C` presupposing `¬□a ∧ ¬□b`, the negation of the
 first disjunct is negative free choice for `A` and `B`, which entails it, so the disjunction
 rule filters it. -/
-theorem filtering_negative (hsat : ∃ w, w ∈ nec R (A ∩ B)) {c : Set W}
+theorem filtering_negative (hsat : ∃ w, w ∈ R.core (A ∩ B)) {c : Set W}
     (hc : c ⊆ (pexNec R A B).presup) (C : W → Prop) :
-    PartialProp.Admits ⟨λ w => w ∉ nec R a ∧ w ∉ nec R b, C⟩
+    PartialProp.Admits ⟨fun w ↦ w ∉ R.core a ∧ w ∉ R.core b, C⟩
       (Connective.disj.localContext c (pexNec R A B).assertion) := by
   intro w ⟨hcw, hna⟩
   have := pex_negative_fc_under_neg hsat (w := w) ⟨hc hcw, hna⟩

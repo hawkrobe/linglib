@@ -406,17 +406,17 @@ individual, yields instead the partition on whether `p` is for sure to be added 
 ground.
 -/
 
-open scoped ModalLogic in
+open scoped ModalLogic SetRel in
 /-- MV's polar partition and [romero-han-2004]'s VERUM partition differ in general: where the
 common ground accepts nothing contingent, VERUM of a contingent proposition holds nowhere, so
 its partition is `{∅, univ}`. -/
 theorem mv_partition_can_diverge_from_romeroHan_partition :
-    ∃ (R : Bool → Bool → Prop) (cg : Bool → Filter Bool) (p : Set Bool),
+    ∃ (R : SetRel Bool Bool) (cg : Bool → Filter Bool) (p : Set Bool),
       ({p, pᶜ} : Set (Set Bool)) ≠ {{w | □[R] (p ∈ cg ·) w}, {w | □[R] (p ∈ cg ·) w}ᶜ} := by
-  refine ⟨fun _ _ ↦ True, fun _ ↦ ⊤, {true}, fun h ↦ ?_⟩
+  refine ⟨.univ, fun _ ↦ ⊤, {true}, fun h ↦ ?_⟩
   have hmem : ({true} : Set Bool) ∈ ({{true}, {true}ᶜ} : Set (Set Bool)) := Or.inl rfl
   rw [h] at hmem
-  simp [ModalLogic.box, Set.ext_iff] at hmem
+  simp [ModalLogic.Box, Set.ext_iff] at hmem
 
 /-! ### § 7. The defining commitment contrast (corollary of substrate)
 

@@ -8,7 +8,7 @@ public import Linglib.Logic.Modal.Defs
 
 The `NE`-free fragment of BSML, Aloni's BSML∅, behaves like classical modal logic
 ([aloni-2022]). This file defines classical (single-world) Kripke truth of a BSML
-formula, `Realize`, with the modal clause taken from the shared `ModalLogic.diamond`,
+formula, `Realize`, with the modal clause taken from the shared `ModalLogic.Diamond`,
 and proves that on `NE`-free formulas team support is pointwise classical truth
 ([anttila-2021] Proposition 2.2.16, both polarities). Consequence and equivalence
 then coincide with their classical definitions: this is [aloni-2022]'s Fact 15 and
@@ -17,7 +17,7 @@ then coincide with their classical definitions: this is [aloni-2022]'s Fact 15 a
 ## Main declarations
 
 * `Realize M φ w` — classical truth of `φ` at the world `w` of `M`: split disjunction
-  is pointwise, `◇` is `ModalLogic.diamond` over `M.Accessible`, and `NE` is true.
+  is pointwise, `◇` is `ModalLogic.Diamond` over `M.accessible`, and `NE` is true.
 * `eval_iff_forall_realize`, `support_iff_forall_realize`,
   `antiSupport_iff_forall_not_realize` — Proposition 2.2.16: an `NE`-free formula is
   supported by a team iff it is true at each of its worlds, and anti-supported iff false
@@ -56,14 +56,14 @@ variable {W : Type*} {Atom : Type*}
 /-! ### Classical truth -/
 
 /-- Classical Kripke truth of a BSML formula at a single world: split disjunction is
-    pointwise, `◇` is `ModalLogic.diamond` over `M.Accessible`, and `NE` is true. -/
+    pointwise, `◇` is `ModalLogic.Diamond` over `M.accessible`, and `NE` is true. -/
 def Realize (M : KripkeModel W Atom) : Formula Atom → W → Prop
   | .atom p, w => M.val p w = true
   | .ne, _ => True
   | .neg ψ, w => ¬ Realize M ψ w
   | .conj ψ₁ ψ₂, w => Realize M ψ₁ w ∧ Realize M ψ₂ w
   | .disj ψ₁ ψ₂, w => Realize M ψ₁ w ∨ Realize M ψ₂ w
-  | .poss ψ, w => ◇[M.Accessible] (Realize M ψ) w
+  | .poss ψ, w => ◇[M.accessible] (Realize M ψ) w
 
 instance instDecidableRealize (M : KripkeModel W Atom) :
     (φ : Formula Atom) → (w : W) → Decidable (Realize M φ w)
@@ -91,10 +91,10 @@ variable {M : KripkeModel W Atom} {φ ψ ψ₁ ψ₂ : Formula Atom} {w : W}
 @[simp] theorem realize_disj :
     Realize M (.disj ψ₁ ψ₂) w ↔ Realize M ψ₁ w ∨ Realize M ψ₂ w := Iff.rfl
 
-/-- The `◇` clause is `ModalLogic.diamond` over `M.Accessible`, definitionally. -/
+/-- The `◇` clause is `ModalLogic.Diamond` over `M.accessible`, definitionally. -/
 theorem realize_poss : Realize M (.poss ψ) w ↔ ∃ v ∈ M.access w, Realize M ψ v := Iff.rfl
 
-theorem realize_nec : Realize M ψ.nec w ↔ □[M.Accessible] (Realize M ψ) w := by
+theorem realize_nec : Realize M ψ.nec w ↔ □[M.accessible] (Realize M ψ) w := by
   simp [Formula.nec, Realize]
 
 /-! ### Support is pointwise truth (Proposition 2.2.16) -/

@@ -52,6 +52,7 @@ local readings, is not defined.
 namespace Schlenker2003
 
 open Reference ModalLogic
+open scoped SetRel
 
 variable {W E P T : Type*}
 
@@ -95,19 +96,19 @@ def reportedContext (t : ContextTower (Context W E P T)) (holder : E)
 /-- `ContextBox R holder φ t w` iff at every world `R holder`-accessible from `w` the embedded
     meaning `φ` holds of the context of the reported speech act: [schlenker-2003]'s attitude
     verb quantifying over contexts, the box over the reported contexts. -/
-def ContextBox (R : E → W → W → Prop) (holder : E) (φ : Context W E P T → Prop)
+def ContextBox (R : E → SetRel W W) (holder : E) (φ : Context W E P T → Prop)
     (t : ContextTower (Context W E P T)) : W → Prop :=
   □[R holder] fun w' ↦ φ (reportedContext t holder w')
 
-instance [Fintype W] (R : E → W → W → Prop) (holder : E) (φ : Context W E P T → Prop)
+instance [Fintype W] (R : E → SetRel W W) (holder : E) (φ : Context W E P T → Prop)
     [DecidablePred φ] (t : ContextTower (Context W E P T)) (w : W)
-    [∀ v, Decidable (R holder w v)] : Decidable (ContextBox R holder φ t w) :=
+    [∀ v, Decidable (w ~[R holder] v)] : Decidable (ContextBox R holder φ t w) :=
   inferInstanceAs (Decidable (□[R holder] (fun w' ↦ φ (reportedContext t holder w')) w))
 
 /-- With a world-only meaning, context quantification is Hintikka world
     quantification, the sense in which [hintikka-1962]'s semantics is
     a special case of [schlenker-2003]'s. -/
-theorem contextBox_world_only (R : E → W → W → Prop) (holder : E) (p : W → Prop)
+theorem contextBox_world_only (R : E → SetRel W W) (holder : E) (p : W → Prop)
     (t : ContextTower (Context W E P T)) :
     ContextBox R holder (fun c ↦ p c.world) t = □[R holder] p := by
   simp only [ContextBox, reportedContext_world]
@@ -215,12 +216,13 @@ def speechCtx : Ctx :=
   { agent := .alice, addressee := .bob, world := .w0, time := (), position := () }
 
 /-- Bob's doxastic accessibility: both worlds are compatible with what he believes. -/
-def bobBel : Person → World → World → Prop
-  | .bob, _, _ => True
-  | .alice, _, w' => w' = .w0
+def bobBel : Person → SetRel World World
+  | .bob => .univ
+  | .alice => {p | p.2 = .w0}
 
-instance : ∀ a w w', Decidable (bobBel a w w') := by
-  intro a w w'; cases a <;> simp [bobBel] <;> infer_instance
+instance : ∀ a w w', Decidable (w ~[bobBel a] w')
+  | .bob, _, _ => inferInstanceAs (Decidable True)
+  | .alice, _, w' => inferInstanceAs (Decidable (w' = .w0))
 
 /-- Alice is happy only in the actual world; Bob is happy in both. -/
 def isHappy : Person → World → Prop

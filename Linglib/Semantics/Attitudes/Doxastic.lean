@@ -8,7 +8,7 @@ public import Linglib.Logic.Modal.Basic
 # Doxastic attitude semantics
 
 Accessibility-based semantics for doxastic attitude verbs (*believe*, *know*, *think*) in the
-tradition of [hintikka-1962]: `R x w w'` reads "`w'` is compatible with what `x` believes or
+tradition of [hintikka-1962]: `w ~[R x] w'` reads "`w'` is compatible with what `x` believes or
 knows in `w`", and ⟦x believes p⟧(w) is the relational box `□[R x] p w` of `Logic/Modal/Defs`,
 so closure under known implication is the K axiom `ModalLogic.box_K`.
 
@@ -35,7 +35,7 @@ case, in `Studies/Schlenker2003.lean`.
 
 namespace Doxastic
 
-open ModalLogic Presupposition
+open ModalLogic Presupposition SetRel
 
 variable {W E : Type*}
 
@@ -55,8 +55,8 @@ instance (v : Veridicality) (p : W → Prop) [DecidablePred p] (w : W) :
 /-- A doxastic attitude predicate: an accessibility relation for each attitude holder, and a
 veridicality value. -/
 structure DoxasticPredicate (W E : Type*) where
-  /-- `access x w w'`: `w'` is compatible with the attitude of `x` in `w`. -/
-  access : E → W → W → Prop
+  /-- `w ~[access x] w'`: `w'` is compatible with the attitude of `x` in `w`. -/
+  access : E → SetRel W W
   /-- Whether the predicate requires its complement to be true. -/
   veridicality : Veridicality
 
@@ -77,7 +77,7 @@ theorem holdsAt_iff :
     V.HoldsAt agent p w ↔ VeridicalityHolds V.veridicality p w ∧ □[V.access agent] p w :=
   Iff.rfl
 
-instance [Fintype W] [∀ v, Decidable (V.access agent w v)] [DecidablePred p] :
+instance [Fintype W] [∀ v, Decidable (w ~[V.access agent] v)] [DecidablePred p] :
     Decidable (V.HoldsAt agent p w) :=
   inferInstanceAs (Decidable (VeridicalityHolds V.veridicality p w ∧ □[V.access agent] p w))
 
@@ -91,7 +91,7 @@ theorem veridical_entails_complement (hV : V.veridicality = .veridical)
 
 /-- Over reflexive accessibility the veridicality requirement is redundant: the predicate holds
 exactly when its complement is true at every accessible world. -/
-theorem holdsAt_iff_box [Std.Refl (V.access agent)] :
+theorem holdsAt_iff_box [(V.access agent).IsRefl] :
     V.HoldsAt agent p w ↔ □[V.access agent] p w := by
   rw [holdsAt_iff, and_iff_right_iff_imp]
   intro h

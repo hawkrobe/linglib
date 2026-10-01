@@ -37,9 +37,9 @@ Variation and negating all proper ones yields Free Choice.
 
 namespace Exhaustification
 
-open ModalLogic
+open ModalLogic SetRel
 
-variable {W E : Type*} (R : W → W → Prop) (w : W) (D : Finset E) (Q : W → E → Prop)
+variable {W E : Type*} (R : SetRel W W) (w : W) (D : Finset E) (Q : W → E → Prop)
 
 /-- The existential claim over the subdomain `S`: some member of `S` is a witness. -/
 def claim (S : Finset E) (v : W) : Prop := ∃ x ∈ S, Q v x
@@ -55,7 +55,8 @@ variable [∀ v, DecidablePred (Q v)]
 def witnesses (v : W) : Finset E := D.filter (Q v ·)
 
 /-- Modal Variation: the witnesses vary across the accessible worlds. -/
-def ModalVariation : Prop := ∃ v, R w v ∧ ∃ v', R w v' ∧ witnesses D Q v ≠ witnesses D Q v'
+def ModalVariation : Prop :=
+  ∃ v, w ~[R] v ∧ ∃ v', w ~[R] v' ∧ witnesses D Q v ≠ witnesses D Q v'
 
 /-- Uniqueness: at most one witness in each accessible world. -/
 def Uniqueness : Prop := □[R] (fun v => (witnesses D Q v).card ≤ 1) w
@@ -146,14 +147,14 @@ theorem modalVariation_of_singletons [∀ v, DecidablePred (Q v)] (hU : Uniquene
 
 /-- Under a necessity modal, a true claim whose singleton alternatives are all false shows
 Modal Variation. -/
-theorem modalVariation_of_box [∀ v, DecidablePred (Q v)] (hw : ∃ v, R w v)
+theorem modalVariation_of_box [∀ v, DecidablePred (Q v)] (hw : ∃ v, w ~[R] v)
     (h : □[R] (claim Q D) w)
     (hc : ∀ S ∈ subdomainAlternatives .singletons D, ¬ □[R] (claim Q S) w) :
     ModalVariation R w D Q := by
   obtain ⟨v, hv⟩ := hw
   obtain ⟨a, ha, hqa⟩ := h v hv
   have := hc {a} (Finset.mem_image_of_mem _ ha)
-  simp only [box, claim, Finset.mem_singleton, exists_eq_left, not_forall] at this
+  simp only [Box, claim, Finset.mem_singleton, exists_eq_left, not_forall] at this
   obtain ⟨v', hv', hna⟩ := this
   exact ⟨v, hv, v', hv', fun h =>
     hna (Finset.mem_filter.1 (h ▸ Finset.mem_filter.2 ⟨ha, hqa⟩ : a ∈ witnesses D Q v')).2⟩
@@ -181,7 +182,7 @@ theorem freeChoice_of_proper (h : ◇[R] (claim Q D) w)
 
 section Decidable
 
-variable [Fintype W] [DecidableRel R] [∀ v, DecidablePred (Q v)]
+variable [Fintype W] [∀ v v', Decidable (v ~[R] v')] [∀ v, DecidablePred (Q v)]
 
 instance (S : Finset E) (v : W) : Decidable (claim Q S v) :=
   inferInstanceAs (Decidable (∃ x ∈ S, _))
@@ -189,7 +190,7 @@ instance (S : Finset E) (v : W) : Decidable (claim Q S v) :=
 instance : Decidable (FreeChoice R w D Q) := inferInstanceAs (Decidable (∀ x ∈ D, _))
 
 instance [DecidableEq W] : Decidable (ModalVariation R w D Q) :=
-  inferInstanceAs (Decidable (∃ v, R w v ∧ ∃ v', R w v' ∧ _ ≠ _))
+  inferInstanceAs (Decidable (∃ v, w ~[R] v ∧ ∃ v', w ~[R] v' ∧ _ ≠ _))
 
 instance : Decidable (Uniqueness R w D Q) := inferInstanceAs (Decidable (□[R] _ w))
 

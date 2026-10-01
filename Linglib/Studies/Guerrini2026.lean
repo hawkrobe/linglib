@@ -51,8 +51,9 @@ formalized, since they need a trivalent `Gen` and a mood licensing substrate.
 namespace Guerrini2026
 
 open ModalLogic Plurality Genericity
+open SetRel
 
-variable {Atom W : Type*} (R : W → W → Prop) (k : W → Finset Atom) (P : Atom → W → Prop) {w : W}
+variable {Atom W : Type*} (R : SetRel W W) (k : W → Finset Atom) (P : Atom → W → Prop) {w : W}
 
 /-! ### The two parses of a generalization, section 3.2 -/
 
@@ -66,18 +67,18 @@ abbrev distributiveKindPred [∀ a w, Decidable (P a w)] (w : W) : Prop := distM
 
 /-- (28): the generic parse is Distributive Kind Predication at every accessible world. -/
 theorem bonaFideGeneric_iff [∀ a w, Decidable (P a w)] :
-    bonaFideGeneric R k P w ↔ ∀ v, R w v → distributiveKindPred k P v :=
+    bonaFideGeneric R k P w ↔ ∀ v, w ~[R] v → distributiveKindPred k P v :=
   Iff.rfl
 
 /-- A law-like generalization holds of the actual members: under a reflexive accessibility the
 generic parse entails Distributive Kind Predication. -/
-theorem distributiveKindPred_of_bonaFideGeneric [∀ a w, Decidable (P a w)] [Std.Refl R]
+theorem distributiveKindPred_of_bonaFideGeneric [∀ a w, Decidable (P a w)] [R.IsRefl]
     (h : bonaFideGeneric R k P w) : distributiveKindPred k P w :=
-  h w (Std.Refl.refl w)
+  h w (R.refl w)
 
 /-- (53): the accidental case. Distribution over the actual members says nothing about other
 worlds, so it survives an exception at an accessible world, which falsifies the generic parse. -/
-theorem not_bonaFideGeneric_of_exception {v : W} (hv : R w v) {a : Atom} (ha : a ∈ k v)
+theorem not_bonaFideGeneric_of_exception {v : W} (hv : w ~[R] v) {a : Atom} (ha : a ∈ k v)
     (hp : ¬ P a v) : ¬ bonaFideGeneric R k P w :=
   λ h => hp (h v hv a ha)
 
@@ -107,16 +108,16 @@ def cumulativeBelowGen (w : W) : Prop :=
 
 /-- (74c) is the strong reading: taken at a singleton sample, it makes every member of the kind
 relate to every location, so it is false of elephants and Africa and Asia. -/
-theorem forall_of_cumulativeBelowGen [Std.Refl R] (h : cumulativeBelowGen R k S locs w)
+theorem forall_of_cumulativeBelowGen [R.IsRefl] (h : cumulativeBelowGen R k S locs w)
     {a : Atom} (ha : a ∈ k w) {l : Loc} (hl : l ∈ locs) : S a l := by
-  obtain ⟨b, hb, hab⟩ := (h w (Std.Refl.refl w) {a} (Finset.singleton_subset_iff.2 ha)
+  obtain ⟨b, hb, hab⟩ := (h w (R.refl w) {a} (Finset.singleton_subset_iff.2 ha)
     (Finset.singleton_nonempty a)).2 l hl
   rwa [Finset.mem_singleton.1 hb] at hab
 
 /-- The strong reading entails Cumulative Kind Predication, the salient weak one. -/
-theorem cumulativeKindPred_of_cumulativeBelowGen [Std.Refl R] (hne : (k w).Nonempty)
+theorem cumulativeKindPred_of_cumulativeBelowGen [R.IsRefl] (hne : (k w).Nonempty)
     (h : cumulativeBelowGen R k S locs w) : cumulativeKindPred k S locs w :=
-  h w (Std.Refl.refl w) (k w) subset_rfl hne
+  h w (R.refl w) (k w) subset_rfl hne
 
 /-! ### Derived Property Predication, section 5.3 -/
 

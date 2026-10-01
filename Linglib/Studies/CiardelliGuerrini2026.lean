@@ -49,41 +49,50 @@ possible that A or it is possible that B* and conjoined *be allowed*, are not ro
 namespace CiardelliGuerrini2026
 
 open Modality ModalLogic English.Auxiliaries
+open SetRel
 
 /-! ### Scope and truth conditions (§2) -/
 
 section Scope
 
-variable {World : Type*} (R : World → World → Prop) (A B : Set World)
+variable {World : Type*} (R : SetRel World World) (A B : Set World)
+
+/-- Universal accessibility on two worlds, the countermodels' frame. -/
+abbrev universalAccess : SetRel Bool Bool := .univ
 
 /-- May-or-may, (2): possibility distributes over disjunction, so this is the one cell of the
 paradigm where the scope ambiguity is invisible to truth conditions. -/
-theorem poss_union_eq : poss R (A ∪ B) = poss R A ∪ poss R B := poss_union
+theorem poss_union_eq : R.preimage (A ∪ B) = R.preimage A ∪ R.preimage B := preimage_union ..
 
 /-- The wide-scope LF does not entail free choice: one possible disjunct suffices for it. -/
 theorem exists_not_poss_union_subset_inter :
-    ∃ A B : Set Bool, ¬ poss (⊤ : Bool → Bool → Prop) A ∪ poss ⊤ B ⊆ poss ⊤ A ∩ poss ⊤ B :=
+    ∃ A B : Set Bool,
+      ¬ universalAccess.preimage A ∪ universalAccess.preimage B ⊆
+        universalAccess.preimage A ∩ universalAccess.preimage B :=
   ⟨Set.univ, ∅, λ h => by simpa using (@h true (by simp)).2⟩
 
 /-- Must-or-must, (5): the narrow-scope disjunctive obligation follows from the wide-scope
 disjunction of obligations. -/
-theorem nec_union_subset_nec_union : nec R A ∪ nec R B ⊆ nec R (A ∪ B) := nec_union_subset
+theorem nec_union_subset_nec_union : R.core A ∪ R.core B ⊆ R.core (A ∪ B) := core_union_subset
 
 /-- But not conversely: a disjunctive obligation leaves open which disjunct is met. -/
 theorem exists_not_nec_union_subset :
-    ∃ A B : Set Bool, ¬ nec (⊤ : Bool → Bool → Prop) (A ∪ B) ⊆ nec ⊤ A ∪ nec ⊤ B :=
+    ∃ A B : Set Bool,
+      ¬ universalAccess.core (A ∪ B) ⊆ universalAccess.core A ∪ universalAccess.core B :=
   ⟨{true}, {false}, λ h => by
     simpa [Bool.forall_bool] using @h true (by simp)⟩
 
 /-- May-and-may, (7): the narrow-scope conjunctive permission entails the wide-scope
 conjunction of permissions. -/
-theorem poss_inter_subset_poss_inter : poss R (A ∩ B) ⊆ poss R A ∩ poss R B :=
-  poss_inter_subset
+theorem poss_inter_subset_poss_inter : R.preimage (A ∩ B) ⊆ R.preimage A ∩ R.preimage B :=
+  preimage_inter_subset R
 
 /-- But not conversely, which is what makes (9b), *you may come with me and you may stay
 here*, absurd on its conjunctive reading: two permissions need not be jointly satisfiable. -/
 theorem exists_not_poss_inter_subset :
-    ∃ A B : Set Bool, ¬ poss (⊤ : Bool → Bool → Prop) A ∩ poss ⊤ B ⊆ poss ⊤ (A ∩ B) :=
+    ∃ A B : Set Bool,
+      ¬ universalAccess.preimage A ∩ universalAccess.preimage B ⊆
+        universalAccess.preimage (A ∩ B) :=
   ⟨{true}, {false}, λ h => by simpa using @h true (by simp)⟩
 
 end Scope

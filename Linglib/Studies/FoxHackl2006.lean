@@ -39,6 +39,7 @@ example sentences are the rows of `Examples.all`.
 namespace FoxHackl2006
 
 open Alternatives ModalLogic OrderDual Set
+open SetRel
 open Degree
 
 variable {D W : Type*} [LinearOrder D]
@@ -87,20 +88,20 @@ theorem moreThan_not_hasMaxInf [DenselyOrdered D] (μ : W → D) (hμ : Function
 
 /-- The deontic modal base whose only requirement is `φ a`: the worlds where `φ` holds of
 some degree above `a`. -/
-abbrev requirementBase (φ : D → Set W) (a : D) : W → W → Prop :=
-  fun _ w' => ∃ d, a < d ∧ w' ∈ φ d
+abbrev requirementBase (φ : D → Set W) (a : D) : SetRel W W :=
+  {p | ∃ d, a < d ∧ p.2 ∈ φ d}
 
 /-- (46) Under `requirementBase φ a`, *required to φ d* describes the closed interval
 `Iic a`. -/
 theorem box_eq_Iic [DenselyOrdered D] {φ : D → Set W} (hφ : StrictAnti φ) (a : D) (w : W) :
-    {d | box (requirementBase φ a) (φ d) w} = Iic a := by
+    {d | w ∈ (requirementBase φ a).core (φ d)} = Iic a := by
   ext d'
   constructor
   · intro h
     by_contra hd'
     obtain ⟨m, ham, hmd'⟩ := exists_between (not_le.1 hd')
     obtain ⟨u, hu, hu'⟩ := Set.exists_of_ssubset (hφ hmd')
-    exact hu' (h u ⟨m, ham, hu⟩)
+    exact hu' (h ⟨m, ham, hu⟩)
   · intro hd' u hu
     obtain ⟨d, had, hu⟩ := hu
     exact hφ.antitone ((hd' : d' ≤ a).trans had.le) hu
@@ -108,21 +109,21 @@ theorem box_eq_Iic [DenselyOrdered D] {φ : D → Set W} (hφ : StrictAnti φ) (
 /-- (13), (46): a universal modal closes the interval, so *required to φ more than d* has a
 most informative degree, `a` itself. -/
 theorem hasMaxInf_box [DenselyOrdered D] {φ : D → Set W} (hφ : StrictAnti φ) (a : D)
-    (w : W) : HasMaxInf (fun d => {w | box (requirementBase φ a) (φ d) w}) w := by
-  have hanti : Antitone fun d => {w | box (requirementBase φ a) (φ d) w} :=
-    fun _ _ h _ hv u hu => hφ.antitone h (hv u hu)
+    (w : W) : HasMaxInf (fun d => (requirementBase φ a).core (φ d)) w := by
+  have hanti : Antitone fun d => (requirementBase φ a).core (φ d) :=
+    fun _ _ h _ hv _ hu => hφ.antitone h (hv hu)
   exact ⟨a, hanti.map_isGreatest (box_eq_Iic hφ a w ▸ isGreatest_Iic)⟩
 
 /-- (14), (47): no existential modal closes the interval — the true degrees of *allowed to
 φ d* have no greatest element, so the constraint still applies. -/
 theorem not_isGreatest_diamond [DenselyOrdered D] {φ : D → Set W} (hφ : StrictAnti φ)
-    (hopen : IsNecessarilyOpen φ) (R : W → W → Prop) (w : W) :
-    ¬ ∃ m, IsGreatest {d | diamond R (φ d) w} m := by
-  rintro ⟨m, ⟨v, hv, hvm⟩, hub⟩
+    (hopen : IsNecessarilyOpen φ) (R : SetRel W W) (w : W) :
+    ¬ ∃ m, IsGreatest {d | w ∈ R.preimage (φ d)} m := by
+  rintro ⟨m, ⟨v, hvm, hv⟩, hub⟩
   obtain ⟨d, hd, hlt⟩ := hopen v
   have hmd : m < d := lt_of_not_ge fun h => hd (hφ.antitone h hvm)
   obtain ⟨y, hmy, hyd⟩ := exists_between hmd
-  exact not_le.2 hmy (hub ⟨v, hv, hlt y hyd⟩)
+  exact not_le.2 hmy (hub ⟨v, hlt y hyd, hv⟩)
 
 /-! ### Negative islands -/
 
@@ -141,13 +142,13 @@ theorem negation_not_hasMaxInf [DenselyOrdered D] (μ : W → D) (hμ : Function
 /-- (27b), (28a), (29a): *required not to φ d* — a universal modal over a downward-monotone
 property closes the interval from below. -/
 theorem hasMaxInf_box_below [DenselyOrdered D] {φ : D → Set W} (hφ : StrictMono φ) (a : D)
-    (w : W) : HasMaxInf (fun d => {w | box (fun _ w' => ∃ d, d < a ∧ w' ∈ φ d) (φ d) w}) w :=
+    (w : W) : HasMaxInf (fun d => SetRel.core {p | ∃ d, d < a ∧ p.2 ∈ φ d} (φ d)) w :=
   hasMaxInf_box (φ := fun d : Dᵒᵈ => φ (ofDual d)) (fun _ _ h => hφ h) (toDual a) w
 
 /-- (28b), (29b), (47): *allowed not to φ d* stays open from below. -/
 theorem not_isLeast_diamond [DenselyOrdered D] {φ : D → Set W} (hφ : StrictMono φ)
-    (hopen : IsNecessarilyOpenBelow φ) (R : W → W → Prop) (w : W) :
-    ¬ ∃ m, IsLeast {d | diamond R (φ d) w} m :=
+    (hopen : IsNecessarilyOpenBelow φ) (R : SetRel W W) (w : W) :
+    ¬ ∃ m, IsLeast {d | w ∈ R.preimage (φ d)} m :=
   not_isGreatest_diamond (φ := fun d : Dᵒᵈ => φ (ofDual d)) (fun _ _ h => hφ h) hopen R w
 
 /-! ### Cardinality as a level of granularity -/

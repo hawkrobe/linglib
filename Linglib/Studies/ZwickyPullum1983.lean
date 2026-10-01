@@ -207,7 +207,7 @@ theorem irregular_are_negatives : ∀ a ∈ irregularNegatives, a ∈ negatives 
 /-! ### Criterion D: the scope of the contracted negator -/
 
 open Modality (ModalForce)
-open ModalLogic (box diamond)
+open ModalLogic (Box Diamond)
 
 /-- The scope of negation relative to the modal in a contracted negative. -/
 inductive NegModalScope
@@ -235,17 +235,13 @@ theorem scope_idiosyncrasy : cantScope.scope ≠ mustntScope.scope := by decide
 
 /-- A four-world frame on which the actual world sees two worlds and every other world only
 itself. -/
-private def kripkeR : Fin 4 → Fin 4 → Prop := λ w v =>
-  match w with
-  | 0 => v = 1 ∨ v = 2
-  | 1 => v = 1
-  | 2 => v = 2
-  | 3 => v = 3
-
-private instance : DecidableRel kripkeR := λ w v => by
-  unfold kripkeR
-  match w with
-  | 0 | 1 | 2 | 3 => infer_instance
+private def kripkeR : SetRel (Fin 4) (Fin 4) :=
+  .ofSuccessors fun w ↦
+    match w with
+    | 0 => {1, 2}
+    | 1 => {1}
+    | 2 => {2}
+    | 3 => {3}
 
 /-- A proposition true at the first two worlds and false at the others. -/
 private def witnessP : Fin 4 → Prop := λ w =>
@@ -261,19 +257,19 @@ private instance : DecidablePred witnessP := λ w => by
 /-- `NOT(CAN(P))` and `CAN(NOT(P))` come apart: on the frame, both `P` and `¬P` are possible at
 the actual world. -/
 theorem neg_over_poss_ne_poss_over_neg :
-    ∃ R : Fin 4 → Fin 4 → Prop,
-      ¬ ∀ (p : Fin 4 → Prop) (w : Fin 4), ¬ diamond R p w ↔ diamond R (λ w' => ¬ p w') w := by
+    ∃ R : SetRel (Fin 4) (Fin 4),
+      ¬ ∀ (p : Fin 4 → Prop) (w : Fin 4), ¬ Diamond R p w ↔ Diamond R (fun w' ↦ ¬ p w') w := by
   refine ⟨kripkeR, λ h => ?_⟩
   have := h witnessP 0
-  simp [diamond, kripkeR, witnessP] at this
+  simp [Diamond, kripkeR, witnessP] at this
 
 /-- `NOT(MUST(P))` and `MUST(NOT(P))` come apart: on the frame, `P` is not necessary at the
 actual world, yet not necessarily false either. -/
 theorem neg_over_nec_ne_nec_over_neg :
-    ∃ R : Fin 4 → Fin 4 → Prop,
-      ¬ ∀ (p : Fin 4 → Prop) (w : Fin 4), ¬ box R p w ↔ box R (λ w' => ¬ p w') w := by
+    ∃ R : SetRel (Fin 4) (Fin 4),
+      ¬ ∀ (p : Fin 4 → Prop) (w : Fin 4), ¬ Box R p w ↔ Box R (fun w' ↦ ¬ p w') w := by
   refine ⟨kripkeR, λ h => ?_⟩
   have := h witnessP 0
-  simp [box, kripkeR, witnessP] at this
+  simp [Box, kripkeR, witnessP] at this
 
 end ZwickyPullum1983

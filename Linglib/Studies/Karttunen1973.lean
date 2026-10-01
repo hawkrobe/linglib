@@ -533,11 +533,9 @@ theorem log_map_conj : (att <$> conj (· ⊆ ·) (Writer.mk a []) (Writer.mk c [
 /-- (38): with belief as necessity over the believer's doxastic alternatives, (37) and (39)
 assert the same ([hintikka-1962]), so a hole *believe* is saved on (37) only by the
 equivalence. -/
-theorem val_map_box_conj (R : W → W → Prop) (A B : Presupposing W (Set W)) :
-    (ModalLogic.box R <$> conj φ A B).val =
-      (conj φ (ModalLogic.box R <$> A) (ModalLogic.box R <$> B)).val := by
-  ext w
-  exact ModalLogic.box_and R _ _ w
+theorem val_map_box_conj (R : SetRel W W) (A B : Presupposing W (Set W)) :
+    (R.core <$> conj φ A B).val = (conj φ (R.core <$> A) (R.core <$> B)).val :=
+  SetRel.core_inter R _ _
 
 /-- (42) as the conjunction of two distinct attitudes (43) admits no such equivalence; as plugs,
 the attitudes leave it presupposing nothing, the paper's tentative verdict for the class. -/

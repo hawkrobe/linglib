@@ -28,7 +28,7 @@ operator on the members of `H` true at `w`:
   whose Hamblin set is `Set.range P`: a true short answer entailing every
   true one;
 - `box H R`, the question under necessity, the image of `H` under
-  `ModalLogic.nec R`, whose presupposition at a world is the prejacent's on
+  `SetRel.core R`, whose presupposition at a world is the prejacent's on
   that world's modal base (`isExhaustivelyResolvable_box_iff`);
 - `KnowsAnswer H w R x`, an agent's knowledge of the answer through their
   doxastic alternatives, and `PossiblyIgnorant H c R x`, [dayal-2025]'s
@@ -65,6 +65,7 @@ of [dayal-2016] needs Hamblin sets whose members entail one another, which
 namespace Question
 
 open Question
+open SetRel
 
 variable {W : Type*} (H : Set (Set W)) (w : W)
 
@@ -331,27 +332,24 @@ theorem isExhaustivelyResolvableOn_singleton :
 /-! ### Questions under necessity -/
 
 /-- The question `□Q` over the accessibility `R`: every member necessitated, the image of `H`
-under `ModalLogic.nec R`. -/
-def box {W' : Type*} (R : W' → W → Prop) : Set (Set W') := ModalLogic.nec R '' H
+under `SetRel.core R`. -/
+def box {W' : Type*} (R : SetRel W' W) : Set (Set W') := R.core '' H
 
-theorem mem_box {W' : Type*} {R : W' → W → Prop} {q : Set W'} :
-    q ∈ box H R ↔ ∃ p ∈ H, ModalLogic.nec R p = q := Iff.rfl
+theorem mem_box {W' : Type*} {R : SetRel W' W} {q : Set W'} :
+    q ∈ box H R ↔ ∃ p ∈ H, R.core p = q := Iff.rfl
 
 /-- Necessity lifts the presupposition: `□Q` is resolvable at `x` iff `Q` is resolvable on the
 worlds accessible from `x`, provided every world is the sole world accessible from some `x`. -/
-theorem isExhaustivelyResolvable_box_iff {W' : Type*} {R : W' → W → Prop}
-    (hR : ∀ v, ∃ x, ∀ u, R x u ↔ u = v) {x : W'} {s : Set W} (hs : ∀ v, R x v ↔ v ∈ s) :
+theorem isExhaustivelyResolvable_box_iff {W' : Type*} {R : SetRel W' W}
+    (hR : ∀ v, ∃ x, ∀ u, x ~[R] u ↔ u = v) {x : W'} {s : Set W} (hs : ∀ v, x ~[R] v ↔ v ∈ s) :
     IsExhaustivelyResolvable (box H R) x ↔ IsExhaustivelyResolvableOn H s := by
-  have mem : ∀ p, x ∈ {y | ∀ v, R y v → v ∈ p} ↔ s ⊆ p := fun p =>
-    ⟨fun h v hv => h v ((hs v).2 hv), fun h v hv => h ((hs v).1 hv)⟩
-  have mono : ∀ p q : Set W, p ⊆ q →
-      {y | ∀ v, R y v → v ∈ p} ⊆ {y | ∀ v, R y v → v ∈ q} :=
-    fun _ _ hpq _ h v hv => hpq (h v hv)
-  have refl : ∀ p q : Set W,
-      {y | ∀ v, R y v → v ∈ p} ⊆ {y | ∀ v, R y v → v ∈ q} → p ⊆ q := by
+  have mem : ∀ p, x ∈ R.core p ↔ s ⊆ p := fun p =>
+    ⟨fun h v hv => h ((hs v).2 hv), fun h v hv => h ((hs v).1 hv)⟩
+  have mono : ∀ p q : Set W, p ⊆ q → R.core p ⊆ R.core q := fun _ _ ↦ core_subset_core
+  have refl : ∀ p q : Set W, R.core p ⊆ R.core q → p ⊆ q := by
     intro p q h v hv
     obtain ⟨y, hy⟩ := hR v
-    exact h (fun u hu => ((hy u).1 hu) ▸ hv) v ((hy v).2 rfl)
+    exact h (fun u hu => ((hy u).1 hu) ▸ hv) ((hy v).2 rfl)
   constructor
   · rintro ⟨q, ⟨⟨p, hp, rfl⟩, hx⟩, hmin⟩
     refine ⟨p, ⟨hp, (mem p).1 hx⟩, fun r ⟨hr, hsr⟩ => refl p r (hmin ⟨⟨r, hr, rfl⟩, (mem r).2 hsr⟩)⟩

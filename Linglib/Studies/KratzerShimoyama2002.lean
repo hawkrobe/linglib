@@ -61,6 +61,7 @@ follow the 2002 manuscript, whose numbering the published chapter keeps.
 namespace KratzerShimoyama2002
 
 open ModalLogic
+open SetRel
 
 /-! ### Hamblin composition (§2, §3) -/
 
@@ -168,38 +169,39 @@ theorem subset_irgend (den : Set E → Set E) (D : Set E) : den D ⊆ irgend den
 
 /-- `kann R A` is *kann* over the propositional alternatives `A`, the possibility that some
 alternative holds. -/
-def kann (R : W → W → Prop) (A : Set (W → Prop)) : Set (W → Prop) :=
+def kann (R : SetRel W W) (A : Set (W → Prop)) : Set (W → Prop) :=
   {◇[R] fun w ↦ ∃ p ∈ A, p w}
 
 /-- `muss R A` is *muss* over the propositional alternatives `A`, the necessity that some
 alternative holds. -/
-def muss (R : W → W → Prop) (A : Set (W → Prop)) : Set (W → Prop) :=
+def muss (R : SetRel W W) (A : Set (W → Prop)) : Set (W → Prop) :=
   {□[R] fun w ↦ ∃ p ∈ A, p w}
 
 /-- `distribution R A w` is the distribution requirement, that every alternative is possible. -/
-def distribution (R : W → W → Prop) (A : Set (W → Prop)) (w : W) : Prop :=
+def distribution (R : SetRel W W) (A : Set (W → Prop)) (w : W) : Prop :=
   ∀ p ∈ A, ◇[R] p w
 
 /-- On a single alternative the modals are the Kripke modals. -/
-theorem kann_singleton (R : W → W → Prop) (p : W → Prop) : kann R {p} = {◇[R] p} := by
+theorem kann_singleton (R : SetRel W W) (p : W → Prop) : kann R {p} = {◇[R] p} := by
   simp [kann]
 
-theorem muss_singleton (R : W → W → Prop) (p : W → Prop) : muss R {p} = {□[R] p} := by
+theorem muss_singleton (R : SetRel W W) (p : W → Prop) : muss R {p} = {□[R] p} := by
   simp [muss]
 
 /-- The distribution requirement is not entailed by *muss* (§6): with two alternatives
 and a single accessible world verifying one of them, necessity holds and distribution
 fails. -/
 theorem not_distribution_of_muss :
-    ∃ (R : Bool → Bool → Prop) (A : Set (Bool → Prop)) (w : Bool),
+    ∃ (R : SetRel Bool Bool) (A : Set (Bool → Prop)) (w : Bool),
       (∀ q ∈ muss R A, q w) ∧ ¬ distribution R A w :=
-  ⟨Eq, {fun w ↦ w = true, fun w ↦ w = false}, true,
+  ⟨.id, {fun w ↦ w = true, fun w ↦ w = false}, true,
     fun q hq ↦ by
       rw [muss, Set.mem_singleton_iff] at hq
       subst hq
-      exact fun w' hw' ↦ ⟨_, Set.mem_insert _ _, hw'.symm⟩,
+      exact fun w' hw' ↦ ⟨_, Set.mem_insert _ _, (SetRel.mem_id.1 hw').symm⟩,
     fun h ↦ by
       obtain ⟨w', hw', hp⟩ := h _ (Set.mem_insert_of_mem _ (Set.mem_singleton _))
+      rw [SetRel.mem_id] at hw'
       subst hw'
       exact Bool.noConfusion hp⟩
 
@@ -216,15 +218,15 @@ every such reason is already entailed by what was said, and the implicature is c
 
 section FreeChoice
 
-variable {W : Type*} (R : W → W → Prop) (A B : W → Prop) (w : W)
+variable {W : Type*} (R : SetRel W W) (A B : W → Prop) (w : W)
 
 /-- *Kann* over the two alternatives is the possibility of their disjunction. -/
 theorem kann_pair : (∀ q ∈ kann R {A, B}, q w) ↔ ◇[R] (fun w ↦ A w ∨ B w) w := by
-  simp [kann, diamond, exists_or, and_or_left]
+  simp [kann, Diamond, exists_or, and_or_left]
 
 /-- *Muss* over the two alternatives is the necessity of their disjunction. -/
 theorem muss_pair : (∀ q ∈ muss R {A, B}, q w) ↔ □[R] (fun w ↦ A w ∨ B w) w := by
-  simp [muss, box]
+  simp [muss, Box]
 
 /-- In (16) the truth-conditional content with the implicature yields free choice. -/
 theorem total_kann (hT : ◇[R] (fun w ↦ A w ∨ B w) w) (hI : ◇[R] A w ↔ ◇[R] B w) :
@@ -236,12 +238,12 @@ theorem total_kann (hT : ◇[R] (fun w ↦ A w ∨ B w) w) (hI : ◇[R] A w ↔ 
 
 /-- In (17) the total meaning implies both possibilities once some world is accessible. -/
 theorem total_muss (hT : □[R] (fun w ↦ A w ∨ B w) w) (hI : □[R] A w ↔ □[R] B w)
-    (hser : ∃ w', R w w') : ◇[R] A w ∧ ◇[R] B w := by
+    (hser : ∃ w', w ~[R] w') : ◇[R] A w ∧ ◇[R] B w := by
   obtain ⟨w₀, hw₀⟩ := hser
   by_cases hA : □[R] A w
   · exact ⟨⟨w₀, hw₀, hA w₀ hw₀⟩, ⟨w₀, hw₀, hI.mp hA w₀ hw₀⟩⟩
   · have hB : ¬ □[R] B w := fun h ↦ hA (hI.mpr h)
-    simp only [box, not_forall] at hA hB
+    simp only [Box, not_forall] at hA hB
     obtain ⟨wa, hwa, ha⟩ := hA
     obtain ⟨wb, hwb, hb⟩ := hB
     exact ⟨⟨wb, hwb, (hT wb hwb).resolve_right hb⟩, ⟨wa, hwa, (hT wa hwa).resolve_left ha⟩⟩

@@ -45,6 +45,7 @@ on the distribution of mention-some enter only through the rows on singular wh-p
 namespace Fox2018
 
 open Question Exhaustification Set
+open scoped SetRel
 
 variable {W : Type*}
 
@@ -184,17 +185,16 @@ theorem not_nonVacuity_exhCell_of_union {q₁ q₂ : Set W} (h₁ : q₁ ∈ H) 
 
 /-- Under a necessity modal, a member that is exactly the modal base of a context world is the
 strongest true member there: the island is obviated. -/
-theorem isStrongestTrueAnswer_box {W' : Type*} {R : W' → W → Prop} {p : Set W} (hp : p ∈ H)
-    {x : W'} (hx : ∀ v, R x v ↔ v ∈ p) :
-    IsStrongestTrueAnswer (box H R) x {y | ∀ v, R y v → v ∈ p} := by
-  refine ⟨⟨⟨p, hp, rfl⟩, λ v hv => (hx v).1 hv⟩, ?_⟩
+theorem isStrongestTrueAnswer_box {W' : Type*} {R : SetRel W' W} {p : Set W} (hp : p ∈ H)
+    {x : W'} (hx : ∀ v, x ~[R] v ↔ v ∈ p) : IsStrongestTrueAnswer (box H R) x (R.core p) := by
+  refine ⟨⟨⟨p, hp, rfl⟩, fun v hv ↦ (hx v).1 hv⟩, ?_⟩
   rintro _ ⟨⟨q, -, rfl⟩, hxq⟩ y hy v hyv
-  exact hxq v ((hx v).2 (hy v hyv))
+  exact hxq ((hx v).2 (hy hyv))
 
 /-- Non-Vacuity holds for the necessitated question whenever every member is exactly the modal
 base of some context world. -/
-theorem nonVacuity_box {W' : Type*} {R : W' → W → Prop} {A : Set W'}
-    (h : ∀ p ∈ H, ∃ x ∈ A, ∀ v, R x v ↔ v ∈ p) :
+theorem nonVacuity_box {W' : Type*} {R : SetRel W' W} {A : Set W'}
+    (h : ∀ p ∈ H, ∃ x ∈ A, ∀ v, x ~[R] v ↔ v ∈ p) :
     NonVacuity (exhCell (box H R)) (box H R) A := by
   rw [nonVacuity_exhCell_iff]
   rintro _ ⟨p, hp, rfl⟩

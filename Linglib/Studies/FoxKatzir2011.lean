@@ -31,7 +31,7 @@ Sentences are propositions `Set W`, alternative sets are `Set (Set W)`, and the 
 intersections of complements, the paper's propositional rendering of *only*. The structural
 definition is stated without focus marking, so `formalAlternatives` contains the paper's set;
 its one new clause, salient constituents, is what brings a symmetric alternative into the set
-(`mem_formalAlternatives_of_salient`). Universal operators are `ModalLogic.box` over an
+(`mem_formalAlternatives_of_salient`). Universal operators are `ModalLogic.Box` over an
 accessibility relation, covering the modal and the quantificational cases alike.
 
 ## References
@@ -50,6 +50,7 @@ accessibility relation, covering the modal and the quantificational cases alike.
 namespace FoxKatzir2011
 
 open Alternatives Exhaustification ModalLogic Set
+open SetRel
 
 variable {W : Type*}
 
@@ -189,19 +190,19 @@ end Symmetry
 
 section Universal
 
-variable {R : W → W → Prop} {S S₁ S₂ : Set W}
+variable {R : SetRel W W} {S S₁ S₂ : Set W}
 
 /-- Under a universal operator the alternatives are no longer symmetric whenever some world's
 accessible worlds fall on both sides. -/
-theorem not_isSymmetric_nec {x : W} (hx : x ∈ nec R S) (hx₁ : x ∉ nec R S₁) (hx₂ : x ∉ nec R S₂) :
-    ¬ IsSymmetric (nec R S) (nec R S₁) (nec R S₂) := λ h => by
-  have : x ∈ nec R S₁ ∪ nec R S₂ := h.union ▸ hx
+theorem not_isSymmetric_nec {x : W} (hx : x ∈ R.core S) (hx₁ : x ∉ R.core S₁)
+    (hx₂ : x ∉ R.core S₂) : ¬ IsSymmetric (R.core S) (R.core S₁) (R.core S₂) := fun h ↦ by
+  have : x ∈ R.core S₁ ∪ R.core S₂ := h.union ▸ hx
   exact this.elim hx₁ hx₂
 
 /-- Both implicatures arise under the universal operator: such a world lies in the strengthened
 meaning. -/
-theorem mem_SM_nec {x : W} (hx : x ∈ nec R S) (hx₁ : x ∉ nec R S₁) (hx₂ : x ∉ nec R S₂) :
-    x ∈ SM {nec R S, nec R S₁, nec R S₂} (nec R S) := by
+theorem mem_SM_nec {x : W} (hx : x ∈ R.core S) (hx₁ : x ∉ R.core S₁) (hx₂ : x ∉ R.core S₂) :
+    x ∈ SM {R.core S, R.core S₁, R.core S₂} (R.core S) := by
   refine mem_SM.2 ⟨hx, λ p hp hps => ?_⟩
   simp only [mem_insert_iff, mem_singleton_iff] at hp
   obtain h1 | h1 | h1 := hp <;> subst p
@@ -210,8 +211,8 @@ theorem mem_SM_nec {x : W} (hx : x ∈ nec R S) (hx₁ : x ∉ nec R S₁) (hx�
   · exact hx₂
 
 /-- Both exclusions of *only* arise under the universal operator. -/
-theorem mem_exh_nec {x : W} (hx : x ∈ nec R S) (hx₁ : x ∉ nec R S₁) (hx₂ : x ∉ nec R S₂) :
-    x ∈ exh {nec R S, nec R S₁, nec R S₂} (nec R S) := by
+theorem mem_exh_nec {x : W} (hx : x ∈ R.core S) (hx₁ : x ∉ R.core S₁) (hx₂ : x ∉ R.core S₂) :
+    x ∈ exh {R.core S, R.core S₁, R.core S₂} (R.core S) := by
   refine ⟨hx, λ p hp hxp => ?_⟩
   simp only [mem_insert_iff, mem_singleton_iff] at hp
   obtain h1 | h1 | h1 := hp <;> subst p

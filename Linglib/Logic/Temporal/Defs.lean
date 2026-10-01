@@ -63,20 +63,20 @@ namespace TWFrame
 
 variable {T : Type u} {World : Type v} {Atom : Type*} [LinearOrder T]
 
-open ModalLogic (box) in
+open scoped ModalLogic in
 /-- Satisfaction `V_{t,w}(A)` ([von-kutschera-1997]) relative to an atomic valuation `V`.
-    `G`/`H`/`N`/`box` are `ModalLogic.box` Kripke modalities over, respectively, future
-    precedence `<`, past precedence `>`, historical equivalence `sim t`, and the universal
-    relation — making the object logic a multimodal Kripke logic by construction. -/
+    `G`/`H`/`N`/`box` are the Kripke boxes `□` over, respectively, future precedence `<`, past
+    precedence `>`, historical equivalence `sim t`, and the universal relation — making the
+    object logic a multimodal Kripke logic by construction. -/
 def sat (F : TWFrame T World) (V : Atom → T → World → Prop) :
     OForm Atom → T → World → Prop
   | .atom p,  t, w => V p t w
   | .neg a,   t, w => ¬ F.sat V a t w
   | .and a b, t, w => F.sat V a t w ∧ F.sat V b t w
-  | .G a,     t, w => box (· < ·) (fun t' => F.sat V a t' w) t
-  | .H a,     t, w => box (· > ·) (fun t' => F.sat V a t' w) t
-  | .N a,     t, w => box (F.sim t) (fun w' => F.sat V a t w') w
-  | .box a,   t, w => box ⊤ (fun w' => F.sat V a t w') w
+  | .G a,     t, w => □[{(t, t') : T × T | t < t'}] (fun t' => F.sat V a t' w) t
+  | .H a,     t, w => □[{(t, t') : T × T | t' < t}] (fun t' => F.sat V a t' w) t
+  | .N a,     t, w => □[{(w, w') | F.sim t w w'}] (fun w' => F.sat V a t w') w
+  | .box a,   t, w => □[.univ] (fun w' => F.sat V a t w') w
 
 /-- Local entailment in a model: `a` entails `b` iff `b` holds wherever `a` does. -/
 def entails (F : TWFrame T World) (V : Atom → T → World → Prop) (a b : OForm Atom) : Prop :=

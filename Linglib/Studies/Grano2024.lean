@@ -334,25 +334,25 @@ theorem intend_like_hope_in_logic :
 
 (73) is necessity over the worlds compatible with the agent's intentions, `□[int]`. Its one
 substantive constraint is that those worlds overlap the worlds compatible with the agent's
-beliefs, `◇[int] (dox w) w`, from which realism, consistency, and monotonicity follow. (78) moves
-to the de se triples of an intention state, and (79) adds the causal self-reference, closing the
-complement's eventuality argument over what the state causes. -/
+beliefs, `◇[int] (w ~[dox] ·) w`, from which realism, consistency, and monotonicity follow.
+(78) moves to the de se triples of an intention state, and (79) adds the causal
+self-reference, closing the complement's eventuality argument over what the state causes. -/
 
 section Hintikka
 
-open ModalLogic
+open ModalLogic SetRel
 
-variable {W : Type*} {int dox : W → W → Prop} {p q : W → Prop} {w : W}
+variable {W : Type*} {int dox : SetRel W W} {p q : W → Prop} {w : W}
 
 /-- Realism: what is intended is believed possible. -/
-theorem realism (h : ◇[int] (dox w) w) (hp : □[int] p w) : ◇[dox] p w :=
+theorem realism (h : ◇[int] (w ~[dox] ·) w) (hp : □[int] p w) : ◇[dox] p w :=
   diamond_of_box h hp
 
 /-- Consistency: two intentions are believed jointly possible, by realism for their
 conjunction. -/
-theorem consistency (h : ◇[int] (dox w) w) (hp : □[int] p w) (hq : □[int] q w) :
+theorem consistency (h : ◇[int] (w ~[dox] ·) w) (hp : □[int] p w) (hq : □[int] q w) :
     ◇[dox] (fun v ↦ p v ∧ q v) w :=
-  realism h ((box_and int p q w).2 ⟨hp, hq⟩)
+  realism h ((box_and int q).2 ⟨hp, hq⟩)
 
 /-- Monotonicity: intending the narrower prejacent is intending the wider. -/
 theorem monotonicity (hpq : p ≤ q) (hp : □[int] p w) : □[int] q w :=
