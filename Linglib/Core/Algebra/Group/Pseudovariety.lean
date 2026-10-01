@@ -9,35 +9,47 @@ module
 
 public import Linglib.Core.Algebra.Group.Aperiodic
 public import Linglib.Core.Algebra.Group.Subquotient
+public import Linglib.Core.GroupTheory.Congruence.Hom
+public import Mathlib.Algebra.Group.Pi.Lemmas
 public import Mathlib.Algebra.Group.Prod
 public import Mathlib.Algebra.Group.PUnit
-public import Mathlib.Basic.Finite.Defs
+public import Mathlib.Data.Fintype.Option
+public import Mathlib.GroupTheory.Congruence.Hom
+public import Mathlib.Order.CompleteLattice.Defs
 
 /-!
 # Pseudovarieties of finite monoids
 
-A **pseudovariety** of finite monoids ([eilenberg-1976], [almeida-1995]) is a class of finite
-monoids closed under taking submonoids, quotients (homomorphic images), and finite direct products
-(the empty product being the trivial monoid). Pseudovarieties are the algebraic side of the
-Eilenberg correspondence: the recognizable-language classes closed under the boolean / quotient /
-inverse-homomorphism operations are exactly `{L | L.SyntacticMonoid ∈ V}` for `V` a pseudovariety.
+This file defines pseudovarieties of finite monoids. A *pseudovariety* is a class of finite monoids
+closed under submonoids, quotients and finite direct products, the empty product being the trivial
+monoid. Pseudovarieties are the algebraic side of Eilenberg's variety theorem, which matches them
+with the varieties of regular languages.
 
 ## Main definitions
 
-* `Monoid.Pseudovariety` — a class of finite monoids closed under submonoid, quotient, product.
-* `Monoid.aperiodicVariety` — the pseudovariety **A** of aperiodic monoids (the star-free side).
+* `Monoid.Pseudovariety`: a class of finite monoids closed under submonoids, quotients and
+  products.
+* `Monoid.Pseudovariety.generated`: the least pseudovariety containing a class of finite monoids.
+* `Monoid.aperiodicVariety`: the pseudovariety of finite aperiodic monoids.
+
+## Main results
+
+* `Monoid.Pseudovariety.pi_mem`: closure under finite dependent products.
+* `Monoid.Pseudovariety.mem_quotient_of_le`, `mem_quotient_ker`, `mem_quotient_inf`: closure
+  properties of quotients by congruences.
+* The pseudovarieties form a complete lattice, with infimum the intersection.
 
 ## Implementation notes
 
-`mem` is a *total* predicate over `Type u` monoids (no `[Finite]` binder), mirroring
-`Monoid.IsAperiodic`; the finiteness restriction characteristic of a *pseudo*variety lives on the
-closure-field hypotheses, where it is used. This lets `V.mem M` be stated before a `Finite M`
-instance is in scope (as in the language-side operator `Pseudovariety.langs`, where finiteness is
-recovered from regularity).
+`mem` is a total predicate on `Type u` monoids that implies finiteness (`finite_of_mem`), so the
+order on pseudovarieties is inclusion of classes of finite monoids and is antisymmetric. The
+structure lives in a fixed universe `u`, like mathlib's `MorphismProperty`; concrete
+pseudovarieties such as `aperiodicVariety` are universe-polymorphic definitions.
 
-Like mathlib's `MorphismProperty`, a `Pseudovariety` is relative to a *fixed* universe `u` (structure
-fields cannot be universe-polymorphic); concrete pseudovarieties such as `aperiodicVariety` are
-universe-polymorphic `def`s producing one `Pseudovariety.{u}` per `u`, so nothing is lost in use.
+## References
+
+* [eilenberg-1976]
+* [pin-mfa]
 -/
 
 @[expose] public section
@@ -46,53 +58,149 @@ universe u
 
 namespace Monoid
 
-/-- A **pseudovariety of finite monoids**: a class closed under submonoids, quotients, and finite
-products. Submonoid/quotient closure is phrased via injective/surjective monoid homomorphisms (the
-divisor form), which is what the closure proofs and the syntactic-monoid arguments consume. -/
+/-- A *pseudovariety of finite monoids* is a class of finite monoids closed under submonoids,
+quotients and finite products, with closure phrased through injective and surjective
+homomorphisms. -/
 structure Pseudovariety where
   /-- The monoids belonging to the pseudovariety. -/
   mem : ∀ (M : Type u) [Monoid M], Prop
-  /-- Closed under submonoids: an injective homomorphism into a member has member domain. -/
-  sub : ∀ {M N : Type u} [Monoid M] [Monoid N] [Finite M] [Finite N] {f : M →* N},
+  /-- Every member is finite. -/
+  finite_of_mem : ∀ {M : Type u} [Monoid M], mem M → Finite M
+  /-- The domain of an injective homomorphism into a member is a member. -/
+  sub : ∀ {M N : Type u} [Monoid M] [Monoid N] {f : M →* N},
     Function.Injective f → mem N → mem M
-  /-- Closed under quotients: a surjective homomorphism from a member has member codomain. -/
-  quot : ∀ {M N : Type u} [Monoid M] [Monoid N] [Finite M] [Finite N] {f : M →* N},
+  /-- The codomain of a surjective homomorphism from a member is a member. -/
+  quot : ∀ {M N : Type u} [Monoid M] [Monoid N] {f : M →* N},
     Function.Surjective f → mem M → mem N
-  /-- Closed under binary products. -/
-  prod : ∀ {M N : Type u} [Monoid M] [Monoid N] [Finite M] [Finite N],
-    mem M → mem N → mem (M × N)
-  /-- Contains the trivial monoid (the empty product). -/
+  /-- The product of two members is a member. -/
+  prod : ∀ {M N : Type u} [Monoid M] [Monoid N], mem M → mem N → mem (M × N)
+  /-- The trivial monoid is a member. -/
   memUnit : mem PUnit.{u + 1}
 
 namespace Pseudovariety
 
 variable (V : Pseudovariety.{u})
 
-/-- Closed under isomorphism (a special case of `quot`). -/
-theorem mem_of_mulEquiv {M N : Type u} [Monoid M] [Monoid N] [Finite M] [Finite N]
-    (e : M ≃* N) (h : V.mem M) : V.mem N :=
+@[ext] theorem ext {V W : Pseudovariety.{u}}
+    (h : ∀ (M : Type u) [Monoid M], V.mem M ↔ W.mem M) : V = W := by
+  obtain ⟨Vm, _, _, _, _, _⟩ := V
+  obtain ⟨Wm, _, _, _, _, _⟩ := W
+  obtain rfl : Vm = Wm := funext fun M ↦ funext fun _ ↦ propext (h M)
+  rfl
+
+instance : PartialOrder Pseudovariety.{u} where
+  le V W := ∀ (M : Type u) [Monoid M], V.mem M → W.mem M
+  le_refl _ _ _ h := h
+  le_trans _ _ _ h₁ h₂ M _ h := h₂ M (h₁ M h)
+  le_antisymm _ _ h₁ h₂ := ext fun M _ ↦ ⟨h₁ M, h₂ M⟩
+
+theorem le_def {V W : Pseudovariety.{u}} :
+    V ≤ W ↔ ∀ (M : Type u) [Monoid M], V.mem M → W.mem M := Iff.rfl
+
+theorem mem_of_mulEquiv {M N : Type u} [Monoid M] [Monoid N] (e : M ≃* N) (h : V.mem M) :
+    V.mem N :=
   V.quot (f := e.toMonoidHom) e.surjective h
 
-/-- Pseudovarieties are closed under **division**: membership descends along
-`Monoid.IsSubquotient`. -/
-theorem mem_of_isSubquotient {M N : Type u} [Monoid M] [Monoid N] [Finite M] [Finite N]
-    (h : IsSubquotient M N) (hN : V.mem N) : V.mem M := by
+/-- A subquotient of a member is a member. -/
+theorem mem_of_isSubquotient {M N : Type u} [Monoid M] [Monoid N] (h : IsSubquotient M N)
+    (hN : V.mem N) : V.mem M := by
   obtain ⟨P, f, hf⟩ := h
   exact V.quot hf (V.sub P.subtype_injective hN)
 
+/-! ### Quotients by congruences -/
+
+/-- Membership of a quotient descends along a coarsening of congruences. -/
+theorem mem_quotient_of_le {M : Type u} [Monoid M] {c d : Con M} (h : c ≤ d)
+    (hc : V.mem c.Quotient) : V.mem d.Quotient :=
+  V.quot (f := Con.map c d h) (Con.lift_surjective_of_surjective _ Con.mk'_surjective) hc
+
+/-- The quotient by the kernel of a homomorphism into a member is a member. -/
+theorem mem_quotient_ker {M N : Type u} [Monoid M] [Monoid N] (f : M →* N) (h : V.mem N) :
+    V.mem (Con.ker f).Quotient :=
+  V.sub (Con.kerLift_injective f) h
+
+/-- The quotient by the meet of two congruences is a member when both quotients are. -/
+theorem mem_quotient_inf {M : Type u} [Monoid M] {c d : Con M} (hc : V.mem c.Quotient)
+    (hd : V.mem d.Quotient) : V.mem (c ⊓ d).Quotient := by
+  have h : Con.ker (c.mk'.prod d.mk') ≤ c ⊓ d := by
+    rw [Con.ker_prod, Con.mk'_ker, Con.mk'_ker]
+  exact V.mem_quotient_of_le h (V.mem_quotient_ker _ (V.prod hc hd))
+
+/-! ### Finite products -/
+
+/-- Reindexing a dependent product of monoids along an equivalence of the index. -/
+private def piCongrLeftMul {α β : Type*} (P : β → Type*) [∀ b, Mul (P b)] (e : α ≃ β) :
+    (∀ a, P (e a)) ≃* (∀ b, P b) :=
+  { Equiv.piCongrLeft P e with
+    map_mul' := fun f g ↦ by
+      funext b
+      obtain ⟨a, rfl⟩ := e.surjective b
+      simp [Equiv.piCongrLeft_apply_apply] }
+
+/-- Splitting a dependent product of monoids over `Option`. -/
+private def piOptionEquivProdMul {α : Type*} (f : Option α → Type*) [∀ i, Mul (f i)] :
+    (∀ i, f i) ≃* f none × ∀ a, f (some a) :=
+  { Equiv.piOptionEquivProd with map_mul' := fun _ _ ↦ rfl }
+
+/-- A pseudovariety is closed under finite dependent products. -/
+theorem pi_mem {ι : Type u} [Finite ι] {f : ι → Type u} [∀ i, Monoid (f i)]
+    (h : ∀ i, V.mem (f i)) : V.mem (∀ i, f i) := by
+  refine Finite.induction_empty_option
+    (P := fun J ↦ ∀ (g : J → Type u) [∀ i, Monoid (g i)], (∀ i, V.mem (g i)) → V.mem (∀ i, g i))
+    ?_ ?_ ?_ ι f h
+  · intro α β e ih g _ hg
+    exact V.mem_of_mulEquiv (piCongrLeftMul g e) (ih (fun a ↦ g (e a)) fun a ↦ hg (e a))
+  · intro g _ _
+    exact V.mem_of_mulEquiv (MulEquiv.ofUnique (M := PUnit.{u + 1})) V.memUnit
+  · intro α _ ih g _ hg
+    exact V.mem_of_mulEquiv (piOptionEquivProdMul g).symm
+      (V.prod (hg none) (ih _ fun a ↦ hg (some a)))
+
+/-! ### The lattice of pseudovarieties -/
+
+instance : InfSet Pseudovariety.{u} where
+  sInf s :=
+    { mem M := Finite M ∧ ∀ V ∈ s, V.mem M
+      finite_of_mem h := h.1
+      sub hf h := have := h.1; ⟨.of_injective _ hf, fun V hV ↦ V.sub hf (h.2 V hV)⟩
+      quot hf h := have := h.1; ⟨.of_surjective _ hf, fun V hV ↦ V.quot hf (h.2 V hV)⟩
+      prod hM hN := have := hM.1; have := hN.1
+        ⟨inferInstance, fun V hV ↦ V.prod (hM.2 V hV) (hN.2 V hV)⟩
+      memUnit := ⟨inferInstance, fun V _ ↦ V.memUnit⟩ }
+
+theorem mem_sInf {s : Set Pseudovariety.{u}} {M : Type u} [Monoid M] :
+    (sInf s).mem M ↔ Finite M ∧ ∀ V ∈ s, V.mem M := Iff.rfl
+
+instance : CompleteLattice Pseudovariety.{u} :=
+  completeLatticeOfInf _ fun _ ↦ ⟨fun V hV _ _ hM ↦ hM.2 V hV,
+    fun V hV M _ hM ↦ mem_sInf.2 ⟨V.finite_of_mem hM, fun _ hW ↦ hV hW M hM⟩⟩
+
+/-- The pseudovariety *generated* by a class of monoids is the least pseudovariety containing its
+finite members. -/
+def generated (S : ∀ (M : Type u) [Monoid M], Prop) : Pseudovariety.{u} :=
+  sInf {V | ∀ (N : Type u) [Monoid N] [Finite N], S N → V.mem N}
+
+theorem subset_generated {S : ∀ (M : Type u) [Monoid M], Prop} {M : Type u} [Monoid M]
+    [Finite M] (h : S M) : (generated S).mem M :=
+  ⟨‹_›, fun _ hV ↦ hV M h⟩
+
+theorem generated_le {S : ∀ (M : Type u) [Monoid M], Prop} {V : Pseudovariety.{u}}
+    (h : ∀ (N : Type u) [Monoid N] [Finite N], S N → V.mem N) : generated S ≤ V :=
+  sInf_le h
+
 end Pseudovariety
 
-/-- The **pseudovariety of aperiodic monoids** `A` — the algebraic counterpart of the star-free
-languages ([schutzenberger-1965]). The four closure obligations are the corresponding
-`Monoid.IsAperiodic` lemmas. -/
+/-- The pseudovariety of finite aperiodic monoids, the algebraic counterpart of the star-free
+languages. -/
 def aperiodicVariety : Pseudovariety.{u} where
-  mem M := IsAperiodic M
-  sub hf h := h.of_injective hf
-  quot hf h := h.of_surjective hf
-  prod hM hN := hM.prod hN
-  memUnit := IsAperiodic.of_subsingleton
+  mem M _ := Finite M ∧ IsAperiodic M
+  finite_of_mem h := h.1
+  sub hf h := have := h.1; ⟨.of_injective _ hf, h.2.of_injective hf⟩
+  quot hf h := have := h.1; ⟨.of_surjective _ hf, h.2.of_surjective hf⟩
+  prod hM hN := have := hM.1; have := hN.1; ⟨inferInstance, hM.2.prod hN.2⟩
+  memUnit := ⟨inferInstance, IsAperiodic.of_subsingleton⟩
 
 @[simp] theorem mem_aperiodicVariety {M : Type u} [Monoid M] :
-    aperiodicVariety.mem M ↔ IsAperiodic M := Iff.rfl
+    aperiodicVariety.mem M ↔ Finite M ∧ IsAperiodic M := Iff.rfl
 
 end Monoid
