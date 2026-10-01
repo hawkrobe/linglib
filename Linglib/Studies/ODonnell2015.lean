@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Computability.ContextFreeGrammar.Dirichlet
-public import Linglib.Core.Probability.PitmanYor
+public import Linglib.Core.Probability.Distributions.PitmanYor
 public import Linglib.Morphology.Exponence.Domain
 public import Linglib.Morphology.Exponence.Select
 public import Mathlib.Analysis.Calculus.ContDiff.FaaDiBruno
@@ -146,17 +146,26 @@ An adaptor grammar in the book's maximum-a-posteriori variant is a Dirichlet PCF
 Pitman–Yor process at each nonterminal memoising the subtrees computed there. The corpus
 probability is stated given the latent table assignment `Y`, per nonterminal a set partition of
 the uses of that nonterminal by the table they sat at, since marginalising over `Y` is the
-inference problem of §3.2. `TableAssignment` uses mathlib's `OrderedFinpartition`, whose
-`extendEquiv` is the seating-plan bijection of [pitman-2006]; `pypFactor` depends only on the
-block sizes. -/
+inference problem of §3.2. A table assignment at a nonterminal is a set partition of
+`Fin n`, an `OrderedFinpartition n`, and its Pitman–Yor factor is its probability under the
+seating plan, `pitmanYor`, which depends only on the block sizes ([pitman-2006]). -/
 
 /-- The book's adaptor grammar over `G` is a Dirichlet PCFG with a Pitman–Yor process
 memoising the subtrees rooted at each nonterminal. -/
 @[ext]
 structure AdaptorGrammar {T : Type} [DecidableEq T] (G : ContextFreeGrammar T)
     [DecidableEq G.NT] extends DirichletPCFG G where
-  /-- The Pitman–Yor process memoising expansions of each nonterminal. -/
-  pyp : G.NT → PitmanYor
+  /-- The discount of the Pitman–Yor process memoising expansions of each nonterminal. -/
+  discount : G.NT → ℝ
+  /-- The concentration of the Pitman–Yor process memoising expansions of each nonterminal. -/
+  concentration : G.NT → ℝ
+  /-- The discount is nonnegative. -/
+  discount_nonneg : ∀ a, 0 ≤ discount a
+  /-- The discount is at most `1`. -/
+  discount_le_one : ∀ a, discount a ≤ 1
+  /-- The concentration exceeds minus the discount. With the bounds on the discount, this is the
+  constraint under which the seating plan is a probability ([pitman-2006] (3.5)). -/
+  neg_discount_lt_concentration : ∀ a, -discount a < concentration a
 
 namespace AdaptorGrammar
 
@@ -171,7 +180,13 @@ variable (M : AdaptorGrammar G)
 
 /-- The Pitman–Yor probability of the table assignment at nonterminal `a`. -/
 noncomputable def pypFactor (a : G.NT) (Y : TableAssignment G) : ℝ :=
-  (M.pyp a).partitionProb (Y a).snd.toNatPartition
+  (pitmanYor (M.discount a) (M.concentration a) (Y a).1).real {(Y a).2}
+
+/-- The Pitman–Yor factor is the EPPF of the table sizes ([pitman-2006] Theorem 3.2). -/
+theorem pypFactor_eq (a : G.NT) (Y : TableAssignment G) :
+    M.pypFactor a Y = pitmanYorEPPF (M.discount a) (M.concentration a) (Y a).2.partSizes :=
+  pitmanYor_real_singleton (M.discount_nonneg a) (M.discount_le_one a)
+    (M.neg_discount_lt_concentration a) _
 
 /-- The corpus probability given a table assignment is the product, over the nonterminals the
 grammar expands, of the Dirichlet PCFG factor and the Pitman–Yor factor. -/
@@ -181,8 +196,8 @@ noncomputable def corpusProbGivenTables (D : Multiset (RoseTree (Symbol T G.NT))
 
 theorem corpusProbGivenTables_nonneg (D : Multiset (RoseTree (Symbol T G.NT)))
     (Y : TableAssignment G) : 0 ≤ M.corpusProbGivenTables D Y :=
-  Finset.prod_nonneg λ a ha => mul_nonneg (M.toDirichletPCFG.lhsFactor_pos ha D).le
-    ((M.pyp a).partitionProb_nonneg _)
+  Finset.prod_nonneg fun _ ha ↦ mul_nonneg (M.toDirichletPCFG.lhsFactor_pos ha D).le
+    MeasureTheory.measureReal_nonneg
 
 /-- The table assignment with no customers at any nonterminal. -/
 def emptyTables (G : ContextFreeGrammar T) : TableAssignment G :=
@@ -190,9 +205,7 @@ def emptyTables (G : ContextFreeGrammar T) : TableAssignment G :=
 
 @[simp]
 theorem pypFactor_emptyTables (a : G.NT) : M.pypFactor a (emptyTables G) = 1 := by
-  show (M.pyp a).partitionProb (default : OrderedFinpartition 0).toNatPartition = 1
-  rw [Subsingleton.elim (default : OrderedFinpartition 0).toNatPartition default]
-  simp [PitmanYor.partitionProb, default, Nat.Partition.indiscrete]
+  simp [pypFactor, emptyTables]
 
 @[simp]
 theorem corpusProbGivenTables_empty : M.corpusProbGivenTables 0 (emptyTables G) = 1 :=
