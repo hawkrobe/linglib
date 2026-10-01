@@ -4,7 +4,6 @@ public import Linglib.Core.Computability.ContextFreeGrammar.Dirichlet
 public import Linglib.Core.Probability.Distributions.PitmanYor
 public import Linglib.Morphology.Exponence.Domain
 public import Linglib.Morphology.Exponence.Select
-public import Mathlib.Analysis.Calculus.ContDiff.FaaDiBruno
 
 /-!
 # O'Donnell (2015): Productivity and Reuse in Language
@@ -147,7 +146,7 @@ Pitman–Yor process at each nonterminal memoising the subtrees computed there. 
 probability is stated given the latent table assignment `Y`, per nonterminal a set partition of
 the uses of that nonterminal by the table they sat at, since marginalising over `Y` is the
 inference problem of §3.2. A table assignment at a nonterminal is a set partition of
-`Fin n`, an `OrderedFinpartition n`, and its Pitman–Yor factor is its probability under the
+`Fin n`, a `Finpartition`, and its Pitman–Yor factor is its probability under the
 seating plan, `pitmanYor`, which depends only on the block sizes ([pitman-2006]). -/
 
 /-- The book's adaptor grammar over `G` is a Dirichlet PCFG with a Pitman–Yor process
@@ -174,7 +173,7 @@ variable {T : Type} [DecidableEq T] {G : ContextFreeGrammar T} [DecidableEq G.NT
 /-- The latent table assignment `Y` gives, for each nonterminal, a set partition of its uses in
 the corpus by the table they sat at. Consistency with the corpus is the caller's hypothesis. -/
 abbrev TableAssignment (G : ContextFreeGrammar T) : Type :=
-  G.NT → Σ n, OrderedFinpartition n
+  G.NT → Σ n, Finpartition (Finset.univ : Finset (Fin n))
 
 variable (M : AdaptorGrammar G)
 
@@ -201,11 +200,12 @@ theorem corpusProbGivenTables_nonneg (D : Multiset (RoseTree (Symbol T G.NT)))
 
 /-- The table assignment with no customers at any nonterminal. -/
 def emptyTables (G : ContextFreeGrammar T) : TableAssignment G :=
-  λ _ => ⟨0, default⟩
+  λ _ => ⟨0, ⊥⟩
 
 @[simp]
 theorem pypFactor_emptyTables (a : G.NT) : M.pypFactor a (emptyTables G) = 1 := by
-  simp [pypFactor, emptyTables]
+  rw [pypFactor_eq]
+  simp [emptyTables, Finpartition.partSizes, pitmanYorEPPF]
 
 @[simp]
 theorem corpusProbGivenTables_empty : M.corpusProbGivenTables 0 (emptyTables G) = 1 :=
