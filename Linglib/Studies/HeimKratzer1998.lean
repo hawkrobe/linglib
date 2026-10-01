@@ -409,11 +409,14 @@ theorem interp_of_denotes [Nonempty E] {lex : L → Option (Denotation E W)} {g 
   | tn h => exact h
   | nn _ ih => exact ih
   | faLeft _ _ ih₁ ih₂ =>
-    simp only [interp_node_binary, ih₁, ih₂, Option.bind_some, interpBinary, tryFA_forward]; rfl
+    simp only [interp_node_binary, ih₁, ih₂, Option.bind_some, interpBinary,
+      functionalApplication?_forward]; rfl
   | faRight _ _ ih₁ ih₂ =>
-    simp only [interp_node_binary, ih₁, ih₂, Option.bind_some, interpBinary, tryFA_backward]; rfl
+    simp only [interp_node_binary, ih₁, ih₂, Option.bind_some, interpBinary,
+      functionalApplication?_backward]; rfl
   | pm _ _ ih₁ ih₂ =>
-    simp only [interp_node_binary, ih₁, ih₂, Option.bind_some, interpBinary_pm]; rfl
+    simp only [interp_node_binary, ih₁, ih₂, Option.bind_some,
+      interpBinary_predicateModification]; rfl
   | trace => rfl
   | @pa g n c body τ F h ih =>
     obtain ⟨x₀⟩ := ‹Nonempty E›
@@ -530,7 +533,7 @@ noncomputable def partialLex : String → Option (PDenotation ToyEntity Unit)
 /-- *The student* is a presupposition failure in the toy model, which has two students. -/
 theorem the_student_fails :
     PresupFailure partialLex g₀ (.bin (.leaf "the") (.leaf "student")) := by
-  refine ⟨_, binary_forward the (PFun.lift student_sem), fun ⟨x, _, huniq⟩ ↦ ?_⟩
+  refine ⟨_, interpBinary_forward the (PFun.lift student_sem), fun ⟨x, _, huniq⟩ ↦ ?_⟩
   have hj := huniq .john ((holds_lift _ _).mpr trivial)
   have hm := huniq .mary ((holds_lift _ _).mpr trivial)
   exact ToyEntity.noConfusion (hj.trans hm.symm)
@@ -538,7 +541,7 @@ theorem the_student_fails :
 /-- *The pizza* denotes the pizza, the toy model's unique one. -/
 theorem the_pizza : interp partialLex g₀ (.bin (.leaf "the") (.leaf "pizza")) =
     some ⟨.e, Part.some .pizza⟩ := by
-  refine (binary_forward the (PFun.lift ToyLexicon.pizza_sem)).trans ?_
+  refine (interpBinary_forward the (PFun.lift ToyLexicon.pizza_sem)).trans ?_
   rw [the_lift_eq_some fun x ↦ ?_]
   cases x <;> exact ⟨fun h ↦ by first | rfl | exact h.elim, fun h ↦ by trivial⟩
 
@@ -610,13 +613,13 @@ theorem interp_of_denotes [Nonempty E] {lex : L → Option (PDenotation E W)} {g
   | nn _ ih => exact ih
   | faLeft _ _ ih₁ ih₂ =>
     rw [Partial.interp_node_binary, ih₁, ih₂, Option.bind_some, Option.bind_some,
-      Partial.binary_forward]
+      Partial.interpBinary_forward]
   | faRight _ _ ih₁ ih₂ =>
     rw [Partial.interp_node_binary, ih₁, ih₂, Option.bind_some, Option.bind_some,
-      Partial.binary_backward]
+      Partial.interpBinary_backward]
   | pm _ _ ih₁ ih₂ =>
     rw [Partial.interp_node_binary, ih₁, ih₂, Option.bind_some, Option.bind_some,
-      Partial.binary_pm]
+      Partial.interpBinary_predicateModification]
   | trace => rfl
   | @pa g n c body τ F h ih =>
     obtain ⟨x₀⟩ := ‹Nonempty E›

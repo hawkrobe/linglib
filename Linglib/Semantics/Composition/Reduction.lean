@@ -331,7 +331,7 @@ variable {E W : Type}
 /-- Forward FA at `Id`, with the applicative collapsed. -/
 private theorem interpBinary_fa {σ τ : Ty} (f : Ty.Domain E W (σ ⇒ τ)) (x : Ty.Domain E W σ) :
     interpBinary (M := Id) ⟨σ ⇒ τ, f⟩ ⟨σ, x⟩ = some ⟨τ, f x⟩ := by
-  rw [interpBinary, tryFA_forward]
+  rw [interpBinary, functionalApplication?_forward]
   rfl
 
 /-- Backward FA at `Id`: entity subject, unary predicate. -/

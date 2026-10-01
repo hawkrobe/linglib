@@ -27,9 +27,10 @@ by Predicate Abstraction, which is a capability of the effect (`PredAbs`) rather
 
 * `PredAbs` is the entity-distributor an effect needs for Predicate Abstraction; `Id` has one
   and scope effects do not.
-* `tryFA`, `tryIFA`, `tryPM` and `tryEI` are the binary composition modes and `interpBinary`
-  tries them in order; `tyBinary` is the type they compose to, a function of the daughters'
-  types alone (`interpBinary_map_fst`).
+* `functionalApplication?`, `intensionalApplication?`, `predicateModification?` and
+  `eventIdentification?` are the binary composition modes, `none` where the daughters' types do
+  not fit, and `interpBinary` tries them in order; `tyBinary` is the type they compose to, a
+  function of the daughters' types alone (`interpBinary_map_fst`).
 * `interp` interprets a tree under an assignment, over any leaf type.
 * `interp_congr_of_agree` and its corollaries are [heim-kratzer-1998]'s theorems on variable
   binding: interpretability and the composed type never depend on the assignment
@@ -81,7 +82,7 @@ instance (E W D : Type) : PredAbs Id E W D := ⟨some fun _ f ↦ f⟩
 /-! ### Composition modes -/
 
 /-- Forward functional application, the function being the left daughter. -/
-def applyForward {E W D : Type} {M : Type → Type} [Applicative M]
+def applyForward? {E W D : Type} {M : Type → Type} [Applicative M]
     (df da : Denotation E W M D) : Option (Denotation E W M D) :=
   match hf : df.1 with
   | .fn σ τ =>
@@ -94,7 +95,7 @@ def applyForward {E W D : Type} {M : Type → Type} [Applicative M]
 
 /-- Backward functional application, the function being the right daughter; the left daughter
 still sequences first. -/
-def applyBackward {E W D : Type} {M : Type → Type} [Applicative M]
+def applyBackward? {E W D : Type} {M : Type → Type} [Applicative M]
     (da df : Denotation E W M D) : Option (Denotation E W M D) :=
   match hf : df.1 with
   | .fn σ τ =>
@@ -106,14 +107,14 @@ def applyBackward {E W D : Type} {M : Type → Type} [Applicative M]
   | _ => none
 
 /-- Functional application in either order, forward first. -/
-def tryFA {E W D : Type} {M : Type → Type} [Applicative M]
+def functionalApplication? {E W D : Type} {M : Type → Type} [Applicative M]
     (d1 d2 : Denotation E W M D) : Option (Denotation E W M D) :=
-  applyForward d1 d2 <|> applyBackward d1 d2
+  applyForward? d1 d2 <|> applyBackward? d1 d2
 
 /-- Intensional functional application ([von-fintel-heim-2011]): a daughter expecting an
 intension of type `⟨s,σ⟩` applies to the constant intension of a sister of type `σ`, in
 either order, so that modals and attitude verbs take the intension of their sister. -/
-def tryIFA {E W D : Type} {M : Type → Type} [Applicative M]
+def intensionalApplication? {E W D : Type} {M : Type → Type} [Applicative M]
     (d1 d2 : Denotation E W M D) : Option (Denotation E W M D) :=
   match hf : d1.1 with
   | .fn (.intens σ) τ =>
@@ -141,7 +142,7 @@ def tryIFA {E W D : Type} {M : Type → Type} [Applicative M]
     | _ => none
 
 /-- Predicate modification, the intersection of two `⟨e,t⟩` predicates. -/
-def tryPM {E W D : Type} {M : Type → Type} [Applicative M]
+def predicateModification? {E W D : Type} {M : Type → Type} [Applicative M]
     (d1 d2 : Denotation E W M D) : Option (Denotation E W M D) :=
   match h1 : d1.1, h2 : d2.1 with
   | .fn .e .t, .fn .e .t =>
@@ -152,7 +153,7 @@ def tryPM {E W D : Type} {M : Type → Type} [Applicative M]
 
 /-- The event identification mode combines a role head of type `⟨e,⟨e,t⟩⟩` and an eventuality
 predicate of type `⟨e,t⟩`, in either order, by `eventIdentification`. -/
-def tryEI {E W D : Type} {M : Type → Type} [Applicative M]
+def eventIdentification? {E W D : Type} {M : Type → Type} [Applicative M]
     (d1 d2 : Denotation E W M D) : Option (Denotation E W M D) :=
   match h1 : d1.1, h2 : d2.1 with
   | .fn .e (.fn .e .t), .fn .e .t =>
@@ -168,7 +169,8 @@ def tryEI {E W D : Type} {M : Type → Type} [Applicative M]
 /-- The modes a binary node tries, in order. -/
 def interpBinary {E W D : Type} {M : Type → Type} [Applicative M]
     (d1 d2 : Denotation E W M D) : Option (Denotation E W M D) :=
-  tryFA d1 d2 <|> tryIFA d1 d2 <|> tryPM d1 d2 <|> tryEI d1 d2
+  functionalApplication? d1 d2 <|> intensionalApplication? d1 d2 <|>
+    predicateModification? d1 d2 <|> eventIdentification? d1 d2
 
 /-- The value of an interpreted daughter at the type `τ`, with the default `v` where the
 daughter is uninterpretable or of another type. Types do not depend on the assignment
@@ -189,99 +191,57 @@ section Typing
 
 variable {E W D : Type} {M : Type → Type} [Applicative M]
 
-/-- The type forward application composes from a function type and an argument type. -/
-def tyForward : Ty → Ty → Option Ty
-  | .fn σ τ, σ' => if σ = σ' then some τ else none
-  | _, _ => none
-
-/-- The type intensional application composes, in the order `tryIFA` tries. -/
-def tyIFA : Ty → Ty → Option Ty
-  | .fn (.intens σ) τ, t₂ =>
-    if σ = t₂ then some τ else
-      match t₂ with
-      | .fn (.intens σ') τ' => if σ' = .fn (.intens σ) τ then some τ' else none
-      | _ => none
-  | t₁, .fn (.intens σ) τ => if σ = t₁ then some τ else none
-  | _, _ => none
-
-/-- The type predicate modification composes. -/
-def tyPM : Ty → Ty → Option Ty
-  | .fn .e .t, .fn .e .t => some (.fn .e .t)
-  | _, _ => none
-
-/-- The type event identification composes. -/
-def tyEI : Ty → Ty → Option Ty
-  | .fn .e (.fn .e .t), .fn .e .t => some (.e ⇒ .e ⇒ .t)
-  | .fn .e .t, .fn .e (.fn .e .t) => some (.e ⇒ .e ⇒ .t)
-  | _, _ => none
-
 /-- The type a binary node composes to, or none when no mode applies. -/
 def tyBinary (σ τ : Ty) : Option Ty :=
-  tyForward σ τ <|> tyForward τ σ <|> tyIFA σ τ <|> tyPM σ τ <|> tyEI σ τ
+  σ.apply? τ <|> τ.apply? σ <|> σ.intensionalApplication? τ <|> σ.predicateModification? τ <|>
+    σ.eventIdentification? τ
 
-theorem applyForward_map_fst (d₁ d₂ : Denotation E W M D) :
-    (applyForward d₁ d₂).map (·.1) = tyForward d₁.1 d₂.1 := by
+theorem applyForward?_map_fst (d₁ d₂ : Denotation E W M D) :
+    (applyForward? d₁ d₂).map (·.1) = Ty.apply? d₁.1 d₂.1 := by
   obtain ⟨t₁, v₁⟩ := d₁; obtain ⟨t₂, v₂⟩ := d₂
-  unfold applyForward tyForward
+  unfold applyForward? Ty.apply?
   dsimp only
   split <;> (try split_ifs) <;> simp_all
 
-theorem applyBackward_map_fst (d₁ d₂ : Denotation E W M D) :
-    (applyBackward d₁ d₂).map (·.1) = tyForward d₂.1 d₁.1 := by
+theorem applyBackward?_map_fst (d₁ d₂ : Denotation E W M D) :
+    (applyBackward? d₁ d₂).map (·.1) = Ty.apply? d₂.1 d₁.1 := by
   obtain ⟨t₁, v₁⟩ := d₁; obtain ⟨t₂, v₂⟩ := d₂
-  unfold applyBackward tyForward
+  unfold applyBackward? Ty.apply?
   dsimp only
   split <;> (try split_ifs) <;> simp_all
 
-theorem tryIFA_map_fst (d₁ d₂ : Denotation E W M D) :
-    (tryIFA d₁ d₂).map (·.1) = tyIFA d₁.1 d₂.1 := by
+theorem intensionalApplication?_map_fst (d₁ d₂ : Denotation E W M D) :
+    (intensionalApplication? d₁ d₂).map (·.1) = Ty.intensionalApplication? d₁.1 d₂.1 := by
   obtain ⟨t₁, v₁⟩ := d₁; obtain ⟨t₂, v₂⟩ := d₂
-  unfold tryIFA tyIFA
+  unfold intensionalApplication? Ty.intensionalApplication?
   dsimp only
   split <;> (try split_ifs) <;> (try split) <;> (try split_ifs) <;> simp_all
 
-theorem tryPM_map_fst (d₁ d₂ : Denotation E W M D) :
-    (tryPM d₁ d₂).map (·.1) = tyPM d₁.1 d₂.1 := by
+theorem predicateModification?_map_fst (d₁ d₂ : Denotation E W M D) :
+    (predicateModification? d₁ d₂).map (·.1) = Ty.predicateModification? d₁.1 d₂.1 := by
   obtain ⟨t₁, v₁⟩ := d₁; obtain ⟨t₂, v₂⟩ := d₂
-  unfold tryPM tyPM
+  unfold predicateModification? Ty.predicateModification?
   dsimp only
   split <;> simp_all
 
-theorem tryEI_map_fst (d₁ d₂ : Denotation E W M D) :
-    (tryEI d₁ d₂).map (·.1) = tyEI d₁.1 d₂.1 := by
+theorem eventIdentification?_map_fst (d₁ d₂ : Denotation E W M D) :
+    (eventIdentification? d₁ d₂).map (·.1) = Ty.eventIdentification? d₁.1 d₂.1 := by
   obtain ⟨t₁, v₁⟩ := d₁; obtain ⟨t₂, v₂⟩ := d₂
-  unfold tryEI tyEI
+  unfold eventIdentification? Ty.eventIdentification?
   dsimp only
   split <;> simp_all
 
 theorem interpBinary_map_fst (d₁ d₂ : Denotation E W M D) :
     (interpBinary d₁ d₂).map (·.1) = tyBinary d₁.1 d₂.1 := by
-  simp only [interpBinary, tryFA, tyBinary, Option.orElse_eq_orElse, Option.orElse_eq_or,
-    Option.map_or, Option.or_assoc, applyForward_map_fst, applyBackward_map_fst, tryIFA_map_fst,
-    tryPM_map_fst, tryEI_map_fst]
+  simp only [interpBinary, functionalApplication?, tyBinary, Option.orElse_eq_orElse,
+    Option.orElse_eq_or, Option.map_or, Option.or_assoc, applyForward?_map_fst,
+    applyBackward?_map_fst, intensionalApplication?_map_fst, predicateModification?_map_fst,
+    eventIdentification?_map_fst]
 
-/-- No type is its own argument type, so forward application never applies when backward
-does. -/
-theorem tyForward_fn_self (σ τ : Ty) : tyForward σ (.fn σ τ) = none := by
-  cases σ with
-  | fn a b =>
-    simp only [tyForward]
-    split_ifs with h
-    · have := congrArg sizeOf h
-      simp only [Ty.fn.sizeOf_spec] at this
-      omega
-    · rfl
-  | _ => rfl
-
-/-- Intensional application never applies to extensional types. -/
-theorem tyIFA_eq_none {σ τ : Ty} (h₁ : σ.Extensional) (h₂ : τ.Extensional) :
-    tyIFA σ τ = none := by
-  rcases h₁ with _ | _ | ⟨ha, _⟩ <;> rcases h₂ with _ | _ | ⟨ha', _⟩ <;>
-    (try rcases ha with _ | _ | _) <;> (try rcases ha' with _ | _ | _) <;> rfl
-
-theorem tryIFA_eq_none {d₁ d₂ : Denotation E W M D} (h₁ : d₁.1.Extensional)
-    (h₂ : d₂.1.Extensional) : tryIFA d₁ d₂ = none :=
-  Option.map_eq_none_iff.mp (by rw [tryIFA_map_fst]; exact tyIFA_eq_none h₁ h₂)
+theorem intensionalApplication?_eq_none {d₁ d₂ : Denotation E W M D} (h₁ : d₁.1.Extensional)
+    (h₂ : d₂.1.Extensional) : intensionalApplication? d₁ d₂ = none :=
+  Option.map_eq_none_iff.mp <| by
+    rw [intensionalApplication?_map_fst]; exact Ty.intensionalApplication?_eq_none h₁ h₂
 
 end Typing
 
@@ -353,42 +313,44 @@ variable {C : Type} {E W D : Type} {M : Type → Type} [Applicative M] [PredAbs 
 omit [PredAbs M E W D] in
 /-- Forward application reduces at any types; backward application reduces only at concrete
 types, since forward fires first whenever the left daughter is a function. -/
-@[simp] theorem applyForward_fn {σ τ : Ty} (f : M (Ty.Domain E W (σ ⇒ τ) D))
+@[simp] theorem applyForward?_fn {σ τ : Ty} (f : M (Ty.Domain E W (σ ⇒ τ) D))
     (x : M (Ty.Domain E W σ D)) :
-    applyForward (⟨σ ⇒ τ, f⟩ : Denotation E W M D) ⟨σ, x⟩ = some ⟨τ, f <*> x⟩ := by
-  simp only [applyForward, ↓reduceDIte]
+    applyForward? (⟨σ ⇒ τ, f⟩ : Denotation E W M D) ⟨σ, x⟩ = some ⟨τ, f <*> x⟩ := by
+  simp only [applyForward?, ↓reduceDIte]
 
 omit [PredAbs M E W D] in
-@[simp] theorem tryFA_forward {σ τ : Ty} (f : M (Ty.Domain E W (σ ⇒ τ) D))
+@[simp] theorem functionalApplication?_forward {σ τ : Ty} (f : M (Ty.Domain E W (σ ⇒ τ) D))
     (x : M (Ty.Domain E W σ D)) :
-    tryFA (⟨σ ⇒ τ, f⟩ : Denotation E W M D) ⟨σ, x⟩ = some ⟨τ, f <*> x⟩ := by
-  simp only [tryFA, applyForward_fn]; rfl
+    functionalApplication? (⟨σ ⇒ τ, f⟩ : Denotation E W M D) ⟨σ, x⟩ = some ⟨τ, f <*> x⟩ := by
+  simp only [functionalApplication?, applyForward?_fn]; rfl
 
 omit [PredAbs M E W D] in
-@[simp] theorem applyBackward_fn {σ τ : Ty} (x : M (Ty.Domain E W σ D))
+@[simp] theorem applyBackward?_fn {σ τ : Ty} (x : M (Ty.Domain E W σ D))
     (f : M (Ty.Domain E W (σ ⇒ τ) D)) :
-    applyBackward (⟨σ, x⟩ : Denotation E W M D) ⟨σ ⇒ τ, f⟩ =
+    applyBackward? (⟨σ, x⟩ : Denotation E W M D) ⟨σ ⇒ τ, f⟩ =
       some ⟨τ, (fun x g ↦ g x) <$> x <*> f⟩ := by
-  simp only [applyBackward, ↓reduceDIte]
+  simp only [applyBackward?, ↓reduceDIte]
 
 omit [PredAbs M E W D] in
 /-- Backward application reduces at any types too, since forward cannot apply to an argument
 of the function's own argument type. -/
-@[simp] theorem tryFA_backward {σ τ : Ty} (x : M (Ty.Domain E W σ D))
+@[simp] theorem functionalApplication?_backward {σ τ : Ty} (x : M (Ty.Domain E W σ D))
     (f : M (Ty.Domain E W (σ ⇒ τ) D)) :
-    tryFA (⟨σ, x⟩ : Denotation E W M D) ⟨σ ⇒ τ, f⟩ = some ⟨τ, (fun x g ↦ g x) <$> x <*> f⟩ := by
-  have h : applyForward (⟨σ, x⟩ : Denotation E W M D) ⟨σ ⇒ τ, f⟩ = none :=
-    Option.map_eq_none_iff.mp (by rw [applyForward_map_fst]; exact tyForward_fn_self σ τ)
-  simp only [tryFA, h, applyBackward_fn]; rfl
+    functionalApplication? (⟨σ, x⟩ : Denotation E W M D) ⟨σ ⇒ τ, f⟩ =
+      some ⟨τ, (fun x g ↦ g x) <$> x <*> f⟩ := by
+  have h : applyForward? (⟨σ, x⟩ : Denotation E W M D) ⟨σ ⇒ τ, f⟩ = none :=
+    Option.map_eq_none_iff.mp (by rw [applyForward?_map_fst]; exact Ty.apply?_fn_self σ τ)
+  simp only [functionalApplication?, h, applyBackward?_fn]; rfl
 
 omit [PredAbs M E W D] in
 /-- Two predicates compose by predicate modification, application failing on them. -/
-@[simp] theorem interpBinary_pm (P Q : M (Ty.Domain E W (.e ⇒ .t) D)) :
+@[simp] theorem interpBinary_predicateModification (P Q : M (Ty.Domain E W (.e ⇒ .t) D)) :
     interpBinary (⟨.e ⇒ .t, P⟩ : Denotation E W M D) ⟨.e ⇒ .t, Q⟩ =
       some ⟨.e ⇒ .t, Modifier.intersective <$> P <*> Q⟩ := by
-  have h : tryIFA (⟨.e ⇒ .t, P⟩ : Denotation E W M D) ⟨.e ⇒ .t, Q⟩ = none :=
-    tryIFA_eq_none (.fn .e .t) (.fn .e .t)
-  simp [interpBinary, tryFA, applyForward, applyBackward, h, tryPM]
+  have h : intensionalApplication? (⟨.e ⇒ .t, P⟩ : Denotation E W M D) ⟨.e ⇒ .t, Q⟩ = none :=
+    intensionalApplication?_eq_none (.fn .e .t) (.fn .e .t)
+  simp [interpBinary, functionalApplication?, applyForward?, applyBackward?, h,
+    predicateModification?]
 
 end Reduction
 
