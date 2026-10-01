@@ -19,8 +19,8 @@ anaphoric definiteness, instantiating an unmarked cell that [jenks-2018]'s defin
 typology had no slot for. Because Shan has no articles, no covert type-shift is blocked — ι,
 ι^x and ∩ are all available to bare nouns — while the optional demonstratives *nâj/nân*
 only add spatial content. The cell is derived from `Shan.Determiners.inventory`, the
-bare-noun reading distribution from `MeaningPreservation.selectShift` over the shifts the
-inventory leaves unblocked, and the refutation is stated against
+bare-noun readings as the shifts the inventory leaves unblocked that are maximal under
+[dayal-2004]'s Meaning Preservation, her (79), and the refutation is stated against
 `Jenks2018.attested`.
 
 Her comparison of Shan and English bare nouns (Table 2.3) finds them alike on the
@@ -37,7 +37,7 @@ and refers to it if it is close (`demDenotation`, her (147)–(148)).
 ## References
 
 * [moroney-2021]
-* [deal-2017], [jenks-2018], [schwarz-2013]
+* [dayal-2004], [deal-2017], [jenks-2018], [schwarz-2013]
 -/
 
 @[expose] public section
@@ -45,53 +45,42 @@ and refers to it if it is close (`demDenotation`, her (147)–(148)).
 namespace Moroney2021
 
 open Reference
-open Genericity
+open Genericity Genericity.MeaningPreservation
 open Mereology (CUM)
 
 /-! ### Type-shift selection -/
 
-/-- The type-shift context of a Shan number-neutral bare noun: the inventory blocks nothing,
-and only the predicate's kind-compatibility varies. -/
-def shanCtx (downDefined : Bool) : MeaningPreservation.TypeShiftContext :=
-  { number := .neutral
-  , downDefined := downDefined
-  , iotaBlocked := decide (Shan.Determiners.inventory.Blocks .iota)
-  , iotaAnaphoricBlocked := false
-  , existsBlocked := decide (Shan.Determiners.inventory.Blocks .exists)
-  , instantiationAccessible := true }
-
-/-- With a non-kind predicate a Shan bare noun type-shifts by ι — the definite reading —
-while an English bare singular gets no shift at all, since *the* and *a* block ι and ∃. -/
+/-- With a non-kind predicate a Shan bare noun type-shifts by ι, the definite reading, while an
+English bare singular has no shift available at all, since *the* blocks ι and ι^x, *a* blocks ∃,
+and ∩ is undefined for a singular count noun. -/
 theorem shan_iota_english_none :
-    MeaningPreservation.selectShift (shanCtx false) = some .iota ∧
-      MeaningPreservation.selectShift
-        { number := .sg, downDefined := false, iotaBlocked := true, iotaAnaphoricBlocked := true
-        , existsBlocked := true, instantiationAccessible := true } = none :=
-  ⟨rfl, rfl⟩
+    MaximalFor (Shan.Determiners.inventory.Available False) dayal .iota ∧
+      ∀ τ, ¬ English.Determiners.inventory.Available (DownDefined .count .singular) τ := by
+  decide
 
-/-- With a kind-compatible predicate ∩ is selected while ι and ι^x remain available — the
-definite/kind ambiguity of Shan bare nouns. -/
+/-- With a kind-compatible predicate ∩, ι and ι^x are all maximal, which is the kind and definite
+ambiguity of Shan bare nouns. -/
 theorem shan_kind_ambiguity :
-    MeaningPreservation.selectShift (shanCtx true) = some .down ∧
-      .iota ∈ MeaningPreservation.availableShifts (shanCtx true) ∧
-      .iotaAnaphoric ∈ MeaningPreservation.availableShifts (shanCtx true) := by
-  refine ⟨rfl, ?_, ?_⟩ <;> decide
+    MaximalFor (Shan.Determiners.inventory.Available True) dayal .down ∧
+      MaximalFor (Shan.Determiners.inventory.Available True) dayal .iota ∧
+      MaximalFor (Shan.Determiners.inventory.Available True) dayal .iotaAnaphoric := by
+  decide
 
-/-- Shan's ι^x is unblocked, so bare nouns reach anaphoric definiteness; blocking ι^x —
-Thai's demonstrative — removes exactly that reading. -/
+/-- Shan blocks no ι^x, so bare nouns reach anaphoric definiteness; Thai's demonstrative marks
+familiarity and blocks it. -/
 theorem shan_thai_anaphoric_contrast :
-    .iotaAnaphoric ∈ MeaningPreservation.availableShifts (shanCtx false) ∧
-      .iotaAnaphoric ∉ MeaningPreservation.availableShifts
-        { shanCtx false with iotaAnaphoricBlocked := true } := by
-  constructor <;> decide
+    Shan.Determiners.inventory.Available False .iotaAnaphoric ∧
+      ¬ Thai.Determiners.inventory.Available False .iotaAnaphoric := by
+  decide
 
-/-- ι outranks ∃ under Meaning Preservation: ∃ is available but never selected when ι is, so
-Shan bare nouns default to definite or kind readings and the existential reading arises only
-through existential closure at vP — whence the missing high-scope existential. -/
+/-- Under Meaning Preservation ι outranks ∃, which is available to a Shan bare noun but never
+selected beside ι, so Shan bare nouns default to definite or kind readings and the existential
+reading arises only through existential closure at vP, whence the missing high-scope
+existential. -/
 theorem shan_exists_is_last_resort :
-    (MeaningPreservation.availableShifts (shanCtx false)).head? = some .iota ∧
-      .exists ∈ MeaningPreservation.availableShifts (shanCtx false) :=
-  ⟨rfl, by decide⟩
+    Shan.Determiners.inventory.Available False .exists ∧
+      ¬ MaximalFor (Shan.Determiners.inventory.Available False) dayal .exists := by
+  decide
 
 /-! ### The typology, derived per language -/
 

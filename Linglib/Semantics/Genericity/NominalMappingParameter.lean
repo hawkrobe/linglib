@@ -34,7 +34,7 @@ articles admits bare plurals and bare mass nouns but no bare singular count noun
 ## References
 
 * [chierchia-1998]
-* [dayal-2004]
+* [jenks-2018]
 * [moroney-2021]
 -/
 
@@ -99,7 +99,8 @@ end NominalMapping
 /-! ### Covert type shifts -/
 
 /-- The covert type shifts: kind formation ∩, the definite ι and the existential ∃ of
-[chierchia-1998], and the anaphoric definite ι^x of [dayal-2004] and [moroney-2021]. -/
+[chierchia-1998], and the anaphoric definite ι^x of [jenks-2018], which [moroney-2021] makes
+covert. -/
 inductive CovertShift where
   | down
   | iota
