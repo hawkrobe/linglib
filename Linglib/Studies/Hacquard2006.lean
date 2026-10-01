@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Semantics.Genericity.Normality
 public import Linglib.Semantics.Modality.EventRelativity
 public import Linglib.Studies.Condoravdi2002
 public import Linglib.Fragments.Romance.Italian.Modals
@@ -132,20 +133,21 @@ theorem epistemicPossibility_not_actual {acc : Set W} {w' : W} (hw' : w' ∈ acc
 
 /-! ### The imperfective, chapter 2 -/
 
-/-- `GEN` (130) quantifies over the normal or ideal events from the perspective of `w` at `t`,
-and holds when every ideal event meeting the contextual restriction satisfies the predicate. It
-binds the event variable
-itself, so it requires no verifying instance. -/
+/-- `GEN` (130) is the generic operator under a selection function of the normal or ideal events
+from the perspective of `w` at `t`: it holds when every ideal event meeting the contextual
+restriction satisfies the predicate. It binds the event variable itself, so it requires no
+verifying instance. -/
 def gen (ideal : W → Set T → Set E) (restr : E → Prop) (w : W) (t : Set T) (P : E → Prop) :
     Prop :=
-  ∀ e ∈ ideal w t, restr e → P e
+  (w, t) ∈ (Genericity.Normality.ofAccess fun i : W × Set T ↦ ideal i.1 i.2).gen {e | restr e}
+    {e | P e}
 
 /-- A root modal under `GEN` is not implicative (93), (100). Where nothing counts as an
 ideal event the generic holds, and no event of the actual world need be a `Q`-event. -/
 theorem gen_not_actual {ideal : W → Set T → Set E} {restr : E → Prop} (hideal : ideal w t = ∅)
     (hno : ∀ e, ¬ occurs e w) :
     gen ideal restr w t (rootPossibility f Q) ∧ ¬ perfective occurs τ w t (Q · w) :=
-  ⟨fun e he ↦ (Set.notMem_empty e (hideal ▸ he)).elim, fun ⟨e, he, _, _⟩ ↦ hno e he⟩
+  ⟨fun e he ↦ (Set.notMem_empty e (hideal ▸ he.1)).elim, fun ⟨e, he, _, _⟩ ↦ hno e he⟩
 
 /-! ### Event-relative modality, chapters 3 and 4 -/
 

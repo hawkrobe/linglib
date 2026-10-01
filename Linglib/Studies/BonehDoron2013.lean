@@ -1,10 +1,9 @@
 module
 
-public import Linglib.Semantics.Quantification.Counting
-public import Linglib.Semantics.Genericity.Basic
+public import Linglib.Semantics.Genericity.Normality
 public import Linglib.Semantics.Aspect.Viewpoint
 public import Linglib.Semantics.Mereology
-public import Linglib.Semantics.Modality.Kratzer.Ordering
+public import Linglib.Semantics.Modality.Kratzer.Operators
 
 /-!
 # Boneh and Doron 2013: Hab and Gen in the expression of habituality
@@ -23,6 +22,7 @@ and [pancheva-2003]'s final-subinterval perfect.
 
 ## Main definitions
 
+* `gen` — the chapter's (21), GEN with every case normal and a modalized matrix.
 * `hab` — the chapter's (13)/(15), with (14)'s iteration as `Mereology.IsPlural`
   and the modal base `Modality.ModalBase`.
 * `retro`, `usedToOp`, `perfectOp` — (19b), (18), and the (34a) perfect over
@@ -43,7 +43,6 @@ and [pancheva-2003]'s final-subinterval perfect.
 * `restrictor_contrast`, `sameObjectParallel`, `actualization_contrast`,
   `individual_level_contrast`, `would_vs_usedTo_puzzle` — the chapter's
   judgment pairs ((2), (4), (6)–(7), (42), (47)–(48)).
-* `gen_skeleton` — Gen's reduction to the relativized restricted universal.
 
 ## References
 
@@ -57,8 +56,6 @@ and [pancheva-2003]'s final-subinterval perfect.
 
 namespace BonehDoron2013
 
-open Quantifier Quantifier.GQ Quantifier.NP
-open Genericity (Situation traditionalGEN)
 open Aspect (Perfectivity IntervalPred IMPF)
 open Modality (ModalBase)
 
@@ -84,13 +81,21 @@ theorem same_object_infelicity {E C : Type*} [SemilatticeSup E]
     ¬ ∃ c, cig c ∧ ∃ e, Mereology.IsPlural (smoke · c) e :=
   fun ⟨c, _, e, hIter⟩ => Mereology.not_isPlural_of_subsingleton (hOnce c) e hIter
 
+/-- Gen, (21): every `Q`-individual temporally included in the interval `i` at `w` is a
+`P`-individual throughout the gnomic modal base of `i` at `w`. It selects no normal individuals
+beyond its restrictor, so it is GEN with every case normal, its modality in the matrix. -/
+def gen {W Z T : Type*} (P Q : Z → W → Prop) (τ : Z → Set T) (mb : Set T → ModalBase W)
+    (i : Set T) (w : W) : Prop :=
+  (i, w) ∈ (⊤ : Genericity.Normality (Set T × W) Z).gen {z | τ z ⊆ i ∧ Q z w}
+    {z | Modality.simpleNecessity (mb i) (P z) w}
+
 /-- (4a)/(5a): Gen's universal lets the indefinite scope below, so the same
 unrepeatability premise is satisfiable — a fresh cigarette per event. -/
 theorem gen_admits_fresh_objects :
-    ∃ smoke : Bool → Bool → Prop,
-      (∀ c e₁ e₂, smoke e₁ c → smoke e₂ c → e₁ = e₂) ∧
-        everyOn (Finset.univ : Finset Bool) (fun _ => True) (fun e => ∃ c, smoke e c) :=
-  ⟨(· = ·), fun _ _ _ h₁ h₂ => h₁.trans h₂.symm, fun e _ _ => ⟨e, rfl⟩⟩
+    ∃ smoke : Bool → Bool → Prop, (∀ c e₁ e₂, smoke e₁ c → smoke e₂ c → e₁ = e₂) ∧
+      gen (W := Unit) (fun e _ ↦ ∃ c, smoke e c) (fun _ _ ↦ True) (fun _ ↦ (∅ : Set Unit))
+        (fun _ ↦ Modality.emptyBackground) Set.univ () :=
+  ⟨(· = ·), fun _ _ _ h₁ h₂ ↦ h₁.trans h₂.symm, fun e _ _ _ ↦ ⟨e, rfl⟩⟩
 
 /-- (13) with (15): Hab requires the disposition-indicating INIT event in the
 actual world and an iteration in every accessible world of the gnomic modal
@@ -117,15 +122,6 @@ theorem hab_without_actual_iteration :
       {0}, by decide, {1}, by decide, by decide, by decide, by decide⟩
   · rintro ⟨e, -, e₁, -, e₂, -, h₁, h₂, hne⟩
     exact hne (h₁.trans h₂.symm)
-
-/-- Gen's denotation is the canonical relativized restricted universal, with
-the restrictor conjoined from a normalcy predicate and an overt restrictor.
-Hab admits no such reduction: its force is the existential of (13). -/
-theorem gen_skeleton
-    (sits : List Situation) (normal restrictor scope : Situation → Bool) :
-    traditionalGEN sits normal restrictor scope =
-      everyOn sits.toFinset (fun s => (normal s && restrictor s) = true)
-        (fun s => scope s = true) := rfl
 
 /-! ### used to: the imperfective under a retrospective ((18)–(19), (30)–(35))
 
