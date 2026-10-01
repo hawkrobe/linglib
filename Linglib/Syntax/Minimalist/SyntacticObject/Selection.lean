@@ -47,8 +47,13 @@ head functions it is partial: `0` at exocentric nodes.
 selection product can be an instance on it: the `Option` is implementation, and `0` is the
 public spelling of the exocentric failure, the off-domain value of a partial head function.
 There is no `One`, since two saturated states multiply to `0`, and no associativity claim, so the
-structure is `CommMagma` + `MulZeroClass` only. A trace leaf gets the saturated value
-`.of (mkTraceToken 0) []`; `selCheck` reads only the token's category and `outerSel`.
+structure is `CommMagma` + `MulZeroClass` only. The trace of a token is a lower copy of the
+phrase it heads, so it gets that phrase's value, saturated with the token's category
+(`traceState`), and a head that selected the moved phrase still selects its trace; the bare
+trace remembers no token and gets the saturated dummy `.of (mkTraceToken 0) []`. `selCheck`
+reads only the token's category and `outerSel`. Two saturated sisters have no head, as in
+[marcolli-chomsky-berwick-2025]'s partial head functions: a specifier and its sister are
+labeled, if at all, by the labeling algorithm (`SyntacticObject/Label.lean`).
 -/
 
 @[expose] public section
@@ -154,10 +159,16 @@ theorem SelectionState.head_mul {r : LIToken}
 
 /-! ### Selection check on the carriers -/
 
+/-- The selection state of a trace: a saturated copy of the phrase its token heads, and for the
+    bare trace the saturated dummy. -/
+def traceState : Option LIToken → SelectionState
+  | some tok => .of tok []
+  | none => .of (mkTraceToken 0) []
+
 /-- The selection algebra: the `SyntacticObject.mergeAlgebra` of token + `outerSel`
-    leaves and the saturated trace, indexed or not. -/
+    leaves and the traces' `traceState`. -/
 def selNode : Vertex → List SelectionState → SelectionState :=
-  mergeAlgebra (fun tok => .of tok tok.item.outerSel) (.of (mkTraceToken 0) [])
+  mergeAlgebra (fun tok => .of tok tok.item.outerSel) traceState
 
 /-- `selNode` is invariant under permutation of the daughter states. -/
 theorem selNode_perm (a : Vertex) {l₁ l₂ : List SelectionState} (h : l₁.Perm l₂) :
@@ -180,7 +191,7 @@ theorem selCheckPlanar_perm {t s : RoseTree Vertex} (h : RoseTree.Perm t s) :
 
 /-- Selection check on the nonplanar carrier. -/
 def selCheckN : UnorderedTree Vertex → SelectionState :=
-  liftN (fun tok => .of tok tok.item.outerSel) (.of (mkTraceToken 0) [])
+  liftN (fun tok => .of tok tok.item.outerSel) traceState
 
 @[simp] theorem selCheckN_mk (p : RoseTree Vertex) :
     selCheckN (UnorderedTree.mk p) = selCheckPlanar p := rfl
@@ -214,13 +225,15 @@ def outerCatC : Option Cat := s.selHead.map (·.item.outerCat)
 
 @[simp] theorem selCheck_trace : trace.selCheck = .of (mkTraceToken 0) [] := rfl
 
+@[simp] theorem selCheck_traceOf : (traceOf tok).selCheck = .of tok [] := rfl
+
 @[simp] theorem selCheck_node (l r : SyntacticObject) :
     (merge l r).selCheck = l.selCheck * r.selCheck := liftFun_merge _ _ l r
 
 /-- `selCheck` as a morphism of magmas ([marcolli-chomsky-berwick-2025] §1.13's
     algebraic frame): the `lift` of the leaf data. -/
 noncomputable def selCheckHom : SyntacticObject →ₙ* SelectionState :=
-  lift (fun tok => .of tok tok.item.outerSel) (.of (mkTraceToken 0) [])
+  lift (fun tok => .of tok tok.item.outerSel) traceState
 
 @[simp] theorem selCheckHom_apply : selCheckHom s = s.selCheck := rfl
 

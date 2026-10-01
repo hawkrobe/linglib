@@ -49,9 +49,11 @@ both ([sato-ngui-2017]).
   c-command domain on terms) cannot tell the links of a successive-cyclic chain apart. `interior`
   is the same c-command domain on positions.
 * The head of a constituent is found down its right spine (`headPos?`), a left leaf that selects
-  nothing being a specifier. It is not yet `SyntacticObject.selHead`, which gives a trace no
-  category and has no specifier case, so that `selHead`, and with it `Phase.IsWellFormed`,
-  `phase` and `phaseEdge`, fail on objects with a moved phrase or a subject.
+  nothing being a specifier. Where two saturated phrases are sisters, a specifier and its sister,
+  the selection head `SyntacticObject.selHead` is undefined, as [marcolli-chomsky-berwick-2025]'s
+  head functions are, and the labeling algorithm (`SyntacticObject.label`) labels the object only
+  once one of them has moved on; `headPos?` takes the right sister, so that a phrase with a
+  specifier has a maximal projection to locate a copy in.
 * A chain here is the copies an object contains; the replay of a derivation
   (`Derivation.externalize?`) builds overt chains with bound traces, while covert movement,
   sharing and copies without antecedents are available to the representation only.
