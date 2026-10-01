@@ -5,14 +5,12 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Mathlib.Algebra.BigOperators.Field
-public import Mathlib.Algebra.BigOperators.Intervals
-public import Mathlib.Algebra.Order.BigOperators.GroupWithZero.Multiset
-public import Mathlib.Algebra.Order.BigOperators.Ring.Finset
-public import Mathlib.Analysis.Calculus.ContDiff.FaaDiBruno
-public import Mathlib.MeasureTheory.Measure.Real
-public import Mathlib.Probability.Kernel.Composition.MeasureComp
+public import Linglib.Core.Probability.Exchangeable
+public import Linglib.Core.Probability.Kernel.IonescuTulcea.SeqLaw
+public import Linglib.Core.Probability.PolyaUrn
 public import Linglib.Core.RingTheory.Polynomial.Pochhammer
+public import Mathlib.Algebra.BigOperators.Intervals
+public import Mathlib.MeasureTheory.Measure.Real
 
 /-!
 # The Pitman–Yor partition
@@ -21,31 +19,37 @@ The two-parameter family of random partitions of [pitman-2006] §3.2, generated 
 `(α, θ)` seating plan of the Chinese restaurant process: the first customer sits at a table of
 their own, and when `n` customers sit at `k` tables, `n_i` of them at table `i`, the next
 customer joins table `i` with probability `(n_i - α) / (n + θ)` and opens a new table with
-probability `(θ + k α) / (n + θ)`. The seating after `n` customers is a set partition of
-`Fin n`, and `pitmanYor α θ n` is its law.
+probability `(θ + k α) / (n + θ)`. The seating is a sequence of table labels, each customer
+labelled by the first customer at their table, drawn from this prediction rule (`crpRule`, with
+`seqLaw`); `pitmanYor α θ n` is the law of the partition of `Fin n` it generates.
 
-Theorem 3.2 of [pitman-2006] computes the law: a set partition whose blocks have sizes
+Theorem 3.2 of [pitman-2006] computes the law: a partition whose blocks have sizes
 `n_1, …, n_k` has probability
 
   `p(n_1, …, n_k) = (θ + α)_{k-1↑α} ∏ᵢ (1 - α)_{nᵢ-1↑1} / (θ + 1)_{n-1↑1}`,
 
 where `(x)_{m↑s} = x (x + s) ⋯ (x + (m - 1) s)`. This is `pitmanYorEPPF`, the *exchangeable
 partition probability function*: the probability depends on the partition only through its
-block sizes, which is what makes the random partition exchangeable ([pitman-2006] §2.1).
+block sizes, so the law is invariant under relabelling, exchangeable in the sense of
+[pitman-2006] §2.1 (`smulInvariantMeasure_pitmanYor`).
 
 ## Main definitions
 
-* `ProbabilityTheory.pitmanYorEPPF α θ s`: the probability of a set partition whose multiset of
+* `ProbabilityTheory.pitmanYorEPPF α θ s`: the probability of a partition whose multiset of
   block sizes is `s`.
-* `ProbabilityTheory.pitmanYorStep α θ n`: the kernel seating customer `n + 1`.
-* `ProbabilityTheory.pitmanYor α θ n`: the law of the seating of `n` customers.
+* `ProbabilityTheory.crpRule α θ n`: the seating plan on table labels, as a prediction rule.
+* `ProbabilityTheory.pitmanYor α θ n`: the law of the partition of `n` customers by table.
 
 ## Main results
 
 * `ProbabilityTheory.isProbabilityMeasure_pitmanYor`: for `0 ≤ α ≤ 1` and `-α < θ` the seating
   plan defines a probability measure.
-* `ProbabilityTheory.pitmanYor_real_singleton`: the law of the seating is the EPPF
+* `ProbabilityTheory.seqLaw_crpRule_singleton`: a sequence of table labels has the probability
+  of the partition it generates if each label is the first customer at its table, and `0`
+  otherwise.
+* `ProbabilityTheory.pitmanYor_real_singleton`: the law of the partition is the EPPF
   ([pitman-2006] Theorem 3.2).
+* `ProbabilityTheory.smulInvariantMeasure_pitmanYor`: the partition is exchangeable.
 * `ProbabilityTheory.pitmanYorEPPF_cons_one`, `ProbabilityTheory.pitmanYorEPPF_cons_succ_erase`:
   the EPPF's two seating recursions, the second being [pitman-2006] (3.22).
 * `ProbabilityTheory.pitmanYorEPPF_zero_left`: at `α = 0` the EPPF is the Ewens sampling
@@ -53,33 +57,22 @@ block sizes, which is what makes the random partition exchangeable ([pitman-2006
 
 ## Implementation notes
 
-Set partitions of `Fin n` are mathlib's `OrderedFinpartition n`, whose parts are ordered by their
-greatest elements, so each set partition is represented exactly once. Its `extendEquiv` is the
-bijection behind the seating plan: a partition of `Fin (n + 1)` is a partition of `Fin n`
-together with the table of the new element, `none` for a new table. Mathlib inserts the new
-element as `0` and shifts the others up, so the chain seats each customer at the front rather
-than the back of `Fin n`; its law at each `n` is still Pitman's, since both depend only on block
-sizes.
-
-The seating plan starts from the one-block partition of `Fin 1` ([pitman-2006] p. 60), so the
-law at `0` and `1` is a point mass and the kernel is first applied at `n = 1`: at `n = 0` the
-new-table probability would read `θ / θ`. The products in the EPPF are written over `Ico 1 m`,
+Tables are labelled by their first customer, so a new table opened by customer `n` is labelled
+`n` and the valid label sequences are those equal to the labelling of their partition by least
+elements (`Finpartition.minLabel`). Each partition has exactly one such labelling, which gives
+the law of the partition from that of the labels. The seating plan starts from one customer at
+one table ([pitman-2006] p. 60): the rule for the first customer is the point mass at label `0`,
+as the general formula would read `θ / θ`. The products in the EPPF are written over `Ico 1 m`,
 `(θ + α)_{k-1↑α} = ∏_{1 ≤ i < k} (θ + i α)` and so on, avoiding truncated subtraction. The
 parameters are unbundled: the measure is defined for all real `α, θ`, and the constraints of
 [pitman-2006] (3.5), second case, are hypotheses of the theorems that need them. The first case
 of (3.5), `α < 0` with `θ = m (-α)`, is not treated.
 
-The lemmas about `OrderedFinpartition` are candidates for
-`Mathlib.Analysis.Calculus.ContDiff.FaaDiBruno`.
-
 ## TODO
 
 * The partitions `Π_n` are consistent as `n` grows and form an exchangeable random partition of
-  `ℕ` ([pitman-2006] Theorem 3.2); this needs the chain as a trajectory measure
-  (`ProbabilityTheory.Kernel.traj`) and the restriction maps.
-* Invariance of the law under the action of `Equiv.Perm (Fin n)` on set partitions, the
-  definition of exchangeability in [pitman-2006] §2.1, needs that action on
-  `OrderedFinpartition n`.
+  `ℕ` ([pitman-2006] Theorem 3.2); this needs the label sequence as a trajectory measure
+  (`ProbabilityTheory.Kernel.traj`).
 
 ## References
 
@@ -90,61 +83,6 @@ The lemmas about `OrderedFinpartition` are candidates for
 
 open MeasureTheory Finset
 open scoped ENNReal Nat
-
-namespace OrderedFinpartition
-
-variable {n : ℕ}
-
-instance : MeasurableSpace (OrderedFinpartition n) := ⊤
-
-instance : DiscreteMeasurableSpace (OrderedFinpartition n) := ⟨fun _ ↦ trivial⟩
-
-theorem sum_partSize (c : OrderedFinpartition n) : ∑ i, c.partSize i = n := by
-  simpa using Fintype.card_congr c.equivSigma
-
-/-- The multiset of the sizes of the parts. -/
-def partSizes (c : OrderedFinpartition n) : Multiset ℕ :=
-  univ.val.map c.partSize
-
-@[simp]
-theorem card_partSizes (c : OrderedFinpartition n) : c.partSizes.card = c.length := by
-  simp [partSizes]
-
-@[simp]
-theorem sum_partSizes (c : OrderedFinpartition n) : c.partSizes.sum = n :=
-  c.sum_partSize
-
-@[simp]
-theorem partSizes_eq_zero (c : OrderedFinpartition 0) : c.partSizes = 0 :=
-  Multiset.card_eq_zero.mp <| by rw [card_partSizes]; exact Nat.le_zero.mp c.length_le
-
-theorem partSize_mem_partSizes (c : OrderedFinpartition n) (k : Fin c.length) :
-    c.partSize k ∈ c.partSizes :=
-  Multiset.mem_map_of_mem _ (mem_univ_val k)
-
-@[simp]
-theorem partSizes_extendLeft (c : OrderedFinpartition n) :
-    c.extendLeft.partSizes = 1 ::ₘ c.partSizes := by
-  show (univ : Finset (Fin (c.length + 1))).val.map (Fin.cons 1 c.partSize) =
-    1 ::ₘ (univ : Finset (Fin c.length)).val.map c.partSize
-  rw [Fin.univ_succ]
-  simp [Function.comp_def]
-
-@[simp]
-theorem partSizes_extendMiddle (c : OrderedFinpartition n) (k : Fin c.length) :
-    (c.extendMiddle k).partSizes = (c.partSize k + 1) ::ₘ c.partSizes.erase (c.partSize k) := by
-  have hk : k ∈ (univ : Finset (Fin c.length)).val := mem_univ_val k
-  have hrest : ((univ : Finset (Fin c.length)).val.erase k).map
-      (Function.update c.partSize k (c.partSize k + 1)) =
-      ((univ : Finset (Fin c.length)).val.erase k).map c.partSize :=
-    Multiset.map_congr rfl fun i hi ↦ Function.update_of_ne
-      (by rintro rfl; exact (univ : Finset (Fin c.length)).nodup.notMem_erase hi) _ _
-  show (univ : Finset (Fin c.length)).val.map (Function.update c.partSize k (c.partSize k + 1)) =
-    (c.partSize k + 1) ::ₘ ((univ : Finset (Fin c.length)).val.map c.partSize).erase (c.partSize k)
-  conv_lhs => rw [← Multiset.cons_erase hk]
-  rw [Multiset.map_cons, Function.update_self, hrest, Multiset.map_erase_of_mem _ _ hk]
-
-end OrderedFinpartition
 
 namespace ProbabilityTheory
 
@@ -198,81 +136,44 @@ theorem pitmanYorEPPF_zero_left {s : Multiset ℕ} (hθ : θ ≠ 0) (hs : s.sum 
     CharP.cast_eq_zero, pow_succ]
   field_simp
 
-/-- The weight of a seat for the next customer under the `(α, θ)` seating plan: `θ + k α` for a
-new table (`none`) when `k` tables are occupied, and `nᵢ - α` for table `i` seating `nᵢ`. The
-seat's probability is its weight divided by `n + θ`. -/
-noncomputable def pitmanYorWeight (α θ : ℝ) (c : OrderedFinpartition n) :
-    Option (Fin c.length) → ℝ
-  | none => θ + c.length * α
-  | some i => c.partSize i - α
 
-/-- The `(α, θ)` seating plan as a kernel: customer `n + 1` takes each seat with probability its
-weight divided by `n + θ`. -/
-noncomputable def pitmanYorStep (α θ : ℝ) (n : ℕ) :
-    Kernel (OrderedFinpartition n) (OrderedFinpartition (n + 1)) :=
-  Kernel.ofFunOfCountable fun c ↦
-    ∑ o, ENNReal.ofReal (pitmanYorWeight α θ c o / (n + θ)) • Measure.dirac (c.extend o)
+/-! ### The Chinese restaurant -/
 
-/-- The *Pitman–Yor partition*: the law of the seating of `n` customers under the `(α, θ)`
-seating plan, which starts from one customer at one table. -/
-noncomputable def pitmanYor (α θ : ℝ) : (n : ℕ) → Measure (OrderedFinpartition n)
-  | 0 => Measure.dirac default
-  | 1 => Measure.dirac default
-  | n + 2 => pitmanYorStep α θ (n + 1) ∘ₘ pitmanYor α θ (n + 1)
+variable (α θ) in
+/-- The `(α, θ)` seating plan on table labels, each customer labelled by the first customer at
+their table. The first customer opens table `0`. When customers `0, …, n` sit at `k` tables,
+label `c` used `n_c` times, customer `n + 1` opens a new table, labelled `n + 1`, with
+probability `(θ + k α) / (n + 1 + θ)`, and joins the table labelled `c` with probability
+`(n_c - α) / (n + 1 + θ)`. -/
+noncomputable def crpRule : (n : ℕ) → Kernel (Fin n → ℕ) ℕ
+  | 0 => Kernel.const _ (Measure.dirac 0)
+  | n + 1 => Kernel.ofFunOfCountable fun s ↦
+      ENNReal.ofReal ((θ + #(univ.image s) * α) / (n + 1 + θ)) • Measure.dirac (n + 1) +
+        ∑ c ∈ univ.image s, ENNReal.ofReal ((countVec s c - α) / (n + 1 + θ)) • Measure.dirac c
 
-@[simp] theorem pitmanYor_zero : pitmanYor α θ 0 = Measure.dirac default := by
-  rw [pitmanYor]
+variable (α θ n) in
+/-- The *Pitman–Yor partition*: the law of the partition of `n` customers by table under the
+`(α, θ)` seating plan. -/
+noncomputable def pitmanYor : Measure (Finpartition (univ : Finset (Fin n))) :=
+  (seqLaw (crpRule α θ) n).map Finpartition.ofFun
 
-@[simp] theorem pitmanYor_one : pitmanYor α θ 1 = Measure.dirac default := by
-  rw [pitmanYor]
+theorem crpRule_zero_apply (s : Fin 0 → ℕ) : crpRule α θ 0 s = Measure.dirac 0 := rfl
 
-theorem pitmanYor_add_two (n : ℕ) :
-    pitmanYor α θ (n + 2) = pitmanYorStep α θ (n + 1) ∘ₘ pitmanYor α θ (n + 1) := by
-  rw [pitmanYor]
-
-/-- One seating step: the partition `c.extend o` arises only from `c`, by seat `o`. -/
-theorem pitmanYorStep_comp_singleton_extend (μ : Measure (OrderedFinpartition n))
-    (c : OrderedFinpartition n) (o : Option (Fin c.length)) :
-    (pitmanYorStep α θ n ∘ₘ μ) {c.extend o} =
-      μ {c} * ENNReal.ofReal (pitmanYorWeight α θ c o / (n + θ)) := by
-  rw [Measure.comp_eq_sum_of_countable, Measure.sum_apply _ (measurableSet_singleton _),
-    tsum_fintype]
-  simp only [Measure.smul_apply, smul_eq_mul, pitmanYorStep, Kernel.ofFunOfCountable,
-    Kernel.coe_mk, Measure.coe_finsetSum, Finset.sum_apply, Finset.mul_sum]
-  rw [← Fintype.sum_sigma (fun y : (b : OrderedFinpartition n) × Option (Fin b.length) ↦
-      μ {y.1} * (ENNReal.ofReal (pitmanYorWeight α θ y.1 y.2 / (n + θ)) *
-        Measure.dirac (y.1.extend y.2) {c.extend o})),
-    Fintype.sum_eq_single ⟨c, o⟩]
-  · simp
-  · intro y hy
-    have : y.1.extend y.2 ≠ c.extend o := fun h ↦
-      hy ((OrderedFinpartition.extendEquiv n).injective h)
-    simp [Measure.dirac_apply' _ (measurableSet_singleton _), this]
-
-/-- The weights of all seats sum to `n + θ`. -/
-theorem sum_pitmanYorWeight (c : OrderedFinpartition n) :
-    ∑ o, pitmanYorWeight α θ c o = n + θ := by
-  have : (∑ k, (c.partSize k : ℝ)) = n := by exact_mod_cast c.sum_partSize
-  simp only [Fintype.sum_option, pitmanYorWeight, sum_sub_distrib, this, sum_const, card_univ,
-    Fintype.card_fin, nsmul_eq_mul]
-  ring
+theorem crpRule_succ_apply_singleton (s : Fin (n + 1) → ℕ) (c : ℕ) :
+    crpRule α θ (n + 1) s {c} =
+      (if c = n + 1 then ENNReal.ofReal ((θ + #(univ.image s) * α) / (n + 1 + θ)) else 0) +
+        if c ∈ univ.image s then ENNReal.ofReal ((countVec s c - α) / (n + 1 + θ)) else 0 := by
+  simp only [crpRule, Kernel.ofFunOfCountable, Kernel.coe_mk, Measure.add_apply,
+    Measure.smul_apply, Measure.coe_finsetSum, Finset.sum_apply, smul_eq_mul,
+    Measure.dirac_apply' _ (measurableSet_singleton c), Set.indicator_apply,
+    Set.mem_singleton_iff, Pi.one_apply, mul_ite, mul_one, mul_zero, eq_comm (a := c)]
+  congr 1
+  rw [Finset.sum_ite_eq']
 
 section Constraints
 
 variable (hα₀ : 0 ≤ α) (hα₁ : α ≤ 1) (hθ : -α < θ)
 include hα₀ hα₁ hθ
-
-theorem pitmanYorWeight_nonneg (c : OrderedFinpartition (n + 1)) (o : Option (Fin c.length)) :
-    0 ≤ pitmanYorWeight α θ c o := by
-  cases o with
-  | none =>
-    have : (1 : ℝ) ≤ c.length := by exact_mod_cast c.length_pos n.succ_pos
-    show 0 ≤ θ + c.length * α
-    nlinarith
-  | some k =>
-    have : (1 : ℝ) ≤ c.partSize k := by exact_mod_cast c.partSize_pos k
-    show 0 ≤ (c.partSize k : ℝ) - α
-    linarith
 
 theorem pitmanYorEPPF_nonneg (s : Multiset ℕ) : 0 ≤ pitmanYorEPPF α θ s := by
   refine div_nonneg (mul_nonneg (prod_nonneg fun i hi ↦ ?_) (Multiset.prod_nonneg fun x hx ↦ ?_))
@@ -286,65 +187,145 @@ theorem pitmanYorEPPF_nonneg (s : Multiset ℕ) : 0 ≤ pitmanYorEPPF α θ s :=
   · have : (1 : ℝ) ≤ i := by exact_mod_cast (mem_Ico.mp hi).1
     linarith
 
-theorem isMarkovKernel_pitmanYorStep : IsMarkovKernel (pitmanYorStep α θ (n + 1)) := by
-  refine ⟨fun c ↦ ⟨?_⟩⟩
-  have hn : (0 : ℝ) < (n + 1 : ℕ) + θ := by push_cast; linarith
-  simp only [pitmanYorStep, Kernel.ofFunOfCountable, Kernel.coe_mk, Measure.coe_finsetSum,
-    Finset.sum_apply, Measure.smul_apply, measure_univ, smul_eq_mul, mul_one]
-  rw [← ENNReal.ofReal_sum_of_nonneg fun o _ ↦
-      div_nonneg (pitmanYorWeight_nonneg hα₀ hα₁ hθ c o) hn.le,
-    ← sum_div, sum_pitmanYorWeight, div_self hn.ne', ENNReal.ofReal_one]
 
-theorem isProbabilityMeasure_pitmanYor : ∀ n, IsProbabilityMeasure (pitmanYor α θ n)
-  | 0 => by rw [pitmanYor_zero]; infer_instance
-  | 1 => by rw [pitmanYor_one]; infer_instance
-  | n + 2 => by
-    have := isProbabilityMeasure_pitmanYor (n + 1)
-    have := isMarkovKernel_pitmanYorStep (n := n) hα₀ hα₁ hθ
-    rw [pitmanYor_add_two]
-    infer_instance
+theorem isMarkovKernel_crpRule : ∀ n, IsMarkovKernel (crpRule α θ n)
+  | 0 => by rw [crpRule]; infer_instance
+  | n + 1 => by
+    refine ⟨fun s ↦ ⟨?_⟩⟩
+    have hn : (0 : ℝ) < n + 1 + θ := by have := (n.cast_nonneg : (0 : ℝ) ≤ n); linarith
+    have hK : (1 : ℝ) ≤ #(univ.image s) := by
+      exact_mod_cast card_pos.2 (univ_nonempty.image s)
+    have hsum : ∑ c ∈ univ.image s, (countVec s c : ℝ) = n + 1 := by
+      have := (card_eq_sum_card_image s univ).symm
+      rw [card_univ, Fintype.card_fin] at this
+      exact_mod_cast this
+    simp only [crpRule, Kernel.ofFunOfCountable, Kernel.coe_mk, Measure.add_apply,
+      Measure.coe_finsetSum, Finset.sum_apply, Measure.smul_apply, measure_univ, smul_eq_mul,
+      mul_one]
+    rw [← ENNReal.ofReal_sum_of_nonneg fun c hc ↦ div_nonneg ?_ hn.le,
+      ← ENNReal.ofReal_add (div_nonneg (by nlinarith) hn.le)
+        (sum_nonneg fun c hc ↦ div_nonneg ?_ hn.le), ← sum_div, ← add_div, sum_sub_distrib, hsum,
+      sum_const, nsmul_eq_mul, show θ + #(univ.image s) * α + (n + 1 - #(univ.image s) * α) =
+        n + 1 + θ by ring, div_self hn.ne', ENNReal.ofReal_one]
+    all_goals
+      have : (1 : ℝ) ≤ countVec s c := by
+        exact_mod_cast card_pos.2 (by obtain ⟨i, -, rfl⟩ := mem_image.1 hc; exact ⟨i, by simp⟩)
+      linarith
 
-end Constraints
+theorem isProbabilityMeasure_seqLaw_crpRule (n : ℕ) :
+    IsProbabilityMeasure (seqLaw (crpRule α θ) n) :=
+  have := isMarkovKernel_crpRule hα₀ hα₁ hθ
+  isProbabilityMeasure_seqLaw n
 
-/-- Seating customer `n + 2` multiplies the EPPF by the probability of the seat taken. -/
-theorem pitmanYorEPPF_extend (c : OrderedFinpartition (n + 1)) (o : Option (Fin c.length)) :
-    pitmanYorEPPF α θ (c.extend o).partSizes =
-      pitmanYorEPPF α θ c.partSizes * (pitmanYorWeight α θ c o / ((n + 1 : ℕ) + θ)) := by
-  cases o with
-  | none =>
-    rw [OrderedFinpartition.extend_none, OrderedFinpartition.partSizes_extendLeft,
-      pitmanYorEPPF_cons_one (by simp), OrderedFinpartition.card_partSizes,
-      OrderedFinpartition.sum_partSizes]
-    rfl
-  | some k =>
-    rw [OrderedFinpartition.extend_some, OrderedFinpartition.partSizes_extendMiddle,
-      pitmanYorEPPF_cons_succ_erase (c.partSize_mem_partSizes k) (c.partSize_pos k).ne',
-      OrderedFinpartition.sum_partSizes]
-    rfl
+theorem isProbabilityMeasure_pitmanYor (n : ℕ) : IsProbabilityMeasure (pitmanYor α θ n) :=
+  have := isProbabilityMeasure_seqLaw_crpRule hα₀ hα₁ hθ n
+  (Measure.isProbabilityMeasure_map_iff (measurable_of_countable _).aemeasurable).2 inferInstance
 
-/-- **Pitman's Theorem 3.2**: the Pitman–Yor partition gives each set partition the
+/-- **The seating plan on labels.** A sequence of table labels has the probability
+`pitmanYorEPPF` of the partition it generates if each label is the first customer at its table,
+and probability `0` otherwise. -/
+theorem seqLaw_crpRule_singleton : ∀ {n : ℕ} (s : Fin n → ℕ),
+    seqLaw (crpRule α θ) n {s} =
+      if (Finpartition.ofFun s).minLabel = s then
+        ENNReal.ofReal (pitmanYorEPPF α θ (Finpartition.ofFun s).partSizes) else 0
+  | 0, s => by
+    have hv : (Finpartition.ofFun s).minLabel = s := funext fun i ↦ i.elim0
+    have hp : (Finpartition.ofFun s).partSizes = 0 := by
+      simp [Finpartition.partSizes_ofFun]
+    rw [ite_eq_left hv, hp, seqLaw_zero,
+      Measure.dirac_apply_of_mem (Set.mem_singleton_iff.2 (Subsingleton.elim _ _))]
+    simp [pitmanYorEPPF]
+  | n + 1, s => by
+    have := isMarkovKernel_crpRule hα₀ hα₁ hθ
+    obtain ⟨t, c, rfl⟩ : ∃ t c, s = Fin.snoc t c :=
+      ⟨Fin.init s, s (Fin.last n), (Fin.snoc_init_self s).symm⟩
+    rw [seqLaw_succ_singleton_snoc, seqLaw_crpRule_singleton t]
+    by_cases ht : (Finpartition.ofFun t).minLabel = t
+    swap
+    · rw [ite_eq_right ht, zero_mul,
+        ite_eq_right fun h ↦ ht (Finpartition.minLabel_ofFun_of_snoc h).1]
+    rw [ite_eq_left ht]
+    by_cases hc : c ∈ univ.image t ∨ c = n
+    swap
+    · rw [ite_eq_right fun h ↦ hc (Finpartition.minLabel_ofFun_of_snoc h).2]
+      have hcn : c ≠ n := fun h ↦ hc (Or.inr h)
+      have hci : c ∉ univ.image t := fun h ↦ hc (Or.inl h)
+      cases n with
+      | zero =>
+        rw [crpRule_zero_apply, Measure.dirac_apply' _ (measurableSet_singleton _),
+          Set.indicator_of_notMem (fun h ↦ hcn (Set.mem_singleton_iff.1 h).symm), mul_zero]
+      | succ m =>
+        rw [crpRule_succ_apply_singleton, ite_eq_right hcn, ite_eq_right hci, add_zero, mul_zero]
+    rw [ite_eq_left (Finpartition.minLabel_ofFun_snoc ht hc)]
+    have hE := pitmanYorEPPF_nonneg hα₀ hα₁ hθ (Finpartition.ofFun t).partSizes
+    rcases hc with hc | hc
+    · obtain ⟨k, -, rfl⟩ := mem_image.1 hc
+      have hlt : t k < n := ((Finpartition.le_of_minLabel_ofFun_eq ht k).1).trans_lt k.2
+      obtain ⟨m, rfl⟩ : ∃ m, n = m + 1 := Nat.exists_eq_succ_of_ne_zero (by omega)
+      have hmem : #{i | t i = t k} ∈ (Finpartition.ofFun t).partSizes := by
+        rw [Finpartition.partSizes_ofFun]
+        exact Multiset.mem_map_of_mem _ hc
+      have hpos : #{i | t i = t k} ≠ 0 := (card_pos.2 ⟨k, by simp⟩).ne'
+      rw [crpRule_succ_apply_singleton, ite_eq_right hlt.ne, ite_eq_left hc, zero_add,
+        ← ENNReal.ofReal_mul hE, Finpartition.partSizes_ofFun_snoc_of_mem hc,
+        pitmanYorEPPF_cons_succ_erase hmem hpos, Finpartition.sum_partSizes, card_univ,
+        Fintype.card_fin]
+      push_cast
+      rfl
+    · subst c
+      have hnotin : n ∉ univ.image t := fun h ↦ by
+        obtain ⟨k, -, hk⟩ := mem_image.1 h
+        have := (Finpartition.le_of_minLabel_ofFun_eq ht k).1
+        omega
+      rw [Finpartition.partSizes_ofFun_snoc_of_notMem hnotin]
+      cases n with
+      | zero =>
+        rw [crpRule_zero_apply, Measure.dirac_apply_of_mem (Set.mem_singleton _), mul_one]
+        congr 1
+        simp [Finpartition.partSizes_ofFun, pitmanYorEPPF]
+      | succ m =>
+        rw [crpRule_succ_apply_singleton, ite_eq_left rfl, ite_eq_right hnotin, add_zero,
+          ← ENNReal.ofReal_mul hE, pitmanYorEPPF_cons_one (by simp),
+          Finpartition.sum_partSizes, Finpartition.card_partSizes_ofFun, card_univ,
+          Fintype.card_fin]
+        push_cast
+        rfl
+
+/-- **Pitman's Theorem 3.2**: the Pitman–Yor partition gives each partition of `Fin n` the
 probability `pitmanYorEPPF` of its block sizes ([pitman-2006] (3.6)). -/
-theorem pitmanYor_singleton (hα₀ : 0 ≤ α) (hα₁ : α ≤ 1) (hθ : -α < θ) :
-    ∀ {n : ℕ} (c : OrderedFinpartition n),
-      pitmanYor α θ n {c} = ENNReal.ofReal (pitmanYorEPPF α θ c.partSizes)
-  | 0, c => by
-    rw [pitmanYor_zero, Measure.dirac_apply_of_mem (Subsingleton.elim c default ▸ rfl)]
-    simp [pitmanYorEPPF]
-  | 1, c => by
-    rw [pitmanYor_one, Measure.dirac_apply_of_mem (Subsingleton.elim c default ▸ rfl),
-      Subsingleton.elim c (default : OrderedFinpartition 0).extendLeft]
-    simp [pitmanYorEPPF]
-  | n + 2, c => by
-    obtain ⟨⟨c, o⟩, rfl⟩ := (OrderedFinpartition.extendEquiv (n + 1)).surjective c
-    rw [OrderedFinpartition.extendEquiv_apply, pitmanYor_add_two,
-      pitmanYorStep_comp_singleton_extend, pitmanYor_singleton hα₀ hα₁ hθ c,
-      ← ENNReal.ofReal_mul (pitmanYorEPPF_nonneg hα₀ hα₁ hθ _), pitmanYorEPPF_extend]
+theorem pitmanYor_singleton (P : Finpartition (univ : Finset (Fin n))) :
+    pitmanYor α θ n {P} = ENNReal.ofReal (pitmanYorEPPF α θ P.partSizes) := by
+  have hm : Finpartition.ofFun P.minLabel = P := Finpartition.ofFun_minLabel P
+  have hnull : seqLaw (crpRule α θ) n (Finpartition.ofFun ⁻¹' {P} \ {P.minLabel}) = 0 := by
+    rw [← Set.biUnion_of_singleton (Finpartition.ofFun ⁻¹' {P} \ {P.minLabel}),
+      measure_biUnion_null_iff (Set.to_countable _)]
+    rintro s ⟨hs, hne⟩
+    rw [seqLaw_crpRule_singleton hα₀ hα₁ hθ]
+    refine ite_eq_right fun hv ↦ hne ?_
+    rw [Set.mem_preimage, Set.mem_singleton_iff] at hs
+    rw [Set.mem_singleton_iff, ← hv, hs]
+  have hmem : P.minLabel ∈ Finpartition.ofFun ⁻¹' {P} := hm
+  have hae : Finpartition.ofFun ⁻¹' {P} =ᵐ[seqLaw (crpRule α θ) n] {P.minLabel} :=
+    ae_eq_set.2 ⟨hnull, by rw [Set.sdiff_eq_empty.2 (Set.singleton_subset_iff.2 hmem),
+      measure_empty]⟩
+  rw [pitmanYor, Measure.map_apply (measurable_of_countable _) (measurableSet_singleton P),
+    measure_congr hae, seqLaw_crpRule_singleton hα₀ hα₁ hθ, hm, ite_eq_left rfl]
 
 /-- **Pitman's Theorem 3.2**, real form. -/
-theorem pitmanYor_real_singleton (hα₀ : 0 ≤ α) (hα₁ : α ≤ 1) (hθ : -α < θ)
-    (c : OrderedFinpartition n) :
-    (pitmanYor α θ n).real {c} = pitmanYorEPPF α θ c.partSizes := by
+theorem pitmanYor_real_singleton (P : Finpartition (univ : Finset (Fin n))) :
+    (pitmanYor α θ n).real {P} = pitmanYorEPPF α θ P.partSizes := by
   rw [measureReal_def, pitmanYor_singleton hα₀ hα₁ hθ,
     ENNReal.toReal_ofReal (pitmanYorEPPF_nonneg hα₀ hα₁ hθ _)]
+
+/-- The Pitman–Yor partition is exchangeable: relabelling the customers by a permutation does
+not change its law ([pitman-2006] Theorem 3.2). -/
+theorem smulInvariantMeasure_pitmanYor (n : ℕ) :
+    SMulInvariantMeasure (Equiv.Perm (Fin n)) (Finpartition (univ : Finset (Fin n)))
+      (pitmanYor α θ n) :=
+  smulInvariantMeasure_of_measure_singleton fun σ P ↦ by
+    rw [pitmanYor_singleton hα₀ hα₁ hθ, pitmanYor_singleton hα₀ hα₁ hθ,
+      Finpartition.partSizes_smul]
+
+end Constraints
 
 end ProbabilityTheory
