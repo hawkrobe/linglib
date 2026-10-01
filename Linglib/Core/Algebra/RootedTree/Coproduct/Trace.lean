@@ -460,19 +460,6 @@ theorem comulCN_coassoc
 
 end CoassocCommRing
 
-private lemma sum_map_ite_zero {ι M : Type*} [AddCommMonoid M]
-    (s : Multiset ι) (p : ι → Prop) [DecidablePred p] (g : ι → M) :
-    (s.map (fun a => if p a then g a else (0 : M))).sum =
-      ((s.filter p).map g).sum := by
-  induction s using Multiset.induction with
-  | empty => simp
-  | cons a s ih =>
-    rw [Multiset.map_cons, Multiset.sum_cons, ih]
-    by_cases hpa : p a
-    · rw [ite_eq_left hpa, Multiset.filter_cons_of_pos _ hpa,
-          Multiset.map_cons, Multiset.sum_cons]
-    · rw [ite_eq_right hpa, Multiset.filter_cons_of_neg _ hpa, zero_add]
-
 /-! ### Counit laws and the bialgebra
 
 The counit laws follow from the uniqueness of the empty cut (`cutSummandsCN_filter_empty`). -/
@@ -558,8 +545,7 @@ private theorem counit_rTensor_comulCTreeN (τ : UnorderedTree (α' ⊕ β') →
     by_cases hp : p.1.card = 0
     · rw [ite_eq_left hp, ite_eq_left hp]
     · rw [ite_eq_right hp, ite_eq_right hp, TensorProduct.zero_tmul]]
-  -- Extract the filter via sum_map_ite_zero.
-  rw [sum_map_ite_zero]
+  rw [← Multiset.sum_map_filter]
   -- Filter equals {(0, T)} by cutSummandsCN_filter_empty.
   rw [ConnesKreimer.cutSummandsCN_filter_empty τ T,
       Multiset.map_singleton, Multiset.sum_singleton]

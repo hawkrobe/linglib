@@ -28,7 +28,6 @@ import Linglib.Core.Algebra.RootedTree.Coproduct.Pruning
 import Linglib.Core.Algebra.RootedTree.Coproduct.PruningDuality
 import Linglib.Core.Algebra.RootedTree.Coproduct.Trace
 import Linglib.Core.Algebra.RootedTree.Coproduct.TraceGrading
-import Linglib.Core.Algebra.RootedTree.FormSet
 import Linglib.Core.Algebra.RootedTree.GrossmanLarson.Basic
 import Linglib.Core.Algebra.RootedTree.GrossmanLarson.Pairing
 import Linglib.Core.Algebra.RootedTree.GrossmanLarson.PairingMul
