@@ -15,44 +15,38 @@ public import Linglib.Fragments.English.Determiners
 /-!
 # Chierchia (1998): Reference to kinds across languages
 
-This file formalizes the typological half of [chierchia-1998] and its account of bare plurals in
-generic and episodic sentences; the kinds themselves, with ∩ and ∪, are `Reference.Kind`. The
-Nominal Mapping Parameter sets
-whether a language's nouns denote kinds, predicates, or either: Chinese and Japanese are
-[+arg, −pred], the Romance languages [−arg, +pred], English and most of Germanic [+arg, +pred]
-(`Language.nominalMapping`). In a [+arg, −pred] language every noun is kind-denoting, so its
-extension is mass, there is no plural, and a numeral needs a classifier to find a level of
-counting; conversely a classifier language must be [+arg, −pred], since otherwise its nouns
-could not all be mass-like. The fragments decide which of the sampled languages have
-classifiers, and exactly the [+arg, −pred] ones do (`hasClassifiers_iff`). Bare arguments and
-covert type-shifting track the same setting: a [+arg, −pred] language has no articles and blocks
-no shift, a [−arg] language's articles pre-empt ι, and a [+arg, +pred] language with articles
-admits exactly the bare nominals kind formation is defined for, so English has bare plurals and
-bare mass nouns but no bare singular count nouns. Each language's blocking is derived from its
-determiner inventory by `Determiner.Inventory.Blocks`.
-
-A bare plural denotes its kind, and its instances, ∪ of the kind, meet one of two quantifiers,
-§4.1. In an episodic sentence derived kind predication, (31c), applies the verb to the kind as
-the existential over its instances, `Quantifier.GQ.some`, (32b). In a generic sentence the
-instances enter the restriction of the generic operator, the conditional over normal cases of
-`Genericity.Normality`, which binds them with the situations, (38b) (`dogsBark`); with an object
-fronted into the restriction and the subject left in the scope, the object is read universally
-and the subject existentially, Diesing's generalization, (39b) (`computersRoute`). The
-universal reading entails the existential one at any situation with a normal instance
-(`some_up_of_mem_dogsBark`).
+Chierchia's Nominal Mapping Parameter sets whether a language's nouns denote kinds, predicates,
+or either: Chinese and Japanese are [+arg, −pred], the Romance languages [−arg, +pred], and
+English [+arg, +pred]. In a [+arg, −pred] language every noun denotes a kind, so its extension is
+mass and a numeral needs a classifier. A language's determiners decide which covert type shifts
+it blocks, and with the parameter which bare nominals it admits as arguments. A bare plural
+denotes its kind, whose instances meet the existential of derived kind predication in an
+episodic sentence and the generic operator in a generic one; the kinds themselves, with ∩ and ∪,
+are `Reference.Kind`.
 
 ## Main definitions
 
-* `Language.nominalMapping` — the setting of the parameter in each sampled language
-* `dogsBark`, `computersRoute` — the generic logical forms (38b) and (39b)
+* `Chierchia1998.Language.nominalMapping`: the setting of the parameter in each sampled language.
+* `Chierchia1998.dogsBark`, `Chierchia1998.computersRoute`: the generic logical forms (38b) and
+  (39b).
 
 ## Main results
 
-* `hasClassifiers_iff` — the classifier languages of the sample are the [+arg, −pred] ones
-* `argOnly_blocks_nothing`, `predOnly_blocks_iota` — blocking at the sampled languages
-* `english_licensesBare_iff` — English admits exactly the bare nominals ∩ is defined for
-* `some_up_of_mem_dogsBark` — the generic reading of a bare plural entails its existential
-  reading at a situation with a normal instance
+* `Chierchia1998.hasClassifiers_iff`: the classifier languages of the sample are the
+  [+arg, −pred] ones.
+* `Chierchia1998.argOnly_blocks_nothing`, `Chierchia1998.predOnly_blocks_iota`: blocking in the
+  sampled languages.
+* `Chierchia1998.english_licensesBare_iff`: English admits exactly the bare nominals for which ∩
+  is defined.
+* `Chierchia1998.mem_computersRoute`: Diesing's generalization for (39b).
+* `Chierchia1998.some_up_of_mem_dogsBark`: the generic reading of a bare plural entails its
+  existential reading at a situation with a normal instance.
+
+## Implementation notes
+
+Each language's blocking is derived from its fragment's determiner inventory by
+`Determiner.Inventory.Blocks`. The generic operator is the conditional over the normal cases of a
+`Genericity.Normality`.
 
 ## References
 
@@ -65,21 +59,20 @@ namespace Chierchia1998
 
 open Genericity
 
-/-- The languages the paper discusses. -/
+/-- The sample covers five of the languages the paper discusses. -/
 inductive Language where
   | mandarin | japanese | french | italian | english
   deriving DecidableEq, Fintype
 
 namespace Language
 
-/-- The setting of the Nominal Mapping Parameter: Chinese and Japanese are [+arg, −pred], French
-and Italian [−arg, +pred], English [+arg, +pred]. -/
+/-- `nominalMapping l` is the setting of the Nominal Mapping Parameter in `l`. -/
 def nominalMapping : Language → NominalMapping
   | mandarin | japanese => .argOnly
   | french | italian => .predOnly
   | english => .argAndPred
 
-/-- The determiner inventory of the language's fragment. -/
+/-- `determiners l` is the determiner inventory of the fragment of `l`. -/
 def determiners : Language → Determiner.Inventory
   | mandarin => Mandarin.Determiners.inventory
   | japanese => Japanese.Determiners.inventory
@@ -126,7 +119,7 @@ theorem argOnly_licensesBare (nt : MassCount) (num : Number) :
       (nominalMapping .japanese).LicensesBare (determiners .japanese) nt num := by
   simp [NominalMapping.LicensesBare, nominalMapping]
 
-/-- The [−arg, +pred] languages of the sample have a definite article, so block ι. -/
+/-- The [−arg, +pred] languages of the sample have a definite article and so block ι. -/
 theorem predOnly_blocks_iota :
     ∀ l : Language, l.nominalMapping = .predOnly → l.determiners.Blocks .iota := by
   decide
@@ -152,23 +145,23 @@ open Reference Genericity
 
 variable {S E : Type*} [PartialOrder E]
 
-/-- (38b): *Dogs bark*, `Gn x, s [∪∩dog(x) ∧ C(x, s)] [bark(x, s)]`: the instances of the kind
-enter the restriction of the generic operator, which binds them with the situations. -/
+/-- *Dogs bark* (38b), `Gn x, s [∪∩dog(x) ∧ C(x, s)] [bark(x, s)]`, puts the instances of the
+kind in the restriction of the generic operator, which binds them with the situations. -/
 def dogsBark (N : Normality S (E × S)) (dog : S → Set E) (C : Set (E × S))
     (bark : E → S → Prop) : Set S :=
   N.gen ({p | p.1 ∈ (Kind.down dog).up p.2} ∩ C) {p | bark p.1 p.2}
 
-/-- (39b): *Computers route modern planes* with the object fronted into the restriction of the
-generic operator and the subject reconstructed into its scope, where derived kind predication
+/-- In *Computers route modern planes* (39b), the object is fronted into the restriction of the
+generic operator and the subject is reconstructed into its scope, where derived kind predication
 reads it existentially. -/
 def computersRoute (N : Normality S (E × S)) (computer plane : S → Set E) (C : Set (E × S))
     (route : E → E → S → Prop) : Set S :=
   N.gen ({p | p.1 ∈ (Kind.down plane).up p.2} ∩ C)
     {p | Quantifier.GQ.some ((Kind.down computer).up p.2) (route · p.1 p.2)}
 
-/-- Diesing's generalization, p. 368, for (39b): the fronted bare plural is universal over the
-normal cases of the restriction, and the one in the scope existential over the instances of its
-kind at each. -/
+/-- In (39b) the fronted bare plural is universal over the normal cases of the restriction, and
+the one in the scope is existential over the instances of its kind at each, as Diesing's
+generalization predicts (p. 368). -/
 theorem mem_computersRoute {N : Normality S (E × S)} {computer plane : S → Set E}
     {C : Set (E × S)} {route : E → E → S → Prop} {s : S} :
     s ∈ computersRoute N computer plane C route ↔
