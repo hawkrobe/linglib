@@ -9,15 +9,30 @@ public import Linglib.Core.Algebra.RootedTree.BirkhoffFactorizationSemiring
 public import Linglib.Syntax.Minimalist.Linearization.Externalization
 public import Linglib.Syntax.Minimalist.SyntacticObject.Selection
 public import Linglib.Syntax.Minimalist.FormCopy
+public import Mathlib.Combinatorics.Enumerative.Catalan.Tree
+public import Mathlib.RingTheory.PowerSeries.Basic
 
 /-!
 # Marcolli, Chomsky and Berwick (2025): Mathematical Structure of Syntactic Merge
 
-This file formalizes the worked examples of externalization of
-[marcolli-chomsky-berwick-2025] on the `SyntacticObject` carrier of the Minimalist
-substrate: the harmonic head-initial and head-final orders of a determiner–noun Merge, the
-head-side convention flipping the yield, and exocentric elimination, two saturated nouns
-determining no head and hence no order. The framework itself is the `Syntax/Minimalist/`
+This file formalizes parts of Marcolli, Chomsky and Berwick's algebraic model of Merge.
+
+The core computational structure of Merge (§1.10) is a fixed point. Proposition 1.10.2 works in
+`V(𝔗)`, the free `ℤ`-module on the nonplanar binary trees with unlabelled leaves, graded by the
+number of leaves. It generates these trees by recursively solving `X = 𝔐(X, X)` over formal sums
+`X = ∑ Xₗ`, with the initial condition `X₁ = x`, and reads the integer coefficients of the solution
+as numbers of planar embeddings. Here `V(𝔗)` sits in the Connes–Kreimer algebra of unlabelled
+trees, Merge is the grafting operator after the disjoint union (Lemma 1.3.3), and a formal sum is a
+power series whose degree counts leaves. The sum of the planar binary trees, their planar
+structure forgotten, solves the equation (`isMergeSolution_mergeSolution`) and is its only solution
+(`IsMergeSolution.eq`). The coefficient of each tree is its number of planar embeddings
+(`coeff_planarSum_succ`), and the coefficients of `Xₙ₊₁` sum to the Catalan number `Cₙ`
+(`aeval_planarSum_succ`). On syntactic objects, Lemma 1.3.3 is `toCK_merge`.
+
+The book's worked examples of externalization are stated on the `SyntacticObject` carrier of
+the Minimalist substrate: the harmonic head-initial and head-final orders of a determiner–noun
+Merge, the head-side convention flipping the yield, and exocentric elimination, two saturated
+nouns determining no head and hence no order. The framework itself is the `Syntax/Minimalist/`
 theory layer; the examples are kernel-checked against it.
 
 The book's syntax–semantics interface (Chapter 3) replaces per-feature checking by a single
@@ -34,7 +49,31 @@ and Form Copy restricts the object to the diagonal on which they are one
 (`theMan_mem_copyRel`), while *a book*, not structurally identical to *the man*, is no copy of it
 (`not_mem_copyRel_aBook`).
 
+## Implementation notes
+
+The equation carries its initial term, `X = x t + 𝔐(X, X)`. The book writes `X = 𝔐(X, X)` and
+supplies `X₁ = x` as an initial condition, but `𝔐(X, X)` has no degree-one term
+(`coeff_one_mergeSeries`), so the leaf enters as an inhomogeneous term.
+
+`TreeAlgebra` is spanned by the forests of unlabelled trees, not only by the binary trees of `𝔗`.
+`V(𝔗)` is the span of the single binary trees in it, and every term of the solution lies there.
+
+The proof of Proposition 1.10.2 prints `X₄ = 2{x{x{xx}}} + {{xx}{xx}}`. Its recursion gives
+`𝔐(X₁, X₃) + 𝔐(X₂, X₂) + 𝔐(X₃, X₁) = 4{x{x{xx}}} + {{xx}{xx}}` (`planarSum_four`), and four is
+the number of planar embeddings that the proof says the coefficient counts: the five planar binary
+trees with four leaves split as four and one.
+
 ## TODO
+
+§1.17 reads (1.10.1) as the quadratic case of the combinatorial Dyson–Schwinger equation
+`X = B(P(X))` of (1.17.2), with the grafting operator `B` of Definition 1.3.2 and the recursive
+solution (1.17.3), which the book cites rather than proves. Stating it needs `B` on formal series
+in the grading by vertices, in which `B` raises the degree by one. With `x = B(1)` the Merge case
+is `P(t) = 1 + t²`, while the book writes `P(X) = X²` next to its requirement `a₀ = 1`.
+
+Lemma 1.10.1 identifies `𝔗` with the free nonassociative commutative magma on one generator; the
+link to the syntactic-object carrier, the free commutative magma on the lexical items, is not
+stated.
 
 The book's section locators (§1.12.1, §1.13, §1.13.2) are transcribed from an earlier
 version of this file and are UNVERIFIED against the published text.
@@ -51,7 +90,182 @@ namespace MarcolliChomskyBerwick2025
 
 open RoseTree UnorderedTree Minimalist SyntacticObject ConnesKreimer
 
-/-- A determiner over a noun: `D` selects `N`, so `D` projects. -/
+/-! ### The core computational structure of Merge (§1.10) -/
+
+section CoreMerge
+
+open PowerSeries Finset
+open Finset.HasAntidiagonal.antidiagonal (fst_le snd_le)
+
+/-- The Connes–Kreimer algebra of unlabelled trees over `ℤ`, in which the free `ℤ`-module `V(𝔗)`
+on the nonplanar binary trees sits as the span of single trees. -/
+abbrev TreeAlgebra := ConnesKreimer ℤ (UnorderedTree Unit)
+
+/-- Forgetting the planar structure of a planar binary tree, whose leaves are its `nil`s. -/
+def forgetPlanar : BinaryTree Unit → UnorderedTree Unit
+  | .nil => UnorderedTree.leaf ()
+  | .node _ l r => UnorderedTree.node () {forgetPlanar l, forgetPlanar r}
+
+/-- The single variable `x`, the one-leaf tree. -/
+noncomputable def generator : TreeAlgebra := ofTree (UnorderedTree.leaf ())
+
+/-- Merge on `V(𝔗)` is the grafting operator after the disjoint union (Lemma 1.3.3), a bilinear
+map. -/
+noncomputable def mergeLin : TreeAlgebra →ₗ[ℤ] TreeAlgebra →ₗ[ℤ] TreeAlgebra :=
+  (LinearMap.mul ℤ TreeAlgebra).compr₂ (bPlusLin ())
+
+@[simp] theorem mergeLin_apply (a b : TreeAlgebra) : mergeLin a b = bPlusLin () (a * b) := rfl
+
+theorem mergeLin_comm (a b : TreeAlgebra) : mergeLin a b = mergeLin b a := by
+  rw [mergeLin_apply, mergeLin_apply, _root_.mul_comm]
+
+theorem mergeLin_ofTree (s t : UnorderedTree Unit) :
+    mergeLin (ofTree s) (ofTree t) = ofTree (UnorderedTree.node () {s, t}) := by
+  rw [mergeLin_apply, ← of'_singleton, ← of'_singleton, ← of'_add, bPlusLin_of']
+  rfl
+
+/-- Merge extends to formal series `X = ∑ Xₗ` degree by degree, the degree-`n` term of `𝔐(X, Y)`
+being `∑_{i+j=n} 𝔐(Xᵢ, Yⱼ)`. -/
+noncomputable def mergeSeries (X Y : TreeAlgebra⟦X⟧) : TreeAlgebra⟦X⟧ :=
+  PowerSeries.mk fun n ↦ bPlusLin () (coeff n (X * Y))
+
+@[simp] theorem coeff_mergeSeries (X Y : TreeAlgebra⟦X⟧) (n : ℕ) :
+    coeff n (mergeSeries X Y) = ∑ p ∈ antidiagonal n, mergeLin (coeff p.1 X) (coeff p.2 Y) := by
+  rw [mergeSeries, coeff_mk, coeff_mul, map_sum]; rfl
+
+/-- `𝔐(X, X)` has no degree-one term, so the printed `X = 𝔐(X, X)` cannot meet `X₁ = x`. -/
+theorem coeff_one_mergeSeries {X : TreeAlgebra⟦X⟧} (h0 : coeff 0 X = 0) :
+    coeff 1 (mergeSeries X X) = 0 := by
+  simp [Finset.Nat.sum_antidiagonal_succ, h0]
+
+/-- A series solves (1.10.1) with its initial condition `X₁ = x` when it has no constant term and
+`X = x t + 𝔐(X, X)`. -/
+def IsMergeSolution (X : TreeAlgebra⟦X⟧) : Prop :=
+  coeff 0 X = 0 ∧ X = monomial 1 generator + mergeSeries X X
+
+/-- The formal sum of the planar binary trees with `n` leaves, planarity forgotten. -/
+noncomputable def planarSum : ℕ → TreeAlgebra
+  | 0 => 0
+  | n + 1 => ∑ P ∈ BinaryTree.treesOfNumNodesEq n, ofTree (forgetPlanar P)
+
+/-- The series `X = ∑ₗ Xₗ` of Proposition 1.10.2. -/
+noncomputable def mergeSolution : TreeAlgebra⟦X⟧ := PowerSeries.mk planarSum
+
+/-- The recursion of the proof of Proposition 1.10.2, `Xₙ = ∑_{j=1}^{n-1} 𝔐(Xⱼ, X_{n-j})`. -/
+theorem planarSum_add_two (n : ℕ) :
+    planarSum (n + 2) =
+      ∑ p ∈ antidiagonal n, mergeLin (planarSum (p.1 + 1)) (planarSum (p.2 + 1)) := by
+  rw [planarSum, BinaryTree.treesOfNumNodesEq_succ, sum_biUnion]
+  · refine sum_congr rfl fun p _ ↦ ?_
+    simp only [BinaryTree.pairwiseNode, sum_map, sum_product, planarSum, map_sum,
+      LinearMap.sum_apply, mergeLin_ofTree]
+    rw [sum_comm]
+    rfl
+  · simp_rw [Set.PairwiseDisjoint, Set.Pairwise, disjoint_left]
+    aesop
+
+private theorem sum_antidiagonal_add_two {f : ℕ → TreeAlgebra} (h0 : f 0 = 0) (n : ℕ) :
+    ∑ p ∈ antidiagonal (n + 2), mergeLin (f p.1) (f p.2) =
+      ∑ p ∈ antidiagonal n, mergeLin (f (p.1 + 1)) (f (p.2 + 1)) := by
+  rw [Finset.Nat.sum_antidiagonal_succ, Finset.Nat.sum_antidiagonal_succ', h0]
+  simp
+
+/-- The sum of the planar binary trees solves (1.10.1) with `X₁ = x` (Proposition 1.10.2). -/
+theorem isMergeSolution_mergeSolution : IsMergeSolution mergeSolution := by
+  refine ⟨by simp [mergeSolution, planarSum], PowerSeries.ext fun n ↦ ?_⟩
+  rw [map_add, coeff_mergeSeries, coeff_monomial]
+  rcases n with _ | _ | n
+  · simp [mergeSolution, planarSum]
+  · simp [mergeSolution, planarSum, generator, Finset.Nat.sum_antidiagonal_succ, forgetPlanar]
+  · rw [ite_eq_right (by omega), zero_add, mergeSolution]
+    simp only [coeff_mk]
+    show planarSum (n + 2) = ∑ p ∈ antidiagonal (n + 2), mergeLin (planarSum p.1) (planarSum p.2)
+    rw [sum_antidiagonal_add_two (f := planarSum) rfl n]
+    exact planarSum_add_two n
+
+/-- The solution of Proposition 1.10.2 is unique, since the recursion determines each term from
+the lower ones. -/
+theorem IsMergeSolution.eq {X : TreeAlgebra⟦X⟧} (h : IsMergeSolution X) : X = mergeSolution := by
+  obtain ⟨h0, hX⟩ := h
+  refine PowerSeries.ext fun n ↦ ?_
+  induction n using Nat.strong_induction_on with
+  | _ n ih =>
+    rcases n with _ | _ | n
+    · simp [h0, mergeSolution, planarSum]
+    · have := congrArg (PowerSeries.coeff 1) hX
+      rw [this, map_add, coeff_mergeSeries, coeff_monomial_same, Finset.Nat.sum_antidiagonal_succ,
+        h0]
+      simp [mergeSolution, planarSum, generator, forgetPlanar, h0]
+    · have := congrArg (PowerSeries.coeff (n + 2)) hX
+      rw [this, map_add, coeff_mergeSeries, coeff_monomial, ite_eq_right (by omega), zero_add]
+      show ∑ p ∈ antidiagonal (n + 2), mergeLin (PowerSeries.coeff p.1 X) (PowerSeries.coeff p.2 X)
+        = PowerSeries.coeff (n + 2) mergeSolution
+      rw [sum_antidiagonal_add_two (f := fun i ↦ PowerSeries.coeff i X) h0, mergeSolution,
+        coeff_mk, planarSum_add_two]
+      refine sum_congr rfl fun p hp ↦ ?_
+      rw [ih (p.1 + 1) (by have := fst_le hp; omega), ih (p.2 + 1) (by have := snd_le hp; omega),
+        mergeSolution, coeff_mk, coeff_mk]
+
+/-- The coefficient of a nonplanar tree in `Xₙ₊₁` is its number of planar embeddings. -/
+theorem coeff_planarSum_succ (n : ℕ) (T : UnorderedTree Unit) :
+    (planarSum (n + 1)).coeff {T} =
+      #{P ∈ BinaryTree.treesOfNumNodesEq n | forgetPlanar P = T} := by
+  rw [planarSum, ← lcoeff_apply (R := ℤ), map_sum, card_filter, Nat.cast_sum]
+  refine sum_congr rfl fun P _ ↦ ?_
+  rw [lcoeff_apply, ← of'_singleton, coeff_of']
+  simp [Multiset.singleton_inj]
+
+/-- The coefficients of `Xₙ₊₁` sum to the Catalan number `Cₙ`, the number of planar binary trees
+with `n + 1` leaves. -/
+theorem aeval_planarSum_succ (n : ℕ) :
+    aeval (R := ℤ) (fun _ ↦ (1 : ℤ)) (planarSum (n + 1)) = catalan n := by
+  simp [planarSum, BinaryTree.treesOfNumNodesEq_card_eq_catalan]
+
+/-- `X₁ = x`. -/
+theorem planarSum_one : planarSum 1 = generator := by
+  simp [planarSum, generator, forgetPlanar]
+
+/-- `X₂ = {xx}`. -/
+theorem planarSum_two : planarSum 2 = mergeLin generator generator := by
+  rw [planarSum_add_two]
+  simp [planarSum_one]
+
+/-- `X₃ = {x{xx}} + {{xx}x} = 2{x{xx}}`. -/
+theorem planarSum_three :
+    planarSum 3 = 2 • mergeLin generator (mergeLin generator generator) := by
+  rw [planarSum_add_two]
+  simp [Finset.Nat.sum_antidiagonal_succ, planarSum_one, planarSum_two, two_smul, _root_.mul_comm]
+
+/-- `X₄ = 4{x{x{xx}}} + {{xx}{xx}}`; the proof of Proposition 1.10.2 prints the coefficient
+`2`. -/
+theorem planarSum_four :
+    planarSum 4 = 4 • mergeLin generator (mergeLin generator (mergeLin generator generator)) +
+      mergeLin (mergeLin generator generator) (mergeLin generator generator) := by
+  rw [planarSum_add_two]
+  simp only [Finset.Nat.sum_antidiagonal_succ, Finset.Nat.antidiagonal_zero, sum_singleton,
+    zero_add, Nat.reduceAdd, planarSum_one, planarSum_two, planarSum_three, map_nsmul,
+    LinearMap.smul_apply]
+  rw [mergeLin_comm (mergeLin generator (mergeLin generator generator)) generator]
+  abel
+
+/-- The printed `X₄ = 2{x{x{xx}}} + {{xx}{xx}}` is not the degree-four term of the solution. -/
+example : planarSum 4 ≠
+    2 • mergeLin generator (mergeLin generator (mergeLin generator generator)) +
+      mergeLin (mergeLin generator generator) (mergeLin generator generator) := by
+  rw [planarSum_four]
+  intro h
+  have h' := congrArg (lcoeff ℤ {UnorderedTree.node () {UnorderedTree.leaf (),
+    UnorderedTree.node () {UnorderedTree.leaf (), UnorderedTree.node () {UnorderedTree.leaf (),
+      UnorderedTree.leaf ()}}}}) (add_right_cancel h)
+  simp only [generator, mergeLin_ofTree] at h'
+  simp only [map_nsmul, lcoeff_apply, ← of'_singleton, coeff_of'] at h'
+  norm_num at h'
+
+end CoreMerge
+
+/-! ### Externalization (§1.12–1.13) -/
+
+/-- A determiner over a noun, in which `D` selects `N` and so projects. -/
 private def theDog : SyntacticObject :=
   ⟨UnorderedTree.mk (.node (Sum.inr none)
     [.node (Sum.inl ⟨.simple .D [.N] (phonForm := "the"), 0⟩) [],
@@ -66,8 +280,8 @@ example : (theDog.linearize .final).map (·.map (·.id)) = some [1, 0] := by dec
 example : theDog.phonYield .initial = some ["the", "dog"] := by decide
 example : theDog.phonYield .final = some ["dog", "the"] := by decide
 
-/-- Exocentric Merge: two saturated `N`s, neither selecting the other, so no head and no
-order. -/
+/-- Exocentric Merge of two saturated `N`s, neither selecting the other, determines no head and
+no order. -/
 private def exoNN : SyntacticObject :=
   ⟨UnorderedTree.mk (.node (Sum.inr none)
     [.node (Sum.inl ⟨.simple .N [] (phonForm := "cats"), 0⟩) [],
@@ -134,6 +348,14 @@ forest of its underlying nonplanar tree. The base ring is `ℕ` because every co
 semiring, `Consistency` included, is an `ℕ`-algebra, while a Boolean target is no `ℤ`-algebra. -/
 noncomputable def toCK (S : SyntacticObject) : ConnesKreimer ℕ (UnorderedTree Vertex) :=
   ofTree S.val
+
+/-- Merge factors through the grafting operator on the disjoint union of its arguments, with the
+bare root label (Lemma 1.3.3). -/
+theorem toCK_merge (l r : SyntacticObject) :
+    toCK (merge l r) = bPlusLin (Sum.inr none) (toCK l * toCK r) := by
+  rw [toCK, toCK, toCK, ← of'_singleton (R := ℕ) l.val, ← of'_singleton (R := ℕ) r.val, ← of'_add,
+    bPlusLin_of', merge_val]
+  rfl
 
 open scoped TensorProduct
 
