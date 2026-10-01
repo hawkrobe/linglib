@@ -395,7 +395,7 @@ def remember_rog : Verb := .mkRegular {
   levinClasses := {LevinClass.characterize} }
 
 /-- "forget" in factive/question-embedding sense, with a finite clause, a PRO-ing gerund
-(*John forgot stopping by the flower shop*, [williams-2025] (7)–(10)) or a question. -/
+(*John forgot having stopped by the flower shop*, [williams-2025] (8)) or a question. -/
 def forget_rog : Verb where
   form := "forget"
   form3sg := "forgets"
