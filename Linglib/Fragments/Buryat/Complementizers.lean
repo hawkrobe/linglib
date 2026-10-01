@@ -81,10 +81,10 @@ def nominalizedFrame : ArgumentFrame :=
   { complements := [.clausal (coding := some .nominalized)
       (embeddedSubject := some (.overt (some .gen)))] }
 
-/-- *hanaxa* 'think ~ remember': 'think' with a bare gɘžɘ-CP, 'remember'
-with a nominalized complement (§4.4.3). The `readings` rows carry the
-think~remember alternation — nonveridical/opaque on the bare CP,
-veridical/transparent on the nominalized frame. -/
+/-- *hanaxa* 'think', translated 'remember' with a nominalized complement (§4.4.3): one verb,
+whose nominalized complement carries a presupposition that the event it describes started
+before the thinking ([bondarenko-2020] (2), (21)). The `readings` rows record the alternation,
+nonveridical and opaque on the bare CP, veridical and transparent on the nominalized frame. -/
 def hanaxa : Verb where
   form := "hanaxa"
   frames := [ArgumentFrame.finiteClause, nominalizedFrame]

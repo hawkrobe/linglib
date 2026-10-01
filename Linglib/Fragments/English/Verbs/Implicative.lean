@@ -93,7 +93,10 @@ def remember : Verb := .mkRegular {
   implicative := some .positive
   levinClasses := {LevinClass.characterize} }
 
-/-- "forget" — negative implicative with infinitival -/
+/-- "forget" with an infinitive, [karttunen-1971]'s negative implicative: *forgot to lock the
+    door* entails *did not lock the door*. The factive sense that takes a finite clause, a
+    gerund or a question is `forget_rog`; [williams-2025] takes the two senses to be one verb
+    whose plain infinitive carries a covert modal. -/
 def forget : Verb where
   form := "forget"
   form3sg := "forgets"

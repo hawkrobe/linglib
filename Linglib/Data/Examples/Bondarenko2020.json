@@ -1,0 +1,510 @@
+[
+  {
+    "id": "bondarenko2020_1a",
+    "source": {"bibkey": "bondarenko-2020", "paperLabel": "(1a)"},
+    "reportedIn": null,
+    "language": "russ1264",
+    "primaryText": "Dugar mi:sgɘi zagaha ɘdj-ɘ: gɘžɘ han-a:",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Dugar", "Dugar"], ["mi:sgɘi", "cat.NOM"], ["zagaha", "fish"], ["ɘdj-ɘ:", "eat-PST"],
+      ["gɘžɘ", "COMP"], ["han-a:", "think-PST"]
+    ],
+    "translation": "Dugar thought that a cat ate the fish.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Dugar mi:sgɘi zagaha ɘdi-xɘ gɘžɘ han-a:", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["complement", "CP"],
+      ["translation", "think"]
+    ],
+    "comment": "Printed with the variant ɘdj-ɘ: /ɘdi-xɘ (eat-PST /eat-POT), 'ate / will eat'.",
+    "verified": "page-image"
+  },
+  {
+    "id": "bondarenko2020_1b",
+    "source": {"bibkey": "bondarenko-2020", "paperLabel": "(1b)"},
+    "reportedIn": null,
+    "language": "russ1264",
+    "primaryText": "Dugar mi:sgɘi zagaha ɘdj-ɘ: gɘžɘ han-a: xarin mi:sgɘi zagaha ɘdj-ɘ:-güi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Dugar", "Dugar"], ["mi:sgɘi", "cat.NOM"], ["zagaha", "fish"], ["ɘdj-ɘ:", "eat-PST"],
+      ["gɘžɘ", "COMP"], ["han-a:", "think-PST"], ["xarin", "but"], ["mi:sgɘi", "cat"],
+      ["zagaha", "fish"], ["ɘdj-ɘ:-güi", "eat-PST-NEG"]
+    ],
+    "translation": "Dugar thought that a cat ate the fish, but a cat didn't eat the fish.",
+    "context": "The fish was missing. Dugar was wrong about who ate it.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["complement", "CP"],
+      ["test", "denial"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "bondarenko2020_2a",
+    "source": {"bibkey": "bondarenko-2020", "paperLabel": "(2a)"},
+    "reportedIn": null,
+    "language": "russ1264",
+    "primaryText": "Dugar mi:sgɘi-n zagaha ɘdj-ɘ:ʃ-i:jɘ-n’ han-a:",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Dugar", "Dugar.NOM"], ["mi:sgɘi-n", "cat-GEN"], ["zagaha", "fish"],
+      ["ɘdj-ɘ:ʃ-i:jɘ-n’", "eat-PART-ACC-3"], ["han-a:", "think-PST"]
+    ],
+    "translation": "Dugar remembered a cat's eating the fish.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["complement", "NMN"],
+      ["translation", "remember"]
+    ],
+    "comment": "The source's font prints the esh as an integral sign (∫); written ʃ.",
+    "verified": "page-image"
+  },
+  {
+    "id": "bondarenko2020_2b",
+    "source": {"bibkey": "bondarenko-2020", "paperLabel": "(2b)"},
+    "reportedIn": null,
+    "language": "russ1264",
+    "primaryText": "Dugar mi:sgɘi-n zagaha ɘdj-ɘ:ʃ-i:jɘ-n’ han-a: xarin mi:sgɘi zagaha ɘdj-ɘ:-güi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Dugar", "Dugar"], ["mi:sgɘi-n", "cat-GEN"], ["zagaha", "fish"],
+      ["ɘdj-ɘ:ʃ-i:jɘ-n’", "eat-PART-ACC-3"], ["han-a:", "think-PST"], ["xarin", "but"],
+      ["mi:sgɘi", "cat"], ["zagaha", "fish"], ["ɘdj-ɘ:-güi", "eat-PST-NEG"]
+    ],
+    "translation": "Dugar remembered a cat's eating the fish, but a cat didn't eat the fish.",
+    "context": "The fish was missing. Dugar is wrong about who ate it.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["complement", "NMN"],
+      ["test", "denial"]
+    ],
+    "comment": "The source's font prints the esh as an integral sign (∫); written ʃ.",
+    "verified": "page-image"
+  },
+  {
+    "id": "bondarenko2020_3a",
+    "source": {"bibkey": "bondarenko-2020", "paperLabel": "(3a)"},
+    "reportedIn": null,
+    "language": "russ1264",
+    "primaryText": "Bi Badma tɘrgɘ ɘmdɘl-ɘ: gü gɘžɘ mɘdɘ-nɘ-güi-b xarin Sajana Badm-i:n tɘrgɘ ɘmdɘl-ɘ:ʃ-i:jɘ han-a:",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Bi", "1SG.NOM"], ["Badma", "Badma.NOM"], ["tɘrgɘ", "cart"], ["ɘmdɘl-ɘ:", "break-PST"],
+      ["gü", "Q"], ["gɘžɘ", "COMP"], ["mɘdɘ-nɘ-güi-b", "know-PRS-NEG-1SG"], ["xarin", "but"],
+      ["Sajana", "Sajana.NOM"], ["Badm-i:n", "Badma-GEN"], ["tɘrgɘ", "cart"],
+      ["ɘmdɘl-ɘ:ʃ-i:jɘ", "break-PART-ACC"], ["han-a:", "think-PST"]
+    ],
+    "translation": "I don't know whether Badma broke the cart, but Sajana remembered that Badma broke the cart.",
+    "context": "The speaker is ignorant about the issue, but wants to report Sajana's opinion/memory.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["complement", "NMN"],
+      ["test", "ignorance"]
+    ],
+    "comment": "The first clause is printed once as the context line of (3) and continued by (3a) and (3b), with xarin 'but' in parentheses. The source's font prints the esh as an integral sign (∫); written ʃ.",
+    "verified": "page-image"
+  },
+  {
+    "id": "bondarenko2020_3b",
+    "source": {"bibkey": "bondarenko-2020", "paperLabel": "(3b)"},
+    "reportedIn": null,
+    "language": "russ1264",
+    "primaryText": "Bi Badma tɘrgɘ ɘmdɘl-ɘ: gü gɘžɘ mɘdɘ-nɘ-güi-b xarin Sajana Badma tɘrgɘ ɘmdɘl-ɘ: gɘžɘ han-a:",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Bi", "1SG.NOM"], ["Badma", "Badma.NOM"], ["tɘrgɘ", "cart"], ["ɘmdɘl-ɘ:", "break-PST"],
+      ["gü", "Q"], ["gɘžɘ", "COMP"], ["mɘdɘ-nɘ-güi-b", "know-PRS-NEG-1SG"], ["xarin", "but"],
+      ["Sajana", "Sajana.NOM"], ["Badma", "Badma.NOM"], ["tɘrgɘ", "cart"],
+      ["ɘmdɘl-ɘ:", "break-PST"], ["gɘžɘ", "COMP"], ["han-a:", "think-PST"]
+    ],
+    "translation": "I don't know whether Badma broke the cart, but Sajana thought that Badma broke the cart.",
+    "context": "The speaker is ignorant about the issue, but wants to report Sajana's opinion/memory.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["complement", "CP"],
+      ["test", "ignorance"]
+    ],
+    "comment": "The first clause is printed once as the context line of (3), with xarin 'but' in parentheses.",
+    "verified": "page-image"
+  },
+  {
+    "id": "bondarenko2020_4b",
+    "source": {"bibkey": "bondarenko-2020", "paperLabel": "(4b)"},
+    "reportedIn": null,
+    "language": "russ1264",
+    "primaryText": "Garag-ai xojor-to Sajana Badm-i:n tɘrgɘ ɘmdɘl-ɘ:ʃ-i:jɘ-n’ han-a: Badma tɘrgɘ garag-ai nɘgɘn-dɘ ɘmdɘlɘ-ʒɘ ɘxil-ɘ:",
+    "discourseSegments": [
+      "Garag-ai xojor-to Sajana Badm-i:n tɘrgɘ ɘmdɘl-ɘ:ʃ-i:jɘ-n’ han-a:",
+      "Badma tɘrgɘ garag-ai nɘgɘn-dɘ ɘmdɘlɘ-ʒɘ ɘxil-ɘ:"
+    ],
+    "glossedTokens": [
+      ["Garag-ai", "day-GEN"], ["xojor-to", "two-DAT"], ["Sajana", "Sajana.NOM"],
+      ["Badm-i:n", "Badma-GEN"], ["tɘrgɘ", "cart"], ["ɘmdɘl-ɘ:ʃ-i:jɘ-n’", "break-PART-ACC-3"],
+      ["han-a:", "think-PST"], ["Badma", "Badma.NOM"], ["tɘrgɘ", "cart"], ["garag-ai", "day-GEN"],
+      ["nɘgɘn-dɘ", "one-DAT"], ["ɘmdɘlɘ-ʒɘ", "break-CVB"], ["ɘxil-ɘ:", "begin-PST"]
+    ],
+    "translation": "On Tuesday Sajana remembered Badma's breaking the cart. Badma began to break the cart on Monday.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["complement", "NMN"],
+      ["test", "pre-existence"]
+    ],
+    "comment": "(4a) continued by (4b); Monday is the first day of the week in the village (fn. 3). The source's font prints the esh as an integral sign (∫); written ʃ.",
+    "verified": "page-image"
+  },
+  {
+    "id": "bondarenko2020_4c",
+    "source": {"bibkey": "bondarenko-2020", "paperLabel": "(4c)"},
+    "reportedIn": null,
+    "language": "russ1264",
+    "primaryText": "Garag-ai xojor-to Sajana Badm-i:n tɘrgɘ ɘmdɘl-ɘ:ʃ-i:jɘ-n’ han-a: Badma tɘrgɘ garag-ai gurban-da ɘmdɘlɘ-ʒɘ ɘxil-ɘ:",
+    "discourseSegments": [
+      "Garag-ai xojor-to Sajana Badm-i:n tɘrgɘ ɘmdɘl-ɘ:ʃ-i:jɘ-n’ han-a:",
+      "Badma tɘrgɘ garag-ai gurban-da ɘmdɘlɘ-ʒɘ ɘxil-ɘ:"
+    ],
+    "glossedTokens": [
+      ["Garag-ai", "day-GEN"], ["xojor-to", "two-DAT"], ["Sajana", "Sajana.NOM"],
+      ["Badm-i:n", "Badma-GEN"], ["tɘrgɘ", "cart"], ["ɘmdɘl-ɘ:ʃ-i:jɘ-n’", "break-PART-ACC-3"],
+      ["han-a:", "think-PST"], ["Badma", "Badma.NOM"], ["tɘrgɘ", "cart"], ["garag-ai", "day-GEN"],
+      ["gurban-da", "three-DAT"], ["ɘmdɘlɘ-ʒɘ", "break-CVB"], ["ɘxil-ɘ:", "begin-PST"]
+    ],
+    "translation": "On Tuesday Sajana remembered Badma's breaking the cart. Badma began to break the cart on Wednesday.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["complement", "NMN"],
+      ["test", "pre-existence"]
+    ],
+    "comment": "(4a) continued by (4c); Monday is the first day of the week in the village (fn. 3). The source's font prints the esh as an integral sign (∫); written ʃ.",
+    "verified": "page-image"
+  },
+  {
+    "id": "bondarenko2020_5a",
+    "source": {"bibkey": "bondarenko-2020", "paperLabel": "(5a)"},
+    "reportedIn": null,
+    "language": "russ1264",
+    "primaryText": "Sɘsɘg gar-ga-x-a: bai-ga:n üxibü-jɘ: han-a:",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Sɘsɘg", "Seseg"], ["gar-ga-x-a:", "go.out-CAUS-POT-REFL"], ["bai-ga:n", "be-PFCT"],
+      ["üxibü-jɘ:", "child-ACC.REFL"], ["han-a:", "think-PST"]
+    ],
+    "translation": "Seseg remembered her future child.",
+    "context": "Currently Seseg has a child. The speaker is talking about some time 7 years ago. 7 years ago, Seseg was pregnant with a baby, she has seen her/him during an ultrasound.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["argument", "noun phrase"],
+      ["test", "pre-existence"]
+    ],
+    "comment": "Literally 'her child that will be caused to go out of her'.",
+    "verified": "page-image"
+  },
+  {
+    "id": "bondarenko2020_5b",
+    "source": {"bibkey": "bondarenko-2020", "paperLabel": "(5b)"},
+    "reportedIn": null,
+    "language": "russ1264",
+    "primaryText": "Sɘsɘg gar-ga-x-a: bai-ga:n üxibü-jɘ: han-a:",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Sɘsɘg", "Seseg"], ["gar-ga-x-a:", "go.out-CAUS-POT-REFL"], ["bai-ga:n", "be-PFCT"],
+      ["üxibü-jɘ:", "child-ACC.REFL"], ["han-a:", "think-PST"]
+    ],
+    "translation": "Seseg remembered her future child.",
+    "context": "Currently Seseg has a child. The speaker is talking about some time 7 years ago. 7 years ago, Seseg was not pregnant. But she really wanted a baby and was planning to have one.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["argument", "noun phrase"],
+      ["test", "pre-existence"]
+    ],
+    "comment": "Literally 'her child that will be caused to go out of her'.",
+    "verified": "page-image"
+  },
+  {
+    "id": "bondarenko2020_6a",
+    "source": {"bibkey": "bondarenko-2020", "paperLabel": "(6a)"},
+    "reportedIn": null,
+    "language": "russ1264",
+    "primaryText": "Badma naiman tarxi-tai mi:sgɘi-ɘ hana-na",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Badma", "Badma"], ["naiman", "eight"], ["tarxi-tai", "head-COM"], ["mi:sgɘi-ɘ", "cat-ACC"],
+      ["hana-na", "think-PRS"]
+    ],
+    "translation": "Badma is remembering an eight-headed cat.",
+    "context": "Children at school are asked to imagine a magical animal that does not exist and draw it.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["argument", "noun phrase"],
+      ["test", "pre-existence"]
+    ],
+    "comment": "Printed mi:sgɘi-(ɘ) cat-(ACC): the accusative is optional.",
+    "verified": "page-image"
+  },
+  {
+    "id": "bondarenko2020_6b",
+    "source": {"bibkey": "bondarenko-2020", "paperLabel": "(6b)"},
+    "reportedIn": null,
+    "language": "russ1264",
+    "primaryText": "Badm-ain tarxi so: naiman tarxi-tai mi:sgɘi or-o:",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Badm-ain", "Badma-GEN"], ["tarxi", "head"], ["so:", "in"], ["naiman", "eight"],
+      ["tarxi-tai", "head-COM"], ["mi:sgɘi", "cat"], ["or-o:", "come-PST"]
+    ],
+    "translation": "Badma thought of an eight-headed cat.",
+    "context": "Children at school are asked to imagine a magical animal that does not exist and draw it.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "came into head"]
+    ],
+    "comment": "Literally 'An eight-headed cat came into Badma's head.'",
+    "verified": "page-image"
+  },
+  {
+    "id": "bondarenko2020_7a",
+    "source": {"bibkey": "bondarenko-2020", "paperLabel": "(7a)"},
+    "reportedIn": null,
+    "language": "russ1264",
+    "primaryText": "Sɘsɘg gar-ga-x-a: bai-ga:n üxibü-n tuxai-ga: hana-na",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Sɘsɘg", "Seseg"], ["gar-ga-x-a:", "go.out-CAUS-POT-REFL"], ["bai-ga:n", "be-PFCT"],
+      ["üxibü-n", "child-NOM"], ["tuxai-ga:", "about-ACC.REFL"], ["hana-na", "think-PRS"]
+    ],
+    "translation": "Seseg is thinking about her future child.",
+    "context": "Seseg is not pregnant.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["argument", "tuxai phrase"],
+      ["test", "pre-existence"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "bondarenko2020_7b",
+    "source": {"bibkey": "bondarenko-2020", "paperLabel": "(7b)"},
+    "reportedIn": null,
+    "language": "russ1264",
+    "primaryText": "Badma naiman tarxi-tai mi:sgɘi tuxai hana-na",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Badma", "Badma"], ["naiman", "eight"], ["tarxi-tai", "head-COM"], ["mi:sgɘi", "cat"],
+      ["tuxai", "about"], ["hana-na", "think-PRS"]
+    ],
+    "translation": "Badma is thinking about an eight-headed cat.",
+    "context": "Badma is imagining a non-existing magical animal.",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["argument", "tuxai phrase"],
+      ["test", "pre-existence"]
+    ],
+    "comment": "Less preferred than (6b), but acceptable in the context.",
+    "verified": "page-image"
+  },
+  {
+    "id": "bondarenko2020_8",
+    "source": {"bibkey": "bondarenko-2020", "paperLabel": "(8)"},
+    "reportedIn": null,
+    "language": "russ1264",
+    "primaryText": "Sajana Badm-i:jɘ han-a:",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Sajana", "Sajana.NOM"], ["Badm-i:jɘ", "Badma-ACC"], ["han-a:", "think-PST"]
+    ],
+    "translation": "Sajana remembered Badma.",
+    "context": "Badma is currently alive.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["argument", "noun phrase"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "bondarenko2020_14",
+    "source": {"bibkey": "bondarenko-2020", "paperLabel": "(14)"},
+    "reportedIn": null,
+    "language": "russ1264",
+    "primaryText": "Bi Badma tɘrgɘ ɘmdɘl-ɘ: gü gɘžɘ mɘdɘ-nɘ-güi-b Sajana Badm-i:n tɘrgɘ ɘmdɘl-ɘ:ʃ-i:jɘ hana-na gü?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Bi", "1SG.NOM"], ["Badma", "Badma.NOM"], ["tɘrgɘ", "cart"], ["ɘmdɘl-ɘ:", "break-PST"],
+      ["gü", "Q"], ["gɘžɘ", "COMP"], ["mɘdɘ-nɘ-güi-b", "know-PRS-NEG-1SG,"],
+      ["Sajana", "Sajana.NOM"], ["Badm-i:n", "Badma-GEN"], ["tɘrgɘ", "cart"],
+      ["ɘmdɘl-ɘ:ʃ-i:jɘ", "break-PART-ACC"], ["hana-na", "think-PRS"], ["gü", "Q"]
+    ],
+    "translation": "I don't know whether Badma broke the cart or not. Does Sajana think/remember that Badma broke the cart?",
+    "context": "The speaker is ignorant about whether Badma broke the cart or not, and is wondering whether Sajana might have thoughts on the matter.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["complement", "NMN"],
+      ["test", "question"]
+    ],
+    "comment": "The translation is printed as the intended reading. The source's font prints the esh as an integral sign (∫); written ʃ.",
+    "verified": "page-image"
+  },
+  {
+    "id": "bondarenko2020_15",
+    "source": {"bibkey": "bondarenko-2020", "paperLabel": "(15)"},
+    "reportedIn": null,
+    "language": "russ1264",
+    "primaryText": "Badm-i:n tɘrgɘ ɘmdɘl-ɘ:ʃ-i:jɘ Sajana han-a:-güi, Badma tɘrgɘ ɘmdɘl-ɘ:-güi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Badm-i:n", "Badma-GEN"], ["tɘrgɘ", "cart"], ["ɘmdɘl-ɘ:ʃ-i:jɘ", "break-PART-ACC"],
+      ["Sajana", "Sajana.NOM"], ["han-a:-güi", "think-PST-NEG"], ["Badma", "Badma.NOM"],
+      ["tɘrgɘ", "cart"], ["ɘmdɘl-ɘ:-güi", "break-PST-NEG"]
+    ],
+    "translation": "Sajana didn't think/remember that Badma broke the cart, (and) Badma didn't break the cart.",
+    "context": "The speaker wants to convey that Sajana's thoughts are consistent with reality.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["complement", "NMN"],
+      ["test", "negation"]
+    ],
+    "comment": "The translation is printed as the intended reading. The source's font prints the esh as an integral sign (∫); written ʃ.",
+    "verified": "page-image"
+  },
+  {
+    "id": "bondarenko2020_43a",
+    "source": {"bibkey": "bondarenko-2020", "paperLabel": "(43a)"},
+    "reportedIn": null,
+    "language": "russ1264",
+    "primaryText": "Darima gɘr-tɘ xulgaiʃan or-o: gɘžɘ hana-na, xarin tɘrɘ axa-n’ Xurumxa:n-ha: jɘrɘ-hɘn bai-ga:",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Darima", "Darima.NOM"], ["gɘr-tɘ", "house-DAT"], ["xulgaiʃan", "thief.NOM"],
+      ["or-o:", "enter-PST"], ["gɘžɘ", "COMP"], ["hana-na", "think-PRS"], ["xarin", "but"],
+      ["tɘrɘ", "that"], ["axa-n’", "brother-3.NOM"], ["Xurumxa:n-ha:", "Kurumkan-ABL"],
+      ["jɘrɘ-hɘn", "come-PFCT"], ["bai-ga:", "be-PST"]
+    ],
+    "translation": "Darima thinks that a thief entered the house, but it was her brother coming back from Kurumkan.",
+    "context": "Darima recalled a situation that happened recently. She heard some unexpected noise in the back yard while she was alone at home. She was afraid to look who it was. Now she is convinced that it was a thief entering the house, but I know for a fact that it was just her brother coming home earlier than expected from Kurumkan.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["complement", "CP"],
+      ["test", "false memory"]
+    ],
+    "comment": "The source's font prints the esh as an integral sign (∫); written ʃ.",
+    "verified": "page-image"
+  },
+  {
+    "id": "bondarenko2020_43b",
+    "source": {"bibkey": "bondarenko-2020", "paperLabel": "(43b)"},
+    "reportedIn": null,
+    "language": "russ1264",
+    "primaryText": "Darima gɘr-tɘ xulgaiʃan-ai or-o:ʃ-i:jɘ hana-na, xarin tɘrɘ axa-n’ Xurumxa:n-ha: jɘrɘ-hɘn bai-ga:",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Darima", "Darima.NOM"], ["gɘr-tɘ", "house-DAT"], ["xulgaiʃan-ai", "thief-GEN"],
+      ["or-o:ʃ-i:jɘ", "enter-PART-ACC"], ["hana-na", "think-PRS"], ["xarin", "but"],
+      ["tɘrɘ", "that"], ["axa-n’", "brother-3.NOM"], ["Xurumxa:n-ha:", "Kurumkan-ABL"],
+      ["jɘrɘ-hɘn", "come-PFCT"], ["bai-ga:", "be-PST"]
+    ],
+    "translation": "Darima thinks that a thief entered the house, but it was her brother coming back from Kurumkan.",
+    "context": "Darima recalled a situation that happened recently. She heard some unexpected noise in the back yard while she was alone at home. She was afraid to look who it was. Now she is convinced that it was a thief entering the house, but I know for a fact that it was just her brother coming home earlier than expected from Kurumkan.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["complement", "NMN"],
+      ["test", "false memory"]
+    ],
+    "comment": "The translation is printed as the intended reading. The source's font prints the esh as an integral sign (∫); written ʃ.",
+    "verified": "page-image"
+  },
+  {
+    "id": "bondarenko2020_65",
+    "source": {"bibkey": "bondarenko-2020", "paperLabel": "(65)"},
+    "reportedIn": null,
+    "language": "russ1264",
+    "primaryText": "Dugar mi:sgɘi-n zagaha ɘdj-ɘ: g-ɘ:ʃ-i:jɘ han-a:, xarin mi:sgɘi zagaha ɘdj-ɘ:-güi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Dugar", "Dugar"], ["mi:sgɘi-n", "cat-GEN"], ["zagaha", "fish"], ["ɘdj-ɘ:", "eat-PST"],
+      ["g-ɘ:ʃ-i:jɘ", "say-PART-ACC"], ["han-a:", "think-PST"], ["xarin", "but"],
+      ["mi:sgɘi", "cat"], ["zagaha", "fish"], ["ɘdj-ɘ:-güi", "eat-PST-NEG"]
+    ],
+    "translation": "Dugar remembered (the claim) that the cat ate the fish, but the cat didn't eat the fish.",
+    "context": "The cat didn't eat the fish, but someone made a false claim that it did.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["complement", "nominalized CP"],
+      ["test", "denial"]
+    ],
+    "comment": "The source's font prints the esh as an integral sign (∫); written ʃ.",
+    "verified": "page-image"
+  },
+  {
+    "id": "bondarenko2020_66",
+    "source": {"bibkey": "bondarenko-2020", "paperLabel": "(66)"},
+    "reportedIn": null,
+    "language": "russ1264",
+    "primaryText": "Mi:sgɘi zagaha ɘdj-ɘ: gɘ-žɘ xɘn-ʃjɘ xɘzɘ:-ʃjɘ han-a:-güi, xarin Dugar mi:sgɘi-n zagaha ɘdj-ɘ: g-ɘ:ʃ-i:jɘ han-a:",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mi:sgɘi", "cat"], ["zagaha", "fish"], ["ɘdj-ɘ:", "eat-PST"], ["gɘ-žɘ", "say-CVB"],
+      ["xɘn-ʃjɘ", "who-PTCL"], ["xɘzɘ:-ʃjɘ", "when-PTCL"], ["han-a:-güi", "think-PST-NEG"],
+      ["xarin", "but"], ["Dugar", "Dugar"], ["mi:sgɘi-n", "cat-GEN"], ["zagaha", "fish"],
+      ["ɘdj-ɘ:", "eat-PST"], ["g-ɘ:ʃ-i:jɘ", "say-PART-ACC"], ["han-a:", "think-PST"]
+    ],
+    "translation": "Noone has ever thought that the cat ate the fish, (but) Dugar remembered (the claim) that the cat ate the fish.",
+    "context": "Dugar was the first person to think that the cat ate the fish.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["complement", "nominalized CP"],
+      ["test", "pre-existence"]
+    ],
+    "comment": "Printed with xarin 'but' in parentheses and lowercase 'dugar'. The context is stated in the prose before (66). The source's font prints the esh as an integral sign (∫); written ʃ.",
+    "verified": "page-image"
+  }
+]
