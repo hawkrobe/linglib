@@ -59,15 +59,11 @@ on the underlying module, where the disjoint-union product is available to state
 The insertion `x ∘ y` grafts every tree of `y` onto the original `x`. It is not iterated one-tree
 insertion, which would also graft later trees onto earlier ones.
 
-The insertion Lie algebra of Marcolli, Chomsky and Berwick comes from a different pre-Lie
-product, which inserts a binary tree by subdividing an edge rather than by grafting at a vertex.
-
 ## References
 
 * [grossman-larson-1989]
 * [oudom-guin-2008]
 * [foissy-2021]
-* [marcolli-chomsky-berwick-2025]
 -/
 
 @[expose] public section
@@ -82,7 +78,7 @@ open ConnesKreimer
 
 variable {R : Type*} [CommSemiring R] {α : Type*}
 
-/-- The Guin–Oudom extension `x ∘ y` of the grafting product: on basis forests, the sum of the
+/-- The Guin–Oudom extension `x ∘ y` of the grafting product sums, on basis forests, the
 graftings of every tree of `G` onto a vertex of `F`. -/
 noncomputable def insertion :
     ConnesKreimer R (UnorderedTree α) →ₗ[R] ConnesKreimer R (UnorderedTree α) →ₗ[R]

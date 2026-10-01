@@ -49,6 +49,10 @@ role of `Symbol` and the terminal-color set replacing the
 terminal/nonterminal type split. Mathlib's `SimpleGraph.Coloring` is not
 applicable: proper graph coloring constrains adjacent colors to *differ*,
 while operadic coloring constrains composed colors to *match*.
+
+## References
+
+* [giraudo-2019]
 -/
 
 @[expose] public section
@@ -57,7 +61,7 @@ namespace Bud
 
 variable {Ω : Type*}
 
-/-- A binary tree with a color at every vertex: an operation of the bud
+/-- A binary tree with a color at every vertex, which is an operation of the bud
     operad over the free binary operad, decorated with the colors it
     propagates ([giraudo-2019]). -/
 inductive Tree (Ω : Type*) where
@@ -69,7 +73,7 @@ namespace Tree
 
 variable {x s y : Tree Ω} {c d : Ω} {i j : ℕ}
 
-/-- The output color: the color at the root. -/
+/-- The output color is the color at the root. -/
 def out : Tree Ω → Ω
   | leaf c => c
   | node c _ _ => c
@@ -78,7 +82,7 @@ def out : Tree Ω → Ω
 
 @[simp] theorem out_node {l r : Tree Ω} : (node c l r).out = c := rfl
 
-/-- The input colors: the leaf colors, left to right. -/
+/-- The input colors are the leaf colors, left to right. -/
 def inputs : Tree Ω → List Ω
   | leaf c => [c]
   | node _ l r => l.inputs ++ r.inputs
@@ -349,14 +353,14 @@ namespace System
 
 variable {B : System Ω} {c d : Ω} {x s : Tree Ω} {i : ℕ}
 
-/-- Derivability from the unit of color `c`: start from the one-leaf tree
-    and repeatedly graft rules onto color-matched leaves. -/
+/-- A tree is derivable from the unit of color `c` when it is reached from the one-leaf tree
+    by repeatedly grafting rules onto color-matched leaves. -/
 inductive Derives (B : System Ω) (c : Ω) : Tree Ω → Prop
   | unit (hc : c ∉ B.Terminal) : Derives B c (.leaf c)
   | graft {x s : Tree Ω} (i : ℕ) (hx : Derives B c x) (hs : s ∈ B.rules)
       (hm : x.inputs[i]? = some s.out) : Derives B c (x.graft i s)
 
-/-- The generated language: trees derivable from some unit, all of whose
+/-- The generated language consists of the trees derivable from some unit, all of whose
     inputs are terminal. -/
 def Lang (B : System Ω) (x : Tree Ω) : Prop :=
   (∃ c, B.Derives c x) ∧ ∀ d ∈ x.inputs, d ∈ B.Terminal

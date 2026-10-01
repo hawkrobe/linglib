@@ -14,39 +14,32 @@ public import Linglib.Core.Algebra.RotaBaxter
 open RoseTree UnorderedTree
 
 /-!
-# Semiring Birkhoff factorization on the Connes–Kreimer Hopf algebra  `[UPSTREAM]`
+# Semiring Birkhoff factorization on the Connes–Kreimer Hopf algebra
 
-The **semiring** form of [marcolli-chomsky-berwick-2025]'s renormalization (Def. 3.1.2, Prop. 3.1.9):
-the linguistically operative case, where the target `ℛ` is a commutative *semiring* whose addition
-is not invertible — tropical `(ℝ ∪ {−∞}, max, +)`, Viterbi, and Boolean parsing semirings (§3.5,
-"Birkhoff Factorization and (Semi)ring Parsing"; §3.5.2, "Minimal Yield as Birkhoff Factorization").
-
-The Hopf algebra `H = ConnesKreimer R (UnorderedTree α)` of nonplanar rooted forests is unchanged
-(base `R` only a commutative *semiring* — the antipode-free factorization needs no negation, so this
-works over `R = ℕ`, the base for a Boolean-semiring target), so the entire coproduct/cut
-infrastructure is reused. Only the *character target* `ℛ` is a semiring, with a weight-`+1`
-`RotaBaxterSemiring` operator `R`. The Bogolyubov recursion (Prop. 3.1.9, eq. (3.1.7)) reads
+The Bogolyubov recursion for a linear map `φ : H → ℛ` into a commutative semiring `ℛ`, whose
+addition is not invertible (tropical, Viterbi and Boolean semirings), with a Rota–Baxter operator
+`R` of weight `+1`:
 
   `φ̃(x) = φ(x) ⊡ Σ φ₋(x′) ⊙ φ(x″)`,    `φ₋(x) = R(φ̃(x))`,    `φ₊(x) = φ₋(x) ⊡ φ̃(x)`,
 
-with `⊡, ⊙` the semiring addition/multiplication and `R` the *positive* projection (contrast the
-ring case `φ₋ = −R(φ̃)`, `φ₊ = (1−R)(φ̃)`). Because a semiring has no antipode, only the form
-`φ₊ = φ₋ ⋆ φ` (Def. 3.1.6) is available — there is no `φ = (φ₋ ∘ S) ⋆ φ₊` (Def. 3.1.5).
+with `⊡, ⊙` the semiring addition and multiplication. The Hopf algebra `H` needs only a semiring
+of coefficients, so `ℕ` serves for a Boolean target. A semiring has no antipode, so only the form
+`φ₊ = φ₋ ⋆ φ` of the factorization is available.
 
 ## Main definitions
 
-- `birkhoffMinusTree φ R T` / `birkhoffMinus φ R`: the Bogolyubov negative part `φ₋ = R(φ̃)` on a
-  tree, and as an algebra hom `H →ₐ[R] ℛ`.
-- `birkhoffPrepTree φ R T`: the Bogolyubov preparation `φ̃`.
-- `birkhoffPlusTree φ R T`: the renormalized part `φ₊ = φ̃ + φ₋`.
+* `ConnesKreimer.SemiringRenorm.birkhoffMinusTree`, `birkhoffMinus`: the negative part
+  `φ₋ = R(φ̃)`, on a tree and as an algebra homomorphism.
+* `ConnesKreimer.SemiringRenorm.birkhoffPrepTree`: the Bogolyubov preparation `φ̃`.
+* `ConnesKreimer.SemiringRenorm.birkhoffPlusTree`: the renormalized part `φ₊ = φ̃ + φ₋`.
 
 ## Main results
 
-- `birkhoffFactorization_ofTree`: `φ₊ = φ₋ ⋆ φ` on generators (Def. 3.1.6, Prop. 3.1.9 eq. (3.1.7)).
+* `ConnesKreimer.SemiringRenorm.birkhoffFactorization_ofTree`: `φ₊ = φ₋ ⋆ φ` on generators.
 
 ## References
 
-[marcolli-chomsky-berwick-2025] (Def. 3.1.2, Def. 3.1.6, Prop. 3.1.9, Rem. 3.1.10)
+* [marcolli-tedeschi-2015]
 -/
 
 namespace ConnesKreimer.SemiringRenorm
@@ -56,8 +49,7 @@ open scoped TensorProduct
 variable {R ℛ : Type*} [CommSemiring R] [CommSemiring ℛ] [Algebra R ℛ] {α : Type*}
   (φ : ConnesKreimer R (UnorderedTree α) →ₗ[R] ℛ) (RB : RotaBaxterSemiring ℛ)
 
-/-- **The Bogolyubov negative part `φ₋` on a single tree** (semiring, weight `+1`;
-    [marcolli-chomsky-berwick-2025] Prop. 3.1.9):
+/-- The Bogolyubov negative part on a tree, for a weight-`+1` operator,
     `φ₋(T) = R(Σ_{(cf,rem) ∈ cutSummandsN T} (Π_{Tᵢ ∈ cf} φ₋(Tᵢ)) · φ(ofTree rem))`. The semiring
     analogue of the ring `birkhoffMinusTree`, with the *positive* projection `R` in place of `−R`;
     well-founded on `T.numNodes`. -/
@@ -67,8 +59,8 @@ noncomputable def birkhoffMinusTree (T : UnorderedTree α) : ℛ :=
 termination_by T.numNodes
 decreasing_by exact cutSummandsN_crown_numNodes_lt p.2 t.2
 
-/-- **`φ₋` as an algebra hom** `H →ₐ[R] ℛ`: `birkhoffMinusTree` extended multiplicatively to
-    forests. -/
+/-- The negative part `φ₋` as an algebra homomorphism, `birkhoffMinusTree` extended
+    multiplicatively to forests. -/
 noncomputable def birkhoffMinus : ConnesKreimer R (UnorderedTree α) →ₐ[R] ℛ :=
   aeval (birkhoffMinusTree φ RB)
 
@@ -80,13 +72,13 @@ noncomputable def birkhoffMinus : ConnesKreimer R (UnorderedTree α) →ₐ[R] �
     birkhoffMinus φ RB (ofTree T) = birkhoffMinusTree φ RB T :=
   aeval_ofTree _ T
 
-/-- **The Bogolyubov preparation `φ̃`** ([marcolli-chomsky-berwick-2025] Prop. 3.1.9):
+/-- The Bogolyubov preparation
     `φ̃(T) = Σ_{(cf,rem) ∈ cutSummandsN T} (Π_{Tᵢ ∈ cf} φ₋(Tᵢ)) · φ(ofTree rem)`, of which the
     negative part is `φ₋(T) = R(φ̃(T))` and the renormalized part is `φ₊(T) = φ̃(T) + φ₋(T)`. -/
 noncomputable def birkhoffPrepTree (T : UnorderedTree α) : ℛ :=
   ((cutSummandsN T).map fun p ↦ (p.1.map (birkhoffMinusTree φ RB)).prod * φ (ofTree p.2)).sum
 
-/-- `φ₋(T) = R(φ̃(T))`: the negative part is the positive projection `R` of the preparation. -/
+/-- The negative part is the projection `R` of the preparation, `φ₋(T) = R(φ̃(T))`. -/
 theorem birkhoffMinusTree_eq_op_prep (T : UnorderedTree α) :
     birkhoffMinusTree φ RB T = RB.op (birkhoffPrepTree φ RB T) := by
   rw [birkhoffMinusTree]
@@ -95,15 +87,14 @@ theorem birkhoffMinusTree_eq_op_prep (T : UnorderedTree α) :
     fun p : Forest (UnorderedTree α) × UnorderedTree α ↦
       (p.1.map (birkhoffMinusTree φ RB)).prod * φ (ofTree p.2))
 
-/-- **The renormalized part `φ₊` on a single tree** ([marcolli-chomsky-berwick-2025] Prop. 3.1.9):
-    `φ₊(T) = φ̃(T) + φ₋(T)` (the semiring `φ₋ ⊡ φ̃`) — the consistency-checked value. -/
+/-- The renormalized part on a tree, `φ₊(T) = φ̃(T) + φ₋(T)` (the semiring `φ₋ ⊡ φ̃`). -/
 noncomputable def birkhoffPlusTree (T : UnorderedTree α) : ℛ :=
   birkhoffPrepTree φ RB T + birkhoffMinusTree φ RB T
 
-/-- **Semiring Birkhoff factorization on generators** ([marcolli-chomsky-berwick-2025] Def. 3.1.6,
-    Prop. 3.1.9 eq. (3.1.7), `φ₊ = φ₋ ⋆ φ`): on each tree generator the convolution `φ₋ ⋆ φ` —
-    `mul' ∘ (φ₋ ⊗ φ) ∘ comul` — recovers the renormalized part `φ₊`. Needs `φ` unital (`φ 1 = 1`).
-    Same proof as the ring keystone (the identity is pure coproduct bookkeeping, sign-agnostic). -/
+/-- The semiring Birkhoff factorization `φ₊ = φ₋ ⋆ φ` on generators. On each tree the
+    convolution `φ₋ ⋆ φ`, that is `mul' ∘ (φ₋ ⊗ φ) ∘ comul`, recovers the renormalized part `φ₊`.
+    Needs `φ` unital (`φ 1 = 1`). Same proof as the ring keystone, the identity being pure
+    coproduct bookkeeping. -/
 theorem birkhoffFactorization_ofTree (hφ : φ 1 = 1) (T : UnorderedTree α) :
     LinearMap.mul' R ℛ
         ((TensorProduct.map (birkhoffMinus φ RB).toLinearMap φ) (comulAlgHomN (ofTree T)))

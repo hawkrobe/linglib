@@ -16,11 +16,10 @@ public import Mathlib.Data.Multiset.MapFold
 An unordered rooted tree with vertices labelled in `α` is a `RoseTree α` modulo the permutation
 of children at every vertex: the quotient `UnorderedTree α := Quotient RoseTree.isSetoid`. In the
 Connes–Kreimer literature these are the rooted trees and the ordered ones the planar rooted
-trees ([foissy-introduction-hopf-algebras-trees]); [marcolli-chomsky-berwick-2025] §1.1.3 builds
-syntactic objects on them, since Merge is set formation and `{α, {β, γ}}` has no order. The
-identity criterion is `RoseTree.Perm` (`Core/Data/RoseTree/Perm.lean`); this file owns the
-quotient: the projection `mk`, the lifting API, the lifted invariants, and the constructor `node`
-on `Multiset` children, under which the grafting `B⁺` of a multiset of trees is well defined.
+trees ([foissy-introduction-hopf-algebras-trees]). The identity criterion is `RoseTree.Perm`
+(`Core/Data/RoseTree/Perm.lean`); this file owns the quotient: the projection `mk`, the lifting
+API, the lifted invariants, and the constructor `node` on `Multiset` children, under which the
+grafting `B⁺` of a multiset of trees is well defined.
 
 ## Main definitions
 
@@ -32,8 +31,6 @@ on `Multiset` children, under which the grafting `B⁺` of a multiset of trees i
 
 ## References
 
-* [M. Marcolli, N. Chomsky and R. C. Berwick, *Mathematical Structure of Syntactic Merge*
-  (2025)][marcolli-chomsky-berwick-2025]
 * [L. Foissy, *An introduction to Hopf algebras of trees*][foissy-introduction-hopf-algebras-trees]
 -/
 
@@ -81,8 +78,7 @@ def numNodes : UnorderedTree α → Nat :=
 @[simp] theorem numNodes_leaf (a : α) : (leaf a : UnorderedTree α).numNodes = 1 := by simp
 
 /-- The **leaf count** (number of childless vertices) of a nonplanar tree,
-    lifted from `RoseTree.numLeaves` via `RoseTree.Perm`-invariance. MCB's
-    complexity grading `#L` (Def. 1.6.2) is built on this. -/
+    lifted from `RoseTree.numLeaves` via `RoseTree.Perm`-invariance. -/
 def numLeaves : UnorderedTree α → Nat :=
   Quotient.lift RoseTree.numLeaves (fun _ _ h => RoseTree.numLeaves_perm h)
 
@@ -134,7 +130,7 @@ def children : UnorderedTree α → Multiset (UnorderedTree α) :=
 @[simp] theorem children_mk (t : RoseTree α) :
     (mk t).children = ↑(t.children.map mk) := rfl
 
-/-- Injectivity of the node constructor on the quotient: `mk`-images of two nodes are
+/-- The node constructor is injective on the quotient: `mk`-images of two nodes are
     equal iff the root values agree and the children agree as multisets of nonplanar
     trees. The forward direction is `congrArg` on the `value` and `children`
     destructors; the backward direction assembles a `RoseTree.Perm` componentwise. -/
@@ -196,12 +192,12 @@ theorem node_mk_tree_list (a : α) (ps : List (RoseTree α)) :
   | nil => rfl
   | cons p ps ih => rw [List.map_cons, ← Multiset.cons_coe, node_cons, ih]; rfl
 
-/-- Binary case of `node_mk_tree_list`: a bare pair of `mk`-lifted trees. -/
+/-- The binary case of `node_mk_tree_list` handles a bare pair of `mk`-lifted trees. -/
 theorem node_pair_mk (a : α) (p q : RoseTree α) :
     node a {mk p, mk q} = mk (.node a [p, q]) :=
   node_mk_tree_list a [p, q]
 
-/-- Choose planar representatives for a whole forest at once: every
+/-- Planar representatives can be chosen for a whole forest at once, since every
     `Multiset (UnorderedTree α)` is the `mk`-image of a list of planar trees. Descent
     proofs that use this eliminator meet `node_mk_tree_list` on the nose, with no
     `Quotient.out` repair. -/
@@ -226,7 +222,7 @@ theorem forest_inductionOn {motive : Multiset (UnorderedTree α) → Prop}
   induction F using forest_inductionOn with
   | h ps => rw [node_mk_tree_list]; rfl
 
-/-- Eta law: every tree is the `node` of its root value and children. -/
+/-- Every tree is the `node` of its root value and children. -/
 theorem node_eta (t : UnorderedTree α) : node (value t) (children t) = t := by
   induction t using Quotient.inductionOn with
   | h p =>

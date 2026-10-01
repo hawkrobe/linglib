@@ -43,6 +43,11 @@ The duality is proved by strong induction on the total weight of a
 basis forest `z = of' C`, with the single-tree step driven by the B⁺/B⁻
 adjoint of `BMinus.lean` and the Hochschild cocycle, and the multi-tree
 step by the pairing product rule over `antidiagonal`-indexed splits.
+
+## References
+
+* [foissy-2002]
+* [oudom-guin-2008]
 -/
 
 namespace ConnesKreimer
@@ -72,7 +77,7 @@ private lemma pairing₂_lTensor_bPlusLin (a : α)
 
 /-! ### Tensor-square of the pairing product rule -/
 
-/-- The pairing product rule through both slots of `pairing₂`: for basis
+/-- The pairing product rule holds through both slots of `pairing₂`. For basis
     second components, multiplying the second argument decomposes over
     independent antidiagonal splits of the two basis forests. Tensor
     counterpart of `pairing_of'_mul`, aligned with the
@@ -319,8 +324,8 @@ private lemma pairing₃_lTensor_comul_rho
   | add W₁ W₂ ih₁ ih₂ =>
     rw [map_add, map_add, ih₁, ih₂, map_add]
 
-/-- **Associativity of the GL product, pairing form**: the two triple
-    products pair equally against everything — Δ^ρ coassociativity
+/-- The GL product is associative in pairing form. The two triple
+    products pair equally against everything, by Δ^ρ coassociativity
     (`comulRhoN_coassoc`) pushed through the duality twice on each side. -/
 theorem pairing_product_assoc (x y z w : ConnesKreimer R (UnorderedTree α)) :
     pairing (product x (product y z)) w =

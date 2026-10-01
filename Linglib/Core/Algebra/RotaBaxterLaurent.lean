@@ -9,19 +9,15 @@ public import Linglib.Core.Algebra.RotaBaxter
 public import Mathlib.RingTheory.LaurentSeries
 
 /-!
-# The polar-part Rota–Baxter operator on Laurent series  `[UPSTREAM]`
+# The polar-part Rota–Baxter operator on Laurent series
 
-The **prototype** Rota–Baxter operator of weight `-1` ([marcolli-chomsky-berwick-2025] Prop. 3.5.2,
-eq. (3.5.4)) — the minimal-subtraction operator of Connes–Kreimer renormalization in physics. On the
-Laurent series `LaurentSeries A = HahnSeries ℤ A`, the projection onto the **polar part** (the
-strictly-negative-degree coefficients),
+On the Laurent series `LaurentSeries A = HahnSeries ℤ A`, the projection onto the polar part (the
+strictly negative degree coefficients),
 
   `R(Σ aᵢ tⁱ) = Σ_{i < 0} aᵢ tⁱ`,
 
-is a Rota–Baxter operator of weight `-1`. This realizes the example named in `RotaBaxter.lean`'s
-docstring (the Laurent-series polar projection) and is the operator
-[marcolli-chomsky-berwick-2025] §3.5.2 use to recast Minimal Yield as a Birkhoff factorization
-(Sideward Merge appears as the polar/divergent part, removed by the renormalized character).
+is a Rota–Baxter operator of weight `-1`: the minimal-subtraction operator of Connes–Kreimer
+renormalization.
 
 The Rota–Baxter identity is proved from the splitting `LaurentSeries A = R ⊕ (1 − R)` into the two
 **subalgebras** of polar (support `< 0`) and non-polar (support `≥ 0`) series: `R` fixes products of
@@ -43,9 +39,12 @@ maps.
 - `LaurentSeries.polarHahn`: the polar projection on coefficients.
 - `LaurentSeries.rotaBaxterPolar`: the weight-`-1` Rota–Baxter operator structure.
 
+`[UPSTREAM]` candidate.
+
 ## References
 
-[marcolli-chomsky-berwick-2025] (Prop. 3.5.2, eq. (3.5.4))
+* [connes-kreimer-2000]
+* [ebrahimi-fard-guo-kreimer-2004]
 -/
 
 @[expose] public section
@@ -54,7 +53,7 @@ namespace LaurentSeries
 
 variable {k A : Type*} [CommRing k] [CommRing A] [Algebra k A]
 
-/-- The coefficient function of the polar part: keep the strictly-negative degrees. -/
+/-- The coefficient function of the polar part keeps the strictly negative degrees. -/
 def polarCoeff (s : LaurentSeries A) : ℤ → A := fun i => if i < 0 then s.coeff i else 0
 
 theorem polarCoeff_support_subset (s : LaurentSeries A) :
@@ -62,8 +61,7 @@ theorem polarCoeff_support_subset (s : LaurentSeries A) :
   simp only [polarCoeff, Function.mem_support] at hi ⊢
   exact fun h => hi (by simp [h])
 
-/-- The **polar part** of a Laurent series: the strictly-negative-degree part
-    ([marcolli-chomsky-berwick-2025] eq. (3.5.4)). -/
+/-- The polar part of a Laurent series is its strictly negative degree part. -/
 def polarHahn (s : LaurentSeries A) : LaurentSeries A where
   coeff := polarCoeff s
   isPWO_support' := s.isPWO_support'.mono (polarCoeff_support_subset s)
@@ -220,8 +218,8 @@ theorem coPolarMul_coeff_eq_zero_of_neg (a b : LaurentSeries A) {i : ℤ} (hi : 
 
 /-! ### The Rota–Baxter operator -/
 
-/-- **The polar-projection Rota–Baxter identity** (weight `-1`, sub-form)
-    ([marcolli-chomsky-berwick-2025] Prop. 3.5.2): `R(a)R(b) = R(R(a)b + aR(b) − ab)`, from the ring
+/-- The polar projection satisfies the weight-`-1` Rota–Baxter identity
+    `R(a)R(b) = R(R(a)b + aR(b) − ab)`, from the ring
     identity `R(a)b + aR(b) − ab = R(a)R(b) − (a−R(a))(b−R(b))` and the splitting into the two
     subalgebras (`R` fixes `R(a)R(b)`, kills `(a−R(a))(b−R(b))`). -/
 theorem polarHahn_rotaBaxter (a b : LaurentSeries A) :
@@ -232,7 +230,8 @@ theorem polarHahn_rotaBaxter (a b : LaurentSeries A) :
     polarHahn_eq_self _ (fun i hi => polarMul_coeff_eq_zero_of_nonneg a b hi),
     polarHahn_eq_zero _ (fun i hi => coPolarMul_coeff_eq_zero_of_neg a b hi), sub_zero]
 
-/-- The coefficient of `algebraMap c * y`: the `LaurentSeries` algebra map (resolved via
+/-- The coefficients of `algebraMap c * y` are those of `y` scaled, since the `LaurentSeries`
+    algebra map (resolved via
     `HahnSeries.powerSeriesAlgebra`, `k → PowerSeries A → LaurentSeries A`) is the constant series
     `single 0 (algebraMap k A c)`, so the action is coefficient-wise. -/
 private theorem coeff_algebraMap_mul (c : k) (y : LaurentSeries A) (i : ℤ) :
@@ -242,8 +241,8 @@ private theorem coeff_algebraMap_mul (c : k) (y : LaurentSeries A) (i : ℤ) :
       HahnSeries.C_apply]
   rw [e, HahnSeries.coeff_single_zero_mul]
 
-/-- **The polar projection is a Rota–Baxter operator of weight `-1`** on `LaurentSeries A`
-    ([marcolli-chomsky-berwick-2025] Prop. 3.5.2): the prototype minimal-subtraction operator. The
+/-- The polar projection is a Rota–Baxter operator of weight `-1` on `LaurentSeries A`, the
+    prototype minimal-subtraction operator. The
     `op` linear map is built inline with `letI := Algebra.toModule` to pin the expected module (see
     the implementation note); `map_smul'` is then over the algebra action
     `c • x = algebraMap c * x`. -/
