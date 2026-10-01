@@ -1,6 +1,7 @@
 module
 
-public import Linglib.Semantics.ArgumentStructure.ArgumentIntroduction
+public import Linglib.Semantics.ArgumentStructure.ThematicRole
+public import Linglib.Semantics.Composition.EventIdentification
 public import Linglib.Syntax.Minimalist.SyntacticObject.Build
 public import Linglib.Syntax.Minimalist.SyntacticObject.Term
 public import Linglib.Syntax.Minimalist.Verbal.Voice
@@ -8,21 +9,27 @@ public import Linglib.Syntax.Minimalist.Verbal.Voice
 /-!
 # Kratzer (1996): Severing the External Argument from its Verb
 
-This file formalizes the paper's proposal that the external argument is not an argument of
-the verb. A transitive verb denotes a relation between its internal argument and an event,
-and the external argument is introduced by a separate functional head, Voice, whose
-denotation is a thematic relation such as Agent. Voice and the verb phrase combine by Event
-Identification, which conjoins the two at the event and leaves the introduced participant
-open, so that the sentence *Mittie fed the dog* denotes the events that are feedings of the
-dog and of which Mittie is the agent. Syntactically the external argument is the specifier of
-VoiceP, above the verb phrase that contains the verb and its internal argument.
+This file formalizes Kratzer's proposal that the external argument is not an argument of the
+verb. A transitive verb denotes a relation between its internal argument and an event, and the
+external argument is introduced by a separate functional head, Voice, whose denotation is a
+thematic relation such as Agent. Voice and the verb phrase combine by Event Identification,
+which conjoins the two at the event and leaves the introduced participant open, so that the
+sentence *Mittie fed the dog* denotes the events that are feedings of the dog and of which
+Mittie is the agent. Syntactically the external argument is the specifier of VoiceP, above the
+verb phrase that contains the verb and its internal argument.
+
+Because the external argument enters by Event Identification, the kind of event the verb
+phrase describes constrains the role Voice can assign: an agent head is restricted to actions,
+a holder head to states, and Event Identification of an agent head with a stative verb phrase
+such as *own the dog* yields nothing (`agent_stative_eq_bot`).
 
 ## Implementation notes
 
-Event Identification and the Voice denotation are the library's `eventIdentification` and
-`applToEvent`, and the agentive Voice head is `Voice.agentive`; the derivation is stated for an
-arbitrary agent relation and verb. The tree is built from planar leaf tokens, and the paper's
-structural claim is its c-command relations.
+Event Identification is `Semantics.Composition.eventIdentification`, and the agentive Voice head
+is `Voice.agentive`; the derivation is stated for an arbitrary agent relation and verb. Kratzer's
+Event Identification is undefined on inputs with disjoint sorts of events; the library's is
+total, so the clash comes out as the empty relation. The tree is built from planar leaf tokens,
+and the paper's structural claim is its c-command relations.
 
 ## References
 
@@ -34,17 +41,17 @@ structural claim is its c-command relations.
 
 namespace Kratzer1996
 
-open ArgumentStructure
+open ArgumentStructure Semantics.Composition
 
 section Semantics
 
 variable {Entity T : Type*} [LinearOrder T]
 
-/-- The denotation of *Mittie fed the dog*: Voice, denoting the agent relation, combines with
-the verb phrase by Event Identification, so the agent enters above the verb. -/
+/-- In the denotation of *Mittie fed the dog*, Voice, denoting the agent relation, combines
+with the verb phrase by Event Identification, so the agent enters above the verb. -/
 def mittieFedTheDog (agent feed : ThematicRel Entity T) (mittie dog : Entity) :
     Event T → Prop :=
-  applToEvent agent (feed dog) mittie
+  eventIdentification agent (feed dog) mittie
 
 /-- The sentence holds of an event iff Mittie is its agent and it is a feeding of the dog;
 the verb contributes no agent. -/
@@ -52,12 +59,24 @@ theorem mittieFedTheDog_iff (agent feed : ThematicRel Entity T) (mittie dog : En
     (e : Event T) : mittieFedTheDog agent feed mittie dog e ↔ agent mittie e ∧ feed dog e :=
   Iff.rfl
 
-/-- Severing: two verb phrases with the same events are indistinguishable once Voice adds
-the external argument, whatever the agent relation. -/
+/-- Two verb phrases with the same events are indistinguishable once Voice adds the external
+argument, whatever the agent relation: the agent is severed from the verb. -/
 theorem mittieFedTheDog_congr (agent feed feed' : ThematicRel Entity T) (mittie dog : Entity)
     (h : ∀ e, feed dog e ↔ feed' dog e) (e : Event T) :
     mittieFedTheDog agent feed mittie dog e ↔ mittieFedTheDog agent feed' mittie dog e :=
-  and_congr_right λ _ => h e
+  and_congr_right fun _ ↦ h e
+
+/-- An agent head, whose events are actions, and a stative verb phrase such as *own the dog*
+(25), whose events are states, combine by Event Identification to the empty relation. -/
+theorem agent_stative_eq_bot {agent : ThematicRel Entity T} {P : Event T → Prop}
+    (hagent : ∀ x e, agent x e → e.isAction) (hP : ∀ e, P e → e.isState) :
+    eventIdentification agent P = ⊥ :=
+  eventIdentification_eq_bot_iff.2 fun x ↦ Pi.disjoint_iff.2 fun e ↦
+    Prop.disjoint_iff.2 fun h ↦ (e.isAction_iff_not_isState.1 (hagent x e h.1)) (hP e h.2)
+
+/-- A holder head and a stative verb phrase, (26), compose to a nonempty relation. -/
+example : eventIdentification (fun (_ : Unit) (e : Event ℤ) ↦ e.isState) Event.isState ≠ ⊥ :=
+  fun h ↦ (congrFun₂ h () exampleKnow).mp ⟨rfl, rfl⟩
 
 end Semantics
 
