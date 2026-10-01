@@ -1,6 +1,7 @@
 module
 
-public import Linglib.Semantics.ArgumentStructure.ArgumentIntroduction
+public import Linglib.Semantics.ArgumentStructure.ThematicRole
+public import Linglib.Semantics.Composition.EventIdentification
 public import Linglib.Semantics.Presupposition.Defs
 public import Linglib.Fragments.Romance.French.Verbs
 
@@ -68,7 +69,7 @@ inanimate agent allows *par* when a change on an inferred scale is at stake.
 
 namespace StapsRooryck2024
 
-open ArgumentStructure Presupposition French.Verbs
+open ArgumentStructure Presupposition French.Verbs Semantics.Composition
 
 /-! ### Polymorphic types -/
 

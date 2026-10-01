@@ -3,16 +3,17 @@ module
 public import Linglib.Syntax.Tree.Basic
 public import Linglib.Semantics.Composition.Ty
 public import Linglib.Semantics.Composition.Assignment
+public import Linglib.Semantics.Composition.EventIdentification
 public import Linglib.Semantics.Composition.Lexicon
 public import Linglib.Semantics.Modification.Basic
 
 /-!
 # Type-driven interpretation
 
-This file is the composition engine of [heim-kratzer-1998]'s type-driven interpretation, with
-the intensional application of [von-fintel-heim-2011] and the event identification of
-[kratzer-1996], parameterized over an effect functor `M` in the style of
-[bumford-charlow-2026]. A node denotes an `M`-computation in the domain of its semantic type,
+This file is the composition engine of Heim and Kratzer's type-driven interpretation, with the
+intensional application of von Fintel and Heim and the event identification of Kratzer
+(`eventIdentification`), parameterized over an effect functor `M` in the style of Bumford and
+Charlow. A node denotes an `M`-computation in the domain of its semantic type,
 a `Denotation`, and each composition principle lifts through the `Applicative` structure of
 `M`, so the pure Heim and Kratzer engine is the instance `M = Id`. A terminal node denotes
 what its leaf interpretation gives it, a string in a `Lexicon` or a fragment carrier through
@@ -46,8 +47,9 @@ the function, so at `M = Cont R` surface scope is the default reading and invers
 a reordered evaluation (`Composition/Cont.lean`). Predicate Abstraction needs a distributor
 `(E → M (Ty.Domain ty)) → M (E → Ty.Domain ty)`, which scope effects lack, so under them `.bind`
 nodes fail and binding comes from the order of effects instead; making the distributor optional
-turns that rivalry into a fact instance resolution checks. The abstraction's fallback value `valueAt` is never reached, since types do not depend
-on the assignment. The category parameter of a tree is ignored, composition being type-driven.
+turns that rivalry into a fact instance resolution checks. The abstraction's fallback value
+`valueAt` is never reached, since types do not depend on the assignment. The category parameter
+of a tree is ignored, composition being type-driven.
 
 ## References
 
@@ -148,20 +150,19 @@ def tryPM {E W D : Type} {M : Type → Type} [Applicative M]
     some ⟨.fn .e .t, Modifier.intersective <$> p1 <*> p2⟩
   | _, _ => none
 
-/-- Event identification ([kratzer-1996]): a role head of type `⟨e,⟨e,t⟩⟩` and an eventuality
-predicate of type `⟨e,t⟩`, in either order, conjoin the predicate onto the head's event
-argument. -/
+/-- The event identification mode combines a role head of type `⟨e,⟨e,t⟩⟩` and an eventuality
+predicate of type `⟨e,t⟩`, in either order, by `eventIdentification`. -/
 def tryEI {E W D : Type} {M : Type → Type} [Applicative M]
     (d1 d2 : Denotation E W M D) : Option (Denotation E W M D) :=
   match h1 : d1.1, h2 : d2.1 with
   | .fn .e (.fn .e .t), .fn .e .t =>
     let f : M (Ty.Domain E W (.e ⇒ .e ⇒ .t) D) := h1 ▸ d1.2
     let p : M (Ty.Domain E W (.e ⇒ .t) D) := h2 ▸ d2.2
-    some ⟨.e ⇒ .e ⇒ .t, (fun fv pv x e ↦ fv x e ∧ pv e) <$> f <*> p⟩
+    some ⟨.e ⇒ .e ⇒ .t, eventIdentification <$> f <*> p⟩
   | .fn .e .t, .fn .e (.fn .e .t) =>
     let p : M (Ty.Domain E W (.e ⇒ .t) D) := h1 ▸ d1.2
     let f : M (Ty.Domain E W (.e ⇒ .e ⇒ .t) D) := h2 ▸ d2.2
-    some ⟨.e ⇒ .e ⇒ .t, (fun pv fv x e ↦ fv x e ∧ pv e) <$> p <*> f⟩
+    some ⟨.e ⇒ .e ⇒ .t, flip eventIdentification <$> p <*> f⟩
   | _, _ => none
 
 /-- The modes a binary node tries, in order. -/
@@ -443,8 +444,8 @@ theorem interp_map_fst_congr (g g' : Assignment E) (t : Tree C L) :
       revert h
       cases interp lex g body <;> cases interp lex g' body <;> intro h <;> simp_all
 
-/-- The coincidence theorem: assignments agreeing on the traces free in a tree give it the
-same denotation ([heim-kratzer-1998] §5.4.2). -/
+/-- Assignments agreeing on the traces free in a tree give it the same denotation, the
+coincidence theorem ([heim-kratzer-1998] §5.4.2). -/
 theorem interp_congr_of_agree {g g' : Assignment E} {t : Tree C L}
     (h : ∀ i ∈ t.freeIndices, g i = g' i) : interp lex g t = interp lex g' t := by
   induction t using Tree.rec' generalizing g g' with
