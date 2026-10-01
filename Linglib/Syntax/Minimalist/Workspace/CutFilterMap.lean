@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Combinatorics.RootedTree.Cut
+public import Linglib.Syntax.Minimalist.Workspace.TraceCut
 public import Linglib.Core.Data.UnorderedTree.FilterMap
 
 @[expose] public section
@@ -24,8 +24,8 @@ as an equality of multisets. Both sides are stated `Option`-valued
 maps total.
 
 This is the combinatorial content of the Δ^d = Δ^ρ comparison
-([marcolli-chomsky-berwick-2025] Lemma 1.3.10); the algebra layer
-(`Core/Algebra/RootedTree/Coproduct/Deletion.lean`) transports it
+(Marcolli, Chomsky and Berwick's comparison displayed before (1.3.10)); the algebra
+layer (`DeletionCoproduct.lean`) transports it
 through a cut-summand tensor builder.
 
 ## Main results
@@ -35,6 +35,10 @@ through a cut-summand tensor builder.
 * `ConnesKreimer.cutListSummandsG_map_inl_filterMap`,
   `ConnesKreimer.augActionG_map_inl_filterMap` — children-list and
   per-child companions of the mutual induction.
+
+## References
+
+* [marcolli-chomsky-berwick-2025]
 -/
 
 namespace ConnesKreimer

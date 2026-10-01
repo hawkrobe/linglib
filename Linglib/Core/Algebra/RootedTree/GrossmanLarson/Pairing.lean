@@ -422,8 +422,8 @@ open scoped TensorProduct
 /-! ### Pairings on tensor powers
 
 The pairing extends to `H ⊗ H` and `H ⊗ (H ⊗ H)`, where the duality with the pruning coproduct is
-stated. No such duality holds for the coproduct with trace markers of `Coproduct/Trace.lean`,
-whose trunks contain markers that grafting never produces. -/
+stated. No such duality holds for a coproduct that leaves marker leaves in the trunk, since
+grafting never produces them. -/
 
 /-- `pairing₂` is the pairing on `H ⊗ H` with `pairing₂ (x ⊗ y) (w ⊗ z) = ⟨x, w⟩ * ⟨y, z⟩`. -/
 noncomputable def pairing₂ :

@@ -12,21 +12,12 @@ open RoseTree UnorderedTree
 
 /-!
 # Generic admissible-cut coproduct on `ConnesKreimer R (UnorderedTree α)`
-[marcolli-chomsky-berwick-2025]
 
-The three MCB coproducts — Δ^ρ (pruning), Δ^c (contraction/trace), Δ^d
-(deletion) — share one shape: a primitive `ofTree T ⊗ 1` plus a sum over *cut
-summands* `(crown, trunk)` of `of' crown ⊗ ofTree trunk`. They differ **only**
-in the cut enumeration `cuts T`. This file factors that shape into a single
-`cuts`-parameterized algebra hom `comulAlgHomNG`; the concrete coproducts are
-its instantiations — Δ^ρ at `cuts := cutSummandsN`
-(`Coproduct/Pruning.lean`) and Δ^c at `cuts := cutSummandsCN τ`
-(`Coproduct/Trace.lean`, definitionally).
-
-The cut-*enumeration* layer was already generic (`ConnesKreimer.cutSummandsG`,
-over an extraction policy); this lifts that genericity to the coproduct
-*operator*, so one Merge operator (`Minimalist.Merge.mergeOpG`, downstream)
-serves every coproduct instead of one bespoke copy per Δ.
+Admissible-cut coproducts share one shape: a primitive term `ofTree T ⊗ 1` plus a sum over cut
+summands `(crown, trunk)` of `of' crown ⊗ ofTree trunk`. They differ only in the enumeration
+`cuts T` of the cut summands. This file defines the shape once, as the algebra homomorphism
+`comulAlgHomNG cuts`; the Connes–Kreimer coproduct is its instance at the pruning cuts
+`cutSummandsN` (`Coproduct/Pruning.lean`).
 
 ## Main definitions
 
@@ -37,6 +28,11 @@ serves every coproduct instead of one bespoke copy per Δ.
   (`Combinatorics/RootedTree/Cut.lean`).
 * `WithCuts R cuts` — the policy-indexed carrier, with `Bialgebra` gated
   on `IsAdmissibleCuts cuts`.
+
+## References
+
+* [connes-kreimer-1998]
+* [foissy-introduction-hopf-algebras-trees]
 -/
 
 namespace ConnesKreimer
@@ -45,9 +41,8 @@ open scoped TensorProduct
 
 variable {R : Type*} [CommSemiring R] {α : Type*}
 
-/-- The **generic admissible-cut coproduct** (tree level), parameterized by a cut
-    enumeration `cuts`. Specializing `cuts` to `cutSummandsN` gives Δ^ρ, to
-    `cutSummandsCN τ` gives Δ^c, to the deletion enumeration gives Δ^d. -/
+/-- The generic admissible-cut coproduct on a tree, for a cut enumeration `cuts`. At the pruning
+    cuts `cutSummandsN` it is the Connes–Kreimer coproduct. -/
 noncomputable def comulTreeNG
     (cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α))
     (T : UnorderedTree α) :
@@ -120,10 +115,7 @@ noncomputable def comulAlgHomNG
 
 `treeCutsG`/`forestCutsG` (`Combinatorics/RootedTree/Cut.lean`) enumerate
 the (crown, trunk-forest) pairs of a tree and their convolution over a
-forest; `cutTensor` sends a pair to `of' crown ⊗ of' trunk`. These
-single-sum expansions serve the Δ^ρ cocycle substrate
-(`Coproduct/Pruning.lean`) and the Δ^c double-cut coassoc proof
-(`Coproduct/Trace.lean`). -/
+forest; `cutTensor` sends a pair to `of' crown ⊗ of' trunk`. -/
 
 /-- Tensor-product factor of a (crown, trunk) cut pair. -/
 noncomputable def cutTensor (p : Forest (UnorderedTree α) × Forest (UnorderedTree α)) :
@@ -174,9 +166,8 @@ theorem comulForestNG_eq_sum
 /-! ### The policy-indexed carrier `WithCuts`
 
 The `WithLp` pattern: a type synonym indexed by the cut policy, whose
-`Bialgebra` instance is gated on an admissibility mixin. Δ^ρ keeps the plain
-carrier (`instBialgebraRho`, the Hopf algebra of
-[marcolli-chomsky-berwick-2025] Lemma 1.2.11); the marked variants live here. -/
+`Bialgebra` instance is gated on an admissibility mixin. The pruning coproduct keeps the plain
+carrier (`instBialgebraRho`); other admissible policies get their bialgebra here. -/
 
 set_option linter.unusedVariables false in
 variable (R) in
@@ -194,7 +185,7 @@ noncomputable instance : CommSemiring (WithCuts R cuts) :=
 noncomputable instance : Algebra R (WithCuts R cuts) :=
   inferInstanceAs (Algebra R (ConnesKreimer R (UnorderedTree α)))
 
-/-- Admissibility of a cut policy: the generic coproduct `comulAlgHomNG cuts` is
+/-- A cut policy is admissible when the generic coproduct `comulAlgHomNG cuts` is
 coassociative and counital, uniformly in the coefficient ring. Gates the
 `Bialgebra` instance on `WithCuts` (the `Fact`-style mixin of the `WithLp`
 pattern). -/
@@ -216,9 +207,7 @@ class IsAdmissibleCuts : Prop where
         (counit (R := R))).comp (comulAlgHomNG cuts) =
       (Algebra.TensorProduct.rid R R (ConnesKreimer R (UnorderedTree α))).symm.toAlgHom
 
-/-- The generic admissible-cut bialgebra on the marked carrier: any admissible
-policy yields `Bialgebra R (WithCuts R cuts)`. Δ^c is recovered at
-`cuts := cutSummandsCN τ`. -/
+/-- Any admissible cut policy makes `WithCuts R cuts` a bialgebra. -/
 noncomputable instance WithCuts.instBialgebra
     {R : Type*} [CommRing R] [IsAdmissibleCuts cuts] :
     Bialgebra R (WithCuts R cuts) :=

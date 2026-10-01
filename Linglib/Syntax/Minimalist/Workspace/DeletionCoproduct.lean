@@ -8,8 +8,8 @@ module
 public import Linglib.Core.Algebra.BigOperators.Multiset
 public import Linglib.Core.Data.Multiset.FilterMap
 public import Linglib.Core.Algebra.RootedTree.Coproduct.Pruning
-public import Linglib.Core.Algebra.RootedTree.Coproduct.Trace
-public import Linglib.Core.Combinatorics.RootedTree.CutFilterMap
+public import Linglib.Syntax.Minimalist.Workspace.CutFilterMap
+public import Linglib.Syntax.Minimalist.Workspace.TraceCoproduct
 public import Linglib.Core.Data.UnorderedTree.FilterMap
 
 @[expose] public section
@@ -20,8 +20,8 @@ open RoseTree UnorderedTree
 # The deletion coproduct Δ^d
 
 The deletion variant of the Connes-Kreimer admissible-cut coproduct
-([marcolli-chomsky-berwick-2025] Lemma 1.3.10, p. 44), obtained from the
-trace coproduct Δ^c (`Coproduct/Trace.lean`) by erasing
+(Marcolli, Chomsky and Berwick's comparison displayed before (1.3.10), p. 44),
+obtained from the trace coproduct Δ^c (`TraceCoproduct.lean`) by erasing
 trace-placeholder leaves from both tensor channels:
 `Δ^d = (Π_{d,c} ⊗ Π_{d,c}) ∘ Δ^c`, where `Π_{d,c}` erases
 trace-placeholder leaves.
@@ -44,7 +44,7 @@ trace-placeholder leaves.
 
 ## Implementation notes
 
-[marcolli-chomsky-berwick-2025] work with binary trees: their Δ^d
+Marcolli, Chomsky and Berwick work with binary trees: their Δ^d
 composes with a second projection `Π_{d,p}` contracting degree-1
 vertices to restore binary structure, and their comparison
 `Δ^d = (id ⊗ Π_{d,p}) ∘ Δ^ρ` holds only weakly (Lemma 1.2.12, a
@@ -59,9 +59,9 @@ recovering MCB's one-channel form `(id ⊗ Π_{d,c}) ∘ Δ^c`.
 `embedInlAlgHom` and use the Δ^ρ instance (`instBialgebraRho`,
 `Coproduct/PruningDuality.lean`).
 
-## Status
+## References
 
-`[UPSTREAM]` candidate.
+* [marcolli-chomsky-berwick-2025]
 -/
 
 namespace ConnesKreimer
@@ -72,7 +72,8 @@ variable {R : Type*} [CommSemiring R] {α β : Type*}
 
 /-! ## The trace-erasure algebra hom Π_{d,c} -/
 
-/-- The **trace-erasure algebra hom** `Π_{d,c}`: erase trace subtrees componentwise across each basis
+/-- The **trace-erasure algebra hom** `Π_{d,c}`: erase trace subtrees componentwise
+   across each basis
     forest, dropping trace-rooted trees
     (`Multiset.filterMapAddMonoidHom (UnorderedTree.filterMap Sum.getLeft?)`), lifted
     through `ConnesKreimer.mapDomainAlgHom`. -/
@@ -87,8 +88,8 @@ noncomputable def eraseTracesAlgHom :
   rw [eraseTracesAlgHom, ConnesKreimer.mapDomainAlgHom_of']
   rfl
 
-/-- `eraseTracesAlgHom` on a single tree: the trace-erased tree if the root
-    survives, `1` if the root is a trace placeholder. -/
+/-- On a single tree, `eraseTracesAlgHom` gives the trace-erased tree if the root
+    survives and `1` if the root is a trace placeholder. -/
 @[simp] theorem eraseTracesAlgHom_ofTree (T : UnorderedTree (α ⊕ β)) :
     eraseTracesAlgHom (R := R) (ofTree T) =
       (UnorderedTree.filterMap Sum.getLeft? T).elim 1 ofTree := by
@@ -105,7 +106,7 @@ noncomputable def eraseTracesAlgHom :
 The embedding `α → α ⊕ β` lifts componentwise to trees and forests via
 `RoseTree.map` / `UnorderedTree.map` / `Multiset.map`. -/
 
-/-- The **`Sum.inl` embedding algebra hom**: relabel every basis forest
+/-- The `Sum.inl` embedding relabels every basis forest
     componentwise along `Sum.inl`, embedding trace-free trees into the
     marked alphabet. -/
 noncomputable def embedInlAlgHom :
@@ -136,7 +137,7 @@ theorem eraseTracesAlgHom_comp_embedInlAlgHom :
 
 /-! ## Δ^d definition
 
-`comulDN := (Π_{d,c} ⊗ Π_{d,c}) ∘ Δ^c` — MCB Lemma 1.3.10 by
+`comulDN := (Π_{d,c} ⊗ Π_{d,c}) ∘ Δ^c`, MCB's comparison before (1.3.10) by
 construction. Target carrier is `UnorderedTree α` (trace-free). -/
 
 /-- The **Δ^d coproduct on `ConnesKreimer R (UnorderedTree (α ⊕ β))`** as an
@@ -174,7 +175,7 @@ private theorem eraseTracesAlgHom_ofTree_map_inl
 `Option`-tolerant on both channels: a filtered-out crown entry (`none`)
 is dropped, a filtered-out trunk contributes `1`. The filtered Δ^c
 summands and the `some`-embedded Δ^ρ summands of
-`Core/Combinatorics/RootedTree/CutFilterMap.lean` both land in its
+`CutFilterMap.lean` both land in its
 domain. -/
 
 private noncomputable def optionCutTensor
@@ -230,8 +231,7 @@ private theorem optionCutTensor_filterMap_comp :
   rw [Algebra.TensorProduct.map_tmul]
   exact optionCutTensor_filterMap p
 
-/-- The plain Δ^ρ summand tensor, as a composed map: `optionCutTensor` after
-    the `some` embedding. -/
+/-- The plain Δ^ρ summand tensor is `optionCutTensor` after the `some` embedding. -/
 private theorem optionCutTensor_some_comp :
     ((fun p : Forest (UnorderedTree α) × UnorderedTree α =>
         (of' (R := R) p.1 : ConnesKreimer R (UnorderedTree α)) ⊗ₜ[R] ofTree p.2) ∘

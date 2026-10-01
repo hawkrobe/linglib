@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Minimalist.Merge.Basic
-public import Linglib.Core.Combinatorics.RootedTree.Conservation
+public import Linglib.Syntax.Minimalist.Workspace.TraceConservation
 
 /-!
 # Minimal Search as a weighting of Merge
@@ -54,12 +54,12 @@ theorem epsWeight_zero_of_pos {c : ℕ} (hc : 0 < c) : epsWeight (0 : R) c = 0 :
 
 /-! ### Signed depth costs of a cut -/
 
-/-- `Cut.extractionCost p = depthC p`: pulling out the crown of a Δ^c cut costs its depth. -/
+/-- Pulling out the crown of a Δ^c cut costs its depth, `Cut.extractionCost p = depthC p`. -/
 def Cut.extractionCost (p : Forest (UnorderedTree (α ⊕ β)) × UnorderedTree (α ⊕ β)) : ℤ :=
   (Cut.depthC p : ℤ)
 
-/-- `Cut.quotientCost p = −depthC p`: the contraction quotient of a Δ^c cut costs minus its
-    depth. -/
+/-- The contraction quotient of a Δ^c cut costs minus its depth,
+    `Cut.quotientCost p = −depthC p`. -/
 def Cut.quotientCost (p : Forest (UnorderedTree (α ⊕ β)) × UnorderedTree (α ⊕ β)) : ℤ :=
   -(Cut.depthC p : ℤ)
 
@@ -81,17 +81,17 @@ theorem Cut.extractionCost_pos (τ : UnorderedTree (α ⊕ β) → β) (T : Unor
 
 /-! ### Net costs and the weighted operator -/
 
-/-- **External Merge net cost** (MCB rule 4, whole operands): `0`. -/
+/-- External Merge on whole operands has net cost `0` (MCB rule 4). -/
 def emNetCost : ℕ := 0
 
-/-- **Internal Merge net cost** (MCB Prop 1.5.1, IM): the extracted crown's `+d`
-    and its own quotient's `−d` cancel — the signed sum over the *same* cut `p`,
+/-- The net cost of Internal Merge (MCB Prop 1.5.1) cancels the extracted crown's `+d`
+    against its own quotient's `−d`, the signed sum over the *same* cut `p`,
     truncated to `ℕ` (it is `0`, see `imNetCost_eq_zero`). -/
 def imNetCost (p : Forest (UnorderedTree (α ⊕ β)) × UnorderedTree (α ⊕ β)) : ℕ :=
   (Cut.extractionCost p + Cut.quotientCost p).toNat
 
-/-- **Sideward Merge net cost** (MCB Prop 1.5.1, Sideward 2b): the extracted
-    crown's `+d`, with no quotient operand to cancel it. Equals `Cut.depthC p`. -/
+/-- The net cost of Sideward Merge (MCB Prop 1.5.1, case 2b) is the extracted crown's `+d`,
+    with no quotient operand to cancel it, so it equals `Cut.depthC p`. -/
 def swNetCost (p : Forest (UnorderedTree (α ⊕ β)) × UnorderedTree (α ⊕ β)) : ℕ :=
   (Cut.extractionCost p).toNat
 

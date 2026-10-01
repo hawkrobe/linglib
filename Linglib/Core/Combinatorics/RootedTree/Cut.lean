@@ -13,47 +13,40 @@ open RoseTree UnorderedTree
 
 /-!
 # Admissible-cut enumeration on rose trees
-[marcolli-chomsky-berwick-2025] [foissy-introduction-hopf-algebras-trees]
 
-The combinatorics of admissible cuts, independent of the Hopf-algebra
-structures built on it in `Core/Algebra/RootedTree/Coproduct/`: the
-policy-parameterized enumeration (`cutSummandsG`), its Δ^ρ instance
-(`cutSummandsP`) and Δ^c instance (`extractC`, `cutSummandsCP`), the
-projections to `UnorderedTree` with their `Perm`-invariance
-(`cutSummandsN`, `cutSummandsCN`), and the single-cut count
-(`countSingleCutsRho`).
+The combinatorics of admissible cuts, independent of the Hopf-algebra structures built on it in
+`Core/Algebra/RootedTree/Coproduct/`. An admissible cut of a tree removes a set of subtrees, no
+two on a common path to the root; the enumeration here is parameterized by an extraction policy
+`extract : RoseTree α → Option (List (RoseTree α))`, called on each cut subtree:
 
-The **admissible-cut enumeration** parameterized by an extraction policy
-`extract : RoseTree α → Option (List (RoseTree α))`. A cut at a child
-position calls `extract` on the cut subtree:
+- `extract t = none` forbids cuts at that subtree;
+- `extract t = some []` removes it, leaving nothing in the parent's child slot (pruning, the
+  Connes–Kreimer convention);
+- `extract t = some rs` removes it and leaves the replacement leaves `rs` in its slot.
 
-- `extract t = none` — cuts at this subtree are forbidden (the
-  "extract whole" branch is omitted).
-- `extract t = some []` — extract whole, leaving NOTHING in the
-  parent's child slot (the deletion / Δ^ρ convention).
-- `extract t = some [r]` — extract whole, leaving a single replacement
-  leaf `r` in the parent's child slot (the trace / Δ^c convention).
-- `extract t = some [r₁, r₂, ...]` — extract whole, leaving multiple
-  replacement leaves (general; not used by current consumers).
+The cut bookkeeping is shared by every policy; only the remainder left at a cut varies.
 
-Both Δ^ρ (deletion-style, `Pruning.lean`) and Δ^c (trace-preserving,
-`Trace.lean`) are specializations of this enumeration. The
-combinatorial cut bookkeeping is shared; only the per-cut remainder
-semantics varies.
+## Main definitions
 
-## Status
+* `ConnesKreimer.cutSummandsG extract`: the policy-parameterized enumeration of (crown, trunk)
+  pairs.
+* `ConnesKreimer.cutSummandsP`, `ConnesKreimer.cutSummandsN`: the pruning instance and its
+  descent to `UnorderedTree`.
+* `ConnesKreimer.ExtractInvariant`: policies that descend along `RoseTree.Perm`.
+* `ConnesKreimer.countSingleCutsRho`: the number of single cuts with given crown and trunk.
 
-`[UPSTREAM]` candidate. Once a single cut enumeration is in place, the
-per-cut remainder function (deletion vs trace vs other) is just a
-parameter to the same combinatorial bookkeeping.
+## Main results
 
-## MCB anchor
+* `ConnesKreimer.cutSummandsG_proj_perm`: the projected enumeration is `Perm`-invariant for an
+  invariant policy.
+* `ConnesKreimer.cutSummandsG_filter_empty`: the empty cut is the unique cut with empty crown.
 
-[marcolli-chomsky-berwick-2025] Definition 1.2.8 (book p. 33),
-formula (1.2.8) defines Δ^ω(T) := T ⊗ 1 + 1 ⊗ T + Σ F_v ⊗ T/^ω F_v
-for ω ∈ {c, d, ρ}. The three remainder semantics differ in T/^ω F_v
-but the cut enumeration F_v is the same. This file factors the cut
-enumeration out of the remainder choice.
+`[UPSTREAM]` candidate.
+
+## References
+
+* [connes-kreimer-1998]
+* [foissy-introduction-hopf-algebras-trees]
 -/
 
 namespace ConnesKreimer
@@ -65,11 +58,8 @@ variable {α : Type*}
 Mirrors `cutSummandsP`/`cutListSummandsP`/`augActionP` (in `Pruning.lean`)
 but with the per-child decision factored through `extract`. The
 remainder type is `List (RoseTree α)` (zero, one, or many replacement
-leaves per cut), uniform across deletion and trace variants.
-
-For Δ^ρ: `extract t := some []` (always extract, leave nothing).
-For Δ^c: `extract` returns `some [traceLeaf (τ t)]` for `Sum.inl`-rooted
-inputs and `none` for `Sum.inr`-rooted inputs. -/
+leaves per cut), uniform across policies. Pruning is `extract t := some []`
+(always extract, leave nothing). -/
 
 mutual
 /-- Multiset of (cut forest, remainder) pairs for a tree, under
@@ -77,7 +67,7 @@ mutual
 def cutSummandsG (extract : RoseTree α → Option (List (RoseTree α))) :
     RoseTree α → Multiset (Multiset (RoseTree α) × RoseTree α)
   | .node a cs => (cutListSummandsG extract cs).map (fun p => (p.1, .node a p.2))
-/-- Auxiliary: cut summands for a list of children. The remainder is a
+/-- The cut summands for a list of children. The remainder is a
     list of replacement entries — each surviving child contributes one
     entry (its remainder); each extracted child contributes
     `extract t`-many entries. -/
@@ -87,7 +77,7 @@ def cutListSummandsG (extract : RoseTree α → Option (List (RoseTree α))) :
   | t :: ts =>
       ((augActionG extract t ×ˢ cutListSummandsG extract ts) : Multiset _).map
         (fun p => (p.1.1 + p.2.1, p.1.2 ++ p.2.2))
-/-- Auxiliary: per-child action under `extract`. The `extract` branch
+/-- The per-child action under `extract`. The `extract` branch
     contributes `({t}, replacement)` if `extract t = some replacement`
     (omitted if `extract t = none`). The recursive branch contributes
     `(cut, [remainder])` for each cut summand of t. -/
@@ -100,7 +90,7 @@ def augActionG (extract : RoseTree α → Option (List (RoseTree α))) :
       + (cutSummandsG extract t).map (fun p => (p.1, [p.2]))
 end
 
-/-- Recursive formula on a node: cutSummandsG unfolds via cutListSummandsG. -/
+/-- On a node, `cutSummandsG` unfolds through `cutListSummandsG`. -/
 @[simp] theorem cutSummandsG_node
     (extract : RoseTree α → Option (List (RoseTree α)))
     (a : α) (cs : List (RoseTree α)) :
@@ -134,8 +124,7 @@ end
       + (cutSummandsG extract t).map (fun p => (p.1, [p.2])) := by
   conv_lhs => unfold augActionG
 
-/-- Specialized form of `augActionG_eq` when `extract t = none`: only
-    the inherited cut summands survive. -/
+/-- When `extract t = none`, only the inherited cut summands survive in `augActionG`. -/
 theorem augActionG_eq_none
     (extract : RoseTree α → Option (List (RoseTree α))) (t : RoseTree α)
     (h : extract t = none) :
@@ -144,8 +133,7 @@ theorem augActionG_eq_none
   rw [augActionG_eq, h]
   simp
 
-/-- Specialized form of `augActionG_eq` when `extract t = some r`: the
-    extract-whole branch contributes `({t}, r)`. -/
+/-- When `extract t = some r`, the extract-whole branch of `augActionG` contributes `({t}, r)`. -/
 theorem augActionG_eq_some
     (extract : RoseTree α → Option (List (RoseTree α))) (t : RoseTree α)
     (r : List (RoseTree α)) (h : extract t = some r) :
@@ -158,11 +146,10 @@ theorem augActionG_eq_some
 /-! ### Node-count conservation under generic cuts
 
 For extraction policies whose replacement entries carry a single node
-total (Δ^c's single trace leaf, `extractC`), every cut summand conserves
+in total (one replacement leaf per cut), every cut summand conserves
 vertices up to one replacement vertex per crown component: crown node
 count plus remainder node count equals the original node count plus the
-crown's component count. At the edge level this is exact conservation —
-the grading of MCB Lemma 1.2.10 (`Trace.lean`).
+crown's component count. At the edge level this is exact conservation.
 
 A child list's total node count is `(l.map RoseTree.numNodes).sum`, so
 `List.map_append`/`List.sum_append` discharge the append step directly
@@ -171,7 +158,7 @@ recursion or append lemma is needed. -/
 
 mutual
 
-/-- Cut summands conserve node count (tree level): crown node count plus
+/-- Cut summands conserve node count up to replacements. Crown node count plus
     trunk node count equals the tree node count plus one replacement
     vertex per crown component. Requires single-node replacement entries. -/
 theorem cutSummandsG_numNodes
@@ -188,7 +175,7 @@ theorem cutSummandsG_numNodes
     simp only [RoseTree.numNodes_node]
     omega
 
-/-- Mutual aux: node-count conservation for children-list cut summands. -/
+/-- Node-count conservation for the cut summands of a children list. -/
 theorem cutListSummandsG_numNodes
     (extract : RoseTree α → Option (List (RoseTree α)))
     (hext : ∀ t r, extract t = some r → (r.map RoseTree.numNodes).sum = 1) :
@@ -211,7 +198,7 @@ theorem cutListSummandsG_numNodes
         Multiset.card_add, List.map_cons, List.sum_cons]
     omega
 
-/-- Mutual aux: node-count conservation for per-child actions. -/
+/-- Node-count conservation for the per-child actions. -/
 theorem augActionG_numNodes
     (extract : RoseTree α → Option (List (RoseTree α)))
     (hext : ∀ t r, extract t = some r → (r.map RoseTree.numNodes).sum = 1) :
@@ -278,8 +265,8 @@ mutual
 def cutSummandsP : RoseTree α →
     Multiset (Multiset (RoseTree α) × RoseTree α)
   | .node a cs => (cutListSummandsP cs).map (fun p => (p.1, .node a p.2))
-/-- Auxiliary: cut summands for a list of children. The remainder is a
-    list (children of the parent that survived the cut). -/
+/-- The cut summands for a list of children. The remainder is the
+    list of children of the parent that survived the cut. -/
 def cutListSummandsP : List (RoseTree α) →
     Multiset (Multiset (RoseTree α) × List (RoseTree α))
   | [] => {((0 : Multiset (RoseTree α)), ([] : List (RoseTree α)))}
@@ -288,15 +275,15 @@ def cutListSummandsP : List (RoseTree α) →
         (fun p => match p.1.2 with
           | Option.none => (p.1.1 + p.2.1, p.2.2)
           | Option.some r => (p.1.1 + p.2.1, r :: p.2.2))
-/-- Auxiliary: per-child action — either extract whole (`none` remainder)
-    or recurse with a cut (`some remainder`). -/
+/-- The per-child action either extracts the child whole (`none` remainder)
+    or recurses with a cut (`some remainder`). -/
 def augActionP : RoseTree α →
     Multiset (Multiset (RoseTree α) × Option (RoseTree α))
   | t => (({t} : Multiset (RoseTree α)), Option.none) ::ₘ
          (cutSummandsP t).map (fun p => (p.1, Option.some p.2))
 end
 
-/-- Recursive formula on a node: cutSummandsP unfolds via cutListSummandsP. -/
+/-- On a node, `cutSummandsP` unfolds through `cutListSummandsP`. -/
 @[simp] theorem cutSummandsP_node (a : α) (cs : List (RoseTree α)) :
     cutSummandsP (RoseTree.node a cs) =
       (cutListSummandsP cs).map (fun p => (p.1, .node a p.2)) := by
@@ -377,7 +364,7 @@ def projAugAction : Multiset (RoseTree α) × Option (RoseTree α) →
     Multiset (UnorderedTree α) × Option (UnorderedTree α) :=
   fun p => (p.1.map UnorderedTree.mk, p.2.map UnorderedTree.mk)
 
-/-- Bridge: applying `cutSummandsP_node`'s wrapper `(p.1, .node a p.2)`
+/-- Applying `cutSummandsP_node`'s wrapper `(p.1, .node a p.2)`
     then `projSummand` factors through `projForest` followed by the
     `UnorderedTree.node a` smart constructor. -/
 theorem projSummand_node_factors (a : α) (p : Multiset (RoseTree α) × List (RoseTree α)) :
@@ -411,7 +398,7 @@ def innerCombinerProj :
   | ((F, Option.none), (G, ms)) => (F + G, ms)
   | ((F, Option.some r), (G, ms)) => (F + G, r ::ₘ ms)
 
-/-- Pointwise: `projForest` of an applied tree-level combiner equals
+/-- `projForest` of an applied tree-level combiner equals
     `innerCombinerProj` applied to the projected pair-of-pairs. -/
 private theorem projForest_innerCombiner_apply
     (p : (Multiset (RoseTree α) × Option (RoseTree α)) ×
@@ -434,7 +421,7 @@ private theorem projForest_innerCombiner_apply
     rw [Multiset.map_add]
     rfl
 
-/-- Pointwise: `projAugAction` of `augActionP old` is determined by the
+/-- `projAugAction` of `augActionP old` is determined by the
     UnorderedTree projection of the cut summands plus the equality of the
     `UnorderedTree.mk`-projection of the trees themselves (needed for the
     extract-whole element of `augActionP`). -/
@@ -525,7 +512,7 @@ private theorem cutListSummandsP_proj_at_via_augAction
          (cutListSummandsP (p :: (pre' ++ new :: post))).map projForest
     rw [cutListSummandsP_cons_proj, cutListSummandsP_cons_proj, ih]
 
-/-- Tail lift: `cutListSummandsP` is invariant under `projForest`-equal
+/-- `cutListSummandsP` is invariant under `projForest`-equal
     tails when consed with a fixed head. -/
 private theorem cutListSummandsP_proj_tail_lift (d : RoseTree α)
     {cs ds : List (RoseTree α)}
@@ -656,7 +643,7 @@ theorem cutSummandsP_proj_perm :
     rw [eq_fn, ← Multiset.map_map, ← Multiset.map_map, hL]
   | _, _, .trans h₁ h₂ => (cutSummandsP_proj_perm h₁).trans (cutSummandsP_proj_perm h₂)
 
-/-- Companion: projection invariance of `cutListSummandsP` under `PermList`. -/
+/-- The projection of `cutListSummandsP` is invariant under `PermList`. -/
 private theorem cutListSummandsP_proj_permList :
     ∀ {cs ds : List (RoseTree α)}, RoseTree.PermList cs ds →
       (cutListSummandsP cs).map projForest = (cutListSummandsP ds).map projForest
@@ -704,7 +691,7 @@ noncomputable def cutSummandsN :
 @[simp] theorem cutSummandsN_mk (T : RoseTree α) :
     cutSummandsN (UnorderedTree.mk T) = (cutSummandsP T).map projSummand := rfl
 
-/-- The cut summands of a leaf: only the empty cut `(0, leaf a)`. -/
+/-- A leaf has only the empty cut `(0, leaf a)`. -/
 theorem cutSummandsN_leaf (a : α) :
     cutSummandsN (UnorderedTree.leaf a : UnorderedTree α) =
       ({((0 : Multiset (UnorderedTree α)), UnorderedTree.leaf a)} : Multiset _) := by
@@ -713,13 +700,10 @@ theorem cutSummandsN_leaf (a : α) :
       cutListSummandsP_nil, Multiset.map_singleton, Multiset.map_singleton]
   rfl
 
-/-- Number of Δ^ρ cut summands of `T` whose cut forest is `{T₁}` and whose
-    remainder tree is `T₂` — the Δ^ρ analog of the count `c^T_{T₁,T₂}` of
-    [marcolli-chomsky-berwick-2025]. -/
+/-- The number of pruning cut summands of `T` whose crown is `{T₁}` and whose trunk is
+    `T₂`. -/
 noncomputable def countSingleCutsRho [DecidableEq α] (T T₁ T₂ : UnorderedTree α) : ℕ :=
   (cutSummandsN T).countP fun p => p.1 = ({T₁} : Multiset (UnorderedTree α)) ∧ p.2 = T₂
-
-variable {β : Type*}
 
 /-! ### `augActionN` and `cutForestSummandsN` substrate
 
@@ -749,7 +733,7 @@ theorem augActionN_mk (T : RoseTree α) :
   simp only [cutSummandsN_mk, augActionP_eq, Multiset.map_cons, Multiset.map_map]
   rfl
 
-/-- Multiset.foldr combiner for `cutForestSummandsN`: combine a per-tree
+/-- The `Multiset.foldr` combiner for `cutForestSummandsN` combines a per-tree
     decision with the accumulated cuts of the remaining trees via the
     cartesian product and `innerCombinerProj`. -/
 noncomputable def cutForestCombinerN (T : UnorderedTree α)
@@ -762,7 +746,7 @@ noncomputable def cutForestCombinerN (T : UnorderedTree α)
 instance : LeftCommutative (cutForestCombinerN (α := α)) where
   left_comm _ _ _ := swap_double_combinerProj _ _ _
 
-/-- The **forest cut summand multiset**: every per-tree decision tuple on
+/-- The forest cut summands. Every per-tree decision tuple on
     `F : Multiset (UnorderedTree α)` produces a pair `(cut_forest, remainder_forest)`,
     and `cutForestSummandsN F` enumerates them all (as a multiset). The
     public UnorderedTree-level analog of `(cutListSummandsP ps).map projForest`,
@@ -833,96 +817,6 @@ theorem cutSummandsN_node_planar_list (a : α) (ps : List (RoseTree α)) :
   induction F using UnorderedTree.forest_inductionOn with
   | h ps => rw [cutSummandsN_node_planar_list, ← cutForestSummandsN_via_planar_list]
 
-/-! ### `traceLeaf` — placeholder for a cut subtree -/
-
-/-- The trace-marker placeholder leaf carrying the encoded label `b : β`. -/
-def traceLeaf (b : β) : RoseTree (α ⊕ β) := .node (Sum.inr b) []
-
-/-! ### Δ^c extraction policy -/
-
-/-- The Δ^c extraction policy: for `Sum.inl`-rooted (non-trace)
-    subtrees, extract whole leaving a single `traceLeaf (τ t)` in the
-    parent's child slot. For `Sum.inr`-rooted (trace) subtrees, decline
-    to extract.
-
-    Declining at trace subtrees is required for coassociativity —
-    without it, iterated Δ^c produces "trace of trace" right-channel
-    terms that break the double-cut bijection — and matches
-    [marcolli-chomsky-berwick-2025] Definition 1.2.2's restriction of
-    cuts to accessible terms, which excludes trace placeholders. -/
-def extractC (τ : RoseTree (α ⊕ β) → β) :
-    RoseTree (α ⊕ β) → Option (List (RoseTree (α ⊕ β)))
-  | t@(.node (Sum.inl _) _) => some [traceLeaf (τ t)]
-  | .node (Sum.inr _) _ => none
-
-@[simp] theorem extractC_inl (τ : RoseTree (α ⊕ β) → β)
-    (a : α) (cs : List (RoseTree (α ⊕ β))) :
-    extractC τ (RoseTree.node (Sum.inl a) cs) =
-      some [traceLeaf (τ (RoseTree.node (Sum.inl a) cs))] := rfl
-
-@[simp] theorem extractC_inr (τ : RoseTree (α ⊕ β) → β)
-    (b : β) (cs : List (RoseTree (α ⊕ β))) :
-    extractC τ (RoseTree.node (Sum.inr b) cs) = none := rfl
-
-/-! ### `cutSummandsCP` — Δ^c cut enumeration via the generic `cutSummandsG`
-
-Defined as `cutSummandsG (extractC τ)`. The generic-side simp lemmas
-(`cutSummandsG_node`, `cutListSummandsG_*`, `augActionG_*`) compose with
-`extractC_inl`/`extractC_inr` to give the Δ^c-specific reductions. -/
-
-/-- The Δ^c cut summands: cuts at non-trace subtrees with trace
-    placeholders, skipping cuts at trace leaves. -/
-def cutSummandsCP (τ : RoseTree (α ⊕ β) → β) :
-    RoseTree (α ⊕ β) → Multiset (Multiset (RoseTree (α ⊕ β)) × RoseTree (α ⊕ β)) :=
-  cutSummandsG (extractC τ)
-
-theorem cutSummandsCP_def (τ : RoseTree (α ⊕ β) → β) (T : RoseTree (α ⊕ β)) :
-    cutSummandsCP τ T = cutSummandsG (extractC τ) T := rfl
-
-@[simp] theorem cutSummandsCP_node (τ : RoseTree (α ⊕ β) → β)
-    (a : α ⊕ β) (cs : List (RoseTree (α ⊕ β))) :
-    cutSummandsCP τ (RoseTree.node a cs) =
-      (cutListSummandsG (extractC τ) cs).map (fun p => (p.1, .node a p.2)) := by
-  rw [cutSummandsCP_def, cutSummandsG_node]
-/-! ### Sanity: the trace policy on leaves -/
-
-section Tests
-
-/-- A leaf has exactly one cut summand: the empty cut `(0, leaf)`. -/
-example (τ : RoseTree (Unit ⊕ Unit) → Unit) :
-    cutSummandsCP τ (RoseTree.leaf (Sum.inl ()) : RoseTree (Unit ⊕ Unit))
-      = {((0 : Multiset (RoseTree (Unit ⊕ Unit))),
-          (RoseTree.leaf (Sum.inl ()) : RoseTree (Unit ⊕ Unit)))} := by
-  rw [RoseTree.leaf, cutSummandsCP_node, cutListSummandsG_nil]
-  rfl
-
-/-- The trace-extract branch sits in the augmented per-child action for
-    a `Sum.inl`-rooted subtree. Witness that Δ^c (placeholder leaf)
-    differs from Δ^ρ (admissible-cut pruning). -/
-example (τ : RoseTree (Unit ⊕ Unit) → Unit) :
-    (({RoseTree.leaf (Sum.inl ())} : Multiset (RoseTree (Unit ⊕ Unit))),
-      [traceLeaf (τ (RoseTree.leaf (Sum.inl ())))]) ∈
-        augActionG (extractC τ)
-          (RoseTree.leaf (Sum.inl ()) : RoseTree (Unit ⊕ Unit)) := by
-  rw [RoseTree.leaf, augActionG_eq_some _ _ _ (extractC_inl τ () [])]
-  exact Multiset.mem_cons_self _ _
-
-/-- Trace-marker leaves are NOT extracted: `extractC τ` returns `none`,
-    so the per-child action only inherits cuts from `cutSummandsG`. -/
-example (b : Unit) (τ : RoseTree (Unit ⊕ Unit) → Unit) :
-    augActionG (extractC τ) (traceLeaf b : RoseTree (Unit ⊕ Unit))
-      = (cutSummandsG (extractC τ) (RoseTree.node (Sum.inr b) [])).map
-          (fun p => (p.1, [p.2])) :=
-  augActionG_eq_none _ _ (extractC_inr τ b [])
-
-/-- The `traceLeaf` placeholder is a `Sum.inr`-labeled leaf. -/
-example (b : β) : (traceLeaf b : RoseTree (α ⊕ β)).arity = 0 := rfl
-
-example (b : β) :
-    (traceLeaf b : RoseTree (α ⊕ β)).value = Sum.inr b := rfl
-
-end Tests
-
 /-! ## Descent of cut-summand enumeration
 
 Mirrors `Coproduct/Pruning.lean`'s descent of `cutSummandsP`,
@@ -968,7 +862,7 @@ def combinerProjG :
     Multiset (UnorderedTree α) × Multiset (UnorderedTree α)
   | ((F1, m1), (F2, m2)) => (F1 + F2, m1 + m2)
 
-/-- Pointwise: `projForestG` of an applied tree-level combiner equals
+/-- `projForestG` of an applied tree-level combiner equals
     `combinerProjG` applied to the projected pair-of-pairs. -/
 private theorem projForestG_combine_apply
     (p : (Multiset (RoseTree α) × List (RoseTree α)) ×
@@ -1130,7 +1024,7 @@ private theorem cutListSummandsG_proj_at_via_augAction
          (cutListSummandsG extract (p :: (pre' ++ new :: post))).map projForestG
     rw [cutListSummandsG_cons_proj, cutListSummandsG_cons_proj, ih]
 
-/-- Tail lift: `cutListSummandsG` is invariant under `projForestG`-equal
+/-- `cutListSummandsG` is invariant under `projForestG`-equal
     tails when consed with a fixed head. -/
 private theorem cutListSummandsG_proj_tail_lift
     (extract : RoseTree α → Option (List (RoseTree α)))
@@ -1246,7 +1140,7 @@ theorem cutSummandsG_proj_perm
   | _, _, .trans h₁ h₂ =>
     (cutSummandsG_proj_perm hExt h₁).trans (cutSummandsG_proj_perm hExt h₂)
 
-/-- Companion: projection invariance of `cutListSummandsG` under `PermList`. -/
+/-- The projection of `cutListSummandsG` is invariant under `PermList`. -/
 private theorem cutListSummandsG_proj_permList
     {extract : RoseTree α → Option (List (RoseTree α))}
     (hExt : ExtractInvariant extract) :
@@ -1356,126 +1250,6 @@ theorem cutForestSummandsN_eq_forestCutsG (F : Multiset (UnorderedTree α)) :
       rw [zero_add]
     · show (G + q1, r ::ₘ q2) = (G + q1, {r} + q2)
       rw [Multiset.singleton_add]
-
-/-! ### Trace specialization
-
-The Δ^c policy `extractC (τ ∘ UnorderedTree.mk)` is `ExtractInvariant`:
-- For `Sum.inl _`-rooted inputs, `extractC` returns `some [traceLeaf (τ (mk t))]`.
-- For `Sum.inr _`-rooted inputs, `extractC` returns `none`.
-
-Both cases are determined by the root label and the τ value, both of
-which are `Perm`-invariant. -/
-
-/-- The Δ^c extract policy is `ExtractInvariant`. -/
-theorem extractC_mkComp_invariant (τ : UnorderedTree (α ⊕ β) → β) :
-    ExtractInvariant (extractC (τ ∘ UnorderedTree.mk)) := by
-  intro t s hmk
-  -- Root labels match (perm-invariant), so the extractC branches match.
-  have hlabel : t.value = s.value := by
-    have heq : RoseTree.Perm t s := UnorderedTree.mk_eq_mk_iff.mp hmk
-    exact RoseTree.Perm.value_eq heq
-  -- Destructure both trees as nodes; rewrite root labels via hlabel.
-  obtain ⟨at_, cs_t⟩ := t
-  obtain ⟨as, cs_s⟩ := s
-  simp only [RoseTree.value] at hlabel
-  subst hlabel
-  -- Now both have root label at_. Case-split on at_.
-  cases at_ with
-  | inl a =>
-    show (extractC (τ ∘ UnorderedTree.mk) (RoseTree.node (Sum.inl a) cs_t)).map _ =
-         (extractC (τ ∘ UnorderedTree.mk) (RoseTree.node (Sum.inl a) cs_s)).map _
-    simp only [extractC_inl, Option.map_some]
-    -- Goal: some [mk (traceLeaf (τ (mk t)))] = some [mk (traceLeaf (τ (mk s)))]
-    -- Reduces to: τ (mk t) = τ (mk s), which is congrArg τ hmk.
-    have : (τ ∘ UnorderedTree.mk) (RoseTree.node (Sum.inl a) cs_t) =
-           (τ ∘ UnorderedTree.mk) (RoseTree.node (Sum.inl a) cs_s) := by
-      show τ (UnorderedTree.mk _) = τ (UnorderedTree.mk _)
-      exact congrArg τ hmk
-    rw [this]
-  | inr b =>
-    show (extractC (τ ∘ UnorderedTree.mk) (RoseTree.node (Sum.inr b) cs_t)).map _ =
-         (extractC (τ ∘ UnorderedTree.mk) (RoseTree.node (Sum.inr b) cs_s)).map _
-    simp only [extractC_inr, Option.map_none]
-
-/-- Δ^c cut-summand-projection invariance under `Perm`. -/
-theorem cutSummandsCP_proj_perm (τ : UnorderedTree (α ⊕ β) → β)
-    {t s : RoseTree (α ⊕ β)} (h : RoseTree.Perm t s) :
-    (cutSummandsCP (τ ∘ UnorderedTree.mk) t).map projSummand =
-      (cutSummandsCP (τ ∘ UnorderedTree.mk) s).map projSummand :=
-  cutSummandsG_proj_perm (extractC_mkComp_invariant τ) h
-
-/-! ### Descent of `cutSummandsCP` through `UnorderedTree.mk` -/
-
-/-- The UnorderedTree Δ^c cut summands, descended from `cutSummandsCP` via
-    `Quotient.lift` using the descent invariance
-    `cutSummandsCP_proj_perm`. -/
-noncomputable def cutSummandsCN (τ : UnorderedTree (α ⊕ β) → β) :
-    UnorderedTree (α ⊕ β) → Multiset (Multiset (UnorderedTree (α ⊕ β)) × UnorderedTree (α ⊕ β)) :=
-  Quotient.lift
-    (fun T => (ConnesKreimer.cutSummandsCP (τ ∘ UnorderedTree.mk) T).map
-      ConnesKreimer.projSummand)
-    (fun _ _ h => ConnesKreimer.cutSummandsCP_proj_perm τ h)
-
-@[simp] theorem cutSummandsCN_mk (τ : UnorderedTree (α ⊕ β) → β) (T : RoseTree (α ⊕ β)) :
-    cutSummandsCN τ (UnorderedTree.mk T) =
-      (ConnesKreimer.cutSummandsCP (τ ∘ UnorderedTree.mk) T).map
-        ConnesKreimer.projSummand := rfl
-
-/-- `Σ (wᵢ − 1) + card = Σ wᵢ` for tree-level forests (each `wᵢ ≥ 1`). -/
-private theorem sum_map_numNodes_sub_one_add_card {γ : Type*}
-    (F : Multiset (RoseTree γ)) :
-    ((F.map (fun t => RoseTree.numNodes t - 1)).sum + Multiset.card F =
-      (F.map RoseTree.numNodes).sum) := by
-  induction F using Multiset.induction_on with
-  | empty => rfl
-  | cons a F ih =>
-    have h1 : 1 ≤ RoseTree.numNodes a := RoseTree.numNodes_pos a
-    rw [Multiset.map_cons, Multiset.map_cons, Multiset.sum_cons,
-        Multiset.sum_cons, Multiset.card_cons]
-    omega
-
-/-- Edge conservation for Δ^c cut summands: the trace marker replaces
-    the cut subtree by a unit-weight leaf, so crown edges plus trunk
-    weight recover the tree weight exactly. Descends
-    `cutSummandsG_numNodes` through `UnorderedTree.mk`. -/
-theorem cutSummandsCN_numEdges (τ : UnorderedTree (α ⊕ β) → β)
-    (T : UnorderedTree (α ⊕ β)) :
-    ∀ p ∈ cutSummandsCN τ T,
-      (p.1.map UnorderedTree.numEdges).sum + p.2.numNodes = T.numNodes := by
-  obtain ⟨T₀, rfl⟩ : ∃ T₀ : RoseTree (α ⊕ β), T = UnorderedTree.mk T₀ :=
-    ⟨T.out, (Quotient.out_eq T).symm⟩
-  intro p hp
-  rw [cutSummandsCN_mk] at hp
-  obtain ⟨q, hq, rfl⟩ := Multiset.mem_map.mp hp
-  rw [cutSummandsCP_def] at hq
-  have hext : ∀ (t : RoseTree (α ⊕ β)) r,
-      extractC (τ ∘ UnorderedTree.mk) t = some r →
-      (r.map RoseTree.numNodes).sum = 1 := by
-    intro t r h
-    cases t with
-    | node x cs =>
-      cases x with
-      | inl a =>
-        rw [extractC_inl] at h
-        obtain rfl := (Option.some.injEq _ _ ▸ h :
-          [traceLeaf ((τ ∘ UnorderedTree.mk)
-            (RoseTree.node (Sum.inl a) cs))] = r)
-        simp [traceLeaf]
-      | inr b =>
-        rw [extractC_inr] at h
-        exact absurd h (by simp)
-  have h := cutSummandsG_numNodes _ hext T₀ q hq
-  have hsub := sum_map_numNodes_sub_one_add_card q.1
-  show ((q.1.map UnorderedTree.mk).map UnorderedTree.numEdges).sum +
-      (UnorderedTree.mk q.2).numNodes = (UnorderedTree.mk T₀).numNodes
-  rw [UnorderedTree.numNodes_mk, UnorderedTree.numNodes_mk]
-  rw [show ((q.1.map UnorderedTree.mk).map UnorderedTree.numEdges).sum =
-      ((q.1.map (fun t => RoseTree.numNodes t - 1)).sum) from by
-    show ((q.1.map UnorderedTree.mk).map
-        (fun T => UnorderedTree.numNodes T - 1)).sum = _
-    rw [Multiset.map_map]
-    rfl]
-  omega
 
 /-! ### Empty-cut uniqueness — combinatorial substrate for the per-tree counit law
 
@@ -1596,38 +1370,6 @@ theorem augActionG_filter_empty
       rw [hcongr, cutSummandsG_filter_empty extract t, Multiset.map_singleton]
 
 end
-
-/-- UnorderedTree-level descent: the unique cut summand of `cutSummandsCN τ T`
-    with empty cut forest is `(0, T)`. -/
-theorem cutSummandsCN_filter_empty
-    (τ : UnorderedTree (α ⊕ β) → β) (T : UnorderedTree (α ⊕ β)) :
-    (cutSummandsCN τ T).filter (fun p => p.1.card = 0) =
-      ({((0 : Multiset (UnorderedTree (α ⊕ β))), T)} : Multiset _) := by
-  obtain ⟨T₀, rfl⟩ : ∃ T₀ : RoseTree (α ⊕ β), T = UnorderedTree.mk T₀ :=
-    ⟨Quotient.out T, (Quotient.out_eq T).symm⟩
-  rw [cutSummandsCN_mk, Multiset.filter_map]
-  -- `(projSummand p).1.card = (p.1.map UnorderedTree.mk).card = p.1.card`; use filter_congr.
-  have hcongr :
-      Multiset.filter
-          ((fun p : Multiset (UnorderedTree (α ⊕ β)) × UnorderedTree (α ⊕ β) => p.1.card = 0) ∘
-            projSummand (α := α ⊕ β))
-          (cutSummandsCP (τ ∘ UnorderedTree.mk) T₀) =
-      Multiset.filter (fun p : Multiset (RoseTree (α ⊕ β)) × RoseTree (α ⊕ β) => p.1.card = 0)
-          (cutSummandsCP (τ ∘ UnorderedTree.mk) T₀) := by
-    apply Multiset.filter_congr
-    intro p _
-    show (p.1.map UnorderedTree.mk).card = 0 ↔ p.1.card = 0
-    rw [Multiset.card_map]
-  rw [hcongr]
-  show Multiset.map projSummand
-        (Multiset.filter (fun p : Multiset (RoseTree (α ⊕ β)) × RoseTree (α ⊕ β) => p.1.card = 0)
-          (cutSummandsG (extractC (τ ∘ UnorderedTree.mk)) T₀)) = _
-  rw [cutSummandsG_filter_empty (extractC (τ ∘ UnorderedTree.mk)) T₀,
-      Multiset.map_singleton]
-  show ((((0 : Multiset (RoseTree (α ⊕ β))).map UnorderedTree.mk : Multiset (UnorderedTree (α ⊕ β))),
-         UnorderedTree.mk T₀) : Multiset (UnorderedTree (α ⊕ β)) × UnorderedTree (α ⊕ β)) ::ₘ 0 = _
-  rw [Multiset.map_zero]
-  rfl
 
 mutual
 

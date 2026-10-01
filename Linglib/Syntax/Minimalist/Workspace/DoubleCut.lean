@@ -1,18 +1,17 @@
 module
 
-public import Linglib.Core.Combinatorics.RootedTree.Cut
+public import Linglib.Syntax.Minimalist.Workspace.TraceCut
 public import Linglib.Core.Data.UnorderedTree.Basic
 public import Mathlib.Tactic.Abel
 
 /-!
 # RoseTree double-cut coassociativity for Δ^c (combinatorial core of MCB 1.2.10)
-[marcolli-chomsky-berwick-2025] [foissy-introduction-hopf-algebras-trees]
 
 The combinatorial heart of Δ^c coassociativity: both `(Δ^c ⊗ id) ∘ Δ^c` and
 `(id ⊗ Δ^c) ∘ Δ^c` enumerate ordered pairs of nested admissible cuts of a
 tree, and under trace coherence the two enumerations agree as UnorderedTree
 multisets. This file proves that agreement at the **planar** level (where
-`cutSummandsCP` recurses structurally); `Coproduct/Trace.lean`
+`cutSummandsCP` recurses structurally); `TraceCoproduct.lean`
 descends it through `UnorderedTree.mk` to close the UnorderedTree `doubleCut_eq`.
 
 ## Main results
@@ -25,9 +24,10 @@ descends it through `UnorderedTree.mk` to close the UnorderedTree `doubleCut_eq`
   over the children-list convolution `clconv` (the engine of the induction).
 - `mconv` — multiset convolution monoid, with `mconv_prod_hom`.
 
-## Status
+## References
 
-`[UPSTREAM]` candidate.
+* [marcolli-chomsky-berwick-2025]
+* [foissy-introduction-hopf-algebras-trees]
 -/
 
 @[expose] public section
@@ -238,11 +238,11 @@ theorem proj3_mconv (X Y : Multiset (Triple (α ⊕ β))) :
 
 /-! ### The two second-cut maps are monoid homs -/
 
-/-- LHS second cut: re-cut the crown `p.1`, carrying trunk `p.2`. -/
+/-- The left-hand second cut re-cuts the crown `p.1`, carrying the trunk `p.2`. -/
 def hL (τ : RoseTree (α ⊕ β) → β) (p : Pair (α ⊕ β)) : Multiset (Triple (α ⊕ β)) :=
   (forestCutsP τ p.1).map (fun A12 => (A12.1, A12.2, p.2))
 
-/-- RHS second cut: re-cut the trunk `p.2`, carrying crown `p.1`. -/
+/-- The right-hand second cut re-cuts the trunk `p.2`, carrying the crown `p.1`. -/
 def hR (τ : RoseTree (α ⊕ β) → β) (p : Pair (α ⊕ β)) : Multiset (Triple (α ⊕ β)) :=
   (forestCutsP τ p.2).map (fun B12 => (p.1, B12.1, B12.2))
 
@@ -327,7 +327,7 @@ abbrev Cl (τ : RoseTree (α ⊕ β) → β) (cs : List (RoseTree (α ⊕ β))) 
     Multiset (FP (α ⊕ β) × List (RoseTree (α ⊕ β))) :=
   cutListSummandsG (extractC τ) cs
 
-/-- `treeCutsP` of a node: full cut, plus root-preserving cuts coming
+/-- The cuts `treeCutsP` of a node are the full cut and the root-preserving cuts coming
     from the children-list cut wrapped with `node a`. -/
 theorem treeCutsP_node (τ : RoseTree (α ⊕ β) → β) (a : α ⊕ β) (cs : List (RoseTree (α ⊕ β))) :
     treeCutsP τ (RoseTree.node a cs) =
@@ -337,7 +337,7 @@ theorem treeCutsP_node (τ : RoseTree (α ⊕ β) → β) (a : α ⊕ β) (cs : 
   rw [cutSummandsCP_node, Multiset.map_map]
   rfl
 
-/-- LHS double cut of a node: the full-cut boundary triple, the
+/-- The left-hand double cut of a node consists of the full-cut boundary triple, the
     "split-at-root" middle terms, and the genuine children-crown re-cuts. -/
 theorem dcLHSP_node (τ : RoseTree (α ⊕ β) → β) (a : α ⊕ β) (cs : List (RoseTree (α ⊕ β))) :
     dcLHSP τ (RoseTree.node a cs) =
@@ -357,8 +357,8 @@ theorem dcLHSP_node (τ : RoseTree (α ⊕ β) → β) (a : α ⊕ β) (cs : Lis
   rw [h1]
   rfl
 
-/-- RHS double cut of a node: the full-cut boundary triple plus, for each
-    children-cut, re-cutting the trunk tree `node a remainder`. -/
+/-- The right-hand double cut of a node consists of the full-cut boundary triple and, for
+    each children-cut, the re-cuts of the trunk tree `node a remainder`. -/
 theorem dcRHSP_node (τ : RoseTree (α ⊕ β) → β) (a : α ⊕ β) (cs : List (RoseTree (α ⊕ β))) :
     dcRHSP τ (RoseTree.node a cs) =
       {(({RoseTree.node a cs} : FP (α ⊕ β)), (0 : FP (α ⊕ β)), (0 : FP (α ⊕ β)))}
@@ -570,7 +570,7 @@ on the list using `clconv`-multiplicativity, the per-child `coassA`, and
 the tail IH. `coassA` (per-child) reduces to `coassL` of the child's
 children with `TraceCoherent` reconciling the extract-whole marker. -/
 
-/-- RoseTree trace coherence: `τ` of a cut trunk equals `τ` of the tree. The
+/-- `τ` is trace-coherent on rose trees when `τ` of a cut trunk equals `τ` of the tree. The
     descent of `TraceCoherent` (UnorderedTree) along `UnorderedTree.mk`. -/
 def TraceCoherentP (τ : RoseTree (α ⊕ β) → β) : Prop :=
   ∀ t : RoseTree (α ⊕ β), ∀ p ∈ cutSummandsCP τ t, τ p.2 = τ t
@@ -615,9 +615,12 @@ private theorem bind_cons_splitL {γ : Type*} (S : Multiset γ)
 /-- The `[node a']`-wrapped `dcl` of the children cut, projected, equals the
     nonplanar `node a'`-wrap of the projected `dcl`. -/
 theorem dcl_INH_wrap (τ : RoseTree (α ⊕ β) → β) (a' : α ⊕ β) (cs'' : List (RoseTree (α ⊕ β))) :
-    (dcl τ ((Cl τ cs'').map (fun p => (p.1, ([RoseTree.node a' p.2] : List (RoseTree (α ⊕ β))))))).map proj3L
+    (dcl τ
+      ((Cl τ cs'').map
+        (fun p => (p.1, ([RoseTree.node a' p.2] : List (RoseTree (α ⊕ β))))))).map proj3L
       = ((dcl τ (Cl τ cs'')).map proj3L).map
-          (fun z => (z.1, z.2.1, ({UnorderedTree.node a' z.2.2} : Multiset (UnorderedTree (α ⊕ β))))) := by
+          (fun z => (z.1, z.2.1,
+            ({UnorderedTree.node a' z.2.2} : Multiset (UnorderedTree (α ⊕ β))))) := by
   rw [dclN_eq, dclN_eq, Multiset.bind_map, Multiset.map_bind]
   apply Multiset.bind_congr; intro p _
   rw [Multiset.map_map]
@@ -630,7 +633,8 @@ theorem dcr_nonEW_wrap (τ : RoseTree (α ⊕ β) → β) (a' : α ⊕ β) (cs''
     ((Cl τ cs'').bind (fun p => (Cl τ p.2).map
         (fun p'' => (p.1, p''.1, ([RoseTree.node a' p''.2] : List (RoseTree (α ⊕ β))))))).map proj3L
       = ((dcr τ (Cl τ cs'')).map proj3L).map
-          (fun z => (z.1, z.2.1, ({UnorderedTree.node a' z.2.2} : Multiset (UnorderedTree (α ⊕ β))))) := by
+          (fun z => (z.1, z.2.1,
+            ({UnorderedTree.node a' z.2.2} : Multiset (UnorderedTree (α ⊕ β))))) := by
   rw [dcrN_eq, Multiset.map_bind, Multiset.map_bind]
   apply Multiset.bind_congr; intro p _
   rw [Multiset.map_map, Multiset.map_map]

@@ -6,8 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Algebra.BigOperators.Multiset
-public import Linglib.Core.Combinatorics.RootedTree.DoubleCut
-public import Linglib.Core.Combinatorics.RootedTree.Cut
+public import Linglib.Syntax.Minimalist.Workspace.DoubleCut
 public import Linglib.Core.Algebra.RootedTree.Coproduct.WithCuts
 public import Mathlib.RingTheory.Bialgebra.Basic
 
@@ -17,7 +16,7 @@ public import Mathlib.RingTheory.Bialgebra.Basic
 This file defines the coproduct `Δ^c` of Marcolli, Chomsky and Berwick on forests of trees whose
 vertices are labelled `α ⊕ β`. It sums over the admissible cuts of a tree, pairing the cut-off
 subtrees with the remaining trunk, in which each cut subtree `S` leaves a trace leaf `inr (τ S)`
-computed by a trace encoder `τ`. With the edge grading of `Coproduct/TraceGrading.lean` this gives
+computed by a trace encoder `τ`. With the edge grading of `TraceGrading.lean` this gives
 their Lemma 1.2.10: disjoint union and `Δ^c` make a graded bialgebra.
 
 ## Main definitions
