@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Semantics.Genericity.Normality
 public import Linglib.Studies.Cohen1999
 public import Linglib.Data.Examples.AsherPelletier2013
 public import Mathlib.Probability.ConditionalProbability
@@ -9,8 +10,10 @@ public import Mathlib.Probability.ConditionalProbability
 
 A characterizing generic *φs ψ* is ∀x(φ(x) > ψ(x)), with > the weak conditional of commonsense
 entailment: for each individual, ψ holds throughout the worlds where that individual is a
-normal φ. Normality is selected per restrictor, so *Birds fly* and *Penguins don't fly* hold
-together — the normal Opus-penguin worlds are not normal Opus-bird worlds — and it has give:
+normal φ, the conditional of a normality on worlds (`Genericity.Normality.gen`). Normality is
+selected per restrictor, so *Birds fly* and *Penguins don't fly* hold together, the normal
+Opus-penguin worlds not being normal Opus-bird worlds, which a fixed set of normal worlds cannot
+provide; and it has give:
 the teleological and the statistical construal disagree on whether turtles live to be a
 hundred. Against the probabilistic rival, on which a generic is true when the scope is more
 likely than not given the restrictor, the paper objects that a margin just over half verifies
@@ -25,12 +28,15 @@ Item numbers follow the 2012 preprint.
 
 ## Main definitions
 
-* `NormalWorlds`, `NormalWorlds.cond`, `NormalWorlds.generic`: the selection of normal worlds,
-  the weak conditional, and the generic quantifier.
-* `generic_disjoint`, `generic_inter`, `not_cond_union`: contrary generics select disjoint
-  worlds; the scope weakens; the restrictor does not strengthen.
-* `existentialReading`, `NormalWorlds.cond_univ`, `doubleGeneric`: the alternatives-based, the
-  tautologous, and the circumstantial restrictor.
+* `generic`: the generic quantifier over a normality on worlds, whose conditional is the weak
+  conditional.
+* `generic_disjoint`, `generic_inter`: contrary generics select disjoint worlds; the scope
+  weakens.
+* `normal_ofAccess_eq_empty`, `exists_bird_penguin`: a fixed set of normal worlds leaves no normal
+  penguin world once birds fly and penguins don't, while a normality from an ordering of worlds
+  has one.
+* `existentialReading`, `gen_univ`, `doubleGeneric`: the alternatives-based, the tautologous,
+  and the circumstantial restrictor.
 * `Conditionalizes`, `cond_eq_of_conditionalizes`: the trivialization of probabilistic
   generics.
 
@@ -54,108 +60,110 @@ variable {W E : Type*}
 
 /-! ### The modal quantifier -/
 
-/-- The normal worlds for a proposition, always among the worlds where it holds. -/
-structure NormalWorlds (W : Type*) where
-  star : W → Set W → Set W
-  star_subset : ∀ w p, star w p ⊆ p
+open Genericity
 
-namespace NormalWorlds
+variable (n : Normality W W)
 
-variable (n : NormalWorlds W)
-
-/-- `p > q`: `q` holds throughout the normal `p`-worlds. -/
-def cond (p q : Set W) (w : W) : Prop := n.star w p ⊆ q
-
-/-- ∀x(φ(x) > ψ(x)): for each individual, ψ throughout the worlds where it is a normal φ. -/
-def generic (φ ψ : E → Set W) (w : W) : Prop := ∀ a, n.cond (φ a) (ψ a) w
+/-- ∀x(φ(x) > ψ(x)), (2): for each individual, ψ throughout the worlds where it is a normal φ. -/
+def generic (φ ψ : E → Set W) (w : W) : Prop := ∀ a, w ∈ n.gen (φ a) (ψ a)
 
 /-- Contrary generics select disjoint normal worlds for each individual: if birds fly and
-    penguins don't, the normal Opus-penguin worlds are not normal Opus-bird worlds. -/
-theorem generic_disjoint {φ φ' ψ : E → Set W} {w : W} (h : n.generic φ ψ w)
-    (h' : n.generic φ' (λ a => (ψ a)ᶜ) w) (a : E) :
-    Disjoint (n.star w (φ a)) (n.star w (φ' a)) :=
-  Set.disjoint_left.2 λ _ hv hv' => h' a hv' (h a hv)
+penguins don't, the normal Opus-penguin worlds are not normal Opus-bird worlds. -/
+theorem generic_disjoint {φ φ' ψ : E → Set W} {w : W} (h : generic n φ ψ w)
+    (h' : generic n φ' (fun a ↦ (ψ a)ᶜ) w) (a : E) :
+    Disjoint (n.normal w (φ a)) (n.normal w (φ' a)) :=
+  n.disjoint_normal_of_disjoint (h a) (h' a) disjoint_compl_right
 
 /-- A generic with a conjoined scope entails the generic with either conjunct. -/
-theorem generic_inter {φ ψ χ : E → Set W} {w : W} (h : n.generic φ (λ a => ψ a ∩ χ a) w) :
-    n.generic φ ψ w :=
-  λ a _ hv => (h a hv).1
+theorem generic_inter {φ ψ χ : E → Set W} {w : W} (h : generic n φ (fun a ↦ ψ a ∩ χ a) w) :
+    generic n φ ψ w :=
+  fun a _ hv ↦ (h a hv).1
 
 /-- With logical truths selecting the world of evaluation itself, a tautologous restrictor
-    makes the conditional its consequent at that world. -/
-theorem cond_univ {w : W} (h : n.star w Set.univ = {w}) (q : Set W) :
-    n.cond Set.univ q w ↔ w ∈ q := by
-  simp [cond, h]
+makes the conditional its consequent at that world. -/
+theorem gen_univ {w : W} (h : n.normal w Set.univ = {w}) (q : Set W) :
+    w ∈ n.gen Set.univ q ↔ w ∈ q := by
+  simp [h]
 
-end NormalWorlds
+/-- (7), (8): with a fixed set of normal worlds, *Birds fly* makes Opus fly in its normal
+penguin worlds, so with *Penguins don't fly* it has none. -/
+theorem normal_ofAccess_eq_empty {B : W → Set W} {bird penguin fly : Set W} {w : W}
+    (hpb : penguin ⊆ bird) (hb : w ∈ (Normality.ofAccess B).gen bird fly)
+    (hp : w ∈ (Normality.ofAccess B).gen penguin flyᶜ) :
+    (Normality.ofAccess B).normal w penguin = ∅ :=
+  (Normality.ofAccess B).normal_eq_empty_of_disjoint (Conditional.strictImp_anti_left hpb hb) hp
+    disjoint_compl_right
 
-/-- Strengthening the restrictor is not valid: the normal worlds of a weaker restrictor may
-    all lie in the scope while those of a stronger one do not. -/
-theorem not_cond_union :
-    ∃ (n : NormalWorlds Bool) (p d q : Set Bool) (w : Bool), n.cond p q w ∧ ¬ n.cond (p ∪ d) q w :=
-  ⟨⟨λ _ p => p, λ _ _ => subset_rfl⟩, {true}, {false}, {true}, true, subset_rfl,
-    λ h => by simpa using h (Set.mem_union_right _ rfl)⟩
+/-- (7), (8): with normality from an ordering of worlds, *Birds fly* and *Penguins don't fly* hold
+together and there is a normal Opus-penguin world: the more normal world, where Opus is an
+ordinary bird and flies, is not a penguin world. -/
+theorem exists_bird_penguin :
+    ∃ (n : Normality Bool Bool) (bird penguin fly : Set Bool), penguin ⊆ bird ∧
+      true ∈ n.gen bird fly ∧ true ∈ n.gen penguin flyᶜ ∧ (n.normal true penguin).Nonempty := by
+  refine ⟨.ofOrdering (fun _ ↦ Set.univ) fun _ ↦ inferInstance, Set.univ, {true}, {false},
+    Set.subset_univ _, fun x hx ↦ ?_, fun x hx ↦ ?_, true, ⟨trivial, rfl⟩, fun _ h _ ↦ h.2 ▸ le_rfl⟩
+  · cases x
+    · rfl
+    · exact absurd (hx.2 ⟨trivial, trivial⟩ (Bool.false_le true)) (by decide)
+  · rw [show x = true from hx.1.2]
+    exact Bool.noConfusion
 
 /-- The teleological construal of a turtle's normality: the worlds where it reaches a hundred. -/
-def teleological : NormalWorlds Bool := ⟨λ _ p => p ∩ {true}, λ _ _ => Set.inter_subset_left⟩
+def teleological : Normality Bool Bool := .ofAccess fun _ ↦ {true}
 
 /-- The statistical construal: the worlds where it dies young. -/
-def statistical : NormalWorlds Bool := ⟨λ _ p => p ∩ {false}, λ _ _ => Set.inter_subset_left⟩
+def statistical : Normality Bool Bool := .ofAccess fun _ ↦ {false}
 
 /-- *Turtles live to be 100* is true under the teleological construal and false under the
-    statistical one. -/
+statistical one. -/
 theorem turtles (w : Bool) :
-    teleological.cond Set.univ {true} w ∧ ¬ statistical.cond Set.univ {true} w :=
-  ⟨Set.inter_subset_right, λ h => by simpa using h ⟨Set.mem_univ _, rfl⟩⟩
+    w ∈ teleological.gen Set.univ {true} ∧ w ∉ statistical.gen Set.univ {true} :=
+  ⟨fun _ hx ↦ hx.1, fun h ↦ by simpa using h ⟨rfl, Set.mem_univ false⟩⟩
 
 /-! ### Restrictors -/
 
 /-- The existential reading of *Typhoons arise in this part of the Pacific*: for every
-    alternative property `P` of the place, normally `P` is the property that typhoons arise
-    there. -/
-def existentialReading (n : NormalWorlds W) (Alt : Set (E → Set W)) (T : E → Set W) (c : E)
-    (w : W) : Prop :=
-  ∀ P ∈ Alt, n.cond (P c) {_v | P = T} w
+alternative property `P` of the place, normally `P` is the property that typhoons arise
+there. -/
+def existentialReading (Alt : Set (E → Set W)) (T : E → Set W) (c : E) (w : W) : Prop :=
+  ∀ P ∈ Alt, w ∈ n.gen (P c) {_v | P = T}
 
 /-- An alternative that applies makes the reading defeasibly entail that typhoons arise
-    there: throughout that alternative's normal worlds. -/
-theorem existentialReading.star_subset {n : NormalWorlds W} {Alt : Set (E → Set W)}
-    {T : E → Set W} {c : E} {w : W} (h : existentialReading n Alt T c w) {P : E → Set W}
-    (hP : P ∈ Alt) : n.star w (P c) ⊆ T c := by
+there: throughout that alternative's normal worlds. -/
+theorem existentialReading.normal_subset {Alt : Set (E → Set W)} {T : E → Set W} {c : E} {w : W}
+    (h : existentialReading n Alt T c w) {P : E → Set W} (hP : P ∈ Alt) :
+    n.normal w (P c) ⊆ T c := by
   intro v hv
   have hPT : P = T := h P hP hv
   subst hPT
-  exact n.star_subset w (P c) hv
+  exact n.normal_subset w (P c) hv
 
 /-- Double genericity: for each individual, in its normal worlds every appropriate
-    circumstance normally has it carry the virus — a disposition rather than a frequency. -/
-def doubleGeneric {Ev : Type*} (n : NormalWorlds W) (φ : E → Set W) (C : Ev → Set W)
-    (ψ : E → Ev → Set W) (w : W) : Prop :=
-  n.generic φ (λ a => {v | ∀ e, n.cond (C e) (ψ a e) v}) w
+circumstance normally has it carry the virus, a disposition rather than a frequency. -/
+def doubleGeneric {Ev : Type*} (φ : E → Set W) (C : Ev → Set W) (ψ : E → Ev → Set W) (w : W) :
+    Prop :=
+  generic n φ (fun a ↦ {v | ∀ e, v ∈ n.gen (C e) (ψ a e)}) w
 
 /-- Without a circumstance restriction, and with logical truths selecting the world of
-    evaluation, double genericity is ordinary genericity over every circumstance. -/
-theorem doubleGeneric_univ {Ev : Type*} {n : NormalWorlds W} (h : ∀ v, n.star v Set.univ = {v})
-    (φ : E → Set W) (ψ : E → Ev → Set W) (w : W) :
-    doubleGeneric n φ (λ _ => Set.univ) ψ w ↔ n.generic φ (λ a => {v | ∀ e, v ∈ ψ a e}) w := by
-  simp [doubleGeneric, NormalWorlds.generic, NormalWorlds.cond, h]
+evaluation, double genericity is ordinary genericity over every circumstance. -/
+theorem doubleGeneric_univ {Ev : Type*} (h : ∀ v, n.normal v Set.univ = {v}) (φ : E → Set W)
+    (ψ : E → Ev → Set W) (w : W) :
+    doubleGeneric n φ (fun _ ↦ Set.univ) ψ w ↔ generic n φ (fun a ↦ {v | ∀ e, v ∈ ψ a e}) w := by
+  simp [doubleGeneric, generic, h]
 
 /-! ### Against the probabilistic account -/
 
 /-- Tails in 11 of 20 equally normal cat cases: just over half. -/
-def tailed : Fin 20 → Prop := λ w => w.val < 11
+def tailed : Fin 20 → Prop := fun w ↦ w.val < 11
 
-instance : DecidablePred tailed := λ w => Nat.decLt w.val 11
-
-/-- Every case equally normal: the normal `p`-worlds are the `p`-worlds. -/
-def flat (W : Type*) : NormalWorlds W := ⟨λ _ p => p, λ _ _ => subset_rfl⟩
+instance : DecidablePred tailed := fun w ↦ Nat.decLt w.val 11
 
 /-- The majority account verifies *Cats have tails* on a margin just over half; the modal
-    account does not, since a normal case lacks a tail. -/
+account with every case equally normal does not, since a normal case lacks a tail. -/
 theorem cohen_too_weak :
-    Cohen1999.gen (Finset.univ : Finset (Fin 20)) (λ _ => True) (λ _ => True) tailed ∧
-      ¬ (flat (Fin 20)).cond Set.univ {w | tailed w} 0 := by
-  refine ⟨(Cohen1999.gen_iff_thresholdGt _ _ _ _ (by decide)).mpr (by decide), λ h => ?_⟩
+    Cohen1999.gen (Finset.univ : Finset (Fin 20)) (fun _ ↦ True) (fun _ ↦ True) tailed ∧
+      (0 : Fin 20) ∉ (⊤ : Normality (Fin 20) (Fin 20)).gen Set.univ {w | tailed w} := by
+  refine ⟨(Cohen1999.gen_iff_thresholdGt _ _ _ _ (by decide)).mpr (by decide), fun h ↦ ?_⟩
   exact absurd (h (Set.mem_univ (11 : Fin 20))) (by decide)
 
 variable {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ]
