@@ -16,16 +16,16 @@ ortholattice from an orthogonality relation in `Core/Order/Concept.lean`.
 ## Main definitions
 
 * `JoinDense V`: every element of `L` is the least upper bound of the elements of `V` below it.
-* `OrthocomplementedLattice.Orthogonal V`: the orthogonality relation `a ≤ bᶜ` on the nonzero
+* `IsOrtholattice.Orthogonal V`: the orthogonality relation `a ≤ bᶜ` on the nonzero
   elements of `V`.
-* `OrthocomplementedLattice.represent V`: the concept of the points below an element.
+* `IsOrtholattice.represent V`: the concept of the points below an element.
 
 ## Main results
 
-* `OrthocomplementedLattice.represent_le_iff`, `represent_inf`, `represent_compl`,
+* `IsOrtholattice.represent_le_iff`, `represent_inf`, `represent_compl`,
   `represent_sup`: `represent V` is an ortholattice embedding for any join-dense `V`.
-* `OrthocomplementedLattice.representation`: for a complete ortholattice it is an isomorphism.
-* `OrthocomplementedLattice.representationFinite`: a well-founded ortholattice is represented on
+* `IsOrtholattice.representation`: for a complete ortholattice it is an isomorphism.
+* `IsOrtholattice.representationFinite`: a well-founded ortholattice is represented on
   its join-irreducibles.
 
 ## Implementation notes
@@ -57,7 +57,7 @@ theorem joinDense_supIrred {L : Type*} [SemilatticeSup L] [OrderBot L] [WellFoun
   rw [← hs]
   exact Finset.sup_le fun b hb ↦ hu ⟨hsIrred hb, hs ▸ Finset.le_sup hb⟩
 
-namespace OrthocomplementedLattice
+namespace IsOrtholattice
 
 variable {L : Type*} [Lattice L] [BoundedOrder L] [InvolutiveCompl L]
 
@@ -74,9 +74,8 @@ def Orthogonal (V : Set L) (a b : Point V) : Prop := a.1 ≤ b.1ᶜ
 instance (V : Set L) : Std.Symm (Orthogonal V) :=
   ⟨fun _ _ h ↦ InvolutiveCompl.le_compl_comm.mp h⟩
 
-instance [OrthocomplementedLattice L] (V : Set L) : Std.Irrefl (Orthogonal V) :=
-  ⟨fun a h ↦ a.2.2 <| le_bot_iff.mp <|
-    (le_inf le_rfl h).trans (OrthocomplementedLattice.inf_compl_le_bot a.1)⟩
+instance [IsOrtholattice L] (V : Set L) : Std.Irrefl (Orthogonal V) :=
+  ⟨fun a h ↦ a.2.2 <| (IsOrtholattice.disjoint_of_le_compl h).eq_bot_of_le le_rfl⟩
 
 /-- `represent V a` is the concept whose extent is the points below `a`. -/
 def represent (V : Set L) (a : L) : Concept (Point V) (Point V) (Orthogonal V) :=
@@ -232,4 +231,4 @@ def representationFinite [WellFoundedLT L] :
 
 end Iso
 
-end OrthocomplementedLattice
+end IsOrtholattice

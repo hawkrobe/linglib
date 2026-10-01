@@ -417,4 +417,10 @@ theorem CompatFrame.Regular.isRegular (A : F.Regular) : IsRegular F A :=
   show (Aᶜ).extent = orthoNeg F A.extent
   rw [orthoNeg_eq_upperPolar, Concept.extent_compl, ← Concept.upperPolar_extent]
 
+/-- The join of regular propositions is their De Morgan disjunction `disj`. -/
+@[simp] theorem CompatFrame.Regular.coe_sup (A B : F.Regular) :
+    ((A ⊔ B : F.Regular) : Set S) = disj F (A : Set S) (B : Set S) := by
+  rw [← InvolutiveCompl.compl_compl (A ⊔ B), InvolutiveCompl.compl_sup]
+  simp only [coe_compl, coe_inf, disj]
+
 end Orthologic

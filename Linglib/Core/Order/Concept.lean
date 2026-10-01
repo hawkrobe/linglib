@@ -21,7 +21,7 @@ symmetric relation is an order-reversing involution on extents.
 ## Main results
 
 * `Concept.instInvolutiveCompl`: for a symmetric relation the orthocomplement is an involution.
-* `Concept.instOrthocomplementedLattice`: for a symmetric, irreflexive relation the concepts form
+* `Concept.instIsOrtholattice`: for a symmetric, irreflexive relation the concepts form
   an ortholattice.
 
 ## References
@@ -87,11 +87,9 @@ instance instInvolutiveCompl [Std.Symm r] : InvolutiveCompl (Concept S S r) wher
 
 /-- The concepts of a symmetric, irreflexive relation form an orthocomplemented
     lattice ([holliday-mandelkern-2024] Proposition 4.8). The lattice structure
-    is mathlib's concept lattice; only the orthocomplement and its four axioms
-    are new. -/
-instance instOrthocomplementedLattice [Std.Symm r] [Std.Irrefl r] :
-    OrthocomplementedLattice (Concept S S r) where
+    is mathlib's concept lattice; only the orthocomplement and its axioms are new. -/
+instance instIsOrtholattice [Std.Symm r] [Std.Irrefl r] :
+    IsOrtholattice (Concept S S r) where
   inf_compl_le_bot _ := fun x hx ↦ absurd (rel_extent_intent hx.1 hx.2) (Std.Irrefl.irrefl x)
-  top_le_sup_compl _ := fun _ _ a ha ↦ absurd (ha.2 ha.1) (Std.Irrefl.irrefl a)
 
 end Concept
