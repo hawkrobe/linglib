@@ -249,8 +249,11 @@ each rule, a Pólya urn over `recurse`/`halt` decisions whose pseudo-counts are 
 @[ext]
 structure FragmentGrammar {T : Type} [DecidableEq T] (G : ContextFreeGrammar T)
     [DecidableEq G.NT] extends AdaptorGrammar G where
-  /-- The urn over `recurse`/`halt` decisions at nonterminal position `i` of rule `r`. -/
-  halt : (r : ContextFreeRule T G.NT) → r.NonterminalPos → PolyaUrn FragmentGrammar.Decision
+  /-- The pseudo-counts of the urn over `recurse`/`halt` decisions at nonterminal position `i` of
+  rule `r`. -/
+  halt : (r : ContextFreeRule T G.NT) → r.NonterminalPos → FragmentGrammar.Decision → ℝ
+  /-- The pseudo-counts are positive. -/
+  halt_pos : ∀ r i d, 0 < halt r i d
 
 namespace FragmentGrammar
 
@@ -268,19 +271,19 @@ adaptor-grammar factor times, at each nonterminal slot, the urn likelihood of th
 taken there. -/
 noncomputable def corpusProbGivenStorage (D : Multiset (RoseTree (Symbol T G.NT)))
     (Y : AdaptorGrammar.TableAssignment G) (Z : HaltCounts G) : ℝ :=
-  M.corpusProbGivenTables D Y * ∏ r ∈ G.rules, ∏ i, (M.halt r i).seqProb (Z r i)
+  M.corpusProbGivenTables D Y * ∏ r ∈ G.rules, ∏ i, polyaUrnProb (M.halt r i) (Z r i)
 
 theorem corpusProbGivenStorage_nonneg (D : Multiset (RoseTree (Symbol T G.NT)))
     (Y : AdaptorGrammar.TableAssignment G) (Z : HaltCounts G) :
     0 ≤ M.corpusProbGivenStorage D Y Z :=
   mul_nonneg (M.corpusProbGivenTables_nonneg D Y) <| Finset.prod_nonneg λ r _ =>
-    Finset.prod_nonneg λ i _ => ((M.halt r i).seqProb_pos _).le
+    Finset.prod_nonneg λ i _ => (polyaUrnProb_pos (M.halt_pos r i) _).le
 
 @[simp]
 theorem corpusProbGivenStorage_empty :
     M.corpusProbGivenStorage 0 (AdaptorGrammar.emptyTables G) 0 = 1 := by
   simp only [corpusProbGivenStorage, AdaptorGrammar.corpusProbGivenTables_empty, one_mul]
-  exact Finset.prod_eq_one λ r _ => Finset.prod_eq_one λ i _ => (M.halt r i).seqProb_zero
+  exact Finset.prod_eq_one λ r _ => Finset.prod_eq_one λ i _ => polyaUrnProb_zero (M.halt r i)
 
 /-- In the conjugate update by a corpus `D` and its halt counts `Z`, the adaptor-grammar
 component absorbs the rule counts of `D`, and the urn at each slot absorbs the decisions taken
@@ -288,7 +291,8 @@ there. -/
 noncomputable def posterior (D : Multiset (RoseTree (Symbol T G.NT))) (Z : HaltCounts G) :
     FragmentGrammar G where
   toAdaptorGrammar := M.toAdaptorGrammar.posterior D
-  halt r i := (M.halt r i).posterior (Z r i)
+  halt r i d := M.halt r i d + Z r i d
+  halt_pos r i d := add_pos_of_pos_of_nonneg (M.halt_pos r i d) (Nat.cast_nonneg _)
 
 @[simp]
 theorem posterior_zero : M.posterior 0 0 = M := by
@@ -296,7 +300,7 @@ theorem posterior_zero : M.posterior 0 0 = M := by
 
 theorem posterior_add (D₁ D₂ : Multiset (RoseTree (Symbol T G.NT))) (Z₁ Z₂ : HaltCounts G) :
     M.posterior (D₁ + D₂) (Z₁ + Z₂) = (M.posterior D₁ Z₁).posterior D₂ Z₂ := by
-  ext1 <;> simp [posterior, AdaptorGrammar.posterior_add, PolyaUrn.posterior_add]
+  ext1 <;> simp [posterior, AdaptorGrammar.posterior_add, add_assoc]
 
 end FragmentGrammar
 
