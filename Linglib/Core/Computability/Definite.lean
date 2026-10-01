@@ -18,27 +18,32 @@ public import Mathlib.Data.Set.Finite.List
 /-!
 # Definite languages
 
-A language `L` is **`k`-definite** when membership is decided by the last `k`
-symbols of a word [perles-rabin-shamir-1963]: any two words sharing their
-length-`k` suffix are L-equivalent. **Reverse `k`-definite** (`RD_k`) is the dual
-through the length-`k` prefix, and **generalized `k`-definite** (`ℒℐ_k`)
-tests prefix and suffix jointly ([pin-mfa]).
+This file defines the definite languages and their relatives. A language `L` is *`k`-definite*
+when membership of a word is decided by its last `k` letters: any two words with the same
+length-`k` suffix are both in `L` or both outside it. Perles, Rabin and Shamir develop the theory
+of these languages; *reverse `k`-definite* languages are the mirror image through the length-`k`
+prefix, and *generalized `k`-definite* languages are decided by the prefix and suffix together.
 
 ## Main definitions
 
-* `Edge` and `Edge.takeAt`: a string edge and its length-`k`
-  substring (`right` = suffix, `left` = prefix).
-* `Language.IsDefinite`, `Language.IsReverseDefinite`, `Language.IsGeneralizedDefinite`
-  — membership factoring through the suffix, prefix, and joint edge projections.
-* `Language.IsFiniteOrCofinite`: Lambert's `𝒩`: `L` or its complement is finite.
+* `Edge`, `Edge.takeAt`: an edge of a word and its length-`k` part there (`right` for the suffix,
+  `left` for the prefix).
+* `Language.IsDefinite`, `Language.IsReverseDefinite`, `Language.IsGeneralizedDefinite`: membership
+  factors through the suffix, the prefix, and both.
+* `Language.IsFiniteOrCofinite`: `L` or its complement is finite.
 
-## Main theorems
+## Main results
 
-* `Language.IsDefinite.toIsGeneralizedDefinite` and
-  `Language.IsReverseDefinite.toIsGeneralizedDefinite` — `D_k, RD_k ⊆ ℒℐ_k`.
-* `Language.isFiniteOrCofinite_iff_exists_isDefinite_and_isReverseDefinite`: over a
-  finite alphabet, `𝒩 = 𝒟 ∩ 𝒦` [pin-mfa]: a language is finite-or-cofinite iff it
-  is definite and reverse-definite.
+* `Language.IsDefinite.toIsGeneralizedDefinite`,
+  `Language.IsReverseDefinite.toIsGeneralizedDefinite`: definite and reverse definite languages are
+  generalized definite.
+* `Language.isFiniteOrCofinite_iff_exists_isDefinite_and_isReverseDefinite`: over a finite
+  alphabet, a language is finite or cofinite exactly when it is both definite and reverse definite.
+
+## References
+
+* [perles-rabin-shamir-1963]
+* [pin-mfa]
 -/
 
 @[expose] public section
@@ -47,8 +52,8 @@ variable {α : Type*}
 
 /-! ### Edge projections -/
 
-/-- Which edge of the string the definite test inspects. `right` gives classical
-D_k (final substring); `left` gives RD_k (initial substring). -/
+/-- An `Edge` names an end of a word, `right` for the end that definite languages inspect and
+`left` for the beginning that reverse definite languages inspect. -/
 inductive Edge | left | right
   deriving DecidableEq, Repr
 
@@ -56,9 +61,8 @@ namespace Edge
 
 variable (e : Edge) (k : ℕ) (xs : List α)
 
-/-- Take the length-`k` substring at this edge of `xs`: `left` is the length-`k`
-prefix `List.take`, `right` the length-`k` suffix `List.rtake`. Strings shorter
-than `k` are returned in full. -/
+/-- The length-`k` part of `xs` at an edge, its prefix `List.take` at the left and its suffix
+`List.rtake` at the right. A word shorter than `k` is returned in full. -/
 def takeAt : List α :=
   match e with
   | .left  => xs.take k
@@ -89,7 +93,7 @@ lemma takeAt_right_append_of_le_length {k : ℕ} (x rest : List α) (h : k ≤ r
     Edge.right.takeAt k (x ++ rest) = Edge.right.takeAt k rest :=
   List.rtake_append_of_le_length h
 
-/-- `takeAt k` is idempotent: its output already has length `≤ k`. -/
+/-- `takeAt k` is idempotent, since its output already has length at most `k`. -/
 lemma takeAt_idem : e.takeAt k (e.takeAt k xs) = e.takeAt k xs :=
   takeAt_of_length_le e (by rw [length_takeAt]; exact min_le_left _ _)
 
@@ -102,11 +106,11 @@ end Edge
 
 /-! ### Edge-bridge identities
 
-A long word can be bridged to one sharing its right `k`-suffix and a prescribed
-left `k'`-prefix; these are the combinatorial core of `𝒩 = 𝒟 ∩ 𝒦`. -/
+Two long words are bridged by a word sharing the length-`k` suffix of the first and the
+length-`k'` prefix of the second. This is the combinatorial step behind the characterization of
+the finite and cofinite languages. -/
 
-/-- Bridge two long words via `w' = w₂.take k' ++ w₁.rtake k`: it shares `w₁`'s
-length-`k` suffix (the tail-take absorbs the prepended prefix). -/
+/-- The word `w₂.take k' ++ w₁.rtake k` shares the length-`k` suffix of `w₁`. -/
 private lemma takeAt_right_eq_of_bridge {k k' : ℕ} {w₁ w₂ : List α}
     (hw₁ : k ≤ w₁.length) (_hw₂ : k' ≤ w₂.length) :
     Edge.right.takeAt k (w₂.take k' ++ w₁.rtake k) = Edge.right.takeAt k w₁ := by
@@ -128,72 +132,78 @@ variable {α : Type*}
 
 /-! ### The definite family -/
 
-/-- A language is **`k`-definite** (right-edge): membership factors through the
-length-`k` suffix. -/
+/-- A language is *`k`-definite* when membership factors through the length-`k` suffix. -/
 def IsDefinite (L : Language α) (k : ℕ) : Prop :=
   Function.FactorsThrough (· ∈ L) (Edge.right.takeAt k)
 
-/-- A language is **reverse `k`-definite** (left-edge): membership factors through
-the length-`k` prefix. -/
+/-- A language is *reverse `k`-definite* when membership factors through the length-`k`
+prefix. -/
 def IsReverseDefinite (L : Language α) (k : ℕ) : Prop :=
   Function.FactorsThrough (· ∈ L) (Edge.left.takeAt k)
 
-/-- A language is **generalized `k`-definite** (ℒℐ_k): membership factors through
-the joint length-`k` prefix and suffix. -/
+/-- A language is *generalized `k`-definite* when membership factors through the length-`k`
+prefix and suffix together. -/
 def IsGeneralizedDefinite (L : Language α) (k : ℕ) : Prop :=
-  Function.FactorsThrough (· ∈ L) (fun w => (Edge.left.takeAt k w, Edge.right.takeAt k w))
+  Function.FactorsThrough (· ∈ L) (fun w ↦ (Edge.left.takeAt k w, Edge.right.takeAt k w))
 
-/-- Generalized definiteness in two-hypothesis form: equal length-`k` prefix and
-suffix give L-equivalence (unpacking the joint-projection invariance). -/
+/-- A language is generalized `k`-definite exactly when words with equal length-`k` prefix and
+suffix are both in it or both outside it. -/
 lemma isGeneralizedDefinite_iff_edges {k : ℕ} {L : Language α} :
     L.IsGeneralizedDefinite k ↔
       ∀ ⦃a b⦄, Edge.left.takeAt k a = Edge.left.takeAt k b →
         Edge.right.takeAt k a = Edge.right.takeAt k b → (a ∈ L ↔ b ∈ L) :=
-  ⟨fun h _ _ hpre hsuf => iff_of_eq (h (by simp only [hpre, hsuf])),
-   fun h _ _ hpair => propext (h (congrArg Prod.fst hpair) (congrArg Prod.snd hpair))⟩
+  ⟨fun h _ _ hpre hsuf ↦ iff_of_eq (h (by simp only [hpre, hsuf])),
+   fun h _ _ hpair ↦ propext (h (congrArg Prod.fst hpair) (congrArg Prod.snd hpair))⟩
 
-/-- Definiteness in membership form: a word and its length-`k` suffix are
-`L`-equivalent (single-edge analogue of `isGeneralizedDefinite_iff_edges`). -/
+/-- A language is `k`-definite exactly when every word is in it just when its length-`k` suffix
+is. -/
 lemma isDefinite_iff_mem_takeAt {k : ℕ} {L : Language α} :
     L.IsDefinite k ↔ ∀ w, w ∈ L ↔ Edge.right.takeAt k w ∈ L := by
   unfold IsDefinite
-  rw [Function.factorsThrough_iff_of_idempotent (fun a => Edge.right.takeAt_idem k a)]
+  rw [Function.factorsThrough_iff_of_idempotent (fun a ↦ Edge.right.takeAt_idem k a)]
   simp only [eq_iff_iff]
 
-/-- A language is **finite-or-cofinite** (Lambert's 𝒩): `L` or its complement is
-finite (equivalently `L.Finite ∨ L ∈ Filter.cofinite`). -/
+/-- A language is reverse `k`-definite exactly when every word is in it just when its length-`k`
+prefix is. -/
+lemma isReverseDefinite_iff_mem_takeAt {k : ℕ} {L : Language α} :
+    L.IsReverseDefinite k ↔ ∀ w, w ∈ L ↔ Edge.left.takeAt k w ∈ L := by
+  unfold IsReverseDefinite
+  rw [Function.factorsThrough_iff_of_idempotent (fun a ↦ Edge.left.takeAt_idem k a)]
+  simp only [eq_iff_iff]
+
+/-- A language is *finite or cofinite* when it or its complement is finite. -/
 def IsFiniteOrCofinite (L : Language α) : Prop :=
   L.Finite ∨ Lᶜ.Finite
 
-/-- Constructive view: a language carved out by a permitted length-`k` suffix set
-is `k`-definite (this is the `e` of `Function.factorsThrough_iff`). -/
+/-- The words whose length-`k` suffix lies in a given set form a `k`-definite language. -/
 theorem isDefinite_setOf_right (k : ℕ) (P : Set (List α)) :
     IsDefinite {w | Edge.right.takeAt k w ∈ P} k :=
-  fun _ _ hab => congrArg (· ∈ P) hab
+  fun _ _ hab ↦ congrArg (· ∈ P) hab
 
-/-- Mirror for the left edge: a permitted length-`k` prefix set is reverse-definite. -/
+/-- The words whose length-`k` prefix lies in a given set form a reverse `k`-definite
+language. -/
 theorem isReverseDefinite_setOf_left (k : ℕ) (P : Set (List α)) :
     IsReverseDefinite {w | Edge.left.takeAt k w ∈ P} k :=
-  fun _ _ hab => congrArg (· ∈ P) hab
+  fun _ _ hab ↦ congrArg (· ∈ P) hab
 
 /-! ### Monotonicity in the window -/
 
 /-- A `k`-definite language is `k'`-definite for every `k' ≥ k`. -/
 theorem IsDefinite.mono {k k' : ℕ} {L : Language α} (h : L.IsDefinite k) (hk : k ≤ k') :
     L.IsDefinite k' :=
-  λ _ _ hab =>
+  fun _ _ hab ↦
     h (by rw [← Edge.takeAt_takeAt_of_le .right hk, hab, Edge.takeAt_takeAt_of_le .right hk])
 
 /-- A reverse `k`-definite language is reverse `k'`-definite for every `k' ≥ k`. -/
 theorem IsReverseDefinite.mono {k k' : ℕ} {L : Language α} (h : L.IsReverseDefinite k)
     (hk : k ≤ k') : L.IsReverseDefinite k' :=
-  λ _ _ hab =>
+  fun _ _ hab ↦
     h (by rw [← Edge.takeAt_takeAt_of_le .left hk, hab, Edge.takeAt_takeAt_of_le .left hk])
 
 /-- A generalized `k`-definite language is generalized `k'`-definite for every `k' ≥ k`. -/
 theorem IsGeneralizedDefinite.mono {k k' : ℕ} {L : Language α} (h : L.IsGeneralizedDefinite k)
     (hk : k ≤ k') : L.IsGeneralizedDefinite k' :=
-  λ a b hab => by
+  fun a b hab ↦ by
     obtain ⟨h₁, h₂⟩ := Prod.mk.inj hab
     refine h (Prod.ext ?_ ?_)
     · show Edge.left.takeAt k a = Edge.left.takeAt k b
@@ -211,14 +221,14 @@ def ofSuffix (xs : List α) : Language α := {w | xs <:+ w}
 
 /-- The words beginning with `xs` form a reverse definite language with window `xs.length`. -/
 theorem isReverseDefinite_ofPrefix (xs : List α) : (ofPrefix xs).IsReverseDefinite xs.length :=
-  λ a b hab => by
+  fun a b hab ↦ by
     simp only [Edge.takeAt_left] at hab
     show (xs <+: a) = (xs <+: b)
     rw [List.prefix_iff_eq_take, List.prefix_iff_eq_take, hab]
 
 /-- The words ending in `xs` form a definite language with window `xs.length`. -/
 theorem isDefinite_ofSuffix (xs : List α) : (ofSuffix xs).IsDefinite xs.length :=
-  λ a b hab => by
+  fun a b hab ↦ by
     show (xs <:+ a) = (xs <:+ b)
     rw [List.suffix_iff_eq_drop, List.suffix_iff_eq_drop]
     exact congrArg (xs = ·) hab
@@ -233,7 +243,7 @@ private lemma takeAt_right_reverse (k : ℕ) (l : List α) :
     Edge.right.takeAt k l.reverse = (Edge.left.takeAt k l).reverse := by
   simp [Edge.takeAt_left, Edge.takeAt_right, List.rtake_eq_reverse_take_reverse]
 
-/-- **Reverse duality**: reverse-`k`-definite is `k`-definite of the reversed language. -/
+/-- A language is reverse `k`-definite exactly when its reversal is `k`-definite. -/
 theorem isReverseDefinite_iff_isDefinite_reverse {k : ℕ} {L : Language α} :
     L.IsReverseDefinite k ↔ L.reverse.IsDefinite k := by
   constructor
@@ -246,24 +256,22 @@ theorem isReverseDefinite_iff_isDefinite_reverse {k : ℕ} {L : Language α} :
       rw [takeAt_right_reverse, takeAt_right_reverse, hab]
     simpa only [Language.reverse_mem_reverse] using h key
 
-/-! ### Inclusions into ℒℐ_k -/
+/-! ### Inclusions into the generalized definite languages -/
 
-/-- **D_k ⊆ ℒℐ_k**: the suffix alone determines membership, so the joint
-prefix-and-suffix test does too. -/
+/-- A `k`-definite language is generalized `k`-definite. -/
 theorem IsDefinite.toIsGeneralizedDefinite {k : ℕ} {L : Language α}
     (h : L.IsDefinite k) : L.IsGeneralizedDefinite k :=
-  fun _ _ hab => h (congrArg Prod.snd hab)
+  fun _ _ hab ↦ h (congrArg Prod.snd hab)
 
-/-- **RD_k ⊆ ℒℐ_k**: symmetric, via the prefix. -/
+/-- A reverse `k`-definite language is generalized `k`-definite. -/
 theorem IsReverseDefinite.toIsGeneralizedDefinite {k : ℕ} {L : Language α}
     (h : L.IsReverseDefinite k) : L.IsGeneralizedDefinite k :=
-  fun _ _ hab => h (congrArg Prod.fst hab)
+  fun _ _ hab ↦ h (congrArg Prod.fst hab)
 
-/-! ### `𝒩 = 𝒟 ∩ 𝒦` -/
+/-! ### Finite and cofinite languages -/
 
-/-- A language whose membership is constant off a finite set `s` is finite-or-cofinite:
-either some word outside `s` lies in `L` (forcing `Lᶜ ⊆ s`) or none does (forcing
-`L ⊆ s`). The reusable engine behind the reverse direction of `𝒩 = 𝒟 ∩ 𝒦`. -/
+/-- A language whose membership is constant off a finite set `s` is finite or cofinite, since
+either `Lᶜ ⊆ s` or `L ⊆ s`. -/
 theorem isFiniteOrCofinite_of_eventually_constant {L : Language α} {s : Set (List α)}
     (hs : s.Finite) (h : ∀ a ∈ sᶜ, ∀ b ∈ sᶜ, (a ∈ L ↔ b ∈ L)) : L.IsFiniteOrCofinite := by
   by_cases h_witness : ∃ w₀ ∈ sᶜ, w₀ ∈ L
@@ -278,13 +286,13 @@ theorem isFiniteOrCofinite_of_eventually_constant {L : Language α} {s : Set (Li
     by_contra hws
     exact h_witness w hws hwL
 
-/-- In a bounded language, membership factors through the length-`(N+1)` edge projection:
-words longer than `N` are out, and shorter words are their own length-`(N+1)` edge
-substring, so that substring determines membership. -/
+/-- In a language of words of length at most `N`, membership factors through the
+length-`(N + 1)` edge projection, since longer words are outside and shorter ones are their own
+projection. -/
 private lemma factorsThrough_takeAt_of_bounded {L : Language α} {N : ℕ} (e : Edge)
     (h_bound : ∀ w ∈ L, w.length ≤ N) :
     Function.FactorsThrough (· ∈ L) (e.takeAt (N + 1)) := by
-  refine fun a b hab => ?_
+  refine fun a b hab ↦ ?_
   have hlen : min (N + 1) a.length = min (N + 1) b.length := by
     have := congrArg List.length hab
     rwa [Edge.length_takeAt, Edge.length_takeAt] at this
@@ -293,10 +301,9 @@ private lemma factorsThrough_takeAt_of_bounded {L : Language α} {N : ℕ} (e : 
     rw [Edge.takeAt_of_length_le e (by omega), Edge.takeAt_of_length_le e (by omega)] at hab
     rw [hab]
   · have hb : ¬ b.length ≤ N := by omega
-    exact propext ⟨fun h => absurd (h_bound a h) ha, fun h => absurd (h_bound b h) hb⟩
+    exact propext ⟨fun h ↦ absurd (h_bound a h) ha, fun h ↦ absurd (h_bound b h) hb⟩
 
-/-- A language whose words have length at most `N` is `(N + 1)`-definite: a member is its
-own length-`(N + 1)` suffix. -/
+/-- A language whose words have length at most `N` is `(N + 1)`-definite. -/
 theorem isDefinite_succ_of_forall_length_le {L : Language α} {N : ℕ}
     (h : ∀ w ∈ L, w.length ≤ N) : L.IsDefinite (N + 1) :=
   factorsThrough_takeAt_of_bounded .right h
@@ -306,23 +313,21 @@ theorem isReverseDefinite_succ_of_forall_length_le {L : Language α} {N : ℕ}
     (h : ∀ w ∈ L, w.length ≤ N) : L.IsReverseDefinite (N + 1) :=
   factorsThrough_takeAt_of_bounded .left h
 
-/-- When the complement is bounded, membership still factors through the length-`(N+1)`
-edge projection: `factorsThrough_takeAt_of_bounded` gives it for `Lᶜ`, and factoring
-through is preserved by negation (`Lᶜᶜ = L`). -/
+/-- When the complement of a language consists of words of length at most `N`, membership still
+factors through the length-`(N + 1)` edge projection. -/
 private lemma factorsThrough_takeAt_of_cobounded {L : Language α} {N : ℕ} (e : Edge)
     (h_bound : ∀ w ∈ Lᶜ, w.length ≤ N) :
     Function.FactorsThrough (· ∈ L) (e.takeAt (N + 1)) :=
-  fun _ _ hab =>
+  fun _ _ hab ↦
     propext (not_iff_not.mp (iff_of_eq (factorsThrough_takeAt_of_bounded e h_bound hab)))
 
 /-- A finite set of words has a length bound. -/
 private lemma exists_length_bound_of_finite {S : Set (List α)} (h : S.Finite) :
     ∃ N, ∀ w ∈ S, w.length ≤ N :=
   let ⟨N, hN⟩ := (h.image (·.length)).exists_le
-  ⟨N, fun w hw => hN _ ⟨w, hw, rfl⟩⟩
+  ⟨N, fun w hw ↦ hN _ ⟨w, hw, rfl⟩⟩
 
-/-- **Forward direction of `𝒩 = 𝒟 ∩ 𝒦`**: a finite-or-cofinite language is both
-`k`-definite and reverse-`k'`-definite for some `k`, `k'`. -/
+/-- A finite or cofinite language is definite and reverse definite. -/
 theorem IsFiniteOrCofinite.exists_isDefinite_and_isReverseDefinite
     {L : Language α} (h : L.IsFiniteOrCofinite) :
     (∃ k, L.IsDefinite k) ∧ (∃ k', L.IsReverseDefinite k') := by
@@ -334,10 +339,8 @@ theorem IsFiniteOrCofinite.exists_isDefinite_and_isReverseDefinite
     exact ⟨⟨N + 1, factorsThrough_takeAt_of_cobounded .right hN⟩,
            ⟨N + 1, factorsThrough_takeAt_of_cobounded .left hN⟩⟩
 
-/-- **Reverse direction of `𝒩 = 𝒟 ∩ 𝒦` (finite alphabet)**: if `L` is both
-`k`-definite and reverse-`k'`-definite, it is finite-or-cofinite. For words of
-length `≥ k + k'` membership is constant (bridge argument), so either the long
-words are all in `L` (`Lᶜ` bounded) or none are (`L` bounded). -/
+/-- Over a finite alphabet, a language that is both definite and reverse definite is finite or
+cofinite, since membership is constant on words of length at least `k + k'`. -/
 theorem isFiniteOrCofinite_of_isDefinite_and_isReverseDefinite [Finite α]
     {L : Language α}
     (h : (∃ k, L.IsDefinite k) ∧ (∃ k', L.IsReverseDefinite k')) :
@@ -350,9 +353,8 @@ theorem isFiniteOrCofinite_of_isDefinite_and_isReverseDefinite [Finite α]
   exact (iff_of_eq (hD (takeAt_right_eq_of_bridge hk hk').symm)).trans
     (iff_of_eq (hR (takeAt_left_eq_of_bridge hk hk')))
 
-/-- **Pin's `𝒩 = 𝒟 ∩ 𝒦` (finite alphabet)**: a language over a finite alphabet is
-finite-or-cofinite iff it is `k`-definite for some `k` and reverse-`k'`-definite for
-some `k'`. -/
+/-- Over a finite alphabet, a language is finite or cofinite exactly when it is definite and
+reverse definite. -/
 theorem isFiniteOrCofinite_iff_exists_isDefinite_and_isReverseDefinite [Finite α]
     {L : Language α} :
     L.IsFiniteOrCofinite ↔

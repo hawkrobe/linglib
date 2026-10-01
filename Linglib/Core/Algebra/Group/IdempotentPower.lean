@@ -5,44 +5,49 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Mathlib.Algebra.Free
 public import Mathlib.Algebra.Group.Idempotent
 public import Mathlib.Algebra.Group.WithOne.Basic
 public import Mathlib.Data.Fintype.Option
 public import Mathlib.Data.Set.Finite.Basic
 public import Mathlib.Order.Preorder.Finite
+public import Mathlib.SetTheory.Cardinal.Finite
 
 /-!
-# Idempotent powers in finite monoids and semigroups
+# Idempotents in finite semigroups
 
-In a finite monoid the powers `x, x², x³, …` must repeat, so some
-positive power `x^N` is **idempotent**; any two idempotent positive
-powers of `x` coincide, so the **omega power** `Monoid.omegaPow x` —
-the unique idempotent in the cyclic subsemigroup `⟨x⟩` — is well
-defined. The semigroup case follows by adjoining an identity
-(`WithOne`).
+This file proves the basic facts about idempotents in finite monoids and semigroups. In a finite
+monoid the powers of an element must repeat, so some positive power of every element is
+idempotent; adjoining an identity transfers this to semigroups, and in particular every nonempty
+finite semigroup contains an idempotent.
 
-`omegaPow` is the substrate for the algebraic characterization of
-subregular language classes ([pin-mfa]; [eilenberg-1976];
-[lambert-2026] §6.2): definite languages are exactly those whose
-syntactic monoid satisfies `s · x^ω = x^ω`, reverse-definite ones
-`x^ω · s = x^ω`, and so on (`Core/Computability/Variety/`).
+The main result is the factorization of long products: if `S` is a finite semigroup with `n`
+elements, every product `s₁ ⋯ sₙ` has a prefix `s₁ ⋯ sᵢ` fixed on the right by an idempotent `e`,
+and so lies in `S e S`.
 
 ## Main results
 
-* `Monoid.exists_pos_pow_isIdempotent` — existence, by pigeonhole.
-* `IsIdempotentElem.pow_eq_pow` — uniqueness: idempotent positive
-  powers of the same element coincide (no finiteness needed).
-* `Monoid.omegaPow` — the omega power `x^ω`, canonical by
-  `Monoid.omegaPow_unique`; `IsIdempotentElem.omegaPow_eq`,
-  `Monoid.omegaPow_pow`.
-* `Semigroup.exists_isIdempotentElem`,
-  `Semigroup.exists_isIdempotentElem_map_eq` — the semigroup
-  transfers consumed by `Semigroup/Pseudovariety.lean`.
+* `Monoid.exists_pos_pow_isIdempotent`: every element of a finite monoid has an idempotent
+  positive power, unique by `IsIdempotentElem.pow_eq_pow`.
+* `Semigroup.exists_isIdempotentElem`: a nonempty finite semigroup contains an idempotent.
+* `Semigroup.exists_isIdempotentElem_map_eq`: a surjective homomorphism of finite semigroups lifts
+  idempotents to idempotents.
+* `Semigroup.exists_lt_card_isIdempotentElem_mul_eq`: among the first `|S|` terms of a sequence in
+  which each term is a right multiple of the previous one, some term is fixed on the right by an
+  idempotent.
+* `FreeSemigroup.exists_isIdempotentElem_map_eq_mul_mul`: a homomorphism out of the free semigroup
+  sends every word of length at least `|S|` into `S e S` for an idempotent `e`.
 
-`omegaPow` is defined by `Classical.choose`, hence `noncomputable`;
-`omegaPow_unique` makes it independent of the choice.
+## Implementation notes
 
-`[UPSTREAM]` candidate (`Mathlib.Algebra.Group.Idempotent` sibling).
+The last two results are Proposition II.6.34 and Corollary II.6.35 of [pin-mfa]. Products of
+sequences are expressed through a homomorphism out of `FreeSemigroup α`, which covers products of
+arbitrary elements by taking `α = S` and `FreeSemigroup.lift id`.
+
+## References
+
+* [pin-mfa]
+* [eilenberg-1976]
 -/
 
 @[expose] public section
@@ -53,14 +58,13 @@ variable {M : Type*} [Monoid M]
 
 /-! ### Periodicity of powers -/
 
-/-- Multiplying both sides of a power equation by the same factor
-preserves equality. -/
+/-- Multiplying both sides of a power equation by the same power preserves equality. -/
 private lemma pow_add_step {x : M} {a b : ℕ} (h : x ^ a = x ^ b) (k : ℕ) :
     x ^ (a + k) = x ^ (b + k) := by
   rw [pow_add, pow_add, h]
 
-/-- **Periodicity**: if `x^i = x^j` with `i ≤ j`, then above `i` the
-powers of `x` are periodic with period dividing `j - i`. -/
+/-- If `x ^ i = x ^ j` with `i ≤ j`, the powers of `x` from `i` on are periodic with period
+`j - i`. -/
 private lemma pow_period {x : M} {i j : ℕ} (h_le : i ≤ j) (h_eq : x ^ i = x ^ j)
     {n : ℕ} (hn : i ≤ n) (m : ℕ) : x ^ n = x ^ (n + m * (j - i)) := by
   induction m with
@@ -72,9 +76,8 @@ private lemma pow_period {x : M} {i j : ℕ} (h_le : i ≤ j) (h_eq : x ^ i = x 
     rw [Nat.succ_mul, ← Nat.add_assoc]
     exact ih.trans step
 
-/-- Idempotent positive powers of the same element coincide — no
-finiteness needed: `x^a = (x^a)^b = (x^b)^a = x^b`. This is what makes
-the omega power canonical. -/
+/-- Idempotent positive powers of the same element coincide, since
+`x ^ a = (x ^ a) ^ b = (x ^ b) ^ a = x ^ b`. -/
 theorem _root_.IsIdempotentElem.pow_eq_pow {x : M} {a b : ℕ}
     (hxa : IsIdempotentElem (x ^ a)) (hxb : IsIdempotentElem (x ^ b))
     (ha : a ≠ 0) (hb : b ≠ 0) : x ^ a = x ^ b :=
@@ -86,21 +89,15 @@ variable [Finite M]
 
 /-! ### Existence of an idempotent power -/
 
-/-- **Pigeonhole on monoid powers**: in a finite monoid, the sequence
-of powers `x^1, x^2, x^3, …` must repeat — there exist indices
-`i < j` with `x^i = x^j`. -/
+/-- In a finite monoid the powers of an element repeat, so `x ^ i = x ^ j` for some `i < j`. -/
 theorem exists_pow_eq_pow_of_finite (x : M) :
     ∃ i j : ℕ, i < j ∧ x ^ i = x ^ j := by
   obtain ⟨i, j, hij, h_eq⟩ :=
     Set.finite_univ.exists_lt_map_eq_of_forall_mem
-      (f := fun n : ℕ => x ^ n) (fun _ => Set.mem_univ _)
+      (f := fun n : ℕ ↦ x ^ n) (fun _ ↦ Set.mem_univ _)
   exact ⟨i, j, hij, h_eq⟩
 
-/-- **Existence of an idempotent power**: in a finite monoid `M`,
-every element `x : M` has a positive power `x^N` that is idempotent.
-Pigeonhole gives `x^i = x^j` with `i < j`; `N = j·(j - i)` is a
-positive multiple of the period at least `i`, so `x^N = x^(2N)` by
-`pow_period`. -/
+/-- In a finite monoid every element has an idempotent positive power. -/
 theorem exists_pos_pow_isIdempotent (x : M) :
     ∃ n > 0, IsIdempotentElem (x ^ n) := by
   obtain ⟨i, j, hij, h_eq⟩ := exists_pow_eq_pow_of_finite x
@@ -110,58 +107,6 @@ theorem exists_pos_pow_isIdempotent (x : M) :
   show x ^ (j * (j - i)) * x ^ (j * (j - i)) = x ^ (j * (j - i))
   rw [← pow_add]
   exact (pow_period hij.le h_eq (hij.le.trans (Nat.le_mul_of_pos_right j hp)) j).symm
-
-/-! ### The omega power -/
-
-/-- The **omega power** `x^ω` of an element `x` in a finite monoid:
-the idempotent positive power of `x` (unique by `omegaPow_unique`),
-realized via `Classical.choose` against `exists_pos_pow_isIdempotent`. -/
-noncomputable def omegaPow (x : M) : M :=
-  x ^ (exists_pos_pow_isIdempotent x).choose
-
-/-- The exponent witnessing `omegaPow x` (a positive natural number
-such that `x` raised to it is idempotent). -/
-noncomputable def omegaPowExponent (x : M) : ℕ :=
-  (exists_pos_pow_isIdempotent x).choose
-
-theorem omegaPow_eq_pow (x : M) : omegaPow x = x ^ omegaPowExponent x := rfl
-
-theorem omegaPowExponent_pos (x : M) : 0 < omegaPowExponent x :=
-  (exists_pos_pow_isIdempotent x).choose_spec.1
-
-/-- The omega power of `x` is idempotent. -/
-theorem omegaPow_isIdempotent (x : M) : IsIdempotentElem (omegaPow x) :=
-  (exists_pos_pow_isIdempotent x).choose_spec.2
-
-/-- Any idempotent positive power of `x` equals `omegaPow x`: the
-omega power is canonical, independent of the chosen exponent. -/
-theorem omegaPow_unique {x : M} {n : ℕ} (hn : n ≠ 0)
-    (hxn : IsIdempotentElem (x ^ n)) : x ^ n = omegaPow x :=
-  hxn.pow_eq_pow (omegaPow_isIdempotent x) hn (omegaPowExponent_pos x).ne'
-
-/-- An idempotent element is its own omega power. -/
-theorem _root_.IsIdempotentElem.omegaPow_eq {x : M}
-    (hx : IsIdempotentElem x) : omegaPow x = x := by
-  conv_rhs => rw [← pow_one x]
-  exact (omegaPow_unique one_ne_zero (by rwa [pow_one])).symm
-
-/-- The omega power is a projection. -/
-@[simp] theorem omegaPow_omegaPow (x : M) :
-    omegaPow (omegaPow x) = omegaPow x :=
-  (omegaPow_isIdempotent x).omegaPow_eq
-
-/-- The omega power of `x` is stable under any positive power: raising
-`omegaPow x` to any `n ≥ 1` gives `omegaPow x` back. Direct
-consequence of idempotence (`IsIdempotentElem.pow_eq` from mathlib). -/
-theorem omegaPow_pow (x : M) {n : ℕ} (hn : n ≠ 0) :
-    omegaPow x ^ n = omegaPow x :=
-  (omegaPow_isIdempotent x).pow_eq hn
-
-/-- Multiplying `omegaPow x` by itself yields `omegaPow x` —
-restatement of idempotence in product form. -/
-@[simp] theorem omegaPow_mul_omegaPow (x : M) :
-    omegaPow x * omegaPow x = omegaPow x :=
-  (omegaPow_isIdempotent x).eq
 
 end Monoid
 
@@ -199,23 +144,22 @@ namespace Semigroup
 
 variable {S T : Type*} [Semigroup S] [Semigroup T] [Finite S]
 
-/-- Every element has an idempotent positive power, with the exponent realized in `WithOne S`.
-The `WithOne` shape is the proof device; `exists_isIdempotentElem` and
-`exists_isIdempotentElem_map_eq` are the statements consumers want. -/
+/-- Every element of a finite semigroup has an idempotent positive power, computed in
+`WithOne S`. -/
 private theorem exists_pos_pow_isIdempotentElem_coe (x : S) :
     ∃ (n : ℕ) (e : S), 0 < n ∧ (x : WithOne S) ^ n = e ∧ IsIdempotentElem e := by
   obtain ⟨n, hn, hidem⟩ := Monoid.exists_pos_pow_isIdempotent (x : WithOne S)
   obtain ⟨e, he⟩ := WithOne.exists_coe_pow x n hn
   exact ⟨n, e, hn, he, WithOne.isIdempotentElem_coe.1 (he ▸ hidem)⟩
 
-/-- **A finite nonempty semigroup contains an idempotent.** -/
+/-- A finite nonempty semigroup contains an idempotent. -/
 theorem exists_isIdempotentElem [Nonempty S] : ∃ e : S, IsIdempotentElem e :=
   have ⟨x⟩ := ‹Nonempty S›
   have ⟨_, e, _, _, he⟩ := exists_pos_pow_isIdempotentElem_coe x
   ⟨e, he⟩
 
-/-- A surjective homomorphism lifts an idempotent to an idempotent: replace a preimage by an
-idempotent power of it, which the homomorphism still sends to the (idempotent) target. -/
+/-- A surjective homomorphism of finite semigroups lifts every idempotent to an idempotent, since
+an idempotent power of a preimage is still sent to it. -/
 theorem exists_isIdempotentElem_map_eq {f : S →ₙ* T} (hf : Function.Surjective f) {e' : T}
     (he' : IsIdempotentElem e') : ∃ e : S, IsIdempotentElem e ∧ f e = e' := by
   obtain ⟨x, rfl⟩ := hf e'
@@ -227,4 +171,90 @@ theorem exists_isIdempotentElem_map_eq {f : S →ₙ* T} (hf : Function.Surjecti
   obtain ⟨m, rfl⟩ : ∃ m, n = m + 1 := ⟨n - 1, by omega⟩
   rwa [(WithOne.isIdempotentElem_coe.2 he').pow_succ_eq, WithOne.coe_inj] at hmap
 
+/-! ### Long products -/
+
+/-- An element fixed on the right by `u` is fixed on the right by an idempotent power of `u`. -/
+theorem exists_isIdempotentElem_mul_eq {p u : S} (h : p * u = p) :
+    ∃ e, IsIdempotentElem e ∧ p * e = p := by
+  obtain ⟨n, e, -, hu, he⟩ := exists_pos_pow_isIdempotentElem_coe u
+  refine ⟨e, he, WithOne.coe_inj.1 ?_⟩
+  have hpow : ∀ k : ℕ, (p : WithOne S) * (u : WithOne S) ^ k = p := fun k ↦ by
+    induction k with
+    | zero => rw [pow_zero, mul_one]
+    | succ k ih => rw [pow_succ, ← mul_assoc, ih, ← WithOne.coe_mul, h]
+  rw [WithOne.coe_mul, ← hu, hpow]
+
+/-- Let `p` be a sequence in a finite nonempty semigroup `S` in which each of the first `|S|` terms
+is a right multiple of the previous one. Then one of these terms is fixed on the right by an
+idempotent. -/
+theorem exists_lt_card_isIdempotentElem_mul_eq [Nonempty S] {p : ℕ → S}
+    (hp : ∀ k, k + 1 < Nat.card S → ∃ s, p (k + 1) = p k * s) :
+    ∃ i < Nat.card S, ∃ e, IsIdempotentElem e ∧ p i * e = p i := by
+  have chain {i j : ℕ} (hij : i < j) (hj : j < Nat.card S) : ∃ s, p j = p i * s := by
+    induction j, hij using Nat.le_induction with
+    | base => exact hp i hj
+    | succ j hij ih =>
+      obtain ⟨s, hs⟩ := ih (by omega)
+      obtain ⟨s', hs'⟩ := hp j hj
+      exact ⟨s * s', by rw [hs', hs, mul_assoc]⟩
+  have fixed {i j : Fin (Nat.card S)} (hij : (i : ℕ) < j) (h : p i = p j) :
+      ∃ i < Nat.card S, ∃ e, IsIdempotentElem e ∧ p i * e = p i := by
+    obtain ⟨s, hs⟩ := chain hij j.2
+    exact ⟨i, i.2, exists_isIdempotentElem_mul_eq (hs.symm.trans h.symm)⟩
+  -- Pigeonhole on the first `|S|` terms together with an idempotent `e₀`.
+  obtain ⟨e₀, he₀⟩ := exists_isIdempotentElem (S := S)
+  obtain ⟨x, y, hxy, hne⟩ := Function.not_injective_iff.1 fun hinj ↦ by
+    simpa using Nat.card_le_card_of_injective
+      (fun o : Option (Fin (Nat.card S)) ↦ o.elim e₀ (p ·)) hinj
+  rcases x with _ | i <;> rcases y with _ | j <;> simp only [Option.elim] at hxy
+  · exact absurd rfl hne
+  · exact ⟨j, j.2, e₀, he₀, by rw [← hxy, he₀.eq]⟩
+  · exact ⟨i, i.2, e₀, he₀, by rw [hxy, he₀.eq]⟩
+  · have hij : (i : ℕ) ≠ j := fun h ↦ hne (congrArg some (Fin.ext h))
+    rcases lt_or_gt_of_ne hij with hij | hij
+    exacts [fixed hij hxy, fixed hij hxy.symm]
+
 end Semigroup
+
+namespace FreeSemigroup
+
+variable {α S : Type*} [Semigroup S] (f : FreeSemigroup α →ₙ* S)
+
+/-- An idempotent value of `f` is attained on words of every length. -/
+theorem exists_le_length_map_eq {u : FreeSemigroup α} (hu : IsIdempotentElem (f u)) (n : ℕ) :
+    ∃ v, n ≤ v.length ∧ f v = f u := by
+  induction n with
+  | zero => exact ⟨u, Nat.zero_le _, rfl⟩
+  | succ n ih =>
+    obtain ⟨v, hv, hfv⟩ := ih
+    refine ⟨u * v, ?_, by rw [map_mul, hfv, hu.eq]⟩
+    have : 0 < u.length := Nat.succ_pos _
+    rw [length_mul]; omega
+
+/-- A word of length at least `|S|` is sent into `S e S` for an idempotent `e`. -/
+theorem exists_isIdempotentElem_map_eq_mul_mul [Finite S] {w : FreeSemigroup α}
+    (hw : Nat.card S ≤ w.length) : ∃ x e y, IsIdempotentElem e ∧ f w = x * e * y := by
+  obtain ⟨a, t⟩ := w
+  have : Nonempty S := ⟨f ⟨a, t⟩⟩
+  replace hw : Nat.card S ≤ t.length + 1 := hw
+  -- The prefix of length `k + 1` extends the prefix of length `k` by the letter `t[k]`.
+  obtain ⟨i, -, e, he, hpe⟩ :=
+    Semigroup.exists_lt_card_isIdempotentElem_mul_eq (p := fun k ↦ f ⟨a, t.take k⟩) fun k hk ↦ by
+      have hk : k < t.length := by omega
+      refine ⟨f (of t[k]), ?_⟩
+      rw [← map_mul]
+      congr 1
+      refine FreeSemigroup.ext rfl ?_
+      show t.take (k + 1) = t.take k ++ [t[k]]
+      rw [List.take_add_one, List.getElem?_eq_getElem hk]; rfl
+  rcases h : t.drop i with _ | ⟨b, r⟩
+  · refine ⟨f ⟨a, t.take i⟩, e, e, he, ?_⟩
+    rw [mul_assoc, he.eq, hpe, List.take_of_length_le (List.drop_eq_nil_iff.1 h)]
+  · refine ⟨f ⟨a, t.take i⟩, e, f ⟨b, r⟩, he, ?_⟩
+    rw [hpe, ← map_mul]
+    congr 1
+    refine FreeSemigroup.ext rfl ?_
+    show t = t.take i ++ b :: r
+    rw [← h, List.take_append_drop]
+
+end FreeSemigroup
