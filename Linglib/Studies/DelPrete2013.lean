@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Semantics.Genericity.Normality
 public import Linglib.Semantics.Mereology
 
 /-!
@@ -25,7 +26,8 @@ the indefinite in its scope varies with the situation. The oddness of (2b) again
 knowledge, habitually driving one sports car does not. Against the covert quantifier GEN of
 [krifka-etal-1995], §2, the obligatory wide scope of indefinites that the effect would demand
 gives the negated kind indefinite of (9b) the truth conditions (10b), strictly weaker than the
-intuitive (10'b).
+intuitive (10'b), whatever the appropriate situations GEN quantifies over
+(`genWide_of_genNarrow`, `not_genNarrow_of_genWide`).
 
 ## Implementation notes
 
@@ -256,33 +258,42 @@ theorem impf_indefinite_witness :
       exact ⟨{0} ⊔ {1}, ⟨{0}, rfl, .sum (.base (Or.inl rfl)) (.base (Or.inr rfl)), rfl⟩,
         by decide⟩⟩
 
-/-! ### Against the covert quantifier, §2 -/
+/-! ### Against the covert quantifier, §2
+
+GEN quantifies over the appropriate situations of its restrictor, which a normality on
+situations selects. -/
 
 section Gen
 
-variable (K : I → Prop) (φ : S → Prop) (P : I → S → Prop)
+open Genericity
+
+variable (N : Normality Unit S) (K : I → Prop) (φ : S → Prop) (P : I → S → Prop)
 
 /-- (10b): the negated kind indefinite of (9b) scoping over GEN, as assumption (α)1 demands:
-there is no sub-kind of tuscan cigar that Gianni smokes in every situation. -/
-def genWide : Prop := ¬ ∃ X, K X ∧ ∀ s, φ s → P X s
+there is no sub-kind of tuscan cigar that Gianni smokes in every appropriate situation. -/
+def genWide : Prop := ¬ ∃ X, K X ∧ () ∈ N.gen {s | φ s} {s | P X s}
 
-/-- (10'b): the negation below GEN: in no situation does Gianni smoke a sub-kind of tuscan
-cigar. -/
-def genNarrow : Prop := ∀ s, φ s → ¬ ∃ X, K X ∧ P X s
+/-- (10'b): the negation below GEN: in no appropriate situation does Gianni smoke a sub-kind of
+tuscan cigar. -/
+def genNarrow : Prop := () ∈ N.gen {s | φ s} {s | ¬ ∃ X, K X ∧ P X s}
 
-variable {K φ P}
+variable {N K φ P}
 
-/-- (10'b) is logically stronger than (10b). -/
-theorem genWide_of_genNarrow (hφ : ∃ s, φ s) (h : genNarrow K φ P) : genWide K φ P :=
-  λ ⟨X, hX, hall⟩ => let ⟨s, hs⟩ := hφ; h s hs ⟨X, hX, hall s hs⟩
+/-- (10'b) is logically stronger than (10b), whatever the appropriate situations, provided there
+is one. -/
+theorem genWide_of_genNarrow (hφ : (N.normal () {s | φ s}).Nonempty) (h : genNarrow N K φ P) :
+    genWide N K φ P :=
+  fun ⟨X, hX, hall⟩ ↦ let ⟨_, hs⟩ := hφ; h hs ⟨X, hX, hall hs⟩
 
-/-- (10b) is too weak: where Gianni smokes a tuscan cigar of one sub-kind or another in every
-situation, (10b) holds while (9b) is false, as (10'b) is. -/
+/-- (10b) is too weak: where every situation is appropriate and Gianni smokes a tuscan cigar of
+one sub-kind or another in each, (10b) holds while (9b) is false, as (10'b) is. -/
 theorem not_genNarrow_of_genWide :
-    ∃ (S I : Type) (K : I → Prop) (φ : S → Prop) (P : I → S → Prop),
-      (∃ s, φ s) ∧ genWide K φ P ∧ ¬ genNarrow K φ P :=
-  ⟨Bool, Bool, λ _ => True, λ _ => True, (· = ·), ⟨true, trivial⟩,
-    by unfold genWide; decide, by unfold genNarrow; decide⟩
+    ∃ (S I : Type) (N : Normality Unit S) (K : I → Prop) (φ : S → Prop) (P : I → S → Prop),
+      (N.normal () {s | φ s}).Nonempty ∧ genWide N K φ P ∧ ¬ genNarrow N K φ P :=
+  ⟨Bool, Bool, ⊤, fun _ ↦ True, fun _ ↦ True, (· = ·), ⟨true, trivial⟩,
+    fun ⟨X, _, hall⟩ ↦ absurd (hall (show (!X) ∈ {_s : Bool | True} from trivial))
+      (by cases X <;> decide),
+    fun h ↦ h (show true ∈ {_s : Bool | True} from trivial) ⟨true, trivial, rfl⟩⟩
 
 end Gen
 
