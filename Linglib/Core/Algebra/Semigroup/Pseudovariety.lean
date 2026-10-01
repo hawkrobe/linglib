@@ -8,6 +8,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Algebra.Group.IdempotentPower
+public import Linglib.Core.GroupTheory.Congruence.Hom
 public import Mathlib.Algebra.Group.Prod
 public import Mathlib.Algebra.Group.PUnit
 
@@ -43,10 +44,11 @@ and every `s`. Each is equivalent to an equation on all sufficiently long produc
 
 ## Implementation notes
 
-`mem` is a total predicate over `Type u` semigroups, mirroring `Monoid.Pseudovariety`, with
-finiteness on the closure hypotheses. The pseudovariety **N** of nilpotent semigroups is the
-intersection of **D** and **K** and is not bundled. The long-product characterizations are
-Propositions XI.4.15–XI.4.17 of [pin-mfa].
+`mem` is a total predicate on `Type u` semigroups that implies finiteness, mirroring
+`Monoid.Pseudovariety`, so the order on pseudovarieties is inclusion of classes of finite
+semigroups. The pseudovariety **N** of nilpotent semigroups is the intersection of **D** and **K**
+and is not bundled. The long-product characterizations are Propositions XI.4.15–XI.4.17 of
+[pin-mfa].
 
 ## References
 
@@ -66,26 +68,56 @@ subsemigroups, quotients and finite products, with closure phrased through injec
 structure Pseudovariety where
   /-- The semigroups belonging to the pseudovariety. -/
   mem : ∀ (S : Type u) [Semigroup S], Prop
+  /-- Every member is finite. -/
+  finite_of_mem : ∀ {S : Type u} [Semigroup S], mem S → Finite S
   /-- The domain of an injective homomorphism into a member is a member. -/
-  sub : ∀ {S T : Type u} [Semigroup S] [Semigroup T] [Finite S] [Finite T] {f : S →ₙ* T},
+  sub : ∀ {S T : Type u} [Semigroup S] [Semigroup T] {f : S →ₙ* T},
     Function.Injective f → mem T → mem S
   /-- The codomain of a surjective homomorphism from a member is a member. -/
-  quot : ∀ {S T : Type u} [Semigroup S] [Semigroup T] [Finite S] [Finite T] {f : S →ₙ* T},
+  quot : ∀ {S T : Type u} [Semigroup S] [Semigroup T] {f : S →ₙ* T},
     Function.Surjective f → mem S → mem T
-  /-- Closed under binary products. -/
-  prod : ∀ {S T : Type u} [Semigroup S] [Semigroup T] [Finite S] [Finite T],
-    mem S → mem T → mem (S × T)
-  /-- Contains the trivial semigroup (the empty product). -/
+  /-- The product of two members is a member. -/
+  prod : ∀ {S T : Type u} [Semigroup S] [Semigroup T], mem S → mem T → mem (S × T)
+  /-- The trivial semigroup is a member. -/
   memUnit : mem PUnit.{u + 1}
 
 namespace Pseudovariety
 
 variable (V : Pseudovariety.{u})
 
-/-- Closed under isomorphism (a special case of `quot`). -/
-theorem mem_of_mulEquiv {S T : Type u} [Semigroup S] [Semigroup T] [Finite S] [Finite T]
-    (e : S ≃* T) (h : V.mem S) : V.mem T :=
+@[ext] theorem ext {V W : Pseudovariety.{u}}
+    (h : ∀ (S : Type u) [Semigroup S], V.mem S ↔ W.mem S) : V = W := by
+  obtain ⟨Vm, _, _, _, _, _⟩ := V
+  obtain ⟨Wm, _, _, _, _, _⟩ := W
+  obtain rfl : Vm = Wm := funext fun S ↦ funext fun _ ↦ propext (h S)
+  rfl
+
+instance : PartialOrder Pseudovariety.{u} where
+  le V W := ∀ (S : Type u) [Semigroup S], V.mem S → W.mem S
+  le_refl _ _ _ h := h
+  le_trans _ _ _ h₁ h₂ S _ h := h₂ S (h₁ S h)
+  le_antisymm _ _ h₁ h₂ := ext fun S _ ↦ ⟨h₁ S, h₂ S⟩
+
+theorem mem_of_mulEquiv {S T : Type u} [Semigroup S] [Semigroup T] (e : S ≃* T) (h : V.mem S) :
+    V.mem T :=
   V.quot (f := e.toMulHom) e.surjective h
+
+/-- Membership of a quotient descends along a coarsening of congruences. -/
+theorem mem_quotient_of_le {S : Type u} [Semigroup S] {c d : Con S} (h : c ≤ d)
+    (hc : V.mem c.Quotient) : V.mem d.Quotient :=
+  V.quot (Con.mapMulHom_surjective c d h) hc
+
+/-- The quotient by the kernel of a homomorphism into a member is a member. -/
+theorem mem_quotient_ker {S T : Type u} [Semigroup S] [Semigroup T] (f : S →ₙ* T)
+    (h : V.mem T) : V.mem (Con.ker f).Quotient :=
+  V.sub (Con.kerLiftMulHom_injective f) h
+
+/-- The quotient by the meet of two congruences is a member when both quotients are. -/
+theorem mem_quotient_inf {S : Type u} [Semigroup S] {c d : Con S} (hc : V.mem c.Quotient)
+    (hd : V.mem d.Quotient) : V.mem (c ⊓ d).Quotient := by
+  have h : Con.ker (c.mkMulHom.prod d.mkMulHom) ≤ c ⊓ d := by
+    rw [Con.ker_prodMulHom, Con.ker_mkMulHom_eq, Con.ker_mkMulHom_eq]
+  exact V.mem_quotient_of_le h (V.mem_quotient_ker _ (V.prod hc hd))
 
 end Pseudovariety
 
@@ -245,35 +277,38 @@ end LongProducts
 
 /-- The pseudovariety **D** of definite semigroups. -/
 def definiteVariety : Pseudovariety.{u} where
-  mem S := IsDefinite S
-  sub hf h := h.of_injective hf
-  quot hf h := h.of_surjective hf
-  prod hS hT := hS.prod hT
-  memUnit _ _ _ := rfl
+  mem S _ := Finite S ∧ IsDefinite S
+  finite_of_mem h := h.1
+  sub hf h := have := h.1; ⟨.of_injective _ hf, h.2.of_injective hf⟩
+  quot hf h := have := h.1; ⟨.of_surjective _ hf, h.2.of_surjective hf⟩
+  prod hS hT := have := hS.1; have := hT.1; ⟨inferInstance, hS.2.prod hT.2⟩
+  memUnit := ⟨inferInstance, fun _ _ _ ↦ rfl⟩
 
 /-- The pseudovariety **K** of reverse definite semigroups. -/
 def reverseDefiniteVariety : Pseudovariety.{u} where
-  mem S := IsReverseDefinite S
-  sub hf h := h.of_injective hf
-  quot hf h := h.of_surjective hf
-  prod hS hT := hS.prod hT
-  memUnit _ _ _ := rfl
+  mem S _ := Finite S ∧ IsReverseDefinite S
+  finite_of_mem h := h.1
+  sub hf h := have := h.1; ⟨.of_injective _ hf, h.2.of_injective hf⟩
+  quot hf h := have := h.1; ⟨.of_surjective _ hf, h.2.of_surjective hf⟩
+  prod hS hT := have := hS.1; have := hT.1; ⟨inferInstance, hS.2.prod hT.2⟩
+  memUnit := ⟨inferInstance, fun _ _ _ ↦ rfl⟩
 
 /-- The pseudovariety **LI** of locally trivial semigroups. -/
 def locallyTrivialVariety : Pseudovariety.{u} where
-  mem S := IsLocallyTrivial S
-  sub hf h := h.of_injective hf
-  quot hf h := h.of_surjective hf
-  prod hS hT := hS.prod hT
-  memUnit _ _ _ := rfl
+  mem S _ := Finite S ∧ IsLocallyTrivial S
+  finite_of_mem h := h.1
+  sub hf h := have := h.1; ⟨.of_injective _ hf, h.2.of_injective hf⟩
+  quot hf h := have := h.1; ⟨.of_surjective _ hf, h.2.of_surjective hf⟩
+  prod hS hT := have := hS.1; have := hT.1; ⟨inferInstance, hS.2.prod hT.2⟩
+  memUnit := ⟨inferInstance, fun _ _ _ ↦ rfl⟩
 
 @[simp] theorem mem_definiteVariety {S : Type u} [Semigroup S] :
-    definiteVariety.mem S ↔ IsDefinite S := Iff.rfl
+    definiteVariety.mem S ↔ Finite S ∧ IsDefinite S := Iff.rfl
 
 @[simp] theorem mem_reverseDefiniteVariety {S : Type u} [Semigroup S] :
-    reverseDefiniteVariety.mem S ↔ IsReverseDefinite S := Iff.rfl
+    reverseDefiniteVariety.mem S ↔ Finite S ∧ IsReverseDefinite S := Iff.rfl
 
 @[simp] theorem mem_locallyTrivialVariety {S : Type u} [Semigroup S] :
-    locallyTrivialVariety.mem S ↔ IsLocallyTrivial S := Iff.rfl
+    locallyTrivialVariety.mem S ↔ Finite S ∧ IsLocallyTrivial S := Iff.rfl
 
 end Semigroup

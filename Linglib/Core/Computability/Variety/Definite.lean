@@ -371,35 +371,35 @@ end Converse
 
 /-- A definite language over a finite alphabet lies in the language variety of **D**. -/
 theorem IsDefinite.langs [Finite α] (h : L.IsDefinite k) : Semigroup.definiteVariety.langs L :=
-  ⟨h.isRegular, h.isDefinite_syntacticSemigroup⟩
+  ⟨h.isRegular.finite_syntacticSemigroup, h.isDefinite_syntacticSemigroup⟩
 
 /-- A reverse definite language over a finite alphabet lies in the language variety of **K**. -/
 theorem IsReverseDefinite.langs [Finite α] (h : L.IsReverseDefinite k) :
     Semigroup.reverseDefiniteVariety.langs L :=
-  ⟨h.isRegular, h.isReverseDefinite_syntacticSemigroup⟩
+  ⟨h.isRegular.finite_syntacticSemigroup, h.isReverseDefinite_syntacticSemigroup⟩
 
 /-- A generalized definite language over a finite alphabet lies in the language variety
 of **LI**. -/
 theorem IsGeneralizedDefinite.langs [Finite α] (h : L.IsGeneralizedDefinite k) :
     Semigroup.locallyTrivialVariety.langs L :=
-  ⟨h.isRegular, h.isLocallyTrivial_syntacticSemigroup⟩
+  ⟨h.isRegular.finite_syntacticSemigroup, h.isLocallyTrivial_syntacticSemigroup⟩
 
 /-- The language variety of **D** consists of the definite languages. -/
 theorem langs_definiteVariety_iff [Finite α] :
     Semigroup.definiteVariety.langs L ↔ ∃ k, L.IsDefinite k :=
-  ⟨fun h ↦ have := h.1.finite_syntacticSemigroup; isDefinite_syntacticSemigroup_iff.1 h.2,
+  ⟨fun h ↦ have := h.1; isDefinite_syntacticSemigroup_iff.1 h.2,
     fun ⟨_, h⟩ ↦ h.langs⟩
 
 /-- The language variety of **K** consists of the reverse definite languages. -/
 theorem langs_reverseDefiniteVariety_iff [Finite α] :
     Semigroup.reverseDefiniteVariety.langs L ↔ ∃ k, L.IsReverseDefinite k :=
-  ⟨fun h ↦ have := h.1.finite_syntacticSemigroup; isReverseDefinite_syntacticSemigroup_iff.1 h.2,
+  ⟨fun h ↦ have := h.1; isReverseDefinite_syntacticSemigroup_iff.1 h.2,
     fun ⟨_, h⟩ ↦ h.langs⟩
 
 /-- The language variety of **LI** consists of the generalized definite languages. -/
 theorem langs_locallyTrivialVariety_iff [Finite α] :
     Semigroup.locallyTrivialVariety.langs L ↔ ∃ k, L.IsGeneralizedDefinite k :=
-  ⟨fun h ↦ have := h.1.finite_syntacticSemigroup; isLocallyTrivial_syntacticSemigroup_iff.1 h.2,
+  ⟨fun h ↦ have := h.1; isLocallyTrivial_syntacticSemigroup_iff.1 h.2,
     fun ⟨_, h⟩ ↦ h.langs⟩
 
 end Language

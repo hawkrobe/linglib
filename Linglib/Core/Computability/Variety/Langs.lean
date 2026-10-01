@@ -3,37 +3,40 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 
-[UPSTREAM] candidate: `Mathlib.Computability.Variety.Langs` — a new topic
-directory (mathlib has no variety theory; `TuringMachine/`, `AkraBazzi/` are the
-topic-subdirectory precedent), over `Mathlib.Algebra.Group.Pseudovariety` as the
-monoid-side substrate.
+[UPSTREAM] candidate: `Mathlib.Computability.Variety.Langs`, a new topic directory over
+`Mathlib.Algebra.Group.Pseudovariety`.
 -/
 module
 
 public import Linglib.Core.Computability.SyntacticMonoid
 public import Linglib.Core.Algebra.Group.Pseudovariety
+public import Mathlib.Order.BooleanSubalgebra
 
 /-!
-# The language-side operator of a pseudovariety
+# The languages of a pseudovariety
 
-The forward half of the Eilenberg correspondence: for a pseudovariety `V` of finite monoids,
-`V.langs` collects the regular languages whose syntactic monoid lies in `V`. The **keystone** is
-that `V.langs` is a *variety of languages* — closed under the boolean operations and inverse
-homomorphism — for *any* `V`. Each closure proof is the syntactic-monoid argument already used for
-star-free languages (`Language.IsStarFree`, the `V = aperiodicVariety` instance), generalized by
-replacing `Monoid.IsAperiodic` with `V.mem` and the aperiodic closure lemmas with the closure
-fields of `V`.
+This file defines, for a pseudovariety `V` of finite monoids, the languages whose syntactic monoid
+lies in `V`, and proves that over each alphabet they form a Boolean algebra closed under quotients
+and inverse homomorphisms. These closure properties make `V.langs` a variety of languages, the
+language side of Eilenberg's variety theorem.
 
 ## Main definitions
 
 * `Monoid.Pseudovariety.langs`: the languages whose syntactic monoid lies in `V`.
+* `Monoid.Pseudovariety.toBooleanSubalgebra`: the languages of `V` over an alphabet, as a Boolean
+  subalgebra.
 
 ## Main results
 
-* `Monoid.Pseudovariety.langs_of_recognizes`: a language recognized by a finite monoid in `V` is in
-  `V.langs` (the engine).
-* `langs_compl` / `langs_inf` / `langs_sup` / `langs_univ` / `langs_bot`: boolean closure.
-* `langs_comap`: closure under inverse homomorphism.
+* `Monoid.Pseudovariety.langs_of_recognizes`: a language recognized by a member of `V` lies in
+  `V.langs`.
+* `Monoid.Pseudovariety.langs_leftQuotient`, `langs_rightQuotient`, `langs_comap`: closure under
+  quotients and inverse homomorphisms.
+
+## References
+
+* [eilenberg-1976]
+* [pin-mfa]
 -/
 
 @[expose] public section
@@ -44,101 +47,71 @@ namespace Monoid.Pseudovariety
 
 open Language
 
-variable (V : Pseudovariety.{u}) {α : Type u} {L : Language α}
+variable (V : Pseudovariety.{u}) {α : Type u} {L M : Language α}
 
-/-- The languages over `α` whose (necessarily finite) syntactic monoid lies in `V` — the
-language-side operator of the Eilenberg correspondence. -/
-def langs (L : Language α) : Prop := L.IsRegular ∧ V.mem L.SyntacticMonoid
+/-- The languages of a pseudovariety `V` are those whose syntactic monoid lies in `V`. -/
+def langs (L : Language α) : Prop := V.mem L.SyntacticMonoid
 
-/-- **Engine.** A language recognized by a finite monoid in `V` lies in `V.langs`: the syntactic
-monoid is a quotient of a submonoid of the recognizer, hence in `V`. Generalizes
-`Language.IsStarFree.of_recognizes`. -/
-theorem langs_of_recognizes {N : Type u} [Monoid N] [Finite N] (hN : V.mem N)
-    (η : FreeMonoid α →* N) (P : Set N)
-    (hL : ∀ w : List α, w ∈ L ↔ η (FreeMonoid.ofList w) ∈ P) : V.langs L := by
-  have hle : Con.ker η ≤ L.syntacticCon := ker_le_syntacticCon_of_recognizes ⟨P, Set.ext hL⟩
-  have : Finite (Con.ker η).Quotient := .of_injective _ (Con.kerLift_injective η)
-  have hkerMem : V.mem (Con.ker η).Quotient := V.sub (Con.kerLift_injective η) hN
-  have hsurj : Function.Surjective (Con.map (Con.ker η) L.syntacticCon hle) :=
-    Con.lift_surjective_of_surjective _ Con.mk'_surjective
-  have : Finite L.SyntacticMonoid := Finite.of_surjective _ hsurj
-  exact ⟨IsRegular.of_finite_syntacticMonoid ‹_›, V.quot hsurj hkerMem⟩
+theorem langs_isRegular (h : V.langs L) : L.IsRegular :=
+  .of_finite_syntacticMonoid (V.finite_of_mem h)
 
-/-- **Closure under complement** — immediate from complement-invariance of the syntactic monoid. -/
+theorem langs_iff : V.langs L ↔ L.IsRegular ∧ V.mem L.SyntacticMonoid :=
+  ⟨fun h ↦ ⟨V.langs_isRegular h, h⟩, And.right⟩
+
+variable {V} in
+/-- The languages of `V` are upward closed in the order of syntactic congruences. -/
+theorem langs_of_syntacticCon_le (h : V.langs L) (hle : L.syntacticCon ≤ M.syntacticCon) :
+    V.langs M :=
+  V.mem_quotient_of_le hle h
+
+/-- A language recognized by a member of `V` lies in `V.langs`. -/
+theorem langs_of_recognizes {N : Type u} [Monoid N] (hN : V.mem N) {η : FreeMonoid α →* N}
+    (h : Recognizes η L) : V.langs L :=
+  V.mem_quotient_of_le (ker_le_syntacticCon_of_recognizes h) (V.mem_quotient_ker η hN)
+
 theorem langs_compl (h : V.langs L) : V.langs Lᶜ := by
-  refine ⟨h.1.compl, ?_⟩
   show V.mem (syntacticCon Lᶜ).Quotient
   rw [syntacticCon_compl]
-  exact h.2
+  exact h
 
-/-- **Closure under intersection** — the syntactic monoid of `L ⊓ M` is a quotient of a submonoid
-of `L.SyntacticMonoid × M.SyntacticMonoid`, which is in `V` by `prod`/`sub`/`quot`. -/
-theorem langs_inf {M : Language α} (hL : V.langs L) (hM : V.langs M) : V.langs (L ⊓ M) := by
-  refine ⟨hL.1.inf hM.1, ?_⟩
-  set φ := L.toSyntacticMonoid.prod M.toSyntacticMonoid with hφ
-  have : Finite L.SyntacticMonoid := IsRegular.finite_syntacticMonoid hL.1
-  have : Finite M.SyntacticMonoid := IsRegular.finite_syntacticMonoid hM.1
-  have hprod : V.mem (L.SyntacticMonoid × M.SyntacticMonoid) := V.prod hL.2 hM.2
-  have : Finite (Con.ker φ).Quotient := .of_injective _ (Con.kerLift_injective φ)
-  have hker : V.mem (Con.ker φ).Quotient := V.sub (Con.kerLift_injective φ) hprod
-  have hle : Con.ker φ ≤ (L ⊓ M).syntacticCon := by
-    rw [hφ, ker_prod_toSyntacticMonoid]; exact inf_syntacticCon_le_syntacticCon_inf
-  have : Finite (L ⊓ M).SyntacticMonoid := IsRegular.finite_syntacticMonoid (hL.1.inf hM.1)
-  exact V.quot (f := Con.map (Con.ker φ) _ hle)
-    (Con.lift_surjective_of_surjective _ Con.mk'_surjective) hker
+theorem langs_inf (hL : V.langs L) (hM : V.langs M) : V.langs (L ⊓ M) :=
+  V.mem_quotient_of_le inf_syntacticCon_le_syntacticCon_inf (V.mem_quotient_inf hL hM)
 
-/-- **Closure under union** — by De Morgan, `L ⊔ M = (Lᶜ ⊓ Mᶜ)ᶜ`. -/
-theorem langs_sup {M : Language α} (hL : V.langs L) (hM : V.langs M) : V.langs (L ⊔ M) := by
+theorem langs_sup (hL : V.langs L) (hM : V.langs M) : V.langs (L ⊔ M) := by
   rw [show L ⊔ M = (Lᶜ ⊓ Mᶜ)ᶜ by rw [compl_inf, compl_compl, compl_compl]]
   exact V.langs_compl (V.langs_inf (V.langs_compl hL) (V.langs_compl hM))
 
-/-- **The full language** is in `V.langs` — recognized by the trivial monoid, which is in every
-pseudovariety (`memUnit`). -/
 theorem langs_univ : V.langs (⊤ : Language α) :=
-  V.langs_of_recognizes V.memUnit (1 : FreeMonoid α →* PUnit.{u + 1}) Set.univ
-    (fun _ => iff_of_true (Set.mem_univ _) (Set.mem_univ _))
+  V.langs_of_recognizes V.memUnit (η := (1 : FreeMonoid α →* PUnit.{u + 1})) ⟨Set.univ, rfl⟩
 
-/-- **The empty language** is in `V.langs` — `⊥ = ⊤ᶜ`. -/
 theorem langs_bot : V.langs (⊥ : Language α) := by
   simpa using V.langs_compl V.langs_univ
 
-/-- **Closure under inverse homomorphism.** If `Lb` over `β` is in `V.langs` and
-`φ : FreeMonoid α →* FreeMonoid β` is any monoid hom, the preimage language is in `V.langs`. The
-recognizer is `Lb.toSyntacticMonoid.comp φ` into the finite `Lb.SyntacticMonoid ∈ V`. Generalizes
-`Language.IsStarFree.comap`. -/
+/-- The languages of `V` are closed under inverse homomorphisms of free monoids. -/
 theorem langs_comap {β : Type u} {Lb : Language β} (h : V.langs Lb)
     (φ : FreeMonoid α →* FreeMonoid β) :
     V.langs {w : List α | φ (FreeMonoid.ofList w) ∈ Lb} := by
-  have : Finite Lb.SyntacticMonoid := IsRegular.finite_syntacticMonoid h.1
-  refine V.langs_of_recognizes h.2 (Lb.toSyntacticMonoid.comp φ)
-    {m | ∃ u : FreeMonoid β, Lb.toSyntacticMonoid u = m ∧ u ∈ Lb} fun w => ?_
-  refine ⟨fun hw => ⟨φ (FreeMonoid.ofList w), rfl, hw⟩, fun ⟨u, hu, hmem⟩ => ?_⟩
-  exact (SyntacticEquiv.mem_iff ((toSyntacticMonoid_eq_iff (L := Lb)).mp hu)).mp hmem
-
-/-! ### Closure under quotients
-
-Eilenberg's fourth axiom for a variety of languages ([eilenberg-1976] VII.3.3, stated there for
-letters; [pin-mfa] Ch. XIII §3 states it for words, equivalently). The syntactic congruence of a
-quotient is coarser than that of the language, so the syntactic monoid of the quotient is a
-quotient of the original's. -/
+  obtain ⟨S, hS⟩ := Lb.recognizes_toSyntacticMonoid
+  exact V.langs_of_recognizes h (η := Lb.toSyntacticMonoid.comp φ)
+    ⟨S, Set.ext fun w ↦ Set.ext_iff.mp hS (φ (FreeMonoid.ofList w))⟩
 
 variable {V}
 
-/-- A coarser syntactic congruence keeps the language in `V.langs`. -/
-private theorem langs_of_syntacticCon_le {M : Language α} (h : V.langs L)
-    (hle : L.syntacticCon ≤ M.syntacticCon) : V.langs M := by
-  have : Finite L.SyntacticMonoid := IsRegular.finite_syntacticMonoid h.1
-  have hsurj : Function.Surjective (Con.map L.syntacticCon M.syntacticCon hle) :=
-    Con.lift_surjective_of_surjective _ Con.mk'_surjective
-  have : Finite M.SyntacticMonoid := .of_surjective _ hsurj
-  exact ⟨IsRegular.of_finite_syntacticMonoid ‹_›, V.quot hsurj h.2⟩
-
-/-- **Closure under left quotient** — Eilenberg's axiom VII.3.3. -/
 theorem langs_leftQuotient (h : V.langs L) (u : List α) : V.langs (L.leftQuotient u) :=
   langs_of_syntacticCon_le h (L.syntacticCon_le_leftQuotient u)
 
-/-- **Closure under right quotient** — Eilenberg's axiom VII.3.3. -/
 theorem langs_rightQuotient (h : V.langs L) (u : List α) : V.langs (L.rightQuotient u) :=
   langs_of_syntacticCon_le h (L.syntacticCon_le_rightQuotient u)
+
+variable (V) in
+/-- The languages of `V` over `α`, as a Boolean subalgebra of `Language α`. -/
+def toBooleanSubalgebra (α : Type u) : BooleanSubalgebra (Language α) where
+  carrier := {L | V.langs L}
+  supClosed' _ hL _ hM := V.langs_sup hL hM
+  infClosed' _ hL _ hM := V.langs_inf hL hM
+  compl_mem' h := V.langs_compl h
+  bot_mem' := V.langs_bot
+
+@[simp] theorem mem_toBooleanSubalgebra : L ∈ V.toBooleanSubalgebra α ↔ V.langs L := Iff.rfl
 
 end Monoid.Pseudovariety
