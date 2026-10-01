@@ -3,6 +3,7 @@ module
 public import Linglib.Syntax.Clause.Relative
 public import Linglib.Syntax.Gender.Basic
 public import Linglib.Syntax.Number.Basic
+public import Linglib.Semantics.Reference.Definiteness
 public import Linglib.Fragments.Arabic.ModernStandard.Case
 
 /-!
@@ -93,9 +94,9 @@ theorem relativePronoun_inj :
 /-- The dual relative pronoun merges the genitive and the accusative against the nominative, as
 the dual declension does (p. 188). -/
 theorem relativePronoun_dual_syncretism :
-    ∀ g ∈ [Gender.masculine, .feminine], ∀ c c',
+    ∀ g ∈ [Gender.masculine, .feminine], ∀ s c c',
       relativePronoun .dual g c = relativePronoun .dual g c' ↔
-        baytaani.form .definite c = baytaani.form .definite c' := by
+        Declension.dual s c = Declension.dual s c' := by
   decide
 
 /-! ### The relativizer -/
