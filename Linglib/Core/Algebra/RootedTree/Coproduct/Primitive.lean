@@ -7,8 +7,9 @@ module
 
 public import Linglib.Core.Algebra.BigOperators.Multiset
 public import Linglib.Core.Algebra.RootedTree.Homogeneous
+public import Linglib.Core.Algebra.RootedTree.SymmetricAlgebra
 public import Linglib.Core.Data.Multiset.Antidiagonal
-public import Mathlib.RingTheory.TensorProduct.Maps
+public import Mathlib.RingTheory.Bialgebra.SymmetricAlgebra
 
 /-!
 # The primitive coproduct on the Connes–Kreimer algebra
@@ -27,14 +28,14 @@ admissible-cut coproducts of the sibling files.
 * `ConnesKreimer.comulPrim_coassoc`, `ConnesKreimer.rTensor_counit_comp_comulPrim`,
   `ConnesKreimer.lTensor_counit_comp_comulPrim`, `ConnesKreimer.comm_comp_comulPrim`: the
   coalgebra laws and cocommutativity, in the shape of `Bialgebra.ofAlgHom`.
+* `ConnesKreimer.comulPrim_comp_equiv`: along `IsSymmetricAlgebra.connesKreimer`, `Δ_P` is the
+  comultiplication of `SymmetricAlgebra.instBialgebra`.
 
 ## Implementation notes
 
 `Δ_P` is not a `Bialgebra` instance: the carrier already carries the admissible-cut
 `Bialgebra` (`HopfAlgebra.lean`), so `Δ_P` is an algebra homomorphism with its laws stated
-separately. Under the identification of `ConnesKreimer R T` with `SymmetricAlgebra R (T →₀ R)`,
-`Δ_P` is the comultiplication of `SymmetricAlgebra.instBialgebra`; the identification is not
-formalized.
+separately.
 
 ## References
 
@@ -135,5 +136,15 @@ theorem comm_comp_comulPrim :
       (comulPrim (R := R) (T := T)) = comulPrim := by
   ext t
   simp [add_comm]
+
+/-- Along the identification of `ConnesKreimer R T` with the symmetric algebra on a module with
+basis `T`, `Δ_P` is the comultiplication of the symmetric algebra. -/
+theorem comulPrim_comp_equiv {M : Type*} [AddCommMonoid M] [Module R M] (b : Module.Basis T R M) :
+    (comulPrim (R := R)).comp (IsSymmetricAlgebra.connesKreimer b).equiv.toAlgHom =
+      (Algebra.TensorProduct.map (IsSymmetricAlgebra.connesKreimer b).equiv.toAlgHom
+        (IsSymmetricAlgebra.connesKreimer b).equiv.toAlgHom).comp
+        (Bialgebra.comulAlgHom R (SymmetricAlgebra R M)) := by
+  refine SymmetricAlgebra.algHom_ext <| b.ext fun t ↦ ?_
+  simp
 
 end ConnesKreimer
