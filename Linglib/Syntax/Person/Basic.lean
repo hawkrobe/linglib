@@ -20,10 +20,9 @@ tag `Person=0` is ingested (`Morphology/Word/UD.lean`). A value means the partic
 referents can have (`Person.participantSets`), and whether it includes the speaker, is a
 speech-act participant, or marks clusivity is read off them.
 
-`Person.prominence` ranks the first person above the second and the second above the third. It
-is the size of the feature bundle (`Person.prominence_eq_card`) and the order resolution induces
-up to clusivity (`Person.prominence_le_iff`), the hierarchy of reference
-and coordination of Zwicky, Corbett, and Dalrymple and Kaplan. It is not the only person scale:
+The person hierarchy 1 > 2 > 3, the hierarchy of reference and coordination of Zwicky, Corbett,
+and Dalrymple and Kaplan, is `Person.prominence`, the top of a value's feature bundle
+(`Syntax/Person/Features.lean`). It is not the only person scale:
 Zwicky distinguishes morphosyntactic hierarchies that order the participants otherwise, as
 Algonquian ranks the second person above the first, and for argument coding splits Haspelmath's
 person scale is the binary cut between participants and the rest (`Person.Class`).
@@ -36,7 +35,6 @@ person scale is the binary cut between participants and the rest (`Person.Class`
 * `Person.IncludesSpeaker`, `Person.IsSAP`, `Person.MarksClusivity`: predicates read off the
   participant sets.
 * `Person.coarsen`: the value without its clusivity.
-* `Person.prominence`: the person hierarchy as a rank.
 
 ## References
 
@@ -140,26 +138,16 @@ The clusivity values coarsen to the tripartition's `first`, as `Number.dual` coa
 `Number.plural`, so a system without clusivity realizes inclusive and exclusive referents
 alike. -/
 
-/-- `coarsen` collapses clusivity, sending each value to its tripartition value. -/
-def coarsen : Person → Person
-  | .firstInclusive | .firstExclusive => .first
-  | p => p
+/-- `coarsen` collapses clusivity, sending a value marking clusivity to the first person and
+keeping every other value. -/
+def coarsen (p : Person) : Person := if p.MarksClusivity then .first else p
 
 @[simp] theorem coarsen_idempotent (p : Person) :
-    p.coarsen.coarsen = p.coarsen := by cases p <;> rfl
+    p.coarsen.coarsen = p.coarsen := by revert p; decide
 
 /-- Coarsening erases exactly the clusivity marking. -/
 theorem coarsen_eq_self_iff (p : Person) :
     p.coarsen = p ↔ ¬MarksClusivity p := by
   revert p; decide
-
-/-! ### Prominence -/
-
-/-- `prominence` ranks the first person (2) above the second (1) and the second above the third
-(0); the clusivity values rank with `first`. -/
-def prominence : Person → Nat
-  | .first | .firstInclusive | .firstExclusive => 2
-  | .second => 1
-  | .third => 0
 
 end Person

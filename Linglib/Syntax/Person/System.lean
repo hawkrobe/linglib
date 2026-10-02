@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Order.SupCon
-public import Linglib.Syntax.Person.Lattice
+public import Linglib.Syntax.Person.Features
 
 /-!
 # Person systems

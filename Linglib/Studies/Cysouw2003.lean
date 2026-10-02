@@ -4,7 +4,7 @@ public import Linglib.Data.Examples.Cysouw2003
 public import Linglib.Core.Order.UpperLower.Finset
 public import Linglib.Syntax.Number.Basic
 public import Linglib.Core.Data.Setoid.Basic
-public import Linglib.Syntax.Person.Category
+public import Linglib.Syntax.Person.Features
 public import Linglib.Fragments.English.Pronouns
 public import Linglib.Fragments.Tagalog.Pronouns
 public import Linglib.Morphology.Paradigm.Morphome
