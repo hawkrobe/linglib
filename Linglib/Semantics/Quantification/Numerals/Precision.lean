@@ -6,37 +6,45 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Semantics.Quantification.Numerals.Roundness
-public import Linglib.Core.Algebra.Order.ToIntervalMod
+public import Linglib.Semantics.Degree.Granularity
+public import Mathlib.Data.Rat.Floor
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Pragmatic halo and precision modes
 
-Rounding semantics for numeral imprecision: round numbers (100, 1000) admit
-imprecise construals; sharp numbers (103, 1001) do not — [lasersohn-1999]'s
-pragmatic halo, [krifka-2007]'s approximate interpretation.
+Round numbers such as 100 and 1000 admit imprecise construals and sharp numbers such as 103 do
+not, Lasersohn's pragmatic halo and Krifka's approximate interpretation. Kao et al. project a
+value either exactly or rounded to the nearest multiple of ten, and here the halo width and the
+precision mode of a numeral grow with its roundness score.
 
 ## Main definitions
 
-- `PrecisionMode`, `projectPrecision`, `roundToNearest`: the two meaning
-  projections `f_e(s) = s` and `f_a(s) = Round(s)` of
-  [kao-etal-2014-hyperbole], with `Round` = round-to-nearest-multiple.
-  `Studies/KaoWuEtAl2014.lean` grounds its goal projections in these.
-- `haloWidth`, `withinHalo`, `inferPrecisionMode`: halo width, halo
-  membership, and precision mode as
-  functions of the k-ness score (`Roundness.roundnessScore`). Only the
-  monotone relationship — rounder numerals carry wider halos and favour
-  approximate construal — is motivated by the cited papers
-  ([woodin-etal-2024]'s corpus finding); the magnitude constants and the
-  score threshold are stipulations of this formalisation.
+* `Numerals.Precision.projectPrecision`: the exact projection `f_e(s) = s` and the approximate
+  projection `f_a(s) = Round(s)`, the nearest multiple `Degree.Granularity.representative`.
+* `Numerals.Precision.haloWidth`, `Numerals.Precision.inferPrecisionMode`: the halo width and
+  the precision mode of a numeral as functions of its roundness score.
+
+## Implementation notes
+
+Only the monotone relationship, that rounder numerals carry wider halos and favour approximate
+construal, is motivated by the corpus finding of Woodin et al.; the magnitude constants and the
+score threshold are stipulations.
+
+## References
+
+* [lasersohn-1999]
+* [krifka-2007]
+* [kao-etal-2014-hyperbole]
+* [woodin-etal-2024]
 -/
 
 @[expose] public section
 
 namespace Numerals.Precision
 
-/-- Precision mode for numeral interpretation: which of
-[kao-etal-2014-hyperbole]'s two meaning projections applies. -/
+/-- A precision mode says which of [kao-etal-2014-hyperbole]'s two meaning projections applies to a
+numeral. -/
 inductive PrecisionMode where
   /-- Exact interpretation, `f_e(s) = s`. -/
   | exact
@@ -44,27 +52,12 @@ inductive PrecisionMode where
   | approximate
   deriving Repr, DecidableEq, Fintype
 
-/-- Round a rational to the nearest multiple of `base` —
-[kao-etal-2014-hyperbole]'s `Round` at the default `base = 10`, the
-nearest-representative map of the width-`base` bucket partition
-(`Core/Algebra/Order/ToIntervalMod.lean`). -/
-def roundToNearest (n : ℚ) (base : ℚ := 10) : ℚ :=
-  round (n / base) * base
-
-/-- Rounding moves a value by at most half the grain: the imprecision
-introduced by `f_a` at base 10 is bounded by 5
-(`abs_sub_round_div_zsmul_le`). -/
-theorem abs_sub_roundToNearest_le (n : ℚ) : |n - roundToNearest n| ≤ 5 := by
-  have h := abs_sub_round_div_zsmul_le (by norm_num : (0 : ℚ) < 10) n
-  norm_num [zsmul_eq_mul] at h
-  simpa [roundToNearest] using h
-
-/-- Project a value according to precision mode: `f_e` is the identity,
-`f_a` rounds to the nearest multiple of `base`. -/
+/-- Projecting a value by precision mode leaves it unchanged under `f_e` and
+rounds it to the nearest multiple of `base` under `f_a`. -/
 def projectPrecision (mode : PrecisionMode) (n : ℚ) (base : ℚ := 10) : ℚ :=
   match mode with
   | .exact => n
-  | .approximate => roundToNearest n base
+  | .approximate => Degree.Granularity.representative base n
 
 /-! ### Halo width and precision-mode inference
 
@@ -98,8 +91,8 @@ theorem haloWidth_nonneg (n : Nat) : 0 ≤ haloWidth n := by
 def inferPrecisionMode (n : Nat) : PrecisionMode :=
   if Roundness.roundnessScore n ≥ 2 then .approximate else .exact
 
-/-- Every multiple of 10 is inferred `.approximate`: its roundness score is at
-least 2 (`Roundness.score_ge_two_of_div10`). -/
+/-- Every multiple of 10 is inferred `.approximate`, since its roundness score is at least 2
+(`Roundness.score_ge_two_of_div10`). -/
 theorem inferPrecisionMode_eq_approximate_of_ten_dvd {n : ℕ} (h : 10 ∣ n) :
     inferPrecisionMode n = .approximate := by
   unfold inferPrecisionMode

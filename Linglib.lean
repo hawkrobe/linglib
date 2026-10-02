@@ -15,7 +15,6 @@ import Linglib.Core.Algebra.Group.Subquotient
 import Linglib.Core.Algebra.Group.WithOne
 import Linglib.Core.Algebra.Opposites
 import Linglib.Core.Algebra.Order.Interval.Set.Instances
-import Linglib.Core.Algebra.Order.ToIntervalMod
 import Linglib.Core.Algebra.RootedTree.BMinus
 import Linglib.Core.Algebra.RootedTree.BirkhoffFactorization
 import Linglib.Core.Algebra.RootedTree.BirkhoffFactorizationSemiring

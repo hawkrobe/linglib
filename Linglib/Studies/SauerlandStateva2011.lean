@@ -6,31 +6,36 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Semantics.Degree.Granularity
+public import Mathlib.Data.Finset.Max
+public import Mathlib.Data.Rat.Floor
 
 /-!
 # Sauerland & Stateva (2011): Two Types of Vagueness
 
-This file formalizes the chapter's argument from the distribution of approximators that
-vagueness comes in two kinds. Scalar vagueness belongs to point-denoting scalar terms,
-numerals and clock times, interpreted at a contextual granularity after [krifka-2007], and
-epistemic vagueness to terms like *heap* whose extension varies across indistinguishable
-worlds. Scalar approximators such as *exactly* and *approximately* are granularity setters,
-resetting the context's granularity to the finest or the coarsest available level
-(`Degree.Granularity.finestWidth`, `coarsestWidth`), while epistemic approximators quantify
-over worlds, which is why the two classes distribute complementarily. Within the scalar
-class the endpoint approximators *absolutely*, *completely* and *more or less* combine only
-with scale endpoints and block plain *exactly* and *approximately* there. The chapter's
-example expressions and approximators are classified accordingly (`Item.itemClass`,
-`Approximator.selects`), and the classification reproduces every cited judgment
-(`classification_predicts_distribution`); the reset targets bound every available
-interpretation (`exactly_narrowest`, `approximately_widest`), and a second scalar
-approximator is vacuous because the first reset leaves a single granularity
-(`second_reset_vacuous`).
+Sauerland and Stateva argue from the distribution of approximators that vagueness comes in two
+kinds. Scalar vagueness belongs to terms that denote a point on a scale, such as numerals: a
+contextual granularity maps the point to an interval around it, after Krifka, and scalar
+approximators such as *exactly* and *approximately* reset the granularity to the finest or the
+coarsest available one. Epistemic vagueness belongs to terms like *heap*, whose extension varies
+across indistinguishable worlds, and epistemic approximators quantify over those worlds. Within
+the scalar class, *absolutely*, *completely* and *more or less* take only scale endpoints and
+block *exactly* and *approximately* there.
+
+## Main results
+
+* `SauerlandStateva2011.classification_predicts_distribution`: the two-type classification
+  reproduces every cited judgment.
+* `SauerlandStateva2011.exactly_narrowest`, `SauerlandStateva2011.approximately_widest`: at a
+  degree that is a scale point of every available granularity, *exactly* yields the narrowest
+  reading and *approximately* the widest, (19).
+* `SauerlandStateva2011.second_reset_vacuous`: a second scalar approximator is vacuous, §6.3.5.
 
 ## Implementation notes
 
-The chapter is not available for verification here, so the judgments are as the file found
-them; the granularity intervals are those of `Semantics/Degree/Granularity`.
+Granularities are the grains of `Degree.Granularity`, identified by their widths, and the
+interval a term denotes is the cell of its degree. Cells are half-open so that they partition
+the scale; the chapter writes them closed, (12)–(13). The examples at the end check the
+intervals of (13) and the oddity of (20).
 
 ## References
 
@@ -56,10 +61,9 @@ inductive Item where
   | beefStroganoff
   deriving DecidableEq, Repr
 
-/-- The classification the dualistic theory assigns: scalar terms denote
-scale points — non-endpoints (numerals) or endpoints (*dry*, *full*, their
-§6.4 closed-scale adjectives) — while epistemically vague terms denote no
-point at all. -/
+/-- The dualistic theory classifies scalar terms as denoting scale points, non-endpoints (numerals)
+or endpoints (*dry*, *full*, the closed-scale adjectives of §6.4), and epistemically vague terms as
+denoting no point at all. -/
 inductive ItemClass where
   | scalarNonEndpoint
   | scalarEndpoint
@@ -81,16 +85,15 @@ inductive Approximator where
   | moreOrLess
   deriving DecidableEq, Repr
 
-/-- The item class each approximator selects: plain scalar approximators
-take non-endpoints, the specialized endpoint approximators take endpoints
-(§6.4, (32): *absolutely*/*completely*/*more or less* make endpoints
-more or less precise and block *exactly*/*approximately* there). -/
+/-- Plain scalar approximators select non-endpoints, and the endpoint approximators *absolutely*,
+*completely* and *more or less*, which make endpoints more or less precise and block *exactly* and
+*approximately* there, select endpoints, §6.4 and (32). -/
 def Approximator.selects : Approximator → ItemClass
   | .exactly | .approximately => .scalarNonEndpoint
   | .absolutely | .completely | .moreOrLess => .scalarEndpoint
 
-/-- The theory's compatibility prediction: an approximator combines with an
-item iff the item is of the class it selects. -/
+/-- The theory predicts that an approximator combines with an item exactly when the item is of the
+class the approximator selects. -/
 def compatible (a : Approximator) (i : Item) : Prop :=
   a.selects = i.itemClass
 
@@ -104,11 +107,10 @@ structure Judgment where
   acceptable : Bool
   deriving Repr
 
-/-- Their cited judgments: (4a)/(4b) *exactly/approximately fifty* vs
-`#`…*Beef Stroganoff*; (6a)/(6b) `*`*absolutely fifty* vs *absolutely*
-+ endpoint; (35a)/(35b) `#`*exactly dry/full* vs *exactly three*; (37)
-*completely dry* vs `#`*completely three*; (44) *approximately three* vs
-`#`…*dry*; (45) *more or less dry* vs `#`…*three*. -/
+/-- The cited judgments are (4a)/(4b) *exactly/approximately fifty* vs `#`…*Beef Stroganoff*;
+(6a)/(6b) `*`*absolutely fifty* vs *absolutely* + endpoint; (35a)/(35b) `#`*exactly dry/full* vs
+*exactly three*; (37) *completely dry* vs `#`*completely three*; (44) *approximately three* vs
+`#`…*dry*; and (45) *more or less dry* vs `#`…*three*. -/
 def Judgment.rows : List Judgment :=
   [⟨.exactly, .fifty, true⟩, ⟨.approximately, .fifty, true⟩,
    ⟨.exactly, .beefStroganoff, false⟩, ⟨.approximately, .beefStroganoff, false⟩,
@@ -118,41 +120,56 @@ def Judgment.rows : List Judgment :=
    ⟨.approximately, .three, true⟩, ⟨.approximately, .dry, false⟩,
    ⟨.moreOrLess, .dry, true⟩, ⟨.moreOrLess, .three, false⟩]
 
-/-- **The dualism argument**: the two-type classification reproduces every
-cited judgment — approximator acceptability is class match. -/
+/-- The two-type classification reproduces every cited judgment, an approximator being acceptable
+exactly with the class it selects; this is the dualism argument. -/
 theorem classification_predicts_distribution :
     ∀ j ∈ Judgment.rows, (compatible j.approximator j.item ↔ j.acceptable) := by
   decide
 
-/-! ### Granularity setting (18)–(19)
+/-! ### Granularity setting, (12)–(20) -/
 
-Scalar approximators reset the context's granularity parameter:
-*exactly* to the finest available level, *approximately* to the coarsest.
-The reset targets bound every available interpretation — at the finest
-width the denotation interval (12)–(13), `mkGranInterval` is
-contained in all others. -/
+variable (𝒢 : Finset ℚ) (h𝒢 : 𝒢.Nonempty) {d ε : ℚ}
 
-variable (𝒢 : Finset ℚ) (h𝒢 : 𝒢.Nonempty)
+/-- At a degree that is a scale point of every available granularity, as *5 meters* is in Figure
+6.1, *exactly* yields the narrowest available reading, (19a), since the cell at the finest width
+lies inside the cell at every available one. -/
+theorem exactly_narrowest (hpos : ∀ ε ∈ 𝒢, 0 < ε) (hd : ∀ ε ∈ 𝒢, d ∈ AddSubgroup.zmultiples ε)
+    (hε : ε ∈ 𝒢) : (grain (𝒢.min' h𝒢)).cell d ⊆ (grain ε).cell d :=
+  cell_subset_cell (hpos _ (𝒢.min'_mem h𝒢)) (𝒢.min'_le ε hε) (hd _ (𝒢.min'_mem h𝒢)) (hd ε hε)
 
-/-- (19a): *exactly* yields the narrowest available interpretation —
-its denotation interval sits inside every available one. -/
-theorem exactly_narrowest {ε : ℚ} (hε : ε ∈ 𝒢) (d : ℚ) :
-    (mkGranInterval ε d).lo ≤ (mkGranInterval (finestWidth 𝒢 h𝒢) d).lo ∧
-    (mkGranInterval (finestWidth 𝒢 h𝒢) d).hi ≤ (mkGranInterval ε d).hi :=
-  finer_contained _ _ d (finestWidth_le 𝒢 h𝒢 hε)
+/-- At a degree that is a scale point of every available granularity, *approximately* yields the
+widest available reading, (19b). -/
+theorem approximately_widest (hpos : ∀ ε ∈ 𝒢, 0 < ε)
+    (hd : ∀ ε ∈ 𝒢, d ∈ AddSubgroup.zmultiples ε) (hε : ε ∈ 𝒢) :
+    (grain ε).cell d ⊆ (grain (𝒢.max' h𝒢)).cell d :=
+  cell_subset_cell (hpos ε hε) (𝒢.le_max' ε hε) (hd ε hε) (hd _ (𝒢.max'_mem h𝒢))
 
-/-- (19b): *approximately* yields the widest available
-interpretation. -/
-theorem approximately_widest {ε : ℚ} (hε : ε ∈ 𝒢) (d : ℚ) :
-    (mkGranInterval (coarsestWidth 𝒢 h𝒢) d).lo ≤ (mkGranInterval ε d).lo ∧
-    (mkGranInterval ε d).hi ≤ (mkGranInterval (coarsestWidth 𝒢 h𝒢) d).hi :=
-  finer_contained _ _ d (le_coarsestWidth 𝒢 h𝒢 hε)
-
-/-- A second scalar approximator is vacuous: the first reset leaves a single granularity, on
-which resetting in either direction returns the same width. -/
+/-- A second scalar approximator is vacuous, §6.3.5, since the first resets the granularities to a
+single one, which either reset returns. -/
 theorem second_reset_vacuous (ε : ℚ) :
-    finestWidth {ε} (Finset.singleton_nonempty ε) = ε ∧
-    coarsestWidth {ε} (Finset.singleton_nonempty ε) = ε :=
-  ⟨finestWidth_singleton ε, coarsestWidth_singleton ε⟩
+    ({ε} : Finset ℚ).min' (Finset.singleton_nonempty ε) = ε ∧
+      ({ε} : Finset ℚ).max' (Finset.singleton_nonempty ε) = ε :=
+  ⟨Finset.min'_singleton ε, Finset.max'_singleton ε⟩
+
+/-! (13): *5 meters* at 1 m, *4 meters 50* at 50 cm, and *4 meters 90* at 10 cm. -/
+
+example : (grain (1 : ℚ)).cell 5 = Set.Ico (9 / 2) (11 / 2) := by
+  rw [cell_grain one_pos, representative_eq_self_of_mem_zmultiples one_ne_zero ⟨5, by norm_num⟩]
+  norm_num
+
+example : (grain (1 / 2 : ℚ)).cell (9 / 2) = Set.Ico (17 / 4) (19 / 4) := by
+  rw [cell_grain (by norm_num),
+    representative_eq_self_of_mem_zmultiples (by norm_num) ⟨9, by norm_num⟩]
+  norm_num
+
+example : (grain (1 / 10 : ℚ)).cell (49 / 10) = Set.Ico (97 / 20) (99 / 20) := by
+  rw [cell_grain (by norm_num),
+    representative_eq_self_of_mem_zmultiples (by norm_num) ⟨49, by norm_num⟩]
+  norm_num
+
+/-! (20): at a coarsest width of ten, *49* and *50* share a cell, which the shorter *50* denotes,
+so *approximately 49* is odd. -/
+
+example : grain (10 : ℚ) 49 50 := by norm_num [grain_iff, round_eq_iff]
 
 end SauerlandStateva2011
