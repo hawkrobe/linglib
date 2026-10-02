@@ -507,7 +507,6 @@ def drown : Verb := .mkRegular {
   form := "drown"
   frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
-  causative := some .make
   levinClasses := {LevinClass.poison, .suffocate} }
 
 /-! ### Emission (§ 43) -/

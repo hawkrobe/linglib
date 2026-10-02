@@ -32,7 +32,7 @@ namespace Japanese
 
 open ArgumentStructure
 
-/-- A Japanese verb: the root entry with its romanized citation form, and its spelling. -/
+/-- A Japanese verb is the root entry, with its romanized citation form, and its spelling. -/
 structure Verb extends _root_.Verb where
   /-- The spelling in kanji and kana. -/
   script : String
@@ -93,7 +93,6 @@ def ik_ase : Verb where
   script := "行かせる"
   frames := [ArgumentFrame.smallClause]
   readings := [{ frame := ArgumentFrame.smallClause, control := some .objectControl }]
-  causative := some .make
 
 /-- 食べさせる *tabe-sase-ru* 'make eat', the causative of *taberu* with an accusative causee. -/
 def tabe_sase : Verb where
@@ -101,12 +100,11 @@ def tabe_sase : Verb where
   script := "食べさせる"
   frames := [ArgumentFrame.smallClause]
   readings := [{ frame := ArgumentFrame.smallClause, control := some .objectControl }]
-  causative := some .make
 
 /-! ### Departure verbs -/
 
-/-- 離れる *hanareru* 'leave': the leaver its theme, the source accusative or ablative, and no
-thematic Voice. -/
+/-- 離れる *hanareru* 'leave' takes the leaver as its theme and the source in the accusative or
+ablative, with no thematic Voice. -/
 def hanareru : Verb where
   form := "hanareru"
   script := "離れる"
@@ -114,8 +112,8 @@ def hanareru : Verb where
   voiceType := some .nonThematic
   passivizable := false
 
-/-- 出る *deru* 'exit': the leaver its theme, the source accusative or ablative, and no thematic
-Voice. -/
+/-- 出る *deru* 'exit' takes the leaver as its theme and the source in the accusative or ablative,
+with no thematic Voice. -/
 def deru : Verb where
   form := "deru"
   script := "出る"

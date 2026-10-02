@@ -64,14 +64,12 @@ def faire : Verb where
   form := "faire"
   frames := [ArgumentFrame.smallClause]
   readings := [{ frame := ArgumentFrame.smallClause, control := some .objectControl }]
-  causative := some .make
 
 /-- *laisser* 'let', the permissive causative. -/
 def laisser : Verb where
   form := "laisser"
   frames := [ArgumentFrame.smallClause]
   readings := [{ frame := ArgumentFrame.smallClause, control := some .objectControl }]
-  causative := some .enable
 
 /-! ### Anticausatives
 

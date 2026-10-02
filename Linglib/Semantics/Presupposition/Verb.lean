@@ -5,18 +5,17 @@ public import Linglib.Syntax.Category.Verb.Defs
 /-!
 # Factivity and trigger status of a verb entry
 
-A verb entry is factive when it carries a [karttunen-1971b] factivity class; veridicality is an
-entailment and does not make it factive. It presupposes its complement by factivity or as a
-change of state, and its trigger type follows from its event structure ([roberts-simons-2024]):
-a soft trigger when it presupposes its complement, a prerequisite trigger when it is an
-implicative ([nadathur-2023-implicatives]), and a soft trigger when it is an occasion verb
-([solstad-bott-2024]).
+A verb entry is factive when it carries one of Karttunen's factivity classes; veridicality is an
+entailment and does not make it factive. A verb presupposes its complement by factivity or as a
+change of state. Its trigger type follows from its event structure, after Roberts and Simons: it
+is a soft trigger when it presupposes its complement or, after Solstad and Bott, when it is an
+occasion verb, and an implicative trigger when it carries an implication signature.
 
 ## References
 
+* [karttunen-1971]
 * [karttunen-1971b]
 * [roberts-simons-2024]
-* [nadathur-2023-implicatives]
 * [solstad-bott-2024]
 -/
 
@@ -41,7 +40,7 @@ distinction is not operationalized, so `.soft` stands for both the complement pr
 and the occasion presupposition. -/
 def triggerType? (v : Verb) : Option Presupposition.TriggerType :=
   if v.PresupposesComplement then some .soft
-  else if v.implicative ≠ none then some .prerequisite
+  else if v.implicative ≠ none then some .implicative
   else if v.senseTag = .occasion then some .soft
   else none
 

@@ -144,7 +144,6 @@ insubstantial patient and a unidirectional, gash-like separation, and it is inco
 careful, controlled action ([spalek-mcnally-2026] §3.2). -/
 def rasgar : SpanishVerbEntry :=
   { form := "rasgar", frames := [ArgumentFrame.np, ArgumentFrame.unaccusative],
-    causative := some .make,
     anticausativeMarking := some .marked,
     root := { content := {
       force := {.low, .moderate}
@@ -345,7 +344,6 @@ def hacer : Verb where
   form := "hacer"
   frames := [ArgumentFrame.infinitival, ArgumentFrame.subjunctiveClause]
   readings := [{ frame := ArgumentFrame.infinitival, control := some .objectControl }]
-  causative := some .make
 
 /-- *convencer* 'convince' takes an object and a *de que* clause, which reports an intention in
 the subjunctive and a belief in the indicative. -/

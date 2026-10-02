@@ -5,15 +5,16 @@ public import Linglib.Fragments.English.Verbs.Basic
 /-!
 # English causative verbs
 
-This file defines the English periphrastic causatives *cause*, *make*, *let*, *have*, *get*,
-*force* and *prevent*, and the lexical causatives *kill*, *break* and *tear*, with the linking
-and the entailment each carries.
+The English periphrastic causatives are *cause*, *make*, *let*, *have*, *get*, *force* and
+*prevent*, and the lexical causatives here are *kill*, *break* and *tear*. Karttunen counts
+*cause*, *make*, *have* and *force* among the verbs whose affirmation implies the complement, and
+*prevent* among those whose affirmation implies its negation.
 
 ## References
 
+* [karttunen-1971]
 * [levin-1993]
 * [majid-boster-bowerman-2008]
-* [nadathur-lauer-2020]
 * [spalek-mcnally-2026]
 -/
 
@@ -26,17 +27,17 @@ open English.Inflection
 
 /-! ### Causative (Periphrastic) -/
 
-/-- "cause" — counterfactual dependence (necessity semantics) -/
+/-- *cause* takes an object and an infinitive, *cause the vase to fall*. -/
 def cause : Verb := .mkRegular {
   form := "cause"
   frames := [ArgumentFrame.infinitival]
   readings := [{ frame := ArgumentFrame.infinitival, control := some .objectControl }]
   vendlerClass := some .accomplishment
-  causative := some .cause
+  implicative := some ⟨some .positive, none⟩
   levinClasses := {LevinClass.engender} }
 
-/-- "make" — the periphrastic causative asserting a direct sufficient guarantee, which Levin
-    does not class (the *make* of 26.1 is the verb of creation and that of 29.3 the dub verb). -/
+/-- *make* takes an object and a bare infinitive, *make him leave*. Levin does not class it (the
+*make* of 26.1 is the verb of creation and that of 29.3 the dub verb). -/
 def make : Verb where
   form := "make"
   form3sg := "makes"
@@ -46,10 +47,10 @@ def make : Verb where
   frames := [ArgumentFrame.smallClause]
   readings := [{ frame := ArgumentFrame.smallClause, control := some .objectControl }]
   vendlerClass := some .accomplishment
-  causative := some .make
+  implicative := some ⟨some .positive, none⟩
   levinExcluded := {LevinClass.build, .dub}
 
-/-- "let" — permissive causative (barrier removal) -/
+/-- *let* is the permissive causative, *let him leave*. -/
 def let_ : Verb where
   form := "let"
   form3sg := "lets"
@@ -59,9 +60,8 @@ def let_ : Verb where
   frames := [ArgumentFrame.smallClause]
   readings := [{ frame := ArgumentFrame.smallClause, control := some .objectControl }]
   vendlerClass := some .achievement
-  causative := some .enable
 
-/-- "have" — causative use (directive causation) -/
+/-- *have* in its causative use takes an object and a bare infinitive, *have him leave*. -/
 def have_caus : Verb where
   form := "have"
   form3sg := "has"
@@ -71,11 +71,11 @@ def have_caus : Verb where
   frames := [ArgumentFrame.smallClause]
   readings := [{ frame := ArgumentFrame.smallClause, control := some .objectControl }]
   vendlerClass := some .achievement
-  causative := some .make
+  implicative := some ⟨some .positive, none⟩
   senseTag := .causative
 
-/-- "get" — causative use (persuasive causation), which Levin does not class (the *get* of
-    13.5.1 is the verb of obtaining). -/
+/-- *get* in its causative use takes an object and an infinitive, *get him to leave*. Levin does
+not class it (the *get* of 13.5.1 is the verb of obtaining). -/
 def get_caus : Verb where
   form := "get"
   form3sg := "gets"
@@ -85,27 +85,24 @@ def get_caus : Verb where
   frames := [ArgumentFrame.infinitival]
   readings := [{ frame := ArgumentFrame.infinitival, control := some .objectControl }]
   vendlerClass := some .accomplishment
-  causative := some .make
   senseTag := .causative
   levinExcluded := {LevinClass.get}
 
-/-- "force" — coercive causative (overcome resistance) -/
+/-- *force* takes an object and an infinitive, *force him to leave*. -/
 def force : Verb := .mkRegular {
   form := "force"
   frames := [ArgumentFrame.infinitival]
   readings := [{ frame := ArgumentFrame.infinitival, control := some .objectControl }]
   vendlerClass := some .accomplishment
-  causative := some .force }
+  implicative := some ⟨some .positive, none⟩ }
 
-/-- "prevent" — blocking causative (barrier addition).
-    "X prevented Y from V-ing" entails the effect did NOT occur
-    (¬p in w₀) but would have without X's intervention. -/
+/-- *prevent* takes an object and a *from*-gerund, *prevent him from leaving*. -/
 def prevent : Verb := .mkRegular {
   form := "prevent"
   frames := [ArgumentFrame.gerund]
   readings := [{ frame := ArgumentFrame.gerund, control := some .objectControl }]
   vendlerClass := some .accomplishment
-  causative := some .prevent }
+  implicative := some ⟨some .negative, none⟩ }
 
 /-! ### Lexical Causatives -/
 
@@ -114,7 +111,6 @@ def kill : Verb := .mkRegular {
   form := "kill"
   frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
-  causative := some .make
   root := { content := {
     resultGeometry := {.totalDestruction}
     agentControl := {.neutral, .compatible}
@@ -132,7 +128,6 @@ def break_ : Verb where
   frames := [ArgumentFrame.np, ArgumentFrame.unaccusative,
     ArgumentFrame.np_pp (some Adpositions.with_)]
   vendlerClass := some .accomplishment
-  causative := some .make
   root := { content := {
     force := {.moderate, .high}
     -- direction unconstrained: *break* covers snapping (bidirectional),
@@ -162,7 +157,6 @@ def tear_ : Verb where
     ArgumentFrame.np_pp (some Adpositions.with_)]
   vendlerClass := some .accomplishment
   incrementality := some .strict
-  causative := some .make
   root := { content := {
     force := {.moderate, .high}
     forceDirection := {.bidirectional, .unidirectional}

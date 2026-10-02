@@ -144,7 +144,6 @@ def fare : Verb where
   form := "fare"
   frames := [ArgumentFrame.infinitival, ArgumentFrame.subjunctiveClause]
   readings := [{ frame := ArgumentFrame.infinitival, control := some .objectControl }]
-  causative := some .make
   clauseTypers := [che]
 
 /-! ### Transitive verbs with a lexical reciprocal use -/
@@ -351,7 +350,7 @@ def perfect (v : Verb) (fr : ArgumentFrame) : PerfectAux :=
       v.scaleDimension.isSome then .be
   else .have
 
-/-- The auxiliaries of §14.20: *essere* for the changes of location *venire*, *arrivare* and
+/-- The auxiliaries of §14.20 are *essere* for the changes of location *venire*, *arrivare* and
 *salire*, the changes of state *cadere*, *marcire* and *fiorire*, the persistence of a state
 *rimanere*, and existence in a state *esistere*, *bastare* and *sembrare*; *avere* for *lavorare*,
 *nuotare*, *tossire* and *squillare*, activities, and for *correre* with *verso* 'towards', but

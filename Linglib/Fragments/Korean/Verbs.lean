@@ -38,20 +38,17 @@ def wus_ke_ha : Verb where
   form := "wus-ke ha-ta"
   frames := [ArgumentFrame.infinitival]
   readings := [{ frame := ArgumentFrame.infinitival, control := some .objectControl }]
-  causative := some .cause
 
 /-- *ilk-ke ha-ta* 'cause to read', the periphrastic causative. -/
 def ilk_ke_ha : Verb where
   form := "ilk-ke ha-ta"
   frames := [ArgumentFrame.infinitival]
   readings := [{ frame := ArgumentFrame.infinitival, control := some .objectControl }]
-  causative := some .cause
 
 /-- *cwuk-i-ta* 'kill', the morphological causative of *cwuk-ta* 'die'. -/
 def cwuk_i : Verb where
   form := "cwuk-i-ta"
   frames := [ArgumentFrame.np]
-  causative := some .make
 
 /-- The inventory. -/
 def verbs : List Verb := [wus_ke_ha, ilk_ke_ha, cwuk_i]

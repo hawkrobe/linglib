@@ -76,7 +76,6 @@ def a_intentiona : Verb where
 def a_face : Verb where
   form := "a face"
   frames := [⟨some .nominal, [.nominal, .clausal (coding := some .subjunctive)]⟩]
-  causative := some .make
 
 /-- *a spera* takes both particles and *a vrea* only *să*. -/
 theorem a_spera_takes_both :

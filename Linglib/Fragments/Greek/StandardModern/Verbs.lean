@@ -242,7 +242,6 @@ def protitheme : Verb where
 def vazo : Verb where
   form := "vázo"
   frames := [{ complements := [.nominal, .clausal (coding := some .subjunctive)] }]
-  causative := some .make
 
 /-! ### Occurrence verbs -/
 
