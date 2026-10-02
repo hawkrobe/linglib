@@ -7,7 +7,7 @@ module
 
 public import Linglib.Semantics.Degree.Granularity
 public import Mathlib.Data.Finset.Max
-public import Mathlib.Data.Rat.Floor
+public import Mathlib.Algebra.Order.Archimedean.Real.Basic
 
 /-!
 # Sauerland & Stateva (2011): Two Types of Vagueness
@@ -32,7 +32,7 @@ block *exactly* and *approximately* there.
 
 ## Implementation notes
 
-Granularities are the grains of `Degree.Granularity`, identified by their widths, and the
+Granularities are the grains `Degree.grain`, identified by their widths, and the
 interval a term denotes is the cell of its degree. Cells are half-open so that they partition
 the scale; the chapter writes them closed, (12)–(13). The examples at the end check the
 intervals of (13) and the oddity of (20).
@@ -48,7 +48,7 @@ intervals of (13) and the oddity of (20).
 
 namespace SauerlandStateva2011
 
-open Degree.Granularity
+open Degree
 
 /-! ### The two-vagueness classification (§6.3) -/
 
@@ -128,48 +128,52 @@ theorem classification_predicts_distribution :
 
 /-! ### Granularity setting, (12)–(20) -/
 
-variable (𝒢 : Finset ℚ) (h𝒢 : 𝒢.Nonempty) {d ε : ℚ}
+variable {α : Type*} [Field α] [LinearOrder α] [IsStrictOrderedRing α] [FloorRing α]
+  (𝒢 : Finset α) (h𝒢 : 𝒢.Nonempty) {d ε : α}
 
 /-- At a degree that is a scale point of every available granularity, as *5 meters* is in Figure
 6.1, *exactly* yields the narrowest available reading, (19a), since the cell at the finest width
 lies inside the cell at every available one. -/
 theorem exactly_narrowest (hpos : ∀ ε ∈ 𝒢, 0 < ε) (hd : ∀ ε ∈ 𝒢, d ∈ AddSubgroup.zmultiples ε)
     (hε : ε ∈ 𝒢) : (grain (𝒢.min' h𝒢)).cell d ⊆ (grain ε).cell d :=
-  cell_subset_cell (hpos _ (𝒢.min'_mem h𝒢)) (𝒢.min'_le ε hε) (hd _ (𝒢.min'_mem h𝒢)) (hd ε hε)
+  cell_grain_subset_cell_grain (hpos _ (𝒢.min'_mem h𝒢)) (𝒢.min'_le ε hε) (hd _ (𝒢.min'_mem h𝒢))
+    (hd ε hε)
 
 /-- At a degree that is a scale point of every available granularity, *approximately* yields the
 widest available reading, (19b). -/
 theorem approximately_widest (hpos : ∀ ε ∈ 𝒢, 0 < ε)
     (hd : ∀ ε ∈ 𝒢, d ∈ AddSubgroup.zmultiples ε) (hε : ε ∈ 𝒢) :
     (grain ε).cell d ⊆ (grain (𝒢.max' h𝒢)).cell d :=
-  cell_subset_cell (hpos ε hε) (𝒢.le_max' ε hε) (hd ε hε) (hd _ (𝒢.max'_mem h𝒢))
+  cell_grain_subset_cell_grain (hpos ε hε) (𝒢.le_max' ε hε) (hd ε hε) (hd _ (𝒢.max'_mem h𝒢))
 
 /-- A second scalar approximator is vacuous, §6.3.5, since the first resets the granularities to a
 single one, which either reset returns. -/
-theorem second_reset_vacuous (ε : ℚ) :
-    ({ε} : Finset ℚ).min' (Finset.singleton_nonempty ε) = ε ∧
-      ({ε} : Finset ℚ).max' (Finset.singleton_nonempty ε) = ε :=
+theorem second_reset_vacuous {β : Type*} [LinearOrder β] (ε : β) :
+    ({ε} : Finset β).min' (Finset.singleton_nonempty ε) = ε ∧
+      ({ε} : Finset β).max' (Finset.singleton_nonempty ε) = ε :=
   ⟨Finset.min'_singleton ε, Finset.max'_singleton ε⟩
+
+/-- A multiple of the width is the centre of its cell. -/
+private theorem cell_of_mul {ε d₀ : ℝ} (k : ℤ) (hk : (k : ℝ) * ε = d₀) (hε : 0 < ε) :
+    (grain ε).cell d₀ = Set.Ico (d₀ - ε / 2) (d₀ + ε / 2) := by
+  rw [cell_grain hε, representative_eq_self_of_mem_zmultiples hε.ne'
+    (AddSubgroup.mem_zmultiples_iff.2 ⟨k, by rw [zsmul_eq_mul, hk]⟩)]
 
 /-! (13): *5 meters* at 1 m, *4 meters 50* at 50 cm, and *4 meters 90* at 10 cm. -/
 
-example : (grain (1 : ℚ)).cell 5 = Set.Ico (9 / 2) (11 / 2) := by
-  rw [cell_grain one_pos, representative_eq_self_of_mem_zmultiples one_ne_zero ⟨5, by norm_num⟩]
-  norm_num
+example : (grain (1 : ℝ)).cell 5 = Set.Ico (9 / 2) (11 / 2) := by
+  rw [cell_of_mul 5 (by norm_num) one_pos]; norm_num
 
-example : (grain (1 / 2 : ℚ)).cell (9 / 2) = Set.Ico (17 / 4) (19 / 4) := by
-  rw [cell_grain (by norm_num),
-    representative_eq_self_of_mem_zmultiples (by norm_num) ⟨9, by norm_num⟩]
-  norm_num
+example : (grain (1 / 2 : ℝ)).cell (9 / 2) = Set.Ico (17 / 4) (19 / 4) := by
+  rw [cell_of_mul 9 (by norm_num) (by norm_num)]; norm_num
 
-example : (grain (1 / 10 : ℚ)).cell (49 / 10) = Set.Ico (97 / 20) (99 / 20) := by
-  rw [cell_grain (by norm_num),
-    representative_eq_self_of_mem_zmultiples (by norm_num) ⟨49, by norm_num⟩]
-  norm_num
+example : (grain (1 / 10 : ℝ)).cell (49 / 10) = Set.Ico (97 / 20) (99 / 20) := by
+  rw [cell_of_mul 49 (by norm_num) (by norm_num)]; norm_num
 
 /-! (20): at a coarsest width of ten, *49* and *50* share a cell, which the shorter *50* denotes,
 so *approximately 49* is odd. -/
 
-example : grain (10 : ℚ) 49 50 := by norm_num [grain_iff, round_eq_iff]
+example : (49 : ℝ) ∈ (grain 10).cell 50 := by
+  rw [cell_of_mul 5 (by norm_num) (by norm_num)]; norm_num
 
 end SauerlandStateva2011

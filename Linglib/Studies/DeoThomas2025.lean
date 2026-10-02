@@ -4,7 +4,7 @@ public import Linglib.Semantics.Questions.Partition.Inquisitive
 public import Linglib.Semantics.Presupposition.Defs
 public import Linglib.Data.Examples.DeoThomas2025
 public import Linglib.Semantics.Degree.Granularity
-public import Mathlib.Data.Rat.Floor
+public import Mathlib.Algebra.Order.Archimedean.Real.Basic
 
 /-!
 # Deo and Thomas (2025): Addressing the widest answerable question
@@ -43,14 +43,14 @@ carries the common ground, the construals, and the speaker's Quality and Relevan
 as primitives, with the paper's requirements that every construal cover the common ground
 and that any two construals be comparable by width, which is what makes the optimal construal
 unique. Partition construals are `Question.fromSetoid`, so refinement is the order on
-`Setoid`. Grains are those of `Degree.Granularity`, whose cells are centred on the multiples of
+`Setoid`. Grains are `Degree.grain`, whose cells are centred on the multiples of
 the width, so that a measure phrase denotes the cell it lies at the centre of, (24); Figure 1's
-year and half-year grains are `grain 1` and `grain (1 / 2)` on `ℚ`. Worlds for the constituent
-question of §4.1 are the extensions of its predicate. The exhaustive interpretation of the prejacent is a mandatory
-implicature that the paper leaves to Gricean reasoning, §4.1 and §4.9, and is not formalized;
-neither are the interpretation of the prejacent relative to the granularity of the current
-question in (36), the minimal-sufficiency construal of §4.3, whose alternatives are fixed by a
-causal structure, nor the Focus Principle, (21).
+year and half-year grains are `grain 1` and `grain (1 / 2)` on `ℝ`. Worlds for the constituent
+question of §4.1 are the extensions of its predicate. The exhaustive interpretation of the
+prejacent is a mandatory implicature that the paper leaves to Gricean reasoning, §4.1 and §4.9,
+and is not formalized; neither are the interpretation of the prejacent relative to the
+granularity of the current question in (36), the minimal-sufficiency construal of §4.3, whose
+alternatives are fixed by a causal structure, nor the Focus Principle, (21).
 
 ## References
 
@@ -226,7 +226,7 @@ theorem widerThan_fromSetoid {r s : Setoid W} (h : r < s) :
 
 section Grain
 
-open Degree.Granularity
+open Degree
 
 variable {α : Type*} [Field α] [LinearOrder α] [IsStrictOrderedRing α] [FloorRing α]
 
@@ -252,10 +252,10 @@ theorem widerThan_grain {ε₁ ε₂ : α} (h₁ : 0 < ε₁) (h : ε₁ < ε₂
 since halving the width never refines a grain; so the construals are ordered by width and not by
 [groenendijk-stokhof-1984]'s entailment, fn. 20. -/
 theorem figure1 :
-    WiderThan (fromSetoid (grain (1 / 2 : ℚ))) (fromSetoid (grain 1)) ∧
-      ¬ grain (1 / 2 : ℚ) ≤ grain 1 ∧ ¬ fromSetoid (grain (1 / 2 : ℚ)) ≤ fromSetoid (grain 1) := by
-  have hle : ¬ grain (1 / 2 : ℚ) ≤ grain 1 := by
-    simpa using not_grain_le_grain_of_even (ε := (1 / 2 : ℚ)) (by norm_num) one_pos
+    WiderThan (fromSetoid (grain (1 / 2 : ℝ))) (fromSetoid (grain 1)) ∧
+      ¬ grain (1 / 2 : ℝ) ≤ grain 1 ∧ ¬ fromSetoid (grain (1 / 2 : ℝ)) ≤ fromSetoid (grain 1) := by
+  have hle : ¬ grain (1 / 2 : ℝ) ≤ grain 1 := by
+    simpa using not_grain_le_grain_of_even (ε := (1 / 2 : ℝ)) (by norm_num) one_pos
   exact ⟨widerThan_grain (by norm_num) (by norm_num), hle,
     fun h ↦ hle ((fromSetoid_le_iff _ _).1 h)⟩
 
@@ -271,7 +271,8 @@ def zone (m : ℕ) : Setoid ℕ := Setoid.ker (min · m)
 emphatic use takes the zone to begin as late as the speaker can conceive. -/
 theorem widerThan_zone {m m' : ℕ} (h : m < m') :
     WiderThan (fromSetoid (zone m')) (fromSetoid (zone m)) := by
-  refine widerThan_fromSetoid (lt_iff_le_not_ge.2 ⟨Setoid.le_def.2 fun {x y} hxy ↦ ?_, fun hle ↦ ?_⟩)
+  refine widerThan_fromSetoid
+    (lt_iff_le_not_ge.2 ⟨Setoid.le_def.2 fun {x y} hxy ↦ ?_, fun hle ↦ ?_⟩)
   · have hxy : min x m' = min y m' := hxy
     show min x m = min y m
     omega
