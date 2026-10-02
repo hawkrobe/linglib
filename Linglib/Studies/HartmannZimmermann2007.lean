@@ -11,18 +11,18 @@ public import Linglib.Data.Examples.HartmannZimmermann2007
 /-!
 # Hartmann and Zimmermann (2007): In place — out of place? Focus strategies in Hausa
 
-This file formalizes [hartmann-zimmermann-2007]'s argument that Hausa is a counterexample to two
-universalist claims: that focus is always marked, and that the position of a focus determines
-its pragmatic interpretation. Focus is realized in situ or ex situ, and the paper's §3.2 matrix
-crosses the two strategies with four pragmatic uses, new-information, corrective, contrastive and
-selective, every cell of which is licensed (`hzMatrix`); `strategy_does_not_determine_pragType`
-refutes the Meaning-Structure Mapping Hypothesis of (21), the label following
-[vallduvi-vilkuna-1998], stated as a failure of `Function.FactorsThroughOn`, so that the
-Hungarian and Hausa verdicts differ on one set-theoretic predicate. In-situ new-information
-focus carries no morphosyntactic reflex, and the §5 pilot finds no prosodic one either, so
-`hausa_falsifies_UniversalBFR` refutes the Basic Focus Rule of [selkirk-1995]; focused subjects,
-by contrast, always front (§2.2.2). Exhaustivity is not structural: the particle *kawài* 'only'
-exhaustifies over the resolved contrast set in either position.
+[hartmann-zimmermann-2007]'s argument that Hausa is a counterexample to two universalist claims:
+that focus is always marked, and that the position of a focus determines its pragmatic
+interpretation. Focus is realized in situ or ex situ, and the paper's §3.2 matrix crosses the two
+strategies with four pragmatic uses, new-information, corrective, contrastive and selective,
+every cell of which is licensed (`hzMatrix`); `strategy_does_not_determine_pragType` refutes the
+Meaning-Structure Mapping Hypothesis of (21), the label following [vallduvi-vilkuna-1998], stated
+as a failure of `Function.FactorsThroughOn`, so that the Hungarian and Hausa verdicts differ on
+one set-theoretic predicate. In-situ new-information focus carries no morphosyntactic reflex, and
+the §5 pilot finds no prosodic one either, so `hausa_falsifies_UniversalBFR` refutes the Basic
+Focus Rule of [selkirk-1995]; focused subjects, by contrast, always front (§2.2.2). Exhaustivity
+is not structural: the particle *kawài* 'only' exhaustifies over the resolved contrast set in
+either position.
 
 ## Implementation notes
 
@@ -182,7 +182,7 @@ def s3m : Agreement.Bundle := genderedSingular .third .masculine
 def s3f : Agreement.Bundle := genderedSingular .third .feminine
 
 /-- The impersonal PAC cell. -/
-def p4 : Agreement.Bundle := .pn .zero .plural
+def p4 : Agreement.Bundle := impersonal
 
 /-- Ex-situ new-information focus ((22), `Examples.ex22`). -/
 def exSitu_newInfo : FocusUtterance :=

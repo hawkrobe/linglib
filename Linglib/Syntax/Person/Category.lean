@@ -9,11 +9,10 @@ public import Mathlib.Data.Fintype.Prod
 /-!
 # Referential person categories
 
-This file defines the eight referential person categories. A category is a configuration of
-the speech-act participants a referent contains and of the others it contains, none, one or
-several: the three singular participants and the five attested groups. The two groups this
-excludes, several speakers and an audience with no one else, are the configurations
-`Category.WellFormed` rejects.
+The eight referential person categories. A category is a configuration of the speech-act
+participants a referent contains and of the others it contains, none, one or several: the three
+singular participants and the five attested groups. The two groups this excludes, several
+speakers and an audience with no one else, are the configurations `Category.WellFormed` rejects.
 
 ## Main definitions
 
@@ -175,8 +174,7 @@ directly (Tagalog *kata* = `(firstInclusive, minimal)` ↦ `{speakerAddressee}`)
 clusivity-unmarked non-singular first person is the syncretism
 `{speakerAddressee, speakerAddresseeOthers, speakerOthers}` (English *we*), general number is
 noncommittal between the singular and the group category (`(second, general)` ↦
-`{addressee, addresseeOthers}`), and a singular bearing clusivity or the impersonal person
-realizes nothing. -/
+`{addressee, addresseeOthers}`), and a singular bearing clusivity realizes nothing. -/
 def ofPersonNumber : Person → Number → Finset Category
   | .first, .singular | .first, .minimal => {.speaker}
   | .first, .dual => {.speakerAddressee, .speakerOthers}
@@ -194,7 +192,6 @@ def ofPersonNumber : Person → Number → Finset Category
   | .third, .singular | .third, .minimal => {.other}
   | .third, .general => {.other, .others}
   | .third, _ => {.others}
-  | .zero, _ => ∅
 
 /-- `ofPersonNumber` inverts the person projection, recovering every category from its
 coordinates at some number value. -/

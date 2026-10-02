@@ -117,7 +117,7 @@ P-Constraint. -/
 def decomposePerson : Person → DecomposedPerson
   | .first | .firstInclusive | .firstExclusive => {.proximate, .participant, .author}
   | .second => {.proximate, .participant}
-  | .third | .zero => ∅
+  | .third => ∅
 
 /-! ### Probe targets -/
 
@@ -157,10 +157,8 @@ theorem all_decompositions_wellFormed (p : Person) :
 
 /-- The [±participant, ±author] core of the decomposition agrees with `Person.toFeatures`. -/
 theorem decomposePerson_toFeatures_eq (p : Person) :
-    ∀ f, p.toFeatures = some f → (decomposePerson p).toFeatures = f := by
-  cases p <;> intro f hf <;>
-    simp only [Person.toFeatures, Option.some.injEq, reduceCtorEq] at hf <;>
-    subst hf <;> decide
+    (decomposePerson p).toFeatures = p.toFeatures := by
+  cases p <;> decide
 
 /-- A DP visible to π⁰ outranks one visible only to #⁰, which outranks one visible to neither. -/
 theorem rank_hierarchy :

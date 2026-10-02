@@ -111,7 +111,7 @@ def pred (n : Node) : Node := n.ancestors.head?.getD n
 /-- A node with its ancestors: the iterates of `pred`. -/
 def up (n : Node) : Finset Node := (Finset.range (Fintype.card Node)).image (pred^[·] n)
 
-/-- Dominance: `a ≤ b` when `b` depends on `a`. -/
+/-- `a ≤ b` when `b` depends on `a`, the dominance of the geometry. -/
 instance : PartialOrder Node := PartialOrder.lift up (by decide)
 
 instance : DecidableLE Node := fun a b ↦ inferInstanceAs (Decidable (up a ⊆ up b))
@@ -181,15 +181,13 @@ theorem fillDefaults_isLowerSet {s : Finset Node} (hs : IsLowerSet (↑s : Set N
 
 /-- The person geometries: first person is the bare Participant node (Speaker
 by default), exclusive Participant with Speaker, inclusive Participant with
-Speaker and Addressee, second Participant with Addressee, third nothing; the
-impersonal has no geometry. -/
-def personNodes : Person → Option (Finset Node)
-  | .first => some {.participant}
-  | .firstExclusive => some {.participant, .speaker}
-  | .firstInclusive => some {.participant, .speaker, .addressee}
-  | .second => some {.participant, .addressee}
-  | .third => some ∅
-  | .zero => none
+Speaker and Addressee, second Participant with Addressee, third nothing. -/
+def personNodes : Person → Finset Node
+  | .first => {.participant}
+  | .firstExclusive => {.participant, .speaker}
+  | .firstInclusive => {.participant, .speaker, .addressee}
+  | .second => {.participant, .addressee}
+  | .third => ∅
 
 /-- The number geometries, relative to an active inventory: singular is the bare
 Individuation node, with Minimal where the inventory activates it
@@ -208,9 +206,8 @@ def numberNodes (active : Finset Node) : Number → Option (Finset Node)
 /-- The geometry of a person–number cell: the root with the person and number
 nodes, the latter only in an inventory that activates Individuation. -/
 def cell (active : Finset Node) (p : Person) (n : Number) : Option (Finset Node) := do
-  let ps ← personNodes p
   let ns ← if Node.individuation ∈ active then numberNodes active n else pure ∅
-  pure (insert .referringExpression (ps ∪ ns))
+  pure (insert .referringExpression (personNodes p ∪ ns))
 
 /-- An inventory licenses a cell when the cell's geometry lies within it. -/
 def Licenses (active : Finset Node) (p : Person) (n : Number) : Prop :=
@@ -219,9 +216,9 @@ def Licenses (active : Finset Node) (p : Person) (n : Number) : Prop :=
 instance (active : Finset Node) (p : Person) (n : Number) : Decidable (Licenses active p n) :=
   inferInstanceAs (Decidable (∃ g ∈ cell active p n, g ⊆ active))
 
-theorem personNodes_isLowerSet {p : Person} {ps : Finset Node} (h : personNodes p = some ps) :
-    IsLowerSet (↑(insert ⊥ ps) : Set Node) := by
-  cases p <;> simp [personNodes] at h <;> subst h <;> decide
+theorem personNodes_isLowerSet (p : Person) :
+    IsLowerSet (↑(insert ⊥ (personNodes p)) : Set Node) := by
+  cases p <;> decide
 
 theorem numberNodes_isLowerSet {active : Finset Node} {n : Number} {ns : Finset Node}
     (h : numberNodes active n = some ns) : IsLowerSet (↑(insert ⊥ ns) : Set Node) := by
@@ -230,13 +227,14 @@ theorem numberNodes_isLowerSet {active : Finset Node} {n : Number} {ns : Finset 
 /-- Every assigned geometry is a lower set. -/
 theorem cell_isLowerSet {active : Finset Node} {p : Person} {n : Number} {g : Finset Node}
     (h : cell active p n = some g) : IsLowerSet (↑g : Set Node) := by
-  simp only [cell, Option.bind_eq_bind, Option.bind_eq_some_iff, Option.pure_def] at h
-  obtain ⟨ps, hps, h⟩ := h
+  simp only [cell, Option.bind_eq_bind, Option.pure_def] at h
   have key : ∀ ns : Finset Node, IsLowerSet (↑(insert ⊥ ns) : Set Node) →
-      IsLowerSet (↑(insert Node.referringExpression (ps ∪ ns)) : Set Node) := fun ns hns => by
-    rw [show insert Node.referringExpression (ps ∪ ns) = insert ⊥ ps ∪ insert ⊥ ns by
-      rw [Finset.insert_union, Finset.union_insert, Finset.insert_idem]; rfl, Finset.coe_union]
-    exact (personNodes_isLowerSet hps).union hns
+      IsLowerSet (↑(insert Node.referringExpression (personNodes p ∪ ns)) : Set Node) :=
+    fun ns hns ↦ by
+      rw [show insert Node.referringExpression (personNodes p ∪ ns) =
+          insert ⊥ (personNodes p) ∪ insert ⊥ ns by
+        rw [Finset.insert_union, Finset.union_insert, Finset.insert_idem]; rfl, Finset.coe_union]
+      exact (personNodes_isLowerSet p).union hns
   split_ifs at h <;> obtain ⟨ns, hns, hg⟩ := Option.bind_eq_some_iff.1 h <;> cases hg
   · exact key ns (numberNodes_isLowerSet hns)
   · cases hns; exact key ∅ (by decide)

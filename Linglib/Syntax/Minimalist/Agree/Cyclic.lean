@@ -9,17 +9,17 @@ public import Mathlib.Tactic.DeriveFintype
 /-!
 # Cyclic Agree over articulated person probes
 
-This file defines cyclic Agree over articulated person probes ([bejar-rezac-2009]). Person is
-decomposed into privative segments in a containment hierarchy, every person bearing `π`, speech
-act participants also `participant`, and the innermost segment, `speaker` or `addressee`,
-distinguishing first from second person according to a geometry, a `Minimalist.Geometry` over
-the segments whose closures are the persons' specifications. A probe is an ordered list of
-unvalued segments, and a language's agreement system is a geometry together with a probe. The
-probe meets the internal argument first and checks every segment the argument bears; the
-unmatched segments are its active residue, which meets the external argument on the next cycle.
-The external argument controls the agreement slot when it checks some residue, a direct context,
-and the internal argument controls it otherwise, an inverse context, in which the external
-argument's person is unlicensed by the core probe.
+Cyclic Agree over articulated person probes ([bejar-rezac-2009]). Person is decomposed into
+privative segments in a containment hierarchy, every person bearing `π`, speech act participants
+also `participant`, and the innermost segment, `speaker` or `addressee`, distinguishing first
+from second person according to a geometry, a `Minimalist.Geometry` over the segments whose
+closures are the persons' specifications. A probe is an ordered list of unvalued segments, and a
+language's agreement system is a geometry together with a probe. The probe meets the internal
+argument first and checks every segment the argument bears; the unmatched segments are its active
+residue, which meets the external argument on the next cycle. The external argument controls the
+agreement slot when it checks some residue, a direct context, and the internal argument controls
+it otherwise, an inverse context, in which the external argument's person is unlicensed by the
+core probe.
 
 An articulated probe is a family of flat relativized searches, one per segment, over the
 cyclically ordered arguments, so the residue-based definitions factor through `Probe.search`
@@ -110,7 +110,7 @@ def toGeometry (geom : PersonGeometry) : Minimalist.Geometry Segment where
 
 /-- The innermost segment a person bears under a geometry. -/
 def node (geom : PersonGeometry) : Person → Segment
-  | .third | .zero => .pi
+  | .third => .pi
   | .first | .firstInclusive | .firstExclusive => match geom with
     | .standard | .branching => .speaker
     | .addressee => .participant

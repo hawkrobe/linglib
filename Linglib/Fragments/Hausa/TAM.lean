@@ -60,13 +60,18 @@ open Agreement
 def genderedSingular (p : Person) (g : Gender) : Bundle :=
   Function.update (Bundle.pn p .singular) .gender ↑g
 
+/-- The impersonal 4p, which patterns with the plurals: plural, with no person. -/
+def impersonal : Bundle
+  | .number => Number.plural
+  | _ => ⊥
+
 /-- The nine cells of a PAC paradigm in [newman-2000]'s order: 1s, 2m, 2f, 3m, 3f, 1p, 2p, 3p
 and the impersonal 4p. -/
 def pacCells : List Bundle :=
   [.pn .first .singular, genderedSingular .second .masculine,
     genderedSingular .second .feminine, genderedSingular .third .masculine,
     genderedSingular .third .feminine, .pn .first .plural, .pn .second .plural,
-    .pn .third .plural, .pn .zero .plural]
+    .pn .third .plural, impersonal]
 
 /-- The affirmative TAMs of the PAC. -/
 inductive TAM where

@@ -13,28 +13,27 @@ public import Linglib.Data.Examples.Deal2024
 /-!
 # Deal (2024): Interaction, Satisfaction, and the PCC
 
-This file formalizes the interaction–satisfaction theory of the Person Case Constraint of
-[deal-2024]. A probe is specified by an interaction condition, the features it copies from a
-goal, and a satisfaction condition, the feature that halts its search, with no uninterpretable
-features anywhere. Cliticization of both objects requires Agree with both, and the probe meets
-the direct object first, so a direct object that satisfies the probe bleeds Agree with the
-indirect object: satisfaction by [PART] gives the strong PCC, by [SPKR] the me-first PCC, and
-an insatiable probe no PCC. Dynamic interaction lets a feature copied from the direct object
-narrow the interaction condition, so that the indirect object must bear it too: [PART]
-interacting dynamically on an insatiable probe gives the weak PCC and on a [SPKR]-satisfied
-probe the strictly descending PCC. The probe's walk over the goal sequence is run, and the
-paper's typology tables, (53) over [PART] and [SPKR] and (57) over [ADDR] as well, are derived
-from the runs by classifying each grammar's licit region over the six cells of table (1)
-against the descriptive statements (2), you-first and A-descending. A probe that meets the
-indirect object first yields the reverse PCC of section 6.2. The clitic combinations of French,
-Bulgarian, Italian, Spanish, Shapsug Adyghe and Slovenian are rows, and on the six cells the
-four varieties coincide with the P-Constraint grammars of [pancheva-zubizarreta-2018] and the
-gluttony probes of [coon-keine-2021], the competitors of section 7. The cells of table (1)
-are scenarios (`Clause.Scenario`), and read as an argument coding, the clitic cluster where
-licit and the longer repair where not (`PCCType.coding`), each variety is checked against
-[haspelmath-2021]'s scenario universal, which section 7.1 there claims the person-case
-constraint instantiates: under 1 > 2 > 3 the strong, weak, me-first and strictly descending
-varieties obey it and the addressee-first ones do not, under 2 > 1 > 3 the reverse
+The interaction–satisfaction theory of the Person Case Constraint of [deal-2024]. A probe is
+specified by an interaction condition, the features it copies from a goal, and a satisfaction
+condition, the feature that halts its search, with no uninterpretable features anywhere.
+Cliticization of both objects requires Agree with both, and the probe meets the direct object
+first, so a direct object that satisfies the probe bleeds Agree with the indirect object:
+satisfaction by [PART] gives the strong PCC, by [SPKR] the me-first PCC, and an insatiable probe
+no PCC. Dynamic interaction lets a feature copied from the direct object narrow the interaction
+condition, so that the indirect object must bear it too: [PART] interacting dynamically on an
+insatiable probe gives the weak PCC and on a [SPKR]-satisfied probe the strictly descending PCC.
+The probe's walk over the goal sequence is run, and the paper's typology tables, (53) over [PART]
+and [SPKR] and (57) over [ADDR] as well, are derived from the runs by classifying each grammar's
+licit region over the six cells of table (1) against the descriptive statements (2), you-first
+and A-descending. A probe that meets the indirect object first yields the reverse PCC of section
+6.2. The clitic combinations of French, Bulgarian, Italian, Spanish, Shapsug Adyghe and Slovenian
+are rows, and on the six cells the four varieties coincide with the P-Constraint grammars of
+[pancheva-zubizarreta-2018] and the gluttony probes of [coon-keine-2021], the competitors of
+section 7. The cells of table (1) are scenarios (`Clause.Scenario`), and read as an argument
+coding, the clitic cluster where licit and the longer repair where not (`PCCType.coding`), each
+variety is checked against [haspelmath-2021]'s scenario universal, which section 7.1 there claims
+the person-case constraint instantiates: under 1 > 2 > 3 the strong, weak, me-first and strictly
+descending varieties obey it and the addressee-first ones do not, under 2 > 1 > 3 the reverse
 (`universal5_prominence`, `universal5_addressee`); every variety allows the participant-over-
 third cells, the person-role universal 9b (`participant_third_licit`); the strong variety is
 Modern Greek's T coding (`strong_iff_greekT`), and the two descending statements are the
@@ -125,7 +124,7 @@ def ProbeState.initial : ProbeState := ⟨{.phi}, false, []⟩
 /-- The probe a state denotes: a goal is visible when it bears every feature of the interaction
 condition. -/
 def ProbeState.probe (st : ProbeState) : Probe Person :=
-  .relativized λ p => decide (∀ f ∈ st.int, bears p f = true)
+  .relativized fun p ↦ decide (∀ f ∈ st.int, bears p f = true)
 
 /-- One step of the walk: a satisfied probe is inert, (8b); otherwise a visible goal is
 interacted with, its position recorded, the goal's dynamic features are copied into the
@@ -154,7 +153,7 @@ theorem int_subset_step (g : Grammar) (st : ProbeState) (t : Person × ℕ) :
 theorem probe_sat_antitone (g : Grammar) (st : ProbeState) (t : Person × ℕ) (a : Person)
     (h : (step g st t).probe.sat a = true) : st.probe.sat a = true := by
   simp only [ProbeState.probe, Probe.relativized, decide_eq_true_eq] at h ⊢
-  exact λ f hf => h f (int_subset_step g st t hf)
+  exact fun f hf ↦ h f (int_subset_step g st t hf)
 
 /-- A satisfied probe is inert. -/
 theorem step_of_satisfied (g : Grammar) (st : ProbeState) (t : Person × ℕ)
@@ -205,7 +204,7 @@ def cells : List (Scenario Person) :=
 def addresseeRank : Person → ℕ
   | .second => 2
   | .first | .firstInclusive | .firstExclusive => 1
-  | .third | .zero => 0
+  | .third => 0
 
 /-- The PCC varieties: the four of table (1), the two the feature [ADDR] adds, and none. -/
 inductive PCCType where
@@ -302,7 +301,7 @@ def PCCType.all : List PCCType :=
 
 /-- The variety a grammar derives: the one whose statement it matches on the six cells. -/
 def Grammar.pattern (g : Grammar) : Option PCCType :=
-  PCCType.all.find? λ t => decide (∀ c ∈ cells, Licit g c.high c.low ↔ t.Licit c.high c.low)
+  PCCType.all.find? fun t ↦ decide (∀ c ∈ cells, Licit g c.high c.low ↔ t.Licit c.high c.low)
 
 /-- Table (57), the typology by satisfaction condition and dynamic interaction features, with
 table (53) as its rows and columns without [ADDR]; a probe satisfied by [φ] Agrees with the
