@@ -286,6 +286,19 @@ theorem cutSummandsCN_filter_empty
   rw [Multiset.map_zero]
   rfl
 
+/-- Every crown component of a Δ^c cut of `T` is a subtree of `T`. -/
+theorem cutSummandsCN_mem_subtrees_of_mem_crown (τ : UnorderedTree (α ⊕ β) → β)
+    {T : UnorderedTree (α ⊕ β)} {p : Multiset (UnorderedTree (α ⊕ β)) × UnorderedTree (α ⊕ β)}
+    (hp : p ∈ cutSummandsCN τ T) {x : UnorderedTree (α ⊕ β)} (hx : x ∈ p.1) :
+    x ∈ T.subtrees := by
+  obtain ⟨⟨a, cs⟩, rfl⟩ : ∃ T₀ : RoseTree (α ⊕ β), T = UnorderedTree.mk T₀ :=
+    ⟨Quotient.out T, (Quotient.out_eq T).symm⟩
+  rw [cutSummandsCN_mk] at hp
+  obtain ⟨q, hq, rfl⟩ := Multiset.mem_map.mp hp
+  obtain ⟨y, hy, rfl⟩ := Multiset.mem_map.mp hx
+  rw [subtrees_mk, unorderedSubtrees]
+  exact Multiset.mem_cons_of_mem (mk_mem_of_mem_crown_cutSummandsG _ _ q hq y hy)
+
 /-- A lexical subtree `M` occurring exactly once below the root of `T` is extracted by exactly one
     Δ^c cut, whose trunk is `T` with `M` replaced by its trace. -/
 theorem cutSummandsCN_filter_crown_eq_singleton [DecidableEq α] [DecidableEq β]
