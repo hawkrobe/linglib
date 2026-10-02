@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Person.Basic
-public import Linglib.Syntax.Person.Resolve
+public import Linglib.Syntax.Person.Lattice
 public import Linglib.Syntax.Number.Basic
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Data.Fintype.Prod

@@ -6,7 +6,7 @@ public import Mathlib.Data.Finset.NAry
 public import Mathlib.Data.Finset.Lattice.Fold
 public import Linglib.Syntax.Person.Features
 public import Linglib.Syntax.Agreement.ContainmentPair
-public import Linglib.Syntax.Person.Resolve
+public import Linglib.Syntax.Person.Lattice
 public import Linglib.Semantics.Plurality.NumberFeatures
 public import Linglib.Syntax.Minimalist.Phi.Recursion
 public import Linglib.Syntax.Minimalist.Phi.Lattice
