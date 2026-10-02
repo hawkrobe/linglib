@@ -17,12 +17,14 @@ region of `P` picked out by the value `n`.
   joining with `x`, Harbour's `[+additive]`.
 * `Number.atomsOf`, `Number.nonAtomsOf`, `Number.dualOf`, `Number.pluralOf`:
   the singular, non-atomic, dual and plural regions of `P`.
+* `Number.nonMinimalOf`: the non-minimal elements of `P`, Harbour's `[−minimal]`.
 * `Number.interp`: the region a number value denotes over `P`.
 
 ## Main results
 
 * `Number.additive_subregion_is_cum`: the additive elements of a region form
   a cumulative predicate.
+* `Number.not_nonMinimalOf_atomize`: `[−minimal]` applied after `[+minimal]` is empty.
 * `Number.singular_subset_minimal`, `Number.atomize_eq_of_atoms`: atoms are
   minimal in any region excluding the null individual, so `[+atomic]` entails
   `[+minimal]`.
@@ -73,19 +75,28 @@ instance {Q : D → Prop} [Fintype D] [DecidablePred Q] (x : D) : Decidable (add
   decidable_of_iff (Q x ∧ ∀ y, Q y → Q (x ⊔ y)) Iff.rfl
 
 
-/-- The atoms of `P`: Harbour's `[+atomic]`, the singular region. -/
+/-- The atoms of `P` form Harbour's `[+atomic]` region, the singular. -/
 abbrev atomsOf (P : D → Prop) (x : D) : Prop := P x ∧ Atom x
 
-/-- The non-atoms of `P`: Harbour's `[−atomic]`. -/
+/-- The non-atoms of `P` form Harbour's `[−atomic]` region. -/
 abbrev nonAtomsOf (P : D → Prop) (x : D) : Prop := P x ∧ ¬ Atom x
 
-/-- The minimal non-atoms of `P`: `[−atomic, +minimal]`, the dual region. -/
+/-- The non-minimal elements of `P` form Harbour's `[−minimal]` region, the complement in `P` of
+`atomize P`. -/
+abbrev nonMinimalOf (P : D → Prop) (x : D) : Prop := P x ∧ ¬ atomize P x
+
+/-- The minimal elements of a region of minimal elements are all of them, so
+`(−minimal(+minimal(P)))` is empty. -/
+theorem not_nonMinimalOf_atomize (P : D → Prop) (x : D) : ¬ nonMinimalOf (atomize P) x :=
+  fun h ↦ h.2 ⟨h.1, fun _ hy hyx ↦ h.1.2 hy.1 hyx⟩
+
+/-- The minimal non-atoms of `P` form the `[−atomic, +minimal]` region, the dual. -/
 abbrev dualOf (P : D → Prop) : D → Prop := atomize (nonAtomsOf P)
 
-/-- The non-minimal non-atoms of `P`: `[−atomic, −minimal]`, the plural region. -/
-abbrev pluralOf (P : D → Prop) (x : D) : Prop := nonAtomsOf P x ∧ ¬ dualOf P x
+/-- The non-minimal non-atoms of `P` form the `[−atomic, −minimal]` region, the plural. -/
+abbrev pluralOf (P : D → Prop) : D → Prop := nonMinimalOf (nonAtomsOf P)
 
-/-- An atom of a region excluding the null individual is minimal in it:
+/-- An atom of a region excluding the null individual is minimal in it, so
 `[+atomic]` entails `[+minimal]`. -/
 theorem singular_subset_minimal {P : D → Prop} (hP : ∀ y, P y → ¬ IsBot y) {x : D}
     (hx : atomsOf P x) : atomize P x :=
@@ -97,8 +108,8 @@ theorem atomize_eq_of_atoms {P : D → Prop} (hAll : ∀ x, P x → Atom x) : at
   funext fun x => propext ⟨fun h => h.1, fun hPx =>
     singular_subset_minimal (fun y hy => (hAll y hy).not_isBot) ⟨hPx, hAll x hPx⟩⟩
 
-/-- The region a number value denotes over `P`; the approximative values
-return `none`. -/
+/-- `interp P n` is the region of `P` the value `n` denotes, and `none` for the
+approximative values. -/
 def interp (P : D → Prop) : Number → Option (D → Prop)
   | .general => some P
   | .singular => some (atomsOf P)
@@ -106,8 +117,8 @@ def interp (P : D → Prop) : Number → Option (D → Prop)
   | .plural => some (pluralOf P)
   | .trial => some (atomize (pluralOf P))
   | .minimal => some (atomize P)
-  | .augmented => some fun x => P x ∧ ¬ atomize P x
-  | .unitAugmented => some (atomize fun x => P x ∧ ¬ atomize P x)
+  | .augmented => some (nonMinimalOf P)
+  | .unitAugmented => some (atomize (nonMinimalOf P))
   | _ => none
 
 theorem interp_isSome_iff (P : D → Prop) (n : Number) :
