@@ -48,23 +48,21 @@ inductive Cell
   | strongAbsolute
   deriving DecidableEq, Fintype
 
-/-- The evaluatively positive and negative members of the cell's antonym pair. -/
-def Cell.pair : Cell → GradableAdjective × GradableAdjective
-  | .weakRelative   => (large, small)
-  | .weakAbsolute   => (clean, dirty)
-  | .strongRelative => (gigantic, tiny)
-  | .strongAbsolute => (pristine, filthy)
+/-- The cell's antonym pair, whose positive pole is the evaluatively positive member. -/
+def Cell.pair : Cell → AntonymPair
+  | .weakRelative   => size
+  | .weakAbsolute   => cleanliness
+  | .strongRelative => extremeSize
+  | .strongAbsolute => pristineness
 
-/-- The design's strength factor. -/
-def Cell.strength : Cell → InformationalStrength
-  | .weakRelative | .weakAbsolute => .weak
-  | _ => .strong
+/-- The design's strength factor is the Fragment's strength of the cell's pair. -/
+def Cell.strength (c : Cell) : InformationalStrength := c.pair.strength
 
-/-- The pair leaves a semantic extension gap: its antonyms are contrary. -/
-def Cell.HasGap (c : Cell) : Prop := c.pair.1.antonymRelation = some .contrary
+/-- The pair leaves a semantic extension gap when its poles are not contradictory. -/
+def Cell.HasGap (c : Cell) : Prop := ¬ c.pair.Contradictory
 
 instance : DecidablePred Cell.HasGap :=
-  λ c ↦ inferInstanceAs (Decidable (c.pair.1.antonymRelation = some .contrary))
+  fun c ↦ inferInstanceAs (Decidable (¬ c.pair.Contradictory))
 
 /-- The relative/absolute split of the cells is the Fragment's derived Kennedy class. -/
 theorem cell_classes :
@@ -82,8 +80,8 @@ theorem hasGap_iff (c : Cell) : c.HasGap ↔ c ≠ .weakAbsolute := by
 /-- The scale regions each surface form may communicate. -/
 abbrev Ranges := AntonymForm → Finset Region
 
-/-- The interpretation pattern of a negated antonym pair: the negated positive and the negated
-negative forms diverge (asymmetric) or behave in parallel (symmetric). -/
+/-- A negated antonym pair is interpreted asymmetrically when the negated positive and the negated
+negative forms diverge, and symmetrically when they behave in parallel. -/
 inductive Asymmetry where
   | asymmetric
   | symmetric
@@ -97,16 +95,16 @@ instance (r : Ranges) : Decidable r.Symmetric := Fintype.decidableForallFintype
 def Ranges.asymmetry (r : Ranges) : Asymmetry :=
   if r.Symmetric then .symmetric else .asymmetric
 
-/-- Horn's ranges, given a semantic gap: the negated positive is R-strengthened to
-    the face-threatening antonym it conceals, while the prolix double negative is
-    Q/R-restricted to the gap the simpler positive could not describe. -/
+/-- Horn's ranges assume a semantic gap. The negated positive is R-strengthened to the
+    face-threatening antonym it conceals, while the prolix double negative is Q/R-restricted to the
+    gap the simpler positive could not describe. -/
 def hornRanges : Ranges
   | .positive    => {.positive}
   | .negative    => {.negative}
   | .notPositive => {.negative}
   | .notNegative => {.plateauLow, .plateauHigh}
 
-/-- Krifka's ranges: the BiOT quadruplet of `Krifka2007b`. -/
+/-- Krifka's ranges are the BiOT quadruplet of `Krifka2007b`. -/
 def krifkaRanges : Ranges := λ f ↦ (krifkaQuadruplet.filter (·.1 = f)).image (·.2)
 
 theorem hornRanges_asymmetric : hornRanges.asymmetry = .asymmetric := by decide
@@ -148,9 +146,9 @@ theorem deviation_nach :
 def horn (c : Cell) : Option Asymmetry :=
   if c.HasGap then some hornRanges.asymmetry else none
 
-/-- Krifka's prediction, with or without NACH: the M-principle needs semantically
-    equivalent competitors, which only weak pairs provide (by bivalence for
-    relatives, by entailment for absolutes). -/
+/-- Krifka's account, with or without NACH, makes a prediction only for weak pairs, since the
+    M-principle needs semantically equivalent competitors, which only weak pairs provide (by
+    bivalence for relatives, by entailment for absolutes). -/
 def krifka (nach : Bool) (c : Cell) : Option Asymmetry :=
   match c.strength with
   | .strong => none
