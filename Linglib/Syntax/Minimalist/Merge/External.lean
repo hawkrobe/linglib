@@ -1,37 +1,34 @@
 module
 
 public import Linglib.Syntax.Minimalist.Merge.Basic
+public import Linglib.Syntax.Minimalist.Workspace.TraceConservation
 public import Linglib.Core.Combinatorics.RootedTree.Conservation
 public import Linglib.Core.Combinatorics.RootedTree.Crown
 public import Linglib.Core.Algebra.RootedTree.HopfAlgebra
 
 /-!
-# External Merge on the algebraic carrier
+# External Merge
 
-External Merge (Lemma 1.4.1) on the canonical carrier `ConnesKreimer R (UnorderedTree α)`: for a
-pair `(S, S') : UnorderedTree α` and a root label `lbl`, `mergeOp lbl S S'` sends the workspace `of'
-{S, S'}` to `of' {UnorderedTree.node lbl {S, S'}}` (`mergeOp_pair`), and on a workspace with a
-residual part `F̂` avoiding the cuts that extract `S` or `S'`, it factors through the spectator
-components (`mergeOp_factor_out_singleton`, `mergeOp_pair_residual`). The carrier-level form on
-`SyntacticObject` is `SyntacticObject.mergeOp_node` in `Merge/SyntacticObject.lean`.
+External Merge ([marcolli-chomsky-berwick-2025] Lemma 1.4.1): Merge of two components `S, S'` of
+a workspace replaces them by `node lbl {S, S'}` and leaves the rest unchanged. For a two-object
+workspace this holds over every cut enumeration admitting Merge (`mergeOpG_pair`), in particular
+at the pruning and trace cuts. With a residual workspace `F̂` it holds at the pruning cuts when no
+component of `F̂` has `S` or `S'` as a subtree (`mergeOp_pair_residual`).
 
-The proof of `mergeOp_pair` expands the merge coproduct
-`Δ^ρ({S, S'}) = comulTreeN S * comulTreeN S'`, distributes the primitive-plus-cut split of each
-factor, and evaluates the four cross-terms via `mergePost_basis_tensor`; only the primitive ×
-primitive term survives, the others vanishing because no proper cut extracts a whole tree as its
-crown (`cutSummandsN_crown_ne_singleton`) and vertex conservation (`cutSummandsN_numNodes`)
-forbids two crowns from reassembling `{S, S'}`. The residual case is an induction on `F̂` whose
-components have neither `S` nor `S'` as a subtree, isolating the surviving empty-cut summand of
-`comulTreeN T` via `cutSummandsN_filter_empty`.
+The proof of `mergeOpG_pair` expands the coproduct of `{S, S'}` into four cross-terms of the
+primitive terms and the cut sums of `S` and `S'`. Only the primitive term survives: a cut of `S'`
+alone would need crown `{S'}`, and cuts of both would need crowns reassembling `{S, S'}`, and
+both are ruled out by the edge bound of `IsMergeCuts`.
 
 ## Main results
 
-* `Minimalist.Merge.mergeOp_pair`: External Merge on a two-object workspace.
-* `Minimalist.Merge.mergeOp_pair_residual`: External Merge with a cut-avoiding residual workspace.
+* `Minimalist.Merge.mergeOpG_pair`, `mergeOp_pair`, `mergeOpC_pair`: External Merge on a
+  two-object workspace.
+* `Minimalist.Merge.mergeOp_pair_residual`: External Merge with a residual workspace.
 
 ## References
 
-* [marcolli-chomsky-berwick-2025], §1.4 (Lemma 1.4.1)
+* [marcolli-chomsky-berwick-2025]
 -/
 
 @[expose] public section
@@ -41,151 +38,90 @@ namespace Minimalist.Merge
 open scoped TensorProduct
 open RoseTree UnorderedTree ConnesKreimer
 
-/-- **Algebraic Merge on a 2-tree workspace** (M-C-B Lemma 1.4.1, F̂ = ∅
-    subcase). For any pair `(S, S') : UnorderedTree α` and root label `lbl`,
-    `mergeOp lbl S S'` applied to the basis vector `of' {S, S'}` yields
-    `of' {UnorderedTree.node lbl {S, S'}}`.
+variable {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq (UnorderedTree α)]
 
-    The merge coproduct `Δ^ρ({S, S'}) = comulTreeN S * comulTreeN S'` splits each
-    factor into its full-extraction `ofTree T ⊗ 1` term plus the proper-cut sum;
-    distributing gives 4 cross-terms. Only `prim × prim` survives
-    `mergePost`; the three sum-bearing terms vanish via
-    `cutSummandsN_crown_ne_singleton` (no proper cut's crown is `{S}` or `{S'}`)
-    and `cutSummandsN_numNodes` (two proper crowns under-count `{S, S'}`'s
-    vertices). -/
-theorem mergeOp_pair {R : Type*} [CommSemiring R] {α : Type*}
-    [DecidableEq (UnorderedTree α)] (lbl : α) (S S' : UnorderedTree α) :
-    mergeOp (R := R) lbl S S' (of' ({S, S'} : Forest (UnorderedTree α)))
+omit [DecidableEq (UnorderedTree α)] in
+private theorem sum_map_ite_eq_zero {ι M : Type*} [AddCommMonoid M] {s : Multiset ι}
+    {P : ι → Prop} [DecidablePred P] {f : ι → M} (h : ∀ i ∈ s, ¬ P i) :
+    (s.map fun i ↦ if P i then f i else 0).sum = 0 :=
+  Multiset.sum_eq_zero fun _ hx ↦ by
+    obtain ⟨i, hi, rfl⟩ := Multiset.mem_map.mp hx
+    exact ite_eq_right (h i hi)
+
+instance : IsMergeCuts (cutSummandsN (α := α)) where
+  crown_numEdges_lt := cutSummandsN_crown_numEdges_lt
+
+instance {β : Type*} (τ : UnorderedTree (α ⊕ β) → β) : IsMergeCuts (cutSummandsCN τ) where
+  crown_numEdges_lt := cutSummandsCN_crown_numEdges_lt τ
+
+/-- External Merge of a two-object workspace, over a cut enumeration admitting Merge. -/
+theorem mergeOpG_pair
+    {cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α)}
+    [IsMergeCuts cuts] (lbl : α) (S S' : UnorderedTree α) :
+    mergeOpG (R := R) cuts lbl S S' (of' ({S, S'} : Forest (UnorderedTree α)))
       = of' ({UnorderedTree.node lbl {S, S'}} : Forest (UnorderedTree α)) := by
-  -- Step 1: mergeOp = mergePost ∘ comulAlgHomN, applied to of' {S, S'}.
-  show (mergePost (R := R) (α := α) lbl S S' ∘ₗ comulAlgHomN.toLinearMap)
-       (of' ({S, S'} : Forest (UnorderedTree α))) = _
-  rw [LinearMap.comp_apply, AlgHom.toLinearMap_apply, comulAlgHomN_apply_of']
-  -- Step 2: comulForestN {S, S'} = comulTreeN S * comulTreeN S'.
-  rw [show comulForestN (R := R) ({S, S'} : Forest (UnorderedTree α))
-        = comulTreeN (R := R) S * comulTreeN (R := R) S' from by
-      rw [show ({S, S'} : Forest (UnorderedTree α)) = S ::ₘ ({S'} : Forest (UnorderedTree α))
-            from rfl, comulForestN_cons,
-          show ({S'} : Forest (UnorderedTree α)) = S' ::ₘ (0 : Forest (UnorderedTree α))
-            from rfl, comulForestN_cons, comulForestN_zero, mul_one]]
-  -- Step 3: split each comulTreeN into prim + cut-sum; distribute.
-  unfold comulTreeN comulTreeNG
-  rw [add_mul, mul_add, mul_add]
-  simp only [map_add]
-  -- Term 1 (prim × prim): the surviving contribution.
-  have h_pp :
-      mergePost (R := R) (α := α) lbl S S'
-          ((ofTree S ⊗ₜ[R] (1 : ConnesKreimer R (UnorderedTree α)))
-            * (ofTree S' ⊗ₜ[R] (1 : ConnesKreimer R (UnorderedTree α))))
-        = of' ({UnorderedTree.node lbl {S, S'}} : Forest (UnorderedTree α)) := by
-    rw [Algebra.TensorProduct.tmul_mul_tmul, mul_one, ← of'_singleton, ← of'_singleton,
-        ← of'_add,
-        show ({S} : Forest (UnorderedTree α)) + ({S'} : Forest (UnorderedTree α))
-            = ({S, S'} : Forest (UnorderedTree α)) from rfl,
-        mergePost_basis_tensor, ite_eq_left rfl, mul_one]
-  -- Term 2 (prim S × cut-sum S'): vanishes (crown of S' is never {S'}).
-  have h_ps :
-      mergePost (R := R) (α := α) lbl S S'
-          ((ofTree S ⊗ₜ[R] (1 : ConnesKreimer R (UnorderedTree α)))
-            * ((cutSummandsN S').map
-                (fun p => of' (R := R) p.1 ⊗ₜ[R] ofTree p.2)).sum)
-        = 0 := by
-    rw [← Multiset.sum_map_mul_left, _root_.map_multiset_sum, Multiset.map_map]
-    refine Multiset.sum_eq_zero fun x hx => ?_
-    obtain ⟨p, hp, rfl⟩ := Multiset.mem_map.mp hx
-    show mergePost (R := R) (α := α) lbl S S'
-          ((ofTree S ⊗ₜ[R] (1 : ConnesKreimer R (UnorderedTree α)))
-            * (of' (R := R) p.1 ⊗ₜ[R] ofTree p.2)) = 0
-    rw [Algebra.TensorProduct.tmul_mul_tmul, one_mul, ← of'_singleton, ← of'_add,
-        mergePost_basis_tensor, ite_eq_right]
-    intro hcontra
-    apply cutSummandsN_crown_ne_singleton S' p hp
-    have heq : ({S} : Forest (UnorderedTree α)) + p.1
-             = ({S} : Forest (UnorderedTree α)) + ({S'} : Forest (UnorderedTree α)) := by
-      rw [hcontra]; rfl
-    exact Multiset.add_right_inj.mp heq
-  -- Term 3 (cut-sum S × prim S'): symmetric (crown of S is never {S}).
-  have h_sp :
-      mergePost (R := R) (α := α) lbl S S'
-          (((cutSummandsN S).map
-              (fun p => of' (R := R) p.1 ⊗ₜ[R] ofTree p.2)).sum
-            * (ofTree S' ⊗ₜ[R] (1 : ConnesKreimer R (UnorderedTree α))))
-        = 0 := by
-    rw [← Multiset.sum_map_mul_right, _root_.map_multiset_sum, Multiset.map_map]
-    refine Multiset.sum_eq_zero fun x hx => ?_
-    obtain ⟨p, hp, rfl⟩ := Multiset.mem_map.mp hx
-    show mergePost (R := R) (α := α) lbl S S'
-          ((of' (R := R) p.1 ⊗ₜ[R] ofTree p.2)
-            * (ofTree S' ⊗ₜ[R] (1 : ConnesKreimer R (UnorderedTree α)))) = 0
-    rw [Algebra.TensorProduct.tmul_mul_tmul, mul_one, ← of'_singleton, ← of'_add,
-        mergePost_basis_tensor, ite_eq_right]
-    intro hcontra
-    apply cutSummandsN_crown_ne_singleton S p hp
-    have heq : p.1 + ({S'} : Forest (UnorderedTree α))
-             = ({S} : Forest (UnorderedTree α)) + ({S'} : Forest (UnorderedTree α)) := by
-      rw [hcontra]; rfl
-    exact Multiset.add_left_inj.mp heq
-  -- Term 4 (cut-sum S × cut-sum S'): two proper crowns can't reassemble {S, S'}.
-  have h_ss :
-      mergePost (R := R) (α := α) lbl S S'
-          (((cutSummandsN S).map
-              (fun p => of' (R := R) p.1 ⊗ₜ[R] ofTree p.2)).sum
-            * ((cutSummandsN S').map
-                (fun p => of' (R := R) p.1 ⊗ₜ[R] ofTree p.2)).sum)
-        = 0 := by
-    rw [← Multiset.sum_map_mul_right, _root_.map_multiset_sum, Multiset.map_map]
-    refine Multiset.sum_eq_zero fun x hx => ?_
-    obtain ⟨p, hp, rfl⟩ := Multiset.mem_map.mp hx
-    show mergePost (R := R) (α := α) lbl S S'
-          ((of' (R := R) p.1 ⊗ₜ[R] ofTree p.2)
-            * ((cutSummandsN S').map
-                (fun q => of' (R := R) q.1 ⊗ₜ[R] ofTree q.2)).sum) = 0
-    rw [← Multiset.sum_map_mul_left, _root_.map_multiset_sum, Multiset.map_map]
-    refine Multiset.sum_eq_zero fun y hy => ?_
-    obtain ⟨p', hp', rfl⟩ := Multiset.mem_map.mp hy
-    show mergePost (R := R) (α := α) lbl S S'
-          ((of' (R := R) p.1 ⊗ₜ[R] ofTree p.2)
-            * (of' (R := R) p'.1 ⊗ₜ[R] ofTree p'.2)) = 0
-    rw [Algebra.TensorProduct.tmul_mul_tmul, ← of'_add, mergePost_basis_tensor, ite_eq_right]
-    intro hcontra
-    have hwS := cutSummandsN_numNodes S p hp
-    have hwS' := cutSummandsN_numNodes S' p' hp'
-    have hp2 := p.2.numNodes_pos
-    have hp2' := p'.2.numNodes_pos
-    have hfw : ((p.1 + p'.1).map UnorderedTree.numNodes).sum
-             = (({S, S'} : Forest (UnorderedTree α)).map UnorderedTree.numNodes).sum := by
-      rw [hcontra]
-    rw [Multiset.map_add, Multiset.sum_add,
-        show (({S, S'} : Forest (UnorderedTree α)).map UnorderedTree.numNodes).sum
-            = S.numNodes + S'.numNodes from by
-          simp only [Multiset.insert_eq_cons, Multiset.map_cons, Multiset.sum_cons,
-                     Multiset.map_singleton, Multiset.sum_singleton]] at hfw
-    omega
-  rw [h_pp, h_ps, h_sp, h_ss]
-  simp only [add_zero]
+  have key (F F' : Forest (UnorderedTree α)) (t t' : ConnesKreimer R (UnorderedTree α)) :
+      mergePost (R := R) lbl S S' ((of' F ⊗ₜ[R] t) * (of' F' ⊗ₜ[R] t'))
+        = if F + F' = {S, S'} then of' {UnorderedTree.node lbl {S, S'}} * (t * t') else 0 := by
+    rw [Algebra.TensorProduct.tmul_mul_tmul, ← of'_add, mergePost_basis_tensor]
+  have hpair : ({S} : Forest (UnorderedTree α)) + {S'} = {S, S'} := rfl
+  have hS (p) (hp : p ∈ cuts S) : ¬ p.1 + {S'} = {S, S'} := fun h ↦
+    IsMergeCuts.crown_ne_singleton hp (Multiset.add_left_inj.mp (h.trans hpair.symm))
+  have hS' (p) (hp : p ∈ cuts S') : ¬ {S} + p.1 = {S, S'} := fun h ↦
+    IsMergeCuts.crown_ne_singleton hp (Multiset.add_right_inj.mp (h.trans hpair.symm))
+  have hSS' (p) (hp : p ∈ cuts S) (p') (hp' : p' ∈ cuts S') : ¬ p.1 + p'.1 = {S, S'} := by
+    intro h
+    have hsum := congrArg (fun F ↦ (F.map numEdges).sum) h
+    simp only [Multiset.map_add, Multiset.sum_add, Multiset.insert_eq_cons, Multiset.map_cons,
+      Multiset.map_singleton, Multiset.sum_cons, Multiset.sum_singleton] at hsum
+    rcases eq_or_ne p.1 0 with h1 | h1
+    · have h2 : p'.1 ≠ 0 := fun h2 ↦ by simp [h1, h2] at h
+      have := IsMergeCuts.crown_numEdges_lt hp' h2
+      simp only [h1, Multiset.map_zero, Multiset.sum_zero] at hsum
+      omega
+    · have := IsMergeCuts.crown_numEdges_lt hp h1
+      rcases eq_or_ne p'.1 0 with h2 | h2
+      · simp only [h2, Multiset.map_zero, Multiset.sum_zero] at hsum
+        omega
+      · have := IsMergeCuts.crown_numEdges_lt hp' h2
+        omega
+  rw [mergeOpG, LinearMap.comp_apply, AlgHom.toLinearMap_apply, comulAlgHomNG_apply_of',
+    show ({S, S'} : Forest (UnorderedTree α)) = S ::ₘ S' ::ₘ 0 from rfl, comulForestNG_cons,
+    comulForestNG_cons, comulForestNG_zero, mul_one, comulTreeNG, comulTreeNG]
+  simp only [ofTree, add_mul, mul_add, ← Multiset.sum_map_mul_left,
+    ← Multiset.sum_map_mul_right, map_add, map_multiset_sum, Multiset.map_map,
+    Function.comp_def, key, ite_eq_left hpair, mul_one]
+  rw [sum_map_ite_eq_zero hS, add_zero, Multiset.sum_eq_zero, add_zero]
+  · rfl
+  intro x hx
+  obtain ⟨p', hp', rfl⟩ := Multiset.mem_map.mp hx
+  rw [ite_eq_right (hS' p' hp'), zero_add, sum_map_ite_eq_zero fun p hp ↦ hSS' p hp p' hp']
 
-/-- **Factor-out lemma** (MCB Lemma 1.4.1 Case 1, inductive step). Under
-    `S ∉ T.subtrees` and `S' ∉ T.subtrees` (so `T ≠ S, S'` and no Δ^ρ cut of `T`
-    extracts `S` or `S'` as a crown, `not_mem_subtrees_iff`), `mergeOp lbl S S'` commutes with left
-    multiplication by the spectator `of' {T}`:
+/-- External Merge of a two-object workspace at the pruning cuts. -/
+theorem mergeOp_pair (lbl : α) (S S' : UnorderedTree α) :
+    mergeOp (R := R) lbl S S' (of' ({S, S'} : Forest (UnorderedTree α)))
+      = of' ({UnorderedTree.node lbl {S, S'}} : Forest (UnorderedTree α)) :=
+  mergeOpG_pair lbl S S'
 
-      mergeOp lbl S S' (of' {T} * w) = of' {T} * mergeOp lbl S S' w.
+omit [DecidableEq (UnorderedTree α)] in
+/-- External Merge of a two-object workspace at the trace cuts. -/
+theorem mergeOpC_pair {β : Type*} [DecidableEq (UnorderedTree (α ⊕ β))]
+    (τ : UnorderedTree (α ⊕ β) → β) (lbl : α ⊕ β) (S S' : UnorderedTree (α ⊕ β)) :
+    mergeOpC (R := R) τ lbl S S' (of' ({S, S'} : Forest (UnorderedTree (α ⊕ β))))
+      = of' ({UnorderedTree.node lbl {S, S'}} : Forest (UnorderedTree (α ⊕ β))) :=
+  mergeOpG_pair lbl S S'
 
-    Proof: `comulAlgHomN (of' {T} * w) = comulTreeN T * comulAlgHomN w`. The
-    `ofTree T ⊗ 1` term vanishes (`{T} ⊄ {S, S'}`); the cut-sum splits via
-    `cutSummandsN_filter_empty` into the surviving empty cut `(0, T)` — which
-    by `UnorderedTree`-tensor commutativity and `mergePost_right_one_tmul` yields
-    `of' {T} * mergeOp lbl S S' w` — and the nonempty cuts, each annihilated since
-    a crown `≤ {S, S'}` containing neither `S` nor `S'` must be empty. -/
-theorem mergeOp_factor_out_singleton {R : Type*} [CommSemiring R] {α : Type*}
-    [DecidableEq (UnorderedTree α)] (lbl : α) {S S' T : UnorderedTree α}
+/-- Merge at the pruning cuts commutes with a spectator component `T` that has neither `S` nor
+    `S'` as a subtree ([marcolli-chomsky-berwick-2025] Lemma 1.4.1). The primitive term of `T`
+    does not fit inside `{S, S'}`, no nonempty cut of `T` extracts `S` or `S'`, and the empty cut
+    passes `T` through to the right channel. -/
+theorem mergeOp_factor_out_singleton (lbl : α) {S S' T : UnorderedTree α}
     (hT_S : S ∉ T.subtrees) (hT_S' : S' ∉ T.subtrees)
     (w : ConnesKreimer R (UnorderedTree α)) :
     mergeOp (R := R) lbl S S' (of' ({T} : Forest (UnorderedTree α)) * w)
       = of' ({T} : Forest (UnorderedTree α)) * mergeOp (R := R) lbl S S' w := by
   obtain ⟨hT_ne_S, h_no_S_in_T_cuts⟩ := not_mem_subtrees_iff.mp hT_S
   obtain ⟨hT_ne_S', h_no_S'_in_T_cuts⟩ := not_mem_subtrees_iff.mp hT_S'
-  -- mergeOp = mergePost ∘ comulAlgHomN; split the product through the alg hom.
   show (mergePost (R := R) (α := α) lbl S S' ∘ₗ comulAlgHomN.toLinearMap)
        (of' ({T} : Forest (UnorderedTree α)) * w) = _
   rw [LinearMap.comp_apply, AlgHom.toLinearMap_apply, map_mul,
@@ -194,7 +130,7 @@ theorem mergeOp_factor_out_singleton {R : Type*} [CommSemiring R] {α : Type*}
   unfold comulTreeN comulTreeNG
   rw [add_mul]
   simp only [map_add]
-  -- prim term `ofTree T ⊗ 1`: vanishes since `{T} ⊄ {S, S'}`.
+  -- The primitive term vanishes, since `{T}` does not fit inside `{S, S'}`.
   rw [show mergePost (R := R) (α := α) lbl S S'
         ((ofTree T ⊗ₜ[R] (1 : ConnesKreimer R (UnorderedTree α))) * comulAlgHomN w)
         = 0 from by
@@ -204,18 +140,15 @@ theorem mergeOp_factor_out_singleton {R : Type*} [CommSemiring R] {α : Type*}
       intro h_le
       have hT_mem : T ∈ ({S, S'} : Forest (UnorderedTree α)) :=
         Multiset.subset_of_le h_le (Multiset.mem_singleton.mpr rfl)
-      rw [show ({S, S'} : Forest (UnorderedTree α)) = S ::ₘ ({S'} : Forest (UnorderedTree α))
-            from rfl, Multiset.mem_cons, Multiset.mem_singleton] at hT_mem
-      rcases hT_mem with h | h
-      · exact hT_ne_S h
-      · exact hT_ne_S' h]
+      rw [Multiset.insert_eq_cons, Multiset.mem_cons, Multiset.mem_singleton] at hT_mem
+      exact hT_mem.elim hT_ne_S hT_ne_S']
   rw [zero_add]
-  -- cut-sum: distribute, split off the empty cut `(0, T)` from the rest.
+  -- Split off the empty cut `(0, T)`.
   rw [← Multiset.sum_map_mul_right,
       ← Multiset.filter_add_not (fun pf => pf.1.card = 0) (cutSummandsN T),
       Multiset.map_add, Multiset.sum_add, map_add,
       cutSummandsN_filter_empty, Multiset.map_singleton, Multiset.sum_singleton]
-  -- nonempty cuts vanish: crown `≤ {S, S'}` with `S, S' ∉ crown` is empty.
+  -- The nonempty cuts vanish: a crown inside `{S, S'}` containing neither is empty.
   rw [show mergePost (R := R) (α := α) lbl S S'
         (((cutSummandsN T).filter (fun pf => ¬ pf.1.card = 0)).map
           (fun p => (of' (R := R) p.1 ⊗ₜ[R] ofTree p.2) * comulAlgHomN w)).sum
@@ -224,46 +157,32 @@ theorem mergeOp_factor_out_singleton {R : Type*} [CommSemiring R] {α : Type*}
       refine Multiset.sum_eq_zero fun x hx => ?_
       obtain ⟨p, hp_filter, rfl⟩ := Multiset.mem_map.mp hx
       have hmem := Multiset.mem_filter.mp hp_filter
-      have hp_orig : p ∈ cutSummandsN T := hmem.1
-      have hp_card : ¬ p.1.card = 0 := hmem.2
       show mergePost (R := R) (α := α) lbl S S'
             ((of' (R := R) p.1 ⊗ₜ[R] ofTree p.2) * comulAlgHomN w) = 0
       apply mergePost_left_mul_eq_zero_of_not_le
       intro h_le
-      apply hp_card
-      have hp1_empty : p.1 = 0 := by
-        refine Multiset.eq_zero_of_forall_notMem fun x hx_mem => ?_
-        have hx_in : x ∈ ({S, S'} : Forest (UnorderedTree α)) :=
-          Multiset.subset_of_le h_le hx_mem
-        rw [show ({S, S'} : Forest (UnorderedTree α)) = S ::ₘ ({S'} : Forest (UnorderedTree α))
-              from rfl, Multiset.mem_cons, Multiset.mem_singleton] at hx_in
-        rcases hx_in with h | h
-        · subst h; exact h_no_S_in_T_cuts p hp_orig hx_mem
-        · subst h; exact h_no_S'_in_T_cuts p hp_orig hx_mem
-      rw [hp1_empty, Multiset.card_zero]]
+      apply hmem.2
+      rw [Multiset.card_eq_zero]
+      refine Multiset.eq_zero_of_forall_notMem fun x hx_mem => ?_
+      have hx_in : x ∈ ({S, S'} : Forest (UnorderedTree α)) :=
+        Multiset.subset_of_le h_le hx_mem
+      rw [Multiset.insert_eq_cons, Multiset.mem_cons, Multiset.mem_singleton] at hx_in
+      rcases hx_in with rfl | rfl
+      · exact h_no_S_in_T_cuts p hmem.1 hx_mem
+      · exact h_no_S'_in_T_cuts p hmem.1 hx_mem]
   rw [add_zero]
-  -- surviving empty cut: `(of' 0 ⊗ ofTree T) * cdw` → `of' {T} * mergeOp lbl S S' w`.
+  -- The empty cut passes `T` to the right channel.
   rw [of'_zero,
       mul_comm ((1 : ConnesKreimer R (UnorderedTree α)) ⊗ₜ[R] ofTree T) (comulAlgHomN w),
       mergePost_right_one_tmul,
       mul_comm (mergePost (R := R) (α := α) lbl S S' (comulAlgHomN w)) (ofTree T)]
   rfl
 
-/-- **Algebraic Merge with residual workspace** (M-C-B Lemma 1.4.1, Case 1). For
-    any pair `(S, S')` and residual workspace `Fhat` no component of which has `S` or `S'` as a
-    subtree (so S, S' ∉ Fhat as components and no cut on any `T ∈ Fhat` extracts S or S', which
-    excludes the non-primitive matchings of the full coproduct, restricting to External Merge's
-    member-level contribution per MCB Remark 1.3.8), Merge factors the spectator workspace
-    through:
-
-      mergeOp lbl S S' (of' ({S, S'} + Fhat)) = of' ({UnorderedTree.node lbl {S, S'}} + Fhat).
-
-    Induction on `Fhat` via `mergeOp_factor_out_singleton`. Without the
-    disjointness, `mergeOp` produces the full sum-over-matchings (including
-    Sideward contributions); the Minimal-Search weighting `mergeOpCEps` eliminates those in
-    the ε → 0 limit. -/
-theorem mergeOp_pair_residual {R : Type*} [CommSemiring R] {α : Type*}
-    [DecidableEq (UnorderedTree α)] (lbl : α) {S S' : UnorderedTree α}
+/-- External Merge at the pruning cuts with a residual workspace `F̂` none of whose components has
+    `S` or `S'` as a subtree ([marcolli-chomsky-berwick-2025] Lemma 1.4.1). Without the
+    hypothesis Merge also matches accessible terms inside `F̂`, the Sideward cases of
+    `Merge/Sideward.lean`. -/
+theorem mergeOp_pair_residual (lbl : α) {S S' : UnorderedTree α}
     {Fhat : Forest (UnorderedTree α)}
     (hF : ∀ T ∈ Fhat, Disjoint ({S, S'} : Forest (UnorderedTree α)) T.subtrees) :
     mergeOp (R := R) lbl S S' (of' (({S, S'} : Forest (UnorderedTree α)) + Fhat))
@@ -277,24 +196,10 @@ theorem mergeOp_pair_residual {R : Type*} [CommSemiring R] {α : Type*}
       Multiset.disjoint_left.mp (hF T (Multiset.mem_cons_self _ _)) (by simp)
     have hT_S' : S' ∉ T.subtrees :=
       Multiset.disjoint_left.mp (hF T (Multiset.mem_cons_self _ _)) (by simp)
-    have ih' : mergeOp (R := R) lbl S S'
-                  (of' (({S, S'} : Forest (UnorderedTree α)) + Fhat'))
-              = of' (({UnorderedTree.node lbl {S, S'}} : Forest (UnorderedTree α)) + Fhat') :=
-      ih fun U hU ↦ hF U (Multiset.mem_cons_of_mem hU)
-    have h_lhs_eq : ({S, S'} : Forest (UnorderedTree α)) + T ::ₘ Fhat'
-                  = ({T} : Forest (UnorderedTree α))
-                    + (({S, S'} : Forest (UnorderedTree α)) + Fhat') := by
-      rw [show T ::ₘ Fhat' = ({T} : Forest (UnorderedTree α)) + Fhat' from rfl]; abel
-    have h_rhs_eq : ({UnorderedTree.node lbl {S, S'}} : Forest (UnorderedTree α)) + T ::ₘ Fhat'
-                  = ({T} : Forest (UnorderedTree α))
-                    + (({UnorderedTree.node lbl {S, S'}} : Forest (UnorderedTree α)) + Fhat') := by
-      rw [show T ::ₘ Fhat' = ({T} : Forest (UnorderedTree α)) + Fhat' from rfl]; abel
-    rw [h_lhs_eq, h_rhs_eq,
-        of'_add (R := R) ({T} : Forest (UnorderedTree α))
-          (({S, S'} : Forest (UnorderedTree α)) + Fhat'),
-        of'_add (R := R) ({T} : Forest (UnorderedTree α))
-          (({UnorderedTree.node lbl {S, S'}} : Forest (UnorderedTree α)) + Fhat'),
-        mergeOp_factor_out_singleton lbl hT_S hT_S']
-    exact congrArg (of' (R := R) ({T} : Forest (UnorderedTree α)) * ·) ih'
+    have ih' := ih fun U hU ↦ hF U (Multiset.mem_cons_of_mem hU)
+    rw [Multiset.add_cons, Multiset.add_cons, ← Multiset.singleton_add, ← Multiset.singleton_add,
+      of'_add (R := R) ({T} : Forest (UnorderedTree α)),
+      of'_add (R := R) ({T} : Forest (UnorderedTree α)),
+      mergeOp_factor_out_singleton lbl hT_S hT_S', ih']
 
 end Minimalist.Merge

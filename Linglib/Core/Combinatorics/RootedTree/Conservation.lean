@@ -26,6 +26,7 @@ founded.
 * `ConnesKreimer.cutSummandsN_numNodes`: vertex conservation for the nonplanar pruning cuts.
 * `ConnesKreimer.cutSummandsN_crown_numNodes_lt`, `ConnesKreimer.cutSummandsN_trunk_numNodes_lt`:
   crowns and proper trunks are smaller than the tree.
+* `ConnesKreimer.cutSummandsN_crown_numEdges_lt`: a nonempty crown has fewer edges than the tree.
 * `ConnesKreimer.cutSummandsN_numEdges_single_deletion`: removing one subtree and contracting the
   unary vertex it leaves removes two edges.
 
@@ -163,6 +164,17 @@ theorem cutSummandsN_trunk_numNodes_lt {T : UnorderedTree α}
   have hw := cutSummandsN_numNodes T p hp
   have := Multiset.le_sum_of_mem (Multiset.mem_map_of_mem UnorderedTree.numNodes ht)
   have := t.numNodes_pos
+  omega
+
+/-- A nonempty crown of a deletion cut has fewer edges in total than the tree. -/
+theorem cutSummandsN_crown_numEdges_lt {T : UnorderedTree α}
+    {p : Multiset (UnorderedTree α) × UnorderedTree α} (hp : p ∈ cutSummandsN T)
+    (h : p.1 ≠ 0) : (p.1.map UnorderedTree.numEdges).sum < T.numEdges := by
+  have hw := cutSummandsN_numNodes T p hp
+  rw [UnorderedTree.sum_map_numNodes] at hw
+  have := Multiset.card_pos.mpr h
+  have := p.2.numNodes_pos
+  have := T.numEdges_add_one
   omega
 
 /-- No deletion cut of `T` has `T` itself among its crown components. -/

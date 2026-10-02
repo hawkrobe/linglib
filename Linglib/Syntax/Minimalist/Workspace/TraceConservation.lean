@@ -34,6 +34,7 @@ Search.
   plus one trace per cut (Lemma 1.6.3).
 * `ConnesKreimer.cutSummandsCN_traceLeafCount`: traces are conserved up to one per cut.
 * `ConnesKreimer.cutSummandsCN_lexical_conservation`: lexical vertices are conserved exactly.
+* `ConnesKreimer.cutSummandsCN_crown_numEdges_lt`: a nonempty crown has fewer edges than the tree.
 * `ConnesKreimer.Cut.depthC_pos`: a proper cut of a lexical-rooted tree has positive depth.
 
 ## References
@@ -217,10 +218,9 @@ private theorem ne_nil_of_traceLeafCount_sum_one
 
 mutual
 
-/-- **Trace-leaf conservation** for Δ^c cut summands (tree level): each
-    contraction replaces an extracted subtree by one `Sum.inr` leaf, so
-    crown trace leaves plus trunk trace leaves recover the tree's trace
-    leaves plus one per cut. Requires unit-trace-count replacements. -/
+/-- Under replacements carrying one trace each, crown traces plus trunk traces recover the
+    tree's traces plus one per cut, since each contraction replaces an extracted subtree by one
+    `Sum.inr` leaf. -/
 theorem cutSummandsG_traceLeafCount
     (extract : RoseTree (α ⊕ β) → Option (List (RoseTree (α ⊕ β))))
     (hext : ∀ t r, extract t = some r → (r.map RoseTree.traceLeafCount).sum = 1) :
@@ -384,8 +384,8 @@ private theorem extractC_numNodes_sum_one (τ : RoseTree (α ⊕ β) → β) :
 
 variable {α β : Type*}
 
-/-- **Trace-leaf conservation** for the nonplanar Δ^c cuts: each contraction
-    adds exactly one `Sum.inr` leaf to the trunk (MCB Lemma 1.6.3). -/
+/-- Traces are conserved by the nonplanar Δ^c cuts up to one per cut, since each contraction
+    adds exactly one `Sum.inr` leaf to the trunk. -/
 theorem cutSummandsCN_traceLeafCount (τ : UnorderedTree (α ⊕ β) → β)
     (T : UnorderedTree (α ⊕ β)) :
     ∀ p ∈ cutSummandsCN τ T,
@@ -436,8 +436,8 @@ theorem cutSummandsCN_numNodes (τ : UnorderedTree (α ⊕ β) → β)
 def Cut.numContractions (p : Multiset (UnorderedTree (α ⊕ β)) × UnorderedTree (α ⊕ β)) : ℕ :=
   Multiset.card p.1
 
-/-- The **Minimal-Search depth** of a Δ^c cut summand (MCB §1.5.2): the total
-    extraction depth `Σ d_{v_i}`, read off the trunk's trace markers. The Δ^c
+/-- The Minimal-Search depth of a Δ^c cut summand ([marcolli-chomsky-berwick-2025] §1.5.2) is
+    the total extraction depth `Σ d_{v_i}`, read off the trunk's trace markers. The Δ^c
     quotient places a trace leaf at each cut site at *exactly* the cut depth, so
     the trunk's `traceDepthSum` is the signed `+d` extraction cost of MCB rule 1.
     Under Internal Merge the matching `−d` quotient term (rule 2) references this
@@ -447,11 +447,8 @@ def Cut.numContractions (p : Multiset (UnorderedTree (α ⊕ β)) × UnorderedTr
 def Cut.depthC (p : Multiset (UnorderedTree (α ⊕ β)) × UnorderedTree (α ⊕ β)) : ℕ :=
   p.2.traceDepthSum
 
-/-- **Lexical (non-trace) vertex conservation**: combining weight and
-    trace-leaf conservation, the trace leaf added at each cut is excluded
-    from the lexical count exactly when the vertex it replaced is removed,
-    so non-trace vertices are conserved with no correction term. Stated
-    additively to avoid truncated ℕ subtraction. -/
+/-- Non-trace vertices are conserved exactly by the Δ^c cuts: the trace leaf added at each cut
+    replaces the root of the extracted subtree. Stated additively to avoid truncated subtraction. -/
 theorem cutSummandsCN_lexical_conservation (τ : UnorderedTree (α ⊕ β) → β)
     (T : UnorderedTree (α ⊕ β)) :
     ∀ p ∈ cutSummandsCN τ T,
@@ -462,9 +459,8 @@ theorem cutSummandsCN_lexical_conservation (τ : UnorderedTree (α ⊕ β) → �
   have ht := cutSummandsCN_traceLeafCount τ T p hp
   omega
 
-/-- **Crown trace leaves bounded by the source's**, descended to `UnorderedTree`:
-    the extracted crown forest of a Δ^c cut has no more trace markers than `T`.
-    (Each crown component is a subtree of `T`.) -/
+/-- The crown of a Δ^c cut has no more traces than the tree, each crown component being a subtree
+    of it. -/
 theorem cutSummandsCN_crown_traceLeafCount_le (τ : UnorderedTree (α ⊕ β) → β)
     (T : UnorderedTree (α ⊕ β)) :
     ∀ p ∈ cutSummandsCN τ T,
@@ -484,10 +480,8 @@ theorem cutSummandsCN_crown_traceLeafCount_le (τ : UnorderedTree (α ⊕ β) �
         Multiset.map_congr rfl (fun x _ => UnorderedTree.traceLeafCount_mk x)]
   exact hle
 
-/-- **Each Δ^c contraction leaves ≥ 1 trace marker in the trunk** (MCB Lemma
-    1.6.3 corollary): the trunk's trace count is at least the number of cuts.
-    From trace-leaf conservation (`Σtrace(crown) + trace(trunk) = trace(T) + #cuts`)
-    and the crown bound (`Σtrace(crown) ≤ trace(T)`). -/
+/-- The trunk of a Δ^c cut has at least one trace per cut, by trace conservation and the crown
+    bound. -/
 theorem cutSummandsCN_trunk_traceLeafCount_ge_card (τ : UnorderedTree (α ⊕ β) → β)
     (T : UnorderedTree (α ⊕ β)) :
     ∀ p ∈ cutSummandsCN τ T, Multiset.card p.1 ≤ p.2.traceLeafCount := by
@@ -588,6 +582,51 @@ theorem cutSummandsCN_trunk_value (τ : UnorderedTree (α ⊕ β) → β)
       (UnorderedTree.mk (RoseTree.node a cs)).value
     rw [UnorderedTree.value_mk, UnorderedTree.value_mk, RoseTree.value_node,
         RoseTree.value_node]
+
+/-- Under nonempty-replacement extraction, a cut with a nonempty crown leaves a trunk with at least
+    two vertices, the root and a replacement. -/
+private theorem two_le_numNodes_of_mem_cutSummandsG
+    (extract : RoseTree (α ⊕ β) → Option (List (RoseTree (α ⊕ β))))
+    (hne : ∀ t r, extract t = some r → r ≠ []) :
+    ∀ (t : RoseTree (α ⊕ β)), ∀ p ∈ cutSummandsG extract t, p.1 ≠ 0 → 2 ≤ p.2.numNodes
+  | .node a [], p, hp, h => by
+    simp only [cutSummandsG_node, cutListSummandsG_nil, Multiset.map_singleton,
+      Multiset.mem_singleton] at hp
+    exact (h (congrArg Prod.fst hp)).elim
+  | .node a (c :: cs), p, hp, _ => by
+    rw [cutSummandsG_node] at hp
+    obtain ⟨q, hq, rfl⟩ := Multiset.mem_map.mp hp
+    obtain ⟨d, ds, hd⟩ := List.exists_cons_of_ne_nil
+      (cutListSummandsG_remainder_ne_nil extract hne c cs q hq)
+    have := d.numNodes_pos
+    simp only [hd, RoseTree.numNodes_node, List.map_cons, List.sum_cons]
+    omega
+
+/-- A Δ^c cut with a nonempty crown leaves a trunk with at least two vertices, the root and a
+    trace. -/
+theorem cutSummandsCN_two_le_trunk_numNodes (τ : UnorderedTree (α ⊕ β) → β)
+    (T : UnorderedTree (α ⊕ β)) :
+    ∀ p ∈ cutSummandsCN τ T, p.1 ≠ 0 → 2 ≤ p.2.numNodes := by
+  obtain ⟨T₀, rfl⟩ : ∃ T₀ : RoseTree (α ⊕ β), T = UnorderedTree.mk T₀ :=
+    ⟨T.out, (Quotient.out_eq T).symm⟩
+  intro p hp h
+  rw [cutSummandsCN_mk, ConnesKreimer.cutSummandsCP_def] at hp
+  obtain ⟨q, hq, rfl⟩ := Multiset.mem_map.mp hp
+  have hne : ∀ t r, extractC (τ ∘ UnorderedTree.mk) t = some r → r ≠ [] := fun t r hr ↦
+    ne_nil_of_traceLeafCount_sum_one r (extractC_traceLeafCount_sum_one _ t r hr)
+  show 2 ≤ (UnorderedTree.mk q.2).numNodes
+  rw [UnorderedTree.numNodes_mk]
+  exact two_le_numNodes_of_mem_cutSummandsG _ hne T₀ q hq fun h0 ↦ h (by simp [projSummand, h0])
+
+/-- A nonempty crown of a Δ^c cut has fewer edges in total than the tree. -/
+theorem cutSummandsCN_crown_numEdges_lt (τ : UnorderedTree (α ⊕ β) → β)
+    {T : UnorderedTree (α ⊕ β)} {p : Multiset (UnorderedTree (α ⊕ β)) × UnorderedTree (α ⊕ β)}
+    (hp : p ∈ cutSummandsCN τ T) (h : p.1 ≠ 0) :
+    (p.1.map UnorderedTree.numEdges).sum < T.numEdges := by
+  have hw := cutSummandsCN_numEdges τ T p hp
+  have := cutSummandsCN_two_le_trunk_numNodes τ T p hp h
+  have := T.numEdges_add_one
+  omega
 
 /-! ### Minimal-Search depth of a proper cut -/
 
