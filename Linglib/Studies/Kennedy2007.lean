@@ -171,15 +171,6 @@ theorem fragment_pairs_table61 :
     ¬ Licenses .maximizer tall.scaleType ∧ ¬ Licenses .minimizer short.scaleType := by
   decide
 
-open English.Adjectives in
-/-- Across the Fragment every contradictory pair takes complementary standards (47), the minimum
-on one pole and the maximum on the other, while the relative pair *tall*/*short* takes
-neither. -/
-theorem fragment_contradictory_pairs_complementary :
-    (∀ p ∈ pairs, p.relation = .contradictory → p.ComplementaryStandards) ∧
-      ¬ height.ComplementaryStandards := by
-  decide
-
 /-! ### Interpretive Economy (§4.2–§4.3) -/
 
 /-- An open scale offers no endpoint, so its standard is contextual and the adjective needs a

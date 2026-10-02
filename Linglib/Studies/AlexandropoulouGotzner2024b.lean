@@ -6,7 +6,7 @@ public import Linglib.Data.Examples.AlexandropoulouGotzner2024b
 /-!
 # Alexandropoulou and Gotzner (2024b): adjective interpretation and competition
 
-Re-runs the rating experiments of [alexandropoulou-gotzner-2024a] with one
+Alexandropoulou and Gotzner re-run the rating experiments of their 2024a paper with one
 statement per trial, removing the overt competition among the eight forms of an
 item. The polarity asymmetry of weak relative antonyms persists and is larger
 without competition, absolute antonyms stay symmetric in both modes, and negated
@@ -61,14 +61,13 @@ theorem relative_like (h : tp.neg ≤ tp.pos) :
 
 /-! ### Rows -/
 
-/-- An unmodified negated adjective entails its antonym exactly when the Fragment
-    classifies the pair as contradictory. -/
+/-- An unmodified negated adjective entails its antonym exactly when the Fragment's pair is
+    contradictory. -/
 theorem entails_iff_contradictory :
     ∀ row ∈ Examples.all, row.feature? "modifier" = none →
       row.feature? "negation" = some "negated" →
-      ∀ e ∈ (row.feature? "adjective").bind entryOf,
-        (row.feature? "relation" = some "entails" ↔
-          e.antonymRelation = some .contradictory) := by
+      ∀ p ∈ (row.feature? "adjective").bind English.Adjectives.pairOf,
+        (row.feature? "relation" = some "entails" ↔ p.Contradictory) := by
   decide
 
 /-- The paper's two pragmatic readings are Horn's ranges: negative strengthening

@@ -16,9 +16,10 @@ members measure the same degrees under inverse orderings, so an adjective's `Pol
 member it is, `positive` for the member measuring in the scale's increasing direction (*tall*)
 and `negative` for the inverted one (*short*). Inverting twice restores the ordering,
 so `negative * p` is the polarity of the antonym of a `p` adjective, and polarity acts on scale
-boundedness through the order dual. `Degree.AntonymRelation` is the opposition between the
-members' positive forms, contradictory (*clean* and *dirty*) or contrary (*tall* and *short*,
-which leave a gap), a cell of the Aristotelian square in the sense of Cruse and Horn.
+boundedness through the order dual. The positive forms of the members are contradictory (*clean*
+and *dirty*) or contrary (*tall* and *short*, which leave a gap), two cells of the Aristotelian
+square in the sense of Cruse and Horn; which one a lexical pair occupies is
+`Degree.AntonymPair.Contradictory`.
 
 The contrary case is modelled by a `Degree.ThresholdPair` on a linearly ordered scale, the
 positive form true above its upper threshold and the negative form below its lower one, and
@@ -30,7 +31,6 @@ keeps them apart, as in Krifka's account.
 ## Main definitions
 
 * The action `p • b` of `Polarity` on `Boundedness`, the negative polarity by the order dual.
-* `AntonymRelation`, contradictory or contrary.
 * `ThresholdPair` and its `ThresholdPair.gap`, the interval between the two thresholds.
 * `AntonymForm` with `AntonymForm.contradictoryDenot`, `AntonymForm.strengthenedDenot` and
   `AntonymForm.complexity`.
@@ -76,16 +76,6 @@ instance : MulAction Polarity Boundedness where
 
 @[simp] theorem Boundedness.negative_smul (b : Boundedness) : Polarity.negative • b = b.dual :=
   rfl
-
-/-! ### The relation between the members -/
-
-/-- The opposition between the positive forms of an antonym pair. Contradictories (*clean* and
-*dirty*) cannot both be false, while contraries (*tall* and *short*) can, leaving a gap between
-the two standards. -/
-inductive AntonymRelation where
-  | contradictory
-  | contrary
-  deriving Repr, DecidableEq, Fintype
 
 /-! ### The two-threshold model of a contrary pair -/
 

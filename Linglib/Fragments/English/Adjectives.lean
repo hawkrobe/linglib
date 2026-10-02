@@ -34,7 +34,7 @@ namespace English.Adjectives
 open Degree
 
 def height : AntonymPair :=
-  { dimension := .height, relation := .contrary, posForm := "tall", negForm := "short"
+  { dimension := .height, posForm := "tall", negForm := "short"
   , posComparison := .synthetic "taller" "tallest"
   , negComparison := .synthetic "shorter" "shortest" }
 
@@ -43,14 +43,12 @@ abbrev tall := height.pos
 abbrev short := height.neg
 
 def high : GradableAdjective :=
-  { form := "high", dimension := some .height, antonymForm := some "low"
-  , antonymRelation := some .contrary }
+  { form := "high", dimension := some .height, antonymForm := some "low" }
 
-/-- Note: This is the 1-place adjectival predicate "x is happy".
-For the 2-place veridical-preferential attitude predicate
-"x is happy that p", see `Studies/UegakiSudo2019.lean`. -/
+/-- *happy* here is the one-place predicate "x is happy"; the two-place veridical-preferential
+attitude predicate "x is happy that p" is in `Studies/UegakiSudo2019.lean`. -/
 def happiness : AntonymPair :=
-  { dimension := .happiness, relation := .contrary, posForm := "happy", negForm := "unhappy"
+  { dimension := .happiness, posForm := "happy", negForm := "unhappy"
   , posComparison := .synthetic "happier" "happiest"
   , negComparison := .synthetic "unhappier" "unhappiest", evaluativeValence := some .positive }
 
@@ -61,13 +59,14 @@ abbrev unhappy := happiness.neg
 def sad : GradableAdjective :=
   { form := "sad", polarity := .negative, dimension := some .happiness
   , comparison := .synthetic "sadder" "saddest"
-  , antonymForm := some "happy", antonymRelation := some .contrary
+  , antonymForm := some "happy"
   , evaluativeValence := some .negative }
 
-/-- Both poles take the maximum standard, so a half-full glass is neither full nor empty
-([kennedy-mcnally-2005] (28a)). -/
+/-- *full* and *empty* measure on a closed scale, as *100% full* and *100% empty* show
+([kennedy-mcnally-2005] (28a)), and both poles take the maximum standard ([kennedy-2007], p. 38),
+so a half-full glass is neither full nor empty. -/
 def fullness : AntonymPair :=
-  { dimension := .fullness, relation := .contrary, posForm := "full", negForm := "empty"
+  { dimension := .fullness, posForm := "full", negForm := "empty"
   , posComparison := .synthetic "fuller" "fullest"
   , negComparison := .synthetic "emptier" "emptiest" }
 
@@ -76,7 +75,7 @@ abbrev full := fullness.pos
 abbrev empty := fullness.neg
 
 def heat : AntonymPair :=
-  { dimension := .temperature, relation := .contrary, posForm := "hot", negForm := "cold"
+  { dimension := .temperature, posForm := "hot", negForm := "cold"
   , posComparison := .synthetic "hotter" "hottest", negComparison := .synthetic "colder" "coldest" }
 
 abbrev hot := heat.pos
@@ -84,7 +83,7 @@ abbrev hot := heat.pos
 abbrev cold := heat.neg
 
 def cost : AntonymPair :=
-  { dimension := .cost, relation := .contrary, posForm := "expensive", negForm := "cheap"
+  { dimension := .cost, posForm := "expensive", negForm := "cheap"
   , posComparison := .periphrastic "more expensive" "most expensive"
   , negComparison := .synthetic "cheaper" "cheapest" }
 
@@ -93,7 +92,7 @@ abbrev expensive := cost.pos
 abbrev cheap := cost.neg
 
 def wetness : AntonymPair :=
-  { dimension := .wetness, relation := .contradictory, posForm := "wet", negForm := "dry"
+  { dimension := .wetness, posForm := "wet", negForm := "dry"
   , posComparison := .synthetic "wetter" "wettest", negComparison := .synthetic "drier" "driest" }
 
 abbrev wet := wetness.pos
@@ -101,14 +100,14 @@ abbrev wet := wetness.pos
 abbrev dry := wetness.neg
 
 def cleanliness : AntonymPair :=
-  { dimension := .cleanliness, relation := .contradictory, posForm := "clean", negForm := "dirty" }
+  { dimension := .cleanliness, posForm := "clean", negForm := "dirty" }
 
 abbrev clean := cleanliness.pos
 
 abbrev dirty := cleanliness.neg
 
 def straightness : AntonymPair :=
-  { dimension := .straightness, relation := .contradictory, posForm := "straight"
+  { dimension := .straightness, posForm := "straight"
   , negForm := "bent" }
 
 abbrev straight := straightness.pos
@@ -117,12 +116,12 @@ abbrev bent := straightness.neg
 
 def flat : GradableAdjective :=
   { form := "flat", dimension := some .flatness, antonymForm := some "bumpy"
-  , antonymRelation := some .contradictory, spatialConfigType := some .surfaceOrient }
+  , spatialConfigType := some .surfaceOrient }
 
 /-- *open* takes the minimum standard, any amount of opening ([kennedy-2007] (68)); *closed* the
 maximum. -/
 def openness : AntonymPair :=
-  { dimension := .openness, relation := .contradictory, posForm := "open", negForm := "closed"
+  { dimension := .openness, posForm := "open", negForm := "closed"
   , posLexicalStandard := some .minEndpoint, spatialConfigType := some .barrierConfig }
 
 abbrev open_ := openness.pos
@@ -131,43 +130,41 @@ abbrev closed_ := openness.neg
 
 def shut : GradableAdjective :=
   { form := "shut", polarity := .negative, dimension := some .openness, antonymForm := some "open"
-  , antonymRelation := some .contradictory, spatialConfigType := some .barrierConfig }
+  , spatialConfigType := some .barrierConfig }
 
 def free_ : GradableAdjective :=
   { form := "free", dimension := some .freedom, antonymForm := some "stuck"
-  , antonymRelation := some .contradictory, spatialConfigType := some .unattachment }
+  , spatialConfigType := some .unattachment }
 
 def loose : GradableAdjective :=
   { form := "loose", polarity := .negative, dimension := some .tightness
-  , antonymForm := some "tight", antonymRelation := some .contradictory
+  , antonymForm := some "tight"
   , spatialConfigType := some .unattachment }
 
 def tight : GradableAdjective :=
-  { form := "tight", dimension := some .tightness, antonymForm := some "loose"
-  , antonymRelation := some .contradictory }
+  { form := "tight", dimension := some .tightness, antonymForm := some "loose" }
 
 def smoothness : AntonymPair :=
-  { dimension := .smoothness, relation := .contradictory, posForm := "smooth", negForm := "rough" }
+  { dimension := .smoothness, posForm := "smooth", negForm := "rough" }
 
 abbrev smooth := smoothness.pos
 
 abbrev rough := smoothness.neg
 
 def hardness : AntonymPair :=
-  { dimension := .hardness, relation := .contrary, posForm := "hard", negForm := "soft" }
+  { dimension := .hardness, posForm := "hard", negForm := "soft" }
 
 abbrev hard := hardness.pos
 
 abbrev soft := hardness.neg
 
 def pure_ : GradableAdjective :=
-  { form := "pure", dimension := some .purity, antonymForm := some "impure"
-  , antonymRelation := some .contradictory }
+  { form := "pure", dimension := some .purity, antonymForm := some "impure" }
 
 /-- *dead* takes the maximum standard and is rarely used imprecisely ([kennedy-mcnally-2005]);
 *alive* the minimum. -/
 def life : AntonymPair :=
-  { dimension := .alive, relation := .contradictory, posForm := "alive", negForm := "dead"
+  { dimension := .alive, posForm := "alive", negForm := "dead"
   , posLexicalStandard := some .minEndpoint }
 
 abbrev alive := life.pos
@@ -178,21 +175,21 @@ def pregnant : GradableAdjective :=
   { form := "pregnant" }
 
 def size : AntonymPair :=
-  { dimension := .generalSize, relation := .contrary, posForm := "large", negForm := "small" }
+  { dimension := .generalSize, posForm := "large", negForm := "small" }
 
 abbrev large := size.pos
 
 abbrev small := size.neg
 
 def extremeSize : AntonymPair :=
-  { dimension := .generalSize, relation := .contrary, posForm := "gigantic", negForm := "tiny" }
+  { dimension := .generalSize, posForm := "gigantic", negForm := "tiny", strength := .strong }
 
 abbrev gigantic := extremeSize.pos
 
 abbrev tiny := extremeSize.neg
 
 def pristineness : AntonymPair :=
-  { dimension := .cleanliness, relation := .contrary, posForm := "pristine", negForm := "filthy"
+  { dimension := .cleanliness, posForm := "pristine", negForm := "filthy", strength := .strong
   , evaluativeValence := some .positive }
 
 abbrev pristine := pristineness.pos
@@ -200,15 +197,13 @@ abbrev pristine := pristineness.pos
 abbrev filthy := pristineness.neg
 
 def long : GradableAdjective :=
-  { form := "long", dimension := some .length, antonymForm := some "short"
-  , antonymRelation := some .contrary }
+  { form := "long", dimension := some .length, antonymForm := some "short" }
 
 def wide : GradableAdjective :=
-  { form := "wide", dimension := some .width, antonymForm := some "narrow"
-  , antonymRelation := some .contrary }
+  { form := "wide", dimension := some .width, antonymForm := some "narrow" }
 
 def warmth : AntonymPair :=
-  { dimension := .temperature, relation := .contrary, posForm := "warm", negForm := "cool" }
+  { dimension := .temperature, posForm := "warm", negForm := "cool" }
 
 abbrev warm := warmth.pos
 
@@ -217,42 +212,42 @@ abbrev cool := warmth.neg
 /-! ## Physical dimension adjectives -/
 
 def weight : AntonymPair :=
-  { dimension := .weight, relation := .contrary, posForm := "heavy", negForm := "light" }
+  { dimension := .weight, posForm := "heavy", negForm := "light" }
 
 abbrev heavy := weight.pos
 
 abbrev light := weight.neg
 
 def thickness : AntonymPair :=
-  { dimension := .thickness, relation := .contrary, posForm := "thick", negForm := "thin" }
+  { dimension := .thickness, posForm := "thick", negForm := "thin" }
 
 abbrev thick := thickness.pos
 
 abbrev thin := thickness.neg
 
 def depth : AntonymPair :=
-  { dimension := .depth, relation := .contrary, posForm := "deep", negForm := "shallow" }
+  { dimension := .depth, posForm := "deep", negForm := "shallow" }
 
 abbrev deep := depth.pos
 
 abbrev shallow := depth.neg
 
 def strength : AntonymPair :=
-  { dimension := .strength, relation := .contrary, posForm := "strong", negForm := "weak" }
+  { dimension := .strength, posForm := "strong", negForm := "weak" }
 
 abbrev strong := strength.pos
 
 abbrev weak := strength.neg
 
 def speed : AntonymPair :=
-  { dimension := .speed, relation := .contrary, posForm := "fast", negForm := "slow" }
+  { dimension := .speed, posForm := "fast", negForm := "slow" }
 
 abbrev fast := speed.pos
 
 abbrev slow := speed.neg
 
 def age : AntonymPair :=
-  { dimension := .age, relation := .contrary, posForm := "old", negForm := "young" }
+  { dimension := .age, posForm := "old", negForm := "young" }
 
 abbrev old := age.pos
 
@@ -261,14 +256,14 @@ abbrev young := age.neg
 /-! ## Sensory adjectives -/
 
 def brightness : AntonymPair :=
-  { dimension := .brightness, relation := .contrary, posForm := "bright", negForm := "dark" }
+  { dimension := .brightness, posForm := "bright", negForm := "dark" }
 
 abbrev bright := brightness.pos
 
 abbrev dark := brightness.neg
 
 def volume : AntonymPair :=
-  { dimension := .volume, relation := .contrary, posForm := "loud", negForm := "quiet" }
+  { dimension := .volume, posForm := "loud", negForm := "quiet" }
 
 abbrev loud := volume.pos
 
@@ -283,7 +278,7 @@ on its negative pole. -/
 
 def smart : GradableAdjective :=
   { form := "smart", dimension := some .intelligence, comparison := .synthetic "smarter" "smartest"
-  , antonymForm := some "dumb", antonymRelation := some .contrary }
+  , antonymForm := some "dumb" }
 
 /-- *Confident* is relative on the upper-closed confidence scale. [cariani-santorio-wellwood-2024]
 give it the ordering of *certain* with a contextual contrast state below *certain*'s maximal
@@ -296,8 +291,11 @@ def confident : GradableAdjective :=
   { form := "confident", dimension := some .confidence, lexicalStandard := some .contextual
   , comparison := .periphrastic "more confident" "most confident" }
 
+/-- *certain* and *uncertain* measure on an upper-closed scale, *certain* with the maximum standard
+and *uncertain* with the minimum, as *perfectly certain* and *slightly uncertain* show
+([kennedy-2007] (64)), so the pair is contradictory. -/
 def confidence : AntonymPair :=
-  { dimension := .confidence, relation := .contrary, posForm := "certain", negForm := "uncertain"
+  { dimension := .confidence, posForm := "certain", negForm := "uncertain"
   , posComparison := .periphrastic "more certain" "most certain"
   , negComparison := .periphrastic "more uncertain" "most uncertain" }
 
@@ -305,8 +303,9 @@ abbrev certain := confidence.pos
 
 abbrev uncertain := confidence.neg
 
+/-- *sure* and *unsure* are entered on the scale of *certain* and *uncertain*. -/
 def sureness : AntonymPair :=
-  { dimension := .confidence, relation := .contrary, posForm := "sure", negForm := "unsure"
+  { dimension := .confidence, posForm := "sure", negForm := "unsure"
   , posComparison := .synthetic "surer" "surest"
   , negComparison := .periphrastic "more unsure" "most unsure" }
 
@@ -325,7 +324,7 @@ def doubtful : GradableAdjective :=
     open `.value` scale this class is *derived* (open ⇒ contextual) rather than
     stipulated, so no `lexicalStandard` is needed. -/
 def value : AntonymPair :=
-  { dimension := .value, relation := .contrary, posForm := "good", negForm := "bad"
+  { dimension := .value, posForm := "good", negForm := "bad"
   , posComparison := .suppletive "better" "best", negComparison := .suppletive "worse" "worst"
   , evaluativeValence := some .positive }
 
@@ -334,7 +333,7 @@ abbrev good := value.pos
 abbrev bad := value.neg
 
 def beauty : AntonymPair :=
-  { dimension := .beauty, relation := .contrary, posForm := "beautiful", negForm := "ugly"
+  { dimension := .beauty, posForm := "beautiful", negForm := "ugly"
   , evaluativeValence := some .positive }
 
 abbrev beautiful := beauty.pos
@@ -344,10 +343,13 @@ abbrev ugly := beauty.neg
 def important : GradableAdjective :=
   { form := "important", dimension := some .importance }
 
-/-- *completely safe* but *??completely dangerous*: an upper-closed scale
-([kennedy-mcnally-2005] (27c)). -/
+/-- *safe* and *dangerous* measure on an upper-closed scale, so *completely safe* is fine but
+*??completely dangerous* is not ([kennedy-mcnally-2005] (27c)), and the pair is weak and
+contradictory, as Gotzner and Mazzarella's entailment pretest assumes ([gotzner-mazzarella-2024],
+Appendix 1). Alexandropoulou and Gotzner instead use it as a strong pair in their materials
+([alexandropoulou-gotzner-2024a], Table A.2), which would make it contrary. -/
 def safety : AntonymPair :=
-  { dimension := .safety, relation := .contradictory, posForm := "safe", negForm := "dangerous"
+  { dimension := .safety, posForm := "safe", negForm := "dangerous"
   , evaluativeValence := some .positive }
 
 abbrev safe := safety.pos
@@ -404,15 +406,15 @@ def nice : GradableAdjective :=
 /-- "pleasant" — open scale, positive evaluative ([nouwen-2024]).
     Base for M-degree intensifier *pleasantly*. -/
 def pleasantness : AntonymPair :=
-  { dimension := .value, relation := .contrary, posForm := "pleasant", negForm := "unpleasant"
+  { dimension := .value, posForm := "pleasant", negForm := "unpleasant"
   , evaluativeValence := some .positive }
 
 abbrev pleasant := pleasantness.pos
 
 abbrev unpleasant := pleasantness.neg
 
-/-- "decent" — a mildly-positive adjective: open `.value` scale with a functional
-    (necessity) standard ([beltrama-2025]), recorded via `lexicalStandard`. -/
+/-- *decent* is a mildly positive adjective, on the open value scale with a functional
+    (necessity) standard ([beltrama-2025]) recorded as its `lexicalStandard`. -/
 def decent : GradableAdjective :=
   { form := "decent", dimension := some .value, evaluativeValence := some .positive
   , lexicalStandard := some .necessity }
@@ -488,7 +490,7 @@ def gorgeous : GradableAdjective :=
 /-! ### Mirative bases: H-degree intensifiers, not evaluative -/
 
 def expectation : AntonymPair :=
-  { dimension := .expectation, relation := .contrary, posForm := "usual", negForm := "unusual"
+  { dimension := .expectation, posForm := "usual", negForm := "unusual"
   , evaluativeValence := some .neutral }
 
 abbrev usual := expectation.pos
@@ -515,12 +517,12 @@ def stunning : GradableAdjective :=
 def expected : GradableAdjective :=
   { form := "expected", dimension := some .expectation, evaluativeValence := some .neutral }
 
-/-- *possible* and *impossible*, contradictories: *possible* takes the minimum standard of the
-lower-closed possibility scale and *impossible* the maximum of its dual, as *wet* and *dry* do.
+/-- *possible* and *impossible* are contradictories, since *possible* takes the minimum standard of
+the lower-closed possibility scale and *impossible* the maximum of its dual, as *wet* and *dry* do.
 Whether *possible* is gradable at all is disputed ([lassiter-2017] §5.2.2); the entry records its
 gradable use, which *impossibly long* needs ([nouwen-2024] (27b)). -/
 def possibility : AntonymPair :=
-  { dimension := .possibility, relation := .contradictory, posForm := "possible"
+  { dimension := .possibility, posForm := "possible"
   , negForm := "impossible", evaluativeValence := some .neutral }
 
 abbrev possible := possibility.pos
@@ -550,5 +552,9 @@ def allEntries : List GradableAdjective :=
 /-- The entry with a given surface form. -/
 def lookup (form : String) : Option GradableAdjective :=
   allEntries.find? (·.form == form)
+
+/-- The antonym pair with a given surface form as one of its poles. -/
+def pairOf (form : String) : Option AntonymPair :=
+  pairs.find? fun p ↦ p.posForm == form || p.negForm == form
 
 end English.Adjectives

@@ -14,6 +14,12 @@ derived from its dimension, its polarity and any lexically fixed standard, so th
 share one scale and differ only in pole. The file also defines antonym pairs, informational
 strength, evaluative valence, and the ways a multidimensional adjective binds its dimensions.
 
+An antonym pair is contradictory when its poles take complementary standards, the minimum and the
+maximum of one scale, as Kennedy and McNally explain for *open* and *closed*, and both poles are
+weak. Strong pairs such as *pristine* and *filthy* leave a gap even on a closed scale, as
+Alexandropoulou and Gotzner observe, so the relation is read off the scale structure and the
+informational strength rather than stored.
+
 ## Main definitions
 
 * `AdjectiveClass`: Kennedy's classes of gradable adjectives.
@@ -26,6 +32,8 @@ strength, evaluative valence, and the ways a multidimensional adjective binds it
 * `AntonymPair.ComplementaryStandards`: the poles take the minimum and the maximum, and so
   split the scale; without lexical standards this holds exactly on a half-closed scale
   (`AntonymPair.complementaryStandards_iff_of_lexicalStandard_none`).
+* `AntonymPair.Contradictory`: the poles are contradictory, taking complementary standards and
+  both weak; otherwise they leave a gap and are contrary.
 * `DimensionBindingType`: how a multidimensional adjective binds its dimensions.
 
 ## References
@@ -34,6 +42,10 @@ strength, evaluative valence, and the ways a multidimensional adjective binds it
   (2007)][kennedy-2007]
 * [C. Kennedy and L. McNally, *Scale Structure, Degree Modification, and the Semantics of Gradable
   Predicates* (2005)][kennedy-mcnally-2005]
+* [S. Alexandropoulou and N. Gotzner, *The Interpretation of Relative and Absolute Adjectives Under
+  Negation* (2024)][alexandropoulou-gotzner-2024a]
+* [M. Morzycki, *Adjectival Extremeness: Degree Modification and Contextually Restricted Scales*
+  (2012)][morzycki-2012]
 * [G. W. Sassoon, *A Typology of Multidimensional Adjectives* (2013)][sassoon-2013]
 * [S. Alexandropoulou and N. Gotzner, *Gradable adjective interpretation under negation: The role
   of competition* (2024)][alexandropoulou-gotzner-2024b]
@@ -119,16 +131,14 @@ inductive SpatialConfigType where
   deriving DecidableEq, Repr
 
 /-- A **gradable adjective** is a syntactic adjective together with its degree semantics,
-    namely any lexically fixed standard, the logical relation to its antonym, its resultative
-    spatial configuration ([levin-2026]) and its evaluative valence ([nouwen-2024]). Its scale,
-    positive standard and adjective class are derived from its dimension and polarity. -/
+    namely any lexically fixed standard, its resultative spatial configuration ([levin-2026]) and
+    its evaluative valence ([nouwen-2024]). Its scale, positive standard and adjective class are
+    derived from its dimension and polarity. -/
 structure GradableAdjective extends Adjective where
   /-- The lexically fixed positive standard, for a partial adjective on a closed scale or for an
       adjective on an open scale whose standard its lexicon fixes, such as the necessity standard
       of *decent* ([beltrama-2025]); `none` takes the scale's default. -/
   lexicalStandard : Option PositiveStandard := none
-  /-- The logical relation to the lexical antonym, contrary or contradictory. -/
-  antonymRelation : Option AntonymRelation := none
   /-- Resultative spatial-configuration class ([levin-2026]). -/
   spatialConfigType : Option SpatialConfigType := none
   /-- The evaluative valence, which determines the degree of an intensifier formed on the
@@ -176,13 +186,14 @@ end GradableAdjective
 /-! ### Antonym pairs -/
 
 /-- An **antonym pair** is the positive and the negative polar adjective of one scale, each the
-other's lexical antonym under one relation. The shared data is stored once, and the two adjectives
-are `AntonymPair.pos` and `AntonymPair.neg`. -/
+other's lexical antonym. The shared data is stored once, and the two adjectives are
+`AntonymPair.pos` and `AntonymPair.neg`. -/
 structure AntonymPair where
   /-- The scale both poles measure on. -/
   dimension : ScalarDimension
-  /-- The logical relation between the poles. -/
-  relation : AntonymRelation
+  /-- The poles are informationally weak, as *large* and *small* are, or strong, as *gigantic* and
+      *tiny* are. -/
+  strength : InformationalStrength := .weak
   /-- The positive pole's surface form. -/
   posForm : String
   /-- The negative pole's surface form. -/
@@ -210,7 +221,6 @@ def pos (p : AntonymPair) : GradableAdjective where
   comparison := p.posComparison
   lexicalStandard := p.posLexicalStandard
   antonymForm := some p.negForm
-  antonymRelation := some p.relation
   evaluativeValence := p.evaluativeValence
   spatialConfigType := p.spatialConfigType
 
@@ -222,7 +232,6 @@ def neg (p : AntonymPair) : GradableAdjective where
   comparison := p.negComparison
   lexicalStandard := p.negLexicalStandard
   antonymForm := some p.posForm
-  antonymRelation := some p.relation
   evaluativeValence := p.evaluativeValence.map EvaluativeValence.flip
   spatialConfigType := p.spatialConfigType
 
@@ -255,6 +264,17 @@ theorem complementaryStandards_iff_of_lexicalStandard_none (p : AntonymPair)
     neg, hp, hn, Option.getD_none, Option.map_some, Boundedness.negative_smul]
   generalize p.dimension.boundedness = b
   cases b <;> decide
+
+/-- The poles are **contradictory** when they take complementary standards and both are weak, so
+that denying one asserts the other, as for *clean* and *dirty*. Otherwise the pair leaves a gap,
+a relative pair (*large*, *small*) by its contextual standards and a strong pair (*pristine*,
+*filthy*) because its members are extreme adjectives, whose standards lie beyond those of the weak
+pair ([morzycki-2012]; [alexandropoulou-gotzner-2024a], fn. 11). -/
+def Contradictory (p : AntonymPair) : Prop :=
+  p.ComplementaryStandards ∧ p.strength = .weak
+
+instance (p : AntonymPair) : Decidable p.Contradictory := by
+  unfold Contradictory; infer_instance
 
 end AntonymPair
 
