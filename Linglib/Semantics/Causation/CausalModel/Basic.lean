@@ -85,6 +85,9 @@ variable {M}
 @[simp] theorem contexts_bot : M.contexts ⊥ = Set.univ :=
   Set.eq_univ_of_forall fun _ _ ↦ bot_le
 
+/-- An observation that settles more holds in fewer contexts. -/
+theorem contexts_anti : Antitone M.contexts := fun _ _ h _ hu ↦ h.trans hu
+
 /-- In a context where the observation holds, imposing it as an intervention changes nothing. -/
 theorem solve_eq_solve_bot_of_mem_contexts {s : ∀ v, Flat (α v)} {u : U} (hu : u ∈ M.contexts s) :
     M.solve s u = M.solve ⊥ u := by

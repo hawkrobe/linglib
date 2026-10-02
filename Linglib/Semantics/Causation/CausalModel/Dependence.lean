@@ -25,23 +25,21 @@ the cause.
 ## Main results
 
 * `CausalModel.CausallySufficient.reflTransGen`: a cause sufficient for an effect is its ancestor
+* `CausalModel.CausallySufficient.solve_eq`, `CausalModel.CausallyNecessary.solve_eq`: in every
+  context where the background holds, a sufficient cause brings its effect about, and an effect
+  needs its necessary cause
 * `CausalModel.CausallyEntails.of_isExogenousSettlement`: settling exogenous variables settles
   no less
 * `CausalModel.isExogenousSettlement_update`, `CausalModel.IsExogenousSettlement.trans`
 
 ## Implementation notes
 
-Necessity takes the supersituations it quantifies over as a parameter. Nadathur and Lauer's
-definition ranges over every supersituation, `(· ≤ ·)`, and then a supersituation settling a
-variable between cause and effect reaches the effect around the cause. The definition of
-[nadathur-2023-implicatives] ranges over the supersituations that settle new variables with parents
-only at values the background does not rule out, which still admits such a route, while her worked
-examples argue from settlements of background variables alone. `Implicative` therefore reads
-necessity over the exogenous settlements (`CausalModel.IsExogenousSettlement`), the extensions at
-variables with no parents that the background leaves open. In a finite model each
-relation is decided through the computed strict development
-(`CausalModel.causallyEntails_iff_develop`), the quantified supersituations ranging over the
-finitely many partial assignments.
+Necessity takes the supersituations it quantifies over as a parameter: every supersituation,
+`(· ≤ ·)`, for Nadathur and Lauer, and for the worked examples of [nadathur-2023-implicatives] the
+exogenous settlements, the extensions at the variables with no parents that the background leaves
+open. Over every supersituation, one settling a variable between cause and effect reaches the
+effect around the cause. In a finite model each relation is decided through the computed strict
+development (`CausalModel.causallyEntails_iff_develop`).
 
 ## References
 
@@ -142,6 +140,71 @@ theorem IsExogenousSettlement.trans {s s' s'' : ∀ v, Flat (α v)}
   by_cases hv' : s' v = ⊥
   · exact ⟨(h₂.2 v hv' hne).1, fun x hx ↦ (h₂.2 v hv' hne).2 x (hx.of_isExogenousSettlement h₁)⟩
   · exact h₁.2 v hv hv'
+
+section Contexts
+
+/-! ### Truth in the contexts of a background
+
+A relation of causal dependence relative to a background constrains the actual world of every
+context where the background holds. -/
+
+variable [∀ v, Nonempty (α v)] {s : ∀ v, Flat (α v)} {c : V} {x : α c} {e : V} {y : α e}
+  {u : U}
+
+/-- A cause sufficient for an effect relative to a background brings the effect about in every
+context where the background and the cause hold. -/
+theorem CausallySufficient.solve_eq (h : M.CausallySufficient s c x e y) (hu : u ∈ M.contexts s)
+    (hc : M.solve ⊥ u c = x) : M.solve ⊥ u e = y :=
+  h.2.solve_bot_eq (mem_contexts_update hu hc)
+
+/-- When the context reaches the model only at its roots, a cause necessary for an effect over the
+exogenous settlements of a background holds in every context where the background and the effect
+hold. Settling every open and unsettled root at its value in the context develops to the
+context's actual world, so it settles the effect, and necessity makes it settle the cause. -/
+theorem CausallyNecessary.solve_eq [M.ContextAtRoots]
+    (h : M.CausallyNecessary M.IsExogenousSettlement s c x e y) (hu : u ∈ M.contexts s)
+    (he : M.solve ⊥ u e = y) : M.solve ⊥ u c = x := by
+  classical
+  obtain ⟨hne, ⟨s', -, hs'e, hent'⟩, hall⟩ := h
+  -- settle every open and unsettled root at its value in `u`
+  set t : ∀ v, Flat (α v) := fun v ↦
+    if s v = ⊥ ∧ (∀ w, ¬ M.graph.Adj w v) ∧ ∀ z, ¬ M.CausallyEntails s v z then
+      ↑(M.solve ⊥ u v) else s v with ht
+  have hset : M.IsExogenousSettlement s t := by
+    refine ⟨fun v ↦ ?_, fun v hv hne ↦ ?_⟩
+    · simp only [ht]; split_ifs with hcond
+      · rw [hcond.1]; exact bot_le
+      · exact le_rfl
+    · simp only [ht] at hne; split_ifs at hne with hcond
+      · exact hcond.2
+      · exact absurd hv hne
+  have hut : u ∈ M.contexts t := fun v ↦ by
+    simp only [ht]; split_ifs
+    · exact le_rfl
+    · exact hu v
+  have hte : t e = ⊥ := by
+    simp only [ht]; split_ifs with hcond
+    · exact absurd ((causallyEntails_root_iff hcond.2.1 hcond.1).2
+        ((causallyEntails_root_iff hcond.2.1 hs'e).1 hent')) hne
+    · by_contra hse
+      obtain ⟨z, hz⟩ := Flat.ne_bot_iff_exists.1 hse
+      have hzy : z = y := (Flat.coe_le_coe.1 (hz ▸ hu e)).trans he
+      exact hne (causallyEntails_iff.2 (.inl (by rw [hz, hzy])))
+  have hroot : ∀ v, (∀ w, ¬ M.graph.Adj w v) → ∃ z, M.CausallyEntails t v z := by
+    intro v hv
+    by_cases hcond : s v = ⊥ ∧ (∀ w, ¬ M.graph.Adj w v) ∧ ∀ z, ¬ M.CausallyEntails s v z
+    · refine ⟨M.solve ⊥ u v, causallyEntails_iff.2 (.inl ?_)⟩
+      simp only [ht]; split_ifs
+      · rfl
+    · rcases eq_or_ne (s v) ⊥ with hsv | hsv
+      · obtain ⟨z, hz⟩ : ∃ z, M.CausallyEntails s v z := by
+          by_contra hz; exact hcond ⟨hsv, hv, not_exists.1 hz⟩
+        exact ⟨z, hz.of_isExogenousSettlement hset⟩
+      · obtain ⟨z, hz⟩ := Flat.ne_bot_iff_exists.1 hsv
+        exact ⟨z, (causallyEntails_iff.2 (.inl hz)).of_isExogenousSettlement hset⟩
+  exact (hall t hset hte (he ▸ causallyEntails_solve_bot hroot hut e)).solve_bot_eq hut
+
+end Contexts
 
 section Decidable
 

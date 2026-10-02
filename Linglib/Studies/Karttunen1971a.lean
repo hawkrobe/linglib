@@ -1,32 +1,29 @@
 module
 
 public import Linglib.Semantics.Causation.VerbClass
-public import Linglib.Semantics.Presupposition.Basic
+public import Linglib.Semantics.Presupposition.Implicative
 public import Linglib.Semantics.Presupposition.Verb
 public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Fragments.English.Verbs.Copular
 
 /-!
-# Karttunen (1971): Implicative Verbs
+# Karttunen (1971)
 
-This file formalizes [karttunen-1971], which identifies a class of complement-taking verbs,
-*manage*, *remember*, *bother*, *dare*, *happen* and others listed in (2), whose assertion
-commits the speaker to the complement and whose negation commits the speaker to its negation,
-and analyzes such a sentence as a presupposition–proposition pair: the proposition `v(S)` is
-what is asserted, negated, or questioned, and the presupposition says what condition `v(S)` is
-for the complement `S`. Schema (37) makes `v(S)` necessary and sufficient for `S` (*manage*);
-(41) necessary and sufficient for `¬S` (*fail*, *forget*); (54) necessary only (*be able*,
-*be possible*); (59) sufficient only (*force*, *cause*); the non-implicatives *hope*, *want*
-and *try* carry no such presupposition and are plain `PartialProp.ofProp`.
+Karttunen identifies the implicative verbs, *manage*, *remember*, *bother*, *dare*, *happen* and
+the others listed in (2), whose assertion commits the speaker to the complement and whose
+negation commits the speaker to its negation. He analyzes such a sentence as a
+presupposition–proposition pair: the proposition `v(S)` is what is asserted, negated or
+questioned, and the presupposition says what condition `v(S)` is for the complement. Schema (37)
+makes `v(S)` necessary and sufficient for `S` (*manage*), (41) necessary and sufficient for `¬S`
+(*fail*, *forget*), (54) necessary only (*be able*, *be possible*), and (59) sufficient only
+(*force*, *cause*); the non-implicatives *hope*, *want* and *try* carry no such presupposition.
 
-`Condition` is the presupposed condition, `Schema` pairs it with the polarity of the
-complement, and `Schema.sentence` is the presupposition–proposition pair as a `PartialProp`.
-The paper's entailment facts follow: an affirmative assertion entails the polarity-adjusted
-complement when the condition is sufficient (`holds_imp`), a negated one entails its negation
-when the condition is necessary (`neg_holds_imp`), double negation cancels as in (13), and the
-one-way cells and the non-implicatives leave the other direction open. The English fragment's
-entries for the verbs of (2), (38) and (44), *be able* among them, carry the complement
-polarities of their schemas (`implicative_eq`) and so are presupposition triggers
+The schemas are `Implicative.Schema` under the material reading of the conditions
+(`Implicative.Reading.material`), which gives the paper's entailment facts: double negation
+cancels as in (13) (`manage_neg_neg_holds_imp`), and the one-way cells and the non-implicatives
+leave the other direction open (`force_neg_not_entails`, `beAble_not_entails`,
+`ofProp_not_entails`). The English fragment's entries for the verbs of (2), (38) and (44) carry
+the complement polarities of their schemas (`implicative_eq`) and so are presupposition triggers
 (`isTrigger_of_mem_english`), while its entries for the non-implicatives of (2) carry none
 (`implicative_eq_none`).
 
@@ -39,123 +36,27 @@ polarities of their schemas (`implicative_eq`) and so are presupposition trigger
 
 namespace Karttunen1971a
 
-open Presupposition
+open Presupposition Implicative
 
-/-- The condition `v(S)` is presupposed to be for the complement. -/
-inductive Condition where
-  /-- (59): *force*, *cause*, *make*. -/
-  | sufficient
-  /-- (54): *be able*, *be possible*. -/
-  | necessary
-  /-- (37) and (41): *manage*, *fail*. -/
-  | necessaryAndSufficient
-  deriving DecidableEq, Repr
+/-- Double negation cancels, (13): *John didn't remember not to lock his door* commits the
+speaker to *John locked his door*. -/
+theorem manage_neg_neg_holds_imp {W : Type*} {v S : W → Prop} {w : W}
+    (hs : (PartialProp.neg (Schema.manage.sentence (Reading.material W) v fun w ↦ ¬ S w)).holds w) :
+    S w :=
+  not_not.mp (Schema.neg_holds_imp (k := .manage) trivial hs)
 
-namespace Condition
+/-- (58) *John didn't force Mary to stay home* leaves open whether she stayed. -/
+theorem force_neg_not_entails : ∃ (v S : Unit → Prop),
+    (PartialProp.neg (Schema.force.sentence (Reading.material Unit) v S)).holds () ∧ S () :=
+  ⟨fun _ ↦ False, fun _ ↦ True, ⟨⟨fun _ _ ↦ trivial, fun h ↦ False.elim h⟩, id⟩, trivial⟩
 
-/-- The presupposition: `v` stands in the condition to `S`. -/
-def presup : Condition → Prop → Prop → Prop
-  | .sufficient, v, S => v → S
-  | .necessary, v, S => S → v
-  | .necessaryAndSufficient, v, S => v ↔ S
+/-- (55) *John was able to come* leaves open whether he came. -/
+theorem beAble_not_entails : ∃ (v S : Unit → Prop),
+    (Schema.beAble.sentence (Reading.material Unit) v S).holds () ∧ ¬ S () :=
+  ⟨fun _ ↦ True, fun _ ↦ False, ⟨⟨fun h ↦ False.elim h, fun _ _ ↦ trivial⟩, trivial⟩, id⟩
 
-/-- The condition is at least sufficient. -/
-def IsSufficient : Condition → Prop
-  | .necessary => False
-  | _ => True
-
-/-- The condition is at least necessary. -/
-def IsNecessary : Condition → Prop
-  | .sufficient => False
-  | _ => True
-
-variable {v S : Prop}
-
-theorem presup_imp : ∀ {c : Condition}, c.IsSufficient → c.presup v S → v → S
-  | .sufficient, _, h => h
-  | .necessaryAndSufficient, _, h => h.1
-
-theorem presup_imp_rev : ∀ {c : Condition}, c.IsNecessary → c.presup v S → S → v
-  | .necessary, _, h => h
-  | .necessaryAndSufficient, _, h => h.2
-
-end Condition
-
-/-- The presupposition–proposition schema of an implicative verb: the condition `v(S)` is
-presupposed to be, and whether the complement in question is `S` (*manage*) or `¬S`
-(*fail*). -/
-structure Schema where
-  condition : Condition
-  polarity : Polarity
-  deriving DecidableEq, Repr
-
-namespace Schema
-
-/-- (37): *manage*, *remember*, *bother*. -/
-def manage : Schema := ⟨.necessaryAndSufficient, .positive⟩
-
-/-- (41): *fail*, *forget*, *neglect*. -/
-def fail : Schema := ⟨.necessaryAndSufficient, .negative⟩
-
-/-- (59): *force*, *cause*, *make*. -/
-def force : Schema := ⟨.sufficient, .positive⟩
-
-/-- (59) for the negated complement: *prevent*. -/
-def prevent : Schema := ⟨.sufficient, .negative⟩
-
-/-- (54): *be able*, *be possible*. -/
-def beAble : Schema := ⟨.necessary, .positive⟩
-
-variable (k : Schema)
-
-/-- The two-way implicatives of (37) and (41). -/
-def TwoWay : Prop := k.condition = .necessaryAndSufficient
-
-instance : Decidable k.TwoWay := inferInstanceAs (Decidable (_ = _))
-
-/-- The complement the schema speaks of: `S` or `¬S` by polarity. -/
-def implied (S : Prop) : Prop :=
-  match k.polarity with
-  | .positive => S
-  | .negative => ¬ S
-
-variable {W : Type*} (v S : W → Prop) (w : W)
-
-/-- The sentence `v(S)`: the schema's presupposition, and `v` as the proposition. -/
-def sentence : PartialProp W := ⟨fun w ↦ k.condition.presup (v w) (k.implied (S w)), v⟩
-
-/-- An affirmative assertion commits the speaker to the complement when `v(S)` is
-presupposed sufficient. -/
-theorem holds_imp (h : k.condition.IsSufficient) (hs : (k.sentence v S).holds w) :
-    k.implied (S w) :=
-  Condition.presup_imp h hs.1 hs.2
-
-/-- A negated assertion commits the speaker to the negation of the complement when `v(S)`
-is presupposed necessary. -/
-theorem neg_holds_imp (h : k.condition.IsNecessary)
-    (hs : (PartialProp.neg (k.sentence v S)).holds w) : ¬ k.implied (S w) :=
-  fun hS ↦ hs.2 (Condition.presup_imp_rev h hs.1 hS)
-
-/-- Double negation cancels, (13): `John didn't remember not to lock his door` commits the
-speaker to `John locked his door`. -/
-theorem manage_neg_neg_holds_imp
-    (hs : (PartialProp.neg (manage.sentence v fun w ↦ ¬ S w)).holds w) : S w :=
-  not_not.mp (neg_holds_imp manage v _ w trivial hs)
-
-/-- (58): `John didn't force Mary to stay home` leaves open whether she stayed. -/
-theorem force_neg_not_entails :
-    ∃ (v S : Unit → Prop), (PartialProp.neg (force.sentence v S)).holds () ∧ S () :=
-  ⟨fun _ ↦ False, fun _ ↦ True, ⟨fun _ ↦ trivial, id⟩, trivial⟩
-
-/-- (55): `John was able to come` leaves open whether he came. -/
-theorem beAble_not_entails :
-    ∃ (v S : Unit → Prop), (beAble.sentence v S).holds () ∧ ¬ S () :=
-  ⟨fun _ ↦ True, fun _ ↦ False, ⟨fun h ↦ h.elim, trivial⟩, id⟩
-
-end Schema
-
-/-- (5): a non-implicative, which has no presupposition, commits the speaker to nothing
-about its complement in either polarity. -/
+/-- A non-implicative, which has no presupposition, commits the speaker to nothing about its
+complement in either polarity (5). -/
 theorem ofProp_not_entails :
     (∃ (v S : Unit → Prop), (PartialProp.ofProp v).holds () ∧ ¬ S ()) ∧
       ∃ (v S : Unit → Prop), (PartialProp.neg (PartialProp.ofProp v)).holds () ∧ S () :=
