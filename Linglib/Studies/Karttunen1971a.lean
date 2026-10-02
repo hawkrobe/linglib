@@ -23,7 +23,7 @@ The schemas are `Implicative.Schema` under the material reading of the condition
 cancels as in (13) (`manage_neg_neg_holds_imp`), and the one-way cells and the non-implicatives
 leave the other direction open (`force_neg_not_entails`, `beAble_not_entails`,
 `ofProp_not_entails`). The English fragment's entries for the verbs of (2), (38) and (44) carry
-the complement polarities of their schemas (`implicative_eq`) and so are presupposition triggers
+their schemas (`implicative_eq`) and so are presupposition triggers
 (`isTrigger_of_mem_english`), while its entries for the non-implicatives of (2) carry none
 (`implicative_eq_none`).
 
@@ -80,8 +80,8 @@ def english : List (Verb × Schema) :=
     (happen.toVerb, .manage), (fail.toVerb, .fail), (forget.toVerb, .fail),
     (neglect.toVerb, .fail), (Copular.beAble, .beAble)]
 
-/-- The complement polarity of each entry is its schema's. -/
-theorem implicative_eq : ∀ p ∈ english, p.1.implicative = some p.2.polarity := by
+/-- Each entry carries its schema. -/
+theorem implicative_eq : ∀ p ∈ english, p.1.implicative = some p.2 := by
   decide
 
 /-- Every entry is a presupposition trigger, as (37), (41) and (54) each pair the proposition
@@ -93,7 +93,7 @@ theorem isTrigger_of_mem_english {p : Verb × Schema} (hp : p ∈ english) : p.1
 def nonImplicative : List Verb :=
   [try_.toVerb, promise.toVerb, want.toVerb, intend.toVerb, decide_.toVerb, hope.toVerb]
 
-/-- The non-implicatives of (2) carry no complement polarity. -/
+/-- The non-implicatives of (2) carry no schema. -/
 theorem implicative_eq_none : ∀ v ∈ nonImplicative, v.implicative = none := by
   decide
 

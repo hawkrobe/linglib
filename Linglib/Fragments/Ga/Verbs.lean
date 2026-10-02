@@ -85,7 +85,7 @@ def hiekpano : Verb where
   form := "hiɛ-kpa-nɔ"
   frames := [niFrame]
   readings := [niReading .subjectControl]
-  implicative := some .negative
+  implicative := some .fail
 
 /-- *mia-mi-hiɛ* 'try' (lit. 'squeeze-my-face') — subject control; `ni`
     obligatory (exx 36, 60a: 'I tried to close the door'). -/
@@ -103,7 +103,7 @@ def kai : Verb where
   form := "kai"
   frames := [niFrame, akeFrame]
   readings := [niReading .subjectControl, akeReading]
-  implicative := some .positive
+  implicative := some .manage
 
 /-- *nyɛ* 'manage' — subject control; `ni` optionally overt (ex 39: 'The children
     managed to buy a home'), positive implicative. Also attested with a bare
@@ -113,7 +113,7 @@ def nye : Verb where
   form := "nyɛ"
   frames := [niFrame]
   readings := [niReading .subjectControl]
-  implicative := some .positive
+  implicative := some .manage
 
 /-- *kplɛnɔ* 'agree' — subject control; the `ni`-frame requires the irrealis
     marker (exx 52, 89c, 109, 122a). Alternates into `akɛ` with a subjunctive
@@ -170,7 +170,7 @@ def dai : Verb where
   form := "dai"
   frames := [niFrame]
   readings := [niReading .objectControl]
-  implicative := some .positive
+  implicative := some .force
   causative := some .force
 
 /-- *laka* 'persuade, coax, deceive' (context-dependent, fn 4) — object control
