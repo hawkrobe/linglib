@@ -17,9 +17,9 @@ differences. A probability measure is a qualitatively additive measure through i
 ## Main definitions
 
 * `QualAddMeasure`: qualitatively additive contents, applied as functions `m A`.
+* `QualAddMeasure.ofRepr`: a normalized function representing a qualitative probability.
 * `MeasureTheory.Measure.inducedGe`: the order a measure induces.
-* `MeasureTheory.Measure.toQualAdd`, `MeasureTheory.Measure.toQualitativeProbability`: a
-  probability measure as a qualitatively additive measure and as an order.
+* `MeasureTheory.Measure.toQualAdd`: a probability measure as a qualitatively additive measure.
 
 ## Implementation notes
 
@@ -87,27 +87,31 @@ theorem mu_mono (m : QualAddMeasure K W) {A B : Set W} (h : A ⊆ B) :
     m A ≤ m B := by
   rw [m.qualAdd A B, Set.sdiff_eq_empty.mpr h, m.mu_empty]; exact m.nonneg (B \ A)
 
-/-- A qualitatively additive measure induces a qualitative probability order. -/
-def toQualitativeProbability (m : QualAddMeasure K W) :
-    QualitativeProbability (Set W) where
-  le A B := m A ≤ m B
-  mono' := fun _ _ h => m.mu_mono h
-  nonTrivial := by simp
-  total := fun A B => le_total (m A) (m B)
-  trans' := fun _ _ _ hab hbc => le_trans hab hbc
-  additive := m.qualAdd
+/-- A qualitatively additive measure induces a qualitative probability. -/
+instance (m : QualAddMeasure K W) : IsQualitativeProbability m.inducedGe where
+  refl _ := le_rfl
+  trans _ _ _ hab hbc := le_trans hbc hab
+  total A B := le_total (m B) (m A)
+  mono _ _ h := m.mu_mono h
+  qadd A B := m.qualAdd B A
+  bot_not_ge_top := by simp [inducedGe]
 
-instance (m : QualAddMeasure K W) : IsLikelihoodMono m.inducedGe :=
-  ⟨m.toQualitativeProbability.mono'⟩
+variable {r : Set W → Set W → Prop} [IsQualitativeProbability r]
 
-instance (m : QualAddMeasure K W) : IsTrans (Set W) m.inducedGe :=
-  ⟨fun _ _ _ hab hbc ↦ m.toQualitativeProbability.trans hbc hab⟩
+/-- A function representing a qualitative probability and normalized to `0` on `∅` and `1` on
+    the whole space is a qualitatively additive measure, nonnegative by monotonicity and
+    qualitatively additive because the order is. -/
+def ofRepr (f : Set W → K) (hf : ∀ A B, r A B ↔ f B ≤ f A) (h0 : f ∅ = 0)
+    (h1 : f Set.univ = 1) : QualAddMeasure K W where
+  toFun := f
+  nonneg' A := by rw [← h0]; exact (hf A ∅).mp (rel_bot A)
+  empty' := h0
+  total' := h1
+  qualAdd' A B := by rw [← hf, ← hf]; exact qadd B A
 
-instance (m : QualAddMeasure K W) : IsQualitativeAdditive m.inducedGe :=
-  ⟨fun A B ↦ m.toQualitativeProbability.additive B A⟩
-
-instance (m : QualAddMeasure K W) : IsNontrivial m.inducedGe :=
-  ⟨m.toQualitativeProbability.nonTrivial⟩
+theorem inducedGe_ofRepr (f : Set W → K) (hf : ∀ A B, r A B ↔ f B ≤ f A) (h0 : f ∅ = 0)
+    (h1 : f Set.univ = 1) : (ofRepr f hf h0 h1).inducedGe = r :=
+  funext₂ fun A B ↦ propext (hf A B).symm
 
 end QualAddMeasure
 
@@ -158,19 +162,13 @@ theorem inducedGe_eq_toQualAdd : μ.inducedGe = μ.toQualAdd.inducedGe := by
   funext A B
   exact propext μ.inducedGe_iff_real
 
-/-- A probability measure induces a qualitative probability order, through `toQualAdd`. -/
-noncomputable def toQualitativeProbability : QualitativeProbability (Set W) :=
-  μ.toQualAdd.toQualitativeProbability
-
-/-! The order a probability measure induces carries the axioms, restated for `inducedGe` so
-that instance resolution finds them without unfolding. -/
-
-instance : IsLikelihoodMono μ.inducedGe := inducedGe_eq_toQualAdd μ ▸ inferInstance
-
-instance : IsTrans (Set W) μ.inducedGe := inducedGe_eq_toQualAdd μ ▸ inferInstance
-
-instance : IsQualitativeAdditive μ.inducedGe := inducedGe_eq_toQualAdd μ ▸ inferInstance
-
-instance : IsNontrivial μ.inducedGe := inducedGe_eq_toQualAdd μ ▸ inferInstance
+/-- A probability measure on a discrete space induces a qualitative probability. -/
+instance : IsQualitativeProbability μ.inducedGe where
+  refl _ := le_rfl
+  trans _ _ _ hab hbc := le_trans hbc hab
+  total A B := le_total (μ B) (μ A)
+  mono _ _ h := measure_mono h
+  qadd A B := μ.measure_le_iff_sdiff_le B A
+  bot_not_ge_top := by simp [inducedGe]
 
 end MeasureTheory.Measure

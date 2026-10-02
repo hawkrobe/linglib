@@ -115,13 +115,13 @@ theorem _root_.MeasureTheory.Measure.finiteCancellation : FiniteCancellation μ.
 
 end
 
-/-- A representable qualitative probability order satisfies finite cancellation
-    (the soundness half of Scott's theorem, in balanced-sequence form). -/
+/-- A representable relation satisfies finite cancellation (the soundness half of Scott's
+    theorem, in balanced-sequence form). -/
 theorem Representable.finiteCancellation [Fintype W] [MeasurableSpace W]
-    [MeasurableSingletonClass W] {sys : QualitativeProbability (Set W)} (h : Representable sys) :
-    FiniteCancellation sys.ge := by
+    [MeasurableSingletonClass W] {r : Set W → Set W → Prop} (h : Representable r) :
+    FiniteCancellation r := by
   obtain ⟨μ, hμ, hm⟩ := h
   intro prem X Y hbal hprem
-  exact (hm X Y).mpr (μ.finiteCancellation prem X Y hbal fun p hp ↦ (hm p.2 p.1).mp (hprem p hp))
+  exact (hm Y X).mpr (μ.finiteCancellation prem X Y hbal fun p hp ↦ (hm p.1 p.2).mp (hprem p hp))
 
 end ComparativeProbability
