@@ -6,6 +6,7 @@ public import Linglib.Core.Order.Probability.Content
 public import Linglib.Semantics.Modality.Kratzer.Operators
 public import Linglib.Semantics.Degree.Comparison
 public import Linglib.Studies.HollidayIcard2013
+public import Linglib.Studies.Yalcin2010
 public import Linglib.Data.Examples.Lassiter2015
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Tactic.FinCases
@@ -13,46 +14,36 @@ public import Mathlib.Tactic.FinCases
 /-!
 # Lassiter (2015): Epistemic comparison, models of uncertainty, and the disjunction puzzle
 
-[lassiter-2015] traces the disjunction puzzle, that *φ is as likely as ψ* and *φ is as likely
-as χ* entail *φ is as likely as ψ or χ* under [kratzer-1991]'s comparative possibility, to the
-lift [lewis-1973] uses: a proposition sits in the likelihood order by its highest worlds alone,
-so the likelihood of a disjunction is that of its likeliest disjunct. Iterated over a fair
-lottery in which nobody holds more than two tickets, the puzzle makes Sam as likely to win as
-not (`lottery_collapse`). Section 1.4 shows that [kratzer-2012]'s revised lift, which compares
-only the worlds in exactly one of the two propositions, escapes Yalcin's special case but
-validates the puzzle whenever the alternatives are disjoint, as in the lottery
-(`revised_escapes_collapse`, `revised_disjoint_puzzle`); every countermodel has a world in the
-overlap (`revised_countermodel_overlap`). Section 1.5 shows that [holliday-icard-2013]'s
-m-lifting avoids the puzzle but, under Kratzer's *must*, makes a necessary proposition no
-likelier than its negation as soon as the best worlds are fewer than half
-(`mLift_must_not_probably`, `best_not_probably_of_ncard_lt`).
+Lassiter traces the disjunction puzzle, that *φ is as likely as ψ* and *φ is as likely as χ*
+entail *φ is as likely as ψ or χ* under Kratzer's comparative possibility, to Lewis's lift, by
+which the likelihood of a disjunction is that of its likeliest disjunct. Kratzer's revised lift
+keeps the puzzle for disjoint alternatives, and Holliday and Icard's m-lifting avoids it but,
+under Kratzer's *must*, refutes Yalcin's V6. A probability scale refutes the puzzle; symmetric
+fuzzy measures refute it too but also refute V13, which qualitative additivity restores. Three
+bridges from Kratzer's *must* to a probabilistic *likely* each fail, and the paper ends with
+three probabilistic replacements for the auxiliaries.
 
-Section 2 replaces the lift by a scale. Finitely additive probability refutes the puzzle
-(`prob_refutes_rightUnion`) while allowing it when the first proposition holds at least half
-the mass (`prob_rightUnion_of_half`), and gives Sam the right odds (`lottery_bound`).
-Symmetric fuzzy measures also refute it, but let *Sam goes to the movies* be exactly as
-likely as *Sam goes to school or to the movies* although school is possible
-(`fuzzy_counterexample`); the equal-shares axiom, [holliday-icard-2013]'s qualitative
-additivity, forbids this (`QualAddMeasure.eq_zero_of_union_le`). Section 3 examines three
-bridges from Kratzer's *must* to a probabilistic *likely*: BR1 reimports the disjoint puzzle
-(`bridge1_disjoint_puzzle`) and permits a necessary proposition to be barely likelier than
-not (`bridge1_thin_margin`); BR2 and BR3 permit it to be less likely than not
-(`bridge2_must_not_probably`, `bridge3_must_not_probably`). Section 4 states the three
-replacements for the auxiliaries, quantificational, strong and weak, and the inference from
-*more likely than* to *might* that separates them (`moreLikely_might`,
-`weak_refutes_moreLikely_might`).
+## Main results
+
+* `disjunction_puzzle`, `lottery_collapse`: §1.1, the puzzle and its lottery iteration.
+* `revised_escapes_collapse`, `revised_disjoint_puzzle`, `revised_countermodel_overlap`: §1.4.
+* `mLift_refutes_V6`: §1.5, the m-lifting against (35), which the l-lifting validates under the
+  same *must* (`Yalcin2010.kratzer_V6`).
+* `prob_refutes_rightUnion`, `prob_rightUnion_of_half`, `lottery_bound`: §2.1.
+* `fuzzy_refutes_V13`, `QualAddMeasure.eq_zero_of_union_le`: §2.2, (48) and (49).
+* `bridge1_disjoint_puzzle`, `bridge1_thin_margin`, `bridge2_refutes_V6`, `bridge3_refutes_V6`:
+  §3.
+* `moreLikely_might`, `weak_refutes_moreLikely_might`: §4.
 
 ## Implementation notes
 
-* Kratzer's *must* is `humanNecessity` over the empty base, and Kratzer 2012's revised lift is
-  `KratzerLift` in `Logic/ComparativeProbability/WorldOrdering`, whose disjoint right-union is
-  the observation this paper reports through [holliday-icard-2013].
-* The three world-ordering countermodels share one model: three worlds, the first alone best,
-  masses `0.4`, `0.3`, `0.3`; BR3 holds in it by [holliday-icard-2013]'s footnote-13 lemma,
-  since the order agrees with the measure on singletons.
-* The strong and weak probabilistic auxiliaries are the positive forms of the probability scale,
-  `Degree.Comparison.ge.over` for *must* and `Degree.Comparison.gt.over` for its dual *might*,
-  with thresholds `1` and `θ < 1`.
+* Kratzer's *must* is human necessity over the empty base, as in Yalcin's study
+  (`Yalcin2010.must`).
+* The world-ordering countermodels share three worlds, the first alone best, with masses `0.4`,
+  `0.3`, `0.3`; BR3 holds there by Holliday and Icard's footnote-13 lemma.
+* The strong and weak auxiliaries are the positive forms of the probability scale,
+  `Degree.Comparison.ge.over` for *must* and `Degree.Comparison.gt.over` for *might*, with
+  thresholds `1` and `θ < 1`.
 * The ratio-modifier argument of §2.2 and the open problems of §4 are recorded as examples
   only.
 
@@ -80,13 +71,12 @@ variable {W : Type*}
 
 /-! ### §1.1 The disjunction puzzle and the lottery -/
 
-/-- The puzzle (11) is the right-union property, which [lewis-1973]'s lift has
-([halpern-1997]). -/
+/-- The puzzle (11) is the right-union property, which Lewis's lift has, as Halpern shows. -/
 theorem disjunction_puzzle (r : W → W → Prop) : RightUnion (LewisLift r) :=
   rightUnion_lewisLift
 
-/-- (13)–(14): iterating the puzzle over the other ticket holders, whose winnings exhaust Sam's
-losing, makes Sam as likely to win as not. -/
+/-- Iterating the puzzle over the other ticket holders, whose winnings exhaust Sam's losing,
+makes Sam as likely to win as not, as in (13)–(14). -/
 theorem lottery_collapse {r : Set W → Set W → Prop} (hJ : RightUnion r) {ι : Type*}
     {s : Finset ι} (hs : s.Nonempty) {win : Set W} {wins : ι → Set W}
     (hcover : (⋃ i ∈ s, wins i) = winᶜ) (h : ∀ i ∈ s, r win (wins i)) : r win winᶜ :=
@@ -98,13 +88,14 @@ section Revised
 
 variable (r : W → W → Prop)
 
-/-- (30): the revised lift lets a proposition be as likely as its negation without being as
+/-- The revised lift of (30) lets a proposition be as likely as its negation without being as
 likely as everything, escaping Yalcin's collapse, since it is as likely as the whole space only
 when the space is exhausted. -/
 theorem kratzerLift_univ_iff (A : Set W) : KratzerLift r A Set.univ ↔ A = Set.univ :=
   kratzerLift_univ_iff' r A
 
-/-- Two indiscriminate worlds: `{0}` is as likely as its complement but not as everything. -/
+/-- Over two indiscriminate worlds `{0}` is as likely as its complement but not as
+everything. -/
 theorem revised_escapes_collapse :
     ¬EquiprobabilityCollapse (KratzerLift fun _ _ : Fin 2 ↦ True) := by
   intro h
@@ -112,7 +103,7 @@ theorem revised_escapes_collapse :
   rw [kratzerLift_univ_iff] at this
   exact absurd (this ▸ Set.mem_univ 1) (by simp)
 
-/-- (31), Appendix B: in a countermodel to the puzzle for the revised lift, a world of one
+/-- In a countermodel to the puzzle for the revised lift, (31) of Appendix B, a world of one
 alternative outside the first proposition fails to dominate a world the first proposition shares
 with the other alternative. -/
 theorem revised_countermodel_overlap {A B C : Set W} (hB : KratzerLift r A B)
@@ -139,8 +130,8 @@ theorem revised_countermodel_overlap {A B C : Set W} (hB : KratzerLift r A B)
       · exact hnone v ⟨hvA, hvB⟩
       · exact hall v ⟨hvA, fun h ↦ h.elim hvB hvC⟩⟩
 
-/-- (32), Appendix C: with the alternatives made disjoint, as in the lottery, the puzzle is
-valid for the revised lift. -/
+/-- With the alternatives made disjoint, as in the lottery, the puzzle is valid for the revised
+lift, (32) of Appendix C. -/
 theorem revised_disjoint_puzzle {A B C : Set W} (hB : Disjoint A B) (hC : Disjoint A C)
     (hAB : KratzerLift r A B) (hAC : KratzerLift r A C) : KratzerLift r A (B ∪ C) :=
   kratzerLift_rightUnion_of_disjoint r hB hC hAB hAC
@@ -149,30 +140,31 @@ end Revised
 
 /-! ### §1.5 The m-lifting under Kratzer's *must* -/
 
-/-- A proposition fewer than half of whose worlds it contains cannot be probable under the
-m-lifting: no injection matches its complement into it. -/
+/-- A proposition holding at fewer worlds than its complement cannot be probable under the
+m-lifting, since no injection matches its complement into it. -/
 theorem best_not_probably_of_ncard_lt [Finite W] (r : W → W → Prop) {A : Set W}
     (h : A.ncard < Aᶜ.ncard) : ¬Probably (MatchingLift r) A :=
   fun hp ↦ absurd hp.1.ncard_le (not_le.2 h)
 
-/-- The ordering source of §1.5 and §3: the first of three worlds is the sole best world. -/
+/-- The ordering source of §1.5 and §3 makes the first of three worlds the sole best one. -/
 def bestFirst : List (Fin 3 → Prop) := [(· = 0)]
 
 theorem bestFirst_le (v u : Fin 3) : (v ≤[bestFirst] u) ↔ (u = 0 → v = 0) := by
   simp [bestFirst, atLeastAsGoodAs_iff]
 
-/-- Kratzer's *must* of the sole best world holds, yet under the m-lifting that world is not
-likelier than its complement, since one world matches no injection from two. -/
-theorem mLift_must_not_probably :
-    humanNecessity emptyBackground (fun _ ↦ bestFirst) (· ∈ ({0} : Set (Fin 3))) 0 ∧
-      ¬Probably (MatchingLift (atLeastAsGoodAs bestFirst)) {0} := by
-  refine ⟨?_, best_not_probably_of_ncard_lt _ ?_⟩
-  · intro u _
-    refine ⟨0, by rw [accessibleWorlds_emptyBackground]; exact Set.mem_univ _, ?_, fun z _ hz ↦ ?_⟩
-    · rw [bestFirst_le]; exact fun _ ↦ rfl
-    · rw [bestFirst_le] at hz; exact hz rfl
-  · have : ({0} : Set (Fin 3))ᶜ = {1, 2} := by ext x; fin_cases x <;> simp
-    rw [this, Set.ncard_singleton, Set.ncard_pair (by decide)]; decide
+/-- Kratzer's *must* of the sole best world holds. -/
+theorem must_best : Yalcin2010.must bestFirst {0} 0 :=
+  (Yalcin2010.must_iff _ _ _).2 fun _ ↦ ⟨0, (bestFirst_le _ _).2 fun _ ↦ rfl,
+    fun _ hz ↦ (bestFirst_le _ _).1 hz rfl⟩
+
+/-- Under Kratzer's *must* the m-lifting refutes (35), Yalcin's V6. The sole best world is
+necessary but not likelier than its complement, since one world matches no injection from
+two. -/
+theorem mLift_refutes_V6 :
+    ¬MustToProbably (MatchingLift (atLeastAsGoodAs bestFirst)) (Yalcin2010.must bestFirst · 0) :=
+  fun h ↦ best_not_probably_of_ncard_lt _ (by
+    have : ({0} : Set (Fin 3))ᶜ = {1, 2} := by ext x; fin_cases x <;> simp
+    rw [this, Set.ncard_singleton, Set.ncard_pair (by decide)]; decide) (h _ must_best)
 
 /-! ### §2.1 Scales of probability -/
 
@@ -180,8 +172,8 @@ section Probability
 
 variable (P : FinAddMeasure ℚ W)
 
-/-- (46): three disjoint alternatives with masses `0.4`, `0.3`, `0.3` refute the puzzle for
-probability. -/
+/-- Three disjoint alternatives with masses `0.4`, `0.3`, `0.3` refute the puzzle for
+probability, as in (46). -/
 noncomputable def skewed : FinAddMeasure ℚ (Fin 3) :=
   .ofFintype ![4 / 10, 3 / 10, 3 / 10] (fun i ↦ by fin_cases i <;> norm_num)
     (by simp [Fin.sum_univ_three]; norm_num)
@@ -197,16 +189,16 @@ theorem prob_refutes_rightUnion : ¬RightUnion skewed.inducedGe := by
   simp [skewed] at this
   norm_num at this
 
-/-- The premises are compatible with the conclusion: when the first proposition holds at least
-half the mass, any alternatives outside it together weigh no more. -/
+/-- The premises are compatible with the conclusion, since when the first proposition holds at
+least half the mass, any alternatives outside it together weigh no more. -/
 theorem prob_rightUnion_of_half {A B C : Set W} (hA : 1 / 2 ≤ P A) (hB : B ⊆ Aᶜ) (hC : C ⊆ Aᶜ) :
     P (B ∪ C) ≤ P A := by
   have h1 := P.mu_compl A
   have h2 := P.mu_mono (Set.union_subset hB hC)
   linarith
 
-/-- The fair lottery: a holder of at most `k` of `n` tickets wins with probability at most
-`k / n`, and loses with probability at least `(n - k) / n`. -/
+/-- In the fair lottery a holder of at most `k` of `n` tickets wins with probability at most
+`k / n` and loses with probability at least `(n - k) / n`. -/
 theorem lottery_bound {n k : ℕ} [NeZero n] {A : Set (Fin n)} (h : A.ncard ≤ k) :
     FinAddMeasure.uniform (K := ℚ) (Fin n) A ≤ k / n ∧
       ((n : ℚ) - k) / n ≤ FinAddMeasure.uniform (K := ℚ) (Fin n) Aᶜ := by
@@ -225,21 +217,26 @@ end Probability
 
 /-! ### §2.2 Symmetric fuzzy measures and equal shares -/
 
-/-- (47): a symmetric fuzzy measure, normalized, symmetric under complement, and monotone. -/
+/-- A symmetric fuzzy measure (47) is normalized, symmetric under complement, and monotone. -/
 structure SymmetricFuzzyMeasure (W : Type*) where
-  /-- The measure. -/
+  /-- `mu A` is the measure of `A`. -/
   mu : Set W → ℚ
   mu_univ : mu Set.univ = 1
   symm : ∀ A, mu A + mu Aᶜ = 1
   mono : ∀ ⦃A B⦄, A ⊆ B → mu A ≤ mu B
+
+/-- Under a symmetric fuzzy measure `A` is at least as likely as `B` when it measures at least
+as much. -/
+def SymmetricFuzzyMeasure.likelihood (μ : SymmetricFuzzyMeasure W) (A B : Set W) : Prop :=
+  μ.mu B ≤ μ.mu A
 
 /-- Every probability measure is a symmetric fuzzy measure. -/
 def FinAddMeasure.toSymmetricFuzzy (P : FinAddMeasure ℚ W) : SymmetricFuzzyMeasure W :=
   ⟨P, P.total, P.mu_compl, fun _ _ h ↦ P.mu_mono h⟩
 
 open scoped Classical in
-/-- (48)'s scenario: Sam may go to school (`1`), more likely to the movies (`0`), or elsewhere
-(`2`); the movies alone measure `0.6`, as much as the movies or school. -/
+/-- In the scenario of (48) Sam may go to school (`1`), more likely to the movies (`0`), or
+elsewhere (`2`), and the movies alone measure `0.6`, as much as the movies or school. -/
 noncomputable def cutClass : SymmetricFuzzyMeasure (Fin 3) where
   mu A := if 0 ∈ A then (if 1 ∈ A then (if 2 ∈ A then 1 else 6 / 10) else
       (if 2 ∈ A then 8 / 10 else 6 / 10))
@@ -258,24 +255,20 @@ noncomputable def cutClass : SymmetricFuzzyMeasure (Fin 3) where
         | exact absurd (h a2) b2
         | norm_num
 
-/-- (48): under `cutClass`, going to the movies is exactly as likely as going to school or to the
-movies, although going to school is possible; the measure is not qualitatively additive. -/
-theorem fuzzy_counterexample :
-    cutClass.mu {0} = cutClass.mu ({1} ∪ {0}) ∧ 0 < cutClass.mu {1} ∧
-      ¬(cutClass.mu ({1} ∪ {0}) ≤ cutClass.mu {0} ↔
-        cutClass.mu (({1} ∪ {0}) \ {0}) ≤ cutClass.mu ({0} \ ({1} ∪ {0}))) := by
-  have h1 : ({1} ∪ {0} : Set (Fin 3)) \ {0} = {1} := by ext x; fin_cases x <;> simp
-  have h2 : ({0} : Set (Fin 3)) \ ({1} ∪ {0}) = ∅ := by ext x; fin_cases x <;> simp
-  rw [h1, h2]
-  norm_num [cutClass]
+/-- Symmetric fuzzy measures refute V13. Under `cutClass` going to the movies is exactly as
+likely as going to school or to the movies, although going to school is possible (48). -/
+theorem fuzzy_refutes_V13 : ¬StrictDisjunctionIntro cutClass.likelihood := fun h ↦
+  (h {1} {0} ⟨by norm_num [SymmetricFuzzyMeasure.likelihood, cutClass],
+    by norm_num [SymmetricFuzzyMeasure.likelihood, cutClass]⟩).2
+    (by norm_num [SymmetricFuzzyMeasure.likelihood, cutClass])
 
-/-- (49) with (47): under a qualitatively additive measure, a proposition as likely as a
-disjunction it is part of leaves the other disjunct no mass, so (48) forces school out. -/
+/-- Qualitative additivity, (49) added to (47), gives V13, so a proposition as likely as a
+disjunction it is part of leaves the other disjunct no mass, and (48) forces school out. -/
 theorem QualAddMeasure.eq_zero_of_union_le (m : QualAddMeasure ℚ W) {A B : Set W}
-    (h : m (A ∪ B) ≤ m A) : m (B \ A) = 0 := by
-  have := (m.qualAdd (A ∪ B) A).1 h
-  rw [Set.union_sdiff_left, Set.sdiff_eq_empty.2 Set.subset_union_left, m.mu_empty] at this
-  exact le_antisymm this (m.nonneg _)
+    (h : m (A ∪ B) ≤ m A) : m (B \ A) = 0 :=
+  have : m.inducedGe ⊥ (B \ A) := strictDisjunctionIntro_iff.1 strictDisjunctionIntro B A
+    (show m (B ∪ A) ≤ m A by rwa [Set.union_comm])
+  le_antisymm (le_of_le_of_eq this m.mu_empty) (m.nonneg _)
 
 /-! ### §3 Bridging rules -/
 
@@ -283,65 +276,64 @@ section Bridges
 
 variable (r : W → W → Prop) (P : FinAddMeasure ℚ W)
 
-/-- (57) BR1: the revised lift constrains probability. -/
+/-- BR1 (57) requires the revised lift to constrain probability. -/
 def Bridge1 : Prop := ∀ A B, KratzerLift r A B → P B ≤ P A
 
-/-- (59) BR2: the world order constrains probability on singletons. -/
+/-- BR2 (59) requires the world order to constrain probability on singletons. -/
 def Bridge2 : Prop := ∀ u v, r u v → P {v} ≤ P {u}
 
-/-- (61) BR3: the m-lifting constrains probability. -/
+/-- BR3 (61) requires the m-lifting to constrain probability. -/
 def Bridge3 : Prop := ∀ A B, MatchingLift r A B → P B ≤ P A
 
-/-- (58): BR1 reimports the puzzle for disjoint alternatives ordered by the revised lift. -/
+/-- BR1 reimports the puzzle for disjoint alternatives ordered by the revised lift (58). -/
 theorem bridge1_disjoint_puzzle (h : Bridge1 r P) {A B C : Set W} (hB : Disjoint A B)
     (hC : Disjoint A C) (hAB : KratzerLift r A B) (hAC : KratzerLift r A C) :
     P (B ∪ C) ≤ P A :=
   h _ _ (kratzerLift_rightUnion_of_disjoint r hB hC hAB hAC)
 
-/-- BR2 makes the m-lifting sound for the measure ([holliday-icard-2013], footnote 13), so
-BR3 follows from BR2 when the order agrees with the measure. -/
+/-- BR2 makes the m-lifting sound for the measure, by Holliday and Icard's footnote 13, so BR3
+follows from BR2 when the order agrees with the measure. -/
 theorem bridge3_of_agree [Fintype W] (h : ∀ v u, r v u ↔ P {u} ≤ P {v}) : Bridge3 r P :=
   fun _ _ hAB ↦ HollidayIcard2013.measure_le_of_matchingLift P r h hAB
 
 end Bridges
 
-/-- The three-world model of §3 with masses `0.4`, `0.3`, `0.3`: BR2 holds, Kratzer's *must*
-of the best world holds, yet the best world is less likely than its complement. -/
-theorem bridge2_must_not_probably :
+/-- In the three-world model of §3, with masses `0.4`, `0.3`, `0.3`, BR2 holds, yet under
+Kratzer's *must* V6 fails, since the necessary best world is less likely than its
+complement. -/
+theorem bridge2_refutes_V6 :
     Bridge2 (atLeastAsGoodAs bestFirst) skewed ∧
-      humanNecessity emptyBackground (fun _ ↦ bestFirst) (· ∈ ({0} : Set (Fin 3))) 0 ∧
-      ¬Probably skewed.inducedGe {0} := by
-  refine ⟨fun u v huv ↦ ?_, mLift_must_not_probably.1, fun ⟨h, _⟩ ↦ ?_⟩
+      ¬MustToProbably skewed.inducedGe (Yalcin2010.must bestFirst · 0) := by
+  refine ⟨fun u v huv ↦ ?_, fun hV6 ↦ ?_⟩
   · rw [bestFirst_le] at huv
     fin_cases u <;> fin_cases v <;> simp [skewed] at huv ⊢ <;> norm_num
-  · have hc : ({0} : Set (Fin 3))ᶜ = {1} ∪ {2} := by ext x; fin_cases x <;> simp
+  · have h := (hV6 _ must_best).1
+    have hc : ({0} : Set (Fin 3))ᶜ = {1} ∪ {2} := by ext x; fin_cases x <;> simp
     rw [FinAddMeasure.inducedGe, hc, skewed.additive (Set.disjoint_singleton.2 (by decide))] at h
     simp [skewed] at h
     norm_num at h
 
 /-- The same model satisfies BR3, since the order agrees with the measure on singletons, so
 BR3 too allows a necessary proposition to be less likely than its negation. -/
-theorem bridge3_must_not_probably :
+theorem bridge3_refutes_V6 :
     Bridge3 (atLeastAsGoodAs bestFirst) skewed ∧
-      humanNecessity emptyBackground (fun _ ↦ bestFirst) (· ∈ ({0} : Set (Fin 3))) 0 ∧
-      ¬Probably skewed.inducedGe {0} :=
+      ¬MustToProbably skewed.inducedGe (Yalcin2010.must bestFirst · 0) :=
   ⟨bridge3_of_agree _ _ fun v u ↦ by
       rw [bestFirst_le]; fin_cases u <;> fin_cases v <;> simp [skewed] <;> norm_num,
-    bridge2_must_not_probably.2.1, bridge2_must_not_probably.2.2⟩
+    bridge2_refutes_V6.2⟩
 
-/-- The two-world model of §3 with masses `0.5001` and `0.4999`: BR1 holds, the sole best world
-is necessary, yet it is only barely likelier than its negation, so BR1 cannot deliver *much
-more likely*. -/
+/-- `thin` is the two-world model of §3, with masses `0.5001` and `0.4999`. -/
 noncomputable def thin : FinAddMeasure ℚ (Fin 2) :=
   .ofFintype ![5001 / 10000, 4999 / 10000] (fun i ↦ by fin_cases i <;> norm_num)
     (by simp [Fin.sum_univ_two]; norm_num)
 
-/-- The ordering source with the first of two worlds best. -/
+/-- `bestFirst₂` makes the first of two worlds the best. -/
 def bestFirst₂ : List (Fin 2 → Prop) := [(· = 0)]
 
+/-- In `thin` BR1 holds and the sole best world is necessary, yet it is only barely likelier
+than its negation, so BR1 cannot deliver *much more likely*. -/
 theorem bridge1_thin_margin :
-    Bridge1 (atLeastAsGoodAs bestFirst₂) thin ∧
-      humanNecessity emptyBackground (fun _ ↦ bestFirst₂) (· ∈ ({0} : Set (Fin 2))) 0 ∧
+    Bridge1 (atLeastAsGoodAs bestFirst₂) thin ∧ Yalcin2010.must bestFirst₂ {0} 0 ∧
       thin {0} < 5002 / 10000 := by
   have hle : ∀ v u : Fin 2, (v ≤[bestFirst₂] u) ↔ (u = 0 → v = 0) := fun v u ↦ by
     simp [bestFirst₂, atLeastAsGoodAs_iff]
@@ -354,10 +346,8 @@ theorem bridge1_thin_margin :
   refine ⟨fun A B hAB ↦ ?_, ?_, by simp [thin]; norm_num⟩
   · rcases hsets A with rfl | rfl | rfl | rfl <;> rcases hsets B with rfl | rfl | rfl | rfl <;>
       simp [KratzerLift, hle, thin] at hAB ⊢ <;> norm_num at hAB ⊢
-  · intro u _
-    refine ⟨0, by rw [accessibleWorlds_emptyBackground]; exact Set.mem_univ _, ?_, fun z _ hz ↦ ?_⟩
-    · rw [hle]; exact fun _ ↦ rfl
-    · rw [hle] at hz; exact hz rfl
+  · exact (Yalcin2010.must_iff _ _ _).2 fun _ ↦
+      ⟨0, (hle _ _).2 fun _ ↦ rfl, fun _ hz ↦ (hle _ _).1 hz rfl⟩
 
 /-! ### §4 Probability and the epistemic auxiliaries -/
 
@@ -366,17 +356,18 @@ section Auxiliaries
 variable (P : FinAddMeasure ℚ W)
 
 /-- *Must* as a quantifier over the epistemic space, Kratzer's auxiliary with an empty ordering
-source: the whole space. -/
+source, holds of the whole space. -/
 def quantMust (A : Set W) : Prop := A = Set.univ
 
-/-- The probabilistic *must* with threshold `θ`, strong at `θ = 1` and weak below. -/
+/-- The probabilistic *must* with threshold `θ` holds when `Pr(A) ≥ θ`; it is strong at
+`θ = 1` and weak below. -/
 def probMust (θ : ℚ) (A : Set W) : Prop := A ∈ Degree.Comparison.ge.over P θ
 
-/-- The dual *might*: `Pr(A) > 1 - θ`. -/
+/-- The dual *might* holds when `Pr(A) > 1 - θ`. -/
 def probMight (θ : ℚ) (A : Set W) : Prop := A ∈ Degree.Comparison.gt.over P (1 - θ)
 
-/-- (56) under the quantificational auxiliaries: a necessary proposition has all the mass, the
-largest possible margin over its negation. -/
+/-- Under the quantificational auxiliaries a necessary proposition has all the mass, the
+largest possible margin over its negation, as (56) requires. -/
 theorem quantMust_prob {A : Set W} (h : quantMust A) : P A = 1 ∧ P Aᶜ = 0 := by
   subst h; simp
 
@@ -384,7 +375,7 @@ theorem quantMust_prob {A : Set W} (h : quantMust A) : P A = 1 ∧ P Aᶜ = 0 :=
 theorem probMust_one_iff (A : Set W) : probMust P 1 A ↔ P A = 1 :=
   ⟨fun h ↦ le_antisymm (P.mu_le_one A) h, fun h ↦ h.ge⟩
 
-/-- *Might* is the dual of *must*: `A` might hold iff its complement is not a must. -/
+/-- *Might* is the dual of *must*, since `A` might hold iff its complement is not a must. -/
 theorem probMight_iff_not_probMust_compl (θ : ℚ) (A : Set W) :
     probMight P θ A ↔ ¬ probMust P θ Aᶜ := by
   change 1 - θ < P A ↔ ¬ θ ≤ P Aᶜ
@@ -392,8 +383,8 @@ theorem probMight_iff_not_probMust_compl (θ : ℚ) (A : Set W) :
   rw [not_le]
   constructor <;> intro h <;> linarith
 
-/-- (64): under the strong probabilistic auxiliaries, what is more likely than something might
-be, since it has positive mass. -/
+/-- Under the strong probabilistic auxiliaries, what is more likely than something might be,
+since it has positive mass (64). -/
 theorem moreLikely_might {A B : Set W} (h : Strict P.inducedGe A B) : probMight P 1 A := by
   obtain ⟨hle, hnot⟩ := h
   simp only [FinAddMeasure.inducedGe, ge_iff_le, not_le] at hle hnot
@@ -401,8 +392,8 @@ theorem moreLikely_might {A B : Set W} (h : Strict P.inducedGe A B) : probMight 
   show 1 - 1 < P A
   linarith
 
-/-- (65): under a weak *might*, two astronomically unlikely teams can be ordered without either
-being a live possibility. -/
+/-- Under a weak *might* two astronomically unlikely teams can be ordered without either being
+a live possibility (65). -/
 theorem weak_refutes_moreLikely_might :
     ∃ (P : FinAddMeasure ℚ (Fin 100)) (A B : Set (Fin 100)),
       Strict P.inducedGe A B ∧ ¬probMight P (9 / 10) A := by
