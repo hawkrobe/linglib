@@ -58,6 +58,8 @@ endpoint rules out the contextual standard, and a totally closed scale prefers i
 * [E. Klein, *A Semantics for Positive and Comparative Adjectives* (1980)][klein-1980]
 * [A. Beltrama, *Evaluation, Thresholds, and Practical Commitments: The Grammar of Adjectival
   Mildness* (2025)][beltrama-2025]
+* [M. Morzycki, *Adjectival Extremeness: Degree Modification and Contextually Restricted Scales*
+  (2012)][morzycki-2012]
 -/
 
 @[expose] public section
@@ -276,7 +278,8 @@ rules out the contextual standard, and a totally closed scale admits both endpoi
 prefers the maximum. -/
 
 /-- A positive standard is the kind of threshold the positive form compares a degree with, a
-contextual norm on an open scale and an endpoint on a closed one ([kennedy-2007]). -/
+contextual norm on an open scale and an endpoint on a closed one ([kennedy-2007]), or a standard
+an adjective fixes lexically outside that choice. -/
 inductive PositiveStandard where
   /-- The norm of a comparison class, as for *tall*. -/
   | contextual
@@ -286,36 +289,43 @@ inductive PositiveStandard where
   | maxEndpoint
   /-- The minimum degree for pursuit ([beltrama-2025]). -/
   | necessity
+  /-- A standard beyond that of the weak adjective on the same pole, as for *gigantic* and
+  *pristine* ([morzycki-2012]). -/
+  | extreme
   deriving DecidableEq, Repr
 
 /-- A standard requires a comparison class when fixing it needs contextual information about a
 domain. [kennedy-2007] argues against a comparison-class argument of the positive form, as in
 [klein-1980], and states the positive form with a standard-fixing function,
 `⟦pos⟧ = λg.λx. g(x) ⪰ s(g)` ((27)), which still needs that information for the contextual and
-necessity standards. -/
+necessity standards. An extreme standard lies beyond the degrees a context makes salient
+([morzycki-2012]), so it needs that information too. -/
 def PositiveStandard.RequiresComparisonClass : PositiveStandard → Prop
   | .contextual  => True
   | .minEndpoint => False
   | .maxEndpoint => False
-  | .necessity  => True
+  | .necessity   => True
+  | .extreme     => True
 
 instance : DecidablePred PositiveStandard.RequiresComparisonClass
   | .contextual  => inferInstanceAs (Decidable True)
   | .minEndpoint => inferInstanceAs (Decidable False)
   | .maxEndpoint => inferInstanceAs (Decidable False)
-  | .necessity  => inferInstanceAs (Decidable True)
+  | .necessity   => inferInstanceAs (Decidable True)
+  | .extreme     => inferInstanceAs (Decidable True)
 
 namespace Boundedness
 
 /-- Interpretive Economy admits an endpoint standard exactly where the scale has that endpoint, the
-contextual standard, which context must supply, only on a totally open scale, and the necessity
-standard never ([kennedy-2007] (66)). A totally closed scale therefore admits both endpoints
-((67)–(68)). -/
+contextual standard, which context must supply, only on a totally open scale, and the lexical
+necessity and extreme standards never ([kennedy-2007] (66)). A totally closed scale therefore
+admits both endpoints ((67)–(68)). -/
 def Admits (b : Boundedness) : PositiveStandard → Prop
   | .contextual  => b = .open_
   | .minEndpoint => b.HasMin
   | .maxEndpoint => b.HasMax
-  | .necessity  => False
+  | .necessity   => False
+  | .extreme     => False
 
 instance (b : Boundedness) (s : PositiveStandard) : Decidable (b.Admits s) := by
   cases s <;> simp only [Admits] <;> infer_instance

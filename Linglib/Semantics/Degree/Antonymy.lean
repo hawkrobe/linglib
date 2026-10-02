@@ -18,8 +18,8 @@ and `negative` for the inverted one (*short*). Inverting twice restores the orde
 so `negative * p` is the polarity of the antonym of a `p` adjective, and polarity acts on scale
 boundedness through the order dual. The positive forms of the members are contradictory (*clean*
 and *dirty*) or contrary (*tall* and *short*, which leave a gap), two cells of the Aristotelian
-square in the sense of Cruse and Horn; which one a lexical pair occupies is
-`Degree.AntonymPair.Contradictory`.
+square in the sense of Cruse and Horn; a lexical pair is contradictory when its poles take
+complementary standards, `Degree.AntonymPair.ComplementaryStandards`.
 
 The contrary case is modelled by a `Degree.ThresholdPair` on a linearly ordered scale, the
 positive form true above its upper threshold and the negative form below its lower one, and
