@@ -985,7 +985,6 @@ import Linglib.Semantics.Events.Path
 import Linglib.Semantics.Evidential.Basic
 import Linglib.Semantics.Evidential.Defs
 import Linglib.Semantics.Exhaustification.Alternatives
-import Linglib.Semantics.Exhaustification.Antiexhaustive
 import Linglib.Semantics.Exhaustification.Chain
 import Linglib.Semantics.Exhaustification.Disjunctive
 import Linglib.Semantics.Exhaustification.DomainAlternatives

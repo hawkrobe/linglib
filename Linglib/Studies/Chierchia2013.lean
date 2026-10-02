@@ -2,7 +2,7 @@ module
 
 public import Linglib.Logic.Natural.Soundness
 public import Linglib.Semantics.Polarity.Licensing
-public import Linglib.Semantics.Exhaustification.Antiexhaustive
+public import Linglib.Semantics.Exhaustification.Disjunctive
 public import Linglib.Semantics.Exhaustification.Excluder
 public import Linglib.Fragments.English.PolarityItems
 public import Linglib.Fragments.Romance.Italian.PolarityItems
@@ -45,29 +45,30 @@ section MaximizeStrength
 
 variable {W : Type*} (p q : Set W)
 
-/-- The readings of *or*. -/
+/-- *Or* has an inclusive and an exclusive reading. -/
 inductive DisjunctionReading where
   | inclusive
   | exclusive
   deriving DecidableEq, Repr
 
-/-- The proposition a reading assigns to *p or q*: the disjunction, or the disjunction with the
-not-both implicature added. -/
+/-- A reading assigns to *p or q* the disjunction, or the disjunction with the not-both
+implicature added. -/
 def DisjunctionReading.denotation : DisjunctionReading → Set W
   | .inclusive => p ∪ q
   | .exclusive => (p ∪ q) \ (p ∩ q)
 
+/-- The name of a reading in the example rows. -/
 def DisjunctionReading.key : DisjunctionReading → String
   | .inclusive => "inclusive"
   | .exclusive => "exclusive"
 
-/-- The implicature strengthens. -/
+/-- The not-both implicature strengthens the disjunction. -/
 theorem exclusive_subset_inclusive :
     DisjunctionReading.exclusive.denotation p q ⊆ DisjunctionReading.inclusive.denotation p q :=
   Set.sdiff_subset
 
-/-- Maximize Strength: a reading is preferred in a position when the position's embedding of it
-is at least as strong as its embedding of the other reading. -/
+/-- By Maximize Strength a reading is preferred in a position when the position's embedding of
+it is at least as strong as its embedding of the other reading. -/
 def IsStrongest (C : Set W → Set W) (r : DisjunctionReading) : Prop :=
   ∀ r' : DisjunctionReading, C (r.denotation p q) ⊆ C (r'.denotation p q)
 
@@ -107,33 +108,30 @@ end MaximizeStrength
 
 section Exhaustification
 
-variable {W E : Type*} (D : List E) (P : E → Set W)
+variable {W E : Type*} (D : Finset E) (P : E → Set W)
 
 /-- Under an antitone context the existential entails each of its subdomain alternatives, so
 *any* in a downward-entailing position is exhaustified vacuously: a plain existential. -/
 theorem exh_antitone_eq {C : Set W → Set W} (hC : Antitone C) :
-    exh (C '' dMinAlts D P) (C (existsIn D P)) = C (existsIn D P) :=
-  exh_eq_self (by rintro _ ⟨_, ⟨D', hD', -, rfl⟩, rfl⟩; exact hC (existsIn_subset D P hD'))
+    exh (C '' subDisjs D P) (C (disj D P)) = C (disj D P) :=
+  exh_eq_self (by rintro _ ⟨_, ⟨S, hS, -, rfl⟩, rfl⟩; exact hC (subDisj_mono hS))
 
 /-- At the existential itself, where no witness is entailed, exhaustifying the obligatory
 alternatives negates every singleton alternative and is a contradiction: the source of the
 deviance of *any* in a positive episodic sentence. -/
-theorem exh_dMinAlts_eq_empty (h : ∀ a ∈ D, ¬ existsIn D P ⊆ P a) :
-    exh (dMinAlts D P) (existsIn D P) = ∅ := by
-  refine Set.eq_empty_of_forall_notMem λ w ⟨⟨a, ha, hPa⟩, hall⟩ => h a ha λ v hv => ?_
-  obtain ⟨x, hx, hPx⟩ := hall (existsIn [a] P)
-    ⟨[a], by simpa using ha, ⟨a, List.mem_singleton_self a, w, hPa⟩, rfl⟩
-    ⟨a, List.mem_singleton_self a, hPa⟩ hv
-  obtain rfl := List.mem_singleton.1 hx
-  exact hPx
+theorem exh_subDisjs_eq_empty (h : ∀ a ∈ D, ¬ disj D P ⊆ P a) :
+    exh (subDisjs D P) (disj D P) = ∅ := by
+  refine Set.eq_empty_of_forall_notMem fun w ⟨hw, hall⟩ ↦ ?_
+  obtain ⟨a, ha, hPa⟩ := mem_subDisj.1 hw
+  exact h a ha (by simpa using hall _ ⟨{a}, by simpa, by simp, rfl⟩ (by simpa))
 
 end Exhaustification
 
 /-! ### The positions -/
 
-/-- The positions of the paper's two columns: the easy column, where *or* is exclusive and *any*
-is out, and the hard column, the downward-entailing licensing contexts of [ladusaw-1979], where
-*or* is inclusive and *any* is in. -/
+/-- The positions fall into the paper's two columns, the easy column, where *or* is exclusive and
+*any* is out, and the hard column, the downward-entailing licensing contexts of [ladusaw-1979],
+where *or* is inclusive and *any* is in. -/
 inductive Position where
   /-- A positive sentence. -/
   | matrix
@@ -143,13 +141,13 @@ inductive Position where
   | everyScope
   /-- The scope of a positive quantifier such as *somebody*. -/
   | positiveQuantifierScope
-  /-- A licensing context: the antecedent of a conditional, the first argument of *every*,
-  negation, *nobody*, *doubt*, a possibility modal, an imperative. -/
+  /-- A licensing context, such as the antecedent of a conditional, the first argument of
+  *every*, negation, *nobody*, *doubt*, a possibility modal or an imperative. -/
   | licensing (c : LicensingContext)
   deriving DecidableEq, Repr
 
-/-- The polarity of a position: the easy column is upward entailing, and a licensing context has
-the polarity of its signature. -/
+/-- A position in the easy column is upward entailing, and a licensing context has the polarity
+of its signature. -/
 def Position.polarity : Position → SignType
   | .licensing c => c.signature.sign
   | _ => 1
@@ -180,6 +178,7 @@ theorem licenses_any_not_ever_iff (c : LicensingContext) :
 
 /-! ### The rows -/
 
+/-- The position a row names. -/
 def Position.ofKey : String → Option Position
   | "matrix" => some .matrix
   | "conditionalConsequent" => some .conditionalConsequent
@@ -194,6 +193,7 @@ def Position.ofKey : String → Option Position
   | "imperative" => some (.licensing .imperative)
   | _ => none
 
+/-- The Fragment entry a row names. -/
 def item : String → Option PolarityItem
   | "any" => some English.PolarityItems.any
   | "ever" => some English.PolarityItems.ever

@@ -29,24 +29,41 @@ namespace Exhaustification
 
 variable {World ι : Type*} (I : Finset ι) (p : ι → Set World)
 
-/-- The disjunction over a subset. -/
+/-- `subDisj p S` is the disjunction of `p` over the subset `S`. -/
 def subDisj (S : Finset ι) : Set World := ⋃ i ∈ S, p i
 
-/-- The disjunction of the family over `I`. -/
+/-- `disj I p` is the disjunction of `p` over all of `I`. -/
 abbrev disj : Set World := subDisj p I
 
-/-- The disjunctions over the nonempty subsets of `I`. -/
+/-- `subDisjs I p` collects the disjunctions over the nonempty subsets of `I`. -/
 def subDisjs : Set (Set World) := {q | ∃ S ⊆ I, S.Nonempty ∧ q = subDisj p S}
 
-/-- The disjunction over `I` together with the disjunctions over its subsets of size `m`. -/
+/-- `subDisjsOfCard I p m` collects the disjunction over `I` and the disjunctions over its
+subsets of size `m`. -/
 def subDisjsOfCard (m : ℕ) : Set (Set World) :=
   insert (disj I p) {q | ∃ S ⊆ I, S.card = m ∧ q = subDisj p S}
 
-variable {I p}
+variable {I p} {S T : Finset ι}
 
-@[simp] theorem mem_subDisj {S : Finset ι} {w : World} :
-    w ∈ subDisj p S ↔ ∃ i ∈ S, w ∈ p i := by
+@[simp] theorem mem_subDisj {w : World} : w ∈ subDisj p S ↔ ∃ i ∈ S, w ∈ p i := by
   simp [subDisj]
+
+@[simp] theorem subDisj_singleton (i : ι) : subDisj p {i} = p i := by simp [subDisj]
+
+@[gcongr] theorem subDisj_mono (h : S ⊆ T) : subDisj p S ⊆ subDisj p T :=
+  Set.biUnion_subset_biUnion_left (Finset.coe_subset.2 h)
+
+/-- The sub-disjunctions hold together exactly where every disjunct holds. -/
+theorem sInter_subDisjs : ⋂₀ subDisjs I p = ⋂ i ∈ I, p i := by
+  refine Set.Subset.antisymm (Set.subset_iInter₂ fun i hi ↦ ?_) ?_
+  · simpa using Set.sInter_subset_of_mem
+      (show subDisj p {i} ∈ subDisjs I p from ⟨{i}, by simpa, by simp, rfl⟩)
+  · rintro w hw _ ⟨S, hS, ⟨j, hj⟩, rfl⟩
+    exact mem_subDisj.2 ⟨j, hj, Set.mem_iInter₂.1 hw j (hS hj)⟩
+
+theorem biInter_subset_disj (hI : I.Nonempty) : ⋂ i ∈ I, p i ⊆ disj I p :=
+  let ⟨i, hi⟩ := hI
+  fun _ hw ↦ mem_subDisj.2 ⟨i, hi, Set.mem_iInter₂.1 hw i hi⟩
 
 theorem subDisjsOfCard_subset_subDisjs (hI : I.Nonempty) {m : ℕ} (hm : 0 < m) :
     subDisjsOfCard I p m ⊆ subDisjs I p := by
@@ -70,7 +87,7 @@ theorem isMinimal_of_single {i : ι} (hi : i ∈ I) {w : World}
   obtain ⟨j, hj, hvj⟩ := mem_subDisj.1 hv
   by_cases hji : j = i
   · subst hji
-    refine hnle λ q hq hwq => ?_
+    refine hnle fun q hq hwq ↦ ?_
     obtain ⟨S, hS, rfl⟩ := hA q hq hwq
     obtain ⟨k, hk, hwk⟩ := mem_subDisj.1 hwq
     exact mem_subDisj.2 ⟨k, hk, ((hw k (hS hk)).1 hwk) ▸ hvj⟩
@@ -91,7 +108,7 @@ theorem not_isInnocentlyExcludable_of_subDisjs (q : Set World) :
   obtain ⟨S, hS, ⟨i, hi⟩, rfl⟩ := hA hq.1
   obtain ⟨w, hw⟩ := hsep i (hS hi)
   exact (isInnocentlyExcludable_iff_exhMW_subset_compl A _ _ hq.1).1 hq
-    (isMinimal_of_single (hS hi) (λ q hq _ => let ⟨S, hS, _, h⟩ := hA hq; ⟨S, hS, h⟩)
+    (isMinimal_of_single (hS hi) (fun q hq _ ↦ let ⟨S, hS, _, h⟩ := hA hq; ⟨S, hS, h⟩)
       (hsplit i (hS hi)) hw)
     (mem_subDisj.2 ⟨i, hi, (hw i (hS hi)).2 rfl⟩)
 
@@ -101,8 +118,8 @@ theorem cell_nonempty_of_subDisjs (hI : I.Nonempty) (hall : ∃ w, ∀ i ∈ I, 
   obtain ⟨w, hw⟩ := hall
   obtain ⟨i, hi⟩ := hI
   refine ⟨w, mem_subDisj.2 ⟨i, hi, hw i hi⟩,
-    λ q hq => absurd hq (not_isInnocentlyExcludable_of_subDisjs hA hsplit hsep q),
-    λ r ⟨hr, _⟩ => ?_⟩
+    fun q hq ↦ absurd hq (not_isInnocentlyExcludable_of_subDisjs hA hsplit hsep q),
+    fun r ⟨hr, _⟩ ↦ ?_⟩
   obtain ⟨S, hS, ⟨j, hj⟩, rfl⟩ := hA hr
   exact mem_subDisj.2 ⟨j, hj, hw j (hS hj)⟩
 
@@ -113,32 +130,24 @@ theorem exhIEII_eq_sInter_of_subDisjs (hI : I.Nonempty) (hall : ∃ w, ∀ i ∈
   ext w
   constructor
   · rintro ⟨hφ, _, hne⟩
-    exact ⟨hφ, Set.mem_sInter.2 λ r hr =>
+    exact ⟨hφ, Set.mem_sInter.2 fun r hr ↦
       hne r ⟨hr, not_isInnocentlyExcludable_of_subDisjs hA hsplit hsep r⟩⟩
   · rintro ⟨hφ, hall'⟩
-    exact ⟨hφ, λ q hq => absurd hq (not_isInnocentlyExcludable_of_subDisjs hA hsplit hsep q),
-      λ r ⟨hr, _⟩ => Set.mem_sInter.1 hall' r hr⟩
+    exact ⟨hφ, fun q hq ↦ absurd hq (not_isInnocentlyExcludable_of_subDisjs hA hsplit hsep q),
+      fun r ⟨hr, _⟩ ↦ Set.mem_sInter.1 hall' r hr⟩
 
 end Family
 
 theorem hsplit_subDisjs :
     ∀ i ∈ I, ∀ j ∈ I, j ≠ i → ∃ S ⊆ I, subDisj p S ∈ subDisjs I p ∧ j ∈ S ∧ i ∉ S :=
-  λ _ _ j hj hji => ⟨{j}, by simpa, ⟨{j}, by simpa, by simp, rfl⟩, by simp, by simpa using hji.symm⟩
+  fun _ _ j hj hji ↦
+    ⟨{j}, by simpa, ⟨{j}, by simpa, by simp, rfl⟩, by simp, by simpa using hji.symm⟩
 
 /-- All the sub-disjunctions strengthen the disjunction to the conjunction. -/
 theorem exhIEII_subDisjs (hsep : ∀ i ∈ I, ∃ w, ∀ j ∈ I, w ∈ p j ↔ j = i) (hI : I.Nonempty)
     (hall : ∃ w, ∀ i ∈ I, w ∈ p i) : exhIEII (subDisjs I p) (disj I p) = ⋂ i ∈ I, p i := by
-  rw [exhIEII_eq_sInter_of_subDisjs le_rfl hsplit_subDisjs hsep hI hall]
-  ext w
-  simp only [Set.mem_inter_iff, Set.mem_sInter, Set.mem_iInter]
-  constructor
-  · rintro ⟨_, h⟩ i hi
-    simpa using h _ ⟨{i}, by simpa, by simp, rfl⟩
-  · intro h
-    obtain ⟨i, hi⟩ := hI
-    refine ⟨mem_subDisj.2 ⟨i, hi, h i hi⟩, ?_⟩
-    rintro r ⟨S, hS, ⟨j, hj⟩, rfl⟩
-    exact mem_subDisj.2 ⟨j, hj, h j (hS hj)⟩
+  rw [exhIEII_eq_sInter_of_subDisjs le_rfl hsplit_subDisjs hsep hI hall, sInter_subDisjs,
+    Set.inter_eq_right.2 (biInter_subset_disj hI)]
 
 theorem hsplit_subDisjsOfCard [DecidableEq ι] {m : ℕ} (hm : 0 < m) (hmI : m < I.card) :
     ∀ i ∈ I, ∀ j ∈ I, j ≠ i → ∃ S ⊆ I, subDisj p S ∈ subDisjsOfCard I p m ∧ j ∈ S ∧ i ∉ S := by
@@ -151,7 +160,7 @@ theorem hsplit_subDisjsOfCard [DecidableEq ι] {m : ℕ} (hm : 0 < m) (hmI : m <
       ((hS'.trans (Finset.erase_subset _ _)).trans (Finset.erase_subset _ _))
   · exact Finset.insert_subset hj
       ((hS'.trans (Finset.erase_subset _ _)).trans (Finset.erase_subset _ _))
-  · rw [Finset.card_insert_of_notMem (λ h => (Finset.mem_erase.1 (hS' h)).1 rfl), hcard]; omega
+  · rw [Finset.card_insert_of_notMem (fun h ↦ (Finset.mem_erase.1 (hS' h)).1 rfl), hcard]; omega
   · intro h
     rcases Finset.mem_insert.1 h with rfl | h
     · exact hji rfl
@@ -171,7 +180,7 @@ theorem forall_card_eq_exists_mem_iff [DecidableEq ι] {T : Finset ι} (hT : T �
   · intro h S hS hcard
     by_contra hnone
     push Not at hnone
-    have : S ⊆ I \ T := λ i hi => Finset.mem_sdiff.2 ⟨hS hi, hnone i hi⟩
+    have : S ⊆ I \ T := fun i hi ↦ Finset.mem_sdiff.2 ⟨hS hi, hnone i hi⟩
     have h₁ := Finset.card_le_card this
     have h₂ := Finset.card_le_card hT
     rw [Finset.card_sdiff_of_subset hT, hcard] at h₁
@@ -191,24 +200,24 @@ theorem exhIEII_subDisjsOfCard [DecidableEq ι] [∀ w i, Decidable (w ∈ p i)]
     (hsep : ∀ i ∈ I, ∃ w, ∀ j ∈ I, w ∈ p j ↔ j = i) (hall : ∃ w, ∀ i ∈ I, w ∈ p i) {m : ℕ}
     (hm : 0 < m) (hmI : m ≤ I.card) :
     exhIEII (subDisjsOfCard I p m) (disj I p) =
-      {w | I.card < m + (I.filter λ i => w ∈ p i).card} := by
+      {w | I.card < m + (I.filter fun i ↦ w ∈ p i).card} := by
   have hI : I.Nonempty := Finset.card_pos.1 (by omega)
   rcases hmI.lt_or_eq with hmI | rfl
   swap
   · have hsat : (disj I p).Nonempty :=
-      hall.imp λ w hw => mem_subDisj.2 (hI.imp λ i hi => ⟨hi, hw i hi⟩)
+      hall.imp fun w hw ↦ mem_subDisj.2 (hI.imp fun i hi ↦ ⟨hi, hw i hi⟩)
     rw [subDisjsOfCard_card, exhIEII_singleton hsat]
     ext w
     constructor
     · intro h
       obtain ⟨i, hi, hw⟩ := mem_subDisj.1 h
       have := Finset.card_pos.2
-        (⟨i, Finset.mem_filter.2 ⟨hi, hw⟩⟩ : (I.filter λ i => w ∈ p i).Nonempty)
+        (⟨i, Finset.mem_filter.2 ⟨hi, hw⟩⟩ : (I.filter fun i ↦ w ∈ p i).Nonempty)
       show I.card < I.card + _
       omega
     · intro h
-      have h' : I.card < I.card + (I.filter λ i => w ∈ p i).card := h
-      have hpos : 0 < (I.filter λ i => w ∈ p i).card := by omega
+      have h' : I.card < I.card + (I.filter fun i ↦ w ∈ p i).card := h
+      have hpos : 0 < (I.filter fun i ↦ w ∈ p i).card := by omega
       obtain ⟨i, hi⟩ := Finset.card_pos.1 hpos
       exact mem_subDisj.2 ⟨i, (Finset.mem_filter.1 hi).1, (Finset.mem_filter.1 hi).2⟩
   rw [exhIEII_eq_sInter_of_subDisjs (subDisjsOfCard_subset_subDisjs hI hm)
@@ -266,13 +275,13 @@ theorem isMinimalCover_pair (hcov : φ ⊆ d₁ ∪ d₂) (h₁ : w₁ ∈ φ �
   obtain ⟨⟨hw₁, hw₁₁⟩, hw₁'⟩ := h₁
   obtain ⟨⟨hw₂, hw₂₂⟩, hw₂'⟩ := h₂
   simp only [Set.mem_union, not_or] at hw₁' hw₂'
-  refine ⟨by rintro v (rfl | rfl) <;> assumption, λ w hw => ?_, ?_⟩
+  refine ⟨by rintro v (rfl | rfl) <;> assumption, fun w hw ↦ ?_, ?_⟩
   · rcases hcov hw with h | h
-    · refine ⟨w₁, by simp, λ q hq hq' => ?_⟩
+    · refine ⟨w₁, by simp, fun q hq hq' ↦ ?_⟩
       simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hq
       rcases hq with rfl | rfl | rfl | rfl
       exacts [hw, h, absurd hq' hw₁'.1, absurd hq' hw₁'.2]
-    · refine ⟨w₂, by simp, λ q hq hq' => ?_⟩
+    · refine ⟨w₂, by simp, fun q hq hq' ↦ ?_⟩
       simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hq
       rcases hq with rfl | rfl | rfl | rfl
       exacts [hw, absurd hq' hw₂'.1, h, absurd hq' hw₂'.2]
@@ -284,9 +293,10 @@ theorem isMinimalCover_pair (hcov : φ ⊆ d₁ ∪ d₂) (h₁ : w₁ ∈ φ �
     · exact absurd (huv d₁ (by simp) hw₁₁) hw₂'.1
     · exact leALT_refl _ _
 
-/-- A prejacent covered by two alternatives, each verifiable alone, and a third alternative false
-wherever only one of them holds: exhaustification asserts both and denies the third, provided
-that is consistent — free choice and simplification of disjunctive antecedents. -/
+/-- When a prejacent is covered by two alternatives, each verifiable alone, and a third
+alternative is false wherever only one of them holds, exhaustification asserts both and denies
+the third, provided that is consistent. This is free choice and the simplification of
+disjunctive antecedents. -/
 theorem exhIEII_pair (hcov : φ ⊆ d₁ ∪ d₂) (h₁ : ∃ w ∈ φ ∩ d₁, w ∉ d₂ ∪ c)
     (h₂ : ∃ w ∈ φ ∩ d₂, w ∉ d₁ ∪ c) (h : ∃ w ∈ φ ∩ d₁ ∩ d₂, w ∉ c) :
     exhIEII {φ, d₁, d₂, c} φ = (φ ∩ d₁ ∩ d₂) \ c := by
@@ -310,8 +320,8 @@ theorem exhIEII_pair_inter (hcov : φ ⊆ d₁ ∪ d₂) (h₁ : ∃ w ∈ φ �
   obtain ⟨w₁, ⟨hw₁, hw₁₁⟩, hw₁'⟩ := h₁
   obtain ⟨w₂, ⟨hw₂, hw₂₂⟩, hw₂'⟩ := h₂
   have hM := isMinimalCover_pair hcov (c := d₁ ∩ d₂)
-    ⟨⟨hw₁, hw₁₁⟩, λ h => hw₁' (h.elim id And.right)⟩
-    ⟨⟨hw₂, hw₂₂⟩, λ h => hw₂' (h.elim id And.left)⟩
+    ⟨⟨hw₁, hw₁₁⟩, fun h ↦ hw₁' (h.elim id And.right)⟩
+    ⟨⟨hw₂, hw₂₂⟩, fun h ↦ hw₂' (h.elim id And.left)⟩
   have hIE : ∀ q, IsInnocentlyExcludable {φ, d₁, d₂, d₁ ∩ d₂} φ q ↔ q = d₁ ∩ d₂ := by
     intro q
     constructor
@@ -326,7 +336,7 @@ theorem exhIEII_pair_inter (hcov : φ ⊆ d₁ ∪ d₂) (h₁ : ∃ w ∈ φ �
       IsMISet {φ, d₁, d₂, d₁ ∩ d₂} φ {φ, d} := by
     intro d hd w ⟨hw, hwd⟩ hw'
     simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hd
-    refine ⟨⟨?_, w, ?_⟩, λ R' ⟨hR', u, hu⟩ hRR' r hr => ?_⟩
+    refine ⟨⟨?_, w, ?_⟩, fun R' ⟨hR', u, hu⟩ hRR' r hr ↦ ?_⟩
     · rcases hd with rfl | rfl <;> rintro r (rfl | rfl) <;> simp
     · rintro ψ ((rfl | ⟨q, hq, rfl⟩) | (rfl | rfl))
       exacts [hw, ((hIE q).1 hq) ▸ hw', hw, hwd]
@@ -346,9 +356,9 @@ theorem exhIEII_pair_inter (hcov : φ ⊆ d₁ ∪ d₂) (h₁ : ∃ w ∈ φ �
   · rintro ⟨hw, hIEw, -⟩
     exact ⟨hw, hIEw _ ((hIE _).2 rfl)⟩
   · rintro ⟨hw, hw'⟩
-    refine ⟨hw, λ q hq => ((hIE q).1 hq) ▸ hw', λ r hr => ?_⟩
-    have h₁ := hr.2 _ (hMI d₁ (by simp) w₁ ⟨hw₁, hw₁₁⟩ (λ h => hw₁' h.2))
-    have h₂ := hr.2 _ (hMI d₂ (by simp) w₂ ⟨hw₂, hw₂₂⟩ (λ h => hw₂' h.1))
+    refine ⟨hw, fun q hq ↦ ((hIE q).1 hq) ▸ hw', fun r hr ↦ ?_⟩
+    have h₁ := hr.2 _ (hMI d₁ (by simp) w₁ ⟨hw₁, hw₁₁⟩ (fun h ↦ hw₁' h.2))
+    have h₂ := hr.2 _ (hMI d₂ (by simp) w₂ ⟨hw₂, hw₂₂⟩ (fun h ↦ hw₂' h.1))
     rcases h₁ with rfl | rfl
     · exact hw
     · rcases h₂ with rfl | h
@@ -360,8 +370,8 @@ theorem cell_pair_inter (hcov : φ ⊆ d₁ ∪ d₂) (h₁ : ∃ w ∈ φ ∩ d
     (h₂ : ∃ w ∈ φ ∩ d₂, w ∉ d₁) : cell {φ, d₁, d₂, d₁ ∩ d₂} φ = ∅ := by
   obtain ⟨w₁, ⟨hw₁, hw₁₁⟩, hw₁'⟩ := h₁
   obtain ⟨w₂, ⟨hw₂, hw₂₂⟩, hw₂'⟩ := h₂
-  rw [(isMinimalCover_pair hcov (c := d₁ ∩ d₂) ⟨⟨hw₁, hw₁₁⟩, λ h => hw₁' (h.elim id And.right)⟩
-    ⟨⟨hw₂, hw₂₂⟩, λ h => hw₂' (h.elim id And.left)⟩).cell_eq]
+  rw [(isMinimalCover_pair hcov (c := d₁ ∩ d₂) ⟨⟨hw₁, hw₁₁⟩, fun h ↦ hw₁' (h.elim id And.right)⟩
+    ⟨⟨hw₂, hw₂₂⟩, fun h ↦ hw₂' (h.elim id And.left)⟩).cell_eq]
   ext w
   simp [hw₁, hw₂, hw₁₁, hw₂₂, hw₁', hw₂']
   tauto
@@ -396,14 +406,14 @@ section Cover
 
 variable {φ : Set World} {x : ι → Set World}
 
-/-- A prejacent covered by alternatives each verifiable alone: exhaustification asserts all of
-them, provided that is consistent. -/
+/-- When a prejacent is covered by alternatives each verifiable alone, exhaustification asserts
+all of them, provided that is consistent. -/
 theorem exhIEII_insert_range (hcov : φ ⊆ ⋃ i, x i)
     (hsep : ∀ i, ∃ w ∈ φ ∩ x i, ∀ j, j ≠ i → w ∉ x j) (h : ∃ w ∈ φ, ∀ i, w ∈ x i) :
     exhIEII (insert φ (Set.range x)) φ = φ ∩ ⋂ i, x i := by
   have hM : IsMinimalCover (insert φ (Set.range x)) φ
       {w | ∃ i, w ∈ φ ∩ x i ∧ ∀ j, j ≠ i → w ∉ x j} := by
-    refine ⟨λ v ⟨i, hv, _⟩ => hv.1, λ w hw => ?_, ?_⟩
+    refine ⟨fun v ⟨i, hv, _⟩ ↦ hv.1, fun w hw ↦ ?_, ?_⟩
     · obtain ⟨i, hi⟩ := Set.mem_iUnion.1 (hcov hw)
       obtain ⟨v, hv, hv'⟩ := hsep i
       refine ⟨v, ⟨i, hv, hv'⟩, ?_⟩
@@ -421,11 +431,11 @@ theorem exhIEII_insert_range (hcov : φ ⊆ ⋃ i, x i)
           · exact hkj ▸ hu.2
           · exact absurd hvq (hv' k hkj)
       · exact absurd (huv (x j) (Or.inr ⟨j, rfl⟩) hu.2) (hv' j hji)
-  have hφ : ∀ w ∈ φ, ∃ v ∈ {w | ∃ i, w ∈ φ ∩ x i ∧ ∀ j, j ≠ i → w ∉ x j}, v ∈ φ := λ w hw => by
+  have hφ : ∀ w ∈ φ, ∃ v ∈ {w | ∃ i, w ∈ φ ∩ x i ∧ ∀ j, j ≠ i → w ∉ x j}, v ∈ φ := fun w hw ↦ by
     obtain ⟨i, -⟩ := Set.mem_iUnion.1 (hcov hw)
     obtain ⟨v, hv, hv'⟩ := hsep i
     exact ⟨v, ⟨i, hv, hv'⟩, hv.1⟩
-  have hx : ∀ i, ∃ v ∈ {w | ∃ i, w ∈ φ ∩ x i ∧ ∀ j, j ≠ i → w ∉ x j}, v ∈ x i := λ i => by
+  have hx : ∀ i, ∃ v ∈ {w | ∃ i, w ∈ φ ∩ x i ∧ ∀ j, j ≠ i → w ∉ x j}, v ∈ x i := fun i ↦ by
     obtain ⟨v, hv, hv'⟩ := hsep i
     exact ⟨v, ⟨i, hv, hv'⟩, hv.2⟩
   obtain ⟨w₀, hw₀, hw₀x⟩ := h
@@ -434,13 +444,13 @@ theorem exhIEII_insert_range (hcov : φ ⊆ ⋃ i, x i)
     simp only [Set.mem_ofPred_eq, Set.mem_inter_iff, Set.mem_iInter]
     constructor
     · rintro ⟨hw, h⟩
-      exact ⟨hw, λ i => (h (x i) (Or.inr ⟨i, rfl⟩)).2 (hx i)⟩
+      exact ⟨hw, fun i ↦ (h (x i) (Or.inr ⟨i, rfl⟩)).2 (hx i)⟩
     · rintro ⟨hw, h⟩
       refine ⟨hw, ?_⟩
       rintro q (rfl | ⟨i, rfl⟩)
-      exacts [⟨λ _ => hφ w hw, λ _ => hw⟩, ⟨λ _ => hx i, λ _ => h i⟩]
+      exacts [⟨fun _ ↦ hφ w hw, fun _ ↦ hw⟩, ⟨fun _ ↦ hx i, fun _ ↦ h i⟩]
   · rintro q (rfl | ⟨i, rfl⟩)
-    exacts [⟨λ _ => hφ w₀ hw₀, λ _ => hw₀⟩, ⟨λ _ => hx i, λ _ => hw₀x i⟩]
+    exacts [⟨fun _ ↦ hφ w₀ hw₀, fun _ ↦ hw₀⟩, ⟨fun _ ↦ hx i, fun _ ↦ hw₀x i⟩]
 
 end Cover
 
@@ -448,12 +458,13 @@ section Quantified
 
 variable {φ s₁ s₂ sb e e₁ e₂ eb : Set World}
 
-/-- A disjunction under a quantifier, with alternatives replacing the disjunction by its
-disjuncts and their conjunction and the quantifier by a weaker one (`s` strong, `e` weak, `b`
-conjunctive). Each prejacent world verifies one of three patterns — one disjunct's strong
-alternative with the weak alternatives, or the weak alternatives alone — each pattern is
-realized exactly, and asserting both strong disjunct alternatives while denying the conjunctive
-ones is consistent: exhaustification then does exactly that — universal free choice. -/
+/-- Exhaustifying a disjunction under a quantifier yields universal free choice. The
+alternatives replace the disjunction by its disjuncts and their conjunction and the quantifier by
+a weaker one (`s` strong, `e` weak, `b` conjunctive). When each prejacent world verifies one of
+three patterns (either disjunct's strong alternative with the weak alternatives, or the weak
+alternatives alone), each pattern is realized exactly, and asserting both strong disjunct
+alternatives while denying the conjunctive ones is consistent, exhaustification does exactly
+that. -/
 theorem exhIEII_quantified
     (hcov : ∀ w ∈ φ, (w ∈ s₁ ∧ w ∈ e ∧ w ∈ e₁) ∨ (w ∈ s₂ ∧ w ∈ e ∧ w ∈ e₂) ∨
       (w ∈ e ∧ w ∈ e₁ ∧ w ∈ e₂))
@@ -467,19 +478,19 @@ theorem exhIEII_quantified
   obtain ⟨w₃, hw₃, hw₃e, hw₃e₁, hw₃e₂, hw₃s₁, hw₃s₂, hw₃sb, hw₃eb⟩ := h₃
   obtain ⟨w₀, hw₀, hw₀s₁, hw₀s₂, hw₀e, hw₀e₁, hw₀e₂, hw₀sb, hw₀eb⟩ := h
   have hM : IsMinimalCover {φ, s₁, s₂, sb, e, e₁, e₂, eb} φ {w₁, w₂, w₃} := by
-    refine ⟨by rintro v (rfl | rfl | rfl) <;> assumption, λ w hw => ?_, ?_⟩
+    refine ⟨by rintro v (rfl | rfl | rfl) <;> assumption, fun w hw ↦ ?_, ?_⟩
     · rcases hcov w hw with ⟨h1, h2, h3⟩ | ⟨h1, h2, h3⟩ | ⟨h1, h2, h3⟩
-      · refine ⟨w₁, by simp, λ q hq hq' => ?_⟩
+      · refine ⟨w₁, by simp, fun q hq hq' ↦ ?_⟩
         simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hq
         rcases hq with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl
         exacts [hw, h1, absurd hq' hw₁s₂, absurd hq' hw₁sb, h2, h3, absurd hq' hw₁e₂,
           absurd hq' hw₁eb]
-      · refine ⟨w₂, by simp, λ q hq hq' => ?_⟩
+      · refine ⟨w₂, by simp, fun q hq hq' ↦ ?_⟩
         simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hq
         rcases hq with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl
         exacts [hw, absurd hq' hw₂s₁, h1, absurd hq' hw₂sb, h2, absurd hq' hw₂e₁, h3,
           absurd hq' hw₂eb]
-      · refine ⟨w₃, by simp, λ q hq hq' => ?_⟩
+      · refine ⟨w₃, by simp, fun q hq hq' ↦ ?_⟩
         simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hq
         rcases hq with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl
         exacts [hw, absurd hq' hw₃s₁, absurd hq' hw₃s₂, absurd hq' hw₃sb, h1, h2, h3,
