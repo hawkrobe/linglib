@@ -305,9 +305,9 @@ end CoreMerge
 
 /-- A determiner over a noun, in which `D` selects `N` and so projects. -/
 private def theDog : SyntacticObject :=
-  ⟨UnorderedTree.mk (.node (Sum.inr none)
-    [.node (Sum.inl ⟨.simple .D [.N] (phonForm := "the"), 0⟩) [],
-     .node (Sum.inl ⟨.simple .N [] (phonForm := "dog"), 1⟩) []]), by decide⟩
+  ⟨UnorderedTree.mk (.node Vertex.bare
+    [.node (Vertex.lex ⟨.simple .D [.N] (phonForm := "the"), 0⟩) [],
+     .node (Vertex.lex ⟨.simple .N [] (phonForm := "dog"), 1⟩) []]), by decide⟩
 
 /-- Harmonic head-initial: the projecting `D`'s yield comes first. -/
 example : (theDog.linearize .initial).map (·.map (·.id)) = some [0, 1] := by decide
@@ -321,9 +321,9 @@ example : theDog.phonYield .final = some ["dog", "the"] := by decide
 /-- Exocentric Merge of two saturated `N`s, neither selecting the other, determines no head and
 no order. -/
 private def exoNN : SyntacticObject :=
-  ⟨UnorderedTree.mk (.node (Sum.inr none)
-    [.node (Sum.inl ⟨.simple .N [] (phonForm := "cats"), 0⟩) [],
-     .node (Sum.inl ⟨.simple .N [] (phonForm := "dogs"), 1⟩) []]), by decide⟩
+  ⟨UnorderedTree.mk (.node Vertex.bare
+    [.node (Vertex.lex ⟨.simple .N [] (phonForm := "cats"), 0⟩) [],
+     .node (Vertex.lex ⟨.simple .N [] (phonForm := "dogs"), 1⟩) []]), by decide⟩
 
 example : exoNN.linearize .initial = none := by decide
 example : exoNN.linearize .final = none := by decide
@@ -372,13 +372,13 @@ theorem formSet_of'_card (a : α) (F : Forest (UnorderedTree α)) :
 object or a bare root of any valence over syntactic objects, binary below that root. -/
 def IsExtendedWorkspace (G : Forest (UnorderedTree Vertex)) : Prop :=
   ∀ T ∈ G, IsSyntacticObject T ∨
-    ∃ S : Forest (UnorderedTree Vertex), T = .node (.inr none) S ∧ ∀ T' ∈ S, IsSyntacticObject T'
+    ∃ S : Forest (UnorderedTree Vertex), T = .node Vertex.bare S ∧ ∀ T' ∈ S, IsSyntacticObject T'
 
 /-- On workspaces of syntactic objects, the range of FormSet lies in the span of the extended
 workspaces (Definition 1.16.1). -/
 theorem map_formSet_le (k : ℕ) :
     (Submodule.span R (of' '' {F | ∀ T ∈ F, IsSyntacticObject T})).map
-        (formSet (.inr none) k) ≤
+        (formSet Vertex.bare k) ≤
       Submodule.span R (of' '' {G | IsExtendedWorkspace G}) := by
   rw [Submodule.map_span_le]
   rintro _ ⟨F, hF, rfl⟩
@@ -455,7 +455,7 @@ noncomputable def toCK (S : SyntacticObject) : ConnesKreimer ℕ (UnorderedTree 
 /-- Merge factors through the grafting operator on the disjoint union of its arguments, with the
 bare root label (Lemma 1.3.3). -/
 theorem toCK_merge (l r : SyntacticObject) :
-    toCK (merge l r) = bPlusLin (Sum.inr none) (toCK l * toCK r) := by
+    toCK (merge l r) = bPlusLin Vertex.bare (toCK l * toCK r) := by
   rw [toCK, toCK, toCK, ← of'_singleton (R := ℕ) l.val, ← of'_singleton (R := ℕ) r.val, ← of'_add,
     bPlusLin_of', merge_val]
   rfl

@@ -50,10 +50,11 @@ variable {β : Type*}
     is the trace of, if any, bare binary node ↦ `*`, off-carrier arities ↦ `0`. -/
 def mergeAlgebra [Mul β] [Zero β] (ℓ : LIToken → β) (τ : Option LIToken → β) :
     Vertex → List β → β
-  | .inl tok, _       => ℓ tok
-  | .inr u, []        => τ u
-  | .inr none, [x, y] => x * y
-  | .inr _, _         => 0
+  | .inl (some tok), _ => ℓ tok
+  | .inl none, [x, y]  => x * y
+  | .inl none, _       => 0
+  | .inr u, []         => τ u
+  | .inr _, _          => 0
 
 /-- The trace of a token is a leaf: any daughters put it off the carrier. -/
 private theorem mergeAlgebra_some [Mul β] [Zero β] (ℓ : LIToken → β) (τ : Option LIToken → β)
@@ -62,10 +63,16 @@ private theorem mergeAlgebra_some [Mul β] [Zero β] (ℓ : LIToken → β) (τ 
   match l with
   | [] | [_] | [_, _] | _ :: _ :: _ :: _ => rfl
 
+/-- The index-free trace is a leaf: any daughters put it off the carrier. -/
+private theorem mergeAlgebra_none [Mul β] [Zero β] (ℓ : LIToken → β) (τ : Option LIToken → β)
+    (l : List β) : mergeAlgebra ℓ τ (Sum.inr none) l = if l.isEmpty then τ none else 0 := by
+  match l with
+  | [] | [_] | [_, _] | _ :: _ :: _ :: _ => rfl
+
 /-- A daughter list of three or more is off the carrier. -/
 private theorem mergeAlgebra_big [Mul β] [Zero β] {ℓ : LIToken → β} {τ : Option LIToken → β}
     {l : List β}
-    (h : 2 < l.length) : mergeAlgebra ℓ τ (Sum.inr none) l = 0 := by
+    (h : 2 < l.length) : mergeAlgebra ℓ τ Vertex.bare l = 0 := by
   match l with
   | _ :: _ :: _ :: _ => rfl
   | [] | [_] | [_, _] => simp at h
@@ -101,16 +108,20 @@ variable [CommMagma β] [Zero β] (ℓ : LIToken → β) (τ : Option LIToken �
 theorem mergeAlgebra_perm (a : Vertex) {l₁ l₂ : List β} (h : l₁.Perm l₂) :
     mergeAlgebra ℓ τ a l₁ = mergeAlgebra ℓ τ a l₂ := by
   cases a with
-  | inl tok => rfl
+  | inl o =>
+    cases o with
+    | some tok => rfl
+    | none =>
+      exact perm_congr_arity₂ (fun x y => _root_.mul_comm x y) (fun _ h => mergeAlgebra_big h) h
   | inr u =>
     cases u with
     | none =>
-      exact perm_congr_arity₂ (fun x y => _root_.mul_comm x y) (fun _ h => mergeAlgebra_big h) h
+      simp only [mergeAlgebra_none, List.isEmpty_iff_length_eq_zero, h.length_eq]
     | some tok =>
       simp only [mergeAlgebra_some, List.isEmpty_iff_length_eq_zero, h.length_eq]
 
-/-- The induced algebra on the nonplanar carrier: the catamorphism descends by
-    `mergeAlgebra_perm`. -/
+/-- The catamorphism descends to the nonplanar carrier by `mergeAlgebra_perm`, giving the
+    induced algebra. -/
 def liftN : UnorderedTree Vertex → β :=
   Quotient.lift (RoseTree.fold (mergeAlgebra ℓ τ))
     fun _ _ h => RoseTree.fold_perm (fun a _ _ h' => mergeAlgebra_perm ℓ τ a h') h
@@ -118,9 +129,9 @@ def liftN : UnorderedTree Vertex → β :=
 @[simp] theorem liftN_mk (p : RoseTree Vertex) :
     liftN ℓ τ (UnorderedTree.mk p) = RoseTree.fold (mergeAlgebra ℓ τ) p := rfl
 
-/-- The nonplanar magma law: Merge multiplies values. -/
+/-- Merge multiplies values, the nonplanar magma law. -/
 theorem liftN_merge (a b : UnorderedTree Vertex) :
-    liftN ℓ τ (UnorderedTree.node (Sum.inr none) {a, b}) = liftN ℓ τ a * liftN ℓ τ b := by
+    liftN ℓ τ (UnorderedTree.node Vertex.bare {a, b}) = liftN ℓ τ a * liftN ℓ τ b := by
   refine Quotient.inductionOn₂ a b fun pa pb => ?_
   rw [UnorderedTree.quot_mk_eq_mk, UnorderedTree.quot_mk_eq_mk, UnorderedTree.node_pair_mk]
   exact rfl
@@ -140,8 +151,8 @@ def liftFun (s : SyntacticObject) : β := liftN ℓ τ s.val
   show liftN ℓ τ (merge l r).val = liftN ℓ τ l.val * liftN ℓ τ r.val
   rw [merge_val, liftN_merge]
 
-/-- The universal property, existence half (cf. `FreeMagma.lift`): leaf data
-    extends to a morphism of magmas out of the carrier. -/
+/-- Leaf data extends to a morphism of magmas out of the carrier, the existence half of the
+    universal property (cf. `FreeMagma.lift`). -/
 noncomputable def lift : SyntacticObject →ₙ* β where
   toFun := liftFun ℓ τ
   map_mul' := liftFun_merge ℓ τ
@@ -150,8 +161,7 @@ noncomputable def lift : SyntacticObject →ₙ* β where
 
 end CommMagma
 
-/-- The universal property, uniqueness half: morphisms agreeing on the leaves are
-    equal. -/
+/-- Morphisms agreeing on the leaves are equal, the uniqueness half of the universal property. -/
 theorem hom_ext [Mul β] {f g : SyntacticObject →ₙ* β}
     (hlex : ∀ tok, f (SyntacticObject.leaf tok) = g (SyntacticObject.leaf tok))
     (htrace : f trace = g trace) (htraceOf : ∀ tok, f (traceOf tok) = g (traceOf tok)) :

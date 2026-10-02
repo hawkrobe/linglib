@@ -35,7 +35,7 @@ instance : Inhabited SyntacticObject := ⟨trace⟩
 
 /-! ### Merge as multiplication -/
 
-/-- `l * r = merge l r`: Merge on the carrier. -/
+/-- Merge on the carrier is written `l * r`. -/
 noncomputable instance : Mul SyntacticObject := ⟨merge⟩
 
 @[simp] theorem mul_def (l r : SyntacticObject) : l * r = merge l r := rfl
@@ -57,7 +57,7 @@ end SyntacticObject
 
 namespace PlanarSyntacticObject
 
-/-- `l * r = merge l r`: Merge on the ordered carrier, in the given order. -/
+/-- Merge on the ordered carrier, in the given order, is written `l * r`. -/
 instance : Mul PlanarSyntacticObject := ⟨merge⟩
 
 @[simp] theorem mul_def (l r : PlanarSyntacticObject) : l * r = merge l r := rfl
@@ -113,7 +113,7 @@ def mkLeafPhon (cat : Cat) (sel : SelStack) (phon : String) (id : Nat) : Syntact
 /-- The lexical token at the root, if the root is a lexical leaf. -/
 def getLIToken (s : SyntacticObject) : Option LIToken :=
   match UnorderedTree.value s.val with
-  | .inl tok => some tok
+  | .inl o => o
   | .inr _ => none
 
 @[simp] theorem getLIToken_leaf (tok : LIToken) : (SyntacticObject.leaf tok).getLIToken
@@ -160,7 +160,7 @@ instance (s : SyntacticObject) : Decidable (isTrace s) := inferInstanceAs (Decid
 /-- The number of leaves, traces included. -/
 def leafCount (s : SyntacticObject) : Nat := UnorderedTree.numLeaves s.val
 
-/-- `IsLeaf s ↔ s.leafCount = 1`: a lexical or trace leaf. -/
+/-- An object is a lexical or trace leaf exactly when its leaf count is one. -/
 def IsLeaf (s : SyntacticObject) : Prop := s.leafCount = 1
 
 instance : DecidablePred IsLeaf := fun _ => inferInstanceAs (Decidable (_ = _))
@@ -202,15 +202,15 @@ example : isTrace SyntacticObject.trace ∧ ¬ isTrace (SyntacticObject.leaf
 /-- A bare binary node over a lexical leaf and a bare trace, the shape of an Internal-Merge
     result, is a syntactic object. -/
 example :
-    IsSyntacticObject (UnorderedTree.mk (.node (Sum.inr none)
-      [.leaf (Sum.inl (mkTraceToken 0)), .leaf (Sum.inr none)])) := by decide
+    IsSyntacticObject (UnorderedTree.mk (.node Vertex.bare
+      [.leaf (Vertex.lex (mkTraceToken 0)), .leaf Vertex.trace])) := by decide
 /-- A lexical item with children is rejected: lexical items are leaves. -/
 example :
-    ¬ IsSyntacticObject (UnorderedTree.mk (.node (Sum.inl (mkTraceToken 0)) [.leaf
-      (Sum.inr none)])) := by decide
+    ¬ IsSyntacticObject (UnorderedTree.mk (.node (Vertex.lex (mkTraceToken 0)) [.leaf
+      Vertex.trace])) := by decide
 /-- A ternary bare node is rejected: syntactic objects are binary. -/
 example :
-    ¬ IsSyntacticObject (UnorderedTree.mk (.node (Sum.inr none)
-      [.leaf (Sum.inr none), .leaf (Sum.inr none), .leaf (Sum.inr none)])) := by decide
+    ¬ IsSyntacticObject (UnorderedTree.mk (.node Vertex.bare
+      [.leaf Vertex.trace, .leaf Vertex.trace, .leaf Vertex.trace])) := by decide
 
 end Minimalist

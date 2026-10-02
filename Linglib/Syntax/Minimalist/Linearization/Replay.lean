@@ -56,8 +56,9 @@ def SyntacticObject.toPlanarLeaf? (s : SyntacticObject) : Option PlanarSyntactic
 
 /-- Left-to-right token yield of an ordered tree; traces are unpronounced. -/
 def planarYield : RoseTree Vertex → List LIToken
-  | .node (.inl tok) _ => [tok]
-  | .node (.inr none) [l, r] => planarYield l ++ planarYield r
+  | .node (.inl (some tok)) _ => [tok]
+  | .node (.inl none) [l, r] => planarYield l ++ planarYield r
+  | .node (.inl none) _ => []
   | .node (.inr _) _ => []
 
 /-- The subtree projects to `target`: its unordered tree is `target`'s. -/
@@ -102,7 +103,7 @@ private theorem planarFindP?_pred {p : RoseTree Vertex → Bool} {t s : RoseTree
 
 /-- The daughters of a well-formed binary node are well-formed. -/
 private theorem wellFormed_pair_children {l r : RoseTree Vertex}
-    (ht : wellFormed (.node (Sum.inr none) [l, r]) = true) :
+    (ht : wellFormed (.node Vertex.bare [l, r]) = true) :
     wellFormed l = true ∧ wellFormed r = true := by
   rwa [wellFormed_merge, Bool.and_eq_true] at ht
 
@@ -114,10 +115,10 @@ private theorem planarFindP?_wellFormed {p : RoseTree Vertex → Bool} {t s : Ro
   | case2 => exact absurd h (by simp)
   | case3 => obtain rfl := Option.some.inj h; exact ht
   | case4 a l r _ ihl ihr =>
-    have hcase : a = Sum.inr none := by
+    have hcase : a = Vertex.bare := by
       match a with
-      | .inr none => rfl
-      | .inl _ | .inr (some _) => simp [wellFormed] at ht
+      | .inl none => rfl
+      | .inl (some _) | .inr _ => simp [wellFormed] at ht
     subst hcase
     obtain ⟨hl', hr'⟩ := wellFormed_pair_children ht
     rcases hlf : planarFindP? p l with _ | sl
@@ -148,16 +149,16 @@ theorem replaceWhereP_mk (target : SyntacticObject) {rep : RoseTree Vertex}
     refine ⟨?_, hrep⟩
     rw [projEqP_eq hp, UnorderedTree.replace_self]; exact hmkr
   | case4 a l r hp ihl ihr =>
-    have hcase : a = Sum.inr none := by
+    have hcase : a = Vertex.bare := by
       match a with
-      | .inr none => rfl
-      | .inl _ | .inr (some _) => simp [wellFormed] at ht
+      | .inl none => rfl
+      | .inl (some _) | .inr _ => simp [wellFormed] at ht
     subst hcase
     obtain ⟨hl', hr'⟩ := wellFormed_pair_children ht
     obtain ⟨ihle, ihls⟩ := ihl hl'
     obtain ⟨ihre, ihrs⟩ := ihr hr'
     refine ⟨?_, by rw [wellFormed_merge, ihls, ihrs]; rfl⟩
-    have hne : UnorderedTree.node (Sum.inr none) {UnorderedTree.mk l, UnorderedTree.mk r}
+    have hne : UnorderedTree.node Vertex.bare {UnorderedTree.mk l, UnorderedTree.mk r}
       ≠ target.val := by
       rw [← merge_mk_raw]; exact not_projEqP hp
     rw [merge_mk_raw, ihle, ihre, merge_mk_raw, UnorderedTree.replace_node_pair, ite_eq_right hne]
@@ -172,8 +173,8 @@ theorem replaceWhereP_mk (target : SyntacticObject) {rep : RoseTree Vertex}
 where
   /-- `UnorderedTree.mk` of the ordered binary node is the unordered binary node. -/
   merge_mk_raw (a b : RoseTree Vertex) :
-      UnorderedTree.mk (RoseTree.node (Sum.inr none) [a, b])
-        = UnorderedTree.node (Sum.inr none) {UnorderedTree.mk a, UnorderedTree.mk b} := by
+      UnorderedTree.mk (RoseTree.node Vertex.bare [a, b])
+        = UnorderedTree.node Vertex.bare {UnorderedTree.mk a, UnorderedTree.mk b} := by
     rw [show ({UnorderedTree.mk a, UnorderedTree.mk b} : Multiset (UnorderedTree Vertex))
           = Multiset.ofList ([a, b].map UnorderedTree.mk) from rfl, UnorderedTree.node_mk_tree_list]
 
@@ -225,8 +226,8 @@ def SyntacticObject.tracePlanar (s : SyntacticObject) : PlanarSyntacticObject :=
 
 namespace PlanarSyntacticObject
 
-/-- Internal Merge on the ordered accumulator: the leftmost subtree projecting to `mover` is
-    raised to the left edge, leaving the trace of its head; `none` if absent. -/
+/-- Internal Merge on the ordered accumulator raises the leftmost subtree projecting to `mover`
+    to the left edge, leaving the trace of its head; `none` if absent. -/
 def moveLeft (acc : PlanarSyntacticObject) (mover : SyntacticObject) :
     Option PlanarSyntacticObject :=
   (find? mover acc).map fun s => merge s (replaceWhere mover mover.tracePlanar acc)
@@ -269,7 +270,7 @@ def surfaceTokens (d : Derivation) : List LIToken :=
 /-- The surface category sequence, the readout of word-order studies. -/
 def surfaceCats (d : Derivation) : List Cat := d.surfaceTokens.map (·.item.outerCat)
 
-/-- The surface string: pronounced forms left to right, empty forms dropped. -/
+/-- The surface string lists the pronounced forms left to right, dropping empty forms. -/
 def surfacePhon (d : Derivation) : List String :=
   d.surfaceTokens.filterMap LIToken.phonForm?
 
@@ -364,7 +365,8 @@ theorem SyntacticObject.Derivation.externalize?_faithful (d : Derivation)
     rw [foldl_externStep_toSyntacticObject d.steps h, toPlanarLeaf?_toSyntacticObject hinit]
     rfl
 
-/-- Faithfulness for a prefix: a successful replay of the first `n` steps forgets to stage `n`. -/
+/-- Faithfulness holds for a prefix: a successful replay of the first `n` steps forgets to stage
+    `n`. -/
 theorem SyntacticObject.Derivation.externalize?_take_faithful (d : Derivation) (n : Nat)
     {p : PlanarSyntacticObject} (h : (d.take n).externalize? = some p) :
     p.toSyntacticObject = d.stageAt n :=
@@ -390,7 +392,7 @@ private def xAN : SyntacticObject :=
   (PlanarSyntacticObject.merge (PlanarSyntacticObject.leaf ⟨.simple .A [], 2⟩)
     (PlanarSyntacticObject.leaf ⟨.simple .N [], 1⟩)).toSyntacticObject
 
-/-- No movement: `Dem Num A N`. -/
+/-- Without movement the order is `Dem Num A N`. -/
 private def xDerivBase : Derivation := ⟨xN, [.em .left xA, .em .left xNum, .em .left xD]⟩
 /-- Raise N around A, pied-pipe `[N A]` around Num: `Dem N A Num`. -/
 private def xDerivO : Derivation :=

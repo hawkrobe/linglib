@@ -12,8 +12,8 @@ public import Linglib.Core.Data.RoseTree.Get
 /-!
 # Chains on planar syntactic objects
 
-A planar syntactic object is a copy-theoretic representation. A vertex `Sum.inl tok` is a
-pronounced copy of `tok` and a vertex `Sum.inr (some tok)` a deleted one, the trace Internal Merge
+A planar syntactic object is a copy-theoretic representation. A vertex `Vertex.lex tok` is a
+pronounced copy of `tok` and a vertex `Vertex.traceOf tok` a deleted one, the trace Internal Merge
 leaves, the cancellation `T/T_v` of [marcolli-chomsky-berwick-2025] with the head of `T_v`
 remembered. The chain of a token is the list of its copies, and a copy stands for the maximal
 projection of its token, so a moved phrase sits where its head projects. A token moves when it
@@ -105,7 +105,7 @@ theorem mem_positions_iff {β : Type*} {f : Vertex → Option β} {t : RoseTree 
 
 /-- The pronounced copies, left to right. -/
 def tokenList : RoseTree Vertex → List (TreePath × LIToken) :=
-  positions (Sum.elim some fun _ ↦ none)
+  positions (Sum.elim id fun _ ↦ none)
 
 /-- The deleted copies, left to right. -/
 def traceList : RoseTree Vertex → List (TreePath × LIToken) :=
@@ -121,9 +121,9 @@ def occurrences : List TreePath :=
 def traces : List TreePath :=
   (traceList t.val).filterMap fun x ↦ if x.2 = tok then some x.1 else none
 
-/-- The chain of `tok`: the positions of its copies, pronounced or deleted, left to right. -/
+/-- The chain of `tok` lists the positions of its copies, pronounced or deleted, left to right. -/
 def chain : List TreePath :=
-  (positions (Sum.elim some id) t.val).filterMap fun x ↦ if x.2 = tok then some x.1 else none
+  (positions (Sum.elim id id) t.val).filterMap fun x ↦ if x.2 = tok then some x.1 else none
 
 /-- `tok` moves when it has a deleted copy. -/
 def Moves : Prop := traces t tok ≠ []
@@ -137,23 +137,24 @@ instance : Decidable (IsShared t tok) := inferInstanceAs (Decidable (_ ≤ _))
 
 /-! ### The phrase a copy stands for -/
 
-/-- The position of the head of a constituent, relative to its root: a token or trace leaf is its
+/-- The position of the head of a constituent, relative to its root. A token or trace leaf is its
 own head; at a binary node a left leaf with nothing to select is a specifier and the head lies in
 the right daughter, a left leaf that selects is the head, and otherwise the head lies in the right
 daughter. -/
 def headPos? : RoseTree Vertex → Option (List ℕ)
-  | .node (.inl _) _ | .node (.inr (some _)) _ => some []
-  | .node (.inr none) [.node (.inl tok) [], r] =>
+  | .node (.inl (some _)) _ | .node (.inr (some _)) _ => some []
+  | .node (.inl none) [.node (.inl (some tok)) [], r] =>
       if tok.item.outerSel = [] then (headPos? r).map (1 :: ·) else some [0]
-  | .node (.inr none) [_, r] => (headPos? r).map (1 :: ·)
+  | .node (.inl none) [_, r] => (headPos? r).map (1 :: ·)
+  | .node (.inl none) _ => none
   | .node (.inr none) _ => none
 
-/-- The head of a constituent: the token its head position carries. -/
+/-- The head of a constituent is the token its head position carries. -/
 def headToken? (s : RoseTree Vertex) : Option LIToken :=
-  (headPos? s).bind fun q ↦ (subtreeAt s q).bind (Sum.elim some id ·.value)
+  (headPos? s).bind fun q ↦ (subtreeAt s q).bind (Sum.elim id id ·.value)
 
-/-- The maximal projection of the copy at `p`: the highest position above it whose head is `p`
-itself, `p` when there is none. -/
+/-- The maximal projection of the copy at `p` is the highest position above it whose head is `p`
+itself, or `p` when there is none. -/
 def projectionAt (p : TreePath) : TreePath :=
   ((p.toList.inits.find? fun r ↦
       ((subtreeAt t.val r).bind headPos?).map (r ++ ·) = some p.toList).map TreePath.mk).getD p
@@ -186,13 +187,13 @@ def IsLink (p q : TreePath) : Prop :=
 
 instance (p q : TreePath) : Decidable (IsLink t tok p q) := inferInstanceAs (Decidable (_ ∧ _))
 
-/-- The links of the chain of `tok`: each copy with the projection of the copy linked to it. -/
+/-- The links of the chain of `tok` pair each copy with the projection of the copy linked to it. -/
 def links : List (TreePath × TreePath) :=
   (chain t tok).flatMap fun q ↦
     ((chain t tok).filter fun p ↦ IsLink t tok p q).map fun p ↦ (projectionAt t p, q)
 
-/-- The top of the chain of `tok`: the copies no copy's projection c-commands, where it takes
-scope. -/
+/-- The top of the chain of `tok` consists of the copies no copy's projection c-commands, where it
+takes scope. -/
 def chainTop : List TreePath :=
   (chain t tok).filter fun q ↦ (chain t tok).all fun p ↦ ¬ CCommands t.val (projectionAt t p) q
 
@@ -214,7 +215,7 @@ theorem links_eq_nil_of_length_le_one (h : (chain t tok).length ≤ 1) : links t
 
 /-! ### Locality -/
 
-/-- The interior of the phase headed at `h`: the positions the head c-commands. -/
+/-- The interior of the phase headed at `h` is the set of positions the head c-commands. -/
 def interior (h : TreePath) : Set TreePath := {q | CCommands t.val h q}
 
 instance (h q : TreePath) : Decidable (q ∈ interior t h) :=

@@ -64,11 +64,12 @@ variable {s t x y l r l' r' : SyntacticObject}
 
 /-- The tree of lexical items and traces an object inscribes, forgetting which token fills each
 leaf. -/
-def erase (s : SyntacticObject) : UnorderedTree (LexicalItem ⊕ Option LexicalItem) :=
-  s.val.map (Sum.map LIToken.item (Option.map LIToken.item))
+def erase (s : SyntacticObject) : UnorderedTree (Option LexicalItem ⊕ Option LexicalItem) :=
+  s.val.map (Sum.map (Option.map LIToken.item) (Option.map LIToken.item))
 
 @[simp]
-theorem erase_leaf (tok : LIToken) : (leaf tok).erase = UnorderedTree.leaf (.inl tok.item) :=
+theorem erase_leaf (tok : LIToken) :
+    (leaf tok).erase = UnorderedTree.leaf (.inl (some tok.item)) :=
   map_leaf _ _
 
 @[simp]
@@ -78,7 +79,7 @@ theorem erase_traceOf (tok : LIToken) :
 
 @[simp]
 theorem erase_merge (l r : SyntacticObject) :
-    (merge l r).erase = node (.inr none) {l.erase, r.erase} := by
+    (merge l r).erase = node (.inl none) {l.erase, r.erase} := by
   simp [erase, map_node]
 
 /-- Two inscriptions are structurally identical when they coincide once token identity is
