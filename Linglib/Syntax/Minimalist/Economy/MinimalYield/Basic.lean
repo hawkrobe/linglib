@@ -29,11 +29,14 @@ forms.
 ## Main definitions
 
 * `Minimalist.MinimalYieldWeak`, `Minimalist.MinimalYield`
+* `Minimalist.MinimalYieldC`: Minimal Yield under trace counting.
 * `Minimalist.MinimalYield.signature`: the Pareto signature `(b₀ᵒᵈ, α)`.
 
 ## Main results
 
 * `Minimalist.MinimalYield.em_pair`: External Merge satisfies Minimal Yield.
+* `Minimalist.MinimalYieldC.em_pair`, `MinimalYieldC.im_of_cut`, `MinimalYieldC.add_right`:
+  External and Internal Merge satisfy Minimal Yield under trace counting, beside any spectators.
 * `Minimalist.MinimalYield.not_sideward_3a`, `not_sideward_3b`: the divergent Sideward cases do
   not.
 
@@ -95,8 +98,9 @@ theorem MinimalYield.em_pair (lbl : α) (S S' : UnorderedTree (α ⊕ β)) :
 
 /-! ### Internal Merge -/
 
-/-- Internal Merge via composition leaves `b₀`, `α`, `σ` unchanged (Δᵈ counting):
-    the accessible-term relation `α(T) = α(mover) + α(Q) + 2` is MCB eq. 1.6.7. -/
+/-- Internal Merge via composition leaves `b₀`, `α`, `σ` unchanged under Δᵈ counting, given the
+    accessible-term relation `α(T) = α(mover) + α(Q) + 2` of [marcolli-chomsky-berwick-2025]
+    (1.6.7). -/
 theorem im_pair_size_deltas_deletion (lbl : α) {T mover Q : UnorderedTree (α ⊕ β)}
     (h : T.numEdges = mover.numEdges + Q.numEdges + 2) :
     Multiset.card ({UnorderedTree.node (Sum.inl lbl) {mover, Q}} : Forest (UnorderedTree (α ⊕ β)))
@@ -135,7 +139,8 @@ theorem im_pair_size_deltas_deletion_of_cut (lbl : α) (T : UnorderedTree (α �
     (ConnesKreimer.cutSummandsN_numEdges_single_deletion T p hp mover hcard huc)
 
 /-- Internal Merge via composition leaves `b₀` fixed and raises `αᶜ` and `σᶜ` by one under Δᶜ
-counting, where the relation `αᶜ(T) = αᶜ(β_t) + αᶜ(trunk) + 1` is MCB eq. 1.6.8. -/
+counting, given the relation `αᶜ(T) = αᶜ(β_t) + αᶜ(trunk) + 1` of
+[marcolli-chomsky-berwick-2025] (1.6.8). -/
 theorem im_pair_size_deltas_contraction (lbl : α) {T β_t Q : UnorderedTree (α ⊕ β)}
     (hβ : β_t.traceLeafCount < β_t.numNodes) (hQ : Q.traceLeafCount < Q.numNodes)
     (h : T.accessibleCount = β_t.accessibleCount + Q.accessibleCount + 1) :
@@ -179,6 +184,57 @@ theorem im_pair_size_deltas_contraction_of_cut (lbl a₀ : α)
     (UnorderedTree.traceLeafCount_lt_numNodes_of_rootInl p.2 a₀
       ((cutSummandsCN_trunk_value τ _ p hp).trans (by rw [UnorderedTree.value_node])))
     (cutSummandsCN_accessibleCount_single τ _ a₀ F₀ rfl p hp β_t hcard)
+
+/-! ### Minimal Yield under trace counting
+
+Under the trace coproduct a cut leaves a trace leaf that is not an accessible term, so the counting
+functions discount traces (`Forest.accessibleCount`, `Forest.accessibleSize`). With this counting
+External and Internal Merge both satisfy all three conditions ([marcolli-chomsky-berwick-2025]
+Proposition 1.6.4). -/
+
+/-- Under trace counting, Minimal Yield allows no new components, loses no non-trace accessible
+    term, and raises the trace-aware size by exactly one. -/
+structure MinimalYieldC (F F' : Forest (UnorderedTree (α ⊕ β))) : Prop where
+  noDivergence : Multiset.card F' ≤ Multiset.card F
+  noInfoLoss : Forest.accessibleCount F ≤ Forest.accessibleCount F'
+  minimalYield : Forest.accessibleSize F' = Forest.accessibleSize F + 1
+
+/-- A spectator workspace preserves Minimal Yield under trace counting. -/
+theorem MinimalYieldC.add_right {F F' : Forest (UnorderedTree (α ⊕ β))} (h : MinimalYieldC F F')
+    (W : Forest (UnorderedTree (α ⊕ β))) : MinimalYieldC (F + W) (F' + W) where
+  noDivergence := by simpa using h.noDivergence
+  noInfoLoss := by simpa using h.noInfoLoss
+  minimalYield := by
+    rw [Forest.accessibleSize_add, Forest.accessibleSize_add, h.minimalYield]
+    omega
+
+/-- External Merge of two objects that are not traces satisfies Minimal Yield under trace
+    counting. -/
+theorem MinimalYieldC.em_pair (lbl : α) {S S' : UnorderedTree (α ⊕ β)}
+    (hS : S.traceLeafCount < S.numNodes) (hS' : S'.traceLeafCount < S'.numNodes) :
+    MinimalYieldC ({S, S'} : Forest (UnorderedTree (α ⊕ β)))
+      {UnorderedTree.node (Sum.inl lbl) {S, S'}} := by
+  have hnode := UnorderedTree.accessibleCount_merge lbl S S' hS hS'
+  refine ⟨by simp, ?_, ?_⟩
+  · rw [Forest.accessibleCount_singleton, hnode]
+    simp only [Multiset.insert_eq_cons, Forest.accessibleCount_cons,
+      Forest.accessibleCount_singleton]
+    omega
+  · rw [Forest.accessibleSize_singleton, hnode]
+    simp only [Multiset.insert_eq_cons, Forest.accessibleSize_cons,
+      Forest.accessibleSize_singleton]
+    omega
+
+/-- Internal Merge through a trace cut satisfies Minimal Yield under trace counting. -/
+theorem MinimalYieldC.im_of_cut (lbl a₀ : α) (τ : UnorderedTree (α ⊕ β) → β)
+    (F₀ : Forest (UnorderedTree (α ⊕ β)))
+    (p : Forest (UnorderedTree (α ⊕ β)) × UnorderedTree (α ⊕ β))
+    (hp : p ∈ cutSummandsCN τ (UnorderedTree.node (Sum.inl a₀) F₀))
+    (β_t : UnorderedTree (α ⊕ β)) (hcard : p.1 = {β_t}) :
+    MinimalYieldC ({UnorderedTree.node (Sum.inl a₀) F₀} : Forest (UnorderedTree (α ⊕ β)))
+      {UnorderedTree.node (Sum.inl lbl) {β_t, p.2}} :=
+  have h := im_pair_size_deltas_contraction_of_cut lbl a₀ τ F₀ p hp β_t hcard
+  ⟨h.1.le, h.2.1 ▸ Nat.le_succ _, h.2.2⟩
 
 /-! ### Sideward Merge -/
 
