@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 module
 
 public import Linglib.Core.Order.UpperLower.Finset
@@ -7,42 +12,38 @@ public import Mathlib.Tactic.DeriveFintype
 /-!
 # Containment feature pairs
 
-This file defines valuations of two dependent bivalent features. A containment pair is the set
-of positive features among an outer feature and an inner feature depending on it, and it is
-well-formed when the inner feature entails the outer, so that the positive features form a
-lower set of the two-element dependency chain. Lower sets of a chain are nested and number one
-more than the chain, which is why two dependent features yield three cells, linearly ordered by
-specification, and never a fourth. Person, number, gender and animacy features are finsets over
-their own two-element chains and share this shape through the lower-finset theory of
-`Core/Order/UpperLower/Finset.lean`; this file is the anonymous instance, the cell type of the
-φ-feature competitions.
+A containment pair is the set of positive values of two bivalent features, an outer feature and
+an inner one depending on it. It passes the containment filter when the inner feature entails the
+outer, that is, when its positive features form a lower set of the two-element chain. The lower
+sets of a chain are its initial segments and number one more than the chain
+(`Fintype.card_subtype_isLowerSet`), so two dependent features give exactly three cells, linearly
+ordered by specification. Person, number and gender features instantiate the same theory over
+their own chains; this file is the anonymous instance, the cell type of the φ-feature
+competitions.
 
 ## Main definitions
 
-* `Agreement.ContainmentPair`: the positive features of a valuation, a finset of
-  `ContainmentPair.Feature`.
-* `ContainmentPair.WellFormed`: the containment filter, a lower set of the dependency chain.
-* `ContainmentPair.maximal`, `ContainmentPair.intermediate`, `ContainmentPair.minimal`: the
-  three well-formed cells.
+* `Agreement.ContainmentPair`: the positive features of a valuation.
+* `ContainmentPair.maximal`, `ContainmentPair.intermediate`, `ContainmentPair.minimal`: the three
+  cells, the initial segments of the chain.
 * `ContainmentPair.specLevel`: the number of positive features.
 
 ## Main results
 
-* `ContainmentPair.classification`: every well-formed pair is one of the three cells.
-* `ContainmentPair.card_wellFormed`: there are three well-formed cells.
-* `ContainmentPair.no_four_way`: no four distinct well-formed cells.
+* `ContainmentPair.classification`: every pair passing the filter is one of the three cells.
+* `ContainmentPair.card_wellFormed`: there are three such cells.
 
 ## Implementation notes
 
-The skeleton is the descriptive containment filter of the feature-geometric tradition, not
-Harbour's calculus, which rejects the filter and uses the filtered cell as the quadripartition
-exclusive. That calculus lives at `Syntax/Minimalist/Phi/` and `Studies/Harbour2016.lean`.
+Harley and Ritter read a dependency in a feature geometry as morphological implication, which the
+lower-set condition states for a chain. The filter is descriptive and not Harbour's calculus,
+which rejects it and uses the filtered cell as the quadripartition exclusive
+(`Studies/Harbour2016.lean`).
 
 ## References
 
-* [H. Harley and E. Ritter, *Person and number in pronouns* (2002)][harley-ritter-2002]
-* [D. Adger and D. Harbour, *Why phi?* (2008)][adger-harbour-2008]
-* [D. Harbour, *Impossible Persons* (2016)][harbour-2016]
+* [harley-ritter-2002]
+* [harbour-2016]
 -/
 
 @[expose] public section
@@ -57,58 +58,68 @@ inductive Feature where
   | inner
   deriving DecidableEq, Repr, Fintype
 
-/-- Position on the dependency chain, the outer feature below the inner. -/
+/-- `Feature.rank` places the outer feature below the inner one on the dependency chain. -/
 def Feature.rank : Feature → Fin 2
   | .outer => 0
   | .inner => 1
 
 instance : LinearOrder Feature := LinearOrder.lift' Feature.rank (by decide)
 
+instance : LocallyFiniteOrderBot Feature := Fintype.toLocallyFiniteOrderBot
+
 end ContainmentPair
 
-/-- A valuation of two dependent bivalent features: the set of positive ones. -/
+/-- A valuation of two dependent bivalent features is the set of its positive ones. -/
 abbrev ContainmentPair := Finset ContainmentPair.Feature
 
 namespace ContainmentPair
 
-/-! ### The containment filter -/
+open Finset
 
-/-- Containment: the inner feature entails the outer, so the positive features form a lower
-set of the dependency chain. -/
-def WellFormed (p : ContainmentPair) : Prop := IsLowerSet (↑p : Set Feature)
+/-! ### The three cells -/
 
-instance : DecidablePred WellFormed := fun _ ↦ inferInstanceAs (Decidable (IsLowerSet _))
-
-/-- The most specified cell, both features positive: first person, singular. -/
-def maximal : ContainmentPair := Finset.univ
-
-/-- The intermediate cell, the outer feature alone: second person, dual. -/
-def intermediate : ContainmentPair := {.outer}
-
-/-- The least specified cell, no positive feature: third person, plural. -/
+/-- The least specified cell has no positive feature, as third person and plural. -/
 def minimal : ContainmentPair := ∅
 
-@[simp] theorem maximal_wellFormed : maximal.WellFormed := by decide
-@[simp] theorem intermediate_wellFormed : intermediate.WellFormed := by decide
-@[simp] theorem minimal_wellFormed : minimal.WellFormed := by decide
+/-- The intermediate cell has the outer feature alone, as second person and dual. -/
+def intermediate : ContainmentPair := Iic .outer
 
-/-- The filtered combination, the inner feature without the outer. -/
-theorem not_wellFormed_singleton_inner : ¬ ({.inner} : ContainmentPair).WellFormed := by
+/-- The most specified cell has both features, as first person and singular. -/
+def maximal : ContainmentPair := Iic .inner
+
+theorem intermediate_eq : intermediate = {.outer} := by decide
+
+theorem maximal_eq : maximal = univ := by decide
+
+theorem isLowerSet_minimal : IsLowerSet (↑minimal : Set Feature) := isLowerSet_coe_empty
+
+theorem isLowerSet_intermediate : IsLowerSet (↑intermediate : Set Feature) :=
+  isLowerSet_coe_Iic _
+
+theorem isLowerSet_maximal : IsLowerSet (↑maximal : Set Feature) := isLowerSet_coe_Iic _
+
+/-- The inner feature without the outer fails the containment filter. -/
+theorem not_isLowerSet_singleton_inner :
+    ¬ IsLowerSet (↑({.inner} : ContainmentPair) : Set Feature) := by
   decide
 
-/-- Every well-formed pair is one of the three cells. -/
-theorem classification :
-    ∀ p : ContainmentPair, p.WellFormed → p = maximal ∨ p = intermediate ∨ p = minimal := by
-  decide
+/-- Every pair passing the containment filter is one of the three cells. -/
+theorem classification (p : ContainmentPair) (h : IsLowerSet (↑p : Set Feature)) :
+    p = maximal ∨ p = intermediate ∨ p = minimal := by
+  rcases h.eq_empty_or_eq_Iic with rfl | ⟨a, rfl⟩
+  · exact .inr (.inr rfl)
+  · cases a
+    · exact .inr (.inl rfl)
+    · exact .inl rfl
 
-/-- On well-formed pairs the inner feature entails the outer. -/
-theorem outer_mem_of_inner_mem :
-    ∀ p : ContainmentPair, p.WellFormed → .inner ∈ p → .outer ∈ p := by
-  decide
+/-- Two dependent features yield exactly three cells. -/
+theorem card_wellFormed :
+    Fintype.card {p : ContainmentPair // IsLowerSet (↑p : Set Feature)} = 3 := by
+  rw [Fintype.card_subtype_isLowerSet]; rfl
 
 /-! ### The specification chain -/
 
-/-- Specification level, the number of positive features. -/
+/-- The specification level of a pair is its number of positive features. -/
 def specLevel (p : ContainmentPair) : ℕ := p.card
 
 @[simp] theorem spec_maximal : maximal.specLevel = 2 := by decide
@@ -118,35 +129,6 @@ def specLevel (p : ContainmentPair) : ℕ := p.card
 /-- A pair has at most its two features. -/
 theorem specLevel_le_two (p : ContainmentPair) : p.specLevel ≤ 2 :=
   (Finset.card_le_univ p).trans (by decide)
-
-/-- Specification separates well-formed pairs. -/
-theorem specLevel_injOn_wellFormed :
-    ∀ p q : ContainmentPair, p.WellFormed → q.WellFormed → p.specLevel = q.specLevel → p = q :=
-  fun _ _ hp hq h ↦ (hp.eq_iff_card_eq hq).2 h
-
-/-- The markedness chain: the well-formed cells are the lower sets of the dependency chain,
-linearly ordered by specification. -/
-instance : LinearOrder {p : ContainmentPair // p.WellFormed} :=
-  inferInstanceAs (LinearOrder {s : Finset Feature // IsLowerSet (↑s : Set Feature)})
-
-/-- Two dependent features yield exactly three cells. -/
-theorem card_wellFormed : Fintype.card {p : ContainmentPair // p.WellFormed} = 3 := by decide
-
-private theorem no_four_way' :
-    ∀ a b c d : {p : ContainmentPair // p.WellFormed},
-      a ≠ b → a ≠ c → a ≠ d → b ≠ c → b ≠ d → c ≠ d → False := by
-  decide +kernel
-
-/-- No four distinct well-formed cells. -/
-theorem no_four_way :
-    ∀ a b c d : ContainmentPair,
-      a.WellFormed → b.WellFormed → c.WellFormed → d.WellFormed →
-      a ≠ b → a ≠ c → a ≠ d → b ≠ c → b ≠ d → c ≠ d → False :=
-  fun a b c d ha hb hc hd hab hac had hbc hbd hcd ↦
-    no_four_way' ⟨a, ha⟩ ⟨b, hb⟩ ⟨c, hc⟩ ⟨d, hd⟩
-      (fun h ↦ hab (congrArg Subtype.val h)) (fun h ↦ hac (congrArg Subtype.val h))
-      (fun h ↦ had (congrArg Subtype.val h)) (fun h ↦ hbc (congrArg Subtype.val h))
-      (fun h ↦ hbd (congrArg Subtype.val h)) (fun h ↦ hcd (congrArg Subtype.val h))
 
 end ContainmentPair
 

@@ -29,7 +29,6 @@ covers exactly the participant sets whose own features are its bundle.
 * `Person.Feature`: the two features, ordered participant < author.
 * `Person.Bears`: the features a participant set bears.
 * `Person.toFeatures`: the bundle of a person value, none for the impersonal.
-* `Person.Features.WellFormed`: the containment filter.
 * `Person.Category.toFeatures`: the bundle of a referential category.
 
 ## Main results
@@ -47,7 +46,6 @@ covers exactly the participant sets whose own features are its bundle.
 
 * [ackema-neeleman-2018]
 * [harley-ritter-2002]
-* [adger-harbour-2008]
 * [harbour-2016]
 * [cysouw-2003]
 -/
@@ -73,6 +71,8 @@ def Feature.rank : Feature → Fin 2
 
 instance : LinearOrder Feature := LinearOrder.lift' Feature.rank (by decide)
 
+instance : LocallyFiniteOrderBot Feature := Fintype.toLocallyFiniteOrderBot
+
 /-- A person feature bundle is the set of its positive features. -/
 abbrev Features := Finset Feature
 
@@ -90,18 +90,15 @@ instance (s : Finset Role) : DecidablePred (Bears s) := fun f ↦ by
 theorem Bears.participant {s : Finset Role} (h : Bears s .author) : Bears s .participant :=
   ⟨_, h⟩
 
-/-- A bundle passes the containment filter when its features form a lower set of the chain, an
-author being necessarily a participant. -/
-abbrev Features.WellFormed (pf : Features) : Prop := IsLowerSet (↑pf : Set Feature)
-
 private theorem mem_upperPolar_lowerPolar (t : Features) (f : Feature) :
     f ∈ upperPolar Bears (lowerPolar Bears (t : Set Feature)) ↔
       ∀ s : Finset Role, (∀ g ∈ t, Bears s g) → Bears s f := by
   simp [mem_upperPolar_iff, mem_lowerPolar_iff]
 
-/-- The well-formed bundles are exactly the closed sets of features of the context. -/
+/-- The bundles passing the containment filter, the lower sets of the chain, are exactly the
+closed sets of features of the context. -/
 theorem wellFormed_iff_isIntent (t : Features) :
-    t.WellFormed ↔ IsIntent Bears (t : Set Feature) := by
+    IsLowerSet (↑t : Set Feature) ↔ IsIntent Bears (t : Set Feature) := by
   rw [isIntent_iff, Set.ext_iff]
   simp only [mem_upperPolar_lowerPolar, Finset.mem_coe]
   revert t; decide
@@ -115,10 +112,13 @@ theorem intentClosure_singleton_author :
   · simp [intentClosure, mem_upperPolar_iff, mem_lowerPolar_iff, Bears]
 
 /-- The bundle with the author feature alone violates containment. -/
-theorem not_wellFormed_singleton_author : ¬ ({.author} : Features).WellFormed := by decide
+theorem not_wellFormed_singleton_author :
+    ¬ IsLowerSet (↑({.author} : Features) : Set Feature) := by
+  decide
 
-/-- Exactly three bundles are well-formed. -/
-theorem card_wellFormed : Fintype.card {pf : Features // pf.WellFormed} = 3 := by decide
+/-- Exactly three bundles pass the containment filter. -/
+theorem card_wellFormed : Fintype.card {pf : Features // IsLowerSet (↑pf : Set Feature)} = 3 := by
+  rw [Fintype.card_subtype_isLowerSet]; rfl
 
 /-! ### The bundle of a person value -/
 
@@ -157,7 +157,7 @@ theorem toFeatures_sup {p q : Person} {s t : Features} (hp : p.toFeatures = some
 
 /-- Every bundle is well-formed. -/
 theorem toFeatures_wellFormed {p : Person} {t : Features} (h : p.toFeatures = some t) :
-    t.WellFormed := by
+    IsLowerSet (↑t : Set Feature) := by
   revert p t; decide
 
 /-- A referential value's prominence is the number of its features. -/
@@ -219,7 +219,7 @@ theorem toFeatures_person (c : Category) : c.person.toFeatures = some c.toFeatur
   cases c <;> decide
 
 /-- Every category yields a well-formed bundle. -/
-theorem toFeatures_wellFormed (c : Category) : c.toFeatures.WellFormed := by
+theorem toFeatures_wellFormed (c : Category) : IsLowerSet (↑c.toFeatures : Set Feature) := by
   cases c <;> decide +kernel
 
 /-- A set of categories has a person iff the categories share a bundle. -/

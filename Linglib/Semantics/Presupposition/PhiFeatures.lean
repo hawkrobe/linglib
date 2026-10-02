@@ -18,9 +18,11 @@ everything, so over well-formed bundles the domains nest by specification
 (`IsLowerSet.inf_le_inf_of_card_le`), the Feature-Subset Principle as a consequence of the
 privative geometry. Person is read at parthood of the agent and the addressee of the context of
 utterance, number at atomicity, and gender at the gender a referent is socially assigned
-(`Gendered`). The person domains are the participant-set extents of `Person.Bears` pulled back
-along the participants of a referent, and a tripartition value denotes the referents in its domain
-and in no stronger one, Maximize Presupposition.
+(`Gendered`). For gender Sauerland makes masculine the unmarked value, the one coordinations of
+mixed gender take, with feminine presupposing non-masculinity and neuter genderlessness, so the
+neuter domain lies inside the feminine one. The person domains are the participant-set extents
+of `Person.Bears` pulled back along the participants of a referent, and a tripartition value
+denotes the referents in its domain and in no stronger one, Maximize Presupposition.
 
 ## Main definitions
 
@@ -185,10 +187,10 @@ def dom (n : Option Number) : Set E :=
 @[simp] theorem dom_none : dom (E := E) none = Set.univ := rfl
 
 @[simp] theorem mem_dom_singular : x ∈ dom (E := E) (some .singular) ↔ Atom x := by
-  simp [dom, Features.ofNumber, singularF, Feature.dom]
+  simp [dom, Features.ofNumber, singularF_eq, Feature.dom]
 
 @[simp] theorem dom_dual : dom (E := E) (some .dual) = Set.univ := by
-  simp [dom, Features.ofNumber, dualF, Feature.dom]
+  simp [dom, Features.ofNumber, dualF_eq, Feature.dom]
 
 @[simp] theorem dom_plural : dom (E := E) (some .plural) = Set.univ := by
   simp [dom, Features.ofNumber, pluralF]
@@ -228,10 +230,10 @@ def dom (g : Option Gender) : Set E :=
 
 @[simp] theorem mem_dom_neuter :
     x ∈ dom (some .neuter) ↔ x ∉ Gendered.masculine ∧ x ∉ Gendered.feminine := by
-  simp [dom, Features.fromGender, Features.neuter, Feature.dom]
+  simp [dom, Features.fromGender, Features.neuter_eq, Feature.dom]
 
 @[simp] theorem mem_dom_feminine : x ∈ dom (some .feminine) ↔ x ∉ Gendered.masculine := by
-  simp [dom, Features.fromGender, Features.feminine, Feature.dom]
+  simp [dom, Features.fromGender, Features.feminine_eq, Feature.dom]
 
 @[simp] theorem dom_masculine : dom (E := E) (some .masculine) = Set.univ := by
   simp [dom, Features.fromGender, Features.masculine]

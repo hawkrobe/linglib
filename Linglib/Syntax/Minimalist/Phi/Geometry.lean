@@ -1,89 +1,60 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 module
 
 public import Linglib.Syntax.Person.Features
 public import Linglib.Semantics.Reference.Prominence
 
 /-!
-# Person Feature Geometry [harley-ritter-2002] [bejar-rezac-2003]
-[bejar-rezac-2009] [preminger-2014] [pancheva-zubizarreta-2018]
+# Person feature geometry
 
-The privative-feature geometry [harley-ritter-2002] decomposes
-person into a containment hierarchy where each sub-feature
-implies the next:
+Béjar and Rezac, extending Harley and Ritter's geometry of morphological φ-features to the
+features Agree sees, order the person features by entailment, [speaker] ⇒ [participant] ⇒ [π],
+so that a person is a privative set of features closed downward along the chain. Pancheva and
+Zubizarreta add [proximate] below [participant] for the Person Case Constraint: first and second
+persons are inherently [+proximate], and a third person is [−proximate] by default but may be
+marked [+proximate] beside another third person.
 
-    [φ] → [PERSON] → [participant] → [author]
-    [φ] → [NUMBER] → [plural]
+The geometry drives relativized probing: a probe seeking [participant] skips the DPs that lack it,
+targeting only first and second persons, and a probe seeking [plural] skips singulars (Preminger
+§4.2, after Rizzi's Relativized Minimality). Béjar and Rezac's split person and number probes,
+person probing first, and their Person Licensing Condition derive the Person Case Constraint with
+an unrelativized person probe; Preminger ports the system to Kichean Agent Focus, adds the
+relativization of the probes, and argues against salience scales such as
+`[+participant] > [+plural] > default` (chapter 7).
 
-This decomposition drives **relativized probing**
-([preminger-2014] §4.2, recalling [rizzi-1990]'s Relativized
-Minimality): a probe seeking [participant] skips DPs that lack it
-(3rd person), targeting only 1st/2nd person DPs. A separate probe
-seeking [plural] skips DPs that lack it (singulars), targeting
-only plurals.
+## Main definitions
 
-[bejar-rezac-2003] introduce the split π/# probes (person probing
-first) and the Person Licensing Condition, deriving the Person
-Case Constraint with an *unrelativized* π-probe — the dative
-matches it and absorbs it (see `Studies/BejarRezac2003.lean`);
-[bejar-rezac-2009] develop the system into Cyclic Agree.
-[preminger-2014] §4.4 ports the split-probe + PLC system to
-Kichean Agent Focus, *adding* the relativization of π⁰ to
-[participant] and #⁰ to [plural] — reframing earlier "omnivorous
-hierarchy" accounts. [preminger-2014] Ch. 7 then argues against
-direct hierarchy/scale primitives like
-`[+participant] > [+plural] > default`, on five grounds:
-restrictedness of "salience" effects to AF, K'ichee' formal
-addressee *la* (a 2nd-person form patterning as 3rd-person under
-AF), the AF person restriction (1+2 blocked but 3pl+3pl licit),
-the morphophonological 1st/2nd vs 3rd asymmetry (clitic
-doubling vs direct exponence, [preminger-2014] §3.4 and
-§4.4), and the Zulu parallel ([halpert-2012]: the same machinery
-over augmented/augmentless). The relativized-probing mechanism
-derives the same surface patterns without committing to a salience
-scale.
+* `Minimalist.DecomposedPerson`: the positive features among [proximate], [participant] and
+  [author], a lower set of the chain.
+* `Minimalist.DecomposedPerson.toFeatures`: the [±participant, ±author] core.
+* `Minimalist.decomposePerson`: the decomposition of a person value.
+* `Minimalist.probeVisible`, `Minimalist.probeResolutionRank`: relativized probing and its
+  effect on a single DP.
 
-## Extended Geometry: [±proximate]
+## Main results
 
-[pancheva-zubizarreta-2018] extend the hierarchy with a
-`[±proximate]` feature for the Person Case Constraint:
+* `Minimalist.DecomposedPerson.card_wellFormed`: three dependent features give four cells.
+* `Minimalist.decomposePerson_toFeatures_eq`: the decomposition agrees with `Person.toFeatures`.
 
-    [+author] ⊂ [+participant] ⊂ [+proximate]
+## Implementation notes
 
-1P and 2P are inherently [+proximate]. 3P arguments are
-[-proximate] by default but can be contextually marked [+proximate]
-(when co-occurring with another 3P). The [±proximate] distinction
-also captures the 3P proximate/obviative split in direct/inverse
-alignment systems ([pancheva-zubizarreta-2018] §2.1 (11)).
+`probeResolutionRank` summarizes the two-probe system on a single DP; its agreement with cascade
+resolution over the two probes is `Preminger2014.afTarget_eq_rank`, so it is a derived summary
+and not a salience scale.
 
-## Relationship to Core PersonFeatures
+## References
 
-`DecomposedPerson` is the set of positive features among [proximate],
-[participant] and [author], and `DecomposedPerson.toFeatures` projects
-it to `Person.Features` (the framework-neutral [±participant, ±author]
-decomposition). The two-feature core is shared across all theoretical
-frameworks; `[±proximate]` is specific to
-[pancheva-zubizarreta-2018]'s P-Constraint.
-
-## Person Type
-
-`decomposePerson` takes `Person` (`.first |
-.second |.third`) — the canonical person type shared across the
-library — rather than a raw `Nat`. This eliminates meaningless
-person values and grounds the decomposition in the same type used
-by `DifferentialIndexing`, `Prominence.PersonLevel.isSAP`, etc.
-
-## Note on `probeResolutionRank`
-
-The `probeResolutionRank` function below assigns rank 2 to
-[+participant] DPs, rank 1 to [+plural, −participant] DPs, and
-rank 0 elsewhere — the *surface effect* of the two-probe (π⁰
-before #⁰) system on a single DP. Its derived status is a theorem:
-target resolution is `Probe.cascade` over the two probes
-(`Probe/Basic.lean`), and the rank comparison agrees with the
-cascade on the φ-cell inventory
-(`Preminger2014.afTarget_eq_rank`). It is not a salience
-scale ([preminger-2014] Ch. 7).
-
+* [bejar-rezac-2009], (6), p. 43
+* [harley-ritter-2002]
+* [bejar-rezac-2003]
+* [preminger-2014]
+* [pancheva-zubizarreta-2018]
+* [rizzi-1990]
+* [halpert-2012]
 -/
 
 @[expose] public section
@@ -96,18 +67,18 @@ open Reference.Prominence
 
 namespace DecomposedPerson
 
-/-- The features of the decomposition, each entailing the next along the containment
-hierarchy `[author] → [participant] → [proximate]`: [proximate] marks potential
-point-of-view centres, [participant] the first and second person, [author] the first. The paper
-treats them as privative, a third person lacking [participant] rather than bearing
-[−participant], which the set of positive features renders directly. -/
+/-- The features of the decomposition, each entailing the next along the chain
+`[author] → [participant] → [proximate]`. [proximate] marks potential point-of-view centres,
+[participant] the first and second person, and [author] the first. They are privative, a third
+person lacking [participant] rather than bearing [−participant], which the set of positive
+features renders directly. -/
 inductive Feature where
   | proximate
   | participant
   | author
   deriving DecidableEq, Repr, Fintype
 
-/-- Position on the dependency chain, proximate below participant below author. -/
+/-- `Feature.rank` places proximate below participant below author on the dependency chain. -/
 def Feature.rank : Feature → Fin 3
   | .proximate => 0
   | .participant => 1
@@ -115,34 +86,34 @@ def Feature.rank : Feature → Fin 3
 
 instance : LinearOrder Feature := LinearOrder.lift' Feature.rank (by decide)
 
-/-- The framework-neutral person features inside the decomposition. -/
+instance : LocallyFiniteOrderBot Feature := Fintype.toLocallyFiniteOrderBot
+
+/-- `Feature.ofCore` embeds the framework-neutral person features. -/
 def Feature.ofCore : Person.Feature → Feature
   | .participant => .participant
   | .author => .author
 
 end DecomposedPerson
 
-/-- A person decomposed according to the geometry, extended with [±proximate]: the positive
-features. -/
+/-- A person decomposed by the geometry is the set of its positive features. -/
 abbrev DecomposedPerson := Finset DecomposedPerson.Feature
 
 namespace DecomposedPerson
 
-/-- Geometry well-formedness, `[author] → [participant] → [proximate]`: the positive features
-form a lower set of the containment chain. -/
-def WellFormed (dp : DecomposedPerson) : Prop := IsLowerSet (↑dp : Set Feature)
-
-instance : DecidablePred WellFormed := fun _ ↦ inferInstanceAs (Decidable (IsLowerSet _))
-
-/-- The framework-neutral core of a decomposition, its participant and author features. -/
+/-- The core of a decomposition is its participant and author features. -/
 def toFeatures (dp : DecomposedPerson) : Person.Features :=
   Finset.univ.filter fun f ↦ Feature.ofCore f ∈ dp
 
+/-- Three dependent features give four cells passing the containment filter. -/
+theorem card_wellFormed :
+    Fintype.card {dp : DecomposedPerson // IsLowerSet (↑dp : Set Feature)} = 4 := by
+  rw [Fintype.card_subtype_isLowerSet]; rfl
+
 end DecomposedPerson
 
-/-- Decompose a person value: the first person bears all three features, the second
-[proximate] and [participant], the third none, contextual [+proximate] marking of a third
-person being handled by the P-Constraint evaluation. -/
+/-- The first person bears all three features, the second [proximate] and [participant], and the
+third none; contextual [+proximate] marking of a third person is left to the evaluation of the
+P-Constraint. -/
 def decomposePerson : Person → DecomposedPerson
   | .first | .firstInclusive | .firstExclusive => {.proximate, .participant, .author}
   | .second => {.proximate, .participant}
@@ -150,26 +121,18 @@ def decomposePerson : Person → DecomposedPerson
 
 /-! ### Probe targets -/
 
-/-- What a phi-probe seeks.
-
-    In the AF construction, two probes operate:
-    - **π⁰** seeks [participant]: targets 1st/2nd person DPs
-    - **#⁰** seeks [plural]: targets plural DPs
-
-    π⁰ is merged below #⁰ and probes first — person-before-number
-    probing, inherited from [bejar-rezac-2003]. -/
+/-- In the Agent Focus construction two probes operate, π⁰ seeking [participant] and #⁰ seeking
+[plural]; π⁰ is merged below #⁰ and probes first, person-before-number probing inherited from
+Béjar and Rezac. -/
 inductive Probe.Target where
-  /-- π⁰: person probe, seeks [participant]. -/
+  /-- π⁰, the person probe, seeks [participant]. -/
   | participant
-  /-- #⁰: number probe, seeks [plural]. -/
+  /-- #⁰, the number probe, seeks [plural]. -/
   | plural
   deriving DecidableEq, Repr
 
-/-- Is a DP visible to this probe? Relativized probing: probes skip
-    DPs that lack the feature they seek.
-
-    A DP with person value `person` and number `isPlural` is visible
-    to the probe iff it bears the probe's target feature. -/
+/-- A DP with person `person` and number `isPlural` is visible to a probe iff it bears the
+feature the probe seeks; probes skip the DPs that lack it. -/
 def probeVisible (target : Probe.Target) (person : Person) (isPlural : Bool) : Bool :=
   match target with
   | .participant => decide (.participant ∈ decomposePerson person)
@@ -177,23 +140,9 @@ def probeVisible (target : Probe.Target) (person : Person) (isPlural : Bool) : B
 
 /-! ### Probe resolution rank -/
 
-/-- Probe resolution rank for a DP under the two-probe (π⁰ ≫ #⁰) system.
-
-    A surface-effect summary of which probe targets a given DP:
-
-    - Rank 2: visible to π⁰ ([+participant])
-    - Rank 1: visible to #⁰ but not π⁰ ([+plural, −participant])
-    - Rank 0: invisible to both probes (3SG default)
-
-    Derived from the probing mechanism ([bejar-rezac-2003]),
-    not stipulated as a salience scale: π⁰ is merged below #⁰ and
-    probes earlier in the derivation, its clitic output beats other
-    exponence in the single morphological slot, and each probe
-    targets any DP bearing the sought feature. The rank captures
-    the combined effect on a single DP; its derived status is
-    `Preminger2014.afTarget_eq_rank` (cascade resolution,
-    `Probe/Basic.lean`). It is not a salience scale
-    ([preminger-2014] Ch. 7). -/
+/-- Under the two-probe system a DP visible to π⁰ ranks 2, one visible only to #⁰ ranks 1, and one
+visible to neither ranks 0. The rank summarizes the effect of the probes on a single DP: π⁰ probes
+first and its clitic output beats other exponence in the single slot. -/
 def probeResolutionRank (person : Person) (isPlural : Bool) : Nat :=
   if .participant ∈ decomposePerson person then 2
   else if isPlural then 1
@@ -201,30 +150,23 @@ def probeResolutionRank (person : Person) (isPlural : Bool) : Nat :=
 
 /-! ### Agreement with the neutral decomposition -/
 
-/-- All person values yield well-formed decompositions. -/
-theorem all_decompositions_wellFormed (p : Person) : (decomposePerson p).WellFormed := by
+/-- Every person value decomposes into a lower set of the chain. -/
+theorem all_decompositions_wellFormed (p : Person) :
+    IsLowerSet (↑(decomposePerson p) : Set DecomposedPerson.Feature) := by
   cases p <;> decide
 
-/-- `decomposePerson` is consistent with the framework-neutral
-    `Person.toFeatures`: the [±participant, ±author] core of
-    the Minimalist decomposition agrees with Core Person.Features. -/
+/-- The [±participant, ±author] core of the decomposition agrees with `Person.toFeatures`. -/
 theorem decomposePerson_toFeatures_eq (p : Person) :
     ∀ f, p.toFeatures = some f → (decomposePerson p).toFeatures = f := by
   cases p <;> intro f hf <;>
     simp only [Person.toFeatures, Option.some.injEq, reduceCtorEq] at hf <;>
     subst hf <;> decide
 
-/-- Rank is monotone in the probe hierarchy: any DP visible to π⁰
-    (rank 2) outranks any DP visible only to #⁰ (rank 1), which
-    outranks any DP invisible to both (rank 0). -/
+/-- A DP visible to π⁰ outranks one visible only to #⁰, which outranks one visible to neither. -/
 theorem rank_hierarchy :
     probeResolutionRank .first false > probeResolutionRank .third true ∧
     probeResolutionRank .third true > probeResolutionRank .third false := by decide
 
-/-- Smoke check on per-cell decomposition / probe / rank values.
-    Per-cell theorems would be rfl-trivial on a 3-element type;
-    this single `decide` keeps a kept-tested-shape signal without
-    inflating the API surface. -/
 example :
     .participant ∈ decomposePerson .first ∧
     .author ∈ decomposePerson .first ∧
