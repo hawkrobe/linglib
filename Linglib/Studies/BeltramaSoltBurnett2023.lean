@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.Quantification.Numerals.Roundness
 public import Linglib.Pragmatics.SocialMeaning.IndexicalField
-public import Linglib.Semantics.Quantification.Numerals.Precision
+public import Linglib.Semantics.Quantification.Numerals.Roundness
 public import Linglib.Pragmatics.SocialMeaning.Dimension
 public import Linglib.Pragmatics.SocialMeaning.Persona
 public import Linglib.Fragments.English.NumeralModifiers
@@ -12,16 +12,13 @@ public import Mathlib.Tactic.NormNum
 /-!
 # Context, precision, and social perception
 
-Formalization of [beltrama-solt-burnett-2023] (Language in Society 52). Two social-perception
-experiments compare three precision variants — precise "forty-nine minutes", underspecified
-"fifty minutes", approximate "about fifty minutes" — across four communicative scenarios.
-Ratings on ten scales reduce by PCA to Status, Solidarity, and anti-Solidarity; precise
-variants are rated above approximate on Status and anti-Solidarity and below on Solidarity,
-and the underspecified variant patterns with precise on Status, with approximate on
-anti-Solidarity, and in between on Solidarity — precision and approximation emerge as separate
-indexical loci. Scenario modulates the contrasts: the Status edge of precision is amplified
-where descriptive accuracy matters and neutralized in bonding contexts, while Solidarity
-contrasts sharpen where precision is pragmatically idle.
+Beltrama, Solt and Burnett run two social-perception experiments comparing three precision
+variants, precise *forty-nine minutes*, underspecified *fifty minutes* and approximate *about fifty
+minutes*, across four communicative scenarios. Ratings reduce by PCA to Status, Solidarity and
+anti-Solidarity: precise variants are rated above approximate on Status and anti-Solidarity and
+below on Solidarity, and the underspecified variant shows that precision and approximation are
+separate indexical loci. Scenario modulates the contrasts, the Status edge of precision being
+amplified where accuracy matters and the Solidarity contrast where precision is idle.
 
 ## Main definitions
 
@@ -50,10 +47,13 @@ contrasts sharpen where precision is pragmatically idle.
 
 ## References
 
-* [beltrama-solt-burnett-2023] — the paper; [beltrama-2018] — the sharp/round predecessor.
-* [eckert-2008], [fiske-cuddy-glick-2007] — indexical fields and the evaluation dimensions.
-* [burnett-2019] — the Eckert–Montague lift; [krifka-2007] — round-number approximation;
-  [campbell-kibler-2011] — the neutral-variant diagnostic precedent.
+* [beltrama-solt-burnett-2023]
+* [beltrama-2018]
+* [eckert-2008]
+* [fiske-cuddy-glick-2007]
+* [burnett-2019]
+* [krifka-2007]
+* [campbell-kibler-2011]
 -/
 
 @[expose] public section
@@ -64,14 +64,14 @@ open SocialMeaning
 
 /-! ### Stimuli and the three-way contrast -/
 
-/-- The three precision variants ("The Precision manipulation"): a sharp number, a bare round
-    number, and a round number under an approximator. -/
+/-- The three precision variants of the Precision manipulation are a sharp number, a bare round
+number, and a round number under an approximator. -/
 inductive Variant where
-  /-- Sharp number: "forty-nine minutes". -/
+  /-- The precise variant uses a sharp number, *forty-nine minutes*. -/
   | precise
-  /-- Bare round number: "fifty minutes". -/
+  /-- The underspecified variant uses a bare round number, *fifty minutes*. -/
   | underspecified
-  /-- Modified round number: "about fifty minutes". -/
+  /-- The approximate variant puts a round number under an approximator, *about fifty minutes*. -/
   | approximate
   deriving DecidableEq, Repr
 
@@ -88,16 +88,6 @@ theorem stim_precise_not_round :
 /-- 50 is highly round (score 5) — imprecise readings are available. -/
 theorem stim_round_is_round :
     Numerals.Roundness.roundnessScore stimRound = 5 := by decide
-
-open Numerals.Precision in
-/-- 49 gets the exact precision mode. -/
-theorem precise_stim_is_exact :
-    inferPrecisionMode stimPrecise = .exact := by decide
-
-open Numerals.Precision in
-/-- 50 gets the approximate precision mode. -/
-theorem round_stim_is_approximate :
-    inferPrecisionMode stimRound = .approximate := by decide
 
 open English.NumeralModifiers Semantics in
 /-- The modifier of the approximate variant, *about*, is an approximator of the Fragment: on
@@ -144,9 +134,9 @@ theorem round_supports_contrast (n : Nat)
 
 /-! ### Cell means -/
 
-/-- Experiment 1 cell means (216 recruited, 61 excluded; within-subjects; 7-point scales).
-    PCA factors mapped onto `Dimension`: Status → `.competence`, Solidarity →
-    `.warmth`, anti-Solidarity → `.antiSolidarity`. -/
+/-- These are the cell means of Experiment 1 (216 recruited, 61 excluded; within subjects; 7-point
+scales), with the PCA factors mapped onto `Dimension`, Status to `.competence`, Solidarity to
+`.warmth` and anti-Solidarity to `.antiSolidarity`. -/
 def exp1Mean : Variant → Dimension → ℚ
   | .precise,       .competence      => 501/100  -- M = 5.01, SD = 0.95
   | .precise,       .warmth          => 437/100  -- M = 4.37, SD = 1.08
@@ -172,27 +162,27 @@ def exp2Mean : Variant → Dimension → ℚ
 
 /-! ### The core indexical orderings (replicated across both experiments) -/
 
-/-- Status: precise above approximate in both experiments (5.01 > 4.84; 5.16 > 4.90). -/
+/-- On Status precise is above approximate in both experiments (5.01 > 4.84; 5.16 > 4.90). -/
 theorem competence_precise_gt_approx :
     exp1Mean .precise .competence > exp1Mean .approximate .competence ∧
     exp2Mean .precise .competence > exp2Mean .approximate .competence := by
   norm_num [exp1Mean, exp2Mean]
 
-/-- Solidarity: approximate above precise in both experiments (4.58 > 4.37; 4.84 > 4.15). -/
+/-- On Solidarity approximate is above precise in both experiments (4.58 > 4.37; 4.84 > 4.15). -/
 theorem warmth_approx_gt_precise :
     exp1Mean .approximate .warmth > exp1Mean .precise .warmth ∧
     exp2Mean .approximate .warmth > exp2Mean .precise .warmth := by
   norm_num [exp1Mean, exp2Mean]
 
-/-- Anti-Solidarity: precise above approximate in both experiments (4.37 > 4.10;
-    3.85 > 3.49). -/
+/-- On anti-Solidarity precise is above approximate in both experiments (4.37 > 4.10; 3.85 > 3.49).
+-/
 theorem antiSol_precise_gt_approx :
     exp1Mean .precise .antiSolidarity > exp1Mean .approximate .antiSolidarity ∧
     exp2Mean .precise .antiSolidarity > exp2Mean .approximate .antiSolidarity := by
   norm_num [exp1Mean, exp2Mean]
 
-/-- Sign alignment: Status and anti-Solidarity share direction (both favor precise) while
-    Solidarity reverses — the core sign structure of the precision indexical field. -/
+/-- Status and anti-Solidarity share a direction, both favouring precise, while Solidarity reverses,
+the core sign structure of the precision indexical field. -/
 theorem sign_alignment :
     (exp1Mean .precise .competence > exp1Mean .approximate .competence ∧
      exp1Mean .precise .antiSolidarity > exp1Mean .approximate .antiSolidarity ∧
@@ -204,14 +194,14 @@ theorem sign_alignment :
 
 /-! ### The three-way indexical field -/
 
-/-- The association field of signs a table of cell means determines: the sign of each
-    variant's contrast with the underspecified variant on each dimension. The underspecified
-    variant is the zero point, the neutral-diagnostic reading of the general discussion
-    (p. 828), on which it reveals which endpoint drives each contrast; the paper's alternative,
-    round numbers carrying their own chameleonic indexicality, is not modeled. -/
+/-- A table of cell means determines the association field of signs, the sign of each variant's
+contrast with the underspecified variant on each dimension. The underspecified variant is the zero
+point, the neutral-diagnostic reading of the general discussion (p. 828), on which it reveals which
+endpoint drives each contrast; the paper's alternative, round numbers carrying their own chameleonic
+indexicality, is not modeled. -/
 def signField (mean : Variant → Dimension → ℚ) :
     AssociationField Variant Dimension SignType :=
-  .of λ v d => SignType.sign (mean v d - mean .underspecified d)
+  .of fun v d ↦ SignType.sign (mean v d - mean .underspecified d)
 
 /-- The three-way field, the signs of the Experiment 1 contrasts. -/
 def bsbField : AssociationField Variant Dimension SignType := signField exp1Mean
@@ -296,8 +286,8 @@ inductive PrecisionDemand where
   | low
   deriving DecidableEq, Repr
 
-/-- The paper's four-point precision-need ordering: highest (For-the-record), medium
-    (Persuasion), low (Stranger), lowest (Bonding). -/
+/-- The paper orders precision need in four points, highest For-the-record, then Persuasion, then
+Stranger, and lowest Bonding. -/
 def Scenario.precisionNeed : Scenario → ℕ
   | .forTheRecord => 3
   | .persuasion   => 2
@@ -358,9 +348,9 @@ theorem warmth_enhanced_in_low_demand :
     exp2WarmthByScenario .forTheRecord .precise := by
   norm_num [exp2WarmthByScenario]
 
-/-- Bidirectional modulation: high demand amplifies the Status contrast, low demand the
-    Solidarity contrast — which region of the field is activated depends on the
-    communicative situation. -/
+/-- Modulation is bidirectional: high demand amplifies the Status contrast and low demand the
+Solidarity contrast, so which region of the field is activated depends on the communicative
+situation. -/
 theorem context_crossover :
     (exp1CompetenceByScenario .forTheRecord .precise -
      exp1CompetenceByScenario .forTheRecord .approximate >

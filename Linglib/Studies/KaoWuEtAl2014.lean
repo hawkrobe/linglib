@@ -1,7 +1,8 @@
 module
 
 public import Linglib.Pragmatics.RSA.QUD
-public import Linglib.Semantics.Quantification.Numerals.Precision
+public import Linglib.Semantics.Degree.Granularity
+public import Mathlib.Data.Rat.Floor
 
 /-!
 # Kao, Wu, Bergen and Goodman (2014): Nonliteral Understanding of Number Words
@@ -37,10 +38,16 @@ precision projection composed with a relevance projection, the two affect-only g
 
 @[expose] public section
 
-open MeasureTheory ProbabilityTheory RSA Numerals.Precision
+open MeasureTheory ProbabilityTheory RSA
 open scoped ENNReal
 
 namespace KaoWuEtAl2014
+
+/-- The precision of a goal is exact, the paper's `f_e`, or approximate, `f_a`, which rounds the
+price to the nearest multiple of ten. -/
+inductive Precision
+  | exact | approximate
+  deriving DecidableEq, Repr, Fintype
 
 /-- The price states of Materials and Methods are five round prices and their sharp neighbours. -/
 inductive Price
@@ -74,14 +81,9 @@ theorem value_round (p : Price) :
   cases p <;> norm_num [round, value, Degree.Granularity.representative]
 
 /-- The precision projection `f` of a goal keeps the price exact or rounds it. -/
-def project : PrecisionMode → Price → Price
+def project : Precision → Price → Price
   | .exact, p => p
   | .approximate, p => p.round
-
-/-- `project` is the substrate precision projection on values. -/
-theorem value_project (f : PrecisionMode) (p : Price) :
-    ((project f p).value : ℚ) = projectPrecision f p.value := by
-  cases f <;> simp [project, projectPrecision, value_round]
 
 instance : MeasurableSpace Price := ⊤
 instance : DiscreteMeasurableSpace Price := ⟨fun _ ↦ trivial⟩
@@ -101,12 +103,12 @@ inductive Relevance
 instance : MeasurableSpace Relevance := ⊤
 instance : DiscreteMeasurableSpace Relevance := ⟨fun _ ↦ trivial⟩
 instance : Nonempty Relevance := ⟨.price⟩
-instance : MeasurableSpace PrecisionMode := ⊤
-instance : DiscreteMeasurableSpace PrecisionMode := ⟨fun _ ↦ trivial⟩
-instance : Nonempty PrecisionMode := ⟨.exact⟩
+instance : MeasurableSpace Precision := ⊤
+instance : DiscreteMeasurableSpace Precision := ⟨fun _ ↦ trivial⟩
+instance : Nonempty Precision := ⟨.exact⟩
 
 /-- A goal composes a precision projection with a relevance projection, `g(s, a) = r(f(s), a)`. -/
-abbrev Goal := PrecisionMode × Relevance
+abbrev Goal := Precision × Relevance
 
 /-- The projection of a goal keeps the price component, exact or rounded, and the affect component,
 each when it is relevant. -/
@@ -115,7 +117,7 @@ def project (g : Goal) (m : Meaning) : Option Price × Option Bool :=
     if g.2 = .price then none else some m.2)
 
 /-- The two affect-only goals coincide, as the paper notes. -/
-theorem project_affect (f f' : PrecisionMode) : project (f, .affect) = project (f', .affect) :=
+theorem project_affect (f f' : Precision) : project (f, .affect) = project (f', .affect) :=
   rfl
 
 /-- An utterance is true of a meaning when the price it names is the price state. -/

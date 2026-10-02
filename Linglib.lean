@@ -1046,7 +1046,6 @@ import Linglib.Semantics.Quantification.Lexicon
 import Linglib.Semantics.Quantification.Lindstrom
 import Linglib.Semantics.Quantification.NumberTree
 import Linglib.Semantics.Quantification.Numerals.Basic
-import Linglib.Semantics.Quantification.Numerals.Precision
 import Linglib.Semantics.Quantification.Numerals.Roundness
 import Linglib.Semantics.Quantification.Polyadic
 import Linglib.Semantics.Quantification.Properties
