@@ -3,7 +3,7 @@ module
 public import Linglib.Core.Analysis.Convex.Caratheodory
 public import Linglib.Core.LinearAlgebra.AffineSpace.FiniteDimensional
 public import Linglib.Core.Order.Probability.Scott
-public import Linglib.Core.Order.SignVectors
+public import Linglib.Core.Order.Probability.SignVectors
 public import Mathlib.Data.List.Perm.Basic
 public import Mathlib.Tactic.Tauto
 public import Mathlib.Tactic.FinCases
@@ -24,7 +24,7 @@ representable by a finitely additive measure, as Kraft, Pratt and Seidenberg sho
 
 The proof rests on two imported layers, Carathéodory's theorem at the origin
 (`exists_finset_eq_pos_convex_span_of_mem_convexHull`) and the sign-vector core
-(`SignVec.exists_antidom_pair`), and adds the merge reduction: a valid family
+(`exists_antidominating_pair`), and adds the merge reduction: a valid family
 of comparisons whose integer sum is a single sign vector proves that
 comparison (`merge_to_single`), by a four-rule recursion whose stuck case is
 discharged through the sign-vector core via `v1_tailored`.  Comparisons are
@@ -49,10 +49,6 @@ sign in both; their merge is the sign of their sum, which is then their sum. -/
 /-- The merge of two sign vectors is the sign of their pointwise sum. -/
 private def merge {n : ℕ} (v w : Fin n → SignType) (i : Fin n) : SignType :=
   SignType.sign ((v i : ℤ) + w i)
-
-/-- Two sign vectors are mergeable when no coordinate carries the same nonzero sign in both. -/
-private def Mergeable {n : ℕ} (v w : Fin n → SignType) : Prop :=
-  Disjoint (posSupport v) (posSupport w) ∧ Disjoint (negSupport v) (negSupport w)
 
 private lemma Mergeable.apply {n : ℕ} {v w : Fin n → SignType} (h : Mergeable v w) (i : Fin n) :
     v i = w i → v i = 0 := by
@@ -154,25 +150,18 @@ private lemma null_from_pair {n : ℕ} (sys : QualitativeProbability (Set (Fin n
   · exact ⟨i₀, sys.trans (sys.mono (Set.singleton_subset_iff.mpr hm)) hBC⟩
   · exact ⟨i₀, sys.trans (sys.mono (Set.singleton_subset_iff.mpr hm)) hDA⟩
 
-/-! ### Bridging comparisons to ℚ sign vectors -/
+/-! ### The stuck case of the merge recursion -/
 
-/-- `toQVec v` casts the signs of a comparison to rationals. -/
-private def toQVec (v : Fin 4 → SignType) : Fin 4 → ℚ := fun i ↦ (v i : ℚ)
+private lemma add_nonpos_of_imp (a b : SignType) (h₁ : a = 1 → b = -1) (h₂ : b = 1 → a = -1) :
+    (a : ℤ) + b ≤ 0 := by
+  revert h₁ h₂; revert a b; decide
 
-private lemma toQVec_eq (v : Fin 4 → SignType) (i : Fin 4) : toQVec v i = ((v i : ℤ) : ℚ) := by
-  simp [toQVec]
+private lemma eq_zero_of_add_eq_zero_of_eq (a b : SignType) (h : (a : ℤ) + b = 0) (hab : a = b) :
+    a = 0 := by
+  revert h hab; revert a b; decide
 
-private lemma coe_posSupport_toQVec (v : Fin 4 → SignType) :
-    ↑(SignVec.posSupport (toQVec v)) = posSupport v := by
-  ext i
-  simp only [Finset.mem_coe, SignVec.mem_posSupport, toQVec, mem_posSupport]
-  cases v i <;> decide
-
-private lemma coe_negSupport_toQVec (v : Fin 4 → SignType) :
-    ↑(SignVec.negSupport (toQVec v)) = negSupport v := by
-  ext i
-  simp only [Finset.mem_coe, SignVec.mem_negSupport, toQVec, mem_negSupport]
-  cases v i <;> decide
+private lemma cast_injective : Function.Injective (SignType.cast : SignType → ℚ) := by
+  decide
 
 /-- Zero vectors contribute nothing to the sum. -/
 private lemma comparisonSum_filter_ne_zero {n : ℕ} (L : List (Fin n → SignType)) (i : Fin n) :
@@ -190,7 +179,7 @@ private lemma comparisonSum_filter_ne_zero {n : ℕ} (L : List (Fin n → SignTy
     with the reversed target `-t`.
 
     The balanced family `L ∪ {-t}` thins by Carathéodory's theorem to at most five members, and
-    `SignVec.exists_antidom_pair` then yields an anti-dominating pair unless some member is
+    `exists_antidominating_pair` then yields an anti-dominating pair unless some member is
     mergeable with `-t`. An anti-dominating pair inside `L` is a null pair; one involving `-t`
     is a mono-domination, which is excluded. -/
 private lemma v1_tailored (L : List (Fin 4 → SignType)) {t : Fin 4 → SignType}
@@ -220,125 +209,69 @@ private lemma v1_tailored (L : List (Fin 4 → SignType)) {t : Fin 4 → SignTyp
     refine hv0 (funext fun i ↦ eq_zero_of_ne_one_of_ne_neg_one _ ?_ ?_)
     · exact fun h ↦ Set.notMem_empty i (h1 ▸ (h : i ∈ posSupport v))
     · exact fun h ↦ Set.notMem_empty i (h2 ▸ (h : i ∈ negSupport v))
-  -- Step C: the balanced ℚ sign-vector family on `L′ ∪ {-t}`
+  -- Step C: the balanced family `-t :: L'`, weighted by multiplicity
   set L' := L.filter (· ≠ 0) with hL'
-  set l : List (Fin 4 → ℚ) := ((-t) :: L').map toQVec with hl
-  set S : Finset (Fin 4 → ℚ) := l.toFinset with hS
-  have hfil : ∀ i, comparisonSum L' i = comparisonSum L i := fun i ↦ by
-    rw [hL']; exact comparisonSum_filter_ne_zero L i
-  have hmem_shape : ∀ x ∈ S, ∃ v, (v = -t ∨ v ∈ L') ∧ toQVec v = x := by
+  set l := (-t) :: L' with hl
+  set S := l.toFinset with hS
+  have hmem : ∀ x ∈ S, x = -t ∨ x ∈ L' := fun x hx ↦ List.mem_cons.1 (List.mem_toFinset.1 hx)
+  have hpos : ∀ x ∈ S, (posSupport x).Nonempty := by
     intro x hx
-    rw [hS, List.mem_toFinset, hl, List.mem_map] at hx
-    obtain ⟨v, hv, hvx⟩ := hx
-    exact ⟨v, List.mem_cons.mp hv, hvx⟩
-  have hsign : ∀ x ∈ S, ∀ i, x i = -1 ∨ x i = 0 ∨ x i = 1 := by
-    intro x hx i
-    obtain ⟨v, _, rfl⟩ := hmem_shape x hx
-    simp only [toQVec]; cases v i <;> simp [SignType.cast]
-  have hposne : ∀ x ∈ S, ∃ i, x i = 1 := by
-    intro x hx
-    obtain ⟨v, hv, rfl⟩ := hmem_shape x hx
-    rcases hv with rfl | hv
-    · obtain ⟨k, hk⟩ := hne
-      exact ⟨k, by simp [toQVec, mem_negSupport.mp hk]⟩
-    · obtain ⟨k, hk⟩ := h0 v (List.mem_of_mem_filter hv) (by simpa using List.of_mem_filter hv)
-      exact ⟨k, by simp [toQVec, mem_posSupport.mp hk]⟩
-  have hSne : S.Nonempty := by
-    refine ⟨toQVec (-t), ?_⟩
-    rw [hS, List.mem_toFinset, hl]
-    exact List.mem_map.mpr ⟨-t, List.mem_cons.mpr (Or.inl rfl), rfl⟩
-  have hdQ : ∀ x ∈ S, 0 < ((l.count x : ℕ) : ℚ) := by
-    intro x hx; rw [hS, List.mem_toFinset] at hx; exact_mod_cast List.count_pos_iff.mpr hx
-  have hbal : ∑ x ∈ S, ((l.count x : ℕ) : ℚ) • x = 0 := by
-    funext i
-    rw [Finset.sum_apply]
-    simp only [Pi.smul_apply, smul_eq_mul, Pi.zero_apply]
-    have hc := Finset.sum_list_map_count l (fun x ↦ x i)
-    rw [hS, Finset.sum_congr rfl (fun x _ ↦ (nsmul_eq_mul _ _).symm), ← hc, hl,
-      List.map_map]
-    simp only [Function.comp_def, List.map_cons, List.sum_cons]
-    have hLs : (L'.map (fun v ↦ toQVec v i)).sum = ((comparisonSum L' i : ℤ) : ℚ) := by
-      simp only [toQVec_eq, comparisonSum]; rw [Int.cast_list_sum, List.map_map]; rfl
-    rw [hLs, hfil i, hsum i, toQVec_eq]
-    simp
-  -- no mergeable pair transfers to the vector family
-  have hSnogm : ∀ x ∈ S, ∀ y ∈ S, x ≠ y →
-      ¬(Disjoint (SignVec.posSupport x) (SignVec.posSupport y) ∧
-        Disjoint (SignVec.negSupport x) (SignVec.negSupport y)) := by
-    rintro x hx y hy hxy ⟨hg1, hg2⟩
-    obtain ⟨v, hv, rfl⟩ := hmem_shape x hx
-    obtain ⟨w, hw, rfl⟩ := hmem_shape y hy
-    rw [← Finset.disjoint_coe, coe_posSupport_toQVec, coe_posSupport_toQVec] at hg1
-    rw [← Finset.disjoint_coe, coe_negSupport_toQVec, coe_negSupport_toQVec] at hg2
-    rcases hv with rfl | hv <;> rcases hw with rfl | hw
+    rcases hmem x hx with rfl | hx
+    · rwa [posSupport_neg]
+    · exact h0 x (List.mem_of_mem_filter hx) (by simpa using List.of_mem_filter hx)
+  have hSne : S.Nonempty := ⟨-t, List.mem_toFinset.2 List.mem_cons_self⟩
+  have hdQ : ∀ x ∈ S, 0 < (l.count x : ℚ) := fun x hx ↦ by
+    exact_mod_cast List.count_pos_iff.2 (List.mem_toFinset.1 hx)
+  have hbal (i) : ∑ x ∈ S, (l.count x : ℚ) * x i = 0 := by
+    have h : ((comparisonSum l i : ℤ) : ℚ) = 0 := by
+      rw [hl, comparisonSum_cons, hL', comparisonSum_filter_ne_zero, hsum, Pi.neg_apply,
+        SignType.coe_neg, neg_add_cancel, Int.cast_zero]
+    have hc := Finset.sum_list_map_count l fun x ↦ (x i : ℚ)
+    simp only [nsmul_eq_mul] at hc
+    rw [hS, ← hc]
+    simpa [comparisonSum, Int.cast_list_sum, List.map_map, Function.comp_def] using h
+  have hmerge : ∀ x ∈ S, ∀ y ∈ S, x ≠ y → ¬Mergeable x y := by
+    rintro x hx y hy hxy hm
+    rcases hmem x hx with rfl | hx <;> rcases hmem y hy with rfl | hy
     · exact hxy rfl
-    · exact hrd ⟨w, List.mem_of_mem_filter hw, hg1, hg2⟩
-    · exact hrd ⟨v, List.mem_of_mem_filter hv, hg1.symm, hg2.symm⟩
-    · have hvw : v ≠ w := fun he ↦ hxy (by rw [he])
-      have hvL : v ∈ L := List.mem_of_mem_filter hv
-      have hp1 := List.perm_cons_erase hvL
-      have hwe : w ∈ L.erase v :=
-        (List.mem_erase_of_ne (Ne.symm hvw)).mpr (List.mem_of_mem_filter hw)
-      have hp2 := List.perm_cons_erase hwe
-      exact hnogm ⟨v, w, (L.erase v).erase w, hp1.trans (List.Perm.cons v hp2), hg1, hg2⟩
-  -- Carathéodory at the origin, then the finite core
-  have h0 : (0 : Fin 4 → ℚ) ∈ convexHull ℚ (S : Set (Fin 4 → ℚ)) := by
-    simpa [Finset.centerMass, hbal] using
-      S.centerMass_id_mem_convexHull (fun x hx ↦ (hdQ x hx).le) (Finset.sum_pos hdQ hSne)
-  obtain ⟨S', hS'S, hS'ind, d', hd', hd'1, hsum'⟩ :=
-    exists_finset_eq_pos_convex_span_of_mem_convexHull h0
-  replace hS'S : S' ⊆ S := Finset.coe_subset.1 hS'S
+    · exact hrd ⟨y, List.mem_of_mem_filter hy, hm⟩
+    · exact hrd ⟨x, List.mem_of_mem_filter hx, hm.symm⟩
+    · have hyx : y ∈ L.erase x := (List.mem_erase_of_ne hxy.symm).2 (List.mem_of_mem_filter hy)
+      exact hnogm ⟨x, y, (L.erase x).erase y,
+        (List.perm_cons_erase (List.mem_of_mem_filter hx)).trans
+          (.cons x (List.perm_cons_erase hyx)), hm⟩
+  -- Carathéodory at the origin, along the injective cast to `Fin 4 → ℚ`
+  let e : (Fin 4 → SignType) ↪ (Fin 4 → ℚ) :=
+    ⟨fun v i ↦ v i, fun v w h ↦ funext fun i ↦ cast_injective (congrFun h i)⟩
+  have h0' : (0 : Fin 4 → ℚ) ∈ convexHull ℚ (S.map e : Set (Fin 4 → ℚ)) := by
+    have hz : ∑ x ∈ S, (l.count x : ℚ) • e x = 0 :=
+      funext fun i ↦ by simpa [e, Finset.sum_apply] using hbal i
+    simpa [Finset.centerMass, hz] using S.centerMass_mem_convexHull
+      (fun x hx ↦ (hdQ x hx).le) (Finset.sum_pos hdQ hSne) (z := e)
+      fun x hx ↦ Finset.mem_coe.2 (Finset.mem_map_of_mem e hx)
+  obtain ⟨T, hT, hTind, w, hw, hw1, hw0⟩ := exists_finset_eq_pos_convex_span_of_mem_convexHull h0'
+  obtain ⟨S', hS'S, rfl⟩ := Finset.subset_map_iff.1 (Finset.coe_subset.1 hT)
+  rw [Finset.sum_map] at hw1 hw0
   obtain ⟨x, hxS', y, hyS', hxy, had1, had2⟩ :=
-    SignVec.exists_antidom_pair S' d' hd' (fun x hx ↦ hsign x (hS'S hx))
-      (fun x hx ↦ hposne x (hS'S hx)) (fun x hx y hy ↦ hSnogm x (hS'S hx) y (hS'S hy))
-      hsum' (Finset.nonempty_of_sum_ne_zero (hd'1.trans_ne one_ne_zero))
-      (by simpa using hS'ind.finset_card_le_finrank_succ)
-  have hxS : x ∈ S := hS'S hxS'
-  have hyS : y ∈ S := hS'S hyS'
-  -- vector-level consequences of the anti-dominating pair
-  have hps : ∀ i, x i = 1 → y i = -1 := fun i h ↦
-    SignVec.mem_negSupport.mp (had1 (SignVec.mem_posSupport.mpr h))
-  have hps' : ∀ i, y i = 1 → x i = -1 := fun i h ↦
-    SignVec.mem_negSupport.mp (had2 (SignVec.mem_posSupport.mpr h))
-  have hvle : ∀ i, x i + y i ≤ 0 := by
-    intro i
-    rcases eq_or_ne (x i) 1 with h1 | h1
-    · rw [h1, hps i h1]; norm_num
-    rcases eq_or_ne (y i) 1 with h2 | h2
-    · rw [h2, hps' i h2]; norm_num
-    rcases hsign x hxS i with h | h | h <;> rcases hsign y hyS i with h' | h' | h' <;>
-      first | exact absurd h h1 | exact absurd h' h2 | (rw [h, h']; norm_num)
-  have hvstrict : ∃ i, x i + y i < 0 := by
-    by_contra hall
-    push Not at hall
-    have heq : ∀ i, y i = -x i := fun i ↦
-      le_antisymm (by have := hvle i; linarith) (by have := hall i; linarith)
-    refine hSnogm x hxS y hyS hxy ⟨?_, ?_⟩
-    · rw [Finset.disjoint_left]; intro k hk hk'
-      rw [SignVec.mem_posSupport] at hk hk'
-      rw [heq k, hk] at hk'; norm_num at hk'
-    · rw [Finset.disjoint_left]; intro k hk hk'
-      rw [SignVec.mem_negSupport] at hk hk'
-      rw [heq k, hk] at hk'; norm_num at hk'
-  -- map the pair back to comparisons
-  obtain ⟨v, hv, rfl⟩ := hmem_shape x hxS
-  obtain ⟨w, hw, rfl⟩ := hmem_shape y hyS
-  rw [← Finset.coe_subset, coe_posSupport_toQVec, coe_negSupport_toQVec] at had1 had2
-  rcases hv with rfl | hv <;> rcases hw with rfl | hw
+    exists_antidominating_pair (d := fun x ↦ w (e x))
+      (fun x hx ↦ hw _ (Finset.mem_map_of_mem e hx))
+      (fun i ↦ by simpa [e, Finset.sum_apply] using congrFun hw0 i)
+      (fun x hx ↦ hpos x (hS'S hx)) (fun x hx y hy ↦ hmerge x (hS'S hx) y (hS'S hy))
+      (Finset.nonempty_of_sum_ne_zero (hw1.trans_ne one_ne_zero))
+      (by simpa using hTind.finset_card_le_finrank_succ)
+  -- `-t` is excluded by `hnotdom`, so the pair comes from `L` and is a null pair
+  rcases hmem x (hS'S hxS') with rfl | hx <;> rcases hmem y (hS'S hyS') with rfl | hy
   · exact (hxy rfl).elim
-  · -- the reversed target anti-dominated by `w` is mono-domination, excluded
-    exfalso
-    rw [posSupport_neg] at had1; rw [negSupport_neg] at had2
-    exact hnotdom w (List.mem_of_mem_filter hw) had2 had1
-  · exfalso
-    rw [posSupport_neg] at had2; rw [negSupport_neg] at had1
-    exact hnotdom v (List.mem_of_mem_filter hv) had1 had2
-  · -- both from `L`: the null pair
-    refine Or.inl ⟨v, List.mem_of_mem_filter hv, w, List.mem_of_mem_filter hw,
-      fun i ↦ ?_, ?_⟩
-    · have h := hvle i; simp only [toQVec_eq] at h; exact_mod_cast h
-    · obtain ⟨i, hi⟩ := hvstrict
-      refine ⟨i, ?_⟩; simp only [toQVec_eq] at hi; exact_mod_cast hi
+  · rw [posSupport_neg] at had1; rw [negSupport_neg] at had2
+    exact (hnotdom y (List.mem_of_mem_filter hy) had2 had1).elim
+  · rw [posSupport_neg] at had2; rw [negSupport_neg] at had1
+    exact (hnotdom x (List.mem_of_mem_filter hx) had1 had2).elim
+  · have hle (i) : (x i : ℤ) + y i ≤ 0 :=
+      add_nonpos_of_imp (x i) (y i) (fun h ↦ had1 h) (fun h ↦ had2 h)
+    refine Or.inl ⟨x, List.mem_of_mem_filter hx, y, List.mem_of_mem_filter hy, hle, ?_⟩
+    by_contra! hge
+    exact hmerge x (hS'S hxS') y (hS'S hyS') hxy <| mergeable_of_apply fun i hxyi ↦
+      eq_zero_of_add_eq_zero_of_eq (x i) (y i) ((hle i).antisymm (hge i)) hxyi
 
 /-- When `-t` and `v` are mergeable, `t` is the merge of the residual `merge t (-v)` with `v`;
     this is the coordinatewise arithmetic of the peel rule. -/
