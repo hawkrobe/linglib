@@ -5,19 +5,21 @@ public import Mathlib.Tactic.TypeStar
 /-!
 # Thematic roles
 
-Neo-Davidsonian thematic relations ([davidson-1967], [parsons-1990]) relate an entity to an
-event of an event domain `E`, an event relation generalizes the second argument to any sort
-([rudin-2025b]), and a thematic frame assigns the standard role relations of a model.
+This file defines the thematic relations of neo-Davidsonian semantics, after Davidson and
+Parsons. A thematic relation relates an entity to an event of an event domain `E`; Rudin's event
+relations relate an event to an argument of any sort, such as a proposition or a performance.
 
 ## Main definitions
 
-* `ThematicRel` — a relation between entities and events.
-* `EventRel` — a relation between events and arguments of any sort, event first.
-* `ThematicFrame` — a model's assignment of the role relations.
+* `ThematicRel`: a relation between entities and events.
+* `EventRel`: a relation between events and arguments of any sort, event first.
+* `ThematicFrame`: a model's assignment of the standard role relations.
 
 ## References
 
-* [davidson-1967], [parsons-1990], [rudin-2025b]
+* [davidson-1967]
+* [parsons-1990]
+* [rudin-2025b]
 -/
 
 @[expose] public section

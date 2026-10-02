@@ -11,26 +11,22 @@ public import Mathlib.Tactic.DeriveFintype
 /-!
 # Beavers and Zubair (2013): Anticausatives in Sinhala
 
-This file formalizes Beavers and Zubair's analysis of anticausatives in Colloquial Sinhala. A
-causative root has two involitive detransitives, one with a nominative subject and no entailed
-external causer and one with an accusative subject and an entailed external causer. Causer
-suppression (77) derives both. It removes the causer from the verb's arguments, keeps the
-causation and restricts the suppressed causer to individuals, and that causer is then either the
-patient, as in Chierchia's and Koontz-Garboden's reflexivization, or existentially bound, as in
-Levin and Rappaport Hovav's analysis (78). The accusative marks the second reading, as a semantic
-case in Beavers and Zubair's earlier work. A verb selects the sort of its causer from the typology
-(81), and suppression applies only when that sort includes the individuals, so *minimarannə*
-'murder' and *kapannə* 'cut', which select events, have no inchoative. Since the volitive (71)
-requires an event subject and an anticausative's subject is an individual, anticausatives are
-involitive.
+Beavers and Zubair analyze the anticausatives of Colloquial Sinhala. A causative root has two
+involitive detransitives, one with a nominative subject and no entailed external causer, and one
+with an accusative subject and an entailed external causer. Causer suppression derives both: it
+removes the causer from the verb's arguments, keeps the causation, and leaves the causer to be
+identified with the patient, as in Chierchia's and Koontz-Garboden's reflexivization, or bound
+existentially, as in Levin and Rappaport Hovav's analysis. A verb selects the sort of its causer,
+and suppression applies only when that sort includes the individuals, so *minimarannə* 'murder'
+and *kapannə* 'cut', which select events, have no inchoative.
 
 ## Main definitions
 
-* `CauserSort`: the typology (81), ordered by inclusion of basic sorts.
-* `causerSuppress`, `Reading.resolve`: causer suppression and the two resolutions of the
-  suppressed causer.
-* `caseOfReading`: accusative marks existential resolution.
-* `Root.causerSort`, `Anticausativizes`: the sort each root selects, and the condition of (77).
+* `CauserSort`: the typology of causer sorts, ordered by inclusion of basic sorts.
+* `causerSuppress`: causer suppression.
+* `Reading.resolve`: the two resolutions of the suppressed causer.
+* `caseOfReading`: the accusative marks existential resolution.
+* `Anticausativizes`: the condition of causer suppression on a root.
 
 ## Main results
 
@@ -38,9 +34,9 @@ involitive.
 * `reflexive_resolve_eq_reflexivize`: reflexive resolution is Koontz-Garboden's reflexivization.
 * `causative_entails_existential`: the inchoative is true whenever the causative is.
 * `ibeem_incompatible_with_external`: *ibeemə* 'by itself' excludes the accusative variant.
-* `anticausativizes_iff_alternates`: the roots that meet (77) are those with an inchoative.
-* `hasInvolitive_of_anticausativizes`, `exists_hasInvolitive_not_anticausativizes`: a root with
-  an inchoative has an involitive stem, but the involitive does not mark anticausatives.
+* `anticausativizes_iff_alternates`: the roots that meet the condition are those with an
+  inchoative.
+* `exists_hasInvolitive_not_anticausativizes`: the involitive does not mark anticausatives.
 
 ## Implementation notes
 
@@ -94,7 +90,7 @@ inductive CauserSort where
 
 namespace CauserSort
 
-/-- The basic sorts that a causer sort comprises. -/
+/-- `s.basicSorts` is the set of basic sorts that the causer sort `s` comprises. -/
 def basicSorts : CauserSort → Finset BasicSort
   | event => {.eventuality .dynamic}
   | state => {.eventuality .stative}
@@ -198,12 +194,12 @@ theorem ibeem_incompatible_with_external {E : Type} (vp : E → E → Prop) (y :
 
 open Sinhala
 
-/-- The Sinhala roots the paper analyzes. -/
+/-- A `Root` is one of the Sinhala roots that the paper analyzes. -/
 inductive Root where
   | kada | gila | mara | minimara | kapa | vinaashKara
   deriving DecidableEq, Fintype, Repr
 
-/-- The fragment verb of each root. -/
+/-- `r.verb` is the fragment verb of the root `r`. -/
 def Root.verb : Root → Sinhala.Verb
   | .kada => kadann
   | .gila => gilann
@@ -212,8 +208,8 @@ def Root.verb : Root → Sinhala.Verb
   | .kapa => kapann
   | .vinaashKara => vinaashKarann
 
-/-- The causer sort of each root. The agent-subject roots *minimara-* 'murder' ((65b)) and
-*kapa-* 'cut' select events, and the effector-subject roots select the whole domain, as
+/-- `r.causerSort` is the causer sort that `r` selects. The agent-subject roots *minimara-* 'murder'
+((65b)) and *kapa-* 'cut' select events, and the effector-subject roots select the whole domain, as
 *kada-* 'break' does (76) and as 'destroy' does in Sinhala, where it alternates (p. 40). -/
 def Root.causerSort : Root → CauserSort
   | .minimara | .kapa => .event

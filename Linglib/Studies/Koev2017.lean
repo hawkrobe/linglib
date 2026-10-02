@@ -6,21 +6,26 @@ public import Linglib.Semantics.Presupposition.Basic
 /-!
 # Koev (2017): Evidentiality, Learning Events and Spatiotemporal Distance
 
-[koev-2017] accounts for the Bulgarian evidential *-l* as spatiotemporal distance rather than a
-semantic primitive: an evidential sentence introduces a learning event,
-the event through which the speaker acquired the evidence for the claim, and requires that it
-be spatiotemporally distant from the described event, either not overlapping it in time, as
-with standard indirect evidence, or located elsewhere, as when smoke from a chimney shows a
-fire in progress (`spatiotemporallyDistant`, Definition 24). Direct witness, the same time and
-the same place, is the one configuration the evidential excludes (`direct_not_distant`). The
-distance constraint is independent of the temporal ordering that past tense contributes: the
-smoke scenario satisfies it with no ordering at all (`smoke_no_tense_ordering`). The evidential
-implication is not at issue and projects: in the representation (74b) the learning event
-restricts the context set while the declarative operator (72) commits the speaker to the core
-proposition itself, so the distance condition is the presupposition of a partial proposition
-whose assertion is that proposition, and negation preserves it, (78) (`toEvidentialProp`,
-`projection_past_negation`). No modal weakening of the assertion is involved, against
-[izvorski-1997].
+Koev analyzes the Bulgarian evidential *-l* as spatiotemporal distance rather than a semantic
+primitive. An evidential sentence introduces a learning event, through which the speaker
+acquired the evidence for the claim, and requires it to be spatiotemporally distant from the
+described event: either not overlapping it in time, as with standard indirect evidence, or
+located elsewhere, as when smoke from a chimney shows a fire in progress. Direct witness, at the
+same time and place, is the one configuration the evidential excludes, and the constraint is
+independent of the ordering that past tense contributes. The evidential implication projects as
+the presupposition of a partial proposition whose assertion is the core proposition, with no
+modal weakening, against Izvorski.
+
+## Main definitions
+
+* `spatiotemporallyDistant`: the distance condition.
+* `LearningScenario.toEvidentialProp`: the evidential sentence as a partial proposition.
+
+## Main results
+
+* `direct_not_distant`: direct witness is not distant.
+* `smoke_no_tense_ordering`: the distance condition holds with simultaneous events.
+* `projection_past_negation`: negation preserves the evidential presupposition.
 
 ## Implementation notes
 
@@ -49,8 +54,8 @@ variable {T E : Type*} [LinearOrder T] [Event.TemporalTrace E T] {L : Type*}
 disjunct of Definition 24. -/
 def temporallyDisjoint (e₁ e₂ : E) : Prop := ¬ (τ e₁).overlaps (τ e₂)
 
-/-- Spatiotemporal distance, Definition 24: the events do not overlap in time or occur at
-different locations. -/
+/-- Two events are spatiotemporally distant, Definition 24, when they do not overlap in time or
+occur at different locations. -/
 def spatiotemporallyDistant (loc : E → L) (e₁ e₂ : E) : Prop :=
   temporallyDisjoint e₁ e₂ ∨ loc e₁ ≠ loc e₂
 
@@ -92,7 +97,7 @@ theorem projection_past_negation (loc : E → L) (s : LearningScenario E) {W : T
 
 /-! ### The scenarios of §4 -/
 
-/-- A place for the events of the scenarios. -/
+/-- A `Place` locates the events of the scenarios. -/
 inductive Place
   | here
   | there

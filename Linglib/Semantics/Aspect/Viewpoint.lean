@@ -9,38 +9,43 @@ public import Linglib.Semantics.Events.Basic
 /-!
 # Viewpoint aspect
 
-This file defines viewpoint, the second of the two components of aspect in Smith's theory.
-Following Klein, a viewpoint relates the topic time to the situation time
-(`ViewpointType.ttTSitRelation`). A relation between the reference time and the run time of an
-event gives an operator from event predicates to interval predicates (`IntervalPred.ofRel`),
-monotone in the relation, and the operator of a viewpoint is that of its relation
-(`ViewpointType.denote`). The compositional operators of Knick and Sharf are instances (`IMPF`,
-`PRFV`, `PROSP`), and the perfective and the non-strict imperfective are the upper and the lower
-closure of the predicate's run times (`prfv_iff_mem_upperClosure`,
-`unbounded_iff_mem_lowerClosure`). The perfect takes an interval predicate to a point predicate through the
-perfect time span (`PERF`, `PERF_XN`), and on to tense. The perfect time span of Iatridou,
-Anagnostopoulou and Izvorski admits the spans a perfect-level adverbial allows (`PERF_ADV`), of
-which the plain and extended-now perfects are the two instances.
+This file defines viewpoint aspect, which in Smith's theory, following Klein, relates the topic
+time to the situation time. A relation between the reference time and the run time of an event
+gives an operator from event predicates to interval predicates, and the operator of a viewpoint
+is that of its relation; the imperfective, perfective and prospective operators of Knick and
+Sharf are instances. The perfect takes an interval predicate to a predicate of world-time points
+through a perfect time span, which a perfect-level adverbial in the sense of Iatridou,
+Anagnostopoulou and Izvorski restricts.
+
+## Main definitions
+
+* `Aspect.IntervalPred.ofRel`: the operator of a relation between reference time and run time.
+* `Aspect.IMPF`: the imperfective.
+* `Aspect.PRFV`: the perfective.
+* `Aspect.UNBOUNDED`: Pancheva's non-strict imperfective.
+* `Aspect.PERF_XN`: the perfect with a left boundary drawn from a domain restriction.
+* `Aspect.PERF_ADV`: the perfect over the spans a perfect-level adverbial admits.
+
+## Main results
+
+* `Aspect.prfv_iff_mem_upperClosure`: the perfective holds on the upper closure of the
+  predicate's run times.
+* `Aspect.unbounded_iff_mem_lowerClosure`: the non-strict imperfective holds on their lower
+  closure.
+* `Aspect.perf_adv_iff_perf_xn_image`: at a fixed right boundary an adverbial is a domain
+  restriction on the left boundary.
 
 ## Implementation notes
 
-* Klein's four relations: TT INCL TSit is the imperfective, TT AT TSit the perfective, TT AFTER
-  TSit the perfect and TT BEFORE TSit the prospective; the neutral viewpoint of Smith includes
-  the initial point of the situation and at least one internal stage.
-* The operator equations follow Knick and Sharf: IMPF is λP λt ∃e, t ⊂ τ(e) ∧ P e, (25);
-  PRFV is λP λt ∃e, τ(e) ⊆ t ∧ P e, (28); the extended-now PERF is
-  λp λt ∃t_PTS, RB t_PTS t ∧ p t, (22b), and the paper's revision adds a left boundary drawn from
-  a domain restriction tᵣ, λp λt ∃t_PTS ∃t_LB ⊆ tᵣ, LB t_LB t_PTS ∧ RB t_PTS t ∧ p t, (23b). The
-  predicate applies to the outer reference time, under the paper's convention that beneath the
-  perfect it corresponds to the perfect time span. A boundary is a time point here where the
-  paper has a final or initial subinterval.
-* A perfect-level adverbial is a predicate on spans, so *since t₀* is `LB t₀` and the covert
-  adverbial of an unmodified perfect is `⊤`; at a fixed right boundary such a predicate is
-  interchangeable with a domain restriction on the left boundary (`perf_adv_iff_perf_xn_image`).
-* The non-strict imperfective `UNBOUNDED` is Pancheva's Asp₂ value, (7b), whose strict
-  counterpart is `IMPF`.
-* Event predicates range over any event domain with a temporal trace
-  (`Event.TemporalTrace`).
+* Of Klein's relations, TT INCL TSit is the imperfective, TT AT TSit the perfective, TT AFTER
+  TSit the perfect and TT BEFORE TSit the prospective. Smith's neutral viewpoint includes the
+  initial point of the situation and at least one internal stage.
+* The operators follow Knick and Sharf's equations, with a boundary a time point where the
+  paper has a final or initial subinterval. The predicate applies to the outer reference time,
+  which beneath the perfect is the perfect time span.
+* A perfect-level adverbial is a predicate on spans: *since t₀* is `LB t₀`, and the covert
+  adverbial of an unmodified perfect is `⊤`.
+* Event predicates range over any event domain with a temporal trace (`Event.TemporalTrace`).
 
 ## References
 
@@ -55,10 +60,10 @@ which the plain and extended-now perfects are the two instances.
 
 namespace Aspect
 
-/-- A predicate over time intervals, the output of a viewpoint operator. -/
+/-- An interval predicate holds of time intervals at a world; viewpoint operators output one. -/
 abbrev IntervalPred (W T : Type*) [LinearOrder T] := W → NonemptyInterval T → Prop
 
-/-- A predicate over world-time points, the output of the perfect and the input to tense. -/
+/-- A point predicate holds of world-time points; the perfect outputs one and tense takes one. -/
 abbrev PointPred (W T : Type*) := Reference.Index W T → Prop
 
 /-- `v.ttTSitRelation tt tsit` is the relation the viewpoint `v` imposes between the topic time and
@@ -83,8 +88,8 @@ open Event (τ)
 
 variable {T : Type*} [LinearOrder T] {W E : Type*} [Event.TemporalTrace E T]
 
-/-- The aspect operator of a relation `R` between the reference time and the run time of an
-event: the reference time stands in `R` to the run time of some event of the predicate. -/
+/-- The aspect operator of a relation `R` holds at a reference time that stands in `R` to the run
+time of some event of the predicate. -/
 def IntervalPred.ofRel (R : NonemptyInterval T → NonemptyInterval T → Prop)
     (P : W → E → Prop) : IntervalPred W T :=
   fun w t ↦ ∃ e : E, R t (τ e) ∧ P w e
@@ -150,10 +155,10 @@ theorem prfv_iff_mem_upperClosure :
   ⟨fun ⟨e, hle, hP⟩ ↦ ⟨τ e, Set.mem_image_of_mem τ hP, hle⟩,
     fun ⟨_, ⟨e, hP, rfl⟩, hle⟩ ↦ ⟨e, hle, hP⟩⟩
 
-/-- The right boundary of a perfect time span is the reference time, (22a). -/
+/-- `RB pts t` says that the perfect time span `pts` ends at the reference time `t`, (22a). -/
 def RB (pts : NonemptyInterval T) (t : T) : Prop := pts.snd = t
 
-/-- The left boundary of a perfect time span, (23a). -/
+/-- `LB tLB pts` says that the perfect time span `pts` starts at `tLB`, (23a). -/
 def LB (tLB : T) (pts : NonemptyInterval T) : Prop := pts.fst = tLB
 
 /-- The perfect, (22b), holds where some perfect time span right-bounded by the reference time
@@ -161,8 +166,9 @@ satisfies the interval predicate. -/
 def PERF (p : IntervalPred W T) : PointPred W T :=
   fun s ↦ ∃ pts : NonemptyInterval T, RB pts s.time ∧ p s.world pts
 
-/-- The perfect with a left boundary drawn from the domain restriction `tᵣ`, (23b), over which
-narrow focus on the participle generates alternatives. -/
+/-- The perfect with a left boundary drawn from the domain restriction `tᵣ`, (23b), holds where
+some perfect time span starting in `tᵣ` and right-bounded by the reference time satisfies the
+interval predicate; narrow focus on the participle generates alternatives over `tᵣ`. -/
 def PERF_XN (p : IntervalPred W T) (tᵣ : Set T) : PointPred W T :=
   fun s ↦ ∃ pts : NonemptyInterval T, ∃ tLB ∈ tᵣ,
     LB tLB pts ∧ RB pts s.time ∧ p s.world pts
@@ -182,16 +188,15 @@ theorem perf_monotone {p q : IntervalPred W T} (h : ∀ w t, p w t → q w t) (w
     PERF p ⟨w, t⟩ → PERF q ⟨w, t⟩ :=
   fun ⟨pts, hRB, hp⟩ ↦ ⟨pts, hRB, h w pts hp⟩
 
-/-- An interval predicate evaluated at a point, the degenerate interval, for the non-perfect
-forms. -/
+/-- `p.atPoint` evaluates the interval predicate `p` at the degenerate interval of a point, as
+the non-perfect forms do. -/
 def IntervalPred.atPoint (p : IntervalPred W T) : PointPred W T :=
   fun s ↦ p s.world (NonemptyInterval.pure s.time)
 
 /-! ### The perfect-level adverbial -/
 
-/-- The perfect over the spans a perfect-level adverbial admits, the perfect time span of
-[iatridou-anagnostopoulou-izvorski-2001]: some admissible span right-bounded by the reference time
-satisfies the interval predicate. -/
+/-- The perfect over the spans that a perfect-level adverbial admits holds where some admissible
+span right-bounded by the reference time satisfies the interval predicate. -/
 def PERF_ADV (p : IntervalPred W T) (adv : NonemptyInterval T → Prop) : PointPred W T :=
   fun s ↦ ∃ pts : NonemptyInterval T, adv pts ∧ RB pts s.time ∧ p s.world pts
 

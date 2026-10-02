@@ -28,8 +28,8 @@ property, since a predicate may validate it without being closed under subinterv
 * `Aspect.hasSubintervalProperty_iff_witnesses`: every subinterval of the run time of an event of
   the predicate is the run time of an event of the predicate.
 * `Aspect.HasSubintervalProperty.prfv_of_impf`: the imperfective entails the perfective.
-* `Aspect.not_hasSubintervalProperty_snd_eq`: the predicate of events that end at a fixed later
-  time lacks the property.
+* `Aspect.not_hasSubintervalProperty_snd_eq`: the predicate of events that end when a durative
+  event ends lacks the property.
 * `Aspect.exists_prfv_of_impf_not_hasSubintervalProperty`: a predicate may validate the
   entailment and lack the property.
 

@@ -13,13 +13,10 @@ Non-root modals expand the time of evaluation forward and instantiate the proper
 scope in the worlds of a modal base. Modals for the past are the same modals over the perfect,
 so *might have* is ambiguous between the modal over the perfect, an epistemic possibility about
 the past, and the perfect over the modal, a metaphysical possibility from a past perspective.
-Frame adverbials follow from intersecting the reference interval with the period named,
-*still* and *already* over a modal from the shrinking of live options as time advances, and
-the choice of modal base from the diversity condition, which a settled issue fails. We state
-the paper's operators over closed intervals of times that may run to the end of time, derive
-the three readings, the adverbial patterns in a model, the *still* ~ *already* asymmetry, the
-settledness of non-future instantiation and the counterfactual implication, and check the
-paper's examples as rows.
+Frame adverbials follow from intersecting the reference interval with the period named, *still*
+and *already* over a modal from the shrinking of live options as time advances, and the choice
+of modal base from the diversity condition, which a settled issue fails. The operators are
+stated over closed intervals of times that may run to the end of time.
 
 ## Implementation notes
 
@@ -70,32 +67,32 @@ variable {W T E : Type*} [LinearOrder T] [Event.TemporalTrace E T] {P : W → E 
 
 /-! ### The operators -/
 
-/-- Present tense: instantiation at the time of utterance. -/
+/-- The present tense instantiates the property at the time of utterance. -/
 def PRES (now : T) (Q : SortedProperty W E T) (w : W) : Prop := At (Interval.pure ↑now) w Q
 
-/-- The perfect: instantiation at some interval preceding the reference interval. -/
+/-- The perfect instantiates the property at some interval preceding the reference interval. -/
 def PERF (Q : SortedProperty W E T) : SortedProperty W E T :=
   .temporal λ w t => ∃ t' : NonemptyInterval (WithTop T), Interval.Precedes ↑t' t ∧ At ↑t' w Q
 
-/-- MAY and MIGHT: instantiation, in some world of the modal base at the start of the
+/-- MAY and MIGHT instantiate the property in some world of the modal base at the start of the
 reference interval, throughout the interval expanded forward to the end of time. -/
 def MAY (MB : W → T → Set W) (Q : SortedProperty W E T) : SortedProperty W E T :=
   .temporal λ w t => ∃ t₀ : T, IsLeast (t : Set (WithTop T)) ↑t₀ ∧
     ∃ w' ∈ MB w t₀, At (Interval.Ici t₀) w' Q
 
-/-- WOLL, the untensed modal of *will* and *would*: instantiation in every world of the modal
-base at the start of the reference interval, throughout the forward interval. -/
+/-- WOLL, the untensed modal of *will* and *would*, instantiates the property in every world of the
+modal base at the start of the reference interval, throughout the forward interval. -/
 def WOLL (MB : W → T → Set W) (Q : SortedProperty W E T) : SortedProperty W E T :=
   .temporal λ w t => ∃ t₀ : T, IsLeast (t : Set (WithTop T)) ↑t₀ ∧
     ∀ w' ∈ MB w t₀, At (Interval.Ici t₀) w' Q
 
-/-- A frame adverbial such as *yesterday*, on a property of eventualities: instantiation within
+/-- A frame adverbial such as *yesterday* instantiates a property of eventualities within
 the intersection of the reference interval with the period named. The paper leaves it undefined
 on properties of times, which the theorems carry as `IsEventuality`. -/
 def frame (period : Interval (WithTop T)) (Q : SortedProperty W E T) : SortedProperty W E T :=
   .temporal λ w t => At (t ⊓ period) w Q
 
-/-- *Already*, *yet* and *still*: the identity on properties of states and of times, undefined
+/-- *Already*, *yet* and *still* are the identity on properties of states and of times and undefined
 on properties of events. -/
 def phase : SortedProperty W E T → Option (SortedProperty W E T)
   | .eventive _ => none
@@ -105,14 +102,14 @@ def phase : SortedProperty W E T → Option (SortedProperty W E T)
 
 variable {MB : W → T → Set W} {now : T}
 
-/-- MAY at a nonempty interval: the base is taken at the interval's start. -/
+/-- At a nonempty interval, MAY takes its modal base at the interval's start. -/
 theorem at_coe_may_iff {i : NonemptyInterval (WithTop T)} :
     At ↑i w (MAY MB Q) ↔ ∃ t₀ : T, i.fst = ↑t₀ ∧ ∃ w' ∈ MB w t₀, At (Interval.Ici t₀) w' Q :=
   exists_congr λ _ => and_congr_left λ _ =>
     ⟨λ h => (h.unique Interval.isLeast_coe_fst).symm, λ h => h ▸ Interval.isLeast_coe_fst⟩
 
-/-- MAY at the present: some world of the base at the present has the property throughout the
-forward interval. -/
+/-- At the present, MAY holds when some world of the base at the present has the property throughout
+the forward interval. -/
 @[simp] theorem pres_may_iff :
     PRES now (MAY MB Q) w ↔ ∃ w' ∈ MB w now, At (Interval.Ici now) w' Q := by
   rw [PRES, Interval.pure, at_coe_may_iff]
@@ -122,7 +119,7 @@ forward interval. -/
     exact h
   · exact λ h => ⟨now, rfl, h⟩
 
-/-- The perfect of an event at a ray: the event ended before the ray starts. -/
+/-- The perfect of an event holds at a ray when the event ended before the ray starts. -/
 @[simp] theorem at_Ici_perf_eventive_iff {t : T} :
     At (Interval.Ici t) w (PERF (.eventive P)) ↔ ∃ e, P w e ∧ (τ e).snd < t := by
   constructor
@@ -132,8 +129,8 @@ forward interval. -/
   · rintro ⟨e, he, h⟩
     exact ⟨(τ e).withTop, Interval.precedes_withTop_Ici.2 h, e, he, le_rfl⟩
 
-/-- The perfect over MAY at the present: some past time has, in some world of the base at that
-time, the property throughout that time's forward interval. -/
+/-- At the present, the perfect over MAY holds when some past time has, in some world of the base at
+that time, the property throughout that time's forward interval. -/
 @[simp] theorem pres_perf_may_iff :
     PRES now (PERF (MAY MB Q)) w ↔ ∃ t' < now, ∃ w' ∈ MB w t', At (Interval.Ici t') w' Q := by
   constructor
@@ -147,31 +144,31 @@ time, the property throughout that time's forward interval. -/
 
 /-! ### The three readings -/
 
-/-- A modal for the present with an eventive predicate, *he might run*: some world of the base
-at the present has the event starting no earlier than the present. Future orientation is
+/-- A modal for the present with an eventive predicate, *he might run*, holds when some world of the
+base at the present has the event starting no earlier than the present. Future orientation is
 obligatory. -/
 theorem pres_may_eventive_iff :
     PRES now (MAY MB (.eventive P)) w ↔ ∃ w' ∈ MB w now, ∃ e, P w' e ∧ now ≤ (τ e).fst := by
   simp
 
-/-- A modal for the present with a stative predicate, *he might be here*: some world of the base
-at the present has the state persisting at or past the present. The state may have started
+/-- A modal for the present with a stative predicate, *he might be here*, holds when some world of
+the base at the present has the state persisting at or past the present. The state may have started
 earlier, so future orientation is optional. -/
 theorem pres_may_stative_iff :
     PRES now (MAY MB (.stative P)) w ↔ ∃ w' ∈ MB w now, ∃ e, P w' e ∧ now ≤ (τ e).snd := by
   simp
 
-/-- The modal over the perfect, *he may have won*: some world of the base at the present has
-the event ending before the present. Present perspective, past orientation: the epistemic
-reading. -/
+/-- The modal over the perfect, *he may have won*, holds when some world of the base at the present
+has the event ending before the present. This is the epistemic reading, with present perspective and
+past orientation. -/
 theorem pres_may_perf_eventive_iff :
     PRES now (MAY MB (PERF (.eventive P))) w ↔
       ∃ w' ∈ MB w now, ∃ e, P w' e ∧ (τ e).snd < now := by
   simp
 
-/-- The perfect over the modal, *he might have won*: some past time has, in some world of the
-base at that time, the event starting no earlier than it. Past perspective, future
-orientation: the counterfactual reading, Mondadori's future in the past. -/
+/-- The perfect over the modal, *he might have won*, holds when some past time has, in some world of
+the base at that time, the event starting no earlier than it. This is the counterfactual reading,
+with past perspective and future orientation, Mondadori's future in the past. -/
 theorem pres_perf_may_eventive_iff :
     PRES now (PERF (MAY MB (.eventive P))) w ↔
       ∃ t' < now, ∃ w' ∈ MB w t', ∃ e, P w' e ∧ t' ≤ (τ e).fst := by
@@ -179,8 +176,8 @@ theorem pres_perf_may_eventive_iff :
 
 /-! ### Frame adverbials -/
 
-/-- A modal for the present rejects a period wholly before the present, *he may win
-yesterday*: the forward interval meets it in the null interval. -/
+/-- A modal for the present rejects a period wholly before the present, *he may win yesterday*,
+since the forward interval meets it in the null interval. -/
 theorem frame_modal_past (hQ : Q.IsEventuality) {period : Interval (WithTop T)}
     (hp : period.Precedes (Interval.Ici now)) : ¬ PRES now (MAY MB (frame period Q)) w := by
   simp only [pres_may_iff]
@@ -189,9 +186,9 @@ theorem frame_modal_past (hQ : Q.IsEventuality) {period : Interval (WithTop T)}
   simp only [Interval.mem_inf] at hx
   exact lt_irrefl _ (hp hx.2 hx.1)
 
-/-- The modal over the perfect rejects a period lying at or after the present, *he must have
-been available next month* and *it must have been raining now*: the interval the perfect
-supplies precedes the present, and so the period. -/
+/-- The modal over the perfect rejects a period lying at or after the present, *he must have been
+available next month* and *it must have been raining now*, since the interval the perfect supplies
+precedes the present, and so the period. -/
 theorem frame_modalPerf_nonpast (hQ : Q.IsEventuality) {period : Interval (WithTop T)}
     (hp : period ≤ Interval.Ici now) : ¬ PRES now (MAY MB (PERF (frame period Q))) w := by
   simp only [pres_may_iff]
@@ -203,11 +200,11 @@ theorem frame_modalPerf_nonpast (hQ : Q.IsEventuality) {period : Interval (WithT
 
 /-! ### Live options shrink -/
 
-/-- A possibility at a time was a possibility at every earlier time: the metaphysical base
-widens backward and the forward interval lengthens. This is why *still*, whose presupposition
-is a prior positive phase, scopes over a possibility modal, *he may still win*, and *already*,
-whose presupposition is a prior negative phase, cannot, *he may already win*; read backward, it
-is why *he may win this game* is false once he has lost. -/
+/-- A possibility at a time was a possibility at every earlier time, since the metaphysical base
+widens backward and the forward interval lengthens. This is why *still*, whose presupposition is a
+prior positive phase, scopes over a possibility modal, *he may still win*, and *already*, whose
+presupposition is a prior negative phase, cannot, *he may already win*; read backward, it is why *he
+may win this game* is false once he has lost. -/
 theorem may_antitone {history : HistoricalAlternatives W T}
     (hBC : ∀ w, Antitone (metaphysicalBase history w)) (hQ : Q.IsEventuality) :
     Antitone λ t : T => PRES t (MAY (metaphysicalBase history) Q) w := by
@@ -215,13 +212,13 @@ theorem may_antitone {history : HistoricalAlternatives W T}
   rintro t' t h ⟨w', hw', hat⟩
   exact ⟨w', hBC w h hw', hat.mono hQ (Interval.antitone_Ici h)⟩
 
-/-- The prior-phase half of Löbner's presupposition of *already*: a prior negative phase. -/
+/-- The prior-phase half of Löbner's presupposition of *already* requires a prior negative phase. -/
 def AlreadyPresup (Q : SortedProperty W E T) (w : W) (now : T) : Prop := ∃ t' < now, ¬ PRES t' Q w
 
-/-- The prior-phase half of Löbner's presupposition of *still*: a prior positive phase. -/
+/-- The prior-phase half of Löbner's presupposition of *still* requires a prior positive phase. -/
 def StillPresup (Q : SortedProperty W E T) (w : W) (now : T) : Prop := ∃ t' < now, PRES t' Q w
 
-/-- *He may already win*: the presupposition of *already* over a metaphysical possibility
+/-- In *he may already win*, the presupposition of *already* over a metaphysical possibility
 contradicts its assertion. -/
 theorem not_already_may {history : HistoricalAlternatives W T}
     (hBC : ∀ w, Antitone (metaphysicalBase history w)) (hQ : Q.IsEventuality)
@@ -229,7 +226,7 @@ theorem not_already_may {history : HistoricalAlternatives W T}
     ¬ AlreadyPresup (MAY (metaphysicalBase history) Q) w now :=
   λ ⟨_, ht', hn⟩ => hn (may_antitone hBC hQ ht'.le h)
 
-/-- *He may still win*: the presupposition of *still* over a metaphysical possibility is not
+/-- In *he may still win*, the presupposition of *still* over a metaphysical possibility is not
 merely consistent with the shrinking of possibilities, as the paper puts it, but entailed by
 the assertion, given any earlier time. -/
 theorem still_may {history : HistoricalAlternatives W T}
@@ -240,7 +237,7 @@ theorem still_may {history : HistoricalAlternatives W T}
 
 /-! ### Settledness and the diversity condition -/
 
-/-- The history relation fixes the instantiation of `Q` at every interval up to its time:
+/-- The history relation fixes the instantiation of `Q` at every interval up to its time, so that
 worlds identical up to `t` agree on `Q` there. -/
 def FixesPast (history : HistoricalAlternatives W T) (Q : SortedProperty W E T) : Prop :=
   ∀ t w w', w' ∈ history (w, t) →
@@ -276,7 +273,7 @@ theorem settled_perf {history : HistoricalAlternatives W T} (h : FixesPast histo
   refine exists_congr λ r => and_congr_right λ hr => h t w w' hw' r λ x hx => ?_
   exact (hr hx (Interval.mem_Ici.2 le_rfl)).le
 
-/-- Instantiation at the present, a stative with *now*, is settled in every common ground: the
+/-- Instantiation at the present, a stative with *now*, is settled in every common ground, since the
 forward interval restricted to the present is the present. -/
 theorem settled_present {history : HistoricalAlternatives W T} (h : FixesPast history Q)
     (cg : Set W) (t : T) :
@@ -293,14 +290,14 @@ theorem not_diverse_of_settled {history : HistoricalAlternatives W T} {cg : Set 
 
 /-! ### The counterfactual implication -/
 
-/-- The paper's footnote assumption: a past alternative of a common-ground world that is no
+/-- The paper's footnote assumption says that a past alternative of a common-ground world that is no
 alternative at the time of utterance lies outside the common ground. -/
 def PastAlternativesOutside (history : HistoricalAlternatives W T) (cg : Set W) (t₀ : T) :
     Prop :=
   ∀ w ∈ cg, ∀ t' ≤ t₀, ∀ w' ∈ metaphysicalBase history w t',
     w' ∉ metaphysicalBase history w t₀ → w' ∉ cg
 
-/-- The counterfactual implication: when no present alternative verifies the past
+/-- The counterfactual implication holds: when no present alternative verifies the past
 possibility, the world that does lies outside the common ground, which is what the speaker's
 backtracking to a past perspective signals. -/
 theorem counterfactual_outside_cg {history : HistoricalAlternatives W T} {cg : Set W} {t₀ : T}
@@ -313,64 +310,64 @@ theorem counterfactual_outside_cg {history : HistoricalAlternatives W T} {cg : S
 
 /-! ### Perspective and orientation -/
 
-/-- The scopings of a possibility modal with respect to the perfect. -/
+/-- A `Scope` is a scoping of a possibility modal with respect to the perfect. -/
 inductive Scope
-  /-- The modal alone: *he may win*. -/
+  /-- The modal alone, as in *he may win*. -/
   | modal
-  /-- The modal over the perfect: *he may have won*, the epistemic reading. -/
+  /-- The modal over the perfect, as in *he may have won*, the epistemic reading. -/
   | modalPerf
-  /-- The perfect over the modal: *he might have won*, the counterfactual reading. -/
+  /-- The perfect over the modal, as in *he might have won*, the counterfactual reading. -/
   | perfModal
   deriving DecidableEq, Fintype
 
-/-- The scoping as an operator on the property under the modal. -/
+/-- `s.lf` is the scoping `s` as an operator on the property under the modal. -/
 def Scope.lf (MB : W → T → Set W) : Scope → SortedProperty W E T → SortedProperty W E T
   | .modal, Q => MAY MB Q
   | .modalPerf, Q => MAY MB (PERF Q)
   | .perfModal, Q => PERF (MAY MB Q)
 
-/-- The time at which the modal base is evaluated, read off the three readings: the present
-in `pres_may_eventive_iff` and `pres_may_perf_eventive_iff`, the past time the perfect
+/-- `s.perspective` is the time at which the modal base is evaluated, read off the three readings,
+the present in `pres_may_eventive_iff` and `pres_may_perf_eventive_iff`, the past time the perfect
 supplies in `pres_perf_may_eventive_iff`. -/
 def Scope.perspective : Scope → TemporalPerspective
   | .modal | .modalPerf => .present
   | .perfModal => .past
 
-/-- The direction of the instantiation from the perspective, read off the three readings: the
-event starts no earlier than the perspective, or ends before it. -/
+/-- `s.orientation` is the direction of the instantiation from the perspective, read off the three
+readings, where the event starts no earlier than the perspective, or ends before it. -/
 def Scope.orientation : Scope → TemporalOrientation
   | .modal | .perfModal => .future
   | .modalPerf => .past
 
-/-- The empty cell of the paper's table: a past perspective comes with a future orientation. -/
+/-- A past perspective comes with a future orientation, the empty cell of the paper's table. -/
 theorem Scope.orientation_of_perspective_past :
     ∀ s : Scope, s.perspective = .past → s.orientation = .future := by
   decide
 
 /-! ### A model -/
 
-/-- A one-world model over integer days, with a winning on day `d`. -/
+/-- `winOn d` is the predicate of a winning on day `d`, in a one-world model over integer days. -/
 def winOn (d : ℤ) : Unit → NonemptyInterval ℤ → Prop := λ _ e => e = .pure d
 
-/-- The unrestricted modal base. -/
+/-- The unrestricted modal base admits every world. -/
 def anyWorld : Unit → ℤ → Set Unit := λ _ _ => Set.univ
 
-/-- Where a period sits relative to the present. -/
+/-- A `Zone` says where a period sits relative to the present. -/
 inductive Zone
   | past | present | future
   deriving DecidableEq
 
-/-- The day a zone names, the utterance being on day 0. -/
+/-- `z.day` is the day the zone `z` names, the utterance being on day 0. -/
 def Zone.day : Zone → ℤ
   | .past => -1
   | .present => 0
   | .future => 1
 
-/-- The period a zone names: its day. -/
+/-- The period a zone names is its day. -/
 def Zone.period (z : Zone) : Interval (WithTop ℤ) := Interval.pure ↑z.day
 
-/-- The zones a scoping's reference interval reaches: the forward interval of the present, the
-intervals before it, or the forward interval of a past time. -/
+/-- `s.zones` are the zones the reference interval of the scoping `s` reaches, the forward interval
+of the present, the intervals before it, or the forward interval of a past time. -/
 def Scope.zones : Scope → Finset Zone
   | .modal => {.present, .future}
   | .modalPerf => {.past}
@@ -385,7 +382,7 @@ private theorem winOn_at (d : ℤ) {r : Interval (WithTop ℤ)} (h : Interval.pu
     At r () (.eventive (winOn d)) :=
   ⟨_, rfl, h⟩
 
-/-- The zone table is the satisfiability table: a scoping admits a period exactly when its
+/-- The zone table is the satisfiability table, since a scoping admits a period exactly when its
 sentence about that period can be true, the deviant cells being `frame_modal_past` and
 `frame_modalPerf_nonpast`, the others witnessed. -/
 theorem zones_iff : ∀ s : Scope, ∀ z : Zone, z ∈ s.zones ↔ s.Sat z := by
@@ -419,7 +416,7 @@ theorem zones_iff : ∀ s : Scope, ∀ z : Zone, z ∈ s.zones ↔ s.Sat z := by
 def scopes : List (String × Scope) :=
   [("modal", .modal), ("modalPerf", .modalPerf), ("perfModal", .perfModal)]
 
-/-- An adverbial row: the scoping, the sort of the predicate, and the zone of the frame
+/-- An adverbial row records the scoping, the sort of the predicate, and the zone of the frame
 adverbial. -/
 structure Adverbial where
   /-- The scoping. -/
@@ -429,14 +426,14 @@ structure Adverbial where
   /-- The zone of the period. -/
   zone : Zone
 
-/-- The configuration an adverbial row records. -/
+/-- `Adverbial.ofRow row` is the configuration that the adverbial row `row` records. -/
 def Adverbial.ofRow (row : Datum) : Option Adverbial := do
   guard (row.feature? "construction" = some "adverb")
   return ⟨← row.parse? "scope" scopes,
     ← row.parse? "sort" [("eventive", Aspect.Dynamicity.dynamic), ("stative", .stative)],
     ← row.parse? "adverb" [("past", Zone.past), ("present", .present), ("future", .future)]⟩
 
-/-- The adverbial patterns of [1], [2], [29], [34] and [35]: a frame adverbial is deviant
+/-- In the adverbial patterns of [1], [2], [29], [34] and [35], a frame adverbial is deviant
 exactly when its zone lies outside the scoping's satisfiable cells, `zones_iff`; the one
 questionable row is the eventive predicate with *now* under a modal for the present, which
 the semantics admits by an event within the present. -/
@@ -446,12 +443,12 @@ theorem adverb_rows : ∀ row ∈ Examples.all, ∀ a ∈ Adverbial.ofRow row,
         a.scope = .modal ∧ a.sort = .dynamic ∧ a.zone = .present) := by
   decide
 
-/-- What the context says about the issue. -/
+/-- A `Context` records what the context says about the issue. -/
 inductive Context
   | settled | unsettled | absent
   deriving DecidableEq
 
-/-- A reading row: the scoping, the zone the instantiation refers to, and the context. -/
+/-- A reading row records the scoping, the zone the instantiation refers to, and the context. -/
 structure Reading where
   /-- The scoping. -/
   scope : Scope
@@ -460,8 +457,8 @@ structure Reading where
   /-- What the context says about the issue. -/
   context : Context
 
-/-- The configuration a reading row records, and whether the paper finds the metaphysical
-reading available. -/
+/-- `Reading.ofRow row` is the configuration that the reading row `row` records, and whether the
+paper finds the metaphysical reading available. -/
 def Reading.ofRow (row : Datum) : Option (Reading × Bool) := do
   guard (row.feature? "construction" = some "reading")
   return (⟨← row.parse? "scope" scopes,
@@ -469,7 +466,7 @@ def Reading.ofRow (row : Datum) : Option (Reading × Bool) := do
     ← row.parse? "context" [("settled", Context.settled), ("open", .unsettled), ("none", .absent)]⟩,
     ← row.parse? "metaphysical" [("available", true), ("unavailable", false)])
 
-/-- The metaphysical base is assignable: the instantiation is neither in the past of the
+/-- The metaphysical base is assignable when the instantiation is neither in the past of the
 perspective, `settled_perf`, nor at the present, `settled_present`, nor settled by the
 context. -/
 def Reading.Metaphysical (r : Reading) : Prop :=
@@ -477,72 +474,73 @@ def Reading.Metaphysical (r : Reading) : Prop :=
 
 instance (r : Reading) : Decidable r.Metaphysical := inferInstanceAs (Decidable (_ ∧ _))
 
-/-- The readings of [6], [7], [41] and [42]: the metaphysical reading is available exactly
+/-- In the readings of [6], [7], [41] and [42], the metaphysical reading is available exactly
 where settledness is not guaranteed. -/
 theorem reading_rows : ∀ row ∈ Examples.all, ∀ p ∈ Reading.ofRow row,
     (p.2 = true ↔ p.1.Metaphysical) := by
   decide
 
-/-- The complement a phase adverb applies to. -/
+/-- A `Complement` is the complement that a phase adverb applies to. -/
 inductive Complement
   | eventive | perfect
   deriving DecidableEq
 
-/-- A representative property of the complement's sort. -/
+/-- `c.property` is a representative property of the sort of the complement `c`. -/
 def Complement.property : Complement → SortedProperty Unit (NonemptyInterval Unit) Unit
   | .eventive => .eventive λ _ _ => True
   | .perfect => PERF (.eventive λ _ _ => True)
 
-/-- A sortal row: the complement of *already* or *yet*. -/
+/-- A sortal row records the complement of *already* or *yet*. -/
 def Complement.ofRow (row : Datum) : Option Complement := do
   guard (row.feature? "construction" = some "sortal")
   return ← row.parse? "complement" [("eventive", Complement.eventive), ("perfect", .perfect)]
 
-/-- The sortal restriction of [14] and [15]: *already* and *yet* are acceptable exactly on the
+/-- By the sortal restriction of [14] and [15], *already* and *yet* are acceptable exactly on the
 complements where `phase` is defined, the perfect of an eventive predicate among them. -/
 theorem sortal_rows : ∀ row ∈ Examples.all, ∀ c ∈ Complement.ofRow row,
     (row.judgment = .acceptable ↔ (phase c.property).isSome = true) := by
   decide
 
-/-- The phase adverbs. -/
+/-- A `Phase` is one of the phase adverbs. -/
 inductive Phase
   | already | still
   deriving DecidableEq
 
-/-- A phase row: the adverb scoping over the possibility modal. -/
+/-- A phase row records the adverb scoping over the possibility modal. -/
 def Phase.ofRow (row : Datum) : Option Phase := do
   guard (row.feature? "construction" = some "phase")
   return ← row.parse? "adverb" [("already", Phase.already), ("still", .still)]
 
-/-- The scopings of [36], [37] and [40]: *still* over a possibility modal is acceptable and
+/-- In the scopings of [36], [37] and [40], *still* over a possibility modal is acceptable and
 *already* is not, `still_may` and `not_already_may`. -/
 theorem phase_rows : ∀ row ∈ Examples.all, ∀ p ∈ Phase.ofRow row,
     (row.judgment = .acceptable ↔ p = .still) := by
   decide
 
-/-- The German orders of the modal and the perfect auxiliary, which mirror scope. -/
+/-- An `Order` is one of the German orders of the modal and the perfect auxiliary, which mirror
+scope. -/
 inductive Order
-  /-- *könnte ... haben*: the modal over the perfect. -/
+  /-- *Könnte ... haben* puts the modal over the perfect. -/
   | modalHave
-  /-- *hätte ... können*: the perfect over the modal. -/
+  /-- *Hätte ... können* puts the perfect over the modal. -/
   | hadModal
   deriving DecidableEq
 
-/-- The order the adverb's presuppositions require: *schon* the modal over *already* over the
-perfect, since *already* can scope neither over a possibility modal, `not_already_may`, nor
-under it on an eventive radical, `phase`; *noch* the perfect over *still* over the modal, on
-the paper's exclusion of *still* over the perfect. -/
+/-- `p.order` is the order that the presuppositions of the adverb `p` require, *schon* the modal
+over *already* over the perfect, since *already* can scope neither over a possibility modal,
+`not_already_may`, nor under it on an eventive radical, `phase`; *noch* the perfect over *still*
+over the modal, on the paper's exclusion of *still* over the perfect. -/
 def Phase.order : Phase → Order
   | .already => .modalHave
   | .still => .hadModal
 
-/-- A German row: the order and the adverb. -/
+/-- A German row records the order and the adverb. -/
 def Order.ofRow (row : Datum) : Option (Order × Phase) := do
   guard (row.feature? "construction" = some "german")
   return (← row.parse? "order" [("modalHave", Order.modalHave), ("hadModal", .hadModal)],
     ← row.parse? "adverb" [("schon", Phase.already), ("noch", .still)])
 
-/-- The German pattern [38]: acceptable exactly when the syntax realizes the order the adverb
+/-- The German pattern [38] is acceptable exactly when the syntax realizes the order the adverb
 requires. -/
 theorem german_rows : ∀ row ∈ Examples.all, ∀ p ∈ Order.ofRow row,
     (row.judgment = .acceptable ↔ p.1 = p.2.order) := by

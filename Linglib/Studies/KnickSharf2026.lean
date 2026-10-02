@@ -6,15 +6,24 @@ public import Linglib.Semantics.Quantification.Basic
 /-!
 # Knick and Sharf (2026): On focus and the perfect aspect
 
-[knick-sharf-2026] compose viewpoint aspect, the perfect and tense: an event predicate becomes an
+Knick and Sharf compose viewpoint aspect, the perfect and tense: an event predicate becomes an
 interval predicate under the imperfective or perfective, a predicate of world-time points under
-the perfect, and a proposition under a tense (`evalPres`, `evalPast`, `evalFut`). The simple
-present and the perfects are composed this way (`simplePresent`, `presPerfProgXN`, ...). The
-U-perfect, whose perfect time span has its left boundary in a domain `tᵣ`, entails its simple
-present competitor whatever the domain (`u_perf_entails_simple_present`) and is equivalent to it
-under broad focus, where the domain is unrestricted (`broad_focus_equiv`), which is why
-competition rules it out there. Among the focus alternatives, a domain further in the past is
-stronger (`earlier_lb_stronger_impf`) and not conversely (`earlier_lb_not_weaker_impf`).
+the perfect, and a proposition under a tense. The U-perfect, whose perfect time span has its
+left boundary in a domain `tᵣ`, entails its simple present competitor whatever the domain and is
+equivalent to it under broad focus, where the domain is unrestricted, which is why competition
+rules it out there. Among the focus alternatives, a domain further in the past is stronger.
+
+## Main definitions
+
+* `simplePresent`: the simple present.
+* `presPerfProgXN`: the U-perfect with domain restriction `tᵣ`.
+
+## Main results
+
+* `u_perf_entails_simple_present`: the U-perfect entails the simple present.
+* `broad_focus_equiv`: under broad focus the two are equivalent.
+* `earlier_lb_stronger_impf`: an earlier left boundary is stronger under the imperfective.
+* `earlier_lb_not_weaker_impf`: and not conversely.
 
 ## Implementation notes
 
@@ -111,8 +120,8 @@ theorem simplePresent_unfold (V : W → E → Prop) (tc : T) (w : W) :
     ∃ e : E, NonemptyInterval.pure tc < τ e ∧ V w e := by
   rfl
 
-/-- The U-perfect under narrow focus, (39b): some perfect time span with its left boundary in
-`tᵣ` and its right boundary at `tc` falls under the imperfective. -/
+/-- The U-perfect under narrow focus, (39b), holds when some perfect time span with its left
+boundary in `tᵣ` and its right boundary at `tc` falls under the imperfective. -/
 theorem presPerfProgXN_unfold (V : W → E → Prop) (tᵣ : Set T)
     (tc : T) (w : W) :
     presPerfProgXN V tᵣ tc w ↔

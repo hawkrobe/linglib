@@ -9,26 +9,30 @@ public import Mathlib.Tactic.DeriveFintype
 /-!
 # Krejci (2012): Causativization as Antireflexivization
 
-This file formalizes Krejci's account of why middle and ingestive verbs (*wash*,
-*dress*; *eat*, *learn*) causativize like intransitives in languages that mark causatives
-morphologically. The report's survey orders verb classes on a hierarchy of causativizability,
-unaccusatives before middles and ingestives before unergatives before simple transitives, on
-which no language's causative process skips a tier. Its explanation is that the simple forms
-of these verbs are lexically reflexive: their event structure is already causative, with the
-causer and the causee coidentified, and the lexical causative (*feed*, *teach*, transitive
-*wash* and *dress*) arises by antireflexivization, which delinks the two arguments. This is
-the reflexivization analysis of Koontz-Garboden read in the opposite direction of
-derivation, so the simple form is that study's `reflexivize` applied to its `causative`.
+Krejci explains why middle and ingestive verbs (*wash*, *dress*; *eat*, *learn*) causativize
+like intransitives in languages that mark causatives morphologically. The report orders verb
+classes on a hierarchy of causativizability, unaccusatives before middles and ingestives before
+unergatives before simple transitives, on which no language's causative process skips a tier.
+The simple forms of these verbs are lexically reflexive, with an already causative event
+structure whose causer and causee are coidentified, and the lexical causative (*feed*, *teach*)
+arises by antireflexivization, which delinks the two arguments; this is Koontz-Garboden's
+reflexivization read in the opposite direction. On a model of *eat*, *feed* and *make eat*, the
+entailments of the simple form split between causer and causee of the lexical causative but
+stay with the causee of the periphrastic one.
 
-On a model of *eat*, *feed* and *make eat*, the entailments of the simple form split between
-the causer and the causee of the lexical causative but stay with the causee of the
-periphrastic causative (`feed_not_makeEat`); denying the simple form while asserting the
-lexical causative is consistent on the bieventive representation (`not_eat_and_feed`) and
-contradictory under causer addition; the result state supports a restitutive reading of
-*again*, with *again* on the result state (`againState`), that the repetitive reading does not
-exhaust; and *by itself* is licensed. The hierarchy is a linear order on `Tier`, a causative
-process is the set of tiers it reaches, and respecting the hierarchy is a lower-set condition
-(`Causative.RespectsHierarchy`), checked on the report's Table 2.8.
+## Main definitions
+
+* `eat`: the simple form, the lexical causative on its diagonal.
+* `makeEat`: the periphrastic causative.
+* `Causative.RespectsHierarchy`: a causative process reaches a lower set of tiers.
+
+## Main results
+
+* `feed_not_makeEat`: feeding is not making eat.
+* `not_eat_and_feed`: denying the simple form while asserting the lexical causative is
+  consistent.
+* `restitutive_not_repetitive`: *again* has a restitutive reading on the result state.
+* `table_respectsHierarchy`: no surveyed language skips a tier.
 
 ## Implementation notes
 
@@ -138,16 +142,16 @@ end Model
 
 /-! ### Mary and John -/
 
-/-- The participants. -/
+/-- A `Participant` is Mary or John. -/
 inductive Participant
   | mary
   | john
   deriving DecidableEq
 
-/-- An event running from `s` to `t`. -/
+/-- `ev s t` is the event running from `s` to `t`. -/
 def ev (s t : ℤ) (h : s ≤ t := by decide) : NonemptyInterval ℤ := ⟨(s, t), h⟩
 
-/-- The event running from `s` to `t`. -/
+/-- `At w s t` says that the event `w` runs from `s` to `t`. -/
 def At (w : NonemptyInterval ℤ) (s t : ℤ) : Prop := (τ w).toProd = (s, t)
 
 def w₀ : NonemptyInterval ℤ := ev 0 1
@@ -160,8 +164,9 @@ def e₁ : NonemptyInterval ℤ := ev 4 5
 states at the times 2 and 5. -/
 def digesting (x : Participant) (s : ℤ) : Prop := x = .john ∧ (s = 2 ∨ s = 5)
 
-/-- A model in which the events `causing` lists bring John to potential digestion, with `eff`
-the effectors of events. States are times, and a change gives rise to the state at its end. -/
+/-- `eating causing eff` is the model in which the events `causing` lists bring John to potential
+digestion, with `eff` the effectors of events. States are times, and a change gives rise to the
+state at its end. -/
 def eating (causing : NonemptyInterval ℤ → NonemptyInterval ℤ → Prop)
     (eff : Participant → NonemptyInterval ℤ → Prop) :
     ArgumentStructure.EventStructure.Interpretation Participant ℤ (NonemptyInterval ℤ) where
@@ -246,7 +251,7 @@ theorem restitutive_not_repetitive :
 
 /-! ### The hierarchy of causativizability -/
 
-/-- The tiers of the hierarchy (22), from the most readily causativized. -/
+/-- A `Tier` is a tier of the hierarchy (22), from the most readily causativized. -/
 inductive Tier
   | unaccusative
   | middleIngestive
@@ -254,7 +259,7 @@ inductive Tier
   | simpleTransitive
   deriving DecidableEq, Fintype, Repr
 
-/-- The position of a tier on the hierarchy. -/
+/-- `t.rank` is the position of the tier `t` on the hierarchy. -/
 def Tier.rank : Tier → ℕ
   | .unaccusative => 0
   | .middleIngestive => 1
@@ -286,8 +291,8 @@ theorem mem_reach_iff {c : Causative} (h : c.RespectsHierarchy) (t : Tier) :
 
 end Causative
 
-/-- The surveyed languages of Table 2.8, three of each type. Malayalam reaches transitives only
-with an instrumental causee and is listed with the third type. -/
+/-- `table` lists the surveyed languages of Table 2.8, three of each type. Malayalam reaches
+transitives only with an instrumental causee and is listed with the third type. -/
 def table : List Causative :=
   [⟨"Slave", "-h-", {.unaccusative}⟩,
    ⟨"Mapudungun", "-ɨm", {.unaccusative}⟩,

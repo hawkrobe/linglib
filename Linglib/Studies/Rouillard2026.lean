@@ -13,26 +13,41 @@ public import Linglib.Semantics.Polarity.Basic
 /-!
 # Rouillard 2026: temporal *in*-adverbials and maximal informativity
 
-A temporal *in*-adverbial measures either an event (*Mary wrote up a paper in three days*, an
-E-TIA) or a gap in which no event occurs (*Mary hasn't been sick in three days*, a G-TIA).
-E-TIAs take telic but not atelic VPs; G-TIAs are polarity items confined to negated perfects.
-[rouillard-2026] derives both from the Maximal Informativity Principle: the numeral must be
-capable of being *the* maximally informative value of the property of numbers its constituent
-denotes (§4.1.3). An atelic VP has the subinterval property, so the E-TIA property does not
-depend on the numeral — information collapse (§4.1.1). The perfect quantifies over *open* spans
-ending at speech time while run-times are closed, so under density there is no smallest open
-span including a closed run-time, though there is a largest one excluding it (§4.2.2); the
-eight readings of *Mary has been sick in three days* and its negation then leave exactly one
-survivor (§5.1.1, Table 1).
+A temporal *in*-adverbial measures either an event, as in *Mary wrote up a paper in three days*
+(an E-TIA), or a gap in which no event occurs, as in *Mary hasn't been sick in three days* (a
+G-TIA). E-TIAs take telic but not atelic VPs, and G-TIAs are polarity items confined to negated
+perfects. Rouillard derives both from the Maximal Informativity Principle: the numeral must be
+able to be the maximally informative value of the property of numbers its constituent denotes.
+An atelic VP has the subinterval property, so its E-TIA property does not depend on the numeral.
+The perfect quantifies over open spans ending at speech time while run times are closed, so over
+dense time no open span including a run time is smallest, though one excluding it is largest;
+of the eight readings of *Mary has been sick in three days* and its negation, exactly one
+survives.
 
-Numerals live in an ordered additive monoid `α` valued by an interval content on closed
-intervals of a linearly ordered time `T`; maximal informativity is [fox-hackl-2006]'s
-`Alternatives.IsMaxInf`, and the subinterval property is the closed one of
-`Aspect/SubintervalProperty.lean`, the paper's (111).
+## Main definitions
+
+* `TimeMeasure`: an additive positive measure of intervals that trims and extends.
+* `IsMIPLicensed`: licensing by maximal informativity, after Fox and Hackl.
+* `eTIA`: the E-TIA property.
+* `gTIA`: the G-TIA property.
+
+## Main results
+
+* `not_isMIPLicensed_eTIA`: an atelic VP does not license an E-TIA.
+* `not_isMIPLicensed_gTIA`: a positive G-TIA is not licensed over dense time.
+* `isMIPLicensed_gTIANeg`: a negated G-TIA is licensed.
+* `table1_survivor`: the one reading of Table 1 that survives.
+
+## Implementation notes
+
+* Numerals live in an ordered additive monoid `α` measuring closed intervals of a linearly
+  ordered time `T`. The subinterval property is the closed one of
+  `Aspect/SubintervalProperty.lean`, the paper's (111).
 
 ## References
 
 * [rouillard-2026]
+* [fox-hackl-2006]
 -/
 
 @[expose] public section
@@ -48,16 +63,17 @@ variable {W T E α : Type*} [LinearOrder T] [Event.TemporalTrace E T]
 
 /-! ### Measuring times (§2.2) -/
 
-/-- A temporal measure: an interval content — additive and positive, (6) and (7) — such that a
-span ending at a fixed time can be trimmed or extended to any measure, the right-anchored form
-of (13) and of the surjectivity onto the positive numbers. -/
+/-- A temporal measure is an interval content, additive and positive, (6) and (7), such that a span
+ending at a fixed time can be trimmed or extended to any measure, the right-anchored form of (13)
+and of the surjectivity onto the positive numbers. -/
 class TimeMeasure (μ : NonemptyInterval T → α) : Prop extends IsIntervalContent μ where
   /-- Any smaller measure is attained by a final subinterval. -/
   trim : ∀ (i : NonemptyInterval T) (m : α), m ≤ μ i → ∃ j, j.finalSubinterval i ∧ μ j = m
   /-- Any larger measure is attained by extending to the left. -/
   extend : ∀ (i : NonemptyInterval T) (m : α), μ i ≤ m → ∃ j, i.finalSubinterval j ∧ μ j = m
 
-/-- A closed time lies inside the open counterpart `o(i)` of `i` (§2.2.4, (15b)). -/
+/-- `InOpen t i` says that the closed time `t` lies inside the open counterpart `o(i)` of `i`,
+(15b). -/
 def InOpen (t i : NonemptyInterval T) : Prop := i.fst < t.fst ∧ t.snd < i.snd
 
 theorem inOpen_iff_subset_Ioo {t i : NonemptyInterval T} :
@@ -73,10 +89,11 @@ theorem InOpen.of_finalSubinterval {t i j : NonemptyInterval T} (h : i.finalSubi
 
 /-! ### The Maximal Informativity Principle (§4.1.3) -/
 
-/-- (92) with (75): at some world the numeral is the unique maximally informative value. -/
+/-- A property of numbers is licensed when at some world the numeral is its unique maximally
+informative value, (92) with (75). -/
 def IsMIPLicensed {N : Type*} (φ : N → Set W) : Prop := ∃ w, ∃! n, IsMaxInf φ n w
 
-/-- Information collapse: a property that does not depend on the numeral is not licensed. -/
+/-- A property that does not depend on the numeral is not licensed, the information collapse. -/
 theorem not_isMIPLicensed_of_forall_eq {N : Type*} [Nontrivial N] {φ : N → Set W}
     (h : ∀ n m, φ n = φ m) : ¬ IsMIPLicensed φ := by
   rintro ⟨w, n, hn, huniq⟩
@@ -112,21 +129,21 @@ theorem isMIPLicensed_of_isLeast {N : Type*} [LinearOrder N] {φ : N → Set W}
 
 variable (μ : NonemptyInterval T → α) [TimeMeasure μ]
 
-/-- The E-TIA property (76): `n` measures a time including a `Q`-event, `Q` being the event
-predicate the rest of the LF supplies ((78) for the simple past). -/
+/-- The E-TIA property (76) holds of `n` when `n` measures a time including a `Q`-event, `Q` being
+the event predicate the rest of the LF supplies ((78) for the simple past). -/
 def eTIA (Q : W → E → Prop) (n : α) : Set W :=
   {w | ∃ t, μ t = n ∧ ∃ e, Q w e ∧ τ e ≤ t}
 
 omit [IsOrderedCancelAddMonoid α] in
-/-- The E-TIA property is upward scalar: a longer time still includes the event. -/
+/-- The E-TIA property is upward scalar, since a longer time still includes the event. -/
 theorem eTIA_monotone (Q : W → E → Prop) : Monotone (eTIA μ Q) := by
   rintro n m hnm w ⟨t, rfl, e, he, het⟩
   obtain ⟨j, hj, hjm⟩ := TimeMeasure.extend t m hnm
   exact ⟨j, hjm, e, he, het.trans hj.1⟩
 
 omit [IsOrderedCancelAddMonoid α] in
-/-- (83): under the subinterval property the E-TIA property does not depend on the
-numeral — information collapse. -/
+/-- Under the subinterval property the E-TIA property does not depend on the numeral, the
+information collapse of (83). -/
 theorem eTIA_eq_of_hasSubintervalProperty {Q : W → E → Prop}
     (hQ : HasSubintervalProperty Q) (n m : α) : eTIA μ Q n = eTIA μ Q m := by
   suffices h : ∀ n m w, w ∈ eTIA μ Q n → w ∈ eTIA μ Q m from
@@ -140,19 +157,19 @@ theorem eTIA_eq_of_hasSubintervalProperty {Q : W → E → Prop}
     exact ⟨j, hjm, e, he, hj.1⟩
 
 omit [IsOrderedCancelAddMonoid α] in
-/-- *Mary was sick in three days*: an atelic VP is not licensed (§4.1.1). -/
+/-- With an atelic VP, as in *Mary was sick in three days*, the E-TIA is not licensed. -/
 theorem not_isMIPLicensed_eTIA [Nontrivial α] {Q : W → E → Prop}
     (hQ : HasSubintervalProperty Q) : ¬ IsMIPLicensed (eTIA μ Q) :=
   not_isMIPLicensed_of_forall_eq (eTIA_eq_of_hasSubintervalProperty μ hQ)
 
-/-- The telic case: at a world whose shortest `Q`-event is `e₀`, the least true numeral is its
+/-- In the telic case, at a world whose shortest `Q`-event is `e₀`, the least true numeral is its
 duration. -/
 theorem isLeast_eTIA {Q : W → E → Prop} {w : W} {e₀ : E} (h₀ : Q w e₀)
     (hmin : ∀ e, Q w e → μ (τ e₀) ≤ μ (τ e)) : IsLeast {n | w ∈ eTIA μ Q n} (μ (τ e₀)) :=
   ⟨⟨τ e₀, rfl, e₀, h₀, le_rfl⟩, fun _ ⟨_, ht, e, he, het⟩ =>
     ht ▸ (hmin e he).trans (IsIntervalContent.monotone μ het)⟩
 
-/-- *Mary wrote up a paper in three days*: when worlds differ in the event's duration, a telic
+/-- In *Mary wrote up a paper in three days*, when worlds differ in the event's duration, a telic
 VP is licensed at the world whose shortest event lasts the numeral's measure. -/
 theorem isMIPLicensed_eTIA {Q : W → E → Prop} (hφ : StrictMono (eTIA μ Q)) {w : W}
     {e₀ : E} (h₀ : Q w e₀) (hmin : ∀ e, Q w e → μ (τ e₀) ≤ μ (τ e)) :
@@ -161,12 +178,13 @@ theorem isMIPLicensed_eTIA {Q : W → E → Prop} (hφ : StrictMono (eTIA μ Q))
 
 /-! ### G-TIAs (§4.2) -/
 
-/-- The G-TIA property (101): the open prior time span of measure `n` ending at `s` includes
+/-- The G-TIA property (101) holds of `n` when the open prior time span of measure `n` ending at
+`s` includes
 the closed run-time of a `P`-event. -/
 def gTIA (P : W → E → Prop) (s : T) (n : α) : Set W :=
   {w | ∃ i : NonemptyInterval T, i.snd = s ∧ μ i = n ∧ ∃ e, P w e ∧ InOpen (τ e) i}
 
-/-- The negated G-TIA property (104). -/
+/-- `gTIANeg` is the negated G-TIA property (104). -/
 def gTIANeg (P : W → E → Prop) (s : T) (n : α) : Set W := (gTIA μ P s n)ᶜ
 
 omit [IsOrderedCancelAddMonoid α] in
@@ -196,7 +214,7 @@ theorem not_isLeast_gTIA [DenselyOrdered T] (P : W → E → Prop) (s : T) (w : 
   let ⟨_, _, hmn, hm⟩ := exists_lt_of_mem_gTIA μ hn
   hmn.not_ge (hlb hm)
 
-/-- *Mary has been sick in three days*: a positive G-TIA is not licensed over dense time. -/
+/-- A positive G-TIA, as in *Mary has been sick in three days*, is not licensed over dense time. -/
 theorem not_isMIPLicensed_gTIA [DenselyOrdered T] (P : W → E → Prop) (s : T) :
     ¬ IsMIPLicensed (gTIA μ P s) :=
   not_isMIPLicensed_of_not_isLeast (gTIA_monotone μ P s) (not_isLeast_gTIA μ P s)
@@ -225,7 +243,7 @@ theorem isGreatest_gTIANeg {P : W → E → Prop} {s : T} {w : W} {l₀ : T}
         exact absurd (hjeq ▸ hjn).symm hlt.ne'
     exact hn ⟨j, hjs, hjn, e₀, he₀, hfst ▸ hjl, hsnd.trans_eq hjs.symm⟩
 
-/-- *Mary hasn't been sick in three days*: when worlds separate the gap's length, a negated
+/-- In *Mary hasn't been sick in three days*, when worlds separate the gap's length, a negated
 G-TIA is licensed at the world where the last event abuts the span. -/
 theorem isMIPLicensed_gTIANeg {P : W → E → Prop} {s : T} (hφ : StrictAnti (gTIANeg μ P s))
     {w : W} {l₀ : T} (hall : ∀ e, P w e → (τ e).fst ≤ l₀)
@@ -235,7 +253,7 @@ theorem isMIPLicensed_gTIANeg {P : W → E → Prop} {s : T} (hφ : StrictAnti (
 
 /-! ### The rational model -/
 
-/-- Interval length over rational time. -/
+/-- `ratLength` measures an interval of rational time by its length. -/
 def ratLength (i : NonemptyInterval ℚ) : ℚ≥0 := ⟨i.snd - i.fst, sub_nonneg.2 i.fst_le_snd⟩
 
 instance : TimeMeasure ratLength where
@@ -263,18 +281,18 @@ example (P : W → NonemptyInterval ℚ → Prop) (s : ℚ) : ¬ IsMIPLicensed (
 The four readings of *Mary has been sick in three days* — E- or G-TIA under an E- or U-perfect
 (perfective or imperfective aspect) — and their negations, over the positive numerals. -/
 
-/-- The event predicate an E-perfect hands to an E-TIA, (114): a `P`-event inside an open span
+/-- The E-perfect hands an E-TIA the event predicate (114) of a `P`-event inside an open span
 ending at `s`. -/
 def ePerfFrame (P : W → E → Prop) (s : T) (w : W) (e : E) : Prop :=
   P w e ∧ ∃ i : NonemptyInterval T, i.snd = s ∧ InOpen (τ e) i
 
-/-- The event predicate a U-perfect hands to an E-TIA, (117): a `P`-event including a
-nondegenerate open span ending at `s`. -/
+/-- The U-perfect hands an E-TIA the event predicate (117) of a `P`-event including a nondegenerate
+open span ending at `s`. -/
 def uPerfFrame (P : W → E → Prop) (s : T) (w : W) (e : E) : Prop :=
   P w e ∧ ∃ l < s, Ioo l s ⊆ (τ e : Set T)
 
-/-- The G-TIA property under a U-perfect, (122): some nondegenerate open span ending at `s`
-lies inside a `P`-event and inside a time of measure `n`. -/
+/-- The G-TIA property under a U-perfect, (122), holds when some nondegenerate open span ending at
+`s` lies inside a `P`-event and inside a time of measure `n`. -/
 def uPerfGTIA (P : W → E → Prop) (s : T) (n : α) : Set W :=
   {w | ∃ i : NonemptyInterval T, i.fst < i.snd ∧ i.snd = s ∧ (∃ t, μ t = n ∧ i ≤ t) ∧
     ∃ e, P w e ∧ Ioo i.fst i.snd ⊆ (τ e : Set T)}
@@ -290,7 +308,7 @@ theorem hasSubintervalProperty_ePerfFrame {P : W → E → Prop} {s : T}
 private theorem fst_lt_snd_of_pos {i : NonemptyInterval T} (h : 0 < μ i) : i.fst < i.snd :=
   lt_of_le_of_ne i.fst_le_snd fun h' => h.ne' (IsIntervalContent.eq_zero_of_fst_eq_snd μ h')
 
-/-- (117) collapses to (118): for positive numerals the U-perfect E-TIA property does not
+/-- For positive numerals the U-perfect E-TIA property (117) collapses to (118) and does not
 depend on the numeral. -/
 theorem eTIA_uPerfFrame_eq [DenselyOrdered T] {P : W → E → Prop} {s : T}
     (hP : HasSubintervalProperty P) {n m : α} (hn : 0 < n) (hm : 0 < m) :
@@ -319,7 +337,7 @@ theorem eTIA_uPerfFrame_eq [DenselyOrdered T] {P : W → E → Prop} {s : T}
   rw [he'τ, coe_def, ← hjs]
   exact Ioo_subset_Icc_self
 
-/-- (122) collapses to (123): for positive numerals the U-perfect G-TIA property does not
+/-- For positive numerals the U-perfect G-TIA property (122) collapses to (123) and does not
 depend on the numeral. -/
 theorem uPerfGTIA_eq {P : W → E → Prop} {s : T} {n m : α} (hn : 0 < n) (hm : 0 < m) :
     uPerfGTIA μ P s n = uPerfGTIA μ P s m := by
@@ -334,23 +352,23 @@ theorem uPerfGTIA_eq {P : W → E → Prop} {s : T} {n m : α} (hn : 0 < n) (hm 
   rw [hj.2]
   exact (Ioo_subset_Ioo_left (le_def.1 hj.1).1).trans hei
 
-/-- Event-level or gap-level adverbial. -/
+/-- An `Adverbial` is event-level or gap-level. -/
 inductive Adverbial | event | gap
   deriving DecidableEq
 
-/-- Perfective (E-perfect) or imperfective (U-perfect) aspect under the perfect. -/
+/-- A `Viewpoint` is perfective (E-perfect) or imperfective (U-perfect) aspect under the perfect. -/
 inductive Viewpoint | pfv | impv
   deriving DecidableEq
 
-/-- The four positive readings of *Mary has been sick in three days*. -/
+/-- `positiveReading` gives the four positive readings of *Mary has been sick in three days*. -/
 def positiveReading (P : W → E → Prop) (s : T) : Adverbial → Viewpoint → α → Set W
   | .event, .pfv => eTIA μ (ePerfFrame P s)
   | .event, .impv => eTIA μ (uPerfFrame P s)
   | .gap, .pfv => gTIA μ P s
   | .gap, .impv => uPerfGTIA μ P s
 
-/-- A cell of Table 1, over the positive numerals: the positive reading under the row's
-polarity. -/
+/-- `reading` gives a cell of Table 1 over the positive numerals, the positive reading under the
+row's polarity. -/
 def reading (P : W → E → Prop) (s : T) (pol : Polarity) (a : Adverbial) (v : Viewpoint)
     (n : {n : α // 0 < n}) : Set W :=
   pol • positiveReading μ P s a v n
@@ -360,7 +378,7 @@ private instance [NoMaxOrder α] : Nontrivial {n : α // 0 < n} :=
   let ⟨m, hm⟩ := exists_gt n
   ⟨⟨⟨n, hn⟩, ⟨m, hn.trans hm⟩, fun h => hm.ne (congrArg Subtype.val h)⟩⟩
 
-/-- Table 1: every cell but negated G-TIA under perfective aspect is blocked — the E-TIA
+/-- In Table 1 every cell but negated G-TIA under perfective aspect is blocked, the E-TIA
 cells and the imperfective G-TIA cell by information collapse, the positive perfective G-TIA
 by density, and negation preserves collapse. -/
 theorem table1_blocked [DenselyOrdered T] [NoMaxOrder α] {P : W → E → Prop} {s : T}
@@ -386,7 +404,7 @@ theorem table1_blocked [DenselyOrdered T] [NoMaxOrder α] {P : W → E → Prop}
   · refine not_isMIPLicensed_of_forall_eq fun n m => congrArg compl (hconst a v ?_ n m)
     exact fun hav => h (congrArg (Prod.mk Polarity.negative) hav)
 
-/-- Table 1's survivor: negated G-TIA under perfective aspect, licensed where worlds separate
+/-- The survivor of Table 1 is negated G-TIA under perfective aspect, licensed where worlds separate
 gap lengths and some world's last event abuts the span. -/
 theorem table1_survivor {P : W → E → Prop} {s : T} (hφ : StrictAnti (gTIANeg μ P s))
     {w : W} {l₀ : T} (hall : ∀ e, P w e → (τ e).fst ≤ l₀)

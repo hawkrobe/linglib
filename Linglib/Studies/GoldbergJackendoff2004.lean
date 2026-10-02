@@ -11,50 +11,49 @@ public import Linglib.Data.Examples.GoldbergJackendoff2004
 /-!
 # Goldberg and Jackendoff (2004): The English Resultative as a Family of Constructions
 
-This file formalizes [goldberg-jackendoff-2004]'s resultative family on the paper's own examples.
-A resultative sentence has two subevents, a verbal subevent supplied by the verb and a
-constructional subevent supplied by the construction: a host comes to have the property the
-result phrase names or traverses the path it names, caused by the subject in the transitive
-cases. The four subconstructions of the summary (97) are the combinations of these two choices
-(`Subconstruction`), and in most of them the verbal subevent is the means of the constructional
-one (`ArgumentStructure.SubeventRelation`), with verbs of sound emission and disappearance its
-result (*The trolley rumbled through the tunnel*, (17a); *The witch vanished into the forest*,
-(21a)).
+Goldberg and Jackendoff analyze the English resultative as a family of constructions. A resultative
+has a verbal subevent supplied by the verb and a constructional subevent supplied by the
+construction, in which a host comes to have the property the result phrase names or traverses the
+path it names, caused by the subject in the transitive cases. The constructional subevent controls
+the aspect of the sentence: the event measures out the result phrase's path, so an end-bounded
+result phrase makes a resultative telic and one that is not leaves an activity atelic. Under the
+principle of semantic coherence a verb role unifies with a constructional role only if it can be
+construed as an instance of it, so the intransitive path resultative admits more verbs than the
+intransitive property resultative.
 
-The constructional subevent's aspect controls the sentence's, the generalization (27). The event
-measures out the result phrase's path, so an end-bounded result phrase makes a resultative telic
-whatever the verb (`qua_resultative`), and one that is not end-bounded leaves an activity atelic
-(`cum_resultative`). On a nonrepetitive reading the for-adverbial is accordingly acceptable
-exactly when the result phrase is not end-bounded (`rows_for_adverbial`).
+## Main definitions
 
-The constructional subevent's roles constrain the verb's under the principle of semantic coherence
-(44): a verb role unifies with a constructional role only if it can be construed as an instance of
-it, that is, only if the roles each admits meet (`Row.Coheres`). The causer of a causative is an
-agent and a host a patient, except that the host of an uncaused GO may be either
-(`Subconstruction.subjectRoles`). So the intransitive path resultative admits more verbs than the
-intransitive property resultative (`coheres_noncausative_path`), and *The worm wriggled onto the
-carpet* is acceptable while **She yelled hoarse* and **The ball wiggled itself loose* are not
-(`rows_coherence`).
+* `Subconstruction`: the four subconstructions of the family.
+* `resultative`: the resultative over a path trace.
+* `Row.Coheres`: the coherence of a row's roles with those of its construction.
+
+## Main results
+
+* `qua_resultative`: an end-bounded result phrase makes the resultative telic.
+* `cum_resultative`: a result phrase that is not end-bounded leaves an activity atelic.
+* `rows_for_adverbial`: the for-adverbial is acceptable exactly on the atelic rows.
+* `coheres_noncausative_path`: the intransitive path resultative is the more liberal.
+* `rows_coherence`: outside the telicity tests, a row is acceptable exactly when its roles cohere.
 
 ## Implementation notes
 
-The verbal and constructional subevents are identified as one event, the paper's cotemporal
-means (§4.2). End-boundedness is rendered by quantization and its absence by cumulativity, the
-reading [krifka-1998] gives the event-path homomorphism the paper takes from [jackendoff-1996].
-The paper labels result phrases only as AP or PP; a row's subconstruction follows the summary
-(97), where a PP naming a state (*into pieces*, *to death*) is a property result phrase, and the
-paper presents the examples (49) as transitive spatial resultatives. A row's `subjectRole` and
-`objectRole` are the paper's construals of the verb's arguments, per verb and referent: whether
-the argument is something that acts, an agent, or something to which something happens, a
-patient.
+The verbal and constructional subevents are identified as one event, the paper's cotemporal means
+(§4.2). End-boundedness is rendered by quantization and its absence by cumulativity, the reading
+Krifka gives the event-path homomorphism that the paper takes from Jackendoff. The path of an event
+is a parameter `σ`, and its preservation of sums a hypothesis. The paper labels result phrases only
+as AP or PP; a row's subconstruction follows the summary (97), where a PP naming a state (*into
+pieces*, *to death*) is a property result phrase, and the paper presents the examples (49) as
+transitive spatial resultatives. A row's `subjectRole` and `objectRole` are the paper's construals
+of the verb's arguments, per verb and referent: whether the argument is something that acts, an
+agent, or something to which something happens, a patient.
 
 ## TODO
 
-- The temporal relations the subevent relation allows (33): a means does not follow the
-  subevent it effects, and a result does not precede its cause.
+- The temporal relations the subevent relation allows (33): a means does not follow the subevent it
+  effects, and a result does not precede its cause.
 - Full argument realization (37), which excludes (41d) and (43b,c).
-- The stative extension readings (25), and the *follow* subconstructions (52), (55) and (56),
-  which are transitive but not causative.
+- The stative extension readings (25), and the *follow* subconstructions (52), (55) and (56), which
+  are transitive but not causative.
 
 ## References
 
@@ -182,7 +181,7 @@ structure Row where
   objectRole : Option (Finset ThetaRole)
   judgment : Judgment
 
-/-- The paper's verbs, by citation form. -/
+/-- `verbs` lists the paper's verbs by citation form. -/
 def verbs : List (String × English.Verbs.Verb) :=
   [("hammer", hammer), ("laugh", laugh), ("freeze", freeze), ("roll", roll), ("water", water),
    ("break", break_), ("drink", drink), ("talk", talk), ("yell", yell), ("heat", heat),
@@ -210,7 +209,8 @@ def Row.ofDatum (ex : Datum) : Option Row := do
          objectRole := ex.parse? "objectRole" construals
          judgment := ex.judgment }
 
-/-- The paper's examples (5)–(9), (23)–(24), (45)–(49), (97c), and *wipe the table clean*. -/
+/-- `rows` lists the paper's examples (5)–(9), (23)–(24), (45)–(49), (97c), and *wipe the table
+clean*. -/
 def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 example : rows.length = Examples.all.length := by decide

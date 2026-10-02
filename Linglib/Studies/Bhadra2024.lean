@@ -51,7 +51,8 @@ open ArgumentStructure
 
 /-! ### Outcome cardinality -/
 
-/-- The cardinality tier of an outcome set, ordered `empty < singleton < multi` (62). -/
+/-- An outcome cardinality is the tier of an outcome set, ordered `empty < singleton < multi`
+(62). -/
 inductive OutcomeCardinality where
   | empty
   | singleton
@@ -60,7 +61,7 @@ inductive OutcomeCardinality where
 
 namespace OutcomeCardinality
 
-/-- The rank of a tier as a natural number. -/
+/-- `c.rank` is the rank of the tier `c` as a natural number. -/
 def toNat : OutcomeCardinality → ℕ
   | .empty => 0
   | .singleton => 1

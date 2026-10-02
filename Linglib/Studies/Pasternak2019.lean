@@ -7,32 +7,36 @@ public import Linglib.Semantics.Mereology
 /-!
 # Pasternak (2019): A Lot of Hatred and a Ton of Desire
 
-This file formalizes the account in [pasternak-2019] of intensity as a monotonic measure
-function on mental states. *Ann hates Bill more than Matt hates Jeff* is a verbal comparative
-of the same shape as *more snow* and *ran more* ([wellwood-2015]): the matrix and than-clause
-predicates are the verb's eventualities with their experiencers and themes (`themed`), and
-the comparative is `Degree.maxComparative` under the intensity measure
-(`intensityComparative`), carrying the presupposition that the measure is monotonic on the
-salient part-whole relation among the verb's states, the monotonicity of
-[schwarzschild-2006] that pseudopartitives, *out the wazoo*, adverbial measure phrases, and
-nominal and verbal comparatives all impose (`Monotonic`). The comparative entails the matrix
-positive but not the than-clause positive, *Jack admires the chairman more than Jill does; in
-fact, Jill doesn't admire him at all*, which the zero degree in the than-clause set secures
-(`intensityComparative.exists_matrix`, `intensityComparativeZero_of_none`), and under the
-presupposition it compares the maximal states, Ann's hating Bill against Matt's hating Jeff
-(`intensityComparative_of_greatest`). Mental-state predicates are homogeneous, a state being a
-state of Ann hating Bill iff all its substates are, the biconditional form of `Mereology.DIV`
-(`div_iff`); the closure under parts supplies the strips of a state whose sums make intensity
-monotonic.
+Pasternak analyzes intensity as a monotonic measure function on mental states. *Ann hates Bill more
+than Matt hates Jeff* is a verbal comparative of the same shape as Wellwood's *more snow* and *ran
+more*: the comparative maximizes the intensity measure over the verb's eventualities with the given
+experiencers and themes, and presupposes, as Schwarzschild's monotonicity requires of every such
+construction, that the measure is monotonic on the salient part-whole relation among the verb's
+states. The comparative entails the matrix positive but not the than-clause positive, which a zero
+degree in the than-clause set secures, and under the presupposition it compares the maximal states.
+Mental-state predicates are homogeneous, a state of Ann hating Bill having only such states as
+parts.
+
+## Main definitions
+
+* `intensityComparative`: the intensity comparative.
+* `Monotonic`: the monotonicity presupposition.
+* `intensityComparativeZero`: the comparative with a zero degree in the than-clause set.
+
+## Main results
+
+* `intensityComparative_of_greatest`: under the presupposition the comparative compares the maximal
+  states.
+* `intensityComparativeZero_of_none`: the than-clause positive is not entailed.
+* `div_iff`: mental-state homogeneity.
 
 ## Implementation notes
 
 The reduction of a comparative to its greatest witnesses under a monotone measure is
 `Degree.maxComparative_of_isGreatest`; the zero-degree amendment to the than-clause set is the
-paper's own (`thanDegreesZero`); the part-whole order on eventualities is the event mereology
-of `Semantics/Events/Basic`. The two-dimensional state ontology that
-grounds the salient part-whole relation, the Mandarin data, and the desire predicates are not
-formalized.
+paper's own (`thanDegreesZero`); the part-whole order on eventualities is a partial order on the
+event domain. The two-dimensional state ontology that grounds the salient part-whole relation, the
+Mandarin data, and the desire predicates are not formalized.
 
 ## TODO
 
@@ -65,7 +69,8 @@ structure MentalStateVerb (E D : Type*) where
 variable {Entity E D : Type*} [Preorder D] (v : MentalStateVerb E D)
   (frame : ThematicFrame Entity E)
 
-/-- Eventualities of the verb with experiencer `α` and theme `x`. -/
+/-- `themed α x e` holds when `e` is an eventuality of the verb with experiencer `α` and theme
+`x`. -/
 def themed (α x : Entity) (e : E) : Prop :=
   frame.experiencer α e ∧ v.predicate e ∧ frame.theme x e
 
@@ -78,8 +83,8 @@ sides differing in experiencer and theme, measured by the intensity measure (56a
 def intensityComparative (α β x y : Entity) : Prop :=
   maxComparative (themed v frame α x) (themed v frame β y) v.μint
 
-/-- The states of the verb with theme `x`, whatever their experiencer, the domain of the
-monotonicity presupposition. -/
+/-- `statesOf x` is the set of states of the verb with theme `x`, whatever their experiencer, the
+domain of the monotonicity presupposition. -/
 def statesOf (x : Entity) : Set E := {e | v.predicate e ∧ frame.theme x e}
 
 /-- The monotonicity presupposition (56b), the paper's (4) on the salient part-whole relation,
@@ -88,7 +93,7 @@ def Monotonic [PartialOrder E] (x : Entity) : Prop := StrictMonoOn v.μint (stat
 
 variable {v frame} {α β x y : Entity}
 
-/-- The positive entailment, that the comparative entails the matrix positive. -/
+/-- The comparative entails the matrix positive. -/
 theorem intensityComparative.exists_matrix (h : intensityComparative v frame α β x y) :
     ∃ e, themed v frame α x e :=
   let ⟨_, _, e, he, _⟩ := h; ⟨e, he⟩
@@ -115,12 +120,14 @@ section Zero
 
 variable [Zero D] (v frame)
 
-/-- The than-clause degree set with the scale's zero degree added, whose maximum exists even
+/-- `thanDegreesZero` adds the scale's zero degree to the than-clause degree set, whose maximum
+then exists even
 without a than-clause witness (62). -/
 def thanDegreesZero (Pthan : E → Prop) : Set D :=
   insert 0 (thanDegrees Pthan v.μint)
 
-/-- The intensity comparative with the zero degree added to the than-clause set (62). -/
+/-- `intensityComparativeZero` is the intensity comparative with the zero degree added to the
+than-clause set (62). -/
 def intensityComparativeZero (α β x y : Entity) : Prop :=
   ∃ δ, IsGreatest (thanDegreesZero v (themed v frame β y)) δ ∧
     ∃ e, themed v frame α x e ∧ δ < v.μint e

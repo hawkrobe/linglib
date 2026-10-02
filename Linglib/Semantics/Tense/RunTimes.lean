@@ -10,14 +10,19 @@ public import Linglib.Core.Order.Interval
 /-!
 # Run times
 
-A clause denotes the set of intervals at which it holds, its run times (`RunTimes`).
-Statives denote a maximal interval with all its subintervals
-(`stativeDenotation`, a principal downset); accomplishments denote a
-singleton (`accomplishmentDenotation`); `timeTrace` projects an interval
-set to the time points it covers. An event predicate denotes the image of its events under
-the temporal trace (`Event.TemporalTrace`). The temporal-connective analyses that
-consume this carrier live in their studies (Anscombe1964, Karttunen1974,
-BeaverCondoravdi2003, Rett2020a, …).
+This file defines run times, after Krifka: a clause denotes the set of intervals at which it
+holds. A stative clause denotes an interval with all its subintervals and an accomplishment a
+single interval, and `timeTrace` projects a set of intervals to the time points it covers. An
+event predicate denotes the image of its events under the temporal trace
+(`Event.TemporalTrace`). The analyses of temporal connectives built on run times live in their
+studies.
+
+## Main definitions
+
+* `Tense.RunTimes`: the sets of intervals that clauses denote.
+* `Tense.stativeDenotation`: an interval with all its subintervals.
+* `Tense.accomplishmentDenotation`: a single interval.
+* `Tense.timeTrace`: the time points that a set of intervals covers.
 
 ## References
 
@@ -31,10 +36,10 @@ namespace Tense
 
 variable {T : Type*} [LinearOrder T]
 
-/-- A sentence denotes a set of temporal intervals — its "run-times". -/
+/-- The run times of a clause are the intervals at which it holds. -/
 abbrev RunTimes (T : Type*) [LinearOrder T] := Set (NonemptyInterval T)
 
-/-- The time points contained in some interval of a denotation. -/
+/-- The time trace of a set of intervals is the set of time points they contain. -/
 def timeTrace (p : RunTimes T) : Set T :=
   { t | ∃ i ∈ p, t ∈ i }
 

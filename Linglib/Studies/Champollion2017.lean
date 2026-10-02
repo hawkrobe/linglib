@@ -10,56 +10,41 @@ public import Linglib.Studies.Krifka1998
 /-!
 # Champollion 2017: distributivity as a bridge between aspect and measurement
 
-This file formalizes results from *Parts of a Whole* ([champollion-2017]), which unifies
-predicative distributivity, atelicity and pseudopartitive measurement under one property,
-stratified reference: a predicate applies to an event exactly when that event divides
-exhaustively into parts the predicate also applies to, along some dimension. The dimension is what
-varies — thematic roles for distributivity, runtime for the *for*-adverbial, measure for the
-pseudopartitive — and the property is defined once (`StratifiedReference`), with the three
-specializations as instances (`DistributiveReference`, `SubintervalReference`,
-`MeasurementReference`).
-
-Two things are done here with that property. Lexical cumulativity, which the book assumes
-throughout, entails Krifka's `CUM`; and atelicity in the runtime dimension is the existence of a
-Schwarzschild cover into proper-subinterval parts, which is the book's own theorem relating
-algebraic closure to covers. The per-verb distributivity facts — *see* distributing on both roles,
-*kill* on its theme only, *meet* on neither — are meaning postulates in the book's sense, and are
-recorded as such, over the Fragment verbs' denotations.
-
-Vendler classes are not among the book's primitives; its atelicity diagnostic is the
-subinterval-reference test, not a class label.
-
-Chapter 6 sets the book's strata-based account of *for*-adverbials against [krifka-1998]'s
-subregion-based one, whose presupposition (28) requires every temporal part of the event to fall
-under the predicate. On an event that splits into two temporally non-overlapping parts the
-subregion presupposition yields stratified reference along the runtime
-(`stratifiedReference_of_divisiveness`); the *push carts all the way to the store for fifty
-minutes* scenario of Figure 6.2, on a model of eight legs of four trips, has stratified reference
-but violates the presupposition at the halfway legs (`pushCarts_stratified`,
-`pushCarts_not_subregion`), which is the chapter's case against divisive reference.
+Champollion's *Parts of a Whole* unifies predicative distributivity, atelicity and
+pseudopartitive measurement under one property, stratified reference: a predicate applies to an
+event that divides exhaustively into parts the predicate also applies to, along some dimension.
+The dimension varies, thematic roles for distributivity, run time for the *for*-adverbial and a
+measure for the pseudopartitive, while the property is defined once. Lexical cumulativity, which
+the book assumes throughout, entails Krifka's cumulativity, and atelicity along the run time is
+a Schwarzschild cover into parts with properly smaller run times. Against Krifka's subregion
+account of *for*-adverbials, the book's back-and-forth scenario has stratified reference and
+violates the subregion presupposition. The per-verb distributivity facts are meaning postulates,
+stated over the Fragment verbs' denotations.
 
 ## Main definitions
 
-* `StratifiedReference` — a predicate's event divides into parts the predicate applies to, whose
-  images along a dimension stand in a granularity relation to the event's
-* `DistributiveReference`, `SubintervalReference`, `MeasurementReference` — the dimension is a
-  thematic role with atomic granularity, the runtime with proper subintervals, a measure with
-  smaller values
-* `Verb.StratifiesOver` — a verb's denotation has stratified distributive reference along a role
-* `LexicallyCumulative` — a predicate is a fixed point of algebraic closure
-* `ChampollionPostulates` — the per-verb distributivity postulates over Fragment verbs
+* `StratifiedReference`: an event divides into parts the predicate applies to, whose images along
+  a dimension stand in a granularity relation to the event's.
+* `DistributiveReference`: stratified reference along a thematic role with atomic granularity.
+* `SubintervalReference`: stratified reference along the run time with proper subintervals.
+* `MeasurementReference`: stratified reference along a measure with smaller values.
+* `Verb.StratifiesOver`: a verb's denotation has distributive reference along a role.
+* `LexicallyCumulative`: a predicate is a fixed point of algebraic closure.
+* `ChampollionPostulates`: the per-verb distributivity postulates.
 
 ## Main results
 
-* `lexicallyCumulative_imp_cum` — lexical cumulativity entails Krifka's `CUM`
-* `subintervalReference_iff_cover` — atelicity is a finite cover into proper-subinterval parts
-* `stratifiedReference_of_divisiveness` — on a temporally separable event, Krifka's divisiveness
-  clause gives stratified reference along the runtime
-* `pushCarts_stratified`, `pushCarts_not_subregion` — the Figure 6.2 event has stratified
-  reference and fails the subregion presupposition
+* `lexicallyCumulative_imp_cum`: lexical cumulativity entails Krifka's `CUM`.
+* `subintervalReference_iff_cover`: atelicity is a finite cover into proper-subinterval parts.
+* `stratifiedReference_of_divisiveness`: on a temporally separable event, Krifka's divisiveness
+  clause gives stratified reference along the run time.
+* `pushCarts_stratified`: the back-and-forth event of Figure 6.2 has stratified reference.
+* `pushCarts_not_subregion`: that event fails the subregion presupposition.
 
 ## Implementation notes
 
+* Vendler classes are not among the book's primitives; its atelicity diagnostic is the
+  subinterval-reference test.
 * The granularity is a binary relation between the image of a part and the image of the whole,
   where the book has a unary predicate built from the whole, so that the three specializations
   are instances of one definition.
@@ -89,21 +74,9 @@ open _root_.Mereology Aspect
 
 /-! ### Stratified reference ([champollion-2017] eq. 16/17) -/
 
-/-- Stratified reference is the core unified property of
-    [champollion-2017] eq. (16), with the binary-granularity
-    convention from eq. (17)'s γ-helper inlined.
-
-    `StratifiedReference d γ P x` holds iff `x` can be decomposed into `P`-parts `y`
-    whose `d`-images stand in relation `γ` to `d x`.
-
-    - `d : α → β` — the *dimension* (thematic role θ, runtime τ, measure μ, ...)
-    - `γ : β → β → Prop` — the *granularity* relating inner (`d y`) to outer
-      (`d x`). Uncurried form of Champollion's eq. (17) γ-helper
-      `γ(M, x) := λd. d < M(x)`.
-    - `P : α → Prop` — the predicate under scrutiny ("the Share")
-    - `x : α` — the entity being decomposed
-
-    `StratifiedReference d γ P x = *{y : P(y) ∧ γ (d y) (d x)}(x)`. -/
+/-- `StratifiedReference d γ P x` holds when `x` is a sum of `P`-parts whose images under the
+dimension `d` stand in the granularity relation `γ` to the image of `x`, the stratified reference
+of [champollion-2017] eq. (16) with the granularity of eq. (17) made binary. -/
 def StratifiedReference {α β : Type*} [SemilatticeSup α]
     (d : α → β) (γ : β → β → Prop) (P : α → Prop) (x : α) : Prop :=
   AlgClosure (fun y ↦ P y ∧ γ (d y) (d x)) x
@@ -118,17 +91,8 @@ def StratifiedReferenceUniv {α β : Type*} [SemilatticeSup α]
 
 /-! ### Atomic granularity (shared γ) -/
 
-/-- Atomic granularity for dimensions where `[PartialOrder β]` is
-    available: the inner d-image is an `Atom` in β. Used by
-    `DistributiveReference` (dimension = θ thematic role; entities have a
-    partial-order instance via the entity lattice).
-
-    For dimensions without a `PartialOrder` instance — notably the
-    runtime dimension (`NonemptyInterval T`) used by stativity — atomicity
-    is expressed dimension-natively (e.g., `NonemptyInterval.IsPoint` for
-    `NonemptyInterval T`). The unification is at the `StratifiedReference`
-    parameter-space level: both express "γ = inner is atomic in the
-    dimension's natural sense" at different concrete instantiations. -/
+/-- Atomic granularity holds when the inner image is an atom of the dimension, the granularity of
+distributive reference along a thematic role. -/
 def AtomicGranularity {β : Type*} [PartialOrder β] : β → β → Prop :=
   fun inner _outer ↦ Atom inner
 
@@ -159,11 +123,8 @@ form, so the distributivity property composes directly with a
 coincides with the functional form on a role's graph
 (`relationalDistributiveReference_graph`). -/
 
-/-- Relational stratified distributive reference takes the role to be a
-    neo-Davidsonian relation `R : Entity → α → Prop`. A stratum `y` counts
-    iff it has an atomic `R`-filler. Under thematic uniqueness
-    (`Mereology.UP R`) that filler is unique, recovering "the
-    `R`-filler of `y` is atomic". -/
+/-- Relational distributive reference takes the role to be a neo-Davidsonian relation `R` and
+counts a part when it has an atomic `R`-filler. -/
 def RelationalDistributiveReference {Entity α : Type*} [PartialOrder Entity]
     [SemilatticeSup α] (R : Entity → α → Prop) (P : α → Prop) (x : α) : Prop :=
   AlgClosure (fun y ↦ P y ∧ ∃ a, R a y ∧ Atom a) x
@@ -183,10 +144,8 @@ theorem relationalDistributiveReference_mono {Entity α : Type*}
   intro x hx
   exact algClosure_mono (fun y ⟨hp, ha⟩ ↦ ⟨h y hp, ha⟩) x hx
 
-/-- Relational distributive reference along a functional role's graph
-    coincides with the functional `DistributiveReference` — the bridge
-    justifying the relational form as the faithful generalization of
-    [champollion-2017]'s distributive reference. -/
+/-- Along the graph of a functional role, relational distributive reference is the functional
+`DistributiveReference`. -/
 theorem relationalDistributiveReference_graph {Entity α : Type*}
     [PartialOrder Entity] [SemilatticeSup α]
     {θ : α → Entity} {P : α → Prop} {x : α} :
@@ -198,8 +157,8 @@ theorem relationalDistributiveReference_graph {Entity α : Type*}
 
 /-! ### Stratified Subinterval StratifiedReference ([champollion-2017] eq. 38) -/
 
-/-- Proper-subinterval granularity: inner runtime is a proper subinterval
-    of outer runtime. The binary `γ` for subinterval reference. -/
+/-- Proper-subinterval granularity holds when the inner run time is a proper subinterval of the
+outer one. -/
 def SubintervalGranularity {T : Type*} [LinearOrder T]
     (inner outer : NonemptyInterval T) : Prop :=
   inner < outer
@@ -253,27 +212,22 @@ def MeasurementReferenceUniv {α β : Type*} [SemilatticeSup α] [Preorder β]
 
 /-! ### Distributivity Constraint -/
 
-/-- [champollion-2017] Ch 4 §4.6 **Distributivity Constraint**
-    (restated in Ch 7 §7.4 for the measurement chapter):
-    a distributive construction with Share `S`, Map `M`, granularity `γ`
-    describing entity `x` is acceptable iff `SR_{M,γ}(S)(x)`. The same
-    constraint underlies adverbial-*each*, *for*-adverbials, and
-    pseudopartitives — they differ only in how `M`, `γ`, and `S` are set. -/
+/-- The Distributivity Constraint of [champollion-2017] accepts a distributive construction with
+share `Share`, map `Map` and granularity `gran` describing `x` exactly when the share has
+stratified reference along the map at that granularity. Adverbial *each*, *for*-adverbials and
+pseudopartitives differ only in the three parameters. -/
 abbrev DistributivityConstraint {α β : Type*} [SemilatticeSup α]
     (Map : α → β) (gran : β → β → Prop) (Share : α → Prop) (x : α) : Prop :=
   StratifiedReference Map gran Share x
 
 /-! ### Construction Instances -/
 
-/-- "each" distributes over atomic θ-fillers.
-    Map = θ (thematic role), granularity = Atom (inner only). -/
+/-- Adverbial *each* requires distributive reference along a thematic role. -/
 abbrev eachConstr {α β : Type*} [SemilatticeSup α] [PartialOrder β]
     (θ : α → β) (Share : α → Prop) (x : α) : Prop :=
   DistributiveReference θ Share x
 
-/-- "for"-adverbials require subinterval reference: the predicate must
-    have stratified subinterval reference (atelicity).
-    Map = τ, granularity = proper subinterval. -/
+/-- A *for*-adverbial requires its predicate to have subinterval reference. -/
 abbrev forConstr {T E : Type*} [LinearOrder T] [Event.TemporalTrace E T]
     [SemilatticeSup E]
     (Share : E → Prop) (e : E) : Prop :=
@@ -303,38 +257,21 @@ theorem distributiveReference_mono {α β : Type*} [SemilatticeSup α]
   intro x hx
   exact algClosure_mono (fun y ⟨hp, hg⟩ ↦ ⟨h y hp, hg⟩) x hx
 
-/-- Stratified reference is monotone in the predicate, dimension-
-    polymorphically. Generalizes `distributiveReference_mono` to any
-    dimension `d` and granularity `γ`. -/
+/-- Stratified reference is monotone in the predicate, for any dimension and granularity. -/
 theorem stratifiedReference_mono {α β : Type*} [SemilatticeSup α]
     {d : α → β} {γ : β → β → Prop} {P Q : α → Prop} (h : ∀ x, P x → Q x) :
     ∀ x, StratifiedReference d γ P x → StratifiedReference d γ Q x := by
   intro x hx
   exact algClosure_mono (fun y ⟨hp, hg⟩ ↦ ⟨h y hp, hg⟩) x hx
 
-/-- **Dimension-polymorphic substrate witness.** Stratified reference with
-    reflexive granularity is satisfied by every `P`-element via the base
-    case. Quantifies over any `d : α → β` (no sum homomorphism needed for
-    this direction, since the witness is structural).
-
-    The companion direction — closure under sums via a `SupHom` — is
-    `stratifiedReference_join` below; together they establish that stratified
-    reference composes faithfully with the trace-function abstraction. -/
+/-- Under a reflexive granularity every `P`-element has stratified reference, by the base case. -/
 theorem stratifiedReference_of_refl_granularity {α β : Type*} [SemilatticeSup α]
     {d : α → β} {γ : β → β → Prop} (hRefl : ∀ b, γ b b)
     {P : α → Prop} {x : α} (hx : P x) : StratifiedReference d γ P x :=
   AlgClosure.base ⟨hx, hRefl (d x)⟩
 
-/-- Stratified reference is closed under join when (i) the dimension is a
-    sum-homomorphism and (ii) the granularity is monotone in the outer
-    position w.r.t. `≤` on β. The substrate validation that the
-    trace-function abstraction (`d : SupHom α β`, applicable uniformly to
-    τ, σ, agentOf, patientOf, themeOf) composes correctly with stratified
-    reference.
-
-    The `SupHom` structure ensures `d (x ⊔ y) = d x ⊔ d y`; the
-    monotonicity assumption on γ then carries the stratification witnesses
-    for `x` and `y` over to a witness for `x ⊔ y`. -/
+/-- Stratified reference is closed under join when the dimension preserves sums and the granularity
+is monotone in its outer argument. -/
 theorem stratifiedReference_join {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
     (d : SupHom α β)
     {γ : β → β → Prop}
@@ -359,9 +296,8 @@ theorem stratifiedReference_join {α β : Type*} [SemilatticeSup α] [Semilattic
 
 /-! ### Aspect Bridge (subinterval reference ↔ atelicity) -/
 
-/-- for-adverbials require subinterval reference (Champollion Ch 5 §5.4).
-    "John ran for an hour" is felicitous because "run" has it.
-    "* John arrived for an hour" is infelicitous because "arrive" lacks it. -/
+/-- A *for*-adverbial requires subinterval reference, so *John ran for an hour* is felicitous and
+*John arrived for an hour* is not. -/
 theorem forAdverbial_requires_subintervalReference
     {T E : Type*} [LinearOrder T] [Event.TemporalTrace E T]
     [SemilatticeSup E]
@@ -370,18 +306,8 @@ theorem forAdverbial_requires_subintervalReference
     ∀ e, P e → SubintervalReference P e :=
   h_for_ok
 
-/-- QUA and subinterval reference are directly incompatible, in that if P(e) and
-    `SubintervalReference P e` hold, then P cannot be quantized. The
-    AlgClosure decomposition yields a base element a with P(a) and
-    τ a ⊂ τ e. Since a ≤ e (from the join structure) and
-    a ≠ e (proper subinterval is irreflexive), we get a < e, contradicting
-    QUA.
-
-    Direct, not routed through CUM: the would-be route
-    `SubintervalReferenceUniv → CUM → ¬QUA` fails at the first step
-    (`SubintervalReferenceUniv → CUM` is false in general; counterexample:
-    `P := λe. (τ e).length ≤ 1` over dense time). See module docstring
-    "Relation to Krifka's CUM/QUA". -/
+/-- Quantization and subinterval reference are incompatible, since an event with subinterval
+reference has a proper part in the predicate. -/
 theorem qua_incompatible_with_subintervalReference
     {T E : Type*} [LinearOrder T] [Event.TemporalTrace E T]
     [SemilatticeSup E]
@@ -397,20 +323,14 @@ theorem qua_incompatible_with_subintervalReference
 
 /-! ### for-Adverbial Compatibility -/
 
-/-- The "for"-adverbial adds a duration constraint on the event runtime
-    and requires the predicate to have subinterval reference
-    ([champollion-2017]'s for-adverbial entry, eq. (72), restated for
-    *for an hour* as eq. (21); eq. (39) is the constraint on its Share).
-    "V for δ" = λe. V(e) ∧ τ(e) = δ ∧ SubintervalReference V e. -/
+/-- *V for δ* holds of an event of `V` whose run time is `δ` and at which `V` has subinterval
+reference, [champollion-2017]'s entry for the *for*-adverbial, eq. (72). -/
 def forAdverbialMeaning {T E : Type*} [LinearOrder T] [Event.TemporalTrace E T]
     [SemilatticeSup E]
     (V : E → Prop) (duration : NonemptyInterval T) (e : E) : Prop :=
   V e ∧ τ e = duration ∧ SubintervalReference V e
 
-/-- "in"-adverbials are incompatible with subinterval reference (they
-    require telicity). "V in δ" requires QUA, which is incompatible with
-    subinterval reference. Any P-event with subinterval reference has a
-    strict P-part, contradicting QUA. -/
+/-- An *in*-adverbial, which requires quantization, is incompatible with subinterval reference. -/
 theorem in_adverbial_incompatible_with_subintervalReference
     {T E : Type*} [LinearOrder T] [Event.TemporalTrace E T]
     [SemilatticeSup E]
@@ -474,10 +394,10 @@ theorems; they are stated here over the Fragment verbs' denotations. -/
 section Distributivity
 variable {Entity E : Type*} [PartialOrder Entity] [SemilatticeSup E]
 
-/-- The book's postulates on the distributivity of verbs, over an interpretation `V` of the
-fragment's verbs as event predicates and the agent and theme roles. *See* distributes on both
-roles and *kill* on its theme only, since a member of the posse need not have killed anyone,
-and *meet* does not distribute on its agent. -/
+/-- `ChampollionPostulates` records the book's postulates on the distributivity of verbs, over an
+interpretation `V` of the fragment's verbs as event predicates and the agent and theme roles. *See*
+distributes on both roles and *kill* on its theme only, since a member of the posse need not have
+killed anyone, and *meet* does not distribute on its agent. -/
 structure ChampollionPostulates (V : Verb → E → Prop)
     (agentRole themeRole : Entity → E → Prop) : Prop where
   see_distributes_agent : see.toVerb.StratifiesOver V agentRole
@@ -509,9 +429,9 @@ open Krifka1998
 
 variable {α T : Type*} [SemilatticeSup α] [PartialOrder T] (τ : α → T) (P : α → Prop)
 
-/-- The subregion presupposition (28) that the chapter attributes to [krifka-1998]'s
-*for*-adverbial: the event has a temporal part, and every temporal part of it falls under the
-predicate. -/
+/-- The subregion presupposition (28), which the chapter attributes to [krifka-1998]'s
+*for*-adverbial, holds when the event has a temporal part and every temporal part of it falls
+under the predicate. -/
 def SubregionPresup (e : α) : Prop :=
   (∃ e', IsTemporalPart τ e' e) ∧ ∀ e', IsTemporalPart τ e' e → P e'
 

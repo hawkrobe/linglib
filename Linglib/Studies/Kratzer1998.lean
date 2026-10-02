@@ -10,39 +10,31 @@ public import Linglib.Data.Examples.Kratzer1998
 /-!
 # Kratzer (1998): More Structural Analogies between Pronouns and Tenses
 
-This file formalizes the paper's tense inventory and the consequences it draws from it.
-Tenses are pronouns ([partee-1973]): English has two indexical tenses, a present defined
-when the context provides an interval including the utterance time and a past defined when
-it provides one preceding it, and a zero tense, a variable with no presupposition that must
-be bound by the next tense up, just as a zero pronoun must be bound by a local antecedent.
-Attitude complements denote properties of times because a zero tense with a binder index
-abstracts over the time, which derives Abusch's constraint from the verbs' selection; an
-indexical tense in the same position yields a proposition, whatever binder is inserted. The
-present under past of *The ultrasound picture indicated that Mary is pregnant* is read de re
-about a state through the operator that turns a property of times into a property of
-eventualities. Finally, what looks like a tense may spell out a tense together with one of
-three aspects after [klein-1994], operators from properties of events to properties of times.
-Out of the blue only the present is defined, and only the perfect places the event before
-the reference time, so a form describes a past event out of the blue just in case it spells
-out present tense with perfect aspect. The closing tables assign that combination to the
-English simple past and the German *Perfekt* and never to the *Präteritum*, which is the
-contrast between *Borromini built this church* and its two German renderings.
+Kratzer treats tenses as pronouns, after Partee. English has two indexical tenses, a present
+defined when the context provides an interval including the utterance time and a past defined
+when it provides one preceding it, and a zero tense with no presupposition that must be bound by
+the next tense up. A zero tense with a binder index abstracts over the time, so attitude
+complements denote properties of times, which derives Abusch's constraint from the verbs'
+selection. What looks like a tense may spell out a tense together with one of Klein's three
+aspects; since out of the blue only the present is defined and only the perfect places the
+event before the reference time, a form describes a past event out of the blue just in case it
+spells out present tense with perfect aspect. The paper's tables assign that combination to the
+English simple past and the German *Perfekt* and never to the *Präteritum*.
 
-## Main declarations
+## Main definitions
 
-* `tense`, `zeroTense`: the indexical tense with a given cell, and the zero tense, as pronouns.
-* `AspectHead`, `AspectHead.rel`, `AspectHead.denote`: the three aspects, each a relation
-  between the reference time and the event time, and its operator.
-* `denote`: the truth conditions of a tense with an aspect.
-* `AspectHead.IsAnterior`: the aspect places the event before the reference time, which holds
-  of the perfect alone (`AspectHead.isAnterior_iff`).
-* `Variety`, `Variety.SpellsOut`: a variety's table, relating tense forms to the tenses and
-  aspects they spell out; `english`, `standardGerman` and `southGerman` are the paper's.
-* `Variety.DescribesPastOutOfTheBlue`: a form spells out a tense defined out of the blue with
-  an anterior aspect; `describesPastOutOfTheBlue_iff` reduces it to the present perfect cell.
-* `Variety.IsTenseFaithful`, `Variety.IsPerfectCompositional`: the two ways a table can be read
-  off the make-up of the forms. Standard German has both, South German only the second, and
-  English neither.
+* `tense`: an indexical tense as a pronoun.
+* `zeroTense`: the zero tense.
+* `AspectHead.denote`: the operator of an aspect, from event properties to time properties.
+* `Variety.SpellsOut`: a variety's table of tense forms and what they spell out.
+* `Variety.DescribesPastOutOfTheBlue`: a form describes a past event out of the blue.
+
+## Main results
+
+* `AspectHead.isAnterior_iff`: only the perfect is anterior.
+* `describesPastOutOfTheBlue_iff`: describing a past event out of the blue is spelling out the
+  present perfect.
+* `rows_outOfTheBlue`: the out-of-the-blue judgments of the paper's examples.
 
 ## Implementation notes
 
@@ -61,10 +53,12 @@ tense forms.
 ## References
 
 * [kratzer-1998]
-* [partee-1973] — tenses as pronouns
-* [abusch-1997], [ogihara-1989], [ogihara-1996] — sequence of tense and temporal de se
-* [heim-kratzer-1998] — binder indices
-* [klein-1994] — reference time and the aspects
+* [partee-1973]
+* [abusch-1997]
+* [ogihara-1989]
+* [ogihara-1996]
+* [heim-kratzer-1998]
+* [klein-1994]
 -/
 
 @[expose] public section
@@ -153,7 +147,8 @@ world. -/
 theorem star_congr (P : IntervalPred W T) (e : E) (w w' : W) :
     star P w e ↔ star P w' e := Iff.rfl
 
-/-- The relation of an aspect between the reference time `r` and the event time `s`. The
+/-- `a.rel r s` is the relation of the aspect `a` between the reference time `r` and the event
+time `s`. The
 imperfective includes the reference time in the event time, the perfective includes the event
 time in the reference time, and the perfect has the event over by the reference time. -/
 def AspectHead.rel : AspectHead → NonemptyInterval T → NonemptyInterval T → Prop

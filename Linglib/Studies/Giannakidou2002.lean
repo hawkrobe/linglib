@@ -15,30 +15,36 @@ public import Linglib.Data.Examples.Giannakidou2002
 /-!
 # Giannakidou (2002): UNTIL, Aspect, and Negation
 
-This file formalizes [giannakidou-2002]'s argument for [karttunen-1974]'s two *until*s against
-the one-*until* analysis on which negation is an aspectual stativizer ([mittwoch-1977],
-[de-swart-1996]). Durative UNTIL asks its description to hold at every subinterval of an
-interval ending at the until time (`durativeUntil`), which a homogeneous description supplies
-(`durativeUntil_iff_of_homogeneous`) and a perfective description of a single event cannot
-(`not_durativeUntil_prfv`): the imperfective is homogeneous (`impf_homogeneous`), so Greek, which
-marks aspect overtly, lets *mexri* combine with imperfectives and not with negated perfectives,
-where the scalar polarity item *para monon* stands in. Under negation the two analyses part ways:
-the wide-scope reading is durative UNTIL of the state of not-P-ing and holds when nothing P-like
-ever happens (`wideScope_of_forall_not`), whereas the eventive UNTIL entails the event
-(`eventiveUntil_actualization`) and is Karttunen's *not until* together with the actualization his
-presupposition supplies (`eventiveUntil_iff`). *Before* shares the scale but not the event
-(`eventiveUntil_not_before`, `not_before_of_forall_not`).
+Giannakidou argues for Karttunen's two *until*s against the one-*until* analysis of Mittwoch
+and de Swart, on which negation is an aspectual stativizer. Durative UNTIL asks its description
+to hold at every subinterval of an interval ending at the until time, which a homogeneous
+description supplies and a perfective description of a single event cannot; since the
+imperfective is homogeneous, Greek, which marks aspect overtly, lets *mexri* combine with
+imperfectives and not with negated perfectives, where the polarity item *para monon* stands in.
+Under negation the analyses part ways: the wide-scope reading holds when nothing P-like ever
+happens, whereas eventive UNTIL entails the event and is Karttunen's *not until* with the
+actualization his presupposition supplies. The paper's Greek, English, Icelandic and Dutch
+judgments follow from the fragment entries of the connectives, and its stativity diagnostics
+from homogeneity with negation playing no role.
 
-The rows are the paper's Greek, English, Icelandic and Dutch sentences. `Predicted` derives each
-judgment from the fragment entry of its connective, the homogeneity its aspect or eventuality
-affords, and the licensing its polarity requires; the wide-scope reading, which preposing and a
-continuation denying the event diagnose, needs an imperfective or perfect form, which the English
-simple past is not. The stativity diagnostics of the paper's fifth section follow from the same
-homogeneity criterion with negation playing no role (`diagnostics_predicted`).
+## Main definitions
+
+* `durativeUntil`: durative UNTIL.
+* `eventiveUntil`: Karttunen's eventive UNTIL.
+* `wideScope`: Mittwoch's wide-scope reading.
+* `Predicted`: the judgment the two-*until* analysis predicts for a row.
+
+## Main results
+
+* `not_durativeUntil_prfv`: a perfective description of a single event rules out durative UNTIL.
+* `wideScope_of_forall_not`: the wide-scope reading carries no actualization.
+* `eventiveUntil_iff`: eventive UNTIL is *not until* with actualization.
+* `rows_predicted`: every judgment on the UNTIL sentences is predicted.
+* `diagnostics_predicted`: the stativity diagnostics follow from homogeneity alone.
 
 ## Implementation notes
 
-* Descriptions are the aspect substrate's interval predicates; events carry a run time and a
+* Descriptions are the interval predicates of `Aspect`; events carry a run time and a
   perfective description places it within the reference interval, an imperfective one strictly
   around it. The until interval is required to be nondegenerate, which is what excludes a single
   event from satisfying the durative condition at both its endpoints.
@@ -80,8 +86,8 @@ theorem impf_homogeneous (P : W → E → Prop) : Homogeneous (IMPF P) :=
 theorem unbounded_homogeneous (P : W → E → Prop) : Homogeneous (UNBOUNDED P) :=
   λ _ _ _ hji ⟨e, hle, he⟩ => ⟨e, hji.trans hle, he⟩
 
-/-- Durative UNTIL: the description holds at every subinterval of a nondegenerate interval ending
-at the until time. -/
+/-- Durative UNTIL holds when the description holds at every subinterval of a nondegenerate interval
+ending at the until time. -/
 def durativeUntil (p : IntervalPred W T) (w : W) (t' : T) : Prop :=
   ∃ i : NonemptyInterval T, i.fst < i.snd ∧ i.snd = t' ∧ ∀ j ≤ i, p w j
 
@@ -92,7 +98,7 @@ theorem durativeUntil_iff_of_homogeneous {p : IntervalPred W T} (hp : Homogeneou
   ⟨λ ⟨i, hi, ht, h⟩ => ⟨i, hi, ht, h i le_rfl⟩,
     λ ⟨i, hi, ht, h⟩ => ⟨i, hi, ht, λ j hj => hp w i j hj h⟩⟩
 
-/-- A perfective description of a single event is incompatible with durative UNTIL: an
+/-- A perfective description of a single event is incompatible with durative UNTIL, since an
 achievement or accomplishment cannot lie within both endpoints of the until interval. -/
 theorem not_durativeUntil_prfv {P : W → E → Prop} {w : W}
     (hP : ∀ e e', P w e → P w e' → e = e') (t' : T) : ¬ durativeUntil (PRFV P) w t' := by
@@ -107,21 +113,22 @@ theorem not_durativeUntil_prfv {P : W → E → Prop} {w : W}
 
 /-! ### Negation: wide scope, narrow scope and the eventive UNTIL -/
 
-/-- The state of not-P-ing that a stativizing negation would deliver: no P-event overlaps the
-interval. -/
+/-- The state of not-P-ing, which a stativizing negation would deliver, holds when no P-event
+overlaps the interval. -/
 def notState (P : W → E → Prop) : IntervalPred W T :=
   λ w i => ∀ e, P w e → ∀ a ∈ (τ e), a ∉ i
 
 theorem notState_homogeneous (P : W → E → Prop) : Homogeneous (notState P) :=
   λ _ _ _ hji h e he a ha haj => h e he a ha (NonemptyInterval.coe_subset_coe.mpr hji haj)
 
-/-- Mittwoch's wide-scope reading: durative UNTIL of the state of not-P-ing. -/
+/-- Mittwoch's wide-scope reading is durative UNTIL of the state of not-P-ing. -/
 def wideScope (P : W → E → Prop) (w : W) (t' : T) : Prop := durativeUntil (notState P) w t'
 
-/-- External negation: the durative UNTIL claim denied. -/
+/-- External negation denies the durative UNTIL claim. -/
 def narrowScope (p : IntervalPred W T) (w : W) (t' : T) : Prop := ¬ durativeUntil p w t'
 
-/-- Karttunen's eventive UNTIL, scalar: a P-event at the until time and none starting earlier. -/
+/-- Karttunen's scalar eventive UNTIL holds when a P-event occurs at the until time and none
+starts earlier. -/
 def eventiveUntil (P : W → E → Prop) (w : W) (t : T) : Prop :=
   (∃ e, P w e ∧ t ∈ (τ e)) ∧ ∀ e, P w e → t ≤ (τ e).fst
 
@@ -129,12 +136,13 @@ theorem eventiveUntil_actualization {P : W → E → Prop} {w : W} {t : T}
     (h : eventiveUntil P w t) : ∃ e, P w e :=
   let ⟨⟨e, he, _⟩, _⟩ := h; ⟨e, he⟩
 
-/-- The wide-scope reading holds when nothing P-like ever happens: it carries no actualization. -/
+/-- The wide-scope reading holds when nothing P-like ever happens, so it carries no
+actualization. -/
 theorem wideScope_of_forall_not {P : W → E → Prop} {w : W} (hP : ∀ e, ¬ P w e) {t t' : T}
     (h : t < t') : wideScope P w t' :=
   ⟨⟨(t, t'), h.le⟩, h, rfl, λ _ _ e he => absurd he (hP e)⟩
 
-/-- The run times of a description's events at a world. -/
+/-- `runTimes P w` is the set of run times of the events of `P` at the world `w`. -/
 def runTimes (P : W → E → Prop) (w : W) : RunTimes T := {i | ∃ e, P w e ∧ τ e = i}
 
 /-- Eventive UNTIL is Karttunen's *not until* together with the actualization his presupposition
@@ -165,19 +173,19 @@ theorem eventiveUntil_not_before {P : W → E → Prop} {w : W} {t : T}
   λ ⟨_, ⟨_, ⟨e, he, rfl⟩, hs⟩, hlt⟩ =>
     absurd ((h.2 e he).trans (NonemptyInterval.mem_def.mp hs).1) (not_le.mpr hlt)
 
-/-- *Not before* carries no actualization: it holds when nothing P-like ever happens. -/
+/-- *Not before* carries no actualization, since it holds when nothing P-like ever happens. -/
 theorem not_before_of_forall_not {P : W → E → Prop} {w : W} (hP : ∀ e, ¬ P w e) (t : T) :
     ¬ before (runTimes P w) t :=
   λ ⟨_, ⟨_, ⟨e, he, _⟩, _⟩, _⟩ => hP e he
 
 /-! ### The paper's sentences -/
 
-/-- The UNTIL words and *before* of the paper's four languages. -/
+/-- A `Connective` is one of the UNTIL words or *before* in the paper's four languages. -/
 inductive Connective
   | until | mexri | paraMonon | prin | til | fyrrEn | tot | pas
   deriving DecidableEq, Repr
 
-/-- The fragment entry of each connective. -/
+/-- `c.entry` is the fragment entry of the connective `c`. -/
 def Connective.entry : Connective → Tense.Connective
   | .until => English.TemporalConnectives.until_
   | .mexri => Greek.StandardModern.TemporalConnectives.mexri
@@ -188,8 +196,8 @@ def Connective.entry : Connective → Tense.Connective
   | .tot => Dutch.TemporalConnectives.tot
   | .pas => Dutch.TemporalConnectives.pas
 
-/-- The polarity item a connective is or doubles as: the Greek, Icelandic and Dutch punctual
-*until* words, and English *until* in its eventive use. -/
+/-- `c.polarityItem` is the polarity item that the connective `c` is or doubles as, for the Greek,
+Icelandic and Dutch punctual *until* words, and English *until* in its eventive use. -/
 def Connective.polarityItem : Connective → Option PolarityItem
   | .until => some English.PolarityItems.until_
   | .paraMonon => some Greek.StandardModern.PolarityItems.paraMonon
@@ -197,36 +205,38 @@ def Connective.polarityItem : Connective → Option PolarityItem
   | .pas => some Dutch.PolarityItems.pas
   | _ => none
 
-/-- Durative UNTIL: an *until* entry that is not punctual. -/
+/-- A connective is durative UNTIL when it is an *until* entry that is not punctual. -/
 abbrev Connective.Durative (c : Connective) : Prop :=
   c.entry.relation = .until_ ∧ ¬ c.entry.punctual
 
-/-- Eventive UNTIL: a punctual entry, or an *until* with a polarity-item use. -/
+/-- A connective is eventive UNTIL when it is a punctual entry or an *until* with a
+polarity-item use. -/
 abbrev Connective.Eventive (c : Connective) : Prop :=
   c.entry.punctual ∨ c.polarityItem.isSome = true
 
 abbrev Connective.Before (c : Connective) : Prop := c.entry.relation = .before
 
-/-- The viewpoint of the main clause. -/
+/-- An `AspectForm` is the viewpoint of the main clause. -/
 inductive AspectForm
   | imperfective | perfective | progressive | perfect | simplePast
   deriving DecidableEq, Repr
 
-/-- States and activities against achievements and accomplishments. -/
+/-- An `Eventuality` class separates states and activities from achievements and
+accomplishments. -/
 inductive Eventuality
   | stative | eventive
   deriving DecidableEq, Repr
 
-/-- What the sentence puts the connective under. -/
+/-- A `Licenser` is what the sentence puts the connective under. -/
 inductive Licenser
   | none | negation | without | nonveridical
   deriving DecidableEq, Repr
 
-/-- Negation and *without*, the antiveridical licensers. -/
+/-- Negation and *without* are the antiveridical licensers. -/
 abbrev Licenser.Antiveridical (l : Licenser) : Prop := l = .negation ∨ l = .without
 
-/-- What the sentence tests: acceptability, preposing of the UNTIL phrase, or a continuation
-denying the event. -/
+/-- A `Test` is what the sentence tests, acceptability, preposing of the UNTIL phrase, or a
+continuation denying the event. -/
 inductive Test
   | plain | preposed | noEventContinuation
   deriving DecidableEq, Repr
@@ -240,19 +250,20 @@ structure Row where
   acceptable : Bool
   deriving DecidableEq, Repr
 
-/-- A homogeneous main clause: an imperfective, progressive or perfect form, or a stative. -/
+/-- A main clause is homogeneous when it has an imperfective, progressive or perfect form, or
+is stative. -/
 abbrev Homog (a : AspectForm) (e : Eventuality) : Prop :=
   a = .imperfective ∨ a = .progressive ∨ a = .perfect ∨ e = .stative
 
-/-- The forms that admit the wide-scope reading: the imperfective and the perfect. -/
+/-- The forms that admit the wide-scope reading are the imperfective and the perfect. -/
 abbrev WideScopeForm (a : AspectForm) : Prop := a = .imperfective ∨ a = .perfect
 
-/-- The licensing a connective's polarity item demands: an antiveridical licenser for a negative
+/-- The polarity item of a connective demands an antiveridical licenser for a negative
 item, none for a positive one. -/
 abbrev Licensed (c : Connective) (l : Licenser) : Prop :=
   ∀ i ∈ c.polarityItem, (i.IsNPI → l.Antiveridical) ∧ (i.IsPPI → l = .none)
 
-/-- The judgment the two-*until* analysis predicts. -/
+/-- `Predicted` is the judgment that the two-*until* analysis predicts for a row. -/
 def Predicted (r : Row) : Prop :=
   (r.test = .plain → (r.connective.Durative ∧ Homog r.aspect r.eventuality) ∨
     (r.connective.Eventive ∧ Licensed r.connective r.licenser) ∨ r.connective.Before) ∧
@@ -284,7 +295,7 @@ homogeneity of the main clause and the licensing of the polarity item. -/
 theorem rows_predicted : ∀ r ∈ rows, (r.acceptable = true ↔ Predicted r) := by
   decide
 
-/-- The stativity diagnostics of the fifth section. -/
+/-- A `Diagnostic` is one of the stativity diagnostics of the fifth section. -/
 inductive Diagnostic
   | howLong | while | forAdverbial | imperative
   deriving DecidableEq, Repr
@@ -312,7 +323,7 @@ def DiagnosticRow.ofDatum (ex : Datum) : Option DiagnosticRow := do
 def diagnostics : List DiagnosticRow := Examples.all.filterMap DiagnosticRow.ofDatum
 
 /-- The stative diagnostics accept a homogeneous clause and the imperative rejects one, with
-negation playing no role: negation is no stativizer. -/
+negation playing no role, so negation is no stativizer. -/
 theorem diagnostics_predicted : ∀ r ∈ diagnostics, (r.acceptable = true ↔
     ((r.diagnostic = .imperative → ¬ Homog r.aspect r.eventuality) ∧
       (r.diagnostic ≠ .imperative → Homog r.aspect r.eventuality))) := by
