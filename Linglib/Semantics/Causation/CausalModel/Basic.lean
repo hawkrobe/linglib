@@ -24,6 +24,8 @@ The solution at a variable depends only on the intervention at that variable and
 * `CausalModel.solve_congr`: interventions agreeing on a variable's ancestors agree there
 * `CausalModel.solve_update_of_not_reflTransGen`: intervening on `c` leaves what `c` does not
   reach unchanged
+* `CausalModel.solve_eq_solve_bot_of_mem_contexts`: imposing an observation that holds changes
+  nothing
 
 ## References
 
@@ -82,6 +84,26 @@ variable {M}
 
 @[simp] theorem contexts_bot : M.contexts ⊥ = Set.univ :=
   Set.eq_univ_of_forall fun _ _ ↦ bot_le
+
+/-- In a context where the observation holds, imposing it as an intervention changes nothing. -/
+theorem solve_eq_solve_bot_of_mem_contexts {s : ∀ v, Flat (α v)} {u : U} (hu : u ∈ M.contexts s) :
+    M.solve s u = M.solve ⊥ u := by
+  refine (eq_solve_of_isFixedPt (funext fun v ↦ ?_)).symm
+  rw [step_apply]
+  cases hs : s v with
+  | bot => exact (solve_of_eq_bot rfl u).symm
+  | coe a =>
+    have h : (↑a : Flat (α v)) ≤ ↑(M.solve ⊥ u v) := hs ▸ hu v
+    rw [Flat.unbotD_coe, Flat.coe_le_coe.1 h]
+
+/-- An observation extended by a fact of the context's actual world still holds there. -/
+theorem mem_contexts_update [DecidableEq V] {s : ∀ v, Flat (α v)} {u : U}
+    (hu : u ∈ M.contexts s) {c : V} {x : α c} (hx : M.solve ⊥ u c = x) :
+    u ∈ M.contexts (Function.update s c ↑x) := by
+  intro v
+  rcases eq_or_ne v c with rfl | hv
+  · rw [Function.update_self, ← hx]; exact le_rfl
+  · rw [Function.update_of_ne hv]; exact hu v
 
 end Observation
 
