@@ -24,10 +24,10 @@ stages therefore form a chain of economical transformations.
 
 ## Main results
 
-* `Minimalist.SyntacticObject.Step.noComplexityLoss`, `Step.minimalYieldC`: an admissible step is
+* `Minimalist.SyntacticObject.Step.noComplexityLoss`, `Step.minimalYield`: an admissible step is
   economical.
-* `Minimalist.SyntacticObject.Derivation.isChain_noComplexityLoss`, `isChain_minimalYieldC`: so
-  is every step of an admissible derivation.
+* `Minimalist.SyntacticObject.Derivation.isChain_noComplexityLoss`, `isChain_minimalYield`: so is
+  every step of an admissible derivation.
 
 ## References
 
@@ -95,16 +95,16 @@ theorem Step.noComplexityLoss (h : step.Admissible current W) :
 
 /-- An admissible step whose operands are not traces satisfies Minimal Yield under trace
     counting. -/
-theorem Step.minimalYieldC (h : step.Admissible current W) (hcur : current.val.value.isLeft)
+theorem Step.minimalYield (h : step.Admissible current W) (hcur : current.val.value.isLeft)
     (hitems : ∀ i ∈ step.items, i.val.value.isLeft) :
-    MinimalYieldC (({current} + step.items + W).map Subtype.val)
+    MinimalYield UnorderedTree.accessibleCount (({current} + step.items + W).map Subtype.val)
       (({step.apply current} + W).map Subtype.val) := by
   cases step with
   | em side item =>
     rw [Step.apply_em, merge_comm]
     simp only [Step.items, Multiset.mem_singleton, forall_eq] at hitems
     simp only [Step.items, Multiset.map_add, Multiset.map_singleton, merge_val]
-    exact (MinimalYieldC.em_pair none (traceLeafCount_lt_numNodes hcur)
+    exact (MinimalYield.em_pair_accessibleCount none (traceLeafCount_lt_numNodes hcur)
       (traceLeafCount_lt_numNodes hitems)).add_right _
   | im mover =>
     obtain ⟨hm, hc, hne, -⟩ := h
@@ -112,7 +112,8 @@ theorem Step.minimalYieldC (h : step.Admissible current W) (hcur : current.val.v
     obtain ⟨l, r, rfl⟩ := exists_eq_merge_of_count_terms hc hne
     simp only [Step.items, add_zero, Step.apply_im, Multiset.map_add, Multiset.map_singleton,
       merge_val, Multiset.pair_comm (deleteAccessible mover (merge l r)).val] at hp ⊢
-    exact (MinimalYieldC.im_of_cut none none traceEncoder _ _ hp mover.val rfl).add_right _
+    exact (MinimalYield.im_accessibleCount_of_cut none none traceEncoder _ _ hp mover.val
+      rfl).add_right _
 
 /-- The workspaces after each of a list of steps hold the object built so far beside the items
     still to come. -/
@@ -154,11 +155,11 @@ theorem isChain_noComplexityLoss {d : Derivation} (hd : d.Admissible) :
 
 /-- Every step of an admissible derivation whose initial object and items are not traces satisfies
     Minimal Yield under trace counting. -/
-theorem isChain_minimalYieldC {d : Derivation} (hd : d.Admissible)
+theorem isChain_minimalYield {d : Derivation} (hd : d.Admissible)
     (hinit : d.initial.val.value.isLeft) (hitems : ∀ i ∈ d.items, i.val.value.isLeft) :
-    d.workspaces.IsChain
-      (fun W W' : Workspace ↦ MinimalYieldC (W.map Subtype.val) (W'.map Subtype.val)) :=
-  isChain_of_step (P := fun S ↦ S.val.value.isLeft) (fun h hcur hi ↦ Step.minimalYieldC h hcur hi)
+    d.workspaces.IsChain (fun W W' : Workspace ↦
+      MinimalYield UnorderedTree.accessibleCount (W.map Subtype.val) (W'.map Subtype.val)) :=
+  isChain_of_step (P := fun S ↦ S.val.value.isLeft) (fun h hcur hi ↦ Step.minimalYield h hcur hi)
     value_isLeft_apply d.steps d.initial hd hinit hitems
 
 end Derivation

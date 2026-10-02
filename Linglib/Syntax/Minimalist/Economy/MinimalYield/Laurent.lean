@@ -19,9 +19,9 @@ Minimal Yield can be restated as a Birkhoff factorization in the ring of Laurent
 
   `δb₀ F F' = b₀ F − b₀ F'`,  `δα F F' = α F' − α F`,  `δσ F F' = σ F' − σ F`,
 
-shows Minimal Yield is `0 ≤ δb₀ ∧ 0 ≤ δα ∧ δσ = 1`, and connects the gradings to the polar-part
-operator `R = LaurentSeries.polarHahn`: a transformation satisfies weak Minimal Yield iff its
-`δb₀`- and `δα`-monomials are both nonpolar (`weak_iff_polarHahn`).
+shows Minimal Yield under deletion counting is `0 ≤ δb₀ ∧ 0 ≤ δα ∧ δσ = 1`, and connects the
+gradings to the polar-part operator `R = LaurentSeries.polarHahn`: a transformation satisfies weak
+Minimal Yield iff its `δb₀`- and `δα`-monomials are both nonpolar (`weak_iff_polarHahn`).
 
 The character `ϕt : H →ₐ[R] LaurentSeries R` on the Hopf algebra of nonplanar forests records,
 in place of the derivation coefficients of `DM`, only the grading `tᵟ` with `δ = δα`; on a forest
@@ -76,17 +76,19 @@ def δσ : ℤ := ((F'.map UnorderedTree.numNodes).sum : ℤ) - (F.map Unordered
 theorem δσ_eq : δσ F F' = δα F F' - δb₀ F F' := by
   simp only [δσ, δα, δb₀, UnorderedTree.sum_map_numNodes]; omega
 
-theorem weak_iff_gradings : MinimalYieldWeak F F' ↔ 0 ≤ δb₀ F F' ∧ 0 ≤ δα F F' := by
+theorem weak_iff_gradings :
+    MinimalYieldWeak UnorderedTree.numEdges F F' ↔ 0 ≤ δb₀ F F' ∧ 0 ≤ δα F F' := by
   simp only [δb₀, δα, sub_nonneg, Nat.cast_le]
   exact ⟨fun h => ⟨h.1, h.2⟩, fun h => ⟨h.1, h.2⟩⟩
 
-theorem iff_gradings : MinimalYield F F' ↔ 0 ≤ δb₀ F F' ∧ 0 ≤ δα F F' ∧ δσ F F' = 1 := by
-  rw [← and_assoc, ← weak_iff_gradings, δσ, sub_eq_iff_eq_add']
-  exact ⟨fun h => ⟨h.1, by exact_mod_cast h.2⟩, fun h => ⟨h.1, by exact_mod_cast h.2⟩⟩
+theorem iff_gradings :
+    MinimalYield UnorderedTree.numEdges F F' ↔ 0 ≤ δb₀ F F' ∧ 0 ≤ δα F F' ∧ δσ F F' = 1 := by
+  rw [← and_assoc, ← weak_iff_gradings, δσ_eq, δα, δb₀]
+  exact ⟨fun h => ⟨h.1, by have := h.2; omega⟩, fun h => ⟨h.1, by have := h.2; omega⟩⟩
 
 /-- Weak Minimal Yield holds iff the `δb₀`- and `δα`-monomials of `F → F'` are both nonpolar. -/
 theorem weak_iff_polarHahn [Nontrivial R] :
-    MinimalYieldWeak F F' ↔
+    MinimalYieldWeak UnorderedTree.numEdges F F' ↔
       polarHahn (HahnSeries.single (δb₀ F F') (1 : R)) = 0 ∧
         polarHahn (HahnSeries.single (δα F F') (1 : R)) = 0 := by
   simp only [weak_iff_gradings, polarHahn_single_eq_zero_iff one_ne_zero]
@@ -95,12 +97,12 @@ end Gradings
 
 /-! ### The character `ϕt` -/
 
-/-- The value of `ϕt` on a tree: `t^{α(T)}`. -/
+/-- On a tree `T`, `ϕt` takes the value `t^{α(T)}`. -/
 noncomputable def gradingMonomialTree (T : UnorderedTree α) : LaurentSeries R :=
   HahnSeries.single (T.numEdges : ℤ) 1
 
-/-- The character `ϕt : H →ₐ[R] LaurentSeries R`, `ϕt(F) = t^{α(F)}`, multiplicative over
-disjoint union. -/
+/-- The character `ϕt : H →ₐ[R] LaurentSeries R` sends a forest `F` to `t^{α(F)}`,
+    multiplicatively over disjoint union. -/
 noncomputable def gradingChar : ConnesKreimer R (UnorderedTree α) →ₐ[R] LaurentSeries R :=
   aeval gradingMonomialTree
 
@@ -110,7 +112,8 @@ noncomputable def gradingChar : ConnesKreimer R (UnorderedTree α) →ₐ[R] Lau
 
 /-- `ϕt(F) = t^{α(F)}`, since `α` is additive over forests. -/
 theorem prod_gradingMonomialTree (F : Forest (UnorderedTree α)) :
-    (F.map (gradingMonomialTree (R := R))).prod = HahnSeries.single ((F.map UnorderedTree.numEdges).sum : ℤ) 1 := by
+    (F.map (gradingMonomialTree (R := R))).prod
+      = HahnSeries.single ((F.map UnorderedTree.numEdges).sum : ℤ) 1 := by
   induction F using Multiset.induction with
   | empty => rw [Multiset.map_zero, Multiset.prod_zero, Multiset.map_zero, Multiset.sum_zero]; rfl
   | cons T F ih =>
@@ -119,7 +122,8 @@ theorem prod_gradingMonomialTree (F : Forest (UnorderedTree α)) :
     push_cast; rfl
 
 theorem gradingChar_apply_of'_eq (F : Forest (UnorderedTree α)) :
-    gradingChar (R := R) (of' F) = HahnSeries.single ((F.map UnorderedTree.numEdges).sum : ℤ) 1 := by
+    gradingChar (R := R) (of' F)
+      = HahnSeries.single ((F.map UnorderedTree.numEdges).sum : ℤ) 1 := by
   rw [gradingChar_apply_of', prod_gradingMonomialTree]
 
 @[simp] theorem gradingChar_apply_ofTree (T : UnorderedTree α) :
