@@ -209,7 +209,7 @@ def IsVacuous (t : PlanarSyntacticObject) (K : Core.Order.TreePath) : Prop :=
 instance (t : PlanarSyntacticObject) (K : Core.Order.TreePath) : Decidable (IsVacuous t K) := by
   unfold IsVacuous; infer_instance
 
-/-- **Pronunciation Economy** (39): no application of ellipsis is vacuous. -/
+/-- Pronunciation Economy (39) requires that no application of ellipsis be vacuous. -/
 def PronunciationEconomy (t : PlanarSyntacticObject) : Prop :=
   ∀ K ∈ elidedDomains t, ¬ IsVacuous t K
 
@@ -222,11 +222,11 @@ instance (t : PlanarSyntacticObject) : Decidable (PronunciationEconomy t) :=
 the right spine, the specifiers are the left daughters above the head, which is the first
 selecting item met; the result is `none` when the spine ends first. -/
 def projection : RoseTree Vertex → Option (List (RoseTree Vertex) × LIToken)
-  | .node (.inr none) [.node (.inl tok) [], r] =>
+  | .node (.inl none) [.node (.inl (some tok)) [], r] =>
       if tok.item.outerSel = [] then
-        (projection r).map fun x ↦ (.node (.inl tok) [] :: x.1, x.2)
+        (projection r).map fun x ↦ (.node (.inl (some tok)) [] :: x.1, x.2)
       else some ([], tok)
-  | .node (.inr none) [l, r] => (projection r).map fun x ↦ (l :: x.1, x.2)
+  | .node (.inl none) [l, r] => (projection r).map fun x ↦ (l :: x.1, x.2)
   | _ => none
 
 /-- A constituent is a wh-specifier when its head is a wh-token or its trace. -/

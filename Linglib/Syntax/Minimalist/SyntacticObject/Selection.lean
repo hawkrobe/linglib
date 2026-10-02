@@ -64,13 +64,13 @@ open RoseTree UnorderedTree SyntacticObject
 
 /-! ### The selection state -/
 
-/-- A constituent's selection state: the projecting head with its residual stack
-    (`.of tok []` = saturated), `0` off the endocentric domain. -/
+/-- A constituent's selection state is the projecting head with its residual stack
+    (`.of tok []` = saturated), and `0` off the endocentric domain. -/
 structure SelectionState : Type where
   toOption : Option (LIToken × List Cat)
 deriving DecidableEq
 
-/-- A defined selection state: projecting head `tok` with residual stack `stack`. -/
+/-- A defined selection state has projecting head `tok` and residual stack `stack`. -/
 def SelectionState.of (tok : LIToken) (stack : List Cat) : SelectionState :=
   ⟨some (tok, stack)⟩
 
@@ -100,7 +100,8 @@ def selCombine : SelectionState → SelectionState → Option (Bool × LIToken �
       if ha.item.outerCat = c then some (false, hb, rest) else none
   | _, _ => none
 
-/-- Which daughter projects: `some true` = left, `some false` = right. -/
+/-- The projecting daughter is reported as `some true` for the left and `some false` for the
+    right. -/
 def selSide (x y : SelectionState) : Option Bool := (selCombine x y).map (·.1)
 
 /-- Swapping the sisters flips the side and keeps the head and residual. -/
@@ -115,7 +116,7 @@ theorem selCombine_comm : selCombine x y = (selCombine y x).map fun p => (!p.1, 
 theorem selSide_comm : selSide x y = (selSide y x).map Bool.not := by
   simp only [selSide, selCombine_comm x y, Option.map_map]; rfl
 
-/-- The selection product: the head-and-residual of the `selCombine` decision
+/-- The selection product is the head-and-residual of the `selCombine` decision
     ([marcolli-chomsky-berwick-2025] §1.13); `0` is absorbing. -/
 instance : MulZeroClass SelectionState where
   mul x y := ⟨(selCombine x y).map (·.2)⟩
@@ -123,7 +124,7 @@ instance : MulZeroClass SelectionState where
   zero_mul _ := rfl
   mul_zero x := by rcases x with ⟨_ | ⟨h, _ | ⟨c, s⟩⟩⟩ <;> rfl
 
-/-- `*` unfolded: the canonical accessor for the selection product. -/
+/-- `*` unfolds to the canonical accessor for the selection product. -/
 theorem SelectionState.mul_def : x * y = ⟨(selCombine x y).map (·.2)⟩ := rfl
 
 instance : CommMagma SelectionState where
@@ -136,7 +137,7 @@ example : ∃ x y : SelectionState, x ≠ 0 ∧ y ≠ 0 ∧ x * y = 0 :=
 
 variable {x y}
 
-/-- Coherence: the projected head is the head of the sister on the reported side. -/
+/-- The projected head is the head of the sister on the reported side. -/
 theorem selCombine_eq_some {b : Bool} {hd : LIToken} {res : List Cat}
     (h : selCombine x y = some (b, hd, res)) :
     (bif b then x else y).head = some hd := by
@@ -159,13 +160,13 @@ theorem SelectionState.head_mul {r : LIToken}
 
 /-! ### Selection check on the carriers -/
 
-/-- The selection state of a trace: a saturated copy of the phrase its token heads, and for the
+/-- The selection state of a trace is a saturated copy of the phrase its token heads, and for the
     bare trace the saturated dummy. -/
 def traceState : Option LIToken → SelectionState
   | some tok => .of tok []
   | none => .of (mkTraceToken 0) []
 
-/-- The selection algebra: the `SyntacticObject.mergeAlgebra` of token + `outerSel`
+/-- The selection algebra is the `SyntacticObject.mergeAlgebra` of token + `outerSel`
     leaves and the traces' `traceState`. -/
 def selNode : Vertex → List SelectionState → SelectionState :=
   mergeAlgebra (fun tok => .of tok tok.item.outerSel) traceState
@@ -175,11 +176,11 @@ theorem selNode_perm (a : Vertex) {l₁ l₂ : List SelectionState} (h : l₁.Pe
     selNode a l₁ = selNode a l₂ :=
   mergeAlgebra_perm _ _ a h
 
-/-- Selection check on a planar tree: the catamorphism of `selNode`. -/
+/-- The selection check on a planar tree is the catamorphism of `selNode`. -/
 def selCheckPlanar : RoseTree Vertex → SelectionState :=
   RoseTree.fold selNode
 
-/-- Reduction of `selCheckPlanar` at a node: fold the algebra over the daughters. -/
+/-- At a node, `selCheckPlanar` folds the algebra over the daughters. -/
 theorem selCheckPlanar_node (a : Vertex) (cs : List (RoseTree Vertex)) :
     selCheckPlanar (RoseTree.node a cs) = selNode a (cs.map selCheckPlanar) :=
   RoseTree.fold_node ..
@@ -197,7 +198,7 @@ def selCheckN : UnorderedTree Vertex → SelectionState :=
     selCheckN (UnorderedTree.mk p) = selCheckPlanar p := rfl
 
 theorem selCheckN_node (a b : UnorderedTree Vertex) :
-    selCheckN (UnorderedTree.node (Sum.inr none) {a, b}) = selCheckN a * selCheckN b :=
+    selCheckN (UnorderedTree.node Vertex.bare {a, b}) = selCheckN a * selCheckN b :=
   liftN_merge _ _ a b
 
 /-! ### The selection-driven head on `SyntacticObject` -/
@@ -239,7 +240,7 @@ noncomputable def selCheckHom : SyntacticObject →ₙ* SelectionState :=
 
 @[simp] theorem selHead_leaf : (SyntacticObject.leaf tok).selHead = some tok := rfl
 
-/-- **Endocentricity**: a node's projecting head is one of its daughters' heads —
+/-- A node's projecting head is one of its daughters' heads (endocentricity), the
     bare-phrase-structure projection ([chomsky-1995-bare] §4, abstracted as
     [marcolli-chomsky-berwick-2025] Definition 1.13.6 / Lemma 1.13.7). -/
 theorem selHead_node {l r : SyntacticObject} {h : LIToken} (hlr : (merge l r).selHead = some h) :

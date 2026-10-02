@@ -52,8 +52,8 @@ inductive Freq
   | veryMany | many | few | veryFew | unattested
   deriving DecidableEq, Repr
 
-/-- A row of (6): an order of Dem, Num, A and N, its frequency, and the number of marked options
-the paper's derivation of it counts, none for the unattested orders and for (6p). -/
+/-- A row of (6) records an order of Dem, Num, A and N, its frequency, and the number of marked
+options the paper's derivation of it counts, none for the unattested orders and for (6p). -/
 structure OrderRow where
   order : List Cat
   freq : Freq
@@ -94,7 +94,7 @@ def table : List OrderRow :=
 
 /-! ### The derivation space (7) -/
 
-/-- The marked options of (7b): raising without pied-piping (iii), pied-piping of the
+/-- The marked options of (7b) are raising without pied-piping (iii), pied-piping of the
 picture-of-who type (iv), and partial rather than total raising (v). -/
 inductive Marked
   | withoutPiedPiping | pictureOfWho | partialMovement
@@ -107,29 +107,29 @@ def tokDem : LIToken := ⟨.simple .Dem [], 4⟩
 
 /-- The tree contains the overt noun; a trace does not count (7b-vi). -/
 def hasN : RoseTree SyntacticObject.Vertex → Bool
-  | .node (.inl t) _ => t == tokN
-  | .node (.inr none) [l, r] => hasN l || hasN r
-  | .node (.inr _) _ => false
+  | .node (.inl (some t)) _ => t == tokN
+  | .node (.inl none) [l, r] => hasN l || hasN r
+  | .node _ _ => false
 
 /-- The noun is the tree's specifier, `[NP [XP]]` (fn. 21). -/
 def specHasN : RoseTree SyntacticObject.Vertex → Bool
-  | .node (.inl t) _ => t == tokN
-  | .node (.inr none) [l, _] => hasN l
-  | .node (.inr _) _ => false
+  | .node (.inl (some t)) _ => t == tokN
+  | .node (.inl none) [l, _] => hasN l
+  | .node _ _ => false
 
 def subtrees : RoseTree SyntacticObject.Vertex → List (RoseTree SyntacticObject.Vertex)
   | t@(.node _ []) => [t]
   | t@(.node _ [l, r]) => t :: (subtrees l ++ subtrees r)
   | t@(.node _ _) => [t]
 
-/-- The marked option used by raising `s` past a modifier whose complement is `c`: the whole
+/-- The marked option used by raising `s` past a modifier whose complement is `c`. The whole
 complement pied-pipes, of the whose-picture type when the noun is its specifier and of the
 picture-of-who type otherwise, and a proper part strands the rest. -/
 def markOf (c s : RoseTree SyntacticObject.Vertex) : Option Marked :=
   if s == c then (if specHasN s then none else some .pictureOfWho) else some .withoutPiedPiping
 
-/-- A stage of the enumeration: the derivation, its ordered form, the marked options of its raises
-and their number. -/
+/-- A stage of the enumeration records the derivation, its ordered form, the marked options of its
+raises and their number. -/
 structure Stage where
   derivation : Derivation
   planar : PlanarSyntacticObject
@@ -149,7 +149,7 @@ def step (m : LIToken) (st : Stage) : List Stage :=
             (markOf st.planar.val s).toList ++ st.marks, st.raises + 1⟩
       else none
 
-/-- The derivations (7) allows: the noun Merged with A, Num and Dem in turn, with an optional
+/-- The derivations (7) allows Merge the noun with A, Num and Dem in turn, with an optional
 raise after each. -/
 def stages : List Stage :=
   [⟨⟨leaf tokN, []⟩, PlanarSyntacticObject.leaf tokN, [], 0⟩].flatMap (step tokA) |>.flatMap
@@ -162,8 +162,8 @@ def Stage.order (st : Stage) : List Cat := st.derivation.surfaceCats
 /-- The orders some derivation reaches. -/
 def reachableOrders : List (List Cat) := (stages.map Stage.order).eraseDups
 
-/-- Universal 20 derived: an order is reachable iff it is attested, so the 14 attested orders have
-derivations and the 10 unattested do not. -/
+/-- Universal 20 is derived: an order is reachable iff it is attested, so the 14 attested orders
+have derivations and the 10 unattested do not. -/
 theorem u20_reachable_iff_attested :
     table.all fun r => decide (r.order ∈ reachableOrders) = decide r.Attested := by decide
 
@@ -184,13 +184,13 @@ theorem markedOptions_eq_stated :
     (table.filter fun r => r.stated.isSome && r.order != [.A, .N, .Num, .Dem]).all fun r =>
       decide (markedOptions r.order = r.stated) := by decide
 
-/-- (6w), A N Num Dem: the paper counts one marked option, the picture-of-who pied-piping of
+/-- For (6w), A N Num Dem, the paper counts one marked option, the picture-of-who pied-piping of
 `[A N]` past Num, but (7b-v) lists the order as partial, and no derivation avoids it, since the
 noun never passes A. -/
 theorem markedOptions_w : markedOptions [.A, .N, .Num, .Dem] = some 2 := by decide
 
-/-- (6p), N Dem A Num, for which the paper states no count: one, the extraction of the noun
-past Dem. -/
+/-- (6p), N Dem A Num, for which the paper states no count, has one marked option, the
+extraction of the noun past Dem. -/
 theorem markedOptions_p : markedOptions [.N, .Dem, .A, .Num] = some 1 := by decide
 
 /-- Marked options predict the extremes of frequency: an attested order has no marked option iff

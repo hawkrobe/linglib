@@ -36,7 +36,7 @@ theorem isSyntacticObject_replace (target replacement s : SyntacticObject) :
     IsSyntacticObject (UnorderedTree.replace target.val replacement.val s.val) := by
   induction s using ind with
   | leaf tok =>
-    rw [show (SyntacticObject.leaf tok).val = UnorderedTree.leaf (Sum.inl tok) from rfl,
+    rw [show (SyntacticObject.leaf tok).val = UnorderedTree.leaf (Vertex.lex tok) from rfl,
       UnorderedTree.replace_leaf]
     split
     · exact replacement.2
@@ -87,7 +87,8 @@ theorem replace_lexLeaf_of_ne {tok : LIToken} {target replacement : SyntacticObj
     (h : SyntacticObject.leaf tok ≠ target) : replace (SyntacticObject.leaf tok) target replacement
       = SyntacticObject.leaf tok := by
   apply Subtype.ext
-  rw [replace_val, show (SyntacticObject.leaf tok).val = UnorderedTree.leaf (Sum.inl tok) from rfl,
+  rw [replace_val,
+    show (SyntacticObject.leaf tok).val = UnorderedTree.leaf (Vertex.lex tok) from rfl,
       UnorderedTree.replace_leaf, ite_eq_right]
   exact fun heq => h (Subtype.ext heq)
 

@@ -13,7 +13,7 @@ public import Linglib.Core.Combinatorics.RootedTree.Conservation
 # Merge on the syntactic-object carrier
 
 Merge on the carrier is the bare binary node `SyntacticObject.merge` with root label
-`Sum.inr none`. External Merge of two objects is the algebraic Merge operator of
+`Vertex.bare`. External Merge of two objects is the algebraic Merge operator of
 `Merge/Basic.lean` on the two-object workspace (`mergeOp_node`).
 
 Internal Merge cannot be stated through the pruning coproduct on syntactic objects. A syntactic
@@ -44,7 +44,7 @@ open RoseTree UnorderedTree ConnesKreimer
 /-- External Merge on the carrier is the algebraic Merge with the bare root label on the
     two-object workspace. -/
 theorem mergeOp_node (S S' : SyntacticObject) :
-    Merge.mergeOp (R := ℤ) (Sum.inr none) S.val S'.val
+    Merge.mergeOp (R := ℤ) Vertex.bare S.val S'.val
         (of' ({S.val, S'.val} : Forest (UnorderedTree Vertex)))
       = of' (R := ℤ) ({(merge S S').val} : Forest (UnorderedTree Vertex)) := by
   rw [Merge.mergeOp_pair, merge_val]
@@ -52,15 +52,14 @@ theorem mergeOp_node (S S' : SyntacticObject) :
 mutual
 private theorem odd_numNodes_of_wellFormed : ∀ {t : RoseTree Vertex}, wellFormed t = true →
     Odd t.numNodes
-  | .node (.inl _) cs, h => by
+  | .node (.inl (some _)) cs, h => by
     rw [wellFormed, List.isEmpty_iff] at h; subst h; simp
-  | .node (.inr (some _)) cs, h => by
+  | .node (.inr _) cs, h => by
     rw [wellFormed, List.isEmpty_iff] at h; subst h; simp
-  | .node (.inr none) cs, h => by
-    rw [wellFormed, Bool.and_eq_true, Bool.or_eq_true, beq_iff_eq, beq_iff_eq] at h
+  | .node (.inl none) cs, h => by
+    rw [wellFormed, Bool.and_eq_true, beq_iff_eq] at h
     obtain ⟨hlen, hl⟩ := h
     match cs, hlen, hl with
-    | [], _, _ => simp
     | [a, b], _, hl =>
       simp only [wellFormedList, Bool.and_eq_true] at hl
       obtain ⟨x, hx⟩ := odd_numNodes_of_wellFormed hl.1
@@ -68,6 +67,7 @@ private theorem odd_numNodes_of_wellFormed : ∀ {t : RoseTree Vertex}, wellForm
       simp only [RoseTree.numNodes_node, List.map_cons, List.map_nil, List.sum_cons,
         List.sum_nil, add_zero]
       exact ⟨x + y + 1, by omega⟩
+    | [], h, _ => simp at h
     | [_], h, _ => simp at h
     | _ :: _ :: _ :: _, h, _ => simp at h
 end
