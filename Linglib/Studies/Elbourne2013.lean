@@ -3,48 +3,57 @@ module
 public import Linglib.Data.Examples.Elbourne2013
 public import Linglib.Semantics.Reference.Iota
 public import Linglib.Semantics.Presupposition.Basic
-public import Linglib.Semantics.Reference.ChoiceFunction
 public import Mathlib.Order.Minimal
 
 /-!
 # Elbourne (2013): Definite Descriptions
 
-This file formalizes [elbourne-2013]'s Fregean situation semantics for the definite article.
-Situations are parts of possible worlds, ordered by parthood, with worlds the maximal situations
-([kratzer-1989], [barwise-perry-1983]); quantifiers range over minimal situations. The article
-takes a property and a situation and, on the domain condition that exactly one thing has the
-property in that situation, denotes that thing, so a definite description is a partial function
-from situations to individuals. Its situation pronoun may be free, referring to a contextually
-given situation, or bound by the abstractor of the containing proposition. The choice yields the
-book's unifications: a free pronoun discharges the uniqueness presupposition at its referent and
-makes the sentence about a particular individual, Donnellan's referential use; a bound pronoun
-carries the presupposition to the situation the proposition is applied to, the attributive use,
-by the rule λ-Conversion II. Binding below an intensional operator gives the de dicto reading,
-reference to the actual world inside it the de re reading, and binding above it Kripke's
-attributive-yet-de-re number of the planets. Under attitude verbs the presupposition projects to
-the subject's beliefs ([karttunen-1974-presupposition]), which is why a definite description,
-unlike its Russellian paraphrase, makes Hans inconsistent when he is unsure whether there is a
-ghost in his attic. Donkey-anaphoric descriptions are bound to the minimal situations introduced
-by the restrictor, each of which contains exactly one donkey, so *every man who owns a donkey
-beats the donkey* gets the strong reading; and since a description depends only on its situation,
-a downstressed repetition of *the donkey* has no sloppy reading, unlike the relation-variable
-descriptions of [stanley-szab-2000]. Pronouns have the article's lexical entry, their noun phrase
-supplied by NP-deletion.
+Elbourne gives the definite article a Fregean semantics over situations, the parts of possible
+worlds ordered by parthood. The article takes a property and a situation and, if exactly one
+thing has the property there, denotes that thing, so a description is a partial function from
+situations to individuals. Its situation pronoun is free, referring to a situation the context
+supplies, or bound by the abstractor of the containing proposition: free pronouns give Donnellan's
+referential use and bound ones the attributive use. Binding the pronoun below an intensional
+operator gives the de dicto reading, letting it refer to the actual world the de re reading, and
+binding it above the operator Kripke's attributive yet de re reading. Under an attitude verb the
+presupposition projects to the subject's beliefs, after Karttunen, and a donkey-anaphoric
+description is bound to the minimal situations of its restrictor, which gives donkey sentences
+their strong reading and a repeated description no sloppy reading.
+
+## Main definitions
+
+* `the`, `description`, `sentence`: the article, a description with its situation pronoun, and a
+  sentence as a partial proposition.
+* `deDicto`, `deRe`, `attributiveDeRe`, `attitude`: descriptions under intensional operators and
+  attitude verbs.
+* `Village`: situations as finite sets of atomic facts.
+
+## Main results
+
+* `sentence_presup`: a sentence presupposes exactly one satisfier at the situation its pronoun
+  denotes.
+* `deDicto_presup`, `deRe_presup`, `attributiveDeRe_assertion`: the three readings under an
+  intensional operator.
+* `attitude_inconsistent_of_agnostic`, `russellian_consistent`: the description, unlike its
+  Russellian paraphrase, makes an agnostic subject's desire infelicitous.
+* `everyOwnerBeatsTheDonkey_iff`, `incomplete_description`,
+  `everyOwnerBeatsTheDonkeyAndThePriestToo_iff`: the strong donkey reading, incompleteness, and
+  the strict reading of a repeated description in the village.
 
 ## Implementation notes
 
 * Situations are any partial order; minimality is mathlib's `Minimal`, and the lexical entries of
   §2.3.3 are transcribed with it. The article is `iota` at the situation, so its domain
   condition is `∃!` (`the_isSome_iff`), and a sentence is `PartialProp.presupOfReferent` of the
-  description; the free/bound status of a situation pronoun is the substrate's `SitVarStatus`,
-  whose two values the book introduced. A description inside a scope contributes `∃ z ∈ the f s`,
-  the assertion of `presupOfReferent` with `Option` membership.
+  description. A situation pronoun is its value as a function of the situation the proposition
+  is applied to, constant when free and the identity when bound. A description inside a scope
+  contributes `∃ z ∈ the f s`, the assertion of `presupOfReferent` with `Option` membership.
 * Intensional operators are universal over an accessibility relation and lift partial
   propositions by requiring presupposition and assertion throughout the accessible situations;
   attitude verbs check the presupposition in the subject's doxastic alternatives and the
   assertion in the verb's own, Karttunen's projection.
 * The village of ch. 6 and ch. 9 is a concrete model: situations are finite sets of atomic
-  facts ordered by inclusion, [kratzer-1989]'s states of affairs, so minimal situations are
+  facts ordered by inclusion, Kratzer's states of affairs, so minimal situations are
   computed and the strong reading of the donkey sentence is a theorem rather than a reading of
   the truth conditions.
 * The examples are `Data.Examples.Elbourne2013`.
@@ -83,29 +92,29 @@ section Quantification
 
 variable {S : Type*} [PartialOrder S] {E : Type*}
 
-/-- The morpheme `Q` (22): an extended situation, a minimal situation between `s'` and `s` in
-which `x` has the property. -/
+/-- The morpheme `Q`, (22), holds of `x` when there is an extended situation, a minimal situation
+between `s'` and `s` in which `x` has the property. -/
 def Q (f : E → S → Prop) (x : E) (s s' : S) : Prop :=
-  ∃ s'', Minimal (λ s'' => s' ≤ s'' ∧ s'' ≤ s ∧ f x s'') s''
+  ∃ s'', Minimal (fun s'' ↦ s' ≤ s'' ∧ s'' ≤ s ∧ f x s'') s''
 
-/-- `every` (20): every minimal situation, within the restrictor situation `s₀` and the
-truth-supporting situation `s`, in which an individual has the restrictor property satisfies the
-nuclear scope. -/
+/-- `every`, (20), holds when every minimal situation, within the restrictor situation `s₀` and
+the truth-supporting situation `s`, in which an individual has the restrictor property satisfies
+the nuclear scope. -/
 def every (s₀ : S) (f : E → S → Prop) (g : E → S → S → Prop) (s : S) : Prop :=
-  ∀ x s', Minimal (λ s' => s' ≤ s₀ ∧ s' ≤ s ∧ f x s') s' → g x s s'
+  ∀ x s', Minimal (fun s' ↦ s' ≤ s₀ ∧ s' ≤ s ∧ f x s') s' → g x s s'
 
-/-- `a` (21): some minimal restrictor situation satisfies the nuclear scope. -/
+/-- `a`, (21), holds when some minimal restrictor situation satisfies the nuclear scope. -/
 def a (s₀ : S) (f : E → S → Prop) (g : E → S → S → Prop) (s : S) : Prop :=
-  ∃ x s', Minimal (λ s' => s' ≤ s₀ ∧ s' ≤ s ∧ f x s') s' ∧ g x s s'
+  ∃ x s', Minimal (fun s' ↦ s' ≤ s₀ ∧ s' ≤ s ∧ f x s') s' ∧ g x s s'
 
-/-- `always` (33): every minimal situation in `s` satisfying the antecedent satisfies the
-consequent. -/
+/-- `always`, (33), holds when every minimal situation in `s` satisfying the antecedent satisfies
+the consequent. -/
 def always (p : S → Prop) (q : S → S → Prop) (s : S) : Prop :=
-  ∀ s', Minimal (λ s' => s' ≤ s ∧ p s') s' → q s s'
+  ∀ s', Minimal (fun s' ↦ s' ≤ s ∧ p s') s' → q s s'
 
-/-- The morpheme `Q_A` (34), the propositional counterpart of `Q`. -/
+/-- The morpheme `Q_A`, (34), is the propositional counterpart of `Q`. -/
 def QA (p : S → Prop) (s s' : S) : Prop :=
-  ∃ s'', Minimal (λ s'' => s' ≤ s'' ∧ s'' ≤ s ∧ p s'') s''
+  ∃ s'', Minimal (fun s'' ↦ s' ≤ s'' ∧ s'' ≤ s ∧ p s'') s''
 
 end Quantification
 
@@ -115,11 +124,12 @@ section Article
 
 variable {S E : Type*}
 
-/-- The definite article, (3) of ch. 3: `λf.λs : ∃!x f(x)(s). ιx f(x)(s)`, a partial function
+/-- The definite article, (3) of ch. 3, is `λf.λs : ∃!x f(x)(s). ιx f(x)(s)`, a partial function
 from situations to the unique satisfier of the property in the situation. -/
 noncomputable def the (f : E → S → Prop) (s : S) : Option E := iota (f · s)
 
-/-- The domain condition of the article: exactly one satisfier in the situation. -/
+/-- The domain condition of the article is that exactly one thing has the property in the
+situation. -/
 theorem the_isSome_iff (f : E → S → Prop) (s : S) : (the f s).isSome ↔ ∃! x, f x s :=
   iota_isSome_iff _
 
@@ -127,98 +137,80 @@ theorem the_eq_some_iff (f : E → S → Prop) (s : S) (x : E) :
     the f s = some x ↔ f x s ∧ ∀ y, f y s → y = x :=
   iota_eq_some_iff _
 
-/-- A pronoun, (4b) of ch. 10: the article's entry, its noun phrase supplied by NP-deletion. -/
+/-- A pronoun, (4b) of ch. 10, has the article's entry, its noun phrase supplied by
+NP-deletion. -/
 noncomputable def pronoun (np : E → S → Prop) : S → Option E := the np
 
-/-- The situation a situation pronoun contributes at evaluation situation `s`: its referent `s₀`
-when free, the situation abstracted over by the containing proposition when bound (Situation
-Binding I and λ-Conversion II). -/
-def sitValue : SitVarStatus → S → S → S
-  | .free, s₀, _ => s₀
-  | .bound, _, s => s
+/-- `[[the NP] sᵢ]`, (4) of ch. 3, is the description with its situation pronoun, whose value is
+the function `σ` of the situation the containing proposition is applied to. A free pronoun is
+constant, so that the referent enters via the context and is the same wherever the proposition
+is applied, the referential use of (11) of ch. 5; a bound one is the identity (Situation Binding
+I and λ-Conversion II), so that the individual described depends on the situation of
+evaluation, the attributive use of (15) of ch. 5. -/
+noncomputable def description (σ : S → S) (f : E → S → Prop) (s : S) : Option E :=
+  the f (σ s)
 
-/-- `[[the NP] sᵢ]`, (4) of ch. 3: the description with its situation pronoun. -/
-noncomputable def description (st : SitVarStatus) (s₀ : S) (f : E → S → Prop) (s : S) :
-    Option E :=
-  the f (sitValue st s₀ s)
+/-- `[[[the NP] sᵢ] VP]` is the sentence as a partial proposition, (3) of ch. 4 for a free
+pronoun and (4) for a bound one. -/
+noncomputable def sentence (σ : S → S) (f vp : E → S → Prop) : PartialProp S :=
+  PartialProp.presupOfReferent (description σ f) vp
 
-/-- `[[[the NP] sᵢ] VP]`: the sentence as a partial proposition, (3) of ch. 4 for a free pronoun
-and (4) for a bound one. -/
-noncomputable def sentence (st : SitVarStatus) (s₀ : S) (f vp : E → S → Prop) : PartialProp S :=
-  PartialProp.presupOfReferent (description st s₀ f) vp
-
-/-- A referential situation pronoun discharges the domain condition at its referent, whatever
-situation the proposition is applied to. -/
-theorem sentence_free_presup (s₀ : S) (f vp : E → S → Prop) (s : S) :
-    (sentence .free s₀ f vp).presup s ↔ ∃! x, f x s₀ :=
-  the_isSome_iff f s₀
-
-/-- A bound situation pronoun carries the domain condition to the topic situation: the
-proposition is partial, and presupposes exactly one satisfier where it is applied. -/
-theorem sentence_bound_presup (s₀ : S) (f vp : E → S → Prop) (s : S) :
-    (sentence .bound s₀ f vp).presup s ↔ ∃! x, f x s :=
-  the_isSome_iff f s
+/-- The sentence presupposes exactly one satisfier at the situation its pronoun denotes. A free
+pronoun discharges the domain condition at its referent, whatever situation the proposition is
+applied to; a bound one carries it to the situation where the proposition is applied. -/
+theorem sentence_presup (σ : S → S) (f vp : E → S → Prop) (s : S) :
+    (sentence σ f vp).presup s ↔ ∃! x, f x (σ s) :=
+  the_isSome_iff f (σ s)
 
 /-- Where the description denotes, the sentence says of that individual what the predicate says
 of it; a referential description makes the proposition object-dependent, (12) of ch. 5. -/
-theorem sentence_assertion (st : SitVarStatus) (s₀ : S) (f vp : E → S → Prop) {s : S} {x : E}
-    (h : description st s₀ f s = some x) : (sentence st s₀ f vp).assertion s ↔ vp x s :=
+theorem sentence_assertion (σ : S → S) (f vp : E → S → Prop) {s : S} {x : E}
+    (h : description σ f s = some x) : (sentence σ f vp).assertion s ↔ vp x s :=
   Iff.of_eq (PartialProp.presupOfReferent_assertion_some _ _ _ _ h)
-
-/-- Attributive use, (15) of ch. 5: the description is bound, so which individual is described
-is a function of the situation of evaluation, not of the context. -/
-theorem description_bound (s₀ : S) (f : E → S → Prop) (s : S) :
-    description .bound s₀ f s = the f s :=
-  rfl
-
-/-- Referential use, (11) of ch. 5: the referent enters via the context and is the same at every
-situation of evaluation. -/
-theorem description_free (s₀ : S) (f : E → S → Prop) (s s' : S) :
-    description .free s₀ f s = description .free s₀ f s' :=
-  rfl
 
 /-! ### Intensional operators: de re, de dicto, attributive de re (ch. 7) -/
 
-/-- A universal intensional operator over an accessibility relation, on partial propositions:
-presupposition and assertion of the prejacent are required throughout the accessible
-situations, as in (12) and (14) of ch. 7. -/
+/-- A universal intensional operator over an accessibility relation requires the presupposition
+and the assertion of a partial proposition throughout the accessible situations, as in (12) and
+(14) of ch. 7. -/
 def box (R : S → Set S) (p : PartialProp S) : PartialProp S where
-  presup := λ s => ∀ w ∈ R s, p.presup w
-  assertion := λ s => ∀ w ∈ R s, p.assertion w
+  presup := fun s ↦ ∀ w ∈ R s, p.presup w
+  assertion := fun s ↦ ∀ w ∈ R s, p.assertion w
 
-/-- De dicto, (11) of ch. 7: the situation pronoun bound by `ς` immediately below the operator. -/
-noncomputable def deDicto (R : S → Set S) (s₀ : S) (f vp : E → S → Prop) : PartialProp S :=
-  box R (sentence .bound s₀ f vp)
-
-/-- De re, (13) of ch. 7: a referential situation pronoun, to the actual world `w₀`, inside the
+/-- De dicto, (11) of ch. 7, the situation pronoun is bound by `ς` immediately below the
 operator. -/
-noncomputable def deRe (R : S → Set S) (w₀ : S) (f vp : E → S → Prop) : PartialProp S :=
-  box R (sentence .free w₀ f vp)
+noncomputable def deDicto (R : S → Set S) (f vp : E → S → Prop) : PartialProp S :=
+  box R (sentence id f vp)
 
-/-- Attributive de re, (17) and (25) of ch. 7: the pronoun bound above the operator, so the
+/-- De re, (13) of ch. 7, the situation pronoun inside the operator refers to the actual world
+`w₀`. -/
+noncomputable def deRe (R : S → Set S) (w₀ : S) (f vp : E → S → Prop) : PartialProp S :=
+  box R (sentence (fun _ ↦ w₀) f vp)
+
+/-- Attributive de re, (17) and (25) of ch. 7, the pronoun is bound above the operator, so the
 description is evaluated at the topic situation and only the predicate is modalized. -/
 noncomputable def attributiveDeRe (R : S → Set S) (f vp : E → S → Prop) : PartialProp S :=
-  PartialProp.presupOfReferent (the f) λ x s => ∀ w ∈ R s, vp x w
+  PartialProp.presupOfReferent (the f) fun x s ↦ ∀ w ∈ R s, vp x w
 
-/-- De dicto: every accessible situation must contain exactly one satisfier, and the satisfiers
+/-- De dicto, every accessible situation must contain exactly one satisfier, and the satisfiers
 may differ. -/
-theorem deDicto_presup (R : S → Set S) (s₀ : S) (f vp : E → S → Prop) (s : S) :
-    (deDicto R s₀ f vp).presup s ↔ ∀ w ∈ R s, ∃! x, f x w :=
-  forall₂_congr λ w _ => sentence_bound_presup s₀ f vp w
+theorem deDicto_presup (R : S → Set S) (f vp : E → S → Prop) (s : S) :
+    (deDicto R f vp).presup s ↔ ∀ w ∈ R s, ∃! x, f x w :=
+  forall₂_congr fun w _ ↦ sentence_presup id f vp w
 
-/-- De re: the satisfier is fixed in the actual world, and need not satisfy the property in the
+/-- De re, the satisfier is fixed in the actual world, and need not satisfy the property in the
 accessible situations. -/
 theorem deRe_presup (R : S → Set S) (w₀ : S) (f vp : E → S → Prop) (s : S) :
     (deRe R w₀ f vp).presup s ↔ ∀ w ∈ R s, ∃! x, f x w₀ :=
-  forall₂_congr λ w _ => sentence_free_presup w₀ f vp w
+  forall₂_congr fun w _ ↦ sentence_presup (fun _ ↦ w₀) f vp w
 
 /-- Attributive de re presupposes exactly one satisfier in the topic situation. -/
 theorem attributiveDeRe_presup (R : S → Set S) (f vp : E → S → Prop) (s : S) :
     (attributiveDeRe R f vp).presup s ↔ ∃! x, f x s :=
   the_isSome_iff f s
 
-/-- Kripke's number of the planets, (16) of ch. 7: attributive, since the speaker need not know
-which number, yet de re, since the number in the topic situation is what is odd in every
+/-- Kripke's number of the planets, (16) of ch. 7, is attributive, since the speaker need not
+know which number, yet de re, since the number in the topic situation is what is odd in every
 accessible world. -/
 theorem attributiveDeRe_assertion (R : S → Set S) (f vp : E → S → Prop) {s : S} {x : E}
     (h : the f s = some x) : (attributiveDeRe R f vp).assertion s ↔ ∀ w ∈ R s, vp x w :=
@@ -226,64 +218,63 @@ theorem attributiveDeRe_assertion (R : S → Set S) (f vp : E → S → Prop) {s
 
 /-! ### Existence entailments (ch. 8) -/
 
-/-- An attitude verb with [karttunen-1974-presupposition]'s projection (§8.6): the complement's
-presupposition is presupposed to hold throughout the subject's doxastic alternatives, its
+/-- An attitude verb with [karttunen-1974-presupposition]'s projection (§8.6) presupposes the
+complement's presupposition throughout the subject's doxastic alternatives and asserts its
 assertion throughout the verb's own alternatives, doxastic for *believe* and bouletic for
 *want*. -/
 def attitude (dox R : S → Set S) (p : PartialProp S) : PartialProp S where
-  presup := λ s => ∀ w ∈ dox s, p.presup w
-  assertion := λ s => ∀ w ∈ R s, p.assertion w
+  presup := fun s ↦ ∀ w ∈ dox s, p.presup w
+  assertion := fun s ↦ ∀ w ∈ R s, p.assertion w
 
-/-- (40)–(41) of ch. 8: *Hans wants the ghost in his attic to be quiet* presupposes that Hans
+/-- *Hans wants the ghost in his attic to be quiet*, (40)–(41) of ch. 8, presupposes that Hans
 believes there is exactly one ghost in his attic. -/
-theorem attitude_presup (dox R : S → Set S) (s₀ : S) (f vp : E → S → Prop) (s : S) :
-    (attitude dox R (sentence .bound s₀ f vp)).presup s ↔ ∀ w ∈ dox s, ∃! x, f x w :=
-  forall₂_congr λ w _ => sentence_bound_presup s₀ f vp w
+theorem attitude_presup (dox R : S → Set S) (f vp : E → S → Prop) (s : S) :
+    (attitude dox R (sentence id f vp)).presup s ↔ ∀ w ∈ dox s, ∃! x, f x w :=
+  forall₂_congr fun w _ ↦ sentence_presup id f vp w
 
-/-- (31) with (33b): a subject unsure whether there is a ghost in his attic cannot felicitously
-want the ghost in his attic to be quiet, since the presupposition attributes the belief to him. -/
-theorem attitude_inconsistent_of_agnostic (dox R : S → Set S) (s₀ : S) (f vp : E → S → Prop)
-    {s : S} (h : ∃ w ∈ dox s, ¬ ∃ x, f x w) :
-    ¬ (attitude dox R (sentence .bound s₀ f vp)).presup s := by
+/-- A subject unsure whether there is a ghost in his attic cannot felicitously want the ghost in
+his attic to be quiet, (31) with (33b), since the presupposition attributes the belief to him. -/
+theorem attitude_inconsistent_of_agnostic (dox R : S → Set S) (f vp : E → S → Prop) {s : S}
+    (h : ∃ w ∈ dox s, ¬ ∃ x, f x w) : ¬ (attitude dox R (sentence id f vp)).presup s := by
   rw [attitude_presup]
   intro hp
   obtain ⟨w, hw, hno⟩ := h
   exact hno (hp w hw).exists
 
-/-- The Russellian paraphrase (33a): existence and uniqueness asserted inside the attitude. -/
+/-- The Russellian paraphrase (33a) asserts existence and uniqueness inside the attitude. -/
 def russellian (R : S → Set S) (f vp : E → S → Prop) (s : S) : Prop :=
   ∀ w ∈ R s, ∃ x, f x w ∧ (∀ y, f y w → y = x) ∧ vp x w
 
-/-- (39) of ch. 8: the antecedent of a conditional is a hole, so the existence presupposition of
+/-- The antecedent of a conditional is a hole, (39) of ch. 8, so the existence presupposition of
 the description projects to the whole conditional. -/
-theorem conditional_presup (s₀ : S) (f vp : E → S → Prop) (q : PartialProp S) (s : S) :
-    (PartialProp.imp (sentence .bound s₀ f vp) q).presup s ↔ (∃! x, f x s) ∧ q.presup s :=
-  and_congr_left' (sentence_bound_presup s₀ f vp s)
+theorem conditional_presup (f vp : E → S → Prop) (q : PartialProp S) (s : S) :
+    (PartialProp.imp (sentence id f vp) q).presup s ↔ (∃! x, f x s) ∧ q.presup s :=
+  and_congr_left' (sentence_presup id f vp s)
 
 end Article
 
-/-- (31) with (33a): the Russellian paraphrase is consistent with agnosticism, since the
-existence claim sits inside the bouletic alternatives; a witness with two situations, one
+/-- The Russellian paraphrase is consistent with agnosticism, (31) with (33a), since the
+existence claim sits inside the bouletic alternatives. The witness has two situations, one
 without a ghost that the subject leaves open and one with a quiet ghost that he wants. -/
 theorem russellian_consistent :
     ∃ (dox R : Bool → Set Bool) (f vp : Unit → Bool → Prop),
       (∃ w ∈ dox true, ¬ ∃ x, f x w) ∧ russellian R f vp true :=
-  ⟨λ _ => Set.univ, λ _ => {true}, λ _ w => w = true, λ _ _ => True,
-    ⟨false, Set.mem_univ _, by simp⟩, λ w hw => ⟨(), hw, λ _ _ => rfl, trivial⟩⟩
+  ⟨fun _ ↦ Set.univ, fun _ ↦ {true}, fun _ w ↦ w = true, fun _ _ ↦ True,
+    ⟨false, Set.mem_univ _, by simp⟩, fun w hw ↦ ⟨(), hw, fun _ _ ↦ rfl, trivial⟩⟩
 
-/-- (36) of ch. 8: under an attitude verb the description commits the subject, not the speaker,
-to a fountain of youth. The presupposition holds although there is none in the topic
+/-- Under an attitude verb the description commits the subject, not the speaker, to a fountain
+of youth, (36) of ch. 8. The presupposition holds although there is none in the topic
 situation. -/
 theorem attitude_presup_not_speaker :
     ∃ (dox R : Bool → Set Bool) (f vp : Unit → Bool → Prop) (s : Bool),
-      (attitude dox R (sentence .bound s f vp)).presup s ∧ ¬ ∃ x, f x s :=
-  ⟨λ _ => {true}, λ _ => {true}, λ _ w => w = true, λ _ _ => True, false,
-    (attitude_presup _ _ _ _ _ _).mpr λ w hw => ⟨(), hw, λ _ _ => rfl⟩, by simp⟩
+      (attitude dox R (sentence id f vp)).presup s ∧ ¬ ∃ x, f x s :=
+  ⟨fun _ ↦ {true}, fun _ ↦ {true}, fun _ w ↦ w = true, fun _ _ ↦ True, false,
+    (attitude_presup _ _ _ _ _).mpr fun w hw ↦ ⟨(), hw, fun _ _ ↦ rfl⟩, by simp⟩
 
 /-! ### The village: situations as sets of facts (ch. 6, ch. 9) -/
 
-/-- Atomic facts of a village: [kratzer-1989]'s states of affairs, thin particulars instantiating
-properties and relations. -/
+/-- The atomic facts of a village are [kratzer-1989]'s states of affairs, thin particulars
+instantiating properties and relations. -/
 inductive Fact (E : Type*)
   | farmer (x : E)
   | donkey (x : E)
@@ -304,11 +295,11 @@ variable {E : Type*}
 
 /-- The minimal situations containing a fact within two bounds are the singleton. -/
 theorem exists_minimal_singleton_iff {t u : Village E} (φ : Fact E) (g : Village E → Prop) :
-    (∃ s, Minimal (λ s => s ≤ t ∧ s ≤ u ∧ φ ∈ s) s ∧ g s) ↔ φ ∈ t ∧ φ ∈ u ∧ g {φ} := by
+    (∃ s, Minimal (fun s ↦ s ≤ t ∧ s ≤ u ∧ φ ∈ s) s ∧ g s) ↔ φ ∈ t ∧ φ ∈ u ∧ g {φ} := by
   have hmin (ht : φ ∈ t) (hu : φ ∈ u) (s : Village E) :
-      Minimal (λ s => s ≤ t ∧ s ≤ u ∧ φ ∈ s) s ↔ s = {φ} :=
+      Minimal (fun s ↦ s ≤ t ∧ s ≤ u ∧ φ ∈ s) s ↔ s = {φ} :=
     minimal_iff_eq ⟨Finset.singleton_subset_iff.mpr ht, Finset.singleton_subset_iff.mpr hu,
-      Finset.mem_singleton_self φ⟩ λ _ h => Finset.singleton_subset_iff.mpr h.2.2
+      Finset.mem_singleton_self φ⟩ fun _ h ↦ Finset.singleton_subset_iff.mpr h.2.2
   constructor
   · rintro ⟨s, hs, hg⟩
     have ht := hs.prop.1 hs.prop.2.2
@@ -319,28 +310,29 @@ theorem exists_minimal_singleton_iff {t u : Village E} (φ : Fact E) (g : Villag
 
 variable [DecidableEq E]
 
-/-- An extended situation for a set of facts exists exactly when the facts hold in the
-truth-supporting situation. -/
+/-- An extended situation for a set of facts exists exactly when `s'` is part of `s` and the
+facts hold in `s`. -/
 theorem Q_subset_iff (Φ : E → Village E) (x : E) (s s' : Village E) :
-    Q (λ x s'' => Φ x ⊆ s'') x s s' ↔ s' ≤ s ∧ Φ x ⊆ s := by
+    Q (fun x s'' ↦ Φ x ⊆ s'') x s s' ↔ s' ≤ s ∧ Φ x ⊆ s := by
   constructor
   · rintro ⟨s'', hs''⟩
     exact ⟨hs''.prop.1.trans hs''.prop.2.1, hs''.prop.2.2.trans hs''.prop.2.1⟩
   · rintro ⟨hle, hsub⟩
     exact ⟨s' ∪ Φ x, (minimal_iff_eq ⟨Finset.subset_union_left, Finset.union_subset hle hsub,
-      Finset.subset_union_right⟩ λ _ h => Finset.union_subset h.1 h.2.2).mpr rfl⟩
+      Finset.subset_union_right⟩ fun _ h ↦ Finset.union_subset h.1 h.2.2).mpr rfl⟩
 
-/-- The singleton case: an extended situation for a fact. -/
+/-- An extended situation for a single fact exists exactly when `s'` is part of `s` and the fact
+holds in `s`. -/
 theorem Q_mem_iff (φ : E → Fact E) (x : E) (s s' : Village E) :
-    Q (λ x s'' => φ x ∈ s'') x s s' ↔ s' ≤ s ∧ φ x ∈ s := by
-  simpa only [Finset.singleton_subset_iff] using Q_subset_iff (λ x => {φ x}) x s s'
+    Q (fun x s'' ↦ φ x ∈ s'') x s s' ↔ s' ≤ s ∧ φ x ∈ s := by
+  simpa only [Finset.singleton_subset_iff] using Q_subset_iff (fun x ↦ {φ x}) x s s'
 
-/-- *man who owns a donkey*, the restrictor of (4) in ch. 6 with `a` and `Q` inside the relative
-clause. -/
+/-- *man who owns a donkey* is the restrictor of (4) in ch. 6, with `a` and `Q` inside the
+relative clause. -/
 def ownsADonkey (s₀ : Village E) (x : E) (s' : Village E) : Prop :=
   Fact.farmer x ∈ s' ∧
-    a s₀ (λ y (s : Village E) => Fact.donkey y ∈ s)
-      (λ y => Q (λ y (s : Village E) => Fact.owns x y ∈ s) y) s'
+    a s₀ (fun y (s : Village E) ↦ Fact.donkey y ∈ s)
+      (fun y ↦ Q (fun y (s : Village E) ↦ Fact.owns x y ∈ s) y) s'
 
 /-- The relative clause unfolds to facts in the situation. -/
 theorem ownsADonkey_iff (s₀ : Village E) (x : E) {s' : Village E} (h : s' ≤ s₀) :
@@ -352,10 +344,10 @@ theorem ownsADonkey_iff (s₀ : Village E) (x : E) {s' : Village E} (h : s' ≤ 
   · rintro ⟨hf, y, hd, ho⟩
     exact ⟨hf, y, h hd, hd, hd, ho⟩
 
-/-- The minimal situations of a farmer owning a donkey within the world: one per owned donkey,
-consisting of the farmer, the donkey and the owning. -/
+/-- Within the world there is one minimal situation of a farmer owning a donkey per owned
+donkey, consisting of the farmer, the donkey and the owning. -/
 theorem minimal_ownsADonkey_iff (w : Village E) (x : E) (s' : Village E) :
-    Minimal (λ s' => s' ≤ w ∧ s' ≤ w ∧ ownsADonkey w x s') s' ↔
+    Minimal (fun s' ↦ s' ≤ w ∧ s' ≤ w ∧ ownsADonkey w x s') s' ↔
       ∃ y, Fact.farmer x ∈ w ∧ Fact.donkey y ∈ w ∧ Fact.owns x y ∈ w ∧
         s' = {Fact.farmer x, Fact.donkey y, Fact.owns x y} := by
   constructor
@@ -387,42 +379,42 @@ theorem minimal_ownsADonkey_iff (w : Village E) (x : E) (s' : Village E) :
       simp only [Finset.insert_subset_iff, Finset.singleton_subset_iff]
       exact ⟨hf', hd', ho'⟩
 
-/-- In the minimal situation of a farmer owning a donkey, *the donkey* denotes that donkey:
-uniqueness from minimality. -/
+/-- In the minimal situation of a farmer owning a donkey, *the donkey* denotes that donkey, unique
+by minimality. -/
 theorem the_donkey_minimal (x y : E) :
-    the (λ z (s : Village E) => Fact.donkey z ∈ s) {Fact.farmer x, Fact.donkey y, Fact.owns x y} =
+    the (fun z (s : Village E) ↦ Fact.donkey z ∈ s) {Fact.farmer x, Fact.donkey y, Fact.owns x y} =
       some y := by
   rw [the_eq_some_iff]
-  refine ⟨by simp, λ z hz => ?_⟩
+  refine ⟨by simp, fun z hz ↦ ?_⟩
   simp only [Finset.mem_insert, Finset.mem_singleton, reduceCtorEq, false_or, or_false,
     Fact.donkey.injEq] at hz
   exact hz
 
-/-- The domain condition of the donkey-anaphoric description is met by minimality: every minimal
-situation of a farmer owning a donkey contains exactly one donkey, §6.2. -/
+/-- The domain condition of the donkey-anaphoric description is met by minimality, since every
+minimal situation of a farmer owning a donkey contains exactly one donkey, §6.2. -/
 theorem existsUnique_donkey_of_minimal (w : Village E) (x : E) {s' : Village E}
-    (hs : Minimal (λ s' => s' ≤ w ∧ s' ≤ w ∧ ownsADonkey w x s') s') :
+    (hs : Minimal (fun s' ↦ s' ≤ w ∧ s' ≤ w ∧ ownsADonkey w x s') s') :
     ∃! z, Fact.donkey z ∈ s' := by
   obtain ⟨y, -, -, -, rfl⟩ := (minimal_ownsADonkey_iff w x s').mp hs
-  exact (the_isSome_iff (λ z (s : Village E) => Fact.donkey z ∈ s) _).mp
+  exact (the_isSome_iff (fun z (s : Village E) ↦ Fact.donkey z ∈ s) _).mp
     (by rw [the_donkey_minimal]; rfl)
 
-/-- The nuclear scope of (4) in ch. 6, `σ₃ [Q [beats [the donkey s₃]]]`: Situation Binding III
+/-- The nuclear scope of (4) in ch. 6 is `σ₃ [Q [beats [the donkey s₃]]]`. Situation Binding III
 binds the description to the restrictor's minimal situation `s'`, and `Q` extends `s'` to a
 situation in which the beating holds. -/
 noncomputable def beatsTheDonkey (x : E) (s s' : Village E) : Prop :=
-  Q (λ x s'' => ∃ z ∈ the (λ z (s : Village E) => Fact.donkey z ∈ s) s', Fact.beats x z ∈ s'')
+  Q (fun x s'' ↦ ∃ z ∈ the (fun z (s : Village E) ↦ Fact.donkey z ∈ s) s', Fact.beats x z ∈ s'')
     x s s'
 
-/-- (3) of ch. 6, *every man who owns a donkey beats the donkey*, with the LF (4). -/
+/-- This is (3) of ch. 6, *every man who owns a donkey beats the donkey*, with the LF (4). -/
 noncomputable def everyOwnerBeatsTheDonkey (s₀ s : Village E) : Prop :=
   every s₀ (ownsADonkey s₀) beatsTheDonkey s
 
-/-- (10a) of ch. 10, *every man who owns a donkey beats it*: the pronoun with its deleted noun
-phrase in place of the description. -/
+/-- In (10a) of ch. 10, *every man who owns a donkey beats it*, the pronoun with its deleted noun
+phrase stands in place of the description. -/
 noncomputable def everyOwnerBeatsIt (s₀ s : Village E) : Prop :=
   every s₀ (ownsADonkey s₀)
-    (λ x s s' => Q (λ x s'' => ∃ z ∈ pronoun (λ z (s : Village E) => Fact.donkey z ∈ s) s',
+    (fun x s s' ↦ Q (fun x s'' ↦ ∃ z ∈ pronoun (fun z (s : Village E) ↦ Fact.donkey z ∈ s) s',
       Fact.beats x z ∈ s'') x s s') s
 
 private theorem beatsTheDonkey_iff (w : Village E) (x y : E) :
@@ -431,9 +423,9 @@ private theorem beatsTheDonkey_iff (w : Village E) (x y : E) :
   unfold beatsTheDonkey
   rw [the_donkey_minimal]
   simp only [Option.mem_def, Option.some.injEq, exists_eq_left']
-  exact Q_mem_iff (λ x => Fact.beats x y) x w _
+  exact Q_mem_iff (fun x ↦ Fact.beats x y) x w _
 
-/-- The neat semantics for donkey sentences (§6.2): in the village world, the sentence is true
+/-- On the neat semantics for donkey sentences (§6.2), the sentence is true in the village world
 iff every farmer beats every donkey he owns. The bound description picks out the unique donkey
 of each minimal owning situation, so the reading is the strong one. -/
 theorem everyOwnerBeatsTheDonkey_iff (w : Village E) :
@@ -455,33 +447,34 @@ theorem everyOwnerBeatsIt_iff (w : Village E) :
 
 /-! ### Incompleteness and the argument from sloppy identity (ch. 9) -/
 
-/-- The room of (4) in ch. 9, with one table, covered with books. -/
+/-- The room of (4) in ch. 9 has one table, covered with books. -/
 def room : Village Bool := {Fact.table true, Fact.covered true}
 
-/-- The world containing the room and a second table. -/
+/-- The world contains the room and a second table. -/
 def world : Village Bool := {Fact.table true, Fact.table false, Fact.covered true}
 
 theorem room_le_world : room ≤ world := by decide
 
-/-- Incompleteness, (4) of ch. 9: *the table is covered with books* said in a room with one table.
-The referential situation pronoun to the room satisfies the domain condition although the world
-contains two tables. -/
+/-- Incompleteness, (4) of ch. 9, arises when *the table is covered with books* is said in a room
+with one table. The referential situation pronoun to the room satisfies the domain condition
+although the world contains two tables. -/
 theorem incomplete_description :
-    (sentence .free room (λ x (s : Village Bool) => Fact.table x ∈ s)
-        (λ x s => Fact.covered x ∈ s)).presup world ∧
+    (sentence (fun _ ↦ room) (fun x (s : Village Bool) ↦ Fact.table x ∈ s)
+        (fun x s ↦ Fact.covered x ∈ s)).presup world ∧
       ¬ ∃! x, Fact.table x ∈ world :=
-  ⟨(sentence_free_presup _ _ _ _).mpr ⟨true, by decide, by decide⟩, λ ⟨_, _, h⟩ =>
+  ⟨(sentence_presup _ _ _ _).mpr ⟨true, by decide, by decide⟩, fun ⟨_, _, h⟩ ↦
     Bool.noConfusion ((h true (by decide)).trans (h false (by decide)).symm)⟩
 
-/-- A relation-variable description, §9.2.1: `the [f v] NP`, the unique NP-satisfier standing in
-the covert relation to the individual variable `v`, which a higher quantifier may bind. -/
+/-- A relation-variable description `the [f v] NP`, §9.2.1, denotes the unique NP-satisfier
+standing in the covert relation to the individual variable `v`, which a higher quantifier may
+bind. -/
 noncomputable def relDescription {S : Type*} (rel : E → E → S → Prop) (np : E → S → Prop) (v : E)
     (s : S) : Option E :=
-  iota λ x => np x s ∧ rel x v s
+  iota fun x ↦ np x s ∧ rel x v s
 
 omit [DecidableEq E] in
-/-- The relation-variable description covaries with its individual variable: *the donkey* as
-*the donkey v owns* denotes each owner's own donkey, which licenses the sloppy reading of (17b)
+/-- The relation-variable description covaries with its individual variable. Read as *the donkey
+v owns*, *the donkey* denotes each owner's own donkey, which licenses the sloppy reading of (17b)
 in ch. 9 and would wrongly license one for (17a). -/
 theorem relDescription_eq_some_iff {S : Type*} (rel : E → E → S → Prop) (np : E → S → Prop)
     (v : E) (s : S) (x : E) :
@@ -490,33 +483,33 @@ theorem relDescription_eq_some_iff {S : Type*} (rel : E → E → S → Prop) (n
   rw [relDescription, iota_eq_some_iff]
   simp only [and_imp]
 
-/-- (29) of ch. 9 with the LF (31): *every farmer who owns a donkey beats the donkey, and the
-priest beats the donkey too*. The quantifier scopes over the conjunction, and both occurrences of
+/-- In (29) of ch. 9, *every farmer who owns a donkey beats the donkey, and the priest beats the
+donkey too*, with the LF (31), the quantifier scopes over the conjunction, and both occurrences of
 *the donkey* are bound by `σ` to the same minimal situation. -/
 noncomputable def everyOwnerBeatsTheDonkeyAndThePriestToo (s₀ s : Village E) : Prop :=
   every s₀ (ownsADonkey s₀)
-    (λ x s s' => Q (λ x s'' => ∃ z ∈ the (λ z (s : Village E) => Fact.donkey z ∈ s) s',
+    (fun x s s' ↦ Q (fun x s'' ↦ ∃ z ∈ the (fun z (s : Village E) ↦ Fact.donkey z ∈ s) s',
       Fact.beats x z ∈ s'' ∧
-        ∃ p ∈ the (λ p (s : Village E) => Fact.priest p ∈ s) s₀, Fact.beats p z ∈ s'') x s s') s
+        ∃ p ∈ the (fun p (s : Village E) ↦ Fact.priest p ∈ s) s₀, Fact.beats p z ∈ s'') x s s') s
 
-/-- The strict reading, (32) of ch. 9: the priest beats each farmer's donkey. A sloppy reading,
+/-- On the strict reading, (32) of ch. 9, the priest beats each farmer's donkey. A sloppy reading,
 on which the priest beats his own donkey, would need the description to depend on an individual
 variable, which the situation-variable description lacks. -/
 theorem everyOwnerBeatsTheDonkeyAndThePriestToo_iff (w : Village E) {p : E}
-    (hp : the (λ p (s : Village E) => Fact.priest p ∈ s) w = some p) :
+    (hp : the (fun p (s : Village E) ↦ Fact.priest p ∈ s) w = some p) :
     everyOwnerBeatsTheDonkeyAndThePriestToo w w ↔
       ∀ x y, Fact.farmer x ∈ w → Fact.donkey y ∈ w → Fact.owns x y ∈ w →
         Fact.beats x y ∈ w ∧ Fact.beats p y ∈ w := by
-  have key (x y : E) : Q (λ x' s'' => ∃ z ∈ the (λ z (s : Village E) => Fact.donkey z ∈ s)
+  have key (x y : E) : Q (fun x' s'' ↦ ∃ z ∈ the (fun z (s : Village E) ↦ Fact.donkey z ∈ s)
         {Fact.farmer x, Fact.donkey y, Fact.owns x y}, Fact.beats x' z ∈ s'' ∧
-          ∃ p ∈ the (λ p (s : Village E) => Fact.priest p ∈ s) w, Fact.beats p z ∈ s'')
+          ∃ p ∈ the (fun p (s : Village E) ↦ Fact.priest p ∈ s) w, Fact.beats p z ∈ s'')
         x w {Fact.farmer x, Fact.donkey y, Fact.owns x y} ↔
       {Fact.farmer x, Fact.donkey y, Fact.owns x y} ≤ w ∧
         Fact.beats x y ∈ w ∧ Fact.beats p y ∈ w := by
     rw [the_donkey_minimal, hp]
     simp only [Option.mem_def, Option.some.injEq, exists_eq_left']
     simpa only [Finset.insert_subset_iff, Finset.singleton_subset_iff] using
-      Q_subset_iff (λ x => {Fact.beats x y, Fact.beats p y}) x w
+      Q_subset_iff (fun x ↦ {Fact.beats x y, Fact.beats p y}) x w
         {Fact.farmer x, Fact.donkey y, Fact.owns x y}
   constructor
   · intro h x y hf hd ho
