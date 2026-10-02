@@ -5,29 +5,58 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Mathlib.Order.Basic
-public import Mathlib.Data.Finset.Max
-public import Linglib.Core.Algebra.Order.ToIntervalMod
-public import Mathlib.Algebra.Order.Group.Defs
+public import Mathlib.Algebra.Group.Subgroup.ZPowers.Basic
+public import Mathlib.Algebra.Ring.Parity
+public import Mathlib.Order.Interval.Set.OrdConnected
+public import Linglib.Core.Algebra.Order.Round
+public import Linglib.Core.Data.Setoid.Basic
 public import Linglib.Semantics.Questions.Partition.Basic
 
 /-!
 # Scale granularity
 
-This file defines the granularity apparatus of [sauerland-stateva-2011], following
-[krifka-2007]: a granularity function partitions a scale into cells of one width, the grain,
-and a finer granularity has narrower cells. A grain cell around a degree is the open interval
-of the grain's width centred on the degree, `mkGranInterval`, which contains the degree and
-shrinks as the grain gets finer. A context supplies a finite set of available grain widths, and
-scalar approximators select from it, *exactly* the finest and *approximately* the coarsest,
-`finestWidth` and `coarsestWidth`. On a discrete scale a grain width induces the partition by
-integer division, `granQUD`, which a dividing width refines, the bridge to the question
-widths of [deo-thomas-2025].
+A granularity function of width `w` maps each degree to an interval of width `w` that contains
+it. The grain of width `ε` is the granularity function that reports each degree by the nearest
+multiple of `ε`: degrees with the same nearest multiple are indistinguishable, and the cell of a
+degree is the half-open interval of width `ε` centred on that multiple. Krifka builds levels of
+precision this way, Sauerland and Stateva define granularity functions by the properties
+collected in `IsGranularity`, and Deo and Thomas take the cells of a grain as the answers to a
+degree question.
+
+A finer grain is a narrower one, not a refinement. No cell of a wider granularity function fits
+inside a cell of a narrower one, and a grain refines the grain `k` times as wide exactly when `k`
+is odd, so halving the width never refines. Around a common multiple of two widths the cells are
+nested.
+
+## Main definitions
+
+* `Degree.Granularity.IsGranularity`: a granularity function of a given width.
+* `Degree.Granularity.grain`: the partition of the scale by nearest multiple of `ε`.
+* `Degree.Granularity.representative`: the nearest multiple of `ε`.
+
+## Main results
+
+* `Degree.Granularity.cell_grain`: a cell is the half-open interval of width `ε` centred on its
+  representative.
+* `Degree.Granularity.IsGranularity.not_subset`: a cell of a wider granularity function never
+  fits inside a cell of a narrower one.
+* `Degree.Granularity.cell_subset_cell`: around a common multiple, a finer cell lies inside a
+  coarser one.
+* `Degree.Granularity.grain_le_grain_iff_odd`: the grain of width `ε` refines the grain of width
+  `k * ε` exactly when `k` is odd.
+
+## Implementation notes
+
+Cells are half-open, the only choice of endpoints that partitions the scale; Sauerland and Stateva
+write closed intervals and Thomas and Deo open ones. `IsGranularity` states the width by placing
+each cell between the open and the closed interval of that width, which leaves the endpoints
+open, as Thomas and Deo recommend, and needs no `sSup`, which `ℚ` lacks.
 
 ## References
 
-* [sauerland-stateva-2011]
 * [krifka-2007]
+* [sauerland-stateva-2011]
+* [thomas-deo-2020]
 * [deo-thomas-2025]
 -/
 
@@ -35,143 +64,159 @@ widths of [deo-thomas-2025].
 
 namespace Degree.Granularity
 
-/-! ### Granularity Intervals (eqs. 43, 45, 49) -/
+open Set
 
-/-- A granularity interval: the open interval (lo, hi) around a degree.
-
-    Paper eq. (43): g(d) = (d − ε, d + ε) for non-endpoint d.
-    Endpoints are handled asymmetrically:
-    - g(min(S)) = (min(S), min(S) + ε)
-    - g(max(S)) = (max(S) − ε, max(S)) -/
-structure GranInterval (D : Type*) where
-  /-- Infimum of the grain cell — used by equatives (eq. 45). -/
-  lo : D
-  /-- Supremum of the grain cell — used by comparatives (eq. 49). -/
-  hi : D
-
-/-! ### Granularity Construction (eqs. 40–42) -/
-
-/-! ### [sauerland-stateva-2011] granularity framework
-
-Eqs. (40a-c) define the properties of a granularity function γ:
-- (40a) s ∈ γ(s) — every degree is in its own cell
-- (40b) γ(s) is an interval — (already guaranteed by `GranInterval`)
-- (40c) |γ(s)| = |γ(s')| for all s, s' — all cells have equal width
-  (guaranteed by parametric construction from ε)
-
-Eq. (41): γ is finer than γ' iff cells of γ are strictly narrower.
-Eq. (42): The concrete construction γ(d) = (d − ε, d + ε). -/
-
-section GranularityFunction
+section IsGranularity
 
 variable {D : Type*} [AddCommGroup D] [LinearOrder D] [IsOrderedAddMonoid D]
+  {γ γ₁ γ₂ : D → Set D} {w w₁ w₂ : D}
 
-/-- Eq. (42): Construct a granularity interval from grain size ε.
-    g(d) = (d − ε, d + ε) — the open interval of width 2ε around d.
-    (Eq. 43 refines this for scale endpoints; see `GranInterval` docstring.) -/
-def mkGranInterval (ε d : D) : GranInterval D := ⟨d - ε, d + ε⟩
+/-- A granularity function of width `w` maps each degree to a set that contains it and lies
+between the open and the closed interval of width `w` with a common left end. -/
+structure IsGranularity (γ : D → Set D) (w : D) : Prop where
+  /-- Every degree lies in its own cell. -/
+  mem_self (s : D) : s ∈ γ s
+  /-- Every cell is an interval of width `w`, whichever of its endpoints it contains. -/
+  exists_Ioo_subset_subset_Icc (s : D) : ∃ a, Ioo a (a + w) ⊆ γ s ∧ γ s ⊆ Icc a (a + w)
 
-/-- Eq. (40a): d ∈ g(d) for positive grain — every degree is in the
-    interior of its own cell. For open interval (lo, hi): lo < d < hi. -/
-theorem containsSelf (ε d : D) (hε : 0 < ε) :
-    (mkGranInterval ε d).lo < d ∧ d < (mkGranInterval ε d).hi :=
-  ⟨sub_lt_self d hε, lt_add_of_pos_right d hε⟩
+omit [IsOrderedAddMonoid D] in
+/-- The cells of a granularity function are convex. -/
+theorem IsGranularity.ordConnected (h : IsGranularity γ w) (s : D) : (γ s).OrdConnected := by
+  obtain ⟨a, h₁, h₂⟩ := h.exists_Ioo_subset_subset_Icc s
+  refine ⟨fun x hx y hy z ⟨hxz, hzy⟩ ↦ ?_⟩
+  rcases ((h₂ hx).1.trans hxz).eq_or_lt with rfl | hlt
+  · exact le_antisymm hxz (h₂ hx).1 ▸ hx
+  rcases (hzy.trans (h₂ hy).2).eq_or_lt with rfl | hlt'
+  · exact le_antisymm (h₂ hy).2 hzy ▸ hy
+  exact h₁ ⟨hlt, hlt'⟩
 
-/-- Eq. (41): Finer granularity → narrower intervals → containment.
-    If ε₁ ≤ ε₂, then g_{ε₁}(d) ⊆ g_{ε₂}(d):
-    - lo: d − ε₂ ≤ d − ε₁ (finer has larger infimum)
-    - hi: d + ε₁ ≤ d + ε₂ (finer has smaller supremum) -/
-theorem finer_contained (ε₁ ε₂ d : D) (h : ε₁ ≤ ε₂) :
-    (mkGranInterval ε₂ d).lo ≤ (mkGranInterval ε₁ d).lo ∧
-    (mkGranInterval ε₁ d).hi ≤ (mkGranInterval ε₂ d).hi :=
-  ⟨sub_le_sub_left h d, add_le_add_right h d⟩
+theorem IsGranularity.nonneg (h : IsGranularity γ w) : 0 ≤ w := by
+  obtain ⟨a, -, h₂⟩ := h.exists_Ioo_subset_subset_Icc 0
+  obtain ⟨h₃, h₄⟩ := h₂ (h.mem_self 0)
+  exact le_of_add_le_add_left (a := a) (by simpa using h₃.trans h₄)
 
-end GranularityFunction
+/-- A cell of a wider granularity function never lies inside a cell of a narrower one. -/
+theorem IsGranularity.not_subset [DenselyOrdered D] (h₁ : IsGranularity γ₁ w₁)
+    (h₂ : IsGranularity γ₂ w₂) (hlt : w₁ < w₂) (s t : D) : ¬ γ₂ t ⊆ γ₁ s := fun hsub ↦ by
+  obtain ⟨a, ha, -⟩ := h₂.exists_Ioo_subset_subset_Icc t
+  obtain ⟨b, -, hb⟩ := h₁.exists_Ioo_subset_subset_Icc s
+  have hw : a < a + w₂ := lt_add_of_pos_right a (h₁.nonneg.trans_lt hlt)
+  have hI : Ioo a (a + w₂) ⊆ Icc b (b + w₁) := (ha.trans hsub).trans hb
+  have hab : b ≤ a := not_lt.1 fun h ↦ by
+    obtain ⟨z, hz₁, hz₂⟩ := exists_between (lt_min h hw)
+    exact not_le.2 (hz₂.trans_le (min_le_left _ _))
+      (hI ⟨hz₁, hz₂.trans_le (min_le_right _ _)⟩).1
+  have hba : a + w₂ ≤ b + w₁ := not_lt.1 fun h ↦ by
+    obtain ⟨z, hz₁, hz₂⟩ := exists_between (max_lt h hw)
+    exact not_le.2 ((le_max_left _ _).trans_lt hz₁) (hI ⟨(le_max_right _ _).trans_lt hz₁, hz₂⟩).2
+  exact not_le.2 hlt ((add_le_add_iff_left b).1 ((add_le_add_left hab w₂).trans hba))
 
-variable {D : Type*} [LinearOrder D]
+end IsGranularity
 
-/-! ### Granularity selection ([sauerland-stateva-2011] (18)–(19), (41))
+section Grain
 
-A context supplies a set of available granularities; scalar approximators
-*reset* it ([sauerland-stateva-2011] (18)–(19)): *exactly* to the finest,
-*approximately* to the coarsest. With uniform-width granularities the
-finer-than order (their (41)) is width comparison, so selection is
-`Finset.min'`/`max'`. Resetting leaves a singleton, on which any further
-reset is vacuous — the engine of approximator-stacking oddity
-(their §6.3.5). -/
+variable {α : Type*} [Field α] [LinearOrder α] [FloorRing α] {ε ε₁ ε₂ d d' : α}
 
-section GranSelection
+/-- The grain of width `ε` identifies two degrees when they have the same nearest multiple of
+`ε`. -/
+def grain (ε : α) : Setoid α := Setoid.ker fun d ↦ round (d / ε)
 
-variable (𝒢 : Finset D) (h𝒢 : 𝒢.Nonempty)
+/-- The representative of `d` at width `ε` is the nearest multiple of `ε`. -/
+def representative (ε d : α) : α := round (d / ε) • ε
 
-/-- The finest available grain width — the reset target of *exactly*
-([sauerland-stateva-2011] (19a)). -/
-def finestWidth : D := 𝒢.min' h𝒢
+theorem grain_iff : grain ε d d' ↔ round (d / ε) = round (d' / ε) := Iff.rfl
 
-/-- The coarsest available grain width — the reset target of
-*approximately* ([sauerland-stateva-2011] (19b)). -/
-def coarsestWidth : D := 𝒢.max' h𝒢
+theorem representative_mem_zmultiples (ε d : α) : representative ε d ∈ AddSubgroup.zmultiples ε :=
+  AddSubgroup.mem_zmultiples_iff.2 ⟨_, rfl⟩
 
-theorem finestWidth_le {ε : D} (hε : ε ∈ 𝒢) : finestWidth 𝒢 h𝒢 ≤ ε :=
-  Finset.min'_le _ _ hε
+variable [IsStrictOrderedRing α]
 
-theorem le_coarsestWidth {ε : D} (hε : ε ∈ 𝒢) : ε ≤ coarsestWidth 𝒢 h𝒢 :=
-  Finset.le_max' _ _ hε
+theorem grain_iff_representative (hε : ε ≠ 0) :
+    grain ε d d' ↔ representative ε d = representative ε d' := by
+  simp only [grain_iff, representative, zsmul_eq_mul]
+  exact ⟨fun h ↦ by rw [h], fun h ↦ by exact_mod_cast mul_right_cancel₀ hε h⟩
 
-@[simp] theorem finestWidth_singleton (ε : D) :
-    finestWidth {ε} (Finset.singleton_nonempty ε) = ε :=
-  Finset.min'_singleton ε
+theorem representative_eq_self_of_mem_zmultiples (hε : ε ≠ 0)
+    (hd : d ∈ AddSubgroup.zmultiples ε) : representative ε d = d := by
+  obtain ⟨k, rfl⟩ := AddSubgroup.mem_zmultiples_iff.1 hd
+  simp only [representative, zsmul_eq_mul]
+  rw [mul_div_cancel_right₀ _ hε, round_intCast]
 
-@[simp] theorem coarsestWidth_singleton (ε : D) :
-    coarsestWidth {ε} (Finset.singleton_nonempty ε) = ε :=
-  Finset.max'_singleton ε
+theorem abs_sub_representative_le (hε : 0 < ε) (d : α) : |d - representative ε d| ≤ ε / 2 :=
+  abs_sub_round_div_zsmul_le hε d
 
-end GranSelection
+/-- The representative of `d` is the multiple of `ε` nearest to `d`. -/
+theorem abs_sub_representative_le_abs_sub (hε : ε ≠ 0) (d : α) (n : ℤ) :
+    |d - representative ε d| ≤ |d - n • ε| :=
+  abs_sub_round_div_zsmul_le_abs_sub_zsmul hε d n
 
+/-- The cell of `d` is the half-open interval of width `ε` centred on its representative. -/
+theorem cell_grain (hε : 0 < ε) (d : α) :
+    (grain ε).cell d = Ico (representative ε d - ε / 2) (representative ε d + ε / 2) := by
+  ext x
+  rw [Setoid.mem_cell, grain_iff, round_eq_iff, mem_Ico, mem_Ico, le_div_iff₀ hε,
+    div_lt_iff₀ hε, representative, zsmul_eq_mul, sub_mul, add_mul, one_div_mul_eq_div]
 
-/-! ### Granularity–Question Bridge -/
+/-- Two degrees the grain of width `ε` identifies are less than `ε` apart. -/
+theorem abs_sub_lt_of_grain (hε : 0 < ε) (h : grain ε d d') : |d - d'| < ε := by
+  have hd : d ∈ (grain ε).cell d' := h
+  have hd' := (grain ε).mem_cell_self d'
+  rw [cell_grain hε] at hd hd'
+  rw [abs_sub_lt_iff]
+  constructor <;> linarith [hd.1, hd.2, hd'.1, hd'.2]
 
-/-! ### Grain width → partition → question width
+theorem isGranularity_cell (hε : 0 < ε) : IsGranularity (grain ε).cell ε where
+  mem_self := (grain ε).mem_cell_self
+  exists_Ioo_subset_subset_Icc d := ⟨representative ε d - ε / 2, by
+    rw [cell_grain hε, show representative ε d - ε / 2 + ε = representative ε d + ε / 2 by ring]
+    exact ⟨Ioo_subset_Ico_self, Ico_subset_Icc_self⟩⟩
 
-The degree-level infrastructure above handles what happens *within* a
-grain cell (equatives compare against infimum, comparatives against
-supremum). This section connects to the *question* level: how grain
-width determines a partition on the scale, and how finer grains produce
-wider questions ([deo-thomas-2025] §3.1.2–3.2).
+/-- Around a common multiple of two widths, the cell of the finer grain lies inside the cell of
+the coarser one. -/
+theorem cell_subset_cell (hε₁ : 0 < ε₁) (h : ε₁ ≤ ε₂) (h₁ : d ∈ AddSubgroup.zmultiples ε₁)
+    (h₂ : d ∈ AddSubgroup.zmultiples ε₂) : (grain ε₁).cell d ⊆ (grain ε₂).cell d := by
+  have hε₂ := hε₁.trans_le h
+  rw [cell_grain hε₁, cell_grain hε₂, representative_eq_self_of_mem_zmultiples hε₁.ne' h₁,
+    representative_eq_self_of_mem_zmultiples hε₂.ne' h₂]
+  exact Ico_subset_Ico (by linarith) (by linarith)
 
-The key chain:
-- Grain width ε induces a partition via ⌊d/ε⌋ (integer division)
-- If ε₁ ∣ ε₂, the ε₁-partition refines the ε₂-partition
-- Partition refinement implies question width,
-  `DeoThomas2025.widerThan_fromSetoid`
+/-- The grain of width `ε` refines the grain of any odd multiple of its width. -/
+theorem grain_le_grain_of_odd (j : ℕ) : grain ε ≤ grain ((2 * j + 1 : ℕ) * ε) := by
+  have : (fun d : α ↦ round (d / ((2 * j + 1 : ℕ) * ε))) =
+      (fun n : ℤ ↦ (n + j) / (2 * j + 1 : ℕ)) ∘ fun d ↦ round (d / ε) := by
+    funext d
+    rw [Function.comp_apply, ← round_div_two_mul_add_one, div_mul_eq_div_div, div_right_comm]
+  rw [grain, grain, this]
+  exact Setoid.ker_le_ker_comp _ _
 
-The first two steps live here. The paper's own grains are centred on the
-multiples of ε rather than aligned at 0, `DeoThomas2025.grain`, and a finer
-centred grain is wider without refining the coarser one. -/
+/-- The grain of width `ε` refines no grain of an even multiple of its width, since the boundary
+`j * ε` of the coarser grain is the centre of a cell of the finer one. -/
+theorem not_grain_le_grain_of_even (hε : 0 < ε) {j : ℕ} (hj : 0 < j) :
+    ¬ grain ε ≤ grain ((2 * j : ℕ) * ε) := fun h ↦ by
+  set K : α := (2 * j : ℕ) * ε with hK
+  have hj : (1 : α) ≤ j := by exact_mod_cast hj
+  have hK' : K = 2 * (j * ε) := by rw [hK]; push_cast; ring
+  have hfine := cell_grain hε (j * ε)
+  rw [representative_eq_self_of_mem_zmultiples hε.ne'
+    (AddSubgroup.mem_zmultiples_iff.2 ⟨j, by rw [zsmul_eq_mul, Int.cast_natCast]⟩)] at hfine
+  have hcoarse := cell_grain (by rw [hK']; positivity : 0 < K) 0
+  rw [representative_eq_self_of_mem_zmultiples (by rw [hK']; positivity) (zero_mem _)] at hcoarse
+  have hlo : j * ε - ε / 4 ∈ (grain ε).cell (j * ε) := hfine ▸ ⟨by linarith, by linarith⟩
+  have hhi : j * ε + ε / 4 ∈ (grain ε).cell (j * ε) := hfine ▸ ⟨by linarith, by linarith⟩
+  have h0 : j * ε - ε / 4 ∈ (grain K).cell 0 := hcoarse ▸ ⟨by nlinarith, by linarith⟩
+  have h1 : j * ε + ε / 4 ∈ (grain K).cell 0 :=
+    (grain K).trans (Setoid.le_def.1 h ((grain ε).trans hhi ((grain ε).symm hlo))) h0
+  rw [hcoarse] at h1
+  exact absurd h1.2 (by linarith)
 
-section GranularityQuestion
+/-- The grain of width `ε` refines the grain of width `k * ε` exactly when `k` is odd. -/
+theorem grain_le_grain_iff_odd (hε : 0 < ε) {k : ℕ} (hk : 0 < k) :
+    grain ε ≤ grain (k * ε) ↔ Odd k := by
+  rcases Nat.even_or_odd' k with ⟨j, rfl | rfl⟩
+  · refine ⟨fun h ↦ absurd h (not_grain_le_grain_of_even hε (by omega)), fun h ↦ ?_⟩
+    exact absurd h (Nat.not_odd_iff_even.2 (even_two_mul j))
+  · exact ⟨fun _ ↦ odd_two_mul_add_one j, fun _ ↦ grain_le_grain_of_odd j⟩
 
-/-- A granularity QUD on `Fin n`, parameterized by grain width ε.
-
-    Maps each degree d to grain index ⌊d/ε⌋, inducing a partition where
-    degrees in the same grain cell are indistinguishable — the ℕ grain
-    partition (`Setoid.ker (· / ε)`, `Core/Algebra/Order/Grain.lean`)
-    restricted to `Fin n`.
-
-    [deo-thomas-2025] definition (22): γ maps each point p to a cell I
-    of a partition such that p ∈ I. For uniform grain width ε on a discrete
-    scale with cells aligned at 0, this is integer division by ε. -/
-abbrev granQUD (n : Nat) (ε : Nat) : Setoid (Fin n) := Setoid.ker (λ w => w.val / ε)
-
-/-- Finer granularity induces partition refinement.
-
-    [deo-thomas-2025] §3.1.2, (23): if ε₁ divides ε₂ (finer grain
-    fits evenly into coarser grain), then the ε₁-partition refines the
-    ε₂-partition. Every fine cell is contained in exactly one coarse cell. -/
-theorem finer_granularity_refines (n ε₁ ε₂ : Nat) (hdvd : ε₁ ∣ ε₂) :
-    granQUD n ε₁ ≤ granQUD n ε₂ :=
-  Setoid.le_def.2 λ h => Setoid.le_def.1 (Nat.ker_div_le_of_dvd hdvd) h
-
-end GranularityQuestion
+end Grain
 
 end Degree.Granularity
