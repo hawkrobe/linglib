@@ -2,7 +2,7 @@ module
 
 public import Linglib.Fragments.English.Adjectives
 public import Linglib.Morphology.Exponence.Containment.Contiguity
-public import Linglib.Syntax.Person.Basic
+public import Linglib.Syntax.Person.Features
 public import Linglib.Syntax.Agreement.PersonCaseConstraint
 public import Mathlib.Tactic.TFAE
 

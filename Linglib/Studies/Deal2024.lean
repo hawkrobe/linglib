@@ -260,10 +260,11 @@ def PCCType.coding (t : PCCType) (s : Scenario Person) : ℕ :=
 
 /-- Usualness on the cells of table (1) under a person ranking: a cell is the more usual when its
 kind is the higher. -/
-def MoreUsualOn (rank : Person → ℕ) (s t : Scenario Person) : Prop :=
+def MoreUsualOn {β : Type*} [LinearOrder β] (rank : Person → β) (s t : Scenario Person) : Prop :=
   s ∈ cells ∧ t ∈ cells ∧ t.kindBy rank < s.kindBy rank
 
-instance (rank : Person → ℕ) (s t : Scenario Person) : Decidable (MoreUsualOn rank s t) :=
+instance {β : Type*} [LinearOrder β] (rank : Person → β) (s t : Scenario Person) :
+    Decidable (MoreUsualOn rank s t) :=
   inferInstanceAs (Decidable (_ ∧ _ ∧ _))
 
 /-- Section 7.1 of [haspelmath-2021] on table (1): under the person scale 1 > 2 > 3, a variety

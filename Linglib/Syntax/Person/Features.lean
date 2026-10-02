@@ -29,6 +29,7 @@ covers exactly the participant sets whose own features are its bundle.
 * `Person.Feature`: the two features, ordered participant < author.
 * `Person.Bears`: the features a participant set bears.
 * `Person.toFeatures`: the bundle of a person value.
+* `Person.prominence`: the top of a value's bundle, the person hierarchy.
 * `Person.Category.toFeatures`: the bundle of a referential category.
 
 ## Main results
@@ -38,6 +39,8 @@ covers exactly the participant sets whose own features are its bundle.
 * `Person.mem_participantSets_iff`: a tripartition value covers the participant sets whose
   features are its bundle.
 * `Person.toFeatures_sup`: the bundle of a coordination is the union of its conjuncts' bundles.
+* `Person.mem_toFeatures_iff`: a value bears exactly the features up to its prominence.
+* `Person.prominence_le_iff`: prominence is the order resolution induces up to clusivity.
 * `Person.prominence_le_iff_subset`: prominence orders values by inclusion of their bundles.
 * `Person.Category.sharedPerson_isSome_iff`: a set of categories has a person iff they share a
   bundle.
@@ -151,15 +154,6 @@ theorem toFeatures_sup (p q : Person) : (p ⊔ q).toFeatures = p.toFeatures ∪ 
 theorem toFeatures_wellFormed (p : Person) : IsLowerSet (↑p.toFeatures : Set Feature) := by
   revert p; decide
 
-/-- A value's prominence is the number of its features. -/
-theorem prominence_eq_card (p : Person) : p.prominence = p.toFeatures.card := by
-  revert p; decide
-
-/-- Prominence orders values by inclusion of their bundles. -/
-theorem prominence_le_iff_subset {p q : Person} :
-    p.prominence ≤ q.prominence ↔ p.toFeatures ⊆ q.toFeatures := by
-  revert p q; decide
-
 /-- `IsSAP` is featural participanthood. -/
 theorem isSAP_iff_participant {p : Person} : p.IsSAP ↔ .participant ∈ p.toFeatures := by
   revert p; decide
@@ -179,6 +173,40 @@ theorem coarsen_ofParticipants_eq_iff (s t : Finset Role) :
     (ofParticipants s).coarsen = (ofParticipants t).coarsen ↔
       univ.filter (Bears s) = univ.filter (Bears t) := by
   revert s t; decide
+
+/-! ### Prominence
+
+A bundle is a lower set of the chain participant < author, so it is determined by its top
+feature, and ordering values by their tops is the person hierarchy 1 > 2 > 3. It is the order
+coordination induces up to clusivity: a coordination takes the person of its most prominent
+conjunct, as Zwicky's hierarchy of reference and Corbett's resolution rules state. -/
+
+/-- The prominence of a value is the top feature of its bundle: [author] for the first person,
+[participant] for the second, none for the third. -/
+def prominence (p : Person) : WithBot Feature := p.toFeatures.max
+
+@[simp] theorem prominence_first : prominence .first = Feature.author := by decide
+@[simp] theorem prominence_firstInclusive : prominence .firstInclusive = Feature.author := by
+  decide
+@[simp] theorem prominence_firstExclusive : prominence .firstExclusive = Feature.author := by
+  decide
+@[simp] theorem prominence_second : prominence .second = Feature.participant := by decide
+@[simp] theorem prominence_third : prominence .third = ⊥ := by decide
+
+/-- A value bears exactly the features up to its prominence. -/
+theorem mem_toFeatures_iff {p : Person} {f : Feature} : f ∈ p.toFeatures ↔ ↑f ≤ p.prominence := by
+  revert p f; decide
+
+/-- Prominence orders values by inclusion of their bundles. -/
+theorem prominence_le_iff_subset {p q : Person} :
+    p.prominence ≤ q.prominence ↔ p.toFeatures ⊆ q.toFeatures := by
+  revert p q; decide
+
+/-- Prominence is the order resolution induces up to clusivity, `p` being at most as prominent as
+`q` iff coordinating them gives `q`'s tripartition value. -/
+theorem prominence_le_iff {p q : Person} :
+    p.prominence ≤ q.prominence ↔ (p ⊔ q).coarsen = q.coarsen := by
+  revert p q; decide
 
 /-! ### The features of a referential category -/
 

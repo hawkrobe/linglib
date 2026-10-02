@@ -16,20 +16,19 @@ public import Linglib.Syntax.Person.Class
 /-!
 # Haspelmath (2021): Role-reference associations and the explanation of argument coding splits
 
-This file formalizes the role-reference association universal of [haspelmath-2021]
-(Universal 1, (5)): deviations from the usual associations of role rank and referential
-prominence are coded by longer grammatical forms. `RoleReferenceUniversal` states it for
-any usualness relation on situations; `ArgumentRole.MoreUsualFor` (the single-argument
-tendencies (9)) and `Scenario.MoreUsual` (the scenario tendencies (10), (11), over
-`Clause.Scenario`) instantiate it as the
-single-argument flagging universal `SingleArgumentUniversal` (Universal 3, whose role
-instances are Universals 4, 6, 7 and 8) and the scenario universal `ScenarioUniversal`
-(Universal 5, which yields the person-role universal 9b, the relative scenario universal
-10 and the inverse universal 11). Universal 12 is Universal 1 read with the usage rate of
-the longer alternant of an alternation as its coding, and the givenness alternation
-universals 13 and 14 are its scenario instances. `roleReferenceUniversal_of_formFrequency`
-is the explanation of §11.2: Universal 2 (the usual association is the frequent one) and
-the form-frequency correspondence universal (68) of [haspelmath-2021b] entail Universal 1.
+The role-reference association universal of [haspelmath-2021] (Universal 1, (5)): deviations from
+the usual associations of role rank and referential prominence are coded by longer grammatical
+forms. `RoleReferenceUniversal` states it for any usualness relation on situations;
+`ArgumentRole.MoreUsualFor` (the single-argument tendencies (9)) and `Scenario.MoreUsual` (the
+scenario tendencies (10), (11), over `Clause.Scenario`) instantiate it as the single-argument
+flagging universal `SingleArgumentUniversal` (Universal 3, whose role instances are Universals 4,
+6, 7 and 8) and the scenario universal `ScenarioUniversal` (Universal 5, which yields the
+person-role universal 9b, the relative scenario universal 10 and the inverse universal 11).
+Universal 12 is Universal 1 read with the usage rate of the longer alternant of an alternation as
+its coding, and the givenness alternation universals 13 and 14 are its scenario instances.
+`roleReferenceUniversal_of_formFrequency` is the explanation of §11.2: Universal 2 (the usual
+association is the frequent one) and the form-frequency correspondence universal (68) of
+[haspelmath-2021b] entail Universal 1.
 
 The coding splits the paper cites are stated as coding-length functions on the
 prominence scales of (8), checked against the universals and against the paper's own
@@ -106,9 +105,8 @@ and the focus scale of (8b), background above focus, is the dual of focus markin
 `Focus.Markᵒᵈ`, its more prominent end the unfocused one. -/
 
 
-/-- The ternary person scale of (47a), first > second > third: the ranks of
-`Person.prominence`, read off by `ofPerson`; `Person.Class` is its coarsening at the
-locuphoric cut. -/
+/-- The ternary person scale of (47a), first > second > third: `Person.prominence`, read off by
+`ofPerson`; `Person.Class` is its coarsening at the locuphoric cut. -/
 inductive PersonRank where
   | third
   | second
@@ -125,15 +123,16 @@ def rank : PersonRank → ℕ
 
 instance : LinearOrder PersonRank := LinearOrder.lift' rank (by decide)
 
-/-- The rank of a person: the clusivity-marked firsts rank first and the impersonal
-third. -/
+/-- The rank of a person, read off its prominence: the clusivity-marked firsts rank first. -/
 def ofPerson (p : Person) : PersonRank :=
   match p.prominence with
-  | 0 => .third
-  | 1 => .second
-  | _ => .first
+  | ⊥ => .third
+  | some .participant => .second
+  | some .author => .first
 
-theorem rank_ofPerson (p : Person) : (ofPerson p).rank = p.prominence := by cases p <;> rfl
+theorem ofPerson_le_ofPerson {p q : Person} :
+    ofPerson p ≤ ofPerson q ↔ p.prominence ≤ q.prominence := by
+  revert p q; decide
 
 end PersonRank
 

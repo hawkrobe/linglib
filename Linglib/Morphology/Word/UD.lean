@@ -55,7 +55,7 @@ def fromUD : UD.Person → Option Person
   | .zero => none
 
 /-- Realization is a partial inverse of ingestion up to clusivity, which has no tag. -/
-theorem fromUD_toUD (p : Person) : fromUD p.toUD = some p.coarsen := by cases p <;> rfl
+theorem fromUD_toUD (p : Person) : fromUD p.toUD = some p.coarsen := by cases p <;> decide
 
 @[simp] theorem toUD_fromUD {u : UD.Person} {p : Person} (h : fromUD u = some p) :
     p.toUD = u := by
