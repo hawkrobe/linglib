@@ -7,19 +7,18 @@ public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 /-!
 # Woodin, Winter, Littlemore, Perlman & Grieve (2024): Large-Scale Patterns of Number Use
 
-This file formalizes the model of number frequency in [woodin-etal-2024]'s corpus study of the
-British National Corpus: the log frequency of a number is a linear function of its log
-magnitude and of which roundness properties it has (`Model.predicted`). The six properties
-are being a multiple of five, being a multiple of ten, and the 10-ness, 2-ness, 2½-ness and
-5-ness of [jansen-pollmann-2001], taken with a positive power of ten so that every round
-number is a multiple of five (`Property.Holds`). The properties nest: 10-ness, 2-ness and
-5-ness entail being a multiple of ten, and every property entails being a multiple of five
-(`multipleOf5_mem_of_mem`),
-and the unweighted count of properties is the roundness score of the substrate
-(`card_properties`). With non-negative weights the roundness term is monotone in the property
-set, and a rounder number of comparable magnitude is predicted more frequent exactly when the
-weights of its extra properties outweigh the magnitude penalty (`predicted_le_iff`), the case
-the study illustrates with 99 and 100 (`predicted_99_le_100_iff`).
+Woodin et al. model the frequency of numbers in the British National Corpus: the log frequency
+of a number is a linear function of its log magnitude and of which roundness properties it has.
+The properties nest, since 10-ness, 2-ness and 5-ness make a number a multiple of ten and every
+property makes it a multiple of five, and their unweighted count is the roundness score of
+`Numerals.Roundness`.
+
+## Main results
+
+* `multipleOf5_mem_of_mem`: every roundness property entails being a multiple of five.
+* `predicted_le_iff`: a rounder number of comparable magnitude is predicted more frequent
+  exactly when the weights of its extra properties outweigh the magnitude penalty.
+* `predicted_99_le_100_iff`: the study's illustration with 99 and 100.
 
 ## Implementation notes
 
@@ -43,34 +42,6 @@ open Numerals.Roundness Finset
 
 /-! ### The roundness properties -/
 
-/-- The six roundness properties of the model. -/
-inductive Property where
-  | multipleOf5
-  | multipleOf10
-  | tenness
-  | twoness
-  | twoAndAHalfness
-  | fiveness
-  deriving DecidableEq, Repr, Fintype
-
-/-- Whether a number has a property; the k-ness properties take a positive power of ten. -/
-def Property.Holds : Property → ℕ → Prop
-  | .multipleOf5, n => 5 ∣ n
-  | .multipleOf10, n => 10 ∣ n
-  | .tenness, n => HasKness 10 n
-  | .twoness, n => HasKness 20 n
-  | .twoAndAHalfness, n => HasKness 25 n
-  | .fiveness, n => HasKness 50 n
-
-instance (p : Property) (n : ℕ) : Decidable (p.Holds n) := by
-  cases p <;> unfold Property.Holds <;> infer_instance
-
-/-- The properties a number has. -/
-def properties (n : ℕ) : Finset Property := univ.filter (·.Holds n)
-
-theorem mem_properties {p : Property} {n : ℕ} : p ∈ properties n ↔ p.Holds n := by
-  simp [properties]
-
 /-- 10-ness, 2-ness and 5-ness make a number a multiple of ten. -/
 theorem dvd_ten_of_holds {p : Property} {n : ℕ}
     (hp : p = .tenness ∨ p = .twoness ∨ p = .fiveness) (h : p.Holds n) : 10 ∣ n := by
@@ -92,19 +63,10 @@ theorem multipleOf5_mem_of_mem {p : Property} {n : ℕ} (h : p ∈ properties n)
   | twoness => exact Nat.dvd_trans (by norm_num) (dvd_ten_of_holds (.inr (.inl rfl)) h)
   | fiveness => exact Nat.dvd_trans (by norm_num) (dvd_ten_of_holds (.inr (.inr rfl)) h)
 
-/-- The number of properties is the substrate's roundness score. -/
-theorem card_properties (n : ℕ) : (properties n).card = roundnessScore n := by
-  have hu : (univ : Finset Property) = {.multipleOf5, .multipleOf10, .tenness, .twoness,
-      .twoAndAHalfness, .fiveness} := by decide
-  rw [properties, card_filter, hu]
-  simp only [sum_insert, mem_insert, mem_singleton, reduceCtorEq, or_self, not_false_eq_true,
-    sum_singleton, Property.Holds, roundnessScore]
-  ring
-
 /-! ### The frequency model -/
 
-/-- A model of log frequency: a coefficient on log magnitude and a weight per roundness
-property. -/
+/-- A model of log frequency has a coefficient on log magnitude and a weight per roundness property.
+-/
 structure Model where
   magnitude : ℝ
   weight : Property → ℝ
@@ -121,7 +83,7 @@ noncomputable def predicted (n : ℕ) : ℝ :=
 theorem sum_weight_le_of_subset (hw : ∀ p, 0 ≤ M.weight p) {n m : ℕ}
     (h : properties n ⊆ properties m) :
     ∑ p ∈ properties n, M.weight p ≤ ∑ p ∈ properties m, M.weight p :=
-  sum_le_sum_of_subset_of_nonneg h λ p _ _ => hw p
+  sum_le_sum_of_subset_of_nonneg h fun p _ _ ↦ hw p
 
 /-- At equal roundness, a negative magnitude coefficient predicts the smaller number more
 frequent. -/
@@ -144,9 +106,8 @@ theorem predicted_le_iff {n m : ℕ} (h : properties n ⊆ properties m) :
   rw [← sum_sdiff h]
   constructor <;> intro h' <;> linarith
 
-/-- The study's illustration: 100 has every property and 99 none, so 100 is predicted more
-frequent exactly when the summed weights make up the magnitude penalty of one part in a
-hundred. -/
+/-- In the study's illustration 100 has every property and 99 none, so 100 is predicted more
+frequent exactly when the summed weights make up the magnitude penalty of one part in a hundred. -/
 theorem predicted_99_le_100_iff :
     M.predicted 99 ≤ M.predicted 100 ↔
       -M.magnitude * Real.logb 10 (100 / 99) ≤ ∑ p, M.weight p := by

@@ -1,45 +1,39 @@
 module
 
 public import Mathlib.Data.Nat.Log
+public import Mathlib.Data.Fintype.Card
+public import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
+public import Mathlib.Tactic.Ring
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
-# Graded Numeral Roundness (k-ness Model)
+# Numeral roundness
 
-Framework-agnostic infrastructure for graded numeral roundness,
-following [sigurd-1988], [jansen-pollmann-2001], and [woodin-etal-2024].
-
-A number n has **k-ness** if it lies in [jansen-pollmann-2001]'s set
-k × (1–9 × 10ⁿ): n = m × k × 10^b with 1 ≤ m ≤ 9 — so 10-ness is the
-k = 1 family, per their own example "70 has only 10-ness". The roundness
-score follows [woodin-etal-2024] in requiring b ≥ 1, which drops the
-single digits from 10-ness and 15, 45, … from 5-ness; since k-ness with
-b ≥ 1 is 10k-ness, one predicate serves both (cf.
-`Studies/JansenPollmann2001.lean` for the divergence).
-
-The 6 properties, ordered by strength as frequency predictors in
-[woodin-etal-2024]'s negative binomial regression (strongest first):
-10-ness (β = 4.46), 2.5-ness (β = 3.84), 5-ness (β = 3.39),
-2-ness (β = 2.74), multiple of 10 (β = 2.45), multiple of 5 (β = 0.06);
-the 2-ness and multiple-of-10 credible intervals overlap.
+A number has `k`-ness when it is a digit times `k` times a power of ten, Jansen and Pollmann's
+`k × (1–9 × 10ⁿ)`. Sigurd, Jansen and Pollmann, and Woodin et al. take a number's roundness to be
+carried by six properties: being a multiple of five or of ten, and 10-ness, 2-ness, 2½-ness and
+5-ness. Following Woodin et al. the `k`-ness properties require a positive power of ten, which is
+`10 k`-ness, so every round number is a multiple of five. The roundness score of a number is the
+number of these properties it has.
 
 ## Main definitions
 
-- `HasKness`: the k-ness properties as one decidable predicate;
-  `hasKness_ten_mul_iff` is the positive-exponent reading
-- `roundnessScore`: count of the six properties that hold (0–6)
-- `RoundnessGrade`, `roundnessGrade`: the score binned into 4 levels
-- `contextualRoundnessScore`, `roundnessInContext`: k-ness relative to a
-  non-standard base (dozens, minutes)
+* `Numerals.Roundness.HasKness`: `k`-ness, decidable.
+* `Numerals.Roundness.Property`: the six roundness properties.
+* `Numerals.Roundness.roundnessScore`: the number of roundness properties a number has.
+
+## Implementation notes
+
+Woodin et al.'s regression weights the properties unequally as predictors of frequency, 10-ness
+strongest (β = 4.46), then 2½-ness (3.84), 5-ness (3.39), 2-ness (2.74), multiple of ten (2.45)
+and multiple of five (0.06); the score counts them equally. Jansen and Pollmann's own definition
+allows the zeroth power, see `Studies/JansenPollmann2001.lean`.
 
 ## References
 
-* [C. J. M. Jansen, M. M. W. Pollmann, *On round numbers: pragmatic aspects of numerical
-  expressions* (2001)][jansen-pollmann-2001]
-* [B. Sigurd, *Round numbers* (1988)][sigurd-1988]
-* [G. Woodin, B. Winter, J. Littlemore, M. Perlman, J. Grieve, *Large-scale patterns of
-  number use in spoken and written English* (2023)][woodin-etal-2024]
-* [M. Krifka, *Approximate interpretation of number words* (2007)][krifka-2007]
-* [C. Cummins, *Constraints on numerical expressions* (2015)][cummins-2015]
+* [sigurd-1988]
+* [jansen-pollmann-2001]
+* [woodin-etal-2024]
 -/
 
 @[expose] public section
@@ -80,115 +74,61 @@ theorem hasKness_ten_mul_iff {k n : ℕ} :
   simp only [HasKness, Nat.pow_succ]
   constructor <;> rintro ⟨b, m, h1, h9, rfl⟩ <;> exact ⟨b, m, h1, h9, by ac_rfl⟩
 
-/-! ### Roundness score
+/-! ### The roundness properties -/
 
-The six graded roundness properties of [sigurd-1988] and
-[jansen-pollmann-2001] — multiple of 5, multiple of 10, 2-ness, 2.5-ness,
-5-ness, 10-ness — counted equally. The count predicts numeral frequency
-and pragmatic behavior ([woodin-etal-2024]). -/
+/-- The six roundness properties of a number. -/
+inductive Property where
+  | multipleOf5
+  | multipleOf10
+  | tenness
+  | twoness
+  | twoAndAHalfness
+  | fiveness
+  deriving DecidableEq, Repr, Fintype
 
-/-- Count of true roundness properties (0–6). Higher = rounder. The k-ness properties
-are taken with a positive exponent, following [woodin-etal-2024], so 2-, 2½-, 5- and
-10-ness are `HasKness 20`, `HasKness 25`, `HasKness 50` and `HasKness 10`. -/
-def roundnessScore (n : ℕ) : ℕ :=
-  (if 5 ∣ n then 1 else 0) + (if 10 ∣ n then 1 else 0) +
-  (if HasKness 20 n then 1 else 0) + (if HasKness 25 n then 1 else 0) +
-  (if HasKness 50 n then 1 else 0) + (if HasKness 10 n then 1 else 0)
+/-- A number has a roundness property; the `k`-ness properties take a positive power of ten, so
+2-, 2½-, 5- and 10-ness are 20-, 25-, 50- and 10-ness. -/
+def Property.Holds : Property → ℕ → Prop
+  | .multipleOf5, n => 5 ∣ n
+  | .multipleOf10, n => 10 ∣ n
+  | .tenness, n => HasKness 10 n
+  | .twoness, n => HasKness 20 n
+  | .twoAndAHalfness, n => HasKness 25 n
+  | .fiveness, n => HasKness 50 n
 
-/-- Maximum possible roundness score. -/
-def maxRoundnessScore : ℕ := 6
+instance (p : Property) (n : ℕ) : Decidable (p.Holds n) := by
+  cases p <;> unfold Property.Holds <;> infer_instance
 
-/-! ### Roundness grade (binned score) -/
+/-- The roundness properties a number has. -/
+def properties (n : ℕ) : Finset Property := Finset.univ.filter (·.Holds n)
 
-/--
-Binned roundness grade for use in width/tolerance functions.
+@[simp] theorem mem_properties {p : Property} {n : ℕ} : p ∈ properties n ↔ p.Holds n := by
+  simp [properties]
 
-Collapses the 0–6 score into 4 levels to avoid duplicating
-step-function logic across Theory files.
--/
-inductive RoundnessGrade where
-  /-- score ≥ 5 (e.g., 100, 50, 200) -/
-  | high
-  /-- score 3–4 (e.g., 20, 40) -/
-  | moderate
-  /-- score 1–2 (e.g., 110, 15) -/
-  | low
-  /-- score 0 (e.g., 7, 99) -/
-  | none
-  deriving Repr, DecidableEq
+/-! ### The roundness score -/
 
-/-- Classify a number into a roundness grade. -/
-def roundnessGrade (n : ℕ) : RoundnessGrade :=
-  if roundnessScore n ≥ 5 then .high
-  else if roundnessScore n ≥ 3 then .moderate
-  else if roundnessScore n ≥ 1 then .low
-  else .none
+/-- The roundness score of a number is the number of roundness properties it has. -/
+def roundnessScore (n : ℕ) : ℕ := (properties n).card
 
-/-! ### Context-sensitive roundness -/
+/-- The roundness score counts the six properties one by one. -/
+theorem roundnessScore_eq (n : ℕ) : roundnessScore n =
+    (if 5 ∣ n then 1 else 0) + (if 10 ∣ n then 1 else 0) + (if HasKness 10 n then 1 else 0) +
+      (if HasKness 20 n then 1 else 0) + (if HasKness 25 n then 1 else 0) +
+        (if HasKness 50 n then 1 else 0) := by
+  have hu : (Finset.univ : Finset Property) = {.multipleOf5, .multipleOf10, .tenness, .twoness,
+      .twoAndAHalfness, .fiveness} := by decide
+  rw [roundnessScore, properties, Finset.card_filter, hu]
+  simp only [Finset.sum_insert, Finset.mem_insert, Finset.mem_singleton, reduceCtorEq, or_self,
+    not_false_eq_true, Finset.sum_singleton, Property.Holds]
+  ring
 
-/--
-Count k-ness-like properties relative to a non-standard base.
-
-For base b, checks divisibility by b, 2b, 5b, and 10b — mirroring
-the standard k-ness properties but on a different scale.
-
-Examples:
-- contextualRoundnessScore 48 12 = 2 (48 ÷ 12 = 4, 48 ÷ 24 = 2)
-- contextualRoundnessScore 120 12 = 4 (divides by 12, 24, 60, 120)
--/
-def contextualRoundnessScore (n : ℕ) (base : ℕ) : ℕ :=
-  if base ≤ 1 ∨ n = 0 then 0
-  else
-    (if base ∣ n then 1 else 0) + (if base * 2 ∣ n then 1 else 0) +
-    (if base * 5 ∣ n then 1 else 0) + (if base * 10 ∣ n then 1 else 0)
-
-/--
-Context-sensitive roundness: compose default k-ness with a non-standard base.
-
-On a base-12 (dozens) scale, 48 = 4 × 12 is "round" even though its
-default k-ness score is 0. On base-60 (minutes), 120 = 2 × 60 is round.
-
-The contextual score derives from actual divisibility properties relative
-to the base (not a flat bonus), paralleling how standard k-ness derives
-from divisibility by 2/2.5/5/10 × powers of 10.
--/
-def roundnessInContext (n : ℕ) (base : ℕ) : ℕ :=
-  max (roundnessScore n) (contextualRoundnessScore n base)
-
-/-! ### Per-datum verification -/
+theorem roundnessScore_le_six (n : ℕ) : roundnessScore n ≤ 6 :=
+  (Finset.card_le_univ _).trans_eq rfl
 
 example : roundnessScore 100 = 6 := by decide
 example : roundnessScore 50 = 5 := by decide
-example : roundnessScore 7 = 0 := by decide
-example : roundnessScore 1000 = 6 := by decide
-example : roundnessScore 200 = 6 := by decide
-example : roundnessScore 110 = 2 := by decide
 example : roundnessScore 20 = 4 := by decide
-
-example : roundnessGrade 100 = .high := by decide
-example : roundnessGrade 50 = .high := by decide
-example : roundnessGrade 110 = .low := by decide
-example : roundnessGrade 7 = .none := by decide
-
-example : contextualRoundnessScore 48 12 = 2 := by decide
-example : contextualRoundnessScore 120 12 = 4 := by decide
--- contextual score beats default; nothing on base-10; default beats contextual
-example : roundnessInContext 48 12 = 2 := by decide
-example : roundnessInContext 48 10 = 0 := by decide
-example : roundnessInContext 100 10 = 6 := by decide
-
-/-- The roundness score never exceeds `maxRoundnessScore`: each of the six
-properties contributes at most 1. -/
-theorem roundnessScore_le_max (n : ℕ) : roundnessScore n ≤ maxRoundnessScore := by
-  unfold roundnessScore maxRoundnessScore
-  split_ifs <;> omega
-
-/-- Multiples of 10 have roundness score ≥ 2 (multiple-of-5 and
-multiple-of-10 both hold). The keystone for downstream sorry-free proofs. -/
-theorem score_ge_two_of_div10 (n : ℕ) (h10 : 10 ∣ n) :
-    2 ≤ roundnessScore n := by
-  have h5 : 5 ∣ n := Nat.dvd_trans ⟨2, rfl⟩ h10
-  rw [roundnessScore, ite_eq_left h5, ite_eq_left h10]
-  omega
+example : roundnessScore 110 = 2 := by decide
+example : roundnessScore 7 = 0 := by decide
 
 end Numerals.Roundness

@@ -200,8 +200,8 @@ theorem ninetyNine_blocked {m : ℚ} (hm : 1 / 2 ≤ m) : Violates (numeral 99 m
 /-- Below two hundred, only *100* itself carries the full roundness score. -/
 theorem score_ge_six_lt_two_hundred : ∀ n < 200, 6 ≤ roundnessScore n → n = 100 := by
   intro n hn h6
-  unfold roundnessScore at h6
-  split_ifs at h6 with h5 h10 h20 h25 h50 hk10 <;> try omega
+  rw [roundnessScore_eq] at h6
+  split_ifs at h6 with h5 h10 hk10 h20 h25 h50 <;> try omega
   have h50d := h50.dvd
   have h20d := h20.dvd
   have hpos : 0 < n := by
