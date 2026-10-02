@@ -34,7 +34,7 @@ supplied by NP-deletion.
 ## Implementation notes
 
 * Situations are any partial order; minimality is mathlib's `Minimal`, and the lexical entries of
-  §2.3.3 are transcribed with it. The article is `russellIota?` at the situation, so its domain
+  §2.3.3 are transcribed with it. The article is `iota` at the situation, so its domain
   condition is `∃!` (`the_isSome_iff`), and a sentence is `PartialProp.presupOfReferent` of the
   description; the free/bound status of a situation pronoun is the substrate's `SitVarStatus`,
   whose two values the book introduced. A description inside a scope contributes `∃ z ∈ the f s`,
@@ -117,15 +117,15 @@ variable {S E : Type*}
 
 /-- The definite article, (3) of ch. 3: `λf.λs : ∃!x f(x)(s). ιx f(x)(s)`, a partial function
 from situations to the unique satisfier of the property in the situation. -/
-noncomputable def the (f : E → S → Prop) (s : S) : Option E := russellIota? (f · s)
+noncomputable def the (f : E → S → Prop) (s : S) : Option E := iota (f · s)
 
 /-- The domain condition of the article: exactly one satisfier in the situation. -/
 theorem the_isSome_iff (f : E → S → Prop) (s : S) : (the f s).isSome ↔ ∃! x, f x s :=
-  russellIota?_isSome_iff _
+  iota_isSome_iff _
 
 theorem the_eq_some_iff (f : E → S → Prop) (s : S) (x : E) :
     the f s = some x ↔ f x s ∧ ∀ y, f y s → y = x :=
-  russellIota?_eq_some_iff _
+  iota_eq_some_iff _
 
 /-- A pronoun, (4b) of ch. 10: the article's entry, its noun phrase supplied by NP-deletion. -/
 noncomputable def pronoun (np : E → S → Prop) : S → Option E := the np
@@ -477,7 +477,7 @@ theorem incomplete_description :
 the covert relation to the individual variable `v`, which a higher quantifier may bind. -/
 noncomputable def relDescription {S : Type*} (rel : E → E → S → Prop) (np : E → S → Prop) (v : E)
     (s : S) : Option E :=
-  russellIota? λ x => np x s ∧ rel x v s
+  iota λ x => np x s ∧ rel x v s
 
 omit [DecidableEq E] in
 /-- The relation-variable description covaries with its individual variable: *the donkey* as
@@ -487,7 +487,7 @@ theorem relDescription_eq_some_iff {S : Type*} (rel : E → E → S → Prop) (n
     (v : E) (s : S) (x : E) :
     relDescription rel np v s = some x ↔
       (np x s ∧ rel x v s) ∧ ∀ y, np y s → rel y v s → y = x := by
-  rw [relDescription, russellIota?_eq_some_iff]
+  rw [relDescription, iota_eq_some_iff]
   simp only [and_imp]
 
 /-- (29) of ch. 9 with the LF (31): *every farmer who owns a donkey beats the donkey, and the

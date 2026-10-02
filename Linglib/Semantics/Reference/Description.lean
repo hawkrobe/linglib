@@ -115,26 +115,26 @@ the Russellian iota over its restrictor at the situation, conjoined for the stro
 the demonstrative with identity to the indexed entity ([schwarz-2009]) and for the possessive
 with the possession relation to the possessor. -/
 noncomputable def denote : Description E W → Assignment E → W → Option E
-  | .bare R, g, s | .unique R, g, s => russellIota? (R g s)
+  | .bare R, g, s | .unique R, g, s => iota (R g s)
   | .anaphoric R d, g, s | .demonstrative R _ d, g, s =>
-      russellIota? fun x ↦ R g s x ∧ x = g d
+      iota fun x ↦ R g s x ∧ x = g d
   | .possessive R possessor rel, g, s =>
-      russellIota? fun x ↦ R g s x ∧ rel g s (possessor g s) x
+      iota fun x ↦ R g s x ∧ rel g s (possessor g s) x
 
 noncomputable instance : Denotes (Description E W) (Assignment E → W → Option E) := ⟨denote⟩
 
-@[simp] theorem denote_bare : ⟦bare R⟧ g s = russellIota? (R g s) := rfl
+@[simp] theorem denote_bare : ⟦bare R⟧ g s = iota (R g s) := rfl
 
-@[simp] theorem denote_unique : ⟦unique R⟧ g s = russellIota? (R g s) := rfl
+@[simp] theorem denote_unique : ⟦unique R⟧ g s = iota (R g s) := rfl
 
 @[simp] theorem denote_anaphoric :
-    ⟦anaphoric R d⟧ g s = russellIota? fun x ↦ R g s x ∧ x = g d := rfl
+    ⟦anaphoric R d⟧ g s = iota fun x ↦ R g s x ∧ x = g d := rfl
 
 @[simp] theorem denote_demonstrative :
-    ⟦demonstrative R δ d⟧ g s = russellIota? fun x ↦ R g s x ∧ x = g d := rfl
+    ⟦demonstrative R δ d⟧ g s = iota fun x ↦ R g s x ∧ x = g d := rfl
 
 @[simp] theorem denote_possessive :
-    ⟦possessive R possessor rel⟧ g s = russellIota? fun x ↦ R g s x ∧ rel g s (possessor g s) x :=
+    ⟦possessive R possessor rel⟧ g s = iota fun x ↦ R g s x ∧ rel g s (possessor g s) x :=
   rfl
 
 /-- The covert iota of a bare noun is the weak article; the two differ in form, not meaning. -/
@@ -149,21 +149,21 @@ theorem denote_demonstrative_eq_anaphoric : ⟦demonstrative R δ d⟧ = ⟦anap
 /-- The weak article denotes `x` iff `x` is the unique satisfier of the restrictor at the
 situation. -/
 theorem denote_unique_eq_some_iff : ⟦unique R⟧ g s = some x ↔ R g s x ∧ ∀ y, R g s y → y = x :=
-  russellIota?_eq_some_iff _
+  iota_eq_some_iff _
 
 /-- The covert iota denotes `x` iff `x` is the unique satisfier of the restrictor at the
 situation. -/
 theorem denote_bare_eq_some_iff : ⟦bare R⟧ g s = some x ↔ R g s x ∧ ∀ y, R g s y → y = x :=
-  russellIota?_eq_some_iff _
+  iota_eq_some_iff _
 
 /-- The weak article is defined iff the restrictor has a unique satisfier at the situation. -/
 theorem denote_unique_isSome_iff : (⟦unique R⟧ g s).isSome ↔ ∃! x, R g s x :=
-  russellIota?_isSome_iff _
+  iota_isSome_iff _
 
 /-- The strong article denotes `x` iff `x` is its antecedent and the restrictor holds of the
 antecedent at the situation: the index selects, the situation only decides definedness. -/
 theorem denote_anaphoric_eq_some_iff : ⟦anaphoric R d⟧ g s = some x ↔ R g s (g d) ∧ x = g d := by
-  rw [denote_anaphoric, russellIota?_eq_some_iff]
+  rw [denote_anaphoric, iota_eq_some_iff]
   exact ⟨fun ⟨⟨h, hx⟩, _⟩ ↦ ⟨hx ▸ h, hx⟩,
     fun ⟨h, hx⟩ ↦ ⟨⟨hx ▸ h, hx⟩, fun _ hy ↦ hy.2.trans hx.symm⟩⟩
 
@@ -183,7 +183,7 @@ theorem denote_anaphoric_rigid {s' : W} {x' : E} (h : ⟦anaphoric R d⟧ g s = 
 possession relation to the possessor. -/
 theorem denote_possessive_isSome_iff :
     (⟦possessive R possessor rel⟧ g s).isSome ↔ ∃! x, R g s x ∧ rel g s (possessor g s) x :=
-  russellIota?_isSome_iff _
+  iota_isSome_iff _
 
 end Description
 

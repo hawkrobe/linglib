@@ -13,7 +13,7 @@ to denote a number, a predicate counting the atoms of a plurality, or a quantifi
 properties, and the survey's point is that the three are notational variants related by
 type-shifts: the counting operator `MANY` takes the number to the predicate ((22), (23)), the
 survey's `CARD` takes the predicate back to the number ((24), (25)), and [partee-1987]'s `BE` and
-`iota`, the Russellian `russellIota?`, lower [kennedy-2015]'s degree quantifier, `λP. max(P) = n`,
+`iota`, the Russellian `iota`, lower [kennedy-2015]'s degree quantifier, `λP. max(P) = n`,
 to the number ((49), (50)). The survey then fills the empty slot in the landscape with a lower-bound
 degree quantifier, the Montague lift of the number ((52)), and an operator `MAX` sending a
 quantifier to the properties whose maximum lies in every member of it ((53)), which turns the
@@ -30,7 +30,7 @@ the polarity behaviour of *zero* argues it should ([bylinina-nouwen-2018]).
 
 * `CARD_MANY`, `MANY_injective_iff`: `CARD` inverts `MANY` at every numeral some plurality
   realizes, so the modifier view determines the numeral exactly when the atoms are infinite.
-* `BE_maxIn_singleton`, `russellIota?_BE_maxIn_singleton`: lowering the exactly-reading
+* `BE_maxIn_singleton`, `iota_BE_maxIn_singleton`: lowering the exactly-reading
   quantifier gives the number back.
 * `MAX_individual`, `maxIn_singleton_lt_individual`: `MAX` takes the lower-bound quantifier to the
   exactly-reading one, which is strictly stronger.
@@ -108,8 +108,8 @@ theorem BE_maxIn_singleton (n : ℕ) : BE (maxIn {n}) = ident n := by
     subst h; exact maxIn_singleton.2 isGreatest_singleton⟩
 
 /-- Lowering with `BE` and then `iota` recovers the number ((50)). -/
-theorem russellIota?_BE_maxIn_singleton (n : ℕ) : russellIota? (BE (maxIn {n})) = some n := by
-  rw [BE_maxIn_singleton]; exact russellIota?_ident n
+theorem iota_BE_maxIn_singleton (n : ℕ) : iota (BE (maxIn {n})) = some n := by
+  rw [BE_maxIn_singleton]; exact iota_ident n
 
 /-- The exactly-reading quantifier determines the numeral, since `BE` recovers it. -/
 theorem maxIn_singleton_injective : Function.Injective fun n : ℕ => maxIn {n} :=
