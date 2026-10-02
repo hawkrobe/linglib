@@ -14,17 +14,17 @@ Nadathur analyses an implicative as Karttunen's presupposition–proposition pai
 conditions, her Proposal (32). The verb presupposes that its prerequisite is causally necessary
 for the complement and, if it is two-way, causally sufficient, both relative to a background
 situation, and it asserts the prerequisite. Under this causal reading of the conditions
-(`causalReading`), which is sound at every context of the background, the complement entailments
-of Karttunen's schemas carry over.
+(`causalReading`), which is sound at every context of the background, a verb implies what its
+implication signature says.
 
 In her Dreyfus scenario, an eight-vertex causal model, the nerve that *dare* names is causally
 necessary and sufficient for sending the message, so *dare* is felicitous there and its assertion
 and denial decide the message (`dare_felicitous_for_msg`, `msg_of_dare`, `not_msg_of_not_dare`).
 The nerve is necessary but not sufficient for establishing communication and for spying, so *dare*
-is infelicitous there (`dare_infelicitous_for_com`, `dare_infelicitous_for_spy`). The paper's
-Finnish implicatives fall under Karttunen's schemas, which the Finnish fragment's entries carry
-(`implicative_eq`), and each of the paper's minimal pairs entails what its schema commits the
-speaker to (`rows_agree`).
+is infelicitous there (`dare_infelicitous_for_com`, `dare_infelicitous_for_spy`). The Finnish
+fragment's entries carry the implication signatures of the paper's Finnish implicatives
+(`implicative_eq`), and each of the paper's minimal pairs implies what its verb's signature says for
+its matrix polarity (`rows_agree`).
 
 ## Implementation notes
 
@@ -59,7 +59,7 @@ sufficiency semantics takes a single prerequisite vertex.
 
 namespace Nadathur2023
 
-open CausalModel Implicative Presupposition
+open CausalModel Implicative Presupposition NaturalLogic
 
 /-! ### Consistent supersituations -/
 
@@ -163,10 +163,11 @@ def dreyfusBg : V → Flat Bool := [.INT ← true, .SEC ← true]
 instance : dreyfusModel.ContextAtRoots :=
   ⟨fun {v w} hw _ _ _ ↦ by cases v <;> first | rfl | (exfalso; revert hw; revert w; decide)⟩
 
-/-- *Dreyfus dared to `e`*, the two-way schema under the causal reading with the nerve as the
-prerequisite. -/
+/-- *Dreyfus dared to `e`*, a verb of the two-way signature `+/−` under the causal reading, with
+the nerve as the prerequisite. -/
 def dare (e : V) : PartialProp (dreyfusModel.contexts dreyfusBg) :=
-  Schema.manage.sentence (causalReading dreyfusModel dreyfusBg) (.NRV, true) (e, true)
+  sentence (causalReading dreyfusModel dreyfusBg) ⟨some .positive, some .negative⟩ (.NRV, true)
+    (e, true)
 
 /-- NRV is causally sufficient for MSG, the background settling neither. -/
 theorem nrv_sufficient_for_msg :
@@ -215,32 +216,34 @@ theorem nrv_necessary_for_msg :
 /-- (34a) *Dreyfus dared to send a message to the Germans* is felicitous: at every context of the
 background, NRV is causally necessary and sufficient for MSG. -/
 theorem dare_felicitous_for_msg (u : dreyfusModel.contexts dreyfusBg) : (dare .MSG).presup u :=
-  ⟨fun _ ↦ nrv_sufficient_for_msg, fun _ ↦ nrv_necessary_for_msg⟩
+  ⟨fun _ hq ↦ by cases hq; exact nrv_sufficient_for_msg,
+    fun _ hq ↦ by cases hq; exact nrv_necessary_for_msg⟩
 
 /-- (34a) entails that Dreyfus sent the message. -/
 theorem msg_of_dare {u : dreyfusModel.contexts dreyfusBg} (h : (dare .MSG).holds u) :
     dreyfusModel.solve ⊥ u .MSG = true :=
-  Schema.holds_imp (k := .manage) trivial h
+  holds_signed_of_mem_implied (m := .positive) (q := .positive) rfl h
 
 /-- (34b) *Dreyfus did not dare to send a message to the Germans* entails that he did not send
 it. -/
 theorem not_msg_of_not_dare {u : dreyfusModel.contexts dreyfusBg}
     (h : (PartialProp.neg (dare .MSG)).holds u) : dreyfusModel.solve ⊥ u .MSG ≠ true :=
-  Schema.neg_holds_imp (k := .manage) trivial h
+  ((causalReading dreyfusModel dreyfusBg).holds_neg _ u).1
+    (holds_signed_of_mem_implied (m := .negative) (q := .negative) rfl h)
 
 /-- (34c) *?/# Dreyfus dared to establish communication with the Germans* is infelicitous: NRV is
 not causally sufficient for COM, which stays unsettled while LST and BRK are unresolved. -/
 theorem dare_infelicitous_for_com (u : dreyfusModel.contexts dreyfusBg) :
     ¬ (dare .COM).presup u :=
   fun h ↦ (by decide : ¬ dreyfusModel.CausallySufficient dreyfusBg .NRV true .COM true)
-    (h.1 trivial).2
+    (h.1 .positive rfl).2
 
 /-- (34d) *?/# Dreyfus dared to spy for the Germans* is infelicitous: NRV is not causally
 sufficient for SPY, whose conditions LST, BRK and COM are all undetermined. -/
 theorem dare_infelicitous_for_spy (u : dreyfusModel.contexts dreyfusBg) :
     ¬ (dare .SPY).presup u :=
   fun h ↦ (by decide : ¬ dreyfusModel.CausallySufficient dreyfusBg .NRV true .SPY true)
-    (h.1 trivial).2
+    (h.1 .positive rfl).2
 
 /-- In (34c) NRV is nevertheless causally necessary for COM. Achievability settles the exogenous
 LST = 1 and BRK = 0, and every path to COM = 1 runs through NRV = 1. -/
@@ -297,25 +300,32 @@ end Consistent
 
 /-! ### The Finnish implicatives -/
 
-/-- The schemas of the Finnish verbs. *Onnistua* is the bleached two-way verb, and *uskaltaa*,
-*viitsiä*, *malttaa*, *hennoa*, *kehdata* and *ehtiä* name their prerequisites, courage,
-engagement, patience, hard-heartedness, the lack of shame and time. *Jaksaa* names strength and
-*mahtua* being small enough, and both entail only when negated, as does *pystyä*, which the paper
-also allows might be a modal; *laiminlyödä* and *epäröidä* reverse the polarity. -/
-def finnish : List (Finnish.Verb × Schema) :=
-  [(Finnish.onnistua, .manage), (Finnish.uskaltaa, .manage), (Finnish.viitsiä, .manage),
-    (Finnish.malttaa, .manage), (Finnish.hennoa, .manage), (Finnish.kehdata, .manage),
-    (Finnish.ehtiä, .manage), (Finnish.jaksaa, .beAble), (Finnish.mahtua, .beAble),
-    (Finnish.pystyä, .beAble), (Finnish.laiminlyödä, .fail), (Finnish.epäröidä, .hesitate)]
+/-- The implication signatures of the Finnish verbs. *Onnistua* is the bleached two-way verb,
+and *uskaltaa*, *viitsiä*, *malttaa*, *hennoa*, *kehdata* and *ehtiä* name their prerequisites,
+courage, engagement, patience, hard-heartedness, the lack of shame and time. *Jaksaa* names
+strength and *mahtua* being small enough, and both imply only when negated, as does *pystyä*, which
+the paper also allows might be a modal; *laiminlyödä* and *epäröidä* reverse the polarity. -/
+def finnish : List (Finnish.Verb × ImplicationSignature) :=
+  [(Finnish.onnistua, ⟨some .positive, some .negative⟩),
+    (Finnish.uskaltaa, ⟨some .positive, some .negative⟩),
+    (Finnish.viitsiä, ⟨some .positive, some .negative⟩),
+    (Finnish.malttaa, ⟨some .positive, some .negative⟩),
+    (Finnish.hennoa, ⟨some .positive, some .negative⟩),
+    (Finnish.kehdata, ⟨some .positive, some .negative⟩),
+    (Finnish.ehtiä, ⟨some .positive, some .negative⟩),
+    (Finnish.jaksaa, ⟨none, some .negative⟩), (Finnish.mahtua, ⟨none, some .negative⟩),
+    (Finnish.pystyä, ⟨none, some .negative⟩),
+    (Finnish.laiminlyödä, ⟨some .negative, some .positive⟩),
+    (Finnish.epäröidä, ⟨none, some .positive⟩)]
 
-/-- Each schema is the one the Fragment's entry carries. -/
+/-- Each signature is the one the Fragment's entry carries. -/
 theorem implicative_eq : ∀ p ∈ finnish, p.1.implicative = some p.2 := by
   decide
 
-/-- A minimal-pair member: the schema of its verb, the polarity of its matrix, and the polarity of
-the complement the paper says it entails, if any. -/
+/-- A minimal-pair member records the implication signature of its verb, the polarity of its
+matrix, and the polarity of the complement the paper says it implies, if any. -/
 structure Row where
-  schema : Schema
+  signature : ImplicationSignature
   matrix : Polarity
   entails : Option Polarity
 
@@ -334,8 +344,8 @@ theorem isSome_ofDatum : ∀ e ∈ Examples.all, (Row.ofDatum e).isSome := by
 /-- The rows of the paper's Finnish minimal pairs. -/
 def rows : List Row := Examples.all.filterMap Row.ofDatum
 
-/-- Each claim entails what its schema commits the speaker to. -/
-theorem rows_agree : ∀ r ∈ rows, r.schema.entailed r.matrix = r.entails := by
+/-- Each claim implies what its verb's signature says for its matrix polarity. -/
+theorem rows_agree : ∀ r ∈ rows, r.signature.implied r.matrix = r.entails := by
   decide
 
 end Nadathur2023

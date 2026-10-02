@@ -5,7 +5,7 @@ public import Linglib.Syntax.Category.Verb.ArgumentFrame.Basic
 public import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 public import Linglib.Semantics.Presupposition.Basic
 public import Linglib.Semantics.Presupposition.TriggerTypology
-public import Linglib.Semantics.Presupposition.Implicative
+public import Linglib.Logic.Natural.ImplicationSignature
 public import Linglib.Semantics.Aspect.Defs
 public import Linglib.Semantics.Events.PathDir
 public import Linglib.Semantics.Attitudes.Basic
@@ -152,17 +152,17 @@ structure Aspect where
   phasal : Option Phasal := none
   deriving Repr, BEq
 
-/-- The presupposition profile of a verb is its factivity class and its implicative schema.
+/-- The presupposition profile of a verb is its factivity class and its implication signature.
     Whether the verb triggers a presupposition, and of which kind, is derived
     (`Verb.triggerType?`). -/
 structure Presupposition where
   /-- The [karttunen-1971b] factivity class of a factive predicate; `none` for a
       non-factive. -/
   factivity : Option _root_.Presupposition.Factivity := none
-  /-- The [karttunen-1971] schema of an implicative, the condition its prerequisite is
-      presupposed to be for the complement and the complement's polarity; `none` for a
+  /-- The [nairn-condoravdi-karttunen-2006] implication signature of an implicative, the
+      polarity of the complement it implies in a positive and in a negative context; `none` for a
       non-implicative. -/
-  implicative : Option Implicative.Schema := none
+  implicative : Option NaturalLogic.ImplicationSignature := none
   deriving Repr, BEq
 
 /-- The causal semantics of a verb is its causative mechanism. -/

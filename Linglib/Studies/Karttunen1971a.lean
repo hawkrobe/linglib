@@ -18,12 +18,13 @@ makes `v(S)` necessary and sufficient for `S` (*manage*), (41) necessary and suf
 (*fail*, *forget*), (54) necessary only (*be able*, *be possible*), and (59) sufficient only
 (*force*, *cause*); the non-implicatives *hope*, *want* and *try* carry no such presupposition.
 
-The schemas are `Implicative.Schema` under the material reading of the conditions
+Each schema fixes an implication signature: (37) is `+/−`, (41) `−/+`, (54) `◦/−` and (59)
+`+/◦`. The analysis is `Implicative.sentence` under the material reading of the conditions
 (`Implicative.Reading.material`), which gives the paper's entailment facts: double negation
-cancels as in (13) (`manage_neg_neg_holds_imp`), and the one-way cells and the non-implicatives
+cancels as in (13) (`manage_neg_neg_holds_imp`), and the one-way schemas and the non-implicatives
 leave the other direction open (`force_neg_not_entails`, `beAble_not_entails`,
 `ofProp_not_entails`). The English fragment's entries for the verbs of (2), (38) and (44) carry
-their schemas (`implicative_eq`) and so are presupposition triggers
+the signatures of their schemas (`implicative_eq`) and so are presupposition triggers
 (`isTrigger_of_mem_english`), while its entries for the non-implicatives of (2) carry none
 (`implicative_eq_none`).
 
@@ -36,24 +37,25 @@ their schemas (`implicative_eq`) and so are presupposition triggers
 
 namespace Karttunen1971a
 
-open Presupposition Implicative
+open Presupposition Implicative NaturalLogic
 
 /-- Double negation cancels, (13): *John didn't remember not to lock his door* commits the
 speaker to *John locked his door*. -/
 theorem manage_neg_neg_holds_imp {W : Type*} {v S : W → Prop} {w : W}
-    (hs : (PartialProp.neg (Schema.manage.sentence (Reading.material W) v fun w ↦ ¬ S w)).holds w) :
-    S w :=
-  not_not.mp (Schema.neg_holds_imp (k := .manage) trivial hs)
+    (hs : (PartialProp.neg (sentence (Reading.material W) ⟨some .positive, some .negative⟩ v
+      fun w ↦ ¬ S w)).holds w) : S w :=
+  not_not.mp (holds_signed_of_mem_implied (m := .negative) (q := .negative) rfl hs)
 
 /-- (58) *John didn't force Mary to stay home* leaves open whether she stayed. -/
 theorem force_neg_not_entails : ∃ (v S : Unit → Prop),
-    (PartialProp.neg (Schema.force.sentence (Reading.material Unit) v S)).holds () ∧ S () :=
-  ⟨fun _ ↦ False, fun _ ↦ True, ⟨⟨fun _ _ ↦ trivial, fun h ↦ False.elim h⟩, id⟩, trivial⟩
+    (PartialProp.neg (sentence (Reading.material Unit) ⟨some .positive, none⟩ v S)).holds () ∧
+      S () :=
+  ⟨fun _ ↦ False, fun _ ↦ True, ⟨⟨fun _ _ h ↦ h.elim, fun _ h ↦ (by cases h)⟩, id⟩, trivial⟩
 
 /-- (55) *John was able to come* leaves open whether he came. -/
 theorem beAble_not_entails : ∃ (v S : Unit → Prop),
-    (Schema.beAble.sentence (Reading.material Unit) v S).holds () ∧ ¬ S () :=
-  ⟨fun _ ↦ True, fun _ ↦ False, ⟨⟨fun h ↦ False.elim h, fun _ _ ↦ trivial⟩, trivial⟩, id⟩
+    (sentence (Reading.material Unit) ⟨none, some .negative⟩ v S).holds () ∧ ¬ S () :=
+  ⟨fun _ ↦ True, fun _ ↦ False, ⟨⟨fun _ h ↦ (by cases h), fun _ _ _ ↦ trivial⟩, trivial⟩, id⟩
 
 /-- A non-implicative, which has no presupposition, commits the speaker to nothing about its
 complement in either polarity (5). -/
@@ -69,31 +71,40 @@ section Lexicon
 
 open English.Verbs hiding Verb
 
-/-- The English fragment's entries for the implicatives of (2), with schema (37), for the
-negative implicatives of (38), with (41), and for *be able* of (44), with (54), as far as the
+/-- The English fragment's entries for the implicatives of (2), with the signature of schema
+(37), for the negative implicatives of (38), with that of (41), and for *be able* of (44), with
+that of (54), as far as the
 fragment covers the lists: its *get* is the causative sense and its *avoid* takes a noun phrase.
 The verbs of (56), *force* and *prevent*, are causatives in the fragment and carry no implicative
 polarity. -/
-def english : List (Verb × Schema) :=
-  [(manage.toVerb, .manage), (remember.toVerb, .manage), (bother.toVerb, .manage),
-    (dare.toVerb, .manage), (venture.toVerb, .manage), (condescend.toVerb, .manage),
-    (happen.toVerb, .manage), (fail.toVerb, .fail), (forget.toVerb, .fail),
-    (neglect.toVerb, .fail), (Copular.beAble, .beAble)]
+def english : List (Verb × ImplicationSignature) :=
+  [(manage.toVerb, ⟨some .positive, some .negative⟩),
+    (remember.toVerb, ⟨some .positive, some .negative⟩),
+    (bother.toVerb, ⟨some .positive, some .negative⟩),
+    (dare.toVerb, ⟨some .positive, some .negative⟩),
+    (venture.toVerb, ⟨some .positive, some .negative⟩),
+    (condescend.toVerb, ⟨some .positive, some .negative⟩),
+    (happen.toVerb, ⟨some .positive, some .negative⟩),
+    (fail.toVerb, ⟨some .negative, some .positive⟩),
+    (forget.toVerb, ⟨some .negative, some .positive⟩),
+    (neglect.toVerb, ⟨some .negative, some .positive⟩),
+    (Copular.beAble, ⟨none, some .negative⟩)]
 
-/-- Each entry carries its schema. -/
+/-- Each entry carries the signature of its schema. -/
 theorem implicative_eq : ∀ p ∈ english, p.1.implicative = some p.2 := by
   decide
 
 /-- Every entry is a presupposition trigger, as (37), (41) and (54) each pair the proposition
 with a presupposition. -/
-theorem isTrigger_of_mem_english {p : Verb × Schema} (hp : p ∈ english) : p.1.IsTrigger :=
+theorem isTrigger_of_mem_english {p : Verb × ImplicationSignature} (hp : p ∈ english) :
+    p.1.IsTrigger :=
   Verb.isTrigger_iff.2 (.inr (.inl (by simp [implicative_eq p hp])))
 
 /-- The fragment's entries for the non-implicatives of (2). -/
 def nonImplicative : List Verb :=
   [try_.toVerb, promise.toVerb, want.toVerb, intend.toVerb, decide_.toVerb, hope.toVerb]
 
-/-- The non-implicatives of (2) carry no schema. -/
+/-- The non-implicatives of (2) carry no signature. -/
 theorem implicative_eq_none : ∀ v ∈ nonImplicative, v.implicative = none := by
   decide
 
