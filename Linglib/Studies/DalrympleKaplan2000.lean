@@ -54,7 +54,9 @@ conjunction's marker. Each construction is then checked against the paper's judg
   the file analyses the grammars that accept the paper's examples.
 * The person of a marker set is the substrate's `Person.ofParticipants`, the markers the two
   discourse roles, so resolution as union is the substrate's `Person.ofParticipants_union`,
-  derived from profile grounding rather than checked by a table.
+  the join of the participant sets the values cover rather than a checked table.
+* The English encoding (91) is derived as the largest participant set a value covers; the
+  paper reaches `{S,H}` from the requirement that *Bill and I* and *you and I* share a value.
 * The collapsed English system is stated as the tripartition's coarsened resolution, the
   study's bridge to the substrate; the paper frames §6.2 as a choice between two marker
   assignments.
@@ -241,8 +243,9 @@ open English.Verbs hiding Verb
 theorem will_and_have :
     AcceptableIff Examples.ex_49 (English.Verbs.Verb.Cell.base ∈ formCells set_.realize "set" ∧
         English.Verbs.Verb.Cell.pastParticiple ∈ formCells set_.realize "set") ∧
-      AcceptableIff Examples.ex_47 (English.Verbs.Verb.Cell.base ∈ formCells clarify.realize "clarify" ∧
-        English.Verbs.Verb.Cell.pastParticiple ∈ formCells clarify.realize "clarify") ∧
+      AcceptableIff Examples.ex_47
+        (English.Verbs.Verb.Cell.base ∈ formCells clarify.realize "clarify" ∧
+          English.Verbs.Verb.Cell.pastParticiple ∈ formCells clarify.realize "clarify") ∧
       AcceptableIff Examples.ex_48
         (English.Verbs.Verb.Cell.base ∈ formCells clarify.realize "clarified" ∧
           English.Verbs.Verb.Cell.pastParticiple ∈ formCells clarify.realize "clarified") := by
@@ -326,12 +329,10 @@ theorem fula :
       AcceptableIff Examples.ex_86 (Person.ofParticipants (∅ ∪ {.speaker}) = .firstExclusive) := by
   decide
 
-/-- The encoding of languages without the inclusive/exclusive contrast, every first person the
-    inclusive's set, the second the hearer, the third empty ((91)). -/
-def english : Person → PersonSet
-  | .first => {.speaker, .addressee}
-  | .second => {.addressee}
-  | _ => ∅
+/-- The encoding of languages without the inclusive/exclusive contrast assigns each person the
+    largest participant set it covers, so every first person gets the inclusive's set, the
+    second the hearer, and the third the empty set ((91)). -/
+def english (p : Person) : PersonSet := p.participantSets.sup id
 
 /-- Union under this encoding is the tripartition's coarsened resolution ((92)). -/
 theorem english_table :

@@ -1,213 +1,208 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 module
 
+public import Mathlib.Data.Finset.Sups
 public import Mathlib.Data.Fintype.Powerset
 public import Linglib.Discourse.Role
 public import Linglib.Syntax.Person.Basic
 
 /-!
-# Person — resolution
-[corbett-2006] [zwicky-1977b] [dalrymple-kaplan-2000]
+# Person resolution
 
-Resolution in coordination: the person of a coordinate structure from
-the persons of its conjuncts (*you and I* → first inclusive). The
-canonical table returns the finest analytical value
-(`first + second = firstInclusive`); systems without the distinction
-coarsen via `resolveIn`, exactly as `Number.resolve`'s canonical dual
-coarsens to plural in {sg, pl} systems.
+A person value covers the referents whose participants form one of its participant sets:
+`{speaker}` or `{speaker, addressee}` for the first person unmarked for clusivity, a single set for
+each value of the quadripartition, and none for the impersonal `zero`. As Zwicky proposes, a
+coordination refers to the union of its conjuncts' referents, so its participant sets are the
+pairwise unions `⊻` of theirs. Distinct values cover distinct participant sets, so this makes
+`Person` a join-semilattice whose join `⊔` is person resolution, with third person at the bottom
+and the impersonal at the top.
 
-The table is not stipulated: `resolve_profile` derives it from referent
-union. A person value constrains which discourse roles the referent
-includes (`Profile`: speaker yes/no, addressee yes/no/underdetermined —
-the tripartition `first` leaves the addressee slot open), and
-coordination unions referents — so resolution is pointwise disjunction
-on profiles, [dalrymple-kaplan-2000]'s set-union semantics for person
-resolution. The Zwicky hierarchy (1 < 2 < 3, [zwicky-1977b]) falls out:
-in a tripartition system, resolution is minimum of `hierarchyRank`
-(`resolveIn_tripartition_min`).
+Dalrymple and Kaplan's marker sets are the participant sets of the quadripartition, and their union
+is the join (`Person.ofParticipants_union`). A system without clusivity coarsens the join, and
+resolution there follows the hierarchy 1 > 2 > 3 of Corbett's resolution rules.
 
-`zero` (impersonal) does not participate in attested resolution; it is
-treated as an identity by convention (documented, not an empirical
-claim).
+## Main definitions
 
-A referent that includes a known set of discourse participants has a
-total profile, and the person it determines is `ofParticipants`; the
-union of two participant sets is the resolution of their persons
-(`ofParticipants_union`), [dalrymple-kaplan-2000]'s person resolution
-by marker-set union.
+* `Person.participantSets`: the participant sets a person value covers.
+* the `SemilatticeSup Person` instance: person resolution as the join.
+* `Person.ofParticipants`: the value covering exactly one participant set.
+* `Person.coarsenTo`, `Person.System.resolve`: resolution within a person system.
+
+## Main results
+
+* `Person.participantSets_sup`: the participant sets of a join are the pairwise unions.
+* `Person.ofParticipants_union`: the person of a union of participant sets is the join of their
+  persons.
+* `Person.coarsen_eq_iff`: coarsening sends a value to the tripartition value covering it.
+* `Person.System.tripartition_resolve`: in the tripartition, resolution selects the conjunct
+  highest on the hierarchy.
+
+## Implementation notes
+
+The impersonal covers no participant set, so a coordination with an impersonal conjunct has no
+referential person; making `zero` absorbing records this and keeps every law unconditional.
+
+## References
+
+* [zwicky-1977b]
+* [dalrymple-kaplan-2000]
+* [corbett-2006]
 -/
 
 @[expose] public section
 
+open scoped FinsetFamily
+
 namespace Person
 
-/-! ### Canonical resolution -/
+open Finset Discourse
 
-/-- Canonical person resolution: the finest analytical value for the
-    coordination of two referents. Speaker inclusion dominates;
-    coordination with the addressee yields the inclusive. `zero` is an
-    identity by convention. -/
-def resolve : Person → Person → Person
-  | .zero, p => p
-  | p, .zero => p
-  | .firstInclusive, _ => .firstInclusive
-  | _, .firstInclusive => .firstInclusive
-  | .first, .second => .firstInclusive
-  | .second, .first => .firstInclusive
-  | .firstExclusive, .second => .firstInclusive
-  | .second, .firstExclusive => .firstInclusive
-  | .first, _ => .first
-  | _, .first => .first
-  | .firstExclusive, _ => .firstExclusive
-  | _, .firstExclusive => .firstExclusive
-  | .second, _ => .second
-  | _, .second => .second
-  | .third, .third => .third
+/-! ### Participant sets -/
 
-theorem resolve_comm : ∀ a b, resolve a b = resolve b a := by decide
+/-- `p.participantSets` is the family of participant sets of the referents `p` covers. -/
+def participantSets : Person → Finset (Finset Role)
+  | .first => {{.speaker}, {.speaker, .addressee}}
+  | .firstInclusive => {{.speaker, .addressee}}
+  | .firstExclusive => {{.speaker}}
+  | .second => {{.addressee}}
+  | .third => {∅}
+  | .zero => ∅
 
-theorem resolve_assoc :
-    ∀ a b c, resolve (resolve a b) c = resolve a (resolve b c) := by
-  decide
+theorem participantSets_injective : Function.Injective participantSets := by decide
 
-/-- Resolving two referential persons gives a referential person. -/
-theorem resolve_ne_zero : ∀ {a b : Person}, a ≠ .zero → b ≠ .zero → resolve a b ≠ .zero := by
-  decide
+@[simp] theorem participantSets_inj {p q : Person} :
+    p.participantSets = q.participantSets ↔ p = q :=
+  participantSets_injective.eq_iff
 
-@[simp] theorem resolve_zero_left (p : Person) : resolve .zero p = p := by
-  cases p <;> rfl
+@[simp] theorem participantSets_eq_empty {p : Person} : p.participantSets = ∅ ↔ p = .zero := by
+  cases p <;> decide
 
-@[simp] theorem resolve_zero_right (p : Person) : resolve p .zero = p := by
-  cases p <;> rfl
+/-- The participant sets of a value are closed under union. -/
+theorem supClosed_participantSets (p : Person) :
+    SupClosed (p.participantSets : Set (Finset Role)) := by
+  rw [← sups_eq_self]; cases p <;> decide
 
-/-! ### The grounding: resolution is referent union
+/-! ### Resolution -/
 
-A person value constrains the discourse roles in the referent. The
-profile records speaker inclusion (determinate for every value) and
-addressee inclusion (`none` = underdetermined: the tripartition `first`
-says nothing about the addressee). Coordination unions referents, so
-the resolved profile is the pointwise disjunction — with
-`none ∨ false = none`: if one conjunct's addressee status is open, so
-is the coordination's. -/
+/-- In person resolution the impersonal absorbs, third person is neutral, the first person
+unmarked for clusivity absorbs the exclusive, and any other two distinct values together cover
+both the speaker and the addressee. -/
+instance : Max Person where
+  max
+    | .zero, _ | _, .zero => .zero
+    | .third, p | p, .third => p
+    | .first, .firstExclusive | .firstExclusive, .first => .first
+    | p, q => if p = q then p else .firstInclusive
 
-/-- Discourse-role inclusion profile of a (non-impersonal) person
-    value. -/
-structure Profile where
-  /-- The referent includes the speaker. -/
-  speaker : Bool
-  /-- The referent includes the addressee; `none` = underdetermined. -/
-  addressee : Option Bool
-  deriving DecidableEq, Repr
+/-- The participant sets of a coordination are the unions of its conjuncts'. -/
+@[simp] theorem participantSets_sup (p q : Person) :
+    (p ⊔ q).participantSets = p.participantSets ⊻ q.participantSets := by
+  revert p q; decide
 
-/-- The profile of each value; `zero` constrains roles in a
-    context-dependent way and has none. -/
-def toProfile : Person → Option Profile
-  | .first => some ⟨true, none⟩
-  | .firstInclusive => some ⟨true, some true⟩
-  | .firstExclusive => some ⟨true, some false⟩
-  | .second => some ⟨false, some true⟩
-  | .third => some ⟨false, some false⟩
-  | .zero => none
+instance : SemilatticeSup Person :=
+  SemilatticeSup.mk'
+    (fun _ _ ↦ participantSets_injective <| by simp only [participantSets_sup, sups_comm])
+    (fun _ _ _ ↦ participantSets_injective <| by simp only [participantSets_sup, sups_assoc])
+    (fun p ↦ participantSets_injective <| by
+      rw [participantSets_sup, sups_eq_self]; exact supClosed_participantSets p)
 
-/-- Profiles of unions: pointwise disjunction (three-valued on the
-    addressee slot). -/
-def Profile.or (p q : Profile) : Profile :=
-  ⟨p.speaker || q.speaker,
-    match p.addressee, q.addressee with
-    | some true, _ => some true
-    | _, some true => some true
-    | some false, some false => some false
-    | _, _ => none⟩
+instance : DecidableLE Person := fun p q ↦ inferInstanceAs (Decidable (p ⊔ q = q))
 
-/-- **The resolution table is referent union** ([dalrymple-kaplan-2000]):
-    for referential persons, the profile of the resolved value is the
-    disjunction of the conjuncts' profiles. The table is derived, not
-    stipulated. -/
-theorem resolve_profile :
-    ∀ p q : Person, p ≠ .zero → q ≠ .zero →
-      (resolve p q).toProfile =
-        (p.toProfile.bind fun pp => q.toProfile.map pp.or) := by
-  decide
+instance : BoundedOrder Person where
+  bot := .third
+  bot_le p := show .third ⊔ p = p by cases p <;> rfl
+  top := .zero
+  le_top p := show p ⊔ .zero = .zero by cases p <;> rfl
 
-/-- Distinct values have distinct profiles: the referential inventory is
-    exactly the profile space reachable from referents. -/
-theorem toProfile_injOn :
-    ∀ p q : Person, p ≠ .zero → q ≠ .zero →
-      p.toProfile = q.toProfile → p = q := by
-  decide
+@[simp] theorem bot_eq_third : (⊥ : Person) = .third := rfl
+
+@[simp] theorem top_eq_zero : (⊤ : Person) = .zero := rfl
 
 /-! ### The person of a participant set -/
 
-/-- The person of a referent that includes exactly the given discourse participants: first
-    inclusive with both, first exclusive with the speaker alone, second with the addressee
-    alone and third with neither, the quadripartition as the subsets of the participants
-    ([harbour-2016]; [dalrymple-kaplan-2000]'s person of a marker set). -/
-def ofParticipants (s : Finset Discourse.Role) : Person :=
+/-- The person of a referent whose participants are `s` is first inclusive with both, first
+exclusive with the speaker alone, second with the addressee alone, and third with neither. -/
+def ofParticipants (s : Finset Role) : Person :=
   if .speaker ∈ s then if .addressee ∈ s then .firstInclusive else .firstExclusive
   else if .addressee ∈ s then .second else .third
 
-theorem ofParticipants_injective : Function.Injective ofParticipants := by decide
+@[simp] theorem participantSets_ofParticipants (s : Finset Role) :
+    (ofParticipants s).participantSets = {s} := by
+  revert s; decide
 
-theorem ofParticipants_ne_zero (s : Finset Discourse.Role) : ofParticipants s ≠ .zero := by
-  unfold ofParticipants; split_ifs <;> simp
+/-- The values of the quadripartition are exactly those covering a single participant set. -/
+theorem participantSets_eq_singleton_iff {p : Person} {s : Finset Role} :
+    p.participantSets = {s} ↔ p = ofParticipants s := by
+  rw [← participantSets_inj, participantSets_ofParticipants]
 
-/-- The profile of the person of a participant set records which participants it includes. -/
-theorem toProfile_ofParticipants (s : Finset Discourse.Role) :
-    (ofParticipants s).toProfile =
-      some ⟨decide (.speaker ∈ s), some (decide (.addressee ∈ s))⟩ := by
-  unfold ofParticipants; split_ifs with hS hH hH <;> simp [toProfile, hS, hH]
+theorem ofParticipants_injective : Function.Injective ofParticipants := fun s t h ↦ by
+  simpa using congrArg participantSets h
 
-/-- Resolution is participant union ([dalrymple-kaplan-2000]): the person of the union of two
-    participant sets is the resolution of their persons, since profiles union pointwise. -/
-theorem ofParticipants_union (s t : Finset Discourse.Role) :
-    ofParticipants (s ∪ t) = resolve (ofParticipants s) (ofParticipants t) := by
-  refine (toProfile_injOn _ _
-    (resolve_ne_zero (ofParticipants_ne_zero s) (ofParticipants_ne_zero t))
-    (ofParticipants_ne_zero _) ?_).symm
-  rw [resolve_profile _ _ (ofParticipants_ne_zero s) (ofParticipants_ne_zero t),
-    toProfile_ofParticipants, toProfile_ofParticipants, toProfile_ofParticipants]
-  by_cases hS : .speaker ∈ s <;> by_cases hS' : .speaker ∈ t <;>
-    by_cases hH : .addressee ∈ s <;> by_cases hH' : .addressee ∈ t <;>
-    simp [Profile.or, hS, hS', hH, hH']
+@[simp] theorem ofParticipants_empty : ofParticipants ∅ = ⊥ := rfl
 
-/-! ### System-relative resolution -/
+/-- The person of a union of participant sets is the join of their persons. -/
+theorem ofParticipants_union (s t : Finset Role) :
+    ofParticipants (s ∪ t) = ofParticipants s ⊔ ofParticipants t :=
+  participantSets_injective <| by simp
 
-/-- Coarsen a value into a system: keep it if present, else collapse
-    clusivity. -/
+/-! ### Predicates read off the participant sets -/
+
+theorem includesSpeaker_iff (p : Person) :
+    IncludesSpeaker p ↔
+      p.participantSets.Nonempty ∧ ∀ s ∈ p.participantSets, .speaker ∈ s := by
+  cases p <;> decide
+
+theorem isSAP_iff (p : Person) :
+    IsSAP p ↔ p.participantSets.Nonempty ∧ ∀ s ∈ p.participantSets, s.Nonempty := by
+  cases p <;> decide
+
+/-! ### Coarsening -/
+
+/-- Coarsening a value never loses a participant set. -/
+theorem participantSets_subset_coarsen (p : Person) :
+    p.participantSets ⊆ p.coarsen.participantSets := by
+  cases p <;> decide
+
+/-- Coarsening sends a referential value to the tripartition value covering its participant
+sets. -/
+theorem coarsen_eq_iff {p : Person} (hp : p ≠ .zero) (q : Person) :
+    p.coarsen = q ↔
+      q ∈ System.tripartition.values ∧ p.participantSets ⊆ q.participantSets := by
+  revert p q; decide
+
+/-- The tripartition value of a coordination depends only on the tripartition values of its
+conjuncts. -/
+theorem coarsen_sup (p q : Person) : (p ⊔ q).coarsen = (p.coarsen ⊔ q.coarsen).coarsen := by
+  revert p q; decide
+
+/-! ### Resolution in a person system -/
+
+/-- Coarsening into a system keeps a value the system has and otherwise collapses clusivity. -/
 def coarsenTo (sys : List Person) (p : Person) : Person :=
   if p ∈ sys then p
   else if p.coarsen ∈ sys then p.coarsen
   else p
 
-/-- Resolution within a system: canonical resolution, coarsened. -/
+/-- Resolution within a system is the join coarsened into the system. -/
 def resolveIn (sys : List Person) (a b : Person) : Person :=
-  coarsenTo sys (resolve a b)
+  coarsenTo sys (a ⊔ b)
 
 theorem resolveIn_comm (sys : List Person) (a b : Person) :
     resolveIn sys a b = resolveIn sys b a := by
-  simp only [resolveIn, resolve_comm]
+  rw [resolveIn, resolveIn, sup_comm]
 
-/-- Resolution typed by a `Person.System`. -/
+/-- `ns.resolve` is resolution within the values of the person system `ns`. -/
 def System.resolve (ns : System) (a b : Person) : Person :=
   resolveIn ns.values a b
 
-/-- In a clusivity system: *you and I* resolves to the inclusive. -/
-theorem resolve_quadripartition_incl :
-    System.quadripartition.resolve .firstExclusive .second =
-      .firstInclusive := by decide
-
-/-- In a tripartition system the canonical inclusive coarsens to plain
-    first: English *you and I* → *we*. -/
-theorem resolve_tripartition_first :
-    System.tripartition.resolve .first .second = .first := by decide
-
-/-- **The Zwicky hierarchy as a corollary** ([zwicky-1977b]): in a
-    tripartition system, resolution is minimum of `hierarchyRank` —
-    1 < 2 < 3 is not a primitive but the shadow of referent union. -/
-theorem resolveIn_tripartition_min :
-    ∀ p q : Person, p ∈ System.tripartition.values →
-      q ∈ System.tripartition.values →
-      (System.tripartition.resolve p q).hierarchyRank =
-        min p.hierarchyRank q.hierarchyRank := by
+/-- In the tripartition, resolution selects the conjunct highest on the hierarchy 1 > 2 > 3. -/
+theorem System.tripartition_resolve :
+    ∀ p ∈ tripartition.values, ∀ q ∈ tripartition.values,
+      tripartition.resolve p q = if p.hierarchyRank ≤ q.hierarchyRank then p else q := by
   decide
 
 end Person
