@@ -1,231 +1,583 @@
 module
 
+public import Mathlib.Data.Fintype.EquivFin
 public import Mathlib.Order.Interval.Set.OrdConnected
-public import Mathlib.Data.Finset.Card
-public import Mathlib.Data.Fintype.Powerset
-public import Linglib.Semantics.Plurality.NumberFeatures
-public import Linglib.Syntax.Minimalist.Phi.Recursion
+public import Linglib.Semantics.Plurality.Number
+public import Linglib.Studies.Corbett2000
 
 /-!
 # Harbour (2014): Paucity, Abundance, and the Theory of Number
 
-[harbour-2014]'s account of the approximative numbers, paucal and greater plural, by a feature
-[±additive] of additive closure, over the library's [±atomic, ±minimal] decomposition and its
-activation and recursion parameters (`Semantics/Plurality/NumberFeatures.lean`,
-`Syntax/Minimalist/Phi/Recursion.lean`). The convexity condition (32) asks basic meanings to be
-convex regions of the number lattice, and its definition of convexity (33) is `Set.OrdConnected`,
-`ordConnected_iff_convexity_def`; on the first-person lattice the [+additive] region is not
-convex, since between the speaker atom and any [+additive] plurality lies a [−additive] paucity
-(section 4.5, Figure 8), `firstPerson_additive_not_ordConnected`, which is why [±additive] alone
-is never a language's number feature while [±atomic] or [±minimal] alone can be. Feature bundles
-being sets (27), a doubly negative specification of a feature is its maximal one, so there is no
-dyad augmented (25) or quadral (26), `axiom_of_extension`. The Greenberg-style implications of
-Table 1 hold across the well-formed parameter space, `table1_implications_generated`, every
-attested system of Table 3 satisfies them, and the unattested setting {±additive, ±minimal*}
-would violate the implication from unit augmented to augmented, so the universals are contingent
-on the typology's gaps (section 5.1). In Mele-Fila (Table 4) the plural is [+additive] relative
-to the lower of two conventionalized cuts and [−additive] relative to the upper, so it belongs
-both to the class the article *a* realizes and to the class the pronoun *raateu* realizes
-(section 5.2).
+Harbour characterizes the approximative numbers, paucal and greater plural, by a feature
+`[±additive]` of additive closure, beside the `[±atomic]` and `[±minimal]` that give the exact
+numbers. Each feature acts on a lattice of atoms and their sums, and the same two parameters
+govern all three: whether a feature is active on Number⁰ (22) and whether its two values may
+cooccur (23). A sociosemantic convention fixes the height of the cut `[±additive]` induces (14).
+A parameter setting generates a number system, the feature bundles with nonempty denotation, and
+the typology of Table 3 and the implications of Table 1 are claims about these systems.
+
+## Main definitions
+
+* `Setting`, `Bundle`, `Convention`: parameter settings, feature bundles, and the placement of
+  the cuts.
+* `Setting.system`: the number system a setting generates.
+* `PlusAdditive`: the `[+additive]` elements of a region cut horizontally.
+
+## Main results
+
+* `atomize_nonMinimalOf_iterate`: the successor-like function (31).
+* `not_additiveIn_band`, `additiveIn_firstPerson_iff`: below a cut no element of the
+  third-person lattice is `[+additive]`, and on the first-person lattice only the speaker is.
+* `not_ordConnected_plusAdditive_firstPerson`: `{±additive}` alone cuts the first-person lattice
+  nonconvexly, against the convexity condition (32).
+* `table3_generated`: the systems of Table 3, with Corbett's records of its example languages.
+* `wellFormed_toSystem_iff`: Table 1 holds of every legitimate setting but
+  `{±additive(*), ±minimal*}`, two lacunae whose unit augmented has no augmented.
+* `meleFila_system`, `meleFila_classes`: Mele-Fila's plural is `[+additive]` relative to the
+  lower cut and `[−additive]` relative to the upper, sharing a form with each neighbour (Table 4).
 
 ## Implementation notes
 
-The first-person lattice is modeled on a four-element carrier, the speaker and three others, with
-the conventional cut at triads. The critique of privative geometries (section 6) is the argument
-behind the containment filter on feature bundles, the lower sets of a feature chain
-(`Number.card_wellFormed`), which Harbour rejects. Table 1 (p. 186), Table 3 (p. 214), Table 4
-(p. 216), (27), (32), (33), and Figure 8 were verified against the publication.
+* A bundle is a `Finset` of signed features, so the axiom of extension (27) is built in, and it
+  is interpreted in the order (28); its cell is its denotation less the more specific bundles',
+  as the plural of Figure 7 is `Q+ \ Q′`.
+* The typology is computed on the strata of the third-person lattice over thirteen atoms, the
+  cardinalities to which `card` carries the operators; low cuts sit at six and eight atoms, high
+  ones at ten and twelve, and the labels (p. 201) follow Table 3 and its note b.
+
+## TODO
+
+* Banyun's greater and greatest plurals (Table 3, (18)) have no `Number` value, (24) omitting the
+  greatest plural; the first-person `[+additive]` singular of n. 23 is outside the typology.
+* The typology holds in one model; stating it for every lattice and every placement of the cuts
+  needs the action of the features on strata symbolically, with the join of strata `k` and `m`
+  ranging over `[max k m, k + m]`.
 
 ## References
 
 * [harbour-2014]
-* [gardenfors-2004]
-* [grimm-2018]
 * [corbett-2000]
+* [gardenfors-2004]
 -/
 
 @[expose] public section
 
 namespace Harbour2014
 
-open Minimalist.Phi.Recursion
+open Mereology
+open Number (additiveIn atomsOf nonAtomsOf nonMinimalOf)
 
-/-! ### Convexity (§4.5): (33) is `Set.OrdConnected` -/
+/-! ### Features act through cardinality (§2, (12)) -/
 
-/-- [harbour-2014] (33): "a lattice region L is convex if and only if
-    `c ∈ L` whenever `a, b ∈ L` and `a ⊑ c ⊑ b`" — definitionally
-    mathlib's `Set.OrdConnected`, hence the same predicate as
-    [grimm-2018]'s no-discontinuous-class condition and the fixed points of
-    `ordConnectedHull`. -/
-theorem ordConnected_iff_convexity_def {α : Type*} [Preorder α] (L : Set α) :
-    L.OrdConnected ↔ ∀ a ∈ L, ∀ b ∈ L, ∀ c, a ≤ c → c ≤ b → c ∈ L := by
-  constructor
-  · intro h a ha b hb c hac hcb
-    exact h.out ha hb ⟨hac, hcb⟩
-  · intro h
-    exact ⟨fun a ha b hb c hc ↦ h a ha b hb c hc.1 hc.2⟩
+section Card
 
-/-- The first-person(-exclusive) lattice over the ontology
-    {i, o, o′, o″} (`0` = the speaker atom i): every element contains i
-    ([harbour-2014] Figure 8, modeled on a four-element carrier). -/
-def firstPerson : Set (Finset (Fin 4)) := {s | 0 ∈ s}
+variable {α : Type*}
 
-/-- The [+additive] value region of `{±additive}` on the first-person
-    lattice, with the conventional cut at triads: the join-complete upper
-    region *and* the speaker atom {i}, which — being the unique member of
-    its equivalence class — is its own join-complete region defined by a
-    single horizontal cut ([harbour-2014] p. 211, Figure 8). -/
-def firstPersonAdditive : Set (Finset (Fin 4)) :=
-  {s | 0 ∈ s ∧ (s.card = 1 ∨ 3 ≤ s.card)}
+/-- On the strata `ℕ` the atom is `1`. -/
+theorem atom_iff_eq_one {k : ℕ} : Atom k ↔ k = 1 := by
+  refine ⟨fun h ↦ ?_, ?_⟩
+  · have h0 : k ≠ 0 := fun h0 ↦ h.1 (h0 ▸ isBot_bot)
+    have := h.2 (y := 1) (by simp [isBot_iff_eq_bot]) (by omega)
+    omega
+  · rintro rfl
+    exact ⟨by simp [isBot_iff_eq_bot], fun y hy _ ↦ by
+      have : y ≠ 0 := fun h0 ↦ hy (h0 ▸ isBot_bot); omega⟩
 
-instance : DecidablePred (· ∈ firstPersonAdditive) := fun s ↦
-  decidable_of_iff (0 ∈ s ∧ (s.card = 1 ∨ 3 ≤ s.card)) Iff.rfl
+instance : DecidablePred (Atom : ℕ → Prop) := fun _ ↦ decidable_of_iff _ atom_iff_eq_one.symm
 
-/-- Both parts of the [+additive] region are genuinely join-complete
-    ((7): the sum of any two elements stays within): the upper region is
-    closed under union, and the atom trivially so. -/
-theorem firstPersonAdditive_parts_joinComplete :
-    (∀ s t : Finset (Fin 4), 0 ∈ s ∧ 3 ≤ s.card → 0 ∈ t ∧ 3 ≤ t.card →
-      0 ∈ s ∪ t ∧ 3 ≤ (s ∪ t).card) ∧
-    ({0} : Finset (Fin 4)) ∪ {0} = {0} := by
-  constructor
-  · decide
-  · decide
+instance (R : Finset ℕ) : DecidablePred (Minimal (· ∈ R)) := fun k ↦
+  decidable_of_iff (k ∈ R ∧ ∀ j ∈ R, j ≤ k → k ≤ j) Iff.rfl
 
-/-- **The §4.5 disparity, as a theorem** (previously prose): the
-    [+additive] value region of the first-person lattice is *nonconvex* —
-    "between the [+additive] first-person atom and any [+additive]
-    first-person plural, there must lie a [−additive] first-person paucal"
-    (p. 212). Witness: i ⊑ io ⊑ ioo′, with the dyad io in the paucal gap.
-    By the convexity condition (32) — basic meanings must be convex
-    ([gardenfors-2004]) — `{±additive}` cannot be a language's sole
-    number feature, while `{±atomic}` and `{±minimal}` (whose cuts are
-    single horizontal lines) can. -/
-theorem firstPerson_additive_not_ordConnected :
-    ¬ firstPersonAdditive.OrdConnected := by
+/-- `card` carries minimality in a union of strata to minimality among the strata. -/
+theorem minimal_comp_card {S : ℕ → Prop} {s : Finset α} :
+    Minimal (S ∘ Finset.card) s ↔ Minimal S s.card := by
+  refine ⟨fun h ↦ ⟨h.1, fun j hj hle ↦ ?_⟩, fun h ↦ ⟨h.1, fun t ht hts ↦ ?_⟩⟩
+  · obtain ⟨t, hts, rfl⟩ := Finset.exists_subset_card_eq hle
+    exact Finset.card_le_card (h.2 hj hts)
+  · exact (Finset.eq_of_subset_of_card_le hts (h.2 ht (Finset.card_le_card hts))).ge
+
+/-- The atoms of the powerset lattice are the sets of one atom. -/
+theorem atom_iff_card {s : Finset α} : Atom s ↔ Atom s.card := by
+  have : (fun t : Finset α ↦ ¬ IsBot t) = (fun k : ℕ ↦ ¬ IsBot k) ∘ Finset.card := by
+    ext t; simp [isBot_iff_eq_bot]
+  simp only [Atom, this, minimal_comp_card]
+
+variable {S : ℕ → Prop}
+
+theorem atomize_comp_card : atomize (S ∘ Finset.card) = atomize S ∘ Finset.card (α := α) := by
+  ext t; exact minimal_comp_card
+
+variable [DecidableEq α]
+
+theorem atomsOf_comp_card : atomsOf (S ∘ Finset.card) = atomsOf S ∘ Finset.card (α := α) := by
+  ext t; simp [atomsOf, atom_iff_card]
+
+theorem nonAtomsOf_comp_card :
+    nonAtomsOf (S ∘ Finset.card) = nonAtomsOf S ∘ Finset.card (α := α) := by
+  ext t; simp [nonAtomsOf, atom_iff_card]
+
+theorem nonMinimalOf_comp_card :
+    nonMinimalOf (S ∘ Finset.card) = nonMinimalOf S ∘ Finset.card (α := α) := by
+  ext t; simp [nonMinimalOf, atomize_comp_card]
+
+end Card
+
+/-! ### The successor-like function (§4.4) -/
+
+section Successor
+
+variable {α : Type*} [DecidableEq α]
+
+private theorem atomize_le (k : ℕ) : atomize (k ≤ ·) = (· = k) := by
+  ext j
+  exact ⟨fun h ↦ le_antisymm (h.2 le_rfl h.1) h.1, by rintro rfl; exact ⟨le_rfl, fun _ h _ ↦ h⟩⟩
+
+private theorem nonMinimalOf_iterate (n : ℕ) : nonMinimalOf^[n] (2 ≤ ·) = (n + 2 ≤ ·) := by
+  induction n with
+  | zero => rfl
+  | succ n ih =>
+    rw [Function.iterate_succ_apply', ih]
+    ext j; simp only [nonMinimalOf, atomize_le]; omega
+
+private theorem nonMinimalOf_iterate_comp_card (n : ℕ) (S : ℕ → Prop) :
+    nonMinimalOf^[n] (S ∘ Finset.card) = nonMinimalOf^[n] S ∘ Finset.card (α := α) := by
+  induction n with
+  | zero => rfl
+  | succ n ih => rw [Function.iterate_succ_apply', Function.iterate_succ_apply', ih,
+      nonMinimalOf_comp_card]
+
+/-- `(+minimal(−minimalⁿ(−atomic(P))))` holds of exactly the sums of `n + 2` atoms, the
+successor-like function (31); `n = 0` gives the dual of (30) and `n = 1` the trial. -/
+theorem atomize_nonMinimalOf_iterate (n : ℕ) (s : Finset α) :
+    atomize (nonMinimalOf^[n] (nonAtomsOf Finset.Nonempty)) s ↔ s.card = n + 2 := by
+  have hP : (Finset.Nonempty : Finset α → Prop) = (1 ≤ ·) ∘ Finset.card := by
+    ext t; simp [Finset.one_le_card]
+  have hna : nonAtomsOf (1 ≤ ·) = (2 ≤ ·) := by
+    ext j; simp only [nonAtomsOf, atom_iff_eq_one]; omega
+  rw [hP, nonAtomsOf_comp_card, hna, nonMinimalOf_iterate_comp_card, nonMinimalOf_iterate,
+    atomize_comp_card, atomize_le]
+  rfl
+
+/-- `(+minimal(+atomic(P)))` holds of exactly the atoms, the singular of (30). -/
+theorem atomize_atomsOf (s : Finset α) :
+    atomize (atomsOf Finset.Nonempty) s ↔ s.card = 1 := by
+  have hP : (Finset.Nonempty : Finset α → Prop) = (1 ≤ ·) ∘ Finset.card := by
+    ext t; simp [Finset.one_le_card]
+  have ha : atomsOf (1 ≤ ·) = ((· = 1) : ℕ → Prop) := by
+    ext j; simp only [atomsOf, atom_iff_eq_one]; omega
+  rw [hP, atomsOf_comp_card, ha, atomize_comp_card]
+  exact ⟨fun h ↦ h.1, fun h ↦ ⟨h, fun _ hj _ ↦ hj ▸ h.le⟩⟩
+
+end Successor
+
+/-! ### Orders of composition (§§3.3, 4.1, 4.3) -/
+
+section Orders
+
+variable {D : Type*} [SemilatticeSup D]
+
+/-- `(αatomic(ᾱatomic(P)))` is empty, so `[±atomic]*` adds nothing (§4.1, n. 15). -/
+theorem not_atomsOf_nonAtomsOf (P : D → Prop) (x : D) : ¬ atomsOf (nonAtomsOf P) x :=
+  fun h ↦ h.1.2 h.2
+
+/-- `(+atomic(−minimal(P)))` is empty when `P` excludes the null individual, since an atom of `P`
+is minimal in it (§4.3). -/
+theorem not_atomsOf_nonMinimalOf {P : D → Prop} (hP : ∀ y, P y → ¬ IsBot y) (x : D) :
+    ¬ atomsOf (nonMinimalOf P) x :=
+  fun h ↦ h.1.2 (Number.singular_subset_minimal hP ⟨h.1.1, h.2⟩)
+
+end Orders
+
+/-! ### `[±additive]` and horizontal cuts (§3.1) -/
+
+section Additive
+
+variable {α : Type*} [DecidableEq α]
+
+/-- A band holds of the sums of at least `lo` and fewer than `hi` atoms. -/
+def Band (lo hi : ℕ) (s : Finset α) : Prop := lo ≤ s.card ∧ s.card < hi
+
+/-- No element of a band above the null individual is additive in it, given infinitely many
+atoms, since two of its elements can always sum past its upper bound. So the bounded region below
+a cut of the third-person lattice is `[−additive]` throughout (10), and
+`(+additive(−additive(P)))` is unsatisfiable (§3.3). -/
+theorem not_additiveIn_band [Infinite α] {lo hi : ℕ} (hlo : 1 ≤ lo) (s : Finset α) :
+    ¬ additiveIn (Band lo hi) s := by
+  rintro ⟨⟨hl, hh⟩, h⟩
+  obtain ⟨u, hsu, hu⟩ :=
+    Infinite.exists_superset_card_eq s (s.card + max lo (hi - s.card)) (by omega)
+  have hcard : (u \ s).card = max lo (hi - s.card) := by
+    rw [Finset.card_sdiff_of_subset hsu, hu]; omega
+  have := (h (u \ s) ⟨by omega, by omega⟩).2
+  rw [Finset.sup_eq_union, Finset.union_sdiff_of_subset hsu, hu] at this
+  omega
+
+/-- Every element above a cut is additive in the region above it (10), whose complement below
+the cut is thereby complement-complete (11). -/
+theorem additiveIn_le_card {c : ℕ} {s : Finset α} (hs : c ≤ s.card) :
+    additiveIn (c ≤ ·.card) s :=
+  ⟨hs, fun _ _ ↦ hs.trans (Finset.card_le_card Finset.subset_union_left)⟩
+
+/-- Likewise an element above a cut that contains a given atom is additive among such elements. -/
+theorem additiveIn_le_card' {i : α} {c : ℕ} {s : Finset α} (hi : i ∈ s) (hs : c ≤ s.card) :
+    additiveIn (fun t ↦ i ∈ t ∧ c ≤ t.card) s :=
+  ⟨⟨hi, hs⟩, fun _ _ ↦ ⟨Finset.mem_union_left _ hi,
+    hs.trans (Finset.card_le_card Finset.subset_union_left)⟩⟩
+
+end Additive
+
+/-! ### Convexity (§4.5) -/
+
+section Convexity
+
+variable {α : Type*} [DecidableEq α]
+
+/-- An element of a region `P` cut at `c` is `[+additive]` (10) when it is additive in the bounded
+region below the cut or in the unbounded region above it. -/
+def PlusAdditive (c : ℕ) (P : Finset α → Prop) (s : Finset α) : Prop :=
+  additiveIn (fun t ↦ P t ∧ t.card < c) s ∨ additiveIn (fun t ↦ P t ∧ c ≤ t.card) s
+
+/-- On the third-person lattice, with infinitely many atoms, the `[+additive]` elements are those
+above the cut. -/
+theorem plusAdditive_nonempty_iff [Infinite α] {c : ℕ} (hc : 1 ≤ c) (s : Finset α) :
+    PlusAdditive c Finset.Nonempty s ↔ c ≤ s.card := by
+  have hb : (fun t : Finset α ↦ t.Nonempty ∧ t.card < c) = Band 1 c := by
+    ext t; simp [Band, Finset.one_le_card]
+  have ha : (fun t : Finset α ↦ t.Nonempty ∧ c ≤ t.card) = (c ≤ ·.card) := by
+    ext t; exact ⟨fun h ↦ h.2, fun h ↦ ⟨Finset.card_pos.mp (by omega), h⟩⟩
+  rw [PlusAdditive, hb, ha]
+  exact ⟨fun h ↦ h.elim (fun h ↦ (not_additiveIn_band le_rfl s h).elim) (·.1),
+    fun h ↦ .inr (additiveIn_le_card h)⟩
+
+/-- So `{±additive}` cuts the third-person lattice convexly (33), into paucal and plural. -/
+theorem ordConnected_plusAdditive_nonempty [Infinite α] {c : ℕ} (hc : 1 ≤ c) :
+    {s : Finset α | PlusAdditive c Finset.Nonempty s}.OrdConnected := by
+  simp only [plusAdditive_nonempty_iff hc]
+  exact IsUpperSet.ordConnected fun _ _ hst h ↦ h.trans (Finset.card_le_card hst)
+
+/-- On the first-person exclusive lattice, the sums containing the speaker `i`, the speaker atom
+is the only element additive below a cut (Figure 8), being the lattice's bottom. -/
+theorem additiveIn_firstPerson_iff [Infinite α] {i : α} {c : ℕ} (hc : 2 ≤ c) (s : Finset α) :
+    additiveIn (fun t ↦ i ∈ t ∧ t.card < c) s ↔ s = {i} := by
+  refine ⟨fun ⟨⟨hi, hlt⟩, h⟩ ↦ ?_, ?_⟩
+  · by_contra hne
+    have h2 : 2 ≤ s.card := by
+      by_contra h2
+      exact hne (Finset.eq_singleton_iff_unique_mem.mpr ⟨hi, fun x hx ↦
+        Finset.card_le_one.mp (by omega) x hx i hi⟩)
+    obtain ⟨u, hsu, hu⟩ := Infinite.exists_superset_card_eq s c hlt.le
+    have hiu : i ∉ u \ s := fun h ↦ (Finset.mem_sdiff.mp h).2 hi
+    have := (h (insert i (u \ s)) ⟨Finset.mem_insert_self i _, by
+      rw [Finset.card_insert_of_notMem hiu, Finset.card_sdiff_of_subset hsu]; omega⟩).2
+    rw [Finset.sup_eq_union, Finset.union_insert, Finset.union_sdiff_of_subset hsu,
+      Finset.insert_eq_of_mem (hsu hi), hu] at this
+    omega
+  · rintro rfl
+    refine ⟨⟨Finset.mem_singleton_self i, by simp; omega⟩, fun t ht ↦ ?_⟩
+    rwa [Finset.sup_eq_union, Finset.singleton_union, Finset.insert_eq_of_mem ht.1]
+
+/-- So `{±additive}` cuts the first-person lattice nonconvexly, a `[−additive]` paucal lying
+between the `[+additive]` speaker and a `[+additive]` plural (p. 212), and by the convexity
+condition (32), after [gardenfors-2004], `[±additive]` is never a language's sole number
+feature. -/
+theorem not_ordConnected_plusAdditive_firstPerson [Infinite α] (i : α) {c : ℕ} (hc : 3 ≤ c) :
+    ¬ {s | PlusAdditive c (i ∈ ·) s}.OrdConnected := by
   intro h
-  have h01 : ({0, 1} : Finset (Fin 4)) ∈ firstPersonAdditive :=
-    h.out (x := {0}) (by decide) (y := {0, 1, 2}) (by decide)
-      ⟨by decide, by decide⟩
-  exact absurd h01 (by decide)
+  obtain ⟨o, ho⟩ := exists_ne i
+  obtain ⟨u, hu, huc⟩ := Infinite.exists_superset_card_eq {i, o} c
+    (by rw [Finset.card_pair ho.symm]; omega)
+  have hmid := h.out (x := {i}) (y := u)
+    (.inl ((additiveIn_firstPerson_iff (by omega) _).mpr rfl))
+    (.inr (additiveIn_le_card' (hu (by simp)) huc.ge))
+    ⟨Finset.singleton_subset_iff.mpr (by simp), hu⟩
+  rcases hmid with hl | hr
+  · have := congrArg Finset.card ((additiveIn_firstPerson_iff (by omega) _).mp hl)
+    rw [Finset.card_pair ho.symm, Finset.card_singleton] at this
+    omega
+  · have := hr.1.2
+    rw [Finset.card_pair ho.symm] at this
+    omega
 
-/-! ### The axiom of extension (§4.2)
+end Convexity
 
-Feature bundles are sets, so (27) {a, a} = {a}: `[+F −F]` is the maximal
-specification a single feature admits. This rules out the dyad augmented
-(25) `*[+minimal −minimal −minimal]` and the quadral (26)
-`*[+minimal −minimal −minimal −atomic]` — they are not richer bundles at
-all — and caps exact numbers at trial and unit augmented. -/
+/-! ### Parameters and the typology (§§4.2, 5.1) -/
 
-/-- (27) in bundle form: a third occurrence of a feature value adds
-    nothing — the putative quadral bundle *is* the trial bundle. -/
-theorem axiom_of_extension :
-    ({true, false, false} : Finset Bool) = {true, false} := by decide
+/-- Harbour's number features are `[±atomic]`, `[±minimal]` and `[±additive]`. -/
+inductive Feature where
+  | atomic
+  | minimal
+  | additive
+  deriving DecidableEq, Fintype, Repr
 
-/-- A single bivalent feature's value set has at most two elements —
-    `[+F −F]` is maximal complexity. -/
-theorem feature_set_card_le_two : ∀ s : Finset Bool, s.card ≤ 2 := by decide
+/-- A feature on Number⁰ is inactive, active (22), or recursive, its two values allowed to
+cooccur (23), written `[±F]*`. -/
+inductive Activation where
+  | inactive
+  | active
+  | recursive
+  deriving DecidableEq, Fintype, Repr
 
-/-! ### Typology (§5.1): Table 1 universals as corollaries
+/-- Under an activation a bundle carries no value of `[±F]`, one, or under recursion both, and no
+more by the axiom of extension (27). -/
+def Activation.signs : Activation → List (Finset Bool)
+  | .inactive => [∅]
+  | .active => [{true}, {false}]
+  | .recursive => [{true}, {false}, {true, false}]
 
-(34) Typological implication schema: if category A must cooccur with
-category B, then the parameter setting for A generates B. The named
-Table 1 implications hold across the entire well-formed parameter space,
-and every attested Table 3 system satisfies the full universal set through
-`HarbourConfig.toSystem`. -/
+/-- A parameter setting fixes the activation of each feature. -/
+structure Setting where
+  /-- The activation of `[±atomic]`. -/
+  atomic : Activation
+  /-- The activation of `[±minimal]`. -/
+  minimal : Activation
+  /-- The activation of `[±additive]`. -/
+  additive : Activation
+  deriving DecidableEq, Fintype, Repr
 
-open Minimalist.Phi.Recursion in
-/-- TR → DU, DU → SG, SG → PL, PC → PL, and GR.PC → PC ([harbour-2014]
-    Table 1) hold for every well-formed parameter setting — Greenberg-style
-    universals as corollaries of the feature geometry, not stipulations. -/
-theorem table1_implications_generated :
-    ∀ c : HarbourConfig, c.wellFormed →
-      (.trial ∈ c.surfaceCategories → .dual ∈ c.surfaceCategories) ∧
-      (.dual ∈ c.surfaceCategories → .singular ∈ c.surfaceCategories) ∧
-      (.singular ∈ c.surfaceCategories → .plural ∈ c.surfaceCategories) ∧
-      (.paucal ∈ c.surfaceCategories → .plural ∈ c.surfaceCategories) ∧
-      (.greaterPaucal ∈ c.surfaceCategories →
-        .paucal ∈ c.surfaceCategories) := by
+/-- A feature bundle is the set of its signed features, `(F, true)` standing for `+F` (§2.3). -/
+abbrev Bundle := Finset (Feature × Bool)
+
+namespace Setting
+
+/-- A bundle of a setting values every active feature once and a recursive one once or twice. -/
+def bundles (σ : Setting) : List Bundle := do
+  let a ← σ.atomic.signs
+  let m ← σ.minimal.signs
+  let d ← σ.additive.signs
+  pure (a.image (.atomic, ·) ∪ m.image (.minimal, ·) ∪ d.image (.additive, ·))
+
+/-- A setting is legitimate unless `[±additive]` is its sole feature, which the convexity
+condition (32) rules out (§4.5, `not_ordConnected_plusAdditive_firstPerson`). -/
+def Legitimate (σ : Setting) : Prop :=
+  σ.additive ≠ .inactive → σ.atomic ≠ .inactive ∨ σ.minimal ≠ .inactive
+
+instance (σ : Setting) : Decidable σ.Legitimate := by unfold Legitimate; infer_instance
+
+end Setting
+
+/-- A conventionalized cut (14) is low, bounding paucals, or high, bounding greater plurals. -/
+inductive Height where
+  | low
+  | high
+  deriving DecidableEq, Fintype, Repr
+
+/-- The sociosemantic convention (14) places no cut without `[±additive]`, one cut with it, and
+under recursion a low cut and a second cut above it (§3.3). Two high cuts, Banyun's greater and
+greatest plurals, are left out. -/
+inductive Convention where
+  | none
+  | one (h : Height)
+  | two (h : Height)
+  deriving DecidableEq, Fintype, Repr
+
+namespace Convention
+
+/-- A convention fits an activation of `[±additive]` when it has as many cuts. -/
+def Fits : Convention → Activation → Prop
+  | .none, .inactive | .one _, .active | .two _, .recursive => True
+  | _, _ => False
+
+instance : ∀ c a, Decidable (Fits c a)
+  | .none, .inactive | .one _, .active | .two _, .recursive => isTrue trivial
+  | .none, .active | .none, .recursive | .one _, .inactive | .one _, .recursive
+  | .two _, .inactive | .two _, .active => isFalse id
+
+/-- The lower cut lies at six atoms, or at ten for a single high cut. -/
+def lower : Convention → ℕ
+  | .one .high => 10
+  | _ => 6
+
+/-- The upper cut lies at eight atoms for a second low cut and at twelve for a second high one. -/
+def upper : Convention → ℕ
+  | .two .low => 8
+  | .two .high => 12
+  | c => c.lower
+
+end Convention
+
+/-- The strata of the third-person lattice over thirteen atoms (Figure 3) are one to thirteen. -/
+def strata : Finset ℕ := Finset.Icc 1 13
+
+/-- A bundle denotes the strata its features select, composed in the order (28). -/
+def Bundle.denote (c : Convention) (b : Bundle) : Finset ℕ :=
+  let R := if (.atomic, false) ∈ b then strata.filter (nonAtomsOf (· ∈ strata)) else strata
+  let R := if (.atomic, true) ∈ b then R.filter (atomsOf (· ∈ R)) else R
+  let R := if (.minimal, false) ∈ b then R.filter (nonMinimalOf (· ∈ R)) else R
+  let R := if (.minimal, true) ∈ b then R.filter (atomize (· ∈ R)) else R
+  let R := if (.additive, true) ∈ b then R.filter (c.lower ≤ ·) else R
+  if (.additive, false) ∈ b then
+    R.filter (· < if (.additive, true) ∈ b then c.upper else c.lower)
+  else R
+
+/-- The cell of a bundle in a setting is its denotation less those of the more specific bundles,
+as the plural of Figure 7 is `Q+ \ Q′`. -/
+def Setting.cell (σ : Setting) (c : Convention) (b : Bundle) : Finset ℕ :=
+  b.denote c \ (σ.bundles.filter (b ⊂ ·)).foldr (fun b' R ↦ b'.denote c ∪ R) ∅
+
+/-- A bundle is labelled with the descriptive name of its number (p. 201), after Table 3. -/
+def Bundle.label (c : Convention) (b : Bundle) : Number :=
+  if (.atomic, true) ∈ b then .singular
+  else if (.minimal, true) ∈ b then
+    if (.minimal, false) ∈ b then (if (.atomic, false) ∈ b then .trial else .unitAugmented)
+    else if (.atomic, false) ∈ b then .dual else .minimal
+  else if (.additive, false) ∈ b then
+    if (.additive, true) ∈ b then (if c = .two .low then .greaterPaucal else .plural)
+    else if c = .one .high then .plural else .paucal
+  else if (.additive, true) ∈ b then
+    (if c = .one .high ∨ c = .two .high then .greaterPlural else .plural)
+  else if (.minimal, false) ∈ b ∧ (.atomic, false) ∉ b then .augmented
+  else if b = ∅ then .general else .plural
+
+namespace Setting
+
+/-- The number system of a setting consists of its bundles with nonempty cells. -/
+def system (σ : Setting) (c : Convention) : List Bundle :=
+  σ.bundles.filter fun b ↦ (σ.cell c b).Nonempty
+
+/-- The values of a setting's system are its bundles' labels. -/
+def values (σ : Setting) (c : Convention) : List Number := (σ.system c).map (Bundle.label c)
+
+/-- A setting's system as a `Number.System` sets general number apart. -/
+def toSystem (σ : Setting) (c : Convention) : Number.System where
+  name := ""
+  values := (σ.values c).filter (· ≠ .general)
+  hasGeneral := decide (.general ∈ σ.values c)
+
+end Setting
+
+/-- The cells of every system cover the lattice. -/
+theorem exists_mem_cell : ∀ σ : Setting, ∀ c : Convention, c.Fits σ.additive →
+    ∀ k ∈ strata, ∃ b ∈ σ.bundles, k ∈ σ.cell c b := by
+  decide +kernel
+
+/-- The cells of a system are disjoint, so the system partitions the lattice. -/
+theorem disjoint_cell : ∀ σ : Setting, ∀ c : Convention, c.Fits σ.additive →
+    ∀ b ∈ σ.system c, ∀ b' ∈ σ.system c, b ≠ b' → Disjoint (σ.cell c b) (σ.cell c b') := by
+  decide +kernel
+
+/-- Distinct numbers of a system have distinct labels. -/
+theorem nodup_values : ∀ σ : Setting, ∀ c : Convention, c.Fits σ.additive →
+    (σ.values c).Nodup := by
+  decide +kernel
+
+/-- `[±atomic]*` adds no number to `[±atomic]` (§4.1). -/
+theorem values_atomic_recursive : ∀ m d : Activation, ∀ c : Convention,
+    (Setting.mk .recursive m d).values c = (Setting.mk .active m d).values c := by
+  decide +kernel
+
+/-- The axiom of extension caps the exact numbers, the cells of a single stratum, at the trial
+and unit augmented, three atoms on this lattice (§4.2). -/
+theorem le_three_of_card_cell_eq_one : ∀ σ : Setting, ∀ c : Convention, c.Fits σ.additive →
+    ∀ b ∈ σ.system c, (σ.cell c b).card = 1 → ∀ k ∈ σ.cell c b, k ≤ 3 := by
+  decide +kernel
+
+/-- (26)'s quadral `[+minimal −minimal −minimal −atomic]` is the trial bundle. -/
+example : ({(.minimal, true), (.minimal, false), (.minimal, false), (.atomic, false)} : Bundle) =
+    {(.minimal, true), (.minimal, false), (.atomic, false)} := by
   decide
 
-/-- Every attested Table 3 system, read as a `Number.System` through the
-    `HarbourConfig.toSystem` bridge, satisfies all Table 1 universals
-    (`Number.System.WellFormed`). The generative inventory and the
-    descriptive inventory agree. -/
-theorem table3_systems_wellFormed :
-    ∀ e ∈ harbour2014Table3, (e.config.toSystem).WellFormed := by decide
+/-- A system has at most two approximative numbers (p. 205). -/
+theorem length_approximative_le_two : ∀ σ : Setting, ∀ c : Convention, c.Fits σ.additive →
+    ((σ.values c).filter (· ∈ [.paucal, .greaterPaucal, .greaterPlural])).length ≤ 2 := by
+  decide +kernel
 
-/-! ### The lacunae (§5.1, pp. 214–215)
+/-- No system has more than six numbers. -/
+theorem length_values_le_six : ∀ σ : Setting, ∀ c : Convention, c.Fits σ.additive →
+    (σ.values c).length ≤ 6 := by
+  decide +kernel
 
-Four parameter settings are well-formed but unattested:
-`{±additive, ±minimal*}`, `{±additive*, ±minimal}`,
-`{±additive*, ±minimal*}`, and `{±additive*, ±minimal*, ±atomic}`.
-Harbour argues the gaps are contingent (unit augmentation and multiple
-approximative numbers are independently rare). The first lacuna shows the
-universals are claims about *attested* systems: its generated system
-violates U.AUG → AUG. -/
+/-- Every legitimate setting satisfies the implicational universals of Table 1 except
+`{±additive(*), ±minimal*}`, two lacunae of Table 3 whose unit augmented has no augmented. -/
+theorem wellFormed_toSystem_iff : ∀ σ : Setting, ∀ c : Convention, c.Fits σ.additive →
+    σ.Legitimate → ((σ.toSystem c).WellFormed ↔
+      ¬ (σ.atomic = .inactive ∧ σ.minimal = .recursive ∧ σ.additive ≠ .inactive)) := by
+  decide +kernel
 
-/-- The unattested setting `{±additive, ±minimal*}` (Table 3's first
-    lacuna row): minimal, unit augmented, paucal, plural. -/
-def uaugLacuna : HarbourConfig :=
-  ⟨false, true, true, true, false⟩
+instance (l : List Number) : Decidable (IsLowerSet {v | v ∈ l}) :=
+  decidable_of_iff (∀ v ∈ l, ∀ u : Number, u ≤ v → u ∈ l)
+    ⟨fun h _ _ huv hv ↦ h _ hv _ huv, fun h _ hv _ huv ↦ h huv hv⟩
 
-/-- The lacuna's system has unit augmented without augmented — Table 1's
-    U.AUG → AUG would fail were it attested. The universal is protected by
-    the (contingent) typological gap, exactly as the paper's discussion of
-    the lacunae implies. -/
-theorem lacuna_violates_uaug :
-    uaugLacuna.wellFormed = true ∧
-    ¬ (uaugLacuna.toSystem).WellFormed := by
-  constructor
-  · decide
-  · decide
+/-- The same settings generate lower sets of the markedness order of `Number`. -/
+theorem isLowerSet_values_iff : ∀ σ : Setting, ∀ c : Convention, c.Fits σ.additive →
+    σ.Legitimate → (IsLowerSet {v | v ∈ σ.values c} ↔
+      ¬ (σ.atomic = .inactive ∧ σ.minimal = .recursive ∧ σ.additive ≠ .inactive)) := by
+  decide +kernel
 
-/-! ### Composed number (§5.2): Mele-Fila, Table 4
+/-- Table 3 pairs each setting and convention with the system of its example language, as
+[corbett-2000] records it where it does, or of a lacuna; Banyun's row is left out. -/
+def table3 : List (Setting × Convention × List Number) :=
+  [(⟨.inactive, .inactive, .inactive⟩, .none, Corbett2000.piraha.values),
+   (⟨.active, .inactive, .inactive⟩, .none, [.singular, .plural]),  -- Svan
+   (⟨.inactive, .active, .inactive⟩, .none, [.minimal, .augmented]),  -- Winnebago
+   (⟨.inactive, .recursive, .inactive⟩, .none, Corbett2000.rembarrnga.values),
+   (⟨.active, .active, .inactive⟩, .none, [.singular, .dual, .plural]),  -- Kiowa
+   (⟨.active, .inactive, .active⟩, .one .low, Corbett2000.bayso.values),
+   (⟨.active, .inactive, .active⟩, .one .high, [.singular, .plural, .greaterPlural]),  -- Fula
+   (⟨.inactive, .active, .active⟩, .one .low, [.minimal, .paucal, .plural]),  -- Mebengokre
+   (⟨.active, .recursive, .inactive⟩, .none, Corbett2000.larike.values),
+   (⟨.inactive, .recursive, .active⟩, .one .low, [.minimal, .unitAugmented, .paucal, .plural]),
+   (⟨.inactive, .active, .recursive⟩, .two .low, [.minimal, .paucal, .greaterPaucal, .plural]),
+   (⟨.inactive, .recursive, .recursive⟩, .two .low,
+     [.minimal, .unitAugmented, .paucal, .greaterPaucal, .plural]),
+   (⟨.active, .active, .active⟩, .one .low, Corbett2000.yimas.values),
+   (⟨.active, .active, .active⟩, .one .high, Corbett2000.mokilese.values),
+   (⟨.active, .recursive, .active⟩, .one .low, Corbett2000.marshallese.values),
+   (⟨.active, .active, .recursive⟩, .two .low, Corbett2000.sursurunga.values),
+   (⟨.active, .active, .recursive⟩, .two .high, Corbett2000.meleFila.values),
+   (⟨.active, .recursive, .recursive⟩, .two .low,
+     [.singular, .dual, .trial, .paucal, .greaterPaucal, .plural])]
 
-Mele-Fila (singular–dual–paucal–plural–greater plural) crosscuts two
-syncretism patterns: the definite article *a* covers plural and greater
-plural — exactly the values carrying (+additive) — while the pronoun
-*raateu* covers paucal and plural — exactly the values carrying
-(−additive). Plural belongs to both natural classes because, with two
-conventionalized cuts, it is [−additive] relative to the high cut and
-[+additive] relative to the low one. -/
+/-- Every row of Table 3 is generated. -/
+theorem table3_generated : ∀ r ∈ table3, (r.1.toSystem r.2.1).values.Perm r.2.2 := by
+  decide +kernel
 
-/-- Mele-Fila's five values ([harbour-2014] Table 4). -/
-def meleFilaValues : List Number :=
-  [.singular, .dual, .paucal, .plural, .greaterPlural]
+/-! ### Composed number (§5.2) -/
 
-/-- The position of a value on Mele-Fila's scale. -/
-def rank (v : Number) : ℕ := meleFilaValues.idxOf v
+/-- In the singular–dual–paucal–plural system of Yimas and Motuna the paucal shares `[−additive]`
+with the dual and `[−minimal]` with the plural, so Motuna composes it from a dual–paucal and a
+paucal–plural morpheme ((38)–(40)) and Yimas marks it by `[−additive]` on a `[−minimal]` form
+((44)–(45)). -/
+theorem yimas_system :
+    (((⟨.active, .active, .active⟩ : Setting).system (.one .low)).map
+      fun b ↦ (b.label (.one .low), b)).Perm
+    [(.singular, {(.atomic, true), (.minimal, true), (.additive, false)}),
+     (.dual, {(.atomic, false), (.minimal, true), (.additive, false)}),
+     (.paucal, {(.atomic, false), (.minimal, false), (.additive, false)}),
+     (.plural, {(.atomic, false), (.minimal, false), (.additive, true)})] := by
+  decide +kernel
 
-/-- [+additive] relative to a cut of the scale: the values at the cut and above it. -/
-def Additive (cut : ℕ) (v : Number) : Prop := cut ≤ rank v
+/-- Mele-Fila's setting is `{±additive*, ±minimal, ±atomic}`, with a low and a high cut. -/
+abbrev meleFila : Setting := ⟨.active, .active, .recursive⟩
 
-instance (cut : ℕ) : DecidablePred (Additive cut) := fun _ ↦ Nat.decLe _ _
+/-- Mele-Fila's five numbers have the bundles of Table 4, the plural carrying both values of
+`[±additive]`. -/
+theorem meleFila_system :
+    ((meleFila.system (.two .high)).map fun b ↦ (b.label (.two .high), b)).Perm
+    [(.singular, {(.atomic, true), (.minimal, true), (.additive, false)}),
+     (.dual, {(.atomic, false), (.minimal, true), (.additive, false)}),
+     (.paucal, {(.atomic, false), (.minimal, false), (.additive, false)}),
+     (.plural, {(.atomic, false), (.minimal, false), (.additive, false), (.additive, true)}),
+     (.greaterPlural, {(.atomic, false), (.minimal, false), (.additive, true)})] := by
+  decide +kernel
 
-/-- The two conventionalized cuts of [±additive] (Table 4): the lower between paucal and
-plural, the upper between plural and greater plural. -/
-def lowerCut : ℕ := 3
+/-- The plural lies between the two cuts, `[+additive]` relative to the lower and `[−additive]`
+relative to the upper. -/
+theorem meleFila_cell_plural : meleFila.cell (.two .high)
+    {(.atomic, false), (.minimal, false), (.additive, false), (.additive, true)} =
+      Finset.Ico 6 12 := by
+  decide +kernel
 
-def upperCut : ℕ := 4
-
-/-- The plural is [+additive] relative to the lower cut and [−additive] relative to the upper:
-the two signs of Table 4's bottom row. -/
-theorem plural_additive_lower_not_upper :
-    Additive lowerCut .plural ∧ ¬ Additive upperCut .plural := by decide
-
-/-- The article *a* realizes the values [+additive] relative to the lower cut, plural and
-greater plural; the pronoun *raateu* the non-minimal values [−additive] relative to the upper
-cut, paucal and plural; plural is in both classes. -/
-theorem meleFila_syncretism_classes :
-    meleFilaValues.filter (fun v ↦ decide (Additive lowerCut v)) = [.plural, .greaterPlural] ∧
-      meleFilaValues.filter (fun v ↦ decide (2 ≤ rank v ∧ ¬ Additive upperCut v)) =
-        [.paucal, .plural] := by
-  decide
-
-/-- Mele-Fila's inventory satisfies the Table 1 universals. -/
-theorem meleFila_wellFormed :
-    Number.System.WellFormed
-      { name := "Mele-Fila", values := meleFilaValues } := by decide
+/-- So the plural belongs to two natural classes (Table 4), `[+additive]` with the greater plural,
+realized by the article *a*, and `[−minimal −additive]` with the paucal, realized by the pronoun
+*raateu*. -/
+theorem meleFila_classes :
+    (((meleFila.system (.two .high)).filter ((.additive, true) ∈ ·)).map
+        (Bundle.label (.two .high))).Perm [.plural, .greaterPlural] ∧
+      (((meleFila.system (.two .high)).filter
+        fun b ↦ (.minimal, false) ∈ b ∧ (.additive, false) ∈ b).map
+          (Bundle.label (.two .high))).Perm [.paucal, .plural] := by
+  decide +kernel
 
 end Harbour2014
+
+end
