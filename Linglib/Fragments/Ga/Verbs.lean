@@ -78,7 +78,7 @@ def hiekpano : Verb where
   form := "hiɛ-kpa-nɔ"
   frames := [niFrame]
   readings := [niReading .subjectControl]
-  implicative := some ⟨some .negative, some .positive⟩
+  implicative := ⟨.some .negative, .some .positive⟩
 
 /-- *mia-mi-hiɛ* 'try' (lit. 'squeeze-my-face') is a subject-control verb whose `ni` is obligatory
 (exx 36, 60a: 'I tried to close the door'). -/
@@ -95,7 +95,7 @@ def kai : Verb where
   form := "kai"
   frames := [niFrame, akeFrame]
   readings := [niReading .subjectControl, akeReading]
-  implicative := some ⟨some .positive, some .negative⟩
+  implicative := ⟨.some .positive, .some .negative⟩
 
 /-- *nyɛ* 'manage' is a positive implicative with subject control, whose `ni` is optionally overt
 (ex 39: 'The children managed to buy a home'). It is also attested with a bare realis past
@@ -105,7 +105,7 @@ def nye : Verb where
   form := "nyɛ"
   frames := [niFrame]
   readings := [niReading .subjectControl]
-  implicative := some ⟨some .positive, some .negative⟩
+  implicative := ⟨.some .positive, .some .negative⟩
 
 /-- *kplɛnɔ* 'agree' is a subject-control verb whose `ni`-frame requires the irrealis marker
 (exx 52, 89c, 109, 122a). It alternates into `akɛ` with a subjunctive complement, 'agree that'
@@ -161,7 +161,7 @@ def dai : Verb where
   form := "dai"
   frames := [niFrame]
   readings := [niReading .objectControl]
-  implicative := some ⟨some .positive, none⟩
+  implicative := ⟨.some .positive, ⊥⟩
 
 /-- *laka* 'persuade, coax, deceive', its sense depending on context (fn 4), is an object-control
 verb (exx 57–58). -/

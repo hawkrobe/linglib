@@ -7,9 +7,9 @@ public import Linglib.Syntax.Category.Verb.Defs
 
 A verb entry is factive when it carries one of Karttunen's factivity classes; veridicality is an
 entailment and does not make it factive. A verb presupposes its complement by factivity or as a
-change of state. Its trigger type follows from its event structure, after Roberts and Simons: it
-is a soft trigger when it presupposes its complement or, after Solstad and Bott, when it is an
-occasion verb, and an implicative trigger when it carries an implication signature.
+change of state. Its trigger type follows from its event structure, after Roberts and Simons: it is
+a soft trigger when it presupposes its complement or, after Solstad and Bott, when it is an occasion
+verb, and an implicative trigger when its implication signature implies something.
 
 ## References
 
@@ -40,7 +40,7 @@ distinction is not operationalized, so `.soft` stands for both the complement pr
 and the occasion presupposition. -/
 def triggerType? (v : Verb) : Option Presupposition.TriggerType :=
   if v.PresupposesComplement then some .soft
-  else if v.implicative ≠ none then some .implicative
+  else if v.implicative ≠ ⊥ then some .implicative
   else if v.senseTag = .occasion then some .soft
   else none
 
@@ -66,11 +66,11 @@ theorem triggerType_of_presupposesComplement (h : v.PresupposesComplement) :
 
 theorem triggerType_eq_none_iff :
     v.triggerType? = none ↔
-      ¬ v.PresupposesComplement ∧ v.implicative = none ∧ v.senseTag ≠ .occasion := by
+      ¬ v.PresupposesComplement ∧ v.implicative = ⊥ ∧ v.senseTag ≠ .occasion := by
   unfold triggerType?; split_ifs <;> simp_all
 
 @[simp] theorem isTrigger_iff :
-    v.IsTrigger ↔ v.PresupposesComplement ∨ v.implicative ≠ none ∨ v.senseTag = .occasion := by
+    v.IsTrigger ↔ v.PresupposesComplement ∨ v.implicative ≠ ⊥ ∨ v.senseTag = .occasion := by
   simp only [IsTrigger, ne_eq, triggerType_eq_none_iff]; tauto
 
 theorem IsFactive.isTrigger (h : v.IsFactive) : v.IsTrigger :=

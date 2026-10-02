@@ -178,7 +178,7 @@ class, and a doxastic or preferential attitude the propositional or desiderative
 where the fields decide nothing, as for *try*. -/
 def derivedLandauClass (v : Verb) : Option PredicateClass :=
   if v.phasal ≠ none then some .aspectual
-  else if v.implicative ≠ none then some .implicative
+  else if v.implicative ≠ ⊥ then some .implicative
   else if v.IsFactive then some .factive
   else if v.TakesQuestion ∧ v.attitude = none then some .interrogative
   else match v.attitude with

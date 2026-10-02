@@ -267,7 +267,7 @@ theorem implicative_rows :
     ∀ row ∈ Examples.all, row.feature? "diagnostic" = some "implicative" →
       ∀ v ∈ verbOf row,
         (row.feature? "irrealisMarker" = some "absent" ↔
-          v.implicative.bind (·.positive) = some .positive) := by
+          v.implicative.positive = .some .positive) := by
   decide +kernel
 
 /-! ### The OC signature (Table 2) -/

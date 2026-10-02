@@ -25,8 +25,9 @@ signature says.
 
 ## Main results
 
-* `Implicative.holds_signed_of_mem_implied`: an affirmed or denied claim implies the polarity of
+* `Implicative.holds_signed_of_implied_eq`: an affirmed or denied claim implies the polarity of
   the complement that its signature records for that context
+* `Implicative.antitone_presup`: a signature that implies more presupposes more
 
 ## References
 
@@ -102,19 +103,28 @@ proposition `v` and embedded fact `S`. It presupposes that `v` is sufficient for
 `s` implies in a positive context and necessary for the negation of the complement it implies in a
 negative context, and it asserts `v`. -/
 def sentence (s : ImplicationSignature) (v S : F) : PartialProp W where
-  presup w := (∀ q ∈ s.positive, R.Sufficient v (R.signed q S) w) ∧
-    ∀ q ∈ s.negative, R.Necessary v (R.signed (.negative * q) S) w
+  presup w := (∀ q : Polarity, s.positive = q → R.Sufficient v (R.signed q S) w) ∧
+    ∀ q : Polarity, s.negative = q → R.Necessary v (R.signed (.negative * q) S) w
   assertion := R.Holds v
 
 variable {R} {s : ImplicationSignature} {v S : F} {w : W}
 
 /-- A claim of matrix polarity `m` implies the polarity of the complement that its signature
 records for a context of that polarity. -/
-theorem holds_signed_of_mem_implied {m q : Polarity} (hq : q ∈ s.implied m)
+theorem holds_signed_of_implied_eq {m q : Polarity} (hq : s.implied m = q)
     (hs : (m • sentence R s v S).holds w) : R.Holds (R.signed q S) w := by
   cases m
   · exact R.holds_of_sufficient (hs.1.1 q hq) hs.2
   · by_contra h
     exact hs.2 (R.holds_of_necessary (hs.1.2 q hq) (Reading.holds_signed_negative_mul.2 h))
+
+variable (R v S) in
+/-- A signature that implies more presupposes more: the presupposition of a sentence weakens as
+its signature descends. -/
+theorem antitone_presup : Antitone fun s ↦ (sentence R s v S).presup := by
+  intro s t h w ⟨hp, hn⟩
+  have hst := ImplicationSignature.le_iff.1 h
+  exact ⟨fun q hq ↦ hp q (Flat.coe_le_iff.1 (hq ▸ hst.1)),
+    fun q hq ↦ hn q (Flat.coe_le_iff.1 (hq ▸ hst.2))⟩
 
 end Implicative
