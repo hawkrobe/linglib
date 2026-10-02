@@ -5,6 +5,7 @@ public import Linglib.Syntax.Category.Verb.ArgumentFrame.Basic
 public import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 public import Linglib.Semantics.Presupposition.Basic
 public import Linglib.Semantics.Presupposition.TriggerTypology
+public import Linglib.Semantics.Presupposition.Implicative
 public import Linglib.Semantics.Aspect.Defs
 public import Linglib.Semantics.Events.PathDir
 public import Linglib.Semantics.Attitudes.Basic
@@ -62,9 +63,9 @@ open NaturalLogic (Signature)
 inductive VoiceType where
   /-- An external argument is introduced: transitives and unergatives. -/
   | agentive
-  /-- No external argument: unaccusatives and anticausatives. -/
+  /-- No external argument is introduced, as in unaccusatives and anticausatives. -/
   | nonThematic
-  /-- No specifier and no semantics: the middle voice. -/
+  /-- The head has no specifier and no semantics, as in the middle voice. -/
   | expletive
   /-- An agent that binds the internal argument ([wood-2015]). -/
   | reflexive
@@ -107,9 +108,9 @@ namespace Verb
     entailments and voice. Unaccusativity and implicit arguments are frame shapes
     (`ArgumentFrame.unaccusative`, `ArgumentFrame.objectDrop`). -/
 structure ArgStructure where
-  /-- Argument frames, citation frame first: `ArgumentFrame.intransitive`, `ArgumentFrame.np`,
-      `ArgumentFrame.finiteClause`, … (`Syntax/Category/Verb/ArgumentFrame/Basic.lean`). `[]`
-      records no frame. -/
+  /-- The verb's argument frames, citation frame first, such as `ArgumentFrame.intransitive`,
+      `ArgumentFrame.np` and `ArgumentFrame.finiteClause`
+      (`Syntax/Category/Verb/ArgumentFrame/Basic.lean`); `[]` records no frame. -/
   frames : List ArgumentFrame
   /-- Proto-role entailment profile for the subject (external argument).
       The authoritative representation of argument semantics
@@ -151,20 +152,22 @@ structure Aspect where
   phasal : Option Phasal := none
   deriving Repr, BEq
 
-/-- The presupposition profile of a verb is its factivity class. Whether the verb triggers a
-    presupposition, and of which kind, is derived (`Verb.triggerType?`). -/
+/-- The presupposition profile of a verb is its factivity class and its implicative schema.
+    Whether the verb triggers a presupposition, and of which kind, is derived
+    (`Verb.triggerType?`). -/
 structure Presupposition where
   /-- The [karttunen-1971b] factivity class of a factive predicate; `none` for a
       non-factive. -/
   factivity : Option _root_.Presupposition.Factivity := none
+  /-- The [karttunen-1971] schema of an implicative, the condition its prerequisite is
+      presupposed to be for the complement and the complement's polarity; `none` for a
+      non-implicative. -/
+  implicative : Option Implicative.Schema := none
   deriving Repr, BEq
 
-/-- The causal and implicative semantics of a verb are its implicative polarity and causative
-    mechanism. -/
+/-- The causal semantics of a verb is its causative mechanism. -/
 structure Causation where
-  /-- For implicative verbs: complement entailment polarity (links to compositional semantics). -/
-  implicative : Option Polarity := none
-  /-- For causative verbs: force-dynamic mechanism (links to compositional semantics). -/
+  /-- The force-dynamic mechanism a causative verb lexicalizes; `none` for a non-causative. -/
   causative : Option Causative := none
   deriving Repr, BEq
 
@@ -173,8 +176,8 @@ structure Causation where
     attitude and opacity (`none` = inherit `Verb.attitude` /
     `Verb.opaqueContext`), and the frame's control type. -/
 structure Reading where
-  /-- The frame this reading is conditioned on: it applies to every frame of the verb
-      refining it, in the refinement order on `ArgumentFrame`. -/
+  /-- The reading applies to every frame of the verb refining this one, in the refinement order
+      on `ArgumentFrame`. -/
   frame : ArgumentFrame
   /-- Frame-conditioned attitude override. -/
   attitude : Option _root_.Attitude := none

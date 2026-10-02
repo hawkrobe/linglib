@@ -22,9 +22,9 @@ necessary and sufficient for sending the message, so *dare* is felicitous there 
 and denial decide the message (`dare_felicitous_for_msg`, `msg_of_dare`, `not_msg_of_not_dare`).
 The nerve is necessary but not sufficient for establishing communication and for spying, so *dare*
 is infelicitous there (`dare_infelicitous_for_com`, `dare_infelicitous_for_spy`). The paper's
-Finnish implicatives fall under Karttunen's schemas, which agree with the polarities of the Finnish
-fragment's entries (`implicative_eq`), and each of the paper's minimal pairs entails what its
-schema commits the speaker to (`rows_agree`).
+Finnish implicatives fall under Karttunen's schemas, which the Finnish fragment's entries carry
+(`implicative_eq`), and each of the paper's minimal pairs entails what its schema commits the
+speaker to (`rows_agree`).
 
 ## Implementation notes
 
@@ -308,8 +308,8 @@ def finnish : List (Finnish.Verb × Schema) :=
     (Finnish.ehtiä, .manage), (Finnish.jaksaa, .beAble), (Finnish.mahtua, .beAble),
     (Finnish.pystyä, .beAble), (Finnish.laiminlyödä, .fail), (Finnish.epäröidä, .hesitate)]
 
-/-- The polarity of each schema is the complement polarity of the Fragment's entry. -/
-theorem implicative_eq : ∀ p ∈ finnish, p.1.implicative = some p.2.polarity := by
+/-- Each schema is the one the Fragment's entry carries. -/
+theorem implicative_eq : ∀ p ∈ finnish, p.1.implicative = some p.2 := by
   decide
 
 /-- A minimal-pair member: the schema of its verb, the polarity of its matrix, and the polarity of

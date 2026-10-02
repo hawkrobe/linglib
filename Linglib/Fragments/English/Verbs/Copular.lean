@@ -60,7 +60,7 @@ def able : ClauseEmbeddingAdjective where
   form := "able"
   frames := [ArgumentFrame.infinitival]
   readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
-  implicative := some .positive
+  implicative := some .beAble
 
 /-- *be annoyed (that p)*. -/
 def beAnnoyed : Verb := annoyed.toVerb "be"

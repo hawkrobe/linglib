@@ -56,15 +56,15 @@ open Negation
 
 /-! ### The dual inference (Section 5.5) -/
 
-/-- (13): a trigger's meaning activates its argument and the argument's negation at distinct
+/-- In (13), a trigger's meaning activates its argument and the argument's negation at distinct
 points of a domain, worlds, times or entities. -/
 def DualInference {X : Type*} (p : X → Prop) : Prop := (∃ x, p x) ∧ ∃ y, ¬ p y
 
 /-! ### Temporal operators (Section 6.2) -/
 
 open Tense Anscombe1964 Karttunen1974 in
-/-- *q before p*: *p* holds at some time and fails at the time of *q*, which precedes every time
-of *p*, (13b). -/
+/-- *q before p* says that *p* holds at some time and fails at the time of *q*, which precedes
+every time of *p*, (13b). -/
 theorem before_dual {T : Type*} [LinearOrder T] {A B : RunTimes T}
     (h : Anscombe.beforeEver A B) (hB : (timeTrace B).Nonempty) :
     DualInference (· ∈ timeTrace B) :=
@@ -90,13 +90,14 @@ theorem possibility_of_not_impossible {W : Type*} (f : ModalBase W) (g : Orderin
   by_contra hne
   exact h fun w' hw' ↦ fun hp ↦ hne ⟨w', hw', hp⟩
 
-/-- *q without p*: `q ∧ ¬p`, the negation in the meaning, (13c). -/
+/-- *q without p* is `q ∧ ¬p`, the negation in the meaning, (13c). -/
 def withoutSem {W : Type*} (q p : Set W) : Set W := q ∩ pᶜ
 
 theorem withoutSem_subset_compl {W : Type*} (q p : Set W) : withoutSem q p ⊆ pᶜ :=
   Set.inter_subset_right
 
-/-- *q unless p*: if not `p` then `q`, so `¬p` holds in the suppositive worlds, (13c). -/
+/-- *q unless p* says that if not `p` then `q`, so `¬p` holds in the suppositive worlds,
+(13c). -/
 def unlessSem {W : Type*} (q p : Set W) : Set W := Conditional.materialImp pᶜ q
 
 theorem mem_of_mem_unlessSem {W : Type*} {q p : Set W} {w : W} (h : w ∈ unlessSem q p)
@@ -106,8 +107,8 @@ theorem mem_of_mem_unlessSem {W : Type*} {q p : Set W} {w : W} (h : w ∈ unless
 /-! ### Comparatives (Section 6.4) -/
 
 open Degree in
-/-- *Y is more Q than Z*: `Y` has `Q` to its own degree and `Z` does not, the two predications of
-(13d) over distinct entities. -/
+/-- *Y is more Q than Z* says that `Y` has `Q` to its own degree and `Z` does not, the two
+predications of (13d) over distinct entities. -/
 theorem comparative_dual {Entity α : Type*} [LinearOrder α] (μ : Entity → α) (y z : Entity)
     (h : comparativeSem μ y z .positive) : DualInference fun e ↦ μ y ≤ μ e :=
   ⟨⟨y, le_rfl⟩, ⟨z, not_le.2 h⟩⟩
@@ -118,7 +119,7 @@ theorem comparative_dual {Entity α : Type*} [LinearOrder α] (μ : Entity → �
 preferential attitude (*fear*), a negative implicative (*forget*) or a preventive causative
 (*prevent*). -/
 def IsExpletiveNegationTrigger (v : Verb) : Prop :=
-  v.preferentialValence? = some .negative ∨ v.implicative = some .negative ∨
+  v.preferentialValence? = some .negative ∨ v.implicative.map (·.polarity) = some .negative ∨
     v.causative = some .prevent
 
 instance : DecidablePred IsExpletiveNegationTrigger := fun _ ↦
@@ -129,7 +130,8 @@ theorem negative_valence_is_en_trigger {v : Verb} (h : v.preferentialValence? = 
     IsExpletiveNegationTrigger v := Or.inl h
 
 /-- A negative implicative verb is a trigger of the *forget* class. -/
-theorem negative_implicative_is_en_trigger {v : Verb} (h : v.implicative = some .negative) :
+theorem negative_implicative_is_en_trigger {v : Verb}
+    (h : v.implicative.map (·.polarity) = some .negative) :
     IsExpletiveNegationTrigger v := Or.inr (Or.inl h)
 
 /-- A preventive causative is a trigger of the *forget* class. -/
@@ -158,9 +160,9 @@ inductive Language
   | zarmaSonrai
   deriving DecidableEq, Repr
 
-/-- The kind of negator an example uses: the standard negator, a dedicated expletive negator
-(French *ne* alone), an imperative negator (Mandarin *bié*), a deontic one (Mandarin *bùgāi*) or
-a copular one (Zarma-Sonrai *sinda*). -/
+/-- An example uses the standard negator, a dedicated expletive negator (French *ne* alone), an
+imperative negator (Mandarin *bié*), a deontic one (Mandarin *bùgāi*) or a copular one
+(Zarma-Sonrai *sinda*). -/
 inductive NegatorKind
   | standard
   | dedicated
@@ -169,8 +171,8 @@ inductive NegatorKind
   | copular
   deriving DecidableEq, Repr
 
-/-- A row: the language, the trigger concept, the negator, its kind, and for French whether the
-paper reports the use as entrenched. -/
+/-- A row records the language, the trigger concept, the negator, its kind, and for French
+whether the paper reports the use as entrenched. -/
 structure Row where
   language : Language
   concept : ENConcept
@@ -242,10 +244,11 @@ theorem januubi_standard : ∀ r ∈ rows, r.language = .januubi → r.kind = .s
 
 /-! ### Blocked classes (Sections 6.4 and 7) -/
 
-/-- Why a concept fails to trigger expletive negation in a language: Januubi admits only noun
-phrases as complements of comparatives and disprefers the modal that the *regret* class needs;
-Januubi, Mandarin and Zarma-Sonrai express *too … to* as 'too … so that … not', and Mandarin and
-Zarma-Sonrai express *without* as 'q not p', where the negation is part of the meaning. -/
+/-- A concept can fail to trigger expletive negation in a language for these reasons: Januubi
+admits only noun phrases as complements of comparatives and disprefers the modal that the
+*regret* class needs; Januubi, Mandarin and Zarma-Sonrai express *too … to* as
+'too … so that … not', and Mandarin and Zarma-Sonrai express *without* as 'q not p', where the
+negation is part of the meaning. -/
 def blocking : Language → ENConcept → Option ENBlockingReason
   | .januubi, .moreThan | .januubi, .lessThan => some .npOnlyComplement
   | .januubi, .regret => some .modalRestriction

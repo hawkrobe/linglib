@@ -157,8 +157,8 @@ theorem control_rows :
 
 /-! ### Rows -/
 
-/-- Gã vocabulary items for minimal pronouns: no context-specific item, so the
-    elsewhere pronoun realizes every context. -/
+/-- Gã has no context-specific vocabulary item for minimal pronouns, so the elsewhere pronoun
+    realizes every context. -/
 def gaInventory : Vocabulary Form where
   items := []
   elsewhere := .pronoun
@@ -174,8 +174,8 @@ def clauseOf : String → Option EmbeddedClauseType
   | "keji" => some .keji
   | _ => none
 
-/-- The clause type of a row: its complement's, or the finite type for a
-    matrix clause the paper labels finite. -/
+/-- A row's clause type is its complement's, or the finite type for a matrix clause the paper
+    labels finite. -/
 def clauseTypeOf (row : Datum) : Option EmbeddedClauseType :=
   match row.feature? "complementizer", row.feature? "clauseType" with
   | some c, _ => clauseOf c
@@ -196,9 +196,8 @@ def formOf (row : Datum) : Option Form :=
   | some "null" => some .null
   | _ => none
 
-/-- Rows whose only point is the shape of the controlled subject: the
-    control frame is grammatical exactly with the inventory's control form
-    (exx 2–3, 34–44, 54–59 vs 40–41). -/
+/-- In the rows whose only point is the shape of the controlled subject, the control frame is
+    grammatical exactly with the inventory's control form (exx 2–3, 34–44, 54–59 vs 40–41). -/
 theorem controlled_subject_rows :
     ∀ row ∈ Examples.all, row.feature? "diagnostic" ∈ [none, some "nullSubject"] →
       ∀ f ∈ formOf row, (row.judgment = .acceptable ↔ f = gaInventory.controlForm) := by
@@ -211,8 +210,7 @@ theorem lexical_subject_rows :
       row.feature? "clauseContext" = none → row.judgment = .ungrammatical := by
   decide +kernel
 
-/-- Complementizer selection (exx 104–106): grammatical exactly when the verb
-    takes the complementizer. -/
+/-- A complementizer is grammatical exactly when the verb takes it (exx 104–106). -/
 theorem c_selection_rows :
     ∀ row ∈ Examples.all, row.feature? "diagnostic" = some "cSelection" →
       ∀ v ∈ verbOf row, ∀ c ∈ clauseTypeOf row,
@@ -263,13 +261,13 @@ theorem marker_rows :
         (m = "present" ↔ (row.feature? "control").isSome) := by
   decide +kernel
 
-/-- The paper's implicative contrast (ex 89): the marker is absent exactly under
-    the positive implicatives of the Fragment, whose complements are entailed
-    realized ([karttunen-1971]). -/
+/-- In the paper's implicative contrast (ex 89) the marker is absent exactly under the verbs of
+    the Fragment whose affirmed use entails the complement realized ([karttunen-1971]). -/
 theorem implicative_rows :
     ∀ row ∈ Examples.all, row.feature? "diagnostic" = some "implicative" →
       ∀ v ∈ verbOf row,
-        (row.feature? "irrealisMarker" = some "absent" ↔ v.implicative = some .positive) := by
+        (row.feature? "irrealisMarker" = some "absent" ↔
+          v.implicative.bind (·.entailed .positive) = some .positive) := by
   decide +kernel
 
 /-! ### The OC signature (Table 2) -/
@@ -313,9 +311,9 @@ theorem controlled_form_covaries :
     subjectForms .second .singular ≠ subjectForms .second .plural := by
   decide +kernel
 
-/-- The control diagnostic a row attests when acceptable: a non-c-commanding or
-    long-distance antecedent by the paper's coindexation, a free reading of the
-    embedded subject, or a strict reading under ellipsis. -/
+/-- An acceptable row attests one control diagnostic, a non-c-commanding or long-distance
+    antecedent by the paper's coindexation, a free reading of the embedded subject, or a strict
+    reading under ellipsis. -/
 def attests (row : Datum) : Diagnostic → Prop
   | .nonCCommandingControl =>
     row.feature? "antecedent" = some "nonCCommanding" ∧ row.judgment = .acceptable
@@ -408,8 +406,8 @@ def contextOf : String → Option IrrealisContext
   | "control" => some .embeddedControl
   | _ => none
 
-/-- The exponents of the irrealis marker: high tone on the subject, high tone on
-    the verb, the vowel segment *a*. -/
+/-- The irrealis marker has three exponents, high tone on the subject, high tone on the verb,
+    and the vowel segment *a*. -/
 inductive Exponent where
   | subjectTone
   | verbTone
@@ -430,8 +428,8 @@ def rowsIn (ctx : IrrealisContext) (j : Judgment) : List Datum :=
   Examples.all.filter fun row =>
     decide ((row.feature? "clauseContext").bind contextOf = some ctx ∧ row.judgment = j)
 
-/-- Table 4 from the rows: the exponents some grammatical row shows in the
-    context (exx 85–86, 93–97, 100–103). -/
+/-- Table 4 is read off the rows, as the exponents some grammatical row shows in the context
+    (exx 85–86, 93–97, 100–103). -/
 def realization (ctx : IrrealisContext) : Finset Exponent :=
   Finset.univ.filter fun e => ∃ row ∈ rowsIn ctx .acceptable, shows row e
 
