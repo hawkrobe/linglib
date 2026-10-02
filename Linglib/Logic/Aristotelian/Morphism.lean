@@ -1,22 +1,41 @@
 module
 
-public import Linglib.Logic.Aristotelian.Diagram
+public import Linglib.Logic.Aristotelian.Basic
 public import Mathlib.Order.BooleanSubalgebra
 
 /-!
 # Isomorphisms of Aristotelian diagrams
 
-Per [deklerck-vignero-demey-2024] and [demey-smessaert-2024]. An *Aristotelian isomorphism* is a
-bijection of corners preserving the labeled relation matrix; these form a groupoid — the core of
-the category of Aristotelian diagrams of [deklerck-vignero-demey-2024]. A *Boolean isomorphism*
-([demey-smessaert-2024], Definition 7) is the stronger notion of a corner bijection extending to an
-order-isomorphism of the Boolean closures; every Boolean isomorphism is an Aristotelian one, but not
-conversely (the Keynes–Johnson octagons of [demey-smessaert-2024] witness the gap).
+An *Aristotelian diagram* is a fragment of a Boolean algebra, here an indexed family
+`φ : ι → α`. Demey and Smessaert call a bijection of corners an *Aristotelian isomorphism* when
+it preserves and reflects the four Aristotelian relations, and a *Boolean isomorphism* when it
+extends to an order isomorphism of the Boolean closures. Every Boolean isomorphism is an
+Aristotelian one but not conversely, as their Keynes–Johnson octagons show. Aristotelian
+isomorphisms form a groupoid, the core of De Klerck, Vignero and Demey's category of
+Aristotelian diagrams.
 
-## Main declarations
+## Main definitions
 
-* `AristotelianIso` — a relation-matrix-preserving corner bijection, with `refl`/`symm`/`trans`.
-* `BooleanIso`, `BooleanIso.toAristotelianIso` — the stronger notion and the nesting.
+* `AristotelianIso`, with `refl`, `symm` and `trans`.
+* `BooleanIso`, with `refl`, `symm` and `trans`.
+
+## Main results
+
+* `BooleanIso.toAristotelianIso`: every Boolean isomorphism is an Aristotelian isomorphism.
+
+## Implementation notes
+
+The family `φ : ι → α` stands in for the paper's set `F ⊆ α`, and a corner bijection is a
+bijection of index types. `AristotelianIso` asks for `Disjoint`, `Codisjoint` and `<` to be
+preserved and reflected. This is equivalent to asking it of the four relations, since each of
+`IsCompl`, `IsContrary`, `IsSubcontrary` and `<` is a Boolean combination of the three, and
+conversely (`disjoint_iff_isCompl_or_isContrary`, `codisjoint_iff_isCompl_or_isSubcontrary`).
+
+## References
+
+* [demey-smessaert-2018]
+* [demey-smessaert-2024]
+* [deklerck-vignero-demey-2024]
 -/
 
 @[expose] public section
@@ -38,27 +57,26 @@ end BooleanSubalgebra
 
 namespace Aristotelian
 
-variable {ι ι' ι'' : Type*} [Fintype ι] [Fintype ι'] [Fintype ι'']
-  {α α' α'' : Type*} [BooleanAlgebra α] [BooleanAlgebra α'] [BooleanAlgebra α'']
-  {D : Diagram ι α} {D' : Diagram ι' α'} {D'' : Diagram ι'' α''}
+variable {ι ι' ι'' α α' α'' : Type*} [BooleanAlgebra α] [BooleanAlgebra α'] [BooleanAlgebra α'']
+  {φ : ι → α} {φ' : ι' → α'} {φ'' : ι'' → α''}
 
 open BooleanSubalgebra
 open Equiv (toFun_as_coe apply_symm_apply)
 
-/-- An **Aristotelian isomorphism** ([demey-smessaert-2024], Definition 6): a corner bijection
-preserving and reflecting `Disjoint`, `Codisjoint`, and `<` — equivalently all four Aristotelian
-relations (`map_isContradictory` etc.), since these are boolean combinations. -/
-structure AristotelianIso (D : Diagram ι α) (D' : Diagram ι' α') extends ι ≃ ι' where
+/-- An **Aristotelian isomorphism** is a corner bijection preserving and reflecting `Disjoint`,
+`Codisjoint` and `<`, and hence the four Aristotelian relations (`map_isCompl` and
+siblings). -/
+structure AristotelianIso (φ : ι → α) (φ' : ι' → α') extends ι ≃ ι' where
   /-- Joint inconsistency (`⊓ = ⊥`) is preserved and reflected. -/
-  map_disjoint : ∀ i j, Disjoint (D.φ i) (D.φ j) ↔ Disjoint (D'.φ (toFun i)) (D'.φ (toFun j))
+  map_disjoint : ∀ i j, Disjoint (φ i) (φ j) ↔ Disjoint (φ' (toFun i)) (φ' (toFun j))
   /-- Joint exhaustiveness (`⊔ = ⊤`) is preserved and reflected. -/
-  map_codisjoint : ∀ i j, Codisjoint (D.φ i) (D.φ j) ↔ Codisjoint (D'.φ (toFun i)) (D'.φ (toFun j))
-  /-- Strict entailment (subalternation) is preserved and reflected. -/
-  map_lt : ∀ i j, D.φ i < D.φ j ↔ D'.φ (toFun i) < D'.φ (toFun j)
+  map_codisjoint : ∀ i j, Codisjoint (φ i) (φ j) ↔ Codisjoint (φ' (toFun i)) (φ' (toFun j))
+  /-- Subalternation (`<`) is preserved and reflected. -/
+  map_lt : ∀ i j, φ i < φ j ↔ φ' (toFun i) < φ' (toFun j)
 
 namespace AristotelianIso
 
-instance : EquivLike (AristotelianIso D D') ι ι' where
+instance : EquivLike (AristotelianIso φ φ') ι ι' where
   coe e := e.toFun
   inv e := e.invFun
   left_inv e := e.left_inv
@@ -66,20 +84,20 @@ instance : EquivLike (AristotelianIso D D') ι ι' where
   coe_injective' e e' h _ := by
     obtain ⟨e, _, _, _⟩ := e; obtain ⟨e', _, _, _⟩ := e'; congr; exact Equiv.coe_fn_injective h
 
-@[simp] theorem coe_fn_toEquiv (e : AristotelianIso D D') : (e.toEquiv : ι → ι') = e := rfl
+@[simp] theorem coe_fn_toEquiv (e : AristotelianIso φ φ') : (e.toEquiv : ι → ι') = e := rfl
 
 @[ext]
-theorem ext {e e' : AristotelianIso D D'} (h : ∀ i, e i = e' i) : e = e' := DFunLike.ext _ _ h
+theorem ext {e e' : AristotelianIso φ φ'} (h : ∀ i, e i = e' i) : e = e' := DFunLike.ext _ _ h
 
 /-- The identity Aristotelian isomorphism. -/
-@[refl] protected def refl (D : Diagram ι α) : AristotelianIso D D where
+@[refl] protected def refl (φ : ι → α) : AristotelianIso φ φ where
   toEquiv := Equiv.refl ι
   map_disjoint _ _ := Iff.rfl
   map_codisjoint _ _ := Iff.rfl
   map_lt _ _ := Iff.rfl
 
 /-- The inverse Aristotelian isomorphism. -/
-@[symm] protected def symm (e : AristotelianIso D D') : AristotelianIso D' D where
+@[symm] protected def symm (e : AristotelianIso φ φ') : AristotelianIso φ' φ where
   toEquiv := e.toEquiv.symm
   map_disjoint i j := by
     simpa only [toFun_as_coe, apply_symm_apply]
@@ -92,92 +110,84 @@ theorem ext {e e' : AristotelianIso D D'} (h : ∀ i, e i = e' i) : e = e' := DF
       using (e.map_lt (e.toEquiv.symm i) (e.toEquiv.symm j)).symm
 
 /-- Composition of Aristotelian isomorphisms. -/
-@[trans] protected def trans (e : AristotelianIso D D') (e' : AristotelianIso D' D'') :
-    AristotelianIso D D'' where
+@[trans] protected def trans (e : AristotelianIso φ φ') (e' : AristotelianIso φ' φ'') :
+    AristotelianIso φ φ'' where
   toEquiv := e.toEquiv.trans e'.toEquiv
   map_disjoint i j := (e.map_disjoint i j).trans (e'.map_disjoint _ _)
   map_codisjoint i j := (e.map_codisjoint i j).trans (e'.map_codisjoint _ _)
   map_lt i j := (e.map_lt i j).trans (e'.map_lt _ _)
 
-/-- An Aristotelian isomorphism preserves and reflects contradictoriness (Definition 6). -/
-theorem map_isContradictory (e : AristotelianIso D D') (i j : ι) :
-    IsContradictory (D.φ i) (D.φ j) ↔ IsContradictory (D'.φ (e i)) (D'.φ (e j)) := by
-  simp only [IsContradictory, isCompl_iff, e.map_disjoint, e.map_codisjoint,
-    toFun_as_coe, coe_fn_toEquiv]
+/-- An Aristotelian isomorphism preserves and reflects contradiction. -/
+theorem map_isCompl (e : AristotelianIso φ φ') (i j : ι) :
+    IsCompl (φ i) (φ j) ↔ IsCompl (φ' (e i)) (φ' (e j)) := by
+  simp only [isCompl_iff, e.map_disjoint, e.map_codisjoint, toFun_as_coe, coe_fn_toEquiv]
 
-/-- An Aristotelian isomorphism preserves and reflects contrariety (Definition 6). -/
-theorem map_isContrary (e : AristotelianIso D D') (i j : ι) :
-    IsContrary (D.φ i) (D.φ j) ↔ IsContrary (D'.φ (e i)) (D'.φ (e j)) := by
+/-- An Aristotelian isomorphism preserves and reflects contrariety. -/
+theorem map_isContrary (e : AristotelianIso φ φ') (i j : ι) :
+    IsContrary (φ i) (φ j) ↔ IsContrary (φ' (e i)) (φ' (e j)) := by
   simp only [IsContrary, e.map_disjoint, e.map_codisjoint, toFun_as_coe, coe_fn_toEquiv]
 
-/-- An Aristotelian isomorphism preserves and reflects subcontrariety (Definition 6). -/
-theorem map_isSubcontrary (e : AristotelianIso D D') (i j : ι) :
-    IsSubcontrary (D.φ i) (D.φ j) ↔ IsSubcontrary (D'.φ (e i)) (D'.φ (e j)) := by
+/-- An Aristotelian isomorphism preserves and reflects subcontrariety. -/
+theorem map_isSubcontrary (e : AristotelianIso φ φ') (i j : ι) :
+    IsSubcontrary (φ i) (φ j) ↔ IsSubcontrary (φ' (e i)) (φ' (e j)) := by
   simp only [IsSubcontrary, e.map_disjoint, e.map_codisjoint, toFun_as_coe, coe_fn_toEquiv]
-
-/-- An Aristotelian isomorphism preserves and reflects subalternation (Definition 6). -/
-theorem map_isSubaltern (e : AristotelianIso D D') (i j : ι) :
-    IsSubaltern (D.φ i) (D.φ j) ↔ IsSubaltern (D'.φ (e i)) (D'.φ (e j)) :=
-  e.map_lt i j
 
 end AristotelianIso
 
 /-! ### Boolean isomorphism (Definition 7) and the nesting -/
 
 /-- The `i`-th corner of a diagram, viewed inside its Boolean closure. -/
-def Diagram.corner (D : Diagram ι α) (i : ι) : closure (Set.range D.φ) :=
-  ⟨D.φ i, subset_closure (Set.mem_range_self i)⟩
+def corner (φ : ι → α) (i : ι) : closure (Set.range φ) :=
+  ⟨φ i, subset_closure (Set.mem_range_self i)⟩
 
 @[simp, norm_cast]
-theorem Diagram.coe_corner (D : Diagram ι α) (i : ι) : (D.corner i : α) = D.φ i := rfl
+theorem coe_corner (φ : ι → α) (i : ι) : (corner φ i : α) = φ i := rfl
 
-/-- A **Boolean isomorphism** ([demey-smessaert-2024], Definition 7): a corner bijection that
-extends to an order-isomorphism of the Boolean closures. -/
+/-- A **Boolean isomorphism** is a corner bijection that extends to an order isomorphism of the
+Boolean closures. -/
 @[ext]
-structure BooleanIso (D : Diagram ι α) (D' : Diagram ι' α') where
+structure BooleanIso (φ : ι → α) (φ' : ι' → α') where
   /-- The underlying corner bijection. -/
   toEquiv : ι ≃ ι'
   /-- The order-isomorphism of Boolean closures extending it. -/
-  closureIso : closure (Set.range D.φ) ≃o closure (Set.range D'.φ)
+  closureIso : closure (Set.range φ) ≃o closure (Set.range φ')
   /-- `closureIso` carries corners to corners. -/
-  extends_corners : ∀ i, closureIso (D.corner i) = D'.corner (toEquiv i)
+  extends_corners : ∀ i, closureIso (corner φ i) = corner φ' (toEquiv i)
 
 namespace BooleanIso
-open Diagram
 
 /-- The identity Boolean isomorphism. -/
-@[refl] protected def refl (D : Diagram ι α) : BooleanIso D D :=
-  ⟨Equiv.refl ι, OrderIso.refl _, fun _ => rfl⟩
+@[refl] protected def refl (φ : ι → α) : BooleanIso φ φ :=
+  ⟨Equiv.refl ι, OrderIso.refl _, fun _ ↦ rfl⟩
 
 /-- The inverse Boolean isomorphism. -/
-@[symm] protected def symm (e : BooleanIso D D') : BooleanIso D' D where
+@[symm] protected def symm (e : BooleanIso φ φ') : BooleanIso φ' φ where
   toEquiv := e.toEquiv.symm
   closureIso := e.closureIso.symm
   extends_corners i := by rw [e.closureIso.symm_apply_eq, e.extends_corners, apply_symm_apply]
 
 /-- Composition of Boolean isomorphisms. -/
-@[trans] protected def trans (e : BooleanIso D D') (e' : BooleanIso D' D'') : BooleanIso D D'' where
+@[trans] protected def trans (e : BooleanIso φ φ') (e' : BooleanIso φ' φ'') : BooleanIso φ φ'' where
   toEquiv := e.toEquiv.trans e'.toEquiv
   closureIso := e.closureIso.trans e'.closureIso
   extends_corners i := by
     simp only [OrderIso.trans_apply, e.extends_corners, e'.extends_corners, Equiv.trans_apply]
 
-/-- **Every Boolean isomorphism is an Aristotelian isomorphism** ([demey-smessaert-2024], p.13); the
-converse fails (the Keynes–Johnson octagons witness the gap). -/
-def toAristotelianIso (bi : BooleanIso D D') : AristotelianIso D D' where
+/-- Every Boolean isomorphism is an Aristotelian isomorphism. -/
+def toAristotelianIso (bi : BooleanIso φ φ') : AristotelianIso φ φ' where
   toEquiv := bi.toEquiv
   map_disjoint i j := by
-    simp only [toFun_as_coe, ← coe_corner, disjoint_coe, ← bi.extends_corners,
+    simp only [toFun_as_coe, ← coe_corner φ, ← coe_corner φ', disjoint_coe, ← bi.extends_corners,
       disjoint_map_orderIso_iff]
   map_codisjoint i j := by
-    simp only [toFun_as_coe, ← coe_corner, codisjoint_coe, ← bi.extends_corners,
-      codisjoint_map_orderIso_iff]
+    simp only [toFun_as_coe, ← coe_corner φ, ← coe_corner φ', codisjoint_coe,
+      ← bi.extends_corners, codisjoint_map_orderIso_iff]
   map_lt i j := by
-    simp only [toFun_as_coe, ← coe_corner, Subtype.coe_lt_coe, ← bi.extends_corners,
-      bi.closureIso.lt_iff_lt]
+    simp only [toFun_as_coe, ← coe_corner φ, ← coe_corner φ', Subtype.coe_lt_coe,
+      ← bi.extends_corners, bi.closureIso.lt_iff_lt]
 
 /-- Forget a Boolean isomorphism down to its underlying Aristotelian isomorphism. -/
-instance : CoeOut (BooleanIso D D') (AristotelianIso D D') := ⟨toAristotelianIso⟩
+instance : CoeOut (BooleanIso φ φ') (AristotelianIso φ φ') := ⟨toAristotelianIso⟩
 
 end BooleanIso
 

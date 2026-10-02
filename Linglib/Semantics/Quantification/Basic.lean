@@ -2,7 +2,6 @@ module
 
 public import Linglib.Semantics.Quantification.Defs
 public import Linglib.Semantics.Quantification.Properties
-public import Linglib.Core.Order.Aristotelian
 
 /-!
 # Concrete propositional generalized quantifiers
@@ -57,8 +56,8 @@ theorem the_iff {α : Type*} (R S : α → Prop) :
   · rintro ⟨⟨x, hx, huniq⟩, hS⟩
     exact ⟨x, fun y => ⟨huniq y, fun h => h ▸ hx⟩, hS x hx⟩
 
-/-- B&C semantic universals ([barwise-cooper-1981]): conservativity plus
-    monotonicity in scope. Convenience conjunction of three Core predicates. -/
+/-- A quantifier satisfies Barwise and Cooper's semantic universals when it is conservative and
+either monotone or antitone in its scope. -/
 def SatisfiesUniversals {α : Type*} (q : GQ α) : Prop :=
   Conservative q ∧ (ScopeMonotone q ∨ ScopeAntitone q)
 
@@ -241,21 +240,13 @@ theorem filtrating_every : Filtrating (every : GQ α) :=
 
 /-! ### Aristotelian square of opposition
 
-The four Aristotelian relations among GQ denotations `(every, GQ.some, no,
-everyᶜ)` at a fixed restrictor `R`, where the corners are elements of the
-Pi-instance Boolean algebra `(α → Prop) → Prop`.
-
-The **contradictory** diagonals are placed on the `Aristotelian` hub by construction:
-since outer negation is the Boolean complement `ᶜ`, every quantifier is
-`Aristotelian.IsContradictory` to its complement (`isContradictory_compl`, which is just
-`isCompl_compl`), and the A–O and E–I diagonals are instances. The pointwise `↔`-form theorems
-(`every_contradicts_notEvery`, `no_contradicts_some`) are the unfolded readings.
-
-**Contrariety** and **subalternation** are *not* hub relations: they hold only under
-existential import (non-empty restrictor) and are `|R|`-sensitive — at a singleton `R`,
-`every`/`no` are contradictory, not contrary — so the unconditional `IsContrary`/`IsSubaltern`
-do not apply. They stay as the conditional theorems (`a_e_contrary`, `subalternation_a_i`, …),
-the faithful Aristotelian-vs-Boolean existential-import treatment. -/
+The four Aristotelian relations among the GQ denotations `every`, `GQ.some`, `no` and `everyᶜ`
+at a fixed restrictor `R`. Outer negation is the Boolean complement, so the contradictory
+diagonals are instances of `isCompl_compl`; the theorems below give their pointwise readings.
+Contrariety and subalternation hold only under existential import, and at a singleton
+restrictor `every` and `no` are contradictory rather than contrary, so they are stated as
+theorems conditional on a nonempty restrictor rather than as `Aristotelian.IsContrary` and `<`.
+-/
 
 /-- The A-form and the O-form are contradictories. -/
 theorem every_contradicts_notEvery (R S : α → Prop) :
@@ -295,13 +286,6 @@ theorem subcontrariety_i_o (R S : α → Prop)
   · exact Or.inl h
   · right; intro hA; apply h
     obtain ⟨x, hRx⟩ := hR; exact ⟨x, hRx, hA x hRx⟩
-
-/-- Every quantifier is `Aristotelian.IsContradictory` to its outer negation, by the Boolean
-complement law on the Boolean algebra `(α → Prop) → Prop`. The square's contradictory diagonals
-are instances. -/
-theorem isContradictory_compl (q : GQ α) (R : α → Prop) :
-    Aristotelian.IsContradictory ((q R) : (α → Prop) → Prop) (qᶜ R) :=
-  isCompl_compl
 
 /-! ### Basic left monotonicities ([peters-westerstahl-2006] §5.5) -/
 

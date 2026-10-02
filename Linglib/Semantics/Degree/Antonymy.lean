@@ -3,7 +3,7 @@ module
 public import Mathlib.Algebra.Group.Action.Defs
 public import Linglib.Semantics.Polarity.Basic
 public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Core.Order.Aristotelian
+public import Linglib.Logic.Aristotelian.Basic
 public import Linglib.Semantics.Degree.Boundedness
 public import Mathlib.Order.Interval.Set.Disjoint
 
@@ -11,26 +11,26 @@ public import Mathlib.Order.Interval.Set.Disjoint
 # Antonymy
 
 This file defines the vocabulary of an antonym pair of gradable adjectives, *tall* and *short*
-or *happy* and *unhappy*. The two members measure on the same degrees under inverse orderings
-([kennedy-2007] (60) and fn. 29, [kennedy-mcnally-2005] fn. 7): an adjective's `Polarity` is
-which member it is, `positive` for the member measuring in the scale's increasing direction
-(*tall*) and `negative` for the inverted one (*short*). Inverting twice restores the ordering,
+or *happy* and *unhappy*. Following Kennedy (2007) and Kennedy and McNally (2005), the two
+members measure the same degrees under inverse orderings, so an adjective's `Polarity` is which
+member it is, `positive` for the member measuring in the scale's increasing direction (*tall*)
+and `negative` for the inverted one (*short*). Inverting twice restores the ordering,
 so `negative * p` is the polarity of the antonym of a `p` adjective, and polarity acts on scale
 boundedness through the order dual. `Degree.AntonymRelation` is the opposition between the
 members' positive forms, contradictory (*clean* and *dirty*) or contrary (*tall* and *short*,
-which leave a gap), a cell of the Aristotelian square ([cruse-1986], [horn-1989]).
+which leave a gap), a cell of the Aristotelian square in the sense of Cruse and Horn.
 
 The contrary case is modelled by a `Degree.ThresholdPair` on a linearly ordered scale, the
 positive form true above its upper threshold and the negative form below its lower one, and
 `Degree.AntonymForm` is the quadruplet *happy*, *not happy*, *unhappy*, *not unhappy* that
 sentential negation generates from a pair, with a contradictory denotation on one threshold,
 where *not unhappy* collapses to *happy*, and a strengthened denotation on a pair, where the gap
-keeps them apart ([krifka-2007b]).
+keeps them apart, as in Krifka's account.
 
 ## Main definitions
 
 * The action `p • b` of `Polarity` on `Boundedness`, the negative polarity by the order dual.
-* `AntonymRelation`, contradictory or contrary, embedded in `Aristotelian.OppositionRel`.
+* `AntonymRelation`, contradictory or contrary.
 * `ThresholdPair` and its `ThresholdPair.gap`, the interval between the two thresholds.
 * `AntonymForm` with `AntonymForm.contradictoryDenot`, `AntonymForm.strengthenedDenot` and
   `AntonymForm.complexity`.
@@ -43,7 +43,7 @@ keeps them apart ([krifka-2007b]).
   `AntonymForm.strengthenedDenot_notPositive_diff_negative`: a pair leaves a gap when its lower
   threshold does not exceed its upper one, and the gap is what each negated form adds to the
   opposite simple form.
-* `isContradictory_contradictoryDenot`, `isContrary_strengthenedDenot`: the two denotations
+* `isCompl_contradictoryDenot`, `isContrary_strengthenedDenot`: the two denotations
   realize the two cells of the Aristotelian square.
 
 ## References
@@ -79,33 +79,13 @@ instance : MulAction Polarity Boundedness where
 
 /-! ### The relation between the members -/
 
-/-- The opposition between the positive forms of an antonym pair: contradictories (*clean* and
-*dirty*) cannot both be false, contraries (*tall* and *short*) can, leaving a gap between the
-two standards. An antonym pair is never subcontrary or unconnected, so the type has two
-members, embedded in `Aristotelian.OppositionRel` by `toOpposition`. -/
+/-- The opposition between the positive forms of an antonym pair. Contradictories (*clean* and
+*dirty*) cannot both be false, while contraries (*tall* and *short*) can, leaving a gap between
+the two standards. -/
 inductive AntonymRelation where
   | contradictory
   | contrary
   deriving Repr, DecidableEq, Fintype
-
-/-- The cell of the Aristotelian square an antonym pair occupies. -/
-def AntonymRelation.toOpposition : AntonymRelation → Aristotelian.OppositionRel
-  | .contradictory => .contradictory
-  | .contrary      => .contrary
-
-instance : Coe AntonymRelation Aristotelian.OppositionRel := ⟨AntonymRelation.toOpposition⟩
-
-theorem AntonymRelation.toOpposition_injective :
-    Function.Injective AntonymRelation.toOpposition := by
-  intro a b h; cases a <;> cases b <;> simp_all [AntonymRelation.toOpposition]
-
-/-- The image of `toOpposition` is exactly the two antonym cells of `OppositionRel`. -/
-theorem AntonymRelation.range_toOpposition (r : Aristotelian.OppositionRel) :
-    (∃ n : AntonymRelation, n.toOpposition = r) ↔ r = .contradictory ∨ r = .contrary := by
-  constructor
-  · rintro ⟨n, rfl⟩; cases n <;> simp [AntonymRelation.toOpposition]
-  · rintro (rfl | rfl)
-    exacts [⟨.contradictory, rfl⟩, ⟨.contrary, rfl⟩]
 
 /-! ### The two-threshold model of a contrary pair -/
 
@@ -134,8 +114,8 @@ end ThresholdPair
 
 /-! ### The quadruplet -/
 
-/-- The four surface forms sentential negation generates from an antonym pair: *happy*,
-*not happy*, *unhappy*, *not unhappy* ([horn-1989], [krifka-2007b]). The type carries no
+/-- An antonym form is one of the four surface forms that sentential negation generates from an
+antonym pair, *happy*, *not happy*, *unhappy* and *not unhappy*. The type carries no
 semantics; a contradictory account collapses the four to two denotations and a contrary
 account keeps four, and each is a function on it. -/
 inductive AntonymForm where
@@ -147,8 +127,8 @@ inductive AntonymForm where
 
 namespace AntonymForm
 
-/-- Exchange the two poles of the quadruplet: *happy* with *unhappy* and *not happy* with
-*not unhappy*. -/
+/-- `flip` exchanges the two poles of the quadruplet, *happy* with *unhappy* and *not happy*
+with *not unhappy*. -/
 def flip : AntonymForm → AntonymForm
   | .positive    => .negative
   | .negative    => .positive
@@ -212,7 +192,7 @@ theorem contradictoryDenot_synonymy :
   ⟨rfl, rfl⟩
 
 /-- Contradictory negation is the complement of the positive form, so double negation
-eliminates: *not unhappy* is *happy*, the puzzle [krifka-2007b] solves pragmatically. -/
+eliminates and *not unhappy* is *happy*, the puzzle Krifka solves pragmatically. -/
 theorem contradictoryDenot_notPositive :
     contradictoryDenot θ .notPositive = (contradictoryDenot θ .positive)ᶜ :=
   Set.compl_Ioi.symm
@@ -229,11 +209,10 @@ theorem strengthenedDenot_notPositive_diff_negative :
   rw [strengthenedDenot, strengthenedDenot, Set.sdiff_eq, Set.compl_Iio, Set.inter_comm,
     Set.Ici_inter_Iic, ThresholdPair.gap]
 
-open Aristotelian in
 /-- With one threshold the negative form is the complement of the positive form, so the pair is
 contradictory. -/
-theorem isContradictory_contradictoryDenot :
-    IsContradictory (contradictoryDenot θ .positive) (contradictoryDenot θ .negative) :=
+theorem isCompl_contradictoryDenot :
+    IsCompl (contradictoryDenot θ .positive) (contradictoryDenot θ .negative) :=
   contradictoryDenot_notPositive θ ▸ isCompl_compl
 
 open Aristotelian in

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Core.Order.Aristotelian
+public import Linglib.Logic.Aristotelian.Basic
 public import Linglib.Logic.Aristotelian.Partition
 public import Mathlib.Data.Fintype.BigOperators
 public import Mathlib.Data.Fintype.Order
@@ -9,18 +9,17 @@ public import Mathlib.Order.BooleanSubalgebra
 /-!
 # Bitstring semantics for logical fragments
 
-Per [demey-smessaert-2018] §3.2. For a fragment `φ : ι → W → Bool`, the
-bitstring of a formula `ψ` in the Boolean closure of `Set.range φ` records, for
-each consistent anchor cell, whether that cell entails `ψ`. This map is a Boolean
-isomorphism onto `Fin n → Bool` (Theorem 1), hence an Aristotelian isomorphism
-(Theorem 2).
+This is the bitstring semantics of Demey and Smessaert (2018, Section 3.2). For a fragment
+`φ : ι → W → Bool`, the bitstring of a formula `ψ` in the Boolean closure of `Set.range φ`
+records, for each consistent anchor cell, whether that cell entails `ψ`. This map is a Boolean
+isomorphism onto `Fin n → Bool` (Theorem 1), hence an Aristotelian isomorphism (Theorem 2).
 
 ## Main declarations
 
 * `bitstringOf` — the bitstring map (Definition 7).
 * `bitstringOrderIso` — the isomorphism `closure (Set.range φ) ≃o (Fin n → Bool)`.
 * `isAtom_anchor` — consistent anchor cells are the atoms of the closure.
-* `isContradictory_bitstring_iff` and siblings — the Aristotelian relations transfer.
+* `isCompl_bitstring_iff` and siblings — the Aristotelian relations transfer.
 
 ## Implementation notes
 
@@ -32,6 +31,11 @@ world-enumeration declarations — which also require `[Fintype W]` — live in
 `isAtom_anchor` is the `partition`-cell case of mathlib's atom representation for
 finite Boolean algebras (`CompleteAtomicBooleanAlgebra.toSetOfIsAtom`); the
 bitstring isomorphism is its explicit `Fin n`-indexed form.
+
+## References
+
+* [demey-smessaert-2018]
+* [demey-smessaert-2024]
 -/
 
 @[expose] public section
@@ -50,8 +54,8 @@ variable {W : Type*} {ι : Type*}
 section
 variable [Fintype ι] (φ : ι → W → Bool)
 
-/-- Lemma 6 for the indexed-family `anchor`: every closure element is entailed by
-an anchor or by its complement ([demey-smessaert-2018]). -/
+/-- Every element of the closure is entailed either by an anchor or by its complement
+(Lemma 6). -/
 theorem anchor_le_or_le_compl_mem_closure (σ : ι → Bool) {ψ : W → Bool}
     (hψ : ψ ∈ BooleanSubalgebra.closure (Set.range φ)) :
     anchor φ σ ≤ ψ ∨ anchor φ σ ≤ ψᶜ := by
@@ -59,10 +63,10 @@ theorem anchor_le_or_le_compl_mem_closure (σ : ι → Bool) {ψ : W → Bool}
   | mem ψ' hψ' =>
     obtain ⟨i, rfl⟩ := hψ'
     by_cases h : σ i = true
-    · refine Or.inl (le_iff_forall.mpr fun w hw => ?_)
+    · refine Or.inl fun w hw ↦ ?_
       simp only [anchor, decide_eq_true_eq] at hw
       simpa only [ite_eq_left h] using hw i
-    · refine Or.inr (le_iff_forall.mpr fun w hw => ?_)
+    · refine Or.inr fun w hw ↦ ?_
       simp only [anchor, decide_eq_true_eq] at hw
       have := hw i
       rw [ite_eq_right h] at this
@@ -146,7 +150,7 @@ theorem atom_imp_anchor {a : BooleanSubalgebra.closure (Set.range φ)} (ha : IsA
       BooleanSubalgebra.closure (Set.range φ)) := isAtom_anchor φ σ ⟨w, hcons⟩
   rcases anchor_le_or_le_compl_mem_closure φ σ a.2 with hL | hR
   · exact (congrArg Subtype.val ((ha.le_iff_eq hα.ne_bot).mp hL)).symm
-  · have hcompl : (a.val)ᶜ w = true := (le_iff_forall.mp hR) w hcons
+  · have hcompl : (a.val)ᶜ w = true := hR w hcons
     simp only [Pi.compl_apply, hw] at hcompl
     exact absurd hcompl (by decide)
 
@@ -172,8 +176,8 @@ noncomputable def anchorIndex :
     Fin (partition ι W φ).card → (ι → Bool) :=
   fun i => ((partition ι W φ).equivFin.symm i).val
 
-/-- The bitstring of `ψ` relative to `φ`: bit `i` is `true` iff anchor `i` entails
-`ψ` ([demey-smessaert-2018], Definition 7). -/
+/-- The bitstring of `ψ` relative to `φ` has bit `i` set iff anchor `i` entails `ψ`
+(Definition 7). -/
 noncomputable def bitstringOf (ψ : W → Bool) :
     Fin (partition ι W φ).card → Bool :=
   fun i => decide (∀ w, anchor φ (anchorIndex φ i) w = true → ψ w = true)
@@ -197,11 +201,11 @@ theorem bitstringOf_apply_at_anchor {ψ : W → Bool}
   rcases anchor_le_or_le_compl_mem_closure φ (anchorIndex φ i) hψ with hL | hR
   · have hβ : bitstringOf φ ψ i = true := by
       simp only [bitstringOf, decide_eq_true_eq]
-      exact fun w' hw' => (le_iff_forall.mp hL) w' hw'
-    have hψw : ψ w = true := (le_iff_forall.mp hL) w hw
+      exact fun w' hw' ↦ hL w' hw'
+    have hψw : ψ w = true := hL w hw
     rw [hβ, hψw]
   · have hψw : ψ w = false := by
-      have := (le_iff_forall.mp hR) w hw
+      have := hR w hw
       simpa only [Pi.compl_apply, Bool.compl_eq_bnot, Bool.not_eq_eq_eq_not,
         Bool.not_true] using this
     have hβ : bitstringOf φ ψ i = false := by
@@ -305,8 +309,8 @@ theorem bitstringInverse_bitstringOf {ψ : W → Bool}
 
 /-! ### Theorem 1: the Boolean isomorphism -/
 
-/-- **Theorem 1** ([demey-smessaert-2018]): `bitstringOf φ` is an order
-isomorphism `closure (Set.range φ) ≃o (Fin n → Bool)`, `n = |partition|`. -/
+/-- `bitstringOf φ` is an order isomorphism `closure (Set.range φ) ≃o (Fin n → Bool)` with
+`n = |partition|` (Theorem 1). -/
 noncomputable def bitstringOrderIso :
     BooleanSubalgebra.closure (Set.range φ) ≃o
     (Fin (partition ι W φ).card → Bool) where
@@ -317,7 +321,6 @@ noncomputable def bitstringOrderIso :
   map_rel_iff' := by
     rintro ⟨ψ₁, hψ₁⟩ ⟨ψ₂, hψ₂⟩
     show bitstringOf φ ψ₁ ≤ bitstringOf φ ψ₂ ↔ ψ₁ ≤ ψ₂
-    rw [le_iff_forall, le_iff_forall]
     constructor
     · intro h w hw₁
       have := h (worldAnchorIndex φ w)
@@ -332,34 +335,34 @@ noncomputable def bitstringOrderIso :
 
 /-! ### Boolean complexity -/
 
-/-- The Boolean complexity of a fragment: its bitstring length `|partition| = log₂ |𝔹(𝓕)|`. By
-`nonempty_orderIso_closure_iff` this is the complete invariant of the Boolean closure up to
-order-isomorphism ([demey-smessaert-2024]). -/
+/-- The Boolean complexity of a fragment is its bitstring length `|partition| = log₂ |𝔹(𝓕)|`.
+By `nonempty_orderIso_closure_iff` it is a complete invariant of the Boolean closure up to order
+isomorphism. -/
 def boolComplexity : ℕ := (partition ι W φ).card
 
 /-! ### Theorem 2: Aristotelian transfer
 
-Each relation transfers along the Boolean isomorphism `bitstringOrderIso`
-([demey-smessaert-2018], Theorem 2). -/
+Each relation transfers along the Boolean isomorphism `bitstringOrderIso`, so the bitstring
+map is an Aristotelian isomorphism. -/
 
 section Transfer
 variable (a b : BooleanSubalgebra.closure (Set.range φ))
 
-theorem isContradictory_bitstring_iff :
-    IsContradictory (bitstringOf φ a.val) (bitstringOf φ b.val) ↔ IsContradictory a b :=
-  isContradictory_apply_orderIso (bitstringOrderIso φ)
+theorem isCompl_bitstring_iff :
+    IsCompl (bitstringOf φ a.val) (bitstringOf φ b.val) ↔ IsCompl a b :=
+  (bitstringOrderIso φ).isCompl_iff.symm
 
 theorem isContrary_bitstring_iff :
     IsContrary (bitstringOf φ a.val) (bitstringOf φ b.val) ↔ IsContrary a b :=
-  isContrary_apply_orderIso (bitstringOrderIso φ)
+  isContrary_map_orderIso_iff (bitstringOrderIso φ)
 
 theorem isSubcontrary_bitstring_iff :
     IsSubcontrary (bitstringOf φ a.val) (bitstringOf φ b.val) ↔ IsSubcontrary a b :=
-  isSubcontrary_apply_orderIso (bitstringOrderIso φ)
+  isSubcontrary_map_orderIso_iff (bitstringOrderIso φ)
 
-theorem isSubaltern_bitstring_iff :
-    IsSubaltern (bitstringOf φ a.val) (bitstringOf φ b.val) ↔ IsSubaltern a b :=
-  isSubaltern_apply_orderIso (bitstringOrderIso φ)
+theorem bitstring_lt_bitstring_iff :
+    bitstringOf φ a.val < bitstringOf φ b.val ↔ a < b :=
+  (bitstringOrderIso φ).lt_iff_lt
 
 end Transfer
 
@@ -373,10 +376,9 @@ variable {ι' W' : Type*}
   [Fintype W'] [Fintype ι'] [DecidableEq ι']
   (φ : ι → W → Bool) (ψ : ι' → W' → Bool)
 
-/-- **Classification of fragments up to Boolean isomorphism** ([demey-smessaert-2024]): the
-Boolean closures of two fragments are order-isomorphic iff the fragments have equal Boolean
-complexity. The complete invariant is thus a single natural number — and fragments of different
-complexity are never Boolean-isomorphic (the obstruction behind the Keynes–Johnson 7 vs 6). -/
+/-- The Boolean closures of two fragments are order-isomorphic iff the fragments have equal
+Boolean complexity. Fragments of different complexity are therefore never Boolean-isomorphic,
+the obstruction behind the Keynes–Johnson octagons of complexity 7 and 6. -/
 theorem nonempty_orderIso_closure_iff :
     Nonempty (BooleanSubalgebra.closure (Set.range φ) ≃o
       BooleanSubalgebra.closure (Set.range ψ)) ↔ boolComplexity φ = boolComplexity ψ := by
