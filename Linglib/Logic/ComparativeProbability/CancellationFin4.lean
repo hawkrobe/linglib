@@ -1,7 +1,5 @@
 module
 
-public import Linglib.Core.Analysis.Convex.Caratheodory
-public import Linglib.Core.LinearAlgebra.AffineSpace.FiniteDimensional
 public import Linglib.Logic.ComparativeProbability.Scott
 public import Linglib.Logic.ComparativeProbability.SignVectors
 public import Mathlib.Data.List.Perm.Basic
@@ -22,9 +20,8 @@ representable by a finitely additive measure, as Kraft, Pratt and Seidenberg sho
 
 ## Implementation notes
 
-The proof rests on two imported layers, Carathéodory's theorem at the origin
-(`exists_finset_eq_pos_convex_span_of_mem_convexHull`) and the sign-vector core
-(`exists_antidominating_pair`), and adds the merge reduction: a valid family
+The proof rests on the sign-vector core (`Balanced.exists_antiDominating`) and adds the merge
+reduction: a valid family
 of comparisons whose integer sum is a single sign vector proves that
 comparison (`merge_to_single`), by a four-rule recursion whose stuck case is
 discharged through the sign-vector core via `v1_tailored`.  Comparisons are
@@ -160,9 +157,6 @@ private lemma eq_zero_of_add_eq_zero_of_eq (a b : SignType) (h : (a : ℤ) + b =
     a = 0 := by
   revert h hab; revert a b; decide
 
-private lemma cast_injective : Function.Injective (SignType.cast : SignType → ℚ) := by
-  decide
-
 /-- Zero vectors contribute nothing to the sum. -/
 private lemma comparisonSum_filter_ne_zero {n : ℕ} (L : List (Fin n → SignType)) (i : Fin n) :
     comparisonSum (L.filter (· ≠ 0)) i = comparisonSum L i := by
@@ -178,10 +172,10 @@ private lemma comparisonSum_filter_ne_zero {n : ℕ} (L : List (Fin n → SignTy
     members whose sum is `≤ 0` with a strict negative coordinate) or has a member mergeable
     with the reversed target `-t`.
 
-    The balanced family `L ∪ {-t}` thins by Carathéodory's theorem to at most five members, and
-    `exists_antidominating_pair` then yields an anti-dominating pair unless some member is
-    mergeable with `-t`. An anti-dominating pair inside `L` is a null pair; one involving `-t`
-    is a mono-domination, which is excluded. -/
+    The family `L ∪ {-t}` is balanced by multiplicity, so `Balanced.exists_antiDominating`
+    yields an anti-dominating pair unless some member is mergeable with `-t`. An anti-dominating
+    pair inside `L` is a null pair; one involving `-t` is a mono-domination, which is
+    excluded. -/
 private lemma v1_tailored (L : List (Fin 4 → SignType)) {t : Fin 4 → SignType}
     (hsum : ∀ i, comparisonSum L i = t i) (hne : (negSupport t).Nonempty)
     (hnotdom : ∀ v ∈ L, posSupport v ⊆ posSupport t → ¬ negSupport t ⊆ negSupport v)
@@ -209,28 +203,25 @@ private lemma v1_tailored (L : List (Fin 4 → SignType)) {t : Fin 4 → SignTyp
     refine hv0 (funext fun i ↦ eq_zero_of_ne_one_of_ne_neg_one _ ?_ ?_)
     · exact fun h ↦ Set.notMem_empty i (h1 ▸ (h : i ∈ posSupport v))
     · exact fun h ↦ Set.notMem_empty i (h2 ▸ (h : i ∈ negSupport v))
-  -- Step C: the balanced family `-t :: L'`, weighted by multiplicity
+  -- Step C: the family `-t :: L'`, balanced by multiplicity
   set L' := L.filter (· ≠ 0) with hL'
   set l := (-t) :: L' with hl
   set S := l.toFinset with hS
   have hmem : ∀ x ∈ S, x = -t ∨ x ∈ L' := fun x hx ↦ List.mem_cons.1 (List.mem_toFinset.1 hx)
+  have hbal : Balanced S := by
+    refine ⟨fun x ↦ l.count x, fun x hx ↦ ?_, fun i ↦ ?_⟩
+    · exact Nat.cast_pos.2 (List.count_pos_iff.2 (List.mem_toFinset.1 hx))
+    have h : comparisonSum l i = 0 := by
+      rw [hl, comparisonSum_cons, hL', comparisonSum_filter_ne_zero, hsum, Pi.neg_apply,
+        SignType.coe_neg, neg_add_cancel]
+    rw [comparisonSum, Finset.sum_list_map_count l fun v ↦ (v i : ℤ)] at h
+    simpa [hS, nsmul_eq_mul] using h
   have hpos : ∀ x ∈ S, (posSupport x).Nonempty := by
     intro x hx
     rcases hmem x hx with rfl | hx
     · rwa [posSupport_neg]
     · exact h0 x (List.mem_of_mem_filter hx) (by simpa using List.of_mem_filter hx)
-  have hSne : S.Nonempty := ⟨-t, List.mem_toFinset.2 List.mem_cons_self⟩
-  have hdQ : ∀ x ∈ S, 0 < (l.count x : ℚ) := fun x hx ↦ by
-    exact_mod_cast List.count_pos_iff.2 (List.mem_toFinset.1 hx)
-  have hbal (i) : ∑ x ∈ S, (l.count x : ℚ) * x i = 0 := by
-    have h : ((comparisonSum l i : ℤ) : ℚ) = 0 := by
-      rw [hl, comparisonSum_cons, hL', comparisonSum_filter_ne_zero, hsum, Pi.neg_apply,
-        SignType.coe_neg, neg_add_cancel, Int.cast_zero]
-    have hc := Finset.sum_list_map_count l fun x ↦ (x i : ℚ)
-    simp only [nsmul_eq_mul] at hc
-    rw [hS, ← hc]
-    simpa [comparisonSum, Int.cast_list_sum, List.map_map, Function.comp_def] using h
-  have hmerge : ∀ x ∈ S, ∀ y ∈ S, x ≠ y → ¬Mergeable x y := by
+  have hmerge : (S : Set (Fin 4 → SignType)).Pairwise (¬Mergeable · ·) := by
     rintro x hx y hy hxy hm
     rcases hmem x hx with rfl | hx <;> rcases hmem y hy with rfl | hy
     · exact hxy rfl
@@ -240,27 +231,10 @@ private lemma v1_tailored (L : List (Fin 4 → SignType)) {t : Fin 4 → SignTyp
       exact hnogm ⟨x, y, (L.erase x).erase y,
         (List.perm_cons_erase (List.mem_of_mem_filter hx)).trans
           (.cons x (List.perm_cons_erase hyx)), hm⟩
-  -- Carathéodory at the origin, along the injective cast to `Fin 4 → ℚ`
-  let e : (Fin 4 → SignType) ↪ (Fin 4 → ℚ) :=
-    ⟨fun v i ↦ v i, fun v w h ↦ funext fun i ↦ cast_injective (congrFun h i)⟩
-  have h0' : (0 : Fin 4 → ℚ) ∈ convexHull ℚ (S.map e : Set (Fin 4 → ℚ)) := by
-    have hz : ∑ x ∈ S, (l.count x : ℚ) • e x = 0 :=
-      funext fun i ↦ by simpa [e, Finset.sum_apply] using hbal i
-    simpa [Finset.centerMass, hz] using S.centerMass_mem_convexHull
-      (fun x hx ↦ (hdQ x hx).le) (Finset.sum_pos hdQ hSne) (z := e)
-      fun x hx ↦ Finset.mem_coe.2 (Finset.mem_map_of_mem e hx)
-  obtain ⟨T, hT, hTind, w, hw, hw1, hw0⟩ := exists_finset_eq_pos_convex_span_of_mem_convexHull h0'
-  obtain ⟨S', hS'S, rfl⟩ := Finset.subset_map_iff.1 (Finset.coe_subset.1 hT)
-  rw [Finset.sum_map] at hw1 hw0
-  obtain ⟨x, hxS', y, hyS', hxy, had1, had2⟩ :=
-    exists_antidominating_pair (d := fun x ↦ w (e x))
-      (fun x hx ↦ hw _ (Finset.mem_map_of_mem e hx))
-      (fun i ↦ by simpa [e, Finset.sum_apply] using congrFun hw0 i)
-      (fun x hx ↦ hpos x (hS'S hx)) (fun x hx y hy ↦ hmerge x (hS'S hx) y (hS'S hy))
-      (Finset.nonempty_of_sum_ne_zero (hw1.trans_ne one_ne_zero))
-      (by simpa using hTind.finset_card_le_finrank_succ)
+  obtain ⟨x, hxS, y, hyS, hxy, had1, had2⟩ :=
+    hbal.exists_antiDominating hpos hmerge ⟨-t, List.mem_toFinset.2 List.mem_cons_self⟩
   -- `-t` is excluded by `hnotdom`, so the pair comes from `L` and is a null pair
-  rcases hmem x (hS'S hxS') with rfl | hx <;> rcases hmem y (hS'S hyS') with rfl | hy
+  rcases hmem x hxS with rfl | hx <;> rcases hmem y hyS with rfl | hy
   · exact (hxy rfl).elim
   · rw [posSupport_neg] at had1; rw [negSupport_neg] at had2
     exact (hnotdom y (List.mem_of_mem_filter hy) had2 had1).elim
@@ -270,7 +244,7 @@ private lemma v1_tailored (L : List (Fin 4 → SignType)) {t : Fin 4 → SignTyp
       add_nonpos_of_imp (x i) (y i) (fun h ↦ had1 h) (fun h ↦ had2 h)
     refine Or.inl ⟨x, List.mem_of_mem_filter hx, y, List.mem_of_mem_filter hy, hle, ?_⟩
     by_contra! hge
-    exact hmerge x (hS'S hxS') y (hS'S hyS') hxy <| mergeable_of_apply fun i hxyi ↦
+    exact hmerge hxS hyS hxy <| mergeable_of_apply fun i hxyi ↦
       eq_zero_of_add_eq_zero_of_eq (x i) (y i) ((hle i).antisymm (hge i)) hxyi
 
 /-- When `-t` and `v` are mergeable, `t` is the merge of the residual `merge t (-v)` with `v`;
