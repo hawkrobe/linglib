@@ -50,15 +50,15 @@ def ixLoc (R : E → L → Prop) (o : L) : E → Prop := λ x => R x o
 
 /-- The demonstrative `⟦that⟧ = λR λP. ιx. P(x) ∧ R(x)`: the unique entity meeting the
 spatial and the nominal restriction. -/
-noncomputable def that (R P : E → Prop) : Option E := russellIota (Modifier.intersective R P)
+noncomputable def that (R P : E → Prop) : Option E := russellIota? (Modifier.intersective R P)
 
 /-- `that` refers exactly when there is a unique entity meeting both restrictions. -/
 theorem that_isSome_iff (R P : E → Prop) : (that R P).isSome ↔ ∃! x, P x ∧ R x := by
-  simp [that, russellIota_isSome_iff, and_comm]
+  simp [that, russellIota?_isSome_iff, and_comm]
 
 /-- With a trivial nominal restriction (the ASL null pronoun), `that` is `ιx. R(x)`. -/
-theorem that_top (R : E → Prop) : that R ⊤ = russellIota R :=
-  congrArg russellIota (inf_top_eq R)
+theorem that_top (R : E → Prop) : that R ⊤ = russellIota? R :=
+  congrArg russellIota? (inf_top_eq R)
 
 /-! ### The continuum of relations
 

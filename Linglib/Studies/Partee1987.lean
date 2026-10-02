@@ -30,12 +30,12 @@ predicative reading having moved into the noun phrase.
 ## Implementation notes
 
 The setting is extensional, so `pred` is `ident`, `nom` and `iota` are both the Russellian
-`Reference.russellIota`, and `THE` is the partial composite `lift ∘ iota` the paper offers
-as the alternative to its total, presuppositionless quantifier meaning. Fact 2 is proved after
-[keenan-faltz-1985]: the homomorphism is pinned on the atom at each singleton property, a meet
-of the lifts and their complements, and monotonicity decides it everywhere else. The mappings
-to and from kinds of §3.4 onward and the analysis of the Williams counterexample are not
-formalized.
+`Reference.russellIota?`, and `THE` is `Reference.THE?`, the partial composite `lift ∘ iota`
+the paper offers as the alternative to its total, presuppositionless quantifier meaning. Fact 2
+is proved after [keenan-faltz-1985]: the homomorphism is pinned on the atom at each singleton
+property, a meet of the lifts and their complements, and monotonicity decides it everywhere
+else. The mappings to and from kinds of §3.4 onward and the analysis of the Williams
+counterexample are not formalized.
 
 ## References
 
@@ -55,37 +55,37 @@ variable {E : Type*} (j : E) (P : E → Prop)
 /-! ### Figure 1: three inverse pairs -/
 
 /-- `lower(lift(j)) = j`: `lower` inverts the total injection `lift`. -/
-theorem lower_lift : lower (individual j) = some j :=
-  lower_individual j
+theorem lower_lift : lower? (individual j) = some j :=
+  lower?_individual j
 
 /-- `iota(ident(j)) = j`: `iota` inverts the singleton map `ident`, and extensionally this is
 `nom(pred(j)) = j` as well. -/
-theorem iota_ident : russellIota (ident j) = some j :=
-  russellIota_ident j
+theorem iota_ident : russellIota? (ident j) = some j :=
+  russellIota?_ident j
 
 /-- (48): lowering a lifted entity through `BE` and `iota` returns it. -/
-theorem iota_BE_lift : russellIota (BE (individual j)) = some j := by
-  rw [BE_individual_eq_ident]; exact russellIota_ident j
+theorem iota_BE_lift : russellIota? (BE (individual j)) = some j := by
+  rw [BE_individual_eq_ident]; exact russellIota?_ident j
 
 /-! ### Figure 2: *the king* in three types (§3.2) -/
 
 /-- Whenever `iota` is defined, `THE(king') = lift(iota(king'))`. -/
-theorem THE_eq_lift_iota (h : russellIota P = some j) : THE P = some (individual j) := by
-  simp [THE, h]
+theorem THE_eq_lift_iota (h : russellIota? P = some j) : THE? P = some (individual j) := by
+  simp [THE?, h]
 
 /-- Whenever `iota` is defined, `lower(THE(king')) = iota(king')`. -/
-theorem lower_THE (h : russellIota P = some j) : (THE P).bind lower = some j := by
-  simp [THE_eq_lift_iota j P h, lower_individual]
+theorem lower_THE (h : russellIota? P = some j) : (THE? P).bind lower? = some j := by
+  simp [THE_eq_lift_iota j P h, lower?_individual]
 
 /-- The predicative reading `BE(THE(king'))` is `ident(iota(king'))`: the diagram commutes. -/
-theorem BE_THE (h : russellIota P = some j) : ∃ Q ∈ THE P, BE Q = ident j :=
-  ⟨individual j, by simp [THE, h], BE_individual_eq_ident j⟩
+theorem BE_THE (h : russellIota? P = some j) : ∃ Q ∈ THE? P, BE Q = ident j :=
+  ⟨individual j, by simp [THE?, h], BE_individual_eq_ident j⟩
 
 /-- With exactly one king the predicative *the king* is the common noun *king*, the
 equivalence that lets the article drop in *John is (the) president* (12). -/
-theorem BE_THE_eq_of_unique (h : russellIota P = some j) (hP : ∀ x, P x ↔ x = j) :
-    ∃ Q ∈ THE P, BE Q = P :=
-  ⟨individual j, by simp [THE, h],
+theorem BE_THE_eq_of_unique (h : russellIota? P = some j) (hP : ∀ x, P x ↔ x = j) :
+    ∃ Q ∈ THE? P, BE Q = P :=
+  ⟨individual j, by simp [THE?, h],
     by rw [BE_individual_eq_ident]; exact funext λ x => propext (hP x).symm⟩
 
 /-! ### `A` and `BE` as natural functors (§3.3) -/

@@ -12,7 +12,7 @@ A description distinguishes its referent from a contrast set when its compatibil
 referent strictly exceeds its compatibility with every distractor, compatibility taking values
 in a preorder. At truth values this is the distinguishing description of [dale-reiter-1995],
 which holds of the referent and of no distractor, and the Russellian uniqueness of
-`Reference.russellIota` over the domain the contrast set restricts. Under a graded semantics it
+`Reference.russellIota?` over the domain the contrast set restricts. Under a graded semantics it
 says the referent is the literal listener's best guess, since a strictly monotone rescaling of
 compatibility such as the listener's normalization does not change it
 (`RSA.distinguishes_literalListener_uniformOn_iff`). A graded description
@@ -27,7 +27,7 @@ is the general one at a threshold.
 ## Main results
 
 * `distinguishes_prop_iff`: at truth values, `d` holds of `r` and of no distractor.
-* `distinguishes_iff_russellIota`, `distinguishes_univ_erase_iff`: identification is the
+* `distinguishes_iff_russellIota?`, `distinguishes_univ_erase_iff`: identification is the
   definite's uniqueness on the domain, and `r` is the whole extension against everything else.
 * `distinguishes_comp_iff`: invariance under strictly monotone rescaling of compatibility.
 * `distinguishes_iff_exists_threshold`: a graded compatibility distinguishes exactly when some
@@ -109,9 +109,9 @@ theorem distinguishes_prop_iff (hC : C.Nonempty) :
 
 /-- Identification against a nonempty contrast set that excludes the referent is the Russellian
 uniqueness of the description on the domain `insert r C`. -/
-theorem distinguishes_iff_russellIota [DecidableEq E] (hC : C.Nonempty) (hr : r ∉ C) :
-    Distinguishes compat C r d ↔ russellIota (fun x ↦ compat d x ∧ x ∈ insert r C) = some r := by
-  rw [distinguishes_prop_iff hC, russellIota_eq_some_iff]
+theorem distinguishes_iff_russellIota? [DecidableEq E] (hC : C.Nonempty) (hr : r ∉ C) :
+    Distinguishes compat C r d ↔ russellIota? (fun x ↦ compat d x ∧ x ∈ insert r C) = some r := by
+  rw [distinguishes_prop_iff hC, russellIota?_eq_some_iff]
   simp only [Finset.mem_insert, true_or, and_true]
   exact and_congr_right fun _ ↦
     ⟨fun h x ⟨hx, hxr⟩ ↦ hxr.elim id fun hxC ↦ (h x hxC hx).elim,

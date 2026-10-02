@@ -108,26 +108,26 @@ def restrictor (c : ReferentialContext) : Disambiguation → Referent → Prop
 /-- A context supports an analysis when the analysis's definite refers and, for a relative
 clause, the bare definite does not. -/
 def Supports (c : ReferentialContext) (d : Disambiguation) : Prop :=
-  (russellIota (c.restrictor d)).isSome ∧ (d.IsRelative → russellIota c.Woman = none)
+  (russellIota? (c.restrictor d)).isSome ∧ (d.IsRelative → russellIota? c.Woman = none)
 
 /-- *The woman* refers exactly when the context has one woman. -/
-theorem russellIota_woman_isSome_iff (c : ReferentialContext) :
-    (russellIota c.Woman).isSome ↔ c = .uniqueReferent := by
-  rw [russellIota_isSome_iff]
+theorem russellIota?_woman_isSome_iff (c : ReferentialContext) :
+    (russellIota? c.Woman).isSome ↔ c = .uniqueReferent := by
+  rw [russellIota?_isSome_iff]
   cases c <;> simp [Woman, ExistsUnique]
   decide
 
 /-- *The woman* fails to refer exactly when the context has two women. -/
-theorem russellIota_woman_eq_none_iff (c : ReferentialContext) :
-    russellIota c.Woman = none ↔ c = .nonUniqueReferents := by
-  rw [← Option.not_isSome_iff_eq_none, russellIota_woman_isSome_iff]
+theorem russellIota?_woman_eq_none_iff (c : ReferentialContext) :
+    russellIota? c.Woman = none ↔ c = .nonUniqueReferents := by
+  rw [← Option.not_isSome_iff_eq_none, russellIota?_woman_isSome_iff]
   cases c <;> simp
 
 /-- *The woman that he'd risked his life for* refers in either context. -/
-theorem russellIota_restrictor_isSome (c : ReferentialContext) {d : Disambiguation}
-    (hd : d.IsRelative) : (russellIota (c.restrictor d)).isSome := by
+theorem russellIota?_restrictor_isSome (c : ReferentialContext) {d : Disambiguation}
+    (hd : d.IsRelative) : (russellIota? (c.restrictor d)).isSome := by
   have hw : c.Woman .rescued := by cases c <;> simp [Woman]
-  rw [russellIota_isSome_iff]
+  rw [russellIota?_isSome_iff]
   cases d <;> simp only [Disambiguation.IsRelative] at hd <;>
     exact ⟨.rescued, ⟨hw, rfl⟩, fun _ h ↦ h.2⟩
 
@@ -150,9 +150,9 @@ theorem Condition.isMatch_iff (c : Condition) :
     c.IsMatch ↔ (c.context = .nonUniqueReferents ↔ c.disambiguation.IsRelative) := by
   obtain ⟨d, x⟩ := c
   cases d <;> cases x <;> simp [Condition.IsMatch, ReferentialContext.Supports,
-    Disambiguation.IsRelative, ReferentialContext.russellIota_woman_isSome_iff,
-    ReferentialContext.russellIota_woman_eq_none_iff,
-    ReferentialContext.russellIota_restrictor_isSome]
+    Disambiguation.IsRelative, ReferentialContext.russellIota?_woman_isSome_iff,
+    ReferentialContext.russellIota?_woman_eq_none_iff,
+    ReferentialContext.russellIota?_restrictor_isSome]
 
 /-! ### The processing tree -/
 

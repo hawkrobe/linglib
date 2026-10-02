@@ -49,7 +49,7 @@ the partition into degrees, and refers to the degree (59) of the restrictor's in
   (p. 616: the members of a partition "are always objects, not kinds").
 * (28b) as printed binds `y_k` in the antecedent and uses it in the consequent; it is read with
   `y_k` bound outside the implication. (33) prints `Π(x_y)` for `Π(x_k)`.
-* The ι of (31) and (36) is `Reference.russellIota`, undefined when no cell or several qualify.
+* The ι of (31) and (36) is `Reference.russellIota?`, undefined when no cell or several qualify.
 * Dogs come in every combination of breed and role and lions in every combination of subspecies
   and diet, so there are people-eating lions of both subspecies. The restrictor *lions that eat
   people* is read as footnote 11's *lions that eat only people*, a value of the diet.
@@ -175,15 +175,15 @@ theorem ncard_realized_room14a : (realized (Setoid.ker Dog.breed).classes room14
 /-- (31b): the demonstrative *that (kind of) dog*, the ι of the cells containing the
 demonstrated dog, always refers, to that dog's cell. -/
 theorem that_eq (s : Setoid E) (a : E) :
-    russellIota (fun y ↦ y ∈ s.classes ∧ a ∈ y) = some {x | s x a} :=
-  (russellIota_eq_some_iff _).2 ⟨⟨s.mem_classes a, s.refl' a⟩,
+    russellIota? (fun y ↦ y ∈ s.classes ∧ a ∈ y) = some {x | s x a} :=
+  (russellIota?_eq_some_iff _).2 ⟨⟨s.mem_classes a, s.refl' a⟩,
     fun _ hy ↦ (Setoid.classes_eqv_classes a).unique hy ⟨s.mem_classes a, s.refl' a⟩⟩
 
 /-- (32b): *the kind of dog*, the ι of the cells alone, fails once the partition has two
 cells. -/
 theorem the_kind_eq_none (s : Setoid E) {a b : E} (h : ¬ s a b) :
-    russellIota (· ∈ s.classes) = none :=
-  (russellIota_eq_none_iff _).2 fun ⟨y, hy, hu⟩ ↦ h <| s.rel_iff_exists_classes.2
+    russellIota? (· ∈ s.classes) = none :=
+  (russellIota?_eq_none_iff _).2 fun ⟨y, hy, hu⟩ ↦ h <| s.rel_iff_exists_classes.2
     ⟨y, hy, hu _ (s.mem_classes a) ▸ s.refl' a, hu _ (s.mem_classes b) ▸ s.refl' b⟩
 
 /-- κ+, (33): the cells of the partition that contain every instance of the restrictor `P`. -/
@@ -202,22 +202,22 @@ takes, so the demonstrative is the definite over κ+. -/
 /-- (36): when every instance of the restrictor shares the cell of `a ∈ P`, the definite over
 κ+ refers to that cell. -/
 theorem the_kappaPlus_eq_some (s : Setoid E) {P : Set E} {a : E} (ha : a ∈ P)
-    (hP : ∀ x ∈ P, s x a) : russellIota (· ∈ kappaPlus s P) = some {x | s x a} :=
-  (russellIota_eq_some_iff _).2 ⟨⟨s.mem_classes a, hP⟩, fun _ ⟨hy, hPy⟩ ↦
+    (hP : ∀ x ∈ P, s x a) : russellIota? (· ∈ kappaPlus s P) = some {x | s x a} :=
+  (russellIota?_eq_some_iff _).2 ⟨⟨s.mem_classes a, hP⟩, fun _ ⟨hy, hPy⟩ ↦
     Setoid.eq_of_mem_classes hy (hPy ha) (s.mem_classes a) (s.refl' a)⟩
 
 /-- p. 604: when two instances of the restrictor lie in different cells, no cell contains them
 both and the definite fails. -/
 theorem the_kappaPlus_eq_none (s : Setoid E) {P : Set E} {a b : E} (ha : a ∈ P) (hb : b ∈ P)
-    (h : ¬ s a b) : russellIota (· ∈ kappaPlus s P) = none :=
-  (russellIota_eq_none_iff _).2 fun ⟨y, ⟨hy, hPy⟩, _⟩ ↦
+    (h : ¬ s a b) : russellIota? (· ∈ kappaPlus s P) = none :=
+  (russellIota?_eq_none_iff _).2 fun ⟨y, ⟨hy, hPy⟩, _⟩ ↦
     h (s.rel_iff_exists_classes.2 ⟨y, hy, hPy ha, hPy hb⟩)
 
 /-- (36), (37) and footnote 11: under the partition by a function `f`, such as what each lion
 eats, the individuals on which `f` takes a given value form a cell, and the definite with that
 restrictor refers to exactly them, the second line of (36). -/
 theorem the_kappaPlus_ker {β : Type*} (f : E → β) (a : E) :
-    russellIota (· ∈ kappaPlus (Setoid.ker f) (f ⁻¹' {f a})) = some (f ⁻¹' {f a}) :=
+    russellIota? (· ∈ kappaPlus (Setoid.ker f) (f ⁻¹' {f a})) = some (f ⁻¹' {f a}) :=
   the_kappaPlus_eq_some _ rfl fun _ h ↦ h
 
 /-- Subspecies of lion. -/
@@ -240,14 +240,14 @@ def eatPeople : Set Lion := Lion.diet ⁻¹' {.people}
 /-- p. 604: the partition of lions by subspecies cannot serve *the lions that eat people*, since
 there are people-eating lions of both subspecies. -/
 theorem the_kappaPlus_subspecies :
-    russellIota (· ∈ kappaPlus (Setoid.ker Lion.subspecies) eatPeople) = none :=
+    russellIota? (· ∈ kappaPlus (Setoid.ker Lion.subspecies) eatPeople) = none :=
   the_kappaPlus_eq_none _ (a := ⟨.african, .people, 0⟩) (b := ⟨.asiatic, .people, 0⟩) rfl rfl
     (by simp [Setoid.ker_def])
 
 /-- (37): the partition by what lions eat serves it, and the definite refers to the
 people-eating lions. -/
 theorem the_kappaPlus_diet :
-    russellIota (· ∈ kappaPlus (Setoid.ker Lion.diet) eatPeople) = some eatPeople :=
+    russellIota? (· ∈ kappaPlus (Setoid.ker Lion.diet) eatPeople) = some eatPeople :=
   the_kappaPlus_ker Lion.diet ⟨.african, .people, 0⟩
 
 /-! ### Amounts (§4.3) -/
@@ -258,7 +258,7 @@ instance of the restrictor is as A as `a`, the definite over κ+ refers to the d
 individuals exactly as A as `a`, (59). -/
 theorem amount_reading [Preorder E] {P : Set E} {a : E} (ha : a ∈ P)
     (hP : ∀ x ∈ P, AntisymmRel (· ≤ ·) x a) :
-    russellIota (· ∈ kappaPlus (Degree.cresswellSetoid (· ≤ ·)) P) =
+    russellIota? (· ∈ kappaPlus (Degree.cresswellSetoid (· ≤ ·)) P) =
       some {y | AntisymmRel (· ≤ ·) a y} := by
   simp_rw [← Degree.cresswellSetoid_le_iff] at hP
   rw [the_kappaPlus_eq_some _ ha hP]

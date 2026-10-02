@@ -37,7 +37,7 @@ confine to cumulative properties.
   paper's requirement that the trace of a bare noun phrase be untyped.
 * Count nouns that count atoms (`ofAtoms`) witness the measure laws and yield the
   quantization of numeral phrases and the cumulativity of the semantic plural.
-* The down operator at a world is `Reference.iota`, the largest member of the extension.
+* The down operator at a world is `Reference.iota?`, the largest member of the extension.
 * The topic condition on kind reference, the choice-function reading of *some*, and the
   singular definite generics of the paper's last section are not formalized.
 
@@ -107,9 +107,9 @@ theorem cum_pluralize_ofAtoms (D : World → Set Atom) (w : World) :
 
 /-- The down operator (77) is not confined to cumulative properties: in a world with exactly one
 dog, `∩[one dog]` is that dog. -/
-theorem iota_withNumber_one {D : World → Set Atom} {w : World} {a : Atom} (h : D w = {a}) :
-    iota (withNumber 1 (ofAtoms D) w) = some {a} :=
-  iota_eq_some_iff.2
+theorem iota?_withNumber_one {D : World → Set Atom} {w : World} {a : Atom} (h : D w = {a}) :
+    iota? (withNumber 1 (ofAtoms D) w) = some {a} :=
+  iota?_eq_some_iff.2
     ⟨⟨h ▸ subset_rfl, Set.finite_singleton a, Set.ncard_singleton a⟩, fun _ ⟨hx, _, _⟩ ↦ h ▸ hx⟩
 
 /-! ### Composition and narrow scope -/
