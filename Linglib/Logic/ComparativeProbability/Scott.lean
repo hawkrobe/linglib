@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Order.FourierMotzkin
-public import Linglib.Core.Order.Probability.Cancellation
+public import Linglib.Logic.ComparativeProbability.Cancellation
 public import Mathlib.Algebra.BigOperators.Field
 public import Mathlib.Algebra.Order.Ring.Abs
 public import Mathlib.Basic.Sign.Basic
@@ -11,9 +11,9 @@ public import Mathlib.RingTheory.Localization.Integer
 /-!
 # Scott's theorem
 
-[scott-1964]'s representation theorem for qualitative probability on a finite
-set: an order on the subsets of a finite `W` is represented by a finitely
-additive probability measure iff it satisfies finite cancellation. A comparison
+Scott's representation theorem for qualitative probability on a finite set says that an order
+on the subsets of a finite `W` is represented by a finitely additive probability measure iff it
+satisfies finite cancellation. A comparison
 `A ≿ B` between disjoint sets is a **sign vector** `v : W → SignType`, `A` its
 positive support and `B` its negative support, and cancellation
 (`Cancellation`) says that whenever a list of valid comparisons sums to zero as
@@ -30,18 +30,15 @@ turns it into a list violating `Cancellation`.
 
 ## Main declarations
 
-* `posSupport`, `negSupport`, `comparisonSum` — the sign-vector vocabulary.
-* `Cancellation` — Scott's condition in sign-vector form.
+* `posSupport`, `negSupport`, `comparisonSum`: the sign-vector vocabulary.
+* `Cancellation`: Scott's condition in sign-vector form.
 * `FiniteCancellation.cancellation`, `Cancellation.finiteCancellation`,
-  `cancellation_iff_finiteCancellation` — the two forms agree.
-* `Cancellation.transport` — cancellation along an equivalence of carriers.
-* `cancellation_implies_representable` — the Farkas direction.
-* `representable_iff_cancellation`, `representable_iff_finiteCancellation` —
-  Scott's theorem.
-* `cancellation_of_null_atom` — a null atom reduces cancellation to
-  representability one atom down.
-
-`[UPSTREAM]` candidate (see the note in `Defs.lean`).
+  `cancellation_iff_finiteCancellation`: the two forms agree.
+* `Cancellation.transport`: cancellation along an equivalence of carriers.
+* `cancellation_implies_representable`: the Farkas direction.
+* `representable_iff_cancellation`, `representable_iff_finiteCancellation`: Scott's theorem.
+* `cancellation_of_null_atom`: a null atom reduces cancellation to representability one atom
+  down.
 
 ## References
 
@@ -57,10 +54,10 @@ variable {W : Type*}
 
 /-! ### Sign vectors as comparisons -/
 
-/-- The positive support of a sign vector: the left side of the comparison. -/
+/-- The positive support of a sign vector is the left side of the comparison. -/
 def posSupport (v : W → SignType) : Set W := {i | v i = 1}
 
-/-- The negative support of a sign vector: the right side of the comparison. -/
+/-- The negative support of a sign vector is the right side of the comparison. -/
 def negSupport (v : W → SignType) : Set W := {i | v i = -1}
 
 @[simp] theorem mem_posSupport {v : W → SignType} {i : W} : i ∈ posSupport v ↔ v i = 1 :=
@@ -85,7 +82,7 @@ private theorem signCast_eq_ite (s : SignType) :
     (s : ℤ) = (if s = 1 then 1 else 0) - (if s = -1 then 1 else 0) := by
   cases s <;> rfl
 
-/-- The sum of a list of sign vectors, as an integer vector. -/
+/-- `comparisonSum L` sums a list of sign vectors as an integer vector. -/
 def comparisonSum (L : List (W → SignType)) (i : W) : ℤ := (L.map fun v ↦ (v i : ℤ)).sum
 
 @[simp] theorem comparisonSum_nil (i : W) : comparisonSum ([] : List (W → SignType)) i = 0 :=
@@ -101,9 +98,8 @@ theorem comparisonSum_perm {L L' : List (W → SignType)} (h : L.Perm L') :
 
 /-! ### Scott's condition -/
 
-/-- **Scott's cancellation condition** ([scott-1964]): when a list of valid
-    comparisons sums to zero as integer vectors, every comparison in the list
-    also holds reversed. -/
+/-- **Scott's cancellation condition** says that when a list of valid comparisons sums to zero
+    as integer vectors, every comparison in the list also holds reversed. -/
 def Cancellation (ge : Set W → Set W → Prop) : Prop :=
   ∀ L : List (W → SignType), (∀ v ∈ L, ge (posSupport v) (negSupport v)) →
     comparisonSum L = 0 → ∀ v ∈ L, ge (negSupport v) (posSupport v)
@@ -169,7 +165,8 @@ private theorem seqCount_sub_seqCount (P : List (Set W × Set W)) (i : W) :
     rw [← ih]
     ring
 
-/-- The sign vector of a comparison of sets: `+1` on `A \ B`, `-1` on `B \ A`. -/
+/-- `normalize p` is the sign vector of a comparison of sets, `+1` on `A \ B` and `-1` on
+    `B \ A`. -/
 private noncomputable def normalize (p : Set W × Set W) (i : W) : SignType :=
   SignType.sign ((if i ∈ p.1 then 1 else 0) - (if i ∈ p.2 then 1 else 0) : ℤ)
 
@@ -189,8 +186,8 @@ private theorem negSupport_normalize (p : Set W × Set W) :
   simp only [mem_negSupport, normalize, sign_eq_neg_one_iff, Set.mem_sdiff]
   split_ifs <;> simp_all
 
-/-- For a qualitative probability order the sign-vector form implies the
-    balanced-sequence form: normalize every comparison by additivity. -/
+/-- For a qualitative probability order the sign-vector form implies the balanced-sequence
+    form, by normalizing every comparison with additivity. -/
 theorem Cancellation.finiteCancellation (sys : QualitativeProbability (Set W))
     (h : Cancellation sys.ge) : FiniteCancellation sys.ge := by
   intro prem X Y hbal hprem
@@ -253,7 +250,7 @@ private theorem comparisonSum_replicate (m : ℕ) (v : Fin n → SignType) (i : 
     comparisonSum (List.replicate m v) i = m * (v i : ℤ) := by
   simp [comparisonSum, List.sum_replicate]
 
-/-- Cancellation for rational weightings: a nonnegative weighting of valid
+/-- Cancellation extends to rational weightings, so a nonnegative weighting of valid
     comparisons that sums to zero reverses every comparison it weights. -/
 private theorem Cancellation.weighted {ge : Set (Fin n) → Set (Fin n) → Prop}
     (h : Cancellation ge) (w : (Fin n → SignType) → ℚ) (hw : ∀ v, 0 ≤ w v)
@@ -286,7 +283,7 @@ open scoped Classical
 
 variable {n : ℕ} (sys : QualitativeProbability (Set (Fin n)))
 
-/-- The comparisons that hold in `sys`. -/
+/-- `validVecs sys` lists the comparisons that hold in `sys`. -/
 private noncomputable def validVecs : List (Fin n → SignType) :=
   (Finset.univ.filter fun v ↦ sys.ge (posSupport v) (negSupport v)).toList
 
@@ -294,7 +291,7 @@ private theorem mem_validVecs {v : Fin n → SignType} :
     v ∈ validVecs sys ↔ sys.ge (posSupport v) (negSupport v) := by
   simp [validVecs]
 
-/-- The linear constraint of a comparison: `v · x ≥ 1` if `v` is strict and
+/-- `row sys v` is the linear constraint of a comparison, `v · x ≥ 1` if `v` is strict and
     `≥ 0` otherwise, written `lhs · x ≤ rhs`. -/
 private noncomputable def row (v : Fin n → SignType) : Polyhedral.Ineq n :=
   ⟨fun j ↦ -(v j : ℚ), if sys.ge (negSupport v) (posSupport v) then 0 else -1⟩
@@ -305,10 +302,10 @@ private theorem row_sat {v : Fin n → SignType} {x : Fin n → ℚ} :
   simp only [row, Polyhedral.Ineq.sat, Polyhedral.dot, neg_mul, Finset.sum_neg_distrib]
   split_ifs <;> constructor <;> intro h <;> linarith
 
-/-- The linear system of all valid comparisons. -/
+/-- `system sys` is the linear system of all valid comparisons. -/
 private noncomputable def system : Polyhedral.System n := (validVecs sys).map (row sys)
 
-/-- The sign vector `+1` on `A` and `-1` on `B`. -/
+/-- `ofSets A B` is the sign vector `+1` on `A` and `-1` on `B`. -/
 private noncomputable def ofSets (A B : Set (Fin n)) (i : Fin n) : SignType :=
   if i ∈ A then 1 else if i ∈ B then -1 else 0
 
@@ -431,27 +428,26 @@ end Farkas
 
 variable [Fintype W]
 
-/-- **Scott's theorem**, hard direction: a qualitative probability order on a
-    finite carrier satisfying cancellation is represented by a finitely
-    additive measure. -/
+/-- **Scott's theorem**, hard direction. A qualitative probability order on a finite carrier
+    satisfying cancellation is represented by a finitely additive measure. -/
 theorem cancellation_implies_representable (sys : QualitativeProbability (Set W))
     (h : Cancellation sys.ge) : Representable sys := by
   classical
   exact perm_repr (Fintype.equivFin W) sys
     (representable_of_cancellation_fin _ (h.transport (Fintype.equivFin W)))
 
-/-- **Scott's theorem** ([scott-1964]), sign-vector form. -/
+/-- **Scott's theorem** in sign-vector form. -/
 theorem representable_iff_cancellation (sys : QualitativeProbability (Set W)) :
     Representable sys ↔ Cancellation sys.ge :=
   ⟨fun h ↦ h.finiteCancellation.cancellation, cancellation_implies_representable sys⟩
 
-/-- **Scott's theorem** ([scott-1964]), balanced-sequence form. -/
+/-- **Scott's theorem** in balanced-sequence form. -/
 theorem representable_iff_finiteCancellation (sys : QualitativeProbability (Set W)) :
     Representable sys ↔ FiniteCancellation sys.ge :=
   (representable_iff_cancellation sys).trans (cancellation_iff_finiteCancellation sys)
 
-/-- A null atom plus representability one cardinality down yields cancellation:
-    swap the null atom to position 0 and apply `null_elem_reduce`. -/
+/-- A null atom and representability one cardinality down yield cancellation, by swapping the
+    null atom to position 0 and applying `null_elem_reduce`. -/
 theorem cancellation_of_null_atom {n : ℕ} (sys : QualitativeProbability (Set (Fin (n + 2))))
     {j : Fin (n + 2)} (hj : sys.ge ∅ {j})
     (sub : ∀ sys' : QualitativeProbability (Set (Fin (n + 1))), Representable sys') :

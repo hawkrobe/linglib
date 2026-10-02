@@ -11,8 +11,8 @@ Conjunctivitis E1. Holliday and Icard's Figure 1 keeps his labels for V1–V7, V
 I1–I3, leaves out the conditional patterns V8–V10 and E1, and adds V13, which Lassiter defends
 against symmetric fuzzy measures. Each pattern is a predicate on a likelihood relation `r` on a
 Boolean algebra, with the account's modals (V6, V7) and conditional (V8–V10) as parameters; I1
-is `RightUnion`. Each valid pattern is derived once from the axioms of
-`Core/Order/Probability/Defs`, so a model discharges it by instance resolution.
+is `RightUnion`. Each valid pattern is derived once from the axioms in `Defs.lean`, so a model
+discharges it by instance resolution.
 
 ## Main statements
 
@@ -157,13 +157,13 @@ theorem positiveFormTransfer [IsComplementReversing r] : PositiveFormTransfer r 
 theorem complementTransfer [IsComplementReversing r] : ComplementTransfer r :=
   fun _ _ hba ha ↦ _root_.trans (_root_.trans hba ha) (complRev _ _ hba)
 
-/-- I2 makes V12 trivial: `a ≽ aᶜ` already gives `a ≽ bᶜ`. -/
+/-- I2 makes V12 trivial, since `a ≽ aᶜ` already gives `a ≽ bᶜ`. -/
 theorem complementTransfer_of_equiprobabilityCollapse (h : EquiprobabilityCollapse r) :
     ComplementTransfer r :=
   fun a b hba ha ↦ _root_.trans hba (h a bᶜ ha)
 
-/-- The union property gives I2, as Yalcin derives it: I1 for `a`, `a` and `aᶜ` gives `a ≽ ⊤`,
-and V5 does the rest. -/
+/-- The union property gives I2, as Yalcin derives it, since I1 for `a`, `a` and `aᶜ` gives
+`a ≽ ⊤` and V5 does the rest. -/
 theorem equiprobabilityCollapse_of_rightUnion [IsLikelihoodMono r] (hJ : RightUnion r) :
     EquiprobabilityCollapse r := fun a _ ha ↦
   _root_.trans (sup_compl_eq_top (x := a) ▸ hJ a a aᶜ (mono _ _ le_rfl) ha) (mono _ _ le_top)

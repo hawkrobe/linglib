@@ -1,26 +1,25 @@
 module
 
-public import Linglib.Core.Order.Probability.Defs
+public import Linglib.Logic.ComparativeProbability.Defs
 public import Mathlib.Order.BooleanAlgebra.Basic
 public import Mathlib.Data.Set.Image
 public import Mathlib.Logic.Equiv.Set
 public import Mathlib.Data.Fintype.Basic
 
 /-!
-# Qualitative probability orders: basic API
+# Basic API for qualitative probability orders
 
-Consequences of the axioms on any Boolean algebra (disjoint common context
-cancels; disjoint comparisons merge), and the transport operations on
-set-carriers: pullback along an injection (`comap`) and along an equivalence
-(`transport`).
+On any Boolean algebra the axioms let a disjoint common context cancel and let disjoint
+comparisons merge. On orders over sets, a qualitative probability order pulls back along an
+injection (`comap`) and along an equivalence (`transport`).
 
 ## Main statements
 
-* `QualitativeProbability.sup_le_sup_iff_right`, `sup_le_sup_right`,
-  `sup_le_sup`.
-* `QualitativeProbability.comap`, `transport`, `elim0`.
-* `QualitativeProbability.exists_singleton_not_le_empty` — a finite carrier has
-  a non-null atom.
+* `QualitativeProbability.sup_le_sup_iff_right`, `sup_le_sup_right`, `sup_le_sup`: context
+  cancellation and merging.
+* `QualitativeProbability.comap`, `transport`, `elim0`: the transport operations.
+* `QualitativeProbability.exists_singleton_not_le_empty`: a finite carrier has a non-null
+  atom.
 -/
 
 @[expose] public section
@@ -33,8 +32,7 @@ variable {α : Type*} [BooleanAlgebra α] (sys : QualitativeProbability α)
 
 /-! #### Consequences of the axioms -/
 
-/-- Disjoint common context cancels: `a ⊔ c ≼ b ⊔ c ↔ a ≼ b` for `c` disjoint
-    from both. -/
+/-- A common context `c` disjoint from both sides cancels, so `a ⊔ c ≼ b ⊔ c ↔ a ≼ b`. -/
 theorem sup_le_sup_iff_right {a b c : α} (hca : Disjoint c a) (hcb : Disjoint c b) :
     sys.le (a ⊔ c) (b ⊔ c) ↔ sys.le a b := by
   rw [sys.additive a b, sys.additive (a ⊔ c) (b ⊔ c), sup_comm b c, ← sdiff_sdiff_left,
@@ -45,9 +43,9 @@ theorem sup_le_sup_right {a b c : α} (h : sys.le a b) (hca : Disjoint c a)
     (hcb : Disjoint c b) : sys.le (a ⊔ c) (b ⊔ c) :=
   (sys.sup_le_sup_iff_right hca hcb).mpr h
 
-/-- Two comparisons with disjoint left parts and disjoint right parts merge
-    into their joins, even with cross overlaps: add context to each side,
-    transit through `b₁ ⊔ a₂`, then restore the pivot `a₂ ⊓ b₁` by additivity. -/
+/-- Two comparisons with disjoint left parts and disjoint right parts merge into their joins,
+    even with cross overlaps. The proof adds context to each side, passes through `b₁ ⊔ a₂`,
+    and restores the pivot `a₂ ⊓ b₁` by additivity. -/
 theorem sup_le_sup {a₁ b₁ a₂ b₂ : α} (h₁ : sys.le a₁ b₁) (h₂ : sys.le a₂ b₂)
     (ha : Disjoint a₁ a₂) (hb : Disjoint b₁ b₂) : sys.le (a₁ ⊔ a₂) (b₁ ⊔ b₂) := by
   have e₁ : (a₂ ⊔ a₁ \ b₂) ⊔ a₁ ⊓ b₂ = a₁ ⊔ a₂ := by
@@ -63,13 +61,12 @@ theorem sup_le_sup {a₁ b₁ a₂ b₂ : α} (h₁ : sys.le a₁ b₁) (h₂ : 
   · have h := sys.sup_le_sup_right h₁ disjoint_sdiff_self_left (hb.symm.mono_left sdiff_le)
     rwa [sup_sdiff_self_right, sup_comm a₁ b₂] at h
 
-
 end QualitativeProbability
 
 /-! ### Transport on set carriers -/
 
-/-- Pull back a qualitative probability order along an injection: `α`-sets
-    compare via their images. Non-triviality requires a witness and must be
+/-- `comap f hf sys` pulls a qualitative probability order back along an injection `f`, so
+    that sets compare by their images. Non-triviality requires a witness and must be
     supplied. -/
 def QualitativeProbability.comap {α W : Type*} (f : α → W) (hf : Function.Injective f)
     (sys : QualitativeProbability (Set W)) (hnt : ¬sys.le (Set.range f) ∅) :
@@ -85,13 +82,14 @@ def QualitativeProbability.comap {α W : Type*} (f : α → W) (hf : Function.In
     show sys.le (f '' A) (f '' B) ↔ sys.le (f '' (A \ B)) (f '' (B \ A))
     rw [Set.image_sdiff hf, Set.image_sdiff hf]; exact sys.additive _ _
 
-/-- Transport a qualitative probability order along an equivalence of carriers. -/
+/-- `transport e sys` carries a qualitative probability order along an equivalence of
+    carriers. -/
 def QualitativeProbability.transport {W α : Type*} (e : W ≃ α)
     (sys : QualitativeProbability (Set W)) : QualitativeProbability (Set α) :=
   sys.comap e.symm e.symm.injective
     (by rw [Equiv.range_eq_univ, ← Set.top_eq_univ, ← Set.bot_eq_empty]; exact sys.nonTrivial)
 
-/-- There is no qualitative probability order on an empty carrier: `∅ = Ω`
+/-- There is no qualitative probability order on an empty carrier, since `∅ = Ω`
     contradicts non-triviality. Mirrors `Fin.elim0`. -/
 def QualitativeProbability.elim0 {C : Sort*} (sys : QualitativeProbability (Set (Fin 0))) :
     C := by
@@ -100,8 +98,8 @@ def QualitativeProbability.elim0 {C : Sort*} (sys : QualitativeProbability (Set 
     rw [Set.top_eq_univ, Set.bot_eq_empty, ← this]; exact sys.refl ∅
   exact absurd h sys.nonTrivial
 
-/-- On a finite carrier some atom is not null: were every singleton at most as
-    likely as `∅`, so would be `Set.univ`. -/
+/-- On a finite carrier some atom is not null, since were every singleton at most as likely
+    as `∅`, so would be `Set.univ`. -/
 theorem QualitativeProbability.exists_singleton_not_le_empty {W : Type*} [Fintype W]
     (sys : QualitativeProbability (Set W)) : ∃ i, ¬sys.le {i} ∅ := by
   by_contra hall

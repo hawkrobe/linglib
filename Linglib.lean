@@ -188,14 +188,6 @@ import Linglib.Core.Order.PartialRank
 import Linglib.Core.Order.PartialUnify
 import Linglib.Core.Order.Positions
 import Linglib.Core.Order.PreorderLattice
-import Linglib.Core.Order.Probability.Basic
-import Linglib.Core.Order.Probability.Cancellation
-import Linglib.Core.Order.Probability.CancellationFin4
-import Linglib.Core.Order.Probability.Completeness
-import Linglib.Core.Order.Probability.Content
-import Linglib.Core.Order.Probability.Defs
-import Linglib.Core.Order.Probability.Representability
-import Linglib.Core.Order.Probability.Scott
 import Linglib.Core.Order.StrictBounds
 import Linglib.Core.Order.SuccPred.Tree
 import Linglib.Core.Order.Valuation

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Core.Order.Probability.Scott
+public import Linglib.Logic.ComparativeProbability.Scott
 public import Mathlib.Tactic.IntervalCases
 public import Mathlib.Tactic.Linarith
 public import Mathlib.Tactic.NormNum

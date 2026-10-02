@@ -2,7 +2,7 @@ module
 
 public import Linglib.Logic.ComparativeProbability.WorldOrdering
 public import Linglib.Logic.ComparativeProbability.Patterns
-public import Linglib.Core.Order.Probability.Completeness
+public import Linglib.Logic.ComparativeProbability.Completeness
 public import Linglib.Logic.ComparativeProbability.Defs
 
 /-!
