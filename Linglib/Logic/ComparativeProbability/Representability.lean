@@ -7,9 +7,9 @@ public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 /-!
 # Representability of qualitative probability orders
 
-A qualitative probability order is representable when a finitely additive probability measure
-induces it. Kraft, Pratt and Seidenberg show that every order on at most four atoms is
-representable and give a five-atom order that is not. This file holds the predicate and the
+A qualitative probability order is representable when a probability measure induces it. Kraft,
+Pratt and Seidenberg show that every order on at most four atoms is representable and give a
+five-atom order that is not. This file holds the predicate and the
 reductions to disjoint comparisons and past a null atom; `CancellationFin4.lean` derives the
 cases up to four atoms from Scott cancellation, and `Completeness.lean` holds the five-atom
 counterexample and its padding to every larger size.
@@ -26,12 +26,15 @@ counterexample and its padding to every larger size.
 
 @[expose] public section
 
+open MeasureTheory
+
 namespace ComparativeProbability
 
-/-- A qualitative probability order is **representable** when some finitely
-    additive probability measure induces exactly its comparison relation. -/
-def Representable {W : Type*} (sys : QualitativeProbability (Set W)) : Prop :=
-  ∃ m : FinAddMeasure ℚ W, ∀ A B, sys.le A B ↔ m A ≤ m B
+/-- A qualitative probability order is **representable** when some probability measure induces
+    exactly its comparison relation. -/
+def Representable {W : Type*} [MeasurableSpace W] (sys : QualitativeProbability (Set W)) :
+    Prop :=
+  ∃ μ : Measure W, IsProbabilityMeasure μ ∧ ∀ A B, sys.le A B ↔ μ A ≤ μ B
 
 attribute [local instance] Classical.propDecidable
 
@@ -39,13 +42,13 @@ attribute [local instance] Classical.propDecidable
 
 /-- Agreement on disjoint pairs suffices for full representability, since additivity reduces
     every comparison to a disjoint one. -/
-theorem reduce_to_disjoint {W : Type*} (sys : QualitativeProbability (Set W))
-    (m : FinAddMeasure ℚ W)
-    (h : ∀ C D : Set W, Disjoint C D → (sys.le C D ↔ m C ≤ m D)) :
-    ∀ A B, sys.le A B ↔ m A ≤ m B := by
+theorem reduce_to_disjoint {W : Type*} [MeasurableSpace W] [DiscreteMeasurableSpace W]
+    (sys : QualitativeProbability (Set W)) (μ : Measure W) [IsFiniteMeasure μ]
+    (h : ∀ C D : Set W, Disjoint C D → (sys.le C D ↔ μ C ≤ μ D)) :
+    ∀ A B, sys.le A B ↔ μ A ≤ μ B := by
   intro A B
   rw [sys.additive A B]
-  exact (h _ _ disjoint_sdiff_sdiff).trans (m.mu_qadd A B).symm
+  exact (h _ _ disjoint_sdiff_sdiff).trans (Measure.measure_le_iff_sdiff_le μ A B).symm
 
 /-- Removing a null element (`sys.le {j} ∅`) from both sides of a disjoint
     comparison preserves `le`. -/
@@ -88,24 +91,30 @@ theorem null_elem_reduce {n : ℕ} (sys : QualitativeProbability (Set (Fin (n + 
   have hnt : ¬sys.le (Set.range (Fin.succ : Fin (n + 1) → Fin (n + 2))) ∅ := by
     obtain ⟨i, hi⟩ := hnn
     exact fun h => hi (sys.trans (sys.mono (Set.singleton_subset_iff.mpr (Set.mem_range_self i))) h)
-  obtain ⟨m_r, hm_r⟩ := sub_repr (sys.comap Fin.succ (Fin.succ_injective _) hnt)
-  -- lift the sub-measure (the null element gets weight 0)
-  refine ⟨m_r.map Fin.succ, reduce_to_disjoint sys _ (fun C D hdisj => ?_)⟩
-  rw [null_removal_disjoint sys 0 hn0 C D hdisj,
+  obtain ⟨μ, hμ, hm⟩ := sub_repr (sys.comap Fin.succ (Fin.succ_injective _) hnt)
+  -- push the sub-measure forward (the null element gets weight 0)
+  have hmap : ∀ C, μ.map Fin.succ C = μ (Fin.succ ⁻¹' C) := fun C ↦
+    Measure.map_apply (.of_discrete) (.of_discrete)
+  refine ⟨μ.map Fin.succ, inferInstance,
+    reduce_to_disjoint sys _ fun C D hdisj ↦ ?_⟩
+  rw [null_removal_disjoint sys 0 hn0 C D hdisj, hmap, hmap,
       ← succ_image_preimage C, ← succ_image_preimage D]
-  exact hm_r (Fin.succ ⁻¹' C) (Fin.succ ⁻¹' D)
+  exact hm (Fin.succ ⁻¹' C) (Fin.succ ⁻¹' D)
 
 /-! ### Transport along equivalences -/
 
-theorem transfer_repr {W α : Type*}
-    (e : W ≃ α) (sys : QualitativeProbability (Set W)) (m : FinAddMeasure ℚ α)
-    (hm : ∀ A B : Set α, (sys.transport e).le A B ↔ m A ≤ m B) :
-    ∀ A B : Set W, sys.le A B ↔ m.map e.symm A ≤ m.map e.symm B := by
+theorem transfer_repr {W α : Type*} [MeasurableSpace W] [DiscreteMeasurableSpace W]
+    [MeasurableSpace α] [DiscreteMeasurableSpace α] (e : W ≃ α)
+    (sys : QualitativeProbability (Set W)) (μ : Measure α)
+    (hm : ∀ A B : Set α, (sys.transport e).le A B ↔ μ A ≤ μ B) :
+    ∀ A B : Set W, sys.le A B ↔ μ.map e.symm A ≤ μ.map e.symm B := by
   intro A B
   have h := hm (e '' A) (e '' B)
   simp only [QualitativeProbability.transport, QualitativeProbability.comap,
     Equiv.symm_image_image] at h
-  simpa only [FinAddMeasure.map_apply, ← Equiv.image_eq_preimage_symm] using h
+  rwa [Measure.map_apply (.of_discrete) (.of_discrete),
+    Measure.map_apply (.of_discrete) (.of_discrete), ← Equiv.image_eq_preimage_symm,
+    ← Equiv.image_eq_preimage_symm]
 
 /-- `j` is null in `sys.transport σ` exactly when `σ.symm j` is null in `sys`. -/
 theorem perm_null_iff {n : ℕ} (σ : Fin n ≃ Fin n)
@@ -115,9 +124,11 @@ theorem perm_null_iff {n : ℕ} (σ : Fin n ≃ Fin n)
   simp only [Set.image_empty, Set.image_singleton]
 
 /-- Representability transports backward along any equivalence. -/
-theorem perm_repr {W α : Type*} (σ : W ≃ α) (sys : QualitativeProbability (Set W))
+theorem perm_repr {W α : Type*} [MeasurableSpace W] [DiscreteMeasurableSpace W]
+    [MeasurableSpace α] [DiscreteMeasurableSpace α] (σ : W ≃ α)
+    (sys : QualitativeProbability (Set W))
     (h : Representable (sys.transport σ)) : Representable sys := by
-  obtain ⟨m, hm⟩ := h
-  exact ⟨m.map σ.symm, transfer_repr σ sys m hm⟩
+  obtain ⟨μ, hμ, hm⟩ := h
+  exact ⟨μ.map σ.symm, inferInstance, transfer_repr σ sys μ hm⟩
 
 end ComparativeProbability

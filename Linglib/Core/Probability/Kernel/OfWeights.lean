@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Core.MeasureTheory.Measure.Dirac
 public import Mathlib.Probability.Kernel.Basic
 public import Mathlib.MeasureTheory.Measure.Real
 public import Mathlib.Probability.UniformOn
@@ -31,22 +32,6 @@ total.
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal
-
-namespace MeasureTheory.Measure
-
-variable {β : Type*} [MeasurableSpace β] [Fintype β] [MeasurableSingletonClass β]
-
-/-- A finite sum of scaled Dirac measures evaluates at a singleton to its weight. -/
-theorem sum_smul_dirac_apply_singleton (w : β → ℝ≥0∞) (b : β) :
-    (∑ b', w b' • dirac b') {b} = w b := by
-  rw [finsetSum_apply,
-    Finset.sum_eq_single_of_mem b (Finset.mem_univ b) fun b' _ hb' => by
-      rw [smul_apply, smul_eq_mul, dirac_apply' _ (.singleton b),
-        Set.indicator_of_notMem (fun h => hb' (Set.mem_singleton_iff.mp h)), mul_zero],
-    smul_apply, smul_eq_mul, dirac_apply' _ (.singleton b),
-    Set.indicator_of_mem (Set.mem_singleton b), Pi.one_apply, mul_one]
-
-end MeasureTheory.Measure
 
 namespace ProbabilityTheory.Kernel
 

@@ -4,6 +4,7 @@ public import Linglib.Logic.ComparativeProbability.WorldOrdering
 public import Linglib.Logic.ComparativeProbability.Patterns
 public import Linglib.Logic.ComparativeProbability.Completeness
 public import Linglib.Logic.ComparativeProbability.Defs
+public import Linglib.Core.Probability.UniformOn
 
 /-!
 # Holliday and Icard (2013): Measure semantics and qualitative semantics for epistemic modals
@@ -29,6 +30,8 @@ comparisons (3)–(6), which the paper doubts speakers find inconsistent.
 
 ## Implementation notes
 
+* The paper's finitely additive measures are mathlib's probability measures on a discrete
+  measurable space; on the paper's finite spaces the two coincide.
 * `□` and `◇` are the paper's quantifiers over the epistemic space, `A = Set.univ` and
   `A ≠ ∅`, with every world accessible, so V6 comes from non-triviality and V7 from
   monotonicity. The order-internal `◇A := ¬ ∅ ⩾ A` agrees with this for the liftings but, over
@@ -61,7 +64,7 @@ comparisons (3)–(6), which the paper doubts speakers find inconsistent.
 
 namespace HollidayIcard2013
 
-open ComparativeProbability
+open ComparativeProbability MeasureTheory ProbabilityTheory
 open scoped ComparativeProbability.QualitativeProbability
 
 variable {W : Type*}
@@ -121,53 +124,52 @@ section Measures
 
 variable {K : Type*} [Field K] [LinearOrder K] [IsStrictOrderedRing K]
 
-/-- Every finitely additive measure validates V1–V7 and V11–V13 (Fact 2). -/
-theorem measure_validities (m : FinAddMeasure K W) :
-    ProbablyToNotProbablyNot m.inducedGe ∧ ProbablyDistribInf m.inducedGe ∧
-      ChancyDisjunctionIntro m.inducedGe ∧ Minimality m.inducedGe ∧ Maximality m.inducedGe ∧
-      MustToProbably m.inducedGe (· = Set.univ) ∧ ProbablyToMight m.inducedGe (· ≠ ∅) ∧
-      PositiveFormTransfer m.inducedGe ∧ ComplementTransfer m.inducedGe ∧
-      StrictDisjunctionIntro m.inducedGe :=
+/-- Every probability measure validates V1–V7 and V11–V13 (Fact 2). -/
+theorem measure_validities [MeasurableSpace W] [DiscreteMeasurableSpace W] (μ : Measure W)
+    [IsProbabilityMeasure μ] :
+    ProbablyToNotProbablyNot μ.inducedGe ∧ ProbablyDistribInf μ.inducedGe ∧
+      ChancyDisjunctionIntro μ.inducedGe ∧ Minimality μ.inducedGe ∧ Maximality μ.inducedGe ∧
+      MustToProbably μ.inducedGe (· = Set.univ) ∧ ProbablyToMight μ.inducedGe (· ≠ ∅) ∧
+      PositiveFormTransfer μ.inducedGe ∧ ComplementTransfer μ.inducedGe ∧
+      StrictDisjunctionIntro μ.inducedGe :=
   ⟨probablyToNotProbablyNot, probablyDistribInf, chancyDisjunctionIntro, minimality,
     maximality, mustToProbably, probablyToMight, positiveFormTransfer, complementTransfer,
     strictDisjunctionIntro⟩
 
 /-- `uniform3` is the uniform measure on three worlds. -/
-local notation "uniform3" => FinAddMeasure.uniform (K := ℚ) (Fin 3)
-
-private theorem uniform3_singleton (i : Fin 3) : uniform3 {i} = 1 / 3 := by simp
-
-private theorem uniform3_pair (i j : Fin 3) (h : i ≠ j) : uniform3 {i, j} = 2 / 3 := by
-  rw [FinAddMeasure.uniform_apply, Set.ncard_pair h]; norm_num
+local notation "uniform3" => uniformOn (Set.univ : Set (Fin 3))
 
 /-- I1 fails for the uniform measure, since `{0}` is at least as likely as `{1}` and as `{2}`
 but not as `{1, 2}`. -/
 private theorem uniform3_not_I1 : ¬RightUnion (uniform3).inducedGe := fun h ↦ by
-  have := h {0} {1} {2} (by simp [FinAddMeasure.inducedGe])
-    (by simp [FinAddMeasure.inducedGe])
-  simp only [FinAddMeasure.inducedGe, Set.sup_eq_union, Set.singleton_union, uniform3_singleton,
-    uniform3_pair 1 2 (by decide)] at this
-  norm_num at this
+  have := h {0} {1} {2} (by simp [Measure.inducedGe, uniformOn_univ_le_iff])
+    (by simp [Measure.inducedGe, uniformOn_univ_le_iff])
+  simp only [Measure.inducedGe, uniformOn_univ_le_iff, Set.sup_eq_union, Set.singleton_union]
+    at this
+  rw [Set.ncard_pair (by decide), Set.ncard_singleton] at this
+  omega
 
 /-- `{0, 1}` beats its complement under the uniform measure … -/
 private theorem uniform3_probably_pair : Probably (uniform3).inducedGe {0, 1} := by
-  have := (uniform3).mu_compl {0, 1}
-  rw [uniform3_pair 0 1 (by decide)] at this
-  constructor <;> simp only [FinAddMeasure.inducedGe, uniform3_pair 0 1 (by decide)] <;> linarith
+  have hc : ({0, 1} : Set (Fin 3))ᶜ = {2} := by ext x; fin_cases x <;> simp
+  constructor <;>
+    rw [Measure.inducedGe, uniformOn_univ_le_iff, hc, Set.ncard_pair (by decide),
+      Set.ncard_singleton] <;> omega
 
 /-- … but is not at least as likely as `W`. -/
 private theorem uniform3_not_pair_univ : ¬(uniform3).inducedGe {0, 1} Set.univ := by
-  simp only [FinAddMeasure.inducedGe, uniform3_pair 0 1 (by decide), (uniform3).total]
-  norm_num
+  rw [Measure.inducedGe, uniformOn_univ_le_iff, Set.ncard_pair (by decide), Set.ncard_univ,
+    Nat.card_eq_fintype_card, Fintype.card_fin]
+  omega
 
 /-- The uniform measure on three worlds refutes each of I1–I3 (Fact 2). -/
 theorem measures_refute_I_patterns :
-    (∃ m : FinAddMeasure ℚ (Fin 3), ¬RightUnion m.inducedGe) ∧
-    (∃ m : FinAddMeasure ℚ (Fin 3), ¬EquiprobabilityCollapse m.inducedGe) ∧
-    (∃ m : FinAddMeasure ℚ (Fin 3), ¬HamblinCollapse m.inducedGe) :=
-  ⟨⟨uniform3, uniform3_not_I1⟩,
-    ⟨uniform3, fun h ↦ uniform3_not_pair_univ (h _ _ uniform3_probably_pair.1)⟩,
-    ⟨uniform3, fun h ↦ uniform3_not_pair_univ (h _ _ uniform3_probably_pair)⟩⟩
+    (∃ μ : Measure (Fin 3), IsProbabilityMeasure μ ∧ ¬RightUnion μ.inducedGe) ∧
+    (∃ μ : Measure (Fin 3), IsProbabilityMeasure μ ∧ ¬EquiprobabilityCollapse μ.inducedGe) ∧
+    (∃ μ : Measure (Fin 3), IsProbabilityMeasure μ ∧ ¬HamblinCollapse μ.inducedGe) :=
+  ⟨⟨uniform3, inferInstance, uniform3_not_I1⟩,
+    ⟨uniform3, inferInstance, fun h ↦ uniform3_not_pair_univ (h _ _ uniform3_probably_pair.1)⟩,
+    ⟨uniform3, inferInstance, fun h ↦ uniform3_not_pair_univ (h _ _ uniform3_probably_pair)⟩⟩
 
 /-- Qualitative additivity already yields V1–V7 and V11–V13 (Fact 3). -/
 theorem qualAddMeasure_validities (m : QualAddMeasure K W) :
@@ -183,12 +185,13 @@ theorem qualAddMeasure_validities (m : QualAddMeasure K W) :
 /-- The uniform measure, read as a qualitatively additive measure, refutes each of I1–I3
 (Fact 3). -/
 theorem qualAddMeasures_refute_I_patterns :
-    (∃ m : QualAddMeasure ℚ (Fin 3), ¬RightUnion m.inducedGe) ∧
-    (∃ m : QualAddMeasure ℚ (Fin 3), ¬EquiprobabilityCollapse m.inducedGe) ∧
-    (∃ m : QualAddMeasure ℚ (Fin 3), ¬HamblinCollapse m.inducedGe) :=
-  ⟨⟨(uniform3).toQualAdd, uniform3_not_I1⟩,
-    ⟨(uniform3).toQualAdd, fun h ↦ uniform3_not_pair_univ (h _ _ uniform3_probably_pair.1)⟩,
-    ⟨(uniform3).toQualAdd, fun h ↦ uniform3_not_pair_univ (h _ _ uniform3_probably_pair)⟩⟩
+    (∃ m : QualAddMeasure ℝ (Fin 3), ¬RightUnion m.inducedGe) ∧
+    (∃ m : QualAddMeasure ℝ (Fin 3), ¬EquiprobabilityCollapse m.inducedGe) ∧
+    (∃ m : QualAddMeasure ℝ (Fin 3), ¬HamblinCollapse m.inducedGe) := by
+  refine ⟨⟨(uniform3).toQualAdd, ?_⟩, ⟨(uniform3).toQualAdd, ?_⟩, ⟨(uniform3).toQualAdd, ?_⟩⟩ <;>
+    rw [← Measure.inducedGe_eq_toQualAdd]
+  exacts [uniform3_not_I1, fun h ↦ uniform3_not_pair_univ (h _ _ uniform3_probably_pair.1),
+    fun h ↦ uniform3_not_pair_univ (h _ _ uniform3_probably_pair)]
 
 /-- Every FA order on a finite set of worlds is represented by a qualitatively additive measure
 (Theorem 6, after van der Hoek). -/
@@ -261,23 +264,22 @@ theorem mLift_refutes_I_patterns :
   · rw [hc, Set.ncard_singleton, Set.ncard_pair (by decide)]
     decide
 
-/-- If the world ordering agrees with a finitely additive measure on singletons, the m-lifting
-is sound for the measure order (footnote 13), since the injection carries the sum of the
-singleton masses of `B` into a sum over a subset of `A`. -/
-theorem measure_le_of_matchingLift {K : Type*} [Field K] [LinearOrder K] [IsStrictOrderedRing K]
-    [Fintype W] (m : FinAddMeasure K W) (ge_w : W → W → Prop)
-    (h : ∀ v u, ge_w v u ↔ m {u} ≤ m {v}) {A B : Set W} (hAB : MatchingLift ge_w A B) :
-    m B ≤ m A := by
+/-- If the world ordering agrees with a measure on singletons, the m-lifting is sound for the
+measure order (footnote 13), since the injection carries the sum of the singleton masses of `B`
+into a sum over a subset of `A`. -/
+theorem measure_le_of_matchingLift [Fintype W] [MeasurableSpace W] [MeasurableSingletonClass W]
+    (μ : Measure W) (ge_w : W → W → Prop) (h : ∀ v u, ge_w v u ↔ μ {u} ≤ μ {v}) {A B : Set W}
+    (hAB : MatchingLift ge_w A B) : μ B ≤ μ A := by
   classical
   obtain ⟨f, hf, hinj⟩ := hAB
-  calc m B = ∑ b ∈ B.toFinset, m {b} := by rw [m.sum_mu_singleton, Set.coe_toFinset]
-    _ ≤ ∑ b ∈ B.toFinset, m {f b} :=
+  calc μ B = ∑ b ∈ B.toFinset, μ {b} := by rw [sum_measure_singleton, Set.coe_toFinset]
+    _ ≤ ∑ b ∈ B.toFinset, μ {f b} :=
         Finset.sum_le_sum fun b hb ↦ (h _ _).mp (hf b (Set.mem_toFinset.mp hb)).2
-    _ = ∑ a ∈ B.toFinset.image f, m {a} := by
+    _ = ∑ a ∈ B.toFinset.image f, μ {a} := by
         rw [Finset.sum_image fun x hx y hy hxy ↦
           hinj (Set.mem_toFinset.mp hx) (Set.mem_toFinset.mp hy) hxy]
-    _ = m ↑(B.toFinset.image f) := m.sum_mu_singleton _
-    _ ≤ m A := m.mu_mono fun a ha ↦ by
+    _ = μ ↑(B.toFinset.image f) := sum_measure_singleton
+    _ ≤ μ A := measure_mono fun a ha ↦ by
         rw [Finset.coe_image, Set.coe_toFinset] at ha
         obtain ⟨b, hb, rfl⟩ := ha
         exact (hf b hb).1
@@ -340,7 +342,7 @@ theorem mLift_not_total :
 
 /-! ### Theorem 8: what separates FA from finite additivity -/
 
-/-- Every FA order on `Fin n` is representable by a finitely additive measure iff `n < 5`
+/-- Every FA order on `Fin n` is representable by a probability measure iff `n < 5`
 (Theorem 8, after Kraft, Pratt and Seidenberg). -/
 theorem fa_representable_iff_card_lt_five (n : ℕ) :
     (∀ sys : QualitativeProbability (Set (Fin n)), Representable sys) ↔ n < 5 :=
@@ -348,21 +350,20 @@ theorem fa_representable_iff_card_lt_five (n : ℕ) :
       let ⟨sys, hsys⟩ := exists_nonrepresentable_fin (n := n) (by omega); hsys (h sys),
     fun h sys ↦ representable_of_card_lt_five sys (by simpa using h)⟩
 
-/-- No finitely additive measure satisfies the World Cup comparisons (3)–(6), with Argentina,
-Brazil, China, Denmark and England as the worlds `0`–`4`: Argentina-or-England more likely
-than China-or-Denmark, Brazil-or-China more likely than Argentina-or-Denmark, Denmark more
-likely than Argentina-or-China, and Argentina-or-China-or-Denmark more likely than
-Brazil-or-England. The four left-hand sides and the four right-hand sides have the same total
-mass. -/
-theorem worldCup_not_finitelyAdditive (m : FinAddMeasure ℚ (Fin 5)) :
-    ¬ (Strict m.inducedGe {0, 4} {2, 3} ∧ Strict m.inducedGe {1, 2} {0, 3} ∧
-      Strict m.inducedGe {3} {0, 2} ∧ Strict m.inducedGe {0, 2, 3} {1, 4}) := by
-  have pair : ∀ a b : Fin 5, a ≠ b → m {a, b} = m {a} + m {b} := fun a b hab ↦ by
-    rw [Set.insert_eq, m.additive (Set.disjoint_singleton.mpr hab)]
-  have triple : m ({0, 2, 3} : Set (Fin 5)) = m {0} + m {2} + m {3} := by
-    rw [Set.insert_eq, m.additive (Set.disjoint_singleton_left.mpr (by simp)), pair 2 3 (by decide),
-      add_assoc]
-  simp only [Strict, FinAddMeasure.inducedGe, ge_iff_le, not_le, triple,
+/-- No finite measure satisfies the World Cup comparisons (3)–(6), with Argentina, Brazil,
+China, Denmark and England as the worlds `0`–`4`: Argentina-or-England more likely than
+China-or-Denmark, Brazil-or-China more likely than Argentina-or-Denmark, Denmark more likely
+than Argentina-or-China, and Argentina-or-China-or-Denmark more likely than Brazil-or-England.
+The four left-hand sides and the four right-hand sides have the same total mass. -/
+theorem worldCup_not_finitelyAdditive (μ : Measure (Fin 5)) [IsFiniteMeasure μ] :
+    ¬ (Strict μ.inducedGe {0, 4} {2, 3} ∧ Strict μ.inducedGe {1, 2} {0, 3} ∧
+      Strict μ.inducedGe {3} {0, 2} ∧ Strict μ.inducedGe {0, 2, 3} {1, 4}) := by
+  have pair : ∀ a b : Fin 5, a ≠ b → μ.real {a, b} = μ.real {a} + μ.real {b} := fun a b hab ↦ by
+    rw [Set.insert_eq, measureReal_union (Set.disjoint_singleton.mpr hab) (.singleton b)]
+  have triple : μ.real ({0, 2, 3} : Set (Fin 5)) = μ.real {0} + μ.real {2} + μ.real {3} := by
+    rw [Set.insert_eq, measureReal_union (Set.disjoint_singleton_left.mpr (by simp)) .of_discrete,
+      pair 2 3 (by decide), add_assoc]
+  simp only [Strict, Measure.inducedGe_iff_real, not_le, triple,
     pair 0 4 (by decide), pair 2 3 (by decide), pair 1 2 (by decide), pair 0 3 (by decide),
     pair 0 2 (by decide), pair 1 4 (by decide)]
   intro ⟨⟨_, h1⟩, ⟨_, h2⟩, ⟨_, h3⟩, ⟨_, h4⟩⟩

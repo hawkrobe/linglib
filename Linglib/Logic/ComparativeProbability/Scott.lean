@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Core.LinearAlgebra.Matrix.Farkas
+public import Linglib.Core.MeasureTheory.Measure.Dirac
 public import Linglib.Logic.ComparativeProbability.Cancellation
 public import Mathlib.Algebra.BigOperators.Field
 public import Mathlib.Algebra.Order.Ring.Abs
@@ -12,19 +13,19 @@ public import Mathlib.RingTheory.Localization.Integer
 # Scott's theorem
 
 Scott's representation theorem for qualitative probability on a finite set says that an order
-on the subsets of a finite `W` is represented by a finitely additive probability measure iff it
+on the subsets of a finite `W` is represented by a probability measure iff it
 satisfies finite cancellation. A comparison `A ≿ B` between disjoint sets is a **sign vector**
 `v : W → SignType`, `A` its positive support and `B` its negative support, and cancellation
 (`Cancellation`) says that whenever a multiset of valid comparisons sums to zero as integer
 vectors, every comparison in it also holds reversed. This is equivalent to the balanced-sequence
 form `FiniteCancellation` of `Cancellation.lean` (`cancellation_iff_finiteCancellation`).
 
-The hard direction is linear-programming duality over `ℚ` (`Matrix.farkas`),
-on `Fin n` and transported along `Fintype.equivFin`: the weight vectors
-representing the order form a polyhedron, which is nonempty unless a Farkas
-certificate exists, and a certificate is a nonnegative weighting of valid
-comparisons that sums to zero yet weights a strict one. Clearing denominators
-turns it into a multiset violating `Cancellation`.
+The hard direction is linear-programming duality over `ℚ` (`Matrix.farkas`), on `Fin n` and
+transported along `Fintype.equivFin`. The weight vectors representing the order form a
+polyhedron, whose normalized points weight the Dirac measures of a representing measure; it is
+nonempty unless a Farkas certificate exists, a nonnegative weighting of valid comparisons that
+sums to zero yet weights a strict one. Clearing denominators turns the certificate into a
+multiset violating `Cancellation`.
 
 ## Main declarations
 
@@ -277,6 +278,7 @@ end Weighted
 section Farkas
 
 open scoped Classical Matrix
+open MeasureTheory
 
 variable {n : ℕ} (sys : QualitativeProbability (Set (Fin n)))
 
@@ -344,13 +346,23 @@ private theorem representable_of_feasible {x : Fin n → ℚ} (hx : coeffs sys *
     simp only [Set.mem_univ, ite_true, Set.mem_empty_iff_false, ite_false, Finset.sum_const_zero,
       sub_zero, ite_eq_right hnt] at this
     linarith
-  let m := FinAddMeasure.ofFintype (fun j ↦ x j / ∑ j, x j)
-    (fun j ↦ div_nonneg (hnn j) hσ.le) (by rw [← Finset.sum_div, div_self hσ.ne'])
-  have hm : ∀ A : Set (Fin n), m A = (∑ j, if j ∈ A then x j else 0) / ∑ j, x j := fun A ↦ by
-    simp only [m, FinAddMeasure.ofFintype, FinAddMeasure.coe_mk, Finset.sum_div]
-    exact Finset.sum_congr rfl fun j _ ↦ by split_ifs <;> simp
-  refine ⟨m, reduce_to_disjoint sys m fun C D hCD ↦ ?_⟩
-  rw [hm, hm, div_le_div_iff_of_pos_right hσ]
+  -- the probability measure with masses proportional to `x`
+  have hσR : (0 : ℝ) < ∑ j, (x j : ℝ) := by exact_mod_cast hσ
+  have hw (j : Fin n) : 0 ≤ (x j : ℝ) / ∑ j, (x j : ℝ) :=
+    div_nonneg (by exact_mod_cast hnn j) hσR.le
+  have := Measure.isProbabilityMeasure_sum_ofReal_smul_dirac hw
+    (by rw [← Finset.sum_div, div_self hσR.ne'])
+  have hm (A : Set (Fin n)) :
+      (∑ j, ENNReal.ofReal ((x j : ℝ) / ∑ j, (x j : ℝ)) • Measure.dirac j).real A =
+        ((∑ j, if j ∈ A then x j else 0 : ℚ) : ℝ) / ((∑ j, x j : ℚ) : ℝ) := by
+    rw [Measure.sum_ofReal_smul_dirac_real_apply hw]
+    push_cast
+    rw [Finset.sum_div]
+    refine Finset.sum_congr rfl fun j _ ↦ ?_
+    by_cases hj : j ∈ A <;> simp [hj]
+  refine ⟨_, this, reduce_to_disjoint sys _ fun C D hCD ↦ ?_⟩
+  rw [← ENNReal.toReal_le_toReal (measure_ne_top _ _) (measure_ne_top _ _), ← measureReal_def,
+    ← measureReal_def, hm, hm, div_le_div_iff_of_pos_right (by exact_mod_cast hσ), Rat.cast_le]
   constructor
   · intro h
     have := hsets D C hCD.symm h
@@ -402,10 +414,10 @@ end Farkas
 
 /-! ### Scott's theorem -/
 
-variable [Fintype W]
+variable [Fintype W] [MeasurableSpace W] [DiscreteMeasurableSpace W]
 
 /-- **Scott's theorem**, hard direction. A qualitative probability order on a finite carrier
-    satisfying cancellation is represented by a finitely additive measure. -/
+    satisfying cancellation is represented by a probability measure. -/
 theorem cancellation_implies_representable (sys : QualitativeProbability (Set W))
     (h : Cancellation sys.ge) : Representable sys := by
   classical

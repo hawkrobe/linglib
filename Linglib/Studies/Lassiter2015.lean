@@ -3,6 +3,8 @@ module
 public import Linglib.Logic.ComparativeProbability.Patterns
 public import Linglib.Logic.ComparativeProbability.WorldOrdering
 public import Linglib.Logic.ComparativeProbability.Content
+public import Linglib.Core.MeasureTheory.Measure.Dirac
+public import Linglib.Core.Probability.UniformOn
 public import Linglib.Semantics.Modality.Kratzer.Operators
 public import Linglib.Semantics.Degree.Comparison
 public import Linglib.Studies.HollidayIcard2013
@@ -41,6 +43,8 @@ three probabilistic replacements for the auxiliaries.
   (`Yalcin2010.must`).
 * The world-ordering countermodels share three worlds, the first alone best, with masses `0.4`,
   `0.3`, `0.3`; BR3 holds there by Holliday and Icard's footnote-13 lemma.
+* Probabilities are mathlib probability measures on a discrete space, compared on their real
+  values; the models of §2.1 and §3 are finite sums of Dirac measures.
 * The strong and weak auxiliaries are the positive forms of the probability scale,
   `Degree.Comparison.ge.over` for *must* and `Degree.Comparison.gt.over` for *might*, with
   thresholds `1` and `θ < 1`.
@@ -65,7 +69,7 @@ three probabilistic replacements for the auxiliaries.
 
 namespace Lassiter2015
 
-open ComparativeProbability Modality
+open ComparativeProbability Modality MeasureTheory ProbabilityTheory
 
 variable {W : Type*}
 
@@ -168,59 +172,63 @@ theorem mLift_refutes_V6 :
 
 /-! ### §2.1 Scales of probability -/
 
-section Probability
-
-variable (P : FinAddMeasure ℚ W)
-
 /-- Three disjoint alternatives with masses `0.4`, `0.3`, `0.3` refute the puzzle for
 probability, as in (46). -/
-noncomputable def skewed : FinAddMeasure ℚ (Fin 3) :=
-  .ofFintype ![4 / 10, 3 / 10, 3 / 10] (fun i ↦ by fin_cases i <;> norm_num)
+noncomputable def skewed : Measure (Fin 3) :=
+  ∑ i, ENNReal.ofReal (![4 / 10, 3 / 10, 3 / 10] i) • Measure.dirac i
+
+private theorem skewed_nonneg (i : Fin 3) : 0 ≤ (![4 / 10, 3 / 10, 3 / 10] : Fin 3 → ℝ) i := by
+  fin_cases i <;> norm_num
+
+instance : IsProbabilityMeasure skewed :=
+  Measure.isProbabilityMeasure_sum_ofReal_smul_dirac skewed_nonneg
     (by simp [Fin.sum_univ_three]; norm_num)
+
+theorem skewed_real (A : Set (Fin 3)) :
+    skewed.real A = ∑ i, A.indicator ![4 / 10, 3 / 10, 3 / 10] i :=
+  Measure.sum_ofReal_smul_dirac_real_apply skewed_nonneg A
 
 theorem prob_refutes_rightUnion : ¬RightUnion skewed.inducedGe := by
   intro h
-  have h12 : skewed ({1} ∪ {2}) = 6 / 10 := by
-    rw [skewed.additive (Set.disjoint_singleton.2 (by decide))]
-    simp [skewed]; norm_num
-  have := h {0} {1} {2} (by simp [FinAddMeasure.inducedGe, skewed]; norm_num)
-    (by simp [FinAddMeasure.inducedGe, skewed]; norm_num)
-  simp only [FinAddMeasure.inducedGe, Set.sup_eq_union, h12] at this
-  simp [skewed] at this
+  have := h {0} {1} {2}
+    (by simp [Measure.inducedGe_iff_real, skewed_real, Set.indicator_apply]; norm_num)
+    (by simp [Measure.inducedGe_iff_real, skewed_real, Set.indicator_apply]; norm_num)
+  simp [Measure.inducedGe_iff_real, skewed_real, Fin.sum_univ_three, Set.indicator_apply] at this
   norm_num at this
+
+section Probability
+
+variable [MeasurableSpace W] [DiscreteMeasurableSpace W] (P : Measure W) [IsProbabilityMeasure P]
 
 /-- The premises are compatible with the conclusion, since when the first proposition holds at
 least half the mass, any alternatives outside it together weigh no more. -/
-theorem prob_rightUnion_of_half {A B C : Set W} (hA : 1 / 2 ≤ P A) (hB : B ⊆ Aᶜ) (hC : C ⊆ Aᶜ) :
-    P (B ∪ C) ≤ P A := by
-  have h1 := P.mu_compl A
-  have h2 := P.mu_mono (Set.union_subset hB hC)
+theorem prob_rightUnion_of_half {A B C : Set W} (hA : 1 / 2 ≤ P.real A) (hB : B ⊆ Aᶜ)
+    (hC : C ⊆ Aᶜ) : P.real (B ∪ C) ≤ P.real A := by
+  have h1 := probReal_add_probReal_compl (μ := P) (.of_discrete : MeasurableSet A)
+  have h2 : P.real (B ∪ C) ≤ P.real Aᶜ := measureReal_mono (Set.union_subset hB hC)
   linarith
+
+end Probability
 
 /-- In the fair lottery a holder of at most `k` of `n` tickets wins with probability at most
 `k / n` and loses with probability at least `(n - k) / n`. -/
 theorem lottery_bound {n k : ℕ} [NeZero n] {A : Set (Fin n)} (h : A.ncard ≤ k) :
-    FinAddMeasure.uniform (K := ℚ) (Fin n) A ≤ k / n ∧
-      ((n : ℚ) - k) / n ≤ FinAddMeasure.uniform (K := ℚ) (Fin n) Aᶜ := by
-  have hn : (0 : ℚ) < n := by exact_mod_cast NeZero.pos n
-  have hk : (A.ncard : ℚ) ≤ k := by exact_mod_cast h
-  constructor
-  · rw [FinAddMeasure.uniform_apply, Fintype.card_fin]
-    exact div_le_div_of_nonneg_right hk hn.le
-  · have := (FinAddMeasure.uniform (K := ℚ) (Fin n)).mu_compl A
-    rw [FinAddMeasure.uniform_apply, Fintype.card_fin] at this
-    have h1 : (A.ncard : ℚ) / n ≤ k / n := div_le_div_of_nonneg_right hk hn.le
-    have h2 : ((n : ℚ) - k) / n = 1 - k / n := by rw [sub_div, div_self hn.ne']
-    linarith
-
-end Probability
+    (uniformOn (Set.univ : Set (Fin n))).real A ≤ k / n ∧
+      ((n : ℝ) - k) / n ≤ (uniformOn (Set.univ : Set (Fin n))).real Aᶜ := by
+  have hn : (0 : ℝ) < n := by exact_mod_cast NeZero.pos n
+  have hA : (uniformOn (Set.univ : Set (Fin n))).real A ≤ k / n := by
+    rw [uniformOn_univ_real_apply, Fintype.card_fin]
+    exact div_le_div_of_nonneg_right (by exact_mod_cast h) hn.le
+  refine ⟨hA, ?_⟩
+  rw [probReal_compl_eq_one_sub .of_discrete, sub_div, div_self hn.ne']
+  linarith
 
 /-! ### §2.2 Symmetric fuzzy measures and equal shares -/
 
 /-- A symmetric fuzzy measure (47) is normalized, symmetric under complement, and monotone. -/
 structure SymmetricFuzzyMeasure (W : Type*) where
   /-- `mu A` is the measure of `A`. -/
-  mu : Set W → ℚ
+  mu : Set W → ℝ
   mu_univ : mu Set.univ = 1
   symm : ∀ A, mu A + mu Aᶜ = 1
   mono : ∀ ⦃A B⦄, A ⊆ B → mu A ≤ mu B
@@ -230,9 +238,11 @@ as much. -/
 def SymmetricFuzzyMeasure.likelihood (μ : SymmetricFuzzyMeasure W) (A B : Set W) : Prop :=
   μ.mu B ≤ μ.mu A
 
-/-- Every probability measure is a symmetric fuzzy measure. -/
-def FinAddMeasure.toSymmetricFuzzy (P : FinAddMeasure ℚ W) : SymmetricFuzzyMeasure W :=
-  ⟨P, P.total, P.mu_compl, fun _ _ h ↦ P.mu_mono h⟩
+/-- Every probability measure is a symmetric fuzzy measure, through its real values. -/
+noncomputable def SymmetricFuzzyMeasure.ofMeasure [MeasurableSpace W] [DiscreteMeasurableSpace W]
+    (P : Measure W) [IsProbabilityMeasure P] : SymmetricFuzzyMeasure W :=
+  ⟨P.real, probReal_univ, fun A ↦ probReal_add_probReal_compl .of_discrete,
+    fun _ _ h ↦ measureReal_mono h⟩
 
 open scoped Classical in
 /-- In the scenario of (48) Sam may go to school (`1`), more likely to the movies (`0`), or
@@ -264,7 +274,7 @@ theorem fuzzy_refutes_V13 : ¬StrictDisjunctionIntro cutClass.likelihood := fun 
 
 /-- Qualitative additivity, (49) added to (47), gives V13, so a proposition as likely as a
 disjunction it is part of leaves the other disjunct no mass, and (48) forces school out. -/
-theorem QualAddMeasure.eq_zero_of_union_le (m : QualAddMeasure ℚ W) {A B : Set W}
+theorem QualAddMeasure.eq_zero_of_union_le (m : QualAddMeasure ℝ W) {A B : Set W}
     (h : m (A ∪ B) ≤ m A) : m (B \ A) = 0 :=
   have : m.inducedGe ⊥ (B \ A) := strictDisjunctionIntro_iff.1 strictDisjunctionIntro B A
     (show m (B ∪ A) ≤ m A by rwa [Set.union_comm])
@@ -274,7 +284,7 @@ theorem QualAddMeasure.eq_zero_of_union_le (m : QualAddMeasure ℚ W) {A B : Set
 
 section Bridges
 
-variable (r : W → W → Prop) (P : FinAddMeasure ℚ W)
+variable (r : W → W → Prop) [MeasurableSpace W] (P : Measure W)
 
 /-- BR1 (57) requires the revised lift to constrain probability. -/
 def Bridge1 : Prop := ∀ A B, KratzerLift r A B → P B ≤ P A
@@ -293,7 +303,8 @@ theorem bridge1_disjoint_puzzle (h : Bridge1 r P) {A B C : Set W} (hB : Disjoint
 
 /-- BR2 makes the m-lifting sound for the measure, by Holliday and Icard's footnote 13, so BR3
 follows from BR2 when the order agrees with the measure. -/
-theorem bridge3_of_agree [Fintype W] (h : ∀ v u, r v u ↔ P {u} ≤ P {v}) : Bridge3 r P :=
+theorem bridge3_of_agree [Fintype W] [MeasurableSingletonClass W]
+    (h : ∀ v u, r v u ↔ P {u} ≤ P {v}) : Bridge3 r P :=
   fun _ _ hAB ↦ HollidayIcard2013.measure_le_of_matchingLift P r h hAB
 
 end Bridges
@@ -304,13 +315,12 @@ complement. -/
 theorem bridge2_refutes_V6 :
     Bridge2 (atLeastAsGoodAs bestFirst) skewed ∧
       ¬MustToProbably skewed.inducedGe (Yalcin2010.must bestFirst · 0) := by
-  refine ⟨fun u v huv ↦ ?_, fun hV6 ↦ ?_⟩
+  refine ⟨fun u v huv ↦ (Measure.inducedGe_iff_real skewed).2 ?_, fun hV6 ↦ ?_⟩
   · rw [bestFirst_le] at huv
-    fin_cases u <;> fin_cases v <;> simp [skewed] at huv ⊢ <;> norm_num
+    rw [skewed_real, skewed_real]
+    fin_cases u <;> fin_cases v <;> simp at huv ⊢ <;> norm_num
   · have h := (hV6 _ must_best).1
-    have hc : ({0} : Set (Fin 3))ᶜ = {1} ∪ {2} := by ext x; fin_cases x <;> simp
-    rw [FinAddMeasure.inducedGe, hc, skewed.additive (Set.disjoint_singleton.2 (by decide))] at h
-    simp [skewed] at h
+    simp [Measure.inducedGe_iff_real, skewed_real, Fin.sum_univ_three, Set.indicator_apply] at h
     norm_num at h
 
 /-- The same model satisfies BR3, since the order agrees with the measure on singletons, so
@@ -319,13 +329,26 @@ theorem bridge3_refutes_V6 :
     Bridge3 (atLeastAsGoodAs bestFirst) skewed ∧
       ¬MustToProbably skewed.inducedGe (Yalcin2010.must bestFirst · 0) :=
   ⟨bridge3_of_agree _ _ fun v u ↦ by
-      rw [bestFirst_le]; fin_cases u <;> fin_cases v <;> simp [skewed] <;> norm_num,
+      rw [bestFirst_le, ← Measure.inducedGe, Measure.inducedGe_iff_real, skewed_real,
+        skewed_real]
+      fin_cases u <;> fin_cases v <;> simp <;> norm_num,
     bridge2_refutes_V6.2⟩
 
 /-- `thin` is the two-world model of §3, with masses `0.5001` and `0.4999`. -/
-noncomputable def thin : FinAddMeasure ℚ (Fin 2) :=
-  .ofFintype ![5001 / 10000, 4999 / 10000] (fun i ↦ by fin_cases i <;> norm_num)
+noncomputable def thin : Measure (Fin 2) :=
+  ∑ i, ENNReal.ofReal (![5001 / 10000, 4999 / 10000] i) • Measure.dirac i
+
+private theorem thin_nonneg (i : Fin 2) :
+    0 ≤ (![5001 / 10000, 4999 / 10000] : Fin 2 → ℝ) i := by
+  fin_cases i <;> norm_num
+
+instance : IsProbabilityMeasure thin :=
+  Measure.isProbabilityMeasure_sum_ofReal_smul_dirac thin_nonneg
     (by simp [Fin.sum_univ_two]; norm_num)
+
+theorem thin_real (A : Set (Fin 2)) :
+    thin.real A = ∑ i, A.indicator ![5001 / 10000, 4999 / 10000] i :=
+  Measure.sum_ofReal_smul_dirac_real_apply thin_nonneg A
 
 /-- `bestFirst₂` makes the first of two worlds the best. -/
 def bestFirst₂ : List (Fin 2 → Prop) := [(· = 0)]
@@ -334,7 +357,7 @@ def bestFirst₂ : List (Fin 2 → Prop) := [(· = 0)]
 than its negation, so BR1 cannot deliver *much more likely*. -/
 theorem bridge1_thin_margin :
     Bridge1 (atLeastAsGoodAs bestFirst₂) thin ∧ Yalcin2010.must bestFirst₂ {0} 0 ∧
-      thin {0} < 5002 / 10000 := by
+      thin.real {0} < 5002 / 10000 := by
   have hle : ∀ v u : Fin 2, (v ≤[bestFirst₂] u) ↔ (u = 0 → v = 0) := fun v u ↦ by
     simp [bestFirst₂, atLeastAsGoodAs_iff]
   have hsets : ∀ A : Set (Fin 2), A = ∅ ∨ A = {0} ∨ A = {1} ∨ A = Set.univ := fun A ↦ by
@@ -343,17 +366,20 @@ theorem bridge1_thin_margin :
     · right; left; ext x; fin_cases x <;> simp [h0, h1]
     · right; right; left; ext x; fin_cases x <;> simp [h0, h1]
     · left; ext x; fin_cases x <;> simp [h0, h1]
-  refine ⟨fun A B hAB ↦ ?_, ?_, by simp [thin]; norm_num⟩
-  · rcases hsets A with rfl | rfl | rfl | rfl <;> rcases hsets B with rfl | rfl | rfl | rfl <;>
-      simp [KratzerLift, hle, thin] at hAB ⊢ <;> norm_num at hAB ⊢
+  refine ⟨fun A B hAB ↦ (Measure.inducedGe_iff_real thin).2 ?_, ?_, ?_⟩
+  · rw [thin_real, thin_real]
+    rcases hsets A with rfl | rfl | rfl | rfl <;> rcases hsets B with rfl | rfl | rfl | rfl <;>
+      simp [KratzerLift, hle, Fin.sum_univ_two] at hAB ⊢ <;> norm_num at hAB ⊢
   · exact (Yalcin2010.must_iff _ _ _).2 fun _ ↦
       ⟨0, (hle _ _).2 fun _ ↦ rfl, fun _ hz ↦ (hle _ _).1 hz rfl⟩
+  · simp [thin_real]
+    norm_num
 
 /-! ### §4 Probability and the epistemic auxiliaries -/
 
 section Auxiliaries
 
-variable (P : FinAddMeasure ℚ W)
+variable [MeasurableSpace W] (P : Measure W)
 
 /-- *Must* as a quantifier over the epistemic space, Kratzer's auxiliary with an empty ordering
 source, holds of the whole space. -/
@@ -361,10 +387,12 @@ def quantMust (A : Set W) : Prop := A = Set.univ
 
 /-- The probabilistic *must* with threshold `θ` holds when `Pr(A) ≥ θ`; it is strong at
 `θ = 1` and weak below. -/
-def probMust (θ : ℚ) (A : Set W) : Prop := A ∈ Degree.Comparison.ge.over P θ
+def probMust (θ : ℝ) (A : Set W) : Prop := A ∈ Degree.Comparison.ge.over P.real θ
 
 /-- The dual *might* holds when `Pr(A) > 1 - θ`. -/
-def probMight (θ : ℚ) (A : Set W) : Prop := A ∈ Degree.Comparison.gt.over P (1 - θ)
+def probMight (θ : ℝ) (A : Set W) : Prop := A ∈ Degree.Comparison.gt.over P.real (1 - θ)
+
+variable [IsProbabilityMeasure P]
 
 /-- Under the quantificational auxiliaries a necessary proposition has all the mass, the
 largest possible margin over its negation, as (56) requires. -/
@@ -372,40 +400,38 @@ theorem quantMust_prob {A : Set W} (h : quantMust A) : P A = 1 ∧ P Aᶜ = 0 :=
   subst h; simp
 
 /-- The strong probabilistic *must* agrees with the quantificational one on the mass. -/
-theorem probMust_one_iff (A : Set W) : probMust P 1 A ↔ P A = 1 :=
-  ⟨fun h ↦ le_antisymm (P.mu_le_one A) h, fun h ↦ h.ge⟩
+theorem probMust_one_iff (A : Set W) : probMust P 1 A ↔ P.real A = 1 :=
+  ⟨fun h ↦ le_antisymm measureReal_le_one h, fun h ↦ h.ge⟩
 
 /-- *Might* is the dual of *must*, since `A` might hold iff its complement is not a must. -/
-theorem probMight_iff_not_probMust_compl (θ : ℚ) (A : Set W) :
+theorem probMight_iff_not_probMust_compl [DiscreteMeasurableSpace W] (θ : ℝ) (A : Set W) :
     probMight P θ A ↔ ¬ probMust P θ Aᶜ := by
-  change 1 - θ < P A ↔ ¬ θ ≤ P Aᶜ
-  have := P.mu_compl A
+  change 1 - θ < P.real A ↔ ¬ θ ≤ P.real Aᶜ
+  have := probReal_add_probReal_compl (μ := P) (.of_discrete : MeasurableSet A)
   rw [not_le]
   constructor <;> intro h <;> linarith
 
 /-- Under the strong probabilistic auxiliaries, what is more likely than something might be,
 since it has positive mass (64). -/
 theorem moreLikely_might {A B : Set W} (h : Strict P.inducedGe A B) : probMight P 1 A := by
-  obtain ⟨hle, hnot⟩ := h
-  simp only [FinAddMeasure.inducedGe, ge_iff_le, not_le] at hle hnot
-  have := P.nonneg B
-  show 1 - 1 < P A
+  have hlt := h.2
+  rw [Measure.inducedGe_iff_real, not_le] at hlt
+  have := measureReal_nonneg (μ := P) (s := B)
+  show 1 - 1 < P.real A
   linarith
 
 /-- Under a weak *might* two astronomically unlikely teams can be ordered without either being
 a live possibility (65). -/
 theorem weak_refutes_moreLikely_might :
-    ∃ (P : FinAddMeasure ℚ (Fin 100)) (A B : Set (Fin 100)),
+    ∃ P : Measure (Fin 100), IsProbabilityMeasure P ∧ ∃ A B : Set (Fin 100),
       Strict P.inducedGe A B ∧ ¬probMight P (9 / 10) A := by
-  refine ⟨FinAddMeasure.uniform (K := ℚ) (Fin 100), {0, 1}, {0}, ⟨?_, ?_⟩, ?_⟩
-  · simp only [FinAddMeasure.inducedGe, ge_iff_le]
-    exact (FinAddMeasure.uniform (K := ℚ) (Fin 100)).mu_mono (Set.singleton_subset_iff.2 (by simp))
-  · simp only [FinAddMeasure.inducedGe, ge_iff_le, not_le, FinAddMeasure.uniform_apply,
-      Set.ncard_singleton, Set.ncard_pair (show (0 : Fin 100) ≠ 1 by decide), Fintype.card_fin]
-    norm_num
+  have hpair : ({0, 1} : Set (Fin 100)).ncard = 2 := Set.ncard_pair (by decide)
+  refine ⟨uniformOn Set.univ, inferInstance, {0, 1}, {0}, ⟨?_, ?_⟩, ?_⟩
+  · exact measure_mono (Set.singleton_subset_iff.2 (by simp))
+  · rw [Measure.inducedGe, uniformOn_univ_le_iff, hpair, Set.ncard_singleton]
+    omega
   · simp only [probMight, Degree.Comparison.mem_over, Degree.Comparison.rel,
-      FinAddMeasure.uniform_apply, Set.ncard_pair (show (0 : Fin 100) ≠ 1 by decide),
-      Fintype.card_fin, not_lt]
+      uniformOn_univ_real_apply, hpair, Fintype.card_fin, not_lt]
     norm_num
 
 end Auxiliaries

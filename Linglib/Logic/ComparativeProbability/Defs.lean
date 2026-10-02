@@ -107,7 +107,7 @@ instance (priority := 100) instComplementReversingOfQualitativeAdditive
 transitive, monotone, non-trivial and qualitatively additive relation, the standard
 base system for comparative probability since de Finetti. Every such order on a
 finite carrier is represented by a qualitatively additive measure
-(`exists_qualAddMeasure_repr`), but by a finitely additive one only below five
+(`exists_qualAddMeasure_repr`), but by a probability measure only below five
 atoms (Kraft, Pratt and Seidenberg; `Completeness.lean`). Reflexivity and
 `⊥ ≼ a` are consequences of monotonicity (`refl`, `bot_le`), not fields. -/
 structure QualitativeProbability (α : Type*) [BooleanAlgebra α] where

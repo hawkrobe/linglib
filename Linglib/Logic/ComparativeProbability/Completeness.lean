@@ -7,7 +7,7 @@ public import Mathlib.Data.Fin.VecNotation
 /-! # Representation and completeness theorems
 
 Kraft, Pratt and Seidenberg show that every qualitative probability order on fewer than five
-atoms is represented by a finitely additive probability measure, and give an order on five
+atoms is represented by a probability measure, and give an order on five
 atoms that is not; padding it with null atoms gives one at every larger size. Following van
 der Hoek, every order on a finite carrier is still represented by a qualitatively additive
 measure.
@@ -33,6 +33,8 @@ measure.
 -/
 
 @[expose] public section
+
+open MeasureTheory
 
 namespace ComparativeProbability
 
@@ -154,11 +156,12 @@ theorem QualitativeProbability.pad_last_null {n : ℕ}
     measure zero and its restriction along `Fin.castSucc` represents `sys`. -/
 theorem representable_of_pad {n : ℕ} {sys : QualitativeProbability (Set (Fin n))}
     (h : Representable sys.pad) : Representable sys := by
-  obtain ⟨m, hm⟩ := h
+  obtain ⟨μ, hμ, hm⟩ := h
   have hinj := Fin.castSucc_injective n
-  have hlast : m {Fin.last n} = 0 := by
-    have h0 : m {Fin.last n} ≤ m ∅ := (hm _ _).mp sys.pad_last_null
-    rw [m.mu_empty] at h0; linarith [m.nonneg {Fin.last n}]
+  have hlast : μ {Fin.last n} = 0 := by
+    simpa using (hm _ _).mp sys.pad_last_null
+  have hcomap (A : Set (Fin n)) : μ.comap Fin.castSucc A = μ (Fin.castSucc '' A) :=
+    Measure.comap_apply _ hinj (fun _ _ ↦ .of_discrete) μ .of_discrete
   have hcover : Fin.castSucc '' (Set.univ : Set (Fin n)) ∪ {Fin.last n} = Set.univ := by
     rw [Set.image_univ]
     ext i
@@ -168,16 +171,11 @@ theorem representable_of_pad {n : ℕ} {sys : QualitativeProbability (Set (Fin n
     · exact Or.inr rfl
   have hdisj : Disjoint (Fin.castSucc '' (Set.univ : Set (Fin n))) {Fin.last n} :=
     Set.disjoint_singleton_right.mpr fun ⟨i, _, hi⟩ ↦ (Fin.castSucc_lt_last i).ne hi
-  have htotal : m (Fin.castSucc '' (Set.univ : Set (Fin n))) = 1 := by
-    have := m.additive hdisj
-    rw [hcover, m.total, hlast, add_zero] at this; linarith
-  refine ⟨{
-    toFun := fun A ↦ m (Fin.castSucc '' A)
-    nonneg' := fun A ↦ m.nonneg _
-    additive' := fun A B hd ↦ by
-      rw [Set.image_union]; exact m.additive ((Set.disjoint_image_iff hinj).mpr hd)
-    total' := htotal
-  }, fun A B ↦ ?_⟩
+  have htotal : μ (Fin.castSucc '' (Set.univ : Set (Fin n))) = 1 := by
+    have := measure_union hdisj (.of_discrete) (μ := μ)
+    rwa [hcover, measure_univ, hlast, add_zero, eq_comm] at this
+  refine ⟨μ.comap Fin.castSucc, ⟨by rw [hcomap]; exact htotal⟩, fun A B ↦ ?_⟩
+  rw [hcomap, hcomap]
   have key := hm (Fin.castSucc '' A) (Fin.castSucc '' B)
   rwa [show sys.pad.le (Fin.castSucc '' A) (Fin.castSucc '' B) ↔ sys.le A B from by
     show sys.le (Fin.castSucc ⁻¹' (Fin.castSucc '' A)) _ ↔ _
@@ -196,17 +194,17 @@ theorem exists_nonrepresentable_fin {n : ℕ} (h : 5 ≤ n) :
 /-! ### The Kraft–Pratt–Seidenberg theorems -/
 
 /-- **Kraft–Pratt–Seidenberg below five atoms.** Every qualitative probability order on fewer
-    than five atoms is representable by a finitely additive measure. -/
-theorem representable_of_card_lt_five {W : Type*} [Fintype W]
-    (sys : QualitativeProbability (Set W)) (hcard : Fintype.card W < 5) :
-    Representable sys := by
+    than five atoms is representable by a probability measure. -/
+theorem representable_of_card_lt_five {W : Type*} [Fintype W] [MeasurableSpace W]
+    [DiscreteMeasurableSpace W] (sys : QualitativeProbability (Set W))
+    (hcard : Fintype.card W < 5) : Representable sys := by
   classical
   exact perm_repr _ sys (representable_of_le_four (by omega) (sys.transport (Fintype.equivFin W)))
 
 /-- **Kraft–Pratt–Seidenberg from five atoms on.** Some qualitative probability order is not
-    representable by any finitely additive measure. -/
-theorem exists_nonrepresentable_of_five_le_card {W : Type*} [Fintype W]
-    (hcard : 5 ≤ Fintype.card W) :
+    representable by any probability measure. -/
+theorem exists_nonrepresentable_of_five_le_card {W : Type*} [Fintype W] [MeasurableSpace W]
+    [DiscreteMeasurableSpace W] (hcard : 5 ≤ Fintype.card W) :
     ∃ sys : QualitativeProbability (Set W), ¬Representable sys := by
   have : DecidableEq W := Classical.typeDecidableEq W
   obtain ⟨sysF, hsysF⟩ := exists_nonrepresentable_fin hcard

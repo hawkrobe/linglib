@@ -8,7 +8,7 @@ public import Mathlib.Tactic.FinCases
 /-! # Cancellation on at most four atoms
 
 Every qualitative probability order on at most four atoms satisfies Scott cancellation, hence is
-representable by a finitely additive measure, as Kraft, Pratt and Seidenberg showed.
+representable by a probability measure, as Kraft, Pratt and Seidenberg showed.
 
 ## Main declarations
 

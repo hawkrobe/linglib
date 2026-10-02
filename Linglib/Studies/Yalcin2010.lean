@@ -3,6 +3,7 @@ module
 public import Linglib.Logic.ComparativeProbability.Patterns
 public import Linglib.Logic.ComparativeProbability.WorldOrdering
 public import Linglib.Logic.ComparativeProbability.Content
+public import Linglib.Core.Probability.UniformOn
 public import Linglib.Semantics.Degree.Comparison
 public import Linglib.Semantics.Modality.Kratzer.Operators
 public import Linglib.Data.Examples.Yalcin2010
@@ -57,7 +58,7 @@ the probability space account validates V1–V12 and none of I1–I3 or E1.
 
 namespace Yalcin2010
 
-open ComparativeProbability Modality
+open ComparativeProbability Modality MeasureTheory ProbabilityTheory
 
 /-! ### §3: the relative likelihood approach
 
@@ -270,7 +271,7 @@ theorem measure_eq_one_iff (A : Set W) : m.measure A = 1 ↔ ∃ w ∈ A, m.poss
       rw [← hsup, Finset.sup'_eq_sup hA]
       exact h
     · rw [Finset.not_nonempty_iff_eq_empty] at hA
-      simp [measure, hA, bot_eq_zero] at h
+      simp [measure, hA] at h
   · rintro ⟨w, hw, hw1⟩
     refine le_antisymm (m.measure_le_one A) ?_
     rw [← hw1]
@@ -281,7 +282,7 @@ theorem measure_mono {A B : Set W} (h : A ⊆ B) : m.measure A ≤ m.measure B :
   exact Finset.sup_mono fun x hx ↦
     Finset.mem_filter.2 ⟨Finset.mem_univ _, h (Finset.mem_filter.1 hx).2⟩
 
-theorem measure_empty : m.measure ∅ = 0 := by simp [measure, bot_eq_zero]
+theorem measure_empty : m.measure ∅ = 0 := by simp [measure]
 
 theorem measure_univ : m.measure Set.univ = 1 :=
   (m.measure_eq_one_iff _).2 (let ⟨w, hw⟩ := m.exists_eq_one; ⟨w, Set.mem_univ w, hw⟩)
@@ -421,8 +422,10 @@ end Hamblin
 
 section Probability
 
-variable {W : Type*} (P : FinAddMeasure ℚ W)
+variable {W : Type*} [MeasurableSpace W] [DiscreteMeasurableSpace W] (P : Measure W)
+  [IsProbabilityMeasure P]
 
+omit [DiscreteMeasurableSpace W] [IsProbabilityMeasure P] in
 theorem prob_V1 : ProbablyToNotProbablyNot P.inducedGe := probablyToNotProbablyNot
 theorem prob_V2 : ProbablyDistribInf P.inducedGe := probablyDistribInf
 theorem prob_V3 : ChancyDisjunctionIntro P.inducedGe := chancyDisjunctionIntro
@@ -444,57 +447,51 @@ theorem prob_V12 : ComplementTransfer P.inducedGe := complementTransfer
 
 end Probability
 
+/-- An equiprobable space of `n` worlds orders propositions by how many worlds they hold in. -/
+private theorem uniform_inducedGe_iff {n : ℕ} [NeZero n] {A B : Set (Fin n)} :
+    (uniformOn (Set.univ : Set (Fin n))).inducedGe A B ↔ B.ncard ≤ A.ncard :=
+  uniformOn_univ_le_iff
+
 /-- The fair coin refutes I1 and I2. Heads is at least as likely as tails and as heads but not
 as heads or tails, and it is as likely as its complement without being as likely as
 everything. -/
 theorem prob_refutes_I1_I2 :
-    ¬RightUnion (FinAddMeasure.uniform (K := ℚ) (Fin 2)).inducedGe ∧
-      ¬EquiprobabilityCollapse (FinAddMeasure.uniform (K := ℚ) (Fin 2)).inducedGe := by
-  have h0 : (FinAddMeasure.uniform (K := ℚ) (Fin 2)) {0} = 1 / 2 := by simp
-  have h1 : (FinAddMeasure.uniform (K := ℚ) (Fin 2)) {1} = 1 / 2 := by simp
+    ¬RightUnion (uniformOn (Set.univ : Set (Fin 2))).inducedGe ∧
+      ¬EquiprobabilityCollapse (uniformOn (Set.univ : Set (Fin 2))).inducedGe := by
   have hc : ({0} : Set (Fin 2))ᶜ = {1} := by ext x; fin_cases x <;> simp
-  have hu : ({1} : Set (Fin 2)) ∪ {0} = Set.univ := by ext x; fin_cases x <;> simp
+  have hu : ({1} : Set (Fin 2)) ⊔ {0} = Set.univ := by ext x; fin_cases x <;> simp
   constructor
   · intro h
-    have := h {0} {1} {0} (by simp [FinAddMeasure.inducedGe, h0, h1])
-      (by simp [FinAddMeasure.inducedGe])
-    simp only [FinAddMeasure.inducedGe, Set.sup_eq_union, hu, FinAddMeasure.total, h0] at this
-    norm_num at this
+    have := h {0} {1} {0} (by simp [uniform_inducedGe_iff]) (by simp [uniform_inducedGe_iff])
+    rw [hu, uniform_inducedGe_iff] at this
+    simp at this
   · intro h
-    have := h {0} Set.univ (by simp [FinAddMeasure.inducedGe, hc, h0, h1])
-    simp only [FinAddMeasure.inducedGe, FinAddMeasure.total, h0] at this
-    norm_num at this
+    have := h {0} Set.univ (by simp [hc, uniform_inducedGe_iff])
+    rw [uniform_inducedGe_iff] at this
+    simp at this
 
 /-- Three equiprobable worlds refute Hamblin's collapse I3, since `{0, 1}` is probable but not as
 likely as everything. -/
-theorem prob_refutes_I3 : ¬HamblinCollapse (FinAddMeasure.uniform (K := ℚ) (Fin 3)).inducedGe := by
+theorem prob_refutes_I3 : ¬HamblinCollapse (uniformOn (Set.univ : Set (Fin 3))).inducedGe := by
   intro h
-  have hA : (FinAddMeasure.uniform (K := ℚ) (Fin 3)) {0, 1} = 2 / 3 := by
-    rw [FinAddMeasure.uniform_apply, Set.ncard_pair (by decide)]; norm_num
+  have hA : ({0, 1} : Set (Fin 3)).ncard = 2 := Set.ncard_pair (by decide)
   have hc : ({0, 1} : Set (Fin 3))ᶜ = {2} := by ext x; fin_cases x <;> simp
-  have hAc : (FinAddMeasure.uniform (K := ℚ) (Fin 3)) ({0, 1} : Set (Fin 3))ᶜ = 1 / 3 := by
-    rw [hc, FinAddMeasure.uniform_singleton]; norm_num
-  have := h {0, 1} Set.univ ⟨by simp [FinAddMeasure.inducedGe, hA, hAc]; norm_num,
-    by simp [FinAddMeasure.inducedGe, hA, hAc]; norm_num⟩
-  simp only [FinAddMeasure.inducedGe, FinAddMeasure.total, hA] at this
-  norm_num at this
+  have := h {0, 1} Set.univ ⟨by rw [uniform_inducedGe_iff, hc, hA, Set.ncard_singleton]; omega,
+    by rw [uniform_inducedGe_iff, hc, hA, Set.ncard_singleton]; omega⟩
+  rw [uniform_inducedGe_iff, hA] at this
+  simp at this
 
 /-- The twelve-sided die of §4 refutes Conjunctivitis for the probability space semantics. A
 number below nine and a number above four are each probable, eight faces of twelve, but a
 number above four and below nine is not, four faces. -/
-theorem prob_refutes_E1 : ¬Conjunctivitis (FinAddMeasure.uniform (K := ℚ) (Fin 12)).inducedGe := by
+theorem prob_refutes_E1 : ¬Conjunctivitis (uniformOn (Set.univ : Set (Fin 12))).inducedGe := by
   intro h
-  have hval : ∀ A : Set (Fin 12), (FinAddMeasure.uniform (K := ℚ) (Fin 12)) A = A.ncard / 12 :=
-    fun A ↦ by rw [FinAddMeasure.uniform_apply]; simp
-  have hprob : ∀ A : Set (Fin 12), 6 < A.ncard → A.ncard + Aᶜ.ncard = 12 →
-      Probably (FinAddMeasure.uniform (K := ℚ) (Fin 12)).inducedGe A := fun A hA hsum ↦ by
-    constructor <;> simp only [FinAddMeasure.inducedGe, hval] <;>
-      [skip; intro hle] <;>
-      (have : (A.ncard : ℚ) + Aᶜ.ncard = 12 := by exact_mod_cast hsum) <;>
-      (have : (6 : ℚ) < A.ncard := by exact_mod_cast hA) <;>
-      linarith
   have hcard : ∀ A : Set (Fin 12), A.ncard + Aᶜ.ncard = 12 := fun A ↦ by
     rw [Set.ncard_add_ncard_compl, Nat.card_eq_fintype_card, Fintype.card_fin]
+  have hprob : ∀ A : Set (Fin 12), 6 < A.ncard →
+      Probably (uniformOn (Set.univ : Set (Fin 12))).inducedGe A := fun A hA ↦ by
+    have := hcard A
+    exact ⟨uniform_inducedGe_iff.2 (by omega), fun h ↦ by rw [uniform_inducedGe_iff] at h; omega⟩
   have hlow : ({n : Fin 12 | n.val < 8} : Set (Fin 12)).ncard = 8 := by
     rw [Set.ncard_eq_toFinset_card', Set.toFinset_ofPred]; decide
   have hhigh : ({n : Fin 12 | 4 ≤ n.val} : Set (Fin 12)).ncard = 8 := by
@@ -504,14 +501,9 @@ theorem prob_refutes_E1 : ¬Conjunctivitis (FinAddMeasure.uniform (K := ℚ) (Fi
     ext n; simp [and_comm]
   have hmid : ({n : Fin 12 | n.val < 8} ⊓ {n : Fin 12 | 4 ≤ n.val} : Set (Fin 12)).ncard = 4 := by
     rw [hint, Set.ncard_eq_toFinset_card', Set.toFinset_ofPred]; decide
-  have hmidc : ({n : Fin 12 | n.val < 8} ⊓ {n : Fin 12 | 4 ≤ n.val} : Set (Fin 12))ᶜ.ncard = 8 := by
-    have := hcard ({n : Fin 12 | n.val < 8} ⊓ {n : Fin 12 | 4 ≤ n.val})
-    omega
-  have := (h _ _ (hprob _ (by rw [hlow]; norm_num) (hcard _))
-    (hprob _ (by rw [hhigh]; norm_num) (hcard _))).2
-  apply this
-  simp only [FinAddMeasure.inducedGe, hval, hmid, hmidc]
-  norm_num
+  have := hcard ({n : Fin 12 | n.val < 8} ⊓ {n : Fin 12 | 4 ≤ n.val})
+  exact (h {n | n.val < 8} {n | 4 ≤ n.val} (hprob _ (by omega)) (hprob _ (by omega))).2
+    (uniform_inducedGe_iff.2 (by omega))
 
 /-! ### §6: scales
 
@@ -520,18 +512,18 @@ theorem prob_refutes_E1 : ¬Conjunctivitis (FinAddMeasure.uniform (K := ℚ) (Fi
 
 section Threshold
 
-variable {W : Type*} (P : FinAddMeasure ℚ W)
+variable {W : Type*} [MeasurableSpace W] (P : Measure W)
 
 /-- *Probably* with threshold `n` holds when `Pr(A) > n`, the strict positive form of the
 probability scale. -/
-def probablyAt (n : ℚ) (A : Set W) : Prop := A ∈ Degree.Comparison.gt.over P n
+def probablyAt (n : ℝ) (A : Set W) : Prop := A ∈ Degree.Comparison.gt.over P.real n
 
 /-- With a threshold of at least one half, a proposition and its complement are not both
 probable. -/
-theorem probablyAt_V1 {n : ℚ} (hn : 1 / 2 ≤ n) (A : Set W) :
-    probablyAt P n A → ¬probablyAt P n Aᶜ := by
+theorem probablyAt_V1 [DiscreteMeasurableSpace W] [IsProbabilityMeasure P] {n : ℝ}
+    (hn : 1 / 2 ≤ n) (A : Set W) : probablyAt P n A → ¬probablyAt P n Aᶜ := by
   intro hA hAc
-  have := P.mu_compl A
+  have := probReal_add_probReal_compl (μ := P) (.of_discrete : MeasurableSet A)
   simp only [probablyAt, Degree.Comparison.mem_over, Degree.Comparison.rel] at hA hAc
   linarith
 
@@ -540,11 +532,11 @@ end Threshold
 /-- Below one half the pattern fails. With the threshold one third, the fair coin's heads and
 tails are both probable. -/
 theorem probablyAt_refutes_V1 :
-    probablyAt (FinAddMeasure.uniform (K := ℚ) (Fin 2)) (1 / 3) {0} ∧
-      probablyAt (FinAddMeasure.uniform (K := ℚ) (Fin 2)) (1 / 3) ({0} : Set (Fin 2))ᶜ := by
+    probablyAt (uniformOn (Set.univ : Set (Fin 2))) (1 / 3) {0} ∧
+      probablyAt (uniformOn (Set.univ : Set (Fin 2))) (1 / 3) ({0} : Set (Fin 2))ᶜ := by
   have hc : ({0} : Set (Fin 2))ᶜ = {1} := by ext x; fin_cases x <;> simp
   simp only [probablyAt, Degree.Comparison.mem_over, Degree.Comparison.rel, hc,
-    FinAddMeasure.uniform_singleton, Fintype.card_fin]
+    uniformOn_univ_real_singleton, Fintype.card_fin]
   norm_num
 
 end Yalcin2010
