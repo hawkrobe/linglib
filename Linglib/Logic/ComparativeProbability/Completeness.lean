@@ -2,7 +2,7 @@ module
 
 public import Linglib.Logic.ComparativeProbability.Representability
 public import Linglib.Logic.ComparativeProbability.CancellationFin4
-public import Mathlib.Tactic.IntervalCases
+public import Mathlib.Data.Fin.VecNotation
 
 /-! # Representation and completeness theorems
 
@@ -200,15 +200,8 @@ theorem exists_nonrepresentable_fin {n : ℕ} (h : 5 ≤ n) :
 theorem representable_of_card_lt_five {W : Type*} [Fintype W]
     (sys : QualitativeProbability (Set W)) (hcard : Fintype.card W < 5) :
     Representable sys := by
-  have : DecidableEq W := Classical.typeDecidableEq W
-  let e := Fintype.equivFin W
-  set n := Fintype.card W with hn_def
-  interval_cases n
-  · exact (sys.transport e).elim0
-  · exact perm_repr e sys (representable_fin1 (sys.transport e))
-  · exact perm_repr e sys (representable_fin2 (sys.transport e))
-  · exact perm_repr e sys (representable_fin3 (sys.transport e))
-  · exact perm_repr e sys (representable_fin4 (sys.transport e))
+  classical
+  exact perm_repr _ sys (representable_of_le_four (by omega) (sys.transport (Fintype.equivFin W)))
 
 /-- **Kraft–Pratt–Seidenberg from five atoms on.** Some qualitative probability order is not
     representable by any finitely additive measure. -/

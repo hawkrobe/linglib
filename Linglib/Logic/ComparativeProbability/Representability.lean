@@ -2,28 +2,22 @@ module
 
 public import Linglib.Logic.ComparativeProbability.Basic
 public import Linglib.Logic.ComparativeProbability.Content
-public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import Mathlib.Tactic.FinCases
-public import Mathlib.Tactic.Tauto
-public import Mathlib.Data.Fin.VecNotation
-public import Mathlib.Algebra.BigOperators.Fin
 
 /-!
 # Representability of qualitative probability orders
 
 A qualitative probability order is representable when a finitely additive probability measure
 induces it. Kraft, Pratt and Seidenberg show that every order on at most four atoms is
-representable and give a five-atom order that is not. This file holds the predicate, the
-reductions to disjoint comparisons and past a null atom, and the one- and two-atom cases;
-`CancellationFin4.lean` derives the three- and four-atom cases from Scott cancellation, and
-`Completeness.lean` holds the five-atom counterexample and its padding to every larger size.
+representable and give a five-atom order that is not. This file holds the predicate and the
+reductions to disjoint comparisons and past a null atom; `CancellationFin4.lean` derives the
+cases up to four atoms from Scott cancellation, and `Completeness.lean` holds the five-atom
+counterexample and its padding to every larger size.
 
 ## Main statements
 
 * `Representable`: the representability predicate.
 * `reduce_to_disjoint`, `null_elem_reduce`, `perm_repr`: the reductions.
-* `representable_fin1`, `representable_fin2`: the one- and two-atom cases.
 
 ## References
 
@@ -100,162 +94,6 @@ theorem null_elem_reduce {n : ℕ} (sys : QualitativeProbability (Set (Fin (n + 
   rw [null_removal_disjoint sys 0 hn0 C D hdisj,
       ← succ_image_preimage C, ← succ_image_preimage D]
   exact hm_r (Fin.succ ⁻¹' C) (Fin.succ ⁻¹' D)
-
-/-! ### One and two atoms -/
-
-private theorem set_fin1_eq (A : Set (Fin 1)) : A = ∅ ∨ A = Set.univ := by
-  by_cases h : (0 : Fin 1) ∈ A
-  · right; ext x; simp [Fin.eq_zero x, h]
-  · left; ext x; exact ⟨fun hx => absurd (Fin.eq_zero x ▸ hx) h, fun hx => hx.elim⟩
-
-private noncomputable def measure_fin1 : FinAddMeasure ℚ (Fin 1) :=
-  .ofFintype ![1] (by intro i; fin_cases i; norm_num) (by simp)
-
-theorem representable_fin1 (sys : QualitativeProbability (Set (Fin 1))) : Representable sys := by
-  refine ⟨measure_fin1, fun A B => ?_⟩
-  have hme := measure_fin1.mu_empty
-  have hu := measure_fin1.total
-  rcases set_fin1_eq A with rfl | rfl <;> rcases set_fin1_eq B with rfl | rfl
-  · exact ⟨fun _ => le_refl _, fun _ => sys.refl _⟩
-  · exact ⟨fun _ => by rw [hme, hu]; norm_num, fun _ => sys.mono (Set.empty_subset _)⟩
-  · exact ⟨fun h => absurd h sys.nonTrivial, fun h => by rw [hme, hu] at h; linarith⟩
-  · exact ⟨fun _ => le_refl _, fun _ => sys.refl _⟩
-
-private noncomputable def measure_fin2 (a : ℚ) (ha : 0 ≤ a) (ha1 : a ≤ 1) :
-    FinAddMeasure ℚ (Fin 2) :=
-  .ofFintype ![a, 1 - a] (by intro i; fin_cases i <;> simp <;> linarith)
-    (by simp [Fin.sum_univ_two])
-
-private theorem mf2_zero (a : ℚ) (ha : 0 ≤ a) (ha1 : a ≤ 1) :
-    (measure_fin2 a ha ha1) {(0 : Fin 2)} = a := by
-  simp [measure_fin2]
-
-private theorem mf2_one (a : ℚ) (ha : 0 ≤ a) (ha1 : a ≤ 1) :
-    (measure_fin2 a ha ha1) {(1 : Fin 2)} = 1 - a := by
-  simp [measure_fin2]
-
-private theorem set_fin2_eq (A : Set (Fin 2)) :
-    A = ∅ ∨ A = {0} ∨ A = {1} ∨ A = Set.univ := by
-  by_cases h0 : (0 : Fin 2) ∈ A <;> by_cases h1 : (1 : Fin 2) ∈ A
-  · right; right; right; ext x; fin_cases x <;> simp_all
-  · right; left; ext x; fin_cases x <;> simp_all
-  · right; right; left; ext x; fin_cases x <;> simp_all
-  · left; ext x; fin_cases x <;> simp_all
-
-private theorem not_both_null_fin2 (sys : QualitativeProbability (Set (Fin 2))) :
-    ¬(sys.le {0} ∅ ∧ sys.le {1} ∅) := by
-  intro ⟨h0, h1⟩
-  have hd1 : ({(0 : Fin 2)} : Set _) \ Set.univ = ∅ := by ext x; simp
-  have hd2 : Set.univ \ ({(0 : Fin 2)} : Set _) = {(1 : Fin 2)} := by
-    ext x; simp only [Set.mem_sdiff, Set.mem_univ, Set.mem_singleton_iff, true_and, Fin.ext_iff]
-    omega
-  exact sys.nonTrivial (sys.trans ((sys.additive Set.univ {0}).mpr (hd1 ▸ hd2 ▸ h1)) h0)
-
-/-- The measure values and the ordering facts settle all 16 pairs on `Fin 2`. The 7
-    non-disjoint pairs close by exfalso, the 5 uniform pairs (∅/∅, X/∅, ∅/univ) do not depend
-    on the ordering, and the 4 critical pairs (∅/{0}, ∅/{1}, {0}/{1}, {1}/{0}) use the
-    hypotheses. -/
-private theorem fin2_dispatch (sys : QualitativeProbability (Set (Fin 2)))
-    (a : ℚ) (ha : 0 ≤ a) (ha1 : a ≤ 1)
-    (he0 : sys.le {(0 : Fin 2)} ∅ ↔ a ≤ 0)
-    (he1 : sys.le {(1 : Fin 2)} ∅ ↔ 1 - a ≤ 0)
-    (h01 : sys.le {(0 : Fin 2)} {1} ↔ a ≤ 1 - a)
-    (h10 : sys.le {(1 : Fin 2)} {0} ↔ 1 - a ≤ a) :
-    ∀ C D : Set (Fin 2), Disjoint C D →
-      (sys.le C D ↔ measure_fin2 a ha ha1 C ≤ measure_fin2 a ha ha1 D) := by
-  intro C D hCD
-  have hme := (measure_fin2 a ha ha1).mu_empty
-  have hm0 := mf2_zero a ha ha1
-  have hm1 := mf2_one a ha ha1
-  have hmu := (measure_fin2 a ha ha1).total
-  have hdisj : ∀ x ∈ C, x ∉ D := fun x hx => Set.disjoint_left.mp hCD hx
-  rcases set_fin2_eq C with rfl | rfl | rfl | rfl <;>
-  rcases set_fin2_eq D with rfl | rfl | rfl | rfl
-  -- ∅ vs ∅
-  · exact ⟨fun _ => le_refl _, fun _ => sys.refl _⟩
-  -- ∅ vs {0}
-  · rw [hme, hm0]; exact ⟨fun _ => ha, fun _ => sys.mono (Set.empty_subset _)⟩
-  -- ∅ vs {1}
-  · rw [hme, hm1]; exact ⟨fun _ => by linarith, fun _ => sys.mono (Set.empty_subset _)⟩
-  -- ∅ vs univ
-  · rw [hme, hmu]; exact ⟨fun _ => by norm_num, fun _ => sys.mono (Set.empty_subset _)⟩
-  -- {0} vs ∅
-  · rw [hm0, hme]; exact he0
-  -- {0} vs {0}: not disjoint
-  · exact (hdisj 0 rfl rfl).elim
-  -- {0} vs {1}
-  · rw [hm0, hm1]; exact h01
-  -- {0} vs univ: not disjoint
-  · exact (hdisj 0 rfl (Set.mem_univ _)).elim
-  -- {1} vs ∅
-  · rw [hm1, hme]; exact he1
-  -- {1} vs {0}
-  · rw [hm1, hm0]; exact h10
-  -- {1} vs {1}: not disjoint
-  · exact (hdisj 1 rfl rfl).elim
-  -- {1} vs univ: not disjoint
-  · exact (hdisj 1 rfl (Set.mem_univ _)).elim
-  -- univ vs ∅
-  · rw [hmu, hme]; exact ⟨fun h => absurd h sys.nonTrivial, fun h => by linarith⟩
-  -- univ vs {0}: not disjoint
-  · exact (hdisj 0 (Set.mem_univ _) rfl).elim
-  -- univ vs {1}: not disjoint
-  · exact (hdisj 1 (Set.mem_univ _) rfl).elim
-  -- univ vs univ: not disjoint
-  · exact (hdisj 0 (Set.mem_univ _) (Set.mem_univ _)).elim
-
-theorem representable_fin2 (sys : QualitativeProbability (Set (Fin 2))) : Representable sys := by
-  by_cases h_null0 : sys.le {(0 : Fin 2)} ∅
-  · -- Case 1: atom 0 null → a = 0
-    have h_nnull1 : ¬sys.le {(1 : Fin 2)} ∅ := fun h => not_both_null_fin2 sys ⟨h_null0, h⟩
-    have h_n10 : ¬sys.le {(1 : Fin 2)} {0} :=
-      fun h => not_both_null_fin2 sys ⟨h_null0, sys.trans h h_null0⟩
-    have h_01 : sys.le {(0 : Fin 2)} {1} :=
-      (sys.total {(0 : Fin 2)} {1}).resolve_right h_n10
-    refine ⟨measure_fin2 0 le_rfl zero_le_one,
-      reduce_to_disjoint sys _ (fin2_dispatch sys 0 le_rfl zero_le_one
-        ⟨fun _ => le_refl _, fun _ => h_null0⟩
-        ⟨fun h => absurd h h_nnull1, fun h => by linarith⟩
-        ⟨fun _ => by linarith, fun _ => h_01⟩
-        ⟨fun h => absurd h h_n10, fun h => by linarith⟩)⟩
-  · by_cases h_null1 : sys.le {(1 : Fin 2)} ∅
-    · -- Case 2: atom 1 null → a = 1
-      have h_n01 : ¬sys.le {(0 : Fin 2)} {1} :=
-        fun h => not_both_null_fin2 sys ⟨sys.trans h h_null1, h_null1⟩
-      have h_10 : sys.le {(1 : Fin 2)} {0} :=
-        (sys.total {(1 : Fin 2)} {0}).resolve_right h_n01
-      refine ⟨measure_fin2 1 zero_le_one le_rfl,
-        reduce_to_disjoint sys _ (fin2_dispatch sys 1 zero_le_one le_rfl
-          ⟨fun h => absurd h h_null0, fun h => by linarith⟩
-          ⟨fun _ => by linarith, fun _ => h_null1⟩
-          ⟨fun h => absurd h h_n01, fun h => by linarith⟩
-          ⟨fun _ => by linarith, fun _ => h_10⟩)⟩
-    · -- Neither null: both singletons are "positive"
-      by_cases h01 : sys.le {(0 : Fin 2)} {1}
-      · by_cases h10 : sys.le {(1 : Fin 2)} {0}
-        · -- Case 3c: {0} ≈ {1} → a = 1/2
-          refine ⟨measure_fin2 (1/2) (by linarith) (by linarith),
-            reduce_to_disjoint sys _ (fin2_dispatch sys (1/2) (by linarith) (by linarith)
-              ⟨fun h => absurd h h_null0, fun h => by linarith⟩
-              ⟨fun h => absurd h h_null1, fun h => by linarith⟩
-              ⟨fun _ => by linarith, fun _ => h01⟩
-              ⟨fun _ => by linarith, fun _ => h10⟩)⟩
-        · -- Case 3a: {0} ≺ {1} → a = 1/3
-          refine ⟨measure_fin2 (1/3) (by linarith) (by linarith),
-            reduce_to_disjoint sys _ (fin2_dispatch sys (1/3) (by linarith) (by linarith)
-              ⟨fun h => absurd h h_null0, fun h => by linarith⟩
-              ⟨fun h => absurd h h_null1, fun h => by linarith⟩
-              ⟨fun _ => by linarith, fun _ => h01⟩
-              ⟨fun h => absurd h h10, fun h => by linarith⟩)⟩
-      · -- Case 3b: ¬({0} ≼ {1}) → {1} ≺ {0} (totality), a = 2/3
-        have h10 : sys.le {(1 : Fin 2)} {0} :=
-          (sys.total {(1 : Fin 2)} {0}).resolve_right h01
-        refine ⟨measure_fin2 (2/3) (by linarith) (by linarith),
-          reduce_to_disjoint sys _ (fin2_dispatch sys (2/3) (by linarith) (by linarith)
-            ⟨fun h => absurd h h_null0, fun h => by linarith⟩
-            ⟨fun h => absurd h h_null1, fun h => by linarith⟩
-            ⟨fun h => absurd h h01, fun h => by linarith⟩
-            ⟨fun _ => by linarith, fun _ => h10⟩)⟩
 
 /-! ### Transport along equivalences -/
 

@@ -6,7 +6,7 @@ public import Mathlib.Data.List.Perm.Basic
 public import Mathlib.Tactic.Tauto
 public import Mathlib.Tactic.FinCases
 
-/-! # Cancellation on three and four atoms
+/-! # Cancellation on at most four atoms
 
 Every qualitative probability order on at most four atoms satisfies Scott cancellation, hence is
 representable by a finitely additive measure, as Kraft, Pratt and Seidenberg showed.
@@ -14,20 +14,21 @@ representable by a finitely additive measure, as Kraft, Pratt and Seidenberg sho
 ## Main declarations
 
 * `ComparativeProbability.no_null_cancellation`: cancellation on `Fin 4` with no null atoms.
-* `ComparativeProbability.fa_cancellation_fin4`: every FA system on `Fin 4` satisfies
-  cancellation.
-* `ComparativeProbability.representable_fin4`: every FA system on `Fin 4` is representable.
+* `ComparativeProbability.QualitativeProbability.extendLex`: the extension by a dominant world.
+* `ComparativeProbability.cancellation_of_le_four`: every FA system on at most four atoms
+  satisfies cancellation.
+* `ComparativeProbability.representable_of_le_four`: every FA system on at most four atoms is
+  representable.
 
 ## Implementation notes
 
-The proof rests on the sign-vector core (`Balanced.exists_antiDominating`) and adds the merge
-reduction: a valid family
-of comparisons whose integer sum is a single sign vector proves that
-comparison (`merge_to_single`), by a four-rule recursion whose stuck case is
-discharged through the sign-vector core via `v1_tailored`.  Comparisons are
-`Scott.lean`'s sign vectors; two comparisons with no shared nonzero coordinate
-*merge* into the sign of their sum (`merge`), and the merge recursion itself
-is private plumbing, so only the theorems above are exported.
+On `Fin 4` with no null atom the proof is the merge reduction: a valid family of comparisons
+whose integer sum is a single sign vector proves that comparison (`merge_to_single`), by a
+four-rule recursion whose stuck case is discharged through the sign-vector core
+(`Balanced.exists_antiDominating`) via `v1_tailored`. Comparisons are `Scott.lean`'s sign
+vectors; two comparisons with no shared nonzero coordinate *merge* into the sign of their sum
+(`merge`). Smaller sizes reach this case by the lexicographic extension, and a null atom drops
+to one atom fewer, so a single induction covers every size up to four.
 
 ## References
 
@@ -352,28 +353,23 @@ theorem no_null_cancellation (sys : QualitativeProbability (Set (Fin 4)))
   rw [Pi.neg_apply, SignType.coe_neg]
   omega
 
-/-! ### Fin 3 via lexicographic extension
+/-! ### Fewer atoms by lexicographic extension
 
-A `Fin 3` system with no null atoms extends to a `Fin 4` system by adding a
-*dominant* fourth world: comparisons are decided first by membership of the
-new world, then by the restriction to the original three.  The extension
-preserves the FA axioms and the absence of null atoms, and reflects
-cancellation, so `no_null_cancellation` discharges the no-null case of
-`fa_cancellation_fin3`; null atoms reduce to `representable_fin2`.  Representability
-on `Fin 3` then follows from cancellation. -/
+A system on `Fin n` with no null atom extends to `Fin (n + 1)` by adding a *dominant* world:
+comparisons are decided first by membership of the new world, then by the restriction to the
+original ones. The extension preserves the axioms and the absence of null atoms, and reflects
+cancellation, so iterating it carries the no-null case of every size up to four to
+`no_null_cancellation`; a null atom reduces to one atom fewer. -/
 
-/-- `restrict3 A` restricts a `Fin 4` proposition to the first three worlds. -/
-def restrict3 (A : Set (Fin 4)) : Set (Fin 3) := {i | Fin.castSucc i ∈ A}
-
-/-- The lexicographic extension of a `Fin 3` system to `Fin 4`, in which the new world
-    `Fin.last 3` dominates and ties break by the restriction. -/
-def QualitativeProbability.extendLex (sys : QualitativeProbability (Set (Fin 3))) :
-    QualitativeProbability (Set (Fin 4)) where
-  le A B := (Fin.last 3 ∈ B ∧ Fin.last 3 ∉ A) ∨
-    ((Fin.last 3 ∈ B ↔ Fin.last 3 ∈ A) ∧ sys.le (restrict3 A) (restrict3 B))
+/-- `sys.extendLex` extends a system on `Fin n` to `Fin (n + 1)` by a new world `Fin.last n`
+    that dominates, with ties broken by the restriction along `Fin.castSucc`. -/
+def QualitativeProbability.extendLex {n : ℕ} (sys : QualitativeProbability (Set (Fin n))) :
+    QualitativeProbability (Set (Fin (n + 1))) where
+  le A B := (Fin.last n ∈ B ∧ Fin.last n ∉ A) ∨
+    ((Fin.last n ∈ B ↔ Fin.last n ∈ A) ∧ sys.le (Fin.castSucc ⁻¹' A) (Fin.castSucc ⁻¹' B))
   mono' A B hAB := by
-    by_cases hb : Fin.last 3 ∈ B
-    · by_cases ha : Fin.last 3 ∈ A
+    by_cases hb : Fin.last n ∈ B
+    · by_cases ha : Fin.last n ∈ A
       · exact Or.inr ⟨iff_of_true hb ha, sys.mono fun i hi ↦ hAB hi⟩
       · exact Or.inl ⟨hb, ha⟩
     · exact Or.inr ⟨iff_of_false hb fun h ↦ hb (hAB h), sys.mono fun i hi ↦ hAB hi⟩
@@ -382,13 +378,13 @@ def QualitativeProbability.extendLex (sys : QualitativeProbability (Set (Fin 3))
     · exact h3
     · exact hiff.mpr trivial
   total A B := by
-    by_cases ha : Fin.last 3 ∈ A <;> by_cases hb : Fin.last 3 ∈ B
-    · rcases sys.total (restrict3 A) (restrict3 B) with h | h
+    by_cases ha : Fin.last n ∈ A <;> by_cases hb : Fin.last n ∈ B
+    · rcases sys.total (Fin.castSucc ⁻¹' A) (Fin.castSucc ⁻¹' B) with h | h
       · exact Or.inl (Or.inr ⟨iff_of_true hb ha, h⟩)
       · exact Or.inr (Or.inr ⟨iff_of_true ha hb, h⟩)
     · exact Or.inr (Or.inl ⟨ha, hb⟩)
     · exact Or.inl (Or.inl ⟨hb, ha⟩)
-    · rcases sys.total (restrict3 A) (restrict3 B) with h | h
+    · rcases sys.total (Fin.castSucc ⁻¹' A) (Fin.castSucc ⁻¹' B) with h | h
       · exact Or.inl (Or.inr ⟨iff_of_false hb ha, h⟩)
       · exact Or.inr (Or.inr ⟨iff_of_false ha hb, h⟩)
   trans' A B C := by
@@ -398,10 +394,10 @@ def QualitativeProbability.extendLex (sys : QualitativeProbability (Set (Fin 3))
     · exact Or.inl ⟨hc, fun ha ↦ hnb (hba.mpr ha)⟩
     · exact Or.inr ⟨hcb.trans hba, sys.trans hle1 hle2⟩
   additive A B := by
-    by_cases ha : Fin.last 3 ∈ A <;> by_cases hb : Fin.last 3 ∈ B
+    by_cases ha : Fin.last n ∈ A <;> by_cases hb : Fin.last n ∈ B
     · -- tie on both sides; restriction additivity carries it
-      have hab : Fin.last 3 ∉ A \ B := fun h ↦ h.2 hb
-      have hba : Fin.last 3 ∉ B \ A := fun h ↦ h.2 ha
+      have hab : Fin.last n ∉ A \ B := fun h ↦ h.2 hb
+      have hba : Fin.last n ∉ B \ A := fun h ↦ h.2 ha
       constructor
       · rintro (⟨-, hna⟩ | ⟨-, hle⟩)
         · exact absurd ha hna
@@ -420,8 +416,8 @@ def QualitativeProbability.extendLex (sys : QualitativeProbability (Set (Fin 3))
     · -- the new world sits in `B \ A`: both sides true by dominance
       exact iff_of_true (Or.inl ⟨hb, ha⟩) (Or.inl ⟨⟨hb, ha⟩, fun h ↦ ha h.1⟩)
     · -- the new world is absent everywhere; restriction additivity again
-      have hab : Fin.last 3 ∉ A \ B := fun h ↦ ha h.1
-      have hba : Fin.last 3 ∉ B \ A := fun h ↦ hb h.1
+      have hab : Fin.last n ∉ A \ B := fun h ↦ ha h.1
+      have hba : Fin.last n ∉ B \ A := fun h ↦ hb h.1
       constructor
       · rintro (⟨h3, -⟩ | ⟨-, hle⟩)
         · exact absurd h3 hb
@@ -430,57 +426,59 @@ def QualitativeProbability.extendLex (sys : QualitativeProbability (Set (Fin 3))
         · exact absurd h3 hba
         · exact Or.inr ⟨iff_of_false hb ha, (sys.additive _ _).mpr hle⟩
 
+section Extend
+
+variable {n : ℕ}
+
 /-- The extension preserves the absence of null atoms. -/
-private lemma extendLex_no_null (sys : QualitativeProbability (Set (Fin 3)))
-    (hnull : ∀ i : Fin 3, ¬sys.ge ∅ {i}) :
-    ∀ j : Fin 4, ¬(QualitativeProbability.extendLex sys).ge ∅ {j} := by
-  refine Fin.lastCases ?_ ?_
+private lemma extendLex_no_null (sys : QualitativeProbability (Set (Fin n)))
+    (hnull : ∀ i, ¬sys.ge ∅ {i}) : ∀ j, ¬sys.extendLex.ge ∅ {j} := by
+  refine Fin.lastCases ?_ fun i ↦ ?_
   · rintro (⟨h3, -⟩ | ⟨hiff, -⟩)
     · exact h3
     · exact hiff.mpr rfl
-  · intro i
-    rintro (⟨h3, -⟩ | ⟨-, hge⟩)
+  · rintro (⟨h3, -⟩ | ⟨-, hge⟩)
     · exact h3
     · refine hnull i ?_
-      have he : restrict3 {Fin.castSucc i} = {i} := by
-        ext k; simp [restrict3, Fin.castSucc_inj, eq_comm]
-      rwa [show restrict3 ∅ = ∅ from rfl, he] at hge
+      have he : Fin.castSucc ⁻¹' {Fin.castSucc i} = ({i} : Set (Fin n)) := by
+        ext k; simp [Fin.castSucc_inj]
+      rwa [Set.preimage_empty, he] at hge
 
-/-- `embed v` extends a `Fin 3` comparison to `Fin 4`, neutral at the new world. -/
-private def embed (v : Fin 3 → SignType) : Fin 4 → SignType := Fin.snoc v 0
+/-- `embed v` extends a comparison on `Fin n` to `Fin (n + 1)`, neutral at the new world. -/
+private def embed (v : Fin n → SignType) : Fin (n + 1) → SignType := Fin.snoc v 0
 
-private lemma restrict3_posSupport_embed (v : Fin 3 → SignType) :
-    restrict3 (posSupport (embed v)) = posSupport v := by
-  ext i; simp [restrict3, embed]
+private lemma preimage_posSupport_embed (v : Fin n → SignType) :
+    Fin.castSucc ⁻¹' posSupport (embed v) = posSupport v := by
+  ext i; simp [embed]
 
-private lemma restrict3_negSupport_embed (v : Fin 3 → SignType) :
-    restrict3 (negSupport (embed v)) = negSupport v := by
-  ext i; simp [restrict3, embed]
+private lemma preimage_negSupport_embed (v : Fin n → SignType) :
+    Fin.castSucc ⁻¹' negSupport (embed v) = negSupport v := by
+  ext i; simp [embed]
 
-private lemma last_notMem_posSupport_embed (v : Fin 3 → SignType) :
-    Fin.last 3 ∉ posSupport (embed v) := by
-  show ¬embed v (Fin.last 3) = 1
+private lemma last_notMem_posSupport_embed (v : Fin n → SignType) :
+    Fin.last n ∉ posSupport (embed v) := by
+  show ¬embed v (Fin.last n) = 1
   rw [embed, Fin.snoc_last]; decide
 
-private lemma last_notMem_negSupport_embed (v : Fin 3 → SignType) :
-    Fin.last 3 ∉ negSupport (embed v) := by
-  show ¬embed v (Fin.last 3) = -1
+private lemma last_notMem_negSupport_embed (v : Fin n → SignType) :
+    Fin.last n ∉ negSupport (embed v) := by
+  show ¬embed v (Fin.last n) = -1
   rw [embed, Fin.snoc_last]; decide
 
 /-- Cancellation transfers back along the lexicographic extension. -/
-private theorem cancellation_extendLex (sys : QualitativeProbability (Set (Fin 3)))
-    (h : Cancellation (QualitativeProbability.extendLex sys).ge) : Cancellation sys.ge := by
+private theorem cancellation_extendLex (sys : QualitativeProbability (Set (Fin n)))
+    (h : Cancellation sys.extendLex.ge) : Cancellation sys.ge := by
   intro L hvalid hsum v hv
   have key := h (L.map embed) ?_ ?_ (embed v) (List.mem_map_of_mem hv)
   · -- strictness transfers back
     rcases key with ⟨h3, -⟩ | ⟨-, hge⟩
     · exact absurd h3 (last_notMem_negSupport_embed v)
-    · rwa [restrict3_posSupport_embed, restrict3_negSupport_embed] at hge
+    · rwa [preimage_posSupport_embed, preimage_negSupport_embed] at hge
   · intro w hw
     obtain ⟨w, hwL, rfl⟩ := List.mem_map.mp hw
     refine Or.inr ⟨iff_of_false (last_notMem_posSupport_embed w)
       (last_notMem_negSupport_embed w), ?_⟩
-    rw [restrict3_posSupport_embed, restrict3_negSupport_embed]
+    rw [preimage_posSupport_embed, preimage_negSupport_embed]
     exact hvalid w hwL
   · -- the new coordinate vanishes; the old ones are unchanged
     funext i
@@ -488,38 +486,45 @@ private theorem cancellation_extendLex (sys : QualitativeProbability (Set (Fin 3
     · rw [comparisonSum, List.map_map]
       refine List.sum_eq_zero fun x hx ↦ ?_
       obtain ⟨w, -, rfl⟩ := List.mem_map.mp hx
-      show ((embed w (Fin.last 3) : ℤ)) = 0
+      show ((embed w (Fin.last n) : ℤ)) = 0
       rw [embed, Fin.snoc_last]; rfl
     · simpa [comparisonSum, List.map_map, Function.comp_def, embed] using congrFun hsum i
 
-/-- Every FA system on `Fin 3` satisfies cancellation. A null atom reduces to `Fin 2`
-    representability; the no-null case extends lexicographically into `Fin 4` and pulls back
-    through `no_null_cancellation`. -/
-theorem fa_cancellation_fin3 (sys : QualitativeProbability (Set (Fin 3))) :
+/-- A system on at most four atoms with no null atom satisfies cancellation, since its
+    lexicographic extension to `Fin 4` falls to `no_null_cancellation`. -/
+private theorem no_null_cancellation_of_le_four (hn : n ≤ 4)
+    (sys : QualitativeProbability (Set (Fin n))) (hnull : ∀ i, ¬sys.ge ∅ {i}) :
     Cancellation sys.ge := by
-  by_cases h : ∃ j, sys.ge ∅ {j}
-  · obtain ⟨j, hj⟩ := h
-    exact cancellation_of_null_atom sys hj representable_fin2
-  · push Not at h
+  induction h : 4 - n generalizing n with
+  | zero =>
+    obtain rfl : n = 4 := by omega
+    exact no_null_cancellation sys hnull
+  | succ k ih =>
     exact cancellation_extendLex sys
-      (no_null_cancellation (QualitativeProbability.extendLex sys) (extendLex_no_null sys h))
+      (ih (by omega) sys.extendLex (extendLex_no_null sys hnull) (by omega))
 
-/-- Every FA system on `Fin 3` is representable, by Scott cancellation. -/
-theorem representable_fin3 (sys : QualitativeProbability (Set (Fin 3))) : Representable sys :=
-  cancellation_implies_representable sys (fa_cancellation_fin3 sys)
+end Extend
 
-/-- Every FA system on `Fin 4` satisfies cancellation. A null atom reduces to `Fin 3`; the
-    no-null case is the merge reduction `no_null_cancellation`. -/
-theorem fa_cancellation_fin4 (sys : QualitativeProbability (Set (Fin 4))) :
-    Cancellation sys.ge := by
-  by_cases h : ∃ j, sys.ge ∅ {j}
-  · obtain ⟨j, hj⟩ := h
-    exact cancellation_of_null_atom sys hj representable_fin3
-  · push Not at h
-    exact no_null_cancellation sys h
+/-- Every FA system on at most four atoms satisfies cancellation. A null atom reduces to one atom
+    fewer (`cancellation_of_null_atom`); otherwise the lexicographic extension to `Fin 4`
+    applies. -/
+theorem cancellation_of_le_four : ∀ {n : ℕ}, n ≤ 4 →
+    ∀ sys : QualitativeProbability (Set (Fin n)), Cancellation sys.ge
+  | 0, _, sys => sys.elim0
+  | 1, hn, sys => no_null_cancellation_of_le_four hn sys fun i hi ↦ by
+      obtain ⟨j, hj⟩ := sys.exists_singleton_not_le_empty
+      exact hj (Subsingleton.elim i j ▸ hi)
+  | n + 2, hn, sys => by
+      by_cases h : ∃ j, sys.ge ∅ {j}
+      · obtain ⟨j, hj⟩ := h
+        exact cancellation_of_null_atom sys hj fun sys' ↦
+          cancellation_implies_representable sys' (cancellation_of_le_four (by omega) sys')
+      · push Not at h
+        exact no_null_cancellation_of_le_four hn sys h
 
-/-- Every FA system on `Fin 4` is representable, by Scott cancellation. -/
-theorem representable_fin4 (sys : QualitativeProbability (Set (Fin 4))) : Representable sys :=
-  cancellation_implies_representable sys (fa_cancellation_fin4 sys)
+/-- Every FA system on at most four atoms is representable, by Scott cancellation. -/
+theorem representable_of_le_four {n : ℕ} (hn : n ≤ 4)
+    (sys : QualitativeProbability (Set (Fin n))) : Representable sys :=
+  cancellation_implies_representable sys (cancellation_of_le_four hn sys)
 
 end ComparativeProbability
