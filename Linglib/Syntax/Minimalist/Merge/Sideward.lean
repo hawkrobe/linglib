@@ -31,7 +31,7 @@ For each case 2b, 3a, 3b:
   matching multiset to a singleton `{p0}`.
 - `mergeOp_sideward_X` (residual): induction over residual workspace
   `Fhat` via `mergeOp_factor_out_singleton` (from `Merge.External`),
-  under `CutAvoidingForest`.
+  for residual components having neither operand as a subtree.
 
 ## References
 
@@ -266,7 +266,7 @@ theorem mergeOp_sideward_2b {R : Type*} [CommSemiring R]
     (h_T_j_no_T_i : ∀ p ∈ cutSummandsN T_j, T_i ∉ p.1)
     (h_distinct : T_i ≠ T_j)
     (h_β_ne_Tj : β ≠ T_j)
-    (h_F_disjoint : CutAvoidingForest ({T_i, β} : Forest (UnorderedTree α)) Fhat) :
+    (h_F_disjoint : ∀ T ∈ Fhat, Disjoint ({T_i, β} : Forest (UnorderedTree α)) T.subtrees) :
     mergeOp (R := R) lbl T_i β (of' (({T_i, T_j} : Forest (UnorderedTree α)) + Fhat))
       = of' (({UnorderedTree.node lbl {T_i, β}, T_j_q} : Forest (UnorderedTree α)) + Fhat) := by
   induction Fhat using Multiset.induction with
@@ -275,9 +275,11 @@ theorem mergeOp_sideward_2b {R : Type*} [CommSemiring R]
     exact mergeOp_sideward_2b_pair lbl T_i T_j β T_j_q p0 h_filter h_remainder
       h_T_j_no_T_i h_distinct h_β_ne_Tj
   | cons T Fhat' ih =>
-    have hT_S := h_F_disjoint.head T_i (by simp)
-    have hT_S' := h_F_disjoint.head β (by simp)
-    have ih' := ih h_F_disjoint.of_cons
+    have hT_S : T_i ∉ T.subtrees :=
+      Multiset.disjoint_left.mp (h_F_disjoint T (Multiset.mem_cons_self _ _)) (by simp)
+    have hT_S' : β ∉ T.subtrees :=
+      Multiset.disjoint_left.mp (h_F_disjoint T (Multiset.mem_cons_self _ _)) (by simp)
+    have ih' := ih fun U hU ↦ h_F_disjoint U (Multiset.mem_cons_of_mem hU)
     have h_lhs_eq : ({T_i, T_j} : Forest (UnorderedTree α)) + T ::ₘ Fhat'
                   = ({T} : Forest (UnorderedTree α))
                     + (({T_i, T_j} : Forest (UnorderedTree α)) + Fhat') := by
@@ -435,7 +437,8 @@ theorem mergeOp_sideward_3b_general_pair {R : Type*} [CommSemiring R]
             · have h_target_zero :
                   Multiset.count x ({α_t, β} : Forest (UnorderedTree α)) = 0 := by
                 show Multiset.count x (α_t ::ₘ ({β} : Forest (UnorderedTree α))) = 0
-                rw [Multiset.count_cons, Multiset.count_singleton, ite_eq_right hx_α, ite_eq_right hx_β]
+                rw [Multiset.count_cons, Multiset.count_singleton,
+                    ite_eq_right hx_α, ite_eq_right hx_β]
               omega
         · apply Multiset.ext.mpr
           intro x
@@ -457,7 +460,8 @@ theorem mergeOp_sideward_3b_general_pair {R : Type*} [CommSemiring R]
             · have h_target_zero :
                   Multiset.count x ({α_t, β} : Forest (UnorderedTree α)) = 0 := by
                 show Multiset.count x (α_t ::ₘ ({β} : Forest (UnorderedTree α))) = 0
-                rw [Multiset.count_cons, Multiset.count_singleton, ite_eq_right hx_α, ite_eq_right hx_β]
+                rw [Multiset.count_cons, Multiset.count_singleton,
+                    ite_eq_right hx_α, ite_eq_right hx_β]
               omega
       rw [ite_eq_left h_split]
     · rw [ite_eq_right h_sum,
@@ -508,9 +512,10 @@ theorem mergeOp_sideward_3b {R : Type*} [CommSemiring R]
     (h_α_ne_Ti : α_t ≠ T_i) (h_α_ne_Tj : α_t ≠ T_j)
     (h_β_ne_Ti : β ≠ T_i) (h_β_ne_Tj : β ≠ T_j)
     (h_α_ne_β : α_t ≠ β)
-    (h_F_disjoint : CutAvoidingForest ({α_t, β} : Forest (UnorderedTree α)) Fhat) :
+    (h_F_disjoint : ∀ T ∈ Fhat, Disjoint ({α_t, β} : Forest (UnorderedTree α)) T.subtrees) :
     mergeOp (R := R) lbl α_t β (of' (({T_i, T_j} : Forest (UnorderedTree α)) + Fhat))
-      = of' (({UnorderedTree.node lbl {α_t, β}, T_i_q, T_j_q} : Forest (UnorderedTree α)) + Fhat) := by
+      = of' (({UnorderedTree.node lbl {α_t, β}, T_i_q, T_j_q} : Forest (UnorderedTree α))
+          + Fhat) := by
   induction Fhat using Multiset.induction with
   | empty =>
     rw [add_zero, add_zero]
@@ -518,9 +523,11 @@ theorem mergeOp_sideward_3b {R : Type*} [CommSemiring R]
       h_remainder_α h_remainder_β h_T_i_no_β h_T_j_no_α h_α_ne_Ti h_α_ne_Tj h_β_ne_Ti
       h_β_ne_Tj h_α_ne_β
   | cons T Fhat' ih =>
-    have hT_S := h_F_disjoint.head α_t (by simp)
-    have hT_S' := h_F_disjoint.head β (by simp)
-    have ih' := ih h_F_disjoint.of_cons
+    have hT_S : α_t ∉ T.subtrees :=
+      Multiset.disjoint_left.mp (h_F_disjoint T (Multiset.mem_cons_self _ _)) (by simp)
+    have hT_S' : β ∉ T.subtrees :=
+      Multiset.disjoint_left.mp (h_F_disjoint T (Multiset.mem_cons_self _ _)) (by simp)
+    have ih' := ih fun U hU ↦ h_F_disjoint U (Multiset.mem_cons_of_mem hU)
     have h_lhs_eq : ({T_i, T_j} : Forest (UnorderedTree α)) + T ::ₘ Fhat'
                   = ({T} : Forest (UnorderedTree α))
                     + (({T_i, T_j} : Forest (UnorderedTree α)) + Fhat') := by
@@ -528,7 +535,8 @@ theorem mergeOp_sideward_3b {R : Type*} [CommSemiring R]
     have h_rhs_eq :
         ({UnorderedTree.node lbl {α_t, β}, T_i_q, T_j_q} : Forest (UnorderedTree α)) + T ::ₘ Fhat'
           = ({T} : Forest (UnorderedTree α))
-            + (({UnorderedTree.node lbl {α_t, β}, T_i_q, T_j_q} : Forest (UnorderedTree α)) + Fhat') := by
+            + (({UnorderedTree.node lbl {α_t, β}, T_i_q, T_j_q} : Forest (UnorderedTree α))
+                + Fhat') := by
       rw [show T ::ₘ Fhat' = ({T} : Forest (UnorderedTree α)) + Fhat' from rfl]; abel
     rw [h_lhs_eq, h_rhs_eq, of'_add (R := R) ({T} : Forest (UnorderedTree α)) _,
         of'_add (R := R) ({T} : Forest (UnorderedTree α)) _,
@@ -558,11 +566,13 @@ theorem mergeOp_sideward_3a_general_pair {R : Type*} [CommSemiring R]
   -- Prim term vanishes (T_i ∉ {α_t, β}).
   rw [show mergePost (R := R) (α := α) lbl α_t β
         (ofTree T_i ⊗ₜ[R] (1 : ConnesKreimer R (UnorderedTree α))) = 0 from by
-      rw [show (ofTree T_i : ConnesKreimer R (UnorderedTree α)) = of' ({T_i} : Forest (UnorderedTree α))
+      rw [show (ofTree T_i : ConnesKreimer R (UnorderedTree α))
+          = of' ({T_i} : Forest (UnorderedTree α))
             from rfl, mergePost_basis_tensor, ite_eq_right]
       intro h_eq
       have h_T_i_mem : T_i ∈ ({T_i} : Forest (UnorderedTree α)) := Multiset.mem_singleton.mpr rfl
-      rw [h_eq, show ({α_t, β} : Forest (UnorderedTree α)) = α_t ::ₘ ({β} : Forest (UnorderedTree α))
+      rw [h_eq, show ({α_t, β} : Forest (UnorderedTree α))
+          = α_t ::ₘ ({β} : Forest (UnorderedTree α))
             from rfl, Multiset.mem_cons, Multiset.mem_singleton] at h_T_i_mem
       rcases h_T_i_mem with h | h
       · exact h_α_ne_Ti h.symm
@@ -574,7 +584,8 @@ theorem mergeOp_sideward_3a_general_pair {R : Type*} [CommSemiring R]
       (of' ({UnorderedTree.node lbl {α_t, β}} : Forest (UnorderedTree α))))
   show mergePost (R := R) (α := α) lbl α_t β (of' (R := R) p.1 ⊗ₜ[R] ofTree p.2)
     = if p.1 = ({α_t, β} : Forest (UnorderedTree α))
-        then of' ({UnorderedTree.node lbl {α_t, β}} : Forest (UnorderedTree α)) * ofTree (R := R) p.2
+        then of' ({UnorderedTree.node lbl {α_t, β}} : Forest (UnorderedTree α))
+            * ofTree (R := R) p.2
         else 0
   rw [mergePost_basis_tensor]
 
@@ -603,7 +614,7 @@ theorem mergeOp_sideward_3a {R : Type*} [CommSemiring R]
     (h_filter : matchingTwoEdgeCutsN T_i α_t β = {p0})
     (h_remainder : p0.2 = T_i_q)
     (h_α_ne_Ti : α_t ≠ T_i) (h_β_ne_Ti : β ≠ T_i)
-    (h_F_disjoint : CutAvoidingForest ({α_t, β} : Forest (UnorderedTree α)) Fhat) :
+    (h_F_disjoint : ∀ T ∈ Fhat, Disjoint ({α_t, β} : Forest (UnorderedTree α)) T.subtrees) :
     mergeOp (R := R) lbl α_t β (of' (({T_i} : Forest (UnorderedTree α)) + Fhat))
       = of' (({UnorderedTree.node lbl {α_t, β}, T_i_q} : Forest (UnorderedTree α)) + Fhat) := by
   induction Fhat using Multiset.induction with
@@ -612,16 +623,20 @@ theorem mergeOp_sideward_3a {R : Type*} [CommSemiring R]
     exact mergeOp_sideward_3a_pair lbl T_i α_t β T_i_q p0 h_filter h_remainder
       h_α_ne_Ti h_β_ne_Ti
   | cons T Fhat' ih =>
-    have hT_S := h_F_disjoint.head α_t (by simp)
-    have hT_S' := h_F_disjoint.head β (by simp)
-    have ih' := ih h_F_disjoint.of_cons
+    have hT_S : α_t ∉ T.subtrees :=
+      Multiset.disjoint_left.mp (h_F_disjoint T (Multiset.mem_cons_self _ _)) (by simp)
+    have hT_S' : β ∉ T.subtrees :=
+      Multiset.disjoint_left.mp (h_F_disjoint T (Multiset.mem_cons_self _ _)) (by simp)
+    have ih' := ih fun U hU ↦ h_F_disjoint U (Multiset.mem_cons_of_mem hU)
     have h_lhs_eq : ({T_i} : Forest (UnorderedTree α)) + T ::ₘ Fhat'
                   = ({T} : Forest (UnorderedTree α))
                     + (({T_i} : Forest (UnorderedTree α)) + Fhat') := by
       rw [show T ::ₘ Fhat' = ({T} : Forest (UnorderedTree α)) + Fhat' from rfl]; abel
-    have h_rhs_eq : ({UnorderedTree.node lbl {α_t, β}, T_i_q} : Forest (UnorderedTree α)) + T ::ₘ Fhat'
+    have h_rhs_eq : ({UnorderedTree.node lbl {α_t, β}, T_i_q} : Forest (UnorderedTree α))
+        + T ::ₘ Fhat'
                   = ({T} : Forest (UnorderedTree α))
-                    + (({UnorderedTree.node lbl {α_t, β}, T_i_q} : Forest (UnorderedTree α)) + Fhat') := by
+                    + (({UnorderedTree.node lbl {α_t, β}, T_i_q} : Forest (UnorderedTree α))
+                        + Fhat') := by
       rw [show T ::ₘ Fhat' = ({T} : Forest (UnorderedTree α)) + Fhat' from rfl]; abel
     rw [h_lhs_eq, h_rhs_eq, of'_add (R := R) ({T} : Forest (UnorderedTree α)) _,
         of'_add (R := R) ({T} : Forest (UnorderedTree α)) _,

@@ -47,7 +47,6 @@ import Linglib.Core.Combinatorics.RootedTree.Aut
 import Linglib.Core.Combinatorics.RootedTree.Conservation
 import Linglib.Core.Combinatorics.RootedTree.ContractUnary
 import Linglib.Core.Combinatorics.RootedTree.Cut
-import Linglib.Core.Combinatorics.RootedTree.CutAvoiding
 import Linglib.Core.Combinatorics.SetFamily.FourFunctions
 import Linglib.Core.Computability.Bimachine
 import Linglib.Core.Computability.ContextFreeGrammar.InterRegular
