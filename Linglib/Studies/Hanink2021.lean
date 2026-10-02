@@ -13,11 +13,11 @@ head idx below D that Washo pronounces as *gi ~ ge*: in third-person pronouns (1
 demonstratives (2), and at the edge of internally headed relative clauses (3), which are DPs
 over a nominalized CP (40). The index has two meanings (80): as a variable it is the property of
 being the antecedent, so a familiar DP is D's ι over the restriction modified by the index (15),
-which is the substrate's anaphoric description, `denote_anaphoric_eq_russellIota?`, with the
+which is the substrate's anaphoric description, `denote_anaphoric_eq_iota`, with the
 deixis of *hádi* and *wídi* a presupposition on D (34); as a binder it turns the open proposition
 of the embedded clause, whose semantic head is a restricted variable (69), into a property
 without movement, the substrate's abstraction `lambdaAbsG`, so that the relative denotes what an
-externally headed relative denotes by raising and intersection, `russellIota?_idxBind`, (72) and
+externally headed relative denotes by raising and intersection, `iota_idxBind`, (72) and
 (60). The Prohibition against Vacuous Binding (86) leaves the binder meaning to complements with
 a free variable: under a perception verb the nominalization has none, so the index is a
 variable and the clause a familiar DP over a property of events (106). Washo relatives are
@@ -34,7 +34,7 @@ anaphoric bare definites (115) even under dependent case (22). The examples are 
 ## Implementation notes
 
 The index is the substrate's assignment index, so the variable meaning is `idxVar` and the
-binder meaning `lambdaAbsG`; D's ι is `russellIota?`, whose `∃!` presupposition is (34a)'s.
+binder meaning `lambdaAbsG`; D's ι is `iota`, whose `∃!` presupposition is (34a)'s.
 The R head of demonstratives (35) is the identity relation, so it is not represented. Ellipsis
 of a pronoun's NP is recorded as the complement lacking the feature that makes an NP overt
 (section 6.3). The quantified heads of section 5.1 and the German relative-clause parallel of
@@ -79,14 +79,14 @@ abbrev idxBind (n : ℕ) (φ : Assignment E → Prop) : Assignment E → E → P
 /-- A familiar DP, D's ι over the restriction modified by the index as a variable ((15), (35b),
 (97) and (106)), is the substrate's anaphoric description, which denotes the antecedent if it
 satisfies the restriction. -/
-theorem denote_anaphoric_eq_russellIota? (R : Restrictor E W) (d : ℕ) (g : Assignment E) (s : W) :
-    ⟦Description.anaphoric R d⟧ g s = russellIota? (fun x ↦ R g s x ∧ idxVar d g x) := rfl
+theorem denote_anaphoric_eq_iota (R : Restrictor E W) (d : ℕ) (g : Assignment E) (s : W) :
+    ⟦Description.anaphoric R d⟧ g s = iota (fun x ↦ R g s x ∧ idxVar d g x) := rfl
 
 /-- The demonstrative D heads *hádi* and *wídi* of (34b) and (34c) add a deictic presupposition
 and otherwise contribute ι, so a demonstrative refers as the anaphoric DP does. -/
-theorem denote_demonstrative_eq_russellIota? (R : Restrictor E W) (deictic : Reference.Deixis)
+theorem denote_demonstrative_eq_iota (R : Restrictor E W) (deictic : Reference.Deixis)
     (d : ℕ) (g : Assignment E) (s : W) :
-    ⟦Description.demonstrative R deictic d⟧ g s = russellIota? (fun x ↦ R g s x ∧ idxVar d g x) :=
+    ⟦Description.demonstrative R deictic d⟧ g s = iota (fun x ↦ R g s x ∧ idxVar d g x) :=
   rfl
 
 /-! ### Internally headed relatives, section 4 -/
@@ -107,9 +107,9 @@ theorem idxBind_openClause (n : ℕ) (P : E → Prop) (ψ : Assignment E → Pro
 
 /-- The silent D over the bound clause, (72), refers to what the definite over the externally
 headed relative, (60), refers to, the same meaning reached by different steps. -/
-theorem russellIota?_idxBind (n : ℕ) (P : E → Prop) (ψ : Assignment E → Prop) (g : Assignment E) :
-    russellIota? (idxBind n (openClause n P ψ) g) =
-      russellIota? (fun x ↦ P x ∧ lambdaAbsG n ψ g x) := by
+theorem iota_idxBind (n : ℕ) (P : E → Prop) (ψ : Assignment E → Prop) (g : Assignment E) :
+    iota (idxBind n (openClause n P ψ) g) =
+      iota (fun x ↦ P x ∧ lambdaAbsG n ψ g x) := by
   rw [idxBind_openClause]
 
 /-- Without a free occurrence of the index, when `φ` depends only on the other indices, the

@@ -169,7 +169,7 @@ theorem _root_.Article.denotations_realized (a : Article) (idx : ℕ)
 /-- A possessive determiner's denotation as a `Nominal`: the definite
 description selecting the unique satisfier of the possessee restrictor `R` that
 stands in `rel` to the `possessor` — the `Description.possessive` selector
-(`russellIota?` of `R ∧ rel possessor ·`). The intrinsic presupposition is
+(`iota` of `R ∧ rel possessor ·`). The intrinsic presupposition is
 vacuous; the definite's only presupposition is definedness, exposed as the
 selector returning `some`.
 
@@ -203,7 +203,7 @@ theorem _root_.PossessiveDeterminer.denote_realized (p : PossessiveDeterminer) :
 
 /-! ### Unification with the possessive description
 
-The possessive determiner's denotation (`Description.possessive`/`russellIota?`) and the
+The possessive determiner's denotation (`Description.possessive`/`iota`) and the
 `Possession` description are not two analyses — they are the same construction. The
 determiner's restrictor *is* Barker's `Possession.π` of the noun predicate and the possession
 relation, applied to the possessor, and its definedness presupposition *is* the description's
@@ -219,7 +219,7 @@ and the possession relation `rel` at the situation, applied to the possessor: th
 construction. -/
 theorem Description.denote_possessive_eq_pi :
     ⟦Description.possessive R possessor rel⟧ g s
-      = russellIota? fun x ↦ Possession.π (fun y s' ↦ R g s' y) (fun a b s' ↦ rel g s' a b)
+      = iota fun x ↦ Possession.π (fun y s' ↦ R g s' y) (fun a b s' ↦ rel g s' a b)
           (possessor g s) x s :=
   rfl
 

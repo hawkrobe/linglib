@@ -63,12 +63,13 @@ def krifkaScrambled : Prop := GQ.some (books ()) readᶜ
 
 /-- On the kinds approach (38), the bare plural shifts to its kind, and derived kind predication
 introduces the existential over its instances below negation. -/
-def chierchiaUnscrambled : Prop := ¬ GQ.some ((iota? (books ())).elim (∅ : Set _) Set.Iic) read
+def chierchiaUnscrambled : Prop :=
+  ¬ GQ.some ((iota (IsGreatest (books ()))).elim (∅ : Set _) Set.Iic) read
 
 /-- On the kinds approach with the kind scrambled over negation, the kind binds a kind-level
 trace below negation. -/
 def chierchiaScrambled : Prop :=
-  NP.individual (fun s ↦ iota? (books s))
+  NP.individual (fun s ↦ iota (IsGreatest (books s)))
     (fun k : Unit → Option (Individual Book) ↦ GQ.some ((k ()).elim (∅ : Set _) Set.Iic) read)ᶜ
 
 /-- Scrambling a kind over negation changes nothing, since a kind takes no scope, as a name
@@ -88,8 +89,8 @@ theorem books_example : krifkaScrambled ∧ ¬ krifkaUnscrambled ∧ ¬ chierchi
   refine ⟨⟨Individual.atom .unfinished, trivial, not_read_unfinished⟩,
     not_not.2 ⟨Individual.atom .finished, trivial, read_finished⟩, ?_⟩
   rw [chierchiaScrambled_iff, chierchiaUnscrambled, not_not]
-  have hd : iota? (books ()) = some ⟨Set.univ, Set.univ_nonempty⟩ :=
-    iota?_eq_some_iff.2 ⟨trivial, fun x _ ↦ (Set.subset_univ x.1 : x ≤ _)⟩
+  have hd : iota (IsGreatest (books ())) = some ⟨Set.univ, Set.univ_nonempty⟩ :=
+    iota_isGreatest_eq_some_iff.2 ⟨trivial, fun x _ ↦ (Set.subset_univ x.1 : x ≤ _)⟩
   rw [hd]
   exact ⟨Individual.atom .finished, (Set.subset_univ _ : Individual.atom Book.finished ≤ _),
     read_finished⟩

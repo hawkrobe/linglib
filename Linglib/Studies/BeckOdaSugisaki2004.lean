@@ -125,11 +125,11 @@ theorem pos_comparedTo (μ : Entity → D) (x y : Entity) :
 
 /-- `theC C P` is the unique `P`-individual of the contextual domain `C` (54). -/
 noncomputable def theC (C : Set Entity) (P : Entity → Prop) : Option Entity :=
-  russellIota? fun x => x ∈ C ∧ P x
+  iota fun x => x ∈ C ∧ P x
 
 theorem theC_eq_some_iff (C : Set Entity) (P : Entity → Prop) (y : Entity) :
     theC C P = some y ↔ (y ∈ C ∧ P y) ∧ ∀ z, z ∈ C → P z → z = y := by
-  simp only [theC, russellIota?_eq_some_iff, and_imp]
+  simp only [theC, iota_eq_some_iff, and_imp]
 
 /-- If `Y` is the maximal `P`-plurality, then the greatest `n` for which some `P`-plurality
 has at least `n` members is the cardinality of `Y` (41a). -/

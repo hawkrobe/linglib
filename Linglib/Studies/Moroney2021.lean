@@ -153,13 +153,13 @@ theorem maa_cumulative_not_divisive : CUM isDog ∧ ¬ LacksMinimalParts isDog :
 /-- The bare definite description: the unique referent satisfying the restrictor, the
 uniqueness reading available to Shan bare nouns. -/
 noncomputable def bareDefinite {E : Type*} (restrictor : E → Prop) : Option E :=
-  russellIota? restrictor
+  iota restrictor
 
 /-- The demonstrative denotation of Moroney's (147)–(148): the unique referent satisfying the
 restrictor and the demonstrative's spatial content, `ιx[P(x) ∧ CLOSE.TO.SPEAKER(x)]`. -/
 noncomputable def demDenotation {E : Type*} (d : DemonstrativeDeterminer) (restrictor : E → Prop)
     (spatialPred : Deixis → E → Prop) : Option E :=
-  russellIota? fun x ↦ restrictor x ∧ spatialPred d.deictic x
+  iota fun x ↦ restrictor x ∧ spatialPred d.deictic x
 
 /-- The demonstrative refers to the bare definite's referent whenever that referent has the
 demonstrative's spatial property, so *nâj/nân* are optional wherever the bare noun already
@@ -168,7 +168,7 @@ theorem demDenotation_eq_some_of_bareDefinite {E : Type*} {d : DemonstrativeDete
     {restrictor : E → Prop} {spatialPred : Deixis → E → Prop} {e : E}
     (h : bareDefinite restrictor = some e) (hs : spatialPred d.deictic e) :
     demDenotation d restrictor spatialPred = some e := by
-  rw [bareDefinite, russellIota?_eq_some_iff] at h
-  exact (russellIota?_eq_some_iff _).2 ⟨⟨h.1, hs⟩, fun x hx ↦ h.2 x hx.1⟩
+  rw [bareDefinite, iota_eq_some_iff] at h
+  exact (iota_eq_some_iff _).2 ⟨⟨h.1, hs⟩, fun x hx ↦ h.2 x hx.1⟩
 
 end Moroney2021

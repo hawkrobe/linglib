@@ -44,10 +44,10 @@ open Reference
 variable {W E : Type*} {φ : E → W → Prop} {w : W} {e intended : E}
 
 /-- The attributive use: at each world, the unique satisfier of the description there. -/
-noncomputable def attributive (φ : E → W → Prop) : W → Option E := fun w ↦ russellIota? (φ · w)
+noncomputable def attributive (φ : E → W → Prop) : W → Option E := fun w ↦ iota (φ · w)
 
 theorem attributive_eq_some_iff : attributive φ w = some e ↔ φ e w ∧ ∀ x, φ x w → x = e :=
-  russellIota?_eq_some_iff _
+  iota_eq_some_iff _
 
 /-- The attributive use as a nominal denotation: the selector is the pointwise iota and there
 is no presupposition beyond its definedness. -/

@@ -13,7 +13,7 @@ mappings between the three types come in inverse pairs, the paper's Figure 1: `l
 substrate's `Quantifier.NP.individual`, and `lower`, the total injection of an entity into
 its principal ultrafilter and its partial inverse; `ident` and `iota`, the singleton property
 of an entity and the unique member of a property; and `nom` and `pred`, the correlates of
-properties and entities after [chierchia-1984] (`lower_lift`, `iota_ident`). The definite
+properties and entities after [chierchia-1984] (`lower_lift`, `Reference.iota_ident`). The definite
 article has a partial entity meaning, `iota`, and a total quantifier meaning, `THE`, related
 by `THE(king') = lift(iota(king'))` whenever the latter is defined, and the predicative reading
 of *the king* is `BE(THE(king'))`, so that the three readings of Figure 2 cohere,
@@ -30,12 +30,12 @@ predicative reading having moved into the noun phrase.
 ## Implementation notes
 
 The setting is extensional, so `pred` is `ident`, `nom` and `iota` are both the Russellian
-`Reference.russellIota?`, and `THE` is `Reference.THE?`, the partial composite `lift ∘ iota`
-the paper offers as the alternative to its total, presuppositionless quantifier meaning. Fact 2
-is proved after [keenan-faltz-1985]: the homomorphism is pinned on the atom at each singleton
-property, a meet of the lifts and their complements, and monotonicity decides it everywhere
-else. The mappings to and from kinds of §3.4 onward and the analysis of the Williams
-counterexample are not formalized.
+`Reference.iota`, and `THE` is the partial composite `lift ∘ iota` the paper offers as the
+alternative to its total, presuppositionless quantifier meaning. Fact 2 is proved after
+[keenan-faltz-1985]: the homomorphism is pinned on the atom at each singleton property, a meet
+of the lifts and their complements, and monotonicity decides it everywhere else. The mappings
+to and from kinds of §3.4 onward and the analysis of the Williams counterexample are not
+formalized.
 
 ## References
 
@@ -52,40 +52,52 @@ open Quantifier Quantifier.GQ Quantifier.NP Reference
 
 variable {E : Type*} (j : E) (P : E → Prop)
 
+/-- `THE P` is the presuppositional definite article, the Montague lift of the unique `P`. -/
+noncomputable def THE : Option (NP E) := (iota P).map individual
+
+/-- `lower Q` is the entity whose Montague lift is `Q`, when `Q` is a principal ultrafilter. -/
+noncomputable def lower (Q : NP E) : Option E := iota fun j ↦ Q = individual j
+
 /-! ### Figure 1: three inverse pairs -/
 
-/-- `lower(lift(j)) = j`: `lower` inverts the total injection `lift`. -/
-theorem lower_lift : lower? (individual j) = some j :=
-  lower?_individual j
+/-- `lower` inverts the total injection `lift`, `lower(lift(j)) = j`. -/
+theorem lower_lift : lower (individual j) = some j :=
+  (iota_eq_some_iff _).2 ⟨rfl, fun _ h ↦ (individual_injective h).symm⟩
 
-/-- `iota(ident(j)) = j`: `iota` inverts the singleton map `ident`, and extensionally this is
-`nom(pred(j)) = j` as well. -/
-theorem iota_ident : russellIota? (ident j) = some j :=
-  russellIota?_ident j
-
-/-- (48): lowering a lifted entity through `BE` and `iota` returns it. -/
-theorem iota_BE_lift : russellIota? (BE (individual j)) = some j := by
-  rw [BE_individual_eq_ident]; exact russellIota?_ident j
+/-- Lowering a lifted entity through `BE` and `iota` returns it (48). -/
+theorem iota_BE_lift : iota (BE (individual j)) = some j := by
+  rw [BE_individual_eq_ident]; exact iota_ident j
 
 /-! ### Figure 2: *the king* in three types (§3.2) -/
 
+/-- The article applied to a singleton property lifts its member, `THE(ident(j)) = lift(j)`. -/
+theorem THE_ident : THE (ident j) = some (individual j) := by
+  rw [THE, iota_ident]; rfl
+
+/-- The determiner *the* is the quantifier `THE` applied to its scope. -/
+theorem the_sem_iff_THE (S : E → Prop) : the P S ↔ ∃ Q ∈ THE P, Q S :=
+  (the_sem_iff_iota P S).trans
+    ⟨fun ⟨x, hx, hS⟩ ↦ ⟨individual x, Option.map_eq_some_iff.2 ⟨x, hx, rfl⟩, hS⟩,
+      fun ⟨_, hQ, hS⟩ ↦
+        let ⟨x, hx, hxQ⟩ := Option.map_eq_some_iff.1 hQ; ⟨x, hx, (hxQ ▸ hS : individual x S)⟩⟩
+
 /-- Whenever `iota` is defined, `THE(king') = lift(iota(king'))`. -/
-theorem THE_eq_lift_iota (h : russellIota? P = some j) : THE? P = some (individual j) := by
-  simp [THE?, h]
+theorem THE_eq_lift_iota (h : iota P = some j) : THE P = some (individual j) := by
+  simp [THE, h]
 
 /-- Whenever `iota` is defined, `lower(THE(king')) = iota(king')`. -/
-theorem lower_THE (h : russellIota? P = some j) : (THE? P).bind lower? = some j := by
-  simp [THE_eq_lift_iota j P h, lower?_individual]
+theorem lower_THE (h : iota P = some j) : (THE P).bind lower = some j := by
+  simp [THE_eq_lift_iota j P h, lower_lift]
 
 /-- The predicative reading `BE(THE(king'))` is `ident(iota(king'))`: the diagram commutes. -/
-theorem BE_THE (h : russellIota? P = some j) : ∃ Q ∈ THE? P, BE Q = ident j :=
-  ⟨individual j, by simp [THE?, h], BE_individual_eq_ident j⟩
+theorem BE_THE (h : iota P = some j) : ∃ Q ∈ THE P, BE Q = ident j :=
+  ⟨individual j, by simp [THE, h], BE_individual_eq_ident j⟩
 
 /-- With exactly one king the predicative *the king* is the common noun *king*, the
 equivalence that lets the article drop in *John is (the) president* (12). -/
-theorem BE_THE_eq_of_unique (h : russellIota? P = some j) (hP : ∀ x, P x ↔ x = j) :
-    ∃ Q ∈ THE? P, BE Q = P :=
-  ⟨individual j, by simp [THE?, h],
+theorem BE_THE_eq_of_unique (h : iota P = some j) (hP : ∀ x, P x ↔ x = j) :
+    ∃ Q ∈ THE P, BE Q = P :=
+  ⟨individual j, by simp [THE, h],
     by rw [BE_individual_eq_ident]; exact funext λ x => propext (hP x).symm⟩
 
 /-! ### `A` and `BE` as natural functors (§3.3) -/
@@ -94,7 +106,7 @@ theorem BE_THE_eq_of_unique (h : russellIota? P = some j) (hP : ∀ x, P x ↔ x
 theorem BE_lift : BE (individual j) = ident j :=
   BE_individual_eq_ident j
 
-/-- Fact 2: `BE` is the unique Boolean homomorphism making Figure 3 commute; Fact 1, that it
+/-- By Fact 2, `BE` is the unique Boolean homomorphism making Figure 3 commute; Fact 1, that it
 is one, is `Quantifier.NP.beHom`. -/
 theorem BE_natural [Fintype E] [DecidableEq E] (f : BoundedLatticeHom (NP E) (E → Prop))
     (hcomm : ∀ j : E, f (individual j) = ident j) (Q : NP E) : f Q = BE Q := by
