@@ -329,6 +329,8 @@ theorem tamil_clusivity_collapsed_by_toFeatures :
 `Syntax/Agreement/ContainmentPair.lean` rejects, the author as a non-participant, which the free
 combinatorics of chapter 9 generate and the calculus fills
 (`Examples.exclusive_includes_speaker`). -/
-theorem exclusive_sign_filtered : ¬ (signOf .speakerOthers).toPair.WellFormed := by decide
+theorem exclusive_sign_filtered :
+    ¬ IsLowerSet (↑(signOf .speakerOthers).toPair : Set Agreement.ContainmentPair.Feature) := by
+  decide
 
 end Harbour2016

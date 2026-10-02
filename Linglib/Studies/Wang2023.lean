@@ -83,7 +83,8 @@ theorem not_mem_optimal_of_top_pos {C : Type*} [DecidableEq C] {candidates : Lis
 
 /-- Under Taboo » MP! every optimal candidate is the least specified cell. -/
 theorem tod_mp_only_minimal (candidates : List ContainmentPair)
-    (hWF : ∀ c ∈ candidates, c.WellFormed) (hMin : ContainmentPair.minimal ∈ candidates)
+    (hWF : ∀ c ∈ candidates, IsLowerSet (↑c : Set ContainmentPair.Feature))
+    (hMin : ContainmentPair.minimal ∈ candidates)
     (hNE : candidates ≠ []) :
     ∀ c ∈ (Tableau.ofRanking candidates [todConstraint, mpConstraint] hNE).optimal,
       c = .minimal := by
@@ -130,7 +131,8 @@ theorem tod_mp_minimal_mem_optimal (candidates : List ContainmentPair)
 /-- Taboo » MP! selects the least specified cell alone from any well-formed candidate set
 that contains it: the emergence of the semantically unmarked. -/
 theorem tod_mp_general (candidates : List ContainmentPair)
-    (hWF : ∀ c ∈ candidates, c.WellFormed) (hMin : ContainmentPair.minimal ∈ candidates)
+    (hWF : ∀ c ∈ candidates, IsLowerSet (↑c : Set ContainmentPair.Feature))
+    (hMin : ContainmentPair.minimal ∈ candidates)
     (hNE : candidates ≠ []) :
     (Tableau.ofRanking candidates [todConstraint, mpConstraint] hNE).optimal =
       {ContainmentPair.minimal} := by

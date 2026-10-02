@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 module
 
 public import Linglib.Semantics.Plurality.NumberFeatures
@@ -6,50 +11,35 @@ public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Order.UpperLower.Basic
 
 /-!
-# Feature Recursion
-[harbour-2014] [harbour-2016]
+# Feature recursion
 
-[harbour-2014] §4, [harbour-2016] Ch 6: extended number categories beyond the base three
-(singular, dual, plural) arise from **feature recursion** — reapplying
-[±minimal] to sublattice regions of the base [±atomic, ±minimal] partition.
+Harbour derives the number categories beyond singular, dual and plural by feature recursion,
+reapplying [±minimal] inside a region of the base [±atomic, ±minimal] partition. Recursion on the
+plural region gives the trial, its minimal elements (groups of three), and the greater plural;
+recursion on the non-singular region gives the unit augmented, pairs, and the augmented. Only
+[±minimal] recurses, and atoms, being singletons, cannot be partitioned further. The values a
+configuration of active features generates form a lower set of the markedness order on `Number`,
+so the implicational universals are one `IsLowerSet` statement.
 
-## The Mechanism
+## Main definitions
 
-The base partition divides the lattice of individual sums into three regions:
-- **Singular** [+atomic, +minimal]: atoms (singletons)
-- **Dual** [−atomic, +minimal]: minimal non-atoms (pairs)
-- **Plural** [−atomic, −minimal]: non-minimal non-atoms (groups of 3+)
+* `Minimalist.Phi.Recursion.Region`, `Minimalist.Phi.Recursion.RecursiveNumber`: the regions
+  recursion applies to and the categories it yields.
+* `Minimalist.Phi.Recursion.HarbourConfig`: a configuration of active features and recursions,
+  with the categories it generates.
 
-Feature recursion reapplies [±minimal] to a non-singleton region, splitting
-it in two. This operation is constrained:
-- Only [±minimal] can recurse (not [±atomic])
-- The target region must have non-trivial lattice structure — atoms are
-  singletons and cannot be further partitioned
+## Main results
 
-## Derived Categories
+* `no_singular_recursion`, `only_two_regions`: recursion applies to the dual and plural regions.
+* `categories_isLowerSet`: the generated categories form a lower set of the markedness order.
+* `sixteen_wellformed_configs`, `table3_counts_match`: the configuration space and Harbour's
+  Table 3.
 
-Recursion on **plural** (the [−atomic, −minimal] region) yields:
-- **Trial** [+minimalR]: the minimal elements of the plural region
-  (groups of exactly 3)
-- **Greater plural** [−minimalR]: non-minimal plurals (groups of 4+)
+## References
 
-Recursion on **non-singular** (the [−atomic] region, before the base
-[±minimal] split) yields:
-- **Unit augmented** [+minimalR]: the minimal non-singulars (pairs)
-- **Augmented** [−minimalR]: non-minimal non-singulars (groups of 3+)
-
-## Implicational Universals as a Lower Set
-
-The implicational universals (trial → dual → plural → singular, etc.) are
-not stipulated — they are a theorem of the feature geometry. The generated
-values form a **lower set** in the markedness partial order on `Number`
-(`Number.instPartialOrder`, `Syntax/Number/Basic.lean`): if a marked value
-is generated, all less-marked values it presupposes are also generated (§ 8).
-
-This is a lattice-theoretic property: the partial order on values is
-the presupposition ordering, and the `IsLowerSet` formulation (Mathlib)
-captures all implicational universals in a single statement.
-
+* [harbour-2014]
+* [harbour-2016]
+* [corbett-2000]
 -/
 
 @[expose] public section
@@ -60,35 +50,27 @@ open Number (Features singularF dualF pluralF)
 
 /-! ### Recursion Regions -/
 
-/-- A region of the number lattice eligible for recursion.
-
-    Only non-atomic ([−atomic]) regions have internal lattice structure
-    that supports a meaningful [±minimal] split. Atoms are singletons
-    and cannot be further partitioned. -/
+/-- A region of the number lattice eligible for recursion is non-atomic: only [−atomic] regions
+have the internal structure a [±minimal] split needs, atoms being singletons. -/
 structure Region where
   /-- The base number features defining this region. -/
   base : Features
-  /-- The base features must be well-formed. -/
-  base_wf : base.WellFormed
-  /-- The region must be non-atomic: atoms cannot be recursed. -/
+  /-- The base features pass the containment filter. -/
+  base_wf : IsLowerSet (↑base : Set Number.Feature)
+  /-- The region is non-atomic, since atoms cannot be recursed. -/
   base_nonatomic : .atomic ∉ base
   deriving DecidableEq
 
-/-- The plural region: [−atomic, −minimal]. Groups of 3 or more. -/
+/-- The plural region, [−atomic, −minimal], holds the groups of three or more. -/
 def pluralRegion : Region := ⟨pluralF, by decide, by decide⟩
 
-/-- The non-singular (dual) region: [−atomic, +minimal]. Minimal
-    non-atoms (pairs). -/
+/-- The non-singular (dual) region, [−atomic, +minimal], holds the minimal non-atoms, pairs. -/
 def dualRegion : Region := ⟨dualF, by decide, by decide⟩
 
 /-! ### Recursive Number Categories -/
 
-/-- A recursive number category: one application of [±minimal] within
-    a base region.
-
-    [harbour-2016] Ch 6: reapplying [±minimal] to a sublattice
-    region splits it into a minimal and non-minimal subregion, yielding
-    two new number categories from one base category. -/
+/-- A recursive number category applies [±minimal] once within a base region, splitting it into
+a minimal and a non-minimal subregion ([harbour-2016] chapter 6). -/
 structure RecursiveNumber where
   /-- The target region for recursion. -/
   region : Region
@@ -96,29 +78,22 @@ structure RecursiveNumber where
   isMinimalInRegion : Bool
   deriving DecidableEq
 
-/-- Trial: minimal element of the plural region.
-    The smallest groups of 3+ = groups of exactly 3. -/
+/-- The trial is the minimal part of the plural region, groups of exactly three. -/
 def trial : RecursiveNumber := ⟨pluralRegion, true⟩
 
-/-- Greater plural: non-minimal element of the plural region.
-    Groups of 4+. -/
+/-- The greater plural is the non-minimal part of the plural region, groups of four or more. -/
 def greaterPlural : RecursiveNumber := ⟨pluralRegion, false⟩
 
-/-- Unit augmented: minimal element of the non-singular region.
-    The smallest non-singulars = pairs. -/
+/-- The unit augmented is the minimal part of the non-singular region, pairs. -/
 def unitAugmented : RecursiveNumber := ⟨dualRegion, true⟩
 
-/-- Augmented: non-minimal element of the non-singular region.
-    Non-singulars that are not minimal = groups of 3+. -/
+/-- The augmented is the non-minimal part of the non-singular region, groups of three or more. -/
 def augmented : RecursiveNumber := ⟨dualRegion, false⟩
 
 /-! ### Mapping to Corbett Values -/
 
-/-- Map recursive features to [corbett-2000]'s number categories.
-
-    Recursion target determines the category:
-    - On the plural region ([−atomic, −minimal]): trial / greater plural
-    - On the non-singular region ([−atomic, +minimal]): unit augmented / augmented -/
+/-- A recursive category is one of [corbett-2000]'s number values, the trial or greater plural on
+the plural region and the unit augmented or augmented on the non-singular region. -/
 def RecursiveNumber.toNumber (r : RecursiveNumber) : Number :=
   if .minimal ∈ r.region.base then
     -- Recursion on the non-singular ([−atomic, +minimal]) region
@@ -134,12 +109,8 @@ theorem augmented_toNumber : augmented.toNumber = .augmented := by decide
 
 /-! ### Impossibility of Singular Recursion -/
 
-/-- Recursion on singular is impossible: [+atomic] regions cannot be
-    further partitioned because they're singletons.
-
-    This explains why no language has a "sub-singular" category: the
-    singular region contains only atoms, which have no internal lattice
-    structure to split via [±minimal]. -/
+/-- No region is singular, since [+atomic] regions are singletons with no structure to split,
+which is why no language has a sub-singular category. -/
 theorem no_singular_recursion : ¬∃ (r : Region), r.base = singularF := by
   intro ⟨r, hr⟩
   have := r.base_nonatomic
@@ -148,51 +119,39 @@ theorem no_singular_recursion : ¬∃ (r : Region), r.base = singularF := by
 
 /-! ### Recursion Properties -/
 
-/-- Each recursion yields exactly 2 new categories: the [+minimal] and
-    [−minimal] subregions are always distinct. -/
+/-- The [+minimal] and [−minimal] subregions of a recursion are distinct categories. -/
 theorem recursion_yields_two (reg : Region) :
     (⟨reg, true⟩ : RecursiveNumber).toNumber ≠
     (⟨reg, false⟩ : RecursiveNumber).toNumber := by
   by_cases hm : Number.Feature.minimal ∈ reg.base <;> simp [RecursiveNumber.toNumber, hm]
 
-/-- Trial presupposes plural: the plural region must exist (i.e., the
-    base partition must include [−atomic, −minimal]) for trial to arise
-    from recursion on it. -/
+/-- The trial presupposes the plural, the region it arises from. -/
 theorem trial_presupposes_plural : trial.region.base = pluralF := rfl
 
-/-- Unit augmented presupposes dual: the non-singular region must exist
-    for unit augmented to arise from recursion on it. -/
+/-- The unit augmented presupposes the dual, the region it arises from. -/
 theorem unitAug_presupposes_dual : unitAugmented.region.base = dualF := rfl
 
-/-- The base partition is a prerequisite for any recursion: every
-    recursive category's base region is a well-formed base number. -/
+/-- Every recursive category's base region is a base number passing the containment filter. -/
 theorem recursion_presupposes_base (r : RecursiveNumber) :
-    r.region.base.WellFormed := r.region.base_wf
+    IsLowerSet (↑r.region.base : Set Number.Feature) := r.region.base_wf
 
-/-- Base regions of recursive numbers map to Corbett values. -/
+/-- The base regions of the trial and the unit augmented are the plural and the dual. -/
 theorem recursion_base_categories :
     trial.region.base.toNumber = some .plural ∧
     unitAugmented.region.base.toNumber = some .dual := ⟨rfl, rfl⟩
 
 /-! ### Only Two Recursion Regions -/
 
-/-- There are exactly two recursion-eligible regions: the dual region
-    ([−atomic, +minimal]) and the plural region ([−atomic, −minimal]).
-
-    The singular region ([+atomic, +minimal]) is excluded by `base_nonatomic`,
-    and the ill-formed [+atomic, −minimal] is excluded by `base_wf`. -/
+/-- The recursion regions are exactly the dual and the plural region, the singular being excluded
+by `base_nonatomic` and the filtered [+atomic, −minimal] by `base_wf`. -/
 theorem only_two_regions (r : Region) : r.base = dualF ∨ r.base = pluralF := by
   obtain ⟨b, hw, hna⟩ := r
   revert b; decide
 
 /-! ### Harbour Configuration Space -/
 
-/-- A Harbour number configuration: which features and operations are active.
-
-    [harbour-2014]: every attested number system can be described
-    by activating a subset of these 5 parameters. The 2⁵ = 32 logically
-    possible configurations reduce to 16 well-formed ones after applying
-    the feature activation prerequisites. -/
+/-- A Harbour configuration records which features and recursions are active; every attested
+number system activates some of these five parameters ([harbour-2014]). -/
 structure HarbourConfig where
   /-- Whether [±atomic] is active. -/
   hasAtomic : Bool
@@ -207,7 +166,7 @@ structure HarbourConfig where
   recurseOnAdditive : Bool
   deriving DecidableEq, Repr, Fintype
 
-/-- Well-formedness: feature activation prerequisites.
+/-- A configuration is well-formed when its activations meet their prerequisites.
 
     1. [±minimal] recursion requires [±minimal] — the feature must be active
        for recursion to have a target region. When [±atomic] is also active,
@@ -222,7 +181,7 @@ def HarbourConfig.wellFormed (c : HarbourConfig) : Bool :=
   (!c.hasAdditive || c.hasAtomic || c.hasMinimal) &&
   (!c.recurseOnAdditive || c.hasAdditive)
 
-/-- The number categories generated by a Harbour configuration.
+/-- A configuration generates number categories cumulatively, each activation adding some.
 
     Features are activated cumulatively, and each activation adds
     categories to the system:
@@ -293,24 +252,20 @@ theorem categories_lowerSet (c : HarbourConfig) (hw : c.wellFormed = true)
   cases ca <;> cases cm <;> cases cd <;> cases cr <;> cases cra <;>
     cases a <;> cases b <;> decide
 
-/-- The lower set property stated via Mathlib's `IsLowerSet`. -/
+/-- The generated categories form a lower set in mathlib's sense. -/
 theorem categories_isLowerSet (c : HarbourConfig) (hw : c.wellFormed = true) :
     IsLowerSet {cat : Number | c.categories.contains cat = true} :=
   fun a b hab ha => categories_lowerSet c hw b a hab ha
 
 /-! ### Corollaries -/
 
-/-- General number is outside the Harbour feature system entirely: no
-    configuration generates it. -/
+/-- No configuration generates general number, which lies outside the feature system. -/
 theorem general_not_generated (c : HarbourConfig) :
     c.categories.contains .general = false := by
   obtain ⟨a, m, d, r, ra⟩ := c
   cases a <;> cases m <;> cases d <;> cases r <;> cases ra <;> decide
 
-/-- Exactly 16 of the 32 logically possible configurations are well-formed.
-    (Previously 13 when [±minimal] recursion required [±atomic]; relaxing
-    to require only [±minimal] adds 3 configs: {±minimal*}, {±additive, ±minimal*},
-    {±additive*, ±minimal*}.) -/
+/-- Exactly 16 of the 32 logically possible configurations are well-formed. -/
 theorem sixteen_wellformed_configs :
     let allConfigs := [false, true].flatMap fun a =>
       [false, true].flatMap fun m =>
@@ -355,7 +310,7 @@ Key predictions:
   {±additive*, ±minimal}, {±additive*, ±minimal*, ±atomic}) have
   plausible explanations for their absence. -/
 
-/-- Surface categories: the morphologically distinct number values.
+/-- The surface categories are the morphologically distinct number values.
 
     Unlike `categories` (which includes superordinates for the lower-set
     property), this removes a category that has been split into
@@ -372,17 +327,16 @@ def HarbourConfig.surfaceCategories (c : HarbourConfig) : List Number :=
   let removeAugmented := c.hasAdditive && !c.hasAtomic && c.hasMinimal
   cats.filter fun cat => !(removeAugmented && cat == .augmented)
 
-/-- The `Number.System` a configuration generates: surface values as the
-    inventory. The empty configuration leaves Number⁰ featureless — general
-    number ([harbour-2014] (24); Pirahã, Classical Chinese). -/
+/-- A configuration generates the `Number.System` of its surface values; the empty configuration
+leaves Number⁰ featureless, general number ([harbour-2014] (24); Pirahã, Classical Chinese). -/
 def HarbourConfig.toSystem (c : HarbourConfig) (name : String := "") :
     Number.System :=
   { name := name
     values := c.surfaceCategories
     hasGeneral := c.surfaceCategories.isEmpty }
 
-/-- [harbour-2014] Table 3 entry: a `HarbourConfig` connected to
-    the predicted system size and an example language. -/
+/-- An entry of [harbour-2014]'s Table 3 pairs a configuration with the predicted system size and
+an example language. -/
 structure Harbour2014Entry where
   /-- The feature activation and recursion parameters. -/
   config : HarbourConfig
@@ -392,7 +346,7 @@ structure Harbour2014Entry where
   language : String
   deriving Repr
 
-/-- [harbour-2014] Table 3: typology of number systems.
+/-- [harbour-2014]'s Table 3 is a typology of number systems.
     15 attested parametric settings (12 distinct configs) generating
     0–5 value systems. Subscripted entries share the same config
     but exemplify different languages. -/
@@ -432,7 +386,7 @@ def harbour2014Table3 : List Harbour2014Entry := [
 theorem table3_all_wellformed :
     harbour2014Table3.all (fun e => e.config.wellFormed) = true := by decide
 
-/-- Surface category counts match Table 3's predictions.
+/-- The surface category counts match Table 3's predictions.
 
     This is the key verification theorem: the generative mechanism
     (`HarbourConfig` → `categories` → `surfaceCategories`) produces
@@ -448,8 +402,8 @@ theorem max_system_size :
     harbour2014Table3.all (fun e => decide (e.numValues ≤ 5)) = true := by
   decide
 
-/-- All nonempty systems have at least 2 values: number is inherently
-    contrastive ([harbour-2014] §1). -/
+/-- Every nonempty system has at least two values, number being contrastive ([harbour-2014]
+§1). -/
 theorem min_system_size :
     harbour2014Table3.all
       (fun e => decide (e.numValues = 0 ∨ e.numValues ≥ 2)) = true := by

@@ -7,9 +7,9 @@ public import Linglib.Syntax.Gender.Basic
 /-!
 # Feature decompositions of gender
 
-This file defines two decompositions of gender values: the split feature, whose
-morphological and semantic halves may match, differ or go missing, and the bivalent
-[±feminine, ±neuter] presentation of a sex-based three-gender system.
+Two decompositions of gender values: the split feature, whose morphological and semantic halves
+may match, differ or go missing, and the bivalent [±feminine, ±neuter] presentation of a
+sex-based three-gender system.
 
 A split feature has a half legible to morphology and a half legible to semantics. The
 halves match on a natural value, only the morphological half is present on an arbitrary
@@ -42,6 +42,7 @@ pair on the pattern of the person and number presentations.
 * [smith-2021] — the mismatch typology
 * [kramer-2015] — interpretable and uninterpretable gender
 * [sauerland-2003] — the markedness ordering the bivalent presentation reconstructs
+* [sauerland-2008b] — the Dominance test for markedness
 * [hammerly-2019]
 -/
 
@@ -65,28 +66,27 @@ namespace SplitFeature
 
 variable {V : Type*} (s : SplitFeature V)
 
-/-- Natural (conceptual) value: both halves present and matched —
-    [kramer-2015]'s interpretable gender in split-feature terms. -/
+/-- A natural (conceptual) value has both halves present and matched, [kramer-2015]'s
+interpretable gender in split-feature terms. -/
 def IsNatural : Prop := ∃ v, s.uF = some v ∧ s.iF = some v
 
-/-- Arbitrary value: morphological half only — [kramer-2015]'s
-    uninterpretable gender in split-feature terms. -/
+/-- An arbitrary value has the morphological half only, [kramer-2015]'s uninterpretable gender in
+split-feature terms. -/
 def IsArbitrary : Prop := (∃ v, s.uF = some v) ∧ s.iF = none
 
 /-- Semantic-only value: interpreted but morphologically inert
     (the half [smith-2015] allows to go missing on the uF side). -/
 def IsSemanticOnly : Prop := s.uF = none ∧ ∃ v, s.iF = some v
 
-/-- Hybrid value: both halves present and mismatched — committee-type
-    nouns ([smith-2015]); unrepresentable in an interpretability
-    classification of single feature tokens. -/
+/-- A hybrid value has both halves present and mismatched, as committee-type nouns do
+([smith-2015]), which a classification of single feature tokens by interpretability cannot
+represent. -/
 def IsHybrid : Prop := ∃ u i, s.uF = some u ∧ s.iF = some i ∧ u ≠ i
 
-/-- Featureless: both halves absent. -/
+/-- A featureless value has both halves absent. -/
 def IsAbsent : Prop := s.uF = none ∧ s.iF = none
 
-/-- The five cases are exhaustive: every split feature is natural, hybrid,
-    arbitrary, semantic-only, or absent. -/
+/-- Every split feature is natural, hybrid, arbitrary, semantic-only, or absent. -/
 theorem classify (s : SplitFeature V) :
     s.IsNatural ∨ s.IsHybrid ∨ s.IsArbitrary ∨ s.IsSemanticOnly ∨ s.IsAbsent := by
   obtain ⟨_ | u, _ | i⟩ := s
@@ -97,7 +97,7 @@ theorem classify (s : SplitFeature V) :
     · exact .inl ⟨u, rfl, rfl⟩
     · exact .inr (.inl ⟨u, i, rfl, rfl, h⟩)
 
-/-- A hybrid value is not natural: the mismatch is real. -/
+/-- A hybrid value is not natural. -/
 theorem IsHybrid.not_isNatural {s : SplitFeature V} (h : s.IsHybrid) :
     ¬ s.IsNatural := by
   rintro ⟨v, hu, hi⟩
@@ -110,66 +110,60 @@ end SplitFeature
 
 /-! ### The bivalent presentation: [±feminine, ±neuter]
 
-A reconstruction of [sauerland-2003]'s markedness ordering of sex-based gender, on which
-masculine is semantically vacuous, feminine presupposes non-masculinity and neuter
-presupposes genderlessness, as two binary features with the containment
-[+neuter] → [+feminine]: neuter is the most specified gender, as singular is for number and
-first person for person, and masculine the least. The paper itself states no features; the
-three well-formed combinations are the three genders of a sex-based system, and the scheme
-parallels person [±author] ⊂ [±participant] and number [±atomic] ⊂ [±minimal], all three
-lower sets of a two-feature chain (`Syntax/Agreement/ContainmentPair.lean`). -/
+[sauerland-2003] derives Czech gender agreement under coordination from a markedness ordering on
+which masculine is semantically vacuous, feminine presupposes non-masculinity and neuter
+presupposes genderlessness (§6, (45)); [sauerland-2008b]'s Dominance test, the gender a mixed
+coordination takes, likewise makes masculine less marked than feminine (pp. 63–65). The
+presentation here reconstructs the ordering as two binary features with the containment
+[+neuter] → [+feminine], so the three genders of a sex-based system are the initial segments of
+the chain feminine < neuter, neuter the most specified and masculine the least, as for person and
+number (`Syntax/Agreement/ContainmentPair.lean`). -/
 
-/-- The two gender features, neuter depending on feminine, reconstructing
-[sauerland-2003]'s markedness ordering. -/
+/-- The two gender features, neuter depending on feminine. -/
 inductive Feature where
-  /-- [feminine]: non-masculine, the value feminine and neuter share. -/
+  /-- [feminine] holds of non-masculine referents, those feminine and neuter share. -/
   | feminine
-  /-- [neuter]: the referent triggers neuter agreement. -/
+  /-- [neuter] holds of referents triggering neuter agreement. -/
   | neuter
   deriving DecidableEq, Repr, Fintype
 
-/-- Position on the dependency chain, feminine below neuter. -/
+/-- `Feature.rank` places feminine below neuter on the dependency chain. -/
 def Feature.rank : Feature → Fin 2
   | .feminine => 0
   | .neuter => 1
 
 instance : LinearOrder Feature := LinearOrder.lift' Feature.rank (by decide)
 
-/-- A gender feature bundle: the positive features. The three well-formed bundles are the
-three sex-based genders: neuter [+feminine, +neuter], feminine [+feminine, −neuter],
-masculine [−feminine, −neuter]. -/
+instance : LocallyFiniteOrderBot Feature := Fintype.toLocallyFiniteOrderBot
+
+/-- A gender feature bundle is the set of its positive features. -/
 abbrev Features := Finset Feature
 
-/-- Neuter features: [+feminine, +neuter]. -/
-def Features.neuter : Features := {.feminine, .neuter}
+open Finset in
+/-- The neuter is [+feminine, +neuter], the whole chain. -/
+def Features.neuter : Features := Iic .neuter
 
-/-- Feminine features: [+feminine, −neuter]. -/
-def Features.feminine : Features := {.feminine}
+open Finset in
+/-- The feminine is [+feminine, −neuter], the chain below neuter. -/
+def Features.feminine : Features := Iic .feminine
 
-/-- Masculine features: [−feminine, −neuter]. -/
+/-- The masculine is [−feminine, −neuter], the empty bundle. -/
 def Features.masculine : Features := ∅
 
-/-- Well-formedness: [+neuter] → [+feminine], neuter entails feminine in the feature
-geometry, so the positive features form a lower set of the chain. -/
-abbrev Features.WellFormed (gf : Features) : Prop := IsLowerSet (↑gf : Set Feature)
+theorem Features.neuter_eq : Features.neuter = {.feminine, .neuter} := by decide
 
-@[simp] theorem Features.neuter_wellFormed : Features.neuter.WellFormed := by decide
-@[simp] theorem Features.feminine_wellFormed : Features.feminine.WellFormed := by decide
-@[simp] theorem Features.masculine_wellFormed : Features.masculine.WellFormed := by decide
+theorem Features.feminine_eq : Features.feminine = {.feminine} := by decide
 
-/-- The bundle with the neuter feature alone is the one that violates containment. -/
-theorem Features.not_wellFormed_singleton_neuter : ¬ ({.neuter} : Features).WellFormed := by
+/-- The bundle with the neuter feature alone violates containment. -/
+theorem Features.not_wellFormed_singleton_neuter :
+    ¬ IsLowerSet (↑({.neuter} : Features) : Set Feature) := by
   decide
 
-/-- Exactly three well-formed bundles, the three genders, the carrier count of the
-containment chain. -/
+/-- Exactly three bundles pass the containment filter, the three genders. The bound is a claim
+about the presentation and not about gender systems. -/
 theorem Features.card_wellFormed :
-    Fintype.card {gf : Features // gf.WellFormed} = 3 := by decide
-
-/-- Containment: [+neuter] → [+feminine] for all well-formed bundles. -/
-theorem Features.feminine_of_neuter :
-    ∀ f : Features, f.WellFormed → .neuter ∈ f → .feminine ∈ f := by
-  decide
+    Fintype.card {gf : Features // IsLowerSet (↑gf : Set Feature)} = 3 := by
+  rw [Fintype.card_subtype_isLowerSet]; rfl
 
 /-- Map gender features to the comparative labels. -/
 def Features.toGender (f : Features) : Option Gender :=
@@ -184,8 +178,8 @@ def Features.fromGender : Gender → Option Features
   | .masculine => some Features.masculine
   | _          => none
 
-/-- A well-formed feature survives the round trip through its label. -/
-theorem Features.fromGender_toGender {f : Features} (h : f.WellFormed) :
+/-- A bundle passing the containment filter survives the round trip through its label. -/
+theorem Features.fromGender_toGender {f : Features} (h : IsLowerSet (↑f : Set Feature)) :
     f.toGender.bind Features.fromGender = some f := by
   revert f; decide
 

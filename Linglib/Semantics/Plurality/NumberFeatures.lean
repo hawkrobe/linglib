@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 module
 
 public import Mathlib.Data.Fintype.Powerset
@@ -8,47 +13,41 @@ public import Linglib.Core.Order.UpperLower.Finset
 /-!
 # The feature decomposition of number
 
-This file defines Harbour's `[±atomic, ±minimal]` feature bundle for the
-three basic number values, well-formed when the positive features form a
-lower set of the chain minimal < atomic, and the classification of lattice
-elements by the regions of `Number.interp`.
+Harbour decomposes the three basic number values into two features, [±atomic] and [±minimal]. A
+bundle is the set of its positive features, and it passes the containment filter when they form a
+lower set of the chain minimal < atomic, so the three values are the chain's initial segments. For
+number the filter follows from the semantics: an atom is minimal in every region excluding the
+null individual (`Number.singular_subset_minimal`), so [+atomic, −minimal] corresponds to no
+number, as Harbour observes. Lattice elements are classified by the regions of `Number.interp`.
 
 ## Main definitions
 
-* `Number.Feature`, `Number.Features`: the `[±atomic, ±minimal]` bundle as
-  the finset of positive features, with `Features.toNumber`/`Features.ofNumber`
-  relating it to `Number`.
-* `Features.WellFormed`: the containment `[+atomic] → [+minimal]`, a lower
-  set of the feature chain.
-* `Number.latticeToFeatures`: the bundle a lattice element realizes in a
-  region, singular on its atoms, dual on its minimal non-atoms, plural
-  otherwise.
+* `Number.Feature`, `Number.Features`: the two features and their bundles, with
+  `Features.toNumber` and `Features.ofNumber` relating bundles to `Number`.
+* `Number.latticeToFeatures`: the bundle a lattice element realizes in a region, singular on its
+  atoms, dual on its minimal non-atoms, plural otherwise.
 * `Number.dualPredOnLattice`: the dual as a predicate modifier.
 
 ## Main results
 
-* `Number.card_wellFormed`: exactly three well-formed bundles.
-* `Number.toNumber_isSome_iff`, `Number.ofNumber_toNumber`,
-  `Number.toNumber_ofNumber`: the bundles and the values correspond on the
-  well-formed cells.
-* `Number.latticeToFeatures_wellFormed`: classification never produces the
-  ill-formed cell — the containment is a theorem of the lattice semantics,
-  not a stipulation.
-* `Number.dualPredOnLattice_iff`: the dual predicate modifier is the
-  restriction to elements classified `dualF`.
+* `Number.card_wellFormed`: exactly three bundles pass the containment filter.
+* `Number.toNumber_isSome_iff`, `Number.ofNumber_toNumber`, `Number.toNumber_ofNumber`: bundles
+  and values correspond on those cells.
+* `Number.latticeToFeatures_wellFormed`: classification never produces the filtered cell.
+* `Number.dualPredOnLattice_iff`: the dual predicate modifier is the restriction to elements
+  classified `dualF`.
 
 ## Implementation notes
 
-For number the containment filter follows from the semantics (an atom is
-minimal in every region that excludes the null individual,
-`Number.singular_subset_minimal`); for person it is a convention. The
-examples use the powerset lattice `Finset (Fin n)` on its nonempty subsets,
-where the atoms are the singletons.
+Harbour argues that the features are bivalent, a privative encoding collapsing values such as
+unit augmented and minimal; a bundle here is the set of positive values of a bivalent valuation,
+the negative values being its complement. The examples use the powerset lattice `Finset (Fin n)`
+on its nonempty subsets, whose atoms are the singletons.
 
 ## References
 
-* [harbour-2014], (11), (12), §3, §4.4
-* [harbour-2016], §9.5
+* [harbour-2014], §5.1, p. 213
+* [harbour-2016], §9.5, pp. 222–223
 * [link-1983]
 * [jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025], §4.2.1, §8
 -/
@@ -63,30 +62,38 @@ open Mereology (Atom CUM atomize)
 
 /-- Harbour's two number features, atomicity depending on minimality. -/
 inductive Feature where
-  /-- `[minimal]`: the referent is minimal in its region. -/
+  /-- `[minimal]` holds of a referent minimal in its region. -/
   | minimal
-  /-- `[atomic]`: the referent is an atom. -/
+  /-- `[atomic]` holds of an atom. -/
   | atomic
   deriving DecidableEq, Repr, Fintype
 
-/-- Position on the dependency chain, minimal below atomic. -/
+/-- `Feature.rank` places minimal below atomic on the dependency chain. -/
 def Feature.rank : Feature → Fin 2
   | .minimal => 0
   | .atomic => 1
 
 instance : LinearOrder Feature := LinearOrder.lift' Feature.rank (by decide)
 
-/-- A number feature bundle: the positive features. -/
+instance : LocallyFiniteOrderBot Feature := Fintype.toLocallyFiniteOrderBot
+
+/-- A number feature bundle is the set of its positive features. -/
 abbrev Features := Finset Feature
 
-/-- Singular: `[+atomic, +minimal]`. -/
-def singularF : Features := {.minimal, .atomic}
+open Finset in
+/-- The singular is `[+atomic, +minimal]`, the whole chain. -/
+def singularF : Features := Iic .atomic
 
-/-- Dual: `[−atomic, +minimal]`. -/
-def dualF : Features := {.minimal}
+open Finset in
+/-- The dual is `[−atomic, +minimal]`, the chain below atomic. -/
+def dualF : Features := Iic .minimal
 
-/-- Plural: `[−atomic, −minimal]`. -/
+/-- The plural is `[−atomic, −minimal]`, the empty bundle. -/
 def pluralF : Features := ∅
+
+theorem singularF_eq : singularF = {.minimal, .atomic} := by decide
+
+theorem dualF_eq : dualF = {.minimal} := by decide
 
 /-- The number value a bundle realizes; the ill-formed `[+atomic, −minimal]`
 realizes none. -/
@@ -102,23 +109,16 @@ def Features.ofNumber : Number → Option Features
   | .plural => some pluralF
   | _ => none
 
-/-- A bundle is well-formed if `[+atomic]` entails `[+minimal]`: its positive features form a
-lower set of the chain minimal < atomic. -/
-abbrev Features.WellFormed (nf : Features) : Prop := IsLowerSet (↑nf : Set Feature)
+/-- Exactly three bundles pass the containment filter, the three basic number values. -/
+theorem card_wellFormed : Fintype.card {nf : Features // IsLowerSet (↑nf : Set Feature)} = 3 := by
+  rw [Fintype.card_subtype_isLowerSet]; rfl
 
-theorem atomic_implies_minimal :
-    ∀ f : Features, f.WellFormed → .atomic ∈ f → .minimal ∈ f := by
-  decide
-
-/-- Exactly three well-formed bundles, the three basic number values. -/
-theorem card_wellFormed : Fintype.card {nf : Features // nf.WellFormed} = 3 := by
-  decide
-
-theorem toNumber_isSome_iff : ∀ f : Features, f.toNumber.isSome ↔ f.WellFormed := by
+theorem toNumber_isSome_iff :
+    ∀ f : Features, f.toNumber.isSome ↔ IsLowerSet (↑f : Set Feature) := by
   decide
 
 theorem ofNumber_toNumber :
-    ∀ f : Features, f.WellFormed → f.toNumber.bind Features.ofNumber = some f := by
+    ∀ f : Features, IsLowerSet (↑f : Set Feature) → f.toNumber.bind Features.ofNumber = some f := by
   decide
 
 theorem toNumber_ofNumber : ∀ (n : Number) (f : Features),
@@ -132,20 +132,19 @@ section Lattice
 variable {D : Type*} [SemilatticeSup D] [Fintype D] [DecidableLE D]
  
 
-/-- The bundle a lattice element realizes in the region `P`: singular on the
-atoms of `P`, dual on its minimal non-atoms, plural on the rest — the decidable
-mirror of `Number.interp`. -/
+/-- A lattice element realizes, in the region `P`, the singular on the atoms of `P`, the dual on
+its minimal non-atoms, and the plural on the rest, the decidable mirror of `Number.interp`. -/
 def latticeToFeatures (P : D → Prop) [DecidablePred P] (x : D) : Features :=
   if atomsOf P x then singularF else if dualOf P x then dualF else pluralF
 
 /-- Classification never produces the ill-formed cell. -/
 theorem latticeToFeatures_wellFormed (P : D → Prop) [DecidablePred P] (x : D) :
-    (latticeToFeatures P x).WellFormed := by
+    IsLowerSet (↑(latticeToFeatures P x) : Set Feature) := by
   unfold latticeToFeatures
   split_ifs <;> decide
 
-/-- The dual as a predicate modifier: `P x` and `x` has exactly two atomic
-parts, i.e. is a minimal non-atom of the region `domain`
+/-- The dual as a predicate modifier holds of `x` when `P x` and `x` has exactly two atomic parts,
+being a minimal non-atom of the region `domain`
 ([jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025] (39)). -/
 abbrev dualPredOnLattice (domain P : D → Prop) (x : D) : Prop :=
   P x ∧ dualOf domain x
@@ -183,9 +182,8 @@ example : ¬ dualPredOnLattice ps3 (fun _ => True) ({0, 1, 2} : Finset (Fin 3)) 
 cannot split it; the paucal/plural contrast needs a larger lattice. -/
 example : CUM (fun s : Finset (Fin 3) => 2 ≤ s.card) := by decide
 
-/-- A paucal region of two to three atoms is not cumulative: `{0, 1} ⊔ {2, 3}`
-has four. Complement completeness ([harbour-2014] (11)) holds of the plural
-region of four or more atoms. -/
+/-- A paucal region of two to three atoms is not cumulative, since `{0, 1} ⊔ {2, 3}` has four.
+Complement completeness ([harbour-2014] (11)) holds of the plural region of four or more atoms. -/
 example :
     ¬ CUM (fun s : Finset (Fin 5) => 2 ≤ s.card ∧ s.card ≤ 3) ∧
       CUM (fun s : Finset (Fin 5) => 4 ≤ s.card) := by
