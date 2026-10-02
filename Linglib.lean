@@ -173,7 +173,6 @@ import Linglib.Core.Order.AllenRelation
 import Linglib.Core.Order.Antichain
 import Linglib.Core.Order.Argmax
 import Linglib.Core.Order.Branching
-import Linglib.Core.Order.Caratheodory
 import Linglib.Core.Order.DeMorganAlgebra.Basic
 import Linglib.Core.Order.Flat
 import Linglib.Core.Order.FourierMotzkin

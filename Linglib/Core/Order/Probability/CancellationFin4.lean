@@ -1,35 +1,40 @@
 module
 
+public import Linglib.Core.Analysis.Convex.Caratheodory
+public import Linglib.Core.LinearAlgebra.AffineSpace.FiniteDimensional
 public import Linglib.Core.Order.Probability.Scott
-public import Linglib.Core.Order.Caratheodory
 public import Linglib.Core.Order.SignVectors
 public import Mathlib.Data.List.Perm.Basic
 public import Mathlib.Tactic.Tauto
 public import Mathlib.Tactic.FinCases
 
-/-! # Cancellation for `Fin 4`: the structural merge-reduction proof
+/-! # Cancellation on three and four atoms
 
-Every qualitative probability order on four atoms satisfies Scott cancellation,
-hence is representable by a finitely additive measure
-([kraft-pratt-seidenberg-1959]).
+Every qualitative probability order on at most four atoms satisfies Scott cancellation, hence is
+representable by a finitely additive measure, as Kraft, Pratt and Seidenberg showed.
 
 ## Main declarations
 
-* `ComparativeProbability.fa_cancellation_fin4` — FA axioms imply cancellation on `Fin 4`.
-* `ComparativeProbability.representable_fin4` — every FA system on `Fin 4` is representable.
-* `ComparativeProbability.no_null_cancellation` — cancellation for systems with no null atoms.
+* `ComparativeProbability.no_null_cancellation`: cancellation on `Fin 4` with no null atoms.
+* `ComparativeProbability.fa_cancellation_fin4`: every FA system on `Fin 4` satisfies
+  cancellation.
+* `ComparativeProbability.representable_fin4`: every FA system on `Fin 4` is representable.
 
 ## Implementation notes
 
-The proof rests on two imported layers — conic Carathéodory
-(`Caratheodory.exists_posdep_card_le_five`) and the sign-vector core
-(`SignVec.exists_antidom_pair`) — and adds the merge reduction: a valid family
+The proof rests on two imported layers, Carathéodory's theorem at the origin
+(`exists_finset_eq_pos_convex_span_of_mem_convexHull`) and the sign-vector core
+(`SignVec.exists_antidom_pair`), and adds the merge reduction: a valid family
 of comparisons whose integer sum is a single sign vector proves that
 comparison (`merge_to_single`), by a four-rule recursion whose stuck case is
 discharged through the sign-vector core via `v1_tailored`.  Comparisons are
 `Scott.lean`'s sign vectors; two comparisons with no shared nonzero coordinate
 *merge* into the sign of their sum (`merge`), and the merge recursion itself
 is private plumbing, so only the theorems above are exported.
+
+## References
+
+* [kraft-pratt-seidenberg-1959]
 -/
 
 @[expose] public section
@@ -41,11 +46,11 @@ namespace ComparativeProbability
 Two sign vectors are *mergeable* when no coordinate carries the same nonzero
 sign in both; their merge is the sign of their sum, which is then their sum. -/
 
-/-- The merge of two sign vectors: the sign of their pointwise sum. -/
+/-- The merge of two sign vectors is the sign of their pointwise sum. -/
 private def merge {n : ℕ} (v w : Fin n → SignType) (i : Fin n) : SignType :=
   SignType.sign ((v i : ℤ) + w i)
 
-/-- No coordinate carries the same nonzero sign in both vectors. -/
+/-- Two sign vectors are mergeable when no coordinate carries the same nonzero sign in both. -/
 private def Mergeable {n : ℕ} (v w : Fin n → SignType) : Prop :=
   Disjoint (posSupport v) (posSupport w) ∧ Disjoint (negSupport v) (negSupport w)
 
@@ -109,7 +114,7 @@ private lemma negSupport_merge {n : ℕ} {v w : Fin n → SignType} (h : Mergeab
   exact sign_add_eq_neg_one_iff _ _ (h.apply i)
 
 /-- The merge of two valid mergeable comparisons is valid
-    (`QualitativeProbability.sup_le_sup`, then Axiom A). -/
+    (`QualitativeProbability.sup_le_sup`, then `QualitativeProbability.additive`). -/
 private lemma merge_valid {n : ℕ} (sys : QualitativeProbability (Set (Fin n)))
     {v w : Fin n → SignType} (hv : sys.ge (posSupport v) (negSupport v))
     (hw : sys.ge (posSupport w) (negSupport w)) (h : Mergeable v w) :
@@ -118,11 +123,10 @@ private lemma merge_valid {n : ℕ} (sys : QualitativeProbability (Set (Fin n)))
   rw [sys.additive] at hmerge
   rwa [QualitativeProbability.ge, posSupport_merge h, negSupport_merge h]
 
-/-- **Two-member null-forcing**: if two valid comparisons sum to `≤ 0`
-    everywhere with a strict negative coordinate, some atom is null (`ge ∅ {i}`).
-    The sum forces `posSupport v ⊆ negSupport w` and `posSupport w ⊆ negSupport v`;
-    then `ge C A → ge C B → (Axiom A) ge ∅ (B \ C)`, and symmetrically, and the
-    strict coordinate lies in one of the two differences. -/
+/-- If two valid comparisons sum to `≤ 0` everywhere with a strict negative coordinate, some
+    atom is null (`ge ∅ {i}`). The sum forces `posSupport v ⊆ negSupport w` and
+    `posSupport w ⊆ negSupport v`; then `ge C A → ge C B → ge ∅ (B \ C)` by additivity, and
+    symmetrically, and the strict coordinate lies in one of the two differences. -/
 private lemma null_from_pair {n : ℕ} (sys : QualitativeProbability (Set (Fin n)))
     {v w : Fin n → SignType}
     (hv : sys.ge (posSupport v) (negSupport v)) (hw : sys.ge (posSupport w) (negSupport w))
@@ -152,7 +156,7 @@ private lemma null_from_pair {n : ℕ} (sys : QualitativeProbability (Set (Fin n
 
 /-! ### Bridging comparisons to ℚ sign vectors -/
 
-/-- ℚ-valued sign vector of a comparison. -/
+/-- `toQVec v` casts the signs of a comparison to rationals. -/
 private def toQVec (v : Fin 4 → SignType) : Fin 4 → ℚ := fun i ↦ (v i : ℚ)
 
 private lemma toQVec_eq (v : Fin 4 → SignType) (i : Fin 4) : toQVec v i = ((v i : ℤ) : ℚ) := by
@@ -180,17 +184,15 @@ private lemma comparisonSum_filter_ne_zero {n : ℕ} (L : List (Fin n → SignTy
     · rw [List.filter_cons_of_neg (by simp [hv]), comparisonSum_cons, ih, hv]; simp
     · rw [List.filter_cons_of_pos (by simp [hv]), comparisonSum_cons, comparisonSum_cons, ih]
 
-/-- **The (V1) consequence** the recursion needs (the combinatorial crux, isolated):
-    a "stuck" family — no mergeable pair, no mono-dominating member, summing to a
-    target `t` with nonempty negative support — either contains a **null pair**
-    (two members whose sum is `≤ 0` with a strict negative coordinate) or has a
-    member mergeable with the reversed target `-t`.
+/-- A stuck family of comparisons, with no mergeable pair and no mono-dominating member,
+    summing to a target `t` with nonempty negative support either contains a *null pair* (two
+    members whose sum is `≤ 0` with a strict negative coordinate) or has a member mergeable
+    with the reversed target `-t`.
 
-    This is exactly (V1) applied to `L ∪ {-t}` (balanced): (V1) yields a
-    mergeable or anti-dominating pair; an anti-dominating pair inside `L` is a
-    null pair, an anti-dominating pair with `-t` is mono-domination (excluded), a
-    mergeable pair inside `L` is excluded by `hnogm`, leaving a member mergeable
-    with `-t`. -/
+    The balanced family `L ∪ {-t}` thins by Carathéodory's theorem to at most five members, and
+    `SignVec.exists_antidom_pair` then yields an anti-dominating pair unless some member is
+    mergeable with `-t`. An anti-dominating pair inside `L` is a null pair; one involving `-t`
+    is a mono-domination, which is excluded. -/
 private lemma v1_tailored (L : List (Fin 4 → SignType)) {t : Fin 4 → SignType}
     (hsum : ∀ i, comparisonSum L i = t i) (hne : (negSupport t).Nonempty)
     (hnotdom : ∀ v ∈ L, posSupport v ⊆ posSupport t → ¬ negSupport t ⊆ negSupport v)
@@ -279,13 +281,18 @@ private lemma v1_tailored (L : List (Fin 4 → SignType)) {t : Fin 4 → SignTyp
         (List.mem_erase_of_ne (Ne.symm hvw)).mpr (List.mem_of_mem_filter hw)
       have hp2 := List.perm_cons_erase hwe
       exact hnogm ⟨v, w, (L.erase v).erase w, hp1.trans (List.Perm.cons v hp2), hg1, hg2⟩
-  -- Carathéodory pivot, then the finite core
-  obtain ⟨S', hS'S, hS'ne, hS'card, d', hd', hsum'⟩ :=
-    Caratheodory.exists_posdep_card_le_five S (fun x ↦ ((l.count x : ℕ) : ℚ)) hdQ hSne hbal
+  -- Carathéodory at the origin, then the finite core
+  have h0 : (0 : Fin 4 → ℚ) ∈ convexHull ℚ (S : Set (Fin 4 → ℚ)) := by
+    simpa [Finset.centerMass, hbal] using
+      S.centerMass_id_mem_convexHull (fun x hx ↦ (hdQ x hx).le) (Finset.sum_pos hdQ hSne)
+  obtain ⟨S', hS'S, hS'ind, d', hd', hd'1, hsum'⟩ :=
+    exists_finset_eq_pos_convex_span_of_mem_convexHull h0
+  replace hS'S : S' ⊆ S := Finset.coe_subset.1 hS'S
   obtain ⟨x, hxS', y, hyS', hxy, had1, had2⟩ :=
     SignVec.exists_antidom_pair S' d' hd' (fun x hx ↦ hsign x (hS'S hx))
       (fun x hx ↦ hposne x (hS'S hx)) (fun x hx y hy ↦ hSnogm x (hS'S hx) y (hS'S hy))
-      hsum' hS'ne hS'card
+      hsum' (Finset.nonempty_of_sum_ne_zero (hd'1.trans_ne one_ne_zero))
+      (by simpa using hS'ind.finset_card_le_finrank_succ)
   have hxS : x ∈ S := hS'S hxS'
   have hyS : y ∈ S := hS'S hyS'
   -- vector-level consequences of the anti-dominating pair
@@ -333,8 +340,8 @@ private lemma v1_tailored (L : List (Fin 4 → SignType)) {t : Fin 4 → SignTyp
     · obtain ⟨i, hi⟩ := hvstrict
       refine ⟨i, ?_⟩; simp only [toQVec_eq] at hi; exact_mod_cast hi
 
-/-- Residual-target arithmetic for the peel rule: when `-t` and `v` are
-    mergeable, `t` is the merge of the residual `merge t (-v)` with `v`. -/
+/-- When `-t` and `v` are mergeable, `t` is the merge of the residual `merge t (-v)` with `v`;
+    this is the coordinatewise arithmetic of the peel rule. -/
 private lemma merge_residual_aux (a b : SignType) (h : -a = b → -a = 0) :
     SignType.sign ((SignType.sign ((a : ℤ) + (-b : SignType)) : ℤ) + b) = a := by
   revert h; revert a b; decide
@@ -344,9 +351,9 @@ private lemma mergeable_residual_aux (a b : SignType) (h : -a = b → -a = 0) :
       SignType.sign ((a : ℤ) + (-b : SignType)) = 0 := by
   revert h; revert a b; decide
 
-/-- **Recombine** (case 4 of the merge recursion): if `v` is valid, mergeable with
-    the reversed target `-t`, and the residual target `merge t (-v)` is provable
-    (the IH), then so is `t`: merge the residual with `v`. -/
+/-- If `v` is valid and mergeable with the reversed target `-t`, and the residual target
+    `merge t (-v)` is provable, then so is `t`, the merge of the residual with `v`. This is the
+    last case of the merge recursion. -/
 private lemma recombine {n : ℕ} (sys : QualitativeProbability (Set (Fin n)))
     {t v : Fin n → SignType} (hm : Mergeable (-t) v)
     (hv : sys.ge (posSupport v) (negSupport v))
@@ -363,13 +370,11 @@ private lemma recombine {n : ℕ} (sys : QualitativeProbability (Set (Fin n)))
     exact merge_residual_aux (t i) (v i) this
   rwa [e] at this
 
-/-- **Merge-to-single**: on a no-null Fin 4 system, any valid family of
-    comparisons whose integer sum is a single sign vector `t` proves
-    `posSupport t ≿ negSupport t`. Four uniform rules: trivial target
-    (`negSupport t = ∅`), mono-domination, merge a mergeable pair and recurse,
-    or (no mergeable pair) `v1_tailored` gives a null pair (→ contradiction via
-    `hnull`) or a member mergeable with the reversed target (→ peel it, recurse
-    on the residual, `recombine`). -/
+/-- On a `Fin 4` system with no null atoms, a valid family of comparisons whose integer sum is
+    a single sign vector `t` proves `posSupport t ≿ negSupport t`. The recursion has four rules:
+    a trivial target (`negSupport t = ∅`), mono-domination, merging a mergeable pair, and
+    otherwise `v1_tailored`, whose null pair contradicts `hnull` and whose member mergeable
+    with `-t` is peeled off before recursing on the residual (`recombine`). -/
 private theorem merge_to_single (sys : QualitativeProbability (Set (Fin 4)))
     (hnull : ∀ i : Fin 4, ¬ sys.ge ∅ {i})
     (L : List (Fin 4 → SignType)) (hvalid : ∀ v ∈ L, sys.ge (posSupport v) (negSupport v))
@@ -427,9 +432,8 @@ decreasing_by
     simp only [List.length_cons] at h ⊢
     omega
 
-/-- **No-null case** of Theorem 8a (Fin 4): when no atom is null, every
-    balanced list of valid comparisons reverses, via the merge reduction
-    `merge_to_single`. -/
+/-- A qualitative probability on `Fin 4` with no null atom satisfies cancellation, by the merge
+    reduction `merge_to_single`. -/
 theorem no_null_cancellation (sys : QualitativeProbability (Set (Fin 4)))
     (hnull : ∀ i : Fin 4, ¬ sys.ge ∅ {i}) : Cancellation sys.ge := by
   intro L hvalid hsum v hv
@@ -448,15 +452,14 @@ A `Fin 3` system with no null atoms extends to a `Fin 4` system by adding a
 new world, then by the restriction to the original three.  The extension
 preserves the FA axioms and the absence of null atoms, and reflects
 cancellation, so `no_null_cancellation` discharges the no-null case of
-`fa_cancellation_fin3`; null atoms reduce to `representable_fin2`.  Theorem 8a
-for `Fin 3` then *follows from* cancellation — replacing the former
-measure-by-measure case analysis. -/
+`fa_cancellation_fin3`; null atoms reduce to `representable_fin2`.  Representability
+on `Fin 3` then follows from cancellation. -/
 
-/-- Restriction of a `Fin 4` proposition to the first three worlds. -/
+/-- `restrict3 A` restricts a `Fin 4` proposition to the first three worlds. -/
 def restrict3 (A : Set (Fin 4)) : Set (Fin 3) := {i | Fin.castSucc i ∈ A}
 
-/-- Lexicographic extension: the new world `Fin.last 3` dominates; ties break
-    by the restriction. -/
+/-- The lexicographic extension of a `Fin 3` system to `Fin 4`, in which the new world
+    `Fin.last 3` dominates and ties break by the restriction. -/
 def QualitativeProbability.extendLex (sys : QualitativeProbability (Set (Fin 3))) :
     QualitativeProbability (Set (Fin 4)) where
   le A B := (Fin.last 3 ∈ B ∧ Fin.last 3 ∉ A) ∨
@@ -536,7 +539,7 @@ private lemma extendLex_no_null (sys : QualitativeProbability (Set (Fin 3)))
         ext k; simp [restrict3, Fin.castSucc_inj, eq_comm]
       rwa [show restrict3 ∅ = ∅ from rfl, he] at hge
 
-/-- Embed a `Fin 3` comparison into `Fin 4`: the new world is neutral. -/
+/-- `embed v` extends a `Fin 3` comparison to `Fin 4`, neutral at the new world. -/
 private def embed (v : Fin 3 → SignType) : Fin 4 → SignType := Fin.snoc v 0
 
 private lemma restrict3_posSupport_embed (v : Fin 3 → SignType) :
@@ -582,9 +585,9 @@ private theorem cancellation_extendLex (sys : QualitativeProbability (Set (Fin 3
       rw [embed, Fin.snoc_last]; rfl
     · simpa [comparisonSum, List.map_map, Function.comp_def, embed] using congrFun hsum i
 
-/-- **Cancellation for Fin 3**, structurally: a null atom reduces to `Fin 2`
-    representability; the no-null case extends lexicographically into `Fin 4`
-    and pulls back through `no_null_cancellation`. -/
+/-- Every FA system on `Fin 3` satisfies cancellation. A null atom reduces to `Fin 2`
+    representability; the no-null case extends lexicographically into `Fin 4` and pulls back
+    through `no_null_cancellation`. -/
 theorem fa_cancellation_fin3 (sys : QualitativeProbability (Set (Fin 3))) :
     Cancellation sys.ge := by
   by_cases h : ∃ j, sys.ge ∅ {j}
@@ -594,15 +597,12 @@ theorem fa_cancellation_fin3 (sys : QualitativeProbability (Set (Fin 3))) :
     exact cancellation_extendLex sys
       (no_null_cancellation (QualitativeProbability.extendLex sys) (extendLex_no_null sys h))
 
-/-- **Theorem 8a for Fin 3**: every FA system on three elements is representable —
-    now *derived from* Scott cancellation, replacing the former measure-by-measure
-    case analysis. -/
+/-- Every FA system on `Fin 3` is representable, by Scott cancellation. -/
 theorem representable_fin3 (sys : QualitativeProbability (Set (Fin 3))) : Representable sys :=
   cancellation_implies_representable sys (fa_cancellation_fin3 sys)
 
-/-- **Theorem 8a (Fin 4), structural**: every FA system on `Fin 4` satisfies
-    cancellation. A null atom reduces to `Fin 3`; the no-null case is the merge
-    reduction `no_null_cancellation`. -/
+/-- Every FA system on `Fin 4` satisfies cancellation. A null atom reduces to `Fin 3`; the
+    no-null case is the merge reduction `no_null_cancellation`. -/
 theorem fa_cancellation_fin4 (sys : QualitativeProbability (Set (Fin 4))) :
     Cancellation sys.ge := by
   by_cases h : ∃ j, sys.ge ∅ {j}
@@ -611,8 +611,7 @@ theorem fa_cancellation_fin4 (sys : QualitativeProbability (Set (Fin 4))) :
   · push Not at h
     exact no_null_cancellation sys h
 
-/-- **Theorem 8a for Fin 4**: every FA system on 4 elements is representable.
-    Via Scott cancellation — see `Cancellation.lean` for the framework. -/
+/-- Every FA system on `Fin 4` is representable, by Scott cancellation. -/
 theorem representable_fin4 (sys : QualitativeProbability (Set (Fin 4))) : Representable sys :=
   cancellation_implies_representable sys (fa_cancellation_fin4 sys)
 
