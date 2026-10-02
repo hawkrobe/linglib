@@ -11,30 +11,34 @@ public import Linglib.Studies.Bresnan1973
 /-!
 # Wellwood (2015): On the Semantics of Comparison Across Categories
 
-This file formalizes [wellwood-2015]'s hypothesis that nominal, verbal and adjectival
-comparatives contain one degree-introducing morpheme, *much*, which denotes an
-assignment-supplied measure function (7), while *-er* and *as* compare the measure of what
-the base predicate applies to with the maximal degree of the than-clause ((27), (38);
-[von-stechow-1984], [rullmann-1995]). The three domains then share one truth condition
-(`comparativeTruth`), and the paper's step-by-step derivations of the nominal, verbal and
-adjectival cases are one tree interpreted by the [heim-kratzer-1998] engine at three
-lexical cells (`matrix_derivation_denotes`), differing only in the thematic role and in what
-is measured: coffee, running events, or heat states (`nominalComparative`,
-`verbalComparative`, `adjectivalComparative`). What *much* measures must be non-trivially
-ordered by part-whole structure and measured monotonically (26): a quantized domain, that of
-a singular count noun, a telic verb phrase or a non-gradable adjective, has no proper parts,
-so every measure preserves its order vacuously and none separates anything, whereas a
-cumulative domain with two satisfiers has a proper part
-(`nontriviallyStructured_of_cum`). Which dimensions a comparative allows follows from what is
-measured rather than from the category of the measuring word: a linearly ordered state
-domain fixes the comparative ordering for every admissible measure, and a domain with
-incomparable parts, like coffee by weight and volume, does not (`model_restricted_iff`).
-The obligatory *much* of *very* with nouns and verbs and its absence with adjectives is
-[bresnan-1973]'s Much Deletion (`very_much_deletion`).
+Wellwood proposes that nominal, verbal and adjectival comparatives contain one
+degree-introducing morpheme, *much*, which denotes an assignment-supplied measure function, while
+*-er* and *as* compare the measure of what the base predicate applies to with the maximal degree
+of the than-clause, after von Stechow and Rullmann. The three domains share one truth condition,
+and the paper's derivations are one tree interpreted by Heim and Kratzer's engine at three
+lexical cells, measuring coffee, running events or heat states. What *much* measures must be
+non-trivially ordered by part-whole structure and measured monotonically, which a quantized
+domain cannot be. Which dimensions a comparative allows follows from what is measured rather
+than from the category of the measuring word, and the obligatory *much* of *very* with nouns and
+verbs is Bresnan's Much Deletion.
+
+## Main definitions
+
+* `comparativeTruth`: the cross-categorial truth condition of the comparative.
+* `NontriviallyStructured`: a domain with a satisfier properly part of another.
+* `MeasuredDomain.Model`: the order model of what a comparative measures.
+
+## Main results
+
+* `matrix_derivation_denotes`: the engine derives the matrix clause.
+* `nontriviallyStructured_of_cum`: a cumulative domain with two satisfiers is non-trivially
+  structured.
+* `model_restricted_iff`: only states fix the comparative ordering for every admissible measure.
+* `very_much_deletion`: Much Deletion.
 
 ## Implementation notes
 
-Degrees are rationals and eventualities the `Event` type of the thematic substrate; the
+Degrees are rationals and eventualities an abstract event type; the
 engine's sorted domain is the sum of individuals and eventualities, and existential closure
 is a lexical item. The order models of the measured domains are the reals for states and the
 componentwise-ordered plane for entities and events. The bare-adjective, measure-phrase and
@@ -60,13 +64,13 @@ open Degree
 
 /-! ### The truth conditions -/
 
-/-- The comparative (42), (48), (65): some eventuality bearing the role to `a` satisfies `P`
-and measures strictly above the maximal than-clause degree of `b`. -/
+/-- The comparative, (42), (48), (65), holds when some eventuality bearing the role to `a` satisfies
+`P` and measures strictly above the maximal than-clause degree of `b`. -/
 def comparativeTruth {Ent α Measured : Type*} (role : Ent → α → Prop) (P : α → Prop)
     (extract : α → Measured) (μ : Measured → ℚ) (a b : Ent) : Prop :=
   maxComparative (λ e => role a e ∧ P e) (λ e => role b e ∧ P e) (λ e => μ (extract e))
 
-/-- The equative (27ii): the same with a weak comparison. -/
+/-- The equative, (27ii), is the comparative with a weak comparison. -/
 def equativeTruth {Ent α Measured : Type*} (role : Ent → α → Prop) (P : α → Prop)
     (extract : α → Measured) (μ : Measured → ℚ) (a b : Ent) : Prop :=
   maxEquative (λ e => role a e ∧ P e) (λ e => role b e ∧ P e) (λ e => μ (extract e))
@@ -83,19 +87,19 @@ section Derivation
 
 variable {Ent α : Type*}
 
-/-- The degree phrase with *-er* (37i): a strict threshold on the measure. -/
+/-- The degree phrase with *-er*, (37i), sets a strict threshold on the measure. -/
 def matrixDegP (μ : α → ℚ) (δ : ℚ) (e : α) : Prop := δ < μ e
 
-/-- The degree phrase with *abs* (38ii): a weak threshold. -/
+/-- The degree phrase with *abs*, (38ii), sets a weak threshold. -/
 def absDegP (μ : α → ℚ) (d : ℚ) (e : α) : Prop := d ≤ μ e
 
-/-- The than-clause (40), (41): the degrees some eventuality of `b`'s reaches. -/
+/-- The than-clause, (40), (41), denotes the degrees that some eventuality of `b`'s reaches. -/
 def thanClause (role : Ent → α → Prop) (P : α → Prop) (μ : α → ℚ) (b : Ent) :
     Set ℚ :=
   {d | ∃ e, role b e ∧ P e ∧ absDegP μ d e}
 
-/-- The matrix clause (37viii): existential closure over the role, the predicate and the
-degree phrase at the standard `δ`. -/
+/-- The matrix clause, (37viii), existentially closes the role, the predicate and the degree
+phrase at the standard `δ`. -/
 def matrixClause (role : Ent → α → Prop) (P : α → Prop) (μ : α → ℚ) (a : Ent)
     (δ : ℚ) : Prop :=
   ∃ e, role a e ∧ P e ∧ matrixDegP μ δ e
@@ -123,10 +127,10 @@ open Syntax (Tree)
 
 variable {Ent α : Type}
 
-/-- The sorted domain: individuals and eventualities. -/
+/-- The sorted domain consists of individuals and eventualities. -/
 abbrev Dom (Ent α : Type) : Type := Ent ⊕ α
 
-/-- The lexicon: *much* is the measure (7), *-er* and *abs* the strict and weak degree heads
+/-- In the lexicon *much* is the measure (7), *-er* and *abs* the strict and weak degree heads
 ((27i), (38ii)), the role head composes by event identification ([kratzer-1996]), and
 existential closure is an item. -/
 def lexicon {D : Type} [LinearOrder D] [Zero D] (role : Ent → α → Prop) (P : α → Prop)
@@ -150,7 +154,7 @@ def lexicon {D : Type} [LinearOrder D] [Zero D] (role : Ent → α → Prop) (P 
   | "EC" => some ⟨(.e ⇒ .t) ⇒ .t, λ p => ∃ e : α, p (.inr e)⟩
   | _ => none
 
-/-- The matrix tree (36), (44), (60): the degree phrase modifies the base predicate, the role
+/-- In the matrix tree, (36), (44), (60), the degree phrase modifies the base predicate, the role
 head adds the subject, and the event variable is closed. -/
 def matrixTree : Tree Unit String :=
   .node () [.terminal () "EC",
@@ -160,7 +164,7 @@ def matrixTree : Tree Unit String :=
           .node () [.node () [.terminal () "er", .terminal () "much"],
             .terminal () "δ"]]]]]
 
-/-- The than-clause body (39), (46), (62): the same tree with *abs* for *-er*. -/
+/-- The than-clause body, (39), (46), (62), is the matrix tree with *abs* for *-er*. -/
 def thanTree : Tree Unit String :=
   .node () [.terminal () "EC",
     .node () [.terminal () "subj",
@@ -190,21 +194,21 @@ end TypeDriven
 
 section Domains
 
-variable {Entity T : Type*} [LinearOrder T]
+variable {Entity E : Type*}
 
-/-- The nominal comparative (42): the agent's event, measuring its theme. -/
-def nominalComparative (frame : ThematicFrame Entity T) (P : Event T → Prop)
-    (themeOf : Event T → Entity) (μ : Entity → ℚ) (a b : Entity) : Prop :=
+/-- The nominal comparative, (42), measures the theme of the agent's event. -/
+def nominalComparative (frame : ThematicFrame Entity E) (P : E → Prop)
+    (themeOf : E → Entity) (μ : Entity → ℚ) (a b : Entity) : Prop :=
   comparativeTruth frame.agent P themeOf μ a b
 
-/-- The verbal comparative (48): the agent's event, measured itself. -/
-def verbalComparative (frame : ThematicFrame Entity T) (P : Event T → Prop)
-    (μ : Event T → ℚ) (a b : Entity) : Prop :=
+/-- The verbal comparative, (48), measures the agent's event itself. -/
+def verbalComparative (frame : ThematicFrame Entity E) (P : E → Prop)
+    (μ : E → ℚ) (a b : Entity) : Prop :=
   comparativeTruth frame.agent P id μ a b
 
-/-- The adjectival comparative (65): the holder's state, measured itself. -/
-def adjectivalComparative (frame : ThematicFrame Entity T) (P : Event T → Prop)
-    (μ : Event T → ℚ) (a b : Entity) : Prop :=
+/-- The adjectival comparative, (65), measures the holder's state itself. -/
+def adjectivalComparative (frame : ThematicFrame Entity E) (P : E → Prop)
+    (μ : E → ℚ) (a b : Entity) : Prop :=
   comparativeTruth frame.holder P id μ a b
 
 end Domains
@@ -222,12 +226,13 @@ def NontriviallyStructured [PartialOrder α] (P : α → Prop) : Prop :=
   ∃ x y, P x ∧ P y ∧ x < y
 
 /-- A quantized domain, that of a singular count noun, a telic verb phrase or a non-gradable
-adjective, is not. -/
+adjective, is not non-trivially structured. -/
 theorem not_nontriviallyStructured_of_qua [PartialOrder α] {P : α → Prop} (hQ : QUA P) :
     ¬ NontriviallyStructured P :=
   λ ⟨_, _, hx, hy, hlt⟩ => hQ hx hy hlt.ne hlt.le
 
-/-- A cumulative domain with two satisfiers is: their sum has one of them as a proper part. -/
+/-- A cumulative domain with two satisfiers is non-trivially structured, since their sum has one
+of them as a proper part. -/
 theorem nontriviallyStructured_of_cum [SemilatticeSup α] {P : α → Prop} (hC : CUM P) {x y : α}
     (hx : P x) (hy : P y) (hne : x ≠ y) : NontriviallyStructured P := by
   by_cases h : x < x ⊔ y
@@ -240,7 +245,7 @@ theorem strictMonoOn_of_qua [PartialOrder α] {P : α → Prop} (hQ : QUA P) (μ
     StrictMonoOn μ {x | P x} :=
   λ _ hx _ hy hlt => absurd hlt.le (hQ hx hy hlt.ne)
 
-/-- On a non-trivially structured domain a monotonic measure separates some pair: the
+/-- On a non-trivially structured domain a monotonic measure separates some pair, so the
 preservation of structure is non-trivial. -/
 theorem exists_lt_of_strictMonoOn [PartialOrder α] {P : α → Prop}
     (hP : NontriviallyStructured P) {μ : α → ℚ} (hμ : StrictMonoOn μ {x | P x}) :
@@ -252,12 +257,12 @@ end Structure
 
 /-! ### Dimension tracks the measured domain (§3.4) -/
 
-/-- What a comparative measures: entities, events, or states. -/
+/-- A `MeasuredDomain` is what a comparative measures, entities, events, or states. -/
 inductive MeasuredDomain
   | entity | event | state
   deriving DecidableEq, Repr
 
-/-- The order model of a measured domain: states are linearly ordered, entities and events
+/-- In the order model of a measured domain states are linearly ordered, while entities and events
 have incomparable parts, like coffee by weight and by volume. -/
 abbrev MeasuredDomain.Model : MeasuredDomain → Type
   | .state => ℝ
@@ -280,7 +285,7 @@ theorem model_restricted_iff :
 
 /-! ### Much Deletion (§3.3, §6.3) -/
 
-/-- [bresnan-1973]'s *-er* with *much*, the source of *more* in every domain. -/
+/-- [bresnan-1973]'s *-er* with *much* is the source of *more* in every domain. -/
 def crossCategorialQP : Bresnan1973.QP := ⟨{ clitic := some .er }, .much⟩
 
 theorem crossCategorialQP_suppletion : crossCategorialQP.suppletion = some .more := rfl

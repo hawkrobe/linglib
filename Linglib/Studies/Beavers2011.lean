@@ -54,9 +54,11 @@ predicate.
 
 namespace Beavers2011
 
+open Event (τ)
+
 open ArgumentStructure HayKennedyLevin1999 Set
 
-variable {α S D T : Type*} [LinearOrder T]
+variable {α S D T E : Type*} [LinearOrder T] [Event.TemporalTrace E T]
 
 /-! ### Scalar change (§4.1) -/
 
@@ -66,30 +68,30 @@ variable [LinearOrder D]
 
 /-- `Result m b x s g e` holds when the theme `x` starts the event `e` at the contextual source `b`
 on the scale `s` and ends it at the higher goal `g`, the result relation of (48). -/
-def Result (m : S → α → T → D) (b : D) (x : α) (s : S) (g : D) (e : Event T) : Prop :=
-  m s x e.τ.fst = b ∧ b < g ∧ m s x e.τ.snd = g
+def Result (m : S → α → T → D) (b : D) (x : α) (s : S) (g : D) (e : E) : Prop :=
+  m s x (τ e).fst = b ∧ b < g ∧ m s x (τ e).snd = g
 
-variable {m : S → α → T → D} {b : D} {θ : α → S → Event T → Prop} {φ : α → Event T → Prop}
+variable {m : S → α → T → D} {b : D} {θ : α → S → E → Prop} {φ : α → E → Prop}
 
 /-- A non-quantized change entails that the theme ends the event with more of the property than
 it began with, so that *the soup cooled 5 degrees, but nothing is different about it* is
 contradictory ((59)). -/
 theorem exists_lt_of_nonQuantizedChange (h : NonQuantizedChange θ (Result m b) φ) {x : α}
-    {e : Event T} (hx : φ x e) : ∃ s, θ x s e ∧ m s x e.τ.fst < m s x e.τ.snd :=
+    {e : E} (hx : φ x e) : ∃ s, θ x s e ∧ m s x (τ e).fst < m s x (τ e).snd :=
   let ⟨s, hs, _, h₁, h₂, h₃⟩ := h x e hx
   ⟨s, hs, h₁ ▸ h₃ ▸ h₂⟩
 
 /-- On a predicate whose only scale is `s₀`, a quantized change to `g` ends every event at `g`. -/
 theorem snd_eq_of_quantizedChange {s₀ : S} {g : D} (hθ : ∀ x s e, θ x s e → s = s₀)
-    (h : QuantizedChange θ (Result m b) φ g) {x : α} {e : Event T} (hx : φ x e) :
-    m s₀ x e.τ.snd = g :=
+    (h : QuantizedChange θ (Result m b) φ g) {x : α} {e : E} (hx : φ x e) :
+    m s₀ x (τ e).snd = g :=
   let ⟨s, hs, _, _, h₃⟩ := h x e hx
   hθ x s e hs ▸ h₃
 
 /-- A predicate on the single scale `s₀` with two events that end at different goals effects no
 quantized change, since a quantized change fixes one goal for all its events (p. 357). -/
 theorem not_quantizedChange_of_snd_ne {s₀ : S} (hθ : ∀ x s e, θ x s e → s = s₀) {x x' : α}
-    {e e' : Event T} (hx : φ x e) (hx' : φ x' e') (hne : m s₀ x e.τ.snd ≠ m s₀ x' e'.τ.snd) :
+    {e e' : E} (hx : φ x e) (hx' : φ x' e') (hne : m s₀ x (τ e).snd ≠ m s₀ x' (τ e').snd) :
     ¬ ∃ g, QuantizedChange θ (Result m b) φ g := fun ⟨_, h⟩ ↦
   hne ((snd_eq_of_quantizedChange hθ h hx).trans (snd_eq_of_quantizedChange hθ h hx').symm)
 
@@ -100,15 +102,15 @@ end Result
 section HayKennedyLevin
 
 variable [AddCommGroup D] [LinearOrder D] [IsOrderedAddMonoid D] {m : S → α → T → D} {b : D}
-  {s₀ : S} {φ : α → Event T → Prop}
+  {s₀ : S} {φ : α → E → Prop}
 
 /-- On a predicate whose scale is `s₀`, a quantized change to `b + n` for a positive `n` is the
 reading of [hay-kennedy-levin-1999] with the measure phrase `n` from the source `b`, as in *the
 soup cooled 5 degrees* ((58a)). -/
 theorem quantizedChange_iff_describes_measurePhrase {n : D} (hn : 0 < n) :
     QuantizedChange (fun _ s _ ↦ s = s₀) (Result m b) φ (b + n) ↔
-      ∀ x e, φ x e → m s₀ x e.τ.fst = b ∧
-        Describes (m s₀) x (measurePhrase n) e.τ.fst e.τ.snd := by
+      ∀ x e, φ x e → m s₀ x (τ e).fst = b ∧
+        Describes (m s₀) x (measurePhrase n) (τ e).fst (τ e).snd := by
   refine forall₂_congr fun x e ↦ imp_congr_right fun _ ↦ ?_
   simp only [Result, exists_eq_left, describes_iff_sub_mem, measurePhrase, mem_singleton_iff,
     lt_add_iff_pos_right, hn, true_and]
@@ -123,8 +125,8 @@ theorem quantizedChange_iff_describes_measurePhrase {n : D} (hn : 0 < n) :
 soup cooled* ((58b)). -/
 theorem nonQuantizedChange_iff_describes_someAmount :
     NonQuantizedChange (fun _ s _ ↦ s = s₀) (Result m b) φ ↔
-      ∀ x e, φ x e → m s₀ x e.τ.fst = b ∧
-        Describes (m s₀) x someAmount e.τ.fst e.τ.snd := by
+      ∀ x e, φ x e → m s₀ x (τ e).fst = b ∧
+        Describes (m s₀) x someAmount (τ e).fst (τ e).snd := by
   refine forall₂_congr fun x e ↦ imp_congr_right fun _ ↦ ?_
   simp only [Result, exists_eq_left, describes_iff_sub_mem, someAmount, mem_Ioi, sub_pos]
   constructor
@@ -139,14 +141,14 @@ end HayKennedyLevin
 
 section KennedyLevin
 
-variable [LinearOrder D] {m : S → α → T → D} {b : D} {s₀ : S} {φ : α → Event T → Prop}
+variable [LinearOrder D] {m : S → α → T → D} {b : D} {s₀ : S} {φ : α → E → Prop}
 
 /-- From a source below the maximum, the telic reading of a degree achievement on a scale closed
 above, on which the theme reaches the maximum ([kennedy-levin-2008]), is a quantized change to
 `⊤`, as for *straighten*. -/
 theorem quantizedChange_top_of_maxStandard [OrderTop D] (hb : b ≠ ⊤)
-    (h : ∀ x e, φ x e → m s₀ x e.τ.fst = b ∧
-      projIci (m s₀ x e.τ.fst) (m s₀ x e.τ.snd) = ⊤) :
+    (h : ∀ x e, φ x e → m s₀ x (τ e).fst = b ∧
+      projIci (m s₀ x (τ e).fst) (m s₀ x (τ e).snd) = ⊤) :
     QuantizedChange (fun _ s _ ↦ s = s₀) (Result m b) φ ⊤ := fun x e hx ↦
   let ⟨h₁, h₂⟩ := h x e hx
   have h₃ := (KennedyLevin2008.maxStandard_iff (m s₀) x _ _ (h₁ ▸ hb)).1 h₂
@@ -155,7 +157,7 @@ theorem quantizedChange_top_of_maxStandard [OrderTop D] (hb : b ≠ ⊤)
 /-- The atelic reading of a degree achievement, on which the theme ends above where it began
 ([kennedy-levin-2008]), is a non-quantized change, as for *widen* or *cool*. -/
 theorem nonQuantizedChange_of_minStandard
-    (h : ∀ x e, φ x e → m s₀ x e.τ.fst = b ∧ ⊥ < projIci (m s₀ x e.τ.fst) (m s₀ x e.τ.snd)) :
+    (h : ∀ x e, φ x e → m s₀ x (τ e).fst = b ∧ ⊥ < projIci (m s₀ x (τ e).fst) (m s₀ x (τ e).snd)) :
     NonQuantizedChange (fun _ s _ ↦ s = s₀) (Result m b) φ := fun x e hx ↦
   let ⟨h₁, h₂⟩ := h x e hx
   have h₃ := (KennedyLevin2008.minStandard_iff (m s₀) x _ _).1 h₂

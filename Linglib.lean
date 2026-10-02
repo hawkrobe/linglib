@@ -985,9 +985,7 @@ import Linglib.Logic.Natural.Soundness
 import Linglib.Logic.Natural.Strawson.Basic
 import Linglib.Logic.Natural.Strawson.Soundness
 import Linglib.Semantics.Events.Basic
-import Linglib.Semantics.Events.CEM
 import Linglib.Semantics.Events.Path
-import Linglib.Semantics.Events.SpatialTrace
 import Linglib.Semantics.Evidential.Basic
 import Linglib.Semantics.Evidential.Defs
 import Linglib.Semantics.Exhaustification.Alternatives
@@ -1098,7 +1096,6 @@ import Linglib.Semantics.Tense.Perspective
 import Linglib.Semantics.Tense.Pronoun
 import Linglib.Semantics.Tense.Reichenbach
 import Linglib.Semantics.Tense.RunTimes
-import Linglib.Semantics.Tense.TenseAspectComposition
 import Linglib.Studies.AbneyKeshet2025
 import Linglib.Studies.AbramskySadrzadeh2014
 import Linglib.Studies.Abusch1997

@@ -1,57 +1,60 @@
-/-
-# Tense–Aspect Composition
-
-End-to-end composition chain bridging viewpoint aspect operators to tense
-evaluation, following [knick-sharf-2026].
-
-## The Pipeline
-
-```
-Event T → Prop ──[IMPF/PRFV]──▷ IntervalPred ──[PERF]──▷ PointPred ──[eval*]──▷ Prop
-```
-
-The aspect chain produces `PointPred W T = Index W T → Prop`.
-The eval* operators instantiate the situation (fixing world and time).
-
-## Composed Forms
-
-| Form                | Composition              | Example              |
-|---------------------|--------------------------|----------------------|
-| `simplePresent`     | PRES(IMPF(V).atPoint)    | "John runs"          |
-| `simplePast`        | PAST(PRFV(V).atPoint)    | "John ran"           |
-| `presPerfProg`      | PRES(PERF(IMPF(V)))      | "John has been running" |
-| `presPerfSimple`    | PRES(PERF(PRFV(V)))      | "John has run"       |
-| `presPerfProgXN`    | PRES(PERF_XN(IMPF(V),tᵣ))| "John has been running (since…)" |
-| `pastPerfProg`      | PAST(PERF(IMPF(V)))      | "John had been running" |
-
-## Key Results
-
-- U-perf(tᵣ) entails simple present for all tᵣ (Theorem 3)
-- U-perf(Set.univ) ↔ simple present (broad focus, Theorem 4)
-- Earlier LB strengthens IMPF (Theorem 5), later LB strengthens PRFV (Theorem 6)
-- The converse of Theorem 5 is false: concrete counterexample (Theorem 7)
-
--/
-
 module
 
 public import Linglib.Semantics.Aspect.Viewpoint
 public import Linglib.Semantics.Quantification.Basic
 
+/-!
+# Knick and Sharf (2026): On focus and the perfect aspect
+
+Knick and Sharf compose viewpoint aspect, the perfect and tense: an event predicate becomes an
+interval predicate under the imperfective or perfective, a predicate of world-time points under
+the perfect, and a proposition under a tense. The U-perfect, whose perfect time span has its
+left boundary in a domain `tᵣ`, entails its simple present competitor whatever the domain and is
+equivalent to it under broad focus, where the domain is unrestricted, which is why competition
+rules it out there. Among the focus alternatives, a domain further in the past is stronger.
+
+## Main definitions
+
+* `simplePresent`: the simple present.
+* `presPerfProgXN`: the U-perfect with domain restriction `tᵣ`.
+
+## Main results
+
+* `u_perf_entails_simple_present`: the U-perfect entails the simple present.
+* `broad_focus_equiv`: under broad focus the two are equivalent.
+* `earlier_lb_stronger_impf`: an earlier left boundary is stronger under the imperfective.
+* `earlier_lb_not_weaker_impf`: and not conversely.
+
+## Implementation notes
+
+* A left boundary is a time point, where the paper's left boundary is a subinterval of `tᵣ`
+  (`Aspect.PERF_XN`).
+* `later_lb_stronger_prfv`, the reversed ordering under the perfective, is not drawn in the paper.
+
+## TODO
+
+* The existential past and future restate the Priorean operators of `Studies/Musan1995`,
+  `Studies/VonStechow2009` and `Studies/Sharvit2014`, which should share one definition.
+
+## References
+
+* [knick-sharf-2026]
+-/
+
 @[expose] public section
 
-namespace Tense.TenseAspectComposition
+namespace KnickSharf2026
 
 open Reference
 
 open Aspect
+open Event (τ)
 
-variable {W T : Type*} [LinearOrder T]
+variable {W T E : Type*} [LinearOrder T] [Event.TemporalTrace E T]
 
-/-! ### Tense Evaluation Operators -/
+/-! ### Tense -/
 
-/-- Evaluate a point predicate at speech time (PRESENT).
-    PRES: p holds at tc in world w. -/
+/-- The present tense evaluates a point predicate at the speech time `tc` in the world `w`. -/
 def evalPres (p : PointPred W T) (tc : T) (w : W) : Prop :=
   p ⟨w, tc⟩
 
@@ -62,76 +65,75 @@ def evalRel (rel : T → T → Prop) (p : PointPred W T) (tc : T) (w : W) : Prop
   Quantifier.GQ.some (fun t => rel t tc) (fun t => p ⟨w, t⟩)
 
 omit [LinearOrder T] in
-/-- Monotone in the body predicate — inherited from `scopeMonotone_some`, not reproved. -/
+/-- Existential tense evaluation is monotone in the point predicate. -/
 theorem evalRel_mono {rel : T → T → Prop} {p q : PointPred W T}
     (h : ∀ x, p x → q x) {tc : T} {w : W} :
     evalRel rel p tc w → evalRel rel q tc w :=
   Quantifier.GQ.scopeMonotone_some _ fun _ hp => h _ hp
 
-/-- Existential past evaluates a point predicate as `∃ t < tc, p(w)(t)`. -/
+/-- The existential past evaluates a point predicate at some time before `tc`. -/
 def evalPast (p : PointPred W T) (tc : T) (w : W) : Prop :=
   evalRel (· < ·) p tc w
 
-/-- Existential future evaluates a point predicate as `∃ t > tc, p(w)(t)`. -/
+/-- The existential future evaluates a point predicate at some time after `tc`. -/
 def evalFut (p : PointPred W T) (tc : T) (w : W) : Prop :=
   evalRel (· > ·) p tc w
 
-/-! ### Composed Tense–Aspect Forms -/
+/-! ### Composed forms -/
 
 /-- The simple present is `PRES(IMPF(V).atPoint)`, so *John runs* holds at speech time when
 some event `e` with `[tc, tc] ⊂ τ(e)` satisfies `V`. -/
-def simplePresent (V : W → Event T → Prop) (tc : T) (w : W) : Prop :=
+def simplePresent (V : W → E → Prop) (tc : T) (w : W) : Prop :=
   evalPres (IntervalPred.atPoint (IMPF V)) tc w
 
 /-- The simple past is `PAST(PRFV(V).atPoint)`, so *John ran* holds when some `t < tc` and some
 event `e` with `τ(e) ⊆ [t, t]` satisfy `V`. -/
-def simplePast (V : W → Event T → Prop) (tc : T) (w : W) : Prop :=
+def simplePast (V : W → E → Prop) (tc : T) (w : W) : Prop :=
   evalPast (IntervalPred.atPoint (PRFV V)) tc w
 
 /-- The present perfect progressive is `PRES(PERF(IMPF(V)))`, so *John has been running* holds
 at `tc` when some perfect time span right-bounded by `tc` satisfies `IMPF(V)`. -/
-def presPerfProg (V : W → Event T → Prop) (tc : T) (w : W) : Prop :=
+def presPerfProg (V : W → E → Prop) (tc : T) (w : W) : Prop :=
   evalPres (PERF (IMPF V)) tc w
 
 /-- The present perfect simple is `PRES(PERF(PRFV(V)))`, so *John has run* holds at `tc` when
 some perfect time span right-bounded by `tc` satisfies `PRFV(V)`. -/
-def presPerfSimple (V : W → Event T → Prop) (tc : T) (w : W) : Prop :=
+def presPerfSimple (V : W → E → Prop) (tc : T) (w : W) : Prop :=
   evalPres (PERF (PRFV V)) tc w
 
 /-- The present perfect progressive with Extended Now is `PRES(PERF_XN(IMPF(V), tᵣ))`, the
 U-perfect reading of [knick-sharf-2026]; *John has been running since Monday* restricts the left
 boundary to `tᵣ`. -/
-def presPerfProgXN (V : W → Event T → Prop) (tᵣ : Set T) (tc : T) (w : W) : Prop :=
+def presPerfProgXN (V : W → E → Prop) (tᵣ : Set T) (tc : T) (w : W) : Prop :=
   evalPres (PERF_XN (IMPF V) tᵣ) tc w
 
 /-- The past perfect progressive is `PAST(PERF(IMPF(V)))`, so *John had been running* holds when
 some `t < tc` satisfies `PERF(IMPF(V))`. -/
-def pastPerfProg (V : W → Event T → Prop) (tc : T) (w : W) : Prop :=
+def pastPerfProg (V : W → E → Prop) (tc : T) (w : W) : Prop :=
   evalPast (PERF (IMPF V)) tc w
 
-/-! ### Unfold Theorems -/
+/-! ### Unfolding -/
 
 /-- The simple present unfolds to `∃e, [tc, tc] ⊂ τ(e) ∧ V(w)(e)`. -/
-theorem simplePresent_unfold (V : W → Event T → Prop) (tc : T) (w : W) :
+theorem simplePresent_unfold (V : W → E → Prop) (tc : T) (w : W) :
     simplePresent V tc w ↔
-    ∃ e : Event T, NonemptyInterval.pure tc < e.τ ∧ V w e := by
+    ∃ e : E, NonemptyInterval.pure tc < τ e ∧ V w e := by
   rfl
 
-/-- Present perfect progressive with XN unfolds to K&S eq. 39b:
-    ∃PTS, ∃tLB ∈ tᵣ, LB(tLB, PTS) ∧ RB(PTS, tc) ∧ IMPF(V)(w)(PTS). -/
-theorem presPerfProgXN_unfold (V : W → Event T → Prop) (tᵣ : Set T)
+/-- The U-perfect under narrow focus, (39b), holds when some perfect time span with its left
+boundary in `tᵣ` and its right boundary at `tc` falls under the imperfective. -/
+theorem presPerfProgXN_unfold (V : W → E → Prop) (tᵣ : Set T)
     (tc : T) (w : W) :
     presPerfProgXN V tᵣ tc w ↔
     ∃ pts : NonemptyInterval T, ∃ tLB ∈ tᵣ,
       LB tLB pts ∧ RB pts tc ∧ IMPF V w pts := by
   rfl
 
-/-! ### [knick-sharf-2026] Core Results -/
+/-! ### Results -/
 
-/-- Theorem 3 of [knick-sharf-2026] says that the U-perfect entails the simple present for any
-domain restriction `tᵣ`: a perfect time span ending at `tc` inside an ongoing event puts `tc`
-itself inside that event. -/
-theorem u_perf_entails_simple_present (V : W → Event T → Prop)
+/-- The U-perfect (39b) entails its simple present competitor (39a) whatever the domain `tᵣ`: a
+perfect time span ending at `tc` inside the run time of an event puts `tc` itself inside it. -/
+theorem u_perf_entails_simple_present (V : W → E → Prop)
     (tᵣ : Set T) (tc : T) (w : W) :
     presPerfProgXN V tᵣ tc w → simplePresent V tc w := by
   intro ⟨pts, _, _, _, hRB, e, hlt, hV⟩
@@ -145,72 +147,69 @@ theorem u_perf_entails_simple_present (V : W → Event T → Prop)
        (fun h => Or.inl (lt_of_lt_of_le h (le_trans pts.fst_le_snd (le_of_eq hRB))))
        (fun h => Or.inr (lt_of_eq_of_lt hRB.symm h))⟩, hV⟩
 
-/-- Theorem 4 of [knick-sharf-2026] says that under broad focus, where `tᵣ` is the whole line,
-the U-perfect is equivalent to the simple present, the degenerate case without a left-boundary
-constraint; the converse direction takes the perfect time span from the event's start to
-`tc`. -/
-theorem broad_focus_equiv (V : W → Event T → Prop) (tc : T) (w : W) :
+/-- Under broad focus, where the domain `tᵣ` is the whole line, the U-perfect is equivalent to
+the simple present, the equivalence by which competition rules it out; the converse direction
+takes the point `tc` as the perfect time span. -/
+theorem broad_focus_equiv (V : W → E → Prop) (tc : T) (w : W) :
     presPerfProgXN V Set.univ tc w ↔ simplePresent V tc w := by
   constructor
   · exact u_perf_entails_simple_present V Set.univ tc w
   · intro h
     exact ⟨NonemptyInterval.pure tc, tc, Set.mem_univ _, rfl, rfl, h⟩
 
-/-- Theorem 5 of [knick-sharf-2026] says that an earlier left boundary is stronger under the
-imperfective, since an event containing a perfect time span from `tLB₁` also contains the
-shorter one from a later `tLB₂` by the subinterval property. -/
-theorem earlier_lb_stronger_impf (V : W → Event T → Prop)
+/-- An earlier left boundary is stronger under the imperfective, the ordering of the focus
+alternatives in (33) and (35): an event whose run time contains the perfect time span from
+`tLB₁` also contains the shorter one from a later `tLB₂`. -/
+theorem earlier_lb_stronger_impf (V : W → E → Prop)
     (tLB₁ tLB₂ : T) (tc : T) (w : W) (h : tLB₁ < tLB₂) (htc : tLB₂ ≤ tc) :
     PERF_XN (IMPF V) {tLB₁} ⟨w, tc⟩ → PERF_XN (IMPF V) {tLB₂} ⟨w, tc⟩ := by
   intro ⟨pts, tLB, htLB, hLB, hRB, e, hlt, hV⟩
   obtain ⟨hsub, _hOr⟩ := NonemptyInterval.lt_def.mp hlt
   obtain ⟨hS1, hS2⟩ := NonemptyInterval.le_def.mp hsub
   -- tLB = tLB₁ (from singleton), pts = [tLB₁, tc]
-  -- e.τ ⊃ pts, so e.τ.fst ≤ tLB₁ < tLB₂ and tc ≤ e.τ.snd
+  -- (τ e) ⊃ pts, so (τ e).fst ≤ tLB₁ < tLB₂ and tc ≤ (τ e).snd
   -- Construct new PTS = [tLB₂, tc]
   refine ⟨⟨⟨tLB₂, tc⟩, htc⟩, tLB₂, rfl, rfl, rfl, e,
     NonemptyInterval.lt_def.mpr ⟨NonemptyInterval.le_def.mpr ⟨?_, ?_⟩, ?_⟩, hV⟩
-  · -- e.τ.fst ≤ tLB₂: from e.τ.fst ≤ pts.fst = tLB₁ < tLB₂
+  · -- (τ e).fst ≤ tLB₂: from (τ e).fst ≤ pts.fst = tLB₁ < tLB₂
     have : tLB = tLB₁ := htLB
     exact le_of_lt (lt_of_le_of_lt (this ▸ hLB ▸ hS1) h)
-  · -- tc ≤ e.τ.snd
+  · -- tc ≤ (τ e).snd
     exact le_trans (le_of_eq hRB.symm) hS2
-  · -- proper: e.τ.fst < tLB₂ (left disjunct)
+  · -- proper: (τ e).fst < tLB₂ (left disjunct)
     have : tLB = tLB₁ := htLB
     exact Or.inl (lt_of_le_of_lt (this ▸ hLB ▸ hS1) h)
 
-/-- Theorem 6 of [knick-sharf-2026] says that a later left boundary is stronger under the
-perfective, since an event fitting inside the shorter span from `tLB₂` also fits inside the
-longer span from an earlier `tLB₁`. -/
-theorem later_lb_stronger_prfv (V : W → Event T → Prop)
+/-- A later left boundary is stronger under the perfective (28), since an event fitting inside
+the shorter span from `tLB₂` also fits inside the longer span from an earlier `tLB₁`. -/
+theorem later_lb_stronger_prfv (V : W → E → Prop)
     (tLB₁ tLB₂ : T) (tc : T) (w : W) (h : tLB₁ < tLB₂) :
     PERF_XN (PRFV V) {tLB₂} ⟨w, tc⟩ → PERF_XN (PRFV V) {tLB₁} ⟨w, tc⟩ := by
   intro ⟨pts, tLB, htLB, hLB, hRB, e, hle, hV⟩
   obtain ⟨hS1, hS2⟩ := NonemptyInterval.le_def.mp hle
   -- tLB = tLB₂ (singleton), pts = [tLB₂, tc]
-  -- e.τ ⊆ pts: pts.fst ≤ e.τ.fst ∧ e.τ.snd ≤ pts.snd
-  -- Construct PTS' = [tLB₁, tc], which is larger, so e.τ ⊆ PTS' too
+  -- (τ e) ⊆ pts: pts.fst ≤ (τ e).fst ∧ (τ e).snd ≤ pts.snd
+  -- Construct PTS' = [tLB₁, tc], which is larger, so (τ e) ⊆ PTS' too
   have htLBeq : tLB = tLB₂ := htLB
   have htc : tLB₂ ≤ tc := htLBeq ▸ hLB ▸ le_trans pts.fst_le_snd (le_of_eq hRB)
   refine ⟨⟨⟨tLB₁, tc⟩, le_of_lt (lt_of_lt_of_le h htc)⟩, tLB₁, rfl, rfl, rfl, e,
     NonemptyInterval.le_def.mpr ⟨?_, ?_⟩, hV⟩
-  · -- e.τ.fst ≥ tLB₁: from tLB₁ < tLB₂ = pts.fst ≤ e.τ.fst
+  · -- (τ e).fst ≥ tLB₁: from tLB₁ < tLB₂ = pts.fst ≤ (τ e).fst
     exact le_of_lt (lt_of_lt_of_le h (htLBeq ▸ hLB ▸ hS1))
-  · -- e.τ.snd ≤ tc: from e.τ.snd ≤ pts.snd = tc
+  · -- (τ e).snd ≤ tc: from (τ e).snd ≤ pts.snd = tc
     exact le_trans hS2 (le_of_eq hRB)
 
-/-- Theorem 7 of [knick-sharf-2026] says that the converse of Theorem 5 fails, since an event
-going on since `tLB₂` need not have been going on since an earlier `tLB₁`; the counterexample
-takes the boundaries `0` and `2`, speech time `4`, and an event running over `[1, 5]`. -/
+/-- The ordering is strict, as the state `s''` of (33) shows: an event going on since `tLB₂`
+need not have been going on since an earlier `tLB₁`. The counterexample takes the boundaries
+`0` and `2`, speech time `4`, and an event running over `[1, 5]`. -/
 theorem earlier_lb_not_weaker_impf :
-    ¬ ∀ (V : Unit → Event ℤ → Prop) (tLB₁ tLB₂ : ℤ) (tc : ℤ) (w : Unit),
+    ¬ ∀ (V : Unit → NonemptyInterval ℤ → Prop) (tLB₁ tLB₂ : ℤ) (tc : ℤ) (w : Unit),
       tLB₁ < tLB₂ →
       PERF_XN (IMPF V) {tLB₂} ⟨w, tc⟩ → PERF_XN (IMPF V) {tLB₁} ⟨w, tc⟩ := by
   intro hall
   -- Counterexample: event runtime [1,5], tLB₁=0, tLB₂=2, tc=4
-  -- sort defaults to .action; the proof doesn't reference .sort
-  let e₀ : Event ℤ := ⟨⟨⟨1, 5⟩, by omega⟩, .action⟩
-  let V : Unit → Event ℤ → Prop := fun _ e => e = e₀
+  let e₀ : NonemptyInterval ℤ := ⟨⟨1, 5⟩, by omega⟩
+  let V : Unit → NonemptyInterval ℤ → Prop := fun _ e => e = e₀
   -- Premise: PERF_XN(IMPF(V), {2})(⟨(), 4⟩)
   -- PTS = [2,4], event [1,5]: [2,4] ⊂ [1,5] ✓
   have prem : PERF_XN (IMPF V) {(2 : ℤ)} ⟨(), 4⟩ := by
@@ -222,14 +221,14 @@ theorem earlier_lb_not_weaker_impf :
   obtain ⟨pts, tLB, htLB, hLB, hRB, e, hlt, hV⟩ := concl
   have hS1 := (NonemptyInterval.le_def.mp (NonemptyInterval.lt_def.mp hlt).1).1
   -- htLB : tLB = 0, hLB : pts.fst = tLB, so pts.fst = 0
-  -- hV : e = e₀, so e.τ.fst = 1
-  -- hS1 : e.τ.fst ≤ pts.fst, i.e. 1 ≤ 0 — contradiction
+  -- hV : e = e₀, so (τ e).fst = 1
+  -- hS1 : (τ e).fst ≤ pts.fst, i.e. 1 ≤ 0 — contradiction
   have htLBeq : tLB = (0 : ℤ) := htLB
   subst htLBeq
   dsimp only [V] at hV
   subst hV
   dsimp only [e₀] at hS1
-  simp only [LB, Event.τ] at hLB hS1
+  simp only [LB, Event.τ_nonemptyInterval] at hLB hS1
   omega
 
-end Tense.TenseAspectComposition
+end KnickSharf2026

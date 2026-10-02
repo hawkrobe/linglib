@@ -6,21 +6,27 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Order.Interval
-public import Linglib.Semantics.Events.Basic
 
 /-!
 # Run times
-[krifka-1989]
 
-A clause denotes the set of intervals at which it holds, its run times (`RunTimes`).
-Statives denote a maximal interval with all its subintervals
-(`stativeDenotation`, a principal downset); accomplishments denote a
-singleton (`accomplishmentDenotation`); `timeTrace` projects an interval
-set to the time points it covers, and `eventDenotation`
-(`Semantics/Events/Basic.lean`) realises the patterns from
-neo-Davidsonian event predicates. The temporal-connective analyses that
-consume this carrier live in their studies (Anscombe1964, Karttunen1974,
-BeaverCondoravdi2003, Rett2020a, …).
+This file defines run times, after Krifka: a clause denotes the set of intervals at which it
+holds. A stative clause denotes an interval with all its subintervals and an accomplishment a
+single interval, and `timeTrace` projects a set of intervals to the time points it covers. An
+event predicate denotes the image of its events under the temporal trace
+(`Event.TemporalTrace`). The analyses of temporal connectives built on run times live in their
+studies.
+
+## Main definitions
+
+* `Tense.RunTimes`: the sets of intervals that clauses denote.
+* `Tense.stativeDenotation`: an interval with all its subintervals.
+* `Tense.accomplishmentDenotation`: a single interval.
+* `Tense.timeTrace`: the time points that a set of intervals covers.
+
+## References
+
+* [krifka-1989]
 -/
 
 @[expose] public section
@@ -30,10 +36,10 @@ namespace Tense
 
 variable {T : Type*} [LinearOrder T]
 
-/-- A sentence denotes a set of temporal intervals — its "run-times". -/
+/-- The run times of a clause are the intervals at which it holds. -/
 abbrev RunTimes (T : Type*) [LinearOrder T] := Set (NonemptyInterval T)
 
-/-- The time points contained in some interval of a denotation. -/
+/-- The time trace of a set of intervals is the set of time points they contain. -/
 def timeTrace (p : RunTimes T) : Set T :=
   { t | ∃ i ∈ p, t ∈ i }
 
@@ -59,15 +65,12 @@ theorem mem_timeTrace_pure {a t : T} :
     t ∈ timeTrace {NonemptyInterval.pure a} ↔ t = a := by
   simp
 
-/-- Stative denotation: the maximal interval `i` with all its subintervals —
-    the principal downset `Set.Iic i`, a lower set, which *is* the
-    subinterval-closure property. The *activity* case (a minimal-parts floor:
-    a single step is not "running") is the stratified reference of
-    `Studies/Champollion2017.lean` ([champollion-2017]), not this lower set. -/
+/-- A stative clause holding throughout `i` denotes `i` with all its subintervals, the principal
+downset `Set.Iic i`. -/
 def stativeDenotation (i : NonemptyInterval T) : RunTimes T :=
   Set.Iic i
 
-/-- Accomplishment denotation: exactly the singleton `{i}` — quantization. -/
+/-- An accomplishment over `i` denotes the singleton `{i}`. -/
 def accomplishmentDenotation (i : NonemptyInterval T) : RunTimes T :=
   {i}
 
@@ -89,19 +92,5 @@ theorem mem_timeTrace_stativeDenotation {i : NonemptyInterval T} {t : T} :
 theorem timeTrace_accomplishmentDenotation (i : NonemptyInterval T) :
     timeTrace (accomplishmentDenotation i) = { t | t ∈ i } := by
   ext t; simp [timeTrace, accomplishmentDenotation]
-
-
-theorem timeTrace_eventDenotation (P : Event T → Prop) :
-    timeTrace (eventDenotation P) = { t | ∃ e, P e ∧ t ∈ e.τ } :=
-  timeTrace_image Event.τ { e | P e }
-
-theorem eventDenotation_singleton (e₀ : Event T) :
-    eventDenotation (fun e => e = e₀) = accomplishmentDenotation e₀.τ := by
-  simp [eventDenotation, accomplishmentDenotation]
-
-theorem eventDenotation_sub_stative (i : NonemptyInterval T) (P : Event T → Prop)
-    (hP : ∀ e, P e → e.τ ≤ i) :
-    eventDenotation P ⊆ stativeDenotation i := by
-  rintro j ⟨e, he, rfl⟩; exact hP e he
 
 end Tense

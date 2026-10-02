@@ -34,7 +34,7 @@ and the paper's structural claim is its c-command relations.
 ## References
 
 * [kratzer-1996]
-* [marantz-1984] — the asymmetry between internal and external arguments the paper builds on
+* [marantz-1984]
 -/
 
 @[expose] public section
@@ -45,38 +45,40 @@ open ArgumentStructure Semantics.Composition
 
 section Semantics
 
-variable {Entity T : Type*} [LinearOrder T]
+variable {Entity E : Type*}
 
 /-- In the denotation of *Mittie fed the dog*, Voice, denoting the agent relation, combines
 with the verb phrase by Event Identification, so the agent enters above the verb. -/
-def mittieFedTheDog (agent feed : ThematicRel Entity T) (mittie dog : Entity) :
-    Event T → Prop :=
+def mittieFedTheDog (agent feed : ThematicRel Entity E) (mittie dog : Entity) :
+    E → Prop :=
   eventIdentification agent (feed dog) mittie
 
 /-- The sentence holds of an event iff Mittie is its agent and it is a feeding of the dog;
 the verb contributes no agent. -/
-theorem mittieFedTheDog_iff (agent feed : ThematicRel Entity T) (mittie dog : Entity)
-    (e : Event T) : mittieFedTheDog agent feed mittie dog e ↔ agent mittie e ∧ feed dog e :=
+theorem mittieFedTheDog_iff (agent feed : ThematicRel Entity E) (mittie dog : Entity)
+    (e : E) : mittieFedTheDog agent feed mittie dog e ↔ agent mittie e ∧ feed dog e :=
   Iff.rfl
 
 /-- Two verb phrases with the same events are indistinguishable once Voice adds the external
 argument, whatever the agent relation: the agent is severed from the verb. -/
-theorem mittieFedTheDog_congr (agent feed feed' : ThematicRel Entity T) (mittie dog : Entity)
-    (h : ∀ e, feed dog e ↔ feed' dog e) (e : Event T) :
+theorem mittieFedTheDog_congr (agent feed feed' : ThematicRel Entity E) (mittie dog : Entity)
+    (h : ∀ e, feed dog e ↔ feed' dog e) (e : E) :
     mittieFedTheDog agent feed mittie dog e ↔ mittieFedTheDog agent feed' mittie dog e :=
   and_congr_right fun _ ↦ h e
 
-/-- An agent head, whose events are actions, and a stative verb phrase such as *own the dog*
+/-- An agent head, whose events are not states, and a stative verb phrase such as *own the dog*
 (25), whose events are states, combine by Event Identification to the empty relation. -/
-theorem agent_stative_eq_bot {agent : ThematicRel Entity T} {P : Event T → Prop}
-    (hagent : ∀ x e, agent x e → e.isAction) (hP : ∀ e, P e → e.isState) :
+theorem agent_stative_eq_bot (IsState : E → Prop) {agent : ThematicRel Entity E} {P : E → Prop}
+    (hagent : ∀ x e, agent x e → ¬ IsState e) (hP : ∀ e, P e → IsState e) :
     eventIdentification agent P = ⊥ :=
   eventIdentification_eq_bot_iff.2 fun x ↦ Pi.disjoint_iff.2 fun e ↦
-    Prop.disjoint_iff.2 fun h ↦ (e.isAction_iff_not_isState.1 (hagent x e h.1)) (hP e h.2)
+    Prop.disjoint_iff.2 fun h ↦ hagent x e h.1 (hP e h.2)
 
-/-- A holder head and a stative verb phrase, (26), compose to a nonempty relation. -/
-example : eventIdentification (fun (_ : Unit) (e : Event ℤ) ↦ e.isState) Event.isState ≠ ⊥ :=
-  fun h ↦ (congrFun₂ h () exampleKnow).mp ⟨rfl, rfl⟩
+/-- A holder head and a stative verb phrase, (26), compose to a nonempty relation wherever there
+is a state. -/
+example (IsState : E → Prop) {e : E} (he : IsState e) :
+    eventIdentification (fun (_ : Unit) ↦ IsState) IsState ≠ ⊥ :=
+  fun h ↦ (congrFun₂ h () e).mp ⟨he, he⟩
 
 end Semantics
 
@@ -84,22 +86,22 @@ section Syntax
 
 open Minimalist SyntacticObject
 
-/-- Agentive Voice, subcategorizing for the verb phrase. -/
+/-- `voice` is agentive Voice, which subcategorizes for the verb phrase. -/
 def voice : LIToken := ⟨.simple .Voice [.v] "Voice", 200⟩
 
-/-- The verbalizer. -/
+/-- `little_v` is the verbalizer. -/
 def little_v : LIToken := ⟨.simple .v [.V] "v", 201⟩
 
-/-- The verb *fed*, subcategorizing for its internal argument. -/
+/-- `fed` is the verb *fed*, which subcategorizes for its internal argument. -/
 def fed : LIToken := ⟨.simple .V [.D] "fed", 202⟩
 
-/-- The external argument. -/
+/-- `mittie` is the external argument. -/
 def mittie : LIToken := ⟨.simple .D [] "Mittie", 203⟩
 
-/-- The internal argument. -/
+/-- `theDog` is the internal argument. -/
 def theDog : LIToken := ⟨.simple .D [] "the dog", 204⟩
 
-/-- `[VoiceP Mittie [Voice' Voice [vP v [VP fed [DP the dog]]]]]`. -/
+/-- The tree of the sentence is `[VoiceP Mittie [Voice' Voice [vP v [VP fed [DP the dog]]]]]`. -/
 def tree : PlanarSyntacticObject := mittie * (voice * (little_v * (fed * theDog)))
 
 /-- The external argument c-commands the internal argument, and not conversely. -/
@@ -108,8 +110,8 @@ theorem mittie_cCommands_theDog :
       ¬ cCommandsIn tree (leaf theDog) (leaf mittie) := by
   constructor <;> decide
 
-/-- Voice c-commands the verb phrase, and the external argument c-commands Voice: the
-external argument sits above the head that introduces it. -/
+/-- Voice c-commands the verb phrase, and the external argument c-commands Voice, so the external
+argument sits above the head that introduces it. -/
 theorem voice_between :
     cCommandsIn tree (leaf voice) (leaf fed) ∧ cCommandsIn tree (leaf mittie) (leaf voice) := by
   constructor <;> decide

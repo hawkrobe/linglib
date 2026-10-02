@@ -8,26 +8,28 @@ public import Linglib.Data.Examples.Pylkkanen2008
 /-!
 # Pylkkänen (2008): Introducing Arguments
 
-This file formalizes [pylkkanen-2008]'s inventory of argument-introducing heads (Table 1.1) and
-the two typologies built on it. Applicative heads are high or low: a high applicative relates
-the applied argument to the event and combines with the verb phrase by Event Identification, a
-low applicative relates it to the verb's theme by a transfer-of-possession relation and takes
-the verb as its argument (15). Causative heads share one meaning, Cause (9), which relates a
-causing event to a caused one and introduces no individual; they vary in whether Cause is
-bundled with Voice into one head and in whether it selects a root, a verb, or a phase.
+Pylkkänen's inventory of argument-introducing heads underlies two typologies. Applicative heads
+are high or low: a high applicative relates the applied argument to the event and combines with
+the verb phrase by Event Identification, and a low applicative relates it to the verb's theme
+by a transfer of possession and takes the verb as its argument. Causative heads share one
+meaning, Cause, which relates a causing event to a caused one and introduces no individual;
+they vary in whether Cause is bundled with Voice and in whether it selects a root, a verb or a
+phase. The diagnostics that separate the heads, such as the restriction of low applicatives to
+structures with a direct object, are facts about semantic types, derived here by the
+type-driven composition engine.
 
-The first applicative diagnostic, that only high applicatives combine with unergatives, is a
-fact about semantic types, and is derived from the types of (13) and (15) by the type-driven
-composition engine (`composes_unergative_iff`, checked against the six languages of Table 2.1
-in `table21_unergative`). Over an unergative, the one constituent of the type a low applicative
-needs is the Voice' whose open argument is the agent, and composing (15) with it makes the
-applied-to object both agent and theme of the event, the contradiction of (103b)
-(`lowAppl_agent_eq_bot`). The causative claims of §3.2 and §3.3 are typing facts as well: Cause
-and Voice cannot combine with each other, Cause must apply before Voice (`cause_voice_order`),
-and only the bieventive Cause yields a causative with no individual argument
-(`unaccusative_causative`). The predictions of Tables 3.1 and 3.2 are derived from
-`CauseHead.Embeds`, the layers a causative head's complement may contain; their joint corollary is
-that a root-selecting, Voice-bundling causative leaves no position for a causee.
+## Main definitions
+
+* `lowAppl`: the low applicative.
+* `cause`: Cause, the meaning shared by every causative head.
+* `CauseHead.Embeds`: the layers a causative head's complement may contain.
+
+## Main results
+
+* `composes_unergative_iff`: only high applicatives combine with unergatives.
+* `lowAppl_agent_eq_bot`: a low applicative over an unergative makes the object agent and theme.
+* `cause_voice_order`: Cause applies before Voice.
+* `hasCauseePosition_iff`: a root-selecting, Voice-bundling causative leaves no causee position.
 
 ## Implementation notes
 
@@ -66,20 +68,21 @@ book's correlation of the two tests across Table 2.1 (`table21_static_iff_unerga
 
 namespace Pylkkanen2008
 
+
 open ArgumentStructure Minimalist Examples Semantics.Composition Semantics.Composition.Tree
 
-variable {Entity : Type*} {T : Type*} [LinearOrder T]
+variable {Entity E : Type*}
 
 /-! ### Applicatives: high relates to the event, low to the theme -/
 
 /-- The low applicative (15) relates the direct object `x` to the indirect object `y` by the
 transfer relation `poss`, to-the-possession for a recipient applicative and from-the-possession
 for a source applicative, and asserts that `x` is the theme of the verb `f`. -/
-def lowAppl (theme : ThematicRel Entity T) (poss : Entity → Entity → Prop) (x y : Entity)
-    (f : ThematicRel Entity T) : Event T → Prop :=
+def lowAppl (theme : ThematicRel Entity E) (poss : Entity → Entity → Prop) (x y : Entity)
+    (f : ThematicRel Entity E) : E → Prop :=
   fun e ↦ f x e ∧ theme x e ∧ poss x y
 
-/-- The type of the low applicative head (15), `⟨e,⟨e,⟨⟨e,⟨s,t⟩⟩,⟨s,t⟩⟩⟩⟩`. -/
+/-- `lowApplTy` is the type of the low applicative head (15), `⟨e,⟨e,⟨⟨e,⟨s,t⟩⟩,⟨s,t⟩⟩⟩⟩`. -/
 abbrev lowApplTy : Ty := .e ⇒ .e ⇒ Ty.eet ⇒ Ty.et
 
 /-- `sisterTy a` is the type of the applicative constituent that is the verb's sister, the high
@@ -113,8 +116,8 @@ theorem lowApplP_composes_transitive : tyBinary (Ty.eet ⇒ Ty.et) Ty.eet = some
 /-- In the derivation (16) of *Mary bought John the book*, the low ApplP takes the verb, whose
 denotation relates its theme to a buying event, and Voice adds the agent by Event
 Identification. -/
-theorem voiceP_lowAppl (agent theme : ThematicRel Entity T) (poss : Entity → Entity → Prop)
-    (buying : Event T → Prop) (mary john book : Entity) (e : Event T) :
+theorem voiceP_lowAppl (agent theme : ThematicRel Entity E) (poss : Entity → Entity → Prop)
+    (buying : E → Prop) (mary john book : Entity) (e : E) :
     eventIdentification agent
         (lowAppl theme poss book john (eventIdentification theme buying)) mary e ↔
       buying e ∧ agent mary e ∧ theme book e ∧ poss book john := by
@@ -124,14 +127,15 @@ theorem voiceP_lowAppl (agent theme : ThematicRel Entity T) (poss : Entity → E
 /-- Over an unergative the constituent of type `⟨e,⟨s,t⟩⟩` is the Voice' whose open argument is
 the agent, and the low ApplP composed with it holds of no event when no participant is both
 agent and theme, the contradiction of (103b). -/
-theorem lowAppl_agent_eq_bot {agent theme : ThematicRel Entity T} (h : Disjoint agent theme)
-    (poss : Entity → Entity → Prop) (run : Event T → Prop) (x y : Entity) :
+theorem lowAppl_agent_eq_bot {agent theme : ThematicRel Entity E} (h : Disjoint agent theme)
+    (poss : Entity → Entity → Prop) (run : E → Prop) (x y : Entity) :
     lowAppl theme poss x y (eventIdentification agent run) = ⊥ := by
   ext e
   simp only [Pi.disjoint_iff, Prop.disjoint_iff] at h
   simpa [lowAppl] using fun ha _ ht _ ↦ h x e ⟨ha, ht⟩
 
-/-- The applicative constructions the book analyzes, with the heads it assigns them
+/-- A `Construction` is one of the applicative constructions the book analyzes, with the head it
+assigns
 (Table 1.1, together with the Korean and Albanian applicatives of Chapter 2). -/
 inductive Construction where
   | chagaBenefactive
@@ -199,20 +203,20 @@ theorem possessor_dative_transitivity :
 
 /-- Cause (9), the meaning shared by every causative head, relates the event it describes to a
 caused event of which the predicate `f` holds, and introduces no individual. -/
-def cause (CAUSE : Event T → Event T → Prop) (f : Event T → Prop) : Event T → Prop :=
+def cause (CAUSE : E → E → Prop) (f : E → Prop) : E → Prop :=
   fun e ↦ ∃ e', f e' ∧ CAUSE e e'
 
 /-- On the bieventive analysis (14) of *John melted the ice*, Voice relates John to an event
 that causes a melting, the reading (13b); on the θ-role analysis (16), a causer head relates
 John to the melting itself, the reading (15b). -/
-theorem melted_readings (CAUSE : Event T → Event T → Prop) (agent causer : ThematicRel Entity T)
-    (melt : Event T → Prop) (john : Entity) (e : Event T) :
+theorem melted_readings (CAUSE : E → E → Prop) (agent causer : ThematicRel Entity E)
+    (melt : E → Prop) (john : Entity) (e : E) :
     (eventIdentification agent (cause CAUSE melt) john e ↔
         agent john e ∧ ∃ e', melt e' ∧ CAUSE e e') ∧
       (eventIdentification causer melt john e ↔ causer john e ∧ melt e) :=
   ⟨Iff.rfl, Iff.rfl⟩
 
-/-- The type of Cause (9), `⟨⟨s,t⟩,⟨s,t⟩⟩`. -/
+/-- `causeTy` is the type of Cause (9), `⟨⟨s,t⟩,⟨s,t⟩⟩`. -/
 abbrev causeTy : Ty := Ty.et ⇒ Ty.et
 
 /-- Cause applied to a verb phrase yields a predicate of events, the unaccusative causative (18),

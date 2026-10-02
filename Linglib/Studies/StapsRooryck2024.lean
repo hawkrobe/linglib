@@ -8,35 +8,34 @@ public import Linglib.Fragments.Romance.French.Verbs
 /-!
 # Staps and Rooryck (2024): Formalizing Spatial-Causal Polysemy of Agent Prepositions
 
-This file formalizes [staps-rooryck-2024]'s analysis of the French agent prepositions *par*
-and *de*. Against accounts on which the agent preposition of a passive is a semantically
-vacuous case marker, the paper gives each preposition one polymorphically typed denotation
-in the sense of the principled polysemy of [tyler-evans-2003], instantiated by the syntactic
-context: entities and situations in passives, situations or forces and situations in causal
-adjuncts. The domain types are `SemDomain`, an instantiation type is `PrepType`, and `Rel`
-types a relation at an instantiation. In causal adjuncts, in the force-theoretic frame of
-[copley-harley-2015] and [copley-harley-2022], *de* names a causing situation and *par* a
-force (`deCausal`, `parCausal`); a cause *de* names is, through its net force, a cause *par*
-names (`parCausal_net_of_deCausal`). In passives the by-phrase is the external argument of
-[angelopoulos-collins-terzi-2020], a predicate of events combined with the verb by Event
-Identification and closed by passive Voice, and the closure is redundant
-(`voicePass_eventIdentification`).
+Staps and Rooryck analyze the French agent prepositions *par* and *de*. Against accounts on
+which the agent preposition of a passive is a vacuous case marker, they give each preposition one
+polymorphically typed denotation, in the sense of Tyler and Evans's principled polysemy,
+instantiated by the syntactic context. In causal adjuncts, in Copley and Harley's force-theoretic
+frame, *de* names a causing situation and *par* a force. In passives the by-phrase is the
+external argument of Angelopoulos, Collins and Terzi, combined with the verb by Event
+Identification. The agentive instantiations share the at-issue relation Initiator and differ in
+presupposition, high proto-agentivity for *par* and low for *de*, where proto-agentivity is
+relational in the terms of Dowty and of Hopper and Thompson: bringing about a change,
+volitionality and telicity, with change primary. Over the fragment's verbs this derives the
+paper's readings, such as the exclusion of *de* by verbs of change.
 
-The agentive instantiations share the at-issue relation Initiator and differ only in
-presupposition, high proto-agentivity for *par* and low for *de* (`parAgentive`,
-`deAgentive`, `parAgentive_presup_iff`). The relevant proto-agentivity is relational, in the
-terms of [dowty-1991] and [hopper-thompson-1980]: whether the agent brings about a change,
-volitionality and telicity, a `Construal`, ordered with change primary
-(`Construal.lt_of_change`, `Construal.le_iff_of_not_change`). *Par* presupposes a construal
-at least as proto-agentive as any the verb makes available and *de* one without change at
-most as proto-agentive as any (`ParSelects`, `DeSelects`); over the fragment's entries this
-derives the paper's readings: the verbs of change exclude *de* (`change_verbs_exclude_de`),
-the psych verbs allow both (`psych_verbs_allow_both`), *par* selects the volitional and *de*
-the positional sense of *suivre* (`par_suivre`, `de_suivre`), and *par* the telic and *de*
-the atelic sense of *abandonner* (`par_abandonner`, `de_abandonner`). The paper's remark that
-in a causal model an effect depends on a distal cause only where it depends on the proximate
-one, offered as a reason *de* marks low proto-agentivity, is
-`dependsOnProximate_of_dependsOnDistal`.
+## Main definitions
+
+* `parCausal`: *par* in a causal adjunct.
+* `deCausal`: *de* in a causal adjunct.
+* `parAgentive`: *par* in a passive.
+* `deAgentive`: *de* in a passive.
+* `Construal`: the agent's relation to the event, ordered by proto-agentivity.
+
+## Main results
+
+* `parCausal_net_of_deCausal`: a cause *de* names is, through its net force, one *par* names.
+* `voicePass_eventIdentification`: passive Voice's closure is redundant under a by-phrase.
+* `change_verbs_exclude_de`: verbs of change exclude *de*.
+* `psych_verbs_allow_both`: psych verbs allow both prepositions.
+* `dependsOnProximate_of_dependsOnDistal`: an effect depends on a distal cause only where it
+  depends on the proximate one.
 
 ## Implementation notes
 
@@ -45,7 +44,7 @@ survey of twenty-one speakers on a six-point scale only to confirm its judgments
 it reports are not reproduced. Change on a contextually inferred scale, which lets the psych
 verbs take *par* when the emotion has effects, is beyond the lexical construals and is not
 formalized. The stative/dynamic contrast, which the paper finds never decisive on its own,
-is not a coordinate of `Construal`. [straub-1974]'s generalization that non-stative verbs
+is not a coordinate of `Construal`. Straub's generalization that non-stative verbs
 take *par*, stative verbs with animate agents either preposition and stative verbs with
 inanimate agents *de* is described in the paper as too coarse, since a stative verb with an
 inanimate agent allows *par* when a change on an inferred scale is at stake.
@@ -89,14 +88,14 @@ structure PrepType where
 
 universe u
 
-/-- The interpretation of the domain types in the force-theoretic frame of
-[copley-harley-2022]: a force is a function from situations to situations. -/
+/-- `Dom` interprets the domain types in the force-theoretic frame of [copley-harley-2022], where a
+force is a function from situations to situations. -/
 def Dom (Entity S : Type u) : SemDomain → Type u
   | .e => Entity
   | .s => S
   | .f => S → S
 
-/-- A relation of type `⟨η, ⟨θ, t⟩⟩`, from ground to figure. -/
+/-- A relation of type `⟨η, ⟨θ, t⟩⟩` relates a ground to a figure. -/
 abbrev Rel (Entity S : Type u) (t : PrepType) : Type u :=
   Dom Entity S t.ground → Dom Entity S t.figure → Prop
 
@@ -126,44 +125,44 @@ end Causal
 
 section Passive
 
-variable {Entity T : Type*} [LinearOrder T]
+variable {Entity E : Type*}
 
 /-- The by-phrase (10b) is the agentive instantiation applied to its argument, a predicate of
 events at type `⟨s, t⟩`. -/
-def byPhrase (init : ThematicRel Entity T) (x : Entity) : Event T → Prop := init x
+def byPhrase (init : ThematicRel Entity E) (x : Entity) : E → Prop := init x
 
 /-- Passive Voice (9b) is the existential closure of the external argument. -/
-def voicePass (p : ThematicRel Entity T) : Event T → Prop := fun e ↦ ∃ x, p x e
+def voicePass (p : ThematicRel Entity E) : E → Prop := fun e ↦ ∃ x, p x e
 
 /-- In (10) the by-phrase combines with the verb's denotation by Event Identification and the
 closure passive Voice performs is redundant, since the by-phrase supplies the initiator. -/
-theorem voicePass_eventIdentification (init : ThematicRel Entity T) (body : Event T → Prop)
-    (j : Entity) (e : Event T) :
+theorem voicePass_eventIdentification (init : ThematicRel Entity E) (body : E → Prop)
+    (j : Entity) (e : E) :
     voicePass (eventIdentification (fun x e ↦ init x e ∧ body e) (byPhrase init j)) e ↔
       init j e ∧ body e :=
   ⟨fun ⟨_, ⟨_, hb⟩, hj⟩ ↦ ⟨hj, hb⟩, fun ⟨hj, hb⟩ ↦ ⟨j, ⟨hj, hb⟩, hj⟩⟩
 
 /-- *par* in a passive (35a) is the initiator relation, presupposing high proto-agentivity of
 the agent in the event. The evaluation point of the partial proposition is the event. -/
-def parAgentive (init : ThematicRel Entity T) (High : Entity → Event T → Prop) (x : Entity) :
-    PartialProp (Event T) where
+def parAgentive (init : ThematicRel Entity E) (High : Entity → E → Prop) (x : Entity) :
+    PartialProp (E) where
   presup := High x
   assertion := init x
 
 /-- *de* in a passive (35b) is the initiator relation, presupposing low proto-agentivity. -/
-def deAgentive (init : ThematicRel Entity T) (High : Entity → Event T → Prop) (x : Entity) :
-    PartialProp (Event T) where
+def deAgentive (init : ThematicRel Entity E) (High : Entity → E → Prop) (x : Entity) :
+    PartialProp (E) where
   presup e := ¬ High x e
   assertion := init x
 
-variable (init : ThematicRel Entity T) (High : Entity → Event T → Prop) (x : Entity)
+variable (init : ThematicRel Entity E) (High : Entity → E → Prop) (x : Entity)
 
 /-- The two prepositions share their at-issue content. -/
 theorem parAgentive_assertion :
     (parAgentive init High x).assertion = (deAgentive init High x).assertion := rfl
 
 /-- Their presuppositions are complementary. -/
-theorem parAgentive_presup_iff (e : Event T) :
+theorem parAgentive_presup_iff (e : E) :
     (parAgentive init High x).presup e ↔ ¬ (deAgentive init High x).presup e :=
   not_not.symm
 
@@ -171,8 +170,8 @@ end Passive
 
 /-! ### Proto-agentivity -/
 
-/-- A construal of the agent's relation to the event, by the relational proto-agentivity
-properties the paper finds decisive: bringing about a change, volitionality and telicity. -/
+/-- A construal records the agent's relation to the event by the relational proto-agentivity
+properties the paper finds decisive, bringing about a change, volitionality and telicity. -/
 structure Construal where
   change : Bool
   volition : Bool

@@ -10,27 +10,34 @@ public import Linglib.Data.Examples.Bondarenko2020
 /-!
 # Bondarenko (2020): factivity from pre-existence
 
-This file formalizes [bondarenko-2020]'s account of the factivity alternation of Barguzin Buryat
-*hanaxa*, 'think' with a finite CP (1) and 'remember' with a nominalized clause (2). The
-nominalized clause presupposes that the event it describes started before the thinking: a
-*began* continuation must place the event's start before the matrix time (4), a future child or
-a fictional cat cannot be the object (5), (6), and the inference survives questions and negation
-(14), (15). The alternation is not an ambiguity of the verb. A CP modifies the thinking event,
-whose content its complementizer fixes (25), and adds no presupposition, so the report imposes
-nothing on the actual world (`reportThat_presup`). A nominalized clause
-saturates the internal argument that the head θTh introduces, and θTh presupposes that this
-argument started before the matrix time (`thetaTh`, (55)). Closed by a strong Kleene existential
-(58) ([fox-2013]), the report presupposes exactly that (`presup_closure_thetaTh`, (59)), and in
-the past tense that such an event preceded some past thinking time ((62):
-`exists_preExists_of_report_presup`). Pre-existence entails that the event exists in the world
-of evaluation, which is the factive inference (`exists_of_report_presup`). A nominalized CP is a
-predicate of contentful individuals (64), so its pre-existence presupposition concerns a claim
-with the content, not an event of it (65), (66).
+Bondarenko accounts for the factivity alternation of Barguzin Buryat *hanaxa*, 'think' with a
+finite CP and 'remember' with a nominalized clause. The nominalized clause presupposes that the
+event it describes started before the thinking: a *began* continuation must place its start
+before the matrix time, a future child or a fictional cat cannot be the object, and the
+inference survives questions and negation. A CP modifies the thinking event, whose content its
+complementizer fixes, and adds no presupposition. A nominalized clause saturates the internal
+argument of the head θTh, which presupposes that this argument started before the matrix time;
+closed by Fox's strong Kleene existential, the report presupposes exactly that, and the factive
+inference follows.
+
+## Main definitions
+
+* `thetaTh`: the head θTh with *hanaxa*.
+* `report`: the past-tense report with a nominalized clause.
+* `reportThat`: the past-tense report with a CP.
+
+## Main results
+
+* `reportThat_presup`: a report with a CP presupposes nothing.
+* `presup_closure_thetaTh`: the closed θTh-report presupposes pre-existence.
+* `exists_preExists_of_report_presup`: the past-tense report presupposes pre-existence at some
+  past thinking time.
+* `exists_of_report_presup`: the factive inference.
 
 ## Implementation notes
 
 * Pre-existence is `Event.PreExists` of `Semantics/Events/PreExistence.lean`, shared with
-  [williams-2025]. Time spans are a function `τ` into `NonemptyInterval`, the run time of an
+  `Studies/Williams2025`. Time spans are a function `τ` into `NonemptyInterval`, the run time of an
   event or the life span of an entity, and the paper's `LB(τ(x)) < t` is `(τ x).fst < t.fst`.
 * Truth values are trivalent, as in the paper: a sentence is a `PartialProp`, defined when it is
   true or false. The existential closure (58) and the past tense (60) are both the strong Kleene
@@ -63,28 +70,30 @@ with the content, not an event of it (65), (66).
 
 namespace Bondarenko2020
 
+
 open Presupposition PartialProp Event
 
 variable {W T X E I : Type*} [LinearOrder T]
 
 /-! ### θTh and its presupposition, (55), (56) -/
 
-/-- θTh (55), (56) with *hanaxa*, at the matrix time `t`: the event `e` is a `P`-event about an
-individual of `Q` that started before `t`, presupposing that `Q` describes such an individual. -/
+/-- With *hanaxa*, θTh holds of an event `e` at the matrix time `t` when `e` is a `P`-event about
+an individual of `Q` that started before `t`, and presupposes that `Q` describes such an
+individual, (55), (56). -/
 def thetaTh (τ : X → NonemptyInterval T) (about : E → X) (P : W → NonemptyInterval T → E → Prop)
     (Q : W → NonemptyInterval T → X → Prop) (t : NonemptyInterval T) (e : E) : PartialProp W where
   presup w := PreExists τ (Q w t) t.fst
   assertion w := ∃ x, Q w t x ∧ (τ x).fst < t.fst ∧ P w t e ∧ about e = x
 
-/-- The past tense (60) over the existentially closed (58) θTh-report (57), within the
-contextual interval `g₁`: (61). -/
+/-- The report (61) is the past tense (60), within the contextual interval `g₁`, over the
+existentially closed (58) θTh-report (57). -/
 def report (τ : X → NonemptyInterval T) (about : E → X) (P : W → NonemptyInterval T → E → Prop)
     (Q : W → NonemptyInterval T → X → Prop) (g₁ t : NonemptyInterval T) : PartialProp W :=
   existsPartialStrong (fun t' ↦ t'.precedes t ∧ t' ≤ g₁) fun t' ↦
     existsPartialStrong (fun _ ↦ True) (thetaTh τ about P Q t')
 
-/-- The past tense (28) over a report with a CP (27): a thinking event whose content the
-complementizer (25) fixes as `p`, (29). -/
+/-- A report with a CP, (29), is the past tense (28) over a thinking event whose content the
+complementizer (25) fixes as `p`. -/
 def reportThat [Anchor E I] (P : W → NonemptyInterval T → E → Prop) (p : I → Prop)
     (g₁ t : NonemptyInterval T) : PartialProp W :=
   existsPartialStrong (fun t' ↦ t'.precedes t ∧ t' ≤ g₁) fun t' ↦
@@ -93,30 +102,30 @@ def reportThat [Anchor E I] (P : W → NonemptyInterval T → E → Prop) (p : I
 variable {τ : X → NonemptyInterval T} {about : E → X} {P : W → NonemptyInterval T → E → Prop}
   {Q : W → NonemptyInterval T → X → Prop} {g₁ t : NonemptyInterval T} {w : W}
 
-/-- (55), (56): θTh's assertion repeats its presupposition, so θTh is true exactly when its
-assertion holds. -/
+/-- θTh's assertion repeats its presupposition, so θTh is true exactly when its assertion holds,
+(55), (56). -/
 theorem thetaTh_holds_iff {e : E} :
     (thetaTh τ about P Q t e).holds w ↔ (thetaTh τ about P Q t e).assertion w :=
   ⟨And.right, fun h ↦ ⟨let ⟨x, hx, hlt, _⟩ := h; ⟨x, hx, hlt⟩, h⟩⟩
 
 /-! ### A CP adds no presupposition, §3.1 -/
 
-/-- §3.1.2: a report with a CP is defined at every world, so it presupposes nothing about the
-actual world. -/
+/-- A report with a CP is defined at every world, so it presupposes nothing about the
+actual world, §3.1.2. -/
 theorem reportThat_presup [Anchor E I] (p : I → Prop) : (reportThat P p g₁ t).presup w :=
   existsPartialStrong_presup_of_forall fun _ _ ↦ trivial
 
 /-! ### A nominalized clause presupposes pre-existence, §3.2.3 -/
 
-/-- (59): the existentially closed θTh-report presupposes pre-existence. -/
+/-- The existentially closed θTh-report presupposes pre-existence, (59). -/
 theorem presup_closure_thetaTh [Nonempty E] :
     (existsPartialStrong (fun _ ↦ True) (thetaTh τ about P Q t)).presup w ↔
       PreExists τ (Q w t) t.fst :=
   existsPartialStrong_presup_iff (π := fun w ↦ PreExists τ (Q w t) t.fst)
     ⟨Classical.arbitrary E, trivial⟩ fun _ _ ↦ rfl
 
-/-- (62): over a nonempty contextual past, the report presupposes that the complement describes
-something that started before a past thinking time. -/
+/-- Over a nonempty contextual past, the report presupposes that the complement describes
+something that started before a past thinking time, (62). -/
 theorem exists_preExists_of_report_presup [Nonempty E] (hpast : ∃ t', t'.precedes t ∧ t' ≤ g₁)
     (h : (report τ about P Q g₁ t).presup w) :
     ∃ t', t'.precedes t ∧ t' ≤ g₁ ∧ PreExists τ (Q w t') t'.fst := by
@@ -129,29 +138,29 @@ theorem report_presup_of_not_exists (hpast : ¬ ∃ t', t'.precedes t ∧ t' ≤
     (report τ about P Q g₁ t).presup w :=
   existsPartialStrong_presup_of_not_exists hpast
 
-/-- (2b), (3): the factive inference. The report presupposes that the complement describes
-something in the world of evaluation. -/
+/-- The report presupposes that the complement describes something in the world of evaluation,
+the factive inference (2b), (3). -/
 theorem exists_of_report_presup [Nonempty E] (hpast : ∃ t', t'.precedes t ∧ t' ≤ g₁)
     (h : (report τ about P Q g₁ t).presup w) : ∃ t' x, t'.precedes t ∧ Q w t' x :=
   let ⟨t', hprec, _, hpre⟩ := exists_preExists_of_report_presup hpast h
   let ⟨x, hx⟩ := hpre.exists
   ⟨t', x, hprec, hx⟩
 
-/-- (15): negation keeps the presupposition. -/
+/-- Negation keeps the presupposition, (15). -/
 theorem neg_report_presup :
     (neg (report τ about P Q g₁ t)).presup = (report τ about P Q g₁ t).presup :=
   rfl
 
-/-- (64), (65): with a nominalized CP, a predicate of contentful individuals, the presupposition
+/-- With a nominalized CP, a predicate of contentful individuals, the presupposition
 is that an individual with the content started before the matrix time; it does not depend on
-the world of evaluation, so it cannot require the content to be true there. -/
+the world of evaluation, so it cannot require the content to be true there, (64), (65). -/
 theorem presup_closure_thetaTh_comp [Nonempty E] [Anchor X I] (p : I → Prop) :
     (existsPartialStrong (fun _ ↦ True)
         (thetaTh τ about P (fun _ _ ↦ Anchor.comp p) t)).presup w ↔
       PreExists τ (Anchor.comp p) t.fst :=
   presup_closure_thetaTh
 
-/-- (1b): a report with a CP can be true while its content is false. One thinking event, at
+/-- A report with a CP can be true while its content is false, (1b). One thinking event, at
 the past time `1` and with the content that the world is `true`, makes the report true at the
 world `false`. -/
 example :
@@ -165,16 +174,16 @@ example :
 Days are integers, Monday `1`, Tuesday `2`, Wednesday `3` (fn. 3), and the thinking is on
 Tuesday. -/
 
-/-- (4b): a breaking begun on Monday is one Sajana can remember on Tuesday. -/
-example : PreExists Event.τ (· = ⟨.pure 1, .action⟩) (2 : ℤ) := by
+/-- A breaking begun on Monday is one Sajana can remember on Tuesday, (4b). -/
+example : PreExists Event.τ (· = (.pure 1 : NonemptyInterval ℤ)) (2 : ℤ) := by
   simp
 
-/-- (4c): one begun on Wednesday is not. -/
-example : ¬ PreExists Event.τ (· = ⟨.pure 3, .action⟩) (2 : ℤ) := by
+/-- A breaking begun on Wednesday is not, (4c). -/
+example : ¬ PreExists Event.τ (· = (.pure 3 : NonemptyInterval ℤ)) (2 : ℤ) := by
   simp
 
-/-- (5), (8): a child conceived before the time talked about, here `0`, can be remembered, and
-neither it nor Badma need have stopped existing; a child not yet conceived cannot. -/
+/-- A child conceived before the time talked about, here `0`, can be remembered, and
+neither it nor Badma need have stopped existing; a child not yet conceived cannot, (5), (8). -/
 example : PreExists (fun (x : NonemptyInterval ℤ) ↦ x) (· = ⟨(-1, 10), by decide⟩) 0 ∧
     ¬ PreExists (fun (x : NonemptyInterval ℤ) ↦ x) (· = ⟨(2, 10), by decide⟩) 0 := by
   simp

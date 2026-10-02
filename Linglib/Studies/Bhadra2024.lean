@@ -45,11 +45,14 @@ change.
 
 namespace Bhadra2024
 
+open Event (τ)
+
 open ArgumentStructure
 
 /-! ### Outcome cardinality -/
 
-/-- The cardinality tier of an outcome set, ordered `empty < singleton < multi` (62). -/
+/-- An outcome cardinality is the tier of an outcome set, ordered `empty < singleton < multi`
+(62). -/
 inductive OutcomeCardinality where
   | empty
   | singleton
@@ -58,7 +61,7 @@ inductive OutcomeCardinality where
 
 namespace OutcomeCardinality
 
-/-- The rank of a tier as a natural number. -/
+/-- `c.rank` is the rank of the tier `c` as a natural number. -/
 def toNat : OutcomeCardinality → ℕ
   | .empty => 0
   | .singleton => 1
@@ -130,29 +133,29 @@ theorem tier_eq_multi_iff (c : OutcomeClass) :
 /-- A state function gives an object's state at each time, a lifespan point (53). -/
 abbrev StateFunction (Entity State T : Type*) := T → Entity → State
 
-variable {Entity State T : Type*} [LinearOrder T]
+variable {Entity State T E : Type*} [LinearOrder T] [Event.TemporalTrace E T]
 
 /-- `res(e)(x)` is the object's state at the right boundary of `e` (64). -/
-def resState (k : StateFunction Entity State T) (e : Event T) (x : Entity) : State :=
-  k (Event.τ e).snd x
+def resState (k : StateFunction Entity State T) (e : E) (x : Entity) : State :=
+  k (τ e).snd x
 
 /-- `pre(e)(x)` is the object's state at the left boundary of `e` (65). -/
-def preState (k : StateFunction Entity State T) (e : Event T) (x : Entity) : State :=
-  k (Event.τ e).fst x
+def preState (k : StateFunction Entity State T) (e : E) (x : Entity) : State :=
+  k (τ e).fst x
 
 /-- A verb root, as the prefixes see it, is its base predicate together with the lexical outcome
 set of states at the right boundary and the contextual threshold set of states at the left boundary
 ((56), (60)). -/
-structure VerbOutcomes (Entity State T : Type*) [LinearOrder T] where
+structure VerbOutcomes (E Entity State : Type*) where
   /-- The base predicate `P(e)(x)`. -/
-  verb : EventRel T Entity
+  verb : EventRel E Entity
   /-- The outcome set `O`. -/
   outcomes : Set State
   /-- The threshold set `T`. -/
   thresholds : Set State
 
 /-- The cardinality of a root is the tier of its outcome set. -/
-noncomputable def VerbOutcomes.cardinality (vro : VerbOutcomes Entity State T) :
+noncomputable def VerbOutcomes.cardinality (vro : VerbOutcomes E Entity State) :
     OutcomeCardinality :=
   OutcomeCardinality.ofSet vro.outcomes
 
@@ -161,11 +164,11 @@ noncomputable def VerbOutcomes.cardinality (vro : VerbOutcomes Entity State T) :
 /-- Reversative *un-* (66) requires a prior base event `e'` whose result is the state the *un-*
 event starts from and a multi-membered outcome set, and returns the object to the base event's
 initial state. The vacuous `∃ Q. Q(e)(x)` of the assertion is dropped. -/
-def unSem (k : StateFunction Entity State T) (vro : VerbOutcomes Entity State T)
-    (e : Event T) (x : Entity) : Prop :=
-  ∃ e' : Event T,
+def unSem (k : StateFunction Entity State T) (vro : VerbOutcomes E Entity State)
+    (e : E) (x : Entity) : Prop :=
+  ∃ e' : E,
     vro.verb e' x ∧
-    (Event.τ e').precedes (Event.τ e) ∧
+    (τ e').precedes (τ e) ∧
     resState k e' x = preState k e x ∧
     vro.outcomes.Nontrivial ∧
     resState k e x = preState k e' x
@@ -174,44 +177,44 @@ def unSem (k : StateFunction Entity State T) (vro : VerbOutcomes Entity State T)
 result state is an admissible start state, so that the base action does not leave the object where
 its result cannot be restored, and requires the base predicate to hold of the *re-* event. It
 places no demand on the cardinality of the outcome set. -/
-def reSem (k : StateFunction Entity State T) (vro : VerbOutcomes Entity State T)
-    (e : Event T) (x : Entity) : Prop :=
-  (∃ e' : Event T,
+def reSem (k : StateFunction Entity State T) (vro : VerbOutcomes E Entity State)
+    (e : E) (x : Entity) : Prop :=
+  (∃ e' : E,
     vro.verb e' x ∧
-    (Event.τ e').precedes (Event.τ e) ∧
+    (τ e').precedes (τ e) ∧
     resState k e x = resState k e' x ∧
     resState k e' x ∈ vro.thresholds) ∧
   vro.verb e x
 
 /-- A root whose outcome set is not multi-membered cannot host *un-* (67). -/
 theorem subsingleton_blocks_un (k : StateFunction Entity State T)
-    (vro : VerbOutcomes Entity State T) (h : ¬ vro.outcomes.Nontrivial)
-    (e : Event T) (x : Entity) : ¬ unSem k vro e x :=
+    (vro : VerbOutcomes E Entity State) (h : ¬ vro.outcomes.Nontrivial)
+    (e : E) (x : Entity) : ¬ unSem k vro e x :=
   fun ⟨_, _, _, _, hnt, _⟩ ↦ h hnt
 
 theorem singleton_blocks_un (k : StateFunction Entity State T)
-    (vro : VerbOutcomes Entity State T) (s : State) (hs : vro.outcomes = {s})
-    (e : Event T) (x : Entity) : ¬ unSem k vro e x :=
+    (vro : VerbOutcomes E Entity State) (s : State) (hs : vro.outcomes = {s})
+    (e : E) (x : Entity) : ¬ unSem k vro e x :=
   subsingleton_blocks_un k vro
     (by rw [Set.not_nontrivial_iff, hs]; exact Set.subsingleton_singleton) e x
 
 theorem empty_blocks_un (k : StateFunction Entity State T)
-    (vro : VerbOutcomes Entity State T) (hs : vro.outcomes = ∅)
-    (e : Event T) (x : Entity) : ¬ unSem k vro e x :=
+    (vro : VerbOutcomes E Entity State) (hs : vro.outcomes = ∅)
+    (e : E) (x : Entity) : ¬ unSem k vro e x :=
   subsingleton_blocks_un k vro
     (by rw [Set.not_nontrivial_iff, hs]; exact Set.subsingleton_empty) e x
 
 /-- Hosting *un-* forces a root's outcome set into the multi-membered tier. -/
 theorem un_requires_multi (k : StateFunction Entity State T)
-    (vro : VerbOutcomes Entity State T) (e : Event T) (x : Entity)
+    (vro : VerbOutcomes E Entity State) (e : E) (x : Entity)
     (h : unSem k vro e x) : vro.cardinality = .multi :=
   let ⟨_, _, _, _, hnt, _⟩ := h
   OutcomeCardinality.ofSet_eq_multi hnt
 
 /-- A base action whose result is never an admissible start state blocks *re-* (72). -/
 theorem not_reSem_of_outcome_not_threshold (k : StateFunction Entity State T)
-    (vro : VerbOutcomes Entity State T) (x : Entity)
-    (h : ∀ e', vro.verb e' x → resState k e' x ∉ vro.thresholds) (e : Event T) :
+    (vro : VerbOutcomes E Entity State) (x : Entity)
+    (h : ∀ e', vro.verb e' x → resState k e' x ∉ vro.thresholds) (e : E) :
     ¬ reSem k vro e x :=
   fun ⟨⟨e', hv, _, _, hT⟩, _⟩ ↦ h e' hv hT
 
@@ -219,21 +222,17 @@ theorem not_reSem_of_outcome_not_threshold (k : StateFunction Entity State T)
 
 section Examples
 
-/-- `ev₁` is the base event of the scenario. -/
-def ev₁ : Event ℤ where
-  runtime := ⟨⟨0, 5⟩, by omega⟩
-  sort := .action
+/-- `ev₁` is the base event of the scenario, over `[0, 5]`. -/
+def ev₁ : NonemptyInterval ℤ := ⟨⟨0, 5⟩, by omega⟩
 
-/-- `ev₂` is the prefixed event of the scenario. -/
-def ev₂ : Event ℤ where
-  runtime := ⟨⟨10, 15⟩, by omega⟩
-  sort := .action
+/-- `ev₂` is the prefixed event of the scenario, over `[10, 15]`. -/
+def ev₂ : NonemptyInterval ℤ := ⟨⟨10, 15⟩, by omega⟩
 
-private theorem ev₁_precedes_ev₂ : (Event.τ ev₁).precedes (Event.τ ev₂) := by
+private theorem ev₁_precedes_ev₂ : (τ ev₁).precedes (τ ev₂) := by
   show (5 : ℤ) < 10; omega
 
 /-- The base predicate of every worked root holds of the scenario's two events. -/
-def acts : EventRel ℤ Unit := fun e _ ↦ e = ev₁ ∨ e = ev₂
+def acts : EventRel (NonemptyInterval ℤ) Unit := fun e _ ↦ e = ev₁ ∨ e = ev₂
 
 private theorem acts_ev₁ : acts ev₁ () := Or.inl rfl
 private theorem acts_ev₂ : acts ev₂ () := Or.inr rfl
@@ -255,7 +254,7 @@ inductive ParchmentState where
 
 /-- *Fold* is a potential-for-change root (60), with a multi-membered outcome set, and a folded
 parchment can be folded again. -/
-def foldVRO : VerbOutcomes Unit ParchmentState ℤ where
+def foldVRO : VerbOutcomes (NonemptyInterval ℤ) Unit ParchmentState where
   verb := acts
   outcomes := {.slightlyCreased, .folded, .tightlyFolded}
   thresholds := {.flat, .slightlyCreased, .folded}
@@ -270,7 +269,7 @@ theorem fold_un : unSem (andBack .flat .folded) foldVRO ev₂ () :=
 /-- *Re-* attaches to *fold* as well, on the multi-membered tier. -/
 theorem fold_re : reSem (twice .flat .folded) foldVRO ev₂ () :=
   ⟨⟨ev₁, acts_ev₁, ev₁_precedes_ev₂, rfl,
-      by simp [foldVRO, resState, twice, ev₁, Event.τ]⟩, acts_ev₂⟩
+      by simp [foldVRO, resState, twice, ev₁]⟩, acts_ev₂⟩
 
 inductive LimbState where
   | intact | broken
@@ -278,32 +277,33 @@ inductive LimbState where
 
 /-- *Break* applied to a limb (61a) has a single result, and a broken limb admits another breaking
 (73a). -/
-def breakLimbVRO : VerbOutcomes Unit LimbState ℤ where
+def breakLimbVRO : VerbOutcomes (NonemptyInterval ℤ) Unit LimbState where
   verb := acts
   outcomes := {.broken}
   thresholds := {.intact, .broken}
 
 /-- *Break* applied to a sewer has the same single result, which a sewer cannot informatively reach
 again (73a). -/
-def breakSewerVRO : VerbOutcomes Unit LimbState ℤ where
+def breakSewerVRO : VerbOutcomes (NonemptyInterval ℤ) Unit LimbState where
   verb := acts
   outcomes := {.broken}
   thresholds := {.intact}
 
 /-- *#Unbreak a limb* fails, the outcome set being a singleton (67). -/
-theorem breakLimb_not_un (k : StateFunction Unit LimbState ℤ) (e : Event ℤ) :
+theorem breakLimb_not_un (k : StateFunction Unit LimbState ℤ) (e : NonemptyInterval ℤ) :
     ¬ unSem k breakLimbVRO e () :=
   singleton_blocks_un k breakLimbVRO .broken rfl e ()
 
 /-- *Rebreak a limb* is true in the scenario (73a). -/
 theorem breakLimb_re : reSem (twice .intact .broken) breakLimbVRO ev₂ () :=
   ⟨⟨ev₁, acts_ev₁, ev₁_precedes_ev₂, rfl,
-      by simp [breakLimbVRO, resState, twice, ev₁, Event.τ]⟩, acts_ev₂⟩
+      by simp [breakLimbVRO, resState, twice, ev₁]⟩, acts_ev₂⟩
 
 /-- *#Rebreak a sewer* fails, since a broken sewer is not an admissible start state (73a). -/
-theorem breakSewer_not_re (e : Event ℤ) : ¬ reSem (twice .intact .broken) breakSewerVRO e () :=
+theorem breakSewer_not_re (e : NonemptyInterval ℤ) :
+    ¬ reSem (twice .intact .broken) breakSewerVRO e () :=
   not_reSem_of_outcome_not_threshold _ _ () (fun e' he' ↦ by
-    rcases he' with rfl | rfl <;> simp [breakSewerVRO, resState, twice, ev₁, ev₂, Event.τ]) e
+    rcases he' with rfl | rfl <;> simp [breakSewerVRO, resState, twice, ev₁, ev₂]) e
 
 inductive SurfaceState where
   | unaltered | surfaceAltered
@@ -311,21 +311,22 @@ inductive SurfaceState where
 
 /-- *Hit* is an impingement-effecting root (61g), with a single, irreversible surface alteration.
 -/
-def hitVRO : VerbOutcomes Unit SurfaceState ℤ where
+def hitVRO : VerbOutcomes (NonemptyInterval ℤ) Unit SurfaceState where
   verb := acts
   outcomes := {.surfaceAltered}
   thresholds := {.unaltered}
 
 /-- *\*Unhit* fails (25). -/
-theorem hit_not_un (k : StateFunction Unit SurfaceState ℤ) (e : Event ℤ) :
+theorem hit_not_un (k : StateFunction Unit SurfaceState ℤ) (e : NonemptyInterval ℤ) :
     ¬ unSem k hitVRO e () :=
   singleton_blocks_un k hitVRO .surfaceAltered rfl e ()
 
 /-- *\*Rehit* fails, since impingement leaves the surface altered and never again unaltered (48).
 -/
-theorem hit_not_re (e : Event ℤ) : ¬ reSem (twice .unaltered .surfaceAltered) hitVRO e () :=
+theorem hit_not_re (e : NonemptyInterval ℤ) :
+    ¬ reSem (twice .unaltered .surfaceAltered) hitVRO e () :=
   not_reSem_of_outcome_not_threshold _ _ () (fun e' he' ↦ by
-    rcases he' with rfl | rfl <;> simp [hitVRO, resState, twice, ev₁, ev₂, Event.τ]) e
+    rcases he' with rfl | rfl <;> simp [hitVRO, resState, twice, ev₁, ev₂]) e
 
 inductive TruckState where
   | empty | full
@@ -333,7 +334,7 @@ inductive TruckState where
 
 /-- *Load* is a degree achievement (70), with a single contextually salient result that does not
 prevent loading again. -/
-def loadVRO : VerbOutcomes Unit TruckState ℤ where
+def loadVRO : VerbOutcomes (NonemptyInterval ℤ) Unit TruckState where
   verb := acts
   outcomes := {.full}
   thresholds := {.empty, .full}
@@ -341,23 +342,23 @@ def loadVRO : VerbOutcomes Unit TruckState ℤ where
 /-- *Raj reloaded the truck* is true in the scenario (69a). -/
 theorem load_re : reSem (twice .empty .full) loadVRO ev₂ () :=
   ⟨⟨ev₁, acts_ev₁, ev₁_precedes_ev₂, rfl,
-      by simp [loadVRO, resState, twice, ev₁, Event.τ]⟩, acts_ev₂⟩
+      by simp [loadVRO, resState, twice, ev₁]⟩, acts_ev₂⟩
 
 inductive MirrorState where
   | intact | shattered
   deriving DecidableEq, Repr
 
 /-- *Shatter* (71) has a single result that leaves the object outside every threshold. -/
-def shatterVRO : VerbOutcomes Unit MirrorState ℤ where
+def shatterVRO : VerbOutcomes (NonemptyInterval ℤ) Unit MirrorState where
   verb := acts
   outcomes := {.shattered}
   thresholds := {.intact}
 
 /-- *#The children reshattered the mirror* fails (69b). -/
-theorem shatter_not_re (e : Event ℤ) :
+theorem shatter_not_re (e : NonemptyInterval ℤ) :
     ¬ reSem (twice .intact .shattered) shatterVRO e () :=
   not_reSem_of_outcome_not_threshold _ _ () (fun e' he' ↦ by
-    rcases he' with rfl | rfl <;> simp [shatterVRO, resState, twice, ev₁, ev₂, Event.τ]) e
+    rcases he' with rfl | rfl <;> simp [shatterVRO, resState, twice, ev₁, ev₂]) e
 
 /-- *Re-* is indifferent to outcome cardinality, attaching to a root with a single outcome. -/
 theorem re_on_singleton :

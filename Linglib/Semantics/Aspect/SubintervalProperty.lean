@@ -28,8 +28,8 @@ property, since a predicate may validate it without being closed under subinterv
 * `Aspect.hasSubintervalProperty_iff_witnesses`: every subinterval of the run time of an event of
   the predicate is the run time of an event of the predicate.
 * `Aspect.HasSubintervalProperty.prfv_of_impf`: the imperfective entails the perfective.
-* `Aspect.not_hasSubintervalProperty_snd_eq`: the predicate of events that end at a fixed later
-  time lacks the property.
+* `Aspect.not_hasSubintervalProperty_snd_eq`: the predicate of events that end when a durative
+  event ends lacks the property.
 * `Aspect.exists_prfv_of_impf_not_hasSubintervalProperty`: a predicate may validate the
   entailment and lack the property.
 
@@ -51,34 +51,36 @@ and is not modelled.
 
 namespace Aspect
 
-variable {W T : Type*} [LinearOrder T] {P : W → Event T → Prop} {w : W}
+open Event (τ)
+
+variable {W T E : Type*} [LinearOrder T] [Event.TemporalTrace E T] {P : W → E → Prop} {w : W}
   {t : NonemptyInterval T}
 
 /-- A predicate of events has the subinterval property when its run times form a lower set at
 every world. -/
-def HasSubintervalProperty (P : W → Event T → Prop) : Prop :=
-  ∀ w, IsLowerSet (eventDenotation (P w))
+def HasSubintervalProperty (P : W → E → Prop) : Prop :=
+  ∀ w, IsLowerSet (τ '' {e | P w e})
 
 /-- A predicate has the subinterval property exactly when every subinterval of the run time of
 one of its events is the run time of one of its events. -/
 theorem hasSubintervalProperty_iff_witnesses :
     HasSubintervalProperty P ↔
-      ∀ (e : Event T) (w : W), P w e → ∀ t ≤ e.τ, ∃ e' : Event T, e'.τ = t ∧ P w e' :=
-  ⟨fun h _ w hP _ ht ↦ let ⟨e', hP', hτ⟩ := h w ht (mem_eventDenotation_of hP); ⟨e', hτ, hP'⟩,
+      ∀ (e : E) (w : W), P w e → ∀ t ≤ τ e, ∃ e' : E, τ e' = t ∧ P w e' :=
+  ⟨fun h _ w hP _ ht ↦ let ⟨e', hP', hτ⟩ := h w ht (Set.mem_image_of_mem τ hP); ⟨e', hτ, hP'⟩,
     fun h w _ t ht ⟨e, hP, he⟩ ↦ let ⟨e', hτ, hP'⟩ := h e w hP t (he ▸ ht); ⟨e', hP', hτ⟩⟩
 
 namespace HasSubintervalProperty
 
 /-- Under the subinterval property an interval inside the run time of an event of the predicate
 is a run time of the predicate. -/
-theorem mem_eventDenotation_of_unbounded (h : HasSubintervalProperty P)
-    (ht : UNBOUNDED P w t) : t ∈ eventDenotation (P w) :=
+theorem mem_image_of_unbounded (h : HasSubintervalProperty P) (ht : UNBOUNDED P w t) :
+    t ∈ τ '' {e | P w e} :=
   let ⟨_, hs, hle⟩ := unbounded_iff_mem_lowerClosure.1 ht; h w hle hs
 
 /-- Under the subinterval property the non-strict imperfective entails the perfective. -/
 theorem prfv_of_unbounded (h : HasSubintervalProperty P) (ht : UNBOUNDED P w t) :
     PRFV P w t :=
-  prfv_iff_mem_upperClosure.2 (subset_upperClosure (h.mem_eventDenotation_of_unbounded ht))
+  prfv_iff_mem_upperClosure.2 (subset_upperClosure (h.mem_image_of_unbounded ht))
 
 /-- Under the subinterval property the imperfective entails the perfective. -/
 theorem prfv_of_impf (h : HasSubintervalProperty P) (ht : IMPF P w t) : PRFV P w t :=
@@ -86,30 +88,30 @@ theorem prfv_of_impf (h : HasSubintervalProperty P) (ht : IMPF P w t) : PRFV P w
 
 end HasSubintervalProperty
 
-/-- The predicate of events that end at a fixed time lacks the subinterval property when there
-is an earlier time, as the building of a house holds of no proper part that lacks the result. -/
-theorem not_hasSubintervalProperty_snd_eq [Nonempty W] {t₁ t₂ : T} (hlt : t₁ < t₂) :
-    ¬ HasSubintervalProperty fun (_ : W) (e : Event T) ↦ e.τ.snd = t₂ := fun h ↦ by
-  obtain ⟨e', hτ, hP⟩ := hasSubintervalProperty_iff_witnesses.1 h
-    ⟨⟨⟨t₁, t₂⟩, hlt.le⟩, .action⟩ (Classical.arbitrary W) rfl (.pure t₁)
-    (NonemptyInterval.le_def.2 ⟨le_rfl, hlt.le⟩)
+/-- The predicate of events that end when a durative event ends lacks the subinterval property,
+as the building of a house holds of no proper part that lacks the result. -/
+theorem not_hasSubintervalProperty_snd_eq [Nonempty W] {e : E} (he : (τ e).fst < (τ e).snd) :
+    ¬ HasSubintervalProperty fun (_ : W) (e' : E) ↦ (τ e').snd = (τ e).snd := fun h ↦ by
+  obtain ⟨e', hτ, hP⟩ := hasSubintervalProperty_iff_witnesses.1 h e (Classical.arbitrary W) rfl
+    (.pure (τ e).fst) (NonemptyInterval.le_def.2 ⟨le_rfl, he.le⟩)
   rw [hτ] at hP
-  exact hlt.ne hP
+  exact he.ne hP
 
 /-- The entailment from the imperfective to the perfective does not characterize the subinterval
 property. The predicate of events that are instantaneous or run from `0` to `2` validates it,
 every reference time containing an instant, and the interval from `0` to `1` is a subinterval
 of one of its run times without being one. -/
 theorem exists_prfv_of_impf_not_hasSubintervalProperty :
-    ∃ P : Unit → Event ℤ → Prop,
+    ∃ P : Unit → NonemptyInterval ℤ → Prop,
       (∀ w t, IMPF P w t → PRFV P w t) ∧ ¬ HasSubintervalProperty P := by
-  refine ⟨fun _ e ↦ e.τ.IsPoint ∨ e.τ = ⟨⟨0, 2⟩, by decide⟩,
-    fun _ t _ ↦ ⟨⟨.pure t.fst, .action⟩, NonemptyInterval.le_def.2 ⟨le_rfl, t.fst_le_snd⟩,
-      .inl rfl⟩, fun h ↦ ?_⟩
+  refine ⟨fun _ e ↦ e.IsPoint ∨ e = ⟨⟨0, 2⟩, by decide⟩,
+    fun _ t _ ↦ ⟨.pure t.fst, NonemptyInterval.le_def.2 ⟨le_rfl, t.fst_le_snd⟩, .inl rfl⟩,
+    fun h ↦ ?_⟩
   obtain ⟨e', hτ, hP⟩ := hasSubintervalProperty_iff_witnesses.1 h
-    ⟨⟨⟨0, 2⟩, by decide⟩, .action⟩ () (.inr rfl) ⟨⟨0, 1⟩, by decide⟩
+    ⟨⟨0, 2⟩, by decide⟩ () (.inr rfl) ⟨⟨0, 1⟩, by decide⟩
     (NonemptyInterval.le_def.2 ⟨le_rfl, by decide⟩)
-  rw [hτ] at hP
+  rw [Event.τ_nonemptyInterval] at hτ
+  subst hτ
   rcases hP with hP | hP
   · exact absurd hP (by decide)
   · exact absurd (congrArg (·.snd) hP) (by decide)
