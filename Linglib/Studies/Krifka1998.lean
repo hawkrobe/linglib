@@ -5,22 +5,22 @@ public import Linglib.Semantics.Aspect.Telicity
 /-!
 # Krifka (1998): The Origins of Telicity
 
-This file formalizes [krifka-1998]'s account of telicity as a property of event
-predicates rather than of events: a predicate is telic when no event it applies to has a
-proper part it also applies to that starts or ends at a different time (`Aspect.IsTelic`, with
-the incremental relations, in `Semantics/Aspect/Telicity.lean`). Telicity is then
-derived rather than stipulated. For verbs of consumption and creation it follows from the
-mereological transfer between object and event that the thematic relation performs, the
-strictly incremental relations of `Aspect.SINC`; for movement verbs it follows from
-the conditions the paper adds to the part relation: expansion, adjacency, source and goal.
+Krifka treats telicity as a property of event predicates: a predicate is telic when no event it
+applies to has a proper part it also applies to that starts or ends at a different time
+(`Aspect.IsTelic`). For verbs of consumption and creation telicity follows from the transfer of
+part structure between object and event that a strictly incremental thematic relation performs,
+and for verbs of movement it follows from expansion, adjacency, and the source and goal of the
+path. Quantized predicates are telic but not conversely, and cumulative predicates that apply to
+two non-contemporaneous events are atelic.
 
-Quantized predicates are telic (`isTelic_of_qua`) but not conversely, and cumulative
-predicates are atelic once they apply to two non-contemporaneous events. On a model of
-*eat*, *eat apples* is cumulative and *eat two
-apples* quantized (`eat_two_apples_qua`). Expansion with mapping to objects makes the
-verb phrase of a quantized object telic (`isTelic_vp_of_seinc`), and a movement with a
-specified source and goal is telic (`isTelic_sourceGoal`). The movement diagrams of the
-paper are checked against the adjacency condition on a finite model (`Movement`).
+## Main results
+
+* `eat_apples_cum`, `eat_two_apples_qua`: on a model of *eat*, *eat apples* is cumulative and
+  *eat two apples* is quantized.
+* `isTelic_vp_of_seinc`: expansion with mapping to objects makes the verb phrase of a quantized
+  object telic.
+* `isTelic_sourceGoal`: a movement with a specified source and goal is telic.
+* `Movement`: the paper's movement diagrams, checked against adjacency on a finite model.
 
 ## Implementation notes
 
@@ -33,8 +33,7 @@ paper are checked against the adjacency condition on a finite model (`Movement`)
 * The source and goal conditions quantify the subpath and the subevent separately; the
   formalization ties them through the thematic relation, as the paper's telicity proof does.
 * The measure adverbial (55) is formalized only through its part relation `IsTemporalPart`,
-  which [champollion-2017] takes up; the manuscript's universal clause ranges over the parts of
-  the witness `e′`, where Champollion's restatement ranges over the parts of `e`.
+  without its presupposed universal clause over the parts of the witness `e′`.
 * The strict-movement telicity claim of the paper does not follow from adjacency and
   mapping to objects alone (adjacency may be empty), and the tangentiality condition on
   sums of movements, the derived measure functions for movement and the changes in other
@@ -61,8 +60,8 @@ section MeasureAdverbial
 
 variable {T : Type*} [PartialOrder β] [PartialOrder T] (τ : β → T)
 
-/-- A temporal part of an event, the part relation with respect to a temporal measure (55): a
-part beside which the event has a part with a non-overlapping runtime. -/
+/-- `e'` is a temporal part of `e`, in the part relation of a temporal measure (55), if it is
+part of `e` and `e` has a part whose runtime does not overlap the runtime of `e'`. -/
 def IsTemporalPart (e' e : β) : Prop := e' ≤ e ∧ ∃ e'' ≤ e, ¬ Overlap (τ e') (τ e'')
 
 variable {τ}
@@ -82,33 +81,35 @@ end MeasureAdverbial
 
 section Eat
 
-/-- A model of *eat*: three apples, and an eating event identified with the apples it
+/-- In a model of *eat* with three apples, an eating event is identified with the apples it
 consumes. -/
 def eat (x e : Finset (Fin 3)) : Prop := x = e
 
 /-- The object relation of *eat* is strictly incremental and summative, with unique
 participants. -/
 theorem eat_sinc : SINC eat where
-  ue _ _ h _ hle := ⟨_, ⟨h ▸ hle, rfl⟩, λ _ hz => hz.2.symm⟩
-  uo _ _ h _ hle := ⟨_, ⟨h ▸ hle, rfl⟩, λ _ hz => hz.2⟩
+  ue _ _ h _ hle := ⟨_, ⟨h ▸ hle, rfl⟩, fun _ hz ↦ hz.2.symm⟩
+  uo _ _ h _ hle := ⟨_, ⟨h ▸ hle, rfl⟩, fun _ hz ↦ hz.2⟩
   extended := ⟨{0, 1}, {0}, {0, 1}, {0}, by decide, by decide, rfl, rfl⟩
 
-theorem eat_sum : SUM eat := λ _ _ hx _ _ hy => congr_arg₂ (· ⊔ ·) hx hy
+theorem eat_sum : SUM eat := fun _ _ hx _ _ hy ↦ congr_arg₂ (· ⊔ ·) hx hy
 
-theorem eat_up : UP eat := λ _ _ _ hx hy => hx.trans hy.symm
+theorem eat_up : UP eat := fun _ _ _ hx hy ↦ hx.trans hy.symm
 
-/-- *eat apples* is cumulative: the bare plural is cumulative and *eat* is summative. -/
+/-- *eat apples* is cumulative, since the bare plural is cumulative and *eat* is summative. -/
 theorem eat_apples_cum : CUM (VP eat Finset.Nonempty) :=
-  vp_cum eat_sum λ _ hx _ _ => hx.mono Finset.subset_union_left
+  vp_cum eat_sum fun _ hx _ _ ↦ hx.mono Finset.subset_union_left
 
-/-- *eat two apples* is quantized: a measure phrase is quantized and *eat* is strictly
+/-- *eat two apples* is quantized, since a measure phrase is quantized and *eat* is strictly
 incremental. -/
 theorem eat_two_apples_qua : QUA (VP eat (Finset.card · = 2)) :=
-  vp_qua eat_up eat_sinc.mso (extMeasure_qua 2)
+  vp_qua eat_up eat_sinc.mso
+    (qua_pullback (IsExtensiveMeasure.strictMono Finset.card) (singleton_qua 2))
 
 end Eat
 
-/-- *eat it*: with a particular object, a strictly incremental verb phrase is quantized. -/
+/-- With a particular object, as in *eat it*, a strictly incremental verb phrase is
+quantized. -/
 theorem qua_vp_eq [SemilatticeSup α] [SemilatticeSup β] {θ : α → β → Prop} (h : SINC θ)
     (hU : UP θ) (y : α) : QUA (VP θ (· = y)) :=
   vp_qua hU h.mso (singleton_qua y)
@@ -119,10 +120,10 @@ section Expansion
 
 variable [SemilatticeSup α] [SemilatticeSup β] (precedes : β → β → Prop) (θ : α → β → Prop)
 
-/-- Expansion: the objects of temporally ordered events do not overlap. -/
+/-- A relation is expansive if the objects of temporally ordered events do not overlap. -/
 def EXP : Prop := ∀ x y e e', θ x e → θ y e' → precedes e e' → ¬ Overlap x y
 
-/-- A strictly expansive incremental relation: expansion with mapping to objects. -/
+/-- A relation is strictly expansive incremental if it is expansive and maps to objects. -/
 def SEINC : Prop := EXP precedes θ ∧ MO θ
 
 variable {precedes θ} (h : SEINC precedes θ) (h₀ : ∀ x e, θ x e → ¬ IsBot x) {x : α} {e e' : β}
@@ -132,7 +133,7 @@ include h h₀
 of each other. -/
 theorem isInitialPart_of_seinc (hx : θ x e) (hx' : θ x e') (hle : e' ≤ e) :
     IsInitialPart precedes e' e :=
-  ⟨hle, λ ⟨e'', h'', hp⟩ =>
+  ⟨hle, fun ⟨e'', h'', hp⟩ ↦
     let ⟨y, hy, hθ⟩ := h.2 hx h''
     h.1 y x e'' e' hθ hx' hp ⟨y, h₀ y e'' hθ, le_rfl, hy⟩⟩
 
@@ -140,23 +141,24 @@ theorem isInitialPart_of_seinc (hx : θ x e) (hx' : θ x e') (hle : e' ≤ e) :
 each other. -/
 theorem isFinalPart_of_seinc (hx : θ x e) (hx' : θ x e') (hle : e' ≤ e) :
     IsFinalPart precedes e' e :=
-  ⟨hle, λ ⟨e'', h'', hp⟩ =>
+  ⟨hle, fun ⟨e'', h'', hp⟩ ↦
     let ⟨y, hy, hθ⟩ := h.2 hx h''
     h.1 x y e' e'' hx' hθ hp ⟨y, h₀ y e'' hθ, hy, le_rfl⟩⟩
 
 /-- The events of a fixed object under a strictly expansive incremental relation form a
 telic predicate. -/
 theorem isTelic_of_seinc (x : α) : IsTelic precedes (θ x) :=
-  λ _ _ hx hx' hle => ⟨isInitialPart_of_seinc h h₀ hx hx' hle, isFinalPart_of_seinc h h₀ hx hx' hle⟩
+  fun _ _ hx hx' hle ↦
+    ⟨isInitialPart_of_seinc h h₀ hx hx' hle, isFinalPart_of_seinc h h₀ hx hx' hle⟩
 
-/-- *eat two apples* is telic: the verb phrase of a quantized object under a strictly
-expansive incremental relation with unique participants. -/
+/-- The verb phrase of a quantized object under a strictly expansive incremental relation with
+unique participants is telic, as *eat two apples* is. -/
 theorem isTelic_vp_of_seinc (hUP : UP θ) {OBJ : α → Prop} (hOBJ : QUA OBJ) :
     IsTelic precedes (VP θ OBJ) := by
   rintro e e' ⟨x, hOx, hx⟩ ⟨x', hOx', hx'⟩ hle
   obtain ⟨x'', hx''le, hx''⟩ := h.2 hx hle
   obtain rfl := hUP hx' hx''
-  obtain rfl : x' = x := by_contra λ hne => hOBJ hOx' hOx hne hx''le
+  obtain rfl : x' = x := by_contra fun hne ↦ hOBJ hOx' hOx hne hx''le
   exact ⟨isInitialPart_of_seinc h h₀ hx hx' hle, isFinalPart_of_seinc h h₀ hx hx' hle⟩
 
 end Expansion
@@ -168,13 +170,14 @@ section Movement
 variable [SemilatticeSup α] [SemilatticeSup β] (adjα : α → α → Prop) (adjβ : β → β → Prop)
   (precedes : β → β → Prop) (isPath : α → Prop) (θ : α → β → Prop)
 
-/-- The adjacency property: two subevents of a movement are temporally adjacent iff their
-paths are spatially adjacent. -/
+/-- A relation has the adjacency property if two subevents of a movement are temporally
+adjacent iff their paths are spatially adjacent. -/
 def ADJ : Prop :=
   ∀ x e y z e' e'', θ x e → e' ≤ e → e'' ≤ e → y ≤ x → z ≤ x → θ y e' → θ z e'' →
     (adjβ e' e'' ↔ adjα y z)
 
-/-- A strict movement relation: adjacency, mapping to objects, and paths as objects. -/
+/-- A strict movement relation has the adjacency property, maps to objects, and takes paths as
+objects. -/
 def SMR : Prop := ADJ adjα adjβ θ ∧ MO θ ∧ ∀ x e, θ x e → isPath x
 
 /-- The closure of a relation under sums of temporally ordered events. -/
@@ -183,7 +186,7 @@ inductive PrecedenceClosure (θ' : α → β → Prop) : α → β → Prop wher
   | sum {x₁ x₂ : α} {e₁ e₂ : β} : PrecedenceClosure θ' x₁ e₁ → PrecedenceClosure θ' x₂ e₂ →
       precedes e₁ e₂ → PrecedenceClosure θ' (x₁ ⊔ x₂) (e₁ ⊔ e₂)
 
-/-- A movement relation (71): the closure of a strict movement relation under sums of
+/-- A movement relation (71) is the closure of a strict movement relation under sums of
 temporally ordered events. -/
 def MR : Prop :=
   ∃ θ', SMR adjα adjβ isPath θ' ∧ ∀ x e, θ x e ↔ PrecedenceClosure precedes θ' x e
@@ -203,17 +206,17 @@ relation. -/
 theorem mr_of_smr (h : SMR adjα adjβ isPath θ)
     (hClosed : ∀ x₁ x₂ e₁ e₂, θ x₁ e₁ → θ x₂ e₂ → precedes e₁ e₂ → θ (x₁ ⊔ x₂) (e₁ ⊔ e₂)) :
     MR adjα adjβ precedes isPath θ :=
-  ⟨θ, h, λ _ _ => ⟨.base, λ hcl => by
+  ⟨θ, h, fun _ _ ↦ ⟨.base, fun hcl ↦ by
     induction hcl with
     | base h => exact h
     | sum _ _ hp ih₁ ih₂ => exact hClosed _ _ _ _ ih₁ ih₂ hp⟩⟩
 
-/-- *walk from the university to the capitol* is telic: a movement with a specified source
-and goal, under mapping to objects and uniqueness of participants. -/
+/-- A movement with a specified source and goal is telic under mapping to objects and
+uniqueness of participants, as *walk from the university to the capitol* is. -/
 theorem isTelic_sourceGoal (hax : NoPartPrecedes precedes) (hMO : MO θ) (hUP : UP θ)
     (u v : α) :
     IsTelic precedes
-      (λ e => ∃ x, θ x e ∧ Source adjα precedes θ u x e ∧ Goal adjα precedes θ v x e) := by
+      (fun e ↦ ∃ x, θ x e ∧ Source adjα precedes θ u x e ∧ Goal adjα precedes θ v x e) := by
   rintro e e' ⟨x, hx, hS, hG⟩ ⟨x', hx', hS', hG'⟩ hle
   obtain ⟨x'', hx''le, hx''⟩ := hMO hx hle
   obtain rfl := hUP hx' hx''
@@ -226,8 +229,8 @@ end Movement
 
 section Diagram
 
-/-- The path segments of the paper's diagram: `a` to `g` in a line, `h` and `i` a detour
-from `c` to `f`. -/
+/-- The path segments of the paper's diagram run from `a` to `g` in a line, with `h` and `i` a
+detour from `c` to `f`. -/
 inductive Seg | a | b | c | d | e | f | g | h | i
   deriving DecidableEq
 
@@ -240,10 +243,10 @@ def Seg.adj (s t : Seg) : Prop := (s, t) ∈ edges ∨ (t, s) ∈ edges
 
 instance (s t : Seg) : Decidable (s.adj t) := by unfold Seg.adj; infer_instance
 
-/-- Adjacency of paths: disjoint, with an adjacent pair of segments. -/
+/-- Two paths are adjacent if they are disjoint and have an adjacent pair of segments. -/
 def pathAdj (x y : Finset Seg) : Prop := Disjoint x y ∧ ∃ s ∈ x, ∃ t ∈ y, s.adj t
 
-/-- Adjacency of events: disjoint, with a consecutive pair of times. -/
+/-- Two events are adjacent if they are disjoint and have a consecutive pair of times. -/
 def eventAdj (e e' : Finset (Fin 7)) : Prop :=
   Disjoint e e' ∧ ∃ i ∈ e, ∃ j ∈ e', i.val + 1 = j.val ∨ j.val + 1 = i.val
 
@@ -252,9 +255,9 @@ instance (x y : Finset Seg) : Decidable (pathAdj x y) := by unfold pathAdj; infe
 instance (e e' : Finset (Fin 7)) : Decidable (eventAdj e e') := by
   unfold eventAdj; infer_instance
 
-/-- The pairs a diagram relates: its atomic movements and the whole. -/
+/-- A diagram relates its atomic movements and the whole movement. -/
 def support (L : List (Seg × Fin 7)) : List (Finset Seg × Finset (Fin 7)) :=
-  L.map (λ p => ({p.1}, {p.2})) ++ [((L.map Prod.fst).toFinset, (L.map Prod.snd).toFinset)]
+  L.map (fun p ↦ ({p.1}, {p.2})) ++ [((L.map Prod.fst).toFinset, (L.map Prod.snd).toFinset)]
 
 /-- The movement relation a diagram depicts. -/
 def Movement (L : List (Seg × Fin 7)) (x : Finset Seg) (e : Finset (Fin 7)) : Prop :=
@@ -268,22 +271,22 @@ private theorem adj_movement_iff {L : List (Seg × Fin 7)} :
     ADJ pathAdj eventAdj (Movement L) ↔
       ∀ p ∈ support L, ∀ q ∈ support L, ∀ r ∈ support L,
         q.2 ≤ p.2 → r.2 ≤ p.2 → q.1 ≤ p.1 → r.1 ≤ p.1 → (eventAdj q.2 r.2 ↔ pathAdj q.1 r.1) :=
-  ⟨λ h p hp q hq r hr h₁ h₂ h₃ h₄ => h p.1 p.2 q.1 r.1 q.2 r.2 hp h₁ h₂ h₃ h₄ hq hr,
-    λ h _ _ _ _ _ _ hp h₁ h₂ h₃ h₄ hq hr => h _ hp _ hq _ hr h₁ h₂ h₃ h₄⟩
+  ⟨fun h p hp q hq r hr h₁ h₂ h₃ h₄ ↦ h p.1 p.2 q.1 r.1 q.2 r.2 hp h₁ h₂ h₃ h₄ hq hr,
+    fun h _ _ _ _ _ _ hp h₁ h₂ h₃ h₄ hq hr ↦ h _ hp _ hq _ hr h₁ h₂ h₃ h₄⟩
 
 /-- A walk along `a` to `f`. -/
 def walk : List (Seg × Fin 7) := [(.a, 0), (.b, 1), (.c, 2), (.d, 3), (.e, 4), (.f, 5)]
 
-/-- A stop-and-go movement: a pause between `c` and `d`. -/
+/-- A stop-and-go movement pauses between `c` and `d`. -/
 def stopAndGo : List (Seg × Fin 7) := [(.a, 0), (.b, 1), (.c, 2), (.d, 4), (.e, 5), (.f, 6)]
 
-/-- Telekinesis: from `b` straight to `e`. -/
+/-- Telekinesis moves from `b` straight to `e`. -/
 def telekinesis : List (Seg × Fin 7) := [(.a, 0), (.b, 1), (.e, 2), (.f, 3)]
 
-/-- An Echternach movement: a return along `c` and `b`. -/
+/-- An Echternach movement returns along `c` and `b`. -/
 def echternach : List (Seg × Fin 7) := [(.a, 0), (.b, 1), (.c, 2), (.c, 3), (.b, 4)]
 
-/-- An Alcatraz movement: around the circle `c`, `d`, `e`, `f`, `i`, `h`. -/
+/-- An Alcatraz movement goes around the circle `c`, `d`, `e`, `f`, `i`, `h`. -/
 def alcatraz : List (Seg × Fin 7) := [(.c, 0), (.d, 1), (.e, 2), (.f, 3), (.i, 4), (.h, 5)]
 
 /-- A movement along a disconnected path. -/
@@ -291,23 +294,23 @@ def disconnected : List (Seg × Fin 7) := [(.a, 0), (.b, 1), (.e, 4), (.f, 5)]
 
 theorem adj_walk : ADJ pathAdj eventAdj (Movement walk) := adj_movement_iff.2 (by decide)
 
-theorem not_adj_stopAndGo : ¬ ADJ pathAdj eventAdj (Movement stopAndGo) := λ h =>
+theorem not_adj_stopAndGo : ¬ ADJ pathAdj eventAdj (Movement stopAndGo) := fun h ↦
   absurd (h {.a, .b, .c, .d, .e, .f} {0, 1, 2, 4, 5, 6} {.c} {.d} {2} {4} (by decide) (by decide)
     (by decide) (by decide) (by decide) (by decide) (by decide)) (by decide)
 
-theorem not_adj_telekinesis : ¬ ADJ pathAdj eventAdj (Movement telekinesis) := λ h =>
+theorem not_adj_telekinesis : ¬ ADJ pathAdj eventAdj (Movement telekinesis) := fun h ↦
   absurd (h {.a, .b, .e, .f} {0, 1, 2, 3} {.b} {.e} {1} {2} (by decide) (by decide) (by decide)
     (by decide) (by decide) (by decide) (by decide)) (by decide)
 
-theorem not_adj_echternach : ¬ ADJ pathAdj eventAdj (Movement echternach) := λ h =>
+theorem not_adj_echternach : ¬ ADJ pathAdj eventAdj (Movement echternach) := fun h ↦
   absurd (h {.a, .b, .c} {0, 1, 2, 3, 4} {.c} {.c} {2} {3} (by decide) (by decide) (by decide)
     (by decide) (by decide) (by decide) (by decide)) (by decide)
 
-theorem not_adj_alcatraz : ¬ ADJ pathAdj eventAdj (Movement alcatraz) := λ h =>
+theorem not_adj_alcatraz : ¬ ADJ pathAdj eventAdj (Movement alcatraz) := fun h ↦
   absurd (h {.c, .d, .e, .f, .i, .h} {0, 1, 2, 3, 4, 5} {.h} {.c} {5} {0} (by decide) (by decide)
     (by decide) (by decide) (by decide) (by decide) (by decide)) (by decide)
 
-/-- A connected set of segments: no proper nonempty subset is closed under adjacency. -/
+/-- A set of segments is connected if no proper nonempty subset is closed under adjacency. -/
 def Connected (x : Finset Seg) : Prop :=
   ∀ y ∈ x.powerset, y.Nonempty → y ≠ x → ∃ s ∈ y, ∃ t ∈ x \ y, s.adj t
 
@@ -315,7 +318,7 @@ def Connected (x : Finset Seg) : Prop :=
 theorem adj_disconnected :
     ADJ pathAdj eventAdj (Movement disconnected) ∧ ¬ Connected {.a, .b, .e, .f} :=
   ⟨adj_movement_iff.2 (by decide),
-    λ h => absurd (h {.a, .b} (by decide) (by decide) (by decide)) (by decide)⟩
+    fun h ↦ absurd (h {.a, .b} (by decide) (by decide) (by decide)) (by decide)⟩
 
 end Diagram
 
