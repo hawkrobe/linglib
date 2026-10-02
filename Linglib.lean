@@ -177,7 +177,6 @@ import Linglib.Core.Order.DeMorganAlgebra.Basic
 import Linglib.Core.Order.Flat
 import Linglib.Core.Order.GaloisConnection
 import Linglib.Core.Order.Interval
-import Linglib.Core.Order.IntervalContent
 import Linglib.Core.Order.IterateFixedPoint
 import Linglib.Core.Order.LeftLinear
 import Linglib.Core.Order.Monotone.Monovary
