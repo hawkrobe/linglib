@@ -1,0 +1,137 @@
+module
+
+public import Linglib.Data.Examples.Schema
+
+/-!
+# `Owusu2022` — typed example data
+
+Auto-generated from `Linglib/Data/Examples/Owusu2022.json` by
+`scripts/gen_examples.py`. Do not edit by hand; edit the JSON and re-run
+the generator. Consumers (the paper's study file, test-suite hubs) import
+this module; declarations live in `namespace Owusu2022.Examples`.
+-/
+
+@[expose] public section
+
+namespace Owusu2022.Examples
+
+def ex_3_21 : Datum :=
+  { id := "owusu2022_3_21"
+    source := ⟨"owusu-2022", "(21)"⟩
+    reportedIn := none
+    language := "akan1250"
+    primaryText := "Onipa bí a-n-to dwom."
+    glossedTokens := [("Onipa", "person"), ("bí", "INDEF"), ("a-n-to", "PERF-NEG-sing"), ("dwom", "song")]
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := [("wide", .acceptable)]
+    paperFeatures := [("operator", "negation"), ("position", "subject")] }
+
+def ex_3_22 : Datum :=
+  { id := "owusu2022_3_22"
+    source := ⟨"owusu-2022", "(22)"⟩
+    reportedIn := none
+    language := "akan1250"
+    primaryText := "Me-n-ni fish bí."
+    glossedTokens := [("Me-n-ni", "1SG-NEG-eat"), ("fish", "fish"), ("bí", "INDEF")]
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := [("narrow", .unacceptable), ("wide", .acceptable)]
+    paperFeatures := [("operator", "negation"), ("position", "object")] }
+
+def ex_3_23 : Datum :=
+  { id := "owusu2022_3_23"
+    source := ⟨"owusu-2022", "(23)"⟩
+    reportedIn := none
+    language := "akan1250"
+    primaryText := "Sojani bí gyina pono biara ano."
+    glossedTokens := [("Sojani", "soldier"), ("bí", "INDEF"), ("gyina", "stand"), ("pono", "door"), ("biara", "every"), ("ano", "mouth")]
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := [("wide", .acceptable), ("narrow", .unacceptable)]
+    paperFeatures := [("operator", "every"), ("position", "subject")] }
+
+def ex_3_24 : Datum :=
+  { id := "owusu2022_3_24"
+    source := ⟨"owusu-2022", "(24)"⟩
+    reportedIn := none
+    language := "akan1250"
+    primaryText := "ɔbaa biara kane-e nhoma bí."
+    glossedTokens := [("ɔbaa", "woman"), ("biara", "every"), ("kane-e", "read-PST"), ("nhoma", "book"), ("bí", "INDEF")]
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := [("narrow", .acceptable), ("wide", .acceptable)]
+    paperFeatures := [("operator", "every"), ("position", "object")] }
+
+def ex_3_29 : Datum :=
+  { id := "owusu2022_3_29"
+    source := ⟨"owusu-2022", "(29)"⟩
+    reportedIn := none
+    language := "akan1250"
+    primaryText := "Dan n-ni ha."
+    glossedTokens := [("Dan", "house"), ("n-ni", "NEG-be.located"), ("ha", "there")]
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := [("narrow", .acceptable)]
+    paperFeatures := [("operator", "negation"), ("position", "subject")] }
+
+def ex_3_30 : Datum :=
+  { id := "owusu2022_3_30"
+    source := ⟨"owusu-2022", "(30)"⟩
+    reportedIn := none
+    language := "akan1250"
+    primaryText := "Me-n-ni fish."
+    glossedTokens := [("Me-n-ni", "1SG-NEG-eat"), ("fish", "fish")]
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := [("narrow", .acceptable), ("wide", .unacceptable)]
+    paperFeatures := [("operator", "negation"), ("position", "object")] }
+
+def ex_3_31 : Datum :=
+  { id := "owusu2022_3_31"
+    source := ⟨"owusu-2022", "(31)"⟩
+    reportedIn := none
+    language := "akan1250"
+    primaryText := "ɔbaa biara kane-e nhoma."
+    glossedTokens := [("ɔbaa", "woman"), ("biara", "every"), ("kane-e", "read-PST"), ("nhoma", "book")]
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := [("narrow", .acceptable), ("wide", .unacceptable)]
+    paperFeatures := [("operator", "every"), ("position", "object")] }
+
+def ex_3_32 : Datum :=
+  { id := "owusu2022_3_32"
+    source := ⟨"owusu-2022", "(32)"⟩
+    reportedIn := none
+    language := "akan1250"
+    primaryText := "Sojani gyina pono biara ano."
+    glossedTokens := [("Sojani", "soldier"), ("gyina", "stand"), ("pono", "door"), ("biara", "every"), ("ano", "mouth")]
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := [("wide", .unacceptable), ("narrow", .acceptable)]
+    paperFeatures := [("operator", "every"), ("position", "subject")] }
+
+def ex_3_57 : Datum :=
+  { id := "owusu2022_3_57"
+    source := ⟨"owusu-2022", "(57)"⟩
+    reportedIn := none
+    language := "akan1250"
+    primaryText := "Sukuuni biara a-m-fa krataa bí àa ɔ-kyere-e a-n-kɔ."
+    glossedTokens := [("Sukuuni", "student"), ("biara", "every"), ("a-m-fa", "PERF-NEG-take"), ("krataa", "paper"), ("bí", "INDEF"), ("àa", "REL"), ("ɔ-kyere-e", "3SG-write-PST"), ("a-n-kɔ", "PERF-NEG-go")]
+    context := "There are three students, Alan, Bob and Carl. They all have three published papers. For their job application, they all submitted only two of their papers."
+    judgment := .acceptable
+    alternatives := []
+    readings := [("narrow", .unacceptable)]
+    paperFeatures := [("operator", "negation"), ("position", "object")] }
+
+def all : List Datum := [ex_3_21, ex_3_22, ex_3_23, ex_3_24, ex_3_29, ex_3_30, ex_3_31, ex_3_32, ex_3_57]
+
+end Owusu2022.Examples

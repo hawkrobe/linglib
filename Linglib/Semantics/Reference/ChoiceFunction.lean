@@ -8,18 +8,16 @@ public import Linglib.Logic.Modal.Extensional
 /-!
 # Choice functions
 
-The referential semantics of indefinites: a choice function picks an individual out of a
-property, so an indefinite noun phrase denotes an individual rather than an existential
-quantifier ([reinhart-1997], [winter-1997]), and its scope is the binding site of the function
-variable rather than a quantifier-raising site. A choice function is *correct* when it picks a
-member of every nonempty property (`CF.IsCorrect`). A *skolemized* choice function takes a
-situation argument ([kratzer-1998-pseudoscope]); [owusu-2022] feeds the same situation to the
-function and to an intensional restrictor (`SkolemCF.applyIntension`), and [mirrazi-2024]
-lets an intensional operator bind that argument, so the function picks different individuals
-at different worlds while its existential closure sits above negation (`SkolemCF.applyIntensionAt`
-under `SitVarStatus.bound`). Under an operator extensional at the matrix situation the bound and
-free construals coincide (`bound_free_collapse`), which is why a choice-functional indefinite
-takes wide scope over negation; a situation quantifier separates them (`bound_free_diverge_box`).
+A choice function picks an individual out of a property. For Reinhart and for Winter an
+indefinite noun phrase denotes the value of such a function rather than an existential
+quantifier, and it scopes where the function variable is bound rather than where a quantifier
+would raise to. A choice function is *correct* when it picks a member of every nonempty property.
+Kratzer gives the function implicit arguments, skolem indices that are bound like pronouns;
+Mirrazi adds a world argument that an intensional operator can bind, so that the function picks
+different individuals at different worlds, and Owusu feeds the same situation to the function and
+to the restrictor. Under an operator that is extensional at the matrix situation the bound and
+free construals of that argument coincide, so a choice-functional indefinite takes wide scope
+over negation, while a situation quantifier separates them.
 
 ## Main definitions
 
@@ -33,16 +31,16 @@ takes wide scope over negation; a situation quantifier separates them (`bound_fr
 
 ## Main results
 
-* `cf_wide_scope_specific`, `exists_narrow_scope_under_negation`: the choice-functional
-  indefinite under negation is specific, where the existential one may take narrow scope.
 * `bound_free_collapse`, `bound_free_diverge_box`: extensional operators neutralize, and
   situation quantifiers separate, the free and bound construals of the situation argument.
-* `isCorrect_some_of_apply`, `correct_cfs_disagree_on_some`: a correct choice function
-  witnesses the existential reading, and distinct correct functions commit to distinct witnesses.
+* `isCorrect_some_of_apply`, `CF.IsCorrect.forall_apply_iff_some_iff`: a correct choice
+  function witnesses the existential reading, and agrees with it on every predicate only when the
+  restrictor has a single member.
 * `CF.exists_isCorrect_iff_some`, `CF.forall_isCorrect_iff_every`: quantifying over
   correct choice functions gives the existential and universal readings on a nonempty restrictor.
-* `CF.exists_isCorrect_forall_iff`: a choice function whose restrictor contains a bound variable
-  takes no scope relative to the binder.
+* `CF.exists_isCorrect_forall_iff`, `CF.exists_isCorrect_forall_iff_of_injective`,
+  `SkolemCF.exists_isCorrect_forall_iff`: a choice function whose restrictor contains a bound
+  variable, and a skolemized one whose index is bound, take no scope relative to the binder.
 
 ## References
 
@@ -67,11 +65,11 @@ def CF (E : Type*) := (E → Prop) → E
 /-- A choice function is correct when it picks a member of every nonempty property. -/
 def CF.IsCorrect (f : CF E) : Prop := ∀ P : E → Prop, (∃ x, P x) → P (f P)
 
-/-- A skolemized choice function is a choice function at each situation
-([kratzer-1998-pseudoscope]). -/
+/-- A skolemized choice function is a choice function at each index, an individual or a
+situation ([kratzer-1998-pseudoscope]). -/
 def SkolemCF (S E : Type*) := S → CF E
 
-/-- A skolemized choice function is correct when it is correct at every situation. -/
+/-- A skolemized choice function is correct when it is correct at every index. -/
 def SkolemCF.IsCorrect (f : SkolemCF S E) : Prop := ∀ s, (f s).IsCorrect
 
 /-- The two analyses of an indefinite determiner are an existential quantifier, scoping by
@@ -82,8 +80,8 @@ inductive IndefiniteAnalysis where
   deriving DecidableEq, Repr
 
 /-- An indefinite yields the wide pseudo-scope de dicto reading when it is choice-functional and
-its determiner carries a world variable ([mirrazi-2024]): existential closure of the function
-above negation, with the function's output varying across the worlds of the operator. -/
+its determiner carries a world variable ([mirrazi-2024]). The function is then existentially
+closed above negation while its output varies across the worlds of the operator. -/
 def IndefiniteAnalysis.CanPseudoDeDicto : IndefiniteAnalysis → Bool → Prop
   | .choiceFunction, hasWorldVar => hasWorldVar = true
   | .existential, _ => False
@@ -92,32 +90,17 @@ instance : ∀ t b, Decidable (IndefiniteAnalysis.CanPseudoDeDicto t b)
   | .choiceFunction, _ => inferInstanceAs (Decidable (_ = true))
   | .existential, _ => inferInstanceAs (Decidable False)
 
-/-! ### Scope under negation -/
-
-/-- The wide-scope reading of a choice-functional indefinite under negation is specific: a
-correct function picks a restrictor member, so its failing the predicate witnesses a restrictor
-member that fails it. -/
-theorem cf_wide_scope_specific {f : CF E} (hf : f.IsCorrect) {N VP : E → Prop} (hN : ∃ x, N x)
-    (h : ¬ VP (f N)) : ∃ x, N x ∧ ¬ VP x :=
-  ⟨f N, hf N hN, h⟩
-
-/-- An existential indefinite can take narrow scope under negation, since the negated
-existential is satisfiable on a nonempty restrictor. -/
-theorem exists_narrow_scope_under_negation {N VP : E → Prop} (h : ∀ x, N x → ¬ VP x) :
-    ¬ ∃ x, N x ∧ VP x :=
-  fun ⟨x, hN, hVP⟩ ↦ h x hN hVP
-
 /-! ### The situation argument, free or bound -/
 
-/-- The status of a situation variable ([elbourne-2013]): free, resolved to a contextually
-salient situation, or bound by an intensional operator. -/
+/-- A situation variable is free, resolved to a contextually salient situation, or bound by an
+intensional operator ([elbourne-2013]). -/
 inductive SitVarStatus where
   | free
   | bound
   deriving DecidableEq, Repr
 
-/-- A skolemized choice function applied at `s` to an intensional restrictor evaluated at the
-same `s`: [owusu-2022]'s entry for Akan *bí*, the situation shared by function and restrictor. -/
+/-- `f.applyIntension s P` applies the skolemized choice function at `s` to the restrictor `P`
+evaluated at the same `s`, as in [owusu-2022]'s entry for Akan *bí*. -/
 def SkolemCF.applyIntension (f : SkolemCF S E) (s : S) (P : S → E → Prop) : E := f s (P s)
 
 /-- On a rigid restrictor the intensional application is the extensional one. -/
@@ -131,7 +114,7 @@ def SkolemCF.applyIntensionAt (f : SkolemCF S E) : SitVarStatus → S → S → 
   | .bound, sOp, _, P => f.applyIntension sOp P
 
 /-- A world-skolemized choice function picks different individuals at different worlds even
-on a rigid restrictor: [mirrazi-2024]'s answer to the fixed-set problem. -/
+on a rigid restrictor, which is [mirrazi-2024]'s answer to the fixed-set problem. -/
 theorem SkolemCF.applyIntensionAt_bound_ne (f : SkolemCF S E) {w₁ w₂ : S} {P : E → Prop}
     (h : f w₁ P ≠ f w₂ P) :
     f.applyIntensionAt .bound w₁ w₂ (fun _ ↦ P) ≠ f.applyIntensionAt .bound w₂ w₁ (fun _ ↦ P) :=
@@ -179,6 +162,15 @@ theorem isCorrect_some_of_apply {f : CF E} (hf : f.IsCorrect) {N VP : E → Prop
     (hVP : VP (f N)) : GQ.some N VP :=
   ⟨f N, hf N hN, hVP⟩
 
+/-- A correct choice function agrees with the existential reading on every predicate exactly
+when its pick is the only member of the restrictor. -/
+theorem CF.IsCorrect.forall_apply_iff_some_iff {f : CF E} (hf : f.IsCorrect) {N : E → Prop}
+    (hN : ∃ x, N x) : (∀ VP : E → Prop, VP (f N) ↔ GQ.some N VP) ↔ ∀ x, N x → x = f N := by
+  refine ⟨fun h x hx ↦ ((h (· = x)).mpr ⟨x, hx, rfl⟩).symm, fun h VP ↦
+    ⟨isCorrect_some_of_apply hf hN, ?_⟩⟩
+  rintro ⟨x, hx, hVP⟩
+  rwa [h x hx] at hVP
+
 /-- Every member of a property is the pick of some correct choice function. -/
 theorem CF.exists_isCorrect_apply_eq {N : E → Prop} {x : E} (hx : N x) :
     ∃ f : CF E, f.IsCorrect ∧ f N = x := by
@@ -217,7 +209,7 @@ theorem CF.forall_isCorrect_iff_of_not_exists {N : E → Prop} (hN : ¬ ∃ x, N
   rwa [dite_eq_right hN] at this
 
 /-- A choice function applied to a restrictor that contains a bound variable takes no scope
-relative to the binder: since the restrictor already varies with the variable, one correct
+relative to the binder. Since the restrictor already varies with the variable, one correct
 function can be assembled from the pointwise choices. -/
 theorem CF.exists_isCorrect_forall_iff [Nonempty E] {ι : Type*} (R : ι → E → Prop)
     (VP : E → Prop) :
@@ -241,22 +233,34 @@ theorem CF.exists_isCorrect_forall_iff [Nonempty E] {ι : Type*} (R : ι → E �
     obtain ⟨f, hf, -⟩ := CF.exists_isCorrect_apply_eq (N := (· = x)) rfl
     exact ⟨f, hf, fun i ↦ (hι ⟨i⟩).elim⟩
 
-/-- Two correct choice functions disagree on the same restrictor and predicate. Over `Bool`,
-the function preferring `true` hits the witness of `(· = true)` and the one preferring `false`
-does not. -/
-theorem correct_cfs_disagree_on_some :
-    ∃ f₁ f₂ : CF Bool, f₁.IsCorrect ∧ f₂.IsCorrect ∧
-      ∃ N VP : Bool → Prop, GQ.some N VP ∧ VP (f₁ N) ∧ ¬ VP (f₂ N) := by
+/-- When distinct values of a bound variable give distinct restrictors, a choice function takes
+no scope relative to the binder even if the predicate also contains the variable. -/
+theorem CF.exists_isCorrect_forall_iff_of_injective [Nonempty E] {ι : Type*}
+    {R : ι → E → Prop} (hR : Function.Injective R) (VP : ι → E → Prop) :
+    (∃ f : CF E, f.IsCorrect ∧ ∀ i, VP i (f (R i))) ↔
+      ∀ i, ∃ f : CF E, f.IsCorrect ∧ VP i (f (R i)) := by
   classical
-  refine ⟨fun P ↦ if P true then true else false, fun P ↦ if P false then false else true,
-    ?_, ?_, fun _ ↦ True, (· = true), ⟨true, trivial, rfl⟩, by simp, by simp⟩
-  · rintro P ⟨x, hx⟩
-    by_cases h : P true
-    · simp [h]
-    · cases x <;> simp_all
-  · rintro P ⟨x, hx⟩
-    by_cases h : P false
-    · simp [h]
-    · cases x <;> simp_all
+  refine ⟨fun ⟨f, hf, h⟩ i ↦ ⟨f, hf, h i⟩, fun h ↦ ?_⟩
+  choose F hF hVP using h
+  obtain ⟨x⟩ := ‹Nonempty E›
+  obtain ⟨g, hg, -⟩ := CF.exists_isCorrect_apply_eq (N := (· = x)) rfl
+  refine ⟨fun P ↦ if hP : ∃ i, R i = P then F hP.choose P else g P, fun P hP ↦ ?_, fun i ↦ ?_⟩
+  · beta_reduce
+    split_ifs
+    exacts [hF _ P hP, hg P hP]
+  · beta_reduce
+    split_ifs with hP
+    · rw [show hP.choose = i from hR hP.choose_spec]
+      exact hVP i
+    · exact absurd ⟨i, rfl⟩ hP
+
+/-- A skolemized choice function whose index a binder ranges over takes no scope relative to
+the binder, since a correct function can be assembled from the choices at each index. -/
+theorem SkolemCF.exists_isCorrect_forall_iff (N : S → E → Prop) (VP : S → E → Prop) :
+    (∃ F : SkolemCF S E, F.IsCorrect ∧ ∀ s, VP s (F s (N s))) ↔
+      ∀ s, ∃ f : CF E, f.IsCorrect ∧ VP s (f (N s)) := by
+  refine ⟨fun ⟨F, hF, h⟩ s ↦ ⟨F s, hF s, h s⟩, fun h ↦ ?_⟩
+  choose F hF hVP using h
+  exact ⟨F, hF, hVP⟩
 
 end Reference
