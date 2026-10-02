@@ -38,7 +38,6 @@ person scale is the binary cut between participants and the rest (`Person.Class`
   participant sets.
 * `Person.coarsen`: the value without its clusivity.
 * `Person.prominence`: the person hierarchy as a rank.
-* `Person.System`: the values a language's paradigms distinguish.
 
 ## References
 
@@ -169,38 +168,5 @@ def prominence : Person → Nat
   | .first | .firstInclusive | .firstExclusive => 2
   | .second => 1
   | .third | .zero => 0
-
-/-! ### Person systems -/
-
-/-- A language's person system is the list of values its paradigms distinguish; the marking
-types of the first person complex are `Person.Clusivity`. -/
-structure System where
-  /-- The person values the system distinguishes. -/
-  values : List Person
-  deriving DecidableEq, Repr
-
-namespace System
-
-/-- The system marks clusivity. -/
-def HasClusivity (ns : System) : Prop :=
-  .firstInclusive ∈ ns.values ∨ .firstExclusive ∈ ns.values
-
-instance : DecidablePred HasClusivity := fun ns => by
-  unfold HasClusivity; infer_instance
-
-/-- The tripartition is the English-type system of first, second and third person. -/
-def tripartition : System := ⟨[.first, .second, .third]⟩
-
-/-- The quadripartition is the Indonesian- or Tagalog-type system with clusivity. -/
-def quadripartition : System :=
-  ⟨[.firstInclusive, .firstExclusive, .second, .third]⟩
-
-theorem tripartition_no_clusivity : ¬tripartition.HasClusivity := by
-  decide
-
-theorem quadripartition_clusivity : quadripartition.HasClusivity := by
-  decide
-
-end System
 
 end Person

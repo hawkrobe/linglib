@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.Examples.DalrympleKaplan2000
-public import Linglib.Syntax.Person.Resolve
+public import Linglib.Syntax.Person.System
 public import Linglib.Fragments.Chichewa.Gender
 public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Fragments.German.Pronouns
@@ -334,20 +334,18 @@ theorem fula :
     second the hearer, and the third the empty set ((91)). -/
 def english (p : Person) : PersonSet := p.participantSets.sup id
 
-/-- Union under this encoding is the tripartition's coarsened resolution ((92)). -/
-theorem english_table :
-    ∀ p q : Person, p ∈ Person.System.tripartition.values →
-      q ∈ Person.System.tripartition.values →
-      english (Person.System.tripartition.resolve p q) = english p ∪ english q := by
+/-- Union under this encoding is resolution in the tripartition ((92)). -/
+theorem english_table : ∀ s t : PersonSet,
+    english (Person.tripartitionOf (s ∪ t)) =
+      english (Person.tripartitionOf s) ∪ english (Person.tripartitionOf t) := by
   decide
 
 /-- Under this encoding the person hierarchy is the inclusion of marker sets, so union picks
     the most prominent conjunct, the hierarchy of Zwicky and Corbett (fn. 12) as a corollary of
     union. -/
-theorem english_subset_iff_prominence :
-    ∀ p q : Person, p ∈ Person.System.tripartition.values →
-      q ∈ Person.System.tripartition.values →
-      (english q ⊆ english p ↔ q.prominence ≤ p.prominence) := by
+theorem english_subset_iff_prominence : ∀ s t : PersonSet,
+    english (Person.tripartitionOf t) ⊆ english (Person.tripartitionOf s) ↔
+      (Person.tripartitionOf t).prominence ≤ (Person.tripartitionOf s).prominence := by
   decide
 
 /-- *José y yo* and *ja a ty* take first-plural agreement and *José y tú* second-plural, the
@@ -370,7 +368,7 @@ def sag : Person → PersonSet
 /-- Their assignment is the De Morgan dual of (91), each set the complement of the union
     analysis's, so it succeeds on English exactly where union does ((101)–(103)). -/
 theorem sag_eq_compl :
-    ∀ p : Person, p ∈ Person.System.tripartition.values → sag p = (english p)ᶜ := by
+    ∀ s : PersonSet, sag (Person.tripartitionOf s) = (english (Person.tripartitionOf s))ᶜ := by
   decide
 
 /-- Intersection with the empty first-person set cannot tell *you and I* from *Bill and I*, so
