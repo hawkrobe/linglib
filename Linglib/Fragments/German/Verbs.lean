@@ -78,7 +78,7 @@ def lassen : Verb :=
   { Verb.ofStem (strong "lassen" "lässt" "ließ" "gelassen") with
     frames := [ArgumentFrame.smallClause]
     readings := [{ frame := ArgumentFrame.smallClause, control := some .objectControl }]
-    causative := some .enable, objects := [.acc] }
+    objects := [.acc] }
 
 /-- *machen* 'make' is the productive causative, as in *Das macht mich traurig* 'that makes me
 sad'. -/
@@ -86,12 +86,12 @@ def machen : Verb :=
   { Verb.ofStem (weak "machen") with
     frames := [ArgumentFrame.smallClause]
     readings := [{ frame := ArgumentFrame.smallClause, control := some .objectControl }]
-    causative := some .make, objects := [.acc] }
+    objects := [.acc] }
 
 /-- *töten* 'kill' is a lexical causative formed on the adjective *tot* 'dead'. -/
 def toeten : Verb :=
   { Verb.ofStem (weak "töten") with
-    frames := [ArgumentFrame.np], causative := some .make, objects := [.acc] }
+    frames := [ArgumentFrame.np], objects := [.acc] }
 
 /-- *bauen* 'build' is a transitive verb of creation, as in *Borromini baute diese Kirche*
 'Borromini built this church'. -/
@@ -155,7 +155,7 @@ def brechen : Verb :=
 /-- *zerbrechen* 'break' is a lexical causative formed on *brechen* with the inseparable *zer-*. -/
 def zerbrechen : Verb :=
   { Verb.ofStem (brechen.stem.inseparable "zer") with
-    frames := [ArgumentFrame.np], causative := some .make, objects := [.acc] }
+    frames := [ArgumentFrame.np], objects := [.acc] }
 
 /-- *frieren* 'freeze' is an unaccusative achievement, *der See ist gefroren* 'the lake has frozen',
 and an impersonal verb, *es hat in der Nacht gefroren* 'there was a frost in the night'

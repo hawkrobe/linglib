@@ -113,7 +113,6 @@ def öldür : Verb where
   rootSegments := [ö, l]
   voice := [.causative]
   frames := [ArgumentFrame.np]
-  causative := some .make
 
 /-- *yaptır-* 'have done, make do', the causative of *yap-* 'do, make'. -/
 def yaptır : Verb where
@@ -122,7 +121,6 @@ def yaptır : Verb where
   voice := [.causative]
   frames := [ArgumentFrame.smallClause]
   readings := [{ frame := ArgumentFrame.smallClause, control := some .objectControl }]
-  causative := some .make
 
 /-- `verbs` lists the entries. -/
 def verbs : List Verb := [kork, um, endişelen, dolan, öldür, yaptır]

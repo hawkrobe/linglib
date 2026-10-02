@@ -39,7 +39,6 @@ def crack : Verb := .mkRegular {
     ArgumentFrame.np_pp (some Adpositions.with_)]
   vendlerClass := some .achievement
   scaleDimension := some .cracking
-  causative := some .make
   levinClasses := {LevinClass.break_, .soundEmission} }
 
 /-- "dent" — Levin 21.2 Carve verbs. Physical disturbance CoS verb.
@@ -50,7 +49,6 @@ def dent : Verb := .mkRegular {
   frames := [ArgumentFrame.np, ArgumentFrame.np_pp (some Adpositions.with_)]
   vendlerClass := some .achievement
   scaleDimension := some .denting
-  causative := some .make
   levinClasses := {LevinClass.carve} }
 
 /-- "scratch" — Levin 21.1 Cut verbs, a physical disturbance CoS verb for
@@ -63,7 +61,6 @@ def scratch : Verb := .mkRegular {
     ArgumentFrame.np_pp (some Adpositions.on), ArgumentFrame.np_pp (some Adpositions.with_)]
   vendlerClass := some .achievement
   scaleDimension := some .scratching
-  causative := some .make
   levinClasses := {LevinClass.cut, .hurt, .rummage, .scribble, .swat, .wipeManner} }
 
 /-- "shatter" — Levin 45.1 Break verbs. NOT a physical disturbance verb.
@@ -74,7 +71,6 @@ def shatter : Verb := .mkRegular {
   frames := [ArgumentFrame.np, ArgumentFrame.unaccusative,
     ArgumentFrame.np_pp (some Adpositions.with_)]
   vendlerClass := some .achievement
-  causative := some .make
   levinClasses := {LevinClass.break_} }
 
 /-- "burn" — destruction or transformation by fire or heat; Levin 45.4 other change-of-state
@@ -85,7 +81,6 @@ def burn : Verb := .mkRegular {
     ArgumentFrame.np_pp (some Adpositions.with_)]
   vendlerClass := some .accomplishment
   incrementality := some .strict
-  causative := some .make
   root := { content := {
     force := {.moderate, .high}
     patientRobustness := {.flimsy, .moderate, .robust}
@@ -100,7 +95,6 @@ def destroy : Verb := .mkRegular {
   form := "destroy"
   frames := [ArgumentFrame.np, ArgumentFrame.np_pp (some Adpositions.with_)]
   vendlerClass := some .accomplishment
-  causative := some .make
   root := { content := {
     resultGeometry := {.totalDestruction}
     agentControl := {.neutral, .compatible}
@@ -116,7 +110,6 @@ def melt : Verb := .mkRegular {
     ArgumentFrame.np_pp (some Adpositions.with_)]
   vendlerClass := some .accomplishment
   incrementality := some .strict
-  causative := some .make
   root := { content := {
     force := {.low, .moderate}
     patientRobustness := {.moderate, .robust}
@@ -337,7 +330,6 @@ def freeze : Verb where
   frames := [ArgumentFrame.np, ArgumentFrame.unaccusative,
     ArgumentFrame.np_pp (some Adpositions.with_)]
   vendlerClass := some .accomplishment
-  causative := some .make
   levinClasses := {LevinClass.knead, .otherChangeOfState, .weather}
 
 /-- "heat" — Levin 45.4 Other Change of State verbs. Causative/inchoative alternation. -/
@@ -346,7 +338,6 @@ def heat : Verb := .mkRegular {
   frames := [ArgumentFrame.np, ArgumentFrame.unaccusative,
     ArgumentFrame.np_pp (some Adpositions.with_)]
   vendlerClass := some .accomplishment
-  causative := some .make
   levinClasses := {LevinClass.cooking, .otherChangeOfState} }
 
 /-- "bend" — Levin 45.2 Bend verbs. Causative/inchoative alternation.
@@ -361,7 +352,6 @@ def bend : Verb where
     ArgumentFrame.np_pp (some Adpositions.with_)]
   vendlerClass := some .accomplishment
   scaleDimension := some .curvature
-  causative := some .make
   levinClasses := {LevinClass.assumePosition, .bend, .knead, .spatialConfiguration}
 
 /-- "boil" — Levin 45.3 Cooking verbs. Causative/inchoative alternation.
@@ -372,7 +362,6 @@ def boil : Verb := .mkRegular {
     ArgumentFrame.np_pp (some Adpositions.with_)]
   vendlerClass := some .accomplishment
   scaleDimension := some .boiling
-  causative := some .make
   levinClasses := {LevinClass.cooking} }
 
 /-- "rust" — Levin 45.5 Entity-Specific CoS verbs. Inchoative only.

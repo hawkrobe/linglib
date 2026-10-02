@@ -9,19 +9,18 @@ public import Linglib.Semantics.Presupposition.Verb
 /-!
 # Landau (2015): A Two-Tiered Theory of Control
 
-This file formalizes the two-tiered theory of [landau-2015]: obligatory control complements
-divide by the attitude status of the selecting predicate, non-attitude complements
-establishing control by predication and attitude complements by the binding of a projected
-coordinate of the embedded context, a second tier built over the first. The predicate classes
-of [landau-2000] carry the split, the four classes selecting untensed complements to the
-predicative tier and the four selecting tensed ones to the logophoric tier ((4), (5)); the
-summary table of contrasts (80) shows the two tiers separated on every row, with obligatory
-control into an inflected complement realized as the OC-NC generalization (70) over the
-library's clause classes (`inflectedComplement_realizes_ocnc`); and object control under
-attitude predicates reads *de se* with psychological verbs and *de te* with communicative
-ones (36). The predicate classes are derived from the English fragment's verb entries rather
-than stored (`derivedLandauClass`), and the derivation places the book's exhaustive-control
-verbs on the predicative tier and its partial-control verbs on the logophoric tier.
+In Landau's two-tiered theory of control, obligatory control complements divide by the attitude
+status of the selecting predicate, non-attitude complements establishing control by predication and
+attitude complements by the binding of a projected coordinate of the embedded context, a second tier
+built over the first. Landau's earlier predicate classes carry the split, the four classes selecting
+untensed complements to the predicative tier and the four selecting tensed ones to the logophoric
+tier ((4), (5)); the summary table of contrasts (80) shows the two tiers separated on every row,
+with obligatory control into an inflected complement realized as the OC-NC generalization (70) over
+the library's clause classes (`inflectedComplement_realizes_ocnc`); and object control under
+attitude predicates reads *de se* with psychological verbs and *de te* with communicative ones (36).
+The predicate classes are derived from the English fragment's verb entries rather than stored
+(`derivedLandauClass`), and the derivation places the book's exhaustive-control verbs on the
+predicative tier and its partial-control verbs on the logophoric tier.
 
 ## Implementation notes
 
@@ -48,18 +47,18 @@ open Control
 
 /-! ### The two tiers -/
 
-/-- The two tiers of obligatory control: predicative control, selected by non-attitude
-predicates, where PRO moves to the specifier of Fin and control is syntactic predication,
-which forces exhaustive control; and logophoric control, selected by attitude predicates,
-where the complementizer projects a perspectival coordinate that binds PRO, which admits
-partial control and forces a reading bound to the attitude holder. -/
+/-- Obligatory control has two tiers. Predicative control, selected by non-attitude predicates,
+moves PRO to the specifier of Fin and is syntactic predication, which forces exhaustive control.
+In logophoric control, selected by attitude predicates, the complementizer projects a
+perspectival coordinate that binds PRO, which admits partial control and forces a reading bound
+to the attitude holder. -/
 inductive Tier where
   | predicative
   | logophoric
   deriving DecidableEq, Repr
 
-/-- Each tier's dependency mechanism in the neutral vocabulary: predication shares the
-referent, logophoric control composes a binding leg over predication. -/
+/-- In the neutral vocabulary of control mechanisms, predication shares the referent and
+logophoric control composes a binding leg over predication. -/
 def Tier.mechanism : Tier → Control.Mechanism
   | .predicative => .referent
   | .logophoric  => .composite
@@ -89,7 +88,8 @@ inductive PredicateClass where
   | interrogative
   deriving DecidableEq, Repr
 
-/-- The tier a class selects: untensed complements are predicative, tensed ones logophoric. -/
+/-- A class selects a tier by tense, untensed complements being predicative and tensed ones
+logophoric. -/
 def PredicateClass.tier : PredicateClass → Tier
   | .implicative | .aspectual | .modal | .evaluative => .predicative
   | .factive | .propositional | .desiderative | .interrogative => .logophoric
@@ -103,16 +103,16 @@ inductive Table80Row where
   /-- A non-human PRO ((81)): the logophoric binder is the author or addressee coordinate,
   defined only for humans. -/
   | nonhumanPRO
-  /-- An implicit controller ((90), (93)): predication needs a syntactically represented
-  argument, so exhaustive-control verbs resist impersonal passives (98). -/
+  /-- An implicit controller ((90), (93)) is out under predication, which needs a syntactically
+  represented argument, so exhaustive-control verbs resist impersonal passives (98). -/
   | implicitControl
-  /-- Control shift (§4.3): predication is bi-unique (`Control.IsSaturating.eq_of_controllers`),
-  so no other argument can saturate the predicate. -/
+  /-- Control shift (§4.3) is out under predication, which is bi-unique
+  (`Control.IsSaturating.eq_of_controllers`), so no other argument can saturate the predicate. -/
   | controlShift
-  /-- Partial control (§5): a saturating dependency is exhaustive
+  /-- Partial control (§5) is out under a saturating dependency, which is exhaustive
   (`Control.IsSaturating.not_isPartial`). -/
   | partialControl
-  /-- Split control (§5): a saturating dependency has a unique controller
+  /-- Split control (§5) is out under a saturating dependency, which has a unique controller
   (`Control.IsSaturating.not_isSplit`). -/
   | splitControl
   deriving DecidableEq, Repr
@@ -148,8 +148,8 @@ theorem inflectedComplement_realizes_ocnc :
 
 /-! ### Readings of PRO under attitude predicates (table (36)) -/
 
-/-- The logophoric readings of PRO: bound to the author coordinate of the embedded context
-(*de se*) or to its addressee coordinate (*de te*). -/
+/-- Logophoric PRO is bound to the author coordinate of the embedded context (*de se*) or to its
+addressee coordinate (*de te*). -/
 inductive DeSeReading where
   | deSe
   | deTe
@@ -171,15 +171,14 @@ def objectControlReading : ObjectControlSubclass → DeSeReading
 
 /-! ### Predicate classes from the fragment -/
 
-/-- The predicate class of a fragment verb, read off its semantic fields: a change-of-state type
-gives the aspectual class, an implicative or causative entry the implicative class, a factive
+/-- The predicate class of a fragment verb is read off its semantic fields. A change-of-state type
+gives the aspectual class, an implication signature the implicative class, a factive
 presupposition the factive class, question embedding without an attitude the interrogative
 class, and a doxastic or preferential attitude the propositional or desiderative class; `none`
 where the fields decide nothing, as for *try*. -/
 def derivedLandauClass (v : Verb) : Option PredicateClass :=
   if v.phasal ≠ none then some .aspectual
   else if v.implicative ≠ none then some .implicative
-  else if v.causative ≠ none then some .implicative
   else if v.IsFactive then some .factive
   else if v.TakesQuestion ∧ v.attitude = none then some .interrogative
   else match v.attitude with
@@ -187,8 +186,8 @@ def derivedLandauClass (v : Verb) : Option PredicateClass :=
     | some (.preferential _) => some .desiderative
     | none                   => none
 
-/-- The tier of a fragment control verb: that of its class, or else logophoric exactly when the
-verb selects an attitude complement; `none` for a verb without control. -/
+/-- A fragment control verb is on the tier of its class, or else logophoric exactly when it
+selects an attitude complement; a verb without control has no tier. -/
 def derivedControlTier (v : Verb) : Option Tier :=
   if v.controlType == ControlType.none && v.altControlType == ControlType.none then Option.none
   else match derivedLandauClass v with

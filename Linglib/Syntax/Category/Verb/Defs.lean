@@ -9,7 +9,6 @@ public import Linglib.Logic.Natural.ImplicationSignature
 public import Linglib.Semantics.Aspect.Defs
 public import Linglib.Semantics.Events.PathDir
 public import Linglib.Semantics.Attitudes.Basic
-public import Linglib.Semantics.Causation.VerbClass
 public import Linglib.Semantics.ArgumentStructure.LevinClass
 public import Linglib.Logic.Natural.Basic
 public import Linglib.Semantics.Aspect.Phasal
@@ -19,15 +18,15 @@ public import Linglib.Semantics.Degree.Antonymy
 public import Linglib.Semantics.ArgumentStructure.RoleList
 public import Linglib.Semantics.Root.Defs
 
-/-! # Verb entry — core type
+/-!
+# Verb entries
 
-The framework-neutral verb entry: the selectional and inflectional enums (`VoiceType`,
-`SenseTag`) and the `Verb` structure, whose fields are grouped into the
-facets `Verb.ArgStructure`, `Verb.Aspect`, `Verb.Presupposition`, `Verb.Causation` and
-`Verb.Attitude` and shared by every language's fragment. Complement selection is a list of
-typed frames, and a frame-conditioned attitude, opacity or control lives on a `Verb.Reading`
-row. The classifications of an entry, factive, causative, trigger and so on, are read off
-these fields in `Syntax/Category/Verb/Basic.lean`.
+`Verb` is the framework-neutral verb entry shared by every language's fragment. Its fields are
+grouped into the facets `Verb.ArgStructure`, `Verb.Aspect`, `Verb.Presupposition` and
+`Verb.Attitude`, beside the selectional and inflectional enums `VoiceType` and `SenseTag`.
+Complement selection is a list of typed frames, and a frame-conditioned attitude, opacity or
+control lives on a `Verb.Reading` row. The classifications of an entry, factive, implicative,
+trigger and so on, are read off these fields in `Syntax/Category/Verb/Basic.lean`.
 
 ## Implementation notes
 
@@ -165,12 +164,6 @@ structure Presupposition where
   implicative : Option NaturalLogic.ImplicationSignature := none
   deriving Repr, BEq
 
-/-- The causal semantics of a verb is its causative mechanism. -/
-structure Causation where
-  /-- The force-dynamic mechanism a causative verb lexicalizes; `none` for a non-causative. -/
-  causative : Option Causative := none
-  deriving Repr, BEq
-
 /-- One frame-conditioned reading of a verb ([bondarenko-2022] §4.4.3
     *hanaxa*; Greek *thimame*): per-frame overrides of the lexeme-level
     attitude and opacity (`none` = inherit `Verb.attitude` /
@@ -217,13 +210,11 @@ end Verb
 Cross-linguistic verb core: all semantic fields shared across languages.
 
 Composes the `Verb.*` facets (argument structure, aspect, presupposition,
-causation, attitude, root) plus the citation form, speech-act status, and a
+attitude, root) plus the citation form, speech-act status, and a
 polysemy disambiguator. Language-specific fragments extend this with
 morphological fields appropriate to their inflectional system.
 -/
-structure Verb extends
-    Verb.ArgStructure, Verb.Aspect, Verb.Presupposition,
-    Verb.Causation, Verb.Attitude where
+structure Verb extends Verb.ArgStructure, Verb.Aspect, Verb.Presupposition, Verb.Attitude where
   /-- The [levin-1993] classes whose member lists carry the citation form, for the English
       entries; the classes are Levin's, so entries for other languages carry none. A verb Levin
       cross-lists carries every class, and a study chooses a sense by membership. -/

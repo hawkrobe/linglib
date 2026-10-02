@@ -1,10 +1,10 @@
 module
 
 public import Mathlib.Data.Fintype.Prod
+public import Mathlib.Data.Fintype.Sigma
+public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Semantics.Causation.CausalModel.Dependence
-public import Linglib.Semantics.Causation.VerbClass
 public import Linglib.Core.Relation.ReflTransGen
-public import Linglib.Fragments.English.Verbs.Inventory
 
 /-!
 # Nadathur and Lauer (2020)
@@ -20,7 +20,6 @@ action, presupposed by *make*, separates it from *let*.
 ## Main definitions
 
 * `NadathurLauer2020.Make`, `NadathurLauer2020.Cause`: the lexical entries (25)
-* `NadathurLauer2020.denotation`: the entry the paper gives a causative class
 * `NadathurLauer2020.TemporalLocationConstraint`: the constraint (28) on backgrounds
 * `NadathurLauer2020.VolitionalActionConstraint`: the constraint on volitional action (43)
 
@@ -76,15 +75,6 @@ context `u`. -/
 def Cause (s : ∀ v, Flat (α v)) (u : U) (c : V) (x : α c) (e : V) (y : α e) : Prop :=
   M.CausallyNecessary (· ≤ ·) (Function.update s c ⊥) c x e y ∧ M.solve ⊥ u c = x ∧
     M.solve ⊥ u e = y
-
-/-- The entry of a causative class is (25b) for *cause* and (25a) for *make* and for *let*, a
-sufficiency causative by Section 4.1. The paper gives none for *force*, which footnote 25 counts
-only plausibly among the sufficiency causatives, nor for *prevent*. -/
-def denotation : Causative →
-    Option ((∀ v, Flat (α v)) → U → ∀ c : V, α c → ∀ e : V, α e → Prop)
-  | .cause => some (Cause M)
-  | .make | .enable => some (Make M)
-  | .force | .prevent => none
 
 variable {M}
 
@@ -494,18 +484,5 @@ theorem volitionalActionConstraint_persuasion :
   decide
 
 end Dancing
-
-/-! ### The English causatives -/
-
-section English
-
-variable {U V : Type*} {α : V → Type*} [DecidableEq V] [∀ v, Nonempty (α v)]
-  (M : CausalModel U V α) [M.IsAcyclic]
-
-example : English.Verbs.cause.causative.bind (denotation M) = some (Cause M) := rfl
-example : English.Verbs.make.causative.bind (denotation M) = some (Make M) := rfl
-example : English.Verbs.let_.causative.bind (denotation M) = some (Make M) := rfl
-
-end English
 
 end NadathurLauer2020

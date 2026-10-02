@@ -62,7 +62,6 @@ def fazer : Verb where
   form := "fazer"
   frames := [ArgumentFrame.infinitival, ArgumentFrame.subjunctiveClause]
   readings := [{ frame := ArgumentFrame.infinitival, control := some .objectControl }]
-  causative := some .make
 
 /-! ### Lexical reciprocals -/
 

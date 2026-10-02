@@ -922,7 +922,6 @@ import Linglib.Semantics.Attitudes.Doxastic
 import Linglib.Semantics.Attitudes.Factivity
 import Linglib.Semantics.Attitudes.Preference
 import Linglib.Semantics.Causation.Morphological
-import Linglib.Semantics.Causation.VerbClass
 import Linglib.Semantics.Composition.Assignment
 import Linglib.Semantics.Composition.Combinator
 import Linglib.Semantics.Composition.Cont
