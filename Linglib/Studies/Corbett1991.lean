@@ -7,7 +7,7 @@ public import Linglib.Syntax.Agreement.Resolution
 public import Linglib.Syntax.Agreement.Classes
 public import Linglib.Syntax.Gender.Assignment
 public import Linglib.Syntax.Number.Resolve
-public import Linglib.Syntax.Person.Resolve
+public import Linglib.Syntax.Person.Lattice
 public import Linglib.Fragments.Tamil.Gender
 public import Linglib.Fragments.Swahili.Nouns
 public import Linglib.Fragments.Afar.Gender
@@ -22,14 +22,13 @@ public import Linglib.Data.Examples.Corbett1991
 /-!
 # Corbett (1991): Gender
 
-This file formalizes the book's typology of gender. Gender is a property of nouns shown only
-in agreement, and a language's genders are the classes of nouns that take the same
-agreements. Nouns are assigned to them by rules reading their meaning or their form: the
-semantic rules take precedence, the formal rules, morphological or phonological, sort the
-semantic residue, and no system is formal alone (`Gender.AssignmentSystem`). Tamil, Russian,
-Swahili, Afar and Hausa instantiate the schema on their fragments, and the assignment systems
-of chapters 2 and 3 are surveyed by kind and by the semantic criteria their rules use
-(`survey`).
+The book's typology of gender. Gender is a property of nouns shown only in agreement, and a
+language's genders are the classes of nouns that take the same agreements. Nouns are assigned to
+them by rules reading their meaning or their form: the semantic rules take precedence, the
+formal rules, morphological or phonological, sort the semantic residue, and no system is formal
+alone (`Gender.AssignmentSystem`). Tamil, Russian, Swahili, Afar and Hausa instantiate the
+schema on their fragments, and the assignment systems of chapters 2 and 3 are surveyed by kind
+and by the semantic criteria their rules use (`survey`).
 
 Counting the genders starts from agreement classes, the sets of nouns taking identical
 agreements in every form on every target, distinguishes the controller genders into which
@@ -194,10 +193,10 @@ def system : Gender.AssignmentSystem (Bool × Option Gender) Unit Value where
   formal _ := none
   residue := .neut
 
-theorem isStrictSemantic_system : system.IsStrictSemantic := λ _ => rfl
+theorem isStrictSemantic_system : system.IsStrictSemantic := fun _ ↦ rfl
 
 /-- The rules assign every noun of the fragment its gender. -/
-theorem assign_eq_gender : ∀ n ∈ allNouns, system.assign sem (λ _ => ()) n = n.gender := by
+theorem assign_eq_gender : ∀ n ∈ allNouns, system.assign sem (fun _ ↦ ()) n = n.gender := by
   decide
 
 end Tamil
@@ -221,7 +220,7 @@ inductive Declension where
 irregular third declension. -/
 def declension (n : Russian.Gender.Noun) : Option Declension :=
   if n = znamja ∨ n = put' then some .irregularIII else
-    n.declClass.map λ
+    n.declClass.map fun
       | .I => .I
       | .II => .II
       | .III => .III
@@ -351,7 +350,7 @@ def system : Gender.AssignmentSystem (Option Gender) Bool Gender where
 the book says only that the phonological rule has exceptions. -/
 theorem assign_eq_gender :
     ∀ n ∈ allNouns, n ∉ [gida, kada] →
-      system.assign sem (λ n => decide n.EndsInAa) n = n.gender := by
+      system.assign sem (fun n ↦ decide n.EndsInAa) n = n.gender := by
   decide
 
 end Hausa
@@ -374,7 +373,7 @@ theorem card_range_adjForm :
 
 /-- Every fragment noun takes, in each number, the form of its gender: (5) to (10). -/
 theorem rows : ∀ row ∈ Examples.all, row.language = "roma1327" →
-    ∀ n ∈ row.parse? "noun" (allNouns.map λ n => (n.form, n)),
+    ∀ n ∈ row.parse? "noun" (allNouns.map fun n ↦ (n.form, n)),
       ∀ pl ∈ row.parse? "number" [("singular", false), ("plural", true)],
         ∀ f ∈ row.parse? "form" [("zero", AdjForm.zero), ("ă", .ă), ("i", .i), ("e", .e)],
           (row.judgment = .acceptable ↔ n.gender.adjForm pl = f) := by
@@ -636,7 +635,7 @@ end FinePosition
 /-- Swahili *rafiki* 'friend', (47) to (49): an animate of morphological class 9/10 with
 gender 1/2 agreement throughout, class 9/10 agreement remaining possible on an attributive
 possessive alone. -/
-def rafiki : Hybrid FinePosition := λ
+def rafiki : Hybrid FinePosition := fun
   | .possessive => some .both
   | .attributive | .predicate => some .semanticOnly
   | _ => none
@@ -644,7 +643,7 @@ def rafiki : Hybrid FinePosition := λ
 /-- Kami *ng'ombe* 'cows' and *mbudzi* 'goats', (54) and (55): syntactic agreement of the
 predicate rejected, both forms accepted on attributives other than the possessive, which the
 book reports with class 10 agreement only. -/
-def ngombe : Hybrid FinePosition := λ
+def ngombe : Hybrid FinePosition := fun
   | .possessive => some .syntacticOnly
   | .attributive => some .both
   | .predicate => some .semanticOnly
@@ -709,11 +708,11 @@ conjunct, first person; a second, second; otherwise third. -/
 def personRules : List (ResolutionRule Person Person) :=
   [⟨.any, (· = .first), .first⟩, ⟨.any, (· = .second), .second⟩, otherwise .third]
 
-/-- On the three persons the rules are the substrate's resolution in a system of three
-persons, the union of the conjuncts' discourse roles. -/
+/-- On the three persons the rules are the substrate's resolution coarsened to the three
+persons, the union of the conjuncts' participant sets without clusivity. -/
 theorem resolve_personRules_pair :
     ∀ a ∈ [Person.first, .second, .third], ∀ b ∈ [Person.first, .second, .third],
-      resolve personRules [a, b] = some (Person.resolveIn [.first, .second, .third] a b) := by
+      resolve personRules [a, b] = some (a ⊔ b).coarsen := by
   decide
 
 /-- The number resolution rules of §9.1.2 in a system with the given values: the conjuncts'
@@ -731,7 +730,7 @@ open _root_.Tamil.Gender
 /-- Whether a gender is one of the rational genders. -/
 def Rational : Value → Prop := (· ≠ .neut)
 
-instance : DecidablePred Rational := λ _ => by unfold Rational; infer_instance
+instance : DecidablePred Rational := fun _ ↦ by unfold Rational; infer_instance
 
 /-- §9.3: all rationals take the rational form, all non-rationals the neuter; a mixture
 has no resolved form. -/
@@ -747,12 +746,12 @@ theorem resolve_masc_neut : resolve rules [.masc, .neut] = none := by decide
 /-- A strict semantic assignment with a semantic resolution: the resolved form is a function
 of the conjuncts' rationality. -/
 theorem resolve_factorsThrough :
-    Function.FactorsThrough (resolve rules) (List.map (decide <| Rational ·)) := λ cs ds h => by
+    Function.FactorsThrough (resolve rules) (List.map (decide <| Rational ·)) := fun cs ds h ↦ by
   have h₁ : ∀ l : List Value,
-      (∀ c ∈ l, Rational c) ↔ ∀ b ∈ l.map (decide <| Rational ·), b = true := λ l => by
+      (∀ c ∈ l, Rational c) ↔ ∀ b ∈ l.map (decide <| Rational ·), b = true := fun l ↦ by
     simp
   have h₂ : ∀ l : List Value,
-      (∀ c ∈ l, ¬ Rational c) ↔ ∀ b ∈ l.map (decide <| Rational ·), b = false := λ l => by
+      (∀ c ∈ l, ¬ Rational c) ↔ ∀ b ∈ l.map (decide <| Rational ·), b = false := fun l ↦ by
     simp
   simp only [resolve, rules, ResolutionRule.Applies, h₁, h₂, h]
 
@@ -878,7 +877,7 @@ open _root_.Romanian.Gender
 def MaleAnimate (n : Romanian.Gender.Noun) : Prop :=
   n.animate ∧ n.naturalGender = some .masculine
 
-instance : DecidablePred MaleAnimate := λ _ => by unfold MaleAnimate; infer_instance
+instance : DecidablePred MaleAnimate := fun _ ↦ by unfold MaleAnimate; infer_instance
 
 /-- §9.5, collapsed: a male animate, masculine; all masculine, masculine; otherwise
 feminine, over the fragment's nouns. -/
@@ -897,8 +896,8 @@ namespace SerboCroat
 female, feminine; all feminine, optionally feminine; otherwise masculine. The optional rule
 yields a second grammar. -/
 def stage2 : List (List (ResolutionRule (Slovene.Value × Bool) Slovene.Value)) :=
-  [[⟨.all, (λ c => c.1 = .fem ∧ c.2), .fem⟩, ⟨.all, (·.1 = .fem), .fem⟩, otherwise .masc],
-    [⟨.all, (λ c => c.1 = .fem ∧ c.2), .fem⟩, otherwise .masc]]
+  [[⟨.all, (fun c ↦ c.1 = .fem ∧ c.2), .fem⟩, ⟨.all, (·.1 = .fem), .fem⟩, otherwise .masc],
+    [⟨.all, (fun c ↦ c.1 = .fem ∧ c.2), .fem⟩, otherwise .masc]]
 
 /-- (77) and (78): feminine inanimates may take the masculine. -/
 theorem feminine_inanimates_masc :
@@ -1035,7 +1034,7 @@ is the gender the assignment rules give the noun. -/
 
 open _root_.Swahili in
 theorem swahili_rows : ∀ row ∈ Examples.all, row.language = "swah1253" →
-    ∀ n ∈ row.parse? "noun" (allNouns.map λ n => (n.form, n)),
+    ∀ n ∈ row.parse? "noun" (allNouns.map fun n ↦ (n.form, n)),
       ∀ g ∈ row.parse? "concord" [("1/2", Gender.genderA), ("3/4", .genderB), ("7/8", .genderD)],
         (row.judgment = .acceptable ↔ Swahili.system.assign Swahili.sem Noun.morphClass n = g) := by
   decide +kernel

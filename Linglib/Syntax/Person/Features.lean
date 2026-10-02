@@ -182,7 +182,7 @@ theorem includesSpeaker_iff_author {p : Person} {t : Features} (h : p.toFeatures
 
 /-- A tripartition value covers exactly the participant sets whose features are its bundle, the
 sets in the domain of its bundle and in no domain of a more specified one. -/
-theorem mem_participantSets_iff {p : Person} (hp : p ∈ System.tripartition.values)
+theorem mem_participantSets_iff {p : Person} (hp : p.coarsen = p)
     {t : Features} (ht : p.toFeatures = some t) (s : Finset Role) :
     s ∈ p.participantSets ↔ univ.filter (Bears s) = t := by
   revert p t s; decide

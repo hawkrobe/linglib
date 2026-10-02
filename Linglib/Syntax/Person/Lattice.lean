@@ -113,8 +113,7 @@ theorem participantSets_subset_coarsen (p : Person) :
 /-- Coarsening sends a referential value to the tripartition value covering its participant
 sets. -/
 theorem coarsen_eq_iff {p : Person} (hp : p ≠ .zero) (q : Person) :
-    p.coarsen = q ↔
-      q ∈ System.tripartition.values ∧ p.participantSets ⊆ q.participantSets := by
+    p.coarsen = q ↔ q.coarsen = q ∧ p.participantSets ⊆ q.participantSets := by
   revert p q; decide
 
 /-- The tripartition value of a coordination depends only on the tripartition values of its
