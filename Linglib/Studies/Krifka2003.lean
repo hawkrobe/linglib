@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.Mereology
 public import Linglib.Semantics.Quantification.Basic
-public import Linglib.Semantics.Reference.Kind
+public import Linglib.Semantics.Reference.Iota
 public import Mathlib.Data.Set.Card
 public import Mathlib.Order.SupClosed
 
@@ -23,7 +23,7 @@ confine to cumulative properties.
 * `Krifka2003.isExtensiveMeasure_ofAtoms`: atom-counting nouns are extensive measures (53).
 * `Krifka2003.qua_withNumber_ofAtoms`, `Krifka2003.cum_pluralize_ofAtoms`: numeral phrases are
   quantized and the semantic plural is cumulative.
-* `Krifka2003.down_withNumber_one`: in a world with exactly one dog, ∩ of *one dog* is that dog.
+* `Krifka2003.iota_withNumber_one`: in a world with exactly one dog, ∩ of *one dog* is that dog.
 * `Krifka2003.bare_narrow`, `Krifka2003.indefinite_wide_numeral_narrow`: bare plurals scope
   below negation, and *two dogs* scopes over it only as a determiner phrase.
 
@@ -37,6 +37,7 @@ confine to cumulative properties.
   paper's requirement that the trace of a bare noun phrase be untyped.
 * Count nouns that count atoms (`ofAtoms`) witness the measure laws and yield the
   quantization of numeral phrases and the cumulativity of the semantic plural.
+* The down operator at a world is `Reference.iota`, the largest member of the extension.
 * The topic condition on kind reference, the choice-function reading of *some*, and the
   singular definite generics of the paper's last section are not formalized.
 
@@ -106,9 +107,9 @@ theorem cum_pluralize_ofAtoms (D : World → Set Atom) (w : World) :
 
 /-- The down operator (77) is not confined to cumulative properties: in a world with exactly one
 dog, `∩[one dog]` is that dog. -/
-theorem down_withNumber_one {D : World → Set Atom} {w : World} {a : Atom} (h : D w = {a}) :
-    {a} ∈ Kind.down (withNumber 1 (ofAtoms D)) w :=
-  Kind.mem_down.2
+theorem iota_withNumber_one {D : World → Set Atom} {w : World} {a : Atom} (h : D w = {a}) :
+    iota (withNumber 1 (ofAtoms D) w) = some {a} :=
+  iota_eq_some_iff.2
     ⟨⟨h ▸ subset_rfl, Set.finite_singleton a, Set.ncard_singleton a⟩, fun _ ⟨hx, _, _⟩ ↦ h ▸ hx⟩
 
 /-! ### Composition and narrow scope -/
