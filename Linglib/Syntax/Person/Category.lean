@@ -74,7 +74,7 @@ def participants : Category → Finset Discourse.Role
   | speakerAddressee | speakerAddresseeOthers => {.speaker, .addressee}
   | other | others => ∅
 
-/-- The others a category contains: none, one, or several, several counting as two. -/
+/-- A category contains no others, one, or several, several counting as two. -/
 def otherCount : Category → Fin 3
   | speaker | addressee | speakerAddressee => 0
   | other | speakerOthers | addresseeOthers | speakerAddresseeOthers => 1
@@ -119,7 +119,7 @@ def IncludesSpeaker (c : Category) : Prop := .speaker ∈ c.participants
 /-- The category includes the addressee. -/
 def IncludesAddressee (c : Category) : Prop := .addressee ∈ c.participants
 
-/-- The first person complex: the groups including the speaker. -/
+/-- The first person complex consists of the groups including the speaker. -/
 def IsFirstPersonComplex (c : Category) : Prop := c.IncludesSpeaker ∧ c.IsGroup
 
 /-- An inclusive category includes both the speaker and the addressee. -/
@@ -160,6 +160,11 @@ theorem person_includesSpeaker_iff (c : Category) :
     c.person.IncludesSpeaker ↔ c.IncludesSpeaker := by
   cases c <;> decide +kernel
 
+/-- The person of a category covers the category's participants. -/
+theorem participants_mem_participantSets_person (c : Category) :
+    c.participants ∈ c.person.participantSets := by
+  cases c <;> decide
+
 /-- Unlike UD realization, the person projection separates inclusive from exclusive. -/
 theorem person_separates_clusivity :
     Category.speakerAddresseeOthers.person ≠ Category.speakerOthers.person := by decide +kernel
@@ -191,7 +196,7 @@ def ofPersonNumber : Person → Number → Finset Category
   | .third, _ => {.others}
   | .zero, _ => ∅
 
-/-- `ofPersonNumber` inverts the person projection: every category is recovered from its
+/-- `ofPersonNumber` inverts the person projection, recovering every category from its
 coordinates at some number value. -/
 theorem ofPersonNumber_person (c : Category) : ∃ n, ofPersonNumber c.person n = {c} := by
   cases c
@@ -211,9 +216,9 @@ addressees or English *we* for any group containing the speaker, has a person an
 only up to the values neutral between them, the clusivity-unmarked `first` and the
 noncommittal `general`. -/
 
-/-- The person shared by a set of referential categories: the common value of `person` where
-there is one, `first` for categories differing only in clusivity, `none` for the empty set and
-for categories disagreeing on the speech-act roles they include. -/
+/-- The person shared by a set of referential categories is the common value of `person` where
+there is one, `first` for categories differing only in clusivity, and `none` for the empty set
+and for categories disagreeing on the speech-act roles they include. -/
 def sharedPerson (s : Finset Category) : Option Person :=
   if s = ∅ then none
   else if ∀ c ∈ s, c.IncludesSpeaker then
@@ -224,8 +229,8 @@ def sharedPerson (s : Finset Category) : Option Person :=
   else if ∀ c ∈ s, ¬ c.IncludesSpeaker ∧ ¬ c.IncludesAddressee then some .third
   else none
 
-/-- The number shared by a set of referential categories: singular or plural when the
-categories agree, `general` when they mix individuals and groups, `none` for the empty set.
+/-- The number shared by a set of referential categories is singular or plural when the
+categories agree, `general` when they mix individuals and groups, and `none` for the empty set.
 Cysouw's categories do not separate dual from plural, so the projection is at that
 granularity. -/
 def sharedNumber (s : Finset Category) : Option Number :=
