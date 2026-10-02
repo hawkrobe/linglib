@@ -18,9 +18,8 @@ consonant-final loanwords take *ɗîn* in place of *-n* ([schwarz-2013]).
 
 ## Main definitions
 
-* `Hausa.Determiners.inventory` — the determiners, deriving the `.bipartite` cell of
-  [moroney-2021]
-* `Hausa.Determiners.Indefinite` — the bare and the *wani* indefinite
+* `Hausa.Determiners.inventory`: the determiners, deriving the `.bipartite` cell of
+  [moroney-2021].
 
 ## References
 
@@ -63,11 +62,5 @@ def inventory : Determiner.Inventory :=
 
 /-- Hausa derives the `.bipartite` cell. -/
 theorem marking : inventory.markingStrategy = .bipartite := by decide
-
-/-- The two indefinite strategies: a bare noun or the *wani* series. -/
-inductive Indefinite where
-  | bare
-  | wani
-  deriving DecidableEq, Repr
 
 end Hausa.Determiners
