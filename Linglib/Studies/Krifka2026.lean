@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Reference.Kind
+public import Linglib.Semantics.Reference.Iota
 public import Linglib.Semantics.Plurality.Algebra
 public import Linglib.Semantics.Dynamic.Update
 public import Linglib.Logic.Assignment
@@ -41,8 +41,9 @@ pronoun *them* is therefore interpretable and a partitive is not.
 * Which concepts sponsor kinds (*dogs from the animal shelter* does not) is left to the
   lexicon, as in the paper.
 * Individuals form any join semilattice, as in the paper (§3); the models are Link's nonempty
-  sets of atoms, `Plurality.Algebra.Individual`. The sufficient condition for σ is stated for
-  finite extensions, where the paper has closure under arbitrary sums.
+  sets of atoms, `Plurality.Algebra.Individual`. A kind is a function from worlds to partial
+  individuals, and σ is `Reference.iota`. The sufficient condition for σ is stated for finite
+  extensions (`it_isSome_of_supClosed`), where the paper has closure under arbitrary sums.
 
 ## References
 
@@ -70,13 +71,14 @@ section Kinds
 variable [SemilatticeSup E]
 
 /-- *it* (17a) denotes the kind of a concept, ∩ as in (13b). -/
-noncomputable def it (P : World → Set E) : Kind World E := Kind.down P
+noncomputable def it (P : World → Set E) : World → Option E := fun w ↦ iota (P w)
 
 /-- *they* (17b) denotes the kind of the plural closure (14) of a concept. -/
-noncomputable def they (P : World → Set E) : Kind World E := Kind.down fun w ↦ supClosure (P w)
+noncomputable def they (P : World → Set E) : World → Option E :=
+  fun w ↦ iota (supClosure (P w))
 
 /-- `pronoun f` is the kind pronoun that the count feature `f` selects. -/
-noncomputable def pronoun : MassCount → (World → Set E) → Kind World E
+noncomputable def pronoun : MassCount → (World → Set E) → World → Option E
   | .mass => it
   | .count => they
 
@@ -87,6 +89,15 @@ theorem they_eq_it_of_supClosed {P : World → Set E} (h : ∀ w, SupClosed (P w
   unfold they it
   simp only [fun w ↦ (h w).supClosure_eq]
 
+/-- The kind of a finite, nonempty, cumulative concept is defined, the finite case of the
+sufficient condition for σ stated after (13). -/
+theorem it_isSome_of_supClosed {P : World → Set E} {w : World} (hfin : (P w).Finite)
+    (hne : (P w).Nonempty) (hcum : SupClosed (P w)) : (it P w).isSome :=
+  have ht : hfin.toFinset.Nonempty := hfin.toFinset_nonempty.2 hne
+  iota_isSome_iff.2 ⟨hfin.toFinset.sup' ht id,
+    hcum.finsetSup'_mem ht fun _ hx ↦ hfin.mem_toFinset.1 hx,
+    fun _ hx ↦ Finset.le_sup' id (hfin.mem_toFinset.2 hx)⟩
+
 end Kinds
 
 /-- The concept *spider* holds of the two atoms of a two-atom model. -/
@@ -94,7 +105,8 @@ def spider : Unit → Set (Individual Bool) :=
   fun _ ↦ {Individual.atom true, Individual.atom false}
 
 /-- The kind of the singular count concept is undefined with two instances (15c). -/
-theorem spider_no_kind : ¬ (it spider ()).Dom := by
+theorem spider_no_kind : it spider () = none := by
+  refine iota_eq_none_iff.2 ?_
   rintro ⟨x, hx, hmax⟩
   have h₁ := hmax (Set.mem_insert _ _)
   have h₂ := hmax (Set.mem_insert_of_mem _ rfl)
@@ -103,9 +115,8 @@ theorem spider_no_kind : ¬ (it spider ()).Dom := by
   · exact Bool.noConfusion (Set.mem_singleton_iff.1 (h₁ (Set.mem_singleton true)))
 
 /-- The kind of the plural closure of *spider* is the sum of the two spiders (15b). -/
-theorem spiders_kind : Individual.atom true ⊔ Individual.atom false ∈ they spider () := by
-  rw [they, Kind.mem_down]
-  refine ⟨supClosed_supClosure (subset_supClosure (Set.mem_insert _ _))
+theorem spiders_kind : they spider () = some (Individual.atom true ⊔ Individual.atom false) := by
+  refine iota_eq_some_iff.2 ⟨supClosed_supClosure (subset_supClosure (Set.mem_insert _ _))
     (subset_supClosure (Set.mem_insert_of_mem _ rfl)), ?_⟩
   refine supClosure_min (t := Set.Iic (Individual.atom true ⊔ Individual.atom false)) ?_
     fun _ hx _ hy ↦ Set.mem_Iic.2 (sup_le (Set.mem_Iic.1 hx) (Set.mem_Iic.1 hy))
@@ -120,7 +131,7 @@ an index (§4); `undef` marks an index outside the assignment's domain. -/
 inductive DRefVal (World E : Type*)
   | entity (x : E)
   | concept (P : World → Set E) (f : MassCount)
-  | kind (k : Kind World E)
+  | kind (k : World → Option E)
   | index (w : World)
   | undef
 

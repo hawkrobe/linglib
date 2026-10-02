@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Reference.Kind
+public import Linglib.Semantics.Reference.Iota
 public import Linglib.Semantics.Plurality.Algebra
 public import Linglib.Semantics.Quantification.NP
 public import Linglib.Data.Examples.LeBruynDeSwart2022
@@ -63,12 +63,13 @@ def krifkaScrambled : Prop := GQ.some (books ()) readᶜ
 
 /-- On the kinds approach (38), the bare plural shifts to its kind, and derived kind predication
 introduces the existential over its instances below negation. -/
-def chierchiaUnscrambled : Prop := ¬ GQ.some ((Kind.down books).up ()) read
+def chierchiaUnscrambled : Prop := ¬ GQ.some ((iota (books ())).elim (∅ : Set _) Set.Iic) read
 
 /-- On the kinds approach with the kind scrambled over negation, the kind binds a kind-level
 trace below negation. -/
 def chierchiaScrambled : Prop :=
-  NP.individual (Kind.down books) (fun k : Kind Unit (Individual Book) ↦ GQ.some (k.up ()) read)ᶜ
+  NP.individual (fun s ↦ iota (books s))
+    (fun k : Unit → Option (Individual Book) ↦ GQ.some ((k ()).elim (∅ : Set _) Set.Iic) read)ᶜ
 
 /-- Scrambling a kind over negation changes nothing, since a kind takes no scope, as a name
 takes none, so the kinds approach gives narrow scope at either position. -/
@@ -87,9 +88,10 @@ theorem books_example : krifkaScrambled ∧ ¬ krifkaUnscrambled ∧ ¬ chierchi
   refine ⟨⟨Individual.atom .unfinished, trivial, not_read_unfinished⟩,
     not_not.2 ⟨Individual.atom .finished, trivial, read_finished⟩, ?_⟩
   rw [chierchiaScrambled_iff, chierchiaUnscrambled, not_not]
-  have hd : (⟨Set.univ, Set.univ_nonempty⟩ : Individual Book) ∈ Kind.down books () :=
-    Kind.mem_down.2 ⟨trivial, fun x _ ↦ (Set.subset_univ x.1 : x ≤ _)⟩
-  exact ⟨Individual.atom .finished,
-    ⟨_, hd, (Set.subset_univ _ : Individual.atom Book.finished ≤ _)⟩, read_finished⟩
+  have hd : iota (books ()) = some ⟨Set.univ, Set.univ_nonempty⟩ :=
+    iota_eq_some_iff.2 ⟨trivial, fun x _ ↦ (Set.subset_univ x.1 : x ≤ _)⟩
+  rw [hd]
+  exact ⟨Individual.atom .finished, (Set.subset_univ _ : Individual.atom Book.finished ≤ _),
+    read_finished⟩
 
 end LeBruynDeSwart2022
