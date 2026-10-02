@@ -6,42 +6,36 @@ public import Linglib.Semantics.Mereology
 /-!
 # Mereology of relations
 
-This file defines the part-structure properties of a relation `θ : α → β → Prop` between two
-mereologies, [krifka-1998]'s conditions on the thematic relation between an object and the
-event it participates in. Uniqueness of participants and of events are mathlib's
-`Relator.LeftUnique` and `Relator.RightUnique`; summativity is `Mereology.CUM` of the graph
-of `θ` in the product order (`sum_iff_cum_uncurry`), so Link's closure of a relation under
-sums is `AlgClosure` of its graph; and the mapping and uniqueness conditions relate the parts
-of a related object to the parts of its event. Each condition on the event side is the
-object-side condition of the converse relation `flip θ`, so results are proved once and
-transported.
+Krifka states his conditions on the thematic relation between an object and an event as
+part-structure properties of a relation `θ : α → β → Prop` between two mereologies. Uniqueness of
+participants and of events are mathlib's `Relator.LeftUnique` and `Relator.RightUnique`,
+summativity is cumulativity of the graph of `θ` in the product order, and the mapping and
+uniqueness conditions relate the parts of a related object to the parts of its event. Each
+condition on the event side is the object-side condition of the converse relation `flip θ`. When
+the relation is the graph of a thematic function, as in [champollion-krifka-2016], the
+conditions become properties of the function: summativity is preservation of sums, general
+uniqueness of events is injectivity, and mapping to subobjects is strict monotonicity.
 
 ## Main definitions
 
-* `UP`, `GUE` — uniqueness of participants and general uniqueness of events: `θ` is left-
-  and right-unique.
-* `SUM` — summativity ([krifka-1989]), the cumulativity of a relation ([krifka-1998]):
-  related pairs sum to related pairs.
-* `ME`, `MSE`, `UE` — mapping to events, mapping to subevents, and uniqueness of events:
-  a part of a related object is related to a part, a proper part, or a unique part of the
-  event.
-* `MO`, `MSO`, `UO` — the converse conditions: mapping to objects, mapping to subobjects,
-  and uniqueness of objects.
+* `UP`, `GUE`: uniqueness of participants and general uniqueness of events.
+* `SUM`: summativity, the cumulativity of a relation.
+* `ME`, `MSE`, `UE`: mapping to events, mapping to subevents, and uniqueness of events.
+* `MO`, `MSO`, `UO`: mapping to objects, mapping to subobjects, and uniqueness of objects.
 
 ## Main results
 
-* `UP.uo_of_mo`, `GUE.ue_of_me` — with mapping, global uniqueness gives relative uniqueness,
-  the paper's remark that uniqueness of objects follows from uniqueness of participants.
-* `UE.mse_of_uo`, `UO.mso_of_ue` — the two uniqueness conditions give the strict mappings,
-  so the mapping clauses of strict incrementality are redundant.
-* `UE.exists_orderIso_of_uo` — under both uniqueness conditions `θ` restricts, between the
-  parts of a related object and event, to the graph of an order isomorphism: the one-to-one
-  correspondence between the parts of the apples and the parts of their eating.
-* `sum_graph` — the graph of a sum homomorphism is summative.
+* `UP.uo_of_mo`, `UE.mse_of_uo`: uniqueness of participants gives uniqueness of objects, and the
+  two uniqueness conditions give the strict mappings.
+* `UE.exists_orderIso_of_uo`: under both uniqueness conditions a related object and event have
+  order-isomorphic parts.
+* `UO.qua_of_mso`: the events of a fixed object form a quantized predicate.
+* `gue_graph_iff`, `mso_graph_iff`, `sum_graph_iff`: the conditions on the graph of a thematic
+  function.
 
 ## References
 
-* [krifka-1989], [krifka-1998]
+* [krifka-1989], [krifka-1998], [champollion-krifka-2016]
 -/
 
 @[expose] public section
@@ -88,10 +82,6 @@ theorem sum_iff_cum_uncurry : SUM θ ↔ CUM (Function.uncurry θ) :=
   ⟨fun h _ hp _ hq ↦ h hp hq, fun h _ _ hx _ _ hy ↦ h (a := (_, _)) (b := (_, _)) hx hy⟩
 
 theorem SUM.flip (h : SUM θ) : SUM (flip θ) := fun _ _ h₁ _ _ h₂ ↦ h h₁ h₂
-
-/-- The graph of a sum homomorphism is summative. -/
-theorem sum_graph (f : SupHom β α) : SUM (· = f ·) :=
-  fun _ _ hx _ _ hy ↦ (congr_arg₂ (· ⊔ ·) hx hy).trans (map_sup f _ _).symm
 
 end Sum
 
@@ -162,6 +152,15 @@ theorem UE.mse_of_uo (hE : UE θ) (hO : UO θ) : MSE θ := fun _ _ hxe _ hyx ↦
 /-- Uniqueness of objects and of events give mapping to subobjects. -/
 theorem UO.mso_of_ue (hO : UO θ) (hE : UE θ) : MSO θ := UE.mse_of_uo hO hE
 
+/-- With unique objects and mapping to subobjects, the events of a fixed object form a quantized
+predicate, since it takes the whole event to `θ` the object. [krifka-1998] draws this
+consequence after (50) from uniqueness of objects alone, which does not suffice, since a
+relation holding of one object and every event has unique objects. -/
+theorem UO.qua_of_mso (hO : UO θ) (hm : MSO θ) (x : α) : QUA (θ x) :=
+  qua_of_forall fun _ _ he hlt he' ↦
+    let ⟨_, hy, hθ⟩ := hm he hlt
+    hy.ne ((hO he hlt.le).unique ⟨hy.le, hθ⟩ ⟨le_rfl, he'⟩)
+
 end PartialOrder
 
 /-! ### The correspondence between parts -/
@@ -193,5 +192,59 @@ theorem UE.exists_orderIso_of_uo (hE : UE θ) (hO : UO θ) (hxe : θ x e) :
     fun y e' ↦ ⟨fun h ↦ Subtype.ext ((hf y).2 e' ⟨e'.2, h⟩).symm, fun h ↦ h ▸ (hf y).1.2⟩⟩
 
 end OrderIso
+
+/-! ### Thematic functions
+
+A thematic function `f : β → α` sends an event to its participant, and its graph `(· = f ·)` is
+the corresponding thematic relation. [champollion-krifka-2016] require of such a function
+cumulativity (13.23), that it preserve sums, and distinctiveness (13.24), that distinct events
+have distinct participants. -/
+
+section Graph
+
+variable (f : β → α)
+
+/-- The graph of a function has unique participants. -/
+theorem up_graph : UP (· = f ·) := fun _ _ _ hx hy ↦ hx.trans hy.symm
+
+/-- The graph of a function has general uniqueness of events iff the function is injective, the
+distinctiveness (13.24) of [champollion-krifka-2016]. -/
+theorem gue_graph_iff : GUE (· = f ·) ↔ Function.Injective f :=
+  ⟨fun h _ _ heq ↦ h rfl heq, fun h _ _ _ h₁ h₂ ↦ h (h₁.symm.trans h₂)⟩
+
+variable [Preorder α] [Preorder β]
+
+/-- The graph of a function maps to objects iff the function is monotone. -/
+theorem mo_graph_iff : MO (· = f ·) ↔ Monotone f :=
+  ⟨fun h _ _ hle ↦ let ⟨_, hy, hy'⟩ := h rfl hle; hy' ▸ hy,
+    fun h _ _ hxe _ hle ↦ ⟨_, hxe ▸ h hle, rfl⟩⟩
+
+/-- The graph of a function has unique objects iff the function is monotone. -/
+theorem uo_graph_iff : UO (· = f ·) ↔ Monotone f :=
+  ⟨fun h _ _ hle ↦ let ⟨_, ⟨hy, hy'⟩, _⟩ := h rfl hle; hy' ▸ hy,
+    fun h _ _ hxe _ hle ↦ ⟨_, ⟨hxe ▸ h hle, rfl⟩, fun _ hz ↦ hz.2⟩⟩
+
+/-- The graph of a function maps to subobjects iff the function is strictly monotone. -/
+theorem mso_graph_iff : MSO (· = f ·) ↔ StrictMono f :=
+  ⟨fun h _ _ hlt ↦ let ⟨_, hy, hy'⟩ := h rfl hlt; hy' ▸ hy,
+    fun h _ _ hxe _ hlt ↦ ⟨_, hxe ▸ h hlt, rfl⟩⟩
+
+end Graph
+
+section GraphSum
+
+variable [SemilatticeSup α] [SemilatticeSup β]
+
+/-- The graph of a function is summative iff the function preserves sums, the cumulativity
+(13.23) of [champollion-krifka-2016]. -/
+theorem sum_graph_iff (f : β → α) : SUM (· = f ·) ↔ ∀ e e', f (e ⊔ e') = f e ⊔ f e' :=
+  ⟨fun h e e' ↦ (h (x := f e) rfl (y := f e') rfl).symm,
+    fun h _ _ hx _ _ hy ↦ (congr_arg₂ (· ⊔ ·) hx hy).trans (h _ _).symm⟩
+
+/-- The graph of a sum homomorphism is summative. -/
+theorem sum_graph {F : Type*} [FunLike F β α] [SupHomClass F β α] (f : F) : SUM (· = f ·) :=
+  (sum_graph_iff f).2 (map_sup f)
+
+end GraphSum
 
 end Mereology
