@@ -20,7 +20,8 @@ Both are fixed points of maps that compute each variable from its parents
 (`WellFounded.fixedPoint`). The strict development settles less than the Kleene one
 (`CausalModel.Forced.of_causallyEntails`), and the Kleene one is sound: what it forces holds in
 every context when the observation is imposed as an intervention
-(`CausalModel.Forced.solve_eq_of_intervene`).
+(`CausalModel.Forced.solve_eq_of_intervene`), and in every context where the observation holds
+(`CausalModel.Forced.solve_bot_eq`).
 
 ## Main definitions
 
@@ -31,8 +32,12 @@ every context when the observation is imposed as an intervention
 
 * `CausalModel.forced_iff`, `CausalModel.causallyEntails_iff`: the defining equations
 * `CausalModel.Forced.of_causallyEntails`: the strict development settles less
-* `CausalModel.Forced.solve_eq_of_intervene`: soundness for the observation imposed as an
-  intervention
+* `CausalModel.Forced.solve_eq_of_intervene`, `CausalModel.Forced.solve_bot_eq`: soundness for
+  the observation imposed as an intervention and for the observation holding
+* `CausalModel.causallyEntails_congr`: the strict development of a variable reads the
+  observation only at its ancestors
+* `CausalModel.CausallyEntails.parent_eq`: a settled variable settles each parent to the value
+  its equation needs
 * `CausalModel.causallyEntails_iff_develop`: the strict development computed one value per
   variable (`CausalModel.develop`), so that `decide` evaluates it in a finite model
 
@@ -145,6 +150,27 @@ theorem CausallyEntails.parent_settled (h : M.CausallyEntails s v x) (hv : s v =
   · rw [hv] at h; exact absurd h Flat.bot_ne_coe
   · exact hpar w hw
 
+/-- Observations that agree on a variable and all its ancestors settle it alike. -/
+theorem causallyEntails_congr {t : ∀ v, Flat (α v)}
+    (h : ∀ w, Relation.ReflTransGen M.graph.Adj w v → s w = t w) :
+    M.CausallyEntails s v x ↔ M.CausallyEntails t v x := by
+  induction v using hM.induction with
+  | _ v ih =>
+    have hpar : ∀ w, M.graph.Adj w v → ∀ z, M.CausallyEntails s w z ↔ M.CausallyEntails t w z :=
+      fun w hw _ ↦ ih w hw fun w' hw' ↦ h w' (hw'.tail hw)
+    rw [causallyEntails_iff, causallyEntails_iff, h v .refl]
+    exact or_congr_right (and_congr_right fun _ ↦ and_congr
+      (forall₂_congr fun w hw ↦ exists_congr (hpar w hw))
+      (forall₂_congr fun _ _ ↦ imp_congr_left (forall₂_congr fun w hw ↦
+        forall_congr' fun z ↦ imp_congr_left (hpar w hw z))))
+
+/-- Settling `c` leaves what the strict development settles about a variable `c` does not reach
+unchanged. -/
+theorem causallyEntails_update_of_not_reflTransGen [DecidableEq V] {c : V}
+    (h : ¬ Relation.ReflTransGen M.graph.Adj c v) (y : Flat (α c)) :
+    M.CausallyEntails (Function.update s c y) v x ↔ M.CausallyEntails s v x :=
+  causallyEntails_congr fun w hw ↦ Function.update_of_ne (fun hwc : w = c ↦ h (hwc ▸ hw)) y s
+
 /-- In a finite model, the Kleene development is reached by iterating its rounds once per
 variable. -/
 theorem forced_iff_iterate_card [Fintype V] :
@@ -175,6 +201,57 @@ theorem Forced.solve_eq_of_intervene (h : M.Forced s v x) (u : U) : M.solve s u 
 theorem CausallyEntails.solve_eq_of_intervene (h : M.CausallyEntails s v x) (u : U) :
     M.solve s u v = x :=
   (Forced.of_causallyEntails h).solve_eq_of_intervene u
+
+/-- The Kleene development is sound for the observational reading. What it forces from `s` holds
+in every context where `s` holds. -/
+theorem Forced.solve_bot_eq (h : M.Forced s v x) {u : U} (hu : u ∈ M.contexts s) :
+    M.solve ⊥ u v = x := by
+  rw [← solve_eq_solve_bot_of_mem_contexts hu]; exact h.solve_eq_of_intervene u
+
+/-- The strict development is sound for the observational reading. -/
+theorem CausallyEntails.solve_bot_eq (h : M.CausallyEntails s v x) {u : U}
+    (hu : u ∈ M.contexts s) : M.solve ⊥ u v = x :=
+  (Forced.of_causallyEntails h).solve_bot_eq hu
+
+/-- The strict development settles a variable to at most one value. -/
+theorem CausallyEntails.unique [Nonempty U] {y : α v} (hx : M.CausallyEntails s v x)
+    (hy : M.CausallyEntails s v y) : x = y := by
+  classical
+  induction v using hM.induction with
+  | _ v ih =>
+    rcases causallyEntails_iff.1 hx with hx | ⟨hv, hpar, hx⟩
+    · rcases causallyEntails_iff.1 hy with hy | ⟨hv, -, -⟩
+      · exact Flat.coe_injective (hx.symm.trans hy)
+      · rw [hv] at hx; exact absurd hx Flat.bot_ne_coe
+    · rcases causallyEntails_iff.1 hy with hy | ⟨-, -, hy⟩
+      · rw [hv] at hy; exact absurd hy Flat.bot_ne_coe
+      · choose y₀ hy₀ using hpar
+        let z : ∀ w, α w := fun w ↦ if h : M.graph.Adj w v then y₀ w h else Classical.arbitrary _
+        have hz : ∀ w, M.graph.Adj w v → ∀ z', M.CausallyEntails s w z' → z w = z' :=
+          fun w hw z' hz' ↦ by simp only [z, hw, ↓reduceDIte]; exact ih w hw (hy₀ w hw) hz'
+        exact (hx (Classical.arbitrary U) z hz).symm.trans (hy _ z hz)
+
+/-- A variable the strict development settles, unobserved, takes its equation's value at the values
+the development settles for its parents, in every context. -/
+theorem CausallyEntails.eqn_eq [Nonempty U] (h : M.CausallyEntails s v x) (hv : s v = ⊥)
+    {y : ∀ w, α w} (hy : ∀ w, M.graph.Adj w v → M.CausallyEntails s w (y w)) (u : U) :
+    M.eqn v u y = x := by
+  rcases causallyEntails_iff.1 h with h | ⟨-, -, h⟩
+  · rw [hv] at h; exact absurd h Flat.bot_ne_coe
+  · exact h u y fun w hw _ hz ↦ (hy w hw).unique hz
+
+/-- A variable the strict development settles, unobserved, settles each parent to the value its
+equation needs for the result. -/
+theorem CausallyEntails.parent_eq [Nonempty U] (h : M.CausallyEntails s v x) (hv : s v = ⊥)
+    {w : V} (hw : M.graph.Adj w v) {z : α w}
+    (hz : ∀ u (y : ∀ w, α w), M.eqn v u y = x → y w = z) : M.CausallyEntails s w z := by
+  classical
+  choose y₀ hy₀ using fun w (hw : M.graph.Adj w v) ↦ h.parent_settled hv hw
+  let y : ∀ w, α w := fun w ↦ if h : M.graph.Adj w v then y₀ w h else Classical.arbitrary _
+  have hy : ∀ w (hw : M.graph.Adj w v), M.CausallyEntails s w (y w) := fun w hw ↦ by
+    simp only [y, hw, ↓reduceDIte]; exact hy₀ w hw
+  rw [← hz (Classical.arbitrary U) y (h.eqn_eq hv hy _)]
+  exact hy w hw
 
 section Develop
 
@@ -265,23 +342,6 @@ theorem causallyEntails_iff_develop {s : ∀ v, Flat (α v)} {v : V} {x : α v} 
             exact Flat.coe_inj.1 h
           · exact absurd h Flat.bot_ne_coe
       · simp [hp]
-
-omit [∀ v, Nonempty (α v)] in
-/-- The strict development settles a variable to at most one value. -/
-theorem CausallyEntails.unique {s : ∀ v, Flat (α v)} {v : V} {x y : α v}
-    (hx : M.CausallyEntails s v x) (hy : M.CausallyEntails s v y) : x = y :=
-  Flat.coe_injective ((causallyEntails_iff_develop.1 hx).symm.trans
-    (causallyEntails_iff_develop.1 hy))
-
-omit [∀ v, Nonempty (α v)] in
-/-- A variable the strict development settles, unobserved, takes its equation's value at the values
-the development settles for its parents, in every context. -/
-theorem CausallyEntails.eqn_eq {s : ∀ v, Flat (α v)} {v : V} {x : α v}
-    (h : M.CausallyEntails s v x) (hv : s v = ⊥) {y : ∀ w, α w}
-    (hy : ∀ w, M.graph.Adj w v → M.CausallyEntails s w (y w)) (u : U) : M.eqn v u y = x := by
-  rcases causallyEntails_iff.1 h with h | ⟨-, -, h⟩
-  · rw [hv] at h; exact absurd h Flat.bot_ne_coe
-  · exact h u y fun w hw _ hz ↦ (hy w hw).unique hz
 
 section Decidable
 

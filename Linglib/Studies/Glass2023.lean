@@ -3,25 +3,19 @@ module
 public import Linglib.Studies.NadathurLauer2020
 
 /-!
-# Glass (2023): Using the Anna Karenina Principle to explain why *cause* favors negative-sentiment complements
+# Glass (2023)
 
-This file formalizes [glass-2023b]'s account of why *cause* collocates with undesirable outcomes.
-Over a deterministic causal model ([halpern-pearl-2005]), a value of a variable is locally
-sufficient for a value of a downstream variable when some setting of the other variables
-guarantees it, the sufficient sets of [mackie-1965], and globally sufficient when every setting
-does; necessity is the mirror image, the absence of the cause being sufficient for the absence of
-the effect (`GloballySufficient`, `LocallySufficient`, `GloballyNecessary`, `LocallyNecessary`,
-`globallyNecessary_iff`). The global notions entail the local ones
-(`LocallySufficient.of_globally`, `LocallyNecessary.of_globally`). *C causes E* asserted on a
-state of knowledge requires that the effect develop in every settlement of what is unknown
-(`Cause`), so knowing the cause alone it is assertable exactly when the cause is globally
-sufficient (`cause_update_bot_iff`): a globally sufficient cause licenses *cause* under
-uncertainty, a merely necessary one only under full information, which is the asymmetry of the
-paper's Table 2, worked out on its lightbulb (`Light`). Since the Anna Karenina Principle assigns
-desired outcomes conjunctive models, in which each factor is necessary but insufficient, and
-undesired ones disjunctive models, in which each factor suffices, *C causes E* is true in more
-states of knowledge when E is bad. Glass's *cause* asserts only local sufficiency where
-[nadathur-lauer-2020] make it assert necessity, so the two diverge on the latter's bus scenario
+Glass explains why *cause* favours undesirable complements. Over a deterministic causal model in
+the sense of Halpern and Pearl, a value is locally sufficient for a downstream value when some
+setting of the other variables guarantees it, as in Mackie's sufficient sets, and globally
+sufficient when every setting does; necessity is the mirror image (`GloballySufficient`,
+`LocallySufficient`, `GloballyNecessary`, `LocallyNecessary`). *C causes E*, asserted on a state
+of knowledge, requires the effect to develop in every settlement of what is unknown (`Cause`), so
+knowing the cause alone it is assertable exactly when the cause is globally sufficient
+(`cause_update_bot_iff`), the asymmetry of the paper's Table 2. The Anna Karenina Principle gives
+desired outcomes conjunctive models and undesired ones disjunctive models, so *C causes E* holds
+in more states of knowledge when E is bad. Glass's *cause* asserts local sufficiency where Nadathur
+and Lauer's asserts necessity, and the two diverge on their bus scenario
 (`glass_nl_diverge_on_bus`).
 
 ## Implementation notes
@@ -173,13 +167,13 @@ theorem s1_on_not_globallySufficient : ¬ GloballySufficient light .S1 true .L t
   fun h ↦ absurd (h ⟨true, false⟩ [.S1 ← true] (by decide) (by decide))
     (by decide)
 
-/-- Bottom right of Table 2: knowing only that switch 1 is off, it caused the light to be off. -/
+/-- Knowing only that switch 1 is off, it caused the light to be off (Table 2, bottom right). -/
 theorem s1_off_causes_off_uncertain :
     Cause light [.S1 ← false] .S1 false .L false :=
   cause_update_bot_iff.2 s1_off_globallySufficient
 
-/-- Bottom left of Table 2: knowing only that switch 1 is on, one cannot say it caused the light
-to be on. -/
+/-- Knowing only that switch 1 is on, one cannot say it caused the light to be on (Table 2,
+bottom left). -/
 theorem not_s1_on_causes_on_uncertain :
     ¬ Cause light [.S1 ← true] .S1 true .L true :=
   fun h ↦ s1_on_not_globallySufficient (cause_update_bot_iff.1 h)
@@ -187,7 +181,7 @@ theorem not_s1_on_causes_on_uncertain :
 /-- The background with both switches on. -/
 def bothOn : V → Flat Bool := [.S1 ← true, .S2 ← true]
 
-/-- Top left of Table 2: with both switches known to be on, switch 1 caused the light to be on. -/
+/-- With both switches known to be on, switch 1 caused the light to be on (Table 2, top left). -/
 theorem s1_on_causes_on_certain : Cause light bothOn .S1 true .L true := by
   refine ⟨by decide, fun u I hk hL ↦ ?_⟩
   have h1 : I .S1 = ↑true := Flat.coe_le_iff.1 ((by decide : bothOn .S1 = ↑true) ▸ hk .S1)
@@ -210,8 +204,8 @@ so Glass's *cause* accepts "Ava's training caused Lia to take the bus", which
 opposite verdicts. -/
 theorem glass_nl_diverge_on_bus :
     Cause busModel (Function.update s_b .Tr ↑true) .Tr true .Bs true ∧
-      ¬ NadathurLauer2020.denotation busModel .cause s_b .Tr true .Bs true := by
-  refine ⟨⟨by decide, fun u I hk hBs ↦ ?_⟩, cause_infelicitous_for_bus⟩
+      ¬ NadathurLauer2020.Cause busModel s_b actual .Tr true .Bs true := by
+  refine ⟨⟨by decide, fun u I hk hBs ↦ ?_⟩, not_cause⟩
   have hRn : I .Rn = ↑true :=
     Flat.coe_le_iff.1 ((by decide : Function.update s_b .Tr ↑true .Rn = ↑true) ▸ hk .Rn)
   rw [solve_of_eq_bot hBs]

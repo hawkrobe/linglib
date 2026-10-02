@@ -9,40 +9,38 @@ public import Mathlib.Probability.ConditionalProbability
 public import Linglib.Studies.NadathurLauer2020
 
 /-!
-# Cao, White and Lassiter 2025: graded causative verb semantics
+# Cao, White and Lassiter (2025)
 
-This file formalizes the graded-causative analysis of English *cause*, *make*, and *force* in
-[cao-white-lassiter-2025]. Where [nadathur-lauer-2020] give *make* and *force* a single
-categorical truth condition, this account measures three quantities in one structural causal
-model of tic-tac-toe — Pearl's probability of sufficiency ([pearl-2019], `suf`), a simplified
-[halpern-kleiman-weiner-2018] degree of intention,
-and the number of alternative actions open to the causee — and finds that no one of them
-determines which verb speakers accept, each verb instead having its own set of reliable
-interactions. The model apparatus is shared with [cao-geiger-kreiss-icard-gerstenberg-2023]:
-models are time-indexed (`TimeIndex`) and their agents play a soft-optimality policy.
+Cao, White and Lassiter treat English *cause*, *make* and *force* as graded causatives. Where
+Nadathur and Lauer give *make* a categorical truth condition, causal sufficiency, they measure
+three quantities in a structural causal model of tic-tac-toe: Pearl's probability of sufficiency
+(`suf`), a simplified version of Halpern and Kleiman-Weiner's degree of intention, and the number
+of alternative actions open to the causee. No one quantity determines which verb speakers accept;
+each verb has its own set of reliable interactions. As in the model of Cao, Geiger, Kreiss, Icard
+and Gerstenberg, the models are time-indexed (`TimeIndex`) and their agents play a
+soft-optimality policy.
 
 The paper's in-text judgments, its examples (3)–(11), are rows in
 `Data/Examples/CaoWhiteLassiter2025.json`; the regression estimates stay in prose.
 
 ## Main definitions
 
-* `softOptimalPolicy` — the move distribution of a player of skill `ρ`
-* `altCount`, `intentionDegree`, `modelIntention` — the ALT and INT measures
-* `suf` — the SUF measure, Pearl's probability of sufficiency over a causal model
-* `TimeIndex` — the paper's time-indexed causal models (definition 1)
+* `softOptimalPolicy`: the move distribution of a player of skill `ρ`
+* `altCount`, `intentionDegree`, `modelIntention`: the ALT and INT measures
+* `suf`: the SUF measure, Pearl's probability of sufficiency over a causal model
+* `TimeIndex`: the paper's time-indexed causal models (definition 1)
 
 ## Main results
 
-* `softOptimalPolicy_zero`, `softOptimalPolicy_one` — the infant and the professional
-* `intentionDegree_eq_one_of_altCount_eq_zero` — an action with no alternative comes out
-  maximally intentional, so the simplified INT drops the alternative-possibilities condition
-  ([frankfurt-1969], [halpern-kleiman-weiner-2018]) and ALT carries it instead
-* `suf_dirac` — with a certain context SUF is the {0,1} indicator of the counterfactual outcome
-* `suf_eq_one_of_make` — where [nadathur-lauer-2020]'s categorical *make* holds, SUF is 1 under
-  every distribution over contexts
-* `make_semantics_eq_force`, `judgment_differs_make_force` — Nadathur and Lauer's semantics does
-  not distinguish the two verbs the paper's (8) separates
-* `ProbabilisticExample.suf_eq` — with an uncertain background, SUF is the background's
+* `softOptimalPolicy_zero`, `softOptimalPolicy_one`: the infant and the professional
+* `intentionDegree_eq_one_of_altCount_eq_zero`: an action with no alternative comes out maximally
+  intentional, so the simplified INT drops Frankfurt's alternative-possibilities condition and
+  ALT carries it instead
+* `suf_dirac`: with a certain context SUF is the {0,1} indicator of the counterfactual outcome
+* `suf_eq_one_of_make`: where Nadathur and Lauer's *make* holds, SUF is 1 under every
+  distribution over contexts
+* `judgment_differs_make_force`: the paper's (8) separates *make* from *force*
+* `ProbabilisticExample.suf_eq`: with an uncertain background, SUF is the background's
   probability rather than 0 or 1
 
 ## References
@@ -74,8 +72,8 @@ deterministic professional. -/
 section
 variable {A : Type*} [Fintype A] [Nonempty A] (best : A) (ρ : ℝ≥0) (hρ : ρ ≤ 1)
 
-/-- The move distribution of a player of skill `ρ`: the highest-utility
-    move `best` with probability `ρ`, otherwise a uniform random move. -/
+/-- A player of skill `ρ` plays the highest-utility move `best` with probability `ρ` and otherwise a
+uniform random move. -/
 noncomputable def softOptimalPolicy : PMF A :=
   PMF.mix ρ hρ (PMF.uniformOfFintype A) (PMF.pure best)
 
@@ -104,8 +102,8 @@ could-not-have-done-otherwise configuration. -/
 section
 variable {A : Type*} [Fintype A] (p : PMF A) (taken : A)
 
-/-- The number of alternative actions available to the causee: the
-    support of the action distribution, less the action taken. -/
+/-- The number of alternative actions available to the causee is the size of the support of the
+action distribution, less the action taken. -/
 noncomputable def altCount : ℕ :=
   (p.support \ {taken}).ncard
 
@@ -207,7 +205,7 @@ theorem suf_bot (ν : MeasureTheory.Measure U) [MeasureTheory.IsProbabilityMeasu
 
 /-! ### Deterministic limit
 
-With a certain context SUF collapses to a {0,1} indicator, and wherever [nadathur-lauer-2020]'s
+With a certain context SUF collapses to a {0,1} indicator, and wherever Nadathur and Lauer's
 categorical *make* holds of the empty background, SUF is 1 whatever the distribution over
 contexts. The converse fails: a single context can make the intervention yield the effect without
 the effect being settled by the strict development, so the categorical *make* semantics is
@@ -221,13 +219,15 @@ theorem suf_dirac [MeasurableSingletonClass U] (u₀ : U) (c : V) (x : α c) (e 
   rw [suf_bot, MeasureTheory.Measure.dirac_apply, Set.indicator_apply]
   simp only [Set.mem_ofPred_eq, Pi.one_apply]
 
-/-- [nadathur-lauer-2020]'s *make* entails maximal SUF: whenever the categorical *make* holds of
-the empty background, SUF is 1 under every distribution over contexts. -/
+/-- Nadathur and Lauer's *make* entails maximal SUF. Whenever *make* holds of the empty
+background, SUF is 1 under every distribution over contexts. -/
 theorem suf_eq_one_of_make (ν : MeasureTheory.Measure U) [MeasureTheory.IsProbabilityMeasure ν]
-    {c e : V} {x : α c} {y : α e} (h : NadathurLauer2020.denotation M .make ⊥ c x e y) :
+    {u₀ : U} {c e : V} {x : α c} {y : α e} (h : NadathurLauer2020.Make M ⊥ u₀ c x e y) :
     suf M ν ⊥ c x e y = 1 := by
+  have h' := h.1.2
+  rw [Function.update_idem] at h'
   have hall : {u | M.solve [c ← x] u e = y} = Set.univ :=
-    Set.eq_univ_of_forall fun u ↦ NadathurLauer2020.solve_update_eq_of_denotation (.inl rfl) h u
+    Set.eq_univ_of_forall h'.solve_eq_of_intervene
   rw [suf_bot, hall, MeasureTheory.measure_univ]
 
 end Model
@@ -252,15 +252,9 @@ non-interchangeability triplets (3)–(4), the gym gradability triplets (5)–(7
 could-have-done-otherwise pair (8), the intent-denial continuations (9)–(10), and the
 *make*/*let* sufficiency pair (11). -/
 
-/-- [nadathur-lauer-2020] give *make* and *force* the same truth conditions, both being
-sufficiency causatives. -/
-theorem make_semantics_eq_force {U V : Type*} {α : V → Type*} [DecidableEq V]
-    (M : CausalModel U V α) [M.IsAcyclic] :
-    NadathurLauer2020.denotation M .make = NadathurLauer2020.denotation M .force := rfl
-
-/-- The paper's (8) separates them anyway: in one frame with a could-have-done-otherwise
-continuation, *made* tolerates the continuation and *forced* resists it. What the shared
-semantics misses is the causee's alternatives, which ALT measures. -/
+/-- The paper's (8) separates *make* from *force*. In one frame with a could-have-done-otherwise
+continuation, *made* tolerates the continuation and *forced* resists it, a difference in the
+causee's alternatives, which ALT measures. -/
 theorem judgment_differs_make_force :
     Examples.cwl2025_ex8a.judgment ≠ Examples.cwl2025_ex8b.judgment := by decide
 
@@ -281,7 +275,7 @@ categorical semantics. -/
 
 namespace ProbabilisticExample
 
-/-- The vertices: the cause, the background noise, and the effect. -/
+/-- The vertices are the cause, the background noise, and the effect. -/
 inductive V | cause | noise | effect
   deriving DecidableEq, Fintype, Repr
 
@@ -307,7 +301,7 @@ def timeIndex : TimeIndex model where
 
 instance : model.IsAcyclic := timeIndex.isAcyclic
 
-/-- The background: the noise is true with probability `p`. -/
+/-- In the background the noise is true with probability `p`. -/
 noncomputable def background (p : ℝ≥0∞) : MeasureTheory.Measure Bool :=
   p • MeasureTheory.Measure.dirac true + (1 - p) • MeasureTheory.Measure.dirac false
 
