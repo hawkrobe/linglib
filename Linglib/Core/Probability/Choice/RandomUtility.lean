@@ -12,30 +12,36 @@ public import Mathlib.MeasureTheory.Group.Convolution
 /-!
 # Random utility models
 
-In a random utility model the alternatives `j : ι` have independent real-valued utilities with laws
-`ν j`, and the alternative with the highest utility is chosen. The choice probability of `i` is the
-mass that the product measure `Measure.pi ν` gives to the event that coordinate `i` is the strict
-maximum. The additive model, with utility `u j + ε j` for a systematic part `u j` and noise `ε j`,
-is the case where `ν` is a location family.
+In a random utility model the alternatives `j : ι` have real-valued utilities with a joint law `μ`
+on `ι → ℝ`, and the alternative with the highest utility is chosen. The choice probability of `i` is
+the mass `μ` gives to the event that coordinate `i` is the strict maximum. Most models take the
+utilities independent, `μ = Measure.pi ν`; noise on parameters shared by the alternatives
+correlates them, and such a law is a pushforward (`choiceProb_map`). The additive model, with
+utility `u j + ε j` for a systematic part `u j` and noise `ε j`, is the case where `ν` is a location
+family.
 
-The theory here is independent of the noise family. Splitting coordinate `i` off the product measure
-(`measurePreserving_piSplitAt`) writes the choice probability as the integral against `ν i` of the
-product of the other coordinates' distribution functions. For atomless noise ties are null, so the choice
-probabilities of the alternatives sum to one. Gumbel noise gives the logit rule
-(`Linglib/Core/Probability/Choice/GumbelLuce.lean`), and Gaussian noise gives the probit rule, whose
-binary case is computed here from the convolution of two Gaussians.
+For independent utilities the theory is independent of the noise family. Splitting coordinate `i`
+off the product measure (`measurePreserving_piSplitAt`) writes the choice probability as the
+integral against `ν i` of the product of the other coordinates' distribution functions. For
+atomless noise ties are null, so the choice probabilities of the alternatives sum to one. Gumbel
+noise gives the logit rule (`Linglib/Core/Probability/Choice/GumbelLuce.lean`), and Gaussian noise
+gives the probit rule, whose binary case is computed here from the convolution of two Gaussians.
 
 ## Main definitions
 
-* `ProbabilityTheory.rumChoiceProb`: the probability that alternative `i` has the highest utility.
+* `ProbabilityTheory.choiceProb`: the probability that alternative `i` has the highest utility under
+  a joint law of the utilities.
 * `ProbabilityTheory.gaussianChoiceProb`: the binary probit choice probability `Φ (Δ / σ)`.
 
 ## Main results
 
-* `ProbabilityTheory.rumChoiceProb_eq_lintegral`: the choice probability as an integral against
+* `ProbabilityTheory.choiceProb_map`: the choice probabilities of a pushforward law.
+* `ProbabilityTheory.choiceProb_pi_eq_lintegral`: for independent utilities, the choice
+  probability as an integral against
   `ν i`.
-* `ProbabilityTheory.sum_rumChoiceProb`: for atomless noise the choice probabilities sum to one.
-* `ProbabilityTheory.rumChoiceProb_gaussianReal`: two alternatives with independent Gaussian
+* `ProbabilityTheory.sum_choiceProb_pi`: for independent atomless noise the choice probabilities
+  sum to one.
+* `ProbabilityTheory.choiceProb_pi_gaussianReal`: two alternatives with independent Gaussian
   utilities of common variance `v` have choice probability `Φ ((u 0 - u 1) / √(2 * v))`.
 
 ## TODO
@@ -63,21 +69,36 @@ section ChoiceProb
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
-/-- The choice probability of alternative `i` in the random utility model whose utilities are
-independent with laws `ν j`: the probability that coordinate `i` is the strict maximum. -/
-noncomputable def rumChoiceProb (ν : ι → Measure ℝ) (i : ι) : ℝ≥0∞ :=
-  Measure.pi ν {x | ∀ j, j ≠ i → x j < x i}
+/-- The choice probability of alternative `i` in the random utility model whose utilities have
+the joint law `μ` is the probability that coordinate `i` is the strict maximum. -/
+noncomputable def choiceProb (μ : Measure (ι → ℝ)) (i : ι) : ℝ≥0∞ :=
+  μ {x | ∀ j, j ≠ i → x j < x i}
+
+omit [DecidableEq ι] in
+theorem measurableSet_setOf_forall_ne_lt (i : ι) :
+    MeasurableSet {x : ι → ℝ | ∀ j, j ≠ i → x j < x i} := by
+  simp only [ofPred_forall]
+  exact .iInter fun j ↦ .iInter fun _ ↦
+    measurableSet_lt (measurable_pi_apply j) (measurable_pi_apply i)
+
+omit [DecidableEq ι] in
+/-- The choice probabilities of a pushforward law are the masses of the preimage events. -/
+theorem choiceProb_map {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω) {U : Ω → ι → ℝ}
+    (hU : Measurable U) (i : ι) :
+    choiceProb (P.map U) i = P {ω | ∀ j, j ≠ i → U ω j < U ω i} := by
+  rw [choiceProb, Measure.map_apply hU (measurableSet_setOf_forall_ne_lt i)]
+  rfl
 
 /-- The choice probability of `i` is the integral, against the law of the `i`-th utility, of the
 probability that every other utility falls below it. -/
-theorem rumChoiceProb_eq_lintegral (ν : ι → Measure ℝ) [∀ j, SigmaFinite (ν j)] (i : ι) :
-    rumChoiceProb ν i = ∫⁻ x, ∏ j ∈ univ.erase i, ν j (Iio x) ∂ν i := by
+theorem choiceProb_pi_eq_lintegral (ν : ι → Measure ℝ) [∀ j, SigmaFinite (ν j)] (i : ι) :
+    choiceProb (Measure.pi ν) i = ∫⁻ x, ∏ j ∈ univ.erase i, ν j (Iio x) ∂ν i := by
   have hS : {x : ι → ℝ | ∀ j, j ≠ i → x j < x i} = MeasurableEquiv.piSplitAt (fun _ ↦ ℝ) i ⁻¹'
       {p | ∀ j, p.2 j < p.1} := by ext; simp
   have hT : MeasurableSet {p : ℝ × ({j // j ≠ i} → ℝ) | ∀ j, p.2 j < p.1} := by
     simp only [ofPred_forall]
     exact .iInter fun j ↦ measurableSet_lt (by fun_prop) measurable_fst
-  rw [rumChoiceProb, hS, (measurePreserving_piSplitAt ν i).measure_preimage_equiv,
+  rw [choiceProb, hS, (measurePreserving_piSplitAt ν i).measure_preimage_equiv,
     Measure.prod_apply hT]
   refine lintegral_congr fun x ↦ ?_
   rw [show Prod.mk x ⁻¹' {p : ℝ × ({j // j ≠ i} → ℝ) | ∀ j, p.2 j < p.1} =
@@ -86,10 +107,10 @@ theorem rumChoiceProb_eq_lintegral (ν : ι → Measure ℝ) [∀ j, SigmaFinite
 
 /-- For atomless noise the choice probability integrates the product of the other alternatives'
 distribution functions. -/
-theorem rumChoiceProb_eq_lintegral_cdf (ν : ι → Measure ℝ) [∀ j, IsProbabilityMeasure (ν j)]
+theorem choiceProb_pi_eq_lintegral_cdf (ν : ι → Measure ℝ) [∀ j, IsProbabilityMeasure (ν j)]
     [∀ j, NullSingletonClass (ν j)] (i : ι) :
-    rumChoiceProb ν i = ∫⁻ x, ENNReal.ofReal (∏ j ∈ univ.erase i, cdf (ν j) x) ∂ν i := by
-  rw [rumChoiceProb_eq_lintegral]
+    choiceProb (Measure.pi ν) i = ∫⁻ x, ENNReal.ofReal (∏ j ∈ univ.erase i, cdf (ν j) x) ∂ν i := by
+  rw [choiceProb_pi_eq_lintegral]
   refine lintegral_congr fun x ↦ ?_
   rw [ENNReal.ofReal_prod_of_nonneg fun j _ ↦ cdf_nonneg _ _]
   exact prod_congr rfl fun j _ ↦ by rw [ofReal_cdf, measure_congr Iio_ae_eq_Iic]
@@ -97,15 +118,12 @@ theorem rumChoiceProb_eq_lintegral_cdf (ν : ι → Measure ℝ) [∀ j, IsProba
 variable (ν : ι → Measure ℝ) [∀ j, IsProbabilityMeasure (ν j)] [∀ j, NullSingletonClass (ν j)]
 
 /-- For atomless noise the choice probabilities of the alternatives sum to one. -/
-theorem sum_rumChoiceProb [Nonempty ι] : ∑ i, rumChoiceProb ν i = 1 := by
-  have hmeas : ∀ i, MeasurableSet {x : ι → ℝ | ∀ j, j ≠ i → x j < x i} := fun i ↦ by
-    simp only [ofPred_forall]
-    exact .iInter fun j ↦ .iInter fun _ ↦
-      measurableSet_lt (measurable_pi_apply j) (measurable_pi_apply i)
+theorem sum_choiceProb_pi [Nonempty ι] : ∑ i, choiceProb (Measure.pi ν) i = 1 := by
   have hdisj : Pairwise (Function.onFun Disjoint fun i ↦ {x : ι → ℝ | ∀ j, j ≠ i → x j < x i}) :=
     fun i k hik ↦ Set.disjoint_left.2 fun x hi hk ↦ lt_asymm (hi k hik.symm) (hk i hik)
-  simp only [rumChoiceProb]
-  rw [← measure_biUnion_finset (fun i _ k _ hik ↦ hdisj hik) fun i _ ↦ hmeas i,
+  simp only [choiceProb]
+  rw [← measure_biUnion_finset (fun i _ k _ hik ↦ hdisj hik) fun i _ ↦
+      measurableSet_setOf_forall_ne_lt i,
     ← measure_univ (μ := Measure.pi ν)]
   refine measure_congr (ae_eq_univ.2 (measure_mono_null (t := ⋃ j, ⋃ k, ⋃ (_ : j ≠ k),
     {x : ι → ℝ | x j = x k}) (fun x hx ↦ ?_) ?_))
@@ -120,10 +138,11 @@ end ChoiceProb
 
 /-! ### Gaussian noise: the probit rule -/
 
-/-- The binary probit rule: two alternatives with independent Gaussian utilities of means `u 0`,
-`u 1` and common variance `v`. The difference of the utilities is Gaussian with variance `2 * v`. -/
-theorem rumChoiceProb_gaussianReal (u : Fin 2 → ℝ) {v : ℝ≥0} (hv : v ≠ 0) :
-    rumChoiceProb (fun j ↦ gaussianReal (u j) v) 0 =
+/-- Two alternatives with independent Gaussian utilities of means `u 0`, `u 1` and common variance
+`v` follow the binary probit rule, since the difference of the utilities is Gaussian with variance
+`2 * v`. -/
+theorem choiceProb_pi_gaussianReal (u : Fin 2 → ℝ) {v : ℝ≥0} (hv : v ≠ 0) :
+    choiceProb (Measure.pi fun j ↦ gaussianReal (u j) v) 0 =
       ENNReal.ofReal (normalCDF ((u 0 - u 1) / √(2 * v))) := by
   have hS : {x : Fin 2 → ℝ | ∀ j, j ≠ 0 → x j < x 0} =
       MeasurableEquiv.piFinTwo (fun _ ↦ ℝ) ⁻¹' ((fun p : ℝ × ℝ ↦ p.1 + -p.2) ⁻¹' Ioi 0) := by
@@ -138,7 +157,7 @@ theorem rumChoiceProb_gaussianReal (u : Fin 2 → ℝ) {v : ℝ≥0} (hv : v ≠
       Measure.map_map (by fun_prop) (by fun_prop)]
     rfl
   have hv2 : v + v ≠ 0 := by simpa using hv
-  rw [rumChoiceProb, hS,
+  rw [choiceProb, hS,
     (measurePreserving_piFinTwo fun j ↦ gaussianReal (u j) v).measure_preimage_equiv,
     ← Measure.map_apply (by fun_prop) measurableSet_Ioi, hmap, ← ofReal_measureReal,
     gaussianReal_real_Ioi _ hv2, sub_zero, NNReal.coe_add, two_mul]
@@ -147,10 +166,9 @@ variable {Δ σ : ℝ}
 
 open Real
 
-/-- Binary choice probability of a Gaussian random utility model: `Φ(Δ / σ)`,
-where `Δ` is the utility gap between the two alternatives and `σ` is the standard
-deviation of the Gaussian noise on their difference. Equivalently `P(X > 0)` for
-`X ~ N(Δ, σ²)` — the probit choice rule. -/
+/-- The binary probit choice probability `Φ(Δ / σ)` is that of a Gaussian random utility model
+whose utility gap is `Δ` and whose noise on the gap has standard deviation `σ`, equivalently
+`P(X > 0)` for `X ~ N(Δ, σ²)`. -/
 noncomputable def gaussianChoiceProb (Δ σ : ℝ) : ℝ :=
   normalCDF (Δ / σ)
 
@@ -164,11 +182,11 @@ theorem gaussianReal_real_Ioi_zero (Δ : ℝ) (hσ : 0 < σ) :
 
 /-- Two alternatives with independent Gaussian utilities of common standard deviation `σ` follow the
 probit rule with standard deviation `σ * √2`, that of the difference of the two utilities. -/
-theorem rumChoiceProb_gaussianReal_sq (u : Fin 2 → ℝ) (hσ : 0 < σ) :
-    rumChoiceProb (fun j ↦ gaussianReal (u j) (.mk (σ ^ 2) (sq_nonneg σ))) 0 =
+theorem choiceProb_pi_gaussianReal_sq (u : Fin 2 → ℝ) (hσ : 0 < σ) :
+    choiceProb (Measure.pi fun j ↦ gaussianReal (u j) (.mk (σ ^ 2) (sq_nonneg σ))) 0 =
       ENNReal.ofReal (gaussianChoiceProb (u 0 - u 1) (σ * √2)) := by
   have hv : NNReal.mk (σ ^ 2) (sq_nonneg σ) ≠ 0 := by simp [← NNReal.coe_eq_zero, hσ.ne']
-  rw [rumChoiceProb_gaussianReal u hv, gaussianChoiceProb, NNReal.coe_mk, mul_comm (2 : ℝ),
+  rw [choiceProb_pi_gaussianReal u hv, gaussianChoiceProb, NNReal.coe_mk, mul_comm (2 : ℝ),
     sqrt_mul (sq_nonneg σ), sqrt_sq hσ.le]
 
 @[simp]
@@ -183,7 +201,7 @@ theorem gaussianChoiceProb_pos (Δ σ : ℝ) : 0 < gaussianChoiceProb Δ σ :=
 theorem gaussianChoiceProb_lt_one (Δ σ : ℝ) : gaussianChoiceProb Δ σ < 1 :=
   normalCDF_lt_one _
 
-/-- Complementarity: choosing the first alternative or the second is certain. -/
+/-- Choosing the first alternative or the second is certain. -/
 theorem gaussianChoiceProb_complement (Δ σ : ℝ) :
     gaussianChoiceProb Δ σ + gaussianChoiceProb (-Δ) σ = 1 := by
   simp only [gaussianChoiceProb, neg_div, normalCDF_neg]; ring

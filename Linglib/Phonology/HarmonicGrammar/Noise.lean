@@ -2,255 +2,196 @@ module
 
 public import Linglib.Phonology.HarmonicGrammar.Harmony
 public import Linglib.Core.Probability.Choice.RandomUtility
-public import Linglib.Core.Analysis.SpecialFunctions.Softmax
+public import Linglib.Core.Probability.Distributions.Gaussian
 
 /-!
-# Harmony under noise
+# Noisy harmonic grammar
 
-The stochastic readings of harmonic grammar: injecting noise into harmony
-evaluation turns the argmax into a choice probability. Gaussian noise gives
-the probit models (Noisy HG, Normal MaxEnt); Gumbel noise gives MaxEnt's
-softmax, whose logit identities close the family.
+Boersma and Pater make harmonic grammar stochastic by adding independent Gaussian noise to every
+constraint weight at each evaluation, so that a candidate wins with the probability that its noisy
+harmony is the highest. Flemming reads this as a random utility model whose utilities are the
+noisy harmonies. The candidates share the weights, so their noisy harmonies are correlated, and the
+model is the choice rule `choiceProb` at the pushforward of the weight noise rather than at a
+product of independent laws. The harmony difference of two candidates is Gaussian with variance
+`v * (d ⬝ᵥ d)` for their violation difference `d`, so how noisy a comparison is depends on the
+violation profile and not only on the harmonies, unlike in MaxEnt, where the utilities are
+independent.
 
-Noisy HG ([boersma-pater-2016]) adds i.i.d. Gaussian noise N(0,σ²) to
-each constraint weight before evaluation. For binary choice between
-candidates a and b, the harmony score difference H(a)−H(b) becomes a
-Gaussian random variable with variance σ² · Σⱼ(cⱼ(a)−cⱼ(b))² — the noise
-is **context-dependent**, scaling with squared violation differences.
+## Main definitions
 
-Normal MaxEnt ([flemming-2021]) instead adds i.i.d. Gaussian noise
-N(0,ε²) directly to candidate scores, giving a constant noise standard
-deviation σ_d = ε√2 for binary choice.
+* `weightNoise`: independent `N(0, v)` noise on every constraint weight.
+* `weightNoiseChoiceProb`: the probability that a candidate has the highest harmony under noisy
+  weights.
 
-Both are instances of the Gaussian random utility model (`ProbabilityTheory.gaussianChoiceProb`,
-the probit choice rule) — the Gaussian sibling of softmax. They ground directly in
-that pure-math fact, not in Thurstone's psychophysics: Noisy HG and Thurstone Case V
-are sibling applications of the same probit RUM, neither depending on the other.
+## Main results
 
-A grammar here is a constraint set `con : ConstraintSet C (Fin n)` and a weight vector
-`w : Fin n → ℝ` (from `OptimalityTheory/Constraint/Defs.lean`); there is no weighted-constraint
-record. Violation-difference quantities (`violationDiffSqSum`, `nhgCovariance`) read only `con`;
-harmony quantities read `con` and `w`.
+* `weightNoiseChoiceProb_eq_choiceProb_map`: noisy harmonic grammar is the random utility model
+  whose joint law is that of the noisy harmonies.
+* `map_weightNoise_harmonyScore_sub`: the harmony difference of two candidates is Gaussian with
+  variance `v * (d ⬝ᵥ d)`.
+* `variance_harmonyScore_sub`, `covariance_harmonyScore_sub`: the variances and covariances of
+  the harmony differences.
+* `weightNoise_setOf_harmonyScore_lt`, `weightNoiseChoiceProb_of_forall_ne_eq`,
+  `weightNoiseChoiceProb_fin_two`: the probability that one candidate beats another is the probit
+  of their harmony difference over its standard deviation.
 
-## MaxEnt logit-harmony identity
+## Implementation notes
 
-For classical MaxEnt (Gumbel noise → softmax), the log-odds ratio between
-any two candidates equals their harmony score difference:
+The noise has variance `v : ℝ≥0`, as in mathlib's `gaussianReal`; Boersma and Pater take `v = 1`.
+Flemming's normal MaxEnt, with independent Gaussian noise on the candidates' harmonies, needs no
+definition: it is `choiceProb (Measure.pi fun c ↦ gaussianReal (harmonyScore con w c) v)`, with
+binary case `choiceProb_pi_gaussianReal`. His censored variant, which clamps noisy weights at zero,
+has no closed form and is not formalized.
 
-  `log(P(a)/P(b)) = H(a) − H(b)`
+## References
 
-This implies **logit uniformity** ([flemming-2021] §5.1, eq (10)): adding one
-violation of constraint j changes the logit by exactly −wⱼ, regardless
-of the violation profile elsewhere. NHG lacks this property because its
-noise variance σ_d depends on the violation profile.
+* [boersma-pater-2016]
+* [flemming-2021]
 -/
 
 @[expose] public section
 
 namespace HarmonicGrammar
 
-open Real OptimalityTheory ProbabilityTheory
+open MeasureTheory ProbabilityTheory OptimalityTheory
+open scoped NNReal ENNReal
 
-variable {C : Type*} {n : Nat}
+variable {C ι : Type*} [Fintype ι] (con : ConstraintSet C ι) (w : ι → ℝ) (v : ℝ≥0)
 
-/-! ### NHG Noise Variance -/
+/-- The weight noise of noisy harmonic grammar perturbs each constraint weight by independent
+`N(0, v)` noise. -/
+noncomputable def weightNoise (ι : Type*) [Fintype ι] (v : ℝ≥0) : Measure (ι → ℝ) :=
+  Measure.pi fun _ : ι ↦ gaussianReal 0 v
 
-/-- Sum of squared violation differences between two candidates.
-    This determines the NHG noise variance: σ_d² = σ² · violationDiffSqSum. -/
-noncomputable def violationDiffSqSum (con : ConstraintSet C (Fin n)) (a b : C) : ℝ :=
-  ∑ i, ((con i a : ℝ) - (con i b : ℝ)) ^ 2
+instance : IsProbabilityMeasure (weightNoise ι v) := by
+  unfold weightNoise; infer_instance
 
-/-- NHG noise standard deviation for binary choice:
-    σ_d = σ · √(Σⱼ (cⱼ(a) − cⱼ(b))²).
+/-- `weightNoiseChoiceProb con w v a` is the probability that `a` has the highest harmony when the
+weights `w` are perturbed by weight noise of variance `v`. -/
+noncomputable def weightNoiseChoiceProb (a : C) : ℝ≥0∞ :=
+  weightNoise ι v {η | ∀ b, b ≠ a → harmonyScore con (w + η) b < harmonyScore con (w + η) a}
 
-    The noise is **context-dependent**: it scales with the violation
-    difference profile, not just the per-weight noise σ. -/
-noncomputable def nhgSigmaD (con : ConstraintSet C (Fin n)) (sigma : ℝ) (a b : C) : ℝ :=
-  sigma * Real.sqrt (violationDiffSqSum con a b)
+theorem measurable_harmonyScore_add (c : C) :
+    Measurable fun η : ι → ℝ ↦ harmonyScore con (w + η) c := by
+  simp only [harmonyScore_eq_neg_sum, Pi.add_apply]
+  fun_prop
 
-/-! ### NHG binary choice (Gaussian random utility model) -/
+theorem measurable_harmonyScore_add_sub (a b : C) :
+    Measurable fun η : ι → ℝ ↦ harmonyScore con (w + η) a - harmonyScore con (w + η) b := by
+  simp only [harmonyScore_eq_neg_sum, Pi.add_apply]
+  fun_prop
 
-/-- **NHG binary choice probability** ([flemming-2021]):
-    `P(a ≻ b) = Φ((H(a) − H(b)) / σ_d)`.
+theorem dotProduct_violationDiff_self_nonneg (a b : C) :
+    0 ≤ (con.violationDiff a b ⬝ᵥ con.violationDiff a b : ℝ) :=
+  Finset.sum_nonneg fun _ _ ↦ mul_self_nonneg _
 
-    Noisy HG is the Gaussian random utility model (`gaussianChoiceProb`, the
-    probit choice rule) applied to the harmony gap, with the context-dependent
-    NHG noise `σ_d = σ·√(Σⱼ(cⱼ(a)−cⱼ(b))²)` (`nhgSigmaD`). It grounds directly
-    in the Gaussian RUM — *not* through Thurstone's psychophysics. -/
-noncomputable def nhgChoiceProb (con : ConstraintSet C (Fin n)) (w : Fin n → ℝ) (sigma : ℝ)
-    (a b : C) : ℝ :=
-  gaussianChoiceProb (harmonyScore con w a - harmonyScore con w b)
-    (nhgSigmaD con sigma a b)
+/-- Noisy harmonic grammar is the random utility model whose utilities are the noisy
+harmonies. -/
+theorem weightNoiseChoiceProb_eq_choiceProb_map [Fintype C] (a : C) :
+    weightNoiseChoiceProb con w v a =
+      choiceProb ((weightNoise ι v).map fun η c ↦ harmonyScore con (w + η) c) a :=
+  (choiceProb_map _ (measurable_pi_iff.mpr (measurable_harmonyScore_add con w)) a).symm
 
-/-- NHG choice probability in closed form: `Φ((H(a) − H(b)) / σ_d)`
-    ([flemming-2021] eq (15)). -/
-theorem nhg_choiceProb_eq (con : ConstraintSet C (Fin n)) (w : Fin n → ℝ) (sigma : ℝ) (a b : C) :
-    nhgChoiceProb con w sigma a b =
-    normalCDF ((harmonyScore con w a - harmonyScore con w b) /
-               nhgSigmaD con sigma a b) := by
-  simp only [nhgChoiceProb, gaussianChoiceProb]
-
-/-! ### Normal MaxEnt -/
-
-/-- Normal MaxEnt noise standard deviation: σ_d = ε√2 (constant).
-
-    When noise is added i.i.d. N(0,ε²) to each candidate score, the
-    difference of two candidates is N(H(a)−H(b), 2ε²), giving σ_d = ε√2
-    regardless of the violation profile. This is the key distinction
-    from NHG, where σ_d varies by context. -/
-noncomputable def normalMaxEntSigmaD (epsilon : ℝ) : ℝ :=
-  epsilon * Real.sqrt 2
-
-/-- **Normal MaxEnt binary choice probability** ([flemming-2021]):
-    `P(a ≻ b) = Φ((H(a) − H(b)) / (ε√2))`.
-
-    Like NHG, the Gaussian random utility model (`gaussianChoiceProb`) applied
-    to the harmony gap — but with the *constant* noise `σ_d = ε√2`
-    (`normalMaxEntSigmaD`) rather than NHG's context-dependent `σ_d`. -/
-noncomputable def normalMaxEntChoiceProb (con : ConstraintSet C (Fin n)) (w : Fin n → ℝ)
-    (epsilon : ℝ) (a b : C) : ℝ :=
-  gaussianChoiceProb (harmonyScore con w a - harmonyScore con w b)
-    (normalMaxEntSigmaD epsilon)
-
-/-- The constant `σ_d = ε√2` is derived and not stipulated: when the harmonies of `a` and `b` are
-    perturbed by independent `N(0, ε²)` noise, the probability that `a` has the higher perturbed
-    harmony is `normalMaxEntChoiceProb`. -/
-theorem rumChoiceProb_eq_normalMaxEntChoiceProb (con : ConstraintSet C (Fin n)) (w : Fin n → ℝ)
-    {epsilon : ℝ} (hε : 0 < epsilon) (a b : C) :
-    rumChoiceProb (fun j ↦ gaussianReal (![harmonyScore con w a, harmonyScore con w b] j)
-      (.mk (epsilon ^ 2) (sq_nonneg _))) 0 =
-      ENNReal.ofReal (normalMaxEntChoiceProb con w epsilon a b) :=
-  rumChoiceProb_gaussianReal_sq _ hε
-
-/-- Normal MaxEnt choice probability in closed form: `Φ((H(a) − H(b)) / (ε√2))`
-    ([flemming-2021] eq (17)). -/
-theorem normalMaxEnt_choiceProb_eq (con : ConstraintSet C (Fin n)) (w : Fin n → ℝ)
-    (epsilon : ℝ) (a b : C) :
-    normalMaxEntChoiceProb con w epsilon a b =
-    normalCDF ((harmonyScore con w a - harmonyScore con w b) /
-               normalMaxEntSigmaD epsilon) := by
-  simp only [normalMaxEntChoiceProb, gaussianChoiceProb]
-
-/-! ### MaxEnt Logit-Harmony Identity -/
-
-/-- **Logit uniformity** (MaxEnt diagnostic; [flemming-2021] §5.1):
-    for softmax with α = 1, the log-odds between any two alternatives
-    equals their score difference. Hence changing one score by −w
-    changes the log-odds by exactly −w, regardless of context.
-
-    This property characterizes MaxEnt among stochastic HG variants.
-    NHG lacks it because its noise variance σ_d depends on the violation
-    profile (see `nhgSigmaD`).
-
-    See `HarmonicGrammar.Square.Independent.interaction_logOdds_softmax`
-    (`IntersectingFamilies.lean`) for the consequence that intersecting
-    constraint families yield constant logit differences. -/
-theorem logit_uniformity {ι : Type*} [Fintype ι] [Nonempty ι]
-    (s : ι → ℝ) (a b : ι) :
-    log (softmax s a / softmax s b) = s a - s b := by
-  rw [log_softmax_div_softmax]
-
-/-- **MaxEnt logit-harmony identity**: the log-odds ratio between two
-    candidates equals their harmony score difference.
-
-    `log(P(a)/P(b)) = H(a) − H(b)`
-
-    Instantiation of `logit_uniformity` with harmony scores. -/
-theorem maxent_logit_harmony [Fintype C] [Nonempty C]
-    (con : ConstraintSet C (Fin n)) (w : Fin n → ℝ) (a b : C) :
-    log (softmax (harmonyScore con w) a /
-         softmax (harmonyScore con w) b) =
-    harmonyScore con w a - harmonyScore con w b :=
-  logit_uniformity (harmonyScore con w) a b
-
-/-- **Ratio independence** (IIA for MaxEnt): the probability ratio between
-    two candidates depends only on their own harmony scores.
-
-    `P(a)/P(b) = exp(H(a) − H(b))`
-
-    Adding or removing other candidates from the competition doesn't
-    change the ratio. Corollary of `softmax_div_softmax` with α = 1. -/
-theorem maxent_iia [Fintype C] [Nonempty C]
-    (con : ConstraintSet C (Fin n)) (w : Fin n → ℝ) (a b : C) :
-    softmax (harmonyScore con w) a /
-    softmax (harmonyScore con w) b =
-    exp (harmonyScore con w a - harmonyScore con w b) := by
-  rw [softmax_div_softmax]
-
-/-! ### Harmony Difference Decomposition -/
-
-/-- **Harmony difference decomposition**: the harmony score difference
-    equals the negated weighted sum of violation differences.
-
-    `H(a) − H(b) = −Σⱼ wⱼ · (cⱼ(a) − cⱼ(b))`
-
-    This is the bridge between abstract harmony scores and the constraint
-    violation patterns used in empirical analyses (e.g., French schwa). -/
-theorem harmonyScore_diff (con : ConstraintSet C (Fin n)) (w : Fin n → ℝ) (a b : C) :
-    harmonyScore con w a - harmonyScore con w b =
-    -∑ i, w i * ((con i a : ℝ) - (con i b : ℝ)) := by
-  rw [harmonyScore_eq_neg_sum, harmonyScore_eq_neg_sum]
-  simp only [mul_sub, Finset.sum_sub_distrib]
+/-- Noise on the weights moves the harmony difference of two candidates by the noise against their
+violation difference. -/
+theorem harmonyScore_add_sub (η : ι → ℝ) (a b : C) :
+    harmonyScore con (w + η) a - harmonyScore con (w + η) b =
+      harmonyScore con w a - harmonyScore con w b + ∑ i, -con.violationDiff a b i * η i := by
+  rw [harmonyScore_sub, harmonyScore_sub, add_dotProduct, dotProduct_comm η]
+  simp only [dotProduct, neg_mul, Finset.sum_neg_distrib]
   ring
 
-/-! ### Censored NHG ([flemming-2021] §7.3) -/
-
-/-- Censored weight: noise is clamped so weights never go negative.
-
-    In censored NHG, the noisy weight is `max(0, w + n)` where `n ~ N(0,σ²)`.
-    This prevents negative weights (which would reverse constraint preferences)
-    and makes the effective noise variance depend on the weight magnitude:
-    constraints with larger weights are less affected by censoring. -/
-noncomputable def censoredWeight (w n : ℝ) : ℝ := max 0 (w + n)
-
-/-- Censored weights are non-negative by construction. -/
-theorem censoredWeight_nonneg (w n : ℝ) : 0 ≤ censoredWeight w n :=
-  le_max_left 0 _
-
-/-- Censored weights are monotone in the underlying weight. -/
-theorem censoredWeight_mono_weight {w₁ w₂ n : ℝ} (hw : w₁ ≤ w₂) :
-    censoredWeight w₁ n ≤ censoredWeight w₂ n :=
-  max_le_max_left 0 (by linarith)
-
-/-- **Weight sensitivity** ([flemming-2021] §7.3): censoring is
-    non-trivial — different weights produce different censored values
-    for some noise realization.
-
-    The witness is `n = -w₁`: this zeroes out `w₁` but leaves `w₂ > 0`. -/
-theorem censored_nhg_weight_sensitivity (w₁ w₂ : ℝ) (hw : w₁ < w₂) :
-    ∃ n : ℝ, censoredWeight w₁ n ≠ censoredWeight w₂ n := by
-  use -w₁
-  simp only [censoredWeight, add_neg_cancel, max_self]
-  rw [show w₂ + -w₁ = w₂ - w₁ from rfl]
-  have h_pos : 0 < w₂ - w₁ := sub_pos.mpr hw
-  rw [max_eq_right (le_of_lt h_pos)]
-  exact ne_of_lt h_pos
-
-/-! ### Multi-Candidate NHG Covariance -/
-
-/-- NHG noise covariance between two score differences relative to a
-    reference candidate `a`:
-
-    `Cov(ε_b − ε_a, ε_c − ε_a) = σ² · Σₖ (cₖ(b) − cₖ(a)) · (cₖ(c) − cₖ(a))`
-
-    When this is non-zero, the score differences are correlated, and the
-    joint distribution over 3+ candidates is multivariate normal with
-    non-diagonal covariance — not reducible to independent binary
-    comparisons. This is why NHG violates IIA for 3+ candidates
-    ([flemming-2021] §9). -/
-noncomputable def nhgCovariance (con : ConstraintSet C (Fin n)) (sigma : ℝ) (a b c : C) : ℝ :=
-  sigma ^ 2 * ∑ i, ((con i b : ℝ) - (con i a : ℝ)) *
-                   ((con i c : ℝ) - (con i a : ℝ))
-
-/-- The NHG self-covariance `Cov(ε_b − ε_a, ε_b − ε_a)` equals
-    the variance `σ² · violationDiffSqSum`, recovering the binary case. -/
-theorem nhgCovariance_self (con : ConstraintSet C (Fin n)) (sigma : ℝ) (a b : C) :
-    nhgCovariance con sigma a b b =
-    sigma ^ 2 * violationDiffSqSum con b a := by
-  simp only [nhgCovariance, violationDiffSqSum]
+/-- Under weight noise the harmony difference of two candidates is Gaussian, with mean their
+harmony difference and variance `v` times the squared length of their violation difference. -/
+theorem map_weightNoise_harmonyScore_sub (a b : C) :
+    (weightNoise ι v).map (fun η ↦ harmonyScore con (w + η) a - harmonyScore con (w + η) b) =
+      gaussianReal (harmonyScore con w a - harmonyScore con w b)
+        (v * (con.violationDiff a b ⬝ᵥ con.violationDiff a b : ℝ).toNNReal) := by
+  have hgap : (fun η ↦ harmonyScore con (w + η) a - harmonyScore con (w + η) b) =
+      (· + (harmonyScore con w a - harmonyScore con w b)) ∘
+        fun η ↦ ∑ i, -con.violationDiff a b i * η i := by
+    funext η
+    rw [Function.comp_apply, harmonyScore_add_sub, add_comm]
+  rw [hgap, ← Measure.map_map (by fun_prop) (by fun_prop), weightNoise,
+    map_pi_gaussianReal_sum_mul, gaussianReal_map_add_const]
   congr 1
-  apply Finset.sum_congr rfl
-  intro i _
-  ring
+  · simp
+  · ext
+    push_cast
+    rw [Real.coe_toNNReal _ (dotProduct_violationDiff_self_nonneg con a b), dotProduct,
+      Finset.mul_sum]
+    exact Finset.sum_congr rfl fun i _ ↦ by ring
+
+/-- The variance of the harmony difference of two candidates is `v` times the squared length of
+their violation difference. -/
+theorem variance_harmonyScore_sub (a b : C) :
+    Var[fun η ↦ harmonyScore con (w + η) a - harmonyScore con (w + η) b; weightNoise ι v] =
+      v * (con.violationDiff a b ⬝ᵥ con.violationDiff a b : ℝ) := by
+  rw [← variance_id_map (measurable_harmonyScore_add_sub con w a b).aemeasurable,
+    map_weightNoise_harmonyScore_sub, variance_id_gaussianReal, NNReal.coe_mul,
+    Real.coe_toNNReal _ (dotProduct_violationDiff_self_nonneg con a b)]
+
+/-- The covariance of the harmony differences of `b` and of `c` from a common candidate `a` is `v`
+times the dot product of their violation differences, so the joint law of the differences
+depends on the whole violation profile and not only on the harmonies. -/
+theorem covariance_harmonyScore_sub (a b c : C) :
+    cov[fun η ↦ harmonyScore con (w + η) b - harmonyScore con (w + η) a,
+      fun η ↦ harmonyScore con (w + η) c - harmonyScore con (w + η) a; weightNoise ι v] =
+      v * (con.violationDiff b a ⬝ᵥ con.violationDiff c a : ℝ) := by
+  have hint (d : ι → ℝ) : Integrable (fun η : ι → ℝ ↦ ∑ i, d i * η i) (weightNoise ι v) := by
+    rw [weightNoise]
+    exact integrable_finsetSum _ fun i _ ↦ (((memLp_id_gaussianReal 2).const_mul
+      (d i)).comp_measurePreserving (measurePreserving_eval _ i)).integrable (by norm_num)
+  simp_rw [harmonyScore_add_sub con w _ b a, harmonyScore_add_sub con w _ c a]
+  rw [covariance_const_add_left (hint _), covariance_const_add_right (hint _), weightNoise,
+    covariance_pi_gaussianReal_sum_mul, dotProduct, Finset.mul_sum]
+  exact Finset.sum_congr rfl fun i _ ↦ by ring
+
+/-- The probability that `a` has a higher noisy harmony than `b` is the probit of their harmony
+difference over its standard deviation. -/
+theorem weightNoise_setOf_harmonyScore_lt (hv : v ≠ 0) {a b : C}
+    (hab : (con.violationDiff a b : ι → ℝ) ≠ 0) :
+    weightNoise ι v {η | harmonyScore con (w + η) b < harmonyScore con (w + η) a} =
+      ENNReal.ofReal (gaussianChoiceProb (harmonyScore con w a - harmonyScore con w b)
+        √(v * (con.violationDiff a b ⬝ᵥ con.violationDiff a b : ℝ))) := by
+  have hdd : 0 < (con.violationDiff a b ⬝ᵥ con.violationDiff a b : ℝ) :=
+    (dotProduct_violationDiff_self_nonneg con a b).lt_of_ne
+      (Ne.symm (mt dotProduct_self_eq_zero.mp hab))
+  have hσ : 0 < √(v * (con.violationDiff a b ⬝ᵥ con.violationDiff a b : ℝ)) :=
+    Real.sqrt_pos.mpr (mul_pos (NNReal.coe_pos.mpr (pos_iff_ne_zero.mpr hv)) hdd)
+  rw [show {η : ι → ℝ | harmonyScore con (w + η) b < harmonyScore con (w + η) a} =
+      (fun η ↦ harmonyScore con (w + η) a - harmonyScore con (w + η) b) ⁻¹' Set.Ioi 0 by
+    ext; simp [sub_pos],
+    ← Measure.map_apply (measurable_harmonyScore_add_sub con w a b) measurableSet_Ioi,
+    map_weightNoise_harmonyScore_sub, ← ofReal_measureReal, ← gaussianReal_real_Ioi_zero _ hσ]
+  congr 3
+  ext
+  rw [NNReal.coe_mul, Real.coe_toNNReal _ hdd.le, NNReal.coe_mk, Real.sq_sqrt (by positivity)]
+
+/-- When `b` is the only other candidate, the probability that `a` wins is the probit of their
+harmony difference over its standard deviation. -/
+theorem weightNoiseChoiceProb_of_forall_ne_eq (hv : v ≠ 0) {a b : C} (hb : ∀ c, c ≠ a → c = b)
+    (hab : a ≠ b) (hd : (con.violationDiff a b : ι → ℝ) ≠ 0) :
+    weightNoiseChoiceProb con w v a =
+      ENNReal.ofReal (gaussianChoiceProb (harmonyScore con w a - harmonyScore con w b)
+        √(v * (con.violationDiff a b ⬝ᵥ con.violationDiff a b : ℝ))) := by
+  rw [weightNoiseChoiceProb, ← weightNoise_setOf_harmonyScore_lt con w v hv hd]
+  congr 1
+  ext η
+  exact ⟨fun h ↦ h b hab.symm, fun h c hc ↦ hb c hc ▸ h⟩
+
+section FinTwo
+
+variable (con : ConstraintSet (Fin 2) ι) (w : ι → ℝ) (v : ℝ≥0)
+
+/-- With two candidates, the probability that the first wins is the probit of their harmony
+difference over its standard deviation. -/
+theorem weightNoiseChoiceProb_fin_two (hv : v ≠ 0) (hd : (con.violationDiff 0 1 : ι → ℝ) ≠ 0) :
+    weightNoiseChoiceProb con w v 0 =
+      ENNReal.ofReal (gaussianChoiceProb (harmonyScore con w 0 - harmonyScore con w 1)
+        √(v * (con.violationDiff 0 1 ⬝ᵥ con.violationDiff 0 1 : ℝ))) :=
+  weightNoiseChoiceProb_of_forall_ne_eq con w v hv (fun c hc ↦ by omega) zero_ne_one hd
+
+end FinTwo
 
 end HarmonicGrammar

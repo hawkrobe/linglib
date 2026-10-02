@@ -13,10 +13,10 @@ public import Linglib.Core.LinearAlgebra.Matrix.DotProduct
 /-!
 # Harmony
 
-A Harmonic Grammar ([smolensky-legendre-2006]) weights each constraint of a constraint set by a
-number, real in the usual statement, and the harmony of a candidate is the negated weighted sum of
-its violations, `H(c) = -(w ⬝ᵥ C(c))`, a linear functional of the candidate's violation vector.
-The weight vector `w : ι → R` is the grammar's parameter, the Harmonic-Grammar twin of an OT
+A Harmonic Grammar, in Smolensky and Legendre's formulation, weights each constraint of a constraint
+set by a number, real in the usual statement, and the harmony of a candidate is the negated weighted
+sum of its violations, `H(c) = -(w ⬝ᵥ C(c))`, a linear functional of the candidate's violation
+vector. The weight vector `w : ι → R` is the grammar's parameter, the Harmonic-Grammar twin of an OT
 ranking, and both act on one `ConstraintSet C ι`. The weight ring is a parameter so that a grammar
 with rational or integer weights keeps its scores exactly computable.
 
@@ -27,12 +27,14 @@ violations than another on every constraint has at least its harmony, which is h
 ## Main definitions
 
 * `harmonyScore`: the harmony `H(c) = -(w ⬝ᵥ C(c))` of a candidate.
+* `OptimalityTheory.ConstraintSet.violationDiff`: the violation difference `C(a) - C(b)`.
 * `harmonyDominates`: harmonic dominance, `H(a) > H(b)`.
 
 ## Main results
 
 * `harmonyScore_cons`: `@[simp]` cons-recursion evaluating harmony on literal grammars
   `![C₀, …]`, `![w₀, …]`.
+* `harmonyScore_sub`: the harmony difference is `-(w ⬝ᵥ (C(a) - C(b)))`.
 * `harmonyScore_congr`: harmony depends only on the violation vector.
 * `harmonyScore_append`, `harmonyScore_joint`: harmony is additive over a concatenated constraint
   set and, for a jointly evaluated one, over the mappings.
@@ -69,6 +71,19 @@ def harmonyScore [Ring R] (con : ConstraintSet C ι) (w : ι → R) (c : C) : R 
 theorem harmonyScore_eq_neg_sum [Ring R] (con : ConstraintSet C ι) (w : ι → R) (c : C) :
     harmonyScore con w c = -∑ j, w j * (con j c : R) := rfl
 
+/-- The violation difference `C(a) - C(b)` of two candidates, a row of a comparative
+tableau. -/
+def _root_.OptimalityTheory.ConstraintSet.violationDiff [Ring R] (con : ConstraintSet C ι)
+    (a b : C) : ι → R :=
+  fun j ↦ (con j a : R) - con j b
+
+/-- The harmony difference of two candidates is the weight vector against their violation
+difference. -/
+theorem harmonyScore_sub [Ring R] (con : ConstraintSet C ι) (w : ι → R) (a b : C) :
+    harmonyScore con w a - harmonyScore con w b = -(w ⬝ᵥ con.violationDiff a b) := by
+  rw [show con.violationDiff a b = (fun j ↦ (con j a : R)) - fun j ↦ (con j b : R) from rfl,
+    dotProduct_sub, neg_sub, harmonyScore, harmonyScore, neg_sub_neg]
+
 /-- The candidate `a` harmonically dominates `b` when `H(a) > H(b)`. The relation is the
 pullback of `>` along `harmonyScore con w` (`Order.Preimage`), so it inherits `IsStrictOrder`
 from the weight ring. -/
@@ -89,10 +104,7 @@ def harmonyDominates [Ring R] [LT R] (con : ConstraintSet C ι) (w : ι → R) :
     (w₀ : ℝ) (w : Fin n → ℝ) (x : C) :
     harmonyScore (Matrix.vecCons c₀ con) (Matrix.vecCons w₀ w) x =
       -(w₀ * (c₀ x : ℝ)) + harmonyScore con w x := by
-  have h : (fun j ↦ (Matrix.vecCons c₀ con j x : ℝ)) =
-      Matrix.vecCons (c₀ x : ℝ) fun j ↦ (con j x : ℝ) :=
-    funext (Fin.cases rfl fun _ ↦ rfl)
-  simp only [harmonyScore, h, dotProduct, Fin.sum_univ_succ, Matrix.cons_val_zero,
+  simp only [harmonyScore, dotProduct, Fin.sum_univ_succ, Matrix.cons_val_zero,
     Matrix.cons_val_succ, neg_add]
 
 @[simp] theorem harmonyScore_zero_weight (con : ConstraintSet C ι) (x : C) :

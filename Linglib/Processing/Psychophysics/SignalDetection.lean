@@ -7,33 +7,32 @@ public import Linglib.Core.Probability.Distributions.Logistic
 /-!
 # Signal detection theory
 
-Signal detection theory accounts for a yes-no judgment as a criterion on a noisy decision variable
-([macmillan-creelman-2005]). A trial holds a signal or only noise, the observer receives an
-observation whose law depends on which, and it responds "yes" when the observation exceeds a
-criterion `k`. The experiment is a kernel `P : Kernel Bool ℝ` from the state of the trial to the
-law of the observation, and the observer's response rates are the masses its two laws give to
-`(k, ∞)`: the hit rate on signal trials and the false-alarm rate on noise trials. In a
-forced-choice task one interval holds the signal and the rest noise, and the observer picks the
-interval with the largest observation, so the proportion correct is the choice probability of
-the signal interval in the random utility model of the intervals' laws (`forcedChoice`). It is
-the probability that every noise observation falls below the signal observation, which for two
-intervals is the area under the yes-no receiver operating characteristic, the area theorem of
-[green-swets-1966] (`forcedChoice_eq_lintegral`).
+Signal detection theory, in Macmillan and Creelman's presentation, accounts for a yes-no judgment as
+a criterion on a noisy decision variable. A trial holds a signal or only noise, the observer
+receives an observation whose law depends on which, and it responds "yes" when the observation
+exceeds a criterion `k`. The experiment is a kernel `P : Kernel Bool ℝ` from the state of the trial
+to the law of the observation, and the observer's response rates are the masses its two laws give to
+`(k, ∞)`: the hit rate on signal trials and the false-alarm rate on noise trials. In a forced-choice
+task one interval holds the signal and the rest noise, and the observer picks the interval with the
+largest observation, so the proportion correct is the choice probability of the signal interval in
+the random utility model of the intervals' laws (`forcedChoice`). It is the probability that every
+noise observation falls below the signal observation, which for two intervals is the area under the
+yes-no receiver operating characteristic, Green and Swets's area theorem
+(`forcedChoice_eq_lintegral`).
 
-The models [macmillan-creelman-2005] compare are location experiments (`locationExperiment`): a
-noise law `ν` shifted by `δ / 2` on signal trials and by `-(δ / 2)` on noise trials, the
-sensitivity `δ` being the distance between the two laws. The normal model takes `ν` standard
-normal, and the Choice Theory of [luce-1959] takes it logistic ([macmillan-creelman-2005], ch. 4,
-p. 98). In every location experiment the hit rate of a criterion is the false-alarm rate of the
-criterion lower by `δ` (`hitRate_eq_falseAlarmRate_sub`). For a symmetric `ν`, such as both of
-these, the receiver operating characteristic on axes transformed by the quantile function of `ν` is
-therefore a line of unit slope, `δ` above the chance line. In the normal model the axes are
-z-scores: whatever the criterion `k`, the sensitivity is `d' = z(H) - z(F)` and
-`k = -(z(H) + z(F)) / 2` (`probit_hitRate_sub_probit_falseAlarmRate`,
-`probit_hitRate_add_probit_falseAlarmRate`). The likelihood ratio of signal to noise at an
-observation `x` is `exp (d' * x)` (`likelihoodRatio_gaussianReal`), and the two-alternative forced
-choice is the binary probit rule, with proportion correct `Φ (d' / √2)`
-(`forcedChoice_one_gaussianReal`).
+The models Macmillan and Creelman compare are location experiments (`locationExperiment`): a noise
+law `ν` shifted by `δ / 2` on signal trials and by `-(δ / 2)` on noise trials, the sensitivity `δ`
+being the distance between the two laws. The normal model takes `ν` standard normal, and Luce's
+Choice Theory takes it logistic (Macmillan and Creelman, ch. 4, p. 98). In every location experiment
+the hit rate of a criterion is the false-alarm rate of the criterion lower by `δ`
+(`hitRate_eq_falseAlarmRate_sub`). For a symmetric `ν`, such as both of these, the receiver
+operating characteristic on axes transformed by the quantile function of `ν` is therefore a line of
+unit slope, `δ` above the chance line. In the normal model the axes are z-scores: whatever the
+criterion `k`, the sensitivity is `d' = z(H) - z(F)` and `k = -(z(H) + z(F)) / 2`
+(`probit_hitRate_sub_probit_falseAlarmRate`, `probit_hitRate_add_probit_falseAlarmRate`). The
+likelihood ratio of signal to noise at an observation `x` is `exp (d' * x)`
+(`likelihoodRatio_gaussianReal`), and the two-alternative forced choice is the binary probit rule,
+with proportion correct `Φ (d' / √2)` (`forcedChoice_one_gaussianReal`).
 
 ## Main definitions
 
@@ -44,39 +43,39 @@ choice is the binary probit rule, with proportion correct `Φ (d' / √2)`
 ## Main results
 
 * `SignalDetection.forcedChoice_eq_lintegral`: the forced-choice proportion correct as an integral
-  over the signal observation, [green-swets-1966]'s eq. (2.13).
+  over the signal observation, Green and Swets's eq. (2.13).
 * `SignalDetection.hitRate_eq_falseAlarmRate_sub`: in a location experiment the hit rate of `k` is
   the false-alarm rate of `k - δ`.
 * `SignalDetection.falseAlarmRate_lt_hitRate`: at positive sensitivity the receiver operating
   characteristic lies above the chance line.
 * `SignalDetection.probit_hitRate_sub_probit_falseAlarmRate`: in the normal model
-  `z(H) = z(F) + d'`, [macmillan-creelman-2005]'s eq. (1.8).
+  `z(H) = z(F) + d'`, Macmillan and Creelman's eq. (1.8).
 * `SignalDetection.probit_hitRate_add_probit_falseAlarmRate`: in the normal model the criterion is
-  `c = -(z(H) + z(F)) / 2`, [macmillan-creelman-2005]'s eq. (2.1).
+  `c = -(z(H) + z(F)) / 2`, Macmillan and Creelman's eq. (2.1).
 * `SignalDetection.likelihoodRatio_gaussianReal`: the likelihood ratio of the normal model.
 * `SignalDetection.forcedChoice_one_gaussianReal`: in the normal model the two-alternative
-  proportion correct is `Φ (d' / √2)`, [macmillan-creelman-2005]'s eq. (7.6).
+  proportion correct is `Φ (d' / √2)`, Macmillan and Creelman's eq. (7.6).
 * `SignalDetection.log_odds_hitRate_sub_log_odds_falseAlarmRate`,
   `SignalDetection.log_odds_hitRate_add_log_odds_falseAlarmRate`: in the logistic model the
   sensitivity and the criterion are the difference and minus the mean of the log-odds of the rates,
-  [macmillan-creelman-2005]'s eqs. (4.10) and (4.12).
+  Macmillan and Creelman's eqs. (4.10) and (4.12).
 
 ## Implementation notes
 
 The forced-choice observer picks the interval with the largest observation, where
-[green-swets-1966] (p. 46) pick the interval with the largest likelihood ratio. The two rules agree
+Green and Swets (p. 46) pick the interval with the largest likelihood ratio. The two rules agree
 whenever the likelihood ratio increases with the observation, as it does in the normal model
-(`likelihoodRatio_gaussianReal`). Page numbers of [green-swets-1966] are those of its 1988
+(`likelihoodRatio_gaussianReal`). Page numbers of Green and Swets are those of the 1988
 reprint.
 
 ## TODO
 
 * The slope of the receiver operating characteristic at a criterion is the likelihood ratio there
-  ([macmillan-creelman-2005], ch. 2); for the normal model this needs the derivative of `Φ`.
+  (Macmillan and Creelman, ch. 2); for the normal model this needs the derivative of `Φ`.
 * The optimal criterion is the Bayes estimator of the experiment under 0-1 loss, and a larger
   sensitivity gives a more informative experiment in the order of
   `Linglib/Core/Probability/Decision/Blackwell.lean`.
-* The axiom-1 forced choice of [luce-1959] (section 2.E) is a logistic Yes-No model at twice the
+* Luce's axiom-1 forced choice (section 2.E) is a logistic Yes-No model at twice the
   sensitivity, which is not the forced choice of the logistic model: the difference of two logistic
   observations is not logistic.
 
@@ -112,7 +111,7 @@ noncomputable def falseAlarmRate : ℝ := (P false).real (Ioi k)
 intervals, in which the observer picks the interval with the largest observation: the choice
 probability of the signal interval in the random utility model of the intervals' laws. -/
 noncomputable def forcedChoice (n : ℕ) : ℝ≥0∞ :=
-  rumChoiceProb (fun j : Fin (n + 1) ↦ P (decide (j = 0))) 0
+  choiceProb (Measure.pi fun j : Fin (n + 1) ↦ P (decide (j = 0))) 0
 
 /-- The forced-choice proportion correct is the probability that all `n` noise observations fall
 below the signal observation `k`, integrated over `k` ([green-swets-1966], eqs. (2.7) and (2.13),
@@ -120,7 +119,7 @@ p. 47). With one noise interval it is the area under the yes-no receiver operati
 characteristic, the hit rate integrated over the false-alarm rate. -/
 theorem forcedChoice_eq_lintegral [IsFiniteKernel P] (n : ℕ) :
     forcedChoice P n = ∫⁻ k, P false (Iio k) ^ n ∂(P true) := by
-  rw [forcedChoice, rumChoiceProb_eq_lintegral]
+  rw [forcedChoice, choiceProb_pi_eq_lintegral]
   refine lintegral_congr fun k ↦ ?_
   rw [Finset.prod_congr rfl fun j hj ↦ by rw [decide_eq_false (Finset.ne_of_mem_erase hj)],
     Finset.prod_const, Finset.card_erase_of_mem (Finset.mem_univ _), Finset.card_univ,
@@ -254,7 +253,7 @@ theorem forcedChoice_one_gaussianReal :
       fun j ↦ gaussianReal (![δ / 2, -(δ / 2)] j) 1 := by
     funext j
     fin_cases j <;> simp [locationExperiment_gaussianReal]
-  rw [forcedChoice, h, rumChoiceProb_gaussianReal _ one_ne_zero]
+  rw [forcedChoice, h, choiceProb_pi_gaussianReal _ one_ne_zero]
   simp only [Matrix.cons_val_zero, Matrix.cons_val_one, NNReal.coe_one, mul_one, sub_neg_eq_add,
     add_halves]
 

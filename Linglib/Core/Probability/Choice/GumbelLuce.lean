@@ -5,35 +5,39 @@ public import Linglib.Core.Probability.Choice.RandomUtility
 public import Linglib.Core.Analysis.SpecialFunctions.Softmax
 
 /-!
-# Gumbel–Luce equivalence [mcfadden-1974]
+# Gumbel–Luce equivalence
 
-A random utility model assigns each alternative `i` the utility `uᵢ + εᵢ` and
-chooses the maximizer; with i.i.d. Gumbel noise the choice probabilities are
-exactly softmax, `P(i) = exp(uᵢ/β) / ∑ⱼ exp(uⱼ/β)`. The Gumbel→softmax
-direction is due to [marschak-1960] and, in the constructive form given here,
-to Holman and Marley (via [luce-suppes-1965]); [mcfadden-1974] proves it as
-his Lemma 1 and credits them. McFadden's own contribution is the converse, Lemma 2:
-among translation-complete i.i.d. noise distributions only the Gumbel family
-yields the Luce rule [luce-1959]. Uniqueness genuinely needs choice sets of
-size ≥ 3: for binary choice the logistic form does not pin down Gumbel noise
-(Yellott [yellott-1977]; compare the binary probit in
+A random utility model assigns each alternative `i` the utility `uᵢ + εᵢ` and chooses the
+maximizer. With i.i.d. Gumbel noise the choice probabilities are exactly softmax,
+`P(i) = exp(uᵢ/β) / ∑ⱼ exp(uⱼ/β)`. This direction is due to Marschak and, in the constructive form
+given here, to Holman and Marley as reported by Luce and Suppes; McFadden proves it as his Lemma 1
+and credits them. McFadden's own contribution is the converse, his Lemma 2: among
+translation-complete i.i.d. noise distributions only the Gumbel family yields Luce's choice rule.
+Uniqueness needs choice sets of size at least 3, since Yellott shows that for binary choice the
+logistic form does not pin down Gumbel noise (compare the binary probit in
 `Core/Probability/Choice/RandomUtility.lean`).
 
-The distribution layer (density, measure, CDF, max-stability, and the
-max-probability integral) lives in `Core/Probability/Gumbel.lean`; this file
-gives it the random-utility reading.
+The distribution layer (density, measure, cdf, max-stability, and the max-probability integral)
+lives in `Core/Probability/Gumbel.lean`; this file gives it the random-utility reading.
 
 ## Main results
 
-* `rumChoiceProb_gumbelMeasure`: Lemma 1 of [mcfadden-1974] — under independent
-  Gumbel utilities the choice probabilities are softmax.
-* `rumChoiceProb_gumbelMeasure_fin_two`: the binary case is the logistic function.
-* `gumbel_from_functional_eq`, `eq_cdf_gumbelMeasure_of_functional_eq`: the
-  terminal step of Lemma 2 — a noise CDF satisfying `G(x-c) = G(x)^{exp c}`
-  is Gumbel. McFadden derives that equation only for positive-integer `exp c`
-  (duplicated alternatives) and extends by monotonicity; the derivation of the
-  equation from the softmax form and translation completeness is not
-  formalized here.
+* `choiceProb_pi_gumbelMeasure`: McFadden's Lemma 1, under independent Gumbel utilities the
+  choice probabilities are softmax.
+* `choiceProb_pi_gumbelMeasure_fin_two`: the binary case is the logistic function.
+* `gumbel_from_functional_eq`, `eq_cdf_gumbelMeasure_of_functional_eq`: the terminal step of
+  Lemma 2, a noise cdf satisfying `G(x-c) = G(x)^{exp c}` is Gumbel. McFadden derives that
+  equation only for positive-integer `exp c` (duplicated alternatives) and extends by
+  monotonicity; the derivation of the equation from the softmax form and translation completeness
+  is not formalized here.
+
+## References
+
+* [mcfadden-1974]
+* [marschak-1960]
+* [luce-suppes-1965]
+* [luce-1959]
+* [yellott-1977]
 -/
 
 @[expose] public section
@@ -49,16 +53,11 @@ variable {ι : Type*} [Fintype ι] [DecidableEq ι] [Nonempty ι] {β : ℝ}
 instance (μ β : ℝ) : NullSingletonClass (gumbelMeasure μ β) := by
   unfold gumbelMeasure; infer_instance
 
-/-- **Gumbel RUM ⟹ softmax** (Lemma 1 of [mcfadden-1974], due to Holman and
-    Marley via Luce and Suppes): when the utilities are independent with
-    `Gumbel(uⱼ, β)` laws, alternative `i` has the highest utility with
-    probability `softmax ((1/β) • u) i`.
-
-    [mcfadden-1974] states the unit-scale case; the `β`-generalization is
-    standard (the scale of the noise is not separately identified from the
-    scale of `u`). -/
-theorem rumChoiceProb_gumbelMeasure (u : ι → ℝ) (hβ : 0 < β) (i : ι) :
-    rumChoiceProb (fun j ↦ gumbelMeasure (u j) β) i =
+/-- When the utilities are independent with `Gumbel(uⱼ, β)` laws, alternative `i` has the highest
+utility with probability `softmax ((1/β) • u) i`. McFadden states the unit-scale case; the scale
+of the noise is not separately identified from that of `u`. -/
+theorem choiceProb_pi_gumbelMeasure (u : ι → ℝ) (hβ : 0 < β) (i : ι) :
+    choiceProb (Measure.pi fun j ↦ gumbelMeasure (u j) β) i =
       ENNReal.ofReal (softmax ((1 / β) • u) i) := by
   have : ∀ j, IsProbabilityMeasure (gumbelMeasure (u j) β) :=
     fun j ↦ isProbabilityMeasure_gumbelMeasure hβ (u j)
@@ -73,7 +72,7 @@ theorem rumChoiceProb_gumbelMeasure (u : ι → ℝ) (hβ : 0 < β) (i : ι) :
         rw [Real.norm_of_nonneg (hnonneg x)]
         exact Finset.prod_le_one₀ (fun j _ ↦ cdf_nonneg _ x) fun j _ ↦ cdf_le_one _ x)
   have hpdf : Measurable (gumbelPDF (u i) β) := (measurable_gumbelPDFReal _ _).ennreal_ofReal
-  rw [rumChoiceProb_eq_lintegral_cdf, gumbelMeasure,
+  rw [choiceProb_pi_eq_lintegral_cdf, gumbelMeasure,
     lintegral_withDensity_eq_lintegral_mul _ hpdf hcdf.ennreal_ofReal]
   simp_rw [Pi.mul_apply, gumbelPDF, ← ENNReal.ofReal_mul (gumbelPDFReal_nonneg hβ.le _ _)]
   rw [← ofReal_integral_eq_lintegral_ofReal hint
@@ -85,14 +84,13 @@ end GumbelRUM
 
 /-! ### Binary case: the logistic function -/
 
-/-- **Binary Gumbel RUM = logistic**: for two alternatives the choice
-    probability is `sigmoid ((u 0 - u 1) / β)`. Compare the binary probit
-    `rumChoiceProb_gaussianReal`, `Φ((u 0 - u 1)/√(2v))` for Gaussian noise. By
-    [yellott-1977] the two are indistinguishable on binary data alone. -/
-theorem rumChoiceProb_gumbelMeasure_fin_two (u : Fin 2 → ℝ) {β : ℝ} (hβ : 0 < β) :
-    rumChoiceProb (fun j ↦ gumbelMeasure (u j) β) 0 =
+/-- For two alternatives with Gumbel noise the choice probability is the logistic function
+`sigmoid ((u 0 - u 1) / β)`. The binary probit `choiceProb_pi_gaussianReal` is its Gaussian
+counterpart, and the two are indistinguishable on binary data alone. -/
+theorem choiceProb_pi_gumbelMeasure_fin_two (u : Fin 2 → ℝ) {β : ℝ} (hβ : 0 < β) :
+    choiceProb (Measure.pi fun j ↦ gumbelMeasure (u j) β) 0 =
       ENNReal.ofReal (Real.sigmoid ((u 0 - u 1) / β)) := by
-  rw [rumChoiceProb_gumbelMeasure u hβ 0, softmax_fin_two]
+  rw [choiceProb_pi_gumbelMeasure u hβ 0, softmax_fin_two]
   simp only [Pi.smul_apply, smul_eq_mul]
   congr 2; ring
 
