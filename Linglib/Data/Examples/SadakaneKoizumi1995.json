@@ -1,0 +1,1548 @@
+[
+  {
+    "id": "sadakanekoizumi1995_5a",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "(5a)"},
+    "language": "nucl1643",
+    "primaryText": "Kanta-wa yuuenti-de uma-ni 3-too notta.",
+    "glossedTokens": [
+      ["Kanta-wa", "Kanta-TOP"], ["yuuenti-de", "amusement.park-at"], ["uma-ni", "horse-NI"],
+      ["3-too", "3-CL"], ["notta", "rode"]
+    ],
+    "translation": "Kanta rode three horses at the amusement park.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["category", "O1"],
+      ["particle", "caseMarker"],
+      ["form", "ni"],
+      ["test", "quantifierFloat"]
+    ],
+    "comment": "Printed under the heading 'Case marker ni'; repeated as (16b), labelled [O1].",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_5b",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "(5b)"},
+    "language": "nucl1643",
+    "primaryText": "Kanta-no ronbun-wa riron-ni 2-tu motozuiteiru.",
+    "glossedTokens": [
+      ["Kanta-no", "Kanta-GEN"], ["ronbun-wa", "paper-TOP"], ["riron-ni", "theory-NI"],
+      ["2-tu", "2-CL"], ["motozuiteiru", "based.on"]
+    ],
+    "translation": "Kanta's paper is based on two theories.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["category", "F"],
+      ["particle", "postposition"],
+      ["form", "ni"],
+      ["test", "quantifierFloat"]
+    ],
+    "comment": "Printed under the heading 'Postposition ni'; repeated as (20b), labelled [F].",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_6a",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "(6a)"},
+    "language": "nucl1643",
+    "primaryText": "Gakusee-ga 3-nin piza-o tabeta.",
+    "glossedTokens": [
+      ["Gakusee-ga", "student-NOM"], ["3-nin", "3-CL"], ["piza-o", "pizza-ACC"], ["tabeta", "ate"]
+    ],
+    "translation": "Three students ate pizza.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["particle", "caseMarker"],
+      ["form", "ga"],
+      ["test", "quantifierFloat"]
+    ],
+    "comment": "Printed under the heading 'Case markers', the host bracketed as an NP.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_6b",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "(6b)"},
+    "language": "nucl1643",
+    "primaryText": "John-ga piza-o 2-kire tabeta.",
+    "glossedTokens": [
+      ["John-ga", "John-NOM"], ["piza-o", "pizza-ACC"], ["2-kire", "2-CL"], ["tabeta", "ate"]
+    ],
+    "translation": "John ate two slices of pizza.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["particle", "caseMarker"],
+      ["form", "o"],
+      ["test", "quantifierFloat"]
+    ],
+    "comment": "Printed under the heading 'Case markers', the host bracketed as an NP.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_7a",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "(7a)"},
+    "language": "nucl1643",
+    "primaryText": "John-ga gakusee kara 3-nin purezento-o moratta.",
+    "glossedTokens": [
+      ["John-ga", "John-NOM"], ["gakusee", "student"], ["kara", "from"], ["3-nin", "3-CL"],
+      ["purezento-o", "presents-ACC"], ["moratta", "received"]
+    ],
+    "translation": "John received presents from three students.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["particle", "postposition"],
+      ["form", "kara"],
+      ["test", "quantifierFloat"]
+    ],
+    "comment": "Printed under the heading 'Postpositions', the host bracketed as an NP inside a PP.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_7b",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "(7b)"},
+    "language": "nucl1643",
+    "primaryText": "Mary-ga konpuutaa de 2-dai ronbun-o kaita.",
+    "glossedTokens": [
+      ["Mary-ga", "Mary-NOM"], ["konpuutaa", "computer"], ["de", "with"], ["2-dai", "2-CL"],
+      ["ronbun-o", "paper-ACC"], ["kaita", "wrote"]
+    ],
+    "translation": "Mary wrote a paper with two computers.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["particle", "postposition"],
+      ["form", "de"],
+      ["test", "quantifierFloat"]
+    ],
+    "comment": "Printed under the heading 'Postpositions', the host bracketed as an NP inside a PP.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_8a",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "(8a)"},
+    "language": "nucl1643",
+    "primaryText": "Kinoo piza-o tabeta no-wa Mary-ga da",
+    "glossedTokens": [
+      ["Kinoo", "yesterday"], ["piza-o", "pizza-ACC"], ["tabeta", "ate"], ["no-wa", "NL-TOP"],
+      ["Mary-ga", "Mary-NOM"], ["da", "COP"]
+    ],
+    "translation": "It's Mary that ate pizza yesterday.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["particle", "caseMarker"],
+      ["form", "ga"],
+      ["test", "cleftWithParticle"]
+    ],
+    "comment": "The focus bracketed as an NP.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_8b",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "(8b)"},
+    "language": "nucl1643",
+    "primaryText": "Kinoo Mary-ga tabeta no-wa piza-o da",
+    "glossedTokens": [
+      ["Kinoo", "yesterday"], ["Mary-ga", "Mary-NOM"], ["tabeta", "ate"], ["no-wa", "NL-TOP"],
+      ["piza-o", "pizza-ACC"], ["da", "COP"]
+    ],
+    "translation": "It's pizza that Mary ate yesterday.",
+    "context": "",
+    "judgment": "questionable",
+    "paperFeatures": [
+      ["particle", "caseMarker"],
+      ["form", "o"],
+      ["test", "cleftWithParticle"]
+    ],
+    "comment": "The focus bracketed as an NP. Note 5: clefts with accusative o are slightly better than with nominative ga.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_9a",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "(9a)"},
+    "language": "nucl1643",
+    "primaryText": "John-ga tegami-o moratta no-wa Mary kara da",
+    "glossedTokens": [
+      ["John-ga", "John-NOM"], ["tegami-o", "letter-ACC"], ["moratta", "received"],
+      ["no-wa", "NL-TOP"], ["Mary", "Mary"], ["kara", "from"], ["da", "COP"]
+    ],
+    "translation": "It's from Mary that John received a letter.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["particle", "postposition"],
+      ["form", "kara"],
+      ["test", "cleftWithParticle"]
+    ],
+    "comment": "The focus bracketed as a PP.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_9b",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "(9b)"},
+    "language": "nucl1643",
+    "primaryText": "John-ga keeki-o kitta no-wa kono naihu de da",
+    "glossedTokens": [
+      ["John-ga", "John-NOM"], ["keeki-o", "cake-ACC"], ["kitta", "cut"], ["no-wa", "NL-TOP"],
+      ["kono", "this"], ["naihu", "knife"], ["de", "with"], ["da", "COP"]
+    ],
+    "translation": "It's with this knife that John cut the cake.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["particle", "postposition"],
+      ["form", "de"],
+      ["test", "cleftWithParticle"]
+    ],
+    "comment": "The focus bracketed as a PP.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_10a",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "(10a)"},
+    "language": "nucl1643",
+    "primaryText": "Kore-wa piza da",
+    "glossedTokens": [
+      ["Kore-wa", "this-TOP"], ["piza", "pizza"], ["da", "COP"]
+    ],
+    "translation": "This is pizza.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["focus", "NP"]
+    ],
+    "comment": "The complement of da bracketed as an NP.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_10b",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "(10b)"},
+    "language": "nucl1643",
+    "primaryText": "Kore-wa utukusii da",
+    "glossedTokens": [
+      ["Kore-wa", "this-TOP"], ["utukusii", "beautiful"], ["da", "COP"]
+    ],
+    "translation": "This is beautiful.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["focus", "AP"]
+    ],
+    "comment": "The complement of da bracketed as an AP; the paper sets it beside the acceptable Kore-wa utukusii, without da.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_10c",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "(10c)"},
+    "language": "nucl1643",
+    "primaryText": "Kore-wa Nihon kara da",
+    "glossedTokens": [
+      ["Kore-wa", "this-TOP"], ["Nihon", "Japan"], ["kara", "from"], ["da", "COP"]
+    ],
+    "translation": "This is from Japan.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["focus", "PP"]
+    ],
+    "comment": "The complement of da bracketed as a PP.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_11a",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "(11a)"},
+    "language": "nucl1643",
+    "primaryText": "Kinoo piza-o tabeta no-wa Mary da",
+    "glossedTokens": [
+      ["Kinoo", "yesterday"], ["piza-o", "pizza-ACC"], ["tabeta", "ate"], ["no-wa", "NL-TOP"],
+      ["Mary", "Mary"], ["da", "COP"]
+    ],
+    "translation": "It's Mary that ate pizza yesterday.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["particle", "caseMarker"],
+      ["form", "ga"],
+      ["test", "cleftWithoutParticle"]
+    ],
+    "comment": "(8a) without the focus's particle ga.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_11b",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "(11b)"},
+    "language": "nucl1643",
+    "primaryText": "Kinoo Mary-ga tabeta no-wa piza da",
+    "glossedTokens": [
+      ["Kinoo", "yesterday"], ["Mary-ga", "Mary-NOM"], ["tabeta", "ate"], ["no-wa", "NL-TOP"],
+      ["piza", "pizza"], ["da", "COP"]
+    ],
+    "translation": "It's pizza that Mary ate yesterday.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["particle", "caseMarker"],
+      ["form", "o"],
+      ["test", "cleftWithoutParticle"]
+    ],
+    "comment": "(8b) without the focus's particle o.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_12a",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "(12a)"},
+    "language": "nucl1643",
+    "primaryText": "John-ga tegami-o moratta no-wa Mary da",
+    "glossedTokens": [
+      ["John-ga", "John-NOM"], ["tegami-o", "letter-ACC"], ["moratta", "received"],
+      ["no-wa", "NL-TOP"], ["Mary", "Mary"], ["da", "COP"]
+    ],
+    "translation": "It's (from) Mary that John received a letter.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["particle", "postposition"],
+      ["form", "kara"],
+      ["test", "cleftWithoutParticle"],
+      ["alsoJudged", "questionable"]
+    ],
+    "comment": "(9a) without the focus's particle kara, printed */??. Note 7: acceptable in an appropriate context.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_12b",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "(12b)"},
+    "language": "nucl1643",
+    "primaryText": "John-ga keeki-o kitta no-wa kono naihu da",
+    "glossedTokens": [
+      ["John-ga", "John-NOM"], ["keeki-o", "cake-ACC"], ["kitta", "cut"], ["no-wa", "NL-TOP"],
+      ["kono", "this"], ["naihu", "knife"], ["da", "COP"]
+    ],
+    "translation": "It's (with) this knife that John cut the cake.",
+    "context": "",
+    "judgment": "marginal",
+    "paperFeatures": [
+      ["particle", "postposition"],
+      ["form", "de"],
+      ["test", "cleftWithoutParticle"],
+      ["alsoJudged", "acceptable"]
+    ],
+    "comment": "(9b) without the focus's particle de, printed ?/√; easier than (12a) because the instrumental ranks above the ablative on the accessibility hierarchy (13). Note 7: acceptable in an appropriate context.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_16a",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "(16a)"},
+    "language": "nucl1643",
+    "primaryText": "Emi-wa tomodati-ni 3-nin bara-no hanataba-o ageta.",
+    "glossedTokens": [
+      ["Emi-wa", "Emi-TOP"], ["tomodati-ni", "friend-NI"], ["3-nin", "3-CL"],
+      ["bara-no", "rose-GEN"], ["hanataba-o", "bouquet-ACC"], ["ageta", "gave"]
+    ],
+    "translation": "Emi gave a bouquet of roses to three of her friends.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["category", "A"],
+      ["particle", "caseMarker"],
+      ["form", "ni"],
+      ["test", "quantifierFloat"]
+    ],
+    "comment": "Note 9: acceptable in the innovating variety the paper describes, unacceptable in the conservative one.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_17a",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "(17a)"},
+    "language": "nucl1643",
+    "primaryText": "Emi-ga bara-no hanataba-o ageta no-wa Mika-ni da.",
+    "glossedTokens": [
+      ["Emi-ga", "Emi-NOM"], ["bara-no", "roses-GEN"], ["hanataba-o", "bouquet-ACC"],
+      ["ageta", "gave"], ["no-wa", "NL-TOP"], ["Mika-ni", "Mika-NI"], ["da", "COP"]
+    ],
+    "translation": "It's to Mika that Emi gave the bouquet of roses.",
+    "context": "",
+    "judgment": "questionable",
+    "paperFeatures": [
+      ["category", "A"],
+      ["particle", "caseMarker"],
+      ["form", "ni"],
+      ["test", "cleftWithParticle"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_17b",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "(17b)"},
+    "language": "nucl1643",
+    "primaryText": "Kanta-ga yuuenti-de notta no-wa uma-ni da.",
+    "glossedTokens": [
+      ["Kanta-ga", "Kanta-NOM"], ["yuuenti-de", "amusement.park-at"], ["notta", "rode"],
+      ["no-wa", "NL-TOP"], ["uma-ni", "horse-NI"], ["da", "COP"]
+    ],
+    "translation": "It's a horse that Kanta rode at the amusement park.",
+    "context": "",
+    "judgment": "questionable",
+    "paperFeatures": [
+      ["category", "O1"],
+      ["particle", "caseMarker"],
+      ["form", "ni"],
+      ["test", "cleftWithParticle"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_18a",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "(18a)"},
+    "language": "nucl1643",
+    "primaryText": "Emi-ga bara-no hanataba-o ageta no-wa Mika da.",
+    "glossedTokens": [
+      ["Emi-ga", "Emi-NOM"], ["bara-no", "roses-GEN"], ["hanataba-o", "bouquet-ACC"],
+      ["ageta", "gave"], ["no-wa", "NL-TOP"], ["Mika", "Mika"], ["da", "COP"]
+    ],
+    "translation": "It's to Mika that Emi gave the bouquet of roses.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["category", "A"],
+      ["particle", "caseMarker"],
+      ["form", "ni"],
+      ["test", "cleftWithoutParticle"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_18b",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "(18b)"},
+    "language": "nucl1643",
+    "primaryText": "Kanta-ga yuuenti-de notta no-wa uma da.",
+    "glossedTokens": [
+      ["Kanta-ga", "Kanta-NOM"], ["yuuenti-de", "amusement.park-at"], ["notta", "rode"],
+      ["no-wa", "NL-TOP"], ["uma", "horse"], ["da", "COP"]
+    ],
+    "translation": "It's a horse that Kanta rode at the amusement park.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["category", "O1"],
+      ["particle", "caseMarker"],
+      ["form", "ni"],
+      ["test", "cleftWithoutParticle"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_20a",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "(20a)"},
+    "language": "nucl1643",
+    "primaryText": "Mika-wa sensee-ni 3-nin inu-o home-rare-ta.",
+    "glossedTokens": [
+      ["Mika-wa", "Mika-TOP"], ["sensee-ni", "prof.-NI"], ["3-nin", "3-CL"], ["inu-o", "dog-ACC"],
+      ["home-rare-ta", "praise-PASS-PAST"]
+    ],
+    "translation": "Mika was affected by three teachers' complimenting her dog.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["category", "H3"],
+      ["particle", "postposition"],
+      ["form", "ni"],
+      ["test", "quantifierFloat"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_21a",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "(21a)"},
+    "language": "nucl1643",
+    "primaryText": "Mika-ga inu-o home-rare-ta no-wa Tanaka sensee-ni da.",
+    "glossedTokens": [
+      ["Mika-ga", "Mika-NOM"], ["inu-o", "dog-ACC"], ["home-rare-ta", "praise-PASS-PAST"],
+      ["no-wa", "NL-TOP"], ["Tanaka", "Tanaka"], ["sensee-ni", "prof.-NI"], ["da", "COP"]
+    ],
+    "translation": "It's by Prof. Tanaka that Mika was affected by his complimenting her dog.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["category", "H3"],
+      ["particle", "postposition"],
+      ["form", "ni"],
+      ["test", "cleftWithParticle"]
+    ],
+    "comment": "The translation coindexes Prof. Tanaka and his.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_21b",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "(21b)"},
+    "language": "nucl1643",
+    "primaryText": "Kanta-no ronbun-ga motozuiteiru no-wa GB riron-ni da.",
+    "glossedTokens": [
+      ["Kanta-no", "Kanta-GEN"], ["ronbun-ga", "paper-NOM"], ["motozuiteiru", "based.on"],
+      ["no-wa", "NL-TOP"], ["GB", "GB"], ["riron-ni", "theory-NI"], ["da", "COP"]
+    ],
+    "translation": "It's the GB theory that Kanta's paper is based on.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["category", "F"],
+      ["particle", "postposition"],
+      ["form", "ni"],
+      ["test", "cleftWithParticle"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_22a",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "(22a)"},
+    "language": "nucl1643",
+    "primaryText": "Mika-ga inu-o home-rare-ta no-wa Tanaka sensee da.",
+    "glossedTokens": [
+      ["Mika-ga", "Mika-NOM"], ["inu-o", "dog-ACC"], ["home-rare-ta", "praise-PASS-PAST"],
+      ["no-wa", "NL-TOP"], ["Tanaka", "Tanaka"], ["sensee", "prof."], ["da", "COP"]
+    ],
+    "translation": "It's Prof. Tanaka that Mika was affected by his complimenting her dog.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["category", "H3"],
+      ["particle", "postposition"],
+      ["form", "ni"],
+      ["test", "cleftWithoutParticle"]
+    ],
+    "comment": "The translation coindexes Prof. Tanaka and his.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_22b",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "(22b)"},
+    "language": "nucl1643",
+    "primaryText": "Kanta-no ronbun-ga motozuiteiru no-wa GB riron da.",
+    "glossedTokens": [
+      ["Kanta-no", "Kanta-GEN"], ["ronbun-ga", "paper-NOM"], ["motozuiteiru", "based.on"],
+      ["no-wa", "NL-TOP"], ["GB", "GB"], ["riron", "theory"], ["da", "COP"]
+    ],
+    "translation": "It's the GB theory that Kanta's paper is based on.",
+    "context": "",
+    "judgment": "marginal",
+    "paperFeatures": [
+      ["category", "F"],
+      ["particle", "postposition"],
+      ["form", "ni"],
+      ["test", "cleftWithoutParticle"],
+      ["alsoJudged", "acceptable"]
+    ],
+    "comment": "Printed ?/√. The gloss line prints paper-Top under ronbun-ga.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_24a",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "(24a)"},
+    "language": "nucl1643",
+    "primaryText": "Kanta-wa Narita kuukoo-de siriai-ni 3-nin atta.",
+    "glossedTokens": [
+      ["Kanta-wa", "Kanta-TOP"], ["Narita", "Narita"], ["kuukoo-de", "airport-at"],
+      ["siriai-ni", "acquaintance-NI"], ["3-nin", "3-CL"], ["atta", "met"]
+    ],
+    "translation": "Kanta met three acquaintances at Narita airport.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["category", "D"],
+      ["particle", "caseMarker"],
+      ["form", "ni"],
+      ["test", "quantifierFloat"]
+    ],
+    "comment": "The paper reads the ni here as the case marker the verb may select.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_24b",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "(24b)"},
+    "language": "nucl1643",
+    "primaryText": "Hokuto-wa sukina onnanoko-ni 2-ri hanataba-o okutta.",
+    "glossedTokens": [
+      ["Hokuto-wa", "Hokuto-TOP"], ["sukina", "favorite"], ["onnanoko-ni", "girl-NI"],
+      ["2-ri", "2-CL"], ["hanataba-o", "bouquet-ACC"], ["okutta", "sent"]
+    ],
+    "translation": "Hokuto sent a bouquet to two of his favorite young women.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["category", "N2"],
+      ["particle", "caseMarker"],
+      ["form", "ni"],
+      ["test", "quantifierFloat"],
+      ["reading", "affected"]
+    ],
+    "comment": "The paper reads the ni here as the case marker the verb may select; repeated as (38a), an affected goal.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_25a",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "(25a)"},
+    "language": "nucl1643",
+    "primaryText": "Kanta-ga Narita kuukoo-de atta no-wa Mika-ni da.",
+    "glossedTokens": [
+      ["Kanta-ga", "Kanta-NOM"], ["Narita", "Narita"], ["kuukoo-de", "airport-at"],
+      ["atta", "met"], ["no-wa", "NL-TOP"], ["Mika-ni", "Mika-NI"], ["da", "COP"]
+    ],
+    "translation": "It's Mika that Kanta met at Narita airport.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["category", "D"],
+      ["particle", "postposition"],
+      ["form", "ni"],
+      ["test", "cleftWithParticle"]
+    ],
+    "comment": "The paper reads the ni here as the postposition the verb may select.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_25b",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "(25b)"},
+    "language": "nucl1643",
+    "primaryText": "Hokuto-ga hanataba-o okutta no-wa Mika-ni da.",
+    "glossedTokens": [
+      ["Hokuto-ga", "Hokuto-NOM"], ["hanataba-o", "bouquet-ACC"], ["okutta", "sent"],
+      ["no-wa", "NL-TOP"], ["Mika-ni", "Mika-NI"], ["da", "COP"]
+    ],
+    "translation": "It's to Mika that Hokuto sent a bouquet.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["category", "N2"],
+      ["particle", "postposition"],
+      ["form", "ni"],
+      ["test", "cleftWithParticle"]
+    ],
+    "comment": "The paper reads the ni here as the postposition the verb may select.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_26a",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "(26a)"},
+    "language": "nucl1643",
+    "primaryText": "Kanta-ga Narita kuukoo-de atta no-wa Mika da.",
+    "glossedTokens": [
+      ["Kanta-ga", "Kanta-NOM"], ["Narita", "Narita"], ["kuukoo-de", "airport-at"],
+      ["atta", "met"], ["no-wa", "NL-TOP"], ["Mika", "Mika"], ["da", "COP"]
+    ],
+    "translation": "It's Mika that Kanta met at Narita airport.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["category", "D"],
+      ["particle", "caseMarker"],
+      ["form", "ni"],
+      ["test", "cleftWithoutParticle"]
+    ],
+    "comment": "The paper reads the omitted ni as the case marker the verb may select.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_26b",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "(26b)"},
+    "language": "nucl1643",
+    "primaryText": "Hokuto-ga hanataba-o okutta no-wa Mika da.",
+    "glossedTokens": [
+      ["Hokuto-ga", "Hokuto-NOM"], ["hanataba-o", "bouquet-ACC"], ["okutta", "sent"],
+      ["no-wa", "NL-TOP"], ["Mika", "Mika"], ["da", "COP"]
+    ],
+    "translation": "It's to Mika that Hokuto sent a bouquet.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["category", "N2"],
+      ["particle", "caseMarker"],
+      ["form", "ni"],
+      ["test", "cleftWithoutParticle"]
+    ],
+    "comment": "The paper reads the omitted ni as the case marker the verb may select. The gloss line prints Mika-NI under Mika.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_30a",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "(30a)"},
+    "language": "nucl1643",
+    "primaryText": "Kanta-wa seeto-ni 5-nin butai-no ue-de odor-ase-ta.",
+    "glossedTokens": [
+      ["Kanta-wa", "Kanta-TOP"], ["seeto-ni", "student-NI"], ["5-nin", "5-CL"],
+      ["butai-no", "stage-GEN"], ["ue-de", "top-on"], ["odor-ase-ta", "dance-CAUS-PAST"]
+    ],
+    "translation": "Kanta had five of his students dance on the stage.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["category", "J1"],
+      ["particle", "insertion"],
+      ["form", "ni"],
+      ["test", "quantifierFloat"]
+    ],
+    "comment": "The gloss line prints dance-Cause-Past.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_30b",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "(30b)"},
+    "language": "nucl1643",
+    "primaryText": "Kanta-ga butai-no ue-de odor-ase-ta no-wa Emi-ni da.",
+    "glossedTokens": [
+      ["Kanta-ga", "Kanta-NOM"], ["butai-no", "stage-GEN"], ["ue-de", "top-on"],
+      ["odor-ase-ta", "dance-CAUS-PAST"], ["no-wa", "NL-TOP"], ["Emi-ni", "Emi-NI"], ["da", "COP"]
+    ],
+    "translation": "It's Emi that Kanta had dance on the stage.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["category", "J1"],
+      ["particle", "insertion"],
+      ["form", "ni"],
+      ["test", "cleftWithParticle"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_30c",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "(30c)"},
+    "language": "nucl1643",
+    "primaryText": "Kanta-ga butai-no ue-de odor-ase-ta no-wa Emi da.",
+    "glossedTokens": [
+      ["Kanta-ga", "Kanta-NOM"], ["butai-no", "stage-GEN"], ["ue-de", "top-on"],
+      ["odor-ase-ta", "dance-CAUS-PAST"], ["no-wa", "NL-TOP"], ["Emi", "Emi"], ["da", "COP"]
+    ],
+    "translation": "It's Emi that Kanta had dance on the stage.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["category", "J1"],
+      ["particle", "insertion"],
+      ["form", "ni"],
+      ["test", "cleftWithoutParticle"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_34b",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "(34b)"},
+    "language": "nucl1643",
+    "primaryText": "Mika-ga heya-o katazuketa no-wa kiree-ni da.",
+    "glossedTokens": [
+      ["Mika-ga", "Mika-NOM"], ["heya-o", "room-ACC"], ["katazuketa", "cleaned.up"],
+      ["no-wa", "NL-TOP"], ["kiree-ni", "beautiful-NI"], ["da", "COP"]
+    ],
+    "translation": "It's beautifully that Mika cleaned up her room.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["category", "Q"],
+      ["particle", "copula"],
+      ["form", "ni"],
+      ["test", "cleftWithParticle"]
+    ],
+    "comment": "(34a) records that the numeral quantifier test does not apply.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_34c",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "(34c)"},
+    "language": "nucl1643",
+    "primaryText": "Mika-ga heya-o katazuketa no-wa kiree da.",
+    "glossedTokens": [
+      ["Mika-ga", "Mika-NOM"], ["heya-o", "room-ACC"], ["katazuketa", "cleaned.up"],
+      ["no-wa", "NL-TOP"], ["kiree", "beautiful"], ["da", "COP"]
+    ],
+    "translation": "It's beautifully that Mika cleaned up her room.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["category", "Q"],
+      ["particle", "copula"],
+      ["form", "ni"],
+      ["test", "cleftWithoutParticle"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_35a",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "(35a)"},
+    "language": "nucl1643",
+    "primaryText": "Emi-wa Mika-ni bara-no hanataba-o ageta.",
+    "glossedTokens": [
+      ["Emi-wa", "Emi-TOP"], ["Mika-ni", "Mika-NI"], ["bara-no", "rose-GEN"],
+      ["hanataba-o", "bouquet-ACC"], ["ageta", "gave"]
+    ],
+    "translation": "Emi gave Mika a bouquet of roses.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["category", "A"],
+      ["particle", "caseMarker"],
+      ["form", "ni"],
+      ["reading", "affected"]
+    ],
+    "comment": "The host bracketed as an NP; the paper: the bouquet reached Mika and she came to possess it. The gloss line indexes Mika.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_35b",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "(35b)"},
+    "language": "nucl1643",
+    "primaryText": "Kanta-wa yuuenti-de uma-ni notta.",
+    "glossedTokens": [
+      ["Kanta-wa", "Kanta-TOP"], ["yuuenti-de", "amusement.park-at"], ["uma-ni", "horse-NI"],
+      ["notta", "rode"]
+    ],
+    "translation": "Kanta rode a horse at the amusement park.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["category", "O1"],
+      ["particle", "caseMarker"],
+      ["form", "ni"],
+      ["reading", "affected"]
+    ],
+    "comment": "The host bracketed as an NP; the paper: the horse is physically affected.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_36a",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "(36a)"},
+    "language": "nucl1643",
+    "primaryText": "Mika-wa Tanaka sensee-ni inu-o home-rare-ta.",
+    "glossedTokens": [
+      ["Mika-wa", "Mika-TOP"], ["Tanaka", "Tanaka"], ["sensee-ni", "prof.-NI"],
+      ["inu-o", "dog-ACC"], ["home-rare-ta", "praise-PASS-PAST"]
+    ],
+    "translation": "Mika was affected by Prof. Tanaka's complimenting her dog.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["category", "H3"],
+      ["particle", "postposition"],
+      ["form", "ni"],
+      ["reading", "nonaffected"]
+    ],
+    "comment": "The ni phrase bracketed as a PP; the paper: its referent is not affected at all, if anything affecting.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_36b",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "(36b)"},
+    "language": "nucl1643",
+    "primaryText": "Kanta-no ronbun-wa GB riron-ni motozuiteiru.",
+    "glossedTokens": [
+      ["Kanta-no", "Kanta-GEN"], ["ronbun-wa", "paper-TOP"], ["GB", "GB"],
+      ["riron-ni", "theory-NI"], ["motozuiteiru", "based.on"]
+    ],
+    "translation": "Kanta's paper is based on the GB theory.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["category", "F"],
+      ["particle", "postposition"],
+      ["form", "ni"],
+      ["reading", "nonaffected"]
+    ],
+    "comment": "The ni phrase bracketed as a PP; the paper: the theory is in no sense affected.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_37a",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "(37a)"},
+    "language": "nucl1643",
+    "primaryText": "Hokuto-wa Mika-ni hanataba-o okutta.",
+    "glossedTokens": [
+      ["Hokuto-wa", "Hokuto-TOP"], ["Mika-ni", "Mika-NI"], ["hanataba-o", "bouquet-ACC"],
+      ["okutta", "sent"]
+    ],
+    "translation": "Hokuto sent a bouquet to Mika.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["category", "N2"],
+      ["particle", "caseMarker"],
+      ["particle", "postposition"],
+      ["form", "ni"],
+      ["reading", "affected"],
+      ["reading", "nonaffected"]
+    ],
+    "comment": "Ambiguous: an affected goal meant to come to possess the bouquet, or a mere goal.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_37b",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "(37b)"},
+    "language": "nucl1643",
+    "primaryText": "Kanta-wa Narita kuukoo-de Mika-ni atta.",
+    "glossedTokens": [
+      ["Kanta-wa", "Kanta-TOP"], ["Narita", "Narita"], ["kuukoo-de", "airport-at"],
+      ["Mika-ni", "Mika-NI"], ["atta", "met"]
+    ],
+    "translation": "Kanta met Mika at Narita airport.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["category", "D"],
+      ["particle", "caseMarker"],
+      ["particle", "postposition"],
+      ["form", "ni"],
+      ["reading", "affected"],
+      ["reading", "nonaffected"]
+    ],
+    "comment": "Ambiguous: Mika may or may not be psychologically affected by meeting Kanta.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_38b",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "(38b)"},
+    "language": "nucl1643",
+    "primaryText": "Hokuto-wa gaikoku-ni 2-tu hanataba-o okutta.",
+    "glossedTokens": [
+      ["Hokuto-wa", "Hokuto-TOP"], ["gaikoku-ni", "foreign.country-NI"], ["2-tu", "2-CL"],
+      ["hanataba-o", "bouquet-ACC"], ["okutta", "sent"]
+    ],
+    "translation": "Hokuto sent a bouquet to two foreign countries.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["particle", "postposition"],
+      ["form", "ni"],
+      ["test", "quantifierFloat"],
+      ["reading", "nonaffected"]
+    ],
+    "comment": "A nonaffected goal: with a referent that cannot possess things, the ni of (37a) is unambiguously a postposition. (38a) repeats (24b).",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_app1",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "Appendix (1)"},
+    "language": "nucl1643",
+    "primaryText": "Emi-wa Mika-ni bara-no hanataba-o age-ta.",
+    "glossedTokens": [
+      ["Emi-wa", "Emi-TOP"], ["Mika-ni", "Mika-NI"], ["bara-no", "rose-of"],
+      ["hanataba-o", "bouquet-ACC"], ["age-ta", "give-PAST"]
+    ],
+    "translation": "Emi gave a bouquet of roses to Mika.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["category", "A"],
+      ["particle", "caseMarker"],
+      ["form", "ni"]
+    ],
+    "comment": "Goal indirect object. The appendix leaves proper names unglossed.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_app2",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "Appendix (2)"},
+    "language": "nucl1643",
+    "primaryText": "Emi-wa oi-ni omotya-o kaw-ta.",
+    "glossedTokens": [
+      ["Emi-wa", "Emi-TOP"], ["oi-ni", "nephew-NI"], ["omotya-o", "toys-ACC"],
+      ["kaw-ta", "buy-PAST"]
+    ],
+    "translation": "Emi bought some toys for her nephew.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["category", "B"],
+      ["particle", "postposition"],
+      ["form", "ni"]
+    ],
+    "comment": "Benefactive. The appendix leaves proper names unglossed.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_app3",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "Appendix (3)"},
+    "language": "nucl1643",
+    "primaryText": "Sono kusuri-wa zutuu-ni ii.",
+    "glossedTokens": [
+      ["Sono", "the"], ["kusuri-wa", "medicine-TOP"], ["zutuu-ni", "headache-NI"], ["ii", "good"]
+    ],
+    "translation": "The medicine is good for headache.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["category", "C1"],
+      ["particle", "postposition"],
+      ["form", "ni"]
+    ],
+    "comment": "Dative of confrontation with an adjectival predicate.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_app4",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "Appendix (4)"},
+    "language": "nucl1643",
+    "primaryText": "Mika-wa kodomo-ni sinsetu da.",
+    "glossedTokens": [
+      ["Mika-wa", "Mika-TOP"], ["kodomo-ni", "child-NI"], ["sinsetu", "kind"], ["da", "be"]
+    ],
+    "translation": "Mika is kind to children.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["category", "C2"],
+      ["particle", "postposition"],
+      ["form", "ni"]
+    ],
+    "comment": "Dative of confrontation with an adjectival nominal predicate. The appendix leaves proper names unglossed.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_app5",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "Appendix (5)"},
+    "language": "nucl1643",
+    "primaryText": "Koko-no onsen-wa ryuumati-ni kiku.",
+    "glossedTokens": [
+      ["Koko-no", "here-GEN"], ["onsen-wa", "hot.spring-TOP"], ["ryuumati-ni", "rheumatism-NI"],
+      ["kiku", "good"]
+    ],
+    "translation": "The hot spring here is good for rheumatism.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["category", "C3"],
+      ["particle", "postposition"],
+      ["form", "ni"]
+    ],
+    "comment": "Dative of confrontation with a verbal predicate.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_app6",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "Appendix (6)"},
+    "language": "nucl1643",
+    "primaryText": "Kanta-wa Narita kuukoo-de Mika-ni aw-ta.",
+    "glossedTokens": [
+      ["Kanta-wa", "Kanta-TOP"], ["Narita", "Narita"], ["kuukoo-de", "airport-at"],
+      ["Mika-ni", "Mika-NI"], ["aw-ta", "meet-PAST"]
+    ],
+    "translation": "Kanta met Mika at the Narita airport.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["category", "D"],
+      ["particle", "caseMarker"],
+      ["particle", "postposition"],
+      ["form", "ni"]
+    ],
+    "comment": "Pseudo-reciprocal use of dative confrontation. The appendix leaves proper names unglossed.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_app7",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "Appendix (7)"},
+    "language": "nucl1643",
+    "primaryText": "Sono kaisya-wa hitodebusoku-ni kometteiru.",
+    "glossedTokens": [
+      ["Sono", "the"], ["kaisya-wa", "company-TOP"], ["hitodebusoku-ni", "short.of.hands-NI"],
+      ["kometteiru", "distressed"]
+    ],
+    "translation": "The company is distressed by a shortage of hands.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["category", "E"],
+      ["particle", "postposition"],
+      ["form", "ni"]
+    ],
+    "comment": "Objective stimulus.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_app8",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "Appendix (8)"},
+    "language": "nucl1643",
+    "primaryText": "Kanta-no ronbun-wa GB riron-ni motozuiteiru.",
+    "glossedTokens": [
+      ["Kanta-no", "Kanta-GEN"], ["ronbun-wa", "paper-TOP"], ["GB", "GB"],
+      ["riron-ni", "theory-NI"], ["motozuiteiru", "based.on"]
+    ],
+    "translation": "Kanta's paper is based on GB theory.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["category", "F"],
+      ["particle", "postposition"],
+      ["form", "ni"]
+    ],
+    "comment": "(Dependent etc.) 'on'. The appendix leaves proper names unglossed.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_app9",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "Appendix (9)"},
+    "language": "nucl1643",
+    "primaryText": "Hokuto-wa ryoori-no sikata-o hahaoya-ni naraw-ta.",
+    "glossedTokens": [
+      ["Hokuto-wa", "Hokuto-TOP"], ["ryoori-no", "cooking-GEN"], ["sikata-o", "way-ACC"],
+      ["hahaoya-ni", "mother-NI"], ["naraw-ta", "learn-PAST"]
+    ],
+    "translation": "Hokuto learned how to cook from his mother.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["category", "G"],
+      ["particle", "postposition"],
+      ["form", "ni"]
+    ],
+    "comment": "'From/by' agent. The appendix leaves proper names unglossed.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_app10",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "Appendix (10)"},
+    "language": "nucl1643",
+    "primaryText": "Hokuto-wa Yamada-sensee-ni sikar-are-ta.",
+    "glossedTokens": [
+      ["Hokuto-wa", "Hokuto-TOP"], ["Yamada-sensee-ni", "Yamada-teacher-NI"],
+      ["sikar-are-ta", "scold-PASS-PAST"]
+    ],
+    "translation": "Hokuto was scolded by Mr. Yamada.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["category", "H1"],
+      ["particle", "postposition"],
+      ["form", "ni"]
+    ],
+    "comment": "The underlying agent in a direct passive conversion. The appendix leaves proper names unglossed.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_app11",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "Appendix (11)"},
+    "language": "nucl1643",
+    "primaryText": "Emi-wa gakkoo-no kaeri ame-ni hur-are-ta.",
+    "glossedTokens": [
+      ["Emi-wa", "Emi-TOP"], ["gakkoo-no", "school-GEN"], ["kaeri", "on.the.way.back"],
+      ["ame-ni", "rain-NI"], ["hur-are-ta", "rain-PASS-PAST"]
+    ],
+    "translation": "Emi was adversely affected by the rain on the way home from school.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["category", "H2"],
+      ["particle", "postposition"],
+      ["form", "ni"]
+    ],
+    "comment": "The underlying agent in indirect passive conversion with an intransitive verb. The appendix leaves proper names unglossed.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_app12",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "Appendix (12)"},
+    "language": "nucl1643",
+    "primaryText": "Mika-wa Tanaka-sensee-ni musuko-o home-rare-ta.",
+    "glossedTokens": [
+      ["Mika-wa", "Mika-TOP"], ["Tanaka-sensee-ni", "Tanaka-teacher-NI"], ["musuko-o", "son-ACC"],
+      ["home-rare-ta", "compliment-PASS-PAST"]
+    ],
+    "translation": "Mika was affected by Ms. Tanaka's compliment to her son.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["category", "H3"],
+      ["particle", "postposition"],
+      ["form", "ni"]
+    ],
+    "comment": "The underlying agent in an indirect passive conversion with a transitive verb. The appendix leaves proper names unglossed.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_app13",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "Appendix (13)"},
+    "language": "nucl1643",
+    "primaryText": "Kanta-wa Tanaka-sensee-ni tuisi-o uke-sase-rare-ta.",
+    "glossedTokens": [
+      ["Kanta-wa", "Kanta-TOP"], ["Tanaka-sensee-ni", "Tanaka-teacher-NI"],
+      ["tuisi-o", "make.up.test-ACC"], ["uke-sase-rare-ta", "take-CAUS-PASS-PAST"]
+    ],
+    "translation": "Kanta was made to take a make-up test by Mr. Tanaka.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["category", "I"],
+      ["particle", "postposition"],
+      ["form", "ni"]
+    ],
+    "comment": "The instigator of a passivized causative. The text prints Tanka -sensee-ni and the gloss make-up test-Acc and take-Cause-Pass-Past. The appendix leaves proper names unglossed.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_app14",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "Appendix (14)"},
+    "language": "nucl1643",
+    "primaryText": "Kanta-wa Emi-ni butai-no ue-de odor-ase-ta.",
+    "glossedTokens": [
+      ["Kanta-wa", "Kanta-TOP"], ["Emi-ni", "Emi-NI"], ["butai-no", "stage-GEN"],
+      ["ue-de", "top-on"], ["odor-ase-ta", "dance-CAUS-PAST"]
+    ],
+    "translation": "Kanta had Emi dance on the stage.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["category", "J1"],
+      ["particle", "insertion"],
+      ["form", "ni"]
+    ],
+    "comment": "The underlying agent of a causativized conversion with an intransitive verb. The appendix leaves proper names unglossed.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_app15",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "Appendix (15)"},
+    "language": "nucl1643",
+    "primaryText": "Tanaka-sensee-wa seeto-ni heya-o soozis-ase-ta.",
+    "glossedTokens": [
+      ["Tanaka-sensee-wa", "Tanaka-teacher-TOP"], ["seeto-ni", "students-NI"],
+      ["heya-o", "room-ACC"], ["soozis-ase-ta", "clean-CAUS-PAST"]
+    ],
+    "translation": "Mr. Tanaka had students clean the room.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["category", "J2"],
+      ["particle", "insertion"],
+      ["form", "ni"]
+    ],
+    "comment": "The underlying agent of a causativized conversion with a transitive verb. The appendix leaves proper names unglossed.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_app16",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "Appendix (16)"},
+    "language": "nucl1643",
+    "primaryText": "Emi-wa Ohaio Ginkoo-ni 3-nen-kan tutome-ta.",
+    "glossedTokens": [
+      ["Emi-wa", "Emi-TOP"], ["Ohaio", "Ohio"], ["Ginkoo-ni", "Bank-NI"],
+      ["3-nen-kan", "3-year-for"], ["tutome-ta", "work-PAST"]
+    ],
+    "translation": "Emi worked for Ohio Bank for 3 years.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["category", "K"],
+      ["particle", "postposition"],
+      ["form", "ni"]
+    ],
+    "comment": "Pseudo-agent 'by/at'. The appendix leaves proper names unglossed.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_app17",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "Appendix (17)"},
+    "language": "nucl1643",
+    "primaryText": "Mitukosi-ni koosyuudenwa-ga aru.",
+    "glossedTokens": [
+      ["Mitukosi-ni", "Mitsukoshi-NI"], ["koosyuudenwa-ga", "pay.phone-NOM"], ["aru", "exist"]
+    ],
+    "translation": "There are many pay phones at Mitsukoshi.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["category", "L1"],
+      ["particle", "postposition"],
+      ["form", "ni"]
+    ],
+    "comment": "Indirect subject, possessor. The appendix leaves proper names unglossed.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_app18",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "Appendix (18)"},
+    "language": "nucl1643",
+    "primaryText": "Emi-ni sono muzukasii mondai-ga tokeru.",
+    "glossedTokens": [
+      ["Emi-ni", "Emi-NI"], ["sono", "the"], ["muzukasii", "difficult"],
+      ["mondai-ga", "problems-NOM"], ["tokeru", "can.solve"]
+    ],
+    "translation": "Emi can solve the difficult problems.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["category", "L2"],
+      ["particle", "insertion"],
+      ["form", "ni"]
+    ],
+    "comment": "Indirect subject, quasi-possessor. The appendix leaves proper names unglossed.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_app19",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "Appendix (19)"},
+    "language": "nucl1643",
+    "primaryText": "Kaigi-wa san-zi-ni hazimaru.",
+    "glossedTokens": [
+      ["Kaigi-wa", "meeting-TOP"], ["san-zi-ni", "three-o'clock-NI"], ["hazimaru", "start"]
+    ],
+    "translation": "The meeting will start at 3 o'clock.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["category", "M"],
+      ["particle", "postposition"],
+      ["form", "ni"]
+    ],
+    "comment": "Specific time. The gloss line prints 3 o'clock-NI. Note 10: the numeral quantifier test does not apply to M, R and T, which are not referential.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_app20",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "Appendix (20)"},
+    "language": "nucl1643",
+    "primaryText": "Hokuto-wa kinoo zinzya-ni ik-ta.",
+    "glossedTokens": [
+      ["Hokuto-wa", "Hokuto-TOP"], ["kinoo", "yesterday"], ["zinzya-ni", "shrine-NI"],
+      ["ik-ta", "go-PAST"]
+    ],
+    "translation": "Hokuto went to a shrine yesterday.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["category", "N1"],
+      ["particle", "caseMarker"],
+      ["particle", "postposition"],
+      ["form", "ni"]
+    ],
+    "comment": "Dative of direction with an intransitive verb. The appendix leaves proper names unglossed.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_app21",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "Appendix (21)"},
+    "language": "nucl1643",
+    "primaryText": "Kanta-wa Mika-ni hon-o watasi-ta.",
+    "glossedTokens": [
+      ["Kanta-wa", "Kanta-TOP"], ["Mika-ni", "Mika-NI"], ["hon-o", "book-ACC"],
+      ["watasi-ta", "pass-PAST"]
+    ],
+    "translation": "Kanta passed a book to Mika.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["category", "N2"],
+      ["particle", "caseMarker"],
+      ["particle", "postposition"],
+      ["form", "ni"]
+    ],
+    "comment": "Dative of direction with a transitive verb. The appendix leaves proper names unglossed.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_app22",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "Appendix (22)"},
+    "language": "nucl1643",
+    "primaryText": "Kanta-wa yuuenti-de uma-ni nor-ta.",
+    "glossedTokens": [
+      ["Kanta-wa", "Kanta-TOP"], ["yuuenti-de", "amusement.park-at"], ["uma-ni", "horse-NI"],
+      ["nor-ta", "ride-PAST"]
+    ],
+    "translation": "Kanta rode a horse at the amusement park.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["category", "O1"],
+      ["particle", "caseMarker"],
+      ["form", "ni"]
+    ],
+    "comment": "Change of position with an intransitive verb. The appendix leaves proper names unglossed.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_app23",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "Appendix (23)"},
+    "language": "nucl1643",
+    "primaryText": "Emi-wa aoi osara-ni osusi-o narabe-ta.",
+    "glossedTokens": [
+      ["Emi-wa", "Emi-TOP"], ["aoi", "blue"], ["osara-ni", "plate-NI"], ["osusi-o", "sushi-ACC"],
+      ["narabe-ta", "arrange-PAST"]
+    ],
+    "translation": "Emi arranged some sushi on blue plates.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["category", "O2"],
+      ["particle", "postposition"],
+      ["form", "ni"]
+    ],
+    "comment": "Change of position with a transitive verb. The appendix leaves proper names unglossed.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_app24",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "Appendix (24)"},
+    "language": "nucl1643",
+    "primaryText": "Nihon-no syusyoo-wa Kaihu-san-kara Miyazawa-san-ni kawar-ta.",
+    "glossedTokens": [
+      ["Nihon-no", "Japan-GEN"], ["syusyoo-wa", "Prime.Minister-TOP"],
+      ["Kaihu-san-kara", "Kaifu-Mr.-from"], ["Miyazawa-san-ni", "Miyazawa-Mr.-NI"],
+      ["kawar-ta", "change-PAST"]
+    ],
+    "translation": "The Japanese Prime Minister has changed from Mr. Kaifu to Mr. Miyazawa.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["category", "P1"],
+      ["particle", "copula"],
+      ["form", "ni"]
+    ],
+    "comment": "Change of state with an intransitive verb. The appendix leaves proper names unglossed.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_app25",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "Appendix (25)"},
+    "language": "nucl1643",
+    "primaryText": "Hokuto-wa inugoya-o kiti-ni kae-ta.",
+    "glossedTokens": [
+      ["Hokuto-wa", "Hokuto-TOP"], ["inugoya-o", "dog.house-ACC"], ["kiti-ni", "fort-NI"],
+      ["kae-ta", "change-PAST"]
+    ],
+    "translation": "Hokuto has changed a dog house into a fort.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["category", "P2"],
+      ["particle", "copula"],
+      ["form", "ni"]
+    ],
+    "comment": "Change of state with a transitive verb. The appendix leaves proper names unglossed.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_app26",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "Appendix (26)"},
+    "language": "nucl1643",
+    "primaryText": "Mika-wa heya-o kiree-ni katazuke-ta.",
+    "glossedTokens": [
+      ["Mika-wa", "Mika-TOP"], ["heya-o", "room-ACC"], ["kiree-ni", "beautiful-NI"],
+      ["katazuke-ta", "cleaned.up-PAST"]
+    ],
+    "translation": "Mika cleaned up her room beautifully.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["category", "Q"],
+      ["particle", "copula"],
+      ["form", "ni"]
+    ],
+    "comment": "Evaluation. The appendix leaves proper names unglossed.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_app27",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "Appendix (27)"},
+    "language": "nucl1643",
+    "primaryText": "Kanta-wa Mika-no tokoro-e soodan-ni ik-ta.",
+    "glossedTokens": [
+      ["Kanta-wa", "Kanta-TOP"], ["Mika-no", "Mika-GEN"], ["tokoro-e", "place-to"],
+      ["soodan-ni", "consult-NI"], ["ik-ta", "go-PAST"]
+    ],
+    "translation": "Kanta went to Mika to consult with her.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["category", "R"],
+      ["particle", "postposition"],
+      ["form", "ni"]
+    ],
+    "comment": "Purpose. The appendix leaves proper names unglossed.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_app28",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "Appendix (28)"},
+    "language": "nucl1643",
+    "primaryText": "Kanta-wa cyuugokuzin-ni mieru.",
+    "glossedTokens": [
+      ["Kanta-wa", "Kanta-TOP"], ["cyuugokuzin-ni", "Chinese-NI"], ["mieru", "look"]
+    ],
+    "translation": "Kanta looks like a Chinese.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["category", "S"],
+      ["particle", "copula"],
+      ["form", "ni"]
+    ],
+    "comment": "Appearing to be. The appendix leaves proper names unglossed.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_app29",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "Appendix (29)"},
+    "language": "nucl1643",
+    "primaryText": "Asa tuyu-ga giniro-ni hikatteiru.",
+    "glossedTokens": [
+      ["Asa", "morning"], ["tuyu-ga", "dew-NOM"], ["giniro-ni", "silver-NI"],
+      ["hikatteiru", "shining"]
+    ],
+    "translation": "The morning dew is shining like silver.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["category", "T"],
+      ["particle", "postposition"],
+      ["form", "ni"]
+    ],
+    "comment": "Manner.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_app30",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "Appendix (30)"},
+    "language": "nucl1643",
+    "primaryText": "Kaidan-wa otosiyori-ni huben da.",
+    "glossedTokens": [
+      ["Kaidan-wa", "stairs-TOP"], ["otosiyori-ni", "elderly.people-NI"],
+      ["huben", "inconvenient"], ["da", "COP"]
+    ],
+    "translation": "Stairs are inconvenient for elderly people.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["category", "U"],
+      ["particle", "postposition"],
+      ["form", "ni"]
+    ],
+    "comment": "Reference.",
+    "verified": "page-image"
+  },
+  {
+    "id": "sadakanekoizumi1995_app31",
+    "source": {"bibkey": "sadakane-koizumi-1995", "paperLabel": "Appendix (31)"},
+    "language": "nucl1643",
+    "primaryText": "Kawashima-san-wa seezika-o yuuzin-ni motteiru.",
+    "glossedTokens": [
+      ["Kawashima-san-wa", "Kawashima-Ms.-TOP"], ["seezika-o", "politician-ACC"],
+      ["yuuzin-ni", "friend-NI"], ["motteiru", "have"]
+    ],
+    "translation": "Ms. Kawashima has a politician as her friend.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["category", "V"],
+      ["particle", "copula"],
+      ["form", "ni"]
+    ],
+    "comment": "Correlational mutative. The appendix leaves proper names unglossed.",
+    "verified": "page-image"
+  }
+]
