@@ -65,7 +65,6 @@ comparisons (3)–(6), which the paper doubts speakers find inconsistent.
 namespace HollidayIcard2013
 
 open ComparativeProbability MeasureTheory ProbabilityTheory
-open scoped ComparativeProbability.QualitativeProbability
 
 variable {W : Type*}
 
@@ -195,10 +194,9 @@ theorem qualAddMeasures_refute_I_patterns :
 
 /-- Every FA order on a finite set of worlds is represented by a qualitatively additive measure
 (Theorem 6, after van der Hoek). -/
-theorem fa_qualAdd_complete [Fintype W] (sys : QualitativeProbability (Set W)) :
-    ∃ m : QualAddMeasure ℚ W, ∀ A B, A ≿[sys] B ↔ m.inducedGe A B :=
-  let ⟨m, hm⟩ := exists_qualAddMeasure_repr sys
-  ⟨m, fun A B ↦ hm B A⟩
+theorem fa_qualAdd_complete [Fintype W] (r : Set W → Set W → Prop) [IsQualitativeProbability r] :
+    ∃ m : QualAddMeasure ℚ W, ∀ A B, r A B ↔ m.inducedGe A B :=
+  exists_qualAddMeasure_repr r
 
 end Measures
 
@@ -345,10 +343,11 @@ theorem mLift_not_total :
 /-- Every FA order on `Fin n` is representable by a probability measure iff `n < 5`
 (Theorem 8, after Kraft, Pratt and Seidenberg). -/
 theorem fa_representable_iff_card_lt_five (n : ℕ) :
-    (∀ sys : QualitativeProbability (Set (Fin n)), Representable sys) ↔ n < 5 :=
+    (∀ r : Set (Fin n) → Set (Fin n) → Prop, IsQualitativeProbability r → Representable r) ↔
+      n < 5 :=
   ⟨fun h ↦ by_contra fun hge ↦
-      let ⟨sys, hsys⟩ := exists_nonrepresentable_fin (n := n) (by omega); hsys (h sys),
-    fun h sys ↦ representable_of_card_lt_five sys (by simpa using h)⟩
+      let ⟨r, hr, hnr⟩ := exists_nonrepresentable_fin (n := n) (by omega); hnr (h r hr),
+    fun h r _ ↦ representable_of_card_lt_five r (by simpa using h)⟩
 
 /-- No finite measure satisfies the World Cup comparisons (3)–(6), with Argentina, Brazil,
 China, Denmark and England as the worlds `0`–`4`: Argentina-or-England more likely than

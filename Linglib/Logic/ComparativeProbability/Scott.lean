@@ -108,19 +108,13 @@ def Cancellation (ge : Set W → Set W → Prop) : Prop :=
     comparisonSum M = 0 → ∀ v ∈ M, ge (negSupport v) (posSupport v)
 
 /-- Cancellation pulls back along an equivalence of carriers. -/
-theorem Cancellation.transport {α : Type*} (e : W ≃ α) {sys : QualitativeProbability (Set W)}
-    (h : Cancellation sys.ge) : Cancellation (sys.transport e).ge := by
+theorem Cancellation.transport {α : Type*} (e : W ≃ α) {r : Set W → Set W → Prop}
+    (h : Cancellation r) : Cancellation (Set.preimage e ⁻¹'o r) := by
   intro M hvalid hsum v hv
-  have himg : ∀ S : Set α, e.symm '' S = e ⁻¹' S := fun S ↦ by
-    rw [Equiv.image_eq_preimage_symm, Equiv.symm_symm]
-  have key := h (M.map (· ∘ e)) ?_ ?_ (v ∘ e) (Multiset.mem_map_of_mem _ hv)
-  · show sys.le (e.symm '' posSupport v) (e.symm '' negSupport v)
-    rwa [himg, himg]
+  refine h (M.map (· ∘ e)) ?_ ?_ (v ∘ e) (Multiset.mem_map_of_mem _ hv)
   · intro w hw
     obtain ⟨u, hu, rfl⟩ := Multiset.mem_map.mp hw
-    have := hvalid u hu
-    change sys.le (e.symm '' negSupport u) (e.symm '' posSupport u) at this
-    rwa [himg, himg] at this
+    exact hvalid u hu
   · funext w
     simpa [comparisonSum, Multiset.map_map, Function.comp_def] using congrFun hsum (e w)
 
@@ -193,23 +187,23 @@ private theorem negSupport_normalize (p : Set W × Set W) :
   simp only [mem_negSupport, normalize, sign_eq_neg_one_iff, Set.mem_sdiff]
   split_ifs <;> simp_all
 
-/-- For a qualitative probability order the sign-vector form implies the balanced-sequence
-    form, by normalizing every comparison with additivity. -/
-theorem Cancellation.finiteCancellation (sys : QualitativeProbability (Set W))
-    (h : Cancellation sys.ge) : FiniteCancellation sys.ge := by
+/-- For a qualitative probability the sign-vector form implies the balanced-sequence form, by
+    normalizing every comparison with additivity. -/
+theorem Cancellation.finiteCancellation (r : Set W → Set W → Prop) [IsQualitativeProbability r]
+    (h : Cancellation r) : FiniteCancellation r := by
   intro prem X Y hbal hprem
   by_contra hYX
-  have hXY : sys.le Y X := (sys.total X Y).resolve_left hYX
+  have hXY : r X Y := (total_of r Y X).resolve_left hYX
   have key := h (((X, Y) :: prem).map normalize : List (W → SignType)) ?_ ?_ (normalize (X, Y))
     (Multiset.mem_coe.2 (List.mem_cons_self ..))
   · rw [negSupport_normalize, posSupport_normalize] at key
-    exact hYX ((sys.additive X Y).mpr key)
+    exact hYX ((qadd (r := r) Y X).mpr key)
   · intro v hv
     obtain ⟨p, hp, rfl⟩ := List.mem_map.mp (Multiset.mem_coe.1 hv)
-    rw [QualitativeProbability.ge, negSupport_normalize, posSupport_normalize]
+    rw [posSupport_normalize, negSupport_normalize]
     rcases List.mem_cons.mp hp with rfl | hp
-    · exact (sys.additive Y X).mp hXY
-    · exact (sys.additive p.2 p.1).mp (hprem p hp)
+    · exact (qadd (r := r) X Y).mp hXY
+    · exact (qadd (r := r) p.1 p.2).mp (hprem p hp)
   · funext i
     have key := seqCount_sub_seqCount ((X, Y) :: prem) i
     simp only [List.map_cons, hbal i, sub_self, List.sum_cons] at key
@@ -217,10 +211,10 @@ theorem Cancellation.finiteCancellation (sys : QualitativeProbability (Set W))
       Pi.zero_apply, List.sum_cons]
     omega
 
-/-- The two forms of Scott's condition agree on a qualitative probability order. -/
-theorem cancellation_iff_finiteCancellation (sys : QualitativeProbability (Set W)) :
-    Cancellation sys.ge ↔ FiniteCancellation sys.ge :=
-  ⟨Cancellation.finiteCancellation sys, FiniteCancellation.cancellation⟩
+/-- The two forms of Scott's condition agree on a qualitative probability. -/
+theorem cancellation_iff_finiteCancellation (r : Set W → Set W → Prop)
+    [IsQualitativeProbability r] : Cancellation r ↔ FiniteCancellation r :=
+  ⟨Cancellation.finiteCancellation r, FiniteCancellation.cancellation⟩
 
 end Bridge
 
@@ -280,22 +274,22 @@ section Farkas
 open scoped Classical Matrix
 open MeasureTheory
 
-variable {n : ℕ} (sys : QualitativeProbability (Set (Fin n)))
+variable {n : ℕ} (r : Set (Fin n) → Set (Fin n) → Prop)
 
-/-- `coeffs sys` has a row for each comparison `v`, `-v` if `v` holds in `sys` and `0`
+/-- `coeffs r` has a row for each comparison `v`, `-v` if `v` holds in `r` and `0`
     otherwise. -/
 private noncomputable def coeffs : Matrix (Fin n → SignType) (Fin n) ℚ :=
-  Matrix.of fun v j ↦ if sys.ge (posSupport v) (negSupport v) then -(v j : ℚ) else 0
+  Matrix.of fun v j ↦ if r (posSupport v) (negSupport v) then -(v j : ℚ) else 0
 
-/-- `bound sys v` is `-1` when `v` holds strictly in `sys` and `0` otherwise, so that
-    `coeffs sys *ᵥ x ≤ bound sys` asks `v ⬝ᵥ x ≥ 1` of each strict comparison and `v ⬝ᵥ x ≥ 0`
+/-- `bound r v` is `-1` when `v` holds strictly in `r` and `0` otherwise, so that
+    `coeffs r *ᵥ x ≤ bound r` asks `v ⬝ᵥ x ≥ 1` of each strict comparison and `v ⬝ᵥ x ≥ 0`
     of each other valid one. -/
 private noncomputable def bound (v : Fin n → SignType) : ℚ :=
-  if sys.ge (posSupport v) (negSupport v) ∧ ¬sys.ge (negSupport v) (posSupport v) then -1 else 0
+  if r (posSupport v) (negSupport v) ∧ ¬r (negSupport v) (posSupport v) then -1 else 0
 
-private theorem le_sum_of_mulVec_le {x : Fin n → ℚ} (hx : coeffs sys *ᵥ x ≤ bound sys)
-    {v : Fin n → SignType} (hv : sys.ge (posSupport v) (negSupport v)) :
-    (if sys.ge (negSupport v) (posSupport v) then 0 else 1) ≤ ∑ j, (v j : ℚ) * x j := by
+private theorem le_sum_of_mulVec_le {x : Fin n → ℚ} (hx : coeffs r *ᵥ x ≤ bound r)
+    {v : Fin n → SignType} (hv : r (posSupport v) (negSupport v)) :
+    (if r (negSupport v) (posSupport v) then 0 else 1) ≤ ∑ j, (v j : ℚ) * x j := by
   have h := hx v
   simp only [coeffs, bound, Matrix.mulVec, dotProduct, Matrix.of_apply, hv, ite_true, true_and,
     neg_mul, Finset.sum_neg_distrib] at h
@@ -326,23 +320,21 @@ private theorem sum_ofSets_mul {A B : Set (Fin n)} (h : Disjoint A B) (x : Fin n
   all_goals simp [ofSets, hA, hB]
 
 /-- A solution of the system, normalized, is a representing measure. -/
-private theorem representable_of_feasible {x : Fin n → ℚ} (hx : coeffs sys *ᵥ x ≤ bound sys) :
-    Representable sys := by
-  have hsets : ∀ A B : Set (Fin n), Disjoint A B → sys.le B A →
-      (if sys.le A B then 0 else 1) ≤
+private theorem representable_of_feasible [IsQualitativeProbability r] {x : Fin n → ℚ}
+    (hx : coeffs r *ᵥ x ≤ bound r) : Representable r := by
+  have hsets : ∀ A B : Set (Fin n), Disjoint A B → r A B →
+      (if r B A then 0 else 1) ≤
         (∑ j, if j ∈ A then x j else 0) - ∑ j, if j ∈ B then x j else 0 := fun A B hd hg ↦ by
-    have := le_sum_of_mulVec_le sys hx
-      (by rwa [QualitativeProbability.ge, posSupport_ofSets, negSupport_ofSets hd])
-    rwa [QualitativeProbability.ge, posSupport_ofSets, negSupport_ofSets hd,
-      sum_ofSets_mul hd] at this
+    have := le_sum_of_mulVec_le r hx (by rwa [posSupport_ofSets, negSupport_ofSets hd])
+    rwa [posSupport_ofSets, negSupport_ofSets hd, sum_ofSets_mul hd] at this
   have hnn : ∀ j, 0 ≤ x j := fun j ↦ by
-    have := hsets {j} ∅ disjoint_bot_right (sys.bot_le _)
+    have := hsets {j} ∅ disjoint_bot_right (rel_empty _)
     simp only [Set.mem_singleton_iff, Finset.sum_ite_eq', Finset.mem_univ, ite_true,
       Set.mem_empty_iff_false, ite_false, Finset.sum_const_zero, sub_zero] at this
     split_ifs at this <;> linarith
   have hσ : 0 < ∑ j, x j := by
-    have := hsets Set.univ ∅ disjoint_bot_right (sys.bot_le _)
-    have hnt : ¬sys.le Set.univ ∅ := sys.nonTrivial
+    have := hsets Set.univ ∅ disjoint_bot_right (rel_empty _)
+    have hnt : ¬r ∅ Set.univ := not_rel_empty_univ
     simp only [Set.mem_univ, ite_true, Set.mem_empty_iff_false, ite_false, Finset.sum_const_zero,
       sub_zero, ite_eq_right hnt] at this
     linarith
@@ -360,43 +352,43 @@ private theorem representable_of_feasible {x : Fin n → ℚ} (hx : coeffs sys *
     rw [Finset.sum_div]
     refine Finset.sum_congr rfl fun j _ ↦ ?_
     by_cases hj : j ∈ A <;> simp [hj]
-  refine ⟨_, this, reduce_to_disjoint sys _ fun C D hCD ↦ ?_⟩
+  refine ⟨_, this, reduce_to_disjoint _ fun C D hCD ↦ ?_⟩
   rw [← ENNReal.toReal_le_toReal (measure_ne_top _ _) (measure_ne_top _ _), ← measureReal_def,
     ← measureReal_def, hm, hm, div_le_div_iff_of_pos_right (by exact_mod_cast hσ), Rat.cast_le]
   constructor
   · intro h
-    have := hsets D C hCD.symm h
+    have := hsets C D hCD h
     split_ifs at this <;> linarith
   · intro h
     by_contra hCD'
-    have := hsets C D hCD ((sys.total C D).resolve_left hCD')
+    have := hsets D C hCD.symm ((total_of r C D).resolve_left hCD')
     rw [ite_eq_right hCD'] at this
     linarith
 
 /-- A Farkas certificate for the system is a nonnegative neutral weighting with positive weight
     on a strict comparison. -/
 private theorem not_cancellation_of_certificate {y : (Fin n → SignType) → ℚ} (hy : 0 ≤ y)
-    (hyA : y ᵥ* coeffs sys = 0) (hyb : y ⬝ᵥ bound sys < 0) : ¬Cancellation sys.ge := by
+    (hyA : y ᵥ* coeffs r = 0) (hyb : y ⬝ᵥ bound r < 0) : ¬Cancellation r := by
   intro hcancel
   -- the weight of a comparison: its certificate weight if it holds
-  let w : (Fin n → SignType) → ℚ := fun v ↦ if sys.ge (posSupport v) (negSupport v) then y v else 0
+  let w : (Fin n → SignType) → ℚ := fun v ↦ if r (posSupport v) (negSupport v) then y v else 0
   have hw : ∀ v, 0 ≤ w v := fun v ↦ by
     simp only [w]; split_ifs
     exacts [hy v, le_rfl]
-  have hvalid : ∀ v, 0 < w v → sys.ge (posSupport v) (negSupport v) := fun v hv ↦ by
+  have hvalid : ∀ v, 0 < w v → r (posSupport v) (negSupport v) := fun v hv ↦ by
     by_contra h
     simp only [w, h, ite_false, lt_self_iff_false] at hv
   have hsum : ∀ j, ∑ v, w v * (v j : ℚ) = 0 := fun j ↦ by
     have h := congrFun hyA j
     simp only [Matrix.vecMul, dotProduct, coeffs, Matrix.of_apply, Pi.zero_apply] at h
     have : ∑ v, w v * (v j : ℚ) = -∑ v, y v *
-        (if sys.ge (posSupport v) (negSupport v) then -(v j : ℚ) else 0) := by
+        (if r (posSupport v) (negSupport v) then -(v j : ℚ) else 0) := by
       rw [← Finset.sum_neg_distrib]
       exact Finset.sum_congr rfl fun v _ ↦ by simp only [w]; split_ifs <;> ring
     rw [this, h, neg_zero]
   -- some strict comparison carries positive weight
-  obtain ⟨v, hyv, hv, hstr⟩ : ∃ v, 0 < y v ∧ sys.ge (posSupport v) (negSupport v) ∧
-      ¬sys.ge (negSupport v) (posSupport v) := by
+  obtain ⟨v, hyv, hv, hstr⟩ : ∃ v, 0 < y v ∧ r (posSupport v) (negSupport v) ∧
+      ¬r (negSupport v) (posSupport v) := by
     by_contra! hall
     refine hyb.not_ge (Finset.sum_nonneg fun v _ ↦ ?_)
     simp only [bound]
@@ -405,49 +397,51 @@ private theorem not_cancellation_of_certificate {y : (Fin n → SignType) → �
     · rw [mul_zero]
   exact hstr (hcancel.weighted w hw hvalid hsum (by simp only [w, hv, ite_true]; exact hyv))
 
-private theorem representable_of_cancellation_fin (h : Cancellation sys.ge) :
-    Representable sys :=
-  (Matrix.farkas (coeffs sys) (bound sys)).elim (fun ⟨_, hx⟩ ↦ representable_of_feasible sys hx)
-    fun ⟨_, hy, hyA, hyb⟩ ↦ absurd h (not_cancellation_of_certificate sys hy hyA hyb)
+private theorem representable_of_cancellation_fin [IsQualitativeProbability r]
+    (h : Cancellation r) : Representable r :=
+  (Matrix.farkas (coeffs r) (bound r)).elim (fun ⟨_, hx⟩ ↦ representable_of_feasible r hx)
+    fun ⟨_, hy, hyA, hyb⟩ ↦ absurd h (not_cancellation_of_certificate r hy hyA hyb)
 
 end Farkas
 
 /-! ### Scott's theorem -/
 
-variable [Fintype W] [MeasurableSpace W] [DiscreteMeasurableSpace W]
+section Scott
 
-/-- **Scott's theorem**, hard direction. A qualitative probability order on a finite carrier
+variable [Fintype W] [MeasurableSpace W] [DiscreteMeasurableSpace W]
+  (r : Set W → Set W → Prop) [IsQualitativeProbability r]
+
+/-- **Scott's theorem**, hard direction. A qualitative probability on a finite carrier
     satisfying cancellation is represented by a probability measure. -/
-theorem cancellation_implies_representable (sys : QualitativeProbability (Set W))
-    (h : Cancellation sys.ge) : Representable sys := by
+theorem cancellation_implies_representable (h : Cancellation r) : Representable r := by
   classical
-  exact perm_repr (Fintype.equivFin W) sys
+  exact perm_repr (Fintype.equivFin W) r
     (representable_of_cancellation_fin _ (h.transport (Fintype.equivFin W)))
 
 /-- **Scott's theorem** in sign-vector form. -/
-theorem representable_iff_cancellation (sys : QualitativeProbability (Set W)) :
-    Representable sys ↔ Cancellation sys.ge :=
-  ⟨fun h ↦ h.finiteCancellation.cancellation, cancellation_implies_representable sys⟩
+theorem representable_iff_cancellation : Representable r ↔ Cancellation r :=
+  ⟨fun h ↦ h.finiteCancellation.cancellation, cancellation_implies_representable r⟩
 
 /-- **Scott's theorem** in balanced-sequence form. -/
-theorem representable_iff_finiteCancellation (sys : QualitativeProbability (Set W)) :
-    Representable sys ↔ FiniteCancellation sys.ge :=
-  (representable_iff_cancellation sys).trans (cancellation_iff_finiteCancellation sys)
+theorem representable_iff_finiteCancellation : Representable r ↔ FiniteCancellation r :=
+  (representable_iff_cancellation r).trans (cancellation_iff_finiteCancellation r)
+
+end Scott
 
 /-- A null atom and representability one cardinality down yield cancellation, by swapping the
     null atom to position 0 and applying `null_elem_reduce`. -/
-theorem cancellation_of_null_atom {n : ℕ} (sys : QualitativeProbability (Set (Fin (n + 2))))
-    {j : Fin (n + 2)} (hj : sys.ge ∅ {j})
-    (sub : ∀ sys' : QualitativeProbability (Set (Fin (n + 1))), Representable sys') :
-    Cancellation sys.ge := by
+theorem cancellation_of_null_atom {n : ℕ} (r : Set (Fin (n + 2)) → Set (Fin (n + 2)) → Prop)
+    [IsQualitativeProbability r] {j : Fin (n + 2)} (hj : r ∅ {j})
+    (sub : ∀ r' : Set (Fin (n + 1)) → Set (Fin (n + 1)) → Prop,
+      IsQualitativeProbability r' → Representable r') :
+    Cancellation r := by
   set σ := Equiv.swap (0 : Fin (n + 2)) j with hσ
-  have h0 : (sys.transport σ).le {0} ∅ := by
+  have h0 : (Set.preimage σ ⁻¹'o r) ∅ {0} := by
     rw [perm_null_iff, show σ.symm 0 = j by simp [hσ]]; exact hj
-  have hnn : ∃ i : Fin (n + 1), ¬(sys.transport σ).le {Fin.succ i} ∅ := by
-    obtain ⟨k, hk⟩ := (sys.transport σ).exists_singleton_not_le_empty
+  have hnn : ∃ i : Fin (n + 1), ¬(Set.preimage σ ⁻¹'o r) ∅ {Fin.succ i} := by
+    obtain ⟨k, hk⟩ := exists_not_rel_empty_singleton (Set.preimage σ ⁻¹'o r)
     obtain ⟨i, rfl⟩ : ∃ i, Fin.succ i = k := Fin.exists_succ_eq.mpr fun h ↦ hk (h ▸ h0)
     exact ⟨i, hk⟩
-  exact (representable_iff_cancellation sys).mp
-    (perm_repr σ sys (null_elem_reduce _ h0 hnn sub))
+  exact (representable_iff_cancellation r).mp (perm_repr σ r (null_elem_reduce _ h0 hnn sub))
 
 end ComparativeProbability
