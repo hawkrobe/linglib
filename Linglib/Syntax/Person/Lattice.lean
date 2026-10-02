@@ -153,6 +153,10 @@ theorem isSAP_iff (p : Person) :
     IsSAP p ↔ p.participantSets.Nonempty ∧ ∀ s ∈ p.participantSets, s.Nonempty := by
   cases p <;> decide
 
+theorem marksClusivity_iff (p : Person) :
+    MarksClusivity p ↔ IncludesSpeaker p ∧ p.participantSets.card = 1 := by
+  cases p <;> decide
+
 /-! ### Coarsening -/
 
 /-- Coarsening a value never loses a participant set. -/
