@@ -6,8 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Syntax.Minimalist.SyntacticObject.Replace
-public import Linglib.Syntax.Minimalist.SyntacticObject.Selection
+public import Linglib.Syntax.Minimalist.Merge.SyntacticObject
 
 /-!
 # Derivations
@@ -26,7 +25,7 @@ the left, which changes no stage and no mover.
 
 ## Main definitions
 
-* `Minimalist.SyntacticObject.Side`, `Step`, `Step.apply`, `Step.mover?`, `deleteAccessible`
+* `Minimalist.SyntacticObject.Side`, `Step`, `Step.apply`, `Step.mover?`
 * `Minimalist.SyntacticObject.Derivation`, `Derivation.final`, `stageAt`, `movedItems`, `take`,
   `append`, `leftward`
 
@@ -54,8 +53,8 @@ namespace SyntacticObject
 
 /-! ### Steps -/
 
-/-- The side at which External Merge attaches the new item: the planarization datum that
-    externalization reads and the derived object ignores. -/
+/-- External Merge attaches the new item on a side, a planarization datum that externalization
+    reads and the derived object ignores. -/
 inductive Side where
   | left
   | right
@@ -65,26 +64,11 @@ inductive Side where
 inductive Step where
   /-- External Merge, the new item as the daughter on `side`. -/
   | em (side : Side) (item : SyntacticObject)
-  /-- Internal Merge: raise `mover`, leaving the trace of its head in its place. -/
+  /-- Internal Merge raises `mover`, leaving the trace of its head in its place. -/
   | im (mover : SyntacticObject)
 
-/-- The trace a moved object leaves: the trace of its head by selection, the bare trace when it
-    has none. -/
-def headTrace (s : SyntacticObject) : SyntacticObject := s.selHead.elim trace traceOf
-
-/-- The remainder `T/mover`: the current object with the mover's occurrences replaced by the
-    trace of its head, the remaining tree of an admissible cut ([marcolli-chomsky-berwick-2025],
-    Definition 1.2.6). For a uniquely accessible mover this is the deletion remainder that
-    `Merge.mergeOp_im_composition` extracts; `replace` extends it to a chain of occurrences. -/
-noncomputable def deleteAccessible (mover current : SyntacticObject) : SyntacticObject :=
-  current.replace mover mover.headTrace
-
-@[simp] theorem deleteAccessible_val (mover current : SyntacticObject) :
-    (deleteAccessible mover current).val
-      = UnorderedTree.replace mover.val mover.headTrace.val current.val := rfl
-
-/-- Apply a step: External Merge is the node with the item on the given side, Internal Merge the
-    node of the remainder and the mover. -/
+/-- A step builds a node: External Merge with the item on the given side, Internal Merge of the
+    remainder and the mover. -/
 noncomputable def Step.apply (step : Step) (current : SyntacticObject) : SyntacticObject :=
   match step with
   | .em .left item => merge item current

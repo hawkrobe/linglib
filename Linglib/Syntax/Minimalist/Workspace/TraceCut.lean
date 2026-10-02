@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Combinatorics.RootedTree.Cut
+public import Linglib.Core.Combinatorics.RootedTree.CutReplace
 
 @[expose] public section
 
@@ -32,6 +32,8 @@ forbidden, since a trace is not an accessible term. This is the admissible-cut e
 * `ConnesKreimer.cutSummandsCN_numEdges`: crown edges plus trunk vertices recover the vertices of
   the tree.
 * `ConnesKreimer.cutSummandsCN_filter_empty`: the empty cut is the unique cut with empty crown.
+* `ConnesKreimer.cutSummandsCN_filter_crown_eq_singleton`: a lexical subtree occurring once is
+  extracted by one cut, whose trunk replaces it by its trace.
 
 ## References
 
@@ -116,7 +118,7 @@ example (τ : RoseTree (Unit ⊕ Unit) → Unit) :
   rw [RoseTree.leaf, augActionG_eq_some _ _ _ (extractC_inl τ () [])]
   exact Multiset.mem_cons_self _ _
 
-/-- Trace-marker leaves are NOT extracted: `extractC τ` returns `none`,
+/-- Trace leaves are not extracted: `extractC τ` returns `none`,
     so the per-child action only inherits cuts from `cutSummandsG`. -/
 example (b : Unit) (τ : RoseTree (Unit ⊕ Unit) → Unit) :
     augActionG (extractC τ) (traceLeaf b : RoseTree (Unit ⊕ Unit))
@@ -252,8 +254,7 @@ theorem cutSummandsCN_numEdges (τ : UnorderedTree (α ⊕ β) → β)
     rfl]
   omega
 
-/-- UnorderedTree-level descent: the unique cut summand of `cutSummandsCN τ T`
-    with empty cut forest is `(0, T)`. -/
+/-- The empty cut `(0, T)` is the unique cut summand of `cutSummandsCN τ T` with empty crown. -/
 theorem cutSummandsCN_filter_empty
     (τ : UnorderedTree (α ⊕ β) → β) (T : UnorderedTree (α ⊕ β)) :
     (cutSummandsCN τ T).filter (fun p => p.1.card = 0) =
@@ -284,5 +285,33 @@ theorem cutSummandsCN_filter_empty
          UnorderedTree.mk T₀) : Multiset (UnorderedTree (α ⊕ β)) × UnorderedTree (α ⊕ β)) ::ₘ 0 = _
   rw [Multiset.map_zero]
   rfl
+
+/-- A lexical subtree `M` occurring exactly once below the root of `T` is extracted by exactly one
+    Δ^c cut, whose trunk is `T` with `M` replaced by its trace. -/
+theorem cutSummandsCN_filter_crown_eq_singleton [DecidableEq α] [DecidableEq β]
+    (τ : UnorderedTree (α ⊕ β) → β) {M T : UnorderedTree (α ⊕ β)} (hM : M.value.isLeft)
+    (hcount : T.subtrees.count M = 1) (hTM : T ≠ M) :
+    (cutSummandsCN τ T).filter (fun p ↦ p.1 = {M})
+      = {({M}, UnorderedTree.replace M (UnorderedTree.leaf (Sum.inr (τ M))) T)} := by
+  obtain ⟨T₀, rfl⟩ : ∃ T₀ : RoseTree (α ⊕ β), T = UnorderedTree.mk T₀ :=
+    ⟨Quotient.out T, (Quotient.out_eq T).symm⟩
+  obtain ⟨a, cs⟩ := T₀
+  have hlist : (unorderedSubtreesList cs).count M = 1 := by
+    rw [subtrees_mk, unorderedSubtrees, Multiset.count_cons, ite_eq_right (Ne.symm hTM),
+      add_zero] at hcount
+    exact hcount
+  have hE : ∀ s, UnorderedTree.mk s = M → ∃ ρ,
+      extractC (τ ∘ UnorderedTree.mk) s = some [ρ] ∧
+        UnorderedTree.mk ρ = UnorderedTree.leaf (Sum.inr (τ M)) := by
+    rintro ⟨x, ds⟩ rfl
+    obtain ⟨y, rfl⟩ := Sum.isLeft_iff.mp hM
+    exact ⟨traceLeaf (τ (UnorderedTree.mk (.node (Sum.inl y) ds))), rfl, rfl⟩
+  have key := map_trunk_filter_cutSummandsG (extractC (τ ∘ UnorderedTree.mk)) hE
+    (.node a cs) hlist hTM
+  rw [cutSummandsCN_mk, Multiset.filter_map, replace_mk,
+    ← Multiset.map_singleton (fun t ↦ (({M} : Multiset (UnorderedTree (α ⊕ β))), t)), ← key,
+    Multiset.map_map]
+  exact Multiset.map_congr (Multiset.filter_congr fun _ _ ↦ Iff.rfl)
+    fun q hq ↦ Prod.ext (Multiset.mem_filter.mp hq).2 rfl
 
 end ConnesKreimer
