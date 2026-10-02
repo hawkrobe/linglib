@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Semantics.Aspect.Telicity
+public import Mathlib.Data.Fintype.Powerset
+public import Mathlib.Tactic.FinCases
 
 /-!
 # Krifka (1998): The Origins of Telicity
@@ -20,10 +22,15 @@ two non-contemporaneous events are atelic.
 * `isTelic_vp_of_seinc`: expansion with mapping to objects makes the verb phrase of a quantized
   object telic.
 * `isTelic_sourceGoal`: a movement with a specified source and goal is telic.
+* `Reading.not_isTelic_read`: incrementality does not guarantee telicity, since re-reading the end
+  of an article gives a reading with a non-final part that is also a reading.
 * `Movement`: the paper's movement diagrams, checked against adjacency on a finite model.
 
 ## Implementation notes
 
+* The model of *eat* identifies an event with the apples it consumes, so its verb phrases are the
+  object predicates themselves; the transfer from object to verb phrase is the general
+  `Aspect.vp_cum` and `Aspect.vp_qua`.
 * Temporal precedence is a parameter of the telicity notions. The paper's consequence of
   its event axioms that overlapping events never precede each other enters as
   `NoPartPrecedes`, which is all the proofs use.
@@ -92,9 +99,9 @@ theorem eat_sinc : SINC eat where
   uo _ _ h _ hle := ⟨_, ⟨h ▸ hle, rfl⟩, fun _ hz ↦ hz.2⟩
   extended := ⟨{0, 1}, {0}, {0, 1}, {0}, by decide, by decide, rfl, rfl⟩
 
-theorem eat_sum : SUM eat := fun _ _ hx _ _ hy ↦ congr_arg₂ (· ⊔ ·) hx hy
+theorem eat_sum : SUM eat := sum_graph (SupHom.id _)
 
-theorem eat_up : UP eat := fun _ _ _ hx hy ↦ hx.trans hy.symm
+theorem eat_up : UP eat := up_graph id
 
 /-- *eat apples* is cumulative, since the bare plural is cumulative and *eat* is summative. -/
 theorem eat_apples_cum : CUM (VP eat Finset.Nonempty) :=
@@ -111,8 +118,60 @@ end Eat
 /-- With a particular object, as in *eat it*, a strictly incremental verb phrase is
 quantized. -/
 theorem qua_vp_eq [SemilatticeSup α] [SemilatticeSup β] {θ : α → β → Prop} (h : SINC θ)
-    (hU : UP θ) (y : α) : QUA (VP θ (· = y)) :=
-  vp_qua hU h.mso (singleton_qua y)
+    (y : α) : QUA (VP θ (· = y)) :=
+  vp_eq θ y ▸ h.uo.qua_of_mso h.mso y
+
+/-! ### Incrementality without telicity (§3.6)
+
+An article has two paragraphs, read by the events `0`, `1` and `2`, the last two both reading the
+second paragraph. A strict reading reads each paragraph of its object once, and *read* is the
+closure of strict reading under sums, which is incremental but lets the reader go back. -/
+
+namespace Reading
+
+/-- Event `0` reads the first paragraph, and events `1` and `2` both read the second. -/
+def paragraph (i : Fin 3) : Fin 2 := if i = 0 then 0 else 1
+
+/-- An event is a strict reading of some paragraphs if it reads each of them exactly once. -/
+def readOnce (x : Finset (Fin 2)) (e : Finset (Fin 3)) : Prop :=
+  (∀ p, p ∈ x ↔ ∃ i ∈ e, paragraph i = p) ∧ ∀ i ∈ e, ∀ j ∈ e, paragraph i = paragraph j → i = j
+
+instance : DecidableRel readOnce := fun _ _ ↦ by unfold readOnce; infer_instance
+
+theorem readOnce_sinc : SINC readOnce where
+  ue x e h y hy := by
+    revert h hy
+    unfold ExistsUnique
+    fin_cases x <;> fin_cases e <;> fin_cases y <;> decide
+  uo e x h e' he' := by
+    revert h he'
+    unfold ExistsUnique flip
+    fin_cases x <;> fin_cases e <;> fin_cases e' <;> decide
+  extended := ⟨{0, 1}, {0}, {0, 1}, {0}, by decide, by decide, by decide, by decide⟩
+
+/-- Reading is the closure of strict reading under sums. -/
+def read (x : Finset (Fin 2)) (e : Finset (Fin 3)) : Prop :=
+  AlgClosure (Function.uncurry readOnce) (x, e)
+
+theorem read_inc : INC read := ⟨readOnce, readOnce_sinc, fun _ _ ↦ Iff.rfl⟩
+
+/-- An event precedes another if all its times are earlier. -/
+def precedes (a b : Finset (Fin 3)) : Prop := ∀ i ∈ a, ∀ j ∈ b, i < j
+
+instance : DecidableRel precedes := fun _ _ ↦ by unfold precedes; infer_instance
+
+/-- *Read the article* is not telic, since the strict reading `{0, 1}` is a part of the reading
+`{0, 1, 2}` that the re-reading `{2}` follows. -/
+theorem not_isTelic_read : ¬ IsTelic precedes (read Finset.univ) := fun h ↦ by
+  have hsum : read Finset.univ {0, 1, 2} := by
+    have := AlgClosure.sum (P := Function.uncurry readOnce) (x := (Finset.univ, {0, 1}))
+      (y := (Finset.univ, {0, 2})) (.base (by decide)) (.base (by decide))
+    rwa [show ((Finset.univ, {0, 1}) ⊔ (Finset.univ, {0, 2}) : Finset (Fin 2) × Finset (Fin 3)) =
+      (Finset.univ, {0, 1, 2}) from by decide] at this
+  exact (h {0, 1, 2} {0, 1} hsum (.base (by decide)) (by decide)).2.2
+    ⟨{2}, by decide, by unfold flip; decide⟩
+
+end Reading
 
 /-! ### Telicity by expansion -/
 

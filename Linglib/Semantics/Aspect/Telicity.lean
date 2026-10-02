@@ -6,52 +6,46 @@ public import Linglib.Semantics.Mereology.Relation
 /-!
 # Telicity
 
-This file defines telicity as a property of event predicates and derives it from the thematic
-relation between an object and an event, following Krifka. A predicate is telic when every part
-of one of its events that it also applies to is both an initial and a final part of that event,
-so that no event of the predicate has a proper part of the predicate that starts later or ends
-earlier. Quantized predicates are telic, though not conversely, and a cumulative predicate that
-applies to two events one after the other is not.
-
-Telicity originates in the thematic relation. A relation is strictly incremental when the parts
-of the object and the parts of the event correspond one to one, as for the object of *eat* or
-*draw*, and incremental when it is the closure of such a relation under sums, which admits the
-backups of *read the article*. The verb phrase of a relation and an object predicate is the
-existential closure over the object, and the reference properties of the object carry over to
-it: cumulativity along a summative relation, so *eat apples* is cumulative, and quantization
-along a relation with uniqueness of participants and mapping to subobjects, so *eat two apples*
-is quantized.
-
-Accounts differ on which structural property the label `Aspect.Telicity` names: the initial
-and final part property here, quantization, or the failure of the subinterval property
-(`Semantics/Aspect/SubintervalProperty.lean`). The theorems of this file relate the first two.
+Krifka treats telicity as a property of event predicates: a predicate is telic when every part
+of one of its events that it also applies to is both an initial and a final part of that event.
+Quantized predicates are telic though not conversely, and cumulative or divisive predicates that
+apply to events with successive parts are not. Telicity originates in the thematic relation. A
+relation is strictly incremental when the parts of the object and of the event correspond one to
+one, as for the object of *eat*, and incremental when it is the closure of such a relation under
+sums, which admits the backups of *read the article*. The reference properties of the object
+carry over to the verb phrase: cumulativity along a summative relation, and quantization along a
+relation with unique participants that maps to subobjects. For a thematic function these are a
+sum homomorphism and an injective one, so *drink milk* is cumulative and *drink two liters of
+milk* quantized.
 
 ## Main definitions
 
-* `IsTelic` — every part of an event of the predicate that the predicate applies to is an
-  initial and a final part of it.
-* `SINC`, `INC` — strict incrementality and incrementality of a thematic relation.
-* `Incrementality.Holds` — the property an incrementality class of `Aspect/Defs.lean` names.
-* `VP` — the verb phrase of a relation and an object predicate.
+* `IsTelic`: every part of an event of the predicate that the predicate applies to is an initial
+  and a final part of it.
+* `SINC`, `INC`: strict incrementality and incrementality of a thematic relation.
+* `Incrementality.Holds`: the property an incrementality class of `Aspect/Defs.lean` names.
+* `VP`: the verb phrase of a relation and an object predicate.
 
 ## Main results
 
-* `isTelic_of_qua`, `exists_isTelic_not_qua` — quantized predicates are telic, not conversely.
-* `not_isTelic_of_cum` — a cumulative predicate of two successive events is not telic.
-* `SINC.inc_of_sum`, `INC.sum` — a summative strictly incremental relation is incremental, and
-  an incremental relation is summative.
-* `vp_cum`, `vp_qua` — cumulativity and quantization carry over from the object to the verb
-  phrase.
+* `isTelic_of_qua`, `exists_isTelic_not_qua`: quantized predicates are telic, not conversely.
+* `not_isTelic_of_cum`, `not_isTelic_of_div`: cumulative and divisive predicates with successive
+  events or parts are not telic.
+* `SINC.inc_of_sum`, `INC.sum`: a summative strictly incremental relation is incremental, and an
+  incremental relation is summative.
+* `vp_cum`, `vp_qua`: cumulativity and quantization carry over from the object to the verb
+  phrase; `vp_cum_graph` and `vp_qua_graph` are the cases of a thematic function.
 
 ## Implementation notes
 
-Temporal precedence is a parameter of the telicity notions. That overlapping events never
-precede each other, a consequence of the event axioms, enters as `NoPartPrecedes`.
+Temporal precedence is a parameter of the telicity notions. The proofs use only that parts of an
+event neither precede nor follow it, `NoPartPrecedes`, which follows from Krifka's axiom that
+overlapping events do not precede each other (`noPartPrecedes_of_overlap`). A final part is an
+initial part under the converse precedence, so results about final parts are transported.
 
 ## References
 
-* [krifka-1989]
-* [krifka-1998]
+* [krifka-1989], [krifka-1998], [champollion-krifka-2016]
 -/
 
 @[expose] public section
@@ -73,8 +67,9 @@ variable [PartialOrder β] (precedes : β → β → Prop)
 /-- An initial part of an event is a part that no part of the event precedes. -/
 def IsInitialPart (e' e : β) : Prop := e' ≤ e ∧ ¬ ∃ e'', e'' ≤ e ∧ precedes e'' e'
 
-/-- A final part of an event is a part that no part of the event follows. -/
-def IsFinalPart (e' e : β) : Prop := e' ≤ e ∧ ¬ ∃ e'', e'' ≤ e ∧ precedes e' e''
+/-- A final part of an event is a part that no part of the event follows, an initial part under
+the converse precedence. -/
+abbrev IsFinalPart (e' e : β) : Prop := IsInitialPart (flip precedes) e' e
 
 /-- A predicate is telic when every `P`-part of a `P`-event is an initial and a final part of
 it. -/
@@ -86,12 +81,25 @@ def NoPartPrecedes : Prop := ∀ a b : β, a ≤ b → ¬ precedes a b ∧ ¬ pr
 
 variable {precedes}
 
+theorem NoPartPrecedes.flip (h : NoPartPrecedes precedes) : NoPartPrecedes (flip precedes) :=
+  fun a b hle ↦ ⟨(h a b hle).2, (h a b hle).1⟩
+
+/-- Parts of an event neither precede nor follow it if overlapping events do not precede each
+other ([krifka-1998] (35)) and no event is null. -/
+theorem noPartPrecedes_of_overlap [NoBotOrder β] (h : ∀ a b, Overlap a b → ¬ precedes a b) :
+    NoPartPrecedes precedes := fun a b hle ↦
+  ⟨h a b (.of_le (not_isBot a) hle), h b a (Overlap.of_le (not_isBot a) hle).symm⟩
+
 theorem isInitialPart_self (h : NoPartPrecedes precedes) (e : β) :
     IsInitialPart precedes e e :=
   ⟨le_rfl, fun ⟨_, h', hp⟩ ↦ (h _ _ h').1 hp⟩
 
 theorem isFinalPart_self (h : NoPartPrecedes precedes) (e : β) : IsFinalPart precedes e e :=
-  ⟨le_rfl, fun ⟨_, h', hp⟩ ↦ (h _ _ h').2 hp⟩
+  isInitialPart_self h.flip e
+
+/-- A predicate telic for a precedence is telic for its converse. -/
+theorem IsTelic.flip {P : β → Prop} (h : IsTelic precedes P) : IsTelic (flip precedes) P :=
+  fun e e' he he' hle ↦ ⟨(h e e' he he' hle).2, (h e e' he he' hle).1⟩
 
 /-- Quantized predicates are telic. -/
 theorem isTelic_of_qua (h : NoPartPrecedes precedes) {P : β → Prop} (hP : QUA P) :
@@ -118,6 +126,13 @@ theorem not_isTelic_of_cum [SemilatticeSup β] {precedes : β → β → Prop} {
     (hP : CUM P) {e e' e'' : β} (he : P e) (he' : P e') (h'' : e'' ≤ e)
     (hp : precedes e' e'') : ¬ IsTelic precedes P :=
   fun hT ↦ (hT (e ⊔ e') e' (hP he he') he' le_sup_right).2.2 ⟨e'', h''.trans le_sup_left, hp⟩
+
+/-- A divisive predicate true of an event with a part preceding another part is not telic, as
+the divisive reference of activities makes them atelic ([champollion-krifka-2016]). -/
+theorem not_isTelic_of_div [PartialOrder β] {precedes : β → β → Prop} {P : β → Prop}
+    (hP : DIV P) {e e' e'' : β} (he : P e) (h' : e' ≤ e) (h'' : e'' ≤ e)
+    (hp : precedes e' e'') : ¬ IsTelic precedes P :=
+  fun hT ↦ (hT e e' he (hP h' he) h').2.2 ⟨e'', h'', hp⟩
 
 end InitialFinal
 
@@ -190,10 +205,35 @@ theorem vp_cum (hθ : SUM θ) (hObj : CUM OBJ) : CUM (VP θ OBJ) :=
   fun _ ⟨_, h₁, hθ₁⟩ _ ⟨_, h₂, hθ₂⟩ ↦ ⟨_, hObj h₁ h₂, hθ hθ₁ hθ₂⟩
 
 /-- Uniqueness of participants and mapping to subobjects carry quantization from the object
-to the verb phrase: the object of a proper subevent is a proper part of the object. -/
+to the verb phrase, since the object of a proper subevent is a proper part of the object. -/
 theorem vp_qua (hU : UP θ) (hm : MSO θ) (hObj : QUA OBJ) : QUA (VP θ OBJ) :=
   qua_of_forall fun _ _ ⟨_, hy, hθ⟩ hlt ⟨_, hz, hθz⟩ ↦
     let ⟨_, hlt', hθ'⟩ := hm hθ hlt
     hObj (hU hθz hθ' ▸ hz) hy hlt'.ne hlt'.le
+
+omit [SemilatticeSup α] [SemilatticeSup β] in
+/-- The verb phrase of a particular object is the object's event predicate. -/
+theorem vp_eq (θ : α → β → Prop) (y : α) : VP θ (· = y) = θ y :=
+  funext fun _ ↦ propext ⟨fun ⟨_, h, hθ⟩ ↦ h ▸ hθ, fun h ↦ ⟨y, rfl, h⟩⟩
+
+omit [SemilatticeSup α] [SemilatticeSup β] in
+/-- The verb phrase along a thematic function is the object predicate pulled back along it. -/
+theorem vp_graph (f : β → α) (OBJ : α → Prop) : VP (· = f ·) OBJ = OBJ ∘ f :=
+  funext fun _ ↦ propext ⟨by rintro ⟨_, h, rfl⟩; exact h, fun h ↦ ⟨_, h, rfl⟩⟩
+
+/-- A cumulative object predicate along a sum homomorphism gives a cumulative verb phrase, so
+*drink milk* is cumulative ([champollion-krifka-2016]). -/
+theorem vp_cum_graph {F : Type*} [FunLike F β α] [SupHomClass F β α] (f : F) (hObj : CUM OBJ) :
+    CUM (VP (· = f ·) OBJ) :=
+  vp_cum (sum_graph f) hObj
+
+/-- A quantized object predicate along an injective sum homomorphism gives a quantized verb
+phrase, so *drink two liters of milk* is quantized ([champollion-krifka-2016]). The
+homomorphism places the participant of a proper subevent below the whole participant, and
+injectivity makes it a proper part. -/
+theorem vp_qua_graph {F : Type*} [FunLike F β α] [SupHomClass F β α] (f : F)
+    (hf : Function.Injective f) (hObj : QUA OBJ) : QUA (VP (· = f ·) OBJ) :=
+  vp_qua (up_graph f) ((mso_graph_iff f).2 ((OrderHomClass.mono f).strictMono_of_injective hf))
+    hObj
 
 end Aspect
