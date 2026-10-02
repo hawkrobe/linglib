@@ -9,24 +9,23 @@ public import Mathlib.Tactic.Linarith
 A comparison on four atoms is a sign vector `v : Fin 4 → SignType`, with positive side
 `posSupport v` and negative side `negSupport v`. Two comparisons are *mergeable* when no atom
 carries the same nonzero sign in both, and *anti-dominating* when the positive side of each lies
-in the negative side of the other. A family is *balanced* when strictly positive integer weights
-sum it to zero. Every nonempty balanced family of pairwise non-mergeable comparisons with
-nonempty positive sides contains an anti-dominating pair; this is the combinatorial core of
-cancellation on `Fin 4`.
+in the negative side of the other. Every nonempty multiset of pairwise non-mergeable comparisons
+with nonempty positive sides that sums to zero contains an anti-dominating pair; this is the
+combinatorial core of cancellation on `Fin 4`.
 
 ## Main declarations
 
 * `ComparativeProbability.Mergeable`, `ComparativeProbability.AntiDominating`: the two relations
   between comparisons.
-* `ComparativeProbability.Balanced`: positive weights sum the family to zero.
-* `ComparativeProbability.Balanced.dotProduct_eq_zero`: an integer functional that is
-  nonnegative on a balanced family vanishes on it.
-* `ComparativeProbability.Balanced.exists_antiDominating`: the anti-domination theorem.
+* `ComparativeProbability.dotProduct_eq_zero_of_comparisonSum_eq_zero`: an integer functional
+  that is nonnegative on a multiset of comparisons summing to zero vanishes on it.
+* `ComparativeProbability.exists_antiDominating`: the anti-domination theorem.
 
 ## Implementation notes
 
 Every case closes by a *witness*, an integer functional that is nonnegative on the family and
-positive on a member, which `Balanced.dotProduct_eq_zero` rules out. A family of at most three
+positive on a member, which `dotProduct_eq_zero_of_comparisonSum_eq_zero` rules out; the cases
+read the family as the finset of its distinct members. A family of at most three
 members falls to the functional reading the signs that one member shares with the others. In a
 larger family, a member with a single positive coordinate `k` falls to `e_k` when it has full
 support; otherwise it has the shape `+1` at `p`, `0` at `ζ`, `-1` elsewhere, the functional
@@ -58,27 +57,39 @@ of the other. -/
 def AntiDominating (v w : W → SignType) : Prop :=
   posSupport v ⊆ negSupport w ∧ posSupport w ⊆ negSupport v
 
-/-- A family of comparisons is balanced when strictly positive integer weights sum it to zero. -/
-def Balanced (S : Finset (W → SignType)) : Prop :=
-  ∃ d : (W → SignType) → ℤ, (∀ v ∈ S, 0 < d v) ∧ ∀ i, ∑ v ∈ S, d v * v i = 0
-
-/-- An integer functional that is nonnegative on a balanced family vanishes on it. -/
-theorem Balanced.dotProduct_eq_zero [Fintype W] {S : Finset (W → SignType)} (hS : Balanced S)
-    {u : W → ℤ} (hu : ∀ v ∈ S, 0 ≤ u ⬝ᵥ fun i ↦ (v i : ℤ)) {v : W → SignType} (hv : v ∈ S) :
-    (u ⬝ᵥ fun i ↦ (v i : ℤ)) = 0 := by
-  obtain ⟨d, hd, hbal⟩ := hS
-  have hsum : ∑ w ∈ S, d w * (u ⬝ᵥ fun i ↦ (w i : ℤ)) = 0 := by
-    calc ∑ w ∈ S, d w * (u ⬝ᵥ fun i ↦ (w i : ℤ)) = ∑ i, u i * ∑ w ∈ S, d w * w i := by
+/-- An integer functional that is nonnegative on a multiset of comparisons summing to zero
+vanishes on each of them. -/
+theorem dotProduct_eq_zero_of_comparisonSum_eq_zero [Fintype W] {M : Multiset (W → SignType)}
+    (hM : comparisonSum M = 0) {u : W → ℤ} (hu : ∀ v ∈ M, 0 ≤ u ⬝ᵥ fun i ↦ (v i : ℤ))
+    {v : W → SignType} (hv : v ∈ M) : (u ⬝ᵥ fun i ↦ (v i : ℤ)) = 0 := by
+  classical
+  have hsum : ∑ w ∈ M.toFinset, (M.count w : ℤ) * (u ⬝ᵥ fun i ↦ (w i : ℤ)) = 0 := by
+    have h (i : W) : ∑ w ∈ M.toFinset, (M.count w : ℤ) * w i = 0 := by
+      simpa [comparisonSum, Finset.sum_multiset_map_count] using congrFun hM i
+    calc ∑ w ∈ M.toFinset, (M.count w : ℤ) * (u ⬝ᵥ fun i ↦ (w i : ℤ))
+        = ∑ i, u i * ∑ w ∈ M.toFinset, (M.count w : ℤ) * w i := by
           simp only [dotProduct, mul_sum]
           rw [sum_comm]
           exact sum_congr rfl fun i _ ↦ sum_congr rfl fun w _ ↦ by ring
-      _ = 0 := by simp [hbal]
-  have := (sum_eq_zero_iff_of_nonneg fun w hw ↦ mul_nonneg (hd w hw).le (hu w hw)).1 hsum v hv
-  exact (mul_eq_zero.1 this).resolve_left (hd v hv).ne'
+      _ = 0 := by simp [h]
+  have := (sum_eq_zero_iff_of_nonneg fun w hw ↦ mul_nonneg (Nat.cast_nonneg _)
+    (hu w (Multiset.mem_toFinset.1 hw))).1 hsum v (Multiset.mem_toFinset.2 hv)
+  exact (mul_eq_zero.1 this).resolve_left (Nat.cast_ne_zero.2 (Multiset.count_ne_zero.2 hv))
 
 end General
 
 variable {S : Finset (Fin 4 → SignType)}
+
+/-- A family admits no witness when every integer functional that is nonnegative on it vanishes
+on it. -/
+private def NoWitness (S : Finset (Fin 4 → SignType)) : Prop :=
+  ∀ ⦃u : Fin 4 → ℤ⦄, (∀ v ∈ S, 0 ≤ u ⬝ᵥ fun i ↦ (v i : ℤ)) →
+    ∀ ⦃v⦄, v ∈ S → (u ⬝ᵥ fun i ↦ (v i : ℤ)) = 0
+
+private lemma NoWitness.eq_zero (hS : NoWitness S) {u : Fin 4 → ℤ}
+    (hu : ∀ v ∈ S, 0 ≤ u ⬝ᵥ fun i ↦ (v i : ℤ)) {v : Fin 4 → SignType} (hv : v ∈ S) :
+    (u ⬝ᵥ fun i ↦ (v i : ℤ)) = 0 :=
+  hS hu hv
 
 private lemma neg_one_le_mul (a b : SignType) : -1 ≤ (a : ℤ) * b := by
   revert a b; decide
@@ -98,13 +109,13 @@ private lemma exists_eq_of_not_mergeable {v w : Fin 4 → SignType} (h : ¬Merge
 /-- A balanced family inside `{a, b, c}` cannot contain `a` when `a` shares the nonzero sign
 `s₁` with `b` at `j₁` and `s₂` with `c` at `j₂`, since `s₁ e_{j₁} + s₂ e_{j₂}` is `2` at `a`
 and nonnegative at `b` and `c`. -/
-private lemma false_of_subset_triple (hS : Balanced S) {a b c : Fin 4 → SignType} (ha : a ∈ S)
+private lemma false_of_subset_triple (hS : NoWitness S) {a b c : Fin 4 → SignType} (ha : a ∈ S)
     (hsub : S ⊆ {a, b, c}) {j₁ j₂ : Fin 4} {s₁ s₂ : SignType} (hs₁ : s₁ ≠ 0) (hs₂ : s₂ ≠ 0)
     (ha₁ : a j₁ = s₁) (hb₁ : b j₁ = s₁) (ha₂ : a j₂ = s₂) (hc₂ : c j₂ = s₂) : False := by
   have hval (v : Fin 4 → SignType) : ((Pi.single j₁ (s₁ : ℤ) + Pi.single j₂ (s₂ : ℤ)) ⬝ᵥ
       fun i ↦ (v i : ℤ)) = s₁ * v j₁ + s₂ * v j₂ := by
     simp [add_dotProduct]
-  have h := hS.dotProduct_eq_zero (u := Pi.single j₁ (s₁ : ℤ) + Pi.single j₂ (s₂ : ℤ))
+  have h := hS.eq_zero (u := Pi.single j₁ (s₁ : ℤ) + Pi.single j₂ (s₂ : ℤ))
     (fun v hv ↦ ?_) ha
   · rw [hval, ha₁, ha₂, mul_self_eq_one hs₁, mul_self_eq_one hs₂] at h
     omega
@@ -116,7 +127,7 @@ private lemma false_of_subset_triple (hS : Balanced S) {a b c : Fin 4 → SignTy
   · rw [hb₁, mul_self_eq_one hs₁]; omega
   · rw [hc₂, mul_self_eq_one hs₂]; omega
 
-private lemma false_of_card_le_three (hS : Balanced S) (hposne : ∀ v ∈ S, ∃ i, v i = 1)
+private lemma false_of_card_le_three (hS : NoWitness S) (hposne : ∀ v ∈ S, ∃ i, v i = 1)
     (hmerge : (S : Set (Fin 4 → SignType)).Pairwise (¬Mergeable · ·)) (hne : S.Nonempty)
     (h3 : #S ≤ 3) : False := by
   rcases (by have := card_pos.2 hne; omega : #S = 1 ∨ #S = 2 ∨ #S = 3) with h | h | h
@@ -178,7 +189,7 @@ private lemma card_pos_add_card_neg_le_four (w : Fin 4 → SignType) : #(pos w) 
 
 /-- No member of a balanced non-mergeable family has two zero coordinates, since the member,
 read as a functional, is then nonnegative on the family and positive on itself. -/
-private lemma at_most_one_zero (hS : Balanced S) (hposne : ∀ v ∈ S, ∃ i, v i = 1)
+private lemma at_most_one_zero (hS : NoWitness S) (hposne : ∀ v ∈ S, ∃ i, v i = 1)
     (hmerge : (S : Set (Fin 4 → SignType)).Pairwise (¬Mergeable · ·))
     {v : Fin 4 → SignType} (hvS : v ∈ S) {i₁ i₂ : Fin 4} (hne : i₁ ≠ i₂)
     (hz1 : v i₁ = 0) (hz2 : v i₂ = 0) : False := by
@@ -210,7 +221,7 @@ private lemma at_most_one_zero (hS : Balanced S) (hposne : ∀ v ∈ S, ∃ i, v
     rw [hip_supp, ← add_sum_erase _ _ hjsupp, hj1]
     omega
   obtain ⟨k, hk⟩ := hposne v hvS
-  have h := hS.dotProduct_eq_zero hge hvS
+  have h := hS.eq_zero hge hvS
   have : 1 ≤ u ⬝ᵥ fun i ↦ (v i : ℤ) :=
     calc (1 : ℤ) = u k * v k := by simp [hu, hk]
       _ ≤ ∑ i, u i * v i := single_le_sum (fun i _ ↦ mul_self_nonneg (u i)) (mem_univ k)
@@ -306,7 +317,7 @@ private lemma wt3_witness_bound (wp wi wj wz : SignType)
 /-- A singleton-positive weight-3 member forces an *s-shape* companion, which is zero at the
     member's positive coordinate, `-1` at its zero coordinate, and splits ±1 on the remaining
     two. -/
-private lemma s_shape_forcing (hS : Balanced S) (hposne : ∀ v ∈ S, ∃ i, v i = 1)
+private lemma s_shape_forcing (hS : NoWitness S) (hposne : ∀ v ∈ S, ∃ i, v i = 1)
     (hmerge : (S : Set (Fin 4 → SignType)).Pairwise (¬Mergeable · ·))
     (hno : (S : Set (Fin 4 → SignType)).Pairwise (¬AntiDominating · ·))
     {x : Fin 4 → SignType} (hxS : x ∈ S) {p ζ : Fin 4} (hpζ : p ≠ ζ)
@@ -317,7 +328,7 @@ private lemma s_shape_forcing (hS : Balanced S) (hposne : ∀ v ∈ S, ∃ i, v 
   -- the functional `e_p + e_ζ` is `1` at `x`, so it is negative on some member `y`
   obtain ⟨y, hyS, hy⟩ : ∃ y ∈ S, (y p : ℤ) + y ζ < 0 := by
     by_contra! hall
-    have h := hS.dotProduct_eq_zero (u := Pi.single p 1 + Pi.single ζ 1)
+    have h := hS.eq_zero (u := Pi.single p 1 + Pi.single ζ 1)
       (fun w hw ↦ by simpa [add_dotProduct] using hall w hw) hxS
     simp [add_dotProduct, hxp, hxζ] at h
   have hxy : x ≠ y := by rintro rfl; simp [hxp, hxζ] at hy
@@ -361,7 +372,7 @@ private lemma s_shape_forcing (hS : Balanced S) (hposne : ∀ v ∈ S, ∃ i, v 
 
 /-- No member is singleton-positive of weight 3, since the s-shape chain closes into a 3-cycle
     whose witness is nonnegative on all of `S` and positive at `x`. -/
-private lemma sp3_kill (hS : Balanced S) (hposne : ∀ v ∈ S, ∃ i, v i = 1)
+private lemma sp3_kill (hS : NoWitness S) (hposne : ∀ v ∈ S, ∃ i, v i = 1)
     (hmerge : (S : Set (Fin 4 → SignType)).Pairwise (¬Mergeable · ·))
     (hno : (S : Set (Fin 4 → SignType)).Pairwise (¬AntiDominating · ·))
     {x : Fin 4 → SignType} (hxS : x ∈ S) {p ζ : Fin 4} (hpζ : p ≠ ζ)
@@ -434,7 +445,7 @@ private lemma sp3_kill (hS : Balanced S) (hposne : ∀ v ∈ S, ∃ i, v i = 1)
         (Ne.symm hiζ) hpζ (Ne.symm hip) hjζ (Ne.symm hij) (Ne.symm hjp) hy₂a hy₂i hy₂n
       exact wt3_witness_bound (w p) (w i) (w b) (w a) hpos1 h2p h2i h2j hgx hax hgy1 hay1
         hgy2 hay2
-    have h := hS.dotProduct_eq_zero
+    have h := hS.eq_zero
       (u := Pi.single p 1 + Pi.single i 1 + Pi.single a 1 - Pi.single b 1)
       (fun w hw ↦ by simpa [add_dotProduct, sub_dotProduct] using hterm w hw) hxS
     simp [add_dotProduct, sub_dotProduct, hxp, hxζ, hxn i hip hiζ, hxn b hjp hjζ] at h
@@ -473,7 +484,7 @@ private lemma antiDominating_of_ne_zero {v w : Fin 4 → SignType} (hv : ∀ i, 
   · rcases (v i).trichotomy with h | h | h
     exacts [h, absurd h (hv i), absurd hi (Set.disjoint_left.1 hdisj h)]
 
-private lemma false_of_four_le_card (hS : Balanced S) (hposne : ∀ v ∈ S, ∃ i, v i = 1)
+private lemma false_of_four_le_card (hS : NoWitness S) (hposne : ∀ v ∈ S, ∃ i, v i = 1)
     (hmerge : (S : Set (Fin 4 → SignType)).Pairwise (¬Mergeable · ·))
     (hno : (S : Set (Fin 4 → SignType)).Pairwise (¬AntiDominating · ·)) (h4 : 4 ≤ #S) :
     False := by
@@ -516,7 +527,7 @@ private lemma false_of_four_le_card (hS : Balanced S) (hposne : ∀ v ∈ S, ∃
         obtain rfl : m = k := by rw [← Set.mem_singleton_iff, ← hk']; exact hm1
         simp [hmw] at h
       all_goals simp [h]
-    have h := hS.dotProduct_eq_zero (u := Pi.single k 1) (fun w hw ↦ by simpa using hnok w hw) hv
+    have h := hS.eq_zero (u := Pi.single k 1) (fun w hw ↦ by simpa using hnok w hw) hv
     simp [hk] at h
   -- `𝟙` is then nonnegative on the family, so every member has two coordinates of each sign
   have hnn : ∀ w ∈ S, 0 ≤ (1 : Fin 4 → ℤ) ⬝ᵥ fun i ↦ (w i : ℤ) := fun w hw ↦ by
@@ -526,7 +537,7 @@ private lemma false_of_four_le_card (hS : Balanced S) (hposne : ∀ v ∈ S, ∃
     omega
   have hfull : ∀ w ∈ S, #(pos w) = 2 ∧ ∀ i, w i ≠ 0 := by
     intro w hw
-    have h0 := hS.dotProduct_eq_zero hnn hw
+    have h0 := hS.eq_zero hnn hw
     rw [one_dotProduct_eq] at h0
     have := hcard2 w hw
     have := card_pos_add_card_neg_le_four w
@@ -555,17 +566,24 @@ private lemma false_of_four_le_card (hS : Balanced S) (hposne : ∀ v ∈ S, ∃
   rw [← coe_pos, ← coe_pos, disjoint_coe]
   exact disjoint_iff_inter_eq_empty.2 hdisj
 
-/-- **Anti-domination from balance.** A nonempty balanced family of pairwise non-mergeable
-comparisons on four atoms, each with a nonempty positive side, contains an anti-dominating
+/-- **Anti-domination from balance.** A nonempty multiset of pairwise non-mergeable comparisons
+on four atoms, each with a nonempty positive side, that sums to zero contains an anti-dominating
 pair. -/
-theorem Balanced.exists_antiDominating (hS : Balanced S)
-    (hpos : ∀ v ∈ S, (posSupport v).Nonempty)
-    (hmerge : (S : Set (Fin 4 → SignType)).Pairwise (¬Mergeable · ·)) (hne : S.Nonempty) :
-    ∃ v ∈ S, ∃ w ∈ S, v ≠ w ∧ AntiDominating v w := by
-  have hposne : ∀ v ∈ S, ∃ i, v i = 1 := hpos
+theorem exists_antiDominating {M : Multiset (Fin 4 → SignType)} (hM : comparisonSum M = 0)
+    (hpos : ∀ v ∈ M, (posSupport v).Nonempty)
+    (hmerge : ∀ v ∈ M, ∀ w ∈ M, v ≠ w → ¬Mergeable v w) (hne : M ≠ 0) :
+    ∃ v ∈ M, ∃ w ∈ M, v ≠ w ∧ AntiDominating v w := by
+  classical
+  have hS : NoWitness M.toFinset := fun u hu v hv ↦
+    dotProduct_eq_zero_of_comparisonSum_eq_zero hM
+      (fun w hw ↦ hu w (Multiset.mem_toFinset.2 hw)) (Multiset.mem_toFinset.1 hv)
+  have hposne : ∀ v ∈ M.toFinset, ∃ i, v i = 1 := fun v hv ↦ hpos v (Multiset.mem_toFinset.1 hv)
+  have hmerge' : (M.toFinset : Set (Fin 4 → SignType)).Pairwise (¬Mergeable · ·) :=
+    fun v hv w hw ↦ hmerge v (by simpa using hv) w (by simpa using hw)
   by_contra! hno
-  rcases le_or_gt #S 3 with h | h
-  · exact false_of_card_le_three hS hposne hmerge hne h
-  · exact false_of_four_le_card hS hposne hmerge (fun v hv w hw ↦ hno v hv w hw) h
+  rcases le_or_gt #M.toFinset 3 with h | h
+  · exact false_of_card_le_three hS hposne hmerge' (Multiset.toFinset_nonempty.2 hne) h
+  · exact false_of_four_le_card hS hposne hmerge'
+      (fun v hv w hw ↦ hno v (by simpa using hv) w (by simpa using hw)) h
 
 end ComparativeProbability

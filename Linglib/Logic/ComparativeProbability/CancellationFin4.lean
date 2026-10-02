@@ -2,7 +2,6 @@ module
 
 public import Linglib.Logic.ComparativeProbability.Scott
 public import Linglib.Logic.ComparativeProbability.SignVectors
-public import Mathlib.Data.List.Perm.Basic
 public import Mathlib.Tactic.Tauto
 public import Mathlib.Tactic.FinCases
 
@@ -159,42 +158,43 @@ private lemma eq_zero_of_add_eq_zero_of_eq (a b : SignType) (h : (a : ℤ) + b =
   revert h hab; revert a b; decide
 
 /-- Zero vectors contribute nothing to the sum. -/
-private lemma comparisonSum_filter_ne_zero {n : ℕ} (L : List (Fin n → SignType)) (i : Fin n) :
-    comparisonSum (L.filter (· ≠ 0)) i = comparisonSum L i := by
-  induction L with
-  | nil => rfl
-  | cons v rest ih =>
+private lemma comparisonSum_filter_ne_zero {n : ℕ} (M : Multiset (Fin n → SignType)) (i : Fin n) :
+    comparisonSum (M.filter (· ≠ 0)) i = comparisonSum M i := by
+  induction M using Multiset.induction_on with
+  | empty => rfl
+  | cons v M ih =>
     by_cases hv : v = 0
-    · rw [List.filter_cons_of_neg (by simp [hv]), comparisonSum_cons, ih, hv]; simp
-    · rw [List.filter_cons_of_pos (by simp [hv]), comparisonSum_cons, comparisonSum_cons, ih]
+    · rw [Multiset.filter_cons_of_neg _ (by simpa using hv), comparisonSum_cons, ih, hv]; simp
+    · rw [Multiset.filter_cons_of_pos _ (by simpa using hv), comparisonSum_cons,
+        comparisonSum_cons, ih]
 
 /-- A stuck family of comparisons, with no mergeable pair and no mono-dominating member,
     summing to a target `t` with nonempty negative support either contains a *null pair* (two
     members whose sum is `≤ 0` with a strict negative coordinate) or has a member mergeable
     with the reversed target `-t`.
 
-    The family `L ∪ {-t}` is balanced by multiplicity, so `Balanced.exists_antiDominating`
-    yields an anti-dominating pair unless some member is mergeable with `-t`. An anti-dominating
+    The family `-t ::ₘ M` sums to zero, so `exists_antiDominating` yields an anti-dominating
+    pair unless some member is mergeable with `-t`. An anti-dominating
     pair inside `L` is a null pair; one involving `-t` is a mono-domination, which is
     excluded. -/
-private lemma v1_tailored (L : List (Fin 4 → SignType)) {t : Fin 4 → SignType}
-    (hsum : ∀ i, comparisonSum L i = t i) (hne : (negSupport t).Nonempty)
-    (hnotdom : ∀ v ∈ L, posSupport v ⊆ posSupport t → ¬ negSupport t ⊆ negSupport v)
-    (hnogm : ¬ ∃ v w rest, L.Perm (v :: w :: rest) ∧ Mergeable v w) :
-    (∃ v ∈ L, ∃ w ∈ L, (∀ i, (v i : ℤ) + w i ≤ 0) ∧ ∃ i, (v i : ℤ) + w i < 0)
-      ∨ ∃ v ∈ L, Mergeable (-t) v := by
+private lemma v1_tailored (M : Multiset (Fin 4 → SignType)) {t : Fin 4 → SignType}
+    (hsum : ∀ i, comparisonSum M i = t i) (hne : (negSupport t).Nonempty)
+    (hnotdom : ∀ v ∈ M, posSupport v ⊆ posSupport t → ¬ negSupport t ⊆ negSupport v)
+    (hnogm : ¬ ∃ v w rest, M = v ::ₘ w ::ₘ rest ∧ Mergeable v w) :
+    (∃ v ∈ M, ∃ w ∈ M, (∀ i, (v i : ℤ) + w i ≤ 0) ∧ ∃ i, (v i : ℤ) + w i < 0)
+      ∨ ∃ v ∈ M, Mergeable (-t) v := by
   classical
   -- Step A: a member with empty positive support and nonempty negative support
   -- is a null pair with itself
-  by_cases hemp : ∃ v ∈ L, posSupport v = ∅ ∧ (negSupport v).Nonempty
+  by_cases hemp : ∃ v ∈ M, posSupport v = ∅ ∧ (negSupport v).Nonempty
   · obtain ⟨v, hvL, hv1, k, hk⟩ := hemp
     have hv0 : ∀ i, v i ≠ 1 := fun i h ↦ Set.notMem_empty i (hv1 ▸ h)
     refine Or.inl ⟨v, hvL, v, hvL, fun i ↦ add_self_nonpos _ (hv0 i), k, ?_⟩
     rw [mem_negSupport.mp hk]; decide
   -- Step B: the right disjunct as an escape hatch
-  by_cases hrd : ∃ v ∈ L, Mergeable (-t) v
+  by_cases hrd : ∃ v ∈ M, Mergeable (-t) v
   · exact Or.inr hrd
-  have h0 : ∀ v ∈ L, v ≠ 0 → (posSupport v).Nonempty := by
+  have h0 : ∀ v ∈ M, v ≠ 0 → (posSupport v).Nonempty := by
     intro v hv hv0
     by_contra h1
     rw [Set.not_nonempty_iff_eq_empty] at h1
@@ -204,48 +204,42 @@ private lemma v1_tailored (L : List (Fin 4 → SignType)) {t : Fin 4 → SignTyp
     refine hv0 (funext fun i ↦ eq_zero_of_ne_one_of_ne_neg_one _ ?_ ?_)
     · exact fun h ↦ Set.notMem_empty i (h1 ▸ (h : i ∈ posSupport v))
     · exact fun h ↦ Set.notMem_empty i (h2 ▸ (h : i ∈ negSupport v))
-  -- Step C: the family `-t :: L'`, balanced by multiplicity
-  set L' := L.filter (· ≠ 0) with hL'
-  set l := (-t) :: L' with hl
-  set S := l.toFinset with hS
-  have hmem : ∀ x ∈ S, x = -t ∨ x ∈ L' := fun x hx ↦ List.mem_cons.1 (List.mem_toFinset.1 hx)
-  have hbal : Balanced S := by
-    refine ⟨fun x ↦ l.count x, fun x hx ↦ ?_, fun i ↦ ?_⟩
-    · exact Nat.cast_pos.2 (List.count_pos_iff.2 (List.mem_toFinset.1 hx))
-    have h : comparisonSum l i = 0 := by
-      rw [hl, comparisonSum_cons, hL', comparisonSum_filter_ne_zero, hsum, Pi.neg_apply,
-        SignType.coe_neg, neg_add_cancel]
-    rw [comparisonSum, Finset.sum_list_map_count l fun v ↦ (v i : ℤ)] at h
-    simpa [hS, nsmul_eq_mul] using h
-  have hpos : ∀ x ∈ S, (posSupport x).Nonempty := by
+  -- Step C: the family `-t ::ₘ M'` sums to zero
+  set M' := M.filter (· ≠ 0) with hM'
+  have hmem : ∀ x ∈ -t ::ₘ M', x = -t ∨ x ∈ M' := fun x hx ↦ Multiset.mem_cons.1 hx
+  have hbal : comparisonSum (-t ::ₘ M') = 0 := funext fun i ↦ by
+    rw [comparisonSum_cons, hM', comparisonSum_filter_ne_zero, hsum, Pi.neg_apply,
+      SignType.coe_neg, neg_add_cancel, Pi.zero_apply]
+  have hpos : ∀ x ∈ -t ::ₘ M', (posSupport x).Nonempty := by
     intro x hx
     rcases hmem x hx with rfl | hx
     · rwa [posSupport_neg]
-    · exact h0 x (List.mem_of_mem_filter hx) (by simpa using List.of_mem_filter hx)
-  have hmerge : (S : Set (Fin 4 → SignType)).Pairwise (¬Mergeable · ·) := by
-    rintro x hx y hy hxy hm
+    · exact h0 x (Multiset.mem_of_mem_filter hx) (by simpa using Multiset.of_mem_filter hx)
+  have hmerge : ∀ x ∈ -t ::ₘ M', ∀ y ∈ -t ::ₘ M', x ≠ y → ¬Mergeable x y := by
+    intro x hx y hy hxy hm
     rcases hmem x hx with rfl | hx <;> rcases hmem y hy with rfl | hy
     · exact hxy rfl
-    · exact hrd ⟨y, List.mem_of_mem_filter hy, hm⟩
-    · exact hrd ⟨x, List.mem_of_mem_filter hx, hm.symm⟩
-    · have hyx : y ∈ L.erase x := (List.mem_erase_of_ne hxy.symm).2 (List.mem_of_mem_filter hy)
-      exact hnogm ⟨x, y, (L.erase x).erase y,
-        (List.perm_cons_erase (List.mem_of_mem_filter hx)).trans
-          (.cons x (List.perm_cons_erase hyx)), hm⟩
+    · exact hrd ⟨y, Multiset.mem_of_mem_filter hy, hm⟩
+    · exact hrd ⟨x, Multiset.mem_of_mem_filter hx, hm.symm⟩
+    · have hxM := Multiset.mem_of_mem_filter hx
+      have hyx : y ∈ M.erase x :=
+        (Multiset.mem_erase_of_ne hxy.symm).2 (Multiset.mem_of_mem_filter hy)
+      exact hnogm ⟨x, y, (M.erase x).erase y,
+        by rw [Multiset.cons_erase hyx, Multiset.cons_erase hxM], hm⟩
   obtain ⟨x, hxS, y, hyS, hxy, had1, had2⟩ :=
-    hbal.exists_antiDominating hpos hmerge ⟨-t, List.mem_toFinset.2 List.mem_cons_self⟩
-  -- `-t` is excluded by `hnotdom`, so the pair comes from `L` and is a null pair
+    exists_antiDominating hbal hpos hmerge (Multiset.cons_ne_zero)
+  -- `-t` is excluded by `hnotdom`, so the pair comes from `M` and is a null pair
   rcases hmem x hxS with rfl | hx <;> rcases hmem y hyS with rfl | hy
   · exact (hxy rfl).elim
   · rw [posSupport_neg] at had1; rw [negSupport_neg] at had2
-    exact (hnotdom y (List.mem_of_mem_filter hy) had2 had1).elim
+    exact (hnotdom y (Multiset.mem_of_mem_filter hy) had2 had1).elim
   · rw [posSupport_neg] at had2; rw [negSupport_neg] at had1
-    exact (hnotdom x (List.mem_of_mem_filter hx) had1 had2).elim
+    exact (hnotdom x (Multiset.mem_of_mem_filter hx) had1 had2).elim
   · have hle (i) : (x i : ℤ) + y i ≤ 0 :=
       add_nonpos_of_imp (x i) (y i) (fun h ↦ had1 h) (fun h ↦ had2 h)
-    refine Or.inl ⟨x, List.mem_of_mem_filter hx, y, List.mem_of_mem_filter hy, hle, ?_⟩
+    refine Or.inl ⟨x, Multiset.mem_of_mem_filter hx, y, Multiset.mem_of_mem_filter hy, hle, ?_⟩
     by_contra! hge
-    exact hmerge hxS hyS hxy <| mergeable_of_apply fun i hxyi ↦
+    exact hmerge x hxS y hyS hxy <| mergeable_of_apply fun i hxyi ↦
       eq_zero_of_add_eq_zero_of_eq (x i) (y i) ((hle i).antisymm (hge i)) hxyi
 
 /-- When `-t` and `v` are mergeable, `t` is the merge of the residual `merge t (-v)` with `v`;
@@ -285,71 +279,64 @@ private lemma recombine {n : ℕ} (sys : QualitativeProbability (Set (Fin n)))
     with `-t` is peeled off before recursing on the residual (`recombine`). -/
 private theorem merge_to_single (sys : QualitativeProbability (Set (Fin 4)))
     (hnull : ∀ i : Fin 4, ¬ sys.ge ∅ {i})
-    (L : List (Fin 4 → SignType)) (hvalid : ∀ v ∈ L, sys.ge (posSupport v) (negSupport v))
-    (t : Fin 4 → SignType) (hsum : ∀ i, comparisonSum L i = t i) :
+    (M : Multiset (Fin 4 → SignType)) (hvalid : ∀ v ∈ M, sys.ge (posSupport v) (negSupport v))
+    (t : Fin 4 → SignType) (hsum : ∀ i, comparisonSum M i = t i) :
     sys.ge (posSupport t) (negSupport t) := by
   by_cases hne : (negSupport t).Nonempty
-  · by_cases hdom : ∃ v ∈ L, posSupport v ⊆ posSupport t ∧ negSupport t ⊆ negSupport v
+  · by_cases hdom : ∃ v ∈ M, posSupport v ⊆ posSupport t ∧ negSupport t ⊆ negSupport v
     · -- mono-domination discharge
-      obtain ⟨v, hvL, hv1, hv2⟩ := hdom
-      exact sys.trans (sys.mono hv2) (sys.trans (hvalid v hvL) (sys.mono hv1))
+      obtain ⟨v, hvM, hv1, hv2⟩ := hdom
+      exact sys.trans (sys.mono hv2) (sys.trans (hvalid v hvM) (sys.mono hv1))
     · -- no mono-dominating member: either a mergeable pair (merge & recurse) or,
       -- failing that, a forced null atom contradicting `hnull`.
       push Not at hdom
-      by_cases hgm : ∃ v w rest, L.Perm (v :: w :: rest) ∧ Mergeable v w
+      by_cases hgm : ∃ v w rest, M = v ::ₘ w ::ₘ rest ∧ Mergeable v w
       case neg =>
-        rcases v1_tailored L hsum hne hdom hgm with
-          ⟨v, hvL, w, hwL, hle, i0, hlt⟩ | ⟨v, hvL, hm⟩
+        rcases v1_tailored M hsum hne hdom hgm with
+          ⟨v, hvM, w, hwM, hle, i0, hlt⟩ | ⟨v, hvM, hm⟩
         · -- null pair → null atom → contradicts hnull
-          obtain ⟨i, hi⟩ := null_from_pair sys (hvalid v hvL) (hvalid w hwL) hle i0 hlt
+          obtain ⟨i, hi⟩ := null_from_pair sys (hvalid v hvM) (hvalid w hwM) hle i0 hlt
           exact absurd hi (hnull i)
         · -- reversed target merges `v`: peel `v`, recurse on the residual, recombine
-          have hperm := List.perm_cons_erase hvL
           have hmt : Mergeable t (-v) := ⟨by simpa using hm.2, by simpa using hm.1⟩
-          have hsum' : ∀ i, comparisonSum (L.erase v) i = merge t (-v) i := fun i ↦ by
-            have h1 := congrFun (comparisonSum_perm hperm) i
-            rw [comparisonSum_cons, hsum i] at h1
+          have hsum' : ∀ i, comparisonSum (M.erase v) i = merge t (-v) i := fun i ↦ by
+            have h1 := hsum i
+            rw [← Multiset.cons_erase hvM, comparisonSum_cons] at h1
             rw [coe_merge hmt, Pi.neg_apply, SignType.coe_neg]
             omega
-          have hvalid' : ∀ x ∈ L.erase v, sys.ge (posSupport x) (negSupport x) :=
-            fun x hx ↦ hvalid x (List.mem_of_mem_erase hx)
-          exact recombine sys hm (hvalid v hvL)
-            (merge_to_single sys hnull (L.erase v) hvalid' (merge t (-v)) hsum')
-      obtain ⟨v, w, rest, hperm, hm⟩ := hgm
-      -- new list: merge v w :: rest, one shorter
-      have hvmem : v ∈ L := hperm.mem_iff.mpr (by simp)
-      have hwmem : w ∈ L := hperm.mem_iff.mpr (by simp)
-      have hrestsub : ∀ x ∈ rest, x ∈ L := fun x hx ↦ hperm.mem_iff.mpr (by simp [hx])
-      have hvalid' : ∀ x ∈ merge v w :: rest, sys.ge (posSupport x) (negSupport x) := by
+          exact recombine sys hm (hvalid v hvM) (merge_to_single sys hnull (M.erase v)
+            (fun x hx ↦ hvalid x (Multiset.mem_of_mem_erase hx)) (merge t (-v)) hsum')
+      obtain ⟨v, w, rest, hM, hm⟩ := hgm
+      -- new family: `merge v w ::ₘ rest`, one smaller
+      have hvalid' : ∀ x ∈ merge v w ::ₘ rest, sys.ge (posSupport x) (negSupport x) := by
         intro x hx
-        rcases List.mem_cons.mp hx with rfl | hx
-        · exact merge_valid sys (hvalid v hvmem) (hvalid w hwmem) hm
-        · exact hvalid x (hrestsub x hx)
-      have hsum' : ∀ i, comparisonSum (merge v w :: rest) i = t i := fun i ↦ by
-        rw [comparisonSum_cons, coe_merge hm, ← hsum i, congrFun (comparisonSum_perm hperm) i]
+        rcases Multiset.mem_cons.mp hx with rfl | hx
+        · exact merge_valid sys (hvalid v (by simp [hM])) (hvalid w (by simp [hM])) hm
+        · exact hvalid x (by simp [hM, hx])
+      have hsum' : ∀ i, comparisonSum (merge v w ::ₘ rest) i = t i := fun i ↦ by
+        rw [comparisonSum_cons, coe_merge hm, ← hsum i, hM]
         simp only [comparisonSum_cons]; omega
-      exact merge_to_single sys hnull (merge v w :: rest) hvalid' t hsum'
+      exact merge_to_single sys hnull (merge v w ::ₘ rest) hvalid' t hsum'
   · -- trivial-target discharge: `negSupport t = ∅`
     rw [Set.not_nonempty_iff_eq_empty] at hne
     rw [QualitativeProbability.ge, hne]
     exact sys.bot_le _
-termination_by L.length
+termination_by Multiset.card M
 decreasing_by
-  all_goals
-    have h := hperm.length_eq
-    simp only [List.length_cons] at h ⊢
-    omega
+  all_goals first
+    | exact Multiset.card_erase_lt_of_mem ‹_›
+    | (rw [‹M = _›]; simp)
 
 /-- A qualitative probability on `Fin 4` with no null atom satisfies cancellation, by the merge
     reduction `merge_to_single`. -/
 theorem no_null_cancellation (sys : QualitativeProbability (Set (Fin 4)))
     (hnull : ∀ i : Fin 4, ¬ sys.ge ∅ {i}) : Cancellation sys.ge := by
-  intro L hvalid hsum v hv
+  intro M hvalid hsum v hv
   rw [← posSupport_neg v, ← negSupport_neg v]
-  refine merge_to_single sys hnull (L.erase v) (fun w hw ↦ hvalid w (List.mem_of_mem_erase hw))
-    (-v) fun i ↦ ?_
-  have h := congrFun ((comparisonSum_perm (List.perm_cons_erase hv)).symm.trans hsum) i
-  rw [comparisonSum_cons, Pi.zero_apply] at h
+  refine merge_to_single sys hnull (M.erase v)
+    (fun w hw ↦ hvalid w (Multiset.mem_of_mem_erase hw)) (-v) fun i ↦ ?_
+  have h := congrFun hsum i
+  rw [← Multiset.cons_erase hv, comparisonSum_cons, Pi.zero_apply] at h
   rw [Pi.neg_apply, SignType.coe_neg]
   omega
 
@@ -468,14 +455,14 @@ private lemma last_notMem_negSupport_embed (v : Fin n → SignType) :
 /-- Cancellation transfers back along the lexicographic extension. -/
 private theorem cancellation_extendLex (sys : QualitativeProbability (Set (Fin n)))
     (h : Cancellation sys.extendLex.ge) : Cancellation sys.ge := by
-  intro L hvalid hsum v hv
-  have key := h (L.map embed) ?_ ?_ (embed v) (List.mem_map_of_mem hv)
+  intro M hvalid hsum v hv
+  have key := h (M.map embed) ?_ ?_ (embed v) (Multiset.mem_map_of_mem _ hv)
   · -- strictness transfers back
     rcases key with ⟨h3, -⟩ | ⟨-, hge⟩
     · exact absurd h3 (last_notMem_negSupport_embed v)
     · rwa [preimage_posSupport_embed, preimage_negSupport_embed] at hge
   · intro w hw
-    obtain ⟨w, hwL, rfl⟩ := List.mem_map.mp hw
+    obtain ⟨w, hwL, rfl⟩ := Multiset.mem_map.mp hw
     refine Or.inr ⟨iff_of_false (last_notMem_posSupport_embed w)
       (last_notMem_negSupport_embed w), ?_⟩
     rw [preimage_posSupport_embed, preimage_negSupport_embed]
@@ -483,12 +470,12 @@ private theorem cancellation_extendLex (sys : QualitativeProbability (Set (Fin n
   · -- the new coordinate vanishes; the old ones are unchanged
     funext i
     refine Fin.lastCases ?_ (fun i ↦ ?_) i
-    · rw [comparisonSum, List.map_map]
-      refine List.sum_eq_zero fun x hx ↦ ?_
-      obtain ⟨w, -, rfl⟩ := List.mem_map.mp hx
+    · rw [comparisonSum, Multiset.map_map]
+      refine Multiset.sum_eq_zero fun x hx ↦ ?_
+      obtain ⟨w, -, rfl⟩ := Multiset.mem_map.mp hx
       show ((embed w (Fin.last n) : ℤ)) = 0
       rw [embed, Fin.snoc_last]; rfl
-    · simpa [comparisonSum, List.map_map, Function.comp_def, embed] using congrFun hsum i
+    · simpa [comparisonSum, Multiset.map_map, Function.comp_def, embed] using congrFun hsum i
 
 /-- A system on at most four atoms with no null atom satisfies cancellation, since its
     lexicographic extension to `Fin 4` falls to `no_null_cancellation`. -/
