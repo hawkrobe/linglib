@@ -39,6 +39,7 @@ covers exactly the participant sets whose own features are its bundle.
 * `Person.mem_participantSets_iff`: a tripartition value covers the participant sets whose
   features are its bundle.
 * `Person.toFeatures_sup`: the bundle of a coordination is the union of its conjuncts' bundles.
+* `Person.prominence_le_iff_subset`: prominence orders values by inclusion of their bundles.
 * `Person.Category.sharedPerson_isSome_iff`: a set of categories has a person iff they share a
   bundle.
 
@@ -158,6 +159,16 @@ theorem toFeatures_sup {p q : Person} {s t : Features} (hp : p.toFeatures = some
 theorem toFeatures_wellFormed {p : Person} {t : Features} (h : p.toFeatures = some t) :
     t.WellFormed := by
   revert p t; decide
+
+/-- A referential value's prominence is the number of its features. -/
+theorem prominence_eq_card {p : Person} {t : Features} (h : p.toFeatures = some t) :
+    p.prominence = t.card := by
+  revert p t; decide
+
+/-- Prominence orders referential values by inclusion of their bundles. -/
+theorem prominence_le_iff_subset {p q : Person} {s t : Features} (hp : p.toFeatures = some s)
+    (hq : q.toFeatures = some t) : p.prominence ≤ q.prominence ↔ s ⊆ t := by
+  revert p q s t; decide
 
 /-- `IsSAP` is featural participanthood. -/
 theorem isSAP_iff_participant {p : Person} {t : Features} (h : p.toFeatures = some t) :

@@ -113,21 +113,21 @@ abbrev Distributes {α : Type*} (P : α → Prop) (s : Finset α) : Prop := ∀ 
 theorem union_isLeast {α : Type*} [DecidableEq α] (x y : Finset α) :
     IsLeast {z | x ⊆ z ∧ y ⊆ z} (x ∪ y) :=
   ⟨⟨Finset.subset_union_left, Finset.subset_union_right⟩,
-    λ _ ⟨hx, hy⟩ => Finset.union_subset hx hy⟩
+    fun _ ⟨hx, hy⟩ ↦ Finset.union_subset hx hy⟩
 
 /-- The intersection is the largest set contained in both, which is why an intersection
     analysis cannot be stated by minimal models (§6.5). -/
 theorem inter_isGreatest {α : Type*} [DecidableEq α] (x y : Finset α) :
     IsGreatest {z | z ⊆ x ∧ z ⊆ y} (x ∩ y) :=
   ⟨⟨Finset.inter_subset_left, Finset.inter_subset_right⟩,
-    λ _ ⟨hx, hy⟩ => Finset.subset_inter hx hy⟩
+    fun _ ⟨hx, hy⟩ ↦ Finset.subset_inter hx hy⟩
 
 /-! ### Indeterminacy: set values and membership (§§3–4) -/
 
 /-- Under equality checking no value meets two distinct requirements, whichever disjunct of
     (18) is chosen ((19)–(21)) and whatever the variable of (23) stands for ((24)). -/
 theorem not_eq_and_eq_of_ne {α : Type*} {x a b : α} (h : a ≠ b) : ¬ (x = a ∧ x = b) :=
-  λ ⟨ha, hb⟩ => h (ha ▸ hb)
+  fun ⟨ha, hb⟩ ↦ h (ha ▸ hb)
 
 /-- In the flat order two distinct atoms have no join, so the unification of an underspecified
     value with the two verbs' requirements fails, the transitivity argument of (24) as order
@@ -265,9 +265,9 @@ theorem xhosa_coordination :
     AcceptableIff Examples.ex_54
         (Distributes (· ∈ formCells Xhosa.Gender.plSubjPrefix "zi")
           {Xhosa.Gender.genderD, .genderE}) ∧
-      AcceptableIff Examples.ex_53a (Distributes (λ g : Xhosa.Gender => g.pluralClass = .cl6)
+      AcceptableIff Examples.ex_53a (Distributes (fun g : Xhosa.Gender ↦ g.pluralClass = .cl6)
           {Xhosa.Gender.genderC, .genderD}) ∧
-      AcceptableIff Examples.ex_53b (Distributes (λ g : Xhosa.Gender => g.pluralClass = .cl8)
+      AcceptableIff Examples.ex_53b (Distributes (fun g : Xhosa.Gender ↦ g.pluralClass = .cl8)
           {Xhosa.Gender.genderC, .genderD}) := by
   decide
 
@@ -341,13 +341,13 @@ theorem english_table :
       english (Person.System.tripartition.resolve p q) = english p ∪ english q := by
   decide
 
-/-- Under this encoding the person hierarchy 1 < 2 < 3 is the reverse inclusion of marker sets,
-    so union picks the lowest-ranked conjunct, the hierarchy of Zwicky and Corbett (fn. 12)
-    as a corollary of union, as the substrate derives it from referent union. -/
-theorem english_subset_iff_rank :
+/-- Under this encoding the person hierarchy is the inclusion of marker sets, so union picks
+    the most prominent conjunct, the hierarchy of Zwicky and Corbett (fn. 12) as a corollary of
+    union. -/
+theorem english_subset_iff_prominence :
     ∀ p q : Person, p ∈ Person.System.tripartition.values →
       q ∈ Person.System.tripartition.values →
-      (english q ⊆ english p ↔ p.hierarchyRank ≤ q.hierarchyRank) := by
+      (english q ⊆ english p ↔ q.prominence ≤ p.prominence) := by
   decide
 
 /-- *José y yo* and *ja a ty* take first-plural agreement and *José y tú* second-plural, the

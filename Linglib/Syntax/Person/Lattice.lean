@@ -34,6 +34,7 @@ quadripartition, and their union is the join (`Person.ofParticipants_union`).
 * `Person.ofParticipants_union`: the person of a union of participant sets is the join of their
   persons.
 * `Person.coarsen_eq_iff`: coarsening sends a value to the tripartition value covering it.
+* `Person.prominence_le_iff`: prominence is the order resolution induces up to clusivity.
 
 ## Implementation notes
 
@@ -174,6 +175,12 @@ theorem coarsen_eq_iff {p : Person} (hp : p ≠ .zero) (q : Person) :
 /-- The tripartition value of a coordination depends only on the tripartition values of its
 conjuncts. -/
 theorem coarsen_sup (p q : Person) : (p ⊔ q).coarsen = (p.coarsen ⊔ q.coarsen).coarsen := by
+  revert p q; decide
+
+/-- On referential values, prominence is the order resolution induces up to clusivity, `p` being
+at most as prominent as `q` iff coordinating them gives `q`'s tripartition value. -/
+theorem prominence_le_iff {p q : Person} (hp : p ≠ .zero) (hq : q ≠ .zero) :
+    p.prominence ≤ q.prominence ↔ (p ⊔ q).coarsen = q.coarsen := by
   revert p q; decide
 
 end Person
