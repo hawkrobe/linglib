@@ -1,6 +1,7 @@
 module
 
-public import Linglib.Semantics.Quantification.Numerals.Roundness
+public import Linglib.Semantics.Degree.Granularity
+public import Mathlib.Data.Rat.Floor
 public import Linglib.Pragmatics.SocialMeaning.IndexicalField
 public import Linglib.Pragmatics.SocialMeaning.Dimension
 public import Linglib.Pragmatics.SocialMeaning.Persona
@@ -8,43 +9,47 @@ public import Linglib.Studies.BeltramaSoltBurnett2023
 public import Linglib.Data.Examples.BeltramaSchwarz2024
 public import Mathlib.Basic.Sign.Defs
 public import Mathlib.Tactic.NormNum
-public import Mathlib.Tactic.Linarith
 
 /-!
 # Social stereotypes and imprecision resolution
 
 Beltrama and Schwarz find that comprehenders interpret a round numeral more strictly when its
 speaker is described as Nerdy and more tolerantly when Chill, but that the Nerdy effect appears
-only in a Covered-Screen inference task, not in a Truth-Value Judgment task. Here the asymmetry
-follows from one mechanism: a persona scales the pragmatic halo, the sign of the scaling is its
-rejection shift, and a rejection shift is suppressed where rejection is prejudicial, blaming the
-speaker (§7). The paper offers this gate tentatively, noting that it would also predict globally
-more charitable judgments, which are not observed.
+only in a Covered-Screen inference task, not in a Truth-Value Judgment task. A numeral denotes the
+cell of its value at the comprehender's precision level, and a persona moves that level toward
+strictness when the precision variant it favors indexes Competence, Hypothesis 1 grounded in the
+bidirectionality of social meaning. A shift toward rejection is suppressed where rejection is
+prejudicial, blaming the speaker (§7); the paper offers this gate tentatively, noting that it
+would also predict globally more charitable judgments, which are not observed.
 
 ## Main definitions
 
 * `precisionField`: Beltrama, Solt and Burnett's measured indexical field over their precision
   variants, of which the precise and approximate ones are at issue here.
-* `haloWidth`, `withinHalo`: the pragmatic halo of a numeral, growing with its roundness.
-* `speakerHalo`, `personaShift`: the persona-scaled halo and the rejection shift.
+* `personaShift`, `level`: the strictness shift a persona induces, read off the field, and the
+  precision level it sets.
+* `Covered`: a covered-screen response, the displayed value outside the numeral's extension.
 * `RejectionPrejudicial`, `predictedShift`: the task gate suppressing rejection shifts.
 
 ## Main results
 
-* `bidirectionality`, `haloMultiplier_coheres`: persona, precision variant and tolerance
-  multiplier cohere in the inherited field.
-* `margin_resolved_by_persona`, `no_shift_on_sharp`: the $207 screen falls inside the default
-  halo of *$200* but outside the Nerdy-narrowed one, and a sharp numeral has no halo to shift.
+* `Covered.of_le`: Hypothesis 1, a covered response under a more liberal condition is one under a
+  stricter condition.
+* `personaShift_nerdy_eq_neg_chill`, `personaShift_eq_neg_warmth`: the personas pull in opposite
+  directions, and the Competence and Warmth clusters predict the same shift.
 * `predictedShift_coveredScreen`, `predictedShift_truthValueJudgment`, `shift_blocked_iff`: the
   task asymmetry, derived from prejudiciality.
 
 ## Implementation notes
 
-In Experiment 1 (n = 282, §4.5) COVERED rates in the Imprecise cell were higher for Nerdy and
-lower for Chill than baseline; in Experiment 2 (n = 244, §5.3) WRONG rates were lower for Chill
-with no Nerdy difference, and the pooled analysis (§6) shows a Nerdy × Task interaction. The
-stimulus and observed directions are the rows of `Data.Examples.BeltramaSchwarz2024`. The halo
-magnitudes and the roundness gate, a multiple of ten, are conventional.
+The extension of a numeral at a precision level is its cell in `Degree.Granularity`, as the
+paper's "a lower level of precision … includes the value displayed on the visible screen in the
+numeral's extension" (§4.1) suggests, and a persona moves the level by one halving step. The
+paper's 5–18% deviations are a stimulus design leaving participants on the fence, not a level;
+the illustration with a twenty-dollar baseline grain is conventional. In Experiment 1 (§4.5)
+covered responses in the Imprecise cell were more frequent for Nerdy and less for Chill than at
+baseline; in Experiment 2 (§5.3) rejections were less frequent for Chill with no Nerdy difference;
+the rows of `Data.Examples.BeltramaSchwarz2024` record the directions.
 
 ## References
 
@@ -57,15 +62,14 @@ magnitudes and the roundness gate, a multiple of ten, are conventional.
 * [donofrio-2018]
 * [fricker-2007]
 * [krifka-2007]
-* [lasersohn-1999]
-* [woodin-etal-2024]
+* [sauerland-stateva-2011]
 -/
 
 @[expose] public section
 
 namespace BeltramaSchwarz2024
 
-open SocialMeaning
+open SocialMeaning Degree.Granularity
 
 /-! ### Conditions -/
 
@@ -108,8 +112,8 @@ def Persona.dimension : Persona → Dimension
   | .nerdy => .competence
   | .chill => .warmth
 
-/-- Production and comprehension cohere: the mode a persona favors positively indexes
-    the dimension it foregrounds. -/
+/-- Production and comprehension cohere: the mode a persona favors positively indexes the dimension
+it foregrounds. -/
 theorem bidirectionality (p : Persona) :
     precisionField.Indexes p.precision p.dimension := by
   cases p <;> decide +kernel
@@ -145,191 +149,140 @@ def impreciseReadingAvailable (n : Nat) : Prop := 10 ∣ n
 instance (n : Nat) : Decidable (impreciseReadingAvailable n) :=
   inferInstanceAs (Decidable (10 ∣ n))
 
-/-- The round numeral supports an imprecise reading
-    and the displayed value does not. -/
+/-- The round numeral supports an imprecise reading and the displayed value does not. -/
 theorem roundness_gates_persona :
     impreciseReadingAvailable statedAmount ∧
       ¬ impreciseReadingAvailable displayedAmount :=
   ⟨⟨20, rfl⟩, by decide⟩
 
-/-! ### The pragmatic halo
+/-! ### The precision level
 
-[lasersohn-1999]'s halo of a numeral, the values close enough to count as its value, here grows
-with the numeral's roundness score; only that monotone relationship is motivated, by
-[woodin-etal-2024]'s corpus finding, and the magnitude factors are conventional. -/
+A numeral denotes the cell of its value in the grain of the comprehender's precision level, so a
+less precise interpretation, at a coarser grain, takes more values into the numeral's extension
+(§4.1). A persona moves the precision level by one step of halving or doubling, [krifka-2007]'s
+optimal refinement, toward strictness when its favored variant indexes Competence: Hypothesis 1,
+grounded in the bidirectionality of social meaning (§3). -/
 
-/-- The halo width of a numeral grows with its roundness score, scaled by its magnitude. -/
-def haloWidth (n : Nat) : ℚ :=
-  let magnitudeFactor : ℚ :=
-    if n ≥ 1000 then 50 else if n ≥ 100 then 10 else if n ≥ 10 then 5 else 1
-  magnitudeFactor * Numerals.Roundness.roundnessScore n / 6
+/-- The shift of a persona condition toward a stricter interpretation is the sign with which its
+favored variant indexes Competence, and `0` at baseline. -/
+def personaShift : PersonaCondition → SignType
+  | none => 0
+  | some p => precisionField p.precision .competence
 
-/-- A value lies within a numeral's halo when it is no farther from the numeral than the halo
-width. -/
-def withinHalo (n : Nat) (q : ℚ) : Prop := |q - (n : ℚ)| ≤ haloWidth n
+@[simp] theorem personaShift_none : personaShift none = 0 := rfl
 
-theorem haloWidth_nonneg (n : Nat) : 0 ≤ haloWidth n := by
-  have h : (0 : ℚ) ≤ (Numerals.Roundness.roundnessScore n : ℚ) := Nat.cast_nonneg _
-  simp only [haloWidth]
-  split_ifs <;> exact div_nonneg (mul_nonneg (by norm_num) h) (by norm_num)
+theorem personaShift_nerdy : personaShift (some .nerdy) = 1 := by decide +kernel
 
-/-! ### The speaker-scaled halo -/
+theorem personaShift_chill : personaShift (some .chill) = -1 := by decide +kernel
 
-/-- A persona's halo multiplier narrows the halo for Nerdy and widens it for Chill. Only the
-ordering, Nerdy below the baseline `1` below Chill, does any work below; the magnitudes are
-conventional. -/
-def Persona.haloMultiplier : Persona → ℚ
-  | .nerdy => 1/2
-  | .chill => 2
+/-- Nerdy and Chill pull in opposite directions, since their favored variants are antipodal in the
+field. -/
+theorem personaShift_nerdy_eq_neg_chill :
+    personaShift (some .nerdy) = -personaShift (some .chill) :=
+  congrFun BeltramaSoltBurnett2023.opposite_directions .competence
 
-/-- A persona narrows the halo exactly when its favored mode indexes away from Warmth
-    in the inherited field. -/
-theorem haloMultiplier_coheres (p : Persona) :
-    p.haloMultiplier < 1 ↔ precisionField p.precision .warmth < 0 := by
+/-- The Competence and the Warmth clusters predict the same shift, so the sign field cannot tell
+apart the two sources of the effect that §3 distinguishes. -/
+theorem personaShift_eq_neg_warmth (p : Persona) :
+    personaShift (some p) = -precisionField p.precision .warmth := by
   cases p <;> decide +kernel
 
-/-- The speaker-conditioned halo width is `haloWidth` scaled by the condition's tolerance
-multiplier, `1` at baseline. -/
-def speakerHalo (c : PersonaCondition) (n : Nat) : ℚ :=
-  c.elim 1 Persona.haloMultiplier * haloWidth n
+/-- The precision level of a persona condition is the baseline grain width `w` halved once per
+step toward strictness. -/
+def level (w : ℚ) (c : PersonaCondition) : ℚ := w / 2 ^ (personaShift c : ℤ)
 
-/-- The stimulus numeral's default halo has width `haloWidth 200 = 10`. -/
-theorem haloWidth_stated : haloWidth statedAmount = 10 := by
-  have hs : Numerals.Roundness.roundnessScore 200 = 6 := by decide
-  unfold haloWidth statedAmount
-  rw [hs]; norm_num
+@[simp] theorem level_none (w : ℚ) : level w none = w := by simp [level, personaShift]
 
-/-- The margin is live: $207 falls within the default halo of "$200" (§4.1's 5–18%
-    band), so the Imprecise cell is genuinely contested. -/
-theorem displayed_within_default_halo :
-    withinHalo statedAmount (displayedAmount : ℚ) := by
-  unfold withinHalo
-  rw [haloWidth_stated]
-  norm_num [statedAmount, displayedAmount]
+@[simp] theorem level_nerdy (w : ℚ) : level w (some .nerdy) = w / 2 := by
+  simp [level, personaShift_nerdy]
 
-/-- The margin is resolved by persona: the Nerdy-narrowed halo excludes $207; the
-    Chill-widened one includes it. -/
-theorem margin_resolved_by_persona :
-    ¬ |(displayedAmount : ℚ) - statedAmount| ≤ speakerHalo (some .nerdy) statedAmount ∧
-      |(displayedAmount : ℚ) - statedAmount| ≤ speakerHalo (some .chill) statedAmount := by
-  constructor <;>
-    · simp only [speakerHalo, Option.elim, Persona.haloMultiplier, haloWidth_stated]
-      norm_num [statedAmount, displayedAmount]
+@[simp] theorem level_chill (w : ℚ) : level w (some .chill) = 2 * w := by
+  simp [level, personaShift_chill, div_eq_mul_inv, mul_comm]
 
-/-! ### The rejection shift, derived -/
+/-- A comprehender picks the covered screen when the displayed value `d` lies outside the
+extension of the uttered numeral `n` at their precision level. -/
+def Covered (w : ℚ) (c : PersonaCondition) (n d : ℚ) : Prop := d ∉ (grain (level w c)).cell n
 
-/-- A condition's shift on the reject-the-imprecise-reading scale is the sign of its halo narrowing
-relative to baseline, since a narrower halo excludes more values. -/
-def personaShift (c : PersonaCondition) (n : Nat) : SignType :=
-  SignType.sign (haloWidth n - speakerHalo c n)
+/-- Around a numeral that is a point of both precision levels, a covered response under a more
+liberal condition is a covered response under a stricter one, Hypothesis 1. -/
+theorem Covered.of_le {w n d : ℚ} (hw : 0 < w) {c c' : PersonaCondition}
+    (h : personaShift c ≤ personaShift c') (hn : n ∈ AddSubgroup.zmultiples (level w c))
+    (hn' : n ∈ AddSubgroup.zmultiples (level w c')) (hd : Covered w c n d) :
+    Covered w c' n d := fun hd' ↦ by
+  have hle : level w c' ≤ level w c := by
+    rcases c with _ | _ | _ <;> rcases c' with _ | _ | _ <;>
+      simp only [personaShift_none, personaShift_nerdy, personaShift_chill] at h <;>
+      first
+        | (simp only [level_none, level_nerdy, level_chill]; linarith)
+        | exact absurd h (by decide)
+  have hpos : 0 < level w c' := by
+    rcases c' with _ | _ | _ <;> simp only [level_none, level_nerdy, level_chill] <;> positivity
+  exact hd (cell_subset_cell hpos hle hn' hn hd')
 
-/-- At the stimulus numeral the shifts are `+1` for Nerdy, `-1` for Chill and `0` at baseline. -/
-theorem personaShift_stated :
-    personaShift (some .nerdy) statedAmount = 1 ∧
-      personaShift (some .chill) statedAmount = -1 ∧
-        personaShift none statedAmount = 0 := by
+/-- With a baseline grain of twenty dollars the $207 screen lies inside the extension of *$200* at
+baseline and for Chill, and outside it for Nerdy. -/
+example : Covered 20 (some .nerdy) 200 207 ∧ ¬ Covered 20 none 200 207 ∧
+    ¬ Covered 20 (some .chill) 200 207 := by
+  have h (k : ℤ) (ε : ℚ) (hk : (k : ℚ) * ε = 200) (hε : 0 < ε) :
+      (grain ε).cell 200 = Set.Ico (200 - ε / 2) (200 + ε / 2) := by
+    rw [cell_grain hε, representative_eq_self_of_mem_zmultiples hε.ne'
+      (AddSubgroup.mem_zmultiples_iff.2 ⟨k, by rw [zsmul_eq_mul, hk]⟩)]
+  simp only [Covered, level_nerdy, level_none, level_chill, not_not]
   refine ⟨?_, ?_, ?_⟩
-  · simp only [personaShift, speakerHalo, Option.elim, Persona.haloMultiplier,
-      haloWidth_stated]
-    norm_num [sign_pos]
-  · simp only [personaShift, speakerHalo, Option.elim, Persona.haloMultiplier,
-      haloWidth_stated]
-    norm_num [sign_neg]
-  · simp only [personaShift, speakerHalo, Option.elim, haloWidth_stated]
-    norm_num [sign_zero]
-
-/-- A sharp numeral has zero halo, so every condition's shift vanishes on it: the
-    persona effect needs a round numeral to act on. -/
-theorem no_shift_on_sharp (c : PersonaCondition) :
-    personaShift c displayedAmount = 0 := by
-  have h0 : haloWidth displayedAmount = 0 := by
-    have hs : Numerals.Roundness.roundnessScore 207 = 0 := by decide
-    unfold haloWidth displayedAmount
-    rw [hs]; norm_num
-  rcases c with _ | p <;> simp [personaShift, speakerHalo, h0, sign_zero]
-
-/-- Nerdy and Chill pull in exactly opposite directions on any numeral. -/
-theorem nerdy_chill_opposite_shift (n : Nat) :
-    personaShift (some .nerdy) n = - personaShift (some .chill) n := by
-  rcases (haloWidth_nonneg n).eq_or_lt with h | h
-  · simp [personaShift, speakerHalo, Option.elim, Persona.haloMultiplier, ← h, sign_zero]
-  · have h1 : (0 : ℚ) < haloWidth n - 1 / 2 * haloWidth n := by linarith
-    have h2 : haloWidth n - 2 * haloWidth n < 0 := by linarith
-    simp only [personaShift, speakerHalo, Option.elim, Persona.haloMultiplier]
-    rw [sign_pos h1, sign_neg h2, neg_neg]
+  · rw [h 20 _ (by norm_num) (by norm_num)]; norm_num
+  · rw [h 10 _ (by norm_num) (by norm_num)]; norm_num
+  · rw [h 5 _ (by norm_num) (by norm_num)]; norm_num
 
 /-! ### Task asymmetry from the prejudiciality of rejection -/
 
-/-- Rejection is socially prejudicial in a Truth-Value Judgment — "wrong" blames the
-    speaker ([fricker-2007]) — but not in Covered-Screen inference (§7). -/
+/-- Rejection is socially prejudicial in a Truth-Value Judgment — "wrong" blames the speaker
+([fricker-2007]) — but not in Covered-Screen inference (§7). -/
 def RejectionPrejudicial : TaskType → Prop := (· = .truthValueJudgment)
 
 instance : DecidablePred RejectionPrejudicial := fun t =>
   inferInstanceAs (Decidable (t = .truthValueJudgment))
 
-/-- The shift that manifests in a task is `personaShift` at the stimulus numeral, suppressed exactly
-when it points toward rejection in a prejudicial task. -/
+/-- The shift that manifests in a task is `personaShift`, suppressed exactly when it points toward
+rejection in a prejudicial task. -/
 def predictedShift (c : PersonaCondition) (t : TaskType) : SignType :=
-  if 0 < personaShift c statedAmount ∧ RejectionPrejudicial t then 0
-  else personaShift c statedAmount
+  if 0 < personaShift c ∧ RejectionPrejudicial t then 0 else personaShift c
 
 /-- In the inference task rejection is not prejudicial, so both shifts manifest. -/
 theorem predictedShift_coveredScreen :
     predictedShift (some .nerdy) .coveredScreen = 1 ∧
       predictedShift (some .chill) .coveredScreen = -1 := by
-  refine ⟨?_, ?_⟩
-  · simp only [predictedShift, personaShift_stated.1]; decide
-  · simp only [predictedShift, personaShift_stated.2.1]; decide
+  decide +kernel
 
 /-- In the judgment task the Nerdy rejection shift is blocked and the Chill acceptance shift
 survives. -/
 theorem predictedShift_truthValueJudgment :
     predictedShift (some .nerdy) .truthValueJudgment = 0 ∧
       predictedShift (some .chill) .truthValueJudgment = -1 := by
-  refine ⟨?_, ?_⟩
-  · simp only [predictedShift, personaShift_stated.1]; decide
-  · simp only [predictedShift, personaShift_stated.2.1]; decide
+  decide +kernel
 
 /-- The Chill (acceptance) shift is task-invariant: never blocked. -/
 theorem acceptance_shift_never_blocked (t : TaskType) :
-    predictedShift (some .chill) t = personaShift (some .chill) statedAmount := by
-  cases t <;>
-    · simp only [predictedShift, personaShift_stated.2.1]
-      decide
+    predictedShift (some .chill) t = personaShift (some .chill) := by
+  cases t <;> decide +kernel
 
 /-- The Nerdy effect is task-dependent: present in inference, absent in judgment. -/
 theorem nerdy_effect_is_task_dependent :
     predictedShift (some .nerdy) .coveredScreen ≠
       predictedShift (some .nerdy) .truthValueJudgment := by
-  simp only [predictedShift, personaShift_stated.1]
-  decide
+  decide +kernel
 
-/-- Blocking is structural: a shift is suppressed to neutral exactly when the condition
-    is already neutral or points toward rejection in a prejudicial task. -/
+/-- Blocking is structural: a shift is suppressed to neutral exactly when the condition is already
+neutral or points toward rejection in a prejudicial task. -/
 theorem shift_blocked_iff (c : PersonaCondition) (t : TaskType) :
     predictedShift c t = 0 ↔
-      personaShift c statedAmount = 0 ∨
-        (0 < personaShift c statedAmount ∧ RejectionPrejudicial t) := by
+      personaShift c = 0 ∨
+        (0 < personaShift c ∧ RejectionPrejudicial t) := by
   have key : ∀ (s : SignType) (u : TaskType),
       (if 0 < s ∧ RejectionPrejudicial u then 0 else s) = 0 ↔
         s = 0 ∨ (0 < s ∧ RejectionPrejudicial u) := by
     intro s u
     cases s <;> cases u <;> decide
   exact key _ t
-
-/-- `predictedShift`, tabulated over its six cells. -/
-private theorem predictedShift_eq_ite (c : PersonaCondition) (t : TaskType) :
-    predictedShift c t =
-      if c = some .nerdy ∧ t = .coveredScreen then 1
-        else if c = some .chill then -1 else 0 := by
-  rcases c with _ | p
-  · simp only [predictedShift, personaShift_stated.2.2]
-    cases t <;> decide
-  · cases p
-    · simp only [predictedShift, personaShift_stated.1]
-      cases t <;> decide
-    · simp only [predictedShift, personaShift_stated.2.1]
-      cases t <;> decide
 
 /-! ### Data: predicted shift vs. observed direction -/
 
@@ -357,10 +310,8 @@ def rowConfirmsPrediction (e : Datum) : Bool :=
   | _, _, _ => false
 
 -- Every persona × task cell's predicted shift matches the text-reported observed
--- direction (§4.5, §5.3, §6). Routed through the tabulated form: kernel `decide`
--- cannot reduce the ℚ halo arithmetic inside `personaShift`.
+-- direction (§4.5, §5.3, §6).
 example : ∀ e ∈ Examples.all, rowConfirmsPrediction e := by
-  simp only [rowConfirmsPrediction, predictedShift_eq_ite]
-  decide
+  decide +kernel
 
 end BeltramaSchwarz2024
