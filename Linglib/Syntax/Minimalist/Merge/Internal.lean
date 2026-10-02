@@ -16,8 +16,12 @@ trace cuts it keeps a trace in place of `β` (`mergeOpC_im_composition`).
 
 * `Minimalist.Merge.mergeOpUnitG_apply_singleton`, `mergeOpUnitG_apply_singleton_unique`: the
   unit stage on one tree, a sum over the cuts with crown `{β}`.
+* `Minimalist.Merge.mergeOpUnitG_factor_out_singleton`,
+  `mergeOpUnitG_apply_singleton_unique_residual`: the unit stage beside a spectator workspace.
 * `Minimalist.Merge.mergeOpG_im_composition`, `mergeOp_im_composition`,
   `mergeOpC_im_composition`: Internal Merge as a composition of Merges.
+* `Minimalist.Merge.mergeOpG_im_composition_residual`: Internal Merge beside a spectator
+  workspace.
 
 ## Implementation notes
 
@@ -77,6 +81,60 @@ theorem mergeOpUnitG_apply_singleton_unique (β T : UnorderedTree α)
   obtain ⟨p, hp, rfl⟩ := Multiset.mem_map.mp hx
   exact ite_eq_right (Multiset.mem_filter.mp hp).2
 
+/-- The unit stage commutes with a spectator component `T` that does not have `β` as a subtree. -/
+theorem mergeOpUnitG_factor_out_singleton [IsMergeCuts cuts] {β T : UnorderedTree α}
+    (hT : β ∉ T.subtrees) (w : ConnesKreimer R (UnorderedTree α)) :
+    mergeOpUnitG (R := R) cuts β (of' ({T} : Forest (UnorderedTree α)) * w)
+      = of' ({T} : Forest (UnorderedTree α)) * mergeOpUnitG (R := R) cuts β w := by
+  rw [mergeOpUnitG, LinearMap.comp_apply, LinearMap.comp_apply, AlgHom.toLinearMap_apply,
+    AlgHom.toLinearMap_apply, map_mul,
+    show comulAlgHomNG (R := R) cuts (of' ({T} : Forest (UnorderedTree α))) = comulTreeNG cuts T
+      from comulAlgHomNG_apply_ofTree cuts T, comulTreeNG, add_mul, map_add, ← of'_singleton]
+  -- The primitive term vanishes, since `T ≠ β`.
+  rw [mergePostUnit_left_mul_eq_zero_of_not_le _ _ _ ?prim, zero_add]
+  case prim =>
+    intro h_le
+    rw [Multiset.singleton_le, Multiset.mem_singleton] at h_le
+    exact hT (h_le ▸ T.self_mem_subtrees)
+  -- Split off the empty cut `(0, T)`; the nonempty cuts vanish.
+  rw [← Multiset.sum_map_mul_right,
+    ← Multiset.filter_add_not (fun pf => pf.1.card = 0) (cuts T),
+    Multiset.map_add, Multiset.sum_add, map_add, IsMergeCuts.filter_empty,
+    Multiset.map_singleton, Multiset.sum_singleton, _root_.map_multiset_sum,
+    Multiset.sum_eq_zero, add_zero]
+  · rw [of'_zero,
+      mul_comm ((1 : ConnesKreimer R (UnorderedTree α)) ⊗ₜ[R] ofTree T) _,
+      mergePostUnit_right_one_tmul, mul_comm]
+    rfl
+  · intro x hx
+    obtain ⟨p, hp, rfl⟩ := Multiset.mem_map.mp (Multiset.map_map _ _ _ ▸ hx)
+    obtain ⟨hp, hcard⟩ := Multiset.mem_filter.mp hp
+    refine mergePostUnit_left_mul_eq_zero_of_not_le _ _ _ (fun h_le ↦ hcard ?_) _
+    rw [Multiset.card_eq_zero]
+    refine Multiset.eq_zero_of_forall_notMem fun x hx_mem => ?_
+    rw [Multiset.mem_singleton.mp (Multiset.subset_of_le h_le hx_mem)] at hx_mem
+    exact hT (IsMergeCuts.mem_subtrees_of_mem_crown hp hx_mem)
+
+/-- With a residual workspace `F̂` none of whose components has `β` as a subtree, the unit stage
+    on `{T} + F̂` splits `β` off `T` and leaves `F̂` unchanged. -/
+theorem mergeOpUnitG_apply_singleton_unique_residual [IsMergeCuts cuts] (β T : UnorderedTree α)
+    (p0 : Forest (UnorderedTree α) × UnorderedTree α)
+    (h_filter : (cuts T).filter (fun p => p.1 = ({β} : Forest (UnorderedTree α))) = {p0})
+    (hTβ : T ≠ β) {Fhat : Forest (UnorderedTree α)} (hF : ∀ U ∈ Fhat, β ∉ U.subtrees) :
+    mergeOpUnitG (R := R) cuts β (of' (({T} : Forest (UnorderedTree α)) + Fhat))
+      = of' (({β, p0.2} : Forest (UnorderedTree α)) + Fhat) := by
+  induction Fhat using Multiset.induction with
+  | empty =>
+    rw [add_zero, add_zero, mergeOpUnitG_apply_singleton_unique β T p0 h_filter hTβ,
+      ← of'_singleton, ← of'_add]
+    rfl
+  | cons U Fhat' ih =>
+    rw [Multiset.add_cons, Multiset.add_cons, ← Multiset.singleton_add, ← Multiset.singleton_add,
+      of'_add (R := R) ({U} : Forest (UnorderedTree α)),
+      of'_add (R := R) ({U} : Forest (UnorderedTree α)),
+      mergeOpUnitG_factor_out_singleton (hF U (Multiset.mem_cons_self _ _)),
+      ih fun V hV ↦ hF V (Multiset.mem_cons_of_mem hV)]
+
 /-- Internal Merge as the composition `M_{T/β,β} ∘ M_{β,1}` over a cut enumeration admitting
     Merge, for `β` extracted from `T` by a single cut with trunk `Q`. -/
 theorem mergeOpG_im_composition [IsMergeCuts cuts] (lbl : α) (β T Q : UnorderedTree α)
@@ -89,6 +147,21 @@ theorem mergeOpG_im_composition [IsMergeCuts cuts] (lbl : α) (β T Q : Unordere
   rw [mergeOpUnitG_apply_singleton_unique β T p0 h_filter hTβ, h_remainder, ← of'_singleton,
     ← of'_add, add_comm]
   exact mergeOpG_pair lbl Q β
+
+/-- Internal Merge with a residual workspace `F̂`, none of whose components has `β` or the trunk
+    `Q` as a subtree. -/
+theorem mergeOpG_im_composition_residual [IsMergeCuts cuts] (lbl : α) (β T Q : UnorderedTree α)
+    (p0 : Forest (UnorderedTree α) × UnorderedTree α)
+    (h_filter : (cuts T).filter (fun p => p.1 = ({β} : Forest (UnorderedTree α))) = {p0})
+    (h_remainder : p0.2 = Q) (hTβ : T ≠ β) {Fhat : Forest (UnorderedTree α)}
+    (hF : ∀ U ∈ Fhat, Disjoint ({Q, β} : Forest (UnorderedTree α)) U.subtrees) :
+    mergeOpG (R := R) cuts lbl Q β
+        (mergeOpUnitG (R := R) cuts β (of' (({T} : Forest (UnorderedTree α)) + Fhat)))
+      = of' (({UnorderedTree.node lbl {Q, β}} : Forest (UnorderedTree α)) + Fhat) := by
+  rw [mergeOpUnitG_apply_singleton_unique_residual β T p0 h_filter hTβ
+      fun U hU ↦ Multiset.disjoint_left.mp (hF U hU) (by simp), h_remainder,
+    Multiset.pair_comm]
+  exact mergeOpG_pair_residual lbl hF
 
 /-- Internal Merge at the pruning cuts. -/
 theorem mergeOp_im_composition (lbl : α) (β T Q : UnorderedTree α)

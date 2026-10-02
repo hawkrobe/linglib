@@ -60,18 +60,80 @@ variable {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq (UnorderedTree �
 
 /-! ### The matching projections -/
 
-/-- The matching projection `γ_{S,S'}` keeps the coefficient of the basis element `{S, S'}` and
-    sends every other basis element to zero. -/
+/-- The projection onto the basis element `F₀` keeps its coefficient and sends every other basis
+    element to zero. -/
+noncomputable def forestProj (F₀ : Forest (UnorderedTree α)) :
+    ConnesKreimer R (UnorderedTree α) →ₗ[R] ConnesKreimer R (UnorderedTree α) :=
+  ConnesKreimer.linearLift (fun F => if F = F₀ then of' F else 0)
+
+theorem forestProj_apply_of' (F₀ F : Forest (UnorderedTree α)) :
+    forestProj (R := R) F₀ (of' F) = if F = F₀ then of' F else 0 := by
+  rw [forestProj, ConnesKreimer.linearLift_of']
+
+omit [DecidableEq (UnorderedTree α)] in
+private theorem of'_mul_single (F G : Forest (UnorderedTree α)) (r : R) :
+    of' (R := R) F * single G r = single (F + G) r := by
+  rw [smul_single_one G r, mul_smul_comm]
+  change r • (of' (R := R) F * of' G) = single (F + G) r
+  rw [← of'_add]
+  exact (smul_single_one (F + G) r).symm
+
+/-- The projection onto `F₀` kills every product with a forest that does not fit inside `F₀`. -/
+theorem forestProj_mul_eq_zero_of_not_le {F₀ F : Forest (UnorderedTree α)} (hF : ¬ F ≤ F₀)
+    (a : ConnesKreimer R (UnorderedTree α)) : forestProj F₀ (of' F * a) = 0 := by
+  induction a using ConnesKreimer.induction_linear with
+  | zero => rw [mul_zero, map_zero]
+  | add g h hg hh => rw [mul_add, map_add, hg, hh, add_zero]
+  | single G r =>
+    have hne : F + G ≠ F₀ := fun heq => hF (heq ▸ Multiset.le_add_right F G)
+    rw [of'_mul_single, forestProj]
+    simp only [ConnesKreimer.linearLift_single]
+    rw [ite_eq_right hne, smul_zero]
+
+omit [DecidableEq (UnorderedTree α)] in
+/-- A chain `⊔ ∘ (f ⊗ id)` kills every term whose left channel is a product with `x` that `f`
+    kills. -/
+private theorem mul'_map_tmul_mul_eq_zero
+    (f : ConnesKreimer R (UnorderedTree α) →ₗ[R] ConnesKreimer R (UnorderedTree α))
+    {x : ConnesKreimer R (UnorderedTree α)} (hf : ∀ a, f (x * a) = 0)
+    (b : ConnesKreimer R (UnorderedTree α))
+    (z : ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) :
+    (LinearMap.mul' R (ConnesKreimer R (UnorderedTree α)) ∘ₗ TensorProduct.map f LinearMap.id)
+      ((x ⊗ₜ[R] b) * z) = 0 := by
+  induction z using TensorProduct.inductionOn with
+  | tmul a b' =>
+    rw [Algebra.TensorProduct.tmul_mul_tmul, LinearMap.comp_apply, TensorProduct.map_tmul, hf,
+      TensorProduct.zero_tmul, map_zero]
+  | add z₁ z₂ h₁ h₂ => rw [mul_add, map_add, h₁, h₂, add_zero]
+
+omit [DecidableEq (UnorderedTree α)] in
+/-- A chain `⊔ ∘ (f ⊗ id)` commutes with right multiplication by a right-channel factor `1 ⊗ y`. -/
+private theorem mul'_map_mul_one_tmul
+    (f : ConnesKreimer R (UnorderedTree α) →ₗ[R] ConnesKreimer R (UnorderedTree α))
+    (z : ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α))
+    (y : ConnesKreimer R (UnorderedTree α)) :
+    (LinearMap.mul' R (ConnesKreimer R (UnorderedTree α)) ∘ₗ TensorProduct.map f LinearMap.id)
+        (z * ((1 : ConnesKreimer R (UnorderedTree α)) ⊗ₜ[R] y))
+      = (LinearMap.mul' R (ConnesKreimer R (UnorderedTree α)) ∘ₗ
+          TensorProduct.map f LinearMap.id) z * y := by
+  induction z using TensorProduct.inductionOn with
+  | tmul a b =>
+    rw [Algebra.TensorProduct.tmul_mul_tmul, mul_one, LinearMap.comp_apply, LinearMap.comp_apply,
+      TensorProduct.map_tmul, TensorProduct.map_tmul, LinearMap.id_apply, LinearMap.id_apply,
+      LinearMap.mul'_apply, LinearMap.mul'_apply, mul_assoc]
+  | add z₁ z₂ h₁ h₂ => rw [add_mul, map_add, map_add, h₁, h₂, add_mul]
+
+/-- The matching projection `γ_{S,S'}` ([marcolli-chomsky-berwick-2025] Definition 1.3.1) is the
+    projection onto `{S, S'}`. -/
 noncomputable def gammaMatch (S S' : UnorderedTree α) :
     ConnesKreimer R (UnorderedTree α) →ₗ[R] ConnesKreimer R (UnorderedTree α) :=
-  ConnesKreimer.linearLift
-    (fun F => if F = ({S, S'} : Forest (UnorderedTree α)) then of' F else 0)
+  forestProj {S, S'}
 
 theorem gammaMatch_apply_singleton (S S' : UnorderedTree α)
     (F : Forest (UnorderedTree α)) :
     gammaMatch (R := R) S S' (of' F) =
-      if F = ({S, S'} : Forest (UnorderedTree α)) then of' F else 0 := by
-  rw [gammaMatch, ConnesKreimer.linearLift_of']
+      if F = ({S, S'} : Forest (UnorderedTree α)) then of' F else 0 :=
+  forestProj_apply_of' _ F
 
 /-- The matching operator `δ_{S,S'} = γ_{S,S'} ⊗ id` acts on the left channel of a coproduct. -/
 noncomputable def deltaMatch (S S' : UnorderedTree α) :
@@ -133,29 +195,13 @@ theorem mergePost_basis_tensor (lbl : α) (S S' : UnorderedTree α)
   · rw [ite_eq_right hF, TensorProduct.zero_tmul, ite_eq_right hF]
     simp only [map_zero]
 
-omit [DecidableEq (UnorderedTree α)] in
-private theorem of'_mul_single (F G : Forest (UnorderedTree α)) (r : R) :
-    of' (R := R) F * single G r = single (F + G) r := by
-  rw [smul_single_one G r, mul_smul_comm]
-  change r • (of' (R := R) F * of' G) = single (F + G) r
-  rw [← of'_add]
-  exact (smul_single_one (F + G) r).symm
-
 /-- `γ_{S,S'}` kills every product with a forest `F` that does not fit inside `{S, S'}`. -/
 theorem gammaMatch_mul_eq_zero_of_not_le (S S' : UnorderedTree α)
     (F : Forest (UnorderedTree α))
     (hF : ¬ F ≤ ({S, S'} : Forest (UnorderedTree α)))
     (a : ConnesKreimer R (UnorderedTree α)) :
-    gammaMatch (R := R) S S' (of' F * a) = 0 := by
-  induction a using ConnesKreimer.induction_linear with
-  | zero => rw [mul_zero, map_zero]
-  | add g h hg hh => rw [mul_add, map_add, hg, hh, add_zero]
-  | single G r =>
-    have hne : F + G ≠ ({S, S'} : Forest (UnorderedTree α)) :=
-      fun heq => hF (heq ▸ Multiset.le_add_right F G)
-    rw [of'_mul_single, gammaMatch]
-    simp only [ConnesKreimer.linearLift_single]
-    rw [ite_eq_right hne, smul_zero]
+    gammaMatch (R := R) S S' (of' F * a) = 0 :=
+  forestProj_mul_eq_zero_of_not_le hF a
 
 /-- `γ_{S,S'}` kills every product with a tree other than `S` and `S'`. -/
 theorem gammaMatch_singleton_mul_eq_zero (S S' T : UnorderedTree α)
@@ -168,6 +214,11 @@ theorem gammaMatch_singleton_mul_eq_zero (S S' T : UnorderedTree α)
   rw [Multiset.insert_eq_cons, Multiset.mem_cons, Multiset.mem_singleton] at hT_mem
   exact hT_mem.elim hT_ne_S hT_ne_S'
 
+private theorem mergePost_eq (lbl : α) (S S' : UnorderedTree α) :
+    mergePost (R := R) lbl S S' = LinearMap.mul' R (ConnesKreimer R (UnorderedTree α)) ∘ₗ
+      TensorProduct.map (graftBinaryAt lbl S S' ∘ₗ gammaMatch S S') LinearMap.id := by
+  rw [mergePost, deltaMatch, ← TensorProduct.map_comp, LinearMap.id_comp]
+
 /-- The post-coproduct chain kills every term whose left channel carries a forest that does not
     fit inside `{S, S'}`. -/
 theorem mergePost_left_mul_eq_zero_of_not_le (lbl : α) (S S' : UnorderedTree α)
@@ -175,18 +226,9 @@ theorem mergePost_left_mul_eq_zero_of_not_le (lbl : α) (S S' : UnorderedTree α
     (hF : ¬ F ≤ ({S, S'} : Forest (UnorderedTree α)))
     (z : ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) :
     mergePost (R := R) (α := α) lbl S S' ((of' (R := R) F ⊗ₜ[R] b) * z) = 0 := by
-  induction z using TensorProduct.inductionOn with
-  | tmul a b' =>
-    rw [Algebra.TensorProduct.tmul_mul_tmul]
-    unfold mergePost deltaMatch
-    rw [LinearMap.comp_apply, LinearMap.comp_apply,
-        TensorProduct.map_tmul, LinearMap.id_apply,
-        gammaMatch_mul_eq_zero_of_not_le _ _ _ hF,
-        TensorProduct.zero_tmul, map_zero, map_zero]
-  | add z1 z2 ih1 ih2 =>
-    rw [mul_add]
-    simp only [map_add]
-    rw [ih1, ih2, add_zero]
+  rw [mergePost_eq]
+  exact mul'_map_tmul_mul_eq_zero _ (fun a ↦ by
+    rw [LinearMap.comp_apply, gammaMatch_mul_eq_zero_of_not_le _ _ _ hF, map_zero]) b z
 
 /-- The post-coproduct chain commutes with right multiplication by a right-channel factor
     `1 ⊗ y`, so a spectator workspace passes through it unchanged. -/
@@ -196,20 +238,8 @@ theorem mergePost_right_one_tmul (lbl : α) (S S' : UnorderedTree α)
     mergePost (R := R) (α := α) lbl S S'
         (z * ((1 : ConnesKreimer R (UnorderedTree α)) ⊗ₜ[R] y))
       = mergePost (R := R) (α := α) lbl S S' z * y := by
-  induction z using TensorProduct.inductionOn with
-  | tmul a b =>
-    rw [Algebra.TensorProduct.tmul_mul_tmul, mul_one]
-    unfold mergePost deltaMatch
-    rw [LinearMap.comp_apply, LinearMap.comp_apply,
-        LinearMap.comp_apply, LinearMap.comp_apply,
-        TensorProduct.map_tmul, LinearMap.id_apply, TensorProduct.map_tmul,
-        LinearMap.id_apply, TensorProduct.map_tmul, LinearMap.id_apply,
-        TensorProduct.map_tmul, LinearMap.id_apply]
-    rw [LinearMap.mul'_apply, LinearMap.mul'_apply, mul_assoc]
-  | add z1 z2 ih1 ih2 =>
-    rw [add_mul]
-    simp only [map_add]
-    rw [ih1, ih2, add_mul]
+  rw [mergePost_eq]
+  exact mul'_map_mul_one_tmul _ z y
 
 /-! ### The unit stage `M_{β,1}`
 
@@ -222,14 +252,13 @@ channel and leaves `T/β` on the right. Its grafting step is the identity, since
     `{β}`. -/
 noncomputable def gammaMatchSingle (β : UnorderedTree α) :
     ConnesKreimer R (UnorderedTree α) →ₗ[R] ConnesKreimer R (UnorderedTree α) :=
-  ConnesKreimer.linearLift
-    (fun F => if F = ({β} : Forest (UnorderedTree α)) then of' F else 0)
+  forestProj {β}
 
 theorem gammaMatchSingle_apply_singleton (β : UnorderedTree α)
     (F : Forest (UnorderedTree α)) :
     gammaMatchSingle (R := R) β (of' F) =
-      if F = ({β} : Forest (UnorderedTree α)) then of' F else 0 := by
-  rw [gammaMatchSingle, ConnesKreimer.linearLift_of']
+      if F = ({β} : Forest (UnorderedTree α)) then of' F else 0 :=
+  forestProj_apply_of' _ F
 
 /-- The matching operator `δ_{β,1} = γ_{β,1} ⊗ id`. -/
 noncomputable def deltaMatchSingle (β : UnorderedTree α) :
@@ -263,6 +292,23 @@ theorem mergePostUnit_basis_tensor (β : UnorderedTree α)
     exact LinearMap.mul'_apply
   · rw [ite_eq_right hF, TensorProduct.zero_tmul, ite_eq_right hF]
     exact map_zero _
+
+/-- The unit chain kills every term whose left channel carries a forest that does not fit inside
+    `{β}`. -/
+theorem mergePostUnit_left_mul_eq_zero_of_not_le (β : UnorderedTree α)
+    (F : Forest (UnorderedTree α)) (b : ConnesKreimer R (UnorderedTree α))
+    (hF : ¬ F ≤ ({β} : Forest (UnorderedTree α)))
+    (z : ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) :
+    mergePostUnit (R := R) β ((of' (R := R) F ⊗ₜ[R] b) * z) = 0 :=
+  mul'_map_tmul_mul_eq_zero _ (forestProj_mul_eq_zero_of_not_le hF) b z
+
+/-- The unit chain commutes with right multiplication by a right-channel factor `1 ⊗ y`. -/
+theorem mergePostUnit_right_one_tmul (β : UnorderedTree α)
+    (z : ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α))
+    (y : ConnesKreimer R (UnorderedTree α)) :
+    mergePostUnit (R := R) β (z * ((1 : ConnesKreimer R (UnorderedTree α)) ⊗ₜ[R] y))
+      = mergePostUnit (R := R) β z * y :=
+  mul'_map_mul_one_tmul _ z y
 
 /-! ### Merge over a cut enumeration -/
 
@@ -318,13 +364,17 @@ noncomputable def mergeOpUnitC {β : Type*} [DecidableEq (UnorderedTree (α ⊕ 
 /-! ### Cut enumerations that admit Merge -/
 
 omit [DecidableEq (UnorderedTree α)] in
-/-- A cut enumeration admits Merge when every nonempty crown has fewer edges in total than its
-    tree. Then no crown is the whole tree, and the crowns of two trees never reassemble the pair,
-    so External Merge of a pair is exact (`mergeOpG_pair`). -/
+/-- A cut enumeration admits Merge when its crowns are subtrees with fewer edges in total than
+    their tree, and its only empty cut is the tree itself. The edge bound makes External Merge of
+    a pair exact (`mergeOpG_pair`); the other two let a spectator component pass through
+    (`mergeOpG_factor_out_singleton`). -/
 class IsMergeCuts
     (cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α)) : Prop where
   crown_numEdges_lt {T : UnorderedTree α} {p : Forest (UnorderedTree α) × UnorderedTree α} :
     p ∈ cuts T → p.1 ≠ 0 → (p.1.map numEdges).sum < T.numEdges
+  mem_subtrees_of_mem_crown {T : UnorderedTree α} {p : Forest (UnorderedTree α) × UnorderedTree α}
+    {x : UnorderedTree α} : p ∈ cuts T → x ∈ p.1 → x ∈ T.subtrees
+  filter_empty (T : UnorderedTree α) : (cuts T).filter (fun p ↦ p.1.card = 0) = {(0, T)}
 
 omit [DecidableEq (UnorderedTree α)] in
 /-- No cut of an enumeration admitting Merge extracts the whole tree. -/

@@ -41,6 +41,8 @@ syntactic object (`not_isSyntacticObject_of_mem_cutSummandsN`): the mover's pare
 * `Minimalist.SyntacticObject.cutSummandsCN_filter_mover`: the trace cut extracting a uniquely
   accessible mover leaves `deleteAccessible`.
 * `Minimalist.SyntacticObject.mergeOpUnitC_current`, `mergeOpC_im`: Internal Merge on the carrier.
+* `Minimalist.SyntacticObject.mergeOpC_node_residual`, `mergeOpC_im_residual`: both beside a
+  spectator workspace.
 * `Minimalist.SyntacticObject.numNodes_odd`: a syntactic object has an odd number of vertices.
 * `Minimalist.SyntacticObject.not_isSyntacticObject_of_mem_cutSummandsN`: no pruning cut removing
   one syntactic object from another leaves a syntactic object.
@@ -135,6 +137,47 @@ theorem mergeOpC_im (hm : mover.val.value.isLeft) (h : current.terms.count mover
           Forest (UnorderedTree Vertex)) := by
   rw [Merge.mergeOpC_im_composition traceEncoder Vertex.bare _ _ _ _
       (cutSummandsCN_filter_mover hm h hne) rfl (fun h' ↦ hne (Subtype.ext h')), merge_val]
+
+/-! ### Merge beside a spectator workspace -/
+
+theorem val_mem_subtrees {S U : SyntacticObject} : S.val ∈ U.val.subtrees ↔ S ∈ U.terms := by
+  rw [← map_val_terms, Multiset.mem_map_of_injective Subtype.val_injective]
+
+private theorem disjoint_pair_subtrees {S S' U : SyntacticObject}
+    (h : S ∉ U.terms ∧ S' ∉ U.terms) :
+    Disjoint ({S.val, S'.val} : Forest (UnorderedTree Vertex)) U.val.subtrees := by
+  rw [Multiset.disjoint_left]
+  intro a ha
+  rw [Multiset.insert_eq_cons, Multiset.mem_cons, Multiset.mem_singleton] at ha
+  rcases ha with rfl | rfl <;> rw [val_mem_subtrees]
+  exacts [h.1, h.2]
+
+/-- External Merge on the carrier beside a spectator workspace none of whose components contains
+    `S` or `S'`. -/
+theorem mergeOpC_node_residual (τ : UnorderedTree Vertex → Option LIToken)
+    (S S' : SyntacticObject) {W : Workspace} (hW : ∀ U ∈ W, S ∉ U.terms ∧ S' ∉ U.terms) :
+    Merge.mergeOpC (R := ℤ) τ Vertex.bare S.val S'.val (of' (({S, S'} + W).map Subtype.val))
+      = of' (({merge S S'} + W).map Subtype.val) := by
+  rw [Multiset.map_add, Multiset.map_add, Multiset.map_singleton, merge_val]
+  refine Merge.mergeOpC_pair_residual τ Vertex.bare fun U hU ↦ ?_
+  obtain ⟨U', hU', rfl⟩ := Multiset.mem_map.mp hU
+  exact disjoint_pair_subtrees (hW U' hU')
+
+/-- Internal Merge of a uniquely accessible mover beside a spectator workspace none of whose
+    components contains the mover or the remainder. -/
+theorem mergeOpC_im_residual (hm : mover.val.value.isLeft) (h : current.terms.count mover = 1)
+    (hne : current ≠ mover) {W : Workspace}
+    (hW : ∀ U ∈ W, deleteAccessible mover current ∉ U.terms ∧ mover ∉ U.terms) :
+    Merge.mergeOpC (R := ℤ) traceEncoder Vertex.bare (deleteAccessible mover current).val
+        mover.val (Merge.mergeOpUnitC traceEncoder mover.val
+          (of' (({current} + W).map Subtype.val)))
+      = of' (({merge (deleteAccessible mover current) mover} + W).map Subtype.val) := by
+  rw [Multiset.map_add, Multiset.map_add, Multiset.map_singleton, Multiset.map_singleton,
+    merge_val]
+  refine Merge.mergeOpG_im_composition_residual Vertex.bare _ _ _ _
+    (cutSummandsCN_filter_mover hm h hne) rfl (fun h' ↦ hne (Subtype.ext h')) fun U hU ↦ ?_
+  obtain ⟨U', hU', rfl⟩ := Multiset.mem_map.mp hU
+  exact disjoint_pair_subtrees (hW U' hU')
 
 private def demoCurrent : SyntacticObject :=
   (PlanarSyntacticObject.merge (.leaf (mkTraceToken 0))
