@@ -35,7 +35,7 @@ def manage : Verb := .mkRegular {
   readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   vendlerClass := some .achievement
   passivizable := false
-  implicative := some .manage }
+  implicative := some ⟨some .positive, some .negative⟩ }
 
 /-- "fail" — a negative implicative; "failed to VP" entails "not VP". -/
 def fail : Verb := .mkRegular {
@@ -44,7 +44,7 @@ def fail : Verb := .mkRegular {
   readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   vendlerClass := some .achievement
   passivizable := false
-  implicative := some .fail }
+  implicative := some ⟨some .negative, some .positive⟩ }
 
 /-- "try" — subject control, no entailment -/
 def try_ : Verb where
@@ -90,7 +90,7 @@ def remember : Verb := .mkRegular {
   readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   vendlerClass := some .achievement
   passivizable := false
-  implicative := some .manage
+  implicative := some ⟨some .positive, some .negative⟩
   levinClasses := {LevinClass.characterize} }
 
 /-- "forget" with an infinitive, [karttunen-1971]'s negative implicative: *forgot to lock the
@@ -107,7 +107,7 @@ def forget : Verb where
   readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   vendlerClass := some .achievement
   passivizable := false
-  implicative := some .fail
+  implicative := some ⟨some .negative, some .positive⟩
 
 /-- "neglect" — negative implicative, listed with *forget* and *fail* among
     [karttunen-1971]'s negative implicatives: neglecting to lock the door
@@ -118,7 +118,7 @@ def neglect : Verb := .mkRegular {
   readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   vendlerClass := some .achievement
   passivizable := false
-  implicative := some .fail }
+  implicative := some ⟨some .negative, some .positive⟩ }
 
 /-! ### Raising -/
 
@@ -147,7 +147,7 @@ def dare : Verb := .mkRegular {
   readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   vendlerClass := some .achievement
   passivizable := false
-  implicative := some .manage }
+  implicative := some ⟨some .positive, some .negative⟩ }
 
 /-- "bother" — a positive implicative whose prerequisite presupposition is engagement. "He
     bothered to answer" entails "He answered" and presupposes that apathy had to be overcome
@@ -158,7 +158,7 @@ def bother : Verb := .mkRegular {
   readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   vendlerClass := some .achievement
   passivizable := false
-  implicative := some .manage
+  implicative := some ⟨some .positive, some .negative⟩
   levinClasses := {LevinClass.amuse, .pain} }
 
 /-- "hesitate" — polarity-reversing one-way implicative.
@@ -173,7 +173,7 @@ def hesitate : Verb := .mkRegular {
   readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   vendlerClass := some .activity
   passivizable := false
-  implicative := some .hesitate
+  implicative := some ⟨none, some .positive⟩
   levinClasses := {LevinClass.linger} }
 
 /-- "venture" — positive implicative, among [karttunen-1971]'s implicative
@@ -184,7 +184,7 @@ def venture : Verb := .mkRegular {
   readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   vendlerClass := some .achievement
   passivizable := false
-  implicative := some .manage }
+  implicative := some ⟨some .positive, some .negative⟩ }
 
 /-- "condescend" — positive implicative, among [karttunen-1971]'s implicative
     predicates: condescending to help entails helping. -/
@@ -194,7 +194,7 @@ def condescend : Verb := .mkRegular {
   readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   vendlerClass := some .achievement
   passivizable := false
-  implicative := some .manage }
+  implicative := some ⟨some .positive, some .negative⟩ }
 
 /-- "happen" — raising verb, positive implicative, among [karttunen-1971]'s
     implicative predicates: happening to see Mary entails seeing her.
@@ -204,7 +204,7 @@ def happen : Verb := .mkRegular {
   frames := [ArgumentFrame.infinitival]
   readings := [{ frame := ArgumentFrame.infinitival, control := some .raising }]
   passivizable := false
-  implicative := some .manage
+  implicative := some ⟨some .positive, some .negative⟩
   levinClasses := {LevinClass.occurrence} }
 
 end English.Verbs

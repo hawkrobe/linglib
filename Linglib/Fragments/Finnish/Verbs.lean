@@ -162,7 +162,7 @@ def onnistua : Verb where
   infinitiveStem := [o, n, n, i, s, t, u]
   inflectionalStem := [o, n, n, i, s, t, u]
   complement := some (.ma, .ill)
-  implicative := some .manage
+  implicative := some ⟨some .positive, some .negative⟩
 
 /-- *uskaltaa* 'dare'. -/
 def uskaltaa : Verb where
@@ -172,7 +172,7 @@ def uskaltaa : Verb where
   infinitiveStem := [u, s, k, a, l, t, a]
   inflectionalStem := [u, s, k, a, l, t, a]
   complement := some (.a, .nom)
-  implicative := some .manage
+  implicative := some ⟨some .positive, some .negative⟩
 
 /-- *viitsiä* 'bother'. -/
 def viitsiä : Verb where
@@ -182,7 +182,7 @@ def viitsiä : Verb where
   infinitiveStem := [v, i, i, t, s, i]
   inflectionalStem := [v, i, i, t, s, i]
   complement := some (.a, .nom)
-  implicative := some .manage
+  implicative := some ⟨some .positive, some .negative⟩
 
 /-- *malttaa* 'have the patience'. -/
 def malttaa : Verb where
@@ -192,7 +192,7 @@ def malttaa : Verb where
   infinitiveStem := [m, a, l, t, t, a]
   inflectionalStem := [m, a, l, t, t, a]
   complement := some (.a, .nom)
-  implicative := some .manage
+  implicative := some ⟨some .positive, some .negative⟩
 
 /-- *hennoa* 'have the heart'. -/
 def hennoa : Verb where
@@ -202,7 +202,7 @@ def hennoa : Verb where
   infinitiveStem := [h, e, n, n, o]
   inflectionalStem := [h, e, n, n, o]
   complement := some (.a, .nom)
-  implicative := some .manage
+  implicative := some ⟨some .positive, some .negative⟩
 
 /-- *kehdata* 'be unembarrassed, act without shame'. -/
 def kehdata : Verb where
@@ -212,7 +212,7 @@ def kehdata : Verb where
   infinitiveStem := [k, e, h, d, a, t]
   inflectionalStem := [k, e, h, t, a, a]
   complement := some (.a, .nom)
-  implicative := some .manage
+  implicative := some ⟨some .positive, some .negative⟩
 
 /-- *ehtiä* 'find time, make time'. -/
 def ehtiä : Verb where
@@ -222,7 +222,7 @@ def ehtiä : Verb where
   infinitiveStem := [e, h, t, i]
   inflectionalStem := [e, h, t, i]
   complement := some (.a, .nom)
-  implicative := some .manage
+  implicative := some ⟨some .positive, some .negative⟩
 
 /-- *jaksaa* 'have the strength'. -/
 def jaksaa : Verb where
@@ -232,7 +232,7 @@ def jaksaa : Verb where
   infinitiveStem := [j, a, k, s, a]
   inflectionalStem := [j, a, k, s, a]
   complement := some (.a, .nom)
-  implicative := some .beAble
+  implicative := some ⟨none, some .negative⟩
 
 /-- *mahtua* 'fit, be small enough', with the MA infinitive illative. -/
 def mahtua : Verb where
@@ -242,7 +242,7 @@ def mahtua : Verb where
   infinitiveStem := [m, a, h, t, u]
   inflectionalStem := [m, a, h, t, u]
   complement := some (.ma, .ill)
-  implicative := some .beAble
+  implicative := some ⟨none, some .negative⟩
 
 /-- *pystyä* 'be able', with the MA infinitive illative. -/
 def pystyä : Verb where
@@ -252,7 +252,7 @@ def pystyä : Verb where
   infinitiveStem := [p, y, s, t, y]
   inflectionalStem := [p, y, s, t, y]
   complement := some (.ma, .ill)
-  implicative := some .beAble
+  implicative := some ⟨none, some .negative⟩
 
 /-- *laiminlyödä* 'neglect'. -/
 def laiminlyödä : Verb where
@@ -262,7 +262,7 @@ def laiminlyödä : Verb where
   infinitiveStem := [l, a, i, m, i, n, l, y, ö]
   inflectionalStem := [l, a, i, m, i, n, l, y, ö]
   complement := some (.a, .nom)
-  implicative := some .fail
+  implicative := some ⟨some .negative, some .positive⟩
 
 /-- *epäröidä* 'hesitate'. -/
 def epäröidä : Verb where
@@ -272,7 +272,7 @@ def epäröidä : Verb where
   infinitiveStem := [e, p, ä, r, ö, i]
   inflectionalStem := [e, p, ä, r, ö, i]
   complement := some (.a, .nom)
-  implicative := some .hesitate
+  implicative := some ⟨none, some .positive⟩
 
 /-- The entries. -/
 def verbs : List Verb :=

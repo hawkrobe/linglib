@@ -116,10 +116,10 @@ theorem comparative_dual {Entity α : Type*} [LinearOrder α] (μ : Entity → �
 /-! ### Verbal triggers -/
 
 /-- The verb's lexical semantics licenses expletive negation (§5.5): a negative-valence
-preferential attitude (*fear*), a negative implicative (*forget*) or a preventive causative
-(*prevent*). -/
+preferential attitude (*fear*), an implicative whose affirmed use implies the negation of its
+complement (*forget*), or a preventive causative (*prevent*). -/
 def IsExpletiveNegationTrigger (v : Verb) : Prop :=
-  v.preferentialValence? = some .negative ∨ v.implicative.map (·.polarity) = some .negative ∨
+  v.preferentialValence? = some .negative ∨ v.implicative.bind (·.positive) = some .negative ∨
     v.causative = some .prevent
 
 instance : DecidablePred IsExpletiveNegationTrigger := fun _ ↦
@@ -129,9 +129,10 @@ instance : DecidablePred IsExpletiveNegationTrigger := fun _ ↦
 theorem negative_valence_is_en_trigger {v : Verb} (h : v.preferentialValence? = some .negative) :
     IsExpletiveNegationTrigger v := Or.inl h
 
-/-- A negative implicative verb is a trigger of the *forget* class. -/
+/-- An implicative whose affirmed use implies the negation of its complement is a trigger of the
+*forget* class. -/
 theorem negative_implicative_is_en_trigger {v : Verb}
-    (h : v.implicative.map (·.polarity) = some .negative) :
+    (h : v.implicative.bind (·.positive) = some .negative) :
     IsExpletiveNegationTrigger v := Or.inr (Or.inl h)
 
 /-- A preventive causative is a trigger of the *forget* class. -/
