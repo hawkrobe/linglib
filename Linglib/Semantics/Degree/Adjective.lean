@@ -11,29 +11,28 @@ public import Linglib.Syntax.Category.Adjective.Basic
 This file defines `Degree.GradableAdjective`, a syntactic adjective together with its degree
 semantics. The scale an adjective measures on, its positive standard and its Kennedy class are
 derived from its dimension, its polarity and any lexically fixed standard, so that *wet* and *dry*
-share one scale and differ only in pole. The file also defines antonym pairs, informational
-strength, evaluative valence, and the ways a multidimensional adjective binds its dimensions.
+share one scale and differ only in pole. The file also defines antonym pairs, evaluative valence,
+and the ways a multidimensional adjective binds its dimensions.
 
 An antonym pair is contradictory when its poles take complementary standards, the minimum and the
-maximum of one scale, as Kennedy and McNally explain for *open* and *closed*, and both poles are
-weak. Strong pairs such as *pristine* and *filthy* leave a gap even on a closed scale, as
-Alexandropoulou and Gotzner observe, so the relation is read off the scale structure and the
-informational strength rather than stored.
+maximum of one scale, as Kennedy and McNally explain for *open* and *closed*. A pair of extreme
+adjectives such as *pristine* and *filthy* leaves a gap even on a closed scale, as Alexandropoulou
+and Gotzner observe, since its standards lie beyond those of the weak pair; the relation is read
+off the standards rather than stored. How a standard is interpreted, as a literal endpoint or
+relative to a contextual range, is left to the studies.
 
 ## Main definitions
 
 * `AdjectiveClass`: Kennedy's classes of gradable adjectives.
-* `InformationalStrength`: the distinction between weak and strong adjectives on one scale.
 * `EvaluativeValence`: whether a predicate denotes a good, a bad or a neutral property.
 * `GradableAdjective`: a syntactic adjective with its degree semantics.
 * `GradableAdjective.scaleType`: the scale an adjective measures on.
 * `GradableAdjective.standard`: the positive standard of an adjective.
 * `AntonymPair`: the two polar adjectives of one scale.
-* `AntonymPair.ComplementaryStandards`: the poles take the minimum and the maximum, and so
-  split the scale; without lexical standards this holds exactly on a half-closed scale
+* `AntonymPair.ComplementaryStandards`: the poles take the minimum and the maximum, and so are
+  contradictory, where any other pair leaves a gap and is contrary; without lexical standards
+  this holds exactly on a half-closed scale
   (`AntonymPair.complementaryStandards_iff_of_lexicalStandard_none`).
-* `AntonymPair.Contradictory`: the poles are contradictory, taking complementary standards and
-  both weak; otherwise they leave a gap and are contrary.
 * `DimensionBindingType`: how a multidimensional adjective binds its dimensions.
 
 ## References
@@ -47,9 +46,6 @@ informational strength rather than stored.
 * [M. Morzycki, *Adjectival Extremeness: Degree Modification and Contextually Restricted Scales*
   (2012)][morzycki-2012]
 * [G. W. Sassoon, *A Typology of Multidimensional Adjectives* (2013)][sassoon-2013]
-* [S. Alexandropoulou and N. Gotzner, *Gradable adjective interpretation under negation: The role
-  of competition* (2024)][alexandropoulou-gotzner-2024b]
-* [L. R. Horn, *On the Semantic Properties of Logical Operators in English* (1972)][horn-1972]
 * [A. Beltrama, *Evaluation, Thresholds, and Practical Commitments: The Grammar of Adjectival
   Mildness* (2025)][beltrama-2025]
 * [R. Nouwen, *The Semantics and Probabilistic Pragmatics of Deadjectival Intensifiers*
@@ -65,8 +61,8 @@ namespace Degree
 /-! ### Kennedy's adjective classes -/
 
 /-- An adjective class is Kennedy's classification of an adjective by its scale structure and
-standard ([kennedy-2007], [kennedy-mcnally-2005]), with a further class for non-gradable
-adjectives. -/
+standard ([kennedy-2007], [kennedy-mcnally-2005]), with further classes for the lexical necessity
+and extreme standards and for non-gradable adjectives. -/
 inductive AdjectiveClass where
   /-- The standard varies with a comparison class, as for *tall*, *expensive* and *big*. -/
   | relative
@@ -76,6 +72,9 @@ inductive AdjectiveClass where
   | absoluteMinimum
   /-- The standard is a necessity threshold, as for *decent* and *acceptable* ([beltrama-2025]). -/
   | mildlyPositive
+  /-- The standard lies beyond that of the weak adjective on the same pole, as for *gigantic* and
+  *pristine* ([morzycki-2012]). -/
+  | extreme
   /-- The adjective has no degree argument and no scale, as for *atomic*, *prime*, *deceased* and
   *pregnant*; an adjective that is not gradable belongs here rather than in a gradable class. -/
   | nonGradable
@@ -88,17 +87,6 @@ def AdjectiveClass.IsRelative (c : AdjectiveClass) : Prop :=
 
 instance : DecidablePred AdjectiveClass.IsRelative :=
   fun c => decEq c .relative
-
-/-! ### Informational strength -/
-
-/-- Informational strength distinguishes weak gradable adjectives such as *large* and *clean*,
-which cover a broad region of their scale, from strong ones such as *gigantic* and *pristine*,
-which cover a narrower, more extreme region and entail the weak adjective on the same pole
-([alexandropoulou-gotzner-2024b], [horn-1972]). -/
-inductive InformationalStrength where
-  | weak    -- large, small, clean, dirty
-  | strong  -- gigantic, tiny, pristine, filthy
-  deriving Repr, DecidableEq
 
 /-! ### Evaluative valence -/
 
@@ -173,7 +161,8 @@ def adjectiveClass (g : GradableAdjective) : AdjectiveClass :=
     | .contextual  => .relative
     | .minEndpoint => .absoluteMinimum
     | .maxEndpoint => .absoluteMaximum
-    | .necessity  => .mildlyPositive
+    | .necessity   => .mildlyPositive
+    | .extreme     => .extreme
 
 /-- An adjective is relative when its class is. -/
 def IsRelative (g : GradableAdjective) : Prop := g.adjectiveClass.IsRelative
@@ -191,9 +180,6 @@ other's lexical antonym. The shared data is stored once, and the two adjectives 
 structure AntonymPair where
   /-- The scale both poles measure on. -/
   dimension : ScalarDimension
-  /-- The poles are informationally weak, as *large* and *small* are, or strong, as *gigantic* and
-      *tiny* are. -/
-  strength : InformationalStrength := .weak
   /-- The positive pole's surface form. -/
   posForm : String
   /-- The negative pole's surface form. -/
@@ -203,7 +189,8 @@ structure AntonymPair where
   /-- The negative pole's comparison paradigm. -/
   negComparison : Adjective.Comparison := .regular
   /-- The positive pole's lexically fixed standard, when it departs from the scale's default:
-      the minimum for a partial adjective like *open* on a closed scale. -/
+      the minimum for a partial adjective like *open* on a closed scale, or the extreme standard
+      of *gigantic*. -/
   posLexicalStandard : Option PositiveStandard := none
   /-- The negative pole's lexically fixed standard, when it departs from the dual's default. -/
   negLexicalStandard : Option PositiveStandard := none
@@ -245,7 +232,10 @@ def neg (p : AntonymPair) : GradableAdjective where
 @[simp] theorem neg_antonymForm (p : AntonymPair) : p.neg.antonymForm = some p.pos.form := rfl
 
 /-- The poles take complementary standards, one the minimum and the other the maximum, so that
-denying one asserts the other, as for *wet* and *dry* ([kennedy-2007] (47)). -/
+they are contradictory and denying one asserts the other, as for *wet* and *dry*
+([kennedy-2007] (47)). Any other pair leaves a gap, a relative pair (*large*, *small*) by its
+contextual standards and an extreme pair (*pristine*, *filthy*) by standards beyond those of the
+weak pair ([morzycki-2012]; [alexandropoulou-gotzner-2024a], fn. 11). -/
 def ComplementaryStandards (p : AntonymPair) : Prop :=
   (p.pos.standard = .minEndpoint ∧ p.neg.standard = .maxEndpoint) ∨
     (p.pos.standard = .maxEndpoint ∧ p.neg.standard = .minEndpoint)
@@ -264,17 +254,6 @@ theorem complementaryStandards_iff_of_lexicalStandard_none (p : AntonymPair)
     neg, hp, hn, Option.getD_none, Option.map_some, Boundedness.negative_smul]
   generalize p.dimension.boundedness = b
   cases b <;> decide
-
-/-- The poles are **contradictory** when they take complementary standards and both are weak, so
-that denying one asserts the other, as for *clean* and *dirty*. Otherwise the pair leaves a gap,
-a relative pair (*large*, *small*) by its contextual standards and a strong pair (*pristine*,
-*filthy*) because its members are extreme adjectives, whose standards lie beyond those of the weak
-pair ([morzycki-2012]; [alexandropoulou-gotzner-2024a], fn. 11). -/
-def Contradictory (p : AntonymPair) : Prop :=
-  p.ComplementaryStandards ∧ p.strength = .weak
-
-instance (p : AntonymPair) : Decidable p.Contradictory := by
-  unfold Contradictory; infer_instance
 
 end AntonymPair
 
@@ -349,9 +328,10 @@ theorem negate_involutive (b : DimensionBindingType) :
     adjective, disjunctive for the minimum standard of a partial one, and mixed for a contextual
     standard ([sassoon-2013], Hypothesis set 3, (23)). -/
 def predictedBinding : Degree.PositiveStandard → DimensionBindingType
-  | .maxEndpoint  => .conjunctive
-  | .minEndpoint  => .disjunctive
-  | .contextual   => .mixed
+  | .maxEndpoint => .conjunctive
+  | .minEndpoint => .disjunctive
+  | .contextual  => .mixed
   | .necessity   => .mixed   -- evaluative; context-dependent like contextual
+  | .extreme     => .mixed   -- context-dependent like contextual
 
 end Degree

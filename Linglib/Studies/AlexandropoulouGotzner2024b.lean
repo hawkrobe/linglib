@@ -61,18 +61,17 @@ theorem relative_like (h : tp.neg ≤ tp.pos) :
 
 /-! ### Rows -/
 
-/-- An unmodified negated adjective entails its antonym exactly when the Fragment's pair is
-    contradictory. -/
-theorem entails_iff_contradictory :
+/-- An unmodified negated adjective entails its antonym exactly when the Fragment's pair takes
+    complementary standards. -/
+theorem entails_iff_complementaryStandards :
     ∀ row ∈ Examples.all, row.feature? "modifier" = none →
       row.feature? "negation" = some "negated" →
       ∀ p ∈ (row.feature? "adjective").bind English.Adjectives.pairOf,
-        (row.feature? "relation" = some "entails" ↔ p.Contradictory) := by
+        (row.feature? "relation" = some "entails" ↔ p.ComplementaryStandards) := by
   decide
 
-/-- The paper's two pragmatic readings are Horn's ranges: negative strengthening
-    lands *not large* on the antonym, the middling reading lands *not small* on
-    the gap. -/
+/-- The paper's two pragmatic readings are Horn's ranges, negative strengthening landing
+    *not large* on the antonym and the middling reading landing *not small* on the gap. -/
 theorem readings_are_horn_ranges :
     ∀ row ∈ Examples.all, ∀ f ∈ formOf row, ∀ i ∈ row.feature? "inference",
       (i = "negative_strengthening" ↔ hornRanges f = {.negative}) ∧

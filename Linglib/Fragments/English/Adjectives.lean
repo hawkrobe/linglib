@@ -25,6 +25,8 @@ pair's `pos` and `neg`.
 * [lassiter-2017]
 * [rappaport-hovav-2014]
 * [rotstein-winter-2004]
+* [morzycki-2012]
+* [alexandropoulou-gotzner-2024a]
 -/
 
 @[expose] public section
@@ -181,15 +183,22 @@ abbrev large := size.pos
 
 abbrev small := size.neg
 
+/-- *gigantic* and *tiny* are extreme adjectives on the scale of *large* and *small*, with standards
+beyond theirs ([morzycki-2012]). -/
 def extremeSize : AntonymPair :=
-  { dimension := .generalSize, posForm := "gigantic", negForm := "tiny", strength := .strong }
+  { dimension := .generalSize, posForm := "gigantic", negForm := "tiny"
+  , posLexicalStandard := some .extreme, negLexicalStandard := some .extreme }
 
 abbrev gigantic := extremeSize.pos
 
 abbrev tiny := extremeSize.neg
 
+/-- *pristine* and *filthy* are extreme adjectives on the scale of *clean* and *dirty*, with
+standards beyond theirs, so the pair leaves a gap although the weak pair does not
+([alexandropoulou-gotzner-2024a]). -/
 def pristineness : AntonymPair :=
-  { dimension := .cleanliness, posForm := "pristine", negForm := "filthy", strength := .strong
+  { dimension := .cleanliness, posForm := "pristine", negForm := "filthy"
+  , posLexicalStandard := some .extreme, negLexicalStandard := some .extreme
   , evaluativeValence := some .positive }
 
 abbrev pristine := pristineness.pos
