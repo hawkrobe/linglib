@@ -23,6 +23,7 @@ finite model computes it.
 
 * `CausalModel U V α`: exogenous contexts `U`, a graph, and structural equations
 * `CausalModel.IsAcyclic`: the graph is well founded
+* `CausalModel.ContextAtRoots`: only the roots read the context
 * `CausalModel.step`: one round of the equations, with the intervened variables held fixed
 * `CausalModel.solve`: the solution under an intervention in a context
 * `[c ← x, d ← y]`: the partial assignment settling `c` and `d`, scoped in `CausalModel`
@@ -84,6 +85,12 @@ variable {U V : Type*} {α : V → Type*} (M : CausalModel U V α)
 
 /-- A model is acyclic, or recursive, when its graph is well founded. -/
 abbrev IsAcyclic : Prop := WellFounded M.graph.Adj
+
+/-- The context reaches a model only at its roots when the equation of every variable with a
+parent gives the same value in every context, as in the dynamics of Schulz and Nadathur, whose
+inner variables are truth functions of their parents. -/
+class ContextAtRoots : Prop where
+  eqn_eq_of_adj {v w : V} : M.graph.Adj w v → ∀ u u' y, M.eqn v u y = M.eqn v u' y
 
 /-- A model is acyclic when every edge climbs in depth. -/
 theorem IsAcyclic.of_depth (depth : V → ℕ) (h : ∀ {w v}, M.graph.Adj w v → depth w < depth v) :

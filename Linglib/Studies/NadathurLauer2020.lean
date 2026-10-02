@@ -91,10 +91,8 @@ variable {M}
 /-- *Make* entails that the effect occurs (footnote 20). The background with the cause added holds
 in the evaluation world, so the effect it settles occurs there. -/
 theorem Make.solve_eq {s : ∀ v, Flat (α v)} {u : U} {c : V} {x : α c} {e : V} {y : α e}
-    (h : Make M s u c x e y) (hu : u ∈ M.contexts s) : M.solve ⊥ u e = y := by
-  have h' := h.1.2
-  rw [Function.update_idem] at h'
-  exact h'.solve_bot_eq (mem_contexts_update hu h.2)
+    (h : Make M s u c x e y) (hu : u ∈ M.contexts s) : M.solve ⊥ u e = y :=
+  h.1.solve_eq (contexts_anti (update_le_self_iff.2 bot_le) hu) h.2
 
 variable [Fintype U] [Inhabited U] [∀ v, Inhabited (α v)] [∀ v, DecidableEq (α v)] [Fintype V]
   [DecidableRel M.graph.Adj]

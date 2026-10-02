@@ -38,6 +38,8 @@ every context when the observation is imposed as an intervention
   observation only at its ancestors
 * `CausalModel.CausallyEntails.parent_eq`: a settled variable settles each parent to the value
   its equation needs
+* `CausalModel.causallyEntails_solve_bot`: when only the roots read the context, an observation
+  whose development settles every root develops to the actual world of its contexts
 * `CausalModel.causallyEntails_iff_develop`: the strict development computed one value per
   variable (`CausalModel.develop`), so that `decide` evaluates it in a finite model
 
@@ -212,6 +214,26 @@ theorem Forced.solve_bot_eq (h : M.Forced s v x) {u : U} (hu : u ∈ M.contexts 
 theorem CausallyEntails.solve_bot_eq (h : M.CausallyEntails s v x) {u : U}
     (hu : u ∈ M.contexts s) : M.solve ⊥ u v = x :=
   (Forced.of_causallyEntails h).solve_bot_eq hu
+
+/-- When the context reaches the model only at its roots, an observation whose development settles
+every root develops, in a context where it holds, to that context's actual world. -/
+theorem causallyEntails_solve_bot [M.ContextAtRoots] {u : U}
+    (hs : ∀ v, (∀ w, ¬ M.graph.Adj w v) → ∃ z, M.CausallyEntails s v z)
+    (hu : u ∈ M.contexts s) : ∀ v, M.CausallyEntails s v (M.solve ⊥ u v) := by
+  intro v
+  induction v using hM.induction with
+  | _ v ih =>
+    by_cases hpar : ∃ w, M.graph.Adj w v
+    · rcases eq_or_ne (s v) ⊥ with hsv | hsv
+      · refine causallyEntails_iff.2 (.inr ⟨hsv, fun w hw ↦ ⟨_, ih w hw⟩, fun u' y hy ↦ ?_⟩)
+        obtain ⟨w, hw⟩ := hpar
+        rw [M.dependsOn_eqn v u' fun w (hw : M.graph.Adj w v) ↦ hy w hw _ (ih w hw),
+          ContextAtRoots.eqn_eq_of_adj hw u' u]
+        exact (solve_of_eq_bot rfl u).symm
+      · obtain ⟨a, ha⟩ := Flat.ne_bot_iff_exists.1 hsv
+        exact (causallyEntails_iff.2 (.inl ha)).solve_bot_eq hu ▸ causallyEntails_iff.2 (.inl ha)
+    · obtain ⟨z, hz⟩ := hs v (not_exists.1 hpar)
+      exact hz.solve_bot_eq hu ▸ hz
 
 /-- The strict development settles a variable to at most one value. -/
 theorem CausallyEntails.unique [Nonempty U] {y : α v} (hx : M.CausallyEntails s v x)
