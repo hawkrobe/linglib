@@ -113,6 +113,10 @@
       [
         "environment",
         "episodic"
+      ],
+      [
+        "device",
+        "covertModal"
       ]
     ],
     "comment": "An episodic sentence that still requires a covert epistemic modal for its interpretation."
@@ -193,7 +197,7 @@
     "glossedTokens": [],
     "translation": "I went out on the street and started knocking like a madman at a door whatever with wooden shutters.",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "marginal",
     "alternatives": [],
     "readings": [
       {
@@ -209,6 +213,10 @@
       [
         "environment",
         "episodic"
+      ],
+      [
+        "device",
+        "covertModal"
       ]
     ],
     "comment": "Slightly marginal out of the blue; existential in a semimodalized context."
@@ -402,7 +410,7 @@
       },
       {
         "name": "existential",
-        "judgment": "questionable"
+        "judgment": "marginal"
       }
     ],
     "paperFeatures": [
@@ -470,7 +478,7 @@
       },
       {
         "name": "existential",
-        "judgment": "questionable"
+        "judgment": "marginal"
       }
     ],
     "paperFeatures": [
@@ -529,7 +537,7 @@
     "glossedTokens": [],
     "translation": "Yesterday I spoke with a philosopher (I don't know/don't care who).",
     "context": "",
-    "judgment": "marginal",
+    "judgment": "questionable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -556,7 +564,7 @@
     "glossedTokens": [],
     "translation": "Yesterday I spoke with a philosopher (I don't know/don't care who) that was interested in speaking with me.",
     "context": "",
-    "judgment": "marginal",
+    "judgment": "questionable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -583,7 +591,7 @@
     "glossedTokens": [],
     "translation": "Yesterday I spoke with any philosopher.",
     "context": "",
-    "judgment": "marginal",
+    "judgment": "questionable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -963,7 +971,7 @@
     "glossedTokens": [],
     "translation": "I didn't see just any student.",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "marginal",
     "alternatives": [],
     "readings": [
       {
@@ -1063,7 +1071,7 @@
     "glossedTokens": [],
     "translation": "I have married a whatsoever doctor.",
     "context": "",
-    "judgment": "marginal",
+    "judgment": "questionable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1122,7 +1130,7 @@
     "glossedTokens": [],
     "translation": "A linguist has married a whatever doctor.",
     "context": "",
-    "judgment": "marginal",
+    "judgment": "questionable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1133,6 +1141,10 @@
       [
         "environment",
         "episodic"
+      ],
+      [
+        "device",
+        "intervention"
       ]
     ],
     "comment": "A quantified DP between the freezing operator and the item does not rescue it: intervention."
