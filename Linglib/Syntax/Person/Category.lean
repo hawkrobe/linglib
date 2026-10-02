@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Person.Basic
-public import Linglib.Syntax.Person.Resolve
+public import Linglib.Syntax.Person.Lattice
 public import Linglib.Syntax.Number.Basic
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Data.Fintype.Prod
@@ -225,7 +225,7 @@ def sharedPerson (s : Finset Category) : Option Person :=
     if ∀ c ∈ s, c.person = .firstInclusive then some .firstInclusive
     else if ∀ c ∈ s, c.person = .firstExclusive then some .firstExclusive
     else some .first
-  else if ∀ c ∈ s, c.IncludesAddressee then some .second
+  else if ∀ c ∈ s, c.IncludesAddressee ∧ ¬ c.IncludesSpeaker then some .second
   else if ∀ c ∈ s, ¬ c.IncludesSpeaker ∧ ¬ c.IncludesAddressee then some .third
   else none
 

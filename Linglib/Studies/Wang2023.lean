@@ -9,23 +9,21 @@ public import Linglib.Data.Examples.Wang2023
 /-!
 # Wang (2023): Honorifics without [HON]
 
-This file formalizes [wang-r-2023]'s derivation of the typology of honorific pronouns. Across
-the paper's survey the values recruited for honorification are plural number, third person and
-indefiniteness, never singular, first or second person, or definites (Table 1, (28)). These are
-the semantically unmarked values of their categories, the ones carrying the weakest
-presupposition (54), (55), (56), which the containment-pair cells of the phi-feature substrate
-already order by specification, and the recruitment follows from a pragmatic maxim of
-avoidance, the Taboo of Directness (57), ranked above Maximize Presupposition! of
-[heim-1991] (59): where the latter demands the strongest presupposition compatible with the
-context, the former demands the weakest, and in respect contexts the taboo wins. Both maxims
-are optimality-theoretic constraints on the cells (`todConstraint`, `mpConstraint`), and for
-any set of well-formed candidates containing the least specified cell the ranking Taboo » MP!
-selects that cell alone (`tod_mp_general`), so no honorific singular, local person or definite
-can arise. Articulated number systems with a dual (80) need a weak taboo that only avoids the
-strongest presupposition (82), and the four attested patterns of honorific nonsingulars are the
-rankings of (83): a strong taboo over MP! gives honorific plural only, a weak taboo over MP!
-honorific dual only, both rankings by degree of politeness the escalating systems, and the
-weak taboo alone the non-escalating ones.
+Across Wang's survey the values recruited for honorific pronouns are plural number, third
+person and indefiniteness, never singular, first or second person, or definites (Table 1, (28)).
+These are the semantically unmarked values, the ones carrying the weakest presupposition (54)–(56),
+which the containment-pair cells order by specification. Recruitment follows from the Taboo of
+Directness (57), which in respect contexts demands the weakest presupposition, ranked above Heim's
+Maximize Presupposition! (59), which demands the strongest. Number systems with a dual (80) also
+need a weak taboo that avoids only the strongest presupposition (82), and the four attested
+patterns of honorific nonsingulars are the rankings of (83).
+
+## Main results
+
+* `tod_mp_general`: Taboo » MP! selects the least specified cell alone, so no honorific singular,
+  local person or definite arises.
+* `stod_mp_wtod`, `wtod_mp_stod`, `wtod_alone`: the rankings of (83) give honorific plural only,
+  dual only, and the non-escalating systems.
 
 ## Implementation notes
 
@@ -55,15 +53,15 @@ open Agreement OptimalityTheory
 theorem plural_eq_bot : Number.pluralF = ⊥ := rfl
 
 /-- The third person is the least specified person cell, the empty bundle (55). -/
-theorem third_eq_bot : Person.thirdF = ⊥ := rfl
+theorem third_eq_bot : Person.toFeatures .third = some ⊥ := Person.toFeatures_third
 
 /-! ### The Taboo of Directness and Maximize Presupposition! (§4.2) -/
 
-/-- The Taboo of Directness (57): in respect contexts, use the form with the weakest
-presupposition. As a constraint it penalizes presuppositional strength. -/
+/-- The Taboo of Directness (57) asks in respect contexts for the form with the weakest
+presupposition; as a constraint it penalizes presuppositional strength. -/
 def todConstraint : Constraint ContainmentPair := ContainmentPair.specLevel
 
-/-- Maximize Presupposition! (59): use the form with the strongest presupposition. As a
+/-- Maximize Presupposition! (59) asks for the form with the strongest presupposition; as a
 constraint it penalizes the shortfall from the maximal strength. -/
 def mpConstraint : Constraint ContainmentPair :=
   fun c ↦ ContainmentPair.maximal.specLevel - c.specLevel
@@ -98,7 +96,7 @@ theorem tod_mp_only_minimal (candidates : List ContainmentPair)
   · exact absurd hZero (by decide)
   · rfl
 
-/-- The least specified cell is optimal under Taboo » MP!: its profile is lexicographically
+/-- The least specified cell is optimal under Taboo » MP!, its profile being lexicographically
 least. -/
 theorem tod_mp_minimal_mem_optimal (candidates : List ContainmentPair)
     (hMin : ContainmentPair.minimal ∈ candidates) (hNE : candidates ≠ []) :
@@ -141,8 +139,8 @@ theorem tod_mp_general (candidates : List ContainmentPair)
   exact ⟨tod_mp_only_minimal candidates hWF hMin hNE c,
     fun h ↦ h ▸ tod_mp_minimal_mem_optimal candidates hMin hNE⟩
 
-/-- The unattested honorifics (28): with the taboo on top, the most specified cell, singular,
-local person or definite, is never optimal beside a less specified competitor. -/
+/-- With the taboo on top, the most specified cell, singular, local person or definite, is never
+optimal beside a less specified competitor, so these honorifics are unattested (28). -/
 theorem maximal_not_optimal_of_tod_top (candidates : List ContainmentPair)
     (rest : List (Constraint ContainmentPair)) (hNE : candidates ≠ [])
     (hMin : ContainmentPair.minimal ∈ candidates) :
@@ -152,7 +150,7 @@ theorem maximal_not_optimal_of_tod_top (candidates : List ContainmentPair)
 
 /-! ### Articulated number systems (§5) -/
 
-/-- The weak Taboo of Directness (82b): avoid the form with the strongest presupposition. -/
+/-- The weak Taboo of Directness (82b) avoids the form with the strongest presupposition. -/
 def wtodConstraint : Constraint ContainmentPair :=
   fun c ↦ if c.specLevel = ContainmentPair.maximal.specLevel then 1 else 0
 
@@ -167,19 +165,19 @@ theorem maximal_not_optimal_of_wtod_top (candidates : List ContainmentPair)
       (Tableau.ofRanking candidates (wtodConstraint :: rest) hNE).optimal :=
   not_mem_optimal_of_top_pos hMin rfl (by decide)
 
-/-- (83b): strong taboo » MP! » weak taboo recruits the plural only, as in Slovenian. -/
+/-- Strong taboo » MP! » weak taboo recruits the plural only, as in Slovenian (83b). -/
 theorem stod_mp_wtod :
     (Tableau.ofRanking number [todConstraint, mpConstraint, wtodConstraint]).optimal =
       {ContainmentPair.minimal} := by
   decide +kernel
 
-/-- (83a): weak taboo » MP! » strong taboo recruits the dual only, as in Mwotlap and Kharia. -/
+/-- Weak taboo » MP! » strong taboo recruits the dual only, as in Mwotlap and Kharia (83a). -/
 theorem wtod_mp_stod :
     (Tableau.ofRanking number [wtodConstraint, mpConstraint, todConstraint]).optimal =
       {ContainmentPair.intermediate} := by
   decide +kernel
 
-/-- (83d): the weak taboo alone leaves dual and plural, the non-escalating system of Imere. -/
+/-- The weak taboo alone leaves dual and plural, the non-escalating system of Imere (83d). -/
 theorem wtod_alone :
     (Tableau.ofRanking number [wtodConstraint]).optimal =
       {ContainmentPair.intermediate, ContainmentPair.minimal} := by

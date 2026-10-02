@@ -6,7 +6,7 @@ public import Mathlib.Data.Finset.NAry
 public import Mathlib.Data.Finset.Lattice.Fold
 public import Linglib.Syntax.Person.Features
 public import Linglib.Syntax.Agreement.ContainmentPair
-public import Linglib.Syntax.Person.Resolve
+public import Linglib.Syntax.Person.Lattice
 public import Linglib.Semantics.Plurality.NumberFeatures
 public import Linglib.Syntax.Minimalist.Phi.Recursion
 public import Linglib.Syntax.Minimalist.Phi.Lattice
@@ -260,15 +260,13 @@ theorem attested_number_systems_derivable :
       p.1.wellFormed = true ∧ Generates p.1 p.2 := by
   decide
 
-/-! ### Harbour's sign decomposition of the Cysouw categories ([harbour-2016] Table 4.3)
+/-! ### Harbour's signs for the Cysouw categories (Table 4.3)
 
-The neutral `Person.Category.toFeatures` underdetermines the group categories (`speakerOthers`,
-`speakerAddressee` and `speakerAddresseeOthers` all `firstF`). Harbour's **operational
-signs** distinguish them; that distinction is *this theory's* commitment, derived from the
-partition above. A dedicated `Sign` carrier is used rather than `Person.Features`, because the
-exclusive's `+author −participant` is exactly the combination the neutral type's `wellFormed`
-invariant (SAP containment: author ⟹ participant) rejects — for operations, not SAP-membership
-predicates, that invariant does not apply ([harbour-2016] Ch. 9). -/
+The membership bundles `Person.Category.toFeatures` give the three groups including the speaker
+one bundle, `{participant, author}`. Harbour's signs distinguish them, a commitment of this theory
+derived from the partition above. Signs get their own type rather than `Person.Features`: the
+exclusive's `+author −participant` is the combination the containment filter rejects, and the
+filter, which holds of membership, does not hold of operations (chapter 9). -/
 
 open Person (Category)
 
@@ -298,14 +296,12 @@ decomposition (`Category.toFeatures`) collapses them (cf. `Examples.inclusive_ne
 theorem signOf_speakerOthers_ne_speakerAddressee :
     signOf .speakerOthers ≠ signOf .speakerAddressee := by decide
 
-/-! ### Application: the Tamil clusivity contrast through the Pronoun API
+/-! ### The Tamil clusivity contrast
 
-A lexical pronoun entry feeds Harbour's signs by composing `Pronoun.categories` — the
-[cysouw-2003] category a `person`/`number`/`clusivity` triple realizes — with `signOf`. Tamil's
-clusivity-marked 1pl forms *naam* (inclusive) and *naan-ŋgæ* (exclusive) land on distinct signs,
-where the neutral `Category.toFeatures` collapses both 1pl categories to `firstF`: the
-distinction [harbour-2016]'s decomposition exists to draw, here discharged on real Fragment
-entries rather than a stipulated example. -/
+A pronoun entry reaches Harbour's signs through the categories its person, number and clusivity
+realize (`Pronoun.categories`). Tamil's first person plural forms *naam* (inclusive) and
+*naan-ŋgæ* (exclusive) realize distinct signs, where the membership bundles give both categories
+`{participant, author}`. -/
 
 open Tamil.Pronouns (naam naanŋgæ)
 

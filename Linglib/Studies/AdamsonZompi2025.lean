@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Agreement.PersonCaseConstraint
-public import Linglib.Syntax.Person.Resolve
+public import Linglib.Syntax.Person.Lattice
 public import Linglib.Fragments.Romance.Italian.Pronouns
 public import Linglib.Fragments.Romance.Spanish.Pronouns
 public import Linglib.Fragments.German.Pronouns

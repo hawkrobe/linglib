@@ -11,44 +11,48 @@ public import Linglib.Syntax.Gender.Decomposition
 /-!
 # The domains of φ-features
 
-A φ-feature is a presuppositional partial identity function on the entity domain
-[sauerland-2003]: it asserts nothing and is defined on a domain, so a feature denotes as that
-domain, a `Set` of entities. A bundle of features denotes as the intersection of its features'
-domains, `Finset.inf`, the empty bundle as everything, so a bigger bundle denotes a smaller
-domain, and over well-formed bundles the domains nest by specification
-(`IsLowerSet.inf_le_inf_of_card_le`): the Feature-Subset Principle as a consequence of the
-privative geometry rather than a stipulation. The person, number and gender values denote
-through their bundles (`Person.dom`, `Number.dom`, `Gender.dom`): person at parthood of the
-agent and the addressee of the context of utterance (`Reference.Context`), number at
-atomicity, and gender at the gender of the referent, the referents gendered masculine and
-feminine that the entity domain comes equipped with (`Gendered`): the feminine feature
-presupposes a referent not gendered masculine and the neuter one a referent not gendered
-feminine, so the neuter domain lies inside the feminine one
-(`Gender.dom_neuter_subset_dom_feminine`), the markedness ordering of [sauerland-2008b]. The
-three columns are one skeleton, the containment pair of [harley-ritter-2002] and
-[adger-harbour-2008]. An absent feature, and a value without a bundle, the impersonal person,
-the numbers beyond the dual and the non-sex-based genders, denote the whole domain. The
-semantically unmarked values, third person, plural and masculine, are the empty bundles, and
-their unrestricted domain is what honorification recruits [wang-r-2023].
+Following Sauerland, a φ-feature is a presuppositional partial identity function on entities: it
+asserts nothing and is defined on a domain, so it denotes that domain, a `Set` of entities. A
+bundle denotes the intersection of its features' domains (`Finset.inf`) and the empty bundle
+everything, so over well-formed bundles the domains nest by specification
+(`IsLowerSet.inf_le_inf_of_card_le`), the Feature-Subset Principle as a consequence of the
+privative geometry. Person is read at parthood of the agent and the addressee of the context of
+utterance, number at atomicity, and gender at the gender a referent is socially assigned
+(`Gendered`). The person domains are the participant-set extents of `Person.Bears` pulled back
+along the participants of a referent, and a tripartition value denotes the referents in its domain
+and in no stronger one, Maximize Presupposition.
+
+## Main definitions
+
+* `Person.dom`, `Number.dom`, `Gender.dom`: the domain of an optional value.
+* `Reference.Context.participants`: the discourse roles whose holders are part of a referent.
+
+## Main results
+
+* `Person.mem_dom_feature_iff`: a person feature's domain is the pullback of `Person.Bears`.
+* `Person.participants_mem_participantSets_first`, `…_second`, `…_third`: the tripartition
+  values denote the referents in their domain and in no stronger one.
+* `Gender.dom_neuter_subset_dom_feminine`: the neuter domain lies inside the feminine one.
 
 ## Implementation notes
 
-The gender of a referent is a social category, not an anatomical one: a referent may be
-gendered neither way, and then only a form without a gender feature is defined of it, the
-account of singular *they* in [bjorkman-2017] and [konnelly-cowper-2020]. The person entries
-take the agent and the addressee as parts of the referent where [sauerland-2003] has them
-overlap it; the two coincide for an atomic agent and addressee. The two-feature decomposition
-does not see clusivity, so the inclusive is refined to referents including the addressee and
-the exclusive leaves the addressee's exclusion to Maximize Presupposition. The dual's minimality
-domain needs a mereological predicate the entity domain's order does not supply, so the number
-outer set is the whole domain and the dual restricts nothing.
+An absent feature, and a value without a bundle, the impersonal person, the numbers beyond the
+dual and the non-sex-based genders, denote the whole domain; the semantically unmarked values,
+third person, plural and masculine, are the empty bundles, whose unrestricted domain Wang finds
+recruited by honorification. A referent may be gendered neither way, and then only a form without
+a gender feature is defined of it, the account of singular *they* of Bjorkman and of Konnelly and
+Cowper. The person entries take the agent and the addressee as parts of the referent where
+Sauerland has them overlap it; the two coincide for an atomic agent and addressee. The
+two-feature decomposition does not see clusivity, so the inclusive is refined to referents
+including the addressee. The cells of the tripartition are stated one by one: a general
+Maximize-Presupposition form fails when the agent is part of the addressee, which collapses the
+first and second person domains. The dual's minimality domain needs a mereological predicate the
+entity domain's order does not supply, so the dual restricts nothing.
 
 ## References
 
 * [sauerland-2003]
 * [sauerland-2008b]
-* [harley-ritter-2002]
-* [adger-harbour-2008]
 * [bjorkman-2017]
 * [konnelly-cowper-2020]
 * [wang-r-2023]
@@ -64,16 +68,16 @@ namespace Person
 
 variable {W E P T : Type*} [PartialOrder E] (c : Reference.Context W E P T) (x : E)
 
-/-- The domain of a person feature at a context of utterance: [author] the referents including
-the agent, [participant] those including the agent or the addressee. -/
+/-- At a context of utterance, [author] is defined of the referents including the agent and
+[participant] of those including the agent or the addressee. -/
 def Feature.dom : Feature → Set E
   | .author => Set.Ici c.agent
   | .participant => Set.Ici c.agent ∪ Set.Ici c.addressee
 
-/-- The domain of an optional person value at a context of utterance: first person the
-referents including the agent, the inclusive those including the agent and the addressee,
-second those including the agent or the addressee, third everything; an absent feature and the
-impersonal restrict nothing. -/
+/-- At a context of utterance, the first person is defined of the referents including the agent,
+the inclusive of those including the agent and the addressee, and the second of those including
+the agent or the addressee; the third person, an absent value and the impersonal restrict
+nothing. -/
 def dom : Option Person → Set E
   | some .firstInclusive => Set.Ici c.agent ∩ Set.Ici c.addressee
   | p => (p.bind toFeatures).elim Set.univ (·.inf (Feature.dom c))
@@ -81,21 +85,21 @@ def dom : Option Person → Set E
 @[simp] theorem dom_none : dom c none = Set.univ := rfl
 
 @[simp] theorem mem_dom_first : x ∈ dom c (some .first) ↔ c.agent ≤ x := by
-  simp [dom, toFeatures, firstF, Feature.dom, or_and_right]
+  simp [dom, Feature.dom, or_and_right]
 
 @[simp] theorem mem_dom_firstInclusive :
     x ∈ dom c (some .firstInclusive) ↔ c.agent ≤ x ∧ c.addressee ≤ x := Iff.rfl
 
 @[simp] theorem mem_dom_firstExclusive :
     x ∈ dom c (some .firstExclusive) ↔ c.agent ≤ x := by
-  simp [dom, toFeatures, firstF, Feature.dom, or_and_right]
+  simp [dom, Feature.dom, or_and_right]
 
 @[simp] theorem mem_dom_second :
     x ∈ dom c (some .second) ↔ c.agent ≤ x ∨ c.addressee ≤ x := by
-  simp [dom, toFeatures, secondF, Feature.dom]
+  simp [dom, Feature.dom]
 
 @[simp] theorem dom_third : dom c (some .third) = Set.univ := by
-  simp [dom, toFeatures, thirdF]
+  simp [dom]
 
 @[simp] theorem dom_zero : dom c (some .zero) = Set.univ := rfl
 
@@ -106,21 +110,75 @@ theorem dom_firstInclusive_subset_dom_first :
 
 end Person
 
+namespace Reference.Context
+
+variable {W E P T : Type*} [PartialOrder E] (c : Context W E P T) (x : E)
+
+open Classical in
+/-- The participants of a referent at a context are the discourse roles whose holders, the agent
+and the addressee, are part of it. -/
+noncomputable def participants : Finset Discourse.Role :=
+  Finset.univ.filter fun r ↦ (match r with | .speaker => c.agent | .addressee => c.addressee) ≤ x
+
+@[simp] theorem speaker_mem_participants : .speaker ∈ c.participants x ↔ c.agent ≤ x := by
+  simp [participants]
+
+@[simp] theorem addressee_mem_participants :
+    .addressee ∈ c.participants x ↔ c.addressee ≤ x := by
+  simp [participants]
+
+end Reference.Context
+
+namespace Person
+
+variable {W E P T : Type*} [PartialOrder E] (c : Reference.Context W E P T) (x : E)
+
+/-- A person feature's domain holds the referents whose participants bear the feature. -/
+theorem mem_dom_feature_iff (f : Feature) : x ∈ Feature.dom c f ↔ Bears (c.participants x) f := by
+  cases f <;> simp [Feature.dom, Bears, Finset.Nonempty, Discourse.Role.exists_role]
+
+/-- The first person denotes the referents in its domain. -/
+theorem participants_mem_participantSets_first :
+    c.participants x ∈ Person.first.participantSets ↔ x ∈ dom c (some .first) := by
+  simp only [mem_dom_first, participantSets, Finset.mem_insert, Finset.mem_singleton,
+    Finset.ext_iff, Discourse.Role.forall_role, Reference.Context.speaker_mem_participants,
+    Reference.Context.addressee_mem_participants]
+  simp; tauto
+
+/-- The second person denotes the referents in its domain and not in the first person's. -/
+theorem participants_mem_participantSets_second :
+    c.participants x ∈ Person.second.participantSets ↔
+      x ∈ dom c (some .second) ∧ x ∉ dom c (some .first) := by
+  simp only [mem_dom_second, mem_dom_first, participantSets, Finset.mem_singleton,
+    Finset.ext_iff, Discourse.Role.forall_role, Reference.Context.speaker_mem_participants,
+    Reference.Context.addressee_mem_participants]
+  simp; tauto
+
+/-- The third person denotes the referents outside the second person's domain, which contains
+the first person's. -/
+theorem participants_mem_participantSets_third :
+    c.participants x ∈ Person.third.participantSets ↔ x ∉ dom c (some .second) := by
+  simp only [mem_dom_second, participantSets, Finset.mem_singleton, Finset.ext_iff,
+    Discourse.Role.forall_role, Reference.Context.speaker_mem_participants,
+    Reference.Context.addressee_mem_participants]
+  simp
+
+end Person
+
 /-! ### Number -/
 
 namespace Number
 
 variable {E : Type*} [PartialOrder E] (x : E)
 
-/-- The domain of a number feature: [atomic] the atoms, [minimal] everything pending a
-minimality predicate. -/
+/-- [atomic] is defined of the atoms, and [minimal], pending a minimality predicate, of
+everything. -/
 def Feature.dom : Feature → Set E
   | .atomic => {x | Atom x}
   | .minimal => Set.univ
 
-/-- The domain of an optional number value: singular the atoms, plural everything, the dual
-everything pending a minimality predicate; an absent feature and a value without a bundle
-restrict nothing. -/
+/-- The singular is defined of the atoms; the plural, the dual (pending a minimality
+predicate), an absent value and a value without a bundle restrict nothing. -/
 def dom (n : Option Number) : Set E :=
   (n.bind Features.ofNumber).elim Set.univ (·.inf Feature.dom)
 
@@ -139,9 +197,9 @@ end Number
 
 /-! ### Gender -/
 
-/-- The gender of referents, as socially constituted: the referents gendered masculine and those
-gendered feminine, disjoint. Grammatical gender presupposes it, and a referent may be gendered
-neither way. -/
+/-- A gendered entity domain has disjoint sets of referents gendered masculine and gendered
+feminine, as socially constituted. Grammatical gender presupposes it, and a referent may be
+gendered neither way. -/
 class Gendered (E : Type*) where
   /-- The referents gendered masculine. -/
   masculine : Set E
@@ -154,15 +212,15 @@ namespace Gender
 
 variable {E : Type*} [Gendered E] (x : E)
 
-/-- The domain of a gender feature over a gendered entity domain: [feminine] the referents not
-gendered masculine, [neuter] those not gendered feminine. -/
+/-- Over a gendered entity domain, [feminine] is defined of the referents not gendered masculine
+and [neuter] of those not gendered feminine. -/
 def Feature.dom : Feature → Set E
   | .feminine => Gendered.masculineᶜ
   | .neuter => Gendered.feminineᶜ
 
-/-- The domain of an optional gender value over a gendered entity domain: the feminine the
-referents not gendered masculine, the neuter those gendered neither way, the masculine
-everything; an absent feature and the non-sex-based genders restrict nothing. -/
+/-- Over a gendered entity domain, the feminine is defined of the referents not gendered
+masculine and the neuter of those gendered neither way; the masculine, an absent value and the
+non-sex-based genders restrict nothing. -/
 def dom (g : Option Gender) : Set E :=
   (g.bind Features.fromGender).elim Set.univ (·.inf Feature.dom)
 
@@ -178,8 +236,8 @@ def dom (g : Option Gender) : Set E :=
 @[simp] theorem dom_masculine : dom (E := E) (some .masculine) = Set.univ := by
   simp [dom, Features.fromGender, Features.masculine]
 
-/-- The neuter domain lies inside the feminine one: the containment `[+neuter] → [+feminine]`
-of the decomposition, as a fact about referents. -/
+/-- The neuter domain lies inside the feminine one, the containment `[+neuter] → [+feminine]` of
+the decomposition as a fact about referents. -/
 theorem dom_neuter_subset_dom_feminine :
     dom (E := E) (some .neuter) ⊆ dom (some .feminine) :=
   Finset.inf_mono (by decide : Features.feminine ⊆ Features.neuter)
