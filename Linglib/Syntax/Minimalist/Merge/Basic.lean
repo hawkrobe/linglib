@@ -2,49 +2,51 @@ module
 
 public import Linglib.Core.Algebra.RootedTree.Coproduct.Pruning
 public import Linglib.Core.Algebra.RootedTree.Coproduct.WithCuts
+public import Linglib.Core.Data.UnorderedTree.Count
 public import Linglib.Syntax.Minimalist.Workspace.TraceCut
 public import Mathlib.LinearAlgebra.TensorProduct.Basic
 public import Mathlib.RingTheory.TensorProduct.Maps
 
 /-!
-# Merge operator on the Connes–Kreimer bialgebra of nonplanar forests
+# The Merge operator on workspaces
 
-Per [marcolli-chomsky-berwick-2025] §1.3 (Definitions 1.3.1, 1.3.2, 1.3.4),
-the linguistic **Merge operator** `M_{S,S'}` for a pair `(S, S') : UnorderedTree α`
-of accessible terms is the composition
+The Merge operator of [marcolli-chomsky-berwick-2025] (Definition 1.3.4) on the workspace algebra
+`ConnesKreimer R (UnorderedTree α)`: for a pair `S, S'` of accessible terms,
 
-  M_{S,S'} = ⊔ ∘ (B ⊗ id) ∘ δ_{S,S'} ∘ Δ
+  M_{S,S'} = ⊔ ∘ (B ⊗ id) ∘ δ_{S,S'} ∘ Δ,
 
-on the canonical carrier `ConnesKreimer R (UnorderedTree α)`, where:
+where `Δ` is a coproduct extracting accessible terms, `δ_{S,S'}` keeps the terms whose left
+channel is the forest `{S, S'}` (Definition 1.3.1), `B` grafts that forest under a new root
+(Definition 1.3.2), and `⊔` multiplies the two channels back into one workspace. Only `Δ` depends
+on how accessible terms are cut out, so the operator is defined over an arbitrary cut enumeration
+`cuts` (`mergeOpG`), with the pruning instance `mergeOp` and the trace instance `mergeOpC`. The
+unit stage `M_{β,1}` of Internal Merge (Proposition 1.4.2) has no grafting step (`mergeOpUnitG`).
 
-- `Δ` is the merge coproduct (`comulAlgHomN`, the Δ^ρ deletion coproduct);
-- `δ_{S,S'}` selects coproduct terms whose left channel equals the 2-element
-  forest `{S, S'}` (Def 1.3.1);
-- `B ⊗ id` grafts on the left channel: replaces the 2-element forest `{S, S'}`
-  with the binary tree `UnorderedTree.node lbl {S, S'}` (the label `lbl` of the new
-  root is a parameter — the operator layer is agnostic to which label decorates
-  the grafted node);
-- `⊔` is multiplication on `ConnesKreimer R (UnorderedTree α)` (forest disjoint
-  union, the algebra structure).
+External, Internal and Sideward Merge are in `Merge/External.lean`, `Merge/Internal.lean` and
+`Merge/Sideward.lean`; the Minimal-Search weighting is in `Economy/MinimalSearch.lean`.
 
-This file builds the building blocks (`gammaMatch`, `deltaMatch`, `graftBinaryAt`)
-and assembles `mergeOp`, together with the generic operator `mergeOpG` over an
-arbitrary cut enumeration and its Δ^c instance `mergeOpC`. The three cases of
-Merge are realized in `Merge/External.lean`, `Merge/Internal.lean`, and
-`Merge/Sideward.lean`; the Minimal-Search weighting in `Economy/MinimalSearch.lean`.
+## Main definitions
 
-## Merge coproduct: Δ^ρ, not Δ^d
+* `Minimalist.Merge.mergeOpG`, `mergeOp`, `mergeOpC`: Merge over a cut enumeration, at the pruning
+  cuts, and at the trace cuts.
+* `Minimalist.Merge.mergeOpUnitG`, `mergeOpUnit`, `mergeOpUnitC`: the unit stage `M_{β,1}`.
+* `Minimalist.Merge.IsMergeCuts`: cut enumerations whose nonempty crowns have fewer edges than
+  their tree.
 
-[marcolli-chomsky-berwick-2025] Def 1.3.4 states merge with the Δ^d
-(delete-then-rebinarize) coproduct. The canonical n-ary carrier uses Δ^ρ
-(`comulAlgHomN`): Δ^d and Δ^ρ extract the **same** accessible terms, differing
-only in the remainder, which `mergePost` discards when grafting the pair — so
-merge correctness is unaffected. Δ^ρ is the n-ary-faithful deletion (MCB's
-binary Δ^d `+2` is a rebinarization artifact).
+## Main results
+
+* `Minimalist.Merge.mergePost_basis_tensor`: the post-coproduct chain on a basis tensor.
+* `Minimalist.Merge.mergeOpG_comm`: Merge does not depend on the order of the pair.
+
+## Implementation notes
+
+Definition 1.3.4 uses the deletion coproduct `Δ^d`, which contracts the unary vertex a cut leaves.
+`mergeOp` uses the pruning coproduct `Δ^ρ`, which keeps it. The two extract the same accessible
+terms and differ only in the remainder, so the forest `B` grafts is the same.
 
 ## References
 
-* [marcolli-chomsky-berwick-2025], §1.3 (Definitions 1.3.1, 1.3.2, 1.3.4)
+* [marcolli-chomsky-berwick-2025]
 -/
 
 @[expose] public section
@@ -56,69 +58,38 @@ open RoseTree UnorderedTree ConnesKreimer
 
 variable {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq (UnorderedTree α)]
 
-/-! ## §1: γ_{S,S'} matching projection (M-C-B Def 1.3.1)
+/-! ### The matching projections -/
 
-For a fixed pair `(S, S') : UnorderedTree α`, `gammaMatch S S'` is the linear
-endomorphism of `ConnesKreimer R (UnorderedTree α)` that projects onto the basis
-element `of' {S, S'}`:
-
-  gammaMatch S S' (of' F) = if F = {S, S'} then of' F else 0
-
-Built as a `ConnesKreimer.linearLift` that maps the `{S, S'}` basis vector to
-itself and every other basis vector to zero. -/
-
-/-- The matching projection γ_{S,S'} (M-C-B Def 1.3.1): keeps the coefficient
-    of the `{S, S'}` basis element, sends everything else to zero. -/
+/-- The matching projection `γ_{S,S'}` keeps the coefficient of the basis element `{S, S'}` and
+    sends every other basis element to zero. -/
 noncomputable def gammaMatch (S S' : UnorderedTree α) :
     ConnesKreimer R (UnorderedTree α) →ₗ[R] ConnesKreimer R (UnorderedTree α) :=
   ConnesKreimer.linearLift
     (fun F => if F = ({S, S'} : Forest (UnorderedTree α)) then of' F else 0)
 
-/-- **γ_{S,S'} acts as a basis-vector projection**: on the basis element
-    `of' F`, it returns `of' F` if `F = {S, S'}` and `0` otherwise.
-    M-C-B Def 1.3.1. -/
 theorem gammaMatch_apply_singleton (S S' : UnorderedTree α)
     (F : Forest (UnorderedTree α)) :
     gammaMatch (R := R) S S' (of' F) =
       if F = ({S, S'} : Forest (UnorderedTree α)) then of' F else 0 := by
   rw [gammaMatch, ConnesKreimer.linearLift_of']
 
-/-! ## §2: δ_{S,S'} matching on the left tensor channel (M-C-B Def 1.3.1)
-
-`deltaMatch S S' = gammaMatch S S' ⊗ id` lifts the matching projection to act on
-the left channel of the coproduct output. -/
-
-/-- The matching operator δ_{S,S'} on tensored coproduct output applies
-    `gammaMatch S S'` to the left channel and the identity to the right. -/
+/-- The matching operator `δ_{S,S'} = γ_{S,S'} ⊗ id` acts on the left channel of a coproduct. -/
 noncomputable def deltaMatch (S S' : UnorderedTree α) :
     (ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) →ₗ[R]
       (ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) :=
   TensorProduct.map (gammaMatch (R := R) S S') LinearMap.id
 
-/-! ## §3: B grafting for binary Merge (M-C-B Def 1.3.2 + Lemma 1.3.3)
+/-! ### Grafting -/
 
-`graftBinaryAt lbl S S'` replaces the 2-element forest `{S, S'}` (basis element)
-with the binary tree `UnorderedTree.node lbl {S, S'}` (also a basis element). All
-other basis elements map to zero — we only need this specialized form because
-the Merge action's preceding `δ_{S,S'}` step restricts the left channel to
-multiples of `{S, S'}` anyway.
-
-The label `lbl` of the grafted root is a parameter: the operator layer is
-agnostic to which label decorates the new node (consumers supply the lexical
-head). -/
-
-/-- The grafting operator B specialized at the pair `(S, S')` with root label
-    `lbl`: maps the basis element `{S, S'}` to `UnorderedTree.node lbl {S, S'}`, all
-    other basis elements to zero. M-C-B Lemma 1.3.3 for binary Merge. -/
+/-- The grafting operator `B` at the pair `S, S'` sends the basis element `{S, S'}` to the tree
+    `node lbl {S, S'}` and every other basis element to zero. Merge applies it only after
+    `δ_{S,S'}`, so this restriction of [marcolli-chomsky-berwick-2025]'s `B` suffices. -/
 noncomputable def graftBinaryAt (lbl : α) (S S' : UnorderedTree α) :
     ConnesKreimer R (UnorderedTree α) →ₗ[R] ConnesKreimer R (UnorderedTree α) :=
   ConnesKreimer.linearLift
     (fun F => if F = ({S, S'} : Forest (UnorderedTree α))
       then of' ({UnorderedTree.node lbl {S, S'}} : Forest (UnorderedTree α)) else 0)
 
-/-- On a basis vector `of' F`, `graftBinaryAt` returns
-    `of' {UnorderedTree.node lbl {S, S'}}` if `F = {S, S'}`, and `0` otherwise.
-    Same shape as `gammaMatch_apply_singleton` with a different target. -/
 theorem graftBinaryAt_apply_singleton (lbl : α) (S S' : UnorderedTree α)
     (F : Forest (UnorderedTree α)) :
     graftBinaryAt (R := R) lbl S S' (of' F) =
@@ -127,22 +98,9 @@ theorem graftBinaryAt_apply_singleton (lbl : α) (S S' : UnorderedTree α)
         else 0 := by
   rw [graftBinaryAt, ConnesKreimer.linearLift_of']
 
-/-! ## §4: Merge operator (M-C-B Def 1.3.4)
+/-! ### The Merge operator -/
 
-`mergeOp lbl S S' = ⊔ ∘ (B ⊗ id) ∘ δ_{S,S'} ∘ Δ^ρ`
-
-The chain:
-
-1. `Δ^ρ` (`comulAlgHomN`) extracts accessible cuts (deletion remainder)
-2. `δ_{S,S'}` filters to terms where the cut forest equals `{S, S'}`
-3. `(B ⊗ id)` grafts `{S, S'}` into `UnorderedTree.node lbl {S, S'}` on the left
-4. `⊔` multiplies the two channels back into a single workspace
-
-When no admissible cut produces `{S, S'}` as its cut forest, all terms are
-killed by `δ_{S,S'}` and `mergeOp lbl S S' F = 0`. -/
-
-/-- **Post-coproduct chain** `⊔ ∘ (B ⊗ id) ∘ δ_{S,S'}` as a single named linear
-    map. `mergeOp` factors as `mergePost lbl S S' ∘ comulAlgHomN.toLinearMap`. -/
+/-- The post-coproduct chain `⊔ ∘ (B ⊗ id) ∘ δ_{S,S'}`, shared by every cut enumeration. -/
 noncomputable def mergePost (lbl : α) (S S' : UnorderedTree α) :
     ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α) →ₗ[R]
       ConnesKreimer R (UnorderedTree α) :=
@@ -150,24 +108,14 @@ noncomputable def mergePost (lbl : α) (S S' : UnorderedTree α) :
     ∘ₗ TensorProduct.map (graftBinaryAt (R := R) lbl S S') LinearMap.id
     ∘ₗ deltaMatch (R := R) S S'
 
-/-- The Merge operator `M_{S,S'}` per M-C-B Def 1.3.4 (with root label `lbl`).
-    Factors as `mergePost lbl S S' ∘ comulAlgHomN`. -/
+/-- The Merge operator `M_{S,S'}` of [marcolli-chomsky-berwick-2025] Definition 1.3.4 at the
+    pruning coproduct, with root label `lbl`. -/
 noncomputable def mergeOp (lbl : α) (S S' : UnorderedTree α) :
     ConnesKreimer R (UnorderedTree α) →ₗ[R] ConnesKreimer R (UnorderedTree α) :=
   mergePost (R := R) (α := α) lbl S S' ∘ₗ comulAlgHomN.toLinearMap
 
-/-! ## §5: Post-coproduct chain on basis tensors
-
-`mergePost lbl S S'` evaluated on an elementary tensor `of' F ⊗ r` is:
-- `of' {UnorderedTree.node lbl {S, S'}} * r` if `F = {S, S'}`
-- `0` otherwise
-
-This is the **load-bearing fact** for proving algebraic Merge agrees with
-linguistic `Step.apply`: every basis-tensor term in the coproduct expansion of
-`Δ^ρ({S, S'})` either matches the merge target or is annihilated by `δ_{S,S'}`. -/
-
-/-- The post-coproduct chain `mergePost lbl S S'` evaluated on a basis tensor
-    `of' F ⊗ r`. -/
+/-- On a basis tensor `of' F ⊗ r`, the post-coproduct chain grafts `F` if it is `{S, S'}` and
+    vanishes otherwise. -/
 theorem mergePost_basis_tensor (lbl : α) (S S' : UnorderedTree α)
     (F : Forest (UnorderedTree α)) (r : ConnesKreimer R (UnorderedTree α)) :
     mergePost (R := R) (α := α) lbl S S' (of' F ⊗ₜ[R] r)
@@ -186,8 +134,6 @@ theorem mergePost_basis_tensor (lbl : α) (S S' : UnorderedTree α)
     simp only [map_zero]
 
 omit [DecidableEq (UnorderedTree α)] in
-/-- Left-multiplying a `single` basis vector by `of' F` concatenates forests:
-    `of' F * single G r = single (F + G) r`. -/
 private theorem of'_mul_single (F G : Forest (UnorderedTree α)) (r : R) :
     of' (R := R) F * single G r = single (F + G) r := by
   rw [smul_single_one G r, mul_smul_comm]
@@ -195,13 +141,7 @@ private theorem of'_mul_single (F G : Forest (UnorderedTree α)) (r : R) :
   rw [← of'_add]
   exact (smul_single_one (F + G) r).symm
 
-/-- **General γ_{S,S'}-vanishing on a left-multiplied forest**: if `F` is NOT a
-    sub-multiset of `{S, S'}`, then `γ_{S,S'}(of' F * a) = 0` for any `a`.
-
-    The hypothesis `¬ F ≤ ({S, S'} : Forest (UnorderedTree α))` says `F` cannot
-    embed into `{S, S'}` as a sub-multiset: since `F ≤ F + G` always, every
-    forest `F + G` produced by left-multiplication misses the `{S, S'}` basis
-    element that `γ_{S,S'}` reads. -/
+/-- `γ_{S,S'}` kills every product with a forest `F` that does not fit inside `{S, S'}`. -/
 theorem gammaMatch_mul_eq_zero_of_not_le (S S' : UnorderedTree α)
     (F : Forest (UnorderedTree α))
     (hF : ¬ F ≤ ({S, S'} : Forest (UnorderedTree α)))
@@ -217,8 +157,7 @@ theorem gammaMatch_mul_eq_zero_of_not_le (S S' : UnorderedTree α)
     simp only [ConnesKreimer.linearLift_single]
     rw [ite_eq_right hne, smul_zero]
 
-/-- **Disjoint-singleton vanishing of γ_{S,S'}** (corollary): if `T ≠ S` and
-    `T ≠ S'`, then `γ_{S,S'}(of' {T} * a) = 0`. -/
+/-- `γ_{S,S'}` kills every product with a tree other than `S` and `S'`. -/
 theorem gammaMatch_singleton_mul_eq_zero (S S' T : UnorderedTree α)
     (hT_ne_S : T ≠ S) (hT_ne_S' : T ≠ S') (a : ConnesKreimer R (UnorderedTree α)) :
     gammaMatch (R := R) S S' (of' ({T} : Forest (UnorderedTree α)) * a) = 0 := by
@@ -226,22 +165,11 @@ theorem gammaMatch_singleton_mul_eq_zero (S S' T : UnorderedTree α)
   intro h_le
   have hT_mem : T ∈ ({S, S'} : Forest (UnorderedTree α)) :=
     Multiset.subset_of_le h_le (Multiset.mem_singleton.mpr rfl)
-  have : T = S ∨ T = S' := by
-    rw [show ({S, S'} : Forest (UnorderedTree α)) = S ::ₘ ({S'} : Forest (UnorderedTree α))
-        from rfl, Multiset.mem_cons, Multiset.mem_singleton] at hT_mem
-    exact hT_mem
-  rcases this with h | h
-  · exact hT_ne_S h
-  · exact hT_ne_S' h
+  rw [Multiset.insert_eq_cons, Multiset.mem_cons, Multiset.mem_singleton] at hT_mem
+  exact hT_mem.elim hT_ne_S hT_ne_S'
 
-/-- **Vanishing of mergePost on left-multiplied disjoint factors**: if `F` is NOT
-    a sub-multiset of `{S, S'}` and `b` is arbitrary, then for any `z`:
-
-      mergePost lbl S S' ((of' F ⊗ b) * z) = 0.
-
-    Eliminates cross-terms in the F̂-residual generalization of `mergeOp_pair`:
-    any term whose LEFT contribution is a forest `F` that doesn't fit inside
-    `{S, S'}` vanishes after `mergePost`. -/
+/-- The post-coproduct chain kills every term whose left channel carries a forest that does not
+    fit inside `{S, S'}`. -/
 theorem mergePost_left_mul_eq_zero_of_not_le (lbl : α) (S S' : UnorderedTree α)
     (F : Forest (UnorderedTree α)) (b : ConnesKreimer R (UnorderedTree α))
     (hF : ¬ F ≤ ({S, S'} : Forest (UnorderedTree α)))
@@ -260,14 +188,8 @@ theorem mergePost_left_mul_eq_zero_of_not_le (lbl : α) (S S' : UnorderedTree α
     simp only [map_add]
     rw [ih1, ih2, add_zero]
 
-/-- **Right-multiplicativity of the post-coproduct chain** by a "pure
-    right-channel" factor `1 ⊗ y`. For any `z` and any `y`:
-
-      mergePost lbl S S' (z * (1 ⊗ y)) = mergePost lbl S S' z * y.
-
-    Load-bearing for the F̂-residual generalization of `mergeOp_pair`: the
-    all-empty-cut term of the residual coproduct has the form `1 ⊗ F̂`, so this
-    propagates the residual workspace through the chain unchanged. -/
+/-- The post-coproduct chain commutes with right multiplication by a right-channel factor
+    `1 ⊗ y`, so a spectator workspace passes through it unchanged. -/
 theorem mergePost_right_one_tmul (lbl : α) (S S' : UnorderedTree α)
     (z : ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α))
     (y : ConnesKreimer R (UnorderedTree α)) :
@@ -289,74 +211,43 @@ theorem mergePost_right_one_tmul (lbl : α) (S S' : UnorderedTree α)
     simp only [map_add]
     rw [ih1, ih2, add_mul]
 
-/-! ## §6: M_{β, 1} substrate (single-element matching, no grafting)
+/-! ### The unit stage `M_{β,1}`
 
-Per [marcolli-chomsky-berwick-2025] §1.4.3.1 (book p. 50), the operator
-`M_{β, 1}` is the "first half" of Internal Merge per Prop 1.4.2:
+The first stage of Internal Merge (Proposition 1.4.2) moves an accessible term `β` to the left
+channel and leaves `T/β` on the right. Its grafting step is the identity, since
+`B(β ⊔ 1) = M(β, 1) = β`. It is not a Merge in its own right: it occurs only composed with
+`M_{T/β,β}` ([marcolli-chomsky-berwick-2025] Remark 1.4.3). -/
 
-  IM = M_{T/β, β} ∘ M_{β, 1}
-
-It pulls `β` from the right channel of the coproduct to the left, leaving `T/β`
-on the right; the disjoint-union product then forms `{β, T/β}` in the workspace.
-**The grafting step disappears**: `B(β ⊔ 1) = M(β, 1) = β` acts as identity
-(book p. 50). So
-
-  mergeOpUnit β = ⊔ ∘ δ_{β, 1} ∘ Δ^ρ
-
-with no `B` step.
-
-**Important caveat (book p. 52):** "Internal Merge cannot be further decomposed"
-— `M_{β, 1}` is not in itself a Merge operation; it only exists *as part of the
-composition*. This file gives `mergeOpUnit` a name for substrate-level algebraic
-manipulation; that name does NOT signal a stand-alone Merge. -/
-
-/-- The single-element matching projection `γ_{β, 1}`: keeps the coefficient of
-    the `{β}` basis element, sends everything else to zero. Same shape as
-    `gammaMatch` but with a singleton target. -/
+/-- The single-tree matching projection `γ_{β,1}` keeps the coefficient of the basis element
+    `{β}`. -/
 noncomputable def gammaMatchSingle (β : UnorderedTree α) :
     ConnesKreimer R (UnorderedTree α) →ₗ[R] ConnesKreimer R (UnorderedTree α) :=
   ConnesKreimer.linearLift
     (fun F => if F = ({β} : Forest (UnorderedTree α)) then of' F else 0)
 
-/-- **`γ_{β, 1}` acts as a basis-vector projection**: on `of' F`, returns `of' F`
-    if `F = {β}`, and `0` otherwise. Singleton counterpart of
-    `gammaMatch_apply_singleton`. -/
 theorem gammaMatchSingle_apply_singleton (β : UnorderedTree α)
     (F : Forest (UnorderedTree α)) :
     gammaMatchSingle (R := R) β (of' F) =
       if F = ({β} : Forest (UnorderedTree α)) then of' F else 0 := by
   rw [gammaMatchSingle, ConnesKreimer.linearLift_of']
 
-/-- The matching operator `δ_{β, 1}` on tensored coproduct output applies
-    `gammaMatchSingle β` to the left channel and the identity to the right. -/
+/-- The matching operator `δ_{β,1} = γ_{β,1} ⊗ id`. -/
 noncomputable def deltaMatchSingle (β : UnorderedTree α) :
     (ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) →ₗ[R]
       (ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) :=
   TensorProduct.map (gammaMatchSingle (R := R) β) LinearMap.id
 
-/-- Post-coproduct chain for `M_{β, 1}`: `⊔ ∘ δ_{β, 1}`. NO grafting step
-    (book p. 50: `B(β ⊔ 1) = β` is the identity). Parallel to `mergePost`. -/
+/-- The post-coproduct chain `⊔ ∘ δ_{β,1}` of the unit stage. -/
 noncomputable def mergePostUnit (β : UnorderedTree α) :
     ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α) →ₗ[R]
       ConnesKreimer R (UnorderedTree α) :=
   LinearMap.mul' R (ConnesKreimer R (UnorderedTree α)) ∘ₗ deltaMatchSingle (R := R) β
 
-/-- The "Merge-with-unit" operator `M_{β, 1}` per
-    [marcolli-chomsky-berwick-2025] Prop 1.4.2 (book p. 50). The first half of
-    Internal Merge. Factors as `mergePostUnit β ∘ comulAlgHomN`.
-
-    NOT a Merge operation in its own right (book p. 52): only exists as part of
-    `M_{T/β, β} ∘ M_{β, 1}`. The name is a substrate convenience for stating
-    Prop 1.4.2's composition equation algebraically. -/
+/-- The unit stage `M_{β,1}` at the pruning coproduct. -/
 noncomputable def mergeOpUnit (β : UnorderedTree α) :
     ConnesKreimer R (UnorderedTree α) →ₗ[R] ConnesKreimer R (UnorderedTree α) :=
   mergePostUnit (R := R) (α := α) β ∘ₗ comulAlgHomN.toLinearMap
 
-/-- `mergePostUnit` evaluated on a basis tensor `of' F ⊗ r`:
-    - returns `of' {β} * r` if `F = {β}`
-    - returns `0` otherwise.
-
-    Singleton counterpart of `mergePost_basis_tensor`; one fewer step. -/
 theorem mergePostUnit_basis_tensor (β : UnorderedTree α)
     (F : Forest (UnorderedTree α)) (r : ConnesKreimer R (UnorderedTree α)) :
     mergePostUnit (R := R) (α := α) β (of' F ⊗ₜ[R] r)
@@ -373,48 +264,74 @@ theorem mergePostUnit_basis_tensor (β : UnorderedTree α)
   · rw [ite_eq_right hF, TensorProduct.zero_tmul, ite_eq_right hF]
     exact map_zero _
 
-/-- `mergeOpUnit β` on the empty workspace `(1 : ConnesKreimer
-    R (UnorderedTree α))` is zero. `1 = of' 0` is the multiplicative unit / empty
-    workspace; `δ_{β, 1}` projects on `{β} ≠ 0`, so all cuts are killed.
-    Confirms M-C-B's caveat: `M_{β, 1}` requires β to be present. -/
-theorem mergeOpUnit_one (β : UnorderedTree α) :
-    mergeOpUnit (R := R) β (1 : ConnesKreimer R (UnorderedTree α)) = 0 := by
-  show mergePostUnit (R := R) (α := α) β
-        (comulAlgHomN (1 : ConnesKreimer R (UnorderedTree α))) = 0
-  rw [map_one]
-  show mergePostUnit (R := R) (α := α) β
-        (of' (R := R) (0 : Forest (UnorderedTree α))
-          ⊗ₜ[R] (1 : ConnesKreimer R (UnorderedTree α))) = 0
-  rw [mergePostUnit_basis_tensor]
-  rw [ite_eq_right (by
-    intro h
-    have : (0 : Forest (UnorderedTree α)).card = ({β} : Forest (UnorderedTree α)).card := by
-      rw [h]
-    simp only [Multiset.card_zero, Multiset.card_singleton] at this
-    omega)]
+/-! ### Merge over a cut enumeration -/
 
-/-! ### The generic operator over a cut enumeration -/
-
-/-- The generic Merge operator `M_{S,S'}^{cuts}` over a cut enumeration `cuts`:
-    `mergePost lbl S S' ∘ comulAlgHomNG cuts`. Only the coproduct varies with `cuts`; the
-    post-chain of graft, δ-projection, and multiplication is shared. -/
+/-- Merge `M_{S,S'}` over a cut enumeration `cuts`, whose coproduct is `comulAlgHomNG cuts`. -/
 noncomputable def mergeOpG (cuts : UnorderedTree α → Multiset (Forest
     (UnorderedTree α) × UnorderedTree α))
     (lbl : α) (S S' : UnorderedTree α) :
     ConnesKreimer R (UnorderedTree α) →ₗ[R] ConnesKreimer R (UnorderedTree α) :=
   mergePost (R := R) (α := α) lbl S S' ∘ₗ (comulAlgHomNG cuts).toLinearMap
 
-/-- The Δ^ρ operator `mergeOp` is the generic operator at `cuts := cutSummandsN`. -/
+/-- The unit stage `M_{β,1}` over a cut enumeration `cuts`. -/
+noncomputable def mergeOpUnitG (cuts : UnorderedTree α → Multiset (Forest
+    (UnorderedTree α) × UnorderedTree α)) (β : UnorderedTree α) :
+    ConnesKreimer R (UnorderedTree α) →ₗ[R] ConnesKreimer R (UnorderedTree α) :=
+  mergePostUnit (R := R) (α := α) β ∘ₗ (comulAlgHomNG cuts).toLinearMap
+
 theorem mergeOp_eq_G (lbl : α) (S S' : UnorderedTree α) :
     mergeOp (R := R) lbl S S' = mergeOpG (R := R) cutSummandsN lbl S S' := rfl
 
+theorem mergeOpUnit_eq_G (β : UnorderedTree α) :
+    mergeOpUnit (R := R) β = mergeOpUnitG (R := R) cutSummandsN β := rfl
+
+/-- Merge does not depend on the order of the pair. -/
+theorem mergeOpG_comm (cuts : UnorderedTree α → Multiset (Forest
+    (UnorderedTree α) × UnorderedTree α)) (lbl : α) (S S' : UnorderedTree α) :
+    mergeOpG (R := R) cuts lbl S S' = mergeOpG cuts lbl S' S := by
+  simp only [mergeOpG, mergePost, deltaMatch, gammaMatch, graftBinaryAt, Multiset.pair_comm S S']
+
+/-- The unit stage vanishes on the empty workspace: it needs `β` to be present. -/
+theorem mergeOpUnitG_one (cuts : UnorderedTree α → Multiset (Forest
+    (UnorderedTree α) × UnorderedTree α)) (β : UnorderedTree α) :
+    mergeOpUnitG (R := R) cuts β 1 = 0 := by
+  rw [mergeOpUnitG, LinearMap.comp_apply, AlgHom.toLinearMap_apply, map_one,
+    Algebra.TensorProduct.one_def, ← of'_zero, mergePostUnit_basis_tensor,
+    ite_eq_right (Multiset.singleton_ne_zero β).symm]
+
 omit [DecidableEq (UnorderedTree α)] in
-/-- The Δ^c (trace) Merge operator, the generic operator at `cuts := cutSummandsCN τ`. Its
-    quotients carry a trace leaf at each cut site at the cut depth, so the Minimal-Search cost
-    `Cut.depthC` is recoverable from them. -/
+/-- The trace Merge operator, Merge at the trace cuts `cutSummandsCN τ`. Its trunks carry a trace
+    leaf at each cut site, at the cut depth, so the Minimal-Search cost `Cut.depthC` is read off
+    them. -/
 noncomputable def mergeOpC {β : Type*} [DecidableEq (UnorderedTree (α ⊕ β))]
     (τ : UnorderedTree (α ⊕ β) → β) (lbl : α ⊕ β) (S S' : UnorderedTree (α ⊕ β)) :
     ConnesKreimer R (UnorderedTree (α ⊕ β)) →ₗ[R] ConnesKreimer R (UnorderedTree (α ⊕ β)) :=
   mergeOpG (R := R) (cutSummandsCN τ) lbl S S'
+
+omit [DecidableEq (UnorderedTree α)] in
+/-- The unit stage `M_{S,1}` at the trace cuts `cutSummandsCN τ`. -/
+noncomputable def mergeOpUnitC {β : Type*} [DecidableEq (UnorderedTree (α ⊕ β))]
+    (τ : UnorderedTree (α ⊕ β) → β) (S : UnorderedTree (α ⊕ β)) :
+    ConnesKreimer R (UnorderedTree (α ⊕ β)) →ₗ[R] ConnesKreimer R (UnorderedTree (α ⊕ β)) :=
+  mergeOpUnitG (R := R) (cutSummandsCN τ) S
+
+/-! ### Cut enumerations that admit Merge -/
+
+omit [DecidableEq (UnorderedTree α)] in
+/-- A cut enumeration admits Merge when every nonempty crown has fewer edges in total than its
+    tree. Then no crown is the whole tree, and the crowns of two trees never reassemble the pair,
+    so External Merge of a pair is exact (`mergeOpG_pair`). -/
+class IsMergeCuts
+    (cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α)) : Prop where
+  crown_numEdges_lt {T : UnorderedTree α} {p : Forest (UnorderedTree α) × UnorderedTree α} :
+    p ∈ cuts T → p.1 ≠ 0 → (p.1.map numEdges).sum < T.numEdges
+
+omit [DecidableEq (UnorderedTree α)] in
+/-- No cut of an enumeration admitting Merge extracts the whole tree. -/
+theorem IsMergeCuts.crown_ne_singleton
+    {cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α)}
+    [IsMergeCuts cuts] {T : UnorderedTree α} {p : Forest (UnorderedTree α) × UnorderedTree α}
+    (hp : p ∈ cuts T) : p.1 ≠ {T} := fun h ↦ by
+  simpa [h] using IsMergeCuts.crown_numEdges_lt hp (by simp [h])
 
 end Minimalist.Merge
