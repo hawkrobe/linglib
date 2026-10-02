@@ -8,6 +8,7 @@ module
 public import Linglib.Core.Algebra.RootedTree.BirkhoffFactorizationSemiring
 public import Linglib.Core.Algebra.RootedTree.Coproduct.Primitive
 public import Linglib.Syntax.Minimalist.Linearization.Externalization
+public import Linglib.Syntax.Minimalist.Economy.Derivation
 public import Linglib.Syntax.Minimalist.SyntacticObject.Selection
 public import Linglib.Syntax.Minimalist.FormCopy
 public import Mathlib.Combinatorics.Enumerative.Catalan.Tree
@@ -17,6 +18,11 @@ public import Mathlib.RingTheory.PowerSeries.Basic
 # Marcolli, Chomsky and Berwick (2025): Mathematical Structure of Syntactic Merge
 
 This file formalizes parts of Marcolli, Chomsky and Berwick's algebraic model of Merge.
+
+Internal Merge (§1.4.4) is checked on the book's example, which raises *the apple* out of
+`T = {was, {eaten, {the, apple}}}`. The unit stage `M_{T₂,1}` splits `T` into *the apple* beside
+the quotient `T/T₂`, the composite with `M_{T/T₂,T₂}` merges the two (Proposition 1.4.2), and the
+step satisfies Minimal Yield under trace counting (Proposition 1.6.4).
 
 The core computational structure of Merge (§1.10) is a fixed point. Proposition 1.10.2 works in
 `V(𝔗)`, the free `ℤ`-module on the nonplanar binary trees with unlabelled leaves, graded by the
@@ -57,7 +63,7 @@ and Form Copy restricts the object to the diagonal on which they are one
 
 ## Correspondence with the book
 
-The book's algebra lives in `Core/` and in `Syntax/Minimalist/Workspace/`:
+The book's algebra lives in `Core/` and in `Syntax/Minimalist/{Workspace,Merge,Economy}/`:
 
 * Definitions 1.2.6 and 1.2.8 (admissible cuts, the coproducts `Δ^ω`): `ConnesKreimer.cutSummandsN`
   and `comulAlgHomN` for `Δ^ρ`, which Remark 1.2.9 identifies with the Connes–Kreimer coproduct;
@@ -67,6 +73,16 @@ The book's algebra lives in `Core/` and in `Syntax/Minimalist/Workspace/`:
   `antipodeTreeN`.
 * The comparison of `Δ^d` with `Δ^ρ` displayed before (1.3.10):
   `ConnesKreimer.comulDN_embedInl_eq_comulAlgHomN`.
+* Definition 1.3.4: `Minimalist.Merge.mergeOpG` over a cut enumeration, with `mergeOp` at `Δ^ρ`
+  and `mergeOpC` at `Δ^c`.
+* Lemma 1.4.1: `Minimalist.Merge.mergeOpG_pair`, `mergeOpG_pair_residual`.
+* Proposition 1.4.2: `Minimalist.Merge.mergeOpG_im_composition`; on syntactic objects
+  `Minimalist.SyntacticObject.mergeOpC_im`, and for a derivation
+  `Minimalist.SyntacticObject.Derivation.mergeOpList_initial`.
+* Definition 1.6.1 and Proposition 1.6.4: `Minimalist.MinimalYield` over a counting,
+  `MinimalYield.em_pair`, `em_pair_accessibleCount`, `im_accessibleCount_of_cut`.
+* Definition 1.6.2 and Proposition 1.6.10: `Minimalist.NoComplexityLoss`,
+  `NoComplexityLoss.em_case1`, `im_residual`, `not_map_sideward_2b`.
 * Definition 1.6.2's degree `#L`: `UnorderedTree.numLeaves`; Lemma 1.6.3:
   `ConnesKreimer.cutSummandsCN_numNodes`.
 * Lemma 1.7.3, for `Δ^ρ`: `ConnesKreimer.lcoeff_singleton_isDualPrimitive` and
@@ -80,6 +96,12 @@ The book's algebra lives in `Core/` and in `Syntax/Minimalist/Workspace/`:
   `ConnesKreimer.polarHahn_birkhoffPlus_of'`.
 
 ## Implementation notes
+
+In §1.4.4 the book displays the result with the deletion quotient `T/d T₂ = {was, eaten}`, and
+alternatively with the contraction quotient `T/c T₂`, whose contracted leaf it labels by the
+extracted term `{the, apple}`. The trace cuts of the carrier label that leaf by the head of the
+extracted term (`traceEncoder`), so the example's quotient is `{was, {eaten, t}}` with `t` the
+trace of *the*.
 
 The equation carries its initial term, `X = x t + 𝔐(X, X)`. The book writes `X = 𝔐(X, X)` and
 supplies `X₁ = x` as an initial condition, but `𝔐(X, X)` has no degree-one term
@@ -127,6 +149,59 @@ version of this file and are UNVERIFIED against the published text.
 namespace MarcolliChomskyBerwick2025
 
 open RoseTree UnorderedTree Minimalist SyntacticObject ConnesKreimer
+
+/-! ### Internal Merge: an example (§1.4.4) -/
+
+/-- A token of the simple lexical item of category `c` selecting `sel`, pronounced `pf`. -/
+def tok (c : Cat) (sel : SelStack) (pf : String) (i : ℕ) : LIToken :=
+  ⟨.simple c sel (phonForm := pf), i⟩
+
+/-- *the apple*, the term `T₂` that Internal Merge raises in §1.4.4. -/
+private def theApple : SyntacticObject :=
+  (PlanarSyntacticObject.merge (.leaf (tok .D [.N] "the" 0))
+    (.leaf (tok .N [] "apple" 1))).toSyntacticObject
+
+/-- The workspace `T = {was, {eaten, {the, apple}}}` of §1.4.4. -/
+private def wasEatenTheApple : SyntacticObject :=
+  (PlanarSyntacticObject.merge (.leaf (tok .T [.V] "was" 2))
+    (.merge (.leaf (tok .V [.D] "eaten" 3))
+      (.merge (.leaf (tok .D [.N] "the" 0)) (.leaf (tok .N [] "apple" 1))))).toSyntacticObject
+
+/-- The quotient `T/T₂`, with the trace of the head *the* in place of *the apple*. -/
+private def wasEatenTrace : SyntacticObject :=
+  (PlanarSyntacticObject.merge (.leaf (tok .T [.V] "was" 2))
+    (.merge (.leaf (tok .V [.D] "eaten" 3)) (.traceOf (tok .D [.N] "the" 0)))).toSyntacticObject
+
+/-- The remainder of raising *the apple* out of `T` is the quotient `T/T₂`. -/
+example : deleteAccessible theApple wasEatenTheApple = wasEatenTrace := by decide
+
+/-- The first stage `M_{T₂,1}` splits `T` into `T₂` beside the quotient `T/T₂`. -/
+example :
+    Merge.mergeOpUnitC (R := ℤ) traceEncoder theApple.val
+        (of' ({wasEatenTheApple.val} : Forest (UnorderedTree Vertex)))
+      = of' ({theApple.val, wasEatenTrace.val} : Forest (UnorderedTree Vertex)) := by
+  rw [mergeOpUnitC_current (by decide) (by decide) (by decide),
+    show deleteAccessible theApple wasEatenTheApple = wasEatenTrace by decide]
+
+/-- The composite `M_{T/T₂,T₂} ∘ M_{T₂,1}` is Internal Merge of *the apple*: it merges `T₂` with the
+    quotient `T/T₂` (Proposition 1.4.2). -/
+example :
+    Merge.mergeOpC (R := ℤ) traceEncoder Vertex.bare wasEatenTrace.val theApple.val
+        (Merge.mergeOpUnitC traceEncoder theApple.val
+          (of' ({wasEatenTheApple.val} : Forest (UnorderedTree Vertex))))
+      = of' ({(merge wasEatenTrace theApple).val} : Forest (UnorderedTree Vertex)) := by
+  rw [show wasEatenTrace = deleteAccessible theApple wasEatenTheApple by decide]
+  exact mergeOpC_im (by decide) (by decide) (by decide)
+
+/-- This Internal Merge satisfies Minimal Yield under trace counting, the Δᶜ row of the table of
+    Proposition 1.6.4. -/
+example :
+    MinimalYield UnorderedTree.accessibleCount
+      (({wasEatenTheApple} : Workspace).map Subtype.val)
+      (({merge wasEatenTrace theApple} : Workspace).map Subtype.val) := by
+  rw [show wasEatenTrace = deleteAccessible theApple wasEatenTheApple by decide]
+  exact Step.minimalYield (step := .im theApple) (W := 0)
+    ⟨by decide, by decide, by decide, by simp⟩ (by decide) (by simp [Step.items])
 
 /-! ### The core computational structure of Merge (§1.10) -/
 
@@ -309,10 +384,10 @@ private def theDog : SyntacticObject :=
     [.node (Vertex.lex ⟨.simple .D [.N] (phonForm := "the"), 0⟩) [],
      .node (Vertex.lex ⟨.simple .N [] (phonForm := "dog"), 1⟩) []]), by decide⟩
 
-/-- Harmonic head-initial: the projecting `D`'s yield comes first. -/
+/-- In the harmonic head-initial order the projecting `D`'s yield comes first. -/
 example : (theDog.linearize .initial).map (·.map (·.id)) = some [0, 1] := by decide
 
-/-- Harmonic head-final: the same head function, mirrored. -/
+/-- In the harmonic head-final order the same head function is mirrored. -/
 example : (theDog.linearize .final).map (·.map (·.id)) = some [1, 0] := by decide
 
 example : theDog.phonYield .initial = some ["the", "dog"] := by decide
@@ -525,10 +600,6 @@ theorem headConsistency_eq_convMul (Υ : LIToken → Consistency) (S : Syntactic
   featureConsistency_eq_convMul _ _ (headProbeChar_one Υ) S
 
 /-! ### Obligatory control by Form Copy (§3.8.2) -/
-
-/-- A token of the simple lexical item of category `c` selecting `sel`, pronounced `pf`. -/
-def tok (c : Cat) (sel : SelStack) (pf : String) (i : ℕ) : LIToken :=
-  ⟨.simple c sel (phonForm := pf), i⟩
 
 /-- The controller *the man*, from tokens 0 and 1. -/
 noncomputable def theMan : SyntacticObject :=
