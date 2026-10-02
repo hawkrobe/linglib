@@ -360,7 +360,7 @@ def mebengokre : Number.System :=
 /-- A setting generates a set of number values when every value is among its system's; a
 language need not lexicalize every number its features afford. -/
 def Generates (σ : Setting) (c : Convention) (values : List Number) : Prop :=
-  ∀ v ∈ values, v ∈ σ.values c
+  ∀ v ∈ values, v ∈ σ.values c 0
 
 instance (σ : Setting) (c : Convention) (values : List Number) :
     Decidable (Generates σ c values) :=
