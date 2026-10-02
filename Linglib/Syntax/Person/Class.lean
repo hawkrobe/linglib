@@ -31,7 +31,7 @@ above aliophoric in his terms, the cut the person-case constraint's strong varie
 
 namespace Person
 
-/-- The binary person scale: speech-act participants above non-participants. -/
+/-- The binary person scale ranks speech-act participants above non-participants. -/
 inductive Class where
   | nonParticipant
   | participant
@@ -39,15 +39,15 @@ inductive Class where
 
 namespace Class
 
-/-- Rank on the binary person scale. -/
+/-- `Class.rank` is the position on the binary person scale. -/
 def rank : Class → ℕ
   | .nonParticipant => 0
   | .participant => 1
 
-/-- `nonParticipant < participant`. -/
+/-- The scale orders `nonParticipant < participant`. -/
 instance : LinearOrder Class := LinearOrder.lift' rank (by decide)
 
-/-- `⊥ = nonParticipant`, `⊤ = participant`. -/
+/-- The scale is bounded, `⊥ = nonParticipant` and `⊤ = participant`. -/
 instance : BoundedOrder Class where
   top := .participant
   le_top := by decide
@@ -60,15 +60,15 @@ instance : IsSimpleOrder Class where
 
 end Class
 
-/-- The class of a person: `participant` exactly when it is a speech-act participant. -/
+/-- The class of a person is `participant` exactly when it is a speech-act participant. -/
 def toClass (p : Person) : Class := if p.IsSAP then .participant else .nonParticipant
 
 @[simp] theorem toClass_eq_participant_iff {p : Person} : p.toClass = .participant ↔ p.IsSAP := by
-  cases p <;> simp [toClass, IsSAP]
+  revert p; decide
 
 @[simp] theorem toClass_eq_nonParticipant_iff {p : Person} :
     p.toClass = .nonParticipant ↔ ¬ p.IsSAP := by
-  cases p <;> simp [toClass, IsSAP]
+  revert p; decide
 
 /-- The class is the coarsening of prominence at the participant level. -/
 theorem toClass_mono {p q : Person} (h : p.prominence ≤ q.prominence) :

@@ -7,15 +7,13 @@ module
 
 public import Mathlib.Data.Finset.Sups
 public import Mathlib.Data.Fintype.Powerset
-public import Linglib.Discourse.Role
 public import Linglib.Syntax.Person.Basic
 
 /-!
 # The lattice of persons
 
-A person value covers the referents whose participants form one of its participant sets:
-`{speaker}` or `{speaker, addressee}` for the first person unmarked for clusivity, a single set for
-each value of the quadripartition, and none for the impersonal `zero`. As Zwicky proposes, a
+A person value covers the referents whose participants form one of its participant sets
+(`Person.participantSets`). As Zwicky proposes, a
 coordination refers to the union of its conjuncts' referents, so its participant sets are the
 pairwise unions `⊻` of theirs. Distinct values cover distinct participant sets, so this makes
 `Person` a join-semilattice whose join `⊔` is person resolution, with third person at the bottom
@@ -24,9 +22,7 @@ quadripartition, and their union is the join (`Person.ofParticipants_union`).
 
 ## Main definitions
 
-* `Person.participantSets`: the participant sets a person value covers.
 * the `SemilatticeSup Person` instance: person resolution as the join.
-* `Person.ofParticipants`: the value covering exactly one participant set.
 
 ## Main results
 
@@ -56,24 +52,6 @@ namespace Person
 open Finset Discourse
 
 /-! ### Participant sets -/
-
-/-- `p.participantSets` is the family of participant sets of the referents `p` covers. -/
-def participantSets : Person → Finset (Finset Role)
-  | .first => {{.speaker}, {.speaker, .addressee}}
-  | .firstInclusive => {{.speaker, .addressee}}
-  | .firstExclusive => {{.speaker}}
-  | .second => {{.addressee}}
-  | .third => {∅}
-  | .zero => ∅
-
-theorem participantSets_injective : Function.Injective participantSets := by decide
-
-@[simp] theorem participantSets_inj {p q : Person} :
-    p.participantSets = q.participantSets ↔ p = q :=
-  participantSets_injective.eq_iff
-
-@[simp] theorem participantSets_eq_empty {p : Person} : p.participantSets = ∅ ↔ p = .zero := by
-  cases p <;> decide
 
 /-- The participant sets of a value are closed under union. -/
 theorem supClosed_participantSets (p : Person) :
@@ -118,45 +96,12 @@ instance : BoundedOrder Person where
 
 /-! ### The person of a participant set -/
 
-/-- The person of a referent whose participants are `s` is first inclusive with both, first
-exclusive with the speaker alone, second with the addressee alone, and third with neither. -/
-def ofParticipants (s : Finset Role) : Person :=
-  if .speaker ∈ s then if .addressee ∈ s then .firstInclusive else .firstExclusive
-  else if .addressee ∈ s then .second else .third
-
-@[simp] theorem participantSets_ofParticipants (s : Finset Role) :
-    (ofParticipants s).participantSets = {s} := by
-  revert s; decide
-
-/-- The values of the quadripartition are exactly those covering a single participant set. -/
-theorem participantSets_eq_singleton_iff {p : Person} {s : Finset Role} :
-    p.participantSets = {s} ↔ p = ofParticipants s := by
-  rw [← participantSets_inj, participantSets_ofParticipants]
-
-theorem ofParticipants_injective : Function.Injective ofParticipants := fun s t h ↦ by
-  simpa using congrArg participantSets h
-
 @[simp] theorem ofParticipants_empty : ofParticipants ∅ = ⊥ := rfl
 
 /-- The person of a union of participant sets is the join of their persons. -/
 theorem ofParticipants_union (s t : Finset Role) :
     ofParticipants (s ∪ t) = ofParticipants s ⊔ ofParticipants t :=
   participantSets_injective <| by simp
-
-/-! ### Predicates read off the participant sets -/
-
-theorem includesSpeaker_iff (p : Person) :
-    IncludesSpeaker p ↔
-      p.participantSets.Nonempty ∧ ∀ s ∈ p.participantSets, .speaker ∈ s := by
-  cases p <;> decide
-
-theorem isSAP_iff (p : Person) :
-    IsSAP p ↔ p.participantSets.Nonempty ∧ ∀ s ∈ p.participantSets, s.Nonempty := by
-  cases p <;> decide
-
-theorem marksClusivity_iff (p : Person) :
-    MarksClusivity p ↔ IncludesSpeaker p ∧ p.participantSets.card = 1 := by
-  cases p <;> decide
 
 /-! ### Coarsening -/
 
