@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Degree.Granularity
-public import Mathlib.Data.Rat.Floor
+public import Mathlib.Algebra.Order.Archimedean.Real.Basic
 public import Linglib.Pragmatics.SocialMeaning.IndexicalField
 public import Linglib.Pragmatics.SocialMeaning.Dimension
 public import Linglib.Pragmatics.SocialMeaning.Persona
@@ -42,9 +42,10 @@ would also predict globally more charitable judgments, which are not observed.
 
 ## Implementation notes
 
-The extension of a numeral at a precision level is its cell in `Degree.Granularity`, as the
-paper's "a lower level of precision … includes the value displayed on the visible screen in the
-numeral's extension" (§4.1) suggests, and a persona moves the level by one halving step. The
+The extension of a numeral at a precision level is its cell in the grain of that width,
+`Degree.grain`, as the paper's "a lower level of precision … includes the value displayed on the
+visible screen in the numeral's extension" (§4.1) suggests, and a persona moves the level by one
+halving step. The
 paper's 5–18% deviations are a stimulus design leaving participants on the fence, not a level;
 the illustration with a twenty-dollar baseline grain is conventional. In Experiment 1 (§4.5)
 covered responses in the Imprecise cell were more frequent for Nerdy and less for Chill than at
@@ -69,7 +70,7 @@ the rows of `Data.Examples.BeltramaSchwarz2024` record the directions.
 
 namespace BeltramaSchwarz2024
 
-open SocialMeaning Degree.Granularity
+open SocialMeaning Degree
 
 /-! ### Conditions -/
 
@@ -187,25 +188,31 @@ theorem personaShift_eq_neg_warmth (p : Persona) :
     personaShift (some p) = -precisionField p.precision .warmth := by
   cases p <;> decide +kernel
 
+section Level
+
+variable {α : Type*} [Field α]
+
 /-- The precision level of a persona condition is the baseline grain width `w` halved once per
 step toward strictness. -/
-def level (w : ℚ) (c : PersonaCondition) : ℚ := w / 2 ^ (personaShift c : ℤ)
+def level (w : α) (c : PersonaCondition) : α := w / 2 ^ (personaShift c : ℤ)
 
-@[simp] theorem level_none (w : ℚ) : level w none = w := by simp [level, personaShift]
+@[simp] theorem level_none (w : α) : level w none = w := by simp [level, personaShift]
 
-@[simp] theorem level_nerdy (w : ℚ) : level w (some .nerdy) = w / 2 := by
+@[simp] theorem level_nerdy (w : α) : level w (some .nerdy) = w / 2 := by
   simp [level, personaShift_nerdy]
 
-@[simp] theorem level_chill (w : ℚ) : level w (some .chill) = 2 * w := by
+@[simp] theorem level_chill (w : α) : level w (some .chill) = 2 * w := by
   simp [level, personaShift_chill, div_eq_mul_inv, mul_comm]
+
+variable [LinearOrder α] [IsStrictOrderedRing α] [FloorRing α]
 
 /-- A comprehender picks the covered screen when the displayed value `d` lies outside the
 extension of the uttered numeral `n` at their precision level. -/
-def Covered (w : ℚ) (c : PersonaCondition) (n d : ℚ) : Prop := d ∉ (grain (level w c)).cell n
+def Covered (w : α) (c : PersonaCondition) (n d : α) : Prop := d ∉ (grain (level w c)).cell n
 
 /-- Around a numeral that is a point of both precision levels, a covered response under a more
 liberal condition is a covered response under a stricter one, Hypothesis 1. -/
-theorem Covered.of_le {w n d : ℚ} (hw : 0 < w) {c c' : PersonaCondition}
+theorem Covered.of_le {w n d : α} (hw : 0 < w) {c c' : PersonaCondition}
     (h : personaShift c ≤ personaShift c') (hn : n ∈ AddSubgroup.zmultiples (level w c))
     (hn' : n ∈ AddSubgroup.zmultiples (level w c')) (hd : Covered w c n d) :
     Covered w c' n d := fun hd' ↦ by
@@ -217,13 +224,15 @@ theorem Covered.of_le {w n d : ℚ} (hw : 0 < w) {c c' : PersonaCondition}
         | exact absurd h (by decide)
   have hpos : 0 < level w c' := by
     rcases c' with _ | _ | _ <;> simp only [level_none, level_nerdy, level_chill] <;> positivity
-  exact hd (cell_subset_cell hpos hle hn' hn hd')
+  exact hd (cell_grain_subset_cell_grain hpos hle hn' hn hd')
+
+end Level
 
 /-- With a baseline grain of twenty dollars the $207 screen lies inside the extension of *$200* at
 baseline and for Chill, and outside it for Nerdy. -/
-example : Covered 20 (some .nerdy) 200 207 ∧ ¬ Covered 20 none 200 207 ∧
-    ¬ Covered 20 (some .chill) 200 207 := by
-  have h (k : ℤ) (ε : ℚ) (hk : (k : ℚ) * ε = 200) (hε : 0 < ε) :
+example : Covered (20 : ℝ) (some .nerdy) 200 207 ∧ ¬ Covered (20 : ℝ) none 200 207 ∧
+    ¬ Covered (20 : ℝ) (some .chill) 200 207 := by
+  have h (k : ℤ) (ε : ℝ) (hk : (k : ℝ) * ε = 200) (hε : 0 < ε) :
       (grain ε).cell 200 = Set.Ico (200 - ε / 2) (200 + ε / 2) := by
     rw [cell_grain hε, representative_eq_self_of_mem_zmultiples hε.ne'
       (AddSubgroup.mem_zmultiples_iff.2 ⟨k, by rw [zsmul_eq_mul, hk]⟩)]

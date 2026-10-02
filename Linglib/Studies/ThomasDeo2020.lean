@@ -65,7 +65,7 @@ the rows of `Data.Examples.ThomasDeo2020`.
 
 namespace ThomasDeo2020
 
-open Degree.Granularity Exhaustification
+open Degree Exhaustification
 
 variable {D : Type*} [AddCommGroup D] [LinearOrder D]
 

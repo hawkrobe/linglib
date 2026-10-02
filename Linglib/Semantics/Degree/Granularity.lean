@@ -31,19 +31,19 @@ nested.
 
 ## Main definitions
 
-* `Degree.Granularity.IsGranularity`: a granularity function of a given width.
-* `Degree.Granularity.grain`: the partition of the scale by nearest multiple of `ε`.
-* `Degree.Granularity.representative`: the nearest multiple of `ε`.
+* `Degree.IsGranularity`: a granularity function of a given width.
+* `Degree.grain`: the partition of the scale by nearest multiple of `ε`.
+* `Degree.representative`: the nearest multiple of `ε`.
 
 ## Main results
 
-* `Degree.Granularity.cell_grain`: a cell is the half-open interval of width `ε` centred on its
+* `Degree.cell_grain`: a cell is the half-open interval of width `ε` centred on its
   representative.
-* `Degree.Granularity.IsGranularity.not_subset`: a cell of a wider granularity function never
+* `Degree.IsGranularity.not_subset`: a cell of a wider granularity function never
   fits inside a cell of a narrower one.
-* `Degree.Granularity.cell_subset_cell`: around a common multiple, a finer cell lies inside a
+* `Degree.cell_grain_subset_cell_grain`: around a common multiple, a finer cell lies inside a
   coarser one.
-* `Degree.Granularity.grain_le_grain_iff_odd`: the grain of width `ε` refines the grain of width
+* `Degree.grain_le_grain_iff_odd`: the grain of width `ε` refines the grain of width
   `k * ε` exactly when `k` is odd.
 
 ## Implementation notes
@@ -63,7 +63,7 @@ open, as Thomas and Deo recommend, and needs no `sSup`, which `ℚ` lacks.
 
 @[expose] public section
 
-namespace Degree.Granularity
+namespace Degree
 
 open Set
 
@@ -167,8 +167,8 @@ theorem isGranularity_cell (hε : 0 < ε) : IsGranularity (grain ε).cell ε whe
 
 /-- Around a common multiple of two widths, the cell of the finer grain lies inside the cell of
 the coarser one. -/
-theorem cell_subset_cell (hε₁ : 0 < ε₁) (h : ε₁ ≤ ε₂) (h₁ : d ∈ AddSubgroup.zmultiples ε₁)
-    (h₂ : d ∈ AddSubgroup.zmultiples ε₂) : (grain ε₁).cell d ⊆ (grain ε₂).cell d := by
+theorem cell_grain_subset_cell_grain (hε₁ : 0 < ε₁) (h : ε₁ ≤ ε₂)
+    (h₁ : d ∈ AddSubgroup.zmultiples ε₁) (h₂ : d ∈ AddSubgroup.zmultiples ε₂) : (grain ε₁).cell d ⊆ (grain ε₂).cell d := by
   have hε₂ := hε₁.trans_le h
   rw [cell_grain hε₁, cell_grain hε₂, representative_eq_self_of_mem_zmultiples hε₁.ne' h₁,
     representative_eq_self_of_mem_zmultiples hε₂.ne' h₂]
@@ -213,4 +213,4 @@ theorem grain_le_grain_iff_odd (hε : 0 < ε) {k : ℕ} (hk : 0 < k) :
 
 end Grain
 
-end Degree.Granularity
+end Degree

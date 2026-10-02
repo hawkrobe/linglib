@@ -77,8 +77,8 @@ theorem isRound_round (p : Price) : p.round.IsRound := by cases p <;> decide
 
 /-- `round` is the substrate rounding to the nearest multiple of ten. -/
 theorem value_round (p : Price) :
-    (p.round.value : ℚ) = Degree.Granularity.representative 10 (p.value : ℚ) := by
-  cases p <;> norm_num [round, value, Degree.Granularity.representative]
+    (p.round.value : ℚ) = Degree.representative 10 (p.value : ℚ) := by
+  cases p <;> norm_num [round, value, Degree.representative]
 
 /-- The precision projection `f` of a goal keeps the price exact or rounds it. -/
 def project : Precision → Price → Price
