@@ -875,7 +875,7 @@ section Thurstone
 
 In Thurstone's model each stimulus produces an independent observation and the larger observation is
 judged the larger stimulus, so its choice probabilities are those of a random utility model
-(`ProbabilityTheory.rumChoiceProb`). With three stimuli the probabilities that `x` is judged the
+(`ProbabilityTheory.choiceProb`). With three stimuli the probabilities that `x` is judged the
 largest and the smallest differ by `P(x, y) + P(x, z) - 1`, and Theorem 7 (p. 57) shows that the
 choice axiom cannot reproduce this difference, taking the integral identity from the text. -/
 

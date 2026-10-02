@@ -7,7 +7,7 @@ public import Linglib.Studies.Zuraw2010
 /-!
 # Zuraw and Hayes (2017): Intersecting Constraint Families
 
-This file formalizes the Tagalog case of [zuraw-hayes-2017]'s argument for Harmonic Grammar.
+This file formalizes the Tagalog case of Zuraw and Hayes's argument for Harmonic Grammar.
 Nasal substitution is conditioned by two families of constraints (§2.4): the consonant-sensitive
 markedness constraints (3), (4), (6), and the Uniformity constraints (5), one for each of the six
 prefix constructions. Every square crossing two prefixes with two stems is independent in the
@@ -17,14 +17,14 @@ restrained by floor and ceiling effects (§2.3); Harmonic Grammar predicts the p
 constraint effects add.
 
 In MaxEnt the probability of substitution is logistic in the harmony difference (13)
-(`maxentSubst_eq`), the logit rates have constant differences on every square
-(`maxent_predicts_hz`), and so the effects of prefixes and of stems are across the board on
-every square, for every weighting (`maxent_acrossTheBoard`). In Noisy Harmonic Grammar the noise
-on a comparison grows with the number of constraints that distinguish the candidates, four for
-/p/ as in (15) (`violationDiffSqSum_p`); since that number depends on the stem alone, the
+(`maxEntSubst_eq`), the logit rates have constant differences on every square
+(`maxEnt_interaction_logOdds_eq_zero`), and so the effects of prefixes and of stems are across the
+board on every square, for every weighting (`maxEnt_acrossTheBoard`). In Noisy Harmonic Grammar the
+noise on a comparison grows with the number of constraints that distinguish the candidates, four for
+/p/ as in (15) (`dotProduct_violationDiff_self_p`); since that number depends on the stem alone, the
 effects of the prefixes are across the board on every square, for every weighting and noise
-(`nhg_acrossTheBoard`). A decision-tree model instead multiplies a prefix probability by a stem
-probability, so the stem differences grow with the prefix probability, the paper's claws
+(`weightNoise_acrossTheBoard`). A decision-tree model instead multiplies a prefix probability by a
+stem probability, so the stem differences grow with the prefix probability, the paper's claws
 (`decision_tree_monotonic_diff`).
 
 Stochastic OT fails differently (§3.8). When a lone constraint opposes two synergistic families
@@ -40,12 +40,12 @@ Harmonic Grammar's tug-of-war the difference vanishes in both directions
 ## Implementation notes
 
 * The inputs are the thirty-six crossings of the six prefix constructions of Figure 3 with the
-  six stem-initial consonants of [zuraw-2010]; its /t/ stands for the paper's t/s class.
+  six stem-initial consonants of Zuraw (2010); its /t/ stands for the paper's t/s class.
 * The constraints are those of Table 1, in its order, the consonant-sensitive ones pulled back
-  from [zuraw-2010] along the projection of a candidate onto its stem and decision.
+  from Zuraw (2010) along the projection of a candidate onto its stem and decision.
 * Magri's theorem is proved for noise of any law, stochastic OT's Gaussian noise among them: the
   opposing candidate's rate integrates, against the law of its constraint, the product of the
-  other two constraints' distribution functions (`rumChoiceProb_eq_lintegral`), and that product
+  other two constraints' distribution functions (`choiceProb_pi_eq_lintegral`), and that product
   has increasing differences in the two ranking values.
 * The paper's fitted weights and ranking values, their log likelihoods, the empirical rates, the
   French and Hungarian data, and the partial-ordering model are not represented.
@@ -63,6 +63,7 @@ Harmonic Grammar's tug-of-war the difference vanishes in both directions
 namespace ZurawHayes2017
 
 open Real OptimalityTheory HarmonicGrammar ProbabilityTheory Finset
+open scoped NNReal
 open Zuraw2010 (StemC SubSt NSCand)
 
 /-! ### Inputs and candidates -/
@@ -83,11 +84,11 @@ inductive Prefix
   | pangRes
   deriving DecidableEq, Repr, Fintype
 
-/-- A candidate: a prefix construction and a stem-initial consonant, with or without
+/-- A candidate is a prefix construction and a stem-initial consonant, with or without
 substitution. -/
 abbrev Candidate := (Prefix × StemC) × SubSt
 
-/-- The projection of a candidate onto [zuraw-2010]'s stem and decision. -/
+/-- The projection of a candidate onto the stem and decision of a `Zuraw2010` candidate. -/
 def project (c : Candidate) : NSCand := (c.1.2, c.2)
 
 /-- The square crossing the prefixes `p` and `p'` (rows) with the stems `c` and `c'` (columns). -/
@@ -96,20 +97,20 @@ def square (p p' : Prefix) (c c' : StemC) : Square (Prefix × StemC) :=
 
 /-! ### The constraints -/
 
-/-- `NasSub` of (3): one violation for a nasal followed by an obstruent across a morpheme
+/-- `NasSub` (3) assigns one violation to a nasal followed by an obstruent across a morpheme
 boundary. -/
 def nasSub : Constraint Candidate := Zuraw2010.nasSub.comap project
 
-/-- *NC̥ of (4): one violation for a nasal followed by a voiceless obstruent. -/
+/-- *NC̥ (4) assigns one violation to a nasal followed by a voiceless obstruent. -/
 def starNC : Constraint Candidate := Zuraw2010.starNC.comap project
 
-/-- *[root m/n/ŋ of (6a): a root must not begin with a nasal. -/
+/-- *[root m/n/ŋ (6a) forbids a root to begin with a nasal. -/
 def starRootNasal : Constraint Candidate := Zuraw2010.starInitAll.comap project
 
-/-- *[root n/ŋ of (6b): a root must not begin with a coronal or velar nasal. -/
+/-- *[root n/ŋ (6b) forbids a root to begin with a coronal or velar nasal. -/
 def starRootCorVel : Constraint Candidate := Zuraw2010.starInitCorVel.comap project
 
-/-- *[root ŋ of (6c): a root must not begin with a velar nasal. -/
+/-- *[root ŋ (6c) forbids a root to begin with a velar nasal. -/
 def starRootVelar : Constraint Candidate := Zuraw2010.starInitVelar.comap project
 
 /-- The Uniformity constraint of (5) indexed to prefix construction `q`: a segment of the prefix
@@ -160,21 +161,21 @@ theorem acrossTheBoard_of_interaction_eq_zero {X S : Type*} {sq : Square X} {d :
 /-! ### Maximum entropy -/
 
 /-- The MaxEnt probability of substitution for an input. -/
-noncomputable def maxentSubst (w : Fin 11 → ℝ) (x : Prefix × StemC) : ℝ :=
+noncomputable def maxEntSubst (w : Fin 11 → ℝ) (x : Prefix × StemC) : ℝ :=
   softmax (fun y ↦ harmonyScore constraints w (x, y)) .yes
 
 /-- The MaxEnt probability of substitution is logistic in the harmony difference between the
 substituted and unsubstituted candidates (13). -/
-theorem maxentSubst_eq (w : Fin 11 → ℝ) (x : Prefix × StemC) :
-    maxentSubst w x =
+theorem maxEntSubst_eq (w : Fin 11 → ℝ) (x : Prefix × StemC) :
+    maxEntSubst w x =
       sigmoid (harmonyScore constraints w (x, .yes) - harmonyScore constraints w (x, .no)) := by
-  rw [maxentSubst, softmax_def, show (univ : Finset SubSt) = {.yes, .no} by decide,
+  rw [maxEntSubst, softmax_def, show (univ : Finset SubSt) = {.yes, .no} by decide,
     sum_pair (by decide), sigmoid_def, neg_sub, exp_sub, ← div_self (exp_pos _).ne', ← add_div,
     inv_div]
 
 /-- Any MaxEnt weighting has constant logit differences on every square, whatever the other
 candidates. -/
-theorem maxent_predicts_hz (w : Fin 11 → ℝ) (p p' : Prefix) (c c' : StemC) :
+theorem maxEnt_interaction_logOdds_eq_zero (w : Fin 11 → ℝ) (p p' : Prefix) (c c' : StemC) :
     (square p p' c c').interaction (fun x ↦
       log (softmax (fun y ↦ harmonyScore constraints w (x, y)) .yes /
         softmax (fun y ↦ harmonyScore constraints w (x, y)) .no)) = 0 :=
@@ -190,11 +191,11 @@ theorem harmony_b_sub_harmony_k (w : Fin 11 → ℝ) (p : Prefix) :
 
 /-- MaxEnt's effects are across the board on every square, for every weighting: those of the
 prefixes at every pair of stems, and those of the stems at every pair of prefixes. -/
-theorem maxent_acrossTheBoard (w : Fin 11 → ℝ) (p p' : Prefix) (c c' : StemC) :
-    AcrossTheBoard (square p p' c c') (maxentSubst w) ∧
-      AcrossTheBoard (square p p' c c').transpose (maxentSubst w) := by
+theorem maxEnt_acrossTheBoard (w : Fin 11 → ℝ) (p p' : Prefix) (c c' : StemC) :
+    AcrossTheBoard (square p p' c c') (maxEntSubst w) ∧
+      AcrossTheBoard (square p p' c c').transpose (maxEntSubst w) := by
   have hd := (independent p p' c c').interaction_harmonyScore_sub w .yes .no
-  rw [funext (maxentSubst_eq w)]
+  rw [funext (maxEntSubst_eq w)]
   exact ⟨acrossTheBoard_of_interaction_eq_zero (s := fun _ ↦ ()) (F := fun _ ↦ sigmoid)
       (fun _ ↦ sigmoid_strictMono.monotone) hd ⟨rfl, rfl⟩,
     acrossTheBoard_of_interaction_eq_zero (s := fun _ ↦ ()) (F := fun _ ↦ sigmoid)
@@ -202,14 +203,20 @@ theorem maxent_acrossTheBoard (w : Fin 11 → ℝ) (p p' : Prefix) (c c' : StemC
 
 /-! ### Noisy Harmonic Grammar -/
 
+/-- The NHG probability of substitution for an input under noise of variance `v` on the
+weights. -/
+noncomputable def weightNoiseSubst (w : Fin 11 → ℝ) (v : ℝ≥0) (x : Prefix × StemC) : ℝ :=
+  (weightNoiseChoiceProb (constraints.comap (x, ·)) w v .yes).toReal
+
 /-- The number of constraints that distinguish substitution from its absence, each counted with
 its squared violation difference. -/
 private def diffSq (x : Prefix × StemC) : ℤ :=
   ∑ i, ((constraints i (x, .yes) : ℤ) - constraints i (x, .no)) ^ 2
 
-private theorem violationDiffSqSum_eq_diffSq (x : Prefix × StemC) :
-    violationDiffSqSum constraints (x, .yes) (x, .no) = diffSq x := by
-  simp [violationDiffSqSum, diffSq]
+private theorem dotProduct_violationDiff_self_eq_diffSq (x : Prefix × StemC) :
+    (constraints.violationDiff (x, .yes) (x, .no) ⬝ᵥ
+      constraints.violationDiff (x, .yes) (x, .no) : ℝ) = diffSq x := by
+  simp [dotProduct, ConstraintSet.violationDiff, diffSq, sq]
 
 private theorem diffSq_eq (q : Prefix) (c : StemC) : diffSq (q, c) = diffSq (.mangOther, c) := by
   revert q c
@@ -221,27 +228,40 @@ private theorem diffSq_pos (x : Prefix × StemC) : 0 < diffSq x := by
 
 /-- The Noisy HG noise on /p/ is the sum of four Gaussians, one for each constraint that
 distinguishes substitution from its absence, whatever the prefix (15). -/
-theorem violationDiffSqSum_p (q : Prefix) :
-    violationDiffSqSum constraints ((q, .p), .yes) ((q, .p), .no) = 4 := by
-  rw [violationDiffSqSum_eq_diffSq]
+theorem dotProduct_violationDiff_self_p (q : Prefix) :
+    (constraints.violationDiff ((q, .p), .yes) ((q, .p), .no) ⬝ᵥ
+      constraints.violationDiff ((q, .p), .yes) ((q, .p), .no) : ℝ) = 4 := by
+  rw [dotProduct_violationDiff_self_eq_diffSq]
   exact_mod_cast (show diffSq (q, .p) = 4 by cases q <;> decide +kernel)
+
+/-- The NHG probability of substitution is probit in the harmony difference between the
+substituted and unsubstituted candidates, with a noise scale fixed by the stem. -/
+private theorem weightNoiseSubst_eq (w : Fin 11 → ℝ) {v : ℝ≥0} (hv : v ≠ 0) (x : Prefix × StemC) :
+    weightNoiseSubst w v x =
+      gaussianChoiceProb
+        (harmonyScore constraints w (x, .yes) - harmonyScore constraints w (x, .no))
+        √(v * diffSq (.mangOther, x.2)) := by
+  have hd : (constraints.violationDiff (x, .yes) (x, .no) : Fin 11 → ℝ) ≠ 0 := fun h ↦ by
+    have := dotProduct_violationDiff_self_eq_diffSq x
+    rw [h, zero_dotProduct] at this
+    exact (diffSq_pos x).ne' (by exact_mod_cast this.symm)
+  rw [weightNoiseSubst, weightNoiseChoiceProb_of_forall_ne_eq (constraints.comap (x, ·)) w v hv
+      (fun y hy ↦ by cases y <;> simp_all) (by decide) hd,
+    ENNReal.toReal_ofReal (gaussianChoiceProb_pos _ _).le, ← diffSq_eq x.1,
+    ← dotProduct_violationDiff_self_eq_diffSq x]
+  rfl
 
 /-- Noisy Harmonic Grammar's prefix effects are across the board on every square, for every
 weighting and noise: its noise depends on the stem alone. -/
-theorem nhg_acrossTheBoard (w : Fin 11 → ℝ) {σ : ℝ} (hσ : 0 < σ) (p p' : Prefix)
+theorem weightNoise_acrossTheBoard (w : Fin 11 → ℝ) {v : ℝ≥0} (hv : v ≠ 0) (p p' : Prefix)
     (c c' : StemC) :
-    AcrossTheBoard (square p p' c c')
-      fun x ↦ nhgChoiceProb constraints w σ (x, .yes) (x, .no) := by
-  have hs (x : Prefix × StemC) :
-      nhgSigmaD constraints σ (x, .yes) (x, .no) = σ * √(diffSq (.mangOther, x.2)) := by
-    rw [nhgSigmaD, violationDiffSqSum_eq_diffSq, ← diffSq_eq x.1]
+    AcrossTheBoard (square p p' c c') (weightNoiseSubst w v) := by
+  rw [funext (weightNoiseSubst_eq w hv)]
   refine acrossTheBoard_of_interaction_eq_zero (F := fun s Δ ↦ gaussianChoiceProb Δ s)
     (fun x ↦ (gaussianChoiceProb_strictMono ?_).monotone)
-    ((independent p p' c c').interaction_harmonyScore_sub w _ _)
-    ⟨by simp only [hs, square], by simp only [hs, square]⟩
-  rw [hs]
-  have := diffSq_pos (.mangOther, x.2)
-  have : (0 : ℝ) < diffSq (.mangOther, x.2) := by exact_mod_cast this
+    ((independent p p' c c').interaction_harmonyScore_sub w _ _) ⟨rfl, rfl⟩
+  have : (0 : ℝ) < diffSq (.mangOther, x.2) := by exact_mod_cast diffSq_pos _
+  have : (0 : ℝ) < v := NNReal.coe_pos.mpr (pos_iff_ne_zero.mpr hv)
   positivity
 
 /-! ### Stochastic OT with synergistic families (§3.8) -/
@@ -259,7 +279,7 @@ lone opposing constraint, with ranking value `n`, faces two synergistic families
 through one constraint, with ranking values `a` and `u`, the candidate it favors wins exactly
 when it outruns the other two (§3.8). `raceRate η n a u` is the rate of that candidate. -/
 noncomputable def raceRate (n a u : ℝ) : ℝ≥0∞ :=
-  rumChoiceProb ![η.map (n + ·), η.map (a + ·), η.map (u + ·)] 0
+  choiceProb (Measure.pi ![η.map (n + ·), η.map (a + ·), η.map (u + ·)]) 0
 
 omit [IsProbabilityMeasure η] in
 private theorem map_add_Iio (r x : ℝ) : η.map (r + ·) (Iio x) = η (Iio (x - r)) := by
@@ -281,7 +301,7 @@ theorem raceRate_eq (n a u : ℝ) :
   have : ∀ j, SigmaFinite (![η.map (n + ·), η.map (a + ·), η.map (u + ·)] j) := fun j ↦ by
     fin_cases j <;> simp only [Fin.zero_eta, Fin.mk_one, Fin.reduceFinMk, Matrix.cons_val] <;>
       infer_instance
-  rw [raceRate, rumChoiceProb_eq_lintegral, show univ.erase (0 : Fin 3) = {1, 2} by decide]
+  rw [raceRate, choiceProb_pi_eq_lintegral, show univ.erase (0 : Fin 3) = {1, 2} by decide]
   simp [map_add_Iio]
 
 theorem raceRate_le_one (n a u : ℝ) : raceRate η n a u ≤ 1 := by
