@@ -2,7 +2,7 @@ module
 
 public import Linglib.Core.Algebra.Order.Interval.Set.Group
 public import Linglib.Core.Order.Interval.Set.ProjIcc
-public import Linglib.Semantics.Degree.Basic
+public import Linglib.Semantics.Degree.Boundedness
 public import Linglib.Studies.HayKennedyLevin1999
 
 /-!
@@ -74,8 +74,8 @@ variable {E δ : Type*} [LinearOrder δ] (μ : E → δ) (a b : E)
 
 /-- At the minimum standard, the difference function at `b`'s degree holds of `a` exactly
 when `a` has more of the property than `b` ((23)–(24)). -/
-theorem comparative_iff : ⊥ < projIci (μ b) (μ a) ↔ comparativeSem μ a b .positive := by
-  rw [bot_lt_projIci, comparativeSem_positive]
+theorem comparative_iff : ⊥ < projIci (μ b) (μ a) ↔ μ b < μ a :=
+  bot_lt_projIci
 
 /-- At a maximum standard, a comparative would hold exactly when the positive form does,
 unless the standard already has the greatest degree (fn. 16). -/
@@ -114,7 +114,7 @@ theorem defaultStandard_eq :
 
 /-- The minimum-standard reading has the truth conditions of the comparative, the argument
 ending the event with more of the property than it began with ((27)). -/
-theorem minStandard_iff : ⊥ < projIci (m x i) (m x f) ↔ comparativeSem (m x) f i .positive :=
+theorem minStandard_iff : ⊥ < projIci (m x i) (m x f) ↔ m x i < m x f :=
   comparative_iff (m x) f i
 
 variable [OrderTop δ]

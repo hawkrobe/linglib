@@ -1,28 +1,32 @@
 module
 
 public import Linglib.Data.Examples.Kennedy1999
+public import Mathlib.Order.Interval.Set.Basic
 
 /-!
 # Kennedy (1999): Projecting the Adjective
 
-This file formalizes the judgment data of [kennedy-1999], the dissertation arguing that gradable
-adjectives denote measure functions whose relational type is derived by degree morphology, and
-that the positive and negative extents of one scale, POSδ and NEGδ of (30) and (31), derive
-antonymy and cross-polar anomaly rather than stipulating them. The extent algebra lives in
-`Semantics/Degree/Basic.lean`: extents are `Set.Iic (μ x)` and `Set.Ioi (μ x)`, comparison is
-extent inclusion (`Degree.comparative_iff_Iic_ssubset`), the antonymy biconditional (54) is
-`Degree.antonymy_biconditional`, and cross-polar anomaly (Section 3.1.7) is
-`Degree.not_crossExtentInclusion`; the embedding of measure functions into [klein-1980]'s
-degree-free delineation semantics is `Degree.delineation_strictly_more_general` in
-`Semantics/Degree/Hom.lean`.
+Kennedy argues that gradable adjectives denote measure functions from objects to extents on a
+scale. The positive extent of an object, (30), runs from the bottom of the scale up to its
+measure, and the negative extent, (31), from its measure to the top, so the antonymy
+biconditional (54) follows from the complementarity of the two. Positive and negative extents are
+disjoint sorts, so a comparison between them is undefined, which explains cross-polar anomaly
+alongside incommensurability (section 3.1.7).
 
-The rows of `Data/Examples/Kennedy1999.json` are the cross-polar and incommensurability
-comparatives of Sections 3.1.3–3.1.7, with the ficus quadruple (61)–(64) showing the anomaly
-reaching beyond antonym pairs, and the measure-phrase constructions of Sections 3.1.8–3.1.9. The
-account defines a comparison exactly when the compared extents are of one sort on a shared
-scale, and an absolute measure phrase exactly with a positive adjective, whose extents are
-bounded; `comparison_defined_iff` and `measurePhrase_positive_iff` check the predicted patterns
-against the rows.
+## Main results
+
+* `Kennedy1999.antonymy_biconditional`: (54), *a is taller than b* iff *b is shorter than a*, on
+  the extents of (30) and (31).
+* `Kennedy1999.comparison_defined_iff`: a subdeletion comparative is acceptable exactly when the
+  compared extents are of one sort on a shared scale, against the rows of sections 3.1.3–3.1.7.
+* `Kennedy1999.measurePhrase_positive_iff`: an absolute measure phrase composes exactly with a
+  positive adjective, sections 3.1.8–3.1.9.
+
+## Implementation notes
+
+Extents are the rays `Set.Iic (μ a)` and `Set.Ici (μ a)`, closed at the measure as in (30) and
+(31). The embedding of measure functions into Klein's degree-free semantics is
+`Degree.delineation_strictly_more_general` in `Semantics/Degree/Hom.lean`.
 
 ## References
 
@@ -34,6 +38,20 @@ against the rows.
 
 namespace Kennedy1999
 
+
+/-! ### The algebra of extents (section 3.1.5) -/
+
+section Extents
+
+variable {E D : Type*} [LinearOrder D] (μ : E → D) (a b : E)
+
+/-- The positive extent of `a`, (30), properly contains that of `b` exactly when the negative extent
+of `b`, (31), properly contains that of `a`, the antonymy biconditional (54). -/
+theorem antonymy_biconditional :
+    Set.Iic (μ b) ⊂ Set.Iic (μ a) ↔ Set.Ici (μ a) ⊂ Set.Ici (μ b) :=
+  Set.Iic_ssubset_Iic.trans Set.Ici_ssubset_Ici.symm
+
+end Extents
 
 /-! ### Cross-polar anomaly (Sections 3.1.3–3.1.7) -/
 
@@ -51,8 +69,8 @@ def sharedScale (e : Datum) : Prop :=
 instance (e : Datum) : Decidable (sharedScale e) :=
   inferInstanceAs (Decidable (_ = _))
 
-/-- The subdeletion comparatives: cross-polar anomalies, same-polarity controls, the ficus
-quadruple, and the incommensurability cases. -/
+/-- The subdeletion comparatives are the cross-polar anomalies, the same-polarity controls, the
+ficus quadruple, and the incommensurability cases. -/
 def crossPolarRows : List Datum :=
   [ Examples.cpa_long_short, Examples.cpa_short_long
   , Examples.subdel_pos_pos, Examples.subdel_neg_neg
@@ -61,8 +79,7 @@ def crossPolarRows : List Datum :=
   , Examples.incomm_tall_clever, Examples.incomm_tragic_heavy ]
 
 /-- A subdeletion comparative is acceptable exactly when the compared extents are of the same
-sort on a shared scale: cross-polar anomaly and incommensurability under one condition, the
-polarity half of which is `Degree.not_crossExtentInclusion`. -/
+sort on a shared scale: cross-polar anomaly and incommensurability under one condition. -/
 theorem comparison_defined_iff :
     ∀ e ∈ crossPolarRows, e.judgment = .acceptable ↔ (samePolarity e ∧ sharedScale e) := by
   decide

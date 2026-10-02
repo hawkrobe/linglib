@@ -9,6 +9,7 @@ public import Mathlib.Algebra.Group.Subgroup.ZPowers.Basic
 public import Mathlib.Algebra.Ring.Parity
 public import Mathlib.Order.Interval.Set.OrdConnected
 public import Linglib.Core.Algebra.Order.Round
+public import Linglib.Core.Order.Interval.Set.LinearOrder
 public import Linglib.Core.Data.Setoid.Basic
 public import Linglib.Semantics.Questions.Partition.Basic
 
@@ -100,15 +101,8 @@ theorem IsGranularity.not_subset [DenselyOrdered D] (h₁ : IsGranularity γ₁ 
     (h₂ : IsGranularity γ₂ w₂) (hlt : w₁ < w₂) (s t : D) : ¬ γ₂ t ⊆ γ₁ s := fun hsub ↦ by
   obtain ⟨a, ha, -⟩ := h₂.exists_Ioo_subset_subset_Icc t
   obtain ⟨b, -, hb⟩ := h₁.exists_Ioo_subset_subset_Icc s
-  have hw : a < a + w₂ := lt_add_of_pos_right a (h₁.nonneg.trans_lt hlt)
-  have hI : Ioo a (a + w₂) ⊆ Icc b (b + w₁) := (ha.trans hsub).trans hb
-  have hab : b ≤ a := not_lt.1 fun h ↦ by
-    obtain ⟨z, hz₁, hz₂⟩ := exists_between (lt_min h hw)
-    exact not_le.2 (hz₂.trans_le (min_le_left _ _))
-      (hI ⟨hz₁, hz₂.trans_le (min_le_right _ _)⟩).1
-  have hba : a + w₂ ≤ b + w₁ := not_lt.1 fun h ↦ by
-    obtain ⟨z, hz₁, hz₂⟩ := exists_between (max_lt h hw)
-    exact not_le.2 ((le_max_left _ _).trans_lt hz₁) (hI ⟨(le_max_right _ _).trans_lt hz₁, hz₂⟩).2
+  obtain ⟨hab, hba⟩ := (Ioo_subset_Icc_iff (lt_add_of_pos_right a (h₁.nonneg.trans_lt hlt))).1
+    ((ha.trans hsub).trans hb)
   exact not_le.2 hlt ((add_le_add_iff_left b).1 ((add_le_add_left hab w₂).trans hba))
 
 end IsGranularity

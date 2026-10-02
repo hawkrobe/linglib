@@ -72,20 +72,12 @@ variable {Entity D : Type*} [LinearOrder D]
 def er (D₁ D₂ : Set D) : Prop :=
   ∃ m₁ m₂, IsGreatest D₁ m₁ ∧ IsGreatest D₂ m₂ ∧ m₁ < m₂
 
+/-- With unique witnesses `er` compares the two maxima directly, the comparative and the
+subcomparative of (7′), (9′) and (10′). -/
 theorem er_Iic_Iic (d₁ d₂ : D) : er (Set.Iic d₁) (Set.Iic d₂) ↔ d₁ < d₂ := by
   refine ⟨fun ⟨_, _, h₁, h₂, h⟩ => ?_,
     fun h => ⟨_, _, isGreatest_Iic, isGreatest_Iic, h⟩⟩
   rwa [h₁.unique isGreatest_Iic, h₂.unique isGreatest_Iic] at h
-
-/-- With unique witnesses, `er` is the direct comparison of measures ((7′), (9′)). -/
-theorem er_Iic_iff_comparativeSem (μ : Entity → D) (a b : Entity) :
-    er (Set.Iic (μ b)) (Set.Iic (μ a)) ↔ comparativeSem μ a b .positive :=
-  er_Iic_Iic _ _
-
-/-- A subcomparative compares the maxima of degree sets on two dimensions (10′). -/
-theorem er_Iic_iff_subcomparative (μ ν : Entity → D) (a b : Entity) :
-    er (Set.Iic (ν b)) (Set.Iic (μ a)) ↔ subcomparative μ ν a b :=
-  er_Iic_Iic _ _
 
 /-! ### The contextual analysis -/
 
@@ -118,7 +110,7 @@ theorem maxIn_Ioi_Iic_iff (μ : Entity → D) (c : D) (x : Entity) :
 /-- A context setter supplying `y` sets `c := μ y`, and the positive form becomes the
 comparison with `y` ((21), (25)). -/
 theorem pos_comparedTo (μ : Entity → D) (x y : Entity) :
-    pos μ (μ y) x ↔ comparativeSem μ x y .positive :=
+    pos μ (μ y) x ↔ μ y < μ x :=
   pos_iff_lt μ (μ y) x
 
 /-! ### Yori-clauses denote individuals -/
@@ -143,8 +135,8 @@ theorem isGreatest_card_of_isGreatest {Atom : Type*} {P : Finset Atom → Prop}
 /-- An individual standard lies on the matrix dimension, so the reading of the shelf–door
 sentence with the door as standard differs from the subcomparative ((74), (79)). -/
 theorem pos_ne_subcomparative :
-    ∃ μ ν : Fin 2 → ℕ, subcomparative μ ν 0 1 ∧ ¬ pos μ (μ 1) 0 :=
-  ⟨![2, 3], ![0, 1], by simp [subcomparative], by simp [pos_iff_lt]⟩
+    ∃ μ ν : Fin 2 → ℕ, ν 1 < μ 0 ∧ ¬ pos μ (μ 1) 0 :=
+  ⟨![2, 3], ![0, 1], by decide, by simp [pos_iff_lt]⟩
 
 /-! ### Negative islands -/
 

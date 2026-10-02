@@ -4,13 +4,12 @@ public import Mathlib.Tactic.NormNum
 
 /-!
 # Measure-phrase modification of degree constructions
-[schwarzschild-2005] [solt-2015] [winter-2005] [buring-2007]
 
 Measure-phrase differentials ("3 inches taller") and factor phrases
 ("twice as tall"): `differentialComparative` and `factorEquative`, the
 interval- and ratio-scale rows of the naturality table in
 `Degree/Hom.lean`. Where bare comparatives are invariant under any
-`StrictMono` rescaling (`comparativeSem_comp`), the differential is
+`StrictMono` rescaling (`Comparison.over_comp`), the differential is
 invariant under translations only (`differentialComparative_comp_add`,
 `differentialComparative_not_natural`) and the factor phrase under
 scalings only (`factorEquative_comp_mul`,
@@ -21,6 +20,13 @@ exactly when it is natural under that type's admissible transformations.
 Hence "3 inches taller" ✓ but "*3 units more beautiful" ✗ (beauty is
 ordinal), "twice as tall" ✓ but "*twice as hot" in °C ✗ (temperature is
 interval, no meaningful zero).
+
+## References
+
+* [schwarzschild-2005]
+* [solt-2015]
+* [winter-2005]
+* [buring-2007]
 -/
 
 @[expose] public section
@@ -29,16 +35,15 @@ namespace Degree
 
 /-! ### Differential and factor semantics -/
 
-/-- Differential comparative: "A is d-much Adj-er than B" iff
-    `μ(A) - μ(B) = d`. Requires subtraction structure, not just
-    ordering — what makes measure-phrase differentials more restrictive
-    than bare comparatives. -/
+/-- The differential comparative *A is d-much Adj-er than B* holds when `μ A - μ B = d`. It needs
+subtraction, not just an ordering, which makes measure-phrase differentials more restrictive than
+bare comparatives. -/
 def differentialComparative {Entity D : Type*} [Sub D]
     (μ : Entity → D) (a b : Entity) (diff : D) : Prop :=
   μ a - μ b = diff
 
-/-- Factor phrase equative: "A is n times as tall as B" iff
-    `μ(A) = n × μ(B)`. Requires a meaningful zero (ratio scale). -/
+/-- The factor-phrase equative *A is n times as tall as B* holds when `μ A = n * μ B`, which needs a
+meaningful zero, a ratio scale. -/
 def factorEquative {Entity D : Type*} [Mul D]
     (μ : Entity → D) (a b : Entity) (factor : D) : Prop :=
   μ a = factor * μ b
@@ -53,7 +58,7 @@ theorem differentialComparative_lt_of_pos {Entity D : Type*}
 /-! ### Invariance: the measurement-theoretic hierarchy derived
 
 Each construction's scale-type requirement is its invariance class
-(cf. `comparativeSem_comp` in `Degree/Hom.lean` for the ordinal row and
+(cf. `Comparison.over_comp` in `Degree/Comparison.lean` for the ordinal row and
 `positive_not_natural` for the positive form's failure). -/
 
 /-- Differentials are translation-invariant: shifting the scale's zero

@@ -10,25 +10,22 @@ public import Linglib.Semantics.Quantification.Defs
 /-!
 # Bhatt and Pancheva (2004): Late Merger of Degree Clauses
 
-This file formalizes [bhatt-pancheva-2004], the proposal that a degree clause, the *than*- or
-*as*-phrase, is merged countercyclically as the complement of the degree head after the head has
-raised to its scope position, so that the surface site of the clause marks the scope of the
-comparison. The Heim–Kennedy constraint of [heim-2000] filters the LFs of degree movement, (24):
-the reading (22b) it excludes has the universal quantifier between the DegP and its trace
-(`hkc_22`), and without an *exactly*-differential or *less* the movement over *require* and
-*allow* has no truth-conditional effect, (30), the monotone collapse of [heim-2000]. The
-Extraposition-Scope Generalization, (39), refines [williams-1974]: the scope of the degree head
-is at least as high as the site of its clause, by countercyclic merger, and exactly as high
-(`at_least_as_high`, `exactly_as_high`); the reading of (43) with *-er* over the *before*-clause
-puts the clause between the DegP and its trace (`hkc_43`), so (44), whose clause site puts the
-DegP above the *before*-clause, is out. Merger at the scope position derives the Ellipsis-Scope
-Generalization, (59), on the four LFs of (62), and the Condition C–Scope Generalization on the
-LFs of (69): the pronoun c-commands the name in the degree clause exactly when the comparison
-scopes below the matrix predicate (`conditionC_scope`). Section 7 derives late merger and its
-"exactly as high" half from Trace Conversion and the nonconservativity of *-er*, (84): the
-converted lower copy intersects the degree clause into the second argument, harmless for a
-conservative quantifier, (82), but a contradiction for *-er*, (86) (`erSem_not_conservative`), so
-the clause merges only at the DegP's ultimate scope position, (90).
+Bhatt and Pancheva propose that a degree clause, the *than*- or *as*-phrase, is merged
+countercyclically as the complement of the degree head after the head has raised to its scope
+position, so the surface site of the clause marks the scope of the comparison. This refines
+Williams's generalization: the degree head scopes at least as high as its clause, by
+countercyclic merger, and exactly as high, because Trace Conversion would otherwise intersect the
+clause into the second argument of the nonconservative *-er* and yield a contradiction.
+
+## Main results
+
+* `hkc_22`, `hkc_43`: the Heim–Kennedy constraint excludes the LFs (22b) and (43b).
+* `at_least_as_high`, `exactly_as_high`: the Extraposition-Scope Generalization, (39), on the
+  rows.
+* `ellipsisScope`: the Ellipsis-Scope Generalization, (59), on the LFs of (62).
+* `conditionC_scope`: the Condition C–Scope Generalization on the LFs of (69).
+* `erSem_not_conservative`: *-er* is not conservative, (86), so the clause merges only at the
+  DegP's scope position.
 
 ## Implementation notes
 
@@ -65,7 +62,7 @@ def lf22a : Tree Unit String :=
   bin (leaf "every girl") (binder 1 (bin (bin (leaf "exactly 1 inch -er") (leaf "than that"))
     (binder 2 (bin (leaf "x is") (bin (tr 2) (leaf "tall"))))))
 
-/-- The LF (22b), the DegP over the quantifier:
+/-- The LF (22b) puts the DegP over the quantifier,
 `[[DegP exactly 1 inch -er than that] [λd [every girl [λx [x is d-tall]]]]]`. -/
 def lf22b : Tree Unit String :=
   bin (bin (leaf "exactly 1 inch -er") (leaf "than that"))
@@ -80,13 +77,13 @@ theorem hkc_22 :
 
 /-! ### The Extraposition-Scope Generalization (Section 5.2) -/
 
-/-- The LF (43a) of *Mary climbed higher than 1,000 feet before you did*, the *before*-clause over
-the DegP: `[[Mary [[climbed [t high]] [DegP -er than 1,000 feet]]] [before you did]]`. -/
+/-- The LF (43a) of *Mary climbed higher than 1,000 feet before you did* puts the *before*-clause
+over the DegP, `[[Mary [[climbed [t high]] [DegP -er than 1,000 feet]]] [before you did]]`. -/
 def lf43a : Tree Unit String :=
   bin (bin (leaf "Mary") (bin (bin (leaf "climbed") (bin (tr 1) (leaf "high")))
     (bin (leaf "-er") (leaf "than 1,000 feet")))) (leaf "before you did")
 
-/-- The LF (43b), the DegP over the *before*-clause:
+/-- The LF (43b) puts the DegP over the *before*-clause,
 `[[[Mary [climbed [t high]]] [before you did]] [DegP -er than 1,000 feet]]`. -/
 def lf43b : Tree Unit String :=
   bin (bin (bin (leaf "Mary") (bin (leaf "climbed") (bin (tr 1) (leaf "high"))))
@@ -107,8 +104,8 @@ inductive Site
   | high
   deriving DecidableEq, Repr
 
-/-- An extraposition datum: the clause's site, whether its associate is the bare DegP rather than a
-comparative DP, and whether the comparison's narrow and wide scope readings are available. -/
+/-- An extraposition datum records the clause's site, whether its associate is the bare DegP rather
+than a comparative DP, and whether the comparison's narrow and wide scope readings are available. -/
 structure Row where
   site : Site
   degP : Bool
@@ -130,13 +127,12 @@ def Row.ofDatum (e : Datum) : Option Row := do
 /-- The extraposition data of Section 5.2, (41) to (46) and (53) to (54). -/
 def rows : List Row := Examples.all.filterMap Row.ofDatum
 
-/-- (38), the half of (39) countercyclic merger derives: a clause merged above an operator leaves
+/-- Countercyclic merger derives one half of (39), (38): a clause merged above an operator leaves
 the comparison no scope below it, (42), (44), (46), (53b) and (54b). -/
 theorem at_least_as_high : ∀ r ∈ rows, r.site = .high → r.narrow = false := by decide
 
-/-- The other half of (39): a bare DegP whose clause is merged below an operator has no scope
-above it, (43), (53a) and (54a), whereas a comparative DP raises with its clause, (41) and
-(45). -/
+/-- In the other half of (39), a bare DegP whose clause is merged below an operator has no scope
+above it, (43), (53a) and (54a), whereas a comparative DP raises with its clause, (41) and (45). -/
 theorem exactly_as_high :
     (∀ r ∈ rows, r.degP = true → r.site = .low → r.wide = false) ∧
       ∀ r ∈ rows, r.degP = false → r.site = .low → r.wide = true := by
@@ -144,8 +140,8 @@ theorem exactly_as_high :
 
 /-! ### Ellipsis and Condition C mark the scope of the comparison (Section 6) -/
 
-/-- An LF of *her father tells her to work harder than Mary's boss does*, (62) and (69): the tree
-and the positions of the DegP, the degree clause, the pronoun, the matrix predicate and the
+/-- An LF of *her father tells her to work harder than Mary's boss does*, (62) and (69), records the
+tree and the positions of the DegP, the degree clause, the pronoun, the matrix predicate and the
 matrix and embedded VPs. -/
 structure TellLF where
   tree : Tree Unit String
@@ -156,7 +152,7 @@ structure TellLF where
   matrixVP : TreePath
   embeddedVP : TreePath
 
-/-- The clause merged low, at the embedded clause, (69a):
+/-- With the clause merged low, at the embedded clause, the LF is (69a),
 `[her father [tells [her [[λd PRO to work d-hard] [-er than Mary's boss does]]]]]`. -/
 def low : TellLF where
   tree := bin (leaf "her father") (bin (leaf "tells") (bin (leaf "her")
@@ -169,7 +165,7 @@ def low : TellLF where
   matrixVP := ⟨[1]⟩
   embeddedVP := ⟨[1, 1, 1, 0, 0]⟩
 
-/-- The clause merged high, at the matrix clause, (69c):
+/-- With the clause merged high, at the matrix clause, the LF is (69c),
 `[[λd her father tells her to work d-hard] [-er than Mary's boss does]]`. -/
 def high : TellLF where
   tree := bin (binder 1 (bin (leaf "her father") (bin (leaf "tells") (bin (leaf "her")
@@ -182,17 +178,17 @@ def high : TellLF where
   matrixVP := ⟨[0, 0, 1]⟩
   embeddedVP := ⟨[0, 0, 1, 1, 1]⟩
 
-/-- The Ellipsis-Scope Generalization, (59), on the LFs of (62): the scope of the DegP contains
-the embedded VP at either site and the matrix VP only at the high site, so the reading (62b),
-the clause merged low with the matrix VP elided, is the one missing. -/
+/-- The Ellipsis-Scope Generalization, (59), holds on the LFs of (62): the scope of the DegP
+contains the embedded VP at either site and the matrix VP only at the high site, so the reading
+(62b), the clause merged low with the matrix VP elided, is the one missing. -/
 theorem ellipsisScope :
     (∀ lf ∈ [low, high], (lf.degP, lf.embeddedVP) ∈ cCommandAt lf.tree) ∧
       (low.degP, low.matrixVP) ∉ cCommandAt low.tree ∧
       (high.degP, high.matrixVP) ∈ cCommandAt high.tree := by
   refine ⟨?_, ?_, ?_⟩ <;> decide
 
-/-- The Condition C–Scope Generalization, (69) and (70): the pronoun c-commands the name in the
-degree clause exactly when the comparison does not scope over the matrix predicate. -/
+/-- The Condition C–Scope Generalization, (69) and (70), holds: the pronoun c-commands the name in
+the degree clause exactly when the comparison does not scope over the matrix predicate. -/
 theorem conditionC_scope :
     ∀ lf ∈ [low, high],
       (lf.pronoun, lf.clause) ∈ cCommandAt lf.tree ↔ (lf.degP, lf.tells) ∉ cCommandAt lf.tree := by
@@ -202,23 +198,23 @@ theorem conditionC_scope :
 
 variable {Entity D : Type*}
 
-/-- The comparative degree quantifier, (84): its first argument, the degree clause, is a proper
-subset of its second. -/
+/-- The comparative degree quantifier, (84), holds when its first argument, the degree clause, is a
+proper subset of its second. -/
 def erSem (A B : Set D) : Prop := A ⊂ B
 
-/-- (85): on [kennedy-1999]'s positive extents `-er` compares the measures. -/
+/-- On [kennedy-1999]'s positive extents `-er` compares the measures, (85). -/
 theorem erSem_Iic_iff [LinearOrder D] (μ : Entity → D) (a b : Entity) :
-    erSem (Iic (μ b)) (Iic (μ a)) ↔ comparativeSem μ a b .positive :=
-  (comparative_iff_Iic_ssubset μ a b).symm
+    erSem (Iic (μ b)) (Iic (μ a)) ↔ μ b < μ a :=
+  Iic_ssubset_Iic
 
-/-- (86) and (87): Trace Conversion of an early-merged degree clause intersects it into the second
-argument, and `A ⊂ A ∩ B` is a contradiction. -/
+/-- Trace Conversion of an early-merged degree clause intersects it into the second argument,
+and `A ⊂ A ∩ B` is a contradiction, (86) and (87). -/
 theorem erSem_inter_contradictory (A B : Set D) : ¬ erSem A (A ∩ B) :=
-  λ h => h.not_subset inter_subset_left
+  fun h ↦ h.not_subset inter_subset_left
 
-/-- (82) against (86): a conservative quantifier is unaffected by the intersection, and `-er` is
-not conservative. -/
+/-- A conservative quantifier is unaffected by the intersection, and `-er` is not conservative, (82)
+against (86). -/
 theorem erSem_not_conservative [Nonempty D] : ¬ Quantifier.GQ.Conservative (erSem (D := D)) :=
-  λ h => erSem_inter_contradictory ∅ univ ((h (∅ : Set D) univ).1 (empty_ssubset.2 univ_nonempty))
+  fun h ↦ erSem_inter_contradictory ∅ univ ((h (∅ : Set D) univ).1 (empty_ssubset.2 univ_nonempty))
 
 end BhattPancheva2004

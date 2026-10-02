@@ -5,6 +5,7 @@ public import Linglib.Semantics.Polarity.Basic
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Logic.Aristotelian.Basic
 public import Linglib.Semantics.Degree.Boundedness
+public import Linglib.Semantics.Degree.Comparison
 public import Mathlib.Order.Interval.Set.Disjoint
 
 /-!
@@ -14,12 +15,12 @@ This file defines the vocabulary of an antonym pair of gradable adjectives, *tal
 or *happy* and *unhappy*. Following Kennedy (2007) and Kennedy and McNally (2005), the two
 members measure the same degrees under inverse orderings, so an adjective's `Polarity` is which
 member it is, `positive` for the member measuring in the scale's increasing direction (*tall*)
-and `negative` for the inverted one (*short*). Inverting twice restores the ordering,
-so `negative * p` is the polarity of the antonym of a `p` adjective, and polarity acts on scale
-boundedness through the order dual. The positive forms of the members are contradictory (*clean*
-and *dirty*) or contrary (*tall* and *short*, which leave a gap), two cells of the Aristotelian
-square in the sense of Cruse and Horn; a lexical pair is contradictory when its poles take
-complementary standards, `Degree.AntonymPair.ComplementaryStandards`.
+and `negative` for the inverted one (*short*). Inverting twice restores the ordering, so
+`negative * p` is the polarity of the antonym of a `p` adjective, and polarity acts on scale
+boundedness and on comparisons through the order dual. The positive forms of the members are
+contradictory (*clean* and *dirty*) or contrary (*tall* and *short*, which leave a gap), two
+cells of the Aristotelian square in the sense of Cruse and Horn; a lexical pair is contradictory
+when its poles take complementary standards, `Degree.AntonymPair.ComplementaryStandards`.
 
 The contrary case is modelled by a `Degree.ThresholdPair` on a linearly ordered scale, the
 positive form true above its upper threshold and the negative form below its lower one, and
@@ -30,7 +31,8 @@ keeps them apart, as in Krifka's account.
 
 ## Main definitions
 
-* The action `p • b` of `Polarity` on `Boundedness`, the negative polarity by the order dual.
+* The actions of `Polarity` on `Boundedness` and on `Comparison`, the negative polarity by the
+  order dual.
 * `ThresholdPair` and its `ThresholdPair.gap`, the interval between the two thresholds.
 * `AntonymForm` with `AntonymForm.contradictoryDenot`, `AntonymForm.strengthenedDenot` and
   `AntonymForm.complexity`.
@@ -75,6 +77,18 @@ instance : MulAction Polarity Boundedness where
   mul_smul p q b := by cases p <;> cases q <;> simp [HSMul.hSMul, SMul.smul]
 
 @[simp] theorem Boundedness.negative_smul (b : Boundedness) : Polarity.negative • b = b.dual :=
+  rfl
+
+/-- The negative member of an antonym pair compares on the reversed scale, so its comparison is
+the dual one: *shorter* is `Polarity.negative • Comparison.gt`. -/
+instance : MulAction Polarity Comparison where
+  smul
+    | .positive, c => c
+    | .negative, c => c.dual
+  one_smul _ := rfl
+  mul_smul p q c := by cases p <;> cases q <;> simp [HSMul.hSMul, SMul.smul]
+
+@[simp] theorem Comparison.negative_smul (c : Comparison) : Polarity.negative • c = c.dual :=
   rfl
 
 /-! ### The two-threshold model of a contrary pair -/

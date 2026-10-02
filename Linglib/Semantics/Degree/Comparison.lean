@@ -7,55 +7,67 @@ public import Linglib.Core.Order.StrictBounds
 /-!
 # Reified degree comparison
 
-`Comparison` reifies the five ways a measured value relates to a threshold —
-`=`, `≥`, `>`, `≤`, `<` — as data (cf. core `Ordering`, reified for `compare`).
-It is the shared, theory-neutral primitive behind numeral modifiers, measure
-phrases, and (the measure-derived case of) gradable comparatives, per the
-joint degree-semantic treatment of [kennedy-2015] and [rett-2014].
+A `Comparison` is one of the five ways a measured value can relate to a threshold, `=`, `≥`, `>`,
+`≤` and `<`, kept as data so that numeral modifiers, measure phrases and comparatives can share
+it, as in the joint treatment of Kennedy and Rett. A comparison selects an order interval, and
+`Comparison.over μ n` is the set of entities whose measure lies in it; `Comparison.overSet μ Δ`
+generalizes the threshold to a set of degrees, the clausal standard of Hoeksema's comparative.
+The point-standard comparative *a is taller than b* is `a ∈ Comparison.gt.over μ (μ b)`, that is
+`μ b < μ a`, and the equative is `Comparison.ge`.
 
-It interprets two ways, both bottoming out in mathlib's order API so downstream
-proofs reduce into `Set.mem_Ici` & friends rather than a bespoke lemma set:
+The antonym of a comparison is its order dual, `Comparison.dual`: *a is shorter than b* is the
+dual comparison, which holds exactly when *b is taller than a* does and is the same comparison
+read on the reversed scale, Kennedy's account of antonymy. Comparisons are invariant under a
+strictly monotone change of scale.
 
-* `Comparison.rel`      — the order relation (`[kennedy-2015]`'s `REL`).
-* `Comparison.interval` — the order-interval (`Set.Ici`/`Ioi`/`Iic`/`Iio`/`{·}`).
-* `Comparison.over μ n` — the predication `μ ⁻¹' (c.interval n)`: the entities
-  whose measure lands in the interval. Bare cardinals are `over .eq id`, measure
-  phrases `over c μ` for a `DimensionedMeasure`, classifier counting `over .eq (atom-count)`.
-* `Comparison.overSet μ Δ` — the *set-standard* generalization `μ ⁻¹' (c.bounds Δ)`:
-  the entities whose measure bounds the whole standard set `Δ`. The point predication
-  `over` is the singleton case (`overSet_singleton`); this is the order-theoretic core
-  of [hoeksema-1983]'s S-comparative, with the binary NP-comparative its singleton face.
+## Main definitions
 
-## Main declarations
+* `Degree.Comparison`, with `Comparison.rel`, `Comparison.interval` and `Comparison.over`.
+* `Degree.Comparison.overSet`: the set-standard predication.
+* `Degree.Comparison.dual`: the antonymous comparison.
+* `Degree.maxOnScale`: Rett's order-sensitive maximality.
 
-* `Degree.Comparison` — the reified comparison.
-* `Comparison.isStrict` — Class A (`>`,`<`) vs. non-strict (`=`,`≥`,`≤`).
-* `Comparison.over` / `Comparison.overSet` — point- and set-standard predications.
-* `Comparison.boundary_mem` — Class A/B as interval-endpoint membership.
+## Main results
+
+* `Degree.Comparison.overSet_singleton`: a singleton standard is a point standard.
+* `Degree.Comparison.rel_dual`, `Degree.Comparison.over_dual`: antonymy as argument exchange and
+  as scale reversal.
+* `Degree.Comparison.over_comp`: invariance under a strictly monotone change of scale.
+* `Degree.Comparison.boundary_mem`: the Class A/B distinction as endpoint membership.
+
+## References
+
+* [kennedy-2015]
+* [rett-2014]
+* [hoeksema-1983]
+* [kennedy-2007]
+* [geurts-nouwen-2007]
+* [nouwen-2010]
+* [rett-2026]
 -/
 
 @[expose] public section
 
 namespace Degree
 
-/-- [kennedy-2015]'s `REL` reified: the relation a degree modifier draws
-    between a measured value and a threshold. -/
+/-- A comparison is the relation a degree modifier draws between a measured value and a threshold,
+[kennedy-2015]'s `REL` reified. -/
 inductive Comparison where
-  /-- Exact / bare: `μ x = n`. -/
+  /-- The exact comparison `μ x = n` of a bare numeral. -/
   | eq
-  /-- "At least `n`": `μ x ≥ n`. -/
+  /-- The comparison `μ x ≥ n` of *at least `n`*. -/
   | ge
-  /-- "More than `n`": `μ x > n`. -/
+  /-- The comparison `μ x > n` of *more than `n`*. -/
   | gt
-  /-- "At most `n`": `μ x ≤ n`. -/
+  /-- The comparison `μ x ≤ n` of *at most `n`*. -/
   | le
-  /-- "Fewer than `n`": `μ x < n`. -/
+  /-- The comparison `μ x < n` of *fewer than `n`*. -/
   | lt
   deriving DecidableEq, Repr, Inhabited
 
-/-- Strict (Class A: `>`, `<`) vs. non-strict (bare `=`, Class B `≥`, `≤`). The
-    modifier-level Class A/B split ([geurts-nouwen-2007], [nouwen-2010])
-    is `isStrict` restricted to the four modified forms. -/
+/-- A comparison is strict when it excludes its threshold, as `>` and `<` do; the Class A/B split of
+modified numerals ([geurts-nouwen-2007], [nouwen-2010]) is strictness restricted to the four
+modified forms. -/
 def Comparison.isStrict : Comparison → Prop
   | .gt | .lt => True
   | _         => False
@@ -68,8 +80,7 @@ def Comparison.rel {α : Type*} [Preorder α] : Comparison → α → α → Pro
   | .eq => (· = ·) | .ge => (· ≥ ·) | .gt => (· > ·)
   | .le => (· ≤ ·) | .lt => (· < ·)
 
-/-- The order-interval a comparison selects, in mathlib terms:
-    `{n}` / `[n,∞)` / `(n,∞)` / `(-∞,n]` / `(-∞,n)`. -/
+/-- The order interval a comparison selects is `{n}`, `[n, ∞)`, `(n, ∞)`, `(-∞, n]` or `(-∞, n)`. -/
 def Comparison.interval {α : Type*} [Preorder α] : Comparison → α → Set α
   | .eq => fun n => {n}
   | .ge => Set.Ici
@@ -77,9 +88,9 @@ def Comparison.interval {α : Type*} [Preorder α] : Comparison → α → Set �
   | .le => Set.Iic
   | .lt => Set.Iio
 
-/-- **The unifying predication**: the entities whose measure `μ` lands in the
-    comparison's interval. The measure varies — `id` for bare cardinals, a
-    dimensional `DimensionedMeasure` for measure phrases, an atom-count for classifiers. -/
+/-- The predication of a comparison is the set of entities whose measure lies in its interval; the
+measure is `id` for bare cardinals, a dimensioned measure for measure phrases, and an atom count for
+classifiers. -/
 def Comparison.over {E α : Type*} [Preorder α]
     (c : Comparison) (μ : E → α) (n : α) : Set E :=
   μ ⁻¹' c.interval n
@@ -133,10 +144,8 @@ instance Comparison.overDecidable {E α : Type*} [Preorder α] [DecidableEq α] 
     [DecidableLT α] (c : Comparison) (μ : E → α) (n : α) (x : E) : Decidable (x ∈ c.over μ n) :=
   decidable_of_iff _ (Comparison.mem_over c μ n x).symm
 
-/-- **Class A/B is interval-endpoint membership.** A non-strict comparison
-    (bare `=`, Class B `≥`/`≤`) keeps the boundary `n`; a strict one (Class A
-    `>`/`<`) drops it — the whole Class A/B distinction
-    ([geurts-nouwen-2007], [nouwen-2010]) in one lemma. -/
+/-- A comparison keeps its threshold exactly when it is not strict, so the Class A/B distinction
+([geurts-nouwen-2007], [nouwen-2010]) is membership of the interval's endpoint. -/
 @[simp] theorem Comparison.boundary_mem {α : Type*} [Preorder α]
     (c : Comparison) (n : α) : n ∈ c.interval n ↔ ¬ c.isStrict := by
   cases c <;> simp [Comparison.interval, Comparison.isStrict]
@@ -149,9 +158,8 @@ The than-clause of a comparative supplies not a point but a *set* of degrees.
 `Comparison.overSet` is the corresponding measure-pullback predication. The point
 predication `over` is exactly the singleton case (`overSet_singleton`). -/
 
-/-- The standard-set a comparison imposes: the bounds of `Δ` matching the
-comparison's relation (`upperBounds`/`strictUpperBounds`/… per case). Generalizes
-`Comparison.interval` from a point `n` (≡ `{n}`) to a standard set `Δ`. -/
+/-- The bounds a comparison imposes on a standard set `Δ` are its upper, strict upper, lower or
+strict lower bounds, generalizing `Comparison.interval` from a point to a set. -/
 def Comparison.bounds {α : Type*} [Preorder α] : Comparison → Set α → Set α
   | .eq => fun Δ => {x | ∀ a ∈ Δ, x = a}
   | .ge => upperBounds
@@ -159,10 +167,8 @@ def Comparison.bounds {α : Type*} [Preorder α] : Comparison → Set α → Set
   | .le => lowerBounds
   | .lt => strictLowerBounds
 
-/-- **Set-standard predication**: the entities whose measure bounds the whole
-standard set `Δ`. The set-standard generalization of `Comparison.over` and the
-order-theoretic core of [hoeksema-1983]'s S-comparative; the binary NP-comparative
-is the singleton case (`overSet_singleton`). -/
+/-- The set-standard predication is the set of entities whose measure bounds the whole standard set
+`Δ`, the order-theoretic core of [hoeksema-1983]'s clausal comparative. -/
 def Comparison.overSet {E α : Type*} [Preorder α]
     (c : Comparison) (μ : E → α) (Δ : Set α) : Set E :=
   μ ⁻¹' c.bounds Δ
@@ -183,11 +189,72 @@ theorem Comparison.bounds_singleton {α : Type*} [Preorder α] (c : Comparison) 
     (c : Comparison) (μ : E → α) (Δ : Set α) (x : E) :
     x ∈ c.overSet μ Δ ↔ μ x ∈ c.bounds Δ := Iff.rfl
 
-/-- **The NP ⊂ S bridge**: the set-standard predication at a singleton standard is
-the point predication. Makes [hoeksema-1983]'s NP↔S equivalence definitional. -/
+/-- At a singleton standard the set-standard predication is the point predication, so
+[hoeksema-1983]'s phrasal and clausal comparatives coincide there. -/
 @[simp] theorem Comparison.overSet_singleton {E α : Type*} [Preorder α]
     (c : Comparison) (μ : E → α) (n : α) : c.overSet μ {n} = c.over μ n := by
   simp only [Comparison.overSet, Comparison.over, Comparison.bounds_singleton]
+
+/-! ### The antonymous comparison -/
+
+/-- The dual of a comparison reads it on the reversed scale: `>` becomes `<`, `≥` becomes `≤`,
+and `=` is fixed. -/
+def Comparison.dual : Comparison → Comparison
+  | .eq => .eq
+  | .ge => .le
+  | .gt => .lt
+  | .le => .ge
+  | .lt => .gt
+
+@[simp] theorem Comparison.dual_eq : Comparison.eq.dual = .eq := rfl
+@[simp] theorem Comparison.dual_ge : Comparison.ge.dual = .le := rfl
+@[simp] theorem Comparison.dual_gt : Comparison.gt.dual = .lt := rfl
+@[simp] theorem Comparison.dual_le : Comparison.le.dual = .ge := rfl
+@[simp] theorem Comparison.dual_lt : Comparison.lt.dual = .gt := rfl
+
+theorem Comparison.dual_involutive : Function.Involutive Comparison.dual := fun c ↦ by
+  cases c <;> rfl
+
+@[simp] theorem Comparison.dual_dual (c : Comparison) : c.dual.dual = c :=
+  Comparison.dual_involutive c
+
+/-- Antonymy preserves strictness: *fewer than* is Class A, as *more than* is. -/
+@[simp] theorem Comparison.isStrict_dual (c : Comparison) : c.dual.isStrict ↔ c.isStrict := by
+  cases c <;> exact Iff.rfl
+
+section Dual
+
+variable {E α : Type*} [Preorder α] (c : Comparison)
+
+/-- The dual comparison exchanges its arguments: *a is shorter than b* exactly when *b is
+taller than a*. -/
+theorem Comparison.rel_dual (a b : α) : c.dual.rel a b ↔ c.rel b a := by
+  cases c <;> simp only [Comparison.dual, Comparison.rel, eq_comm]
+
+/-- The dual comparison on a scale is the comparison on the dual scale. -/
+theorem Comparison.rel_dual_toDual (a b : α) :
+    c.dual.rel a b ↔ c.rel (OrderDual.toDual a) (OrderDual.toDual b) := by
+  cases c <;> exact Iff.rfl
+
+/-- The dual predication is the predication on the dual scale. -/
+theorem Comparison.over_dual (μ : E → α) (n : α) :
+    c.dual.over μ n = c.over (OrderDual.toDual ∘ μ) (OrderDual.toDual n) := by
+  cases c <;> rfl
+
+/-- The bounds of a standard set for the dual comparison are the bounds of the dual set for the
+comparison on the dual scale. -/
+theorem Comparison.bounds_dual (Δ : Set α) :
+    c.dual.bounds Δ = OrderDual.toDual ⁻¹' c.bounds (OrderDual.toDual '' Δ) := by
+  cases c <;> ext x <;>
+    simp [Comparison.bounds, upperBounds, lowerBounds, strictUpperBounds, strictLowerBounds]
+
+/-- The dual set-standard predication is the set-standard predication on the dual scale. -/
+theorem Comparison.overSet_dual (μ : E → α) (Δ : Set α) :
+    c.dual.overSet μ Δ = c.overSet (OrderDual.toDual ∘ μ) (OrderDual.toDual '' Δ) := by
+  ext x
+  simp only [Comparison.mem_overSet, Comparison.bounds_dual, Set.mem_preimage, Function.comp]
+
+end Dual
 
 /-! ### Threshold and measure monotonicity
 
@@ -229,8 +296,7 @@ section ThresholdLinear
 
 variable {E α : Type*} [LinearOrder α] (μ : E → α)
 
-/-- Polarity duality: clearing the threshold is exactly not falling
-    below it. -/
+/-- Clearing the threshold is exactly not falling below it. -/
 theorem Comparison.mem_ge_over_iff_not_mem_lt_over {θ : α} {x : E} :
     x ∈ Comparison.ge.over μ θ ↔ x ∉ Comparison.lt.over μ θ := by
   simp [Comparison.mem_over, Comparison.rel, not_lt]
@@ -271,14 +337,21 @@ theorem Comparison.strictMono_lt_over (hμ : Function.Surjective μ) :
   obtain ⟨w, rfl⟩ := hμ a
   exact lt_irrefl _ (h hab)
 
-/-- The Klein reduction: strict comparison holds iff some threshold
-    separates the two measures. -/
+/-- Strict comparison holds exactly when some threshold separates the two measures, Klein's
+reduction of the comparative. -/
 theorem Comparison.lt_iff_separating_threshold {x y : E} :
     μ y < μ x ↔ ∃ θ, x ∈ Comparison.ge.over μ θ ∧ y ∉ Comparison.ge.over μ θ := by
   constructor
   · exact fun h => ⟨μ x, le_refl _, not_le.mpr h⟩
   · rintro ⟨θ, hx, hy⟩
     exact lt_of_lt_of_le (not_le.mp hy) hx
+
+/-- A comparison is invariant under a strictly monotone change of scale. -/
+theorem Comparison.over_comp {β : Type*} [Preorder β] {f : α → β} (hf : StrictMono f)
+    (c : Comparison) (n : α) : c.over (f ∘ μ) (f n) = c.over μ n := by
+  ext x
+  cases c <;> simp [Comparison.over, Comparison.interval, hf.lt_iff_lt, hf.le_iff_le,
+    hf.injective.eq_iff]
 
 end ThresholdLinear
 
@@ -290,16 +363,12 @@ largest). The same operator underlies both temporal connectives (*before* / *aft
 degree comparatives. `maxOnScale_lt_eq` / `maxOnScale_ge_eq` / `maxOnScale_gt_eq` ground the
 operator in mathlib's `IsLeast` / `IsGreatest`, and the interval evaluations are corollaries. -/
 
-/-- Order-sensitive maximality ([rett-2026], def. 1):
-    MAX_c(X) = { x ∈ X | ∀ x' ∈ X, x' ≠ x → c.rel x x' }.
-    The dominance relation is the reified `Comparison` rather than a lawless
-    `R : α → α → Prop`; each concrete `c` (`.lt`, `.gt`, `.ge`, …) names an
-    order relation via `Comparison.rel`. -/
+/-- Order-sensitive maximality, [rett-2026] (44), picks the elements of `X` that dominate every
+other element under the comparison `c`. -/
 def maxOnScale {α : Type*} [Preorder α] (c : Comparison) (X : Set α) : Set α :=
   { x | x ∈ X ∧ ∀ x' ∈ X, x' ≠ x → c.rel x x' }
 
-/-- MAX on a singleton is that singleton: MAX_c({x}) = {x}.
-    The universal quantifier is vacuously satisfied, so this holds for any `c`. -/
+/-- Maximality on a singleton returns the singleton, for any comparison. -/
 theorem maxOnScale_singleton {α : Type*} [Preorder α] (c : Comparison) (x : α) :
     maxOnScale c {x} = {x} := by
   ext y
@@ -309,8 +378,7 @@ theorem maxOnScale_singleton {α : Type*} [Preorder α] (c : Comparison) (x : α
   · rintro rfl
     exact ⟨rfl, fun x' hx' hne => absurd hx' hne⟩
 
-/-- Grounding: `MAX₍≥₎` is mathlib's `IsGreatest` (the `x' = x` case of the
-    dominance quantifier holds by reflexivity). -/
+/-- Maximality under `≥` picks the greatest element. -/
 theorem maxOnScale_ge_eq {α : Type*} [Preorder α] (X : Set α) :
     maxOnScale .ge X = {x | IsGreatest X x} := by
   ext x
@@ -322,8 +390,8 @@ theorem maxOnScale_ge_eq {α : Type*} [Preorder α] (X : Set α) :
   · exact le_refl _
   · exact hdom y hy hne
 
-/-- Grounding: `MAX₍<₎` is mathlib's `IsLeast` — on a partial order, strictly
-    dominating the *other* elements of `X` on the `<` scale is being the least. -/
+/-- Maximality under `<` picks the least element: on a partial order, strictly dominating the other
+elements of `X` on the `<` scale is being the least. -/
 theorem maxOnScale_lt_eq {α : Type*} [PartialOrder α] (X : Set α) :
     maxOnScale .lt X = {x | IsLeast X x} := by
   ext x
@@ -334,7 +402,7 @@ theorem maxOnScale_lt_eq {α : Type*} [PartialOrder α] (X : Set α) :
     · exact (hdom y hy hne).le
   · exact lt_of_le_of_ne (hlb hy) (Ne.symm hne)
 
-/-- Grounding: `MAX₍>₎` is mathlib's `IsGreatest`, dually to `maxOnScale_lt_eq`. -/
+/-- Maximality under `>` picks the greatest element. -/
 theorem maxOnScale_gt_eq {α : Type*} [PartialOrder α] (X : Set α) :
     maxOnScale .gt X = {x | IsGreatest X x} := by
   ext x
@@ -346,8 +414,7 @@ theorem maxOnScale_gt_eq {α : Type*} [PartialOrder α] (X : Set α) :
     · exact (hdom y hy hne).le
   · exact lt_of_le_of_ne (hub hy) hne
 
-/-- MAX₍<₎ on a closed interval `{x | s ≤ x ∧ x ≤ f}` (= `Set.Icc s f`) is the left
-    endpoint: `IsLeast` grounding plus `isLeast_Icc`. Dual: MAX₍>₎ is `{f}`. -/
+/-- Maximality under `<` on a closed interval is its left endpoint. -/
 theorem maxOnScale_lt_closedInterval {α : Type*} [LinearOrder α]
     (s f : α) (hsf : s ≤ f) :
     maxOnScale .lt { x : α | s ≤ x ∧ x ≤ f } = {s} := by
@@ -355,8 +422,7 @@ theorem maxOnScale_lt_closedInterval {α : Type*} [LinearOrder α]
   exact Set.eq_singleton_iff_unique_mem.mpr
     ⟨isLeast_Icc hsf, fun _ h => h.unique (isLeast_Icc hsf)⟩
 
-/-- MAX₍>₎ on a closed interval `{x | s ≤ x ∧ x ≤ f}` (= `Set.Icc s f`) is the right
-    endpoint. -/
+/-- Maximality under `>` on a closed interval is its right endpoint. -/
 theorem maxOnScale_gt_closedInterval {α : Type*} [LinearOrder α]
     (s f : α) (hsf : s ≤ f) :
     maxOnScale .gt { x : α | s ≤ x ∧ x ≤ f } = {f} := by
@@ -364,33 +430,10 @@ theorem maxOnScale_gt_closedInterval {α : Type*} [LinearOrder α]
   exact Set.eq_singleton_iff_unique_mem.mpr
     ⟨isGreatest_Icc hsf, fun _ h => h.unique (isGreatest_Icc hsf)⟩
 
-/-- A scalar construction f is **ambidirectional** iff
-    applying f to a set B and to its complement Bᶜ yields the same result,
-    because MAX picks the same informative boundary from both.
-    This is the mechanism behind expletive negation licensing: when
-    f(B) ↔ f(Bᶜ), negating B is truth-conditionally vacuous. -/
+/-- A scalar construction `f` is ambidirectional at `B` when it returns the same result on `B` and
+on its complement, as maximality does when it picks the same boundary from both; this is the
+mechanism behind expletive negation. -/
 def isAmbidirectional {α : Type*} (f : Set α → Prop) (B : Set α) : Prop :=
   f B ↔ f Bᶜ
-
-
-/-- **Bridge**: `maxOnScale .ge` applied to the "at least" degree set
-    `{d | d ≤ μ(w)}` yields `{μ(w)}` — the singleton containing the true
-    value. This connects the relational MAX to `IsMaxInf`.
-
-    The convention: `maxOnScale c X` picks elements x ∈ X with `c.rel x x'` for
-    all other x'. With `c = .ge`, this picks elements ≥ all others,
-    i.e., the maximum. -/
-theorem maxOnScale_atLeast_singleton {W α : Type*} [LinearOrder α] (μ : W → α) (w : W) :
-    maxOnScale .ge { d : α | d ≤ μ w } = { μ w } := by
-  rw [maxOnScale_ge_eq]
-  exact Set.eq_singleton_iff_unique_mem.mpr
-    ⟨isGreatest_Iic, fun _ h => h.unique isGreatest_Iic⟩
-
-/-- MAX₍≥₎ on {d | d ≤ b} is {b}. Corollary of `maxOnScale_atLeast_singleton`
-    with `μ = id`. Used by the comparative boundary theorems. -/
-theorem maxOnScale_ge_atMost {α : Type*} [LinearOrder α] (b : α) :
-    maxOnScale .ge {d | d ≤ b} = {b} :=
-  maxOnScale_atLeast_singleton id b
-
 
 end Degree

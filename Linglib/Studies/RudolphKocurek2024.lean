@@ -7,7 +7,6 @@ public import Linglib.Core.ModelTheory.Semantics
 public import Mathlib.Order.Antisymmetrization
 public import Mathlib.Order.Defs.Unbundled
 public import Linglib.Logic.ComparativeProbability.WorldOrdering
-public import Linglib.Semantics.Degree.Basic
 public import Linglib.Semantics.Degree.Delineation
 
 /-!
@@ -28,7 +27,7 @@ truth at every reasonably close interpretation (`evalVery_iff`). The metalinguis
 restricts the ordering to the antecedent's interpretations and so conveys weak comparatives. Under
 No Reversal the comparative reduces to the delineation comparative of Klein, and the supplement's
 revised semantics and degree theory make metalinguistic degrees a bounded linear order on which
-the comparative is the comparative of degree semantics (`mc_iff_comparativeSem`).
+the comparative is the comparative of degree semantics (`mc_iff_formulaDeg_lt`).
 
 ## Implementation notes
 
@@ -521,10 +520,9 @@ abbrev EvalVery : Prop :=
 abbrev EvalSorta : Prop :=
   ¬ EvalVery interp (.not φ) ord d i w
 
-/-- mostly A : some reasonably high level
-strictly below the top makes A uniformly true, and every A-false level below
-the current interpretation sits below it. Compatible with A and with ¬A
-(unlike `very`); entails `sorta A`; `mostly A ∧ mostly ¬A` is contradictory. -/
+/-- *Mostly A* holds when some reasonably high level strictly below the top makes A uniformly true
+and every A-false level below the current interpretation sits below it. It is compatible with A and
+with ¬A, unlike `very`, entails `sorta A`, and `mostly A ∧ mostly ¬A` is contradictory. -/
 def EvalMostly : Prop :=
   ∃ i', ord.lt i' i ∧ d.close i i' ∧
     (∀ j, ord.equiv j i' → Eval interp φ ord j w) ∧
@@ -981,7 +979,7 @@ theorem strictlyBetter_irrefl (X : Finset I) :
   intro ⟨i', hi', _, _, _⟩
   simp at hi'
 
-/-- ∼ refutes ⊐: equivalent sets are incomparable. -/
+/-- Equivalence refutes strict ordering: equivalent sets are incomparable. -/
 theorem degreeEquiv_not_strictlyBetter (X Y : Finset I) :
     degreeEquiv ord i X Y → ¬ strictlyBetter ord i X Y := by
   intro h_eq ⟨i', h_sdiff, _, h_ymx, h_inner⟩
@@ -1447,8 +1445,8 @@ end DegreeBridges
 
 The results above make `MetaDegree` a bounded linear order, a scale in the degree
 substrate's sense. The instances below package that, and
-`mc_iff_comparativeSem` cashes it out: the revised MC is the degree
-substrate's binary comparative over the measure function `formulaDeg`. -/
+`mc_iff_formulaDeg_lt` cashes it out: the revised MC is the point-standard
+comparative of degree semantics over the measure function `formulaDeg`. -/
 
 noncomputable section Scale
 
@@ -1551,16 +1549,14 @@ theorem deg_lt_deg_iff {X Y : Finset I}
     exact ⟨fun hYX ↦ strictlyBetter_irrefl ord i Y
         (strictlyBetter_trans ord i Y X Y hYX h), not_not.mpr h⟩
 
-/-- The revised metalinguistic comparative is the binary comparative of degree semantics
-(`Degree.comparativeSem`, in the positive direction) over the metalinguistic measure function
-`formulaDeg`, which is the paper's (59). Metagradability thereby instantiates the central object of
-degree semantics, a measure `μ : E → D` into a bounded linear scale, with the formulas as `E` and
-the `MetaDegree` scale as `D`. -/
-theorem mc_iff_comparativeSem (A B : ComparativeFormula L E) (w : W) :
+/-- The revised metalinguistic comparative is the point-standard comparative of degree semantics
+over the metalinguistic measure function `formulaDeg`, which is the paper's (59). Metagradability
+thereby instantiates the central object of degree semantics, a measure `μ : E → D` into a bounded
+linear scale, with the formulas as `E` and the `MetaDegree` scale as `D`. -/
+theorem mc_iff_formulaDeg_lt (A B : ComparativeFormula L E) (w : W) :
     EvalRevised interp (.comp A B) ord i w ↔
-    Degree.comparativeSem (fun φ ↦ formulaDeg interp ord i φ w) A B .positive := by
+    formulaDeg interp ord i B w < formulaDeg interp ord i A w := by
   rw [mc_iff_degree_gt]
-  simp only [Degree.comparativeSem_positive]
   exact (deg_lt_deg_iff ord i (denotation_subset_field interp ord i A w)
     (denotation_subset_field interp ord i B w)).symm
 
@@ -1629,8 +1625,8 @@ abbrev Pa : ComparativeFormula (Language.monadic Pred) Entity := .matom Pred.phi
     | .i1, .linguist => true
     | _, _ => false
 
-/-- Observation 1: *Ann is more a linguist than a philosopher* is consistent with her being
-both, and with her being neither. -/
+/-- *Ann is more a linguist than a philosopher* is consistent with her being both and with her being
+neither, Observation 1. -/
 theorem comp_consistent_with_both_and_neither :
     (Eval both (.comp La Pa) ord₃ .i2 .w0 ∧ Eval both La ord₃ .i2 .w0 ∧
       Eval both Pa ord₃ .i2 .w0) ∧
@@ -1657,7 +1653,7 @@ instance : DecidableRel tiedOrd.le := fun _ _ ↦ inferInstanceAs (Decidable (_ 
     | .j1, .philosopher => true
     | _, _ => false
 
-/-- Observation 5: *Ann is as much a linguist as not* is consistent, a borderline case. -/
+/-- *Ann is as much a linguist as not* is consistent, a borderline case, Observation 5. -/
 theorem equi_not_consistent : Eval tied (La.equi (.not La)) tiedOrd .j0 .w0 := by decide
 
 /-- Acceptance is nonclassical, since the tautology is accepted on the tied model while the

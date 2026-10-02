@@ -161,7 +161,7 @@ theorem nonQuantizedChange_of_minStandard
     NonQuantizedChange (fun _ s _ ↦ s = s₀) (Result m b) φ := fun x e hx ↦
   let ⟨h₁, h₂⟩ := h x e hx
   have h₃ := (KennedyLevin2008.minStandard_iff (m s₀) x _ _).1 h₂
-  ⟨s₀, rfl, _, h₁, h₁ ▸ (Degree.comparativeSem_positive _ _ _).1 h₃, rfl⟩
+  ⟨s₀, rfl, _, h₁, h₁ ▸ h₃, rfl⟩
 
 end KennedyLevin
 

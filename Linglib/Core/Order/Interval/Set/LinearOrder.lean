@@ -3,18 +3,26 @@ module
 public import Mathlib.Order.Interval.Set.LinearOrder
 
 /-!
-# Inclusion of an open interval in a closed one
+# Interval inclusions in a linear order
 
 Over a dense order, a nonempty open interval lies inside a closed interval exactly when its
-endpoints do. This is the missing sibling of `Set.Ioo_subset_Ioo_iff` and `Set.Icc_subset_Ioo_iff`,
-an `[UPSTREAM]` addition to `Mathlib.Order.Interval.Set.LinearOrder`.
+endpoints do, the missing sibling of `Set.Ioo_subset_Ioo_iff` and `Set.Icc_subset_Ioo_iff`. And
+in any linear order a ray closed above is never inside a ray open below. Both are `[UPSTREAM]`
+additions to `Mathlib.Order.Interval.Set.LinearOrder`.
 -/
 
 @[expose] public section
 
 namespace Set
 
-variable {α : Type*} [LinearOrder α] [DenselyOrdered α] {a₁ a₂ b₁ b₂ : α}
+variable {α : Type*} [LinearOrder α]
+
+/-- A ray closed above is never inside a ray open below: `min a b` lies in the first and not in
+the second. -/
+theorem not_Iic_subset_Ioi (a b : α) : ¬ Iic a ⊆ Ioi b :=
+  fun h ↦ lt_irrefl b ((h (min_le_left a b)).trans_le (min_le_right a b))
+
+variable [DenselyOrdered α] {a₁ a₂ b₁ b₂ : α}
 
 theorem Ioo_subset_Icc_iff (h₁ : a₁ < b₁) : Ioo a₁ b₁ ⊆ Icc a₂ b₂ ↔ a₂ ≤ a₁ ∧ b₁ ≤ b₂ := by
   refine ⟨fun h ↦ ⟨le_of_not_gt fun h' ↦ ?_, le_of_not_gt fun h' ↦ ?_⟩,
