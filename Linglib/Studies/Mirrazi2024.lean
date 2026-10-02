@@ -1,31 +1,39 @@
 module
 
 public import Linglib.Semantics.Reference.ChoiceFunction
-public import Linglib.Fragments.Farsi.Determiners
+public import Linglib.Logic.Modal.Defs
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Mirrazi (2024): Indefinites in Negated Intensional Contexts
 
-This file formalizes the argument of [mirrazi-2024] from Farsi indefinites under negated
-intensional operators. *Rodica does not think that Carl read some of the books* has a
-reading on which the indefinite scopes above the negation but below *think*, de dicto: no
-syntactic position is at once above the negation and below the attitude, so movement cannot
-derive it, and neg-raising cannot either, since it leaves the indefinite below the negation
-and the reading also arises under predicates that do not raise negation. The paper derives
-the reading from in-situ choice functions whose existential closure sits above the negation
-while the function carries a world variable bound by the attitude (`widePseudoDeDictoTC`,
-against the de re construal `wideDeReTC`). The world variable is what separates the two:
-when the noun's extension and the function are rigid across the belief worlds the truth
-conditions coincide (`deRe_eq_pseudoDeDicto_when_rigid`), the fixed-set problem, and the
-Farsi indefinites, choice-functional with a world variable, are predicted to have the
-reading (`farsi_indefinites_pseudo`).
+*Rodica does not think that Carl read some of the books* has, in Farsi, a reading on which the
+indefinite scopes above the negation but below *think*: Rodica believes that there are books Carl
+did not read, without believing of any particular book that he did not read it. No syntactic
+position is at once above the negation and below the attitude, so Mirrazi derives the reading
+from a choice function closed above the negation whose world argument the attitude binds,
+(44), and likewise for a modal, (48). An intensional choice function, applied to the intension
+of its restrictor but not skolemized to a world, gives only the de re reading when the
+restrictor is the same set in every belief world, (41)–(42): the fixed-set problem.
+
+## Main results
+
+* `skolemized_iff`: closing a world-skolemized function above the negation, with its world
+  argument bound by the operator, gives the reading on which the indefinite scopes below the
+  operator and above the negation.
+* `intensional_iff_of_fixed`: an intensional choice function on a restrictor that is one fixed
+  set across the accessible worlds gives the de re reading.
+* `Scenario40.skolemized`, `Scenario40.not_intensional`, `Scenario40.not_narrow`: in the context
+  of (40) the skolemized function makes the sentence true, no intensional function does, and the
+  narrow reading is false.
 
 ## Implementation notes
 
-The choice-function apparatus, its world-skolemized variant, and the classification of
-indefinites by type and world variable live in `Semantics/Reference/ChoiceFunction`;
-the Farsi determiners are the fragment's. Universal quantifiers, which lack the reading,
-enter only through that classification.
+* Negation is below the attitude, as the paper's excluded-middle presupposition yields; the
+  attitude and the modal are a box over an accessibility relation.
+* The noun's world argument is bound together with the determiner's, as the paper assumes.
+* The paper fixes only the books the function picks in three belief worlds, (45); the scenario
+  makes those books the unread ones, one per world.
 
 ## References
 
@@ -36,42 +44,94 @@ enter only through that classification.
 
 namespace Mirrazi2024
 
-open Reference
-open Farsi.Determiners
+open Reference Quantifier ModalLogic SetRel
 
-section TruthConditions
+variable {W E : Type*} {R : SetRel W W} {w₀ : W} {VP : E → W → Prop}
 
-variable (W E : Type*) (f : SkolemCF W E) (R : E → W → W → Prop) (agent : E) (worlds : List W)
-  (nounProp : W → E → Prop) (vp : E → W → Prop) (w₀ : W)
+/-- Closing a world-skolemized choice function above the negation, with its world argument bound
+by the operator, (44) and (48), makes the sentence true exactly when every accessible world has
+a member of the restrictor that fails the predicate there. -/
+theorem skolemized_iff {N : W → E → Prop} (hN : ∀ w, ∃ x, N w x) :
+    (∃ F : SkolemCF W E, F.IsCorrect ∧ Box R (fun w ↦ ¬ VP (F w (N w)) w) w₀) ↔
+      Box R (fun w ↦ GQ.some (N w) (¬ VP · w)) w₀ := by
+  refine (SkolemCF.exists_isCorrect_forall_iff N fun w x ↦ w₀ ~[R] w → ¬ VP x w).trans <|
+    forall_congr' fun w ↦
+      (CF.exists_isCorrect_iff_some (hN w) fun x ↦ w₀ ~[R] w → ¬ VP x w).trans ?_
+  obtain ⟨b, hb⟩ := hN w
+  refine ⟨fun ⟨x, hx, h⟩ hw ↦ ⟨x, hx, h hw⟩, fun h ↦ ?_⟩
+  by_cases hw : w₀ ~[R] w
+  · obtain ⟨x, hx, h'⟩ := h hw
+    exact ⟨x, hx, fun _ ↦ h'⟩
+  · exact ⟨b, hb, (absurd · hw)⟩
 
-/-- The wide pseudo-scope de dicto reading: in every belief world the individual the function
-picks from that world's extension of the noun fails the predicate. -/
-def widePseudoDeDictoTC : Prop :=
-  ∀ w' ∈ worlds, R agent w₀ w' → ¬ vp (f.applyIntensionAt .bound w' w₀ nounProp) w'
+/-- An intensional choice function applied to a restrictor whose extension is one fixed set `B`
+in every accessible world, (41) with (42), makes the sentence true exactly when one member of `B`
+fails the predicate in every accessible world, the de re reading. -/
+theorem intensional_iff_of_fixed {N : W → E → Prop} {B : E → Prop} (hB : ∃ x, B x)
+    (hN : ∀ w, w₀ ~[R] w → N w = B) :
+    (∃ f : CF E, f.IsCorrect ∧ Box R (fun w ↦ ¬ VP (f (N w)) w) w₀) ↔
+      GQ.some B fun x ↦ Box R (¬ VP x ·) w₀ := by
+  refine Iff.trans ?_ (CF.exists_isCorrect_iff_some hB fun x ↦ Box R (¬ VP x ·) w₀)
+  exact exists_congr fun f ↦ and_congr_right fun _ ↦ forall₂_congr fun w hw ↦
+    iff_of_eq (congrArg (fun N' ↦ ¬ VP (f N') w) (hN w hw))
 
-/-- The wide-scope de re reading: the function's world argument is free, so the individual is
-fixed across the belief worlds. -/
-def wideDeReTC : Prop :=
-  ∀ w' ∈ worlds, R agent w₀ w' → ¬ vp (f.applyIntensionAt .free w' w₀ nounProp) w'
+/-! ### The context of (40) -/
 
-/-- The two readings differ only in whether the function's world argument is bound, so with a
-rigid noun extension and a rigid function they coincide: the fixed-set problem of plain
-intensional choice functions. -/
-theorem deRe_eq_pseudoDeDicto_when_rigid (hRigidNP : ∀ w, nounProp w = nounProp w₀)
-    (hRigidCF : ∀ w, f w = f w₀) :
-    widePseudoDeDictoTC W E f R agent worlds nounProp vp w₀ ↔
-      wideDeReTC W E f R agent worlds nounProp vp w₀ := by
-  simp only [widePseudoDeDictoTC, wideDeReTC, SkolemCF.applyIntensionAt, SkolemCF.applyIntension]
-  constructor <;> intro h w' hw' hR
-  · rw [← hRigidNP w', ← hRigidCF w']; exact h w' hw' hR
-  · rw [hRigidNP w', hRigidCF w']; exact h w' hw' hR
+namespace Scenario40
 
-end TruthConditions
+/-- The five books Carl has to read. -/
+inductive Book where
+  | a | b | c | d | e
+  deriving DecidableEq, Fintype
 
-/-- The Farsi indefinites *ye*, *čand-ta*, and *do-ta* are choice-functional with a world
-variable, so they support the wide pseudo-scope de dicto reading. -/
-theorem farsi_indefinites_pseudo :
-    ∀ e ∈ [ye, candTa, doTa], e.analysis.CanPseudoDeDicto e.hasWorldVar := by
+/-- The actual world and three of Rodica's belief worlds. -/
+inductive World where
+  | actual | w₁ | w₂ | w₃
+  deriving DecidableEq, Fintype
+
+/-- Rodica's belief worlds are the three non-actual ones. -/
+def beliefs : SetRel World World := {p | p.1 = .actual ∧ p.2 ≠ .actual}
+
+instance : DecidableRel (· ~[beliefs] ·) := fun _ _ ↦
+  inferInstanceAs (Decidable (_ ∧ _))
+
+/-- The book Carl did not read in each belief world, as the function picks in (45). -/
+def unread : World → Book → Prop
+  | .w₁, x => x = .a
+  | .w₂, x => x = .c
+  | .w₃, x => x = .e
+  | .actual, _ => False
+
+instance : DecidableRel unread
+  | .w₁, _ | .w₂, _ | .w₃, _ => inferInstanceAs (Decidable (_ = _))
+  | .actual, _ => inferInstanceAs (Decidable False)
+
+/-- Carl read the books other than the unread one. -/
+def Read (x : Book) (w : World) : Prop := ¬ unread w x
+
+/-- Some world-skolemized function makes (40) true in its context. -/
+theorem skolemized :
+    ∃ F : SkolemCF World Book, F.IsCorrect ∧
+      Box beliefs (fun w ↦ ¬ Read (F w fun _ ↦ True) w) .actual :=
+  (skolemized_iff (N := fun _ _ ↦ True) fun _ ↦ ⟨.a, trivial⟩).mpr <| by
+    simp only [Box, GQ.some, Read, not_not]
+    decide
+
+/-- No intensional choice function makes (40) true in its context, since the books are the same
+in every belief world and no book went unread in all of them. -/
+theorem not_intensional :
+    ¬ ∃ f : CF Book, f.IsCorrect ∧ Box beliefs (fun w ↦ ¬ Read (f fun _ ↦ True) w) .actual := by
+  rw [intensional_iff_of_fixed (N := fun _ _ ↦ True) (B := fun _ ↦ True) ⟨.a, trivial⟩
+    fun _ _ ↦ rfl]
+  simp only [Box, GQ.some, Read, not_not]
   decide
+
+/-- The reading with the indefinite below the negation, that Rodica thinks Carl read none of the
+books, is false in the context of (40). -/
+theorem not_narrow : ¬ Box beliefs (fun w ↦ ¬ ∃ x, Read x w) .actual := by
+  simp only [Box, Read]
+  decide
+
+end Scenario40
 
 end Mirrazi2024

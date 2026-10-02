@@ -69,16 +69,17 @@ theorem bi_reading_not_narrow {S E : Type*} (f : SkolemCF S E) {s : S} (hf : (f 
   have h' := (Owusu2022.negation_narrow_iff f hf ⟨a, ha⟩).mp h
   hab ((h' a ha).trans (h' b hb).symm)
 
-/-- The review explains (15) by negation not being an intensional operator, so that the
-situation argument of the choice function cannot be shifted away from the resource situation.
-Pointwise negation is extensional (`ModalLogic.IsExtensionalAt.neg`), so by
-`bound_free_collapse` the bound and free construals of the situation argument of *bí* coincide
-under it, for any function and restrictor. A situation quantifier separates them
-(`bound_free_diverge_box`), so the collapse comes from negation. -/
+/-- The review explains (15) by negation not being an intensional operator, so that it cannot
+shift the situation argument of the choice function away from the resource situation. An
+operator is extensional exactly when it cannot tell an argument whose situation it binds from
+the same argument with the situation fixed (`ModalLogic.isExtensionalAt_iff_forall_diag`), and
+pointwise negation is extensional, so under negation the bound and the free construals of the
+situation argument of *bí* coincide, for any function and restrictor. -/
 theorem bi_negation_construals_collapse {S E : Type*}
     (f : SkolemCF S E) (s₀ : S) (P : S → E → Prop) (VP : E → S → Prop) :
-    (fun p s ↦ ¬ p s) (fun s ↦ VP (f.applyIntensionAt .bound s s₀ P) s) s₀ ↔
-      (fun p s ↦ ¬ p s) (fun s ↦ VP (f.applyIntensionAt .free s s₀ P) s) s₀ :=
-  bound_free_collapse ModalLogic.IsExtensionalAt.neg f P VP
+    (fun p s ↦ ¬ p s) (fun s ↦ VP (f.applyIntension s P) s) s₀ ↔
+      (fun p s ↦ ¬ p s) (fun s ↦ VP (f.applyIntension s₀ P) s) s₀ :=
+  iff_of_eq <| ModalLogic.isExtensionalAt_iff_forall_diag.mp ModalLogic.IsExtensionalAt.neg
+    fun σ s ↦ VP (f.applyIntension σ P) s
 
 end Zimmermann2026
