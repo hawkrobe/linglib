@@ -2,6 +2,7 @@ module
 
 public import Mathlib.Data.Sigma.Order
 public import Linglib.Semantics.Degree.Hom
+public import Linglib.Semantics.Polarity.Basic
 public import Linglib.Semantics.Conditionals.SelectionFunction
 public import Linglib.Data.Examples.Cresswell1976
 
@@ -46,21 +47,22 @@ section Comparative
 
 variable {D : Type*} [LT D] {ω ω' ω₁ ω₂ : Set D} {a b : D}
 
-/-- *er than* on two properties of degrees: both are instantiated and every degree of the
+/-- *Er than* holds of two properties of degrees when both are instantiated and every degree of the
 first exceeds every degree of the second (2.3). -/
 def ErThan (ω ω' : Set D) : Prop := ω.Nonempty ∧ ω'.Nonempty ∧ ∀ a ∈ ω, ∀ b ∈ ω', b < a
 
-/-- *as as*: every degree of the first exceeds or equals every degree of the second (2.7). -/
+/-- *As as* holds when every degree of the first exceeds or equals every degree of the second (2.7).
+-/
 def AsAs (ω ω' : Set D) : Prop := ω.Nonempty ∧ ω'.Nonempty ∧ ∀ a ∈ ω, ∀ b ∈ ω', b < a ∨ b = a
 
-/-- *exactly as as*: the degrees coincide (2.7). -/
+/-- *Exactly as as* holds when the degrees coincide (2.7). -/
 def Exactly (ω ω' : Set D) : Prop := ω.Nonempty ∧ ω'.Nonempty ∧ ∀ a ∈ ω, ∀ b ∈ ω', a = b
 
 theorem ErThan.asAs (h : ErThan ω ω') : AsAs ω ω' :=
-  ⟨h.1, h.2.1, λ a ha b hb => .inl (h.2.2 a ha b hb)⟩
+  ⟨h.1, h.2.1, fun a ha b hb ↦ .inl (h.2.2 a ha b hb)⟩
 
 theorem Exactly.asAs (h : Exactly ω ω') : AsAs ω ω' :=
-  ⟨h.1, h.2.1, λ a ha b hb => .inr (h.2.2 a ha b hb).symm⟩
+  ⟨h.1, h.2.1, fun a ha b hb ↦ .inr (h.2.2 a ha b hb).symm⟩
 
 /-- A phrasal comparative compares its two degrees ((13), (18)). -/
 @[simp] theorem erThan_singleton : ErThan {a} {b} ↔ b < a := by simp [ErThan]
@@ -77,16 +79,16 @@ omit [LT D] in
 than both (footnote 10). -/
 theorem erThan_union (h₁ : ω₁.Nonempty) (h₂ : ω₂.Nonempty) :
     ErThan ω (ω₁ ∪ ω₂) ↔ ErThan ω ω₁ ∧ ErThan ω ω₂ :=
-  ⟨λ ⟨h, _, hlt⟩ => ⟨⟨h, h₁, λ a ha b hb => hlt a ha b (.inl hb)⟩,
-    ⟨h, h₂, λ a ha b hb => hlt a ha b (.inr hb)⟩⟩,
-   λ ⟨⟨h, _, hlt₁⟩, ⟨_, _, hlt₂⟩⟩ =>
-    ⟨h, h₁.inl, λ a ha b hb => hb.elim (hlt₁ a ha b) (hlt₂ a ha b)⟩⟩
+  ⟨fun ⟨h, _, hlt⟩ ↦ ⟨⟨h, h₁, fun a ha b hb ↦ hlt a ha b (.inl hb)⟩,
+    ⟨h, h₂, fun a ha b hb ↦ hlt a ha b (.inr hb)⟩⟩,
+   fun ⟨⟨h, _, hlt₁⟩, ⟨_, _, hlt₂⟩⟩ ↦
+    ⟨h, h₁.inl, fun a ha b hb ↦ hb.elim (hlt₁ a ha b) (hlt₂ a ha b)⟩⟩
 
 /-- Reading a scale downward reverses the comparison: *shorter than* is *taller than* with the
 terms exchanged ((39), (72)). -/
 theorem erThan_image_toDual : ErThan (toDual '' ω) (toDual '' ω') ↔ ErThan ω' ω := by
   simp only [ErThan, Set.image_nonempty, Set.forall_mem_image, toDual_lt_toDual, and_left_comm]
-  exact and_congr_right λ _ => and_congr_right λ _ => forall₂_comm
+  exact and_congr_right fun _ ↦ and_congr_right fun _ ↦ forall₂_comm
 
 end Comparative
 
@@ -94,25 +96,9 @@ section Substrate
 
 variable {E α : Type*} {μ : E → α} {x y : E}
 
-/-- On one scale the phrasal comparative is the substrate's comparative. -/
-theorem erThan_singleton_iff_comparativeSem [Preorder α] :
-    ErThan {μ x} {μ y} ↔ comparativeSem μ x y .positive :=
-  erThan_singleton
-
-/-- On a scale read downward it is the substrate's negative-polarity comparative. -/
-theorem erThan_singleton_toDual_iff_comparativeSem [Preorder α] :
-    ErThan {toDual (μ x)} {toDual (μ y)} ↔ comparativeSem μ x y .negative :=
-  erThan_singleton_toDual
-
-/-- The equative is the substrate's weak equative (2.7). -/
-theorem asAs_singleton_iff_equativeSem [PartialOrder α] :
-    AsAs {μ x} {μ y} ↔ equativeSem μ x y .positive :=
+/-- On one scale the equative is the weak comparison of the two measures (2.7). -/
+theorem asAs_singleton_iff_le [PartialOrder α] : AsAs {μ x} {μ y} ↔ μ y ≤ μ x :=
   asAs_singleton.trans le_iff_lt_or_eq.symm
-
-/-- *Exactly* is the substrate's strengthened equative (2.7). -/
-theorem exactly_singleton_iff_equativeStrengthened [Preorder α] :
-    Exactly {μ x} {μ y} ↔ equativeStrengthened μ x y :=
-  exactly_singleton
 
 end Substrate
 
@@ -130,7 +116,7 @@ theorem ErThan.fst_eq (h : ErThan ω ω') {a b : Σ i, P i} (ha : a ∈ ω) (hb 
 /-- Degree properties on distinct scales are never compared: the anomaly of (23), (65) and
 (69). -/
 theorem not_erThan_of_fst_ne (h : ∀ a ∈ ω, ∀ b ∈ ω', a.1 ≠ b.1) : ¬ ErThan ω ω' :=
-  λ he => let ⟨a, ha⟩ := he.1; let ⟨b, hb⟩ := he.2.1; h a ha b hb (he.fst_eq ha hb)
+  fun he ↦ let ⟨a, ha⟩ := he.1; let ⟨b, hb⟩ := he.2.1; h a ha b hb (he.fst_eq ha hb)
 
 /-- On one scale the comparative is the scale's. -/
 theorem erThan_image_sigmaMk {i : ι} {ω ω' : Set (P i)} :
@@ -141,8 +127,8 @@ end Scales
 
 /-! ### The scales of the paper's comparatives -/
 
-/-- The scales the examples compare on: spatial and temporal distances, volumes, the numbers
-of (3.6), and the unit-free scales of §4. -/
+/-- The examples compare on spatial and temporal distances, volumes, the numbers of (3.6), and the
+unit-free scales of §4. -/
 inductive Scale where
   | distance
   | time
@@ -152,7 +138,7 @@ inductive Scale where
   | beauty
   deriving DecidableEq
 
-/-- A scale read upward or, for *short*, downward: the relation of a degree (2.1). -/
+/-- A directed scale is the relation of a degree read upward or, for *short*, downward (2.1). -/
 abbrev DirectedScale := Scale × Polarity
 
 /-- The scale a `paperFeatures` label names. -/
@@ -185,7 +171,7 @@ theorem scale_ne_of_unacceptable : ∀ d ∈ data, d.2.2 = .unacceptable → d.1
 theorem not_erThan_of_unacceptable {P : DirectedScale → Type*} [∀ s, LT (P s)] {d}
     (hd : d ∈ data) (hj : d.2.2 = .unacceptable) {ω ω' : Set (Σ s, P s)}
     (hω : ∀ a ∈ ω, a.1 = d.1) (hω' : ∀ b ∈ ω', b.1 = d.2.1) : ¬ ErThan ω ω' :=
-  not_erThan_of_fst_ne λ a ha b hb => by
+  not_erThan_of_fst_ne fun a ha b hb ↦ by
     rw [hω a ha, hω' b hb]; exact scale_ne_of_unacceptable d hd hj
 
 /-! ### Superlatives, mass nouns and plurals ((2.6), §3) -/
@@ -194,15 +180,15 @@ section Totality
 
 variable {E D : Type*} [LE D] (ω : E → D → Prop) (ω' : E → Prop)
 
-/-- *tot*: the degree of the greatest part of whatever satisfies both predicates (3.2). -/
+/-- *Tot* gives the degree of the greatest part of whatever satisfies both predicates (3.2). -/
 def tot : Set D := {u | IsGreatest {d | ∃ c, ω' c ∧ ω c d} u}
 
-/-- *est*: `a` bears a unique degree at or above every degree of anything (2.6). -/
+/-- *Est* holds when `a` bears a unique degree at or above every degree of anything (2.6). -/
 def Est (a : E) : Prop := ∃! b, ω a b ∧ b ∈ upperBounds {d | ∃ c, ω c d}
 
 /-- The superlative of a measure holds of a greatest value, ties allowed as in (2.6): *tallest
 spy* (27). -/
-theorem est_iff (μ : E → D) (a : E) : Est (λ c d => μ c = d) a ↔ ∀ c, μ c ≤ μ a := by
+theorem est_iff (μ : E → D) (a : E) : Est (fun c d ↦ μ c = d) a ↔ ∀ c, μ c ≤ μ a := by
   simp [Est, upperBounds, ExistsUnique]
 
 end Totality
@@ -212,7 +198,7 @@ section TotalityOrder
 variable {E D : Type*} [PartialOrder D] {ω : E → D → Prop} {ω' : E → Prop}
 
 theorem tot_eq_singleton {u : D} (h : IsGreatest {d | ∃ c, ω' c ∧ ω c d} u) : tot ω ω' = {u} :=
-  Set.eq_singleton_iff_unique_mem.2 ⟨h, λ _ h' => h'.unique h⟩
+  Set.eq_singleton_iff_unique_mem.2 ⟨h, fun _ h' ↦ h'.unique h⟩
 
 /-- The comparative of two totalities compares their greatest degrees: *more water ebbs than
 mud flows* compares two volumes ((42), (44)). -/
@@ -227,11 +213,11 @@ section Plural
 
 variable {E : Type*} (noun : Finset E) (pred : E → Prop)
 
-/-- *pl*: a nonempty set of things satisfying the noun, with its cardinality, a positive
+/-- *Pl* gives a nonempty set of things satisfying the noun, with its cardinality, a positive
 integer, as degree ((3.6), (49)). -/
 def Pl (a : Finset E) (n : ℕ) : Prop := a ⊆ noun ∧ a.Nonempty ∧ a.card = n
 
-/-- *all*: something satisfies the plural, and everything that does satisfies the predicate
+/-- *All* holds when something satisfies the plural and everything that does satisfies the predicate
 (3.7). -/
 def All {A B : Type*} (ω : A → B → Prop) (ω' : A → Prop) : Prop :=
   (∃ a b, ω a b) ∧ ∀ a, (∃ b, ω a b) → ω' a
@@ -239,27 +225,28 @@ def All {A B : Type*} (ω : A → B → Prop) (ω' : A → Prop) : Prop :=
 /-- The totality of the sets satisfying a distributive predicate is the number of things
 satisfying it: *more men walk* counts the walking men ((54), (55)). -/
 theorem tot_pl [DecidablePred pred] (h : (noun.filter pred).Nonempty) :
-    tot (Pl noun) (λ a => ∀ x ∈ a, pred x) = {(noun.filter pred).card} := by
-  refine tot_eq_singleton ⟨⟨noun.filter pred, λ _ hx => (Finset.mem_filter.1 hx).2,
+    tot (Pl noun) (fun a ↦ ∀ x ∈ a, pred x) = {(noun.filter pred).card} := by
+  refine tot_eq_singleton ⟨⟨noun.filter pred, fun _ hx ↦ (Finset.mem_filter.1 hx).2,
     Finset.filter_subset _ _, h, rfl⟩, ?_⟩
   rintro _ ⟨a, ha, hsub, -, rfl⟩
-  exact Finset.card_le_card λ x hx => Finset.mem_filter.2 ⟨hsub hx, ha x hx⟩
+  exact Finset.card_le_card fun x hx ↦ Finset.mem_filter.2 ⟨hsub hx, ha x hx⟩
 
-/-- *More men walk than birds fly*: the walking men outnumber the flying birds ((52), (55)). -/
+/-- *More men walk than birds fly* holds when the walking men outnumber the flying birds ((52),
+(55)). -/
 theorem erThan_tot_pl (man bird : Finset E) (walk fly : E → Prop) [DecidablePred walk]
     [DecidablePred fly] (hw : (man.filter walk).Nonempty) (hf : (bird.filter fly).Nonempty) :
-    ErThan (tot (Pl man) (λ a => ∀ x ∈ a, walk x)) (tot (Pl bird) (λ a => ∀ x ∈ a, fly x)) ↔
+    ErThan (tot (Pl man) (fun a ↦ ∀ x ∈ a, walk x)) (tot (Pl bird) (fun a ↦ ∀ x ∈ a, fly x)) ↔
       (bird.filter fly).card < (man.filter walk).card := by
   rw [tot_pl _ _ hw, tot_pl _ _ hf, erThan_singleton]
 
 /-- *All men walk* and *every man walks* are synonymous given that there are men, although
 *all* takes the plural and *every* (3.8) the count noun ((56), (57)). -/
 theorem all_pl_iff_forall :
-    All (Pl noun) (λ a => ∀ x ∈ a, pred x) ↔ noun.Nonempty ∧ ∀ x ∈ noun, pred x :=
-  ⟨λ ⟨⟨_, _, hsub, hne, _⟩, h⟩ =>
-    ⟨hne.mono hsub, λ x hx => h noun ⟨_, Finset.Subset.refl _, hne.mono hsub, rfl⟩ x hx⟩,
-   λ ⟨hne, h⟩ => ⟨⟨noun, _, Finset.Subset.refl _, hne, rfl⟩,
-    λ _ ⟨_, hsub, _, _⟩ x hx => h x (hsub hx)⟩⟩
+    All (Pl noun) (fun a ↦ ∀ x ∈ a, pred x) ↔ noun.Nonempty ∧ ∀ x ∈ noun, pred x :=
+  ⟨fun ⟨⟨_, _, hsub, hne, _⟩, h⟩ ↦
+    ⟨hne.mono hsub, fun x hx ↦ h noun ⟨_, Finset.Subset.refl _, hne.mono hsub, rfl⟩ x hx⟩,
+   fun ⟨hne, h⟩ ↦ ⟨⟨noun, _, Finset.Subset.refl _, hne, rfl⟩,
+    fun _ ⟨_, hsub, _, _⟩ x hx ↦ h x (hsub hx)⟩⟩
 
 end Plural
 
@@ -278,8 +265,8 @@ section Counterfactual
 variable {W D : Type*} [Preorder D] (s : Conditional.SelectionFunction W) (height : W → D)
   (smokes : Set W) (w : W)
 
-/-- *If Bill had been a smoker he would be shorter than he is*: his height at the nearest world
-where he smokes is below his actual height ((71)). -/
+/-- *If Bill had been a smoker he would be shorter than he is* holds when his height at the nearest
+world where he smokes is below his actual height ((71)). -/
 theorem erThan_sel :
     ErThan {toDual (height (s.sel w smokes))} {toDual (height w)} ↔
       height (s.sel w smokes) < height w :=

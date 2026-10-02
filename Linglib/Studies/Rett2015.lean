@@ -2,27 +2,30 @@ module
 
 public import Linglib.Data.Examples.Rett2015
 public import Linglib.Fragments.English.Adjectives
-public import Linglib.Semantics.Degree.Basic
+public import Linglib.Semantics.Degree.Antonymy
+public import Linglib.Semantics.Degree.Defs
 
 /-!
 # Rett (2015): The semantics of evaluativity
 
-This file formalizes the book's derivation of the distribution of evaluativity across degree
-constructions, its Table 3.1, from two Neo-Gricean implicatures. A Quantity implicature
-strengthens the otherwise tautological positive construction, and the Marked Meaning
-Principle, after [horn-1984]'s division of pragmatic labor, makes the marked, negative antonym
-evaluative in exactly the polar-invariant constructions, `IsPolarInvariant`, the equatives and
-degree questions in which its unmarked antonym has the same truth conditions. The route
-deriving evaluativity for a construction and antonym polarity, if any, is `implicature`, and
-`evaluative_iff_observed` checks its predictions against every judgment of the table. Polar
-invariance is grounded in the comparison semantics: the strengthened equatives of two
-antonyms are mutually entailing, `exact_equative_antonym_invariant`, while their comparatives
-exclude each other, `comparative_antonym_variant`.
+Rett derives the distribution of evaluativity across degree constructions, her Table 3.1, from two
+Neo-Gricean implicatures. A Quantity implicature strengthens the otherwise tautological positive
+construction, and the Marked Meaning Principle, after Horn's division of pragmatic labor, makes the
+marked, negative antonym evaluative in exactly the polar-invariant constructions, the equatives
+and degree questions in which its unmarked antonym has the same truth conditions.
+
+## Main results
+
+* `evaluative_iff_observed`: the implicature route, `implicature`, predicts every judgment of the
+  table.
+* `exact_equative_antonym_invariant`, `comparative_antonym_variant`: polar invariance grounded in
+  the comparison semantics, the strengthened equatives of two antonyms being mutually entailing and
+  their comparatives excluding each other.
 
 ## Implementation notes
 
-Antonym polarity is the adjective's `Adjective.polarity`, the `Polarity` that
-`Degree.equativeSem` and `Degree.comparativeSem` take as their direction; negative antonyms
+Antonym polarity is the adjective's `Adjective.polarity`, which acts on the comparison of its
+equative and comparative through the order dual, `Polarity.negative • c = c.dual`; negative antonyms
 are the marked members of their pairs ([bierwisch-1989], [kennedy-2007]). The positive
 construction and the measure phrase have no polarity-parametrized semantics in the substrate,
 so their rows of `IsPolarInvariant` are the book's classification.
@@ -46,8 +49,8 @@ open English.Adjectives
 
 /-! ### Polar (in)variance and markedness -/
 
-/-- Rett's polar (in)variance: in a polar-invariant construction the two antonyms yield the
-same truth conditions, so the marked antonym has an unmarked competitor. Equatives and degree
+/-- A construction is polar-invariant, in Rett's sense, when the two antonyms yield the same truth
+conditions in it, so that the marked antonym has an unmarked competitor. Equatives and degree
 questions are polar-invariant; positives, comparatives, and measure phrases are not. -/
 def IsPolarInvariant : Construction → Prop
   | .equative | .degreeQuestion => True
@@ -60,21 +63,20 @@ instance : DecidablePred IsPolarInvariant
 /-- Negative antonyms are the marked members of their pairs. -/
 def IsMarked (p : Polarity) : Prop := p = .negative
 
-instance : DecidablePred IsMarked := λ p => inferInstanceAs (Decidable (p = .negative))
+instance : DecidablePred IsMarked := fun p ↦ inferInstanceAs (Decidable (p = .negative))
 
 /-! ### The implicature derivation -/
 
-/-- The implicature route deriving evaluativity: Quantity (Chapter 3's degree tautology) or
-Manner (Chapter 5's Marked Meaning Principle). -/
+/-- Evaluativity is derived by a Quantity implicature (Chapter 3's degree tautology) or a Manner
+implicature (Chapter 5's Marked Meaning Principle). -/
 inductive Implicature where
   | quantity
   | manner
   deriving DecidableEq, Repr
 
-/-- The implicature deriving evaluativity for a construction and antonym polarity, if any:
-the positive construction is strengthened by Quantity for both antonyms, and the Marked
-Meaning Principle makes the marked antonym of a polar-invariant construction evaluative by
-Manner. -/
+/-- The implicature deriving evaluativity for a construction and antonym polarity, if any, is
+Quantity for the positive construction with either antonym, and Manner, by the Marked Meaning
+Principle, for the marked antonym of a polar-invariant construction. -/
 def implicature (c : Construction) (p : Polarity) : Option Implicature :=
   if c = .positive then some .quantity
   else if IsPolarInvariant c ∧ IsMarked p then some .manner else none
@@ -85,8 +87,8 @@ def Evaluative (c : Construction) (p : Polarity) : Prop := implicature c p ≠ n
 instance (c : Construction) (p : Polarity) : Decidable (Evaluative c p) :=
   inferInstanceAs (Decidable (_ ≠ _))
 
-/-- The Marked Meaning Principle: Manner-derived evaluativity exactly for the marked antonym
-in a polar-invariant construction. -/
+/-- The Marked Meaning Principle makes evaluativity Manner-derived exactly for the marked antonym in
+a polar-invariant construction. -/
 theorem implicature_eq_manner_iff (c : Construction) (p : Polarity) :
     implicature c p = some .manner ↔ IsPolarInvariant c ∧ IsMarked p := by
   cases c <;> cases p <;> decide
@@ -128,45 +130,40 @@ subject's actual measure. -/
 
 section PolarVarianceGrounding
 
-variable {Entity D : Type*} [LinearOrder D] (μ : Entity → D) (a b : Entity)
+variable {Entity D : Type*} [LinearOrder D] (μ : Entity → D) (a b : Entity) (p : Polarity)
 
-/-- "A is exactly as tall as B" and "A is exactly as short as B" are mutually entailing: each
-strengthened equative reduces to `μ a = μ b`. -/
+/-- The strengthened equative of an adjective of either polarity, *as tall as and not taller
+than* or *as short as and not shorter than*, holds exactly when the two measures are equal. -/
+theorem exact_equative_iff_eq :
+    (a ∈ (p • Comparison.ge).over μ (μ b) ∧ a ∉ (p • Comparison.gt).over μ (μ b)) ↔ μ a = μ b := by
+  cases p <;> simp [eq_iff_le_not_lt, and_comm]
+
+/-- The strengthened equatives of two antonyms, *exactly as tall as* and *exactly as short as*,
+are mutually entailing. -/
 theorem exact_equative_antonym_invariant :
-    (equativeSem μ a b .positive ∧ ¬ comparativeSem μ a b .positive) ↔
-      (equativeSem μ a b .negative ∧ ¬ comparativeSem μ a b .negative) := by
-  simp only [equativeSem_positive, equativeSem_negative, comparativeSem_positive,
-    comparativeSem_negative, not_lt]
-  exact and_comm
+    (a ∈ (p • Comparison.ge).over μ (μ b) ∧ a ∉ (p • Comparison.gt).over μ (μ b)) ↔
+      (a ∈ ((Polarity.negative * p) • Comparison.ge).over μ (μ b) ∧
+        a ∉ ((Polarity.negative * p) • Comparison.gt).over μ (μ b)) := by
+  rw [exact_equative_iff_eq, exact_equative_iff_eq]
 
-/-- Both strengthened antonym equatives are the "exactly" reading
-`Degree.equativeStrengthened`. -/
-theorem exact_equative_eq_strengthened :
-    (equativeSem μ a b .positive ∧ ¬ comparativeSem μ a b .positive) ↔
-      equativeStrengthened μ a b := by
-  simp only [equativeSem_positive, comparativeSem_positive, equativeStrengthened, not_lt,
-    le_antisymm_iff]
-  exact and_comm
+/-- The antonym comparatives exclude each other: *A is taller than B* and *A is shorter than B*
+cannot both hold. -/
+theorem comparative_antonyms_exclusive (h : a ∈ (p • Comparison.gt).over μ (μ b)) :
+    a ∉ ((Polarity.negative * p) • Comparison.gt).over μ (μ b) := by
+  cases p <;> simpa using lt_asymm h
 
-/-- The antonym comparatives exclude each other: "A is taller than B" and "A is shorter than
-B" cannot both hold. -/
-theorem comparative_antonyms_exclusive :
-    comparativeSem μ a b .positive → ¬ comparativeSem μ a b .negative :=
-  λ h => lt_asymm h
-
-/-- Whenever the antonyms could differ (`μ a ≠ μ b`), they do: the antonym comparatives have
-complementary truth conditions, so no truth-conditionally equivalent unmarked alternative
-exists. -/
+/-- Wherever the antonyms could differ, `μ a ≠ μ b`, their comparatives are complementary, so no
+truth-conditionally equivalent unmarked alternative exists. -/
 theorem comparative_antonym_variant (h : μ a ≠ μ b) :
-    comparativeSem μ a b .positive ↔ ¬ comparativeSem μ a b .negative := by
-  simp only [comparativeSem_positive, comparativeSem_negative, not_lt]
-  exact ⟨le_of_lt, λ hle => hle.lt_of_ne h.symm⟩
+    a ∈ (p • Comparison.gt).over μ (μ b) ↔
+      a ∉ ((Polarity.negative * p) • Comparison.gt).over μ (μ b) := by
+  cases p <;> simp [lt_iff_le_and_ne, h.symm, h]
 
 end PolarVarianceGrounding
 
 /-! ### Table 3.1 -/
 
-/-- A Table 3.1 judgment: construction, antonym polarity, and whether the sentence is
+/-- A Table 3.1 judgment records the construction, the antonym polarity, and whether the sentence is
 evaluative. The ungrammatical negative-antonym measure phrase carries no judgment. -/
 def datum (e : Datum) : Option (Construction × Polarity × Bool) :=
   do

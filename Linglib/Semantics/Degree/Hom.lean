@@ -13,8 +13,6 @@ public import Linglib.Semantics.Degree.Measure.Dimensioned
 
 /-!
 # Morphisms between gradability representations
-[kamp-1975] [klein-1980] [kennedy-1999] [kennedy-2007] [scontras-2014] [bale-schwarz-2022]
-[cresswell-1976] [bale-2008] [cariani-santorio-wellwood-2023] [mendia-2020]
 
 The maps between the framework objects for gradable predicates, with their faithfulness
 theorems — the degree-semantic analogue of the representation maps in
@@ -61,6 +59,19 @@ threshold induces (`exists_isUpperSet_forall_ne_preimage`).
   its classes (`cresswellSetoid_setoid`).
 * `universalDegree_lt_iff`: Bale's universal scale.
 * `maxComparative_comp`, `positive_not_natural`: which operators are natural in the scale.
+
+## References
+
+* [kamp-1975]
+* [klein-1980]
+* [kennedy-1999]
+* [kennedy-2007]
+* [scontras-2014]
+* [bale-schwarz-2022]
+* [cresswell-1976]
+* [bale-2008]
+* [cariani-santorio-wellwood-2023]
+* [mendia-2020]
 -/
 
 @[expose] public section
@@ -105,14 +116,11 @@ theorem monotone_excludes_nonlinear {Entity : Type*}
   obtain ⟨_, u, u', ⟨X₁, _, hu₁, hnu'₁⟩, ⟨X₂, _, hu'₂, hnu₂⟩⟩ := hnn
   exact hnu₂ (hmono X₁ X₂ (Set.mem_univ _) (Set.mem_univ _) u u' hu₁ hnu'₁ hu'₂)
 
-/-- A concrete nonlinear delineation: two entities whose ordering
-    depends on which other entities are in the comparison class.
-    This models multi-criteria adjectives like "clever" where
-    different subsets apply different ranking criteria.
-
-    The construction: j is "clever" in C when m is absent (math
-    criterion dominates), m is "clever" when j is absent (social
-    criterion dominates). In {j, m}, criteria conflict. -/
+/-- This nonlinear delineation orders two entities differently depending on which other entities are
+in the comparison class, as multi-criteria adjectives like *clever* do when different subsets apply
+different ranking criteria: `j` is clever in `C` when `m` is absent, where the mathematical
+criterion dominates, and `m` is clever when `j` is absent, where the social one does; in `{j, m}`
+the criteria conflict. -/
 inductive NL2 | j | m
 
 def nlDel : ComparisonClass NL2 → NL2 → Prop
@@ -135,19 +143,11 @@ theorem nonlinear_delineation_exists :
     · show ¬(NL2.m ∉ ({NL2.m} : Set NL2))
       simp
 
-/-- **The strict separation theorem**: Klein's delineation framework is
-    strictly more general than degree-based frameworks.
-
-    Forward: every degree function induces a monotone delineation
-    (`measureDelineation_monotone`).
-
-    Backward FAILS: there exist delineations (nonlinear ones) that no
-    degree function can induce, because degree-induced delineations
-    are always monotone, and monotonicity excludes nonlinearity.
-
-    This is the formal content of Klein's critique of degree semantics:
-    multi-criteria adjectives like "clever" require the richer delineation
-    framework. -/
+/-- Klein's delineation framework is strictly more general than degree-based frameworks. Every
+degree function induces a monotone delineation (`measureDelineation_monotone`), but some nonlinear
+delineations are induced by no degree function, since degree-induced delineations are monotone and
+monotonicity excludes nonlinearity. This is the formal content of Klein's critique of degree
+semantics: multi-criteria adjectives like *clever* need the richer delineation framework. -/
 theorem delineation_strictly_more_general :
     -- (i) Degree → Delineation: every degree function induces a monotone delineation
     (∀ (E D : Type*) [LinearOrder D] (μ : E → D),
@@ -319,8 +319,8 @@ then maps any finite scale into the universal scale Ω ≅ ℚ ∩ (0, 1] by
 relative position (`relativeRank`), the homomorphism that licenses
 indirect cross-scale comparison. -/
 
-/-- Two-sided indistinguishability under a comparison `φ`
-    ([cresswell-1976] (4.1)): same φ-profile on the left and right. -/
+/-- Two pairs are indistinguishable under a comparison `φ` when they have the same φ-profile on the
+left and on the right, [cresswell-1976] (4.1). -/
 def cresswellSetoid {E : Type*} (φ : E → E → Prop) : Setoid E where
   r a b := (∀ c, φ a c ↔ φ b c) ∧ (∀ c, φ c a ↔ φ c b)
   iseqv :=
@@ -336,9 +336,9 @@ abbrev CresswellDegree {E : Type*} (φ : E → E → Prop) : Type _ :=
 /-- The comparison a relation induces on its degrees, `⟦a⟧ < ⟦b⟧` iff `φ b a`, strict exactly
 when `φ` is; well-definedness is [cresswell-1976]'s own consistency proof for (4.2). -/
 instance {E : Type*} {φ : E → E → Prop} : LT (CresswellDegree φ) :=
-  ⟨Quotient.lift₂ (λ a b => φ b a) λ a₁ _ _ b₂ hac hbd => propext ((hbd.1 a₁).trans (hac.2 b₂))⟩
+  ⟨Quotient.lift₂ (fun a b ↦ φ b a) fun a₁ _ _ b₂ hac hbd ↦ propext ((hbd.1 a₁).trans (hac.2 b₂))⟩
 
-/-- [cresswell-1976] (4.2): `ā >_φ b̄ iff φ(a, b)`. -/
+/-- The degree of `a` exceeds that of `b` exactly when `φ(a, b)`, [cresswell-1976] (4.2). -/
 @[simp] theorem CresswellDegree.mk_lt_mk {E : Type*} {φ : E → E → Prop} {a b : E} :
     (⟦a⟧ : CresswellDegree φ) < ⟦b⟧ ↔ φ b a :=
   Iff.rfl
@@ -361,14 +361,12 @@ theorem cresswellSetoid_setoid {E : Type*} (s : Setoid E) : cresswellSetoid s = 
     ⟨fun _ ↦ ⟨s.trans' (s.symm' h), s.trans' h⟩,
       fun _ ↦ ⟨(s.trans' · h), (s.trans' · (s.symm' h))⟩⟩⟩
 
-/-- [bale-2008]'s universal-degree homomorphism on a finite scale: the
-    relative position of `d`, valued in an order-isomorphic *model* of
-    Ω (the paper takes Ω to be isomorphic to ℚ ∩ [0, 1]; only the order
-    on the values is ever consumed — universal degrees are ordinal, not
-    arithmetic). Defined on whatever carrier plays the primary scale —
-    in Bale's regime the *quotient*, so equivalent individuals share a
-    universal degree by construction and the value counts equivalence
-    classes, not individuals. -/
+/-- [bale-2008]'s universal-degree homomorphism on a finite scale sends `d` to its relative
+position, valued in an order-isomorphic model of Ω; the paper takes Ω to be isomorphic to ℚ ∩ [0,
+1], but only the order on the values is ever consumed, so universal degrees are ordinal, not
+arithmetic. It is defined on whatever carrier plays the primary scale, in Bale's regime the
+quotient, so equivalent individuals share a universal degree by construction and the value counts
+equivalence classes, not individuals. -/
 def relativeRank {D : Type*} [Fintype D] [LinearOrder D] (d : D) : ℚ :=
   (Finset.univ.filter (· ≤ d)).card / Fintype.card D
 
@@ -414,8 +412,8 @@ section Universal
 
 variable {D : Type*} [LinearOrder D]
 
-/-- The relative position of `d` among the values of a finite scale `S`: the fraction of `S` at
-    or below it. `relativeRank` is the case `S = univ`. -/
+/-- The relative position of `d` among the values of a finite scale `S` is the fraction of `S` at or
+below it; `relativeRank` is the case `S = univ`. -/
 def relativeRankIn (S : Finset D) (d : D) : ℚ := (S.filter (· ≤ d)).card / S.card
 
 theorem relativeRank_eq_relativeRankIn_univ [Fintype D] (d : D) :
@@ -430,12 +428,12 @@ theorem relativeRankIn_lt_iff {S : Finset D} {d₁ d₂ : D} (h₁ : d₁ ∈ S)
   · intro h
     by_contra hle
     exact absurd h (not_lt.2 (Finset.card_le_card
-      (Finset.monotone_filter_right S λ x _ (hx : x ≤ d₂) => hx.trans (not_lt.1 hle))))
+      (Finset.monotone_filter_right S fun x _ (hx : x ≤ d₂) ↦ hx.trans (not_lt.1 hle))))
   · intro h
     refine Finset.card_lt_card ((Finset.ssubset_iff_of_subset
-      (Finset.monotone_filter_right S λ x _ (hx : x ≤ d₁) => hx.trans h.le)).2 ⟨d₂, ?_, ?_⟩)
+      (Finset.monotone_filter_right S fun x _ (hx : x ≤ d₁) ↦ hx.trans h.le)).2 ⟨d₂, ?_, ?_⟩)
     · exact Finset.mem_filter.2 ⟨h₂, le_rfl⟩
-    · exact λ hd => absurd (Finset.mem_filter.1 hd).2 (not_le.2 h)
+    · exact fun hd ↦ absurd (Finset.mem_filter.1 hd).2 (not_le.2 h)
 
 theorem relativeRankIn_le_iff {S : Finset D} {d₁ d₂ : D} (h₁ : d₁ ∈ S) (h₂ : d₂ ∈ S) :
     relativeRankIn S d₁ ≤ relativeRankIn S d₂ ↔ d₁ ≤ d₂ := by
@@ -453,14 +451,14 @@ theorem relativeRankIn_of_forall_ge {S : Finset D} {d : D} (hd : d ∈ S)
   have : S.filter (· ≤ d) = {d} := by
     ext x
     simp only [Finset.mem_filter, Finset.mem_singleton]
-    exact ⟨λ ⟨hx, hxd⟩ => le_antisymm hxd (hmin x hx), by rintro rfl; exact ⟨hd, le_rfl⟩⟩
+    exact ⟨fun ⟨hx, hxd⟩ ↦ le_antisymm hxd (hmin x hx), by rintro rfl; exact ⟨hd, le_rfl⟩⟩
   rw [relativeRankIn, this, Finset.card_singleton, Nat.cast_one]
 
 variable {α : Type*} [Fintype α]
 
-/-- [bale-2008]'s universal degree of `x` under the quasi-order a ranking induces: the relative
-    position of `rank x` among the values the ranking takes. Equivalent elements share a degree,
-    and the denominator counts equivalence classes, not elements. -/
+/-- [bale-2008]'s universal degree of `x` under the quasi-order a ranking induces is the relative
+position of `rank x` among the values the ranking takes. Equivalent elements share a degree, and the
+denominator counts equivalence classes, not elements. -/
 def universalDegree (rank : α → D) (x : α) : ℚ :=
   relativeRankIn (Finset.univ.image rank) (rank x)
 
@@ -501,14 +499,14 @@ theorem universalDegree_of_surjective [Fintype D] {rank : α → D} (h : Functio
 /-- An element ranked at least as high as every other has degree one. -/
 theorem universalDegree_of_forall_le (rank : α → D) {x : α} (h : ∀ y, rank y ≤ rank x) :
     universalDegree rank x = 1 :=
-  relativeRankIn_of_forall_le (Finset.mem_image_of_mem _ (Finset.mem_univ _)) λ d hd => by
+  relativeRankIn_of_forall_le (Finset.mem_image_of_mem _ (Finset.mem_univ _)) fun d hd ↦ by
     obtain ⟨y, -, rfl⟩ := Finset.mem_image.1 hd; exact h y
 
 /-- An element ranked at most as high as every other has degree one over the number of
     classes. -/
 theorem universalDegree_of_forall_ge (rank : α → D) {x : α} (h : ∀ y, rank x ≤ rank y) :
     universalDegree rank x = 1 / (Finset.univ.image rank).card :=
-  relativeRankIn_of_forall_ge (Finset.mem_image_of_mem _ (Finset.mem_univ _)) λ d hd => by
+  relativeRankIn_of_forall_ge (Finset.mem_image_of_mem _ (Finset.mem_univ _)) fun d hd ↦ by
     obtain ⟨y, -, rfl⟩ := Finset.mem_image.1 hd; exact h y
 
 /-- On `Fin n`, position `k` has relative rank `(k + 1) / n`. -/
@@ -529,26 +527,8 @@ scale-morphism): comparatives, equatives, and the max-quantified
 comparative are invariant; the positive form transports only if the
 threshold rides along. This derives the classic observation that
 comparatives are context-independent while the positive form needs a
-contextually fixed standard: *pos* is the one non-natural operator. -/
-
-section Transport
-
-variable {Entity D D' : Type*} [LinearOrder D] [Preorder D']
-  {f : D → D'} {μ : Entity → D}
-
-/-- Comparatives are invariant under change of scale representation. -/
-theorem comparativeSem_comp (hf : StrictMono f) (a b : Entity)
-    (dir : Polarity) :
-    comparativeSem (f ∘ μ) a b dir ↔ comparativeSem μ a b dir := by
-  cases dir <;> exact hf.lt_iff_lt
-
-/-- Equatives are invariant under change of scale representation. -/
-theorem equativeSem_comp (hf : StrictMono f) (a b : Entity)
-    (dir : Polarity) :
-    equativeSem (f ∘ μ) a b dir ↔ equativeSem μ a b dir := by
-  cases dir <;> exact hf.le_iff_le
-
-end Transport
+contextually fixed standard: *pos* is the one non-natural operator. The
+point-standard comparatives and equatives are `Comparison.over_comp`. -/
 
 section TransportMax
 
@@ -597,9 +577,8 @@ theorem positive_not_natural :
 
 end TransportMax
 
-/-- Universal property of the degree construction: any φ-invariant map
-    factors through `CresswellDegree φ` — the quotient is the initial
-    scale a comparison relation determines. -/
+/-- Any φ-invariant map factors through `CresswellDegree φ`, so the quotient is the initial scale a
+comparison relation determines. -/
 theorem factors_through_cresswellDegree {E X : Type*} {φ : E → E → Prop}
     (g : E → X) (hg : ∀ a b, (cresswellSetoid φ).r a b → g a = g b) :
     ∃ ĝ : CresswellDegree φ → X, ĝ ∘ (Quotient.mk (cresswellSetoid φ)) = g :=

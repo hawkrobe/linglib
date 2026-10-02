@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Semantics.Degree.Adjective
-public import Linglib.Semantics.Degree.Basic
 public import Linglib.Fragments.English.Adjectives
 
 /-!
@@ -98,17 +97,17 @@ theorem isCompl_minStandardPos_maxStandardPos_dual [OrderBot D] (μ : Entity →
 
 /-- *The floor is wetter than the countertop* entails *the floor is wet* (49). -/
 theorem minStandardPos_of_comparative [OrderBot D] {μ : Entity → D} {a b : Entity}
-    (h : comparativeSem μ a b .positive) : MinStandardPos μ a :=
+    (h : μ b < μ a) : MinStandardPos μ a :=
   bot_le.trans_lt h
 
 /-- *The floor is drier than the countertop* entails *the countertop is not dry* (50). -/
 theorem not_maxStandardPos_of_comparative [OrderTop D] {μ : Entity → D} {a b : Entity}
-    (h : comparativeSem μ a b .positive) : ¬ MaxStandardPos μ b :=
+    (h : μ b < μ a) : ¬ MaxStandardPos μ b :=
   not_maxStandardPos_of_lt_top (h.trans_le le_top)
 
 /-- *Rod A is longer than rod B* entails neither that A is long nor that it is not (51). -/
 theorem relativePos_undetermined_of_comparative (μ : Entity → D) {a b : Entity}
-    (h : comparativeSem μ a b .positive) :
+    (h : μ b < μ a) :
     (∃ θ, RelativePos μ θ a) ∧ ∃ θ, ¬ RelativePos μ θ a :=
   ⟨⟨μ b, h⟩, μ a, lt_irrefl _⟩
 
