@@ -166,7 +166,7 @@ instance : dreyfusModel.ContextAtRoots :=
 /-- *Dreyfus dared to `e`*, a verb of the two-way signature `+/−` under the causal reading, with
 the nerve as the prerequisite. -/
 def dare (e : V) : PartialProp (dreyfusModel.contexts dreyfusBg) :=
-  sentence (causalReading dreyfusModel dreyfusBg) ⟨some .positive, some .negative⟩ (.NRV, true)
+  sentence (causalReading dreyfusModel dreyfusBg) ⟨.some .positive, .some .negative⟩ (.NRV, true)
     (e, true)
 
 /-- NRV is causally sufficient for MSG, the background settling neither. -/
@@ -216,20 +216,20 @@ theorem nrv_necessary_for_msg :
 /-- (34a) *Dreyfus dared to send a message to the Germans* is felicitous: at every context of the
 background, NRV is causally necessary and sufficient for MSG. -/
 theorem dare_felicitous_for_msg (u : dreyfusModel.contexts dreyfusBg) : (dare .MSG).presup u :=
-  ⟨fun _ hq ↦ by cases hq; exact nrv_sufficient_for_msg,
-    fun _ hq ↦ by cases hq; exact nrv_necessary_for_msg⟩
+  ⟨fun _ hq ↦ by obtain rfl := Flat.coe_inj.1 hq; exact nrv_sufficient_for_msg,
+    fun _ hq ↦ by obtain rfl := Flat.coe_inj.1 hq; exact nrv_necessary_for_msg⟩
 
 /-- (34a) entails that Dreyfus sent the message. -/
 theorem msg_of_dare {u : dreyfusModel.contexts dreyfusBg} (h : (dare .MSG).holds u) :
     dreyfusModel.solve ⊥ u .MSG = true :=
-  holds_signed_of_mem_implied (m := .positive) (q := .positive) rfl h
+  holds_signed_of_implied_eq (m := .positive) (q := .positive) rfl h
 
 /-- (34b) *Dreyfus did not dare to send a message to the Germans* entails that he did not send
 it. -/
 theorem not_msg_of_not_dare {u : dreyfusModel.contexts dreyfusBg}
     (h : (PartialProp.neg (dare .MSG)).holds u) : dreyfusModel.solve ⊥ u .MSG ≠ true :=
   ((causalReading dreyfusModel dreyfusBg).holds_neg _ u).1
-    (holds_signed_of_mem_implied (m := .negative) (q := .negative) rfl h)
+    (holds_signed_of_implied_eq (m := .negative) (q := .negative) rfl h)
 
 /-- (34c) *?/# Dreyfus dared to establish communication with the Germans* is infelicitous: NRV is
 not causally sufficient for COM, which stays unsettled while LST and BRK are unresolved. -/
@@ -306,20 +306,20 @@ courage, engagement, patience, hard-heartedness, the lack of shame and time. *Ja
 strength and *mahtua* being small enough, and both imply only when negated, as does *pystyä*, which
 the paper also allows might be a modal; *laiminlyödä* and *epäröidä* reverse the polarity. -/
 def finnish : List (Finnish.Verb × ImplicationSignature) :=
-  [(Finnish.onnistua, ⟨some .positive, some .negative⟩),
-    (Finnish.uskaltaa, ⟨some .positive, some .negative⟩),
-    (Finnish.viitsiä, ⟨some .positive, some .negative⟩),
-    (Finnish.malttaa, ⟨some .positive, some .negative⟩),
-    (Finnish.hennoa, ⟨some .positive, some .negative⟩),
-    (Finnish.kehdata, ⟨some .positive, some .negative⟩),
-    (Finnish.ehtiä, ⟨some .positive, some .negative⟩),
-    (Finnish.jaksaa, ⟨none, some .negative⟩), (Finnish.mahtua, ⟨none, some .negative⟩),
-    (Finnish.pystyä, ⟨none, some .negative⟩),
-    (Finnish.laiminlyödä, ⟨some .negative, some .positive⟩),
-    (Finnish.epäröidä, ⟨none, some .positive⟩)]
+  [(Finnish.onnistua, ⟨.some .positive, .some .negative⟩),
+    (Finnish.uskaltaa, ⟨.some .positive, .some .negative⟩),
+    (Finnish.viitsiä, ⟨.some .positive, .some .negative⟩),
+    (Finnish.malttaa, ⟨.some .positive, .some .negative⟩),
+    (Finnish.hennoa, ⟨.some .positive, .some .negative⟩),
+    (Finnish.kehdata, ⟨.some .positive, .some .negative⟩),
+    (Finnish.ehtiä, ⟨.some .positive, .some .negative⟩),
+    (Finnish.jaksaa, ⟨⊥, .some .negative⟩), (Finnish.mahtua, ⟨⊥, .some .negative⟩),
+    (Finnish.pystyä, ⟨⊥, .some .negative⟩),
+    (Finnish.laiminlyödä, ⟨.some .negative, .some .positive⟩),
+    (Finnish.epäröidä, ⟨⊥, .some .positive⟩)]
 
 /-- Each signature is the one the Fragment's entry carries. -/
-theorem implicative_eq : ∀ p ∈ finnish, p.1.implicative = some p.2 := by
+theorem implicative_eq : ∀ p ∈ finnish, p.1.implicative = p.2 := by
   decide
 
 /-- A minimal-pair member records the implication signature of its verb, the polarity of its
@@ -327,14 +327,14 @@ matrix, and the polarity of the complement the paper says it implies, if any. -/
 structure Row where
   signature : ImplicationSignature
   matrix : Polarity
-  entails : Option Polarity
+  entails : Flat Polarity
 
 /-- A row from the paper's features. -/
 def Row.ofDatum (e : Datum) : Option Row := do
   let k ← e.parse? "verb" (finnish.map fun p ↦ (p.1.form, p.2))
   let m ← e.parse? "matrix" [("positive", Polarity.positive), ("negated", .negative)]
-  let ent ← e.parse? "entails"
-    [("complement", some Polarity.positive), ("negation", some .negative), ("nothing", none)]
+  let ent : Flat Polarity ← e.parse? "entails"
+    [("complement", ↑Polarity.positive), ("negation", ↑Polarity.negative), ("nothing", ⊥)]
   some ⟨k, m, ent⟩
 
 /-- Every example is a row. -/

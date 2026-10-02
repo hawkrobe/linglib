@@ -158,10 +158,10 @@ structure Presupposition where
   /-- The [karttunen-1971b] factivity class of a factive predicate; `none` for a
       non-factive. -/
   factivity : Option _root_.Presupposition.Factivity := none
-  /-- The [nairn-condoravdi-karttunen-2006] implication signature of an implicative, the
-      polarity of the complement it implies in a positive and in a negative context; `none` for a
-      non-implicative. -/
-  implicative : Option NaturalLogic.ImplicationSignature := none
+  /-- The [nairn-condoravdi-karttunen-2006] implication signature of the verb, the polarity of
+      the complement it implies in a positive and in a negative context; `⊥` for a verb that
+      implies nothing. -/
+  implicative : NaturalLogic.ImplicationSignature := ⊥
   deriving Repr, BEq
 
 /-- One frame-conditioned reading of a verb ([bondarenko-2022] §4.4.3

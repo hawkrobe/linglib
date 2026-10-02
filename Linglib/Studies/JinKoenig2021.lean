@@ -119,7 +119,7 @@ theorem comparative_dual {Entity α : Type*} [LinearOrder α] (μ : Entity → �
 attitude (*fear*) or its affirmation implies the negation of its complement (*forget*,
 *prevent*). -/
 def IsExpletiveNegationTrigger (v : Verb) : Prop :=
-  v.preferentialValence? = some .negative ∨ v.implicative.bind (·.positive) = some .negative
+  v.preferentialValence? = some .negative ∨ v.implicative.positive = .some .negative
 
 instance : DecidablePred IsExpletiveNegationTrigger := fun _ ↦
   inferInstanceAs (Decidable (_ ∨ _))
@@ -131,7 +131,7 @@ theorem negative_valence_is_en_trigger {v : Verb} (h : v.preferentialValence? = 
 /-- A verb whose affirmation implies the negation of its complement is a trigger of the *forget*
 class. -/
 theorem negative_implicative_is_en_trigger {v : Verb}
-    (h : v.implicative.bind (·.positive) = some .negative) :
+    (h : v.implicative.positive = .some .negative) :
     IsExpletiveNegationTrigger v := Or.inr h
 
 open English

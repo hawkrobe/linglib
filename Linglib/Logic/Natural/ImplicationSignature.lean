@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.Polarity.Basic
+public import Linglib.Core.Order.Flat
 
 /-!
 # Implication signatures
@@ -12,6 +13,9 @@ context implies, if any: *manage* is `+/−`, since *managed to leave* implies *
 manage to leave* implies *didn't leave*; *force* is `+/◦`, *refuse* `−/◦`, *hesitate* `◦/+`, and a
 propositional attitude such as *want* is `◦/◦`. MacCartney and Manning count nine signatures,
 covering the two-way and one-way implicatives, the factives and the attitudes.
+
+Each slot of a signature is a flat value, `◦` being `⊥`, so signatures are ordered by how much
+they imply: *force*'s `+/◦` lies below *manage*'s `+/−`, and the attitudes' `◦/◦` is `⊥`.
 
 ## Main definitions
 
@@ -31,19 +35,21 @@ covering the two-way and one-way implicatives, the factives and the attitudes.
 namespace NaturalLogic
 
 /-- The implication signature of a complement-taking operator gives the polarity of the complement
-it implies in a positive context and in a negative context, `none` where it implies nothing. -/
+it implies in a positive context and in a negative context, `⊥` where it implies nothing. -/
 @[ext]
 structure ImplicationSignature where
   /-- The complement's implied polarity in a positive context. -/
-  positive : Option Polarity
+  positive : Flat Polarity
   /-- The complement's implied polarity in a negative context. -/
-  negative : Option Polarity
+  negative : Flat Polarity
   deriving DecidableEq, Repr
 
 namespace ImplicationSignature
 
+variable {s t : ImplicationSignature}
+
 /-- The polarity of the complement implied in a context of polarity `m`. -/
-def implied (s : ImplicationSignature) : Polarity → Option Polarity
+def implied (s : ImplicationSignature) : Polarity → Flat Polarity
   | .positive => s.positive
   | .negative => s.negative
 
@@ -52,6 +58,25 @@ def implied (s : ImplicationSignature) : Polarity → Option Polarity
 
 @[simp] theorem implied_negative (s : ImplicationSignature) : s.implied .negative = s.negative :=
   rfl
+
+theorem implied_injective : Function.Injective implied := fun _ _ h ↦
+  ImplicationSignature.ext (congrFun h .positive) (congrFun h .negative)
+
+/-- One signature is below another when every context implies less under it. -/
+instance : PartialOrder ImplicationSignature :=
+  PartialOrder.lift implied implied_injective
+
+theorem le_iff : s ≤ t ↔ s.positive ≤ t.positive ∧ s.negative ≤ t.negative :=
+  ⟨fun h ↦ ⟨h .positive, h .negative⟩, fun h m ↦ by cases m <;> simp [h.1, h.2]⟩
+
+/-- The signature `◦/◦` implies nothing in either context. -/
+instance : OrderBot ImplicationSignature where
+  bot := ⟨⊥, ⊥⟩
+  bot_le _ := le_iff.2 ⟨bot_le, bot_le⟩
+
+@[simp] theorem bot_positive : (⊥ : ImplicationSignature).positive = ⊥ := rfl
+
+@[simp] theorem bot_negative : (⊥ : ImplicationSignature).negative = ⊥ := rfl
 
 end ImplicationSignature
 

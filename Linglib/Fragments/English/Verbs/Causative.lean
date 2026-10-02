@@ -33,7 +33,7 @@ def cause : Verb := .mkRegular {
   frames := [ArgumentFrame.infinitival]
   readings := [{ frame := ArgumentFrame.infinitival, control := some .objectControl }]
   vendlerClass := some .accomplishment
-  implicative := some ⟨some .positive, none⟩
+  implicative := ⟨.some .positive, ⊥⟩
   levinClasses := {LevinClass.engender} }
 
 /-- *make* takes an object and a bare infinitive, *make him leave*. Levin does not class it (the
@@ -47,7 +47,7 @@ def make : Verb where
   frames := [ArgumentFrame.smallClause]
   readings := [{ frame := ArgumentFrame.smallClause, control := some .objectControl }]
   vendlerClass := some .accomplishment
-  implicative := some ⟨some .positive, none⟩
+  implicative := ⟨.some .positive, ⊥⟩
   levinExcluded := {LevinClass.build, .dub}
 
 /-- *let* is the permissive causative, *let him leave*. -/
@@ -71,7 +71,7 @@ def have_caus : Verb where
   frames := [ArgumentFrame.smallClause]
   readings := [{ frame := ArgumentFrame.smallClause, control := some .objectControl }]
   vendlerClass := some .achievement
-  implicative := some ⟨some .positive, none⟩
+  implicative := ⟨.some .positive, ⊥⟩
   senseTag := .causative
 
 /-- *get* in its causative use takes an object and an infinitive, *get him to leave*. Levin does
@@ -94,7 +94,7 @@ def force : Verb := .mkRegular {
   frames := [ArgumentFrame.infinitival]
   readings := [{ frame := ArgumentFrame.infinitival, control := some .objectControl }]
   vendlerClass := some .accomplishment
-  implicative := some ⟨some .positive, none⟩ }
+  implicative := ⟨.some .positive, ⊥⟩ }
 
 /-- *prevent* takes an object and a *from*-gerund, *prevent him from leaving*. -/
 def prevent : Verb := .mkRegular {
@@ -102,7 +102,7 @@ def prevent : Verb := .mkRegular {
   frames := [ArgumentFrame.gerund]
   readings := [{ frame := ArgumentFrame.gerund, control := some .objectControl }]
   vendlerClass := some .accomplishment
-  implicative := some ⟨some .negative, none⟩ }
+  implicative := ⟨.some .negative, ⊥⟩ }
 
 /-! ### Lexical Causatives -/
 
