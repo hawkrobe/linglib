@@ -95,10 +95,10 @@ noncomputable def kpsSystem : QualitativeProbability (Set (Fin 5)) where
     rw [Set.toFinset_sdiff, Set.toFinset_sdiff]
     exact kps_additive_finset _ _
 
-/-- `kpsFamily` lists the four comparisons of the Kraft–Pratt–Seidenberg order that cancel,
+/-- `kpsFamily` collects the four comparisons of the Kraft–Pratt–Seidenberg order that cancel,
     `p ≻ qs`, `pqs ≻ rt`, `rs ≻ pq` and `qt ≻ ps`. -/
-private def kpsFamily : List (Fin 5 → SignType) :=
-  [![1, -1, 0, -1, 0], ![1, 1, -1, 1, -1], ![-1, -1, 1, 1, 0], ![-1, 1, 0, -1, 1]]
+private def kpsFamily : Multiset (Fin 5 → SignType) :=
+  {![1, -1, 0, -1, 0], ![1, 1, -1, 1, -1], ![-1, -1, 1, 1, 0], ![-1, 1, 0, -1, 1]}
 
 private theorem posSupport_eq_coe_filter (v : Fin 5 → SignType) :
     posSupport v = ↑(Finset.univ.filter fun i ↦ v i = 1) := by ext; simp
@@ -111,7 +111,7 @@ private theorem negSupport_eq_coe_filter (v : Fin 5 → SignType) :
     (`representable_iff_cancellation`) would force `qs ≿ p`. -/
 theorem kps_not_representable : ¬Representable kpsSystem := fun h ↦ by
   have key := (representable_iff_cancellation kpsSystem).mp h kpsFamily (fun v hv ↦ ?_)
-    (by decide) ![1, -1, 0, -1, 0] (List.mem_cons_self ..)
+    (by decide) ![1, -1, 0, -1, 0] (by simp [kpsFamily])
   · revert key
     show ¬kpsRank (posSupport _).toFinset ≤ kpsRank (negSupport _).toFinset
     rw [posSupport_eq_coe_filter, negSupport_eq_coe_filter, Finset.toFinset_coe,
@@ -120,7 +120,7 @@ theorem kps_not_representable : ¬Representable kpsSystem := fun h ↦ by
   · show kpsRank (negSupport v).toFinset ≤ kpsRank (posSupport v).toFinset
     rw [posSupport_eq_coe_filter, negSupport_eq_coe_filter, Finset.toFinset_coe,
       Finset.toFinset_coe]
-    simp only [kpsFamily, List.mem_cons, List.not_mem_nil, or_false] at hv
+    simp only [kpsFamily, Multiset.insert_eq_cons, Multiset.mem_cons, Multiset.mem_singleton] at hv
     rcases hv with rfl | rfl | rfl | rfl <;> decide
 
 end KPSSystem

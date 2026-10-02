@@ -13,20 +13,18 @@ public import Mathlib.RingTheory.Localization.Integer
 
 Scott's representation theorem for qualitative probability on a finite set says that an order
 on the subsets of a finite `W` is represented by a finitely additive probability measure iff it
-satisfies finite cancellation. A comparison
-`A ≿ B` between disjoint sets is a **sign vector** `v : W → SignType`, `A` its
-positive support and `B` its negative support, and cancellation
-(`Cancellation`) says that whenever a list of valid comparisons sums to zero as
-integer vectors, every comparison in it also holds reversed. This is
-equivalent to the balanced-sequence form `FiniteCancellation` of
-`Cancellation.lean` (`cancellation_iff_finiteCancellation`).
+satisfies finite cancellation. A comparison `A ≿ B` between disjoint sets is a **sign vector**
+`v : W → SignType`, `A` its positive support and `B` its negative support, and cancellation
+(`Cancellation`) says that whenever a multiset of valid comparisons sums to zero as integer
+vectors, every comparison in it also holds reversed. This is equivalent to the balanced-sequence
+form `FiniteCancellation` of `Cancellation.lean` (`cancellation_iff_finiteCancellation`).
 
 The hard direction is linear-programming duality over `ℚ` (`Matrix.farkas`),
 on `Fin n` and transported along `Fintype.equivFin`: the weight vectors
 representing the order form a polyhedron, which is nonempty unless a Farkas
 certificate exists, and a certificate is a nonnegative weighting of valid
 comparisons that sums to zero yet weights a strict one. Clearing denominators
-turns it into a list violating `Cancellation`.
+turns it into a multiset violating `Cancellation`.
 
 ## Main declarations
 
@@ -82,44 +80,48 @@ private theorem signCast_eq_ite (s : SignType) :
     (s : ℤ) = (if s = 1 then 1 else 0) - (if s = -1 then 1 else 0) := by
   cases s <;> rfl
 
-/-- `comparisonSum L` sums a list of sign vectors as an integer vector. -/
-def comparisonSum (L : List (W → SignType)) (i : W) : ℤ := (L.map fun v ↦ (v i : ℤ)).sum
+/-- `comparisonSum M` sums a multiset of sign vectors as an integer vector. -/
+def comparisonSum (M : Multiset (W → SignType)) (i : W) : ℤ := (M.map fun v ↦ (v i : ℤ)).sum
 
-@[simp] theorem comparisonSum_nil (i : W) : comparisonSum ([] : List (W → SignType)) i = 0 :=
+@[simp] theorem comparisonSum_zero (i : W) : comparisonSum (0 : Multiset (W → SignType)) i = 0 :=
   rfl
 
-@[simp] theorem comparisonSum_cons (v : W → SignType) (L : List (W → SignType)) (i : W) :
-    comparisonSum (v :: L) i = v i + comparisonSum L i := by
+@[simp] theorem comparisonSum_cons (v : W → SignType) (M : Multiset (W → SignType)) (i : W) :
+    comparisonSum (v ::ₘ M) i = v i + comparisonSum M i := by
   simp [comparisonSum]
 
-theorem comparisonSum_perm {L L' : List (W → SignType)} (h : L.Perm L') :
-    comparisonSum L = comparisonSum L' :=
-  funext fun _ ↦ (h.map _).sum_eq
+@[simp] theorem comparisonSum_add (M N : Multiset (W → SignType)) (i : W) :
+    comparisonSum (M + N) i = comparisonSum M i + comparisonSum N i := by
+  simp [comparisonSum]
+
+theorem comparisonSum_coe (L : List (W → SignType)) (i : W) :
+    comparisonSum (L : Multiset (W → SignType)) i = (L.map fun v ↦ (v i : ℤ)).sum := by
+  simp [comparisonSum]
 
 /-! ### Scott's condition -/
 
-/-- **Scott's cancellation condition** says that when a list of valid comparisons sums to zero
-    as integer vectors, every comparison in the list also holds reversed. -/
+/-- **Scott's cancellation condition** says that when a multiset of valid comparisons sums to
+    zero as integer vectors, every comparison in it also holds reversed. -/
 def Cancellation (ge : Set W → Set W → Prop) : Prop :=
-  ∀ L : List (W → SignType), (∀ v ∈ L, ge (posSupport v) (negSupport v)) →
-    comparisonSum L = 0 → ∀ v ∈ L, ge (negSupport v) (posSupport v)
+  ∀ M : Multiset (W → SignType), (∀ v ∈ M, ge (posSupport v) (negSupport v)) →
+    comparisonSum M = 0 → ∀ v ∈ M, ge (negSupport v) (posSupport v)
 
 /-- Cancellation pulls back along an equivalence of carriers. -/
 theorem Cancellation.transport {α : Type*} (e : W ≃ α) {sys : QualitativeProbability (Set W)}
     (h : Cancellation sys.ge) : Cancellation (sys.transport e).ge := by
-  intro L hvalid hsum v hv
+  intro M hvalid hsum v hv
   have himg : ∀ S : Set α, e.symm '' S = e ⁻¹' S := fun S ↦ by
     rw [Equiv.image_eq_preimage_symm, Equiv.symm_symm]
-  have key := h (L.map (· ∘ e)) ?_ ?_ (v ∘ e) (List.mem_map_of_mem hv)
+  have key := h (M.map (· ∘ e)) ?_ ?_ (v ∘ e) (Multiset.mem_map_of_mem _ hv)
   · show sys.le (e.symm '' posSupport v) (e.symm '' negSupport v)
     rwa [himg, himg]
   · intro w hw
-    obtain ⟨u, hu, rfl⟩ := List.mem_map.mp hw
+    obtain ⟨u, hu, rfl⟩ := Multiset.mem_map.mp hw
     have := hvalid u hu
     change sys.le (e.symm '' negSupport u) (e.symm '' posSupport u) at this
     rwa [himg, himg] at this
   · funext w
-    simpa [comparisonSum, List.map_map, Function.comp_def] using congrFun hsum (e w)
+    simpa [comparisonSum, Multiset.map_map, Function.comp_def] using congrFun hsum (e w)
 
 section Bridge
 
@@ -128,29 +130,33 @@ open scoped Classical
 /-- The integer sum of a list of sign vectors is the difference of the
     membership counts of its two supports. -/
 private theorem comparisonSum_eq_seqCount (L : List (W → SignType)) (i : W) :
-    comparisonSum L i = seqCount i (L.map posSupport) - seqCount i (L.map negSupport) := by
+    comparisonSum (L : Multiset (W → SignType)) i =
+      seqCount i (L.map posSupport) - seqCount i (L.map negSupport) := by
   induction L with
   | nil => simp
   | cons v L ih =>
-    simp only [List.map_cons, seqCount_cons, comparisonSum_cons, ih, mem_posSupport,
-      mem_negSupport, signCast_eq_ite (v i)]
+    simp only [← Multiset.cons_coe, List.map_cons, seqCount_cons, comparisonSum_cons, ih,
+      mem_posSupport, mem_negSupport, signCast_eq_ite (v i)]
     push_cast
     split_ifs <;> ring
 
 /-- The balanced-sequence form implies the sign-vector form. -/
 theorem FiniteCancellation.cancellation {ge : Set W → Set W → Prop}
     (h : FiniteCancellation ge) : Cancellation ge := by
-  intro L hge hsum v hv
-  refine h ((L.erase v).map fun w ↦ (posSupport w, negSupport w)) (posSupport v) (negSupport v)
+  intro M hge hsum v hv
+  set L := (M.erase v).toList
+  refine h (L.map fun w ↦ (posSupport w, negSupport w)) (posSupport v) (negSupport v)
     (fun i ↦ ?_) fun p hp ↦ ?_
-  · have := congrFun ((comparisonSum_perm (List.perm_cons_erase hv)).symm.trans hsum) i
-    rw [comparisonSum_eq_seqCount, List.map_cons, List.map_cons, Pi.zero_apply] at this
+  · have hM : ((v :: L : List (W → SignType)) : Multiset (W → SignType)) = M := by
+      rw [← Multiset.cons_coe, Multiset.coe_toList, Multiset.cons_erase hv]
+    have := congrFun hsum i
+    rw [← hM, comparisonSum_eq_seqCount, List.map_cons, List.map_cons, Pi.zero_apply] at this
     simp only [List.map_map]
-    show seqCount i (posSupport v :: (L.erase v).map posSupport) =
-      seqCount i (negSupport v :: (L.erase v).map negSupport)
+    show seqCount i (posSupport v :: L.map posSupport) =
+      seqCount i (negSupport v :: L.map negSupport)
     omega
   · obtain ⟨w, hw, rfl⟩ := List.mem_map.mp hp
-    exact hge w (List.mem_of_mem_erase hw)
+    exact hge w (Multiset.mem_of_mem_erase (Multiset.mem_toList.1 hw))
 
 /-- Membership counts on the two sides of a list of set pairs differ by the
     sum of the indicator differences. -/
@@ -193,11 +199,12 @@ theorem Cancellation.finiteCancellation (sys : QualitativeProbability (Set W))
   intro prem X Y hbal hprem
   by_contra hYX
   have hXY : sys.le Y X := (sys.total X Y).resolve_left hYX
-  have key := h (((X, Y) :: prem).map normalize) ?_ ?_ (normalize (X, Y)) (List.mem_cons_self ..)
+  have key := h (((X, Y) :: prem).map normalize : List (W → SignType)) ?_ ?_ (normalize (X, Y))
+    (Multiset.mem_coe.2 (List.mem_cons_self ..))
   · rw [negSupport_normalize, posSupport_normalize] at key
     exact hYX ((sys.additive X Y).mpr key)
   · intro v hv
-    obtain ⟨p, hp, rfl⟩ := List.mem_map.mp hv
+    obtain ⟨p, hp, rfl⟩ := List.mem_map.mp (Multiset.mem_coe.1 hv)
     rw [QualitativeProbability.ge, negSupport_normalize, posSupport_normalize]
     rcases List.mem_cons.mp hp with rfl | hp
     · exact (sys.additive Y X).mp hXY
@@ -205,7 +212,7 @@ theorem Cancellation.finiteCancellation (sys : QualitativeProbability (Set W))
   · funext i
     have key := seqCount_sub_seqCount ((X, Y) :: prem) i
     simp only [List.map_cons, hbal i, sub_self, List.sum_cons] at key
-    simp only [comparisonSum, List.map_map, List.map_cons, Function.comp_def, coe_normalize,
+    simp only [comparisonSum_coe, List.map_map, List.map_cons, Function.comp_def, coe_normalize,
       Pi.zero_apply, List.sum_cons]
     omega
 
@@ -237,19 +244,6 @@ private theorem exists_nat_mul {ι : Type*} [Fintype ι] (w : ι → ℚ) (hw : 
   rw [Nat.cast_natAbs, Nat.cast_natAbs, Int.cast_abs, Int.cast_abs, this, abs_mul,
     abs_of_nonneg (hw i)]
 
-private theorem comparisonSum_flatMap {α : Type*} (l : List α) (f : α → List (Fin n → SignType))
-    (i : Fin n) : comparisonSum (l.flatMap f) i = (l.map fun a ↦ comparisonSum (f a) i).sum := by
-  induction l with
-  | nil => rfl
-  | cons a l ih =>
-    simp only [List.flatMap_cons, comparisonSum, List.map_append, List.sum_append,
-      List.map_cons, List.sum_cons] at ih ⊢
-    rw [ih]
-
-private theorem comparisonSum_replicate (m : ℕ) (v : Fin n → SignType) (i : Fin n) :
-    comparisonSum (List.replicate m v) i = m * (v i : ℤ) := by
-  simp [comparisonSum, List.sum_replicate]
-
 /-- Cancellation extends to rational weightings, so a nonnegative weighting of valid
     comparisons that sums to zero reverses every comparison it weights. -/
 private theorem Cancellation.weighted {ge : Set (Fin n) → Set (Fin n) → Prop}
@@ -261,15 +255,18 @@ private theorem Cancellation.weighted {ge : Set (Fin n) → Set (Fin n) → Prop
   have hpos : ∀ u, 0 < w u ↔ 0 < m u := fun u ↦ by
     rw [← Nat.cast_pos (α := ℚ), hm]
     exact ⟨fun h ↦ by positivity, fun h ↦ pos_of_mul_pos_right h (Nat.cast_nonneg D)⟩
-  have hmem : ∀ u, u ∈ Finset.univ.toList.flatMap (fun u ↦ List.replicate (m u) u) ↔ 0 < w u :=
-    fun u ↦ by simp [List.mem_flatMap, List.mem_replicate, hpos, Nat.pos_iff_ne_zero]
-  refine h _ (fun u hu ↦ hvalid u ((hmem u).mp hu)) (funext fun i ↦ ?_) v ((hmem v).mpr hv)
-  have : ((comparisonSum (Finset.univ.toList.flatMap fun u ↦ List.replicate (m u) u) i : ℤ) : ℚ)
-      = D * ∑ u, w u * (u i : ℚ) := by
-    rw [comparisonSum_flatMap, Finset.sum_map_toList, Finset.mul_sum]
+  -- the multiset with `m u` copies of each comparison `u`
+  set M := Finset.univ.val.bind fun u ↦ Multiset.replicate (m u) u
+  have hmem : ∀ u, u ∈ M ↔ 0 < w u := fun u ↦ by
+    simp [M, Multiset.mem_bind, Multiset.mem_replicate, hpos, Nat.pos_iff_ne_zero]
+  refine h M (fun u hu ↦ hvalid u ((hmem u).mp hu)) (funext fun i ↦ ?_) v ((hmem v).mpr hv)
+  have hM : comparisonSum M i = ∑ u, (m u : ℤ) * (u i : ℤ) := by
+    simp [M, comparisonSum, Multiset.map_bind, Multiset.sum_bind, Multiset.map_replicate,
+      Multiset.sum_replicate, Finset.sum_map_val]
+  have : ((comparisonSum M i : ℤ) : ℚ) = D * ∑ u, w u * (u i : ℚ) := by
+    rw [hM, Finset.mul_sum]
     push_cast
-    exact Finset.sum_congr rfl fun u _ ↦ by
-      rw [comparisonSum_replicate]; push_cast; rw [hm]; ring
+    exact Finset.sum_congr rfl fun u _ ↦ by rw [hm]; ring
   rw [hsum, mul_zero] at this
   exact_mod_cast this
 
