@@ -22,8 +22,8 @@ order in which the persons are chosen.
 
 ## Main results
 
-* `Person.System.tripartition_resolve`: in the tripartition, resolution selects the conjunct
-  highest on the hierarchy.
+* `Person.System.tripartition_resolve`: in the tripartition, resolution selects the more
+  prominent conjunct.
 
 ## References
 
@@ -53,10 +53,10 @@ theorem resolveIn_comm (sys : List Person) (a b : Person) :
 def System.resolve (ns : System) (a b : Person) : Person :=
   resolveIn ns.values a b
 
-/-- In the tripartition, resolution selects the conjunct highest on the hierarchy 1 > 2 > 3. -/
+/-- In the tripartition, resolution selects the more prominent conjunct. -/
 theorem System.tripartition_resolve :
     ∀ p ∈ tripartition.values, ∀ q ∈ tripartition.values,
-      tripartition.resolve p q = if p.hierarchyRank ≤ q.hierarchyRank then p else q := by
+      tripartition.resolve p q = if q.prominence ≤ p.prominence then p else q := by
   decide
 
 end Person
