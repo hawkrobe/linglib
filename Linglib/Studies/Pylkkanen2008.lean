@@ -66,17 +66,18 @@ book's correlation of the two tests across Table 2.1 (`table21_static_iff_unerga
 
 namespace Pylkkanen2008
 
+
 open ArgumentStructure Minimalist Examples Semantics.Composition Semantics.Composition.Tree
 
-variable {Entity : Type*} {T : Type*} [LinearOrder T]
+variable {Entity E : Type*}
 
 /-! ### Applicatives: high relates to the event, low to the theme -/
 
 /-- The low applicative (15) relates the direct object `x` to the indirect object `y` by the
 transfer relation `poss`, to-the-possession for a recipient applicative and from-the-possession
 for a source applicative, and asserts that `x` is the theme of the verb `f`. -/
-def lowAppl (theme : ThematicRel Entity T) (poss : Entity → Entity → Prop) (x y : Entity)
-    (f : ThematicRel Entity T) : Event T → Prop :=
+def lowAppl (theme : ThematicRel Entity E) (poss : Entity → Entity → Prop) (x y : Entity)
+    (f : ThematicRel Entity E) : E → Prop :=
   fun e ↦ f x e ∧ theme x e ∧ poss x y
 
 /-- The type of the low applicative head (15), `⟨e,⟨e,⟨⟨e,⟨s,t⟩⟩,⟨s,t⟩⟩⟩⟩`. -/
@@ -113,8 +114,8 @@ theorem lowApplP_composes_transitive : tyBinary (Ty.eet ⇒ Ty.et) Ty.eet = some
 /-- In the derivation (16) of *Mary bought John the book*, the low ApplP takes the verb, whose
 denotation relates its theme to a buying event, and Voice adds the agent by Event
 Identification. -/
-theorem voiceP_lowAppl (agent theme : ThematicRel Entity T) (poss : Entity → Entity → Prop)
-    (buying : Event T → Prop) (mary john book : Entity) (e : Event T) :
+theorem voiceP_lowAppl (agent theme : ThematicRel Entity E) (poss : Entity → Entity → Prop)
+    (buying : E → Prop) (mary john book : Entity) (e : E) :
     eventIdentification agent
         (lowAppl theme poss book john (eventIdentification theme buying)) mary e ↔
       buying e ∧ agent mary e ∧ theme book e ∧ poss book john := by
@@ -124,8 +125,8 @@ theorem voiceP_lowAppl (agent theme : ThematicRel Entity T) (poss : Entity → E
 /-- Over an unergative the constituent of type `⟨e,⟨s,t⟩⟩` is the Voice' whose open argument is
 the agent, and the low ApplP composed with it holds of no event when no participant is both
 agent and theme, the contradiction of (103b). -/
-theorem lowAppl_agent_eq_bot {agent theme : ThematicRel Entity T} (h : Disjoint agent theme)
-    (poss : Entity → Entity → Prop) (run : Event T → Prop) (x y : Entity) :
+theorem lowAppl_agent_eq_bot {agent theme : ThematicRel Entity E} (h : Disjoint agent theme)
+    (poss : Entity → Entity → Prop) (run : E → Prop) (x y : Entity) :
     lowAppl theme poss x y (eventIdentification agent run) = ⊥ := by
   ext e
   simp only [Pi.disjoint_iff, Prop.disjoint_iff] at h
@@ -199,14 +200,14 @@ theorem possessor_dative_transitivity :
 
 /-- Cause (9), the meaning shared by every causative head, relates the event it describes to a
 caused event of which the predicate `f` holds, and introduces no individual. -/
-def cause (CAUSE : Event T → Event T → Prop) (f : Event T → Prop) : Event T → Prop :=
+def cause (CAUSE : E → E → Prop) (f : E → Prop) : E → Prop :=
   fun e ↦ ∃ e', f e' ∧ CAUSE e e'
 
 /-- On the bieventive analysis (14) of *John melted the ice*, Voice relates John to an event
 that causes a melting, the reading (13b); on the θ-role analysis (16), a causer head relates
 John to the melting itself, the reading (15b). -/
-theorem melted_readings (CAUSE : Event T → Event T → Prop) (agent causer : ThematicRel Entity T)
-    (melt : Event T → Prop) (john : Entity) (e : Event T) :
+theorem melted_readings (CAUSE : E → E → Prop) (agent causer : ThematicRel Entity E)
+    (melt : E → Prop) (john : Entity) (e : E) :
     (eventIdentification agent (cause CAUSE melt) john e ↔
         agent john e ∧ ∃ e', melt e' ∧ CAUSE e e') ∧
       (eventIdentification causer melt john e ↔ causer john e ∧ melt e) :=

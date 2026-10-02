@@ -39,8 +39,8 @@ which the plain and extended-now perfects are the two instances.
   interchangeable with a domain restriction on the left boundary (`perf_adv_iff_perf_xn_image`).
 * The non-strict imperfective `UNBOUNDED` is Pancheva's Asp₂ value, (7b), whose strict
   counterpart is `IMPF`.
-* `Event T` and event predicates come from `Semantics/Events/Basic.lean`; tense-aspect
-  composition does not reference the event sort.
+* Event predicates range over any event domain with a temporal trace
+  (`Event.TemporalTrace`).
 
 ## References
 
@@ -79,73 +79,75 @@ instance {T : Type*} [LinearOrder T] (v : ViewpointType) (tt tsit : NonemptyInte
 
 /-! ### Operators -/
 
-variable {T : Type*} [LinearOrder T] {W : Type*}
+open Event (τ)
+
+variable {T : Type*} [LinearOrder T] {W E : Type*} [Event.TemporalTrace E T]
 
 /-- The aspect operator of a relation `R` between the reference time and the run time of an
 event: the reference time stands in `R` to the run time of some event of the predicate. -/
 def IntervalPred.ofRel (R : NonemptyInterval T → NonemptyInterval T → Prop)
-    (P : W → Event T → Prop) : IntervalPred W T :=
-  fun w t ↦ ∃ e : Event T, R t e.τ ∧ P w e
+    (P : W → E → Prop) : IntervalPred W T :=
+  fun w t ↦ ∃ e : E, R t (τ e) ∧ P w e
 
 @[simp] theorem IntervalPred.ofRel_apply {R : NonemptyInterval T → NonemptyInterval T → Prop}
-    {P : W → Event T → Prop} {w : W} {t : NonemptyInterval T} :
-    IntervalPred.ofRel R P w t ↔ ∃ e : Event T, R t e.τ ∧ P w e := Iff.rfl
+    {P : W → E → Prop} {w : W} {t : NonemptyInterval T} :
+    IntervalPred.ofRel R P w t ↔ ∃ e : E, R t (τ e) ∧ P w e := Iff.rfl
 
 /-- The operator is monotone in the relation. -/
 theorem IntervalPred.ofRel_mono {R S : NonemptyInterval T → NonemptyInterval T → Prop}
-    (h : ∀ t s, R t s → S t s) {P : W → Event T → Prop} {w : W} {t : NonemptyInterval T} :
+    (h : ∀ t s, R t s → S t s) {P : W → E → Prop} {w : W} {t : NonemptyInterval T} :
     IntervalPred.ofRel R P w t → IntervalPred.ofRel S P w t :=
   fun ⟨e, hR, hP⟩ ↦ ⟨e, h _ _ hR, hP⟩
 
 /-- The operator of a viewpoint is the operator of its relation between the topic time and the
 situation time. -/
-def ViewpointType.denote (v : ViewpointType) (P : W → Event T → Prop) : IntervalPred W T :=
+def ViewpointType.denote (v : ViewpointType) (P : W → E → Prop) : IntervalPred W T :=
   IntervalPred.ofRel v.ttTSitRelation P
 
 /-- The imperfective, (25), holds where the reference time is properly contained in the run time
 of an event of the predicate. -/
-def IMPF (P : W → Event T → Prop) : IntervalPred W T :=
+def IMPF (P : W → E → Prop) : IntervalPred W T :=
   ViewpointType.imperfective.denote P
 
 /-- The perfective, (28), holds where the run time of an event of the predicate is contained in
 the reference time. -/
-def PRFV (P : W → Event T → Prop) : IntervalPred W T :=
+def PRFV (P : W → E → Prop) : IntervalPred W T :=
   ViewpointType.perfective.denote P
 
 /-- The prospective holds where the reference time precedes an event of the predicate. -/
-def PROSP (P : W → Event T → Prop) : IntervalPred W T :=
+def PROSP (P : W → E → Prop) : IntervalPred W T :=
   ViewpointType.prospective.denote P
 
-/-- The non-strict imperfective of [pancheva-2003], (7b): the reference time is contained,
-not necessarily properly, in the run time of an event of the predicate. -/
-def UNBOUNDED (P : W → Event T → Prop) : IntervalPred W T :=
+/-- The non-strict imperfective, (7b) of [pancheva-2003], holds where the reference time is
+contained, not necessarily properly, in the run time of an event of the predicate. -/
+def UNBOUNDED (P : W → E → Prop) : IntervalPred W T :=
   IntervalPred.ofRel (· ≤ ·) P
 
-variable {P : W → Event T → Prop} {w : W} {t : NonemptyInterval T}
+variable {P : W → E → Prop} {w : W} {t : NonemptyInterval T}
 
-theorem impf_iff : IMPF P w t ↔ ∃ e : Event T, t < e.τ ∧ P w e := Iff.rfl
+theorem impf_iff : IMPF P w t ↔ ∃ e : E, t < τ e ∧ P w e := Iff.rfl
 
-theorem prfv_iff : PRFV P w t ↔ ∃ e : Event T, e.τ ≤ t ∧ P w e := Iff.rfl
+theorem prfv_iff : PRFV P w t ↔ ∃ e : E, τ e ≤ t ∧ P w e := Iff.rfl
 
-theorem prosp_iff : PROSP P w t ↔ ∃ e : Event T, t.isBefore e.τ ∧ P w e := Iff.rfl
+theorem prosp_iff : PROSP P w t ↔ ∃ e : E, t.isBefore (τ e) ∧ P w e := Iff.rfl
 
-theorem unbounded_iff : UNBOUNDED P w t ↔ ∃ e : Event T, t ≤ e.τ ∧ P w e := Iff.rfl
+theorem unbounded_iff : UNBOUNDED P w t ↔ ∃ e : E, t ≤ τ e ∧ P w e := Iff.rfl
 
-theorem impf_entails_unbounded (P : W → Event T → Prop) (w : W) (t : NonemptyInterval T) :
+theorem impf_entails_unbounded (P : W → E → Prop) (w : W) (t : NonemptyInterval T) :
     IMPF P w t → UNBOUNDED P w t :=
   IntervalPred.ofRel_mono (R := (· < ·)) (S := (· ≤ ·)) fun _ _ ↦ le_of_lt
 
 /-- The non-strict imperfective holds at the intervals in the lower closure of the predicate's
 run times. -/
 theorem unbounded_iff_mem_lowerClosure :
-    UNBOUNDED P w t ↔ t ∈ lowerClosure (eventDenotation (P w)) :=
-  ⟨fun ⟨e, hle, hP⟩ ↦ ⟨e.τ, mem_eventDenotation_of hP, hle⟩,
+    UNBOUNDED P w t ↔ t ∈ lowerClosure (τ '' {e | P w e}) :=
+  ⟨fun ⟨e, hle, hP⟩ ↦ ⟨τ e, Set.mem_image_of_mem τ hP, hle⟩,
     fun ⟨_, ⟨e, hP, rfl⟩, hle⟩ ↦ ⟨e, hle, hP⟩⟩
 
 /-- The perfective holds at the intervals in the upper closure of the predicate's run times. -/
 theorem prfv_iff_mem_upperClosure :
-    PRFV P w t ↔ t ∈ upperClosure (eventDenotation (P w)) :=
-  ⟨fun ⟨e, hle, hP⟩ ↦ ⟨e.τ, mem_eventDenotation_of hP, hle⟩,
+    PRFV P w t ↔ t ∈ upperClosure (τ '' {e | P w e}) :=
+  ⟨fun ⟨e, hle, hP⟩ ↦ ⟨τ e, Set.mem_image_of_mem τ hP, hle⟩,
     fun ⟨_, ⟨e, hP, rfl⟩, hle⟩ ↦ ⟨e, hle, hP⟩⟩
 
 /-- The right boundary of a perfect time span is the reference time, (22a). -/

@@ -59,42 +59,45 @@ paper's examples as rows.
 
 namespace Condoravdi2002
 
+open Event (τ)
+
 open Aspect HistoricalAlternatives
 open Modality (TemporalPerspective TemporalOrientation)
 
-variable {W T : Type*} [LinearOrder T] {P : W → Event T → Prop} {Q Q' : SortedProperty W T}
+variable {W T E : Type*} [LinearOrder T] [Event.TemporalTrace E T] {P : W → E → Prop}
+  {Q Q' : SortedProperty W E T}
   {r : Interval (WithTop T)} {t t' : T} {w : W}
 
 /-! ### The operators -/
 
 /-- Present tense: instantiation at the time of utterance. -/
-def PRES (now : T) (Q : SortedProperty W T) (w : W) : Prop := At (Interval.pure ↑now) w Q
+def PRES (now : T) (Q : SortedProperty W E T) (w : W) : Prop := At (Interval.pure ↑now) w Q
 
 /-- The perfect: instantiation at some interval preceding the reference interval. -/
-def PERF (Q : SortedProperty W T) : SortedProperty W T :=
+def PERF (Q : SortedProperty W E T) : SortedProperty W E T :=
   .temporal λ w t => ∃ t' : NonemptyInterval (WithTop T), Interval.Precedes ↑t' t ∧ At ↑t' w Q
 
 /-- MAY and MIGHT: instantiation, in some world of the modal base at the start of the
 reference interval, throughout the interval expanded forward to the end of time. -/
-def MAY (MB : W → T → Set W) (Q : SortedProperty W T) : SortedProperty W T :=
+def MAY (MB : W → T → Set W) (Q : SortedProperty W E T) : SortedProperty W E T :=
   .temporal λ w t => ∃ t₀ : T, IsLeast (t : Set (WithTop T)) ↑t₀ ∧
     ∃ w' ∈ MB w t₀, At (Interval.Ici t₀) w' Q
 
 /-- WOLL, the untensed modal of *will* and *would*: instantiation in every world of the modal
 base at the start of the reference interval, throughout the forward interval. -/
-def WOLL (MB : W → T → Set W) (Q : SortedProperty W T) : SortedProperty W T :=
+def WOLL (MB : W → T → Set W) (Q : SortedProperty W E T) : SortedProperty W E T :=
   .temporal λ w t => ∃ t₀ : T, IsLeast (t : Set (WithTop T)) ↑t₀ ∧
     ∀ w' ∈ MB w t₀, At (Interval.Ici t₀) w' Q
 
 /-- A frame adverbial such as *yesterday*, on a property of eventualities: instantiation within
 the intersection of the reference interval with the period named. The paper leaves it undefined
 on properties of times, which the theorems carry as `IsEventuality`. -/
-def frame (period : Interval (WithTop T)) (Q : SortedProperty W T) : SortedProperty W T :=
+def frame (period : Interval (WithTop T)) (Q : SortedProperty W E T) : SortedProperty W E T :=
   .temporal λ w t => At (t ⊓ period) w Q
 
 /-- *Already*, *yet* and *still*: the identity on properties of states and of times, undefined
 on properties of events. -/
-def phase : SortedProperty W T → Option (SortedProperty W T)
+def phase : SortedProperty W E T → Option (SortedProperty W E T)
   | .eventive _ => none
   | Q => some Q
 
@@ -121,13 +124,13 @@ forward interval. -/
 
 /-- The perfect of an event at a ray: the event ended before the ray starts. -/
 @[simp] theorem at_Ici_perf_eventive_iff {t : T} :
-    At (Interval.Ici t) w (PERF (.eventive P)) ↔ ∃ e, P w e ∧ e.τ.snd < t := by
+    At (Interval.Ici t) w (PERF (.eventive P)) ↔ ∃ e, P w e ∧ (τ e).snd < t := by
   constructor
   · rintro ⟨t', ht', e, he, hle⟩
     exact ⟨e, he, WithTop.coe_lt_coe.1
       (ht' (Interval.coe_le_iff.1 hle).2 (Interval.mem_Ici.2 le_rfl))⟩
   · rintro ⟨e, he, h⟩
-    exact ⟨e.τ.withTop, Interval.precedes_withTop_Ici.2 h, e, he, le_rfl⟩
+    exact ⟨(τ e).withTop, Interval.precedes_withTop_Ici.2 h, e, he, le_rfl⟩
 
 /-- The perfect over MAY at the present: some past time has, in some world of the base at that
 time, the property throughout that time's forward interval. -/
@@ -148,14 +151,14 @@ time, the property throughout that time's forward interval. -/
 at the present has the event starting no earlier than the present. Future orientation is
 obligatory. -/
 theorem pres_may_eventive_iff :
-    PRES now (MAY MB (.eventive P)) w ↔ ∃ w' ∈ MB w now, ∃ e, P w' e ∧ now ≤ e.τ.fst := by
+    PRES now (MAY MB (.eventive P)) w ↔ ∃ w' ∈ MB w now, ∃ e, P w' e ∧ now ≤ (τ e).fst := by
   simp
 
 /-- A modal for the present with a stative predicate, *he might be here*: some world of the base
 at the present has the state persisting at or past the present. The state may have started
 earlier, so future orientation is optional. -/
 theorem pres_may_stative_iff :
-    PRES now (MAY MB (.stative P)) w ↔ ∃ w' ∈ MB w now, ∃ e, P w' e ∧ now ≤ e.τ.snd := by
+    PRES now (MAY MB (.stative P)) w ↔ ∃ w' ∈ MB w now, ∃ e, P w' e ∧ now ≤ (τ e).snd := by
   simp
 
 /-- The modal over the perfect, *he may have won*: some world of the base at the present has
@@ -163,7 +166,7 @@ the event ending before the present. Present perspective, past orientation: the 
 reading. -/
 theorem pres_may_perf_eventive_iff :
     PRES now (MAY MB (PERF (.eventive P))) w ↔
-      ∃ w' ∈ MB w now, ∃ e, P w' e ∧ e.τ.snd < now := by
+      ∃ w' ∈ MB w now, ∃ e, P w' e ∧ (τ e).snd < now := by
   simp
 
 /-- The perfect over the modal, *he might have won*: some past time has, in some world of the
@@ -171,7 +174,7 @@ base at that time, the event starting no earlier than it. Past perspective, futu
 orientation: the counterfactual reading, Mondadori's future in the past. -/
 theorem pres_perf_may_eventive_iff :
     PRES now (PERF (MAY MB (.eventive P))) w ↔
-      ∃ t' < now, ∃ w' ∈ MB w t', ∃ e, P w' e ∧ t' ≤ e.τ.fst := by
+      ∃ t' < now, ∃ w' ∈ MB w t', ∃ e, P w' e ∧ t' ≤ (τ e).fst := by
   simp
 
 /-! ### Frame adverbials -/
@@ -213,10 +216,10 @@ theorem may_antitone {history : HistoricalAlternatives W T}
   exact ⟨w', hBC w h hw', hat.mono hQ (Interval.antitone_Ici h)⟩
 
 /-- The prior-phase half of Löbner's presupposition of *already*: a prior negative phase. -/
-def AlreadyPresup (Q : SortedProperty W T) (w : W) (now : T) : Prop := ∃ t' < now, ¬ PRES t' Q w
+def AlreadyPresup (Q : SortedProperty W E T) (w : W) (now : T) : Prop := ∃ t' < now, ¬ PRES t' Q w
 
 /-- The prior-phase half of Löbner's presupposition of *still*: a prior positive phase. -/
-def StillPresup (Q : SortedProperty W T) (w : W) (now : T) : Prop := ∃ t' < now, PRES t' Q w
+def StillPresup (Q : SortedProperty W E T) (w : W) (now : T) : Prop := ∃ t' < now, PRES t' Q w
 
 /-- *He may already win*: the presupposition of *already* over a metaphysical possibility
 contradicts its assertion. -/
@@ -239,16 +242,16 @@ theorem still_may {history : HistoricalAlternatives W T}
 
 /-- The history relation fixes the instantiation of `Q` at every interval up to its time:
 worlds identical up to `t` agree on `Q` there. -/
-def FixesPast (history : HistoricalAlternatives W T) (Q : SortedProperty W T) : Prop :=
+def FixesPast (history : HistoricalAlternatives W T) (Q : SortedProperty W E T) : Prop :=
   ∀ t w w', w' ∈ history (w, t) →
     ∀ r : Interval (WithTop T), (∀ x ∈ r, x ≤ ↑t) → (At r w Q ↔ At r w' Q)
 
 /-- Worlds agreeing on the events that have begun agree on which events lie within an interval
 of the past. -/
 theorem fixesPast_eventive :
-    FixesPast (ofDatedFacts (λ e : Event T => e.τ.fst) P) (.eventive P) := by
+    FixesPast (ofDatedFacts (λ e : E => (τ e).fst) P) (.eventive P) := by
   intro t w w' h r hr
-  have key : ∀ e : Event T, ↑e.τ.withTop ≤ r → e.τ.fst ≤ t := λ e he =>
+  have key : ∀ e : E, ↑(τ e).withTop ≤ r → (τ e).fst ≤ t := λ e he =>
     WithTop.coe_le_coe.1 (hr _ (Interval.coe_le_iff.1 he).1)
   exact ⟨λ ⟨e, he, hle⟩ => ⟨e, (h e (key e hle)).1 he, hle⟩,
     λ ⟨e, he, hle⟩ => ⟨e, (h e (key e hle)).2 he, hle⟩⟩
@@ -256,9 +259,9 @@ theorem fixesPast_eventive :
 /-- Worlds agreeing on the states that have begun agree on which states overlap an interval of
 the past. -/
 theorem fixesPast_stative :
-    FixesPast (ofDatedFacts (λ e : Event T => e.τ.fst) P) (.stative P) := by
+    FixesPast (ofDatedFacts (λ e : E => (τ e).fst) P) (.stative P) := by
   intro t w w' h r hr
-  have key : ∀ e : Event T, ¬ Disjoint (↑e.τ.withTop) r → e.τ.fst ≤ t := λ e hd => by
+  have key : ∀ e : E, ¬ Disjoint (↑(τ e).withTop) r → (τ e).fst ≤ t := λ e hd => by
     obtain ⟨x, hx, hx'⟩ := Interval.not_disjoint_iff.1 hd
     rw [NonemptyInterval.mem_coe_interval, NonemptyInterval.mem_withTop] at hx
     exact WithTop.coe_le_coe.1 (le_trans hx.1 (hr x hx'))
@@ -321,7 +324,7 @@ inductive Scope
   deriving DecidableEq, Fintype
 
 /-- The scoping as an operator on the property under the modal. -/
-def Scope.lf (MB : W → T → Set W) : Scope → SortedProperty W T → SortedProperty W T
+def Scope.lf (MB : W → T → Set W) : Scope → SortedProperty W E T → SortedProperty W E T
   | .modal, Q => MAY MB Q
   | .modalPerf, Q => MAY MB (PERF Q)
   | .perfModal, Q => PERF (MAY MB Q)
@@ -347,7 +350,7 @@ theorem Scope.orientation_of_perspective_past :
 /-! ### A model -/
 
 /-- A one-world model over integer days, with a winning on day `d`. -/
-def winOn (d : ℤ) : Unit → Event ℤ → Prop := λ _ e => e.τ = NonemptyInterval.pure d
+def winOn (d : ℤ) : Unit → NonemptyInterval ℤ → Prop := λ _ e => e = .pure d
 
 /-- The unrestricted modal base. -/
 def anyWorld : Unit → ℤ → Set Unit := λ _ _ => Set.univ
@@ -380,7 +383,7 @@ def Scope.Sat (s : Scope) (z : Zone) : Prop :=
 
 private theorem winOn_at (d : ℤ) {r : Interval (WithTop ℤ)} (h : Interval.pure ↑d ≤ r) :
     At r () (.eventive (winOn d)) :=
-  ⟨⟨_, .action⟩, rfl, h⟩
+  ⟨_, rfl, h⟩
 
 /-- The zone table is the satisfiability table: a scoping admits a period exactly when its
 sentence about that period can be true, the deviant cells being `frame_modal_past` and
@@ -422,7 +425,7 @@ structure Adverbial where
   /-- The scoping. -/
   scope : Scope
   /-- The sort of the predicate. -/
-  sort : Event.Kind
+  sort : Aspect.Dynamicity
   /-- The zone of the period. -/
   zone : Zone
 
@@ -430,7 +433,7 @@ structure Adverbial where
 def Adverbial.ofRow (row : Datum) : Option Adverbial := do
   guard (row.feature? "construction" = some "adverb")
   return ⟨← row.parse? "scope" scopes,
-    ← row.parse? "sort" [("eventive", Event.Kind.action), ("stative", .state)],
+    ← row.parse? "sort" [("eventive", Aspect.Dynamicity.dynamic), ("stative", .stative)],
     ← row.parse? "adverb" [("past", Zone.past), ("present", .present), ("future", .future)]⟩
 
 /-- The adverbial patterns of [1], [2], [29], [34] and [35]: a frame adverbial is deviant
@@ -440,7 +443,7 @@ the semantics admits by an event within the present. -/
 theorem adverb_rows : ∀ row ∈ Examples.all, ∀ a ∈ Adverbial.ofRow row,
     (row.judgment = .ungrammatical ↔ a.zone ∉ a.scope.zones) ∧
       (row.judgment = .questionable ↔
-        a.scope = .modal ∧ a.sort = .action ∧ a.zone = .present) := by
+        a.scope = .modal ∧ a.sort = .dynamic ∧ a.zone = .present) := by
   decide
 
 /-- What the context says about the issue. -/
@@ -486,7 +489,7 @@ inductive Complement
   deriving DecidableEq
 
 /-- A representative property of the complement's sort. -/
-def Complement.property : Complement → SortedProperty Unit Unit
+def Complement.property : Complement → SortedProperty Unit (NonemptyInterval Unit) Unit
   | .eventive => .eventive λ _ _ => True
   | .perfect => PERF (.eventive λ _ _ => True)
 

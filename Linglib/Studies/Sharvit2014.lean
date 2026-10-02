@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Tense.TenseAspectComposition
+public import Linglib.Semantics.Quantification.Basic
 public import Linglib.Studies.BeaverCondoravdi2003
 public import Linglib.Semantics.Tense.Embedding
 
@@ -41,8 +41,6 @@ namespace Sharvit2014
 
 open Semantics
 
-open Tense.TenseAspectComposition (evalPast evalRel)
-open Aspect (PointPred)
 
 /-- The `EARLIEST` definedness presupposition of `before^{B&C}`: `EARLIEST_C` is defined for
     body `p` iff the set of `C`-times where `p` holds has a least element (mathlib's
@@ -79,16 +77,6 @@ inductive LexicalType
 def quantificationalPast {T : Type*} [LT T]
     (K : Set T) (p : T → Prop) (t : T) : Prop :=
   Quantifier.GQ.some (· ∈ K) (fun t' => t' < t ∧ p t')
-
-/-- The pipeline's existential past is the quantificational past with trivial
-    restrictor: `evalPast` = `quantificationalPast` over `Set.univ`. Together
-    with `pronominalLookup_eq_some_iff_tensePronoun` below, this places both
-    of Sharvit's tense lexical types over operators the rest of the codebase
-    already uses. -/
-theorem evalPast_iff_quantificationalPast {W T : Type*} [LinearOrder T]
-    (p : PointPred W T) (tc : T) (w : W) :
-    evalPast p tc w ↔ quantificationalPast Set.univ (λ t => p ⟨w, t⟩) tc := by
-  simp [evalPast, evalRel, quantificationalPast, Quantifier.GQ.some]
 
 /-- IPF ([sharvit-2014] (27), p. 272): when the body of `before^{B&C}` is the
     quantificational past `[[PAST]]^{K,g}(q)`, and the restrictor `C` is

@@ -1,248 +1,60 @@
 module
 
-public import Mathlib.Order.Basic
-public import Mathlib.Data.Set.Image
 public import Linglib.Core.Order.Interval
 
 /-!
-# Neo-Davidsonian Event Semantics
+# Events
 
-Foundational types and basic API for neo-Davidsonian event semantics
-([davidson-1967], [parsons-1990]). Verbs denote predicates of
-events; thematic roles are independent two-place predicates
-(`ArgumentStructure.ThematicRel`).
+Neo-Davidsonian event semantics ([davidson-1967], [parsons-1990]) quantifies over events, which
+are individuals of their own sort: an event domain is a type `E`, verbs denote predicates on it,
+and thematic roles relate its elements to their participants. The temporal trace `τ` sends each
+event to its run time ([krifka-1998], [champollion-2017]). The trace need not be injective, since
+two distinct events can go on at the same time.
 
 ## Main definitions
 
-* `Event.Kind` — the two sorts of eventualities, actions and states ([bach-1986])
-* `Event` — the unified event type: a runtime interval + its sort
-* `Event.τ` — temporal trace function
-* `Event.isAction` / `Event.isState` — decidable `Prop` sort predicates
-* `Event.isPunctual` / `Event.isDurative` — decidable `Prop` duration predicates
-* `Event.Mereology` — part-of typeclass with τ-monotonicity + sort-preservation
-* `Event.partialOrder` — `PartialOrder` instance derived from `Event.Mereology`
-* `Event.Manner` — manner ontology ([liefke-2024] §4.3)
-* `exampleRun` / `exampleKnow` — concrete `Event ℤ` instances
+* `Event.TemporalTrace`: the temporal trace of an event domain.
 
-## Naming note
+## Implementation notes
 
-`Event` is the unified type for linguistic events. The Bach 1981/1986
-distinction between "eventuality" (genus, sortless) and "event" (narrow
-sense, non-state) has largely collapsed in current practice —
-[champollion-2017] and [zhao-2025] both use "event"
-generically with sort/aktionsart as an inherent attribute. Tense-aspect
-code that doesn't care about sort simply doesn't reference `.sort`;
-sortless construction sites default to `.action`. The lexical feature
-`Aspect.Dynamicity` labels verb entries; the sort here is the ontological
-attribute of a token.
+* Parthood is an order on the event domain from `Semantics/Mereology.lean` (`PartialOrder`,
+  `SemilatticeSup`, `Mereology.ClassicalMereology`). Laws relating it to the trace, such as the
+  requirement of [krifka-1998] and [champollion-2017] that τ preserve sums, are hypotheses of the
+  theorems that need them, and theories that never read a run time take no trace.
+* τ is total, where [champollion-2017] lets trace functions be partial for events not located in
+  time. The richness of [krifka-1998], that every time is the run time of some event, is
+  `Function.Surjective τ`, a hypothesis where a theorem needs it.
+* Run times are `NonemptyInterval T`, so the run time of a sum is the convex hull of the run times
+  of its parts. In [krifka-1998] times form a part structure in which the sum of two separated
+  times is not convex.
+* [bach-1986] divides eventualities into states and non-states; here the division is a property
+  of predicates (`Aspect.Dynamicity`, `Aspect.SortedProperty`), not a field of events.
+* Intervals form an event domain with the identity trace, one event per run time, in which the
+  studies build their satisfiability witnesses.
 
 ## References
 
-* [davidson-1967], [parsons-1990] (neo-Davidsonian foundations)
-* [bach-1986] (action/state ontology)
-* [krifka-1989] (interval-valued runtimes)
-* [champollion-2017], [zhao-2025] (event-as-generic)
-* [liefke-2024] §4.3 (manner ontology)
+* [davidson-1967]
+* [parsons-1990]
+* [bach-1986]
+* [krifka-1998]
+* [champollion-2017]
 -/
 
 @[expose] public section
 
-/-- The two sorts of eventualities: actions, which involve change, and states, which do not
-([bach-1986]). -/
-inductive Event.Kind where
-  | action
-  | state
-  deriving DecidableEq, Repr
-
-/-- An event: a temporal individual with ontological sort. -/
-structure Event (T : Type*) [LinearOrder T] where
-  /-- The temporal extent of this event -/
-  runtime : NonemptyInterval T
-  /-- Ontological sort: action or state ([bach-1986]). -/
-  sort : Event.Kind
-
 namespace Event
 
-variable {T : Type*} [LinearOrder T]
+/-- The temporal trace of an event domain `E`, which sends each event to its run time. -/
+class TemporalTrace (E : Type*) (T : outParam Type*) [LE T] where
+  /-- The run time of an event. -/
+  τ : E → NonemptyInterval T
 
-/-! ### Temporal trace -/
+export TemporalTrace (τ)
 
-/-- Temporal trace function τ(e) = the runtime interval of event e. -/
-@[simp]
-def τ (e : Event T) : NonemptyInterval T :=
-  e.runtime
+/-- Each interval is an event whose run time is itself. -/
+instance {T : Type*} [LE T] : TemporalTrace (NonemptyInterval T) T := ⟨id⟩
 
-/-! ### Sort predicates -/
-
-/-- Is this event an action? -/
-def isAction (e : Event T) : Prop :=
-  e.sort = .action
-
-/-- Is this event a state? -/
-def isState (e : Event T) : Prop :=
-  e.sort = .state
-
-instance : DecidablePred (isAction (T := T)) :=
-  fun e => decEq e.sort .action
-
-instance : DecidablePred (isState (T := T)) :=
-  fun e => decEq e.sort .state
-
-/-- `isAction` and `isState` are complementary. -/
-theorem isAction_iff_not_isState (e : Event T) :
-    e.isAction ↔ ¬ e.isState := by
-  simp only [Event.isAction, Event.isState]
-  cases e.sort <;> decide
-
-/-- `isState` and `isAction` are complementary. -/
-theorem isState_iff_not_isAction (e : Event T) :
-    e.isState ↔ ¬ e.isAction := by
-  simp only [Event.isAction, Event.isState]
-  cases e.sort <;> decide
-
-/-! ### Duration predicates -/
-
-/-- Is this event punctual (instantaneous)? Its runtime is a single point.
-    The temporal-extent counterpart of the dynamicity sort; derived from the
-    runtime via `NonemptyInterval.IsPoint`. -/
-def isPunctual (e : Event T) : Prop :=
-  e.τ.IsPoint
-
-/-- Is this event durative (temporally extended)? -/
-def isDurative (e : Event T) : Prop :=
-  ¬ e.isPunctual
-
-instance : DecidablePred (isPunctual (T := T)) :=
-  fun e => by unfold Event.isPunctual NonemptyInterval.IsPoint; infer_instance
-
-instance : DecidablePred (isDurative (T := T)) :=
-  fun e => by unfold Event.isDurative; infer_instance
-
-/-- `isDurative` and `isPunctual` are complementary. -/
-theorem isDurative_iff_not_isPunctual (e : Event T) :
-    e.isDurative ↔ ¬ e.isPunctual := Iff.rfl
-
-/-! ### Mereology -/
-
-/-- Axioms for event part-of structure. Part-of is a partial order on
-    events with temporal and sort constraints. -/
-class Mereology (T : Type*) [LinearOrder T] where
-  /-- e₁ is a part of e₂ -/
-  partOf : Event T → Event T → Prop
-  /-- Part-of is reflexive -/
-  refl : ∀ e, partOf e e
-  /-- Part-of is antisymmetric -/
-  antisymm : ∀ e₁ e₂, partOf e₁ e₂ → partOf e₂ e₁ → e₁ = e₂
-  /-- Part-of is transitive -/
-  trans : ∀ e₁ e₂ e₃, partOf e₁ e₂ → partOf e₂ e₃ → partOf e₁ e₃
-  /-- τ is monotone: if e₁ ⊑ e₂ then τ(e₁) ⊆ τ(e₂) -/
-  τ_monotone : ∀ e₁ e₂, partOf e₁ e₂ →
-    e₁.runtime ≤ e₂.runtime
-  /-- Sort is preserved under part-of: parts of actions are actions,
-      parts of states are states -/
-  sort_preserved : ∀ e₁ e₂, partOf e₁ e₂ → e₁.sort = e₂.sort
-
-/-- Event mereology induces a `PartialOrder`: parthood is reflexive,
-    transitive, and antisymmetric. -/
-instance partialOrder (T : Type*) [LinearOrder T]
-    [m : Mereology T] : PartialOrder (Event T) where
-  le := m.partOf
-  le_refl := m.refl
-  le_trans := m.trans
-  le_antisymm := m.antisymm
-
-/-! ### Manner -/
-
-/-- A manner: the "how" of an event, individuated as an equivalence class
-    of events under a similarity relation ([liefke-2024] §4.3).
-    Manners are to events what properties are to individuals. -/
-structure Manner (T : Type*) [LinearOrder T] where
-  /-- The characteristic predicate: which events exhibit this manner -/
-  exhibits : Event T → Prop
-
-/-- The manner of an event under a similarity criterion.
-    `e.manner sim` gives the manner class of `e` under `sim`. -/
-def manner (e : Event T) (sim : Event T → Event T → Prop) : Manner T :=
-  ⟨sim e⟩
-
-/-- Two events share a manner iff both satisfy the manner predicate. -/
-def Manner.sharedBy (m : Manner T) (e₁ e₂ : Event T) : Prop :=
-  m.exhibits e₁ ∧ m.exhibits e₂
+@[simp] theorem τ_nonemptyInterval {T : Type*} [LE T] (i : NonemptyInterval T) : τ i = i := rfl
 
 end Event
-
-/-! ### Run-time projection (event predicate → interval set)
-
-The event→interval projection: the set of run-time intervals of the events
-satisfying `P`, i.e. the image of `P` under the temporal trace τ
-([krifka-1989], [krifka-1998]). This is neutral event substrate — the upper
-rung of the projection ladder whose tense-specific lower rungs (`timeTrace`,
-the canonical denotation patterns) live in
-`Semantics/Tense/RunTimes.lean`. It is homed here, upstream of all
-aspect/tense theories, so that subinterval/homogeneity properties can be
-stated as order-theoretic facts about it (see
-`Semantics/Aspect/SubintervalProperty.lean`). -/
-
-section Denotation
-
-variable {T : Type*} [LinearOrder T]
-
-/-- The event→interval projection: the set of run-time intervals of events
-    satisfying `P`, i.e. the image of `P` under the temporal trace τ. Every
-    event-level temporal theory projects to the interval level through this map. -/
-def eventDenotation (P : Event T → Prop) : Set (NonemptyInterval T) :=
-  Event.τ '' { e | P e }
-
-/-- Membership in `eventDenotation`: an interval is a run-time of some `P`-event. -/
-@[simp]
-theorem mem_eventDenotation {P : Event T → Prop} {i : NonemptyInterval T} :
-    i ∈ eventDenotation P ↔ ∃ e, P e ∧ e.τ = i := Iff.rfl
-
-/-- No events satisfy `P` ↔ the denotation is empty. -/
-theorem eventDenotation_eq_empty {P : Event T → Prop} :
-    eventDenotation P = ∅ ↔ ∀ e, ¬ P e := by
-  rw [eventDenotation, Set.image_eq_empty]
-  exact Set.eq_empty_iff_forall_notMem
-
-/-- The run-time of any `P`-event is in the denotation. -/
-theorem mem_eventDenotation_of {P : Event T → Prop} {e : Event T} (he : P e) :
-    e.τ ∈ eventDenotation P :=
-  Set.mem_image_of_mem _ he
-
-end Denotation
-
-/-! ### Concrete examples (ℤ-time events) -/
-
-/-- Example: a running event from time 1 to 5. -/
-def exampleRun : Event ℤ :=
-  ⟨⟨⟨1, 5⟩, by omega⟩, .action⟩
-
-/-- Example: a knowing state from time 0 to 10. -/
-def exampleKnow : Event ℤ :=
-  ⟨⟨⟨0, 10⟩, by omega⟩, .state⟩
-
-/-- The run event is an action. -/
-theorem exampleRun_isAction : exampleRun.isAction := rfl
-
-/-- The know event is a state. -/
-theorem exampleKnow_isState : exampleKnow.isState := rfl
-
-/-- The run event is not a state. -/
-theorem exampleRun_not_state : ¬ exampleRun.isState := by decide
-
-/-- The know event is not an action. -/
-theorem exampleKnow_not_action : ¬ exampleKnow.isAction := by decide
-
-/-- The run event is durative. -/
-theorem exampleRun_isDurative : exampleRun.isDurative := by decide
-
-/-- The run event starts at 1. -/
-theorem exampleRun_start : exampleRun.τ.fst = 1 := rfl
-
-/-- The run event ends at 5. -/
-theorem exampleRun_finish : exampleRun.τ.snd = 5 := rfl
-
-/-- The know event spans 0 to 10. -/
-theorem exampleKnow_runtime :
-    exampleKnow.τ.fst = 0 ∧ exampleKnow.τ.snd = 10 :=
-  ⟨rfl, rfl⟩

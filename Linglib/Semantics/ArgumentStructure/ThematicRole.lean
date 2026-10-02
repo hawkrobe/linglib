@@ -1,14 +1,13 @@
 module
 
-public import Linglib.Semantics.Events.Basic
+public import Mathlib.Tactic.TypeStar
 
 /-!
 # Thematic roles
 
-This file defines neo-Davidsonian thematic relations ([davidson-1967], [parsons-1990]). A
-thematic relation relates an entity to an event, an event relation generalizes the second
-argument to any sort ([rudin-2025b]), and a thematic frame assigns the standard role relations
-of a model.
+Neo-Davidsonian thematic relations ([davidson-1967], [parsons-1990]) relate an entity to an
+event of an event domain `E`, an event relation generalizes the second argument to any sort
+([rudin-2025b]), and a thematic frame assigns the standard role relations of a model.
 
 ## Main definitions
 
@@ -27,33 +26,33 @@ namespace ArgumentStructure
 
 /-- A thematic relation relates an entity to an event: `agent j e` says that `j` is the agent
 of `e`. -/
-abbrev ThematicRel (Entity T : Type*) [LinearOrder T] := Entity → Event T → Prop
+abbrev ThematicRel (Entity E : Type*) := Entity → E → Prop
 
 /-- A relation between an event and an argument of any sort, such as a proposition, a question
 or a performance ([rudin-2025b]); the event comes first, as for content and reenactment
 relations, where `ThematicRel` puts the entity first. -/
-abbrev EventRel (T α : Type*) [LinearOrder T] := Event T → α → Prop
+abbrev EventRel (E α : Type*) := E → α → Prop
 
 /-- A thematic frame assigns the role relations of a model. The holder role is distinct from
 the agent: it selects states, where the agent selects actions. -/
-structure ThematicFrame (Entity T : Type*) [LinearOrder T] where
+structure ThematicFrame (Entity E : Type*) where
   /-- The agent, the volitional causer. -/
-  agent : ThematicRel Entity T
+  agent : ThematicRel Entity E
   /-- The patient, the affected entity. -/
-  patient : ThematicRel Entity T
+  patient : ThematicRel Entity E
   /-- The theme, the entity in a state or location. -/
-  theme : ThematicRel Entity T
+  theme : ThematicRel Entity E
   /-- The experiencer, the perceiver or cognizer. -/
-  experiencer : ThematicRel Entity T
+  experiencer : ThematicRel Entity E
   /-- The goal, the recipient or target. -/
-  goal : ThematicRel Entity T
+  goal : ThematicRel Entity E
   /-- The source, the origin. -/
-  source : ThematicRel Entity T
+  source : ThematicRel Entity E
   /-- The instrument, the means. -/
-  instrument : ThematicRel Entity T
+  instrument : ThematicRel Entity E
   /-- The stimulus, the cause of an experience. -/
-  stimulus : ThematicRel Entity T
+  stimulus : ThematicRel Entity E
   /-- The holder, the entity in a state. -/
-  holder : ThematicRel Entity T
+  holder : ThematicRel Entity E
 
 end ArgumentStructure

@@ -61,9 +61,11 @@ homogeneity criterion with negation playing no role (`diagnostics_predicted`).
 
 namespace Giannakidou2002
 
+open Event (τ)
+
 open Aspect Tense Karttunen1974 Heinamaki1974
 
-variable {W T : Type*} [LinearOrder T]
+variable {W T E : Type*} [LinearOrder T] [Event.TemporalTrace E T]
 
 /-! ### Durative UNTIL and homogeneity -/
 
@@ -72,10 +74,10 @@ it holds at. -/
 def Homogeneous (p : IntervalPred W T) : Prop :=
   ∀ w, ∀ i j : NonemptyInterval T, j ≤ i → p w i → p w j
 
-theorem impf_homogeneous (P : W → Event T → Prop) : Homogeneous (IMPF P) :=
+theorem impf_homogeneous (P : W → E → Prop) : Homogeneous (IMPF P) :=
   λ _ _ _ hji ⟨e, hlt, he⟩ => ⟨e, lt_of_le_of_lt hji hlt, he⟩
 
-theorem unbounded_homogeneous (P : W → Event T → Prop) : Homogeneous (UNBOUNDED P) :=
+theorem unbounded_homogeneous (P : W → E → Prop) : Homogeneous (UNBOUNDED P) :=
   λ _ _ _ hji ⟨e, hle, he⟩ => ⟨e, hji.trans hle, he⟩
 
 /-- Durative UNTIL: the description holds at every subinterval of a nondegenerate interval ending
@@ -92,7 +94,7 @@ theorem durativeUntil_iff_of_homogeneous {p : IntervalPred W T} (hp : Homogeneou
 
 /-- A perfective description of a single event is incompatible with durative UNTIL: an
 achievement or accomplishment cannot lie within both endpoints of the until interval. -/
-theorem not_durativeUntil_prfv {P : W → Event T → Prop} {w : W}
+theorem not_durativeUntil_prfv {P : W → E → Prop} {w : W}
     (hP : ∀ e e', P w e → P w e' → e = e') (t' : T) : ¬ durativeUntil (PRFV P) w t' := by
   rintro ⟨i, hi, -, h⟩
   obtain ⟨e₁, h₁, he₁⟩ :=
@@ -101,43 +103,43 @@ theorem not_durativeUntil_prfv {P : W → Event T → Prop} {w : W}
     h (NonemptyInterval.pure i.snd) (NonemptyInterval.le_def.mpr ⟨i.fst_le_snd, le_rfl⟩)
   obtain rfl := hP e₁ e₂ he₁ he₂
   exact absurd ((NonemptyInterval.le_def.mp h₂).1.trans
-    (e₁.τ.fst_le_snd.trans (NonemptyInterval.le_def.mp h₁).2)) (not_le.mpr hi)
+    ((τ e₁).fst_le_snd.trans (NonemptyInterval.le_def.mp h₁).2)) (not_le.mpr hi)
 
 /-! ### Negation: wide scope, narrow scope and the eventive UNTIL -/
 
 /-- The state of not-P-ing that a stativizing negation would deliver: no P-event overlaps the
 interval. -/
-def notState (P : W → Event T → Prop) : IntervalPred W T :=
-  λ w i => ∀ e, P w e → ∀ a ∈ e.τ, a ∉ i
+def notState (P : W → E → Prop) : IntervalPred W T :=
+  λ w i => ∀ e, P w e → ∀ a ∈ (τ e), a ∉ i
 
-theorem notState_homogeneous (P : W → Event T → Prop) : Homogeneous (notState P) :=
+theorem notState_homogeneous (P : W → E → Prop) : Homogeneous (notState P) :=
   λ _ _ _ hji h e he a ha haj => h e he a ha (NonemptyInterval.coe_subset_coe.mpr hji haj)
 
 /-- Mittwoch's wide-scope reading: durative UNTIL of the state of not-P-ing. -/
-def wideScope (P : W → Event T → Prop) (w : W) (t' : T) : Prop := durativeUntil (notState P) w t'
+def wideScope (P : W → E → Prop) (w : W) (t' : T) : Prop := durativeUntil (notState P) w t'
 
 /-- External negation: the durative UNTIL claim denied. -/
 def narrowScope (p : IntervalPred W T) (w : W) (t' : T) : Prop := ¬ durativeUntil p w t'
 
 /-- Karttunen's eventive UNTIL, scalar: a P-event at the until time and none starting earlier. -/
-def eventiveUntil (P : W → Event T → Prop) (w : W) (t : T) : Prop :=
-  (∃ e, P w e ∧ t ∈ e.τ) ∧ ∀ e, P w e → t ≤ e.τ.fst
+def eventiveUntil (P : W → E → Prop) (w : W) (t : T) : Prop :=
+  (∃ e, P w e ∧ t ∈ (τ e)) ∧ ∀ e, P w e → t ≤ (τ e).fst
 
-theorem eventiveUntil_actualization {P : W → Event T → Prop} {w : W} {t : T}
+theorem eventiveUntil_actualization {P : W → E → Prop} {w : W} {t : T}
     (h : eventiveUntil P w t) : ∃ e, P w e :=
   let ⟨⟨e, he, _⟩, _⟩ := h; ⟨e, he⟩
 
 /-- The wide-scope reading holds when nothing P-like ever happens: it carries no actualization. -/
-theorem wideScope_of_forall_not {P : W → Event T → Prop} {w : W} (hP : ∀ e, ¬ P w e) {t t' : T}
+theorem wideScope_of_forall_not {P : W → E → Prop} {w : W} (hP : ∀ e, ¬ P w e) {t t' : T}
     (h : t < t') : wideScope P w t' :=
   ⟨⟨(t, t'), h.le⟩, h, rfl, λ _ _ e he => absurd he (hP e)⟩
 
 /-- The run times of a description's events at a world. -/
-def runTimes (P : W → Event T → Prop) (w : W) : RunTimes T := {i | ∃ e, P w e ∧ e.τ = i}
+def runTimes (P : W → E → Prop) (w : W) : RunTimes T := {i | ∃ e, P w e ∧ τ e = i}
 
 /-- Eventive UNTIL is Karttunen's *not until* together with the actualization his presupposition
 supplies. -/
-theorem eventiveUntil_iff (P : W → Event T → Prop) (w : W) (t : T) :
+theorem eventiveUntil_iff (P : W → E → Prop) (w : W) (t : T) :
     eventiveUntil P w t ↔ notUntil (runTimes P w) {NonemptyInterval.pure t} ∧
       when_ (runTimes P w) {NonemptyInterval.pure t} := by
   constructor
@@ -145,26 +147,26 @@ theorem eventiveUntil_iff (P : W → Event T → Prop) (w : W) (t : T) :
     refine ⟨(notUntil_iff _ _).mpr λ s ⟨_, ⟨e', he', rfl⟩, hs⟩ =>
       ⟨t, ⟨_, rfl, NonemptyInterval.mem_pure_self t⟩,
         (hall e' he').trans (NonemptyInterval.mem_def.mp hs).1⟩,
-      t, ⟨e.τ, ⟨e, he, rfl⟩, ht⟩, ⟨_, rfl, NonemptyInterval.mem_pure_self t⟩⟩
+      t, ⟨τ e, ⟨e, he, rfl⟩, ht⟩, ⟨_, rfl, NonemptyInterval.mem_pure_self t⟩⟩
   · rintro ⟨hnu, s, ⟨_, ⟨e, he, rfl⟩, hs⟩, j, hj, hsj⟩
     obtain rfl := Set.mem_singleton_iff.mp hj
     rw [NonemptyInterval.mem_pure] at hsj
     subst hsj
     refine ⟨⟨e, he, hs⟩, λ e' he' => ?_⟩
-    obtain ⟨t', ⟨j, hj, ht'⟩, hle⟩ := (notUntil_iff _ _).mp hnu e'.τ.fst
-      ⟨e'.τ, ⟨e', he', rfl⟩, NonemptyInterval.mem_def.mpr ⟨le_rfl, e'.τ.fst_le_snd⟩⟩
+    obtain ⟨t', ⟨j, hj, ht'⟩, hle⟩ := (notUntil_iff _ _).mp hnu (τ e').fst
+      ⟨τ e', ⟨e', he', rfl⟩, NonemptyInterval.mem_def.mpr ⟨le_rfl, (τ e').fst_le_snd⟩⟩
     obtain rfl := Set.mem_singleton_iff.mp hj
     rw [NonemptyInterval.mem_pure] at ht'
     exact ht' ▸ hle
 
 /-- Eventive UNTIL entails *not before*, one direction of Karttunen's equivalence. -/
-theorem eventiveUntil_not_before {P : W → Event T → Prop} {w : W} {t : T}
+theorem eventiveUntil_not_before {P : W → E → Prop} {w : W} {t : T}
     (h : eventiveUntil P w t) : ¬ before (runTimes P w) t :=
   λ ⟨_, ⟨_, ⟨e, he, rfl⟩, hs⟩, hlt⟩ =>
     absurd ((h.2 e he).trans (NonemptyInterval.mem_def.mp hs).1) (not_le.mpr hlt)
 
 /-- *Not before* carries no actualization: it holds when nothing P-like ever happens. -/
-theorem not_before_of_forall_not {P : W → Event T → Prop} {w : W} (hP : ∀ e, ¬ P w e) (t : T) :
+theorem not_before_of_forall_not {P : W → E → Prop} {w : W} (hP : ∀ e, ¬ P w e) (t : T) :
     ¬ before (runTimes P w) t :=
   λ ⟨_, ⟨_, ⟨e, he, _⟩, _⟩, _⟩ => hP e he
 

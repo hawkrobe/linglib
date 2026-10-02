@@ -83,6 +83,8 @@ but violates the presupposition at the halfway legs (`pushCarts_stratified`,
 
 namespace Champollion2017
 
+open Event (τ)
+
 open _root_.Mereology Aspect
 
 /-! ### Stratified reference ([champollion-2017] eq. 16/17) -/
@@ -207,15 +209,15 @@ def SubintervalGranularity {T : Type*} [LinearOrder T]
     be built from `P`-parts with runtimes properly included in `τ e` ([champollion-2017]
     eq. (38)). It captures atelicity, the predicates compatible with *for*-adverbials having
     subinterval reference. -/
-def SubintervalReference {T : Type*} [LinearOrder T]
-    [SemilatticeSup (Event T)]
-    (P : Event T → Prop) (e : Event T) : Prop :=
-  StratifiedReference (fun e' : Event T ↦ e'.runtime) SubintervalGranularity P e
+def SubintervalReference {T E : Type*} [LinearOrder T] [Event.TemporalTrace E T]
+    [SemilatticeSup E]
+    (P : E → Prop) (e : E) : Prop :=
+  StratifiedReference τ SubintervalGranularity P e
 
 /-- `P` has universal subinterval reference when every `P`-event has subinterval reference. -/
-def SubintervalReferenceUniv {T : Type*} [LinearOrder T]
-    [SemilatticeSup (Event T)]
-    (P : Event T → Prop) : Prop :=
+def SubintervalReferenceUniv {T E : Type*} [LinearOrder T] [Event.TemporalTrace E T]
+    [SemilatticeSup E]
+    (P : E → Prop) : Prop :=
   ∀ e, P e → SubintervalReference P e
 
 /-! ### Stratified Measurement StratifiedReference -/
@@ -272,8 +274,9 @@ abbrev eachConstr {α β : Type*} [SemilatticeSup α] [PartialOrder β]
 /-- "for"-adverbials require subinterval reference: the predicate must
     have stratified subinterval reference (atelicity).
     Map = τ, granularity = proper subinterval. -/
-abbrev forConstr {T : Type*} [LinearOrder T] [SemilatticeSup (Event T)]
-    (Share : Event T → Prop) (e : Event T) : Prop :=
+abbrev forConstr {T E : Type*} [LinearOrder T] [Event.TemporalTrace E T]
+    [SemilatticeSup E]
+    (Share : E → Prop) (e : E) : Prop :=
   SubintervalReference Share e
 
 /-! ### Key Theorems -/
@@ -360,8 +363,9 @@ theorem stratifiedReference_join {α β : Type*} [SemilatticeSup α] [Semilattic
     "John ran for an hour" is felicitous because "run" has it.
     "* John arrived for an hour" is infelicitous because "arrive" lacks it. -/
 theorem forAdverbial_requires_subintervalReference
-    {T : Type*} [LinearOrder T] [SemilatticeSup (Event T)]
-    {P : Event T → Prop}
+    {T E : Type*} [LinearOrder T] [Event.TemporalTrace E T]
+    [SemilatticeSup E]
+    {P : E → Prop}
     (h_for_ok : SubintervalReferenceUniv P) :
     ∀ e, P e → SubintervalReference P e :=
   h_for_ok
@@ -369,20 +373,21 @@ theorem forAdverbial_requires_subintervalReference
 /-- QUA and subinterval reference are directly incompatible, in that if P(e) and
     `SubintervalReference P e` hold, then P cannot be quantized. The
     AlgClosure decomposition yields a base element a with P(a) and
-    a.runtime ⊂ e.runtime. Since a ≤ e (from the join structure) and
+    τ a ⊂ τ e. Since a ≤ e (from the join structure) and
     a ≠ e (proper subinterval is irreflexive), we get a < e, contradicting
     QUA.
 
     Direct, not routed through CUM: the would-be route
     `SubintervalReferenceUniv → CUM → ¬QUA` fails at the first step
     (`SubintervalReferenceUniv → CUM` is false in general; counterexample:
-    `P := λe. e.runtime.length ≤ 1` over dense time). See module docstring
+    `P := λe. (τ e).length ≤ 1` over dense time). See module docstring
     "Relation to Krifka's CUM/QUA". -/
 theorem qua_incompatible_with_subintervalReference
-    {T : Type*} [LinearOrder T] [SemilatticeSup (Event T)]
-    {P : Event T → Prop}
+    {T E : Type*} [LinearOrder T] [Event.TemporalTrace E T]
+    [SemilatticeSup E]
+    {P : E → Prop}
     (hQua : QUA P)
-    {e : Event T} (he : P e) (hSub : SubintervalReference P e) :
+    {e : E} (he : P e) (hSub : SubintervalReference P e) :
     False := by
   obtain ⟨a, ⟨hPa, hGran⟩, hle⟩ := algClosure_has_base hSub
   have hne : a ≠ e := by
@@ -397,20 +402,21 @@ theorem qua_incompatible_with_subintervalReference
     ([champollion-2017]'s for-adverbial entry, eq. (72), restated for
     *for an hour* as eq. (21); eq. (39) is the constraint on its Share).
     "V for δ" = λe. V(e) ∧ τ(e) = δ ∧ SubintervalReference V e. -/
-def forAdverbialMeaning {T : Type*} [LinearOrder T]
-    [SemilatticeSup (Event T)]
-    (V : Event T → Prop) (duration : NonemptyInterval T) (e : Event T) : Prop :=
-  V e ∧ e.runtime = duration ∧ SubintervalReference V e
+def forAdverbialMeaning {T E : Type*} [LinearOrder T] [Event.TemporalTrace E T]
+    [SemilatticeSup E]
+    (V : E → Prop) (duration : NonemptyInterval T) (e : E) : Prop :=
+  V e ∧ τ e = duration ∧ SubintervalReference V e
 
 /-- "in"-adverbials are incompatible with subinterval reference (they
     require telicity). "V in δ" requires QUA, which is incompatible with
     subinterval reference. Any P-event with subinterval reference has a
     strict P-part, contradicting QUA. -/
 theorem in_adverbial_incompatible_with_subintervalReference
-    {T : Type*} [LinearOrder T] [SemilatticeSup (Event T)]
-    {P : Event T → Prop}
+    {T E : Type*} [LinearOrder T] [Event.TemporalTrace E T]
+    [SemilatticeSup E]
+    {P : E → Prop}
     (hQua : QUA P)
-    {e₁ e₂ : Event T} (he₁ : P e₁) (_he₂ : P e₂) (_hne : e₁ ≠ e₂) :
+    {e₁ e₂ : E} (he₁ : P e₁) (_he₂ : P e₂) (_hne : e₁ ≠ e₂) :
     ¬ SubintervalReferenceUniv P := by
   intro hSub
   exact qua_incompatible_with_subintervalReference hQua he₁ (hSub e₁ he₁)
@@ -426,11 +432,11 @@ open _root_.Aspect Champollion2017
 Whether a verb distributes over the atomic fillers of a thematic role is a property of its event
 denotation, not a feature it carries. -/
 
-variable {Entity T : Type*} [LinearOrder T] [PartialOrder Entity] [SemilatticeSup (Event T)]
+variable {Entity E : Type*} [PartialOrder Entity] [SemilatticeSup E]
 
 /-- A verb stratifies over the atomic fillers of role `R` when the event predicate that the
 interpretation `V` assigns it has relational stratified distributive reference along `R`. -/
-def StratifiesOver (v : Verb) (V : Verb → Event T → Prop) (R : Entity → Event T → Prop) :
+def StratifiesOver (v : Verb) (V : Verb → E → Prop) (R : Entity → E → Prop) :
     Prop :=
   RelationalDistributiveReferenceUniv R (V v)
 
@@ -466,14 +472,14 @@ The book's per-verb distributivity facts are lexical meaning postulates in Hoeks
 theorems; they are stated here over the Fragment verbs' denotations. -/
 
 section Distributivity
-variable {Entity T : Type*} [LinearOrder T] [PartialOrder Entity] [SemilatticeSup (Event T)]
+variable {Entity E : Type*} [PartialOrder Entity] [SemilatticeSup E]
 
 /-- The book's postulates on the distributivity of verbs, over an interpretation `V` of the
 fragment's verbs as event predicates and the agent and theme roles. *See* distributes on both
 roles and *kill* on its theme only, since a member of the posse need not have killed anyone,
 and *meet* does not distribute on its agent. -/
-structure ChampollionPostulates (V : Verb → Event T → Prop)
-    (agentRole themeRole : Entity → Event T → Prop) : Prop where
+structure ChampollionPostulates (V : Verb → E → Prop)
+    (agentRole themeRole : Entity → E → Prop) : Prop where
   see_distributes_agent : see.toVerb.StratifiesOver V agentRole
   see_distributes_theme : see.toVerb.StratifiesOver V themeRole
   kill_distributes_theme : kill.toVerb.StratifiesOver V themeRole
@@ -487,11 +493,11 @@ end Distributivity
 /-- A predicate `P` has stratified subinterval reference at `e` iff `e` is the sum of a finite
 Schwarzschild cover into proper-subinterval `P`-parts, the book's theorem at the runtime
 dimension. -/
-theorem subintervalReference_iff_cover {T : Type*} [LinearOrder T]
-    [SemilatticeSup (Event T)] {P : Event T → Prop} {e : Event T} :
+theorem subintervalReference_iff_cover {T E : Type*} [LinearOrder T] [Event.TemporalTrace E T]
+    [SemilatticeSup E] {P : E → Prop} {e : E} :
     SubintervalReference P e ↔
-      ∃ (parts : Finset (Event T)) (hne : parts.Nonempty),
-        (∀ p ∈ parts, P p ∧ p.runtime < e.runtime) ∧ parts.sup' hne id = e := by
+      ∃ (parts : Finset E) (hne : parts.Nonempty),
+        (∀ p ∈ parts, P p ∧ Event.τ p < Event.τ e) ∧ parts.sup' hne id = e := by
   unfold SubintervalReference StratifiedReference SubintervalGranularity
   exact algClosure_iff_exists_sup' _ _
 

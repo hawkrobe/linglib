@@ -63,6 +63,7 @@ with the content, not an event of it (65), (66).
 
 namespace Bondarenko2020
 
+
 open Presupposition PartialProp Event
 
 variable {W T X E I : Type*} [LinearOrder T]
@@ -166,11 +167,11 @@ Days are integers, Monday `1`, Tuesday `2`, Wednesday `3` (fn. 3), and the think
 Tuesday. -/
 
 /-- (4b): a breaking begun on Monday is one Sajana can remember on Tuesday. -/
-example : PreExists Event.τ (· = ⟨.pure 1, .action⟩) (2 : ℤ) := by
+example : PreExists Event.τ (· = (.pure 1 : NonemptyInterval ℤ)) (2 : ℤ) := by
   simp
 
 /-- (4c): one begun on Wednesday is not. -/
-example : ¬ PreExists Event.τ (· = ⟨.pure 3, .action⟩) (2 : ℤ) := by
+example : ¬ PreExists Event.τ (· = (.pure 3 : NonemptyInterval ℤ)) (2 : ℤ) := by
   simp
 
 /-- (5), (8): a child conceived before the time talked about, here `0`, can be remembered, and

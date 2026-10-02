@@ -56,44 +56,44 @@ namespace Rudin2025b
 
 open ArgumentStructure Commitment
 
-variable {T : Type*} [LinearOrder T] {P δ W : Type*}
+variable {E P δ W : Type*}
 
 /-! ### Quotative and ordinary complements -/
 
 /-- A verb of speech under the paper's template: an event is in its extension exactly when
 every performance reenacting it has the verb's characteristic property. -/
-def speechVerb (reenact : EventRel T P) (prop : P → Prop) (e : Event T) : Prop :=
+def speechVerb (reenact : EventRel E P) (prop : P → Prop) (e : E) : Prop :=
   ∀ u, reenact e u → prop u
 
 /-- The quotative complementizer: the events a performance reenacts. -/
-def quote (reenact : EventRel T P) (u : P) (e : Event T) : Prop := reenact e u
+def quote (reenact : EventRel E P) (u : P) (e : E) : Prop := reenact e u
 
 /-- An ordinary clausal complement: the events whose content is the clause's denotation. -/
-def thatClause (content : EventRel T δ) (d : δ) (e : Event T) : Prop := content e d
+def thatClause (content : EventRel E δ) (d : δ) (e : E) : Prop := content e d
 
 /-- A quotative speech report, by predicate modification: the verb's events that the
 performance reenacts. -/
-def quoteReport (reenact : EventRel T P) (prop : P → Prop) (u : P) (e : Event T) : Prop :=
+def quoteReport (reenact : EventRel E P) (prop : P → Prop) (u : P) (e : E) : Prop :=
   speechVerb reenact prop e ∧ quote reenact u e
 
 /-- Quoting a performance that lacks the verb's property is contradictory. -/
-theorem not_quoteReport {reenact : EventRel T P} {prop : P → Prop} {u : P} (h : ¬ prop u)
-    (e : Event T) : ¬ quoteReport reenact prop u e :=
+theorem not_quoteReport {reenact : EventRel E P} {prop : P → Prop} {u : P} (h : ¬ prop u)
+    (e : E) : ¬ quoteReport reenact prop u e :=
   λ ⟨hv, hr⟩ => h (hv u hr)
 
 /-- With the reenactment relation free, a quotative report of an event is satisfiable exactly
 when the performance has the verb's property. -/
-theorem exists_reenact_iff (prop : P → Prop) (u : P) (e : Event T) :
-    (∃ reenact : EventRel T P, quoteReport reenact prop u e) ↔ prop u :=
+theorem exists_reenact_iff (prop : P → Prop) (u : P) (e : E) :
+    (∃ reenact : EventRel E P, quoteReport reenact prop u e) ↔ prop u :=
   ⟨λ ⟨_, hv, hr⟩ => hv u hr, λ h => ⟨λ _ v => v = u, λ _ hv => hv ▸ h, rfl⟩⟩
 
 /-- A sortal restriction on content: the content of one of the verb's events has the sort. -/
-def ContentSort (V : Event T → Prop) (content : EventRel T δ) (sort : δ → Prop) : Prop :=
+def ContentSort (V : E → Prop) (content : EventRel E δ) (sort : δ → Prop) : Prop :=
   ∀ e d, V e → content e d → sort d
 
 /-- An ordinary complement of the wrong sort is contradictory: a proposition under *ask*. -/
-theorem not_thatClause {V : Event T → Prop} {content : EventRel T δ} {sort : δ → Prop}
-    (hV : ContentSort V content sort) {d : δ} (hd : ¬ sort d) (e : Event T) :
+theorem not_thatClause {V : E → Prop} {content : EventRel E δ} {sort : δ → Prop}
+    (hV : ContentSort V content sort) {d : δ} (hd : ¬ sort d) (e : E) :
     ¬ (V e ∧ thatClause content d e) :=
   λ ⟨hv, hc⟩ => hd (hV e d hv hc)
 
@@ -269,7 +269,7 @@ def Verb.property : Verb → Performance W → Prop
 instance (v : Verb) (u : Performance W) : Decidable (v.property u) := by
   cases v <;> simp only [Verb.property] <;> infer_instance
 
-variable {reenact : EventRel T (Performance W)} {v : Volume} (p : Set W) (e : Event T)
+variable {reenact : EventRel E (Performance W)} {v : Volume} (p : Set W) (e : E)
 
 /-- Karate gestures under *say* are contradictory: a saying is reenacted only by linguistic
 material. -/
@@ -289,7 +289,7 @@ theorem assert_risingDeclarative :
 /-- A rising declarative under *ask* is satisfiable, whatever proposition it denotes: its
 utterance is an asking. -/
 theorem ask_risingDeclarative :
-    ∃ reenact : EventRel T (Performance W),
+    ∃ reenact : EventRel E (Performance W),
       quoteReport reenact Verb.ask.property ⟨.utterance ⟨.declarative, p, true⟩, v⟩ e :=
   (exists_reenact_iff _ _ e).2 ((Performance.asking_iff _).2 (Or.inl ⟨rfl, rfl⟩))
 
@@ -327,12 +327,13 @@ def datum (x : Datum) : Option (Verb × Performance Bool) := do
 def data : List (Datum × Verb × Performance Bool) :=
   Examples.all.filterMap λ x => (datum x).map (x, ·)
 
-def e₀ : Event ℕ := ⟨⟨⟨0, 0⟩, le_rfl⟩, .action⟩
+/-- The event of the reports. -/
+def e₀ : Unit := ()
 
 /-- Each of the paper's quotative reports is judged acceptable exactly when it is satisfiable
 under the verb's meaning postulate. -/
 theorem judgments : ∀ d ∈ data, d.1.judgment = .acceptable ↔
-    ∃ reenact : EventRel ℕ (Performance Bool), quoteReport reenact d.2.1.property d.2.2 e₀ := by
+    ∃ reenact : EventRel Unit (Performance Bool), quoteReport reenact d.2.1.property d.2.2 e₀ := by
   simp only [exists_reenact_iff]
   decide +kernel
 

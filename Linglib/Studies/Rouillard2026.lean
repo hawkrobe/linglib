@@ -39,10 +39,12 @@ intervals of a linearly ordered time `T`; maximal informativity is [fox-hackl-20
 
 namespace Rouillard2026
 
+open Event (τ)
+
 open Alternatives Aspect Core.Order NonemptyInterval Set
 
-variable {W T α : Type*} [LinearOrder T] [AddCommMonoid α] [LinearOrder α]
-  [IsOrderedCancelAddMonoid α]
+variable {W T E α : Type*} [LinearOrder T] [Event.TemporalTrace E T]
+  [AddCommMonoid α] [LinearOrder α] [IsOrderedCancelAddMonoid α]
 
 /-! ### Measuring times (§2.2) -/
 
@@ -112,12 +114,12 @@ variable (μ : NonemptyInterval T → α) [TimeMeasure μ]
 
 /-- The E-TIA property (76): `n` measures a time including a `Q`-event, `Q` being the event
 predicate the rest of the LF supplies ((78) for the simple past). -/
-def eTIA (Q : W → Event T → Prop) (n : α) : Set W :=
-  {w | ∃ t, μ t = n ∧ ∃ e, Q w e ∧ e.τ ≤ t}
+def eTIA (Q : W → E → Prop) (n : α) : Set W :=
+  {w | ∃ t, μ t = n ∧ ∃ e, Q w e ∧ τ e ≤ t}
 
 omit [IsOrderedCancelAddMonoid α] in
 /-- The E-TIA property is upward scalar: a longer time still includes the event. -/
-theorem eTIA_monotone (Q : W → Event T → Prop) : Monotone (eTIA μ Q) := by
+theorem eTIA_monotone (Q : W → E → Prop) : Monotone (eTIA μ Q) := by
   rintro n m hnm w ⟨t, rfl, e, he, het⟩
   obtain ⟨j, hj, hjm⟩ := TimeMeasure.extend t m hnm
   exact ⟨j, hjm, e, he, het.trans hj.1⟩
@@ -125,35 +127,35 @@ theorem eTIA_monotone (Q : W → Event T → Prop) : Monotone (eTIA μ Q) := by
 omit [IsOrderedCancelAddMonoid α] in
 /-- (83): under the subinterval property the E-TIA property does not depend on the
 numeral — information collapse. -/
-theorem eTIA_eq_of_hasSubintervalProperty {Q : W → Event T → Prop}
+theorem eTIA_eq_of_hasSubintervalProperty {Q : W → E → Prop}
     (hQ : HasSubintervalProperty Q) (n m : α) : eTIA μ Q n = eTIA μ Q m := by
   suffices h : ∀ n m w, w ∈ eTIA μ Q n → w ∈ eTIA μ Q m from
     Set.ext fun w => ⟨h n m w, h m n w⟩
   rintro n m w ⟨t, rfl, e, he, het⟩
-  rcases le_total m (μ e.τ) with hle | hge
-  · obtain ⟨j, hj, hjm⟩ := TimeMeasure.trim e.τ m hle
+  rcases le_total m (μ (τ e)) with hle | hge
+  · obtain ⟨j, hj, hjm⟩ := TimeMeasure.trim (τ e) m hle
     obtain ⟨e', he'τ, he'⟩ := hasSubintervalProperty_iff_witnesses.1 hQ e w he j hj.1
     exact ⟨j, hjm, e', he', he'τ.le⟩
-  · obtain ⟨j, hj, hjm⟩ := TimeMeasure.extend e.τ m hge
+  · obtain ⟨j, hj, hjm⟩ := TimeMeasure.extend (τ e) m hge
     exact ⟨j, hjm, e, he, hj.1⟩
 
 omit [IsOrderedCancelAddMonoid α] in
 /-- *Mary was sick in three days*: an atelic VP is not licensed (§4.1.1). -/
-theorem not_isMIPLicensed_eTIA [Nontrivial α] {Q : W → Event T → Prop}
+theorem not_isMIPLicensed_eTIA [Nontrivial α] {Q : W → E → Prop}
     (hQ : HasSubintervalProperty Q) : ¬ IsMIPLicensed (eTIA μ Q) :=
   not_isMIPLicensed_of_forall_eq (eTIA_eq_of_hasSubintervalProperty μ hQ)
 
 /-- The telic case: at a world whose shortest `Q`-event is `e₀`, the least true numeral is its
 duration. -/
-theorem isLeast_eTIA {Q : W → Event T → Prop} {w : W} {e₀ : Event T} (h₀ : Q w e₀)
-    (hmin : ∀ e, Q w e → μ e₀.τ ≤ μ e.τ) : IsLeast {n | w ∈ eTIA μ Q n} (μ e₀.τ) :=
-  ⟨⟨e₀.τ, rfl, e₀, h₀, le_rfl⟩, fun _ ⟨_, ht, e, he, het⟩ =>
+theorem isLeast_eTIA {Q : W → E → Prop} {w : W} {e₀ : E} (h₀ : Q w e₀)
+    (hmin : ∀ e, Q w e → μ (τ e₀) ≤ μ (τ e)) : IsLeast {n | w ∈ eTIA μ Q n} (μ (τ e₀)) :=
+  ⟨⟨τ e₀, rfl, e₀, h₀, le_rfl⟩, fun _ ⟨_, ht, e, he, het⟩ =>
     ht ▸ (hmin e he).trans (IsIntervalContent.monotone μ het)⟩
 
 /-- *Mary wrote up a paper in three days*: when worlds differ in the event's duration, a telic
 VP is licensed at the world whose shortest event lasts the numeral's measure. -/
-theorem isMIPLicensed_eTIA {Q : W → Event T → Prop} (hφ : StrictMono (eTIA μ Q)) {w : W}
-    {e₀ : Event T} (h₀ : Q w e₀) (hmin : ∀ e, Q w e → μ e₀.τ ≤ μ e.τ) :
+theorem isMIPLicensed_eTIA {Q : W → E → Prop} (hφ : StrictMono (eTIA μ Q)) {w : W}
+    {e₀ : E} (h₀ : Q w e₀) (hmin : ∀ e, Q w e → μ (τ e₀) ≤ μ (τ e)) :
     IsMIPLicensed (eTIA μ Q) :=
   isMIPLicensed_of_isLeast hφ ⟨_, isLeast_eTIA μ h₀ hmin⟩
 
@@ -161,49 +163,49 @@ theorem isMIPLicensed_eTIA {Q : W → Event T → Prop} (hφ : StrictMono (eTIA 
 
 /-- The G-TIA property (101): the open prior time span of measure `n` ending at `s` includes
 the closed run-time of a `P`-event. -/
-def gTIA (P : W → Event T → Prop) (s : T) (n : α) : Set W :=
-  {w | ∃ i : NonemptyInterval T, i.snd = s ∧ μ i = n ∧ ∃ e, P w e ∧ InOpen e.τ i}
+def gTIA (P : W → E → Prop) (s : T) (n : α) : Set W :=
+  {w | ∃ i : NonemptyInterval T, i.snd = s ∧ μ i = n ∧ ∃ e, P w e ∧ InOpen (τ e) i}
 
 /-- The negated G-TIA property (104). -/
-def gTIANeg (P : W → Event T → Prop) (s : T) (n : α) : Set W := (gTIA μ P s n)ᶜ
+def gTIANeg (P : W → E → Prop) (s : T) (n : α) : Set W := (gTIA μ P s n)ᶜ
 
 omit [IsOrderedCancelAddMonoid α] in
-theorem gTIA_monotone (P : W → Event T → Prop) (s : T) : Monotone (gTIA μ P s) := by
+theorem gTIA_monotone (P : W → E → Prop) (s : T) : Monotone (gTIA μ P s) := by
   rintro n m hnm w ⟨i, rfl, rfl, e, he, hei⟩
   obtain ⟨j, hj, hjm⟩ := TimeMeasure.extend i m hnm
   exact ⟨j, hj.2.symm, hjm, e, he, hei.of_finalSubinterval hj⟩
 
 omit [IsOrderedCancelAddMonoid α] in
-theorem gTIANeg_antitone (P : W → Event T → Prop) (s : T) : Antitone (gTIANeg μ P s) :=
+theorem gTIANeg_antitone (P : W → E → Prop) (s : T) : Antitone (gTIANeg μ P s) :=
   fun _ _ h => compl_subset_compl.2 (gTIA_monotone μ P s h)
 
 /-- Under density every witnessing open span shrinks to a strictly smaller one, still
 positive in measure, that includes the same run-time (§4.2.2). -/
-theorem exists_lt_of_mem_gTIA [DenselyOrdered T] {P : W → Event T → Prop} {s : T} {w : W}
+theorem exists_lt_of_mem_gTIA [DenselyOrdered T] {P : W → E → Prop} {s : T} {w : W}
     {n : α} (h : w ∈ gTIA μ P s n) : ∃ m, 0 < m ∧ m < n ∧ w ∈ gTIA μ P s m := by
   obtain ⟨i, rfl, rfl, e, he, hei⟩ := h
   obtain ⟨l, hil, hle⟩ := exists_between hei.1
-  have hls : l < i.snd := (hle.trans_le e.τ.fst_le_snd).trans hei.2
+  have hls : l < i.snd := (hle.trans_le (τ e).fst_le_snd).trans hei.2
   refine ⟨μ ⟨⟨l, i.snd⟩, hls.le⟩, IsIntervalContent.positive l i.snd hls, ?_,
     ⟨⟨l, i.snd⟩, hls.le⟩, rfl, rfl, e, he, hle, hei.2⟩
   exact IsIntervalContent.measure_lt_of_left_lt μ hil hls.le
 
 /-- There is no smallest open span including a closed run-time. -/
-theorem not_isLeast_gTIA [DenselyOrdered T] (P : W → Event T → Prop) (s : T) (w : W) (n : α) :
+theorem not_isLeast_gTIA [DenselyOrdered T] (P : W → E → Prop) (s : T) (w : W) (n : α) :
     ¬ IsLeast {m | w ∈ gTIA μ P s m} n := fun ⟨hn, hlb⟩ =>
   let ⟨_, _, hmn, hm⟩ := exists_lt_of_mem_gTIA μ hn
   hmn.not_ge (hlb hm)
 
 /-- *Mary has been sick in three days*: a positive G-TIA is not licensed over dense time. -/
-theorem not_isMIPLicensed_gTIA [DenselyOrdered T] (P : W → Event T → Prop) (s : T) :
+theorem not_isMIPLicensed_gTIA [DenselyOrdered T] (P : W → E → Prop) (s : T) :
     ¬ IsMIPLicensed (gTIA μ P s) :=
   not_isMIPLicensed_of_not_isLeast (gTIA_monotone μ P s) (not_isLeast_gTIA μ P s)
 
 /-- When every `P`-event starts by `l₀`, and one starts exactly at `l₀` and ends before `s`,
 the open span from `l₀` to `s` is the largest excluding every `P`-event (§4.2.2): the greatest
 true numeral of the negated property is its measure. -/
-theorem isGreatest_gTIANeg {P : W → Event T → Prop} {s : T} {w : W} {l₀ : T}
-    (hall : ∀ e, P w e → e.τ.fst ≤ l₀) (hwit : ∃ e, P w e ∧ e.τ.fst = l₀ ∧ e.τ.snd < s)
+theorem isGreatest_gTIANeg {P : W → E → Prop} {s : T} {w : W} {l₀ : T}
+    (hall : ∀ e, P w e → (τ e).fst ≤ l₀) (hwit : ∃ e, P w e ∧ (τ e).fst = l₀ ∧ (τ e).snd < s)
     (hl : l₀ ≤ s) : IsGreatest {n | w ∈ gTIANeg μ P s n} (μ ⟨⟨l₀, s⟩, hl⟩) := by
   obtain ⟨e₀, he₀, hfst, hsnd⟩ := hwit
   refine ⟨fun ⟨i, his, hiμ, e, he, hei⟩ => ?_, fun n hn => ?_⟩
@@ -225,9 +227,9 @@ theorem isGreatest_gTIANeg {P : W → Event T → Prop} {s : T} {w : W} {l₀ : 
 
 /-- *Mary hasn't been sick in three days*: when worlds separate the gap's length, a negated
 G-TIA is licensed at the world where the last event abuts the span. -/
-theorem isMIPLicensed_gTIANeg {P : W → Event T → Prop} {s : T} (hφ : StrictAnti (gTIANeg μ P s))
-    {w : W} {l₀ : T} (hall : ∀ e, P w e → e.τ.fst ≤ l₀)
-    (hwit : ∃ e, P w e ∧ e.τ.fst = l₀ ∧ e.τ.snd < s) (hl : l₀ ≤ s) :
+theorem isMIPLicensed_gTIANeg {P : W → E → Prop} {s : T} (hφ : StrictAnti (gTIANeg μ P s))
+    {w : W} {l₀ : T} (hall : ∀ e, P w e → (τ e).fst ≤ l₀)
+    (hwit : ∃ e, P w e ∧ (τ e).fst = l₀ ∧ (τ e).snd < s) (hl : l₀ ≤ s) :
     IsMIPLicensed (gTIANeg μ P s) :=
   isMIPLicensed_of_isGreatest hφ ⟨_, isGreatest_gTIANeg μ hall hwit hl⟩
 
@@ -253,7 +255,7 @@ instance : TimeMeasure ratLength where
     ring
 
 /-- The blocking theorem's hypotheses are jointly satisfiable at rational time. -/
-example (P : W → Event ℚ → Prop) (s : ℚ) : ¬ IsMIPLicensed (gTIA ratLength P s) :=
+example (P : W → NonemptyInterval ℚ → Prop) (s : ℚ) : ¬ IsMIPLicensed (gTIA ratLength P s) :=
   not_isMIPLicensed_gTIA ratLength P s
 
 /-! ### Table 1 (§5.1.1)
@@ -263,22 +265,22 @@ The four readings of *Mary has been sick in three days* — E- or G-TIA under an
 
 /-- The event predicate an E-perfect hands to an E-TIA, (114): a `P`-event inside an open span
 ending at `s`. -/
-def ePerfFrame (P : W → Event T → Prop) (s : T) (w : W) (e : Event T) : Prop :=
-  P w e ∧ ∃ i : NonemptyInterval T, i.snd = s ∧ InOpen e.τ i
+def ePerfFrame (P : W → E → Prop) (s : T) (w : W) (e : E) : Prop :=
+  P w e ∧ ∃ i : NonemptyInterval T, i.snd = s ∧ InOpen (τ e) i
 
 /-- The event predicate a U-perfect hands to an E-TIA, (117): a `P`-event including a
 nondegenerate open span ending at `s`. -/
-def uPerfFrame (P : W → Event T → Prop) (s : T) (w : W) (e : Event T) : Prop :=
-  P w e ∧ ∃ l < s, Ioo l s ⊆ (e.τ : Set T)
+def uPerfFrame (P : W → E → Prop) (s : T) (w : W) (e : E) : Prop :=
+  P w e ∧ ∃ l < s, Ioo l s ⊆ (τ e : Set T)
 
 /-- The G-TIA property under a U-perfect, (122): some nondegenerate open span ending at `s`
 lies inside a `P`-event and inside a time of measure `n`. -/
-def uPerfGTIA (P : W → Event T → Prop) (s : T) (n : α) : Set W :=
+def uPerfGTIA (P : W → E → Prop) (s : T) (n : α) : Set W :=
   {w | ∃ i : NonemptyInterval T, i.fst < i.snd ∧ i.snd = s ∧ (∃ t, μ t = n ∧ i ≤ t) ∧
-    ∃ e, P w e ∧ Ioo i.fst i.snd ⊆ (e.τ : Set T)}
+    ∃ e, P w e ∧ Ioo i.fst i.snd ⊆ (τ e : Set T)}
 
 /-- The E-perfect frame inherits the subinterval property. -/
-theorem hasSubintervalProperty_ePerfFrame {P : W → Event T → Prop} {s : T}
+theorem hasSubintervalProperty_ePerfFrame {P : W → E → Prop} {s : T}
     (hP : HasSubintervalProperty P) : HasSubintervalProperty (ePerfFrame P s) :=
   hasSubintervalProperty_iff_witnesses.2 fun e w ⟨he, i, his, hei⟩ t ht =>
     let ⟨e', he'τ, he'⟩ := hasSubintervalProperty_iff_witnesses.1 hP e w he t ht
@@ -290,18 +292,18 @@ private theorem fst_lt_snd_of_pos {i : NonemptyInterval T} (h : 0 < μ i) : i.fs
 
 /-- (117) collapses to (118): for positive numerals the U-perfect E-TIA property does not
 depend on the numeral. -/
-theorem eTIA_uPerfFrame_eq [DenselyOrdered T] {P : W → Event T → Prop} {s : T}
+theorem eTIA_uPerfFrame_eq [DenselyOrdered T] {P : W → E → Prop} {s : T}
     (hP : HasSubintervalProperty P) {n m : α} (hn : 0 < n) (hm : 0 < m) :
     eTIA μ (uPerfFrame P s) n = eTIA μ (uPerfFrame P s) m := by
   suffices h : ∀ n m : α, 0 < m → ∀ w, w ∈ eTIA μ (uPerfFrame P s) n →
       w ∈ eTIA μ (uPerfFrame P s) m from Set.ext fun w => ⟨h n m hm w, h m n hn w⟩
   rintro n m hm w ⟨t, rfl, e, ⟨he, l, hls, hle⟩, het⟩
   rw [coe_def] at hle
-  have hel : e.τ.toProd.1 ≤ l := not_lt.1 fun h => by
+  have hel : (τ e).toProd.1 ≤ l := not_lt.1 fun h => by
     obtain ⟨m, hlm, hm⟩ := exists_between (lt_min h hls)
     exact ((hle ⟨hlm, hm.trans_le (min_le_right _ _)⟩).1.trans_lt
       (hm.trans_le (min_le_left _ _))).false
-  have hse : s ≤ e.τ.toProd.2 := not_lt.1 fun h => by
+  have hse : s ≤ (τ e).toProd.2 := not_lt.1 fun h => by
     obtain ⟨m, hm, hms⟩ := exists_between (max_lt h hls)
     exact ((le_max_left _ _).trans_lt hm).not_ge
       (hle ⟨(le_max_right _ _).trans_lt hm, hms⟩).2
@@ -310,7 +312,7 @@ theorem eTIA_uPerfFrame_eq [DenselyOrdered T] {P : W → Event T → Prop} {s : 
     (min_le_right _ _)
   have hjpos : 0 < μ j := hjμ ▸ lt_min hm hpos
   have hjs : j.snd = s := hj.2
-  have hje : j ≤ e.τ := hj.1.trans (le_def.2 ⟨hel, hse⟩)
+  have hje : j ≤ τ e := hj.1.trans (le_def.2 ⟨hel, hse⟩)
   obtain ⟨e', he'τ, he'⟩ := hasSubintervalProperty_iff_witnesses.1 hP e w he j hje
   obtain ⟨t', ht', ht'μ⟩ := TimeMeasure.extend j m (hjμ ▸ min_le_left _ _)
   refine ⟨t', ht'μ, e', ⟨he', j.fst, hjs ▸ fst_lt_snd_of_pos μ hjpos, ?_⟩, he'τ ▸ ht'.1⟩
@@ -319,7 +321,7 @@ theorem eTIA_uPerfFrame_eq [DenselyOrdered T] {P : W → Event T → Prop} {s : 
 
 /-- (122) collapses to (123): for positive numerals the U-perfect G-TIA property does not
 depend on the numeral. -/
-theorem uPerfGTIA_eq {P : W → Event T → Prop} {s : T} {n m : α} (hn : 0 < n) (hm : 0 < m) :
+theorem uPerfGTIA_eq {P : W → E → Prop} {s : T} {n m : α} (hn : 0 < n) (hm : 0 < m) :
     uPerfGTIA μ P s n = uPerfGTIA μ P s m := by
   suffices h : ∀ n m : α, 0 < m → ∀ w, w ∈ uPerfGTIA μ P s n → w ∈ uPerfGTIA μ P s m from
     Set.ext fun w => ⟨h n m hm w, h m n hn w⟩
@@ -341,7 +343,7 @@ inductive Viewpoint | pfv | impv
   deriving DecidableEq
 
 /-- The four positive readings of *Mary has been sick in three days*. -/
-def positiveReading (P : W → Event T → Prop) (s : T) : Adverbial → Viewpoint → α → Set W
+def positiveReading (P : W → E → Prop) (s : T) : Adverbial → Viewpoint → α → Set W
   | .event, .pfv => eTIA μ (ePerfFrame P s)
   | .event, .impv => eTIA μ (uPerfFrame P s)
   | .gap, .pfv => gTIA μ P s
@@ -349,7 +351,7 @@ def positiveReading (P : W → Event T → Prop) (s : T) : Adverbial → Viewpoi
 
 /-- A cell of Table 1, over the positive numerals: the positive reading under the row's
 polarity. -/
-def reading (P : W → Event T → Prop) (s : T) (pol : Polarity) (a : Adverbial) (v : Viewpoint)
+def reading (P : W → E → Prop) (s : T) (pol : Polarity) (a : Adverbial) (v : Viewpoint)
     (n : {n : α // 0 < n}) : Set W :=
   pol • positiveReading μ P s a v n
 
@@ -361,7 +363,7 @@ private instance [NoMaxOrder α] : Nontrivial {n : α // 0 < n} :=
 /-- Table 1: every cell but negated G-TIA under perfective aspect is blocked — the E-TIA
 cells and the imperfective G-TIA cell by information collapse, the positive perfective G-TIA
 by density, and negation preserves collapse. -/
-theorem table1_blocked [DenselyOrdered T] [NoMaxOrder α] {P : W → Event T → Prop} {s : T}
+theorem table1_blocked [DenselyOrdered T] [NoMaxOrder α] {P : W → E → Prop} {s : T}
     (hP : HasSubintervalProperty P) (pol : Polarity) (a : Adverbial) (v : Viewpoint)
     (h : (pol, a, v) ≠ (.negative, .gap, .pfv)) : ¬ IsMIPLicensed (reading μ P s pol a v) := by
   have hconst : ∀ a v, (a, v) ≠ (.gap, .pfv) → ∀ n m : {n : α // 0 < n},
@@ -386,12 +388,12 @@ theorem table1_blocked [DenselyOrdered T] [NoMaxOrder α] {P : W → Event T →
 
 /-- Table 1's survivor: negated G-TIA under perfective aspect, licensed where worlds separate
 gap lengths and some world's last event abuts the span. -/
-theorem table1_survivor {P : W → Event T → Prop} {s : T} (hφ : StrictAnti (gTIANeg μ P s))
-    {w : W} {l₀ : T} (hall : ∀ e, P w e → e.τ.fst ≤ l₀)
-    (hwit : ∃ e, P w e ∧ e.τ.fst = l₀ ∧ e.τ.snd < s) :
+theorem table1_survivor {P : W → E → Prop} {s : T} (hφ : StrictAnti (gTIANeg μ P s))
+    {w : W} {l₀ : T} (hall : ∀ e, P w e → (τ e).fst ≤ l₀)
+    (hwit : ∃ e, P w e ∧ (τ e).fst = l₀ ∧ (τ e).snd < s) :
     IsMIPLicensed (reading μ P s .negative .gap .pfv) := by
   obtain ⟨e₀, he₀, hfst, hsnd⟩ := hwit
-  have hl : l₀ < s := hfst ▸ e₀.τ.fst_le_snd.trans_lt hsnd
+  have hl : l₀ < s := hfst ▸ (τ e₀).fst_le_snd.trans_lt hsnd
   refine isMIPLicensed_of_isGreatest (w := w) (fun n m hnm => hφ (Subtype.coe_lt_coe.2 hnm))
     ⟨⟨μ ⟨⟨l₀, s⟩, hl.le⟩, IsIntervalContent.positive l₀ s hl⟩, ?_⟩
   have hg := isGreatest_gTIANeg μ hall ⟨e₀, he₀, hfst, hsnd⟩ hl.le

@@ -2,7 +2,8 @@ module
 
 public import Linglib.Semantics.ArgumentStructure.ThetaRole
 public import Linglib.Semantics.ArgumentStructure.Linking
-public import Linglib.Semantics.Events.SpatialTrace
+public import Linglib.Semantics.Events.Path
+public import Linglib.Semantics.Mereology
 public import Linglib.Syntax.Category.Verb.Argument
 public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Data.Examples.GoldbergJackendoff2004
@@ -139,29 +140,29 @@ section Aspect
 
 open Mereology Spatial
 
-variable {Loc T : Type*} [LinearOrder T] [Event.Mereology T] [ClassicalMereology (Event T)]
-  [SemilatticeSup (Path Loc)] [Trace Loc T] {V : Event T → Prop} {R : Path Loc → Prop}
+variable {E Loc : Type*} [SemilatticeSup E] [SemilatticeSup (Path Loc)] {σ : E → Path Loc}
+  {V : E → Prop} {R : Path Loc → Prop}
 
-/-- `resultative V R e` holds when `e` is an event of the verb whose path, the path of the
+/-- `resultative σ V R e` holds when `e` is an event of the verb whose path `σ e`, the path of the
 constructional subevent, is one the result phrase describes, the two subevents being
 cotemporal. -/
-def resultative (V : Event T → Prop) (R : Path Loc → Prop) (e : Event T) : Prop :=
-  V e ∧ R (Trace.σ e)
+def resultative (σ : E → Path Loc) (V : E → Prop) (R : Path Loc → Prop) (e : E) : Prop :=
+  V e ∧ R (σ e)
 
 /-- By the generalization (27), an end-bounded result phrase makes the resultative telic whatever
-the verb. -/
-theorem qua_resultative
-    (hσ : ∀ e e' : Event T, (Trace.σ (e ⊔ e') : Path Loc) = Trace.σ e ⊔ Trace.σ e')
-    (hinj : Function.Injective (Trace.σ : Event T → Path Loc)) (hR : QUA R) :
-    QUA (resultative V R) :=
-  IsAntichain.subset (Trace.bounded_path_telic hσ hinj hR) fun _ h ↦ h.2
+the verb, when the path of a sum of events is the sum of their paths and distinct events have
+distinct paths. -/
+theorem qua_resultative (hσ : ∀ e e', σ (e ⊔ e') = σ e ⊔ σ e') (hinj : Function.Injective σ)
+    (hR : QUA R) : QUA (resultative σ V R) :=
+  IsAntichain.subset
+    (qua_pullback ((OrderHomClass.monotone (SupHom.mk σ hσ)).strictMono_of_injective hinj) hR)
+    fun _ h ↦ h.2
 
 /-- By the generalization (27), a result phrase that is not end-bounded leaves the resultative of
-an activity atelic. -/
-theorem cum_resultative
-    (hσ : ∀ e e' : Event T, (Trace.σ (e ⊔ e') : Path Loc) = Trace.σ e ⊔ Trace.σ e')
-    (hV : CUM V) (hR : CUM R) : CUM (resultative V R) :=
-  SupClosed.inter hV (Trace.unbounded_path_atelic hσ hR)
+an activity atelic, when the path of a sum of events is the sum of their paths. -/
+theorem cum_resultative (hσ : ∀ e e', σ (e ⊔ e') = σ e ⊔ σ e') (hV : CUM V) (hR : CUM R) :
+    CUM (resultative σ V R) :=
+  SupClosed.inter hV (hR.preimage (SupHom.mk σ hσ))
 
 end Aspect
 

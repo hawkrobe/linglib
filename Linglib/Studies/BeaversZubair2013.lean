@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Events.Basic
+public import Linglib.Semantics.Aspect.Defs
 public import Linglib.Syntax.Case.Basic
 public import Linglib.Syntax.Voice.Basic
 public import Linglib.Fragments.Sinhala.Verbs
@@ -71,11 +71,11 @@ namespace BeaversZubair2013
 The domain is sorted into individuals and eventualities, and the eventualities into events and
 states (§4.3). A verb's causer ranges over one of the sorts of the typology (81). -/
 
-/-- The basic sorts of the domain are the individuals and the eventualities of each kind, the
-events being the actions. -/
+/-- The basic sorts of the domain are the individuals and the eventualities of each dynamicity,
+the events being the dynamic eventualities. -/
 inductive BasicSort where
   | individual
-  | eventuality (k : Event.Kind)
+  | eventuality (k : Aspect.Dynamicity)
   deriving DecidableEq
 
 /-- A causer sort is a node of the typology (81). -/
@@ -96,11 +96,11 @@ namespace CauserSort
 
 /-- The basic sorts that a causer sort comprises. -/
 def basicSorts : CauserSort → Finset BasicSort
-  | event => {.eventuality .action}
-  | state => {.eventuality .state}
-  | eventuality => {.eventuality .action, .eventuality .state}
+  | event => {.eventuality .dynamic}
+  | state => {.eventuality .stative}
+  | eventuality => {.eventuality .dynamic, .eventuality .stative}
   | individual => {.individual}
-  | any => {.individual, .eventuality .action, .eventuality .state}
+  | any => {.individual, .eventuality .dynamic, .eventuality .stative}
 
 theorem basicSorts_injective : Function.Injective basicSorts := by decide
 

@@ -39,21 +39,23 @@ perfect over the bounded viewpoint alone.
 
 namespace Pancheva2003
 
+open Event (τ)
+
 open Aspect
 
 /-! ### The aspectual makeup of the participle, (7) and (9) -/
 
-variable {T : Type*} [LinearOrder T] {W : Type*}
+variable {T E : Type*} [LinearOrder T] [Event.TemporalTrace E T] {W : Type*}
 
 /-- The neutral inner viewpoint of (7b), p. 282: the reference interval overlaps the beginning
 of the event, which may extend beyond it. -/
-def INIT_OVERLAP (P : W → Event T → Prop) : IntervalPred W T :=
-  λ w t => ∃ e : Event T, t.initialOverlap e.τ ∧ P w e
+def INIT_OVERLAP (P : W → E → Prop) : IntervalPred W T :=
+  λ w t => ∃ e : E, t.initialOverlap (τ e) ∧ P w e
 
 /-- The bounded inner viewpoint of (7b): the run time of the event is properly contained in the
 reference interval. -/
-def BOUNDED (P : W → Event T → Prop) : IntervalPred W T :=
-  λ w t => ∃ e : Event T, e.τ < t ∧ P w e
+def BOUNDED (P : W → E → Prop) : IntervalPred W T :=
+  λ w t => ∃ e : E, τ e < t ∧ P w e
 
 /-- The interval-level PERFECT of (9b), p. 284: some perfect time span of which the reference
 interval is a final subinterval satisfies the predicate. -/
@@ -77,13 +79,13 @@ inductive PerfectType
   deriving DecidableEq, Repr
 
 /-- The universal perfect, (11): PERFECT over UNBOUNDED. -/
-abbrev universalPerfect (P : W → Event T → Prop) : IntervalPred W T := PERF_P (UNBOUNDED P)
+abbrev universalPerfect (P : W → E → Prop) : IntervalPred W T := PERF_P (UNBOUNDED P)
 
 /-- The experiential perfect, (12): PERFECT over NEUTRAL. -/
-abbrev experientialPerfect (P : W → Event T → Prop) : IntervalPred W T :=
+abbrev experientialPerfect (P : W → E → Prop) : IntervalPred W T :=
   PERF_P (INIT_OVERLAP P)
 
 /-- The resultative perfect, (15): PERFECT over BOUNDED, without the result state of p. 288. -/
-abbrev resultativePerfect (P : W → Event T → Prop) : IntervalPred W T := PERF_P (BOUNDED P)
+abbrev resultativePerfect (P : W → E → Prop) : IntervalPred W T := PERF_P (BOUNDED P)
 
 end Pancheva2003

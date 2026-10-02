@@ -33,7 +33,7 @@ has no universal perfect while Bulgarian's imperfective and neutral participles 
 
 ## Implementation notes
 
-* A point-level eventuality predicate is read off an event's runtime, `t ∈ e.τ`, so that the
+* A point-level eventuality predicate is read off an event's runtime, `t ∈ τ e`, so that the
   universal reading is inclusion of the span in the runtime and the bounded existential
   reading inclusion of the runtime in the span; the paper's *properly included* is weakened
   to inclusion, as in the library's `Aspect.PRFV`.
@@ -48,9 +48,11 @@ has no universal perfect while Bulgarian's imperfective and neutral participles 
 
 namespace IatridouEtAl2001
 
+open Event (τ)
+
 open Aspect
 
-variable {W T : Type*} [LinearOrder T]
+variable {W T E : Type*} [LinearOrder T] [Event.TemporalTrace E T]
 
 /-! ### The perfect time span and its two readings -/
 
@@ -63,18 +65,18 @@ inductive BoundaryKind where
 
 /-- (18c): the universal reading, the eventuality at every point of the span, its endpoints
 included. -/
-def universal (P : W → Event T → Prop) : IntervalPred W T :=
-  λ w pts => ∃ e, P w e ∧ ∀ t ∈ pts, t ∈ e.τ
+def universal (P : W → E → Prop) : IntervalPred W T :=
+  λ w pts => ∃ e, P w e ∧ ∀ t ∈ pts, t ∈ (τ e)
 
 /-- (18e): the existential reading, the eventuality at some point of the span. -/
-def existential (P : W → Event T → Prop) : IntervalPred W T :=
-  λ w pts => ∃ e, P w e ∧ ∃ t ∈ pts, t ∈ e.τ
+def existential (P : W → E → Prop) : IntervalPred W T :=
+  λ w pts => ∃ e, P w e ∧ ∃ t ∈ pts, t ∈ (τ e)
 
 /-- (44c): a bounded eventuality, asserted complete, lying inside the span. -/
-def bounded (P : W → Event T → Prop) : IntervalPred W T :=
-  λ w pts => ∃ e, P w e ∧ e.τ ≤ pts
+def bounded (P : W → E → Prop) : IntervalPred W T :=
+  λ w pts => ∃ e, P w e ∧ τ e ≤ pts
 
-variable (P : W → Event T → Prop)
+variable (P : W → E → Prop)
 
 theorem existential_of_universal {w : W} {pts : NonemptyInterval T} (h : universal P w pts) :
     existential P w pts :=
@@ -86,8 +88,8 @@ theorem existential_of_bounded {w : W} {pts : NonemptyInterval T} (h : bounded P
     existential P w pts := by
   obtain ⟨e, he, hle⟩ := h
   obtain ⟨h₁, h₂⟩ := NonemptyInterval.le_def.1 hle
-  exact ⟨e, he, e.τ.fst, NonemptyInterval.mem_def.2 ⟨h₁, e.τ.fst_le_snd.trans h₂⟩,
-    NonemptyInterval.mem_def.2 ⟨le_rfl, e.τ.fst_le_snd⟩⟩
+  exact ⟨e, he, (τ e).fst, NonemptyInterval.mem_def.2 ⟨h₁, (τ e).fst_le_snd.trans h₂⟩,
+    NonemptyInterval.mem_def.2 ⟨le_rfl, (τ e).fst_le_snd⟩⟩
 
 /-- Point 3: the existential reading is monotone in the span, so nothing ties the left
 boundary to the eventuality; the span is not the E–R interval, and (28) has a span from 1991
@@ -100,7 +102,7 @@ theorem existential_mono {w : W} {pts pts' : NonemptyInterval T} (hle : pts ≤ 
 /-- Point 1: on the universal reading the eventuality holds at the right boundary, the time
 tense supplies, by assertion; in the present perfect that is the utterance time. -/
 theorem universal_at_rb {adv : NonemptyInterval T → Prop} {w : W} {t : T}
-    (h : PERF_ADV (universal P) adv ⟨w, t⟩) : ∃ e, P w e ∧ t ∈ e.τ := by
+    (h : PERF_ADV (universal P) adv ⟨w, t⟩) : ∃ e, P w e ∧ t ∈ (τ e) := by
   obtain ⟨pts, _, hrb, e, he, hall⟩ := h
   have hrb' : pts.snd = t := hrb
   exact ⟨e, he, hall t (NonemptyInterval.mem_def.2 ⟨hrb' ▸ pts.fst_le_snd, hrb'.ge⟩)⟩
@@ -108,7 +110,7 @@ theorem universal_at_rb {adv : NonemptyInterval T → Prop} {w : W} {t : T}
 /-- Mittwoch's observation, on the left boundary: with *since 1990* the eventuality holds in
 1990 by assertion. -/
 theorem universal_at_lb {t₀ : T} {w : W} {t : T}
-    (h : PERF_ADV (universal P) (LB t₀) ⟨w, t⟩) : ∃ e, P w e ∧ t₀ ∈ e.τ := by
+    (h : PERF_ADV (universal P) (LB t₀) ⟨w, t⟩) : ∃ e, P w e ∧ t₀ ∈ (τ e) := by
   obtain ⟨pts, hlb, _, e, he, hall⟩ := h
   have hlb' : pts.fst = t₀ := hlb
   exact ⟨e, he, hall t₀ (NonemptyInterval.mem_def.2 ⟨hlb'.le, hlb' ▸ pts.fst_le_snd⟩)⟩
@@ -117,15 +119,15 @@ theorem universal_at_lb {t₀ : T} {w : W} {t : T}
 span that ends at the tense's time ends by that time, which in the present perfect is
 pastness; the universal perfect, holding at that time, is not anterior. -/
 theorem bounded_before_rb {adv : NonemptyInterval T → Prop} {w : W} {t : T}
-    (h : PERF_ADV (bounded P) adv ⟨w, t⟩) : ∃ e, P w e ∧ e.τ.snd ≤ t := by
+    (h : PERF_ADV (bounded P) adv ⟨w, t⟩) : ∃ e, P w e ∧ (τ e).snd ≤ t := by
   obtain ⟨pts, _, hrb, e, he, hle⟩ := h
   have hrb' : pts.snd = t := hrb
   exact ⟨e, he, hrb' ▸ (NonemptyInterval.le_def.1 hle).2⟩
 
 /-- (44d) and (45): a bounded eventuality fills the span only by terminating exactly at its
 right boundary. -/
-theorem bounded_fills_iff (e : Event T) (pts : NonemptyInterval T) :
-    e.τ ≤ pts ∧ pts ≤ e.τ ↔ e.τ = pts :=
+theorem bounded_fills_iff (e : E) (pts : NonemptyInterval T) :
+    τ e ≤ pts ∧ pts ≤ τ e ↔ τ e = pts :=
   ⟨λ h => le_antisymm h.1 h.2, λ h => ⟨h.le, h.ge⟩⟩
 
 /-! ### Perfect-level adverbials -/

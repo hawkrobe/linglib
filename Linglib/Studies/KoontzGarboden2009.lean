@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Semantics.Events.Basic
 public import Linglib.Semantics.ArgumentStructure.EventStructure
 public import Linglib.Semantics.ArgumentStructure.EventStructure.Interpretation
 public import Linglib.Fragments.Romance.Spanish.Verbs
@@ -66,14 +65,14 @@ def reflexivize {α β : Type*} (R : α → α → β) : α → β := fun x ↦ 
 
 section Model
 
-variable {Entity State T : Type*} [LinearOrder T]
-  (M : ArgumentStructure.EventStructure.Interpretation Entity State (Event T))
-  (θ agent : Entity → Event T → Prop) (P : Entity → State → Prop)
+variable {Entity State E : Type*}
+  (M : ArgumentStructure.EventStructure.Interpretation Entity State E)
+  (θ agent : Entity → E → Prop) (P : Entity → State → Prop)
 
 /-- A causative change-of-state verb ((10b), (17), (29)): an event `e` in which `x` comes to
 be in the root's state, caused by an event whose participant `y` bears the causer relation
 `θ`, the underspecified `M.effector` for *romper* and an agent relation for *asesinar*. -/
-def causative (y x : Entity) (e : Event T) : Prop :=
+def causative (y x : Entity) (e : E) : Prop :=
   ∃ w, θ y w ∧ M.cause w e ∧ M.vBecome P x e
 
 /-- Over the underspecified causer, `causative` and the head `vCause` over `vBecome` have the same
@@ -84,37 +83,37 @@ theorem exists_causative_iff (y x : Entity) :
 
 /-- Anticausativization is reflexivization. The derived inchoative is the causative on its
 diagonal, so the undergoer is also the participant in the causing event. -/
-def anticausative : Entity → Event T → Prop := reflexivize (causative M θ P)
+def anticausative : Entity → E → Prop := reflexivize (causative M θ P)
 
-theorem anticausative_iff (x : Entity) (e : Event T) :
+theorem anticausative_iff (x : Entity) (e : E) :
     anticausative M θ P x e ↔ ∃ w, θ x w ∧ M.cause w e ∧ M.vBecome P x e := Iff.rfl
 
 /-- A reflexivized verb has the anticausative reading when it has an instance whose single
 argument is not an agent of the event causing its change, as in *el vaso se rompió* 'the cup
 broke'. -/
-def AnticausativeReading (P : Entity → Event T → Prop) : Prop :=
+def AnticausativeReading (P : Entity → E → Prop) : Prop :=
   ∃ x e, P x e ∧ ∀ w, M.cause w e → ¬ agent x w
 
 /-- *Por sí solo* 'by itself' ((54)) is licensed on a predicate that entails a causing subevent
 with the subject as its effector; the modifier then adds that the subject is its sole
 effector (§3.4, §4.1). -/
-def LicensesBySelf (P : Entity → Event T → Prop) : Prop :=
+def LicensesBySelf (P : Entity → E → Prop) : Prop :=
   ∀ x e, P x e → ∃ w, M.cause w e ∧ M.effector x w
 
 /-- In the passive of a causative verb the causer is existentially closed rather than
 identified with the subject. -/
-def passive (x : Entity) (e : Event T) : Prop := ∃ y, causative M M.effector P y x e
+def passive (x : Entity) (e : E) : Prop := ∃ y, causative M M.effector P y x e
 
 variable {M θ agent P}
 
 /-- A derived inchoative entails the causative with its subject as its own causer, the special
 kind of causative that §3.5 finds the inchoative to entail. -/
-theorem causative_self_of_anticausative {x : Entity} {e : Event T}
+theorem causative_self_of_anticausative {x : Entity} {e : E}
     (h : anticausative M θ P x e) : causative M θ P x x e := h
 
 /-- A derived inchoative retains a causing subevent whose causer is its subject, so CAUSE
 survives reflexivization. -/
-theorem exists_cause_of_anticausative {x : Entity} {e : Event T}
+theorem exists_cause_of_anticausative {x : Entity} {e : E}
     (h : anticausative M θ P x e) : ∃ w, θ x w ∧ M.cause w e :=
   let ⟨w, hθ, hc, _⟩ := h; ⟨w, hθ, hc⟩
 
@@ -151,7 +150,7 @@ inductive Participant
 /-- In the model where Juan breaks the glass, `eff` says who counts as an effector of the
 causing event, and every event gives rise to the glass's broken state. -/
 def breaking (eff : Participant → Prop) :
-    ArgumentStructure.EventStructure.Interpretation Participant Unit (Event ℤ) where
+    ArgumentStructure.EventStructure.Interpretation Participant Unit Unit where
   become _ _ := True
   cause _ _ := True
   effector y _ := eff y
@@ -160,18 +159,18 @@ def breaking (eff : Participant → Prop) :
 def broken (x : Participant) (_ : Unit) : Prop := x = .vaso
 
 /-- Juan alone is an agent. -/
-def juanAgent (y : Participant) (_ : Event ℤ) : Prop := y = .juan
+def juanAgent (y : Participant) (_ : Unit) : Prop := y = .juan
 
 /-- In the first model Juan, not the glass, is the effector. -/
-def breakingByJuan : ArgumentStructure.EventStructure.Interpretation Participant Unit (Event ℤ) :=
+def breakingByJuan : ArgumentStructure.EventStructure.Interpretation Participant Unit Unit :=
   breaking (· = .juan)
 
 /-- In the second model the glass and Juan are both effectors. -/
-def breakingByBoth : ArgumentStructure.EventStructure.Interpretation Participant Unit (Event ℤ) :=
+def breakingByBoth : ArgumentStructure.EventStructure.Interpretation Participant Unit Unit :=
   breaking fun _ ↦ True
 
-/-- An event of the models. -/
-def e₀ : Event ℤ := ⟨⟨(0, 0), le_rfl⟩, .action⟩
+/-- The one event of the models. -/
+def e₀ : Unit := ()
 
 /-- The causative does not entail the derived inchoative. With Juan the only effector, *Juan
 rompió el vaso* holds and *el vaso se rompió* fails. -/

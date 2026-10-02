@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Semantics.Events.Basic
 public import Linglib.Studies.KoontzGarboden2009
 public import Linglib.Semantics.Presupposition.Iterative
 public import Linglib.Core.Order.UpperLower.Finset
@@ -53,36 +54,38 @@ process is the set of tiers it reaches, and respecting the hierarchy is a lower-
 
 namespace Krejci2012
 
+open Event (τ)
+
 open KoontzGarboden2009 ArgumentStructure
 
 /-! ### Antireflexivization -/
 
 section Model
 
-variable {Entity State T : Type*} [LinearOrder T]
-  (M : ArgumentStructure.EventStructure.Interpretation Entity State (Event T))
-  (manip : Entity → Event T → Prop) (S : Entity → State → Prop)
+variable {Entity State T E : Type*} [LinearOrder T] [Event.TemporalTrace E T]
+  (M : ArgumentStructure.EventStructure.Interpretation Entity State E)
+  (manip : Entity → E → Prop) (S : Entity → State → Prop)
 
 /-- In the lexical causative (38a) the causer's manipulation of food brings the causee to the
 state of potential digestion. -/
-abbrev feed : Entity → Entity → Event T → Prop := causative M manip S
+abbrev feed : Entity → Entity → E → Prop := causative M manip S
 
 /-- The simple form (37a) is the lexical causative on its diagonal, where the eater manipulates
 the food and comes to digest it. Antireflexivization ((96)–(97)) delinks the two arguments. -/
-abbrev eat : Entity → Event T → Prop := reflexivize (feed M manip S)
+abbrev eat : Entity → E → Prop := reflexivize (feed M manip S)
 
 /-- The periphrastic causative *make eat* adds a further causing event, with its own effector,
 of an eating. -/
-def makeEat (z x : Entity) (e : Event T) : Prop :=
+def makeEat (z x : Entity) (e : E) : Prop :=
   ∃ w, M.effector z w ∧ M.cause w e ∧ eat M manip S x e
 
 /-- Causativization by causer addition ((94)) is the analysis the report rejects, on which the
 simple form is an activity `ingest` with no causing subevent and the causative adds a causer. -/
-def causerAddition (ingest : Entity → Event T → Prop) (y x : Entity) (e : Event T) : Prop :=
+def causerAddition (ingest : Entity → E → Prop) (y x : Entity) (e : E) : Prop :=
   ∃ w, M.effector y w ∧ M.cause w e ∧ ingest x e
 
 /-- An event precedes another when its run time is before the other's. -/
-abbrev Before (e' e : Event T) : Prop := e'.τ.isBefore e.τ
+abbrev Before (e' e : E) : Prop := (τ e').isBefore (τ e)
 
 /-- On the restitutive reading *again* modifies only the result state ((66a)): the state predicate
 holds of a state that an earlier state of it preceded, whether or not a change brought that
@@ -94,10 +97,10 @@ def againState (ltS : State → State → Prop) (S : Entity → State → Prop) 
 
 /-- On the repetitive reading *again* modifies the whole predicate ((66b)), so the sentence
 presupposes that the whole event happened before. -/
-def Repetitive (P : Entity → Event T → Prop) (x : Entity) (e : Event T) : Prop :=
+def Repetitive (P : Entity → E → Prop) (x : Entity) (e : E) : Prop :=
   (Presupposition.again Before (P x)).holds e
 
-variable {M manip S} {x y z : Entity} {e : Event T}
+variable {M manip S} {x y z : Entity} {e : E}
 
 /-- The simple form is the derived inchoative of `KoontzGarboden2009`. -/
 theorem eat_eq_anticausative : eat M manip S = anticausative M manip S := rfl
@@ -121,7 +124,7 @@ theorem exists_manip_of_makeEat (h : makeEat M manip S z x e) :
 
 /-- Under causer addition the causative entails the simple form, so denying the one while
 asserting the other is contradictory ((95)). -/
-theorem ingest_of_causerAddition {ingest : Entity → Event T → Prop}
+theorem ingest_of_causerAddition {ingest : Entity → E → Prop}
     (h : causerAddition M ingest y x e) : ingest x e :=
   let ⟨_, _, _, h⟩ := h; h
 
@@ -142,16 +145,16 @@ inductive Participant
   deriving DecidableEq
 
 /-- An event running from `s` to `t`. -/
-def ev (s t : ℤ) (h : s ≤ t := by decide) : Event ℤ := ⟨⟨(s, t), h⟩, .action⟩
+def ev (s t : ℤ) (h : s ≤ t := by decide) : NonemptyInterval ℤ := ⟨(s, t), h⟩
 
 /-- The event running from `s` to `t`. -/
-def At (w : Event ℤ) (s t : ℤ) : Prop := w.τ.toProd = (s, t)
+def At (w : NonemptyInterval ℤ) (s t : ℤ) : Prop := (τ w).toProd = (s, t)
 
-def w₀ : Event ℤ := ev 0 1
-def e₀ : Event ℤ := ev 1 2
-def w₁ : Event ℤ := ev 0 2
-def w₂ : Event ℤ := ev 3 4
-def e₁ : Event ℤ := ev 4 5
+def w₀ : NonemptyInterval ℤ := ev 0 1
+def e₀ : NonemptyInterval ℤ := ev 1 2
+def w₁ : NonemptyInterval ℤ := ev 0 2
+def w₂ : NonemptyInterval ℤ := ev 3 4
+def e₁ : NonemptyInterval ℤ := ev 4 5
 
 /-- The state of potential digestion holds of John after each meal of the scenarios below, the
 states at the times 2 and 5. -/
@@ -159,37 +162,38 @@ def digesting (x : Participant) (s : ℤ) : Prop := x = .john ∧ (s = 2 ∨ s =
 
 /-- A model in which the events `causing` lists bring John to potential digestion, with `eff`
 the effectors of events. States are times, and a change gives rise to the state at its end. -/
-def eating (causing : Event ℤ → Event ℤ → Prop) (eff : Participant → Event ℤ → Prop) :
-    ArgumentStructure.EventStructure.Interpretation Participant ℤ (Event ℤ) where
-  become s e := (∃ w, causing w e) ∧ s = e.τ.toProd.2
+def eating (causing : NonemptyInterval ℤ → NonemptyInterval ℤ → Prop)
+    (eff : Participant → NonemptyInterval ℤ → Prop) :
+    ArgumentStructure.EventStructure.Interpretation Participant ℤ (NonemptyInterval ℤ) where
+  become s e := (∃ w, causing w e) ∧ s = (τ e).toProd.2
   cause := causing
   effector := eff
 
 /-- Mary manipulates the food. -/
-def spoonManip (y : Participant) (w : Event ℤ) : Prop := y = .mary ∧ At w 0 1
+def spoonManip (y : Participant) (w : NonemptyInterval ℤ) : Prop := y = .mary ∧ At w 0 1
 
 /-- In spoon feeding ((44a)) Mary's manipulation of the food causes John's change. -/
 def spoonFeeding :
-    ArgumentStructure.EventStructure.Interpretation Participant ℤ (Event ℤ) :=
+    ArgumentStructure.EventStructure.Interpretation Participant ℤ (NonemptyInterval ℤ) :=
   eating (fun w e ↦ At w 0 1 ∧ At e 1 2) spoonManip
 
 /-- John manipulates the food. -/
-def supManip (y : Participant) (w : Event ℤ) : Prop := y = .john ∧ At w 0 1
+def supManip (y : Participant) (w : NonemptyInterval ℤ) : Prop := y = .john ∧ At w 0 1
 
 /-- Under supervision ((48)) John's manipulation of the food and Mary's supervising action both
 cause John's change. -/
 def supervising :
-    ArgumentStructure.EventStructure.Interpretation Participant ℤ (Event ℤ) :=
+    ArgumentStructure.EventStructure.Interpretation Participant ℤ (NonemptyInterval ℤ) :=
   eating (fun w e ↦ (At w 0 1 ∨ At w 0 2) ∧ At e 1 2)
     (fun y w ↦ (y = .john ∧ At w 0 1) ∨ (y = .mary ∧ At w 0 2))
 
 /-- Mary manipulates the food the first time, John the second. -/
-def twoManip (y : Participant) (w : Event ℤ) : Prop :=
+def twoManip (y : Participant) (w : NonemptyInterval ℤ) : Prop :=
   (y = .mary ∧ At w 0 1) ∨ (y = .john ∧ At w 3 4)
 
 /-- In the model of two meals Mary feeds John, and later John eats. -/
 def twoMeals :
-    ArgumentStructure.EventStructure.Interpretation Participant ℤ (Event ℤ) :=
+    ArgumentStructure.EventStructure.Interpretation Participant ℤ (NonemptyInterval ℤ) :=
   eating (fun w e ↦ (At w 0 1 ∧ At e 1 2) ∨ (At w 3 4 ∧ At e 4 5)) twoManip
 
 /-- *I didn't eat pie; you fed pie to me* ((92), (106)) is consistent, since John, fed by Mary,
@@ -236,7 +240,7 @@ theorem restitutive_not_repetitive :
       · exact Participant.noConfusion h
       rcases hc with ⟨h, _⟩ | ⟨_, he⟩
       · exact absurd (hw.symm.trans h) (by decide)
-      · have hb' : e'.τ.toProd.2 ≤ 4 := hb
+      · have hb' : (τ e').toProd.2 ≤ 4 := hb
         rw [he] at hb'
         exact absurd hb' (by decide)⟩
 

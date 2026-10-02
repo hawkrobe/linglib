@@ -190,21 +190,21 @@ end TypeDriven
 
 section Domains
 
-variable {Entity T : Type*} [LinearOrder T]
+variable {Entity E : Type*}
 
 /-- The nominal comparative (42): the agent's event, measuring its theme. -/
-def nominalComparative (frame : ThematicFrame Entity T) (P : Event T → Prop)
-    (themeOf : Event T → Entity) (μ : Entity → ℚ) (a b : Entity) : Prop :=
+def nominalComparative (frame : ThematicFrame Entity E) (P : E → Prop)
+    (themeOf : E → Entity) (μ : Entity → ℚ) (a b : Entity) : Prop :=
   comparativeTruth frame.agent P themeOf μ a b
 
 /-- The verbal comparative (48): the agent's event, measured itself. -/
-def verbalComparative (frame : ThematicFrame Entity T) (P : Event T → Prop)
-    (μ : Event T → ℚ) (a b : Entity) : Prop :=
+def verbalComparative (frame : ThematicFrame Entity E) (P : E → Prop)
+    (μ : E → ℚ) (a b : Entity) : Prop :=
   comparativeTruth frame.agent P id μ a b
 
 /-- The adjectival comparative (65): the holder's state, measured itself. -/
-def adjectivalComparative (frame : ThematicFrame Entity T) (P : Event T → Prop)
-    (μ : Event T → ℚ) (a b : Entity) : Prop :=
+def adjectivalComparative (frame : ThematicFrame Entity E) (P : E → Prop)
+    (μ : E → ℚ) (a b : Entity) : Prop :=
   comparativeTruth frame.holder P id μ a b
 
 end Domains

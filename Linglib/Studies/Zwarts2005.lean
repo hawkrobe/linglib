@@ -1,6 +1,7 @@
 module
 
-public import Linglib.Semantics.Events.SpatialTrace
+public import Linglib.Semantics.Events.Path
+public import Linglib.Semantics.Mereology
 
 /-!
 # Zwarts (2005): Prepositional Aspect and the Algebra of Paths
@@ -27,8 +28,8 @@ and a trace homomorphism transfers closure from the phrase to the verb phrase (2
 ## Implementation notes
 
 * The strict goal and source denotations enter through their endpoint content only.
-* The paper's trace function respects Rothstein's partial event concatenation, not the
-  unrestricted mereological sum of `Spatial.Trace`.
+* The paper's trace function respects Rothstein's partial event concatenation, not an
+  unrestricted mereological sum.
 
 ## TODO
 

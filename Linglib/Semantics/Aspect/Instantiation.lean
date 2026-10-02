@@ -38,27 +38,31 @@ the stative clause.
 
 namespace Aspect
 
-variable {W T : Type*} [LinearOrder T]
+open Event (τ)
 
-/-- A property sorted by what it is a property of: events, states, or times. -/
-inductive SortedProperty (W T : Type*) [LinearOrder T]
-  | eventive (P : W → Event T → Prop)
-  | stative (P : W → Event T → Prop)
+variable {W E T : Type*} [LinearOrder T]
+
+/-- A sorted property is a property of events, of states, or of times. -/
+inductive SortedProperty (W E T : Type*) [LinearOrder T]
+  | eventive (P : W → E → Prop)
+  | stative (P : W → E → Prop)
   | temporal (P : W → Interval (WithTop T) → Prop)
 
 /-- A property of eventualities rather than of times. -/
-def SortedProperty.IsEventuality : SortedProperty W T → Prop
+def SortedProperty.IsEventuality : SortedProperty W E T → Prop
   | .temporal _ => False
   | _ => True
 
+variable [Event.TemporalTrace E T]
+
 /-- `At t w Q`: the property `Q` is instantiated in `w` at the interval `t`, by inclusion of the
 runtime for events, overlap for states, and application for properties of times. -/
-def At (t : Interval (WithTop T)) (w : W) : SortedProperty W T → Prop
-  | .eventive P => ∃ e, P w e ∧ ↑e.τ.withTop ≤ t
-  | .stative P => ∃ e, P w e ∧ ¬ Disjoint (↑e.τ.withTop) t
+def At (t : Interval (WithTop T)) (w : W) : SortedProperty W E T → Prop
+  | .eventive P => ∃ e, P w e ∧ ↑(τ e).withTop ≤ t
+  | .stative P => ∃ e, P w e ∧ ¬ Disjoint (↑(τ e).withTop) t
   | .temporal P => P w t
 
-variable {P : W → Event T → Prop} {Q : SortedProperty W T} {r r' : Interval (WithTop T)} {w : W}
+variable {P : W → E → Prop} {Q : SortedProperty W E T} {r r' : Interval (WithTop T)} {w : W}
 
 /-- An eventuality instantiated at an interval gives the interval a time. -/
 theorem exists_mem_of_at (hQ : Q.IsEventuality) (h : At r w Q) : ∃ x, x ∈ r := by
@@ -85,12 +89,12 @@ theorem At.mono (hQ : Q.IsEventuality) (h : r ≤ r') (hr : At r w Q) : At r' w 
 
 /-- An event is instantiated at the ray from `t` when it starts no earlier than `t`. -/
 @[simp] theorem at_Ici_eventive_iff {t : T} :
-    At (Interval.Ici t) w (.eventive P) ↔ ∃ e, P w e ∧ t ≤ e.τ.fst := by
+    At (Interval.Ici t) w (.eventive P) ↔ ∃ e, P w e ∧ t ≤ (τ e).fst := by
   simp [At, Interval.withTop_le_Ici]
 
 /-- A state is instantiated at the ray from `t` when it persists at or past `t`. -/
 @[simp] theorem at_Ici_stative_iff {t : T} :
-    At (Interval.Ici t) w (.stative P) ↔ ∃ e, P w e ∧ t ≤ e.τ.snd := by
+    At (Interval.Ici t) w (.stative P) ↔ ∃ e, P w e ∧ t ≤ (τ e).snd := by
   simp [At, Interval.not_disjoint_withTop_Ici]
 
 /-- On a bounded interval, eventive instantiation is the perfective viewpoint. -/

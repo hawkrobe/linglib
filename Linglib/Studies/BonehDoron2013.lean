@@ -56,6 +56,8 @@ and [pancheva-2003]'s final-subinterval perfect.
 
 namespace BonehDoron2013
 
+open Event (τ)
+
 open Aspect (Perfectivity IntervalPred IMPF)
 open Modality (ModalBase)
 
@@ -138,7 +140,7 @@ def retro {W T : Type*} [LinearOrder T] (A : IntervalPred W T) :
   fun w p => ∃ i, A w i ∧ i.isBefore p
 
 /-- (18): *used to* — the retrospective over the imperfective. -/
-def usedToOp {W T : Type*} [LinearOrder T] (P : W → Event T → Prop) :
+def usedToOp {W T E : Type*} [LinearOrder T] [Event.TemporalTrace E T] (P : W → E → Prop) :
     IntervalPred W T :=
   retro (IMPF P)
 
@@ -160,9 +162,9 @@ theorem retro_perfect_forces_point {T : Type*} [LinearOrder T]
 Still do."): (19a) bounds only the reference interval, so a state whose
 runtime strictly contains a pre-perspective reference interval satisfies
 *used to* however far the state runs — through the perspective included. -/
-theorem usedTo_of_persisting_state {W T : Type*} [LinearOrder T]
-    {P : W → Event T → Prop} {w : W} {e : Event T} (hP : P w e)
-    {i p : NonemptyInterval T} (hie : i < e.τ) (hip : i.isBefore p) :
+theorem usedTo_of_persisting_state {W T E : Type*} [LinearOrder T] [Event.TemporalTrace E T]
+    {P : W → E → Prop} {w : W} {e : E} (hP : P w e)
+    {i p : NonemptyInterval T} (hie : i < τ e) (hip : i.isBefore p) :
     usedToOp P w p :=
   ⟨i, ⟨e, hie, hP⟩, hip⟩
 

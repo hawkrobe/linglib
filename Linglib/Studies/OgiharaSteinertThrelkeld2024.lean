@@ -3,6 +3,7 @@ module
 public import Linglib.Studies.Anscombe1964
 public import Linglib.Studies.BeaverCondoravdi2003
 public import Linglib.Core.Order.AllenRelation
+public import Linglib.Semantics.Events.Basic
 public import Linglib.Semantics.Tense.RunTimes
 public import Linglib.Data.Examples.OgiharaSteinertThrelkeld2024
 
@@ -52,6 +53,8 @@ are recorded in the example rows only.
 
 namespace OgiharaSteinertThrelkeld2024
 
+open Event (τ)
+
 open OgiharaSteinertThrelkeld2024.Examples
 open Tense Anscombe1964 BeaverCondoravdi2003
 
@@ -79,125 +82,103 @@ exist and the complement's run-time wholly precedes the main event's — while *
 existential over the main clause and universal over the complement, so it is vacuously
 satisfied when no complement event exists. The precedence is Allen's `precedes` atom. -/
 
-variable {T : Type*} [LinearOrder T]
+variable {T E : Type*} [LinearOrder T] [Event.TemporalTrace E T]
 
 /-- *P after Q*: some `P`-event whose run-time some `Q`-event's run-time wholly precedes. -/
-def eventAfter (P Q : Event T → Prop) : Prop :=
-  ∃ e₁ e₂ : Event T, P e₁ ∧ Q e₂ ∧ e₂.τ.precedes e₁.τ
+def eventAfter (P Q : E → Prop) : Prop :=
+  ∃ e₁ e₂ : E, P e₁ ∧ Q e₂ ∧ (τ e₂).precedes (τ e₁)
 
 /-- *P before Q*: some `P`-event whose run-time wholly precedes every `Q`-event's. -/
-def eventBefore (P Q : Event T → Prop) : Prop :=
-  ∃ e₁ : Event T, P e₁ ∧ ∀ e₂ : Event T, Q e₂ → e₁.τ.precedes e₂.τ
+def eventBefore (P Q : E → Prop) : Prop :=
+  ∃ e₁ : E, P e₁ ∧ ∀ e₂ : E, Q e₂ → (τ e₁).precedes (τ e₂)
 
-theorem eventAfter_iff_allen (P Q : Event T → Prop) :
-    eventAfter P Q ↔ ∃ e₁ e₂ : Event T, P e₁ ∧ Q e₂ ∧
-      AllenRelation.precedes.holds e₂.τ e₁.τ :=
+theorem eventAfter_iff_allen (P Q : E → Prop) :
+    eventAfter P Q ↔ ∃ e₁ e₂ : E, P e₁ ∧ Q e₂ ∧
+      AllenRelation.precedes.holds (τ e₂) (τ e₁) :=
   Iff.rfl
 
-theorem eventBefore_iff_allen (P Q : Event T → Prop) :
-    eventBefore P Q ↔ ∃ e₁ : Event T, P e₁ ∧ ∀ e₂ : Event T, Q e₂ →
-      AllenRelation.precedes.holds e₁.τ e₂.τ :=
+theorem eventBefore_iff_allen (P Q : E → Prop) :
+    eventBefore P Q ↔ ∃ e₁ : E, P e₁ ∧ ∀ e₂ : E, Q e₂ →
+      AllenRelation.precedes.holds (τ e₁) (τ e₂) :=
   Iff.rfl
 
 /-- *After*'s veridicality follows from its double existential. -/
-theorem after_veridicality_derived {P Q : Event T → Prop} (h : eventAfter P Q) :
-    ∃ e : Event T, Q e :=
+theorem after_veridicality_derived {P Q : E → Prop} (h : eventAfter P Q) :
+    ∃ e : E, Q e :=
   let ⟨_, e₂, _, hq, _⟩ := h; ⟨e₂, hq⟩
 
 /-- *Before*'s non-veridicality follows from its universal: any `P`-event with an empty `Q`
 satisfies it. -/
 theorem before_nonveridicality_derived :
-    ∃ (P Q : Event ℤ → Prop), eventBefore P Q ∧ ¬ ∃ e : Event ℤ, Q e :=
-  ⟨λ e => e = ⟨⟨⟨0, 1⟩, by decide⟩, .action⟩, λ _ => False,
-    ⟨⟨⟨⟨0, 1⟩, by decide⟩, .action⟩, rfl, λ _ h => h.elim⟩, λ ⟨_, h⟩ => h⟩
+    ∃ (P Q : NonemptyInterval ℤ → Prop), eventBefore P Q ∧ ¬ ∃ e, Q e :=
+  ⟨(· = .pure 0), fun _ ↦ False, ⟨.pure 0, rfl, fun _ h ↦ h.elim⟩, fun ⟨_, h⟩ ↦ h⟩
 
 /-- Both connectives commit to the main clause. -/
-theorem eventBefore_veridical_main {P Q : Event T → Prop} (h : eventBefore P Q) :
-    ∃ e : Event T, P e :=
+theorem eventBefore_veridical_main {P Q : E → Prop} (h : eventBefore P Q) :
+    ∃ e : E, P e :=
   let ⟨e₁, hp, _⟩ := h; ⟨e₁, hp⟩
 
 /-- The event-level *after* projects to [anscombe-1964]'s on run-time denotations. -/
-theorem anscombe_after_of_eventAfter {P Q : Event T → Prop} (h : eventAfter P Q) :
-    Anscombe.after (eventDenotation P) (eventDenotation Q) := by
+theorem anscombe_after_of_eventAfter {P Q : E → Prop} (h : eventAfter P Q) :
+    Anscombe.after (τ '' {e | P e}) (τ '' {e | Q e}) := by
   obtain ⟨e₁, e₂, hp, hq, hprec⟩ := h
-  refine ⟨e₁.τ.fst, ?_, e₂.τ.snd, ?_, hprec⟩
-  · rw [timeTrace_eventDenotation]; exact ⟨e₁, hp, le_rfl, e₁.τ.fst_le_snd⟩
-  · rw [timeTrace_eventDenotation]; exact ⟨e₂, hq, e₂.τ.fst_le_snd, le_rfl⟩
+  refine ⟨(τ e₁).fst, ?_, (τ e₂).snd, ?_, hprec⟩
+  · rw [timeTrace_image]; exact ⟨e₁, hp, le_rfl, (τ e₁).fst_le_snd⟩
+  · rw [timeTrace_image]; exact ⟨e₂, hq, (τ e₂).fst_le_snd, le_rfl⟩
 
 /-- The event-level *before* projects to [anscombe-1964]'s quantificational one. -/
-theorem anscombe_before_of_eventBefore {P Q : Event T → Prop} (h : eventBefore P Q) :
-    Anscombe.beforeEver (eventDenotation P) (eventDenotation Q) := by
+theorem anscombe_before_of_eventBefore {P Q : E → Prop} (h : eventBefore P Q) :
+    Anscombe.beforeEver (τ '' {e | P e}) (τ '' {e | Q e}) := by
   obtain ⟨e₁, hp, hall⟩ := h
-  refine ⟨e₁.τ.snd, ?_, λ t' ht' => ?_⟩
-  · rw [timeTrace_eventDenotation]; exact ⟨e₁, hp, e₁.τ.fst_le_snd, le_rfl⟩
-  · rw [timeTrace_eventDenotation] at ht'
+  refine ⟨(τ e₁).snd, ?_, λ t' ht' => ?_⟩
+  · rw [timeTrace_image]; exact ⟨e₁, hp, (τ e₁).fst_le_snd, le_rfl⟩
+  · rw [timeTrace_image] at ht'
     obtain ⟨e₂, hq, ht'_lo, _⟩ := ht'
     exact (hall e₂ hq).trans_le ht'_lo
 
 /-- The projection is strict: [anscombe-1964]'s point-wise *before* allows the main run-time
 to reach into the complement's, which whole-run-time precedence forbids. -/
 theorem not_eventBefore_of_anscombe :
-    ¬ ∀ (P Q : Event ℤ → Prop),
-      Anscombe.beforeEver (eventDenotation P) (eventDenotation Q) → eventBefore P Q := by
+    ¬ ∀ (P Q : NonemptyInterval ℤ → Prop),
+      Anscombe.beforeEver (τ '' {e | P e}) (τ '' {e | Q e}) → eventBefore P Q := by
   intro h
-  let eP : Event ℤ := ⟨⟨⟨1, 5⟩, by decide⟩, .action⟩
-  let eQ : Event ℤ := ⟨⟨⟨3, 8⟩, by decide⟩, .action⟩
-  have hansc : Anscombe.beforeEver (eventDenotation (· = eP)) (eventDenotation (· = eQ)) := by
+  let eP : NonemptyInterval ℤ := ⟨⟨1, 5⟩, by decide⟩
+  let eQ : NonemptyInterval ℤ := ⟨⟨3, 8⟩, by decide⟩
+  have hansc : Anscombe.beforeEver (τ '' {e | e = eP}) (τ '' {e | e = eQ}) := by
     refine ⟨1, ?_, ?_⟩
-    · rw [timeTrace_eventDenotation]
-      exact ⟨eP, rfl, by simp [Event.τ, eP], by simp [Event.τ, eP]⟩
+    · rw [timeTrace_image]
+      exact ⟨eP, rfl, by simp [eP], by simp [eP]⟩
     · intro t' ht'
-      rw [timeTrace_eventDenotation] at ht'
+      rw [timeTrace_image] at ht'
       obtain ⟨e, rfl, hlo, _⟩ := ht'
-      simp only [Event.τ, eQ] at hlo; omega
+      simp only [Event.τ_nonemptyInterval, eQ] at hlo; omega
   obtain ⟨e₁, rfl, hall⟩ := h _ _ hansc
   have := hall eQ rfl
-  simp [NonemptyInterval.precedes, Event.τ, eP, eQ] at this
+  simp [NonemptyInterval.precedes, eP, eQ] at this
 
-/-- Scenario: "He left₁ after she arrived₀" with punctual events.
-    - leaving event at time 1
-    - arriving event at time 0
-    the paper predicts: after(leave, arrive) holds (τ(arrive) ≺ τ(leave)). -/
-theorem scenario_after_punctual :
-    let leave : Event ℤ := ⟨⟨⟨1, 1⟩, le_refl _⟩, .action⟩
-    let arrive : Event ℤ := ⟨⟨⟨0, 0⟩, le_refl _⟩, .action⟩
-    eventAfter (· = leave) (· = arrive) := by
-  refine ⟨⟨⟨⟨1, 1⟩, le_refl _⟩, .action⟩, ⟨⟨⟨0, 0⟩, le_refl _⟩, .action⟩, rfl, rfl, ?_⟩
-  simp [NonemptyInterval.precedes, Event.τ]
+/-- *He left after she arrived*, with the arriving at `0` and the leaving at `1`: the
+arriving precedes the leaving. -/
+example : eventAfter (· = (.pure 1 : NonemptyInterval ℤ)) (· = .pure 0) :=
+  ⟨_, _, rfl, rfl, by simp [NonemptyInterval.precedes]⟩
 
-/-- Scenario: "He left₁ before she arrived₃" with punctual events.
-    - leaving event at time 1
-    - arriving event at time 3
-    the paper predicts: before(leave, arrive) holds (τ(leave) ≺ τ(arrive)). -/
-theorem scenario_before_punctual :
-    let leave : Event ℤ := ⟨⟨⟨1, 1⟩, le_refl _⟩, .action⟩
-    let arrive : Event ℤ := ⟨⟨⟨3, 3⟩, le_refl _⟩, .action⟩
-    eventBefore (· = leave) (· = arrive) := by
-  refine ⟨⟨⟨⟨1, 1⟩, le_refl _⟩, .action⟩, rfl, ?_⟩
-  intro e₂ rfl
-  simp [NonemptyInterval.precedes, Event.τ]
+/-- *He left before she arrived*, with the leaving at `1` and the arriving at `3`. -/
+example : eventBefore (· = (.pure 1 : NonemptyInterval ℤ)) (· = .pure 3) :=
+  ⟨_, rfl, fun _ h ↦ by subst h; simp [NonemptyInterval.precedes]⟩
 
-/-- Scenario: "The bomb exploded₅ before anyone defused it" (nobody defused it).
-    the paper predicts: before(explode, defuse) holds vacuously (no defuse-events). -/
-theorem scenario_before_counterfactual :
-    let explode : Event ℤ := ⟨⟨⟨5, 5⟩, le_refl _⟩, .action⟩
-    eventBefore (· = explode) (λ _ => False) := by
-  exact ⟨⟨⟨⟨5, 5⟩, le_refl _⟩, .action⟩, rfl, λ _ h => h.elim⟩
+/-- *The bomb exploded before anyone defused it*, where nobody defused it: *before* holds
+vacuously. -/
+example : eventBefore (· = (.pure 5 : NonemptyInterval ℤ)) fun _ ↦ False :=
+  ⟨_, rfl, fun _ h ↦ h.elim⟩
 
-/-- The punctual after-scenario projects correctly through eventDenotation:
-    OST.after implies Anscombe.after on the projected interval sets. -/
-theorem scenario_after_projects :
-    let leave : Event ℤ := ⟨⟨⟨1, 1⟩, le_refl _⟩, .action⟩
-    let arrive : Event ℤ := ⟨⟨⟨0, 0⟩, le_refl _⟩, .action⟩
-    Anscombe.after (eventDenotation (· = leave)) (eventDenotation (· = arrive)) :=
-  anscombe_after_of_eventAfter scenario_after_punctual
+/-- The punctual *after* scenario projects to [anscombe-1964]'s *after* on run times. -/
+example : Anscombe.after (τ '' {e | e = (.pure 1 : NonemptyInterval ℤ)})
+    (τ '' {e | e = (.pure 0 : NonemptyInterval ℤ)}) :=
+  anscombe_after_of_eventAfter ⟨_, _, rfl, rfl, by simp [NonemptyInterval.precedes]⟩
 
-/-- The punctual before-scenario projects correctly through eventDenotation. -/
-theorem scenario_before_projects :
-    let leave : Event ℤ := ⟨⟨⟨1, 1⟩, le_refl _⟩, .action⟩
-    let arrive : Event ℤ := ⟨⟨⟨3, 3⟩, le_refl _⟩, .action⟩
-    Anscombe.beforeEver (eventDenotation (· = leave)) (eventDenotation (· = arrive)) :=
-  anscombe_before_of_eventBefore scenario_before_punctual
+/-- The punctual *before* scenario projects to [anscombe-1964]'s *before* on run times. -/
+example : Anscombe.beforeEver (τ '' {e | e = (.pure 1 : NonemptyInterval ℤ)})
+    (τ '' {e | e = (.pure 3 : NonemptyInterval ℤ)}) :=
+  anscombe_before_of_eventBefore ⟨_, rfl, fun _ h ↦ by subst h; simp [NonemptyInterval.precedes]⟩
 
 /-- A counterexample to B&C's branching-time analysis.
     In each case, the complement eventuality is temporally bounded to an

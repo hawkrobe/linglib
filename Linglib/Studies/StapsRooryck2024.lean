@@ -126,44 +126,44 @@ end Causal
 
 section Passive
 
-variable {Entity T : Type*} [LinearOrder T]
+variable {Entity E : Type*}
 
 /-- The by-phrase (10b) is the agentive instantiation applied to its argument, a predicate of
 events at type `⟨s, t⟩`. -/
-def byPhrase (init : ThematicRel Entity T) (x : Entity) : Event T → Prop := init x
+def byPhrase (init : ThematicRel Entity E) (x : Entity) : E → Prop := init x
 
 /-- Passive Voice (9b) is the existential closure of the external argument. -/
-def voicePass (p : ThematicRel Entity T) : Event T → Prop := fun e ↦ ∃ x, p x e
+def voicePass (p : ThematicRel Entity E) : E → Prop := fun e ↦ ∃ x, p x e
 
 /-- In (10) the by-phrase combines with the verb's denotation by Event Identification and the
 closure passive Voice performs is redundant, since the by-phrase supplies the initiator. -/
-theorem voicePass_eventIdentification (init : ThematicRel Entity T) (body : Event T → Prop)
-    (j : Entity) (e : Event T) :
+theorem voicePass_eventIdentification (init : ThematicRel Entity E) (body : E → Prop)
+    (j : Entity) (e : E) :
     voicePass (eventIdentification (fun x e ↦ init x e ∧ body e) (byPhrase init j)) e ↔
       init j e ∧ body e :=
   ⟨fun ⟨_, ⟨_, hb⟩, hj⟩ ↦ ⟨hj, hb⟩, fun ⟨hj, hb⟩ ↦ ⟨j, ⟨hj, hb⟩, hj⟩⟩
 
 /-- *par* in a passive (35a) is the initiator relation, presupposing high proto-agentivity of
 the agent in the event. The evaluation point of the partial proposition is the event. -/
-def parAgentive (init : ThematicRel Entity T) (High : Entity → Event T → Prop) (x : Entity) :
-    PartialProp (Event T) where
+def parAgentive (init : ThematicRel Entity E) (High : Entity → E → Prop) (x : Entity) :
+    PartialProp (E) where
   presup := High x
   assertion := init x
 
 /-- *de* in a passive (35b) is the initiator relation, presupposing low proto-agentivity. -/
-def deAgentive (init : ThematicRel Entity T) (High : Entity → Event T → Prop) (x : Entity) :
-    PartialProp (Event T) where
+def deAgentive (init : ThematicRel Entity E) (High : Entity → E → Prop) (x : Entity) :
+    PartialProp (E) where
   presup e := ¬ High x e
   assertion := init x
 
-variable (init : ThematicRel Entity T) (High : Entity → Event T → Prop) (x : Entity)
+variable (init : ThematicRel Entity E) (High : Entity → E → Prop) (x : Entity)
 
 /-- The two prepositions share their at-issue content. -/
 theorem parAgentive_assertion :
     (parAgentive init High x).assertion = (deAgentive init High x).assertion := rfl
 
 /-- Their presuppositions are complementary. -/
-theorem parAgentive_presup_iff (e : Event T) :
+theorem parAgentive_presup_iff (e : E) :
     (parAgentive init High x).presup e ↔ ¬ (deAgentive init High x).presup e :=
   not_not.symm
 

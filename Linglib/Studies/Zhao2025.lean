@@ -59,6 +59,8 @@ activities.
 
 namespace Zhao2025
 
+open Event (τ)
+
 open Set
 
 variable {E α : Type*}
@@ -132,8 +134,8 @@ end Preorder
 /-- A predicate of events in time has the subinterval property exactly when its
 existential quantifier is atomically distributive over time at every world. -/
 theorem hasSubintervalProperty_iff_forall_atomDist {W T : Type*} [LinearOrder T]
-    {P : W → Event T → Prop} :
-    Aspect.HasSubintervalProperty P ↔ ∀ w, AtomDist Event.τ (.ofPred (P w)) :=
+    [Event.TemporalTrace E T] {P : W → E → Prop} :
+    Aspect.HasSubintervalProperty P ↔ ∀ w, AtomDist τ (.ofPred (P w)) :=
   forall_congr' fun _ ↦ atomDist_ofPred_iff.symm
 
 /-- (5.44), (5.57): a duration argument or a measure phrase gives the trace a positive length, so

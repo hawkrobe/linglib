@@ -141,10 +141,9 @@ theorem subpath_iff_infix {p q : Path Loc} :
       · cases q
         simp_all [points, List.append_assoc]
 
-/-- The subpath order, as a **scoped** instance: path sets are also studied
-    under a rival total lattice sum ([krifka-1998]'s part structures,
-    hypothesized as `SemilatticeSup (Path Loc)` in `Events/SpatialTrace.lean`).
-    Activate with `open scoped Spatial.Path`. -/
+/-- The subpath order is a scoped instance, since paths are also studied under a rival total
+lattice sum (the `SemilatticeSup (Path Loc)` of `Studies/GoldbergJackendoff2004.lean`).
+Activate it with `open scoped Spatial.Path`. -/
 scoped instance instSubpathOrder : PartialOrder (Path Loc) where
   le := Subpath
   le_refl p := subpath_iff_infix.mpr (List.infix_refl _)
