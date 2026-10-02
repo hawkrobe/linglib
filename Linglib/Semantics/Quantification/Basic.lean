@@ -2,6 +2,7 @@ module
 
 public import Linglib.Semantics.Quantification.Defs
 public import Linglib.Semantics.Quantification.Properties
+public import Linglib.Logic.Aristotelian.Square
 
 /-!
 # Concrete propositional generalized quantifiers
@@ -17,6 +18,12 @@ quantifiers such as *most* and *few* are in `Quantification/Counting.lean`.
 
 * `every`, `GQ.some`, `no`, `the`: the propositional denotations.
 * `SatisfiesUniversals`: conservativity together with monotonicity in the scope.
+* `square`: the square of opposition of `every`, `no`, `some` and `not every` at a restrictor.
+
+## Main results
+
+* `square_relations`: with a non-empty restrictor the four stand in all six relations of the
+  square.
 
 ## References
 
@@ -240,13 +247,19 @@ theorem filtrating_every : Filtrating (every : GQ α) :=
 
 /-! ### Aristotelian square of opposition
 
-The four Aristotelian relations among the GQ denotations `every`, `GQ.some`, `no` and `everyᶜ`
-at a fixed restrictor `R`. Outer negation is the Boolean complement, so the contradictory
-diagonals are instances of `isCompl_compl`; the theorems below give their pointwise readings.
-Contrariety and subalternation hold only under existential import, and at a singleton
-restrictor `every` and `no` are contradictory rather than contrary, so they are stated as
-theorems conditional on a nonempty restrictor rather than as `Aristotelian.IsContrary` and `<`.
+At a restrictor `R`, the denotations `every R`, `no R`, `GQ.some R` and `everyᶜ R` are the corners
+of a square in the Boolean algebra `(α → Prop) → Prop`. Outer negation is the Boolean complement,
+so the diagonals are contradictory at every restrictor. Contrariety, and with it the
+subalternations and subcontrariety, needs existential import: at an empty restrictor `every` and
+`no` both hold vacuously (`a_e_contrary`), and `square_relations` assumes a non-empty one.
 -/
+
+/-- The square of opposition at the restrictor `R`. -/
+def square (R : α → Prop) : Aristotelian.Square ((α → Prop) → Prop) where
+  A := every R
+  E := no R
+  I := GQ.some R
+  O := (every : GQ α)ᶜ R
 
 /-- The A-form and the O-form are contradictories. -/
 theorem every_contradicts_notEvery (R S : α → Prop) :
@@ -258,34 +271,23 @@ theorem no_contradicts_some (R S : α → Prop) :
     (no : GQ α) R S ↔ ¬ ((GQ.some : GQ α) R S) := by
   simp only [no, GQ.some]; push Not; rfl
 
-/-- The A-form and the E-form are contraries, since they cannot both hold unless the
-restrictor is empty. -/
+/-- The A-form and the E-form both hold only when the restrictor is empty. -/
 theorem a_e_contrary (R S : α → Prop) :
     (every : GQ α) R S → (no : GQ α) R S →
     ∀ x : α, ¬ R x := by
   intro hA hE x hR; exact hE x hR (hA x hR)
 
+/-- With a non-empty restrictor the four determiners stand in all six relations of the square. -/
+theorem square_relations {R : α → Prop} (hR : ∃ x : α, R x) :
+    Aristotelian.SquareRelations (square R) :=
+  .of_disjoint (funext fun S ↦ propext <| iff_not_comm.mp (no_contradicts_some R S)) rfl <|
+    Pi.disjoint_iff.mpr fun S ↦ Prop.disjoint_iff.mpr fun ⟨hA, hE⟩ ↦
+      let ⟨x, hx⟩ := hR; a_e_contrary R S hA hE x hx
+
 /-- The A-form entails the I-form when the restrictor is nonempty. -/
-theorem subalternation_a_i (R S : α → Prop)
-    (hR : ∃ x : α, R x) :
-    (every : GQ α) R S → (GQ.some : GQ α) R S := by
-  intro hA; obtain ⟨x, hRx⟩ := hR; exact ⟨x, hRx, hA x hRx⟩
-
-/-- The E-form entails the O-form when the restrictor is nonempty. -/
-theorem subalternation_e_o (R S : α → Prop)
-    (hR : ∃ x : α, R x) :
-    (no : GQ α) R S → (every : GQ α)ᶜ R S := by
-  intro hE hA; obtain ⟨x, hRx⟩ := hR; exact hE x hRx (hA x hRx)
-
-/-- The I-form and the O-form are subcontraries, since they cannot both fail when the
-restrictor is nonempty. -/
-theorem subcontrariety_i_o (R S : α → Prop)
-    (hR : ∃ x : α, R x) :
-    (GQ.some : GQ α) R S ∨ (every : GQ α)ᶜ R S := by
-  by_cases h : (GQ.some : GQ α) R S
-  · exact Or.inl h
-  · right; intro hA; apply h
-    obtain ⟨x, hRx⟩ := hR; exact ⟨x, hRx, hA x hRx⟩
+theorem subalternation_a_i (R S : α → Prop) (hR : ∃ x : α, R x) :
+    (every : GQ α) R S → (GQ.some : GQ α) R S :=
+  (square_relations hR).subalternAI S
 
 /-! ### Basic left monotonicities ([peters-westerstahl-2006] §5.5) -/
 
