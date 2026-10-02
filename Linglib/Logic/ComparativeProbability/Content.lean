@@ -26,9 +26,8 @@ kind induces a qualitative probability order.
 
 The contents are generic over an ordered field `K`: `ℝ` gives classical
 `[0,1]`-valued measures, `ℚ` the computable theory. On a finite state space the
-two agree (rational and real linear feasibility coincide), and only `ℚ` supports
-the constructive Farkas (`Core/Order/FourierMotzkin.lean`) and `decide`-checked
-models (`Representability.lean`) behind the representation theorems.
+two agree, since rational and real linear feasibility coincide; the representation
+theorems are stated over `ℚ`, where their models can be checked by `decide`.
 `FinAddMeasure` mirrors mathlib's `MeasureTheory.AddContent` interface (`FunLike`,
 primed axiom fields with unprimed lemmas); re-founding on `AddContent` itself
 would trade the ordered-field axioms for monoid-valued contents over a set

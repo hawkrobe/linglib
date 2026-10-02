@@ -175,7 +175,6 @@ import Linglib.Core.Order.Argmax
 import Linglib.Core.Order.Branching
 import Linglib.Core.Order.DeMorganAlgebra.Basic
 import Linglib.Core.Order.Flat
-import Linglib.Core.Order.FourierMotzkin
 import Linglib.Core.Order.GaloisConnection
 import Linglib.Core.Order.Interval
 import Linglib.Core.Order.IntervalContent

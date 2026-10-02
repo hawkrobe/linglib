@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Core.Order.FourierMotzkin
+public import Linglib.Core.LinearAlgebra.Matrix.Farkas
 public import Linglib.Logic.ComparativeProbability.Cancellation
 public import Mathlib.Algebra.BigOperators.Field
 public import Mathlib.Algebra.Order.Ring.Abs
@@ -21,7 +21,7 @@ integer vectors, every comparison in it also holds reversed. This is
 equivalent to the balanced-sequence form `FiniteCancellation` of
 `Cancellation.lean` (`cancellation_iff_finiteCancellation`).
 
-The hard direction is linear-programming duality over `ℚ` (`Polyhedral.farkas`),
+The hard direction is linear-programming duality over `ℚ` (`Matrix.farkas`),
 on `Fin n` and transported along `Fintype.equivFin`: the weight vectors
 representing the order form a polyhedron, which is nonempty unless a Farkas
 certificate exists, and a certificate is a nonnegative weighting of valid
@@ -279,31 +279,28 @@ end Weighted
 
 section Farkas
 
-open scoped Classical
+open scoped Classical Matrix
 
 variable {n : ℕ} (sys : QualitativeProbability (Set (Fin n)))
 
-/-- `validVecs sys` lists the comparisons that hold in `sys`. -/
-private noncomputable def validVecs : List (Fin n → SignType) :=
-  (Finset.univ.filter fun v ↦ sys.ge (posSupport v) (negSupport v)).toList
+/-- `coeffs sys` has a row for each comparison `v`, `-v` if `v` holds in `sys` and `0`
+    otherwise. -/
+private noncomputable def coeffs : Matrix (Fin n → SignType) (Fin n) ℚ :=
+  Matrix.of fun v j ↦ if sys.ge (posSupport v) (negSupport v) then -(v j : ℚ) else 0
 
-private theorem mem_validVecs {v : Fin n → SignType} :
-    v ∈ validVecs sys ↔ sys.ge (posSupport v) (negSupport v) := by
-  simp [validVecs]
+/-- `bound sys v` is `-1` when `v` holds strictly in `sys` and `0` otherwise, so that
+    `coeffs sys *ᵥ x ≤ bound sys` asks `v ⬝ᵥ x ≥ 1` of each strict comparison and `v ⬝ᵥ x ≥ 0`
+    of each other valid one. -/
+private noncomputable def bound (v : Fin n → SignType) : ℚ :=
+  if sys.ge (posSupport v) (negSupport v) ∧ ¬sys.ge (negSupport v) (posSupport v) then -1 else 0
 
-/-- `row sys v` is the linear constraint of a comparison, `v · x ≥ 1` if `v` is strict and
-    `≥ 0` otherwise, written `lhs · x ≤ rhs`. -/
-private noncomputable def row (v : Fin n → SignType) : Polyhedral.Ineq n :=
-  ⟨fun j ↦ -(v j : ℚ), if sys.ge (negSupport v) (posSupport v) then 0 else -1⟩
-
-private theorem row_sat {v : Fin n → SignType} {x : Fin n → ℚ} :
-    (row sys v).sat x ↔
-      (if sys.ge (negSupport v) (posSupport v) then 0 else 1) ≤ ∑ j, (v j : ℚ) * x j := by
-  simp only [row, Polyhedral.Ineq.sat, Polyhedral.dot, neg_mul, Finset.sum_neg_distrib]
-  split_ifs <;> constructor <;> intro h <;> linarith
-
-/-- `system sys` is the linear system of all valid comparisons. -/
-private noncomputable def system : Polyhedral.System n := (validVecs sys).map (row sys)
+private theorem le_sum_of_mulVec_le {x : Fin n → ℚ} (hx : coeffs sys *ᵥ x ≤ bound sys)
+    {v : Fin n → SignType} (hv : sys.ge (posSupport v) (negSupport v)) :
+    (if sys.ge (negSupport v) (posSupport v) then 0 else 1) ≤ ∑ j, (v j : ℚ) * x j := by
+  have h := hx v
+  simp only [coeffs, bound, Matrix.mulVec, dotProduct, Matrix.of_apply, hv, ite_true, true_and,
+    neg_mul, Finset.sum_neg_distrib] at h
+  split_ifs at h ⊢ <;> linarith
 
 /-- `ofSets A B` is the sign vector `+1` on `A` and `-1` on `B`. -/
 private noncomputable def ofSets (A B : Set (Fin n)) (i : Fin n) : SignType :=
@@ -330,14 +327,13 @@ private theorem sum_ofSets_mul {A B : Set (Fin n)} (h : Disjoint A B) (x : Fin n
   all_goals simp [ofSets, hA, hB]
 
 /-- A solution of the system, normalized, is a representing measure. -/
-private theorem representable_of_feasible {x : Fin n → ℚ} (hx : ∀ r ∈ system sys, r.sat x) :
+private theorem representable_of_feasible {x : Fin n → ℚ} (hx : coeffs sys *ᵥ x ≤ bound sys) :
     Representable sys := by
   have hsets : ∀ A B : Set (Fin n), Disjoint A B → sys.le B A →
       (if sys.le A B then 0 else 1) ≤
         (∑ j, if j ∈ A then x j else 0) - ∑ j, if j ∈ B then x j else 0 := fun A B hd hg ↦ by
-    have := (row_sat sys).mp (hx (row sys (ofSets A B))
-      (List.mem_map_of_mem ((mem_validVecs sys).mpr
-        (by rwa [QualitativeProbability.ge, posSupport_ofSets, negSupport_ofSets hd]))))
+    have := le_sum_of_mulVec_le sys hx
+      (by rwa [QualitativeProbability.ge, posSupport_ofSets, negSupport_ofSets hd])
     rwa [QualitativeProbability.ge, posSupport_ofSets, negSupport_ofSets hd,
       sum_ofSets_mul hd] at this
   have hnn : ∀ j, 0 ≤ x j := fun j ↦ by
@@ -368,59 +364,42 @@ private theorem representable_of_feasible {x : Fin n → ℚ} (hx : ∀ r ∈ sy
     rw [ite_eq_right hCD'] at this
     linarith
 
-/-- A Farkas certificate for the system, regrouped by comparison, is a
-    nonnegative neutral weighting with positive weight on a strict comparison. -/
-private theorem not_cancellation_of_infeasCert (cert : Polyhedral.InfeasCert (system sys)) :
-    ¬Cancellation sys.ge := by
+/-- A Farkas certificate for the system is a nonnegative neutral weighting with positive weight
+    on a strict comparison. -/
+private theorem not_cancellation_of_certificate {y : (Fin n → SignType) → ℚ} (hy : 0 ≤ y)
+    (hyA : y ᵥ* coeffs sys = 0) (hyb : y ⬝ᵥ bound sys < 0) : ¬Cancellation sys.ge := by
   intro hcancel
-  have hlen : (system sys).length = (validVecs sys).length := List.length_map ..
-  -- the comparison behind each row
-  let vec : Fin (system sys).length → Fin n → SignType := fun i ↦
-    (validVecs sys).get (i.cast hlen)
-  have hget : ∀ i, (system sys).get i = row sys (vec i) := fun i ↦ by
-    simp [system, List.get_eq_getElem, vec]
-  -- the weight of a comparison: the certificate weights of its rows
-  let w : (Fin n → SignType) → ℚ := fun v ↦ ∑ i, if vec i = v then cert.ws i else 0
-  have hw : ∀ v, 0 ≤ w v := fun v ↦ Finset.sum_nonneg fun i _ ↦ by
-    split_ifs <;> simp [cert.nonneg]
-  have hregroup : ∀ g : (Fin n → SignType) → ℚ,
-      ∑ v, w v * g v = ∑ i, cert.ws i * g (vec i) := fun g ↦ by
-    simp only [w, Finset.sum_mul, ite_mul, zero_mul]
-    rw [Finset.sum_comm]
-    exact Finset.sum_congr rfl fun i _ ↦ by rw [Finset.sum_ite_eq]; simp
-  have hpos : ∀ v, 0 < w v → ∃ i, vec i = v ∧ 0 < cert.ws i := fun v hv ↦ by
-    by_contra hall
-    push Not at hall
-    refine hv.not_ge (Finset.sum_nonpos fun i _ ↦ ?_)
-    split_ifs with hi
-    · exact hall i hi
-    · exact le_rfl
+  -- the weight of a comparison: its certificate weight if it holds
+  let w : (Fin n → SignType) → ℚ := fun v ↦ if sys.ge (posSupport v) (negSupport v) then y v else 0
+  have hw : ∀ v, 0 ≤ w v := fun v ↦ by
+    simp only [w]; split_ifs
+    exacts [hy v, le_rfl]
   have hvalid : ∀ v, 0 < w v → sys.ge (posSupport v) (negSupport v) := fun v hv ↦ by
-    obtain ⟨i, rfl, -⟩ := hpos v hv
-    exact (mem_validVecs sys).mp (List.get_mem _ _)
+    by_contra h
+    simp only [w, h, ite_false, lt_self_iff_false] at hv
   have hsum : ∀ j, ∑ v, w v * (v j : ℚ) = 0 := fun j ↦ by
-    have h := cert.coeffsZero j
-    simp only [hget, row, mul_neg, Finset.sum_neg_distrib, neg_eq_zero] at h
-    rw [hregroup]; exact h
-  have hstrict : ∃ i, 0 < cert.ws i ∧ ¬sys.ge (negSupport (vec i)) (posSupport (vec i)) := by
-    by_contra hall
-    push Not at hall
-    have h := cert.boundNeg
-    simp only [hget, row] at h
-    refine h.not_ge (le_of_eq (Finset.sum_eq_zero fun i _ ↦ ?_).symm)
-    split_ifs with hi
-    · exact mul_zero _
-    · rw [le_antisymm (not_lt.mp fun hlt ↦ hi (hall i hlt)) (cert.nonneg i), zero_mul]
-  obtain ⟨i, hi, hstr⟩ := hstrict
-  refine hstr (hcancel.weighted w hw hvalid hsum (v := vec i) (lt_of_lt_of_le hi ?_))
-  have := Finset.single_le_sum (f := fun k ↦ if vec k = vec i then cert.ws k else 0)
-    (fun k _ ↦ by split_ifs <;> simp [cert.nonneg]) (Finset.mem_univ i)
-  simpa using this
+    have h := congrFun hyA j
+    simp only [Matrix.vecMul, dotProduct, coeffs, Matrix.of_apply, Pi.zero_apply] at h
+    have : ∑ v, w v * (v j : ℚ) = -∑ v, y v *
+        (if sys.ge (posSupport v) (negSupport v) then -(v j : ℚ) else 0) := by
+      rw [← Finset.sum_neg_distrib]
+      exact Finset.sum_congr rfl fun v _ ↦ by simp only [w]; split_ifs <;> ring
+    rw [this, h, neg_zero]
+  -- some strict comparison carries positive weight
+  obtain ⟨v, hyv, hv, hstr⟩ : ∃ v, 0 < y v ∧ sys.ge (posSupport v) (negSupport v) ∧
+      ¬sys.ge (negSupport v) (posSupport v) := by
+    by_contra! hall
+    refine hyb.not_ge (Finset.sum_nonneg fun v _ ↦ ?_)
+    simp only [bound]
+    split_ifs with h
+    · rw [le_antisymm (not_lt.mp fun hlt ↦ h.2 (hall v hlt h.1)) (hy v), zero_mul]
+    · rw [mul_zero]
+  exact hstr (hcancel.weighted w hw hvalid hsum (by simp only [w, hv, ite_true]; exact hyv))
 
 private theorem representable_of_cancellation_fin (h : Cancellation sys.ge) :
     Representable sys :=
-  (Polyhedral.farkas (system sys)).elim (fun ⟨_, hx⟩ ↦ representable_of_feasible sys hx)
-    fun ⟨cert⟩ ↦ absurd h (not_cancellation_of_infeasCert sys cert)
+  (Matrix.farkas (coeffs sys) (bound sys)).elim (fun ⟨_, hx⟩ ↦ representable_of_feasible sys hx)
+    fun ⟨_, hy, hyA, hyb⟩ ↦ absurd h (not_cancellation_of_certificate sys hy hyA hyb)
 
 end Farkas
 
