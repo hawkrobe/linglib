@@ -5,26 +5,33 @@ public import Linglib.Logic.ComparativeProbability.Defs
 /-!
 # Validity patterns for comparative probability
 
-The inference patterns against which semantics for the comparative epistemic modal *at least
-as likely as* and for *probably* are assessed: the intuitively valid V1–V12 of [yalcin-2010],
-the intuitively invalid I1–I3, and Conjunctivitis E1, in the numbering of
-[holliday-icard-2013]'s Figure 1. Each is a predicate on a likelihood relation `r` on a
-Boolean algebra, named by the paper's own labels with the figure's numbering in the docstrings.
-V6 and V7 take the account's necessity and possibility modals as parameters and V8–V10 its
-indicative conditional, since these vary across semantics; I1, the union property, is
-`RightUnion` of `Defs`.
+Yalcin assesses semantics for *probably* and the comparative *at least as likely as* against
+inference patterns: the intuitively valid V1–V12, the invalid I1–I3, and the questionable
+Conjunctivitis E1. Holliday and Icard's Figure 1 keeps his labels for V1–V7, V11, V12 and
+I1–I3, leaves out the conditional patterns V8–V10 and E1, and adds V13, which Lassiter defends
+against symmetric fuzzy measures. Each pattern is a predicate on a likelihood relation `r` on a
+Boolean algebra, with the account's modals (V6, V7) and conditional (V8–V10) as parameters; I1
+is `RightUnion`. Each valid pattern is derived once from the axioms of
+`Core/Order/Probability/Defs`, so a model discharges it by instance resolution.
 
-Each valid pattern is derived once from the axioms of comparative probability
-(`Core/Order/Probability/Defs`), so a model discharges it by instance resolution: V1 for
-every relation, V2–V5 and V7–V10 from monotonicity and transitivity, V11 and V12 from
-transitivity and complement reversal, and V6 from additivity and non-triviality when the
-necessity modal is the order's own `⊥ ≽ aᶜ`. The invalid patterns and E1 are refuted or
-validated model by model in the studies.
+## Main statements
+
+* `mustToProbably_eq_top_iff`, `probablyToMight_ne_bot_iff`: for the quantifiers `a = ⊤` and
+  `a ≠ ⊥` over the epistemic space, V6 says that the tautology is probable and V7 that the
+  contradiction is not.
+* `strictDisjunctionIntro_iff`: over a monotone order, V13 says that an event at least as
+  likely as a disjunction it is part of leaves the rest no more likely than `⊥`.
+* `chancyModusTollens_iff`: V9 is V8 by contraposition, whatever the conditional.
+* `equiprobabilityCollapse_of_rightUnion`, `hamblinCollapse_of_equiprobabilityCollapse`,
+  `complementTransfer_of_equiprobabilityCollapse`: I1 gives I2, as Yalcin derives it, and I2
+  gives I3 and V12. This is why Holliday and Icard's Fact 1 finds V12 valid for the l-lifting
+  although Yalcin counts it among the failures of Kratzer's account.
 
 ## References
 
 * [yalcin-2010]
 * [holliday-icard-2013]
+* [lassiter-2015]
 -/
 
 @[expose] public section
@@ -33,120 +40,134 @@ namespace ComparativeProbability
 
 variable {α : Type*} [BooleanAlgebra α] (r : α → α → Prop)
 
-/-- V1, *probably* to not *probably* not: `△a → ¬△aᶜ`. -/
+/-- V1, *probably* to not *probably* not, holds when `△a` gives `¬△aᶜ`. -/
 def ProbablyToNotProbablyNot : Prop := ∀ a : α, Probably r a → ¬ Probably r aᶜ
-/-- V2, distribution over conjunction: `△(a ⊓ b) → △a ∧ △b`. -/
+/-- V2, distribution over conjunction, holds when `△(a ⊓ b)` gives `△a` and `△b`. -/
 def ProbablyDistribInf : Prop := ∀ a b : α, Probably r (a ⊓ b) → Probably r a ∧ Probably r b
-/-- V3, chancy disjunction introduction: `△a → △(a ⊔ b)`. -/
+/-- V3, chancy disjunction introduction, holds when `△a` gives `△(a ⊔ b)`. -/
 def ChancyDisjunctionIntro : Prop := ∀ a b : α, Probably r a → Probably r (a ⊔ b)
-/-- V4, minimality: `a ≽ ⊥`. -/
+/-- V4, minimality, holds when every `a` is at least as likely as `⊥`. -/
 def Minimality : Prop := ∀ a : α, r a ⊥
-/-- V5, maximality: `⊤ ≽ a`. -/
+/-- V5, maximality, holds when `⊤` is at least as likely as every `a`. -/
 def Maximality : Prop := ∀ a : α, r ⊤ a
-/-- V6, *must* to *probably*: `□a → △a`, for the account's necessity modal. -/
+/-- V6, *must* to *probably*, holds when `□a` gives `△a` for the account's necessity modal. -/
 def MustToProbably (must : α → Prop) : Prop := ∀ a : α, must a → Probably r a
-/-- V7, *probably* to *might*: `△a → ◇a`, for the account's possibility modal. -/
+/-- V7, *probably* to *might*, holds when `△a` gives `◇a` for the account's possibility
+modal. -/
 def ProbablyToMight (might : α → Prop) : Prop := ∀ a : α, Probably r a → might a
-/-- V8, chancy modus ponens, for the account's indicative conditional. -/
+/-- V8, chancy modus ponens, holds when *if `a`, `b`* and `△a` give `△b` for the account's
+indicative conditional. -/
 def ChancyModusPonens (ifThen : α → α → Prop) : Prop :=
   ∀ a b : α, ifThen a b → Probably r a → Probably r b
-/-- V9, chancy modus tollens. -/
+/-- V9, chancy modus tollens, holds when *if `a`, `b`* and `¬△b` give `¬△a`. -/
 def ChancyModusTollens (ifThen : α → α → Prop) : Prop :=
   ∀ a b : α, ifThen a b → ¬ Probably r b → ¬ Probably r a
-/-- V10, conditional to comparative: `(if a, b) → b ≽ a`. -/
+/-- V10, conditional to comparative, holds when *if `a`, `b`* gives `b ≽ a`. -/
 def ConditionalToComparative (ifThen : α → α → Prop) : Prop := ∀ a b : α, ifThen a b → r b a
-/-- V11, positive form transfer: `b ≽ a → △a → △b`. -/
+/-- V11, positive form transfer, holds when `b ≽ a` and `△a` give `△b`. -/
 def PositiveFormTransfer : Prop := ∀ a b : α, r b a → Probably r a → Probably r b
-/-- V12, complement transfer: `b ≽ a → a ≽ aᶜ → b ≽ bᶜ`. -/
+/-- V12, complement transfer, holds when `b ≽ a` and `a ≽ aᶜ` give `b ≽ bᶜ`. -/
 def ComplementTransfer : Prop := ∀ a b : α, r b a → r a aᶜ → r b bᶜ
-/-- I2, collapse of equiprobability into certainty: `a ≽ aᶜ → a ≽ b`. -/
+/-- V13, strict disjunction introduction, holds when `(a \ b) ≻ ⊥` gives `(a ⊔ b) ≻ b`. -/
+def StrictDisjunctionIntro : Prop := ∀ a b : α, Strict r (a \ b) ⊥ → Strict r (a ⊔ b) b
+/-- I2, collapse of equiprobability into certainty, holds when `a ≽ aᶜ` gives `a ≽ b`. The
+premise is Figure 1's one-directional one, where Yalcin writes *as likely as*. -/
 def EquiprobabilityCollapse : Prop := ∀ a b : α, r a aᶜ → r a b
-/-- I3, Hamblin's collapse: `△a → a ≽ b`. -/
+/-- I3, Hamblin's collapse, holds when `△a` gives `a ≽ b`. -/
 def HamblinCollapse : Prop := ∀ a b : α, Probably r a → r a b
-/-- E1, Conjunctivitis: `△a → △b → △(a ⊓ b)`. -/
+/-- E1, Conjunctivitis, holds when `△a` and `△b` give `△(a ⊓ b)`. -/
 def Conjunctivitis : Prop := ∀ a b : α, Probably r a → Probably r b → Probably r (a ⊓ b)
 
 variable {r}
 
-/-- V1 holds for **any** relation: it is pure logic about `Strict` and double complement. -/
+/-- V1 holds for **any** relation, by the logic of `Strict` and double complement. -/
 theorem probablyToNotProbablyNot : ProbablyToNotProbablyNot r := by
   rintro a ⟨_, hanot⟩ ⟨hac, _⟩
   rw [compl_compl] at hac; exact hanot hac
 
-/-- V2 from monotonicity and transitivity. -/
-theorem probablyDistribInf_of [IsLikelihoodMono r] [IsTrans α r] : ProbablyDistribInf r := by
-  rintro a b ⟨hab, habnot⟩
-  have hsa : r a (a ⊓ b) := mono _ _ inf_le_left
-  have hsb : r b (a ⊓ b) := mono _ _ inf_le_right
-  have hca : r (a ⊓ b)ᶜ aᶜ := mono _ _ (compl_le_compl inf_le_left)
-  have hcb : r (a ⊓ b)ᶜ bᶜ := mono _ _ (compl_le_compl inf_le_right)
-  refine ⟨⟨Trans.trans (Trans.trans hsa hab) hca, ?_⟩,
-          ⟨Trans.trans (Trans.trans hsb hab) hcb, ?_⟩⟩
-  · exact fun hc ↦ habnot (Trans.trans (Trans.trans hca hc) hsa)
-  · exact fun hc ↦ habnot (Trans.trans (Trans.trans hcb hc) hsb)
+/-- V9 is V8 by contraposition, for any conditional. -/
+theorem chancyModusTollens_iff {ifThen : α → α → Prop} :
+    ChancyModusTollens r ifThen ↔ ChancyModusPonens r ifThen :=
+  ⟨fun h a b hab ha ↦ by_contra (h a b hab · ha), fun h a b hab hb ha ↦ hb (h a b hab ha)⟩
 
-/-- V3 from monotonicity and transitivity. -/
-theorem chancyDisjunctionIntro_of [IsLikelihoodMono r] [IsTrans α r] :
-    ChancyDisjunctionIntro r := by
-  rintro a b ⟨hA, hAnot⟩
-  have h1 : r (a ⊔ b) a := mono _ _ le_sup_left
-  have h2 : r aᶜ (aᶜ ⊓ bᶜ) := mono _ _ inf_le_left
-  refine ⟨?_, ?_⟩
-  · rw [compl_sup]; exact Trans.trans (Trans.trans h1 hA) h2
-  · rw [compl_sup]; exact fun hc ↦ hAnot (Trans.trans (Trans.trans h2 hc) h1)
+/-- V6 for the necessity modal `a = ⊤` says exactly that the tautology is probable. -/
+theorem mustToProbably_eq_top_iff : MustToProbably r (· = ⊤) ↔ Probably r ⊤ :=
+  ⟨fun h ↦ h ⊤ rfl, fun h _ ha ↦ ha ▸ h⟩
 
-/-- V4 from monotonicity. -/
-theorem minimality_of [IsLikelihoodMono r] : Minimality r := fun _ ↦ mono _ _ bot_le
+/-- V7 for the possibility modal `a ≠ ⊥` says exactly that the contradiction is not
+probable. -/
+theorem probablyToMight_ne_bot_iff : ProbablyToMight r (· ≠ ⊥) ↔ ¬ Probably r ⊥ :=
+  ⟨fun h hb ↦ h ⊥ hb rfl, fun h _ ha hb ↦ h (hb ▸ ha)⟩
 
-/-- V5 from monotonicity. -/
-theorem maximality_of [IsLikelihoodMono r] : Maximality r := fun _ ↦ mono _ _ le_top
+/-- I3 is I2 with a strict premise. -/
+theorem hamblinCollapse_of_equiprobabilityCollapse (h : EquiprobabilityCollapse r) :
+    HamblinCollapse r := fun a b ha ↦ h a b ha.1
 
-/-- V6 for the necessity modal `⊥ ≽ aᶜ` of the order itself, from monotonicity, transitivity,
-additivity, and non-triviality. -/
-theorem mustToProbably_of [IsLikelihoodMono r] [IsTrans α r] [hq : IsQualitativeAdditive r]
-    [IsNontrivial r] : MustToProbably r fun a ↦ r ⊥ aᶜ := by
-  intro a h0ac
-  have hA0 : r a ⊥ := mono _ _ bot_le
-  refine ⟨Trans.trans hA0 h0ac, ?_⟩
-  intro hAcA
-  have h0A : r ⊥ a := Trans.trans h0ac hAcA
-  have hAtop : r a ⊤ := by rw [hq.qadd a ⊤]; simpa using h0ac
-  exact IsNontrivial.bot_not_ge_top (Trans.trans h0A hAtop)
+section Mono
 
-/-- V7 for the possibility modal `¬ ⊥ ≽ a` of the order itself, from monotonicity and
-transitivity. -/
-theorem probablyToMight_of [IsLikelihoodMono r] [IsTrans α r] : ProbablyToMight r (Possibly r) := by
-  rintro a ⟨_, hAnot⟩ hempty
-  exact hAnot (IsTrans.trans aᶜ ⊥ a (mono ⊥ aᶜ bot_le) hempty)
+variable [IsLikelihoodMono r]
 
-/-- V8 for the conditional read as entailment, from monotonicity and transitivity: *probably*
-is monotone. -/
-theorem chancyModusPonens_of [IsLikelihoodMono r] [IsTrans α r] : ChancyModusPonens r (· ≤ ·) := by
-  rintro a b hab ⟨ha, hanot⟩
-  have h1 : r b a := mono _ _ hab
-  have h2 : r aᶜ bᶜ := mono _ _ (compl_le_compl hab)
-  exact ⟨Trans.trans (Trans.trans h1 ha) h2,
-    fun hc ↦ hanot (Trans.trans (Trans.trans h2 hc) h1)⟩
+theorem minimality : Minimality r := fun _ ↦ mono _ _ bot_le
 
-/-- V9 for the conditional read as entailment, the contrapositive of V8. -/
-theorem chancyModusTollens_of [IsLikelihoodMono r] [IsTrans α r] : ChancyModusTollens r (· ≤ ·) :=
-  fun a b hab hb ha ↦ hb (chancyModusPonens_of a b hab ha)
+theorem maximality : Maximality r := fun _ ↦ mono _ _ le_top
 
-/-- V10 for the conditional read as entailment, from monotonicity. -/
-theorem conditionalToComparative_of [IsLikelihoodMono r] : ConditionalToComparative r (· ≤ ·) :=
-  fun _ _ hab ↦ mono _ _ hab
+theorem mustToProbably [IsNontrivial r] : MustToProbably r (· = ⊤) :=
+  mustToProbably_eq_top_iff.2 probably_top
 
-/-- V11 from transitivity and complement reversal. -/
-theorem positiveFormTransfer_of [IsTrans α r] [IsComplementReversing r] :
-    PositiveFormTransfer r := by
-  rintro a b hba ⟨ha, hanot⟩
-  have h2 : r aᶜ bᶜ := complRev _ _ hba
-  refine ⟨Trans.trans (Trans.trans hba ha) h2, ?_⟩
-  exact fun hc ↦ hanot (Trans.trans (Trans.trans h2 hc) hba)
+theorem probablyToMight : ProbablyToMight r (· ≠ ⊥) :=
+  probablyToMight_ne_bot_iff.2 not_probably_bot
 
-/-- V12 from transitivity and complement reversal. -/
-theorem complementTransfer_of [IsTrans α r] [IsComplementReversing r] : ComplementTransfer r := by
-  intro a b hba ha
-  exact Trans.trans (Trans.trans hba ha) (complRev _ _ hba)
+theorem conditionalToComparative_le : ConditionalToComparative r (· ≤ ·) := fun _ _ ↦ mono _ _
+
+theorem probablyDistribInf [IsTrans α r] : ProbablyDistribInf r :=
+  fun _ _ h ↦ ⟨h.mono inf_le_left, h.mono inf_le_right⟩
+
+theorem chancyDisjunctionIntro [IsTrans α r] : ChancyDisjunctionIntro r :=
+  fun _ _ h ↦ h.mono le_sup_left
+
+/-- V8 holds for the conditional read as entailment, since *probably* is upward closed. -/
+theorem chancyModusPonens_le [IsTrans α r] : ChancyModusPonens r (· ≤ ·) :=
+  fun _ _ ↦ Probably.mono
+
+theorem chancyModusTollens_le [IsTrans α r] : ChancyModusTollens r (· ≤ ·) :=
+  chancyModusTollens_iff.2 chancyModusPonens_le
+
+/-- Over a monotone order, V13 says that a proposition at least as likely as a disjunction it
+is part of leaves the rest of the disjunction no more likely than `⊥`. -/
+theorem strictDisjunctionIntro_iff :
+    StrictDisjunctionIntro r ↔ ∀ a b, r b (a ⊔ b) → r ⊥ (a \ b) := by
+  refine ⟨fun h a b hb ↦ by_contra fun hne ↦ (h a b ⟨mono _ _ bot_le, hne⟩).2 hb, ?_⟩
+  rintro h a b ⟨-, hne⟩
+  exact ⟨mono _ _ le_sup_right, fun hc ↦ hne (h a b hc)⟩
+
+theorem strictDisjunctionIntro [IsQualitativeAdditive r] : StrictDisjunctionIntro r :=
+  strictDisjunctionIntro_iff.2 fun a b hb ↦ by
+    have := (qadd b (a ⊔ b)).1 hb
+    rwa [sdiff_eq_bot_iff.2 le_sup_right, sup_sdiff_right_self] at this
+
+end Mono
+
+section Trans
+
+variable [IsTrans α r]
+
+theorem positiveFormTransfer [IsComplementReversing r] : PositiveFormTransfer r :=
+  fun _ _ hba ha ↦ strict_of_strict_of_rel (strict_of_rel_of_strict hba ha) (complRev _ _ hba)
+
+theorem complementTransfer [IsComplementReversing r] : ComplementTransfer r :=
+  fun _ _ hba ha ↦ _root_.trans (_root_.trans hba ha) (complRev _ _ hba)
+
+/-- I2 makes V12 trivial: `a ≽ aᶜ` already gives `a ≽ bᶜ`. -/
+theorem complementTransfer_of_equiprobabilityCollapse (h : EquiprobabilityCollapse r) :
+    ComplementTransfer r :=
+  fun a b hba ha ↦ _root_.trans hba (h a bᶜ ha)
+
+/-- The union property gives I2, as Yalcin derives it: I1 for `a`, `a` and `aᶜ` gives `a ≽ ⊤`,
+and V5 does the rest. -/
+theorem equiprobabilityCollapse_of_rightUnion [IsLikelihoodMono r] (hJ : RightUnion r) :
+    EquiprobabilityCollapse r := fun a _ ha ↦
+  _root_.trans (sup_compl_eq_top (x := a) ▸ hJ a a aᶜ (mono _ _ le_rfl) ha) (mono _ _ le_top)
+
+end Trans
 
 end ComparativeProbability

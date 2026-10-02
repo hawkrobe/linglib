@@ -10,32 +10,31 @@ public import Mathlib.Order.Defs.Unbundled
 /-!
 # World-ordering semantics: lifting an order on worlds to propositions
 
-[lewis-1973]'s comparative possibility lifts a relation `r` on worlds to propositions:
-`A` is at least as possible as `B` when every world of `B` is `r`-dominated by a world of
-`A`, that is when `B` lies in the image of `A` under `r` (`LewisLift`, mathlib's
-`SetRel.image`). [kratzer-1991] uses it as the semantics of the comparative epistemic
-modal, and [holliday-icard-2013] (§9) replace it by the m-lifting `MatchingLift`, which
-asks the dominating worlds to be distinct. Both lifts of a preorder are monotone and
-transitive likelihood orders (`Core/Order/Probability/Defs`), and the m-lifting of a
-finite preorder reverses complements ([harrison-trainor-holliday-icard-2018]): following
-each point of `A \ B` along the dominating injection until it leaves `A` yields the
-reverse matching.
+Lewis's comparative possibility lifts a relation `r` on worlds to propositions: `A` is at
+least as possible as `B` when every world of `B` is `r`-dominated by a world of `A`, that is
+when `B` lies in the image of `A` under `r` (`LewisLift`). Kratzer uses it for the comparative
+epistemic modal. Holliday and Icard replace it by the m-lifting `MatchingLift`, which asks the
+dominating worlds to be distinct, and Kratzer's later revision `KratzerLift` compares only the
+worlds in exactly one of the two propositions. The l- and m-liftings of a preorder are
+monotone, transitive likelihood orders, and the m-lifting of a finite preorder reverses
+complements, as Harrison-Trainor, Holliday and Icard show by following each point of `A \ B`
+along the dominating injection until it leaves `A`.
 
-The l-lifting has the two closure properties of the logic WJR ([halpern-2003]):
-right-union `J` (`RightUnion`, in `Defs`) and determination by singletons
-(`DeterminedBySingletons`). A monotone, transitive relation on `Set W` is the l-lifting
-of some reflexive relation on `W` **iff** it has both (`lewisLift_repr_iff`), the
-model-theoretic core of WJR's completeness.
+The l-lifting has the two closure properties of Halpern's logic WJR, right-union `J` and
+determination by singletons, and a monotone, transitive relation on `Set W` is an l-lifting
+exactly when it has both (`lewisLift_repr_iff`). The revised lift keeps right-union for
+disjoint alternatives, an observation Holliday and Icard credit to Lassiter.
 
 ## Main statements
 
 * `lewisLift_iff`, `rightUnion_lewisLift`, `determinedBySingletons_lewisLift`, and the
-  `Std.Refl`/`IsTrans`/`IsLikelihoodMono` instances for both lifts.
+  `Std.Refl`/`IsTrans`/`IsLikelihoodMono` instances for both lifts, with `IsNontrivial`
+  over a nonempty domain.
 * `MatchingLift.ncard_le`, `matchingLift_compl_compl` and the `IsComplementReversing`
   instance.
 * `strict_lewisLift_iff` — over a total relation the strict lift is Lewis's ∃∀ clause.
-* `KratzerLift`, [kratzer-2012]'s revised comparative possibility, with
-  `kratzerLift_rightUnion_of_disjoint`, the disjoint-alternatives disjunction puzzle it keeps.
+* `KratzerLift` with `kratzerLift_rightUnion_of_disjoint`, the disjunction puzzle it keeps for
+  disjoint alternatives.
 * `exists_lewisLift_repr`, `lewisLift_repr_iff` — the WJR representation and its round
   trip.
 
@@ -55,16 +54,17 @@ namespace ComparativeProbability
 
 variable {α : Type*}
 
-/-- Determination by singletons: `r A {b} → ∃ a ∈ A, r {a} {b}`. -/
+/-- A relation on propositions is determined by singletons when `r A {b}` gives some `a ∈ A`
+with `r {a} {b}`. -/
 def DeterminedBySingletons (r : Set α → Set α → Prop) : Prop :=
   ∀ (A : Set α) (b : α), r A {b} → ∃ a ∈ A, r {a} {b}
 
-/-- [lewis-1973]'s comparative possibility, the l-lifting: every world of `B` is
-`r`-dominated by some world of `A`, i.e. `B` lies in the image of `A` under `r`. -/
+/-- The l-lifting `LewisLift r A B` holds when every world of `B` is `r`-dominated by some
+world of `A`, that is when `B` lies in the image of `A` under `r`. -/
 def LewisLift (r : α → α → Prop) (A B : Set α) : Prop :=
   B ⊆ SetRel.image {p : α × α | r p.1 p.2} A
 
-/-- The m-lifting of [holliday-icard-2013]: some injection `f : B ↪ A` dominates
+/-- The m-lifting `MatchingLift r A B` holds when some injection `f : B ↪ A` dominates
 pointwise. -/
 def MatchingLift (r : α → α → Prop) (A B : Set α) : Prop :=
   ∃ f : α → α, (∀ b ∈ B, f b ∈ A ∧ r (f b) b) ∧ Set.InjOn f B
@@ -103,6 +103,9 @@ theorem LewisLift.trans [IsTrans α r] (hAB : LewisLift r A B) (hBC : LewisLift 
 instance [IsTrans α r] : IsTrans (Set α) (LewisLift r) := ⟨fun _ _ _ ↦ LewisLift.trans⟩
 
 instance [Std.Refl r] : IsLikelihoodMono (LewisLift r) := ⟨fun _ _ h ↦ lewisLift_of_subset h⟩
+
+instance [Nonempty α] : IsNontrivial (LewisLift r) :=
+  ⟨fun h ↦ Set.univ_nonempty.ne_empty (lewisLift_empty_left_iff.1 h)⟩
 
 /-- The l-lifting is right-union closed, Halpern's axiom `J`. -/
 theorem rightUnion_lewisLift : RightUnion (LewisLift r) :=
@@ -153,6 +156,9 @@ instance [Std.Refl r] : Std.Refl (MatchingLift r) :=
 
 instance [Std.Refl r] : IsLikelihoodMono (MatchingLift r) :=
   ⟨fun _ _ h ↦ matchingLift_of_subset h⟩
+
+instance [Nonempty α] : IsNontrivial (MatchingLift r) :=
+  ⟨fun h ↦ Set.univ_nonempty.ne_empty (matchingLift_empty_left_iff.1 h)⟩
 
 theorem MatchingLift.mono_left (h : MatchingLift r A B) (hA : A ⊆ A') : MatchingLift r A' B :=
   let ⟨f, hf, hinj⟩ := h
@@ -247,9 +253,8 @@ private theorem chain_dominance [IsPreorder α r] (hfr : ∀ a ∈ A, r (f a) a)
     rw [Function.iterate_succ_apply']
     exact _root_.trans (hfr _ (hA n n.lt_succ_self)) (ih fun m hm ↦ hA m (by omega))
 
-/-- Complement reversal: a dominating matching `A ↪ B` yields one `Bᶜ ↪ Aᶜ`, sending each
-point of `A \ B` to the first point outside `A` on its `f`-chain and fixing `Aᶜ ∩ Bᶜ`
-([harrison-trainor-holliday-icard-2018]). -/
+/-- A dominating matching `A ↪ B` yields one `Bᶜ ↪ Aᶜ`, which sends each point of `A \ B` to
+the first point outside `A` on its `f`-chain and fixes `Aᶜ ∩ Bᶜ`. -/
 theorem MatchingLift.compl [Finite α] [IsPreorder α r] (h : MatchingLift r B A) :
     MatchingLift r Aᶜ Bᶜ := by
   classical
@@ -305,11 +310,10 @@ private lemma ge_of_forall_singleton (hT : ∀ A B : Set W, A ⊆ B → ge B A) 
     exact hJ A _ _ (hsub _ (Finset.mem_insert_self _ _))
       (ih (fun c hc ↦ hsub c (Finset.mem_insert_of_mem hc)))
 
-/-- **Theorem 2** of [holliday-icard-2013] ([halpern-2003], Thm. 7.5.1a): a monotone,
-transitive comparison relation satisfying `J` (right-union) and `DS` (determination by
-singletons) is the l-lifting of a reflexive relation on worlds, namely `ge {u} {v}`. The
-paper states this as completeness of the logic WJR; this is its per-model representation
-core, without the syntax. -/
+/-- A monotone, transitive comparison relation satisfying `J` (right-union) and `DS`
+(determination by singletons) is the l-lifting of a reflexive relation on worlds, namely
+`ge {u} {v}`. This is the per-model core of Holliday and Icard's Theorem 2, the completeness of
+WJR (Halpern's Thm. 7.5.1a), without the syntax. -/
 theorem exists_lewisLift_repr (hMono : ∀ A B : Set W, A ⊆ B → ge B A)
     (hTran : ∀ A B C : Set W, ge A B → ge B C → ge A C)
     (hJ : RightUnion ge) (hDS : DeterminedBySingletons ge) :
@@ -326,10 +330,9 @@ theorem exists_lewisLift_repr (hMono : ∀ A B : Set W, A ⊆ B → ge B A)
     have hAa : ge A {a} := hMono {a} A (Set.singleton_subset_iff.mpr haA)
     exact hTran A {a} {b} hAa hab
 
-/-- Round trip of `exists_lewisLift_repr`: a monotone, transitive comparison relation is
-the l-lifting of a reflexive world relation **iff** it satisfies right-union and
-determination by singletons, the model-theoretic form of soundness and completeness for
-WJR ([holliday-icard-2013]; [halpern-2003]). -/
+/-- A monotone, transitive comparison relation is the l-lifting of a reflexive world relation
+**iff** it satisfies right-union and determination by singletons, the model-theoretic form of
+soundness and completeness for WJR. -/
 theorem lewisLift_repr_iff (hMono : ∀ A B : Set W, A ⊆ B → ge B A)
     (hTran : ∀ A B C : Set W, ge A B → ge B C → ge A C) :
     (∃ ge_w : W → W → Prop, (∀ w, ge_w w w) ∧ ∀ A B, ge A B ↔ LewisLift ge_w A B) ↔
@@ -348,9 +351,9 @@ end Representation
 
 /-! ### Kratzer's revised comparative possibility -/
 
-/-- [kratzer-2012]'s revised comparative possibility, the k-lifting of [holliday-icard-2013]:
-`A` is at least as likely as `B` unless some world in `B` outside `A` strictly dominates every
-world in `A` outside `B`; only the worlds in exactly one of the two propositions count. -/
+/-- The k-lifting `KratzerLift r A B` holds unless some world in `B` outside `A` strictly
+dominates every world in `A` outside `B`, so only the worlds in exactly one of the two
+propositions count. -/
 def KratzerLift (r : α → α → Prop) (A B : Set α) : Prop :=
   ¬ ∃ b ∈ B \ A, ∀ a ∈ A \ B, r b a ∧ ¬ r a b
 
@@ -371,8 +374,8 @@ theorem kratzerLift_univ_iff' (r : α → α → Prop) (A : Set α) :
   · rintro rfl b hb
     exact absurd hb.1 hb.2
 
-/-- Lassiter's observation, reported by [holliday-icard-2013]: when `A` is disjoint from both
-alternatives, the revised lift is right-union closed, so the disjunction puzzle survives it. -/
+/-- When `A` is disjoint from both alternatives the revised lift is right-union closed, so the
+disjunction puzzle survives it. -/
 theorem kratzerLift_rightUnion_of_disjoint (r : α → α → Prop) {A B C : Set α}
     (hB : Disjoint A B) (hC : Disjoint A C) (hAB : KratzerLift r A B) (hAC : KratzerLift r A C) :
     KratzerLift r A (B ∪ C) := by
