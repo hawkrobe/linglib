@@ -20,7 +20,7 @@ exactly when it is a principal ultrafilter, so a proper name survives the round 
 *every student* does not. The shifts relating `NP` to the other noun-phrase types are
 [partee-1987]'s. The total ones are `individual`, `ident`, `A` and `BE`, with the two faces of
 Partee's triangle `BE_individual_eq_ident` and `A_ident_eq_individual` proved here, and the
-partial ones, `Reference.THE` and `Reference.lower`, are Russellian iotas. The individuals are
+partial ones, `Reference.THE?` and `Reference.lower?`, are Russellian iotas. The individuals are
 exactly the quantifiers that commute with negation and with arbitrary conjunction
 (`exists_eq_individual_iff`), [keenan-faltz-1985]'s characterization of proper-noun denotations
 by their Complements and Meets Conditions, and an existential is one exactly when its restrictor

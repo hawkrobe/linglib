@@ -438,31 +438,32 @@ end Derivations
 /-! ### Existence in argument position -/
 
 /-- The iota shift (84): the unique satisfier, or the undefined individual. -/
-noncomputable def iota (P : Prop3 E) : Option E := russellIota (P · = .true)
+noncomputable def iota? (P : Prop3 E) : Option E := russellIota? (P · = .true)
 
-theorem iota_isSome_iff (P : Prop3 E) : (iota P).isSome ↔ ∃! x, P x = .true :=
-  russellIota_isSome_iff _
+theorem iota?_isSome_iff (P : Prop3 E) : (iota? P).isSome ↔ ∃! x, P x = .true :=
+  russellIota?_isSome_iff _
 
-theorem iota_eq_none_iff (P : Prop3 E) : iota P = none ↔ ¬ ∃! x, P x = .true := by
-  rw [← Option.not_isSome_iff_eq_none, iota_isSome_iff]
+theorem iota?_eq_none_iff (P : Prop3 E) : iota? P = none ↔ ¬ ∃! x, P x = .true := by
+  rw [← Option.not_isSome_iff_eq_none, iota?_isSome_iff]
 
 /-- The argumental reading of (14): the empty restrictor has no referent. -/
-theorem iota_false : iota (λ _ => .false : Prop3 E) = none :=
-  (iota_eq_none_iff _).2 λ ⟨_, hx, _⟩ => by simp at hx
+theorem iota?_false : iota? (λ _ => .false : Prop3 E) = none :=
+  (iota?_eq_none_iff _).2 λ ⟨_, hx, _⟩ => by simp at hx
 
 /-- Under iota the article's presupposition adds nothing: iota presupposes uniqueness. -/
-theorem iota_the [DecidablePred (WeakUnique (E := E))] (P : Prop3 E) : iota (the P) = iota P := by
+theorem iota?_the [DecidablePred (WeakUnique (E := E))] (P : Prop3 E) :
+    iota? (the P) = iota? P := by
   by_cases h : WeakUnique P
   · rw [the_eq_of_weakUnique h]
-  · rw [(iota_eq_none_iff _).2 λ ⟨_, hx, _⟩ => by simp [the_eq_indet_of_not_weakUnique h] at hx,
-      (iota_eq_none_iff _).2 λ hu => h (existsUnique_iff_nonempty_subsingleton.1 hu).2]
+  · rw [(iota?_eq_none_iff _).2 λ ⟨_, hx, _⟩ => by simp [the_eq_indet_of_not_weakUnique h] at hx,
+      (iota?_eq_none_iff _).2 λ hu => h (existsUnique_iff_nonempty_subsingleton.1 hu).2]
 
 /-- The determinate reading (87): undefinedness of the individual percolates (86), so the
 sentence is classical exactly when the description has exactly one satisfier. -/
-theorem elim_iota_ne_indet_iff (P : Prop3 E) (f : E → Trivalent) (hf : ∀ x, f x ≠ .indet) :
-    (iota P).elim .indet f ≠ .indet ↔ ∃! x, P x = .true := by
-  rw [← iota_isSome_iff]
-  cases iota P <;> simp [hf]
+theorem elim_iota?_ne_indet_iff (P : Prop3 E) (f : E → Trivalent) (hf : ∀ x, f x ≠ .indet) :
+    (iota? P).elim .indet f ≠ .indet ↔ ∃! x, P x = .true := by
+  rw [← iota?_isSome_iff]
+  cases iota? P <;> simp [hf]
 
 /-- The existential shift (85). -/
 noncomputable def ex (P Q : Prop3 E) : Trivalent := exists' (λ x => meetWeak (P x) (Q x))
@@ -473,16 +474,16 @@ theorem ex_indet_left (Q : Prop3 E) : ex (λ _ => .indet) Q = .indet :=
 /-- No determinate indefinites (§3.3): an indefinite the definite fails to block has, at some
 world of the context, a restrictor without a unique satisfier, so its reading under iota has
 no defined update. -/
-theorem not_update_dom_iota_of_not_blocks [Nontrivial E] [DecidablePred (WeakUnique (E := E))]
+theorem not_update_dom_iota?_of_not_blocks [Nontrivial E] [DecidablePred (WeakUnique (E := E))]
     (F : W → Prop3 E → Trivalent) (π : W → Prop3 E) (G : W → E → Trivalent) {C : Set W}
     (h : ¬ Blocks C (λ α w => F w (α (π w))) the an) :
-    ¬ (update C (λ w => (iota (π w)).elim .indet (G w))).Dom := λ hd =>
+    ¬ (update C (λ w => (iota? (π w)).elim .indet (G w))).Dom := λ hd =>
   h (blocks_of_weakUnique F π λ w hw => by
-    have hne : (iota (π w)).elim .indet (G w) ≠ .indet := hd hw
-    rcases hi : iota (π w) with _ | x
+    have hne : (iota? (π w)).elim .indet (G w) ≠ .indet := hd hw
+    rcases hi : iota? (π w) with _ | x
     · simp [hi] at hne
     · exact (existsUnique_iff_nonempty_subsingleton.1
-        ((iota_isSome_iff _).1 (by rw [hi]; rfl))).2)
+        ((iota?_isSome_iff _).1 (by rw [hi]; rfl))).2)
 
 section AntiUniqueness
 

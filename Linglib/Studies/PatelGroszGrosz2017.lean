@@ -115,7 +115,7 @@ theorem der_eq_er_of_unique {E W : Type} (R : Restrictor E W) (i : ℕ) (g : Ass
     (hUniq : ∀ y, R g s y → y = g i) :
     ⟦Description.ofStrength .familiarity R i⟧ g s =
       ⟦Description.ofStrength .uniqueness R i⟧ g s :=
-  congrArg russellIota (funext fun x ↦ propext ⟨And.left, fun h ↦ ⟨h, hUniq x h⟩⟩)
+  congrArg russellIota? (funext fun x ↦ propext ⟨And.left, fun h ↦ ⟨h, hUniq x h⟩⟩)
 
 /-! ### Minimize DP! (§5) -/
 

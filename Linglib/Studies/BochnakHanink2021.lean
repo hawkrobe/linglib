@@ -93,7 +93,7 @@ def complement : Description E W := .anaphoric (fun _ _ x ↦ fprop cont p x) d
 /-- The complement denotes the familiar individual whose content is the embedded proposition
 (78). -/
 theorem denote_complement :
-    ⟦complement cont p d⟧ g s = russellIota fun x ↦ cont x = p ∧ Hanink2021.idxVar d g x := rfl
+    ⟦complement cont p d⟧ g s = russellIota? fun x ↦ cont x = p ∧ Hanink2021.idxVar d g x := rfl
 
 /-- The complement is defined iff its antecedent has the embedded content (§5.3). -/
 theorem denote_complement_isSome_iff : (⟦complement cont p d⟧ g s).isSome ↔ cont (g d) = p :=

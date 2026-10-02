@@ -42,7 +42,7 @@ pronoun *them* is therefore interpretable and a partitive is not.
   lexicon, as in the paper.
 * Individuals form any join semilattice, as in the paper (§3); the models are Link's nonempty
   sets of atoms, `Plurality.Algebra.Individual`. A kind is a function from worlds to partial
-  individuals, and σ is `Reference.iota`. The sufficient condition for σ is stated for finite
+  individuals, and σ is `Reference.iota?`. The sufficient condition for σ is stated for finite
   extensions (`it_isSome_of_supClosed`), where the paper has closure under arbitrary sums.
 
 ## References
@@ -71,11 +71,11 @@ section Kinds
 variable [SemilatticeSup E]
 
 /-- *it* (17a) denotes the kind of a concept, ∩ as in (13b). -/
-noncomputable def it (P : World → Set E) : World → Option E := fun w ↦ iota (P w)
+noncomputable def it (P : World → Set E) : World → Option E := fun w ↦ iota? (P w)
 
 /-- *they* (17b) denotes the kind of the plural closure (14) of a concept. -/
 noncomputable def they (P : World → Set E) : World → Option E :=
-  fun w ↦ iota (supClosure (P w))
+  fun w ↦ iota? (supClosure (P w))
 
 /-- `pronoun f` is the kind pronoun that the count feature `f` selects. -/
 noncomputable def pronoun : MassCount → (World → Set E) → World → Option E
@@ -94,7 +94,7 @@ sufficient condition for σ stated after (13). -/
 theorem it_isSome_of_supClosed {P : World → Set E} {w : World} (hfin : (P w).Finite)
     (hne : (P w).Nonempty) (hcum : SupClosed (P w)) : (it P w).isSome :=
   have ht : hfin.toFinset.Nonempty := hfin.toFinset_nonempty.2 hne
-  iota_isSome_iff.2 ⟨hfin.toFinset.sup' ht id,
+  iota?_isSome_iff.2 ⟨hfin.toFinset.sup' ht id,
     hcum.finsetSup'_mem ht fun _ hx ↦ hfin.mem_toFinset.1 hx,
     fun _ hx ↦ Finset.le_sup' id (hfin.mem_toFinset.2 hx)⟩
 
@@ -106,7 +106,7 @@ def spider : Unit → Set (Individual Bool) :=
 
 /-- The kind of the singular count concept is undefined with two instances (15c). -/
 theorem spider_no_kind : it spider () = none := by
-  refine iota_eq_none_iff.2 ?_
+  refine iota?_eq_none_iff.2 ?_
   rintro ⟨x, hx, hmax⟩
   have h₁ := hmax (Set.mem_insert _ _)
   have h₂ := hmax (Set.mem_insert_of_mem _ rfl)
@@ -116,7 +116,7 @@ theorem spider_no_kind : it spider () = none := by
 
 /-- The kind of the plural closure of *spider* is the sum of the two spiders (15b). -/
 theorem spiders_kind : they spider () = some (Individual.atom true ⊔ Individual.atom false) := by
-  refine iota_eq_some_iff.2 ⟨supClosed_supClosure (subset_supClosure (Set.mem_insert _ _))
+  refine iota?_eq_some_iff.2 ⟨supClosed_supClosure (subset_supClosure (Set.mem_insert _ _))
     (subset_supClosure (Set.mem_insert_of_mem _ rfl)), ?_⟩
   refine supClosure_min (t := Set.Iic (Individual.atom true ⊔ Individual.atom false)) ?_
     fun _ hx _ hy ↦ Set.mem_Iic.2 (sup_le (Set.mem_Iic.1 hx) (Set.mem_Iic.1 hy))

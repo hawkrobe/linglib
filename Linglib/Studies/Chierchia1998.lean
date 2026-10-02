@@ -22,7 +22,7 @@ mass and a numeral needs a classifier. A language's determiners decide which cov
 it blocks, and with the parameter which bare nominals it admits as arguments. A bare plural
 denotes its kind, whose instances meet the existential of derived kind predication in an
 episodic sentence and the generic operator in a generic one. A kind sends each situation to a
-partial individual, ∩ takes the largest member of a property's extension (`Reference.iota`), and
+partial individual, ∩ takes the largest member of a property's extension (`Reference.iota?`), and
 ∪ takes the parts of a kind's value (`Set.Iic`).
 
 ## Main definitions
@@ -150,15 +150,15 @@ variable {S E : Type*} [PartialOrder E]
 kind in the restriction of the generic operator, which binds them with the situations. -/
 def dogsBark (N : Normality S (E × S)) (dog : S → Set E) (C : Set (E × S))
     (bark : E → S → Prop) : Set S :=
-  N.gen ({p | p.1 ∈ (iota (dog p.2)).elim ∅ Set.Iic} ∩ C) {p | bark p.1 p.2}
+  N.gen ({p | p.1 ∈ (iota? (dog p.2)).elim ∅ Set.Iic} ∩ C) {p | bark p.1 p.2}
 
 /-- In *Computers route modern planes* (39b), the object is fronted into the restriction of the
 generic operator and the subject is reconstructed into its scope, where derived kind predication
 reads it existentially. -/
 def computersRoute (N : Normality S (E × S)) (computer plane : S → Set E) (C : Set (E × S))
     (route : E → E → S → Prop) : Set S :=
-  N.gen ({p | p.1 ∈ (iota (plane p.2)).elim ∅ Set.Iic} ∩ C)
-    {p | Quantifier.GQ.some ((iota (computer p.2)).elim (∅ : Set E) Set.Iic) (route · p.1 p.2)}
+  N.gen ({p | p.1 ∈ (iota? (plane p.2)).elim ∅ Set.Iic} ∩ C)
+    {p | Quantifier.GQ.some ((iota? (computer p.2)).elim (∅ : Set E) Set.Iic) (route · p.1 p.2)}
 
 /-- In (39b) the fronted bare plural is universal over the normal cases of the restriction, and
 the one in the scope is existential over the instances of its kind at each, as Diesing's
@@ -166,8 +166,8 @@ generalization predicts (p. 368). -/
 theorem mem_computersRoute {N : Normality S (E × S)} {computer plane : S → Set E}
     {C : Set (E × S)} {route : E → E → S → Prop} {s : S} :
     s ∈ computersRoute N computer plane C route ↔
-      ∀ p ∈ N.normal s ({p | p.1 ∈ (iota (plane p.2)).elim ∅ Set.Iic} ∩ C),
-        ∃ x ∈ (iota (computer p.2)).elim ∅ Set.Iic, route x p.1 p.2 :=
+      ∀ p ∈ N.normal s ({p | p.1 ∈ (iota? (plane p.2)).elim ∅ Set.Iic} ∩ C),
+        ∃ x ∈ (iota? (computer p.2)).elim ∅ Set.Iic, route x p.1 p.2 :=
   Iff.rfl
 
 /-- The generic reading of a bare plural, (38b), entails its episodic reading by derived kind
@@ -175,8 +175,8 @@ predication, (31c), at any situation where the kind has a normal instance: if do
 some dog barks wherever a normal dog is. -/
 theorem some_up_of_mem_dogsBark {N : Normality S (E × S)} {dog : S → Set E} {C : Set (E × S)}
     {bark : E → S → Prop} {s s' : S} {x : E} (h : s ∈ dogsBark N dog C bark)
-    (hx : (x, s') ∈ N.normal s ({p | p.1 ∈ (iota (dog p.2)).elim ∅ Set.Iic} ∩ C)) :
-    Quantifier.GQ.some ((iota (dog s')).elim (∅ : Set E) Set.Iic) (bark · s') :=
+    (hx : (x, s') ∈ N.normal s ({p | p.1 ∈ (iota? (dog p.2)).elim ∅ Set.Iic} ∩ C)) :
+    Quantifier.GQ.some ((iota? (dog s')).elim (∅ : Set E) Set.Iic) (bark · s') :=
   ⟨x, (N.normal_subset s _ hx).1, h hx⟩
 
 end Generic
