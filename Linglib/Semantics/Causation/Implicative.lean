@@ -78,7 +78,8 @@ abbrev failSem (s : ∀ v, Flat (α v)) (p : V) (xP : α p) (c : V) (xC : α c) 
 
 /-- The necessity presupposition says that the prerequisite is causally necessary
 ([nadathur-2023-implicatives] Definition 10b with the preamble of Definition 10) for the
-complement, over the exogenous settlements of the background. -/
+complement, over the exogenous settlements of the background rather than its consistent
+supersituations. -/
 abbrev necessityPresup (s : ∀ v, Flat (α v)) (p : V) (xP : α p) (c : V) (xC : α c) : Prop :=
   ¬ M.CausallyEntails s p xP ∧ M.CausallyNecessary M.IsExogenousSettlement s p xP c xC
 

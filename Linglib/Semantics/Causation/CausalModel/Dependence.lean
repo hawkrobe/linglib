@@ -33,10 +33,12 @@ the cause.
 
 Necessity takes the supersituations it quantifies over as a parameter. Nadathur and Lauer's
 definition ranges over every supersituation, `(· ≤ ·)`, and then a supersituation settling a
-variable between cause and effect reaches the effect around the cause. The worked examples of
-[nadathur-2023-implicatives] consider only settlements of background variables, so `Implicative`
-reads necessity over the exogenous settlements (`CausalModel.IsExogenousSettlement`), the
-extensions at variables with no parents that the background leaves open. In a finite model each
+variable between cause and effect reaches the effect around the cause. The definition of
+[nadathur-2023-implicatives] ranges over the supersituations that settle new variables with parents
+only at values the background does not rule out, which still admits such a route, while her worked
+examples argue from settlements of background variables alone. `Implicative` therefore reads
+necessity over the exogenous settlements (`CausalModel.IsExogenousSettlement`), the extensions at
+variables with no parents that the background leaves open. In a finite model each
 relation is decided through the computed strict development
 (`CausalModel.causallyEntails_iff_develop`), the quantified supersituations ranging over the
 finitely many partial assignments.

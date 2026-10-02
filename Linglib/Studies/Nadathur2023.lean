@@ -30,6 +30,13 @@ definitions. The sufficiency verdicts are decided over the finite model; the nec
 verdicts are proved through the equations, which make every path to the effect run through the
 nerve.
 
+Definition 10b ranges over the consistent supersituations of Definition 9b
+(`IsConsistentSupersituation`), and over them the verdicts on (34c) and (34d) fail: settling the
+message, which the background leaves open, reaches communication without the nerve
+(`Consistent.not_nrv_necessary_for_com`). The paper argues those verdicts from the background
+variables alone, so necessity is read over the exogenous settlements, a subset of the consistent
+supersituations (`isConsistentSupersituation_of_isExogenousSettlement`).
+
 ## TODO
 
 The *manage* examples need set-valued prerequisites, one of them the
@@ -49,6 +56,37 @@ namespace Nadathur2023
 
 open CausalModel
 open Implicative (manageSem failSem ImplicativeClass Prerequisite)
+
+/-! ### Consistent supersituations -/
+
+section Consistent
+
+variable {U V : Type*} {α : V → Type*} (M : CausalModel U V α) [M.IsAcyclic]
+
+/-- `IsConsistentSupersituation M s s'` says that `s'` is a consistent supersituation of `s`
+(Definition 9b). It extends `s`, and to each variable with parents that it newly settles it gives
+the only value the strict development of `s` could settle there. -/
+def IsConsistentSupersituation (s s' : ∀ v, Flat (α v)) : Prop :=
+  s ≤ s' ∧ ∀ v, s v = ⊥ → (∃ w, M.graph.Adj w v) → ∀ x : α v, s' v = ↑x →
+    ∀ z, M.CausallyEntails s v z → z = x
+
+variable {M}
+
+/-- Every exogenous settlement is a consistent supersituation, since it newly settles no variable
+with parents. -/
+theorem isConsistentSupersituation_of_isExogenousSettlement {s s' : ∀ v, Flat (α v)}
+    (h : M.IsExogenousSettlement s s') : IsConsistentSupersituation M s s' :=
+  ⟨h.1, fun v hv ⟨w, hw⟩ x hx _ _ ↦
+    absurd hw ((h.2 v hv (by rw [hx]; exact Flat.coe_ne_bot)).1 w)⟩
+
+instance [Fintype U] [Inhabited U] [∀ v, Inhabited (α v)] [∀ v, DecidableEq (α v)] [Fintype V]
+    [∀ v, Fintype (α v)] [DecidableRel M.graph.Adj] (s s' : ∀ v, Flat (α v)) :
+    Decidable (IsConsistentSupersituation M s s') :=
+  haveI : ∀ v, Decidable (s v = ⊥ → (∃ w, M.graph.Adj w v) → ∀ x : α v, s' v = ↑x →
+      ∀ z, M.CausallyEntails s v z → z = x) := fun _ ↦ inferInstance
+  inferInstanceAs (Decidable (_ ∧ _))
+
+end Consistent
 
 /-- Dreyfus scenario vertices ([nadathur-2023-implicatives] §6.1.1, Figure 3):
     INT (Dreyfus intends to spy), NRV (he has the nerve), LST (a German is
@@ -212,6 +250,43 @@ theorem msg_iff_nerve :
       (dreyfusModel.CausallyEntails s' .MSG true ↔ dreyfusModel.CausallyEntails s' .NRV true) :=
   Implicative.complement_iff_prerequisite nrv_root nrv_open nrv_sufficient_for_msg
     nrv_necessary_for_msg
+
+/-! ### Definition 10b over consistent supersituations
+
+Definition 10b quantifies over the consistent supersituations of the background. One of them
+settles the message, which the background leaves open, together with a listener and an ungarbled
+message, and so reaches communication and spying without the nerve. -/
+
+namespace Consistent
+
+/-- The Dreyfus background with the message sent, a German listening, and the message
+ungarbled. -/
+def messageSent : V → Flat Bool :=
+  [.INT ← true, .SEC ← true, .MSG ← true, .LST ← true, .BRK ← false]
+
+/-- Over consistent supersituations NRV is still causally necessary for MSG (34a), NRV being a
+parent of MSG. -/
+theorem nrv_necessary_for_msg :
+    dreyfusModel.CausallyNecessary (IsConsistentSupersituation dreyfusModel) dreyfusBg .NRV true
+      .MSG true :=
+  ⟨by decide, ⟨Function.update dreyfusBg .NRV ↑true, by decide, by decide, by decide⟩,
+    fun _ _ hc h ↦ nrv_of_msg hc h⟩
+
+/-- Over consistent supersituations NRV is not causally necessary for COM, against the paper's
+verdict on (34c): settling the message reaches communication without the nerve. -/
+theorem not_nrv_necessary_for_com :
+    ¬ dreyfusModel.CausallyNecessary (IsConsistentSupersituation dreyfusModel) dreyfusBg .NRV
+      true .COM true :=
+  fun h ↦ absurd (h.2.2 messageSent (by decide) (by decide) (by decide)) (by decide)
+
+/-- Over consistent supersituations NRV is not causally necessary for SPY, against the paper's
+verdict on (34d): settling the message reaches spying without the nerve. -/
+theorem not_nrv_necessary_for_spy :
+    ¬ dreyfusModel.CausallyNecessary (IsConsistentSupersituation dreyfusModel) dreyfusBg .NRV
+      true .SPY true :=
+  fun h ↦ absurd (h.2.2 messageSent (by decide) (by decide) (by decide)) (by decide)
+
+end Consistent
 
 /-! ### The Finnish implicatives -/
 
