@@ -22,8 +22,9 @@ each one is black", assertive only if there are crows.
 * `belnap_forall_content_eq_every`, `belnap_exists_content_eq_some`: the restricted forms
   (11)–(12) assert `every` and `GQ.some`, and their shared assertiveness condition is Strawson's
   existential presupposition, here derived rather than stipulated.
-* `content_square_relations`: the four forms stand in all six relations of the square whenever
-  the restrictor is non-empty, which is exactly where they are assertive.
+* `contentSquare_eq_square`, `content_square_relations`: the asserted contents of the four forms
+  are the quantifier square at the restrictor, so they stand in all six relations of the square
+  whenever the restrictor is non-empty, which is exactly where they are assertive.
 * `i_conversion_equitrue`, `i_conversion_not_equiassertive`, `barbara`: conversion preserves
   truth but not assertiveness, and Barbara's major does all the implying (pp. 8–9).
 
@@ -106,34 +107,27 @@ theorem square_equiassertive (C B : E → Prop) :
     (belnapSquare C B).A.presup = (belnapSquare C B).O.presup :=
   ⟨rfl, rfl, rfl⟩
 
-/-- The asserted contents of the four forms, as a square in the Boolean algebra
-`Unit → Prop`. -/
-def contentSquare (C B : E → Prop) : Square (Unit → Prop) where
-  A := (belnapSquare C B).A.assertion
-  E := (belnapSquare C B).E.assertion
-  I := (belnapSquare C B).I.assertion
-  O := (belnapSquare C B).O.assertion
+/-- Abstracting over the scope, the asserted contents of the four forms make up a square in the
+Boolean algebra `(E → Prop) → Prop`. -/
+def contentSquare (C : E → Prop) : Square ((E → Prop) → Prop) where
+  A B := (belnapSquare C B).A.assertion ()
+  E B := (belnapSquare C B).E.assertion ()
+  I B := (belnapSquare C B).I.assertion ()
+  O B := (belnapSquare C B).O.assertion ()
 
-/-- The I-form asserts the negation of what the E-form asserts. -/
-theorem contentSquare_I (C B : E → Prop) :
-    (contentSquare C B).I = (contentSquare C B).Eᶜ := by
-  funext
-  simp [contentSquare, belnapSquare, restrictedExists, restrictedForall]
-
-/-- The O-form asserts the negation of what the A-form asserts. -/
-theorem contentSquare_O (C B : E → Prop) :
-    (contentSquare C B).O = (contentSquare C B).Aᶜ := by
-  funext
-  simp [contentSquare, belnapSquare, restrictedExists, restrictedForall]
+/-- The content square is the square of `every`, `no`, `some` and `not every` at the
+restrictor `C`. -/
+theorem contentSquare_eq_square (C : E → Prop) : contentSquare C = GQ.square C := by
+  simp only [contentSquare, GQ.square, Square.mk.injEq]
+  refine ⟨rfl, rfl, rfl, funext fun B ↦ propext ?_⟩
+  simp [belnapSquare, restrictedExists, every]
 
 /-- The content square satisfies `SquareRelations` when the restrictor is non-empty, which is
 Belnap's assertiveness condition, so the relations hold exactly where the forms are
 assertive. -/
-theorem content_square_relations (C B : E → Prop) (hR : ∃ x : E, C x) :
-    SquareRelations (contentSquare C B) :=
-  .of_disjoint (contentSquare_I C B) (contentSquare_O C B) <|
-    Pi.disjoint_iff.mpr fun _ ↦ Prop.disjoint_iff.mpr fun ⟨hA, hE⟩ ↦
-      let ⟨x, hx⟩ := hR; hE x hx (hA x hx)
+theorem content_square_relations (C : E → Prop) (hR : ∃ x : E, C x) :
+    SquareRelations (contentSquare C) :=
+  contentSquare_eq_square C ▸ GQ.square_relations hR
 
 /-! ### Obversion, I-conversion, Barbara -/
 
