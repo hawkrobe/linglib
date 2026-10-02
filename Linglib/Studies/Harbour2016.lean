@@ -6,7 +6,6 @@ public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Data.Finset.NAry
 public import Mathlib.Data.Finset.Lattice.Fold
 public import Linglib.Syntax.Person.Features
-public import Linglib.Syntax.Agreement.ContainmentPair
 public import Linglib.Syntax.Person.System
 public import Linglib.Semantics.Plurality.NumberFeatures
 public import Linglib.Syntax.Minimalist.Phi.Recursion
@@ -404,9 +403,9 @@ structure Sign where
   participant : Bool
   deriving DecidableEq, Repr
 
-/-- A sign read as a containment pair, participant the outer and author the inner feature. -/
-def Sign.toPair (s : Sign) : Agreement.ContainmentPair :=
-  (if s.participant then {.outer} else ∅) ∪ (if s.author then {.inner} else ∅)
+/-- A sign read as a membership bundle, its positive features. -/
+def Sign.toFeatures (s : Sign) : Person.Features :=
+  (if s.participant then {.participant} else ∅) ∪ (if s.author then {.author} else ∅)
 
 /-- Harbour's sign for a Cysouw category (Table 4.3). The exclusive, and with it the singular
 speaker, which the quadripartition places in the exclusive cell (p. 96), is
@@ -452,12 +451,12 @@ theorem tamil_clusivity_collapsed_by_toFeatures :
     naam.toPronoun.categories.image Category.toFeatures
       = naanŋgæ.toPronoun.categories.image Category.toFeatures := by decide
 
-/-- The exclusive's sign is the [+author, −participant] combination the containment filter of
-`Syntax/Agreement/ContainmentPair.lean` rejects, the author as a non-participant, which the free
-combinatorics of chapter 9 generate and the calculus fills
+/-- The exclusive's sign is the [+author, −participant] combination the containment filter on
+membership bundles rejects (`Person.wellFormed_iff_isIntent`), the author as a non-participant,
+which the free combinatorics of chapter 9 generate and the calculus fills
 (`Examples.exclusive_includes_speaker`). -/
 theorem exclusive_sign_filtered :
-    ¬ IsLowerSet (↑(signOf .speakerOthers).toPair : Set Agreement.ContainmentPair.Feature) := by
+    ¬ IsLowerSet (↑(signOf .speakerOthers).toFeatures : Set Person.Feature) := by
   decide
 
 end Harbour2016

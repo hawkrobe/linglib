@@ -9,9 +9,9 @@ public import Linglib.Syntax.Minimalist.Phi.Recursion
 /-!
 # Harbour (2014): Paucity, Abundance, and the Theory of Number
 
-This file formalizes [harbour-2014]'s account of the approximative numbers, paucal and greater
-plural, by a feature [±additive] of additive closure, over the library's [±atomic, ±minimal]
-decomposition and its activation and recursion parameters (`Semantics/Plurality/NumberFeatures.lean`,
+[harbour-2014]'s account of the approximative numbers, paucal and greater plural, by a feature
+[±additive] of additive closure, over the library's [±atomic, ±minimal] decomposition and its
+activation and recursion parameters (`Semantics/Plurality/NumberFeatures.lean`,
 `Syntax/Minimalist/Phi/Recursion.lean`). The convexity condition (32) asks basic meanings to be
 convex regions of the number lattice, and its definition of convexity (33) is `Set.OrdConnected`,
 `ordConnected_iff_convexity_def`; on the first-person lattice the [+additive] region is not
@@ -30,11 +30,11 @@ both to the class the article *a* realizes and to the class the pronoun *raateu*
 
 ## Implementation notes
 
-The first-person lattice is modeled on a four-element carrier, the speaker and three others,
-with the conventional cut at triads. The critique of privative geometries (section 6) is the
-argument behind the containment filter of `Syntax/Agreement/ContainmentPair.lean`, which Harbour
-rejects. Table 1 (p. 186), Table 3 (p. 214), Table 4 (p. 216), (27), (32), (33), and Figure 8
-were verified against the publication.
+The first-person lattice is modeled on a four-element carrier, the speaker and three others, with
+the conventional cut at triads. The critique of privative geometries (section 6) is the argument
+behind the containment filter on feature bundles, the lower sets of a feature chain
+(`Number.card_wellFormed`), which Harbour rejects. Table 1 (p. 186), Table 3 (p. 214), Table 4
+(p. 216), (27), (32), (33), and Figure 8 were verified against the publication.
 
 ## References
 
@@ -63,7 +63,7 @@ theorem ordConnected_iff_convexity_def {α : Type*} [Preorder α] (L : Set α) :
   · intro h a ha b hb c hac hcb
     exact h.out ha hb ⟨hac, hcb⟩
   · intro h
-    exact ⟨λ a ha b hb c hc => h a ha b hb c hc.1 hc.2⟩
+    exact ⟨fun a ha b hb c hc ↦ h a ha b hb c hc.1 hc.2⟩
 
 /-- The first-person(-exclusive) lattice over the ontology
     {i, o, o′, o″} (`0` = the speaker atom i): every element contains i
@@ -78,7 +78,7 @@ def firstPerson : Set (Finset (Fin 4)) := {s | 0 ∈ s}
 def firstPersonAdditive : Set (Finset (Fin 4)) :=
   {s | 0 ∈ s ∧ (s.card = 1 ∨ 3 ≤ s.card)}
 
-instance : DecidablePred (· ∈ firstPersonAdditive) := λ s =>
+instance : DecidablePred (· ∈ firstPersonAdditive) := fun s ↦
   decidable_of_iff (0 ∈ s ∧ (s.card = 1 ∨ 3 ≤ s.card)) Iff.rfl
 
 /-- Both parts of the [+additive] region are genuinely join-complete
@@ -201,7 +201,7 @@ def rank (v : Number) : ℕ := meleFilaValues.idxOf v
 /-- [+additive] relative to a cut of the scale: the values at the cut and above it. -/
 def Additive (cut : ℕ) (v : Number) : Prop := cut ≤ rank v
 
-instance (cut : ℕ) : DecidablePred (Additive cut) := λ _ => Nat.decLe _ _
+instance (cut : ℕ) : DecidablePred (Additive cut) := fun _ ↦ Nat.decLe _ _
 
 /-- The two conventionalized cuts of [±additive] (Table 4): the lower between paucal and
 plural, the upper between plural and greater plural. -/
@@ -218,8 +218,8 @@ theorem plural_additive_lower_not_upper :
 greater plural; the pronoun *raateu* the non-minimal values [−additive] relative to the upper
 cut, paucal and plural; plural is in both classes. -/
 theorem meleFila_syncretism_classes :
-    meleFilaValues.filter (λ v => decide (Additive lowerCut v)) = [.plural, .greaterPlural] ∧
-      meleFilaValues.filter (λ v => decide (2 ≤ rank v ∧ ¬ Additive upperCut v)) =
+    meleFilaValues.filter (fun v ↦ decide (Additive lowerCut v)) = [.plural, .greaterPlural] ∧
+      meleFilaValues.filter (fun v ↦ decide (2 ≤ rank v ∧ ¬ Additive upperCut v)) =
         [.paucal, .plural] := by
   decide
 

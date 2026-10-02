@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Syntax.Agreement.ContainmentPair
 public import Linglib.Phonology.OptimalityTheory.Constraint.Defs
 public import Linglib.Phonology.OptimalityTheory.Tableau
 public import Linglib.Semantics.Presupposition.PhiFeatures
@@ -9,23 +8,23 @@ public import Linglib.Semantics.Alternatives.Competition
 /-!
 # Maximize Presupposition
 
-This file defines Maximize Presupposition ([heim-1991]) in its two formulations. As
-competition, `Blocked`: an expression is blocked when an alternative with the same assertion
-carries a strictly stronger presupposition, the anti-presupposition of [percus-2006] and
-[sauerland-2008a], stated over any alternative source by `Alternatives.Blocked` and so shared
-by the pragmatic reading, which derives it from Gricean reasoning ([schlenker-2012]), and the
-grammatical, locally applied one ([singh-2011]). As a violable constraint, `mpConstraintOf`:
-over candidates carrying a presuppositional strength, violations count the distance from the
-maximal strength, so that Maximize Presupposition is antagonistic to a markedness penalty on
-strength (`mp_reverses_markedness`); `phiMP` is its φ-feature instance, and `PragConstraint.MP`
-of `Studies/Wang2025.lean` ranks it against internal coherence and felicity ([wang-2025]).
+Maximize Presupposition ([heim-1991]) in its two formulations. As competition, `Blocked`: an
+expression is blocked when an alternative with the same assertion carries a strictly stronger
+presupposition, the anti-presupposition of [percus-2006] and [sauerland-2008a], stated over any
+alternative source by `Alternatives.Blocked` and so shared by the pragmatic reading, which
+derives it from Gricean reasoning ([schlenker-2012]), and the grammatical, locally applied one
+([singh-2011]). As a violable constraint, `mpConstraintOf`: over candidates carrying a
+presuppositional strength, violations count the distance from the maximal strength, so that
+Maximize Presupposition is antagonistic to a markedness penalty on strength
+(`mp_reverses_markedness`); `phiMP` is its φ-feature instance, and `PragConstraint.MP` of
+`Studies/Wang2025.lean` ranks it against internal coherence and felicity ([wang-2025]).
 
 ## Main definitions
 
 * `Blocked` — blocked under Maximize Presupposition: a same-assertion alternative with a
   strictly stronger presupposition.
 * `mpConstraintOf`, `markednessPenalty` — the constraint pair over a strength function.
-* `phiMP`, `phiMarkedness` — the pair on φ-feature containment pairs.
+* `phiMP`, `phiMarkedness` — the pair on φ-feature bundles, a bundle's strength its size.
 
 ## Main results
 
@@ -47,7 +46,7 @@ of `Studies/Wang2025.lean` ranks it against internal coherence and felicity ([wa
 
 namespace Presupposition.MaximizePresupposition
 
-open Agreement OptimalityTheory
+open OptimalityTheory
 
 /-- `φ` is blocked under Maximize Presupposition when an alternative with the same assertion
 carries a strictly stronger presupposition. -/
@@ -162,45 +161,43 @@ theorem markedness_selects_weakest {C : Type*} [DecidableEq C] (candidates : Lis
 
 /-! ### The φ-feature instance
 
-The containment-pair cells with `specLevel` as strength are an instance of the competition:
-a cell denotes a domain restriction, which asserts nothing, and the strength ordering is domain
-containment (`IsLowerSet.inf_le_inf_of_card_le`). -/
+The φ-feature bundles of a finite feature chain, a bundle's strength its number of features, are
+an instance of the competition: a bundle denotes a domain restriction, which asserts nothing, and
+the strength ordering on the well-formed bundles, the lower sets of the chain, is domain
+containment (`IsLowerSet.inf_le_inf_of_card_le`). The full bundle is the strongest. -/
 
-/-- The φ-feature Maximize Presupposition constraint: `mpConstraintOf` at `specLevel`. -/
-def phiMP : Constraint ContainmentPair :=
-  mpConstraintOf ContainmentPair.maximal.specLevel ContainmentPair.specLevel
+section Phi
 
-theorem phiMP_eval (c : ContainmentPair) :
-    phiMP c = ContainmentPair.maximal.specLevel - c.specLevel := rfl
+variable {α : Type*} [Fintype α] [DecidableEq α]
 
-/-- The φ-feature markedness constraint, `markednessPenalty` at `specLevel`: the generic form
-of the Taboo of Directness. -/
-def phiMarkedness : Constraint ContainmentPair := markednessPenalty ContainmentPair.specLevel
+/-- The φ-feature Maximize Presupposition constraint: `mpConstraintOf` at the bundle's size. -/
+def phiMP : Constraint (Finset α) := mpConstraintOf (Fintype.card α) Finset.card
 
-theorem phiMarkedness_eval (c : ContainmentPair) : phiMarkedness c = c.specLevel := rfl
+theorem phiMP_eval (c : Finset α) : phiMP c = Fintype.card α - c.card := rfl
 
-/-- MP over phi-features selects the maximal (most marked) cell when
-    it is among the candidates. Instantiation of `mp_selects_strongest`
-    to `ContainmentPair`.
+/-- The φ-feature markedness constraint, `markednessPenalty` at the bundle's size: the generic
+form of the Taboo of Directness. -/
+def phiMarkedness : Constraint (Finset α) := markednessPenalty Finset.card
 
-    This is the normal-speech pattern: absent any politeness or
-    context-sensitivity constraint, MP forces use of the form with the
-    strongest presupposition (SG over PL, 1st over 3rd, DEF over INDEF).
-    [sauerland-2003] derives the preference for singular from
-    exactly this principle. -/
-theorem phi_mp_selects_maximal (candidates : List ContainmentPair)
-    (rest : List (Constraint ContainmentPair)) (hNE : candidates ≠ [])
-    (hMax : ContainmentPair.maximal ∈ candidates) :
+theorem phiMarkedness_eval (c : Finset α) : phiMarkedness c = c.card := rfl
+
+/-- Maximize Presupposition over φ-features selects the full bundle when it is a candidate, the
+form with the strongest presupposition: the singular over the plural, the first person over the
+third, the definite over the indefinite. [sauerland-2003] derives the preference for the
+singular from exactly this principle. -/
+theorem phi_mp_selects_maximal (candidates : List (Finset α))
+    (rest : List (Constraint (Finset α))) (hNE : candidates ≠ [])
+    (hMax : Finset.univ ∈ candidates) :
     ∀ c ∈ (Tableau.ofRanking candidates (phiMP :: rest) hNE).optimal,
-      c.specLevel = ContainmentPair.maximal.specLevel :=
-  mp_selects_strongest candidates _ ContainmentPair.specLevel rest hNE
-    (fun c _ ↦ ContainmentPair.specLevel_le_two c) ⟨.maximal, hMax, rfl⟩
+      c.card = Fintype.card α :=
+  mp_selects_strongest candidates _ Finset.card rest hNE (fun c _ ↦ Finset.card_le_univ c)
+    ⟨_, hMax, Finset.card_univ⟩
 
-/-- MP and markedness reverse each other over phi-features.
-    This is the algebraic core of `tod_reverses_mp` in `Wang2023`. -/
-theorem phi_mp_reverses_markedness (c₁ c₂ : ContainmentPair) :
+/-- Maximize Presupposition and markedness reverse each other over φ-features. -/
+theorem phi_mp_reverses_markedness (c₁ c₂ : Finset α) :
     phiMarkedness c₁ < phiMarkedness c₂ ↔ phiMP c₁ > phiMP c₂ :=
-  mp_reverses_markedness _ ContainmentPair.specLevel c₁ c₂ (ContainmentPair.specLevel_le_two c₁)
-    (ContainmentPair.specLevel_le_two c₂)
+  mp_reverses_markedness _ Finset.card c₁ c₂ (Finset.card_le_univ c₁) (Finset.card_le_univ c₂)
+
+end Phi
 
 end Presupposition.MaximizePresupposition

@@ -177,7 +177,7 @@ and minimal never cooccur. Plural spans both. `general` is isolated
 
 This *typological* order is one of three markedness notions on number and
 must not be conflated with the others: the *specification* order on the
-Harbour decomposition (`Agreement.ContainmentPair.specLevel`: sg > du > pl,
+Harbour decomposition (the size of a `Number.Features` bundle: sg > du > pl,
 linear) and *semantic* markedness ([sauerland-2003], which rides on
 specification). On the sg/pl pair the two orders disagree — here sg and pl
 are incomparable; under specification sg > pl. -/

@@ -45,7 +45,6 @@ namespace Sauerland2003
 
 open Mereology (Atom AlgClosure cum_maximal_unique algClosure_cum not_atom_sup_of_ne)
 open Plurality.Algebra (D)
-open Agreement
 open Presupposition OptimalityTheory Presupposition.MaximizePresupposition
 
 variable {E : Type*}
@@ -77,11 +76,13 @@ end Number
 
 /-- Maximize Presupposition selects `[Sg]` when both features are candidates: with `phiMP`
 top-ranked, every optimal cell has maximal presuppositional strength. -/
-theorem mp_selects_sg (rest : List (Constraint ContainmentPair)) :
-    ∀ c ∈ (Tableau.ofRanking [ContainmentPair.maximal, .minimal] (phiMP :: rest)
-      (List.cons_ne_nil _ _)).optimal,
-      c.specLevel = ContainmentPair.maximal.specLevel :=
-  phi_mp_selects_maximal _ rest (List.cons_ne_nil _ _) (.head _)
+theorem mp_selects_sg (rest : List (Constraint Number.Features)) :
+    ∀ c ∈ (Tableau.ofRanking [Number.singularF, Number.pluralF] (phiMP :: rest)
+      (List.cons_ne_nil _ _)).optimal, c = Number.singularF := by
+  have hsg : Number.singularF = Finset.univ := by decide
+  intro c hc
+  rw [hsg, ← Finset.card_eq_iff_eq_univ]
+  exact phi_mp_selects_maximal _ rest _ (hsg ▸ .head _) c hc
 
 /-! ### *Every* as `JE ∘ DER`, and the indefinite -/
 
