@@ -133,6 +133,11 @@ theorem inducedGe_iff_real (μ : Measure W) [IsFiniteMeasure μ] {A B : Set W} :
     μ.inducedGe A B ↔ μ.real B ≤ μ.real A :=
   (ENNReal.toReal_le_toReal (measure_ne_top μ B) (measure_ne_top μ A)).symm
 
+theorem strict_inducedGe_iff_real (μ : Measure W) [IsFiniteMeasure μ] {A B : Set W} :
+    Strict μ.inducedGe A B ↔ μ.real B < μ.real A := by
+  rw [Strict, μ.inducedGe_iff_real, μ.inducedGe_iff_real, not_le]
+  exact ⟨And.right, fun h ↦ ⟨h.le, h⟩⟩
+
 /-- A finite measure on a discrete space compares two events as it compares their differences,
     since `μ(A) = μ(A \ B) + μ(A ∩ B)` and `μ(B) = μ(B \ A) + μ(A ∩ B)`. -/
 theorem measure_le_iff_sdiff_le [DiscreteMeasurableSpace W] (μ : Measure W) [IsFiniteMeasure μ]
