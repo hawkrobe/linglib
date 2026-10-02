@@ -2,7 +2,7 @@ module
 
 public import Linglib.Logic.ComparativeProbability.Patterns
 public import Linglib.Logic.ComparativeProbability.WorldOrdering
-public import Linglib.Core.Order.Probability.Content
+public import Linglib.Logic.ComparativeProbability.Content
 public import Linglib.Semantics.Modality.Kratzer.Operators
 public import Linglib.Semantics.Degree.Comparison
 public import Linglib.Studies.HollidayIcard2013

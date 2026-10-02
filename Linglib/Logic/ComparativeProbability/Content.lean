@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Core.Order.Probability.Defs
+public import Linglib.Logic.ComparativeProbability.Defs
 public import Mathlib.Tactic.Linarith
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
@@ -10,16 +10,17 @@ public import Mathlib.Data.Set.Card
 /-!
 # Additive contents and the orders they induce
 
-Finitely additive (`FinAddMeasure`) and qualitatively additive
-(`QualAddMeasure`) probability contents on `Set W`, valued in an ordered field,
-and the qualitative probability orders they induce.
+A probability content on `Set W` assigns each event a value in an ordered field. It is
+finitely additive (`FinAddMeasure`) when disjoint unions add, and qualitatively additive
+(`QualAddMeasure`) when only the comparison of two events is fixed by their differences. Each
+kind induces a qualitative probability order.
 
 ## Main definitions
 
-* `FinAddMeasure`, `QualAddMeasure` — with `FunLike` application `m A`,
-  `ofFintype` (discrete contents), `map` (pushforward).
+* `FinAddMeasure`, `QualAddMeasure`: the two kinds of content, applied as functions `m A`, with
+  `ofFintype` (discrete contents) and `map` (pushforward).
 * `QualAddMeasure.toQualitativeProbability`, `FinAddMeasure.toQualAdd`,
-  `FinAddMeasure.toQualitativeProbability`.
+  `FinAddMeasure.toQualitativeProbability`: the induced orders.
 
 ## Implementation notes
 
@@ -39,21 +40,18 @@ system with `sUnion` side conditions, so the structure stays local.
 
 namespace ComparativeProbability
 
-/-- A finitely additive probability measure on subsets of `W`, valued in an
-    ordered field `K`. The value type is left generic: instantiate at `ℚ` for the
-    constructive, `decide`-able representation theory and at `ℝ` for classical
-    `[0,1]`-valued measures (see the module docstring).
-
-    The measure applies as a function: `m A`, via `FunLike`. -/
+/-- A finitely additive probability measure on subsets of `W`, valued in an ordered field
+    `K`. The value type is generic, `ℚ` for the constructive representation theory and `ℝ`
+    for classical `[0,1]`-valued measures, and the measure applies as a function `m A`. -/
 structure FinAddMeasure (K : Type*) [Field K] [LinearOrder K] [IsStrictOrderedRing K]
     (W : Type*) where
-  /-- The measure function. Apply the measure itself: `m A`. -/
+  /-- `toFun A` is the measure of `A`. Apply the measure itself, `m A`. -/
   toFun : Set W → K
-  /-- Non-negativity. Use the lemma `nonneg`. -/
+  /-- Every event has nonnegative measure. Use the lemma `nonneg`. -/
   nonneg' : ∀ A, 0 ≤ toFun A
-  /-- Finite additivity on disjoint sets. Use the lemma `additive`. -/
+  /-- Disjoint events add. Use the lemma `additive`. -/
   additive' : ∀ A B, Disjoint A B → toFun (A ∪ B) = toFun A + toFun B
-  /-- Normalization. Use the lemma `total`. -/
+  /-- The sure event has measure one. Use the lemma `total`. -/
   total' : toFun Set.univ = 1
 
 namespace FinAddMeasure
@@ -79,18 +77,17 @@ theorem additive (m : FinAddMeasure K W) {A B : Set W} (h : Disjoint A B) :
 
 @[simp] theorem total (m : FinAddMeasure K W) : m Set.univ = 1 := m.total'
 
-/-- Measure-induced comparative likelihood `A ≿ B ↔ μ(A) ≥ μ(B)` — the
-    `≿`-reading (`QualitativeProbability.ge`) consumed by the logic layer; the
-    order itself is `toQualitativeProbability`. -/
+/-- `m.inducedGe A B` is the comparative likelihood `A ≿ B ↔ μ(A) ≥ μ(B)` that the measure
+    induces, the `≿`-reading (`QualitativeProbability.ge`); the order itself is
+    `toQualitativeProbability`. -/
 def inducedGe (m : FinAddMeasure K W) (A B : Set W) : Prop := m A ≥ m B
 
-/-- μ(∅) = 0 for any finitely additive measure.
-    Follows from additivity: μ(∅ ∪ ∅) = μ(∅) + μ(∅), but ∅ ∪ ∅ = ∅. -/
+/-- The empty event has measure zero, since `μ(∅ ∪ ∅) = μ(∅) + μ(∅)` and `∅ ∪ ∅ = ∅`. -/
 @[simp] theorem mu_empty (m : FinAddMeasure K W) : m ∅ = 0 := by
   have h := m.additive (A := ∅) (B := ∅) disjoint_bot_left
   rw [Set.empty_union] at h; linarith
 
-/-- Subset monotonicity: `A ⊆ B → μ(A) ≤ μ(B)`. -/
+/-- A finitely additive measure is monotone, `A ⊆ B → μ(A) ≤ μ(B)`. -/
 theorem mu_mono (m : FinAddMeasure K W) {A B : Set W} (h : A ⊆ B) :
     m A ≤ m B := by
   have hunion := m.additive (A := A) (B := B \ A) disjoint_sdiff_self_right
@@ -100,14 +97,14 @@ theorem mu_mono (m : FinAddMeasure K W) {A B : Set W} (h : A ⊆ B) :
 theorem mu_le_one (m : FinAddMeasure K W) (A : Set W) : m A ≤ 1 :=
   m.total ▸ m.mu_mono (Set.subset_univ A)
 
-/-- Complement measure: `μ(A) + μ(Aᶜ) = 1`. -/
+/-- An event and its complement have measures summing to one, `μ(A) + μ(Aᶜ) = 1`. -/
 theorem mu_compl (m : FinAddMeasure K W) (A : Set W) :
     m A + m Aᶜ = 1 := by
   have hunion := m.additive (A := A) (B := Aᶜ) disjoint_compl_right
   rw [Set.union_compl_self] at hunion; linarith [m.total]
 
-/-- Qualitative additivity for a finitely additive measure: splitting `A` and `B`
-    into the shared part `A ∩ B` and the private parts cancels the shared part. -/
+/-- A finitely additive measure is qualitatively additive, since splitting `A` and `B` into
+    the shared part `A ∩ B` and the private parts cancels the shared part. -/
 theorem mu_qadd (m : FinAddMeasure K W) (A B : Set W) :
     m A ≤ m B ↔ m (A \ B) ≤ m (B \ A) := by
   have key : ∀ X Y : Set W, m X = m (X \ Y) + m (X ∩ Y) := fun X Y => by
@@ -126,7 +123,7 @@ theorem mu_qadd (m : FinAddMeasure K W) (A B : Set W) :
       Set.disjoint_singleton_left.mpr fun h => ha (Finset.mem_coe.mp h)
     rw [Finset.sum_insert ha, ih, Finset.coe_insert, Set.insert_eq, m.additive hdisj]
 
-/-- Pushforward of a finitely additive measure along a map. -/
+/-- `m.map f` pushes a finitely additive measure forward along `f`. -/
 def map {α : Type*} (f : W → α) (m : FinAddMeasure K W) : FinAddMeasure K α where
   toFun A := m (f ⁻¹' A)
   nonneg' _ := m.nonneg _
@@ -137,8 +134,8 @@ def map {α : Type*} (f : W → α) (m : FinAddMeasure K W) : FinAddMeasure K α
     (A : Set α) : m.map f A = m (f ⁻¹' A) := rfl
 
 open scoped Classical in
-/-- The discrete measure with weight `w i` on the atom `i` (the `PMF.ofFintype`
-    pattern). -/
+/-- `ofFintype w` is the discrete measure with weight `w i` on the atom `i`, as in
+    `PMF.ofFintype`. -/
 noncomputable def ofFintype [Fintype W] (w : W → K) (hw : ∀ i, 0 ≤ w i)
     (hw1 : ∑ i, w i = 1) : FinAddMeasure K W where
   toFun A := ∑ i, if i ∈ A then w i else 0
@@ -157,12 +154,11 @@ noncomputable def ofFintype [Fintype W] (w : W → K) (hw : ∀ i, 0 ≤ w i)
   classical
   simp [ofFintype, Set.mem_singleton_iff, Finset.sum_ite_eq' Finset.univ i w]
 
-
 /-- The singleton masses of a finite type sum to one. -/
 theorem sum_singleton [Fintype W] (m : FinAddMeasure K W) : ∑ w, m {w} = 1 := by
   rw [m.sum_mu_singleton, Finset.coe_univ, m.total]
 
-/-- The point mass at `w`. -/
+/-- `dirac w` is the point mass at `w`. -/
 noncomputable def dirac [Fintype W] [DecidableEq W] (w : W) : FinAddMeasure K W :=
   ofFintype (fun v ↦ if v = w then 1 else 0) (fun _ ↦ by split_ifs <;> simp) (by simp)
 
@@ -170,7 +166,7 @@ noncomputable def dirac [Fintype W] [DecidableEq W] (w : W) : FinAddMeasure K W 
     dirac (K := K) w {v} = if v = w then 1 else 0 := by
   simp [dirac]
 
-/-- The uniform measure on a finite nonempty type. -/
+/-- `uniform W` is the uniform measure on a finite nonempty type. -/
 noncomputable def uniform (W : Type*) [Fintype W] [Nonempty W] : FinAddMeasure K W :=
   ofFintype (fun _ ↦ 1 / Fintype.card W) (fun _ ↦ div_nonneg zero_le_one (Nat.cast_nonneg _))
     (by
@@ -196,25 +192,21 @@ end FinAddMeasure
 
 /-! ### Qualitatively additive measures -/
 
-/-- A qualitatively additive measure on subsets of W.
-    Unlike `FinAddMeasure`, this does NOT require μ(A ∪ B) = μ(A) + μ(B)
-    for disjoint A, B. Instead it requires the weaker **qualitative additivity**
-    condition: μ(A) ≥ μ(B) ↔ μ(A \ B) ≥ μ(B \ A).
-
-    Every qualitative probability order on a finite carrier is represented by
-    one (`exists_qualAddMeasure_repr`), by an affine renormalisation of the
-    dominated-set count. -/
+/-- A qualitatively additive measure on subsets of `W` need not add over disjoint unions, as a
+    `FinAddMeasure` does; it satisfies only the weaker **qualitative additivity**
+    `μ(A) ≥ μ(B) ↔ μ(A \ B) ≥ μ(B \ A)`. Every qualitative probability order on a finite
+    carrier is represented by one (`exists_qualAddMeasure_repr`). -/
 structure QualAddMeasure (K : Type*) [Field K] [LinearOrder K] [IsStrictOrderedRing K]
     (W : Type*) where
-  /-- The measure function. Apply the measure itself: `m A`. -/
+  /-- `toFun A` is the measure of `A`. Apply the measure itself, `m A`. -/
   toFun : Set W → K
-  /-- Non-negativity. Use the lemma `nonneg`. -/
+  /-- Every event has nonnegative measure. Use the lemma `nonneg`. -/
   nonneg' : ∀ A, 0 ≤ toFun A
   /-- The impossible proposition has measure zero. Use the lemma `mu_empty`. -/
   empty' : toFun ∅ = 0
-  /-- Normalization. Use the lemma `total`. -/
+  /-- The sure event has measure one. Use the lemma `total`. -/
   total' : toFun Set.univ = 1
-  /-- Qualitative additivity. Use the lemma `qualAdd`. -/
+  /-- Two events compare as their differences do. Use the lemma `qualAdd`. -/
   qualAdd' : ∀ A B, toFun A ≤ toFun B ↔ toFun (A \ B) ≤ toFun (B \ A)
 
 namespace QualAddMeasure
@@ -234,15 +226,16 @@ theorem nonneg (m : QualAddMeasure K W) (A : Set W) : 0 ≤ m A := m.nonneg' A
 
 @[simp] theorem total (m : QualAddMeasure K W) : m Set.univ = 1 := m.total'
 
-/-- Qualitative additivity: `μ(A) ≤ μ(B) ↔ μ(A ∖ B) ≤ μ(B ∖ A)`. -/
+/-- Two events compare as their differences do, `μ(A) ≤ μ(B) ↔ μ(A ∖ B) ≤ μ(B ∖ A)`. -/
 theorem qualAdd (m : QualAddMeasure K W) (A B : Set W) :
     m A ≤ m B ↔ m (A \ B) ≤ m (B \ A) := m.qualAdd' A B
 
-/-- Measure-induced comparative likelihood `A ≿ B ↔ μ(A) ≥ μ(B)` (the
-    `≿`-reading; see `FinAddMeasure.inducedGe`). -/
+/-- `m.inducedGe A B` is the comparative likelihood `A ≿ B ↔ μ(A) ≥ μ(B)` that the measure
+    induces (see `FinAddMeasure.inducedGe`). -/
 def inducedGe (m : QualAddMeasure K W) (A B : Set W) : Prop := m A ≥ m B
 
-/-- Subset monotonicity: `A ⊆ B → μ(A) ≤ μ(B)`. From qualAdd + μ(∅) = 0 + nonneg. -/
+/-- A qualitatively additive measure is monotone, `A ⊆ B → μ(A) ≤ μ(B)`, by qualitative
+    additivity, `μ(∅) = 0` and non-negativity. -/
 theorem mu_mono (m : QualAddMeasure K W) {A B : Set W} (h : A ⊆ B) :
     m A ≤ m B := by
   rw [m.qualAdd A B, Set.sdiff_eq_empty.mpr h, m.mu_empty]; exact m.nonneg (B \ A)
@@ -263,9 +256,8 @@ section
 
 variable {K : Type*} [Field K] [LinearOrder K] [IsStrictOrderedRing K] {W : Type*}
 
-/-- Every finitely additive measure is qualitatively additive.
-    Proof: μ(A) = μ(A \ B) + μ(A ∩ B) and μ(B) = μ(B \ A) + μ(A ∩ B),
-    so μ(A) ≥ μ(B) ↔ μ(A \ B) ≥ μ(B \ A). -/
+/-- Every finitely additive measure is qualitatively additive, since
+    `μ(A) = μ(A \ B) + μ(A ∩ B)` and `μ(B) = μ(B \ A) + μ(A ∩ B)`. -/
 def FinAddMeasure.toQualAdd (m : FinAddMeasure K W) : QualAddMeasure K W where
   toFun := m.toFun
   nonneg' := m.nonneg'

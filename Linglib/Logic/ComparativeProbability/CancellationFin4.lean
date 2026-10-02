@@ -2,8 +2,8 @@ module
 
 public import Linglib.Core.Analysis.Convex.Caratheodory
 public import Linglib.Core.LinearAlgebra.AffineSpace.FiniteDimensional
-public import Linglib.Core.Order.Probability.Scott
-public import Linglib.Core.Order.Probability.SignVectors
+public import Linglib.Logic.ComparativeProbability.Scott
+public import Linglib.Logic.ComparativeProbability.SignVectors
 public import Mathlib.Data.List.Perm.Basic
 public import Mathlib.Tactic.Tauto
 public import Mathlib.Tactic.FinCases

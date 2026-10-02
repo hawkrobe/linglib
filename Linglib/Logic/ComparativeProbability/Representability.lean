@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Core.Order.Probability.Basic
-public import Linglib.Core.Order.Probability.Content
+public import Linglib.Logic.ComparativeProbability.Basic
+public import Linglib.Logic.ComparativeProbability.Content
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Tactic.FinCases
@@ -12,24 +12,18 @@ public import Mathlib.Algebra.BigOperators.Fin
 /-!
 # Representability of qualitative probability orders
 
-Qualitative probability orders on small domains (|W| ≤ 4) are representable by
-finitely additive probability measures (**Theorem 8a**,
-[kraft-pratt-seidenberg-1959]); this file holds the predicate, the reduction
-lemmas, and the one- and two-atom cases. For every |W| ≥ 5 representability
-fails (**Theorem 8b**, `Completeness.lean`).
+A qualitative probability order is representable when a finitely additive probability measure
+induces it. Kraft, Pratt and Seidenberg show that every order on at most four atoms is
+representable and give a five-atom order that is not. This file holds the predicate, the
+reductions to disjoint comparisons and past a null atom, and the one- and two-atom cases;
+`CancellationFin4.lean` derives the three- and four-atom cases from Scott cancellation, and
+`Completeness.lean` holds the five-atom counterexample and its padding to every larger size.
 
-`[UPSTREAM]` candidate (see the note in `Defs.lean`).
+## Main statements
 
-## Contents
-
-1. **`Representable`**: the representability predicate.
-2. **Shared infrastructure**: null element reduction (`null_elem_reduce`),
-   representability along equivalences (`perm_repr`).
-3. **Small-cardinality proofs**: Fin 1
-   (`representable_fin1`), Fin 2 (`representable_fin2`).  Fin 3 and Fin 4 are
-   derived from Scott cancellation in `CancellationFin4.lean`
-   (`representable_fin3`, `representable_fin4`); the Kraft–Pratt–Seidenberg
-   counterexample and its padding to every `n ≥ 5` are in `Completeness.lean`.
+* `Representable`: the representability predicate.
+* `reduce_to_disjoint`, `null_elem_reduce`, `perm_repr`: the reductions.
+* `representable_fin1`, `representable_fin2`: the one- and two-atom cases.
 
 ## References
 
@@ -45,14 +39,12 @@ namespace ComparativeProbability
 def Representable {W : Type*} (sys : QualitativeProbability (Set W)) : Prop :=
   ∃ m : FinAddMeasure ℚ W, ∀ A B, sys.le A B ↔ m A ≤ m B
 
--- ── Theorem 8a: Per-cardinality proofs ──────────
-
 attribute [local instance] Classical.propDecidable
 
--- ── Reduction Lemma ────────────────────────────────
+/-! ### Reductions -/
 
-/-- Agreement on disjoint pairs suffices for full representability (Axiom A
-    reduces every comparison to a disjoint one). -/
+/-- Agreement on disjoint pairs suffices for full representability, since additivity reduces
+    every comparison to a disjoint one. -/
 theorem reduce_to_disjoint {W : Type*} (sys : QualitativeProbability (Set W))
     (m : FinAddMeasure ℚ W)
     (h : ∀ C D : Set W, Disjoint C D → (sys.le C D ↔ m C ≤ m D)) :
@@ -60,8 +52,6 @@ theorem reduce_to_disjoint {W : Type*} (sys : QualitativeProbability (Set W))
   intro A B
   rw [sys.additive A B]
   exact (h _ _ disjoint_sdiff_sdiff).trans (m.mu_qadd A B).symm
-
--- ── Null element reduction ────────────────────────────
 
 /-- Removing a null element (`sys.le {j} ∅`) from both sides of a disjoint
     comparison preserves `le`. -/
@@ -94,8 +84,8 @@ private theorem succ_image_preimage {n : ℕ} (S : Set (Fin (n + 1))) :
   ext x; simp only [Set.mem_inter_iff, Set.mem_compl_iff, Set.mem_singleton_iff,
     Set.mem_sdiff]; exact And.comm
 
-/-- Null element reduction: if atom 0 is null in an order on `Fin (n+2)` and
-    some atom is not, representability reduces along `Fin.succ` to `Fin (n+1)`. -/
+/-- If atom `0` is null in an order on `Fin (n+2)` and some atom is not, representability
+    reduces along `Fin.succ` to `Fin (n+1)`. -/
 theorem null_elem_reduce {n : ℕ} (sys : QualitativeProbability (Set (Fin (n + 2))))
     (hn0 : sys.le {(0 : Fin (n + 2))} ∅)
     (hnn : ∃ i : Fin (n + 1), ¬sys.le {Fin.succ i} ∅)
@@ -111,9 +101,7 @@ theorem null_elem_reduce {n : ℕ} (sys : QualitativeProbability (Set (Fin (n + 
       ← succ_image_preimage C, ← succ_image_preimage D]
   exact hm_r (Fin.succ ⁻¹' C) (Fin.succ ⁻¹' D)
 
--- ── Card 0: impossible ─────────────────────────────
-
--- ── Card 1 ─────────────────────────────────────────
+/-! ### One and two atoms -/
 
 private theorem set_fin1_eq (A : Set (Fin 1)) : A = ∅ ∨ A = Set.univ := by
   by_cases h : (0 : Fin 1) ∈ A
@@ -132,8 +120,6 @@ theorem representable_fin1 (sys : QualitativeProbability (Set (Fin 1))) : Repres
   · exact ⟨fun _ => by rw [hme, hu]; norm_num, fun _ => sys.mono (Set.empty_subset _)⟩
   · exact ⟨fun h => absurd h sys.nonTrivial, fun h => by rw [hme, hu] at h; linarith⟩
   · exact ⟨fun _ => le_refl _, fun _ => sys.refl _⟩
-
--- ── Card 2: Infrastructure ──────────────────────────
 
 private noncomputable def measure_fin2 (a : ℚ) (ha : 0 ≤ a) (ha1 : a ≤ 1) :
     FinAddMeasure ℚ (Fin 2) :=
@@ -165,12 +151,10 @@ private theorem not_both_null_fin2 (sys : QualitativeProbability (Set (Fin 2))) 
     omega
   exact sys.nonTrivial (sys.trans ((sys.additive Set.univ {0}).mpr (hd1 ▸ hd2 ▸ h1)) h0)
 
--- ── Card 2: Helper for disjoint-pair dispatch ────────
-
-/-- Given measure values and ordering facts, close all 16 disjoint-pair cases on Fin 2.
-    The 7 non-disjoint pairs close by exfalso.
-    The 5 uniform pairs (∅/∅, X/∅, ∅/univ) are independent of the ordering.
-    The 4 critical pairs (∅/{0}, ∅/{1}, {0}/{1}, {1}/{0}) use the hypotheses. -/
+/-- The measure values and the ordering facts settle all 16 pairs on `Fin 2`. The 7
+    non-disjoint pairs close by exfalso, the 5 uniform pairs (∅/∅, X/∅, ∅/univ) do not depend
+    on the ordering, and the 4 critical pairs (∅/{0}, ∅/{1}, {0}/{1}, {1}/{0}) use the
+    hypotheses. -/
 private theorem fin2_dispatch (sys : QualitativeProbability (Set (Fin 2)))
     (a : ℚ) (ha : 0 ≤ a) (ha1 : a ≤ 1)
     (he0 : sys.le {(0 : Fin 2)} ∅ ↔ a ≤ 0)
@@ -219,8 +203,6 @@ private theorem fin2_dispatch (sys : QualitativeProbability (Set (Fin 2)))
   · exact (hdisj 1 (Set.mem_univ _) rfl).elim
   -- univ vs univ: not disjoint
   · exact (hdisj 0 (Set.mem_univ _) (Set.mem_univ _)).elim
-
--- ── Card 2: Main theorem ───────────────────────────
 
 theorem representable_fin2 (sys : QualitativeProbability (Set (Fin 2))) : Representable sys := by
   by_cases h_null0 : sys.le {(0 : Fin 2)} ∅
@@ -275,7 +257,7 @@ theorem representable_fin2 (sys : QualitativeProbability (Set (Fin 2))) : Repres
             ⟨fun h => absurd h h01, fun h => by linarith⟩
             ⟨fun _ => by linarith, fun _ => h10⟩)⟩
 
--- ── Transport + Permutation infrastructure ────────────
+/-! ### Transport along equivalences -/
 
 theorem transfer_repr {W α : Type*}
     (e : W ≃ α) (sys : QualitativeProbability (Set W)) (m : FinAddMeasure ℚ α)
@@ -287,8 +269,7 @@ theorem transfer_repr {W α : Type*}
     Equiv.symm_image_image] at h
   simpa only [FinAddMeasure.map_apply, ← Equiv.image_eq_preimage_symm] using h
 
-/-- Null pattern transport: `j` is null in `sys.transport σ` iff `σ.symm j` is
-    null in `sys`. -/
+/-- `j` is null in `sys.transport σ` exactly when `σ.symm j` is null in `sys`. -/
 theorem perm_null_iff {n : ℕ} (σ : Fin n ≃ Fin n)
     (sys : QualitativeProbability (Set (Fin n))) (j : Fin n) :
     (sys.transport σ).le {j} ∅ ↔ sys.le {σ.symm j} ∅ := by
