@@ -6,57 +6,39 @@ public import Linglib.Semantics.Quantification.Basic
 
 /-!
 # Realizing Lindström quantifiers as GQ denotations
-[barwise-cooper-1981] [mostowski-1957] [van-benthem-1984] [deklerck-vignero-demey-2024]
-[demey-frijters-2023]
 
-A `FirstOrder.Language.LindstromQuantifier` is an isomorphism-invariant class of
-`L`-structures (Mostowski's QUANT built into the type). This file *realizes* one over
-the monadic language `L_UV` (two unary predicates `U`, `V`) as a linguistic
-generalized-quantifier denotation `GQ α = (α → Prop) → (α → Prop) → Prop`: a pair of
-predicates `(A, B)` becomes the structure `(α, A, B)`, and the quantifier holds of
-`(A, B)` iff it holds of that structure (`Det.toGQ`).
-
-The headline is `Det.realize_quantityInvariant`: the project's existing predicate
-`Quantifier.GQ.QuantityInvariant` — invariance of `q A B` under a bijective relabelling
-of the domain — is a *theorem* about every realized Lindström quantifier, not a side
-condition. It falls straight out of `iso_inv`, because a bijection `f` with
-`A (f x) ↔ A' x` and `B (f x) ↔ B' x` is exactly an `L_UV`-isomorphism
-`(α, A, B) ≃[L_UV] (α, A', B')` (with the map `f⁻¹`). This is the general-form
-(Lindström/van Benthem, type `⟨1,1⟩`) of Mostowski's permutation invariance.
-
-`everyDet`/`someDet`/`noDet` are the determiner classes for the Aristotelian core, and
-`everyDet_toGQ`/`someDet_toGQ`/`noDet_toGQ` show the GQ denotations the codebase already
-uses (`every`, `GQ.some`, `no`) are precisely their realizations.
-
-The final section *grounds the square of opposition in the model theory*. The square has a
-single home — the `Aristotelian.IsContradictory`/… relations, instantiated on `GQ α` in
-`Quantification/Basic.lean`. Rather than restate them on a new carrier, `toGQ` is shown to be the
-[deklerck-vignero-demey-2024] **Aristotelian morphism** carrying the class-level Boolean
-structure onto the GQ duality operators (`toGQ_compl` realizes `ᶜ`; `noDet`/`someDet`
-realize the inner-negation/dual corners), so the GQ square is the *image* of the
-model-theoretic one. Existential-import/logic-sensitivity ([demey-frijters-2023]) lives with
-the relations at the GQ layer (`Quantifier.GQ.a_e_contrary`).
-
-The general `LindstromQuantifier` layer is `[UPSTREAM]`-adjacent; this file is the
-linguistic realization functor on top of it.
+A `FirstOrder.Language.LindstromQuantifier` is an isomorphism-invariant class of `L`-structures,
+Mostowski's quantifiers with the invariance built into the type. Over the monadic language
+`L_UV`, with two unary predicates `U` and `V`, such a class is a determiner, and `Det.toGQ`
+realizes it as a generalized-quantifier denotation `GQ α`: a pair of predicates `(A, B)` becomes
+the structure `(α, A, B)`, and the quantifier holds of `(A, B)` when that structure is in the
+class. Quantity invariance is then a theorem about every realized determiner rather than a side
+condition, and the determiners for *every*, *some* and *no* realize the denotations of
+`Quantification/Basic.lean`.
 
 ## Main definitions
 
-* `L_UV` — the monadic language with two unary relation symbols `U`, `V`.
-* `structOfAB A B` — the `L_UV`-structure `(α, A, B)`.
-* `Det := LindstromQuantifier L_UV` and `Det.toGQ` — the realization functor.
-* `everyDet`/`someDet`/`noDet` — the Aristotelian determiner classes.
+* `L_UV`: the monadic language with two unary relation symbols `U`, `V`.
+* `structOfAB A B`: the `L_UV`-structure `(α, A, B)`.
+* `Det`, `Det.toGQ`: determiners and their realization as `GQ α` denotations.
+* `everyDet`, `someDet`, `noDet`: the determiners of the square of opposition.
 
 ## Main results
 
-* `Det.realize_quantityInvariant` — every realized Lindström quantifier satisfies
-  `Quantifier.GQ.QuantityInvariant`.
-* `everyDet_toGQ`/`someDet_toGQ`/`noDet_toGQ` — realizations are `every`/`GQ.some`/
-  `no`.
-* `toGQ_compl` — `toGQ` is the Aristotelian morphism: it carries the Boolean complement of a
-  class to the GQ complement `ᶜ`.
-* `someDet_holds_eq_compl`/`noDet_toGQ_eq_innerNeg`/`someDet_toGQ_eq_dual` — the `no`/`some`
-  corners as the complement/inner-negation/dual images of the model-theoretic structure.
+* `Det.realize_quantityInvariant`: every realized determiner satisfies
+  `Quantifier.GQ.QuantityInvariant`, the type-`⟨1,1⟩` form of Mostowski's permutation
+  invariance.
+* `everyDet_toGQ`, `someDet_toGQ`, `noDet_toGQ`: the realizations are `every`, `GQ.some`, `no`.
+* `toGQ_compl`: realization carries the complement of a class to GQ outer negation.
+* `someDet_holds_eq_compl`, `noDet_toGQ_eq_innerNeg`, `someDet_toGQ_eq_dual`: the `no` and
+  `some` corners as the complement, inner negation and dual of `every`.
+
+## References
+
+* [barwise-cooper-1981]
+* [demey-frijters-2023]
+* [mostowski-1957]
+* [van-benthem-1984]
 -/
 
 @[expose] public section
@@ -107,7 +89,7 @@ are no function symbols. -/
 
 /-! ### The realization functor -/
 
-/-- A *determiner* (type-`⟨1,1⟩` Lindström quantifier): an iso-invariant class of
+/-- A *determiner*, a Lindström quantifier of type `⟨1,1⟩`, is an iso-invariant class of
 `L_UV`-structures. -/
 abbrev Det := LindstromQuantifier.{0, 0, u} L_UV
 
@@ -142,11 +124,9 @@ private noncomputable def equivOfBij {α : Type u} {A B A' B' : α → Prop} {f 
         rw [Equiv.ofBijective_apply_symm_apply f hBij] at this
         exact this.symm)
 
-/-- **Headline.** Every realized Lindström quantifier satisfies the project's
-`QuantityInvariant` predicate: `q A B` is invariant under a bijective relabelling of the
-domain. This is the type-`⟨1,1⟩` Mostowski/Lindström permutation invariance
-([mostowski-1957] [van-benthem-1984]), recovered here as a consequence of `iso_inv` —
-not stipulated on the denotation. -/
+/-- Every realized Lindström quantifier satisfies `QuantityInvariant`: `q A B` is invariant
+under a bijective relabelling of the domain. This is the type-`⟨1,1⟩` form of Mostowski's
+permutation invariance, derived from `iso_inv` rather than stipulated on the denotation. -/
 theorem realize_quantityInvariant (Q : Det.{u}) {α : Type u} :
     Quantifier.GQ.QuantityInvariant (Q.toGQ α) := by
   intro A B A' B' f hBij hA hB
@@ -231,35 +211,27 @@ theorem noDet_toGQ (α : Type u) : noDet.toGQ α = (no : GQ α) := by
   simp only [Det.toGQ, noDet, Set.mem_ofPred_eq, structOfAB_relMap_U, structOfAB_relMap_V,
     Matrix.cons_val_fin_one, no]
 
-/-! ### The square of opposition: `toGQ` realizes it from the model theory
+/-! ### The square of opposition
 
-The square of opposition has a single home. Its relations are the
-`Aristotelian.IsContradictory`/`IsContrary`/`IsSubaltern` of [demey-smessaert-2018],
-instantiated on `GQ α` in `Quantification/Basic.lean` (the working layer): `every_contradicts_notEvery`,
-`no_contradicts_some`, and the existential-import-gated `a_e_contrary`/`subalternation_a_i`
-(contrariety and subalternation need a non-empty restrictor — the logic-sensitivity of
-[demey-frijters-2023]). This section does *not* restate them on a new carrier; it shows the
-realization functor `toGQ` is the [deklerck-vignero-demey-2024] **Aristotelian morphism**
-carrying the class-level Boolean structure onto those GQ duality operators, so the GQ square is
-the *image* of the model-theoretic one.
+The relations of the square live on `GQ α` in `Quantification/Basic.lean`:
+`every_contradicts_notEvery` and `no_contradicts_some`, and `a_e_contrary` and
+`subalternation_a_i`, which need a non-empty restrictor, an instance of the logic-sensitivity
+Demey and Frijters describe. This section shows that realization carries the class-level
+structure to the GQ duality operators. Outer negation is the complement of the class
+(`toGQ_compl`), the corners `no` and `some` are the inner negation and the dual of `every`
+(`noDet_toGQ_eq_innerNeg`, `someDet_toGQ_eq_dual`), and the contradictory diagonal between `no`
+and `some` is the class-level fact `some = ¬ no` (`someDet_holds_eq_compl`). -/
 
-Concretely, outer negation is the Boolean complement of the iso-invariant class
-(`toGQ_compl`); the `E`/`I` corners `no`/`some` are the inner-negation and dual images of `every`
-(`noDet_toGQ_eq_innerNeg`, `someDet_toGQ_eq_dual`); and the `no`/`some` contradictory diagonal
-is the class-level fact `some = ¬ no` (`someDet_holds_eq_compl`) pushed through the morphism. -/
-
-/-- `some` is the Boolean complement of `no` as iso-invariant classes: `∃x. Ux ∧ Vx` is the
-negation of `∀x. Ux → ¬Vx`. The model-theoretic source of the `no`/`some` contradictory
-diagonal — `toGQ`-image is `Quantifier.GQ.no_contradicts_some`. -/
+/-- As iso-invariant classes, `some` is the complement of `no`, since `∃x. Ux ∧ Vx` is the
+negation of `∀x. Ux → ¬Vx`. Its image under `toGQ` is `Quantifier.GQ.no_contradicts_some`. -/
 theorem someDet_holds_eq_compl : (someDet.{u}).holds = (noDet.{u}).holdsᶜ := by
   ext M
   simp only [someDet, noDet, Set.mem_ofPred_eq, Set.mem_compl_iff, not_forall, not_not,
     exists_prop]
 
-/-- **The Aristotelian morphism (outer negation).** `toGQ` carries the Boolean complement of an
-iso-invariant class to GQ outer negation: `(¬Q).toGQ = Qᶜ.toGQ`
-([deklerck-vignero-demey-2024]). With `everyDet`, this realizes the `A`/`O` contradictory
-diagonal as `Quantifier.GQ.every_contradicts_notEvery`. -/
+/-- Realization carries the complement of an iso-invariant class to GQ outer negation. With
+`everyDet` this realizes the contradictory diagonal between `A` and `O` as
+`Quantifier.GQ.every_contradicts_notEvery`. -/
 theorem toGQ_compl (Q : Det.{u}) (α : Type u) : Det.toGQ Qᶜ α = (Q.toGQ α)ᶜ := by
   funext A B
   simp only [Det.toGQ, LindstromQuantifier.holds_compl, Set.mem_compl_iff, compl_apply]

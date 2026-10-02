@@ -10,38 +10,28 @@ public import Mathlib.Data.Fintype.Basic
 /-!
 # Belnap (1970): Conditional Assertion and Restricted Quantification
 
-"If p then q" read as *conditional assertion*: the assertion of q on the
-condition p, assertive only where p is true and as if never made
-otherwise. Belnap gives each sentence four semantic coordinates per world
-(p. 3) — true, false, assertive, and what it asserts — which are exactly
-`PartialProp`'s two fields, and then combines conditional assertion (3)
-with ordinary universal quantification (10) to *derive* restricted
-quantification (11): "All crows are black" comes out as "Consider the
-crows: each one is black", assertive only if there are crows. The four
-Aristotelian forms then stand in "pretty much a good old fashioned square
-of opposition" with equi-assertiveness on top of the content relations,
-obversion is a strong equivalence, I-conversion preserves truth but not
-assertiveness, and Barbara's major alone implies her conclusion.
+Belnap reads "if p then q" as a *conditional assertion*, the assertion of q on the condition p,
+which is assertive only where p is true and is as if never made elsewhere. Each sentence gets four
+semantic coordinates per world (p. 3), true, false, assertive and what it asserts, which are the
+two fields of `PartialProp`. Combining conditional assertion (3) with universal quantification
+(10) derives restricted quantification (11): "All crows are black" becomes "Consider the crows:
+each one is black", assertive only if there are crows.
 
 ## Main statements
 
-* `belnap_forall_content_eq_every`, `belnap_exists_content_eq_some`: the
-  content of the restricted forms (11)–(12) is `every`/`GQ.some`;
-  their shared assertiveness condition is [strawson-1952]'s stipulated
-  existential presupposition, here derived.
-* `content_square_relations`: the four forms satisfy all six
-  `SquareRelations` whenever the restrictor is non-empty — exactly the
-  worlds where they are assertive.
-* `i_conversion_equitrue`, `i_conversion_not_equiassertive`, `barbara`:
-  the paper's asymmetries — conversion preserves truth only, and Barbara's
-  major does all the implying (p. 8–9).
+* `belnap_forall_content_eq_every`, `belnap_exists_content_eq_some`: the restricted forms
+  (11)–(12) assert `every` and `GQ.some`, and their shared assertiveness condition is Strawson's
+  existential presupposition, here derived rather than stipulated.
+* `content_square_relations`: the four forms stand in all six relations of the square whenever
+  the restrictor is non-empty, which is exactly where they are assertive.
+* `i_conversion_equitrue`, `i_conversion_not_equiassertive`, `barbara`: conversion preserves
+  truth but not assertiveness, and Barbara's major does all the implying (pp. 8–9).
 
 ## References
 
-* [belnap-1970]: Conditional Assertion and Restricted Quantification.
-  *Noûs* 4.
-* [quine-1950]: Methods of Logic (the Quine–Rhinelander reading).
-* [strawson-1952]: Introduction to Logical Theory.
+* [belnap-1970]
+* [quine-1950]
+* [strawson-1952]
 -/
 
 @[expose] public section
@@ -69,15 +59,15 @@ conditional assertions over categorical predicates. -/
 
 variable {E : Type}
 
-/-- (11): restricted universal quantification. ∀x(Cx/Bx) is assertive iff
-∃xCx, and asserts the conjunction of Bt for the t with Ct true — the
-A-form as "consider the crows: each one is black". -/
+/-- Restricted universal quantification ∀x(Cx/Bx) (11) is assertive iff ∃xCx and asserts the
+conjunction of Bt for the t with Ct true, the A-form as "consider the crows: each one is
+black". -/
 def restrictedForall (C B : E → Prop) : PartialProp Unit where
   presup := fun _ => ∃ x : E, C x
   assertion := fun _ => ∀ x : E, C x → B x
 
-/-- (12): restricted existential quantification. ∃x(Cx/Bx) is assertive
-iff ∃xCx, and asserts the disjunction of Bt for the t with Ct true. -/
+/-- Restricted existential quantification ∃x(Cx/Bx) (12) is assertive iff ∃xCx and asserts the
+disjunction of Bt for the t with Ct true. -/
 def restrictedExists (C B : E → Prop) : PartialProp Unit where
   presup := fun _ => ∃ x : E, C x
   assertion := fun _ => ∃ x : E, C x ∧ B x
@@ -92,118 +82,58 @@ theorem belnap_forall_content_eq_every (C B : E → Prop) :
 theorem belnap_exists_content_eq_some (C B : E → Prop) :
     (restrictedExists C B).assertion () ↔ GQ.some C B := Iff.rfl
 
-/-- Assertiveness of (11) is the existential presupposition of universals:
-what [strawson-1952] stipulated, Belnap derives — ∀x(Cx/Bx) is
-nonassertive when nothing satisfies C. -/
+/-- Assertiveness of (11) is the existential presupposition of universals, which Strawson
+stipulated and Belnap derives: ∀x(Cx/Bx) is nonassertive when nothing satisfies C. -/
 theorem assertive_iff_restrictor_nonempty (C B : E → Prop) :
     (restrictedForall C B).presup () ↔ ∃ x : E, C x := Iff.rfl
 
 /-! ### The square of opposition -/
 
-/-- The four Aristotelian forms as restricted quantification: "semantic
-relations between these forms turn out ... to constitute what is pretty
-much a good old fashioned square of opposition" (p. 8). -/
+/-- The four Aristotelian forms as restricted quantifications make up a square, since "semantic
+relations between these forms turn out ... to constitute what is pretty much a good old
+fashioned square of opposition" (p. 8). -/
 def belnapSquare (C B : E → Prop) : Square (PartialProp Unit) where
   A := restrictedForall C B
   E := restrictedForall C (fun x => ¬B x)
   I := restrictedExists C B
   O := restrictedExists C (fun x => ¬B x)
 
-/-- All four forms share one assertiveness condition, ∃xCx: the square's
-relations are as strong as possible, equi-assertiveness on top of the
-content relations (p. 8). -/
+/-- All four forms share one assertiveness condition, ∃xCx, so the square's relations are as
+strong as possible, with equi-assertiveness on top of the content relations (p. 8). -/
 theorem square_equiassertive (C B : E → Prop) :
     (belnapSquare C B).A.presup = (belnapSquare C B).E.presup ∧
     (belnapSquare C B).A.presup = (belnapSquare C B).I.presup ∧
     (belnapSquare C B).A.presup = (belnapSquare C B).O.presup :=
   ⟨rfl, rfl, rfl⟩
 
-section ContentSquare
+/-- The asserted contents of the four forms, as a square in the Boolean algebra
+`Unit → Prop`. -/
+def contentSquare (C B : E → Prop) : Square (Unit → Prop) where
+  A := (belnapSquare C B).A.assertion
+  E := (belnapSquare C B).E.assertion
+  I := (belnapSquare C B).I.assertion
+  O := (belnapSquare C B).O.assertion
 
-variable [Fintype E]
+/-- The I-form asserts the negation of what the E-form asserts. -/
+theorem contentSquare_I (C B : E → Prop) :
+    (contentSquare C B).I = (contentSquare C B).Eᶜ := by
+  funext
+  simp [contentSquare, belnapSquare, restrictedExists, restrictedForall]
 
-/-- The assertion-level contents as a Boolean square, for
-`SquareRelations`. -/
-def contentSquare (C B : E → Prop) [DecidablePred C] [DecidablePred B] :
-    Square (Unit → Bool) where
-  A := fun _ => decide (∀ x : E, C x → B x)
-  E := fun _ => decide (∀ x : E, C x → ¬B x)
-  I := fun _ => decide (∃ x : E, C x ∧ B x)
-  O := fun _ => decide (∃ x : E, C x ∧ ¬B x)
+/-- The O-form asserts the negation of what the A-form asserts. -/
+theorem contentSquare_O (C B : E → Prop) :
+    (contentSquare C B).O = (contentSquare C B).Aᶜ := by
+  funext
+  simp [contentSquare, belnapSquare, restrictedExists, restrictedForall]
 
-variable (C B : E → Prop) [DecidablePred C] [DecidablePred B]
-
-/-- A and O have contradictory content. -/
-theorem a_o_contradictory (w : Unit) :
-    (contentSquare C B).A w = !((contentSquare C B).O w) := by
-  simp only [contentSquare]
-  rw [Bool.eq_iff_iff]
-  simp only [decide_eq_true_eq, Bool.not_eq_true', decide_eq_false_iff_not,
-    not_exists, not_and, not_not]
-
-/-- E and I have contradictory content. -/
-theorem e_i_contradictory (w : Unit) :
-    (contentSquare C B).E w = !((contentSquare C B).I w) := by
-  simp only [contentSquare]
-  rw [Bool.eq_iff_iff]
-  simp only [decide_eq_true_eq, Bool.not_eq_true', decide_eq_false_iff_not,
-    not_exists, not_and]
-
-/-- The content square satisfies all six `SquareRelations` when the
-restrictor is non-empty — exactly Belnap's assertiveness condition, so the
-relations hold precisely where the forms are assertive. -/
-theorem content_square_relations (hR : ∃ x : E, C x) :
-    SquareRelations (contentSquare C B) where
-  subalternAI := Aristotelian.le_iff_forall.mpr fun w hA => by
-    simp only [contentSquare, decide_eq_true_eq] at hA ⊢
-    obtain ⟨x, hCx⟩ := hR
-    exact ⟨x, hCx, hA x hCx⟩
-  subalternEO := Aristotelian.le_iff_forall.mpr fun w hE => by
-    simp only [contentSquare, decide_eq_true_eq] at hE ⊢
-    obtain ⟨x, hCx⟩ := hR
-    exact ⟨x, hCx, hE x hCx⟩
-  contradAO := Aristotelian.isContradictory_iff_forall.mpr
-    ⟨fun w hand => by
-        have h := a_o_contradictory C B w
-        rw [hand.1, hand.2] at h; simp at h,
-     fun w => by
-        by_cases hO : (contentSquare C B).O w = true
-        · exact Or.inr hO
-        · left
-          have h := a_o_contradictory C B w
-          rw [show (contentSquare C B).O w = false by simpa using hO] at h
-          simpa using h⟩
-  contradEI := Aristotelian.isContradictory_iff_forall.mpr
-    ⟨fun w hand => by
-        have h := e_i_contradictory C B w
-        rw [hand.1, hand.2] at h; simp at h,
-     fun w => by
-        by_cases hI : (contentSquare C B).I w = true
-        · exact Or.inr hI
-        · left
-          have h := e_i_contradictory C B w
-          rw [show (contentSquare C B).I w = false by simpa using hI] at h
-          simpa using h⟩
-  contraryAE := Aristotelian.disjoint_iff_forall.mpr fun w hand => by
-    obtain ⟨hA, hE⟩ := hand
-    have hI : (contentSquare C B).I w = true := by
-      simp only [contentSquare, decide_eq_true_eq] at hA ⊢
-      obtain ⟨x, hCx⟩ := hR
-      exact ⟨x, hCx, hA x hCx⟩
-    have hEI := e_i_contradictory C B w
-    rw [hI, hE] at hEI; simp at hEI
-  subcontrIO := Aristotelian.codisjoint_iff_forall.mpr fun w => by
-    by_cases hI : (contentSquare C B).I w = true
-    · exact Or.inl hI
-    · right
-      have hIf : ¬∃ x : E, C x ∧ B x := by
-        simpa [contentSquare] using hI
-      push Not at hIf
-      obtain ⟨x, hCx⟩ := hR
-      simp only [contentSquare, decide_eq_true_eq]
-      exact ⟨x, hCx, hIf x hCx⟩
-
-end ContentSquare
+/-- The content square satisfies `SquareRelations` when the restrictor is non-empty, which is
+Belnap's assertiveness condition, so the relations hold exactly where the forms are
+assertive. -/
+theorem content_square_relations (C B : E → Prop) (hR : ∃ x : E, C x) :
+    SquareRelations (contentSquare C B) :=
+  .of_disjoint (contentSquare_I C B) (contentSquare_O C B) <|
+    Pi.disjoint_iff.mpr fun _ ↦ Prop.disjoint_iff.mpr fun ⟨hA, hE⟩ ↦
+      let ⟨x, hx⟩ := hR; hE x hx (hA x hx)
 
 /-! ### Obversion, I-conversion, Barbara -/
 
@@ -216,8 +146,8 @@ theorem obversion (C B : E → Prop) :
         (restrictedForall C B).assertion ()) :=
   ⟨rfl, by simp [restrictedForall, not_not]⟩
 
-/-- I-conversion preserves content: ∃x(Cx/Bx) and ∃x(Bx/Cx) assert the
-same proposition when assertive. -/
+/-- I-conversion preserves content, since ∃x(Cx/Bx) and ∃x(Bx/Cx) assert the same proposition
+when assertive. -/
 theorem i_conversion_content (C B : E → Prop) :
     (restrictedExists C B).assertion () ↔
       (restrictedExists B C).assertion () :=
@@ -233,8 +163,8 @@ theorem i_conversion_equitrue (C B : E → Prop)
   have ⟨x, _, hBx⟩ := hTrue
   ⟨⟨x, hBx⟩, (i_conversion_content C B).mp hTrue⟩
 
-/-- But not equi-assertive: "'Some unicorns are animals' is nonassertive
-while 'Some animals are unicorns' is just plain false" (p. 8). -/
+/-- I-conversion is not equi-assertive, since "'Some unicorns are animals' is nonassertive while
+'Some animals are unicorns' is just plain false" (p. 8). -/
 theorem i_conversion_not_equiassertive :
     ∃ (E : Type) (_ : Fintype E) (C B : E → Prop),
       (restrictedExists C B).presup () ∧
@@ -242,7 +172,7 @@ theorem i_conversion_not_equiassertive :
   ⟨Semantics.Montague.ToyEntity, inferInstance, (· = .john), fun _ => False,
     ⟨.john, rfl⟩, fun ⟨_, h⟩ => h⟩
 
-/-- Barbara's assertiveness propagation (p. 9): "for every w in which
+/-- Barbara's minor propagates assertiveness (p. 9): "for every w in which
 Barbara's minor is true_w, both her major and her conclusion are
 assertive_w". -/
 theorem barbara_assertive (A C B : E → Prop)
@@ -252,9 +182,8 @@ theorem barbara_assertive (A C B : E → Prop)
   have ⟨x, hAx⟩ := hMinorAssertive
   ⟨⟨x, hMinorTrue x hAx⟩, hMinorAssertive⟩
 
-/-- Barbara's content implication: the major alone implies the conclusion
-— "a feature of the situation which doubtless explains the tradition
-according to which Barbara's major is major and her minor only minor"
+/-- The major alone implies Barbara's conclusion, "a feature of the situation which doubtless
+explains the tradition according to which Barbara's major is major and her minor only minor"
 (p. 9). -/
 theorem barbara (A C B : E → Prop)
     (hMajor : (restrictedForall C B).assertion ())

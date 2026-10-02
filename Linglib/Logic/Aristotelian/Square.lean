@@ -1,84 +1,79 @@
 module
 
-public import Linglib.Core.Order.Aristotelian
+public import Mathlib.Order.BooleanAlgebra.Basic
 
 /-!
-# Square of Opposition
+# The square of opposition
 
-[barwise-cooper-1981] [horn-2001]. The Aristotelian square reified as an
-algebraic object: four corners `A`, `E`, `I`, `O` over a Boolean algebra, related
-by contradiction (A–O, E–I), contrariety (A–E), subcontrariety (I–O), and
-subalternation (A→I, E→O). Concrete instantiations (quantifiers, modals,
-attitudes) live in their respective theory modules.
+The square of opposition, in the form Horn surveys, has four corners `A`, `E`, `I`, `O` in a
+Boolean algebra, related by contradiction (A–O, E–I), contrariety (A–E), subcontrariety (I–O)
+and subalternation (A→I, E→O). Its instances for generalized quantifiers, after Barwise and
+Cooper, and for modals live with those theories.
+
+## References
+
+* [barwise-cooper-1981]
+* [horn-2001]
 -/
 
 @[expose] public section
 
 namespace Aristotelian
 
-/-! ### The Square -/
+/-! ### The square -/
 
-/-- The four vertices of a Square of Opposition. -/
+/-- A square of opposition has four corners. -/
 structure Square (α : Type*) where
-  /-- A-corner: universal affirmative (every, □, Bel p). -/
+  /-- `A` is the universal affirmative corner (*every*, `□p`, `Bel p`). -/
   A : α
-  /-- E-corner: universal negative (no, □¬, Bel ¬p). -/
+  /-- `E` is the universal negative corner (*no*, `□¬p`, `Bel ¬p`). -/
   E : α
-  /-- I-corner: particular affirmative (some, ◇, ◇p). -/
+  /-- `I` is the particular affirmative corner (*some*, `◇p`). -/
   I : α
-  /-- O-corner: particular negative (not-every, ¬□, ¬Bel p). -/
+  /-- `O` is the particular negative corner (*not every*, `¬□p`, `¬Bel p`). -/
   O : α
 
 /-! ### Square relations -/
 
-variable {α : Type*} [BooleanAlgebra α]
+variable {α : Type*} [BooleanAlgebra α] {sq : Square α}
 
-/-- The six relations of the Square over a Boolean algebra. Contradiction
-diagonals are the full `IsContradictory`; contrariety/subcontrariety give one
-direction (`Disjoint`/`Codisjoint`); subalternations are non-strict (`≤`). The
-bridges below recover `IsContrary`/`IsSubaltern` from the missing witness. -/
-structure SquareRelations (sq : Square α) where
-  /-- A entails I. -/
-  subalternAI : sq.A ≤ sq.I
-  /-- E entails O. -/
-  subalternEO : sq.E ≤ sq.O
-  /-- A and O are contradictories. -/
-  contradAO : IsContradictory sq.A sq.O
-  /-- E and I are contradictories. -/
-  contradEI : IsContradictory sq.E sq.I
-  /-- A and E are contraries. -/
+/-- A square over a Boolean algebra satisfies the relations of the square when both diagonals
+are contradictory and the universals cannot both hold. Subalternation and subcontrariety follow
+(`subalternAI`, `subalternEO`, `subcontrIO`). -/
+structure SquareRelations (sq : Square α) : Prop where
+  /-- `A` and `O` are contradictories. -/
+  contradAO : IsCompl sq.A sq.O
+  /-- `E` and `I` are contradictories. -/
+  contradEI : IsCompl sq.E sq.I
+  /-- `A` and `E` cannot both hold. -/
   contraryAE : Disjoint sq.A sq.E
-  /-- I and O are subcontraries. -/
-  subcontrIO : Codisjoint sq.I sq.O
 
-/-- The classical square: when the particulars are the complements of the
-    opposite universals (`I = Eᶜ`, `O = Aᶜ`), the contradiction diagonals
-    hold outright and the remaining relations are each equivalent to
-    contrariety, so `Disjoint A E` yields the full square. Under the modern
-    Boolean reading, contrariety is where existential import lives: it
-    fails when the universals hold vacuously (empty subject term; modally,
-    a dead-end world), and the discharging assumption — a non-empty term,
-    seriality — enters through this hypothesis. -/
-theorem SquareRelations.of_disjoint {sq : Square α}
-    (hI : sq.I = sq.Eᶜ) (hO : sq.O = sq.Aᶜ) (h : Disjoint sq.A sq.E) :
-    SquareRelations sq := by
-  refine ⟨?_, ?_, ?_, ?_, h, ?_⟩
-  · rw [hI]; exact le_compl_iff_disjoint_right.mpr h
-  · rw [hO]; exact le_compl_iff_disjoint_right.mpr h.symm
-  · rw [hO]; exact isCompl_compl
-  · rw [hI]; exact isCompl_compl
-  · rw [hI, hO, codisjoint_iff, ← compl_inf, disjoint_iff.mp h.symm, compl_bot]
+namespace SquareRelations
 
-/-! ### Bridges to the Aristotelian predicates -/
+/-- `A` entails `I`. -/
+theorem subalternAI (h : SquareRelations sq) : sq.A ≤ sq.I := by
+  rw [h.contradEI.symm.eq_compl]
+  exact le_compl_iff_disjoint_right.mpr h.contraryAE
 
-/-- Lift to `IsSubaltern sq.A sq.I` given strictness `sq.A ≠ sq.I`. -/
-theorem SquareRelations.toSubalternAI {sq : Square α}
-    (rel : SquareRelations sq) (hne : sq.A ≠ sq.I) : IsSubaltern sq.A sq.I :=
-  lt_of_le_of_ne rel.subalternAI hne
+/-- `E` entails `O`. -/
+theorem subalternEO (h : SquareRelations sq) : sq.E ≤ sq.O := by
+  rw [h.contradAO.symm.eq_compl]
+  exact le_compl_iff_disjoint_right.mpr h.contraryAE.symm
 
-/-- Lift to `IsContrary sq.A sq.E` given non-exhaustion `sq.A ⊔ sq.E ≠ ⊤`. -/
-theorem SquareRelations.toContraryAE {sq : Square α}
-    (rel : SquareRelations sq) (hne : sq.A ⊔ sq.E ≠ ⊤) : IsContrary sq.A sq.E :=
-  ⟨rel.contraryAE, fun hc => hne (codisjoint_iff.mp hc)⟩
+/-- `I` and `O` cannot both fail. -/
+theorem subcontrIO (h : SquareRelations sq) : Codisjoint sq.I sq.O := by
+  rw [h.contradEI.symm.eq_compl, h.contradAO.symm.eq_compl, codisjoint_iff, ← compl_inf,
+    disjoint_iff.mp h.contraryAE.symm, compl_bot]
+
+/-- When the particulars are the complements of the opposite universals (`I = Eᶜ`, `O = Aᶜ`),
+the diagonals are contradictory outright, so `Disjoint A E` gives the whole square. Under the
+Boolean reading contrariety is where existential import lives. It fails when the universals
+hold vacuously (an empty subject term, or modally a dead-end world), and the assumption ruling
+that out, a non-empty term or seriality, enters through this hypothesis. -/
+theorem of_disjoint (hI : sq.I = sq.Eᶜ) (hO : sq.O = sq.Aᶜ) (h : Disjoint sq.A sq.E) :
+    SquareRelations sq :=
+  ⟨hO ▸ isCompl_compl, hI ▸ isCompl_compl, h⟩
+
+end SquareRelations
 
 end Aristotelian
