@@ -14,16 +14,15 @@ public import Linglib.Discourse.Role
 `Person` is the inventory of values that languages' person systems distinguish, clusivity among
 them. Harbour's quadripartition, first exclusive, first inclusive, second and third, sits beside
 the tripartition's `first`, the first person unmarked for clusivity (English *we*), to which
-`coarsen` sends both clusivity values as coarsening sends `Number.dual` to `Number.plural`.
-`zero` is the impersonal person, the Universal Dependencies tag `Person=0`; those tags have no
-clusivity, so realization sends the quadripartition values to the first person
-(`Morphology/Word/UD.lean`). A value means the participant sets its referents can have
-(`Person.participantSets`), and whether it includes the speaker, is a speech-act participant, or
-marks clusivity is read off them.
+`coarsen` sends both clusivity values as coarsening sends `Number.dual` to `Number.plural`. The
+impersonal is not a value but the absence of one, `Option Person`, as the Universal Dependencies
+tag `Person=0` is ingested (`Morphology/Word/UD.lean`). A value means the participant sets its
+referents can have (`Person.participantSets`), and whether it includes the speaker, is a
+speech-act participant, or marks clusivity is read off them.
 
-`Person.prominence` ranks the first person above the second and the second above the third. On
-the referential values it is the size of the feature bundle (`Person.prominence_eq_card`) and the
-order resolution induces up to clusivity (`Person.prominence_le_iff`), the hierarchy of reference
+`Person.prominence` ranks the first person above the second and the second above the third. It
+is the size of the feature bundle (`Person.prominence_eq_card`) and the order resolution induces
+up to clusivity (`Person.prominence_le_iff`), the hierarchy of reference
 and coordination of Zwicky, Corbett, and Dalrymple and Kaplan. It is not the only person scale:
 Zwicky distinguishes morphosyntactic hierarchies that order the participants otherwise, as
 Algonquian ranks the second person above the first, and for argument coding splits Haspelmath's
@@ -66,8 +65,6 @@ inductive Person where
   | second
   /-- `third` refers to neither the speaker nor the addressee. -/
   | third
-  /-- `zero` is the impersonal or generic person (UD `Person=0`, Finnish-type impersonals). -/
-  | zero
   deriving DecidableEq, Repr, Fintype
 
 namespace Person
@@ -76,8 +73,8 @@ namespace Person
 
 A person value covers the referents whose participants, the speaker and the addressee among them,
 form one of its participant sets: `{speaker}` or `{speaker, addressee}` for the first person
-unmarked for clusivity, a single set for each value of the quadripartition, and none for the
-impersonal. The predicates on values read these sets off. -/
+unmarked for clusivity and a single set for each value of the quadripartition. The predicates on
+values read these sets off. -/
 
 open Discourse
 
@@ -88,7 +85,6 @@ def participantSets : Person → Finset (Finset Role)
   | .firstExclusive => {{.speaker}}
   | .second => {{.addressee}}
   | .third => {∅}
-  | .zero => ∅
 
 theorem participantSets_injective : Function.Injective participantSets := by decide
 
@@ -96,7 +92,7 @@ theorem participantSets_injective : Function.Injective participantSets := by dec
     p.participantSets = q.participantSets ↔ p = q :=
   participantSets_injective.eq_iff
 
-@[simp] theorem participantSets_eq_empty {p : Person} : p.participantSets = ∅ ↔ p = .zero := by
+theorem participantSets_nonempty (p : Person) : p.participantSets.Nonempty := by
   cases p <;> decide
 
 /-- The person of a referent whose participants are `s` is first inclusive with both, first
@@ -121,16 +117,13 @@ theorem ofParticipants_injective : Function.Injective ofParticipants := fun s t 
 
 /-! ### Predicates -/
 
-/-- The value includes the speaker when it covers some participant set and each contains the
-speaker. -/
-def IncludesSpeaker (p : Person) : Prop :=
-  p.participantSets.Nonempty ∧ ∀ s ∈ p.participantSets, .speaker ∈ s
+/-- The value includes the speaker when each of its participant sets contains the speaker. -/
+def IncludesSpeaker (p : Person) : Prop := ∀ s ∈ p.participantSets, .speaker ∈ s
 
 instance : DecidablePred IncludesSpeaker := fun _ ↦ by unfold IncludesSpeaker; infer_instance
 
-/-- A speech-act participant value covers some participant set, and each is nonempty. -/
-def IsSAP (p : Person) : Prop :=
-  p.participantSets.Nonempty ∧ ∀ s ∈ p.participantSets, s.Nonempty
+/-- A speech-act participant value has only nonempty participant sets. -/
+def IsSAP (p : Person) : Prop := ∀ s ∈ p.participantSets, s.Nonempty
 
 instance : DecidablePred IsSAP := fun _ ↦ by unfold IsSAP; infer_instance
 
@@ -163,10 +156,10 @@ theorem coarsen_eq_self_iff (p : Person) :
 /-! ### Prominence -/
 
 /-- `prominence` ranks the first person (2) above the second (1) and the second above the third
-(0); the clusivity values rank with `first` and the impersonal with the third person. -/
+(0); the clusivity values rank with `first`. -/
 def prominence : Person → Nat
   | .first | .firstInclusive | .firstExclusive => 2
   | .second => 1
-  | .third | .zero => 0
+  | .third => 0
 
 end Person

@@ -16,8 +16,8 @@ A person value covers the referents whose participants form one of its participa
 (`Person.participantSets`). As Zwicky proposes, a
 coordination refers to the union of its conjuncts' referents, so its participant sets are the
 pairwise unions `⊻` of theirs. Distinct values cover distinct participant sets, so this makes
-`Person` a join-semilattice whose join `⊔` is person resolution, with third person at the bottom
-and the impersonal at the top. Dalrymple and Kaplan's marker sets are the participant sets of the
+`Person` a join-semilattice whose join `⊔` is person resolution, with third person at the
+bottom. Dalrymple and Kaplan's marker sets are the participant sets of the
 quadripartition, and their union is the join (`Person.ofParticipants_union`).
 
 ## Main definitions
@@ -31,11 +31,6 @@ quadripartition, and their union is the join (`Person.ofParticipants_union`).
   persons.
 * `Person.coarsen_eq_iff`: coarsening sends a value to the tripartition value covering it.
 * `Person.prominence_le_iff`: prominence is the order resolution induces up to clusivity.
-
-## Implementation notes
-
-The impersonal covers no participant set, so a coordination with an impersonal conjunct has no
-referential person; making `zero` absorbing records this and keeps every law unconditional.
 
 ## References
 
@@ -60,12 +55,11 @@ theorem supClosed_participantSets (p : Person) :
 
 /-! ### Resolution -/
 
-/-- In person resolution the impersonal absorbs, third person is neutral, the first person
-unmarked for clusivity absorbs the exclusive, and any other two distinct values together cover
-both the speaker and the addressee. -/
+/-- In person resolution third person is neutral, the first person unmarked for clusivity
+absorbs the exclusive, and any other two distinct values together cover both the speaker and the
+addressee. -/
 instance : Max Person where
   max
-    | .zero, _ | _, .zero => .zero
     | .third, p | p, .third => p
     | .first, .firstExclusive | .firstExclusive, .first => .first
     | p, q => if p = q then p else .firstInclusive
@@ -84,15 +78,11 @@ instance : SemilatticeSup Person :=
 
 instance : DecidableLE Person := fun p q ↦ inferInstanceAs (Decidable (p ⊔ q = q))
 
-instance : BoundedOrder Person where
+instance : OrderBot Person where
   bot := .third
   bot_le p := show .third ⊔ p = p by cases p <;> rfl
-  top := .zero
-  le_top p := show p ⊔ .zero = .zero by cases p <;> rfl
 
 @[simp] theorem bot_eq_third : (⊥ : Person) = .third := rfl
-
-@[simp] theorem top_eq_zero : (⊤ : Person) = .zero := rfl
 
 /-! ### The person of a participant set -/
 
@@ -110,9 +100,8 @@ theorem participantSets_subset_coarsen (p : Person) :
     p.participantSets ⊆ p.coarsen.participantSets := by
   cases p <;> decide
 
-/-- Coarsening sends a referential value to the tripartition value covering its participant
-sets. -/
-theorem coarsen_eq_iff {p : Person} (hp : p ≠ .zero) (q : Person) :
+/-- Coarsening sends a value to the tripartition value covering its participant sets. -/
+theorem coarsen_eq_iff (p q : Person) :
     p.coarsen = q ↔ q.coarsen = q ∧ p.participantSets ⊆ q.participantSets := by
   revert p q; decide
 
@@ -121,9 +110,9 @@ conjuncts. -/
 theorem coarsen_sup (p q : Person) : (p ⊔ q).coarsen = (p.coarsen ⊔ q.coarsen).coarsen := by
   revert p q; decide
 
-/-- On referential values, prominence is the order resolution induces up to clusivity, `p` being
-at most as prominent as `q` iff coordinating them gives `q`'s tripartition value. -/
-theorem prominence_le_iff {p q : Person} (hp : p ≠ .zero) (hq : q ≠ .zero) :
+/-- Prominence is the order resolution induces up to clusivity, `p` being at most as prominent as
+`q` iff coordinating them gives `q`'s tripartition value. -/
+theorem prominence_le_iff {p q : Person} :
     p.prominence ≤ q.prominence ↔ (p ⊔ q).coarsen = q.coarsen := by
   revert p q; decide
 

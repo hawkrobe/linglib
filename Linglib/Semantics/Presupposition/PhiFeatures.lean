@@ -78,11 +78,11 @@ def Feature.dom : Feature → Set E
 
 /-- At a context of utterance, the first person is defined of the referents including the agent,
 the inclusive of those including the agent and the addressee, and the second of those including
-the agent or the addressee; the third person, an absent value and the impersonal restrict
+the agent or the addressee; the third person and an absent value, the impersonal, restrict
 nothing. -/
 def dom : Option Person → Set E
   | some .firstInclusive => Set.Ici c.agent ∩ Set.Ici c.addressee
-  | p => (p.bind toFeatures).elim Set.univ (·.inf (Feature.dom c))
+  | p => (p.map toFeatures).elim Set.univ (·.inf (Feature.dom c))
 
 @[simp] theorem dom_none : dom c none = Set.univ := rfl
 
@@ -102,8 +102,6 @@ def dom : Option Person → Set E
 
 @[simp] theorem dom_third : dom c (some .third) = Set.univ := by
   simp [dom]
-
-@[simp] theorem dom_zero : dom c (some .zero) = Set.univ := rfl
 
 /-- The inclusive lies inside the first person. -/
 theorem dom_firstInclusive_subset_dom_first :

@@ -77,7 +77,7 @@ recorded. -/
 def setAPlural : Person → List Morphology.Morph
   | .first | .firstInclusive => [.suff "tik"]
   | .second | .third => [.suff "ik"]
-  | .firstExclusive | .zero => []
+  | .firstExclusive => []
 
 /-- The Set B suffixes, with a zero third person singular and the plural *-ik* alone in the
 third person; *-on* and *-otik* have the harmonic variants *-un* and *-utik*. -/

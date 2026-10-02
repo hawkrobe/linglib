@@ -8,23 +8,23 @@ public import Linglib.Data.Examples.GonzalezPootMcGinnis2006
 /-!
 # González Poot and McGinnis (2006): Local versus Long-Distance Fission in Distributed Morphology
 
-This file formalizes [gonzalez-poot-mcginnis-2006]'s argument that Yucatec Maya has local but
-not long-distance Fission. The verbal agreement suffixes come from one node, Agr3, which agrees
-with both the ergative subject and the nominative object and is realized by strict scansion of
-the Vocabulary (27) with local Fission ([halle-1997]): an item discharges its features from one
-of the node's two matrices and the residue stays available to the items below (`suffixes`). The
-second- and third-person plural suffixes *-éːʃ* and *-oʔob* are unspecified for case, so their
-order is fixed by specificity whatever the grammatical roles, (19) to (22), and one scansion
-never inserts *-oʔob* twice, (23) and (24) (`suffixes_rows`), whereas the object–subject template
-(18) predicts exactly the starred forms (`template_rows`). Long-distance Fission is rejected: the
-split of ergative person onto the auxiliary and number onto the verb, (39), crosses a word
-boundary, and first-person number is a person distinction, (42), so the auxiliary and prefix
-Vocabularies (43) and (44) recover every row (`aux_prefix_rows`) and derive the paradigm (39)
-that the paper aligns with Hebrew, Basque, and Georgian (`ergative_paradigm`,
-`first_person_paradigm`). The appendix's privative implementation over [harley-ritter-2002]'s
-features, (A1) to (A4), recovers the auxiliary and the prefix (`privative_aux_prefix`) but not
-the suffixes: without negative values, the nominative residue of a second-person plural object
-still matches *-en*, so (A4) over-generates on (20) (`privative_suffixes`).
+[gonzalez-poot-mcginnis-2006]'s argument that Yucatec Maya has local but not long-distance
+Fission. The verbal agreement suffixes come from one node, Agr3, which agrees with both the
+ergative subject and the nominative object and is realized by strict scansion of the Vocabulary
+(27) with local Fission ([halle-1997]): an item discharges its features from one of the node's
+two matrices and the residue stays available to the items below (`suffixes`). The second- and
+third-person plural suffixes *-éːʃ* and *-oʔob* are unspecified for case, so their order is fixed
+by specificity whatever the grammatical roles, (19) to (22), and one scansion never inserts
+*-oʔob* twice, (23) and (24) (`suffixes_rows`), whereas the object–subject template (18) predicts
+exactly the starred forms (`template_rows`). Long-distance Fission is rejected: the split of
+ergative person onto the auxiliary and number onto the verb, (39), crosses a word boundary, and
+first-person number is a person distinction, (42), so the auxiliary and prefix Vocabularies (43)
+and (44) recover every row (`aux_prefix_rows`) and derive the paradigm (39) that the paper aligns
+with Hebrew, Basque, and Georgian (`ergative_paradigm`, `first_person_paradigm`). The appendix's
+privative implementation over [harley-ritter-2002]'s features, (A1) to (A4), recovers the
+auxiliary and the prefix (`privative_aux_prefix`) but not the suffixes: without negative values,
+the nominative residue of a second-person plural object still matches *-en*, so (A4)
+over-generates on (20) (`privative_suffixes`).
 
 ## Implementation notes
 
@@ -57,9 +57,7 @@ open scoped DistributedMorphology.VocabularyItem
 /-- The person features of (26), [±PSE, ±Auth], as the substrate's [±participant, ±author]
 decomposition of a person. -/
 def personFeatures (p : Person) : List FeatureVal :=
-  match Person.toFeatures p with
-  | some f => [.participant (decide (.participant ∈ f)), .author (decide (.author ∈ f))]
-  | none => []
+  [.participant (decide (.participant ∈ p.toFeatures)), .author (decide (.author ∈ p.toFeatures))]
 
 /-- Number as the feature [±Pl]. -/
 def number (pl : Bool) : FeatureVal := .phi (.number (if pl then .plural else .singular))
@@ -103,7 +101,7 @@ clause, the object's, (25) and (28b); strict scansion of (27) realizes them, and
 *-Ø* is not overt. -/
 def suffixes (subj : Person × Bool) (obj : Option (Person × Bool)) : List String :=
   (scansion agr3 ∅
-    (matrix subj.1 subj.2 .erg :: (obj.map λ o => [matrix o.1 o.2 .nom]).getD []))
+    (matrix subj.1 subj.2 .erg :: (obj.map fun o ↦ [matrix o.1 o.2 .nom]).getD []))
     |>.filter (· ≠ "Ø")
 
 /-- The auxiliary suffix of an ergative subject, by the Subset Principle over (43). -/
@@ -187,7 +185,7 @@ verbal suffix marks number, since (42) makes first-person number a person distin
 (4). -/
 theorem first_person_paradigm :
     aux (.first, false) ≠ aux (.first, true) ∧ ∀ pl, suffixes (.first, pl) none = [] := by
-  refine ⟨by decide, λ pl => ?_⟩
+  refine ⟨by decide, fun pl ↦ ?_⟩
   cases pl <;> decide
 
 /-! ### The appendix: a privative implementation -/
@@ -227,7 +225,7 @@ def agr3' : List (VocabularyItem Privative String) :=
 /-- The overt verbal suffixes under (A4). -/
 def suffixes' (subj : Person × Bool) (obj : Option (Person × Bool)) : List String :=
   (scansion agr3' ∅
-    (privMatrix subj.1 subj.2 .erg :: (obj.map λ o => [privMatrix o.1 o.2 .nom]).getD []))
+    (privMatrix subj.1 subj.2 .erg :: (obj.map fun o ↦ [privMatrix o.1 o.2 .nom]).getD []))
     |>.filter (· ≠ "Ø")
 
 /-- The privative Agr1 and Agr2 lists (A2) and (A3) recover the auxiliary suffix and the verbal

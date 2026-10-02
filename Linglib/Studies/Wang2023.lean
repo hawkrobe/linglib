@@ -53,7 +53,7 @@ open Agreement OptimalityTheory
 theorem plural_eq_bot : Number.pluralF = ⊥ := rfl
 
 /-- The third person is the least specified person cell, the empty bundle (55). -/
-theorem third_eq_bot : Person.toFeatures .third = some ⊥ := Person.toFeatures_third
+theorem third_eq_bot : Person.toFeatures .third = ⊥ := Person.toFeatures_third
 
 /-! ### The Taboo of Directness and Maximize Presupposition! (§4.2) -/
 

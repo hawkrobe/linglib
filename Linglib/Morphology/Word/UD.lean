@@ -17,8 +17,8 @@ features, and an annotation ingests as an agreement bundle.
 ## Main declarations
 
 * `Person.toUD`, `Person.fromUD`: realization of a person as a tag, clusivity collapsing to
-  the first person, and ingestion of a tag, with `Person.fromUD_toUD` showing ingestion after
-  realization is coarsening.
+  the first person, and ingestion of a tag, the impersonal `Person=0` as no person, with
+  `Person.fromUD_toUD` showing ingestion after realization is coarsening.
 * `Number.toUD`, `Number.fromUD`: the partial realization and ingestion of number, with
   `Number.roundtrip_fromUD_toUD` on the seven values that have a tag.
 * `Gender.toUD`, `Gender.fromUD`: realization where a tag exists and total ingestion,
@@ -46,19 +46,20 @@ def toUD : Person → UD.Person
   | .first | .firstInclusive | .firstExclusive => .first
   | .second => .second
   | .third => .third
-  | .zero => .zero
 
-/-- Ingest an annotation. -/
-def fromUD : UD.Person → Person
-  | .first => .first
-  | .second => .second
-  | .third => .third
-  | .zero => .zero
+/-- Ingest an annotation; the impersonal `Person=0` is the absence of a person. -/
+def fromUD : UD.Person → Option Person
+  | .first => some .first
+  | .second => some .second
+  | .third => some .third
+  | .zero => none
 
-@[simp] theorem toUD_fromUD (u : UD.Person) : (fromUD u).toUD = u := by cases u <;> rfl
+/-- Realization is a partial inverse of ingestion up to clusivity, which has no tag. -/
+theorem fromUD_toUD (p : Person) : fromUD p.toUD = some p.coarsen := by cases p <;> rfl
 
-/-- Ingestion after realization is coarsening: clusivity has no tag. -/
-theorem fromUD_toUD (p : Person) : fromUD p.toUD = p.coarsen := by cases p <;> rfl
+@[simp] theorem toUD_fromUD {u : UD.Person} {p : Person} (h : fromUD u = some p) :
+    p.toUD = u := by
+  cases u <;> simp only [fromUD, Option.some.injEq, reduceCtorEq] at h <;> subst h <;> rfl
 
 /-- The annotation conflates the clusivity values. -/
 theorem ud_conflates_clusivity : Person.firstInclusive.toUD = Person.firstExclusive.toUD := rfl
@@ -240,7 +241,7 @@ def toUD (f : Features) : UD.MorphFeatures where
 
 /-- The features an annotation ingests as. -/
 def ofUD (m : UD.MorphFeatures) : Features
-  | .person => m.person.map Person.fromUD
+  | .person => m.person.bind Person.fromUD
   | .number => m.number.bind Number.fromUD
   | .gender => m.gender.map Gender.fromUD
   | .case => m.case_.map Case.fromUD
