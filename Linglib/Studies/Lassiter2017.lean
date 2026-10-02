@@ -6,6 +6,7 @@ public import Mathlib.Tactic.FinCases
 public import Linglib.Semantics.Attitudes.Desire.ExpectedValue
 public import Linglib.Studies.Kennedy2007
 public import Linglib.Studies.Lassiter2015
+public import Linglib.Core.MeasureTheory.Measure.Dirac
 
 /-!
 # Lassiter (2017): Graded Modality
@@ -53,9 +54,9 @@ derivations live with the expected-value substrate.
 
 ## Implementation notes
 
-Probabilities are finitely additive measures valued in `ℚ`, as in [lassiter-2015], and the
-probability scale is the closed unit interval. The p. 82 claim that the likelihood scale, if
-connected, is isomorphic to a finitely additive probability holds of these measures by
+Probabilities are probability measures read on their real values, as in [lassiter-2015], and
+the probability scale is the closed real unit interval. The p. 82 claim that the likelihood
+scale, if connected, is isomorphic to a finitely additive probability holds of these measures by
 construction; its measurement-theoretic direction, from the axioms listed on p. 97 to a measure,
 is not formalized, and the tower's own representation theorem uses [scott-1964]'s cancellation
 condition rather than those axioms. The book states the threshold ordering twice: strictly on
@@ -92,22 +93,25 @@ expected value over an equiprobable domain of four worlds indexed by the truth v
 
 namespace Lassiter2017
 
+open MeasureTheory
+
 /-! ### Chapter 4: the likelihood scale -/
 
 /-- The probability scale, the closed unit interval, on which *likely* and *probable* measure
 propositions (§4.1). -/
-abbrev Probability : Type := Set.Icc (0 : ℚ) 1
+abbrev Probability : Type := Set.Icc (0 : ℝ) 1
 
 section Scale
 
 open ComparativeProbability
 
-variable {W : Type*} (P : FinAddMeasure ℚ W)
+variable {W : Type*} [MeasurableSpace W] (P : Measure W) [IsProbabilityMeasure P]
 
 /-- A proposition's degree of likelihood is its probability. -/
-def likelihood (A : Set W) : Probability := ⟨P A, P.nonneg A, P.mu_le_one A⟩
+noncomputable def likelihood (A : Set W) : Probability :=
+  ⟨P.real A, measureReal_nonneg, measureReal_le_one⟩
 
-@[simp] theorem coe_likelihood (A : Set W) : (likelihood P A : ℚ) = P A := rfl
+@[simp] theorem coe_likelihood (A : Set W) : (likelihood P A : ℝ) = P.real A := rfl
 
 /-- Nothing is likelier than a tautology (p. 84). -/
 @[simp] theorem likelihood_univ : likelihood P Set.univ = ⊤ := Subtype.ext (by simp)
@@ -153,7 +157,7 @@ theorem coherent_and_not_admits_contextual_probability :
 /-- The open-interval alternative of §4.2.6 keeps Interpretive Economy by making the scale
 `(0, 1)`, which is open, at the cost of a degree for the tautology. -/
 theorem ofOrder_Ioo_zero_one :
-    Boundedness.ofOrder (Set.Ioo (0 : ℚ) 1) = .open_ ∧ (1 : ℚ) ∉ Set.Ioo (0 : ℚ) 1 :=
+    Boundedness.ofOrder (Set.Ioo (0 : ℝ) 1) = .open_ ∧ (1 : ℝ) ∉ Set.Ioo (0 : ℝ) 1 :=
   ⟨Boundedness.ofOrder_Ioo, fun h ↦ lt_irrefl _ h.2⟩
 
 /-- The book's licensing of maximizers and minimizers (§4.2.9): *completely* takes the positive
@@ -184,21 +188,31 @@ section Adjectives
 
 open ComparativeProbability Degree
 
-variable {W : Type*} (P : FinAddMeasure ℚ W) {A : Set W} {θ : ℚ}
+variable {W : Type*} [MeasurableSpace W] (P : Measure W) {A : Set W} {θ : ℝ}
 
 /-- *Likely* and *probable*: a relative adjective, true above a contextual threshold. -/
-def likely (θ : ℚ) : Set (Set W) := Comparison.gt.over P θ
+def likely (θ : ℝ) : Set (Set W) := Comparison.gt.over P.real θ
 
 /-- *Certain* and *sure* (§5.1.5): the maximum standard of the probability scale. -/
-def certain : Set (Set W) := Comparison.ge.over P 1
+def certain : Set (Set W) := Comparison.ge.over P.real 1
 
 /-- *Possible* (§5.2.5): the minimum standard of the probability scale. -/
-def possible : Set (Set W) := Comparison.gt.over P 0
+def possible : Set (Set W) := Comparison.gt.over P.real 0
 
-theorem mem_certain_iff : A ∈ certain P ↔ P A = 1 :=
-  ⟨fun h ↦ le_antisymm (P.mu_le_one A) h, fun h ↦ h.ge⟩
+theorem mem_possible_iff : A ∈ possible P ↔ 0 < P.real A := Iff.rfl
 
-theorem mem_possible_iff : A ∈ possible P ↔ 0 < P A := Iff.rfl
+/-- Certainty entails likelihood (§5.1.4). -/
+theorem certain_subset_likely (hθ : θ < 1) : certain P ⊆ likely P θ :=
+  fun _ h ↦ lt_of_lt_of_le hθ h
+
+/-- Likelihood entails possibility (§5.2.3). -/
+theorem likely_subset_possible (hθ : 0 ≤ θ) : likely P θ ⊆ possible P :=
+  fun _ h ↦ lt_of_le_of_lt hθ h
+
+variable [IsProbabilityMeasure P]
+
+theorem mem_certain_iff : A ∈ certain P ↔ P.real A = 1 :=
+  ⟨fun h ↦ le_antisymm measureReal_le_one h, fun h ↦ h.ge⟩
 
 /-- *Likely* is [kennedy-2007]'s relative positive form on the probability scale. -/
 theorem mem_likely_iff_relativePos (θ : Probability) :
@@ -225,32 +239,26 @@ example : English.Adjectives.possible.standard = .minEndpoint ∧
     English.Adjectives.impossible.standard = .maxEndpoint := by
   decide
 
-/-- Certainty entails likelihood (§5.1.4). -/
-theorem certain_subset_likely (hθ : θ < 1) : certain P ⊆ likely P θ :=
-  fun _ h ↦ lt_of_lt_of_le hθ h
-
-/-- Likelihood entails possibility (§5.2.3). -/
-theorem likely_subset_possible (hθ : 0 ≤ θ) : likely P θ ⊆ possible P :=
-  fun _ h ↦ lt_of_le_of_lt hθ h
-
 /-- *Certain* and *possible* are [lassiter-2015]'s *must* and *might* at threshold one, the
 strong auxiliaries (p. 156), and so duals: `A` is possible iff its negation is not certain. -/
-theorem mem_possible_iff_not_mem_certain_compl : A ∈ possible P ↔ Aᶜ ∉ certain P := by
+theorem mem_possible_iff_not_mem_certain_compl [DiscreteMeasurableSpace W] :
+    A ∈ possible P ↔ Aᶜ ∉ certain P := by
   have h := Lassiter2015.probMight_iff_not_probMust_compl P 1 A
   rwa [Lassiter2015.probMight, sub_self] at h
 
 /-- (4.51b): *n percent A* compares the degree with the scale's maximum. -/
-def percent (n : ℚ) : Set (Set W) := {A | P A / P Set.univ = n / 100}
+def percent (n : ℝ) : Set (Set W) := {A | P.real A / P.real Set.univ = n / 100}
 
 /-- *n percent likely* is interpretable because the maximum is a degree of the scale
 (p. 121–122). -/
-theorem mem_percent_iff (n : ℚ) : A ∈ percent P n ↔ P A = n / 100 := by
+theorem mem_percent_iff (n : ℝ) : A ∈ percent P n ↔ P.real A = n / 100 := by
   simp [percent]
 
 /-- *Fifty percent likely* is "exactly as likely as not" (p. 103). -/
-theorem mem_percent_fifty_iff : A ∈ percent P 50 ↔ P A = P Aᶜ := by
+theorem mem_percent_fifty_iff [DiscreteMeasurableSpace W] :
+    A ∈ percent P 50 ↔ P.real A = P.real Aᶜ := by
   rw [mem_percent_iff]
-  have := P.mu_compl A
+  have := probReal_add_probReal_compl (μ := P) (.of_discrete : MeasurableSet A)
   constructor <;> intro h <;> linarith
 
 end Adjectives
@@ -285,12 +293,12 @@ section Thresholds
 
 open ComparativeProbability Degree
 
-variable {W : Type*} (P : FinAddMeasure ℚ W) (θ : EpistemicItem → ℚ) {A : Set W}
+variable {W : Type*} [MeasurableSpace W] (P : Measure W) (θ : EpistemicItem → ℝ) {A : Set W}
 
 /-- The positive form of an item under a profile of thresholds. -/
-def pos (i : EpistemicItem) : Set (Set W) := i.comparison.over P (θ i)
+def pos (i : EpistemicItem) : Set (Set W) := i.comparison.over P.real (θ i)
 
-theorem mem_pos_iff (i : EpistemicItem) : A ∈ pos P θ i ↔ i.comparison.rel (P A) (θ i) :=
+theorem mem_pos_iff (i : EpistemicItem) : A ∈ pos P θ i ↔ i.comparison.rel (P.real A) (θ i) :=
   Comparison.mem_over _ _ _ _
 
 /-- (6.29a) is [lassiter-2015]'s *must*. -/
@@ -298,7 +306,8 @@ theorem mem_pos_must_iff : A ∈ pos P θ .must ↔ Lassiter2015.probMust P (θ 
 
 /-- (6.29b) with the duality `θ_might = 1 − θ_must` of p. 156 is [lassiter-2015]'s *might*, so
 *might* `A` holds iff *must* `¬A` fails. -/
-theorem mem_pos_might_iff (hdual : θ .might = 1 - θ .must) :
+theorem mem_pos_might_iff [DiscreteMeasurableSpace W] [IsProbabilityMeasure P]
+    (hdual : θ .might = 1 - θ .must) :
     A ∈ pos P θ .might ↔ Aᶜ ∉ pos P θ .must := by
   have h := Lassiter2015.probMight_iff_not_probMust_compl P (θ .must) A
   rw [Lassiter2015.probMight, ← hdual] at h
@@ -327,17 +336,17 @@ theorem antitone_pos (hθ : StrictMono θ) : Antitone (pos P θ) := by
 
 /-- (6.16): *must* `A` leaves `¬A` at most `1 − θ_must` likely, so above one half `A` is more
 likely than its negation. -/
-theorem compl_lt_of_mem_must {θ' : ℚ} (hθ : 1 / 2 < θ') (h : A ∈ Comparison.ge.over P θ') :
-    P Aᶜ < P A := by
-  have := P.mu_compl A
-  change θ' ≤ P A at h
+theorem compl_lt_of_mem_must [DiscreteMeasurableSpace W] [IsProbabilityMeasure P] {θ' : ℝ}
+    (hθ : 1 / 2 < θ') (h : A ∈ Comparison.ge.over P.real θ') : P.real Aᶜ < P.real A := by
+  have := probReal_add_probReal_compl (μ := P) (.of_discrete : MeasurableSet A)
+  change θ' ≤ P.real A at h
   linarith
 
 /-- (6.19): what is more likely than not is a *might*, given `θ_might ≤ 1/2`. -/
-theorem mem_might_of_compl_lt {θ' : ℚ} (hθ : θ' ≤ 1 / 2) (h : P Aᶜ < P A) :
-    A ∈ Comparison.gt.over P θ' := by
-  have := P.mu_compl A
-  change θ' < P A
+theorem mem_might_of_compl_lt [DiscreteMeasurableSpace W] [IsProbabilityMeasure P] {θ' : ℝ}
+    (hθ : θ' ≤ 1 / 2) (h : P.real Aᶜ < P.real A) : A ∈ Comparison.gt.over P.real θ' := by
+  have := probReal_add_probReal_compl (μ := P) (.of_discrete : MeasurableSet A)
+  change θ' < P.real A
   linarith
 
 /-- p. 164: under the dualities of *must* and *might* and of *certain* and *possible*, *certain*
@@ -359,16 +368,20 @@ theorem not_strictMono_of_might_zero (h : θ .might = 0) (hp : 0 ≤ θ .possibl
 
 end Thresholds
 
-open ComparativeProbability in
 /-- With a positive threshold, *might* is strictly stronger than *possible* (§6.5): a
 proposition of probability exactly `θ` is possible and not a *might*. -/
-theorem exists_mem_possible_not_mem_might {θ : ℚ} (h0 : 0 < θ) (h1 : θ ≤ 1) :
-    ∃ (P : FinAddMeasure ℚ (Fin 2)) (A : Set (Fin 2)),
-      A ∈ possible P ∧ A ∉ Degree.Comparison.gt.over P θ := by
-  refine ⟨.ofFintype ![θ, 1 - θ] (fun i ↦ by fin_cases i <;> simp <;> linarith)
-    (by simp [Fin.sum_univ_two]), {0}, ?_, ?_⟩
-  · simp [possible, Degree.Comparison.mem_over, Degree.Comparison.rel, h0]
-  · simp [Degree.Comparison.mem_over, Degree.Comparison.rel]
+theorem exists_mem_possible_not_mem_might {θ : ℝ} (h0 : 0 < θ) (h1 : θ ≤ 1) :
+    ∃ P : Measure (Fin 2), IsProbabilityMeasure P ∧ ∃ A : Set (Fin 2),
+      A ∈ possible P ∧ A ∉ Degree.Comparison.gt.over P.real θ := by
+  have hw (i : Fin 2) : 0 ≤ (![θ, 1 - θ] : Fin 2 → ℝ) i := by
+    fin_cases i <;> simp <;> linarith
+  set P : Measure (Fin 2) := ∑ i, ENNReal.ofReal (![θ, 1 - θ] i) • Measure.dirac i with hP
+  have hP0 : P.real {0} = θ := by rw [hP, Measure.sum_ofReal_smul_dirac_real_apply hw]; simp
+  refine ⟨P, Measure.isProbabilityMeasure_sum_ofReal_smul_dirac hw (by simp [Fin.sum_univ_two]),
+    {0}, ?_, ?_⟩
+  · rwa [mem_possible_iff, hP0]
+  · simp only [Degree.Comparison.mem_over, Degree.Comparison.rel_gt, hP0, lt_irrefl,
+      not_false_eq_true]
 
 open Desire.ExpectedValue Core.DecisionTheory
 

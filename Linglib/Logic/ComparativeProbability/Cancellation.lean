@@ -13,8 +13,8 @@ comparison holds reversed; it characterizes representability by a single additiv
 
 `Scott.lean` proves Scott's theorem in the sign-vector form of the condition and shows the two
 forms agree (`ComparativeProbability.cancellation_iff_finiteCancellation`). This file holds the
-balanced-sequence form and its soundness: the order a finitely additive measure induces, and so
-every representable qualitative probability order, satisfies finite cancellation.
+balanced-sequence form and its soundness: the order a finite measure induces, and so every
+representable qualitative probability order, satisfies finite cancellation.
 
 ## Main definitions
 
@@ -22,7 +22,7 @@ every representable qualitative probability order, satisfies finite cancellation
 
 ## Main statements
 
-* `FinAddMeasure.finiteCancellation`, `Representable.finiteCancellation`: soundness.
+* `MeasureTheory.Measure.finiteCancellation`, `Representable.finiteCancellation`: soundness.
 
 ## References
 
@@ -64,67 +64,64 @@ def FiniteCancellation (ge : Set W → Set W → Prop) : Prop :=
 
 section
 
-variable {K : Type*} [Field K] [LinearOrder K] [IsStrictOrderedRing K]
-  [Fintype W] (m : FinAddMeasure K W)
+open MeasureTheory
+
+variable [Fintype W] [MeasurableSpace W] [MeasurableSingletonClass W] (μ : Measure W)
+  [IsFiniteMeasure μ]
 
 open scoped Classical in
-private lemma mu_eq_sum_ite (E : Set W) :
-    m E = ∑ s, if s ∈ E then m {s} else 0 := by
-  classical
-  have h : m E = ∑ i ∈ E.toFinset, m {i} := by
-    rw [m.sum_mu_singleton, Set.coe_toFinset]
-  rw [h, ← Finset.sum_filter]
-  refine Finset.sum_congr ?_ (fun _ _ => rfl)
-  ext s; simp [Set.mem_toFinset]
+private lemma measureReal_eq_sum_ite (E : Set W) :
+    μ.real E = ∑ s, if s ∈ E then μ.real {s} else 0 := by
+  conv_lhs => rw [show E = ↑(Finset.univ.filter (· ∈ E)) by ext; simp]
+  rw [← sum_measureReal_singleton, Finset.sum_filter]
 
-private lemma mu_listSum (L : List (Set W)) :
-    (L.map m).sum = ∑ s, m {s} * (seqCount s L : K) := by
+private lemma measureReal_listSum (L : List (Set W)) :
+    (L.map μ.real).sum = ∑ s, μ.real {s} * (seqCount s L : ℝ) := by
   classical
   induction L with
   | nil => simp [seqCount]
   | cons E L ih =>
-    rw [List.map_cons, List.sum_cons, ih, mu_eq_sum_ite m E, ← Finset.sum_add_distrib]
-    refine Finset.sum_congr rfl (fun s _ => ?_)
-    have hsc : seqCount s (E :: L) = (if s ∈ E then 1 else 0) + seqCount s L := by
-      simp [seqCount]
-    rw [hsc]; push_cast
+    rw [List.map_cons, List.sum_cons, ih, measureReal_eq_sum_ite μ E, ← Finset.sum_add_distrib]
+    refine Finset.sum_congr rfl fun s _ ↦ ?_
+    rw [seqCount_cons]; push_cast
     by_cases hs : s ∈ E
-    · simp only [hs, ite_true]; rw [mul_add, mul_one]
+    · simp only [hs, ite_true]; ring
     · simp [hs]
 
-private lemma mu_listSum_eq_of_balanced {L₁ L₂ : List (Set W)} (h : BalancedSeqs L₁ L₂) :
-    (L₁.map m).sum = (L₂.map m).sum := by
-  rw [mu_listSum m L₁, mu_listSum m L₂]
-  exact Finset.sum_congr rfl (fun s _ => by rw [h s])
+private lemma measureReal_listSum_eq_of_balanced {L₁ L₂ : List (Set W)} (h : BalancedSeqs L₁ L₂) :
+    (L₁.map μ.real).sum = (L₂.map μ.real).sum := by
+  rw [measureReal_listSum μ L₁, measureReal_listSum μ L₂]
+  exact Finset.sum_congr rfl fun s _ ↦ by rw [h s]
 
-omit [Fintype W] in
-private lemma mu_sum_mono {prem : List (Set W × Set W)}
-    (hprem : ∀ p ∈ prem, m.inducedGe p.1 p.2) :
-    ((prem.map Prod.snd).map m).sum ≤ ((prem.map Prod.fst).map m).sum := by
+omit [Fintype W] [MeasurableSingletonClass W] in
+private lemma measureReal_sum_mono {prem : List (Set W × Set W)}
+    (hprem : ∀ p ∈ prem, μ.inducedGe p.1 p.2) :
+    ((prem.map Prod.snd).map μ.real).sum ≤ ((prem.map Prod.fst).map μ.real).sum := by
   induction prem with
   | nil => simp
   | cons p ps ih =>
     simp only [List.map_cons, List.sum_cons]
-    exact add_le_add (hprem p (List.mem_cons_self ..))
-      (ih (fun q hq => hprem q (List.mem_cons_of_mem _ hq)))
+    exact add_le_add ((μ.inducedGe_iff_real).1 (hprem p (List.mem_cons_self ..)))
+      (ih fun q hq ↦ hprem q (List.mem_cons_of_mem _ hq))
 
-/-- The order a finitely additive measure induces satisfies finite cancellation, since a
-    balanced pair of sequences has equal total measure on its two sides. -/
-theorem FinAddMeasure.finiteCancellation : FiniteCancellation m.inducedGe := by
+/-- The order a finite measure induces satisfies finite cancellation, since a balanced pair of
+    sequences has equal total measure on its two sides. -/
+theorem _root_.MeasureTheory.Measure.finiteCancellation : FiniteCancellation μ.inducedGe := by
   intro prem X Y hbal hprem
-  have hsum := mu_listSum_eq_of_balanced m hbal
+  have hsum := measureReal_listSum_eq_of_balanced μ hbal
   simp only [List.map_cons, List.sum_cons] at hsum
-  show m X ≤ m Y
-  linarith [mu_sum_mono m hprem]
+  rw [μ.inducedGe_iff_real]
+  linarith [measureReal_sum_mono μ hprem]
 
 end
 
 /-- A representable qualitative probability order satisfies finite cancellation
     (the soundness half of Scott's theorem, in balanced-sequence form). -/
-theorem Representable.finiteCancellation [Fintype W] {sys : QualitativeProbability (Set W)}
-    (h : Representable sys) : FiniteCancellation sys.ge := by
-  obtain ⟨m, hm⟩ := h
+theorem Representable.finiteCancellation [Fintype W] [MeasurableSpace W]
+    [MeasurableSingletonClass W] {sys : QualitativeProbability (Set W)} (h : Representable sys) :
+    FiniteCancellation sys.ge := by
+  obtain ⟨μ, hμ, hm⟩ := h
   intro prem X Y hbal hprem
-  exact (hm X Y).mpr (m.finiteCancellation prem X Y hbal fun p hp => (hm p.2 p.1).mp (hprem p hp))
+  exact (hm X Y).mpr (μ.finiteCancellation prem X Y hbal fun p hp ↦ (hm p.2 p.1).mp (hprem p hp))
 
 end ComparativeProbability

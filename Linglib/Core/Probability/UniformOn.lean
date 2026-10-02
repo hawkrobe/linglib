@@ -59,6 +59,18 @@ theorem uniformOn_real_apply [Finite W] (s e : Set W) :
     ← Set.ncard_eq_toFinset_card, ← Set.ncard_eq_toFinset_card, ENNReal.toReal_mul,
     ENNReal.toReal_inv, ENNReal.toReal_natCast, ENNReal.toReal_natCast, inv_mul_eq_div]
 
+/-- On a finite type the uniform measure gives a set, on reals, the proportion of atoms in it. -/
+theorem uniformOn_univ_real_apply (A : Set W) :
+    (uniformOn (Set.univ : Set W)).real A = A.ncard / Fintype.card W := by
+  rw [uniformOn_real_apply, Set.univ_inter, Set.ncard_univ, Nat.card_eq_fintype_card]
+
+/-- The uniform measure on a nonempty finite type compares two sets as their cardinalities. -/
+theorem uniformOn_univ_le_iff [Nonempty W] {A B : Set W} :
+    uniformOn (Set.univ : Set W) A ≤ uniformOn Set.univ B ↔ A.ncard ≤ B.ncard := by
+  rw [← ENNReal.toReal_le_toReal (measure_ne_top _ _) (measure_ne_top _ _), ← measureReal_def,
+    ← measureReal_def, uniformOn_univ_real_apply, uniformOn_univ_real_apply,
+    div_le_div_iff_of_pos_right (by exact_mod_cast Fintype.card_pos), Nat.cast_le]
+
 omit [Fintype W] in
 /-- The uniform measure on a subset of a finite set is absolutely continuous with respect to
 the uniform measure on the set. -/
