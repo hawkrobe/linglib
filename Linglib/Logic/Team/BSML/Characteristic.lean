@@ -22,12 +22,6 @@ is the classical one. The expressive completeness proof of `ExpressiveCompletene
 * `realize_charFormula_iff_bisim`: `χ_w^k` holds at `v` iff `w` and `v` are `k`-bisimilar.
 * `support_charFormula_singleton_iff_bisim`: the same for singleton teams.
 
-## TODO
-
-* The strong characteristic formulas of teams, `θ_s^k = ⋁_{w ∈ s} (χ_w^k ∧ NE)`
-  ([aloni-anttila-yang-2024] Definition 3.10), on which the completeness proof for BSML's
-  natural deduction system rests.
-
 ## References
 
 * [aloni-anttila-yang-2024] Aloni, Anttila and Yang, State-based Modal Logics for Free Choice
