@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.Quantification.Basic
 public import Linglib.Studies.BeaverCondoravdi2003
-public import Linglib.Semantics.Tense.Embedding
+public import Linglib.Semantics.Tense.Pronoun
 
 /-!
 # Sharvit (2014): On the universal principles of tense embedding
@@ -254,7 +254,8 @@ theorem wellFormedPastUnderPastBefore_iff_pronominal (L : LanguageTenseProfile) 
     L.wellFormedPastUnderPastBefore = true ↔ L.isPronominal = true := by
   cases hτ : L.pastLexicalType with
   | none => simp [wellFormedPastUnderPastBefore, isPronominal, hτ]
-  | some τ => cases τ <;> simp [wellFormedPastUnderPastBefore, isPronominal, triggersIPFInBefore, hτ]
+  | some τ =>
+    cases τ <;> simp [wellFormedPastUnderPastBefore, isPronominal, triggersIPFInBefore, hτ]
 
 end LanguageTenseProfile
 

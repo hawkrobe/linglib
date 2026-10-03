@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Semantics.Tense.Embedding
+public import Linglib.Semantics.Tense.Pronoun
+public import Linglib.Semantics.Tense.Reichenbach
 public import Linglib.Data.Examples.Schema
 public import Linglib.Data.Examples.Ogihara1996
 
@@ -10,14 +12,15 @@ public import Linglib.Data.Examples.Ogihara1996
 This file formalizes the ambiguity thesis of [ogihara-1996], developing [ogihara-1989]:
 an embedded past tense is ambiguous between a genuine past, contributing temporal
 precedence, and a zero tense, a bound variable that receives the matrix event time. The
-simultaneous reading is the zero-tense reading (`ogihara_derives_simultaneous`) and the
-shifted reading the genuine-past reading (`ogihara_derives_shifted`), against
+simultaneous reading is the zero-tense reading (`zeroTense_simultaneous`) and the shifted reading
+the genuine-past reading (`genuinePast_shifted`), against
 [kratzer-1998], for whom the past is never ambiguous and the simultaneous reading arises
 from deletion at logical form, and [klecha-2016], for whom it arises from the composition
 of modal base and tense. Japanese is a pure relative-tense language, every tense being
 interpreted in the scope of the structurally higher tenses, so an embedded past is anterior
 to the matrix event and *Taroo-wa Hanako-ga byookidat-ta to it-ta* has only the shifted
-reading (`embeddedByookiDatta`, `byookiDatta_shifted`), the simultaneous reading requiring
+reading (`embeddedByookiDatta`, `byookiDatta_shifted`), a reading of a language without the
+Sequence of Tense rule (`byookiDatta_mem`), the simultaneous reading requiring
 the embedded present; the English past perfect under a past matrix is built against the
 same matrix frame (`pluperfectShifted`, `pluperfect_is_past`).
 
@@ -41,33 +44,27 @@ carry both the morphological tense and the divergent event location.
 
 namespace Ogihara1996
 
-open Tense
+open Tense Semantics
 
-/-- The two readings of embedded past morphology: a genuine past, contributing temporal
-precedence, and a zero tense, a bound variable with no temporal content of its own. -/
-inductive PastReading where
-  | genuinePast
-  | zeroTense
-  deriving DecidableEq
+/-- The frame of a clause embedded under an attitude verb takes the matrix event time as its
+perspective time, so the embedded tense locates its reference time against the attitude holder's
+now. -/
+@[simps] def embeddedFrame {T : Type*} (matrixFrame : ReichenbachFrame T)
+    (embeddedR embeddedE : T) : ReichenbachFrame T :=
+  ⟨matrixFrame.speechTime, matrixFrame.eventTime, embeddedR, embeddedE⟩
 
-/-- [ogihara-1996] derives the simultaneous reading via the zero
-    tense reading of past: the bound variable receives `E_matrix`. The
-    derivation chain is `zeroTense_receives_binder_time` (substrate) →
-    `embeddedR = matrixFrame.eventTime` → a present reference position. -/
-theorem ogihara_derives_simultaneous {T : Type*} [LinearOrder T]
-    (matrixFrame : ReichenbachFrame T) (g : TemporalAssignment T) (n : ℕ) :
-    let embeddedR := interpTense n (updateTemporal g n matrixFrame.eventTime)
-    (embeddedFrame matrixFrame embeddedR embeddedR).referencePosition = .eq := by
-  simp [zeroTense_receives_binder_time]
+/-- The simultaneous reading is the zero-tense reading: a zero tense bound by the attitude
+receives its now, so it coincides with it. -/
+theorem zeroTense_simultaneous {T : Type*} [LinearOrder T] (g : TemporalAssignment T) (n : ℕ)
+    (now : T) : compare (interpTense n (updateTemporal g n now)) now = .eq := by
+  rw [zeroTense_receives_binder_time, compare_eq_iff_eq]
 
-/-- [ogihara-1996] derives the shifted reading via the
-    genuine-past reading: the past tense contributes temporal
-    precedence. -/
-theorem ogihara_derives_shifted {T : Type*} [LinearOrder T]
-    (matrixFrame : ReichenbachFrame T) (embeddedR embeddedE : T)
-    (hPast : embeddedR < matrixFrame.eventTime) :
-    (embeddedFrame matrixFrame embeddedR embeddedE).referencePosition = .lt := by
-  simpa using hPast
+/-- The shifted reading is the genuine-past reading: a pronoun under the past cell whose
+presupposition holds precedes its evaluation time. -/
+theorem genuinePast_shifted {T : Type*} [LinearOrder T] (tp : TensePronoun)
+    (hc : tp.constraint = ⟦past⟧) (g : TemporalAssignment T) (h : tp.fullPresupposition g) :
+    compare (tp.resolve g) (tp.evalTime g) = .lt := by
+  simpa [TensePronoun.fullPresupposition, hc, compare_lt_iff_lt] using h
 
 /-- The matrix frame *Taroo-wa … to it-ta*, past and perfective: the speech and perspective
 times at the origin, the reference and event times two units earlier. -/
@@ -88,6 +85,11 @@ theorem japanese_relative_perspective :
 
 /-- The embedded Japanese past has only the shifted reading. -/
 theorem byookiDatta_shifted : embeddedByookiDatta.referencePosition = .lt := by decide
+
+/-- The Japanese past under a past takes a position open to a language without the Sequence of
+Tense rule. -/
+theorem byookiDatta_mem : embeddedByookiDatta.referencePosition ∈ pastUnderPast False := by
+  decide
 
 /-- The past perfect is perfect: its event precedes its reference time. -/
 theorem pluperfect_is_perfect : pluperfectShifted.eventPosition = .lt := by decide

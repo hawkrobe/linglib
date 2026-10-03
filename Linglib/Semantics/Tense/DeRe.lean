@@ -2,7 +2,8 @@ module
 
 public import Linglib.Semantics.Reference.Context.Basic
 public import Linglib.Semantics.Modality.HistoricalAlternatives
-public import Linglib.Semantics.Tense.Embedding
+public import Linglib.Semantics.Reference.Rigidity
+public import Linglib.Semantics.Tense.Defs
 
 /-!
 # Centered-world temporal de re

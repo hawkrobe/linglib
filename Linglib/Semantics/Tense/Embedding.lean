@@ -1,122 +1,108 @@
 module
 
-public import Linglib.Semantics.Tense.Pronoun
-public import Linglib.Semantics.Tense.Reichenbach
+public import Linglib.Semantics.Tense.Defs
 
 /-!
-# Embedded tense: frames under attitude verbs
+# Embedded tense: the Upper Limit Constraint and past under past
 
-A clause embedded under an attitude verb is evaluated from the attitude holder's now: its frame
-takes the matrix event time as its perspective time (`embeddedFrame`), so the embedded tense
-locates its reference time against that now rather than the speech time. The simultaneous reading
-places the embedded reference time at the matrix event time, so its reference position is `.eq`;
-the shifted reading places it earlier. Whether a language allows both readings of a past under a
-past is its sequence-of-tense parameter (`SOTParameter`, `availableReadings`). Abusch's Upper
-Limit Constraint, in the presuppositional construal Heim gives it, bars the embedded reference
-time from following the matrix event time (`upperLimitConstraint`).
+A tense embedded under an attitude verb is evaluated from the attitude holder's now. Abusch makes
+that local evaluation time an upper limit for the denotation of tenses, and accepts Heim's
+construal of the constraint as a presupposition of every tense node. As a constraint on how the
+reference time of a tense stands to its local evaluation time, the Upper Limit Constraint is the
+cell of the past and the present positions (`upperLimitConstraint`).
+
+A past under a past attitude places its reference time before the attitude's now. In a language
+with the Sequence of Tense rule the embedded past may instead be deleted and read as a zero tense
+bound to the now, so it coincides with it. The positions an embedded past may take are therefore
+the past cell, joined with the present cell where the rule applies (`pastUnderPast`). Every such
+position obeys the Upper Limit Constraint, and the positions exhaust it exactly where the rule
+applies.
 
 ## Main definitions
 
-* `Tense.embeddedFrame`: the frame of an embedded clause.
-* `Tense.SOTParameter`, `Tense.EmbeddedTenseReading`, `Tense.availableReadings`: the readings of
-  a past under a past.
-* `Tense.upperLimitConstraint`: the Upper Limit Constraint.
-* `Tense.DoubleAccess`: the double access reading of a present under a past.
+* `Tense.upperLimitConstraint`: the Upper Limit Constraint, the cell of the past and the present.
+* `Tense.pastUnderPast`: the positions of an embedded past against the attitude's now.
+
+## Main results
+
+* `Tense.pastUnderPast_le_upperLimitConstraint`, `Tense.pastUnderPast_eq_upperLimitConstraint_iff`:
+  every reading of a past under a past obeys the constraint, and the readings exhaust it exactly
+  where the Sequence of Tense rule applies.
+* `Tense.eq_mem_pastUnderPast_iff`: the simultaneous reading is available exactly where the rule
+  applies.
+
+## Implementation notes
+
+Abusch motivates the constraint by the branching of the future across epistemic alternatives;
+that motivation is not formalized here, and the derivation of the cell from a doxastic modal base
+is Klecha's (`Studies/Klecha2016.lean`).
 
 ## References
 
 * [abusch-1997]
 * [heim-1994-comments]
-* [ogihara-1989]
+* [ogihara-1996]
 -/
 
 @[expose] public section
-
-open Tense
 
 namespace Tense
 
 open Semantics
 
-variable {T : Type*}
+/-- The Upper Limit Constraint is the cell of the positions a tense's reference time may take
+against its local evaluation time: before it or at it, never after it. -/
+def upperLimitConstraint : Finset Ordering := ⟦future⟧ᶜ
 
-/-! ### Embedded frames -/
+/-- The Upper Limit Constraint admits the past and the present positions. -/
+theorem upperLimitConstraint_eq_past_sup_present : upperLimitConstraint = ⟦past⟧ ⊔ ⟦present⟧ :=
+  past_sup_present.symm
 
-/-- The Reichenbach frame of a clause embedded under an attitude verb:
-    embedded perspective time P′ = matrix event time E, so the embedded
-    tense locates its R′ relative to the attitude holder's now, not
-    speech time. `embeddedR` and `embeddedE` are the embedded clause's
-    reference and event times, determined by its tense and aspect. -/
-@[simps] def embeddedFrame (matrixFrame : ReichenbachFrame T)
-    (embeddedR embeddedE : T) : ReichenbachFrame T where
-  speechTime := matrixFrame.speechTime
-  perspectiveTime := matrixFrame.eventTime
-  referenceTime := embeddedR
-  eventTime := embeddedE
+theorem mem_upperLimitConstraint {o : Ordering} : o ∈ upperLimitConstraint ↔ o ≠ .gt := by
+  simp [upperLimitConstraint, Denotes.denote, denote]
 
-/-! ### Embedded tense readings -/
+@[simp] theorem compare_mem_upperLimitConstraint {T : Type*} [LinearOrder T] (r p : T) :
+    compare r p ∈ upperLimitConstraint ↔ r ≤ p :=
+  compare_mem_compl_future r p
 
-/-- Sequence-of-tense parameter: whether embedded tense is interpreted
-    relative to the matrix (SOT languages, English) or absolutely, against
-    utterance time (non-SOT languages, Japanese). -/
-inductive SOTParameter where
-  /-- Embedded tense relative to matrix (English). -/
-  | relative
-  /-- Embedded tense absolute, against utterance time (Japanese). -/
-  | absolute
-  deriving DecidableEq, Repr
+/-- The positions an embedded past's reference time may take against the attitude's now, given
+whether the Sequence of Tense rule can delete it: a genuine past precedes the now, and a deleted
+past is a zero tense bound to it. -/
+def pastUnderPast (sot : Prop) [Decidable sot] : Finset Ordering :=
+  ⟦past⟧ ⊔ if sot then ⟦present⟧ else ⊥
 
-/-- The two readings of past under a past attitude verb: **shifted**
-    (embedded event before the matrix event, R′ < P′) or **simultaneous**
-    (embedded event at the matrix event time, R′ = P′, via SOT deletion —
-    [ogihara-1989] §11.2 (83)). -/
-inductive EmbeddedTenseReading where
-  /-- Embedded event before the matrix event (back-shifted). -/
-  | shifted
-  /-- Embedded event at the matrix event time (SOT deletion). -/
-  | simultaneous
-  deriving DecidableEq, Repr, Inhabited
+variable {sot : Prop} [Decidable sot]
 
-/-- The readings a language's `SOTParameter` licenses for past-under-past:
-    SOT (`relative`, English) languages have both; non-SOT (`absolute`,
-    Japanese) languages only the shifted reading. -/
-def availableReadings : SOTParameter → List EmbeddedTenseReading
-  | .relative => [.shifted, .simultaneous]
-  | .absolute => [.shifted]
+theorem mem_pastUnderPast {o : Ordering} : o ∈ pastUnderPast sot ↔ o = .lt ∨ sot ∧ o = .eq := by
+  by_cases h : sot <;> simp [pastUnderPast, h, Denotes.denote, denote]
 
-/-! ### Upper Limit Constraint
+/-- The shifted reading of a past under a past is always available. -/
+theorem lt_mem_pastUnderPast : .lt ∈ pastUnderPast sot :=
+  mem_pastUnderPast.2 (.inl rfl)
 
-[abusch-1997] §7 (p. 25): "the now of an epistemic alternative is an
-upper limit for the denotation of tenses" — at the now of an intensional
-context, future branches diverge across epistemic alternatives, so
-forward reference past the now is unsupported. The presuppositional
-construal (ULC as a definedness constraint, projecting via
-Karttunen-Heim) is due to [heim-1994-comments]; [abusch-1997] fn 20
-endorses it. The value-level reduction `embeddedR ≤ matrixE` strips the
-modal-alternative quantification of Abusch's formulation (the "now of an
-epistemic alternative" quantifies over doxastic alternatives); a
-modal-layer formulation would be more faithful. -/
+/-- The simultaneous reading of a past under a past is available exactly where the Sequence of
+Tense rule applies. -/
+@[simp] theorem eq_mem_pastUnderPast_iff : .eq ∈ pastUnderPast sot ↔ sot := by
+  simp [mem_pastUnderPast]
 
-/-- The Upper Limit Constraint ([abusch-1997] §7, presuppositional
-    construal per [heim-1994-comments]): the embedded reference time may
-    not exceed the matrix event time (= the embedded perspective). -/
-abbrev upperLimitConstraint [LE T] (embeddedR matrixE : T) : Prop :=
-  embeddedR ≤ matrixE
+theorem pastUnderPast_pos (h : sot) : pastUnderPast sot = upperLimitConstraint := by
+  simp [pastUnderPast, h, upperLimitConstraint_eq_past_sup_present]
 
-/-- The shifted reading satisfies the ULC. -/
-theorem shifted_satisfies_ulc [Preorder T] (embeddedR matrixE : T)
-    (h : embeddedR < matrixE) : upperLimitConstraint embeddedR matrixE :=
-  le_of_lt h
+theorem pastUnderPast_neg (h : ¬ sot) : pastUnderPast sot = ⟦past⟧ := by
+  simp [pastUnderPast, h]
 
-/-- The simultaneous reading satisfies the ULC. -/
-theorem simultaneous_satisfies_ulc [Preorder T] (embeddedR matrixE : T)
-    (h : embeddedR = matrixE) : upperLimitConstraint embeddedR matrixE :=
-  le_of_eq h
+/-- Every reading of a past under a past obeys the Upper Limit Constraint. -/
+theorem pastUnderPast_le_upperLimitConstraint : pastUnderPast sot ≤ upperLimitConstraint := by
+  by_cases h : sot
+  · exact (pastUnderPast_pos h).le
+  · rw [pastUnderPast_neg h, upperLimitConstraint_eq_past_sup_present]
+    exact le_sup_left
 
-/-- The double access reading of a present tense under a past attitude: the denotation of the
-present tense overlaps both the believing time and the utterance time. A condition on the
-tense's reference, not on the truth of the complement at either time. -/
-def DoubleAccess (I : Set T) (believing utterance : T) : Prop :=
-  believing ∈ I ∧ utterance ∈ I
+/-- The readings of a past under a past exhaust the Upper Limit Constraint exactly where the
+Sequence of Tense rule applies. -/
+theorem pastUnderPast_eq_upperLimitConstraint_iff :
+    pastUnderPast sot = upperLimitConstraint ↔ sot :=
+  ⟨fun h ↦ eq_mem_pastUnderPast_iff.1 (h ▸ mem_upperLimitConstraint.2 (by decide)),
+    pastUnderPast_pos⟩
 
 end Tense

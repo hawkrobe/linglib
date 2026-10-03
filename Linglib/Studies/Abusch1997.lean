@@ -92,7 +92,7 @@ theorem narrowScope_forward (k : ℕ) (hk : k ≠ 1) :
     by show (-5 : ℤ) < 0; decide,
     by show (if k = 1 then (· < ·) else (· = ·)) (10 : ℤ) 10; simp [hk],
     pastConstraint_singleton.2 rfl, .of_mem (r := 1) (Finset.mem_insert_self _ _) rfl,
-    le_refl (10 : ℤ), by show (0 : ℤ) < 10; decide⟩
+    (compare_mem_upperLimitConstraint _ _).2 le_rfl, by show (0 : ℤ) < 10; decide⟩
 
 /-- The wide-scope LF: the relative clause is outside the attitude, so its past has access only
 to its own relation, evaluated at the utterance time — the interest precedes the utterance. -/
@@ -137,8 +137,8 @@ theorem deRe_eq_nonLocal (rain : T → W → Prop) :
 /-- The forward-shifted reading of *he thought that a burglar attacked him*: an embedded past
 anaphoric to the later opening violates the upper limit constraint at the thinking time. -/
 theorem forwardShifted_not_upperLimit [LinearOrder T] {a : TemporalArgument ℕ}
-    (h : g a.evalIndex < g a.index) : ¬ a.UpperLimit g :=
-  not_le.2 h
+    (h : g a.evalIndex < g a.index) : ¬ a.UpperLimit g := by
+  simpa [TemporalArgument.UpperLimit] using not_le.2 h
 
 /-! ### Present under past -/
 
@@ -162,12 +162,12 @@ theorem doubleAccess_of_counterpart [LinearOrder T] {I J : Set T} (hI : I.OrdCon
     (hulc : ∃ s ∈ J, s ≤ now)
     (hafter : (∀ s ∈ I, believing < s) ↔ ∀ s ∈ J, now < s)
     (hoverlap : believing ∈ I ↔ now ∈ J) :
-    DoubleAccess I believing utterance ∧ now ∈ J := by
+    {believing, utterance} ⊆ I ∧ now ∈ J := by
   have hb : believing ∈ I := by
     by_contra hb
     obtain ⟨s, hs, hsn⟩ := hulc
     refine (hafter.1 fun s hs => lt_of_not_ge fun hsb => hb ?_) s hs |>.not_ge hsn
     exact hI.out hs hU ⟨hsb, hlt.le⟩
-  exact ⟨⟨hb, hU⟩, hoverlap.1 hb⟩
+  exact ⟨Set.pair_subset hb hU, hoverlap.1 hb⟩
 
 end Abusch1997

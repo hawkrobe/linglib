@@ -29,7 +29,8 @@ description may not lie entirely after the context's time, and a world descripti
 its world, one constraint for both (`ULC`). Double access for tense follows as in Abusch, and the
 same argument yields its modal counterpart, the reading on which the agent's thought is about the
 actual world as well as the world of the thought act (`doubleAccess_of_ulc`,
-`worldDoubleAccess_of_ulc`), both instances of `Tense.DoubleAccess`.
+`worldDoubleAccess_of_ulc`): in both the description contains the coordinate of the thought and
+the actual one.
 
 ## Implementation notes
 
@@ -328,8 +329,8 @@ theorem ulc_world_iff (e : Context W E P T → Set W) (c : Context W E P T) :
 /-- On a description denoting a single time the constraint is the upper limit constraint on
 reference times of `Semantics/Tense/Embedding`. -/
 theorem ulc_singleton_iff [LinearOrder T] (r : T) (c : Context W E P T) :
-    ULC (· < ·) Context.time (λ _ => {r}) c ↔ upperLimitConstraint r c.time := by
-  simp [ULC, not_lt, upperLimitConstraint]
+    ULC (· < ·) Context.time (λ _ => {r}) c ↔ compare r c.time ∈ upperLimitConstraint := by
+  simp [ULC, not_lt]
 
 /-- (39): a present tense under a past attitude denotes the utterance time (i'), the
 description contains it at the actual context of the thought (ii'), and the constraint holds
@@ -339,9 +340,9 @@ thought and the utterance time. -/
 theorem doubleAccess_of_ulc [LinearOrder T] {A : Set (Context W E P T)} {c : Context W E P T}
     (hc : c ∈ A) (d : Context W E P T → Set T) (hd : (d c).OrdConnected) (hle : c.time ≤ c₀.time)
     (hii : c₀.time ∈ d c) (hiii : ∀ c' ∈ A, ULC (· < ·) Context.time d c') :
-    DoubleAccess (d c) c.time c₀.time := by
+    {c.time, c₀.time} ⊆ d c := by
   obtain ⟨t, ht, htc⟩ := (ulc_time_iff d c).1 (hiii c hc)
-  exact ⟨hd.out ht hii ⟨htc, hle⟩, hii⟩
+  exact Set.pair_subset (hd.out ht hii ⟨htc, hle⟩) hii
 
 /-- (41): the modal counterpart. An indicative under a subjunctive attitude denotes the actual
 world (i'), the description contains it at the actual context of the thought (ii'), and the
@@ -350,8 +351,8 @@ the thought, the description is about both the world of the thought and the actu
 theorem worldDoubleAccess_of_ulc {A : Set (Context W E P T)} {c : Context W E P T} (hc : c ∈ A)
     (e : Context W E P T → Set W) (hii : c₀.world ∈ e c)
     (hiii : ∀ c' ∈ A, ULC (· ≠ ·) Context.world e c') :
-    DoubleAccess (e c) c.world c₀.world :=
-  ⟨(ulc_world_iff e c).1 (hiii c hc), hii⟩
+    {c.world, c₀.world} ⊆ e c :=
+  Set.pair_subset ((ulc_world_iff e c).1 (hiii c hc)) hii
 
 end ULC
 

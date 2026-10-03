@@ -80,11 +80,17 @@ theorem compare_mem_orientations [LinearOrder T] (m : ModalBase)
       (λ h => Or.inl ((compare_mem_past _ _).2 h)) (λ h => Or.inr ((compare_mem_present _ _).2 h)))
   · exact (compare_mem_future _ _).2 (time_lt_of_mem_futureHistoryBase h)
 
-/-- §4.2: the Upper Limit Constraint of [abusch-1997], `Tense.upperLimitConstraint`, is the
-`dox` case, derived from the modal base rather than imposed on tense. -/
+/-- The doxastic modal base admits exactly the orientations the Upper Limit Constraint of
+[abusch-1997] allows, so the constraint is derived from the modal base rather than imposed on
+tense (§4.2). -/
+theorem orientations_dox : dox.orientations = upperLimitConstraint := by decide
+
+/-- The time of a doxastically accessible situation obeys the Upper Limit Constraint at the
+evaluation time. -/
 theorem upperLimitConstraint_of_mem_dox [LinearOrder T] (history : HistoricalAlternatives W T)
-    {s s' : Index W T} (h : s' ∈ dox.base history s) : upperLimitConstraint s'.time s.time :=
-  time_le_of_mem_actualHistoryBase h
+    {s s' : Index W T} (h : s' ∈ dox.base history s) :
+    compare s'.time s.time ∈ upperLimitConstraint :=
+  orientations_dox ▸ compare_mem_orientations .dox history h
 
 /-- The derivations of §3.3 as the four cells of modal base against tense, (43): `dox` with a
 past is past, `dox` with a non-past is simultaneous, (55), `cir` with a non-past is future,
