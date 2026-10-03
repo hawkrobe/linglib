@@ -3,179 +3,107 @@ module
 public import Linglib.Semantics.Tense.Defs
 
 /-!
-# Reichenbach's Temporal Framework
-[kiparsky-2002] [klein-1994] [reichenbach-1947]
+# Reichenbach's temporal frame
 
-[reichenbach-1947] / [klein-1994] tense–aspect parameters, extended with
-[kiparsky-2002]'s perspective time P.
+A Reichenbach frame locates a clause by four times. Reichenbach's three are points: the point of
+speech S, the point of reference R and the point of the event E. Kiparsky adds the perspective
+time P, the origin of temporal deixis, which includes S in the simple case and departs from it in
+flashbacks and historical presents. A frame has two positions, of R relative to P and of E
+relative to R (`ReichenbachFrame.referencePosition`, `ReichenbachFrame.eventPosition`).
+Reichenbach names the first past, present or future and the second anterior, simple or posterior;
+Kiparsky calls the first tense and the second aspect, the perfect placing E before R and the
+prospective after it. A tense cell of `Semantics/Tense/Defs.lean` constrains the first position,
+as in `f.referencePosition ∈ ⟦past⟧`. Kiparsky links E to P only through R, so their comparison
+is one that the composition of the two positions allows. Reichenbach's own frames are those whose
+perspective is the point of speech (`ReichenbachFrame.root`).
 
-Three (four) distinguished times:
-- **S** (Speech time): When the utterance occurs
-- **P** (Perspective time): Origin of temporal deixis
-- **R** (Reference/Topic time): The time being talked about
-- **E** (Event time): When the event occurs
+## Main definitions
 
-Tense relates R to P; Aspect relates E to R.
+* `Tense.ReichenbachFrame`: the four times of a clause.
+* `Tense.ReichenbachFrame.root`: Reichenbach's frame, the perspective at the point of speech.
+* `Tense.ReichenbachFrame.referencePosition`, `Tense.ReichenbachFrame.eventPosition`: R relative
+  to P and E relative to R.
 
+## Main results
+
+* `Tense.ReichenbachFrame.compare_eventTime_perspectiveTime_mem`: E stands to P as the
+  composition of the event position with the reference position allows.
+
+## Implementation notes
+
+The times are points of a linear order, as Reichenbach's are. Kiparsky takes them to be intervals
+with points as the degenerate case, so his default inclusions of P and E in R become equalities
+here, and the duration of an event that reaches up to the point of speech is not represented;
+his interval account of the perfect is `Studies/Kiparsky2002.lean`, and interval aspect is
+`Semantics/Aspect/Viewpoint.lean`. A frame records times, not morphology: that a sentence's tense
+form yields a frame with a given position is a study's claim.
+
+## References
+
+* [reichenbach-1947]
+* [kiparsky-2002]
 -/
 
 @[expose] public section
 
 namespace Tense
 
-open Semantics
-
-/--
-Reichenbach's temporal parameters for tense/aspect analysis,
-extended with [kiparsky-2002]'s perspective time P.
-
-- `speechTime`: When the utterance is made (S)
-- `perspectiveTime`: Origin of temporal deixis (P, [kiparsky-2002])
-- `referenceTime`: The time being talked about (R, Klein's "topic time")
-- `eventTime`: When the described event occurs (E)
-
-P = S in root clauses but diverges for flashbacks, free indirect discourse,
-and embedded tenses. Tense locates R relative to P (not S).
--/
+/-- A Reichenbach frame consists of the point of speech, the perspective time, the point of
+reference and the point of the event of a clause. -/
 structure ReichenbachFrame (T : Type*) where
-  /-- Speech time (S): when the utterance occurs -/
+  /-- The point of speech S is when the utterance occurs. -/
   speechTime : T
-  /-- Perspective time (P): origin of temporal deixis.
-      Equals S in root clauses; shifts in flashback, FID, embedded tenses. -/
+  /-- The perspective time P is the origin of temporal deixis. -/
   perspectiveTime : T
-  /-- Reference time (R): the time under discussion -/
+  /-- The point of reference R is the time to which adverbs refer. -/
   referenceTime : T
-  /-- Event time (E): when the described event occurs (E) -/
+  /-- The point of the event E is when the event occurs. -/
   eventTime : T
 
 namespace ReichenbachFrame
 
-variable {T : Type*} [LinearOrder T]
+variable {T : Type*}
 
-/-- PAST: R < P (reference time precedes perspective time) — membership of `compare R P` in the
-    `⟦Tense.past⟧` cell. [kiparsky-2002]: tense locates R relative to P, not S. -/
-def isPast (f : ReichenbachFrame T) : Prop :=
-  compare f.referenceTime f.perspectiveTime ∈ ⟦Tense.past⟧
+/-- Reichenbach's frame of the points `s`, `r` and `e` takes the point of speech as the
+perspective. -/
+@[simps] def root (s r e : T) : ReichenbachFrame T := ⟨s, s, r, e⟩
 
-/-- PRESENT: R = P (reference time equals perspective time). Present is the one tense that
-    needs no ordering, so it stays the bare equality (frame predicates over unordered time keep
-    typechecking); it is equivalent to membership in `⟦Tense.present⟧` (`compare_mem_present`). -/
-def isPresent (f : ReichenbachFrame T) : Prop :=
-  f.referenceTime = f.perspectiveTime
+variable [LinearOrder T] (f : ReichenbachFrame T)
 
-/-- FUTURE: P < R (perspective time precedes reference time). -/
-def isFuture (f : ReichenbachFrame T) : Prop :=
-  compare f.referenceTime f.perspectiveTime ∈ ⟦Tense.future⟧
+/-- The reference position of a frame is how its point of reference stands to its perspective
+time, which the words past, present and future indicate. -/
+def referencePosition : Ordering := compare f.referenceTime f.perspectiveTime
 
-/-- NONPAST: P ≤ R (present or future) ([klecha-2016]) — membership in `Tense.nonpast`.
-    Completes the four-way relation on frames. -/
-def isNonpast (f : ReichenbachFrame T) : Prop :=
-  compare f.referenceTime f.perspectiveTime ∈ Tense.nonpast
+/-- The event position of a frame is how its point of the event stands to its point of reference,
+which the words anterior, simple and posterior indicate. -/
+def eventPosition : Ordering := compare f.eventTime f.referenceTime
 
-/-- Simple case: P = S (root clause, no perspective shift). -/
-def isSimpleCase (f : ReichenbachFrame T) : Prop :=
-  f.perspectiveTime = f.speechTime
+@[simp] theorem referencePosition_eq_lt :
+    f.referencePosition = .lt ↔ f.referenceTime < f.perspectiveTime :=
+  compare_lt_iff_lt
 
-/-- Kiparsky's unmarked P–R default: P ≤ R. -/
-def defaultPR (f : ReichenbachFrame T) : Prop :=
-  f.perspectiveTime ≤ f.referenceTime
+@[simp] theorem referencePosition_eq_eq :
+    f.referencePosition = .eq ↔ f.referenceTime = f.perspectiveTime :=
+  compare_eq_iff_eq
 
-/-- Kiparsky's unmarked E–R default: E ≤ R. -/
-def defaultER (f : ReichenbachFrame T) : Prop :=
-  f.eventTime ≤ f.referenceTime
+@[simp] theorem referencePosition_eq_gt :
+    f.referencePosition = .gt ↔ f.perspectiveTime < f.referenceTime :=
+  compare_gt_iff_gt
 
-/-- Perfective: E ⊆ R (event contained in reference).
-    Simplified to E = R for point-based times.
-    TODO: proper interval-based perfective/imperfective distinction
-    lives in `Semantics/Aspect/Defs.lean` (`Perfectivity`). -/
-def isPerfective (f : ReichenbachFrame T) : Prop :=
-  f.eventTime = f.referenceTime
+@[simp] theorem eventPosition_eq_lt : f.eventPosition = .lt ↔ f.eventTime < f.referenceTime :=
+  compare_lt_iff_lt
 
-/-- Perfect: E < R (event precedes reference) -/
-def isPerfect (f : ReichenbachFrame T) : Prop :=
-  f.eventTime < f.referenceTime
+@[simp] theorem eventPosition_eq_eq : f.eventPosition = .eq ↔ f.eventTime = f.referenceTime :=
+  compare_eq_iff_eq
 
-/-- Prospective: R < E (reference precedes event) -/
-def isProspective (f : ReichenbachFrame T) : Prop :=
-  f.referenceTime < f.eventTime
+@[simp] theorem eventPosition_eq_gt : f.eventPosition = .gt ↔ f.referenceTime < f.eventTime :=
+  compare_gt_iff_gt
 
-/-! ### Unfolding lemmas and decidability
-
-One `_def` simp lemma and one `Decidable` instance per predicate, so
-consumers can close concrete goals with `decide` and rewrite with
-`simp only [isPast_def]` instead of unfolding definitions by hand. -/
-
-@[simp] theorem isPast_def (f : ReichenbachFrame T) :
-    f.isPast ↔ f.referenceTime < f.perspectiveTime :=
-  Tense.compare_mem_past f.referenceTime f.perspectiveTime
-
-omit [LinearOrder T] in
-@[simp] theorem isPresent_def (f : ReichenbachFrame T) :
-    f.isPresent ↔ f.referenceTime = f.perspectiveTime := Iff.rfl
-
-@[simp] theorem isFuture_def (f : ReichenbachFrame T) :
-    f.isFuture ↔ f.perspectiveTime < f.referenceTime :=
-  Tense.compare_mem_future f.referenceTime f.perspectiveTime
-
-@[simp] theorem isNonpast_def (f : ReichenbachFrame T) :
-    f.isNonpast ↔ f.perspectiveTime ≤ f.referenceTime :=
-  Tense.compare_mem_nonpast f.referenceTime f.perspectiveTime
-
-omit [LinearOrder T] in
-@[simp] theorem isSimpleCase_def (f : ReichenbachFrame T) :
-    f.isSimpleCase ↔ f.perspectiveTime = f.speechTime := Iff.rfl
-
-@[simp] theorem defaultPR_def (f : ReichenbachFrame T) :
-    f.defaultPR ↔ f.perspectiveTime ≤ f.referenceTime := Iff.rfl
-
-@[simp] theorem defaultER_def (f : ReichenbachFrame T) :
-    f.defaultER ↔ f.eventTime ≤ f.referenceTime := Iff.rfl
-
-omit [LinearOrder T] in
-@[simp] theorem isPerfective_def (f : ReichenbachFrame T) :
-    f.isPerfective ↔ f.eventTime = f.referenceTime := Iff.rfl
-
-@[simp] theorem isPerfect_def (f : ReichenbachFrame T) :
-    f.isPerfect ↔ f.eventTime < f.referenceTime := Iff.rfl
-
-@[simp] theorem isProspective_def (f : ReichenbachFrame T) :
-    f.isProspective ↔ f.referenceTime < f.eventTime := Iff.rfl
-
-/-- In the simple case (P = S), `isPast` reduces to R < S. -/
-theorem isPast_simpleCase (f : ReichenbachFrame T) (h : f.isSimpleCase) :
-    f.isPast ↔ f.referenceTime < f.speechTime := by
-  simp only [isPast_def, isSimpleCase_def] at h ⊢
-  rw [h]
-
-instance (f : ReichenbachFrame T) : Decidable f.isPast := by
-  unfold isPast; infer_instance
-
-instance (f : ReichenbachFrame T) : Decidable f.isPresent :=
-  inferInstanceAs (Decidable (f.referenceTime = f.perspectiveTime))
-
-instance (f : ReichenbachFrame T) : Decidable f.isFuture := by
-  unfold isFuture; infer_instance
-
-instance (f : ReichenbachFrame T) : Decidable f.isNonpast := by
-  unfold isNonpast; infer_instance
-
-instance (f : ReichenbachFrame T) : Decidable f.isSimpleCase :=
-  inferInstanceAs (Decidable (f.perspectiveTime = f.speechTime))
-
-instance (f : ReichenbachFrame T) : Decidable f.defaultPR :=
-  inferInstanceAs (Decidable (f.perspectiveTime ≤ f.referenceTime))
-
-instance (f : ReichenbachFrame T) : Decidable f.defaultER :=
-  inferInstanceAs (Decidable (f.eventTime ≤ f.referenceTime))
-
-instance (f : ReichenbachFrame T) : Decidable f.isPerfective :=
-  inferInstanceAs (Decidable (f.eventTime = f.referenceTime))
-
-instance (f : ReichenbachFrame T) : Decidable f.isPerfect :=
-  inferInstanceAs (Decidable (f.eventTime < f.referenceTime))
-
-instance (f : ReichenbachFrame T) : Decidable f.isProspective :=
-  inferInstanceAs (Decidable (f.referenceTime < f.eventTime))
+/-- The point of the event stands to the perspective time as the composition of the event
+position with the reference position allows. -/
+theorem compare_eventTime_perspectiveTime_mem :
+    compare f.eventTime f.perspectiveTime ∈ f.eventPosition.comp f.referencePosition :=
+  Ordering.compare_mem_comp _ _ _
 
 end ReichenbachFrame
 

@@ -134,12 +134,12 @@ instance (t : Tense) (binding : T) (tos : List T) : Decidable (Realizes t bindin
 /-- The Reichenbach frame of a realization from t₀: S = P = t₀ and R = E = the situation-TO,
 since every tense represents the time of the situation as coinciding with its TO. -/
 def toFrame (t0 : T) (tos : List T) : ReichenbachFrame T :=
-  ⟨t0, t0, tos.getLast?.getD t0, tos.getLast?.getD t0⟩
+  .root t0 (tos.getLast?.getD t0) (tos.getLast?.getD t0)
 
-/-- No frame of a realization is perfect in Reichenbach's sense: the perfect lives in the
-chain, as anteriority to a TO, not in the relation of E to R. -/
-theorem toFrame_not_isPerfect (t0 : T) (tos : List T) : ¬ (toFrame t0 tos).isPerfect :=
-  lt_irrefl _
+/-- Every frame of a realization is simple in Reichenbach's sense, its event at its reference:
+the perfect lives in the chain, as anteriority to a TO, not in the relation of E to R. -/
+theorem toFrame_eventPosition (t0 : T) (tos : List T) : (toFrame t0 tos).eventPosition = .eq := by
+  simp [toFrame]
 
 /-- A chain of anteriorities does fix the situation against t₀: the past perfect's situation
 lies before t₀. -/
@@ -152,17 +152,16 @@ end Realizations
 
 /-- The conditional, the future perfect and the conditional perfect relate the situation-TO to
 an intermediate TO only, so its relation to t₀ is not expressed: each has realizations with the
-situation before, at and after t₀, the three orderings of R against S that
-[reichenbach-1947]'s format distinguishes as separate tenses, and the tense is vague among
-them rather than ambiguous. -/
+situation before, at and after t₀, three orderings of R against S that [reichenbach-1947]'s
+format can tell apart, and the tense is vague among them rather than ambiguous. -/
 theorem vague :
     ∀ o : Ordering,
       (∃ to2 ts : ℤ, Realizes .conditional 0 [to2, ts] ∧
-        compare (toFrame 0 [to2, ts]).referenceTime 0 = o) ∧
+        (toFrame 0 [to2, ts]).referencePosition = o) ∧
       (∃ to2 ts : ℤ, Realizes .futurePerfect 0 [to2, ts] ∧
-        compare (toFrame 0 [to2, ts]).referenceTime 0 = o) ∧
+        (toFrame 0 [to2, ts]).referencePosition = o) ∧
       (∃ to2 to3 ts : ℤ, Realizes .conditionalPerfect 0 [to2, to3, ts] ∧
-        compare (toFrame 0 [to2, to3, ts]).referenceTime 0 = o)
+        (toFrame 0 [to2, to3, ts]).referencePosition = o)
   | .lt => ⟨⟨-3, -1, by decide, by decide⟩, ⟨3, -1, by decide, by decide⟩,
       ⟨-6, 3, -1, by decide, by decide⟩⟩
   | .eq => ⟨⟨-3, 0, by decide, by decide⟩, ⟨3, 0, by decide, by decide⟩,

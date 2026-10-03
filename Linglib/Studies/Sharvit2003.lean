@@ -161,12 +161,12 @@ present constraint, in the mode the language admits, evaluated at the attitude's
 def embeddedPresent (n e : ℕ) (mode : ReferentialMode) : TensePronoun :=
   ⟨n, ⟦Tense.present⟧, mode, e⟩
 
-/-- A bindable present bound by the attitude verb resolves to the attitude's now, so it is
-present relative to the embedded perspective: the nonpast reading of (5) and (12a). -/
-theorem boundPresent_nonpast (n e : ℕ) (g : TemporalAssignment T) (speech now event : T) :
-    ((embeddedPresent n e .bound).toFrame (updateTemporal g n now) speech now event).isPresent :=
-  TensePronoun.bound_present_simultaneous _ _ _ _ _
-    (TensePronoun.bound_resolve_eq_binder _ g now) rfl
+/-- A bindable present bound by the attitude verb resolves to the attitude's now, so its present
+constraint holds relative to the embedded perspective: the nonpast reading of (5) and (12a). -/
+theorem boundPresent_nonpast [LinearOrder T] (n e : ℕ) (g : TemporalAssignment T) (now : T) :
+    (embeddedPresent n e .bound).presupposition
+      ((embeddedPresent n e .bound).resolve (updateTemporal g n now)) now := by
+  simp [TensePronoun.presupposition, TensePronoun.resolve, embeddedPresent, Tense.denote_present]
 
 /-- A matrix-indexical present under a past attitude verb refers to the utterance time, which
 the attitude's earlier now cannot match, so the present constraint fails relative to the

@@ -53,13 +53,12 @@ inductive PastReading where
 /-- [ogihara-1996] derives the simultaneous reading via the zero
     tense reading of past: the bound variable receives `E_matrix`. The
     derivation chain is `zeroTense_receives_binder_time` (substrate) →
-    `embeddedR = matrixFrame.eventTime` → `embeddedFrame.isPresent`. -/
-theorem ogihara_derives_simultaneous {T : Type*}
+    `embeddedR = matrixFrame.eventTime` → a present reference position. -/
+theorem ogihara_derives_simultaneous {T : Type*} [LinearOrder T]
     (matrixFrame : ReichenbachFrame T) (g : TemporalAssignment T) (n : ℕ) :
     let embeddedR := interpTense n (updateTemporal g n matrixFrame.eventTime)
-    (embeddedFrame matrixFrame embeddedR embeddedR).isPresent := by
-  simp only [zeroTense_receives_binder_time, embeddedFrame,
-    ReichenbachFrame.isPresent]
+    (embeddedFrame matrixFrame embeddedR embeddedR).referencePosition = .eq := by
+  simp [zeroTense_receives_binder_time]
 
 /-- [ogihara-1996] derives the shifted reading via the
     genuine-past reading: the past tense contributes temporal
@@ -67,17 +66,12 @@ theorem ogihara_derives_simultaneous {T : Type*}
 theorem ogihara_derives_shifted {T : Type*} [LinearOrder T]
     (matrixFrame : ReichenbachFrame T) (embeddedR embeddedE : T)
     (hPast : embeddedR < matrixFrame.eventTime) :
-    (embeddedFrame matrixFrame embeddedR embeddedE).isPast := by
-  simp only [embeddedFrame, ReichenbachFrame.isPast_def]
-  exact hPast
+    (embeddedFrame matrixFrame embeddedR embeddedE).referencePosition = .lt := by
+  simpa using hPast
 
 /-- The matrix frame *Taroo-wa … to it-ta*, past and perfective: the speech and perspective
 times at the origin, the reference and event times two units earlier. -/
-def matrixItta : ReichenbachFrame ℤ where
-  speechTime := 0
-  perspectiveTime := 0
-  referenceTime := -2
-  eventTime := -2
+def matrixItta : ReichenbachFrame ℤ := .root 0 (-2) (-2)
 
 /-- The embedded *Hanako-ga byookidat-ta*: a past under a past, interpreted relative to the
 matrix event, so its perspective time is the matrix event time and its reference time lies
@@ -93,15 +87,12 @@ theorem japanese_relative_perspective :
     embeddedByookiDatta.perspectiveTime = matrixItta.eventTime := rfl
 
 /-- The embedded Japanese past has only the shifted reading. -/
-theorem byookiDatta_shifted : embeddedByookiDatta.isPast := by
-  simp only [ReichenbachFrame.isPast_def, embeddedByookiDatta, embeddedFrame, matrixItta]; omega
+theorem byookiDatta_shifted : embeddedByookiDatta.referencePosition = .lt := by decide
 
 /-- The past perfect is perfect: its event precedes its reference time. -/
-theorem pluperfect_is_perfect : pluperfectShifted.isPerfect := by
-  simp only [ReichenbachFrame.isPerfect, pluperfectShifted, embeddedFrame, matrixItta]; omega
+theorem pluperfect_is_perfect : pluperfectShifted.eventPosition = .lt := by decide
 
 /-- The past perfect is past relative to the embedded perspective. -/
-theorem pluperfect_is_past : pluperfectShifted.isPast := by
-  simp only [ReichenbachFrame.isPast_def, pluperfectShifted, embeddedFrame, matrixItta]; omega
+theorem pluperfect_is_past : pluperfectShifted.referencePosition = .lt := by decide
 
 end Ogihara1996

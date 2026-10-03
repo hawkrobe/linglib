@@ -5,18 +5,29 @@ public import Linglib.Semantics.Tense.Reichenbach
 
 /-!
 # Embedded tense: frames under attitude verbs
-[abusch-1997] [heim-1994-comments] [ogihara-1989]
 
-The frame of a clause embedded under an attitude verb: `embeddedFrame`
-re-anchors the embedded perspective time to the matrix event time
-(P′ = E_matrix), so embedded tense locates R′ against the attitude
-holder's now rather than speech time. `simultaneousFrame` pins R′ to the
-matrix event time (the SOT-deletion reading); the shifted reading is
-`embeddedFrame` with `R′ < E_matrix` as a hypothesis at use sites.
-`EmbeddedTenseReading` and `availableReadings` parameterize the
-shifted/simultaneous split by a language's `SOTParameter`, and
-`upperLimitConstraint` is [abusch-1997]'s ULC in [heim-1994-comments]'s
-presuppositional construal.
+A clause embedded under an attitude verb is evaluated from the attitude holder's now: its frame
+takes the matrix event time as its perspective time (`embeddedFrame`), so the embedded tense
+locates its reference time against that now rather than the speech time. The simultaneous reading
+places the embedded reference time at the matrix event time, so its reference position is `.eq`;
+the shifted reading places it earlier. Whether a language allows both readings of a past under a
+past is its sequence-of-tense parameter (`SOTParameter`, `availableReadings`). Abusch's Upper
+Limit Constraint, in the presuppositional construal Heim gives it, bars the embedded reference
+time from following the matrix event time (`upperLimitConstraint`).
+
+## Main definitions
+
+* `Tense.embeddedFrame`: the frame of an embedded clause.
+* `Tense.SOTParameter`, `Tense.EmbeddedTenseReading`, `Tense.availableReadings`: the readings of
+  a past under a past.
+* `Tense.upperLimitConstraint`: the Upper Limit Constraint.
+* `Tense.DoubleAccess`: the double access reading of a present under a past.
+
+## References
+
+* [abusch-1997]
+* [heim-1994-comments]
+* [ogihara-1989]
 -/
 
 @[expose] public section
@@ -36,26 +47,12 @@ variable {T : Type*}
     tense locates its R′ relative to the attitude holder's now, not
     speech time. `embeddedR` and `embeddedE` are the embedded clause's
     reference and event times, determined by its tense and aspect. -/
-def embeddedFrame (matrixFrame : ReichenbachFrame T)
+@[simps] def embeddedFrame (matrixFrame : ReichenbachFrame T)
     (embeddedR embeddedE : T) : ReichenbachFrame T where
   speechTime := matrixFrame.speechTime
   perspectiveTime := matrixFrame.eventTime
   referenceTime := embeddedR
   eventTime := embeddedE
-
-/-- The simultaneous reading's frame: embedded R′ = matrix E ("John said
-    Mary was sick" — sick at the saying time), so embedded tense is
-    PRESENT relative to the embedded perspective
-    (`simultaneousFrame_isPresent`). -/
-def simultaneousFrame (matrixFrame : ReichenbachFrame T)
-    (embeddedE : T) : ReichenbachFrame T :=
-  embeddedFrame matrixFrame matrixFrame.eventTime embeddedE
-
-/-- The simultaneous frame satisfies PRESENT (R = P) relative to the
-    embedded perspective. -/
-theorem simultaneousFrame_isPresent (matrixFrame : ReichenbachFrame T)
-    (embeddedE : T) :
-    (simultaneousFrame matrixFrame embeddedE).isPresent := rfl
 
 /-! ### Embedded tense readings -/
 
@@ -115,32 +112,6 @@ theorem shifted_satisfies_ulc [Preorder T] (embeddedR matrixE : T)
 theorem simultaneous_satisfies_ulc [Preorder T] (embeddedR matrixE : T)
     (h : embeddedR = matrixE) : upperLimitConstraint embeddedR matrixE :=
   le_of_eq h
-
-/-! ### Pronoun resolution into frames -/
-
-/-- Assemble the Reichenbach frame a resolved tense pronoun determines:
-    R = the pronoun's referent under `g`, with perspective, speech, and
-    event times supplied by the embedding context. -/
-def TensePronoun.toFrame (tp : TensePronoun)
-    (g : TemporalAssignment T)
-    (speechTime perspectiveTime eventTime : T) :
-    ReichenbachFrame T where
-  speechTime := speechTime
-  perspectiveTime := perspectiveTime
-  referenceTime := tp.resolve g
-  eventTime := eventTime
-
-/-- A present-constraint bound tense under binding gives R = P — the
-    simultaneous reading as pronoun resolution: binding the variable to
-    the perspective time yields a PRESENT frame. -/
-theorem TensePronoun.bound_present_simultaneous
-    (tp : TensePronoun) (g : TemporalAssignment T)
-    (speechTime perspTime eventTime : T)
-    (hBind : tp.resolve g = perspTime)
-    (_hPres : tp.constraint = ⟦present⟧) :
-    (tp.toFrame g speechTime perspTime eventTime).isPresent := by
-  simp only [TensePronoun.toFrame, ReichenbachFrame.isPresent]
-  exact hBind
 
 /-- The double access reading of a present tense under a past attitude: the denotation of the
 present tense overlaps both the believing time and the utterance time. A condition on the

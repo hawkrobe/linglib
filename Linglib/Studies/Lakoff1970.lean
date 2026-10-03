@@ -82,7 +82,7 @@ def NovelPresent (f : Perspective T) : Prop := f.Novel ∧ f.eventTime = f.speec
 requires the event to be salient, as *Shakespeare has written thirty-seven plays* against
 *Shakespeare has quarreled with Bacon*. -/
 def RelevantPerfect [LinearOrder T] (f : Perspective T) : Prop :=
-  f.isPerfect ∧ f.referenceTime = f.speechTime ∧ f.Salient
+  f.eventPosition = .lt ∧ f.referenceTime = f.speechTime ∧ f.Salient
 
 /-- Will-deletion (§5): a present tense for a future event the speaker treats as scheduled and
 salient, as *John dies tomorrow* against *It rains Thursday*. -/
