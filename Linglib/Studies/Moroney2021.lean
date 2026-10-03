@@ -3,6 +3,8 @@ module
 public import Linglib.Semantics.Reference.Iota
 public import Linglib.Semantics.Mereology
 public import Linglib.Syntax.Category.Determiner.Basic
+public import Linglib.Semantics.Presupposition.PhiFeatures
+public import Mathlib.Basic.Rel
 public import Linglib.Semantics.Genericity.MeaningPreservation
 public import Linglib.Fragments.English.Determiners
 public import Linglib.Fragments.German.Determiners
@@ -14,30 +16,38 @@ public import Linglib.Studies.Jenks2018
 /-!
 # Moroney (2021): definiteness and quantification in Shan
 
-[moroney-2021] shows that Shan (Southwestern Tai) bare nouns express both unique and
-anaphoric definiteness, instantiating an unmarked cell that [jenks-2018]'s definiteness
-typology had no slot for. Because Shan has no articles, no covert type-shift is blocked — ι,
-ι^x and ∩ are all available to bare nouns — while the optional demonstratives *nâj/nân*
-only add spatial content. The cell is derived from `Shan.Determiners.inventory`, the
-bare-noun readings as the shifts the inventory leaves unblocked that are maximal under
-[dayal-2004]'s Meaning Preservation, her (79), and the refutation is stated against
-`Jenks2018.attested`.
+Moroney shows that Shan (Southwestern Tai) bare nouns express both unique and anaphoric
+definiteness, instantiating an unmarked cell that Jenks's definiteness typology had no slot for.
+Because Shan has no articles, no covert type-shift is blocked — ι, ι^x and ∩ are all available to
+bare nouns — while the optional demonstratives *nâj/nân* only add spatial content. The cell is
+derived from `Shan.Determiners.inventory`, the bare-noun readings as the shifts the inventory leaves
+unblocked that are maximal under Dayal's Meaning Preservation, her (79), and the refutation is
+stated against `Jenks2018.attested`.
 
-Her comparison of Shan and English bare nouns (Table 2.3) finds them alike on the
-low-scope existential, kind and generic readings, alike in lacking a high-scope existential,
-and different only on the definite reading; that difference is derived here
-(`shan_iota_english_none`) rather than tabulated. On the mass/count side she adopts
-[deal-2017]'s generalized homogeneity — a predicate is g-homogeneous when it is cumulative
-and, among other options, lacks minimal parts — and argues that Shan count nouns, like
-English *furniture*, are cumulative but have identifiable atomic parts
-(`maa_cumulative_not_divisive`). The demonstratives are the definite with the
-referent's closeness to the speaker added: *nâj* presupposes a unique `P` in the situation
-and refers to it if it is close (`demDenotation`, her (147)–(148)).
+Her comparison of Shan and English bare nouns (Table 2.3) finds them alike on the low-scope
+existential, kind and generic readings, alike in lacking a high-scope existential, and different
+only on the definite reading; that difference is derived here (`shan_iota_english_none`) rather than
+tabulated. On the mass/count side she adopts Deal's generalized homogeneity — a predicate is
+g-homogeneous when it is cumulative and, among other options, lacks minimal parts — and argues that
+Shan count nouns, like English *furniture*, are cumulative but have identifiable atomic parts
+(`maa_cumulative_not_divisive`). The demonstratives are the definite with the referent's closeness
+to the speaker added: *nâj* presupposes a unique `P` in the situation and refers to it if it is
+close (`demDenotation`, her (147)–(148)).
+
+## Implementation notes
+
+Moroney leaves close.to.speaker and far.from.speaker primitive. Here a demonstrative's spatial
+content is the vicinity of a referent whose participants form one of its participant sets, as in
+Harbour's account of spatial deixis: *nâj* covers the sets containing the speaker and *nân* the
+others, so close.to.speaker is the vicinity of a referent including the speaker
+(`mem_image_naj_iff`) and far.from.speaker the vicinity of one excluding the speaker
+(`mem_image_nan_iff`). Where she treats far.from.speaker as the opposite of close.to.speaker, the
+two vicinities may overlap here, as when the addressee stands by the speaker.
 
 ## References
 
 * [moroney-2021]
-* [dayal-2004], [deal-2017], [jenks-2018], [schwarz-2013]
+* [dayal-2004], [deal-2017], [harbour-2016], [jenks-2018], [schwarz-2013]
 -/
 
 @[expose] public section
@@ -47,6 +57,7 @@ namespace Moroney2021
 open Reference
 open Genericity
 open Mereology (CUM)
+open scoped SetRel
 
 /-! ### Type-shift selection -/
 
@@ -155,20 +166,39 @@ uniqueness reading available to Shan bare nouns. -/
 noncomputable def bareDefinite {E : Type*} (restrictor : E → Prop) : Option E :=
   iota restrictor
 
-/-- The demonstrative denotation of Moroney's (147)–(148): the unique referent satisfying the
-restrictor and the demonstrative's spatial content, `ιx[P(x) ∧ CLOSE.TO.SPEAKER(x)]`. -/
-noncomputable def demDenotation {E : Type*} (d : DemonstrativeDeterminer) (restrictor : E → Prop)
-    (spatialPred : Deixis → E → Prop) : Option E :=
-  iota fun x ↦ restrictor x ∧ spatialPred d.deictic x
+section Demonstrative
 
-/-- The demonstrative refers to the bare definite's referent whenever that referent has the
-demonstrative's spatial property, so *nâj/nân* are optional wherever the bare noun already
+variable {W E P T : Type*} [PartialOrder E] (c : Reference.Context W E P T) (χ : SetRel E E)
+
+/-- The demonstrative denotation of Moroney's (147)–(148): the unique referent satisfying the
+restrictor and lying in the demonstrative's deictic domain, `ιx[P(x) ∧ close.to.speaker(x)]` for
+*nâj*. -/
+noncomputable def demDenotation (d : DemonstrativeDeterminer) (restrictor : E → Prop) :
+    Option E :=
+  iota fun x ↦ restrictor x ∧ x ∈ χ.image (c.participants ⁻¹' d.deixis)
+
+/-- The demonstrative refers to the bare definite's referent whenever that referent lies in the
+demonstrative's deictic domain, so *nâj/nân* are optional wherever the bare noun already
 provides the definite reading. -/
-theorem demDenotation_eq_some_of_bareDefinite {E : Type*} {d : DemonstrativeDeterminer}
-    {restrictor : E → Prop} {spatialPred : Deixis → E → Prop} {e : E}
-    (h : bareDefinite restrictor = some e) (hs : spatialPred d.deictic e) :
-    demDenotation d restrictor spatialPred = some e := by
+theorem demDenotation_eq_some_of_bareDefinite {d : DemonstrativeDeterminer}
+    {restrictor : E → Prop} {e : E} (h : bareDefinite restrictor = some e)
+    (hs : e ∈ χ.image (c.participants ⁻¹' d.deixis)) :
+    demDenotation c χ d restrictor = some e := by
   rw [bareDefinite, iota_eq_some_iff] at h
   exact (iota_eq_some_iff _).2 ⟨⟨h.1, hs⟩, fun x hx ↦ h.2 x hx.1⟩
+
+/-- *nâj*'s close.to.speaker of (147) is the vicinity of a referent including the speaker. -/
+theorem mem_image_naj_iff {x : E} :
+    x ∈ χ.image (c.participants ⁻¹' Shan.Determiners.naj.deixis) ↔
+      ∃ y, c.agent ≤ y ∧ y ~[χ] x := by
+  simp [Shan.Determiners.naj, SetRel.image, Person.participants_mem_participantSets_first]
+
+/-- *nân*'s far.from.speaker of (148) is the vicinity of a referent excluding the speaker. -/
+theorem mem_image_nan_iff {x : E} :
+    x ∈ χ.image (c.participants ⁻¹' Shan.Determiners.nan.deixis) ↔
+      ∃ y, ¬ c.agent ≤ y ∧ y ~[χ] x := by
+  simp [Shan.Determiners.nan, SetRel.image, Person.participants_mem_participantSets_first]
+
+end Demonstrative
 
 end Moroney2021

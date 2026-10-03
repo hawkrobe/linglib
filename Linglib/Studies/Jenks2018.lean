@@ -186,16 +186,16 @@ theorem rows_agree :
 /-- A demonstrative description denotes the value of its index in every situation where its
 restrictor holds of it, (27) to (30): the demonstrative supplies the index of ι^x, and the
 index, not the situation, fixes the referent. -/
-theorem demonstrative_eq_some_iff {E W : Type} (R : Restrictor E W) (δ : Reference.Deixis)
-    (d : ℕ) (g : Assignment E) (s : W) (x : E) :
-    ⟦Description.demonstrative R δ d⟧ g s = some x ↔ R g s (g d) ∧ x = g d :=
+theorem demonstrative_eq_some_iff {E W : Type} (R : Restrictor E W) (d : ℕ) (g : Assignment E)
+    (s : W) (x : E) :
+    ⟦Description.demonstrative R d⟧ g s = some x ↔ R g s (g d) ∧ x = g d :=
   Description.denote_anaphoric_eq_some_iff R d g s
 
 /-- A demonstrative cannot covary through the situation pronoun: its referents at any two
 situations coincide. -/
-theorem demonstrative_rigid {E W : Type} (R : Restrictor E W) (δ : Reference.Deixis) (d : ℕ)
-    (g : Assignment E) {s s' : W} {x x' : E} (h : ⟦Description.demonstrative R δ d⟧ g s = some x)
-    (h' : ⟦Description.demonstrative R δ d⟧ g s' = some x') : x = x' :=
+theorem demonstrative_rigid {E W : Type} (R : Restrictor E W) (d : ℕ) (g : Assignment E)
+    {s s' : W} {x x' : E} (h : ⟦Description.demonstrative R d⟧ g s = some x)
+    (h' : ⟦Description.demonstrative R d⟧ g s' = some x') : x = x' :=
   Description.denote_anaphoric_rigid R d g s h h'
 
 /-- The bare noun's covert ι does covary: over the restrictor true of the situation itself, the

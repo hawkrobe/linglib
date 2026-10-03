@@ -173,12 +173,12 @@ end QuantityWord
 /-! ## Demonstratives and the possessive -/
 
 /-- *zhè* 这 'this', the proximal demonstrative, which stands before a classifier. -/
-def zhe : DemonstrativeDeterminer := { form := "zhè", deictic := .proximal }
+def zhe : DemonstrativeDeterminer := { form := "zhè", deixis := Person.first.participantSets }
 
 /-- *nà* 那 'that', the distal demonstrative and the obligatory exponent of anaphoric definites,
 donkey anaphora included ([jenks-2018]). -/
 def na : DemonstrativeDeterminer :=
-  { form := "nà", deictic := .distal, definiteUses := {.anaphoric, .donkey} }
+  { form := "nà", deixis := Person.first.participantSetsᶜ, definiteUses := {.anaphoric, .donkey} }
 
 /-- *de* 的, the marker of possession and of nominal modification. -/
 def de : PossessiveDeterminer := { form := "de" }

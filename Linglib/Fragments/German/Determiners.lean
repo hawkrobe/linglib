@@ -47,6 +47,7 @@ familiarity, and Moroney classes a language by how its articles mark the two.
 * [durrell-2011]
 * [schwarz-2009]
 * [moroney-2021]
+* [diessel-2013b]
 -/
 
 @[expose] public section
@@ -139,14 +140,15 @@ theorem faithful : Gender.Faithful fun g ↦ definite (.sg g) :=
 
 /-- The inventory lists the weak definite article, the form contracted with a preposition as in
 *im*; the strong definite article, the full form as in *in dem*; the indefinite article; the
-demonstrative *dieser*; and the possessive *mein*. -/
+demonstrative *dieser*, which no longer contrasts with *jener* and is distance-neutral, so it covers
+every participant set; and the possessive *mein*. -/
 def inventory : Determiner.Inventory :=
   [ .article { form := "im", definiteness := .definite, exponent := .dedicatedMorpheme,
                uses := {.immediateSituation, .largerSituation} },
     .article { form := definite (.sg .masc) .dat, definiteness := .definite,
                exponent := .dedicatedMorpheme, uses := {.anaphoric, .donkey} },
     .article { form := "ein", definiteness := .indefinite, exponent := .dedicatedMorpheme },
-    .demonstrative { form := dieser (.sg .masc) .nom, deictic := .unspecified },
+    .demonstrative { form := dieser (.sg .masc) .nom, deixis := Finset.univ },
     .possessive { form := "mein" } ]
 
 /-- German derives the `.bipartite` Moroney cell. -/

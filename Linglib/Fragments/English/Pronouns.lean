@@ -220,26 +220,25 @@ def interrogatives : Finset InterrogativePronoun := {who, whom, what, where_, wh
 
 /-- The singular proximal demonstrative *this*. -/
 def this_ : DemonstrativePronoun :=
-  { form := "this", person := some .third, number := some .singular, deixis := .proximal }
+  { form := "this", person := some .third, number := some .singular,
+    deixis := Person.first.participantSets }
 
 /-- The singular distal demonstrative *that*. -/
 def that_ : DemonstrativePronoun :=
-  { form := "that", person := some .third, number := some .singular, deixis := .distal }
+  { form := "that", person := some .third, number := some .singular,
+    deixis := Person.first.participantSetsᶜ }
 
 /-- The plural proximal demonstrative *these*. -/
 def these : DemonstrativePronoun :=
-  { form := "these", person := some .third, number := some .plural, deixis := .proximal }
+  { form := "these", person := some .third, number := some .plural,
+    deixis := Person.first.participantSets }
 
 /-- The plural distal demonstrative *those*. -/
 def those : DemonstrativePronoun :=
-  { form := "those", person := some .third, number := some .plural, deixis := .distal }
+  { form := "those", person := some .third, number := some .plural,
+    deixis := Person.first.participantSetsᶜ }
 
 /-- The demonstrative pronoun inventory. -/
 def demonstratives : Finset DemonstrativePronoun := {this_, that_, these, those}
-
-/-- Every demonstrative encodes a distance contrast. -/
-theorem demonstratives_encodesDistance :
-    ∀ d ∈ demonstratives, (Demonstrative.deixis d).EncodesDistance := by
-  decide
 
 end English.Pronouns

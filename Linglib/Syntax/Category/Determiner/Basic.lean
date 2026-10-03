@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Data.Finset.Image
 public import Linglib.Semantics.Reference.Definiteness
-public import Linglib.Semantics.Reference.Deixis
+public import Linglib.Discourse.Role
 public import Linglib.Syntax.Number.Basic
 public import Linglib.Morphology.Word.Basic
 
@@ -101,19 +101,16 @@ structure Article extends Determiner where
   uses : Finset DefiniteUse := ∅
   deriving DecidableEq
 
-/-- A demonstrative determiner carries a deictic feature. Its `definiteUses` are the definite
-uses it obligatorily expones, as Mandarin *na* expones the anaphoric use, and they are empty for
-a demonstrative that merely can be used anaphorically. -/
+/-- A demonstrative determiner carries its deictic content, the participant sets of the referents
+in whose vicinity it locates its referent. Its `definiteUses` are the definite uses it obligatorily
+expones, as Mandarin *na* expones the anaphoric use, and they are empty for a demonstrative that
+merely can be used anaphorically. -/
 structure DemonstrativeDeterminer extends Determiner where
-  /-- The deictic feature. -/
-  deictic : Reference.Deixis
+  /-- The participant sets of the referents in whose vicinity the form locates its referent. -/
+  deixis : Finset (Finset Discourse.Role)
   /-- The definite uses the demonstrative obligatorily expones. -/
   definiteUses : Finset DefiniteUse := ∅
   deriving DecidableEq
-
-/-- The demonstrative determiner shares the `Demonstrative` capability with the demonstrative
-pronoun. -/
-instance : Demonstrative DemonstrativeDeterminer := ⟨DemonstrativeDeterminer.deictic⟩
 
 /-- A quantificational determiner records only what its generalized-quantifier denotation
 leaves open, the grammatical number it selects and whether it selects mass nouns, since

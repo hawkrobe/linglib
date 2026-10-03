@@ -20,21 +20,16 @@ namespace Shan.Determiners
 
 /-- *nâj* 'this', the proximal demonstrative, which obligatorily expones no
     definite use. -/
-def naj : DemonstrativeDeterminer := { form := "nâj", deictic := .proximal }
+def naj : DemonstrativeDeterminer := { form := "nâj", deixis := Person.first.participantSets }
 
 /-- *nân* 'that', the distal demonstrative, which obligatorily expones no
     definite use. -/
-def nan : DemonstrativeDeterminer := { form := "nân", deictic := .distal }
+def nan : DemonstrativeDeterminer := { form := "nân", deixis := Person.first.participantSetsᶜ }
 
 /-- The Shan determiners are the optional demonstratives *nâj/nân*. -/
 def inventory : Determiner.Inventory := [.demonstrative naj, .demonstrative nan]
 
 /-- Shan derives the `.unmarked` Moroney cell. -/
 theorem marking : inventory.markingStrategy = .unmarked := by decide
-
-/-- Both Shan demonstratives encode a distance contrast. -/
-theorem naj_nan_encode_distance :
-    (Demonstrative.deixis naj).EncodesDistance ∧
-    (Demonstrative.deixis nan).EncodesDistance := by decide
 
 end Shan.Determiners
