@@ -36,12 +36,12 @@ evidence of Section 3 supports for English and German, selects the recursive wor
 
 namespace ItoMester2009
 
-open Prosody RootedTree OptimalityTheory
+open Prosody OptimalityTheory
 
 /-! ### Function-word constraints -/
 
-/-- FtBin at the word level: a violation for each ω-node whose mora count is below a foot, a
-subminimal function word parsed as its own ω. -/
+/-- FtBin at the word level assigns a violation to each ω-node whose mora count is below a foot,
+such as a subminimal function word parsed as its own ω. -/
 def subminimalOmega : Constraint Tree := λ t => go t where
   go : Tree → Nat
     | .node a cs =>
@@ -61,26 +61,26 @@ def lexHasOmega (lex : Tree) : Tree → Bool := λ t => go t where
 
 /-! ### The four sites of (25) -/
 
-/-- The function word: one light syllable. -/
+/-- The function word is one light syllable. -/
 def fncσ : Tree := .σ .light
 
 /-- The lexical word as a well-formed, bimoraic ω. -/
 def lexω : Tree := .om [.ft false [.σ .heavy]]
 
-/-- (25a), (20a): the full-ω site, `[φ [ω fnc] [ω lex]]`. -/
+/-- `[φ [ω fnc] [ω lex]]` is the full-ω site, (25a) and (20a). -/
 def fullOmega : Tree := .ph [.om [fncσ], lexω]
 
-/-- (25b), (20b): the amalgamated site, `[ω fnc lex]`. -/
+/-- `[ω fnc lex]` is the amalgamated site, (25b) and (20b). -/
 def amalgamated : Tree := .om [fncσ, .ft false [.σ .heavy]]
 
-/-- (25c), (20c): the ω-adjoined site, `[ω fnc [ω lex]]`. -/
+/-- `[ω fnc [ω lex]]` is the ω-adjoined site, (25c) and (20c). -/
 def omegaAdjoined : Tree := .om [fncσ, lexω]
 
-/-- (25d), (20d): the φ-attached site, `[φ fnc [ω lex]]`. -/
+/-- `[φ fnc [ω lex]]` is the φ-attached site, (25d) and (20d). -/
 def phiAttached : Tree := .ph [fncσ, lexω]
 
-/-- Lex-to-ω, (12), after the alignment constraint of [mccarthy-prince-1993]: a violation when
-the lexical word is not a ω of its own. -/
+/-- Lex-to-ω, (12), after the alignment constraint of [mccarthy-prince-1993], assigns a
+violation when the lexical word is not a ω of its own. -/
 def lexToOmega : Constraint Tree := λ t => if lexHasOmega lexω t then 0 else 1
 
 /-- The candidate set. -/
@@ -112,14 +112,14 @@ theorem phiAttached_optimum :
       = {phiAttached} := by
   decide
 
-/-- (33) and (34): with FtBin and Lex-to-ω alone ranked, the ω-adjoined and φ-attached sites
-tie, each fulfilling both. -/
+/-- With FtBin and Lex-to-ω alone ranked, the ω-adjoined and φ-attached sites tie, each
+fulfilling both, (33) and (34). -/
 theorem adjoined_attached_tie :
     (Tableau.ofRanking candidates [subminimalOmega, lexToOmega]).optimal
       = {omegaAdjoined, phiAttached} := by
   decide
 
-/-- The function-word complex of English and German is prosodified by ω-adjunction: under
+/-- The function-word complex of English and German is prosodified by ω-adjunction, since under
 FtBin, Lex-to-ω ≫ Parse-into-ω ≫ No-Recursion the recursive `[ω fnc [ω lex]]` is the unique
 optimum. -/
 theorem omegaAdjunction_optimum :
@@ -128,7 +128,7 @@ theorem omegaAdjunction_optimum :
   decide
 
 /-- The winning structure is recursive, ω dominating ω, and a legal prosodic word of the
-substrate: No-Recursion is violable, not part of well-formedness. -/
+substrate, so No-Recursion is violable, not part of well-formedness. -/
 theorem winner_recursive_isWord : noRec omegaAdjoined = 1 ∧ IsWord omegaAdjoined := by decide
 
 end ItoMester2009

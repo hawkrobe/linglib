@@ -2,41 +2,46 @@ module
 
 public import Mathlib.Order.Preorder.Chain
 public import Mathlib.Order.Interval.Set.Basic
+public import Mathlib.Order.SuccPred.Archimedean
 
 /-!
 # Left-linear orders
 
 A partial order is **left-linear** when the predecessors of every element are linearly
 ordered: `a ≤ c → b ≤ c → a ≤ b ∨ b ≤ a`. Equivalently, every principal down-set `Iic m`
-is a chain. This is the order-theoretic notion of a *tree*: the order may branch upward
-but never downward.
+is a chain. This is the order-theoretic notion of a tree: the order may branch upward but
+never downward.
 
-Left-linearity is the shared kernel of two linglib substrates: the **Connected Ancestor
-Condition** of [barker-pullum-1990] syntactic trees (`Core.Order.TreePath`) and the
-**no-backward-branching** axiom of Prior–Thomason branching time. Both consume
-`IsLeftLinear`; "ancestors are linearly ordered" (c-command) and "the past is linear"
-(branching time) are literally the same statement, `IsLeftLinear.isChain_Iio`.
+Linear orders are left-linear, and so is every rooted tree in the sense of
+`Mathlib/Order/SuccPred/Tree.lean`: a `PredOrder` with archimedean predecessor is left-linear by
+mathlib's `le_total_of_directed`. Branching-time frames, which need not have predecessors, assume
+left-linearity directly.
 
 ## Main definitions
 
-* `IsLeftLinear M` — the predecessors of every element are linearly ordered.
+* `IsLeftLinear M`: the predecessors of every element are linearly ordered.
 
 ## Main results
 
-* `IsLeftLinear.isChain_Iic`, `IsLeftLinear.isChain_Iio` — every principal down-set is a chain.
+* `IsLeftLinear.isChain_Iic`, `IsLeftLinear.isChain_Iio`: every principal down-set is a chain.
 -/
 
 @[expose] public section
 
 /-- A partial order is **left-linear** when the predecessors of every element are linearly
-ordered (no backward branching). The order-theoretic notion of a tree order. -/
+ordered, so that it never branches backward. -/
 class IsLeftLinear (M : Type*) [PartialOrder M] : Prop where
   /-- The predecessors of any element are pairwise comparable. -/
   comparable_of_le_common : ∀ ⦃a b c : M⦄, a ≤ c → b ≤ c → a ≤ b ∨ b ≤ a
 
 /-- A linear order is left-linear. -/
 instance (priority := 100) {M : Type*} [LinearOrder M] : IsLeftLinear M :=
-  ⟨λ a b _ _ _ => le_total a b⟩
+  ⟨fun a b _ _ _ ↦ le_total a b⟩
+
+/-- A `PredOrder` with archimedean predecessor, such as a rooted tree, is left-linear. -/
+instance (priority := 100) {M : Type*} [PartialOrder M] [PredOrder M] [IsPredArchimedean M] :
+    IsLeftLinear M :=
+  ⟨fun _ _ _ ha hb ↦ (le_total_of_directed ha hb).symm⟩
 
 namespace IsLeftLinear
 
@@ -47,8 +52,7 @@ theorem isChain_Iic (m : M) : IsChain (· ≤ ·) (Set.Iic m) := by
   intro a ha b hb _
   exact comparable_of_le_common (Set.mem_Iic.mp ha) (Set.mem_Iic.mp hb)
 
-/-- In a left-linear order the strict past `Iio m` is a chain: the predecessors of any
-moment are linearly ordered. -/
+/-- In a left-linear order the strict down-set `Iio m` is a chain. -/
 theorem isChain_Iio (m : M) : IsChain (· ≤ ·) (Set.Iio m) := by
   intro a ha b hb _
   exact comparable_of_le_common (le_of_lt (Set.mem_Iio.mp ha)) (le_of_lt (Set.mem_Iio.mp hb))
