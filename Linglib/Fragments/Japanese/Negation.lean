@@ -43,13 +43,13 @@ def en : Marker := { pieces := [[.suff "en"]] }
 
 /-- The plain nonpast and past of *tabe-* 'eat'. -/
 def plain : List Pair :=
-  [⟨[.root "tabe", .suff "ru"], [.root "tabe", .suff "na", .suff "i"]⟩,
-   ⟨[.root "tabe", .suff "ta"], [.root "tabe", .suff "na", .suff "katta"]⟩]
+  [⟨na, [.root "tabe", .suff "ru"], [.root "tabe", .suff "na", .suff "i"]⟩,
+   ⟨na, [.root "tabe", .suff "ta"], [.root "tabe", .suff "na", .suff "katta"]⟩]
 
 /-- The polite nonpast and past of *tabe-* 'eat'. -/
 def polite : List Pair :=
-  [⟨[.root "tabe", .suff "mas", .suff "u"], [.root "tabe", .suff "mas", .suff "en"]⟩,
-   ⟨[.root "tabe", .suff "mas", .suff "ta"],
+  [⟨en, [.root "tabe", .suff "mas", .suff "u"], [.root "tabe", .suff "mas", .suff "en"]⟩,
+   ⟨en, [.root "tabe", .suff "mas", .suff "ta"],
     [.root "tabe", .suff "mas", .suff "en", .free "deshita"]⟩]
 
 /-- The adjectival tense endings, the non-past *-i* and the past *-katta*. -/

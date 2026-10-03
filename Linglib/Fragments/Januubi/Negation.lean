@@ -26,6 +26,6 @@ namespace Januubi.Negation
 def maa : Marker := { pieces := [[.free "maa"]] }
 
 /-- *laa*, the prohibitive negator. -/
-def laa : Marker := { pieces := [[.free "laa"]], gloss := "PROH" }
+def laa : Marker := { pieces := [[.free "laa"]] }
 
 end Januubi.Negation

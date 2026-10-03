@@ -30,9 +30,9 @@ def ne : Marker := { pieces := [[.pref "ne"]] }
 negatives *Petr se nemusí učit* 'Peter needn't study' and *Petr nesmí přijít* 'Peter must not
 come' (p. 510). -/
 def pairs : List Pair :=
-  [⟨[.free "Petr", .free "se", .root "musí", .free "učit"],
+  [⟨ne, [.free "Petr", .free "se", .root "musí", .free "učit"],
     [.free "Petr", .free "se", .pref "ne", .root "musí", .free "učit"]⟩,
-   ⟨[.free "Petr", .root "smí", .free "přijít"],
+   ⟨ne, [.free "Petr", .root "smí", .free "přijít"],
     [.free "Petr", .pref "ne", .root "smí", .free "přijít"]⟩]
 
 end Czech.Negation

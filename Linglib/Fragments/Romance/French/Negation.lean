@@ -32,8 +32,8 @@ def ne : Marker := { pieces := [[.procl "ne"]] }
 
 /-- The present and the compound past of *venir* 'come'. -/
 def pairs : List Pair :=
-  [⟨[.free "jean", .free "vient"], [.free "jean", .procl "ne", .free "vient", .free "pas"]⟩,
-   ⟨[.free "jean", .free "est", .root "ven", .suff "u"],
+  [⟨nePas, [.free "jean", .free "vient"], [.free "jean", .procl "ne", .free "vient", .free "pas"]⟩,
+   ⟨nePas, [.free "jean", .free "est", .root "ven", .suff "u"],
     [.free "jean", .procl "ne", .free "est", .free "pas", .root "ven", .suff "u"]⟩]
 
 end French.Negation

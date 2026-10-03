@@ -28,7 +28,7 @@ def words (ws : List String) : List Morph := ws.map .free
 
 /-- The first person singular present and past of *singen* 'sing' pair with their negations. -/
 def pairs : List Pair :=
-  [⟨words ["ich", "singe"], words ["ich", "singe", "nicht"]⟩,
-   ⟨words ["ich", "sang"], words ["ich", "sang", "nicht"]⟩]
+  [⟨nicht, words ["ich", "singe"], words ["ich", "singe", "nicht"]⟩,
+   ⟨nicht, words ["ich", "sang"], words ["ich", "sang", "nicht"]⟩]
 
 end German.Negation

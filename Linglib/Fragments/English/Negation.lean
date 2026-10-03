@@ -33,19 +33,19 @@ def words (ws : List String) : List Morph := ws.map .free
 
 /-- The compound tenses, whose negative places *not* after the auxiliary. -/
 def compoundTenses : List Pair :=
-  [⟨words ["chris", "is", "dancing"], words ["chris", "is", "not", "dancing"]⟩,
-   ⟨words ["chris", "will", "dance"], words ["chris", "will", "not", "dance"]⟩,
-   ⟨words ["chris", "has", "danced"], words ["chris", "has", "not", "danced"]⟩,
-   ⟨words ["chris", "had", "danced"], words ["chris", "had", "not", "danced"]⟩]
+  [⟨not, words ["chris", "is", "dancing"], words ["chris", "is", "not", "dancing"]⟩,
+   ⟨not, words ["chris", "will", "dance"], words ["chris", "will", "not", "dance"]⟩,
+   ⟨not, words ["chris", "has", "danced"], words ["chris", "has", "not", "danced"]⟩,
+   ⟨not, words ["chris", "had", "danced"], words ["chris", "had", "not", "danced"]⟩]
 
 /-- The plain simple tenses with their negatives, built on *do*. -/
 def simpleTenses : List Pair :=
-  [⟨words ["chris", "dances"], words ["chris", "does", "not", "dance"]⟩,
-   ⟨words ["chris", "danced"], words ["chris", "did", "not", "dance"]⟩]
+  [⟨not, words ["chris", "dances"], words ["chris", "does", "not", "dance"]⟩,
+   ⟨not, words ["chris", "danced"], words ["chris", "did", "not", "dance"]⟩]
 
 /-- The emphatic simple tenses, built on *do* like their negatives. -/
 def emphaticTenses : List Pair :=
-  [⟨words ["chris", "does", "dance"], words ["chris", "does", "not", "dance"]⟩,
-   ⟨words ["chris", "did", "dance"], words ["chris", "did", "not", "dance"]⟩]
+  [⟨not, words ["chris", "does", "dance"], words ["chris", "does", "not", "dance"]⟩,
+   ⟨not, words ["chris", "did", "dance"], words ["chris", "did", "not", "dance"]⟩]
 
 end English.Negation

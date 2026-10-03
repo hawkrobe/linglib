@@ -21,7 +21,7 @@ public import Linglib.Fragments.Romance.Spanish.Negation
 This file formalizes the typology of [miestamo-2005]. The negation of a declarative verbal
 main clause is symmetric when the negative differs from the affirmative only by the presence
 of the negative marker and asymmetric when further structural differences accompany it
-(`IsSymmetric`): removing the marker from the negative leaves the affirmative, differences of
+(`IsSymmetric`): the negative is the affirmative with the marker inserted, differences of
 phonological shape apart. The distinction applies to constructions and to paradigms
 separately: a paradigm is symmetric when its affirmative and negative members correspond one
 to one (`IsSymmetricParadigm`) and neutralizes when distinct affirmative forms share a negative
@@ -63,7 +63,7 @@ open Negation
 
 variable {α β : Type*}
 
-/-- The domains of asymmetry: the finiteness of verbal elements, the marking of a
+/-- The domains of asymmetry are the finiteness of verbal elements, the marking of a
 non-realized category, the marking of emphasis, and other grammatical categories. -/
 inductive AsymmetrySubtype where
   | fin
@@ -75,26 +75,27 @@ inductive AsymmetrySubtype where
 /-! ### Constructions -/
 
 /-- A construction is symmetric when the negative is the affirmative with the negative marker
-added: removing the marker's morphs from the negative leaves the affirmative. -/
-def IsSymmetric (m : Marker) (p : Pair) : Prop :=
-  p.negative.filter (· ∉ m.morphs) = p.affirmative
+inserted: the affirmative is a sublist of the negative, and the two differ by exactly the
+marker's morphs. -/
+def IsSymmetric (p : Pair) : Prop :=
+  p.affirmative.Sublist p.negative ∧ p.negative.Perm (p.affirmative ++ p.marker.morphs)
 
-instance (m : Marker) : DecidablePred (IsSymmetric m) := fun p ↦
-  inferInstanceAs (Decidable (p.negative.filter (· ∉ m.morphs) = p.affirmative))
+instance : DecidablePred IsSymmetric := fun p ↦
+  inferInstanceAs (Decidable (p.affirmative.Sublist p.negative ∧
+    p.negative.Perm (p.affirmative ++ p.marker.morphs)))
 
-/-- The negative contains an element, other than the marker, that the affirmative lacks: the
-finite element of the constructions that add one. -/
-def Adds (m : Marker) (p : Pair) : Prop :=
-  ∃ x ∈ p.negative, x ∉ m.morphs ∧ x ∉ p.affirmative
+/-- The negative contains an element, other than the marker, that the affirmative lacks, as the
+constructions that add a finite element do. -/
+def Adds (p : Pair) : Prop :=
+  ∃ x ∈ p.negative, x ∉ p.marker.morphs ∧ x ∉ p.affirmative
 
-instance (m : Marker) : DecidablePred (Adds m) := fun p ↦
-  inferInstanceAs (Decidable (∃ x ∈ p.negative, x ∉ m.morphs ∧ x ∉ p.affirmative))
+instance : DecidablePred Adds := fun p ↦
+  inferInstanceAs (Decidable (∃ x ∈ p.negative, x ∉ p.marker.morphs ∧ x ∉ p.affirmative))
 
 /-- A construction that adds an element is asymmetric. -/
-theorem not_isSymmetric_of_adds {m : Marker} {p : Pair} (h : Adds m p) : ¬ IsSymmetric m p := by
+theorem not_isSymmetric_of_adds {p : Pair} (h : Adds p) : ¬ IsSymmetric p := by
   obtain ⟨x, hx, hm, ha⟩ := h
-  intro hs
-  exact ha (hs ▸ List.mem_filter.2 ⟨hx, by simpa using hm⟩)
+  exact fun hs ↦ by simpa [ha, hm] using hs.2.subset hx
 
 /-! ### Paradigms -/
 
@@ -103,7 +104,7 @@ one: distinct affirmative forms have distinct negative counterparts. -/
 def IsSymmetricParadigm (p : List α) (aff neg : α → β) : Prop :=
   ∀ e₁ ∈ p, ∀ e₂ ∈ p, neg e₁ = neg e₂ → aff e₁ = aff e₂
 
-/-- Paradigmatic neutralization: distinct affirmative forms with one negative counterpart. -/
+/-- A paradigm neutralizes when distinct affirmative forms have one negative counterpart. -/
 def Neutralizes (p : List α) (aff neg : α → β) : Prop :=
   ∃ e₁ ∈ p, ∃ e₂ ∈ p, aff e₁ ≠ aff e₂ ∧ neg e₁ = neg e₂
 
@@ -169,27 +170,27 @@ end LanguageType
 /-! ### Symmetric negation: Spanish, German, Italian, French, Russian -/
 
 theorem spanish_symmetric :
-    languageType Spanish.Negation.pairs (IsSymmetric Spanish.Negation.no) False = .symmetric := by
+    languageType Spanish.Negation.pairs IsSymmetric False = .symmetric := by
   decide
 
 theorem german_symmetric :
-    languageType German.Negation.pairs (IsSymmetric German.Negation.nicht) False =
+    languageType German.Negation.pairs IsSymmetric False =
       .symmetric := by
   decide
 
 theorem italian_symmetric :
-    languageType Italian.Negation.pairs (IsSymmetric Italian.Negation.non) False =
+    languageType Italian.Negation.pairs IsSymmetric False =
       .symmetric := by
   decide
 
 /-- Both members of the French double marker are removed. -/
 theorem french_symmetric :
-    languageType French.Negation.pairs (IsSymmetric French.Negation.nePas) False =
+    languageType French.Negation.pairs IsSymmetric False =
       .symmetric := by
   decide
 
 theorem russian_symmetric :
-    languageType Russian.Negation.pairs (IsSymmetric Russian.Negation.ne) False = .symmetric := by
+    languageType Russian.Negation.pairs IsSymmetric False = .symmetric := by
   decide
 
 /-! ### Finiteness asymmetry: Finnish, Japanese, Maori, Hixkaryana -/
@@ -198,12 +199,9 @@ theorem russian_symmetric :
 negative of a stem with its ending the auxiliary takes the ending and the stem follows bare:
 the negative verb is the finite element of the clause, and the language is of type Asy. -/
 theorem finnish_negVerb :
-    (∀ p ∈ [Person.first, .second, .third], ∀ n ∈ [Number.singular, .plural],
-      (Finnish.Negation.ending p n).isSome) ∧
-    (∀ p ∈ Finnish.Negation.present,
-      p.negative = Finnish.Negation.e.morphs ++ p.affirmative.reverse) ∧
-    languageType Finnish.Negation.present (IsSymmetric Finnish.Negation.e) False =
-      .asymmetric := by
+    Finnish.Negation.ending.cells = Agreement.Bundle.pnCells ∧
+    (∀ p ∈ Finnish.Negation.present, p.negative = p.marker.morphs ++ p.affirmative.reverse) ∧
+    languageType Finnish.Negation.present IsSymmetric False = .asymmetric := by
   decide
 
 /-- The plain Japanese negative is the verb root, the negator *-na-* and an adjectival tense
@@ -219,9 +217,9 @@ theorem japanese_negative_adjectival :
 /-- The plain and the polite negatives are asymmetric, the polite past adding the copula, while
 the paradigm stays one to one. -/
 theorem japanese_asymmetric :
-    (∀ p ∈ Japanese.Negation.plain, ¬ IsSymmetric Japanese.Negation.na p) ∧
-    (∀ p ∈ Japanese.Negation.polite, ¬ IsSymmetric Japanese.Negation.en p) ∧
-    (∃ p ∈ Japanese.Negation.polite, Adds Japanese.Negation.en p) ∧
+    (∀ p ∈ Japanese.Negation.plain, ¬ IsSymmetric p) ∧
+    (∀ p ∈ Japanese.Negation.polite, ¬ IsSymmetric p) ∧
+    (∃ p ∈ Japanese.Negation.polite, Adds p) ∧
     IsSymmetricParadigm (Japanese.Negation.plain ++ Japanese.Negation.polite)
       (·.affirmative) (·.negative) := by
   decide
@@ -229,22 +227,22 @@ theorem japanese_asymmetric :
 /-- Maori negates only with the initial negative verb, after which the subject precedes the
 tense particle and the verb, so it is of type Asy. -/
 theorem maori_asymmetric :
-    languageType Maori.Negation.pairs (IsSymmetric Maori.Negation.kaore) False =
+    languageType Maori.Negation.pairs IsSymmetric False =
       .asymmetric := by
   decide
 
 /-- Hixkaryana negates only by deverbalizing the lexical verb under an added copula, so it is
 of type Asy. -/
 theorem hixkaryana_asymmetric :
-    (∀ p ∈ Hixkaryana.Negation.pairs, Adds Hixkaryana.Negation.hira p) ∧
-    languageType Hixkaryana.Negation.pairs (IsSymmetric Hixkaryana.Negation.hira) False =
+    (∀ p ∈ Hixkaryana.Negation.pairs, Adds p) ∧
+    languageType Hixkaryana.Negation.pairs IsSymmetric False =
       .asymmetric := by
   decide
 
 /-! ### Mixed languages: Mandarin and Turkish -/
 
-/-- A Mandarin negator's construction is symmetric when it adds nothing but the negator: no verb
-comes with it and no aspect particle of the affirmative is excluded. -/
+/-- A Mandarin negator's construction is symmetric when it adds nothing but the negator, so that
+no verb comes with it and no aspect particle of the affirmative is excluded. -/
 def IsSymmetricNegator (n : Mandarin.Negation.Negator) : Prop := n.verb = none ∧ n.excludes = []
 
 instance : DecidablePred IsSymmetricNegator := fun n ↦
@@ -262,10 +260,10 @@ theorem mandarin_both :
 /-- Turkish negation is symmetric except in the aorist, whose marker changes or drops in the
 negative, a category asymmetry; the paradigm stays one to one. -/
 theorem turkish_both :
-    (∀ p ∈ Turkish.Negation.nonAorist, IsSymmetric Turkish.Negation.mA p) ∧
-    (∀ p ∈ Turkish.Negation.aorist, ¬ IsSymmetric Turkish.Negation.mA p) ∧
+    (∀ p ∈ Turkish.Negation.nonAorist, IsSymmetric p) ∧
+    (∀ p ∈ Turkish.Negation.aorist, ¬ IsSymmetric p) ∧
     languageType (Turkish.Negation.nonAorist ++ Turkish.Negation.aorist)
-      (IsSymmetric Turkish.Negation.mA)
+      IsSymmetric
       (Neutralizes (Turkish.Negation.nonAorist ++ Turkish.Negation.aorist)
         (·.affirmative) (·.negative)) = .both := by
   decide
@@ -276,7 +274,7 @@ theorem turkish_both :
 construction is asymmetric and one negative form corresponds to three affirmative forms. -/
 theorem burmese_neutralizes :
     Neutralizes Burmese.Negation.goParadigm (·.affirmative) (·.negative) ∧
-    languageType Burmese.Negation.goParadigm (IsSymmetric Burmese.Negation.maBu)
+    languageType Burmese.Negation.goParadigm IsSymmetric
       (Neutralizes Burmese.Negation.goParadigm (·.affirmative) (·.negative)) = .asymmetric := by
   decide
 
@@ -284,15 +282,15 @@ theorem burmese_neutralizes :
 affirmatives of the simple tenses; to the plain simple tenses it adds *do*. -/
 theorem english_symmetric_with_emphatic :
     (∀ p ∈ English.Negation.compoundTenses ++ English.Negation.emphaticTenses,
-      IsSymmetric English.Negation.not p) ∧
-    ∀ p ∈ English.Negation.simpleTenses, Adds English.Negation.not p := by
+      IsSymmetric p) ∧
+    ∀ p ∈ English.Negation.simpleTenses, Adds p := by
   decide
 
 /-- English negation is symmetric in construction and asymmetric in paradigm, the plain and the
 emphatic affirmative of a simple tense sharing one negative, so it is of type SymAsy. -/
 theorem english_both :
     languageType (English.Negation.compoundTenses ++ English.Negation.emphaticTenses)
-      (IsSymmetric English.Negation.not)
+      IsSymmetric
       (Neutralizes (English.Negation.simpleTenses ++ English.Negation.emphaticTenses)
         (·.affirmative) (·.negative)) = .both := by
   decide
