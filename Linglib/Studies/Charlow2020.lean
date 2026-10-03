@@ -60,7 +60,7 @@ restrictor holds a bound pronoun cannot outscope the pronoun's binder.
   represented, so a reading the paper rules out is shown to differ from the derived ones.
 * `Si.cf_reading_iff` assumes that no two candidates wrote the same papers, which the paper's
   gloss of (69) needs and leaves implicit.
-* Figure 9 prints `die X` for `die x`. Numbers follow the accepted manuscript (lingbuzz 003302).
+* Figure 9 prints `die X` for `die x`.
 
 ## TODO
 
@@ -462,12 +462,9 @@ theorem cf_reading_iff [Nonempty E] (hwrote : ∀ x ∈ cand, ∃ y ∈ paper, w
     (∃ f : Reference.ChoiceFunction E,
         ¬ ∃ x ∈ cand, subm (f fun y ↦ y ∈ paper ∧ wrote y x) x) ↔
       ¬ ∃ x ∈ cand, ∀ y ∈ paper, wrote y x → subm y x := by
-  have h := Reference.ChoiceFunction.exists_forall_apply_iff_of_injective (ι := cand)
-    (Set.injOn_iff_injective.1 hinj) (fun x ↦ (hwrote x x.2).imp fun _ ↦ id)
-    fun x y ↦ ¬ subm y x
-  simp only [Set.domRestrict_apply, Subtype.forall, GQ.some] at h
-  push Not
-  simpa [and_assoc] using h
+  simpa [and_imp] using Charlow2014.cf_no_candidate_iff (· ∈ cand)
+    (fun x y ↦ y ∈ paper ∧ wrote y x) (fun y x ↦ subm y x)
+    (fun x hx ↦ (hwrote x hx).imp fun _ ↦ id) hinj
 
 /-- The reading (69) over-generates, since it does not entail the bound reading of (53), which
 fails when the one candidate wrote two papers and submitted one. -/

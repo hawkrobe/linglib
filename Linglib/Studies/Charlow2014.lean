@@ -4,31 +4,31 @@ public import Mathlib.Data.Set.Functor
 public import Mathlib.Data.Set.Card
 public import Linglib.Semantics.Alternatives.Basic
 public import Linglib.Semantics.Composition.Cont
+public import Linglib.Semantics.Reference.ChoiceFunction
 public import Linglib.Data.Examples.Charlow2014
 import all Init.Control.State  -- for unfolding `StateT.orElse`
 
 /-!
 # Charlow 2014: on the semantics of exceptional scope
 
-This file formalizes the dissertation's account of exceptional scope as side effects taking scope
-after evaluation. Dynamic semantics in the stack-based style of [dekker-1994] is refactored as a
-monad — `StateT (Stack E) Set`, output stacks of discourse referents plus nondeterminism, the
-transformer of [liang-hudak-jones-1995] over `Set` — and scope-taking as their continuation
-transformer over it (cf. [wadler-1994]), with Lift identified with `monadLift` and Lower with
-`ContT.eval`. A
-scope island is a constituent that must be evaluated: `ContT.reset` ([danvy-filinski-1990])
-discharges quantifiers but leaves nondeterministic and state-changing effects intact, so
-indefinites, disjunctions ([rooth-partee-1982]), the drefs of proper names and the maximal drefs
-of dynamic quantifiers all scope out of islands and feed binding — obeying the Binder Roof
-Constraint of [brasoveanu-farkas-2011] — while *every* and *no* do not escape. The paper's
-examples are rows in `Data/Examples/Charlow2014.json`, cited from the theorems deriving them.
+Charlow treats exceptional scope as side effects taking scope after evaluation. Dekker's
+stack-based dynamic semantics becomes a monad, `StateT (Stack E) Set`, output stacks of discourse
+referents plus nondeterminism, the monad transformer of Liang, Hudak and Jones over `Set`, and
+scope-taking becomes the continuation transformer over it, as in Wadler, with Lift identified
+with `monadLift` and Lower with `ContT.eval`. A scope island is a constituent that must be
+evaluated: Danvy and Filinski's `ContT.reset` discharges quantifiers but leaves nondeterministic
+and state-changing effects intact, so indefinites, disjunctions (after Rooth and Partee), the
+drefs of proper names and the maximal drefs of dynamic quantifiers all scope out of islands and
+feed binding, obeying Brasoveanu and Farkas's Binder Roof Constraint, while *every* and *no* do
+not escape. The paper's examples are rows in `Data/Examples/Charlow2014.json`, cited from the
+theorems deriving them.
 
-The grammar is monadic application ([shan-2002]): `combine` sequences its daughters left to
-right in any monad, and its per-monad unfoldings are the thesis's application rules — functional,
-state-sensitive, nondeterministic ([kratzer-shimoyama-2002]'s rule), and their combinations. The
+The grammar is Shan's monadic application: `combine` sequences its daughters left to right in
+any monad, and its per-monad unfoldings are the thesis's application rules, functional,
+state-sensitive, nondeterministic (Kratzer and Shimoyama's rule), and their combinations. The
 Identity, Reader, Set, Reader.Set, State and State.Set monads are Lean's `Id`, `ReaderT`, `Set`,
-`ReaderT _ Set`, `StateT _ Id` and `StateT _ Set`; the Focus monad — Shan's pointed powerset, for
-[rooth-1985]'s alternatives — is the library's `WithAlternatives`. Continuation results are
+`ReaderT _ Set`, `StateT _ Id` and `StateT _ Set`; the Focus monad, Shan's pointed powerset for
+Rooth's alternatives, is the library's `WithAlternatives`. Continuation results are
 `Prop`-valued, so "some output is true" is `holds`. The stack is `List E`.
 
 ## Main definitions
@@ -64,6 +64,9 @@ Identity, Reader, Set, Reader.Set, State and State.Set monads are Lean's `Id`, `
 * `island_cond_every` — a universal does not scope out of a Reset antecedent
 * `ReaderSet.no_exceptional_binding`, `ReaderSet.run_monadLift` — Reader.Set continuations see the
   input stack only, so the variant hosts exceptional scope but not exceptional binding
+* `cf_exceptional_cond`, `cf_no_candidate_iff`, `cf_same_restrictor_iff`, `cf_layered_iff`,
+  `cf_disjunction_iff` — the choice-functional rival (section 4.7.1) matches exceptional scope but
+  closes choice functions over bound-into restrictors into unattested readings
 
 ## Implementation notes
 
@@ -79,6 +82,8 @@ Identity, Reader, Set, Reader.Set, State and State.Set monads are Lean's `Id`, `
   combination; it is `f <$> m <*> n` (`combine_eq_seq`).
 * The un-indexed pronoun retrieving the last dref is the thesis's own simplification, "an
   extremely crude measure of topicality".
+* The choice-function theorems assume that distinct values of the bound variable give distinct
+  restrictors, which the thesis states for (4.37) and leaves implicit for (4.35) and (4.38).
 
 ## TODO
 
@@ -91,8 +96,7 @@ Identity, Reader, Set, Reader.Set, State and State.Set monads are Lean's `Id`, `
   stack.
 * The thesis's grammar enforces evaluation at islands (a scope island is the sister of `fin`);
   here `ContT.reset` is inserted by hand.
-* The thesis's comparisons with choice functions ([schwarz-2001]'s truth conditions for
-  `Examples.ex4_4`) and with Independence-Friendly Logic.
+* The comparison with Independence-Friendly Logic (section 4.7.2).
 
 ## References
 
@@ -105,6 +109,7 @@ Identity, Reader, Set, Reader.Set, State and State.Set monads are Lean's `Id`, `
 * [rooth-1985]
 * [brasoveanu-farkas-2011]
 * [schwarz-2001]
+* [geurts-2000]
 * [shan-2002]
 * [shan-2004]
 * [kratzer-shimoyama-2002]
@@ -126,9 +131,9 @@ section Monadic
 
 variable {M : Type u → Type u} [Monad M] [LawfulMonad M] {α β γ δ : Type u}
 
-/-- Monadic application over a value-level combination `f`: run `m`, then `n`,
-then combine the values. Forward application is `combine (· ·)`, backward
-`combine (fun x f ↦ f x)`; the thesis's overloaded `A`. -/
+/-- `combine f m n` is monadic application over a value-level combination `f`, which runs `m`,
+then `n`, and combines the values. Forward application is `combine (· ·)` and backward
+`combine (fun x f ↦ f x)`, the thesis's overloaded `A`. -/
 def combine (f : α → β → γ) (m : M α) (n : M β) : M γ :=
   m >>= fun x ↦ n >>= fun y ↦ pure (f x y)
 
@@ -136,8 +141,8 @@ theorem combine_eq_seq (f : α → β → γ) (m : M α) (n : M β) :
     combine f m n = f <$> m <*> n := by
   simp only [combine, seq_eq_bind_map, ← bind_pure_comp, bind_assoc, pure_bind]
 
-/-- Rebracket: sequencing a combined node is sequencing its daughters in linear
-order, whatever the bracketing. -/
+/-- Sequencing a combined node is sequencing its daughters in linear order, whatever the
+bracketing, which is Rebracket. -/
 theorem combine_bind (f : α → β → γ) (m : M α) (n : M β) (k : γ → M δ) :
     combine f m n >>= k = m >>= fun x ↦ n >>= fun y ↦ k (f x y) := by
   simp [combine, bind_assoc]
@@ -233,44 +238,45 @@ Discourse referents live on a stack; pronouns retrieve the most recent one
 (`List.getLast?`). A sentence denotes a `StateSet E Prop`: from an input stack
 to a set of value–output-stack pairs. -/
 
-/-- The reference stack: drefs in order of introduction. -/
+/-- The reference stack lists drefs in order of introduction. -/
 abbrev Stack (E : Type) := List E
 
-/-- The State.Set monad: `StateT` over the `Set` monad. -/
+/-- The State.Set monad is `StateT` over the `Set` monad. -/
 abbrev StateSet (E : Type) := StateT (Stack E) Set
 
 variable {E α β : Type}
 
-/-- An indefinite: a nondeterministic individual satisfying `P`, stack unchanged. -/
+/-- `indef P` is an indefinite, a nondeterministic individual satisfying `P`, with the stack
+unchanged. -/
 def indef (P : E → Prop) : StateSet E E := fun s ↦ {q | P q.1 ∧ q.2 = s}
 
-/-- A pronoun: the topical (most recent) dref, stack unchanged. -/
+/-- `pro` is a pronoun, the topical (most recent) dref, with the stack unchanged. -/
 def pro : StateSet E E := fun s ↦ {q | s.getLast? = some q.1 ∧ q.2 = s}
 
-/-- Dref introduction: run `m` and push its value onto the stack. -/
+/-- `dref m` introduces a dref, running `m` and pushing its value onto the stack. -/
 def dref (m : StateSet E E) : StateSet E E := m >>= fun a s ↦ {(a, s ++ [a])}
 
 /-- A dynamic proposition holds at `s` when some output carries a true value. -/
 def holds (m : StateSet E Prop) (s : Stack E) : Prop := ∃ q ∈ m s, q.1
 
-/-- Dynamic negation: a test on the input stack, returning it unchanged. -/
+/-- `neg m` is dynamic negation, a test on the input stack that returns it unchanged. -/
 def neg (m : StateSet E Prop) : StateSet E Prop := fun s ↦ {(¬ holds m s, s)}
 
 /-- The conditional, from negation via `p → q ↔ ¬(p ∧ ¬q)`. -/
 def cond (m n : StateSet E Prop) : StateSet E Prop :=
   neg (m >>= fun p ↦ neg n >>= fun q ↦ pure (p ∧ q))
 
-/-- The indefinite determiner: the individuals whose restrictor holds, with the
+/-- `det c` is the indefinite determiner, the individuals whose restrictor holds, with the
 restrictor's output stacks. -/
 def det (c : E → StateSet E Prop) : StateSet E E :=
   fun s ↦ {q | ∃ p, (p, q.2) ∈ c q.1 s ∧ p}
 
-/-- `every`: `∀x. P x ⇒ Q x ↔ ¬∃x. P x ∧ ¬Q x`, a scope-taker over dynamic
-properties. -/
+/-- `every c k` is the universal, a scope-taker over dynamic properties defined by
+`∀x. P x ⇒ Q x ↔ ¬∃x. P x ∧ ¬Q x`. -/
 def every (c : E → StateSet E Prop) (k : E → StateSet E Prop) : StateSet E Prop :=
   neg (det c >>= fun x ↦ neg (k x))
 
-/-- `no`: `every` without the inner negation. -/
+/-- `no c k` is `every` without the inner negation. -/
 def no (c : E → StateSet E Prop) (k : E → StateSet E Prop) : StateSet E Prop :=
   neg (det c >>= k)
 
@@ -313,19 +319,19 @@ def no (c : E → StateSet E Prop) (k : E → StateSet E Prop) : StateSet E Prop
   funext s; ext ⟨x, s'⟩
   exact ⟨fun ⟨_, hp, h⟩ ↦ by cases hp; exact ⟨h, rfl⟩, fun ⟨h, hs⟩ ↦ ⟨_, by rw [mem_pure, hs], h⟩⟩
 
-/-- Dref introduction simplifies away (Fact 2.12): what follows sees the stack
-extended with the value. -/
+/-- Dref introduction simplifies away, since what follows sees the stack extended with the
+value (Fact 2.12). -/
 theorem dref_bind (m : StateSet E E) (π : E → StateSet E α) :
     dref m >>= π = m >>= fun a s ↦ π a (s ++ [a]) := by
   funext s; ext q; simp
 
-/-- Binding (Fact 2.13): a pronoun in the immediate scope of a dref-introducing
-program evaluates to that program's value. -/
+/-- A pronoun in the immediate scope of a dref-introducing program evaluates to that program's
+value, which is binding (Fact 2.13). -/
 theorem bind_pro (m : StateSet E E) (π : E → E → StateSet E α) :
     (dref m >>= fun ν ↦ pro >>= fun u ↦ π ν u) = dref m >>= fun ν ↦ π ν ν := by
   funext s; ext q; simp
 
-/-- A man met Polly: a nondeterministic man on the output stack. -/
+/-- *A man met Polly* leaves a nondeterministic man on the output stack. -/
 theorem indef_met_name (man : E → Prop) (met : E → E → Prop) (p : E) :
     combine (fun x f ↦ f x) (dref (indef man)) (combine (· ·) (pure met) (pure p)) =
       fun s ↦ {q | ∃ x, man x ∧ q = (met p x, s ++ [x])} := by
@@ -340,21 +346,20 @@ theorem indef_left_pro_tired (man left tired : E → Prop) :
 
 /-! ### Dynamically closed operators -/
 
-/-- It's false that a linguist left (Fact 3.2): negation discharges the
-indefinite's nondeterminism and dref. -/
+/-- In *it's false that a linguist left* negation discharges the indefinite's nondeterminism and
+dref (Fact 3.2). -/
 theorem neg_dref_indef (ling left : E → Prop) :
     neg (dref (indef ling) >>= fun x ↦ pure (left x)) = pure (¬ ∃ x, ling x ∧ left x) := by
   funext s; simp
 
-/-- Pronouns and negation (Fact 3.3): negation is not closed for anaphoric
-sensitivity. -/
+/-- Negation is not closed for anaphoric sensitivity (Fact 3.3). -/
 theorem neg_pro (m : E → StateSet E Prop) {s : Stack E} (h : s ≠ []) :
     neg (pro >>= m) s = (pro >>= fun x ↦ neg (m x)) s := by
   have := List.getLast?_eq_some_getLast h
   ext q; simp [this]
 
-/-- If someone walked, she ran (Fact 3.4): donkey binding into the consequent,
-and the conditional is closed. -/
+/-- In *if someone walked, she ran* the antecedent's indefinite binds into the consequent, and the
+conditional is closed (Fact 3.4). -/
 theorem cond_dref_indef (P w r : E → Prop) :
     cond (dref (indef P) >>= fun x ↦ pure (w x)) (pro >>= fun y ↦ pure (r y)) =
       pure (∀ x, P x → w x → r x) := by
@@ -366,8 +371,8 @@ theorem every_dref_indef (ling hist : E → Prop) (met : E → E → Prop) :
       pure (∀ x, ling x → ∃ y, hist y ∧ met y x) := by
   funext s; simp [every]
 
-/-- Every linguist rubbed her head (Fact 3.6): in-scope binding via the
-quantified-over individual's dref, then discarded. -/
+/-- In *every linguist rubbed her head* the pronoun is bound in scope by the dref of the
+quantified-over individual, which is then discarded (Fact 3.6). -/
 theorem every_dref_pro (ling : E → Prop) (rubbed : E → E → Prop) (head : E → E) :
     every (fun x ↦ pure (ling x))
         (fun x ↦ dref (pure x) >>= fun ν ↦ pro >>= fun y ↦ pure (rubbed (head y) ν)) =
@@ -380,7 +385,7 @@ A tower `ContT β (StateSet E) α` returns an `α` in a computation of type
 `StateSet E β`. `monadLift` is monadic Lift (`m ↑ = (m >>= ·)`), `ContT.eval`
 Lower (application to `pure`), scopal application is `combine` in `ContT`. -/
 
-/-- Towers: scope-takers over State.Set programs. -/
+/-- A tower is a scope-taker over State.Set programs. -/
 abbrev Tower (E β α : Type) := ContT β (StateSet E) α
 
 /-- Scopal application is continuation-monadic application (Fact 3.7). -/
@@ -391,30 +396,30 @@ theorem combine_contT {ρ : Type} {M : Type → Type} [Monad M] {α β γ : Type
 /-- Lift into the continuation monad over `Id` is the Montague lift. -/
 theorem monadLift_id {ρ α : Type} (a : Id α) : (monadLift a : ContT ρ Id α) = fun k ↦ k a := rfl
 
-/-- Polly saw every linguist, statically: a generalized quantifier in object
+/-- In a static reading of *Polly saw every linguist* a generalized quantifier in object
 position composes by scopal application and Lower discharges it. -/
 theorem static_every {ling : E → Prop} (saw : E → E → Prop) (p : E) :
     ContT.eval (combine (fun x f ↦ f x) (pure p : ContT Prop Id E)
       (combine (· ·) (pure saw) (fun k ↦ ∀ x, ling x → k x))) =
       ∀ x, ling x → saw x p := rfl
 
-/-- Scopal application subsumes monadic application (Fact 3.14): lifting,
-combining, and lowering is combining in the underlying monad. -/
+/-- Scopal application subsumes monadic application, since lifting, combining and lowering is
+combining in the underlying monad (Fact 3.14). -/
 theorem eval_combine_monadLift {M : Type u → Type u} [Monad M] [LawfulMonad M]
     {α β γ : Type u} (f : α → β → γ) (m : M α) (n : M β) :
     ContT.eval (combine f (monadLift m : ContT γ M α) (monadLift n)) = combine f m n := by
   rw [combine_eq_seq, ContT.eval_seq_monadLift, combine_eq_seq]
 
-/-- Reset and monadic programs (Fact 4.1): evaluating a combination of lifted programs and
-lifting the result is lifting their combination, so the side effects of the underlying monad,
-whichever it is, survive evaluation. -/
+/-- Evaluating a combination of lifted programs and lifting the result is lifting their
+combination, so the side effects of the underlying monad, whichever it is, survive evaluation
+(Fact 4.1). -/
 theorem reset_combine_monadLift {M : Type u → Type u} [Monad M] [LawfulMonad M]
     {α β γ ρ : Type u} (f : α → β → γ) (m : M α) (n : M β) :
     ContT.reset (combine f (monadLift m : ContT γ M α) (monadLift n)) =
       (monadLift (combine f m n) : ContT ρ M γ) :=
   congrArg monadLift (eval_combine_monadLift f m n)
 
-/-- A value coerced into a trivial program and lifted (Def. 2.9 with Lift):
+/-- `liftValue a` coerces a value into a trivial program and lifts it (Def. 2.9 with Lift), so
 `(liftValue a).run k = k a`, the Montague lift again (3.20). -/
 def liftValue (a : α) : Tower E β α := monadLift (pure a : StateSet E α)
 
@@ -435,15 +440,15 @@ def noDP (P : E → Prop) : Tower E Prop E := no fun x ↦ (pure (P x) : StateSe
     (noDP P).run k = neg (indef P >>= k) := by
   simp [noDP, no, ContT.run]
 
-/-- John saw a linguist (3.23): the indefinite's nondeterminism survives Lower. -/
+/-- In *John saw a linguist* the indefinite's nondeterminism survives Lower (3.23). -/
 theorem name_saw_indef (j : E) (saw : E → E → Prop) (ling : E → Prop) :
     ContT.eval (combine (fun x f ↦ f x) (liftValue j : Tower E Prop E)
       (combine (· ·) (liftValue saw) (monadLift (indef ling)))) =
       indef ling >>= fun x ↦ pure (saw x j) := by
   funext s; ext q; simp [combine, ContT.eval]
 
-/-- A man saw every linguist, surface scope (3.24): the universal is trapped in
-the indefinite's scope. -/
+/-- In the surface-scope reading of *a man saw every linguist* the universal is trapped in the
+indefinite's scope (3.24). -/
 theorem indef_saw_every (man ling : E → Prop) (saw : E → E → Prop) :
     ContT.eval (combine (fun x f ↦ f x) (monadLift (indef man) : Tower E Prop E)
       (combine (· ·) (liftValue saw) (everyDP ling))) =
@@ -452,8 +457,8 @@ theorem indef_saw_every (man ling : E → Prop) (saw : E → E → Prop) :
 
 /-! ### Bind -/
 
-/-- The Bind type-shifter (Def. 3.16): push the tower's value onto the stack
-before continuing. -/
+/-- `bindShift m` is the Bind type-shifter (Def. 3.16), which pushes the tower's value onto the
+stack before continuing. -/
 def bindShift (m : Tower E β E) : Tower E β E := fun k ↦ m.run fun a s ↦ k a (s ++ [a])
 
 @[simp] theorem run_bindShift (m : Tower E β E) (k : E → StateSet E β) :
@@ -475,8 +480,8 @@ theorem run_bindShift_eq_dref (m : Tower E β E) (k : E → StateSet E β) :
     bindShift (liftValue a : Tower E β E) = monadLift (dref (pure a)) :=
   bindShift_monadLift _
 
-/-- DyS correspondence for indefinites (Fact 3.17): a Bind-shifted lifted
-indefinite feeds its scope each satisfier with the extended stack. -/
+/-- A Bind-shifted lifted indefinite feeds its scope each satisfier with the extended stack, the
+DyS correspondence for indefinites (Fact 3.17). -/
 theorem run_bindShift_monadLift_indef (P : E → Prop) (k : E → StateSet E β) :
     (bindShift (monadLift (indef P) : Tower E β E)).run k =
       fun s ↦ ⋃ x, ⋃ (_ : P x), k x (s ++ [x]) := by
@@ -487,7 +492,7 @@ theorem run_monadLift_pro (k : E → StateSet E β) :
     (monadLift pro : Tower E β E).run k = fun s ↦ ⋃ x ∈ s.getLast?, k x s := by
   funext s; ext q; simp
 
-/-- John rubbed his head (3.25): binding without coindexation. -/
+/-- *John rubbed his head* is bound without coindexation (3.25). -/
 theorem name_rubbed_pro_head (j : E) (rubbed : E → E → Prop) (head : E → E) :
     ContT.eval (combine (fun x f ↦ f x) (bindShift (liftValue j) : Tower E Prop E)
       (combine (· ·) (liftValue rubbed)
@@ -495,7 +500,7 @@ theorem name_rubbed_pro_head (j : E) (rubbed : E → E → Prop) (head : E → E
       fun s ↦ {(rubbed (head j) j, s ++ [j])} := by
   funext s; ext q; simp [combine, ContT.eval]
 
-/-- John's mom saw him (3.26): binding without surface c-command. -/
+/-- *John's mom saw him* is bound without surface c-command (3.26). -/
 theorem name_mom_saw_pro (j : E) (saw : E → E → Prop) (mom : E → E) :
     ContT.eval (combine (fun x f ↦ f x)
       (combine (fun x f ↦ f x) (bindShift (liftValue j) : Tower E Prop E) (liftValue mom))
@@ -515,8 +520,8 @@ def eval₂ (m : Tower E β (Tower E β β)) : StateSet E β := m.run ContT.eval
 
 @[simp] theorem eval₂_def (m : Tower E β (Tower E β β)) : eval₂ m = m.run ContT.eval := rfl
 
-/-- A man saw every linguist, inverse scope (3.28): the universal discharges the
-indefinite's nondeterminism and dref. -/
+/-- In the inverse-scope reading of *a man saw every linguist* the universal discharges the
+indefinite's nondeterminism and dref (3.28). -/
 theorem every_over_indef (man ling : E → Prop) (saw : E → E → Prop) :
     eval₂ (combine (combine (fun x f ↦ f x))
       (pure (bindShift (monadLift (indef man))) : Tower E Prop (Tower E Prop E))
@@ -524,8 +529,8 @@ theorem every_over_indef (man ling : E → Prop) (saw : E → E → Prop) :
       pure (∀ y, ling y → ∃ x, man x ∧ saw y x) := by
   funext s; ext q; simp [combine, ContT.eval, Function.comp_def]
 
-/-- Every owl that Al saw (3.30): the gap is a pronoun bound by the
-determiner's dref, the relative pronoun conjunction. -/
+/-- In *every owl that Al saw* the gap is a pronoun bound by the determiner's dref, and the
+relative pronoun is conjunction (3.30). -/
 theorem every_owl_that_saw (owl : E → Prop) (saw : E → E → Prop) (a : E)
     (k : E → StateSet E Prop) :
     every (fun x ↦ dref (pure x) >>= fun ν ↦ pro >>= fun y ↦ pure (owl ν ∧ saw y a)) k =
@@ -540,24 +545,23 @@ is invisible to a lifted program, so whatever survives evaluation keeps taking
 scope. A tower whose value is itself a program is finished by lifting the value
 and lowering in one fell swoop, `ContT.eval (m >>= monadLift)`. -/
 
-/-- Resetting a linguist left (Fact 4.2): nothing changes — indefinites escape
-islands (`Examples.ex4_1a`). -/
+/-- Resetting *a linguist left* changes nothing, so indefinites escape islands (Fact 4.2,
+`Examples.ex4_1a`). -/
 theorem reset_indef_left (ling left : E → Prop) :
     ContT.reset (combine (fun x f ↦ f x) (monadLift (indef ling) : Tower E Prop E)
       (liftValue left)) =
       (monadLift (indef ling >>= fun x ↦ pure (left x)) : Tower E Prop Prop) := by
   rw [liftValue, reset_combine_monadLift]; simp [combine]
 
-/-- Resetting every linguist left (Fact 4.4): the universal is discharged into a
-truth condition on the bottom level — quantifiers do not escape
-(`Examples.ex4_1b`, `Examples.ex4_1c`). -/
+/-- Resetting *every linguist left* discharges the universal into a truth condition on the
+bottom level, so quantifiers do not escape (Fact 4.4, `Examples.ex4_1b`, `Examples.ex4_1c`). -/
 theorem reset_every (ling left : E → Prop) :
     ContT.reset (combine (fun x f ↦ f x) (everyDP ling : Tower E Prop E) (liftValue left)) =
       (liftValue (∀ x, ling x → left x) : Tower E Prop Prop) := by
   unfold ContT.reset liftValue; congr 1; funext s; ext q; simp [combine, ContT.eval]
 
-/-- Resetting a man met every linguist (Fact 4.5): the indefinite's
-nondeterminism and dref survive, the universal does not. -/
+/-- Resetting *a man met every linguist* keeps the indefinite's nondeterminism and dref but not
+the universal (Fact 4.5). -/
 theorem reset_indef_every (man ling : E → Prop) (met : E → E → Prop) :
     ContT.reset (combine (fun x f ↦ f x) (bindShift (monadLift (indef man)) : Tower E Prop E)
       (combine (· ·) (liftValue met) (everyDP ling))) =
@@ -565,8 +569,8 @@ theorem reset_indef_every (man ling : E → Prop) (met : E → E → Prop) :
         Tower E Prop Prop) := by
   unfold ContT.reset; congr 1; funext s; ext q; simp [combine, ContT.eval]
 
-/-- Resetting the inverse-scope reading (Fact 4.6): an indefinite an
-inverse-scoped universal discharged cannot be reanimated. -/
+/-- Resetting the inverse-scope reading cannot reanimate an indefinite that an inverse-scoped
+universal discharged (Fact 4.6). -/
 theorem reset_every_indef (man ling : E → Prop) (met : E → E → Prop) :
     (monadLift (eval₂ (combine (combine (fun x f ↦ f x))
       (pure (bindShift (monadLift (indef man))) : Tower E Prop (Tower E Prop E))
@@ -575,8 +579,8 @@ theorem reset_every_indef (man ling : E → Prop) (met : E → E → Prop) :
       liftValue (∀ y, ling y → ∃ x, man x ∧ met y x) := by
   rw [every_over_indef]; rfl
 
-/-- Resetting every linguist met her (Fact 4.7): the pronoun's stack
-sensitivity survives the universal. -/
+/-- Resetting *every linguist met her* keeps the pronoun's stack sensitivity past the universal
+(Fact 4.7). -/
 theorem reset_every_pro (ling : E → Prop) (met : E → E → Prop) (k : Prop → StateSet E α)
     {s : Stack E} (h : s ≠ []) :
     (ContT.reset (combine (fun x f ↦ f x) (everyDP ling : Tower E Prop E)
@@ -585,8 +589,8 @@ theorem reset_every_pro (ling : E → Prop) (met : E → E → Prop) (k : Prop �
   have := List.getLast?_eq_some_getLast h
   ext q; simp [ContT.reset, combine, ContT.eval, this]
 
-/-- A man met every linguist, and he left (4.7): both sentences are Reset, and
-the indefinite binds across them. -/
+/-- In *a man met every linguist, and he left* both sentences are Reset and the indefinite binds
+across them (4.7). -/
 theorem exceptional_binding (man ling left : E → Prop) (met : E → E → Prop) :
     ContT.eval (combine (fun x f ↦ f x)
       (ContT.reset (combine (fun x f ↦ f x) (bindShift (monadLift (indef man)) : Tower E Prop E)
@@ -597,8 +601,8 @@ theorem exceptional_binding (man ling left : E → Prop) (met : E → E → Prop
       dref (indef man) >>= fun x ↦ pure ((∀ y, ling y → met y x) ∧ left x) := by
   funext s; ext q; simp [combine, ContT.eval, ContT.reset]
 
-/-- Exceptional scope over negation (4.8): after Reset the embedded indefinite's
-nondeterminism outscopes `it wasn't the case that`. -/
+/-- After Reset the embedded indefinite's nondeterminism outscopes `it wasn't the case that`,
+exceptional scope over negation (4.8). -/
 theorem exceptional_neg (rel ling : E → Prop) (met : E → E → Prop) :
     ContT.eval ((combine (· ·) (liftValue neg : Tower E Prop (StateSet E Prop → StateSet E Prop))
       (pure <$> ContT.reset (combine (fun x f ↦ f x) (monadLift (indef rel) : Tower E Prop E)
@@ -606,8 +610,8 @@ theorem exceptional_neg (rel ling : E → Prop) (met : E → E → Prop) :
       indef rel >>= fun x ↦ pure (¬ ∀ y, ling y → met y x) := by
   funext s; ext q; simp [combine, ContT.eval, ContT.reset]
 
-/-- If a relative of mine dies, I'll be rich (4.9, `Examples.ex4_1a`): `∃ > if`
-from a Reset antecedent. The thesis notes that the truth conditions are a little too weak, one
+/-- *If a relative of mine dies, I'll be rich* gets `∃ > if` from a Reset antecedent (4.9,
+`Examples.ex4_1a`). The thesis notes that the truth conditions are a little too weak, one
 relative who does not die verifying the conditional. -/
 theorem exceptional_cond (rel dies : E → Prop) (rich : Prop) :
     ContT.eval ((combine (· ·)
@@ -618,7 +622,7 @@ theorem exceptional_cond (rel dies : E → Prop) (rich : Prop) :
       indef rel >>= fun x ↦ pure (dies x → rich) := by
   funext s; ext q; simp [combine, ContT.eval, ContT.reset, cond]
 
-/-- If every relative of mine dies, I'll be rich: the universal is discharged inside the Reset
+/-- In *if every relative of mine dies, I'll be rich* the universal is discharged inside the Reset
 antecedent, so the conditional is a plain truth condition with the universal below `if`, and no
 reading puts it above (`Examples.ex4_1b`). -/
 theorem island_cond_every (rel dies : E → Prop) (rich : Prop) :
@@ -630,8 +634,8 @@ theorem island_cond_every (rel dies : E → Prop) (rich : Prop) :
       pure ((∀ x, rel x → dies x) → rich) := by
   funext s; ext q; simp [combine, ContT.eval, ContT.reset, cond]
 
-/-- Exceptional scope feeds binding (4.11): the dref of a relative of mine
-escapes the conditional and binds she. -/
+/-- Exceptional scope feeds binding, since the dref of *a relative of mine* escapes the
+conditional and binds *she* (4.11). -/
 theorem exceptional_feeds_binding (rel dies steelMagnate : E → Prop) (rich : Prop) :
     ContT.eval (combine (fun x f ↦ f x)
       (monadLift (ContT.eval ((combine (· ·)
@@ -645,8 +649,8 @@ theorem exceptional_feeds_binding (rel dies steelMagnate : E → Prop) (rich : P
       dref (indef rel) >>= fun x ↦ pure ((dies x → rich) ∧ steelMagnate x) := by
   funext s; ext q; simp [combine, ContT.eval, ContT.reset, cond]
 
-/-- The Binder Roof Constraint (4.12, `Examples.ex4_4`): giving a paper he wrote
-scope over no candidate evaluates the pronoun outside the quantifier's scope. -/
+/-- Giving *a paper he wrote* scope over *no candidate* evaluates the pronoun outside the
+quantifier's scope, the Binder Roof Constraint (4.12, `Examples.ex4_4`). -/
 theorem brc_derivation (cand : E → Prop) (paperBy submitted : E → E → Prop) :
     eval₂ (combine (combine (fun x f ↦ f x))
       (pure (bindShift (noDP cand)) : Tower E Prop (Tower E Prop E))
@@ -654,6 +658,86 @@ theorem brc_derivation (cand : E → Prop) (paperBy submitted : E → E → Prop
         (pure <$> monadLift (pro >>= fun z ↦ indef (paperBy z))))) =
       pro >>= fun z ↦ indef (paperBy z) >>= fun y ↦ pure (¬ ∃ x, cand x ∧ submitted y x) := by
   funext s; ext q; simp [combine, ContT.eval, Function.comp_def]
+
+/-! ### Choice functions (section 4.7.1)
+
+The choice-functional theory interprets an indefinite as a choice function applied to its
+restrictor and closes the function existentially wherever it likes, so the indefinite takes
+apparent scope without moving. When the restrictor varies with a bound variable, closing the
+function above the binder yields readings that no scope-taking derivation gives. -/
+
+section ChoiceFunction
+
+open Reference Quantifier
+
+/-- Closing the choice function above the conditional gives the exceptional reading that
+`exceptional_cond` derives by scope (4.34). -/
+theorem cf_exceptional_cond (rel dies : E → Prop) (rich : Prop) (hrel : ∃ x, rel x)
+    (s : Stack E) :
+    (∃ f : ChoiceFunction E, dies (f rel) → rich) ↔
+      holds (indef rel >>= fun x ↦ pure (dies x → rich)) s := by
+  refine (ChoiceFunction.exists_apply_iff_some hrel fun x ↦ dies x → rich).trans ?_
+  simp only [holds, indef, GQ.some, mem_bind, mem_pure, Set.mem_ofPred_eq]
+  constructor
+  · rintro ⟨x, hx, h⟩
+    exact ⟨_, ⟨(x, s), ⟨hx, rfl⟩, rfl⟩, h⟩
+  · rintro ⟨_, ⟨q, ⟨hq, -⟩, rfl⟩, h⟩
+    exact ⟨q.1, hq, h⟩
+
+/-- Closing the choice function above *no candidate* gives the reading on which no candidate
+submitted every paper he wrote ([schwarz-2001]), given that every candidate wrote a paper and no
+two wrote the same papers (4.35, `Examples.ex4_4`). -/
+theorem cf_no_candidate_iff [Nonempty E] (cand : E → Prop) (paperBy submitted : E → E → Prop)
+    (hwrote : ∀ x, cand x → ∃ y, paperBy x y) (hinj : Set.InjOn paperBy {x | cand x}) :
+    (∃ f : ChoiceFunction E, ¬ ∃ x, cand x ∧ submitted (f (paperBy x)) x) ↔
+      ¬ ∃ x, cand x ∧ ∀ y, paperBy x y → submitted y x := by
+  have h := ChoiceFunction.exists_forall_apply_iff_of_injective (ι := {x | cand x})
+    (Set.injOn_iff_injective.1 hinj) (fun x ↦ hwrote x x.2) fun x y ↦ ¬ submitted y x
+  simp only [Set.domRestrict_apply, Subtype.forall, Set.mem_ofPred_eq, GQ.some] at h
+  push Not
+  simpa using h
+
+/-- When every girl fancies the same boys `B`, a choice function closed above *every girl* picks
+one boy for all of them, the reading [geurts-2000] objects to (4.36). -/
+theorem cf_same_restrictor_iff (girl : E → Prop) (boysFancied gave : E → E → Prop) {B : E → Prop}
+    (hB : ∃ y, B y) (hsame : ∀ x, girl x → boysFancied x = B) :
+    (∃ f : ChoiceFunction E, ∀ x, girl x → gave (f (boysFancied x)) x) ↔
+      ∃ y, B y ∧ ∀ x, girl x → gave y x := by
+  rw [← GQ.some, ← ChoiceFunction.exists_apply_iff_some hB]
+  exact exists_congr fun f ↦ forall₂_congr fun x hx ↦ by rw [hsame x hx]
+
+/-- Closing the choice function of *a book by …* above negation and that of *a famous linguist*
+below it gives the reading that every famous linguist wrote a book I did not read, given that no
+two famous linguists wrote the same books (4.37, `Examples.ex4_6`). -/
+theorem cf_layered_iff [Nonempty E] (linguist : E → Prop) (bookBy : E → E → Prop)
+    (read : E → Prop) (hling : ∃ x, linguist x) (hbook : ∀ x, linguist x → ∃ y, bookBy x y)
+    (hinj : Set.InjOn bookBy {x | linguist x}) :
+    (∃ f : ChoiceFunction E, ¬ ∃ g : ChoiceFunction E, read (f (bookBy (g linguist)))) ↔
+      ∀ x, linguist x → ∃ y, bookBy x y ∧ ¬ read y := by
+  have hneg (f : ChoiceFunction E) : (¬ ∃ g : ChoiceFunction E, read (f (bookBy (g linguist)))) ↔
+      ∀ x, linguist x → ¬ read (f (bookBy x)) := by
+    rw [not_exists]
+    exact ChoiceFunction.forall_apply_iff_every hling fun z ↦ ¬ read (f (bookBy z))
+  have h := ChoiceFunction.exists_forall_apply_iff_of_injective (ι := {x | linguist x})
+    (Set.injOn_iff_injective.1 hinj) (fun x ↦ hbook x x.2) fun _ y ↦ ¬ read y
+  simp only [Set.domRestrict_apply, Subtype.forall, Set.mem_ofPred_eq, GQ.some] at h
+  simpa only [hneg] using h
+
+/-- A choice function closed above *no candidate* over the doubleton of each candidate's vita
+and portfolio gives the reading that no candidate submitted both, given that the doubletons are
+distinct (4.38). -/
+theorem cf_disjunction_iff [Nonempty E] (cand : E → Prop) (vita portfolio : E → E)
+    (submit : E → E → Prop)
+    (hinj : Set.InjOn (fun x y ↦ y = vita x ∨ y = portfolio x) {x | cand x}) :
+    (∃ f : ChoiceFunction E, ¬ ∃ x, cand x ∧ submit (f fun y ↦ y = vita x ∨ y = portfolio x) x) ↔
+      ¬ ∃ x, cand x ∧ submit (vita x) x ∧ submit (portfolio x) x := by
+  have h := ChoiceFunction.exists_forall_apply_iff_of_injective (ι := {x | cand x})
+    (Set.injOn_iff_injective.1 hinj) (fun x ↦ ⟨vita x, .inl rfl⟩) fun x y ↦ ¬ submit y x.1
+  simp only [Set.domRestrict_apply, Subtype.forall, Set.mem_ofPred_eq, GQ.some] at h
+  push Not
+  simpa [or_imp, forall_and, imp_iff_not_or] using h
+
+end ChoiceFunction
 
 /-! ### Selective exceptional scope
 
@@ -678,7 +762,7 @@ theorem indef_visits_indef_layered (law rel : E → Prop) (visits : E → E → 
       indef rel >>= fun y ↦ pure (indef law >>= fun x ↦ pure (visits y x)) := by
   funext s; ext q; simp [combine, ContT.eval, Function.comp_def]
 
-/-- Unfolding a layered program: lifting twice restores the three-level tower. -/
+/-- Lifting a layered program twice restores the three-level tower. -/
 theorem monadLift_layered {M : Type u → Type u} [Monad M] [LawfulMonad M] {ρ α β : Type u}
     (m : M α) (f : α → M β) :
     (monadLift <$> (monadLift (m >>= fun y ↦ pure (f y)) : ContT ρ M (M β)) :
@@ -698,17 +782,17 @@ section Plural
 
 variable {A : Type}
 
-/-- The distributivity operator (Def. 4.5): a tower quantifying over the atoms
-of its plural argument. -/
+/-- `distr R X` is the distributivity operator (Def. 4.5), a tower quantifying over the atoms of
+its plural argument. -/
 def distr (R : Set A → α) (X : Set A) : Tower (Set A) Prop α :=
   fun k s ↦ {(∀ x ∈ X, holds (k (R {x})) s, s)}
 
 @[simp] theorem run_distr (R : Set A → α) (X : Set A) (k : α → StateSet (Set A) Prop) :
     (distr R X).run k = fun s ↦ {(∀ x ∈ X, holds (k (R {x})) s, s)} := rfl
 
-/-- A guard is standing in front of two buildings, distributive inverse scope
-(4.17): guards vary with buildings, and the plural's nondeterminism outscopes
-the distributed universal. -/
+/-- In the distributive inverse-scope reading of *a guard is standing in front of two buildings*
+guards vary with buildings, and the plural's nondeterminism outscopes the distributed universal
+(4.17). -/
 theorem indef_fronts_two_distr (guard bldgs : Set A → Prop) (fronts : Set A → Set A → Prop) :
     (combine (combine (combine (fun x f ↦ f x)))
       (pure (pure (monadLift (indef guard))) :
@@ -746,16 +830,15 @@ def or (m n : Tower E β α) : Tower E β α := fun k ↦ m.run k <|> n.run k
 @[simp] theorem run_or (m n : Tower E β α) (k : α → StateSet E β) :
     (or m n).run k = (m.run k <|> n.run k) := rfl
 
-/-- Chomsky or May left (4.27): a dref in nondeterministic superposition. -/
+/-- *Chomsky or May left* introduces a dref in nondeterministic superposition (4.27). -/
 theorem or_names_left (c m : E) (left : E → Prop) :
     ContT.eval (combine (fun x f ↦ f x) (or (bindShift (liftValue c)) (bindShift (liftValue m)))
       (liftValue left : Tower E Prop (E → Prop))) =
       (dref (pure c) <|> dref (pure m)) >>= fun x ↦ pure (left x) := by
   funext s; ext q; simp [combine, ContT.eval]
 
-/-- Whenever I see Alf or hear Cal, I scream his name (4.28): the antecedent
-is a proper subpart of each disjunct, and the disjunctive program still hosts
-the dref. -/
+/-- In *whenever I see Alf or hear Cal, I scream his name* the antecedent is a proper subpart of
+each disjunct, and the disjunctive program still hosts the dref (4.28). -/
 theorem or_subparts (me a c : E) (see hear : E → E → Prop) :
     ContT.eval (combine (fun x f ↦ f x) (liftValue me : Tower E Prop E)
       (or (combine (fun x f ↦ f x) (bindShift (liftValue a)) (liftValue see))
@@ -764,16 +847,16 @@ theorem or_subparts (me a c : E) (see hear : E → E → Prop) :
         dref (pure c) >>= fun x ↦ pure (hear x me)) := by
   funext s; ext q; simp [combine, ContT.eval]
 
-/-- Disjunction and the BRC (4.29): disjoining externally lifted indefinites puts program
-disjunction above the continuation and the indefinites below it. -/
+/-- Disjoining externally lifted indefinites puts program disjunction above the continuation and
+the indefinites below it, disjunction under the Binder Roof Constraint (4.29). -/
 theorem or_pure_pure (steak burger : E → Prop) :
     or (pure (monadLift (indef steak)) : Tower E Prop (Tower E Prop E))
       (pure (monadLift (indef burger))) =
       fun c ↦ c (monadLift (indef steak)) <|> c (monadLift (indef burger)) := rfl
 
-/-- Either everyone ate a steak or a hamburger (`Examples.ex4_24b`): with `everyone` externally
-lifted beside the disjunction of (4.29), the universal outscopes each indefinite and not the
-disjunction's nondeterminism, which lives on the top level. -/
+/-- In *either everyone ate a steak or a hamburger*, with `everyone` externally lifted beside the
+disjunction of (4.29), the universal outscopes each indefinite and not the disjunction's
+nondeterminism, which lives on the top level (`Examples.ex4_24b`). -/
 theorem or_over_every (person steak burger : E → Prop) (ate : E → E → Prop) :
     eval₂ (combine (combine (fun x f ↦ f x))
       (pure (everyDP person) : Tower E Prop (Tower E Prop E))
@@ -783,15 +866,16 @@ theorem or_over_every (person steak burger : E → Prop) (ate : E → E → Prop
         pure (∀ y, person y → ∃ x, burger x ∧ ate x y)) := by
   funext s; ext q; simp [combine, ContT.eval, Function.comp_def]
 
-/-- Someone ate every steak or every burger (4.30): disjoining internally lifted universals puts
-their scopal effects, with the disjunction, on the top level. -/
+/-- In *someone ate every steak or every burger* disjoining internally lifted universals puts their
+scopal effects, with the disjunction, on the top level (4.30). -/
 theorem or_map_pure_every (steak burger : E → Prop) :
     or (pure <$> everyDP steak : Tower E Prop (Tower E Prop E)) (pure <$> everyDP burger) =
       fun c ↦ (everyDP steak).run (fun x ↦ c (pure x)) <|>
         (everyDP burger).run (fun x ↦ c (pure x)) := rfl
 
-/-- Mary or John or Bill (4.31), a higher-order disjunctive program: the disjunction of Mary and
-John is lifted and disjoined with Bill, and lowering twice leaves the layering `{{m, j}, b}`. -/
+/-- In the higher-order disjunctive program *Mary or John or Bill* (4.31) the disjunction of Mary
+and John is lifted and disjoined with Bill, and lowering twice leaves the layering
+`{{m, j}, b}`. -/
 theorem or_or_names (m j b : E) :
     ContT.eval (ContT.eval <$>
       or (pure (or (liftValue m) (liftValue j)) : Tower E (StateSet E E) (Tower E E E))
@@ -804,8 +888,8 @@ theorem or_or_names (m j b : E) :
 Anything Bind-shifted survives evaluation (Fact 1.4, Ch. 5.2), so a proper name
 inside an island binds a sloppy pro-form outside it. -/
 
-/-- Everyone thinks BILL will come (5.8, `Examples.ex5_7a`): Bill's dref takes
-inverse scope over the dynamically closed `everyone`. -/
+/-- In *everyone thinks BILL will come* Bill's dref takes inverse scope over the dynamically
+closed `everyone` (5.8, `Examples.ex5_7a`). -/
 theorem name_dref_inverse (person : E → Prop) (thinks : Prop → E → Prop) (come : E → Prop)
     (b : E) :
     eval₂ (combine (combine (fun x f ↦ f x))
@@ -815,9 +899,8 @@ theorem name_dref_inverse (person : E → Prop) (thinks : Prop → E → Prop) (
       dref (pure b) >>= fun y ↦ pure (∀ x, person x → thinks (come y) x) := by
   funext s; ext q; simp [combine, ContT.eval, Function.comp_def]
 
-/-- ... we'll have to invite him: the escaped dref binds the consequent's
-pronoun, so replacing BILL by John yields a meaning identical to the
-antecedent's — Contrast is satisfiable. -/
+/-- In *… we'll have to invite him* the escaped dref binds the consequent's pronoun, so replacing
+BILL by John yields a meaning identical to the antecedent's and Contrast is satisfiable. -/
 theorem name_dref_cond (person : E → Prop) (thinks : Prop → E → Prop) (come invite : E → Prop)
     (b : E) :
     cond (dref (pure b) >>= fun y ↦ pure (∀ x, person x → thinks (come y) x))
@@ -843,15 +926,15 @@ def dynGQ (DET : Set A → Set A → Prop) (M : Set A) : Tower (Set A) Prop A :=
     (dynGQ DET M).run k =
       fun s ↦ {(DET M {x | x ∈ M ∧ holds (k x) s}, s ++ [{x | x ∈ M ∧ holds (k x) s}])} := rfl
 
-/-- Exactly one linguist left (5.19): true iff one linguist left, with the
-linguists who left on the stack. -/
+/-- *Exactly one linguist left* is true iff one linguist left, with the linguists who left on the
+stack (5.19). -/
 theorem dynGQ_left (ling left : Set A) :
     ContT.eval (combine (fun x f ↦ f x) (dynGQ (fun _ N ↦ N.ncard = 1) ling)
       (liftValue (· ∈ left))) =
       dref (pure (ling ∩ left)) >>= fun N ↦ pure (N.ncard = 1) := by
   funext s; ext q; simp [combine, ContT.eval]
 
-/-- Exactly one linguist left; she was tired (5.3.2): she is the maximal dref. -/
+/-- In *exactly one linguist left; she was tired* the pronoun is the maximal dref (5.3.2). -/
 theorem dynGQ_pro (ling left : Set A) (tired : Set A → Prop) :
     ContT.eval (combine (fun x f ↦ f x)
       (monadLift (dref (pure (ling ∩ left)) >>= fun N ↦ pure (N.ncard = 1)) :
@@ -861,8 +944,8 @@ theorem dynGQ_pro (ling left : Set A) (tired : Set A → Prop) :
       dref (pure (ling ∩ left)) >>= fun N ↦ pure (N.ncard = 1 ∧ tired N) := by
   funext s; ext q; simp [combine, ContT.eval]
 
-/-- It's absolutely false that no senators admire Cruz (5.24, `Examples.ex5_23`):
-negation flips the truth value, and the refset dref survives for they. -/
+/-- In *it's absolutely false that no senators admire Cruz* negation flips the truth value, and
+the refset dref survives for *they* (5.24, `Examples.ex5_23`). -/
 theorem dynGQ_neg (sen admire : Set A) :
     ContT.eval ((combine (· ·) (liftValue (neg (E := Set A)) : Tower (Set A) Prop _)
       (pure <$> ContT.reset (combine (fun x f ↦ f x) (dynGQ (fun _ N ↦ N = ∅) sen)
@@ -885,8 +968,8 @@ across islands. -/
 
 namespace Focus
 
-/-- Application in the Focus monad (Fact 5.4): pointwise on values, `NA` on
-alternatives — Rooth's two interpretation functions at once. -/
+/-- Application in the Focus monad is pointwise on values and `NA` on alternatives, Rooth's two
+interpretation functions at once (Fact 5.4). -/
 theorem combine_def {α β γ : Type u} (f : α → β → γ) (m n : WithAlternatives _) :
     combine f m n = ⟨f m.ordinary n.ordinary,
       {c | ∃ x ∈ m.alternatives, ∃ y ∈ n.alternatives, c = f x y}⟩ := by
@@ -896,14 +979,14 @@ theorem combine_def {α β γ : Type u} (f : α → β → γ) (m n : WithAltern
 
 variable {E W : Type}
 
-/-- F-marking (Def. 5.7): a value with its contextual alternatives. -/
+/-- `fmark alt a` is F-marking (Def. 5.7), a value with its contextual alternatives. -/
 def fmark (alt : E → Set E) (a : E) : WithAlternatives E := ⟨a, alt a⟩
 
-/-- `only` (Def. 5.10): the VP's value is the sole true alternative. -/
+/-- `only P` holds when the VP's value is the sole true alternative (Def. 5.10). -/
 def only (P : WithAlternatives (E → W → Prop)) : E → W → Prop :=
   fun x w ↦ {Q | Q ∈ P.alternatives ∧ Q x w} = {P.ordinary}
 
-/-- `also` (Def. 5.10): some other alternative is true too. -/
+/-- `also P` holds when some other alternative is true too (Def. 5.10). -/
 def also (P : WithAlternatives (E → W → Prop)) : E → W → Prop :=
   fun x w ↦ {P.ordinary} ⊂ {Q | Q ∈ P.alternatives ∧ Q x w}
 
@@ -915,7 +998,7 @@ theorem fmark_left (alt : E → Set E) (j : E) (left : E → Prop) :
   rw [eval_combine_monadLift, combine_def]
   exact WithAlternatives.ext rfl (by ext; simp [fmark, WithAlternatives.alternatives_pure])
 
-/-- Sharon only met JOHNᶠ: association with focus at the VP. -/
+/-- *Sharon only met JOHNᶠ* associates with focus at the VP. -/
 theorem only_met_fmark (alt : E → Set E) (j : E) (met : E → E → W → Prop) :
     only (ContT.eval (combine (· ·) (monadLift (pure met : WithAlternatives (E → E → W → Prop)) :
         ContT (E → W → Prop) WithAlternatives _)
@@ -925,7 +1008,7 @@ theorem only_met_fmark (alt : E → Set E) (j : E) (met : E → E → W → Prop
   rw [eval_combine_monadLift, combine_def]
   simp [only, fmark, WithAlternatives.alternatives_pure]
 
-/-- Unselective association (5.4.3): `only` binds both foci in its scope. -/
+/-- In unselective association `only` binds both foci in its scope (5.4.3). -/
 theorem only_fmark_fmark (alt : E → Set E) (b s : E) (intro : E → E → E → W → Prop) :
     only (ContT.eval (combine (· ·)
       (combine (· ·) (monadLift (pure intro : WithAlternatives (E → E → E → W → Prop)) :
@@ -937,9 +1020,9 @@ theorem only_fmark_fmark (alt : E → Set E) (b s : E) (intro : E → E → E �
   simp [only, combine, ContT.eval, fmark, WithAlternatives.alternatives_bind,
     WithAlternatives.alternatives_pure, eq_comm]
 
-/-- Selective association (5.4.4, `Examples.ex5_27b`): with BILLᶠ externally and
-SUEᶠ internally lifted, `only` catches Bill's alternatives at the inner level and
-Sue's survive to `also`: `also > SUEᶠ > only > BILLᶠ`. -/
+/-- In selective association, with BILLᶠ externally and SUEᶠ internally lifted, `only` catches
+Bill's alternatives at the inner level and Sue's survive to `also`, for the scope order
+`also > SUEᶠ > only > BILLᶠ` (5.4.4, `Examples.ex5_27b`). -/
 theorem only_focus_layered (alt : E → Set E) (b s : E) (intro : E → E → E → W → Prop) :
     ContT.eval (combine (· ·)
       (monadLift (pure only : WithAlternatives (WithAlternatives (E → W → Prop) → E → W → Prop)) :
@@ -958,8 +1041,8 @@ theorem only_focus_layered (alt : E → Set E) (b s : E) (intro : E → E → E 
   · ext P
     simp [combine, ContT.eval, fmark, Function.comp_def, eq_comm]
 
-/-- He also only introduced BILLᶠ to SUEᶠ (`Examples.ex5_27b`): merging in `also` captures the
-surviving alternatives of SUEᶠ, for the scope order `also > SUEᶠ > only > BILLᶠ`. -/
+/-- In *he also only introduced BILLᶠ to SUEᶠ* merging in `also` captures the surviving
+alternatives of SUEᶠ, for the scope order `also > SUEᶠ > only > BILLᶠ` (`Examples.ex5_27b`). -/
 theorem also_only_focus_layered (alt : E → Set E) (b s : E) (intro : E → E → E → W → Prop) :
     also (ContT.eval (combine (· ·)
       (monadLift (pure only :
@@ -985,8 +1068,8 @@ theorem reset_fmark (alt : E → Set E) (j : E) (left : E → Prop) :
 
 end Focus
 
-/-- Two underlying monads (5.4.5): Focus effects on the top level and State.Set
-effects on the second evaluate to a layered `WithAlternatives (StateSet E Prop)`. -/
+/-- With two underlying monads, Focus effects on the top level and State.Set effects on the
+second evaluate to a layered `WithAlternatives (StateSet E Prop)` (5.4.5). -/
 theorem focus_over_stateSet (alt : E → Set E) (p : E) (ling : E → Prop) (met : E → E → Prop) :
     ContT.eval (ContT.eval <$> combine (combine (fun x f ↦ f x))
       (pure (monadLift (indef ling)) : ContT (StateSet E Prop) WithAlternatives (Tower E Prop E))
@@ -1008,17 +1091,17 @@ without the abstraction rule [shan-2004] criticised. But `pure` discards the
 stack, so nothing binds out of an island: the account of exceptional scope lives
 in the Set monad both share, the account of exceptional binding in State. -/
 
-/-- The Reader.Set monad: `ReaderT` over the `Set` monad. -/
+/-- The Reader.Set monad is `ReaderT` over the `Set` monad. -/
 abbrev ReaderSet (E : Type) := ReaderT (Stack E) Set
 
 namespace ReaderSet
 
 variable {E α β : Type}
 
-/-- An indefinite: a nondeterministic individual, insensitive to the stack. -/
+/-- `indef P` is an indefinite, a nondeterministic individual insensitive to the stack. -/
 def indef (P : E → Prop) : ReaderSet E E := fun _ ↦ {x | P x}
 
-/-- A pronoun: the topical dref. -/
+/-- `pro` is a pronoun, the topical dref. -/
 def pro : ReaderSet E E := fun s ↦ {x | s.getLast? = some x}
 
 /-- Some output is true. -/
@@ -1034,7 +1117,7 @@ def everyDP (P : E → Prop) : ContT Prop (ReaderSet E) E :=
 /-- The negative quantifier. -/
 def noDP (P : E → Prop) : ContT Prop (ReaderSet E) E := fun k ↦ neg (indef P >>= k)
 
-/-- Bind for Reader.Set towers (Def. 5.21): the continuation reads the
+/-- `bindShift m` is Bind for Reader.Set towers (Def. 5.21), whose continuation reads the
 extended stack. -/
 def bindShift (m : ContT β (ReaderSet E) E) : ContT β (ReaderSet E) E :=
   fun k ↦ m.run fun a s ↦ k a (s ++ [a])
@@ -1069,14 +1152,14 @@ def bindShift (m : ContT β (ReaderSet E) E) : ContT β (ReaderSet E) E :=
 @[simp] theorem run_bindShift (m : ContT β (ReaderSet E) E) (k : E → ReaderSet E β) :
     (bindShift m).run k = m.run fun a s ↦ k a (s ++ [a]) := rfl
 
-/-- Resetting a linguist left (Fact 5.7): the indefinite survives. -/
+/-- Resetting *a linguist left* keeps the indefinite (Fact 5.7). -/
 theorem reset_indef_left (ling left : E → Prop) :
     ContT.reset (combine (fun x f ↦ f x) (monadLift (indef ling) : ContT Prop (ReaderSet E) E)
       (monadLift (pure left : ReaderSet E (E → Prop)))) =
       (monadLift (indef ling >>= fun x ↦ pure (left x)) : ContT Prop (ReaderSet E) Prop) := by
   rw [reset_combine_monadLift]; simp [combine]
 
-/-- Resetting every linguist left (Fact 5.8): the universal is discharged. -/
+/-- Resetting *every linguist left* discharges the universal (Fact 5.8). -/
 theorem reset_every (ling left : E → Prop) :
     ContT.reset (combine (fun x f ↦ f x) (everyDP ling)
       (monadLift (pure left : ReaderSet E (E → Prop)))) =
@@ -1094,13 +1177,12 @@ theorem indef_met_indef_layered (sem phon : E → Prop) (met : E → E → Prop)
       indef phon >>= fun y ↦ pure (indef sem >>= fun x ↦ pure (met y x)) := by
   funext s; ext; simp [combine, ContT.eval, Function.comp_def]
 
-/-- Binding simplification (Fact 5.12): a pronoun read at an extended stack
-evaluates to the new dref. -/
+/-- A pronoun read at an extended stack evaluates to the new dref (Fact 5.12). -/
 theorem bind_pro_append (π : E → ReaderSet E α) (s : Stack E) (a : E) :
     (pro >>= π) (s ++ [a]) = π a (s ++ [a]) := by
   ext; simp
 
-/-- A linguist rubbed his head: in-scope binding via Bind. -/
+/-- *A linguist rubbed his head* is bound in scope via Bind. -/
 theorem indef_rubbed_pro_head (ling : E → Prop) (rubbed : E → E → Prop) (head : E → E) :
     ContT.eval (combine (fun x f ↦ f x)
       (bindShift (monadLift (indef ling)) : ContT Prop (ReaderSet E) E)
@@ -1109,9 +1191,9 @@ theorem indef_rubbed_pro_head (ling : E → Prop) (rubbed : E → E → Prop) (h
       indef ling >>= fun x ↦ pure (rubbed (head x) x) := by
   funext s; ext; simp [combine, ContT.eval]
 
-/-- A man told nobody about a book he wrote, with the object indefinite scoping
-over `nobody` and its pronoun bound by the subject: the subject and object
-indefinites take the top level, `nobody` the second. -/
+/-- In *a man told nobody about a book he wrote*, with the object indefinite scoping over `nobody`
+and its pronoun bound by the subject, the subject and object indefinites take the top level and
+`nobody` the second. -/
 theorem indef_told_no_indef_pro (man person : E → Prop) (bookBy : E → E → Prop)
     (told : E → E → E → Prop) :
     (combine (combine (fun x f ↦ f x))
@@ -1125,8 +1207,8 @@ theorem indef_told_no_indef_pro (man person : E → Prop) (bookBy : E → E → 
         pure (¬ ∃ y, person y ∧ told y z x) := by
   funext s; ext; simp [combine, ContT.eval, Function.comp_def]
 
-/-- A man left; he was tired, in Reader.Set: the indefinite's nondeterminism survives the
-island, and its dref does not, the second sentence's pronoun still reading the input stack.
+/-- In Reader.Set, in *a man left; he was tired* the indefinite's nondeterminism survives the
+island and its dref does not, the second sentence's pronoun still reading the input stack.
 Contrast `Charlow2014.exceptional_binding`. -/
 theorem no_exceptional_binding (man left tired : E → Prop) :
     ContT.eval (combine (fun x f ↦ f x)
@@ -1139,8 +1221,8 @@ theorem no_exceptional_binding (man left tired : E → Prop) :
       indef man >>= fun x ↦ pro >>= fun u ↦ pure (left x ∧ tired u) := by
   funext s; ext; simp [combine, ContT.eval, ContT.reset]
 
-/-- The reckoning (5.5.4): a Reader.Set continuation is evaluated at the input
-stack, so no dref made inside a lifted program reaches it. -/
+/-- A Reader.Set continuation is evaluated at the input stack, so no dref made inside a lifted
+program reaches it, the reckoning of (5.5.4). -/
 theorem run_monadLift (m : ReaderSet E α) (k : α → ReaderSet E β) :
     (monadLift m : ContT β (ReaderSet E) α).run k = fun s ↦ ⋃ x ∈ m s, k x s := by
   funext s; ext; simp
