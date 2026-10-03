@@ -1,447 +1,338 @@
 module
 
-public import Linglib.Core.Order.Branching
+public import Linglib.Core.Data.RoseTree.Get
+public import Linglib.Morphology.Exponence.Containment.Selection
 public import Linglib.Morphology.Exponence.Select
-public import Linglib.Morphology.Morph
-public import Mathlib.Data.List.MinMax
 
 /-!
-# Nanosyntax: Tree-Based Spellout
+# Nanosyntax: phrasal spellout over feature trees
 
-Extension of rank-based Superset spellout
-(`Morphology/Exponence/Containment/Contiguity.lean`) to tree-structured spellout. Implements the Superset Principle (SP) for trees: a lexical
-entry M ↔ S' can spell out syntactic target S if S' structurally
-contains S (`NanoTree.Contains`). Among matching entries, the Elsewhere
-Condition selects the smallest (by tree size).
+In nanosyntax a lexical entry pairs an exponent with a stored tree of features, one feature per
+node. Caha, after Starke, lets an entry spell out a syntactic tree when the stored tree has a
+subtree identical to it, the Superset Principle, which is `Branching.IsSubtree` on `RoseTree`.
+When several entries match, the Elsewhere Condition prefers the one that matches in fewer
+environments, and since a matching stored tree exceeds the syntactic tree by exactly its
+superfluous material, that is the matching entry with the smallest tree. The Foot Condition asks
+the lowest feature of a stored tree to occur in what it spells out. Taraldsen's matching relation
+instead pairs a node of the stored tree with the root of the syntactic tree and requires their
+daughters to match each other both ways; it agrees with containment on right-branching chains,
+where tree spellout is also the rank-based spellout of the containment engine.
 
-The SP on trees is a consequence of [starke-2009]'s Matching relation
-(formalized in [taraldsen-et-al-2018] as (35)): M matches S iff there
-exists a node N in M's stored tree such that S and N have the same root
-label and mutually matching daughters. For the right-branching
-single-daughter trees used in Bantu class prefix analysis, structural
-containment and bidirectional Matching coincide; the implementation
-uses containment as the simpler equivalent formulation.
+## Main definitions
 
-## Main declarations
+* `LexicalEntry`: a stored feature tree paired with an exponent.
+* `LexicalEntry.Matches`, `treeSelect`, `treeSpellout`: the Superset Principle and the Elsewhere
+  Condition.
+* `foot`, `FootConditionMet`: the Foot Condition.
+* `Matching`: Taraldsen's matching relation.
+* `chainTree`, `LexicalEntry.ofSpanRule`: right-branching chains, and rank-based entries read as
+  chain entries.
 
-- `NanoTree`: feature trees; `NanoTree.Contains`: sub-constituency
-- `TreeLexEntry`: a stored tree paired with an exponent; `TreeLexEntry.Matches`
-- `treeSelect`, `treeSpellout`: Superset Principle + Elsewhere Condition
-- `treeSelect_isElsewhereWinner`: the engine as an instance of the shared
-  exponence core (`Exponence`) — derived specificity is reverse tree
-  containment (`TreeLexEntry.le_iff`), and smallest-tree selection is an
-  Elsewhere winner with no side conditions
-- `FootConditionMet`: [taraldsen-et-al-2018]'s constraint on backtracking
-- `chain_contains_iff_le`: for right-branching chains, tree containment
-  reduces to rank comparison — tree-based spellout generalizes (not
-  replaces) rank-based spellout
+## Main results
+
+* `LexicalEntry.le_iff`: specificity is reverse containment of the stored trees.
+* `treeSelect_isElsewhereWinner`: smallest-tree selection picks an Elsewhere winner.
+* `footConditionMet_of_matches_chainTree`: an entry storing a chain meets the Foot Condition
+  wherever it matches, so the condition constrains only entries with branching trees.
+* `matching_chainTree_iff`, `exists_matching_not_isSubtree`: Taraldsen's matching is containment
+  on chains but ignores the order of daughters in general.
+* `treeSpellout_ofSpanRule`: on chains, tree spellout is rank-based spellout.
+
+## Implementation notes
+
+* Matching is the rigid Superset Principle of Caha's (6), identity of a subtree; his later Match
+  (27), which also ignores traces and spelled-out constituents, needs movement and cyclic
+  spellout, which the engine does not represent.
+* A node's daughters are ordered with its complement last, so the foot is the last leaf.
+
+## TODO
+
+* The cyclic lexicalization algorithm of later nanosyntax, with spellout-driven movement,
+  backtracking and complex specifiers, together with Cyclic Override and Caha's relaxed Match.
+
+## References
+
+* [starke-2009]
+* [caha-2009]
+* [taraldsen-2018]
+* [taraldsen-et-al-2018]
 -/
 
 @[expose] public section
 
 namespace Morphology.Nanosyntax
 
-/-! ### NanoTree -/
+open Core.Order.Branching Morphology.Exponence RoseTree
 
-/-- A nanosyntactic feature tree. Simpler than `Syntax` — no
-    traces, no binding, no category/word split. Just labeled nodes
-    with an ordered list of daughters.
+variable {F α : Type*}
 
-    `leaf f` = a terminal feature.
-    `node f children` = feature f dominating daughters. -/
-inductive NanoTree (F : Type*) where
-  | leaf : F → NanoTree F
-  | node : F → List (NanoTree F) → NanoTree F
-  deriving Repr
+/-! ### Lexical entries and matching -/
 
-namespace NanoTree
-
-variable {F : Type*}
-
-/-! ### Decidable equality
-
-Defined by structural recursion (not `deriving DecidableEq`, which routes
-the nested `List` through well-founded recursion and does not kernel-reduce;
-`decide`-style spellout evaluations need the structural form). -/
-
-/-- Structural decidable equality on trees. -/
-protected def decEq [DecidableEq F] : (s t : NanoTree F) → Decidable (s = t)
-  | .leaf f, .leaf g =>
-    if h : f = g then .isTrue (h ▸ rfl)
-    else .isFalse fun he => by cases he; exact h rfl
-  | .leaf _, .node _ _ => .isFalse nofun
-  | .node _ _, .leaf _ => .isFalse nofun
-  | .node f cs, .node g ds =>
-    if h : f = g then
-      match NanoTree.decEq.decEqList cs ds with
-      | .isTrue hl => .isTrue (h ▸ hl ▸ rfl)
-      | .isFalse hl => .isFalse fun he => by cases he; exact hl rfl
-    else .isFalse fun he => by cases he; exact h rfl
-where
-  /-- Structural decidable equality on daughter lists. -/
-  decEqList : (cs ds : List (NanoTree F)) → Decidable (cs = ds)
-    | [], [] => .isTrue rfl
-    | [], _ :: _ => .isFalse nofun
-    | _ :: _, [] => .isFalse nofun
-    | c :: cs, d :: ds =>
-      match NanoTree.decEq c d with
-      | .isTrue h =>
-        match NanoTree.decEq.decEqList cs ds with
-        | .isTrue hl => .isTrue (h ▸ hl ▸ rfl)
-        | .isFalse hl => .isFalse fun he => by cases he; exact hl rfl
-      | .isFalse h => .isFalse fun he => by cases he; exact h rfl
-
-instance [DecidableEq F] : DecidableEq (NanoTree F) := NanoTree.decEq
-
-/-! ### Size -/
-
-/-- Number of nodes in the tree. Used by the Elsewhere Condition
-    to select the smallest matching entry. -/
-def size : NanoTree F → Nat
-  | .leaf _ => 1
-  | .node _ children => 1 + sizeList children
-where
-  sizeList : List (NanoTree F) → Nat
-    | [] => 0
-    | t :: ts => t.size + sizeList ts
-
-/-! ### Containment (Superset Principle on trees) -/
-
-/-- `Contains self target`: `target` occurs in `self` as a sub-constituent.
-    Implements the tree-generalized Superset Principle ([caha-2009] §2.2,
-    [taraldsen-et-al-2018] (36)): entry M matches target S if M's stored
-    tree contains S.
-
-    For right-branching single-daughter trees (all Bantu class prefix
-    structures), this is equivalent to the bidirectional Matching
-    relation ([taraldsen-et-al-2018] (35)).
-
-    For 1D chains: a chain of depth n contains all chains of depth
-    k ≤ n, matching `SpanRule.Matches` (`chain_contains_iff_le`). -/
-inductive Contains : NanoTree F → NanoTree F → Prop
-  | refl (t : NanoTree F) : Contains t t
-  | child {f : F} {cs : List (NanoTree F)} {c target : NanoTree F} :
-      c ∈ cs → Contains c target → Contains (.node f cs) target
-
-@[simp] theorem contains_leaf_iff {f : F} {t : NanoTree F} :
-    Contains (.leaf f) t ↔ (.leaf f : NanoTree F) = t :=
-  ⟨fun h => by cases h; rfl, fun h => h ▸ .refl _⟩
-
-theorem contains_node_iff {f : F} {cs : List (NanoTree F)} {t : NanoTree F} :
-    Contains (.node f cs) t ↔
-      (.node f cs : NanoTree F) = t ∨ ∃ c ∈ cs, Contains c t := by
-  constructor
-  · rintro (_ | ⟨hmem, hc⟩)
-    · exact .inl rfl
-    · exact .inr ⟨_, hmem, hc⟩
-  · rintro (h | ⟨c, hmem, hc⟩)
-    · exact h ▸ .refl _
-    · exact .child hmem hc
-
-/-- Structural decision procedure for containment (kernel-reducible). -/
-protected def decContains [DecidableEq F] :
-    (s t : NanoTree F) → Decidable (Contains s t)
-  | .leaf f, t =>
-    if h : (.leaf f : NanoTree F) = t then .isTrue (h ▸ .refl _)
-    else .isFalse fun hc => h (by cases hc; rfl)
-  | .node f cs, t =>
-    if h : (.node f cs : NanoTree F) = t then .isTrue (h ▸ .refl _)
-    else
-      match NanoTree.decContains.decAny cs t with
-      | .isTrue hex => .isTrue (have ⟨_, hmem, hc⟩ := hex; .child hmem hc)
-      | .isFalse hno => .isFalse fun hc => by
-          cases hc with
-          | refl => exact h rfl
-          | child hmem hc => exact hno ⟨_, hmem, hc⟩
-where
-  /-- Does some member of `cs` contain `t`? -/
-  decAny :
-      (cs : List (NanoTree F)) → (t : NanoTree F) →
-        Decidable (∃ c ∈ cs, Contains c t)
-    | [], _ => .isFalse fun ⟨_, hmem, _⟩ => by cases hmem
-    | c :: cs, t =>
-      match NanoTree.decContains c t with
-      | .isTrue hc => .isTrue ⟨c, List.mem_cons_self .., hc⟩
-      | .isFalse hc =>
-        match NanoTree.decContains.decAny cs t with
-        | .isTrue hex =>
-          .isTrue (have ⟨d, hmem, hd⟩ := hex;
-            ⟨d, List.mem_cons_of_mem _ hmem, hd⟩)
-        | .isFalse hno => .isFalse fun ⟨d, hmem, hd⟩ => by
-            cases hmem with
-            | head => exact hc hd
-            | tail _ hmem => exact hno ⟨d, hmem, hd⟩
-
-instance [DecidableEq F] (s t : NanoTree F) : Decidable (Contains s t) :=
-  NanoTree.decContains s t
-
-theorem Contains.trans {a b c : NanoTree F} (h₁ : Contains a b)
-    (h₂ : Contains b c) : Contains a c := by
-  induction h₁ with
-  | refl => exact h₂
-  | child hmem _ ih => exact .child hmem (ih h₂)
-
-instance : Trans (Contains (F := F)) Contains Contains := ⟨Contains.trans⟩
-
-/-- Each daughter's size is bounded by the daughters' total size. -/
-theorem le_sizeList_of_mem {cs : List (NanoTree F)} {c : NanoTree F}
-    (h : c ∈ cs) : c.size ≤ size.sizeList cs := by
-  induction cs with
-  | nil => cases h
-  | cons d ds ih =>
-    rcases List.mem_cons.mp h with rfl | h
-    · simp only [size.sizeList]; omega
-    · have := ih h; simp only [size.sizeList]; omega
-
-theorem size_lt_of_mem {f : F} {cs : List (NanoTree F)} {c : NanoTree F}
-    (h : c ∈ cs) : c.size < (NanoTree.node f cs).size := by
-  have := le_sizeList_of_mem h
-  simp only [size]; omega
-
-/-- Containment is size-monotone: a contained tree is no larger. -/
-theorem Contains.size_le {s t : NanoTree F} (h : Contains s t) :
-    t.size ≤ s.size := by
-  induction h with
-  | refl => exact Nat.le_refl _
-  | child hmem _ ih => exact ih.trans (Nat.le_of_lt (size_lt_of_mem hmem))
-
-/-- Containment is size-strict off the diagonal: a contained tree of no
-smaller size is the tree itself. -/
-theorem Contains.eq_of_size_le {s t : NanoTree F} (h : Contains s t)
-    (hs : s.size ≤ t.size) : s = t := by
-  cases h with
-  | refl => rfl
-  | child hmem hc =>
-    exact absurd hs
-      (Nat.not_le.mpr (Nat.lt_of_le_of_lt hc.size_le (size_lt_of_mem hmem)))
-
-theorem Contains.antisymm {s t : NanoTree F} (h₁ : Contains s t)
-    (h₂ : Contains t s) : s = t :=
-  h₁.eq_of_size_le h₂.size_le
-
-/-! ### Foot -/
-
-/-- The foot of a tree: the feature at the bottom of the leftmost
-    spine. For right-branching chains [Fn [... [F0]]], the foot
-    is F0 — the deepest feature on the functional sequence. -/
-def foot : NanoTree F → F
-  | .leaf f => f
-  | .node f [] => f
-  | .node _ (child :: _) => child.foot
-
-end NanoTree
-
-/-! ### Tree lexical entry -/
-
-/-- A nanosyntactic lexical entry storing a tree rather than a scalar
-    rank, paired with an exponent of type `α` (`String` in concrete
-    fragments). The tree encodes the full feature geometry that the
-    morpheme lexicalizes.
-
-    Contrast with `SpanRule` (`Morphology/Exponence/Containment/Contiguity.lean`)
-    which stores only a span (depth on a 1D functional sequence). -/
-structure TreeLexEntry (F : Type*) (α : Type*) where
+/-- A nanosyntactic lexical entry pairs a stored feature tree with its exponent. -/
+structure LexicalEntry (F : Type*) (α : Type*) where
   /-- The stored feature tree. -/
-  tree : NanoTree F
+  tree : RoseTree F
   /-- The exponent. -/
   exponent : α
-  /-- The side of its host the exponent attaches on: suffixes arise from
-  spellout-driven movement (roll-up, unary foot), prefixes from subderivation
-  (binary foot), [dekier-2021]'s diagnostic on indefinite markers. -/
-  side : Morph.Side := .after
   deriving Repr
 
-variable {F : Type*} {α : Type*}
+/-- An entry matches a syntactic tree when its stored tree has a subtree identical to it, the
+Superset Principle of [caha-2009] (6). -/
+def LexicalEntry.Matches (e : LexicalEntry F α) (t : RoseTree F) : Prop :=
+  IsSubtree t e.tree
 
-/-- A tree-based entry matches a target under the Superset Principle
-    iff its stored tree contains the target as a sub-constituent. -/
-def TreeLexEntry.Matches (entry : TreeLexEntry F α) (target : NanoTree F) :
-    Prop :=
-  entry.tree.Contains target
+instance [DecidableEq F] (e : LexicalEntry F α) (t : RoseTree F) : Decidable (e.Matches t) :=
+  inferInstanceAs (Decidable (IsSubtree _ _))
 
-instance [DecidableEq F] (entry : TreeLexEntry F α) (target : NanoTree F) :
-    Decidable (entry.Matches target) :=
-  inferInstanceAs (Decidable (NanoTree.Contains _ _))
+/-- A lexical entry is a rule of the exponence core, applicable where it matches. -/
+instance : Exponence.Rule (LexicalEntry F α) (RoseTree F) α :=
+  ⟨LexicalEntry.exponent, fun e t ↦ e.Matches t⟩
 
-/-! ### The shared exponence core -/
+instance : Preorder (LexicalEntry F α) := Exponence.toPreorder
 
-open Morphology.Exponence
+/-- One entry is at least as specific as another exactly when the other's stored tree contains
+its stored tree. -/
+theorem LexicalEntry.le_iff {a b : LexicalEntry F α} : a ≤ b ↔ IsSubtree a.tree b.tree :=
+  ⟨fun h ↦ h (.refl a.tree), fun h _ hc ↦ hc.trans h⟩
 
-/-- A tree lexical entry exposes the shared exponence core interface
-(`Morphology.Exponence.Rule`): contexts are syntactic targets,
-applicability is Superset-Principle matching. -/
-instance : Exponence.Rule (TreeLexEntry F α) (NanoTree F) α :=
-  ⟨TreeLexEntry.exponent, fun e t => e.Matches t⟩
+/-! ### Spellout -/
 
-instance : Preorder (TreeLexEntry F α) := Exponence.toPreorder
-
-/-- The specificity order is reverse containment of the stored trees:
-`a` is at least as specific as `b` exactly when `b`'s tree contains
-`a`'s. Tree size is therefore a faithful specificity measure
-(`Contains.size_le`), which is what licenses smallest-tree selection. -/
-theorem TreeLexEntry.le_iff {a b : TreeLexEntry F α} :
-    a ≤ b ↔ b.tree.Contains a.tree :=
-  ⟨λ h => h (.refl a.tree), λ h _ hc => h.trans hc⟩
-
-/-! ### Tree spellout (Elsewhere Condition) -/
-
-/-- Dualized tree size is strictly antitone in specificity: a strictly
-containing entry has a strictly larger tree, since containment is
-size-antisymmetric (`Contains.eq_of_size_le`). -/
-private theorem size_strictAnti :
-    StrictAnti (fun e : TreeLexEntry F α => OrderDual.toDual e.tree.size) := by
+/-- The size of the stored tree is strictly antitone in specificity, since a strictly containing
+tree is strictly larger. -/
+private theorem numNodes_strictAnti :
+    StrictAnti (fun e : LexicalEntry F α ↦ OrderDual.toDual e.tree.numNodes) := by
   intro s r hlt
-  have hcon := TreeLexEntry.le_iff.mp hlt.le
-  refine OrderDual.toDual_lt_toDual.mpr (lt_of_le_of_ne hcon.size_le fun heq => ?_)
-  refine not_le_of_gt hlt (TreeLexEntry.le_iff.mpr ?_)
-  rw [hcon.eq_of_size_le heq.ge]
-  exact .refl _
+  have hcon := LexicalEntry.le_iff.mp hlt.le
+  refine OrderDual.toDual_lt_toDual.mpr (lt_of_le_of_ne hcon.numNodes_le fun heq ↦ ?_)
+  exact not_le_of_gt hlt (LexicalEntry.le_iff.mpr (hcon.eq_of_numNodes_le heq.ge ▸ .refl _))
 
 section
 variable [DecidableEq F]
 
-instance : DecidableRel (Applies : TreeLexEntry F α → NanoTree F → Prop) :=
-  fun e t => inferInstanceAs (Decidable (e.Matches t))
+instance : DecidableRel (Applies : LexicalEntry F α → RoseTree F → Prop) :=
+  fun e t ↦ inferInstanceAs (Decidable (e.Matches t))
 
-/-- The matching entry with the smallest stored tree (first-listed on
-    ties): Minimize Junk over tree-generalized Superset matching, as the
-    shared core's `Exponence.selectBy` at the tree-size score dualized so
-    the smallest tree wins. -/
-def treeSelect (entries : List (TreeLexEntry F α))
-    (target : NanoTree F) : Option (TreeLexEntry F α) :=
-  selectBy (fun e => OrderDual.toDual e.tree.size) entries target
+/-- `treeSelect entries t` is the matching entry with the smallest stored tree, the first listed
+on ties. -/
+def treeSelect (entries : List (LexicalEntry F α)) (t : RoseTree F) :
+    Option (LexicalEntry F α) :=
+  selectBy (fun e ↦ OrderDual.toDual e.tree.numNodes) entries t
 
-/-- Phrasal spellout via the tree-generalized Superset Principle:
-    among entries whose tree contains the target, select the one
-    with the smallest tree (most specific match).
+/-- `treeSpellout entries t` is the exponent of the entry `treeSelect` picks. -/
+def treeSpellout (entries : List (LexicalEntry F α)) (t : RoseTree F) : Option α :=
+  (treeSelect entries t).map (·.exponent)
 
-    Parallels `Morphology.Containment.spellout`, but the matching
-    relation is tree containment instead of rank comparison, and the
-    specificity metric is tree size instead of rank. -/
-def treeSpellout (entries : List (TreeLexEntry F α))
-    (target : NanoTree F) : Option α :=
-  (treeSelect entries target).map (·.exponent)
+/-- Smallest-tree selection picks an Elsewhere winner. -/
+theorem treeSelect_isElsewhereWinner {entries : List (LexicalEntry F α)} {t : RoseTree F}
+    {e : LexicalEntry F α} (h : treeSelect entries t = some e) :
+    IsElsewhereWinner entries t e :=
+  selectBy_isElsewhereWinner (numNodes_strictAnti.strictAntiOn _) h
 
-/-- Smallest-tree selection is an Elsewhere winner of the shared core:
-the dualized-size score is strictly antitone in specificity
-(`size_strictAnti`), so a size-minimal match is maximally specific. An
-instance of `selectBy_isElsewhereWinner`. -/
-theorem treeSelect_isElsewhereWinner
-    {entries : List (TreeLexEntry F α)} {target : NanoTree F}
-    {e : TreeLexEntry F α} (h : treeSelect entries target = some e) :
-    IsElsewhereWinner entries target e :=
-  selectBy_isElsewhereWinner (size_strictAnti.strictAntiOn _) h
-
-/-- The spelled-out exponent is an Elsewhere winner's exponent. -/
-theorem treeSpellout_isElsewhereWinner
-    {entries : List (TreeLexEntry F α)} {target : NanoTree F} {x : α}
-    (h : treeSpellout entries target = some x) :
-    ∃ e ∈ entries, e.exponent = x ∧
-      IsElsewhereWinner entries target e := by
+/-- The spelled-out exponent is the exponent of an Elsewhere winner. -/
+theorem treeSpellout_isElsewhereWinner {entries : List (LexicalEntry F α)} {t : RoseTree F}
+    {x : α} (h : treeSpellout entries t = some x) :
+    ∃ e ∈ entries, e.exponent = x ∧ IsElsewhereWinner entries t e := by
   obtain ⟨e, he, rfl⟩ := Option.map_eq_some_iff.mp h
   exact ⟨e, selectBy_mem he, rfl, treeSelect_isElsewhereWinner he⟩
 
 end
 
-/-! ### Foot Condition -/
+/-! ### The Foot Condition -/
 
-/-- The Foot Condition ([taraldsen-et-al-2018]): the foot of a lexical
-    entry's stored tree must be present as a feature in the syntactic
-    structure being spelled out.
+/-- The foot of a tree is its lowest feature on the complement line, its last leaf. -/
+def foot (t : RoseTree F) : F := t.leafList.getLast t.leafList_ne_nil
 
-    If entry M stores [X [...[Z]]], the Foot Condition requires that Z
-    appear in the structure. This constrains backtracking: when spellout
-    fails and the derivation splits the target into specifier +
-    complement, only entries whose foot matches a feature in the
-    remaining structure are eligible. -/
-def FootConditionMet (entry : TreeLexEntry F α) (syntacticTree : NanoTree F) :
-    Prop :=
-  syntacticTree.Contains (.leaf entry.tree.foot)
+/-- The Foot Condition ([taraldsen-et-al-2018] (39)) requires a syntactic tree an entry spells
+out to contain the foot of the entry's stored tree. -/
+def FootConditionMet (e : LexicalEntry F α) (t : RoseTree F) : Prop :=
+  foot e.tree ∈ t.leafList
 
-instance [DecidableEq F] (entry : TreeLexEntry F α) (tree : NanoTree F) :
-    Decidable (FootConditionMet entry tree) :=
-  inferInstanceAs (Decidable (NanoTree.Contains _ _))
+instance [DecidableEq F] (e : LexicalEntry F α) (t : RoseTree F) :
+    Decidable (FootConditionMet e t) :=
+  inferInstanceAs (Decidable (_ ∈ _))
 
-/-! ### Chain trees (bridge to 1D) -/
+/-- The Foot Condition holds of every syntactic tree that shares its foot with the stored
+tree. -/
+theorem footConditionMet_of_foot_eq {e : LexicalEntry F α} {t : RoseTree F}
+    (h : foot t = foot e.tree) : FootConditionMet e t := by
+  rw [FootConditionMet, ← h]
+  exact List.getLast_mem _
 
-/-- Build a right-branching chain tree of depth n.
-    `chainTree feat 0 = leaf (feat 0)`
-    `chainTree feat 1 = node (feat 1) [leaf (feat 0)]`
-    `chainTree feat n = node (feat n) [chainTree feat (n-1)]`
+/-! ### Chains -/
 
-    A chain of depth n is isomorphic to an `SpanRule` spanning
-    grade n in the 1D nanosyntax. -/
-def chainTree (feat : Nat → F) : Nat → NanoTree F
-  | 0 => .leaf (feat 0)
-  | n + 1 => .node (feat (n + 1)) [chainTree feat n]
+/-- `chainTree feat n` is the right-branching chain `[feat n [… [feat 0]]]`. -/
+def chainTree (feat : ℕ → F) : ℕ → RoseTree F
+  | 0 => leaf (feat 0)
+  | n + 1 => node (feat (n + 1)) [chainTree feat n]
 
-/-! ### Bridge theorems -/
-
-theorem chainTree_succ (feat : Nat → F) (n : Nat) :
-    chainTree feat (n + 1) = .node (feat (n + 1)) [chainTree feat n] := rfl
-
-/-- Chain tree size is n + 1 (one node per feature level). -/
-theorem chainTree_size (feat : Nat → F) (n : Nat) :
-    (chainTree feat n).size = n + 1 := by
+theorem chainTree_numNodes (feat : ℕ → F) (n : ℕ) : (chainTree feat n).numNodes = n + 1 := by
   induction n with
   | zero => rfl
-  | succ n ih =>
-    simp only [chainTree, NanoTree.size, NanoTree.size.sizeList, ih]
-    omega
+  | succ n ih => simp [chainTree, ih]
 
-/-- The foot of a chain tree is always feat 0 — the bottom of
-    the functional sequence. -/
-theorem chainTree_foot (feat : Nat → F) (n : Nat) :
-    (chainTree feat n).foot = feat 0 := by
+theorem leafList_chainTree (feat : ℕ → F) (n : ℕ) : (chainTree feat n).leafList = [feat 0] := by
   induction n with
-  | zero => rfl
-  | succ n ih => simp only [chainTree, NanoTree.foot, ih]
+  | zero => simp [chainTree]
+  | succ n ih => simp [chainTree, ih]
 
-/-- Chains of distinct depths are distinct trees, regardless of the
-    feature assignment — depth alone separates them. -/
-theorem chainTree_injective (feat : Nat → F) :
-    Function.Injective (chainTree feat) := fun n m h => by
-  have hs := congrArg NanoTree.size h
-  rwa [chainTree_size, chainTree_size, Nat.add_right_cancel_iff] at hs
+theorem foot_chainTree (feat : ℕ → F) (n : ℕ) : foot (chainTree feat n) = feat 0 := by
+  simp [foot, leafList_chainTree]
 
-/-- For right-branching chains, tree containment reduces to rank
-    comparison: a chain of depth re contains a chain of depth r iff
-    r ≤ re. This is exactly the matching condition of the rank-based
-    `SpanRule.Matches`, establishing that tree-based spellout
-    generalizes (not replaces) rank-based spellout.
+theorem chainTree_injective (feat : ℕ → F) : Function.Injective (chainTree feat) :=
+  fun n m h ↦ by simpa [chainTree_numNodes] using congrArg numNodes h
 
-    Unlike the previous Bool formulation, no injectivity of `feat` is
-    needed: chain depth alone drives both directions. -/
-theorem chain_contains_iff_le (feat : Nat → F) (re r : Nat) :
-    (chainTree feat re).Contains (chainTree feat r) ↔ r ≤ re := by
-  induction re generalizing r with
-  | zero =>
-    rw [chainTree, NanoTree.contains_leaf_iff]
-    cases r with
-    | zero => simp [chainTree]
-    | succ r => simp [chainTree]
-  | succ n ih =>
-    rw [chainTree_succ, NanoTree.contains_node_iff, ← chainTree_succ,
-      (chainTree_injective feat).eq_iff]
+/-- On chains, containment is rank comparison, whatever the features. -/
+theorem chainTree_isSubtree_iff (feat : ℕ → F) (r k : ℕ) :
+    IsSubtree (chainTree feat r) (chainTree feat k) ↔ r ≤ k := by
+  induction k generalizing r with
+  | zero => cases r <;> simp [chainTree]
+  | succ k ih =>
+    rw [chainTree, isSubtree_node_iff, ← chainTree, (chainTree_injective feat).eq_iff]
     simp only [List.mem_singleton, exists_eq_left, ih]
     omega
 
+/-- The subtrees of a chain are its lower segments. -/
+theorem eq_chainTree_of_isSubtree {feat : ℕ → F} {k : ℕ} {t : RoseTree F}
+    (h : IsSubtree t (chainTree feat k)) : ∃ r ≤ k, t = chainTree feat r := by
+  induction k with
+  | zero => exact ⟨0, le_rfl, by simpa [chainTree] using h⟩
+  | succ k ih =>
+    rcases isSubtree_node_iff.1 h with h | ⟨c, hc, hsub⟩
+    · exact ⟨k + 1, le_rfl, h⟩
+    · obtain ⟨r, hr, rfl⟩ := ih (List.mem_singleton.1 hc ▸ hsub)
+      exact ⟨r, hr.trans k.le_succ, rfl⟩
+
+/-- An entry storing a chain meets the Foot Condition wherever it matches. -/
+theorem footConditionMet_of_matches_chainTree {e : LexicalEntry F α} {feat : ℕ → F} {k : ℕ}
+    (he : e.tree = chainTree feat k) {t : RoseTree F} (h : e.Matches t) :
+    FootConditionMet e t := by
+  obtain ⟨r, -, rfl⟩ := eq_chainTree_of_isSubtree (he ▸ h : IsSubtree t (chainTree feat k))
+  exact footConditionMet_of_foot_eq (by rw [he, foot_chainTree, foot_chainTree])
+
+/-! ### Taraldsen's matching relation -/
+
+/-- `MatchesRoot s u` holds when the roots of `s` and `u` carry the same feature and every
+daughter of each root-matches some daughter of the other, clauses (a) and (b) of
+[taraldsen-2018] (3). -/
+def MatchesRoot : RoseTree F → RoseTree F → Prop
+  | node f cs, node g ds =>
+      f = g ∧ (∀ c ∈ cs, ∃ d ∈ ds, MatchesRoot c d) ∧ ∀ d ∈ ds, ∃ c, ∃ _ : c ∈ cs, MatchesRoot c d
+termination_by s _ => sizeOf s
+decreasing_by all_goals exact sizeOf_lt_of_mem (by assumption)
+
+theorem matchesRoot_node_iff {f g : F} {cs ds : List (RoseTree F)} :
+    MatchesRoot (node f cs) (node g ds) ↔
+      f = g ∧ (∀ c ∈ cs, ∃ d ∈ ds, MatchesRoot c d) ∧ ∀ d ∈ ds, ∃ c ∈ cs, MatchesRoot c d := by
+  rw [MatchesRoot]
+  simp only [exists_prop]
+
+theorem MatchesRoot.refl : ∀ t : RoseTree F, MatchesRoot t t
+  | node _ cs => matchesRoot_node_iff.2 ⟨rfl, fun c hc ↦ ⟨c, hc, MatchesRoot.refl c⟩,
+      fun d hd ↦ ⟨d, hd, MatchesRoot.refl d⟩⟩
+termination_by t => sizeOf t
+decreasing_by all_goals exact sizeOf_lt_of_mem (by assumption)
+
+/-- A syntactic tree `s` matches a stored tree `t` ([taraldsen-2018] (3)) when the root of `s`
+root-matches some node of `t`. -/
+def Matching (s t : RoseTree F) : Prop := ∃ u, IsSubtree u t ∧ MatchesRoot s u
+
+/-- A subtree matches, so Taraldsen's matching includes the Superset Principle. -/
+theorem Matching.of_isSubtree {s t : RoseTree F} (h : IsSubtree s t) : Matching s t :=
+  ⟨s, h, .refl s⟩
+
+/-- On chains, root-matching is equality of depths. -/
+theorem matchesRoot_chainTree_iff (feat : ℕ → F) (r k : ℕ) :
+    MatchesRoot (chainTree feat r) (chainTree feat k) ↔ r = k := by
+  refine ⟨fun h ↦ ?_, fun h ↦ h ▸ .refl _⟩
+  induction r generalizing k with
+  | zero =>
+    cases k with
+    | zero => rfl
+    | succ k =>
+      obtain ⟨-, -, hb⟩ := matchesRoot_node_iff.1 h
+      obtain ⟨c, hc, -⟩ := hb _ (List.mem_singleton_self _)
+      cases hc
+  | succ r ih =>
+    cases k with
+    | zero =>
+      obtain ⟨-, ha, -⟩ := matchesRoot_node_iff.1 h
+      obtain ⟨d, hd, -⟩ := ha _ (List.mem_singleton_self _)
+      cases hd
+    | succ k =>
+      obtain ⟨-, ha, -⟩ := matchesRoot_node_iff.1 h
+      obtain ⟨d, hd, hm⟩ := ha _ (List.mem_singleton_self _)
+      rw [List.mem_singleton.1 hd] at hm
+      rw [ih k hm]
+
+/-- On chains, Taraldsen's matching is containment. -/
+theorem matching_chainTree_iff (feat : ℕ → F) (r k : ℕ) :
+    Matching (chainTree feat r) (chainTree feat k) ↔
+      IsSubtree (chainTree feat r) (chainTree feat k) := by
+  refine ⟨fun ⟨u, hu, hm⟩ ↦ ?_, Matching.of_isSubtree⟩
+  obtain ⟨j, hj, rfl⟩ := eq_chainTree_of_isSubtree hu
+  rw [chainTree_isSubtree_iff, (matchesRoot_chainTree_iff feat r j).1 hm]
+  exact hj
+
+/-- Taraldsen's matching ignores the order of daughters, which containment does not. It also
+ignores repeated daughters. -/
+theorem exists_matching_not_isSubtree :
+    ∃ s t : RoseTree Bool, Matching s t ∧ ¬ IsSubtree s t := by
+  refine ⟨node true [leaf true, leaf false], node true [leaf false, leaf true], ⟨_, .refl _, ?_⟩,
+    by decide⟩
+  refine matchesRoot_node_iff.2 ⟨rfl, ?_, ?_⟩ <;> simp only [List.mem_cons, List.mem_nil_iff,
+    or_false, forall_eq_or_imp, forall_eq, exists_eq_or_imp, exists_eq_left]
+  · exact ⟨.inr (.refl _), .inl (.refl _)⟩
+  · exact ⟨.inr (.refl _), .inl (.refl _)⟩
+
+/-! ### Rank-based spellout -/
+
+/-- The rank-based entry `it` read as an entry storing the chain up to its span. -/
+def LexicalEntry.ofSpanRule {n : ℕ} (feat : ℕ → F) (it : Containment.SpanRule n α) :
+    LexicalEntry F α :=
+  ⟨chainTree feat it.spans, it.exponent⟩
+
+/-- On chains, tree spellout is the rank-based spellout of the containment engine, since both
+pick the first entry with the least matching span. -/
+theorem treeSpellout_ofSpanRule [DecidableEq F] {n : ℕ} (feat : ℕ → F)
+    (v : List (Containment.SpanRule n α)) (g : Fin n) :
+    treeSpellout (v.map (LexicalEntry.ofSpanRule feat)) (chainTree feat g) =
+      Containment.spellout v g := by
+  set E := LexicalEntry.ofSpanRule (n := n) feat
+  have happ : ∀ it : Containment.SpanRule n α,
+      Applies (E it) (chainTree feat g) ↔ g ≤ it.spans := fun it ↦
+    (chainTree_isSubtree_iff feat _ _).trans Fin.val_fin_le
+  have hsel : treeSelect (v.map E) (chainTree feat g) = (Containment.spelloutWinner v g).map E := by
+    cases hms : Containment.minSpan v g with
+    | top =>
+      rw [Containment.spelloutWinner_eq_none_of_top hms, Option.map_none, treeSelect,
+        selectBy_eq_none_iff, applicable, List.filter_eq_nil_iff]
+      rw [Containment.minSpan_eq_top_iff, Containment.matching, List.filter_eq_nil_iff] at hms
+      intro e he
+      obtain ⟨it, hit, rfl⟩ := List.mem_map.1 he
+      simpa [happ, Containment.SpanRule.Matches] using hms it hit
+    | coe m =>
+      obtain ⟨it₀, hit₀, hsp₀, hgm⟩ := Containment.exists_of_minSpan_eq_coe hms
+      rw [Containment.spelloutWinner_of_coe hms, treeSelect, selectBy,
+        Containment.argmax_eq_find _ (OrderDual.toDual ((m : ℕ) + 1)), applicable,
+        List.filter_map, List.find?_map, Containment.find?_filter_of_imp]
+      · congr 2
+        funext it
+        simp [E, LexicalEntry.ofSpanRule, chainTree_numNodes, Fin.val_inj]
+      · intro it hit
+        simp only [Function.comp, beq_iff_eq, OrderDual.toDual_inj, decide_eq_true_eq,
+          happ] at hit ⊢
+        have : it.spans = m :=
+          Fin.ext (by simpa [E, LexicalEntry.ofSpanRule, chainTree_numNodes] using hit)
+        exact this ▸ hgm
+      · intro e he
+        obtain ⟨hmem, happ'⟩ := mem_applicable.1 he
+        obtain ⟨it, hit, rfl⟩ := List.mem_map.1 hmem
+        have := Containment.le_spans_of_minSpan_eq_coe hms hit ((happ it).1 happ')
+        simpa [E, LexicalEntry.ofSpanRule, chainTree_numNodes] using Fin.le_def.1 this
+      · exact List.mem_map.2 ⟨E it₀, mem_applicable.2 ⟨List.mem_map_of_mem hit₀,
+          (happ it₀).2 (hsp₀ ▸ hgm)⟩,
+          by simp [E, LexicalEntry.ofSpanRule, chainTree_numNodes, hsp₀]⟩
+  rw [treeSpellout, Containment.spellout, hsel, Option.map_map]
+  rfl
+
 end Morphology.Nanosyntax
-
-/-! ### The rose-tree interface -/
-
-namespace Morphology.Nanosyntax.NanoTree
-
-instance {F : Type*} : Core.Order.Branching (NanoTree F) where
-  children
-    | .leaf _ => []
-    | .node _ cs => cs
-
-@[simp] theorem branching_children_leaf {F : Type*} (f : F) :
-    Core.Order.Branching.children (NanoTree.leaf f) = [] := rfl
-
-@[simp] theorem branching_children_node {F : Type*} (f : F)
-    (cs : List (NanoTree F)) :
-    Core.Order.Branching.children (NanoTree.node f cs) = cs := rfl
-
-end Morphology.Nanosyntax.NanoTree
