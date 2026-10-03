@@ -27,7 +27,7 @@ where `φ[ψ]` is equivalent to `φ[ψ ∧ NE/ψ] ⩔ φ[ψ ∧ ⊥/ψ]`.
 ## Main results
 
 * `Formula.Context.setOf_support_fill`: the split behind the translation rules.
-* `soundness`; `completeness`, for finite premise sets, is stated with `sorry`.
+* `soundness`; completeness is proved in `Completeness.lean`.
 * `Derives.fill`: replacement in a context.
 * `strongFalsum_derives`, `conj_disj_derives_disj_conj`, `disj_conj_ne_derives_conj_ne`,
   `poss_derives_poss_conj_ne`, `poss_disj_conj_ne_derives_conj_poss`: derivations from the
@@ -217,7 +217,7 @@ inductive Derives [Inhabited Atom] : Set (Formula Atom) → Formula Atom → Pro
 
 variable [Inhabited Atom] {Γ Δ : Set (Formula Atom)} {φ ψ χ : Formula Atom}
 
-/-! ### Soundness and completeness -/
+/-! ### Soundness -/
 
 /-- **Soundness** ([aloni-anttila-yang-2024] Theorem 4.34). Every team supporting the premises
     supports what they derive. -/
@@ -332,21 +332,6 @@ theorem soundness (h : Γ ⊢ φ) (M : KripkeModel W Atom) :
 /-- A derivation from one premise is a consequence in the sense of `consequence`. -/
 theorem consequence_of_derives (h : {φ} ⊢ ψ) : consequence (W := W) φ ψ :=
   fun M t ht ↦ soundness h M t fun _ hγ ↦ hγ ▸ ht
-
-/-- **Completeness** ([aloni-anttila-yang-2024] Theorem 4.43) for finite premise sets. A
-    consequence that holds on every model is derivable.
-
-    The paper proves it for arbitrary premise sets, which fails here because successor sets
-    are finite. No team supports `{◇pₙ | n ∈ ℕ} ∪ {□¬(pᵢ ∧ pⱼ) | i ≠ j} ∪ {NE}`, yet each finite
-    subset is satisfiable, so `⊥⊥` follows from the set without being derivable from it.
-
-    TODO: the paper's realization argument (pp. 35–40) gives a countermodel to each
-    non-derivable consequence, and the finite model argument of its Proposition 3.21 makes it
-    finite; `⊥ ↦ p ∧ ¬p` carries the paper's derivations over to `Derives`. -/
-theorem completeness {Γ : Finset (Formula Atom)}
-    (h : ∀ (W : Type) [DecidableEq W] (M : KripkeModel W Atom) (s : Finset W),
-      (∀ γ ∈ Γ, support M γ s) → support M φ s) : (Γ : Set (Formula Atom)) ⊢ φ := by
-  sorry
 
 /-! ### Derived rules -/
 
