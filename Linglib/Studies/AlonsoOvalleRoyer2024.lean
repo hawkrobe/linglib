@@ -1,35 +1,64 @@
 module
 
-public import Mathlib.Tactic.DeriveFintype
 public import Mathlib.Data.Fintype.Powerset
-public import Linglib.Semantics.Modality.ModalIndefinite
-public import Linglib.Fragments.Mayan.Chuj.ModalIndefinites
-public import Linglib.Fragments.Romance.Spanish.ModalIndefinites
-public import Linglib.Fragments.German.ModalIndefinites
-public import Linglib.Fragments.Romance.French.ModalIndefinites
-public import Linglib.Fragments.Romance.Italian.ModalIndefinites
+public import Linglib.Semantics.Modality.EventRelativity
+public import Linglib.Semantics.Mood.SpeechEvent
+public import Linglib.Semantics.Presupposition.Defs
 public import Linglib.Data.Examples.AlonsoOvalleRoyer2024
 
 /-!
 # Alonso-Ovalle & Royer (2024): modal indefinites and semantic variation in Chuj
 
 Chuj *yalnhej* DPs are existential quantifiers with an at-issue modal component (59): some
-member of the domain satisfies restrictor and scope, and every member does so in some world
-projected from the DP's event anchor (`Modality.modalIndefiniteSat`). The DP's event
-variable is bound by the abstraction over the VP event (62), left free and read as the
-assertion (69)/(71), or bound by an external modal's anchor (87)/(91); what the anchor
-projects depends on the event (`Modality.ModalSource`): the decision that caused a
-volitional event gives random choice — an indiscriminate decision, or one to take
-everything, satisfies the component and a decision for one item does not (`randomChoice`,
-Fig. 1, (32)–(33)) — and the assertion's content gives an epistemic component compatible
-with any degree of ignorance and with knowing that the whole domain qualifies, but not with
-knowing a proper part (`epistemic`, Figs. 2–3, (29)). A non-volitional verb's event has no
-decision (`nonvolitional`, (34)), and an external argument merges above the VP abstraction,
-so the flavors available at a site follow from the binders that reach it (`flavors`, §3.4,
-fn. 17). *Yalnhej*'s claim has no upper bound where *algún*'s has (`notUpperBounded`,
-(122)–(127)); *uno cualquiera* admits only decisions as anchors, so it has no epistemic
-reading (`unoCualquiera_no_epistemic`, (67)–(68), (93)); under an imperative or an
-attitude the anchor can be coindexed with the external modal's (`harmonic`, (82)–(85)).
+member of the domain satisfies restrictor and scope, and every member does so in some world of
+the content of the DP's event anchor (`ModalExists`, on `Modality.contentPossibility`). The DP's
+event variable is bound by the abstraction over the VP event (62), left free and read as the
+assertion (69)/(71), or bound by an external modal's anchor (87)/(91). A VP event projects the
+worlds where the decision that caused it is fulfilled, which gives random choice: an
+indiscriminate decision, or one to take everything, satisfies the component and a decision for
+one item does not (`randomChoice`, Fig. 1, (32)–(33)). The assertion projects the speaker's
+doxastic alternatives, which gives an epistemic component compatible with any degree of
+ignorance and with knowing that the whole domain qualifies, but not with knowing which proper
+part does (`epistemic`, Figs. 2–3, (29)). A non-volitional verb's event has no decision
+(`nonvolitional`, (34)), and an external argument merges above the VP abstraction, so the
+flavors available at a site follow from the binders that reach it (`flavors_pattern`, §3.4,
+fn. 17). Under an imperative the anchor can be the order's (`harmonic`, (82)–(85)).
+
+Modal indefinites vary in the anchors they admit and in the bound on their witnesses (§6.2).
+*Uno cualquiera* admits only anchors with normative conditions, decisions and orders, as
+Alonso-Ovalle and Menéndez-Benito argue, so it has no epistemic reading but has the harmonic one
+under an imperative (`cualquiera_selective`, (67)–(68), (86), (93)); *n'importe quel* (120) and
+Italian *un N qualsiasi* (121) are as selective. *Yalnhej*'s claim has no upper bound, where
+*algún*'s excludes the whole domain and *uno cualquiera*'s requires a unique witness
+(`upperBound_universal`, (122)–(127)). The readings the rows list follow from the denotations
+(`reading_rows`).
+
+## Implementation notes
+
+* A world records which of two items the agent took, and a scenario fixes the worlds each event
+  projects. (59)'s condition that the possible event be similar to the actual one (fn. 14) is
+  left out: a possible world in the content of the anchor verifies the scope of a member.
+* A component has its anchor's flavor. A decision gives random choice, a circumstantial
+  flavor; the assertion and the order give the primary flavors Hacquard assigns the
+  declarative and imperative speech acts; a belief state gives an epistemic flavor.
+* The bounds of *algún* and *uno cualquiera* (p. 31), the first a quantity implicature (p. 32),
+  are part of the assertion here.
+* The paper reports only unembedded readings of *n'importe quel* and *un N qualsiasi*, and
+  §6.2 ascribes such selectivity to the anchors an item admits. The study gives both
+  *uno cualquiera*'s anchors; *un N qualsiasi*, the "potential Italian counterpart of uno
+  cualquiera" (p. 32), also its unique witness, which Chierchia derives by scalar competition
+  with the numeral.
+* The at-issue status of the components (`survives` rows, §§3.3, 6.1), the unremarkable
+  readings and the predicative uses (§5) are row data: the study models neither embedding
+  under negation nor predication.
+
+## TODO
+
+* Under an overt possibility modal *un N qualsiasi* has an epistemic reading (Chierchia's
+  (31a)), which *uno cualquiera*'s anchors exclude ((93)); the scenario has no overt epistemic
+  modal to state the contrast.
+* No source gives *n'importe quel* an upper bound or denies it one.
+* Fn. 18 ties the missing upper bound to *yalnhej*'s number neutrality.
 
 ## References
 
@@ -41,7 +70,6 @@ attitude the anchor can be coindexed with the external modal's (`harmonic`, (82)
 * [hacquard-2006]
 * [kratzer-shimoyama-2002]
 * [von-fintel-2000-whatever]
-* [jayez-tovena-2006]
 * [chierchia-2013]
 -/
 
@@ -49,131 +77,140 @@ attitude the anchor can be coindexed with the external modal's (`harmonic`, (82)
 
 namespace AlonsoOvalleRoyer2024
 
-open Modality ModalLogic Mood Presupposition Finset
+open Modality Presupposition Finset Discourse.SpeechAct
+
+/-! ### The schema (59) -/
+
+section Schema
+
+variable {E W X : Type*} (con : E → Option (Set W)) (D : Finset X) (P Q : X → W → Prop)
+
+/-- The truth condition (59) holds when some member of `D` satisfies restrictor and scope and
+every restrictor member satisfies the scope in some world of the content of the anchoring
+event `e`. -/
+def ModalExists (e : E) (w : W) : Prop :=
+  (∃ x ∈ D, P x w ∧ Q x w) ∧ ∀ y ∈ D, P y w → contentPossibility con (Q y) e
+
+/-- A unique member of `D` satisfies restrictor and scope, the bound of *uno cualquiera*
+(p. 31). -/
+def UniqueWitness (w : W) : Prop :=
+  ∃ x ∈ D, P x w ∧ Q x w ∧ ∀ y ∈ D, P y w → Q y w → y = x
+
+/-- Not every restrictor member satisfies the scope, the weaker bound of *algún* (p. 31). -/
+def NotAll (w : W) : Prop := ¬ ∀ x ∈ D, P x w → Q x w
+
+variable (w : W) [∀ x, Decidable (P x w)] [∀ x, Decidable (Q x w)]
+
+instance [DecidableEq X] : Decidable (UniqueWitness D P Q w) := by
+  unfold UniqueWitness; infer_instance
+
+instance : Decidable (NotAll D P Q w) := by unfold NotAll; infer_instance
+
+end Schema
 
 /-! ### Events and what they project -/
 
-/-- Two items; a world records which of them the agent took (bought, liked, grabbed). -/
+/-- There are two items, and a world records which of them the agent took (bought, liked,
+grabbed). -/
 abbrev Item := Fin 2
 
 abbrev World := Finset Item
 
 /-- Item `y` is among what was taken. -/
-def taken (y : Item) (w : World) : Prop := y ∈ w
+def Taken (y : Item) (w : World) : Prop := y ∈ w
 
-instance (y : Item) : DecidablePred (taken y) := fun w => inferInstanceAs (Decidable (y ∈ w))
+instance (y : Item) : DecidablePred (Taken y) := fun w ↦ inferInstanceAs (Decidable (y ∈ w))
 
-/-- The events of a scenario: the VP event, the assertion, an order, and a belief. -/
+/-- A scenario has four events, the VP event, the assertion, an order and a belief. -/
 inductive Ev | vp | assertion | order | belief
   deriving DecidableEq
 
-/-- A scenario: the worlds each event projects — the decision that caused the VP event, if
-the verb is volitional; the speaker's doxastic alternatives; the addressee's to-do list; the
-attitude holder's belief state. -/
+/-- A scenario fixes the worlds each event projects, namely those where the decision that
+caused the VP event is fulfilled, if the verb is volitional, the speaker's doxastic
+alternatives, the addressee's to-do list and the attitude holder's belief state. -/
 structure Scenario where
   decision : Option (Finset World)
   dox : Finset World := ∅
   todo : Finset World := ∅
   belief : Finset World := ∅
 
-/-- A scenario from the decision and the doxastic alternatives, with an optional order and
-belief state. -/
+/-- `scenario` builds a scenario from the decision and the doxastic alternatives, with an
+optional order and belief state. -/
 def scenario (decision : Option (Finset World)) (dox : Finset World := ∅)
     (todo : Finset World := ∅) (belief : Finset World := ∅) : Scenario :=
   ⟨decision, dox, todo, belief⟩
 
-/-- The worlds a scenario's event projects. -/
+/-- `s.worlds e` is the set of worlds the event `e` projects in `s`, if any. -/
 def Scenario.worlds (s : Scenario) : Ev → Option (Finset World)
   | .vp => s.decision
   | .assertion => some s.dox
   | .order => some s.todo
   | .belief => some s.belief
 
-/-- The source of each event: a decision for the VP event, the declarative and imperative
-speech acts, and the attitude. -/
-def Scenario.source (s : Scenario) : Ev → Option (ModalSource World)
-  | .vp => s.decision.map fun d => .decision fun _ => [(· ∈ d)]
-  | .assertion => some (.speechAct (.declarative fun _ => [(· ∈ s.dox)]))
-  | .order => some (.speechAct (.imperative fun _ => [(· ∈ s.todo)]))
-  | .belief => some (.attitude fun _ => [(· ∈ s.belief)])
+/-- The content of an event is (59)'s domain-fixing function. -/
+def Scenario.content (s : Scenario) (e : Ev) : Option (Set World) := (s.worlds e).map (↑)
 
-/-- The claim of a *yalnhej* DP over the whole domain, anchored to `e`. -/
-def claim (s : Scenario) (e : Ev) (w : World) : Prop :=
-  ∃ src ∈ s.source e, modalIndefiniteSat src univ (fun _ _ => True) taken w
+theorem contentPossibility_content (s : Scenario) (q : World → Prop) (e : Ev) :
+    contentPossibility s.content q e ↔ ∃ d ∈ s.worlds e, ∃ w ∈ d, q w := by
+  simp [contentPossibility, Scenario.content]
 
-theorem claim_iff (s : Scenario) (e : Ev) (w : World) :
-    claim s e w ↔ ∃ d ∈ s.worlds e, (∃ x, x ∈ w) ∧ ∀ y, ∃ w' ∈ d, y ∈ w' := by
-  cases e <;> cases s.decision <;>
-    simp [claim, Scenario.source, Scenario.worlds, modalIndefiniteSat, simplePossibility,
-      Diamond, ModalBase.mem_accessible, ModalBase.accessibleWorlds, mem_propIntersection,
-      ModalSource.background, SpeechEvent.declarative, SpeechEvent.imperative,
-      taken]
+instance (s : Scenario) (q : World → Prop) [DecidablePred q] (e : Ev) :
+    Decidable (contentPossibility s.content q e) :=
+  decidable_of_iff _ (contentPossibility_content s q e).symm
 
-instance (s : Scenario) (e : Ev) (w : World) : Decidable (claim s e w) :=
-  decidable_of_iff _ (claim_iff s e w).symm
+/-- An event projects a component of its own flavor. The decision behind a VP event gives
+random choice, a circumstantial flavor, the assertion and the order the primary flavors of the
+declarative and imperative speech acts, and a belief state an epistemic flavor. -/
+def Ev.flavor : Ev → ModalFlavor
+  | .vp => .circumstantial
+  | .assertion => Force.declarative.primaryFlavor
+  | .order => Force.imperative.primaryFlavor
+  | .belief => .epistemic
 
-/-- Worlds in which something was taken. -/
+/-- `Claim s e` is the claim of a *yalnhej* DP over the whole domain, anchored to `e`. -/
+def Claim (s : Scenario) (e : Ev) (w : World) : Prop :=
+  ModalExists s.content univ (fun _ _ ↦ True) Taken e w
+
+instance (s : Scenario) (e : Ev) (w : World) : Decidable (Claim s e w) := by
+  unfold Claim ModalExists; infer_instance
+
+/-- `nonempty` is the set of worlds in which something was taken. -/
 abbrev nonempty : Finset World := univ.filter Finset.Nonempty
 
-/-- Fig. 1, (32)–(33): the indiscriminate decision *buy a book* and the decision *buy all
-books* satisfy the modal component; the decision *buy b₁* does not. -/
+/-- In Fig. 1 and (32)–(33), the indiscriminate decision *buy a book* and the decision *buy
+all books* satisfy the modal component, and the decision *buy b₁* does not. -/
 theorem randomChoice :
-    claim (scenario (some nonempty)) .vp {0} ∧ claim (scenario (some {{0, 1}})) .vp {0, 1} ∧
-      ¬ claim (scenario (some {{0}})) .vp {0} := by
-  simp only [claim_iff]; decide
-
-/-- Figs. 2–3, (29): anchored to the assertion, the component holds under total or partial
-ignorance and when the speaker knows the whole domain qualifies, but not when the speaker
-knows which proper part does. -/
-theorem epistemic :
-    claim (scenario none nonempty) .assertion {0} ∧
-      claim (scenario none {{0}, {0, 1}}) .assertion {0} ∧
-      claim (scenario none {{0, 1}}) .assertion {0, 1} ∧
-      ¬ claim (scenario none {{0}}) .assertion {0} := by
-  simp only [claim_iff]; decide
-
-/-- (34): a non-volitional VP event contains no decision, so nothing projects from it and
-the random choice reading is unavailable whatever the world. -/
-theorem nonvolitional (dox todo belief : Finset World) (w : World) :
-    ¬ claim (scenario none dox todo belief) .vp w := by
-  simp [claim_iff, Scenario.worlds, scenario]
-
-/-- (82)–(85): under the imperative, projection from the addressee's deliberate decision
-fails while projection from the order — any card permitted — succeeds. -/
-theorem harmonic :
-    ¬ claim (scenario (some {{0}}) ∅ {{0}, {1}}) .vp {0} ∧
-      claim (scenario (some {{0}}) ∅ {{0}, {1}}) .order {0} := by
-  simp only [claim_iff]; decide
-
-/-! ### Items (§§4.2, 6.2) -/
-
-/-- The denotation of a fragment entry in the scenario, anchored to `e`. -/
-def denotes (mi : ModalIndefinite) (s : Scenario) (e : Ev) (w : World) : Prop :=
-  ∃ src ∈ s.source e, (mi.denotation src univ (fun _ _ => True) taken).holds w
-
-/-- (122)–(127): where everyone danced, *yalnhej* holds and the upper-bounded *algún* does
-not. -/
-theorem notUpperBounded :
-    denotes Chuj.ModalIndefinites.yalnhej (scenario none {{0, 1}}) .assertion {0, 1} ∧
-      ¬ denotes Spanish.ModalIndefinites.algún (scenario none {{0, 1}}) .assertion {0, 1} := by
-  simp [denotes, Scenario.source, ModalIndefinite.denotation, PartialProp.holds,
-    Chuj.ModalIndefinites.yalnhej, Spanish.ModalIndefinites.algún, upperBoundedSat,
-    modalIndefiniteSat, simplePossibility, Diamond, ModalBase.mem_accessible,
-    ModalBase.accessibleWorlds, mem_propIntersection, ModalSource.background,
-    SpeechEvent.declarative, taken, AnchorConstraint.Admits]
+    Claim (scenario (some nonempty)) .vp {0} ∧ Claim (scenario (some {{0, 1}})) .vp {0, 1} ∧
+      ¬ Claim (scenario (some {{0}})) .vp {0} := by
   decide
 
-/-- (67)–(68), (93): *uno cualquiera* admits only decisions as anchors, so anchored to the
-assertion it is undefined — it has no epistemic reading. -/
-theorem unoCualquiera_no_epistemic (s : Scenario) (w : World) :
-    ¬ denotes Spanish.ModalIndefinites.unoCualquiera s .assertion w := by
-  simp [denotes, Scenario.source, ModalIndefinite.denotation, PartialProp.holds,
-    Spanish.ModalIndefinites.unoCualquiera, AnchorConstraint.Admits, ModalSource.IsDecision]
+/-- In Figs. 2–3 and (29), the component anchored to the assertion holds under total or
+partial ignorance and when the speaker knows the whole domain qualifies, but not when the
+speaker knows which proper part does. -/
+theorem epistemic :
+    Claim (scenario none nonempty) .assertion {0} ∧
+      Claim (scenario none {{0}, {0, 1}}) .assertion {0} ∧
+      Claim (scenario none {{0, 1}}) .assertion {0, 1} ∧
+      ¬ Claim (scenario none {{0}}) .assertion {0} := by
+  decide
+
+/-- A non-volitional VP event contains no decision, so nothing projects from it and the random
+choice reading of (34) is unavailable whatever the world. -/
+theorem nonvolitional (dox todo belief : Finset World) (w : World) :
+    ¬ Claim (scenario none dox todo belief) .vp w := by
+  simp [Claim, ModalExists, contentPossibility, Scenario.content, Scenario.worlds, scenario]
+
+/-- Under the imperative of (82)–(85), projection from the addressee's deliberate decision
+fails, while projection from the order, which permits any card, succeeds. -/
+theorem harmonic :
+    ¬ Claim (scenario (some {{0}}) ∅ {{0}, {1}}) .vp {0} ∧
+      Claim (scenario (some {{0}}) ∅ {{0}, {1}}) .order {0} := by
+  decide
 
 /-! ### Position and flavor (§3.4) -/
 
-/-- The base position of the DP relative to the abstraction over the VP event: an external
-argument merges above it (74), internal arguments and adjuncts below (62). -/
+/-- A site is the base position of the DP relative to the abstraction over the VP event. An
+external argument merges above it (74), internal arguments and adjuncts below (62). -/
 inductive Site | external | internal | adjunct
   deriving DecidableEq
 
@@ -181,19 +218,20 @@ def Site.belowVPAbstraction : Site → Bool
   | .external => false
   | .internal | .adjunct => true
 
-/-- The events the DP's variable can be bound to at a site: the VP event where its
-abstraction c-commands the DP, an external modal's anchor when embedded under one, and the
-assertion when left free (fn. 17). -/
+/-- At a site, the DP's event variable can be bound to the VP event where its abstraction
+c-commands the DP, to an external modal's anchor when embedded under one, and to the assertion
+when left free (fn. 17). -/
 def binders (site : Site) (embedded : Option Ev) : List Ev :=
   (if site.belowVPAbstraction then [.vp] else []) ++ embedded.toList ++ [.assertion]
 
-/-- The flavors a DP can express at a site in a scenario: those the sources of its
-available binders project. -/
+/-- A DP at a site can express the flavors of those of its binders that project worlds in the
+scenario. -/
 def flavors (s : Scenario) (site : Site) (embedded : Option Ev) : List ModalFlavor :=
-  (binders site embedded).filterMap fun e => (s.source e).map ModalSource.flavor
+  (binders site embedded).filterMap fun e ↦ (s.worlds e).map fun _ ↦ e.flavor
 
-/-- §3.4: an external argument is epistemic only; an internal argument or adjunct of a
-volitional verb is random choice or epistemic, of a non-volitional verb epistemic only. -/
+/-- An external argument is epistemic only, and an internal argument or adjunct is random
+choice or epistemic with a volitional verb and epistemic only with a non-volitional one
+(§3.4). -/
 theorem flavors_pattern (d dox : Finset World) :
     flavors (scenario (some d) dox) .external none = [.epistemic] ∧
       flavors (scenario none dox) .external none = [.epistemic] ∧
@@ -203,22 +241,99 @@ theorem flavors_pattern (d dox : Finset World) :
       flavors (scenario none dox) .adjunct none = [.epistemic] :=
   ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
 
+/-! ### Items (§§4, 6.2) -/
+
+/-- A modal indefinite of the schema (59) varies, as §6.2 describes, in the anchors it admits,
+a definedness condition, and in the bound on its witnesses. -/
+structure ModalIndefinite where
+  /-- `Admits s e` holds when the item admits the anchor `e` in `s`. -/
+  Admits : Scenario → Ev → Prop
+  [decAdmits : ∀ s e, Decidable (Admits s e)]
+  /-- `Bound w` bounds the witnesses in `w`. -/
+  Bound : World → Prop
+  [decBound : DecidablePred Bound]
+
+attribute [instance] ModalIndefinite.decAdmits ModalIndefinite.decBound
+
+/-- The item's denotation anchored to `e` is defined when the item admits the anchor and true
+when the claim holds within the bound. -/
+def ModalIndefinite.denotation (i : ModalIndefinite) (s : Scenario) (e : Ev) :
+    PartialProp World where
+  presup _ := i.Admits s e
+  assertion w := Claim s e w ∧ i.Bound w
+
+instance (i : ModalIndefinite) (s : Scenario) (e : Ev) (w : World) :
+    Decidable ((i.denotation s e).holds w) := by
+  unfold PartialProp.holds ModalIndefinite.denotation; infer_instance
+
+/-- The decision behind a volitional event and an order have normative conditions; a speech
+event and a belief state do not, having informational content (p. 35, after
+[alonso-ovalle-menendez-benito-2018] pp. 29, 31). -/
+def Scenario.Normative (s : Scenario) : Ev → Prop
+  | .vp => s.decision.isSome
+  | .order => True
+  | .assertion | .belief => False
+
+instance (s : Scenario) : DecidablePred s.Normative
+  | .vp => inferInstanceAs (Decidable (s.decision.isSome = true))
+  | .order => instDecidableTrue
+  | .assertion | .belief => instDecidableFalse
+
+/-- *Yalnhej* admits any anchor and has no bound (§4.2). -/
+def yalnhej : ModalIndefinite := ⟨fun _ _ ↦ True, fun _ ↦ True⟩
+
+/-- *Uno cualquiera* admits normative anchors and requires a unique witness (p. 31). -/
+def cualquiera : ModalIndefinite :=
+  ⟨Scenario.Normative, UniqueWitness univ (fun _ _ ↦ True) Taken⟩
+
+/-- *N'importe quel* admits normative anchors (120). -/
+def nimporteQuel : ModalIndefinite := ⟨Scenario.Normative, fun _ ↦ True⟩
+
+/-- *Uno cualquiera* is undefined anchored to the assertion or a belief state, so it has no
+epistemic reading ((67)–(68), (93)), but anchored to the order of (86) it is defined, and an
+order that any card fulfils verifies it. -/
+theorem cualquiera_selective (s : Scenario) (w : World) :
+    ¬ (cualquiera.denotation s .assertion).holds w ∧
+      ¬ (cualquiera.denotation s .belief).holds w ∧
+      (cualquiera.denotation (scenario (some {{0}}) ∅ {{0}, {1}}) .order).holds {0} := by
+  refine ⟨?_, ?_, by decide⟩ <;>
+    simp [PartialProp.holds, ModalIndefinite.denotation, cualquiera, Scenario.Normative]
+
+/-- *N'importe quel* conveys random choice and is undefined anchored to the assertion
+(120). -/
+theorem nimporteQuel_selective (s : Scenario) (w : World) :
+    (nimporteQuel.denotation (scenario (some nonempty)) .vp).holds {0} ∧
+      ¬ (nimporteQuel.denotation s .assertion).holds w :=
+  ⟨by decide, by simp [PartialProp.holds, ModalIndefinite.denotation, nimporteQuel,
+    Scenario.Normative]⟩
+
+/-- Where everything was taken, because everyone danced (124)–(125) or Xun bought all the
+books (126)–(127), *yalnhej*'s claim holds, while *algún*'s bound (122) and *uno cualquiera*'s
+unique witness (123) fail. -/
+theorem upperBound_universal :
+    (yalnhej.denotation (scenario none {{0, 1}}) .assertion).holds {0, 1} ∧
+      (yalnhej.denotation (scenario (some {{0, 1}})) .vp).holds {0, 1} ∧
+      ¬ NotAll univ (fun _ _ ↦ True) Taken {0, 1} ∧
+      ¬ (cualquiera.denotation (scenario (some {{0, 1}})) .vp).holds {0, 1} := by
+  decide
+
 /-! ### The paper's judgments -/
 
-/-- The reading a row names, as a flavor. -/
+/-- `readingFlavor` gives the flavor of the reading a row names. -/
 def readingFlavor : String → Option ModalFlavor
   | "epistemic" => some .epistemic
   | "random choice" => some .circumstantial
   | _ => none
 
-/-- The doxastic alternatives a row's `epistemicState` names, with `{0}` the actual world. -/
+/-- `doxOf` gives the doxastic alternatives a row's `epistemicState` names, with `{0}` the
+actual world. -/
 def doxOf : String → Option (Finset World)
   | "ignorant" => some nonempty
   | "knows which, not all" => some {{0}}
   | "knows all" => some {{0, 1}}
   | _ => none
 
-/-- The decision a row's `decision` feature names. -/
+/-- `decisionOf` gives the decision a row's `decision` feature names. -/
 def decisionOf : String → Option (Finset World)
   | "indiscriminate" => some nonempty
   | "specific" => some {{0}}
@@ -240,54 +355,54 @@ def positionPredicted (row : Datum) : Option Bool := do
   let s : Scenario := scenario decision dox
   let w : World := if row.feature? "epistemicState" == some "knows all" ||
     row.feature? "decision" == some "all" then {0, 1} else {0}
-  return (binders site none).any fun e =>
-    (s.source e).map ModalSource.flavor == some fl && decide (claim s e w)
+  return (binders site none).any fun e ↦ e.flavor == fl && decide (Claim s e w)
 
 /-- Every Chuj position row carries the predicted judgment. -/
 theorem position_rows :
     ∀ row ∈ Examples.all, ∀ b ∈ positionPredicted row,
       (row.judgment == .acceptable) = b := by decide +kernel
 
-/-- The fragment entry a row's `item` feature names. -/
-def entryOf : String → Option ModalIndefinite
-  | "yalnhej" => some Chuj.ModalIndefinites.yalnhej
-  | "komon" => some Chuj.ModalIndefinites.komon
-  | "algún" => some Spanish.ModalIndefinites.algún
-  | "uno cualquiera" => some Spanish.ModalIndefinites.unoCualquiera
-  | "irgendein" => some German.ModalIndefinites.irgendein
-  | "n'importe quel" => some French.ModalIndefinites.nimporteQuel
-  | "un qualsiasi" => some Italian.ModalIndefinites.unQualsiasi
+/-- `itemOf` gives the item a row's `item` feature names, among those the study gives a
+denotation. *Un N qualsiasi* is *uno cualquiera*'s Italian counterpart (p. 32); *algún* and
+*irgendein*, whose modal components are implicatures (§6.1), and the modifier *komon* have
+none here. -/
+def itemOf : String → Option ModalIndefinite
+  | "yalnhej" => some yalnhej
+  | "uno cualquiera" | "un qualsiasi" => some cualquiera
+  | "n'importe quel" => some nimporteQuel
   | _ => none
 
-/-- A cross-linguistic row's prediction from its fragment entry: a reading is available iff
-the entry has its flavor (or an unremarkable reading), it survives embedding iff the entry's
-component is at-issue, a universal scenario is tolerated iff the entry is not upper-bounded,
-and a predicative position needs a predicative entry. -/
-def entryPredicted (row : Datum) : Option Bool := do
-  let e ← row.feature? "item" >>= entryOf
-  if (row.feature? "position").any (· ∈ ["external", "internal", "adjunct"]) then none
-  if row.feature? "scenario" == some "universal" then return !e.upperBounded
-  if let some s := row.feature? "survives" then return (s == "yes") == (e.status == .atIssue)
-  let predicative := row.feature? "position" == some "predicative"
-  match row.feature? "reading" with
-  | none => if predicative then return e.canBePredicate else none
-  | some reading =>
-    let hasReading := match reading with
-      | "unremarkable" => e.hasUnremarkableReading
-      | r => (readingFlavor r).any (· ∈ e.flavors)
-    return (!predicative || e.canBePredicate) && hasReading
+/-- A reading of flavor `fl` is available unembedded when a binder of an object (62), (69) of
+that flavor makes the item defined and true given an indiscriminate decision and an ignorant
+speaker. -/
+def ModalIndefinite.Available (i : ModalIndefinite) (fl : ModalFlavor) : Prop :=
+  ∃ e ∈ binders .internal none, e.flavor = fl ∧
+    (i.denotation (scenario (some nonempty) nonempty) e).holds {0}
 
-/-- Every cross-linguistic row carries the judgment its fragment entry predicts, and every
-reading it lists is available iff the entry has the flavor. -/
-theorem entry_rows :
-    ∀ row ∈ Examples.all, ∀ e ∈ row.feature? "item" >>= entryOf,
-      (∀ b ∈ entryPredicted row, (row.judgment == .acceptable) = b) ∧
-        ((row.feature? "survives").isNone →
-          ∀ r ∈ row.readings, ∀ fl ∈ readingFlavor r.1,
-            (r.2 == .acceptable) = decide (fl ∈ e.flavors)) := by
+instance (i : ModalIndefinite) (fl : ModalFlavor) : Decidable (i.Available fl) := by
+  unfold ModalIndefinite.Available; infer_instance
+
+/-- A row is bare when it embeds the item nowhere and fixes no position, anchor, scenario or
+continuation. -/
+def IsBare (row : Datum) : Prop :=
+  ∀ f ∈ ["position", "survives", "embedded", "anchor", "scenario", "continuation",
+    "construction", "property"], row.feature? f = none
+
+instance (row : Datum) : Decidable (IsBare row) := by unfold IsBare; infer_instance
+
+/-- In every bare row of an item the study analyses, the judgment of the reading the row names
+and of each reading it lists is acceptable iff the item makes it available ((54), (93),
+(119)–(121), fn. 20 (i)). -/
+theorem reading_rows :
+    ∀ row ∈ Examples.all, IsBare row → ∀ i ∈ (row.feature? "item").bind itemOf,
+      (∀ fl ∈ (row.feature? "reading").bind readingFlavor,
+        (row.judgment == .acceptable) = decide (i.Available fl)) ∧
+      ∀ r ∈ row.readings, ∀ fl ∈ readingFlavor r.1,
+        (r.2 == .acceptable) = decide (i.Available fl) := by
   decide +kernel
 
 example : (∃ row ∈ Examples.all, (positionPredicted row).isSome) ∧
-    ∃ row ∈ Examples.all, (entryPredicted row).isSome := by decide +kernel
+    ∃ row ∈ Examples.all, IsBare row ∧ ((row.feature? "item").bind itemOf).isSome := by
+  decide +kernel
 
 end AlonsoOvalleRoyer2024
