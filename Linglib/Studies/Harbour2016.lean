@@ -350,12 +350,12 @@ theorem graph_not_admissible :
 open Harbour2014 (Setting Convention)
 
 /-- Winnebago has minimal and augmented, from `±minimal` alone ([harbour-2014] Table 3). -/
-def winnebago : Number.System := { name := "Winnebago", values := [.minimal, .augmented] }
+def winnebago : Number.System := { values := [.minimal, .augmented] }
 
 /-- Mebengokre has minimal, paucal and plural, from `±additive` and `±minimal`
 ([harbour-2014] Table 3). -/
 def mebengokre : Number.System :=
-  { name := "Mebengokre", values := [.minimal, .paucal, .plural] }
+  { values := [.minimal, .paucal, .plural] }
 
 /-- A setting generates a set of number values when every value is among its system's; a
 language need not lexicalize every number its features afford. -/

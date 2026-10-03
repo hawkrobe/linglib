@@ -123,9 +123,9 @@ theorem resolve_ofCard (h₁ : ns.DualImpliesSingular) (h₂ : ns.TrialImpliesDu
 
 -- Both hypotheses are needed: a dual without a singular, or a trial without a dual, makes the
 -- value of a sum depend on more than the values of its parts.
-example : let ns : System := { name := "", values := [.dual, .plural] }
+example : let ns : System := { values := [.dual, .plural] }
     ns.resolve (ns.ofCard 1) (ns.ofCard 1) ≠ ns.ofCard 2 := by decide
-example : let ns : System := { name := "", values := [.singular, .trial, .plural] }
+example : let ns : System := { values := [.singular, .trial, .plural] }
     ns.resolve (ns.ofCard 2) (ns.ofCard 1) ≠ ns.ofCard 3 := by decide
 
 /-- Any number of conjuncts, resolved in order, give the value of the sum of their
