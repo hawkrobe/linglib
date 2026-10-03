@@ -24,7 +24,7 @@ premise of the Mohawk argument (`stem_matching_fails`).
 ## Implementation notes
 
 Grammars are mathlib's `ContextFreeGrammar`, and the language theorems go through derivation
-trees: soundness by induction on a valid tree, with what each nonterminal generates spelled out
+trees: soundness by induction on a licensed tree, with what each nonterminal generates spelled out
 (`Generated`), and completeness by building the derivation. The Dutch verb phrases are described
 as the paper does, with the categories of the lexicon (29b) as terminals; the row predictions
 decide membership by stripping the names and counting the transitive verbs (`isVerbPhrase`),
@@ -51,11 +51,12 @@ private theorem produces_of_mem {T : Type*} {g : ContextFreeGrammar T} {r : Cont
     (hr : r ∈ g.rules) : g.Produces [.nonterminal r.input] r.output :=
   ⟨r, hr, ContextFreeRule.Rewrites.input_output⟩
 
-/-- A valid tree whose root is a terminal yields that terminal. -/
+/-- A licensed tree whose root is a terminal yields that terminal. -/
 private theorem yield_eq_of_value_terminal {T : Type*} {g : ContextFreeGrammar T}
-    {t : RoseTree (Symbol T g.NT)} (ht : t.ValidFor g) {a : T} (hv : t.value = .terminal a) :
+    {t : RoseTree (Symbol T g.NT)} (ht : t.Licensed g.Licenses) {a : T}
+    (hv : t.value = .terminal a) :
     t.yield = [a] := by
-  cases ht with
+  induction ht using RoseTree.Licensed.grammar_induction with
   | terminal b =>
     obtain rfl : b = a := by simpa [RoseTree.leaf] using hv
     simp [RoseTree.leaf]
@@ -75,7 +76,7 @@ inductive ConcordNT
   deriving DecidableEq, Repr
 
 open Symbol in
-/-- The finite state grammar of §1: a singular or plural *which*-phrase selects the chain of
+/-- In the finite state grammar of §1 a singular or plural *which*-phrase selects the chain of
 *she thought* and *you thought* clauses ending in the agreeing verb. -/
 def concordGrammar : ContextFreeGrammar Word where
   NT := ConcordNT
@@ -98,7 +99,7 @@ private theorem cprod {r : CRule} (hr : r ∈ concordGrammar.rules) :
     concordGrammar.Produces [.nonterminal r.input] r.output :=
   produces_of_mem hr
 
-/-- A finite state grammar: every rule rewrites to terminals followed by at most one
+/-- In a finite state grammar every rule rewrites to terminals followed by at most one
 nonterminal. -/
 def IsFiniteState {T : Type*} (g : ContextFreeGrammar T) : Prop :=
   ∀ r ∈ g.rules, ∀ s ∈ r.output.dropLast, (Symbol.terminal? s).isSome
@@ -137,8 +138,8 @@ private theorem derives_chain (ps : List Bool) :
       · simpa [chain] using ihU.append_left [Symbol.terminal .she, .terminal .thought]
       · simpa [chain] using ihT.append_left [Symbol.terminal .she, .terminal .thought]
 
-/-- Concord over an unbounded domain in a finite state language: for every chain of embedded
-clauses, the plural *which*-phrase agrees with *were* and the singular with *was*. -/
+/-- Concord holds over an unbounded domain in a finite state language, since for every chain of
+embedded clauses the plural *which*-phrase agrees with *were* and the singular with *was*. -/
 theorem concord_unbounded (ps : List Bool) :
     [Word.which, .problems, .did, .your, .professor, .say] ++ chain ps ++ [.were, .unsolvable]
         ∈ concordGrammar.language ∧
@@ -161,14 +162,14 @@ theorem concord_unbounded (ps : List Bool) :
 
 /-! ### §2: the nonidentity language (8) and grammar (9) -/
 
-/-- The terminal vocabulary of (8): the two letters of the differing substrings and the three
+/-- The terminal vocabulary of (8) has the two letters of the differing substrings and the three
 markers. -/
 inductive Sym
   | a | b | alpha | beta | gamma
   deriving DecidableEq, Repr
 
-/-- The nonterminals of grammar (9): `S₁`, `S₂`, `A₁`, `B₁` are the paper's `S'`, `S''`, `A'`,
-`B'`. -/
+/-- Among the nonterminals of grammar (9), `S₁`, `S₂`, `A₁`, `B₁` are the paper's `S'`, `S''`,
+`A'`, `B'`. -/
 inductive XYNT
   | S | S₁ | S₂ | A | B | A₁ | B₁ | C | D
   deriving DecidableEq, Repr
@@ -210,14 +211,14 @@ private theorem xprod {r : XRule} (hr : r ∈ xyGrammar.rules) :
 /-- A string over `a` and `b`. -/
 def AB (l : List Sym) : Prop := ∀ c ∈ l, c = .a ∨ c = .b
 
-/-- The language (8): a central marker between two strings over `a` and `b` that differ. -/
+/-- The language (8) has a central marker between two strings over `a` and `b` that differ. -/
 def IsXY (w : List Sym) : Prop :=
   ∃ x y, w = .alpha :: x ++ .beta :: y ++ [.gamma] ∧ AB x ∧ AB y ∧ x ≠ y
 
-/-- What each nonterminal of grammar (9) generates: `S₁` a marker between strings of different
-lengths, `S₂` a marker between strings differing at some position, `A` and `B` a specified `a` or
-`b` flanked by equally many characters before it and after the marker, `A₁` and `B₁` a specified
-`a` or `b` and a tail. -/
+/-- Each nonterminal of grammar (9) generates its own strings. `S₁` generates a marker between
+strings of different lengths, `S₂` a marker between strings differing at some position, `A` and
+`B` a specified `a` or `b` flanked by equally many characters before it and after the marker, and
+`A₁` and `B₁` a specified `a` or `b` and a tail. -/
 def Generated : XYNT → List Sym → Prop
   | .C, w => w = [.a] ∨ w = [.b]
   | .D, w => w ≠ [] ∧ AB w
@@ -255,11 +256,11 @@ private theorem exists_of_generated_C {w : List Sym} (h : Generated .C w) :
   · exact ⟨.a, rfl, Or.inl rfl⟩
   · exact ⟨.b, rfl, Or.inr rfl⟩
 
-/-- Soundness: a tree of grammar (9) rooted at a nonterminal yields what that nonterminal
-generates; at `S`, a string of (8). -/
-theorem xy_sound {t : RoseTree (Symbol Sym xyGrammar.NT)} (ht : t.ValidFor xyGrammar) :
+/-- By soundness, a tree of grammar (9) rooted at a nonterminal yields what that nonterminal
+generates, which at `S` is a string of (8). -/
+theorem xy_sound {t : RoseTree (Symbol Sym xyGrammar.NT)} (ht : t.Licensed xyGrammar.Licenses) :
     ∀ N, t.value = .nonterminal N → Generated N t.yield := by
-  induction ht with
+  induction ht using RoseTree.Licensed.grammar_induction with
   | terminal x => simp [RoseTree.leaf]
   | nonterminal N cs hrule hcs ih =>
     intro N' hN
@@ -513,7 +514,7 @@ private theorem derives_S₂ {x y : List Sym} (hx : AB x) (hy : AB y) (hlen : x.
       ((derives_B u d u' hu hd hu' hlen').append_right _).trans ((derives_A₁ he).append_left _)
   · exact absurd rfl hpq
 
-/-- Completeness: every string of (8) is derived. -/
+/-- By completeness, every string of (8) is derived. -/
 theorem derives_xy {w : List Sym} (hw : IsXY w) :
     xyGrammar.Derives [.nonterminal .S] (w.map .terminal) := by
   obtain ⟨x, y, rfl, hx, hy, hne⟩ := hw
@@ -534,7 +535,7 @@ theorem xyGrammar_language : xyGrammar.language = ({w | IsXY w} : Language Sym) 
   ext w
   constructor
   · intro hw
-    obtain ⟨t, ht, rfl, hv⟩ := xyGrammar.exists_valid_tree hw
+    obtain ⟨t, ht, rfl, hv⟩ := xyGrammar.exists_licensed_tree hw
     exact xy_sound ht .S hv
   · exact λ hw => (ContextFreeGrammar.mem_language_iff _ _).2 (derives_xy hw)
 
@@ -545,13 +546,13 @@ theorem isXY_isContextFree : Language.IsContextFree ({w | IsXY w} : Language Sym
 
 /-! ### §4: *respectively* -/
 
-/-- Langendoen's characterization (17) of English *respectively* sentences: each verb agrees in
+/-- Langendoen's characterization (17) of English *respectively* sentences has each verb agree in
 number with its subject. -/
 def Langendoen (r : Datum) : Prop := r.feature? "subjects" = r.feature? "verbs"
 
 instance (r : Datum) : Decidable (Langendoen r) := by unfold Langendoen; infer_instance
 
-/-- (19): the judgments are the exact converse of the characterization. -/
+/-- The judgments in (19) are the exact converse of the characterization. -/
 theorem respectively_converse :
     (Langendoen ex19a ∧ ex19a.judgment = .unacceptable) ∧
       (¬ Langendoen ex19b ∧ ex19b.judgment = .acceptable) := by
@@ -562,20 +563,20 @@ theorem respectively_18b : Langendoen ex18b ∧ ex18b.judgment = .unacceptable :
 
 /-! ### §5: Dutch verb raising and grammar (29) -/
 
-/-- The categories of the lexicon (29b): names, transitive infinitives, intransitive verbs,
+/-- The categories of the lexicon (29b) are names, transitive infinitives, intransitive verbs,
 transitive and intransitive VP-complement-taking infinitives, and finite transitive and
 intransitive VP-complement-taking verbs. -/
 inductive Cat
   | B | D | E | F | G | H | I
   deriving DecidableEq, Repr
 
-/-- The nonterminals of grammar (29a): the verb phrase and its VP complement. -/
+/-- The nonterminals of grammar (29a) are the verb phrase and its VP complement. -/
 inductive DutchNT
   | A | C
   deriving DecidableEq, Repr
 
 open Symbol in
-/-- Grammar (29a): `A → B C D | C E` and `C → B C F | C G | B H | I`. -/
+/-- Grammar (29a) has the rules `A → B C D | C E` and `C → B C F | C G | B H | I`. -/
 def dutchGrammar : ContextFreeGrammar Cat where
   NT := DutchNT
   initial := .A
@@ -617,25 +618,26 @@ def objects (vs : List Cat) : ℕ := vs.countP Cat.transitive
 @[simp] theorem objects_append (v w : List Cat) : objects (v ++ w) = objects v + objects w :=
   List.countP_append ..
 
-/-- A VP complement: names, a finite VP-complement-taking verb, then nonfinite VP-complement-taking
-verbs, with one name for each transitive verb. -/
+/-- A VP complement consists of names, a finite VP-complement-taking verb, then nonfinite
+VP-complement-taking verbs, with one name for each transitive verb. -/
 def IsComplement (w : List Cat) : Prop :=
   ∃ n h x, w = List.replicate n .B ++ h :: x ∧ (h = .H ∨ h = .I) ∧ (∀ c ∈ x, c = .F ∨ c = .G) ∧
     n = objects (h :: x)
 
-/-- The verb phrases of (24) as the paper describes them: `n` names, a finite
+/-- The verb phrases of (24), as the paper describes them, consist of `n` names, a finite
 VP-complement-taking verb, a string of nonfinite VP-complement-taking verbs, and a final
 transitive or intransitive verb, with one name for each transitive verb. -/
 def IsVerbPhrase (w : List Cat) : Prop :=
   ∃ n h x v, w = List.replicate n .B ++ h :: x ++ [v] ∧ (h = .H ∨ h = .I) ∧
     (∀ c ∈ x, c = .F ∨ c = .G) ∧ (v = .D ∨ v = .E) ∧ n = objects (h :: x ++ [v])
 
-/-- Soundness: a tree of grammar (29) rooted at `C` yields a VP complement and one rooted at `A` a
-verb phrase. -/
-theorem dutch_sound {t : RoseTree (Symbol Cat dutchGrammar.NT)} (ht : t.ValidFor dutchGrammar) :
+/-- By soundness, a tree of grammar (29) rooted at `C` yields a VP complement and one rooted at
+`A` a verb phrase. -/
+theorem dutch_sound {t : RoseTree (Symbol Cat dutchGrammar.NT)}
+    (ht : t.Licensed dutchGrammar.Licenses) :
     (t.value = .nonterminal .C → IsComplement t.yield) ∧
       (t.value = .nonterminal .A → IsVerbPhrase t.yield) := by
-  induction ht with
+  induction ht using RoseTree.Licensed.grammar_induction with
   | terminal a => simp [RoseTree.leaf]
   | nonterminal N cs hrule hcs ih =>
     simp only [RoseTree.value_node, Symbol.nonterminal.injEq, RoseTree.yield_node_nonterminal]
@@ -685,7 +687,7 @@ theorem dutch_sound {t : RoseTree (Symbol Cat dutchGrammar.NT)} (ht : t.ValidFor
         · simp at hn ⊢
           omega
 
-/-- Completeness for `C`: every VP complement is derived. -/
+/-- By completeness for `C`, every VP complement is derived. -/
 theorem derives_complement : ∀ (x : List Cat) {n : ℕ} {h : Cat}, (h = .H ∨ h = .I) →
     (∀ c ∈ x, c = .F ∨ c = .G) → n = objects (h :: x) →
       dutchGrammar.Derives [.nonterminal .C]
@@ -715,7 +717,7 @@ theorem derives_complement : ∀ (x : List Cat) {n : ℕ} {h : Cat}, (h = .H ∨
       refine (dprod (r := ⟨.C, [.nonterminal .C, .terminal .G]⟩) (by decide)).trans_derives ?_
       simpa using this
 
-/-- Completeness: every verb phrase is derived. -/
+/-- By completeness, every verb phrase is derived. -/
 theorem derives_verbPhrase {w : List Cat} (hw : IsVerbPhrase w) :
     dutchGrammar.Derives [.nonterminal .A] (w.map .terminal) := by
   obtain ⟨n, h, x, v, rfl, hh, hx, rfl | rfl, hn⟩ := hw
@@ -736,7 +738,7 @@ theorem dutchGrammar_language : dutchGrammar.language = ({w | IsVerbPhrase w} : 
   ext w
   constructor
   · intro hw
-    obtain ⟨t, ht, rfl, hv⟩ := dutchGrammar.exists_valid_tree hw
+    obtain ⟨t, ht, rfl, hv⟩ := dutchGrammar.exists_licensed_tree hw
     exact (dutch_sound ht).2 hv
   · exact λ hw => (ContextFreeGrammar.mem_language_iff _ _).2 (derives_verbPhrase hw)
 
@@ -746,7 +748,8 @@ theorem isVerbPhrase_isContextFree : Language.IsContextFree ({w | IsVerbPhrase w
 
 /-! #### The examples (25) to (31) -/
 
-/-- Deciding `IsVerbPhrase`: strip the names, read the first and last verb, and count. -/
+/-- `IsVerbPhrase` is decided by stripping the names, reading the first and last verb, and
+counting. -/
 def isVerbPhrase (w : List Cat) : Bool :=
   match w.dropWhile (· == .B) with
   | [] => false
@@ -830,8 +833,8 @@ def Cat.ofChar? : Char → Option Cat
 def categories (r : Datum) : Option (List Cat) :=
   (r.feature? "categories").bind λ s => s.toList.mapM Cat.ofChar?
 
-/-- A row is predicted: it is grammatical exactly when its category string is a verb phrase of
-grammar (29). -/
+/-- A row is predicted when its grammaticality agrees with whether its category string is a verb
+phrase of grammar (29). -/
 def Predicted (r : Datum) : Prop :=
   match categories r with
   | some w => r.judgment = .acceptable ↔ isVerbPhrase w = true
@@ -840,13 +843,13 @@ def Predicted (r : Datum) : Prop :=
 instance (r : Datum) : Decidable (Predicted r) := by
   unfold Predicted; split <;> infer_instance
 
-/-- (25) to (31): grammar (29) accepts the grammatical clauses and rejects the ungrammatical. -/
+/-- On (25) to (31), grammar (29) accepts the grammatical clauses and rejects the ungrammatical. -/
 theorem dutch_rows : ∀ r ∈ Examples.all, r.language = "dutc1256" → Predicted r := by decide
 
 /-! ### §6: Mohawk noun incorporation -/
 
-/-- The stem-matching premise of the Mohawk argument: the stem incorporated in the verb is the
-head noun stem of its external argument. -/
+/-- The stem-matching premise of the Mohawk argument says that the stem incorporated in the verb is
+the head noun stem of its external argument. -/
 def StemMatched (r : Datum) : Prop :=
   r.feature? "incorporated" = r.feature? "external"
 

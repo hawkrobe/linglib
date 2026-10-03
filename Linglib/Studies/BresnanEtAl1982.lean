@@ -12,10 +12,11 @@ V′ cluster holding the verbs — whose depths must match: a verb with no argum
 violates Completeness, an argument with no verb violates Coherence. The string set of these clauses
 is weakly context-free (the argument of [huybregts-1976] fails), but no context-free grammar
 generates exactly the well-formed trees, under any relabelling of its nonterminals: a tall enough
-derivation tree repeats a nonterminal along the verb cluster, and pumping the cluster yields a valid
-tree with more verbs than arguments. The lexical-functional grammar of [kaplan-bresnan-1982]
-generates the trees through a context-free c-structure grammar filtered by the well-formedness
-conditions on f-structures, and functional control derives the cross-serial association itself.
+derivation tree repeats a nonterminal along the verb cluster, and pumping the cluster yields a
+licensed tree with more verbs than arguments. The lexical-functional grammar of
+[kaplan-bresnan-1982] generates the trees through a context-free c-structure grammar filtered by the
+well-formedness conditions on f-structures, and functional control derives the cross-serial
+association itself.
 
 ## Main definitions
 
@@ -25,7 +26,7 @@ conditions on f-structures, and functional control derives the cross-serial asso
 
 ## Main results
 
-* `tree_validFor_cStructure` — the c-structure grammar generates every `tree k m`
+* `tree_licensed_cStructure` — the c-structure grammar generates every `tree k m`
 * `Spine.complete_and_coherent_iff` — Completeness and Coherence hold exactly when the objects
   match the non-final verbs
 * `yield_dutch_mem_weakGrammar` — the matched strings are weakly context-free
@@ -48,7 +49,7 @@ namespace BresnanEtAl1982
 
 open RoseTree Symbol Core.Order.Branching
 
-/-- Leaf classes: a noun phrase or a verb. -/
+/-- A leaf is a noun phrase or a verb. -/
 inductive Word | np | v
   deriving DecidableEq, Repr
 
@@ -58,7 +59,7 @@ inductive Cat | S | VP | vBar
 
 /-! ### The trees -/
 
-/-- The verb cluster of `m + 1` verbs: the right-branching V′ of (22), by V′ → V (V′). -/
+/-- The verb cluster of `m + 1` verbs is the right-branching V′ of (22), by V′ → V (V′). -/
 def cluster : ℕ → RoseTree (Symbol Word Cat)
   | 0 => node (nonterminal .vBar) [leaf (terminal .v)]
   | m + 1 => node (nonterminal .vBar) [leaf (terminal .v), cluster m]
@@ -68,7 +69,8 @@ def spine : ℕ → RoseTree (Symbol Word Cat)
   | 0 => node (nonterminal .VP) [leaf (terminal .np)]
   | k + 1 => node (nonterminal .VP) [leaf (terminal .np), spine k]
 
-/-- The VP of (22): the first object, the spine of the remaining `k` objects, and the cluster. -/
+/-- The VP of (22) has the first object, the spine of the remaining `k` objects, and the
+cluster. -/
 def topVP : ℕ → ℕ → RoseTree (Symbol Word Cat)
   | 0, m => node (nonterminal .VP) [leaf (terminal .np), cluster m]
   | k + 1, m => node (nonterminal .VP) [leaf (terminal .np), spine k, cluster m]
@@ -77,7 +79,8 @@ def topVP : ℕ → ℕ → RoseTree (Symbol Word Cat)
 def tree (k m : ℕ) : RoseTree (Symbol Word Cat) :=
   node (nonterminal .S) [leaf (terminal .np), topVP k m]
 
-/-- The well-formed trees: `n + 1` objects and `n + 2` verbs, each non-final verb with its object.
+/-- The well-formed trees have `n + 1` objects and `n + 2` verbs, each non-final verb with its
+object.
 (1) is `dutch 0`, (26) is `dutch 1`, (3) is `dutch 2`. -/
 def dutch (n : ℕ) : RoseTree (Symbol Word Cat) := tree n (n + 1)
 
@@ -117,9 +120,9 @@ theorem one_lt_height_cluster (m : ℕ) : 1 < (cluster m).height := by
 
 /-! ### The c-structure grammar -/
 
-/-- The c-structure grammar (25): S → NP VP, VP → (NP)(VP)(V′), V′ → V (V′), with the optional
-expansions the trees use. It generates every `tree k m`, matched or not; the f-structure conditions
-below do the filtering. -/
+/-- The c-structure grammar (25) has S → NP VP, VP → (NP)(VP)(V′) and V′ → V (V′), with the
+optional expansions the trees use. It generates every `tree k m`, matched or not; the f-structure
+conditions below do the filtering. -/
 def cStructure : ContextFreeGrammar Word where
   NT := Cat
   initial := .S
@@ -131,7 +134,7 @@ def cStructure : ContextFreeGrammar Word where
              ⟨.vBar, [terminal .v, nonterminal .vBar]⟩,
              ⟨.vBar, [terminal .v]⟩ }
 
-theorem cluster_validFor (m : ℕ) : (cluster m).ValidFor cStructure := by
+theorem cluster_licensed (m : ℕ) : (cluster m).Licensed cStructure.Licenses := by
   induction m with
   | zero =>
     refine .nonterminal _ _ (by simp [cStructure]) ?_
@@ -141,7 +144,7 @@ theorem cluster_validFor (m : ℕ) : (cluster m).ValidFor cStructure := by
     simp only [List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp, forall_eq]
     exact ⟨.terminal _, ih⟩
 
-theorem spine_validFor (k : ℕ) : (spine k).ValidFor cStructure := by
+theorem spine_licensed (k : ℕ) : (spine k).Licensed cStructure.Licenses := by
   induction k with
   | zero =>
     refine .nonterminal _ _ (by simp [cStructure]) ?_
@@ -151,33 +154,33 @@ theorem spine_validFor (k : ℕ) : (spine k).ValidFor cStructure := by
     simp only [List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp, forall_eq]
     exact ⟨.terminal _, ih⟩
 
-theorem topVP_validFor (k m : ℕ) : (topVP k m).ValidFor cStructure := by
+theorem topVP_licensed (k m : ℕ) : (topVP k m).Licensed cStructure.Licenses := by
   cases k with
   | zero =>
     refine .nonterminal _ _ (by simp [cStructure]) ?_
     simp only [List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp, forall_eq]
-    exact ⟨.terminal _, cluster_validFor m⟩
+    exact ⟨.terminal _, cluster_licensed m⟩
   | succ k =>
     refine .nonterminal _ _ (by simp [cStructure]) ?_
     simp only [List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp, forall_eq]
-    exact ⟨.terminal _, spine_validFor k, cluster_validFor m⟩
+    exact ⟨.terminal _, spine_licensed k, cluster_licensed m⟩
 
 /-- The c-structure grammar generates every tree, whatever its counts of objects and verbs. -/
-theorem tree_validFor_cStructure (k m : ℕ) : (tree k m).ValidFor cStructure := by
+theorem tree_licensed_cStructure (k m : ℕ) : (tree k m).Licensed cStructure.Licenses := by
   refine .nonterminal _ _ (by simp [cStructure]) ?_
   simp only [List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp, forall_eq]
-  exact ⟨.terminal _, topVP_validFor k m⟩
+  exact ⟨.terminal _, topVP_licensed k m⟩
 
 /-! ### The f-structure and its well-formedness -/
 
-/-- The f-structure spine a c-structure induces under (32) and (35)–(36): the VP branch supplies an
-OBJ at each depth below `objects`, the V′ branch a PRED at each depth below `verbs`, every non-final
-PRED subcategorizing SUBJ, OBJ and VCOMP and the final one SUBJ alone. -/
+/-- In the f-structure spine a c-structure induces under (32) and (35)–(36), the VP branch supplies
+an OBJ at each depth below `objects` and the V′ branch a PRED at each depth below `verbs`, every
+non-final PRED subcategorizing SUBJ, OBJ and VCOMP and the final one SUBJ alone. -/
 structure Spine where
   objects : ℕ
   verbs : ℕ
 
-/-- The spine of a tree: its object NPs (all but the subject) and its verbs. -/
+/-- The spine of a tree records its object NPs (all but the subject) and its verbs. -/
 def Spine.ofTree (t : RoseTree (Symbol Word Cat)) : Spine :=
   ⟨t.yield.count .np - 1, t.yield.count .v⟩
 
@@ -187,13 +190,13 @@ def Spine.ofTree (t : RoseTree (Symbol Word Cat)) : Spine :=
 /-- The OBJ at depth `i` has a value. -/
 def Spine.HasObj (s : Spine) (i : ℕ) : Prop := i < s.objects
 
-/-- The PRED at depth `i` subcategorizes an OBJ: it exists and is not the final verb. -/
+/-- The PRED at depth `i` subcategorizes an OBJ when it exists and is not the final verb. -/
 def Spine.GovernsObj (s : Spine) (i : ℕ) : Prop := i + 1 < s.verbs
 
-/-- Completeness: every subcategorized OBJ has a value. -/
+/-- Completeness requires every subcategorized OBJ to have a value. -/
 def Spine.Complete (s : Spine) : Prop := ∀ i, s.GovernsObj i → s.HasObj i
 
-/-- Coherence: every OBJ present is subcategorized by the PRED at its depth. -/
+/-- Coherence requires every OBJ present to be subcategorized by the PRED at its depth. -/
 def Spine.Coherent (s : Spine) : Prop := ∀ i, s.HasObj i → s.GovernsObj i
 
 /-- Completeness and Coherence hold together exactly when the objects match the non-final verbs. -/
@@ -213,34 +216,35 @@ theorem dutch_wellFormed (n : ℕ) :
     (Spine.ofTree (dutch n)).Complete ∧ (Spine.ofTree (dutch n)).Coherent :=
   (Spine.complete_and_coherent_iff _ (by simp [dutch])).mpr (by simp [dutch])
 
-/-- (43) *dat Jan Piet Marie zag helpen laten zwemmen*: the extra verb's OBJ has no value. -/
+/-- In (43) *dat Jan Piet Marie zag helpen laten zwemmen* the extra verb's OBJ has no value. -/
 theorem extra_verb_incomplete : ¬ (Spine.ofTree (tree 1 3)).Complete := fun h => by
   have := h 2
   simp [Spine.GovernsObj, Spine.HasObj] at this
 
-/-- (46) *dat Jan Piet Marie Hans zag helpen zwemmen*: the extra NP is an OBJ the final verb does
-not subcategorize. -/
+/-- In (46) *dat Jan Piet Marie Hans zag helpen zwemmen* the extra NP is an OBJ the final verb
+does not subcategorize. -/
 theorem extra_np_incoherent : ¬ (Spine.ofTree (tree 2 2)).Coherent := fun h => by
   have := h 2
   simp [Spine.GovernsObj, Spine.HasObj] at this
 
-/-- The OBJ at depth `i` is the `i + 1`-th NP: the VP spine places one object per level below the
-subject. -/
+/-- The OBJ at depth `i` is the `i + 1`-th NP, since the VP spine places one object per level
+below the subject. -/
 def npOfObj (i : ℕ) : ℕ := i + 1
 
-/-- Functional control (36), `(↑ VCOMP SUBJ) = (↑ OBJ)`: the subject of the verb at depth `i + 1`
-is the OBJ at depth `i`, and the clause subject is the subject of the first verb. -/
+/-- Under functional control (36), `(↑ VCOMP SUBJ) = (↑ OBJ)`, the subject of the verb at depth
+`i + 1` is the OBJ at depth `i`, and the clause subject is the subject of the first verb. -/
 def subjOfVerb : ℕ → ℕ
   | 0 => 0
   | i + 1 => npOfObj i
 
-/-- The cross-serial association of (1)–(3): the `i`-th NP is the subject of the `i`-th verb. -/
+/-- In the cross-serial association of (1)–(3), the `i`-th NP is the subject of the `i`-th verb. -/
 theorem subjOfVerb_eq (i : ℕ) : subjOfVerb i = i := by
   cases i <;> rfl
 
 /-! ### Weak context-freeness -/
 
-/-- A grammar for the strings of the matched trees, in the spirit of (8): S → NP S V, S → NP V. -/
+/-- This grammar for the strings of the matched trees, in the spirit of (8), has S → NP S V and
+S → NP V. -/
 def weakGrammar : ContextFreeGrammar Word where
   NT := Unit
   initial := ()
@@ -264,7 +268,7 @@ theorem weakGrammar_derives_center (k : ℕ) :
       rw [List.replicate_succ', List.replicate_succ]; simp
     rw [e]; exact h
 
-/-- The matched strings are weakly context-free: `dutch n` yields `np^(n+2) v^(n+2)`. -/
+/-- The matched strings are weakly context-free, since `dutch n` yields `np^(n+2) v^(n+2)`. -/
 theorem yield_dutch_mem_weakGrammar (n : ℕ) : (dutch n).yield ∈ weakGrammar.language := by
   rw [ContextFreeGrammar.mem_language_iff, yield_dutch]
   simp only [List.map_append, List.map_replicate]
@@ -283,10 +287,10 @@ theorem yield_dutch_mem_weakGrammar (n : ℕ) : (dutch n).yield ∈ weakGrammar.
 
 /-- The derivation trees of `g` from its start symbol. -/
 def trees (g : ContextFreeGrammar Word) : Set (RoseTree (Symbol Word g.NT)) :=
-  {t | t.ValidFor g ∧ t.value = nonterminal g.initial}
+  {t | t.Licensed g.Licenses ∧ t.value = nonterminal g.initial}
 
-/-- The path from the root down the verb cluster: into the VP, into the V′, then `L` steps along
-the cluster. -/
+/-- The path from the root down the verb cluster goes into the VP, into the V′, then `L` steps
+along the cluster. -/
 def path (L : ℕ) : List ℕ := 1 :: 2 :: List.replicate L 1
 
 theorem cluster_subtreeAt_replicate (m r : ℕ) :
@@ -307,7 +311,7 @@ theorem dutch_subtreeAt_take (n L r : ℕ) (hr : r ≤ L) (hL : L ≤ n + 2) :
   have := cluster_subtreeAt_replicate (n + 2 - r) r
   rwa [Nat.sub_add_cancel (by omega)] at this
 
-/-- The category at depth `k` along `path`: S, then VP, then V′ all the way down. -/
+/-- The category at depth `k` along `path` is S, then VP, then V′ all the way down. -/
 def catAt : ℕ → Cat
   | 0 => .S
   | 1 => .VP
@@ -316,8 +320,8 @@ def catAt : ℕ → Cat
 /-- No context-free grammar generates exactly the well-formed trees, under any relabelling of its
 nonterminals to the categories S, VP, V′ — so no finite feature decoration helps. A grammar with
 `L` rules that generates `dutch (L + 1)` repeats a nonterminal along the verb cluster, and
-replacing the lower repeat by the upper one gives a valid tree of the same root with more verbs than
-noun phrases, which no `dutch n` has. -/
+replacing the lower repeat by the upper one gives a licensed tree of the same root with more verbs
+than noun phrases, which no `dutch n` has. -/
 theorem not_strongly_contextFree (g : ContextFreeGrammar Word) (ℓ : g.NT → Cat) :
     map (Symbol.mapNonterminal ℓ) '' trees g ≠ Set.range dutch := by
   intro hEq
@@ -374,7 +378,7 @@ theorem not_strongly_contextFree (g : ContextFreeGrammar Word) (ℓ : g.NT → C
     rcases i with _ | _ | i <;> rcases j with _ | _ | j <;> simp [catAt] at hc <;> omega
   -- the pumped tree
   set t' := t.replaceAt ((path L).take j) (node (nonterminal A) cᵢ) with ht'
-  have hvalid : t'.ValidFor g := ht.replaceAt hj (ht.of_subtreeAt hi) rfl
+  have hvalid : t'.Licensed g.Licenses := ht.replaceAt hj (ht.of_subtreeAt hi) rfl
   have hroot' : t'.value = nonterminal g.initial := by
     obtain ⟨j', rfl⟩ : ∃ j', j = j' + 1 := ⟨j - 1, by omega⟩
     rw [ht', path, List.take_succ_cons, value_replaceAt_cons]; exact hroot

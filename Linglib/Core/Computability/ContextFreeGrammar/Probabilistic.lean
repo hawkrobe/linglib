@@ -13,7 +13,7 @@ A probabilistic context-free grammar (PCFG) over `G` is a weight on the rules of
 to one over the rules expanding each nonterminal. The probability of a derivation tree is the
 product of the weights of the rules it applies, and the probability of a corpus, a multiset of
 derivation trees, is the product over its trees, so the corpus probability factorises over
-disjoint sub-corpora. Over valid trees it also collects into a product over the grammar's rules
+disjoint sub-corpora. Over licensed trees it also collects into a product over the grammar's rules
 of the rule weight raised to the corpus count of that rule.
 
 ## Main definitions
@@ -27,7 +27,7 @@ of the rule weight raised to the corpus count of that rule.
 ## Main results
 
 * `PCFG.corpusProb_add`: corpus probability is multiplicative over disjoint corpora.
-* `PCFG.corpusProb_eq_prod_pow_count`: over valid trees, corpus probability is the product of
+* `PCFG.corpusProb_eq_prod_pow_count`: over licensed trees, corpus probability is the product of
   rule weights raised to corpus rule counts.
 
 ## Implementation notes
@@ -48,8 +48,8 @@ trees; the measure it is the singleton mass of, and tightness in the sense of
 
 open scoped ENNReal
 
-/-- A probabilistic context-free grammar over `G`: a rule weight vanishing off the grammar and
-summing to one over the rules with each left-hand side the grammar expands. -/
+/-- A probabilistic context-free grammar over `G` is a rule weight that vanishes off the grammar
+and sums to one over the rules with each left-hand side the grammar expands. -/
 @[ext]
 structure PCFG {T : Type*} (G : ContextFreeGrammar T) [DecidableEq G.NT]
     extends WeightedCFG G ℝ≥0∞ where
@@ -64,8 +64,8 @@ variable {T : Type*} {G : ContextFreeGrammar T} [DecidableEq G.NT] (W : PCFG G)
 
 attribute [simp] weight_eq_zero_of_not_mem
 
-/-- The weight of a node from its symbol and the symbols of its children: the rule weight at a
-nonterminal, `1` at a childless terminal and `0` at a terminal with children. -/
+/-- The weight of a node, read from its symbol and the symbols of its children, is the rule
+weight at a nonterminal, `1` at a childless terminal and `0` at a terminal with children. -/
 noncomputable def symbolWeight : Symbol T G.NT → List (Symbol T G.NT) → ℝ≥0∞
   | .nonterminal A, syms => W.weight ⟨A, syms⟩
   | .terminal _, [] => 1
@@ -79,19 +79,19 @@ noncomputable def symbolWeight : Symbol T G.NT → List (Symbol T G.NT) → ℝ�
 @[simp] theorem symbolWeight_terminal_cons (a : T) (s : Symbol T G.NT)
     (syms : List (Symbol T G.NT)) : W.symbolWeight (.terminal a) (s :: syms) = 0 := rfl
 
-/-- The probability of a derivation tree: the product over its nodes of the weight of the rule
+/-- The probability of a derivation tree is the product over its nodes of the weight of the rule
 applied there. -/
 noncomputable def derivProb (t : RoseTree (Symbol T G.NT)) : ℝ≥0∞ :=
-  (t.offspring.map fun p => W.symbolWeight p.1 p.2).prod
+  (t.localTrees.map fun p => W.symbolWeight p.1 p.2).prod
 
 theorem derivProb_node (s : Symbol T G.NT) (cs : List (RoseTree (Symbol T G.NT))) :
     W.derivProb (RoseTree.node s cs) =
       W.symbolWeight s (cs.map RoseTree.value) * (cs.map W.derivProb).prod := by
-  simp only [derivProb, RoseTree.offspring_node, List.map_cons, List.prod_cons, List.map_flatten,
+  simp only [derivProb, RoseTree.localTrees_node, List.map_cons, List.prod_cons, List.map_flatten,
     List.prod_flatten, List.map_map, Function.comp_def]
   rfl
 
-/-- The probability of a corpus: the product of the probabilities of its derivation trees. -/
+/-- The probability of a corpus is the product of the probabilities of its derivation trees. -/
 noncomputable def corpusProb (D : Multiset (RoseTree (Symbol T G.NT))) : ℝ≥0∞ :=
   (D.map W.derivProb).prod
 
@@ -99,8 +99,8 @@ noncomputable def corpusProb (D : Multiset (RoseTree (Symbol T G.NT))) : ℝ≥0
 theorem corpusProb_zero : W.corpusProb 0 = 1 := by
   simp [corpusProb]
 
-/-- Corpus probability is multiplicative over disjoint corpora: derivation trees are independent
-under a PCFG, in contrast to `DirichletPCFG.corpusProb`. -/
+/-- Corpus probability is multiplicative over disjoint corpora, since derivation trees are
+independent under a PCFG, in contrast to `DirichletPCFG.corpusProb`. -/
 theorem corpusProb_add (D₁ D₂ : Multiset (RoseTree (Symbol T G.NT))) :
     W.corpusProb (D₁ + D₂) = W.corpusProb D₁ * W.corpusProb D₂ := by
   simp [corpusProb]
@@ -116,11 +116,12 @@ section
 
 variable [DecidableEq T]
 
-/-- The probability of a valid derivation tree is the product over the grammar's rules of the
+/-- The probability of a licensed derivation tree is the product over the grammar's rules of the
 rule weight raised to the number of applications of that rule in the tree. -/
-theorem derivProb_eq_prod_pow_ruleCount {t : RoseTree (Symbol T G.NT)} (ht : t.ValidFor G) :
+theorem derivProb_eq_prod_pow_ruleCount {t : RoseTree (Symbol T G.NT)}
+    (ht : t.Licensed G.Licenses) :
     W.derivProb t = ∏ r ∈ G.rules, W.weight r ^ RoseTree.ruleCount r t := by
-  induction ht with
+  induction ht using RoseTree.Licensed.grammar_induction with
   | terminal a => simp [RoseTree.leaf, derivProb_node, RoseTree.ruleCount_node_terminal]
   | nonterminal A cs hrule hcs ih =>
     simp only [derivProb_node, RoseTree.ruleCount_node_nonterminal, pow_add,
@@ -134,10 +135,10 @@ theorem derivProb_eq_prod_pow_ruleCount {t : RoseTree (Symbol T G.NT)} (ht : t.V
       simp only [List.map_cons, List.prod_cons, List.sum_cons, pow_add, Finset.prod_mul_distrib]
       rw [ih c (List.mem_cons_self ..), ihl λ c' hc' => ih c' (List.mem_cons_of_mem _ hc')]
 
-/-- Over valid derivation trees, corpus probability is the product over the grammar's rules of
+/-- Over licensed derivation trees, corpus probability is the product over the grammar's rules of
 the rule weight raised to the corpus count of that rule. -/
 theorem corpusProb_eq_prod_pow_count (D : Multiset (RoseTree (Symbol T G.NT)))
-    (h : ∀ t ∈ D, t.ValidFor G) :
+    (h : ∀ t ∈ D, t.Licensed G.Licenses) :
     W.corpusProb D = ∏ r ∈ G.rules, W.weight r ^ RoseTree.corpusRuleCount r D := by
   induction D using Multiset.induction_on with
   | empty => simp
@@ -149,7 +150,7 @@ theorem corpusProb_eq_prod_pow_count (D : Multiset (RoseTree (Symbol T G.NT)))
       W.derivProb_eq_prod_pow_ruleCount (h t (Multiset.mem_cons_self t D)),
       RoseTree.corpusRuleCount_singleton]
 
-/-- The uniform PCFG: at every nonterminal, the uniform distribution over its rules. -/
+/-- The uniform PCFG puts the uniform distribution over its rules at every nonterminal. -/
 noncomputable def uniform : PCFG G where
   weight r := if r ∈ G.rules then ((G.rules.filter (·.input = r.input)).card : ℝ≥0∞)⁻¹ else 0
   weight_nonneg _ := zero_le
