@@ -27,7 +27,7 @@ def hira : Marker := { pieces := [[.suff "hɨra"]] }
 
 /-- The immediate past of *amryekɨ* 'hunt', first person subject. -/
 def pairs : List Pair :=
-  [⟨[.pref "kɨ", .root "amryekɨ", .suff "no"],
+  [⟨hira, [.pref "kɨ", .root "amryekɨ", .suff "no"],
     [.root "amryekɨ", .suff "hɨra", .pref "w", .root "ah", .suff "ko"]⟩]
 
 end Hixkaryana.Negation

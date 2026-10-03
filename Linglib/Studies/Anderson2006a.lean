@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Syntax.Category.Auxiliary.Constructions
-public import Linglib.Syntax.Negation
 public import Linglib.Data.Examples.Anderson2006a
 public import Mathlib.Data.Finset.Basic
 
@@ -35,7 +34,7 @@ by the inflectional-head criterion.
 
 namespace Anderson2006a
 
-open AuxiliaryVerbs Negation
+open AuxiliaryVerbs
 
 /-! ### Where the inflection is marked -/
 
@@ -112,7 +111,7 @@ theorem rows_pattern :
           m.pattern = p := by
   decide +kernel
 
-/-- Doyayo (15a): the auxiliary partially encodes subject person through tone while the
+/-- In Doyayo (15a) the auxiliary partially encodes subject person through tone while the
 lexical verb carries tense, which (13) classifies as split; the book files it under
 lex-headed. -/
 theorem doyayo_split :
@@ -124,7 +123,7 @@ theorem all_patterns_attested (p : InflectionPattern) :
     ∃ r ∈ Examples.all, ∃ m ∈ (InflectionalMarking.ofRow? r).toList, m.pattern = p := by
   cases p <;> decide +kernel
 
-/-- Chapter 5: in split/doubled patterns the doubled category is overwhelmingly the subject —
+/-- In split/doubled patterns the doubled category is overwhelmingly the subject (chapter 5), and
 every split/doubled example doubles subject agreement and nothing else. -/
 theorem splitDoubled_doubles_subject :
     ∀ r ∈ Examples.all, ∀ m ∈ (InflectionalMarking.ofRow? r).toList,
@@ -133,13 +132,12 @@ theorem splitDoubled_doubles_subject :
 
 /-! ### Negative auxiliaries -/
 
-/-- Negative auxiliaries head constructions of more than one pattern (§1.7.2): Udihe (49) is
-aux-headed, as `Strategy.expectedInflectionPattern` expects of a verbal negator, and Kwerba
-(52) is lex-headed, so that expectation is a tendency rather than a law. -/
+/-- Negative auxiliaries head constructions of more than one pattern (§1.7.2). A negative verb
+that heads its construction is expected to host the inflection, and Udihe (49) is aux-headed, but
+Kwerba (52) is lex-headed, so the expectation is a tendency rather than a law. -/
 theorem negative_auxiliary_patterns :
     (∃ r ∈ Examples.all, r.feature? "strategy" = some "negVerb" ∧
-      (r.feature? "infl_pattern").bind InflectionPattern.ofString? =
-        Strategy.negVerb.expectedInflectionPattern) ∧
+      (r.feature? "infl_pattern").bind InflectionPattern.ofString? = some .auxHeaded) ∧
     ∃ r ∈ Examples.all, r.feature? "strategy" = some "negVerb" ∧
       (r.feature? "infl_pattern").bind InflectionPattern.ofString? = some .lexHeaded := by
   decide +kernel

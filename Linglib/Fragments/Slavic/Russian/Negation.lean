@@ -27,7 +27,7 @@ def ne : Marker := { pieces := [[.free "ne"]] }
 
 /-- *ja govor-ju po-russkij* 'I speak Russian' and its negative. -/
 def pairs : List Pair :=
-  [⟨[.free "ja", .root "govor", .suff "ju", .free "po-russkij"],
+  [⟨ne, [.free "ja", .root "govor", .suff "ju", .free "po-russkij"],
     [.free "ja", .free "ne", .root "govor", .suff "ju", .free "po-russkij"]⟩]
 
 end Russian.Negation

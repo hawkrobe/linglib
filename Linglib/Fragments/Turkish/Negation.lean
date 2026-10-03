@@ -32,14 +32,14 @@ def mA : Marker := { pieces := [[.suff "mA"]] }
 
 /-- The past and the future of *gel-* 'come'. -/
 def nonAorist : List Pair :=
-  [⟨[.root "gel", .suff "di"], [.root "gel", .suff "mA", .suff "di"]⟩,
-   ⟨[.root "gel", .suff "ecek"], [.root "gel", .suff "mA", .suff "ecek"]⟩]
+  [⟨mA, [.root "gel", .suff "di"], [.root "gel", .suff "mA", .suff "di"]⟩,
+   ⟨mA, [.root "gel", .suff "ecek"], [.root "gel", .suff "mA", .suff "ecek"]⟩]
 
 /-- The aorist of *gel-* 'come' in the third singular, the first singular and the third
 plural. -/
 def aorist : List Pair :=
-  [⟨[.root "gel", .suff "ir"], [.root "gel", .suff "mA", .suff "z"]⟩,
-   ⟨[.root "gel", .suff "ir", .suff "im"], [.root "gel", .suff "mA", .suff "m"]⟩,
-   ⟨[.root "gel", .suff "ir", .suff "ler"], [.root "gel", .suff "mA", .suff "z", .suff "ler"]⟩]
+  [⟨mA, [.root "gel", .suff "ir"], [.root "gel", .suff "mA", .suff "z"]⟩,
+   ⟨mA, [.root "gel", .suff "ir", .suff "im"], [.root "gel", .suff "mA", .suff "m"]⟩,
+   ⟨mA, [.root "gel", .suff "ir", .suff "ler"], [.root "gel", .suff "mA", .suff "z", .suff "ler"]⟩]
 
 end Turkish.Negation

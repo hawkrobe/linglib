@@ -40,7 +40,7 @@ def words (ws : List String) : List Morph := ws.map .free
 
 /-- The first person singular present and future of *cantare* 'sing'. -/
 def pairs : List Pair :=
-  [⟨words ["canto"], words ["non", "canto"]⟩,
-   ⟨words ["canterò"], words ["non", "canterò"]⟩]
+  [⟨non, words ["canto"], words ["non", "canto"]⟩,
+   ⟨non, words ["canterò"], words ["non", "canterò"]⟩]
 
 end Italian.Negation

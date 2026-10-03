@@ -27,8 +27,8 @@ def maBu : Marker := { pieces := [[.pref "ma"], [.suff "bû"]] }
 
 /-- The actual, potential and perfect of *θwâ* 'go', with their common negative. -/
 def goParadigm : List Pair :=
-  [⟨[.root "θwâ", .suff "dé"], [.pref "ma", .root "θwâ", .suff "bû"]⟩,
-   ⟨[.root "θwâ", .suff "mé"], [.pref "ma", .root "θwâ", .suff "bû"]⟩,
-   ⟨[.root "θwâ", .suff "bí"], [.pref "ma", .root "θwâ", .suff "bû"]⟩]
+  [⟨maBu, [.root "θwâ", .suff "dé"], [.pref "ma", .root "θwâ", .suff "bû"]⟩,
+   ⟨maBu, [.root "θwâ", .suff "mé"], [.pref "ma", .root "θwâ", .suff "bû"]⟩,
+   ⟨maBu, [.root "θwâ", .suff "bí"], [.pref "ma", .root "θwâ", .suff "bû"]⟩]
 
 end Burmese.Negation

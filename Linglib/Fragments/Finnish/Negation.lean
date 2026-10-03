@@ -1,8 +1,7 @@
 module
 
+public import Linglib.Syntax.Agreement.Paradigm
 public import Linglib.Syntax.Negation
-public import Linglib.Syntax.Person.Basic
-public import Linglib.Syntax.Number.Basic
 
 /-!
 # Finnish negation
@@ -27,20 +26,16 @@ namespace Finnish.Negation
 /-- The negative auxiliary *e-*. -/
 def e : Marker := { pieces := [[.root "e"]] }
 
-/-- The person and number endings of the negative auxiliary in the present: *en*, *et*, *ei*,
-*emme*, *ette*, *eivät*. -/
-def ending : Person → Number → Option Morph
-  | .first, .singular => some (.suff "n")
-  | .second, .singular => some (.suff "t")
-  | .third, .singular => some (.suff "i")
-  | .first, .plural => some (.suff "mme")
-  | .second, .plural => some (.suff "tte")
-  | .third, .plural => some (.suff "ivät")
-  | _, _ => none
+/-- The negative auxiliary takes the person and number endings of the present, giving *en*, *et*,
+*ei*, *emme*, *ette* and *eivät*. -/
+def ending : Agreement.Paradigm Morph :=
+  [(.pn .first .singular, .suff "n"), (.pn .second .singular, .suff "t"),
+   (.pn .third .singular, .suff "i"), (.pn .first .plural, .suff "mme"),
+   (.pn .second .plural, .suff "tte"), (.pn .third .plural, .suff "ivät")]
 
 /-- First person singular presents with their negatives. -/
 def present : List Pair :=
-  [⟨[.root "nuku", .suff "n"], [.root "e", .suff "n", .root "nuku"]⟩,
-   ⟨[.root "juokse", .suff "n"], [.root "e", .suff "n", .root "juokse"]⟩]
+  [⟨e, [.root "nuku", .suff "n"], [.root "e", .suff "n", .root "nuku"]⟩,
+   ⟨e, [.root "juokse", .suff "n"], [.root "e", .suff "n", .root "juokse"]⟩]
 
 end Finnish.Negation

@@ -24,12 +24,12 @@ open Negation
 namespace ZarmaSonrai.Negation
 
 /-- *si*, the imperfective negator. -/
-def si : Marker := { pieces := [[.free "si"]], gloss := "IPFV.NEG" }
+def si : Marker := { pieces := [[.free "si"]] }
 
 /-- *mana*, the perfective negator. -/
-def mana : Marker := { pieces := [[.free "mana"]], gloss := "PFV.NEG" }
+def mana : Marker := { pieces := [[.free "mana"]] }
 
 /-- *sinda* 'not have', the negative possessive verb. -/
-def sinda : Marker := { pieces := [[.free "sinda"]], gloss := "not.have" }
+def sinda : Marker := { pieces := [[.free "sinda"]] }
 
 end ZarmaSonrai.Negation

@@ -26,6 +26,6 @@ def no : Marker := { pieces := [[.free "no"]] }
 
 /-- *canta-s* 'you sing' and its negative. -/
 def pairs : List Pair :=
-  [⟨[.root "canta", .suff "s"], [.free "no", .root "canta", .suff "s"]⟩]
+  [⟨no, [.root "canta", .suff "s"], [.free "no", .root "canta", .suff "s"]⟩]
 
 end Spanish.Negation

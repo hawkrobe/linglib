@@ -29,7 +29,7 @@ def words (ws : List String) : List Morph := ws.map .free
 
 /-- The progressive and the past of *haere* 'go'. -/
 def pairs : List Pair :=
-  [⟨words ["e", "haere", "ana", "ia"], words ["kāore", "ia", "e", "haere", "ana"]⟩,
-   ⟨words ["i", "haere", "ia"], words ["kāore", "ia", "i", "haere"]⟩]
+  [⟨kaore, words ["e", "haere", "ana", "ia"], words ["kāore", "ia", "e", "haere", "ana"]⟩,
+   ⟨kaore, words ["i", "haere", "ia"], words ["kāore", "ia", "i", "haere"]⟩]
 
 end Maori.Negation

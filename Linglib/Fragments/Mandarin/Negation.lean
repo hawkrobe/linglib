@@ -31,9 +31,9 @@ open Negation
 
 namespace Mandarin.Negation
 
-/-- A Mandarin standard negator: its exponent, the aspectual domain it negates, the verb that
-may follow it as part of the negator, and the aspect particles of the affirmative that do not
-occur with it. -/
+/-- A Mandarin standard negator is given by its exponent, the aspectual domain it negates, the
+verb that may follow it as part of the negator, and the aspect particles of the affirmative that
+do not occur with it. -/
 structure Negator where
   /-- The exponent. -/
   marker : Marker
@@ -59,9 +59,9 @@ def mei : Negator where
 def negators : List Negator := [bu, mei]
 
 /-- *bié* 别, the negative imperative. -/
-def bie : Marker := { pieces := [[.free "bié"]], gloss := "IMP.NEG" }
+def bie : Marker := { pieces := [[.free "bié"]] }
 
 /-- *búyào* 不要, literally 'not want', the periphrastic negative imperative. -/
-def buyao : Marker := { pieces := [[.free "bú", .free "yào"]], gloss := "IMP.NEG" }
+def buyao : Marker := { pieces := [[.free "bú", .free "yào"]] }
 
 end Mandarin.Negation
