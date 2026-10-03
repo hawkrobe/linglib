@@ -66,15 +66,16 @@ open Agreement Morphology
 
 /-- The affixes of Set A, as they stand in the present. -/
 def setA : Paradigm (List Morph) :=
-  [(.pn .first .singular, [.pref "v"]), (.pn .second .singular, []),
-   (.pn .third .singular, [.suff "s"]), (.pn .first .plural, [.pref "v", .suff "t"]),
-   (.pn .second .plural, [.suff "t"]), (.pn .third .plural, [.suff "en"])]
+  [(.personNumber .first .singular, [.pref "v"]), (.personNumber .second .singular, []),
+   (.personNumber .third .singular, [.suff "s"]),
+   (.personNumber .first .plural, [.pref "v", .suff "t"]),
+   (.personNumber .second .plural, [.suff "t"]), (.personNumber .third .plural, [.suff "en"])]
 
 /-- The affixes of Set B, as they mark a direct object. -/
 def setB : Paradigm (List Morph) :=
-  [(.pn .first .singular, [.pref "m"]), (.pn .second .singular, [.pref "g"]),
-   (.pn .third .singular, []), (.pn .first .plural, [.pref "gv"]),
-   (.pn .second .plural, [.pref "g", .suff "t"]), (.pn .third .plural, [])]
+  [(.personNumber .first .singular, [.pref "m"]), (.personNumber .second .singular, [.pref "g"]),
+   (.personNumber .third .singular, []), (.personNumber .first .plural, [.pref "gv"]),
+   (.personNumber .second .plural, [.pref "g", .suff "t"]), (.personNumber .third .plural, [])]
 
 /-- The Set B prefix of a third person indirect object. It stands before *k*, *k'*, *g*, *q'*
 and *p'*, becomes *s-* before *c*, *c'*, *j*, *č*, *č'*, *ǰ*, *t*, *t'* and *d*, and is dropped
@@ -87,7 +88,8 @@ def HasObjectPrefix (c : Bundle) : Prop := ∃ ms ∈ setB.realize c, ms ≠ []
 instance : DecidablePred HasObjectPrefix := fun _ ↦ inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
 /-- The direct objects with a Set B prefix are the first and second persons. -/
-theorem hasObjectPrefix_iff_isSAP : ∀ c ∈ Bundle.pnCells, HasObjectPrefix c ↔ c.IsSAP := by
+theorem hasObjectPrefix_iff_isSAP :
+    ∀ c ∈ Bundle.personNumberCells, HasObjectPrefix c ↔ c.IsSAP := by
   decide
 
 /-! ### Series and verb classes -/

@@ -53,11 +53,12 @@ def past (s : Morph) : List Morph := [s, .pref "li", .pref "ku", .root "wa", na]
 
 /-- *ni-na saa* 'I have a watch'. -/
 theorem present_first_singular :
-    (subjectPrefix.realize (.pn .first .singular)).map present = some [.pref "ni", na] := rfl
+    (subjectPrefix.realize (.personNumber .first .singular)).map present = some [.pref "ni",
+                                                                                 na] := rfl
 
 /-- *a-li-ku-wa na wake wawili* 'he had two wives'. -/
 theorem past_third_singular :
-    (subjectPrefix.realize (.pn .third .singular)).map past =
+    (subjectPrefix.realize (.personNumber .third .singular)).map past =
       some [.pref "a", .pref "li", .pref "ku", .root "wa", na] := rfl
 
 /-- The existential is the present construction on a locative subject prefix, *ku-na chakula*

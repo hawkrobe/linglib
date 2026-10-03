@@ -141,7 +141,7 @@ Agree values the probe with, in some number: *z-* in (2a), and *n-* in (2b–d),
 cross-references the EA. -/
 theorem basque_prefix_rows : ∀ e ∈ basqueRows, ∃ v ∈ value? e,
     ∃ n ∈ [Number.singular, .plural],
-      (Basque.absolutive.realize (.pn v n)).bind (·.head?) = slotPrefix? e := by
+      (Basque.absolutive.realize (.personNumber v n)).bind (·.head?) = slotPrefix? e := by
   decide +kernel
 
 /-- Basque's direct contexts (22b) are exactly a SAP EA over a 3rd-person IA, the only cells
@@ -154,7 +154,7 @@ theorem basque_direct_contexts :
 /-- The absolutive slot of the Fragment has a prefix for a person and number iff cyclic Agree
 puts every EA→IA combination with that object into an inverse context, since a SAP IA fully
 checks [u-3-2] and leaves no residue for any EA. -/
-theorem basque_hasPersonPrefix_iff_always_inverse : ∀ c ∈ Bundle.pnCells,
+theorem basque_hasPersonPrefix_iff_always_inverse : ∀ c ∈ Bundle.personNumberCells,
     (Basque.HasPersonPrefix c ↔ ∀ ea : Person, basque.isInverse ea c.person = true) := by decide
 
 /-! ### Georgian: the same [u-3-2] system, plus second-cycle morphology -/
@@ -162,7 +162,7 @@ theorem basque_hasPersonPrefix_iff_always_inverse : ∀ c ∈ Bundle.pnCells,
 /-- The Fragment's Set B has a prefix for a direct object of a person and number iff cyclic
 Agree puts every EA→IA combination with that object into an inverse context, exactly as in
 Basque. -/
-theorem georgian_hasObjectPrefix_iff_always_inverse : ∀ c ∈ Bundle.pnCells,
+theorem georgian_hasObjectPrefix_iff_always_inverse : ∀ c ∈ Bundle.personNumberCells,
     (Georgian.HasObjectPrefix c ↔ ∀ ea : Person, basque.isInverse ea c.person = true) := by
   decide
 
@@ -181,7 +181,8 @@ def controller? (e : Datum) : Option Controller := do
 does. -/
 theorem georgian_prefix_rows : ∀ e ∈ [Examples.br2009_18a, Examples.br2009_18b],
     ∃ v ∈ value? e, ∃ c ∈ controller? e,
-      ((affixSet c).paradigm.realize (.pn v .singular)).bind (·.head?) = slotPrefix? e := by
+      ((affixSet c).paradigm.realize (.personNumber v .singular)).bind (·.head?) =
+        slotPrefix? e := by
   decide +kernel
 
 /-- A 1st-person IA is spelled by first-cycle morphology whatever the EA (18a), since it values

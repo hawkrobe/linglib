@@ -31,24 +31,25 @@ open Agreement
 /-- The person markers of the past tense, by person, number and gender, as in Ryding's paradigm
 of *katab-* 'wrote' ([ryding-2005] p. 443). -/
 def pastSuffix : Paradigm Morph :=
-  [(Bundle.pn .first .singular, .suff "tu"),
-   (Function.update (Bundle.pn .second .singular) .gender ↑Gender.masculine, .suff "ta"),
-   (Function.update (Bundle.pn .second .singular) .gender ↑Gender.feminine, .suff "ti"),
-   (Function.update (Bundle.pn .third .singular) .gender ↑Gender.masculine, .suff "a"),
-   (Function.update (Bundle.pn .third .singular) .gender ↑Gender.feminine, .suff "at"),
-   (Bundle.pn .second .dual, .suff "tumaa"),
-   (Function.update (Bundle.pn .third .dual) .gender ↑Gender.masculine, .suff "aa"),
-   (Function.update (Bundle.pn .third .dual) .gender ↑Gender.feminine, .suff "ataa"),
-   (Bundle.pn .first .plural, .suff "naa"),
-   (Function.update (Bundle.pn .second .plural) .gender ↑Gender.masculine, .suff "tum"),
-   (Function.update (Bundle.pn .second .plural) .gender ↑Gender.feminine, .suff "tunna"),
-   (Function.update (Bundle.pn .third .plural) .gender ↑Gender.masculine, .suff "uu"),
-   (Function.update (Bundle.pn .third .plural) .gender ↑Gender.feminine, .suff "na")]
+  [(Bundle.personNumber .first .singular, .suff "tu"),
+   ((Bundle.personNumber .second .singular).set .gender .masculine, .suff "ta"),
+   ((Bundle.personNumber .second .singular).set .gender .feminine, .suff "ti"),
+   ((Bundle.personNumber .third .singular).set .gender .masculine, .suff "a"),
+   ((Bundle.personNumber .third .singular).set .gender .feminine, .suff "at"),
+   (Bundle.personNumber .second .dual, .suff "tumaa"),
+   ((Bundle.personNumber .third .dual).set .gender .masculine, .suff "aa"),
+   ((Bundle.personNumber .third .dual).set .gender .feminine, .suff "ataa"),
+   (Bundle.personNumber .first .plural, .suff "naa"),
+   ((Bundle.personNumber .second .plural).set .gender .masculine, .suff "tum"),
+   ((Bundle.personNumber .second .plural).set .gender .feminine, .suff "tunna"),
+   ((Bundle.personNumber .third .plural).set .gender .masculine, .suff "uu"),
+   ((Bundle.personNumber .third .plural).set .gender .feminine, .suff "na")]
 
 /-- A person marker of the past tense marks gender except in the first person and the second
 person dual. -/
 theorem pastSuffix_gender_eq_bot_iff :
-    ∀ c ∈ pastSuffix.cells, c .gender = ⊥ ↔ c .person = ↑Person.first ∨ c = .pn .second .dual := by
+    ∀ c ∈ pastSuffix.cells,
+      c .gender = ⊥ ↔ c .person = ↑Person.first ∨ c = .personNumber .second .dual := by
   decide
 
 end Arabic.ModernStandard

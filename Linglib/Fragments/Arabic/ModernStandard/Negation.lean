@@ -92,7 +92,7 @@ example :
        [.root "lays", .suff "aa"], [.root "lays", .suff "ataa"], [.root "las", .suff "naa"],
        [.root "las", .suff "tum"], [.root "las", .suff "tunna"], [.root "lays", .suff "uu"],
        [.root "las", .suff "na"]] ∧
-    laysaForms.realize (.pn .first .dual) = none := by
+    laysaForms.realize (.personNumber .first .dual) = none := by
   decide
 
 /-- The pairs are the third person masculine plural of 'study' in the present and of 'go' in the

@@ -84,7 +84,7 @@ fail, and undefined when the Person Licensing Condition fails. -/
 def afMarker (subj obj : Bundle) : Option (List Morphology.Morph) :=
   if Plc subj obj then some (((afTarget subj obj).map exponent).getD []) else none
 
-/-- The person restriction (25): at most one core argument bears [participant]. -/
+/-- The person restriction (25) allows at most one core argument to bear [participant]. -/
 def PersonRestriction (subj obj : Bundle) : Prop := ¬ (subj.IsParticipant ∧ obj.IsParticipant)
 
 instance : DecidableRel PersonRestriction := λ s o =>
@@ -92,8 +92,8 @@ instance : DecidableRel PersonRestriction := λ s o =>
 
 /-! ### Relativized probing (§4.2, §4.4) -/
 
-/-- Skipping: the slot reflects a participant if either argument is one, the subject first;
-otherwise a plural argument; otherwise nothing (66), (73). -/
+/-- Under skipping the slot reflects a participant if either argument is one, the subject first,
+otherwise a plural argument, and otherwise nothing (66), (73). -/
 theorem afTarget_eq (s o : Bundle) :
     afTarget s o = if s.IsParticipant then some s else if o.IsParticipant then some o
       else if s.IsPlural then some s else if o.IsPlural then some o else none := by
@@ -104,7 +104,7 @@ theorem afTarget_eq (s o : Bundle) :
       Bundle.IsParticipant, Probe.cascade, Probe.search, Probe.relativized,
       List.find?_cons, h1, h2, h3, h4]
 
-/-- The rank of a cell on the hierarchy (23): [participant] above [plural] above the rest, the
+/-- The rank of a cell on the hierarchy (23) puts [participant] above [plural] above the rest, the
 substrate's probe-resolution rank. -/
 def rank (c : Bundle) : ℕ := probeResolutionRank c.person (decide c.IsPlural)
 
@@ -120,22 +120,23 @@ theorem afTarget_eq_rank (s o : Bundle) :
     simp [rank, probeResolutionRank, Bundle.IsParticipant, Bundle.visibleTo, probeVisible, h1, h2,
       h3, h4]
 
-/-- The hierarchy (23) as an account, the morphological competition of §3.3.2: the slot shows
-the higher-ranked argument's absolutive marker. -/
+/-- The hierarchy (23) as an account is the morphological competition of §3.3.2, in which the slot
+shows the higher-ranked argument's absolutive marker. -/
 def hierarchyMarker (subj obj : Bundle) : List Morphology.Morph :=
   exponent (if rank obj ≤ rank subj then subj else obj)
 
-/-- The paradigm (22), (74): on every licit pair of person–number cells the probes deliver
-the hierarchy's marker. -/
+/-- On every licit pair of person–number cells of the paradigm (22), (74), the probes deliver the
+hierarchy's marker. -/
 theorem af_paradigm :
-    ∀ s ∈ Bundle.pnCells, ∀ o ∈ Bundle.pnCells,
+    ∀ s ∈ Bundle.personNumberCells, ∀ o ∈ Bundle.personNumberCells,
       PersonRestriction s o → afMarker s o = some (hierarchyMarker s o) := by
   decide
 
 /-- The marker is symmetric in subject and object (22, note a), (74): a consequence of skipping,
 the probe finding its goal in either position. -/
 theorem afMarker_comm :
-    ∀ s ∈ Bundle.pnCells, ∀ o ∈ Bundle.pnCells, afMarker s o = afMarker o s := by
+    ∀ s ∈ Bundle.personNumberCells, ∀ o ∈ Bundle.personNumberCells,
+      afMarker s o = afMarker o s := by
   decide
 
 /-! ### Licensing (§4.4.2) -/
@@ -193,8 +194,8 @@ theorem failed_agree_tolerated (s o : Bundle) (hs : ¬ s.IsParticipant) (ho : ¬
   rw [afMarker, ite_eq_left hplc, afTarget_eq]
   simp [hs, ho, hsp, hop]
 
-/-- No gratuitous nonagreement (114): with no participant argument, a plural argument must be
-agreed with, and the slot carries its exponent, the subject's first. -/
+/-- There is no gratuitous nonagreement (114): with no participant argument, a plural argument must
+be agreed with, and the slot carries its exponent, the subject's first. -/
 theorem plural_marker (s o : Bundle) (hs : ¬ s.IsParticipant) (ho : ¬ o.IsParticipant) :
     (s.IsPlural → afMarker s o = some (exponent s)) ∧
       (¬ s.IsPlural → o.IsPlural → afMarker s o = some (exponent o)) := by
@@ -204,25 +205,27 @@ theorem plural_marker (s o : Bundle) (hs : ¬ s.IsParticipant) (ho : ¬ o.IsPart
 
 /-! ### Against the alternatives (§4.2, chapter 7) -/
 
-/-- Relativization against the Person Case Constraint (§4.2): the unrelativized person probe
-of [bejar-rezac-2003] is absorbed by a Case-licensed third-person dative above a participant,
-the PCC, where the Kichean probe, relativized to [participant], skips the third-person argument
-and licenses the participant below it. -/
+/-- A relativized probe escapes the Person Case Constraint (§4.2): the unrelativized person probe of
+[bejar-rezac-2003] is absorbed by a Case-licensed third-person dative above a participant, the PCC,
+whereas the Kichean probe, relativized to [participant], skips the third-person argument and
+licenses the participant below it. -/
 theorem relativization_contrast :
     ¬ BejarRezac2003.PLCOk
-        [[BejarRezac2003.dat (.pn .third .singular), PhiGoal.unvalued (.pn .first .singular)]]
-        [BejarRezac2003.dat (.pn .third .singular), PhiGoal.unvalued (.pn .first .singular)] ∧
-      Plc (.pn .third .singular) (.pn .first .singular) := by
+        [[BejarRezac2003.dat (.personNumber .third .singular),
+          PhiGoal.unvalued (.personNumber .first .singular)]]
+        [BejarRezac2003.dat (.personNumber .third .singular),
+         PhiGoal.unvalued (.personNumber .first .singular)] ∧
+      Plc (.personNumber .third .singular) (.personNumber .first .singular) := by
   decide
 
-/-- The asymmetry a hierarchy cannot state (§7.1): it assigns a marker to two participant
+/-- There is an asymmetry a hierarchy cannot state (§7.1): it assigns a marker to two participant
 arguments, which the probes exclude, while two plural arguments are admitted by both. -/
 theorem hierarchy_silent_on_restriction :
-    afMarker (.pn .first .singular) (.pn .second .singular) = none ∧
-      hierarchyMarker (.pn .first .singular) (.pn .second .singular) =
-        exponent (.pn .first .singular) ∧
-      afMarker (.pn .third .plural) (.pn .third .plural) =
-        some (exponent (.pn .third .plural)) := by
+    afMarker (.personNumber .first .singular) (.personNumber .second .singular) = none ∧
+      hierarchyMarker (.personNumber .first .singular) (.personNumber .second .singular) =
+        exponent (.personNumber .first .singular) ∧
+      afMarker (.personNumber .third .plural) (.personNumber .third .plural) =
+        some (exponent (.personNumber .third .plural)) := by
   decide
 
 end Preminger2014

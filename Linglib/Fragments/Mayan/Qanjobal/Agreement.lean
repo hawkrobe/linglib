@@ -65,8 +65,8 @@ open Mayan (ExponentTable)
 
 /-! ### The verbal complex -/
 
-/-- The position classes of the Q'anjob'al verbal complex: the aspect marker, Set B and Set A
-before the stem, the status suffix after it ([mateo-toledo-2008]). -/
+/-- The Q'anjob'al verbal complex has the aspect marker, Set B and Set A before the stem and the
+status suffix after it ([mateo-toledo-2008]). -/
 def template : Morphology.AffixTemplate Mayan.VerbSlot := ⟨[.aspect, .setB, .setA], [.status]⟩
 
 /-- Q'anjob'al is ergative in every clause with a preverbal aspect marker, the imperfective
@@ -86,31 +86,31 @@ def assignCase : UD.Aspect → ArgumentRole → Case
     plural word *heb'*. -/
 def setAExponent : Phonology.Segment.Class → ExponentTable
   | .consonant =>
-    [(.pn .first .singular, [.pref "hin"]), (.pn .second .singular, [.pref "ha"]),
-     (.pn .third .singular, [.pref "s"]), (.pn .first .plural, [.pref "ko"]),
-     (.pn .second .plural, [.pref "he"]),
-     (.pn .third .plural, [.pref "s", .free "heb'"])]
+    [(.personNumber .first .singular, [.pref "hin"]),
+     (.personNumber .second .singular, [.pref "ha"]),
+     (.personNumber .third .singular, [.pref "s"]), (.personNumber .first .plural, [.pref "ko"]),
+     (.personNumber .second .plural, [.pref "he"]),
+     (.personNumber .third .plural, [.pref "s", .free "heb'"])]
   | .vowel =>
-    [(.pn .first .singular, [.pref "w"]), (.pn .second .singular, [.pref "h"]),
-     (.pn .third .singular, [.pref "y"]), (.pn .first .plural, [.pref "j"]),
-     (.pn .second .plural, [.pref "hey"]),
-     (.pn .third .plural, [.pref "y", .free "heb'"])]
+    [(.personNumber .first .singular, [.pref "w"]), (.personNumber .second .singular, [.pref "h"]),
+     (.personNumber .third .singular, [.pref "y"]), (.personNumber .first .plural, [.pref "j"]),
+     (.personNumber .second .plural, [.pref "hey"]),
+     (.personNumber .third .plural, [.pref "y", .free "heb'"])]
 
-/-- Set B (absolutive) markers: suffixes
-    ([coon-mateo-pedro-preminger-2014] table (13)). The 3pl cell is the
-    free plural word *heb'* alone (zero person exponence plus the
-    plural particle); 1pl *-on* is the table's ASCII for *-on̈* [-oŋ]. -/
+/-- The Set B (absolutive) markers are suffixes ([coon-mateo-pedro-preminger-2014] table (13)). The
+3pl cell is the free plural word *heb'* alone (zero person exponence plus the plural particle); 1pl
+*-on* is the table's ASCII for *-on̈* [-oŋ]. -/
 def setBExponent : ExponentTable :=
-  [(.pn .first .singular, [.suff "in"]), (.pn .second .singular, [.suff "ach"]),
-   (.pn .third .singular, []), (.pn .first .plural, [.suff "on"]),
-   (.pn .second .plural, [.suff "ex"]), (.pn .third .plural, [.free "heb'"])]
+  [(.personNumber .first .singular, [.suff "in"]), (.personNumber .second .singular, [.suff "ach"]),
+   (.personNumber .third .singular, []), (.personNumber .first .plural, [.suff "on"]),
+   (.personNumber .second .plural, [.suff "ex"]), (.personNumber .third .plural, [.free "heb'"])]
 
 /-- 3rd person absolutive has zero exponence. -/
-theorem p3sg_abs_null : setBExponent.realize (.pn .third .singular) = some [] := rfl
+theorem p3sg_abs_null : setBExponent.realize (.personNumber .third .singular) = some [] := rfl
 
 /-- 3rd person ergative is *s-* pre-consonantally, *y-* pre-vocalically. -/
 theorem p3sg_erg_allomorphy :
-    (setAExponent .consonant).realize (.pn .third .singular) = some [.pref "s"] ∧
-    (setAExponent .vowel).realize (.pn .third .singular) = some [.pref "y"] := ⟨rfl, rfl⟩
+    (setAExponent .consonant).realize (.personNumber .third .singular) = some [.pref "s"] ∧
+    (setAExponent .vowel).realize (.personNumber .third .singular) = some [.pref "y"] := ⟨rfl, rfl⟩
 
 end Qanjobal

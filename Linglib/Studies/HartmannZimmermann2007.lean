@@ -69,8 +69,8 @@ open Exhaustification Focus
 
 /-! ## What is focused (§2.2.2) -/
 
-/-- What is focused: Hausa singles out subjects (§2.2.2); everything
-else collapses to `nonSubject`. -/
+/-- Hausa singles out subjects as what is focused (§2.2.2); everything else collapses to
+`nonSubject`. -/
 inductive Focused where
   | subject
   | nonSubject
@@ -132,8 +132,8 @@ particles (*kawài* 'only'; *nee/cee* per the paper's fn. 3) over the
 resolved contrast set, in either strategy — (32a/b) attest in-situ and
 ex-situ *only BOOKS* alike. -/
 
-/-- The exhaustified answer: the exclusion asserted by *only* over the
-scenario's resolved contrast set. -/
+/-- The exhaustified answer is the exclusion asserted by *only* over the scenario's resolved
+contrast set. -/
 def exhAnswer (u : Use) : Set Alt :=
   excludes (ctx u).contrastSet answer.ordinary
 
@@ -173,13 +173,14 @@ def mkInSituUtt (tam : TAM) (cell : Agreement.Bundle) (g : Gender)
   ⟨mkInSitu tam cell (some g) hasStab, ctl.use, foc⟩
 
 /-- The first person singular PAC cell. -/
-def s1 : Agreement.Bundle := .pn .first .singular
+def s1 : Agreement.Bundle := .personNumber .first .singular
 
 /-- The third person masculine singular PAC cell. -/
-def s3m : Agreement.Bundle := genderedSingular .third .masculine
+def s3m : Agreement.Bundle :=
+  (Agreement.Bundle.personNumber .third .singular).set .gender .masculine
 
 /-- The third person feminine singular PAC cell. -/
-def s3f : Agreement.Bundle := genderedSingular .third .feminine
+def s3f : Agreement.Bundle := (Agreement.Bundle.personNumber .third .singular).set .gender .feminine
 
 /-- The impersonal PAC cell. -/
 def p4 : Agreement.Bundle := impersonal
@@ -289,9 +290,9 @@ theorem not_licensed_exSitu_subjunctive (t : TAM) (c : Agreement.Bundle) (g : Op
 
 /-! ## Universalist Basic Focus Rule (§5, §6.2) -/
 
-/-- The overt reflexes of a focus utterance in the shared `Reflex` vocabulary: non-vacuous
-fronting (subjects front string-vacuously), the Rel form of the PAC where fronting changes the
-TAM, and the stabilizer. -/
+/-- The overt reflexes of a focus utterance in the shared `Reflex` vocabulary are non-vacuous
+fronting (subjects front string-vacuously), the Rel form of the PAC where fronting changes the TAM,
+and the stabilizer. -/
 def FocusUtterance.reflexes (u : FocusUtterance) : Finset (Reflex Focused) :=
   (if u.focused = .nonSubject ∧ u.cfg.strategy = .exSitu then {.displacement u.focused}
     else ∅) ∪
@@ -301,7 +302,8 @@ def FocusUtterance.reflexes (u : FocusUtterance) : Finset (Reflex Focused) :=
     {.morpheme u.focused [.free (stabilizer u.cfg.focusGender).form]}
   else ∅)
 
-/-- A morphosyntactic reflex of focus: some reflex outside the phonological channel. -/
+/-- A focus utterance has a morphosyntactic reflex when some reflex lies outside the phonological
+channel. -/
 def FocusUtterance.HasMorphosyntacticReflex (u : FocusUtterance) : Prop :=
   ∃ ρ ∈ u.reflexes, ρ.modality.channel ≠ .phonological
 

@@ -117,11 +117,11 @@ def cellNumber (c : Agreement.Bundle) : Number := if c.IsPlural then .plural els
 /-- Every cell of the resumptive paradigm of Table 2 is the Subset Principle's choice for the
 corresponding structure, by the Vocabulary of (28) ((43), (45)). -/
 theorem table2 :
-    ∀ c ∈ Agreement.Bundle.pnCells,
+    ∀ c ∈ Agreement.Bundle.personNumberCells,
       (spellout (pronoun (cellPerson c) (cellNumber c))).map Morphology.Morph.suff =
         resumptive.realize c := by
   intro c hc
-  simp only [Agreement.Bundle.pnCells, List.mem_cons, List.mem_nil_iff, or_false] at hc
+  simp only [Agreement.Bundle.personNumberCells, List.mem_cons, List.mem_nil_iff, or_false] at hc
   rcases hc with rfl | rfl | rfl | rfl | rfl | rfl <;> decide
 
 /-! ### MaxElide (§5.2–5.3) -/

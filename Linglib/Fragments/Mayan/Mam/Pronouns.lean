@@ -63,14 +63,15 @@ def qa : PersonalPronoun := { form := "qa", person := some .third, number := som
 
 /-- The independent series, with no pronoun in the third person singular. -/
 def independent : Paradigm PersonalPronoun :=
-  [(.pn .first .singular, qini), (.pn .firstExclusive .plural, qoy),
-    (.pn .firstInclusive .plural, qo), (.pn .second .singular, iDisagr),
-    (.pn .second .plural, qi), (.pn .third .plural, qa)]
+  [(.personNumber .first .singular, qini), (.personNumber .firstExclusive .plural, qoy),
+    (.personNumber .firstInclusive .plural, qo), (.personNumber .second .singular, iDisagr),
+    (.personNumber .second .plural, qi), (.personNumber .third .plural, qa)]
 
 /-- The subject and possessor series, the bare enclitic in the first person singular and
 exclusive plural and no pronoun in the inclusive plural and the third person singular. -/
 def subjPoss : Paradigm PersonalPronoun :=
-  [(.pn .first .singular, iDisagr), (.pn .firstExclusive .plural, iDisagr),
-    (.pn .second .singular, iDisagr), (.pn .second .plural, qi), (.pn .third .plural, qa)]
+  [(.personNumber .first .singular, iDisagr), (.personNumber .firstExclusive .plural, iDisagr),
+    (.personNumber .second .singular, iDisagr), (.personNumber .second .plural, qi),
+    (.personNumber .third .plural, qa)]
 
 end Mam

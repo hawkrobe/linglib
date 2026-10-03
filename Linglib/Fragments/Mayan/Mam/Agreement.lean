@@ -48,19 +48,20 @@ open Mayan (ExponentTable)
 third person alike. -/
 def setAExponent : Phonology.Segment.Class → ExponentTable
   | .consonant =>
-    [(.pn .first .singular, [.pref "n"]), (.pn .second .singular, [.pref "t"]),
-     (.pn .third .singular, [.pref "t"]), (.pn .first .plural, [.pref "q"]),
-     (.pn .second .plural, [.pref "ky"]), (.pn .third .plural, [.pref "ky"])]
+    [(.personNumber .first .singular, [.pref "n"]), (.personNumber .second .singular, [.pref "t"]),
+     (.personNumber .third .singular, [.pref "t"]), (.personNumber .first .plural, [.pref "q"]),
+     (.personNumber .second .plural, [.pref "ky"]), (.personNumber .third .plural, [.pref "ky"])]
   | .vowel =>
-    [(.pn .first .singular, [.pref "w"]), (.pn .second .singular, [.pref "t"]),
-     (.pn .third .singular, [.pref "t"]), (.pn .first .plural, [.pref "q"]),
-     (.pn .second .plural, [.pref "ky"]), (.pn .third .plural, [.pref "ky"])]
+    [(.personNumber .first .singular, [.pref "w"]), (.personNumber .second .singular, [.pref "t"]),
+     (.personNumber .third .singular, [.pref "t"]), (.personNumber .first .plural, [.pref "q"]),
+     (.personNumber .second .plural, [.pref "ky"]), (.personNumber .third .plural, [.pref "ky"])]
 
 /-- The Set B markers; the non-first singular is *tz'=*, also zero. -/
 def setBExponent : ExponentTable :=
-  [(.pn .first .singular, [.free "chin"]), (.pn .second .singular, [.procl "tz'"]),
-   (.pn .third .singular, [.procl "tz'"]), (.pn .first .plural, [.free "qo"]),
-   (.pn .second .plural, [.free "chi"]), (.pn .third .plural, [.free "chi"])]
+  [(.personNumber .first .singular, [.free "chin"]),
+   (.personNumber .second .singular, [.procl "tz'"]),
+   (.personNumber .third .singular, [.procl "tz'"]), (.personNumber .first .plural, [.free "qo"]),
+   (.personNumber .second .plural, [.free "chi"]), (.personNumber .third .plural, [.free "chi"])]
 
 /-- The Set B of a transitive clause, the non-first singular *tz'=* whatever the object. -/
 def defaultSetB : List Morphology.Morph := [.procl "tz'"]

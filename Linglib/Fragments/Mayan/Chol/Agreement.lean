@@ -77,26 +77,26 @@ def assignCase : UD.Aspect → ArgumentRole → Case
 person plural suffix *-ob*. -/
 def setAExponent : Phonology.Segment.Class → ExponentTable
   | .consonant =>
-    [(.pn .first .singular, [.pref "k"]), (.pn .second .singular, [.pref "a"]),
-     (.pn .third .singular, [.pref "i"]),
-     (.pn .first .plural, [.pref "k", .encl "la"]),
-     (.pn .second .plural, [.pref "a", .encl "la"]),
-     (.pn .third .plural, [.pref "i", .suff "ob"])]
+    [(.personNumber .first .singular, [.pref "k"]), (.personNumber .second .singular, [.pref "a"]),
+     (.personNumber .third .singular, [.pref "i"]),
+     (.personNumber .first .plural, [.pref "k", .encl "la"]),
+     (.personNumber .second .plural, [.pref "a", .encl "la"]),
+     (.personNumber .third .plural, [.pref "i", .suff "ob"])]
   | .vowel =>
-    [(.pn .first .singular, [.pref "k"]), (.pn .second .singular, [.pref "aw"]),
-     (.pn .third .singular, [.pref "iy"]),
-     (.pn .first .plural, [.pref "k", .encl "la"]),
-     (.pn .second .plural, [.pref "aw", .encl "la"]),
-     (.pn .third .plural, [.pref "iy", .suff "ob"])]
+    [(.personNumber .first .singular, [.pref "k"]), (.personNumber .second .singular, [.pref "aw"]),
+     (.personNumber .third .singular, [.pref "iy"]),
+     (.personNumber .first .plural, [.pref "k", .encl "la"]),
+     (.personNumber .second .plural, [.pref "aw", .encl "la"]),
+     (.personNumber .third .plural, [.pref "iy", .suff "ob"])]
 
 /-- The Set B markers, with a zero third person singular, the plural clitic *=la* and the third
 person plural *-ob*. -/
 def setBExponent : ExponentTable :=
-  [(.pn .first .singular, [.suff "oñ"]), (.pn .second .singular, [.suff "ety"]),
-   (.pn .third .singular, []),
-   (.pn .first .plural, [.suff "oñ", .encl "la"]),
-   (.pn .second .plural, [.suff "ety", .encl "la"]),
-   (.pn .third .plural, [.suff "ob"])]
+  [(.personNumber .first .singular, [.suff "oñ"]), (.personNumber .second .singular, [.suff "ety"]),
+   (.personNumber .third .singular, []),
+   (.personNumber .first .plural, [.suff "oñ", .encl "la"]),
+   (.personNumber .second .plural, [.suff "ety", .encl "la"]),
+   (.personNumber .third .plural, [.suff "ob"])]
 
 /-! ### Intransitive classes -/
 

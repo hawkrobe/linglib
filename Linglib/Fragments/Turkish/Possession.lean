@@ -69,9 +69,9 @@ def sentence (pr pe : List Segment) (c : Agreement.Bundle) (e : Existential) :
 /-- *Mehmed'in parası var* 'Mehmet has money' and *Mehmed'in parası yok* 'Mehmet has no
 money'. -/
 theorem mehmet :
-    sentence [m, e, h, m, e, d] [p, a, r, a] (.pn .third .singular) .var =
+    sentence [m, e, h, m, e, d] [p, a, r, a] (.personNumber .third .singular) .var =
         [[m, e, h, m, e, d, i, n], [p, a, r, a, s, ı], [v, a, r]] ∧
-      sentence [m, e, h, m, e, d] [p, a, r, a] (.pn .third .singular) .yok =
+      sentence [m, e, h, m, e, d] [p, a, r, a] (.personNumber .third .singular) .yok =
         [[m, e, h, m, e, d, i, n], [p, a, r, a, s, ı], [y, o, k]] := by
   decide
 

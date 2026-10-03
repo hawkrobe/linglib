@@ -62,13 +62,13 @@ theorem followers_table :
 /-- The second-person possessive -(I)n on *kız*, *el*, *kol* and *göz* surfaces with each of the
 four high vowels (§3.2.1). -/
 theorem iType :
-    realize [k, ı, z] [(possessive (.pn .second .singular)).form] =
+    realize [k, ı, z] [(possessive (.personNumber .second .singular)).form] =
         [k, ı, z, ı, n] ∧
-    realize [e, l] [(possessive (.pn .second .singular)).form] =
+    realize [e, l] [(possessive (.personNumber .second .singular)).form] =
         [e, l, i, n] ∧
-    realize [k, o, l] [(possessive (.pn .second .singular)).form] =
+    realize [k, o, l] [(possessive (.personNumber .second .singular)).form] =
         [k, o, l, u, n] ∧
-    realize [g, ö, z] [(possessive (.pn .second .singular)).form] =
+    realize [g, ö, z] [(possessive (.personNumber .second .singular)).form] =
         [g, ö, z, ü, n] := by
   decide
 
@@ -82,14 +82,14 @@ theorem last_vowel_decides :
 /-- In *üz-ül-dü-nüz* 'you became sad' rounding is copied through three suffixes, and the `D`
 of -DI is voiced after `l` (§3.2). -/
 theorem iterated :
-    realize [ü, z] [passive.form, di.form, (person .one (.pn .second .plural)).form] =
+    realize [ü, z] [passive.form, di.form, (person .one (.personNumber .second .plural)).form] =
       [ü, z, ü, l, d, ü, n, ü, z] := by
   decide
 
 /-- The `o` of -(I)yor does not harmonize and triggers the person marker in *gör-üyor-um*, and
 the converb -(y)ken is invariable in *bak-mış-ken* (§3.4 (vi)). -/
 theorem retriggering :
-    realize [g, ö, r] [iyor.form, (person .two (.pn .first .singular)).form] =
+    realize [g, ö, r] [iyor.form, (person .two (.personNumber .first .singular)).form] =
       [g, ö, r, ü, y, o, r, u, m] ∧
     realize [b, a, k] [miş.form, ⟨some y, [k, e, n]⟩] = [b, a, k, m, ı, ş, k, e, n] := by
   decide
@@ -97,9 +97,9 @@ theorem retriggering :
 /-- The palatal l of *gol* and *hal* fronts the suffix in *gol-ü* and *hal-im*, while rounding
 still comes from the vowel (§3.4 (iv)). -/
 theorem palatal_l :
-    realize [g, o, l'] [(possessive (.pn .third .singular)).form] =
+    realize [g, o, l'] [(possessive (.personNumber .third .singular)).form] =
       [g, o, l', ü] ∧
-    realize [h, a, l'] [(possessive (.pn .first .singular)).form] =
+    realize [h, a, l'] [(possessive (.personNumber .first .singular)).form] =
       [h, a, l', i, m] := by
   decide
 
@@ -114,14 +114,15 @@ theorem voicing_of_D :
 *ev-im* against *araba-m*, *ev-iniz* against *araba-nız*, *ev-imiz* against *araba-mız*, and
 the aorist *gör-ür* against *ara-r* (§6.1.3, §8.1.2). -/
 theorem deletable_vowels :
-    realize [p, u, l] [(possessive (.pn .first .singular)).form] = [p, u, l, u, m] ∧
-    realize [e, v] [(possessive (.pn .first .singular)).form] = [e, v, i, m] ∧
-    realize [a, r, a, b, a] [(possessive (.pn .first .singular)).form] = [a, r, a, b, a, m] ∧
-    realize [e, v] [(possessive (.pn .second .plural)).form] = [e, v, i, n, i, z] ∧
-    realize [a, r, a, b, a] [(possessive (.pn .second .plural)).form] =
+    realize [p, u, l] [(possessive (.personNumber .first .singular)).form] = [p, u, l, u, m] ∧
+    realize [e, v] [(possessive (.personNumber .first .singular)).form] = [e, v, i, m] ∧
+    realize [a, r, a, b, a] [(possessive (.personNumber .first .singular)).form] = [a, r, a, b, a,
+                                                                                    m] ∧
+    realize [e, v] [(possessive (.personNumber .second .plural)).form] = [e, v, i, n, i, z] ∧
+    realize [a, r, a, b, a] [(possessive (.personNumber .second .plural)).form] =
       [a, r, a, b, a, n, ı, z] ∧
-    realize [e, v] [(possessive (.pn .first .plural)).form] = [e, v, i, m, i, z] ∧
-    realize [a, r, a, b, a] [(possessive (.pn .first .plural)).form] =
+    realize [e, v] [(possessive (.personNumber .first .plural)).form] = [e, v, i, m, i, z] ∧
+    realize [a, r, a, b, a] [(possessive (.personNumber .first .plural)).form] =
       [a, r, a, b, a, m, ı, z] ∧
     realize [g, ö, r] [aorist.form] = [g, ö, r, ü, r] ∧
     realize [a, r, a] [aorist.form] = [a, r, a, r] := by
@@ -139,10 +140,11 @@ theorem deletable_consonants :
     realize [s, u, n, a] [genitive.form] = [s, u, n, a, n, ı, n] ∧
     realize [e, m, i, n, e] [genitive.form] = [e, m, i, n, e, n, i, n] ∧
     realize [b, e, t, ü, l] [genitive.form] = [b, e, t, ü, l, ü, n] ∧
-    realize [a, r, a, b, a] [(possessive (.pn .third .singular)).form] = [a, r, a, b, a, s, ı] ∧
-    realize [e, l, b, i, s, e] [(possessive (.pn .third .singular)).form] =
+    realize [a, r, a, b, a] [(possessive (.personNumber .third .singular)).form] = [a, r, a, b, a,
+                                                                                    s, ı] ∧
+    realize [e, l, b, i, s, e] [(possessive (.personNumber .third .singular)).form] =
       [e, l, b, i, s, e, s, i] ∧
-    realize [e, v] [(possessive (.pn .third .singular)).form] = [e, v, i] := by
+    realize [e, v] [(possessive (.personNumber .third .singular)).form] = [e, v, i] := by
   decide
 
 /-- A third-person possessive takes a final `n` before a case suffix, as in *tepe-si-n-de*,
@@ -151,16 +153,18 @@ It takes none word-finally, as in *tepe-si*, and the other possessives take none
 *oda-m-da* (§6.2 (iib), §8.1.2). -/
 theorem pronominal_n :
     realize [t, e, p, e]
-        (Nominal.forms [⟨_, possessive (.pn .third .singular)⟩, ⟨_, locative⟩]) =
+        (Nominal.forms [⟨_, possessive (.personNumber .third .singular)⟩, ⟨_, locative⟩]) =
       [t, e, p, e, s, i, n, d, e] ∧
-    realize [y, ü, z] (Nominal.forms [⟨_, possessive (.pn .third .singular)⟩, ⟨_, dative⟩]) =
+    realize [y, ü,
+             z] (Nominal.forms [⟨_, possessive (.personNumber .third .singular)⟩, ⟨_, dative⟩]) =
       [y, ü, z, ü, n, e] ∧
     realize [e, l, b, i, s, e]
-        (Nominal.forms [⟨_, possessive (.pn .third .plural)⟩, ⟨_, dative⟩]) =
+        (Nominal.forms [⟨_, possessive (.personNumber .third .plural)⟩, ⟨_, dative⟩]) =
       [e, l, b, i, s, e, l, e, r, i, n, e] ∧
-    realize [t, e, p, e] (Nominal.forms [⟨_, possessive (.pn .third .singular)⟩]) =
+    realize [t, e, p, e] (Nominal.forms [⟨_, possessive (.personNumber .third .singular)⟩]) =
       [t, e, p, e, s, i] ∧
-    realize [o, d, a] (Nominal.forms [⟨_, possessive (.pn .first .singular)⟩, ⟨_, locative⟩]) =
+    realize [o, d,
+             a] (Nominal.forms [⟨_, possessive (.personNumber .first .singular)⟩, ⟨_, locative⟩]) =
       [o, d, a, m, d, a] := by
   decide
 
@@ -174,7 +178,7 @@ def masaA : Hiatus.Juncture := ⟨[m, a, s], a, A, [], by decide, by decide⟩
 *araba-m* the vowel of -(I)m is elided, and in *masa-ya* the `y` of -(y)A is inserted
 (§6.1.3). -/
 theorem hiatus_repairs :
-    (possessive (.pn .first .singular)).form.attach arabaIm.stem = arabaIm.elideV2 ∧
+    (possessive (.personNumber .first .singular)).form.attach arabaIm.stem = arabaIm.elideV2 ∧
     dative.form.attach masaA.stem = masaA.epenthesize y :=
   ⟨Suffix.attach_eq_elideV2 arabaIm rfl rfl,
     Suffix.attach_eq_epenthesize masaA rfl (by decide) rfl⟩
@@ -182,13 +186,16 @@ theorem hiatus_repairs :
 /-- The copular markers and the first-person markers of group 2 take the buffer `y` after a
 vowel, as in *okul-da-yım*, *ev-de-ydi-k*, *hasta-ysa-lar* and *kat-sa-ydı-lar* (§8.4). -/
 theorem predicate_buffers :
-    realize [o, k, u, l] [locative.form, (person .two (.pn .first .singular)).form] =
+    realize [o, k, u, l] [locative.form, (person .two (.personNumber .first .singular)).form] =
       [o, k, u, l, d, a, y, ı, m] ∧
-    realize [e, v] [locative.form, pastCopula.form, (person .one (.pn .first .plural)).form] =
+    realize [e, v] [locative.form, pastCopula.form,
+                    (person .one (.personNumber .first .plural)).form] =
       [e, v, d, e, y, d, i, k] ∧
-    realize [h, a, s, t, a] [conditionalCopula.form, (person .one (.pn .third .plural)).form] =
+    realize [h, a, s, t, a] [conditionalCopula.form,
+                             (person .one (.personNumber .third .plural)).form] =
       [h, a, s, t, a, y, s, a, l, a, r] ∧
-    realize [k, a, t] [sa.form, pastCopula.form, (person .one (.pn .third .plural)).form] =
+    realize [k, a, t] [sa.form, pastCopula.form,
+                       (person .one (.personNumber .third .plural)).form] =
       [k, a, t, s, a, y, d, ı, l, a, r] := by
   decide
 
@@ -221,8 +228,8 @@ theorem negative_raised :
 evidential copula, whose buffer `y` appears after the locative's vowel, and a group-2 person
 marker (§8.1 (2)). -/
 theorem nominal_predicate :
-    realize [e, v] [plural.form, (possessive (.pn .first .plural)).form, locative.form,
-        evidentialCopula.form, (person .two (.pn .third .plural)).form] =
+    realize [e, v] [plural.form, (possessive (.personNumber .first .plural)).form, locative.form,
+        evidentialCopula.form, (person .two (.personNumber .third .plural)).form] =
       [e, v, l, e, r, i, m, i, z, d, e, y, m, i, ş, l, e, r] := by
   decide
 
@@ -245,7 +252,7 @@ theorem spelled_stems : ∀ v ∈ verbs, ofString? v.form = some (v.inflect []) 
 /-- *çocuk-lar-ın-a* 'to your children' has the order number, possession, case (§8.1 (1)). -/
 theorem nominal :
     Nominal.Licensed
-      [⟨_, .plural⟩, ⟨_, .possessive (.pn .second .singular)⟩, ⟨_, .dative⟩] := by
+      [⟨_, .plural⟩, ⟨_, .possessive (.personNumber .second .singular)⟩, ⟨_, .dative⟩] := by
   decide
 
 /-- *Döğ-üş-tür-t-ül-me-yebil-iyor-muş-sunuz-dur* fills every slot of the finite verb, the
@@ -253,7 +260,8 @@ voice slot with four stacked suffixes (§8.2 (7)). -/
 theorem finite_verb :
     Verb.Licensed
       [⟨_, .reciprocal⟩, ⟨_, .causative⟩, ⟨_, .causative⟩, ⟨_, .passive⟩, ⟨_, .negative⟩,
-        ⟨_, .abil⟩, ⟨_, .iyor⟩, ⟨_, .evidentialCopula⟩, ⟨_, .person .two (.pn .second .plural)⟩,
+        ⟨_, .abil⟩, ⟨_, .iyor⟩, ⟨_, .evidentialCopula⟩,
+        ⟨_, .person .two (.personNumber .second .plural)⟩,
         ⟨_, .dir⟩] := by
   decide
 
@@ -263,7 +271,7 @@ theorem tam_positions :
     Verb.Licensed [⟨_, .possibility⟩, ⟨_, .negative⟩, ⟨_, .miş⟩, ⟨_, .dir⟩] ∧
     Verb.Licensed [⟨_, .abil⟩, ⟨_, .acak⟩, ⟨_, .evidentialCopula⟩] ∧
     Verb.Licensed
-      [⟨_, .di⟩, ⟨_, .pastCopula⟩, ⟨_, .person .one (.pn .second .singular)⟩] := by
+      [⟨_, .di⟩, ⟨_, .pastCopula⟩, ⟨_, .person .one (.personNumber .second .singular)⟩] := by
   decide
 
 /-- The negative follows voice and precedes the tense/aspect/modality marker (§8.2.2), and

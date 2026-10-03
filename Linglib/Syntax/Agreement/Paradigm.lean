@@ -18,7 +18,7 @@ indexes a paradigm directly ([corbett-1998]).
 
 ## Main definitions
 
-* `Agreement.Bundle.pnCells` — the six person–number bundles
+* `Agreement.Bundle.personNumberCells` — the six person–number bundles
 * `Agreement.Bundle.IsSAP`, `Agreement.Bundle.IsPlural`, `Agreement.Bundle.person` — the
   speech-act-participant and plural cells, and the person a cell bears
 * `Agreement.Paradigm` — a table from bundles to exponents, with `Paradigm.realize` and
@@ -38,28 +38,27 @@ namespace Agreement
 
 namespace Bundle
 
-/-- A cell is a speech-act participant's when its person is first or second. -/
-def IsSAP (b : Bundle) : Prop := b .person = ↑Person.first ∨ b .person = ↑Person.second
+/-- The person a cell bears, third where it bears none. -/
+def person (b : Bundle) : Person := (b .person).unbotD .third
 
-instance (b : Bundle) : Decidable b.IsSAP := inferInstanceAs (Decidable (_ ∨ _))
+@[simp] theorem person_personNumber (p : Person) (n : Number) : (personNumber p n).person = p :=
+  rfl
+
+/-- A cell is a speech-act participant's when the person it bears is. -/
+def IsSAP (b : Bundle) : Prop := b.person.IsSAP
+
+instance (b : Bundle) : Decidable b.IsSAP := inferInstanceAs (Decidable b.person.IsSAP)
 
 /-- A cell is plural when its number is. -/
 def IsPlural (b : Bundle) : Prop := b .number = ↑Number.plural
 
 instance (b : Bundle) : Decidable b.IsPlural := inferInstanceAs (Decidable (_ = _))
 
-/-- The person a cell bears, third where it bears none. -/
-def person (b : Bundle) : Person :=
-  match b .person with
-  | (p : Person) => p
-  | ⊥ => .third
-
-@[simp] theorem person_pn (p : Person) (n : Number) : (pn p n).person = p := rfl
-
 /-- The six person–number cells a person–number paradigm ranges over. -/
-def pnCells : List Bundle :=
-  [.pn .first .singular, .pn .second .singular, .pn .third .singular,
-    .pn .first .plural, .pn .second .plural, .pn .third .plural]
+def personNumberCells : List Bundle :=
+  [.personNumber .first .singular, .personNumber .second .singular,
+    .personNumber .third .singular, .personNumber .first .plural,
+    .personNumber .second .plural, .personNumber .third .plural]
 
 end Bundle
 
@@ -70,9 +69,8 @@ namespace Paradigm
 
 variable {Exp : Type*}
 
-/-- The exponent realizing a cell, the first entry whose cell it is. -/
-def realize (p : Paradigm Exp) (c : Bundle) : Option Exp :=
-  (p.find? fun e ↦ decide (e.1 = c)).map (·.2)
+/-- The exponent realizing a cell, that of the first entry whose cell it is. -/
+def realize (p : Paradigm Exp) (c : Bundle) : Option Exp := p.lookup c
 
 /-- The exponent agreeing with a controller word. -/
 def realizeFor (p : Paradigm Exp) (controller : Word) : Option Exp :=
