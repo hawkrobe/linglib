@@ -1,51 +1,53 @@
 module
 
-public import Linglib.Syntax.Number.Basic
 public import Linglib.Semantics.Mereology
 
 /-!
-# Number values as lattice regions
+# Number features as region operators
 
-This file interprets the number values of `Number` over a join-semilattice of
-individuals, following Harbour's decomposition of number into the binary
-features atomicity, minimality and additivity: `Number.interp P n` is the
-region of `P` picked out by the value `n`.
+Harbour decomposes grammatical number into three features acting on a region of a
+join-semilattice of individuals. `[±atomic]` keeps the region's atoms or the rest, `[±minimal]`
+its minimal elements or the rest, and `[±additive]` the elements whose join with any element of a
+subregion stays in it. Features compose by application, so the dual is `[+minimal]` applied to
+`[−atomic]`, and the trial `[+minimal]` applied to `[−minimal]` applied to `[−atomic]`. Which
+bundle a value names depends on the number system: the plural of English is `[−atomic]`, that of
+a language with a dual `[−atomic, −minimal]`. The systems a parameter setting generates, and the
+cells of their bundles, are computed in `Studies/Harbour2014.lean`.
 
 ## Main definitions
 
-* `Number.additiveIn`: `x` is additive in a region `Q` if `Q` is closed under
-  joining with `x`, Harbour's `[+additive]`.
-* `Number.atomsOf`, `Number.nonAtomsOf`, `Number.dualOf`, `Number.pluralOf`:
-  the singular, non-atomic, dual and plural regions of `P`.
-* `Number.nonMinimalOf`: the non-minimal elements of `P`, Harbour's `[−minimal]`.
-* `Number.interp`: the region a number value denotes over `P`.
+* `Number.atomsOf`, `Number.nonAtomsOf`: the `[+atomic]` and `[−atomic]` regions.
+* `Number.nonMinimalOf`: the `[−minimal]` region, the `[+minimal]` one being `Mereology.atomize`.
+* `Number.dualOf`: the `[−atomic, +minimal]` region, the dual.
+* `Number.additiveIn`: the `[+additive]` elements of a subregion.
 
 ## Main results
 
-* `Number.additive_subregion_is_cum`: the additive elements of a region form
-  a cumulative predicate.
+* `Number.additive_subregion_is_cum`: the `[+additive]` elements form a cumulative predicate.
+* `Number.singular_subset_minimal`: in a region without the null individual an atom is minimal,
+  so `[+atomic]` entails `[+minimal]`.
+* `Number.atomize_eq_of_atoms`: `[+minimal]` applied to a region of atoms changes nothing.
 * `Number.not_nonMinimalOf_atomize`: `[−minimal]` applied after `[+minimal]` is empty.
-* `Number.singular_subset_minimal`, `Number.atomize_eq_of_atoms`: atoms are
-  minimal in any region excluding the null individual, so `[+atomic]` entails
-  `[+minimal]`.
-* `Number.interp_isSome_iff`: `interp` is defined exactly on the
-  non-approximative values.
 
 ## Implementation notes
 
-Minimality in a region is mathlib's `Minimal`, exposed as `Mereology.atomize`;
-atomicity is `Mereology.Atom`. The approximative values (paucal, greater
-paucal, greater plural, global plural) are additive relative to a
-conventionally fixed cut that the lexicon does not supply, so `interp` returns
-`none` for them. Since the carrier is any `SemilatticeSup`, `interp` at an
-event lattice interprets verbal number. The inclusive reading of the plural is
-pragmatic and not encoded.
+Harbour presupposes that the element lies in the region (`[±minimal]`) and in the subregion
+(`[±additive]`); here these are conjuncts. Minimality is mathlib's `Minimal`, exposed as
+`Mereology.atomize`. With a null individual in the region an atom has a proper part, so
+`[+atomic]` no longer entails `[+minimal]`; Martí's revision of `[±minimal]` for that case, which
+counts only parts of nonzero numerosity, is not modelled. `[−atomic]` gives the exclusive plural.
+Whether the inclusive reading in downward-entailing contexts is a second meaning or an implicature
+is open: Martí argues for the former within Harbour's typology, and the experiments of Tieu, Bill,
+Romoli and Crain favour the latter (`Studies/TieuEtAl2020.lean`). The carrier is any
+join-semilattice, so the operators apply to events as well as individuals.
 
 ## References
 
-* [harbour-2014], (10), (20), (21), §4.2, §4.4
+* [harbour-2014] (9) and (10), p. 195; (20) and (21), p. 202; (30), p. 210
+* [marti-2020] pp. 3:30–3:31
+* [marti-2022] (8) and (9), pp. 217–218; (40), p. 224
+* [tieu-etal-2020]
 * [link-1983]
-* [corbett-2000], ch. 7–8
 -/
 
 @[expose] public section
@@ -56,8 +58,8 @@ open Mereology (Atom CUM atomize)
 
 variable {D : Type*} [SemilatticeSup D]
 
-/-- `x` is additive in the region `Q` if `Q x` and `Q (x ⊔ y)` for every `y`
-with `Q y`: Harbour's `[+additive]`. -/
+/-- `x` is additive in the region `Q` if `Q x` and `Q (x ⊔ y)` for every `y` with `Q y`, Harbour's
+`[+additive]`. -/
 def additiveIn (Q : D → Prop) (x : D) : Prop :=
   Q x ∧ ∀ y, Q y → Q (x ⊔ y)
 
@@ -73,7 +75,6 @@ theorem additive_subregion_is_cum (Q : D → Prop) : CUM (additiveIn Q) :=
 
 instance {Q : D → Prop} [Fintype D] [DecidablePred Q] (x : D) : Decidable (additiveIn Q x) :=
   decidable_of_iff (Q x ∧ ∀ y, Q y → Q (x ⊔ y)) Iff.rfl
-
 
 /-- The atoms of `P` form Harbour's `[+atomic]` region, the singular. -/
 abbrev atomsOf (P : D → Prop) (x : D) : Prop := P x ∧ Atom x
@@ -93,37 +94,16 @@ theorem not_nonMinimalOf_atomize (P : D → Prop) (x : D) : ¬ nonMinimalOf (ato
 /-- The minimal non-atoms of `P` form the `[−atomic, +minimal]` region, the dual. -/
 abbrev dualOf (P : D → Prop) : D → Prop := atomize (nonAtomsOf P)
 
-/-- The non-minimal non-atoms of `P` form the `[−atomic, −minimal]` region, the plural. -/
-abbrev pluralOf (P : D → Prop) : D → Prop := nonMinimalOf (nonAtomsOf P)
-
 /-- An atom of a region excluding the null individual is minimal in it, so
 `[+atomic]` entails `[+minimal]`. -/
 theorem singular_subset_minimal {P : D → Prop} (hP : ∀ y, P y → ¬ IsBot y) {x : D}
     (hx : atomsOf P x) : atomize P x :=
   ⟨hx.1, fun _ hy hle => hx.2.2 (hP _ hy) hle⟩
 
-/-- Over a region of atoms, minimality selects everything, which is why
-`[±atomic]` cannot undergo feature recursion. -/
+/-- Over a region of atoms `[+minimal]` selects everything, so `(+minimal(+atomic(P)))` is
+`(+atomic(P))`, the singular. -/
 theorem atomize_eq_of_atoms {P : D → Prop} (hAll : ∀ x, P x → Atom x) : atomize P = P :=
   funext fun x => propext ⟨fun h => h.1, fun hPx =>
     singular_subset_minimal (fun y hy => (hAll y hy).not_isBot) ⟨hPx, hAll x hPx⟩⟩
-
-/-- `interp P n` is the region of `P` the value `n` denotes, and `none` for the
-approximative values. -/
-def interp (P : D → Prop) : Number → Option (D → Prop)
-  | .general => some P
-  | .singular => some (atomsOf P)
-  | .dual => some (dualOf P)
-  | .plural => some (pluralOf P)
-  | .trial => some (atomize (pluralOf P))
-  | .minimal => some (atomize P)
-  | .augmented => some (nonMinimalOf P)
-  | .unitAugmented => some (atomize (nonMinimalOf P))
-  | _ => none
-
-theorem interp_isSome_iff (P : D → Prop) (n : Number) :
-    (interp P n).isSome ↔
-      n ∉ ([.paucal, .greaterPaucal, .greaterPlural, .globalPlural] : List Number) := by
-  cases n <;> simp [interp]
 
 end Number
