@@ -33,6 +33,9 @@ a binary-search-tree lookup, which has no analogue for a general rose tree.
   evaluates.
 * `RoseTree.vertices`: the addresses in preorder, one per vertex (`length_vertices`,
   `nodup_vertices`) and exactly those inside the tree (`mem_vertices`).
+* `RoseTree.positionedLeaves`: the leaves with their addresses, exactly the leaf addresses
+  (`subtreeAt_of_mem_positionedLeaves`, `mem_positionedLeaves_of_subtreeAt`) in the order of the
+  frontier (`map_snd_positionedLeaves`), which is precedence (`pairwise_precedes_positionedLeaves`).
 * `RoseTree.replaceAt`: replacement at an address, splitting the frontier
   (`leafList_replaceAt`) and shrinking the tree when the new subtree is smaller
   (`numNodes_replaceAt_lt`).
@@ -266,6 +269,90 @@ theorem nodup_verticesList : ∀ cs : List (RoseTree α), (verticesList cs).Nodu
     obtain ⟨j, q', rfl⟩ := exists_cons_of_mem_verticesList hp'
     simp at h
 end
+
+/-! ### The leaves with their addresses -/
+
+/-- `positionedLeaves t` lists the leaves of `t` from left to right, each with its address. -/
+def positionedLeaves : RoseTree α → List (TreePath × α) :=
+  fold fun a ps ↦ match ps with
+    | [] => [(⊥, a)]
+    | ps => ps.zipIdx.flatMap fun (qs, i) ↦ qs.map fun x ↦ (⟨i :: x.1.toList⟩, x.2)
+
+@[simp] theorem positionedLeaves_leaf (a : α) : positionedLeaves (node a []) = [(⊥, a)] := by
+  simp only [positionedLeaves, fold_node, List.map_nil]
+
+theorem positionedLeaves_node_of_ne_nil (a : α) {cs : List (RoseTree α)} (h : cs ≠ []) :
+    positionedLeaves (node a cs) = cs.zipIdx.flatMap fun (c, i) ↦
+      c.positionedLeaves.map fun x ↦ (⟨i :: x.1.toList⟩, x.2) := by
+  obtain ⟨c, cs, rfl⟩ := List.exists_cons_of_ne_nil h
+  rw [positionedLeaves, fold_node, List.map_cons]
+  simp only [← List.map_cons, List.zipIdx_map, List.flatMap_map]
+  rfl
+
+private theorem fst_mem_of_mem_zipIdx {l : List (RoseTree α)} {x : RoseTree α × ℕ}
+    (h : x ∈ l.zipIdx) : x.1 ∈ l := by
+  rw [List.fst_eq_of_mem_zipIdx h]
+  exact List.getElem_mem _
+
+private theorem pairwise_snd_lt_zipIdx :
+    ∀ (l : List (RoseTree α)) (k : ℕ), (l.zipIdx k).Pairwise fun a b ↦ a.2 < b.2
+  | [], _ => .nil
+  | _ :: l, k => List.pairwise_cons.mpr
+    ⟨fun _ hb ↦ List.le_snd_of_mem_zipIdx hb, pairwise_snd_lt_zipIdx l (k + 1)⟩
+
+/-- Forgetting the addresses leaves the frontier. -/
+theorem map_snd_positionedLeaves (t : RoseTree α) :
+    t.positionedLeaves.map Prod.snd = t.leafList := by
+  induction t with
+  | node a cs ih =>
+    rcases eq_or_ne cs [] with rfl | hcs
+    · simp
+    rw [positionedLeaves_node_of_ne_nil a hcs, leafList_node_of_ne_nil a hcs, List.map_flatMap]
+    conv_rhs => rw [← List.zipIdx_map_fst 0 cs, List.map_map, ← List.flatMap_def]
+    refine List.flatMap_congr fun x hx ↦ ?_
+    rw [List.map_map, Function.comp_apply, ← ih x.1 (fst_mem_of_mem_zipIdx hx)]
+    rfl
+
+/-- Each listed address holds its leaf. -/
+theorem subtreeAt_of_mem_positionedLeaves {t : RoseTree α} {x : TreePath × α}
+    (h : x ∈ t.positionedLeaves) : subtreeAt t x.1.toList = some (node x.2 []) := by
+  induction t generalizing x with
+  | node a cs ih =>
+    rcases eq_or_ne cs [] with rfl | hcs
+    · obtain rfl := List.mem_singleton.mp (by simpa using h)
+      rfl
+    simp only [positionedLeaves_node_of_ne_nil a hcs, List.mem_flatMap, List.mem_map] at h
+    obtain ⟨⟨c, i⟩, hc, y, hy, rfl⟩ := h
+    simp [List.mem_zipIdx_iff_getElem?.mp hc, ih c (fst_mem_of_mem_zipIdx hc) hy]
+
+/-- Every leaf address is listed. -/
+theorem mem_positionedLeaves_of_subtreeAt {t : RoseTree α} {p : List ℕ} {a : α}
+    (h : subtreeAt t p = some (node a [])) : (⟨p⟩, a) ∈ t.positionedLeaves := by
+  induction t generalizing p with
+  | node b cs ih =>
+    rcases p with _ | ⟨i, p⟩
+    · cases h
+      exact List.mem_singleton.mpr rfl
+    simp only [subtreeAt_cons, branching_children, children_node, Option.bind_eq_some_iff] at h
+    obtain ⟨c, hc, h⟩ := h
+    rw [positionedLeaves_node_of_ne_nil b (List.ne_nil_of_mem (List.mem_of_getElem? hc))]
+    simp only [List.mem_flatMap, List.mem_map]
+    exact ⟨(c, i), List.mem_zipIdx_iff_getElem?.mpr hc, _, ih c (List.mem_of_getElem? hc) h, rfl⟩
+
+/-- The leaf addresses, in the order of the frontier, ascend in precedence. -/
+theorem pairwise_precedes_positionedLeaves (t : RoseTree α) :
+    t.positionedLeaves.Pairwise fun x y ↦ x.1.Precedes y.1 := by
+  induction t with
+  | node a cs ih =>
+    rcases eq_or_ne cs [] with rfl | hcs
+    · simp
+    rw [positionedLeaves_node_of_ne_nil a hcs, List.pairwise_flatMap]
+    refine ⟨fun ⟨c, i⟩ hc ↦ ?_, (pairwise_snd_lt_zipIdx cs 0).imp fun hij x hx y hy ↦ ?_⟩
+    · rw [List.pairwise_map]
+      exact (ih c (fst_mem_of_mem_zipIdx hc)).imp fun h ↦ h.cons i
+    · obtain ⟨x, -, rfl⟩ := List.mem_map.mp hx
+      obtain ⟨y, -, rfl⟩ := List.mem_map.mp hy
+      exact TreePath.precedes_cons_of_lt hij _ _
 
 /-! ### Replacement at an address -/
 
