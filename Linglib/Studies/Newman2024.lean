@@ -419,9 +419,7 @@ instance (t : XTree) : DecidableRel (configuration t).commands := fun a b ↦
 
 /-- `leafPaths t` pairs each leaf of `t` with its position. -/
 def leafPaths (t : XTree) : List (Leaf × TreePath) :=
-  t.fold (fun _ w ↦ [(w, ⊥)])
-    (fun _ bs ↦ bs.zipIdx.flatMap fun (ps, i) ↦ ps.map fun (w, p) ↦ (w, ⟨i :: p.toList⟩))
-    (fun _ _ ↦ []) (fun _ _ ps ↦ ps.map fun (w, p) ↦ (w, ⟨0 :: p.toList⟩))
+  t.positionedTerminals.map fun x ↦ (x.2.2, x.1)
 
 /-- The leaf `x` can bind the leaf `y` in `t`. -/
 def CanBind (t : XTree) (x y : Leaf) : Prop :=
@@ -430,11 +428,12 @@ def CanBind (t : XTree) (x y : Leaf) : Prop :=
 instance (t : XTree) (x y : Leaf) : Decidable (CanBind t x y) :=
   inferInstanceAs (Decidable (∃ a ∈ _, _))
 
-/-- The leaf `x` precedes the leaf `y` in `t`. -/
-def Precedes (t : XTree) (x y : Leaf) : Prop := t.yield.idxOf x < t.yield.idxOf y
+/-- The leaf `x` precedes the leaf `y` in `t` when its position precedes `y`'s. -/
+def Precedes (t : XTree) (x y : Leaf) : Prop :=
+  ∃ a ∈ (leafPaths t).lookup x, ∃ b ∈ (leafPaths t).lookup y, a.Precedes b
 
 instance (t : XTree) (x y : Leaf) : Decidable (Precedes t x y) :=
-  inferInstanceAs (Decidable (_ < _))
+  inferInstanceAs (Decidable (∃ a ∈ _, _))
 
 /-- With the indirect object in V's complement, the direct object binds it and not conversely;
 with it in v's complement, the converse holds, however VP is linearized. -/
@@ -1001,8 +1000,8 @@ example : (greek ⟨.K, {.wh}⟩ greekPassive).Derivation
 /-! ### Weak Economy in subject questions -/
 
 /-- `transitiveSystem whs` has the operations at v in a transitive clause with the phrases in
-`whs` bearing `[wh]`: merging VP, moving the object once VP has merged, and merging the external
-argument. -/
+`whs` bearing `[wh]`, namely merging VP, moving the object once VP has merged, and merging the
+external argument. -/
 def transitiveSystem (whs : List Transitive) : System Transitive where
   checks := Phrase.checks ∘ Transitive.phrase .D whs
   ops := [.vp, .obj, .subj]

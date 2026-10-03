@@ -161,7 +161,17 @@ protected theorem mono {p' q' : TreePath} (h : Precedes p q) (hp : p ≤ p') (hq
   let ⟨r, i, j, hij, hi, hj⟩ := h
   ⟨r, i, j, hij, hi.trans hp, hj.trans hq⟩
 
+/-- Prefixing a common index preserves precedence. -/
+theorem cons (i : ℕ) (h : Precedes p q) : Precedes ⟨i :: p.toList⟩ ⟨i :: q.toList⟩ :=
+  let ⟨r, a, b, hab, ha, hb⟩ := h
+  ⟨i :: r, a, b, hab, List.cons_prefix_cons.mpr ⟨rfl, ha⟩, List.cons_prefix_cons.mpr ⟨rfl, hb⟩⟩
+
 end Precedes
+
+/-- Positions under distinct daughters of the root are ordered as the daughters are. -/
+theorem precedes_cons_of_lt {i j : ℕ} (hij : i < j) (p q : TreePath) :
+    Precedes ⟨i :: p.toList⟩ ⟨j :: q.toList⟩ :=
+  ⟨[], i, j, hij, by simp, by simp⟩
 
 /-- `p` precedes `q` exactly when `p` comes lexicographically before `q` without dominating it. -/
 theorem precedes_iff_lt_and_not_le {p q : TreePath} :

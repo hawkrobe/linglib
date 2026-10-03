@@ -28,6 +28,9 @@ as `Syntax.Cat`.
 * `Syntax.Tree.toRoseTree` and `Syntax.Tree.ofRoseTree?`: the rose tree underlying a
   constituency tree, its nodes labelled by their constructors' data, and the decoding that
   makes the constituency trees a retract of the rose trees; positions are inherited along it.
+* `Syntax.Tree.positionedTerminals`: the terminals with their positions, the word-bearing leaves
+  of the underlying rose tree, in the order of the yield, which is precedence
+  (`pairwise_precedes_positionedTerminals`).
 
 ## Implementation notes
 
@@ -519,6 +522,79 @@ theorem ofRoseTreeList?_map_toRoseTree :
 
 theorem toRoseTree_injective : Function.Injective (toRoseTree : Tree C W → RoseTree (Label C W)) :=
   fun t s h => Option.some.inj (by rw [← ofRoseTree?_toRoseTree t, h, ofRoseTree?_toRoseTree])
+
+/-- Navigating the rose tree is navigating the constituency tree. -/
+theorem subtreeAt_toRoseTree (t : Tree C W) (p : List ℕ) :
+    Branching.subtreeAt t.toRoseTree p = (Branching.subtreeAt t p).map toRoseTree :=
+  Branching.subtreeAt_map_of_children_map children_toRoseTree t p
+
+/-- A terminal label carries a category and a word; other labels carry none. -/
+def Label.terminal? : Label C W → Option (C × W)
+  | .terminal c w => some (c, w)
+  | _ => none
+
+/-- The terminals are the leaves of the underlying rose tree that carry a word. -/
+theorem filterMap_terminal?_leafList (t : Tree C W) :
+    t.toRoseTree.leafList.filterMap Label.terminal? = t.terminals := by
+  induction t with
+  | terminal c w => rfl
+  | node c cs ih =>
+    rcases eq_or_ne cs [] with rfl | hcs
+    · rfl
+    rw [toRoseTree_node, RoseTree.leafList_node_of_ne_nil _ (by simpa using hcs), terminals_node,
+      List.filterMap_flatten, List.map_map, List.map_map, List.flatMap_def]
+    exact congrArg _ (List.map_congr_left fun s hs ↦ ih s hs)
+  | trace n c => rfl
+  | bind n c t ih => simpa [RoseTree.leafList_node_of_ne_nil] using ih
+
+/-! ### Positions of the terminals
+
+The terminals, paired with their positions, are the word-bearing leaves of the underlying rose
+tree, so the order of the yield is precedence (`RoseTree.pairwise_precedes_positionedLeaves`). -/
+
+/-- The terminals, left to right, each paired with its position. -/
+def positionedTerminals (t : Tree C W) : List (TreePath × (C × W)) :=
+  t.toRoseTree.positionedLeaves.filterMap fun x ↦ x.2.terminal?.map (x.1, ·)
+
+/-- Forgetting the positions leaves the terminals. -/
+theorem map_snd_positionedTerminals (t : Tree C W) :
+    t.positionedTerminals.map Prod.snd = t.terminals := by
+  rw [positionedTerminals, List.map_filterMap, ← filterMap_terminal?_leafList,
+    ← RoseTree.map_snd_positionedLeaves, List.filterMap_map]
+  congr 1
+  funext x
+  simp [Option.map_map, Function.comp_def]
+
+/-- Each listed position holds its terminal. -/
+theorem subtreeAt_of_mem_positionedTerminals {t : Tree C W} {x : TreePath × (C × W)}
+    (h : x ∈ t.positionedTerminals) :
+    Branching.subtreeAt t x.1.toList = some (terminal x.2.1 x.2.2) := by
+  obtain ⟨⟨p, l⟩, hl, hx⟩ := List.mem_filterMap.mp h
+  cases l with
+  | terminal c w =>
+    obtain rfl : (p, (c, w)) = x := by simpa [Label.terminal?] using hx
+    have := RoseTree.subtreeAt_of_mem_positionedLeaves hl
+    rw [subtreeAt_toRoseTree] at this
+    obtain ⟨s, hs, hst⟩ := Option.map_eq_some_iff.mp this
+    rw [hs, toRoseTree_injective (hst.trans (toRoseTree_terminal c w).symm)]
+  | _ => simp [Label.terminal?] at hx
+
+/-- Every terminal position is listed. -/
+theorem mem_positionedTerminals_of_subtreeAt {t : Tree C W} {p : List ℕ} {c : C} {w : W}
+    (h : Branching.subtreeAt t p = some (terminal c w)) :
+    (⟨p⟩, (c, w)) ∈ t.positionedTerminals := by
+  have : Branching.subtreeAt t.toRoseTree p = some (.node (.terminal c w) []) := by
+    rw [subtreeAt_toRoseTree, h]
+    rfl
+  exact List.mem_filterMap.mpr ⟨_, RoseTree.mem_positionedLeaves_of_subtreeAt this, rfl⟩
+
+/-- The terminal positions, in the order of the yield, ascend in precedence. -/
+theorem pairwise_precedes_positionedTerminals (t : Tree C W) :
+    t.positionedTerminals.Pairwise fun x y ↦ x.1.Precedes y.1 :=
+  (RoseTree.pairwise_precedes_positionedLeaves _).filterMap _ fun _ _ h _ ha _ hb ↦ by
+    obtain ⟨_, -, rfl⟩ := Option.map_eq_some_iff.mp ha
+    obtain ⟨_, -, rfl⟩ := Option.map_eq_some_iff.mp hb
+    exact h
 
 end Tree
 
