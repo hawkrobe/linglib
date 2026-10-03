@@ -42,6 +42,8 @@ connectives defines a flat property, pointwise its classical truth.
 * `Team.flat_inter`, `Team.tensor_flat`, `Team.poss_flat`, `Team.nec_flat`,
   `Team.possWitness_flat`, `Team.possLax_flat`, `Team.necImage_flat` — `flat` is a
   homomorphism.
+* `Team.poss_union`, `Team.nec_union` — the flat modalities send unions to tensor
+  disjunctions.
 
 ## Implementation notes
 
@@ -59,6 +61,7 @@ Aloni's state-based modal logics call the same object a "state".
 ## References
 
 * [aloni-2022] Aloni, Logic and Conversation: The Case of Free Choice
+* [aloni-anttila-yang-2024] Aloni, Anttila and Yang, State-based Modal Logics for Free Choice
 * [anttila-2021] Anttila, The Logic of Free Choice: Axiomatizations of State-based Modal
   Logics
 * [anttila-2025] Anttila, Not Nothing: Nonemptiness in Team Semantics
@@ -78,24 +81,25 @@ variable {α : Type*}
 
 /-! ### Pointwise connectives -/
 
-/-- The pointwise lift of a property of points: the teams all of whose points satisfy `p`.
-    Atoms, and every flat connective, define such properties. -/
+/-- The pointwise lift `flat p` of a property of points holds of the teams all of whose points
+    satisfy `p`. Atoms, and every flat connective, define such properties. -/
 def flat (p : α → Prop) : TeamProperty α := {t | ∀ x ∈ t, p x}
 
-/-- The non-emptiness atom `NE`: the non-empty teams. -/
+/-- The non-emptiness atom `NE` holds of the non-empty teams. -/
 def ne : TeamProperty α := {t | t.Nonempty}
 
-/-- The flat possibility modality over successor sets `R`: every point of the team has a
-    non-empty subteam of its successors in `P`. -/
+/-- The flat possibility modality over successor sets `R` holds of a team when every point of it
+    has a non-empty set of successors in `P`. -/
 def poss (R : α → Finset α) (P : TeamProperty α) : TeamProperty α :=
   flat fun x ↦ ∃ s ⊆ R x, s.Nonempty ∧ s ∈ P
 
-/-- The flat necessity modality: the successor set of every point of the team is in `P`. -/
+/-- The flat necessity modality holds of a team when the successor set of each of its points is
+    in `P`. -/
 def nec (R : α → Finset α) (P : TeamProperty α) : TeamProperty α :=
   flat fun x ↦ R x ∈ P
 
 /-- The single-witness possibility modality of modal dependence logic ([vaananen-2008]
-    clause (T8)): one team `Y` in `P` supplies a successor to every point. -/
+    clause (T8)) holds of a team when one team `Y` in `P` supplies a successor to every point. -/
 def possWitness (R : α → Finset α) (P : TeamProperty α) : TeamProperty α :=
   {t | ∃ Y, (∀ x ∈ t, ∃ y ∈ Y, y ∈ R x) ∧ Y ∈ P}
 
@@ -150,7 +154,7 @@ theorem flat_inter (p q : α → Prop) : flat p ∩ flat q = flat fun x ↦ p x 
   Set.ext fun _ ↦ by simp [flat, forall_and]
 
 /-- A non-empty subteam of `u` on which `p` holds pointwise exists exactly when `p` holds
-somewhere in `u`: the witness may be taken to be a singleton. -/
+somewhere in `u`, since the witness may be taken to be a singleton. -/
 theorem exists_nonempty_subset_forall_iff (u : Finset α) (p : α → Prop) :
     (∃ t ⊆ u, t.Nonempty ∧ ∀ x ∈ t, p x) ↔ ∃ x ∈ u, p x where
   mp := fun ⟨_, htu, ⟨x, hx⟩, h⟩ ↦ ⟨x, htu hx, h x hx⟩
@@ -171,8 +175,8 @@ theorem nec_flat (R : α → Finset α) (p : α → Prop) :
 
 variable [DecidableEq α] {Q : TeamProperty α}
 
-/-- Tensor (split) disjunction: the teams that split into a part in `P` and a part in `Q`.
-    This is the pointwise sup `P ⊻ Q` of `Finset α` (`tensor_eq_sups`), spelled out so that
+/-- Tensor (split) disjunction holds of the teams that split into a part in `P` and a part in
+    `Q`. It is the pointwise sup `P ⊻ Q` of `Finset α` (`tensor_eq_sups`), spelled out so that
     a split appears as `t₁ ∪ t₂ = t`. -/
 def tensor (P Q : TeamProperty α) : TeamProperty α := {t | ∃ t₁ ∈ P, ∃ t₂ ∈ Q, t₁ ∪ t₂ = t}
 
@@ -189,13 +193,13 @@ def biUnionHom {β : Type*} [DecidableEq β] (R : α → Finset β) :
 @[simp] theorem biUnionHom_apply {β : Type*} [DecidableEq β] (R : α → Finset β) (t : Finset α) :
     biUnionHom R t = t.biUnion R := rfl
 
-/-- The image necessity modality ([vaananen-2008] clause (T9)): the union of the successor
-    sets is in `P`. -/
+/-- The image necessity modality ([vaananen-2008] clause (T9)) holds of a team when the union
+    of its successor sets is in `P`. -/
 def necImage (R : α → Finset α) (P : TeamProperty α) : TeamProperty α :=
   biUnionHom R ⁻¹' P
 
 /-- The lax possibility modality of modal inclusion logic ([anttila-haggblom-yang-2024]
-    Definition 2.2): a team of successors in `P` that reaches every point. -/
+    Definition 2.2) holds of a team when some team of successors in `P` reaches every point. -/
 def possLax (R : α → Finset α) (P : TeamProperty α) : TeamProperty α :=
   {t | ∃ S ⊆ t.biUnion R, (∀ x ∈ t, ∃ y ∈ S, y ∈ R x) ∧ S ∈ P}
 
@@ -321,6 +325,17 @@ theorem mem_tensor_flat : t ∈ tensor (flat p) (flat q) ↔ ∀ x ∈ t, p x �
 
 theorem tensor_flat (p q : α → Prop) : tensor (flat p) (flat q) = flat fun x ↦ p x ∨ q x :=
   Set.ext fun _ ↦ mem_tensor_flat
+
+/-- The flat possibility modality turns a union into a tensor disjunction. This is the law
+    behind `◇(φ ⩔ ψ) ≡ ◇φ ∨ ◇ψ` in [aloni-anttila-yang-2024]. -/
+theorem poss_union (R : α → Finset α) (P Q : TeamProperty α) :
+    poss R (P ∪ Q) = tensor (poss R P) (poss R Q) := by
+  simp only [poss, tensor_flat, Set.mem_union, and_or_left, exists_or]
+
+/-- The flat necessity modality turns a union into a tensor disjunction. -/
+theorem nec_union (R : α → Finset α) (P Q : TeamProperty α) :
+    nec R (P ∪ Q) = tensor (nec R P) (nec R Q) := by
+  rw [nec, nec, nec, tensor_flat]; rfl
 
 /-! ### `flat` commutes with the image modalities
 
