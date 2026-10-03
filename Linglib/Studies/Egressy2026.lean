@@ -29,10 +29,11 @@ size-insensitive Sequence of Tense of English in its CP complements sitting insi
 * Clause size is `Minimalist.ComplementSize` on the shared functional sequence `Cat.fValue`, where
   `Cat.Say` sits at Say > Foc > T. The Williams Cycle (26) and its version for Agree (35) are one
   relation, `WilliamsCycle x y`, between the head of a dependency and the crossed projection.
-* Readings are `Tense.EmbeddedTenseReading`. The two clause types realize the two values of
-  [ogihara-sharvit-2012]'s language-wide `Tense.SOTParameter` clause-internally, so `readings`
-  is `Tense.availableReadings` at the clause-internal parameter, and a chain of embeddings is
-  read pairwise by `profile`.
+* Readings are positions of the embedded reference time against the attitude's now, an
+  `Ordering`: backshifted `.lt`, simultaneous `.eq`. The clause-internal value of
+  [ogihara-sharvit-2012]'s Sequence of Tense parameter is `SOTRule.Applicable` itself, so
+  `readings` is `Tense.pastUnderPast` at it, and a chain of embeddings is read pairwise by
+  `profile`.
 * The examples are `Data.Examples.Egressy2026`. A row's clause type is its `clauseType`
   feature, its matrix verb the `Hungarian.Verbs` entry named by its `matrixVerb` feature,
   and direct perception, which the paper says removes the backshifted reading pragmatically, its
@@ -170,59 +171,52 @@ theorem applicable_vpInternal_cP :
 
 /-! ### Readings: the language-wide parameter realized clause-internally (§1, §2.4) -/
 
-/-- The value of [ogihara-sharvit-2012]'s Sequence of Tense parameter for one embedded clause:
-`relative` (English) where the rule can apply, `absolute` (Japanese) where it cannot. -/
-def sotParameter (a : Attachment) (cs : ComplementSize) : SOTParameter :=
-  if SOTRule.Applicable a cs then .relative else .absolute
-
 /-- The readings of a past clause under a past matrix, where backshift is the default and the
 simultaneous reading arises only through the rule. -/
-def readings (a : Attachment) (cs : ComplementSize) : List EmbeddedTenseReading :=
-  availableReadings (sotParameter a cs)
+def readings (a : Attachment) (cs : ComplementSize) : Finset Ordering :=
+  pastUnderPast (SOTRule.Applicable a cs)
 
-/-- A non-speech-reporting clause is an English complement. -/
-theorem sotParameter_nonSpeech :
-    sotParameter .sizeDependent ClauseType.nonSpeechReporting.size = .relative := by
+/-- The rule reaches a non-speech-reporting clause, as it reaches an English complement. -/
+theorem applicable_nonSpeech :
+    SOTRule.Applicable .sizeDependent ClauseType.nonSpeechReporting.size := by
   decide
 
-/-- A speech-reporting clause is a Japanese complement. -/
-theorem sotParameter_speech :
-    sotParameter .sizeDependent ClauseType.speechReporting.size = .absolute := by
+/-- The rule does not reach a speech-reporting clause, as it reaches no Japanese complement. -/
+theorem not_applicable_speech :
+    ¬ SOTRule.Applicable .sizeDependent ClauseType.speechReporting.size := by
   decide
 
 /-- The core asymmetry (§2.4) is that the simultaneous reading is available exactly in
 non-speech-reporting clauses. -/
 theorem simultaneous_iff (ct : ClauseType) :
-    EmbeddedTenseReading.simultaneous ∈ readings .sizeDependent ct.size ↔
+    .eq ∈ readings .sizeDependent ct.size ↔
       ct = .nonSpeechReporting := by
   cases ct <;> decide
 
 /-- The grammar always leaves the backshifted reading; only pragmatics removes it. -/
 theorem shifted_mem (a : Attachment) (cs : ComplementSize) :
-    EmbeddedTenseReading.shifted ∈ readings a cs := by
-  unfold readings sotParameter
-  split <;> simp [availableReadings]
+    .lt ∈ readings a cs :=
+  lt_mem_pastUnderPast
 
 /-- (19): an English past-under-past complement has the simultaneous reading. -/
 theorem english_simultaneous :
-    EmbeddedTenseReading.simultaneous ∈ readings .vpInternal .cP := by
+    .eq ∈ readings .vpInternal .cP := by
   decide
 
 /-! ### Direct perception (§2.1) -/
 
 /-- One can only perceive directly what happens now: the readings the paper reports are the
 grammatical ones, narrowed to the simultaneous reading under direct perception. -/
-def observed (direct : Prop) [Decidable direct] (rs : List EmbeddedTenseReading) :
-    List EmbeddedTenseReading :=
-  if direct then rs.filter (· = .simultaneous) else rs
+def observed (direct : Prop) [Decidable direct] (rs : Finset Ordering) : Finset Ordering :=
+  if direct then rs ⊓ ⟦present⟧ else rs
 
 /-- Pragmatics only removes readings. -/
-theorem observed_subset (direct : Prop) [Decidable direct] (rs : List EmbeddedTenseReading) :
-    observed direct rs ⊆ rs := by
+theorem observed_le (direct : Prop) [Decidable direct] (rs : Finset Ordering) :
+    observed direct rs ≤ rs := by
   unfold observed
   split
-  · exact List.filter_subset_self _
-  · exact List.Subset.refl _
+  · exact inf_le_left
+  · exact le_rfl
 
 /-! ### The data (§2) -/
 
@@ -242,21 +236,19 @@ instance (e : Datum) (key : String) : Decidable (DirectPerceptionAt e key) :=
   inferInstanceAs (Decidable (_ = _))
 
 /-- The readings as named in the rows. -/
-def readingTable : List (String × EmbeddedTenseReading) :=
-  [("simultaneous", .simultaneous), ("backshifted", .shifted)]
+def readingTable : List (String × Ordering) := [("simultaneous", .eq), ("backshifted", .lt)]
 
 /-- A row's reported readings at embedding level `lvl` agree with a predicted reading set when
 each named reading is judged acceptable exactly if predicted. -/
-def Agrees (e : Datum) (lvl : String) (rs : List EmbeddedTenseReading) : Prop :=
+def Agrees (e : Datum) (lvl : String) (rs : Finset Ordering) : Prop :=
   ∀ r ∈ e.readings, ∀ x ∈ readingTable, r.1 = lvl ++ x.1 → (r.2 = .acceptable ↔ x.2 ∈ rs)
 
-instance (e : Datum) (lvl : String) (rs : List EmbeddedTenseReading) :
-    Decidable (Agrees e lvl rs) :=
+instance (e : Datum) (lvl : String) (rs : Finset Ordering) : Decidable (Agrees e lvl rs) :=
   inferInstanceAs (Decidable (∀ r ∈ e.readings, ∀ x ∈ readingTable, _ → _))
 
 /-- The predicted readings of a single-embedding Hungarian row: the grammar at its clause
 type, narrowed by direct perception. -/
-def predicted (e : Datum) (ct : ClauseType) : List EmbeddedTenseReading :=
+def predicted (e : Datum) (ct : ClauseType) : Finset Ordering :=
   observed (DirectPerceptionAt e "directPerception") (readings .sizeDependent ct.size)
 
 /-- The single-embedding rows of §2.1–2.2: object, subject and adjunct clauses of both types. -/
@@ -300,15 +292,14 @@ structure Clause where
 clause under a past clause is read by the rule; a past clause under any other tense is
 backshifted only, since the rule needs an agreeing PAST above; a non-past clause has no
 past-under-past reading. -/
-def linkReadings (a : Attachment) (matrix : Finset Ordering) (c : Clause) :
-    List EmbeddedTenseReading :=
-  if c.tense = ⟦past⟧ then (if matrix = ⟦past⟧ then readings a c.size else [.shifted]) else []
+def linkReadings (a : Attachment) (matrix : Finset Ordering) (c : Clause) : Finset Ordering :=
+  if c.tense = ⟦past⟧ then (if matrix = ⟦past⟧ then readings a c.size else ⟦past⟧) else ⊥
 
 /-- The readings at each level of a chain of embedded clauses under a matrix tense, matrix first.
 Each clause is read against the clause immediately containing it: by (41) every clause attaches
 at its own size, so a SayP is never inside a TP of any higher clause while a TP is inside the TP
 of the clause containing it, and only structurally adjacent clauses interact (§2.3, §4). -/
-def profile (a : Attachment) : Finset Ordering → List Clause → List (List EmbeddedTenseReading)
+def profile (a : Attachment) : Finset Ordering → List Clause → List (Finset Ordering)
   | _, [] => []
   | m, c :: rest => linkReadings a m c :: profile a c.tense rest
 
@@ -319,14 +310,14 @@ def chain (ct₁ ct₂ : ClauseType) : List Clause := [⟨⟦past⟧, ct₁.size
 non-speech-reporting deepest clause is simultaneous with it. -/
 theorem ex16_profile :
     profile .sizeDependent ⟦past⟧ (chain .speechReporting .nonSpeechReporting) =
-      [[.shifted], [.shifted, .simultaneous]] := by
+      [⟦past⟧, ⟦past⟧ ⊔ ⟦present⟧] := by
   decide
 
 /-- (17): hear > shout > be, the mirror image of (16): only adjacent clauses interact, and a
 speech-reporting clause is backshifted whatever contains it. -/
 theorem ex17_profile :
     profile .sizeDependent ⟦past⟧ (chain .nonSpeechReporting .speechReporting) =
-      [[.shifted, .simultaneous], [.shifted]] := by
+      [⟦past⟧ ⊔ ⟦present⟧, ⟦past⟧] := by
   decide
 
 /-- The two-level rows (10), (15), (16) and (17) are predicted level by level, direct perception
@@ -335,19 +326,19 @@ theorem doubleRows_predicted : ∀ e ∈ [ex_10, ex_15, ex_16, ex_17], ∀ ct₁
     e.parse? "intermediateClauseType" clauseTypeTable = some ct₁ →
     e.parse? "deepestClauseType" clauseTypeTable = some ct₂ →
       Agrees e "intermediate " (observed (DirectPerceptionAt e "intermediateDirectPerception")
-          ((profile .sizeDependent ⟦past⟧ (chain ct₁ ct₂)).getD 0 [])) ∧
+          ((profile .sizeDependent ⟦past⟧ (chain ct₁ ct₂)).getD 0 ⊥)) ∧
         Agrees e "deepest " (observed (DirectPerceptionAt e "deepestDirectPerception")
-          ((profile .sizeDependent ⟦past⟧ (chain ct₁ ct₂)).getD 1 [])) := by
+          ((profile .sizeDependent ⟦past⟧ (chain ct₁ ct₂)).getD 1 ⊥)) := by
   decide
 
 /-- (18), [ogihara-1996]: English past under *will* under past. The deepest past has no
 simultaneous reading, the tense immediately above it being a future rather than an agreeing
 past, although English complements attach inside the VP and are otherwise deleted freely. -/
 theorem ex18_profile :
-    profile .vpInternal ⟦past⟧ [⟨⟦future⟧, .cP⟩, ⟨⟦past⟧, .cP⟩] = [[], [.shifted]] := by
+    profile .vpInternal ⟦past⟧ [⟨⟦future⟧, .cP⟩, ⟨⟦past⟧, .cP⟩] = [⊥, ⟦past⟧] := by
   decide
 
-theorem ex18_predicted : Agrees ex_18 "deepest " [.shifted] := by decide
+theorem ex18_predicted : Agrees ex_18 "deepest " ⟦past⟧ := by decide
 
 /-! ### Rival mechanisms (§3.3, §4) -/
 

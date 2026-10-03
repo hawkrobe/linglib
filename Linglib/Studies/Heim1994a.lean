@@ -3,6 +3,7 @@ module
 public import Linglib.Core.Order.Interval
 public import Linglib.Semantics.Reference.Context.Index
 public import Linglib.Semantics.Tense.Embedding
+public import Linglib.Semantics.Tense.Perspective
 
 /-!
 # Heim (1994): Comments on Abusch's Theory of Tense
@@ -25,8 +26,8 @@ Licensing Condition `TLC` with the definition (67) of "in the domain of" license
 ## Implementation notes
 
 * Times are nonempty intervals, so that `<` is `NonemptyInterval.precedes`, `o` is
-  `NonemptyInterval.overlaps` and "does not follow" is `NotAfter`, the endpoint form of the
-  library's `Tense.upperLimitConstraint`.
+  `NonemptyInterval.overlaps` and "does not follow" is `NotAfter`, the library's
+  `Tense.upperLimitConstraint` as a perspectival presupposition on intervals.
 * Predicates carry their subjects, de dicto descriptions are atomic and always defined, and
   the presuppositions of the nuclear scopes of `woll` and of res-moved `believe` project
   universally, the law the paper invokes for `some` and `believe`. The time-concept is
@@ -54,10 +55,11 @@ variable {T : Type*} [LinearOrder T]
 /-- `t` does not follow `t₀`, the relation `¬>` of (16). -/
 def NotAfter (t t₀ : NonemptyInterval T) : Prop := ¬ t₀.precedes t
 
-/-- Not following is the library's Upper Limit Constraint on the endpoints. -/
-theorem notAfter_iff_upperLimitConstraint (t t₀ : NonemptyInterval T) :
-    NotAfter t t₀ ↔ Tense.upperLimitConstraint t.fst t₀.snd :=
-  not_lt
+/-- Not following is the library's Upper Limit Constraint as a perspectival presupposition: the
+interval a tense denotes stands to the local evaluation time in the constraint's cell. -/
+theorem notAfter_iff_presup (t t₀ : NonemptyInterval T) :
+    NotAfter t t₀ ↔ Tense.Perspective.Presup Tense.upperLimitConstraint t₀ t := by
+  simp [NotAfter, Tense.Perspective.Presup, Tense.upperLimitConstraint, Tense.denote_future]
 
 theorem notAfter_self (t : NonemptyInterval T) : NotAfter t t := precedes_irrefl t
 

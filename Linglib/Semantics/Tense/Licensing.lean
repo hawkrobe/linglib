@@ -65,8 +65,9 @@ variable (a : TemporalArgument ι) (ρ : RelationAssignment ι T) (g : ℕ → T
 evaluation time. -/
 def Con : Prop := ρ a.rel (g a.index) (g a.evalIndex)
 
-/-- The upper limit constraint: the argument's time does not follow its local evaluation time. -/
-def UpperLimit [LE T] : Prop := upperLimitConstraint (g a.index) (g a.evalIndex)
+/-- The upper limit constraint holds of an argument when its time stands to its local evaluation
+time in the Upper Limit Constraint's cell, not following it. -/
+def UpperLimit [LinearOrder T] : Prop := compare (g a.index) (g a.evalIndex) ∈ upperLimitConstraint
 
 /-- Locally licensed: the argument's own relation is temporal precedence. -/
 def LocallyLicensed [LT T] : Prop := ρ a.rel = (· < ·)

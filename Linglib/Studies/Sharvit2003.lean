@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.Tense.Embedding
+public import Linglib.Semantics.Tense.Pronoun
 public import Linglib.Data.Examples.Sharvit2003
 
 /-!
@@ -10,7 +11,7 @@ This file formalizes the squib's typological argument. Under the Deletion Theory
 [ogihara-1996] and [von-stechow-1995], sequence of tense is a parameter: an SOT language deletes
 an embedded tense under agreement with a c-commanding attitude tense, and the deleted tense is a
 bound zero tense, the relative now of [heim-1994-comments], so past under past has a nonpast
-reading beside its anteriority reading (`Tense.availableReadings`). A second parameter, matrix
+reading beside its anteriority reading (`Tense.pastUnderPast`). A second parameter, matrix
 indexicality after [schlenker-1999], is whether the present-tense morpheme must refer to the
 utterance time in present-under-past sentences or may be interpreted as a bound variable. The
 two cross to the typology (11): English deletes and has an indexical present, Hebrew neither
@@ -72,21 +73,22 @@ inductive PresentTense
 /-- A language type of the Deletion Theory (11): the SOT rule, which deletes a tense under
 agreement and interprets it as a bound zero tense, and the indexicality of the present. -/
 structure Language where
-  sot : SOTParameter
+  /-- The language has the SOT rule. -/
+  sotRule : Bool
   present : PresentTense
   deriving DecidableEq, Repr
 
 /-- Type 1, English: the SOT rule and a matrix-indexical present. -/
-def english : Language := ⟨.relative, .matrixIndexical⟩
+def english : Language := ⟨true, .matrixIndexical⟩
 
 /-- Type 2, Hebrew: no SOT rule and a bindable present. -/
-def hebrew : Language := ⟨.absolute, .bindable⟩
+def hebrew : Language := ⟨false, .bindable⟩
 
 /-- Type 3, Modern Greek: the SOT rule and a bindable present. -/
-def greek : Language := ⟨.relative, .bindable⟩
+def greek : Language := ⟨true, .bindable⟩
 
 /-- Type 4, unattested: no SOT rule and a matrix-indexical present. -/
-def type4 : Language := ⟨.absolute, .matrixIndexical⟩
+def type4 : Language := ⟨false, .matrixIndexical⟩
 
 /-! ### Zero tense and the Embeddability Principle -/
 
@@ -99,11 +101,11 @@ inductive ZeroTense
 /-- A language provides a source of zero tense: deletion needs the SOT rule, and a bound
 present needs a present morpheme that is not a matrix indexical. -/
 def Language.Provides (L : Language) : ZeroTense → Prop
-  | .deleted => L.sot = .relative
+  | .deleted => L.sotRule
   | .boundPresent => L.present = .bindable
 
 instance (L : Language) : DecidablePred L.Provides
-  | .deleted => inferInstanceAs (Decidable (L.sot = .relative))
+  | .deleted => inferInstanceAs (Decidable (L.sotRule : Prop))
   | .boundPresent => inferInstanceAs (Decidable (L.present = .bindable))
 
 /-- The Embeddability Principle (13) as a condition on a language: some source of zero tense
@@ -138,10 +140,10 @@ inductive Embedded
   deriving DecidableEq, Repr
 
 /-- The nonpast reading is available for an embedded past exactly when the SOT rule licenses
-the simultaneous reading (`Tense.availableReadings`), and for an embedded present exactly when
-the present can be bound. -/
+the simultaneous reading (`Tense.pastUnderPast`), and for an embedded present exactly when the
+present can be bound. -/
 def NonpastAvailable (L : Language) : Embedded → Prop
-  | .past => .simultaneous ∈ availableReadings L.sot
+  | .past => .eq ∈ pastUnderPast L.sotRule
   | .present => L.Provides .boundPresent
 
 instance (L : Language) : DecidablePred (NonpastAvailable L)
@@ -151,9 +153,8 @@ instance (L : Language) : DecidablePred (NonpastAvailable L)
 /-- The simultaneous reading of a deleted tense is available exactly in languages with the SOT
 rule: the two parameters of the typology are the two sources of zero tense. -/
 theorem nonpastAvailable_past_iff (L : Language) :
-    NonpastAvailable L .past ↔ L.Provides .deleted := by
-  obtain ⟨s, p⟩ := L
-  cases s <;> cases p <;> decide
+    NonpastAvailable L .past ↔ L.Provides .deleted :=
+  eq_mem_pastUnderPast_iff
 
 /-- The present morpheme of a complement clause as a tense pronoun: variable `n` under the
 present constraint, in the mode the language admits, evaluated at the attitude's now, slot
@@ -182,8 +183,8 @@ theorem indexicalPresent_no_nonpast [LinearOrder T] (tp : TensePronoun)
 out and the utterance time; an interval too short to span the two years between them cannot,
 hence the oddity. -/
 theorem not_doubleAccess_of_short [Sub T] [Preorder T] {I : Set T} {b u : T}
-    (h : ∀ x ∈ I, ∀ y ∈ I, y - x < u - b) : ¬ DoubleAccess I b u :=
-  λ ⟨hb, hu⟩ => lt_irrefl _ (h b hb u hu)
+    (h : ∀ x ∈ I, ∀ y ∈ I, y - x < u - b) : ¬ {b, u} ⊆ I :=
+  fun hI ↦ lt_irrefl _ (h b (hI (by simp)) u (hI (by simp)))
 
 /-! ### The nonpast reading of (1) under the Deletion Theory -/
 

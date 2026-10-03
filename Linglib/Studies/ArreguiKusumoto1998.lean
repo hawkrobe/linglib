@@ -51,7 +51,7 @@ quantificational, bound by a covert adverb of quantification, and a past-tense o
 namespace ArreguiKusumoto1998
 
 open English.TemporalConnectives Japanese.TemporalConnectives
-open Tense (SOTParameter EmbeddedTenseReading availableReadings)
+open Tense (pastUnderPast)
 
 variable {T : Type*}
 
@@ -276,9 +276,9 @@ inductive Language
   deriving DecidableEq
 
 /-- English has the sequence-of-tense rule; Polish and Japanese do not. -/
-def Language.sot : Language → SOTParameter
-  | .english => .relative
-  | _ => .absolute
+def Language.sotRule : Language → Bool
+  | .english => true
+  | _ => false
 
 /-- The temporal connectives compared. -/
 inductive Connective
@@ -333,13 +333,13 @@ def Connective.relation : Connective → Ordering
 
 /-- The relative-tense account: the adjunct tense takes the matrix event time as reference
     time and must agree with the connective, unless a sequence-of-tense rule deletes it. -/
-def relativeTense (sot : SOTParameter) (c : Connective) (τ : Tense) : Bool :=
-  sot = .relative || τ.relation = c.relation
+def relativeTense (sotRule : Bool) (c : Connective) (τ : Tense) : Bool :=
+  sotRule || τ.relation = c.relation
 
 /-- On *mae* and *ato* the two accounts agree. -/
 theorem relativeTense_eq_composes :
     ∀ (c : Connective) (τ : Tense), Structure.of .japanese c = .selectTP →
-      relativeTense .absolute c τ = composes .japanese c τ := by
+      relativeTense false c τ = composes .japanese c τ := by
   decide
 
 /-! ### The paper's examples -/
@@ -374,11 +374,11 @@ def clauses? (r : Datum) : Option ℕ :=
   | _ => none
 
 /-- A row's readings as complement readings. -/
-def complementReadings (r : Datum) : List EmbeddedTenseReading :=
-  r.readings.filterMap λ x =>
+def complementReadings (r : Datum) : List Ordering :=
+  r.readings.filterMap fun x ↦
     match x.1 with
-    | "shifted" => some .shifted
-    | "simultaneous" => some .simultaneous
+    | "shifted" => some .lt
+    | "simultaneous" => some .eq
     | _ => none
 
 /-- A row's readings as when-clause readings. -/
@@ -389,15 +389,15 @@ def whenReadings (r : Datum) : List WhenReading :=
     | "habitual" => some .habitual
     | _ => none
 
-/-- A past-under-past complement has the readings the language's sequence-of-tense
-    parameter licenses; a present-under-past complement is simultaneous. -/
+open Semantics in
+/-- A past-under-past complement has the readings the language's sequence-of-tense rule
+    licenses; a present-under-past complement is simultaneous. -/
 theorem rows_complement :
     ∀ r ∈ Examples.all, r.feature? "clause" = some "complement" →
-      ∀ l ∈ language? r, ∀ τ ∈ tense? r,
-        (complementReadings r).Perm
-          (match τ with
-            | .past => availableReadings l.sot
-            | .present => [.simultaneous]) := by
+      ∀ l ∈ language? r, ∀ τ ∈ tense? r, ∀ o : Ordering,
+        o ∈ complementReadings r ↔ o ∈ (match τ with
+          | .past => pastUnderPast l.sotRule
+          | .present => ⟦_root_.Tense.present⟧) := by
   decide
 
 /-- A past-tensed adjunct is acceptable exactly when it composes: always in a relative
@@ -433,7 +433,7 @@ theorem rows_when :
 theorem rows_relativeTense :
     ∀ r ∈ Examples.all, r.source.paperLabel ∈ ["(8)", "(11a)"] →
       ∀ l ∈ language? r, ∀ c ∈ connective? r, ∀ τ ∈ tense? r,
-        r.judgment = .acceptable ∧ relativeTense l.sot c τ = false := by
+        r.judgment = .acceptable ∧ relativeTense l.sotRule c τ = false := by
   decide
 
 end ArreguiKusumoto1998
