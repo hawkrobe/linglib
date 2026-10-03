@@ -6,15 +6,15 @@ public import Linglib.Syntax.Case.Basic
 # The containment order on Case
 
 Caha takes the representation of a case to be a stack of nested feature shells, so that each case
-on his sequence contains the cases before it. Here the sequence is the list `containment` of the
-nominative, accusative, genitive, dative and locative, and one case is below another when it comes
-earlier in the list, `[c₁, c₂] <+ containment`. The cases off the list, such as the ergative, the
-absolutive and the instrumental, are comparable only to themselves, and that silence is part of
-the theory. The order is a scoped instance (`open scoped Case.Caha`), since a theoretical order is
-an opt-in commitment and not an order on the inventory. McFadden's natural classes are read off
-it: the nonnominative cases, whose shared accusative feature conditions the stem allomorphy that
-sets the nominative apart, and the oblique cases beyond the structural nominative and accusative.
-The *ABA syncretism law over the order is the framework-neutral `Morphology.IsContiguous`.
+on a hierarchy of cases contains the cases before it. The hierarchy here is the list
+`containment` of the nominative, accusative, genitive, dative and locative, and one case is below
+another when it comes earlier in the list, `[c₁, c₂] <+ containment`. The cases off the list, such
+as the ergative, the absolutive and the instrumental, are comparable only to themselves. The order
+is a scoped instance (`open scoped Case.Caha`), since a theoretical order is an opt-in commitment
+and not an order on the inventory. McFadden's nonnominative cases, those containing the
+accusative, are the natural class whose shared feature conditions the stem allomorphy that sets
+the nominative apart, and the *ABA syncretism law over the order is the framework-neutral
+`Morphology.IsContiguous`.
 
 The directional containment of spatial cases, Place ⊂ Goal ⊂ Source ⊂ Route, is
 `Spatial.PathDir`, and the decomposition of spatial cases into localization and direction is in
@@ -22,28 +22,30 @@ The directional containment of spatial cases, Place ⊂ Goal ⊂ Source ⊂ Rout
 
 ## Main definitions
 
-* `Case.containment`: the containment sequence.
+* `Case.containment`: the containment hierarchy.
 * The scoped `PartialOrder Case` instance in `Case.Caha`: the containment order.
-* `Case.IsNonnominative`, `Case.IsOblique`: the cases containing the accusative and the genitive.
+* `Case.IsNonnominative`: the cases containing the accusative.
 
 ## Main results
 
-* `Case.IsOblique.isNonnominative`: every oblique case is nonnominative.
-* `Case.IsNonnominative.mem_containment`: every nonnominative case is on the sequence.
+* `Case.IsNonnominative.mem_containment`: every nonnominative case is on the hierarchy.
 
 ## Implementation notes
 
-The sequence matches neither of Caha's verbatim. His Universal Case sequence is nominative,
-accusative, genitive, dative, instrumental, comitative, without the locative, and his Russian
-sequence puts the prepositional between the genitive and the dative. The one here is closer to
-Blake's typological hierarchy, which Caha argues should coincide with his sequence. Caha's own
-sequences are stated in `Studies/Caha2009.lean`.
+The list is the start of Blake's hierarchy, nominative, accusative or ergative, genitive, dative,
+locative, ablative or instrumental, along its accusative alignment and cut before the ablative and
+instrumental, which share a position. McFadden takes Blake's hierarchy as Caha updates it, and
+Aitha caps it with the postpositions, which the locative stands for here. Caha's own sequences
+differ: his Universal Case sequence is nominative, accusative, genitive, dative, instrumental,
+comitative, and his Russian order puts the prepositional between the genitive and the dative.
+They are stated in `Studies/Caha2009.lean`.
 
 ## References
 
 * [caha-2009]
-* [mcfadden-2018]
 * [blake-1994]
+* [mcfadden-2018]
+* [aitha-2026]
 -/
 
 @[expose] public section
@@ -52,7 +54,7 @@ namespace Case
 
 open List
 
-/-- The containment sequence is the nominative, accusative, genitive, dative and locative, each
+/-- The containment hierarchy is the nominative, accusative, genitive, dative and locative, each
 containing the cases before it. -/
 def containment : List Case := [.nom, .acc, .gen, .dat, .loc]
 
@@ -61,7 +63,7 @@ theorem nodup_containment : containment.Nodup := by decide
 namespace Caha
 
 /-- In the containment order a case is below another when it comes earlier in `containment`, and
-a case off the sequence is comparable only to itself. -/
+a case off the hierarchy is comparable only to itself. -/
 scoped instance : PartialOrder Case :=
   haveI := nodup_containment.isStrictOrder_pair_sublist
   partialOrderOfSO fun c₁ c₂ ↦ [c₁, c₂] <+ containment
@@ -85,18 +87,8 @@ def IsNonnominative (c : Case) : Prop := (.acc : Case) ≤ c
 instance (c : Case) : Decidable (IsNonnominative c) :=
   inferInstanceAs (Decidable ((.acc : Case) ≤ c))
 
-/-- A case is oblique when its representation contains the genitive's, `.gen ≤ c` in the
-containment order. -/
-def IsOblique (c : Case) : Prop := (.gen : Case) ≤ c
-
-instance (c : Case) : Decidable (IsOblique c) :=
-  inferInstanceAs (Decidable ((.gen : Case) ≤ c))
-
-theorem IsOblique.isNonnominative (h : IsOblique c) : IsNonnominative c :=
-  le_trans (show (.acc : Case) ≤ .gen by decide) h
-
-/-- A nonnominative case is on the containment sequence, so that the ergative, the absolutive and
-the oblique of a direct–oblique system are neither nonnominative nor oblique. -/
+/-- A nonnominative case is on the containment hierarchy, so that the ergative, the absolutive and
+the oblique of a direct–oblique system are not nonnominative. -/
 theorem IsNonnominative.mem_containment (h : IsNonnominative c) : c ∈ containment := by
   rcases h with rfl | h
   · decide
