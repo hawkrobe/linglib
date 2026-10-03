@@ -76,7 +76,7 @@ def Annotation.parse? (str : String) : Option Annotation :=
   (str.toList.foldl step (some (⟨0, 0, 0⟩, 0))).map (·.1)
 
 /-- The frame an annotation describes, with the perspective at speech time. -/
-def Annotation.frame (a : Annotation) : ReichenbachFrame ℤ := ⟨a.s, a.s, a.r, a.e⟩
+def Annotation.frame (a : Annotation) : ReichenbachFrame ℤ := .root a.s a.r a.e
 
 /-- The auxiliaries the paper assigns a frame relation: *akan* future, *sedang* progressive,
 *sudah/telah* perfect. -/
@@ -101,9 +101,9 @@ def Aux.ofForm (s : String) : Option Aux :=
 /-- The frame relation each auxiliary expresses: *akan* S < E-R, *sedang* E = R, *sudah* E < R
 with R free. -/
 def Aux.frame {T : Type*} [LinearOrder T] : Aux → ReichenbachFrame T → Prop
-  | .akan, f => f.isFuture ∧ f.isPerfective
-  | .sedang, f => f.isPerfective
-  | .sudah, f => f.isPerfect
+  | .akan, f => f.referencePosition = .gt ∧ f.eventPosition = .eq
+  | .sedang, f => f.eventPosition = .eq
+  | .sudah, f => f.eventPosition = .lt
 
 instance {T : Type*} [LinearOrder T] (a : Aux) (f : ReichenbachFrame T) :
     Decidable (a.frame f) := by
@@ -135,7 +135,7 @@ theorem sudah_reference_free :
 /-- The English present perfect grammaticalises E < R together with R at the deictic
 centre. -/
 def englishPresentPerfect {T : Type*} [LinearOrder T] (f : ReichenbachFrame T) : Prop :=
-  f.isPerfect ∧ f.isPresent
+  f.eventPosition = .lt ∧ f.referencePosition = .eq
 
 instance {T : Type*} [LinearOrder T] (f : ReichenbachFrame T) :
     Decidable (englishPresentPerfect f) := by
@@ -145,16 +145,15 @@ instance {T : Type*} [LinearOrder T] (f : ReichenbachFrame T) :
 present perfect is contradictory, while *sudah* under the same reference time is satisfiable —
 (5b) *Dia sudah pergi kemarin*. -/
 theorem klein_puzzle_dissolved :
-    (∀ f : ReichenbachFrame ℤ, englishPresentPerfect f → f.isPast → False) ∧
-      ∃ f : ReichenbachFrame ℤ, Aux.sudah.frame f ∧ f.isPast :=
-  ⟨fun f hpp hpast => ne_of_lt ((ReichenbachFrame.isPast_def f).mp hpast) hpp.2,
-    ⟨⟨2, 2, 1, 0⟩, by decide⟩⟩
+    (∀ f : ReichenbachFrame ℤ, englishPresentPerfect f → f.referencePosition ≠ .lt) ∧
+      ∃ f : ReichenbachFrame ℤ, Aux.sudah.frame f ∧ f.referencePosition = .lt :=
+  ⟨fun _ h ↦ h.2 ▸ by decide, ⟨.root 2 1 0, by decide⟩⟩
 
 /-- The English present perfect strictly strengthens *sudah*. -/
 theorem english_pp_strictly_stronger {T : Type*} [LinearOrder T] :
     (∀ f : ReichenbachFrame T, englishPresentPerfect f → Aux.sudah.frame f) ∧
       ∃ f : ReichenbachFrame ℤ, Aux.sudah.frame f ∧ ¬ englishPresentPerfect f :=
-  ⟨fun _ h => h.1, ⟨⟨2, 2, 1, 0⟩, by decide⟩⟩
+  ⟨fun _ h => h.1, ⟨.root 2 1 0, by decide⟩⟩
 
 /-! ### Finiteness (§3) -/
 
