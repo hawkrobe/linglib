@@ -1,67 +1,50 @@
 module
 
 public import Linglib.Morphology.Exponence.Containment.Contiguity
-public import Linglib.Morphology.Paradigm.DomainContiguity
 public import Mathlib.Logic.Relation
 
 /-!
 # Synthetic and analytic realization: Merger over a containment hierarchy
 
-[bobaljik-2012] ch. 3 treats the synthetic/analytic distinction as
-structural: a grade is realized synthetically when Merger has bundled
-its heads into the root's complex word, periphrastically otherwise.
-`MergerStep` models one application of Merger — adjoin a head to the
-merged region, skipping no intervening head (part of Marantz's
-definition; equivalently, successive-cyclic head movement) — and the
-book's generalizations are theorems about the reachable regions:
+[bobaljik-2012] ch. 3 treats the synthetic/analytic distinction as structural. A grade is realized
+synthetically when Merger has bundled its heads into the root's complex word, and periphrastically
+otherwise. `MergerStep` is one application of Merger, which adjoins a head to the merged region
+without skipping an intervening head, and the book's generalizations about periphrasis become
+theorems about the regions Merger reaches and the structure realization sees.
 
-* **Initial segments** (`mergerReachable_iff_exists_region`): the
-  regions reachable from the bare root are exactly the initial
-  segments of the hierarchy, coordinatized by `Synthesis.wordTop`.
-* **SSG** (`MergerReachable.mem_of_le`,
-  `Synthesis.syntheticAt_of_le`): no morphological superlative
-  without a morphological comparative — merged regions are downward
-  closed in heads, so synthesis is downward closed in grades. No
-  language has `long – more long – longest`.
-* **RSG** (`min_lt_wordTop_of_realizeIn_ne`, specialized as `rsg`):
-  root suppletion is limited to synthetic comparatives. Items can
-  only be conditioned by word-internal structure (`realizeIn`), so
-  distinct root forms at two grades force Merger past their lower
-  grade — no `*good – more bett`.
-
-The merged region also induces a two-block domain partition of the
-grades (`Synthesis.domainPartition`) — [bobaljik-2012]'s structural
-adjacency as one source of `Morphology/Paradigm/DomainContiguity.lean`'s
-domain-relativized contiguity, alongside the accessibility-domain
-refinements of [moskal-2015] and [smith-moskal-xu-kang-bobaljik-2019].
+* The regions reachable from the bare root are exactly the initial segments of the hierarchy,
+  coordinatized by `Synthesis.wordTop`.
+* Merged regions are downward closed, so synthesis is downward closed in grades. This is the
+  Synthetic Superlative Generalization: no language has *long – more long – longest*.
+* Rules see only the root's word, so distinct root forms at two grades force Merger past the lower
+  one. This is the Root Suppletion Generalization: no *good – more bett*.
 
 ## Main declarations
 
-* `MergerStep`, `MergerReachable` — Merger as successive-cyclic head
-  bundling; the reachable merged regions
-* `Synthesis n` — how far up the hierarchy the lexeme's word extends
-* `realizeIn` — realization seeing only word-internal structure
-* `MergerReachable.mem_of_le`, `Synthesis.syntheticAt_of_le` (SSG),
-  `min_lt_wordTop_of_realizeIn_ne` (RSG), `isContiguous_realizeIn`,
-  `Synthesis.domainPartition`
+* `MergerStep`, `MergerReachable`, `mergerReachable_iff_exists_region`
+* `Synthesis`, `MergerReachable.mem_of_le`, `Synthesis.syntheticAt_of_le`
+* `realizeIn`, `isContiguous_realizeIn`, `min_lt_wordTop_of_realizeIn_ne`, `rsg`
+
+## References
+
+* [bobaljik-2012]
 -/
 
 @[expose] public section
 
 namespace DistributedMorphology
 
-open Morphology (Paradigm IsContiguous DomainPartition SameDomain)
+open Morphology (Paradigm IsContiguous)
 open Morphology.Containment
 
 variable {n : ℕ} {F : Type*}
 
 /-! ### Merger as successive-cyclic head bundling -/
 
-/-- One application of Merger: adjoin head `h` to the merged region
-`R`. The side condition that every head strictly between the root and
-`h` is already merged is [bobaljik-2012]'s "Merger cannot skip
-intervening heads" (part of Marantz's definition of Morphological
-Merger; equivalently, successive-cyclic head movement). -/
+/-- One application of Merger adjoins head `h` to the merged region `R`. Every head strictly
+between the root and `h` must already be merged, since Merger cannot skip intervening heads, which
+[bobaljik-2012] takes from the definition of Morphological Merger. For head movement the condition
+is successive cyclicity. -/
 def MergerStep [NeZero n] (R S : Finset (Fin n)) : Prop :=
   ∃ h : Fin n, 0 < h ∧ h ∉ R ∧ (∀ k : Fin n, 0 < k → k < h → k ∈ R) ∧ S = insert h R
 
@@ -79,20 +62,19 @@ theorem mergerReachable_Ioc [NeZero n] (t : Fin n) :
   | succ i ih =>
     refine ih.tail ⟨i.succ, i.succ_pos, ?_, ?_, ?_⟩
     · simp only [Finset.mem_Ioc, not_and, not_le]
-      exact λ _ => Fin.castSucc_lt_succ
-    · exact λ k hk0 hkh =>
-        Finset.mem_Ioc.mpr ⟨hk0, Fin.le_castSucc_iff.mpr hkh⟩
+      exact fun _ ↦ Fin.castSucc_lt_succ
+    · exact fun k hk0 hkh ↦ Finset.mem_Ioc.mpr ⟨hk0, Fin.le_castSucc_iff.mpr hkh⟩
     · ext k
       simp only [Finset.mem_insert, Finset.mem_Ioc, Fin.ext_iff, Fin.lt_def,
         Fin.le_def, Fin.val_succ, Fin.val_castSucc, Fin.val_zero]
       omega
 
 /-- The regions reachable by successive Merger are exactly the initial
-segments of the hierarchy: the no-skipping condition forces every head
+segments of the hierarchy, since the no-skipping condition forces every head
 below a merged head to be merged. -/
 theorem mergerReachable_iff [NeZero n] {R : Finset (Fin n)} :
     MergerReachable R ↔ ∃ t : Fin n, R = Finset.Ioc 0 t := by
-  refine ⟨λ h => ?_, λ ⟨t, ht⟩ => ht ▸ mergerReachable_Ioc t⟩
+  refine ⟨fun h ↦ ?_, fun ⟨t, ht⟩ ↦ ht ▸ mergerReachable_Ioc t⟩
   induction h with
   | refl => exact ⟨0, (Finset.Ioc_self 0).symm⟩
   | tail _ hstep ih =>
@@ -114,9 +96,9 @@ theorem mergerReachable_iff [NeZero n] {R : Finset (Fin n)} :
       · exact Or.inl rfl
       · exact Or.inr ⟨hk0, (Finset.mem_Ioc.mp (hskip k hk0 hkh')).2⟩
 
-/-- **SSG core** ([bobaljik-2012] ch. 3): merged regions are downward
-closed in heads — if the superlative head has merged, so has the
-comparative head below it. -/
+/-- Merged regions are downward closed in heads, so if the superlative head has merged, so has the
+comparative head below it. This is the core of the Synthetic Superlative Generalization of
+[bobaljik-2012] ch. 3. -/
 theorem MergerReachable.mem_of_le [NeZero n] {R : Finset (Fin n)}
     (hR : MergerReachable R) {h k : Fin n} (hk0 : 0 < k) (hkh : k ≤ h)
     (hh : h ∈ R) : k ∈ R := by
@@ -125,34 +107,29 @@ theorem MergerReachable.mem_of_le [NeZero n] {R : Finset (Fin n)}
 
 /-! ### The synthetic extent -/
 
-/-- The synthetic extent of a lexeme's paradigm: heads `1..wordTop` are
-realized word-internally with the root (Merger applied); grades above
-`wordTop` are periphrastic. `wordTop` coordinatizes the merged region:
-by `mergerReachable_iff_exists_region`, the regions successive-cyclic
-Merger can build are exactly those of this form. -/
+/-- The synthetic extent of a lexeme's paradigm. Heads `1..wordTop` are realized word-internally
+with the root, and grades above `wordTop` are periphrastic. By `mergerReachable_iff_exists_region`
+the regions successive-cyclic Merger builds are exactly those of this form. -/
 structure Synthesis (n : ℕ) where
   /-- The highest head merged into the root's word. -/
   wordTop : Fin n
   deriving DecidableEq, Repr
 
-/-- The merged region of the lexeme's word: heads `1..wordTop`. -/
+/-- The merged region of the lexeme's word, heads `1..wordTop`. -/
 def Synthesis.region [NeZero n] (s : Synthesis n) : Finset (Fin n) :=
   Finset.Ioc 0 s.wordTop
 
-/-- Merged regions and synthetic extents are in coordinatizing
-correspondence: a region is Merger-reachable iff it is `s.region` for
-some `Synthesis s`. -/
+/-- A region is Merger-reachable iff it is the region of some synthetic extent. -/
 theorem mergerReachable_iff_exists_region [NeZero n] {R : Finset (Fin n)} :
     MergerReachable R ↔ ∃ s : Synthesis n, R = s.region :=
   mergerReachable_iff.trans
-    ⟨λ ⟨t, ht⟩ => ⟨⟨t⟩, ht⟩, λ ⟨s, hs⟩ => ⟨s.wordTop, hs⟩⟩
+    ⟨fun ⟨t, ht⟩ ↦ ⟨⟨t⟩, ht⟩, fun ⟨s, hs⟩ ↦ ⟨s.wordTop, hs⟩⟩
 
 theorem Synthesis.mergerReachable_region [NeZero n] (s : Synthesis n) :
     MergerReachable s.region :=
   mergerReachable_Ioc s.wordTop
 
-/-- Grade `g` is realized synthetically: all its heads are
-word-internal. -/
+/-- Grade `g` is realized synthetically when all its heads are word-internal. -/
 def Synthesis.SyntheticAt (s : Synthesis n) (g : Fin n) : Prop :=
   g ≤ s.wordTop
 
@@ -163,66 +140,62 @@ instance (s : Synthesis n) (g : Fin n) : Decidable (s.SyntheticAt g) :=
 region. -/
 theorem Synthesis.syntheticAt_iff_region [NeZero n] {s : Synthesis n} {g : Fin n} :
     s.SyntheticAt g ↔ Finset.Ioc 0 g ⊆ s.region := by
-  refine ⟨λ h => Finset.Ioc_subset_Ioc le_rfl h, λ hsub => ?_⟩
+  refine ⟨fun h ↦ Finset.Ioc_subset_Ioc le_rfl h, fun hsub ↦ ?_⟩
   rcases eq_or_ne g 0 with rfl | hg
   · exact Fin.zero_le _
   · exact (Finset.mem_Ioc.mp
       (hsub (Finset.mem_Ioc.mpr ⟨(Fin.pos_iff_ne_zero' g).mpr hg, le_rfl⟩))).2
 
-/-- **SSG** ([bobaljik-2012] ch. 3): synthesis is downward closed — a
-synthetic superlative entails a synthetic comparative. The grade-level
-shadow of `MergerReachable.mem_of_le`. -/
+/-- Synthesis is downward closed, so a synthetic superlative entails a synthetic comparative. This
+is the Synthetic Superlative Generalization of [bobaljik-2012] ch. 3, the grade-level shadow of
+`MergerReachable.mem_of_le`. -/
 theorem Synthesis.syntheticAt_of_le {s : Synthesis n} {g g' : Fin n}
     (h : s.SyntheticAt g) (h' : g' ≤ g) : s.SyntheticAt g' :=
   le_trans h' h
 
 /-! ### Word-internal realization -/
 
-/-- Realization restricted to word-internal structure: at grade `g`,
-rules see only the merged region — suppletion cannot be conditioned by
-periphrastic material outside the word ([bobaljik-2012]'s locality
-condition (90) applied through Merger). Models the
-comparative-embedding periphrasis type (Greek, the book's (107a–b));
-the positive-embedding type (Russian, (107c–d)) needs a per-grade
-embedding choice rather than a single `wordTop`. -/
+/-- Realization within the lexeme's synthetic extent. At grade `g` rules see only the root's word,
+which reaches head `min g wordTop`, so suppletion cannot be conditioned by material outside the
+word ([bobaljik-2012]'s locality condition (90)). A periphrastic grade thus embeds the highest
+synthetic form, as the Greek superlative *o cheiró-ter-os* embeds the comparative. A superlative
+that embeds the positive instead, as Russian *samyj plox-oj* does (§3.3.3), is `realize`
+precomposed with a choice of word extent for each grade. -/
 def realizeIn (s : Synthesis n) (v : List (SpanRule n F)) : Paradigm n (Option F) :=
-  λ g => realize v (min g s.wordTop)
+  fun g ↦ realize v (min g s.wordTop)
 
 /-- At a synthetic grade, word-internal realization is realization. -/
 theorem realizeIn_eq_realize_of_le {s : Synthesis n} {v : List (SpanRule n F)}
-    {g : Fin n} (h : g ≤ s.wordTop) : realizeIn s v g = realize v g := by
-  unfold realizeIn
-  rw [min_eq_left h]
+    {g : Fin n} (h : g ≤ s.wordTop) : realizeIn s v g = realize v g :=
+  congrArg (realize v) (min_eq_left h)
 
-/-- At a periphrastic grade, the root word realizes as at `wordTop` —
-the highest grade whose structure is word-internal. -/
+/-- At a periphrastic grade, the root's word realizes as at `wordTop`, the highest grade whose
+structure is word-internal. -/
 theorem realizeIn_eq_realize_wordTop_of_le {s : Synthesis n}
     {v : List (SpanRule n F)} {g : Fin n} (h : s.wordTop ≤ g) :
-    realizeIn s v g = realize v s.wordTop := by
-  unfold realizeIn
-  rw [min_eq_right h]
+    realizeIn s v g = realize v s.wordTop :=
+  congrArg (realize v) (min_eq_right h)
 
-/-- Word-internal realization is still contiguous: `realizeIn` is
-`realize` precomposed with the monotone regrading `min · wordTop`. -/
+/-- Word-internal realization is contiguous, since it is `realize` precomposed with the monotone
+regrading `min · wordTop`. -/
 theorem isContiguous_realizeIn {s : Synthesis n} {v : List (SpanRule n F)}
     (hAH : Antihomophonous v) : IsContiguous (realizeIn s v) :=
-  (isContiguous_realize hAH).comp_monotone (λ _ _ h => min_le_min_right _ h)
+  (isContiguous_realize hAH).comp_monotone fun _ _ h ↦ min_le_min_right _ h
 
 /-- A lexeme with no Merger at all (`wordTop = 0`, fully periphrastic
 paradigm) realizes the same root form at every grade. -/
 theorem realizeIn_const_of_wordTop_eq_zero {s : Synthesis n}
     {v : List (SpanRule n F)} (h : (s.wordTop : ℕ) = 0) (g g' : Fin n) :
     realizeIn s v g = realizeIn s v g' := by
-  have hle : ∀ x : Fin n, s.wordTop ≤ x := λ x => by
+  have hle : ∀ x : Fin n, s.wordTop ≤ x := fun x ↦ by
     rw [Fin.le_def, h]; exact Nat.zero_le _
   rw [realizeIn_eq_realize_wordTop_of_le (hle g),
     realizeIn_eq_realize_wordTop_of_le (hle g')]
 
-/-- **RSG, general form** ([bobaljik-2012] ch. 3): distinct root forms
-at two grades force Merger past their lower grade — root suppletion at
-a grade requires that grade's word to be synthetic. Contrapositively:
-above `wordTop` the word realizes constantly (`
-realizeIn_eq_realize_wordTop_of_le`). -/
+/-- Distinct root forms at two grades force Merger past their lower grade, so root suppletion at a
+grade requires that grade's word to be synthetic. This is the general form of the Root Suppletion
+Generalization of [bobaljik-2012] ch. 3; above `wordTop` the word realizes constantly
+(`realizeIn_eq_realize_wordTop_of_le`). -/
 theorem min_lt_wordTop_of_realizeIn_ne {s : Synthesis n}
     {v : List (SpanRule n F)} {g g' : Fin n}
     (h : realizeIn s v g ≠ realizeIn s v g') : min g g' < s.wordTop := by
@@ -232,28 +205,14 @@ theorem min_lt_wordTop_of_realizeIn_ne {s : Synthesis n}
     realizeIn_eq_realize_wordTop_of_le (hle.trans (min_le_right g g'))] at h
   exact h rfl
 
-/-- **RSG** ([bobaljik-2012] ch. 3): root suppletion is limited to
-synthetic comparatives — a lexeme showing distinct root forms at two
-grades has undergone Merger at least once, so its comparative is
-synthetic. Excludes `*good – more bett`. -/
+/-- Root suppletion is limited to synthetic comparatives, the Root Suppletion Generalization of
+[bobaljik-2012] ch. 3. A lexeme showing distinct root forms at two grades has undergone Merger at
+least once, so its comparative is synthetic, which excludes *good – more bett*. -/
 theorem rsg {s : Synthesis 3} {v : List (SpanRule 3 F)} {g g' : Fin 3}
     (h : realizeIn s v g ≠ realizeIn s v g') : s.SyntheticAt 1 := by
   have hlt := min_lt_wordTop_of_realizeIn_ne h
   rw [Fin.lt_def] at hlt
   rw [Synthesis.SyntheticAt, Fin.le_def, Fin.val_one]
   omega
-
-/-! ### The induced domain partition -/
-
-/-- The two-block domain partition induced by Merger: word-internal
-grades vs periphrastic ones — [bobaljik-2012]'s structural adjacency
-as a source of domain partitions for
-`Morphology/Paradigm/DomainContiguity.lean`. -/
-def Synthesis.domainPartition (s : Synthesis n) : DomainPartition n Bool :=
-  λ g => decide (s.SyntheticAt g)
-
-theorem Synthesis.sameDomain_domainPartition_iff {s : Synthesis n} {i j : Fin n} :
-    SameDomain s.domainPartition i j ↔ (s.SyntheticAt i ↔ s.SyntheticAt j) := by
-  simp [SameDomain, domainPartition, decide_eq_decide]
 
 end DistributedMorphology
