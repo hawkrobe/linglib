@@ -63,10 +63,10 @@ theorem wani_scopings_diverge :
 /-- Under the choice-function analysis (16a) *bí* under negation, as in (15), is not the narrow
 reading. When the restrictor has two members, the negated pick and the negated existential
 differ on some predicate. -/
-theorem bi_reading_not_narrow {S E : Type*} (f : SkolemCF S E) {s : S} (hf : (f s).IsCorrect)
+theorem bi_reading_not_narrow {S E : Type*} (f : S → ChoiceFunction E) {s : S}
     {P : S → E → Prop} {a b : E} (ha : P s a) (hb : P s b) (hab : a ≠ b) :
-    ¬ ∀ VP : E → Prop, ¬ VP (f.applyIntension s P) ↔ ¬ GQ.some (P s) VP := fun h ↦
-  have h' := (Owusu2022.negation_narrow_iff f hf ⟨a, ha⟩).mp h
+    ¬ ∀ VP : E → Prop, ¬ VP (f s (P s)) ↔ ¬ GQ.some (P s) VP := fun h ↦
+  have h' := (Owusu2022.negation_narrow_iff f ⟨a, ha⟩).mp h
   hab ((h' a ha).trans (h' b hb).symm)
 
 /-- The review explains (15) by negation not being an intensional operator, so that it cannot
@@ -76,10 +76,10 @@ the same argument with the situation fixed (`ModalLogic.isExtensionalAt_iff_fora
 pointwise negation is extensional, so under negation the bound and the free construals of the
 situation argument of *bí* coincide, for any function and restrictor. -/
 theorem bi_negation_construals_collapse {S E : Type*}
-    (f : SkolemCF S E) (s₀ : S) (P : S → E → Prop) (VP : E → S → Prop) :
-    (fun p s ↦ ¬ p s) (fun s ↦ VP (f.applyIntension s P) s) s₀ ↔
-      (fun p s ↦ ¬ p s) (fun s ↦ VP (f.applyIntension s₀ P) s) s₀ :=
+    (f : S → ChoiceFunction E) (s₀ : S) (P : S → E → Prop) (VP : E → S → Prop) :
+    (fun p s ↦ ¬ p s) (fun s ↦ VP (f s (P s)) s) s₀ ↔
+      (fun p s ↦ ¬ p s) (fun s ↦ VP (f s₀ (P s₀)) s) s₀ :=
   iff_of_eq <| ModalLogic.isExtensionalAt_iff_forall_diag.mp ModalLogic.IsExtensionalAt.neg
-    fun σ s ↦ VP (f.applyIntension σ P) s
+    fun σ s ↦ VP (f σ (P σ)) s
 
 end Zimmermann2026

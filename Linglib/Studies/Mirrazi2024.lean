@@ -52,11 +52,10 @@ variable {W E : Type*} {R : SetRel W W} {w₀ : W} {VP : E → W → Prop}
 by the operator, (44) and (48), makes the sentence true exactly when every accessible world has
 a member of the restrictor that fails the predicate there. -/
 theorem skolemized_iff {N : W → E → Prop} (hN : ∀ w, ∃ x, N w x) :
-    (∃ F : SkolemCF W E, F.IsCorrect ∧ Box R (fun w ↦ ¬ VP (F w (N w)) w) w₀) ↔
+    (∃ F : W → ChoiceFunction E, Box R (fun w ↦ ¬ VP (F w (N w)) w) w₀) ↔
       Box R (fun w ↦ GQ.some (N w) (¬ VP · w)) w₀ := by
-  refine (SkolemCF.exists_isCorrect_forall_iff N fun w x ↦ w₀ ~[R] w → ¬ VP x w).trans <|
-    forall_congr' fun w ↦
-      (CF.exists_isCorrect_iff_some (hN w) fun x ↦ w₀ ~[R] w → ¬ VP x w).trans ?_
+  refine (ChoiceFunction.exists_pi_apply_iff hN fun w x ↦ w₀ ~[R] w → ¬ VP x w).trans <|
+    forall_congr' fun w ↦ ?_
   obtain ⟨b, hb⟩ := hN w
   refine ⟨fun ⟨x, hx, h⟩ hw ↦ ⟨x, hx, h hw⟩, fun h ↦ ?_⟩
   by_cases hw : w₀ ~[R] w
@@ -69,10 +68,10 @@ in every accessible world, (41) with (42), makes the sentence true exactly when 
 fails the predicate in every accessible world, the de re reading. -/
 theorem intensional_iff_of_fixed {N : W → E → Prop} {B : E → Prop} (hB : ∃ x, B x)
     (hN : ∀ w, w₀ ~[R] w → N w = B) :
-    (∃ f : CF E, f.IsCorrect ∧ Box R (fun w ↦ ¬ VP (f (N w)) w) w₀) ↔
+    (∃ f : ChoiceFunction E, Box R (fun w ↦ ¬ VP (f (N w)) w) w₀) ↔
       GQ.some B fun x ↦ Box R (¬ VP x ·) w₀ := by
-  refine Iff.trans ?_ (CF.exists_isCorrect_iff_some hB fun x ↦ Box R (¬ VP x ·) w₀)
-  exact exists_congr fun f ↦ and_congr_right fun _ ↦ forall₂_congr fun w hw ↦
+  refine Iff.trans ?_ (ChoiceFunction.exists_apply_iff_some hB fun x ↦ Box R (¬ VP x ·) w₀)
+  exact exists_congr fun f ↦ forall₂_congr fun w hw ↦
     iff_of_eq (congrArg (fun N' ↦ ¬ VP (f N') w) (hN w hw))
 
 /-! ### The context of (40) -/
@@ -111,7 +110,7 @@ def Read (x : Book) (w : World) : Prop := ¬ unread w x
 
 /-- Some world-skolemized function makes (40) true in its context. -/
 theorem skolemized :
-    ∃ F : SkolemCF World Book, F.IsCorrect ∧
+    ∃ F : World → ChoiceFunction Book,
       Box beliefs (fun w ↦ ¬ Read (F w fun _ ↦ True) w) .actual :=
   (skolemized_iff (N := fun _ _ ↦ True) fun _ ↦ ⟨.a, trivial⟩).mpr <| by
     simp only [Box, GQ.some, Read, not_not]
@@ -120,7 +119,7 @@ theorem skolemized :
 /-- No intensional choice function makes (40) true in its context, since the books are the same
 in every belief world and no book went unread in all of them. -/
 theorem not_intensional :
-    ¬ ∃ f : CF Book, f.IsCorrect ∧ Box beliefs (fun w ↦ ¬ Read (f fun _ ↦ True) w) .actual := by
+    ¬ ∃ f : ChoiceFunction Book, Box beliefs (fun w ↦ ¬ Read (f fun _ ↦ True) w) .actual := by
   rw [intensional_iff_of_fixed (N := fun _ _ ↦ True) (B := fun _ ↦ True) ⟨.a, trivial⟩
     fun _ _ ↦ rfl]
   simp only [Box, GQ.some, Read, not_not]
