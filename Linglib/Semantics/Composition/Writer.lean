@@ -3,132 +3,129 @@ module
 public import Mathlib.Control.Monad.Writer
 
 /-!
-# Writer Monad for Compositional Side-Effects
+# Writer monads for side-issue meaning
 
-The Writer monad `⟨M, η, ⋆⟩` models meaning dimensions that accumulate
-side-effect information during compositional interpretation —
-[giorgolo-asudeh-2012]'s application of [shan-2001]'s
-monads-for-semantics program:
+A computation of the writer monad `Writer ω` yields a value and logs output in `ω`. Giorgolo and
+Asudeh model conventional implicature this way, in Shan's monadic program: the value of an
+expression is its at-issue content, the log collects the side-issue propositions of its parts,
+`pure` logs nothing and `bind` appends the logs. Forgetting the log is a monad morphism to `Id`,
+and `bind` only extends the log, so content flows from the at-issue dimension into the side-issue
+one and never back.
 
-- **M** (the functor): maps a type `A` to paired values `A × List P`
-- **η** (unit/pure): lifts a value with an empty log
-- **⋆** (bind): sequences computations, combining their logs
+## Main definitions
 
-The carrier is mathlib's `Writer (List P) A` (= `WriterT (List P) Id A`),
-whose `Monad` instance comes from mathlib's `[EmptyCollection ω] [Append ω]`
-instance for `WriterT`. This file adds the domain-named surface
-(`Writer.mk`/`val`/`log`/`tell`), projection simp lemmas, and the
-`LawfulMonad` instance for list logs.
+* `Writer.val`, `Writer.log`: the value and the log of a computation.
+* `WriterT.instLawfulMonadList`: the monad laws for list logs, over any lawful monad.
 
-This pattern unifies several linglib constructions:
+## Main results
 
-| Phenomenon | Value | Log |
-|------------|-------|-----|
-| Conventional implicatures | at-issue content | CI propositions |
-| Post-suppositions | DRS content | cardinality tests |
-| Expressives | denotation | speaker attitude |
+* `Writer.val_pure`, `Writer.val_bind`: forgetting the log is a monad morphism.
+* `Writer.log_prefix_bind`: the log of `m` is a prefix of the log of `m >>= f`.
 
-The Writer monad enforces [potts-2005]'s flow restriction structurally:
-`bind`'s function argument receives only the value, never the log. At-issue
-content can flow into side-issue computations, but side-issue content cannot
-leak back into at-issue computation.
+## Implementation notes
 
-See `Studies/Charlow2021.lean` (`PostSupp`) for the same pattern applied to
-dynamic GQs, with the log monoid `(Update S, ○, SetRel.id)` in place of
-`List P`. A log of CI propositions conjoins to the not-at-issue content of a
-two-dimensional meaning, a monad morphism onto `ConventionalImplicature.TwoDim`
-(`TwoDim.ofWriter_bind`).
+* Mathlib's two `Monad` instances on `Writer ω`, for `[Monoid ω]` and for
+  `[EmptyCollection ω] [Append ω]`, are both `WriterT.monad empty append`; the projection lemmas
+  are stated for that monad, as mathlib states `WriterT.run_bind`, and apply under either.
+* Mathlib proves the monad laws for monoid logs only, and lists are not a monoid there.
+* Giorgolo and Asudeh take the log to be a monoid of propositions and fix it to sets under union.
+  They require the arrows to be isotone in the log for the preorder `x ≤ y ↔ ∃ z, x * z = y`,
+  which is `x ∣ y` in mathlib. The consumers here log lists, the free monoid, on which this
+  preorder is the prefix order.
+
+## References
+
+* [giorgolo-asudeh-2012]
+* [shan-2001]
 -/
 
 @[expose] public section
 
-universe u
+universe u v
+
+namespace WriterT
+
+variable {M : Type u → Type v} {P : Type u} [Monad M] [LawfulMonad M]
+
+/-- A writer monad with list logs is lawful over any lawful monad. -/
+instance instLawfulMonadList : LawfulMonad (WriterT (List P) M) := LawfulMonad.mk'
+  (id_map := fun _ ↦ by ext; simp)
+  (pure_bind := fun _ _ ↦ by ext; simp)
+  (bind_assoc := fun _ _ _ ↦ by ext; simp)
+  (bind_pure_comp := fun _ _ ↦ by ext; simp)
+
+end WriterT
 
 namespace Writer
 
-variable {ω : Type u} {P A B : Type u}
+variable {ω A B : Type u}
 
-/-- The computation with value `a` and log `w`: `mk a w = ⟨(a, w)⟩`. -/
+/-- `Writer.mk a w` is the computation with value `a` and log `w`. -/
 protected def mk (a : A) (w : ω) : Writer ω A := WriterT.mk (a, w)
 
-/-- The at-issue value of a Writer computation: `val m = m.run.1`. -/
+/-- The value of a computation is the first component of its run. -/
 def val (m : Writer ω A) : A := m.run.1
 
-/-- The accumulated log of a Writer computation: `log m = m.run.2`. -/
+/-- The log of a computation is the second component of its run. -/
 def log (m : Writer ω A) : ω := m.run.2
 
 @[ext]
-protected theorem ext {m₁ m₂ : Writer ω A}
-    (hv : m₁.val = m₂.val) (hl : m₁.log = m₂.log) : m₁ = m₂ :=
-  WriterT.ext _ _ (Prod.ext_iff.mpr ⟨hv, hl⟩)
+protected theorem ext {m₁ m₂ : Writer ω A} (hv : m₁.val = m₂.val) (hl : m₁.log = m₂.log) :
+    m₁ = m₂ :=
+  WriterT.ext _ _ (Prod.ext hv hl)
 
 @[simp] theorem val_mk (a : A) (w : ω) : (Writer.mk a w).val = a := rfl
 
 @[simp] theorem log_mk (a : A) (w : ω) : (Writer.mk a w).log = w := rfl
 
-/-- Log a single item: `tell p = mk () [p]` — [giorgolo-asudeh-2012]'s
-`write(t) = ⟨⊥, {t}⟩`. (`PUnit` rather than `Unit` keeps it
-universe-polymorphic.) -/
-def tell (p : P) : Writer (List P) PUnit := Writer.mk PUnit.unit [p]
+@[simp] theorem val_tell (w : ω) : (tell w : Writer ω PUnit).val = ⟨⟩ := rfl
 
-/-! ### Projection lemmas for list logs -/
+@[simp] theorem log_tell (w : ω) : (tell w : Writer ω PUnit).log = w := rfl
 
-@[simp] theorem val_pure (a : A) : (pure a : Writer (List P) A).val = a := rfl
+section Monad
 
-@[simp] theorem log_pure (a : A) : (pure a : Writer (List P) A).log = [] := rfl
+variable (empty : ω) (append : ω → ω → ω)
 
-@[simp] theorem val_bind (m : Writer (List P) A) (f : A → Writer (List P) B) :
+@[simp] theorem val_pure (a : A) :
+    letI := WriterT.monad (M := Id) empty append
+    (pure a : Writer ω A).val = a := rfl
+
+@[simp] theorem log_pure (a : A) :
+    letI := WriterT.monad (M := Id) empty append
+    (pure a : Writer ω A).log = empty := rfl
+
+/-- The value of `m >>= f` is the value of `f` at the value of `m`, so the log of `m` never
+reaches it. -/
+@[simp] theorem val_bind (m : Writer ω A) (f : A → Writer ω B) :
+    letI := WriterT.monad (M := Id) empty append
     (m >>= f).val = (f m.val).val := rfl
 
-@[simp] theorem log_bind (m : Writer (List P) A) (f : A → Writer (List P) B) :
-    (m >>= f).log = m.log ++ (f m.val).log := rfl
+@[simp] theorem log_bind (m : Writer ω A) (f : A → Writer ω B) :
+    letI := WriterT.monad (M := Id) empty append
+    (m >>= f).log = append m.log (f m.val).log := rfl
 
-@[simp] theorem val_map (f : A → B) (m : Writer (List P) A) :
+@[simp] theorem val_map (f : A → B) (m : Writer ω A) :
+    letI := WriterT.monad (M := Id) empty append
     (f <$> m).val = f m.val := rfl
 
-@[simp] theorem log_map (f : A → B) (m : Writer (List P) A) :
+@[simp] theorem log_map (f : A → B) (m : Writer ω A) :
+    letI := WriterT.monad (M := Id) empty append
     (f <$> m).log = m.log := rfl
 
-@[simp] theorem val_tell (p : P) : (tell p).val = PUnit.unit := rfl
+@[simp] theorem val_seq (f : Writer ω (A → B)) (m : Writer ω A) :
+    letI := WriterT.monad (M := Id) empty append
+    (f <*> m).val = f.val m.val := rfl
 
-@[simp] theorem log_tell (p : P) : (tell p).log = [p] := rfl
+@[simp] theorem log_seq (f : Writer ω (A → B)) (m : Writer ω A) :
+    letI := WriterT.monad (M := Id) empty append
+    (f <*> m).log = append f.log m.log := rfl
 
-/-! ### Monad laws
+end Monad
 
-The `Monad (Writer (List P))` instance is mathlib's
-`[EmptyCollection ω] [Append ω]` instance for `WriterT`; the laws hold
-because `(List P, ++, [])` is a monoid. -/
-
-instance : LawfulMonad (Writer (List P)) := LawfulMonad.mk' (Writer (List P))
-  (id_map := λ _ => rfl)
-  (pure_bind := λ _ _ => rfl)
-  (bind_assoc := λ _ _ _ => Writer.ext rfl (List.append_assoc ..))
-  (bind_pure_comp := λ _ _ => Writer.ext rfl (List.append_nil _))
-
-/-! ### Log monotonicity -/
-
-/-- The log only grows: bind's output log extends the input log. -/
-theorem log_grows (m : Writer (List P) A) (f : A → Writer (List P) B) :
-    ∃ suffix, (m >>= f).log = m.log ++ suffix :=
-  ⟨(f m.val).log, rfl⟩
-
-/-- Side-effects are permanent: once logged, an item stays in the log. -/
-theorem tell_persists (m : Writer (List P) A) (f : A → Writer (List P) B)
-    (p : P) (h : p ∈ m.log) : p ∈ (m >>= f).log := by
-  simp only [log_bind, List.mem_append]
-  exact Or.inl h
-
-/-- A composition's log extends the input's log: bind is isotone for the prefix order of the
-list monoid ([giorgolo-asudeh-2012]'s condition on the arrows of the Writer's category). -/
-theorem log_prefix_bind (m : Writer (List P) A) (f : A → Writer (List P) B) :
+/-- The log of `m >>= f` extends the log of `m`, so composition is isotone for the prefix order
+on list logs. -/
+theorem log_prefix_bind {P : Type u} (m : Writer (List P) A) (f : A → Writer (List P) B) :
     m.log <+: (m >>= f).log :=
   ⟨(f m.val).log, rfl⟩
-
-/-- The at-issue value of a composition depends on the input's value alone: the continuation
-never sees the log, which is [potts-2005]'s restriction on the flow of information from the
-side-issue to the at-issue dimension, enforced by the monad ([giorgolo-asudeh-2012]). -/
-theorem val_bind_congr {m m' : Writer (List P) A} (f : A → Writer (List P) B)
-    (h : m.val = m'.val) : (m >>= f).val = (m' >>= f).val := by
-  simp only [val_bind, h]
 
 end Writer
