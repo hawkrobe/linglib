@@ -18,16 +18,18 @@ to diagnose the position of negation in polar questions.
 ## References
 
 * [stankova-2025]
+* [diessel-2013b]
 -/
 
 @[expose] public section
 
 namespace Czech.Determiners
 
-/-- *ten* 'that, the', the distance-neutral demonstrative. -/
-def ten : DemonstrativeDeterminer := { form := "ten", deictic := .unspecified }
+/-- *ten* 'that, the' is the distance-neutral demonstrative, against contrastive *onen*, so it
+covers every participant set. -/
+def ten : DemonstrativeDeterminer := { form := "ten", deixis := Finset.univ }
 
-/-- The quantificational determiners: *každý* 'every', *žádný* 'no', *nějaký* 'some' and
+/-- The quantificational determiners are *každý* 'every', *žádný* 'no', *nějaký* 'some' and
 *některý* 'some, certain'. -/
 inductive QuantityWord where
   | kazdy | zadny | nejaky | nektery
@@ -72,7 +74,7 @@ instance : Semantics.Denotes QuantityWord (Set Quantifier.GQ.Family.{u}) where
 
 end QuantityWord
 
-/-- The Czech determiners: the demonstrative and the quantifiers, with no article. -/
+/-- The Czech determiners are the demonstrative and the quantifiers, with no article. -/
 def inventory : Determiner.Inventory :=
   .demonstrative ten :: QuantityWord.toList.map (.quantifier ·.toQuantifier)
 

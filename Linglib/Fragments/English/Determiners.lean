@@ -56,7 +56,7 @@ export Quantifier.Lexicon
 
 /-! ## Quantificational determiners -/
 
-/-- The quantificational determiners of English: the six-word quantity scale *none*, *few*,
+/-- The quantificational determiners of English are the six-word quantity scale *none*, *few*,
 *some*, *half*, *most* and *all*, and *every*, *each*, *many*, *both* and *neither*. -/
 inductive QuantityWord where
   | none_ | few | some_ | half | most | all | every | each | many | both | neither
@@ -78,7 +78,7 @@ def form : QuantityWord → String
   | .both => "both"
   | .neither => "neither"
 
-/-- The grammatical number a word selects, which the denotation leaves open: *every* and *all*
+/-- The grammatical number a word selects is left open by the denotation, so *every* and *all*
 share a denotation and differ here. *Both* and *neither* select the dual, the core concept
 `[−atomic, +minimal]` of [harbour-2014], whose cardinality clause the denotation reflects
 ([jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025]). -/
@@ -177,16 +177,16 @@ def an : Article :=
   { form := "an", definiteness := .indefinite, exponent := .dedicatedMorpheme }
 
 /-- "this" — proximal demonstrative determiner, singular. -/
-def this : DemonstrativeDeterminer := { form := "this", deictic := .proximal }
+def this : DemonstrativeDeterminer := { form := "this", deixis := Person.first.participantSets }
 
 /-- "that" — distal demonstrative determiner, singular. -/
-def that : DemonstrativeDeterminer := { form := "that", deictic := .distal }
+def that : DemonstrativeDeterminer := { form := "that", deixis := Person.first.participantSetsᶜ }
 
 /-- "these" — proximal demonstrative determiner, plural. -/
-def these : DemonstrativeDeterminer := { form := "these", deictic := .proximal }
+def these : DemonstrativeDeterminer := { form := "these", deixis := Person.first.participantSets }
 
 /-- "those" — distal demonstrative determiner, plural. -/
-def those : DemonstrativeDeterminer := { form := "those", deictic := .distal }
+def those : DemonstrativeDeterminer := { form := "those", deixis := Person.first.participantSetsᶜ }
 
 /-- "my" — first-person possessive determiner. -/
 def my : PossessiveDeterminer := { form := "my" }

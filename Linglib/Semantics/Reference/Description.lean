@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Semantics.Composition.Assignment
-public import Linglib.Semantics.Reference.Deixis
 public import Linglib.Semantics.Reference.Definiteness
 public import Linglib.Semantics.Reference.Iota
 public import Linglib.Semantics.Denotation
@@ -9,16 +8,15 @@ public import Linglib.Semantics.Denotation
 /-!
 # Nominal descriptions
 
-A `Description E W` is a definite description over entities `E` at situations `W`: a bare noun
-read by the covert iota, the weak (uniqueness) and strong (familiarity) articles of
-[schwarz-2009], a deictic demonstrative, and a possessive. Its denotation `⟦k⟧ g s`, relative to
-an entity assignment and a resource situation, is the partial individual the description picks
-out, `none` when the uniqueness presupposition fails. Every constructor is a Russellian iota
-([russell-1905]) over a restrictor at the situation; the strong article and the demonstrative are
-the iota over the restrictor conjoined with identity to the indexed entity, so the anaphoric
-index selects the referent while the situation only decides definedness
-(`denote_anaphoric_eq_some_iff`, `denote_anaphoric_rigid`), whereas the weak article's referent
-covaries with the situation.
+A `Description E W` is a definite description over entities `E` at situations `W`: a bare noun read
+by the covert iota, the weak (uniqueness) and strong (familiarity) articles of Schwarz, a deictic
+demonstrative, and a possessive. Its denotation `⟦k⟧ g s`, relative to an entity assignment and a
+resource situation, is the partial individual the description picks out, `none` when the uniqueness
+presupposition fails. Every constructor is a Russellian iota over a restrictor at the situation; the
+strong article and the demonstrative are the iota over the restrictor conjoined with identity to the
+indexed entity, so the anaphoric index selects the referent while the situation only decides
+definedness (`denote_anaphoric_eq_some_iff`, `denote_anaphoric_rigid`), whereas the weak article's
+referent covaries with the situation.
 
 ## Main definitions
 
@@ -36,12 +34,12 @@ covaries with the situation.
 
 ## Implementation notes
 
-The resource situation is a Reader argument of the denotation, as the assignment is: a
-situation pronoun binding it ([hanink-2021]) is composition above the description, `fun gs ↦
-⟦k⟧ g (gs n)`, not a field of it. Indefinites do not denote a partial individual and are not
-descriptions; `Description.Kind.indefinite` records them for inventory typology only.
-Demonstratives carry a `Reference.Deixis` feature whose presupposition is imposed by the
-determiner (`DemonstrativeDeterminer.denote`), not by the description.
+The resource situation is a Reader argument of the denotation, as the assignment is: a situation
+pronoun binding it, as Hanink proposes, is composition above the description,
+`fun gs ↦ ⟦k⟧ g (gs n)`, not a field of it. Indefinites do not denote a partial individual and are
+not descriptions; `Description.Kind.indefinite` records them for inventory typology only. A
+demonstrative's deictic content and the presupposition it imposes belong to the determiner
+(`DemonstrativeDeterminer.denote`), not to the description.
 
 ## References
 
@@ -60,29 +58,30 @@ namespace Reference
 
 open Semantics Semantics.Composition
 
-/-- A restrictor: a property of entities at a situation, relative to an entity assignment. -/
+/-- A restrictor is a property of entities at a situation, relative to an entity assignment. -/
 abbrev Restrictor (E W : Type) := Assignment E → W → E → Prop
 
-/-- The definite descriptions, distinguished by form: the covert iota of a bare noun, the weak
+/-- The definite descriptions are distinguished by form: the covert iota of a bare noun, the weak
 and strong articles of [schwarz-2009], a deictic demonstrative, and a possessive. -/
 inductive Description (E W : Type) where
   /-- A bare noun read by the covert iota ([chierchia-1998], [dayal-2004]). -/
   | bare (restrictor : Restrictor E W)
-  /-- The weak article: [coppock-beaver-2015]'s uniqueness definite. -/
+  /-- The weak article is [coppock-beaver-2015]'s uniqueness definite. -/
   | unique (restrictor : Restrictor E W)
-  /-- The strong article: the familiarity definite whose antecedent is the `discourseIdx`-th
+  /-- The strong article is the familiarity definite whose antecedent is the `discourseIdx`-th
   entity of the assignment. -/
   | anaphoric (restrictor : Restrictor E W) (discourseIdx : ℕ)
-  /-- A deictic demonstrative ([moroney-2021]): the strong article with a deictic feature. -/
-  | demonstrative (restrictor : Restrictor E W) (deictic : Reference.Deixis) (discourseIdx : ℕ)
-  /-- A possessive: the unique satisfier of the restrictor that stands in `relation` to the
+  /-- A deictic demonstrative ([moroney-2021]) is the strong article in its form, its deictic
+  content being the determiner's. -/
+  | demonstrative (restrictor : Restrictor E W) (discourseIdx : ℕ)
+  /-- A possessive picks the unique satisfier of the restrictor that stands in `relation` to the
   `possessor`. -/
   | possessive (restrictor : Restrictor E W) (possessor : Assignment E → W → E)
       (relation : Assignment E → W → E → E → Prop)
 
 namespace Description
 
-variable {E W : Type} (R : Restrictor E W) (δ : Reference.Deixis) (d : ℕ)
+variable {E W : Type} (R : Restrictor E W) (d : ℕ)
   (possessor : Assignment E → W → E) (rel : Assignment E → W → E → E → Prop) (g : Assignment E)
   (s : W) {x : E}
 
@@ -96,9 +95,8 @@ def kind : Description E W → Kind
   | .demonstrative .. => .demonstrative
   | .possessive ..    => .possessive
 
-/-- The description an article strength realizes over a restrictor: the weak article for
-uniqueness and the strong article for familiarity, `idx` being the strong article's anaphoric
-index. -/
+/-- An article strength realizes the weak article over a restrictor for uniqueness and the strong
+article for familiarity, `idx` being the strong article's anaphoric index. -/
 def ofStrength (p : Strength) (R : Restrictor E W) (idx : ℕ) : Description E W :=
   match p with
   | .uniqueness  => .unique R
@@ -116,7 +114,7 @@ the demonstrative with identity to the indexed entity ([schwarz-2009]) and for t
 with the possession relation to the possessor. -/
 noncomputable def denote : Description E W → Assignment E → W → Option E
   | .bare R, g, s | .unique R, g, s => iota (R g s)
-  | .anaphoric R d, g, s | .demonstrative R _ d, g, s =>
+  | .anaphoric R d, g, s | .demonstrative R d, g, s =>
       iota fun x ↦ R g s x ∧ x = g d
   | .possessive R possessor rel, g, s =>
       iota fun x ↦ R g s x ∧ rel g s (possessor g s) x
@@ -131,7 +129,7 @@ noncomputable instance : Denotes (Description E W) (Assignment E → W → Optio
     ⟦anaphoric R d⟧ g s = iota fun x ↦ R g s x ∧ x = g d := rfl
 
 @[simp] theorem denote_demonstrative :
-    ⟦demonstrative R δ d⟧ g s = iota fun x ↦ R g s x ∧ x = g d := rfl
+    ⟦demonstrative R d⟧ g s = iota fun x ↦ R g s x ∧ x = g d := rfl
 
 @[simp] theorem denote_possessive :
     ⟦possessive R possessor rel⟧ g s = iota fun x ↦ R g s x ∧ rel g s (possessor g s) x :=
@@ -140,9 +138,9 @@ noncomputable instance : Denotes (Description E W) (Assignment E → W → Optio
 /-- The covert iota of a bare noun is the weak article; the two differ in form, not meaning. -/
 theorem denote_bare_eq_unique : ⟦bare R⟧ = ⟦unique R⟧ := rfl
 
-/-- Deixis filters the referent without selecting it: a demonstrative denotes as the strong
-article with the same index, and its deictic feature is a presupposition on the referent. -/
-theorem denote_demonstrative_eq_anaphoric : ⟦demonstrative R δ d⟧ = ⟦anaphoric R d⟧ := rfl
+/-- A demonstrative denotes as the strong article with the same index, so deixis, a presupposition
+on the referent, filters it without selecting it. -/
+theorem denote_demonstrative_eq_anaphoric : ⟦demonstrative R d⟧ = ⟦anaphoric R d⟧ := rfl
 
 /-! ### Referent conditions -/
 

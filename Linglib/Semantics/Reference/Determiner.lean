@@ -1,6 +1,8 @@
 module
 
+public import Mathlib.Basic.Rel
 public import Linglib.Semantics.Reference.Description
+public import Linglib.Semantics.Presupposition.PhiFeatures
 public import Linglib.Syntax.Category.Determiner.Basic
 public import Linglib.Semantics.Reference.Nominal
 public import Linglib.Semantics.Possession.Basic
@@ -8,50 +10,60 @@ public import Linglib.Semantics.Possession.Basic
 /-!
 # The denotation of a determiner
 
-[schwarz-2009] [patel-grosz-grosz-2017] [coppock-beaver-2015] [moroney-2021]
-
-Gives the determiner lexical records (`Syntax/Category/Determiner/Basic.lean`) meanings,
-as `Nominal`s — the determiner half of the API whose pronoun half is
-`Semantics/Reference/Pronoun.lean`. The wiring is parallel:
+The determiner records of `Syntax/Category/Determiner/Basic.lean` denote `Nominal`s, in parallel
+with the pronouns of `Semantics/Reference/Pronoun.lean`:
 
 | | pronoun | determiner |
 |---|---|---|
 | lexical record | `PersonalPronoun` | `Article`, `DemonstrativeDeterminer` |
 | selector | `interpPronoun` (`g ↦ g i`) | `⟦k⟧` for a `Description` `k` |
-| intrinsic presupposition | φ-features (`phiPresup`) | deixis (`deixisPresup`) |
+| intrinsic presupposition | φ-domain (`phiDom`) | vicinity of the anchors (`χ.image`) |
 
-The selector is the description's denotation, so determiner-as-object and the interpreted
-description pick the same individual *by construction*. The intrinsic presupposition is where
-a demonstrative's deictic feature projects: deixis filters the referent but never selects it
-(`denote_selector_eq_anaphoric`, the API-level form of
-`Description.denote_demonstrative_eq_anaphoric`).
+The selector is the description's denotation, so a determiner and its description pick the same
+individual by construction. A demonstrative's deictic content projects as its intrinsic
+presupposition, so deixis filters the referent but never selects it
+(`DemonstrativeDeterminer.denote_selector_eq_anaphoric`). Following Harbour's spatial head χ, the
+presupposition is that the referent lies in the vicinity of a referent whose participants form one
+of the demonstrative's participant sets: the χ-image of the preimage of those sets under
+`Reference.Context.participants`. For the first person's sets that preimage is the first person's
+φ-domain, and for the other persons' sets it is their φ-domain less the more prominent ones'.
 
 ## Main declarations
 
-* `Description.toNominal` — a description's `Nominal` (vacuous intrinsic
-  presupposition; a definite's only presupposition is definedness).
-* `DemonstrativeDeterminer.deixisPresup` — the deictic presupposition over an
-  entity domain, with model-supplied proximity predicates (parallel to
-  `PersonalPronoun.phiPresup`'s `speaker`/`addressee`).
-* `DemonstrativeDeterminer.denote` — the demonstrative's `Nominal`.
-* `Article.toDescriptions` — an article's possible descriptions, the image of
-  its admissible [schwarz-2009] strengths under `Description.ofStrength`.
-* `Article.denotations` — an article's possible `Nominal`s, the image of
-  `Article.toDescriptions` under `Description.toNominal`; a syncretic article
-  (English *the*) denotes both the weak and the strong description.
-* `PossessiveDeterminer.denote` — the possessive determiner's `Nominal`: a definite description
-  selecting the unique satisfier of the possessee restrictor that stands in the possession
-  relation to the possessor; the GQ-form possessive (`PossNP`, narrowing-aware) lives in
-  `Semantics/Possession/Quantifier.lean`.
-* `Description.denote_possessive_eq_pi`, `PossessiveDeterminer.denote_isSome_iff_existsUnique`
-  — the determiner denotation *is* the `Possession` description: Barker's `π` applied to the
-  possessor as restrictor, definedness as its presupposition.
+* `Description.toNominal`: a description's `Nominal`, with vacuous intrinsic presupposition.
+* `DemonstrativeDeterminer.denote`: the demonstrative's `Nominal`.
+* `Article.toDescriptions`, `Article.denotations`: an article's possible descriptions, one per
+  admissible strength, and their `Nominal`s; a syncretic article (English *the*) denotes both the
+  weak and the strong description.
+* `PossessiveDeterminer.denote`: the possessive determiner's `Nominal`, the unique satisfier of
+  the possessee restrictor that stands in the possession relation to the possessor.
+* `Description.denote_possessive_eq_pi`, `PossessiveDeterminer.denote_isSome_iff_existsUnique`:
+  the possessive determiner's denotation is Barker's `π` applied to the possessor, with
+  definedness as its presupposition.
 
 ## Implementation notes
 
-Context is the entity assignment `Assignment E` and the world coordinate is the resource
-situation `W`, exactly as for `PersonalPronoun.denote`. `Quantifier` (a generalized
-quantifier, not an individual denotation — it has no `Nominal`) remains deferred.
+Context is the entity assignment `Assignment E` and the world coordinate is the resource situation
+`W`, as for `PersonalPronoun.denote`. A demonstrative also reads the context of utterance, whose
+agent and addressee fix the participants of a referent, and a vicinity relation `χ : SetRel E E`.
+Harbour leaves the anchoring referent free; the presupposition closes it existentially, his reading
+of English *here* as the vicinity of any group containing the speaker. A demonstrative without a
+deictic contrast covers every participant set and so presupposes only that its referent lies in some
+vicinity: its deictic centre is the whole discourse space, as Terenghi puts it. Harbour's (16) and
+Moroney's (147)–(148) put the deictic condition inside the restriction, where it can select among
+the restrictor's satisfiers; here it is a presupposition on the indexed referent of the
+strong-article description, and the two coincide whenever the index supplies a referent that meets
+the condition. Distance, visibility and elevation, which cross-cut the person cells, are not
+modeled. `Quantifier`, a generalized quantifier rather than an individual denotation, has no
+`Nominal`.
+
+## References
+
+* [schwarz-2009]
+* [coppock-beaver-2015]
+* [moroney-2021]
+* [harbour-2016]
+* [terenghi-2023]
 -/
 
 @[expose] public section
@@ -59,13 +71,14 @@ quantifier, not an individual denotation — it has no `Nominal`) remains deferr
 namespace Reference
 
 open Semantics Semantics.Composition
+open scoped SetRel
 
 variable {E W : Type} (R : Restrictor E W) (d : ℕ) (possessor : Assignment E → W → E)
-  (rel : Assignment E → W → E → E → Prop) (proximal medial distal : E → Prop)
+  (rel : Assignment E → W → E → E → Prop)
 
 /-! ### Descriptions as nominal denotations -/
 
-/-- A description as a `Nominal`: the selector is its denotation and the intrinsic
+/-- A description denotes the `Nominal` whose selector is its denotation and whose intrinsic
 presupposition is vacuous, a definite's only presupposition being that the selector is
 defined. -/
 noncomputable def Description.toNominal (k : Description E W) : Nominal (Assignment E) W E where
@@ -80,33 +93,51 @@ noncomputable def Description.toNominal (k : Description E W) : Nominal (Assignm
 
 /-! ### The demonstrative determiner's denotation -/
 
-/-- The deictic presupposition of a demonstrative determiner, over an entity
-domain. The model supplies the proximity predicates the deixis cells need
-(parallel to the `speaker`/`addressee`/`isFemale` parameters of
-`PersonalPronoun.phiPresup`); an `unspecified` feature contributes the
-trivial presupposition. -/
-def _root_.DemonstrativeDeterminer.deixisPresup (dem : DemonstrativeDeterminer) : E → Prop :=
-  match dem.deictic with
-  | .proximal    => proximal
-  | .medial      => medial
-  | .distal      => distal
-  | .unspecified => fun _ ↦ True
+section Demonstrative
 
-/-- A demonstrative determiner's denotation as a `Nominal`: the selector is the demonstrative
-description at discourse index `d`, and the intrinsic presupposition is the deictic
-presupposition imposed on the indexed referent `g d` — parallel to `PersonalPronoun.denote`,
-with deixis in place of φ-features. -/
+variable {P T : Type} [PartialOrder E] (c : Context W E P T) (χ : SetRel E E)
+
+/-- A demonstrative determiner denotes the `Nominal` whose selector is the demonstrative
+description at discourse index `d` and whose intrinsic presupposition is that the indexed referent
+`g d` lies in the vicinity of a referent whose participants form one of its participant sets. -/
 noncomputable def _root_.DemonstrativeDeterminer.denote (dem : DemonstrativeDeterminer) :
     Nominal (Assignment E) W E where
-  presup g _ := dem.deixisPresup proximal medial distal (g d)
-  selector := ⟦Description.demonstrative R dem.deictic d⟧
+  presup g _ := g d ∈ χ.image (c.participants ⁻¹' dem.deixis)
+  selector := ⟦Description.demonstrative R d⟧
 
-/-- A demonstrative determiner denotes on every model, the restrictor, the index and the
-proximity predicates being the Reader arguments of its domain. -/
+/-- A demonstrative determiner denotes on every model, the restrictor, the index, the context of
+utterance and the vicinity relation being the Reader arguments of its domain. -/
 noncomputable instance : Denotes DemonstrativeDeterminer
-    (∀ (E W : Type), Restrictor E W → ℕ → (E → Prop) → (E → Prop) → (E → Prop) →
+    (∀ (E W P T : Type) [PartialOrder E], Restrictor E W → ℕ → Context W E P T → SetRel E E →
       Nominal (Assignment E) W E) :=
-  ⟨fun dem _ _ ↦ dem.denote⟩
+  ⟨fun dem _ _ _ _ _ ↦ dem.denote⟩
+
+/-- A demonstrative determiner presupposes that its referent lies in the vicinity of a referent
+whose participants form one of its participant sets. -/
+@[simp] theorem _root_.DemonstrativeDeterminer.denote_presup (dem : DemonstrativeDeterminer)
+    (g : Assignment E) (s : W) :
+    (dem.denote R d c χ).presup g s ↔ ∃ x, c.participants x ∈ dem.deixis ∧ x ~[χ] g d := by
+  simp [DemonstrativeDeterminer.denote, SetRel.image]
+
+/-- A demonstrative with fewer participant sets presupposes more. -/
+theorem _root_.DemonstrativeDeterminer.denote_presup_mono {dem₁ dem₂ : DemonstrativeDeterminer}
+    (h : dem₁.deixis ⊆ dem₂.deixis) {g : Assignment E} {s : W}
+    (hp : (dem₁.denote R d c χ).presup g s) : (dem₂.denote R d c χ).presup g s :=
+  SetRel.image_mono (Set.preimage_mono (Finset.coe_subset.2 h)) hp
+
+/-- Two demonstratives with complementary participant sets together cover the vicinity of every
+referent. -/
+theorem _root_.DemonstrativeDeterminer.denote_presup_or_iff_of_compl
+    {dem₁ dem₂ : DemonstrativeDeterminer} (h : dem₂.deixis = dem₁.deixisᶜ) (g : Assignment E)
+    (s : W) :
+    (dem₁.denote R d c χ).presup g s ∨ (dem₂.denote R d c χ).presup g s ↔ ∃ x, x ~[χ] g d := by
+  simp only [DemonstrativeDeterminer.denote_presup, h, Finset.mem_compl]
+  constructor
+  · rintro (⟨x, -, hx⟩ | ⟨x, -, hx⟩) <;> exact ⟨x, hx⟩
+  · rintro ⟨x, hx⟩
+    by_cases hm : c.participants x ∈ dem₁.deixis
+    · exact .inl ⟨x, hm, hx⟩
+    · exact .inr ⟨x, hm, hx⟩
 
 /-- Deixis filters, it does not select: a demonstrative determiner's selector
 is exactly the strong article's selector. The API-level form of
@@ -114,16 +145,16 @@ is exactly the strong article's selector. The API-level form of
 in the `presup` component. -/
 theorem _root_.DemonstrativeDeterminer.denote_selector_eq_anaphoric
     (dem : DemonstrativeDeterminer) :
-    (dem.denote R d proximal medial distal).selector
-      = (Description.anaphoric R d).toNominal.selector := rfl
+    (dem.denote R d c χ).selector = (Description.anaphoric R d).toNominal.selector := rfl
 
-/-- Two demonstrative determiners differing only in deictic feature share a
+/-- Two demonstrative determiners differing only in deictic content share a
 selector — *this* and *that* pick the same referent and differ only in what
 they presuppose about it. -/
 theorem _root_.DemonstrativeDeterminer.denote_selector_congr
     (dem₁ dem₂ : DemonstrativeDeterminer) :
-    (dem₁.denote R d proximal medial distal).selector
-      = (dem₂.denote R d proximal medial distal).selector := rfl
+    (dem₁.denote R d c χ).selector = (dem₂.denote R d c χ).selector := rfl
+
+end Demonstrative
 
 /-! ### The article's descriptions and denotations -/
 
@@ -166,10 +197,9 @@ theorem _root_.Article.denotations_realized (a : Article) (idx : ℕ)
 
 /-! ### The possessive determiner's denotation -/
 
-/-- A possessive determiner's denotation as a `Nominal`: the definite
-description selecting the unique satisfier of the possessee restrictor `R` that
-stands in `rel` to the `possessor` — the `Description.possessive` selector
-(`iota` of `R ∧ rel possessor ·`). The intrinsic presupposition is
+/-- A possessive determiner denotes the `Nominal` of the definite description selecting the
+unique satisfier of the possessee restrictor `R` that stands in `rel` to the `possessor`, the
+`Description.possessive` selector (`iota` of `R ∧ rel possessor ·`). The intrinsic presupposition is
 vacuous; the definite's only presupposition is definedness, exposed as the
 selector returning `some`.
 

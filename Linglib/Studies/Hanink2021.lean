@@ -1,6 +1,9 @@
 module
 
 public import Linglib.Semantics.Reference.Description
+public import Mathlib.Data.Finset.BooleanAlgebra
+public import Mathlib.Data.Fintype.Powerset
+public import Linglib.Syntax.Person.Basic
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 public import Linglib.Data.Examples.Hanink2021
 public import Mathlib.Data.Prod.Lex
@@ -38,7 +41,9 @@ binder meaning `lambdaAbsG`; D's ι is `iota`, whose `∃!` presupposition is (3
 The R head of demonstratives (35) is the identity relation, so it is not represented. Ellipsis
 of a pronoun's NP is recorded as the complement lacking the feature that makes an NP overt
 (section 6.3). The quantified heads of section 5.1 and the German relative-clause parallel of
-section 4.4 are recorded as data and prose only.
+section 4.4 are recorded as data and prose only. Hanink calls *wídi* proximal and *hádi* distal;
+their deictic content is read as the two cells of Harbour's author bipartition, the participant
+sets containing the speaker and the others.
 
 ## TODO
 
@@ -84,9 +89,8 @@ theorem denote_anaphoric_eq_iota (R : Restrictor E W) (d : ℕ) (g : Assignment 
 
 /-- The demonstrative D heads *hádi* and *wídi* of (34b) and (34c) add a deictic presupposition
 and otherwise contribute ι, so a demonstrative refers as the anaphoric DP does. -/
-theorem denote_demonstrative_eq_iota (R : Restrictor E W) (deictic : Reference.Deixis)
-    (d : ℕ) (g : Assignment E) (s : W) :
-    ⟦Description.demonstrative R deictic d⟧ g s = iota (fun x ↦ R g s x ∧ idxVar d g x) :=
+theorem denote_demonstrative_eq_iota (R : Restrictor E W) (d : ℕ) (g : Assignment E) (s : W) :
+    ⟦Description.demonstrative R d⟧ g s = iota (fun x ↦ R g s x ∧ idxVar d g x) :=
   rfl
 
 /-! ### Internally headed relatives, section 4 -/
@@ -128,17 +132,19 @@ complement is an overt NP, a CP, an RP, or a nominal under ellipsis, which lacks
 features that make an NP overt (section 6.3). -/
 inductive Feat where
   | idx | dep | np | cp | rp | elided
-  | d | deixis (f : Reference.Deixis)
-  deriving DecidableEq, Repr
+  | d | deixis (δ : Finset (Finset Discourse.Role))
+  deriving DecidableEq
 
 /-- The Vocabulary entries for idx, (119) and (131), are *gi* elsewhere, *ge* under dependent
 case, and null before an overt NP. -/
 def idxItems : List (VocabularyItem Feat String) :=
   [[Feat.idx] ⟷ "gi", [Feat.idx, .dep] ⟷ "ge", ⟨⟨[.idx], [], [[.np]]⟩, ""⟩]
 
-/-- The Vocabulary entries for D, (130), are null elsewhere, *hádi* distal and *wídi* proximal. -/
+/-- The Vocabulary entries for D, (130), are null elsewhere, *hádi* distal and *wídi* proximal,
+the speaker's space. -/
 def dItems : List (VocabularyItem Feat String) :=
-  [[Feat.d] ⟷ "", [Feat.d, .deixis .distal] ⟷ "hádi", [Feat.d, .deixis .proximal] ⟷ "wídi"]
+  [[Feat.d] ⟷ "", [Feat.d, .deixis Person.first.participantSetsᶜ] ⟷ "hádi",
+    [Feat.d, .deixis Person.first.participantSets] ⟷ "wídi"]
 
 /-- Under (118), contextual specificity takes precedence over the Elsewhere Principle, the
 ordering of [arregi-nevins-2012]. An item is ranked first by the features it demands of the
@@ -164,7 +170,7 @@ theorem idxExponent_distribution :
       idxExponent ⟨[.idx, .dep], [], [[.elided]]⟩ = some "ge" ∧
       idxExponent ⟨[.idx], [], [[.cp]]⟩ = some "gi" ∧
       idxExponent ⟨[.idx, .dep], [], [[.cp]]⟩ = some "ge" ∧
-      idxExponent ⟨[.idx], [[.d, .deixis .distal]], [[.rp]]⟩ = some "gi" ∧
+      idxExponent ⟨[.idx], [[.d, .deixis Person.first.participantSetsᶜ]], [[.rp]]⟩ = some "gi" ∧
       idxExponent ⟨[.idx], [], [[.np]]⟩ = some "" ∧
       idxExponent ⟨[.idx, .dep], [], [[.np]]⟩ = some "" := by
   decide
@@ -179,12 +185,12 @@ theorem subsetPrinciple_accusative_bare :
 /-- The demonstratives *hádigi* and *wídigi* of (25) and (127) decompose as the D exponent
 followed by the idx exponent. -/
 theorem demonstrative_forms :
-    (dExponent ⟨[.d, .deixis .distal], [], [[.idx]]⟩).bind
-        (fun a ↦ (idxExponent ⟨[.idx], [[.d, .deixis .distal]], [[.rp]]⟩).map (a ++ ·)) =
-      some "hádigi" ∧
-    (dExponent ⟨[.d, .deixis .proximal], [], [[.idx]]⟩).bind
-        (fun a ↦ (idxExponent ⟨[.idx], [[.d, .deixis .proximal]], [[.rp]]⟩).map (a ++ ·)) =
-      some "wídigi" := by
+    (dExponent ⟨[.d, .deixis Person.first.participantSetsᶜ], [], [[.idx]]⟩).bind (fun a ↦
+        (idxExponent ⟨[.idx], [[.d, .deixis Person.first.participantSetsᶜ]], [[.rp]]⟩).map
+          (a ++ ·)) = some "hádigi" ∧
+    (dExponent ⟨[.d, .deixis Person.first.participantSets], [], [[.idx]]⟩).bind (fun a ↦
+        (idxExponent ⟨[.idx], [[.d, .deixis Person.first.participantSets]], [[.rp]]⟩).map
+          (a ++ ·)) = some "wídigi" := by
   decide
 
 end Hanink2021

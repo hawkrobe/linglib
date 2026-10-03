@@ -28,7 +28,7 @@ def inventory : Determiner.Inventory :=
   [ .article { form := "Clf-N", definiteness := .definite, exponent := .classifierPhrase,
                uses := {.immediateSituation, .largerSituation, .anaphoric, .donkey} },
     .article { form := "jat-Clf-N", definiteness := .indefinite, exponent := .numeralClassifier },
-    .demonstrative { form := "nei", deictic := .proximal } ]
+    .demonstrative { form := "nei", deixis := Person.first.participantSets } ]
 
 /-- Cantonese derives the `.generallyMarked` Moroney cell. -/
 theorem marking : inventory.markingStrategy = .generallyMarked := by decide

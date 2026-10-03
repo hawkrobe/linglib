@@ -45,25 +45,25 @@ open Discourse
 
 /-! ### Form-function criteria (§1.1) -/
 
-/-- Informativity: a modifier lowers the accessibility a form codes. -/
+/-- By informativity, a modifier lowers the accessibility a form codes. -/
 theorem informativity_modifier :
     ∀ a b : AccessibilityLevel, a.head = b.head → a.deixis = b.deixis →
       a.modified → ¬ b.modified → a < b := by
   decide
 
-/-- Informativity: a demonstrative with a noun codes lower accessibility than a bare one. -/
+/-- By informativity, a demonstrative with a noun codes lower accessibility than a bare one. -/
 theorem informativity_lexical :
     ∀ a b : AccessibilityLevel, a.head = b.head → a.deixis = b.deixis →
       ¬ a.modified → ¬ b.modified → a.lexical → ¬ b.lexical → a < b := by
   decide
 
-/-- Informativity: a full name codes lower accessibility than a partial one. -/
+/-- By informativity, a full name codes lower accessibility than a partial one. -/
 theorem informativity_partial_name :
     ∀ a b : AccessibilityLevel, a.head = .name → b.head = .name →
       ¬ a.modified → ¬ b.modified → a.full → ¬ b.full → a < b := by
   decide
 
-/-- Rigidity: a full name codes lower accessibility than the description of the same
+/-- By rigidity, a full name codes lower accessibility than the description of the same
 length. -/
 theorem rigidity_full_name :
     ∀ a b : AccessibilityLevel, a.head = .name → a.full → b.head = .description →
@@ -76,13 +76,13 @@ theorem rigidity_not_sufficient :
     AccessibilityLevel.shortDefDescription < AccessibilityLevel.lastName := by
   decide
 
-/-- Attenuation: a stressed pronoun codes lower accessibility than an unstressed one. -/
+/-- By attenuation, a stressed pronoun codes lower accessibility than an unstressed one. -/
 theorem attenuation_stress :
     ∀ a b : AccessibilityLevel, a.head = .pronoun → b.head = .pronoun →
       a.stressed → ¬ b.stressed → a < b := by
   decide
 
-/-- Attenuation: a free pronoun codes lower accessibility than a cliticized one, a pronoun
+/-- By attenuation, a free pronoun codes lower accessibility than a cliticized one, a pronoun
 than verbal agreement, and agreement than zero. -/
 theorem attenuation_reduction :
     ∀ a b : AccessibilityLevel,
@@ -96,7 +96,8 @@ shape (§5.1 records Kirsner's Dutch data against this). -/
 theorem deixis_proximate :
     ∀ a b : AccessibilityLevel, a.head = .demonstrative → b.head = .demonstrative →
       a.modified = b.modified → a.lexical = b.lexical →
-      a.deixis = some .distal → b.deixis = some .proximal → a < b := by
+      a.deixis = some Person.first.participantSetsᶜ → b.deixis = some Person.first.participantSets →
+        a < b := by
   decide
 
 /-! ### Accessibility as a complex concept (§1.2) -/
@@ -114,8 +115,8 @@ def Topicality.rank : Topicality → ℕ
   | .localTopic => 1
   | .globalTopic => 2
 
-/-- The factors a degree of accessibility is assessed from: distance since the last mention,
-competing antecedents, topicality, and the unity of antecedent and anaphor. -/
+/-- A degree of accessibility is assessed from distance since the last mention, competing
+antecedents, topicality, and the unity of antecedent and anaphor. -/
 structure Factors where
   distance : ℕ
   competitors : ℕ
@@ -130,7 +131,7 @@ def Factors.Dominates (a b : Factors) : Prop :=
 
 instance (a b : Factors) : Decidable (a.Dominates b) := by unfold Factors.Dominates; infer_instance
 
-/-- *Maya kissed Rachel. And then she/SHE …*: the first-mentioned Maya is topical but more
+/-- In *Maya kissed Rachel. And then she/SHE …* the first-mentioned Maya is topical but more
 distant, Rachel more recent but not topical. -/
 def maya : Factors := ⟨2, 1, .localTopic, false⟩
 
@@ -177,9 +178,9 @@ theorem rows_topicality_over_distance :
       c < m := by
   decide +kernel
 
-/-- (3) against (4): the entity whose point of view a newspaper takes is coded by the higher
-marker — the victim by zero and the rapist by a name in Haaretz, the rapists by zero and the
-victim by a demonstrative in Maariv. -/
+/-- Comparing (3) with (4), the entity whose point of view a newspaper takes is coded by the
+higher marker: the victim by zero and the rapist by a name in Haaretz, the rapists by zero and
+the victim by a demonstrative in Maariv. -/
 theorem rows_perspective :
     ∀ r ∈ Examples.all, ∀ v ∈ (marker r "victim").toList, ∀ p ∈ (marker r "rapists").toList,
       (r.feature? "perspective" = some "victim" → p < v) ∧

@@ -95,10 +95,12 @@ grammar argues that it is a quantifier rather than an article. -/
 def geen : Quantifier := { form := "geen", selectsMass := true }
 
 /-- The proximate demonstrative is *deze* ~ *dit*. -/
-def deze : DemonstrativeDeterminer := { form := plural .proximate, deictic := .proximal }
+def deze : DemonstrativeDeterminer :=
+  { form := plural .proximate, deixis := Person.first.participantSets }
 
 /-- The distal demonstrative is *die* ~ *dat*. -/
-def die : DemonstrativeDeterminer := { form := plural .distal, deictic := .distal }
+def die : DemonstrativeDeterminer :=
+  { form := plural .distal, deixis := Person.first.participantSetsᶜ }
 
 /-- The inventory lists the two articles, *geen* and the two demonstratives. -/
 def inventory : Determiner.Inventory :=
