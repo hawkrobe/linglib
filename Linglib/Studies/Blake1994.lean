@@ -2,7 +2,6 @@ module
 
 public import Mathlib.Data.Finset.Option
 public import Mathlib.Order.UpperLower.Basic
-public import Linglib.Syntax.Case.Order
 public import Linglib.Fragments.Arabic.ModernStandard.Case
 public import Linglib.Fragments.Dargwa.Case
 public import Linglib.Fragments.Finnish.Case

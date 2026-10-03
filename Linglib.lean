@@ -181,7 +181,6 @@ import Linglib.Core.Order.LeftLinear
 import Linglib.Core.Order.Monotone.Monovary
 import Linglib.Core.Order.OfCriteria
 import Linglib.Core.Order.Ortholattice
-import Linglib.Core.Order.PartialRank
 import Linglib.Core.Order.PartialUnify
 import Linglib.Core.Order.Positions
 import Linglib.Core.Order.PreorderLattice

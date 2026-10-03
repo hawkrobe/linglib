@@ -60,7 +60,7 @@ namespace Aitha2026
 
 open DistributedMorphology Prosody
 open scoped Case.Caha
-open Core OptimalityTheory
+open OptimalityTheory
 
 /-! ### Case -/
 
