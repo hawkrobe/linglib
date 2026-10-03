@@ -18,7 +18,8 @@ bundle is the set of its positive features, and it passes the containment filter
 lower set of the chain minimal < atomic, so the three values are the chain's initial segments. For
 number the filter follows from the semantics: an atom is minimal in every region excluding the
 null individual (`Number.singular_subset_minimal`), so [+atomic, −minimal] corresponds to no
-number, as Harbour observes. Lattice elements are classified by the regions of `Number.interp`.
+number, as Harbour observes. Lattice elements are classified by the regions of Harbour's
+features (`Semantics/Plurality/Number.lean`).
 
 ## Main definitions
 
@@ -130,10 +131,9 @@ theorem toNumber_ofNumber : ∀ (n : Number) (f : Features),
 section Lattice
 
 variable {D : Type*} [SemilatticeSup D] [Fintype D] [DecidableLE D]
- 
 
 /-- A lattice element realizes, in the region `P`, the singular on the atoms of `P`, the dual on
-its minimal non-atoms, and the plural on the rest, the decidable mirror of `Number.interp`. -/
+its minimal non-atoms, and the plural on the rest. -/
 def latticeToFeatures (P : D → Prop) [DecidablePred P] (x : D) : Features :=
   if atomsOf P x then singularF else if dualOf P x then dualF else pluralF
 
