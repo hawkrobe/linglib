@@ -107,6 +107,10 @@ sentences: write each variant as its own row with its own `judgment` and `paperF
 sharing the `paperLabel`, when the variants differ in what the paper classifies; keep a
 contrast the paper does not classify in `alternatives`. A feature a sentence bears twice (two
 indefinite series in one clause) is two entries under the same key, not a slash-joined value.
+A mark a source prints split between speakers (`*/??`, `?/√`) gives one sentence several marks.
+The row's `judgment` is the first mark printed, and each further mark is a `paperFeatures` entry
+`["alsoJudged", <judgment>]`, in printed order; the generator rejects a value that is not a
+judgment.
 A judgment that holds only in a scenario records the scenario in `context`.
 A discourse is one row: `discourseSegments` lists its utterances, `primaryText`
 joins them with single spaces, and the judgment is of the last utterance in
