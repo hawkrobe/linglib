@@ -4,41 +4,33 @@ public import Linglib.Logic.Team.BSML.Classical
 public import Linglib.Logic.Team.BSML.Bisimulation
 
 /-!
-# Characteristic (Hintikka) formulas for BSML — foundation
+# Characteristic formulas for BSML
 
-[aloni-anttila-yang-2024] [anttila-2025]
+The depth-`k` characteristic (Hintikka) formula `χ_w^k` of a world `w` is an `NE`-free formula
+true at exactly the worlds `k`-bisimilar to `w`. Being `NE`-free, it is supported by a team iff it
+is classically true at each world of the team (`support_iff_forall_realize`), so the construction
+is the classical one. The expressive completeness proof of `ExpressiveCompleteness.lean` uses it.
 
-The expressive-completeness converse for BSML (`subset_definableClass_support`
-in `BSML/ExpressiveCompleteness.lean`) needs **characteristic formulas**: for
-each world `w` and depth `k`, an NE-free formula `χ_w^k` such that a singleton
-`{v}` supports it exactly when `v` is `k`-bisimilar to `w`. This file builds the
-foundation — finite conjunction over an NE-free language and the **depth-0
-(atomic type)** characterisation — and proves it against classical single-world
-truth `Realize` (`BSML/Classical.lean`).
+## Main definitions
 
-Working through `Realize` is the simplification that makes this tractable:
-characteristic formulas are NE-free, so by `support_iff_forall_realize` their team
-support reduces to pointwise `Realize`, and the construction becomes the
-standard *classical* modal Hintikka characterisation.
+* `verum`, `bigConj`, `bigDisj`: `⊤` as `p ∨ ¬p`, and finite conjunction and disjunction.
+* `atomicType M w`: the conjunction of the atomic literals true at `w`.
+* `charFormula M k w`: the depth-`k` characteristic formula of `w`.
 
-## Main declarations
+## Main results
 
-* `verum`, `bigConj` — `⊤` (as `p ∨ ¬p`) and finite conjunction, both NE-free.
-* `atomicType M w` — the depth-0 Hintikka formula: the conjunction of atomic
-  literals true at `w`.
-* `charFormula M k w` — the depth-`k` Hintikka formula: atomic type, `◇` of
-  each successor type, and `□` of the successor-type disjunction.
-* `realize_charFormula_iff_bisim` — the characterisation: `v`
-  classically satisfies `χ_w^k` iff `w` and `v` are `k`-bisimilar.
-* `support_charFormula_singleton_iff_bisim` — the team-semantic face:
-  singleton support of `χ_w^k` is `k`-bisimilarity.
+* `realize_charFormula_iff_bisim`: `χ_w^k` holds at `v` iff `w` and `v` are `k`-bisimilar.
+* `support_charFormula_singleton_iff_bisim`: the same for singleton teams.
 
-## Todo
+## TODO
 
-* Team characteristic formulas (`θ_s^k = ⋁_{w ∈ s} (χ_w^k ∧ NE)`,
-  Definition 3.10 of [aloni-anttila-yang-2024]) and the convex,
-  union-closed normal form that discharges
-  `subset_definableClass_support`.
+* The strong characteristic formulas of teams, `θ_s^k = ⋁_{w ∈ s} (χ_w^k ∧ NE)`
+  ([aloni-anttila-yang-2024] Definition 3.10), on which the completeness proof for BSML's
+  natural deduction system rests.
+
+## References
+
+* [aloni-anttila-yang-2024] Aloni, Anttila and Yang, State-based Modal Logics for Free Choice
 -/
 
 @[expose] public section
@@ -51,9 +43,8 @@ variable {W : Type*} {Atom : Type*}
 
 /-! ### `⊤` and finite conjunction -/
 
-/-- `⊤` as an NE-free BSML formula: `p ∨ ¬p` for the default atom. Classically
-    evaluates to `true` at every world; supported by every team. Requires an
-    atom (`[Inhabited Atom]`): BSML has no atom-free closed `⊤`. -/
+/-- The tautology `p ∨ ¬p` for the default atom is `NE`-free, true at every world and
+    supported by every team. BSML has no tautology without atoms. -/
 def verum [Inhabited Atom] : Formula Atom :=
   .disj (.atom default) (.neg (.atom default))
 
@@ -86,9 +77,8 @@ theorem neFree_bigConj [Inhabited Atom] (l : List (Formula Atom))
 
 /-! ### Atomic type (depth-0 Hintikka formula) -/
 
-/-- The **atomic type** of `w`: the conjunction over all atoms `p` of the literal
-    `p` (when `w ⊨ p`) or `¬p` (when `w ⊭ p`). The depth-0 characteristic
-    formula. -/
+/-- The atomic type of `w` conjoins, over all atoms `p`, the literal `p` if `p` holds at `w`
+    and `¬p` otherwise. It is the depth-0 characteristic formula. -/
 noncomputable def atomicType [Fintype Atom] [Inhabited Atom]
     (M : KripkeModel W Atom) (w : W) : Formula Atom :=
   bigConj ((Finset.univ : Finset Atom).toList.map
@@ -116,9 +106,7 @@ theorem realize_atomicType [Fintype Atom] [Inhabited Atom]
     obtain ⟨p, -, rfl⟩ := List.mem_map.mp hφ
     cases hb : M.val p w <;> simp [hb, Realize, h p]
 
-/-- **Depth-0 characterisation**: `w`'s atomic type is classically satisfied at
-    `v` iff `v` and `w` are 0-bisimilar. The base case of the characteristic-
-    formula characterisation. -/
+/-- The atomic type of `w` holds at `v` iff `w` and `v` are 0-bisimilar. -/
 theorem realize_atomicType_iff_bisim0 [Fintype Atom] [Inhabited Atom]
     (M : KripkeModel W Atom) (w v : W) :
     Realize M (atomicType M w) v ↔ WorldBisim 0 M w M v := by
@@ -127,23 +115,15 @@ theorem realize_atomicType_iff_bisim0 [Fintype Atom] [Inhabited Atom]
   · intro h p; exact (h p).symm
   · intro h p; exact (h p).symm
 
-/-! ### `⊥` and finite disjunction -/
-
-/-- `⊥` as an NE-free BSML formula: `p ∧ ¬p` for the default atom. Classically
-    false at every world. -/
-def falsum [Inhabited Atom] : Formula Atom :=
-  .conj (.atom default) (.neg (.atom default))
+/-! ### Finite disjunction -/
 
 @[simp] theorem not_realize_falsum [Inhabited Atom] (M : KripkeModel W Atom) (w : W) :
-    ¬ Realize M falsum w := by
-  simp [falsum, Realize]
-
-@[simp] theorem neFree_falsum [Inhabited Atom] : (falsum : Formula Atom).NEFree :=
-  ⟨trivial, trivial⟩
+    ¬ Realize M .falsum w := by
+  simp [Formula.falsum, Realize]
 
 /-- Finite disjunction of a list of formulas; the empty disjunction is `⊥`. -/
 def bigDisj [Inhabited Atom] : List (Formula Atom) → Formula Atom
-  | [] => falsum
+  | [] => .falsum
   | φ :: rest => .disj φ (bigDisj rest)
 
 theorem realize_bigDisj [Inhabited Atom] (M : KripkeModel W Atom) (w : W)
@@ -156,17 +136,16 @@ theorem realize_bigDisj [Inhabited Atom] (M : KripkeModel W Atom) (w : W)
 theorem neFree_bigDisj [Inhabited Atom] (l : List (Formula Atom))
     (h : ∀ φ ∈ l, φ.NEFree) : (bigDisj l).NEFree := by
   induction l with
-  | nil => exact neFree_falsum
+  | nil => exact Formula.neFree_falsum
   | cons φ rest ih =>
     exact ⟨h φ (List.mem_cons.mpr (Or.inl rfl)),
            ih (fun ψ hψ => h ψ (List.mem_cons.mpr (Or.inr hψ)))⟩
 
 /-! ### Characteristic formulas -/
 
-/-- The depth-`k` characteristic (Hintikka) formula of `w`: at depth `0` the
-    atomic type; at depth `k + 1` the atomic type, conjoined with `◇χ_v^k`
-    for each `R`-successor `v` and with `□` of the disjunction of the
-    successor types. -/
+/-- The depth-`k` characteristic (Hintikka) formula of `w` is its atomic type at depth `0`. At
+    depth `k + 1` it conjoins the atomic type with `◇χ_v^k` for each successor `v` and with `□`
+    of the disjunction of the successors' formulas. -/
 noncomputable def charFormula [Fintype Atom] [Inhabited Atom]
     (M : KripkeModel W Atom) : ℕ → W → Formula Atom
   | 0, w => atomicType M w
@@ -189,9 +168,8 @@ theorem neFree_charFormula [Fintype Atom] [Inhabited Atom]
       obtain ⟨v, -, rfl⟩ := List.mem_map.mp hφ
       exact ih v
 
-/-- **Depth-`k` characterisation** (the Hintikka half of Theorem 3.3 of
-    [aloni-anttila-yang-2024]): `w`'s depth-`k` characteristic formula is
-    classically satisfied at `v` iff `w` and `v` are `k`-bisimilar. -/
+/-- The depth-`k` characteristic formula of `w` holds at `v` iff `w` and `v` are `k`-bisimilar
+    ([aloni-anttila-yang-2024] Theorem 3.3). -/
 theorem realize_charFormula_iff_bisim [Fintype Atom] [Inhabited Atom]
     (M : KripkeModel W Atom) (k : ℕ) (w v : W) :
     Realize M (charFormula M k w) v ↔ WorldBisim k M w M v := by
@@ -242,8 +220,8 @@ theorem support_bigConj_iff [Inhabited Atom] (M : KripkeModel W Atom)
   | cons φ rest ih =>
     simp only [bigConj, support_conj, ih, List.forall_mem_cons]
 
-/-- Team support of a flat disjunction of characteristic formulas: every
-    world of the team is `k`-bisimilar to some representative in `S`. -/
+/-- A team supports the disjunction of the characteristic formulas of the worlds in `S` iff each
+    of its worlds is `k`-bisimilar to one in `S`. -/
 theorem support_charDisj_iff [Fintype Atom] [Inhabited Atom]
     (M : KripkeModel W Atom) (k : ℕ) (S : Finset W) (t : Finset W) :
     support M (bigDisj (S.toList.map (charFormula M k))) t ↔

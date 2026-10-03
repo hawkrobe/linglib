@@ -7,35 +7,28 @@ public import Linglib.Logic.Team.Operations
 public import Linglib.Logic.Team.Kripke
 
 /-!
-# Bilateral state-based modal logic: core definitions
+# Bilateral state-based modal logic
 
-Bilateral state-based modal logic (BSML, [aloni-2022]) evaluates formulas
-against **teams** — finite sets of worlds of a Kripke model — with two
-polarities: support (`⊨⁺`) and anti-support (`⊨⁻`). Negation swaps the
-polarities, so double-negation elimination holds definitionally, and the
-non-emptiness atom `NE` (supported exactly by non-empty teams) is the
-ingredient from which the free-choice effects derive. Despite being
-state-based, BSML is a static logic: formulas are evaluated against teams,
-not updated by them ([aloni-2022] p. 22). QBSML ([aloni-vanormondt-2023])
-runs the same recursion over quantified atoms.
+Aloni's bilateral state-based modal logic (BSML) evaluates formulas against teams, finite sets of
+worlds of a Kripke model, in two polarities: support (`⊨⁺`) and anti-support (`⊨⁻`). Negation
+swaps the polarities, and the non-emptiness atom `NE`, supported exactly by the non-empty teams,
+is the source of the free-choice effects. BSML is static: formulas are evaluated against teams,
+not updated by them. QBSML runs the same recursion over quantified atoms.
 
-## Main declarations
+## Main definitions
 
-* `Formula` — atoms, `NE`, `¬`, `∧`, split `∨`, and `◇`; `□` is the
-  abbreviation `Formula.nec` (`□φ := ¬◇¬φ`).
-* `eval` — bilateral evaluation, the two polarities unified by a `Bool`
-  parameter; `support`/`antiSupport` fix the polarity.
-* `Formula.NEFree`, `Formula.Positive` — the `NE`-free and negation-free
-  syntactic fragments.
-* `consequence`, `equivalent` — support consequence and bilateral
-  equivalence.
-* `evalStar`, `consequenceStar` — BSML*, the variant excluding `∅` from
-  the possible states; `supportStar`/`antiSupportStar` fix the polarity.
+* `Formula`: atoms, `NE`, `¬`, `∧`, split `∨` and `◇`; `□` is the abbreviation `Formula.nec`.
+* `eval`: bilateral evaluation, with the polarity a `Bool`; `support` and `antiSupport` fix it.
+* `Formula.NEFree`, `Formula.Positive`: the `NE`-free and the negation-free fragments.
+* `Formula.falsum`, `Formula.strongFalsum`: the weak contradiction `p ∧ ¬p` and the strong
+  contradiction `⊥ ∧ NE`.
+* `consequence`, `equivalent`: support consequence and bilateral equivalence.
+* `evalStar`, `consequenceStar`: BSML*, which excludes `∅` from the possible states.
 
 ## Implementation notes
 
-The support and anti-support clauses are dual — `∧`/`∨` swap, `◇`/`□` swap,
-atoms flip truth value:
+The support and anti-support clauses are dual: `∧` and `∨` swap, `◇` and `□` swap, and atoms flip
+their truth value.
 
 | Connective | Support (⊨⁺) | Anti-support (⊨⁻) |
 |-----------|-------------|-------------------|
@@ -47,15 +40,17 @@ atoms flip truth value:
 | □φ | ∀w∈s: R[w] ⊨⁺ φ | ∀w∈s: ∃ ne t⊆R[w]: t ⊨⁻ φ |
 | NE | s ≠ ∅ | s = ∅ |
 
-Each clause is an operation of `Team/Operations.lean` applied to the support sets of the
-subformulas — atoms and the modalities are `Team.flat`, `Team.poss` and `Team.nec`, the
-split clauses `Team.tensor`, `NE` is `Team.ne` with anti-support `{∅}` — so the closure
-properties of `Properties.lean` are folds over the per-connective lemmas there.
-Encoding both polarities in one `eval` makes the duality a single recursion
-and double-negation elimination a `rfl`: `eval M true (.neg (.neg φ)) t`
-reduces to `eval M true φ t` by two negation clauses. Models are the shared
-`ModalLogic.KripkeModel` carrier; teams are `Finset W`; `eval` is `Prop`-valued
-with a `Decidable` instance, so concrete claims close by `decide`.
+Each clause applies an operation of `Team/Operations.lean` to the support sets of the
+subformulas, so the closure properties of `Properties.lean` are folds over the per-connective
+lemmas there. One `eval` for both polarities makes double-negation elimination `rfl`. `eval` is
+`Prop`-valued with a `Decidable` instance, so concrete claims close by `decide`.
+
+## References
+
+* [aloni-2022] Aloni, Logic and Conversation: The Case of Free Choice
+* [aloni-anttila-yang-2024] Aloni, Anttila and Yang, State-based Modal Logics for Free Choice
+* [aloni-vanormondt-2023] Aloni and van Ormondt, Modified Numerals and Split Disjunction: The
+  First-Order Case
 -/
 
 @[expose] public section
@@ -66,28 +61,28 @@ open ModalLogic (KripkeModel)
 
 /-! ### Formulas -/
 
-/-- BSML formulas over an atom type: `p | NE | ¬φ | φ∧ψ | φ∨ψ | ◇φ`.
-    `□` is not primitive — see `Formula.nec`. -/
+/-- The formulas of BSML over an atom type are built from atoms and `NE` by `¬`, `∧`, split `∨`
+    and `◇`; `□` is the abbreviation `Formula.nec`. -/
 inductive Formula (Atom : Type*) where
-  /-- Atomic proposition -/
+  /-- An atomic proposition. -/
   | atom : Atom → Formula Atom
-  /-- Non-emptiness atom: team is non-empty -/
+  /-- The non-emptiness atom, supported by the non-empty teams. -/
   | ne : Formula Atom
-  /-- Negation: swap support/anti-support -/
+  /-- Negation, which swaps support and anti-support. -/
   | neg : Formula Atom → Formula Atom
-  /-- Conjunction -/
+  /-- Conjunction. -/
   | conj : Formula Atom → Formula Atom → Formula Atom
-  /-- Split disjunction -/
+  /-- Split disjunction. -/
   | disj : Formula Atom → Formula Atom → Formula Atom
-  /-- Possibility modal -/
+  /-- The possibility modality. -/
   | poss : Formula Atom → Formula Atom
   deriving Repr
 
 variable {Atom : Type*}
 
-/-- Necessity as an abbreviation: `Formula.nec φ = ¬◇¬φ`, giving the derived
-    clauses `s ⊨⁺ □φ ↔ ∀ w ∈ s, R[w] ⊨⁺ φ` and
-    `s ⊨⁻ □φ ↔ ∀ w ∈ s, ∃ nonempty t ⊆ R[w], t ⊨⁻ φ`. -/
+/-- Necessity `□φ` abbreviates `¬◇¬φ`. A team supports it when the successors of each of its
+    worlds support `φ`, and anti-supports it when each world has a non-empty set of successors
+    anti-supporting `φ`. -/
 def Formula.nec (φ : Formula Atom) : Formula Atom :=
   .neg (.poss (.neg φ))
 
@@ -129,15 +124,27 @@ instance instDecidablePositive : (φ : Formula Atom) → Decidable φ.Positive
   | .disj φ ψ => @instDecidableAnd _ _ (instDecidablePositive φ) (instDecidablePositive ψ)
   | .poss φ => instDecidablePositive φ
 
+/-! ### Contradictions -/
+
+/-- The weak contradiction `⊥ := p ∧ ¬p` for a fixed atom `p`, the default one
+    ([aloni-2022]; [aloni-anttila-yang-2024] take `⊥` as primitive instead). -/
+def Formula.falsum [Inhabited Atom] : Formula Atom :=
+  .conj (.atom default) (.neg (.atom default))
+
+/-- The strong contradiction `⊥⊥ := ⊥ ∧ NE` ([aloni-anttila-yang-2024]). -/
+def Formula.strongFalsum [Inhabited Atom] : Formula Atom :=
+  .conj .falsum .ne
+
+@[simp] theorem Formula.neFree_falsum [Inhabited Atom] : (Formula.falsum : Formula Atom).NEFree :=
+  ⟨trivial, trivial⟩
+
 /-! ### Bilateral evaluation -/
 
 variable {W : Type*} [DecidableEq W]
 
-/-- Bilateral evaluation with polarity parameter: `eval M true φ t` is
-    support (`⊨⁺`), `eval M false φ t` is anti-support (`⊨⁻`), and negation
-    flips the polarity. The split clauses (disjunction-support,
-    conjunction-anti-support) are `Team.tensor`, the pointwise sup of the
-    parts' support sets. -/
+/-- Bilateral evaluation `eval M b φ t` is support (`⊨⁺`) when `b` is `true` and anti-support
+    (`⊨⁻`) when `b` is `false`. Negation flips the polarity, and the split clauses, support of
+    `∨` and anti-support of `∧`, are `Team.tensor`. -/
 def eval (M : KripkeModel W Atom) : Bool → Formula Atom → Finset W → Prop
   | true,  .atom p,       t => t ∈ Team.flat fun w ↦ M.val p w = true
   | false, .atom p,       t => t ∈ Team.flat fun w ↦ M.val p w = false
@@ -152,11 +159,11 @@ def eval (M : KripkeModel W Atom) : Bool → Formula Atom → Finset W → Prop
   | true,  .poss ψ,       t => t ∈ Team.poss M.access {s | eval M true ψ s}
   | false, .poss ψ,       t => t ∈ Team.nec M.access {s | eval M false ψ s}
 
-/-- Support: positive evaluation. -/
+/-- Support is evaluation in the positive polarity. -/
 abbrev support (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) : Prop :=
   eval M true φ t
 
-/-- Anti-support: negative evaluation. -/
+/-- Anti-support is evaluation in the negative polarity. -/
 abbrev antiSupport (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) : Prop :=
   eval M false φ t
 
@@ -195,24 +202,34 @@ lemma empty_supports_atom (M : KripkeModel W Atom) (p : Atom) :
     support M (.atom p) ∅ :=
   fun w hw => absurd hw (Finset.notMem_empty w)
 
+/-- The weak contradiction is supported by the empty team only. -/
+@[simp] theorem support_falsum [Inhabited Atom] (M : KripkeModel W Atom) (t : Finset W) :
+    support M .falsum t ↔ t = ∅ where
+  mp := fun ⟨h₁, h₂⟩ ↦ Finset.eq_empty_iff_forall_notMem.mpr fun w hw ↦ by
+    simpa [h₁ w hw] using h₂ w hw
+  mpr := by rintro rfl; exact ⟨Team.empty_mem_flat _, Team.empty_mem_flat _⟩
+
+/-- The strong contradiction is supported by no team. -/
+theorem not_support_strongFalsum [Inhabited Atom] (M : KripkeModel W Atom) (t : Finset W) :
+    ¬ support M .strongFalsum t := fun ⟨h, hne⟩ ↦ hne.ne_empty ((support_falsum M t).mp h)
+
 /-! ### Consequence and equivalence -/
 
-/-- Semantic consequence: every team supporting `φ` supports `ψ`. -/
+/-- `ψ` is a consequence of `φ` when every team supporting `φ` supports `ψ`. -/
 def consequence (φ ψ : Formula Atom) : Prop :=
   ∀ (M : KripkeModel W Atom) (t : Finset W), support M φ t → support M ψ t
 
-/-- Semantic equivalence: same support and anti-support conditions. -/
+/-- Two formulas are equivalent when they have the same support and anti-support. -/
 def equivalent (φ ψ : Formula Atom) : Prop :=
   ∀ (M : KripkeModel W Atom) (t : Finset W),
     (support M φ t ↔ support M ψ t) ∧ (antiSupport M φ t ↔ antiSupport M ψ t)
 
 /-! ### BSML* -/
 
-/-- Bilateral evaluation for BSML* ([aloni-2022] §6.3.1): like `eval`, but `∅` is not among
-    the possible states, so each part of a split (disjunction-support, conjunction-anti-support)
-    is intersected with `Team.ne`. The exclusion is imposed wherever states are quantified, in
-    the splits here and on the outer team in `consequenceStar`, while the atom, `ne` and modal
-    clauses keep their BSML form (the `◇` witness is non-empty already). -/
+/-- Bilateral evaluation for BSML* ([aloni-2022] §6.3.1) differs from `eval` in that `∅` is not
+    among the possible states, so each part of a split is intersected with `Team.ne`. The
+    exclusion applies wherever states are quantified, in the splits here and on the outer team in
+    `consequenceStar`; the atom, `ne` and modal clauses keep their BSML form. -/
 def evalStar (M : KripkeModel W Atom) : Bool → Formula Atom → Finset W → Prop
   | true,  .atom p,       t => t ∈ Team.flat fun w ↦ M.val p w = true
   | false, .atom p,       t => t ∈ Team.flat fun w ↦ M.val p w = false
@@ -231,11 +248,11 @@ def evalStar (M : KripkeModel W Atom) : Bool → Formula Atom → Finset W → P
   | true,  .poss ψ,       t => t ∈ Team.poss M.access {s | evalStar M true ψ s}
   | false, .poss ψ,       t => t ∈ Team.nec M.access {s | evalStar M false ψ s}
 
-/-- BSML* support: positive evaluation with non-empty intermediate states. -/
+/-- BSML* support is `evalStar` in the positive polarity. -/
 abbrev supportStar (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) : Prop :=
   evalStar M true φ t
 
-/-- BSML* anti-support. -/
+/-- BSML* anti-support is `evalStar` in the negative polarity. -/
 abbrev antiSupportStar (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) : Prop :=
   evalStar M false φ t
 
@@ -247,8 +264,8 @@ abbrev antiSupportStar (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset 
     (φ : Formula Atom) (t : Finset W) :
     antiSupportStar M (.neg φ) t ↔ supportStar M φ t := Iff.rfl
 
-/-- BSML* consequence: `supportStar` consequence on non-empty teams — in
-    BSML*, `∅` is not among the possible states. -/
+/-- In BSML*, `ψ` is a consequence of `φ` when every non-empty team supporting `φ` supports
+    `ψ`. -/
 def consequenceStar (φ ψ : Formula Atom) : Prop :=
   ∀ (M : KripkeModel W Atom) (t : Finset W), t.Nonempty → supportStar M φ t → supportStar M ψ t
 
