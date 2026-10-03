@@ -1,44 +1,76 @@
 module
 
-public import Mathlib.Data.Set.Insert
-public import Linglib.Semantics.ConventionalImplicature
-public import Linglib.Semantics.Evidential.Defs
+public import Linglib.Data.Examples.MartinezVera2026
+public import Linglib.Discourse.Commitment.Basic
 public import Linglib.Discourse.Role
-public import Linglib.Semantics.Questions.Hamblin
-public import Linglib.Logic.Modal.Defs
-public import Mathlib.Order.Filter.Basic
-public import Linglib.Studies.Faller2019
+public import Linglib.Fragments.Quechua.SaraguroKichwa.Evidentiality
+public import Linglib.Semantics.ConventionalImplicature
+public import Linglib.Semantics.Evidential.Basic
+public import Linglib.Semantics.Exhaustification.InnocentExclusion
+public import Linglib.Semantics.Questions.Resolution
 
 /-!
-# Martínez Vera (2026): Verum, Contrast and Evidentiality in Saraguro Kichwa
+# Martínez Vera (2026)
 
-This file formalizes [martinez-vera-2026]'s analysis of the Saraguro Kichwa enclitic *=mi*
-as a focus marker whose felicity presupposes a highlighted, strengthened alternative
-entailing the negation of the scope proposition (`miFelicitous`, the paper's definition
-(37), reduced to the polar case where exhaustification is the identity). The marker is
-licensed when the negation of the scope is salient, after a biased question, an assertion
-of the negation, or a reportative-evidential antecedent: the polar question under
-discussion (`polarQUD`) and the discourse update by an evidential act's raised propositions
-(`updateAfterAct`) give the headline contrast, *=mi* felicitous after presenting with the
-reportative *-shka* and infelicitous after asserting with the direct *-rka*. The polar
-partition is in general distinct from the verum partition of [romero-han-2004]
-(`mv_partition_neq_romeroHan_partition`).
+Martínez Vera analyzes the Saraguro Kichwa enclitic *=mi* as a focus marker. A sentence with
+*=mi* and scope `p` presupposes an alternative to `p` that is highlighted in the context and that,
+exhaustified relative to the alternatives, entails `¬p`; a proposition is highlighted when a move
+on record addresses the question under discussion with it. A declarative with the direct
+evidential *-rka* is an assertion and addresses that question by `p`, while one with the
+reportative *-shka* presents `p` and addresses it by `p` or `¬p`, so only the latter can be
+confirmed with *=mi*. In a correction the highlighted proposition is the corrected one, and
+exhaustifying it relative to the alternatives of the constituent *=mi* marks yields `¬p`.
+
+## Main definitions
+
+* `withEvidential`: an evidential applied to a sentence.
+* `Move.assert`, `Move.present`, `Move.declare`: the illocutionary operators, and the one a
+  declarative with a given evidential performs.
+* `Highlighted`, `MiDefined`: highlighting, and the presupposition of *=mi*.
+
+## Main statements
+
+* `miDefined_univ_iff`: for *=mi* on a clause exhaustification is vacuous, and *=mi* needs a
+  highlighted proposition entailing `¬p`.
+* `miDefined_update_present`, `miDefined_update_assert_iff`: presenting `p` licenses *=mi* on
+  `p`, and asserting it does not.
+* `miDefined_of_isInnocentlyExcludable`: corrections.
+* `judgment_eq_acceptable_iff_miDefined`, `judgment_eq_acceptable_iff_nonempty`: an example is
+  acceptable exactly when the analysis licenses its *=mi*, or its speaker stays consistent.
 
 ## Implementation notes
 
-Two-dimensional content, evidential illocution, evidential sources, and polar questions are
-substrate; the paper's notion of a highlighted proposition, one made salient by an utterance
-and addressing the question under discussion (its (38)), and the felicity apparatus are
-paper-specific and stay here, while the
-three-way evidential paradigm of Saraguro Kichwa lives in its fragment. The paper's data is
-original fieldwork with six speakers following [matthewson-2004].
+The paper's composition rule I is the bind of `TwoDim`, whose `⊤` plays the empty not-at-issue
+layer. An illocutionary operator is the move it puts on record: its speaker's commitments,
+without their addressee, and the propositions by which it addresses the question under
+discussion, addressing being partial answerhood. Exhaustification is innocent exclusion; the
+paper glosses the alternatives it may deny as those entailing the prejacent, under which a
+correction would not entail `¬p`. Highlighting is the paper's notion, not the compositional
+highlighting of `Semantics/Questions/Highlighting.lean`. The operator name `present` is
+Faller's. The examples are evaluated in a model whose worlds are sets of events. The paper's
+survey of *=mi* across Quechuan, after Faller, Sánchez, Tellings, Grzech and Bendezú, finds the
+analyses hard to compare at present and is not formalized.
+
+## TODO
+
+* The paper describes *=mi* in (27d) as marking the verb; with alternatives varying the verb
+  phrase, which include buying a pig, (37) would license it.
+* Footnote 7's use of *-rka* by an authority without direct perception, and the past tense of
+  *-rka* and *-shka*, are not modelled.
 
 ## References
 
 * [martinez-vera-2026]
+* [bendezu-2023]
 * [faller-2002]
-* [romero-han-2004]
-* [matthewson-2004]
+* [fox-2007]
+* [grzech-2020]
+* [krifka-2014]
+* [krifka-2017]
+* [murray-2014]
+* [sanchez-2010]
+* [simons-tonhauser-beaver-roberts-2010]
+* [tellings-2014]
 -/
 
 @[expose] public section
@@ -46,445 +78,752 @@ original fieldwork with six speakers following [matthewson-2004].
 namespace MartinezVera2026
 
 open ConventionalImplicature (TwoDim)
+open Exhaustification (exhIE IsInnocentlyExcludable)
+open Quechua.SaraguroKichwa.Evidentiality (rka shka shi)
 
-/-! ### Composition of ⟨A, N⟩ pairs -/
+variable {A W : Type*}
 
-variable {W : Type*}
+/-! ### Evidentials -/
 
-/-- Composition rule I: β has empty NAI; α brings NAI. The new at-issue layer is `α.A β.A`;
-the new NAI is `α.N β.A`. -/
-def composeI (atFn naiFn : (W → Prop) → (W → Prop)) (β : TwoDim W (W → Prop)) :
-    TwoDim W (W → Prop) :=
-  ⟨atFn β.atIssue, naiFn β.atIssue⟩
+/-- `evidence ev s e p` is the not-at-issue proposition of the evidential `e` ((40b), (42b)),
+that `s` has evidence for `p` from a source `e` covers, where `ev s π p` is the set of worlds in
+which `s` has evidence of kind `π` for `p`. For *-rka* this is direct perceptual evidence and for
+*-shka* reportative evidence. -/
+def evidence (ev : A → Evidential.Parameter → Set W → Set W) (s : A) (e : Evidential)
+    (p : Set W) : Set W :=
+  {w | ∃ π ∈ e.covers, w ∈ ev s π p}
 
-/-- Composition rule II, in which both α and β bring NAI, accumulates `β.N ∧ α.N β.A` as the
-new NAI; it is the bind of two-dimensional meanings. -/
-def composeII (atFn naiFn : (W → Prop) → (W → Prop)) (β : TwoDim W (W → Prop)) :
-    TwoDim W (W → Prop) :=
-  β >>= fun a ↦ ⟨atFn a, naiFn a⟩
+/-- `withEvidential ev s e S` applies the evidential `e` to the sentence `S` by rule I ((40a),
+(42a)), keeping the scope at issue and adding the speaker's evidence for it not at issue. -/
+def withEvidential (ev : A → Evidential.Parameter → Set W → Set W) (s : A) (e : Evidential)
+    (S : TwoDim W (Set W)) : TwoDim W (Set W) :=
+  S >>= fun p ↦ ⟨p, (· ∈ evidence ev s e p)⟩
 
-/-- Composition rule III: an illocutionary operator takes the full ⟨A, N⟩ pair. -/
-def composeIII (op : TwoDim W (W → Prop) → TwoDim W (W → Prop)) (β : TwoDim W (W → Prop)) :
-    TwoDim W (W → Prop) :=
-  op β
+variable (ev : A → Evidential.Parameter → Set W → Set W) (s : A) (e : Evidential)
 
-@[simp] theorem composeI_atIssue (atFn naiFn : (W → Prop) → (W → Prop)) (β : TwoDim W (W → Prop)) :
-    (composeI atFn naiFn β).atIssue = atFn β.atIssue := rfl
+@[simp] theorem withEvidential_atIssue (S : TwoDim W (Set W)) :
+    (withEvidential ev s e S).atIssue = S.atIssue := rfl
 
-@[simp] theorem composeI_notAtIssue (atFn naiFn : (W → Prop) → (W → Prop))
-    (β : TwoDim W (W → Prop)) : (composeI atFn naiFn β).notAtIssue = naiFn β.atIssue := rfl
+@[simp] theorem ofPred_notAtIssue_withEvidential_pure (p : Set W) :
+    Set.ofPred (withEvidential ev s e (pure p)).notAtIssue = evidence ev s e p := by
+  ext; simp [withEvidential]
 
-@[simp] theorem composeII_atIssue (atFn naiFn : (W → Prop) → (W → Prop)) (β : TwoDim W (W → Prop)) :
-    (composeII atFn naiFn β).atIssue = atFn β.atIssue := rfl
+/-! ### Moves and contexts -/
 
-@[simp] theorem composeII_notAtIssue (atFn naiFn : (W → Prop) → (W → Prop))
-    (β : TwoDim W (W → Prop)) :
-    (composeII atFn naiFn β).notAtIssue = β.notAtIssue ⊓ naiFn β.atIssue := rfl
+/-- A move on the conversational record has a speaker, the propositions the speaker commits to,
+and the propositions by means of which it addresses the question under discussion. -/
+structure Move (A W : Type*) where
+  /-- The speaker. -/
+  speaker : A
+  /-- The propositions the speaker commits to. -/
+  commitments : Set (Set W)
+  /-- The propositions by means of which the move addresses the question under discussion. -/
+  addressers : Set (Set W)
 
-/-- Rule II generalizes rule I: they coincide when β's NAI is trivial. -/
-theorem composeI_eq_composeII (atFn naiFn : (W → Prop) → (W → Prop)) (β : TwoDim W (W → Prop))
-    (hβ : β.notAtIssue = ⊤) : composeI atFn naiFn β = composeII atFn naiFn β :=
-  TwoDim.ext rfl (by simp [composeI, hβ])
+namespace Move
 
-open Evidential
+/-- The operator `assert` (39) commits the speaker to the scope, by means of which she addresses
+the question under discussion, and to the not-at-issue content. -/
+def assert (s : A) (S : TwoDim W (Set W)) : Move A W where
+  speaker := s
+  commitments := {S.atIssue, Set.ofPred S.notAtIssue}
+  addressers := {S.atIssue}
 
-variable {W : Type*}
+/-- The operator `present` (41) brings the scope to the addressee's attention, addresses the
+question under discussion by means of it or its negation, and commits the speaker only to the
+not-at-issue content. -/
+def present (s : A) (S : TwoDim W (Set W)) : Move A W where
+  speaker := s
+  commitments := {Set.ofPred S.notAtIssue}
+  addressers := {S.atIssue, S.atIssueᶜ}
 
-/-! ### Highlighting (38) -/
+/-- A question biased toward `q` steers the exchange toward adopting `q`, and so addresses the
+question under discussion by means of it (§4.2). -/
+def biasedQuestion (s : A) (q : Set W) : Move A W := ⟨s, ∅, {q}⟩
 
-/-- A highlighting context records the propositions made salient by recent utterances and the
-question under discussion. -/
-structure HighlightingContext (W : Type*) where
-  /-- Propositions made salient by recent utterances. -/
-  salient : Set (Set W)
+/-- A declarative with a direct evidential is asserted and one with a reportative is presented
+((40c), (42c)), and `declare s e S` is the move of a declarative with evidential `e`, if the paper
+analyzes `e`. -/
+def declare (s : A) (e : Evidential) (S : TwoDim W (Set W)) : Option (Move A W) :=
+  match e.evidenceType? with
+  | some .attested => some (assert s S)
+  | some .reported => some (present s S)
+  | _ => none
+
+theorem declare_of_isDirect {e : Evidential} (he : e.IsDirect) (S : TwoDim W (Set W)) :
+    declare s e S = some (assert s S) := by
+  simp [declare, Evidential.evidenceType?_eq_some_iff.2 he]
+
+theorem declare_of_isReportative {e : Evidential} (he : e.IsReportative)
+    (S : TwoDim W (Set W)) : declare s e S = some (present s S) := by
+  simp [declare, Evidential.evidenceType?_eq_some_iff.2 he]
+
+@[simp] theorem declare_rka (S : TwoDim W (Set W)) : declare s rka S = some (assert s S) :=
+  declare_of_isDirect s (by decide) S
+
+@[simp] theorem declare_shka (S : TwoDim W (Set W)) : declare s shka S = some (present s S) :=
+  declare_of_isReportative s (by decide) S
+
+-- The paper does not analyze the inferential *-shi* (footnote 6).
+example (S : TwoDim W (Set W)) : declare s shi S = none := rfl
+
+end Move
+
+/-- A context of utterance consists of the moves on record and the question under discussion. -/
+structure Context (A W : Type*) where
+  /-- The moves on record. -/
+  moves : Set (Move A W)
   /-- The question under discussion. -/
   qud : Question W
 
-/-- A proposition addresses a question when it is comparable to one of its alternatives,
-entailing it or entailed by it. -/
-def AddressesQUD (q : Question W) (p : Set W) : Prop :=
-  ∃ a ∈ q.alt, p ⊆ a ∨ a ⊆ p
+namespace Context
 
-/-- A proposition is highlighted when an utterance has made it salient and it addresses the
-question under discussion (38). -/
-def Highlighted (c : HighlightingContext W) (p : Set W) : Prop :=
-  p ∈ c.salient ∧ AddressesQUD c.qud p
+/-- `c.update m` puts the move `m` on record. -/
+def update (c : Context A W) (m : Move A W) : Context A W := ⟨insert m c.moves, c.qud⟩
 
-/-! ### § 0. Evidential illocutionary operators (Faller / Murray)
+/-- `c.declare s e S` puts on record the move of a declarative with evidential `e`, if the paper
+analyzes `e`. -/
+def declare (c : Context A W) (s : A) (e : Evidential) (S : TwoDim W (Set W)) : Context A W :=
+  ((Move.declare s e S).map c.update).getD c
 
-Substrate previously hosted at `Discourse/EvidentialIllocution.lean`,
-inlined here per anchoring rule (sole consumer is this study file).
-The `assert`/`present` distinction is [faller-2002] /
-[murray-2014]; the `raisedPropositions` projection drives
-[martinez-vera-2026]'s salience updates downstream. -/
+/-- Asking a question that addresses no prior one makes it the question under discussion. -/
+def ask (c : Context A W) (Q : Question W) : Context A W := ⟨c.moves, Q⟩
 
-/-- Result of applying an illocutionary operator: speaker, addressee,
-    scope proposition, evidential (not-at-issue) proposition, and
-    commits-to-scope flag (`true` for `assert`, `false` for `present`). -/
-structure EvidentialAct (W : Type*) where
-  speaker : Discourse.Role
-  addressee : Discourse.Role
-  scope : Set W
-  evidentialContent : Set W
-  commitsToScope : Bool
+/-- The commitment state of the record commits the speaker of each move to each of its
+commitments. -/
+def commitments (c : Context A W) : Commitment.State A W :=
+  {k | ∃ m ∈ c.moves, ∃ p ∈ m.commitments, k = Commitment.commit m.speaker p}
 
-/-- [faller-2002]/[faller-2019a]: `assert(⟨A, N⟩)` commits the
-    speaker to both A and N. Used with direct evidentials. -/
-def assert (s a : Discourse.Role) (β : TwoDim W (W → Prop)) : EvidentialAct W :=
-  { speaker := s
-  , addressee := a
-  , scope := { w | β.atIssue w }
-  , evidentialContent := { w | β.notAtIssue w }
-  , commitsToScope := true }
+/-- `c.contextSetOf s` is the set of worlds compatible with the commitments of `s`. -/
+def contextSetOf (c : Context A W) (s : A) : Set W :=
+  Commitment.contextSet (Commitment.ofCommitter c.commitments s)
 
-/-- [murray-2014]/[faller-2019a]: `present(⟨A, N⟩)` brings A
-    to attention but does NOT commit to A; commits only to N. Used with
-    reportative/inferential evidentials. -/
-def present (s a : Discourse.Role) (β : TwoDim W (W → Prop)) : EvidentialAct W :=
-  { speaker := s
-  , addressee := a
-  , scope := { w | β.atIssue w }
-  , evidentialContent := { w | β.notAtIssue w }
-  , commitsToScope := false }
+theorem mem_contextSetOf {c : Context A W} {s : A} {w : W} :
+    w ∈ c.contextSetOf s ↔ ∀ m ∈ c.moves, m.speaker = s → ∀ p ∈ m.commitments, w ∈ p := by
+  simp only [contextSetOf, Commitment.contextSet, Commitment.contents, Commitment.ofCommitter,
+    commitments, Set.mem_sInter, Set.mem_image, Set.mem_ofPred_eq]
+  constructor
+  · intro h m hm hs p hp
+    exact h p ⟨_, ⟨⟨⟨m, hm, p, hp, rfl⟩, hs⟩, rfl⟩, rfl⟩
+  · rintro h _ ⟨_, ⟨⟨⟨m, hm, p, hp, rfl⟩, hs⟩, -⟩, rfl⟩
+    exact h m hm hs p hp
 
-@[simp] theorem assert_commitsToScope (s a : Discourse.Role) (β : TwoDim W (W → Prop)) :
-    (assert s a β).commitsToScope = true := rfl
+end Context
 
-@[simp] theorem present_commitsToScope (s a : Discourse.Role) (β : TwoDim W (W → Prop)) :
-    (present s a β).commitsToScope = false := rfl
+/-- A proposition is highlighted (38) when a move on record addresses the question under
+discussion by means of it and it partially answers that question. -/
+def Highlighted (c : Context A W) (q : Set W) : Prop :=
+  (∃ m ∈ c.moves, q ∈ m.addressers) ∧ c.qud.PartiallyAnsweredBy q
 
-theorem assert_present_differ_only_in_scope_commitment
-    (s a : Discourse.Role) (β : TwoDim W (W → Prop)) :
-    (assert s a β).scope = (present s a β).scope ∧
-    (assert s a β).evidentialContent = (present s a β).evidentialContent ∧
-    (assert s a β).commitsToScope ≠ (present s a β).commitsToScope := by
-  refine ⟨rfl, rfl, ?_⟩
-  simp only [assert_commitsToScope, present_commitsToScope]
-  decide
+/-- The presupposition of *=mi* (37) holds when some alternative to the scope `p` is highlighted
+and, exhaustified relative to the alternatives, entails `¬p`. Where defined, *=mi* is the
+identity on its argument. -/
+def MiDefined (c : Context A W) (ALT : Set (Set W)) (p : Set W) : Prop :=
+  ∃ q ∈ ALT, Highlighted c q ∧ exhIE ALT q ⊆ pᶜ
 
-/-- Propositions an act puts forward to the addressee. `assert` raises
-    the scope; `present` raises both scope and its complement (the open
-    polar issue). -/
-def EvidentialAct.raisedPropositions (a : EvidentialAct W) : Set (Set W) :=
-  if a.commitsToScope then {a.scope} else {a.scope, a.scopeᶜ}
+variable {c : Context A W} {ALT : Set (Set W)} {p q : Set W}
 
-@[simp] theorem assert_raisedPropositions (s a : Discourse.Role) (β : TwoDim W (W → Prop)) :
-    (assert s a β).raisedPropositions = {{ w | β.atIssue w }} := by
-  simp [EvidentialAct.raisedPropositions, assert]
-
-@[simp] theorem present_raisedPropositions (s a : Discourse.Role) (β : TwoDim W (W → Prop)) :
-    (present s a β).raisedPropositions =
-      ({ { w | β.atIssue w }, { w | β.atIssue w }ᶜ } : Set (Set W)) := by
-  simp [EvidentialAct.raisedPropositions, present]
-
-theorem present_raises_polar_negation (s a : Discourse.Role) (β : TwoDim W (W → Prop)) :
-    { w | β.atIssue w }ᶜ ∈ (present s a β).raisedPropositions := by
-  simp
-
-theorem assert_does_not_raise_polar_negation
-    (s a : Discourse.Role) (β : TwoDim W (W → Prop)) (hne : ∃ w, β.atIssue w) :
-    { w | β.atIssue w }ᶜ ∉ (assert s a β).raisedPropositions := by
-  simp only [assert_raisedPropositions, Set.mem_singleton_iff]
-  intro h
+/-- The witness of (37) differs from the scope, as the paper's prose requires, whenever its
+exhaustification is consistent. -/
+theorem ne_of_exhIE_subset_compl (h : exhIE ALT q ⊆ pᶜ) (hne : (exhIE ALT q).Nonempty) :
+    q ≠ p := by
+  rintro rfl
   obtain ⟨w, hw⟩ := hne
-  have : w ∉ ({ w | β.atIssue w }ᶜ : Set W) := by simp [hw]
-  rw [h] at this
-  exact this hw
+  exact h hw (Exhaustification.exhIE_subset ALT q hw)
 
-/-- Typological mapping from evidential source to illocutionary
-    operator flavour. -/
-inductive IllocutionaryFlavour where
-  | assertFlavour
-  | presentFlavour
-  deriving DecidableEq, Repr, Inhabited
+/-- When nothing on record addresses the question under discussion, *=mi* is undefined, as out
+of the blue ((7), (28)) and after an unbiased polar question (8) or a constituent question
+(29). -/
+theorem not_miDefined_of_addressers (h : ∀ m ∈ c.moves, m.addressers = ∅) :
+    ¬ MiDefined c ALT p := by
+  rintro ⟨q, -, ⟨⟨m, hm, hq⟩, -⟩, -⟩
+  simp [h m hm] at hq
 
-def IllocutionaryFlavour.ofEvidenceType :
-    EvidenceType → IllocutionaryFlavour
-  | .attested => .assertFlavour
-  | .reported => .presentFlavour
-  | .inferring => .presentFlavour
+/-- For clausal *=mi* the alternatives are all propositions ((44d), (51d)), exhaustification is
+vacuous, and (37) asks for a highlighted proposition entailing `¬p`. -/
+theorem miDefined_univ_iff : MiDefined c Set.univ p ↔ ∃ q, Highlighted c q ∧ q ⊆ pᶜ := by
+  simp [MiDefined, Exhaustification.exhIE_univ]
 
-@[simp] theorem flavour_attested :
-    IllocutionaryFlavour.ofEvidenceType .attested = .assertFlavour := rfl
-@[simp] theorem flavour_reported :
-    IllocutionaryFlavour.ofEvidenceType .reported = .presentFlavour := rfl
-@[simp] theorem flavour_inferring :
-    IllocutionaryFlavour.ofEvidenceType .inferring = .presentFlavour := rfl
+/-- A highlighted `¬p` licenses clausal *=mi* on `p` ((43), (44)). -/
+theorem miDefined_of_highlighted_compl (h : Highlighted c pᶜ) : MiDefined c Set.univ p :=
+  miDefined_univ_iff.2 ⟨pᶜ, h, subset_rfl⟩
 
-/-- Partial collapse of [faller-2019a]'s commitment-grounds evidence types
-    onto Willett's: reportative evidence is reported evidence;
-    adequate evidence and best possible grounds are commitment-strength
-    grades that cross-cut Willett's types. -/
-def fallerEvidenceType? : Faller2019.EvidenceType → Option EvidenceType
-  | .reportative => some .reported
-  | .adequate => none
-  | .bpg => none
+theorem highlighted_update_iff {m : Move A W} :
+    Highlighted (c.update m) q ↔ (q ∈ m.addressers ∨ ∃ m' ∈ c.moves, q ∈ m'.addressers) ∧
+      c.qud.PartiallyAnsweredBy q := by
+  simp [Highlighted, Context.update]
 
-/-- [faller-2019a]'s Cuzco Quechua reportative and the SK reportative
-    `-shka` land on the same evidence type, hence license the same
-    illocutionary flavour: `present`, not `assert`. -/
-theorem faller_reportative_flavour :
-    (fallerEvidenceType? .reportative).map IllocutionaryFlavour.ofEvidenceType
-      = some .presentFlavour := rfl
+/-- Presenting `p` licenses clausal *=mi* on `p` ((48), (50), (51)), wherever `¬p` addresses the
+question under discussion. -/
+theorem miDefined_update_present (S : TwoDim W (Set W))
+    (h : c.qud.PartiallyAnsweredBy S.atIssueᶜ) :
+    MiDefined (c.update (.present s S)) Set.univ S.atIssue :=
+  miDefined_of_highlighted_compl (highlighted_update_iff.2 ⟨.inl (by simp [Move.present]), h⟩)
 
-def applyDefault (src : EvidenceType) (s a : Discourse.Role) (β : TwoDim W (W → Prop)) :
-    EvidentialAct W :=
-  match IllocutionaryFlavour.ofEvidenceType src with
-  | .assertFlavour => assert s a β
-  | .presentFlavour => present s a β
+/-- Asserting a consistent `p` adds nothing that licenses clausal *=mi* on `p` ((47), (49)). -/
+theorem miDefined_update_assert_iff (S : TwoDim W (Set W)) (hp : S.atIssue.Nonempty) :
+    MiDefined (c.update (.assert s S)) Set.univ S.atIssue ↔ MiDefined c Set.univ S.atIssue := by
+  simp only [miDefined_univ_iff, highlighted_update_iff, Move.assert, Set.mem_singleton_iff]
+  constructor
+  · rintro ⟨q, ⟨rfl | hq, hqud⟩, hsub⟩
+    · obtain ⟨w, hw⟩ := hp
+      exact absurd hw (hsub hw)
+    · exact ⟨q, ⟨hq, hqud⟩, hsub⟩
+  · rintro ⟨q, ⟨hq, hqud⟩, hsub⟩
+    exact ⟨q, ⟨.inr hq, hqud⟩, hsub⟩
 
-@[simp] theorem applyDefault_attested (s a : Discourse.Role) (β : TwoDim W (W → Prop)) :
-    applyDefault .attested s a β = assert s a β := rfl
-@[simp] theorem applyDefault_reported (s a : Discourse.Role) (β : TwoDim W (W → Prop)) :
-    applyDefault .reported s a β = present s a β := rfl
-@[simp] theorem applyDefault_inferring (s a : Discourse.Role) (β : TwoDim W (W → Prop)) :
-    applyDefault .inferring s a β = present s a β := rfl
+/-- A highlighted alternative that innocently excludes the scope licenses *=mi* ((45), (46)), as
+exhaustifying "Juan bought a cow" relative to what Juan might have bought denies that he bought a
+pig. -/
+theorem miDefined_of_isInnocentlyExcludable (hq : q ∈ ALT) (hh : Highlighted c q)
+    (h : IsInnocentlyExcludable ALT q p) : MiDefined c ALT p :=
+  ⟨q, hq, hh, h.exhIE_subset_compl⟩
 
-theorem attested_commits_indirect_does_not (s a : Discourse.Role) (β : TwoDim W (W → Prop)) :
-    (applyDefault .attested s a β).commitsToScope = true ∧
-    (applyDefault .reported s a β).commitsToScope = false ∧
-    (applyDefault .inferring s a β).commitsToScope = false :=
-  ⟨rfl, rfl, rfl⟩
+/-- When no highlighted proposition is among the alternatives, *=mi* is undefined, as in a
+correction of the object with *=mi* on the subject or the verb ((27c), (27d)). -/
+theorem not_miDefined_of_disjoint (h : ∀ q, Highlighted c q → q ∉ ALT) :
+    ¬ MiDefined c ALT p := by
+  rintro ⟨q, hq, hh, -⟩
+  exact h q hh hq
 
-/-! ### § 1. The =mi denotation (paper eq. 37, polar reduction) -/
+/-! ### Commitments -/
 
-/-- Felicity condition for `=mi` attached to a scope expression `S` in
-    context `c`, given a focus alternative set `alts`. This is paper
-    eq. (37) for the case where `alts` is the polar partition `{p, pᶜ}`:
-    polar partitions admit no innocently excludable alternatives (negating
-    both gives `{¬p, ¬pᶜ} = {¬p, p}`, contradictory), so exhaustification
-    collapses to identity, and the paper's "`exh(q)` entails `¬S.A`"
-    reduces to "`q ⊆ S.atIssueᶜ`".
+/-- A speaker committed to a proposition and to its negation is inconsistent. -/
+theorem contextSetOf_eq_empty {s : A} {m m' : Move A W} (hm : m ∈ c.moves) (hm' : m' ∈ c.moves)
+    (hs : m.speaker = s) (hs' : m'.speaker = s) (hp : p ∈ m.commitments)
+    (hp' : pᶜ ∈ m'.commitments) : c.contextSetOf s = ∅ :=
+  Set.eq_empty_of_forall_notMem fun _ hw ↦
+    Context.mem_contextSetOf.1 hw m' hm' hs' _ hp' (Context.mem_contextSetOf.1 hw m hm hs p hp)
 
-    Note: the polar reduction does NOT extend to constituent-focus
-    contrast cases (paper §3 examples 22–28), where alts may include
-    multiple elements with overlap. Those would consume the full
-    `Semantics/Exhaustification.Excluder` machinery. -/
-def miFelicitous (c : HighlightingContext W) (alts : Set (Set W))
-    (S : TwoDim W (W → Prop)) : Prop :=
-  ∃ q ∈ alts, Highlighted c q ∧ q ⊆ ({ w | S.atIssue w } : Set W)ᶜ
+theorem contextSetOf_update {m : Move A W} {w : W} :
+    w ∈ (c.update m).contextSetOf s ↔
+      (m.speaker = s → ∀ p ∈ m.commitments, w ∈ p) ∧ w ∈ c.contextSetOf s := by
+  simp [Context.mem_contextSetOf, Context.update]
 
-/-! ### § 2. The polar QUD setup -/
+variable (S : TwoDim W (Set W))
 
-/-- The polar QUD over a contingent proposition `p`: alternatives are
-    `{p, pᶜ}`. Built from `Question.polar p`. Used as the QUD slot
-    in the discourse contexts that license a `=mi` follow-up.
+/-- Asserting `p` and then `¬p` is inconsistent (18a), as is the *-rka* counterpart of footnote 9,
+where *=mi* on `¬p` is licensed but the speaker contradicts herself. -/
+theorem contextSetOf_assert_assert_compl :
+    ((c.update (.assert s S)).update (.assert s (pure S.atIssueᶜ))).contextSetOf s = ∅ :=
+  contextSetOf_eq_empty (m := .assert s S) (m' := .assert s (pure S.atIssueᶜ)) (p := S.atIssue)
+    (by simp [Context.update]) (by simp [Context.update]) rfl rfl (by simp [Move.assert])
+    (by simp [Move.assert])
 
-    With this (non-trivial) QUD, `AddressesQUD` does real filtering work:
-    a proposition addresses `polarQUD p` iff it is comparable to `p` or
-    to `pᶜ`. Both `p` and `pᶜ` themselves trivially address it (each is
-    a subset of itself), so the highlighted alternatives in the headline
-    contrast satisfy the QUD-addressing requirement of `Highlighted`. -/
-def polarQUD (p : Set W) : HighlightingContext W :=
-  { salient := ∅, qud := Question.polar p }
+/-- Presenting `p` and then asserting `¬p` is consistent wherever the speaker's evidence for `p`
+is compatible with `¬p` (19a). -/
+theorem mem_contextSetOf_present_assert_compl {w : W} (hc : w ∈ c.contextSetOf s)
+    (hN : S.notAtIssue w) (hA : w ∉ S.atIssue) :
+    w ∈ ((c.update (.present s S)).update (.assert s (pure S.atIssueᶜ))).contextSetOf s := by
+  simp [contextSetOf_update, Move.assert, Move.present, hc, hN, hA]
 
-/-- Either `p` or `pᶜ` is itself a maximal answer to `polar p`, when `p`
-    is contingent (`p ≠ ∅` and `p ≠ Set.univ`). This is the substrate
-    fact `Question.alt_polar_of_nontrivial`. -/
-theorem mem_alt_polar (p : Set W) (hne : p ≠ ∅) (hnu : p ≠ Set.univ) :
-    p ∈ (Question.polar p).alt := by
-  rw [Question.alt_polar_of_nontrivial hne hnu]
-  simp
+/-- Denying the evidence a declarative commits to is inconsistent, after an assertion (18b) or a
+presentation (19b). -/
+theorem contextSetOf_update_assert_compl_notAtIssue {m : Move A W} (hs : m.speaker = s)
+    (hm : Set.ofPred S.notAtIssue ∈ m.commitments) :
+    ((c.update m).update (.assert s (pure (Set.ofPred S.notAtIssue)ᶜ))).contextSetOf s = ∅ :=
+  contextSetOf_eq_empty (m' := .assert s (pure (Set.ofPred S.notAtIssue)ᶜ))
+    (by simp [Context.update]) (by simp [Context.update]) hs rfl hm (by simp [Move.assert])
 
-theorem mem_alt_polar_compl (p : Set W) (hne : p ≠ ∅) (hnu : p ≠ Set.univ) :
-    pᶜ ∈ (Question.polar p).alt := by
-  rw [Question.alt_polar_of_nontrivial hne hnu]
-  simp
+/-- Confirming a presented `p` with *=mi* asserts it, so denying it afterwards is inconsistent
+(footnote 10). -/
+theorem contextSetOf_present_assert_assert_compl :
+    (((c.update (.present s S)).update (.assert s (pure S.atIssue))).update
+      (.assert s (pure S.atIssueᶜ))).contextSetOf s = ∅ :=
+  contextSetOf_assert_assert_compl s (pure S.atIssue)
 
-/-- `p` itself addresses the polar QUD over `p`: it equals one of the two
-    alternatives. Requires `p` contingent so the polar partition is
-    non-trivial. -/
-theorem addresses_polarQUD_self (p : Set W) (hne : p ≠ ∅) (hnu : p ≠ Set.univ) :
-    AddressesQUD (polarQUD (W := W) p).qud p := by
-  refine ⟨p, ?_, Or.inl (le_refl _)⟩
-  exact mem_alt_polar p hne hnu
+/-! ### The examples
 
-/-- `pᶜ` addresses the polar QUD over `p`: it equals the other
-    alternative. Requires `p` contingent. -/
-theorem addresses_polarQUD_compl (p : Set W) (hne : p ≠ ∅) (hnu : p ≠ Set.univ) :
-    AddressesQUD (polarQUD (W := W) p).qud pᶜ := by
-  refine ⟨pᶜ, ?_, Or.inl (le_refl _)⟩
-  exact mem_alt_polar_compl p hne hnu
+The examples are evaluated in a model whose worlds are sets of events: an event fixes a value at
+each constituent site of the scope sentence, a world is the set of events that happened, and the
+question under discussion asks which event happened. The scope is that the scope event happened,
+and a correction asserts that its variant at the contrasted site did. The propositions in play
+are the scope, its negation and the variants, named by `Answer`; `miDefined_iff` reduces the
+presupposition of *=mi* in each example's context to a check on these names, and
+`judgment_eq_acceptable_iff_miDefined` compares it with the paper's judgments. -/
 
-/-! ### § 3. Discourse-update map (generic; consumes substrate)
+open Discourse (Role)
 
-`updateAfterAct c a` adds the propositions an act `a` raises to the
-salient set of `c`. The match-on-`commitsToScope` lives in the substrate
-(`EvidentialAct.raisedPropositions`), not here — verum studies, biased
-polar-question studies, and reportative-evidential studies all consume
-the same generic update.
--/
+/-- A `Site` is a constituent that *=mi* marks or a correction contrasts in the examples. -/
+inductive Site
+  | subject | object | goal | verbPhrase | verb | modifier
+  deriving DecidableEq
 
-/-- Generic discourse-update: an act adds the propositions it raises to
-    the salient set. The behaviour-distinguishing match is delegated to
-    the substrate's `EvidentialAct.raisedPropositions`. -/
-def updateAfterAct (c : HighlightingContext W) (a : EvidentialAct W) :
-    HighlightingContext W :=
-  { c with salient := c.salient ∪ a.raisedPropositions }
+/-- An event fixes a value at each site. -/
+abbrev Event := Site → Bool
 
-@[simp] theorem salient_updateAfterAct (c : HighlightingContext W) (a : EvidentialAct W) :
-    (updateAfterAct c a).salient = c.salient ∪ a.raisedPropositions := rfl
+/-- `happened e` is the proposition that the event `e` happened. -/
+def happened (e : Event) : Set (Set Event) := {w | e ∈ w}
 
-@[simp] theorem qud_updateAfterAct (c : HighlightingContext W) (a : EvidentialAct W) :
-    (updateAfterAct c a).qud = c.qud := rfl
+/-- `vary k b` is the scope event with the value at `k` set to `b`, the scope event itself when
+`b` is `true`. -/
+def vary (k : Site) (b : Bool) : Event := Function.update (fun _ ↦ true) k b
 
-/-! ### § 4. The headline contrast (paper exx. 47–50)
+/-- An `Answer` names a proposition in play, the scope, its negation, or the variant at a
+site. -/
+inductive Answer
+  | scope | negation | variant (k : Site)
+  deriving DecidableEq
 
-The proofs derive from the substrate facts `present_raises_polar_negation`
-and `assert_does_not_raise_polar_negation`. The match-on-`commitsToScope`
-is exercised once in the substrate; here the consequences fall out.
--/
+/-- `a.prop` is the proposition the answer `a` names. -/
+def Answer.prop : Answer → Set (Set Event)
+  | scope => happened fun _ ↦ true
+  | negation => (happened fun _ ↦ true)ᶜ
+  | variant k => happened (vary k false)
 
-/-- After a reportative-evidential `present(p)` update, a `=mi`-marked
-    follow-up confirming `p` is felicitous: the witness is the highlighted
-    `pᶜ`, which is raised by `present` (substrate:
-    `present_raises_polar_negation`) and addresses the polar QUD over `p`
-    (substrate: `addresses_polarQUD_compl`).
+/-- The question under discussion of the model asks which event happened. -/
+def whichEvent : Question (Set Event) := Question.which Set.univ happened
 
-    Paper exx. 21/48. Hypotheses `hne` and `hnu` are the contingency
-    conditions on the scope: the paper assumes contingent scopes throughout.
-    The alternative set is the polar partition `{p, pᶜ}`. -/
-theorem mi_felicitous_after_present
-    (s a : Discourse.Role) (p : Set W) (hne : p ≠ ∅) (hnu : p ≠ Set.univ) :
-    miFelicitous
-      (updateAfterAct (polarQUD p) (present s a (pure (· ∈ p))))
-      ({p, pᶜ} : Set (Set W))
-      (pure (· ∈ p)) := by
-  refine ⟨pᶜ, by simp, ⟨?_, ?_⟩, ?_⟩
-  · -- pᶜ is in the salient set, via the substrate fact
-    -- `present_raises_polar_negation`
-    simp only [salient_updateAfterAct, polarQUD,
-      MartinezVera2026.present_raisedPropositions,
-      TwoDim.pure_atIssue, Set.empty_union, Set.mem_insert_iff,
-      Set.mem_singleton_iff]
-    right; rfl
-  · -- pᶜ addresses the polar QUD over p
-    simp only [qud_updateAfterAct, polarQUD]
-    exact addresses_polarQUD_compl p hne hnu
-  · -- pᶜ ⊆ pᶜ (trivially); the at-issue layer of (pure (· ∈ p))
-    -- unfolds to (· ∈ p), so its complement is pᶜ
-    intro w hw
-    simpa using hw
+/-- The alternatives of *=mi* on a clause are all propositions ((44d), (51d)), and those of *=mi*
+on the constituent at a site are the variants at that site ((46d)). -/
+def alternatives : Option Site → Set (Set (Set Event))
+  | none => Set.univ
+  | some k => Set.range fun b ↦ happened (vary k b)
 
-/-- After a direct-evidential `assert(p)` update, a `=mi`-marked follow-up
-    confirming `p` is NOT felicitous: only `p` itself is raised by
-    `assert` (substrate: `assert_does_not_raise_polar_negation`), and
-    `p ⊆ pᶜ` would force `p = ∅`, contradicting contingency.
+/-- The model's speaker has evidence of every kind for everything. -/
+def evModel (_ : Role) (_ : Evidential.Parameter) (_ : Set (Set Event)) : Set (Set Event) :=
+  Set.univ
 
-    Paper ex. 47 — the contrast that motivates the present/assert
-    distinction. -/
-theorem mi_infelicitous_after_assert
-    (s a : Discourse.Role) (p : Set W) (hne : p ≠ ∅) (hnu : p ≠ Set.univ) :
-    ¬ miFelicitous
-        (updateAfterAct (polarQUD p) (assert s a (pure (· ∈ p))))
-        ({p, pᶜ} : Set (Set W))
-        (pure (· ∈ p)) := by
-  rintro ⟨q, hq, ⟨hsalient, _⟩, hsub⟩
-  -- After assert, raisedPropositions = {p}; salient = ∅ ∪ {p} = {p}
-  -- So hsalient says q = p. Combined with hsub : q ⊆ pᶜ, that forces p ⊆ pᶜ,
-  -- which means p = ∅, contradicting `hne`.
-  simp only [salient_updateAfterAct, polarQUD,
-    MartinezVera2026.assert_raisedPropositions,
-    TwoDim.pure_atIssue, Set.empty_union,
-    Set.mem_singleton_iff] at hsalient
-  -- hsalient : q = {w | w ∈ p}, which is just `q = p`
-  have hq_eq : q = p := by
-    rw [hsalient]; rfl
-  subst hq_eq
-  apply hne
-  ext w
-  refine ⟨λ hw => ?_, λ hw => absurd hw (Set.notMem_empty _)⟩
-  have := hsub hw
-  simp at this
-  exact absurd hw this
+/-- `sentence s e p` is the declarative of `s` with evidential `e` and scope `p`. -/
+def sentence (s : Role) (e : Evidential) (p : Set (Set Event)) :
+    TwoDim (Set Event) (Set (Set Event)) :=
+  withEvidential evModel s e (pure p)
 
-/-! ### § 6. MV's partition and [romero-han-2004]'s VERUM partition
+/-- A `Prior` is the discourse before a *=mi* sentence as the paper describes its examples. It is
+empty, an assertion of the negated scope (6), a debate between the scope and its negation ((9),
+(11)), a declarative of the scope with *-rka* (20) or *-shka* (21), or a correction asserting a
+variant ((22)–(30)). -/
+inductive Prior
+  | none | assertedNegation | debate | direct | reportative | correction (k : Site)
+  deriving DecidableEq
 
-The partition over which `=mi` operates is the polar `{p, pᶜ}`. [romero-han-2004]'s VERUM,
-the necessity `□[R] (p ∈ cg ·)` along the knowledge and conversational goals of an
-individual, yields instead the partition on whether `p` is for sure to be added to the common
-ground.
--/
+/-- An `Asked` is the question asked right before the *=mi* sentence, an unbiased polar question
+((8), (9)), a constituent question (29), or a question biased toward the negation (10) or toward
+the scope (11). -/
+inductive Asked
+  | polar | constituent | negativeBiased | positiveBiased
+  deriving DecidableEq
 
-open scoped ModalLogic SetRel in
-/-- MV's polar partition and [romero-han-2004]'s VERUM partition differ in general: where the
-common ground accepts nothing contingent, VERUM of a contingent proposition holds nowhere, so
-its partition is `{∅, univ}`. -/
-theorem mv_partition_can_diverge_from_romeroHan_partition :
-    ∃ (R : SetRel Bool Bool) (cg : Bool → Filter Bool) (p : Set Bool),
-      ({p, pᶜ} : Set (Set Bool)) ≠ {{w | □[R] (p ∈ cg ·) w}, {w | □[R] (p ∈ cg ·) w}ᶜ} := by
-  refine ⟨.univ, fun _ ↦ ⊤, {true}, fun h ↦ ?_⟩
-  have hmem : ({true} : Set Bool) ∈ ({{true}, {true}ᶜ} : Set (Set Bool)) := Or.inl rfl
-  rw [h] at hmem
-  simp [ModalLogic.Box, Set.ext_iff] at hmem
+/-- `p.context` is the context the prior discourse `p` sets up. -/
+def Prior.context : Prior → Context Role (Set Event)
+  | none => ⟨∅, whichEvent⟩
+  | assertedNegation => (⟨∅, whichEvent⟩ : Context _ _).declare .addressee rka
+      (sentence .addressee rka Answer.negation.prop)
+  | debate => ((⟨∅, whichEvent⟩ : Context _ _).update (.assert .addressee
+      (pure Answer.negation.prop))).update (.assert .speaker (pure Answer.scope.prop))
+  | direct => (⟨∅, whichEvent⟩ : Context _ _).declare .speaker rka
+      (sentence .speaker rka Answer.scope.prop)
+  | reportative => (⟨∅, whichEvent⟩ : Context _ _).declare .speaker shka
+      (sentence .speaker shka Answer.scope.prop)
+  | correction k => (⟨∅, whichEvent⟩ : Context _ _).declare .addressee rka
+      (sentence .addressee rka (Answer.variant k).prop)
 
-/-! ### § 7. The defining commitment contrast (corollary of substrate)
+/-- `a.context c` asks the question `a` in the context `c`. -/
+def Asked.context : Asked → Context Role (Set Event) → Context Role (Set Event)
+  | polar, c => c.ask (.polar Answer.scope.prop)
+  | constituent, c => c.ask whichEvent
+  | negativeBiased, c => (c.ask (.polar Answer.scope.prop)).update
+      (.biasedQuestion .addressee Answer.negation.prop)
+  | positiveBiased, c => (c.ask (.polar Answer.scope.prop)).update
+      (.biasedQuestion .addressee Answer.scope.prop)
 
-Direct evidentials commit the speaker to scope; reportatives do not.
-This is `MartinezVera2026.assert_commitsToScope` and
-`present_commitsToScope` packaged as a single statement. The reason
-`present` highlights `¬p` (and `assert` doesn't) is downstream of this
-commitment difference, formalised in the substrate's
-`present_raises_polar_negation` / `assert_does_not_raise_polar_negation`.
--/
+/-- A *=mi* example records its prior discourse, the question asked, the constituent *=mi* marks,
+and the polarity of its scope. -/
+structure MiExample where
+  /-- The discourse before the *=mi* sentence. -/
+  prior : Prior
+  /-- The question asked right before it, if any. -/
+  asked : Option Asked
+  /-- The constituent *=mi* marks, or none for the clause. -/
+  focus : Option Site
+  /-- The polarity of the scope. -/
+  polarity : Polarity
+  deriving DecidableEq
 
-theorem direct_commits_reportative_does_not
-    (s a : Discourse.Role) (β : TwoDim W (W → Prop)) :
-    (assert s a β).commitsToScope = true ∧
-    (present s a β).commitsToScope = false :=
-  ⟨rfl, rfl⟩
+namespace MiExample
 
-/-! ### § 8. Cross-Quechuan family contrast (paper §5)
+variable (r : MiExample)
 
-A label-only typology of published `=mi` analyses across Quechuan
-varieties. **This is currently a `decide`-distinct enum, not a
-semantic taxonomy** — each cell is a stand-in for a future per-paper
-study file (Faller2002, Tellings2014, Grzech2020, Bendezú2023). Once
-those exist, this enum should be replaced by `MiSemantics W`-shaped
-inhabitants whose pairwise distinctness becomes a substantive theorem
-about predicted felicity profiles, not an enum tautology.
+/-- `r.context` is the context of the *=mi* sentence. -/
+def context : Context Role (Set Event) := (r.asked.map Asked.context).getD id r.prior.context
 
-Currently retained as a drift sentry: if a future formalisation
-collapses any two analyses into one (e.g. by treating "epistemic
-authority" as a sub-case of "verum + focus"), the
-`pairwise_distinct` proof fails and forces a re-evaluation of the
-paper's typological-divergence claim.
--/
+/-- `r.scope` names the scope of the *=mi* sentence. -/
+def scope : Answer := match r.polarity with
+  | .positive => .scope
+  | .negative => .negation
 
-/-- Analytic stance taken on `=mi` in a given Quechuan variety, as
-    surveyed in paper §5. Five mutually-incompatible claims, one per
-    variety. Each is a label awaiting a future per-paper study. -/
-inductive MiAnalysis where
-  /-- Verum + focus marker requiring discourse sensitivity to the QUD
-      (Saraguro Kichwa per [martinez-vera-2026]). -/
-  | verumPlusFocus
-  /-- Verum + corrective contrast (Conchucos Quechua per
-      [bendezu-2023]). -/
-  | verumPlusContrast
-  /-- Pure (best-possible-grounds) direct evidential
-      (Cuzco Quechua per [faller-2002], [sanchez-2010]). -/
-  | directEvidentialOnly
-  /-- Pure evidential, no focus role (Imbabura Kichwa per
-      [tellings-2014]). -/
-  | pureEvidentialNoFocus
-  /-- Epistemic-authority marker (Upper Napo Kichwa per
-      [grzech-2020]). -/
-  | epistemicAuthority
-  deriving DecidableEq, Repr, Inhabited
+/-- `r.addressers` lists the answers by means of which the moves on record address the question
+under discussion. -/
+def addressers : List Answer :=
+  (match r.prior with
+    | .none => []
+    | .assertedNegation => [.negation]
+    | .debate => [.negation, .scope]
+    | .direct => [.scope]
+    | .reportative => [.scope, .negation]
+    | .correction k => [.variant k]) ++
+  (match r.asked with
+    | some .negativeBiased => [.negation]
+    | some .positiveBiased => [.scope]
+    | _ => [])
 
-/-- The cross-Quechuan map from variety to published `=mi` analysis. -/
-def quechuanMiAnalyses : List (String × MiAnalysis) :=
-  [ ("Saraguro Kichwa (qvj)", .verumPlusFocus)
-  , ("Conchucos Quechua (qxn)", .verumPlusContrast)
-  , ("Cuzco Quechua (quz)", .directEvidentialOnly)
-  , ("Imbabura Kichwa (qvi)", .pureEvidentialNoFocus)
-  , ("Upper Napo Kichwa (qvo)", .epistemicAuthority) ]
+/-- Every answer in play addresses the question under discussion, except that a variant does not
+address a polar question about the scope. -/
+def Addresses : Answer → Prop
+  | .variant _ => r.asked = none ∨ r.asked = some .constituent
+  | _ => True
 
-/-- The five published analyses are pairwise distinct as labels. Drift
-    sentry: collapsing two cases breaks this. -/
-theorem quechuanMiAnalyses_pairwise_distinct :
-    [MiAnalysis.verumPlusFocus, .verumPlusContrast, .directEvidentialOnly,
-     .pureEvidentialNoFocus, .epistemicAuthority].Pairwise (· ≠ ·) := by
-  decide
+/-- An answer fits the *=mi* sentence when it is one of its alternatives and its exhaustification
+entails the negated scope, as `fits_iff` shows. -/
+def Fits (a : Answer) : Prop := match r.focus, r.polarity with
+  | none, .positive => a = .negation
+  | none, .negative => a = .scope
+  | some k, .positive => a = .variant k
+  | some _, .negative => a = .scope
+
+/-- The analysis licenses the *=mi* sentence when some answer on record addresses the question
+under discussion and fits it. -/
+def Licensed : Prop := ∃ a ∈ r.addressers, r.Addresses a ∧ r.Fits a
+
+instance (a : Answer) : Decidable (r.Addresses a) := by
+  cases a <;> unfold Addresses <;> infer_instance
+
+instance (a : Answer) : Decidable (r.Fits a) := by
+  unfold Fits; split <;> infer_instance
+
+instance : Decidable r.Licensed := by
+  unfold Licensed; infer_instance
+
+end MiExample
+
+/-! #### The model's propositions -/
+
+theorem happened_subset_happened {e e' : Event} : happened e ⊆ happened e' ↔ e = e' := by
+  refine ⟨fun h ↦ (Set.mem_singleton_iff.1 (h (Set.mem_singleton e))).symm, fun h ↦ h ▸ subset_rfl⟩
+
+theorem vary_true (k : Site) : vary k true = fun _ ↦ true := Function.update_eq_self k _
+
+theorem vary_false_ne (k : Site) : vary k false ≠ fun _ ↦ true :=
+  fun h ↦ by simpa [vary] using congrFun h k
+
+theorem vary_false_inj {j k : Site} : vary j false = vary k false ↔ j = k := by
+  refine ⟨fun h ↦ ?_, fun h ↦ h ▸ rfl⟩
+  by_contra hjk
+  simpa [vary, hjk] using congrFun h j
+
+theorem empty_mem_negation : ∅ ∈ Answer.negation.prop :=
+  Set.notMem_empty (fun _ ↦ true : Event)
+
+theorem empty_notMem_happened (e : Event) : ∅ ∉ happened e := Set.notMem_empty e
+
+theorem mem_alternatives_iff {a : Answer} {k : Site} :
+    a.prop ∈ alternatives (some k) ↔ a = .scope ∨ a = .variant k := by
+  refine ⟨?_, ?_⟩
+  · rintro ⟨b, hb⟩
+    cases a with
+    | scope =>
+      exact .inl rfl
+    | negation =>
+      exact absurd (hb ▸ empty_mem_negation) (empty_notMem_happened _)
+    | variant j =>
+      have h := happened_subset_happened.1 hb.subset
+      cases b
+      · exact .inr (congrArg Answer.variant (vary_false_inj.1 h.symm))
+      · exact (vary_false_ne j ((vary_true k).symm.trans h).symm).elim
+  · rintro (rfl | rfl)
+    · exact ⟨true, by simp [Answer.prop, vary_true]⟩
+    · exact ⟨false, rfl⟩
+
+theorem happened_mem_alt_whichEvent (e : Event) : happened e ∈ whichEvent.alt :=
+  Question.mem_alt_which_of_maximal e trivial ⟨{e}, Set.mem_singleton e⟩
+    fun _ _ h ↦ by rw [happened_subset_happened.1 h]
+
+theorem partiallyAnsweredBy_whichEvent (a : Answer) : whichEvent.PartiallyAnsweredBy a.prop := by
+  cases a with
+  | scope => exact Question.partiallyAnsweredBy_of_mem_alt (happened_mem_alt_whichEvent _)
+  | negation => exact Question.partiallyAnsweredBy_compl_of_mem_alt (happened_mem_alt_whichEvent _)
+  | variant k => exact Question.partiallyAnsweredBy_of_mem_alt (happened_mem_alt_whichEvent _)
+
+theorem partiallyAnsweredBy_polar_iff (a : Answer) :
+    (Question.polar Answer.scope.prop).PartiallyAnsweredBy a.prop ↔ ∀ k, a ≠ .variant k := by
+  have hne : Answer.scope.prop ≠ ∅ := Set.nonempty_iff_ne_empty.1 ⟨{fun _ ↦ true}, rfl⟩
+  have hnu : Answer.scope.prop ≠ Set.univ := fun h ↦
+    empty_notMem_happened (fun _ ↦ true) (show ∅ ∈ Answer.scope.prop by rw [h]; trivial)
+  rw [Question.partiallyAnsweredBy_polar_iff hne hnu]
+  cases a with
+  | scope => simp
+  | negation => simp [Answer.prop]
+  | variant k =>
+    simp only [ne_eq, Answer.variant.injEq, forall_eq', iff_false, not_or]
+    refine ⟨fun h ↦ ?_, fun h ↦ ?_⟩
+    · exact vary_false_ne k (Set.mem_singleton_iff.1 (h (Set.mem_singleton _)))
+    · exact h (show _ ∈ ({vary k false, fun _ ↦ true} : Set Event) from .inl rfl) (.inr rfl)
+
+theorem finite_alternatives (k : Site) : (alternatives (some k)).Finite := Set.finite_range _
+
+theorem forall_mem_alternatives {k : Site} {P : Set (Set Event) → Prop} :
+    (∀ a ∈ alternatives (some k), P a) ↔ P Answer.scope.prop ∧ P (Answer.variant k).prop := by
+  simp [alternatives, Answer.prop, vary_true, and_comm]
+
+theorem singleton_mem_happened (e : Event) : {e} ∈ happened e := Set.mem_singleton e
+
+/-- Exhaustifying the variant at `k` relative to the alternatives at `k` denies the scope. -/
+theorem exhIE_variant_subset (k : Site) :
+    exhIE (alternatives (some k)) (Answer.variant k).prop ⊆ Answer.scope.propᶜ :=
+  IsInnocentlyExcludable.exhIE_subset_compl
+    (.of_forall_subset_or_notMem (w := {vary k false}) (mem_alternatives_iff.2 (.inl rfl))
+      (singleton_mem_happened _) (fun h ↦ vary_false_ne k (Set.mem_singleton_iff.1 h).symm)
+      (forall_mem_alternatives.2 ⟨.inr fun h ↦ vary_false_ne k (Set.mem_singleton_iff.1 h).symm,
+        .inl subset_rfl⟩))
+
+theorem singleton_mem_exhIE_variant (k : Site) :
+    {vary k false} ∈ exhIE (alternatives (some k)) (Answer.variant k).prop :=
+  Exhaustification.mem_exhIE_of_forall_subset_or_notMem _ _ (finite_alternatives k)
+    (singleton_mem_happened _)
+    (forall_mem_alternatives.2 ⟨.inr fun h ↦ vary_false_ne k (Set.mem_singleton_iff.1 h).symm,
+      .inl subset_rfl⟩)
+
+theorem singleton_mem_exhIE_scope (k : Site) :
+    {fun _ ↦ true} ∈ exhIE (alternatives (some k)) Answer.scope.prop :=
+  Exhaustification.mem_exhIE_of_forall_subset_or_notMem _ _ (finite_alternatives k)
+    (singleton_mem_happened _)
+    (forall_mem_alternatives.2
+      ⟨.inl subset_rfl, .inr fun h ↦ vary_false_ne k (Set.mem_singleton_iff.1 h)⟩)
+
+theorem prop_negation : Answer.negation.prop = Answer.scope.propᶜ := rfl
+
+theorem compl_negation : Answer.negation.propᶜ = Answer.scope.prop := compl_compl _
+
+theorem scope_ne_empty : Answer.scope.prop ≠ ∅ :=
+  Set.nonempty_iff_ne_empty.1 ⟨_, singleton_mem_happened _⟩
+
+theorem variant_not_subset_compl (k : Site) : ¬ (Answer.variant k).prop ⊆ Answer.scope.propᶜ :=
+  fun h ↦ h (a := {vary k false, fun _ ↦ true}) (Set.mem_insert _ _)
+    (Set.mem_insert_of_mem _ (Set.mem_singleton _))
+
+theorem negation_not_subset_scope : ¬ Answer.negation.prop ⊆ Answer.scope.prop :=
+  fun h ↦ empty_notMem_happened _ (h empty_mem_negation)
+
+theorem variant_not_subset_scope (k : Site) : ¬ (Answer.variant k).prop ⊆ Answer.scope.prop :=
+  fun h ↦ vary_false_ne k (Set.mem_singleton_iff.1 (h (singleton_mem_happened _))).symm
+
+namespace MiExample
+
+variable (r : MiExample)
+
+/-- An answer fits the *=mi* sentence exactly when it is an alternative whose exhaustification
+entails the negated scope. -/
+theorem fits_iff (a : Answer) :
+    (a.prop ∈ alternatives r.focus ∧ exhIE (alternatives r.focus) a.prop ⊆ r.scope.propᶜ) ↔
+      r.Fits a := by
+  obtain ⟨prior, asked, focus, polarity⟩ := r
+  rcases focus with _ | k <;> cases polarity <;>
+    simp only [Fits, scope, alternatives, Set.mem_univ, true_and, Exhaustification.exhIE_univ,
+      compl_negation]
+  · cases a <;> simp [scope_ne_empty, variant_not_subset_compl, prop_negation]
+  · cases a <;> simp [negation_not_subset_scope, variant_not_subset_scope]
+  · rw [← alternatives, mem_alternatives_iff]
+    cases a with
+    | scope => exact iff_of_false (fun h ↦ h.2 (singleton_mem_exhIE_scope k)
+        (Exhaustification.exhIE_subset _ _ (singleton_mem_exhIE_scope k))) (by simp)
+    | negation => simp
+    | variant j =>
+      simp only [reduceCtorEq, false_or, Answer.variant.injEq]
+      exact ⟨fun h ↦ h.1, fun h ↦ ⟨h, h ▸ exhIE_variant_subset k⟩⟩
+  · rw [← alternatives, mem_alternatives_iff]
+    cases a with
+    | scope => exact iff_of_true ⟨.inl rfl, Exhaustification.exhIE_subset _ _⟩ rfl
+    | negation => simp
+    | variant j =>
+      refine iff_of_false ?_ (by simp)
+      rintro ⟨h | h, hsub⟩
+      · cases h
+      · obtain rfl := Answer.variant.inj h
+        have := hsub (singleton_mem_exhIE_variant j)
+        exact vary_false_ne j (Set.mem_singleton_iff.1 this).symm
+
+theorem exists_mem_moves_iff (q : Set (Set Event)) :
+    (∃ m ∈ r.context.moves, q ∈ m.addressers) ↔ ∃ a ∈ r.addressers, a.prop = q := by
+  obtain ⟨prior, asked, focus, polarity⟩ := r
+  cases prior <;> rcases asked with _ | _ | _ | _ | _ <;>
+    simp [context, Prior.context, Asked.context, Context.declare, Context.update, Context.ask,
+      Move.assert, Move.present, Move.biasedQuestion, addressers, sentence, eq_comm,
+      prop_negation] <;> tauto
+
+theorem qud_context : r.context.qud = if r.asked = none ∨ r.asked = some .constituent then
+    whichEvent else .polar Answer.scope.prop := by
+  obtain ⟨prior, asked, focus, polarity⟩ := r
+  cases prior <;> rcases asked with _ | _ | _ | _ | _ <;>
+    simp [context, Prior.context, Asked.context, Context.declare, Context.update, Context.ask]
+
+theorem highlighted_context_iff (q : Set (Set Event)) :
+    Highlighted r.context q ↔ ∃ a ∈ r.addressers, r.Addresses a ∧ a.prop = q := by
+  simp only [Highlighted, exists_mem_moves_iff, qud_context]
+  constructor
+  · rintro ⟨⟨a, ha, rfl⟩, hq⟩
+    refine ⟨a, ha, ?_, rfl⟩
+    split_ifs at hq with h
+    · cases a <;> simp [Addresses, h]
+    · cases a <;> simp_all [Addresses, partiallyAnsweredBy_polar_iff]
+  · rintro ⟨a, ha, hadd, rfl⟩
+    refine ⟨⟨a, ha, rfl⟩, ?_⟩
+    split_ifs with h
+    · exact partiallyAnsweredBy_whichEvent a
+    · rw [partiallyAnsweredBy_polar_iff]
+      rintro k rfl
+      exact h hadd
+
+/-- In each example's context, the presupposition of *=mi* holds exactly when the analysis
+licenses it. -/
+theorem miDefined_iff :
+    MiDefined r.context (alternatives r.focus) r.scope.prop ↔ r.Licensed := by
+  simp only [MiDefined, highlighted_context_iff, Licensed]
+  constructor
+  · rintro ⟨_, hq, ⟨a, ha, hadd, rfl⟩, hexh⟩
+    exact ⟨a, ha, hadd, (r.fits_iff a).1 ⟨hq, hexh⟩⟩
+  · rintro ⟨a, ha, hadd, hfit⟩
+    obtain ⟨hq, hexh⟩ := (r.fits_iff a).2 hfit
+    exact ⟨a.prop, hq, ⟨a, ha, hadd, rfl⟩, hexh⟩
+
+end MiExample
+
+/-- The examples name sites by their constructors. -/
+def siteLabels : List (String × Site) :=
+  [("subject", .subject), ("object", .object), ("goal", .goal), ("verbPhrase", .verbPhrase),
+    ("verb", .verb), ("modifier", .modifier)]
+
+/-- The examples name the constituent *=mi* marks, the clause or a site. -/
+def focusLabels : List (String × Option Site) :=
+  ("clause", none) :: siteLabels.map fun (l, k) ↦ (l, some k)
+
+/-- The examples name prior discourses other than a correction by their constructors. -/
+def priorLabels : List (String × Prior) :=
+  [("none", .none), ("assertedNegation", .assertedNegation), ("debate", .debate),
+    ("directEvidential", .direct), ("reportativeEvidential", .reportative)]
+
+/-- The examples name the questions asked by their constructors. -/
+def askedLabels : List (String × Asked) :=
+  [("polar", .polar), ("constituent", .constituent), ("negativeBiased", .negativeBiased),
+    ("positiveBiased", .positiveBiased)]
+
+/-- The examples name the polarity of a negative scope. -/
+def polarityLabels : List (String × Polarity) := [("negative", .negative)]
+
+namespace MiExample
+
+/-- `ofDatum? x` is the *=mi* example the row `x` records, if it records one, a correction
+naming its contrasted site. -/
+def ofDatum? (x : Datum) : Option MiExample := do
+  let prior ← if x.feature? "prior" = some "correction" then
+      (x.parse? "contrast" siteLabels).map .correction
+    else x.parse? "prior" priorLabels
+  let focus ← x.parse? "focus" focusLabels
+  pure ⟨prior, x.parse? "question" askedLabels, focus,
+    (x.parse? "polarity" polarityLabels).getD .positive⟩
+
+end MiExample
+
+/-- Every *=mi* example is acceptable exactly when its presupposition holds in its context. -/
+theorem judgment_eq_acceptable_iff_miDefined :
+    ∀ x ∈ Examples.all, ∀ r ∈ MiExample.ofDatum? x,
+      (x.judgment = .acceptable ↔ MiDefined r.context (alternatives r.focus) r.scope.prop) := by
+  have h : ∀ x ∈ Examples.all, ∀ r ∈ MiExample.ofDatum? x,
+      (x.judgment = .acceptable ↔ r.Licensed) := by
+    decide +kernel
+  intro x hx r hr
+  rw [h x hx r hr, r.miDefined_iff]
+
+/-- A `Continuation` is how the speaker continues her declarative in a commitment test. She denies
+its scope ((18a), (19a)), denies her evidence ((18b), (19b)), or confirms the scope with *=mi*
+and then denies it (footnote 10). -/
+inductive Continuation
+  | deniesScope | deniesEvidence | confirmsThenDeniesScope
+  deriving DecidableEq
+
+/-- A commitment test is a declarative of the scope with an evidential, continued by its
+speaker. -/
+structure CommitmentExample where
+  /-- The evidential of the declarative. -/
+  evidential : Evidential
+  /-- How the speaker continues. -/
+  continuation : Continuation
+
+namespace CommitmentExample
+
+variable (r : CommitmentExample)
+
+/-- `r.context` is the record after the declarative and its continuation. -/
+def context : Context Role (Set Event) :=
+  let c := (⟨∅, whichEvent⟩ : Context _ _).declare .speaker r.evidential
+    (sentence .speaker r.evidential Answer.scope.prop)
+  match r.continuation with
+  | .deniesScope => c.update (.assert .speaker (pure Answer.negation.prop))
+  | .deniesEvidence => c.update
+      (.assert .speaker (pure (evidence evModel .speaker r.evidential Answer.scope.prop)ᶜ))
+  | .confirmsThenDeniesScope => (c.update (.assert .speaker (pure Answer.scope.prop))).update
+      (.assert .speaker (pure Answer.negation.prop))
+
+/-- The speaker of a declarative with a direct or reportative evidential stays consistent exactly
+when the evidential is reportative and she denies only the scope. -/
+theorem nonempty_contextSetOf_iff (he : r.evidential.IsDirect ∨ r.evidential.IsReportative) :
+    (r.context.contextSetOf .speaker).Nonempty ↔
+      r.evidential.IsReportative ∧ r.continuation = .deniesScope := by
+  obtain ⟨e, k⟩ := r
+  rcases he with he | he
+  · have hne : ¬ e.IsReportative := fun h ↦ by cases he.eq h
+    refine iff_of_false ?_ (by simp [hne])
+    rw [Set.not_nonempty_iff_eq_empty]
+    cases k <;> simp only [context, Context.declare, Move.declare_of_isDirect _ he, Option.map_some,
+      Option.getD_some]
+    · exact contextSetOf_assert_assert_compl _ _
+    · rw [← ofPred_notAtIssue_withEvidential_pure evModel]
+      exact contextSetOf_update_assert_compl_notAtIssue _ _ rfl
+        (by simp [Move.assert, sentence, ofPred_notAtIssue_withEvidential_pure])
+    · exact contextSetOf_eq_empty (m := .assert .speaker (pure Answer.scope.prop))
+        (m' := .assert .speaker (pure Answer.negation.prop)) (p := Answer.scope.prop)
+        (by simp [Context.update]) (by simp [Context.update]) rfl rfl (by simp [Move.assert])
+        (by simp [Move.assert, prop_negation])
+  · cases k <;> simp only [context, Context.declare, Move.declare_of_isReportative _ he,
+      Option.map_some, Option.getD_some, he, true_and, reduceCtorEq, iff_false, iff_true,
+      Set.not_nonempty_iff_eq_empty]
+    · refine ⟨∅, mem_contextSetOf_present_assert_compl _ _ (by simp [Context.mem_contextSetOf])
+        ?_ (empty_notMem_happened _)⟩
+      simpa [sentence, withEvidential, evidence, evModel] using he.1.exists_mem
+    · rw [← ofPred_notAtIssue_withEvidential_pure evModel]
+      exact contextSetOf_update_assert_compl_notAtIssue _ _ rfl
+        (by simp [Move.present, sentence, ofPred_notAtIssue_withEvidential_pure])
+    · exact contextSetOf_present_assert_assert_compl _ _
+
+/-- The examples name the evidentials of the commitment tests by their evidence type. -/
+def evidentialLabels : List (String × Evidential) := [("direct", rka), ("reportative", shka)]
+
+/-- The examples name the continuations by their constructors. -/
+def continuationLabels : List (String × Continuation) :=
+  [("deniesScope", .deniesScope), ("deniesEvidence", .deniesEvidence),
+    ("confirmsThenDeniesScope", .confirmsThenDeniesScope)]
+
+/-- `ofDatum? x` is the commitment test the row `x` records, if it records one. -/
+def ofDatum? (x : Datum) : Option CommitmentExample :=
+  return ⟨← x.parse? "evidential" evidentialLabels, ← x.parse? "continuation" continuationLabels⟩
+
+end CommitmentExample
+
+/-- Every commitment test is acceptable exactly when its speaker's commitments are consistent
+((18), (19), footnote 10). -/
+theorem judgment_eq_acceptable_iff_nonempty :
+    ∀ x ∈ Examples.all, ∀ r ∈ CommitmentExample.ofDatum? x,
+      (x.judgment = .acceptable ↔ (r.context.contextSetOf .speaker).Nonempty) := by
+  have h : ∀ x ∈ Examples.all, ∀ r ∈ CommitmentExample.ofDatum? x,
+      (r.evidential.IsDirect ∨ r.evidential.IsReportative) ∧
+        (x.judgment = .acceptable ↔
+          r.evidential.IsReportative ∧ r.continuation = .deniesScope) := by
+    decide +kernel
+  intro x hx r hr
+  rw [(h x hx r hr).2, r.nonempty_contextSetOf_iff (h x hx r hr).1]
+
+-- Every example is read as a *=mi* example or as a commitment test.
+example : ∀ x ∈ Examples.all,
+    (MiExample.ofDatum? x).isSome ∨ (CommitmentExample.ofDatum? x).isSome := by
+  decide +kernel
 
 end MartinezVera2026

@@ -37,7 +37,7 @@ variable {World : Type*} (ALT : Set (Set World)) (φ : Set World)
 /-! ### Compatible sets -/
 
 
-/-- `E` is `(ALT, φ)`-compatible: it contains `φ`, its other members are negations of
+/-- `E` is `(ALT, φ)`-compatible when it contains `φ`, its other members are negations of
 alternatives, and it is consistent. -/
 def IsCompatible (E : Set (Set World)) : Prop :=
   φ ∈ E ∧
@@ -56,8 +56,8 @@ def IsMCSet (E : Set (Set World)) : Prop :=
   IsCompatible ALT φ E ∧
   ∀ E', IsCompatible ALT φ E' → E ⊆ E' → E' ⊆ E
 
-/-- The propositions in every maximal compatible set: the prejacent and the negations of the
-innocently excludable alternatives. -/
+/-- `IE ALT φ` is the set of propositions in every maximal compatible set, the prejacent and the
+negations of the innocently excludable alternatives. -/
 def IE : Set (Set World) :=
   {ψ | ∀ E, IsMCSet ALT φ E → ψ ∈ E}
 
@@ -101,7 +101,8 @@ theorem IsInnocentlyExcludable.of_extension_consistent
   exact h_not_sup (hE.2 _ hext_compat hsub)
 
 /-- An alternative failing at a prejacent world that falsifies every alternative the prejacent
-does not entail is innocently excludable: that world verifies every maximal compatible set. -/
+does not entail is innocently excludable, since that world verifies every maximal compatible
+set. -/
 theorem IsInnocentlyExcludable.of_forall_subset_or_notMem
     {ALT : Set (Set World)} {φ a : Set World} {w : World} (ha : a ∈ ALT) (hw : φ w)
     (hwa : w ∉ a) (h : ∀ b ∈ ALT, φ ⊆ b ∨ w ∉ b) : IsInnocentlyExcludable ALT φ a := by
@@ -125,8 +126,8 @@ theorem IsInnocentlyExcludable.of_full_exclusion_consistent
 
 /-! ### The exhaustifier -/
 
-/-- The innocent-exclusion exhaustifier: the prejacent with every innocently excludable
-alternative denied. -/
+/-- The innocent-exclusion exhaustifier asserts the prejacent and denies every innocently
+excludable alternative. -/
 def exhIE : Set World :=
   λ u => ∀ ψ ∈ IE ALT φ, ψ u
 
@@ -347,6 +348,13 @@ theorem mem_exhIE_iff (hfin : ALT.Finite) {u : World} :
   · exact hu
   · exact h a ⟨ha, hψ⟩
 
+/-- A prejacent world falsifying every alternative the prejacent does not entail survives
+exhaustification. -/
+theorem mem_exhIE_of_forall_subset_or_notMem (hfin : ALT.Finite) {u : World} (hu : u ∈ φ)
+    (h : ∀ a ∈ ALT, φ ⊆ a ∨ u ∉ a) : u ∈ exhIE ALT φ :=
+  (mem_exhIE_iff ALT φ hfin).2 ⟨hu, fun a ha ↦ (h a ha.1).resolve_left fun hs ↦
+    not_isInnocentlyExcludable_of_phi_subset hfin ⟨u, hu⟩ hs ha⟩
+
 /-- With the innocently excludable alternatives characterized, the exhaustifier denies exactly
 them. -/
 theorem exhIE_eq_of_iff (hfin : ALT.Finite) {P : Set World → Prop}
@@ -371,6 +379,11 @@ theorem exhIE_eq_exh (hfin : ALT.Finite) :
 /-- Exhaustification entails its prejacent. -/
 theorem exhIE_subset : exhIE ALT φ ⊆ φ := λ _ h => h φ (self_mem_IE ALT φ)
 
+/-- Exhaustification denies an innocently excludable alternative. -/
+theorem IsInnocentlyExcludable.exhIE_subset_compl {ALT : Set (Set World)} {φ a : Set World}
+    (h : IsInnocentlyExcludable ALT φ a) : exhIE ALT φ ⊆ aᶜ :=
+  fun _ hu ↦ hu aᶜ h.2
+
 /-- Without alternatives, exhaustification is vacuous. -/
 theorem exhIE_empty : exhIE ∅ φ = φ :=
   Set.Subset.antisymm (exhIE_subset ∅ φ) λ _ hu =>
@@ -385,7 +398,7 @@ theorem exhIE_singleton_self : exhIE {φ} φ = φ := by
   exact absurd ha
     (not_isInnocentlyExcludable_of_phi_subset (Set.finite_singleton _) ⟨w, hw⟩ subset_rfl)
 
-/-- Exhaustification is antitone in the innocently excludable alternatives: more of them, a
+/-- Exhaustification is antitone in the innocently excludable alternatives, more of them giving a
 stronger result. -/
 theorem exhIE_subset_exhIE {ALT' : Set (Set World)} (hfin : ALT.Finite) (hfin' : ALT'.Finite)
     (h : ∀ q, IsInnocentlyExcludable ALT' φ q → IsInnocentlyExcludable ALT φ q) :
@@ -482,6 +495,10 @@ theorem exhMW_subset_exhIE : exhMW ALT φ ⊆ exhIE ALT φ := by
   -- u satisfies E, so ψ u
   exact hsat ψ hψ_in_E
 
+/-- Exhaustification against all propositions is vacuous. -/
+theorem exhIE_univ : exhIE Set.univ φ = φ :=
+  Set.Subset.antisymm (exhIE_subset _ _) ((exhMW_univ φ).ge.trans (exhMW_subset_exhIE _ _))
+
 /-- A prejacent world at which only entailed alternatives hold is minimal. -/
 theorem exh_subset_exhMW : exh ALT φ ⊆ exhMW ALT φ :=
   fun _ ⟨hu, hex⟩ ↦ ⟨hu, fun ⟨_, hv, _, hvu⟩ ↦ hvu fun a ha hau ↦ hex a ha hau hv⟩
@@ -558,8 +575,8 @@ theorem isInnocentlyExcludable_iff_exhMW_subset_compl (a : Set World) (ha : a �
       exact hE_union_sub_E hna_in_union
 
 /-- An alternative that covers the prejacent together with a second alternative some prejacent
-world falsifies is not innocently excludable: negating both contradicts the prejacent, and a
-minimal world below that prejacent world verifies the first. -/
+world falsifies is not innocently excludable, since negating both contradicts the prejacent and
+a minimal world below that prejacent world verifies the first. -/
 theorem not_isInnocentlyExcludable_of_subset_union (hfin : ALT.Finite) {p q : Set World}
     (hp : p ∈ ALT) (hq : q ∈ ALT) (hcov : φ ⊆ p ∪ q) (hne : (φ \ q).Nonempty) :
     ¬ IsInnocentlyExcludable ALT φ p := by

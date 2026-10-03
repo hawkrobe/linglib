@@ -1,0 +1,803 @@
+[
+  {
+    "id": "martinezvera2026_6",
+    "source": {"bibkey": "martinez-vera-2026", "paperLabel": "(6)"},
+    "reportedIn": null,
+    "language": "loja1235",
+    "primaryText": "Maria-ka mana mayu-man ri-rka. Mana, Maria-ka mayu-man ri-rka=mi.",
+    "discourseSegments": [
+      "Maria-ka mana mayu-man ri-rka.",
+      "Mana, Maria-ka mayu-man ri-rka=mi."
+    ],
+    "glossedTokens": [
+      ["Maria-ka", "Maria-TOP"], ["mana", "no"], ["mayu-man", "river-DIR"], ["ri-rka", "go-PST1"],
+      ["Mana", "no"], ["Maria-ka", "Maria-TOP"], ["mayu-man", "river-DIR"],
+      ["ri-rka=mi", "go-PST1=mi"]
+    ],
+    "translation": "Maria didn't go to the river. No, Maria did go to the river.",
+    "context": "Two individuals are discussing Maria's whereabouts.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["prior", "assertedNegation"],
+      ["focus", "clause"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "martinezvera2026_7",
+    "source": {"bibkey": "martinez-vera-2026", "paperLabel": "(7)"},
+    "reportedIn": null,
+    "language": "loja1235",
+    "primaryText": "Juanchu-ka oveja-ta ranti-rka=mi.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Juanchu-ka", "Juan-TOP"], ["oveja-ta", "sheep-ACC"], ["ranti-rka=mi", "buy-PST1=mi"]
+    ],
+    "translation": "Juan bought sheep.",
+    "context": "A couple is on its house entrance seeing people passing by. One individual says (7).",
+    "judgment": "unacceptable",
+    "alternatives": [
+      {"form": "Juanchu-ka oveja-ta ranti-rka.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["prior", "none"],
+      ["focus", "clause"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "martinezvera2026_8b",
+    "source": {"bibkey": "martinez-vera-2026", "paperLabel": "(8b)"},
+    "reportedIn": null,
+    "language": "loja1235",
+    "primaryText": "Maria-ka wakra-ta ranti-rka-chu? Ari, Maria-ka wakra-ta ranti-rka=mi.",
+    "discourseSegments": [
+      "Maria-ka wakra-ta ranti-rka-chu?",
+      "Ari, Maria-ka wakra-ta ranti-rka=mi."
+    ],
+    "glossedTokens": [
+      ["Maria-ka", "Maria-TOP"], ["wakra-ta", "cow-ACC"], ["ranti-rka-chu", "buy-PST1-POL"],
+      ["Ari", "yes"], ["Maria-ka", "Maria-TOP"], ["wakra-ta", "cow-ACC"],
+      ["ranti-rka=mi", "buy-PST1=mi"]
+    ],
+    "translation": "Did Maria buy a cow? Yes, Maria bought a cow.",
+    "context": "One individual asks a question about Maria's whereabouts and another individual replies. There is no bias or expectations as to what Maria would be doing.",
+    "judgment": "unacceptable",
+    "alternatives": [
+      {"form": "Ari, Maria-ka wakra-ta ranti-rka.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["prior", "none"],
+      ["question", "polar"],
+      ["focus", "clause"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "martinezvera2026_8c",
+    "source": {"bibkey": "martinez-vera-2026", "paperLabel": "(8c)"},
+    "reportedIn": null,
+    "language": "loja1235",
+    "primaryText": "Maria-ka wakra-ta ranti-rka-chu? Mana, Maria-ka mana wakra-ta ranti-rka=mi.",
+    "discourseSegments": [
+      "Maria-ka wakra-ta ranti-rka-chu?",
+      "Mana, Maria-ka mana wakra-ta ranti-rka=mi."
+    ],
+    "glossedTokens": [
+      ["Maria-ka", "Maria-TOP"], ["wakra-ta", "cow-ACC"], ["ranti-rka-chu", "buy-PST1-POL"],
+      ["Mana", "no"], ["Maria-ka", "Maria-TOP"], ["mana", "no"], ["wakra-ta", "cow-ACC"],
+      ["ranti-rka=mi", "buy-PST1=mi"]
+    ],
+    "translation": "Did Maria buy a cow? No, Maria didn't buy a cow.",
+    "context": "One individual asks a question about Maria's whereabouts and another individual replies. There is no bias or expectations as to what Maria would be doing.",
+    "judgment": "unacceptable",
+    "alternatives": [
+      {"form": "Mana, Maria-ka mana wakra-ta ranti-rka.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["prior", "none"],
+      ["question", "polar"],
+      ["focus", "clause"],
+      ["polarity", "negative"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "martinezvera2026_fn5_i",
+    "source": {"bibkey": "martinez-vera-2026", "paperLabel": "fn. 5 (i)"},
+    "reportedIn": null,
+    "language": "loja1235",
+    "primaryText": "Maria-manta ima tuku-shka? Maria-ka wakra-ta ranti-rka=mi.",
+    "discourseSegments": [
+      "Maria-manta ima tuku-shka?",
+      "Maria-ka wakra-ta ranti-rka=mi."
+    ],
+    "glossedTokens": [
+      ["Maria-manta", "Maria-ABL"], ["ima", "what"], ["tuku-shka", "happen-PST2"],
+      ["Maria-ka", "Maria-TOP"], ["wakra-ta", "cow-ACC"], ["ranti-rka=mi", "buy-PST1=mi"]
+    ],
+    "translation": "What's up with Maria? Maria bought a cow.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [
+      {"form": "Maria-ka wakra-ta ranti-rka.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["prior", "none"],
+      ["question", "constituent"],
+      ["focus", "clause"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "martinezvera2026_9",
+    "source": {"bibkey": "martinez-vera-2026", "paperLabel": "(9)"},
+    "reportedIn": null,
+    "language": "loja1235",
+    "primaryText": "Maria-ka wakra-ta ranti-rka-chu, na? Ari, Maria-ka wakra-ta ranti-rka=mi.",
+    "discourseSegments": [
+      "Maria-ka wakra-ta ranti-rka-chu, na?",
+      "Ari, Maria-ka wakra-ta ranti-rka=mi."
+    ],
+    "glossedTokens": [
+      ["Maria-ka", "Maria-TOP"], ["wakra-ta", "cow-ACC"], ["ranti-rka-chu", "buy-PST1-POL"],
+      ["na", "in.fact"], ["Ari", "yes"], ["Maria-ka", "Maria-TOP"], ["wakra-ta", "cow-ACC"],
+      ["ranti-rka=mi", "buy-PST1=mi"]
+    ],
+    "translation": "Did Maria in fact buy a cow? Yes, Maria did buy a cow.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["prior", "debate"],
+      ["question", "polar"],
+      ["focus", "clause"]
+    ],
+    "comment": "The paper ties the prior discussion that makes the negation salient to the item na 'in fact' in the question.",
+    "verified": "page-image"
+  },
+  {
+    "id": "martinezvera2026_10",
+    "source": {"bibkey": "martinez-vera-2026", "paperLabel": "(10)"},
+    "reportedIn": null,
+    "language": "loja1235",
+    "primaryText": "Maria-ka mana mayu-man ri-rka-chu? Ari, Maria-ka mayu-man ri-rka=mi.",
+    "discourseSegments": [
+      "Maria-ka mana mayu-man ri-rka-chu?",
+      "Ari, Maria-ka mayu-man ri-rka=mi."
+    ],
+    "glossedTokens": [
+      ["Maria-ka", "Maria-TOP"], ["mana", "no"], ["mayu-man", "river-DIR"],
+      ["ri-rka-chu", "go-PST1-POL"], ["Ari", "yes"], ["Maria-ka", "Maria-TOP"],
+      ["mayu-man", "river-DIR"], ["ri-rka=mi", "go-PST1=mi"]
+    ],
+    "translation": "Maria didn't go to the river? Yes, Maria did go to the river.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["prior", "none"],
+      ["question", "negativeBiased"],
+      ["focus", "clause"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "martinezvera2026_11",
+    "source": {"bibkey": "martinez-vera-2026", "paperLabel": "(11)"},
+    "reportedIn": null,
+    "language": "loja1235",
+    "primaryText": "Ciertu-chu wakra-ta ranti-rka? Ari, Maria-ka wakra-ta ranti-rka=mi.",
+    "discourseSegments": [
+      "Ciertu-chu wakra-ta ranti-rka?",
+      "Ari, Maria-ka wakra-ta ranti-rka=mi."
+    ],
+    "glossedTokens": [
+      ["Ciertu-chu", "in.fact-POL"], ["wakra-ta", "cow-ACC"], ["ranti-rka", "buy-PST1"],
+      ["Ari", "yes"], ["Maria-ka", "Maria-TOP"], ["wakra-ta", "cow-ACC"],
+      ["ranti-rka=mi", "buy-PST1=mi"]
+    ],
+    "translation": "Did Maria in fact buy a cow? Yes, Maria did buy a cow.",
+    "context": "One individual asks a question about Maria's whereabouts and another individual replies. There has been some discussion about Maria's whereabouts, with it being suggested that Maria didn't buy a cow in addition to it being suggested that she did buy one, but the discussion is still open. The individual wants to settle the matter, so they ask the second individual to do so.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["prior", "debate"],
+      ["question", "positiveBiased"],
+      ["focus", "clause"]
+    ],
+    "comment": "The prose spells the item cierttu; the example prints Ciertu.",
+    "verified": "page-image"
+  },
+  {
+    "id": "martinezvera2026_18a",
+    "source": {"bibkey": "martinez-vera-2026", "paperLabel": "(18a)"},
+    "reportedIn": null,
+    "language": "loja1235",
+    "primaryText": "Pedro-ka mayu-man ri-rka, chay-ka mana shina-chu.",
+    "discourseSegments": [
+      "Pedro-ka mayu-man ri-rka,",
+      "chay-ka mana shina-chu."
+    ],
+    "glossedTokens": [
+      ["Pedro-ka", "Pedro-TOP"], ["mayu-man", "river-DIR"], ["ri-rka", "go-PST1"],
+      ["chay-ka", "that-TOP"], ["mana", "no"], ["shina-chu", "like.that-POL"]
+    ],
+    "translation": "Pedro went to the river, but that's not the case.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["evidential", "direct"],
+      ["continuation", "deniesScope"]
+    ],
+    "comment": "The source prints mayuman.",
+    "verified": "page-image"
+  },
+  {
+    "id": "martinezvera2026_18b",
+    "source": {"bibkey": "martinez-vera-2026", "paperLabel": "(18b)"},
+    "reportedIn": null,
+    "language": "loja1235",
+    "primaryText": "Pedro-ka mayu-man ri-rka, mana riku-rka-ni.",
+    "discourseSegments": [
+      "Pedro-ka mayu-man ri-rka,",
+      "mana riku-rka-ni."
+    ],
+    "glossedTokens": [
+      ["Pedro-ka", "Pedro-TOP"], ["mayu-man", "river-DIR"], ["ri-rka", "go-PST1"], ["mana", "no"],
+      ["riku-rka-ni", "see-PST1-1SG"]
+    ],
+    "translation": "Pedro went to the river, but I didn't see it.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["evidential", "direct"],
+      ["continuation", "deniesEvidence"]
+    ],
+    "comment": "The source prints mayuman.",
+    "verified": "page-image"
+  },
+  {
+    "id": "martinezvera2026_19a",
+    "source": {"bibkey": "martinez-vera-2026", "paperLabel": "(19a)"},
+    "reportedIn": null,
+    "language": "loja1235",
+    "primaryText": "Pedro-ka mayu-man ri-shka, chay-ka mana shina-chu.",
+    "discourseSegments": [
+      "Pedro-ka mayu-man ri-shka,",
+      "chay-ka mana shina-chu."
+    ],
+    "glossedTokens": [
+      ["Pedro-ka", "Pedro-TOP"], ["mayu-man", "river-DIR"], ["ri-shka", "go-PST2"],
+      ["chay-ka", "that-TOP"], ["mana", "no"], ["shina-chu", "like.that-POL"]
+    ],
+    "translation": "Pedro went to the river, but that's not the case.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["evidential", "reportative"],
+      ["continuation", "deniesScope"]
+    ],
+    "comment": "The source prints mayuman and glosses chay-ka as 'that'.",
+    "verified": "page-image"
+  },
+  {
+    "id": "martinezvera2026_19b",
+    "source": {"bibkey": "martinez-vera-2026", "paperLabel": "(19b)"},
+    "reportedIn": null,
+    "language": "loja1235",
+    "primaryText": "Pedro-ka mayu-man ri-shka, pi-pash chay-ta mana ni-rka-chu.",
+    "discourseSegments": [
+      "Pedro-ka mayu-man ri-shka,",
+      "pi-pash chay-ta mana ni-rka-chu."
+    ],
+    "glossedTokens": [
+      ["Pedro-ka", "Pedro-TOP"], ["mayu-man", "river-DIR"], ["ri-shka", "go-PST2"],
+      ["pi-pash", "no-one"], ["chay-ta", "that-ACC"], ["mana", "no"],
+      ["ni-rka-chu", "say-PST1-POL"]
+    ],
+    "translation": "Pedro went to the river, but nobody said that to me.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["evidential", "reportative"],
+      ["continuation", "deniesEvidence"]
+    ],
+    "comment": "The source prints mayuman, and the verb as ri-rka glossed go-PST2; the reportative paradigm of (19) and the gloss give ri-shka.",
+    "verified": "page-image"
+  },
+  {
+    "id": "martinezvera2026_20",
+    "source": {"bibkey": "martinez-vera-2026", "paperLabel": "(20)"},
+    "reportedIn": null,
+    "language": "loja1235",
+    "primaryText": "Juanchu-ka shuk wakra-ta shuwa-rka; chashna=mi.",
+    "discourseSegments": [
+      "Juanchu-ka shuk wakra-ta shuwa-rka;",
+      "chashna=mi."
+    ],
+    "glossedTokens": [
+      ["Juanchu-ka", "Juan-TOP"], ["shuk", "one"], ["wakra-ta", "cow-ACC"],
+      ["shuwa-rka", "steal-PST1"], ["chashna=mi", "like.this=mi"]
+    ],
+    "translation": "Juan stole a cow; it's like that.",
+    "context": "Two individuals are discussing Juan's whereabouts. One of them shares the news that Juan stole a cow. They saw Juan doing so, but could not intervene.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["prior", "directEvidential"],
+      ["focus", "clause"]
+    ],
+    "comment": "Repeated as (3) and as (47).",
+    "verified": "page-image"
+  },
+  {
+    "id": "martinezvera2026_21",
+    "source": {"bibkey": "martinez-vera-2026", "paperLabel": "(21)"},
+    "reportedIn": null,
+    "language": "loja1235",
+    "primaryText": "Juanchu-ka shuk wakra-ta shuwa-shka; chashna=mi.",
+    "discourseSegments": [
+      "Juanchu-ka shuk wakra-ta shuwa-shka;",
+      "chashna=mi."
+    ],
+    "glossedTokens": [
+      ["Juanchu-ka", "Juan-TOP"], ["shuk", "one"], ["wakra-ta", "cow-ACC"],
+      ["shuwa-shka", "steal-PST2"], ["chashna=mi", "like.this=mi"]
+    ],
+    "translation": "Juan stole a cow; it's like that.",
+    "context": "Two individuals are discussing Juan's whereabouts. One of them shares the news that Juan stole a cow. They were told that Juan did so, and they trust the source.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["prior", "reportativeEvidential"],
+      ["focus", "clause"]
+    ],
+    "comment": "Repeated as (4) and as (48).",
+    "verified": "page-image"
+  },
+  {
+    "id": "martinezvera2026_fn9_i",
+    "source": {"bibkey": "martinez-vera-2026", "paperLabel": "fn. 9 (i)"},
+    "reportedIn": null,
+    "language": "loja1235",
+    "primaryText": "Juanchu-ka mayu-man ri-shka; mana shina=mi ka-shka-nka.",
+    "discourseSegments": [
+      "Juanchu-ka mayu-man ri-shka;",
+      "mana shina=mi ka-shka-nka."
+    ],
+    "glossedTokens": [
+      ["Juanchu-ka", "Juan-TOP"], ["mayu-man", "river-DIR"], ["ri-shka", "go-PST2"],
+      ["mana", "no"], ["shina=mi", "like.this=mi"], ["ka-shka-nka", "be-PST2-CONJ"]
+    ],
+    "translation": "Juan went to the river, but that's not the case.",
+    "context": "Two individuals are discussing Juan's whereabouts. One of them shares the news that Juan went to the river. They were told that Juan did so, but they don't trust the source.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["prior", "reportativeEvidential"],
+      ["focus", "clause"],
+      ["polarity", "negative"]
+    ],
+    "comment": "The paper adds that the counterpart with -rka is infelicitous through a contradiction, not because of =mi.",
+    "verified": "page-image"
+  },
+  {
+    "id": "martinezvera2026_fn10_i",
+    "source": {"bibkey": "martinez-vera-2026", "paperLabel": "fn. 10 (i)"},
+    "reportedIn": null,
+    "language": "loja1235",
+    "primaryText": "Juanchu-ka shuk wakra-ta shuwa-shka; chashna=mi, chay-ka mana shina-chu.",
+    "discourseSegments": [
+      "Juanchu-ka shuk wakra-ta shuwa-shka;",
+      "chashna=mi,",
+      "chay-ka mana shina-chu."
+    ],
+    "glossedTokens": [
+      ["Juanchu-ka", "Juan-TOP"], ["shuk", "one"], ["wakra-ta", "cow-ACC"],
+      ["shuwa-shka", "steal-PST2"], ["chashna=mi", "like.this=mi"], ["chay-ka", "that-TOP"],
+      ["mana", "no"], ["shina-chu", "like.that-POL"]
+    ],
+    "translation": "Juan stole a cow; it's like that, but that's not the case.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["evidential", "reportative"],
+      ["continuation", "confirmsThenDeniesScope"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "martinezvera2026_22",
+    "source": {"bibkey": "martinez-vera-2026", "paperLabel": "(22)"},
+    "reportedIn": null,
+    "language": "loja1235",
+    "primaryText": "Juanchu-ka wakra-ta ranti-rka. Mana, kuchi-ta=mi ranti-rka.",
+    "discourseSegments": [
+      "Juanchu-ka wakra-ta ranti-rka.",
+      "Mana, kuchi-ta=mi ranti-rka."
+    ],
+    "glossedTokens": [
+      ["Juanchu-ka", "Juan-TOP"], ["wakra-ta", "cow-ACC"], ["ranti-rka", "buy-PST1"],
+      ["Mana", "no"], ["kuchi-ta=mi", "pig-ACC=mi"], ["ranti-rka", "buy-PST1"]
+    ],
+    "translation": "Juan bought a cow. No, he bought a pig.",
+    "context": "Two discourse participants are discussing the issue of what it was (i.e., what farm animal) that Juan bought, e.g., at the Sunday market.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["prior", "correction"],
+      ["focus", "object"],
+      ["contrast", "object"]
+    ],
+    "comment": "Repeated as (5) and as (45).",
+    "verified": "page-image"
+  },
+  {
+    "id": "martinezvera2026_23",
+    "source": {"bibkey": "martinez-vera-2026", "paperLabel": "(23)"},
+    "reportedIn": null,
+    "language": "loja1235",
+    "primaryText": "Juanchu oveja-ta ranti-rka. Mana, Maria=mi oveja-ta ranti-rka.",
+    "discourseSegments": [
+      "Juanchu oveja-ta ranti-rka.",
+      "Mana, Maria=mi oveja-ta ranti-rka."
+    ],
+    "glossedTokens": [
+      ["Juanchu", "Juan"], ["oveja-ta", "sheep-ACC"], ["ranti-rka", "buy-PST1"], ["Mana", "no"],
+      ["Maria=mi", "Maria=mi"], ["oveja-ta", "sheep-ACC"], ["ranti-rka", "buy-PST1"]
+    ],
+    "translation": "Juan bought a sheep. No, Maria bought a sheep.",
+    "context": "Two discourse participants are discussing the issue of who bought a sheep at the Sunday market.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["prior", "correction"],
+      ["focus", "subject"],
+      ["contrast", "subject"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "martinezvera2026_25",
+    "source": {"bibkey": "martinez-vera-2026", "paperLabel": "(25)"},
+    "reportedIn": null,
+    "language": "loja1235",
+    "primaryText": "Pedro-ka mina-man ri-rka. Mana, Pedro-ka mayu-man=mi ri-rka.",
+    "discourseSegments": [
+      "Pedro-ka mina-man ri-rka.",
+      "Mana, Pedro-ka mayu-man=mi ri-rka."
+    ],
+    "glossedTokens": [
+      ["Pedro-ka", "Pedro-TOP"], ["mina-man", "mine-DIR"], ["ri-rka", "go-PST1"], ["Mana", "no"],
+      ["Pedro-ka", "Pedro-TOP"], ["mayu-man=mi", "river-DIR=mi"], ["ri-rka", "go-PST1"]
+    ],
+    "translation": "Pedro went to the mine. No, Pedro went to the river.",
+    "context": "Two discourse participants are discussing Pedro's whereabouts, in particular, where he went for the day.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["prior", "correction"],
+      ["focus", "goal"],
+      ["contrast", "goal"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "martinezvera2026_26",
+    "source": {"bibkey": "martinez-vera-2026", "paperLabel": "(26)"},
+    "reportedIn": null,
+    "language": "loja1235",
+    "primaryText": "Pedro-ka mina-man ri-rka. Mana, Pedro-ka mikuna-kuna-ta mercado-pi ranti-chi-rka=mi.",
+    "discourseSegments": [
+      "Pedro-ka mina-man ri-rka.",
+      "Mana, Pedro-ka mikuna-kuna-ta mercado-pi ranti-chi-rka=mi."
+    ],
+    "glossedTokens": [
+      ["Pedro-ka", "Pedro-TOP"], ["mina-man", "mine-DIR"], ["ri-rka", "go-PST1"], ["Mana", "no"],
+      ["Pedro-ka", "Pedro-TOP"], ["mikuna-kuna-ta", "food-PL-ACC"], ["mercado-pi", "market-LOC"],
+      ["ranti-chi-rka=mi", "buy-CAUS-PST1=mi"]
+    ],
+    "translation": "Pedro went to the mine. No, Pedro sold food in the market.",
+    "context": "Two individuals are discussing Pedro's whereabouts. Since heading to the mine is an activity that takes all day, it excludes any other activity.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["prior", "correction"],
+      ["focus", "verbPhrase"],
+      ["contrast", "verbPhrase"]
+    ],
+    "comment": "The source glosses mercado-pi as market-ACC; -pi is the locative elsewhere in the paper ((24)).",
+    "verified": "page-image"
+  },
+  {
+    "id": "martinezvera2026_27b",
+    "source": {"bibkey": "martinez-vera-2026", "paperLabel": "(27b)"},
+    "reportedIn": null,
+    "language": "loja1235",
+    "primaryText": "Segundo kuchita-ta ranti-rka. Mana, Segundo wakra-ta=mi ranti-rka.",
+    "discourseSegments": [
+      "Segundo kuchita-ta ranti-rka.",
+      "Mana, Segundo wakra-ta=mi ranti-rka."
+    ],
+    "glossedTokens": [
+      ["Segundo", "Segundo"], ["kuchita-ta", "pig-ACC"], ["ranti-rka", "buy-PST1"], ["Mana", "no"],
+      ["Segundo", "Segundo"], ["wakra-ta=mi", "cow-ACC=mi"], ["ranti-rka", "buy-PST1"]
+    ],
+    "translation": "Segundo bought a pig. No, Segundo bought a cow.",
+    "context": "Two discourse participants are discussing the issue of what it was (i.e., what farm animal) that Juan bought, e.g., at the Sunday market.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["prior", "correction"],
+      ["focus", "object"],
+      ["contrast", "object"]
+    ],
+    "comment": "The context names Juan, the example Segundo.",
+    "verified": "page-image"
+  },
+  {
+    "id": "martinezvera2026_27c",
+    "source": {"bibkey": "martinez-vera-2026", "paperLabel": "(27c)"},
+    "reportedIn": null,
+    "language": "loja1235",
+    "primaryText": "Segundo kuchita-ta ranti-rka. Mana, Segundo=mi wakra-ta ranti-rka.",
+    "discourseSegments": [
+      "Segundo kuchita-ta ranti-rka.",
+      "Mana, Segundo=mi wakra-ta ranti-rka."
+    ],
+    "glossedTokens": [
+      ["Segundo", "Segundo"], ["kuchita-ta", "pig-ACC"], ["ranti-rka", "buy-PST1"], ["Mana", "no"],
+      ["Segundo=mi", "Segundo=mi"], ["wakra-ta", "cow-ACC"], ["ranti-rka", "buy-PST1"]
+    ],
+    "translation": "Segundo bought a pig. No, Segundo bought a cow.",
+    "context": "Two discourse participants are discussing the issue of what it was (i.e., what farm animal) that Juan bought, e.g., at the Sunday market.",
+    "judgment": "unacceptable",
+    "alternatives": [
+      {"form": "Mana, Segundo wakra-ta ranti-rka.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["prior", "correction"],
+      ["focus", "subject"],
+      ["contrast", "object"]
+    ],
+    "comment": "Footnote 13: consultants find (27c) more degraded than (27d).",
+    "verified": "page-image"
+  },
+  {
+    "id": "martinezvera2026_27d",
+    "source": {"bibkey": "martinez-vera-2026", "paperLabel": "(27d)"},
+    "reportedIn": null,
+    "language": "loja1235",
+    "primaryText": "Segundo kuchita-ta ranti-rka. Mana, Segundo wakra-ta ranti-rka=mi.",
+    "discourseSegments": [
+      "Segundo kuchita-ta ranti-rka.",
+      "Mana, Segundo wakra-ta ranti-rka=mi."
+    ],
+    "glossedTokens": [
+      ["Segundo", "Segundo"], ["kuchita-ta", "pig-ACC"], ["ranti-rka", "buy-PST1"], ["Mana", "no"],
+      ["Segundo", "Segundo"], ["wakra-ta", "cow-ACC"], ["ranti-rka=mi", "buy-PST1=mi"]
+    ],
+    "translation": "Segundo bought a pig. No, Segundo bought a cow.",
+    "context": "Two discourse participants are discussing the issue of what it was (i.e., what farm animal) that Juan bought, e.g., at the Sunday market.",
+    "judgment": "unacceptable",
+    "alternatives": [
+      {"form": "Mana, Segundo wakra-ta ranti-rka.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["prior", "correction"],
+      ["focus", "verb"],
+      ["contrast", "object"]
+    ],
+    "comment": "The paper describes =mi in (27d) as next to the verb; footnote 13 reports (27d) as degraded rather than impossible.",
+    "verified": "page-image"
+  },
+  {
+    "id": "martinezvera2026_28_modifier",
+    "source": {"bibkey": "martinez-vera-2026", "paperLabel": "(28)"},
+    "reportedIn": null,
+    "language": "loja1235",
+    "primaryText": "Shuk Estados Unidos-manta ashpapi llankak Canada-manta=mi ashpapi llankak-wan tupanaku-n.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Shuk", "a"], ["Estados", "United"], ["Unidos-manta", "States-ABL"],
+      ["ashpapi", "land.LOC"], ["llankak", "work.NMLZ"], ["Canada-manta=mi", "Canada-ABL=mi"],
+      ["ashpapi", "land.LOC"], ["llankak-wan", "work.NMLZ-INST"], ["tupanaku-n", "meet-3"]
+    ],
+    "translation": "An American farmer met a Canadian farmer.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [
+      {"form": "Shuk Estados Unidos-manta ashpapi llankak Canada-manta ashpapi llankak-wan tupanaku-n.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["prior", "none"],
+      ["focus", "modifier"]
+    ],
+    "comment": "Intrasentential contrast. The text adds that =mi after the ablative modifier is ungrammatical, since =mi cannot surface inside the noun phrase.",
+    "verified": "page-image"
+  },
+  {
+    "id": "martinezvera2026_28_object",
+    "source": {"bibkey": "martinez-vera-2026", "paperLabel": "(28)"},
+    "reportedIn": null,
+    "language": "loja1235",
+    "primaryText": "Shuk Estados Unidos-manta ashpapi llankak Canada-manta ashpapi llankak-wan=mi tupanaku-n.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Shuk", "a"], ["Estados", "United"], ["Unidos-manta", "States-ABL"],
+      ["ashpapi", "land.LOC"], ["llankak", "work.NMLZ"], ["Canada-manta", "Canada-ABL"],
+      ["ashpapi", "land.LOC"], ["llankak-wan=mi", "work.NMLZ-INST=mi"], ["tupanaku-n", "meet-3"]
+    ],
+    "translation": "An American farmer met a Canadian farmer.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [
+      {"form": "Shuk Estados Unidos-manta ashpapi llankak Canada-manta ashpapi llankak-wan tupanaku-n.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["prior", "none"],
+      ["focus", "object"]
+    ],
+    "comment": "Intrasentential contrast; the text adds that =mi after the object is possible when the farmer's nationality contrasts with a previously stated one.",
+    "verified": "page-image"
+  },
+  {
+    "id": "martinezvera2026_29b",
+    "source": {"bibkey": "martinez-vera-2026", "paperLabel": "(29b)"},
+    "reportedIn": null,
+    "language": "loja1235",
+    "primaryText": "Pedro-ka ima-ta ranti-rka? Pedro-ka oveja-ta=mi ranti-rka.",
+    "discourseSegments": [
+      "Pedro-ka ima-ta ranti-rka?",
+      "Pedro-ka oveja-ta=mi ranti-rka."
+    ],
+    "glossedTokens": [
+      ["Pedro-ka", "Pedro-TOP"], ["ima-ta", "what-ACC"], ["ranti-rka", "buy-PST1"],
+      ["Pedro-ka", "Pedro-TOP"], ["oveja-ta=mi", "sheep-ACC=mi"], ["ranti-rka", "buy-PST1"]
+    ],
+    "translation": "What did Pedro buy? Pedro bought a sheep.",
+    "context": "An individual asks another one about the farm animal that Pedro bought at the Sunday market.",
+    "judgment": "unacceptable",
+    "alternatives": [
+      {"form": "Pedro-ka oveja-ta ranti-rka.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["prior", "none"],
+      ["question", "constituent"],
+      ["focus", "object"]
+    ],
+    "comment": "The source prints the subject in parentheses: (Pedro-ka) oveja-ta(#=mi) ranti-rka.",
+    "verified": "page-image"
+  },
+  {
+    "id": "martinezvera2026_29c",
+    "source": {"bibkey": "martinez-vera-2026", "paperLabel": "(29c)"},
+    "reportedIn": null,
+    "language": "loja1235",
+    "primaryText": "Pedro-ka ima-ta ranti-rka? Oveja-ta=mi Pedro-ka ranti-rka.",
+    "discourseSegments": [
+      "Pedro-ka ima-ta ranti-rka?",
+      "Oveja-ta=mi Pedro-ka ranti-rka."
+    ],
+    "glossedTokens": [
+      ["Pedro-ka", "Pedro-TOP"], ["ima-ta", "what-ACC"], ["ranti-rka", "buy-PST1"],
+      ["Oveja-ta=mi", "sheep-ACC=mi"], ["Pedro-ka", "Pedro-TOP"], ["ranti-rka", "buy-PST1"]
+    ],
+    "translation": "What did Pedro buy? Pedro bought a sheep.",
+    "context": "An individual asks another one about the farm animal that Pedro bought at the Sunday market.",
+    "judgment": "unacceptable",
+    "alternatives": [
+      {"form": "Oveja-ta Pedro-ka ranti-rka.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["prior", "none"],
+      ["question", "constituent"],
+      ["focus", "object"]
+    ],
+    "comment": "Object fronting. The source prints the subject in parentheses: Oveja-ta(#=mi) (Pedro-ka) ranti-rka.",
+    "verified": "page-image"
+  },
+  {
+    "id": "martinezvera2026_30a",
+    "source": {"bibkey": "martinez-vera-2026", "paperLabel": "(30a)"},
+    "reportedIn": null,
+    "language": "loja1235",
+    "primaryText": "Pedro-ka mana oveja-ta ranti-rka; Pedro-ka wakra-ta=mi ranti-rka.",
+    "discourseSegments": [
+      "Pedro-ka mana oveja-ta ranti-rka;",
+      "Pedro-ka wakra-ta=mi ranti-rka."
+    ],
+    "glossedTokens": [
+      ["Pedro-ka", "Pedro-TOP"], ["mana", "no"], ["oveja-ta", "sheep-ACC"],
+      ["ranti-rka", "buy-PST1"], ["Pedro-ka", "Pedro-TOP"], ["wakra-ta=mi", "cow-ACC=mi"],
+      ["ranti-rka", "buy-PST1"]
+    ],
+    "translation": "Pedro didn't buy a sheep; he bought a cow.",
+    "context": "An individual communicates that the farm animal that Pedro bought was a cow, contrary to what was first thought, namely, that he bought a sheep.",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Pedro-ka mana oveja-ta ranti-rka; Pedro-ka wakra-ta ranti-rka.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["prior", "correction"],
+      ["focus", "object"],
+      ["contrast", "object"]
+    ],
+    "comment": "The source prints the second subject and =mi in parentheses: (Pedro-ka) wakra-ta(=mi) ranti-rka; its gloss line has =MI in small caps.",
+    "verified": "page-image"
+  },
+  {
+    "id": "martinezvera2026_30b",
+    "source": {"bibkey": "martinez-vera-2026", "paperLabel": "(30b)"},
+    "reportedIn": null,
+    "language": "loja1235",
+    "primaryText": "Pedro-ka mana oveja-ta ranti-rka; wakra-ta=mi Pedro-ka ranti-rka.",
+    "discourseSegments": [
+      "Pedro-ka mana oveja-ta ranti-rka;",
+      "wakra-ta=mi Pedro-ka ranti-rka."
+    ],
+    "glossedTokens": [
+      ["Pedro-ka", "Pedro-TOP"], ["mana", "no"], ["oveja-ta", "sheep-ACC"],
+      ["ranti-rka", "buy-PST1"], ["wakra-ta=mi", "cow-ACC=mi"], ["Pedro-ka", "Pedro-TOP"],
+      ["ranti-rka", "buy-PST1"]
+    ],
+    "translation": "Pedro didn't buy a sheep; he bought a cow.",
+    "context": "An individual communicates that the farm animal that Pedro bought was a cow, contrary to what was first thought, namely, that he bought a sheep.",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Pedro-ka mana oveja-ta ranti-rka; wakra-ta Pedro-ka ranti-rka.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["prior", "correction"],
+      ["focus", "object"],
+      ["contrast", "object"]
+    ],
+    "comment": "Object fronting. The source prints wakra-ta(=mi) (Pedro-ka) ranti-rka.",
+    "verified": "page-image"
+  }
+]
