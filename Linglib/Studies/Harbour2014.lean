@@ -227,7 +227,7 @@ theorem additiveIn_le_card' {i : α} {c : ℕ} {s : Finset α} (hi : i ∈ s) (h
     hs.trans (Finset.card_le_card Finset.subset_union_left)⟩⟩
 
 /-- The least element of the person lattice over `B`, the sums containing `B`, is `B` itself,
-which is additive among the least elements: the first- and second-person singular and the
+which is additive among the least elements, so the first- and second-person singular and the
 inclusive minimal are `[+additive]` (n. 23). -/
 theorem additiveIn_atomize_superset (B : Finset α) : additiveIn (atomize (B ⊆ ·)) B := by
   have hB : atomize (B ⊆ ·) B := ⟨subset_rfl, fun _ hy _ ↦ hy⟩
@@ -684,7 +684,6 @@ def values (σ : Setting) (c : Convention) (p : ℕ) : List Number :=
 
 /-- A setting's third-person system as a `Number.System` sets general number apart. -/
 def toSystem (σ : Setting) (c : Convention) : Number.System where
-  name := ""
   values := (σ.values c 0).filter (· ≠ .general)
   hasGeneral := decide (.general ∈ σ.values c 0)
 
@@ -766,8 +765,8 @@ theorem values_atomic_recursive : ∀ m d : Activation, ∀ c : Convention,
   decide +kernel
 
 /-- `{±atomic}` and `{±minimal}` cut the third-person lattice alike, but on the inclusive lattice,
-whose least element is the speaker and hearer, `[±atomic]` draws no line and `[±minimal]` does:
-Svan's singular and plural and Winnebago's minimal and augmented need different features
+whose least element is the speaker and hearer, `[±atomic]` draws no line and `[±minimal]` does,
+so Svan's singular and plural and Winnebago's minimal and augmented need different features
 (p. 203). -/
 theorem system_atomic_minimal :
     (⟨.active, .inactive, .inactive⟩ : Setting).system 0 = [{(.atomic, true)}, {(.atomic, false)}] ∧

@@ -176,8 +176,8 @@ instance : DecidablePred r.Answers := fun q ↦ by cases q <;> unfold Answers <;
 /-- The questions the pattern answers positively. -/
 def profile : Finset Question := Finset.univ.filter r.Answers
 
-/-- The pattern fits the hierarchy: read as conditions, each positive answer requires the
-ones before it, so the profile is an initial segment of the questions. -/
+/-- The pattern fits the hierarchy when, read as conditions, each positive answer requires the
+ones before it, so that the profile is an initial segment of the questions. -/
 def RespectsHierarchy : Prop := IsLowerSet (↑r.profile : Set Question)
 
 instance : Decidable r.RespectsHierarchy := inferInstanceAs (Decidable (IsLowerSet _))
@@ -207,13 +207,13 @@ theorem toPattern_injective : Function.Injective toPattern := by
 /-- The questions a type answers positively. -/
 abbrev profile (t : Clusivity) : Finset Question := t.toPattern.profile
 
-/-- Every common type fits the hierarchy: a specialized exclusive requires a specialized
+/-- Every common type fits the hierarchy, since a specialized exclusive requires a specialized
 inclusive and a split inclusive a specialized exclusive, the two addressee inclusion
 implications. -/
 theorem profile_isLowerSet (t : Clusivity) : IsLowerSet (↑t.profile : Set Question) := by
   revert t; decide +kernel
 
-/-- The rung of a type: its profile, a lower set of the questions. -/
+/-- The rung of a type is its profile, a lower set of the questions. -/
 def rung (t : Clusivity) : {S : Finset Question // IsLowerSet (↑S : Set Question)} :=
   ⟨t.profile, t.profile_isLowerSet⟩
 
@@ -221,8 +221,9 @@ def rung (t : Clusivity) : {S : Finset Question // IsLowerSet (↑S : Set Questi
 questions. -/
 theorem rung_bijective : Function.Bijective rung := by decide +kernel
 
-/-- The First Person Hierarchy: a type precedes another when it answers fewer of the questions,
-no-we, unified-we, only-inclusive, inclusive/exclusive, minimal/augmented. -/
+/-- In the First Person Hierarchy a type precedes another when it answers fewer of the
+questions, ordering no-we, unified-we, only-inclusive, inclusive/exclusive and
+minimal/augmented. -/
 instance : LinearOrder Clusivity := LinearOrder.lift' (fun t ↦ t.profile.card) (by decide +kernel)
 
 /-- Along the hierarchy each type's profile extends its predecessor's. -/
@@ -239,23 +240,24 @@ end Clusivity
 
 /-! ### Paradigmatic structures -/
 
-/-- A paradigmatic structure: which of the eight referential categories share a morpheme. -/
+/-- A paradigmatic structure records which of the eight referential categories share a
+morpheme. -/
 abbrev Structure := Setoid Category
 
-/-- The singular categories, ordered by person prominence, the order in which horizontal
-homophony reaches them: the third person first, the first person last. -/
+/-- The singular categories are ordered by person prominence, the order in which horizontal
+homophony reaches them, the third person first and the first person last. -/
 abbrev Singular := {c : Category // c.IsSingular}
 
 instance : LinearOrder Singular := LinearOrder.lift' (fun a ↦ a.1.person.prominence) (by decide)
 
-/-- The marking of 'we', the columns of the book's Table 4.2: minimal against augmented
-inclusive, inclusive against exclusive, or one form. -/
+/-- The marking of 'we', the columns of the book's Table 4.2, opposes minimal to augmented
+inclusive, or inclusive to exclusive, or has one form. -/
 inductive WeMarking where
   | minimalAugmented | inclusiveExclusive | unified
   deriving DecidableEq, Repr, Fintype
 
 /-- The oppositions a paradigm gives up, in the order the Explicitness Hierarchy says it gives
-them up: the two inside the first person complex, then one between groups, then one between
+them up, are the two inside the first person complex, then one between groups, then one between
 singulars. -/
 inductive Opposition where
   | minimalAugmented | inclusiveExclusive | group | singular
@@ -274,6 +276,20 @@ instance : LinearOrder Opposition := LinearOrder.lift' rank (by decide)
 
 end Opposition
 
+/-- The rows of the cognitive map, the stages of the hierarchical tree of number oppositions
+(Figure 10.8). -/
+inductive NumberStage where
+  /-- N1 paradigms do not distinguish number. -/
+  | N1
+  /-- N2 paradigms consistently oppose singular to group marking. -/
+  | N2
+  /-- N3 paradigms also mark a restricted group, the dual or the inclusive trial of the
+  unit-augmented paradigm. -/
+  | N3
+  /-- N4 paradigms also mark a small group, the paucal. -/
+  | N4
+  deriving DecidableEq, Repr
+
 namespace Structure
 
 variable (s : Structure)
@@ -286,8 +302,8 @@ def SingularHomophony : Prop := ∃ a b : Singular, a ≠ b ∧ s a b
 /-- A singular category shares a morpheme with a group. -/
 def HorizontalHomophony : Prop := ∃ (a : Singular) (b : Category), b.IsGroup ∧ s a b
 
-/-- The singular `a` shares its morpheme with a group of its own person: the first person
-with the exclusive or the inclusive, the second with 2+3, the third with 3+3. -/
+/-- The singular `a` shares its morpheme with a group of its own person, the first person with
+the exclusive or the inclusive, the second with 2+3, the third with 3+3. -/
 def HorizontalHomophonyAt (a : Singular) : Prop :=
   ∃ b : Category, b.IsGroup ∧ b.person.coarsen = a.1.person ∧ s a b
 
@@ -321,7 +337,7 @@ instance (c : Category) : Decidable (s.Specialized c) := by unfold Specialized; 
 
 /-! ### The first person complex -/
 
-/-- The book's letter for a speaker cell: its morpheme class when it is specialized, the
+/-- The book's letter for a speaker cell is its morpheme class when it is specialized, and the
 dash, one for every singular morpheme, when it is not. -/
 def letter (a : Clusivity.Cell) : Option (Quotient s) :=
   if s.Specialized a then some (Quotient.mk s a) else none
@@ -357,10 +373,10 @@ theorem mem_horizontalSingulars_iff (h : s.RespectsHorizontalHierarchy) {a : Sin
     a ∈ s.horizontalSingulars ↔ ↑a ≤ s.horizontalSingulars.max :=
   h.2.mem_iff_le_max
 
-/-- The number stages a paradigm without restricted groups can occupy: no singular/group
-opposition at all (N1), a consistent one (N2), and neither on the intermediate rungs of the
-horizontal hierarchy. -/
-def numberStage : Option Number.Stage :=
+/-- A paradigm without restricted groups is at N1 with no singular/group opposition at all, at
+N2 with a consistent one, and at neither on the intermediate rungs of the horizontal
+hierarchy. -/
+def numberStage : Option NumberStage :=
   if ∀ a, s.HorizontalHomophonyAt a then some .N1
   else if ¬ s.HorizontalHomophony then some .N2 else none
 
@@ -374,9 +390,9 @@ def weMarking : WeMarking :=
   if ¬ s .speakerAddressee .speakerAddresseeOthers then .minimalAugmented
   else if ¬ s .speakerAddressee .speakerOthers then .inclusiveExclusive else .unified
 
-/-- The structure has given up the opposition: minimal against augmented inclusive unless
-'we' is marked so, inclusive against exclusive when 'we' is one form, one between groups when
-two groups share a morpheme, one between singulars when two singulars do. -/
+/-- The structure has given up the opposition of minimal to augmented inclusive unless 'we' is
+marked so, of inclusive to exclusive when 'we' is one form, one between groups when two groups
+share a morpheme, and one between singulars when two singulars do. -/
 def GivesUp : Opposition → Prop
   | .minimalAugmented => s.weMarking ≠ .minimalAugmented
   | .inclusiveExclusive => s.weMarking = .unified
@@ -388,15 +404,16 @@ instance : DecidablePred s.GivesUp := fun o ↦ by cases o <;> unfold GivesUp <;
 /-- The oppositions the structure has given up. -/
 def givenUp : Finset Opposition := Finset.univ.filter s.GivesUp
 
-/-- The hierarchy as a constraint on which oppositions a paradigm may give up: those given up
-form an initial segment of the order, so singulars merge only where groups already merge, and
-groups only once 'we' is one form. -/
+/-- As a constraint on which oppositions a paradigm may give up, the hierarchy requires those
+given up to form an initial segment of the order, so singulars merge only where groups already
+merge, and groups only once 'we' is one form. -/
 def RespectsExplicitnessHierarchy : Prop := IsLowerSet (↑s.givenUp : Set Opposition)
 
 instance : Decidable s.RespectsExplicitnessHierarchy := inferInstanceAs (Decidable (IsLowerSet _))
 
-/-- The rung of a structure on the hierarchy, the last opposition it has given up: the book's
-stages of person differentiation P4 (none given up), P3, P2, P1 and P0 (a singular one). -/
+/-- The rung of a structure on the hierarchy is the last opposition it has given up, the
+book's stages of person differentiation P4 (none given up), P3, P2, P1 and P0 (a singular
+one). -/
 def explicitness : WithBot Opposition := s.givenUp.max
 
 variable {s} in
@@ -451,7 +468,7 @@ end RarePattern
 
 /-! ### The named structures of chapter 4 -/
 
-/-- The structures chapter 4 names after an exemplar: eight common and five semi-common. -/
+/-- Chapter 4 names eight common and five semi-common structures after an exemplar. -/
 inductive Kind where
   | latin | sinhalese | berik | maricopa
   | maranao | mandara | tupiGuarani | kwakiutl | sierraPopoluca
@@ -513,8 +530,8 @@ def names : List (String × Kind) :=
 /-- The paradigmatic structure of the named kind. -/
 abbrev pattern (k : Kind) : Structure := Setoid.ker k.labels
 
-/-- The type of each named structure's first person complex, as the book files them: the
-Maricopa type has no 'we', the Sierra Popoluca type only an inclusive, the Maranao type a
+/-- The book files each named structure's first person complex by type; the Maricopa type has
+no 'we', the Sierra Popoluca type only an inclusive, the Maranao type a
 minimal/augmented one, the other types with an inclusive/exclusive opposition are
 inclusive/exclusive and the rest unified. -/
 def clusivity : Kind → Clusivity
@@ -537,15 +554,15 @@ theorem respectsHorizontalHierarchy_pattern (k : Kind) :
     k.pattern.RespectsHorizontalHierarchy := by
   revert k; decide +kernel
 
-/-- Hierarchy I, with an inclusive/exclusive opposition: Mandara < Tupí-Guaraní < Kwakiutl <
-Sierra Popoluca, the last rung the exclusive marked like the speaker. -/
+/-- Hierarchy I, with an inclusive/exclusive opposition, runs Mandara < Tupí-Guaraní <
+Kwakiutl < Sierra Popoluca, the last rung the exclusive marked like the speaker. -/
 theorem horizontalSingulars_inclusiveExclusive :
     mandara.pattern.horizontalSingulars ⊂ tupiGuarani.pattern.horizontalSingulars ∧
     tupiGuarani.pattern.horizontalSingulars ⊂ kwakiutl.pattern.horizontalSingulars ∧
     kwakiutl.pattern.horizontalSingulars ⊂ sierraPopoluca.pattern.horizontalSingulars := by
   decide +kernel
 
-/-- Hierarchy II, without: Latin < Sinhalese < Berik < Maricopa. -/
+/-- Hierarchy II, without one, runs Latin < Sinhalese < Berik < Maricopa. -/
 theorem horizontalSingulars_unified :
     latin.pattern.horizontalSingulars ⊂ sinhalese.pattern.horizontalSingulars ∧
     sinhalese.pattern.horizontalSingulars ⊂ berik.pattern.horizontalSingulars ∧
@@ -557,9 +574,9 @@ theorem respectsExplicitnessHierarchy_pattern (k : Kind) :
     k.pattern.RespectsExplicitnessHierarchy := by
   revert k; decide +kernel
 
-/-- The columns of the book's cognitive map: vertical homophony (the Slave type) at P1,
-unified-we and no-we at P2, inclusive/exclusive and only-inclusive at P3, minimal/augmented
-at P4. -/
+/-- The columns of the book's cognitive map put vertical homophony (the Slave type) at P1,
+unified-we and no-we at P2, inclusive/exclusive and only-inclusive at P3, and
+minimal/augmented at P4. -/
 theorem explicitness_pattern :
     slave.pattern.explicitness = ↑Opposition.group ∧
     latin.pattern.explicitness = ↑Opposition.inclusiveExclusive ∧
@@ -569,7 +586,7 @@ theorem explicitness_pattern :
     maranao.pattern.explicitness = ⊥ := by
   decide +kernel
 
-/-- The rows of the cognitive map: no-we and only-inclusive at N1, the Slave, Latin, Mandara
+/-- The rows of the cognitive map put no-we and only-inclusive at N1, the Slave, Latin, Mandara
 and Maranao types at N2, and the Sinhalese type between the two. -/
 theorem numberStage_pattern :
     maricopa.pattern.numberStage = some .N1 ∧ sierraPopoluca.pattern.numberStage = some .N1 ∧
@@ -680,7 +697,7 @@ theorem binandere :
   decide +kernel
 
 /-- Addressee inclusion implication II over the printed paradigms. Its exceptions are the
-rare patterns that mark the two inclusives apart: (Pf) and (Pg), which the book names, and
+rare patterns that mark the two inclusives apart, (Pf) and (Pg), which the book names, and
 (Ph), whose paradigm the book's list overlooks. -/
 theorem rows_specializedExclusive_of_splitInclusive :
     ∀ r ∈ rows, (r.rare = none ∨ r.rare = some .pi ∨ r.rare = some .pj) →
@@ -692,14 +709,14 @@ theorem rows_splitInclusive_not_specializedExclusive :
       r.wePattern.SplitInclusive ∧ ¬ r.wePattern.SpecializedExclusive := by
   decide +kernel
 
-/-- The strong universal 'we' fails: the English inflection has no 'we'. -/
+/-- The strong universal 'we' fails, since the English inflection has no 'we'. -/
 theorem english_inflection_noWe :
     ∃ r ∈ rows, r.id = "cysouw2003_4_68" ∧ r.syncretism.HasClusivity .noWe := by
   decide +kernel
 
-/-- The Homophony Implication over the printed paradigms: singular homophony only in
-inflectional paradigms. The two independent-pronoun exceptions the book reports, Qawesqar and
-Winnebago, are described in chapter 2 without a printed paradigm. -/
+/-- Over the printed paradigms, the Homophony Implication holds, singular homophony occurring
+only in inflectional paradigms. The two independent-pronoun exceptions the book reports,
+Qawesqar and Winnebago, are described in chapter 2 without a printed paradigm. -/
 theorem rows_inflectional_of_singularHomophony :
     ∀ r ∈ rows, r.syncretism.SingularHomophony → r.marking = some .inflectional := by
   decide +kernel
@@ -710,15 +727,15 @@ theorem rows_rare_of_not_respectsHorizontalHierarchy :
     ∀ r ∈ rows, ¬ r.syncretism.RespectsHorizontalHierarchy → r.ubiquity = .rare := by
   decide +kernel
 
-/-- Table 4.2's first "nonesuch": under a minimal/augmented inclusive no chapter-4 paradigm
+/-- By Table 4.2's first "nonesuch", under a minimal/augmented inclusive no chapter-4 paradigm
 breaks the horizontal hierarchy. -/
 theorem rows_respectsHorizontalHierarchy_of_minimalAugmented :
     ∀ r ∈ rows, r.chapter = 4 → r.syncretism.weMarking = .minimalAugmented →
       r.syncretism.RespectsHorizontalHierarchy := by
   decide +kernel
 
-/-- Table 4.2's second "nonesuch": no singular homophony under any inclusive/exclusive
-opposition. -/
+/-- By Table 4.2's second "nonesuch", there is no singular homophony under any
+inclusive/exclusive opposition. -/
 theorem rows_unified_of_singularHomophony :
     ∀ r ∈ rows, r.chapter = 4 → r.syncretism.SingularHomophony →
       r.syncretism.weMarking = .unified := by
@@ -741,9 +758,9 @@ theorem rows_rare_of_verticalHomophony_inclusiveExclusive :
       r.ubiquity = .rare := by
   decide +kernel
 
-/-- The book's exemplars of the five rungs: the Waskia present and the Una undergoer suffixes
-have given up a singular and a group opposition, then the Latin, Mandara and Maranao
-types. -/
+/-- Among the book's exemplars of the five rungs, the Waskia present and the Una undergoer
+suffixes have given up a singular and a group opposition, then come the Latin, Mandara and
+Maranao types. -/
 theorem explicitness_rungs :
     ∃ waskia ∈ rows, ∃ una ∈ rows,
       waskia.id = "cysouw2003_4_66" ∧ una.id = "cysouw2003_4_64" ∧
@@ -756,7 +773,7 @@ theorem explicitness_rungs :
 
 /-! ### Two paradigms from the Fragments -/
 
-/-- The English subject forms by referential category: the paradigm of the fragment's
+/-- The English subject forms by referential category are the paradigm of the fragment's
 non-accusative pronouns. -/
 def englishSubject : Category → Finset String :=
   PersonalPronoun.paradigm (English.Pronouns.pronouns.filter (·.case_ ≠ some .acc))
@@ -766,8 +783,8 @@ theorem english_pronouns :
     ∃ r ∈ rows, r.id = "cysouw2003_4_19" ∧ Setoid.ker englishSubject = r.syncretism := by
   decide +kernel
 
-/-- Horizontal homophony in the second person only: the English pronouns break the horizontal
-hierarchy. -/
+/-- With horizontal homophony in the second person only, the English pronouns break the
+horizontal hierarchy. -/
 theorem english_not_respectsHorizontalHierarchy :
     ¬ Structure.RespectsHorizontalHierarchy (Setoid.ker englishSubject) := by decide +kernel
 

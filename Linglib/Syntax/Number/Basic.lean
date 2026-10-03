@@ -20,7 +20,6 @@ Corbett reanalysing apparent quadrals (Sursurunga, Tangga) as paucals.
 * `Number.instPartialOrder`: the markedness order, `a ≤ b` when every system with `b` has `a`.
 * `Number.System`: a language's number values, with the implicational universals as decidable
   predicates and their conjunction `Number.System.WellFormed`.
-* `Number.Stage`: Cysouw's four number-opposition stages, linearly ordered.
 
 ## Implementation notes
 
@@ -34,7 +33,6 @@ resolution in `Syntax/Number/Resolve.lean`.
 * [greenberg-1963]
 * [greenberg-1966]
 * [harbour-2014]
-* [cysouw-2003]
 * [sauerland-2003]
 * [grimm-2018]
 -/
@@ -88,14 +86,6 @@ def isDeterminate : Number → Prop
 
 instance : DecidablePred isDeterminate := fun n => by
   cases n <;> unfold isDeterminate <;> infer_instance
-
-/-- A number value participates in the number system (is not general). -/
-def isInSystem : Number → Prop
-  | .general => False
-  | _ => True
-
-instance : DecidablePred isInSystem := fun n => by
-  cases n <;> unfold isInSystem <;> infer_instance
 
 /-- A determinate value's referent has an exact cardinality, one for the singular, two for the
 dual and three for the trial; the other values have none. -/
@@ -186,47 +176,11 @@ instance instPartialOrder : PartialOrder Number where
   le_trans a b c := by cases a <;> cases b <;> cases c <;> decide
   le_antisymm a b := by cases a <;> cases b <;> decide
 
-/-! ### Number opposition stages ([cysouw-2003], Fig 10.8) -/
-
-/-- The number opposition stages of [cysouw-2003] (Fig 10.8) coarsen the number values into
-four steps of typological richness, from no number marking (N1) to marking of restricted and
-small groups (N3, N4). -/
-inductive Stage where
-  /-- N1 leaves number unmarked, the singular undistinguished from a group. -/
-  | N1
-  /-- N2 opposes the singular to a group, the basic number opposition. -/
-  | N2
-  /-- N3 also distinguishes a restricted group (the dual, and the inclusive trial of
-      unit-augmented paradigms) from an unrestricted one. -/
-  | N3
-  /-- N4 also distinguishes a small group, the paucal. -/
-  | N4
-  deriving DecidableEq, Repr
-
-namespace Stage
-
-/-- `toNat` embeds the stages into `ℕ` in order of richness. -/
-def toNat : Stage → Nat
-  | .N1 => 0
-  | .N2 => 1
-  | .N3 => 2
-  | .N4 => 3
-
-instance : LinearOrder Stage :=
-  LinearOrder.lift' toNat
-    (fun a b h => by cases a <;> cases b <;> simp_all [toNat])
-
-/-- The order on `Stage` is the `toNat` order. -/
-theorem toNat_le_toNat {a b : Stage} : a ≤ b ↔ a.toNat ≤ b.toNat := Iff.rfl
-
-end Stage
-
 /-! ### Number systems ([corbett-2000] §2.3) -/
 
 /-- A number system records the values available in a language, which of them are
 facultative, and whether the language has general number ([corbett-2000] §2.3). -/
 structure System where
-  name : String
   /-- The values available within the number system. -/
   values : List Number
   /-- Whether the language has general number, a form outside the system. -/
@@ -236,16 +190,6 @@ structure System where
   deriving DecidableEq
 
 namespace System
-
-/-- The size of a system is its number of values. -/
-def size (ns : System) : Nat := ns.values.length
-
-/-- A value is obligatory in a system that has it and does not make it facultative. -/
-def IsObligatory (ns : System) (v : Number) : Prop :=
-  v ∈ ns.values ∧ v ∉ ns.facultative
-
-instance (ns : System) (v : Number) : Decidable (ns.IsObligatory v) := by
-  unfold System.IsObligatory; infer_instance
 
 /-! #### Implicational universals ([greenberg-1963], [corbett-2000] §2.3.1) -/
 
@@ -330,15 +274,6 @@ def WellFormed (ns : System) : Prop :=
 
 instance (ns : System) : Decidable ns.WellFormed := by
   unfold WellFormed; infer_instance
-
-/-- A system realizes the [cysouw-2003] stage its number of values fixes, N1 for at most one
-value, N2 for two, N3 for three and N4 for more. -/
-def toStage (ns : System) : Stage :=
-  match ns.size with
-  | 0 | 1 => .N1
-  | 2 => .N2
-  | 3 => .N3
-  | _ => .N4
 
 end System
 

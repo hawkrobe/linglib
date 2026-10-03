@@ -4,7 +4,6 @@ public import Mathlib.Data.Rat.Defs
 public import Mathlib.Order.UpperLower.Basic
 public import Mathlib.Tactic.DeriveFintype
 public import Mathlib.Tactic.FinCases
-public import Mathlib.Tactic.IntervalCases
 public import Mathlib.Tactic.NormNum
 public import Linglib.Syntax.Agreement.Classes
 public import Linglib.Syntax.Number.Resolve
@@ -120,17 +119,6 @@ def values (s : Shape) : List Number :=
     [Number.paucal, .greaterPaucal].take s.indeterminate ++
       .plural :: (if s.greaterPlural then [.greaterPlural] else []))
 
-/-- The plural's lower bound is three with a dual and four with a trial. -/
-def pluralFloor (s : Shape) : ℕ := 2 + s.determinate
-
-/-- A determinate cardinality below the plural's floor has its own value. -/
-theorem fromCard_mem_values (s : Shape) {n : ℕ} (h₀ : 0 < n) (h : n < s.pluralFloor) :
-    Number.fromCard n ∈ s.values := by
-  have h₄ : n < 4 := by have := s.determinate.isLt; unfold pluralFloor at h; omega
-  obtain ⟨d, p, gp⟩ := s
-  revert h₀ h
-  interval_cases n <;> revert d p gp <;> decide
-
 end Shape
 
 /-- General number, the meaning outside the number system, is expressed not at all, by a form
@@ -163,8 +151,8 @@ def facultativeValues (c : Choices) : List Number :=
   c.divisions.drop (c.divisions.length - c.facultative)
 
 /-- The substrate's system. -/
-def toSystem (c : Choices) (name : String) : Number.System :=
-  { name := name, values := c.values, hasGeneral := decide (c.general ≠ .none),
+def toSystem (c : Choices) : Number.System :=
+  { values := c.values, hasGeneral := decide (c.general ≠ .none),
     facultative := c.facultativeValues }
 
 /-- Facultative choices are the last ones. -/
@@ -173,9 +161,9 @@ theorem facultativeValues_suffix (c : Choices) : c.facultativeValues <:+ c.divis
 
 /-- Every sequence of choices is a well-formed system, satisfying Greenberg's implicational
 universals of number as the substrate states them ([greenberg-1963]). -/
-theorem toSystem_wellFormed (c : Choices) (name : String) : (c.toSystem name).WellFormed := by
+theorem toSystem_wellFormed (c : Choices) : c.toSystem.WellFormed := by
   obtain ⟨⟨d, p, gp⟩, g, f⟩ := c
-  change ((Choices.mk ⟨d, p, gp⟩ .none 0).toSystem "").WellFormed
+  change (Choices.mk ⟨d, p, gp⟩ .none 0).toSystem.WellFormed
   fin_cases d <;> fin_cases p <;> cases gp <;> decide
 
 /-- Facultative use works up from the last choice, as the count from the last builds in, so
@@ -253,14 +241,14 @@ def japanese : Choices := { general := .withSingular }
 def hamer : Choices := { greaterPlural := true, general := .separate }
 
 /-- Pirahã has no number at all. -/
-def piraha : Number.System := { name := "Pirahã", values := [] }
+def piraha : Number.System := { values := [] }
 
 /-- Rembarrnga has minimal, unit augmented and augmented, Table 5.18. -/
 def rembarrnga : Number.System :=
-  { name := "Rembarrnga", values := [.minimal, .unitAugmented, .augmented] }
+  { values := [.minimal, .unitAugmented, .augmented] }
 
 /-- Ilocano has minimal and augmented, Table 5.20. -/
-def ilocano : Number.System := { name := "Ilocano", values := [.minimal, .augmented] }
+def ilocano : Number.System := { values := [.minimal, .augmented] }
 
 /-! ### The Animacy Hierarchy (chapters 3 and 4) -/
 
@@ -771,9 +759,9 @@ def resolveNumber (c : Choices) (ns : List Number) : Number :=
 Slovene as in English. -/
 theorem resolveNumber_eq_resolve :
     (∀ a ∈ slovene.values, ∀ b ∈ slovene.values,
-      resolveNumber slovene [a, b] = (slovene.toSystem "Slovene").resolve a b) ∧
+      resolveNumber slovene [a, b] = slovene.toSystem.resolve a b) ∧
       ∀ a ∈ english.values, ∀ b ∈ english.values,
-        resolveNumber english [a, b] = (english.toSystem "English").resolve a b := by
+        resolveNumber english [a, b] = english.toSystem.resolve a b := by
   decide
 
 /-- Table 6.12 gives the percentage of number resolution with Russian conjoined noun phrases by
@@ -876,7 +864,7 @@ theorem slave_rows : ∀ row ∈ Examples.all, row.language = "slav1253" →
 system gives the controller's referent. -/
 theorem hebrew_rows : ∀ row ∈ Examples.all, row.language = "hebr1245" →
     ∀ c ∈ row.parse? "controller" numberNames, ∀ t ∈ row.parse? "target" numberNames,
-      (({} : Choices).toSystem "Modern Hebrew").coarsen c = t := by
+      ({} : Choices).toSystem.coarsen c = t := by
   decide +kernel
 
 /-- The default number, where the controller has none, is the singular in language after
