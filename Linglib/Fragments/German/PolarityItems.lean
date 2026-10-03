@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Semantics.Polarity.Licensing
-public import Linglib.Fragments.German.ModalIndefinites
 public import Linglib.Fragments.German.TemporalConnectives
 
 /-!
@@ -17,13 +16,12 @@ Shimoyama attest it under possibility and necessity modals, under negative quant
 *niemand* 'nobody' and *auf keinen Fall* 'in no case', under *bezweifeln* 'doubt' and in an
 embedded question, and they find it ungrammatical under the inflectional negation *nicht* unless
 *irgend* is stressed. It is also fine in an episodic sentence, where it signals the speaker's
-ignorance or indifference, which is not a licensing environment. Its analysis as a modal
-indefinite is `German.ModalIndefinites.irgendein`. *Brauchen* with a *zu*-infinitive occurs only
-with a negative or with *nur* or *bloß* 'only'. It is a weak negative polarity item, licensed by
-*höchstens eine* 'at most one' as by *keiner* 'no one' ([zwarts-1998] (3)); Büring and Gunlogson,
-and Schaebbicke, Seeliger and Repp in a rating study, find it licensed by *niemand* and *kein* and
-out in a positive polar question. *Erst* is the positive polarity *until* of Karttunen's chart, the
-connective `German.TemporalConnectives.erst`.
+ignorance or indifference, which is not a licensing environment. *Brauchen* with a *zu*-infinitive
+occurs only with a negative or with *nur* or *bloß* 'only'. It is a weak negative polarity item,
+licensed by *höchstens eine* 'at most one' as by *keiner* 'no one' ([zwarts-1998] (3)); Büring and
+Gunlogson, and Schaebbicke, Seeliger and Repp in a rating study, find it licensed by *niemand* and
+*kein* and out in a positive polar question. *Erst* is the positive polarity *until* of Karttunen's
+chart, the connective `German.TemporalConnectives.erst`.
 
 ## TODO
 
@@ -51,7 +49,7 @@ open PolarityItem
 /-- *Irgendein* is an existential indefinite with free-choice effects, attested in questions, under
 *bezweifeln*, under possibility and necessity modals and under negative quantifiers. -/
 def irgendein : PolarityItem :=
-  { form := ModalIndefinites.irgendein.form
+  { form := "irgendein"
   , licensor := some .weak
   , freeChoice := true
   , licensingContexts :=

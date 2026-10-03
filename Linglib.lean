@@ -470,7 +470,6 @@ import Linglib.Fragments.German.Distributives
 import Linglib.Fragments.German.Evidentiality
 import Linglib.Fragments.German.Gender
 import Linglib.Fragments.German.Indefinites
-import Linglib.Fragments.German.ModalIndefinites
 import Linglib.Fragments.German.Negation
 import Linglib.Fragments.German.Particles
 import Linglib.Fragments.German.PolarityItems
@@ -586,7 +585,6 @@ import Linglib.Fragments.Marathi.Particles
 import Linglib.Fragments.MauritianCreole.Determiners
 import Linglib.Fragments.Mayan.Chol.Agreement
 import Linglib.Fragments.Mayan.Chol.Classifiers
-import Linglib.Fragments.Mayan.Chuj.ModalIndefinites
 import Linglib.Fragments.Mayan.Chuj.RootClasses
 import Linglib.Fragments.Mayan.Kaqchikel.Agreement
 import Linglib.Fragments.Mayan.Kaqchikel.Extraction
@@ -623,7 +621,6 @@ import Linglib.Fragments.Romance.Catalan.Reciprocals
 import Linglib.Fragments.Romance.French.Comparison
 import Linglib.Fragments.Romance.French.Determiners
 import Linglib.Fragments.Romance.French.Evidentiality
-import Linglib.Fragments.Romance.French.ModalIndefinites
 import Linglib.Fragments.Romance.French.Modals
 import Linglib.Fragments.Romance.French.Negation
 import Linglib.Fragments.Romance.French.Nouns
@@ -2080,8 +2077,6 @@ import Linglib.Data.Examples.AlonsoOvalleMenendezBenito2010
 import Linglib.Data.Examples.AlonsoOvalleMoghiseh2025a
 import Linglib.Data.Examples.AlonsoOvalleMoghiseh2025b
 import Linglib.Data.Examples.AlonsoOvalleRoyer2024
-import Linglib.Semantics.Modality.Anchor
-import Linglib.Syntax.Category.Determiner.ModalIndefinite
 import Linglib.Syntax.Category.WhModifier
 import Linglib.Data.Examples.Alsop2024
 import Linglib.Data.Examples.AnandHacquard2013
