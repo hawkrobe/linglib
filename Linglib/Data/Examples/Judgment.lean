@@ -26,8 +26,10 @@ This file defines `Judgment`, the mark a paper puts before an example, the CLDF 
   order is a modelling convention rather than a scale from the literature. It ranks `#` above `*`
   because an example marked `#` is well formed but infelicitous; the two constructors keep the
   difference in kind.
-* A split mark a paper prints, such as `*/??` for speakers who differ, is a `List Judgment` in the
-  study that reads it. Gradient ratings are results, recorded in `Data/Experiments/`.
+* A split mark a paper prints, such as `*/??` for speakers who differ, is several marks for one
+  sentence. An example records the first as its `judgment` and each further mark as an
+  `alsoJudged` paper feature, and a study reading them all reads a `List Judgment`. Gradient
+  ratings are results, recorded in `Data/Experiments/`.
 
 ## References
 
@@ -38,15 +40,15 @@ This file defines `Judgment`, the mark a paper puts before an example, the CLDF 
 
 /-- The mark a paper puts before an example. -/
 inductive Judgment where
-  /-- Unmarked: the paper accepts the example. -/
+  /-- The paper accepts the example and leaves it unmarked. -/
   | acceptable
-  /-- `?`: marginal. -/
+  /-- The mark `?` calls the example marginal. -/
   | marginal
-  /-- `??`: questionable. -/
+  /-- The mark `??` calls the example questionable. -/
   | questionable
-  /-- `#`: well formed, but infelicitous or semantically anomalous. -/
+  /-- The mark `#` calls the example well formed but infelicitous or semantically anomalous. -/
   | unacceptable
-  /-- `*`: ungrammatical. -/
+  /-- The mark `*` calls the example ungrammatical. -/
   | ungrammatical
   deriving DecidableEq, Repr, Inhabited, Fintype
 

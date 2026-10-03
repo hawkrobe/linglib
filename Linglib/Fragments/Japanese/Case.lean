@@ -28,8 +28,8 @@ single *ni* entry, the matter of `Studies/SadakaneKoizumi1995.lean`.
 
 ## References
 
-* [kuno-1987]
-* [kuroda-1972]
+* [kuno-1973]
+* [kuroda-1965]
 * [sadakane-koizumi-1995]
 * [tsujimura-2014]
 -/
@@ -54,7 +54,7 @@ inductive Case where
 
 namespace Case
 
-/-- The case particle of each case: *ga* が, *o* を, *no* の, *ni* に. -/
+/-- `c.form` is the case particle of `c`, *ga* が, *o* を, *no* の or *ni* に. -/
 def form : Case → String
   | nom => "ga"
   | acc => "o"
@@ -68,8 +68,8 @@ def label : Case → _root_.Case
   | gen => .gen
   | dat => .dat
 
-/-- The comparative values a case expresses: *ni* marks the recipient, the goal, the time and
-the location of existence. -/
+/-- `c.functions` are the comparative values `c` expresses; *ni* marks the recipient, the goal,
+the time and the location of existence. -/
 def functions : Case → Finset _root_.Case
   | dat => {.dat, .loc, .all, .tem}
   | c => {c.label}
@@ -111,10 +111,10 @@ def form : Postposition → String
   | made => "made"
   | yori => "yori"
 
-/-- The comparative values a postposition expresses: *de* the locative of an action's place and
-the instrumental, *e* the allative, *to* the comitative, *kara* the ablative of spatial and
-temporal sources, *made* the terminative of spatial and temporal endpoints, and *yori* the
-ablative, as the separative standard of the comparative. -/
+/-- `p.functions` are the comparative values `p` expresses. *De* marks the locative of an
+action's place and the instrumental, *e* the allative, *to* the comitative, *kara* the ablative
+of spatial and temporal sources, *made* the terminative of spatial and temporal endpoints, and
+*yori* the ablative, as the separative standard of the comparative. -/
 def functions : Postposition → Finset _root_.Case
   | de => {.loc, .inst}
   | e => {.all}

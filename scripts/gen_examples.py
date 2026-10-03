@@ -48,7 +48,8 @@ Behavior:
   checked against its source.
 - Errors out on schema violations (a key that is not a field, an id outside
   the CLDF identifier characters `[A-Za-z0-9_-]`, a language that is neither
-  empty nor a Glottocode of `languages.csv`, unknown judgment value,
+  empty nor a Glottocode of `languages.csv`, unknown judgment value (also as
+  the value of an `alsoJudged` paper feature),
   malformed gloss pair, missing id or source.bibkey).
 - Idempotent: re-running on unchanged JSON produces no diff.
 - `--check` regenerates in-memory and exits 1 on any drift (CI guard);
@@ -250,6 +251,12 @@ def emit_example(ex: dict, author_year_lower: str) -> str:
     alternatives = emit_form_judgment_list(ex.get("alternatives", []), where + ".alternatives", "form")
     readings    = emit_form_judgment_list(ex.get("readings", []), where + ".readings", "name")
     features    = emit_string_pair_list(ex.get("paperFeatures", []), where + ".paperFeatures")
+    raw = ex.get("paperFeatures", [])
+    pairs = raw.items() if isinstance(raw, dict) else [
+        (e[0], e[1]) if isinstance(e, list) else (e["key"], e["value"]) for e in raw]
+    for k, v in pairs:
+        if k == "alsoJudged":
+            parse_judgment(v, where + ".paperFeatures.alsoJudged")
 
     return f"""def {local} : Datum :=
   {{ id := {lean_string(ex_id)}
