@@ -1,194 +1,164 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 module
 
 public import Linglib.Syntax.Number.Basic
-public import Linglib.Semantics.Plurality.NumberFeatures
+public import Mathlib.Data.Finset.Card
+public import Mathlib.Tactic.IntervalCases
 
 /-!
 # Number resolution
-[corbett-2000] [harbour-2014] [link-1983]
 
-The single canonical number-resolution operation: when two number-bearing
-referents combine (conjoined DPs, resolved agreement), the result is
-**derived** from the join-semilattice of individuals ([link-1983]) via
-[harbour-2014]'s feature geometry, then **coarsened** to the values the
-language's number system makes available — the formal content of
-[corbett-2000] §6.3: "the result depends on which number values the
-language has."
+A target agreeing with all of its conjoined noun phrases takes the number its language gives the
+group they form, in Slovene the dual for two singulars and the plural otherwise. Corbett observes
+that the values resolution produces match the semantics of number. A system with determinate
+values gives a referent of `n` individuals the determinate value of that cardinality if it has
+one and the plural otherwise, and the conjuncts denote distinct individuals, so the group's
+cardinality is the sum of theirs. When the determinate values form an initial segment of
+singular, dual and trial, as the implicational universals require, the value of the sum depends
+only on the values of the parts, so resolution is a function of the conjuncts' numbers. The same
+classification gives the number of a target whose system lacks its controller's value, the
+plural of a Modern Hebrew verb agreeing with a dual noun.
 
-- `Number.resolve` computes the finest value for the mereological sum
-  (sg ⊔ sg → du: atom ⊔ atom = pair).
-- `Number.coarsenTo` maps it to an available value
-  (du → pl in a {sg, pl} system like English).
-- `Number.resolveIn` composes the two; `Number.System.resolve` is the
-  system-typed entry point.
+## Main definitions
 
-Consumers: `Studies/Corbett2000.lean` states the book's resolution data over its language
-systems.
+* `Number.System.ofCard`: the value a system gives a referent of `n` individuals.
+* `Number.System.resolve`: the resolved number of two conjuncts.
+* `Number.System.coarsen`: the value a system gives the referent of another system's value.
+
+## Main results
+
+* `Number.System.resolve_ofCard`: in a system obeying DU → SG and TR → DU, conjuncts of `m`
+  and `n` individuals resolve to the value of `m + n`.
+* `Number.System.foldl_resolve_ofCard`: any number of conjuncts resolve to the value of the sum
+  of their cardinalities.
+* `Number.System.resolve_card_union`: conjuncts denoting disjoint pluralities resolve to the
+  value of their sum.
+* `Number.System.coarsen_ofCard`: a target shows the value of its controller's referent when
+  the controller's system has every determinate value of the target's.
+
+## Implementation notes
+
+That resolution is a function of the conjuncts' numbers says that `ofCard`'s kernel is a
+congruence for addition on positive cardinalities, the additive counterpart of the person
+systems' congruences for union; no consumer reads the quotient, so it is not built. The
+approximative values have no fixed cardinality boundary and the minimal and augmented are
+relative to person, so neither are classes of cardinalities. `resolve` and `coarsen` send them,
+as they send the plural, to the plural; no theorem here reaches them.
+
+## TODO
+
+* Minimal–augmented systems, where the speaker and the addressee, each minimal, sum to the
+  minimal inclusive, want person and number resolved together.
+
+## References
+
+* [corbett-1991] §9.1.2, pp. 263–264
+* [corbett-2000] §6.1, p. 180; §6.5.2, pp. 198–199
+* [corbett-2006] §8.2, pp. 242–243; §8.5.4, p. 257
+* [link-1983]
 -/
 
 @[expose] public section
 
-namespace Number
+namespace Number.System
 
-/-! ### Canonical resolution -/
+variable (ns : System)
 
-/-- Canonical number resolution: the finest value for the mereological
-    sum of two referents, **derived** from two lattice-theoretic principles.
-    The resolution data are [corbett-2000] §6.3 (resolved dual in
-    Slovene/Sorbian); the value lattice they are derived from is
-    [link-1983]/[harbour-2014]:
+/-- `ns.ofCard n` is the value a system gives a referent of `n` individuals, the determinate
+value of that cardinality if the system has it and the plural otherwise. -/
+def ofCard (n : ℕ) : Number :=
+  if fromCard n ∈ ns.values then fromCard n else .plural
 
-    1. **Cardinality addition** (for determinate values):
-       |A ⊔ B| = |A| + |B| for disjoint referent sets A, B.
-       The sum is mapped back to the finest determinate value via
-       `Number.fromCard`.
-
-       - sg(1) + sg(1) = 2 → du
-       - sg(1) + du(2) = 3 → trial
-       - du(2) + du(2) = 4 → plural (no determinate value for sums ≥ 4)
-
-    2. **MIN/AUG lattice join** (for [±minimal] systems without [±atomic]):
-       In a 2-level lattice {minimal, augmented}, the join of any two
-       distinct elements exceeds the minimal. Since coordination requires
-       disjoint referents, the result is always augmented.
-
-    3. **Catch-all**: values without exact cardinality or MIN/AUG
-       membership (plural, paucal, greaterPlural, etc.) resolve to plural
-       — the default non-singular value. -/
+/-- `ns.resolve a b` is the resolved number of two conjuncts, the value of the sum of their
+cardinalities; a conjunct with no fixed cardinality makes it plural. -/
 def resolve (a b : Number) : Number :=
   match a.exactCard, b.exactCard with
-  | some na, some nb => fromCard (na + nb)
-  | _, _ =>
-    if a.isMinAug ∧ b.isMinAug then .augmented
-    else .plural
+  | some m, some n => ns.ofCard (m + n)
+  | _, _ => .plural
 
-/-- Canonical resolution is commutative: x ⊔ y = y ⊔ x. -/
-theorem resolve_comm (a b : Number) : resolve a b = resolve b a := by
-  cases a <;> cases b <;> rfl
+/-- `ns.coarsen v` is the value a system gives the referent of a value `v` of another system,
+the value of its cardinality if `v` has one and the plural otherwise. -/
+def coarsen (v : Number) : Number :=
+  match v.exactCard with
+  | some n => ns.ofCard n
+  | none => .plural
 
-/-- Canonical resolution is associative: sums of three or more referents
-    resolve the same under any bracketing (cardinalities ≥ 4 all collapse
-    to the residual plural, which absorbs). -/
-theorem resolve_assoc :
-    ∀ a b c : Number, resolve (resolve a b) c = resolve a (resolve b c) := by
-  decide
+theorem resolve_comm (a b : Number) : ns.resolve a b = ns.resolve b a := by
+  unfold resolve
+  cases a.exactCard <;> cases b.exactCard <;> simp [Nat.add_comm]
 
-/-! ### Coarsening to a system -/
+theorem ofCard_of_three_lt {n : ℕ} (h : 3 < n) : ns.ofCard n = .plural := by
+  obtain ⟨k, rfl⟩ : ∃ k, n = k + 4 := ⟨n - 4, by omega⟩
+  simp [ofCard, fromCard]
 
-/-- Coarsen a value to the nearest available one in a number system.
+/-- A referent's value has its cardinality exactly when the system has a determinate value for
+it. -/
+theorem exactCard_ofCard {n : ℕ} (hn : 0 < n) :
+    (ns.ofCard n).exactCard = if fromCard n ∈ ns.values ∧ n ≤ 3 then some n else none := by
+  by_cases h3 : n ≤ 3
+  · interval_cases n <;> simp only [ofCard, fromCard] <;> split_ifs <;> simp_all [exactCard]
+  · simp [ofCard_of_three_lt ns (by omega : 3 < n), exactCard, h3]
 
-    Values not present in the system map to their semantic
-    superordinate — the broader value whose referents include
-    the absent value's referents.
+variable {ns}
 
-    The superordinate map is hand-specified: it is *not* monotone in the
-    markedness order (`Number.instPartialOrder`), whose direction is
-    implicational (b presupposes a), not referent-containment. By construction it
-    returns a value in `system` (or the input unchanged), so `resolveIn` is closed
-    over every [harbour-2014] Table 3 system. -/
-def coarsenTo (system : List Number) (c : Number) : Number :=
-  if system.contains c then c else
-  match c with
-  | .dual | .trial | .greaterPlural | .globalPlural =>
-    if system.contains .plural then .plural
-    else if system.contains .augmented then .augmented
-    else c
-  | .unitAugmented =>
-    if system.contains .augmented then .augmented else c
-  | .greaterPaucal =>
-    if system.contains .paucal then .paucal
-    else if system.contains .plural then .plural
-    else c
-  | .paucal =>
-    if system.contains .plural then .plural
-    else if system.contains .augmented then .augmented
-    else c
-  | .augmented =>
-    if system.contains .plural then .plural
-    else c
-  | .plural =>
-    if system.contains .augmented then .augmented
-    else if system.contains .greaterPlural then .greaterPlural
-    else c
-  | _ => c
+/-- In a system whose determinate values are an initial segment of singular, dual and trial,
+conjuncts of `m` and `n` individuals resolve to the value of `m + n`, so resolution matches the
+semantics of number. -/
+theorem resolve_ofCard (h₁ : ns.DualImpliesSingular) (h₂ : ns.TrialImpliesDual) {m n : ℕ}
+    (hm : 0 < m) (hn : 0 < n) : ns.resolve (ns.ofCard m) (ns.ofCard n) = ns.ofCard (m + n) := by
+  unfold DualImpliesSingular TrialImpliesDual at *
+  rw [resolve, exactCard_ofCard ns hm, exactCard_ofCard ns hn]
+  by_cases h4 : 3 < m + n
+  · rw [ofCard_of_three_lt ns h4]
+    split_ifs <;> simp [ofCard_of_three_lt ns h4]
+  · obtain ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ :
+        (m = 1 ∧ n = 1) ∨ (m = 1 ∧ n = 2) ∨ (m = 2 ∧ n = 1) := by omega
+    all_goals
+      by_cases hs : Number.singular ∈ ns.values <;> by_cases hd : Number.dual ∈ ns.values <;>
+        by_cases ht : Number.trial ∈ ns.values <;> simp_all [ofCard, fromCard]
 
-/-- System-parameterized number resolution: canonical lattice join,
-    coarsened to the available values in the target system.
+-- Both hypotheses are needed: a dual without a singular, or a trial without a dual, makes the
+-- value of a sum depend on more than the values of its parts.
+example : let ns : System := { name := "", values := [.dual, .plural] }
+    ns.resolve (ns.ofCard 1) (ns.ofCard 1) ≠ ns.ofCard 2 := by decide
+example : let ns : System := { name := "", values := [.singular, .trial, .plural] }
+    ns.resolve (ns.ofCard 2) (ns.ofCard 1) ≠ ns.ofCard 3 := by decide
 
-    This derives resolution rules from two independent components:
-    1. Lattice join: sg + sg → du (canonical)
-    2. Coarsening: du → pl in a {sg, pl} system -/
-def resolveIn (system : List Number) (a b : Number) : Number :=
-  coarsenTo system (resolve a b)
+/-- Any number of conjuncts, resolved in order, give the value of the sum of their
+cardinalities. -/
+theorem foldl_resolve_ofCard (h₁ : ns.DualImpliesSingular) (h₂ : ns.TrialImpliesDual) {m : ℕ}
+    (hm : 0 < m) {ms : List ℕ} (hms : ∀ x ∈ ms, 0 < x) :
+    (ms.map ns.ofCard).foldl ns.resolve (ns.ofCard m) = ns.ofCard (m + ms.sum) := by
+  induction ms generalizing m with
+  | nil => simp
+  | cons x xs ih =>
+    rw [List.map_cons, List.foldl_cons, resolve_ofCard h₁ h₂ hm (hms x (by simp)),
+      ih (by omega) fun y hy ↦ hms y (by simp [hy]), List.sum_cons, Nat.add_assoc]
 
-/-- System-parameterized resolution is commutative. -/
-theorem resolveIn_comm (system : List Number) (a b : Number) :
-    resolveIn system a b = resolveIn system b a := by
-  simp only [resolveIn, resolve_comm]
+/-- Conjuncts denoting disjoint pluralities resolve to the value of their sum. -/
+theorem resolve_card_union {α : Type*} [DecidableEq α] (h₁ : ns.DualImpliesSingular)
+    (h₂ : ns.TrialImpliesDual) {s t : Finset α} (hs : s.Nonempty) (ht : t.Nonempty)
+    (hst : Disjoint s t) :
+    ns.resolve (ns.ofCard s.card) (ns.ofCard t.card) = ns.ofCard (s ∪ t).card := by
+  rw [Finset.card_union_of_disjoint hst, resolve_ofCard h₁ h₂ hs.card_pos ht.card_pos]
 
-/-- Resolution typed by a `Number.System`: resolve in the system's values. -/
-def System.resolve (ns : System) (a b : Number) : Number :=
-  resolveIn ns.values a b
+/-- A target shows the value of its controller's referent when the controller's system has
+every determinate value of the target's. -/
+theorem coarsen_ofCard {src tgt : System}
+    (h : ∀ v ∈ tgt.values, v.isDeterminate → v ∈ src.values) (n : ℕ) :
+    tgt.coarsen (src.ofCard n) = tgt.ofCard n := by
+  rcases Nat.eq_zero_or_pos n with rfl | hn
+  · simp [coarsen, ofCard, fromCard, exactCard]
+  rw [coarsen, exactCard_ofCard src hn]
+  split_ifs with hs
+  · rfl
+  · by_cases h3 : n ≤ 3
+    · have : fromCard n ∉ tgt.values := fun ht ↦ hs ⟨h _ ht (by interval_cases n <;> trivial), h3⟩
+      simp [ofCard, this]
+    · simp [ofCard_of_three_lt tgt (by omega : 3 < n)]
 
-/-! ### Lattice verification
-
-The canonical resolution is verified against the 3-atom powerset lattice
-(`Number.ps3`: nonempty subsets of `Fin 3`, join = union).
-`Number.latticeToFeatures` classifies elements by lattice position;
-`resolve` is the union pushed through the classification. -/
-
-/-- Atom ⊔ atom is a pair, which is dual (minimal non-atom).
-    Lattice grounding: `resolve sg sg = du`. -/
-theorem lattice_atom_join_dual :
-    latticeToFeatures ps3 ({0} ∪ {1} : Finset (Fin 3)) = dualF := by
-  decide
-
-/-- Atom ⊔ pair is the triple, which is plural (non-minimal non-atom).
-    Lattice grounding: `resolve sg du = trial` (plural in the base
-    system, trial with recursion). -/
-theorem lattice_atom_pair_plural :
-    latticeToFeatures ps3 ({2} ∪ {0, 1} : Finset (Fin 3)) = pluralF := by
-  decide
-
-/-- The derived `resolve` agrees with the powerset lattice: join in the
-    concrete lattice, then classify via `latticeToFeatures`, matches
-    `resolve` applied to the classified inputs — the structural proof
-    that `resolve` is the lattice join pushed through the
-    classification, not a stipulation. -/
-theorem lattice_grounding_agrees :
-    latticeToFeatures ps3 ({0} ∪ {1} : Finset (Fin 3)) = dualF ∧
-    latticeToFeatures ps3 ({2} ∪ {0, 1} : Finset (Fin 3)) = pluralF :=
-  ⟨lattice_atom_join_dual, lattice_atom_pair_plural⟩
-
-/-! ### System-dependent predictions -/
-
-/-- In a {sg, pl} system (English): sg + sg → pl.
-    Canonical du coarsened to plural. -/
-theorem resolve_sgpl_sg_sg :
-    resolveIn [.singular, .plural] .singular .singular = .plural := rfl
-
-/-- In a {sg, du, pl} system (Slovene): sg + sg → du.
-    Canonical du is available, no coarsening. -/
-theorem resolve_sgdupl_sg_sg :
-    resolveIn [.singular, .dual, .plural] .singular .singular = .dual := rfl
-
-/-- In a {sg, du, pl} system: sg + du → pl (triple = plural without
-    recursion). -/
-theorem resolve_sgdupl_sg_du :
-    resolveIn [.singular, .dual, .plural] .singular .dual = .plural := rfl
-
-/-- In a {sg, du, trial, greaterPl} system (Larike): sg + du → trial. -/
-theorem resolve_larike_sg_du :
-    resolveIn [.singular, .dual, .plural, .trial, .greaterPlural]
-      .singular .dual = .trial := rfl
-
-/-- In a {sg, du, trial, greaterPl} system: sg + sg → du. -/
-theorem resolve_larike_sg_sg :
-    resolveIn [.singular, .dual, .plural, .trial, .greaterPlural]
-      .singular .singular = .dual := rfl
-
-/-- In a {min, aug} system (Winnebago): min + min → aug. -/
-theorem resolve_minAug_min_min :
-    resolveIn [.minimal, .augmented] .minimal .minimal = .augmented := rfl
-
-end Number
+end Number.System
