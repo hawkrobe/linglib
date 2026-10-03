@@ -103,7 +103,7 @@ open Minimalist SyntacticObject
 
 /-! ### The clause and its derivations (§4.1–§4.2) -/
 
-/-- The slots a clause's arguments fill: the two core positions of vP, the external one the
+/-- The slots a clause's arguments fill are the two core positions of vP, the external one the
 agent's and the internal one the patient's, and the goal of a ditransitive. -/
 inductive Arg
   | core (p : ArgumentStructure.ArgPosition)
@@ -117,8 +117,8 @@ def Arg.role : Arg → ThetaRole
   | .core .internal => .patient
   | .goal => .goal
 
-/-- A transitive clause: its voice, verb, agent and patient, and the goal PP of a ditransitive,
-which enters as one leaf. -/
+/-- A transitive clause records its voice, verb, agent and patient, and the goal PP of a
+ditransitive, which enters as one leaf. -/
 structure Clause where
   /-- The voice, which picks the pivot. -/
   voice : Voice
@@ -162,18 +162,18 @@ def arg? : Arg → Option LIToken
   | .core .internal => some c.patient
   | .goal => c.goal
 
-/-- The pivot, the argument the voice raises to subject position: the agent in the active and
+/-- The pivot is the argument the voice raises to subject position, the agent in the active and
 the patient in the passive, the slot the voice selects. -/
 def pivot : LIToken :=
   if c.voice.pivot = some ArgumentFrame.Slot.external then c.agent else c.patient
 
-/-- The sides of the paper's own trees (50) and (57): complements on the right; the light verb,
-the agent, Voice and, in a ditransitive, the patient, [larson-1988]'s specifier of VP, on the
+/-- The paper's own trees (50) and (57) put complements on the right, and the light verb, the
+agent, Voice and, in a ditransitive, the patient, [larson-1988]'s specifier of VP, on the
 left. -/
 def paperSides : Sides :=
   ![.right, if c.goal.isSome then .left else .right, .left, .left, .left]
 
-/-- The base (50), (57), `{Voice, {Agent, {v, VP}}}`: the verb takes the patient, or the goal
+/-- In the base (50), (57), `{Voice, {Agent, {v, VP}}}`, the verb takes the patient, or the goal
 and then the patient, then the light verb, the agent and Voice, each Merge on the side `σ`
 gives. -/
 def base (σ : Sides) : List Step :=
@@ -188,8 +188,8 @@ order of extraction that places the goal after the subject. -/
 def evacuate : List Step :=
   (c.goal.toList.flatMap fun pp => [.em .left (F 1), .im pp]) ++ [.em .left (F 2), .im c.pivot]
 
-/-- The remnant VoiceP that raises, (55), (61): Voice and the verb over their traces, the pivot
-and the goal replaced by theirs. -/
+/-- The remnant VoiceP that raises, (55), (61), has Voice and the verb over their traces, and
+the pivot and the goal replaced by theirs. -/
 def remnant : PlanarSyntacticObject :=
   let leaf := PlanarSyntacticObject.leaf
   let trace := PlanarSyntacticObject.traceOf
@@ -199,22 +199,22 @@ def remnant : PlanarSyntacticObject :=
     | none => {trace c.verb, stranded c.patient}
   {leaf c.voiceHead, {leaf c.verb, {trace c.voiceHead, {stranded c.agent, {leaf v₀, vp}}}}}
 
-/-- The derivation up to the last stage before VoiceP raises, an SVO stage: (54), (60), (64),
-(73), (76). -/
+/-- `svoStage` is the derivation up to the last stage before VoiceP raises, an SVO stage, as in
+(54), (60), (64), (73) and (76). -/
 def svoStage (σ : Sides := c.paperSides) : Derivation :=
   ⟨c.verb, c.base σ ++ c.verbToVoice ++ c.evacuate⟩
 
-/-- The VOS derivation, (55), (61), (65), (74), (77): the remnant VoiceP raises over the
+/-- In the VOS derivation, (55), (61), (65), (74), (77), the remnant VoiceP raises over the
 evacuated goal and pivot. -/
 def vos (σ : Sides := c.paperSides) : Derivation :=
   (c.svoStage σ).append [.em .left (F 3), .im c.remnant]
 
-/-- The SVO derivation under the VOS Hypothesis, (83)–(84): the pivot raises once more, past
+/-- In the SVO derivation under the VOS Hypothesis, (83)–(84), the pivot raises once more, past
 the fronted VoiceP. -/
 def svo (σ : Sides := c.paperSides) : Derivation :=
   (c.vos σ).append [.em .left (F 4), .im c.pivot]
 
-/-- The SVO derivation under the SVO Hypothesis (§5), for which the paper draws no tree: the
+/-- In the SVO derivation under the SVO Hypothesis (§5), for which the paper draws no tree, the
 pivot raises and VoiceP, the goal inside it, stays. -/
 def svoInPlace (σ : Sides := c.paperSides) : Derivation :=
   ⟨c.verb, c.base σ ++ c.verbToVoice ++ [.em .left (F 2), .im c.pivot]⟩
@@ -265,7 +265,7 @@ theorem ex13_orders :
       ex13.vois.surfacePhon = ["di-", "lean", "si-John", "tu si-Mary", "buku"] := by
   decide
 
-/-- (81) in both orders: the SVO derivation raises the subject past the fronted VoiceP. -/
+/-- In both orders of (81), the SVO derivation raises the subject past the fronted VoiceP. -/
 theorem ex81_orders :
     ex81.vos.surfacePhon = ["mang-", "atuk", "biang-i", "dakdanak-on"] ∧
       ex81.svo.surfacePhon = ["dakdanak-on", "mang-", "atuk", "biang-i"] := by
@@ -301,8 +301,8 @@ inductive WordOrder
   | vos | svo
   deriving DecidableEq, Repr
 
-/-- The two analyses of SVO clauses (§5): every clause passes through VOS, or VoiceP stays in
-place in SVO clauses. -/
+/-- The two analyses of SVO clauses (§5) are that every clause passes through VOS and that
+VoiceP stays in place in SVO clauses. -/
 inductive OrderHypothesis
   | vosHypothesis | svoHypothesis
   deriving DecidableEq, Repr
@@ -329,8 +329,8 @@ def english : Glottocode := "stan1293"
 
 /-! ### Extraction (§3.2, §4, §5) -/
 
-/-- An extraction datum's configuration: a wh-phrase in the given argument slot, fronted or in
-situ, in a clause of the given voice, order and transitivity. -/
+/-- An extraction datum's configuration is a wh-phrase in the given argument slot, fronted or
+in situ, in a clause of the given voice, order and transitivity. -/
 structure Extraction where
   /-- The clause's voice. -/
   voice : Voice
@@ -349,8 +349,8 @@ namespace Extraction
 def clause (e : Extraction) : Clause :=
   .of e.voice "V" "Agent" "Patient" (if e.ditransitive then some "PP" else none)
 
-/-- The prediction under a hypothesis: a fronted wh-phrase is licit exactly when it is not
-frozen; in situ it is unconstrained. -/
+/-- Under a hypothesis, a fronted wh-phrase is predicted licit exactly when it is not frozen,
+and a wh-phrase in situ is unconstrained. -/
 def Licit (e : Extraction) (hyp : OrderHypothesis) : Prop :=
   e.fronted → ∃ x ∈ e.clause.arg? e.extracted, ¬ (e.clause.derivation hyp e.order).Frozen x
 
@@ -377,22 +377,14 @@ theorem vos_hypothesis_only (hyp : OrderHypothesis) :
 
 /-! ### Binding (§3.4–§3.7, §4.3) -/
 
-/-- [schachter-1984]'s Semantic Hierarchy (28a), actor > patient > dative, as ranks. -/
-def rank : ThetaRole → Option ℕ
-  | .agent => some 0
-  | .patient => some 1
-  | .goal => some 2
-  | _ => none
+/-- [schachter-1984]'s Semantic Hierarchy (28a) is actor > patient > dative. A role outranks
+another, the antecedency condition (28b) of [schachter-1984] and [sugamoto-1984], when it comes
+earlier in the list, `[r, s].Sublist roleHierarchy`; the relation is strict, as fn. 14 reads it,
+since only then does the absence of dative antecedents follow. -/
+def roleHierarchy : List ThetaRole := [.agent, .patient, .goal]
 
-/-- `r` outranks `s` on the Semantic Hierarchy, the antecedency condition (28b) of
-[schachter-1984] and [sugamoto-1984], strictly: fn. 14 reads it so, since only then does the
-absence of dative antecedents follow. -/
-def Outranks (r s : ThetaRole) : Prop := ∃ i ∈ rank r, ∃ j ∈ rank s, i < j
-
-instance : DecidableRel Outranks := fun _ _ => by unfold Outranks; infer_instance
-
-/-- A binding datum's configuration: the antecedent's and the reflexive's argument slots in a
-clause of the given voice and order. -/
+/-- A binding datum's configuration is the pair of the antecedent's and the reflexive's
+argument slots in a clause of the given voice and order. -/
 structure Reflexivization where
   /-- The clause's voice. -/
   voice : Voice
@@ -419,21 +411,21 @@ def ofRow (row : Datum) : Option Reflexivization := do
 
 end Reflexivization
 
-/-- The candidate binding conditions of §4.3: c-command at the surface, at the last stage
-before VoiceP raises, at some stage, and the Semantic Hierarchy Condition. -/
+/-- The candidate binding conditions of §4.3 are c-command at the surface, at the last stage
+before VoiceP raises and at some stage, and the Semantic Hierarchy Condition. -/
 inductive BindingTheory
   | surface | lastSVOStage | derivational | semanticHierarchy
   deriving DecidableEq, Repr
 
 /-- The configuration a candidate condition reads on the argument slots of one clause. The
 three configurational candidates compare the slots' tokens by c-command at the surface, at the
-last SVO stage or at some stage; the Semantic Hierarchy compares their roles by rank. -/
+last SVO stage or at some stage; the Semantic Hierarchy compares their roles in `roleHierarchy`. -/
 def BindingTheory.configuration : BindingTheory → Reflexivization → Binding.Configuration Arg
   | .surface, a => .monoclausal a.clause.arg? fun x y ↦ a.derivation.BindsAtSurface x y
   | .lastSVOStage, a =>
       .monoclausal a.clause.arg? fun x y ↦ a.clause.svoStage.BindsAtSurface x y
   | .derivational, a => .monoclausal a.clause.arg? fun x y ↦ a.derivation.BindsAtSomeStage x y
-  | .semanticHierarchy, _ => .monoclausal (some ·.role) Outranks
+  | .semanticHierarchy, _ => .monoclausal (some ·.role) fun r s ↦ [r, s].Sublist roleHierarchy
 
 /-- A candidate licenses a configuration when, under the candidate's configuration, the
 reflexive meets Condition A, coindexed with its antecedent alone. -/
@@ -475,25 +467,25 @@ inductive Grade
   | typeA | typeB | typeC
   deriving DecidableEq, Repr
 
-/-- The grade of a configuration, reading the Semantic Hierarchy Condition as an addition to
-derivational binding rather than a substitute for it (§3.7): Type A when the antecedent
+/-- The grade of a configuration reads the Semantic Hierarchy Condition as an addition to
+derivational binding rather than a substitute for it (§3.7). It is Type A when the antecedent
 c-commands the reflexive at some stage and outranks it, Type B when it c-commands without
-outranking, Type C when it never c-commands. -/
+outranking, and Type C when it never c-commands. -/
 def Reflexivization.grade (a : Reflexivization) : Grade :=
   if BindingTheory.derivational.Licenses a then
     if BindingTheory.semanticHierarchy.Licenses a then .typeA else .typeB
   else .typeC
 
-/-- Table 1 derived: each row's grade. -/
+/-- Each row has the grade Table 1 gives it. -/
 theorem table1 : ∀ row ∈ Examples.all, ∀ a ∈ Reflexivization.ofRow row,
     ∀ g ∈ row.parse? "tableOne" [("A", Grade.typeA), ("B", .typeB), ("C", .typeC)],
       a.grade = g := by
   decide
 
-/-- The passive (67)–(68) stage by stage, (72)–(74) and (75)–(77): the agent c-commands the
-patient once the verb has adjoined to Voice, stage 6, and not once the patient has raised, the
-patient c-commands the agent once raised and not before, and neither does at the surface, once
-VoiceP has raised. -/
+/-- Stage by stage through the passive (67)–(68), (72)–(74) and (75)–(77), the agent c-commands
+the patient once the verb has adjoined to Voice, stage 6, and not once the patient has raised,
+the patient c-commands the agent once raised and not before, and neither does at the surface,
+once VoiceP has raised. -/
 theorem passive_stages :
     (ex67.vos.CCommandsAt 6 ex67.agent ex67.patient ∧
       ¬ ex67.vos.CCommandsAt ex67.svoStage.length ex67.agent ex67.patient) ∧
@@ -521,8 +513,8 @@ theorem frozen_sides (c : Clause) (σ σ' : Sides) (x : SyntacticObject) :
     (c.vos σ).Frozen x ↔ (c.vos σ').Frozen x := by
   rw [← Derivation.frozen_leftward_iff, vos_leftward c σ σ', Derivation.frozen_leftward_iff]
 
-/-- Nor the surface order (56): every one of the thirty-two attachments, (57), (91) and, up to
-the omitted XP, (89) among them, externalizes to V-O-S-IO. -/
+/-- Nor can the surface order (56), since every one of the thirty-two attachments, (57), (91)
+and, up to the omitted XP, (89) among them, externalizes to V-O-S-IO. -/
 theorem surface_sides (σ : Sides) :
     (ex56.vos σ).surfacePhon = ["mang-", "alean", "buku", "si-John", "tu si-Mary"] := by
   revert σ; decide
@@ -533,8 +525,8 @@ def wasInjured : LIToken := ⟨.simple .V [] (phonForm := "was injured"), 21⟩
 def theBoy : LIToken := ⟨.simple .N [] (phonForm := "the boy"), 22⟩
 def byHimself : LIToken := ⟨.simple .P [] (phonForm := "by himself"), 23⟩
 
-/-- The English passive (97)–(98) of (95): the patient as [larson-1988]'s specifier of VP, the
-agent an adjunct, a *by*-phrase leaf below it, and no argument in Spec,vP, since the passive
+/-- In the English passive (97)–(98) of (95), the patient is [larson-1988]'s specifier of VP and
+the agent an adjunct, a *by*-phrase leaf below it, with no argument in Spec,vP, since the passive
 participle projects none; the patient raises to Spec,FP, Spec,TP in English. -/
 def englishPassive : Derivation :=
   ⟨wasInjured,
@@ -544,8 +536,8 @@ def englishPassive : Derivation :=
 theorem english_order :
     englishPassive.surfacePhon = ["the boy", "was injured", "by himself"] := by decide
 
-/-- The pair a row's roles pick out in the English derivation: the patient is the raised DP,
-the agent the *by*-phrase, which fills no core position. -/
+/-- `englishPair?` is the pair a row's roles pick out in the English derivation, in which the
+patient is the raised DP and the agent the *by*-phrase, which fills no core position. -/
 def englishPair? (row : Datum) : Option (SyntacticObject × SyntacticObject) := do
   guard (row.feature? "construction" = some "binding" ∧ row.language = english)
   let slot (a : Arg) : Option SyntacticObject := match a.role with
@@ -556,7 +548,7 @@ def englishPair? (row : Datum) : Option (SyntacticObject × SyntacticObject) := 
   let reflexive ← slot (← row.parse? "reflexive" args)
   return (antecedent, reflexive)
 
-/-- (95)–(96): the patient binds the agent, which never c-commands it. Raising the patient
+/-- In (95)–(96) the patient binds the agent, which never c-commands it. Raising the patient
 reverses its c-command relation with the agent only when the agent is an argument above it, as
 in Toba Batak; the paper remarks, without arguing it, that if this treatment of English is
 right, [collins-2005]'s smuggling derivation, in which the passive agent is Merged as in the

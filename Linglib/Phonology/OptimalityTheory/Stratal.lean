@@ -4,56 +4,36 @@ public import Linglib.Phonology.OptimalityTheory.Constraint.Defs
 
 /-!
 # Stratal Optimality Theory
-[kiparsky-2000]
 
-Stratal OT is a theory of the phonology–morphology interface where phonological
-computation is **cyclic**: it applies at multiple levels (strata) of morphological
-structure (Stem → Word → Phrase), with the output of each stratum feeding the next as
-input. The crucial property is **constraint reranking**: the same constraint can occupy
-different positions in different strata's rankings, capturing level-ordering effects
-without ad hoc rules or extrinsic ordering.
-
-Per-stratum evaluation is `OptimalityTheory.Tableau.ofOrder` / `Tableau.optimal` in the
-consuming study (e.g. the Telugu weak alternation, [aitha-2026]); a stratum's ranking is
-its constraint **order**, a list of labels most dominant first, shared across strata by
-label since strata typically score different candidate types. This module provides the
-cross-stratal vocabulary over such orders.
+Stratal OT evaluates phonology cyclically, at successive levels of morphological structure (stem,
+word, phrase), the output of each level being the input to the next. Each level, or stratum, has
+its own constraint ranking, and the same constraint can be ranked differently at different strata.
+A stratum's ranking is its constraint order, a list of labels most dominant first, which
+`OptimalityTheory.Tableau.ofOrder` evaluates. One constraint outranks another at a stratum when it
+comes earlier in the order, `[a, b] <+ order`, which requires both to be active there.
 
 ## Main definitions
 
-* `rank` — the rank (0 = highest) of a constraint in an order.
-* `Outranks` — pairwise domination in one order.
-* `Reranked` — the reversal of a pairwise domination between two strata.
+* `OptimalityTheory.Stratal.Reranked`: the reversal of a domination between two strata.
+
+## References
+
+* [kiparsky-2000]
 -/
 
 @[expose] public section
 
 namespace OptimalityTheory.Stratal
 
-variable {L : Type*} [DecidableEq L]
+open List
 
-/-- The rank of `l` in an order: `0` is the most dominant; `none` if `l` is not active at
-this stratum. -/
-def rank (l : L) (order : List L) : Option ℕ := order.findIdx? (· = l)
+variable {L : Type*}
 
-/-- `a` outranks `b` in an order: both are active and `a` is ranked strictly higher. -/
-def Outranks (a b : L) (order : List L) : Prop :=
-  match rank a order, rank b order with
-  | some p, some q => p < q
-  | _, _ => False
+/-- `a` and `b` are reranked between the strata with orders `r₁` and `r₂` when `a` outranks `b`
+in `r₁` and `b` outranks `a` in `r₂`. -/
+def Reranked (a b : L) (r₁ r₂ : List L) : Prop := [a, b] <+ r₁ ∧ [b, a] <+ r₂
 
-instance (a b : L) (order : List L) : Decidable (Outranks a b order) := by
-  unfold Outranks
-  exact match rank a order, rank b order with
-    | some p, some q => inferInstanceAs (Decidable (p < q))
-    | some _, none | none, _ => instDecidableFalse
-
-/-- `a` and `b` are reranked between two strata: `a ≫ b` in `r₁` and `b ≫ a` in `r₂` (e.g.
-`*DIST-0 ≫ MAX` at the Word level but `MAX ≫ *DIST-0` at the Phrase level in Telugu,
-[aitha-2026] §5.3). -/
-def Reranked (a b : L) (r₁ r₂ : List L) : Prop := Outranks a b r₁ ∧ Outranks b a r₂
-
-instance (a b : L) (r₁ r₂ : List L) : Decidable (Reranked a b r₁ r₂) := by
-  unfold Reranked; infer_instance
+instance [DecidableEq L] (a b : L) (r₁ r₂ : List L) : Decidable (Reranked a b r₁ r₂) :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
 end OptimalityTheory.Stratal

@@ -21,7 +21,10 @@ Two additions to the `List.Sublist` API.
   `List.sublist_cons_iff`.
 * Pair sublists as positional order. On a `Nodup` list, `[a, b] <+ l` says exactly that `a` and
   `b` are members with `a` at a strictly earlier index (`List.pair_sublist_iff_idxOf_lt`): the
-  pair-sublist relation is the strict linear order a duplicate-free list carries.
+  pair-sublist relation is the strict linear order a duplicate-free list carries. It is
+  transitive (`List.Nodup.pair_sublist_trans`), so it is a strict order on the whole type
+  (`List.Nodup.isStrictOrder_pair_sublist`) in which elements off the list are related to
+  nothing.
 -/
 
 @[expose] public section
@@ -56,6 +59,26 @@ theorem sublist_append_replicate_iff_of_getLast?_ne (h : l.getLast? ≠ some b) 
     sublist_replicate_append_iff_of_head?_ne (by simpa), reverse_sublist]
 
 end Replicate
+
+/-- On a `Nodup` list, the pair-sublist relation is transitive. -/
+theorem Nodup.pair_sublist_trans {c : α} (hl : l.Nodup) (hab : [a, b] <+ l)
+    (hbc : [b, c] <+ l) : [a, c] <+ l := by
+  induction l with
+  | nil => simp at hab
+  | cons x t ih =>
+    rw [nodup_cons] at hl
+    rcases cons_sublist_cons'.1 hab with hab' | ⟨rfl, hb⟩ <;>
+      rcases cons_sublist_cons'.1 hbc with hbc' | ⟨rfl, hc⟩
+    · exact (ih hl.2 hab' hbc').cons x
+    · exact absurd (hab'.subset (by simp)) hl.1
+    · exact (singleton_sublist.2 (hbc'.subset (by simp))).cons_cons a
+    · exact absurd (hb.subset (by simp)) hl.1
+
+/-- On a `Nodup` list, the pair-sublist relation is a strict order. -/
+theorem Nodup.isStrictOrder_pair_sublist (hl : l.Nodup) :
+    IsStrictOrder α fun a b ↦ [a, b] <+ l where
+  irrefl a := nodup_iff_sublist.1 hl a
+  trans _ _ _ := hl.pair_sublist_trans
 
 variable [DecidableEq α]
 
