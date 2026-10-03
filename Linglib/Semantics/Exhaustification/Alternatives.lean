@@ -42,7 +42,7 @@ theorem leALT_trans (u v w : World) (huv : u ≤[ALT] v) (hvw : v ≤[ALT] w) : 
 
 variable (φ : Set World)
 
-/-- The minimal-world exhaustifier: the prejacent worlds with no prejacent world strictly
+/-- The minimal-world exhaustifier keeps the prejacent worlds with no prejacent world strictly
 below them. -/
 def exhMW : Set World := λ u => φ u ∧ ¬ ∃ v, φ v ∧ (v <[ALT] u)
 
@@ -51,7 +51,7 @@ def IsMinimal (u : World) : Prop := u ∈ exhMW ALT φ
 
 theorem exhMW_subset : exhMW ALT φ ⊆ φ := λ _ ⟨h, _⟩ => h
 
-/-- For finite `ALT` the strict order is well-founded: it is the pullback of strict inclusion
+/-- For finite `ALT` the strict order is well-founded, being the pullback of strict inclusion
 along the finite set of alternatives a world verifies. -/
 theorem ltALT_wf_of_finite (hfin : ALT.Finite) : WellFounded (ltALT ALT) := by
   classical
@@ -81,6 +81,14 @@ theorem exists_isMinimal_le (hfin : ALT.Finite) {w : World} (hw : φ w) :
   let ⟨u, ⟨hu, huw⟩, hmin⟩ :=
     (ltALT_wf_of_finite ALT hfin).has_min {v | φ v ∧ v ≤[ALT] w} ⟨w, hw, leALT_refl ALT w⟩
   ⟨u, ⟨hu, λ ⟨v, hv, hlt⟩ => hmin v ⟨hv, leALT_trans ALT v u w hlt.1 huw⟩ hlt⟩, huw⟩
+
+/-- Against all propositions every prejacent world is minimal, since a world verifying every
+proposition true at another is that world, whose singleton is a proposition. -/
+theorem exhMW_univ : exhMW Set.univ φ = φ := by
+  refine Set.Subset.antisymm (exhMW_subset _ _) fun u hu ↦ ⟨hu, ?_⟩
+  rintro ⟨v, -, hle, hnle⟩
+  obtain rfl : u = v := hle {v} trivial rfl
+  exact hnle (leALT_refl _ u)
 
 /-! ### Representative minimal worlds -/
 
