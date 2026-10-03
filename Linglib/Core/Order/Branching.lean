@@ -9,7 +9,8 @@ public import Mathlib.Algebra.Free
 A carrier `T` is `Branching` when each value exposes an **ordered list
 of children**. One field derives, for every instance:
 
-* Gorn-address machinery: `subtreeAt`, `validPaths`, `daughters`
+* Gorn-address machinery: `subtreeAt`, `validPaths`, `daughters`, and the subtree relation
+  `IsSubtree`
 * via `Core/Order/TreePath.lean`, mathlib's rooted-tree order stack on
   positions: root (`⊥`), parent (`Order.pred`), least common ancestor
   (`⊓`), finite ancestor chains.
@@ -28,8 +29,8 @@ law-free on the carrier and carriers of infinite depth are admissible.
 
 namespace Core.Order
 
-/-- Rose-tree interface: a carrier with an ordered list of children.
-`[]` for leaves. See the module docstring for what one field buys. -/
+/-- A `Branching` carrier gives each value an ordered list of children, `[]` for leaves. See the
+module docstring for what the one field buys. -/
 class Branching (T : Type*) where
   /-- Ordered children. -/
   children : T → List T
@@ -56,17 +57,16 @@ def subtreeAt (t : T) : List Nat → Option T
     subtreeAt t (i :: rest) =
     ((children t)[i]?).bind fun c => subtreeAt c rest := rfl
 
-/-- Valid positions of a tree. Node identity is the **position**
-(`TreePath`), never the subtree value: identical subtrees occur at
-multiple positions, so orders and graphs must live on paths. -/
+/-- `validPaths t` is the set of positions of `t`. Node identity is the position (`TreePath`),
+never the subtree value, since identical subtrees occur at several positions, so orders and graphs
+must live on paths. -/
 def validPaths (t : T) : Set TreePath :=
   {p | (subtreeAt t p.toList).isSome}
 
 theorem bot_mem_validPaths (t : T) : (⊥ : TreePath) ∈ validPaths t := by
   simp [validPaths, subtreeAt]
 
-/-- Gorn-address composition: descending along `p ++ q` is descending
-along `p`, then along `q` from there. -/
+/-- Descending along `p ++ q` is descending along `p`, then along `q` from there. -/
 theorem subtreeAt_append (t : T) (p q : List Nat) :
     subtreeAt t (p ++ q) = (subtreeAt t p).bind (subtreeAt · q) := by
   induction p generalizing t with
@@ -87,23 +87,57 @@ theorem subtreeAt_take_isSome {t s : T} {p : List Nat} (h : subtreeAt t p = some
   rw [← List.take_append_drop k p, subtreeAt_append] at h
   exact Option.isSome_of_isSome_bind (by rw [h]; rfl)
 
-/-- Membership characterization for non-root positions: descend one
-child, then recurse. -/
+/-- A non-root position descends to one child and is a position there. -/
 theorem mem_validPaths_cons {t : T} {i : Nat} {rest : List Nat} :
     (⟨i :: rest⟩ : TreePath) ∈ validPaths t ↔
     ∃ c, (children t)[i]? = some c ∧ (⟨rest⟩ : TreePath) ∈ validPaths c := by
   simp only [validPaths, Set.mem_ofPred_eq, subtreeAt_cons]
   rcases hmem : (children t)[i]? with _ | c <;> simp
 
-/-- Valid paths are closed under prefixes (ancestors of a position are
-positions): the set of positions is downward closed, hence inherits
-the rooted-tree order stack from `TreePath`. -/
+/-- Valid paths are closed under prefixes, since the ancestors of a position are positions, so the
+set of positions is downward closed and inherits the rooted-tree order stack from `TreePath`. -/
 theorem validPaths_prefix_closed {t : T} {p q : TreePath}
     (hq : q ∈ validPaths t) (hpq : p ≤ q) : p ∈ validPaths t := by
   obtain ⟨s, hs⟩ := hpq
   simp only [validPaths, Set.mem_ofPred_eq] at hq ⊢
   rw [← hs, subtreeAt_append] at hq
   exact Option.isSome_of_isSome_bind hq
+
+/-! ### Subtrees -/
+
+/-- `IsSubtree s t` holds when `s` is the subtree of `t` rooted at one of its nodes, reached from
+`t` by descending through children. -/
+def IsSubtree (s t : T) : Prop := Relation.ReflTransGen IsChild s t
+
+@[refl]
+theorem IsSubtree.refl (t : T) : IsSubtree t t := Relation.ReflTransGen.refl
+
+theorem IsSubtree.trans {r s t : T} (h₁ : IsSubtree r s) (h₂ : IsSubtree s t) :
+    IsSubtree r t :=
+  Relation.ReflTransGen.trans h₁ h₂
+
+instance : @Trans T T T IsSubtree IsSubtree IsSubtree := ⟨IsSubtree.trans⟩
+
+theorem IsSubtree.of_isChild {c t : T} (h : IsChild c t) : IsSubtree c t :=
+  Relation.ReflTransGen.single h
+
+/-- The subtrees of `t` are exactly the values of `subtreeAt t` at addresses inside `t`. -/
+theorem isSubtree_iff_exists_subtreeAt {s t : T} :
+    IsSubtree s t ↔ ∃ p, subtreeAt t p = some s := by
+  constructor
+  · intro h
+    induction h using Relation.ReflTransGen.head_induction_on with
+    | refl => exact ⟨[], rfl⟩
+    | head hc _ ih =>
+      obtain ⟨p, hp⟩ := ih
+      obtain ⟨i, hi⟩ := List.mem_iff_getElem?.1 hc
+      exact ⟨p ++ [i], by simp [subtreeAt_append, hp, hi]⟩
+  · rintro ⟨p, hp⟩
+    induction p generalizing t with
+    | nil => cases hp; exact .refl _
+    | cons i p ih =>
+      obtain ⟨c, hc, hp⟩ := subtreeAt_cons_eq_some_iff.1 hp
+      exact (ih hp).tail (List.mem_of_getElem? hc)
 
 /-! ### Maps commuting with `children`
 

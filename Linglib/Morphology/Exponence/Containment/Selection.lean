@@ -42,7 +42,7 @@ variable {n : ℕ} {F : Type*}
 
 /-- On a list with an attained upper bound `m` for `f`, `argmax` is the
 first element with score exactly `m`. -/
-private theorem argmax_eq_find {α β : Type*} [LinearOrder β] [DecidableEq β]
+theorem argmax_eq_find {α β : Type*} [LinearOrder β] [DecidableEq β]
     (f : α → β) (m : β) : ∀ (l : List α), (∀ a ∈ l, f a ≤ m) → m ∈ l.map f →
     l.argmax f = l.find? (fun x => f x == m)
   | [], _, h => by simp at h
@@ -76,7 +76,7 @@ private theorem argmax_eq_find {α β : Type*} [LinearOrder β] [DecidableEq β]
         simp only [ite_eq_left hxc, IH]
 
 /-- `find?` ignores a filter that keeps every match. -/
-private theorem find?_filter_of_imp {α : Type*} {p q : α → Bool}
+theorem find?_filter_of_imp {α : Type*} {p q : α → Bool}
     (h : ∀ a, q a = true → p a = true) : ∀ (l : List α),
     (l.filter p).find? q = l.find? q
   | [] => rfl
@@ -149,8 +149,8 @@ theorem maxThreshold_eq_bot_of_le {v : List (SpanRule n F)} {g g' : Fin n}
   obtain ⟨hv, hle⟩ := mem_applicable.mp hit
   exact h it (mem_applicable.mpr ⟨hv, le_trans hle hg⟩)
 
-/-- The Elsewhere winner at grade `g`: the applicable rule with greatest
-threshold — the most specific applicable rule — as `Exponence.selectBy`. -/
+/-- `winner v g` is the Elsewhere winner at grade `g`, the applicable rule with greatest
+threshold, which is the most specific applicable rule, as `Exponence.selectBy`. -/
 def winner (v : List (SpanRule n F)) (g : Fin n) : Option (SpanRule n F) :=
   Exponence.selectBy SpanRule.threshold v g
 
@@ -210,9 +210,9 @@ theorem winner_congr {v : List (SpanRule n F)} {g g' : Fin n}
   | bot => rw [winner_eq_none_of_bot hmt, winner_eq_none_of_bot (h ▸ hmt)]
   | coe m => rw [winner_of_coe hmt, winner_of_coe (h ▸ hmt)]
 
-/-- The realized pattern: at each grade, the Elsewhere winner's
-exponent (`none` when no rule applies — a paradigm gap). Definitionally
-`Exponence.realize SpanRule.threshold`. -/
+/-- `realize v` is the realized pattern, the Elsewhere winner's exponent at each grade, or `none`
+when no rule applies, a paradigm gap. It is definitionally `Exponence.realize
+SpanRule.threshold`. -/
 def realize (v : List (SpanRule n F)) : Paradigm n (Option F) :=
   λ g => (winner v g).map SpanRule.exponent
 
@@ -260,9 +260,8 @@ def matching (v : List (SpanRule n F)) (g : Fin n) : List (SpanRule n F) :=
     it ∈ matching v g ↔ it ∈ v ∧ g ≤ it.spans := by
   simp [matching, SpanRule.Matches]
 
-/-- The least matching span at grade `g` — Minimize Junk: the winning
-entry stores as little unrealized structure as possible. `⊤` when no
-entry matches. -/
+/-- `minSpan v g` is the least matching span at grade `g`, or `⊤` when no entry matches. Under
+Minimize Junk the winning entry stores as little unrealized structure as possible. -/
 def minSpan (v : List (SpanRule n F)) (g : Fin n) : WithTop (Fin n) :=
   ((matching v g).map SpanRule.spans).minimum
 
@@ -293,8 +292,8 @@ theorem minSpan_eq_coe_intro {v : List (SpanRule n F)} {g : Fin n}
   obtain ⟨hjv, hjle⟩ := mem_matching.mp hjt
   exact hlb jt hjv hjle
 
-/-- The key transfer lemma, dual to `maxThreshold_eq_coe_of_between`: a
-winning span persists upward as long as the grade stays inside it. -/
+/-- A winning span persists upward as long as the grade stays inside it, dually to
+`maxThreshold_eq_coe_of_between`. -/
 theorem minSpan_eq_coe_of_between {v : List (SpanRule n F)} {g g' m : Fin n}
     (h : minSpan v g = ↑m) (hg : g ≤ g') (hm : g' ≤ m) : minSpan v g' = ↑m := by
   obtain ⟨it, hitv, hsp, -⟩ := exists_of_minSpan_eq_coe h
@@ -310,8 +309,8 @@ theorem minSpan_eq_top_of_le {v : List (SpanRule n F)} {g g' : Fin n}
   obtain ⟨hv, hle⟩ := mem_matching.mp hit
   exact h it (mem_matching.mpr ⟨hv, le_trans hg hle⟩)
 
-/-- The spellout winner at grade `g`: the first entry attaining the
-least matching span. -/
+/-- `spelloutWinner v g` is the spellout winner at grade `g`, the first entry attaining the least
+matching span. -/
 def spelloutWinner (v : List (SpanRule n F)) (g : Fin n) :
     Option (SpanRule n F) :=
   (minSpan v g).recTopCoe none (λ m => v.find? (λ it => it.spans == m))
@@ -335,8 +334,8 @@ theorem spelloutWinner_spec {v : List (SpanRule n F)} {g : Fin n}
     have hsp : it.spans = m := by simpa using List.find?_some h
     exact ⟨List.mem_of_find?_eq_some h, by rw [hsp]⟩
 
-/-- The Superset Principle bounds the winner: the entry spelling out grade `g` stores a
-constituent containing grade `g`'s structure. -/
+/-- By the Superset Principle the entry spelling out grade `g` stores a constituent containing
+grade `g`'s structure. -/
 theorem le_spans_of_spelloutWinner_eq_some {v : List (SpanRule n F)} {g : Fin n}
     {it : SpanRule n F} (h : spelloutWinner v g = some it) : g ≤ it.spans := by
   obtain ⟨-, -, -, hle⟩ := exists_of_minSpan_eq_coe (spelloutWinner_spec h).2
@@ -366,9 +365,8 @@ theorem spelloutWinner_congr {v : List (SpanRule n F)} {g g' : Fin n}
     (h : minSpan v g = minSpan v g') : spelloutWinner v g = spelloutWinner v g' := by
   rw [spelloutWinner, spelloutWinner, h]
 
-/-- The spelled-out pattern: at each grade, the Minimize-Junk winner's
-exponent (`none` when no entry contains the structure — a spellout
-gap). -/
+/-- `spellout v` is the spelled-out pattern, the Minimize-Junk winner's exponent at each grade, or
+`none` when no entry contains the structure, a spellout gap. -/
 def spellout (v : List (SpanRule n F)) : Paradigm n (Option F) :=
   λ g => (spelloutWinner v g).map SpanRule.exponent
 
@@ -383,18 +381,17 @@ theorem spellout_eq_none_iff {v : List (SpanRule n F)} {g : Fin n} :
   unfold spellout
   cases spelloutWinner v g <;> simp
 
-/-- Spellout gaps propagate upward: an entry matching a higher grade
-would match the lower one too, so a gap at `g` forces gaps at every
-`g' ≥ g` — [dekier-2021]'s paradigm-gap monotonicity for indefinites. -/
+/-- Spellout gaps propagate upward, since an entry matching a higher grade would match the lower
+one too, so a gap at `g` forces gaps at every `g' ≥ g`, [dekier-2021]'s paradigm-gap monotonicity
+for indefinites. -/
 theorem spellout_eq_none_of_le {v : List (SpanRule n F)} {g g' : Fin n}
     (h : spellout v g = none) (hg : g ≤ g') : spellout v g' = none :=
   spellout_eq_none_iff.mpr
     (minSpan_eq_top_of_le (spellout_eq_none_iff.mp h) hg)
 
-/-- Minimize-Junk selection is an Elsewhere winner of the shared core
-under the Superset reading — with no side conditions: over a linear
-hierarchy the span order is total, so the least-span match is maximally
-specific. -/
+/-- Minimize-Junk selection picks an Elsewhere winner of the shared core under the Superset
+reading with no side conditions, since over a linear hierarchy the span order is total and the
+least-span match is maximally specific. -/
 theorem spelloutWinner_isElsewhereWinner {v : List (SpanRule n F)}
     {g : Fin n} {it : SpanRule n F} (h : spelloutWinner v g = some it) :
     Exponence.IsElsewhereWinner (v.map SpanRule.superset) g it.superset := by
@@ -419,13 +416,12 @@ maximizing `threshold` is the same rule the decomposition engine selects by
 maximizing `feats.card = threshold + 1` — an Elsewhere winner of the shared core
 under the decomposition reading (`winner_isElsewhereWinner_toDecomposition`). -/
 
-/-- The chain decomposition of an `n`-grade hierarchy: grade `i` carries the
-initial segment `[0, i]`. -/
+/-- In the chain decomposition of an `n`-grade hierarchy, grade `i` carries the initial segment
+`[0, i]`. -/
 def chainDecomp {n : ℕ} : Fin n → Finset (Fin n) := Finset.Iic
 
-/-- A span rule read as a feature-decomposition rule over `chainDecomp`: its
-threshold becomes the initial-segment feature set `[0, threshold]`, the exponent
-unchanged. -/
+/-- `toDecomposition it` reads a span rule as a feature-decomposition rule over `chainDecomp`,
+whose feature set is the initial segment `[0, threshold]`, with the exponent unchanged. -/
 def SpanRule.toDecomposition (it : SpanRule n F) :
     Decomposition.Rule (Fin n) chainDecomp F :=
   ⟨Finset.Iic it.threshold, it.exponent⟩
@@ -433,23 +429,20 @@ def SpanRule.toDecomposition (it : SpanRule n F) :
 @[simp] theorem SpanRule.toDecomposition_feats {it : SpanRule n F} :
     it.toDecomposition.feats = Finset.Iic it.threshold := rfl
 
-/-- **Applicability agreement**: threshold containment is Subset containment of
-initial segments. -/
+/-- Threshold containment is Subset containment of initial segments. -/
 @[simp] theorem applies_toDecomposition {it : SpanRule n F} {g : Fin n} :
     Exponence.Applies it.toDecomposition g
       ↔ Exponence.Applies it g := by
   rw [SpanRule.applies_iff]; exact Finset.Iic_subset_Iic
 
-/-- The feature count of a chain rule is one more than its threshold, so
-`feats.card`-maximization is `threshold`-maximization: the two engines optimize
-the same score. -/
+/-- The feature count of a chain rule is one more than its threshold, so `feats.card`
+maximization is `threshold` maximization and the two engines optimize the same score. -/
 theorem SpanRule.toDecomposition_feats_card {it : SpanRule n F} :
     it.toDecomposition.feats.card = (it.threshold : ℕ) + 1 := by
   simp [Fin.card_Iic]
 
-/-- **Specificity agreement**: the chain map reflects the specificity preorder —
-`it` is at least as specific as `jt` under the linear threshold order iff its
-decomposition image is under Subset inclusion. -/
+/-- The chain map reflects the specificity preorder, so `it` is at least as specific as `jt` under
+the linear threshold order iff its decomposition image is under Subset inclusion. -/
 theorem SpanRule.toDecomposition_le_iff {it jt : SpanRule n F} :
     it.toDecomposition ≤ jt.toDecomposition ↔ it ≤ jt := by
   rw [Decomposition.le_iff, SpanRule.le_iff, SpanRule.moreSpecific_iff_threshold_le]
@@ -458,10 +451,9 @@ theorem SpanRule.toDecomposition_le_iff {it jt : SpanRule n F} :
   · intro h; exact h le_rfl
   · intro h c hg; exact le_trans h hg
 
-/-- **Winner agreement**: the containment Elsewhere winner, read through the
-chain map, is an Elsewhere winner of the shared core under the decomposition
-reading — so `Containment.winner` (maximizing `threshold`) and
-`Decomposition.pattern` (`selectBy feats.card`) pick the same rule. -/
+/-- The containment Elsewhere winner, read through the chain map, is an Elsewhere winner of the
+shared core under the decomposition reading, so `Containment.winner`, which maximizes `threshold`,
+and `Decomposition.pattern`, which is `selectBy feats.card`, pick the same rule. -/
 theorem winner_isElsewhereWinner_toDecomposition {v : List (SpanRule n F)}
     {g : Fin n} {it : SpanRule n F} (h : winner v g = some it) :
     Exponence.IsElsewhereWinner (v.map SpanRule.toDecomposition) g it.toDecomposition := by

@@ -4,33 +4,34 @@ public import Linglib.Morphology.Nanosyntax.TreeSpellout
 public import Linglib.Fragments.Xhosa.Basic
 
 /-!
-# Taraldsen, Taraldsen Medová, and Langa (2018): Class Prefixes as Specifiers in Southern Bantu
+# Taraldsen, Taraldsen Medová and Langa (2018): class prefixes as specifiers in Southern Bantu
 
-This file formalizes [taraldsen-et-al-2018]'s analysis of Southern Bantu noun-class prefixes as
-morphemes lexicalizing phrasal Specifiers built on a silent classifier-like noun Nₓ: a singular
-prefix lexicalizes `[Nₓ]` and a plural prefix `[# Nₓ]` (41), (48)–(50), `sgTree`, `plTree`,
-under the phrasal spellout of the substrate, matching by containment (35)–(36) and the Foot
-Condition (39). Agreement with conjoined singular subjects (section 2) shows which
-singular/plural pairs share one N, in Xhosa 1/2, 7/8 and 9/10, and which pair distinct Ns, 3/4
-and 5/6, `SharesClassifierN`, the lexica `xhosaSg`, `xhosaPl`, `rhongaSg`, `rhongaPl`.
+Taraldsen, Taraldsen Medová and Langa analyse the Southern Bantu noun-class prefixes as morphemes
+that lexicalize a whole Specifier built on a silent classifier-like noun: a singular prefix stores
+`[Nₓ]` and a plural prefix `[# Nₓ]`. Agreement with conjoined singulars shows which singular and
+plural prefixes share their noun. A plural whose prefix does not share it is derived by
+backtracking, which builds a second Specifier and stacks the plural prefix on the singular one, as
+in classes 3, 5 and 9 of Changana and Rhonga.
 
-A plural is derived by cyclic spellout with last-resort backtracking (section 4.2, (65)–(75)),
-`derivePlural`: the plural head merges above the classifier first merged with the root; if some
-entry spells out `[# N]` the prefix is direct, and otherwise a second Specifier `[# N']` is built
-inside the first and spelled out on top of the singular prefix, a stack. Over a class-prefix
-lexicon, one whose entries all have the singular or plural shape, `IsClassEntry`, direct spellout
-of `[# N]` fails exactly when no entry stores that tree, `treeSpellout_plTree_eq_none_iff`, so a
-successful derivation stacks exactly when the lexicon has no plural entry on the singular's
-classifier, `isStacked_iff_forall_ne`, and the outer prefix of a stack always lexicalizes a
-plural Specifier, `stacked_outer`, which is why no singular prefix stacks on a plural one
-(section 4.5). Per gender this is the paper's correlation: Changana and Rhonga stack in classes
-3, 5 and 9, whose plural prefixes contain a distinct N, and not in 1 and 7 (62), (76)–(81),
-`rhonga_stacking_iff_not_sharesClassifierN`, `rhonga_cl3_cl4_stacked`; and Xhosa, which may
-first-merge the plural entry's N (82)–(83), `derivePluralFirstMerge`, never stacks, since the
-built structure and the backtrack target then coincide, `not_isStacked_of_firstMerge`. The Shona
-double plural *ma-mi-sha* (84) is derivable exactly when *mi* lexicalizes the bare `[N₄]` (89)
-rather than `[# N₄]` (87), `shona_double_plural`. The class-prefix entries also spell out the
-Fragment's subject concords (60)–(61), `xhosa_prefix_sc_identity`.
+## Main definitions
+
+* `sgTree`, `plTree`, `IsClassEntry`: the singular and plural prefix trees, (41) and (48)–(50).
+* `SharesClassifierN`: the conjoined-subject diagnostic of section 2.
+* `derivePlural`, `derivePluralFirstMerge`: cyclic spellout with backtracking (65)–(75), and the
+  first-merge option (82)–(83).
+* `xhosaPrefixes`, `rhongaPrefixes`, `shonaPrefixes`: the lexica.
+
+## Main results
+
+* `isStacked_iff_forall_ne`, `stacked_outer`: over a class-prefix lexicon a derivation stacks
+  exactly when no entry stores the plural Specifier on the singular's classifier, and the outer
+  prefix of a stack is plural (section 4.5).
+* `rhonga_derivations`, `rhonga_stacking_iff_not_sharesClassifierN`: Changana and Rhonga stack in
+  classes 3, 5 and 9 and not in 1 and 7, (62) and (76)–(81).
+* `not_isStacked_of_firstMerge`, `xhosa_direct`: Xhosa first-merges the plural noun and never
+  stacks.
+* `shona_double_plural`: the Shona double plural *ma-mi-sha* (84).
+* `xhosa_prefix_sc_identity`: the class-prefix entries spell out the subject concords (60)–(61).
 
 ## Implementation notes
 
@@ -53,37 +54,37 @@ later study.
 
 namespace TaraldsenEtAl2018
 
-open Morphology.Nanosyntax Morphology.Exponence
+open Core.Order.Branching Morphology.Nanosyntax Morphology.Exponence
 
 /-! ### Features and entry shapes -/
 
-/-- The nominal features: the number head `#` and the classifier-like silent noun `Nₙ`. -/
+/-- The nominal features are the number head `#` and the classifier-like silent nouns `Nₙ`. -/
 inductive NCFeature where
   | num : NCFeature
   | cls : ℕ → NCFeature
   deriving DecidableEq, Repr
 
 /-- The structure a singular prefix lexicalizes, the bare classifier `[Nₙ]` (41), (48a). -/
-def sgTree (n : ℕ) : NanoTree NCFeature := .leaf (.cls n)
+def sgTree (n : ℕ) : RoseTree NCFeature := .leaf (.cls n)
 
 /-- The structure a plural prefix lexicalizes, the Specifier `[# Nₙ]` (41), (48b). -/
-def plTree (n : ℕ) : NanoTree NCFeature := .node .num [.leaf (.cls n)]
+def plTree (n : ℕ) : RoseTree NCFeature := .node .num [.leaf (.cls n)]
 
 /-- A class-prefix entry stores a singular or a plural tree. -/
-def IsClassEntry (e : TreeLexEntry NCFeature String) : Prop :=
+def IsClassEntry (e : LexicalEntry NCFeature String) : Prop :=
   match e.tree with
-  | .leaf (.cls _) => True
-  | .node .num [.leaf (.cls _)] => True
+  | .node (.cls _) [] => True
+  | .node .num [.node (.cls _) []] => True
   | _ => False
 
-instance (e : TreeLexEntry NCFeature String) : Decidable (IsClassEntry e) := by
+instance (e : LexicalEntry NCFeature String) : Decidable (IsClassEntry e) := by
   unfold IsClassEntry; split <;> infer_instance
 
-/-- A class-prefix entry matches the plural Specifier `[# Nₙ]` exactly when it stores it: no
-singular tree contains it, and a plural tree contains it only by equality. -/
-theorem matches_plTree_iff {e : TreeLexEntry NCFeature String} (he : IsClassEntry e) (n : ℕ) :
+/-- A class-prefix entry matches the plural Specifier `[# Nₙ]` exactly when it stores it, since no
+singular tree contains it and a plural tree contains it only by equality. -/
+theorem matches_plTree_iff {e : LexicalEntry NCFeature String} (he : IsClassEntry e) (n : ℕ) :
     e.Matches (plTree n) ↔ e.tree = plTree n := by
-  unfold TreeLexEntry.Matches plTree
+  unfold LexicalEntry.Matches plTree
   revert he
   unfold IsClassEntry
   split
@@ -92,40 +93,40 @@ theorem matches_plTree_iff {e : TreeLexEntry NCFeature String} (he : IsClassEntr
     simp
   · rename_i heq
     rw [heq]
-    simp [NanoTree.contains_node_iff]
+    simp [RoseTree.isSubtree_node_iff, eq_comm]
   · exact λ h => h.elim
 
 /-- Over a class-prefix lexicon, spellout of `[# Nₙ]` fails exactly when no entry stores it. -/
-theorem treeSpellout_plTree_eq_none_iff {L : List (TreeLexEntry NCFeature String)}
+theorem treeSpellout_plTree_eq_none_iff {L : List (LexicalEntry NCFeature String)}
     (hL : ∀ e ∈ L, IsClassEntry e) (n : ℕ) :
     treeSpellout L (plTree n) = none ↔ ∀ e ∈ L, e.tree ≠ plTree n := by
   rw [treeSpellout, Option.map_eq_none_iff, treeSelect, selectBy_eq_none_iff, applicable,
     List.filter_eq_nil_iff]
-  have happ : ∀ e : TreeLexEntry NCFeature String, Applies e (plTree n) ↔ e.Matches (plTree n) :=
+  have happ : ∀ e : LexicalEntry NCFeature String, Applies e (plTree n) ↔ e.Matches (plTree n) :=
     λ _ => Iff.rfl
   simp only [decide_eq_true_eq, happ]
   exact ⟨λ h e he hn => h e he ((matches_plTree_iff (hL e he) n).2 hn),
     λ h e he hm => h e he ((matches_plTree_iff (hL e he) n).1 hm)⟩
 
 /-- A spelled-out exponent comes from a matching entry of the lexicon. -/
-theorem exists_of_treeSpellout_eq_some {L : List (TreeLexEntry NCFeature String)}
-    {t : NanoTree NCFeature} {x : String} (h : treeSpellout L t = some x) :
+theorem exists_of_treeSpellout_eq_some {L : List (LexicalEntry NCFeature String)}
+    {t : RoseTree NCFeature} {x : String} (h : treeSpellout L t = some x) :
     ∃ e ∈ L, e.Matches t ∧ e.exponent = x := by
   rw [treeSpellout, Option.map_eq_some_iff] at h
   obtain ⟨e, he, rfl⟩ := h
   exact ⟨e, selectBy_mem he, selectBy_applies he, rfl⟩
 
-/-- Whether a singular and a plural entry contain the same classifier N, the foot of each stored
-tree: the conjoined-subject diagnostic of section 2. -/
-def SharesClassifierN (sg pl : TreeLexEntry NCFeature String) : Prop :=
-  sg.tree.foot = pl.tree.foot
+/-- `SharesClassifierN sg pl` holds when a singular and a plural entry contain the same classifier
+N, the foot of each stored tree, which is the conjoined-subject diagnostic of section 2. -/
+def SharesClassifierN (sg pl : LexicalEntry NCFeature String) : Prop :=
+  foot sg.tree = foot pl.tree
 
 instance : DecidableRel SharesClassifierN := λ _ _ => inferInstanceAs (Decidable (_ = _))
 
 /-! ### Pluralization: direct spellout and stacking (section 4.2) -/
 
-/-- The result of pluralizing a noun: one plural prefix forming the sole Specifier, or the plural
-prefix stacked on top of the singular prefix (75). -/
+/-- Pluralizing a noun yields one plural prefix forming the sole Specifier, or the plural prefix
+stacked on top of the singular prefix (75). -/
 inductive PluralizationResult where
   | direct : String → PluralizationResult
   | stacked : String → String → PluralizationResult
@@ -140,11 +141,11 @@ instance : DecidablePred PluralizationResult.IsStacked
   | .direct _ => .isFalse id
   | .stacked _ _ => .isTrue trivial
 
-/-- Cyclic spellout with last-resort backtracking (65)–(75): the plural head merges above the
-classifier `baseN` first merged with the root; if some entry spells out `[# N_baseN]` the prefix
-is direct, and otherwise a Specifier `[# N_plN]` is built inside the first and spelled out on top
-of the singular prefix `[N_baseN]`. -/
-def derivePlural (L : List (TreeLexEntry NCFeature String)) (baseN plN : ℕ) :
+/-- `derivePlural L baseN plN` is cyclic spellout with last-resort backtracking (65)–(75). The
+plural head merges above the classifier `baseN` first merged with the root; if some entry spells
+out `[# N_baseN]` the prefix is direct, and otherwise a Specifier `[# N_plN]` is built inside the
+first and spelled out on top of the singular prefix `[N_baseN]`. -/
+def derivePlural (L : List (LexicalEntry NCFeature String)) (baseN plN : ℕ) :
     Option PluralizationResult :=
   match treeSpellout L (plTree baseN) with
   | some pfx => some (.direct pfx)
@@ -153,13 +154,14 @@ def derivePlural (L : List (TreeLexEntry NCFeature String)) (baseN plN : ℕ) :
     | some outer, some inner => some (.stacked outer inner)
     | _, _ => none
 
-/-- The first-merge option (82)–(83): the plural entry's N merges with the root directly, so the
-built structure and the backtrack target coincide. -/
-def derivePluralFirstMerge (L : List (TreeLexEntry NCFeature String)) (plN : ℕ) :
+/-- `derivePluralFirstMerge L plN` is the first-merge option (82)–(83), in which the plural
+entry's N merges with the root directly, so the built structure and the backtrack target
+coincide. -/
+def derivePluralFirstMerge (L : List (LexicalEntry NCFeature String)) (plN : ℕ) :
     Option PluralizationResult :=
   derivePlural L plN plN
 
-private theorem isStacked_iff_spellout_eq_none {L : List (TreeLexEntry NCFeature String)}
+private theorem isStacked_iff_spellout_eq_none {L : List (LexicalEntry NCFeature String)}
     {baseN plN : ℕ} {r : PluralizationResult} (hr : derivePlural L baseN plN = some r) :
     r.IsStacked ↔ treeSpellout L (plTree baseN) = none := by
   unfold derivePlural at hr
@@ -175,17 +177,17 @@ private theorem isStacked_iff_spellout_eq_none {L : List (TreeLexEntry NCFeature
       exact iff_of_true trivial heq
     next => exact absurd hr nofun
 
-/-- The correlation of section 4.5, derived: over a class-prefix lexicon a successful derivation
-stacks exactly when no entry stores the plural Specifier on the singular's classifier. -/
-theorem isStacked_iff_forall_ne {L : List (TreeLexEntry NCFeature String)}
+/-- Over a class-prefix lexicon a successful derivation stacks exactly when no entry stores the
+plural Specifier on the singular's classifier, the correlation of section 4.5. -/
+theorem isStacked_iff_forall_ne {L : List (LexicalEntry NCFeature String)}
     (hL : ∀ e ∈ L, IsClassEntry e) {baseN plN : ℕ} {r : PluralizationResult}
     (hr : derivePlural L baseN plN = some r) :
     r.IsStacked ↔ ∀ e ∈ L, e.tree ≠ plTree baseN :=
   (isStacked_iff_spellout_eq_none hr).trans (treeSpellout_plTree_eq_none_iff hL baseN)
 
-/-- The outer prefix of a stack lexicalizes the plural Specifier: a singular prefix never stacks
-on top of a plural one (section 4.5). -/
-theorem stacked_outer {L : List (TreeLexEntry NCFeature String)} {baseN plN : ℕ}
+/-- The outer prefix of a stack lexicalizes the plural Specifier, so a singular prefix never
+stacks on top of a plural one (section 4.5). -/
+theorem stacked_outer {L : List (LexicalEntry NCFeature String)} {baseN plN : ℕ}
     {outer inner : String} (hr : derivePlural L baseN plN = some (.stacked outer inner)) :
     ∃ e ∈ L, e.Matches (plTree plN) ∧ e.exponent = outer := by
   unfold derivePlural at hr
@@ -199,9 +201,9 @@ theorem stacked_outer {L : List (TreeLexEntry NCFeature String)} {baseN plN : �
     next => exact absurd hr nofun
 
 /-- With the first-merge option the built structure and the backtrack target coincide, so a
-failed direct spellout leaves nothing for backtracking to lexicalize: stacking is underivable,
+failed direct spellout leaves nothing for backtracking to lexicalize and stacking is underivable,
 which is why Xhosa never stacks. -/
-theorem not_isStacked_of_firstMerge {L : List (TreeLexEntry NCFeature String)} {plN : ℕ}
+theorem not_isStacked_of_firstMerge {L : List (LexicalEntry NCFeature String)} {plN : ℕ}
     {r : PluralizationResult} (hr : derivePluralFirstMerge L plN = some r) : ¬ r.IsStacked := by
   unfold derivePluralFirstMerge derivePlural at hr
   split at hr
@@ -219,32 +221,32 @@ and *ma* `[# N₆]` (50b); D (7/8) *si* `[N₇]` (49a) and *zi* `[# N₇]` (49b)
 nasal `[N₉]`, set aside in footnote 39, and *zi* `[# N₉]`, syncretic with class 8 (footnote 11)
 and containing N₉ because conjoined class-9 singulars allow class-10 agreement (section 2.3). -/
 
-/-- The Xhosa singular entries: bare classifiers. -/
-def xhosaSg : Xhosa.Gender → TreeLexEntry NCFeature String
-  | .genderA => ⟨sgTree 1, "m", .before⟩
-  | .genderB => ⟨sgTree 3, "m", .before⟩
-  | .genderC => ⟨sgTree 5, "li", .before⟩
-  | .genderD => ⟨sgTree 7, "si", .before⟩
-  | .genderE => ⟨sgTree 9, "n", .before⟩
+/-- The Xhosa singular entries store bare classifiers. -/
+def xhosaSg : Xhosa.Gender → LexicalEntry NCFeature String
+  | .genderA => ⟨sgTree 1, "m"⟩
+  | .genderB => ⟨sgTree 3, "m"⟩
+  | .genderC => ⟨sgTree 5, "li"⟩
+  | .genderD => ⟨sgTree 7, "si"⟩
+  | .genderE => ⟨sgTree 9, "n"⟩
 
-/-- The Xhosa plural entries: genders A, D and E share their N with the singular, B and C contain
-distinct Ns, the finding of section 2. -/
-def xhosaPl : Xhosa.Gender → TreeLexEntry NCFeature String
-  | .genderA => ⟨plTree 1, "ba", .before⟩
-  | .genderB => ⟨plTree 4, "mi", .before⟩
-  | .genderC => ⟨plTree 6, "ma", .before⟩
-  | .genderD => ⟨plTree 7, "zi", .before⟩
-  | .genderE => ⟨plTree 9, "zi", .before⟩
+/-- In the Xhosa plural entries genders A, D and E share their N with the singular, and B and C
+contain distinct Ns, the finding of section 2. -/
+def xhosaPl : Xhosa.Gender → LexicalEntry NCFeature String
+  | .genderA => ⟨plTree 1, "ba"⟩
+  | .genderB => ⟨plTree 4, "mi"⟩
+  | .genderC => ⟨plTree 6, "ma"⟩
+  | .genderD => ⟨plTree 7, "zi"⟩
+  | .genderE => ⟨plTree 9, "zi"⟩
 
 /-- The five Xhosa genders. -/
 def xhosaGenders : List Xhosa.Gender := [.genderA, .genderB, .genderC, .genderD, .genderE]
 
 /-- The Xhosa class-prefix lexicon. -/
-def xhosaPrefixes : List (TreeLexEntry NCFeature String) :=
+def xhosaPrefixes : List (LexicalEntry NCFeature String) :=
   xhosaGenders.map xhosaSg ++ xhosaGenders.map xhosaPl
 
-/-- `[N₁]` spells out as *m*: the singular entry wins over *ba* by the smallest match, and `[# N₁]`
-as *ba* (48). -/
+/-- `[N₁]` spells out as *m*, the singular entry winning over *ba* by the smallest match, and
+`[# N₁]` as *ba* (48). -/
 theorem xhosa_spellout_genderA :
     treeSpellout xhosaPrefixes (sgTree 1) = some "m" ∧
       treeSpellout xhosaPrefixes (plTree 1) = some "ba" := by
@@ -269,20 +271,20 @@ inductive RhongaGender where
   deriving DecidableEq, Repr
 
 /-- The singular entries (76), (79a), (80a). -/
-def rhongaSg : RhongaGender → TreeLexEntry NCFeature String
-  | .gA => ⟨sgTree 1, "mu", .before⟩
-  | .gB => ⟨sgTree 3, "mu", .before⟩
-  | .gC => ⟨sgTree 5, "rhi", .before⟩
-  | .gD => ⟨sgTree 7, "xi", .before⟩
-  | .gE => ⟨sgTree 9, "yi", .before⟩
+def rhongaSg : RhongaGender → LexicalEntry NCFeature String
+  | .gA => ⟨sgTree 1, "mu"⟩
+  | .gB => ⟨sgTree 3, "mu"⟩
+  | .gC => ⟨sgTree 5, "rhi"⟩
+  | .gD => ⟨sgTree 7, "xi"⟩
+  | .gE => ⟨sgTree 9, "yi"⟩
 
 /-- The plural entries (77), (79b), (80b). -/
-def rhongaPl : RhongaGender → TreeLexEntry NCFeature String
-  | .gA => ⟨plTree 1, "va", .before⟩
-  | .gB => ⟨plTree 4, "mi", .before⟩
-  | .gC => ⟨plTree 6, "ma", .before⟩
-  | .gD => ⟨plTree 7, "swi", .before⟩
-  | .gE => ⟨plTree 10, "ti", .before⟩
+def rhongaPl : RhongaGender → LexicalEntry NCFeature String
+  | .gA => ⟨plTree 1, "va"⟩
+  | .gB => ⟨plTree 4, "mi"⟩
+  | .gC => ⟨plTree 6, "ma"⟩
+  | .gD => ⟨plTree 7, "swi"⟩
+  | .gE => ⟨plTree 10, "ti"⟩
 
 /-- The singular's classifier, first merged with the root. -/
 def rhongaBaseN : RhongaGender → ℕ
@@ -296,13 +298,13 @@ def rhongaPlN : RhongaGender → ℕ
 def rhongaGenders : List RhongaGender := [.gA, .gB, .gC, .gD, .gE]
 
 /-- The Changana and Rhonga class-prefix lexicon. -/
-def rhongaPrefixes : List (TreeLexEntry NCFeature String) :=
+def rhongaPrefixes : List (LexicalEntry NCFeature String) :=
   rhongaGenders.map rhongaSg ++ rhongaGenders.map rhongaPl
 
 theorem rhongaPrefixes_isClassEntry : ∀ e ∈ rhongaPrefixes, IsClassEntry e := by decide
 
-/-- *mi* on `[# N₄]` cannot spell out `[# N₃]`, its foot being absent, while *va* on `[# N₁]` can
-spell out `[# N₁]`: the Foot Condition (68). -/
+/-- By the Foot Condition (68), *mi* on `[# N₄]` cannot spell out `[# N₃]`, its foot being
+absent, while *va* on `[# N₁]` can spell out `[# N₁]`. -/
 theorem rhonga_footCondition :
     ¬ FootConditionMet (rhongaPl .gB) (plTree 3) ∧ FootConditionMet (rhongaPl .gA) (plTree 1) := by
   decide
@@ -321,7 +323,7 @@ theorem rhonga_cl3_cl4_stacked : derivePlural rhongaPrefixes 3 4 = some (.stacke
   rhonga_derivations.1
 
 /-- For every Changana and Rhonga gender, a successful derivation stacks exactly when the pair's
-classifiers are distinct: the correlation of section 4.5 per language. -/
+classifiers are distinct, the correlation of section 4.5 in these languages. -/
 theorem rhonga_stacking_iff_not_sharesClassifierN (g : RhongaGender) {r : PluralizationResult}
     (hr : derivePlural rhongaPrefixes (rhongaBaseN g) (rhongaPlN g) = some r) :
     r.IsStacked ↔ ¬ SharesClassifierN (rhongaSg g) (rhongaPl g) := by
@@ -336,8 +338,7 @@ theorem xhosa_direct :
       derivePluralFirstMerge xhosaPrefixes 1 = some (.direct "ba") := by
   decide
 
-/-- The cross-linguistic contrast: gender 3/4, direct in Xhosa and stacked in Changana and
-Rhonga. -/
+/-- Gender 3/4 pluralizes directly in Xhosa and stacks in Changana and Rhonga. -/
 theorem xhosa_rhonga_contrast :
     derivePluralFirstMerge xhosaPrefixes 4 = some (.direct "mi") ∧
       derivePlural rhongaPrefixes 3 4 = some (.stacked "mi" "mu") :=
@@ -346,22 +347,22 @@ theorem xhosa_rhonga_contrast :
 /-! ### Shona double plurals (section 4.3) -/
 
 /-- Shona *mi* on the bare `[N₄]` (89) and *ma* on `[# N₆]`. -/
-def shonaPrefixes : List (TreeLexEntry NCFeature String) :=
-  [⟨sgTree 4, "mi", .before⟩, ⟨plTree 6, "ma", .before⟩]
+def shonaPrefixes : List (LexicalEntry NCFeature String) :=
+  [⟨sgTree 4, "mi"⟩, ⟨plTree 6, "ma"⟩]
 
 /-- The double plural *ma-mi-sha* 'groups of villages' (84), (88) is derived from the entry (89),
 and would be underivable, *mi* spelling out `[# N₄]` directly, from the entry (87). -/
 theorem shona_double_plural :
     derivePlural shonaPrefixes 4 6 = some (.stacked "ma" "mi") ∧
-      derivePlural [⟨plTree 4, "mi", .before⟩, ⟨plTree 6, "ma", .before⟩] 4 6 =
+      derivePlural [⟨plTree 4, "mi"⟩, ⟨plTree 6, "ma"⟩] 4 6 =
         some (.direct "mi") := by
   decide
 
 /-! ### Prefix and concord identity (60)–(61) -/
 
 /-- The class-prefix lexicon spells out the Fragment's subject concords for classes 5, 7, 2 and
-8: one set of entries serves nominal prefixes and concords (60)–(61); the paper's own exceptions
-are the class-1 concord *u* (footnote 30) and the class-6 concord *a* (53c). -/
+8, so one set of entries serves nominal prefixes and concords (60)–(61). The paper's own
+exceptions are the class-1 concord *u* (footnote 30) and the class-6 concord *a* (53c). -/
 theorem xhosa_prefix_sc_identity :
     treeSpellout xhosaPrefixes (sgTree 5) = some Xhosa.NounClass.cl5.subjPrefix ∧
       treeSpellout xhosaPrefixes (sgTree 7) = some Xhosa.NounClass.cl7.subjPrefix ∧
