@@ -1,485 +1,384 @@
 module
 
-public import Mathlib.Data.Finset.Basic
-public import Linglib.Data.Examples.Judgment
+public import Linglib.Data.Examples.SadakaneKoizumi1995
 public import Linglib.Fragments.Japanese.Case
-public import Linglib.Syntax.Case.Dependent
+public import Linglib.Syntax.Tree.Command
+
 /-!
-# Sadakane & Koizumi 1995 [sadakane-koizumi-1995] [martin-1975]
+# Sadakane and Koizumi (1995)
 
-*On the nature of the "dative" particle ni in Japanese*. Linguistics 33(1):5–33.
+Japanese particles after a noun phrase divide into case markers, which cliticize onto the noun
+phrase, and postpositions, which head a phrase over it. The particle *ni* seems to behave as both.
+Sadakane and Koizumi argue that it is four homophonous particles: the dative case marker, a
+postposition, the *ni* inserted on a caseless subject, and a form of the copula. Three tests
+separate them, a floating numeral quantifier and a cleft with and without the particle. The uses
+of *ni* that pass all three are ambiguous between the case marker and the postposition, and the
+paper ties the choice between the two to how affected the referent of the noun phrase is.
 
-## Headline claim
+## Main definitions
 
-The apparent ambiguity of Japanese particle *ni* between case marker and
-postposition is **illusory** (Conclusion, p. 23). What looks like a
-single particle with mixed properties is actually four homophonous
-lexemes:
+* `Attachment`: whether a particle cliticizes onto its noun phrase or heads a phrase over it.
+* `Particle`, `Test`, `Particle.Passes`: the four classes of particle, the three tests, and which
+  classes pass which tests.
+* `Position`: the argument positions of the affectedness hierarchy (45).
 
-1. **Dative case marker *ni*** (Martin (1975) categories A, O1)
-2. **Postposition *ni*** (categories B, C1–C3, E, F, G, H1–H3, I, K, L1, M, O2, R, T, U)
-3. ***ni* of *ni*-insertion** (J1, J2, L2; Takezawa 1987's Japanese analogue
-   of English *of*-insertion — a last-resort default for caseless arguments)
-4. **Copula *ni*** (P1, P2, Q, S, V; a form of the copula *da/de aru*)
+## Main statements
 
-Plus an **ambiguous** bucket (D, N1, N2) where speakers disagree on
-whether *ni* is a case marker or a postposition; encoded as
-`Classification.classify _ = none`.
+* `Attachment.hostsQuantifier_iff`: a numeral quantifier and its host c-command each other exactly
+  when the particle cliticizes.
+* `Particle.passes_caseMarker`, `Particle.passes_postposition`, `Particle.passes_insertion`,
+  `Particle.not_passes_copula`: the tables (14), (29) and (32).
+* `exists_passes_and_exists_passes_iff`: a use of *ni* passing both of the first two tests is
+  ambiguous between the case marker and the postposition.
+* `judgment_eq_acceptable_iff`: every test example is acceptable exactly when its particle passes
+  the test.
+* `judgment_eq_acceptable_iff_affected`: a floating quantifier goes with a *ni* phrase exactly when
+  its referent may be affected.
+* `Position.lt_iff_cCommands`: the hierarchy (45) orders the arguments of Koizumi's tree (44) by
+  c-command.
 
-S&K SUPPORT [kuno-1987]'s and Miyagawa (1989)'s case-marker /
-postposition dichotomy — once the four homophones are split apart, the
-remainder respects the binary partition. This is in contrast to the
-"third-type" view (a single *ni* with both case-marker and postposition
-properties) widely held in Japanese linguistics.
+## Implementation notes
 
-## Three operational tests (§2)
+* A test is passed when the paper marks it OK without qualification, so the postposition's cleft
+  without the particle, `*/?/OK` in (14), fails. An example printed with two marks records the
+  first as its judgment and the second as `alsoJudged`.
+* The cleft with the particle follows Nakayama's account, which the paper offers for concreteness
+  without adopting it.
+* Martin's 31 uses of *ni* are the `category` labels of the examples, and the class the paper
+  assigns each is a `particle` label, two for an ambiguous use.
+* The judgments are those of the innovating variety (note 9). Morii's acquisition study, which
+  the paper reports, is not formalized.
 
-S&K distinguish the four types by three syntactic diagnostics, summarised
-in tables 14, 27, 29, and 32:
+## References
 
-| Type                | Floating NQ | Cleft + particle | Cleft − particle |
-|---------------------|-------------|------------------|------------------|
-| Dative case marker  | OK          | */??              | OK               |
-| Postposition        | *           | OK               | */?/OK           |
-| Ambiguous (D,N1,N2) | OK          | OK               | OK               |
-| *ni*-insertion      | *           | */??              | OK               |
-| Copula *ni*         | */N.A.      | */??              | */??             |
-
-Each cell is the list of marks the table prints, as `Judgment`s: `*/??` is
-`[.ungrammatical, .questionable]`, `*/?/OK` is `[.ungrammatical, .marginal, .acceptable]`. The
-`N.A.` of `*/N.A.` is not a mark and is left out (per S&K fn. 10, the test fails for an
-independent non-referentiality reason as well as a structural one).
-
-## Affectedness criterion (§4, p. 18)
-
-> "The case marker *ni* is attached to an NP whose referent is relatively
-> more affected by the action denoted by the verb (predicate/sentence),
-> and the postposition *ni* is attached to an NP whose referent is less
-> affected." (p. 18)
-
-Hierarchy (figure 45, p. 22) carries TWO orthogonal dimensions: a 4-rank
-position scale (NP-in-PP < dative NP < upper accusative NP < lower
-accusative NP) and an `AffectedKind` distinction (phenomenally vs.
-structurally affected). Examples 42–43: *Tom-o korosita* "killed Tom"
-structurally affects Tom (he ceases to exist as such); *Bill-o hometa*
-"praised Bill" only phenomenally affects Bill's psychological state.
-
-## Acquisition prediction (§5, pp. 23–24)
-
-If S&K's analysis is correct (case-marker and postposition *ni* are
-distinct lexemes), Japanese-learning children should acquire them
-independently. Morii (1993) confirms: case-marker *ni* (categories A, O1)
-is acquired between 2;0 and 2;11; postposition *ni* (categories B–U) is
-acquired only after 3;0.
-
-## Layered grounding to linglib
-
-- Diagnostic cells are lists of `Judgment` marks, not a per-paper enum.
-- `Classification.marantz` aligns S&K's 4-way with [baker-2015]'s
-  `Case.Mechanism` from `Syntax/Case/Dependent.lean`. The map
-  is partial: copula *ni* lies outside Marantz's case-assignment domain.
-  Note: `.niInsertion → .unmarked` (Marantz/Schütze's "default-case"
-  fallback) rather than `.agree` — Takezawa's salvage operation is what
-  happens *when Agree fails*, not Agree itself.
-- `MartinCategory.InFragmentNi` is **derived** as a `Finset` intersection
-  of the per-category `fragmentCases` footprint with the Fragment's
-  `Japanese.Case.dat.functions = {.dat, .loc, .all, .tem}`. The
-  conflation theorem `fragment_ni_predicts_inconsistent_signatures`
-  derives the Tsujimura/Fragment vs. S&K granularity disagreement as a
-  real claim about set intersection plus diagnostic-signature mismatch.
-
-## Dialect parameter
-
-S&K's footnote 9 (p. 30) flags that judgments throughout the paper are
-from the **innovating** dialect (per [kuno-1987], Miyagawa 1989).
-The **conservative** dialect (Shibatani 1977) gives different judgments
-for some categories (notably K, *Ohaio Ginkoo-ni* 'work for Ohio Bank').
-This Studies file's `Classification.signature` reflects the innovating
-dialect; a future `Studies/Shibatani1977.lean` could
-formalise the conservative judgments and surface where they diverge.
-The `Dialect` enum is intentionally NOT introduced here (was dead code
-in the previous version) — it earns its keep when the conservative file
-lands.
-
-## Korean parallel (Sells 1995, not yet in linglib)
-
-Sells (1995, *Journal of East Asian Linguistics*) documents the parallel
-case-particle/postposition split for Korean *-i*/*-eseo* but does not
-engage S&K's homophony move for Korean equivalents of *ni*. This gap
-cannot be Lean-formalised until `Fragments/Korean/Case.lean` adopts
-Pattern B (rich marker structure); currently it's a `Finset Case`
-stipulation only. Documented here as future work.
+* [sadakane-koizumi-1995]
+* [kuroda-1965]
+* [martin-1975]
+* [miyagawa-1989]
+* [nakayama-1989]
+* [takezawa-1987]
+* [koizumi-1994]
+* [morii-1993]
 -/
 
 @[expose] public section
 
 namespace SadakaneKoizumi1995
 
+open Syntax Syntax.Tree Core.Order
 
-/-! ## §1 Classification — S&K's four homophonous *ni* lexemes -/
+/-! ### Case markers and postpositions -/
 
-/-- S&K's classification of *ni* into four distinct homophonous lexemes
-    (§4 Discussion, summarised in Conclusion §5). The "ambiguous" cases
-    (D, N1, N2) are encoded as `none` via `Option Classification` rather
-    than a separate constructor — speakers genuinely vary on which of
-    `.dativeCaseMarker` or `.postposition` these belong to. -/
-inductive Classification where
-  /-- Categories A (goal indirect object) and O1 (change of position
-      with intransitive verb). Behaves like accusative *o* and nominative
-      *ga*: omissible in casual speech, no inherent meaning. -/
-  | dativeCaseMarker
-  /-- The 18 categories B, C1–C3, E, F, G, H1–H3, I, K, L1, M, O2, R, T, U.
-      Bears inherent meaning; non-omissible. -/
+/-- A particle either cliticizes onto the noun phrase it follows, as a case marker does,
+`[NP John-ga]`, or takes the noun phrase as its complement and heads a phrase, as a postposition
+does, `[PP [NP John] kara]` ((1)). -/
+inductive Attachment where
+  /-- The particle cliticizes onto the noun phrase. -/
+  | clitic
+  /-- The particle heads a phrase of part of speech `u` over the noun phrase. -/
+  | head (u : UD.UPOS)
+  deriving DecidableEq
+
+/-- A category can bear Case when it is an NP or a PP; an AP cannot ((10)). -/
+def CaseAssignable (c : Cat) : Prop := c = .NP ∨ c = .PP
+
+instance : DecidablePred CaseAssignable := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
+
+namespace Attachment
+
+/-- `a.phrase` is the phrase a particle forms with its noun phrase. -/
+def phrase : Attachment → Tree Cat Unit
+  | clitic => .terminal .NP ()
+  | head u => .node (.proj u) [.terminal .NP (), .terminal (.head u) ()]
+
+/-- In the clause of (6) and (7), the particle's phrase, a floating numeral quantifier and the
+verb are sisters. -/
+def quantifierTree (a : Attachment) : Tree Cat Unit :=
+  .node .VP [a.phrase, .terminal .Num (), .terminal .V ()]
+
+/-- `a.host` is the position of the noun phrase in `a.quantifierTree`. -/
+def host : Attachment → TreePath
+  | clitic => ⟨[0]⟩
+  | head _ => ⟨[0, 0]⟩
+
+/-- A noun phrase hosts a floating numeral quantifier when the two c-command each other
+([miyagawa-1989]), with c-command as note 4 defines it. -/
+def HostsQuantifier (a : Attachment) : Prop :=
+  CCommands a.quantifierTree a.host ⟨[1]⟩ ∧ CCommands a.quantifierTree ⟨[1]⟩ a.host
+
+instance : DecidablePred HostsQuantifier := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
+
+/-- A noun phrase hosts a floating quantifier exactly when its particle cliticizes. A particle
+that heads a phrase puts a branching node above the noun phrase that does not dominate the
+quantifier, as "the PP node prevents the NP from c-commanding the numeral quantifier" (§2) and
+the copula's VP does the same (§3). -/
+theorem hostsQuantifier_iff {a : Attachment} : a.HostsQuantifier ↔ a = clitic := by
+  cases a with
+  | clitic => decide
+  | head u =>
+    refine iff_of_false (fun h ↦ ?_) nofun
+    exact absurd (h.1.1 ⟨[0]⟩ ⟨_, rfl, le_rfl⟩ (show (⟨[0]⟩ : TreePath) < ⟨[0, 0]⟩ by decide))
+      (show ¬ (⟨[0]⟩ : TreePath) ≤ ⟨[1]⟩ by decide)
+
+/-- A particle's phrase can be the focus of a cleft when it can bear Case and bears none yet. On
+[nakayama-1989]'s account the copula *da* assigns Case to its complement, so a case-marked NP
+would be doubly case-marked ((8)) while a PP can be the focus ((9)). -/
+def Focusable (a : Attachment) : Prop := CaseAssignable a.phrase.cat ∧ a ≠ clitic
+
+instance : DecidablePred Focusable := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
+
+/-- No particle both lets its noun phrase host a floating quantifier and lets its phrase be the
+focus of a cleft, so none behaves as a case marker and as a postposition at once (§4). -/
+theorem not_hostsQuantifier_and_focusable (a : Attachment) :
+    ¬ (a.HostsQuantifier ∧ a.Focusable) :=
+  fun ⟨h, _, hne⟩ ↦ hne (hostsQuantifier_iff.1 h)
+
+end Attachment
+
+/-! ### The four particles -/
+
+/-- The tests separate four classes of particle, [kuroda-1965]'s case markers and postpositions
+together with the *ni* of *ni* insertion and the copula. -/
+inductive Particle where
+  /-- A case marker, such as *ga*, *o* and the dative *ni*. -/
+  | caseMarker
+  /-- A postposition, such as *kara*, *de* and the postposition *ni*. -/
   | postposition
-  /-- Categories J1, J2, L2. Per Takezawa 1987, *ni* is inserted onto
-      caseless arguments of certain predicates (causativised verbs) as a
-      last-resort default; the Japanese analogue of English *of*-insertion. -/
-  | niInsertion
-  /-- Categories P1, P2, Q, S, V. *ni* attached to a "predicate" of
-      some sort, related to copula *da/de aru* constructions. -/
+  /-- The *ni* inserted on a caseless noun phrase ([takezawa-1987]). -/
+  | insertion
+  /-- The copula, one of whose forms is *ni*. -/
   | copula
-  deriving DecidableEq, Repr, Fintype
+  deriving DecidableEq, Fintype, Repr
 
-/-! ## §2 Martin (1975) usage categories — 31 letter codes
-
-The 31 categories follow [martin-1975]'s reference grammar; S&K adopt
-his classification with minor modifications (see §2 fn. 3). Each category
-in the appendix (pp. 23–33) is exemplified by one or more verbs.
--/
-
-/-- The 31 usage categories of Japanese *ni* per [martin-1975], as
-    reported in S&K's Appendix (pp. 23–33). Letter codes are S&K's. -/
-inductive MartinCategory where
-  | A | B | C1 | C2 | C3 | D | E | F | G
-  | H1 | H2 | H3 | I | J1 | J2 | K | L1 | L2
-  | M | N1 | N2 | O1 | O2 | P1 | P2 | Q | R | S | T | U | V
-  deriving DecidableEq, Repr, Fintype
-
-namespace MartinCategory
-
-/-- Ascription of each Martin category to one of S&K's four classification
-    types. The "ambiguous" categories (D, N1, N2) return `none`; speakers
-    differ on whether the *ni* in these contexts is a case marker or a
-    postposition. -/
-def classify : MartinCategory → Option Classification
-  | .A | .O1                                 => some .dativeCaseMarker
-  | .D | .N1 | .N2                           => none  -- ambiguous
-  | .J1 | .J2 | .L2                          => some .niInsertion
-  | .P1 | .P2 | .Q  | .S  | .V               => some .copula
-  | .B  | .C1 | .C2 | .C3 | .E  | .F  | .G
-  | .H1 | .H2 | .H3 | .I  | .K  | .L1 | .M
-  | .O2 | .R  | .T  | .U                     => some .postposition
-
-/-- Per-category footprint on the `Case` lattice — what UD case
-    feature(s) the *ni*-use of this Martin category corresponds to most
-    directly. Categories whose *ni*-use does NOT fit any UD case feature
-    Tsujimura's Fragment recognises (`Japanese.Case.dat.functions =
-    {.dat, .loc, .all, .tem}`) map to `∅`. This is study-internal
-    stipulation (the lin agent verified F's mapping is empty per the
-    *GB riron-ni motozuiteiru* example). -/
-def fragmentCases : MartinCategory → Finset Case
-  | .A                  => {.dat}            -- goal indirect object
-  | .O1                 => {.dat, .all}      -- change of position (riding ON something)
-  | .L1                 => {.loc}            -- locative-of-existence
-  | .N1 | .N2           => {.dat, .all}      -- dative of direction (S&K-ambiguous)
-  | .M                  => {.tem}            -- specific time
-  | _                   => ∅                 -- not among the Fragment's ni functions
-
-/-- Whether the Fragment's single *ni*, the dative case particle (with
-    `functions = {.dat, .loc, .all, .tem}`), covers the *ni* uses of a given
-    Martin category. Derived as the non-emptiness of the intersection
-    between the category's `fragmentCases` footprint and the Fragment's
-    `Japanese.Case.dat.functions` — a real `Finset` operation rather than a stipulated
-    lookup table. -/
-def InFragmentNi (c : MartinCategory) : Prop :=
-  (c.fragmentCases ∩ Japanese.Case.dat.functions).Nonempty
-
-instance (c : MartinCategory) : Decidable c.InFragmentNi := by
-  unfold InFragmentNi; infer_instance
-
-end MartinCategory
-
-/-! ## §3 Operational tests + diagnostic signature
-
-Per S&K §2 (pp. 8–11), three syntactic tests distinguish the four types.
-The signatures in tables 14, 29, 32 are encoded as `Classification.signature`, each cell the
-list of marks the table prints.
--/
-
-/-- The three operational diagnostics S&K apply to each Martin category. -/
-inductive OperationalTest where
-  /-- Floating numeral quantifier construction (§2, p. 8): the c-command
-      requirement between numeral and host NP is blocked by an intervening
-      PP node. Case markers permit FNQ; postpositions block it. -/
-  | floatingNQ
-  /-- Clefting with the particle in focus position (§2, p. 9): PPs may
-      occupy focus position; NPs with case markers may not. -/
+/-- The paper tests a use of a particle in three constructions (§2). -/
+inductive Test where
+  /-- A floating numeral quantifier goes with the noun phrase ((6), (7)). -/
+  | quantifierFloat
+  /-- The noun phrase and its particle are the focus of a cleft ((8), (9)). -/
   | cleftWithParticle
-  /-- Clefting without the particle (§2, p. 10): a Hoji-1987 / Inoue-1976
-      "aboutness" cleft variant. Behaviour distinguishes copula *ni* from
-      the others. -/
+  /-- The noun phrase without its particle is the focus of a cleft ((11), (12)). -/
   | cleftWithoutParticle
-  deriving DecidableEq, Repr, Fintype
+  deriving DecidableEq, Fintype, Repr
 
-namespace Classification
+namespace Particle
 
-/-- The marks S&K's tables 14, 29 and 32 give each `Classification` on each
-    `OperationalTest`; a split cell such as `*/??` lists each mark. -/
-def signature : Classification → OperationalTest → List Judgment
-  -- Dative case marker (table 14, top row): OK | */?? | OK
-  | .dativeCaseMarker, .floatingNQ           => [.acceptable]
-  | .dativeCaseMarker, .cleftWithParticle    => [.ungrammatical, .questionable]
-  | .dativeCaseMarker, .cleftWithoutParticle => [.acceptable]
-  -- Postposition (table 14, bottom row): * | OK | */?/OK
-  | .postposition,     .floatingNQ           => [.ungrammatical]
-  | .postposition,     .cleftWithParticle    => [.acceptable]
-  | .postposition,     .cleftWithoutParticle => [.ungrammatical, .marginal, .acceptable]
-  -- ni-of-ni-insertion (table 29): * | */?? | OK
-  | .niInsertion,      .floatingNQ           => [.ungrammatical]
-  | .niInsertion,      .cleftWithParticle    => [.ungrammatical, .questionable]
-  | .niInsertion,      .cleftWithoutParticle => [.acceptable]
-  -- Copula ni (table 32): */N.A. | */?? | */??
-  | .copula,           .floatingNQ           => [.ungrammatical]
-  | .copula,           .cleftWithParticle    => [.ungrammatical, .questionable]
-  | .copula,           .cleftWithoutParticle => [.ungrammatical, .questionable]
+/-- A case marker cliticizes. A postposition heads a PP, and so does the *ni* of *ni* insertion,
+which is a postposition; the copula heads a VP (§3). -/
+def attachment : Particle → Attachment
+  | caseMarker => .clitic
+  | postposition | insertion => .head .ADP
+  | copula => .head .VERB
 
-end Classification
+/-- The *ni* of *ni* insertion marks only a noun phrase in the subject position, Spec,IP (§3). -/
+def MarksSubject : Particle → Prop
+  | insertion => True
+  | _ => False
 
-/-! ## §4 Cardinality theorems — Finset.card decomposition
+instance : DecidablePred MarksSubject := fun p ↦ by
+  cases p <;> unfold MarksSubject <;> infer_instance
 
-The audit-promised "test the data, not the constructor" theorems —
-verifying that S&K's distribution of 31 Martin categories into 4 types
-+ 3 ambiguous matches the paper's own count.
--/
+/-- A particle passes a test when its noun phrase hosts a floating quantifier, when its phrase is
+focusable and not confined to subjects, or, with the particle left out, when what the particle
+contributes can be recovered. A case marker contributes nothing, and the noun phrase of the *ni*
+of *ni* insertion is the subject, the most accessible relation of (13). -/
+def Passes : Particle → Test → Prop
+  | p, .quantifierFloat => p.attachment.HostsQuantifier
+  | p, .cleftWithParticle => p.attachment.Focusable ∧ ¬ p.MarksSubject
+  | p, .cleftWithoutParticle => p.attachment = .clitic ∨ p.MarksSubject
 
-/-- Number of Martin categories classified as `dativeCaseMarker` (§3, p. 11:
-    "two categories of *ni* … behave purely as case markers"). -/
-theorem card_dativeCaseMarker :
-    (Finset.univ.filter (fun c : MartinCategory => c.classify = some .dativeCaseMarker)).card = 2 := by
-  decide
+instance (p : Particle) : DecidablePred p.Passes := fun t ↦ by
+  cases t <;> unfold Passes <;> infer_instance
 
-/-- Number of Martin categories classified as `postposition` (§3, p. 12:
-    "Eighteen categories of *ni* in our list turned out to be postpositions"). -/
-theorem card_postposition :
-    (Finset.univ.filter (fun c : MartinCategory => c.classify = some .postposition)).card = 18 := by
-  decide
+theorem passes_quantifierFloat_iff {p : Particle} :
+    p.Passes .quantifierFloat ↔ p = caseMarker := by
+  decide +revert
 
-/-- Number of categories where speakers vary (S&K's "ambiguous" bucket;
-    §3, p. 14: D, N1, N2 — the three categories listed in (23)). -/
-theorem card_ambiguous :
-    (Finset.univ.filter (fun c : MartinCategory => c.classify = none)).card = 3 := by
-  decide
+theorem passes_cleftWithParticle_iff {p : Particle} :
+    p.Passes .cleftWithParticle ↔ p = postposition := by
+  decide +revert
 
-/-- Number of *ni*-of-*ni*-insertion categories (§3, p. 16: J1, J2, L2). -/
-theorem card_niInsertion :
-    (Finset.univ.filter (fun c : MartinCategory => c.classify = some .niInsertion)).card = 3 := by
-  decide
+/-- A case marker passes the numeral quantifier test and the cleft without the particle ((14)). -/
+theorem passes_caseMarker {t : Test} : caseMarker.Passes t ↔ t ≠ .cleftWithParticle := by
+  decide +revert
 
-/-- Number of copula *ni* categories (§3, p. 17: P1, P2, Q, S, V). -/
-theorem card_copula :
-    (Finset.univ.filter (fun c : MartinCategory => c.classify = some .copula)).card = 5 := by
-  decide
+/-- A postposition passes only the cleft with the particle ((14)). -/
+theorem passes_postposition {t : Test} : postposition.Passes t ↔ t = .cleftWithParticle := by
+  decide +revert
 
-/-- The five sub-counts decompose the universe of 31 Martin categories. -/
-theorem card_decomposition :
-    (Finset.univ : Finset MartinCategory).card = 31 := by decide
+/-- The *ni* of *ni* insertion passes only the cleft without the particle ((29)). -/
+theorem passes_insertion {t : Test} : insertion.Passes t ↔ t = .cleftWithoutParticle := by
+  decide +revert
 
-/-! ## §5 Conflation: Fragment's `ni` collapses S&K types
+/-- The copula passes none of the tests ((32)). -/
+theorem not_passes_copula (t : Test) : ¬ copula.Passes t := by
+  decide +revert
 
-`Fragments/Japanese/Case.lean` exposes a single *ni*, the dative case particle
-`Japanese.Case.dat` (consistent with [tsujimura-2014]'s textbook presentation). S&K's
-4-way analysis would split this entry into multiple lexemes. The
-following theorems make the granularity disagreement Lean-visible: the
-Fragment's `ni` covers Martin categories with INCONSISTENT diagnostic
-signatures, refuting the unitary-`ni` treatment.
--/
+/-- The three tests tell the four particles apart. -/
+theorem passes_injective : Function.Injective Passes := by
+  intro p q h
+  have key (t : Test) : p.Passes t ↔ q.Passes t := by rw [h]
+  cases p <;> cases q <;> first
+    | rfl
+    | exact absurd (key .quantifierFloat) (by decide)
+    | exact absurd (key .cleftWithParticle) (by decide)
+    | exact absurd (key .cleftWithoutParticle) (by decide)
 
-/-- The Fragment's `ni` covers Martin categories from at least two
-    distinct S&K classifications — *.dativeCaseMarker* (witnessed by A)
-    and *.postposition* (witnessed by L1). -/
-theorem fragment_ni_covers_two_sk_types :
-    ∃ c1 c2 : MartinCategory,
-      c1.InFragmentNi ∧ c2.InFragmentNi ∧
-      c1.classify ≠ c2.classify :=
-  ⟨MartinCategory.A, MartinCategory.L1, by decide, by decide, by decide⟩
+end Particle
 
-/-- Stronger statement: the Fragment's `ni` straddles three S&K cells —
-    case marker (A), postposition (L1), and ambiguous (N1). -/
-theorem fragment_ni_conflates_three_sk_cells :
-    (∃ c : MartinCategory, c.InFragmentNi ∧ c.classify = some .dativeCaseMarker) ∧
-    (∃ c : MartinCategory, c.InFragmentNi ∧ c.classify = some .postposition) ∧
-    (∃ c : MartinCategory, c.InFragmentNi ∧ c.classify = none) := by
-  refine ⟨?_, ?_, ?_⟩
-  · exact ⟨MartinCategory.A, by decide, by decide⟩
-  · exact ⟨MartinCategory.L1, by decide, by decide⟩
-  · exact ⟨MartinCategory.N1, by decide, by decide⟩
+open Particle
 
-/-- The empirical bite of the homophony argument: the Fragment's single
-    `ni` covers Martin categories whose S&K-predicted diagnostic
-    signatures DISAGREE on at least one operational test. A unitary `ni`
-    lexeme entails one verdict per test, but the data show two. The
-    Fragment's lexicon is empirically inadequate as encoded. -/
-theorem fragment_ni_predicts_inconsistent_signatures :
-    ∃ c1 c2 : MartinCategory, ∃ cl1 cl2 : Classification, ∃ t : OperationalTest,
-      c1.InFragmentNi ∧ c2.InFragmentNi ∧
-      c1.classify = some cl1 ∧ c2.classify = some cl2 ∧
-      Classification.signature cl1 t ≠ Classification.signature cl2 t := by
-  refine ⟨MartinCategory.A, MartinCategory.L1,
-          .dativeCaseMarker, .postposition, .floatingNQ, ?_⟩
-  refine ⟨?_, ?_, ?_, ?_, ?_⟩ <;> decide
+/-! ### Ambiguity -/
 
-/-! ## §6 Alignment with Marantz dependent case
+/-- A use of *ni* that passes both the numeral quantifier test and the cleft with the particle
+can be read both as the case marker and as the postposition. Such uses are what mislead the
+view of *ni* as a third kind of particle (§4). -/
+theorem exists_passes_and_exists_passes_iff {S : List Particle} :
+    ((∃ p ∈ S, p.Passes .quantifierFloat) ∧ ∃ p ∈ S, p.Passes .cleftWithParticle) ↔
+      caseMarker ∈ S ∧ postposition ∈ S := by
+  simp only [passes_quantifierFloat_iff, passes_cleftWithParticle_iff, exists_eq_right]
 
-S&K's 4-way classification partially aligns with Marantz/Baker's
-`Mechanism` (`lexical | dependent | unmarked | agree`), encoded in
-`Syntax/Case/Dependent.lean`. Per the cross-framework reasoning:
+/-- A use of *ni* that can be read as the case marker or as the postposition passes every test
+((27)). -/
+theorem exists_passes_of_ambiguous (t : Test) :
+    ∃ p ∈ [caseMarker, postposition], p.Passes t := by
+  cases t <;> decide
 
-- Dative case marker *ni* — assigned by structural configuration → `dependent`
-- Postposition *ni* — bears inherent meaning, attached to NP via P head → `lexical`
-- *ni*-of-*ni*-insertion — Takezawa 1987's last-resort salvage on caseless
-  arguments → `unmarked` (Marantz/Schütze 2001 default-case fallback);
-  NOT `agree` (which is T/D-driven probing, distinct from the salvage
-  operation S&K formalise via Takezawa)
-- Copula *ni* — outside Marantz's case-assignment domain (it's a copular
-  construction, not case marking) → `none`
--/
+/-! ### Affectedness -/
 
-open Case (Mechanism)
+/-- The paper reads the referent of a noun phrase as affected or not by the action the verb
+denotes (§4). -/
+inductive Reading where
+  /-- The referent is affected, as a recipient who comes to possess something is. -/
+  | affected
+  /-- The referent is less affected, or not at all. -/
+  | nonaffected
+  deriving DecidableEq, Fintype, Repr
 
-namespace Classification
+/-- The case marker *ni* marks a noun phrase whose referent is affected, and the postposition one
+whose referent is less affected (§4). -/
+def Reading.particle : Reading → Particle
+  | .affected => caseMarker
+  | .nonaffected => postposition
 
-/-- Partial map from S&K's 4-way *ni* taxonomy to Marantz/Baker's
-    `Mechanism`. Copula *ni* maps to `none` (outside Marantz's domain). -/
-def marantz : Classification → Option Mechanism
-  | .dativeCaseMarker => some .dependent
-  | .postposition     => some .lexical
-  | .niInsertion      => some .unmarked
-  | .copula           => none
-
-end Classification
-
-/-- The Takezawa-vs-Chomsky alignment for *ni*-insertion is genuinely
-    underdetermined: Schütze 2001-style default case (`.unmarked`) is the
-    closer fit to Takezawa 1987's "salvage on caseless argument", but a
-    Chomsky 2000-style functional-head Agree analysis would assign
-    `.agree`. The two readings make different predictions for whether
-    *ni*-inserted NPs are visible to T-Agree. This Studies file picks
-    `.unmarked`; the disagreement is recorded explicitly. -/
-theorem niInsertion_alignment_underdetermined :
-    Classification.marantz .niInsertion = some .unmarked ∧
-    (some Mechanism.agree : Option Mechanism) ≠ some .unmarked := by
-  refine ⟨rfl, ?_⟩; decide
-
-/-! ## §7 Affectedness hierarchy (§4, figure 45)
-
-S&K's semantic correlate for the case-marker/postposition split: case
-markers attach to MORE-affected NPs, postpositions to LESS-affected ones.
-The hierarchy spans 4 syntactic positions on a rank dimension PLUS a
-phenomenally-vs-structurally split on an affectedness-kind dimension —
-two orthogonal axes per figure 45.
--/
-
-/-- The four syntactic positions in S&K's affectedness hierarchy
-    (figure 45, p. 22). Ordered from least to most affected on the
-    rank dimension. -/
-inductive SyntacticPosition where
-  /-- NP inside a PP (least affected). -/
+/-- The affectedness hierarchy (45) places a noun phrase in a PP below the dative, and the dative
+below the upper and the lower accusative. -/
+inductive Position where
+  /-- A noun phrase in a PP, the least affected. -/
   | npInPP
-  /-- Dative NP (indirect object). Phenomenally affected. -/
-  | dativeNP
-  /-- Upper accusative NP (e.g., direct object of *praise*). Phenomenally
-      affected (psychological state altered). -/
-  | upperAccusativeNP
-  /-- Lower accusative NP (e.g., direct object of *kill*). Structurally
-      affected (referent's existence/identity altered). -/
-  | lowerAccusativeNP
-  deriving DecidableEq, Repr, Fintype
+  /-- The dative, the indirect object. -/
+  | dative
+  /-- The upper accusative, a nonaffected theme. -/
+  | upperAccusative
+  /-- The lower accusative, an affected theme. -/
+  | lowerAccusative
+  deriving DecidableEq, Fintype, Repr
 
-/-- The kind of affectedness, orthogonal to rank (§4, examples 42–43,
-    p. 21–22). Phenomenal = referent's psychological/relational state
-    altered (*hometa* "praised", *nagutta* "hit" — only part of body).
-    Structural = referent's existence or identity altered (*korosita*
-    "killed", *tabeta* "ate"). -/
-inductive AffectedKind where
-  | phenomenal
-  | structural
-  deriving DecidableEq, Repr, Fintype
+namespace Position
 
-namespace SyntacticPosition
+/-- `p.rank` is the place of `p` in (45), counting from the least affected. -/
+def rank : Position → Fin 4
+  | npInPP => 0
+  | dative => 1
+  | upperAccusative => 2
+  | lowerAccusative => 3
 
-/-- Affectedness rank: higher = more affected. -/
-def affectednessRank : SyntacticPosition → Nat
-  | .npInPP             => 0
-  | .dativeNP           => 1
-  | .upperAccusativeNP  => 2
-  | .lowerAccusativeNP  => 3
+instance : LinearOrder Position := LinearOrder.lift' rank (by decide)
 
-/-- The kind of affectedness associated with each position: phenomenal
-    for dative and upper-accusative; structural for lower-accusative;
-    none for NP-in-PP (unaffected). -/
-def kindOf : SyntacticPosition → Option AffectedKind
-  | .npInPP             => none           -- unaffected
-  | .dativeNP           => some .phenomenal
-  | .upperAccusativeNP  => some .phenomenal
-  | .lowerAccusativeNP  => some .structural
+/-- Koizumi's tree (44) puts the affected goal above the nonaffected theme above the affected
+theme, `[VP NP-dat [V' [VP NP-acc [V' NP-acc V]] V]]`. -/
+def tree44 : Tree Unit Unit :=
+  bin (leaf ()) (bin (bin (leaf ()) (bin (leaf ()) (leaf ()))) (leaf ()))
 
-theorem npInPP_least_affected (p : SyntacticPosition) :
-    npInPP.affectednessRank ≤ p.affectednessRank := by cases p <;> decide
+/-- `p.site?` is the position of the argument `p` in `tree44`; the noun phrase in a PP, which the
+paper adds to Koizumi's hierarchy, has none. -/
+def site? : Position → Option TreePath
+  | npInPP => none
+  | dative => some ⟨[0]⟩
+  | upperAccusative => some ⟨[1, 0, 0]⟩
+  | lowerAccusative => some ⟨[1, 0, 1, 0]⟩
 
-theorem lowerAcc_most_affected (p : SyntacticPosition) :
-    p.affectednessRank ≤ lowerAccusativeNP.affectednessRank := by cases p <;> decide
+/-- Of two arguments of (44), the less affected c-commands the more affected, since
+[koizumi-1994] links an argument's structural height inversely to its affectedness (§4). -/
+theorem lt_iff_cCommands :
+    ∀ p q : Position, ∀ a ∈ p.site?, ∀ b ∈ q.site?, p < q ↔ CCommands tree44 a b := by
+  decide
 
-/-- Dative NPs are MORE affected than NPs in PPs (the case-marker /
-    postposition affectedness contrast, p. 18). -/
-theorem dative_more_than_pp :
-    npInPP.affectednessRank < dativeNP.affectednessRank := by decide
+end Position
 
-/-- Accusative NPs are more affected than dative NPs (p. 21 caveat). -/
-theorem accusative_more_than_dative :
-    dativeNP.affectednessRank < upperAccusativeNP.affectednessRank := by decide
+/-! ### The examples -/
 
-/-- Lower-accusative is the unique structurally-affected position. -/
-theorem lowerAcc_unique_structural :
-    ∀ p : SyntacticPosition, p.kindOf = some .structural → p = .lowerAccusativeNP := by
-  intro p hp; cases p <;> simp_all [kindOf]
+/-- The examples name the four particles by their constructors. -/
+def particleLabels : List (String × Particle) :=
+  [("caseMarker", caseMarker), ("postposition", postposition), ("insertion", insertion),
+    ("copula", copula)]
 
-end SyntacticPosition
+/-- The examples name the three tests by their constructors. -/
+def testLabels : List (String × Test) :=
+  [("quantifierFloat", .quantifierFloat), ("cleftWithParticle", .cleftWithParticle),
+    ("cleftWithoutParticle", .cleftWithoutParticle)]
 
-/-! ## §8 Acquisition prediction (Morii 1993, cited at §5 p. 23–24)
+/-- The examples name the two readings by their constructors. -/
+def readingLabels : List (String × Reading) :=
+  [("affected", .affected), ("nonaffected", .nonaffected)]
 
-S&K's homophony analysis predicts that case-marker *ni* and postposition
-*ni* are independent lexical items, hence acquired independently. Morii
-1993 confirms: case-marker categories (A, O1) are acquired between ages
-2;0 and 2;11; postposition categories (B–U) are acquired only after 3;0.
+/-- The examples of (10) name the category of the copula's complement. -/
+def focusLabels : List (String × Cat) := [("NP", .NP), ("AP", .AdjP), ("PP", .PP)]
 
-Encoded as a discrete acquisition order rather than absolute ages —
-the substantive prediction is the strict ordering, not the precise ages.
--/
+/-- `particles x` lists the particles the paper reads in `x`, two for an ambiguous *ni*. -/
+def particles (x : Datum) : List Particle :=
+  (x.features "particle").filterMap (List.lookup · particleLabels)
 
-namespace Classification
+/-- `readings x` lists the readings the paper gives the *ni* phrase of `x`. -/
+def readings (x : Datum) : List Reading :=
+  (x.features "reading").filterMap (List.lookup · readingLabels)
 
-/-- Acquisition order per Morii 1993: lower number = acquired earlier.
-    Only the dative-case-marker / postposition contrast is reported by
-    Morii; the other two types' acquisition orders are not specified. -/
-def acquisitionOrder : Classification → Option Nat
-  | .dativeCaseMarker => some 0  -- 2;0–2;11
-  | .postposition     => some 1  -- after 3;0
-  | .niInsertion      => none    -- not addressed by Morii 1993
-  | .copula           => none    -- not addressed by Morii 1993
+/-- `test? x` is the test the example `x` applies, if any. -/
+def test? (x : Datum) : Option Test := x.parse? "test" testLabels
 
-end Classification
+/-- Every test example is acceptable exactly when a particle the paper reads in it passes the
+test. -/
+theorem judgment_eq_acceptable_iff :
+    ∀ x ∈ Examples.all, ∀ t, test? x = some t →
+      (x.judgment = .acceptable ↔ ∃ p ∈ particles x, p.Passes t) := by
+  decide +kernel
 
-/-- Case-marker *ni* is acquired strictly before postposition *ni*
-    (Morii 1993, vindicating S&K's homophony analysis). Universally
-    quantified form: every concrete acquisition-order witness for the
-    case-marker class precedes every witness for the postposition class. -/
-theorem case_marker_acquired_before_postposition :
-    ∀ a b : Nat,
-      Classification.acquisitionOrder .dativeCaseMarker = some a →
-      Classification.acquisitionOrder .postposition     = some b →
-      a < b := by
-  intro a b ha hb
-  simp only [Classification.acquisitionOrder, Option.some.injEq] at ha hb
-  omega
+/-- The copula *da* takes an NP or a PP but not an AP ((10)). -/
+theorem judgment_eq_acceptable_iff_caseAssignable :
+    ∀ x ∈ Examples.all, ∀ c, x.parse? "focus" focusLabels = some c →
+      (x.judgment = .acceptable ↔ CaseAssignable c) := by
+  decide +kernel
+
+/-- Where the paper reads an example for affectedness, *ni* is the case marker on an affected
+reading and the postposition on a nonaffected one ((35)–(38)). -/
+theorem particles_eq_map_readings :
+    ∀ x ∈ Examples.all, readings x ≠ [] → particles x = (readings x).map Reading.particle := by
+  decide +kernel
+
+/-- A *ni* phrase hosts a floating quantifier exactly when its referent may be affected ((24b),
+(38b)). -/
+theorem judgment_eq_acceptable_iff_affected {x : Datum} (hx : x ∈ Examples.all)
+    (ht : test? x = some .quantifierFloat) (hr : readings x ≠ []) :
+    x.judgment = .acceptable ↔ .affected ∈ readings x := by
+  rw [judgment_eq_acceptable_iff x hx _ ht, particles_eq_map_readings x hx hr]
+  simp only [List.mem_map, passes_quantifierFloat_iff]
+  constructor
+  · rintro ⟨_, ⟨r, hr, rfl⟩, h⟩
+    cases r
+    · exact hr
+    · cases h
+  · exact fun h ↦ ⟨_, ⟨_, h, rfl⟩, rfl⟩
+
+/-- The case markers of the examples have the forms of the fragment's case particles. -/
+theorem caseMarker_form :
+    ∀ x ∈ Examples.all, ∀ s, x.feature? "form" = some s → caseMarker ∈ particles x →
+      ∃ c : Japanese.Case, c.form = s := by
+  decide +kernel
+
+/-- The postpositions of the examples have the forms of the fragment's postpositions or the form
+of the dative *ni*, of which the paper's postposition *ni* is a homophone. -/
+theorem postposition_form :
+    ∀ x ∈ Examples.all, ∀ s, x.feature? "form" = some s → postposition ∈ particles x →
+      s = Japanese.Case.dat.form ∨ ∃ p : Japanese.Postposition, p.form = s := by
+  decide +kernel
 
 end SadakaneKoizumi1995
