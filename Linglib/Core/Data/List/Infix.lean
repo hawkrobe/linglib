@@ -8,12 +8,19 @@ module
 public import Mathlib.Data.List.Infix
 
 /-!
-# Infixes of a three-part concatenation
+# Infixes of a three-part concatenation, and longest common prefixes
 
 An infix of `u ++ m ++ v` lies within `u ++ m`, lies within `m ++ v`, or contains `m`. So an infix
 no longer than `m` cannot contain both an element that occurs only in `u` and an element that
 occurs only in `v`: this is the fact about short windows that pumping arguments use, when `m` is a
 block of the pumped word that separates two others.
+
+The longest common prefix `List.commonPrefix l₁ l₂` is the greatest list that is a prefix of
+both, the meet of the prefix order.
+
+## Main definitions
+
+* `List.commonPrefix`: the longest common prefix of two lists.
 
 ## Main results
 
@@ -25,7 +32,8 @@ block of the pumped word that separates two others.
 ## Implementation notes
 
 [UPSTREAM] candidate: `Mathlib/Data/List/Infix.lean`, or core `Init/Data/List/Sublist.lean` beside
-`List.infix_append_iff`.
+`List.infix_append_iff`. Neither core, Batteries nor mathlib defines a longest common prefix of
+lists.
 -/
 
 @[expose] public section
@@ -54,5 +62,36 @@ theorem IsInfix.notMem_or_notMem_of_length_le (hl : l <:+: u ++ m ++ v)
   · exact .inr fun hy' ↦ hy (h.subset hy')
   · exact .inl fun hx' ↦ hx (h.subset hx')
   · exact .inl fun hx' ↦ hx (mem_append_left v (h.eq_of_length_le hlen ▸ hx'))
+
+section CommonPrefix
+
+variable [DecidableEq α]
+
+/-- `commonPrefix l₁ l₂` is the longest common prefix of `l₁` and `l₂`. -/
+def commonPrefix : List α → List α → List α
+  | a :: as, b :: bs => if a = b then a :: commonPrefix as bs else []
+  | _, _ => []
+
+theorem commonPrefix_prefix_left : ∀ l₁ l₂ : List α, commonPrefix l₁ l₂ <+: l₁
+  | [], _ | _ :: _, [] => by simp [commonPrefix]
+  | a :: as, b :: bs => by
+    by_cases h : a = b
+    · simpa [commonPrefix, h] using commonPrefix_prefix_left as bs
+    · simp [commonPrefix, h]
+
+theorem commonPrefix_prefix_right : ∀ l₁ l₂ : List α, commonPrefix l₁ l₂ <+: l₂
+  | [], _ | _ :: _, [] => by simp [commonPrefix]
+  | a :: as, b :: bs => by
+    by_cases h : a = b
+    · subst h
+      simpa [commonPrefix] using commonPrefix_prefix_right as bs
+    · simp [commonPrefix, h]
+
+theorem prefix_commonPrefix : ∀ {r l₁ l₂ : List α}, r <+: l₁ → r <+: l₂ → r <+: commonPrefix l₁ l₂
+  | [], _, _, _, _ => nil_prefix
+  | _ :: rs, _, _, ⟨_, rfl⟩, ⟨_, rfl⟩ => by
+    simpa [commonPrefix] using prefix_commonPrefix (r := rs) (prefix_append _ _) (prefix_append _ _)
+
+end CommonPrefix
 
 end List

@@ -33,7 +33,7 @@ would gap its grid column, which the Continuous Column Constraint of Section 3.4
 
 namespace Hayes1995
 
-open Prosody RootedTree
+open Prosody
 
 /-! ### The moraic-trochee parse
 
@@ -42,7 +42,7 @@ on the left, and a light with no light to pair with is left stray. Foot heads ar
 parse builds them; `markHeadFoot` then promotes the rightmost foot to head foot, End Rule
 Right. -/
 
-/-- Foot Construction (14c): parse a weight string from left to right into moraic trochees. -/
+/-- Foot Construction (14c) parses a weight string from left to right into moraic trochees. -/
 def parseCells : Yield → List Tree
   | [] => []
   | [w] =>
@@ -56,8 +56,8 @@ def parseCells : Yield → List Tree
       else
         .ft false [.σ w true, .σ w2 false] :: parseCells rest
 
-/-- A heavy syllable is a foot of its own and restarts the count: it is necessarily followed
-by a foot boundary (Section 4.1.3, after (15)). -/
+/-- A heavy syllable is a foot of its own and restarts the count, since it is necessarily
+followed by a foot boundary (Section 4.1.3, after (15)). -/
 theorem parseCells_heavy {w : Syllable.Weight} (hw : Syllable.Weight.heavy ≤ w) (rest : Yield) :
     parseCells (w :: rest) = .ft false [.σ w true] :: parseCells rest := by
   cases rest <;> simp [parseCells, hw]
@@ -66,7 +66,7 @@ theorem parseCells_heavy {w : Syllable.Weight} (hw : Syllable.Weight.heavy ≤ w
 def isFootChild : Tree → Bool
   | .node a _ => a.isFt
 
-/-- End Rule Right (16): the first foot with no foot to its right is promoted to head foot. -/
+/-- By End Rule Right (16), the first foot with no foot to its right is promoted to head foot. -/
 def markHeadFoot : List Tree → List Tree
   | [] => []
   | .node a ds :: rest =>
@@ -75,8 +75,8 @@ def markHeadFoot : List Tree → List Tree
       else
         .node a ds :: markHeadFoot rest
 
-/-- The Cairene parse: a prosodic word over moraic trochees built left to right, the rightmost
-foot heading the word. -/
+/-- The Cairene parse builds a prosodic word over moraic trochees from left to right, with the
+rightmost foot heading the word. -/
 def parse (y : Yield) : Tree := .om (markHeadFoot (parseCells y))
 
 /-! ### Quantity-sensitive stress
@@ -85,45 +85,47 @@ The forms are those of (12), as their post-extrametricality weight profiles (`1`
 heavy). `Tree.columns ∘ parse` recovers the stress: the column of `3` is the primary, `2` a
 secondary, `1` unstressed. -/
 
-/-- *kátaba* 'he wrote' (Classical): all light. -/
+/-- *kátaba* 'he wrote' (Classical) is all light. -/
 def kataba : Yield := [1, 1, 1]
-/-- *mudárris* 'teacher': heavy penult, the final CVC demoted to light. -/
+/-- *mudárris* 'teacher' has a heavy penult, the final CVC demoted to light. -/
 def mudarris : Yield := [1, 2, 1]
-/-- *ʔinkásara* 'it got broken' (Classical): heavy initial. -/
+/-- *ʔinkásara* 'it got broken' (Classical) has a heavy initial. -/
 def Pinkasara : Yield := [2, 1, 1, 1]
-/-- *katábt* 'I wrote': superheavy final, heavy after Consonant Extrametricality. -/
+/-- *katábt* 'I wrote' has a superheavy final, heavy after Consonant Extrametricality. -/
 def katabt : Yield := [1, 2]
-/-- *mudarrísit* 'teacher (f. construct)': heavy second syllable, the final CVC light. -/
+/-- *mudarrísit* 'teacher (f. construct)' has a heavy second syllable and the final CVC light. -/
 def mudarrisit : Yield := [1, 2, 1, 1]
-/-- *ʔadwiyatúhu* 'his drugs (nom.)' (Classical): heavy initial, then an even run of lights. -/
+/-- *ʔadwiyatúhu* 'his drugs (nom.)' (Classical) has a heavy initial, then an even run of
+lights. -/
 def Padwiyatuhu : Yield := [2, 1, 1, 1, 1]
-/-- *šajaratuhúma:* 'their (dual) tree (nom.)' (Classical): six lights, the final CV: light by
-Mora Extrametricality. -/
+/-- *šajaratuhúma:* 'their (dual) tree (nom.)' (Classical) has six lights, the final long-vowel
+syllable light by Mora Extrametricality. -/
 def sajaratuhuma : Yield := [1, 1, 1, 1, 1, 1]
 
-/-- Antepenultimate stress (12c.ii), (15d): *kátaba* parses as `(ká.ta)ba`, the rightmost
-foot heading the antepenult, the final light stray. -/
+/-- *kátaba* has antepenultimate stress (12c.ii), (15d), parsing as `(ká.ta)ba` with the
+rightmost foot heading the antepenult and the final light stray. -/
 theorem gridColumns_kataba : Tree.columns (parse kataba) = [3, 1, 1] := by decide
 
-/-- Penultimate stress on a heavy penult (12b), (15b): *mudárris* parses as `mu(dár)ri`. -/
+/-- *mudárris* has penultimate stress on a heavy penult (12b), (15b), parsing as `mu(dár)ri`. -/
 theorem gridColumns_mudarris : Tree.columns (parse mudarris) = [1, 3, 1] := by decide
 
-/-- The count restarts after a heavy, with secondary stress (12c.ii), (15d): *ʔinkásara* parses
-as `(ʔìn)(ká.sa)ra`. -/
+/-- The count restarts after a heavy, with secondary stress (12c.ii), (15d), so *ʔinkásara*
+parses as `(ʔìn)(ká.sa)ra`. -/
 theorem gridColumns_Pinkasara : Tree.columns (parse Pinkasara) = [2, 3, 1, 1] := by decide
 
-/-- Final stress on a superheavy (12a), (15a): *katábt* parses as `ka(tábt)`. -/
+/-- *katábt* has final stress on a superheavy (12a), (15a), parsing as `ka(tábt)`. -/
 theorem gridColumns_katabt : Tree.columns (parse katabt) = [1, 3] := by decide
 
-/-- A stray initial light before a heavy (12c.i), (15c): *mudarrísit* parses as
+/-- *mudarrísit* has a stray initial light before a heavy (12c.i), (15c), parsing as
 `mu(dàr)(rí.si)t`. -/
 theorem gridColumns_mudarrisit : Tree.columns (parse mudarrisit) = [1, 2, 3, 1] := by decide
 
-/-- Even parity after a heavy (12c.i), (15c): *ʔadwiyatúhu* parses as `(ʔàd)(wì.ya)(tú.hu)`. -/
+/-- *ʔadwiyatúhu* shows even parity after a heavy (12c.i), (15c), parsing as
+`(ʔàd)(wì.ya)(tú.hu)`. -/
 theorem gridColumns_Padwiyatuhu : Tree.columns (parse Padwiyatuhu) = [2, 2, 1, 3, 1] := by
   decide
 
-/-- Even parity from the left edge (12c.i), (15c): *šajaratuhúma:* parses as
+/-- *šajaratuhúma:* shows even parity from the left edge (12c.i), (15c), parsing as
 `(šà.ja)(rà.tu)(hú.ma)`. -/
 theorem gridColumns_sajaratuhuma :
     Tree.columns (parse sajaratuhuma) = [2, 1, 2, 1, 3, 1] := by decide
@@ -140,8 +142,8 @@ foot layer empty beneath, the gapped column of (17) that the Continuous Column C
 of Section 3.4.2 rules out, so the mark falls on the rightmost foot head and the peak lands
 inward. -/
 
-/-- The attested grid of *kátaba*: a continuous staircase, the primary column of three on the
-antepenult, the foot layer supporting it, the stray final light flat. -/
+/-- The attested grid of *kátaba* is a continuous staircase, with the primary column of three on
+the antepenult, the foot layer supporting it, and the stray final light flat. -/
 theorem toGrid_kataba :
     Grid.ofTree (parse kataba) =
       [[true, true, true], [true, false, false], [true, false, false]] := by
@@ -152,15 +154,15 @@ tree does (`Prosody.Grid.ofTree_isContinuous`). -/
 theorem cairene_grid_continuous : Marks.IsContinuous (Grid.ofTree (parse kataba)) :=
   Grid.ofTree_isContinuous _
 
-/-- The grid *kátaba* would have if End Rule Right promoted the stray final light, (17): a
-word-layer mark on the final column with no foot-layer mark beneath. -/
+/-- If End Rule Right promoted the stray final light, (17), *kátaba* would have this grid, with
+a word-layer mark on the final column and no foot-layer mark beneath. -/
 def promotedKataba : Marks := [[true, true, true], [true, false, false], [false, false, true]]
 
-/-- Promoting the final light violates the Continuous Column Constraint: the final column of
-`promotedKataba` is marked on layer 2 with nothing on layer 1. -/
+/-- Promoting the final light violates the Continuous Column Constraint, since the final column
+of `promotedKataba` is marked on layer 2 with nothing on layer 1. -/
 theorem promotedKataba_not_continuous : ¬ Marks.IsContinuous promotedKataba := by decide
 
-/-- The peak retracts off the right edge: the final stray light of *kátaba* is strictly weaker
+/-- The peak retracts off the right edge. The final stray light of *kátaba* is strictly weaker
 than the primary, unlike the uniform right-strong words of [prince-1983], whose grids peak at
 the edge. -/
 theorem kataba_final_below_peak :
