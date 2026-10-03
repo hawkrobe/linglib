@@ -11,14 +11,13 @@ public import Mathlib.Tactic.DeriveFintype
 
 Owusu analyses the Akan indefinite *bí* as a choice function skolemized to a situation. Her
 entry (67) maps a situation `s` and a property `P` to `f s (P s)`, presupposing that `f s` is a
-choice function, so *bí* denotes `SkolemCF.applyIntension` at a correct `f s`. The function is
-free, fixed by the context as in Kratzer's analysis of *a certain*, and never existentially
-closed. A *bí* phrase scopes only above negation and, as a subject, above *biara* 'every', but
-as an object it also scopes below *biara*, while a bare noun scopes only below either. Owusu
-argues that closing the function freely, after Reinhart and Winter, derives the narrow reading
-under negation that *bí* lacks; that closing it only at the top, after Matthewson, derives no
-narrow reading of a conditional; and that the reading below *biara* is functional, the
-function's individual index being bound by the quantifier.
+choice function. The function is free, fixed by the context as in Kratzer's analysis of *a
+certain*, and never existentially closed. A *bí* phrase scopes only above negation and, as a
+subject, above *biara* 'every', but as an object it also scopes below *biara*, while a bare noun
+scopes only below either. Owusu argues that closing the function freely, after Reinhart and
+Winter, derives the narrow reading under negation that *bí* lacks; that closing it only at the
+top, after Matthewson, derives no narrow reading of a conditional; and that the reading below
+*biara* is functional, the function's individual index being bound by the quantifier.
 
 ## Main results
 
@@ -37,10 +36,10 @@ function's individual index being bound by the quantifier.
 
 ## Implementation notes
 
-* The presupposition of (67) is a hypothesis that `f s` is correct.
+* The presupposition of (67) is the type of `f`, a family `S → ChoiceFunction E`.
 * The situation index and the individual index of (67) are taken one at a time, as the index
-  type of `SkolemCF`.
-* A construal holds in some context when some correct function makes it true.
+  type `S`.
+* A construal holds in some context when some choice function makes it true.
 * An example counts as a *bí* example when one of its words is the form of
   `Akan.Determiners.bi`.
 * Owusu takes the world variable from a 2019 manuscript by Mirrazi; [mirrazi-2024] develops
@@ -81,16 +80,15 @@ variable {S E ι : Type*}
 /-- Closing the choice function below negation, as free existential closure must allow for
 (51), gives the narrow reading (50). -/
 theorem closure_below_negation_iff {N VP : E → Prop} (hN : ∃ x, N x) :
-    (¬ ∃ f : CF E, f.IsCorrect ∧ VP (f N)) ↔ ¬ GQ.some N VP :=
-  not_congr (CF.exists_isCorrect_iff_some hN VP)
+    (¬ ∃ f : ChoiceFunction E, VP (f N)) ↔ ¬ GQ.some N VP :=
+  not_congr (ChoiceFunction.exists_apply_iff_some hN VP)
 
 /-- Under negation, the free function of (67) gives the narrow reading for every predicate
 exactly when its pick is the only member of the restrictor at the situation. -/
-theorem negation_narrow_iff (f : SkolemCF S E) {s : S} (hf : (f s).IsCorrect)
-    {P : S → E → Prop} (hP : ∃ x, P s x) :
-    (∀ VP : E → Prop, ¬ VP (f.applyIntension s P) ↔ ¬ GQ.some (P s) VP) ↔
-      ∀ x, P s x → x = f.applyIntension s P :=
-  (forall_congr' fun _ ↦ not_iff_not).trans (hf.forall_apply_iff_some_iff hP)
+theorem negation_narrow_iff (f : S → ChoiceFunction E) {s : S} {P : S → E → Prop}
+    (hP : ∃ x, P s x) :
+    (∀ VP : E → Prop, ¬ VP (f s (P s)) ↔ ¬ GQ.some (P s) VP) ↔ ∀ x, P s x → x = f s (P s) :=
+  (forall_congr' fun _ ↦ not_iff_not).trans ((f s).forall_apply_iff_some_iff hP)
 
 /-! ### Conditionals -/
 
@@ -98,8 +96,8 @@ theorem negation_narrow_iff (f : SkolemCF S E) {s : S} (hf : (f s).IsCorrect)
 gives the wide reading of (60), on which some member of the restrictor is such that the
 consequent holds if it satisfies the antecedent. -/
 theorem closure_above_conditional_iff {N A : E → Prop} {p : Prop} (hN : ∃ x, N x) :
-    (∃ f : CF E, f.IsCorrect ∧ (A (f N) → p)) ↔ ∃ x, N x ∧ (A x → p) :=
-  CF.exists_isCorrect_iff_some hN fun x ↦ A x → p
+    (∃ f : ChoiceFunction E, A (f N) → p) ↔ ∃ x, N x ∧ (A x → p) :=
+  ChoiceFunction.exists_apply_iff_some hN fun x ↦ A x → p
 
 /-! ### *biara* -/
 
@@ -110,15 +108,14 @@ variable {B : E → Prop} {R : ι → E → Prop}
 /-- With the individual index free, some function makes (55a) true exactly when one book was
 read by every woman. -/
 theorem wide_iff (hB : ∃ x, B x) :
-    (∃ f : CF E, f.IsCorrect ∧ ∀ z, R z (f B)) ↔ GQ.some B fun x ↦ ∀ z, R z x :=
-  CF.exists_isCorrect_iff_some hB fun x ↦ ∀ z, R z x
+    (∃ f : ChoiceFunction E, ∀ z, R z (f B)) ↔ GQ.some B fun x ↦ ∀ z, R z x :=
+  ChoiceFunction.exists_apply_iff_some hB fun x ↦ ∀ z, R z x
 
 /-- With the individual index bound by *biara*, some function makes (55b) true exactly when
 every woman read a book, the reading (24) glosses as *every* over the indefinite. -/
 theorem functional_iff (hB : ∃ x, B x) :
-    (∃ F : SkolemCF ι E, F.IsCorrect ∧ ∀ z, R z (F z B)) ↔ ∀ z, GQ.some B (R z) :=
-  (SkolemCF.exists_isCorrect_forall_iff (fun _ ↦ B) R).trans <|
-    forall_congr' fun z ↦ CF.exists_isCorrect_iff_some hB (R z)
+    (∃ F : ι → ChoiceFunction E, ∀ z, R z (F z B)) ↔ ∀ z, GQ.some B (R z) :=
+  ChoiceFunction.exists_pi_apply_iff (fun _ ↦ hB) R
 
 end Every
 
@@ -132,18 +129,16 @@ variable {Wrote Submitted : ι → E → Prop}
 paper they did not submit, provided distinct students wrote distinct papers. -/
 theorem ex57_free_iff [Nonempty E] (hW : ∀ x, ∃ y, Wrote x y)
     (hinj : Function.Injective Wrote) :
-    (∃ f : CF E, f.IsCorrect ∧ ∀ x, ¬ Submitted x (f (Wrote x))) ↔
+    (∃ f : ChoiceFunction E, ∀ x, ¬ Submitted x (f (Wrote x))) ↔
       ∀ x, GQ.some (Wrote x) (¬ Submitted x ·) :=
-  (CF.exists_isCorrect_forall_iff_of_injective hinj fun x y ↦ ¬ Submitted x y).trans <|
-    forall_congr' fun x ↦ CF.exists_isCorrect_iff_some (hW x) (¬ Submitted x ·)
+  ChoiceFunction.exists_forall_apply_iff_of_injective hinj hW fun x y ↦ ¬ Submitted x y
 
 /-- With the index bound by *biara*, some function makes (57b) true exactly when every student
 wrote a paper they did not submit. -/
 theorem ex57_bound_iff (hW : ∀ x, ∃ y, Wrote x y) :
-    (∃ F : SkolemCF ι E, F.IsCorrect ∧ ∀ x, ¬ Submitted x (F x (Wrote x))) ↔
+    (∃ F : ι → ChoiceFunction E, ∀ x, ¬ Submitted x (F x (Wrote x))) ↔
       ∀ x, GQ.some (Wrote x) (¬ Submitted x ·) :=
-  (SkolemCF.exists_isCorrect_forall_iff Wrote fun x y ↦ ¬ Submitted x y).trans <|
-    forall_congr' fun x ↦ CF.exists_isCorrect_iff_some (hW x) (¬ Submitted x ·)
+  ChoiceFunction.exists_pi_apply_iff hW fun x y ↦ ¬ Submitted x y
 
 end DownwardEntailing
 
@@ -179,12 +174,12 @@ private theorem kept : ∀ x, GQ.some (Wrote x) (¬ Submitted x ·) := by
   decide
 
 /-- In (58), some function makes (57a) true. -/
-theorem free : ∃ f : CF Paper, f.IsCorrect ∧ ∀ x, ¬ Submitted x (f (Wrote x)) :=
+theorem free : ∃ f : ChoiceFunction Paper, ∀ x, ¬ Submitted x (f (Wrote x)) :=
   (ex57_free_iff wrote_nonempty wrote_injective).mpr kept
 
 /-- In (58), some function makes (57b) true. -/
 theorem bound :
-    ∃ F : SkolemCF Student Paper, F.IsCorrect ∧ ∀ x, ¬ Submitted x (F x (Wrote x)) :=
+    ∃ F : Student → ChoiceFunction Paper, ∀ x, ¬ Submitted x (F x (Wrote x)) :=
   (ex57_bound_iff wrote_nonempty).mpr kept
 
 /-- In (58) the narrow reading of (57), that no student submitted any paper they wrote, is

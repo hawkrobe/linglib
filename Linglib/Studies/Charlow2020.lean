@@ -1,523 +1,556 @@
 module
 
+public import Mathlib.Data.Finset.Card
 public import Mathlib.Data.Set.Functor
-public import Linglib.Studies.Charlow2018
-public import Linglib.Semantics.Composition.Cont
+public import Linglib.Semantics.Composition.Assignment
 public import Linglib.Semantics.Quantification.NP
+public import Linglib.Semantics.Reference.ChoiceFunction
+public import Linglib.Studies.Charlow2014
+public import Linglib.Data.Examples.Charlow2020
 
 /-!
-# Charlow 2020: the scope of alternatives
+# Charlow (2020): the scope of alternatives
 
-## Thesis
+Charlow takes an indefinite to denote a set of individuals and lets it take scope through two
+type-shifters: `η` forms a singleton, and `≫=` feeds the members of a set one by one to a scope
+and unions the results. They are the unit and bind of the set monad. Because bind is associative,
+an indefinite that takes scope at the edge of an island turns the island into a set of
+alternatives, and the island can then take scope in its turn, which gives exceptional scope
+without movement out of the island. Higher-order alternative sets let two indefinites on one
+island take scope independently, and once assignments are added to the monad, an indefinite whose
+restrictor holds a bound pronoun cannot outscope the pronoun's binder.
 
-Alternative-denoting expressions (indefinites, *wh*-words, focused
-elements) interact with their semantic context by **taking scope**, not
-by point-wise functional application as in classical alternative
-semantics. Charlow decomposes Partee's LIFT into two freely-applying
-type-shifters — `η` (eq. 16: `λp.{p}`, = Karttunen IDENT generalised)
-and `≫=` (eq. 27: `λm.λf. ⋃_{x∈m} f x`, a polymorphic scope-taker) —
-which together form a **monad** over sets.
+## Main definitions
 
-The crucial property is **ASSOCIATIVITY** (eq. 34, Figure 7): scoping
-at the edge of an island and then scoping again is provably equivalent
-to direct wide scope. Indefinites can iteratively pied-pipe out of
-nested islands without any island-violating movement — *roll-up
-pied-piping*, §4.3.
+* `closureCond`, `det`, `distr`: the conditional (31), the determiners (65) and (84), and the
+  distributivity operator (41), each closing off the alternatives of its scope.
+* `lawyerOuter`, `relativeOuter`: the two higher-order islands of Figure 10.
+* `Si.pro`, `Si.beta`, `Si.det`: pronouns (58), `β`-binding (61) and determiners over
+  `ReaderT (Assignment E) Set`.
+* `Si.a`, `Si.that`: the indefinite determiner (83) and the relative pronoun (87).
+* `Si.abstractChoice`: abstraction by a choice function in alternative semantics (74).
 
-## Part I — Apparatus (Charlow §§3–4)
+## Main results
 
-* `eta` — set unit (eq. 16): `η := λp.{p}`
-* `setBind` — set bind (eq. 27): `m ≫= := λf. ⋃_{x∈m} f x`
-* `setMap` — set fmap (derived)
-* monad laws (Left/Right Identity + ASSOCIATIVITY) inherited from
-  mathlib's `LawfulMonad Set`
-* `existsClosure` — Charlow's `↓` (eq. 19): `m^↓ := ⊤ ∈ m`
-* the applicative presentation of [charlow-2018] is recovered from the monad
-  (`seq_from_setBind`), and is strictly weaker than it
-* `lift_eq_A_eta` — LIFT decomposition (eq. 28):
-  `A ∘ η = LIFT` on entities (Partee 1986's triangle, extended)
-* `higher_order_from_eta` — higher-order alternative sets `S(S t)`
-  (§5.2): the substrate for selective exceptional scope
+* `some_pure`, `bind_pure_left`, `plusWh_some`: the extended Partee triangle of Figure 4
+  commutes.
+* `exceptional_scope`, `exceptional_ne_narrow`: (33), and the exceptional reading of (1) is not
+  the narrow one.
+* `every_island`: pied-piping a universal's island gives nothing new (2).
+* `intermediate_scope`, `two_island`: intermediate exceptional scope (3), and the distributive
+  scope of a plural indefinite stays in its island (39).
+* `relative_wide`, `lawyer_wide`, `seminar_paper`: selective exceptional scope, (43), (47), (49).
+* `lawyer_wide_not_pointwise`: no function of the point-wise island meaning gives the
+  lawyer-wide reading of (43).
+* `Si.expert_wide_bound`: exceptional scope beside a bound pronoun (51).
+* `Si.paper_wide`, `Si.paper_narrow`, `Si.not_dependsOn_paper_wide`: the Binder Roof
+  Constraint of (53), Figure 14.
+* `Si.cf_reading_iff`, `Si.cf_reading_not_imp_bound`: the choice-function reading (69) and its
+  over-generation.
+* `Si.a_paper_that_she_wrote`: the determiners of Appendix A derive (66).
+* `Si.nobody_met_iff`: abstraction by a choice function over-generates (77).
 
-## Part II — Empirical predictions (Charlow §§2, 4, 5, 6.4)
+## Implementation notes
 
-* Exceptional scope: indefinites escape conditional islands
-* Intermediate exceptional scope: scope can stop anywhere up the tree
-* Selectivity: higher-order alternative sets distinguish multiple
-  island-bound indefinites
-* Binder Roof Constraint: type-system blocks an indefinite from
-  scoping over a binder that binds into it
+* `η`, `≫=` and flattening are `pure`, `>>=` and `joinM` of mathlib's `Set.monad`, and the
+  closure `⇓` (19) is `sSup` on `Set Prop`. Truth values are `Prop`, as in the paper's main text.
+* The paper's conditional `if : t → t → t` is a parameter `cond`; the witnesses that separate
+  readings use the material conditional. Pluralities are `Finset`s of atoms.
+* A derivation is a term in the monad, and which constituent takes scope where is not
+  represented, so a reading the paper rules out is shown to differ from the derived ones.
+* `Si.cf_reading_iff` assumes that no two candidates wrote the same papers, which the paper's
+  gloss of (69) needs and leaves implicit.
+* Figure 9 prints `die X` for `die x`. Numbers follow the accepted manuscript (lingbuzz 003302).
 
-## Parallel with the maybe monad ([grove-2022])
+## TODO
 
-The same `η`/`≫=` structure with a different carrier:
-
-| | Indeterminacy ([charlow-2020]) | Presupposition ([grove-2022]) |
-|---|---|---|
-| Carrier | `Set α = α → Prop` | `Option α` |
-| Unit | `η_S(x) = {x}` | `η_#(v) = some v` |
-| Bind | `m ≫=_S f = ⋃_{x∈m} f(x)` | `v ≫=_# k = k(v); # ≫=_# k = #` |
-| Linguistic effect | Alternatives | Partiality |
-| Scope payoff | Indefinites escape islands | Presuppositions project past filters |
+* (46), and point-wise composition with a closure inside the island (45) on (46) and (47).
+* (79)–(82), (88), and Appendix B.
 
 ## References
 
 * [charlow-2020]
-* [charlow-2018]
-* [grove-2022]
+* [charlow-2014]
+* [partee-1987]
+* [reinhart-1997]
+* [brasoveanu-farkas-2011]
 -/
 
 @[expose] public section
 
+attribute [local instance] Set.monad
+
 namespace Charlow2020
 
-/-! ## Part I — Apparatus -/
-
-/-! ### §1 Set monad operations
-
-The set monad `S a := Set a` with:
-
-* `η x := {x}` (eq. 16: singleton)
-* `m ≫= f := ⋃_{x ∈ m} f(x)` (eq. 27: flatmap / bind)
-
-Generalised to arbitrary types (the paper uses `S a` for sets of `a`'s).
-The operations and `LawfulMonad` come from mathlib's `Set.monad`; we
-add the paper-faithful names and application-form simp lemmas. -/
-
-section Operations
-
-variable {A B C : Type}
-
-attribute [local instance] Set.monad
-
-/-- **η** (eq. 16): inject a value into a singleton set. Charlow's
-generalised Karttunen IDENT. -/
-def eta (x : A) : Set A := pure x
-
-/-- **≫=** (eq. 27): monadic bind for sets. Charlow's scope-taking
-operator: feeds `m`'s alternatives one-by-one to `f` and unions the
-results. -/
-def setBind (m : Set A) (f : A → Set B) : Set B := m >>= f
-
-/-- `map` for the set functor: mathlib's `Functor.map` (`Set.image`). -/
-def setMap (f : A → B) (m : Set A) : Set B := f <$> m
-
-@[simp] theorem mem_eta (x y : A) : y ∈ eta x ↔ y = x := Iff.rfl
-
-@[simp] theorem mem_setBind (m : Set A) (f : A → Set B) (b : B) :
-    b ∈ setBind m f ↔ ∃ a, a ∈ m ∧ b ∈ f a := by
-  simp only [setBind, Set.bind_def, Set.mem_iUnion, exists_prop]
-
-/-- Application-form characterisation of `eta` (consumers treat
-`Set A = A → Prop` and apply `eta x` as a function). -/
-@[simp] theorem eta_apply (x y : A) : eta x y ↔ y = x := Iff.rfl
-
-/-- Application-form characterisation of `setBind`. -/
-@[simp] theorem setBind_apply (m : Set A) (f : A → Set B) (b : B) :
-    setBind m f b ↔ ∃ a, m a ∧ f a b := mem_setBind m f b
-
-end Operations
-
-/-! ### §2 Monad laws
-
-The three monad laws for `(S, η, ≫=)`. ASSOCIATIVITY (eq. 34, Figure 7)
-is load-bearing: it guarantees that scope at the edge of an island,
-followed by scope of the resulting set, equals direct wide scope —
-exceptional scope without island-violating movement. -/
-
-section MonadLaws
-
-variable {A B C : Type}
-
-attribute [local instance] Set.monad
-
-/-- **LEFT IDENTITY**: `η x ≫= f = f x`. Mathlib's `pure_bind` for `Set`. -/
-theorem set_left_identity (x : A) (f : A → Set B) :
-    setBind (eta x) f = f x := pure_bind x f
-
-/-- **RIGHT IDENTITY**: `m ≫= η = m`. Mathlib's `bind_pure` for `Set`. -/
-theorem set_right_identity (m : Set A) :
-    setBind m eta = m := bind_pure m
-
-/-- **ASSOCIATIVITY** (eq. 34): `(m ≫= f) ≫= g = m ≫= (λx. f x ≫= g)`.
-Mathlib's `bind_assoc` for `Set`. This is the central theorem of
-Figure 7: taking scope at an island edge and then taking scope again
-equals taking scope directly out of the island — generating exceptional
-scope without island-violating movement. -/
-theorem set_associativity (m : Set A) (f : A → Set B) (g : B → Set C) :
-    setBind (setBind m f) g = setBind m (fun a => setBind (f a) g) :=
-  bind_assoc m f g
-
-end MonadLaws
-
-/-! ### §3 Existential closure -/
-
-/-- **↓** (eq. 19): a set of propositions is "true" iff it contains a
-true member. Charlow's existential closure operator, used to turn a set
-of alternative propositions back into a single truth value. In classical
-set theory `m^↓ := ⊤ ∈ m`; in Lean's type theory we use the
-extensional `∃ p, m p ∧ p` (existence of a true member), avoiding
-`propext` issues when propositions are logically but not definitionally
-equal to `True`. -/
-def existsClosure (m : Prop → Prop) : Prop := ∃ p, m p ∧ p
-
-/-- A set of alternatives as a scope-taker: the canonical Set→Cont
-morphism sends `m` to the continuized value holding of some member —
-[charlow-2020]'s thesis that alternative sets take scope the way
-quantifiers do. -/
-def setToCont {A : Type} (m : Set A) : Cont Prop A := λ κ => ∃ x, x ∈ m ∧ κ x
-
-/-- **↓ is LOWER through the Set→Cont morphism**: existential closure of
-a proposition set is exactly lowering (`ContT.eval`) its continuized
-image. The tree's two scope-effect carriers — `Set` for alternatives
-([charlow-2020]), `Cont` for quantifier scope — share one evaluation
-operation. -/
-theorem eval_setToCont (m : Set Prop) :
-    ContT.eval (setToCont m) = existsClosure m := rfl
-
-/-! ### §4 The applicative from the monad
-
-The Set applicative of [charlow-2018] — point-wise composition, mathlib's `<*>` — is strictly
-weaker than the monadic bind: the former is derivable from the latter, not vice versa. Charlow
-argues (§5.4) that the difference matters — the applicative cannot derive selectivity for
-multiple island-bound indefinites, while the monad can. -/
-
-section ApplicativeBridge
-
-variable {A B : Type}
-
-/-- The standard monad-to-applicative derivation at Set:
-`m ⊛ n = m ≫= λf. n ≫= λx. η (f x)`. -/
-theorem seq_from_setBind (m : Set (A → B)) (n : Set A) :
-    m <*> n = setBind m (fun f => setBind n (fun x => eta (f x))) := by
-  ext b
-  simp only [Set.seq_eq_set_seq, Set.mem_seq_iff, mem_setBind, mem_eta]
-  aesop
-
-end ApplicativeBridge
-
-/-! ### §5 LIFT decomposition (Charlow §3.2, eq. 28)
-
-Partee's LIFT — which maps an individual to a generalised quantifier
-— decomposes as `≫= ∘ η`. Starting from the predicative (set) meaning
-of an indefinite, `η` injects it into a singleton set, and `≫=`
-produces a scope-taking function:
-
-`(η x)^≫= = λf. ⋃_{y ∈ {x}} f y = λf. f x = lift(x)`
-
-The key insight: LIFT is not primitive; it falls out of the monad
-structure. We need only `η` and `≫=` — not Partee's full suite — to
-handle indefinites compositionally. -/
-
-section LiftDecomposition
-
-open Quantifier.NP (individual A ident A_ident_eq_individual)
-
-variable {E W : Type}
-
-/-- **LIFT = A ∘ η** on the domain (eq. 28). In linglib's formulation
-using `A` (which takes an explicit domain):
-`A(domain)(ident j)(P) = (∃ x ∈ domain, j = x ∧ P x)`. When `j ∈ domain`
-this reduces to `P j = individual j P`. This is exactly
-`A_ident_eq_individual` from `Quantifier.lean`, re-exposed in the
-set-monad context. -/
-theorem lift_eq_A_eta (domain : List E) (j : E)
-    (hj : j ∈ domain) (_hnd : domain.Nodup) :
-    ∀ P : E → Prop, A domain (ident j) P = individual j P := by
-  intro P; exact congrFun (A_ident_eq_individual domain j hj) P
-
-end LiftDecomposition
-
-/-! ### §6 Higher-order alternative sets (Charlow §5.2, eq. 48)
-
-When a scope argument `f` is itself a function into sets, `≫=` with
-an extra `η` produces **higher-order alternative sets** of type
-`S(S b)`. These preserve the identity of distinct sources of
-alternatives, enabling selective exceptional scope when multiple
-indefinites occur on an island. The mechanism that point-wise
-alternative semantics cannot replicate (§5.4). -/
-
-/-- Applying `η` inside a `≫=` computation produces higher-order
-alternative sets. If `m : S a` and `f : a → b`, then
-`m ≫= (λx. η(η(f x)))` has type `S(S b)` — a set of singletons,
-each containing one alternative. -/
-theorem higher_order_from_eta {A B : Type} (m : A → Prop) (f : A → B) :
-    setBind m (fun x => eta (eta (f x))) =
-    (fun (s : B → Prop) => ∃ a, m a ∧ s = eta (f a)) := by
-  ext s; simp only [mem_setBind, mem_eta]; rfl
-
-/-! ## Part II — Empirical predictions -/
-
-/-! ### §7 Exceptional scope: indefinites escape conditional islands
-
-Charlow §2.1, eqs (1)–(2): indefinites (but not universals) can take
-scope out of the antecedent of a conditional.
-
-* (1) If [a rich relative of mine dies], I'll inherit a house.
-      ✓ Reading: `∃x ∈ rel. if(dies x) → house`
-* (2) If [every rich relative of mine dies], I'll inherit a house.
-      ✗ No reading: `*∀x ∈ rel. if(dies x) → house`
-
-The indefinite *a rich relative of mine* denotes a set of individuals
-(type `S e`). The monad's `≫=` turns the island into a set of
-alternative propositions, and ASSOCIATIVITY guarantees this equals
-direct wide scope. Derivation follows §4.1–4.2, eq. 33, Figures 6–7. -/
-
-section ConditionalIsland
-
-/-- A model with three people, two of whom are my relatives. -/
-inductive Ind where | r₁ | r₂ | nonrel
-  deriving DecidableEq, Repr
-
-/-- My relatives: r₁ and r₂. -/
-def myRel : Ind → Prop
-  | .r₁ => True
-  | .r₂ => True
-  | .nonrel => False
-
-/-- "a rich relative of mine" — the set-valued (indefinite) meaning. -/
-def aRichRelative : Ind → Prop := myRel
-
-/-- "x dies" — a predicate on individuals. -/
-def dies : Ind → Prop := fun _ => True
-
-/-- "I'll inherit a house" — simplified as a constant proposition. -/
-def house : Prop := True
-
-/-- **Step 1** (island-internal): the indefinite takes scope at the
-island edge via `≫=`, turning the island into a set of alternative
-antecedent propositions. Eq. 33, first `≫=`:
-`aRel ≫= (λx. η(dies x)) = {dies r₁, dies r₂}`. -/
-def islandMeaning : Prop → Prop :=
-  setBind aRichRelative (fun x => eta (dies x))
-
-/-- **Step 2** (island-external): the pied-piped island takes scope
-over the conditional via a second `≫=`. Eq. 33, second `≫=`:
-`{dies x | rel x} ≫= (λp. η(p → house))`. -/
-def conditionalMeaning : Prop → Prop :=
-  setBind islandMeaning (fun antecedent => eta (antecedent → house))
-
-/-- **Direct wide scope**: the indefinite scopes directly over the
-conditional, bypassing the island boundary. -/
-def wideScope : Prop → Prop :=
-  setBind aRichRelative (fun x => eta (dies x → house))
-
-/-- **ASSOCIATIVITY derives exceptional scope** (the key theorem).
-The two-step derivation (scope at island edge via first `≫=`, then
-scope over conditional via second `≫=`) equals direct wide scope by
-ASSOCIATIVITY + LEFT IDENTITY:
-
-```
-  (aRel ≫= λx. η(dies x)) ≫= (λp. η(p → house))
-= aRel ≫= (λx. η(dies x) ≫= (λp. η(p → house)))   — ASSOCIATIVITY
-= aRel ≫= (λx. η(dies x → house))                  — LEFT IDENTITY
-= wideScope
-``` -/
-theorem island_eq_wide : conditionalMeaning = wideScope := by
-  simp only [conditionalMeaning, islandMeaning, wideScope]
-  rw [set_associativity]
-  congr 1; funext x
-  exact set_left_identity (dies x) (fun p => eta (p → house))
-
-/-- The exceptional scope reading is satisfiable: there exists a
-member of the result set (since r₁ is a relative). -/
-theorem exceptional_scope_satisfiable :
-    ∃ p, wideScope p := by
-  refine ⟨dies .r₁ → house, ?_⟩
-  simp only [wideScope, setBind_apply, eta_apply]
-  exact ⟨.r₁, trivial, rfl⟩
-
-end ConditionalIsland
-
-/-! ### §8 Intermediate exceptional scope
-
-§2.1 eq. (3), §4.2 Figure 8: indefinites allow not just widest scope
-but also **intermediate** exceptional scope.
-
-* (3) Each student has to come up with three arguments showing that
-      [some condition proposed by Chomsky is wrong].
-      ✓ ∀ ≫ ∃ ≫ 3: for each student, there is some condition …
-
-The indefinite *some condition* is embedded in a relative clause (a
-scope island). It escapes via ASSOCIATIVITY — same mechanism as §7 —
-but stops at an intermediate position under the universal *each
-student*. The difference is simply WHERE the indefinite stops. Each
-application of ASSOCIATIVITY crosses one island boundary; the
-indefinite can always "forego one or more of the secondary island
-scopings, come what may higher up in the tree" (p. 442). -/
-
-section IntermediateScope
-
-inductive Condition where | c₁ | c₂ | c₃
-  deriving DecidableEq, Repr
-
-/-- "some condition proposed by Chomsky" — the indefinite (type `S e`). -/
-def someCondition : Condition → Prop
-  | .c₁ => True
-  | .c₂ => True
-  | .c₃ => False
-
-/-- "x is wrong" -/
-def isWrong : Condition → Prop := fun _ => True
-
-/-- Island-internal meaning: the relative clause with the indefinite.
-The first `≫=` at the island edge produces a set of propositions. -/
-def rcIsland : Prop → Prop :=
-  setBind someCondition (fun c => eta (isWrong c))
-
-/-- Island-external: a second `≫=` carries the alternatives out into
-the matrix clause "showing that …". -/
-def matrixMeaning : Prop → Prop :=
-  setBind rcIsland (fun p => eta p)
-
-/-- **ASSOCIATIVITY + LEFT IDENTITY** let the indefinite escape the
-relative clause, producing a set of alternative propositions. After
-escaping, the set `{isWrong c | condition c}` can be universally
-quantified per student (intermediate scope) without needing a further
-`≫=` over the universal — the indefinite simply stops here. -/
-theorem intermediate_escapes_rc :
-    matrixMeaning = setBind someCondition (fun c => eta (isWrong c)) := by
-  simp only [matrixMeaning, rcIsland]
-  rw [set_associativity]
-  congr 1; funext c
-  exact set_left_identity (isWrong c) (fun p => eta p)
-
-/-- The escaped set has distinct alternatives (one per accessible
-condition), confirming the indefinite genuinely scopes out. -/
-theorem intermediate_has_alternatives :
-    matrixMeaning (isWrong .c₁) ∧ matrixMeaning (isWrong .c₂) := by
-  rw [intermediate_escapes_rc]
-  simp only [setBind_apply, eta_apply]
-  exact ⟨⟨.c₁, trivial, rfl⟩, ⟨.c₂, trivial, rfl⟩⟩
-
-end IntermediateScope
-
-/-! ### §9 Selectivity with multiple island-bound indefinites
-
-Charlow §5: when multiple indefinites occur on an island, the grammar
-generates **selective** exceptional scope — each indefinite can
-independently take scope inside or outside the island.
-
-* (43) If [a persuasive lawyer visits a rich relative of mine],
-       I'll inherit a house.
-       ✓ ∃_lawyer ≫ if ≫ ∃_relative  (specific lawyer, any relative)
-       ✓ ∃_relative ≫ if ≫ ∃_lawyer  (specific relative, any lawyer)
-       ✓ ∃_lawyer ≫ ∃_relative ≫ if  (both wide scope)
-
-**The mechanism** (§5.2, Figure 10): applying `η` to a scope argument
-that is itself a function into sets produces **higher-order alternative
-sets** `S(S t)`. The outer set tracks one indefinite, the inner set
-tracks the other. Because the layers are independent, the grammar can
-process them differently — scoping one above the conditional while
-existentially closing the other inside it.
-
-This is what alternative semantics (point-wise `{{·}}`) CANNOT do: the
-point-wise interpretation function `{{·}}` maps everything to flat sets
-`S t`, conflating distinct sources of alternatives (§5.4). -/
+open Quantifier Quantifier.NP
+
+/-- The closure `⇓` (19), `T ∈ m`, is the supremum of a set of truth values. -/
+theorem sSup_iff_true_mem (m : Set Prop) : sSup m ↔ True ∈ m := by
+  rw [sSup_Prop_eq]
+  exact ⟨fun ⟨p, hp, h⟩ ↦ eq_true h ▸ hp, fun h ↦ ⟨True, h, trivial⟩⟩
+
+/-! ### The extended Partee triangle (Figure 4) -/
+
+section Shifters
+
+variable {α β : Type}
+
+/-- `plusWh Q` is the `+wh` shifter (25), which turns a generalized quantifier into a scope-taker
+over sets. -/
+def plusWh (Q : NP α) (f : α → Set β) : Set β := {y | Q fun x ↦ y ∈ f x}
+
+/-- Partee's `A`, existential closure over a set, sends a singleton to the Montague lift,
+`A ∘ η = LIFT` (24). -/
+theorem some_pure (x : α) : GQ.some (pure x : Set α) = individual x :=
+  some_eq_individual_iff.2 rfl
+
+/-- Binding a singleton is the Montague lift at result type `Set β`, `(≫=) ∘ η = LIFT` (28). -/
+theorem bind_pure_left (x : α) : (fun f : α → Set β ↦ pure x >>= f) = fun f ↦ f x :=
+  funext (pure_bind x)
+
+/-- Applying `+wh` to Partee's `A` gives bind, `+wh ∘ A = (≫=)` (29). -/
+theorem plusWh_some (m : Set α) : plusWh (GQ.some m) = fun f : α → Set β ↦ m >>= f := by
+  funext f; ext y; simp [plusWh, GQ.some, Set.bind_def]; rfl
+
+/-- Applying `+wh` to the Montague lift gives the lift at result type `Set β`, the last face of
+Figure 4. -/
+theorem plusWh_individual (x : α) : plusWh (individual x) = fun f : α → Set β ↦ f x := by
+  funext f; ext y; simp [plusWh, individual]
+
+end Shifters
+
+/-! ### Exceptional scope -/
+
+section Conditional
+
+variable {E : Type} (cond : Prop → Prop → Prop)
+
+/-- `closureCond cond m n` is the conditional (31), `{if m⇓ n⇓}`, which closes off the
+alternatives of both arguments. -/
+def closureCond (m n : Set Prop) : Set Prop := pure (cond (sSup m) (sSup n))
+
+/-- `det D P f` is the determiner `D` over `P` closing off the alternatives of its scope `f`, as
+in (65) and (84) without assignments. -/
+def det (D : GQ E) (P : Set E) (f : E → Set Prop) : Set Prop := pure (D (· ∈ P) fun x ↦ sSup (f x))
+
+variable (rel : Set E) (dies : E → Prop) (house : Prop)
+
+/-- Taking scope over its island, which then takes scope over the conditional, gives the
+indefinite exceptional scope, `{if (dies x) house | rel x}` (33), as in `Examples.ex1`. -/
+theorem exceptional_scope :
+    (rel >>= fun x ↦ pure (dies x)) >>= (fun p ↦ closureCond cond (pure p) (pure house)) =
+      (fun x ↦ cond (dies x) house) '' rel := by
+  ext q; simp [closureCond, Set.bind_def, sSup_singleton, eq_comm, -eq_iff_iff]
+
+/-- Pied-piping the island is scoping the indefinite out of it directly (Figure 7). -/
+theorem exceptional_scope_eq_wide :
+    (rel >>= fun x ↦ pure (dies x)) >>= (fun p ↦ closureCond cond (pure p) (pure house)) =
+      rel >>= fun x ↦ closureCond cond (pure (dies x)) (pure house) := by
+  simp only [bind_assoc, pure_bind]
+
+/-- Closing the island off in the antecedent gives the narrow reading `if ≫ ∃` (13). -/
+theorem narrow_scope :
+    closureCond cond (rel >>= fun x ↦ pure (dies x)) (pure house) =
+      {cond (∃ x ∈ rel, dies x) house} := by
+  simp [closureCond, Set.bind_def, sSup_Prop_eq, -eq_iff_iff]
+
+/-- A universal closes its island off to a singleton, so pied-piping the island gives the narrow
+reading again (2), as in `Examples.ex2`. -/
+theorem every_island :
+    det GQ.every rel (fun x ↦ pure (dies x)) >>= (fun p ↦ closureCond cond (pure p) (pure house)) =
+      closureCond cond (det GQ.every rel fun x ↦ pure (dies x)) (pure house) := by
+  simp [det, closureCond, sSup_singleton, -eq_iff_iff]
+
+variable (student : Set E) (wrong : E → Prop) (argue : E → Prop → Prop)
+
+/-- The island of (3) can scope over *three arguments showing that* and stop below *each
+student*, as in `Examples.ex3`. -/
+theorem intermediate_scope :
+    det GQ.every student (fun y ↦ (rel >>= fun c ↦ pure (wrong c)) >>= fun p ↦ pure (argue y p)) =
+      {∀ y ∈ student, ∃ c ∈ rel, argue y (wrong c)} := by
+  simp [det, GQ.every, Set.bind_def, sSup_Prop_eq, -eq_iff_iff]
+
+/-- The island of (3) can also scope over *each student*. -/
+theorem widest_scope :
+    (rel >>= fun c ↦ pure (wrong c)) >>= (fun p ↦ det GQ.every student fun y ↦ pure (argue y p)) =
+      (fun c ↦ ∀ y ∈ student, argue y (wrong c)) '' rel := by
+  ext q; simp [det, GQ.every, Set.bind_def, sSup_singleton, eq_comm, -eq_iff_iff]
+
+end Conditional
+
+/-- The intermediate and widest readings of (3) differ. -/
+theorem intermediate_ne_widest : ¬ ∀ (student rel : Set Bool) (wrong : Bool → Prop)
+    (argue : Bool → Prop → Prop),
+    sSup (det GQ.every student fun y ↦ (rel >>= fun c ↦ pure (wrong c)) >>=
+        fun p ↦ pure (argue y p)) ↔
+      sSup ((rel >>= fun c ↦ pure (wrong c)) >>= fun p ↦ det GQ.every student fun y ↦
+        pure (argue y p)) := by
+  intro h
+  have h := h Set.univ Set.univ (· = true) fun y p ↦ (p ↔ y = true)
+  rw [intermediate_scope, widest_scope] at h
+  simp [-eq_iff_iff] at h
+
+/-- The exceptional and narrow readings of (1) differ. -/
+theorem exceptional_ne_narrow : ¬ ∀ (rel : Set Bool) (dies : Bool → Prop) (house : Prop),
+    sSup ((rel >>= fun x ↦ pure (dies x)) >>=
+        fun p ↦ closureCond (· → ·) (pure p) (pure house)) ↔
+      sSup (closureCond (· → ·) (rel >>= fun x ↦ pure (dies x)) (pure house)) := by
+  intro h
+  have h := h Set.univ (· = true) False
+  simp only [exceptional_scope, narrow_scope, sSup_singleton, sSup_Prop_eq] at h
+  exact h.1 ⟨_, ⟨false, trivial, rfl⟩, by simp⟩ ⟨true, trivial, rfl⟩
+
+/-! ### Plural indefinites -/
+
+section Plural
+
+variable {A : Type} (cond : Prop → Prop → Prop) (house : Prop)
+
+/-- `two P` is the set of pluralities of two atoms of `P`, as `two.rels` (40). -/
+def two (P : Set A) : Set (Finset A) := {X | X.card = 2 ∧ ∀ x ∈ X, x ∈ P}
+
+/-- `distr f` is the distributivity operator `∆` (41), which requires every atom of a plurality
+to satisfy the closed scope `f`. -/
+def distr (f : A → Set Prop) (X : Finset A) : Set Prop := pure (∀ x ∈ X, sSup (f x))
+
+/-- With `∆`, *two linguists wrote something* gets its distributive reading (Figure 9, left). -/
+theorem two_wrote_something (ling something : Set A) (wrote : A → A → Prop) :
+    two ling >>= distr (fun x ↦ something >>= fun y ↦ pure (wrote y x)) =
+      (fun X ↦ ∀ x ∈ X, ∃ y ∈ something, wrote y x) '' two ling := by
+  ext q; simp [distr, Set.bind_def, sSup_Prop_eq, eq_comm, -eq_iff_iff]
+
+/-- In *if two relatives of mine die* the plural's existential scope leaves the island while `∆`
+stays inside it (Figure 9, right), as in `Examples.ex39`. -/
+theorem two_island (rel : Set A) (die : A → Prop) :
+    (two rel >>= distr fun x ↦ pure (die x)) >>=
+        (fun p ↦ closureCond cond (pure p) (pure house)) =
+      (fun X ↦ cond (∀ x ∈ X, die x) house) '' two rel := by
+  ext q; simp [distr, closureCond, Set.bind_def, sSup_singleton, eq_comm, -eq_iff_iff]
+
+/-- The reading of (39) with `∆` above the conditional, which would need the plural to scope out
+of the island, differs from the derived one. -/
+theorem two_island_ne_distr_wide : ¬ ∀ (rel : Set Bool) (die : Bool → Prop) (house : Prop),
+    sSup ((two rel >>= distr fun x ↦ pure (die x)) >>=
+        fun p ↦ closureCond (· → ·) (pure p) (pure house)) ↔
+      sSup (two rel >>= distr fun x ↦ closureCond (· → ·) (pure (die x)) (pure house)) := by
+  intro h
+  have h := h Set.univ (· = true) False
+  simp [distr, closureCond, two, Set.bind_def, sSup_Prop_eq, sSup_singleton, -eq_iff_iff] at h
+  obtain ⟨X, hX, ht⟩ := h.1 ⟨Finset.univ, rfl, Finset.mem_univ _⟩
+  exact ht (Finset.eq_univ_of_card X (by simpa using hX) ▸ Finset.mem_univ _)
+
+end Plural
+
+/-! ### Selectivity -/
 
 section Selectivity
 
-inductive LawyerOrRel where | l₁ | l₂ | r₁ | r₂
-  deriving DecidableEq, Repr
+variable {E : Type} (cond : Prop → Prop → Prop) (lawyer rel : Set E) (visits : E → E → Prop)
+  (house : Prop)
 
-def isLawyer : LawyerOrRel → Prop
-  | .l₁ => True
-  | .l₂ => True
-  | _ => False
+/-- `lawyerOuter` is the higher-order island `{{visits y x | rel y} | lawyer x}` of Figure 10,
+left, with the lawyer in the outer layer. -/
+def lawyerOuter : Set (Set Prop) :=
+  lawyer >>= fun x ↦ pure (rel >>= fun y ↦ pure (visits y x))
 
-def isRelative : LawyerOrRel → Prop
-  | .r₁ => True
-  | .r₂ => True
-  | _ => False
+/-- `relativeOuter` is the higher-order island `{{visits y x | lawyer x} | rel y}` of Figure 10,
+right, with the relative in the outer layer. -/
+def relativeOuter : Set (Set Prop) :=
+  rel >>= fun y ↦ pure (lawyer >>= fun x ↦ pure (visits y x))
 
-def visits : LawyerOrRel → LawyerOrRel → Prop := fun _ _ => True
+/-- Pied-piping the flat island scopes both indefinites over the conditional (44). -/
+theorem both_wide :
+    (lawyer >>= fun x ↦ rel >>= fun y ↦ pure (visits y x)) >>=
+        (fun p ↦ closureCond cond (pure p) (pure house)) =
+      Set.image2 (fun x y ↦ cond (visits y x) house) lawyer rel := by
+  ext q; simp [closureCond, Set.bind_def, sSup_singleton, eq_comm, -eq_iff_iff]
 
-/-- **Higher-order island meaning**: two applications of `η` produce
-`S(S t)` — a set of sets. §5.2, Figure 10 (left tree): the lawyer
-indefinite sits in the outer layer (via an extra `η`), the relative in
-the inner layer. Each member of the outer set corresponds to one
-lawyer; each is itself a set of visit-propositions (one per relative). -/
-def higherOrderIsland : (Prop → Prop) → Prop :=
-  setBind isLawyer (fun l =>
-    eta (setBind isRelative (fun r =>
-      eta (visits l r))))
+/-- Pied-piping the island of Figure 10, right, scopes the relative above the conditional and
+reconstructs the lawyer below it, (49) and Figure 11. -/
+theorem relative_wide :
+    relativeOuter lawyer rel visits >>= (fun m ↦ closureCond cond m (pure house)) =
+      (fun y ↦ cond (∃ x ∈ lawyer, visits y x) house) '' rel := by
+  ext q; simp [relativeOuter, closureCond, Set.bind_def, sSup_Prop_eq, eq_comm, -eq_iff_iff]
 
-/-- The higher-order structure is genuine: the outer set contains
-distinct inner sets, one per lawyer. -/
-theorem higherOrder_has_layers :
-    higherOrderIsland (setBind isRelative (fun r => eta (visits .l₁ r))) ∧
-    higherOrderIsland (setBind isRelative (fun r => eta (visits .l₂ r))) := by
-  simp only [higherOrderIsland, setBind_apply, eta_apply]
-  exact ⟨⟨.l₁, trivial, rfl⟩, ⟨.l₂, trivial, rfl⟩⟩
+/-- Pied-piping the island of Figure 10, left, scopes the lawyer above the conditional and
+reconstructs the relative below it (section 5.3). -/
+theorem lawyer_wide :
+    lawyerOuter lawyer rel visits >>= (fun m ↦ closureCond cond m (pure house)) =
+      (fun x ↦ cond (∃ y ∈ rel, visits y x) house) '' lawyer := by
+  ext q; simp [lawyerOuter, closureCond, Set.bind_def, sSup_Prop_eq, eq_comm, -eq_iff_iff]
 
-/-- **Flattening** (monadic join `μ`): collapsing the two layers via
-`≫= id` recovers the flat island where both indefinites scope at the
-same level. Uses ASSOCIATIVITY + LEFT IDENTITY — the same mechanism as
-exceptional scope in §7. This gives the both-wide-scope reading: both
-indefinites escape. -/
-theorem flatten_higher_order :
-    setBind higherOrderIsland id =
-    setBind isLawyer (fun l =>
-      setBind isRelative (fun r => eta (visits l r))) := by
-  simp only [higherOrderIsland]
-  rw [set_associativity]
-  congr 1; funext l
-  exact set_left_identity _ id
+/-- Flattening a higher-order island gives the point-wise island (11) and forgets the layers. -/
+theorem joinM_lawyerOuter :
+    joinM (lawyerOuter lawyer rel visits) = pure visits <*> rel <*> lawyer := by
+  ext q; simp [lawyerOuter, joinM, Set.bind_def, Set.seq_eq_set_seq, Set.mem_seq_iff]; aesop
 
-/-- Both-wide-scope reading: both indefinites escape the island. The
-result is `{visits l r → house | lawyer l ∧ relative r}`. -/
-def bothWide : Prop → Prop :=
-  setBind isLawyer (fun l =>
-    setBind isRelative (fun r =>
-      eta (visits l r → house)))
+/-- Flattening the other higher-order island gives the same point-wise island. -/
+theorem joinM_relativeOuter :
+    joinM (relativeOuter lawyer rel visits) = pure visits <*> rel <*> lawyer := by
+  ext q; simp [relativeOuter, joinM, Set.bind_def, Set.seq_eq_set_seq, Set.mem_seq_iff]; aesop
 
-/-- Lawyer-wide, relative-narrow: only the lawyer escapes. For each
-lawyer, the conditional quantifies over relatives inside. Arises from
-the higher-order island: the outer layer (lawyers) scopes above the
-conditional, while the inner layer (relatives) is existentially closed
-inside it (eq. 49). -/
-def lawyerWide : Prop → Prop :=
-  setBind isLawyer (fun l =>
-    eta ((∃ r, isRelative r ∧ visits l r) → house))
-
-/-- The two readings are genuinely different: `bothWide` has
-alternatives for each (lawyer, relative) pair, while `lawyerWide` has
-alternatives only for each lawyer. -/
-theorem selectivity_produces_distinct_readings :
-    (∃ p, bothWide p) ∧ (∃ p, lawyerWide p) := by
-  simp only [bothWide, lawyerWide, setBind_apply, eta_apply]
-  exact ⟨⟨_, .l₁, trivial, .r₁, trivial, rfl⟩, ⟨_, .l₁, trivial, rfl⟩⟩
+/-- In (47) the seminar scopes above *every grad* and the paper reconstructs between *every grad*
+and the conditional, as in `Examples.ex47`. -/
+theorem seminar_paper (grad seminar paper : Set E) (disc : E → E → Prop) (joy : E → Prop) :
+    (seminar >>= fun s ↦ pure (paper >>= fun p ↦ pure (disc p s))) >>=
+        (fun m ↦ det GQ.every grad fun g ↦ m >>= fun q ↦ closureCond cond (pure q) (pure (joy g))) =
+      (fun s ↦ ∀ g ∈ grad, ∃ p ∈ paper, cond (disc p s) (joy g)) '' seminar := by
+  ext q
+  simp [det, GQ.every, closureCond, Set.bind_def, sSup_Prop_eq, sSup_singleton, eq_comm,
+    -eq_iff_iff]
 
 end Selectivity
 
-/-! ### §10 Binder Roof Constraint (Charlow §6.4)
+/-- The two selective readings of (43) differ, as in `Examples.ex43`. -/
+theorem lawyer_wide_ne_relative_wide : ¬ ∀ visits : Fin 4 → Fin 4 → Prop,
+    sSup (lawyerOuter {0, 1} {2, 3} visits >>= fun m ↦ closureCond (· → ·) m (pure False)) ↔
+      sSup (relativeOuter {0, 1} {2, 3} visits >>= fun m ↦ closureCond (· → ·) m (pure False)) := by
+  intro h
+  have h := h fun _ x ↦ x = 0
+  rw [lawyer_wide, relative_wide] at h
+  simp [-eq_iff_iff] at h
 
-When an operator binds into an indefinite, the indefinite cannot scope
-over that operator.
+/-- No function of the point-wise island meaning gives the lawyer-wide reading of (43), since two
+visiting relations with the same point-wise island differ on it (section 5.4). -/
+theorem lawyer_wide_not_pointwise :
+    ¬ ∃ F : Set Prop → Prop, ∀ visits : Fin 4 → Fin 4 → Prop,
+      F (pure visits <*> {2, 3} <*> {0, 1}) ↔
+        sSup (lawyerOuter {0, 1} {2, 3} visits >>= fun m ↦ closureCond (· → ·) m (pure False)) := by
+  rintro ⟨F, hF⟩
+  have univ_of : ∀ visits : Fin 4 → Fin 4 → Prop, visits 2 0 → ¬ visits 3 0 →
+      (pure visits <*> ({2, 3} : Set (Fin 4)) <*> {0, 1}) = Set.univ := by
+    intro v h1 h2
+    refine Set.eq_univ_of_forall fun q ↦ ?_
+    simp only [Set.seq_eq_set_seq, Set.mem_seq_iff]
+    by_cases hq : q
+    · exact ⟨v 2, ⟨v, rfl, 2, by simp, rfl⟩, 0, by simp, eq_true hq ▸ eq_true h1⟩
+    · exact ⟨v 3, ⟨v, rfl, 3, by simp, rfl⟩, 0, by simp, eq_false hq ▸ eq_false h2⟩
+  have h1 := hF fun y x ↦ x = 0 ∧ y = 2
+  have h2 := hF fun y _ ↦ y = 2
+  rw [univ_of _ (by simp) (by simp), lawyer_wide] at h1
+  rw [univ_of _ rfl (by decide), lawyer_wide] at h2
+  simp [-eq_iff_iff] at h1 h2
+  exact h2 h1
 
-* (52) Every boyˣ who talked to a friend of hisₓ left.     `*∃ ≫ ∀`
-* (53) No candidateˣ submitted a paper heₓ had written.     `*∃ ≫ no`
+/-! ### Assignments
 
-**The type-theoretic argument**: because the η-and-`≫=` approach is
-oriented around scope-taking, an indefinite whose restrictor contains a
-bound variable `x` is of type `A → B → Prop` — a function that DEPENDS
-on `x`:
+The monad of (54)–(56) is `ReaderT (Assignment E) Set`, whose membership lemmas come from the
+Reader.Set monad of `Charlow2014`. -/
 
-```
-  m x : B → Prop      -- the indefinite's meaning, given a value for x
-  setBind (m x) f     -- well-typed: x is in scope
-```
+namespace Si
 
-For the indefinite to scope OVER x's binder, we would need
-`setBind m …` where `m : A → B → Prop` — but `setBind` expects
-`m : Set B`. The constraint is enforced by the type system, not by a
-stipulation.
+open Semantics.Composition
+open scoped Assignment
 
-This contrasts with **choice-function** approaches ([reinhart-1997]),
-which leave indefinites in situ and need additional stipulations to
-block the wide-scope reading (cf. eqs 67–69). No theorem is needed
-here: the Binder Roof Constraint is enforced by Lean's type checker.
-The indefinite's dependence on the bound variable `x` prevents it from
-scoping over `x`'s binder. -/
+variable {E α : Type}
+
+example : LawfulMonad (ReaderT (Assignment E) Set) := inferInstance
+
+@[simp] theorem monadLift_apply (m : Set α) (g : Assignment E) :
+    (monadLift m : ReaderT (Assignment E) Set α) g = m := rfl
+
+/-- `pro n` is the pronoun `she_n` (58), the singleton of the value of index `n`. -/
+def pro (n : ℕ) : ReaderT (Assignment E) Set E := fun g ↦ {interpPronoun n g}
+
+@[simp] theorem pro_apply (n : ℕ) (g : Assignment E) : pro n g = {g n} := rfl
+
+/-- `beta n f x` is the binder `βⁿ` (61), which evaluates the scope `f x` with index `n` anchored
+to `x`. -/
+def beta (n : ℕ) (f : E → ReaderT (Assignment E) Set α) (x : E) : ReaderT (Assignment E) Set α :=
+  withReader (·[n ↦ x]) (f x)
+
+@[simp] theorem beta_apply (n : ℕ) (f : E → ReaderT (Assignment E) Set α) (x : E)
+    (g : Assignment E) : beta n f x g = f x (g[n ↦ x]) := rfl
+
+/-- `det D P f` is the determiner `D` over `P` closing off its scope `f` at each assignment, as
+*everybody* (65) and the *no candidate* of Figure 14 do. -/
+def det (D : GQ E) (P : Set E) (f : E → ReaderT (Assignment E) Set Prop) :
+    ReaderT (Assignment E) Set Prop :=
+  fun g ↦ pure (D (· ∈ P) fun y ↦ sSup (f y g))
+
+variable (ling : Set E) (cited : E → E → Prop)
+
+/-- *A linguist cited her₀* leaves the pronoun free, (59) and Figure 12, left. -/
+theorem ling_cited_her :
+    (monadLift ling : ReaderT (Assignment E) Set E) >>=
+        (fun x ↦ pro 0 >>= fun y ↦ pure (cited y x)) =
+      fun g ↦ (fun x ↦ cited (g 0) x) '' ling := by
+  funext g; ext q; simp [eq_comm, -eq_iff_iff]
+
+/-- In *a linguist β⁰ cited herself₀* the pronoun is bound, and the meaning is the same at every
+assignment (Figure 12, right). -/
+theorem ling_cited_herself :
+    (monadLift ling : ReaderT (Assignment E) Set E) >>=
+        beta 0 (fun x ↦ pro 0 >>= fun y ↦ pure (cited y x)) =
+      fun _ ↦ (fun x ↦ cited x x) '' ling := by
+  funext g; ext q; simp [eq_comm, -eq_iff_iff]
+
+/-- `expertCites` is the higher-order island *a famous expert on indefinites cites her₀* of
+Figure 13, left, with the indefinite in the outer layer and the pronoun in the inner. -/
+def expertCites (exp : Set E) (cites : E → E → Prop) :
+    ReaderT (Assignment E) Set (ReaderT (Assignment E) Set Prop) :=
+  (monadLift exp : ReaderT (Assignment E) Set E) >>= fun x ↦
+    pure (pro 0 >>= fun y ↦ pure (cites y x))
+
+/-- Pied-piping the island over *everybody* while its inner layer reconstructs under `β⁰` gives
+the indefinite scope over *everybody* and binds the pronoun, (51) and Figure 13, right, as in
+`Examples.ex51`. -/
+theorem expert_wide_bound (exp human : Set E) (cites : E → E → Prop)
+    (lovesWhen : Prop → E → Prop) :
+    expertCites exp cites >>=
+        (fun m ↦ det GQ.every human (beta 0 fun y ↦ m >>= fun p ↦ pure (lovesWhen p y))) =
+      fun _ ↦ (fun x ↦ ∀ y ∈ human, lovesWhen (cites y x) y) '' exp := by
+  funext g; ext q; simp [expertCites, det, GQ.every, sSup_Prop_eq, eq_comm, -eq_iff_iff]
+
+/-! #### The Binder Roof Constraint -/
+
+section BinderRoof
+
+variable (cand paper : Set E) (wrote subm : E → E → Prop)
+
+/-- `paperBy paper wrote` is *a paper he₀ had written* (66), the papers written by the value of
+index 0. -/
+def paperBy : ReaderT (Assignment E) Set E := fun g ↦ {x | x ∈ paper ∧ wrote x (g 0)}
+
+/-- Scoped over *no candidate*, the indefinite leaves its pronoun free (Figure 14). -/
+theorem paper_wide :
+    paperBy paper wrote >>= (fun x ↦ det GQ.no cand (beta 0 fun y ↦ pure (subm x y))) =
+      fun g ↦ (fun x ↦ ¬ ∃ y ∈ cand, subm x y) '' {x | x ∈ paper ∧ wrote x (g 0)} := by
+  funext g; ext q; simp [paperBy, det, GQ.no, sSup_Prop_eq, eq_comm, -eq_iff_iff]
+
+/-- Below the indefinite, `β⁰` does nothing (Figure 14). -/
+theorem paper_wide_beta :
+    paperBy paper wrote >>= (fun x ↦ det GQ.no cand (beta 0 fun y ↦ pure (subm x y))) =
+      paperBy paper wrote >>= fun x ↦ det GQ.no cand fun y ↦ pure (subm x y) :=
+  rfl
+
+/-- The wide reading reads the pronoun's index. -/
+theorem dependsOn_paper_wide :
+    DependsOn (paperBy paper wrote >>= fun x ↦ det GQ.no cand (beta 0 fun y ↦ pure (subm x y)))
+      {0} := by
+  intro g g' h
+  rw [paper_wide]
+  simp only [h 0 rfl]
+
+/-- Below `β⁰` the indefinite has its pronoun bound, and the reading is the same at every
+assignment, as in `Examples.ex53`. -/
+theorem paper_narrow :
+    det GQ.no cand (beta 0 fun y ↦ paperBy paper wrote >>= fun x ↦ pure (subm x y)) =
+      fun _ ↦ {¬ ∃ y ∈ cand, ∃ x ∈ paper, wrote x y ∧ subm x y} := by
+  funext g; simp [paperBy, det, GQ.no, sSup_Prop_eq, -eq_iff_iff]
+
+/-- The narrow reading depends on no index. -/
+theorem dependsOn_paper_narrow :
+    DependsOn (det GQ.no cand (beta 0 fun y ↦ paperBy paper wrote >>= fun x ↦ pure (subm x y)))
+      ∅ := by
+  rw [paper_narrow]; exact dependsOn_const _
+
+/-- The wide reading does depend on the pronoun, so it is not the bound reading. -/
+theorem not_dependsOn_paper_wide :
+    ¬ DependsOn (paperBy (E := Bool) Set.univ (fun _ y ↦ y = true) >>=
+      fun x ↦ det GQ.no Set.univ (beta 0 fun y ↦ pure (x = y))) ∅ := by
+  intro h
+  have h := congrArg Set.Nonempty (h.empty (fun _ ↦ true) fun _ ↦ false)
+  rw [paper_wide] at h
+  simp at h
+
+/-- With a choice function (67), the reading (69) of (53) holds exactly when no candidate
+submitted every paper she wrote, given that every candidate wrote a paper and no two wrote the
+same ones. -/
+theorem cf_reading_iff [Nonempty E] (hwrote : ∀ x ∈ cand, ∃ y ∈ paper, wrote y x)
+    (hinj : Set.InjOn (fun x y ↦ y ∈ paper ∧ wrote y x) cand) :
+    (∃ f : Reference.ChoiceFunction E,
+        ¬ ∃ x ∈ cand, subm (f fun y ↦ y ∈ paper ∧ wrote y x) x) ↔
+      ¬ ∃ x ∈ cand, ∀ y ∈ paper, wrote y x → subm y x := by
+  have h := Reference.ChoiceFunction.exists_forall_apply_iff_of_injective (ι := cand)
+    (Set.injOn_iff_injective.1 hinj) (fun x ↦ (hwrote x x.2).imp fun _ ↦ id)
+    fun x y ↦ ¬ subm y x
+  simp only [Set.domRestrict_apply, Subtype.forall, GQ.some] at h
+  push Not
+  simpa [and_assoc] using h
+
+/-- The reading (69) over-generates, since it does not entail the bound reading of (53), which
+fails when the one candidate wrote two papers and submitted one. -/
+theorem cf_reading_not_imp_bound :
+    ¬ ∀ (cand paper : Set (Fin 3)) (wrote subm : Fin 3 → Fin 3 → Prop) (g : Assignment (Fin 3)),
+    (∃ f : Reference.ChoiceFunction (Fin 3),
+        ¬ ∃ x ∈ cand, subm (f fun y ↦ y ∈ paper ∧ wrote y x) x) →
+      sSup (det GQ.no cand (beta 0 fun y ↦ paperBy paper wrote >>= fun x ↦ pure (subm x y))
+        g) := by
+  intro h
+  have := h {0} {1, 2} (fun _ x ↦ x = 0) (fun y _ ↦ y = 1) (fun _ ↦ 0) <| by
+    refine (cf_reading_iff {0} {1, 2} (fun _ x ↦ x = 0) (fun y _ ↦ y = 1) (by simp)
+      (by simp [Set.InjOn])).2 ?_
+    simp
+  rw [paper_narrow] at this
+  simp at this
+
+end BinderRoof
+
+/-! #### Building the indefinite (Appendix A) -/
+
+section Determiners
+
+variable (paper : Set E) (wrote : E → E → Prop)
+
+/-- `a f` is the indefinite determiner (83), the set of individuals whose restrictor `f` holds. -/
+def a (f : E → ReaderT (Assignment E) Set Prop) : ReaderT (Assignment E) Set E :=
+  fun g ↦ {x | sSup (f x g)}
+
+/-- `that r l` is the relative pronoun (87), which conjoins two assignment-relative sets of
+propositions. -/
+def that (r l : ReaderT (Assignment E) Set Prop) : ReaderT (Assignment E) Set Prop :=
+  fun g ↦ Set.image2 (· ∧ ·) (l g) (r g)
+
+/-- The determiner scoping over its noun gives the set-denoting indefinite (85). -/
+theorem a_pure (ling : Set E) : a (fun x ↦ pure (x ∈ ling)) = monadLift ling := by
+  funext g; ext x; simp [a, sSup_Prop_eq, -eq_iff_iff]
+
+/-- *A paper (that) she₀ had written*, with `β¹` binding the gap, is (66) (Figure 15, right). -/
+theorem a_paper_that_she_wrote :
+    a (beta 1 fun x ↦
+        that (pro 1 >>= fun z ↦ pro 0 >>= fun w ↦ pure (wrote z w)) (pure (x ∈ paper))) =
+      paperBy paper wrote := by
+  funext g; ext x
+  simp [a, that, paperBy, sSup_Prop_eq, Function.update_of_ne, -eq_iff_iff]
+
+end Determiners
+
+/-! #### Binding in alternative semantics -/
+
+section AlternativeSemantics
+
+/-- `abstractChoice n m` is abstraction over index `n` in alternative semantics (74), in which a
+choice function flattens the alternatives of `m` at each value of the index. -/
+def abstractChoice (n : ℕ) (m : ReaderT (Assignment E) Set Prop) :
+    ReaderT (Assignment E) Set (E → Prop) :=
+  fun g ↦ Set.range fun f : Reference.ChoiceFunction Prop ↦ fun x ↦ f (· ∈ m (g[n ↦ x]))
+
+/-- Composed point-wise with the abstraction (74), `nobody [λ₀ t₀ met a phonologist]` has a true
+alternative exactly when nobody met every phonologist (77). -/
+theorem nobody_met_iff (human phon : Set E) (met : E → E → Prop) (hphon : phon.Nonempty)
+    (g : Assignment E) :
+    sSup ((fun P ↦ ¬ ∃ x ∈ human, P x) ''
+        abstractChoice 0 (fun g ↦ (fun y ↦ met y (g 0)) '' phon) g) ↔
+      ¬ ∃ x ∈ human, ∀ y ∈ phon, met y x := by
+  simp only [abstractChoice, sSup_Prop_eq, Set.mem_image, Set.mem_range, Function.update_self]
+  constructor
+  · rintro ⟨_, ⟨_, ⟨f, rfl⟩, rfl⟩, h⟩ ⟨x, hx, hall⟩
+    obtain ⟨y, hy, hq⟩ := f.apply_of_exists (P := fun q ↦ ∃ y ∈ phon, met y x = q)
+      (hphon.elim fun y hy ↦ ⟨_, y, hy, rfl⟩)
+    exact h ⟨x, hx, show f _ from hq ▸ hall y hy⟩
+  · intro h
+    push Not at h
+    obtain ⟨f, hf⟩ := (Reference.ChoiceFunction.exists_forall_apply_iff (ι := human)
+      (fun x q ↦ ∃ y ∈ phon, met y x.1 = q) Not).2 fun x ↦ by
+        obtain ⟨y, hy, hn⟩ := h x x.2
+        obtain ⟨f, hf⟩ := Reference.ChoiceFunction.exists_apply_eq
+          (N := fun q ↦ ∃ y ∈ phon, met y x.1 = q) ⟨y, hy, rfl⟩
+        exact ⟨f, hf ▸ hn⟩
+    exact ⟨_, ⟨_, ⟨f, rfl⟩, rfl⟩, fun ⟨x, hx, hfx⟩ ↦ hf ⟨x, hx⟩ hfx⟩
+
+end AlternativeSemantics
+
+end Si
 
 end Charlow2020

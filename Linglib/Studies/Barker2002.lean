@@ -30,17 +30,17 @@ that the quantifiers of a constituent are contiguous in the scope order of the s
 * The paper states the schema for rules of any arity, with one continuized rule per permutation
   of the daughters. Its grammar has rules of arity at most two, and so does `Deriv`.
 * The expository determiners, which apply to the continuized nominal, are `Deriv.bind` at a
-  generalized-quantifier denotation. The determiners of the final grammar quantify over correct
-  choice functions.
+  generalized-quantifier denotation. The determiners of the final grammar quantify over choice
+  functions.
 * Transitive verbs take the object first, so `saw m j` is *John saw Mary*.
 
 ## TODO
 
 The paper calls the four scopings of *someone saw a friend of everyone* logically distinct. The
 restrictor of *a* contains the variable that *everyone* binds, so by
-`Reference.CF.exists_isCorrect_forall_iff` the two scopings that differ in the order of *a* and
-*everyone* are equivalent (`a_everyone_iff_everyone_a`), and the grammar gives the sentence two
-truth conditions. A wide-scope *a friend* common to everyone is not among them.
+`Reference.ChoiceFunction.exists_forall_apply_iff` the two scopings that differ in the order of
+*a* and *everyone* are equivalent (`a_everyone_iff_everyone_a`), and the grammar gives the
+sentence two truth conditions. A wide-scope *a friend* common to everyone is not among them.
 
 ## References
 
@@ -232,7 +232,7 @@ def VS (p : Priority) (vs : Deriv ι (Prop → E → Prop)) (s : Deriv ι Prop) 
   binary (fun T q ↦ T q) p vs s
 
 /-- NP → Det N, `Det(N)`, with determiners denoting choice functions. -/
-def NP (p : Priority) (det : Deriv ι (CF E)) (n : Deriv ι (E → Prop)) : Deriv ι E :=
+def NP (p : Priority) (det : Deriv ι (ChoiceFunction E)) (n : Deriv ι (E → Prop)) : Deriv ι E :=
   binary (fun D P ↦ D P) p det n
 
 /-- N → Nr PPof, `Nr(PP)`. -/
@@ -253,14 +253,14 @@ nominal, so the determiner scopes under whatever the nominal contains. -/
 def NPgq (w : String) (Q : Quantifier.GQ E) (n : Deriv String (E → Prop)) : Deriv String E :=
   bind w (fun P ↦ Q P) n
 
-/-- *every* quantifies universally over correct choice functions. -/
-def every : Deriv String (CF E) := quant "every" fun D ↦ ∀ f : CF E, f.IsCorrect → D f
+/-- *every* quantifies universally over choice functions. -/
+def every : Deriv String (ChoiceFunction E) := quant "every" fun D ↦ ∀ f, D f
 
-/-- *a* quantifies existentially over correct choice functions. -/
-def a : Deriv String (CF E) := quant "a" fun D ↦ ∃ f : CF E, f.IsCorrect ∧ D f
+/-- *a* quantifies existentially over choice functions. -/
+def a : Deriv String (ChoiceFunction E) := quant "a" fun D ↦ ∃ f, D f
 
 variable (j m : E) (left' slept' man' woman' : E → Prop) (saw' friendOf : E → E → Prop)
-  (thought' : Prop → E → Prop) (the : CF E)
+  (thought' : Prop → E → Prop) (the : ChoiceFunction E)
 
 /-! ### Scope displacement and scope ambiguity -/
 
@@ -270,8 +270,8 @@ theorem john_left (p : Priority) : (S p (lex j) (lex left' : Deriv ι _)).eval =
 theorem everyone_left (p : Priority) : (S p everyone (lex left')).eval = ∀ x, left' x := by
   cases p <;> rfl
 
-/-- A quantifier in object position takes scope over the clause, whatever determiner it has:
-*John saw every man*, *John saw most men*. -/
+/-- A quantifier in object position takes scope over the clause, whatever determiner it has, as
+in *John saw every man* and *John saw most men*. -/
 theorem john_saw_NPgq (w : String) (Q : Quantifier.GQ E) (p p' : Priority) :
     (S p (lex j) (VP p' (lex saw') (NPgq w Q (lex man')))).eval = Q man' (saw' · j) := by
   cases p <;> cases p' <;> rfl
@@ -312,7 +312,7 @@ theorem someone_saw_the_friend_of_the_friend_of_everyone (p : Priority) :
 /-- *John saw every man* says that for every way of choosing a man, John saw him. -/
 theorem john_saw_every_man (p₁ p₂ p₃ : Priority) :
     (S p₁ (lex j) (VP p₂ (lex saw') (NP p₃ every (lex man')))).eval =
-      ∀ f : CF E, f.IsCorrect → saw' (f man') j := by
+      ∀ f : ChoiceFunction E, saw' (f man') j := by
   cases p₁ <;> cases p₂ <;> cases p₃ <;> rfl
 
 /-- When there are men, the choice-function *every* and the generalized-quantifier *every*
@@ -321,14 +321,14 @@ theorem john_saw_every_man_iff (hman : ∃ x, man' x) (p₁ p₂ p₃ : Priority
     (S p₁ (lex j) (VP p₂ (lex saw') (NP p₃ every (lex man')))).eval ↔
       Quantifier.GQ.every man' (saw' · j) := by
   rw [john_saw_every_man]
-  exact CF.forall_isCorrect_iff_every hman (saw' · j)
+  exact ChoiceFunction.forall_apply_iff_every hman (saw' · j)
 
 /-- When there are no men they come apart, since the choice-function sentence says that John
 saw everyone and the generalized-quantifier sentence is vacuously true. -/
 theorem john_saw_every_man_iff_of_not_exists (hman : ¬ ∃ x, man' x) (p₁ p₂ p₃ : Priority) :
     (S p₁ (lex j) (VP p₂ (lex saw') (NP p₃ every (lex man')))).eval ↔ ∀ x, saw' x j := by
   rw [john_saw_every_man]
-  exact CF.forall_isCorrect_iff_of_not_exists hman (saw' · j)
+  exact ChoiceFunction.forall_apply_iff_of_not_exists hman (saw' · j)
 
 /-! ### The scopings of *someone saw a friend of everyone* -/
 
@@ -350,10 +350,10 @@ theorem scopeOrder_someoneSawAFriendOfEveryone (pS pVP pNP pN : Priority) :
 theorem eval_someoneSawAFriendOfEveryone (pS pVP pNP pN : Priority) :
     (someoneSawAFriendOfEveryone saw' friendOf pS pVP pNP pN).eval =
       match pS, pNP with
-      | .left, .left => ∃ y, ∃ f : CF E, f.IsCorrect ∧ ∀ x, saw' (f (friendOf x)) y
-      | .left, .right => ∃ y, ∀ x, ∃ f : CF E, f.IsCorrect ∧ saw' (f (friendOf x)) y
-      | .right, .left => ∃ f : CF E, f.IsCorrect ∧ ∀ x, ∃ y, saw' (f (friendOf x)) y
-      | .right, .right => ∀ x, ∃ f : CF E, f.IsCorrect ∧ ∃ y, saw' (f (friendOf x)) y := by
+      | .left, .left => ∃ y, ∃ f : ChoiceFunction E, ∀ x, saw' (f (friendOf x)) y
+      | .left, .right => ∃ y, ∀ x, ∃ f : ChoiceFunction E, saw' (f (friendOf x)) y
+      | .right, .left => ∃ f : ChoiceFunction E, ∀ x, ∃ y, saw' (f (friendOf x)) y
+      | .right, .right => ∀ x, ∃ f : ChoiceFunction E, ∃ y, saw' (f (friendOf x)) y := by
   cases pS <;> cases pVP <;> cases pNP <;> cases pN <;> rfl
 
 /-- The priority at NP orders the object's two quantifiers. -/
@@ -387,8 +387,8 @@ theorem a_everyone_iff_everyone_a [Nonempty E] (pS pVP pN pVP' pN' : Priority) :
       (someoneSawAFriendOfEveryone saw' friendOf pS pVP' .right pN').eval := by
   rw [eval_someoneSawAFriendOfEveryone, eval_someoneSawAFriendOfEveryone]
   cases pS
-  · exact exists_congr fun y ↦ CF.exists_isCorrect_forall_iff friendOf (saw' · y)
-  · exact CF.exists_isCorrect_forall_iff friendOf fun z ↦ ∃ y, saw' z y
+  · exact exists_congr fun y ↦ ChoiceFunction.exists_forall_apply_iff friendOf (saw' · y)
+  · exact ChoiceFunction.exists_forall_apply_iff friendOf fun z ↦ ∃ y, saw' z y
 
 /-! ### Generalized coordination -/
 
