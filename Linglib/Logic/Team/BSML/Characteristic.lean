@@ -2,25 +2,40 @@ module
 
 public import Linglib.Logic.Team.BSML.Classical
 public import Linglib.Logic.Team.BSML.Bisimulation
+public import Mathlib.Data.Fintype.Pi
+public import Mathlib.Data.Fintype.Prod
 
 /-!
 # Characteristic formulas for BSML
 
-The depth-`k` characteristic (Hintikka) formula `χ_w^k` of a world `w` is an `NE`-free formula
-true at exactly the worlds `k`-bisimilar to `w`. Being `NE`-free, it is supported by a team iff it
-is classically true at each world of the team (`support_iff_forall_realize`), so the construction
-is the classical one. The expressive completeness proof of `ExpressiveCompleteness.lean` uses it.
+The world type of depth `k` of a world, over `n` atoms enumerated by `e`, records the truth values
+of these atoms and, for positive `k`, the set of depth `k - 1` types of the world's successors.
+Each type has a characteristic (Hintikka) formula, an `NE`-free formula that holds at a world
+exactly when the world has that type. Two worlds have the same type exactly when they are
+`k`-bisimilar, once `e` enumerates every atom. The strong Hintikka formula of a set of types `T` is
+supported by a team exactly when the types of its worlds are those in `T`.
 
 ## Main definitions
 
-* `verum`, `bigConj`, `bigDisj`: `⊤` as `p ∨ ¬p`, and finite conjunction and disjunction.
-* `atomicType M w`: the conjunction of the atomic literals true at `w`.
-* `charFormula M k w`: the depth-`k` characteristic formula of `w`.
+* `verum`, `bigConj`, `bigDisj`, `bigDisjNE`: `⊤` as `p ∨ ¬p`, finite conjunction and
+  disjunction, and finite disjunction with each disjunct conjoined with `NE`.
+* `WorldType n k`, `worldType e M k w`: the world types, and the type of a world.
+* `hintikka e k τ`, `strongHintikka e T`: the Hintikka formulas of a type and of a set of types.
 
 ## Main results
 
-* `realize_charFormula_iff_bisim`: `χ_w^k` holds at `v` iff `w` and `v` are `k`-bisimilar.
-* `support_charFormula_singleton_iff_bisim`: the same for singleton teams.
+* `realize_hintikka_iff`: the Hintikka formula of `τ` holds at `w` iff `w` has type `τ`.
+* `worldType_eq_iff_worldBisim`: two worlds have the same type iff they are `k`-bisimilar.
+* `realize_hintikka_worldType_iff`: the Hintikka formula of `w`'s type holds at `w'` iff `w'` is
+  `k`-bisimilar to `w`.
+* `support_strongHintikka_iff`: a team supports the strong Hintikka formula of `T` iff the types
+  of its worlds are those in `T`.
+
+## Implementation notes
+
+[aloni-anttila-yang-2024] Definition 3.2 conjoins the depth `k` Hintikka formula of the world at
+depth `k + 1`; here only its literals are conjoined, which is equivalent and needs no truncation of
+types.
 
 ## References
 
@@ -33,7 +48,7 @@ namespace BSML
 
 open ModalLogic
 
-variable {W : Type*} {Atom : Type*}
+variable {W W' : Type*} {Atom : Type*}
 
 /-! ### `⊤` and finite conjunction -/
 
@@ -69,46 +84,6 @@ theorem neFree_bigConj [Inhabited Atom] (l : List (Formula Atom))
     exact ⟨h φ (List.mem_cons.mpr (Or.inl rfl)),
            ih (fun ψ hψ => h ψ (List.mem_cons.mpr (Or.inr hψ)))⟩
 
-/-! ### Atomic type (depth-0 Hintikka formula) -/
-
-/-- The atomic type of `w` conjoins, over all atoms `p`, the literal `p` if `p` holds at `w`
-    and `¬p` otherwise. It is the depth-0 characteristic formula. -/
-noncomputable def atomicType [Fintype Atom] [Inhabited Atom]
-    (M : KripkeModel W Atom) (w : W) : Formula Atom :=
-  bigConj ((Finset.univ : Finset Atom).toList.map
-    (fun p => if M.val p w then .atom p else .neg (.atom p)))
-
-theorem neFree_atomicType [Fintype Atom] [Inhabited Atom]
-    (M : KripkeModel W Atom) (w : W) : (atomicType M w).NEFree := by
-  apply neFree_bigConj
-  intro φ hφ
-  obtain ⟨p, -, rfl⟩ := List.mem_map.mp hφ
-  cases M.val p w <;> simp [Formula.NEFree]
-
-/-- The atomic type of `w` is classically satisfied at `v` exactly when `v` and
-    `w` assign every atom the same value. -/
-theorem realize_atomicType [Fintype Atom] [Inhabited Atom]
-    (M : KripkeModel W Atom) (w v : W) :
-    Realize M (atomicType M w) v ↔ ∀ p : Atom, M.val p v = M.val p w := by
-  rw [atomicType, realize_bigConj]
-  constructor
-  · intro h p
-    have hp := h _ (List.mem_map.mpr
-      ⟨p, Finset.mem_toList.mpr (Finset.mem_univ p), rfl⟩)
-    cases hb : M.val p w <;> simp [hb, Realize] at hp <;> simp [hp]
-  · intro h φ hφ
-    obtain ⟨p, -, rfl⟩ := List.mem_map.mp hφ
-    cases hb : M.val p w <;> simp [hb, Realize, h p]
-
-/-- The atomic type of `w` holds at `v` iff `w` and `v` are 0-bisimilar. -/
-theorem realize_atomicType_iff_bisim0 [Fintype Atom] [Inhabited Atom]
-    (M : KripkeModel W Atom) (w v : W) :
-    Realize M (atomicType M w) v ↔ WorldBisim 0 M w M v := by
-  rw [realize_atomicType]
-  constructor
-  · intro h p; exact (h p).symm
-  · intro h p; exact (h p).symm
-
 /-! ### Finite disjunction -/
 
 @[simp] theorem not_realize_falsum [Inhabited Atom] (M : KripkeModel W Atom) (w : W) :
@@ -135,115 +110,251 @@ theorem neFree_bigDisj [Inhabited Atom] (l : List (Formula Atom))
     exact ⟨h φ (List.mem_cons.mpr (Or.inl rfl)),
            ih (fun ψ hψ => h ψ (List.mem_cons.mpr (Or.inr hψ)))⟩
 
-/-! ### Characteristic formulas -/
+variable [Inhabited Atom]
 
-/-- The depth-`k` characteristic (Hintikka) formula of `w` is its atomic type at depth `0`. At
-    depth `k + 1` it conjoins the atomic type with `◇χ_v^k` for each successor `v` and with `□`
-    of the disjunction of the successors' formulas. -/
-noncomputable def charFormula [Fintype Atom] [Inhabited Atom]
-    (M : KripkeModel W Atom) : ℕ → W → Formula Atom
-  | 0, w => atomicType M w
-  | k + 1, w =>
-      .conj (atomicType M w)
-        (.conj
-          (bigConj ((M.access w).toList.map fun v => .poss (charFormula M k v)))
-          (Formula.nec (bigDisj ((M.access w).toList.map fun v => charFormula M k v))))
+theorem modalDepth_bigConj {L : List (Formula Atom)} {k : ℕ} (hL : ∀ x ∈ L, x.modalDepth ≤ k) :
+    (bigConj L).modalDepth ≤ k := by
+  induction L with
+  | nil => simp [bigConj, verum, Formula.modalDepth]
+  | cons x r ih =>
+    simp only [bigConj, Formula.modalDepth, max_le_iff]
+    exact ⟨hL x (by simp), ih fun y hy ↦ hL y (by simp [hy])⟩
 
-theorem neFree_charFormula [Fintype Atom] [Inhabited Atom]
-    (M : KripkeModel W Atom) (k : ℕ) (w : W) : (charFormula M k w).NEFree := by
-  induction k generalizing w with
-  | zero => exact neFree_atomicType M w
-  | succ k ih =>
-    refine ⟨neFree_atomicType M w, ?_, ?_⟩
-    · refine neFree_bigConj _ (fun φ hφ => ?_)
-      obtain ⟨v, -, rfl⟩ := List.mem_map.mp hφ
-      exact ih v
-    · refine neFree_bigDisj _ (fun φ hφ => ?_)
-      obtain ⟨v, -, rfl⟩ := List.mem_map.mp hφ
-      exact ih v
+theorem modalDepth_bigDisj {L : List (Formula Atom)} {k : ℕ} (hL : ∀ x ∈ L, x.modalDepth ≤ k) :
+    (bigDisj L).modalDepth ≤ k := by
+  induction L with
+  | nil => simp [bigDisj, Formula.falsum, Formula.modalDepth]
+  | cons x r ih =>
+    simp only [bigDisj, Formula.modalDepth, max_le_iff]
+    exact ⟨hL x (by simp), ih fun y hy ↦ hL y (by simp [hy])⟩
 
-/-- The depth-`k` characteristic formula of `w` holds at `v` iff `w` and `v` are `k`-bisimilar
-    ([aloni-anttila-yang-2024] Theorem 3.3). -/
-theorem realize_charFormula_iff_bisim [Fintype Atom] [Inhabited Atom]
-    (M : KripkeModel W Atom) (k : ℕ) (w v : W) :
-    Realize M (charFormula M k w) v ↔ WorldBisim k M w M v := by
-  induction k generalizing w v with
-  | zero => exact realize_atomicType_iff_bisim0 M w v
-  | succ k ih =>
+/-- `bigDisjNE L` is the disjunction of the formulas of `L`, each conjoined with `NE`. -/
+def bigDisjNE (L : List (Formula Atom)) : Formula Atom := bigDisj (L.map fun x ↦ .conj x .ne)
+
+/-! ### World types -/
+
+/-- A world type of depth `k` over `n` atoms gives the truth values of the atoms and, at positive
+    depth, the set of the depth `k - 1` types of the successors. -/
+def WorldType (n : ℕ) : ℕ → Type
+  | 0 => Fin n → Bool
+  | k + 1 => (Fin n → Bool) × Finset (WorldType n k)
+
+namespace WorldType
+
+variable {n : ℕ}
+
+noncomputable instance instDecidableEq (k : ℕ) : DecidableEq (WorldType n k) := Classical.decEq _
+
+noncomputable instance instFintype : (k : ℕ) → Fintype (WorldType n k)
+  | 0 => inferInstanceAs (Fintype (Fin n → Bool))
+  | k + 1 => @instFintypeProd _ _ _ (@Finset.fintype _ (instFintype k))
+
+/-- `τ.val` gives the truth values of the atoms at the type `τ`. -/
+def val : {k : ℕ} → WorldType n k → Fin n → Bool
+  | 0, a => a
+  | _ + 1, τ => τ.1
+
+end WorldType
+
+variable {n : ℕ} (e : Fin n → Atom)
+
+/-- `worldType e M k w` is the type of depth `k` of the world `w`, over the atoms enumerated
+    by `e`. -/
+noncomputable def worldType (M : KripkeModel W Atom) : (k : ℕ) → W → WorldType n k
+  | 0, w => fun i ↦ M.val (e i) w
+  | k + 1, w => (fun i ↦ M.val (e i) w, (M.access w).image (worldType M k))
+
+omit [Inhabited Atom] in
+theorem val_worldType (M : KripkeModel W Atom) :
+    ∀ (k : ℕ) (w : W), (worldType e M k w).val = fun i ↦ M.val (e i) w
+  | 0, _ | _ + 1, _ => rfl
+
+/-! ### Hintikka formulas -/
+
+/-- `literal e i b` is the `i`-th atom if `b` holds and its negation otherwise. -/
+def literal (i : Fin n) (b : Bool) : Formula Atom :=
+  if b then .atom (e i) else .neg (.atom (e i))
+
+/-- `literals e a` conjoins the literals of the assignment `a`. -/
+def literals (a : Fin n → Bool) : Formula Atom :=
+  bigConj ((List.finRange n).map fun i ↦ literal e i (a i))
+
+/-- The Hintikka formula of a type conjoins its literals and, at positive depth, the possibility
+    of each successor type and the necessity of their disjunction. -/
+noncomputable def hintikka : (k : ℕ) → WorldType n k → Formula Atom
+  | 0, a => literals e a
+  | k + 1, τ => .conj (literals e τ.1)
+      (.conj (bigConj (τ.2.toList.map fun σ ↦ .poss (hintikka k σ)))
+      (Formula.nec (bigDisj (τ.2.toList.map (hintikka k)))))
+
+/-- The strong Hintikka formula of a set of types `T` is the disjunction of the formulas
+    `χ_τ ∧ NE` for `τ ∈ T`. -/
+noncomputable def strongHintikka {k : ℕ} (T : Finset (WorldType n k)) : Formula Atom :=
+  bigDisjNE (T.toList.map (hintikka e k))
+
+omit [Inhabited Atom] in
+theorem neFree_literal (i : Fin n) (b : Bool) : (literal e i b).NEFree := by
+  unfold literal; split <;> trivial
+
+theorem neFree_literals (a : Fin n → Bool) : (literals e a).NEFree :=
+  neFree_bigConj _ fun φ hφ ↦ by
+    obtain ⟨i, -, rfl⟩ := List.mem_map.mp hφ; exact neFree_literal e i _
+
+theorem neFree_hintikka : ∀ (k : ℕ) (τ : WorldType n k), (hintikka e k τ).NEFree
+  | 0, a => neFree_literals e a
+  | k + 1, τ => ⟨neFree_literals e _, neFree_bigConj _ (fun φ hφ ↦ by
+      obtain ⟨σ, -, rfl⟩ := List.mem_map.mp hφ; exact neFree_hintikka k σ),
+    neFree_bigDisj _ (fun φ hφ ↦ by
+      obtain ⟨σ, -, rfl⟩ := List.mem_map.mp hφ; exact neFree_hintikka k σ)⟩
+
+theorem modalDepth_literals (a : Fin n → Bool) : (literals e a).modalDepth ≤ 0 :=
+  modalDepth_bigConj fun x hx ↦ by
+    obtain ⟨i, -, rfl⟩ := List.mem_map.mp hx; unfold literal; split <;> rfl
+
+theorem modalDepth_hintikka : ∀ (k : ℕ) (τ : WorldType n k), (hintikka e k τ).modalDepth ≤ k
+  | 0, a => modalDepth_literals e a
+  | k + 1, τ => by
+    simp only [hintikka, Formula.modalDepth, Formula.nec, max_le_iff]
+    refine ⟨(modalDepth_literals e _).trans (Nat.zero_le _), modalDepth_bigConj fun x hx ↦ ?_,
+      Nat.succ_le_succ (modalDepth_bigDisj fun x hx ↦ ?_)⟩ <;>
+    obtain ⟨σ, -, rfl⟩ := List.mem_map.mp hx
+    · exact Nat.succ_le_succ (modalDepth_hintikka k σ)
+    · exact modalDepth_hintikka k σ
+
+theorem strongHintikka_empty {k : ℕ} :
+    strongHintikka e (∅ : Finset (WorldType n k)) = .falsum := by
+  simp [strongHintikka, bigDisjNE, bigDisj]
+
+/-! ### Hintikka formulas characterize types -/
+
+variable {e}
+
+omit [Inhabited Atom] in
+theorem realize_literal (M : KripkeModel W Atom) (i : Fin n) (b : Bool) (w : W) :
+    Realize M (literal e i b) w ↔ M.val (e i) w = b := by
+  unfold literal; cases b <;> simp
+
+theorem realize_literals (M : KripkeModel W Atom) (a : Fin n → Bool) (w : W) :
+    Realize M (literals e a) w ↔ (fun i ↦ M.val (e i) w) = a := by
+  rw [literals, realize_bigConj, funext_iff]
+  simp [realize_literal]
+
+/-- The Hintikka formula of `τ` holds at a world exactly when the world has type `τ`. -/
+theorem realize_hintikka_iff (M : KripkeModel W Atom) :
+    ∀ (k : ℕ) (τ : WorldType n k) (w : W), Realize M (hintikka e k τ) w ↔ worldType e M k w = τ
+  | 0, a, w => realize_literals M a w
+  | k + 1, τ, w => by
+    simp only [hintikka, realize_conj, realize_literals, realize_bigConj, realize_bigDisj,
+      List.mem_map, Finset.mem_toList, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂,
+      realize_poss, realize_hintikka_iff M k, Formula.nec, realize_neg, not_exists, not_and,
+      exists_exists_and_eq_and, not_forall, not_not, exists_prop]
+    rw [worldType, Prod.ext_iff, Finset.ext_iff]
+    simp only [Finset.mem_image]
+    refine and_congr Iff.rfl ⟨fun ⟨h₁, h₂⟩ σ ↦ ⟨fun ⟨v, hv, hσ⟩ ↦ ?_, fun hσ ↦ h₁ σ hσ⟩,
+      fun h ↦ ⟨fun σ hσ ↦ (h σ).mpr hσ, fun v hv ↦ ⟨_, (h _).mp ⟨v, hv, rfl⟩, rfl⟩⟩⟩
+    obtain ⟨x, hx, rfl⟩ := h₂ v hv
+    exact hσ ▸ hx
+
+omit [Inhabited Atom] in
+/-- Two worlds have the same type exactly when they are `k`-bisimilar, once `e` enumerates every
+    atom. -/
+theorem worldType_eq_iff_worldBisim (he : Function.Surjective e) {M : KripkeModel W Atom}
+    {M' : KripkeModel W' Atom} :
+    ∀ (k : ℕ) (w : W) (w' : W'), worldType e M k w = worldType e M' k w' ↔ WorldBisim k M w M' w'
+  | 0, w, w' => by
+    rw [worldType, worldType, funext_iff, WorldBisim]
+    exact (he.forall (p := fun p ↦ M.val p w = M'.val p w')).symm
+  | k + 1, w, w' => by
+    rw [worldType, worldType, Prod.ext_iff, funext_iff, WorldBisim, Finset.ext_iff]
+    refine and_congr (he.forall (p := fun p ↦ M.val p w = M'.val p w')).symm ?_
+    simp only [Finset.mem_image]
     constructor
     · intro h
-      simp only [charFormula, Realize] at h
-      obtain ⟨hA, hB, hC⟩ := h
-      refine ⟨fun p => ((realize_atomicType M w v).mp hA p).symm, ?_, ?_⟩
-      · intro u hu
-        have hposs := (realize_bigConj M v _).mp hB (.poss (charFormula M k u))
-          (List.mem_map.mpr ⟨u, Finset.mem_toList.mpr hu, rfl⟩)
-        obtain ⟨u', hu', hchar⟩ := realize_poss.mp hposs
-        exact ⟨u', hu', (ih u u').mp hchar⟩
-      · intro u' hu'
-        have hd := realize_nec.mp hC u' hu'
-        obtain ⟨φ, hφ, hval⟩ := (realize_bigDisj M u' _).mp hd
-        obtain ⟨u, hu, rfl⟩ := List.mem_map.mp hφ
-        exact ⟨u, Finset.mem_toList.mp hu, (ih u u').mp hval⟩
-    · intro hbisim
-      simp only [charFormula, Realize]
-      refine ⟨(realize_atomicType M w v).mpr (fun p => (hbisim.1 p).symm), ?_, ?_⟩
-      · refine (realize_bigConj M v _).mpr (fun φ hφ => ?_)
-        obtain ⟨u, hu, rfl⟩ := List.mem_map.mp hφ
-        obtain ⟨u', hu', hb⟩ := hbisim.2.1 u (Finset.mem_toList.mp hu)
-        exact realize_poss.mpr ⟨u', hu', (ih u u').mpr hb⟩
-      · refine realize_nec.mpr (fun u' hu' => ?_)
-        obtain ⟨u, hu, hb⟩ := hbisim.2.2 u' hu'
-        exact (realize_bigDisj M u' _).mpr
-          ⟨charFormula M k u, List.mem_map.mpr ⟨u, Finset.mem_toList.mpr hu, rfl⟩,
-           (ih u u').mpr hb⟩
+      refine ⟨fun v hv ↦ ?_, fun v' hv' ↦ ?_⟩
+      · obtain ⟨v', hv', hvv'⟩ := (h _).mp ⟨v, hv, rfl⟩
+        exact ⟨v', hv', (worldType_eq_iff_worldBisim he k v v').mp hvv'.symm⟩
+      · obtain ⟨v, hv, hvv'⟩ := (h _).mpr ⟨v', hv', rfl⟩
+        exact ⟨v, hv, (worldType_eq_iff_worldBisim he k v v').mp hvv'⟩
+    · rintro ⟨h₁, h₂⟩ σ
+      constructor
+      · rintro ⟨v, hv, rfl⟩
+        obtain ⟨v', hv', hb⟩ := h₁ v hv
+        exact ⟨v', hv', ((worldType_eq_iff_worldBisim he k v v').mpr hb).symm⟩
+      · rintro ⟨v', hv', rfl⟩
+        obtain ⟨v, hv, hb⟩ := h₂ v' hv'
+        exact ⟨v, hv, (worldType_eq_iff_worldBisim he k v v').mpr hb⟩
 
-/-! ### Team support of the auxiliary connectives -/
+/-- The Hintikka formula of the type of `w` holds at `w'` exactly when `w'` is `k`-bisimilar to `w`
+    ([aloni-anttila-yang-2024] Theorem 3.3). -/
+theorem realize_hintikka_worldType_iff (he : Function.Surjective e) {M : KripkeModel W Atom}
+    {M' : KripkeModel W' Atom} (k : ℕ) (w : W) (w' : W') :
+    Realize M' (hintikka e k (worldType e M k w)) w' ↔ WorldBisim k M w M' w' := by
+  rw [realize_hintikka_iff, eq_comm, worldType_eq_iff_worldBisim he]
+
+/-! ### Team support -/
 
 variable [DecidableEq W]
 
+omit [Inhabited Atom] in
 theorem support_verum [Inhabited Atom] (M : KripkeModel W Atom) (t : Finset W) :
     support M (verum (Atom := Atom)) t :=
   (support_iff_forall_realize neFree_verum).mpr fun w _ => realize_verum M w
 
-theorem support_bigConj_iff [Inhabited Atom] (M : KripkeModel W Atom)
-    (l : List (Formula Atom)) (t : Finset W) :
+theorem support_bigConj_iff (M : KripkeModel W Atom) (l : List (Formula Atom)) (t : Finset W) :
     support M (bigConj l) t ↔ ∀ φ ∈ l, support M φ t := by
   induction l with
   | nil => simpa [bigConj] using support_verum M t
   | cons φ rest ih =>
     simp only [bigConj, support_conj, ih, List.forall_mem_cons]
 
-/-- A team supports the disjunction of the characteristic formulas of the worlds in `S` iff each
-    of its worlds is `k`-bisimilar to one in `S`. -/
-theorem support_charDisj_iff [Fintype Atom] [Inhabited Atom]
-    (M : KripkeModel W Atom) (k : ℕ) (S : Finset W) (t : Finset W) :
-    support M (bigDisj (S.toList.map (charFormula M k))) t ↔
-      ∀ v ∈ t, ∃ w ∈ S, WorldBisim k M w M v := by
-  have hNE : (bigDisj (S.toList.map (charFormula M k))).NEFree := by
-    refine neFree_bigDisj _ (fun φ hφ => ?_)
-    obtain ⟨w, -, rfl⟩ := List.mem_map.mp hφ
-    exact neFree_charFormula M k w
-  rw [support_iff_forall_realize hNE]
-  constructor
-  · intro h v hv
-    obtain ⟨φ, hφ, hval⟩ := (realize_bigDisj M v _).mp (h v hv)
-    obtain ⟨w, hw, rfl⟩ := List.mem_map.mp hφ
-    exact ⟨w, Finset.mem_toList.mp hw,
-      (realize_charFormula_iff_bisim M k w v).mp hval⟩
-  · intro h v hv
-    obtain ⟨w, hw, hb⟩ := h v hv
-    exact (realize_bigDisj M v _).mpr
-      ⟨charFormula M k w, List.mem_map.mpr ⟨w, Finset.mem_toList.mpr hw, rfl⟩,
-       (realize_charFormula_iff_bisim M k w v).mpr hb⟩
+/-- A team supports a disjunction of Hintikka formulas iff each of its worlds has one of their
+    types. -/
+theorem support_bigDisj_hintikka_iff (M : KripkeModel W Atom) {k : ℕ} (L : List (WorldType n k))
+    (t : Finset W) :
+    support M (bigDisj (L.map (hintikka e k))) t ↔ ∀ w ∈ t, worldType e M k w ∈ L := by
+  rw [support_iff_forall_realize (neFree_bigDisj _ fun x hx ↦ by
+    obtain ⟨σ, -, rfl⟩ := List.mem_map.mp hx; exact neFree_hintikka e k σ)]
+  simp [realize_bigDisj, realize_hintikka_iff]
 
-/-- On singleton teams, support of the characteristic formula is exactly
-    `k`-bisimilarity — the team-semantic face of the characterisation, via
-    the NE-free classical collapse. -/
-theorem support_charFormula_singleton_iff_bisim [Fintype Atom] [Inhabited Atom]
-    (M : KripkeModel W Atom) (k : ℕ) (w v : W) :
-    support M (charFormula M k w) {v} ↔ WorldBisim k M w M v :=
-  (support_singleton_iff_realize (neFree_charFormula M k w)).trans
-    (realize_charFormula_iff_bisim M k w v)
+private theorem support_bigDisjNE_hintikka (M : KripkeModel W Atom) {k : ℕ} :
+    ∀ (l : List (WorldType n k)) (t : Finset W),
+      support M (bigDisjNE (l.map (hintikka e k))) t ↔ t.image (worldType e M k) = l.toFinset
+  | [], t => by simp [bigDisjNE, bigDisj]
+  | τ :: r, t => by
+    change t ∈ Team.tensor _ _ ↔ _
+    rw [List.toFinset_cons]
+    constructor
+    · rintro ⟨t₁, ⟨h₁, hne⟩, t₂, h₂, rfl⟩
+      replace h₁ := (support_iff_forall_realize (neFree_hintikka e k τ)).mp h₁
+      rw [Finset.image_union, (support_bigDisjNE_hintikka M r t₂).mp h₂, Finset.insert_eq]
+      congr 1
+      refine Finset.eq_singleton_iff_unique_mem.mpr ⟨?_, fun σ hσ ↦ ?_⟩
+      · obtain ⟨w, hw⟩ := hne
+        exact Finset.mem_image.mpr ⟨w, hw, (realize_hintikka_iff M k τ w).mp (h₁ w hw)⟩
+      · obtain ⟨w, hw, rfl⟩ := Finset.mem_image.mp hσ
+        exact (realize_hintikka_iff M k τ w).mp (h₁ w hw)
+    · intro h
+      have hmem : ∀ w ∈ t, worldType e M k w = τ ∨ worldType e M k w ∈ r.toFinset := fun w hw ↦
+        Finset.mem_insert.mp (h ▸ Finset.mem_image_of_mem _ hw)
+      refine ⟨t.filter (worldType e M k · = τ), ⟨(support_iff_forall_realize
+        (neFree_hintikka e k τ)).mpr fun w hw ↦ (realize_hintikka_iff M k τ w).mpr
+          (Finset.mem_filter.mp hw).2, ?_⟩, t.filter (worldType e M k · ∈ r.toFinset),
+        (support_bigDisjNE_hintikka M r _).mpr ?_, ?_⟩
+      · obtain ⟨w, hw, hwτ⟩ := Finset.mem_image.mp (h ▸ Finset.mem_insert_self τ _)
+        exact ⟨w, Finset.mem_filter.mpr ⟨hw, hwτ⟩⟩
+      · ext σ
+        simp only [Finset.mem_image, Finset.mem_filter]
+        refine ⟨fun ⟨w, ⟨_, hw⟩, hσ⟩ ↦ hσ ▸ hw, fun hσ ↦ ?_⟩
+        obtain ⟨w, hw, rfl⟩ := Finset.mem_image.mp (h ▸ Finset.mem_insert_of_mem hσ)
+        exact ⟨w, ⟨hw, hσ⟩, rfl⟩
+      · ext w
+        simp only [Finset.mem_union, Finset.mem_filter]
+        exact ⟨fun h ↦ h.elim And.left And.left, fun hw ↦ (hmem w hw).imp (⟨hw, ·⟩) (⟨hw, ·⟩)⟩
+
+/-- A team supports the strong Hintikka formula of `T` exactly when the types of its worlds are
+    those in `T` ([aloni-anttila-yang-2024] Definition 3.10). -/
+theorem support_strongHintikka_iff (M : KripkeModel W Atom) {k : ℕ} (T : Finset (WorldType n k))
+    (t : Finset W) : support M (strongHintikka e T) t ↔ t.image (worldType e M k) = T := by
+  rw [strongHintikka, support_bigDisjNE_hintikka, Finset.toList_toFinset]
 
 end BSML

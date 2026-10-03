@@ -10,17 +10,15 @@ public import Mathlib.Data.Fintype.Prod
 
 The natural deduction system `Derives` of `NaturalDeduction.lean` is complete: a consequence that
 holds on every model is derivable from finitely many premises. The proof follows the normal-form
-strategy of Aloni, Anttila and Yang. The world types of each depth over finitely many atoms are the
-worlds of one universal model, and each type has a Hintikka formula true exactly at it. A set of
+strategy of Aloni, Anttila and Yang. The world types of `Characteristic.lean` are the worlds of one
+universal model, and each type's Hintikka formula holds exactly at it there. A set of
 types `T` has the strong Hintikka formula `θ_T`, the disjunction of the formulas `χ_τ ∧ NE`, which
 derives every formula the team `T` supports. Conversely, the `⊥NE`-translation rules split every
 formula into the cases `θ_T` for the teams supporting it.
 
 ## Main definitions
 
-* `WorldType n k`, `univModel e`: the world types of depth `k` over `n` atoms, and the model whose
-  worlds they are.
-* `hintikka e k τ`, `strongHintikka e T`: the Hintikka formulas of a type and of a set of types.
+* `univModel e`: the model whose worlds are the world types.
 * `Splits A S`: `A` splits into the cases `S`.
 
 ## Main results
@@ -219,9 +217,6 @@ theorem Derives.poss_bigDisj (hL : L ≠ []) (h : ∀ x ∈ L, Γ ⊢ .poss x) :
     · exact (h x (by simp)).possMon' ((Derives.single _).disjI Formula.neFree_falsum)
     · exact (h x (by simp)).possJoin' (ih (by simp) fun z hz ↦ h z (by simp [hz]))
 
-/-- `bigDisjNE L` is the disjunction of the formulas of `L`, each conjoined with `NE`. -/
-def bigDisjNE (L : List (Formula Atom)) : Formula Atom := bigDisj (L.map fun x ↦ .conj x .ne)
-
 private theorem Derives.nec_tag {A : List (Formula Atom)} :
     ∀ {B : List (Formula Atom)}, (∀ x ∈ B, Γ ⊢ .poss x) →
       Γ ⊢ Formula.nec (.disj (bigDisj A) (bigDisj B)) →
@@ -265,65 +260,9 @@ theorem Derives.poss_of_nec_bigDisjNE (hL : L ≠ []) (h : Γ ⊢ Formula.nec (b
   (h.necMap ((Derives.single _).conj ((Derives.single _).ne_of_bigDisjNE hL))).necInst
     |>.poss_of_poss_bigDisjNE hx
 
-/-! ### World types and their Hintikka formulas -/
-
-/-- A world type of depth `k` over `n` atoms gives the truth values of the atoms and, at positive
-    depth, the set of the depth `k - 1` types of the successors. -/
-def WorldType (n : ℕ) : ℕ → Type
-  | 0 => Fin n → Bool
-  | k + 1 => (Fin n → Bool) × Finset (WorldType n k)
-
-namespace WorldType
-
-variable {n : ℕ}
-
-noncomputable instance instDecidableEq (k : ℕ) : DecidableEq (WorldType n k) := Classical.decEq _
-
-noncomputable instance instFintype : (k : ℕ) → Fintype (WorldType n k)
-  | 0 => inferInstanceAs (Fintype (Fin n → Bool))
-  | k + 1 => @instFintypeProd _ _ _ (@Finset.fintype _ (instFintype k))
-
-/-- `τ.val` gives the truth values of the atoms at the type `τ`. -/
-def val : {k : ℕ} → WorldType n k → Fin n → Bool
-  | 0, a => a
-  | _ + 1, τ => τ.1
-
-end WorldType
+/-! ### The universal model -/
 
 variable {n : ℕ} (e : Fin n → Atom)
-
-/-- `literal e i b` is the `i`-th atom if `b` holds and its negation otherwise. -/
-def literal (i : Fin n) (b : Bool) : Formula Atom :=
-  if b then .atom (e i) else .neg (.atom (e i))
-
-/-- `literals e a` conjoins the literals of the assignment `a`. -/
-def literals (a : Fin n → Bool) : Formula Atom :=
-  bigConj ((List.finRange n).map fun i ↦ literal e i (a i))
-
-/-- The Hintikka formula of a type conjoins its literals and, at positive depth, the possibility
-    of each successor type and the necessity of their disjunction. -/
-noncomputable def hintikka : (k : ℕ) → WorldType n k → Formula Atom
-  | 0, a => literals e a
-  | k + 1, τ => .conj (literals e τ.1)
-      (.conj (bigConj (τ.2.toList.map fun σ ↦ .poss (hintikka k σ)))
-      (Formula.nec (bigDisj (τ.2.toList.map (hintikka k)))))
-
-/-- The strong Hintikka formula of a set of types `T` is the disjunction of the formulas
-    `χ_τ ∧ NE` for `τ ∈ T`. -/
-noncomputable def strongHintikka {k : ℕ} (T : Finset (WorldType n k)) : Formula Atom :=
-  bigDisjNE (T.toList.map (hintikka e k))
-
-theorem neFree_lits (a : Fin n → Bool) : (literals e a).NEFree :=
-  neFree_bigConj _ fun φ hφ ↦ by
-    obtain ⟨i, -, rfl⟩ := List.mem_map.mp hφ
-    unfold literal; split <;> trivial
-
-theorem neFree_hintikka : ∀ (k : ℕ) (τ : WorldType n k), (hintikka e k τ).NEFree
-  | 0, a => neFree_lits e a
-  | k + 1, τ => ⟨neFree_lits e _, neFree_bigConj _ (fun φ hφ ↦ by
-      obtain ⟨σ, -, rfl⟩ := List.mem_map.mp hφ; exact neFree_hintikka k σ),
-    neFree_bigDisj _ (fun φ hφ ↦ by
-      obtain ⟨σ, -, rfl⟩ := List.mem_map.mp hφ; exact neFree_hintikka k σ)⟩
 
 /-- In the universal model each type is a world, whose successors are its successor types. -/
 noncomputable def univModel : KripkeModel (Σ k, WorldType n k) Atom where
@@ -351,32 +290,19 @@ omit [Inhabited Atom] in
 theorem univModel_access_succ {k : ℕ} (τ : WorldType n (k + 1)) :
     (univModel e).access (world (k + 1) τ) = τ.2.image (world k) := rfl
 
-theorem realize_lits (he : Function.Injective e) (a : Fin n → Bool) (w : Σ k, WorldType n k) :
-    Realize (univModel e) (literals e a) w ↔ w.2.val = a := by
-  rw [literals, realize_bigConj, funext_iff]
-  simp only [List.mem_map, List.mem_finRange, true_and, forall_exists_index,
-    forall_apply_eq_imp_iff]
-  refine forall_congr' fun i ↦ ?_
-  unfold literal
-  cases a i <;> simp [univModel_val he]
+omit [Inhabited Atom] in
+theorem worldType_univModel (he : Function.Injective e) :
+    ∀ (k : ℕ) (τ : WorldType n k), worldType e (univModel e) k (world k τ) = τ
+  | 0, a => funext fun i ↦ univModel_val he i _
+  | k + 1, τ => by
+    rw [worldType, univModel_access_succ, Finset.image_image]
+    refine Prod.ext (funext fun i ↦ univModel_val he i _) ?_
+    simp only [Function.comp_def, worldType_univModel he k, Finset.image_id']
 
 /-- The Hintikka formula of `τ` holds exactly at `τ`. -/
-theorem realize_hintikka (he : Function.Injective e) :
-    ∀ (k : ℕ) (τ τ' : WorldType n k), Realize (univModel e) (hintikka e k τ) (world k τ') ↔ τ' = τ
-  | 0, a, a' => realize_lits he a _
-  | k + 1, τ, τ' => by
-    simp only [hintikka, realize_conj, realize_lits he, realize_bigConj, realize_bigDisj,
-      List.mem_map, Finset.mem_toList, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂,
-      realize_poss, univModel_access_succ, Finset.mem_image, exists_exists_and_eq_and,
-      realize_hintikka he k, exists_eq_right, Formula.nec, realize_neg, not_exists, not_and,
-      not_forall, not_not, exists_prop]
-    constructor
-    · rintro ⟨h₁, h₂, h₃⟩
-      refine Prod.ext h₁ (Finset.ext fun σ ↦ ⟨fun hσ ↦ ?_, h₂ σ⟩)
-      obtain ⟨σ', hσ', rfl⟩ := h₃ σ hσ
-      exact hσ'
-    · rintro rfl
-      exact ⟨rfl, fun σ hσ ↦ hσ, fun σ hσ ↦ ⟨σ, hσ, rfl⟩⟩
+theorem realize_hintikka (he : Function.Injective e) (k : ℕ) (τ τ' : WorldType n k) :
+    Realize (univModel e) (hintikka e k τ) (world k τ') ↔ τ' = τ := by
+  rw [realize_hintikka_iff, worldType_univModel he]
 
 /-! ### Teams of types -/
 
@@ -387,55 +313,27 @@ def Formula.AtomsIn (S : Set Atom) : Formula Atom → Prop
   | .neg φ | .poss φ => φ.AtomsIn S
   | .conj φ ψ | .disj φ ψ => φ.AtomsIn S ∧ ψ.AtomsIn S
 
-theorem strongHintikka_empty {k : ℕ} :
-    strongHintikka e (∅ : Finset (WorldType n k)) = .falsum := by
-  simp [strongHintikka, bigDisjNE, bigDisj]
-
 omit [Inhabited Atom] in
 theorem support_image_iff {k : ℕ} {φ : Formula Atom} (hφ : φ.NEFree) (T : Finset (WorldType n k)) :
     support (univModel e) φ (T.image (world k)) ↔ ∀ τ ∈ T, Realize (univModel e) φ (world k τ) := by
   simp [support_iff_forall_realize hφ]
 
-theorem support_strongHintikka_aux (he : Function.Injective e) {k : ℕ} :
-    ∀ (l : List (WorldType n k)) (T : Finset (WorldType n k)),
-      support (univModel e) (bigDisjNE (l.map (hintikka e k))) (T.image (world k)) ↔ T = l.toFinset
-  | [], T => by simp [bigDisjNE, bigDisj]
-  | τ :: r, T => by
-    change T.image (world k) ∈ Team.tensor _ _ ↔ _
-    constructor
-    · rintro ⟨t₁, ⟨h₁, hne⟩, t₂, h₂, ht⟩
-      obtain ⟨T₁, -, rfl⟩ := Finset.subset_image_iff.mp (ht ▸ Finset.subset_union_left)
-      obtain ⟨T₂, -, rfl⟩ := Finset.subset_image_iff.mp (ht ▸ Finset.subset_union_right)
-      rw [← Finset.image_union, (Finset.image_injective (WorldType.world_injective k)).eq_iff] at ht
-      have hT₂ := (support_strongHintikka_aux he r T₂).mp h₂
-      have hT₁ : T₁ = {τ} := by
-        replace h₁ := (support_image_iff (neFree_hintikka e k τ) T₁).mp h₁
-        obtain ⟨_, hw⟩ := hne
-        obtain ⟨σ, hσ, -⟩ := Finset.mem_image.mp hw
-        refine Finset.eq_singleton_iff_unique_mem.mpr ⟨?_, fun σ' hσ' ↦ ?_⟩
-        · exact (realize_hintikka he k τ σ).mp (h₁ σ hσ) ▸ hσ
-        · exact (realize_hintikka he k τ σ').mp (h₁ σ' hσ')
-      rw [← ht, hT₁, hT₂, List.toFinset_cons, Finset.insert_eq]
-    · rintro rfl
-      refine ⟨{world k τ}, ⟨?_, Finset.singleton_nonempty _⟩, r.toFinset.image (world k),
-        (support_strongHintikka_aux he r _).mpr rfl, by ext; simp⟩
-      exact (support_iff_forall_realize (neFree_hintikka e k τ)).mpr fun w hw ↦ by
-        rw [Finset.mem_singleton.mp hw]; exact (realize_hintikka he k τ τ).mpr rfl
-
 /-- The strong Hintikka formula of `T` is supported exactly by the team of the types in `T`. -/
 theorem support_strongHintikka (he : Function.Injective e) {k : ℕ} (T T' : Finset (WorldType n k)) :
     support (univModel e) (strongHintikka e T) (T'.image (world k)) ↔ T' = T := by
-  rw [strongHintikka, support_strongHintikka_aux he, Finset.toList_toFinset]
+  rw [support_strongHintikka_iff, Finset.image_image, Function.comp_def]
+  simp only [worldType_univModel he, Finset.image_id']
 
 /-! ### Derivations from Hintikka formulas -/
 
-theorem hintikka_derives_lits {k : ℕ} (τ : WorldType n k) :
+theorem hintikka_derives_literals {k : ℕ} (τ : WorldType n k) :
     {hintikka e k τ} ⊢ literals e τ.val := by
   cases k with
   | zero => exact .single _
   | succ k => exact (Derives.single _).conjE₁
 
-theorem lits_derives_lit (a : Fin n → Bool) (i : Fin n) : {literals e a} ⊢ literal e i (a i) :=
+theorem literals_derives_literal (a : Fin n → Bool) (i : Fin n) :
+    {literals e a} ⊢ literal e i (a i) :=
   (Derives.single _).of_bigConj (List.mem_map.mpr ⟨i, List.mem_finRange i, rfl⟩)
 
 theorem hintikka_derives_poss {k : ℕ} (τ : WorldType n (k + 1)) {σ : WorldType n k} (hσ : σ ∈ τ.2) :
@@ -492,7 +390,8 @@ theorem derives_of_support (he : Function.Injective e) :
         (antiSupport (univModel e) φ (T.image (world k)) → {strongHintikka e T} ⊢ .neg φ)
   | .atom _, k, _, ⟨i, rfl⟩, T => by
     have hlit : ∀ τ : WorldType n k, {.conj (hintikka e k τ) .ne} ⊢ literal e i (τ.val i) := fun τ ↦
-      (Derives.single _).conjE₁.trans ((hintikka_derives_lits τ).trans (lits_derives_lit _ i))
+      (Derives.single _).conjE₁.trans
+        ((hintikka_derives_literals τ).trans (literals_derives_literal _ i))
     refine ⟨fun h ↦ (Derives.single _).strongHintikka_elim (fun τ hτ ↦ ?_)
       ((Derives.single _).of_falsum trivial), fun h ↦ (Derives.single _).strongHintikka_elim
       (fun τ hτ ↦ ?_) ((Derives.single _).of_falsum trivial)⟩
@@ -564,10 +463,6 @@ theorem Derives.conj_bigDisj {A : Formula Atom} (hA : A.NEFree) :
 
 theorem Derives.conj_comm (h : Γ ⊢ .conj φ ψ) : Γ ⊢ .conj ψ φ := h.conjE₂.conj h.conjE₁
 
-omit [Inhabited Atom] in
-theorem neFree_literal (i : Fin n) (b : Bool) : (literal e i b).NEFree := by
-  unfold literal; split <;> trivial
-
 /-- Case analysis on the atoms in `is` covers every assignment. -/
 private theorem derives_bigDisj_literals_aux (e : Fin n → Atom) (Γ : Set (Formula Atom)) :
     ∀ is : List (Fin n), Γ ⊢ bigDisj ((Finset.univ : Finset (Fin n → Bool)).toList.map
@@ -579,7 +474,7 @@ private theorem derives_bigDisj_literals_aux (e : Fin n → Atom) (Γ : Set (For
     have hcl : ∀ (a : Fin n → Bool) (is : List (Fin n)),
         (bigConj (is.map fun j ↦ literal e j (a j))).NEFree := fun a is ↦
       neFree_bigConj _ fun x hx ↦ by
-        obtain ⟨j, -, rfl⟩ := List.mem_map.mp hx; exact neFree_literal j _
+        obtain ⟨j, -, rfl⟩ := List.mem_map.mp hx; exact neFree_literal e j _
     refine (derives_bigDisj_literals_aux e Γ r).bigDisj_mono (fun x hx ↦ by
       obtain ⟨a, -, rfl⟩ := List.mem_map.mp hx; exact hcl a _) fun x hx ↦ ?_
     obtain ⟨a, -, rfl⟩ := List.mem_map.mp hx
@@ -737,7 +632,7 @@ theorem derives_bigDisj_hintikka (e : Fin n → Atom) :
     refine h₁.bigDisj_mono hcl fun x hx ↦ ?_
     obtain ⟨y, hy, rfl⟩ := List.mem_map.mp hx
     obtain ⟨a, -, rfl⟩ := List.mem_map.mp hy
-    refine ((Derives.single _).conj_comm.conj_bigDisj (neFree_lits e a)).bigDisj_mono hcl
+    refine ((Derives.single _).conj_comm.conj_bigDisj (neFree_literals e a)).bigDisj_mono hcl
       fun x hx ↦ ?_
     obtain ⟨y, hy, rfl⟩ := List.mem_map.mp hx
     obtain ⟨S, -, rfl⟩ := List.mem_map.mp hy
@@ -950,22 +845,6 @@ theorem Formula.AtomsIn.mono {S S' : Set Atom} (hS : S ⊆ S') {φ : Formula Ato
   | neg _ ih | poss _ ih => exact ih h
   | conj _ _ ih₁ ih₂ | disj _ _ ih₁ ih₂ => exact ⟨ih₁ h.1, ih₂ h.2⟩
 
-theorem modalDepth_bigConj {L : List (Formula Atom)} {k : ℕ} (hL : ∀ x ∈ L, x.modalDepth ≤ k) :
-    (bigConj L).modalDepth ≤ k := by
-  induction L with
-  | nil => simp [bigConj, verum, Formula.modalDepth]
-  | cons x r ih =>
-    simp only [bigConj, Formula.modalDepth, max_le_iff]
-    exact ⟨hL x (by simp), ih fun y hy ↦ hL y (by simp [hy])⟩
-
-theorem modalDepth_bigDisj {L : List (Formula Atom)} {k : ℕ} (hL : ∀ x ∈ L, x.modalDepth ≤ k) :
-    (bigDisj L).modalDepth ≤ k := by
-  induction L with
-  | nil => simp [bigDisj, Formula.falsum, Formula.modalDepth]
-  | cons x r ih =>
-    simp only [bigDisj, Formula.modalDepth, max_le_iff]
-    exact ⟨hL x (by simp), ih fun y hy ↦ hL y (by simp [hy])⟩
-
 theorem atomsIn_bigConj {S : Set Atom} (hd : default ∈ S) {L : List (Formula Atom)}
     (hL : ∀ x ∈ L, x.AtomsIn S) : (bigConj L).AtomsIn S := by
   induction L with
@@ -978,30 +857,16 @@ theorem atomsIn_bigDisj {S : Set Atom} (hd : default ∈ S) {L : List (Formula A
   | nil => exact ⟨hd, hd⟩
   | cons x r ih => exact ⟨hL x (by simp), ih fun y hy ↦ hL y (by simp [hy])⟩
 
-theorem modalDepth_lits (a : Fin n → Bool) : (literals e a).modalDepth ≤ 0 :=
-  modalDepth_bigConj fun x hx ↦ by
-    obtain ⟨i, -, rfl⟩ := List.mem_map.mp hx; unfold literal; split <;> rfl
-
-theorem atomsIn_lits (hd : default ∈ Set.range e) (a : Fin n → Bool) :
+theorem atomsIn_literals (hd : default ∈ Set.range e) (a : Fin n → Bool) :
     (literals e a).AtomsIn (Set.range e) :=
   atomsIn_bigConj hd fun x hx ↦ by
     obtain ⟨i, -, rfl⟩ := List.mem_map.mp hx
     unfold literal; split <;> exact ⟨i, rfl⟩
 
-theorem modalDepth_hintikka : ∀ (k : ℕ) (τ : WorldType n k), (hintikka e k τ).modalDepth ≤ k
-  | 0, a => modalDepth_lits a
-  | k + 1, τ => by
-    simp only [hintikka, Formula.modalDepth, Formula.nec, max_le_iff]
-    refine ⟨(modalDepth_lits _).trans (Nat.zero_le _), modalDepth_bigConj fun x hx ↦ ?_,
-      Nat.succ_le_succ (modalDepth_bigDisj fun x hx ↦ ?_)⟩ <;>
-    obtain ⟨σ, -, rfl⟩ := List.mem_map.mp hx
-    · exact Nat.succ_le_succ (modalDepth_hintikka k σ)
-    · exact modalDepth_hintikka k σ
-
 theorem atomsIn_hintikka (hd : default ∈ Set.range e) :
     ∀ (k : ℕ) (τ : WorldType n k), (hintikka e k τ).AtomsIn (Set.range e)
-  | 0, a => atomsIn_lits hd a
-  | k + 1, τ => ⟨atomsIn_lits hd _, atomsIn_bigConj hd fun x hx ↦ by
+  | 0, a => atomsIn_literals hd a
+  | k + 1, τ => ⟨atomsIn_literals hd _, atomsIn_bigConj hd fun x hx ↦ by
       obtain ⟨σ, -, rfl⟩ := List.mem_map.mp hx; exact atomsIn_hintikka hd k σ,
     atomsIn_bigDisj hd fun x hx ↦ by
       obtain ⟨σ, -, rfl⟩ := List.mem_map.mp hx; exact atomsIn_hintikka hd k σ⟩
@@ -1032,7 +897,7 @@ theorem strongHintikka_conj_derives (he : Function.Injective e) (hd : default �
         obtain ⟨σ, -, rfl⟩ := List.mem_map.mp hx; exact neFree_hintikka e k σ).bigDisj_elim
         (fun x hx ↦ by
           obtain ⟨σ, hσ, rfl⟩ := List.mem_map.mp hx
-          refine (hintikka_derives he (neFree_hintikka e k τ) (modalDepth_hintikka k τ)
+          refine (hintikka_derives he (neFree_hintikka e k τ) (modalDepth_hintikka e k τ)
             (atomsIn_hintikka hd k τ) σ).2 ?_
           rw [realize_hintikka he]; rintro rfl; exact hτ' (Finset.mem_toList.mp hσ))
         ((Derives.single _).of_falsum (neFree_hintikka e k τ))
@@ -1205,7 +1070,7 @@ theorem splits_fill (he : Function.Injective e) (hd : default ∈ Set.range e) :
     have hconjk : ∀ U : Finset (WorldType n k), (bigConj (U.toList.map fun σ ↦
         .poss (hintikka e k σ))).modalDepth ≤ k + 1 := fun U ↦ modalDepth_bigConj fun x hx ↦ by
       obtain ⟨σ, -, rfl⟩ := List.mem_map.mp hx
-      exact Nat.succ_le_succ (modalDepth_hintikka k σ)
+      exact Nat.succ_le_succ (modalDepth_hintikka e k σ)
     have hconjA : ∀ U : Finset (WorldType n k), (bigConj (U.toList.map fun σ ↦
         .poss (hintikka e k σ))).AtomsIn (Set.range e) := fun U ↦ atomsIn_bigConj hd fun x hx ↦ by
       obtain ⟨σ, -, rfl⟩ := List.mem_map.mp hx; exact atomsIn_hintikka hd k σ
@@ -1258,7 +1123,8 @@ theorem splits_fill (he : Function.Injective e) (hd : default ∈ Set.range e) :
                 (List.mem_map_of_mem hσ))
           have hdβ : d.NEFree := ⟨neFree_bigDisj_hintikka e _, hconj U⟩
           have hdk : d.modalDepth ≤ k + 1 := max_le (Nat.succ_le_succ (modalDepth_bigDisj
-            fun x hx ↦ by obtain ⟨σ, -, rfl⟩ := List.mem_map.mp hx; exact modalDepth_hintikka k σ))
+            fun x hx ↦ by
+              obtain ⟨σ, -, rfl⟩ := List.mem_map.mp hx; exact modalDepth_hintikka e k σ))
             (hconjk U)
           have hdA : d.AtomsIn (Set.range e) := ⟨atomsIn_bigDisj hd fun x hx ↦ by
             obtain ⟨σ, -, rfl⟩ := List.mem_map.mp hx; exact atomsIn_hintikka hd k σ, hconjA U⟩

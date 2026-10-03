@@ -101,30 +101,37 @@ theorem subset_definableClass_support [Fintype W] [Fintype Atom] [Inhabited Atom
       fun s hs => Finset.le_sup (f := id) (Set.mem_toFinset.mpr hs)
     set 𝒯 : Finset (Finset W) := Finset.univ.filter
       (fun T => ∀ s ∈ PF, ∃ v ∈ s, ∃ w ∈ T, WorldBisim k M w M v) with h𝒯
+    set e : Fin (Fintype.card Atom) → Atom := fun i ↦ (Fintype.equivFin Atom).symm i
+    have he : Function.Surjective e := (Fintype.equivFin Atom).symm.surjective
     set δ : Finset W → Formula Atom :=
-      fun S => bigDisj (S.toList.map (charFormula M k)) with hδdef
+      fun S ↦ bigDisj ((S.toList.map (worldType e M k)).map (hintikka e k)) with hδdef
+    have hδ : ∀ S t : Finset W, support M (δ S) t ↔ ∀ v ∈ t, ∃ w ∈ S, WorldBisim k M w M v :=
+      fun S t ↦ by
+        simp only [hδdef, support_bigDisj_hintikka_iff, List.mem_map, Finset.mem_toList]
+        exact forall₂_congr fun v _ ↦ exists_congr fun w ↦
+          and_congr_right fun _ ↦ worldType_eq_iff_worldBisim he k w v
     refine ⟨.conj (δ U)
       (bigConj (𝒯.toList.map (fun T => .disj (.conj (δ T) .ne) (δ U)))), Eq.symm ?_⟩
     ext t
     constructor
     · intro htP
-      refine ⟨(support_charDisj_iff M k U t).mpr
+      refine ⟨(hδ U t).mpr
         (fun v hv => ⟨v, hsubU t htP hv, WorldBisim.refl k M v⟩), ?_⟩
       refine (support_bigConj_iff M _ t).mpr (fun ψ hψ => ?_)
       obtain ⟨T, hT, rfl⟩ := List.mem_map.mp hψ
       have hTtrans := (Finset.mem_filter.mp (Finset.mem_toList.mp hT)).2
       obtain ⟨v, hvt, w, hwT, hb⟩ := hTtrans t (Set.mem_toFinset.mpr htP)
       refine ⟨{v}, ⟨?_, Finset.singleton_nonempty v⟩, t, ?_, ?_⟩
-      · refine (support_charDisj_iff M k T {v}).mpr (fun x hx => ?_)
+      · refine (hδ T {v}).mpr (fun x hx => ?_)
         obtain rfl := Finset.mem_singleton.mp hx
         exact ⟨w, hwT, hb⟩
-      · exact (support_charDisj_iff M k U t).mpr
+      · exact (hδ U t).mpr
           (fun x hx => ⟨x, hsubU t htP hx, WorldBisim.refl k M x⟩)
       · show {v} ∪ t = t
         exact Finset.union_eq_right.mpr (Finset.singleton_subset_iff.mpr hvt)
     · rintro ⟨hupper, hhits⟩
       have hcov : ∀ v ∈ t, ∃ w ∈ U, WorldBisim k M w M v :=
-        (support_charDisj_iff M k U t).mp hupper
+        (hδ U t).mp hupper
       set T₀ : Finset W := Finset.univ.filter
         (fun w => ¬ ∃ v ∈ t, WorldBisim k M w M v) with hT₀def
       have hT₀notin : T₀ ∉ 𝒯 := by
@@ -133,7 +140,7 @@ theorem subset_definableClass_support [Fintype W] [Fintype Atom] [Inhabited Atom
           (List.mem_map.mpr ⟨T₀, Finset.mem_toList.mpr hmem, rfl⟩)
         obtain ⟨t₁, ⟨hδ₁, hne₁⟩, t₂, -, hsplit⟩ := hhit
         obtain ⟨x, hx⟩ := hne₁
-        obtain ⟨w, hwT₀, hb⟩ := (support_charDisj_iff M k T₀ t₁).mp hδ₁ x hx
+        obtain ⟨w, hwT₀, hb⟩ := (hδ T₀ t₁).mp hδ₁ x hx
         exact (Finset.mem_filter.mp hwT₀).2
           ⟨x, le_sup_left.trans_eq hsplit hx, hb⟩
       have hs₀ : ∃ s₀ ∈ PF, ∀ w ∈ s₀, ∃ v ∈ t, WorldBisim k M w M v := by
