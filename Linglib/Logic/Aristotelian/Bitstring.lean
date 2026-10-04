@@ -1,36 +1,44 @@
 module
 
-public import Linglib.Logic.Aristotelian.Basic
+public import Linglib.Logic.Aristotelian.Morphism
 public import Linglib.Logic.Aristotelian.Partition
-public import Mathlib.Data.Fintype.BigOperators
-public import Mathlib.Data.Fintype.Order
-public import Mathlib.Order.BooleanSubalgebra
+public import Mathlib.Data.Fintype.Powerset
+public import Mathlib.Order.Hom.CompleteLattice
+public import Mathlib.SetTheory.Cardinal.Finite
 
 /-!
-# Bitstring semantics for logical fragments
+# Bitstring semantics of a fragment
 
-This is the bitstring semantics of Demey and Smessaert (2018, Section 3.2). For a fragment
-`φ : ι → W → Bool`, the bitstring of a formula `ψ` in the Boolean closure of `Set.range φ`
-records, for each consistent anchor cell, whether that cell entails `ψ`. This map is a Boolean
-isomorphism onto `Fin n → Bool` (Theorem 1), hence an Aristotelian isomorphism (Theorem 2).
+Every element of the Boolean closure of a fragment `φ : ι → α` is the join of the parts of the
+partition `φ` induces that lie below it. Sending an element to the set of those parts is therefore
+an order isomorphism from the closure onto the powerset of the parts. Demey and Smessaert write
+the set as a bitstring with one bit per part, and the isomorphism carries the fragment to an
+Aristotelian diagram of bitstrings. Two fragments have isomorphic closures iff their partitions
+have the same number of parts.
 
-## Main declarations
+## Main definitions
 
-* `bitstringOf` — the bitstring map (Definition 7).
-* `bitstringOrderIso` — the isomorphism `closure (Set.range φ) ≃o (Fin n → Bool)`.
-* `isAtom_anchor` — consistent anchor cells are the atoms of the closure.
-* `isCompl_bitstring_iff` and siblings — the Aristotelian relations transfer.
+* `Aristotelian.bitstring`: the isomorphism from the closure onto the powerset of the parts.
+* `Aristotelian.AristotelianIso.bitstring`: the fragment and its bitstrings are Aristotelian
+  isomorphic.
+
+## Main results
+
+* `Aristotelian.anchor_le_or_le_compl`: an anchor lies below each element of the closure or
+  below its complement.
+* `Aristotelian.card_closure`: the closure of a fragment whose partition has `n` parts has `2 ^ n`
+  elements.
+* `Aristotelian.isAtom_iff_mem_parts`: the atoms of the closure are the parts.
+* `Aristotelian.nonempty_orderIso_closure_iff`: two fragments have isomorphic closures iff their
+  partitions have equally many parts.
 
 ## Implementation notes
 
-The closure-membership lemmas need only `[Fintype ι]` (literal membership needs no
-index instances). `[DecidableEq ι]` enters only with the `partition`, so the
-world-enumeration declarations — which also require `[Fintype W]` — live in
-`section WorldEnumeration` below.
-
-`isAtom_anchor` is the `partition`-cell case of mathlib's atom representation for
-finite Boolean algebras (`CompleteAtomicBooleanAlgebra.toSetOfIsAtom`); the
-bitstring isomorphism is its explicit `Fin n`-indexed form.
+Demey and Smessaert number the parts and write the set of parts below an element as a string of
+bits; `bitstring` keeps the set. Their Lemma 9, that the bitstring of a part has a single bit
+set, appears as `isAtom_iff_mem_parts`, since the atoms of a powerset are its singletons. Their
+Theorem 2 follows from Theorem 1 through the Boolean-to-Aristotelian lemma; here it is proved
+directly from `bitstring`.
 
 ## References
 
@@ -42,356 +50,135 @@ bitstring isomorphism is its explicit `Fin n`-indexed form.
 
 namespace Aristotelian
 
-/-- A `Bool`-valued infimum is `true` iff every entry is. -/
-private theorem iInf_bool_eq_true {κ : Type*} (g : κ → Bool) :
-    (⨅ i, g i) = true ↔ ∀ i, g i = true := by
-  rw [← top_eq_true, iInf_eq_top]
+open Finset BooleanSubalgebra
 
-variable {W : Type*} {ι : Type*}
+variable {α ι : Type*} [BooleanAlgebra α] [Fintype ι] {φ : ι → α}
 
-/-! ### Anchor-decidedness -/
+theorem anchor_mem_closure (σ : ι → Bool) : anchor φ σ ∈ closure (Set.range φ) :=
+  inf_induction top_mem (fun _ h _ h' ↦ inf_mem h h') fun i _ ↦ by
+    have h := subset_closure (s := Set.range φ) ⟨i, rfl⟩
+    split
+    exacts [h, compl_mem h]
 
-section
-variable [Fintype ι] (φ : ι → W → Bool)
-
-/-- Every element of the closure is entailed either by an anchor or by its complement
-(Lemma 6). -/
-theorem anchor_le_or_le_compl_mem_closure (σ : ι → Bool) {ψ : W → Bool}
-    (hψ : ψ ∈ BooleanSubalgebra.closure (Set.range φ)) :
+/-- An anchor lies below each element of the closure or below its complement
+([demey-smessaert-2018] Lemma 6). -/
+theorem anchor_le_or_le_compl {ψ : α} (hψ : ψ ∈ closure (Set.range φ)) (σ : ι → Bool) :
     anchor φ σ ≤ ψ ∨ anchor φ σ ≤ ψᶜ := by
-  induction hψ using BooleanSubalgebra.closure_bot_sup_induction with
-  | mem ψ' hψ' =>
-    obtain ⟨i, rfl⟩ := hψ'
-    by_cases h : σ i = true
-    · refine Or.inl fun w hw ↦ ?_
-      simp only [anchor, decide_eq_true_eq] at hw
-      simpa only [ite_eq_left h] using hw i
-    · refine Or.inr fun w hw ↦ ?_
-      simp only [anchor, decide_eq_true_eq] at hw
-      have := hw i
-      rw [ite_eq_right h] at this
-      simp only [Pi.compl_apply, this, Bool.compl_eq_bnot, Bool.not_false]
-  | bot => exact Or.inr (by simp only [compl_bot, le_top])
+  induction hψ using closure_bot_sup_induction with
+  | mem _ h =>
+    obtain ⟨i, rfl⟩ := h
+    cases hσ : σ i
+    exacts [.inr (anchor_le_compl_of_false hσ), .inl (anchor_le_of_true hσ)]
+  | bot => exact .inr (by simp)
   | sup x _ y _ ihx ihy =>
     rcases ihx with hx | hx
-    · left; exact hx.trans le_sup_left
+    · exact .inl (hx.trans le_sup_left)
     rcases ihy with hy | hy
-    · left; exact hy.trans le_sup_right
-    · right; rw [compl_sup]; exact le_inf hx hy
-  | compl x _ ih =>
-    rcases ih with h | h
-    · right; rw [compl_compl]; exact h
-    · left; exact h
+    · exact .inl (hy.trans le_sup_right)
+    · exact .inr (compl_sup (a := x) ▸ le_inf hx hy)
+  | compl x _ ih => exact ih.symm.imp id fun h ↦ (compl_compl x).symm ▸ h
 
-/-! ### Anchor formulas lie in the closure -/
+variable [DecidableEq ι] [DecidableEq α]
 
-omit [Fintype ι] in
-private theorem lit_mem_closure (σ : ι → Bool) (i : ι) :
-    (if σ i then φ i else (φ i)ᶜ) ∈
-    BooleanSubalgebra.closure (Set.range φ) := by
-  have hmem := BooleanSubalgebra.subset_closure (s := Set.range φ) ⟨i, rfl⟩
-  split
-  · exact hmem
-  · exact BooleanSubalgebra.compl_mem hmem
+theorem le_or_disjoint_of_mem_parts {ψ a : α} (hψ : ψ ∈ closure (Set.range φ))
+    (ha : a ∈ (partition φ).parts) : a ≤ ψ ∨ Disjoint a ψ := by
+  obtain ⟨-, σ, rfl⟩ := mem_partition_parts.1 ha
+  exact (anchor_le_or_le_compl hψ σ).imp_right le_compl_iff_disjoint_right.1
 
-/-- An anchor is the infimum of its literals `±φ i`. -/
-theorem anchor_eq_iInf (σ : ι → Bool) :
-    anchor φ σ = ⨅ i, (if σ i then φ i else (φ i)ᶜ) := by
-  funext w
-  rw [iInf_apply]
-  unfold anchor
-  rw [Bool.eq_iff_iff, decide_eq_true_eq, iInf_bool_eq_true]
-  refine forall_congr' fun i => ?_
-  rw [ite_apply]
-  cases hi : σ i <;>
-    simp only [Bool.false_eq_true, ↓reduceIte, Pi.compl_apply, Bool.compl_eq_bnot,
-      Bool.not_eq_eq_eq_not, Bool.not_true]
+/-- An element of the closure lies below `ψ₂` iff every part below it does, since it is the join
+of the parts below it ([demey-smessaert-2018] Lemma 7). -/
+theorem le_iff_forall_mem_parts {ψ₁ ψ₂ : α} (h₁ : ψ₁ ∈ closure (Set.range φ)) :
+    ψ₁ ≤ ψ₂ ↔ ∀ a ∈ (partition φ).parts, a ≤ ψ₁ → a ≤ ψ₂ := by
+  refine ⟨fun h a _ ha ↦ ha.trans h, fun h ↦ ?_⟩
+  have hsup : (partition φ).parts.sup (· ⊓ ψ₁) = ψ₁ := by
+    rw [← sup_inf_distrib_right]
+    exact (congrArg (· ⊓ ψ₁) (partition φ).sup_parts).trans (top_inf_eq ψ₁)
+  rw [← hsup]
+  refine Finset.sup_le fun a ha ↦ ?_
+  rcases le_or_disjoint_of_mem_parts h₁ ha with hle | hdis
+  · exact inf_le_left.trans (h a ha hle)
+  · simp [hdis.eq_bot]
 
-/-- Anchor formulas lie in the Boolean closure of `Set.range φ` — an anchor is the
-infimum of its literals, each of which lies in the closure. -/
-theorem anchor_mem_closure (σ : ι → Bool) :
-    anchor φ σ ∈ BooleanSubalgebra.closure (Set.range φ) := by
-  rw [anchor_eq_iInf]
-  exact BooleanSubalgebra.iInf_mem (fun i => lit_mem_closure φ σ i)
+theorem mem_closure_of_mem_parts {a : α} (ha : a ∈ (partition φ).parts) :
+    a ∈ closure (Set.range φ) := by
+  obtain ⟨-, σ, rfl⟩ := mem_partition_parts.1 ha
+  exact anchor_mem_closure σ
 
-/-! ### Atoms of the closure -/
+variable (φ) in
+/-- The bitstring of an element of the closure is the set of parts below it. This is an order
+isomorphism onto the powerset of the parts ([demey-smessaert-2018] Theorem 1,
+[demey-smessaert-2024] Definition 4). -/
+noncomputable def bitstring : closure (Set.range φ) ≃o Set (partition φ).parts :=
+  .ofSurjective
+    (OrderEmbedding.ofMapLEIff (fun ψ ↦ {a | a.1 ≤ ψ.1}) fun ψ₁ ψ₂ ↦ by
+      rw [Subtype.mk_le_mk, le_iff_forall_mem_parts ψ₁.2]
+      exact ⟨fun h a ha ↦ h (a := ⟨a, ha⟩), fun h a ↦ h a.1 a.2⟩)
+    fun S ↦ by
+      classical
+      refine ⟨⟨(univ.filter (· ∈ S)).sup Subtype.val, sup_induction bot_mem
+        (fun _ h _ h' ↦ sup_mem h h') fun a _ ↦ mem_closure_of_mem_parts a.2⟩, ?_⟩
+      ext a
+      refine ⟨fun h ↦ by_contra fun haS ↦ (partition φ).ne_bot a.2 ?_,
+        fun h ↦ le_sup (by simpa using h)⟩
+      refine le_bot_iff.1 ((le_inf le_rfl h).trans_eq ?_)
+      rw [sup_inf_distrib_left]
+      refine (Finset.sup_eq_bot_iff _ _).2 fun b hb ↦
+        ((partition φ).disjoint a.2 b.2 fun hab ↦ ?_).eq_bot
+      exact haS (Subtype.ext hab ▸ by simpa using hb)
 
-/-- A consistent anchor cell is an atom of `closure (Set.range φ)`: it is below or
-disjoint from every closure element (Lemma 6), so once nonzero nothing lies
-strictly between it and `⊥`. -/
-theorem isAtom_anchor (σ : ι → Bool) (hCons : ∃ w, anchor φ σ w = true) :
-    IsAtom (⟨anchor φ σ, anchor_mem_closure φ σ⟩ :
-      BooleanSubalgebra.closure (Set.range φ)) := by
-  refine ⟨?_, fun b hb => ?_⟩
-  · intro hbot
-    obtain ⟨w, hw⟩ := hCons
-    have hval : anchor φ σ = (⊥ : W → Bool) := congrArg Subtype.val hbot
-    rw [hval] at hw
-    exact Bool.noConfusion hw
-  · have hble : (b : W → Bool) ≤ anchor φ σ := hb.le
-    rcases anchor_le_or_le_compl_mem_closure φ σ b.2 with hL | hR
-    · exact absurd (Subtype.ext (le_antisymm hble hL)) hb.ne
-    · exact Subtype.ext (le_compl_self.mp (hble.trans hR))
+@[simp] theorem mem_bitstring {ψ : closure (Set.range φ)} {a : (partition φ).parts} :
+    a ∈ bitstring φ ψ ↔ a.1 ≤ ψ.1 :=
+  .rfl
 
-/-- Converse of `isAtom_anchor`: every atom of `closure (Set.range φ)` is a consistent
-anchor cell. -/
-theorem atom_imp_anchor {a : BooleanSubalgebra.closure (Set.range φ)} (ha : IsAtom a) :
-    ∃ σ, a.val = anchor φ σ ∧ ∃ w, anchor φ σ w = true := by
-  obtain ⟨w, hw⟩ : ∃ w, a.val w = true := by
-    by_contra hcon
-    push Not at hcon
-    refine ha.1 (Subtype.ext (funext fun w => ?_))
-    show a.val w = (⊥ : W → Bool) w
-    simp only [Pi.bot_apply]
-    exact Bool.eq_false_iff.mpr (hcon w)
-  obtain ⟨σ, hcons⟩ := anchor_jointly_exhaustive φ w
-  refine ⟨σ, ?_, w, hcons⟩
-  have hα : IsAtom (⟨anchor φ σ, anchor_mem_closure φ σ⟩ :
-      BooleanSubalgebra.closure (Set.range φ)) := isAtom_anchor φ σ ⟨w, hcons⟩
-  rcases anchor_le_or_le_compl_mem_closure φ σ a.2 with hL | hR
-  · exact (congrArg Subtype.val ((ha.le_iff_eq hα.ne_bot).mp hL)).symm
-  · have hcompl : (a.val)ᶜ w = true := hR w hcons
-    simp only [Pi.compl_apply, hw] at hcompl
-    exact absurd hcompl (by decide)
+variable (φ) in
+/-- The closure of a fragment has `2 ^ n` elements, where `n` is the number of parts of its
+partition ([demey-smessaert-2018] Theorem 1). -/
+theorem card_closure : Nat.card (closure (Set.range φ)) = 2 ^ #(partition φ).parts := by
+  rw [Nat.card_congr (bitstring φ).toEquiv, Nat.card_eq_fintype_card, Fintype.card_set,
+    Fintype.card_coe]
 
-/-- The atoms of `closure (Set.range φ)` are **exactly** the consistent anchor cells — the
-partition-cell ↔ atom correspondence underlying the bitstring representation. -/
-theorem isAtom_iff_anchor {a : BooleanSubalgebra.closure (Set.range φ)} :
-    IsAtom a ↔ ∃ σ, a.val = anchor φ σ ∧ ∃ w, anchor φ σ w = true := by
-  refine ⟨atom_imp_anchor φ, ?_⟩
-  rintro ⟨σ, heq, hcons⟩
-  rw [show a = ⟨anchor φ σ, anchor_mem_closure φ σ⟩ from Subtype.ext heq]
-  exact isAtom_anchor φ σ hcons
+/-- The atoms of the closure are the parts ([demey-smessaert-2018] Lemma 9). -/
+theorem isAtom_iff_mem_parts {ψ : closure (Set.range φ)} : IsAtom ψ ↔ ψ.1 ∈ (partition φ).parts
+    where
+  mp h := by
+    obtain ⟨a, ha, haψ, ha0⟩ : ∃ a ∈ (partition φ).parts, a ≤ ψ.1 ∧ a ≠ ⊥ := by
+      by_contra! hcon
+      exact h.1 (Subtype.ext (le_bot_iff.1 ((le_iff_forall_mem_parts ψ.2).2 fun a ha h ↦
+        (hcon a ha h).le)))
+    have hb : (⟨a, mem_closure_of_mem_parts ha⟩ : closure (Set.range φ)) ≠ ⊥ :=
+      fun h0 ↦ ha0 (congrArg Subtype.val h0)
+    exact congrArg Subtype.val ((h.le_iff_eq hb).1 haψ) ▸ ha
+  mpr h := ⟨fun h0 ↦ (partition φ).ne_bot h (congrArg Subtype.val h0), fun χ hχ ↦ by
+    rcases le_or_disjoint_of_mem_parts χ.2 h with hle | hdis
+    · exact absurd hle (not_le_of_gt hχ)
+    · exact Subtype.ext (disjoint_self.1 (hdis.mono_left hχ.le))⟩
 
-end
+variable (φ) in
+/-- The bitstrings of the elements of a fragment form an Aristotelian diagram isomorphic to it
+([demey-smessaert-2018] Theorem 2). -/
+noncomputable def AristotelianIso.bitstring :
+    AristotelianIso φ fun i ↦ Aristotelian.bitstring φ (corner φ i) where
+  toEquiv := .refl ι
+  map_disjoint i j := (BooleanSubalgebra.disjoint_coe (a := corner φ i) (b := corner φ j)).trans
+    (disjoint_map_orderIso_iff (Aristotelian.bitstring φ)).symm
+  map_codisjoint i j :=
+    (BooleanSubalgebra.codisjoint_coe (a := corner φ i) (b := corner φ j)).trans
+      (codisjoint_map_orderIso_iff (Aristotelian.bitstring φ)).symm
+  map_lt i j := (Subtype.coe_lt_coe (x := corner φ i) (y := corner φ j)).trans
+    (Aristotelian.bitstring φ).lt_iff_lt.symm
 
-section WorldEnumeration
+variable {ι' α' : Type*} [BooleanAlgebra α'] [Fintype ι'] [DecidableEq ι'] [DecidableEq α']
+  (ψ : ι' → α')
 
-variable [Fintype W] [Fintype ι] [DecidableEq ι] (φ : ι → W → Bool)
-
-/-! ### Bitstring representation (Definition 7) -/
-
-/-- A positional index for the anchor cells, via `partition.equivFin`. -/
-noncomputable def anchorIndex :
-    Fin (partition ι W φ).card → (ι → Bool) :=
-  fun i => ((partition ι W φ).equivFin.symm i).val
-
-/-- The bitstring of `ψ` relative to `φ` has bit `i` set iff anchor `i` entails `ψ`
-(Definition 7). -/
-noncomputable def bitstringOf (ψ : W → Bool) :
-    Fin (partition ι W φ).card → Bool :=
-  fun i => decide (∀ w, anchor φ (anchorIndex φ i) w = true → ψ w = true)
-
-/-- Each partition cell is consistent: some world satisfies the anchor at index `i`. -/
-theorem anchorIndex_consistent (i : Fin (partition ι W φ).card) :
-    ∃ w, anchor φ (anchorIndex φ i) w = true := by
-  have hMem := ((partition ι W φ).equivFin.symm i).property
-  simp only [partition, Finset.mem_filter] at hMem
-  exact hMem.2
-
-/-! ### Bitstring evaluation -/
-
-/-- If `w` satisfies anchor `i` and `ψ` is in the closure, then `bitstringOf φ ψ i`
-is `ψ w`. -/
-theorem bitstringOf_apply_at_anchor {ψ : W → Bool}
-    (hψ : ψ ∈ BooleanSubalgebra.closure (Set.range φ))
-    (i : Fin (partition ι W φ).card) {w : W}
-    (hw : anchor φ (anchorIndex φ i) w = true) :
-    bitstringOf φ ψ i = ψ w := by
-  rcases anchor_le_or_le_compl_mem_closure φ (anchorIndex φ i) hψ with hL | hR
-  · have hβ : bitstringOf φ ψ i = true := by
-      simp only [bitstringOf, decide_eq_true_eq]
-      exact fun w' hw' ↦ hL w' hw'
-    have hψw : ψ w = true := hL w hw
-    rw [hβ, hψw]
-  · have hψw : ψ w = false := by
-      have := hR w hw
-      simpa only [Pi.compl_apply, Bool.compl_eq_bnot, Bool.not_eq_eq_eq_not,
-        Bool.not_true] using this
-    have hβ : bitstringOf φ ψ i = false := by
-      simp only [bitstringOf, decide_eq_false_iff_not, not_forall]
-      exact ⟨w, hw, by rw [hψw]; decide⟩
-    rw [hβ, hψw]
-
-/-- An anchor index satisfied by `w`. -/
-noncomputable def worldAnchorIndex (w : W) : Fin (partition ι W φ).card :=
-  let σ := Classical.choose (anchor_jointly_exhaustive φ w)
-  let hσ := Classical.choose_spec (anchor_jointly_exhaustive φ w)
-  (partition ι W φ).equivFin ⟨σ, by
-    simp only [partition, Finset.mem_filter]
-    exact ⟨Finset.mem_univ _, w, hσ⟩⟩
-
-theorem anchor_worldAnchorIndex (w : W) :
-    anchor φ (anchorIndex φ (worldAnchorIndex φ w)) w = true := by
-  unfold worldAnchorIndex anchorIndex
-  simp only [Equiv.symm_apply_apply]
-  exact Classical.choose_spec (anchor_jointly_exhaustive φ w)
-
-/-- `bitstringOf φ ψ` at a world's anchor index recovers `ψ` at that world. -/
-theorem bitstringOf_apply_at_world {ψ : W → Bool}
-    (hψ : ψ ∈ BooleanSubalgebra.closure (Set.range φ)) (w : W) :
-    bitstringOf φ ψ (worldAnchorIndex φ w) = ψ w :=
-  bitstringOf_apply_at_anchor φ hψ _ (anchor_worldAnchorIndex φ w)
-
-/-- `bitstringOf φ` is injective on the Boolean closure. -/
-theorem bitstringOf_injOn_closure :
-    Set.InjOn (bitstringOf φ)
-      (BooleanSubalgebra.closure (Set.range φ) : Set (W → Bool)) := by
-  intro ψ₁ hψ₁ ψ₂ hψ₂ hEq
-  funext w
-  rw [← bitstringOf_apply_at_world φ hψ₁ w, hEq, bitstringOf_apply_at_world φ hψ₂ w]
-
-/-! ### The inverse and round trips -/
-
-/-- The supremum of the anchor cells whose bit is `true` — the inverse of
-`bitstringOf` on the closure. -/
-noncomputable def bitstringInverse (b : Fin (partition ι W φ).card → Bool) : W → Bool :=
-  ⨆ i, (if b i then anchor φ (anchorIndex φ i) else (⊥ : W → Bool))
-
-theorem bitstringInverse_mem_closure (b : Fin (partition ι W φ).card → Bool) :
-    bitstringInverse φ b ∈ BooleanSubalgebra.closure (Set.range φ) := by
-  refine BooleanSubalgebra.iSup_mem fun i => ?_
-  split
-  · exact anchor_mem_closure φ _
-  · exact (BooleanSubalgebra.closure (Set.range φ)).bot_mem
-
-private theorem anchorIndex_injective :
-    Function.Injective (anchorIndex φ) := by
-  intro i j h
-  unfold anchorIndex at h
-  exact (partition ι W φ).equivFin.symm.injective (Subtype.ext h)
-
-private theorem anchor_at_world_unique {i j : Fin (partition ι W φ).card} {w : W}
-    (hi : anchor φ (anchorIndex φ i) w = true)
-    (hj : anchor φ (anchorIndex φ j) w = true) :
-    i = j := by
-  by_contra hne
-  apply anchor_mutually_exclusive φ (anchorIndex φ i) (anchorIndex φ j)
-    (fun heq => hne (anchorIndex_injective φ heq)) w
-  exact ⟨hi, hj⟩
-
-/-- If `w` satisfies anchor `j`, then `bitstringInverse φ b w` is the `j`-th bit:
-the `iSup` collapses to the summand at `j`. -/
-theorem bitstringInverse_apply_at_anchor (b : Fin (partition ι W φ).card → Bool)
-    (j : Fin (partition ι W φ).card) {w : W}
-    (hw : anchor φ (anchorIndex φ j) w = true) :
-    bitstringInverse φ b w = b j := by
-  unfold bitstringInverse
-  rw [iSup_apply]
-  apply le_antisymm
-  · refine iSup_le fun i => ?_
-    by_cases hij : i = j
-    · subst hij
-      cases hbi : b i <;>
-        simp only [hw, Bool.false_eq_true, ↓reduceIte, Pi.bot_apply, bot_le, le_refl]
-    · have hf : anchor φ (anchorIndex φ i) w = false :=
-        Bool.eq_false_iff.mpr fun hai => hij (anchor_at_world_unique φ hai hw)
-      cases hbi : b i <;>
-        simp only [hf, Bool.false_eq_true, ↓reduceIte, Pi.bot_apply, bot_le, Bool.false_le]
-  · refine le_iSup_of_le j ?_
-    cases hbj : b j <;>
-      simp only [↓reduceIte, hw, le_refl, Bool.false_eq_true, Pi.bot_apply, Bool.false_le]
-
-theorem bitstringOf_bitstringInverse (b : Fin (partition ι W φ).card → Bool) :
-    bitstringOf φ (bitstringInverse φ b) = b := by
-  funext j
-  obtain ⟨w, hw⟩ := anchorIndex_consistent φ j
-  rw [bitstringOf_apply_at_anchor φ (bitstringInverse_mem_closure φ b) j hw]
-  exact bitstringInverse_apply_at_anchor φ b j hw
-
-theorem bitstringInverse_bitstringOf {ψ : W → Bool}
-    (hψ : ψ ∈ BooleanSubalgebra.closure (Set.range φ)) :
-    bitstringInverse φ (bitstringOf φ ψ) = ψ := by
-  funext w
-  rw [bitstringInverse_apply_at_anchor φ (bitstringOf φ ψ)
-      (worldAnchorIndex φ w) (anchor_worldAnchorIndex φ w)]
-  exact bitstringOf_apply_at_world φ hψ w
-
-/-! ### Theorem 1: the Boolean isomorphism -/
-
-/-- `bitstringOf φ` is an order isomorphism `closure (Set.range φ) ≃o (Fin n → Bool)` with
-`n = |partition|` (Theorem 1). -/
-noncomputable def bitstringOrderIso :
-    BooleanSubalgebra.closure (Set.range φ) ≃o
-    (Fin (partition ι W φ).card → Bool) where
-  toFun := fun ⟨ψ, _⟩ => bitstringOf φ ψ
-  invFun := fun b => ⟨bitstringInverse φ b, bitstringInverse_mem_closure φ b⟩
-  left_inv := fun ⟨ψ, hψ⟩ => Subtype.ext (bitstringInverse_bitstringOf φ hψ)
-  right_inv := fun b => bitstringOf_bitstringInverse φ b
-  map_rel_iff' := by
-    rintro ⟨ψ₁, hψ₁⟩ ⟨ψ₂, hψ₂⟩
-    show bitstringOf φ ψ₁ ≤ bitstringOf φ ψ₂ ↔ ψ₁ ≤ ψ₂
-    constructor
-    · intro h w hw₁
-      have := h (worldAnchorIndex φ w)
-      rw [bitstringOf_apply_at_world φ hψ₁ w,
-          bitstringOf_apply_at_world φ hψ₂ w] at this
-      exact this hw₁
-    · intro h i
-      obtain ⟨w, hw⟩ := anchorIndex_consistent φ i
-      rw [bitstringOf_apply_at_anchor φ hψ₁ i hw,
-          bitstringOf_apply_at_anchor φ hψ₂ i hw]
-      exact h w
-
-/-! ### Boolean complexity -/
-
-/-- The Boolean complexity of a fragment is its bitstring length `|partition| = log₂ |𝔹(𝓕)|`.
-By `nonempty_orderIso_closure_iff` it is a complete invariant of the Boolean closure up to order
-isomorphism. -/
-def boolComplexity : ℕ := (partition ι W φ).card
-
-/-! ### Theorem 2: Aristotelian transfer
-
-Each relation transfers along the Boolean isomorphism `bitstringOrderIso`, so the bitstring
-map is an Aristotelian isomorphism. -/
-
-section Transfer
-variable (a b : BooleanSubalgebra.closure (Set.range φ))
-
-theorem isCompl_bitstring_iff :
-    IsCompl (bitstringOf φ a.val) (bitstringOf φ b.val) ↔ IsCompl a b :=
-  (bitstringOrderIso φ).isCompl_iff.symm
-
-theorem isContrary_bitstring_iff :
-    IsContrary (bitstringOf φ a.val) (bitstringOf φ b.val) ↔ IsContrary a b :=
-  isContrary_map_orderIso_iff (bitstringOrderIso φ)
-
-theorem isSubcontrary_bitstring_iff :
-    IsSubcontrary (bitstringOf φ a.val) (bitstringOf φ b.val) ↔ IsSubcontrary a b :=
-  isSubcontrary_map_orderIso_iff (bitstringOrderIso φ)
-
-theorem bitstring_lt_bitstring_iff :
-    bitstringOf φ a.val < bitstringOf φ b.val ↔ a < b :=
-  (bitstringOrderIso φ).lt_iff_lt
-
-end Transfer
-
-end WorldEnumeration
-
-/-! ### Classification up to Boolean isomorphism -/
-
-section Classification
-variable {ι' W' : Type*}
-  [Fintype W] [Fintype ι] [DecidableEq ι]
-  [Fintype W'] [Fintype ι'] [DecidableEq ι']
-  (φ : ι → W → Bool) (ψ : ι' → W' → Bool)
-
-/-- The Boolean closures of two fragments are order-isomorphic iff the fragments have equal
-Boolean complexity. Fragments of different complexity are therefore never Boolean-isomorphic,
-the obstruction behind the Keynes–Johnson octagons of complexity 7 and 6. -/
+variable (φ) in
+/-- Two fragments have order-isomorphic closures iff their partitions have equally many parts
+([demey-smessaert-2024], on Givant and Halmos's classification of finite Boolean algebras). -/
 theorem nonempty_orderIso_closure_iff :
-    Nonempty (BooleanSubalgebra.closure (Set.range φ) ≃o
-      BooleanSubalgebra.closure (Set.range ψ)) ↔ boolComplexity φ = boolComplexity ψ := by
-  constructor
-  · rintro ⟨e⟩
-    have hcard := Fintype.card_congr
-      ((bitstringOrderIso φ).symm.trans (e.trans (bitstringOrderIso ψ))).toEquiv
-    simp only [Fintype.card_fun, Fintype.card_bool, Fintype.card_fin] at hcard
-    exact Nat.pow_right_injective (le_refl 2) hcard
-  · intro h
-    simp only [boolComplexity] at h
-    exact ⟨(h ▸ bitstringOrderIso φ).trans (bitstringOrderIso ψ).symm⟩
-
-end Classification
+    Nonempty (closure (Set.range φ) ≃o closure (Set.range ψ)) ↔
+      #(partition φ).parts = #(partition ψ).parts where
+  mp := fun ⟨e⟩ ↦ Nat.pow_right_injective le_rfl <| show 2 ^ _ = 2 ^ _ by
+    rw [← card_closure, ← card_closure]; exact Nat.card_congr e.toEquiv
+  mpr h := ⟨(bitstring φ).trans <| (Fintype.equivOfCardEq <| by
+    rwa [Fintype.card_coe, Fintype.card_coe]).toOrderIsoSet.trans (bitstring ψ).symm⟩
 
 end Aristotelian
