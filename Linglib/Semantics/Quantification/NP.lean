@@ -4,7 +4,6 @@ public import Linglib.Semantics.Composition.Ty
 public import Linglib.Semantics.Quantification.Basic
 public import Linglib.Semantics.Quantification.Counting
 public import Linglib.Semantics.Composition.Cont
-public import Linglib.Semantics.Composition.Combinator
 public import Mathlib.Order.Hom.BoundedLattice
 public import Mathlib.Order.GaloisConnection.Defs
 
@@ -14,15 +13,15 @@ public import Mathlib.Order.GaloisConnection.Defs
 This file is the API of `NP α`, the type ⟨1⟩ quantifier that a noun phrase denotes.
 Existential closure `A` turns a property into a quantifier and predicative content `BE` turns
 one back. `BE ∘ A` is the identity, and on the monotone quantifiers, which are what
-[barwise-cooper-1981] take natural-language determiners to denote, the two form a
+Barwise and Cooper take natural-language determiners to denote, the two form a
 `GaloisCoinsertion`. Sending a quantifier through `BE` and back preserves truth conditions
 exactly when it is a principal ultrafilter, so a proper name survives the round trip and
 *every student* does not. The shifts relating `NP` to the other noun-phrase types are
-[partee-1987]'s. The total ones are `individual`, `ident`, `A` and `BE`, with the two faces of
+Partee's. The total ones are `individual`, `ident`, `A` and `BE`, with the two faces of
 Partee's triangle `BE_individual_eq_ident` and `A_ident_eq_individual` proved here, and the
 partial ones, THE and lower, are applications of `Reference.iota`. The individuals are
 exactly the quantifiers that commute with negation and with arbitrary conjunction
-(`exists_eq_individual_iff`), [keenan-faltz-1985]'s characterization of proper-noun denotations
+(`exists_eq_individual_iff`), Keenan and Faltz's characterization of proper-noun denotations
 by their Complements and Meets Conditions, and an existential is one exactly when its restrictor
 is a singleton (`some_eq_individual_iff`).
 
@@ -45,19 +44,15 @@ variable {E : Type*}
 
 /-! ### The continuation identification
 
-These are `rfl`: the carrier definitionally coincides with the
-continuation monad at answer type `Prop`, first exploited for natural
-language by [barker-2002] (see `Studies/Barker2002.lean`). -/
+`NP E` is definitionally the continuation monad at answer type `Prop`, an identification
+first exploited for natural language by [barker-2002] (see `Studies/Barker2002.lean`). -/
 
 /-- The quantifier type is the continuation type, since a quantifier is a computation handed
 its own scope. -/
 theorem np_eq_cont : NP E = Cont Prop E := rfl
 
-/-- Montague lift is the continuation monad's unit. -/
+/-- The Montague lift is the continuation monad's unit. -/
 theorem individual_eq_pure (a : E) : individual a = (pure a : Cont Prop E) := rfl
-
-/-- Montague lift is combinatory logic's type-raising combinator `T`. -/
-theorem individual_eq_T (a : E) : individual a = Combinator.T (β := Prop) a := rfl
 
 /-- The sets of a principal ultrafilter intersect to the singleton of its generator. -/
 theorem sInter_individual (a : E) : ⋂₀ (individual a : Set (Set E)) = {a} :=
@@ -65,11 +60,12 @@ theorem sInter_individual (a : E) : ⋂₀ (individual a : Set (Set E)) = {a} :=
 
 /-! ### Predicative content and existential closure -/
 
-/-- The predicative content of a quantifier, `BE(Q) = λx. Q(λy. y = x)`. -/
+/-- `BE Q` is the predicative content of the quantifier `Q`, `BE(Q) = λx. Q(λy. y = x)`. -/
 def BE (Q : NP E) : E → Prop :=
   fun x => Q (fun y => y = x)
 
-/-- Existential closure of a property over a domain, `A(P) = λQ. ∃x ∈ domain. P(x) ∧ Q(x)`. -/
+/-- `A domain P` is the existential closure of the property `P` over `domain`,
+`A(P) = λQ. ∃x ∈ domain. P(x) ∧ Q(x)`. -/
 def A (domain : List E) (P : E → Prop) : NP E :=
   fun Q => ∃ x ∈ domain, P x ∧ Q x
 
@@ -85,15 +81,15 @@ theorem A_ident_eq_individual (domain : List E) (j : E) (hj : j ∈ domain) :
 
 /-! ### `BE` as a bounded-lattice homomorphism -/
 
-/-- `BE(Q₁ ∧ Q₂) = BE(Q₁) ∧ BE(Q₂)` -/
+/-- `BE` commutes with conjunction, `BE(Q₁ ∧ Q₂) = BE(Q₁) ∧ BE(Q₂)`. -/
 theorem BE_conj (Q₁ Q₂ : NP E) :
     BE (fun P => Q₁ P ∧ Q₂ P) = (fun x => BE Q₁ x ∧ BE Q₂ x) := rfl
 
-/-- `BE(Q₁ ∨ Q₂) = BE(Q₁) ∨ BE(Q₂)` -/
+/-- `BE` commutes with disjunction, `BE(Q₁ ∨ Q₂) = BE(Q₁) ∨ BE(Q₂)`. -/
 theorem BE_disj (Q₁ Q₂ : NP E) :
     BE (fun P => Q₁ P ∨ Q₂ P) = (fun x => BE Q₁ x ∨ BE Q₂ x) := rfl
 
-/-- `BE(¬Q) = ¬BE(Q)` -/
+/-- `BE` commutes with negation, `BE(¬Q) = ¬BE(Q)`. -/
 theorem BE_neg (Q : NP E) :
     BE (fun P => ¬(Q P)) = (fun x => ¬(BE Q x)) := rfl
 
@@ -123,8 +119,8 @@ private theorem exists_eq_and_iff (domain : List E) (j : E)
   · rintro ⟨x, _, rfl, hPx⟩; exact hPx
   · intro hPj; exact ⟨j, hj, rfl, hPj⟩
 
-/-- The round trip is the identity on principal ultrafilters:
-    `A(BE(individual j))(P) = individual j P`. -/
+/-- The round trip through `BE` and `A` is the identity on principal ultrafilters,
+`A(BE(individual j))(P) = individual j P`. -/
 theorem roundtrip_preserves_principal (domain : List E) (j : E)
     (hj : j ∈ domain) :
     ∀ P : E → Prop, A domain (BE (individual j)) P = individual j P := by
@@ -132,12 +128,9 @@ theorem roundtrip_preserves_principal (domain : List E) (j : E)
   simp only [A, BE, individual]
   exact propext (exists_eq_and_iff domain j hj P)
 
-/-- **`BE ∘ A = id` on properties** ([partee-1987]): existential closure
-    followed by predicative content recovers the original property, so `A` is a
-    section of `BE`. Partee argues on this basis that `A` (with `some`) is the
-    most natural determiner-type functor.
-
-    `BE(A(P))(x) = A(P)(λy. y = x) = ∃z ∈ domain. P(z) ∧ z = x = P(x)`. -/
+/-- Over a complete domain, existential closure followed by predicative content recovers the
+original property, `BE(A(P)) = P`, so `A` is a section of `BE`. [partee-1987] argues on this
+basis that `A`, which is *some*, is the most natural determiner-type functor. -/
 theorem BE_A_id (domain : List E) (P : E → Prop)
     (hcomplete : ∀ x : E, x ∈ domain) :
     BE (A domain P) = P := by
@@ -149,9 +142,9 @@ theorem BE_A_id (domain : List E) (P : E → Prop)
 def twoDomain : List Bool := [true, false]
 def twoEvery : (Bool → Prop) → Prop := fun P => ∀ x ∈ twoDomain, P x
 
-/-- For non-principal quantifiers the round trip changes truth conditions:
-    `every(⊤)` is true but `A(BE(every))(⊤)` is not, since `BE(every)` asks
-    which entity equals every entity and on a two-element domain none does. -/
+/-- For non-principal quantifiers the round trip changes truth conditions. On a two-element
+domain `every(⊤)` is true but `A(BE(every))(⊤)` is not, since no entity equals every
+entity. -/
 theorem roundtrip_changes_nonprincipal :
     twoEvery (fun _ => True) ∧ ¬ A twoDomain (BE twoEvery) (fun _ => True) := by
   refine ⟨fun _ _ => trivial, ?_⟩
@@ -199,11 +192,11 @@ theorem A_monotone (domain : List E) (P : E → Prop) : Monotone (A domain P) :=
   show (∃ x ∈ domain, P x ∧ R x) → ∃ x ∈ domain, P x ∧ R' x
   exact fun ⟨x, hx, hPx, hRx⟩ ↦ ⟨x, hx, hPx, hRR' x hRx⟩
 
-/-- `A` into the monotone quantifiers `(E → Prop) →o Prop`. -/
+/-- `A_up domain P` is `A domain P` bundled as a monotone quantifier. -/
 def A_up (domain : List E) (P : E → Prop) : (E → Prop) →o Prop :=
   ⟨A domain P, A_monotone domain P⟩
 
-/-- `BE` out of the monotone quantifiers. -/
+/-- `BE_up Q` is the predicative content of the monotone quantifier `Q`. -/
 def BE_up (Q : (E → Prop) →o Prop) : E → Prop := BE Q
 
 /-- `A` is monotone as a map from properties to quantifiers. -/
@@ -242,13 +235,14 @@ def galoisCoinsertion (domain : List E)
     (A_BE_le_of_mono domain)
     (fun P => BE_A_id domain P hcomplete)
 
-/-- The Galois connection `A(P) ≤ Q ↔ P ≤ BE(Q)` for monotone `Q`. -/
+/-- `A` and `BE` form a Galois connection on the monotone quantifiers,
+`A(P) ≤ Q ↔ P ≤ BE(Q)`. -/
 theorem gc_A_BE (domain : List E)
     (hcomplete : ∀ x : E, x ∈ domain) :
     GaloisConnection (A_up domain (E := E)) BE_up :=
   (galoisCoinsertion domain hcomplete).gc
 
-/-- Existential closure over a complete finite domain is (GQ.some : GQ α), since both compute
+/-- Existential closure over a complete finite domain is `GQ.some`, since both compute
 `λR.λS. ∃x. R(x) ∧ S(x)`. -/
 theorem A_eq_some (E : Type*) (domain : List E) (hComplete : ∀ x : E, x ∈ domain) :
     A domain = (GQ.some : GQ E) := by
@@ -262,15 +256,15 @@ theorem A_eq_some (E : Type*) (domain : List E) (hComplete : ∀ x : E, x ∈ do
 letting the quantifier take the two-place predicate and the subject, quantifying over the
 object, and derive that entry for every determiner from its basic one by a lexical rule. -/
 
-/-- The object-position reading of a quantifier, which takes an object-first two-place
-predicate and the subject. -/
+/-- `objectShift Q` is the object-position reading of the quantifier `Q`, which takes an
+object-first two-place predicate and the subject. -/
 def objectShift (Q : NP E) : (E → E → Prop) → E → Prop := fun R x ↦ Q fun y ↦ R y x
 
 @[simp] theorem objectShift_apply (Q : NP E) (R : E → E → Prop) (x : E) :
     objectShift Q R x = Q fun y ↦ R y x := rfl
 
-/-- The object-position reading of a determiner, [heim-kratzer-1998]'s lexical rule deriving
-it from the basic entry. -/
+/-- `D.objectShift` is the object-position reading of the determiner `D`, which
+[heim-kratzer-1998]'s lexical rule derives from the basic entry. -/
 def _root_.Quantifier.GQ.objectShift (D : GQ E) : (E → Prop) → (E → E → Prop) → E → Prop :=
   fun P ↦ NP.objectShift (D P)
 
@@ -279,10 +273,10 @@ def _root_.Quantifier.GQ.objectShift (D : GQ E) : (E → Prop) → (E → E → 
 
 /-! ### Conjunctions and disjunctions of individuals -/
 
-/-- The conjunction of the individuals of `X`, the meet of their lifts. -/
+/-- `conjGQ X` is the conjunction of the individuals of `X`, the meet of their lifts. -/
 def conjGQ (X : Set E) : NP E := ⨅ x ∈ X, individual x
 
-/-- The disjunction of the individuals of `X`, the join of their lifts. -/
+/-- `disjGQ X` is the disjunction of the individuals of `X`, the join of their lifts. -/
 def disjGQ (X : Set E) : NP E := ⨆ x ∈ X, individual x
 
 @[simp] theorem conjGQ_apply (X : Set E) (P : E → Prop) : conjGQ X P ↔ ∀ x ∈ X, P x := by
