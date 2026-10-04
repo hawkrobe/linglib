@@ -1,265 +1,241 @@
 module
 
 public import Linglib.Logic.Team.Kripke
-public import Mathlib.Data.Finset.Lattice.Union
+public import Linglib.Logic.Team.Operations
+public import Linglib.Logic.Team.Atoms
 public import Linglib.Core.Data.Set.Functor
 
 /-!
 # Bisimulation for modal team logics
 
-This file defines bounded-depth world bisimulation between pointed
-`KripkeModel`s and its lift to teams, and proves the transport lemmas
-(image unions, team splits, witness teams) that each team-semantic
-logic's invariance theorem consumes at its modal and split cases.
-Nothing here mentions a formula type: each logic states its own
-`bisim_invariant_eval` against its own evaluation, recursing through
-these carrier lemmas.
+Two teams are related by the lifting `Set.LiftRel r` of a relation `r` on points when every
+point of each team is `r`-related to a point of the other. Team properties `P` and `P'` are
+invariant under `r` when teams related in this way agree on them. Every connective of
+`Team/Operations.lean` preserves invariance, the modalities one step down a chain of relations,
+so a team logic whose evaluation is a fold over these connectives is invariant under bounded
+bisimulation of Kripke models.
 
-## Main declarations
+## Main definitions
 
-* `WorldBisim k M w M' w'`: bounded `k`-bisimulation between pointed worlds.
-* `StateBisim k M s M' s'`: its lift to teams, by back/forth partnership, the relation lifting
-  `Set.LiftRel` of world bisimulation; the modal clause of world bisimulation is the same lifting
-  over the accessible worlds.
-* `StateBisim.biUnionAccess`, `StateBisim.splitPreserve`,
-  `StateBisim.possWitness`: the transport lemmas.
+* `Team.Invariant r P P'`: teams related by the lifting of `r` agree on `P` and `P'`.
+* `ModalLogic.WorldBisim k M w M' w'`: `k`-bisimilarity of pointed Kripke models.
+* `ModalLogic.StateBisim k M s M' s'`: its lifting to teams.
+
+## Main results
+
+* `Team.invariant_flat`, `Team.Invariant.inter`, `Team.Invariant.union`,
+  `Team.Invariant.tensor`, `Team.invariant_dep`: the non-modal connectives and atoms preserve
+  invariance.
+* `Team.Invariant.poss`, `Team.Invariant.nec`, `Team.Invariant.possWitness`,
+  `Team.Invariant.necImage`: the modalities preserve invariance one step down.
+* `Set.LiftRel.exists_finset_union_eq`: the lifting transports splits of a team.
+
+## Implementation notes
+
+[aloni-anttila-yang-2024] relativize bisimilarity to a finite set of atoms. Here it compares
+every atom of the atom type, which is the paper's notion when that type is the finite set.
 
 ## References
 
-* [aloni-anttila-yang-2024] — Definitions 3.1 and 3.6, Lemma 3.7
-* [vaananen-2008] — modal dependence logic, the (T8)/(T9) modal clauses
-* [anttila-2025] — nonemptiness in team semantics
+* [aloni-anttila-yang-2024] Aloni, Anttila and Yang, State-based Modal Logics for Free Choice
+* [vaananen-2008] Väänänen, Modal Dependence Logic
 -/
 
 @[expose] public section
+
+open scoped Relator
+
+namespace Team
+
+variable {α β : Type*} {r r₁ : α → β → Prop} {p : α → Prop} {p' : β → Prop}
+  {P Q : TeamProperty α} {P' Q' : TeamProperty β}
+
+/-- Team properties `P` and `P'` are invariant under a relation `r` on points when teams related
+    by the lifting `Set.LiftRel r` agree on them. -/
+def Invariant (r : α → β → Prop) (P : TeamProperty α) (P' : TeamProperty β) : Prop :=
+  ∀ ⦃s : Finset α⦄ ⦃s' : Finset β⦄, Set.LiftRel r ↑s ↑s' → (s ∈ P ↔ s' ∈ P')
+
+/-! ### Non-modal connectives and atoms -/
+
+theorem invariant_flat (hp : (r ⇒ Iff) p p') : Invariant r (flat p) (flat p') :=
+  fun _ _ hs ↦ ⟨fun h b hb ↦ let ⟨a, ha, hab⟩ := hs.2 b hb; (hp hab).1 (h a ha),
+    fun h a ha ↦ let ⟨b, hb, hab⟩ := hs.1 a ha; (hp hab).2 (h b hb)⟩
+
+theorem invariant_ne : Invariant r (ne : TeamProperty α) (ne : TeamProperty β) :=
+  fun _ _ hs ↦ by simpa using hs.nonempty_iff
+
+theorem invariant_singleton_empty : Invariant r ({∅} : TeamProperty α) ({∅} : TeamProperty β) :=
+  fun _ _ hs ↦ by simpa using hs.eq_empty_iff
+
+theorem invariant_univ : Invariant r (Set.univ : TeamProperty α) (Set.univ : TeamProperty β) :=
+  fun _ _ _ ↦ Iff.rfl
+
+theorem Invariant.inter (h₁ : Invariant r P P') (h₂ : Invariant r Q Q') :
+    Invariant r (P ∩ Q) (P' ∩ Q') :=
+  fun _ _ hs ↦ and_congr (h₁ hs) (h₂ hs)
+
+theorem Invariant.union (h₁ : Invariant r P P') (h₂ : Invariant r Q Q') :
+    Invariant r (P ∪ Q) (P' ∪ Q') :=
+  fun _ _ hs ↦ or_congr (h₁ hs) (h₂ hs)
+
+theorem invariant_dep {γ δ : Type*} {f : α → γ} {f' : β → γ} {g : α → δ} {g' : β → δ}
+    (hf : (r ⇒ Eq) f f') (hg : (r ⇒ Eq) g g') : Invariant r (dep f g) (dep f' g') := by
+  intro s s' hs
+  simp only [mem_dep]
+  constructor
+  · intro h b₁ hb₁ b₂ hb₂ hfb
+    obtain ⟨a₁, ha₁, h₁⟩ := hs.2 b₁ hb₁
+    obtain ⟨a₂, ha₂, h₂⟩ := hs.2 b₂ hb₂
+    rw [← hg h₁, ← hg h₂]
+    exact h a₁ ha₁ a₂ ha₂ (by rw [hf h₁, hf h₂, hfb])
+  · intro h a₁ ha₁ a₂ ha₂ hfa
+    obtain ⟨b₁, hb₁, h₁⟩ := hs.1 a₁ ha₁
+    obtain ⟨b₂, hb₂, h₂⟩ := hs.1 a₂ ha₂
+    rw [hg h₁, hg h₂]
+    exact h b₁ hb₁ b₂ hb₂ (by rw [← hf h₁, ← hf h₂, hfa])
+
+/-! ### Flat modalities
+
+The modalities take an invariance under `r` to an invariance under `r₁`, given that
+`r₁`-related points have successor sets related by the lifting of `r`. For Kripke models `r₁`
+is bisimilarity at depth `k + 1` and `r` at depth `k`
+([aloni-anttila-yang-2024] Lemma 3.7(i)). -/
+
+variable {R : α → Finset α} {R' : β → Finset β}
+
+/-- A sub-team of a team related by the lifting of `r` has a related sub-team on the other
+    side. -/
+theorem _root_.Set.LiftRel.exists_finset_subset {s t : Finset α} {s' : Finset β}
+    (hs : Set.LiftRel r ↑s ↑s') (ht : t ⊆ s) : ∃ t' ⊆ s', Set.LiftRel r ↑t ↑t' := by
+  classical
+  refine ⟨s'.filter fun b ↦ ∃ a ∈ t, r a b, Finset.filter_subset _ _, fun a ha ↦ ?_,
+    fun b hb ↦ (Finset.mem_filter.1 hb).2⟩
+  obtain ⟨b, hb, hab⟩ := hs.1 a (ht ha)
+  exact ⟨b, Finset.mem_filter.2 ⟨hb, a, ha, hab⟩, hab⟩
+
+theorem Invariant.nec (hR : ∀ a b, r₁ a b → Set.LiftRel r ↑(R a) ↑(R' b))
+    (h : Invariant r P P') : Invariant r₁ (nec R P) (nec R' P') :=
+  invariant_flat fun _ _ hab ↦ h (hR _ _ hab)
+
+theorem Invariant.poss (hR : ∀ a b, r₁ a b → Set.LiftRel r ↑(R a) ↑(R' b))
+    (h : Invariant r P P') : Invariant r₁ (poss R P) (poss R' P') := by
+  refine invariant_flat fun a b hab ↦ ⟨?_, ?_⟩
+  · rintro ⟨t, ht, htne, htP⟩
+    obtain ⟨t', ht', htt'⟩ := (hR a b hab).exists_finset_subset ht
+    exact ⟨t', ht', Finset.coe_nonempty.1 (htt'.nonempty_iff.1 htne), (h htt').1 htP⟩
+  · rintro ⟨t', ht', htne, htP⟩
+    obtain ⟨t, ht, htt'⟩ := (Set.liftRel_swap.2 (hR a b hab)).exists_finset_subset ht'
+    rw [Set.liftRel_swap] at htt'
+    exact ⟨t, ht, Finset.coe_nonempty.1 (htt'.nonempty_iff.2 htne), (h htt').2 htP⟩
+
+variable [DecidableEq α] [DecidableEq β]
+
+/-! ### Splits -/
+
+/-- A split of a team related by the lifting of `r` has a related split on the other side
+    ([aloni-anttila-yang-2024] Lemma 3.7(ii)). -/
+theorem _root_.Set.LiftRel.exists_finset_union_eq {s t u : Finset α} {s' : Finset β}
+    (hs : Set.LiftRel r ↑s ↑s') (hsplit : t ∪ u = s) :
+    ∃ t' u' : Finset β, t' ∪ u' = s' ∧ Set.LiftRel r ↑t ↑t' ∧ Set.LiftRel r ↑u ↑u' := by
+  classical
+  subst hsplit
+  have key (v : Finset α) (hv : v ⊆ t ∪ u) :
+      Set.LiftRel r ↑v ↑(s'.filter fun b ↦ ∃ a ∈ v, r a b) :=
+    ⟨fun a ha ↦ (hs.1 a (hv ha)).imp fun b ⟨hb, hab⟩ ↦ ⟨Finset.mem_filter.2 ⟨hb, a, ha, hab⟩, hab⟩,
+      fun b hb ↦ (Finset.mem_filter.1 hb).2⟩
+  refine ⟨_, _, ?_, key t Finset.subset_union_left, key u Finset.subset_union_right⟩
+  refine (Finset.union_subset (Finset.filter_subset _ _) (Finset.filter_subset _ _)).antisymm
+    fun b hb ↦ ?_
+  obtain ⟨a, ha, hab⟩ := hs.2 b hb
+  exact Finset.mem_union.2 <| (Finset.mem_union.1 ha).imp
+    (fun h ↦ Finset.mem_filter.2 ⟨hb, a, h, hab⟩) fun h ↦ Finset.mem_filter.2 ⟨hb, a, h, hab⟩
+
+theorem Invariant.tensor (h₁ : Invariant r P P') (h₂ : Invariant r Q Q') :
+    Invariant r (tensor P Q) (tensor P' Q') := by
+  intro s s' hs
+  constructor
+  · rintro ⟨t, ht, u, hu, rfl⟩
+    obtain ⟨t', u', hsplit, htt', huu'⟩ := hs.exists_finset_union_eq rfl
+    exact ⟨t', (h₁ htt').1 ht, u', (h₂ huu').1 hu, hsplit⟩
+  · rintro ⟨t', ht', u', hu', rfl⟩
+    obtain ⟨t, u, hsplit, htt', huu'⟩ := (Set.liftRel_swap.2 hs).exists_finset_union_eq rfl
+    rw [Set.liftRel_swap] at htt' huu'
+    exact ⟨t, (h₁ htt').2 ht', u, (h₂ huu').2 hu', hsplit⟩
+
+/-! ### Image modalities of dependence logic -/
+
+theorem Invariant.necImage (hR : ∀ a b, r₁ a b → Set.LiftRel r ↑(R a) ↑(R' b))
+    (h : Invariant r P P') : Invariant r₁ (necImage R P) (necImage R' P') := fun _ _ hs ↦
+  h (by simp only [biUnionHom_apply, Finset.coe_biUnion]; exact hs.biUnion fun a _ b _ ↦ hR a b)
+
+/-- A team `Y` meeting the successor set of each point of `s` has a counterpart meeting the
+    successor set of each point of a related `s'`, related to the part of `Y` reachable
+    from `s`. -/
+private theorem exists_liftRel_witness (hR : ∀ a b, r₁ a b → Set.LiftRel r ↑(R a) ↑(R' b))
+    {s : Finset α} {s' : Finset β} (hs : Set.LiftRel r₁ ↑s ↑s') {Y : Finset α}
+    (hY : ∀ a ∈ s, ∃ y ∈ Y, y ∈ R a) :
+    ∃ Y' : Finset β, (∀ b ∈ s', ∃ y' ∈ Y', y' ∈ R' b) ∧ Set.LiftRel r ↑(Y ∩ s.biUnion R) ↑Y' := by
+  classical
+  refine ⟨(s'.biUnion R').filter fun y' ↦ ∃ y ∈ Y ∩ s.biUnion R, r y y', fun b hb ↦ ?_,
+    fun y hy ↦ ?_, fun y' hy' ↦ (Finset.mem_filter.1 hy').2⟩
+  · obtain ⟨a, ha, hab⟩ := hs.2 b hb
+    obtain ⟨y, hyY, hya⟩ := hY a ha
+    obtain ⟨y', hy'b, hyy'⟩ := (hR a b hab).1 y hya
+    exact ⟨y', Finset.mem_filter.2 ⟨Finset.mem_biUnion.2 ⟨b, hb, hy'b⟩, y,
+      Finset.mem_inter.2 ⟨hyY, Finset.mem_biUnion.2 ⟨a, ha, hya⟩⟩, hyy'⟩, hy'b⟩
+  · obtain ⟨a, ha, hya⟩ := Finset.mem_biUnion.1 (Finset.mem_inter.1 hy).2
+    obtain ⟨b, hb, hab⟩ := hs.1 a ha
+    obtain ⟨y', hy'b, hyy'⟩ := (hR a b hab).1 y hya
+    exact ⟨y', Finset.mem_filter.2 ⟨Finset.mem_biUnion.2 ⟨b, hb, hy'b⟩, y, hy, hyy'⟩, hyy'⟩
+
+/-- The single-witness possibility modality preserves invariance between downward-closed
+    properties. -/
+theorem Invariant.possWitness (hR : ∀ a b, r₁ a b → Set.LiftRel r ↑(R a) ↑(R' b))
+    (hP : IsLowerSet P) (hP' : IsLowerSet P') (h : Invariant r P P') :
+    Invariant r₁ (possWitness R P) (possWitness R' P') := by
+  intro s s' hs
+  constructor
+  · rintro ⟨Y, hY, hYP⟩
+    obtain ⟨Y', hY', hYY'⟩ := exists_liftRel_witness hR hs hY
+    exact ⟨Y', hY', (h hYY').1 (hP Finset.inter_subset_left hYP)⟩
+  · rintro ⟨Y', hY', hYP⟩
+    obtain ⟨Y, hY, hYY'⟩ := exists_liftRel_witness
+      (fun b a hba ↦ Set.liftRel_swap.2 (hR a b hba)) (Set.liftRel_swap.2 hs) hY'
+    rw [Set.liftRel_swap] at hYY'
+    exact ⟨Y, hY, (h hYY').2 (hP' Finset.inter_subset_left hYP)⟩
+
+end Team
 
 namespace ModalLogic
 
 variable {W W' Atom : Type*}
 
-/-! ### World bisimulation -/
+/-! ### Bisimulation of Kripke models -/
 
-/-- Bounded-depth bisimulation between pointed worlds across two
-    `KripkeModel`s (Definition 3.1 of [aloni-anttila-yang-2024]). At
-    depth 0, requires only that atoms match. At depth `k+1`, additionally
-    requires the back/forth conditions on accessibility, the relation lifting
-    of depth-`k` bisimilarity to the accessible worlds. -/
+/-- Pointed Kripke models are `k`-bisimilar ([aloni-anttila-yang-2024] Definition 3.1) when they
+    agree on every atom and, at positive depth, their successor sets are related by the lifting
+    of bisimilarity one depth down. -/
 def WorldBisim : ℕ → KripkeModel W Atom → W → KripkeModel W' Atom → W' → Prop
   | 0,     M, w, M', w' => ∀ p : Atom, M.val p w = M'.val p w'
   | k + 1, M, w, M', w' =>
       (∀ p : Atom, M.val p w = M'.val p w') ∧
       Set.LiftRel (WorldBisim k M · M' ·) ↑(M.access w) ↑(M'.access w')
 
-/-- World bisimulation is reflexive at every depth. -/
-theorem WorldBisim.refl (k : ℕ) (M : KripkeModel W Atom) (w : W) :
-    WorldBisim k M w M w := by
+theorem WorldBisim.refl (k : ℕ) (M : KripkeModel W Atom) (w : W) : WorldBisim k M w M w := by
   induction k generalizing w with
   | zero => intro _; rfl
-  | succ k ih => exact ⟨fun _ => rfl, Set.liftRel_refl_of_refl_on fun v _ => ih v⟩
+  | succ k ih => exact ⟨fun _ ↦ rfl, Set.liftRel_refl_of_refl_on fun v _ ↦ ih v⟩
 
-/-- World bisimulation is symmetric (swap models). -/
-theorem WorldBisim.symm {k : ℕ} {M : KripkeModel W Atom} {w : W}
-    {M' : KripkeModel W' Atom} {w' : W'} :
-    WorldBisim k M w M' w' → WorldBisim k M' w' M w := by
-  induction k generalizing w w' with
-  | zero => intro h p; exact (h p).symm
-  | succ k ih => exact fun ⟨hp, h⟩ => ⟨fun p => (hp p).symm, (Set.liftRel_swap.2 h).imp ih⟩
-
-/-- Bisimilarity at depth `k+1` implies bisimilarity at depth `k`:
-    higher depths are stricter. -/
-theorem WorldBisim.mono_succ {k : ℕ} {M : KripkeModel W Atom} {w : W}
-    {M' : KripkeModel W' Atom} {w' : W'} :
-    WorldBisim (k + 1) M w M' w' → WorldBisim k M w M' w' := by
-  induction k generalizing w w' with
-  | zero => exact fun h => h.1
-  | succ n ih => exact fun ⟨hp, h⟩ => ⟨hp, h.imp ih⟩
-
-/-- Bisimilarity is monotone in depth: `m ≤ n → WorldBisim n → WorldBisim m`. -/
-theorem WorldBisim.mono_le {m n : ℕ} (hmn : m ≤ n)
-    {M : KripkeModel W Atom} {w : W} {M' : KripkeModel W' Atom} {w' : W'} :
-    WorldBisim n M w M' w' → WorldBisim m M w M' w' := by
-  induction hmn with
-  | refl => exact id
-  | step _ ih => exact fun h => ih h.mono_succ
-
-/-! ### State bisimulation -/
-
-/-- State bisimulation (Definition 3.6 of [aloni-anttila-yang-2024]):
-    every world in `s` is `k`-bisimilar to some world in `s'`, and every
-    world in `s'` is `k`-bisimilar to some world in `s`. Lifts world
-    bisimulation from points to teams. -/
-def StateBisim (k : ℕ) (M : KripkeModel W Atom) (s : Finset W)
-    (M' : KripkeModel W' Atom) (s' : Finset W') : Prop :=
-  Set.LiftRel (WorldBisim k M · M' ·) ↑s ↑s'
-
-theorem StateBisim.refl (k : ℕ) (M : KripkeModel W Atom) (s : Finset W) :
-    StateBisim k M s M s :=
-  Set.liftRel_refl_of_refl_on fun w _ => WorldBisim.refl k M w
-
-theorem StateBisim.symm {k : ℕ} {M : KripkeModel W Atom} {s : Finset W}
-    {M' : KripkeModel W' Atom} {s' : Finset W'} :
-    StateBisim k M s M' s' → StateBisim k M' s' M s :=
-  fun h => (Set.liftRel_swap.2 h).imp WorldBisim.symm
-
-theorem StateBisim.mono_succ {k : ℕ} {M : KripkeModel W Atom} {s : Finset W}
-    {M' : KripkeModel W' Atom} {s' : Finset W'} :
-    StateBisim (k + 1) M s M' s' → StateBisim k M s M' s' :=
-  fun h => h.imp WorldBisim.mono_succ
-
-theorem StateBisim.mono_le {m n : ℕ} (hmn : m ≤ n)
-    {M : KripkeModel W Atom} {s : Finset W} {M' : KripkeModel W' Atom}
-    {s' : Finset W'} :
-    StateBisim n M s M' s' → StateBisim m M s M' s' := by
-  induction hmn with
-  | refl => exact id
-  | step _ ih => exact fun h => ih h.mono_succ
-
-/-! ### Helpers for the invariance theorems -/
-
-/-- World bisimilarity at any depth preserves atom valuations. -/
-theorem WorldBisim.val_eq {k : ℕ} {M : KripkeModel W Atom} {w : W}
-    {M' : KripkeModel W' Atom} {w' : W'}
-    (h : WorldBisim k M w M' w') (p : Atom) :
-    M.val p w = M'.val p w' :=
+theorem WorldBisim.val_eq {k : ℕ} {M : KripkeModel W Atom} {w : W} {M' : KripkeModel W' Atom}
+    {w' : W'} (h : WorldBisim k M w M' w') (p : Atom) : M.val p w = M'.val p w' :=
   match k, h with
   | 0, h => h p
   | _ + 1, ⟨h, _⟩ => h p
 
-/-- World bisim at depth `k+1` yields state bisim of the accessibility
-    images at depth `k` — the singleton form of Lemma 3.7(i). -/
-theorem WorldBisim.accessStateBisim {k : ℕ} {M : KripkeModel W Atom} {w : W}
-    {M' : KripkeModel W' Atom} {w' : W'}
-    (h : WorldBisim (k + 1) M w M' w') :
-    StateBisim k M (M.access w) M' (M'.access w') :=
-  h.2
-
-/-- State bisim preserves nonemptiness. -/
-theorem StateBisim.nonempty_iff {k : ℕ} {M : KripkeModel W Atom} {s : Finset W}
-    {M' : KripkeModel W' Atom} {s' : Finset W'}
-    (h : StateBisim k M s M' s') : s.Nonempty ↔ s'.Nonempty := by
-  simpa using Set.LiftRel.nonempty_iff h
-
-/-- State bisim preserves emptiness. -/
-theorem StateBisim.eq_empty_iff {k : ℕ} {M : KripkeModel W Atom} {s : Finset W}
-    {M' : KripkeModel W' Atom} {s' : Finset W'}
-    (h : StateBisim k M s M' s') : s = ∅ ↔ s' = ∅ := by
-  simp only [← Finset.not_nonempty_iff_eq_empty, h.nonempty_iff]
-
-/-- Given `s ⇌_k s'` and a sub-team `t ⊆ s`, there is a sub-team
-    `t' ⊆ s'` with `t ⇌_k t'`; non-emptiness transfers. -/
-theorem StateBisim.exists_image_subset {k : ℕ} {M : KripkeModel W Atom}
-    {s t : Finset W} {M' : KripkeModel W' Atom} {s' : Finset W'}
-    (h : StateBisim k M s M' s') (hsub : t ⊆ s) :
-    ∃ t' : Finset W', t' ⊆ s' ∧ (t.Nonempty → t'.Nonempty) ∧
-      StateBisim k M t M' t' := by
-  classical
-  let t' : Finset W' :=
-    s'.filter (fun w' => ∃ w ∈ t, WorldBisim k M w M' w')
-  refine ⟨t', ?_, ?_, ?_, ?_⟩
-  · intro w' hw'; exact (Finset.mem_filter.mp hw').1
-  · rintro ⟨w, hw⟩
-    obtain ⟨w', hw', hbisim⟩ := h.1 w (hsub hw)
-    exact ⟨w', Finset.mem_filter.mpr ⟨hw', w, hw, hbisim⟩⟩
-  · intro w hw
-    obtain ⟨w', hw', hbisim⟩ := h.1 w (hsub hw)
-    exact ⟨w', Finset.mem_filter.mpr ⟨hw', w, hw, hbisim⟩, hbisim⟩
-  · intro w' hw'
-    obtain ⟨_, w, hw, hbisim⟩ := Finset.mem_filter.mp hw'
-    exact ⟨w, hw, hbisim⟩
-
-/-! ### Lemma 3.7: state bisimulation preserves modal step and team splits -/
-
-variable [DecidableEq W] [DecidableEq W']
-
-/-- Lemma 3.7(i): state bisim at depth `k+1` yields state bisim of the
-    unions of accessibility images at depth `k`. -/
-theorem StateBisim.biUnionAccess {k : ℕ} {M : KripkeModel W Atom} {s : Finset W}
-    {M' : KripkeModel W' Atom} {s' : Finset W'}
-    (h : StateBisim (k + 1) M s M' s') :
-    StateBisim k M (s.biUnion M.access) M' (s'.biUnion M'.access) := by
-  rw [StateBisim, Finset.coe_biUnion, Finset.coe_biUnion]
-  exact Set.LiftRel.biUnion h fun _ _ _ _ hb => hb.accessStateBisim
-
-/-- Lemma 3.7(ii): state bisim preserves binary team splits. Given
-    `s = t ∪ u` and `s ⇌_k s'`, there are `t'`, `u'` with `s' = t' ∪ u'`,
-    `t ⇌_k t'`, and `u ⇌_k u'`. -/
-theorem StateBisim.splitPreserve {k : ℕ} {M : KripkeModel W Atom}
-    {s t u : Finset W} {M' : KripkeModel W' Atom} {s' : Finset W'}
-    (h : StateBisim k M s M' s') (hsplit : t ∪ u = s) :
-    ∃ t' u' : Finset W', t' ∪ u' = s' ∧ StateBisim k M t M' t' ∧ StateBisim k M u M' u' := by
-  classical
-  have htsub : t ⊆ s := hsplit ▸ Finset.subset_union_left
-  have husub : u ⊆ s := hsplit ▸ Finset.subset_union_right
-  let t' : Finset W' := s'.filter (fun w' => ∃ w ∈ t, WorldBisim k M w M' w')
-  let u' : Finset W' := s'.filter (fun w' => ∃ w ∈ u, WorldBisim k M w M' w')
-  refine ⟨t', u', ?_, ?_, ?_⟩
-  · apply Finset.Subset.antisymm
-    · intro w' hw'
-      rcases Finset.mem_union.mp hw' with h | h
-      · exact (Finset.mem_filter.mp h).1
-      · exact (Finset.mem_filter.mp h).1
-    · intro w' hw'
-      obtain ⟨w, hw, hbisim⟩ := h.2 w' hw'
-      have hwtu : w ∈ t ∪ u := hsplit ▸ hw
-      rcases Finset.mem_union.mp hwtu with hwt | hwu
-      · refine Finset.mem_union.mpr (Or.inl ?_)
-        exact Finset.mem_filter.mpr ⟨hw', w, hwt, hbisim⟩
-      · refine Finset.mem_union.mpr (Or.inr ?_)
-        exact Finset.mem_filter.mpr ⟨hw', w, hwu, hbisim⟩
-  · refine ⟨?_, ?_⟩
-    · intro w hw
-      obtain ⟨w', hw', hbisim⟩ := h.1 w (htsub hw)
-      refine ⟨w', ?_, hbisim⟩
-      exact Finset.mem_filter.mpr ⟨hw', w, hw, hbisim⟩
-    · intro w' hw'
-      obtain ⟨_, w, hw, hbisim⟩ := Finset.mem_filter.mp hw'
-      exact ⟨w, hw, hbisim⟩
-  · refine ⟨?_, ?_⟩
-    · intro w hw
-      obtain ⟨w', hw', hbisim⟩ := h.1 w (husub hw)
-      refine ⟨w', ?_, hbisim⟩
-      exact Finset.mem_filter.mpr ⟨hw', w, hw, hbisim⟩
-    · intro w' hw'
-      obtain ⟨_, w, hw, hbisim⟩ := Finset.mem_filter.mp hw'
-      exact ⟨w, hw, hbisim⟩
-
-/-! ### Single-witness modal step (Väänänen-style ◇) -/
-
-/-- Single-witness team transport: given `s ⇌_{k+1} s'` and a witness team
-    `Y` inside the image union that every world in `s` reaches, there is a
-    `Y'` that every world in `s'` reaches, with `Y ⇌_k Y'` — the Lemma 3.7
-    analogue for the single-witness `◇`-support clause. -/
-theorem StateBisim.possWitness {k : ℕ} {M : KripkeModel W Atom} {s : Finset W}
-    {M' : KripkeModel W' Atom} {s' : Finset W'}
-    (h : StateBisim (k + 1) M s M' s') {Y : Finset W}
-    (hYsub : Y ⊆ s.biUnion M.access)
-    (hwit : ∀ w ∈ s, ∃ y ∈ Y, y ∈ M.access w) :
-    ∃ Y' : Finset W', Y' ⊆ s'.biUnion M'.access ∧
-      (∀ w' ∈ s', ∃ y' ∈ Y', y' ∈ M'.access w') ∧
-      StateBisim k M Y M' Y' := by
-  classical
-  let Y' : Finset W' :=
-    (s'.biUnion M'.access).filter (fun y' => ∃ y ∈ Y, WorldBisim k M y M' y')
-  refine ⟨Y', ?_, ?_, ?_, ?_⟩
-  · intro y' hy'; exact (Finset.mem_filter.mp hy').1
-  · -- every w' ∈ s' reaches some y' ∈ Y'
-    intro w' hw'
-    obtain ⟨w, hw, hbw⟩ := h.2 w' hw'
-    obtain ⟨y, hyY, hyw⟩ := hwit w hw
-    obtain ⟨y', hy'w', hby⟩ := hbw.2.1 y hyw
-    have hy'mem : y' ∈ Y' :=
-      Finset.mem_filter.mpr ⟨Finset.mem_biUnion.mpr ⟨w', hw', hy'w'⟩, y, hyY, hby⟩
-    exact ⟨y', hy'mem, hy'w'⟩
-  · -- forth: every y ∈ Y has a partner in Y'
-    intro y hyY
-    obtain ⟨w, hw, hyw⟩ := Finset.mem_biUnion.mp (hYsub hyY)
-    obtain ⟨w', hw', hbw⟩ := h.1 w hw
-    obtain ⟨y', hy'w', hby⟩ := hbw.2.1 y hyw
-    exact ⟨y', Finset.mem_filter.mpr
-      ⟨Finset.mem_biUnion.mpr ⟨w', hw', hy'w'⟩, y, hyY, hby⟩, hby⟩
-  · -- back: every y' ∈ Y' has a partner in Y
-    intro y' hy'
-    obtain ⟨_, y, hyY, hby⟩ := Finset.mem_filter.mp hy'
-    exact ⟨y, hyY, hby⟩
+/-- Teams are `k`-bisimilar ([aloni-anttila-yang-2024] Definition 3.6) when they are related by
+    the lifting of `k`-bisimilarity of their worlds. -/
+def StateBisim (k : ℕ) (M : KripkeModel W Atom) (s : Finset W) (M' : KripkeModel W' Atom)
+    (s' : Finset W') : Prop :=
+  Set.LiftRel (WorldBisim k M · M' ·) ↑s ↑s'
 
 end ModalLogic

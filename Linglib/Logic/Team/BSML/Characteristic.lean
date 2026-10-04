@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Logic.Team.BSML.Classical
-public import Linglib.Logic.Team.BSML.Bisimulation
+public import Linglib.Logic.Team.Bisimulation
 public import Mathlib.Data.Fintype.Pi
 public import Mathlib.Data.Fintype.Prod
 

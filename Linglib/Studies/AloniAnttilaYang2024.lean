@@ -1,40 +1,43 @@
 module
 
 public import Linglib.Logic.Team.BSML.Properties
-public import Linglib.Logic.Team.BSML.Bisimulation
 public import Linglib.Logic.Team.Closure
 public import Linglib.Studies.Aloni2022
 
 /-!
 # Aloni, Anttila and Yang (2024): state-based modal logics for free choice
 
-Two extensions of bilateral state-based modal logic: BSML⨼ adds the global
-(inquisitive) disjunction, supported when either disjunct is; BSML⊘ adds the
-emptiness operator, supported when the argument is or the state is empty.
-The closure profile of the three logics comes from two connectives alone
-(Fact 2.7): NE is the only obstruction to downward closure and the empty-state
-property, ⨼ the only obstruction to union closure. All three logics are
-invariant under bounded state bisimulation (Theorem 3.8), and BSML, though
-union closed, cannot express every union-closed bisimulation-invariant
-property (Fact 3.19).
+Aloni, Anttila and Yang extend bilateral state-based modal logic (BSML) in two ways. BSML⨼ adds
+the global disjunction `⨼`, supported when either disjunct is, and BSML⊘ adds the emptiness
+operator `⊘`, supported when its argument is or the state is empty. `NE` is the only obstruction
+to downward closure and to the empty-state property, and `⨼` the only obstruction to union
+closure. All three logics are invariant under bounded bisimulation, and BSML, though union
+closed, cannot express every union-closed bisimulation-invariant property.
 
-Here the three logics are the fragments of one syntax: `Formula` carries ⊥,
-NE, ⨼ and ⊘ together, and `NEFree`, `GDFree`, `EmptFree` cut out the
-languages, so each closure property is a single theorem under its fragment
-hypothesis. The §2 equivalences between the new connectives are stated
-(`support_empt_iff_gdisj_bot`, `support_poss_gdisj`, the distributions of ∧
-and ∨ over ⨼), Lemma 3.18 and the counterexample of Fact 3.19 are proved on a
-two-world model, ⊘ is shown to cancel pragmatic enrichment, and narrow-scope
-free choice transfers from [aloni-2022] along the embedding of BSML.
-Expressive completeness (Theorems 3.15, 3.17) and the natural-deduction
-systems of §4 are not formalised here; the BSML system of Definition 4.33
-lives in `Logic/Team/BSML/NaturalDeduction`.
+## Main results
+
+* `support_empt_iff_gdisj_bot`, `support_poss_gdisj`: equivalences among the new connectives.
+* `isLowerSet_support_of_neFree`, `supClosed_support_of_gdFree`,
+  `isFlat_support_of_neFree_gdFree`: the closure properties of Fact 2.7.
+* `invariant_eval`: bisimulation invariance (Theorem 3.8).
+* `bsml_not_complete_for_unionClosed`: BSML does not express every union-closed
+  bisimulation-invariant property (Fact 3.19).
+* `support_empt_conj_ne`: `⊘` cancels pragmatic enrichment.
+* `narrowScopeFC`: narrow-scope free choice, transferred from BSML along `ofBSML`.
+
+## Implementation notes
+
+The three logics are fragments of one syntax: `Formula` carries `⊥`, `NE`, `⨼` and `⊘`
+together, and `NEFree`, `GDFree` and `EmptFree` cut out the languages, so each closure property
+is one theorem under its fragment hypothesis. Expressive completeness (Theorems 3.15 and 3.17)
+and the natural-deduction systems of §4 are not formalized here; the BSML system lives in
+`Logic/Team/BSML/NaturalDeduction.lean`.
 
 ## References
 
-* [aloni-anttila-yang-2024]
-* [aloni-2022]
-* [anttila-2025]
+* [aloni-anttila-yang-2024] Aloni, Anttila and Yang, State-based Modal Logics for Free Choice
+* [aloni-2022] Aloni, Logic and Conversation: The Case of Free Choice
+* [anttila-2025] Anttila, Not Nothing: Nonemptiness in Team Semantics
 -/
 
 @[expose] public section
@@ -43,12 +46,13 @@ namespace AloniAnttilaYang2024
 
 variable {W W' : Type*} [DecidableEq W] [DecidableEq W'] {Atom : Type*}
 
-open ModalLogic (KripkeModel StateBisim WorldBisim)
+open ModalLogic (KripkeModel WorldBisim)
 
 /-! ### Syntax and semantics -/
 
-/-- The joint syntax of BSML, BSML⨼ and BSML⊘ (Definition 2.1): BSML with the weak
-    contradiction `⊥`, the global disjunction `⨼` and the emptiness operator `⊘`. -/
+/-- The formulas of the joint syntax of BSML, BSML⨼ and BSML⊘ (Definition 2.1) are those of
+    BSML together with the weak contradiction `⊥`, the global disjunction `⨼` and the
+    emptiness operator `⊘`. -/
 inductive Formula (Atom : Type*) where
   | atom (p : Atom)
   /-- Weak contradiction `⊥`, supported by the empty state only. -/
@@ -71,21 +75,21 @@ namespace Formula
 /-- `□φ := ¬◇¬φ`. -/
 def nec (φ : Formula Atom) : Formula Atom := .neg (.poss (.neg φ))
 
-/-- No occurrence of `NE`. -/
+/-- `φ.NEFree` holds when `φ` contains no `NE`. -/
 def NEFree : Formula Atom → Prop
   | .ne => False
   | .neg φ | .empt φ | .poss φ => φ.NEFree
   | .conj φ ψ | .disj φ ψ | .gdisj φ ψ => φ.NEFree ∧ ψ.NEFree
   | _ => True
 
-/-- No occurrence of `⨼`: the BSML⊘ fragment. -/
+/-- `φ.GDFree` holds when `φ` contains no `⨼`, that is, when `φ` is a BSML⊘ formula. -/
 def GDFree : Formula Atom → Prop
   | .gdisj _ _ => False
   | .neg φ | .empt φ | .poss φ => φ.GDFree
   | .conj φ ψ | .disj φ ψ => φ.GDFree ∧ ψ.GDFree
   | _ => True
 
-/-- No occurrence of `⊘`: the BSML⨼ fragment. -/
+/-- `φ.EmptFree` holds when `φ` contains no `⊘`, that is, when `φ` is a BSML⨼ formula. -/
 def EmptFree : Formula Atom → Prop
   | .empt _ => False
   | .neg φ | .poss φ => φ.EmptFree
@@ -115,8 +119,8 @@ instance : (φ : Formula Atom) → Decidable φ.EmptFree
 
 end Formula
 
-/-- Bilateral evaluation (Definition 2.3): `eval M true φ t` is support, `eval M false φ t`
-    anti-support. -/
+/-- Bilateral evaluation `eval M b φ t` (Definition 2.3) is support when `b` is `true` and
+    anti-support when it is `false`. -/
 def eval (M : KripkeModel W Atom) : Bool → Formula Atom → Finset W → Prop
   | true, .atom p, t => ∀ w ∈ t, M.val p w = true
   | false, .atom p, t => ∀ w ∈ t, M.val p w = false
@@ -180,20 +184,20 @@ theorem support_disj_gdisj :
   · rintro (⟨t₁, h₁, t₂, h₂, h⟩ | ⟨t₁, h₁, t₂, h₂, h⟩)
     exacts [⟨t₁, h₁, t₂, Or.inl h₂, h⟩, ⟨t₁, h₁, t₂, Or.inr h₂, h⟩]
 
-/-- `◇(φ ⨼ ψ) ≡ ◇φ ∨ ◇ψ`: the diamond converts the global disjunction into the
-    tensor one (the soundness of Conv◇⨼∨ in Theorem 4.3). -/
+/-- The diamond converts the global disjunction into the tensor one, `◇(φ ⨼ ψ) ≡ ◇φ ∨ ◇ψ`,
+    which makes the rule Conv◇⨼∨ of Theorem 4.3 sound. -/
 theorem support_poss_gdisj :
     support M (.poss (.gdisj φ ψ)) t ↔ support M (.disj (.poss φ) (.poss ψ)) t := by
   classical
   constructor
   · intro h
-    refine ⟨t.filter λ w ↦ ∃ s ⊆ M.access w, s.Nonempty ∧ support M φ s, ?_,
-      t.filter λ w ↦ ∃ s ⊆ M.access w, s.Nonempty ∧ support M ψ s, ?_, ?_⟩
+    refine ⟨t.filter fun w ↦ ∃ s ⊆ M.access w, s.Nonempty ∧ support M φ s, ?_,
+      t.filter fun w ↦ ∃ s ⊆ M.access w, s.Nonempty ∧ support M ψ s, ?_, ?_⟩
     · intro w hw; exact (Finset.mem_filter.mp hw).2
     · intro w hw; exact (Finset.mem_filter.mp hw).2
     · ext w
       simp only [Finset.mem_union, Finset.mem_filter]
-      refine ⟨λ h' ↦ h'.elim And.left And.left, λ hw ↦ ?_⟩
+      refine ⟨fun h' ↦ h'.elim And.left And.left, fun hw ↦ ?_⟩
       obtain ⟨s, hs, hne, hφ | hψ⟩ := h w hw
       exacts [Or.inl ⟨hw, s, hs, hne, hφ⟩, Or.inr ⟨hw, s, hs, hne, hψ⟩]
   · rintro ⟨t₁, h₁, t₂, h₂, h⟩ w hw
@@ -205,7 +209,7 @@ theorem support_poss_gdisj :
 
 private theorem eval_empty_of_neFree (hNE : φ.NEFree) : support M φ ∅ ∧ antiSupport M φ ∅ := by
   induction φ with
-  | atom p => exact ⟨λ w hw ↦ absurd hw (by simp), λ w hw ↦ absurd hw (by simp)⟩
+  | atom p => exact ⟨fun w hw ↦ absurd hw (by simp), fun w hw ↦ absurd hw (by simp)⟩
   | bot => exact ⟨rfl, trivial⟩
   | ne => exact hNE.elim
   | neg ψ ih => exact (ih hNE).symm
@@ -215,7 +219,7 @@ private theorem eval_empty_of_neFree (hNE : φ.NEFree) : support M φ ∅ ∧ an
     exact ⟨Team.empty_mem_tensor (ih₁ hNE.1).1 (ih₂ hNE.2).1, ⟨(ih₁ hNE.1).2, (ih₂ hNE.2).2⟩⟩
   | gdisj ψ₁ ψ₂ ih₁ ih₂ => exact ⟨Or.inl (ih₁ hNE.1).1, ⟨(ih₁ hNE.1).2, (ih₂ hNE.2).2⟩⟩
   | empt ψ ih => exact ⟨Or.inr rfl, (ih hNE).2⟩
-  | poss ψ _ => exact ⟨λ w hw ↦ absurd hw (by simp), λ w hw ↦ absurd hw (by simp)⟩
+  | poss ψ _ => exact ⟨fun w hw ↦ absurd hw (by simp), fun w hw ↦ absurd hw (by simp)⟩
 
 /-- NE-free formulas have the empty-state property. -/
 theorem support_empty_of_neFree (hNE : φ.NEFree) : support M φ ∅ :=
@@ -281,62 +285,63 @@ theorem isFlat_support_of_neFree_gdFree (hNE : φ.NEFree) (hGD : φ.GDFree) :
 
 /-! ### BSML is not complete for union-closed properties -/
 
-/-- Lemma 3.18: a BSML formula with the empty-state property is downward closed. -/
+/-- A BSML formula with the empty-state property is downward closed (Lemma 3.18). -/
 theorem isLowerSet_of_support_empty (hGD : φ.GDFree) (hE : φ.EmptFree) :
     (support M φ ∅ → ∀ s t : Finset W, t ⊆ s → support M φ s → support M φ t) ∧
     (antiSupport M φ ∅ → ∀ s t : Finset W, t ⊆ s → antiSupport M φ s → antiSupport M φ t) := by
   induction φ with
-  | atom p => exact ⟨λ _ _ _ h hs w hw ↦ hs w (h hw), λ _ _ _ h hs w hw ↦ hs w (h hw)⟩
-  | bot => exact ⟨λ _ _ _ h hs ↦ Finset.subset_empty.mp (hs ▸ h), λ _ _ _ _ _ ↦ trivial⟩
+  | atom p => exact ⟨fun _ _ _ h hs w hw ↦ hs w (h hw), fun _ _ _ h hs w hw ↦ hs w (h hw)⟩
+  | bot => exact ⟨fun _ _ _ h hs ↦ Finset.subset_empty.mp (hs ▸ h), fun _ _ _ _ _ ↦ trivial⟩
   | ne =>
-    exact ⟨λ h ↦ absurd h Finset.not_nonempty_empty,
-      λ _ _ _ h hs ↦ by rw [hs] at h; exact Finset.subset_empty.mp h⟩
+    exact ⟨fun h ↦ absurd h Finset.not_nonempty_empty,
+      fun _ _ _ h hs ↦ by rw [hs] at h; exact Finset.subset_empty.mp h⟩
   | neg ψ ih => exact (ih hGD hE).symm
   | conj ψ₁ ψ₂ ih₁ ih₂ =>
     obtain ⟨ihs₁, iha₁⟩ := ih₁ hGD.1 hE.1
     obtain ⟨ihs₂, iha₂⟩ := ih₂ hGD.2 hE.2
-    refine ⟨λ ⟨e₁, e₂⟩ s t h ⟨h₁, h₂⟩ ↦ ⟨ihs₁ e₁ s t h h₁, ihs₂ e₂ s t h h₂⟩, ?_⟩
+    refine ⟨fun ⟨e₁, e₂⟩ s t h ⟨h₁, h₂⟩ ↦ ⟨ihs₁ e₁ s t h h₁, ihs₂ e₂ s t h h₂⟩, ?_⟩
     rintro ⟨u₁, e₁, u₂, e₂, hu⟩ s t h ⟨t₁, h₁, t₂, h₂, hsplit⟩
     have hu₁ : u₁ = ∅ := Finset.subset_empty.mp (le_sup_left.trans_eq hu)
     have hu₂ : u₂ = ∅ := Finset.subset_empty.mp (le_sup_right.trans_eq hu)
     subst hu₁ hu₂
-    exact ⟨t₁ ∩ t, iha₁ e₁ t₁ _ Finset.inter_subset_left h₁, t₂ ∩ t, iha₂ e₂ t₂ _ Finset.inter_subset_left h₂,
-      union_inter_of_union_eq hsplit h⟩
+    exact ⟨t₁ ∩ t, iha₁ e₁ t₁ _ Finset.inter_subset_left h₁, t₂ ∩ t,
+      iha₂ e₂ t₂ _ Finset.inter_subset_left h₂, union_inter_of_union_eq hsplit h⟩
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
     obtain ⟨ihs₁, iha₁⟩ := ih₁ hGD.1 hE.1
     obtain ⟨ihs₂, iha₂⟩ := ih₂ hGD.2 hE.2
-    refine ⟨?_, λ ⟨e₁, e₂⟩ s t h ⟨h₁, h₂⟩ ↦ ⟨iha₁ e₁ s t h h₁, iha₂ e₂ s t h h₂⟩⟩
+    refine ⟨?_, fun ⟨e₁, e₂⟩ s t h ⟨h₁, h₂⟩ ↦ ⟨iha₁ e₁ s t h h₁, iha₂ e₂ s t h h₂⟩⟩
     rintro ⟨u₁, e₁, u₂, e₂, hu⟩ s t h ⟨t₁, h₁, t₂, h₂, hsplit⟩
     have hu₁ : u₁ = ∅ := Finset.subset_empty.mp (le_sup_left.trans_eq hu)
     have hu₂ : u₂ = ∅ := Finset.subset_empty.mp (le_sup_right.trans_eq hu)
     subst hu₁ hu₂
-    exact ⟨t₁ ∩ t, ihs₁ e₁ t₁ _ Finset.inter_subset_left h₁, t₂ ∩ t, ihs₂ e₂ t₂ _ Finset.inter_subset_left h₂,
-      union_inter_of_union_eq hsplit h⟩
+    exact ⟨t₁ ∩ t, ihs₁ e₁ t₁ _ Finset.inter_subset_left h₁, t₂ ∩ t,
+      ihs₂ e₂ t₂ _ Finset.inter_subset_left h₂, union_inter_of_union_eq hsplit h⟩
   | gdisj => exact hGD.elim
   | empt => exact hE.elim
-  | poss ψ _ => exact ⟨λ _ _ _ h hs w hw ↦ hs w (h hw), λ _ _ _ h hs w hw ↦ hs w (h hw)⟩
+  | poss ψ _ => exact ⟨fun _ _ _ h hs w hw ↦ hs w (h hw), fun _ _ _ h hs w hw ↦ hs w (h hw)⟩
 
-/-- The two-world model of Fact 3.19: `p` holds at `true` only, nothing is accessible. -/
+/-- The two-world model of Fact 3.19 makes `p` true at `true` only and has no accessible
+    worlds. -/
 def twoWorlds : KripkeModel Bool Unit where
   access _ := ∅
   val _ w := w
 
-/-- The property `‖(p ∧ NE) ∨ (¬p ∧ NE)‖ ∪ ‖⊥‖` of Fact 3.19: union closed and
-    bisimulation invariant, yet not expressible in BSML. -/
+/-- The property `‖(p ∧ NE) ∨ (¬p ∧ NE)‖ ∪ ‖⊥‖` of Fact 3.19 is union closed and bisimulation
+    invariant, yet not expressible in BSML. -/
 def splitProperty (s : Finset Bool) : Prop :=
   support twoWorlds (.disj (.conj (.atom ()) .ne) (.conj (.neg (.atom ())) .ne)) s ∨ s = ∅
 
-/-- Fact 3.19: no BSML formula expresses `splitProperty` — it holds on `∅` and on
-    `{true, false}`, so a BSML formula expressing it would be downward closed
-    (Lemma 3.18) and hold on `{true}`, where the property fails. -/
+/-- No BSML formula expresses `splitProperty` (Fact 3.19). The property holds on `∅` and on
+    `{true, false}`, so a BSML formula expressing it would be downward closed (Lemma 3.18) and
+    hold on `{true}`, where the property fails. -/
 theorem bsml_not_complete_for_unionClosed :
     ¬ ∃ φ : Formula Unit, φ.GDFree ∧ φ.EmptFree ∧
       ∀ s : Finset Bool, support twoWorlds φ s ↔ splitProperty s := by
   rintro ⟨φ, hGD, hE, h⟩
   have hempty : support twoWorlds φ ∅ := (h ∅).mpr (Or.inr rfl)
   have hboth : support twoWorlds φ {true, false} := (h _).mpr <| Or.inl
-    ⟨{true}, ⟨λ w hw ↦ by simpa [twoWorlds] using hw, by simp⟩,
-      {false}, ⟨λ w hw ↦ by simpa [twoWorlds] using hw, by simp⟩, rfl⟩
+    ⟨{true}, ⟨fun w hw ↦ by simpa [twoWorlds] using hw, by simp⟩,
+      {false}, ⟨fun w hw ↦ by simpa [twoWorlds] using hw, by simp⟩, rfl⟩
   have htrue := (h {true}).mp
     ((isLowerSet_of_support_empty twoWorlds φ hGD hE).1 hempty _ _ (by simp) hboth)
   rcases htrue with ⟨t₁, -, t₂, ⟨hp, hne⟩, hsplit⟩ | h1
@@ -348,7 +353,7 @@ theorem bsml_not_complete_for_unionClosed :
 
 /-! ### The emptiness operator cancels enrichment -/
 
-/-- `⊘(α ∧ NE) ≡ α` for classical `α` (§5): the emptiness operator undoes the
+/-- For classical `α`, `⊘(α ∧ NE) ≡ α` (§5), so the emptiness operator undoes the
     non-emptiness that pragmatic enrichment adds. -/
 theorem support_empt_conj_ne (hα : φ.NEFree) :
     support M (.empt (.conj φ .ne)) t ↔ support M φ t := by
@@ -376,8 +381,8 @@ theorem gdFree_ofBSML (φ : BSML.Formula Atom) : (ofBSML φ).GDFree := by
 theorem emptFree_ofBSML (φ : BSML.Formula Atom) : (ofBSML φ).EmptFree := by
   induction φ <;> simp_all [ofBSML, Formula.EmptFree]
 
-/-- The embedding preserves bilateral evaluation: the joint language is a
-    conservative extension of BSML. -/
+/-- The embedding preserves bilateral evaluation, so the joint language is a conservative
+    extension of BSML. -/
 theorem eval_ofBSML (b : Bool) (φ : BSML.Formula Atom) :
     eval M b (ofBSML φ) t ↔ BSML.eval M b φ t := by
   induction φ generalizing b t with
@@ -414,100 +419,37 @@ theorem narrowScopeFC {α β : BSML.Formula Atom} (hα : α.NEFree) (hβ : β.NE
 
 /-! ### Bisimulation invariance (Theorem 3.8) -/
 
-/-- Modal depth: `⊘` and `¬` preserve it, the binary connectives take the maximum,
-    `◇` increments. -/
+/-- The modal depth of a formula is the greatest number of nested `◇`s in it. -/
 def Formula.modalDepth : Formula Atom → ℕ
   | .atom _ | .bot | .ne => 0
   | .neg ψ | .empt ψ => ψ.modalDepth
   | .conj ψ₁ ψ₂ | .disj ψ₁ ψ₂ | .gdisj ψ₁ ψ₂ => max ψ₁.modalDepth ψ₂.modalDepth
   | .poss ψ => ψ.modalDepth + 1
 
-/-- Theorem 3.8: `k`-bisimilar states agree on every formula of modal depth at most
-    `k`, in both polarities. -/
-theorem bisim_invariant_eval {M : KripkeModel W Atom} {M' : KripkeModel W' Atom}
-    (φ : Formula Atom) {k : ℕ} (hd : φ.modalDepth ≤ k)
-    {s : Finset W} {s' : Finset W'} (hbisim : StateBisim k M s M' s')
-    (b : Bool) : eval M b φ s ↔ eval M' b φ s' := by
-  induction φ generalizing k s s' b with
-  | atom p =>
-    cases b <;>
-    · constructor
-      · intro h w' hw'
-        obtain ⟨w, hw, hbw⟩ := hbisim.2 w' hw'
-        rw [← hbw.val_eq]; exact h w hw
-      · intro h w hw
-        obtain ⟨w', hw', hbw⟩ := hbisim.1 w hw
-        rw [hbw.val_eq]; exact h w' hw'
-  | bot =>
-    cases b
-    · exact ⟨λ _ ↦ trivial, λ _ ↦ trivial⟩
-    · exact hbisim.eq_empty_iff
-  | ne =>
-    cases b
-    · exact hbisim.eq_empty_iff
-    · exact hbisim.nonempty_iff
-  | neg ψ ih =>
-    cases b
-    · exact ih hd hbisim true
-    · exact ih hd hbisim false
+/-- Teams that are `k`-bisimilar agree on every formula of modal depth at most `k`, in both
+    polarities (Theorem 3.8). -/
+theorem invariant_eval {M : KripkeModel W Atom} {M' : KripkeModel W' Atom} {k : ℕ}
+    (φ : Formula Atom) (hd : φ.modalDepth ≤ k) (b : Bool) :
+    Team.Invariant (WorldBisim k M · M' ·) {t | eval M b φ t} {t | eval M' b φ t} := by
+  induction φ generalizing k b with
+  | atom p => cases b <;> exact Team.invariant_flat fun _ _ h ↦ by rw [h.val_eq]
+  | bot => cases b; exacts [Team.invariant_univ, Team.invariant_singleton_empty]
+  | ne => cases b; exacts [Team.invariant_singleton_empty, Team.invariant_ne]
+  | neg ψ ih => cases b <;> exact ih hd _
   | conj ψ₁ ψ₂ ih₁ ih₂ =>
-    have hd₁ : ψ₁.modalDepth ≤ k := (le_max_left _ _).trans hd
-    have hd₂ : ψ₂.modalDepth ≤ k := (le_max_right _ _).trans hd
-    cases b
-    · constructor
-      · rintro ⟨t, h₁, u, h₂, hsplit⟩
-        obtain ⟨t', u', hsplit', hbt, hbu⟩ := hbisim.splitPreserve hsplit
-        exact ⟨t', (ih₁ hd₁ hbt false).mp h₁, u', (ih₂ hd₂ hbu false).mp h₂, hsplit'⟩
-      · rintro ⟨t', h₁, u', h₂, hsplit'⟩
-        obtain ⟨t, u, hsplit, hbt, hbu⟩ := StateBisim.splitPreserve hbisim.symm hsplit'
-        exact ⟨t, (ih₁ hd₁ hbt.symm false).mpr h₁, u, (ih₂ hd₂ hbu.symm false).mpr h₂, hsplit⟩
-    · exact and_congr (ih₁ hd₁ hbisim true) (ih₂ hd₂ hbisim true)
+    obtain ⟨hd₁, hd₂⟩ := max_le_iff.mp hd
+    cases b; exacts [(ih₁ hd₁ _).tensor (ih₂ hd₂ _), (ih₁ hd₁ _).inter (ih₂ hd₂ _)]
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
-    have hd₁ : ψ₁.modalDepth ≤ k := (le_max_left _ _).trans hd
-    have hd₂ : ψ₂.modalDepth ≤ k := (le_max_right _ _).trans hd
-    cases b
-    · exact and_congr (ih₁ hd₁ hbisim false) (ih₂ hd₂ hbisim false)
-    · constructor
-      · rintro ⟨t, h₁, u, h₂, hsplit⟩
-        obtain ⟨t', u', hsplit', hbt, hbu⟩ := hbisim.splitPreserve hsplit
-        exact ⟨t', (ih₁ hd₁ hbt true).mp h₁, u', (ih₂ hd₂ hbu true).mp h₂, hsplit'⟩
-      · rintro ⟨t', h₁, u', h₂, hsplit'⟩
-        obtain ⟨t, u, hsplit, hbt, hbu⟩ := StateBisim.splitPreserve hbisim.symm hsplit'
-        exact ⟨t, (ih₁ hd₁ hbt.symm true).mpr h₁, u, (ih₂ hd₂ hbu.symm true).mpr h₂, hsplit⟩
+    obtain ⟨hd₁, hd₂⟩ := max_le_iff.mp hd
+    cases b; exacts [(ih₁ hd₁ _).inter (ih₂ hd₂ _), (ih₁ hd₁ _).tensor (ih₂ hd₂ _)]
   | gdisj ψ₁ ψ₂ ih₁ ih₂ =>
-    have hd₁ : ψ₁.modalDepth ≤ k := (le_max_left _ _).trans hd
-    have hd₂ : ψ₂.modalDepth ≤ k := (le_max_right _ _).trans hd
-    cases b
-    · exact and_congr (ih₁ hd₁ hbisim false) (ih₂ hd₂ hbisim false)
-    · exact or_congr (ih₁ hd₁ hbisim true) (ih₂ hd₂ hbisim true)
-  | empt ψ ih =>
-    cases b
-    · exact ih hd hbisim false
-    · exact or_congr (ih hd hbisim true) hbisim.eq_empty_iff
+    obtain ⟨hd₁, hd₂⟩ := max_le_iff.mp hd
+    cases b; exacts [(ih₁ hd₁ _).inter (ih₂ hd₂ _), (ih₁ hd₁ _).union (ih₂ hd₂ _)]
+  | empt ψ ih => cases b; exacts [ih hd _, (ih hd _).union Team.invariant_singleton_empty]
   | poss ψ ih =>
-    cases k with
-    | zero => exact absurd hd (Nat.not_succ_le_zero _)
-    | succ k =>
-      have hdψ : ψ.modalDepth ≤ k := Nat.le_of_succ_le_succ hd
-      cases b
-      · constructor
-        · intro h w' hw'
-          obtain ⟨w, hw, hbw⟩ := hbisim.2 w' hw'
-          exact (ih hdψ hbw.accessStateBisim false).mp (h w hw)
-        · intro h w hw
-          obtain ⟨w', hw', hbw⟩ := hbisim.1 w hw
-          exact (ih hdψ hbw.accessStateBisim false).mpr (h w' hw')
-      · constructor
-        · intro h w' hw'
-          obtain ⟨w, hw, hbw⟩ := hbisim.2 w' hw'
-          obtain ⟨t, htsub, htne, htsupp⟩ := h w hw
-          obtain ⟨t', ht'sub, ht'ne, htbisim⟩ := hbw.accessStateBisim.exists_image_subset htsub
-          exact ⟨t', ht'sub, ht'ne htne, (ih hdψ htbisim true).mp htsupp⟩
-        · intro h w hw
-          obtain ⟨w', hw', hbw⟩ := hbisim.1 w hw
-          obtain ⟨t', ht'sub, ht'ne, ht'supp⟩ := h w' hw'
-          obtain ⟨t, htsub, htne, htbisim⟩ :=
-            hbw.accessStateBisim.symm.exists_image_subset ht'sub
-          exact ⟨t, htsub, htne ht'ne, (ih hdψ htbisim.symm true).mpr ht'supp⟩
+    obtain _ | k := k
+    · exact absurd hd (Nat.not_succ_le_zero _)
+    have ih := ih (Nat.le_of_succ_le_succ hd)
+    cases b; exacts [(ih _).nec fun _ _ h ↦ h.2, (ih _).poss fun _ _ h ↦ h.2]
 
 end AloniAnttilaYang2024

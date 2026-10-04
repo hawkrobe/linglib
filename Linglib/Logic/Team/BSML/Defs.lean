@@ -20,6 +20,7 @@ not updated by them. QBSML runs the same recursion over quantified atoms.
 * `Formula`: atoms, `NE`, `¬`, `∧`, split `∨` and `◇`; `□` is the abbreviation `Formula.nec`.
 * `eval`: bilateral evaluation, with the polarity a `Bool`; `support` and `antiSupport` fix it.
 * `Formula.NEFree`, `Formula.Positive`: the `NE`-free and the negation-free fragments.
+* `Formula.modalDepth`: the nesting depth of `◇`.
 * `Formula.falsum`, `Formula.strongFalsum`: the weak contradiction `p ∧ ¬p` and the strong
   contradiction `⊥ ∧ NE`.
 * `Consequence`, `Equivalent`: support consequence and its symmetric closure, the `≡` of the
@@ -125,6 +126,14 @@ instance instDecidablePositive : (φ : Formula Atom) → Decidable φ.Positive
   | .conj φ ψ => @instDecidableAnd _ _ (instDecidablePositive φ) (instDecidablePositive ψ)
   | .disj φ ψ => @instDecidableAnd _ _ (instDecidablePositive φ) (instDecidablePositive ψ)
   | .poss φ => instDecidablePositive φ
+
+/-- The modal depth of a formula is the greatest number of nested `◇`s in it
+    ([aloni-anttila-yang-2024]). -/
+def Formula.modalDepth : Formula Atom → ℕ
+  | .atom _ | .ne => 0
+  | .neg φ => φ.modalDepth
+  | .conj φ ψ | .disj φ ψ => max φ.modalDepth ψ.modalDepth
+  | .poss φ => φ.modalDepth + 1
 
 /-! ### Contradictions -/
 

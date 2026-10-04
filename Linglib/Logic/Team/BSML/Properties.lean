@@ -1,52 +1,40 @@
 module
 
 public import Linglib.Logic.Team.BSML.Defs
+public import Linglib.Logic.Team.Bisimulation
 public import Linglib.Logic.Team.Closure
 public import Linglib.Logic.Team.Definability
 
 /-!
-# BSML formula closure properties
+# Closure properties of BSML support
 
-[anttila-2021] [aloni-2022]
+The teams supporting a BSML formula form a union-closed and order-convex family; when the
+formula is `NE`-free they also include the empty team and are closed downward, so they are
+determined by the singleton teams. Support and anti-support are moreover invariant under bounded
+bisimulation. Anttila proves the closure properties, and Aloni, Anttila and Yang the invariance.
+These are the properties for which BSML is expressively complete
+(`BSML/ExpressiveCompleteness.lean`).
 
-For BSML's `support` relation, this file proves the three constituent
-properties from [anttila-2021] Proposition 2.2.8 (specialised to a logic
-without global disjunction ⨼) plus the flatness corollary from Anttila
-2.2.16.
+## Main results
 
-## Main declarations
-
-* `supClosed_support` — every BSML formula has sup-closed support
-  (Anttila 2.2.8 part 2; BSML's connective set has no ⨼, so the
-  union-closure obstruction is absent).
-* `support_empty_of_neFree` — NE-free BSML formulas are supported on
-  the empty team (Anttila 2.2.8 part 1).
-* `isLowerSet_support_of_neFree` — NE-free BSML formulas are
-  downward-closed (Anttila 2.2.8 part 1).
-* `isFlat_support_of_neFree` — NE-free BSML formulas are flat
-  (Anttila 2.2.16), derived via Anttila
-  Proposition 2.2.2 from the three properties above.
+* `supClosed_support`: support is union-closed.
+* `support_empty_of_neFree`, `isLowerSet_support_of_neFree`: an `NE`-free formula is supported
+  by the empty team and closed downward.
+* `ordConnected_support`: support is order-convex.
+* `isFlat_support_of_neFree`: an `NE`-free formula is flat.
+* `invariant_eval`: `k`-bisimilar teams agree on every formula of modal depth at most `k`.
 
 ## Implementation notes
 
-The negation case needs bilateral mutual induction (support of `¬φ` is
-anti-support of `φ`), so each property is proved as a *joint* statement
-over support + anti-support via a `private` helper, then the public form
-projects the support component.
-
-Proposition 2.2.16 itself, `support t ↔ ∀ w ∈ t, Realize w` with `Realize`
-classical Kripke truth, is proved directly in `Classical.lean`
-(`support_iff_forall_realize`); this file's proof routes through the
-foundational decomposition instead.
-
-The decomposition through [anttila-2021] Propositions 2.2.8 and 2.2.2 is reusable: any
-team-semantic logic in linglib (QBSML, inquisitive, dependence logic) needs the same structural
-argument, proving the three closure properties separately and composing them via
-`Team.isFlat_iff`.
+Negation swaps support and anti-support, so each property is proved for both polarities at once
+by induction on the formula; each case is the lemma of its connective in `Team/Operations.lean`
+or `Team/Bisimulation.lean`. Aloni, Anttila and Yang prove bisimulation invariance for support
+of formulas in negation normal form; the joint induction needs no normal form.
 
 ## References
 
 * [aloni-2022] Aloni, Logic and Conversation: The Case of Free Choice
+* [aloni-anttila-yang-2024] Aloni, Anttila and Yang, State-based Modal Logics for Free Choice
 * [anttila-2021] Anttila, The Logic of Free Choice: Axiomatizations of State-based Modal Logics
 * [anttila-2025] Anttila, Not Nothing: Nonemptiness in Team Semantics
 -/
@@ -118,8 +106,8 @@ private theorem support_and_antiSupport_isLowerSet_of_neFree
     exact ⟨(ih₁ hNE.1).1.tensor (ih₂ hNE.2).1, (ih₁ hNE.1).2.inter (ih₂ hNE.2).2⟩
   | poss ψ _ => exact ⟨isLowerSet_flat _, isLowerSet_flat _⟩
 
-/-- NE-free BSML formulas are downward-closed: support survives under
-    taking subsets of the team. -/
+/-- An `NE`-free BSML formula is downward closed, so its support survives passing to a
+    subteam. -/
 theorem isLowerSet_support_of_neFree {φ : Formula Atom}
     (hNE : φ.NEFree) (M : KripkeModel W Atom) :
     IsLowerSet { t : Finset W | support M φ t } :=
@@ -145,30 +133,17 @@ private theorem support_and_antiSupport_ordConnected
       (support_and_antiSupport_supClosed ψ₂ M).1, ih₁.2.inter ih₂.2⟩
   | poss ψ _ => exact ⟨ordConnected_flat _, ordConnected_flat _⟩
 
-/-- **BSML support is order-convex** for every formula — NE-bearing included
-    ([anttila-2025] Proposition 3.3.1): `{ t | support M φ t }` is
-    `Set.OrdConnected`, i.e. `s ⊆ t ⊆ u` with `support M φ s` and
-    `support M φ u` forces `support M φ t`.
-
-    Generalizes `isLowerSet_support_of_neFree`: for NE-free `φ` the empty-team
-    property holds, and `Team.isLowerSet_iff_ordConnected_of_empty`
-    recovers downward closure from convexity. Together with `supClosed_support`,
-    this is the convex-and-union-closed property for which BSML is expressively
-    complete ([anttila-2025]). -/
+/-- BSML support is order-convex for every formula, `NE` included ([anttila-2025]
+    Proposition 3.3.1), so a team between two supporting teams supports the formula too. With
+    `supClosed_support`, this is the property for which BSML is expressively complete. -/
 theorem ordConnected_support (M : KripkeModel W Atom) (φ : Formula Atom) :
     Set.OrdConnected { t : Finset W | support M φ t } :=
   (support_and_antiSupport_ordConnected φ M).1
 
 /-! ### Flatness corollary (Anttila 2.2.16) -/
 
-/-- **[anttila-2021] Proposition 2.2.16**, flatness form: NE-free BSML formulas
-    are flat — team support equals pointwise support at each world in the
-    team.
-
-    Derived from Anttila 2.2.2 (`Team.isFlat_iff`) applied to
-    the three closure properties proved above. The same conclusion follows
-    from the classical-truth form `support_iff_forall_realize` in
-    `Classical.lean`. -/
+/-- An `NE`-free BSML formula is flat ([anttila-2021] Proposition 2.2.16), by Anttila's
+    Proposition 2.2.2 applied to the three closure properties above. -/
 theorem isFlat_support_of_neFree {φ : Formula Atom}
     (hNE : φ.NEFree) (M : KripkeModel W Atom) :
     IsFlat { t : Finset W | support M φ t } :=
@@ -176,6 +151,36 @@ theorem isFlat_support_of_neFree {φ : Formula Atom}
     (isLowerSet_support_of_neFree hNE M)
     (supClosed_support M φ)
     (support_empty_of_neFree hNE M)
+
+/-! ### Bisimulation invariance -/
+
+section Bisimulation
+
+open ModalLogic (WorldBisim)
+
+variable {W' : Type*} [DecidableEq W'] {M : KripkeModel W Atom} {M' : KripkeModel W' Atom}
+
+/-- Teams that are `k`-bisimilar agree on every formula of modal depth at most `k`, in both
+    polarities ([aloni-anttila-yang-2024] Theorem 3.8). -/
+theorem invariant_eval {k : ℕ} (φ : Formula Atom) (hd : φ.modalDepth ≤ k) (b : Bool) :
+    Invariant (WorldBisim k M · M' ·) {t | eval M b φ t} {t | eval M' b φ t} := by
+  induction φ generalizing k b with
+  | atom p => cases b <;> exact invariant_flat fun _ _ h ↦ by rw [h.val_eq]
+  | ne => cases b; exacts [invariant_singleton_empty, invariant_ne]
+  | neg ψ ih => cases b <;> exact ih hd _
+  | conj ψ₁ ψ₂ ih₁ ih₂ =>
+    obtain ⟨hd₁, hd₂⟩ := max_le_iff.mp hd
+    cases b; exacts [(ih₁ hd₁ _).tensor (ih₂ hd₂ _), (ih₁ hd₁ _).inter (ih₂ hd₂ _)]
+  | disj ψ₁ ψ₂ ih₁ ih₂ =>
+    obtain ⟨hd₁, hd₂⟩ := max_le_iff.mp hd
+    cases b; exacts [(ih₁ hd₁ _).inter (ih₂ hd₂ _), (ih₁ hd₁ _).tensor (ih₂ hd₂ _)]
+  | poss ψ ih =>
+    obtain _ | k := k
+    · exact absurd hd (Nat.not_succ_le_zero _)
+    have ih := ih (Nat.le_of_succ_le_succ hd)
+    cases b; exacts [(ih _).nec fun _ _ h ↦ h.2, (ih _).poss fun _ _ h ↦ h.2]
+
+end Bisimulation
 
 /-! ### Soundness for the closure cell (Definability bridge) -/
 
