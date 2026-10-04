@@ -12,9 +12,11 @@ Licensing head L⁰ above vP probes every phrase in vP and licenses the highest,
 licenses its complement when a causative or applicative head has passed it a case feature, the
 pattern Halpert relates to Burzio's generalization. Nominals with the augment vowel and clauses
 headed by *ukuthi* are licensed intrinsically, while augmentless nominals and clauses headed by
-*sengathi* must be local to a licensing head; augmented nominals still intervene. The verb shows
-L⁰'s probing, conjoint when it finds a goal and disjoint when it fails, and A-movement out of vP
-precedes the probing, the one order Chomsky's Activity Condition leaves.
+*sengathi* must be local to a licensing head in whichever vP they end up, and augmented nominals
+still intervene. An augmentless embedded subject may thus stay in the embedded vP or raise into the
+matrix vP, but not stop between. The verb shows L⁰'s probing, conjoint when it finds a goal and
+disjoint when it fails, and A-movement out of vP precedes the probing, the one order Chomsky's
+Activity Condition leaves.
 
 ## Main definitions
 
@@ -34,15 +36,17 @@ precedes the probing, the one order Chomsky's Activity Condition leaves.
 
 ## Implementation notes
 
-Phrases that left vP or attach above it are listed in `Clause.outside` without positions. A
-prefixed oblique enters as the nominal inside it, which L⁰ sees (§4.4.2), and noun class, which
-plays no role in licensing, is not recorded. Every row with an augmentless nominal is in a
-downward-entailing context, the semantic condition of §3.2.
+Phrases that left vP or attach above it are listed in `Clause.outside` without positions. A row
+records the clause it is about and, when that clause is embedded, the clause embedding it, each
+licensed by its own L⁰; a raised phrase is recorded where it lands, and temporal adverbs whose
+position the source leaves open are not recorded. A prefixed oblique enters as the nominal inside
+it (§4.4.2), and noun class, which plays no role in licensing, is not recorded. Every row with an
+augmentless nominal is in a downward-entailing context, the semantic condition of §3.2.
 
 ## TODO
 
-Raising-to-object, which licenses an augmentless embedded subject in the matrix vP ((123)–(125),
-(216)), needs two clauses. Some speakers accept (141b) (footnote 8).
+That *fisa* 'wish' does not raise its embedded subject for most speakers ((152b)) is a lexical
+fact outside the model. Some speakers accept (141b) (footnote 8).
 
 ## References
 
@@ -64,8 +68,8 @@ open Minimalist
 inductive Goal where
   /-- The goal is a nominal, with or without the augment vowel. -/
   | nominal (augment : Bool)
-  /-- The goal is a clause headed by a complementizer. -/
-  | clause (c : Complementizer)
+  /-- The goal is a clause, headed by a complementizer or by none. -/
+  | clause (c : Option Complementizer)
   /-- The goal is an adverb, such as *kahle* 'well'. -/
   | adverb
   deriving DecidableEq, Repr
@@ -74,7 +78,7 @@ inductive Goal where
 nominal without the augment or a clause headed by *sengathi* (Table 4.1). -/
 def Goal.NeedsL : Goal → Prop
   | .nominal augment => augment = false
-  | .clause c => c = Zulu.sengathi
+  | .clause c => c = some Zulu.sengathi
   | .adverb => False
 
 instance : DecidablePred Goal.NeedsL
@@ -227,8 +231,9 @@ example : Clause.L.outcome [.nominal true] = .valued ∧
 def Goal.ofCode : String → Option Goal
   | "+aug" => some (.nominal true)
   | "-aug" => some (.nominal false)
-  | "ukuthi" => some (.clause Zulu.ukuthi)
-  | "sengathi" => some (.clause Zulu.sengathi)
+  | "cp" => some (.clause none)
+  | "ukuthi" => some (.clause (some Zulu.ukuthi))
+  | "sengathi" => some (.clause (some Zulu.sengathi))
   | "adverb" => some .adverb
   | _ => none
 
@@ -238,25 +243,36 @@ def Extension.ofCode : String → Option Extension
   | "appl" => some .appl
   | _ => none
 
-/-- `Clause.ofRow row` is the clause that the row's features describe. -/
-def Clause.ofRow (row : Datum) : Option Clause := do
-  let outside ← (row.features "outside").mapM Goal.ofCode
-  let above ← (row.features "above").mapM Goal.ofCode
-  let vDomain ← (row.features "vDomain").mapM Goal.ofCode
-  let extensions ← (row.features "extension").mapM Extension.ofCode
+/-- `Clause.ofKeys row outside above vDomain extension` is the clause whose phrases and
+extensions the row lists under the four keys. -/
+def Clause.ofKeys (row : Datum) (outside above vDomain extension : String) : Option Clause := do
+  let outside ← (row.features outside).mapM Goal.ofCode
+  let above ← (row.features above).mapM Goal.ofCode
+  let vDomain ← (row.features vDomain).mapM Goal.ofCode
+  let extensions ← (row.features extension).mapM Extension.ofCode
   return ⟨outside, above, vDomain, extensions⟩
+
+/-- `Clause.ofRow row` is the clause the row is about. -/
+def Clause.ofRow (row : Datum) : Option Clause :=
+  Clause.ofKeys row "outside" "above" "vDomain" "extension"
+
+/-- `Clause.matrixOfRow row` is the clause embedding it, empty when the row records none. -/
+def Clause.matrixOfRow (row : Datum) : Option Clause :=
+  Clause.ofKeys row "matrixOutside" "matrixAbove" "matrixVDomain" "matrixExtension"
 
 /-- `VerbForm.ofRow row` is the verb form the row records, where the alternation shows. -/
 def VerbForm.ofRow (row : Datum) : Option VerbForm :=
   row.parse? "verbForm" [("conjoint", .conjoint), ("disjoint", .disjoint)]
 
-example : ∀ row ∈ Examples.all, (Clause.ofRow row).isSome := by decide
+example : ∀ row ∈ Examples.all, (Clause.ofRow row).isSome ∧ (Clause.matrixOfRow row).isSome := by
+  decide
 
-/-- A sentence of the paradigms of chapters 3 and 4 is acceptable exactly when its clause converges
-and its verb form, where recorded, spells out L⁰'s probing. -/
-theorem Clause.rows : ∀ row ∈ Examples.all, ∀ c ∈ Clause.ofRow row,
+/-- A sentence of the paradigms of chapters 3 and 4 is acceptable exactly when its clause and the
+clause embedding it converge, each licensed by its own L⁰, and its verb form, where recorded,
+spells out L⁰'s probing. -/
+theorem Clause.rows : ∀ row ∈ Examples.all, ∀ c ∈ Clause.ofRow row, ∀ m ∈ Clause.matrixOfRow row,
     (row.judgment = .acceptable ↔
-      c.Converges ∧ ∀ f ∈ VerbForm.ofRow row, c.spellout = f) := by
+      m.Converges ∧ c.Converges ∧ ∀ f ∈ VerbForm.ofRow row, c.spellout = f) := by
   decide
 
 end Halpert2012
