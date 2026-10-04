@@ -66,7 +66,7 @@ English bare singular has no shift available at all, since *the* blocks ι and �
 and ∩ is undefined for a singular count noun. -/
 theorem shan_iota_english_none :
     MaximalFor (Shan.Determiners.inventory.Available False) (· ≠ .exists) .iota ∧
-      ∀ τ, ¬ English.Determiners.inventory.Available (DownDefined .count .singular) τ := by
+      ∀ τ, ¬ English.Determiners.inventory.Available False τ := by
   decide
 
 /-- With a kind-compatible predicate ∩, ι and ι^x are all maximal, which is the kind and definite
@@ -144,24 +144,24 @@ theorem shan_refutes_jenks_typology :
 
 /-! ### Shan count nouns are cumulative but not homogeneous -/
 
-/-- The first clause of [deal-2017]'s generalized homogeneity: `P` lacks minimal parts when
+/-- `P` lacks minimal parts, the first clause of [deal-2017]'s generalized homogeneity, when
 every `P`-element has a proper `P`-part. -/
 def LacksMinimalParts {α : Type*} [Preorder α] (P : α → Prop) : Prop :=
   ∀ x, P x → ∃ y < x, P y
 
-/-- Dog-pluralities over two dogs: the nonempty subsets. -/
+/-- The dog-pluralities over two dogs are the nonempty subsets. -/
 abbrev isDog (x : Finset (Fin 2)) : Prop := x.Nonempty
 
 /-- Shan *mǎa* 'dog' patterns with English *furniture*: the sum of dogs is dogs, but the
 individual dogs are minimal, so the predicate is cumulative without being homogeneous. -/
 theorem maa_cumulative_not_divisive : CUM isDog ∧ ¬ LacksMinimalParts isDog := by
-  refine ⟨λ _ hx _ _ => hx.mono Finset.subset_union_left, λ h => ?_⟩
+  refine ⟨fun _ hx _ _ ↦ hx.mono Finset.subset_union_left, fun h ↦ ?_⟩
   obtain ⟨y, hy, hne⟩ := h {0} (Finset.singleton_nonempty 0)
   exact hne.ne_empty ((Finset.subset_singleton_iff.1 hy.le).resolve_right hy.ne)
 
 /-! ### Demonstratives add spatial content -/
 
-/-- The bare definite description: the unique referent satisfying the restrictor, the
+/-- The bare definite description denotes the unique referent satisfying the restrictor, the
 uniqueness reading available to Shan bare nouns. -/
 noncomputable def bareDefinite {E : Type*} (restrictor : E → Prop) : Option E :=
   iota restrictor

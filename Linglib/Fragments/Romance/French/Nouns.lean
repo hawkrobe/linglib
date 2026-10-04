@@ -1,13 +1,12 @@
 module
 
 public import Linglib.Syntax.Category.Noun.Basic
-public import Linglib.Semantics.Plurality.MassCount
 
 /-!
 # French nouns
 
 The French noun as a lexical entry: the root `GenderedNoun` over the masculine and feminine genders,
-with the mass/count feature and its plural; names are the root `ProperName`. A French noun needs a
+with the count/mass class and its plural; names are the root `ProperName`. A French noun needs a
 determiner (`French.Determiners.inventory`) to be an argument, so no bare nominal is one
 ([chierchia-1998]).
 
@@ -21,10 +20,10 @@ determiner (`French.Determiners.inventory`) to be an argument, so no bare nomina
 namespace French.Nouns
 
 
-/-- A French noun: the root gendered entry with the mass/count feature and its plural. -/
+/-- A French noun is the root gendered entry with the count/mass class and its plural. -/
 structure Noun extends GenderedNoun Gender where
-  /-- The mass/count feature. -/
-  countable : MassCount := .count
+  /-- The count/mass class. -/
+  massCount : MassCount := .count
   /-- The plural. -/
   plural : Option String := none
   deriving DecidableEq, Repr
@@ -61,10 +60,10 @@ def fleur : Noun := { form := "fleur", gloss := "flower", gender := .feminine, p
 
 /-! ### Mass nouns -/
 
-def eau : Noun := { form := "eau", gloss := "water", gender := .feminine, countable := .mass }
-def vin : Noun := { form := "vin", gloss := "wine", gender := .masculine, countable := .mass }
-def pain : Noun := { form := "pain", gloss := "bread", gender := .masculine, countable := .mass }
-def lait : Noun := { form := "lait", gloss := "milk", gender := .masculine, countable := .mass }
+def eau : Noun := { form := "eau", gloss := "water", gender := .feminine, massCount := .mass }
+def vin : Noun := { form := "vin", gloss := "wine", gender := .masculine, massCount := .mass }
+def pain : Noun := { form := "pain", gloss := "bread", gender := .masculine, massCount := .mass }
+def lait : Noun := { form := "lait", gloss := "milk", gender := .masculine, massCount := .mass }
 
 /-! ### Proper names -/
 

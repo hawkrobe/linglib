@@ -2,6 +2,7 @@ module
 
 public import Mathlib.Data.Set.Subsingleton
 public import Mathlib.Order.Antichain
+public import Mathlib.Order.Preorder.Finite
 public import Linglib.Semantics.Quantification.Basic
 
 /-!
@@ -16,8 +17,9 @@ determiner *the* asserts its scope of this referent.
 Sharvy generalizes the definite article to individuals ordered by part-of, and Chierchia adopts
 the generalization: the definite picks out the largest member of a set, `iota (IsGreatest X)`,
 since a set has at most one largest member. No atom is larger than another, so on a set of atoms
-the largest member exists only when there is exactly one member. Sending an individual to its
-parts, `Set.Iic d`, undoes the largest member.
+the largest member exists only when there is exactly one member, while a finite nonempty set
+closed under sum always has one. Sending an individual to its parts, `Set.Iic d`, undoes the
+largest member.
 
 ## Main definitions
 
@@ -30,7 +32,9 @@ parts, `Set.Iic d`, undoes the largest member.
 * `the_sem_iff_iota`: the determiner *the* asserts its scope of the referent.
 * `iota_isGreatest_eq_some_iff`: the largest member, Chierchia's (11a).
 * `IsAntichain.iota_isGreatest`: on an antichain the largest member is the unique member,
-  Chierchia's (11c).
+  Chierchia's (11c), so an antichain with two members has none
+  (`IsAntichain.iota_isGreatest_eq_none`).
+* `DirectedOn.iota_isGreatest_isSome`: a finite nonempty directed set has a largest member.
 * `iota_isGreatest_elim_Iic`, `elim_Iic_iota_isGreatest`: Chierchia's (17a) and (17b) at a
   single situation.
 
@@ -38,10 +42,11 @@ parts, `Set.Iic d`, undoes the largest member.
 
 A partial individual is an `Option`. Krifka, following Link, writes σ for the largest member and
 defines it as ιx[S(x) ∧ ∀x′[S(x′) → x′ ⊑ x]], which is `iota (IsGreatest X)`. A kind in
-Chierchia's sense is a function `S → Option E` from situations to partial individuals: his ∩ is
-`fun s ↦ iota (IsGreatest (P s))` and his ∪ is `fun s ↦ (k s).elim ∅ Set.Iic`, the ι and Id of
-his (25) applied at each situation (pp. 359–360). His (25e) prints Id(x) = λx[x ≤ y]; his
-footnote 14 shows that λy[y ≤ x] is meant.
+Chierchia's sense is a function `S → Option E` from situations to partial individuals. His ∩ is
+`fun s ↦ iota (IsGreatest (P s))` where that is a kind, (16), and his ∪ is
+`fun s ↦ (k s).elim ∅ Set.Iic`, the ι and Id of his (25) applied at each situation
+(pp. 359–360). His (25e) prints Id(x) = λx[x ≤ y]; his footnote 14 shows that λy[y ≤ x] is
+meant.
 
 ## References
 
@@ -170,6 +175,21 @@ theorem _root_.IsAntichain.iota_isGreatest (hs : IsAntichain (· ≤ ·) X) :
     iota (IsGreatest X) = iota (· ∈ X) :=
   Option.ext fun _ ↦ (iota_isGreatest_eq_some_iff.trans <|
     hs.greatest_iff.trans Set.eq_singleton_iff_unique_mem).trans (iota_eq_some_iff _).symm
+
+/-- An antichain with two members, such as a set of two atoms, has no largest member. -/
+theorem _root_.IsAntichain.iota_isGreatest_eq_none (hs : IsAntichain (· ≤ ·) X) {a b : E}
+    (ha : a ∈ X) (hb : b ∈ X) (hab : a ≠ b) : iota (IsGreatest X) = none :=
+  iota_isGreatest_eq_none_iff.2 fun ⟨_, hd⟩ ↦ by
+    rw [hs.greatest_iff.1 hd] at ha hb
+    exact hab (ha.trans hb.symm)
+
+/-- A finite nonempty directed set, such as a finite nonempty sup-closed set, has a largest
+member. -/
+theorem _root_.DirectedOn.iota_isGreatest_isSome (hs : DirectedOn (· ≤ ·) X) (hfin : X.Finite)
+    (hne : X.Nonempty) : (iota (IsGreatest X)).isSome :=
+  let ⟨m, hm⟩ := hfin.exists_maximal hne
+  iota_isGreatest_isSome_iff.2
+    ⟨m, hm.prop, hs.is_top_of_is_max hm.prop fun _ ha ↦ hm.le_of_ge ha⟩
 
 end Order
 
