@@ -33,7 +33,7 @@ condition, and the determiners for *every*, *some* and *no* realize the denotati
 * `toGQ_compl`: realization carries the complement of a class to GQ outer negation.
 * `someDet_holds_eq_compl`, `noDet_toGQ_eq_innerNeg`, `someDet_toGQ_eq_dual`: the `no` and
   `some` corners as the complement, inner negation and dual of `every`.
-* `nEquiv_structOfAB`: two models agree on the sentences of quantifier rank `≤ t` when their
+* `nEquiv_structOfAB_iff`: two models agree on the sentences of quantifier rank `≤ t` iff their
   Venn regions agree in size up to `t`.
 
 ## References
@@ -252,9 +252,11 @@ theorem someDet_toGQ_eq_dual (α : Type u) :
 /-! ### Finite-rank equivalence of `L_UV`-models
 
 `L_UV` is monadic, so the Ehrenfeucht–Fraïssé game on its models is decided by counting: two
-models `(α, A, B)` and `(β, A', B')` agree on every sentence of quantifier rank `≤ t` when each of
+models `(α, A, B)` and `(β, A', B')` agree on every sentence of quantifier rank `≤ t` iff each of
 the four Venn regions of the two predicates has the same size in both or at least `t` elements in
-both. This is the tool behind the first-order undefinability of *more than half*. -/
+both. The four unary types of `L_UV` are these regions, so `foDefinable_iff_exists_min_encard_eq`
+is van Benthem's characterization of the first-order definable determiners as those invariant
+under agreement of the four region sizes up to a threshold. -/
 
 instance : L_UV.IsMonadic :=
   ⟨fun _ => inferInstanceAs (IsEmpty Empty), fun _ hl => ⟨fun r => by cases r <;> exact hl rfl⟩⟩
@@ -266,21 +268,33 @@ private theorem unaryType_structOfAB_eq {α : Type u} (A B : α → Prop) (x : �
   cases R
   exacts [propext hA, propext hB]
 
-/-- Two `L_UV`-models are `t`-equivalent when each Venn region of `U` and `V` has the same size in
+instance : Finite L_UV.Symbols := by
+  refine Finite.of_injective (β := Bool) (fun s => match s with
+    | .inl ⟨_, f⟩ => (f : Empty).elim
+    | .inr ⟨_, .U⟩ => false
+    | .inr ⟨_, .V⟩ => true) ?_
+  rintro (⟨_, ⟨⟩⟩ | ⟨_, r₁⟩) (⟨_, ⟨⟩⟩ | ⟨_, r₂⟩) h
+  cases r₁ <;> cases r₂ <;> first | rfl | cases h
+
+/-- Two `L_UV`-models are `t`-equivalent iff each Venn region of `U` and `V` has the same size in
 both or at least `t` elements in both ([peters-westerstahl-2006] Theorem 13 for type `⟨1, 1⟩`,
 first-order case). -/
-theorem nEquiv_structOfAB {α β : Type u} {A B : α → Prop} {A' B' : β → Prop} {t : ℕ}
-    (hAB : min (t : ℕ∞) {x | A x ∧ B x}.encard = min (t : ℕ∞) {y | A' y ∧ B' y}.encard)
-    (hAnB : min (t : ℕ∞) {x | A x ∧ ¬ B x}.encard = min (t : ℕ∞) {y | A' y ∧ ¬ B' y}.encard)
-    (hnAB : min (t : ℕ∞) {x | ¬ A x ∧ B x}.encard = min (t : ℕ∞) {y | ¬ A' y ∧ B' y}.encard)
-    (hnAnB : min (t : ℕ∞) {x | ¬ A x ∧ ¬ B x}.encard =
-      min (t : ℕ∞) {y | ¬ A' y ∧ ¬ B' y}.encard) :
-    @NEquiv L_UV t α β (structOfAB A B) (structOfAB A' B') := by
-  refine @nEquiv_of_min_encard_eq L_UV α β (structOfAB A B) (structOfAB A' B') _ t fun S => ?_
-  have key : ∀ {γ : Type u} (C D : γ → Prop),
+theorem nEquiv_structOfAB_iff {α β : Type u} {A B : α → Prop} {A' B' : β → Prop} {t : ℕ} :
+    @NEquiv L_UV t α β (structOfAB A B) (structOfAB A' B') ↔
+      min (t : ℕ∞) {x | A x ∧ B x}.encard = min (t : ℕ∞) {y | A' y ∧ B' y}.encard ∧
+      min (t : ℕ∞) {x | A x ∧ ¬ B x}.encard = min (t : ℕ∞) {y | A' y ∧ ¬ B' y}.encard ∧
+      min (t : ℕ∞) {x | ¬ A x ∧ B x}.encard = min (t : ℕ∞) {y | ¬ A' y ∧ B' y}.encard ∧
+      min (t : ℕ∞) {x | ¬ A x ∧ ¬ B x}.encard = min (t : ℕ∞) {y | ¬ A' y ∧ ¬ B' y}.encard := by
+  have key : ∀ {γ : Type u} (C D : γ → Prop) (S : L_UV.Relations 1 → Prop),
       @unaryType L_UV γ (structOfAB C D) ⁻¹' {S} = {c | (C c ↔ S uRel) ∧ (D c ↔ S vRel)} :=
-    fun C D => Set.ext fun c => unaryType_structOfAB_eq C D c S
-  rw [key, key]
-  by_cases hU : S uRel <;> by_cases hV : S vRel <;> simpa [hU, hV]
+    fun C D S => Set.ext fun c => unaryType_structOfAB_eq C D c S
+  rw [@nEquiv_iff_min_encard_eq L_UV α β (structOfAB A B) (structOfAB A' B') _ _ t]
+  simp only [key]
+  refine ⟨fun h => ⟨?_, ?_, ?_, ?_⟩, fun ⟨h₁, h₂, h₃, h₄⟩ S => ?_⟩
+  · simpa using h fun R => match R with | .U => True | .V => True
+  · simpa using h fun R => match R with | .U => True | .V => False
+  · simpa using h fun R => match R with | .U => False | .V => True
+  · simpa using h fun R => match R with | .U => False | .V => False
+  · by_cases hU : S uRel <;> by_cases hV : S vRel <;> simpa [hU, hV]
 
 end Quantifier.Lindstrom

@@ -376,14 +376,14 @@ sentence with fewer than `m` quantifiers, their (5). B&C prove (5) by extending 
 correspondence that respects `U` and `V` one step at each quantifier, their (6), since "there is
 always enough room": below `m`, every Venn region of the two models is either the same set or
 large in both. That argument is the Ehrenfeucht–Fraïssé game on monadic models, so (5) is
-`Quantifier.Lindstrom.nEquiv_structOfAB` applied to the two models (`nEquiv_struc`), for
+`Quantifier.Lindstrom.nEquiv_structOfAB_iff` applied to the two models (`nEquiv_struc`), for
 quantifier rank, which is at most the number of quantifiers. -/
 
 namespace BarwiseCooper1981
 
 open FirstOrder Language
 
-open Quantifier.Lindstrom (L_UV uRel vRel structOfAB nEquiv_structOfAB)
+open Quantifier.Lindstrom (L_UV uRel vRel structOfAB nEquiv_structOfAB_iff)
 
 /-- The structure `M₁`, in which `U` is `[0, m)` and `V` is `[0, 2m)`, so that exactly half the
 `V`'s are `U`'s. -/
@@ -416,7 +416,7 @@ the same set in both models or has at least `m - 1` elements in both. The region
 the same set, so `2m ≤ k` suffices where B&C take `k ≥ 3m`. -/
 theorem nEquiv_struc (m k : ℕ) (hm : 0 < m) (hk : 2 * m ≤ k) :
     @NEquiv L_UV (m - 1) (Fin k) (Fin k) (struc₁ m k) (struc₂ m k) := by
-  refine nEquiv_structOfAB ?_ ?_ ?_ ?_
+  refine nEquiv_structOfAB_iff.2 ⟨?_, ?_, ?_, ?_⟩
   · exact min_eq_min_of_le (le_encard_of_Ico (lo := 0) (hi := m) (by omega) (by omega)
       fun x _ hx => ⟨hx, by omega⟩) (le_encard_of_Ico (lo := 0) (hi := m) (by omega) (by omega)
       fun x _ hx => ⟨by omega, by omega⟩)
