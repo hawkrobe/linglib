@@ -65,7 +65,7 @@ categories head phases is the analysis's choice (`Minimalist.Phase`), so a param
 
 namespace CitkoGracaninYuksek2025
 
-open Minimalist Minimalist.PlanarSyntacticObject RoseTree Core.Order.Branching
+open Minimalist Minimalist.PlanarSyntacticObject RoseTree
 open Minimalist.SyntacticObject (Vertex)
 
 /-! ### The lexicon -/

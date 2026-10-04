@@ -40,7 +40,7 @@ pumps them (`RoseTree.Licensed.replaceAt`, `RoseTree.Licensed.derives`).
 
 @[expose] public section
 
-open RoseTree Core.Order.Branching
+open RoseTree
 
 /-- A language has the pumping property when, beyond some length, every word splits as
 `u ++ v ++ x ++ y ++ z` with `v ++ x ++ y` no longer than that length, `v ++ y` nonempty, and every

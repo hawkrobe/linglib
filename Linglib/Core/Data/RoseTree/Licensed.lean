@@ -39,7 +39,6 @@ on the root alone is a separate conjunct.
 
 namespace RoseTree
 
-open Core.Order.Branching
 
 variable {α : Type*} {R : α → List α → Prop}
 
@@ -87,7 +86,7 @@ theorem licensed_iff_forall_isSubtree {t : RoseTree α} :
   · induction t with
     | node a cs ih =>
       refine licensed_node_iff.mpr ⟨h _ (.refl _), fun c hc ↦ ih c hc fun s hs ↦ ?_⟩
-      exact h s (hs.trans (IsSubtree.of_isChild hc))
+      exact h s (hs.trans (IsSubtree.of_mem_children hc))
 
 /-- Replacing a subtree by a licensed tree with the same root value keeps a tree licensed. -/
 theorem Licensed.replaceAt {t s new : RoseTree α} (ht : t.Licensed R) {p : List ℕ}
@@ -99,7 +98,7 @@ theorem Licensed.replaceAt {t s new : RoseTree α} (ht : t.Licensed R) {p : List
     obtain ⟨c, hc, hcs⟩ := subtreeAt_cons_eq_some_iff.mp hs
     cases t with
     | node a cs =>
-      rw [branching_children, children_node] at hc
+      rw [children_node] at hc
       rw [replaceAt_cons_of_getElem? (by simpa using hc), value_node, children_node]
       have hval : (c.replaceAt p new).value = c.value := by
         cases p with

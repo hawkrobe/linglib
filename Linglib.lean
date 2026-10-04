@@ -171,7 +171,6 @@ import Linglib.Logic.Trivalent.Propositional
 import Linglib.Core.Order.AllenRelation
 import Linglib.Core.Order.Antichain
 import Linglib.Core.Order.Argmax
-import Linglib.Core.Order.Branching
 import Linglib.Core.Order.DeMorganAlgebra.Basic
 import Linglib.Core.Order.Flat
 import Linglib.Core.Order.GaloisConnection
@@ -182,7 +181,6 @@ import Linglib.Core.Order.Monotone.Monovary
 import Linglib.Core.Order.OfCriteria
 import Linglib.Core.Order.Ortholattice
 import Linglib.Core.Order.PartialUnify
-import Linglib.Core.Order.Positions
 import Linglib.Core.Order.PreorderLattice
 import Linglib.Core.Order.StrictBounds
 import Linglib.Core.Order.SuccPred.Tree

@@ -2,7 +2,6 @@ module
 
 public import Linglib.Phonology.Prosody.Foot
 public import Linglib.Phonology.OptimalityTheory.Constraint.Defs
-public import Linglib.Core.Order.Branching
 
 /-!
 # Prosodic words (ω)

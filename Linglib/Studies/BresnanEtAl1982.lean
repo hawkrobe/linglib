@@ -47,7 +47,7 @@ association itself.
 
 namespace BresnanEtAl1982
 
-open RoseTree Symbol Core.Order.Branching
+open RoseTree Symbol
 
 /-- A leaf is a noun phrase or a verb. -/
 inductive Word | np | v

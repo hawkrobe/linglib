@@ -40,7 +40,7 @@ the prose characterization by equal command domains.
 
 namespace BarkerPullum1990
 
-open Core.Order Core.Order.Branching Syntax Syntax.Tree
+open Core.Order Syntax Syntax.Tree
 
 /-- In the government schema `a` governs `b` when `a` commands `b` and `b` bears to `a` the
 composition of head-of with command. -/
