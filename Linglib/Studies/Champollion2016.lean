@@ -1,236 +1,546 @@
 module
 
+public import Linglib.Semantics.Reference.ChoiceFunction
 public import Linglib.Syntax.Category.Coordinator
-public import Linglib.Semantics.Quantification.Defs
-public import Linglib.Semantics.Plurality.Algebra
+public import Mathlib.Data.Set.Card
+public import Mathlib.Data.Set.Sups
 
 /-!
 # Champollion 2016: noun coordination and the intersective theory of conjunction
 
-This file formalizes the case in [champollion-2016-coordination] that *and* has one lexical entry,
-the intersective generalized conjunction of [partee-rooth-1983] — the Boolean meet that the
-substrate calls `Coordinator.op .conjunctive`. Collective readings such as *John and Mary met*
-are not a join on individuals folded into *and*; they come from silent type-shifters.
-
-Two results support the entry. The type-shift from an individual join to a meet of type-raised
-individuals is not an anti-homomorphism but holds exactly on the predicates that distribute the
-join, and that guard is Link distributivity: a `ᴰ`-closed predicate distributes every join when
-atoms are join-prime, while a collective predicate does not, which is why collectivity needs
-raising and minimization rather than raising and intersection. And the rival collective entry of
-[heycock-zamparelli-2005], which builds *and* from union of witness sets, makes *No man and no
-woman smiled* true in a model where the only smilers are a man and a woman — where the
-intersective entry correctly makes it false.
+Champollion argues that *and* has one lexical entry, the intersection of Partee and Rooth, and
+that its collective uses, as in *a man and woman met*, come from silent operators of Winter that
+raise each noun to a quantifier and keep the minimal sets of the conjunction. Pluralities are
+sets. Existential Raising sends a noun to the upper closure of its singletons, and the upper
+closure takes the set product `⊻` to intersection and union to union, so the derivation yields
+the man–woman pairs for *and* and only singletons for *or*. Choice functions closed above
+Minimization repair the case of overlapping nouns and give the mixtures that *ten men and women*
+counts. The collective entry of Heycock and Zamparelli is the set product itself, which agrees
+with intersection on upward-entailing conjuncts and overgenerates on the others.
 
 ## Main definitions
 
-* `DistributiveOverJoin` — a predicate decomposes a join into a meet
-* `andIntersective`, `andSetProduct` — the two entries at the type of properties of pluralities
+* `existentialRaising`, `minimization`, `predicateDistributivity`: ER (12), MIN (19), PDIST (27)
+* `choiceRaising`, `distributiveChoiceRaising`: CR (46) and DCR (78) under a choice function
+* `determinerFitting`: DFIT (92)
 
 ## Main results
 
-* `individual_join_eq_op_iff` — the type-shift holds at a predicate iff it distributes the join
-* `linkD_distributiveOverJoin`, `individual_join_eq_op_of_linkD` — Link's `ᴰ`-closed predicates
-  are the licensed ones
-* `collective_not_distributiveOverJoin`, `individual_join_ne_op_of_not_distributive` — a
-  collective predicate breaks the type-shift
-* `setProduct_overgenerates` — the set-product entry and the intersective entry assign opposite
-  truth values to *No man and no woman smiled*, and the intersective one is right
+* `minimization_op_conjunctive_existentialRaising`: Minimization after Existential Raising keeps
+  the singletons of the overlap and the pairs from the differences (p. 580), the man–woman pairs
+  (20) for disjoint nouns
+* `minimization_op_conjunctive_Ici`: Minimization of two principal filters is their join
+* `exists_mem_minimization_choiceRaising_iff`,
+  `exists_mem_minimization_distributiveChoiceRaising_iff`: Choice Closure above Minimization
+  gives every pair (57) and every mixture (80)
+* `inter_setOf_ncard_minimization_existentialRaising_predicateDistributivity`: no numeral above
+  two counts the Existential Raising of plural nouns (76)
+* `minimization_op_disjunctive_existentialRaising`, `determinerFitting_every_and_iff_or`: *or* is
+  never collective, and *every cat and dog* is *every cat or dog* (95), (96), (99)
+* `sups_eq_op_conjunctive`, `sups_noMan_noWoman`, `sups_individual_card`: the set product (101)
+  is intersection on upper sets and overgenerates in (103) and (105)
+
+## Implementation notes
+
+A plurality is a `Set E` and a property of pluralities a `Set (Set E)`, as in the paper. The
+determiner *a* is `Quantifier.GQ.some`, the Montague lift is `Quantifier.NP.individual`, *and*
+and *or* are `Coordinator.op`, and Choice Closure quantifies over `Reference.ChoiceFunction`,
+whose totality turns the definedness condition `N ≠ ∅` of Choice Raising into a hypothesis. The
+counterexamples to the set product read Heycock and Zamparelli's sets of singletons as the
+individuals they contain, and (76) applies the numeral at the type of the sets it counts. The
+paper's (99a) writes `MIN(ER(cat)) or MIN(ER(dog))` for the `MIN(ER(cat) or ER(dog))` of its
+prose and (99b), and (83c) swaps the Americans and Russians of (82a) and (83b).
+
+## TODO
+
+The scope constraints on Choice Closure (§4.4), determiner doubling for the ten-people reading
+(§5.1), the split scope of indefinite numerals (84)–(87), and Winter's pair semantics (§7.2) are
+not formalized.
 
 ## References
 
 * [champollion-2016-coordination]
 * [partee-rooth-1983]
+* [winter-2001b]
 * [heycock-zamparelli-2005]
-* [link-1983]
-* [link-1987]
+* [bergmann-1982]
 -/
 
 @[expose] public section
 
 namespace Champollion2016
 
-open Quantifier.NP (individual)
-open Plurality.Algebra
+open Quantifier Quantifier.NP Reference Set SetFamily
 
-/-! ### The type-shift `⊔ ↦ ⊓` is guarded to distributive predicates
+variable {α E : Type*}
 
-The intersective entry says *and* is `INT` ([champollion-2016-coordination] eq. 16):
-generalized conjunction, `Coordinator.op .conjunctive`, the Boolean meet `⊓`.
-On two type-raised individuals it returns `λP. P x ∧ P y`. The collective behaviour
-people attribute to *and* (a join `x ⊔ y` on individuals) coincides with this meet only
-for predicates that *distribute* the join — for genuinely collective predicates the two
-come apart, which is the whole motivation for Champollion's silent operators. -/
+/-! ### Minimal elements -/
 
-section TypeShift
+/-- The minimal elements of an upper closure are those of the generating set. -/
+private theorem minimal_mem_upperClosure_iff [PartialOrder α] {s : Set α} {x : α} :
+    Minimal (· ∈ upperClosure s) x ↔ Minimal (· ∈ s) x := by
+  refine ⟨fun h ↦ ?_, fun h ↦ ⟨⟨x, h.prop, le_rfl⟩, fun y ⟨a, has, hay⟩ hyx ↦ ?_⟩⟩
+  · obtain ⟨a, has, hax⟩ := h.prop
+    obtain rfl := h.eq_of_ge ⟨a, has, le_rfl⟩ hax
+    exact ⟨has, fun y hy hyx ↦ h.le_of_le ⟨y, hy, le_rfl⟩ hyx⟩
+  · exact (h.eq_of_ge has (hay.trans hyx)).symm ▸ hay
 
-variable {E : Type} [SemilatticeSup E]
+/-! ### The operators -/
 
-/-- A predicate **distributes a join** when it decomposes `x ⊔ y` into a meet:
-    `P (x ⊔ y) ↔ P x ∧ P y`. Link's `ᴰ`-closed (distributive) predicates satisfy this;
-    collective predicates (`met`, `gather`) do not. -/
-def DistributiveOverJoin {E : Type*} [SemilatticeSup E] (P : E → Prop) : Prop :=
-  ∀ x y : E, P (x ⊔ y) ↔ (P x ∧ P y)
+/-- **Existential Raising** (12) sends `N` to the sets that meet it. At any type it is the
+indefinite article *a* (23). -/
+def existentialRaising (N : Set α) : Set (Set α) := {P | GQ.some N P}
 
-/-- **The type-shift `⊔ ↦ ⊓`, guarded.** Type-raising the individual-join `x ⊔ y` agrees
-    with the GQ-meet `Coordinator.op .conjunctive` of the raised individuals *at `P`* iff `P`
-    distributes this join. The bare anti-homomorphism (for all `P`) is therefore FALSE;
-    distributivity is exactly the guard. -/
-theorem individual_join_eq_op_iff (x y : E) (P : E → Prop) :
-    (individual (x ⊔ y : E) P
-        ↔ Coordinator.op .conjunctive (individual x) (individual y) P)
-      ↔ (P (x ⊔ y : E) ↔ (P x ∧ P y)) := Iff.rfl
+@[simp]
+theorem mem_existentialRaising {N P : Set α} : P ∈ existentialRaising N ↔ ∃ x ∈ N, x ∈ P :=
+  Iff.rfl
 
-/-- For a distributive predicate the type-shift holds: `individual (x ⊔ y)` agrees with the
-    GQ-meet on `P`. -/
-theorem individual_join_eq_op_of_distributive (x y : E) {P : E → Prop}
-    (hP : DistributiveOverJoin P) :
-    individual (x ⊔ y : E) P
-      ↔ Coordinator.op .conjunctive (individual x) (individual y) P :=
-  (individual_join_eq_op_iff x y P).mpr (hP x y)
+/-- **Minimization** (19) keeps the minimal sets of `Q`. -/
+def minimization (Q : Set (Set E)) : Set (Set E) := {P | Minimal (· ∈ Q) P}
 
-/-- **The guard is Link distributivity.** A Link `ᴰ`-closed predicate `ᴰQ`
-    ([link-1987]) distributes every join, given join-prime atoms ([link-1983]). So
-    Champollion's distributive *and* IS Link's distributive predication, and the
-    predicates that break the type-shift are precisely the non-`ᴰ`-closed (collective)
-    ones. -/
-theorem linkD_distributiveOverJoin {E : Type*} [SemilatticeSup E]
-    (hJP : AtomJoinPrime E) (Q : E → Prop) : DistributiveOverJoin (D Q) := by
-  intro x y
+/-- A set survives Minimization iff it is in `Q` and none of its proper subsets is, the form
+(19b) of the operator. -/
+theorem mem_minimization_iff {Q : Set (Set E)} {P : Set E} :
+    P ∈ minimization Q ↔ P ∈ Q ∧ ∀ P' ⊂ P, P' ∉ Q :=
+  minimal_iff_forall_lt
+
+/-- **Predicate Distributivity** (27) sends `P'` to its nonempty subsets. A plural noun is its
+singular under this operator (72). -/
+def predicateDistributivity (P' : Set E) : Set (Set E) := {P | P.Nonempty ∧ P ⊆ P'}
+
+/-- **Choice Raising** (46) is the Montague lift of the member of `N` that `f` chooses. -/
+def choiceRaising (f : ChoiceFunction E) (N : Set E) : Set (Set E) := {P | individual (f N) P}
+
+/-- **Distributive Choice Raising** (78) holds of the sets that contain every member of the
+plurality `f` chooses from `N`. -/
+def distributiveChoiceRaising (f : ChoiceFunction (Set E)) (N : Set (Set E)) : Set (Set E) :=
+  {P | GQ.every (f N) P}
+
+/-- **Determiner Fitting** (92) applies a determiner of individuals to the union of a property
+of pluralities and to the union of its meet with the scope. -/
+def determinerFitting (D : GQ E) (A B : Set (Set E)) : Prop := D (⋃₀ A) (⋃₀ (A ∩ B))
+
+/-! ### Raising and the Montague lift as upper closures -/
+
+/-- Existential Raising is the upper closure of the singletons of the noun, the sets that
+contain some man or other (13). -/
+theorem existentialRaising_eq_upperClosure (N : Set α) :
+    existentialRaising N = upperClosure ((fun x ↦ ({x} : Set α)) '' N) := by
+  ext P; simp
+
+/-- Existential Raising preserves unions. -/
+theorem existentialRaising_union (N N' : Set α) :
+    existentialRaising (N ∪ N') = existentialRaising N ∪ existentialRaising N' := by
+  ext P; simp [or_and_right, exists_or]
+
+/-- The Montague lift of `x` is the principal filter of `{x}`. -/
+theorem setOf_individual (x : E) : {P : Set E | individual x P} = Ici {x} := by
+  ext P; exact (singleton_subset_iff (a := x) (s := P)).symm
+
+/-- Choice Raising is the principal filter of the singleton of the choice. -/
+theorem choiceRaising_eq_Ici (f : ChoiceFunction E) (N : Set E) :
+    choiceRaising f N = Ici {f N} :=
+  setOf_individual (f N)
+
+/-- Distributive Choice Raising is the principal filter of the chosen plurality. -/
+theorem distributiveChoiceRaising_eq_Ici (f : ChoiceFunction (Set E)) (N : Set (Set E)) :
+    distributiveChoiceRaising f N = Ici (f N) :=
+  rfl
+
+/-- The alternative definition of Distributive Choice Raising through Predicate Distributivity
+(79), for a nonempty choice. -/
+theorem distributiveChoiceRaising_eq_setOf (f : ChoiceFunction (Set E)) {N : Set (Set E)}
+    (h : (f N).Nonempty) :
+    distributiveChoiceRaising f N = {P | f N ∈ predicateDistributivity P} := by
+  ext P; exact (and_iff_right h).symm
+
+/-! ### Raising, Intersection, Minimization -/
+
+/-- The pairs drawn from `N` and `N'` are the set product of their singletons. -/
+theorem image_singleton_sups (N N' : Set E) :
+    (fun x ↦ ({x} : Set E)) '' N ⊻ (fun x ↦ ({x} : Set E)) '' N' =
+      {P | ∃ x ∈ N, ∃ y ∈ N', P = {x, y}} := by
+  ext P
+  simp only [mem_sups, mem_image]
   constructor
-  · intro h
-    exact ⟨fun z hz hAtom => h z (le_trans hz le_sup_left) hAtom,
-           fun z hz hAtom => h z (le_trans hz le_sup_right) hAtom⟩
-  · rintro ⟨hx, hy⟩ z hz hAtom
-    rcases hJP z hAtom x y hz with h | h
-    · exact hx z h hAtom
-    · exact hy z h hAtom
+  · rintro ⟨_, ⟨x, hx, rfl⟩, _, ⟨y, hy, rfl⟩, rfl⟩
+    exact ⟨x, hx, y, hy, rfl⟩
+  · rintro ⟨x, hx, y, hy, rfl⟩
+    exact ⟨_, ⟨x, hx, rfl⟩, _, ⟨y, hy, rfl⟩, rfl⟩
 
-/-- A Link `ᴰ`-closed predicate licenses the type-shift `⊔ ↦ ⊓`. -/
-theorem individual_join_eq_op_of_linkD (hJP : AtomJoinPrime E) (x y : E)
-    (Q : E → Prop) :
-    individual (x ⊔ y : E) (D Q : E → Prop)
-      ↔ Coordinator.op .conjunctive (individual x) (individual y) (D Q : E → Prop) :=
-  individual_join_eq_op_of_distributive x y (linkD_distributiveOverJoin hJP Q)
+/-- The conjunction *ER(man) and ER(woman)* is the upper closure of the pairs of a man and a
+woman, the sets that contain both (18). -/
+theorem op_conjunctive_existentialRaising (N N' : Set E) :
+    Coordinator.op .conjunctive (existentialRaising N) (existentialRaising N') =
+      (upperClosure {P : Set E | ∃ x ∈ N, ∃ y ∈ N', P = {x, y}} : Set (Set E)) := by
+  rw [Coordinator.op_conjunctive, existentialRaising_eq_upperClosure,
+    existentialRaising_eq_upperClosure, ← image_singleton_sups, upperClosure_sups]
+  rfl
 
-/-- **The guard is necessary, lifted to the type-shift.** A predicate that does NOT
-    distribute the join breaks the `⊔ ↦ ⊓` agreement at the witnessing pair: there
-    `individual (x ⊔ y)` and the GQ-meet `Coordinator.op .conjunctive` come apart. -/
-theorem individual_join_ne_op_of_not_distributive {P : E → Prop}
-    (h : ¬ DistributiveOverJoin P) :
-    ∃ x y : E, ¬ (individual (x ⊔ y : E) P
-                    ↔ Coordinator.op .conjunctive (individual x) (individual y) P) := by
-  simp only [DistributiveOverJoin, not_forall] at h
-  obtain ⟨x, y, hxy⟩ := h
-  exact ⟨x, y, fun hiff => hxy ((individual_join_eq_op_iff x y P).mp hiff)⟩
+/-- **Minimization after Existential Raising.** The minimal sets containing an `N` and an `N'`
+are the singletons of their overlap and the pairs of an `N` that is not an `N'` with an `N'`
+that is not an `N` (journal p. 580). -/
+theorem minimization_op_conjunctive_existentialRaising (N N' : Set E) :
+    minimization (Coordinator.op .conjunctive (existentialRaising N) (existentialRaising N')) =
+      {P | ∃ x ∈ N ∩ N', P = {x}} ∪ {P | ∃ x ∈ N \ N', ∃ y ∈ N' \ N, P = {x, y}} := by
+  ext P
+  rw [minimization, mem_ofPred_eq, op_conjunctive_existentialRaising]
+  refine minimal_mem_upperClosure_iff.trans ⟨?_, ?_⟩
+  · rintro ⟨⟨x, hx, y, hy, rfl⟩, hmin⟩
+    by_cases hxN' : x ∈ N'
+    · exact Or.inl ⟨x, ⟨hx, hxN'⟩, (hmin (y := {x}) ⟨x, hx, x, hxN', (pair_eq_singleton x).symm⟩
+        (singleton_subset_iff.2 (mem_insert x _))).antisymm
+        (singleton_subset_iff.2 (mem_insert x _))⟩
+    by_cases hyN : y ∈ N
+    · exact Or.inl ⟨y, ⟨hyN, hy⟩, (hmin (y := {y}) ⟨y, hyN, y, hy, (pair_eq_singleton y).symm⟩
+        (singleton_subset_iff.2 (mem_insert_of_mem x rfl))).antisymm
+        (singleton_subset_iff.2 (mem_insert_of_mem x rfl))⟩
+    exact Or.inr ⟨x, ⟨hx, hxN'⟩, y, ⟨hy, hyN⟩, rfl⟩
+  · rintro (⟨x, ⟨hx, hx'⟩, rfl⟩ | ⟨x, ⟨hx, hxN'⟩, y, ⟨hy, hyN⟩, rfl⟩)
+    · refine ⟨⟨x, hx, x, hx', (pair_eq_singleton x).symm⟩, ?_⟩
+      rintro _ ⟨a, -, b, -, rfl⟩ hle
+      obtain rfl : a = x := hle (mem_insert a {b})
+      exact singleton_subset_iff.2 (mem_insert a {b})
+    · refine ⟨⟨x, hx, y, hy, rfl⟩, ?_⟩
+      rintro _ ⟨a, ha, b, hb, rfl⟩ hle
+      obtain rfl : a = x := (hle (mem_insert a {b})).resolve_right fun h ↦ hyN (h ▸ ha)
+      obtain rfl : b = y := (hle (mem_insert_of_mem a rfl)).resolve_left fun h ↦ hxN' (h ▸ hb)
+      exact le_rfl
 
-end TypeShift
+/-- For disjoint nouns, Raising, Intersection and Minimization give the sets of one man and one
+woman, the meaning `mw-pair` of *man and woman* (10), (20). -/
+theorem minimization_op_conjunctive_existentialRaising_of_disjoint {N N' : Set E}
+    (h : Disjoint N N') :
+    minimization (Coordinator.op .conjunctive (existentialRaising N) (existentialRaising N')) =
+      {P | ∃ x ∈ N, ∃ y ∈ N', P = {x, y}} := by
+  rw [minimization_op_conjunctive_existentialRaising, disjoint_iff_inter_eq_empty.mp h,
+    sdiff_eq_left.mpr h, sdiff_eq_left.mpr h.symm]
+  simp
 
-/-- **A collective predicate breaks the guard.** True of the plural `{false, true}`
-    (`John and Mary met`) but of neither part (`Finset Bool`, `∪` as `⊔`): this collective
-    predicate is not `DistributiveOverJoin`, so by `individual_join_ne_op_of_not_distributive`
-    it breaks the type-shift `⊔ ↦ ⊓`. This is why Champollion derives collectivity via
-    silent Raising + Minimization rather than via raising + intersection. -/
-theorem collective_not_distributiveOverJoin :
-    ∃ P : Finset Bool → Prop, ¬ DistributiveOverJoin P :=
-  ⟨(· = ({false, true} : Finset Bool)), by
-    intro hd
-    exact absurd ((hd {false} {true}).mp (by decide)).1 (by decide)⟩
+/-- When the nouns coincide, only singletons survive Minimization, so that *A doctor and lawyer
+met* would be deviant like *#John met* (42). -/
+theorem minimization_op_conjunctive_existentialRaising_self (N : Set E) :
+    minimization (Coordinator.op .conjunctive (existentialRaising N) (existentialRaising N)) =
+      (fun x ↦ ({x} : Set E)) '' N := by
+  rw [minimization_op_conjunctive_existentialRaising]
+  ext P
+  simp [eq_comm]
 
-/-! ### The collective theory overgenerates (§7.1, journal p. 608)
+/-- When John is a man, the singleton of John is the only minimal set that contains John and a
+man, so *John and some man met* (43) would be deviant. -/
+theorem minimization_op_conjunctive_individual_existentialRaising {N : Set E} {j : E}
+    (hj : j ∈ N) :
+    minimization (Coordinator.op .conjunctive {P : Set E | individual j P}
+      (existentialRaising N)) = {{j}} := by
+  have : {P : Set E | individual j P} = existentialRaising {j} := by
+    ext P; exact ⟨fun h ↦ ⟨j, rfl, h⟩, fun ⟨_, hx, h⟩ ↦ (eq_of_mem_singleton hx) ▸ h⟩
+  rw [this, minimization_op_conjunctive_existentialRaising]
+  ext P
+  simp [hj]
 
-Champollion's case against the collective theory: take [heycock-zamparelli-2005]'s entry,
-which builds *and* by **set product** — combining two quantifier denotations `Q`, `Q'` by
-forming the **union** `A ∪ B` of a `Q`-witness and a `Q'`-witness
-([champollion-2016-coordination] eq. 101):
+/-- The hydra *A man and woman who dated met* (24) is true iff the couple of some man and some
+woman both dated and met. -/
+theorem mem_existentialRaising_minimization_inter_iff {N N' : Set E} (h : Disjoint N N')
+    (R S : Set (Set E)) :
+    S ∈ existentialRaising (minimization (Coordinator.op .conjunctive (existentialRaising N)
+        (existentialRaising N')) ∩ R) ↔
+      ∃ x ∈ N, ∃ y ∈ N', {x, y} ∈ R ∧ {x, y} ∈ S := by
+  rw [minimization_op_conjunctive_existentialRaising_of_disjoint h]
+  constructor
+  · rintro ⟨_, ⟨⟨x, hx, y, hy, rfl⟩, hR⟩, hS⟩
+    exact ⟨x, hx, y, hy, hR, hS⟩
+  · rintro ⟨x, hx, y, hy, hR, hS⟩
+    exact ⟨_, ⟨⟨x, hx, y, hy, rfl⟩, hR⟩, hS⟩
 
-    ⟦and_coll⟧ = λQ λQ'. λP. ∃A ∃B [Q(A) ∧ Q'(B) ∧ P = A ∪ B]
+/-- With Predicate Distributivity on the scope, *A man and woman had a beer* (29) is true iff
+some man and some woman each had a beer. -/
+theorem predicateDistributivity_mem_existentialRaising_minimization_iff {N N' : Set E}
+    (h : Disjoint N N') (S : Set E) :
+    predicateDistributivity S ∈ existentialRaising (minimization (Coordinator.op .conjunctive
+        (existentialRaising N) (existentialRaising N'))) ↔
+      ∃ x ∈ N, ∃ y ∈ N', x ∈ S ∧ y ∈ S := by
+  rw [minimization_op_conjunctive_existentialRaising_of_disjoint h]
+  simp only [mem_existentialRaising, predicateDistributivity, mem_ofPred_eq]
+  constructor
+  · rintro ⟨_, ⟨x, hx, y, hy, rfl⟩, -, hS⟩
+    exact ⟨x, hx, y, hy, hS (mem_insert x _), hS (mem_insert_of_mem x rfl)⟩
+  · rintro ⟨x, hx, y, hy, hxS, hyS⟩
+    exact ⟨_, ⟨x, hx, y, hy, rfl⟩, insert_nonempty x _, insert_subset hxS
+      (singleton_subset_iff.2 hyS)⟩
 
-We model the conjuncts at the property-of-pluralities level (type `⟨et,t⟩`), following
-Champollion's prose reduction of the eq. (104) generalized-quantifier argument on journal
-p. 608: `⟦no man⟧`/`⟦no woman⟧` as the *man-free* / *woman-free* witness-set properties.
-The overgeneration: *No man and no woman smiled* (103a) comes out TRUE in the model where a
-smiling man (John) and a smiling woman (Mary) are the only smilers — take `A = {Mary}` (no
-man) and `B = {John}` (no woman), so `A ∪ B = {John, Mary} =` the smilers — even though a
-man did smile. The intersective `Coordinator.op .conjunctive` correctly makes it FALSE. -/
+/-! ### Choice Raising -/
 
-section Overgeneration
+/-- Minimization of the meet of two principal filters keeps only their join. This is how
+Intersection and Minimization form a collective individual. -/
+theorem minimization_op_conjunctive_Ici (a b : Set E) :
+    minimization (Coordinator.op .conjunctive (Ici a) (Ici b)) = {a ∪ b} := by
+  ext P
+  change Minimal (· ∈ Ici a ∩ Ici b) P ↔ _
+  rw [Ici_inter_Ici]
+  exact minimal_ge_iff
 
-/-- The two-individual model of [champollion-2016-coordination] §7.1: persons John and Mary. -/
-inductive Person | john | mary
-  deriving DecidableEq, Repr
+/-- Minimization of the conjoined Montague lifts of John and Mary keeps only their pair (40). -/
+theorem minimization_op_conjunctive_individual (x y : E) :
+    minimization (Coordinator.op .conjunctive {P : Set E | individual x P}
+      {P : Set E | individual y P}) = {{x, y}} := by
+  rw [setOf_individual, setOf_individual, minimization_op_conjunctive_Ici, singleton_union]
 
-/-- A plurality / witness set, as the characteristic function of a set of individuals
-    (type `⟨e,t⟩`). -/
-abbrev Plur := Person → Prop
+/-- On a nonempty noun, Choice Closure directly above Choice Raising is Existential Raising
+(p. 583). -/
+theorem exists_mem_choiceRaising_iff {N P : Set E} (hN : N.Nonempty) :
+    (∃ f : ChoiceFunction E, P ∈ choiceRaising f N) ↔ P ∈ existentialRaising N :=
+  ChoiceFunction.exists_apply_iff_some hN P
 
-/-- `man` holds of John only. -/
-def man : Person → Prop
-  | .john => True
-  | .mary => False
+/-- With Choice Closure above Minimization, *John and some man* (53) holds of the pair of John
+and any man. -/
+theorem exists_mem_minimization_individual_choiceRaising_iff {N P : Set E} (hN : N.Nonempty)
+    (j : E) :
+    (∃ f : ChoiceFunction E, P ∈ minimization (Coordinator.op .conjunctive
+      {P : Set E | individual j P} (choiceRaising f N))) ↔ ∃ x ∈ N, P = {j, x} := by
+  simp only [setOf_individual, choiceRaising_eq_Ici, minimization_op_conjunctive_Ici,
+    singleton_union, mem_singleton_iff]
+  exact ChoiceFunction.exists_apply_iff_some hN fun x ↦ P = {j, x}
 
-/-- `woman` holds of Mary only. -/
-def woman : Person → Prop
-  | .john => False
-  | .mary => True
+/-- With Choice Closure above Minimization, *a doctor and lawyer* (57) holds of the pair of any
+doctor and any lawyer, whether or not they share their professions. -/
+theorem exists_mem_minimization_choiceRaising_iff {N N' P : Set E} (hN : N.Nonempty)
+    (hN' : N'.Nonempty) :
+    (∃ f₁ f₂ : ChoiceFunction E, P ∈ minimization (Coordinator.op .conjunctive
+      (choiceRaising f₁ N) (choiceRaising f₂ N'))) ↔ ∃ x ∈ N, ∃ y ∈ N', P = {x, y} := by
+  simp only [choiceRaising_eq_Ici, minimization_op_conjunctive_Ici, singleton_union,
+    mem_singleton_iff]
+  exact (ChoiceFunction.exists_apply_iff_some hN fun x ↦
+    ∃ f₂ : ChoiceFunction E, P = insert x {f₂ N'}).trans (exists_congr fun x ↦
+      and_congr_right fun _ ↦ ChoiceFunction.exists_apply_iff_some hN' fun y ↦ P = {x, y})
 
-/-- In the model, both John and Mary smiled — and they are the only people. -/
-def smiled : Plur := fun _ => True
+/-! ### Plurals -/
 
-/-- `⟦no man⟧` as a property of pluralities: the set contains no man. -/
-def noMan : Plur → Prop := fun X => ∀ a, X a → ¬ man a
+/-- Existential Raising of plural nouns followed by Minimization gives sets of at most two
+pluralities `{M, W}`, which no numeral above two counts (75), (76). -/
+theorem inter_setOf_ncard_minimization_existentialRaising_predicateDistributivity
+    (N N' : Set E) {n : ℕ} (hn : 2 < n) :
+    {Q : Set (Set E) | Q.ncard = n} ∩ minimization (Coordinator.op .conjunctive
+      (existentialRaising (predicateDistributivity N))
+      (existentialRaising (predicateDistributivity N'))) = ∅ := by
+  rw [minimization_op_conjunctive_existentialRaising, eq_empty_iff_forall_notMem]
+  rintro _ ⟨hcard, ⟨M, -, rfl⟩ | ⟨M, -, W, -, rfl⟩⟩
+  · simp only [mem_ofPred_eq, ncard_singleton] at hcard
+    omega
+  · have := ncard_insert_le M ({W} : Set (Set E))
+    simp only [mem_ofPred_eq, ncard_singleton] at hcard this
+    omega
 
-/-- `⟦no woman⟧` as a property of pluralities: the set contains no woman. -/
-def noWoman : Plur → Prop := fun X => ∀ a, X a → ¬ woman a
+/-- With Distributive Choice Raising and Choice Closure above Minimization, *men and women* (80)
+denotes the mixtures, the unions of a plurality from each noun, which form the set product. -/
+theorem exists_mem_minimization_distributiveChoiceRaising_iff {N N' : Set (Set E)} {P : Set E}
+    (hN : N.Nonempty) (hN' : N'.Nonempty) :
+    (∃ f₁ f₂ : ChoiceFunction (Set E), P ∈ minimization (Coordinator.op .conjunctive
+      (distributiveChoiceRaising f₁ N) (distributiveChoiceRaising f₂ N'))) ↔ P ∈ N ⊻ N' := by
+  simp only [distributiveChoiceRaising_eq_Ici, minimization_op_conjunctive_Ici, mem_singleton_iff,
+    mem_sups]
+  exact (ChoiceFunction.exists_apply_iff_some hN fun M ↦
+    ∃ f₂ : ChoiceFunction (Set E), P = M ∪ f₂ N').trans (exists_congr fun M ↦
+      and_congr_right fun _ ↦ (ChoiceFunction.exists_apply_iff_some hN' fun W ↦
+        P = M ∪ W).trans (exists_congr fun _ ↦ and_congr_right fun _ ↦ eq_comm))
 
-/-- Champollion's **intersective** *and* on quantifier denotations is `Coordinator.op .conjunctive`
-    (the Boolean meet `⊓` on the `Plur → Prop` carrier) —
-    [champollion-2016-coordination] eq. 16. -/
-def andIntersective : (Plur → Prop) → (Plur → Prop) → (Plur → Prop) :=
-  Coordinator.op .conjunctive
+/-- With Choice Closure at the sentence, as in *Two Americans and three Russians made a team*
+(83), the conjunction of two plural nouns holds of a scope iff the union of a plurality from each
+noun does. -/
+theorem exists_mem_existentialRaising_minimization_distributiveChoiceRaising_iff
+    {N N' : Set (Set E)} (hN : N.Nonempty) (hN' : N'.Nonempty) (S : Set (Set E)) :
+    (∃ f₁ f₂ : ChoiceFunction (Set E), S ∈ existentialRaising (minimization
+      (Coordinator.op .conjunctive (distributiveChoiceRaising f₁ N)
+        (distributiveChoiceRaising f₂ N')))) ↔
+      ∃ M ∈ N, ∃ W ∈ N', M ∪ W ∈ S := by
+  simp only [distributiveChoiceRaising_eq_Ici, minimization_op_conjunctive_Ici,
+    mem_existentialRaising, mem_singleton_iff, exists_eq_left]
+  exact (ChoiceFunction.exists_apply_iff_some hN fun M ↦
+    ∃ f₂ : ChoiceFunction (Set E), M ∪ f₂ N' ∈ S).trans (exists_congr fun M ↦
+      and_congr_right fun _ ↦ ChoiceFunction.exists_apply_iff_some hN' fun W ↦ M ∪ W ∈ S)
 
-/-- Heycock & Zamparelli's **set-product** (collective) *and* ([heycock-zamparelli-2005];
-    [champollion-2016-coordination] eq. 101): holds of a plurality `P` iff `P` is the union
-    `A ∪ B` of a `Q`-witness `A` and a `Q'`-witness `B`. -/
-def andSetProduct (Q Q' : Plur → Prop) : Plur → Prop :=
-  fun P => ∃ A B : Plur, Q A ∧ Q' B ∧ P = fun a => A a ∨ B a
+/-! ### *And* and *or* -/
 
-theorem andIntersective_apply (Q Q' : Plur → Prop) (P : Plur) :
-    andIntersective Q Q' P ↔ (Q P ∧ Q' P) := Iff.rfl
+/-- Minimization after Existential Raising of a disjunction keeps only singletons, so *or* is
+never collective (§6.2). -/
+theorem minimization_op_disjunctive_existentialRaising (N N' : Set E) :
+    minimization (Coordinator.op .disjunctive (existentialRaising N) (existentialRaising N')) =
+      (fun x ↦ ({x} : Set E)) '' (N ∪ N') := by
+  have hanti : IsAntichain (· ≤ ·) ((fun x ↦ ({x} : Set E)) '' (N ∪ N')) := by
+    rintro _ ⟨x, -, rfl⟩ _ ⟨y, -, rfl⟩ hne hle
+    exact hne (by rw [singleton_subset_singleton.mp hle])
+  ext P
+  change Minimal (· ∈ existentialRaising N ∪ existentialRaising N') P ↔ _
+  rw [← existentialRaising_union, existentialRaising_eq_upperClosure]
+  exact hanti.minimal_mem_upperClosure_iff_mem
 
-/-- The two witness sets from journal p. 608. -/
-def onlyMary : Plur
-  | .john => False
-  | .mary => True
+/-- Determiner Fitting does not change the indefinite article when the scope excludes the empty
+set (p. 604). -/
+theorem determinerFitting_some_iff {A B : Set (Set E)} (hB : ∅ ∉ B) :
+    determinerFitting GQ.some A B ↔ GQ.some A B := by
+  refine ⟨fun ⟨_, _, P, hP, _⟩ ↦ ⟨P, hP⟩, fun ⟨P, hA, hB'⟩ ↦ ?_⟩
+  obtain ⟨x, hx⟩ := nonempty_iff_ne_empty.mpr fun h ↦ hB (h ▸ hB')
+  exact ⟨x, ⟨P, hA, hx⟩, P, ⟨hA, hB'⟩, hx⟩
 
-def onlyJohn : Plur
-  | .john => True
-  | .mary => False
+/-- Determiner Fitting of *no* to a plural noun, as in *No students met* (94), says that no
+student is in a set of students that met. -/
+theorem determinerFitting_no_predicateDistributivity_iff (N : Set E) (S : Set (Set E)) :
+    determinerFitting GQ.no (predicateDistributivity N) S ↔
+      ¬ ∃ x ∈ N, ∃ P ∈ S, x ∈ P ∧ P ⊆ N := by
+  refine ⟨fun h ⟨x, hx, P, hPS, hxP, hPN⟩ ↦ h x ⟨{x}, ⟨singleton_nonempty x,
+    singleton_subset_iff.2 hx⟩, mem_singleton x⟩ ⟨P, ⟨⟨⟨x, hxP⟩, hPN⟩, hPS⟩, hxP⟩,
+    fun h x _ ⟨P, ⟨⟨_, hPN⟩, hPS⟩, hxP⟩ ↦ h ⟨x, hPN hxP, P, hPS, hxP, hPN⟩⟩
 
-/-- **Intersective: correct.** The intersective `Coordinator.op .conjunctive` entry predicts *No man
-    and no woman smiled* FALSE — a man (John) smiled, so `no man` already fails. -/
-theorem intersective_false : ¬ andIntersective noMan noWoman smiled := by
-  intro h
-  exact (andIntersective_apply _ _ _).mp h |>.1 .john trivial trivial
+/-- For disjoint nonempty nouns, Determiner Fitting of *every* to the collective *cat and dog*
+says that every cat and every dog is licensed (95). -/
+theorem determinerFitting_every_minimization_op_conjunctive {N N' : Set E} (h : Disjoint N N')
+    (hN : N.Nonempty) (hN' : N'.Nonempty) (S : Set E) :
+    determinerFitting GQ.every (minimization (Coordinator.op .conjunctive
+      (existentialRaising N) (existentialRaising N'))) (predicateDistributivity S) ↔
+      GQ.every (Coordinator.op .disjunctive N N') S := by
+  rw [minimization_op_conjunctive_existentialRaising_of_disjoint h]
+  obtain ⟨x₀, hx₀⟩ := hN
+  obtain ⟨y₀, hy₀⟩ := hN'
+  refine ⟨fun hD z hz ↦ ?_, fun hS z ⟨_, ⟨x, hx, y, hy, rfl⟩, hz⟩ ↦ ⟨_, ⟨⟨x, hx, y, hy, rfl⟩,
+    insert_nonempty x _, insert_subset (hS x (Or.inl hx)) (singleton_subset_iff.2
+      (hS y (Or.inr hy)))⟩, hz⟩⟩
+  · have hz' : z ∈ ⋃₀ {P | ∃ x ∈ N, ∃ y ∈ N', P = {x, y}} := by
+      rcases hz with hz | hz
+      exacts [⟨_, ⟨z, hz, y₀, hy₀, rfl⟩, mem_insert z _⟩,
+        ⟨_, ⟨x₀, hx₀, z, hz, rfl⟩, mem_insert_of_mem x₀ rfl⟩]
+    obtain ⟨_, ⟨-, -, hP⟩, hzP⟩ := hD z hz'
+    exact hP hzP
 
-/-- **Set product: wrong.** The [heycock-zamparelli-2005] set-product entry predicts *No
-    man and no woman smiled* TRUE — witness `A = {Mary}` (no man), `B = {John}` (no woman),
-    `A ∪ B =` the smilers. ([champollion-2016-coordination] §7.1, journal p. 608.) -/
-theorem setProduct_true : andSetProduct noMan noWoman smiled := by
-  refine ⟨onlyMary, onlyJohn, ?_, ?_, ?_⟩
-  · intro a ha; cases a <;> simp_all [onlyMary, man]
-  · intro a ha; cases a <;> simp_all [onlyJohn, woman]
-  · funext a; cases a <;> simp [smiled, onlyMary, onlyJohn]
+/-- Under its collective structure, *every cat or dog is licensed* (99) says that every cat and
+every dog is licensed. -/
+theorem determinerFitting_every_minimization_op_disjunctive (N N' S : Set E) :
+    determinerFitting GQ.every (minimization (Coordinator.op .disjunctive
+      (existentialRaising N) (existentialRaising N'))) (predicateDistributivity S) ↔
+      GQ.every (Coordinator.op .disjunctive N N') S := by
+  rw [minimization_op_disjunctive_existentialRaising]
+  refine ⟨fun hD z hz ↦ ?_, fun hS z ⟨_, ⟨x, hx, rfl⟩, hz⟩ ↦ ⟨{x}, ⟨⟨x, hx, rfl⟩,
+    singleton_nonempty x, singleton_subset_iff.2 (hS x hx)⟩, hz⟩⟩
+  obtain ⟨_, ⟨-, -, hP⟩, hzP⟩ := hD z ⟨{z}, ⟨z, hz, rfl⟩, mem_singleton z⟩
+  exact hP hzP
 
-/-- **The payoff** ([champollion-2016-coordination] §7.1): on *No man and no woman smiled*
-    in the John-and-Mary-smiled model, the collective set-product entry
-    ([heycock-zamparelli-2005]) and the intersective `Coordinator.op .conjunctive` entry assign
-    OPPOSITE truth values. The intersective answer (FALSE) is correct; the set-product
-    (join-on-individuals) entry overgenerates (TRUE) — refuting the collective theory of
-    *and*. -/
-theorem setProduct_overgenerates :
-    andSetProduct noMan noWoman smiled ∧ ¬ andIntersective noMan noWoman smiled :=
-  ⟨setProduct_true, intersective_false⟩
+/-- *Every cat and dog* and *every cat or dog* agree, which solves the universal half of
+Bergmann's puzzle (95), (96), (99). -/
+theorem determinerFitting_every_and_iff_or {N N' : Set E} (h : Disjoint N N')
+    (hN : N.Nonempty) (hN' : N'.Nonempty) (S : Set E) :
+    determinerFitting GQ.every (minimization (Coordinator.op .conjunctive
+      (existentialRaising N) (existentialRaising N'))) (predicateDistributivity S) ↔
+      determinerFitting GQ.every (minimization (Coordinator.op .disjunctive
+        (existentialRaising N) (existentialRaising N'))) (predicateDistributivity S) :=
+  (determinerFitting_every_minimization_op_conjunctive h hN hN' S).trans
+    (determinerFitting_every_minimization_op_disjunctive N N' S).symm
 
-end Overgeneration
+/-- *A cat and dog came running in* (97) says that a cat and a dog came, where *a cat or dog*
+(98) says that one of them did. -/
+theorem determinerFitting_some_minimization_op_conjunctive {N N' : Set E} (h : Disjoint N N')
+    (S : Set E) :
+    determinerFitting GQ.some (minimization (Coordinator.op .conjunctive
+      (existentialRaising N) (existentialRaising N'))) (predicateDistributivity S) ↔
+      GQ.some N S ∧ GQ.some N' S := by
+  rw [determinerFitting_some_iff fun h ↦ Set.not_nonempty_empty
+    (h : ∅ ∈ predicateDistributivity S).1]
+  change predicateDistributivity S ∈ existentialRaising _ ↔ _
+  rw [predicateDistributivity_mem_existentialRaising_minimization_iff h]
+  exact ⟨fun ⟨x, hx, y, hy, hxS, hyS⟩ ↦ ⟨⟨x, hx, hxS⟩, y, hy, hyS⟩,
+    fun ⟨⟨x, hx, hxS⟩, y, hy, hyS⟩ ↦ ⟨x, hx, y, hy, hxS, hyS⟩⟩
+
+/-- When a cat came and no dog did, *a cat or dog came running in* (98) is true and *a cat and
+dog came running in* (97) is false. -/
+theorem some_op_disjunctive_and_not_determinerFitting_some {N N' S : Set E} (h : Disjoint N N')
+    {x : E} (hx : x ∈ N) (hxS : x ∈ S) (hN'S : Disjoint N' S) :
+    GQ.some (Coordinator.op .disjunctive N N') S ∧
+      ¬ determinerFitting GQ.some (minimization (Coordinator.op .conjunctive
+        (existentialRaising N) (existentialRaising N'))) (predicateDistributivity S) := by
+  rw [determinerFitting_some_minimization_op_conjunctive h]
+  exact ⟨⟨x, Or.inl hx, hxS⟩, fun ⟨_, y, hy, hyS⟩ ↦ disjoint_left.mp hN'S hy hyS⟩
+
+/-! ### The collective theory -/
+
+/-- Heycock and Zamparelli's collective entry (101), the set product `Q ⊻ Q'`, holds wherever
+intersection does. -/
+theorem op_conjunctive_subset_sups [Lattice α] (Q Q' : Set α) :
+    Coordinator.op .conjunctive Q Q' ⊆ Q ⊻ Q' :=
+  fun a h ↦ ⟨a, h.1, a, h.2, sup_idem a⟩
+
+/-- On upward-entailing conjuncts the collective and the intersective entries agree, so the
+collective theory goes wrong only on conjuncts that are not upward entailing (p. 608). -/
+theorem sups_eq_op_conjunctive [Lattice α] {Q Q' : Set α} (hQ : IsUpperSet Q)
+    (hQ' : IsUpperSet Q') : Q ⊻ Q' = Coordinator.op .conjunctive Q Q' := by
+  refine (Subset.antisymm ?_ (op_conjunctive_subset_sups Q Q'))
+  rintro _ ⟨a, ha, b, hb, rfl⟩
+  exact ⟨hQ le_sup_left ha, hQ' le_sup_right hb⟩
+
+/-- *Man and woman* under the collective entry (102), with nouns as sets of singletons, is the
+meaning that Raising, Intersection and Minimization derive (20). -/
+theorem sups_setOf_ncard_eq_one {N N' : Set E} (h : Disjoint N N') :
+    {A | A.ncard = 1 ∧ A ⊆ N} ⊻ {B | B.ncard = 1 ∧ B ⊆ N'} =
+      minimization (Coordinator.op .conjunctive (existentialRaising N)
+        (existentialRaising N')) := by
+  have hsing (N : Set E) : {A | A.ncard = 1 ∧ A ⊆ N} = (fun x ↦ ({x} : Set E)) '' N := by
+    ext A
+    simp only [mem_ofPred_eq, ncard_eq_one, mem_image]
+    constructor
+    · rintro ⟨⟨x, rfl⟩, hx⟩
+      exact ⟨x, singleton_subset_iff.mp hx, rfl⟩
+    · rintro ⟨x, hx, rfl⟩
+      exact ⟨⟨x, rfl⟩, singleton_subset_iff.2 hx⟩
+  rw [hsing, hsing, image_singleton_sups,
+    minimization_op_conjunctive_existentialRaising_of_disjoint h]
+
+/-- When a man and a woman are the only smilers, the collective entry holds of the smilers in
+*No man and no woman smiled* (103a) and the intersective entry does not. -/
+theorem sups_noMan_noWoman {N N' : Set E} (h : Disjoint N N') {x y : E} (hx : x ∈ N)
+    (hy : y ∈ N') :
+    {x, y} ∈ {P : Set E | GQ.no N P} ⊻ {P | GQ.no N' P} ∧
+      {x, y} ∉ Coordinator.op .conjunctive {P : Set E | GQ.no N P} {P | GQ.no N' P} := by
+  refine ⟨⟨{y}, fun z hz hzy ↦ ?_, {x}, fun z hz hzx ↦ ?_, ?_⟩, fun ⟨hno, _⟩ ↦
+    hno x hx (mem_insert x _)⟩
+  · exact disjoint_left.mp h hz (eq_of_mem_singleton hzy ▸ hy)
+  · exact disjoint_left.mp h (eq_of_mem_singleton hzx ▸ hx) hz
+  · exact (union_comm _ _).trans (singleton_union)
+
+/-- When Mary and someone else smiled, the collective entry still holds of the smilers in
+*Mary and nobody else smiled* (103b). -/
+theorem sups_individual_nobodyElse {x y : E} (hxy : x ≠ y) :
+    {x, y} ∈ {P : Set E | individual y P} ⊻ {P | GQ.no (· ≠ y) P} ∧
+      {x, y} ∉ Coordinator.op .conjunctive {P : Set E | individual y P}
+        {P | GQ.no (· ≠ y) P} :=
+  ⟨⟨{x, y}, mem_insert_of_mem x rfl, ∅, fun _ _ h ↦ h, union_empty _⟩,
+    fun ⟨_, hno⟩ ↦ hno x hxy (mem_insert x _)⟩
+
+/-- Take a condition on the number of women that three meets and four does not, such as
+*between one and three* or *an odd number* (105). The collective entry holds of John and four
+women, and the intersective entry does not. -/
+theorem sups_individual_card {N W : Set E} {j : E} (hj : j ∉ N) (hW : W ⊆ N)
+    (hW4 : W.ncard = 4) {p : ℕ → Prop} (h3 : p 3) (h4 : ¬ p 4) :
+    insert j W ∈ {P : Set E | individual j P} ⊻ {P | p (N ∩ P).ncard} ∧
+      insert j W ∉ Coordinator.op .conjunctive {P : Set E | individual j P}
+        {P | p (N ∩ P).ncard} := by
+  have hNW (P : Set E) (hP : P ⊆ W) : N ∩ P = P := inter_eq_right.mpr (hP.trans hW)
+  obtain ⟨w, hw⟩ := nonempty_of_ncard_ne_zero (s := W) (by omega)
+  refine ⟨⟨{j, w}, mem_insert j _, W \ {w}, ?_, ?_⟩, fun ⟨_, hp⟩ ↦ h4 ?_⟩
+  · rw [mem_ofPred_eq, hNW _ sdiff_subset, ncard_sdiff_singleton_of_mem hw, hW4]
+    exact h3
+  · change {j, w} ∪ W \ {w} = insert j W
+    rw [insert_union, singleton_union, insert_sdiff_singleton, insert_eq_of_mem hw]
+  · have : N ∩ insert j W = W := by
+      rw [inter_insert_of_notMem hj, hNW W subset_rfl]
+    rwa [mem_ofPred_eq, this, hW4] at hp
+
+example {N W : Set E} {j : E} (hj : j ∉ N) (hW : W ⊆ N) (hW4 : W.ncard = 4) :
+    insert j W ∈ {P : Set E | individual j P} ⊻ {P | Odd (N ∩ P).ncard} ∧
+      insert j W ∉ Coordinator.op .conjunctive {P : Set E | individual j P}
+        {P | Odd (N ∩ P).ncard} :=
+  sups_individual_card (p := Odd) hj hW hW4 (by decide) (by decide)
+
+example {N W : Set E} {j : E} (hj : j ∉ N) (hW : W ⊆ N) (hW4 : W.ncard = 4) :
+    insert j W ∈
+      {P : Set E | individual j P} ⊻ {P | 1 ≤ (N ∩ P).ncard ∧ (N ∩ P).ncard ≤ 3} ∧
+      insert j W ∉ Coordinator.op .conjunctive {P : Set E | individual j P}
+        {P | 1 ≤ (N ∩ P).ncard ∧ (N ∩ P).ncard ≤ 3} :=
+  sups_individual_card (p := fun n ↦ 1 ≤ n ∧ n ≤ 3) hj hW hW4 (by decide) (by decide)
 
 end Champollion2016
