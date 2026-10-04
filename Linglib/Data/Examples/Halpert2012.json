@@ -673,6 +673,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["matrixVDomain", "ukuthi"],
       ["outside", "-aug"]
     ],
     "comment": "p. 97. Translated ‘I didn’t say that anyone came.’",
@@ -694,6 +695,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["matrixVDomain", "ukuthi"],
       ["outside", "+aug"]
     ],
     "comment": "p. 97. The source glosses umuntu \"1person\", without AUG.",
@@ -715,6 +717,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["matrixVDomain", "ukuthi"],
       ["above", "-aug"]
     ],
     "comment": "p. 98.",
@@ -1543,6 +1546,351 @@
       ["vDomain", "+aug"]
     ],
     "comment": "p. 185.",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex67a",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(67a)"},
+    "language": "zulu1248",
+    "primaryText": "ngi-funa ukuthi uSipho a-phek-e iqanda",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ngi-funa", "1SG-want"], ["ukuthi", "that"], ["uSipho", "AUG.1Sipho"],
+      ["a-phek-e", "1SJC-cook-SJC"], ["iqanda", "AUG.5egg"]
+    ],
+    "translation": "I want Sipho to cook an egg.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["matrixVDomain", "ukuthi"],
+      ["outside", "+aug"],
+      ["vDomain", "+aug"]
+    ],
+    "comment": "p. 98. Repeated from chapter 2. The source glosses uSipho \"1Sipho\".",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex67b",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(67b)"},
+    "language": "zulu1248",
+    "primaryText": "ngi-funa uSipho ukuthi a-phek-e iqanda",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ngi-funa", "1SG-want"], ["uSipho", "AUG.1Sipho"], ["ukuthi", "that"],
+      ["a-phek-e", "1SJC-cook-SJC"], ["iqanda", "AUG.5egg"]
+    ],
+    "translation": "I want Sipho to cook an egg.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["matrixVDomain", "+aug"],
+      ["matrixVDomain", "ukuthi"],
+      ["vDomain", "+aug"]
+    ],
+    "comment": "p. 98. Repeated from chapter 2. The source glosses uSipho \"1Sipho\".",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex112a",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(112a)"},
+    "language": "zulu1248",
+    "primaryText": "A-ngi-fun-i ukuthi uSipho a-phek-e qanda",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["A-ngi-fun-i", "NEG-1SG-want-NEG"], ["ukuthi", "that"], ["uSipho", "AUG.1Sipho"],
+      ["a-phek-e", "1SJC-cook-SJC"], ["qanda", "5egg"]
+    ],
+    "translation": "I don’t want Sipho to cook any egg.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["matrixVDomain", "ukuthi"],
+      ["outside", "+aug"],
+      ["vDomain", "-aug"]
+    ],
+    "comment": "p. 92. The source glosses the embedded verb \"1SJC. cook- SJC\".",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex112b",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(112b)"},
+    "language": "zulu1248",
+    "primaryText": "A-ngi-cabang-i ukuthi uSipho u-bon-e muntu",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["A-ngi-cabang-i", "NEG-1SG-think-NEG"], ["ukuthi", "that"], ["uSipho", "AUG.1Sipho"],
+      ["u-bon-e", "1S-see-PFV"], ["muntu", "1person"]
+    ],
+    "translation": "I don’t think Sipho saw anyone.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "A-ngi-cabang-i ukuthi uSipho u-bon-e lutho", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["matrixVDomain", "ukuthi"],
+      ["outside", "+aug"],
+      ["vDomain", "-aug"]
+    ],
+    "comment": "p. 92. The source prints muntu/lutho, ‘anyone/anything’. Some speakers reject an NPI in an indicative complement licensed by matrix negation (footnote 4).",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex123",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(123)"},
+    "language": "zulu1248",
+    "primaryText": "A-ngi-lindel-i muntu a-phek-e iqanda",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["A-ngi-lindel-i", "NEG-1SG-expect-NEG"], ["muntu", "1person"],
+      ["a-phek-e", "1SJC-cook-SJC"], ["iqanda", "AUG.5egg"]
+    ],
+    "translation": "I don’t expect anyone to cook an egg.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["matrixVDomain", "-aug"],
+      ["matrixVDomain", "cp"],
+      ["vDomain", "+aug"]
+    ],
+    "comment": "p. 98. The source glosses iqanda \"5egg\".",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex124a",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(124a)"},
+    "language": "zulu1248",
+    "primaryText": "a-ngi-fun-i muntu ukuthi a-phek-e iqanda",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["a-ngi-fun-i", "NEG-1SG-want-NEG"], ["muntu", "1person"], ["ukuthi", "that"],
+      ["a-phek-e", "1SJC-cook-SJC"], ["iqanda", "AUG.5egg"]
+    ],
+    "translation": "I don’t want anyone to cook an egg.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["matrixVDomain", "-aug"],
+      ["matrixVDomain", "ukuthi"],
+      ["vDomain", "+aug"]
+    ],
+    "comment": "p. 99. The source prints (i)qanda.",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex124a_augmentless",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(124a)"},
+    "language": "zulu1248",
+    "primaryText": "a-ngi-fun-i muntu ukuthi a-phek-e qanda",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["a-ngi-fun-i", "NEG-1SG-want-NEG"], ["muntu", "1person"], ["ukuthi", "that"],
+      ["a-phek-e", "1SJC-cook-SJC"], ["qanda", "5egg"]
+    ],
+    "translation": "I don’t want anyone to cook an egg.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["matrixVDomain", "-aug"],
+      ["matrixVDomain", "ukuthi"],
+      ["vDomain", "-aug"]
+    ],
+    "comment": "p. 99. The source prints (i)qanda.",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex124b",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(124b)"},
+    "language": "zulu1248",
+    "primaryText": "a-ngi-fun-i ukuthi muntu a-phek-e iqanda",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["a-ngi-fun-i", "NEG-1SG-want-NEG"], ["ukuthi", "that"], ["muntu", "1person"],
+      ["a-phek-e", "1SJC-cook-SJC"], ["iqanda", "AUG.5egg"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["matrixVDomain", "ukuthi"],
+      ["outside", "-aug"],
+      ["vDomain", "+aug"]
+    ],
+    "comment": "p. 99. The source prints (i)qanda.",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex124b_augmentless",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(124b)"},
+    "language": "zulu1248",
+    "primaryText": "a-ngi-fun-i ukuthi muntu a-phek-e qanda",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["a-ngi-fun-i", "NEG-1SG-want-NEG"], ["ukuthi", "that"], ["muntu", "1person"],
+      ["a-phek-e", "1SJC-cook-SJC"], ["qanda", "5egg"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["matrixVDomain", "ukuthi"],
+      ["outside", "-aug"],
+      ["vDomain", "-aug"]
+    ],
+    "comment": "p. 99. The source prints (i)qanda.",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex152a",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(152a)"},
+    "language": "zulu1248",
+    "primaryText": "ngi-fisa ukuthi uSipho a-pheke iqanda",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ngi-fisa", "1SG-wish"], ["ukuthi", "that"], ["uSipho", "AUG.1Sipho"],
+      ["a-pheke", "1SJC-cook"], ["iqanda", "AUG.5egg"]
+    ],
+    "translation": "I wish that Sipho would cook an egg.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "ngi-fisa uSipho a-pheke iqanda", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["matrixVDomain", "ukuthi"],
+      ["outside", "+aug"],
+      ["vDomain", "+aug"]
+    ],
+    "comment": "p. 120. The source prints the complementizer in parentheses, glosses uSipho \"1Sipho\" and iqanda \"5egg\", and translates ‘would could’.",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex152c",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(152c)"},
+    "language": "zulu1248",
+    "primaryText": "a-ngi-fis-i muntu a-pheke iqanda",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["a-ngi-fis-i", "NEG-1SG-wish-NEG"], ["muntu", "1person"], ["a-pheke", "1SJC-cook"],
+      ["iqanda", "AUG.5egg"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["matrixVDomain", "cp"],
+      ["outside", "-aug"],
+      ["vDomain", "+aug"]
+    ],
+    "comment": "p. 120. For these speakers fisa does not raise its embedded subject (footnote 10), so muntu is the embedded preverbal subject. The source glosses iqanda \"5egg\".",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex245a",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(245a)"},
+    "language": "zulu1248",
+    "primaryText": "ngi-fisa ukuthi ubaba a-fik-e kusasa",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ngi-fisa", "1SG-wish"], ["ukuthi", "that"], ["ubaba", "AUG.1father"],
+      ["a-fik-e", "1SJC-arrive-SJC"], ["kusasa", "tomorrow"]
+    ],
+    "translation": "I wish that dad would arrive tomorrow.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["matrixVDomain", "ukuthi"],
+      ["outside", "+aug"]
+    ],
+    "comment": "p. 180. Judgments of speakers for whom fisa raises (footnote 11).",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex245b",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(245b)"},
+    "language": "zulu1248",
+    "primaryText": "ngi-fisa sengathi ubaba a-nga-fika kusasa",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ngi-fisa", "1SG-wish"], ["sengathi", "as.if"], ["ubaba", "AUG.1father"],
+      ["a-nga-fika", "1SJC-CAN-arrive"], ["kusasa", "tomorrow"]
+    ],
+    "translation": "I wish that dad would arrive tomorrow.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["matrixVDomain", "sengathi"],
+      ["outside", "+aug"]
+    ],
+    "comment": "p. 180. The source glosses ngi-fisa \"1SG- with\".",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex246a",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(246a)"},
+    "language": "zulu1248",
+    "primaryText": "ngi-fisa ubaba ukuthi a-fik-e kusasa",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ngi-fisa", "1SG-wish"], ["ubaba", "AUG.1father"], ["ukuthi", "that"],
+      ["a-fik-e", "1SJC-arrive-SJC"], ["kusasa", "tomorrow"]
+    ],
+    "translation": "I wish that dad would arrive tomorrow.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["matrixVDomain", "+aug"],
+      ["matrixVDomain", "ukuthi"]
+    ],
+    "comment": "p. 180. Judgments of speakers for whom fisa raises (footnote 11).",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex246b",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(246b)"},
+    "language": "zulu1248",
+    "primaryText": "ngi-fisa ubaba sengathi a-nga-fika kusasa",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ngi-fisa", "1SG-wish"], ["ubaba", "AUG.1father"], ["sengathi", "as.if"],
+      ["a-nga-fika", "1SJC-CAN-arrive"], ["kusasa", "tomorrow"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["matrixVDomain", "+aug"],
+      ["matrixVDomain", "sengathi"]
+    ],
+    "comment": "p. 180. Judgments of speakers for whom fisa raises (footnote 11).",
     "verified": "page-image"
   }
 ]
