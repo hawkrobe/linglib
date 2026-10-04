@@ -69,7 +69,7 @@ open Syntax Tree
 
 variable {C W : Type*}
 
-/-- The substitution source of `φ` (the paper's definition (41)): the lexicon together with
+/-- The substitution source of `φ` (the paper's definition (41)) is the lexicon together with
 the subtrees of `φ`, so that a complex constituent of `φ` can replace a simpler one
 elsewhere in it. -/
 def substitutionSource (lex : Finset (Tree C W)) (φ : Tree C W) : Set (Tree C W) :=
@@ -81,9 +81,9 @@ theorem forall_mem_substitutionSource {lex : Finset (Tree C W)} {φ : Tree C W}
   simp only [substitutionSource, Set.mem_union, Finset.mem_coe, Set.mem_ofPred_eq, or_imp,
     forall_and]
 
-/-- One structural operation on parse trees: substitution of a constituent by a same-category
-item of the source, deletion of a child, contraction of a node to one of its same-category
-children, and the recursive cases inside a child or a binder body. -/
+/-- A structural operation on parse trees substitutes a constituent by a same-category item of the
+source, deletes a child, contracts a node to one of its same-category children, or applies one of
+these inside a child or a binder body. -/
 inductive StructOp (source : Set (Tree C W)) : Tree C W → Tree C W → Prop where
   /-- Substitute a tree by a same-category item of the source. -/
   | subst {φ ψ : Tree C W} (h_cat : ψ.cat = φ.cat) (h_src : ψ ∈ source) : StructOp source φ ψ
@@ -110,7 +110,7 @@ instance (source : Set (Tree C W)) : IsPreorder (Tree C W) (atMostAsComplex sour
   refl _ := Relation.ReflTransGen.refl
   trans _ _ _ h₁ h₂ := h₂.trans h₁
 
-/-- Equal complexity: each is at most as complex as the other. -/
+/-- Two trees are of equal complexity when each is at most as complex as the other. -/
 def equalComplexity (source : Set (Tree C W)) : Tree C W → Tree C W → Prop :=
   AntisymmRel (atMostAsComplex source)
 
@@ -126,7 +126,7 @@ theorem equalComplexity_terminal_subst {source : Set (Tree C W)} {cat : C} {oldW
   ⟨Relation.ReflTransGen.single (StructOp.subst rfl h_old),
    Relation.ReflTransGen.single (StructOp.subst rfl h_new)⟩
 
-/-- The structural alternatives of `φ`, the paper's definition (20): the trees at most as
+/-- The structural alternatives of `φ`, the paper's definition (20), are the trees at most as
 complex as `φ` over its substitution source. -/
 def structuralAlternatives (lex : Finset (Tree C W)) (φ : Tree C W) : Set (Tree C W) :=
   {ψ | atMostAsComplex (substitutionSource lex φ) ψ φ}
@@ -159,7 +159,7 @@ private theorem structOp_preserves_no_cat (source : Set (Tree C W)) (c : C) (φ 
     exact ⟨h_φ.1, ih h_φ.2⟩
 
 /-- No tree reachable by structural operations contains a category absent from the source
-and the host: substitution introduces only source material, deletion removes material, and
+and the host, since substitution introduces only source material, deletion removes material, and
 contraction promotes a subtree. -/
 theorem category_preservation (source : Set (Tree C W)) (c : C) (φ ψ : Tree C W)
     (h_source : ∀ s ∈ source, c ∉ s.cats) (h_φ : c ∉ φ.cats)
@@ -208,6 +208,7 @@ private theorem structOp_preserves_free (source : Set (Tree C W))
       · exact h_φ t (List.mem_cons_of_mem _ (List.mem_flatMap.mpr ⟨c, hc, htc⟩))
       · exact hih t htc
   | @inBind n cat body body' _ ih =>
+    rw [Tree.subtrees_bind] at h_φ ⊢
     intro t ht
     rcases List.mem_cons.mp ht with rfl | ht
     · exact h_bind n cat body body' (h_φ _ (List.mem_cons_self ..))
@@ -252,7 +253,7 @@ private theorem lift_at_position {source : Set (Tree C W)}
     have hget : (cs.set i b).get ⟨i, hlen⟩ = b := List.getElem_set_self ..
     rw [hget]; exact hbd
 
-/-- Lift a ReflTransGen chain through a bind constructor: a special case of
+/-- A `ReflTransGen` chain lifts through a binder, a special case of
 `Relation.ReflTransGen.lift` with the homomorphism `StructOp.inBind`. -/
 private theorem lift_bind {source : Set (Tree C W)}
     {n : Nat} {cat : C} {body body' : Tree C W}
@@ -261,7 +262,7 @@ private theorem lift_bind {source : Set (Tree C W)}
   Relation.ReflTransGen.lift (λ t => Tree.bind n cat t)
     (λ _ _ h => StructOp.inBind h) body body' h
 
-/-- Children reachable one by one make the node reachable: with `cs'` pointwise reachable from
+/-- Children reachable one by one make the node reachable. With `cs'` pointwise reachable from
 `cs`, `node cat cs` reaches `node cat cs'` by operations inside successive children. -/
 private theorem pointwise_reachable {source : Set (Tree C W)} {cat : C}
     {cs cs' : List (Tree C W)} (hlen : cs'.length = cs.length)
@@ -307,7 +308,7 @@ private theorem pointwise_reachable {source : Set (Tree C W)} {cat : C}
           simp [htk1_len, htk_len, List.getElem_drop]
           congr 1; omega
 
-/-- Process children one at a time: .node cat cs →* .node cat (cs.map f). -/
+/-- Processing the children one at a time, `.node cat cs` reaches `.node cat (cs.map f)`. -/
 private theorem mapChildren_reachable {source : Set (Tree C W)}
     {cat : C} {cs : List (Tree C W)} {f : Tree C W → Tree C W}
     (hf : ∀ (i : Nat) (hi : i < cs.length),
@@ -319,9 +320,9 @@ private theorem mapChildren_reachable {source : Set (Tree C W)}
 /-- Leaf substitution is reachable via structural operations for any
 source containing `.terminal c β`. -/
 private theorem leafSubst_reachable [DecidableEq C] [DecidableEq W] {source : Set (Tree C W)}
-    (α β : W) (c : C) (h_β : Tree.terminal c β ∈ source) (φ : Tree C W) :
+    (α β : W) (c : C) (h_β : Tree.terminal c β ∈ source) (φ : Tree C W) (hφ : φ.IsWellFormed) :
     Relation.ReflTransGen (StructOp source) φ (φ.leafSubst α β c) := by
-  induction φ with
+  induction φ using Tree.rec' with
   | terminal c' w =>
     rw [Tree.leafSubst_terminal]
     split_ifs with h
@@ -330,16 +331,21 @@ private theorem leafSubst_reachable [DecidableEq C] [DecidableEq W] {source : Se
     · exact .refl
   | node c' cs ih =>
     rw [Tree.leafSubst_node]
-    exact mapChildren_reachable fun i hi ↦ ih _ (List.getElem_mem hi)
+    exact mapChildren_reachable fun i hi ↦
+      ih _ (List.getElem_mem hi) (RoseTree.Licensed.of_mem hφ (List.getElem_mem hi))
   | trace n c' => exact .refl
-  | bind n c' body ih => exact lift_bind ih
+  | bind n c' body ih =>
+    rw [Tree.leafSubst_bind]
+    exact lift_bind (ih (RoseTree.Licensed.of_mem hφ List.mem_cons_self))
+  | junk l cs h _ => exact absurd (RoseTree.licensed_node_iff.mp hφ).1 h
 
-/-- Leaf substitution of a same-category lexical item throughout a tree is a structural
-alternative, so Horn-scale alternatives are a special case of structural ones. -/
+/-- Leaf substitution of a same-category lexical item throughout a well-formed tree is a
+structural alternative, so Horn-scale alternatives are a special case of structural ones. -/
 theorem horn_alternatives_are_structural [DecidableEq C] [DecidableEq W]
-    (lex : Finset (Tree C W)) (φ : Tree C W) (α β : W) (c : C) (h_β : Tree.terminal c β ∈ lex) :
+    (lex : Finset (Tree C W)) (φ : Tree C W) (α β : W) (c : C) (h_β : Tree.terminal c β ∈ lex)
+    (hφ : φ.IsWellFormed) :
     φ.leafSubst α β c ∈ structuralAlternatives lex φ :=
-  leafSubst_reachable α β c (Set.mem_union_left _ (Finset.mem_coe.2 h_β)) φ
+  leafSubst_reachable α β c (Set.mem_union_left _ (Finset.mem_coe.2 h_β)) φ hφ
 
 /-! ### Hamblin composition generates the substitution fragment
 
@@ -349,84 +355,119 @@ composes the constructors through the applicative. Every alternative it evokes i
 substitutions at the leaves, hence a structural alternative (`hamblin_alternatives_subset`);
 deletion and contraction lie outside the compositional fragment, so the converse fails. -/
 
-/-- The Hamblin composition of a tree over a lexicon: a terminal evokes itself and the
+/-- In the Hamblin composition of a tree over a lexicon a terminal evokes itself and the
 same-category items of the lexicon, and the constructors compose pointwise. -/
 def hamblin (lex : Finset (Tree C W)) : Tree C W → WithAlternatives (Tree C W)
   | t@(.terminal c _) => ⟨t, insert t {s | s ∈ lex ∧ s.cat = c}⟩
   | .node c cs => Tree.node c <$> hamblinList lex cs
   | t@(.trace _ _) => pure t
   | .bind n c body => Tree.bind n c <$> hamblin lex body
+  | t => pure t
 where
   /-- The pointwise composition of a list of children. -/
   hamblinList (lex : Finset (Tree C W)) : List (Tree C W) → WithAlternatives (List (Tree C W))
   | [] => pure []
   | t :: ts => (· :: ·) <$> hamblin lex t <*> hamblinList lex ts
 
+/-- A node whose daughters its label does not license evokes only itself. -/
+theorem hamblin_junk (lex : Finset (Tree C W)) {l : Tree.Label C W} {cs : List (Tree C W)}
+    (h : ¬ Tree.Label.Licenses l (cs.map RoseTree.value)) :
+    hamblin lex (RoseTree.node l cs) = pure (RoseTree.node l cs) := by
+  cases l with
+  | terminal c w => cases cs with
+    | nil => exact absurd rfl h
+    | cons => rfl
+  | node c => exact absurd trivial h
+  | trace n c => cases cs with
+    | nil => exact absurd rfl h
+    | cons => rfl
+  | bind n c =>
+    rcases cs with _ | ⟨t, _ | ⟨u, cs⟩⟩
+    · rfl
+    · exact absurd rfl h
+    · rfl
+
 /-- The ordinary value of the composition is the tree itself. -/
 theorem hamblin_ordinary (lex : Finset (Tree C W)) (φ : Tree C W) :
     (hamblin lex φ).ordinary = φ := by
-  refine Tree.rec (motive_1 := λ φ => (hamblin lex φ).ordinary = φ)
-    (motive_2 := λ cs => (hamblin.hamblinList lex cs).ordinary = cs) ?_ ?_ ?_ ?_ ?_ ?_ φ
-  · intro c w; rfl
-  · intro c cs ih; simp only [hamblin, WithAlternatives.ordinary_map, ih]
-  · intro n c; rfl
-  · intro n c body ih; simp only [hamblin, WithAlternatives.ordinary_map, ih]
-  · rfl
-  · intro t ts iht ihts
-    simp only [hamblin.hamblinList, WithAlternatives.ordinary_seq, WithAlternatives.ordinary_map,
-      iht, ihts]
+  induction φ using Tree.rec' with
+  | terminal c w => rfl
+  | node c cs ih =>
+    simp only [hamblin, WithAlternatives.ordinary_map]
+    congr 1
+    induction cs with
+    | nil => rfl
+    | cons t ts ihts =>
+      simp only [hamblin.hamblinList, WithAlternatives.ordinary_seq, WithAlternatives.ordinary_map,
+        ih t List.mem_cons_self, ihts fun s hs ↦ ih s (List.mem_cons_of_mem _ hs)]
+  | trace n c => rfl
+  | bind n c body ih => simp only [hamblin, WithAlternatives.ordinary_map, ih]
+  | junk l cs h _ => rw [hamblin_junk lex h]; rfl
 
-/-- The composition is well formed: the tree is among its own alternatives. -/
+/-- The composition is well formed, since the tree is among its own alternatives. -/
 theorem hamblin_wellFormed (lex : Finset (Tree C W)) (φ : Tree C W) :
     (hamblin lex φ).WellFormed := by
-  refine Tree.rec (motive_1 := λ φ => (hamblin lex φ).WellFormed)
-    (motive_2 := λ cs => (hamblin.hamblinList lex cs).WellFormed) ?_ ?_ ?_ ?_ ?_ ?_ φ
-  · intro c w; exact Set.mem_insert _ _
-  · intro c cs ih; exact ih.map
-  · intro n c; exact WithAlternatives.WellFormed.unfeatured _
-  · intro n c body ih; exact ih.map
-  · exact WithAlternatives.WellFormed.unfeatured _
-  · intro t ts iht ihts
-    exact WithAlternatives.mem_alternatives_seq.2
-      ⟨_, WithAlternatives.mem_alternatives_map.2 ⟨_, iht, rfl⟩, _, ihts, rfl⟩
+  induction φ using Tree.rec' with
+  | terminal c w => exact Set.mem_insert _ _
+  | node c cs ih =>
+    refine WithAlternatives.WellFormed.map ?_
+    induction cs with
+    | nil => exact WithAlternatives.WellFormed.unfeatured _
+    | cons t ts ihts =>
+      exact WithAlternatives.mem_alternatives_seq.2
+        ⟨_, WithAlternatives.mem_alternatives_map.2 ⟨_, ih t List.mem_cons_self, rfl⟩, _,
+          ihts fun s hs ↦ ih s (List.mem_cons_of_mem _ hs), rfl⟩
+  | trace n c => exact WithAlternatives.WellFormed.unfeatured _
+  | bind n c body ih => exact ih.map
+  | junk l cs h _ => rw [hamblin_junk lex h]; exact WithAlternatives.WellFormed.unfeatured _
 
 /-- Over any source containing the lexicon, every alternative the composition evokes is
 reachable from the tree by structural operations. -/
 theorem reachable_of_mem_hamblin {source : Set (Tree C W)} (lex : Finset (Tree C W))
     (hlex : ↑lex ⊆ source) (φ : Tree C W) :
     ∀ ψ ∈ (hamblin lex φ).alternatives, Relation.ReflTransGen (StructOp source) φ ψ := by
-  refine Tree.rec
-    (motive_1 := λ φ => ∀ ψ ∈ (hamblin lex φ).alternatives,
-      Relation.ReflTransGen (StructOp source) φ ψ)
-    (motive_2 := λ cs => ∀ cs' ∈ (hamblin.hamblinList lex cs).alternatives,
-      List.Forall₂ (Relation.ReflTransGen (StructOp source)) cs cs') ?_ ?_ ?_ ?_ ?_ ?_ φ
-  · intro c w ψ hψ
+  induction φ using Tree.rec' with
+  | terminal c w =>
+    intro ψ hψ
     rcases hψ with rfl | ⟨hlex', hcat⟩
     · exact Relation.ReflTransGen.refl
     · exact Relation.ReflTransGen.single (StructOp.subst hcat (hlex (Finset.mem_coe.2 hlex')))
-  · intro c cs ih ψ hψ
+  | node c cs ih =>
+    intro ψ hψ
     obtain ⟨cs', hcs', rfl⟩ := WithAlternatives.mem_alternatives_map.1 hψ
-    have h := ih cs' hcs'
+    clear hψ
+    have h : List.Forall₂ (Relation.ReflTransGen (StructOp source)) cs cs' := by
+      induction cs generalizing cs' with
+      | nil =>
+        have h : cs' ∈ ({[]} : Set (List (Tree C W))) := by
+          simpa [hamblin.hamblinList, WithAlternatives.alternatives_pure] using hcs'
+        obtain rfl := Set.mem_singleton_iff.1 h
+        exact List.Forall₂.nil
+      | cons t ts ihts =>
+        obtain ⟨g, hg, bs, hbs, rfl⟩ := WithAlternatives.mem_alternatives_seq.1 hcs'
+        obtain ⟨b, hb, rfl⟩ := WithAlternatives.mem_alternatives_map.1 hg
+        exact List.Forall₂.cons (ih t List.mem_cons_self b hb)
+          (ihts (fun s hs ↦ ih s (List.mem_cons_of_mem _ hs)) bs hbs)
     exact pointwise_reachable h.length_eq.symm λ i hi => h.get hi (h.length_eq ▸ hi)
-  · intro n c ψ hψ
+  | trace n c =>
+    intro ψ hψ
     have h : ψ ∈ ({Tree.trace n c} : Set (Tree C W)) := by
       simpa [hamblin, WithAlternatives.alternatives_pure] using hψ
     obtain rfl := Set.mem_singleton_iff.1 h
     exact Relation.ReflTransGen.refl
-  · intro n c body ih ψ hψ
+  | bind n c body ih =>
+    intro ψ hψ
     obtain ⟨body', hb, rfl⟩ := WithAlternatives.mem_alternatives_map.1 hψ
     exact lift_bind (ih body' hb)
-  · intro cs' hcs'
-    have h : cs' ∈ ({[]} : Set (List (Tree C W))) := by
-      simpa [hamblin.hamblinList, WithAlternatives.alternatives_pure] using hcs'
+  | junk l cs hj _ =>
+    intro ψ hψ
+    rw [hamblin_junk lex hj] at hψ
+    have h : ψ ∈ ({RoseTree.node l cs} : Set (Tree C W)) := by
+      simpa [WithAlternatives.alternatives_pure] using hψ
     obtain rfl := Set.mem_singleton_iff.1 h
-    exact List.Forall₂.nil
-  · intro t ts iht ihts cs' hcs'
-    obtain ⟨g, hg, bs, hbs, rfl⟩ := WithAlternatives.mem_alternatives_seq.1 hcs'
-    obtain ⟨b, hb, rfl⟩ := WithAlternatives.mem_alternatives_map.1 hg
-    exact List.Forall₂.cons (iht b hb) (ihts bs hbs)
+    exact Relation.ReflTransGen.refl
 
-/-- The compositional fragment: the alternatives the Hamblin engine evokes from the lexicon are
+/-- In the compositional fragment, the alternatives the Hamblin engine evokes from the lexicon are
 structural alternatives. -/
 theorem hamblin_alternatives_subset (lex : Finset (Tree C W)) (φ : Tree C W) :
     (hamblin lex φ).alternatives ⊆ structuralAlternatives lex φ :=
@@ -436,7 +477,7 @@ theorem hamblin_alternatives_subset (lex : Finset (Tree C W)) (φ : Tree C W) :
 
 variable {S M : Type*}
 
-/-- The indirect-alternative combinator (eq. 43,
+/-- This is the indirect-alternative combinator (eq. 43,
 [jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025]).
 
 `indirectFrom base pron meaning size s` is the set of *pronounceable*
@@ -444,9 +485,9 @@ expressions `s'` such that `size s' ≤ size s` and there is some
 *unpronounceable* `sₓ ∈ base s` with `meaning s' = meaning sₓ`.
 
 Both the surrogate `s'` (the indirect alternative `I`) and the witness
-`sₓ` are constrained by `pron`: `I` must be pronounceable while `sₓ` —
-the silent structural alternative it stands in for — must not be, per
-the paper's definition. -/
+`sₓ` are constrained by `pron`, `I` being pronounceable while `sₓ`, the
+silent structural alternative it stands in for, is not, per the paper's
+definition. -/
 def indirectFrom (base : S → Set S) (pron : S → Prop)
     (meaning : S → M) (size : S → Nat) :
     S → Set S :=
@@ -467,7 +508,7 @@ theorem size_le_of_mem (h : s' ∈ indirectFrom base pron meaning size s) :
     size s' ≤ size s := h.2.1
 
 /-- The indirect-alternative set is empty when the base source contains
-no unpronounceable witnesses — the genuine refinement: an indirect
+no unpronounceable witnesses, the genuine refinement, since an indirect
 alternative requires a *silent* witness in the base. -/
 theorem indirectFrom_eq_empty_of_forall_pron (allPron : ∀ x ∈ base s, pron x) :
     indirectFrom base pron meaning size s = ∅ := by

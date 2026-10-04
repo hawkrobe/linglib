@@ -1,45 +1,39 @@
 module
 
 public import Mathlib.Data.Finset.Basic
-public import Linglib.Core.Data.RoseTree.Get
+public import Linglib.Core.Data.RoseTree.Licensed
 
 /-!
 # Constituency trees
 
-This file defines **constituency trees** over a category type `C` and a word type `W`. A
-terminal carries a category and a word, an internal node a category and an ordered list of
-daughters, and the two nodes of Heim and Kratzer's trace theory of movement, an indexed trace
-and an indexed binder over a body, carry a category each. Type-driven interpretation reads the
-tree with `C = Unit`; structural operations on parse trees read it with a category system such
-as `Syntax.Cat`.
+A constituency tree over a category type `C` and a word type `W` is a rose tree whose nodes carry
+labels: a terminal carries a category and a word, an internal node a category, and the two nodes
+of Heim and Kratzer's trace theory of movement, an indexed trace and an indexed binder over a
+body, carry a category each. Type-driven interpretation reads the tree with `C = Unit`; structural
+operations on parse trees read it with a category system such as `Syntax.Cat`. Positions,
+subtrees, replacement and the frontier are those of the rose tree.
 
 ## Main declarations
 
-* `Syntax.Tree`: the tree, with `leaf`, `bin`, `tr` and `binder` building category-free trees.
-* `Syntax.Tree.fold`: the catamorphism; `map`, `numNodes`, `terminals`, `yield`, `cats`,
-  `freeIndices` and `leafSubst` are its specializations, each reducing at every constructor.
-* `Syntax.Tree.rec'`: structural induction with a membership hypothesis at a node.
-* `Syntax.Tree.subtrees`: the subtrees in pre-order.
-* `Syntax.Tree.freeIndices` and `Syntax.Tree.Closed`: the indices of the traces no binder
-  binds, and the trees with none.
-* The `Core.Order.Branching` instance, through which a tree takes Gorn addresses, the
-  dominance order on its positions and the command relations.
-* `Syntax.Tree.replaceAt`: replacement of the subtree at a Gorn address.
-* `Syntax.Tree.toRoseTree` and `Syntax.Tree.ofRoseTree?`: the rose tree underlying a
-  constituency tree, its nodes labelled by their constructors' data, and the decoding that
-  makes the constituency trees a retract of the rose trees; positions are inherited along it.
-* `Syntax.Tree.positionedTerminals`: the terminals with their positions, the word-bearing leaves
-  of the underlying rose tree, in the order of the yield, which is precedence
-  (`pairwise_precedes_positionedTerminals`).
+* `Syntax.Tree.Label`, `Syntax.Tree`: the node labels and the trees over them, with the
+  pattern-matchable constructors `terminal`, `node`, `trace`, `bind` and the category-free
+  `leaf`, `bin`, `tr`, `binder`.
+* `Syntax.Tree.Label.Licenses`, `Syntax.Tree.IsWellFormed`: terminals and traces are leaves and
+  binders have one body.
+* `Syntax.Tree.rec'`: induction over the four shapes, with a case for ill-formed nodes.
+* `Syntax.Tree.terminals`, `yield`, `cats`, `subtrees`, `map`, `freeIndices`, `leafSubst`.
+* `Syntax.Tree.positionedTerminals`: the terminals with their positions, in the order of the
+  yield, which is precedence (`pairwise_precedes_positionedTerminals`).
 
 ## Implementation notes
 
 Daughters are a `List`, so a node is binary or n-ary by its list and sibling order is linear
 precedence. Only the trace theory of movement is expressible: a copy or a multidominance
-representation is not a tree over these constructors. That each binder binds a trace of its
-index is a property of a tree, not a guarantee of the type, and interpretation does not read
-the category on a binder. `deriving DecidableEq` does not fire through the nested `List`, so
-the instance is built by mutual recursion with the daughter list.
+representation is not a tree over these labels. Ill-formed label and arity combinations, such as
+a terminal with daughters, are expressible; `IsWellFormed` excludes them where a theorem needs
+it, and the interpreter denotes them `none`. That each binder binds a trace of its index is a
+property of a tree, not a guarantee of the type, and interpretation does not read the category on
+a binder.
 
 ## References
 
@@ -52,142 +46,133 @@ the instance is built by mutual recursion with the daughter list.
 
 namespace Syntax
 
-/-- In a constituency tree, `terminal c w` is the word `w` under category `c`, `node c cs` the
-category `c` over daughters `cs`, `trace n c` a trace of index `n` and `bind n c t` a binder
-of index `n` over `t`. -/
-inductive Tree (C W : Type*) where
-  | terminal : C → W → Tree C W
-  | node : C → List (Tree C W) → Tree C W
-  | trace : ℕ → C → Tree C W
-  | bind : ℕ → C → Tree C W → Tree C W
-  deriving Repr
+namespace Tree
+
+/-- A node of a constituency tree carries a terminal's category and word, an internal node's
+category, or a trace's or binder's index and category. -/
+inductive Label (C W : Type*) where
+  | terminal : C → W → Label C W
+  | node : C → Label C W
+  | trace : ℕ → C → Label C W
+  | bind : ℕ → C → Label C W
+  deriving DecidableEq, Repr
+
+namespace Label
+
+variable {C W W' : Type*}
+
+/-- The category a label carries. -/
+def cat : Label C W → C
+  | .terminal c _ | .node c | .trace _ c | .bind _ c => c
+
+/-- A terminal label carries a category and a word; other labels carry none. -/
+def terminal? : Label C W → Option (C × W)
+  | .terminal c w => some (c, w)
+  | _ => none
+
+/-- `mapWord f` relabels the word of a terminal label. -/
+def mapWord (f : W → W') : Label C W → Label C W'
+  | .terminal c w => .terminal c (f w)
+  | .node c => .node c
+  | .trace n c => .trace n c
+  | .bind n c => .bind n c
+
+@[simp] theorem cat_mapWord (f : W → W') (l : Label C W) : (l.mapWord f).cat = l.cat := by
+  cases l <;> rfl
+
+@[simp] theorem mapWord_id (l : Label C W) : l.mapWord id = l := by cases l <;> rfl
+
+@[simp] theorem mapWord_mapWord {W'' : Type*} (g : W' → W'') (f : W → W') (l : Label C W) :
+    (l.mapWord f).mapWord g = l.mapWord (g ∘ f) := by
+  cases l <;> rfl
+
+/-- A label licenses its daughters when a terminal or a trace has none and a binder has one. -/
+def Licenses : Label C W → List (Label C W) → Prop
+  | .terminal _ _, ks => ks = []
+  | .node _, _ => True
+  | .trace _ _, ks => ks = []
+  | .bind _ _, ks => ks.length = 1
+
+instance : ∀ (l : Label C W) (ks : List (Label C W)), Decidable (Licenses l ks)
+  | .terminal _ _, ks => inferInstanceAs (Decidable (ks = []))
+  | .node _, _ => inferInstanceAs (Decidable True)
+  | .trace _ _, ks => inferInstanceAs (Decidable (ks = []))
+  | .bind _ _, ks => inferInstanceAs (Decidable (ks.length = 1))
+
+/-- Relabelling the words changes no label's licensed daughters. -/
+@[simp] theorem licenses_mapWord (f : W → W') (l : Label C W) (ks : List (Label C W)) :
+    Licenses (l.mapWord f) (ks.map (mapWord f)) ↔ Licenses l ks := by
+  cases l <;> simp [Licenses, mapWord]
+
+end Label
+
+end Tree
+
+/-- In a constituency tree each node is labelled by a `Tree.Label`. -/
+abbrev Tree (C W : Type*) := RoseTree (Tree.Label C W)
 
 namespace Tree
 
 variable {C W : Type*}
 
-/-! ### Trees without categories -/
+/-! ### The shapes -/
 
-@[match_pattern] abbrev leaf (w : W) : Tree Unit W := .terminal () w
-@[match_pattern] abbrev bin (t₁ t₂ : Tree Unit W) : Tree Unit W := .node () [t₁, t₂]
-@[match_pattern] abbrev tr (n : ℕ) : Tree Unit W := .trace n ()
-@[match_pattern] abbrev binder (n : ℕ) (t : Tree Unit W) : Tree Unit W := .bind n () t
+/-- `terminal c w` is the word `w` under category `c`. -/
+@[match_pattern] abbrev terminal (c : C) (w : W) : Tree C W := RoseTree.node (.terminal c w) []
+
+/-- `node c cs` is the category `c` over daughters `cs`. -/
+@[match_pattern] abbrev node (c : C) (cs : List (Tree C W)) : Tree C W :=
+  RoseTree.node (.node c) cs
+
+/-- `trace n c` is a trace of index `n`. -/
+@[match_pattern] abbrev trace (n : ℕ) (c : C) : Tree C W := RoseTree.node (.trace n c) []
+
+/-- `bind n c t` is a binder of index `n` over `t`. -/
+@[match_pattern] abbrev bind (n : ℕ) (c : C) (t : Tree C W) : Tree C W :=
+  RoseTree.node (.bind n c) [t]
+
+@[match_pattern] abbrev leaf (w : W) : Tree Unit W := terminal () w
+@[match_pattern] abbrev bin (t₁ t₂ : Tree Unit W) : Tree Unit W := node () [t₁, t₂]
+@[match_pattern] abbrev tr (n : ℕ) : Tree Unit W := trace n ()
+@[match_pattern] abbrev binder (n : ℕ) (t : Tree Unit W) : Tree Unit W := bind n () t
 
 /-- The category at the root. -/
-@[simp] def cat : Tree C W → C
-  | terminal c _ => c
-  | node c _ => c
-  | trace _ c => c
-  | bind _ c _ => c
+def cat (t : Tree C W) : C := t.value.cat
 
-/-! ### Decidable equality -/
+@[simp] theorem cat_terminal (c : C) (w : W) : (terminal c w).cat = c := rfl
+@[simp] theorem cat_node (c : C) (cs : List (Tree C W)) : (node c cs).cat = c := rfl
+@[simp] theorem cat_trace (n : ℕ) (c : C) : (trace n c : Tree C W).cat = c := rfl
+@[simp] theorem cat_bind (n : ℕ) (c : C) (t : Tree C W) : (bind n c t).cat = c := rfl
 
-section DecidableEq
-variable [DecidableEq C] [DecidableEq W]
+/-- A tree is well formed when every node has the daughters its label licenses. -/
+def IsWellFormed (t : Tree C W) : Prop := t.Licensed Label.Licenses
 
-mutual
-/-- Decidable equality on trees, mutually with the daughter list. -/
-protected def decEq : (t s : Tree C W) → Decidable (t = s)
-  | terminal c w, terminal c' w' => decidable_of_iff (c = c' ∧ w = w') (by simp)
-  | node c cs, node c' cs' =>
-    match Tree.decEqList cs cs' with
-    | isTrue h => decidable_of_iff (c = c') (by simp [h])
-    | isFalse h => isFalse (by simp [h])
-  | trace n c, trace n' c' => decidable_of_iff (n = n' ∧ c = c') (by simp)
-  | bind n c t, bind n' c' t' =>
-    match Tree.decEq t t' with
-    | isTrue h => decidable_of_iff (n = n' ∧ c = c') (by simp [h])
-    | isFalse h => isFalse (by simp [h])
-  | terminal _ _, node _ _ | terminal _ _, trace _ _ | terminal _ _, bind _ _ _
-  | node _ _, terminal _ _ | node _ _, trace _ _ | node _ _, bind _ _ _
-  | trace _ _, terminal _ _ | trace _ _, node _ _ | trace _ _, bind _ _ _
-  | bind _ _ _, terminal _ _ | bind _ _ _, node _ _ | bind _ _ _, trace _ _ =>
-    isFalse (by simp)
-/-- Decidable equality on daughter lists. -/
-protected def decEqList : (ts ss : List (Tree C W)) → Decidable (ts = ss)
-  | [], [] => isTrue rfl
-  | [], _ :: _ | _ :: _, [] => isFalse (by simp)
-  | t :: ts, s :: ss =>
-    match Tree.decEq t s, Tree.decEqList ts ss with
-    | isTrue h, isTrue hs => isTrue (by rw [h, hs])
-    | isFalse h, _ => isFalse (by simp [h])
-    | _, isFalse hs => isFalse (by simp [hs])
-end
+instance (t : Tree C W) : Decidable t.IsWellFormed :=
+  inferInstanceAs (Decidable (t.Licensed _))
 
-instance instDecidableEq : DecidableEq (Tree C W) := Tree.decEq
+/-! ### Induction -/
 
-end DecidableEq
-
-/-! ### The recursion principle -/
-
-/-- A daughter is smaller than its node in the auto-generated `SizeOf`. -/
-theorem sizeOf_lt_of_mem [SizeOf C] [SizeOf W] {c : C} {cs : List (Tree C W)} {t : Tree C W}
-    (h : t ∈ cs) : sizeOf t < sizeOf (node c cs) := by
-  have := List.sizeOf_lt_of_mem h
-  simp only [node.sizeOf_spec]
-  omega
-
-/-- **Structural induction** for `Tree` gives the node case the motive at every daughter. -/
-@[elab_as_elim, induction_eliminator]
-def rec' {motive : Tree C W → Sort*} (terminal : ∀ c w, motive (terminal c w))
+/-- Induction over the four shapes, with the hypothesis at every daughter, and a case for the
+nodes whose daughters their label does not license. -/
+@[elab_as_elim]
+def rec' {motive : Tree C W → Sort*}
+    (terminal : ∀ c w, motive (terminal c w))
     (node : ∀ c cs, (∀ t ∈ cs, motive t) → motive (node c cs))
     (trace : ∀ n c, motive (trace n c))
-    (bind : ∀ n c t, motive t → motive (bind n c t)) : ∀ t, motive t
-  | .terminal c w => terminal c w
-  | .node c cs => node c cs fun t _ht => rec' terminal node trace bind t
-  | .trace n c => trace n c
-  | .bind n c t => bind n c t (rec' terminal node trace bind t)
-termination_by t => sizeOf t
-decreasing_by
-  · exact sizeOf_lt_of_mem _ht
-  · simp only [bind.sizeOf_spec]; omega
-
-/-! ### Catamorphism
-
-`fold` replaces each constructor by an operation on the folded daughters; the structural
-operations below are its specializations, and their reduction lemmas follow from `fold_node`.
--/
-
-section Fold
-
-variable {β : Type*} (terminal : C → W → β) (node : C → List β → β)
-  (trace : ℕ → C → β) (bind : ℕ → C → β → β)
-
-mutual
-/-- Replace each constructor by the corresponding operation. -/
-def fold : Tree C W → β
-  | .terminal c w => terminal c w
-  | .node c cs => node c (foldList cs)
-  | .trace n c => trace n c
-  | .bind n c t => bind n c (fold t)
-/-- `fold` across a daughter list. -/
-def foldList : List (Tree C W) → List β
-  | [] => []
-  | t :: ts => fold t :: foldList ts
-end
-
-theorem foldList_eq (cs : List (Tree C W)) :
-    foldList terminal node trace bind cs = cs.map (fold terminal node trace bind) := by
-  induction cs with
-  | nil => rfl
-  | cons t ts ih => rw [foldList, ih, List.map_cons]
-
-@[simp] theorem fold_terminal (c : C) (w : W) :
-    fold terminal node trace bind (.terminal c w) = terminal c w := rfl
-
-@[simp] theorem fold_node (c : C) (cs : List (Tree C W)) :
-    fold terminal node trace bind (.node c cs)
-      = node c (cs.map (fold terminal node trace bind)) := by
-  rw [fold, foldList_eq]
-
-@[simp] theorem fold_trace (n : ℕ) (c : C) :
-    fold terminal node trace bind (.trace n c) = trace n c := rfl
-
-@[simp] theorem fold_bind (n : ℕ) (c : C) (t : Tree C W) :
-    fold terminal node trace bind (.bind n c t) = bind n c (fold terminal node trace bind t) :=
-  rfl
-
-end Fold
+    (bind : ∀ n c t, motive t → motive (bind n c t))
+    (junk : ∀ l cs, ¬ Label.Licenses l (cs.map RoseTree.value) → (∀ t ∈ cs, motive t) →
+      motive (RoseTree.node l cs))
+    (t : Tree C W) : motive t :=
+  RoseTree.rec' (motive := motive) (fun l cs ih ↦
+    match l, cs, ih with
+    | .terminal c w, [], _ => terminal c w
+    | .terminal _ _, _ :: _, ih => junk _ _ (by simp [Label.Licenses]) ih
+    | .node c, cs, ih => node c cs ih
+    | .trace n c, [], _ => trace n c
+    | .trace _ _, _ :: _, ih => junk _ _ (by simp [Label.Licenses]) ih
+    | .bind n c, [t], ih => bind n c t (ih t List.mem_cons_self)
+    | .bind _ _, [], ih => junk _ _ (by simp [Label.Licenses]) ih
+    | .bind _ _, _ :: _ :: _, ih => junk _ _ (by simp [Label.Licenses]) ih) t
 
 /-! ### Relabelling the words -/
 
@@ -196,61 +181,50 @@ section Map
 variable {W' W'' : Type*}
 
 /-- Relabel the words, keeping the shape. -/
-def map (f : W → W') : Tree C W → Tree C W' :=
-  fold (fun c w => .terminal c (f w)) .node .trace .bind
+def map (f : W → W') (t : Tree C W) : Tree C W' := RoseTree.map (Label.mapWord f) t
+
+theorem map_rose (f : W → W') (l : Label C W) (cs : List (Tree C W)) :
+    Tree.map f (RoseTree.node l cs) = RoseTree.node (l.mapWord f) (cs.map (map f)) := by
+  simp [map]
+
+@[simp] theorem value_map (f : W → W') (t : Tree C W) : (t.map f).value = t.value.mapWord f := by
+  rcases t with ⟨l, cs⟩
+  simp [map]
 
 @[simp] theorem map_terminal (f : W → W') (c : C) (w : W) :
-    map f (.terminal c w) = .terminal c (f w) := rfl
+    (terminal c w).map f = terminal c (f w) := rfl
 
 @[simp] theorem map_node (f : W → W') (c : C) (cs : List (Tree C W)) :
-    map f (.node c cs) = .node c (cs.map (map f)) := by
-  simp only [map, fold_node]
+    (node c cs).map f = node c (cs.map (map f)) := by
+  simp [map, node, Label.mapWord]
 
-@[simp] theorem map_trace (f : W → W') (n : ℕ) (c : C) : map f (.trace n c) = .trace n c := rfl
+@[simp] theorem map_trace (f : W → W') (n : ℕ) (c : C) : (trace n c).map f = trace n c := rfl
 
 @[simp] theorem map_bind (f : W → W') (n : ℕ) (c : C) (t : Tree C W) :
-    map f (.bind n c t) = .bind n c (map f t) := rfl
+    (bind n c t).map f = bind n c (t.map f) := by
+  simp [map, bind, Label.mapWord]
 
 @[simp] theorem map_id (t : Tree C W) : t.map id = t := by
-  induction t with
-  | node c cs ih => rw [map_node, List.map_congr_left ih, List.map_id']
-  | bind n c t ih => rw [map_bind, ih]
-  | _ => rfl
+  rw [map, show Label.mapWord (C := C) (id : W → W) = id from funext Label.mapWord_id]
+  exact RoseTree.id_map t
 
 @[simp] theorem map_map (g : W' → W'') (f : W → W') (t : Tree C W) :
     (t.map f).map g = t.map (g ∘ f) := by
-  induction t with
-  | node c cs ih => simp only [map_node, List.map_map]; exact congrArg _ (List.map_congr_left ih)
-  | bind n c t ih => rw [map_bind, map_bind, map_bind, ih]
-  | _ => rfl
+  simp only [map, ← RoseTree.comp_map]
+  congr 1
+  funext l
+  exact Label.mapWord_mapWord g f l
 
 @[simp] theorem cat_map (f : W → W') (t : Tree C W) : (t.map f).cat = t.cat := by
-  cases t <;> rfl
+  rcases t with ⟨l, cs⟩
+  simp [map, cat]
 
 end Map
 
-/-! ### Counting -/
-
-/-- The number of nodes. -/
-def numNodes : Tree C W → ℕ :=
-  fold (fun _ _ => 1) (fun _ ns => ns.sum + 1) (fun _ _ => 1) fun _ _ n => n + 1
-
-@[simp] theorem numNodes_terminal (c : C) (w : W) : (terminal c w).numNodes = 1 := rfl
-
-@[simp] theorem numNodes_node (c : C) (cs : List (Tree C W)) :
-    (node c cs).numNodes = (cs.map numNodes).sum + 1 := by
-  simp only [numNodes, fold_node]
-
-@[simp] theorem numNodes_trace (n : ℕ) (c : C) : (trace n c : Tree C W).numNodes = 1 := rfl
-
-@[simp] theorem numNodes_bind (n : ℕ) (c : C) (t : Tree C W) :
-    (bind n c t).numNodes = t.numNodes + 1 := rfl
-
 /-! ### The frontier -/
 
-/-- The terminals, left to right, each with its category. -/
-def terminals : Tree C W → List (C × W) :=
-  fold (fun c w => [(c, w)]) (fun _ => List.flatten) (fun _ _ => []) fun _ _ ws => ws
+/-- The terminals, left to right, each with its category, are the word-bearing leaves. -/
+def terminals (t : Tree C W) : List (C × W) := t.leafList.filterMap Label.terminal?
 
 /-- The yield of a tree is the words at its terminals, left to right. -/
 def yield (t : Tree C W) : List W := t.terminals.map Prod.snd
@@ -259,38 +233,47 @@ def yield (t : Tree C W) : List W := t.terminals.map Prod.snd
 
 @[simp] theorem terminals_node (c : C) (cs : List (Tree C W)) :
     (node c cs).terminals = cs.flatMap terminals := by
-  simp only [terminals, fold_node, List.flatMap_def]
+  rcases cs with _ | ⟨c', cs⟩
+  · rfl
+  · simp only [terminals, node, RoseTree.leafList_node_cons, List.filterMap_flatten, List.map_map,
+      List.flatMap_def]
+    rfl
 
 @[simp] theorem terminals_trace (n : ℕ) (c : C) : (trace n c : Tree C W).terminals = [] := rfl
 
 @[simp] theorem terminals_bind (n : ℕ) (c : C) (t : Tree C W) :
-    (bind n c t).terminals = t.terminals := rfl
+    (bind n c t).terminals = t.terminals := by
+  simp [terminals, bind, RoseTree.leafList_node_of_ne_nil]
 
 @[simp] theorem yield_terminal (c : C) (w : W) : (terminal c w).yield = [w] := rfl
 
 @[simp] theorem yield_node (c : C) (cs : List (Tree C W)) :
     (node c cs).yield = cs.flatMap yield := by
-  simp only [yield, terminals_node, List.map_flatMap]; rfl
+  simp only [yield, terminals_node, List.map_flatMap]
+  rfl
 
 @[simp] theorem yield_trace (n : ℕ) (c : C) : (trace n c : Tree C W).yield = [] := rfl
 
-@[simp] theorem yield_bind (n : ℕ) (c : C) (t : Tree C W) : (bind n c t).yield = t.yield := rfl
+@[simp] theorem yield_bind (n : ℕ) (c : C) (t : Tree C W) : (bind n c t).yield = t.yield := by
+  simp [yield]
 
 /-! ### Categories and subtrees -/
 
 /-- The categories at the nodes, in pre-order. -/
-def cats : Tree C W → List C :=
-  fold (fun c _ => [c]) (fun c css => c :: css.flatten) (fun _ c => [c]) fun _ c cs => c :: cs
+def cats (t : Tree C W) : List C := t.values.map Label.cat
 
 @[simp] theorem cats_terminal (c : C) (w : W) : (terminal c w).cats = [c] := rfl
 
 @[simp] theorem cats_node (c : C) (cs : List (Tree C W)) :
     (node c cs).cats = c :: cs.flatMap cats := by
-  simp only [cats, fold_node, List.flatMap_def]
+  simp only [cats, node, RoseTree.values_node, List.map_cons, List.map_flatten, List.map_map,
+    List.flatMap_def]
+  rfl
 
 @[simp] theorem cats_trace (n : ℕ) (c : C) : (trace n c : Tree C W).cats = [c] := rfl
 
-@[simp] theorem cats_bind (n : ℕ) (c : C) (t : Tree C W) : (bind n c t).cats = c :: t.cats := rfl
+@[simp] theorem cats_bind (n : ℕ) (c : C) (t : Tree C W) : (bind n c t).cats = c :: t.cats := by
+  simp [cats, bind, Label.cat]
 
 theorem mem_cats_node {c' c : C} {cs : List (Tree C W)} :
     c' ∈ (node c cs).cats ↔ c' = c ∨ ∃ t ∈ cs, c' ∈ t.cats := by
@@ -303,10 +286,7 @@ theorem mem_cats_bind {c' : C} {n : ℕ} {c : C} {t : Tree C W} :
 mutual
 /-- The subtrees, the tree itself first, in pre-order. -/
 def subtrees : Tree C W → List (Tree C W)
-  | t@(.terminal _ _) => [t]
-  | t@(.node _ cs) => t :: subtreesList cs
-  | t@(.trace _ _) => [t]
-  | t@(.bind _ _ s) => t :: subtrees s
+  | t@(RoseTree.node _ cs) => t :: subtreesList cs
 /-- `subtrees` across a daughter list. -/
 def subtreesList : List (Tree C W) → List (Tree C W)
   | [] => []
@@ -318,50 +298,63 @@ theorem subtreesList_eq (cs : List (Tree C W)) : subtreesList cs = cs.flatMap su
   | nil => rfl
   | cons t ts ih => rw [subtreesList, ih, List.flatMap_cons]
 
+theorem subtrees_rose (l : Label C W) (cs : List (Tree C W)) :
+    subtrees (RoseTree.node l cs) = RoseTree.node l cs :: cs.flatMap subtrees := by
+  rw [subtrees, subtreesList_eq]
+
 @[simp] theorem subtrees_terminal (c : C) (w : W) : (terminal c w).subtrees = [terminal c w] :=
   rfl
 
 @[simp] theorem subtrees_node (c : C) (cs : List (Tree C W)) :
-    (node c cs).subtrees = node c cs :: cs.flatMap subtrees := by
-  rw [subtrees, subtreesList_eq]
+    (node c cs).subtrees = node c cs :: cs.flatMap subtrees :=
+  subtrees_rose _ cs
 
 @[simp] theorem subtrees_trace (n : ℕ) (c : C) : (trace n c : Tree C W).subtrees = [trace n c] :=
   rfl
 
 @[simp] theorem subtrees_bind (n : ℕ) (c : C) (t : Tree C W) :
-    (bind n c t).subtrees = bind n c t :: t.subtrees := rfl
+    (bind n c t).subtrees = bind n c t :: t.subtrees := by
+  simp [bind, subtrees_rose]
 
 theorem self_mem_subtrees (t : Tree C W) : t ∈ t.subtrees := by
-  cases t <;> simp
+  rcases t with ⟨l, cs⟩
+  simp [subtrees_rose]
 
 /-- The categories are those at the roots of the subtrees. -/
 theorem map_cat_subtrees (t : Tree C W) : t.subtrees.map cat = t.cats := by
-  induction t with
-  | node c cs ih =>
-    simp only [subtrees_node, List.map_cons, cat, cats_node, List.flatMap_def, List.map_flatten,
-      List.map_map]
-    exact congrArg _ (congrArg _ (List.map_congr_left ih))
-  | bind n c t ih => rw [subtrees_bind, List.map_cons, cat, ih, cats_bind]
-  | _ => rfl
+  induction t using RoseTree.rec' with
+  | node l cs ih =>
+    simp only [subtrees_rose, List.map_cons, cats, RoseTree.values_node, List.flatMap_def,
+      List.map_flatten, List.map_map]
+    exact congrArg _ (congrArg _ (List.map_congr_left fun t ht ↦ ih t ht))
 
 /-! ### Free traces -/
 
 /-- The free indices of a tree are the indices of its traces, less those a dominating binder of
 the same index binds. -/
 def freeIndices : Tree C W → Finset ℕ :=
-  fold (fun _ _ => ∅) (fun _ => List.foldr (· ∪ ·) ∅) (fun n _ => {n}) fun n _ s => s.erase n
+  RoseTree.fold fun l ss ↦ match l with
+    | .trace n _ => {n}
+    | .bind n _ => (ss.foldr (· ∪ ·) ∅).erase n
+    | _ => ss.foldr (· ∪ ·) ∅
 
-@[simp] theorem freeIndices_terminal (c : C) (w : W) : (terminal c w).freeIndices = ∅ := rfl
+@[simp] theorem freeIndices_terminal (c : C) (w : W) : (terminal c w).freeIndices = ∅ := by
+  simp [freeIndices]
 
 theorem freeIndices_node (c : C) (cs : List (Tree C W)) :
     (node c cs).freeIndices = (cs.map freeIndices).foldr (· ∪ ·) ∅ := by
-  simp only [freeIndices, fold_node]
+  simp [freeIndices, node]
 
-@[simp] theorem freeIndices_trace (n : ℕ) (c : C) : (trace n c : Tree C W).freeIndices = {n} :=
-  rfl
+@[simp] theorem freeIndices_trace (n : ℕ) (c : C) : (trace n c : Tree C W).freeIndices = {n} := by
+  simp [freeIndices]
 
 @[simp] theorem freeIndices_bind (n : ℕ) (c : C) (t : Tree C W) :
-    (bind n c t).freeIndices = t.freeIndices.erase n := rfl
+    (bind n c t).freeIndices = t.freeIndices.erase n := by
+  simp only [freeIndices, bind, RoseTree.fold_node, List.map_cons, List.map_nil, List.foldr_cons,
+    List.foldr_nil]
+  congr 1
+  ext
+  simp
 
 @[simp] theorem mem_freeIndices_node {i : ℕ} {c : C} {cs : List (Tree C W)} :
     i ∈ (node c cs).freeIndices ↔ ∃ t ∈ cs, i ∈ t.freeIndices := by
@@ -373,47 +366,43 @@ theorem freeIndices_node (c : C) (cs : List (Tree C W)) :
 /-- A tree is closed when no trace is free in it. -/
 def Closed (t : Tree C W) : Prop := t.freeIndices = ∅
 
-instance (t : Tree C W) : Decidable t.Closed := inferInstanceAs (Decidable (_ = _))
+instance [DecidableEq C] [DecidableEq W] (t : Tree C W) : Decidable t.Closed :=
+  inferInstanceAs (Decidable (_ = _))
 
 /-! ### Word substitution -/
 
 /-- Replace the word `w` by `w'` at every terminal of category `c`. -/
-def leafSubst [DecidableEq C] [DecidableEq W] (w w' : W) (c : C) : Tree C W → Tree C W :=
-  fold (fun c' v => .terminal c' (if c = c' ∧ v = w then w' else v)) .node .trace .bind
+def leafSubst [DecidableEq C] [DecidableEq W] (w w' : W) (c : C) (t : Tree C W) : Tree C W :=
+  RoseTree.map (fun
+    | .terminal c' v => .terminal c' (if c = c' ∧ v = w then w' else v)
+    | l => l) t
 
 section LeafSubst
 
 variable [DecidableEq C] [DecidableEq W] (w w' : W) (c : C)
 
 @[simp] theorem leafSubst_terminal (c' : C) (v : W) :
-    leafSubst w w' c (.terminal c' v) = .terminal c' (if c = c' ∧ v = w then w' else v) := rfl
+    leafSubst w w' c (terminal c' v) = terminal c' (if c = c' ∧ v = w then w' else v) := rfl
 
 @[simp] theorem leafSubst_node (c' : C) (cs : List (Tree C W)) :
-    leafSubst w w' c (.node c' cs) = .node c' (cs.map (leafSubst w w' c)) := by
-  simp only [leafSubst, fold_node]
+    leafSubst w w' c (node c' cs) = node c' (cs.map (leafSubst w w' c)) := by
+  simp [leafSubst, node]
 
 @[simp] theorem leafSubst_trace (n : ℕ) (c' : C) :
-    leafSubst w w' c (.trace n c') = .trace n c' := rfl
+    leafSubst w w' c (trace n c') = trace n c' := rfl
 
 @[simp] theorem leafSubst_bind (n : ℕ) (c' : C) (t : Tree C W) :
-    leafSubst w w' c (.bind n c' t) = .bind n c' (leafSubst w w' c t) := rfl
+    leafSubst w w' c (bind n c' t) = bind n c' (leafSubst w w' c t) := by
+  simp [leafSubst, bind]
 
 end LeafSubst
 
 /-! ### Positions
 
-Through the `Branching` instance a tree takes Gorn addresses (`Branching.subtreeAt`), the
-dominance order on its positions and, in `Syntax/Command.lean`, the command relations.
--/
+A tree takes Gorn addresses through the rose tree's `Branching` instance, and with them the
+dominance order on its positions and, in `Syntax/Command.lean`, the command relations. -/
 
 open Core.Order
-
-instance : Branching (Tree C W) where
-  children
-    | .terminal _ _ => []
-    | .node _ cs => cs
-    | .trace _ _ => []
-    | .bind _ _ t => [t]
 
 @[simp] theorem children_terminal (c : C) (w : W) : Branching.children (terminal c w) = [] := rfl
 
@@ -426,141 +415,27 @@ instance : Branching (Tree C W) where
 @[simp] theorem children_bind (n : ℕ) (c : C) (t : Tree C W) :
     Branching.children (bind n c t) = [t] := rfl
 
-/-- Replace the subtree at a Gorn address; an address outside the tree leaves it unchanged. -/
-def replaceAt : Tree C W → List ℕ → Tree C W → Tree C W
-  | _, [], new => new
-  | node c cs, i :: p, new => node c (cs.modify i (·.replaceAt p new))
-  | bind n c t, 0 :: p, new => bind n c (t.replaceAt p new)
-  | t, _ :: _, _ => t
-
-@[simp] theorem replaceAt_nil (t new : Tree C W) : t.replaceAt [] new = new := by
-  cases t <;> rfl
-
 /-- Replacing below the root replaces inside one daughter. -/
 theorem children_replaceAt_cons (t : Tree C W) (i : ℕ) (p : List ℕ) (new : Tree C W) :
     Branching.children (t.replaceAt (i :: p) new) =
       (Branching.children t).modify i (·.replaceAt p new) := by
-  cases t with
-  | bind n c t => cases i <;> simp [replaceAt]
-  | _ => simp [replaceAt]
-
-/-! ### The underlying rose tree
-
-A constituency tree is a rose tree whose nodes carry the data of their constructor, with the
-arity the label demands: none for a terminal or a trace, one for a binder. `toRoseTree` is the
-embedding, and `ofRoseTree?` decodes a rose tree of the right shape. -/
-
-/-- The data a node of a constituency tree carries. -/
-inductive Label (C W : Type*) where
-  | terminal : C → W → Label C W
-  | node : C → Label C W
-  | trace : ℕ → C → Label C W
-  | bind : ℕ → C → Label C W
-  deriving DecidableEq, Repr
-
-/-- The rose tree underlying a constituency tree. -/
-def toRoseTree : Tree C W → RoseTree (Label C W) :=
-  fold (fun c w => .leaf (.terminal c w)) (fun c cs => .node (.node c) cs)
-    (fun n c => .leaf (.trace n c)) fun n c t => .node (.bind n c) [t]
-
-@[simp] theorem toRoseTree_terminal (c : C) (w : W) :
-    (terminal c w).toRoseTree = .leaf (.terminal c w) := rfl
-
-@[simp] theorem toRoseTree_node (c : C) (cs : List (Tree C W)) :
-    (node c cs).toRoseTree = .node (.node c) (cs.map toRoseTree) := by
-  simp only [toRoseTree, fold_node]
-
-@[simp] theorem toRoseTree_trace (n : ℕ) (c : C) :
-    (trace n c : Tree C W).toRoseTree = .leaf (.trace n c) := rfl
-
-@[simp] theorem toRoseTree_bind (n : ℕ) (c : C) (t : Tree C W) :
-    (bind n c t).toRoseTree = .node (.bind n c) [t.toRoseTree] := rfl
-
-/-- `toRoseTree` commutes with `children`, so it is a map of `Branching` trees. -/
-theorem children_toRoseTree (t : Tree C W) :
-    Branching.children t.toRoseTree = (Branching.children t).map toRoseTree := by
-  cases t <;> simp
-
-/-- A constituency tree and its rose tree have the same positions. -/
-theorem validPaths_toRoseTree (t : Tree C W) :
-    Branching.validPaths t.toRoseTree = Branching.validPaths t :=
-  Branching.validPaths_map_of_children_map children_toRoseTree t
-
-mutual
-/-- The constituency tree a rose tree of the right shape encodes. -/
-def ofRoseTree? : RoseTree (Label C W) → Option (Tree C W)
-  | .node (.terminal c w) [] => some (.terminal c w)
-  | .node (.node c) ts => (ofRoseTreeList? ts).map (.node c)
-  | .node (.trace n c) [] => some (.trace n c)
-  | .node (.bind n c) [t] => (ofRoseTree? t).map (.bind n c)
-  | _ => none
-/-- `ofRoseTree?` across a daughter list. -/
-def ofRoseTreeList? : List (RoseTree (Label C W)) → Option (List (Tree C W))
-  | [] => some []
-  | t :: ts => do
-    let t ← ofRoseTree? t
-    let ts ← ofRoseTreeList? ts
-    some (t :: ts)
-end
-
-theorem ofRoseTreeList?_map_toRoseTree :
-    ∀ cs : List (Tree C W), (∀ t ∈ cs, ofRoseTree? t.toRoseTree = some t) →
-      ofRoseTreeList? (cs.map toRoseTree) = some cs
-  | [], _ => rfl
-  | t :: ts, h => by
-    rw [List.map_cons, ofRoseTreeList?, h t List.mem_cons_self,
-      ofRoseTreeList?_map_toRoseTree ts fun s hs => h s (List.mem_cons_of_mem _ hs)]
-    rfl
-
-/-- Decoding inverts the embedding. -/
-@[simp] theorem ofRoseTree?_toRoseTree (t : Tree C W) : ofRoseTree? t.toRoseTree = some t := by
-  induction t with
-  | terminal c w => rfl
-  | node c cs ih => rw [toRoseTree_node, ofRoseTree?, ofRoseTreeList?_map_toRoseTree cs ih]; rfl
-  | trace n c => rfl
-  | bind n c t ih => rw [toRoseTree_bind, ofRoseTree?, ih]; rfl
-
-theorem toRoseTree_injective : Function.Injective (toRoseTree : Tree C W → RoseTree (Label C W)) :=
-  fun t s h => Option.some.inj (by rw [← ofRoseTree?_toRoseTree t, h, ofRoseTree?_toRoseTree])
-
-/-- Navigating the rose tree is navigating the constituency tree. -/
-theorem subtreeAt_toRoseTree (t : Tree C W) (p : List ℕ) :
-    Branching.subtreeAt t.toRoseTree p = (Branching.subtreeAt t p).map toRoseTree :=
-  Branching.subtreeAt_map_of_children_map children_toRoseTree t p
-
-/-- A terminal label carries a category and a word; other labels carry none. -/
-def Label.terminal? : Label C W → Option (C × W)
-  | .terminal c w => some (c, w)
-  | _ => none
-
-/-- The terminals are the leaves of the underlying rose tree that carry a word. -/
-theorem filterMap_terminal?_leafList (t : Tree C W) :
-    t.toRoseTree.leafList.filterMap Label.terminal? = t.terminals := by
-  induction t with
-  | terminal c w => rfl
-  | node c cs ih =>
-    rcases eq_or_ne cs [] with rfl | hcs
-    · rfl
-    rw [toRoseTree_node, RoseTree.leafList_node_of_ne_nil _ (by simpa using hcs), terminals_node,
-      List.filterMap_flatten, List.map_map, List.map_map, List.flatMap_def]
-    exact congrArg _ (List.map_congr_left fun s hs ↦ ih s hs)
-  | trace n c => rfl
-  | bind n c t ih => simpa [RoseTree.leafList_node_of_ne_nil] using ih
+  rcases t with ⟨l, cs⟩
+  rfl
 
 /-! ### Positions of the terminals
 
-The terminals, paired with their positions, are the word-bearing leaves of the underlying rose
-tree, so the order of the yield is precedence (`RoseTree.pairwise_precedes_positionedLeaves`). -/
+The terminals, paired with their positions, are the word-bearing leaves, so the order of the
+yield is precedence (`RoseTree.pairwise_precedes_positionedLeaves`). -/
 
 /-- The terminals, left to right, each paired with its position. -/
 def positionedTerminals (t : Tree C W) : List (TreePath × (C × W)) :=
-  t.toRoseTree.positionedLeaves.filterMap fun x ↦ x.2.terminal?.map (x.1, ·)
+  t.positionedLeaves.filterMap fun x ↦ x.2.terminal?.map (x.1, ·)
 
 /-- Forgetting the positions leaves the terminals. -/
 theorem map_snd_positionedTerminals (t : Tree C W) :
     t.positionedTerminals.map Prod.snd = t.terminals := by
-  rw [positionedTerminals, List.map_filterMap, ← filterMap_terminal?_leafList,
-    ← RoseTree.map_snd_positionedLeaves, List.filterMap_map]
+  rw [positionedTerminals, List.map_filterMap, terminals, ← RoseTree.map_snd_positionedLeaves,
+    List.filterMap_map]
   congr 1
   funext x
   simp [Option.map_map, Function.comp_def]
@@ -573,20 +448,14 @@ theorem subtreeAt_of_mem_positionedTerminals {t : Tree C W} {x : TreePath × (C 
   cases l with
   | terminal c w =>
     obtain rfl : (p, (c, w)) = x := by simpa [Label.terminal?] using hx
-    have := RoseTree.subtreeAt_of_mem_positionedLeaves hl
-    rw [subtreeAt_toRoseTree] at this
-    obtain ⟨s, hs, hst⟩ := Option.map_eq_some_iff.mp this
-    rw [hs, toRoseTree_injective (hst.trans (toRoseTree_terminal c w).symm)]
+    exact RoseTree.subtreeAt_of_mem_positionedLeaves hl
   | _ => simp [Label.terminal?] at hx
 
 /-- Every terminal position is listed. -/
 theorem mem_positionedTerminals_of_subtreeAt {t : Tree C W} {p : List ℕ} {c : C} {w : W}
     (h : Branching.subtreeAt t p = some (terminal c w)) :
-    (⟨p⟩, (c, w)) ∈ t.positionedTerminals := by
-  have : Branching.subtreeAt t.toRoseTree p = some (.node (.terminal c w) []) := by
-    rw [subtreeAt_toRoseTree, h]
-    rfl
-  exact List.mem_filterMap.mpr ⟨_, RoseTree.mem_positionedLeaves_of_subtreeAt this, rfl⟩
+    (⟨p⟩, (c, w)) ∈ t.positionedTerminals :=
+  List.mem_filterMap.mpr ⟨_, RoseTree.mem_positionedLeaves_of_subtreeAt h, rfl⟩
 
 /-- The terminal positions, in the order of the yield, ascend in precedence. -/
 theorem pairwise_precedes_positionedTerminals (t : Tree C W) :

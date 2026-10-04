@@ -96,7 +96,9 @@ theorem isBranchingAt_replaceAt {x : TreePath} (h : ¬ c ≤ x) :
   | nil => exact absurd (TreePath.le_def.2 List.nil_prefix) h
   | cons i c ih =>
     cases x with
-    | nil => simp [isBranchingAt, children_replaceAt_cons]
+    | nil =>
+      rcases t with ⟨l, cs⟩
+      simp [isBranchingAt, RoseTree.replaceAt_cons]
     | cons j x =>
       simp only [isBranchingAt, subtreeAt_cons, children_replaceAt_cons, List.getElem?_modify]
       rcases eq_or_ne i j with rfl | hij
@@ -127,15 +129,5 @@ theorem cCommands_replaceAt_self : CCommands (t.replaceAt c.toList new) c a ↔ 
   simp only [CCommands, mem_cCommandAt_replaceAt (lt_irrefl c)]
 
 end Replace
-
-section RoseTree
-
-variable {C W : Type*}
-
-/-- The c-command relation of a constituency tree is that of its rose tree. -/
-theorem cCommandAt_toRoseTree (t : Tree C W) : cCommandAt t.toRoseTree = cCommandAt t :=
-  cCommandAt_map_of_children_map children_toRoseTree t
-
-end RoseTree
 
 end Syntax.Tree

@@ -53,7 +53,7 @@ inductive Word
   | it | was | is | warm | yesterday | today | aLittleBitMoreThan
   deriving DecidableEq, Repr
 
-/-- The lexicon: the terminal items available for substitution. -/
+/-- The lexicon lists the terminal items available for substitution. -/
 def lexicon : Finset (Tree Cat Word) :=
   {.terminal .N .john, .terminal .V .ate, .terminal .Det .some_, .terminal .Det .all_,
     .terminal .N .cake, .terminal .N .apple, .terminal .N .pear, .terminal .Conj .or_,
@@ -84,13 +84,13 @@ def someButNotAllSentence : Tree Cat Word :=
 /-- (25b) is (25a) with *all* substituted for *some*. -/
 theorem leafSubst_some_all : someSentence.leafSubst .some_ .all_ .Det = allSentence := rfl
 
-/-- (25b) is a structural alternative of (25a): the determiners are same-category items of the
-lexicon. -/
+/-- (25b) is a structural alternative of (25a), since the determiners are same-category items of
+the lexicon. -/
 theorem all_mem_alternatives : allSentence ∈ structuralAlternatives lexicon someSentence :=
   leafSubst_some_all ▸ horn_alternatives_are_structural lexicon someSentence .some_ .all_ .Det
-    (by simp [lexicon])
+    (by simp [lexicon]) (by decide)
 
-/-- The two are of equal complexity: each is one substitution from the other. -/
+/-- The two are of equal complexity, each one substitution from the other. -/
 theorem some_all_equalComplexity :
     equalComplexity (substitutionSource lexicon someSentence) someSentence allSentence := by
   refine ⟨?_, ?_⟩ <;>
@@ -106,8 +106,8 @@ theorem source_lacks_conjP :
     ∀ t ∈ substitutionSource lexicon someSentence, Cat.ConjP ∉ t.cats :=
   forall_mem_substitutionSource.2 ⟨by decide, by decide⟩
 
-/-- The symmetric alternative is no structural alternative: the operations never introduce
-the conjunction phrase it needs, so the symmetry problem does not arise. -/
+/-- The symmetric alternative is no structural alternative, since the operations never
+introduce the conjunction phrase it needs, so the symmetry problem does not arise. -/
 theorem someButNotAll_not_mem_alternatives :
     someButNotAllSentence ∉ structuralAlternatives lexicon someSentence := λ h =>
   category_preservation _ Cat.ConjP someSentence someButNotAllSentence source_lacks_conjP
@@ -118,13 +118,13 @@ inductive Cake
   | none | part | whole
   deriving DecidableEq, Repr
 
-/-- The truth conditions the paper assumes for (25): *some* holds of any eating, *all* of the
-whole, *some but not all* of a part; the other trees are not interpreted. -/
+/-- Under the truth conditions the paper assumes for (25), *some* holds of any eating, *all* of
+the whole, and *some but not all* of a part; the other trees are not interpreted. -/
 def cakeMeaning (t : Tree Cat Word) : Set Cake :=
   {c | (t = someSentence ∧ c ≠ .none) ∨ (t = allSentence ∧ c = .whole) ∨
     (t = someButNotAllSentence ∧ c = .part)}
 
-/-- The alternatives of (21): structural alternatives that are weakly assertable. -/
+/-- The alternatives of (21) are the structural alternatives that are weakly assertable. -/
 def assertableAlts (wa : Tree Cat Word → Prop) (t : Tree Cat Word) : Set (Tree Cat Word) :=
   {t' ∈ structuralAlternatives lexicon t | wa t'}
 
@@ -136,7 +136,7 @@ theorem blocked_of_weaklyAssertable_all {wa : Tree Cat Word → Prop} (h : wa al
     (Set.not_subset.2 ⟨.part, by simp [cakeMeaning], by simp [cakeMeaning, someSentence,
       allSentence, someButNotAllSentence]⟩)⟩
 
-/-- The primary implicature of (25a): a speaker who obeys the principle has *all* not weakly
+/-- In the primary implicature of (25a), a speaker who obeys the principle has *all* not weakly
 assertable; the symmetric alternative, being no alternative, licenses nothing. -/
 theorem primary_implicature_some {wa : Tree Cat Word → Prop}
     (h : ¬ Blocked (assertableAlts wa) cakeMeaning someSentence) : ¬ wa allSentence :=
@@ -171,10 +171,10 @@ theorem leafSubst_or_and : orSentence.leafSubst .or_ .and_ .Conj = andSentence :
 /-- The conjunction is an alternative of the disjunction by substitution. -/
 theorem and_mem_alternatives : andSentence ∈ structuralAlternatives lexicon orSentence :=
   leafSubst_or_and ▸ horn_alternatives_are_structural lexicon orSentence .or_ .and_ .Conj
-    (by simp [lexicon])
+    (by simp [lexicon]) (by decide)
 
-/-- The left disjunct is an alternative of the disjunction: delete the right disjunct and the
-connective, then contract; the effect of the L connective of [sauerland-2004]. -/
+/-- The left disjunct is an alternative of the disjunction, by deleting the right disjunct and
+the connective and then contracting, the effect of the L connective of [sauerland-2004]. -/
 theorem leftDisjunct_mem_alternatives :
     leftDisjunct ∈ structuralAlternatives lexicon orSentence := by
   refine Relation.ReflTransGen.head (StructOp.delete ⟨2, by simp⟩) ?_
@@ -191,13 +191,13 @@ theorem rightDisjunct_mem_alternatives :
 /-- Which of the two fruits John ate. -/
 abbrev Fruits := Bool × Bool
 
-/-- The truth conditions of (26) and (27): the disjunction, the conjunction, and each
-disjunct. -/
+/-- These are the truth conditions of (26) and (27), for the disjunction, the conjunction, and
+each disjunct. -/
 def fruitMeaning (t : Tree Cat Word) : Set Fruits :=
   {f | (t = orSentence ∧ (f.1 ∨ f.2)) ∨ (t = andSentence ∧ f.1 ∧ f.2) ∨
     (t = leftDisjunct ∧ f.1) ∨ (t = rightDisjunct ∧ f.2)}
 
-/-- The primary inferences (28): a speaker of the disjunction who obeys the principle has the
+/-- In the primary inferences (28), a speaker of the disjunction who obeys the principle has the
 conjunction and each disjunct not weakly assertable. -/
 theorem primary_inferences_or {wa : Tree Cat Word → Prop}
     (h : ¬ Blocked (assertableAlts wa) fruitMeaning orSentence) :
@@ -248,8 +248,8 @@ def moreThanWarmYesterday : Tree Cat Word :=
     .node .S [.terminal .Pron .it, .terminal .Aux .was, moreThanWarm, .terminal .Adv .yesterday],
     .terminal .Conj .and_, moreThanWarmToday]
 
-/-- Matsumoto's (40b) is an alternative of (40a) although more complex: the adjective phrase it
-needs is a subtree of (40a), hence in the substitution source (41). -/
+/-- Matsumoto's (40b) is an alternative of (40a) although more complex, since the adjective phrase
+it needs is a subtree of (40a), hence in the substitution source (41). -/
 theorem moreThanWarmYesterday_mem_alternatives :
     moreThanWarmYesterday ∈ structuralAlternatives lexicon warmYesterday :=
   Relation.ReflTransGen.single (StructOp.inChild ⟨0, by simp⟩
