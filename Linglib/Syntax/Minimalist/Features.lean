@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Core.Order.Bundle
-public import Linglib.Pragmatics.SocialMeaning.Honorific
 public import Linglib.Syntax.Case.Basic
 public import Linglib.Semantics.Reference.Prominence
 public import Linglib.Syntax.Gender.Basic
@@ -37,10 +36,6 @@ its host as well as its dimension.
 * [chomsky-1995], [chomsky-2000], [chomsky-2001]
 * [adger-2003]
 * [bjorkman-2011] — the [Infl] feature
-* [alok-2020], [alok-bhalla-2026] — the honorific feature
-* [lobeck-1995] — the [E] feature
-* [panagiotidis-2015] — categorial [N] and [V]
-* [pollock-1989] — [±neg]
 * [marcolli-chomsky-berwick-2025] — bundles as assignments
 -/
 
@@ -64,30 +59,25 @@ inductive Infl where
 sub-dimensions (`person`, `number`, `gender`) so each is a slot in its own right. -/
 inductive FeatureType where
   | person | number | gender
-  | case | wh | q | epp | tense | hon | infl | finite | factive | neg | rel
-  | oblique | ellipsis | catN | catV | foc | pol | pov
+  | case | wh | tense | infl | oblique
   | atomic | minimal | participant | author
   deriving Repr, DecidableEq, Fintype
 
 /-- All feature dimensions, for computable enumeration
 (`Finset.univ.toList` is noncomputable). -/
 def FeatureType.all : List FeatureType :=
-  [.person, .number, .gender, .case, .wh, .q, .epp, .tense, .hon, .infl, .finite,
-   .factive, .neg, .rel, .oblique, .ellipsis, .catN, .catV, .foc, .pol, .pov,
+  [.person, .number, .gender, .case, .wh, .tense, .infl, .oblique,
    .atomic, .minimal, .participant, .author]
 
 /-- The value type of a dimension is `Person`, `Number`, `Gender` or `Case` for the φ-features and
-case, the honorific levels, the [Infl] values, and `Bool` for the bivalent features. -/
+case, the [Infl] values, and `Bool` for the bivalent features. -/
 @[reducible] def FeatureType.ValueOf : FeatureType → Type
   | .person => Person
   | .number => Number
   | .gender => Gender
   | .case => Case
-  | .hon => SocialMeaning.HonorificLevel
   | .infl => Infl
-  | .wh | .q | .epp | .tense | .finite | .factive | .neg | .rel
-  | .oblique | .ellipsis | .catN | .catV | .foc | .pol | .pov
-  | .atomic | .minimal | .participant | .author => Bool
+  | .wh | .tense | .oblique | .atomic | .minimal | .participant | .author => Bool
 
 instance (t : FeatureType) : DecidableEq t.ValueOf := by
   cases t <;> exact inferInstance

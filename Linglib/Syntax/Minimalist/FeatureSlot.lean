@@ -1,64 +1,74 @@
 module
 
-public import Mathlib.Order.Basic
-public import Mathlib.Order.BoundedOrder.Basic
+public import Linglib.Core.Order.Flat
+public import Mathlib.Order.WithBot
 
 /-!
 # Feature-checking slots
-[chomsky-2000] [marcolli-chomsky-berwick-2025]
 
-A *feature-checking slot* records the state of one feature dimension on a
-lexical item. Unlike a plain determinate slot (`Core/Order/Flat.lean`'s `Flat`,
-which is two-state — bottom or a value), a feature dimension under Agree is in
-one of **three** states:
+A feature-checking slot records the state of one feature dimension on a lexical item. Under
+Agree a dimension is in one of three states: `absent`, when the item lacks it; `unvalued`, a
+probe, present but valueless (Chomsky's unvalued feature, which searches for a goal); and
+`valued v`. A determinate slot of `Core/Order/Flat.lean` has two states, bottom or a value, so a
+checking slot is a flat slot with a new bottom below it: `WithBot (Flat α)`, as `EReal` is
+`WithBot (WithTop ℝ)`. Its subsumption order is therefore `absent < unvalued < valued v` with
+distinct values incomparable, the per-slot order the bundle subsumption order is built from.
 
-- `absent` — the item lacks the dimension (the order bottom `⊥`);
-- `unvalued` — a **probe**: the dimension is present but valueless
-  ([chomsky-2000]'s unvalued/uninterpretable feature, which searches for a goal);
-- `valued v` — the dimension is present with value `v`.
+Following Marcolli, Chomsky and Berwick, the free-Merge core keeps the features of a syntactic
+object atomic, and the valued/unvalued apparatus belongs to the Agree layer, so slots are kept
+general here, polymorphic in the value type, and decoupled from the `SyntacticObject` carrier.
 
-`FeatureSlot` is **polymorphic** in the value type `α`, so it is reusable across
-feature spaces (φ-features, case, categorial features, …) and carries no
-commitment to any particular inventory.
+## Main definitions
 
-## Why this is decoupled from the Merge carrier
+* `Minimalist.FeatureSlot` — `WithBot (Flat α)`, with the patterns `absent`, `unvalued`,
+  `valued` and the eliminator `FeatureSlot.rec'`
+* `Minimalist.FeatureSlot.valueWith` — valuation of an unvalued slot
 
-Per [marcolli-chomsky-berwick-2025] (book p. 13), the valued/unvalued
-feature-checking apparatus is the **Stabler-Minimalism** layer: label-matching
-makes Merge partially defined, forcing "an algebraically more complex Hopf
-algebra and … a family of right-ideal coideals … which keep track of the feature
-checking problem." MCB's own free-Merge core (the SMT) keeps `SO₀` features
-*atomic* — Merge is free, with no feature checking. So feature-checking slots are
-an Agree-layer structure, kept general here and **decoupled from the
-`SyntacticObject` carrier** rather than baked into it.
+## References
 
-## Subsumption order
-
-`absent (⊥) < unvalued < valued v`, with distinct `valued` values forming an
-antichain: a probe is more specified than an absent dimension and less specified
-than a value, and two values are incomparable. This is the per-slot order that
-the bundle subsumption order (`Features.BundleLike.Subsumes`) is built from.
+* [chomsky-2000]
+* [marcolli-chomsky-berwick-2025]
 -/
 
 @[expose] public section
 
 namespace Minimalist
 
-/-- A feature-checking slot for value type `α` is `absent`, `unvalued` (a probe), or `valued v`.
-See the module docstring. -/
-inductive FeatureSlot (α : Type*) where
-  | absent
-  | unvalued
-  | valued (v : α)
-  deriving Repr, DecidableEq
+/-- A feature-checking slot for value type `α` is `absent`, `unvalued` (a probe), or `valued v`:
+a flat slot with a new bottom below it. -/
+abbrev FeatureSlot (α : Type*) := WithBot (Flat α)
 
 namespace FeatureSlot
 
 variable {α : Type*}
 
-instance : Bot (FeatureSlot α) := ⟨absent⟩
+/-- An item lacking the dimension has the `absent` slot. -/
+@[match_pattern] abbrev absent : FeatureSlot α := none
+
+/-- A probe has the `unvalued` slot, present but valueless. -/
+@[match_pattern] abbrev unvalued : FeatureSlot α := WithBot.some ⊥
+
+/-- The `valued v` slot carries the value `v`. -/
+@[match_pattern] abbrev valued (v : α) : FeatureSlot α := WithBot.some (Flat.some v)
+
+/-- A slot is absent, unvalued, or valued. -/
+@[elab_as_elim, cases_eliminator, induction_eliminator]
+def rec' {motive : FeatureSlot α → Sort*} (absent : motive .absent) (unvalued : motive .unvalued)
+    (valued : ∀ v, motive (.valued v)) : ∀ s, motive s
+  | .absent => absent
+  | .unvalued => unvalued
+  | .valued v => valued v
 
 @[simp] theorem bot_eq_absent : (⊥ : FeatureSlot α) = absent := rfl
+
+@[simp] theorem unvalued_ne_absent : (unvalued : FeatureSlot α) ≠ absent := nofun
+
+@[simp] theorem valued_ne_absent (v : α) : valued v ≠ absent := nofun
+
+@[simp] theorem valued_ne_unvalued (v : α) : valued v ≠ unvalued := nofun
+
+@[simp] theorem valued_inj {v w : α} : valued v = valued w ↔ v = w :=
+  ⟨fun h ↦ Flat.coe_injective (WithBot.coe_injective h), fun h ↦ h ▸ rfl⟩
 
 /-- The slot specifies a present feature, that is, it is not `absent`. -/
 def isSpecified : FeatureSlot α → Bool
@@ -75,12 +85,13 @@ def isValued : FeatureSlot α → Bool
   | valued _ => true
   | _ => false
 
-/-- The value, when the slot is `valued`. -/
+/-- The value of a slot, when it is valued. -/
 def value? : FeatureSlot α → Option α
   | valued v => some v
   | _ => none
 
-/-- The slot valued with `v` when it is unvalued; an absent or valued slot is left as it is. -/
+/-- Valuing a slot with `v` fills it when it is unvalued and leaves an absent or valued slot as it
+is. -/
 def valueWith (v : α) : FeatureSlot α → FeatureSlot α
   | unvalued => valued v
   | s => s
@@ -91,67 +102,24 @@ def valueWith (v : α) : FeatureSlot α → FeatureSlot α
 
 theorem valueWith_of_ne_unvalued (v : α) {s : FeatureSlot α} (h : s ≠ unvalued) :
     valueWith v s = s := by
-  cases s <;> simp_all [valueWith]
-
-/-- The subsumption order on checking states, `absent ≤ unvalued ≤ valued v`, with distinct
-values incomparable. -/
-protected inductive LE : FeatureSlot α → FeatureSlot α → Prop
-  | absent_le (s) : FeatureSlot.LE absent s
-  | unvalued_le_unvalued : FeatureSlot.LE unvalued unvalued
-  | unvalued_le_valued (v) : FeatureSlot.LE unvalued (valued v)
-  | valued_le_valued (v) : FeatureSlot.LE (valued v) (valued v)
-
-instance : LE (FeatureSlot α) := ⟨FeatureSlot.LE⟩
-
-theorem le_def {a b : FeatureSlot α} : a ≤ b ↔ FeatureSlot.LE a b := Iff.rfl
-
-protected theorem le_refl (a : FeatureSlot α) : a ≤ a := by
-  cases a with
-  | absent => exact .absent_le _
-  | unvalued => exact .unvalued_le_unvalued
-  | valued v => exact .valued_le_valued v
-
-protected theorem le_trans {a b c : FeatureSlot α} (hab : a ≤ b) (hbc : b ≤ c) :
-    a ≤ c := by
-  cases hab with
-  | absent_le => exact .absent_le _
-  | unvalued_le_unvalued => exact hbc
-  | unvalued_le_valued v => cases hbc with | valued_le_valued => exact .unvalued_le_valued v
-  | valued_le_valued v => exact hbc
-
-protected theorem le_antisymm {a b : FeatureSlot α} (hab : a ≤ b) (hba : b ≤ a) :
-    a = b := by
-  cases hab <;> cases hba <;> rfl
-
-instance : PartialOrder (FeatureSlot α) where
-  le_refl := FeatureSlot.le_refl
-  le_trans _ _ _ := FeatureSlot.le_trans
-  le_antisymm _ _ := FeatureSlot.le_antisymm
-
-instance : OrderBot (FeatureSlot α) where
-  bot_le a := .absent_le a
+  cases s with
+  | absent => rfl
+  | unvalued => exact absurd rfl h
+  | valued w => rfl
 
 /-- Valuation is inflationary in the subsumption order. -/
 theorem le_valueWith (v : α) (s : FeatureSlot α) : s ≤ valueWith v s := by
   cases s with
-  | unvalued => exact .unvalued_le_valued v
-  | _ => exact le_rfl
-
-instance [DecidableEq α] (a b : FeatureSlot α) : Decidable (a ≤ b) :=
-  match a, b with
-  | absent, _ => isTrue (.absent_le _)
-  | unvalued, unvalued => isTrue .unvalued_le_unvalued
-  | unvalued, valued v => isTrue (.unvalued_le_valued v)
-  | unvalued, absent => isFalse (by rintro ⟨⟩)
-  | valued v, valued w =>
-    if h : v = w then isTrue (h ▸ .valued_le_valued v)
-    else isFalse (by rintro ⟨⟩; exact h rfl)
-  | valued _, absent => isFalse (by rintro ⟨⟩)
-  | valued _, unvalued => isFalse (by rintro ⟨⟩)
+  | absent => exact bot_le
+  | unvalued => exact WithBot.coe_le_coe.2 bot_le
+  | valued w => exact le_rfl
 
 @[simp] theorem isSpecified_iff_ne_bot {s : FeatureSlot α} :
     s.isSpecified = true ↔ s ≠ ⊥ := by
-  cases s <;> simp [isSpecified]
+  cases s with
+  | absent => simp [isSpecified]
+  | unvalued => exact ⟨fun _ ↦ nofun, fun _ ↦ rfl⟩
+  | valued v => exact ⟨fun _ ↦ nofun, fun _ ↦ rfl⟩
 
 end FeatureSlot
 
