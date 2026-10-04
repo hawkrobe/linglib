@@ -7,6 +7,7 @@ module
 
 public import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
 public import Linglib.Core.Data.UnorderedTree.DecEq
+public import Linglib.Core.Data.UnorderedTree.Licensed
 public import Linglib.Syntax.Minimalist.Defs
 
 /-!
@@ -22,7 +23,8 @@ the cancellation `T/T_v` remembering the head of `T_v`. Traces are exactly the r
 convention of the trace coproduct. `SyntacticObject` is the well-formed unordered tree over
 `Vertex`, the object Merge builds, and `PlanarSyntacticObject` the well-formed ordered tree,
 [marcolli-chomsky-berwick-2025]'s planar embedding, the form linearization and PF read.
-Well-formedness is stated once, on ordered trees, and descends to the quotient;
+Well-formedness is a local condition, each vertex licensing its children (`Vertex.Licenses`), so
+it descends to the quotient;
 `PlanarSyntacticObject.toSyntacticObject` forgets the order and is a homomorphism for the
 vocabulary the two carriers share, `leaf`, `trace`, `traceOf` and `merge`.
 
@@ -71,86 +73,65 @@ namespace SyntacticObject
 
 /-! ### Well-formedness -/
 
-mutual
-/-- An ordered tree is well-formed when a lexical or trace vertex is a leaf and a bare vertex is
-    binary with well-formed children. -/
-def wellFormed : RoseTree Vertex → Bool
-  | .node (.inl (some _)) cs => cs.isEmpty
-  | .node (.inl none) cs => cs.length == 2 && wellFormedList cs
-  | .node (.inr _) cs => cs.isEmpty
-/-- Every tree in the list is well-formed. -/
-def wellFormedList : List (RoseTree Vertex) → Bool
-  | [] => true
-  | c :: cs => wellFormed c && wellFormedList cs
-end
+/-- A vertex licenses its children when a lexical item or a trace has none and the bare label has
+two. -/
+def Vertex.Licenses : Vertex → Multiset Vertex → Prop
+  | .inl (some _), ks => ks = 0
+  | .inl none, ks => Multiset.card ks = 2
+  | .inr _, ks => ks = 0
 
-private theorem wellFormed_node_congr {a : Vertex} {cs ds : List (RoseTree Vertex)}
-    (hlen : cs.length = ds.length) (hlist : wellFormedList cs = wellFormedList ds) :
-    wellFormed (.node a cs) = wellFormed (.node a ds) := by
-  match a with
-  | .inl none => simp only [wellFormed, hlen, hlist]
-  | .inl (some _) | .inr _ =>
-    simp only [wellFormed]
-    rw [Bool.eq_iff_iff]
-    simp only [List.isEmpty_iff_length_eq_zero, hlen]
-
-mutual
-/-- Well-formedness is invariant under permuting children, hence descends to the quotient. -/
-theorem wellFormed_perm : ∀ {t s : RoseTree Vertex}, RoseTree.Perm t s →
-    wellFormed t = wellFormed s
-  | _, _, .node h => wellFormed_node_congr h.length_eq (wellFormedList_permList h)
-  | _, _, .trans h₁ h₂ => (wellFormed_perm h₁).trans (wellFormed_perm h₂)
-
-/-- `wellFormedList` is a conjunction over children, hence `PermList`-invariant. -/
-theorem wellFormedList_permList : ∀ {cs ds : List (RoseTree Vertex)},
-    RoseTree.PermList cs ds → wellFormedList cs = wellFormedList ds
-  | _, _, .nil => rfl
-  | _, _, .cons h hs => by
-    simp only [wellFormedList, wellFormed_perm h, wellFormedList_permList hs]
-  | _, _, .swap _ _ _ => by simp only [wellFormedList, Bool.and_left_comm]
-  | _, _, .trans h₁ h₂ => (wellFormedList_permList h₁).trans (wellFormedList_permList h₂)
-end
-
-/-- The children of a well-formed list are well-formed. -/
-theorem wellFormed_of_mem {cs : List (RoseTree Vertex)} (h : wellFormedList cs = true) :
-    ∀ c ∈ cs, wellFormed c = true := by
-  induction cs with
-  | nil => intro _ hc; exact absurd hc List.not_mem_nil
-  | cons hd tl ih =>
-    rw [wellFormedList, Bool.and_eq_true] at h
-    intro c hc
-    rcases List.mem_cons.mp hc with rfl | hmem
-    · exact h.1
-    · exact ih h.2 c hmem
-
-/-- A bare binary node is well-formed exactly when both daughters are. -/
-@[simp] theorem wellFormed_merge (l r : RoseTree Vertex) :
-    wellFormed (.node Vertex.bare [l, r]) = (wellFormed l && wellFormed r) := by
-  simp [wellFormed, wellFormedList]
-
-/-- Under well-formedness, a node has either no children or exactly two. -/
-theorem wellFormed_length {a : Vertex} {cs : List (RoseTree Vertex)}
-    (ht : wellFormed (.node a cs) = true) : cs.length = 0 ∨ cs.length = 2 := by
-  match a with
-  | .inl (some _) | .inr _ =>
-    rw [wellFormed, List.isEmpty_iff] at ht
-    exact Or.inl (by rw [ht]; rfl)
-  | .inl none =>
-    rw [wellFormed, Bool.and_eq_true, beq_iff_eq] at ht
-    exact Or.inr ht.1
+instance : ∀ (a : Vertex) (ks : Multiset Vertex), Decidable (Vertex.Licenses a ks)
+  | .inl (some _), ks => inferInstanceAs (Decidable (ks = 0))
+  | .inl none, ks => inferInstanceAs (Decidable (Multiset.card ks = 2))
+  | .inr _, ks => inferInstanceAs (Decidable (ks = 0))
 
 end SyntacticObject
 
-/-- An unordered tree over `Vertex` is a syntactic object when its ordered representatives are
-    well-formed: binary, with lexical or trace leaves and bare internal vertices. -/
+/-- An unordered tree over `Vertex` is a syntactic object when every vertex licenses its
+    children, so that lexical items and traces are leaves and bare vertices are binary. -/
 def IsSyntacticObject (t : UnorderedTree SyntacticObject.Vertex) : Prop :=
-  Quotient.lift SyntacticObject.wellFormed (fun _ _ h => SyntacticObject.wellFormed_perm h) t
-    = true
+  t.Licensed SyntacticObject.Vertex.Licenses
 
-instance : DecidablePred IsSyntacticObject := fun _ => inferInstanceAs (Decidable (_ = true))
+instance : DecidablePred IsSyntacticObject := fun t ↦ inferInstanceAs (Decidable (t.Licensed _))
 
 @[simp] theorem isSyntacticObject_mk (t : RoseTree SyntacticObject.Vertex) :
-    IsSyntacticObject (UnorderedTree.mk t) ↔ SyntacticObject.wellFormed t = true := Iff.rfl
+    IsSyntacticObject (UnorderedTree.mk t) ↔
+      t.Licensed fun a ks ↦ SyntacticObject.Vertex.Licenses a (ks : Multiset _) :=
+  Iff.rfl
+
+namespace SyntacticObject
+
+/-- A leaf carrying a lexical item or a trace is a syntactic object. -/
+theorem isSyntacticObject_mk_leaf {a : Vertex} (ha : a ≠ Vertex.bare) :
+    IsSyntacticObject (UnorderedTree.mk (.node a [])) := by
+  refine (isSyntacticObject_mk _).mpr (licensed_node_iff.mpr ⟨?_, by simp⟩)
+  match a, ha with
+  | .inl (some _), _ | .inr _, _ => rfl
+  | .inl none, h => exact absurd rfl h
+
+/-- A bare binary node is a syntactic object exactly when both daughters are. -/
+@[simp] theorem isSyntacticObject_mk_merge (l r : RoseTree Vertex) :
+    IsSyntacticObject (UnorderedTree.mk (.node Vertex.bare [l, r])) ↔
+      IsSyntacticObject (UnorderedTree.mk l) ∧ IsSyntacticObject (UnorderedTree.mk r) := by
+  simp [licensed_node_iff, Vertex.Licenses]
+
+/-- A node of a syntactic object has either no children or exactly two. -/
+theorem length_eq_zero_or_two {a : Vertex} {cs : List (RoseTree Vertex)}
+    (h : IsSyntacticObject (UnorderedTree.mk (.node a cs))) : cs.length = 0 ∨ cs.length = 2 := by
+  have h := (licensed_node_iff.mp ((isSyntacticObject_mk _).mp h)).1
+  match a with
+  | .inl (some _) | .inr _ => exact .inl (by simpa [Vertex.Licenses] using congrArg Multiset.card h)
+  | .inl none => exact .inr (by simpa [Vertex.Licenses] using h)
+
+/-- A node of a syntactic object with children is bare. -/
+theorem eq_bare_of_ne_nil {a : Vertex} {cs : List (RoseTree Vertex)}
+    (h : IsSyntacticObject (UnorderedTree.mk (.node a cs))) (hcs : cs ≠ []) : a = Vertex.bare := by
+  have h := (licensed_node_iff.mp ((isSyntacticObject_mk _).mp h)).1
+  match a with
+  | .inl none => rfl
+  | .inl (some _) | .inr _ => exact absurd (by simpa [Vertex.Licenses] using h) hcs
+
+end SyntacticObject
 
 /-- The syntactic objects are the well-formed unordered trees over `Vertex`. -/
 def SyntacticObject : Type := { t : UnorderedTree SyntacticObject.Vertex // IsSyntacticObject t }
@@ -169,14 +150,17 @@ instance : DecidableEq PlanarSyntacticObject := Subtype.instDecidableEq
 namespace SyntacticObject
 
 /-- A lexical leaf. -/
-@[coe] def leaf (tok : LIToken) : SyntacticObject := ⟨UnorderedTree.leaf (Vertex.lex tok), rfl⟩
+@[coe] def leaf (tok : LIToken) : SyntacticObject :=
+  ⟨UnorderedTree.leaf (Vertex.lex tok), isSyntacticObject_mk_leaf (by simp)⟩
 
 /-- The index-free trace, the mark an admissible cut leaves in the remaining tree
     ([marcolli-chomsky-berwick-2025], Definition 1.2.6); `traceOf` is the indexed trace. -/
-def trace : SyntacticObject := ⟨UnorderedTree.leaf Vertex.trace, rfl⟩
+def trace : SyntacticObject :=
+  ⟨UnorderedTree.leaf Vertex.trace, isSyntacticObject_mk_leaf (by simp)⟩
 
 /-- The trace of `tok`. -/
-def traceOf (tok : LIToken) : SyntacticObject := ⟨UnorderedTree.leaf (Vertex.traceOf tok), rfl⟩
+def traceOf (tok : LIToken) : SyntacticObject :=
+  ⟨UnorderedTree.leaf (Vertex.traceOf tok), isSyntacticObject_mk_leaf (by simp)⟩
 
 @[simp] theorem leaf_val (tok : LIToken) : (leaf tok).val = UnorderedTree.leaf (Vertex.lex tok) :=
   rfl
@@ -198,7 +182,7 @@ theorem isSyntacticObject_merge_iff (a b : UnorderedTree Vertex) :
     IsSyntacticObject (UnorderedTree.mk pa) ∧ IsSyntacticObject (UnorderedTree.mk pb)
   rw [show ({UnorderedTree.mk pa, UnorderedTree.mk pb} : Multiset (UnorderedTree Vertex))
         = Multiset.ofList ([pa, pb].map UnorderedTree.mk) from rfl, UnorderedTree.node_mk_tree_list]
-  exact (isSyntacticObject_mk _).trans (by rw [wellFormed_merge, Bool.and_eq_true]; exact Iff.rfl)
+  exact isSyntacticObject_mk_merge pa pb
 
 /-- Merge on the carrier, the bare binary node over two syntactic objects, also written `*`.
     Noncomputable, since it goes through the smart constructor `UnorderedTree.node`; concrete
@@ -226,22 +210,22 @@ end SyntacticObject
 
 namespace PlanarSyntacticObject
 
-open SyntacticObject (Vertex wellFormed wellFormed_merge)
+open SyntacticObject (Vertex isSyntacticObject_mk_leaf isSyntacticObject_mk_merge)
 
 /-- A lexical leaf. -/
-@[coe] def leaf (tok : LIToken) : PlanarSyntacticObject := ⟨.node (Vertex.lex tok) [], rfl⟩
+@[coe] def leaf (tok : LIToken) : PlanarSyntacticObject :=
+  ⟨.node (Vertex.lex tok) [], isSyntacticObject_mk_leaf (by simp)⟩
 
 /-- The index-free trace. -/
-def trace : PlanarSyntacticObject := ⟨.node Vertex.trace [], rfl⟩
+def trace : PlanarSyntacticObject := ⟨.node Vertex.trace [], isSyntacticObject_mk_leaf (by simp)⟩
 
 /-- The trace of `tok`. -/
-def traceOf (tok : LIToken) : PlanarSyntacticObject := ⟨.node (Vertex.traceOf tok) [], rfl⟩
+def traceOf (tok : LIToken) : PlanarSyntacticObject :=
+  ⟨.node (Vertex.traceOf tok) [], isSyntacticObject_mk_leaf (by simp)⟩
 
 /-- Merge, with the daughters in the given order. -/
 def merge (l r : PlanarSyntacticObject) : PlanarSyntacticObject :=
-  ⟨.node Vertex.bare [l.val, r.val], by
-    show wellFormed _ = true
-    rw [wellFormed_merge, Bool.and_eq_true]; exact ⟨l.2, r.2⟩⟩
+  ⟨.node Vertex.bare [l.val, r.val], (isSyntacticObject_mk_merge _ _).mpr ⟨l.2, r.2⟩⟩
 
 @[simp] theorem leaf_val (tok : LIToken) : (leaf tok).val = .node (Vertex.lex tok) [] := rfl
 @[simp] theorem trace_val : trace.val = .node Vertex.trace [] := rfl
@@ -294,40 +278,25 @@ theorem ind {motive : SyntacticObject → Prop}
   induction n using Nat.strong_induction_on with
   | _ n IH =>
     rintro ⟨lbl, cs⟩ hp hw
-    have hpl : wellFormed (RoseTree.node lbl cs) = true := hp
-    cases lbl with
-    | inl o =>
-      cases o with
-      | some tok =>
-        rw [wellFormed] at hpl
-        rcases cs with _ | ⟨c, cs'⟩
-        · exact leaf tok
-        · simp at hpl
-      | none =>
-        rw [wellFormed, Bool.and_eq_true] at hpl
-        obtain ⟨hlen, hlist⟩ := hpl
-        rcases cs with _ | ⟨pl, _ | ⟨pr, _ | ⟨x, rest⟩⟩⟩
-        · simp at hlen
-        · simp at hlen
-        · have hl : wellFormed pl = true := wellFormed_of_mem hlist pl (by simp)
-          have hr : wellFormed pr = true := wellFormed_of_mem hlist pr (by simp)
-          have hmerge : (⟨UnorderedTree.mk (RoseTree.node Vertex.bare [pl, pr]), hp⟩
-            : SyntacticObject)
-              = SyntacticObject.merge ⟨UnorderedTree.mk pl, hl⟩ ⟨UnorderedTree.mk pr, hr⟩ :=
-            Subtype.ext (merge_mk pl pr hl hr).symm
-          rw [hmerge]
-          simp only [RoseTree.numNodes_node, List.map_cons, List.map_nil, List.sum_cons,
-            List.sum_nil] at hw
-          exact merge _ _ (IH pl.numNodes (by omega) pl hl rfl)
-            (IH pr.numNodes (by omega) pr hr rfl)
-        · simp at hlen
-    | inr u =>
-      rw [wellFormed] at hpl
-      rcases cs with _ | ⟨c, cs'⟩
-      · cases u with
-        | some tok => exact traceOf tok
-        | none => exact trace
-      · simp at hpl
+    rcases length_eq_zero_or_two hp with hlen | hlen
+    · obtain rfl := List.length_eq_zero_iff.mp hlen
+      rcases lbl with (_ | tok) | (_ | tok)
+      · exact absurd (licensed_node_iff.mp ((isSyntacticObject_mk _).mp hp)).1
+          (by simp [Vertex.Licenses])
+      · exact leaf tok
+      · exact trace
+      · exact traceOf tok
+    · obtain ⟨pl, pr, rfl⟩ := List.length_eq_two.mp hlen
+      obtain rfl := eq_bare_of_ne_nil hp (by simp)
+      obtain ⟨hl, hr⟩ := (isSyntacticObject_mk_merge pl pr).mp hp
+      have hmerge : (⟨UnorderedTree.mk (RoseTree.node Vertex.bare [pl, pr]), hp⟩
+          : SyntacticObject) =
+            SyntacticObject.merge ⟨UnorderedTree.mk pl, hl⟩ ⟨UnorderedTree.mk pr, hr⟩ :=
+        Subtype.ext (merge_mk pl pr hl hr).symm
+      rw [hmerge]
+      simp only [RoseTree.numNodes_node, List.map_cons, List.map_nil, List.sum_cons,
+        List.sum_nil] at hw
+      exact merge _ _ (IH pl.numNodes (by omega) pl hl rfl) (IH pr.numNodes (by omega) pr hr rfl)
 
 /-- Every syntactic object is a lexical leaf, a trace, or a Merge. -/
 theorem exists_form (s : SyntacticObject) :

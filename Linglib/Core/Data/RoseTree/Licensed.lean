@@ -6,6 +6,8 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Data.RoseTree.Get
+public import Linglib.Core.Data.RoseTree.Perm
+public import Mathlib.Data.Multiset.MapFold
 
 /-!
 # Licensed trees
@@ -29,6 +31,8 @@ on the root alone is a separate conjunct.
   subtrees, and a tree is licensed when every subtree's root local tree satisfies `R`.
 * `RoseTree.Licensed.replaceAt`: replacing a subtree by a licensed tree with the same root value
   keeps the tree licensed.
+* `RoseTree.licensed_of_perm`: a relation that ignores the order of the children licenses
+  permuted trees alike, so it licenses unordered trees.
 -/
 
 @[expose] public section
@@ -110,5 +114,25 @@ theorem Licensed.replaceAt {t s new : RoseTree α} (ht : t.Licensed R) {p : List
       · rcases List.mem_or_eq_of_mem_set hd with hd | rfl
         · exact ht.of_mem hd
         · exact ih (ht.of_mem (List.mem_of_getElem? hc)) hcs
+
+/-- A relation that ignores the order of the children licenses a tree exactly when it licenses
+any permutation of it. -/
+theorem licensed_of_perm (hR : ∀ a {ks ls : List α}, ks.Perm ls → (R a ks ↔ R a ls)) :
+    ∀ {t s : RoseTree α}, t.Perm s → (t.Licensed R ↔ s.Licensed R) := by
+  intro t
+  induction t with
+  | node a cs ih =>
+    rintro ⟨b, ds⟩ h
+    obtain ⟨rfl, hrel⟩ := perm_node_iff.mp h
+    rw [licensed_node_iff, licensed_node_iff]
+    have hval : (cs.map value).Perm (ds.map value) := by
+      have := Multiset.rel_eq.1 (Multiset.rel_map.2 (hrel.mono fun c _ d _ hcd ↦ hcd.value_eq))
+      rwa [Multiset.map_coe, Multiset.map_coe, Multiset.coe_eq_coe] at this
+    refine and_congr (hR a hval) ⟨fun hc d hd ↦ ?_, fun hd c hc ↦ ?_⟩
+    · obtain ⟨c, hc', hcd⟩ :=
+        Multiset.exists_mem_of_rel_of_mem (Multiset.rel_flip.mpr hrel) (Multiset.mem_coe.mpr hd)
+      exact (ih c (Multiset.mem_coe.mp hc') hcd).mp (hc c (Multiset.mem_coe.mp hc'))
+    · obtain ⟨d, hd', hcd⟩ := Multiset.exists_mem_of_rel_of_mem hrel (Multiset.mem_coe.mpr hc)
+      exact (ih c hc hcd).mpr (hd d (Multiset.mem_coe.mp hd'))
 
 end RoseTree
