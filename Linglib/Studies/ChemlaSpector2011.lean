@@ -48,7 +48,7 @@ so Experiment 2 separates the localist from both globalists.
 
 namespace ChemlaSpector2011
 
-open Aristotelian.Square
+open Aristotelian
 
 /-! ### Readings and theories (§1) -/
 
@@ -107,13 +107,13 @@ abbrev RatingsMonotone (data : List (ℕ × ℕ)) : Prop :=
 
 /-! ### Pictures (§3, Appendix 2) -/
 
-/-- A six-letter picture places each letter in a cell of the square of opposition, a falsifier
-being connected to none of its circles (`E`), a strong verifier to some but not all (`IO`), and a
-weak verifier to all (`A`) (Figure 14). -/
-abbrev Picture6 := Fin 6 → Cell
+/-- A six-letter picture places each letter at a vertex of the triangle of opposition, a
+falsifier being connected to none of its circles (`E`), a strong verifier to some but not all
+(`IO`), and a weak verifier to all (`A`) (Figure 14). -/
+abbrev Picture6 := Fin 6 → Triangle
 
 /-- A three-letter picture. -/
-abbrev Picture3 := Fin 3 → Cell
+abbrev Picture3 := Fin 3 → Triangle
 
 /-! ### Experiment 1: scalar items under a universal (§4) -/
 
@@ -124,19 +124,19 @@ variable {ι : Type*}
 /-- The three readings of (8) over any domain of letters are (10a), each letter is connected
 with at least one of its circles, (10b), that and not every letter with all of them, and (10c),
 every letter with some but not all of them. -/
-def reading : ReadingLabel → (ι → Cell) → Prop
-  | .literal => fun p ↦ ∀ i, p i ∈ Cell.square.I
-  | .global => fun p ↦ (∀ i, p i ∈ Cell.square.I) ∧ ¬ ∀ i, p i ∈ Cell.square.A
+def reading : ReadingLabel → (ι → Triangle) → Prop
+  | .literal => fun p ↦ ∀ i, ⊥ < p i
+  | .global => fun p ↦ (∀ i, ⊥ < p i) ∧ ¬ ∀ i, p i = ⊤
   | .local_ => fun p ↦ ∀ i, p i = .IO
 
-instance [Fintype ι] : (ℓ : ReadingLabel) → (p : ι → Cell) → Decidable (reading ℓ p)
+instance [Fintype ι] : (ℓ : ReadingLabel) → (p : ι → Triangle) → Decidable (reading ℓ p)
   | .literal, _ => inferInstanceAs (Decidable (∀ _, _))
   | .global, _ => inferInstanceAs (Decidable (_ ∧ _))
   | .local_, _ => inferInstanceAs (Decidable (∀ _, _))
 
 /-- The local reading is the literal one with *all* denied of every letter. -/
-theorem reading_local_iff (p : ι → Cell) :
-    reading .local_ p ↔ reading .literal p ∧ ∀ i, p i ∈ Cell.square.O := by
+theorem reading_local_iff (p : ι → Triangle) :
+    reading .local_ p ↔ reading .literal p ∧ ∀ i, p i < ⊤ := by
   simp only [reading, ← forall_and]
   exact forall_congr' fun i ↦ by cases p i <;> decide
 
@@ -181,7 +181,7 @@ namespace Exp2Some
 
 /-- Reading (19a) says that exactly one letter is connected with some or all of its circles, the
 others with none. -/
-abbrev literal (p : Picture3) : Prop := ∃ i, p i ∈ Cell.square.I ∧ ∀ j, j ≠ i → p j = .E
+abbrev literal (p : Picture3) : Prop := ∃ i, ⊥ < p i ∧ ∀ j, j ≠ i → p j = .E
 
 /-- Reading (19b) says that exactly one letter is connected with some but not all of its
 circles, the others with none. -/

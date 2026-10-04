@@ -29,8 +29,8 @@ developmental strategy of Musolino.
 
 ## Implementation notes
 
-* Scalar trials are typed by the cells of the square of opposition (`Aristotelian.Square.Cell`),
-  a box showing Cookie Monster with all, some but not all, or none of the cookies; number trials
+* Scalar trials are typed by the vertices of the triangle of opposition (`Aristotelian.Triangle`),
+  a box showing Cookie Monster with none, some but not all, or all of the cookies; number trials
   by the cardinality of a box.
 * The choice proportions and the statistics stay in prose: the paradigm's predictions are
   categorical, and the paper's argument is that the majority choice identifies the reading.
@@ -151,21 +151,21 @@ theorem choice_one_five_atLeast :
 
 /-! ### Scalar trials
 
-A box's cell of the square records whether Cookie Monster has all of the cookies (`A`), some but
-not all of them (`IO`), or none (`E`). Literal *some* is the `I` corner and *all* the `A` corner,
-and *some* strengthened by its implicature *not all* is the middle cell, where `I` and `O` both
-hold. -/
+A box's vertex of the triangle of opposition records whether Cookie Monster has none of the
+cookies (`E`), some but not all of them (`IO`), or all (`A`). On the scale the vertices form,
+literal *some* holds above the bottom, *all* at the top, and *some* strengthened by its
+implicature *not all* strictly between. -/
 
-open Aristotelian.Square
+open Aristotelian
 
-/-- Literal *some* holds in the `I` corner. -/
-abbrev someLiteral : Cell → Prop := (· ∈ Cell.square.I)
+/-- Literal *some* holds above the bottom vertex. -/
+abbrev someLiteral : Triangle → Prop := (⊥ < ·)
 
-/-- *All* holds in the `A` corner. -/
-abbrev allLiteral : Cell → Prop := (· ∈ Cell.square.A)
+/-- *All* holds at the top vertex. -/
+abbrev allLiteral : Triangle → Prop := (· = ⊤)
 
-/-- *Some* strengthened by *not all* holds where the `I` and `O` corners both do. -/
-abbrev someStrengthened : Cell → Prop := (· ∈ Cell.square.I ⊓ Cell.square.O)
+/-- *Some* strengthened by *not all* holds strictly between the bottom and top vertices. -/
+abbrev someStrengthened : Triangle → Prop := fun t ↦ ⊥ < t ∧ t < ⊤
 
 /-- In some(NONE,SOME) either reading picks the subset. -/
 theorem some_none_some : choice someLiteral ⟨.E, .IO⟩ = some (.visible .IO) := by

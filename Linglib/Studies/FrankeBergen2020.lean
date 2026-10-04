@@ -11,8 +11,8 @@ public import Mathlib.Tactic.DeriveFintype
 
 Franke and Bergen compare four rational speech act models, in the style of Frank and Goodman, of the
 nested Aristotelians *Q₁ of the aliens drank Q₂ of their water*, with *none*, *some* and *all* in
-each position. An alien's type is the cell of the square of opposition its drinking falls in
-(`Aristotelian.Square.Cell`), all of its water, some but not all, or none, a world state is the
+each position. An alien's type is the vertex of the triangle of opposition its drinking falls on
+(`Aristotelian.Triangle`), none of its water, some but not all, or all, a world state is the
 nonempty set of types some alien realizes, and a parse is the set of sites, among the whole sentence
 and the two quantifiers, at which an exhaustivity operator applies. The vanilla model has only the
 literal parse; lexical uncertainty, after Bergen, Levy and Goodman and Potts et al., fixes a lexicon
@@ -67,22 +67,22 @@ matrix-free or arbitrary parse, one softmax over pairs per world.
 namespace FrankeBergen2020
 
 open scoped ENNReal
-open MeasureTheory ProbabilityTheory Aristotelian.Square
+open MeasureTheory ProbabilityTheory Aristotelian
 
 /-! ## The grammar of readings -/
 
 /-! ### Domain -/
 
 /-- A world state is the set of alien types realized by at least one alien, a nonempty set of
-cells of the square. -/
-def World := {s : Finset Cell // s.Nonempty}
+vertices of the triangle. -/
+def World := {s : Finset Triangle // s.Nonempty}
 
 instance : DecidableEq World := Subtype.instDecidableEq
 instance : Fintype World := Subtype.fintype _
 
-instance : Membership Cell World := ⟨fun w t ↦ t ∈ w.val⟩
+instance : Membership Triangle World := ⟨fun w t ↦ t ∈ w.val⟩
 
-instance (t : Cell) (w : World) : Decidable (t ∈ w) :=
+instance (t : Triangle) (w : World) : Decidable (t ∈ w) :=
   inferInstanceAs (Decidable (t ∈ w.val))
 
 instance : MeasurableSpace World := ⊤
@@ -179,28 +179,28 @@ def AristQuant.altCandidates : AristQuant → List AltQuant
 
 /-! ### Compositional semantics -/
 
-/-- An alien of a given type satisfies "drank Q" when its cell lies in the corner of the square
-that Q names. -/
-def AltQuant.sat : AltQuant → Cell → Prop
-  | .none => (· ∈ Cell.square.E)
-  | .some => (· ∈ Cell.square.I)
-  | .all => (· ∈ Cell.square.A)
-  | .notAll => (· ∈ Cell.square.O)
+/-- An alien of a given type satisfies "drank Q" according to its place on the scale, *some*
+holding above the bottom vertex and *all* at the top one. -/
+def AltQuant.sat : AltQuant → Triangle → Prop
+  | .none => (· = ⊥)
+  | .some => (⊥ < ·)
+  | .all => (· = ⊤)
+  | .notAll => (· < ⊤)
 
 instance : ∀ q : AltQuant, DecidablePred q.sat
-  | .none, t => inferInstanceAs (Decidable (t ∈ Cell.square.E))
-  | .some, t => inferInstanceAs (Decidable (t ∈ Cell.square.I))
-  | .all, t => inferInstanceAs (Decidable (t ∈ Cell.square.A))
-  | .notAll, t => inferInstanceAs (Decidable (t ∈ Cell.square.O))
+  | .none, t => inferInstanceAs (Decidable (t = ⊥))
+  | .some, t => inferInstanceAs (Decidable (⊥ < t))
+  | .all, t => inferInstanceAs (Decidable (t = ⊤))
+  | .notAll, t => inferInstanceAs (Decidable (t < ⊤))
 
 /-- Quantifier denotation over the alien types realized in a world. -/
-def AltQuant.eval : AltQuant → World → (Cell → Prop) → Prop
+def AltQuant.eval : AltQuant → World → (Triangle → Prop) → Prop
   | .none, w, sat => ∀ t ∈ w, ¬ sat t
   | .some, w, sat => ∃ t ∈ w, sat t
   | .all, w, sat => ∀ t ∈ w, sat t
   | .notAll, w, sat => ¬ ∀ t ∈ w, sat t
 
-instance : ∀ (q : AltQuant) (w : World) (sat : Cell → Prop) [DecidablePred sat],
+instance : ∀ (q : AltQuant) (w : World) (sat : Triangle → Prop) [DecidablePred sat],
     Decidable (q.eval w sat)
   | .none, _, _, _ => inferInstanceAs (Decidable (∀ _ ∈ _, ¬ _))
   | .some, _, _, _ => inferInstanceAs (Decidable (∃ _ ∈ _, _))
@@ -208,11 +208,11 @@ instance : ∀ (q : AltQuant) (w : World) (sat : Cell → Prop) [DecidablePred s
   | .notAll, _, _, _ => inferInstanceAs (Decidable (¬ ∀ _ ∈ _, _))
 
 /-- *not all* is the negation of *all*, definitionally. -/
-theorem eval_notAll_iff (w : World) (sat : Cell → Prop) :
+theorem eval_notAll_iff (w : World) (sat : Triangle → Prop) :
     AltQuant.eval .notAll w sat ↔ ¬ AltQuant.eval .all w sat := Iff.rfl
 
 /-- *none* is the negation of *some*. -/
-theorem eval_none_iff (w : World) (sat : Cell → Prop) :
+theorem eval_none_iff (w : World) (sat : Triangle → Prop) :
     AltQuant.eval .none w sat ↔ ¬ AltQuant.eval .some w sat := by
   simp [AltQuant.eval]
 
@@ -239,9 +239,9 @@ def matrixAlts (u : Utterance) : List AltSentence :=
   u.outer.altCandidates ×ˢ u.inner.altCandidates
 
 /-- After EXH enrichment, when licensed, inner *some* is conjoined with its not-all implicature
-and holds in the `IO` cell exactly; Exh(none) and Exh(all) are vacuous. -/
-def enrichedSat (qi : AristQuant) (p : Parse) (t : Cell) : Prop :=
-  (↑qi : AltQuant).sat t ∧ (ExhPosition.inner ∈ p ∧ qi = .some → t ∈ Cell.square.O)
+and holds at the `IO` vertex exactly; Exh(none) and Exh(all) are vacuous. -/
+def enrichedSat (qi : AristQuant) (p : Parse) (t : Triangle) : Prop :=
+  (↑qi : AltQuant).sat t ∧ (ExhPosition.inner ∈ p ∧ qi = .some → t < ⊤)
 
 instance (qi : AristQuant) (p : Parse) : DecidablePred (enrichedSat qi p) := fun _ ↦
   inferInstanceAs (Decidable (_ ∧ _))

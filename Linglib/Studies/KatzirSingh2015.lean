@@ -158,27 +158,27 @@ end Scenario
 /-! ### Some and all (Sections 1 and 3.2)
 
 The *some* and *all* alternatives over the three ways a set of grades, names or origins can
-fall, the cells of the square of opposition (`Aristotelian.Square.Cell`): to all (`A`), to some
-but not all (`IO`), or to none (`E`). -/
+fall, the vertices of the triangle of opposition (`Aristotelian.Triangle`): to none (`E`), to
+some but not all (`IO`), or to all (`A`). -/
 
-open Aristotelian.Square
+open Aristotelian
 
 /-- The scalar alternatives. -/
 inductive Scalar
   | some_ | all_
   deriving DecidableEq, Repr, Fintype
 
-/-- *Some* is true in the `I` corner of the square, *all* in the `A` corner. -/
-def scalarDenotes : Scalar → Cell → Prop
-  | .some_, w => w ∈ Cell.square.I
-  | .all_, w => w ∈ Cell.square.A
+/-- *Some* is true above the bottom vertex, *all* only at the top one. -/
+def scalarDenotes : Scalar → Triangle → Prop
+  | .some_, w => ⊥ < w
+  | .all_, w => w = ⊤
 
 instance : ∀ u w, Decidable (scalarDenotes u w) := fun u w ↦ by
   cases u <;> unfold scalarDenotes <;> infer_instance
 
 /-- In the scalar scenario the alternatives form the question and have the same complexity, the
 context being a parameter. -/
-abbrev scalar (context : Set Cell) : Scenario Cell Scalar Scalar where
+abbrev scalar (context : Set Triangle) : Scenario Triangle Scalar Scalar where
   meaning u := {w | scalarDenotes u w}
   complexity _ := 1
   context := context
@@ -201,7 +201,7 @@ theorem all_felicitous_some_odd :
 
 /-- The explicit question *to how many?* of (20) is not settled by the common knowledge of
 (19), and *all* becomes a good answer while *some* stays needlessly weak. -/
-abbrev explicit : Scenario Cell Scalar Cell where
+abbrev explicit : Scenario Triangle Scalar Triangle where
   meaning u := {w | scalarDenotes u w}
   complexity _ := 1
   context := {w | w ≠ .IO}
@@ -213,16 +213,16 @@ theorem explicit_question_rescues_all :
 
 /-- Under a downward-entailing operator (18) the entailment reverses, *some* being the
 stronger, and it is *all* that is needlessly weak. -/
-def restrictorDenotes : Scalar → Cell → Prop
-  | .some_, w => w ∈ Cell.square.A
-  | .all_, w => w ∈ Cell.square.I
+def restrictorDenotes : Scalar → Triangle → Prop
+  | .some_, w => w = ⊤
+  | .all_, w => ⊥ < w
 
 instance : ∀ u w, Decidable (restrictorDenotes u w) := fun u w ↦ by
   cases u <;> unfold restrictorDenotes <;> infer_instance
 
 /-- The scenario of (18) asserts that every professor who assigned an A to some or all of his
 students got a raise, over how many of the A-givers got one. -/
-abbrev restrictor : Scenario Cell Scalar Scalar where
+abbrev restrictor : Scenario Triangle Scalar Scalar where
   meaning u := {w | restrictorDenotes u w}
   complexity _ := 1
   context := Set.univ
