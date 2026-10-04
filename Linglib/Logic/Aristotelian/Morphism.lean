@@ -26,6 +26,8 @@ Aristotelian isomorphic diagram of bitstrings.
 * `BooleanIso.toAristotelianIso`: every Boolean isomorphism is an Aristotelian isomorphism.
 * `BooleanIso.ofInjective`: a diagram is Boolean isomorphic to its image along an injective
   homomorphism.
+* `BooleanIso.ofMintermEqBot`: a corner bijection is a Boolean isomorphism when the minterms of
+  the two diagrams vanish at the same polarity assignments.
 * `AristotelianIso.toSetOfMinterms`: a diagram and its bitstrings are Aristotelian isomorphic.
 
 ## Implementation notes
@@ -181,6 +183,16 @@ noncomputable def ofInjective (g : BoundedLatticeHom α α') (hg : Function.Inje
   closureIso := (orderIsoMapOfInjective _ hg).trans <|
     Set.orderIsoOfEq _ _ (by rw [map_closure, ← Set.range_comp])
   extends_corners _ := rfl
+
+/-- A corner bijection is a Boolean isomorphism when the minterms of the two diagrams, matched
+along it, vanish together. -/
+noncomputable def ofMintermEqBot [Fintype ι] [DecidableEq ι] [DecidableEq α] [DecidableEq α']
+    (e : ι ≃ ι') (h : ∀ σ, minterm φ σ = ⊥ ↔ minterm (φ' ∘ e) σ = ⊥) : BooleanIso φ φ' where
+  toEquiv := e
+  closureIso := (closureOrderIsoOfMintermEqBot h).trans <|
+    Set.orderIsoOfEq _ _ (by rw [e.surjective.range_comp])
+  extends_corners i :=
+    Subtype.ext (congrArg Subtype.val (closureOrderIsoOfMintermEqBot_apply h i) :)
 
 /-- Every Boolean isomorphism is an Aristotelian isomorphism. -/
 def toAristotelianIso (bi : BooleanIso φ φ') : AristotelianIso φ φ' where
