@@ -12,28 +12,25 @@ public import Linglib.Phonology.Tone.Plateauing
 /-!
 # Jardine (2016): Computationally, tone is different
 
-This file formalizes [jardine-2016a], the computational characterization of a typological
-asymmetry: unbounded circumambient processes, whose application depends on unboundedly distant
-material on both sides of the target, (2), are common in tonal phonology and rare in segmental
-phonology, and they are the attested maps beyond weak determinism. The witness is unbounded
-tonal plateauing, every TBU between two H-toned TBUs surfacing H ([hyman-katamba-2010]'s rule,
-(7)), as the string map (36) of Section 4.1 over `H` and Ø, which is `Tone.utp` and reproduces
-the plateaus of Section 2.2 (`utp_map_rows`). The map is neither left- nor right-subsequential,
-Section 4.2 (`utp_not_isSubsequential`), by bounded delay and the reversal symmetry; it is
-regular, since the mark-up decomposition (43), a left-to-right pass writing `?` after a H and a
-right-to-left pass resolving `?`, is a bimachine ([elgot-mezei-1965], `utp_eq_resolve_mark`,
-`utp_isBimachineComputable`); and it is not weakly deterministic, Section 5.2, no union of
-one-sided rules expressing a map that requires both sides (`utp_not_weaklyDeterministic`), so it
-is fully regular, the class Section 5.3 places tone in and bars segmental phonology from
-(`utp_fullyRegular`). Read back into autosegmental representations by (40), the OCP-merged
-output is one H linked to the plateau, Section 4.4.
+Jardine argues that unbounded circumambient processes, whose application depends on material
+unboundedly far away on both sides of the target, (2), are common in tonal phonology and rare in
+segmental phonology. His witness is unbounded tonal plateauing, every TBU between two H-toned
+TBUs surfacing H (Hyman and Katamba's rule, (7)), as the string map (36) of Section 4.1, which is
+`Tone.utp`. The map is subsequential in neither direction (Section 4.2) but regular: the mark-up
+decomposition (43), a left-to-right pass writing `?` after an H and a right-to-left pass
+resolving it, is computed by a bimachine. Read back into autosegmental representations by (40),
+the OCP-merged output is one H linked to the plateau (Section 4.4).
+
+## Main results
+
+* `utp_map_rows`: the map reproduces the plateaus of Section 2.2
+* `utp_not_isSubsequential`: plateauing is subsequential in neither direction
+* `utp_eq_resolve_mark`, `utp_isBimachineComputable`: the mark-up decomposition (43)
 
 ## Implementation notes
 
-* Weak determinism is rendered as computability by a non-interacting bimachine
-  (`IsNonInteractingBimachineComputable`), the class of [meinhardt-mai-bakovic-mccollum-2024]; the
-  paper conjectures, after [heinz-lai-2013], that no mark-up-free decomposition of UTP exists,
-  and under this rendering the conjecture is a theorem.
+* The conjecture of Section 5.2, after Heinz and Lai, that plateauing has no mark-up-free
+  decomposition and so is not weakly deterministic, is not stated.
 * The rows write the paper's string representation one symbol per mora, a long vowel counting
   two; the Digo, Xhosa and Yaka data, whose plateaus interact with tone shift or an accentual
   analysis, are not encoded.
@@ -44,7 +41,6 @@ output is one H linked to the plateau, Section 4.4.
 * [hyman-katamba-2010]
 * [heinz-lai-2013]
 * [elgot-mezei-1965]
-* [meinhardt-mai-bakovic-mccollum-2024]
 -/
 
 @[expose] public section
@@ -58,7 +54,7 @@ open Tone
 The paper's string representation of Section 4.1, one symbol per mora, `H` a TBU associated to a
 H tone and Ø, written `O`, an unspecified one. -/
 
-/-- A row of Section 2.2: the underlying and surface TBU strings. -/
+/-- A row of Section 2.2 pairs an underlying and a surface TBU string. -/
 structure Row where
   underlying : List TBU
   surface : List TBU
@@ -73,10 +69,10 @@ def Row.ofDatum (e : Datum) : Option Row := do
   let s ← e.feature? "surface"
   some ⟨tbuString u, tbuString s⟩
 
-/-- The plateauing data of Section 2.2: Luganda (8) to (12), Zulu (18b) and Saramaccan (21). -/
+/-- The plateauing data of Section 2.2 are Luganda (8) to (12), Zulu (18b) and Saramaccan (21). -/
 def rows : List Row := Examples.all.filterMap Row.ofDatum
 
-/-- The map (36) reproduces every row: no change with at most one H, a plateau between the
+/-- The map (36) reproduces every row, with no change for at most one H and a plateau between the
 outermost Hs otherwise. -/
 theorem utp_map_rows : ∀ r ∈ rows, utp.map r.underlying = r.surface := by decide
 
@@ -100,7 +96,7 @@ theorem utp_not_isLeftSubsequential : ¬ IsLeftSubsequential utp.map :=
           by simpa using utp.map_plateau 0 0 (List.replicate (N + 1) .O)]
       simp [show (1 : ℕ) < N + 1 + 2 by omega]⟩
 
-/-- UTP is not right-subsequential: by the reversal symmetry, a right machine faces the
+/-- UTP is not right-subsequential, since by the reversal symmetry a right machine faces the
 mirror-image unbounded look-ahead. -/
 theorem utp_not_isRightSubsequential : ¬ IsRightSubsequential utp.map := fun h =>
   have hsymm : List.revConj utp.map = utp.map :=
@@ -112,32 +108,21 @@ theorem utp_not_isSubsequential : ∀ d, ¬ IsSubsequential d utp.map
   | .left => utp_not_isLeftSubsequential
   | .right => utp_not_isRightSubsequential
 
-/-! ### UTP is not weakly deterministic
-
-Under the non-interacting-bimachine rendering of weak determinism, the conjecture of Section 5.2,
-that UTP has no mark-up-free decomposition, is a theorem: UTP `RequiresBothSides`, which no union
-of one-sided rules expresses. -/
-
-/-- UTP is not weakly deterministic (§5.2). -/
-theorem utp_not_weaklyDeterministic : ¬ IsNonInteractingBimachineComputable utp.map :=
-  utp.requiresBothSides.not_isNonInteractingBimachineComputable
-
 /-! ### The (43) mark-up decomposition
 
 With one extra symbol the two-pass decomposition exists: a left pass marks every toneless
 TBU after a H with `?`; a right pass resolves `?` by whether a H follows. The mark is
-exactly the alphabet enlargement weak determinism disallows, so with the impossibility
-theorem this locates UTP precisely. -/
+exactly the alphabet enlargement that Heinz and Lai's weak determinism disallows. -/
 
-/-- The mark-up alphabet of (43): `Q` is the paper's `?`. -/
+/-- The mark-up alphabet of (43) adds `Q`, the paper's `?`. -/
 inductive Mark | H | O | Q
   deriving DecidableEq, Repr
 
-/-- Left pass of (43): mark every toneless TBU after a H with `?`. -/
+/-- The left pass of (43) marks every toneless TBU after a H with `?`. -/
 def markLeft : Mealy Bool TBU Mark :=
   .ofFlag (· == .H) fun l a => match a with | .H => .H | .O => if l then .Q else .O
 
-/-- Right pass of (43), run right-to-left: resolve `?` to H when a H follows, else to Ø. -/
+/-- The right pass of (43), run right-to-left, resolves `?` to H when a H follows, else to Ø. -/
 def resolveRight : Mealy Bool Mark TBU :=
   .ofFlag (· == .H) fun r a =>
     match a with | .H => .H | .O => .O | .Q => if r then .H else .O
@@ -150,7 +135,7 @@ theorem markLeft_run_getElem?_H_iff :
   | none => simp
   | some a => cases a <;> simp [ite_eq_iff]
 
-/-- The (43) decomposition computes UTP: mark left-to-right, then resolve right-to-left.
+/-- The (43) decomposition computes UTP, marking left-to-right and then resolving right-to-left.
 Both passes run finite Mealy machines, so this exhibits UTP as a right-subsequential map
 after a left-subsequential one (`Mealy.isLeftSubsequential`,
 `Mealy.isRightSubsequential`). -/
@@ -174,26 +159,19 @@ theorem utp_eq_resolve_mark (w : List TBU) :
       by_cases hL : TBU.H ∈ w.take i <;> by_cases hR : TBU.H ∈ w.drop (i + 1) <;>
         simp [utp.surfaces_split ha, hL, hR]
 
-/-- UTP is regular (§4.2): the (43) decomposition is a right-to-left Mealy pass after a
-left-to-right one, and such a composite is computed by a bimachine — one deterministic
-pass per direction ([elgot-mezei-1965]). So what fails above is one-directional
-determinism, not finite-state computability. -/
+/-- UTP is regular (§4.2). The (43) decomposition is a right-to-left Mealy pass after a
+left-to-right one, and a bimachine computes such a composite, one deterministic pass per
+direction. What fails above is one-directional determinism, not finite-state computability. -/
 theorem utp_isBimachineComputable : IsBimachineComputable utp.map := by
   rw [show utp.map = resolveRight.runRight ∘ markLeft.run from funext utp_eq_resolve_mark]
   exact resolveRight.isRightSubsequential.isBimachineComputable_comp
     markLeft.isLeftSubsequential rfl
 
-/-- UTP is *fully regular* (§5.3): regular but not weakly deterministic — the class the
-paper places tone in and bars segmental phonology from. -/
-theorem utp_fullyRegular :
-    IsBimachineComputable utp.map ∧ ¬ IsNonInteractingBimachineComputable utp.map :=
-  ⟨utp_isBimachineComputable, utp_not_weaklyDeterministic⟩
-
 /-! ### The autosegmental reading (§4.4)
 
 The string representation reads back into autosegmental representations by `TBU.toAR`
 ((40)); the OCP-merged representation of the output has one `H`, linked exactly to the
-plateau — [hyman-katamba-2010]'s rule as given in (7). -/
+plateau, Hyman and Katamba's rule as given in (7). -/
 
 open Autosegmental in
 /-- The merged output's links are the fused `H` over the surfacing positions. -/

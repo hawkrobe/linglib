@@ -18,12 +18,12 @@ public import Linglib.Phonology.Tone.Surfacing
 /-!
 # Unbounded tonal plateauing
 
-[hyman-katamba-2010]'s plateauing rule for Luganda: every tone-bearing unit between two
-H-toned units surfaces H. Formalized over the string rendering of [jardine-2016a]: a word
-over `TBU` records each timing unit's association state (`H` associated to a H tone, `O`
-unassociated), and `utp` — a `Tone.Surfacing` process — rewrites it pointwise by its
-surfacing predicate, the two-sided window `H ∈ w.take (i + 1) ∧ H ∈ w.drop i`: a H at or
-before `i` and one at or after it. The map is `utp.map`, the surfacing set `plateau`.
+Hyman and Katamba's plateauing rule for Luganda makes every tone-bearing unit between two
+H-toned units surface H. Over Jardine's string rendering, a word over `TBU` records each timing
+unit's association state (`H` associated to a H tone, `O` unassociated), and `utp`, a
+`Tone.Surfacing` process, rewrites it pointwise by its surfacing predicate, the two-sided window
+`H ∈ w.take (i + 1) ∧ H ∈ w.drop i` asking for an H at or before `i` and one at or after it. The
+map is `utp.map`, the surfacing set `plateau`.
 
 What surfaces is the representation. The string reads back into two-tier autosegmental
 representations by `TBU.toAR`, and the output representation `plateauAR w` is the OCP-merged
@@ -33,9 +33,9 @@ exactly when `utp.Surfaces w i` (`utp.surfaces_iff_surfacesWith_plateauAR`).
 The map is the flagship *unbounded circumambient* process: whether a position changes
 depends on unboundedly distant material on **both** sides, in the strong witness form
 `utp.requiresBothSides` — perturbing either far side alone reverts the change — with the
-weaker `utp.twoSidedUnboundedDependence` as a corollary, which feeds the weak-determinism
-exclusion theorems of `Studies/Jardine2016a` (bimachine rendering) and `Studies/Yolyan2025`
-(BMRS rendering).
+weaker `utp.twoSidedUnboundedDependence` as a corollary. `Studies/MeinhardtEtAl2024` excludes
+the map from the non-interacting bimachines, and `Studies/LamontOHaraSmith2019` shows it weakly
+deterministic in Heinz and Lai's sense.
 
 ## Main definitions
 
@@ -59,6 +59,11 @@ exclusion theorems of `Studies/Jardine2016a` (bimachine rendering) and `Studies/
   operator in the pointwise H-order: extensive, monotone, idempotent.
 * `utp.requiresBothSides` — deleting either flanking H reverts the plateau target, at
   every distance.
+
+## References
+
+* [hyman-katamba-2010]
+* [jardine-2016a]
 -/
 
 @[expose] public section
@@ -67,22 +72,22 @@ namespace Tone
 
 /-! ### The tone-bearing-unit alphabet -/
 
-/-- A tone-bearing unit's association state: `H` is a TBU associated to a H tone, `O` an
-unspecified TBU ([jardine-2016a]'s Ø). -/
+/-- A tone-bearing unit's association state is `H` for a TBU associated to a H tone and `O`
+for an unspecified TBU (Jardine's Ø). -/
 inductive TBU | H | O
   deriving DecidableEq, Repr
 
 /-! ### The output representation
 
 The string reads back into two-tier representations, and plateauing on representations is
-OCP-fusion followed by hull-closure of the association lines ([hyman-katamba-2010]'s rule
-as an operation on structures). -/
+OCP-fusion followed by hull-closure of the association lines (Hyman and Katamba's rule as an
+operation on structures). -/
 
 open Autosegmental
 
 namespace TBU
 
-/-- The melody a TBU contributes: its H tone if H-toned, nothing otherwise. -/
+/-- A TBU contributes its H tone to the melody if it is H-toned, and nothing otherwise. -/
 def melody : TBU → List TRN
   | .H => [.H]
   | .O => []
@@ -100,8 +105,8 @@ theorem sum_length_melody (w : List TBU) :
   | nil => rfl
   | cons a w ih => cases a <;> simp [ih, Nat.add_comm]
 
-/-- The translation of a TBU into a representation, in coordinates: one timing slot
-carrying the TBU's melody ([jardine-2016a]'s reading of the string as a representation). -/
+/-- A TBU translates, in coordinates, into one timing slot carrying the TBU's melody (Jardine's
+reading of the string as a representation). -/
 def toAR (a : TBU) : TieredAR Bool (TwoTier TRN Unit) := AR.junction (melody a) [()]
 
 theorem toAR_H : toAR .H = AR.single TRN.H () := rfl
@@ -128,21 +133,21 @@ instance (a : TBU) : Finite (toAR a).obj.V :=
     (toAR a).link true false p q ↔ p < (melody a).length ∧ q = 0 := by
   simp [toAR]
 
-/-- The melody of a realized string: one `H` node per H-toned TBU. -/
+/-- The melody of a realized string has one `H` node per H-toned TBU. -/
 @[simp] theorem tierWord_realize_toAR_true (w : List TBU) :
     (AR.realize toAR w).tierWord true = List.replicate (w.count .H) TRN.H := by
   induction w with
   | nil => simp
   | cons a w ih => cases a <;> simp [ih, List.replicate_succ]
 
-/-- The timing tier of a realized string: one slot per TBU. -/
+/-- The timing tier of a realized string has one slot per TBU. -/
 @[simp] theorem tierWord_realize_toAR_false (w : List TBU) :
     (AR.realize toAR w).tierWord false = List.replicate w.length () := by
   induction w with
   | nil => simp
   | cons a w ih => simp [ih, List.replicate_succ]
 
-/-- Links of a realized string: slot `j` links to melody node `p` exactly when TBU `j` is
+/-- In a realized string, slot `j` links to melody node `p` exactly when TBU `j` is
 H-toned and `p` is its accumulated melody position. -/
 theorem link_realize_toAR (w : List TBU) (p j : ℕ) :
     (AR.realize toAR w).link true false p j ↔
@@ -159,8 +164,8 @@ theorem link_realize_toAR (w : List TBU) (p j : ℕ) :
   · rintro ⟨rfl, hj, h⟩
     exact ⟨hj, le_rfl, by simp [h]⟩
 
-/-- Links of the OCP-merged realization: the single fused `H` node (index `0`) links
-exactly to the H-toned slots. -/
+/-- In the OCP-merged realization the single fused `H` node (index `0`) links exactly to
+the H-toned slots. -/
 theorem link_collapse_realize_toAR (w : List TBU) (k j : ℕ) :
     ((AR.realize toAR w).collapse true).link true false k j ↔ k = 0 ∧ w[j]? = some .H := by
   rw [AR.link_collapse]
@@ -174,17 +179,16 @@ theorem link_collapse_realize_toAR (w : List TBU) (k j : ℕ) :
 
 end TBU
 
-/-- The output representation in coordinates: OCP-merge then hull, both at the melody
-tier. -/
+/-- The output representation, in coordinates, is the OCP-merge and then the hull, both at the
+melody tier. -/
 noncomputable def plateauAR (w : List TBU) : TieredAR Bool (TwoTier TRN Unit) :=
   ((AR.realize TBU.toAR w).collapse true).hull true
 
 instance (w : List TBU) : Finite (plateauAR w).obj.V :=
   inferInstanceAs (Finite (((AR.realize TBU.toAR w).collapse true).hull true).obj.V)
 
-/-- Links of the output representation: the fused `H` links to slot `j` iff some H-toned
-TBU lies at or before `j` and some at or after it — fusion then spreading, read back as
-the string window. -/
+/-- In the output representation the fused `H` links to slot `j` iff some H-toned TBU lies at
+or before `j` and some at or after it, fusion then spreading read back as the string window. -/
 theorem link_plateauAR (w : List TBU) (k j : ℕ) :
     (plateauAR w).link true false k j ↔ k = 0 ∧ .H ∈ w.take (j + 1) ∧ .H ∈ w.drop j := by
   by_cases hj : j < w.length
@@ -213,8 +217,8 @@ theorem surfacesWith_plateauAR (w : List TBU) (j : ℕ) :
 
 /-! ### The plateauing process -/
 
-/-- Unbounded tonal plateauing as a surfacing process: TBU `i` surfaces H iff some H-toned
-TBU lies at or before it and some at or after it. -/
+/-- Unbounded tonal plateauing is the surfacing process in which TBU `i` surfaces H iff some
+H-toned TBU lies at or before it and some at or after it. -/
 @[simps hi lo]
 def utp : Surfacing TBU where
   hi := .H
@@ -229,24 +233,23 @@ def utp : Surfacing TBU where
 
 variable {w : List TBU} {i j k : ℕ}
 
-/-- The string-level reading of surfacing: the windowed form, definitional. -/
+/-- Surfacing is, by definition, the two-sided window on the string. -/
 theorem utp.surfaces_def : utp.Surfaces w i ↔ .H ∈ w.take (i + 1) ∧ .H ∈ w.drop i :=
   Iff.rfl
 
-/-- **What surfaces is the representation**: `utp.Surfaces w i` is H-linkedness of timing
-slot `i` in the output representation `plateauAR w` — the OCP-merged, hull-closed
-realization. -/
+/-- What surfaces is the representation. `utp.Surfaces w i` is the H-linkedness of timing slot
+`i` in the output representation `plateauAR w`, the OCP-merged, hull-closed realization. -/
 theorem utp.surfaces_iff_surfacesWith_plateauAR :
     utp.Surfaces w i ↔ (plateauAR w).surfacesWith TRN.H i :=
   (surfacesWith_plateauAR w i).symm
 
-/-- Positionwise reading of surfacing: a H at some `j ≤ i` and a H at some `j ≥ i`. -/
+/-- Position `i` surfaces iff there is an H at some `j ≤ i` and an H at some `j ≥ i`. -/
 theorem utp.surfaces_iff :
     utp.Surfaces w i ↔ (∃ j ≤ i, w[j]? = some .H) ∧ ∃ j ≥ i, w[j]? = some .H := by
   rw [utp.surfaces_def, List.mem_take_iff_getElem?, List.mem_drop_iff_getElem?]
   simp
 
-/-- The surfacing set is convex: the windows only widen. -/
+/-- The surfacing set is convex, since the windows only widen. -/
 theorem utp.surfaces_of_le_of_le (hi : utp.Surfaces w i) (hk : utp.Surfaces w k)
     (hij : i ≤ j) (hjk : j ≤ k) : utp.Surfaces w j :=
   utp.surfaces_def.mpr
@@ -256,7 +259,7 @@ theorem utp.surfaces_of_le_of_le (hi : utp.Surfaces w i) (hk : utp.Surfaces w k)
 theorem utp.H_mem_of_surfaces (h : utp.Surfaces w i) : .H ∈ w :=
   List.take_subset _ _ (utp.surfaces_def.mp h).1
 
-/-- Reversal symmetry: under `reverse` the two windows swap. -/
+/-- Reversal swaps the two windows. -/
 theorem utp.surfaces_reverse (hi : i < w.length) :
     utp.Surfaces w.reverse i ↔ utp.Surfaces w (w.length - 1 - i) := by
   rw [utp.surfaces_def, utp.surfaces_def, List.take_reverse, List.drop_reverse,
@@ -295,7 +298,7 @@ theorem utp.map_reverse : utp.map w.reverse = (utp.map w).reverse := by
 
 /-! ### The plateau set -/
 
-/-- The plateau of `w`: the set of positions that surface H. -/
+/-- The plateau of `w` is the set of positions that surface H. -/
 def plateau (w : List TBU) : Finset ℕ := utp.support w
 
 @[simp] theorem mem_plateau : j ∈ plateau w ↔ utp.Surfaces w j := utp.mem_support
@@ -311,7 +314,7 @@ theorem utp.map_eq_plateau_indicator :
       = (List.range w.length).map fun i => if i ∈ plateau w then TBU.H else TBU.O :=
   utp.map_eq_indicator
 
-/-- Sandwich characterization: a word with Hs at `lo` and `hi` and none outside
+/-- A word with Hs at `lo` and `hi` and none outside
 `[lo, hi]` has plateau exactly `Finset.Icc lo hi`. -/
 theorem plateau_eq_Icc_of {lo hi : ℕ} (hlo : w[lo]? = some .H) (hhi : w[hi]? = some .H)
     (hb : ∀ j, w[j]? = some .H → lo ≤ j ∧ j ≤ hi) : plateau w = Finset.Icc lo hi := by
@@ -338,7 +341,7 @@ Plateauing is a closure operator in the pointwise H-order: extensive
 engine is convexity: the output's Hs are the plateau, an interval, so plateauing the
 output surfaces nothing new (`utp.surfaces_map`). -/
 
-/-- Extensivity: every H survives plateauing. -/
+/-- Every H survives plateauing. -/
 theorem utp.map_getElem?_H_of_getElem?_H (h : w[i]? = some .H) :
     (utp.map w)[i]? = some .H :=
   utp.map_getElem?_hi_of_getElem?_hi h
@@ -350,7 +353,7 @@ theorem utp.surfaces_mono {w' : List TBU}
   obtain ⟨⟨l, hl, hlH⟩, r, hr, hrH⟩ := utp.surfaces_iff.mp h
   exact utp.surfaces_iff.mpr ⟨⟨l, hl, hw l hlH⟩, r, hr, hw r hrH⟩
 
-/-- Monotonicity: pointwise more Hs in, pointwise more Hs out. -/
+/-- Plateauing is monotone, pointwise more Hs in giving pointwise more Hs out. -/
 theorem utp.map_mono {w' : List TBU}
     (hw : ∀ j : ℕ, w[j]? = some TBU.H → w'[j]? = some TBU.H) (j : ℕ)
     (h : (utp.map w)[j]? = some TBU.H) : (utp.map w')[j]? = some TBU.H :=
@@ -363,7 +366,7 @@ theorem utp.H_mem_map : .H ∈ utp.map w ↔ .H ∈ w :=
    fun h => have ⟨i, hi⟩ := List.mem_iff_getElem?.mp h
     List.mem_iff_getElem?.mpr ⟨i, utp.map_getElem?_H_of_getElem?_H hi⟩⟩
 
-/-- Surfacing is invariant under plateauing: the output's Hs are the plateau, whose
+/-- Surfacing is invariant under plateauing, since the output's Hs are the plateau, whose
 convexity flanks no new positions. -/
 theorem utp.surfaces_map : utp.Surfaces (utp.map w) i ↔ utp.Surfaces w i := by
   constructor
@@ -380,7 +383,7 @@ theorem utp.surfaces_map : utp.Surfaces (utp.map w) i ↔ utp.Surfaces w i := by
   ext j
   rw [mem_plateau, mem_plateau, utp.surfaces_map]
 
-/-- Idempotence: a plateau is already closed. -/
+/-- Plateauing is idempotent, a plateau being already closed. -/
 @[simp] theorem utp.map_map : utp.map (utp.map w) = utp.map w := by
   rw [utp.map_eq_plateau_indicator (w := utp.map w), plateau_map, Surfacing.map_length,
     ← utp.map_eq_plateau_indicator]
@@ -440,12 +443,12 @@ example : utp.map [.H, .O, .O, .H] = [.H, .H, .H, .H] := by decide
 Whether the target surfaces is controlled by unboundedly distant flanks: instantiate
 the flank-witness template with `2d+2` toneless TBUs between the flanks. -/
 
-/-- UTP requires both sides ([jardine-2016a]): its trigger is the two-sided window
-conjunction, so deleting either flanking H reverts the plateau target. -/
+/-- UTP requires both sides. Its trigger is the two-sided window conjunction, so deleting either
+flanking H reverts the plateau target. -/
 theorem utp.requiresBothSides : RequiresBothSides utp.map :=
   utp.requiresBothSides_of_surfaces_iff fun _ _ => utp.surfaces_def
 
-/-- UTP has two-sided unbounded dependence, a corollary of its circumambience: whether a
+/-- UTP has two-sided unbounded dependence, a corollary of its circumambience, so whether a
 position changes depends on unboundedly distant material on both sides. -/
 theorem utp.twoSidedUnboundedDependence : TwoSidedUnboundedDependence utp.map :=
   utp.requiresBothSides.twoSidedUnboundedDependence
