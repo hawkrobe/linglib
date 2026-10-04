@@ -896,7 +896,6 @@ import Linglib.Semantics.Attitudes.Factivity
 import Linglib.Semantics.Attitudes.Preference
 import Linglib.Semantics.Causation.Morphological
 import Linglib.Semantics.Composition.Assignment
-import Linglib.Semantics.Composition.Combinator
 import Linglib.Semantics.Composition.Cont
 import Linglib.Semantics.Composition.Coordination
 import Linglib.Semantics.Composition.Model
