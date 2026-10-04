@@ -39,7 +39,6 @@ the structure and the object first as transitive-verb denotations, as `Model.pre
 namespace Semantics.Composition
 
 open FirstOrder
-open Semantics.Montague (Lexicon)
 
 /-- The entities of the toy model are John, Mary, a pizza and a book. -/
 inductive ToyEntity where

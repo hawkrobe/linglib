@@ -8,33 +8,42 @@ public import Mathlib.ModelTheory.Satisfiability
 public import Mathlib.Tactic.FinCases
 
 /-!
-# Reduction: the FO fragment of type-driven composition
+# The first-order fragment of type-driven composition
 
-Compiles the first-order fragment of [heim-kratzer-1998] trees into mathlib
-`FirstOrder.Language.Formula`s and proves agreement with the engine: whenever
-`compileFO` succeeds, the denotation `Tree.interp` composes is equivalent to
-mathlib `Realize` of the compiled formula over the model — the same triangle
-`Semantics/Dynamic/DRS/Reduction.lean` proves for DRT.
+`compileFO` compiles the first-order fragment of Heim and Kratzer's trees, after Quantifier
+Raising, into mathlib `FirstOrder.Language.Formula`s. Whenever it succeeds, the denotation
+`Tree.interp` composes is equivalent to the realization of the compiled formula over the model,
+the same triangle `Semantics/Dynamic/DRS/Reduction.lean` proves for DRT. First-order consequence
+between compiled formulas then transfers to entailment between trees in every composition model.
 
-Trace indices are the formulas' free-variable type (`ℕ`), so the Heim-Kratzer
-bind index *is* the variable name, and assignment update `g[n ↦ x]` on the
-engine side is literally `Function.update` on the realize side. Quantifiers
-bind exactly one trace, so closure is by the *computable* singleton binders
-`Formula.all₁` / `Formula.ex₁` (mathlib's `iAlls`/`iExs` are noncomputable).
+## Main definitions
 
-## Main declarations
+* `FOWords`, `Model.lexiconFO`: the logical vocabulary over a naming-map lexicon.
+* `FOWords.FreshFor`, `LexNaming.Disjoint`: the well-formedness conditions the compiler needs.
+* `compileFO`: the partial compiler.
+* `HoldsAt`: truth of a tree at a world under an assignment.
 
-* `FOWords`, `Model.lexiconFO` — the logical vocabulary over a naming-map
-  lexicon; `FOWords.FreshFor`, `LexNaming.Disjoint` — well-formedness
-* `compileFO` — the partial compiler over QR'd Heim-Kratzer tree shapes
-* `interp_compileFO`, `holdsAt_iff_realize` — the agreement theorem
-* `holdsAt_of_models` — consequence transfer (cross-model entailment from
-  first-order consequence)
+## Main results
 
-*Most* (and the other proportional determiners) is deliberately outside the
-compiled fragment: its first-order undefinability is the planned
-Barwise-Cooper payoff theorem, and the principled reason `compileFO` is
-partial.
+* `interp_compileFO`, `holdsAt_iff_realize`: the engine's denotation of a compiled tree is the
+  realization of its formula.
+* `holdsAt_of_models`: first-order consequence yields entailment in every composition model.
+* `models_imp_iff_entails`, `holdsAt_compactness`: tree entailment is first-order consequence
+  over the empty theory, and families of trees satisfy compactness.
+
+## Implementation notes
+
+Trace indices are the formulas' free variables (`ℕ`), so a binder index is the variable name and
+the assignment update `g[n ↦ x]` is `Function.update`. Quantifiers bind exactly one trace, so
+closure uses the computable singleton binders `Formula.all₁` and `Formula.ex₁` (mathlib's
+`iAlls` and `iExs` are noncomputable). *Most* and the other proportional determiners are not
+first-order definable, as Barwise and Cooper showed, so they lie outside the compiled fragment
+and `compileFO` is partial.
+
+## References
+
+* [heim-kratzer-1998]
+* [barwise-cooper-1981]
 -/
 
 @[expose] public section
@@ -46,7 +55,6 @@ namespace Semantics.Composition
 open FirstOrder Language
 open FirstOrder.Language.Formula (all₁ ex₁)
 open Semantics.Composition
-open Semantics.Montague (Lexicon)
 open Semantics.Composition.Tree
 open Syntax (Tree)
 
@@ -64,8 +72,8 @@ structure FOWords where
   and_ : String := "and"
   or_ : String := "or"
 
-/-- The logical vocabulary's lexicon entries: GQ denotations from
-`Quantification` and the truth-functional connectives, which flip arguments so that
+/-- The logical vocabulary's lexicon gives the quantifier words their denotations from
+`Quantification` and the connectives their truth functions, with arguments flipped so that
 `[t₁ [and t₂]]` composes to `⟦t₁⟧ ∧ ⟦t₂⟧`. -/
 def FOWords.lexicon (fw : FOWords) (E W : Type) : Lexicon E W := fun s =>
   if s = fw.every then some ⟨(.e ⇒ .t) ⇒ (.e ⇒ .t) ⇒ .t, Quantifier.GQ.every⟩
@@ -102,14 +110,14 @@ optional object, sentence negation `[not t]`, sentence coordination
 else — in particular *most* — is outside the fragment and compiles to
 `none`. -/
 
-/-- Compile an entity subtree: a proper name or a trace. -/
+/-- `compileTerm` compiles an entity subtree, a proper name or a trace, to a term. -/
 def compileTerm (nm : LexNaming L) : Tree Unit String → Option (L.Term ℕ)
   | .terminal _ s => (nm.names s).map Constants.term
   | .trace k _ => some (Term.var k)
   | _ => none
 
-/-- Compile a predicate subtree applied to a subject term: an intransitive
-verb, or a transitive verb with a name/trace object. -/
+/-- `compilePred` compiles a predicate subtree applied to a subject term, either an
+intransitive verb or a transitive verb with a name or trace as object. -/
 def compilePred (nm : LexNaming L) (τ : L.Term ℕ) :
     Tree Unit String → Option (L.Formula ℕ)
   | .terminal _ v => (nm.preds₁ v).map fun R => R.formula₁ τ
@@ -118,8 +126,8 @@ def compilePred (nm : LexNaming L) (τ : L.Term ℕ) :
         (compileTerm nm obj).map fun τₒ => R.formula₂ τ τₒ
   | _ => none
 
-/-- Compile the FO fragment of a tree to a first-order formula with trace
-indices as free variables. Partial: `none` outside the fragment. -/
+/-- `compileFO` compiles the first-order fragment of a tree to a formula with trace indices as
+free variables, returning `none` outside the fragment. -/
 def compileFO (fw : FOWords) (nm : LexNaming L) :
     Tree Unit String → Option (L.Formula ℕ)
   | .node _ [.terminal _ s, r] =>
@@ -303,16 +311,15 @@ theorem Model.realizeAt_ex₁ (k : ℕ) (φ : L.Formula ℕ) :
   let := m.interp w
   exact FirstOrder.Language.Formula.realize_ex₁
 
-/-- Atomic agreement, unary: realization of `R(τ)` is the model-sourced
-extensional predicate at the term's value. -/
+/-- The realization of a unary atom `R(τ)` is the extension of `R` at the term's value. -/
 theorem Model.realizeAt_formula₁ (R : L.Relations 1) (τ : L.Term ℕ) :
     m.realizeAt w (R.formula₁ τ) g ↔ m.pred₁ext R w (m.termAt w τ g) := by
   let := m.interp w
   rw [Model.realizeAt, Formula.realize_rel₁]
   exact iff_of_eq (congrArg _ (funext fun i => by fin_cases i; rfl))
 
-/-- Atomic agreement, binary: realization of `R(τ₁, τ₂)` is the model-sourced
-object-first relation at the terms' values (subject first in the vector). -/
+/-- The realization of a binary atom `R(τ₁, τ₂)`, subject first, is the object-first extension
+of `R` at the terms' values. -/
 theorem Model.realizeAt_formula₂ (R : L.Relations 2) (τ₁ τ₂ : L.Term ℕ) :
     m.realizeAt w (R.formula₂ τ₁ τ₂) g ↔
       m.pred₂ext R w (m.termAt w τ₂ g) (m.termAt w τ₁ g) := by
@@ -334,26 +341,24 @@ private theorem interpBinary_fa {σ τ : Ty} (f : Ty.Domain E W (σ ⇒ τ)) (x 
   rw [interpBinary, functionalApplication?_forward]
   rfl
 
-/-- Backward FA at `Id`: entity subject, unary predicate. -/
+/-- Backward functional application at `Id` applies a unary predicate to an entity subject. -/
 private theorem interpBinary_e_et (x : Ty.Domain E W .e) (P : Ty.Domain E W (.e ⇒ .t)) :
     interpBinary (M := Id) ⟨.e, x⟩ ⟨.e ⇒ .t, P⟩ = some ⟨.t, P x⟩ := rfl
 
-/-- Backward FA at `Id`: sentence subject, sentential operator. -/
+/-- Backward functional application at `Id` applies a sentential operator to a sentence. -/
 private theorem interpBinary_t_tt (p : Ty.Domain E W .t) (F : Ty.Domain E W (.t ⇒ .t)) :
     interpBinary (M := Id) ⟨.t, p⟩ ⟨.t ⇒ .t, F⟩ = some ⟨.t, F p⟩ := rfl
 
 private theorem predAbs_id_dist :
     PredAbs.dist? (M := Id) (E := E) (W := W) (D := ℝ) = some (fun _ f => f) := rfl
 
-/-- Congruence for truth-valued results: an `Iff` lifts through
-`some ⟨.t, ·⟩`. -/
+/-- An `Iff` between truth values lifts through `some ⟨.t, ·⟩`. -/
 private theorem some_t_congr {p q : Ty.Domain E W .t} (h : p ↔ q) :
     (some ⟨.t, p⟩ : Option (Denotation E W)) = some ⟨.t, q⟩ :=
   congrArg (fun r => (some ⟨.t, r⟩ : Option (Denotation E W))) (propext h)
 
-/-- The `.bind` node at `Id`, given the body's interpretation at the outer
-assignment: it denotes an entity predicate agreeing pointwise with the body
-at updated assignments. -/
+/-- Given the body's interpretation at the outer assignment, a `.bind` node at `Id` denotes an
+entity predicate that agrees pointwise with the body at the updated assignments. -/
 private theorem interp_bind_exists (lex : Lexicon E W) (g : Assignment E)
     (k : ℕ) (c : Unit) (body : Tree Unit String) {p : Ty.Domain E W .t}
     (hbody : Tree.interp lex g body = some ⟨.t, p⟩) :
@@ -379,8 +384,7 @@ section Agreement
 
 variable (m : Model L) (fw : FOWords) (nm : LexNaming L) (w : m.W)
 
-/-- Entity-subtree agreement: a compiled term's engine value is its
-realization over the model. -/
+/-- The engine's value of a compiled entity subtree is the realization of its term. -/
 theorem interp_compileTerm (g : Assignment m.E) :
     ∀ {t : Tree Unit String} {τ : L.Term ℕ}, compileTerm nm t = some τ →
       Tree.interp (m.lexiconFO fw nm w) g t
@@ -395,8 +399,8 @@ theorem interp_compileTerm (g : Assignment m.E) :
       subst h
       rfl
 
-/-- Predication agreement: subject term + predicate subtree compose to the
-compiled atom's realization. -/
+/-- A subject term and a compiled predicate subtree compose to the realization of the compiled
+atom. -/
 theorem interp_compilePred (hdj : nm.Disjoint) (g : Assignment m.E)
     {subj : Tree Unit String} {τ : L.Term ℕ}
     (hsubj : compileTerm nm subj = some τ) :
@@ -443,9 +447,8 @@ private theorem interp_quantClause {g : Assignment m.E} {q nw : String}
     Option.bind_some, interpBinary_fa, Option.bind_some, hbind,
     Option.bind_some, interpBinary_fa]
 
-/-- **The agreement theorem**: whenever the compiler succeeds, the engine's
-composed denotation *is* the realization of the compiled formula over the
-model at `w` — the DRT triangle for type-driven composition. -/
+/-- Whenever the compiler succeeds, the engine's denotation of the tree is the realization of
+the compiled formula over the model at `w`. -/
 theorem interp_compileFO (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
     (hdj : nm.Disjoint) (t : Tree Unit String) :
     ∀ {φ : L.Formula ℕ} (g : Assignment m.E), compileFO fw nm t = some φ →
@@ -589,8 +592,8 @@ section Consequence
 
 variable (m : Model L) (fw : FOWords) (nm : LexNaming L) (w : m.W)
 
-/-- Truth of a tree at a model's world under an assignment: it composes to a
-true truth value. -/
+/-- A tree holds at a model's world under an assignment when it composes to a true truth
+value. -/
 def HoldsAt (lex : Lexicon m.E m.W) (g : Assignment m.E)
     (t : Tree Unit String) : Prop :=
   ∃ p, Tree.interp lex g t = some ⟨.t, p⟩ ∧ p
@@ -609,9 +612,8 @@ theorem holdsAt_iff_realize (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
   · intro hr
     exact ⟨_, interp_compileFO m fw nm w hnd hfr hdj t g h, hr⟩
 
-/-- **Consequence transfer**: first-order consequence between compiled
-formulas yields cross-model entailment between the trees — for every
-composition model, world, and assignment. -/
+/-- First-order consequence between compiled formulas yields entailment between the trees in
+every composition model, at every world and under every assignment. -/
 theorem holdsAt_of_models (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
     (hdj : nm.Disjoint) {t₁ t₂ : Tree Unit String} {φ₁ φ₂ : L.Formula ℕ}
     (h₁ : compileFO fw nm t₁ = some φ₁) (h₂ : compileFO fw nm t₂ = some φ₂)
@@ -648,7 +650,6 @@ nonempty-domain restriction — standard in the GQ literature.) -/
 namespace Semantics.Composition
 
 open FirstOrder Language
-open Semantics.Montague (Lexicon)
 open Syntax (Tree)
 
 section TheoryBridge
@@ -662,9 +663,8 @@ def Model.ofStructure (M : Type) (S : L₀.Structure M) : Model L₀ :=
 private theorem modelEmpty (M : Type) [L₀.Structure M] : M ⊨ (∅ : L₀.Theory) :=
   ⟨fun _φ hφ => absurd hφ (by simp)⟩
 
-/-- **Tree entailment is first-order consequence**: mathlib's `⊨ᵇ` over the
-empty theory coincides with cross-model entailment between compiled trees,
-over nonempty-domain composition models. -/
+/-- Over composition models with nonempty domains, entailment between compiled trees coincides
+with mathlib's `⊨ᵇ` over the empty theory. -/
 theorem models_imp_iff_entails (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
     (hdj : nm.Disjoint) {t₁ t₂ : Tree Unit String} {φ₁ φ₂ : L₀.Formula ℕ}
     (h₁ : compileFO fw nm t₁ = some φ₁) (h₂ : compileFO fw nm t₂ = some φ₂) :
@@ -694,10 +694,9 @@ theorem models_imp_iff_entails (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
 
 /-! ### Closed trees as sentences, and compactness -/
 
-/-- **Compactness at the tree level**: a family of closed fragment trees is
-jointly satisfiable in a nonempty-domain composition model iff every finite
-subfamily is. The nontrivial direction is mathlib's compactness theorem
-(`Theory.isSatisfiable_iff_isFinitelySatisfiable`, via ultraproducts). -/
+/-- A family of closed fragment trees is jointly satisfiable in a composition model with a
+nonempty domain iff every finite subfamily is. The nontrivial direction is mathlib's compactness
+theorem `Theory.isSatisfiable_iff_isFinitelySatisfiable`. -/
 theorem holdsAt_compactness (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
     (hdj : nm.Disjoint) {ι : Type} (trees : ι → Tree Unit String)
     (φs : ι → L₀.Formula ℕ)

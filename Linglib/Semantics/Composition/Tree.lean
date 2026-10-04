@@ -66,7 +66,6 @@ namespace Semantics.Composition.Tree
 
 open Semantics.Composition
 open scoped Assignment
-open Semantics.Montague
 
 /-! ### Predicate Abstraction as a capability -/
 

@@ -68,12 +68,12 @@ open Degree
 `P` and measures strictly above the maximal than-clause degree of `b`. -/
 def comparativeTruth {Ent α Measured : Type*} (role : Ent → α → Prop) (P : α → Prop)
     (extract : α → Measured) (μ : Measured → ℚ) (a b : Ent) : Prop :=
-  maxComparative (λ e => role a e ∧ P e) (λ e => role b e ∧ P e) (λ e => μ (extract e))
+  maxComparative (fun e ↦ role a e ∧ P e) (fun e ↦ role b e ∧ P e) (fun e ↦ μ (extract e))
 
 /-- The equative, (27ii), is the comparative with a weak comparison. -/
 def equativeTruth {Ent α Measured : Type*} (role : Ent → α → Prop) (P : α → Prop)
     (extract : α → Measured) (μ : Measured → ℚ) (a b : Ent) : Prop :=
-  maxEquative (λ e => role a e ∧ P e) (λ e => role b e ∧ P e) (λ e => μ (extract e))
+  maxEquative (fun e ↦ role a e ∧ P e) (fun e ↦ role b e ∧ P e) (fun e ↦ μ (extract e))
 
 theorem comparativeTruth_entails_equativeTruth {Ent α Measured : Type*}
     (role : Ent → α → Prop) (P : α → Prop) (extract : α → Measured)
@@ -107,8 +107,8 @@ def matrixClause (role : Ent → α → Prop) (P : α → Prop) (μ : α → ℚ
 /-- Filling the standard with the maximal than-clause degree is the comparative. -/
 theorem derivation_eq_comparativeTruth {Measured : Type*} (role : Ent → α → Prop)
     (P : α → Prop) (extract : α → Measured) (μ : Measured → ℚ) (a b : Ent) :
-    (∃ δ, IsGreatest (thanClause role P (λ e => μ (extract e)) b) δ ∧
-        matrixClause role P (λ e => μ (extract e)) a δ) ↔
+    (∃ δ, IsGreatest (thanClause role P (fun e ↦ μ (extract e)) b) δ ∧
+        matrixClause role P (fun e ↦ μ (extract e)) a δ) ↔
       comparativeTruth role P extract μ a b := by
   simp only [comparativeTruth, maxComparative, Degree.thanDegrees, Degree.scopeDegrees,
     Quantifier.GQ.some, thanClause, matrixClause,
@@ -121,7 +121,6 @@ end Derivation
 section TypeDriven
 
 open Semantics.Composition.Tree
-open Semantics.Montague (Lexicon)
 open Semantics.Composition
 open Syntax (Tree)
 
@@ -134,24 +133,24 @@ abbrev Dom (Ent α : Type) : Type := Ent ⊕ α
 ((27i), (38ii)), the role head composes by event identification ([kratzer-1996]), and
 existential closure is an item. -/
 def lexicon {D : Type} [LinearOrder D] [Zero D] (role : Ent → α → Prop) (P : α → Prop)
-    (μ0 : α → D) (subj : Ent) (δ : D) : Lexicon (Dom Ent α) Unit Id D := λ w =>
+    (μ0 : α → D) (subj : Ent) (δ : D) : Lexicon (Dom Ent α) Unit Id D := fun w ↦
   match w with
-  | "much" => some ⟨.e ⇒ .d, show Dom Ent α → D from λ x => match x with
+  | "much" => some ⟨.e ⇒ .d, show Dom Ent α → D from fun x ↦ match x with
       | .inr e => μ0 e
       | .inl _ => 0⟩
   | "er" => some ⟨(.e ⇒ .d) ⇒ .d ⇒ .e ⇒ .t,
-      show (Dom Ent α → D) → D → Dom Ent α → Prop from λ m d x => d < m x⟩
+      show (Dom Ent α → D) → D → Dom Ent α → Prop from fun m d x ↦ d < m x⟩
   | "abs" => some ⟨(.e ⇒ .d) ⇒ .d ⇒ .e ⇒ .t,
-      show (Dom Ent α → D) → D → Dom Ent α → Prop from λ m d x => d ≤ m x⟩
+      show (Dom Ent α → D) → D → Dom Ent α → Prop from fun m d x ↦ d ≤ m x⟩
   | "δ" => some ⟨.d, show D from δ⟩
-  | "pred" => some ⟨.e ⇒ .t, λ x => match x with
+  | "pred" => some ⟨.e ⇒ .t, fun x ↦ match x with
       | .inr e => P e
       | .inl _ => False⟩
-  | "role" => some ⟨.e ⇒ .e ⇒ .t, λ x ev => match x, ev with
+  | "role" => some ⟨.e ⇒ .e ⇒ .t, fun x ev ↦ match x, ev with
       | .inl i, .inr e => role i e
       | _, _ => False⟩
   | "subj" => some ⟨.e, .inl subj⟩
-  | "EC" => some ⟨(.e ⇒ .t) ⇒ .t, λ p => ∃ e : α, p (.inr e)⟩
+  | "EC" => some ⟨(.e ⇒ .t) ⇒ .t, fun p ↦ ∃ e : α, p (.inr e)⟩
   | _ => none
 
 /-- In the matrix tree, (36), (44), (60), the degree phrase modifies the base predicate, the role
@@ -229,7 +228,7 @@ def NontriviallyStructured [PartialOrder α] (P : α → Prop) : Prop :=
 adjective, is not non-trivially structured. -/
 theorem not_nontriviallyStructured_of_qua [PartialOrder α] {P : α → Prop} (hQ : QUA P) :
     ¬ NontriviallyStructured P :=
-  λ ⟨_, _, hx, hy, hlt⟩ => hQ hx hy hlt.ne hlt.le
+  fun ⟨_, _, hx, hy, hlt⟩ ↦ hQ hx hy hlt.ne hlt.le
 
 /-- A cumulative domain with two satisfiers is non-trivially structured, since their sum has one
 of them as a proper part. -/
@@ -243,7 +242,7 @@ theorem nontriviallyStructured_of_cum [SemilatticeSup α] {P : α → Prop} (hC 
 /-- On a quantized domain every measure is monotonic vacuously. -/
 theorem strictMonoOn_of_qua [PartialOrder α] {P : α → Prop} (hQ : QUA P) (μ : α → ℚ) :
     StrictMonoOn μ {x | P x} :=
-  λ _ hx _ hy hlt => absurd hlt.le (hQ hx hy hlt.ne)
+  fun _ hx _ hy hlt ↦ absurd hlt.le (hQ hx hy hlt.ne)
 
 /-- On a non-trivially structured domain a monotonic measure separates some pair, so the
 preservation of structure is non-trivial. -/
@@ -274,7 +273,7 @@ instance : (m : MeasuredDomain) → Preorder m.Model
   | .entity => inferInstanceAs (Preorder (ℝ × ℝ))
   | .event => inferInstanceAs (Preorder (ℝ × ℝ))
 
-/-- Exactly the state domain fixes the comparative ordering for every admissible measure:
+/-- Exactly the state domain fixes the comparative ordering for every admissible measure, so
 *hotter* and *more heat* measure intensively because they measure states, *fuller* and *more
 coffee* extensively because they measure entities (82)–(85). -/
 theorem model_restricted_iff :
@@ -291,7 +290,7 @@ def crossCategorialQP : Bresnan1973.QP := ⟨{ clitic := some .er }, .much⟩
 theorem crossCategorialQP_suppletion : crossCategorialQP.suppletion = some .more := rfl
 
 /-- *very* needs *much* before a noun or a verb phrase and forbids it before an adjective
-(117), (118): *much* deletes exactly before the adjective of its phrase (74). -/
+(117), (118), since *much* deletes exactly before the adjective of its phrase (74). -/
 theorem very_much_deletion :
     Bresnan1973.MuchDeletes ⟨{}, .much⟩ .adjective ∧
       ¬ Bresnan1973.MuchDeletes ⟨{}, .much⟩ .noun ∧
