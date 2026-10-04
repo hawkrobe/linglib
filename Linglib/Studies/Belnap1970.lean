@@ -3,9 +3,7 @@ module
 public import Linglib.Semantics.Presupposition.Trivalent
 public import Linglib.Logic.Aristotelian.Square
 public import Linglib.Semantics.Quantification.NP
-public import Linglib.Semantics.Composition.Toy
 public import Linglib.Data.Examples.Belnap1970
-public import Mathlib.Data.Fintype.Basic
 
 /-!
 # Belnap (1970): Conditional Assertion and Restricted Quantification
@@ -84,7 +82,7 @@ theorem belnap_exists_content_eq_some (C B : E → Prop) :
     (restrictedExists C B).assertion () ↔ GQ.some C B := Iff.rfl
 
 /-- Assertiveness of (11) is the existential presupposition of universals, which Strawson
-stipulated and Belnap derives: ∀x(Cx/Bx) is nonassertive when nothing satisfies C. -/
+stipulated and Belnap derives, since ∀x(Cx/Bx) is nonassertive when nothing satisfies C. -/
 theorem assertive_iff_restrictor_nonempty (C B : E → Prop) :
     (restrictedForall C B).presup () ↔ ∃ x : E, C x := Iff.rfl
 
@@ -131,8 +129,8 @@ theorem content_square_relations (C : E → Prop) (hR : ∃ x : E, C x) :
 
 /-! ### Obversion, I-conversion, Barbara -/
 
-/-- Obversion is a strong equivalence (p. 8): ∀x(Cx/¬¬Bx) and ∀x(Cx/Bx)
-are equi-assertive with identical content. -/
+/-- Obversion is a strong equivalence (p. 8), since ∀x(Cx/¬¬Bx) and ∀x(Cx/Bx) are equi-assertive
+with identical content. -/
 theorem obversion (C B : E → Prop) :
     (restrictedForall C fun x => ¬¬B x).presup =
         (restrictedForall C B).presup ∧
@@ -147,9 +145,9 @@ theorem i_conversion_content (C B : E → Prop) :
       (restrictedExists B C).assertion () :=
   ⟨fun ⟨x, hC, hB⟩ => ⟨x, hB, hC⟩, fun ⟨x, hB, hC⟩ => ⟨x, hC, hB⟩⟩
 
-/-- I-conversion is equitrue (p. 8): "truth is preserved in passing from
-one to the other" — a true ∃x(Cx/Bx) makes its converse assertive and
-true. Assertion alone suffices: the witness also witnesses ∃xBx. -/
+/-- I-conversion is equitrue, in that "truth is preserved in passing from one to the other"
+(p. 8). A true ∃x(Cx/Bx) makes its converse assertive and true, because its witness also
+witnesses ∃xBx. -/
 theorem i_conversion_equitrue (C B : E → Prop)
     (hTrue : (restrictedExists C B).assertion ()) :
     (restrictedExists B C).presup () ∧
@@ -158,17 +156,14 @@ theorem i_conversion_equitrue (C B : E → Prop)
   ⟨⟨x, hBx⟩, (i_conversion_content C B).mp hTrue⟩
 
 /-- I-conversion is not equi-assertive, since "'Some unicorns are animals' is nonassertive while
-'Some animals are unicorns' is just plain false" (p. 8). -/
-theorem i_conversion_not_equiassertive :
-    ∃ (E : Type) (_ : Fintype E) (C B : E → Prop),
-      (restrictedExists C B).presup () ∧
-        ¬(restrictedExists B C).presup () :=
-  ⟨Semantics.Montague.ToyEntity, inferInstance, (· = .john), fun _ => False,
-    ⟨.john, rfl⟩, fun ⟨_, h⟩ => h⟩
+'Some animals are unicorns' is just plain false" (p. 8). In any nonempty domain, a restrictor true
+of everything and one true of nothing separate the two conditions. -/
+theorem i_conversion_not_equiassertive [Nonempty E] :
+    ∃ C B : E → Prop, (restrictedExists C B).presup () ∧ ¬(restrictedExists B C).presup () :=
+  ⟨fun _ ↦ True, fun _ ↦ False, ⟨Classical.arbitrary E, trivial⟩, fun ⟨_, h⟩ ↦ h⟩
 
-/-- Barbara's minor propagates assertiveness (p. 9): "for every w in which
-Barbara's minor is true_w, both her major and her conclusion are
-assertive_w". -/
+/-- Barbara's minor propagates assertiveness, in that "for every w in which Barbara's minor is
+true_w, both her major and her conclusion are assertive_w" (p. 9). -/
 theorem barbara_assertive (A C B : E → Prop)
     (hMinorAssertive : (restrictedForall A C).presup ())
     (hMinorTrue : (restrictedForall A C).assertion ()) :
@@ -187,11 +182,10 @@ theorem barbara (A C B : E → Prop)
 
 /-! ### Contraposition and confirmation (§6) -/
 
-/-- The contrapositive ∀x(¬Bx/¬Cx) has a different assertiveness condition
-from ∀x(Cx/Bx): there-are-nonblack-things vs there-are-crows. Reports that
-something is not a crow support the contrapositive but are "evidentially
-irrelevant" to the original (p. 10) — the confirmation paradox dissolves
-because the two are not the same conditional assertion. -/
+/-- The contrapositive ∀x(¬Bx/¬Cx) is assertive when there are nonblack things, and ∀x(Cx/Bx)
+when there are crows. Reports that something is not a crow support the contrapositive but are
+"evidentially irrelevant" to the original (p. 10), so the confirmation paradox dissolves because
+the two are not the same conditional assertion. -/
 theorem contrapositive_different_assertiveness (C B : E → Prop) :
     ((restrictedForall C B).presup () ↔ ∃ x : E, C x) ∧
       ((restrictedForall (fun x => ¬B x) fun x => ¬C x).presup () ↔
