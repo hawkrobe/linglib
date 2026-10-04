@@ -16,10 +16,7 @@ ordered index, antitone in the index, so that a higher index is a stronger alter
 Exhaustifying a prejacent `φ i` against all stronger alternatives (`exhChain`) then collapses to
 negating the single next-stronger alternative when one exists (`exhChain_iff_succ`). On a dense
 scale with no next alternative, exhaustification cannot be satisfied at all
-(`exhChain_not_of_dense`), the Universal Density of Measurement crash of [fox-hackl-2006]. When
-the alternatives are the lower bounds `j ≤ ·` of a partial order, exhaustifying the `i`th pins
-the value at `i` (`exhChain_le_iff`): *some* against *all* is *some but not all*, and a
-lower-bounded numeral its exact reading.
+(`exhChain_not_of_dense`), the Universal Density of Measurement crash of [fox-hackl-2006].
 
 The two halves of the case split, whether a next-stronger alternative exists, are instantiated
 across the numeral literature: `Numerals.exhNumeral`, the exact reading as the step-1 instance on
@@ -35,7 +32,6 @@ precisification families of approximative *just* ([thomas-deo-2020]).
 
 * `exhChain_iff_succ`: on a chain, exhaustification negates the next-stronger alternative.
 * `exhChain_not_of_dense`: with no next-stronger alternative, exhaustification is unsatisfiable.
-* `exhChain_le_iff`: exhaustifying a lower bound against the stronger ones asserts equality.
 
 ## References
 
@@ -76,11 +72,5 @@ theorem exhChain_not_of_dense (hdense : ∀ w, φ i w → ∃ j, i < j ∧ φ j 
     ¬ exhChain φ i w := fun ⟨hp, hstr⟩ ↦
   let ⟨j, hij, hφj⟩ := hdense w hp
   hstr j hij hφj
-
-/-- Exhaustifying the lower bound `i ≤ ·` against every stronger lower bound asserts `· = i`. -/
-theorem exhChain_le_iff {ι : Type*} [PartialOrder ι] {i w : ι} :
-    exhChain (· ≤ ·) i w ↔ w = i :=
-  ⟨fun ⟨hi, hs⟩ ↦ (hi.lt_or_eq.resolve_left fun h ↦ hs w h le_rfl).symm,
-    fun h ↦ h ▸ ⟨le_rfl, fun _ hj hle ↦ hj.not_ge hle⟩⟩
 
 end Exhaustification

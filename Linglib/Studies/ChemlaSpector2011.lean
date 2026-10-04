@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.Examples.ChemlaSpector2011
 public import Linglib.Pragmatics.Implicature.Diagnostics
-public import Linglib.Semantics.Quantification.Basic
+public import Linglib.Logic.Aristotelian.Square
 public import Linglib.Studies.GeurtsPouscoulous2009
 public import Mathlib.Data.Finset.Card
 public import Mathlib.Data.Fintype.Pi
@@ -48,7 +48,7 @@ so Experiment 2 separates the localist from both globalists.
 
 namespace ChemlaSpector2011
 
-open Quantifier
+open Aristotelian.Square
 
 /-! ### Readings and theories (§1) -/
 
@@ -107,13 +107,13 @@ abbrev RatingsMonotone (data : List (ℕ × ℕ)) : Prop :=
 
 /-! ### Pictures (§3, Appendix 2) -/
 
-/-- A six-letter picture places each letter in a cell of the tripartition of its circles, a
-falsifier being connected to none, a strong verifier to some but not all, and a weak verifier to
-all (Figure 14). -/
-abbrev Picture6 := Fin 6 → Tripartition
+/-- A six-letter picture places each letter in a cell of the square of opposition, a falsifier
+being connected to none of its circles (`E`), a strong verifier to some but not all (`IO`), and a
+weak verifier to all (`A`) (Figure 14). -/
+abbrev Picture6 := Fin 6 → Cell
 
 /-- A three-letter picture. -/
-abbrev Picture3 := Fin 3 → Tripartition
+abbrev Picture3 := Fin 3 → Cell
 
 /-! ### Experiment 1: scalar items under a universal (§4) -/
 
@@ -124,20 +124,21 @@ variable {ι : Type*}
 /-- The three readings of (8) over any domain of letters are (10a), each letter is connected
 with at least one of its circles, (10b), that and not every letter with all of them, and (10c),
 every letter with some but not all of them. -/
-def reading : ReadingLabel → (ι → Tripartition) → Prop
-  | .literal => fun p ↦ ∀ i, ⊥ < p i
-  | .global => fun p ↦ (∀ i, ⊥ < p i) ∧ ¬ ∀ i, p i = ⊤
-  | .local_ => fun p ↦ ∀ i, p i = .someNotAll
+def reading : ReadingLabel → (ι → Cell) → Prop
+  | .literal => fun p ↦ ∀ i, p i ∈ Cell.square.I
+  | .global => fun p ↦ (∀ i, p i ∈ Cell.square.I) ∧ ¬ ∀ i, p i ∈ Cell.square.A
+  | .local_ => fun p ↦ ∀ i, p i = .IO
 
-instance [Fintype ι] : (ℓ : ReadingLabel) → (p : ι → Tripartition) → Decidable (reading ℓ p)
+instance [Fintype ι] : (ℓ : ReadingLabel) → (p : ι → Cell) → Decidable (reading ℓ p)
   | .literal, _ => inferInstanceAs (Decidable (∀ _, _))
   | .global, _ => inferInstanceAs (Decidable (_ ∧ _))
   | .local_, _ => inferInstanceAs (Decidable (∀ _, _))
 
 /-- The local reading is the literal one with *all* denied of every letter. -/
-theorem reading_local_iff (p : ι → Tripartition) :
-    reading .local_ p ↔ reading .literal p ∧ ∀ i, p i < ⊤ := by
-  simp only [reading, ← forall_and, Tripartition.eq_someNotAll_iff]
+theorem reading_local_iff (p : ι → Cell) :
+    reading .local_ p ↔ reading .literal p ∧ ∀ i, p i ∈ Cell.square.O := by
+  simp only [reading, ← forall_and]
+  exact forall_congr' fun i ↦ by cases p i <;> decide
 
 /-- Under the universal the local reading entails the literal one, which keeps the unrestricted
 globalist abreast of the localist throughout Experiment 1. -/
@@ -158,10 +159,10 @@ inductive Exp1Condition where
 /-- The picture of each condition (Figure 4) has six falsifiers, six weak verifiers, four weak
 and two strong verifiers, or six strong verifiers. -/
 def Exp1Condition.witness : Exp1Condition → Picture6
-  | .false_ => fun _ ↦ .none
-  | .literal => fun _ ↦ .all
-  | .weak => fun i ↦ if i.val < 4 then .all else .someNotAll
-  | .strong => fun _ ↦ .someNotAll
+  | .false_ => fun _ ↦ .E
+  | .literal => fun _ ↦ .A
+  | .weak => fun i ↦ if i.val < 4 then .A else .IO
+  | .strong => fun _ ↦ .IO
 
 /-- The readings true at a condition, read off its witness. -/
 def Exp1Condition.truthSet (c : Exp1Condition) : Finset ReadingLabel :=
@@ -180,16 +181,16 @@ namespace Exp2Some
 
 /-- Reading (19a) says that exactly one letter is connected with some or all of its circles, the
 others with none. -/
-abbrev literal (p : Picture3) : Prop := ∃ i, p i ≠ .none ∧ ∀ j, j ≠ i → p j = .none
+abbrev literal (p : Picture3) : Prop := ∃ i, p i ∈ Cell.square.I ∧ ∀ j, j ≠ i → p j = .E
 
 /-- Reading (19b) says that exactly one letter is connected with some but not all of its
 circles, the others with none. -/
 abbrev global (p : Picture3) : Prop :=
-  (∃ i, p i = .someNotAll ∧ ∀ j, j ≠ i → p j = .none) ∧ ∀ i, p i ≠ .all
+  (∃ i, p i = .IO ∧ ∀ j, j ≠ i → p j = .E) ∧ ∀ i, p i ≠ .A
 
 /-- Reading (19c) says that exactly one letter is connected with some but not all of its
 circles, the others with none or all. -/
-abbrev local_ (p : Picture3) : Prop := ∃ i, p i = .someNotAll ∧ ∀ j, j ≠ i → p j ≠ .someNotAll
+abbrev local_ (p : Picture3) : Prop := ∃ i, p i = .IO ∧ ∀ j, j ≠ i → p j ≠ .IO
 
 /-- The three readings of (21). -/
 def reading : ReadingLabel → Picture3 → Prop
@@ -221,10 +222,10 @@ inductive Exp2Condition where
 
 /-- A picture of each condition (Figure 11). -/
 def Exp2Condition.witness : Exp2Condition → Picture3
-  | .false_ => fun _ ↦ .none
-  | .literal => fun i ↦ if i.val = 0 then .all else .none
-  | .local_ => fun i ↦ if i.val = 0 then .someNotAll else .all
-  | .all => fun i ↦ if i.val = 0 then .someNotAll else .none
+  | .false_ => fun _ ↦ .E
+  | .literal => fun i ↦ if i.val = 0 then .A else .E
+  | .local_ => fun i ↦ if i.val = 0 then .IO else .A
+  | .all => fun i ↦ if i.val = 0 then .IO else .E
 
 /-- The readings true at a condition, read off its witness. -/
 def Exp2Condition.truthSet (c : Exp2Condition) : Finset ReadingLabel :=

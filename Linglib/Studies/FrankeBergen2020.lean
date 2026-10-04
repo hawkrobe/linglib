@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Pragmatics.RSA.Uniform
-public import Linglib.Semantics.Quantification.Basic
+public import Linglib.Logic.Aristotelian.Square
 public import Linglib.Semantics.Exhaustification.Finite
 public import Mathlib.Data.List.ProdSigma
 public import Mathlib.Tactic.DeriveFintype
@@ -11,13 +11,13 @@ public import Mathlib.Tactic.DeriveFintype
 
 Franke and Bergen compare four rational speech act models, in the style of Frank and Goodman, of the
 nested Aristotelians *Q₁ of the aliens drank Q₂ of their water*, with *none*, *some* and *all* in
-each position. An alien's type is the cell of the tripartition its drinking falls in
-(`Quantifier.Tripartition`), a world state is the nonempty set of types some alien realizes, and a
-parse is the set of sites, among the whole sentence and the two quantifiers, at which an
-exhaustivity operator applies. The vanilla model has only the literal parse; lexical uncertainty,
-after Bergen, Levy and Goodman and Potts et al., fixes a lexicon per speaker; the local- and
-global-implicature speakers choose an utterance together with a matrix-free or arbitrary parse, one
-softmax over pairs per world.
+each position. An alien's type is the cell of the square of opposition its drinking falls in
+(`Aristotelian.Square.Cell`), all of its water, some but not all, or none, a world state is the
+nonempty set of types some alien realizes, and a parse is the set of sites, among the whole sentence
+and the two quantifiers, at which an exhaustivity operator applies. The vanilla model has only the
+literal parse; lexical uncertainty, after Bergen, Levy and Goodman and Potts et al., fixes a lexicon
+per speaker; the local- and global-implicature speakers choose an utterance together with a
+matrix-free or arbitrary parse, one softmax over pairs per world.
 
 ## Main results
 
@@ -67,41 +67,41 @@ softmax over pairs per world.
 namespace FrankeBergen2020
 
 open scoped ENNReal
-open MeasureTheory ProbabilityTheory Quantifier
+open MeasureTheory ProbabilityTheory Aristotelian.Square
 
 /-! ## The grammar of readings -/
 
 /-! ### Domain -/
 
 /-- A world state is the set of alien types realized by at least one alien, a nonempty set of
-cells of the tripartition. -/
-def World := {s : Finset Tripartition // s.Nonempty}
+cells of the square. -/
+def World := {s : Finset Cell // s.Nonempty}
 
 instance : DecidableEq World := Subtype.instDecidableEq
 instance : Fintype World := Subtype.fintype _
 
-instance : Membership Tripartition World := ⟨fun w t ↦ t ∈ w.val⟩
+instance : Membership Cell World := ⟨fun w t ↦ t ∈ w.val⟩
 
-instance (t : Tripartition) (w : World) : Decidable (t ∈ w) :=
+instance (t : Cell) (w : World) : Decidable (t ∈ w) :=
   inferInstanceAs (Decidable (t ∈ w.val))
 
 instance : MeasurableSpace World := ⊤
 instance : DiscreteMeasurableSpace World := ⟨fun _ ↦ trivial⟩
 
 /-- The world with only N-type aliens (each drank none). -/
-def wN : World := ⟨{.none}, Finset.singleton_nonempty _⟩
+def wN : World := ⟨{.E}, Finset.singleton_nonempty _⟩
 /-- The world with N-type and S-type aliens. -/
-def wNS : World := ⟨{.none, .someNotAll}, by decide +kernel⟩
+def wNS : World := ⟨{.E, .IO}, by decide +kernel⟩
 /-- The world with N-type and A-type aliens. -/
-def wNA : World := ⟨{.none, .all}, by decide +kernel⟩
+def wNA : World := ⟨{.E, .A}, by decide +kernel⟩
 /-- The world with all three alien types. -/
-def wNSA : World := ⟨{.none, .someNotAll, .all}, by decide +kernel⟩
+def wNSA : World := ⟨{.E, .IO, .A}, by decide +kernel⟩
 /-- The world with only S-type aliens (each drank some but not all). -/
-def wS : World := ⟨{.someNotAll}, Finset.singleton_nonempty _⟩
+def wS : World := ⟨{.IO}, Finset.singleton_nonempty _⟩
 /-- The world with S-type and A-type aliens. -/
-def wSA : World := ⟨{.someNotAll, .all}, by decide +kernel⟩
+def wSA : World := ⟨{.IO, .A}, by decide +kernel⟩
 /-- The world with only A-type aliens (each drank all). -/
-def wA : World := ⟨{.all}, Finset.singleton_nonempty _⟩
+def wA : World := ⟨{.A}, Finset.singleton_nonempty _⟩
 
 instance : Nonempty World := ⟨wN⟩
 
@@ -179,28 +179,28 @@ def AristQuant.altCandidates : AristQuant → List AltQuant
 
 /-! ### Compositional semantics -/
 
-/-- An alien of a given type satisfies "drank Q" according to the order of the cells, *some*
-holding above the bottom cell and *all* at the top one. -/
-def AltQuant.sat : AltQuant → Tripartition → Prop
-  | .none => (· = ⊥)
-  | .some => (⊥ < ·)
-  | .all => (· = ⊤)
-  | .notAll => (· < ⊤)
+/-- An alien of a given type satisfies "drank Q" when its cell lies in the corner of the square
+that Q names. -/
+def AltQuant.sat : AltQuant → Cell → Prop
+  | .none => (· ∈ Cell.square.E)
+  | .some => (· ∈ Cell.square.I)
+  | .all => (· ∈ Cell.square.A)
+  | .notAll => (· ∈ Cell.square.O)
 
 instance : ∀ q : AltQuant, DecidablePred q.sat
-  | .none, t => inferInstanceAs (Decidable (t = ⊥))
-  | .some, t => inferInstanceAs (Decidable (⊥ < t))
-  | .all, t => inferInstanceAs (Decidable (t = ⊤))
-  | .notAll, t => inferInstanceAs (Decidable (t < ⊤))
+  | .none, t => inferInstanceAs (Decidable (t ∈ Cell.square.E))
+  | .some, t => inferInstanceAs (Decidable (t ∈ Cell.square.I))
+  | .all, t => inferInstanceAs (Decidable (t ∈ Cell.square.A))
+  | .notAll, t => inferInstanceAs (Decidable (t ∈ Cell.square.O))
 
 /-- Quantifier denotation over the alien types realized in a world. -/
-def AltQuant.eval : AltQuant → World → (Tripartition → Prop) → Prop
+def AltQuant.eval : AltQuant → World → (Cell → Prop) → Prop
   | .none, w, sat => ∀ t ∈ w, ¬ sat t
   | .some, w, sat => ∃ t ∈ w, sat t
   | .all, w, sat => ∀ t ∈ w, sat t
   | .notAll, w, sat => ¬ ∀ t ∈ w, sat t
 
-instance : ∀ (q : AltQuant) (w : World) (sat : Tripartition → Prop) [DecidablePred sat],
+instance : ∀ (q : AltQuant) (w : World) (sat : Cell → Prop) [DecidablePred sat],
     Decidable (q.eval w sat)
   | .none, _, _, _ => inferInstanceAs (Decidable (∀ _ ∈ _, ¬ _))
   | .some, _, _, _ => inferInstanceAs (Decidable (∃ _ ∈ _, _))
@@ -208,11 +208,11 @@ instance : ∀ (q : AltQuant) (w : World) (sat : Tripartition → Prop) [Decidab
   | .notAll, _, _, _ => inferInstanceAs (Decidable (¬ ∀ _ ∈ _, _))
 
 /-- *not all* is the negation of *all*, definitionally. -/
-theorem eval_notAll_iff (w : World) (sat : Tripartition → Prop) :
+theorem eval_notAll_iff (w : World) (sat : Cell → Prop) :
     AltQuant.eval .notAll w sat ↔ ¬ AltQuant.eval .all w sat := Iff.rfl
 
 /-- *none* is the negation of *some*. -/
-theorem eval_none_iff (w : World) (sat : Tripartition → Prop) :
+theorem eval_none_iff (w : World) (sat : Cell → Prop) :
     AltQuant.eval .none w sat ↔ ¬ AltQuant.eval .some w sat := by
   simp [AltQuant.eval]
 
@@ -239,9 +239,9 @@ def matrixAlts (u : Utterance) : List AltSentence :=
   u.outer.altCandidates ×ˢ u.inner.altCandidates
 
 /-- After EXH enrichment, when licensed, inner *some* is conjoined with its not-all implicature
-and holds of the `.someNotAll` type exactly; Exh(none) and Exh(all) are vacuous. -/
-def enrichedSat (qi : AristQuant) (p : Parse) (t : Tripartition) : Prop :=
-  (↑qi : AltQuant).sat t ∧ (ExhPosition.inner ∈ p ∧ qi = .some → t < ⊤)
+and holds in the `IO` cell exactly; Exh(none) and Exh(all) are vacuous. -/
+def enrichedSat (qi : AristQuant) (p : Parse) (t : Cell) : Prop :=
+  (↑qi : AltQuant).sat t ∧ (ExhPosition.inner ∈ p ∧ qi = .some → t ∈ Cell.square.O)
 
 instance (qi : AristQuant) (p : Parse) : DecidablePred (enrichedSat qi p) := fun _ ↦
   inferInstanceAs (Decidable (_ ∧ _))
@@ -292,38 +292,38 @@ the world's alien-type set, not a truth vector. -/
 /-- In Table 1, NN excludes N-types, and matrix parses also negate "none drank not all", which
 is {wA}, the reading of fn. 7 from the alternative *not all* of *none*. -/
 theorem table1_nn : ∀ (p : Parse) (w : World),
-    exhMeaning p .nn w ↔ (.none ∉ w ∧ (.matrix ∈ p → w ≠ wA)) := by decide +kernel
+    exhMeaning p .nn w ↔ (.E ∉ w ∧ (.matrix ∈ p → w ≠ wA)) := by decide +kernel
 
 /-- In Table 1, NS literally holds at wN alone; inner EXH weakens it to the S-free worlds,
 whereupon matrix EXH negates the sentence's own now-stronger literal meaning {wN}. -/
 theorem table1_ns : ∀ (p : Parse) (w : World),
     exhMeaning p .ns w ↔
-      if .inner ∈ p then .someNotAll ∉ w ∧ (.matrix ∈ p → w ≠ wN)
+      if .inner ∈ p then .IO ∉ w ∧ (.matrix ∈ p → w ≠ wN)
       else w = wN := by decide +kernel
 
 /-- In Table 1, NA excludes A-types, and matrix EXH negates the stronger NS, which is {wN}. -/
 theorem table1_na : ∀ (p : Parse) (w : World),
-    exhMeaning p .na w ↔ (.all ∉ w ∧ (.matrix ∈ p → w ≠ wN)) := by decide +kernel
+    exhMeaning p .na w ↔ (.A ∉ w ∧ (.matrix ∈ p → w ≠ wN)) := by decide +kernel
 
 /-- In Table 1, SN requires an N-type, and outer or matrix EXH negates AN, which is {wN}. -/
 theorem table1_sn : ∀ (p : Parse) (w : World),
     exhMeaning p .sn w ↔
-      (.none ∈ w ∧ (.outer ∈ p ∨ .matrix ∈ p → w ≠ wN)) := by decide +kernel
+      (.E ∈ w ∧ (.outer ∈ p ∨ .matrix ∈ p → w ≠ wN)) := by decide +kernel
 
 /-- In Table 1, SS has five row-groups. Inner EXH requires an S-type, matrix EXH then being
 vacuous, and adding outer EXH excludes wS; outer EXH alone keeps the mixed worlds, matrix EXH
 alone pins wNS, and the literal parse excludes wN alone. -/
 theorem table1_ss : ∀ (p : Parse) (w : World),
     exhMeaning p .ss w ↔
-      if .inner ∈ p then .someNotAll ∈ w ∧ (.outer ∈ p → w ≠ wS)
-      else if .outer ∈ p then .none ∈ w ∧ w ≠ wN
+      if .inner ∈ p then .IO ∈ w ∧ (.outer ∈ p → w ≠ wS)
+      else if .outer ∈ p then .E ∈ w ∧ w ≠ wN
       else if .matrix ∈ p then w = wNS
       else w ≠ wN := by decide +kernel
 
 /-- In Table 1, SA requires an A-type, and outer or matrix EXH excludes wA. -/
 theorem table1_sa : ∀ (p : Parse) (w : World),
     exhMeaning p .sa w ↔
-      (.all ∈ w ∧ (.outer ∈ p ∨ .matrix ∈ p → w ≠ wA)) := by decide +kernel
+      (.A ∈ w ∧ (.outer ∈ p ∨ .matrix ∈ p → w ≠ wA)) := by decide +kernel
 
 /-- In Table 1, AN holds at wN alone under every parse. -/
 theorem table1_an : ∀ (p : Parse) (w : World), exhMeaning p .an w ↔ w = wN := by decide +kernel
@@ -333,7 +333,7 @@ AA, excluding wA. -/
 theorem table1_as : ∀ (p : Parse) (w : World),
     exhMeaning p .as w ↔
       if .inner ∈ p then w = wS
-      else .none ∉ w ∧ (.matrix ∈ p → w ≠ wA) := by decide +kernel
+      else .E ∉ w ∧ (.matrix ∈ p → w ≠ wA) := by decide +kernel
 
 /-- In Table 1, AA holds at wA alone under every parse. -/
 theorem table1_aa : ∀ (p : Parse) (w : World), exhMeaning p .aa w ↔ w = wA := by decide +kernel
