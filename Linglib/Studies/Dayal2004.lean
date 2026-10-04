@@ -142,7 +142,7 @@ def kindShift (num : Number) : CovertShift := if num = .singular then .iota else
 
 @[simp] theorem kindShift_of_ne_singular {num : Number} (h : num ≠ .singular) :
     kindShift num = .down :=
-  if_neg h
+  ite_eq_right h
 
 theorem kindShift_eq_down_or_iota (num : Number) :
     kindShift num = .down ∨ kindShift num = .iota := by

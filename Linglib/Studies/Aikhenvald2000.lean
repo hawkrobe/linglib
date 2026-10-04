@@ -18,22 +18,27 @@ systems, and the Mandarin and Japanese numeral-classifier systems, coded as the 
 them, with the kind of each device derived from its locus and the constituent it characterizes
 rather than stored and the realizations of the classifier languages read off their fragments'
 entries; the book's summary claims are checked on that sample, and none is a universal.
+Western Armenian, whose numerals combine with bare nouns, is not classified as a classifier
+language by the book and is left to `BaleKhanjian2014`.
 
-Agreement by a constituent outside the noun is the definitional property of a noun class system, a
-closed obligatory grammatical system (`nounClass_agreement_obligatory`), and noun classes are never
-expressed by free lexemes (`nounClass_bound`), whereas free-form numeral classifiers are
-non-agreeing (`free_numeralClassifier_no_agreement`). Every kind other than noun class assigns
-classifiers on purely semantic grounds (`classifier_assignment_semantic`). Both numeral-classifier
-systems in the sample have a general classifier, read off the earlier descriptions rather than
-coded: every Mandarin noun that takes a classifier can take *gè*, and the category of Japanese
-*-tsu* has no parameter in [downing-1996]'s inventory (`numeralClassifier_general`). Animacy,
-humanness or sex is basic to noun classes and numeral classifiers alike, shape is typical of numeral
-classifiers, and colour is never a basis for categorization (`animacy_basic`,
-`numeralClassifier_shape`, `colour_never`); the absence of compulsory number in numeral-classifier
-languages, Greenberg's association that the book records together with its Dravidian, Nivkh,
-Algonquian, Tucano, Arawak and Ejagham exceptions, holds in the sample
-(`numeralClassifier_no_obligatory_number`). Western Armenian, whose numerals combine with bare
-nouns, is not classified as a classifier language by the book and is left to `BaleKhanjian2014`.
+## Main results
+
+* `nounClass_agreement_obligatory`, `nounClass_bound`: a noun class system is defined by agreement
+  outside the noun, is closed and obligatory, and is never expressed by free lexemes.
+* `free_numeralClassifier_no_agreement`: free-form numeral classifiers do not agree.
+* `numeralClassifier_obligatory`: in both classifier languages no noun that takes a classifier is
+  counted without one, read off the fragments.
+* `classifier_assignment_semantic`: every kind other than noun class assigns classifiers on
+  semantic grounds.
+* `numeralClassifier_general`: both numeral-classifier systems have a general classifier, every
+  Mandarin noun that takes a classifier taking *gè* and the category of Japanese *-tsu* having no
+  parameter in Downing's inventory.
+* `animacy_basic`, `numeralClassifier_shape`, `colour_never`: animacy, humanness or sex is basic
+  to noun classes and numeral classifiers, shape is typical of numeral classifiers, and colour is
+  never a basis for categorization.
+* `numeralClassifier_no_obligatory_number`: numeral-classifier languages lack compulsory number,
+  Greenberg's association, which the book records with its Dravidian, Nivkh, Algonquian, Tucano,
+  Arawak and Ejagham exceptions.
 
 ## References
 
@@ -49,8 +54,8 @@ namespace Aikhenvald2000
 
 open Classifier
 
-/-- The sample: two gender systems, three Bantu noun-class systems, two numeral-classifier
-systems. -/
+/-- The sample has two gender systems, three Bantu noun-class systems and two
+numeral-classifier systems. -/
 inductive Language where
   | french | italian | xhosa | shona | swahili | mandarin | japanese
   deriving DecidableEq, Fintype
@@ -97,8 +102,13 @@ def Agreement : Language → Prop
   | mandarin | japanese => False
   | french | italian | xhosa | shona | swahili => True
 
-/-- (G): the device is obligatory. -/
-def Obligatory (_ : Language) : Prop := True
+/-- (G): the device is obligatory. For the numeral classifiers it is read off the fragments: no
+noun that takes a classifier is counted without one. Gender and noun class are obligatory as the
+book describes them. -/
+def Obligatory : Language → Prop
+  | mandarin => ∀ n ∈ Mandarin.Nouns.nouns, n.classifiers.Nonempty → ¬ n.IsBareCount
+  | japanese => ∀ n ∈ Japanese.Nouns.nouns, n.classifiers.Nonempty → ¬ n.IsBareCount
+  | french | italian | xhosa | shona | swahili => True
 
 /-- (F): the system has a functionally unmarked member or a general classifier. For the
 numeral classifiers it is read off the earlier descriptions: a Mandarin classifier every counted
@@ -128,7 +138,8 @@ def ObligatoryNumber : Language → Prop
 
 instance : DecidablePred Agreement := fun l ↦ by cases l <;> unfold Agreement <;> infer_instance
 
-instance : DecidablePred Obligatory := fun _ ↦ inferInstanceAs (Decidable True)
+instance : DecidablePred Obligatory := fun l ↦ by
+  cases l <;> unfold Obligatory <;> infer_instance
 
 instance : DecidablePred ObligatoryNumber := fun l ↦ by
   cases l <;> unfold ObligatoryNumber <;> infer_instance
@@ -154,6 +165,14 @@ theorem nounClass_bound :
 theorem free_numeralClassifier_no_agreement :
     ∀ l : Language, l.kind = some .numeralClassifier → .morph .free ∈ l.realizations →
       ¬ l.Agreement := by
+  decide
+
+/-- The numeral classifiers of the sample are obligatory: no noun of the Mandarin or Japanese
+fragment that takes a classifier is counted without one, though Mandarin *tiān* 'day', which
+takes none, is counted directly. -/
+theorem numeralClassifier_obligatory :
+    (∀ l : Language, l.kind = some .numeralClassifier → l.Obligatory) ∧
+      Mandarin.Nouns.tian.IsBareCount := by
   decide
 
 /-- Every kind of device other than noun class is assigned on purely semantic grounds; noun

@@ -5,10 +5,10 @@ public import Linglib.Syntax.Category.Noun.Basic
 /-!
 # French nouns
 
-The French noun as a lexical entry: the root `GenderedNoun` over the masculine and feminine genders,
-with the count/mass class and its plural; names are the root `ProperName`. A French noun needs a
-determiner (`French.Determiners.inventory`) to be an argument, so no bare nominal is one
-([chierchia-1998]).
+The French noun as a lexical entry is the root `GenderedNoun` over the masculine and feminine
+genders, which a numeral counts directly or not at all, with its plural; names are the root
+`ProperName`. A French noun needs a determiner (`French.Determiners.inventory`) to be an argument,
+so no bare nominal is one, as Chierchia observes.
 
 ## References
 
@@ -20,13 +20,13 @@ determiner (`French.Determiners.inventory`) to be an argument, so no bare nomina
 namespace French.Nouns
 
 
-/-- A French noun is the root gendered entry with the count/mass class and its plural. -/
-structure Noun extends GenderedNoun Gender where
-  /-- The count/mass class. -/
-  massCount : MassCount := .count
+/-- A French noun is the root gendered entry, which a numeral counts directly or not at all,
+with its plural. -/
+structure Noun extends GenderedNoun Gender, ClassifiedNoun Empty where
+  counters := {none}
   /-- The plural. -/
   plural : Option String := none
-  deriving DecidableEq, Repr
+  deriving DecidableEq
 
 /-! ### Count nouns -/
 
@@ -60,10 +60,10 @@ def fleur : Noun := { form := "fleur", gloss := "flower", gender := .feminine, p
 
 /-! ### Mass nouns -/
 
-def eau : Noun := { form := "eau", gloss := "water", gender := .feminine, massCount := .mass }
-def vin : Noun := { form := "vin", gloss := "wine", gender := .masculine, massCount := .mass }
-def pain : Noun := { form := "pain", gloss := "bread", gender := .masculine, massCount := .mass }
-def lait : Noun := { form := "lait", gloss := "milk", gender := .masculine, massCount := .mass }
+def eau : Noun := { form := "eau", gloss := "water", gender := .feminine, counters := ∅ }
+def vin : Noun := { form := "vin", gloss := "wine", gender := .masculine, counters := ∅ }
+def pain : Noun := { form := "pain", gloss := "bread", gender := .masculine, counters := ∅ }
+def lait : Noun := { form := "lait", gloss := "milk", gender := .masculine, counters := ∅ }
 
 /-! ### Proper names -/
 

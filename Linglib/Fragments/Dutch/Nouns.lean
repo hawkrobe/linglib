@@ -7,8 +7,8 @@ public import Linglib.Syntax.Category.Noun.Basic
 # Dutch nouns
 
 This file records the Dutch noun as a lexical entry. An entry is the root `GenderedNoun` over
-the two genders of `Dutch.Gender`, with the count/mass class and with its plural and
-diminutive where the entry records them; names are the root `ProperName`. The definite article
+the two genders of `Dutch.Gender`, which a numeral counts directly or not at all, with its plural
+and diminutive where the entry records them; names are the root `ProperName`. The definite article
 a noun takes, `Noun.definiteArticle`, is read off its gender through
 `Dutch.Determiners.singular`. Bare plurals and bare mass nouns are arguments and bare singular
 count nouns are not. The entries are the nouns of Le Bruyn and de Swart's scrambling data and
@@ -29,16 +29,15 @@ adjective.
 
 namespace Dutch.Nouns
 
-/-- A Dutch noun is the root gendered entry with the count/mass class and with its plural and
-diminutive where recorded. -/
-structure Noun extends GenderedNoun Gender.Value where
-  /-- The count/mass class. -/
-  massCount : MassCount := .count
+/-- A Dutch noun is the root gendered entry, which a numeral counts directly or not at all, with
+its plural and diminutive where recorded. -/
+structure Noun extends GenderedNoun Gender.Value, ClassifiedNoun Empty where
+  counters := {none}
   /-- The plural. -/
   plural : Option String := none
   /-- The diminutive. -/
   diminutive : Option String := none
-  deriving DecidableEq, Repr
+  deriving DecidableEq
 
 /-- A noun takes the definite article *het* in the singular when it is neuter and *de* when it
 is of common gender. -/
@@ -90,19 +89,19 @@ def ring : Noun := { form := "ring", gloss := "ring", gender := .common, plural 
 /-! ### Mass nouns -/
 
 /-- *water* 'water', neuter. -/
-def water : Noun := { form := "water", gloss := "water", gender := .neuter, massCount := .mass }
+def water : Noun := { form := "water", gloss := "water", gender := .neuter, counters := ∅ }
 
 /-- *goud* 'gold', neuter. -/
-def goud : Noun := { form := "goud", gloss := "gold", gender := .neuter, massCount := .mass }
+def goud : Noun := { form := "goud", gloss := "gold", gender := .neuter, counters := ∅ }
 
 /-- *meel* 'flour', neuter. -/
-def meel : Noun := { form := "meel", gloss := "flour", gender := .neuter, massCount := .mass }
+def meel : Noun := { form := "meel", gloss := "flour", gender := .neuter, counters := ∅ }
 
 /-- *rijst* 'rice', of common gender, *de lekkere rijst* 'the tasty rice'. -/
-def rijst : Noun := { form := "rijst", gloss := "rice", gender := .common, massCount := .mass }
+def rijst : Noun := { form := "rijst", gloss := "rice", gender := .common, counters := ∅ }
 
 /-- *bier* 'beer', neuter, *het lekkere bier* 'the tasty beer' but *lekker bier*. -/
-def bier : Noun := { form := "bier", gloss := "beer", gender := .neuter, massCount := .mass }
+def bier : Noun := { form := "bier", gloss := "beer", gender := .neuter, counters := ∅ }
 
 /-! ### Proper names -/
 
