@@ -10,15 +10,19 @@ public import Linglib.Phonology.Prosody.Word
 /-!
 # Phrase-level prosodic structure
 
-The φ and ι layers above the prosodic word: Strict-Layer
-well-formedness one level up ([selkirk-1996]; overview
-[ishihara-kalivoda-2022]). A phrase is a φ-node over well-formed
-ω-trees; an utterance is an ι-node over phrases. `HeadUnique` is the
-culminativity of prominence — at most one head child per node — the
-structural hook the metrical weak–strong calculus of [buring-2015]
-reads ([buring-2016]). `phrases` reads the φ-constituents off an
-utterance; φ-edges are what demarcative focus reflexes
-(`Reflex.boundary`) realize.
+The φ and ι layers sit above the prosodic word, with Strict-Layer well-formedness one level up
+(Selkirk 1996; overview in Ishihara and Kalivoda 2022). A phrase is a φ-node over well-formed
+ω-trees, and an utterance an ι-node over phrases. `HeadUnique` is the culminativity of
+prominence, at most one head child per node, the structural hook that Büring's (2015) metrical
+weak–strong calculus reads (Büring 2016). `phrases` reads the φ-constituents off an utterance;
+φ-edges are what demarcative focus reflexes (`Reflex.boundary`) realize.
+
+## References
+
+* [selkirk-1996]
+* [ishihara-kalivoda-2022]
+* [buring-2015]
+* [buring-2016]
 -/
 
 @[expose] public section
@@ -27,28 +31,19 @@ namespace Prosody
 
 open RoseTree
 
-/-- A φ-node over well-formed prosodic words: the Strict Layer at the
-phrase level. -/
-def isPhraseTree (t : Tree) : Bool :=
-  t.value.isPh && t.children.all isWordTree
+/-- A well-formed phonological phrase is a licensed tree rooted in a φ-node, so a φ-node over
+well-formed prosodic words, the Strict Layer at the phrase level. -/
+def IsPhrase (t : Tree) : Prop := t.value.isPh = true ∧ t.Licensed Constituent.Licenses
 
-/-- Well-formed phonological phrase. -/
-def IsPhrase (t : Tree) : Prop := isPhraseTree t
+instance (t : Tree) : Decidable (IsPhrase t) := inferInstanceAs (Decidable (_ ∧ _))
 
-instance (t : Tree) : Decidable (IsPhrase t) :=
-  inferInstanceAs (Decidable (_ = true))
+/-- A well-formed intonational phrase, or utterance, is a licensed tree rooted in an ι-node, so
+an ι-node over well-formed phrases. -/
+def IsUtterance (t : Tree) : Prop := t.value.isIota = true ∧ t.Licensed Constituent.Licenses
 
-/-- An ι-node over well-formed phrases: the utterance level. -/
-def isUtteranceTree (t : Tree) : Bool :=
-  t.value.isIota && t.children.all isPhraseTree
+instance (t : Tree) : Decidable (IsUtterance t) := inferInstanceAs (Decidable (_ ∧ _))
 
-/-- Well-formed intonational phrase (utterance). -/
-def IsUtterance (t : Tree) : Prop := isUtteranceTree t
-
-instance (t : Tree) : Decidable (IsUtterance t) :=
-  inferInstanceAs (Decidable (_ = true))
-
-/-- Culminativity of prominence: at most one child heads its parent. -/
+/-- Prominence is culminative when at most one child heads its parent. -/
 def HeadUnique (t : Tree) : Prop :=
   (t.children.filter (fun c => c.value.isHead)).length ≤ 1
 
@@ -62,13 +57,17 @@ def phrases (t : Tree) : List Tree :=
 /-- Every child of a well-formed phrase is a well-formed word. -/
 theorem IsPhrase.children_isWord {t : Tree} (h : IsPhrase t) :
     ∀ c ∈ t.children, IsWord c := by
-  have := (Bool.and_eq_true _ _).mp h
-  exact fun c hc => (List.all_eq_true.mp this.2) c hc
+  rcases t with ⟨a, cs⟩
+  obtain ⟨hph, hl⟩ := h
+  obtain ⟨b, rfl⟩ : ∃ b, a = .ph b := by cases a <;> simp_all [Constituent.isPh]
+  exact fun c hc ↦ ⟨(licensed_node_iff.mp hl).1 c.value (List.mem_map_of_mem hc), hl.of_mem hc⟩
 
 /-- Every child of a well-formed utterance is a well-formed phrase. -/
 theorem IsUtterance.children_isPhrase {t : Tree} (h : IsUtterance t) :
     ∀ c ∈ t.children, IsPhrase c := by
-  have := (Bool.and_eq_true _ _).mp h
-  exact fun c hc => (List.all_eq_true.mp this.2) c hc
+  rcases t with ⟨a, cs⟩
+  obtain ⟨hι, hl⟩ := h
+  obtain rfl : a = .iota := by cases a <;> simp_all [Constituent.isIota]
+  exact fun c hc ↦ ⟨(licensed_node_iff.mp hl).1 c.value (List.mem_map_of_mem hc), hl.of_mem hc⟩
 
 end Prosody

@@ -6,20 +6,15 @@ public import Linglib.Core.Data.RoseTree.Basic
 
 /-!
 # Syllables
-[hayes-1989] [hyman-1985] [selkirk-1982] [clements-1990]
 
-The syllable (σ) — the level above the mora in the prosodic hierarchy: a headed
-**moraic** constituent ([hayes-1989]; [hyman-1985]). A non-moraic `onset` sits over a
-moraic spine whose **head is the nucleus** — the sonority peak ([clements-1990]; the
-"nucleus = head of σ" reading follows dependency/government phonology).
-The nucleus mora is mandatory and structurally **initial** (a σ has ≥1 mora by
-construction; there is no head-direction parameter — unlike the foot); `tail` carries
-any further nuclear morae (long vowels) and a moraic coda.
-
-The moraic structure is the **carrier** (weight is mora-based and load-bearing, so —
-unlike the foot — the tree and onset-rime are secondary). The rival **onset-rime**
-theory ([selkirk-1982]) is a re-representation (`toOnsetRime`), proved to agree with the
-moraic carrier on weight; the segment string is the `yield`.
+The syllable σ is the level above the mora in the prosodic hierarchy, a headed moraic constituent
+(Hayes 1989; Hyman 1985). A non-moraic `onset` sits over a moraic spine whose head is the nucleus,
+the sonority peak (Clements 1990). The nucleus mora is mandatory and initial, so a σ has at least
+one mora, and `tail` carries any further nuclear morae (long vowels) and a moraic coda. Weight is
+mora-based, so the moraic structure is the carrier; Selkirk's (1982) rival onset-rime theory is a
+re-representation (`toOnsetRime`) that agrees with it on weight. The file also defines the
+prosodic constituents, the prosodic tree, and the Layeredness relation by which each constituent
+licenses its daughters.
 
 ## Main definitions
 
@@ -33,6 +28,18 @@ moraic carrier on weight; the segment string is the `yield`.
 * `Syllable.yield` / `toOnsetRime` — re-representations; `toOnsetRime_weight` is the
   weight-correspondence between the moraic and onset-rime theories.
 * `Syllable.Weight` — `Nat` (the mora count), with `.light`/`.heavy`/`.superheavy`.
+* `Constituent`, `Tree` — the prosodic constituents and the prosodic tree over them.
+* `Constituent.Licenses` — Layeredness: the daughters each constituent may dominate.
+
+## References
+
+* [hayes-1989]
+* [hyman-1985]
+* [clements-1990]
+* [selkirk-1982]
+* [mccarthy-prince-1993]
+* [dolatian-2020]
+* [ito-mester-2003]
 -/
 
 @[expose] public section
@@ -43,15 +50,16 @@ open Phonology (Segment)
 
 /-! ### Syllables -/
 
-/-- σ — a headed moraic syllable ([hayes-1989]): a non-moraic `onset`, a nucleus `head`
-    mora (the sonority peak; mandatory, so σ has ≥1 mora and the head is initial by
-    construction), and a `tail` of further morae (long-vowel morae + a moraic coda). -/
+/-- A syllable σ is a headed moraic constituent ([hayes-1989]) with a non-moraic `onset`, a
+    nucleus `head` mora (the sonority peak; mandatory, so σ has at least one mora and the head is
+    initial by construction), and a `tail` of further morae (long-vowel morae and a moraic
+    coda). -/
 structure Syllable where
   /-- The non-moraic onset melody. -/
   onset : List Segment
   /-- The nucleus mora — the sonority peak; mandatory, so σ has ≥ 1 mora. -/
   head  : Mora
-  /-- Further morae: long-vowel morae and a moraic coda. -/
+  /-- The further morae are long-vowel morae and a moraic coda. -/
   tail  : List Mora
   deriving DecidableEq
 
@@ -86,12 +94,12 @@ abbrev weight (σ : Syllable) : Weight := σ.moraCount
 /-- A syllable has at least its nucleus mora. -/
 theorem moraCount_pos (σ : Syllable) : 0 < σ.moraCount := Nat.succ_pos _
 
-/-- The mora count as a positive natural: the weight a `Tone.Registered` word reads. -/
+/-- The mora count as a positive natural is the weight a `Tone.Registered` word reads. -/
 def pnatMoraCount (σ : Syllable) : ℕ+ := ⟨σ.moraCount, σ.moraCount_pos⟩
 
-/-- A heavy syllable: at least two morae. -/
+/-- A syllable is heavy when it has at least two morae. -/
 def IsHeavy (σ : Syllable) : Prop := Weight.heavy ≤ σ.weight
-/-- A light syllable: exactly one mora. -/
+/-- A syllable is light when it has exactly one mora. -/
 def IsLight (σ : Syllable) : Prop := σ.weight = Weight.light
 
 instance (σ : Syllable) : Decidable σ.IsHeavy := by unfold IsHeavy; infer_instance
@@ -122,10 +130,10 @@ def ofCV (onset nucleus coda : List Segment) (wbp : Bool := true)
       | last :: rest => ⟨onset, Mora.of n₀, rest.reverse ++ [last.attach coda]⟩
       | []           => ⟨onset, (Mora.of n₀).attach coda, []⟩
 
-/-- The open syllable of an onset and a short vowel: one mora. -/
+/-- The open syllable of an onset and a short vowel has one mora. -/
 def ofVowel (onset : List Segment) (v : Segment) : Syllable := ⟨onset, .of v, []⟩
 
-/-- The open syllable of an onset and a long vowel: two morae dominating the same melody
+/-- The open syllable of an onset and a long vowel has two morae dominating the same melody
 ([hayes-1989]). -/
 def ofLongVowel (onset : List Segment) (v : Segment) : Syllable := ⟨onset, .of v, [.of v]⟩
 
@@ -135,36 +143,35 @@ def ofLongVowel (onset : List Segment) (v : Segment) : Syllable := ⟨onset, .of
 @[simp] theorem moraCount_ofLongVowel (onset : List Segment) (v : Segment) :
     (ofLongVowel onset v).moraCount = 2 := rfl
 
-/-- The segment string (yield) of a syllable: onset followed by the moraic melody. -/
+/-- The segment string, or yield, of a syllable is its onset followed by the moraic melody. -/
 def yield (σ : Syllable) : List Segment := σ.onset ++ σ.morae.flatMap (·.dominates)
 
 end Syllable
 
 /-! ### Onset-rime re-representation -/
 
-/-- The onset-rime structure ([selkirk-1982]): a rival theory of σ structure, an onset
-    over a rime. Here a re-representation of the canonical moraic `Syllable`. -/
+/-- The onset-rime structure of [selkirk-1982] is a rival theory of σ structure, an onset over a
+    rime, here a re-representation of the canonical moraic `Syllable`. -/
 structure OnsetRime where
   /-- The non-moraic onset melody. -/
   onset : List Segment
-  /-- The rime: the moraic spine. -/
+  /-- The rime is the moraic spine. -/
   rime  : List Mora
   deriving DecidableEq
 
-/-- σ → onset-rime: the rime is the moraic spine ([selkirk-1982]). -/
+/-- Passing from σ to onset-rime structure, the rime is the moraic spine ([selkirk-1982]). -/
 def Syllable.toOnsetRime (σ : Syllable) : OnsetRime := ⟨σ.onset, σ.morae⟩
 
-/-- **Weight correspondence**: the onset-rime rime's mora count equals σ's weight — the
+/-- By **weight correspondence**, the onset-rime rime's mora count equals σ's weight, so the
     moraic and onset-rime theories agree on weight ([selkirk-1982]; [hayes-1989]). -/
 theorem Syllable.toOnsetRime_weight (σ : Syllable) :
     σ.toOnsetRime.rime.length = σ.moraCount := rfl
 
 /-! ### Yield -/
 
-/-- A **yield**: the terminal σ-weight string of a prosodic structure — the
-    unparsed input, or the leaves of a prosodic `Tree`. Distinct from the prosodic
-    word ω (an `IsWord` tree), which is a *headed constituent*: a yield is just the
-    weight profile, with no head and no constituency. -/
+/-- A **yield** is the terminal σ-weight string of a prosodic structure, the unparsed input or
+    the leaves of a prosodic `Tree`. Unlike the prosodic word ω (an `IsWord` tree), which is a
+    headed constituent, a yield is just the weight profile, with no head and no constituency. -/
 abbrev Yield := List Syllable.Weight
 
 namespace Yield
@@ -175,10 +182,10 @@ def ofSyllables (σs : List Syllable) : Yield := σs.map Syllable.weight
 /-- Total mora count (each weight *is* a mora count). -/
 def moraCount (y : Yield) : Nat := y.sum
 
-/-- The minimal-word *size* constraint ([mccarthy-prince-1993]): at least
-    `minMorae` morae (default 2, the moraic-trochee minimum) — the moraic *size* floor on a
-    prosodic word. Whether an ω must structurally contain a foot is a separate, non-presupposed
-    matter (footless languages have ω directly over σ, [dolatian-2020]). -/
+/-- The minimal-word size constraint of [mccarthy-prince-1993] asks for at least `minMorae`
+    morae (default 2, the moraic-trochee minimum), the moraic size floor on a prosodic word.
+    Whether an ω must structurally contain a foot is a separate, non-presupposed matter
+    (footless languages have ω directly over σ, [dolatian-2020]). -/
 abbrev satisfiesMinWord (y : Yield) (minMorae : Nat := 2) : Prop := minMorae ≤ y.moraCount
 
 end Yield
@@ -193,10 +200,10 @@ carrier** for ω/φ/… structures, including the ill-formed ones (a footless ω
 `Constituent.weight`/`.syl` need `Syllable.Weight`; it inherits `DecidableEq`/`map` from
 `RoseTree`. -/
 
-/-- A prosodic node — the **level is the constructor**: a σ carries its mora `weight` and `isHead`,
-    every non-root level carries `isHead` (whether it heads its parent). Constructor defaults match
-    the former smart constructors, so node literals are unchanged; illegal nodes (a weight on a
-    foot, a head on the ι root) are unrepresentable. -/
+/-- In a prosodic node the **level is the constructor**. A σ carries its mora `weight` and
+    `isHead`, and every non-root level carries `isHead` (whether it heads its parent).
+    Constructor defaults match the former smart constructors, so node literals are unchanged;
+    illegal nodes (a weight on a foot, a head on the ι root) are unrepresentable. -/
 inductive Constituent
   /-- A syllable of the given `weight`, optionally the head of its foot. -/
   | syl (weight : Syllable.Weight := 0) (isHead : Bool := false)
@@ -241,21 +248,38 @@ def sameLevel : Constituent → Constituent → Bool
   | .iota, .iota => true
   | _, _ => false
 
-/-- The level family is exclusive: a foot is not a syllable. -/
+/-- Under Layeredness a σ dominates nothing, a foot a non-empty string of σs, an ω feet, ωs and
+    σs, a φ ωs, and an ι φs; `Licenses a ks` says that `a` may dominate daughters labelled `ks`. -/
+def Licenses : Constituent → List Constituent → Prop
+  | .syl .., ks => ks = []
+  | .ft _, ks => ks ≠ [] ∧ ∀ k ∈ ks, k.isSyl = true
+  | .om _, ks => ∀ k ∈ ks, k.isFt = true ∨ k.isOm = true ∨ k.isSyl = true
+  | .ph _, ks => ∀ k ∈ ks, k.isOm = true
+  | .iota, ks => ∀ k ∈ ks, k.isPh = true
+
+instance : ∀ (a : Constituent) (ks : List Constituent), Decidable (Licenses a ks)
+  | .syl .., ks => inferInstanceAs (Decidable (ks = []))
+  | .ft _, ks => inferInstanceAs (Decidable (ks ≠ [] ∧ ∀ k ∈ ks, k.isSyl = true))
+  | .om _, ks =>
+    inferInstanceAs (Decidable (∀ k ∈ ks, k.isFt = true ∨ k.isOm = true ∨ k.isSyl = true))
+  | .ph _, ks => inferInstanceAs (Decidable (∀ k ∈ ks, k.isOm = true))
+  | .iota, ks => inferInstanceAs (Decidable (∀ k ∈ ks, k.isPh = true))
+
+/-- The levels are exclusive, so a foot is not a syllable. -/
 theorem isSyl_eq_false_of_isFt {x : Constituent} (h : x.isFt = true) : x.isSyl = false := by
   cases x <;> simp_all [isFt, isSyl]
 
-/-- The level family is exclusive: a prosodic word is not a syllable. -/
+/-- The levels are exclusive, so a prosodic word is not a syllable. -/
 theorem isSyl_eq_false_of_isOm {x : Constituent} (h : x.isOm = true) : x.isSyl = false := by
   cases x <;> simp_all [isOm, isSyl]
 
 end Constituent
 
-/-- A prosodic tree: the Core ordered rose tree `RoseTree` labeled by
-    `Constituent`s. Ordered children give No-Tangling by construction. -/
+/-- A prosodic tree is an ordered rose tree labelled by `Constituent`s. Ordered children give
+    No-Tangling by construction. -/
 abbrev Tree := RoseTree Constituent
 
-/-- A σ-leaf — the metrical terminal: a syllable of weight `w`, head-marked `h`. -/
+/-- A σ-leaf is the metrical terminal, a syllable of weight `w` with head mark `h`. -/
 abbrev Tree.σ (w : Syllable.Weight := 0) (h : Bool := false) : Tree := .node (.syl w h) []
 
 /-- A foot node over `cs`, optionally the head foot of its word. -/
@@ -270,8 +294,8 @@ abbrev Tree.ph (cs : List Tree) : Tree := .node .ph cs
 /-- **Leaf/branch induction on a prosodic tree.** A σ-leaf is a base case; every other node — a
     foot, word, phrase, or degenerate/ill-formed node — is a branch, carrying the induction
     hypothesis over its children and the fact that it is *not* a σ-leaf. This is what lets proofs
-    reduce the σ-leaf `if` the reader equations carry (via `ite_eq_left ⟨ha, rfl⟩` / `ite_eq_right hne`)
-    instead of `split`ting it. -/
+    reduce the σ-leaf `if` the reader equations carry (via `ite_eq_left ⟨ha, rfl⟩` or
+    `ite_eq_right hne`) instead of `split`ting it. -/
 @[elab_as_elim]
 theorem Tree.recLeafBranch {motive : Tree → Prop}
     (leaf : ∀ a, a.isSyl → motive (.node a []))
