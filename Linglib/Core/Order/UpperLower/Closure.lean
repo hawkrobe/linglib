@@ -12,10 +12,13 @@ order-convex hull of a set — the smallest `OrdConnected` superset — as a bun
 `ClosureOperator (Set α)`. It is the order-theoretic twin of `convexHull`
 (segment-convexity), built the same way, via `ClosureOperator.ofCompletePred`
 over the intersection-closed predicate `OrdConnected` (`Set.ordConnected_sInter`).
+In a partial order, the minimal elements of an upper closure are those of the generating set.
 
 mathlib already has the characterization
 `ordConnected_iff_upperClosure_inter_lowerClosure` and `Set.OrdConnected`, but not
-this bundled closure operator. On upstreaming, these declarations move into
+this bundled closure operator, and it has the minimal-element lemma only for antichains,
+`IsAntichain.minimal_mem_upperClosure_iff_mem`, which follows from the general one with
+`IsAntichain.minimal_mem_iff`. On upstreaming, these declarations move into
 `Mathlib/Order/UpperLower/Closure.lean` (next to that characterization) and this
 file is deleted.
 
@@ -25,16 +28,21 @@ file is deleted.
 * `mem_ordConnectedHull` — `c ∈ ordConnectedHull s ↔ ∃ a b ∈ s, a ≤ c ≤ b`.
 * `ordConnectedHull_eq_upperClosure_inter_lowerClosure` — the bridge to
   `upperClosure`/`lowerClosure`.
+* `minimal_mem_upperClosure_iff`, `maximal_mem_lowerClosure_iff` — the minimal (maximal)
+  elements of an upper (lower) closure.
 -/
 
 @[expose] public section
 
 open Set
 
-variable {α : Type*} [Preorder α]
+variable {α : Type*}
 
-/-- The order-convex hull of `s` as a `ClosureOperator`: the smallest
-`OrdConnected` set containing `s`. The order-theoretic twin of `convexHull`. -/
+section Preorder
+variable [Preorder α]
+
+/-- The order-convex hull of `s` is the smallest `OrdConnected` set containing `s`, as a
+`ClosureOperator`. It is the order-theoretic twin of `convexHull`. -/
 @[simps! isClosed]
 def ordConnectedHull : ClosureOperator (Set α) :=
   .ofCompletePred OrdConnected fun _ ↦ ordConnected_sInter
@@ -76,7 +84,7 @@ theorem ordConnectedHull_eq_upperClosure_inter_lowerClosure (s : Set α) :
     exact (ordConnected_ordConnectedHull s).out
       (subset_ordConnectedHull s ha) (subset_ordConnectedHull s hb) ⟨hac, hcb⟩
 
-/-- Membership in the order-convex hull: the explicit "between two members" form. -/
+/-- An element is in the order-convex hull of `s` iff it lies between two members of `s`. -/
 theorem mem_ordConnectedHull {s : Set α} {c : α} :
     c ∈ ordConnectedHull s ↔ ∃ a ∈ s, ∃ b ∈ s, a ≤ c ∧ c ≤ b := by
   rw [ordConnectedHull_eq_upperClosure_inter_lowerClosure]
@@ -88,3 +96,19 @@ theorem mem_ordConnectedHull {s : Set α} {c : α} :
 
 @[simp] theorem ordConnectedHull_univ : ordConnectedHull (univ : Set α) = univ :=
   ordConnectedHull_eq_self.2 ordConnected_univ
+
+end Preorder
+
+section PartialOrder
+variable [PartialOrder α] {s : Set α} {x : α}
+
+/-- The minimal elements of the upper closure of `s` are those of `s`. -/
+@[to_dual /-- The maximal elements of the lower closure of `s` are those of `s`. -/]
+theorem minimal_mem_upperClosure_iff : Minimal (· ∈ upperClosure s) x ↔ Minimal (· ∈ s) x := by
+  refine ⟨fun h ↦ ?_, fun h ↦ ⟨subset_upperClosure h.prop, fun y ⟨a, has, hay⟩ hyx ↦
+    (h.eq_of_ge has (hay.trans hyx)).symm ▸ hay⟩⟩
+  obtain ⟨a, has, hax⟩ := h.prop
+  obtain rfl := h.eq_of_ge (subset_upperClosure has) hax
+  exact h.mono (fun _ ↦ (subset_upperClosure ·)) has
+
+end PartialOrder
