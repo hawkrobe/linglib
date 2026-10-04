@@ -1,20 +1,21 @@
 module
 
-public import Mathlib.Data.Set.Subsingleton
 public import Mathlib.Data.List.Basic
 
 /-!
 # Probes as interaction and satisfaction specifications
 
-This file defines a probe over a goal type as two predicates on goals, following
-[deal-2025a]'s interaction/satisfaction theory of Agree. A goal *interacts* with the probe
-when it bears features the probe copies, and *satisfies* it when it bears features that halt
-the search. A search over an ordered goal sequence stops at the first satisfying goal, and the
-probe Agrees with that goal when it also interacts; a satisfying goal that does not interact
-absorbs the probe, [deal-2024]'s satisfaction without interaction. The outcome of a search is
-`valued` iff some goal satisfies the probe, and an unvalued outcome is failed Agree, tolerated
-under [preminger-2014]'s obligatory-operations model. The full operation, which copies from
-every interacting goal up to the satisfier, is `Probe.run` in `Probe/Run.lean`.
+This file defines a probe over a goal type as two predicates on goals, following Deal's
+interaction/satisfaction theory of Agree. A goal *interacts* with the probe when it bears features
+the probe copies, and *satisfies* it when it bears features that halt the search. A search over an
+ordered goal sequence stops at the first satisfying goal, and the probe Agrees with that goal when
+it also interacts; a satisfying goal that does not interact absorbs the probe, Deal's satisfaction
+without interaction. The outcome of a search is `valued` iff some goal satisfies the probe, and an
+unvalued outcome is failed Agree, tolerated under Preminger's obligatory-operations model. A goal is
+licensed when the search reaches it, as for Béjar and Rezac; which goals need licensing and which
+satisfy the probe come apart in general, as for Halpert's Zulu L⁰, which every goal satisfies while
+only augmentless nominals need it. The full operation, which copies from every interacting goal up
+to the satisfier, is `Probe.run` in `Probe/Run.lean`.
 
 Probe *specifications*, such as relativized targets, horizon profiles and articulated probes,
 denote a `Probe` by a `toProbe` map rather than re-implementing search.
@@ -29,7 +30,7 @@ denote a `Probe` by a `toProbe` map rather than re-implementing search.
   when it interacts.
 * `Minimalist.Probe.outcome`: `valued` iff the search finds a goal.
 * `Minimalist.Probe.Licensed`, `Minimalist.Probe.AllLicensed`: a goal the search reaches, and
-  every needy goal being reached.
+  every needy goal occurrence being reached.
 * `Minimalist.Probe.cascade`: the first finding of an ordered sequence of probes.
 
 ## Main results
@@ -37,12 +38,15 @@ denote a `Probe` by a `toProbe` map rather than re-implementing search.
 * `Minimalist.Probe.search_eq_some_iff_closest`: locality as list search.
 * `Minimalist.Probe.not_rel_of_search_eq_some`: the found goal is minimal for any precedence
   the sequence respects.
-* `Minimalist.Probe.allLicensed_iff`: one search licenses at most one goal.
+* `Minimalist.Probe.AllLicensed.countP_le_one`, `Minimalist.Probe.relativized_allLicensed_iff`:
+  one search licenses at most one goal.
+* `Minimalist.Probe.indiscriminate_allLicensed_iff`: under bare minimality only the closest goal
+  may need licensing.
 
 ## References
 
 * [deal-2025a], [deal-2024]
-* [bejar-rezac-2003], [preminger-2014]
+* [bejar-rezac-2003], [preminger-2014], [halpert-2012]
 * [chomsky-2000]
 -/
 
@@ -272,47 +276,97 @@ theorem indiscriminate_licensed_iff {a : α} :
   cases goals <;>
     simp only [List.find?_nil, List.find?_cons_of_pos, List.head?_nil, List.head?_cons]
 
-/-- Every goal that needs licensing is licensed by the probe's search. Which goals need licensing
-(`needs`) and which satisfy the probe come apart in general, since [halpert-2012]'s Zulu L⁰ is
-satisfied by every goal while only augmentless nominals need it; feature-relativized probes are
-the diagonal `p.AllLicensed p.sat`, where the probe is satisfied by exactly the needy
-([bejar-rezac-2003]'s π as relativized by [preminger-2014]). -/
+/-- The goals that `needs` selects are all licensed by the probe's single search when each of them
+satisfies the probe and no goal before it does. The condition is on occurrences, like
+`List.Nodup`, so one search licenses one occurrence and two equal needy goals are not both
+licensed. -/
 def AllLicensed (p : Probe α) (needs : α → Bool) (goals : List α) : Prop :=
-  ∀ a ∈ goals, needs a = true → p.Licensed goals a
+  (∀ a ∈ goals, needs a → p.sat a) ∧ goals.Pairwise fun a b ↦ needs b → p.sat a = false
 
-instance [DecidableEq α] (p : Probe α) (needs : α → Bool) (goals : List α) :
+instance (p : Probe α) (needs : α → Bool) (goals : List α) :
     Decidable (p.AllLicensed needs goals) :=
-  inferInstanceAs (Decidable (∀ a ∈ goals, needs a = true → p.Licensed goals a))
+  inferInstanceAs (Decidable (_ ∧ _))
+
+variable {needs : α → Bool}
+
+@[simp] theorem allLicensed_nil : p.AllLicensed needs [] := by simp [AllLicensed]
+
+theorem allLicensed_cons {a : α} :
+    p.AllLicensed needs (a :: goals) ↔
+      (needs a → p.sat a) ∧ (∀ b ∈ goals, needs b → p.sat a = false) ∧
+        p.AllLicensed needs goals := by
+  simp only [AllLicensed, List.mem_cons, forall_eq_or_imp, List.pairwise_cons]
+  tauto
+
+/-- When all needy goals are licensed, the search reaches each of them. -/
+theorem AllLicensed.licensed (h : p.AllLicensed needs goals) {a : α} (ha : a ∈ goals)
+    (hn : needs a) : p.Licensed goals a := by
+  obtain ⟨l₁, l₂, rfl⟩ := List.append_of_mem ha
+  refine search_eq_some_iff_closest.2 ⟨h.1 a ha hn, l₁, l₂, rfl, fun b hb ↦ ?_⟩
+  simpa using (List.pairwise_append.1 h.2).2.2 b hb a List.mem_cons_self hn
+
+/-- Goals none of which needs licensing are all licensed. -/
+theorem allLicensed_of_forall_not (h : ∀ a ∈ goals, needs a = false) :
+    p.AllLicensed needs goals :=
+  ⟨fun a ha hn ↦ by simp [h a ha] at hn,
+    List.pairwise_of_forall_mem_list fun _ _ b hb hn ↦ by simp [h b hb] at hn⟩
+
+/-- One search licenses at most one needy goal. -/
+theorem AllLicensed.countP_le_one (h : p.AllLicensed needs goals) : goals.countP needs ≤ 1 := by
+  induction goals with
+  | nil => simp
+  | cons a l ih =>
+    obtain ⟨ha, hl, h⟩ := allLicensed_cons.1 h
+    rw [List.countP_cons]
+    by_cases hn : needs a
+    · rw [List.countP_eq_zero.2 fun b hb hb' ↦ by simp [hl b hb hb'] at ha; simp_all]
+      split <;> omega
+    · simpa [hn] using ih h
+
+/-- Over goals without repetitions, all needy goals are licensed iff each is reached by the
+search. -/
+theorem allLicensed_iff_forall_licensed (hnd : goals.Nodup) :
+    p.AllLicensed needs goals ↔ ∀ a ∈ goals, needs a → p.Licensed goals a := by
+  refine ⟨fun h a ha hn ↦ h.licensed ha hn, fun h ↦ ?_⟩
+  induction goals with
+  | nil => simp
+  | cons x l ih =>
+    obtain ⟨hx, hnd⟩ := List.nodup_cons.1 hnd
+    have hsat : ∀ b ∈ l, needs b → p.sat x = false := fun b hb hn ↦ by
+      by_contra hs
+      rw [Bool.not_eq_false] at hs
+      have := h b (List.mem_cons_of_mem _ hb) hn
+      simp only [Licensed, search, List.find?_cons, hs, Option.some.injEq] at this
+      subst this
+      exact hx hb
+    refine allLicensed_cons.2 ⟨fun hn ↦ (h x List.mem_cons_self hn).sat, hsat, ih hnd ?_⟩
+    intro b hb hn
+    simpa [Licensed, search, List.find?_cons, hsat b hb hn] using
+      h b (List.mem_cons_of_mem _ hb) hn
 
 /-- On the diagonal, where the probe is relativized to exactly the needy goals, all needy goals
-are licensed iff the satisfying goals are subsingleton, one search licensing at most one goal,
-the fact behind [preminger-2014]'s person restriction. -/
-theorem allLicensed_iff {f : α → Bool} {goals : List α} :
-    (relativized f).AllLicensed f goals ↔ ∀ a ∈ goals, ∀ b ∈ goals, f a → f b → a = b := by
-  constructor
-  · intro h a ha b hb hva hvb
-    exact (h a ha hva).unique (h b hb hvb)
-  · intro h a ha hva
-    obtain ⟨b, hb⟩ := Option.isSome_iff_exists.mp
-      (List.find?_isSome.mpr ⟨a, ha, hva⟩)
-    have hba := h b (mem_of_search_eq_some (p := relativized f) hb) a ha
-      (sat_of_search_eq_some (p := relativized f) hb) hva
-    exact hba ▸ hb
+are licensed iff at most one goal is needy, one search licensing one goal, the fact behind
+[preminger-2014]'s person restriction. -/
+theorem relativized_allLicensed_iff {f : α → Bool} :
+    (relativized f).AllLicensed f goals ↔ goals.countP f ≤ 1 := by
+  refine ⟨AllLicensed.countP_le_one, fun h ↦ ?_⟩
+  induction goals with
+  | nil => simp
+  | cons a l ih =>
+    rw [List.countP_cons] at h
+    refine allLicensed_cons.2 ⟨id, fun b hb hfb ↦ ?_, ih (by split at h <;> omega)⟩
+    have := List.countP_pos_iff.2 ⟨b, hb, hfb⟩
+    cases ha : f a <;> simp_all
 
-/-- `allLicensed_iff` in `Set.Subsingleton` form. -/
-theorem allLicensed_iff_subsingleton {f : α → Bool} {goals : List α} :
-    (relativized f).AllLicensed f goals ↔ {a | a ∈ goals ∧ f a}.Subsingleton := by
-  rw [allLicensed_iff]
-  exact ⟨fun h a ha b hb => h a ha.1 b hb.1 ha.2 hb.2,
-         fun h a ha b hb hva hvb => h ⟨ha, hva⟩ ⟨hb, hvb⟩⟩
-
-/-- Licensing by the indiscriminate probe pins every needy goal to the head of the sequence, the
-highest-element condition of [halpert-2012]. -/
-theorem indiscriminate_allLicensed_iff {needs : α → Bool} {goals : List α} :
-    (indiscriminate : Probe α).AllLicensed needs goals ↔
-      ∀ a ∈ goals, needs a = true → goals.head? = some a :=
-  forall_congr' fun _ => imp_congr_right fun _ => imp_congr_right fun _ =>
-    indiscriminate_licensed_iff
+/-- Licensing by the indiscriminate probe allows no needy goal below the head of the sequence,
+the highest-element condition of [halpert-2012]. -/
+theorem indiscriminate_allLicensed_iff :
+    (indiscriminate : Probe α).AllLicensed needs goals ↔ ∀ a ∈ goals.tail, needs a = false := by
+  cases goals with
+  | nil => simp
+  | cons a l =>
+    simpa [indiscriminate, relativized, AllLicensed] using
+      fun h ↦ List.pairwise_of_forall_mem_list fun _ _ b hb ↦ h b hb
 
 /-! ### Cascades -/
 

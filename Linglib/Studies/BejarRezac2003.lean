@@ -37,7 +37,7 @@ probe is `Probe.ofInt`, the probe gated only by the Active Goal Hypothesis.
   nominal is 3rd person.
 * `dnc_pcc_iff`: in a dative–nominative construction the constraint applies iff the dative
   satisfies the EPP.
-* `plcOk_singleCycle_iff_allLicensed`: one cycle over the base order is
+* `plcOk_singleCycle_iff_allLicensed`: one cycle over a base order without repeated goals is
   `Probe.AllLicensed` for the indiscriminate probe.
 
 ## References
@@ -62,8 +62,8 @@ open Minimalist Agreement
 dative marker, and so is inactive for outside Agree (§4). -/
 def dat (c : Bundle) : PhiGoal := .valued .dat c
 
-/-- The person probe of a Case-licensing head: every nominal bears a person value (8), and
-a nominal whose Case is already valued is inactive (§2, §4). -/
+/-- The person probe of a Case-licensing head interacts with every active nominal, since every
+nominal bears a person value (8) and a nominal whose Case is already valued is inactive (§2, §4). -/
 def pi : Probe PhiGoal := .ofInt (·.isActive)
 
 /-- The person probe Agrees with the closest nominal, and only if that nominal is active
@@ -72,14 +72,14 @@ theorem pi_agree_eq_some_iff {goals : List PhiGoal} {g : PhiGoal} :
     pi.agree goals = some g ↔ goals.head? = some g ∧ g.isActive = true :=
   Probe.ofInt_agree_eq_some_iff
 
-/-- An inactive closest nominal absorbs the probe: match without Agree (9). -/
+/-- An inactive closest nominal absorbs the probe, a match without Agree (9). -/
 theorem pi_agree_absorbed (d g : PhiGoal) (hd : d.isActive = false) :
     pi.agree [d, g] = none :=
   Probe.agree_eq_none_of_not_int rfl hd
 
-/-- The Person Licensing Condition over the person-Agree cycles of a derivation: every
-participant among `args` has its Case valued by a functional category of its own or Agrees
-with the person probe of some cycle (§3). -/
+/-- The Person Licensing Condition holds over the person-Agree cycles of a derivation when every
+participant among `args` has its Case valued by a functional category of its own or Agrees with
+the person probe of some cycle (§3). -/
 def PLCOk (cycles : List (List PhiGoal)) (args : List PhiGoal) : Prop :=
   ∀ g ∈ args, g.cell.IsParticipant →
     (g.isActive = false ∨ ∃ goals ∈ cycles, pi.agree goals = some g)
@@ -99,15 +99,15 @@ theorem plcOk_iff (cycles : List (List PhiGoal)) (args : List PhiGoal) :
   simp only [pi_agree_eq_some_iff]
   cases g.isActive <;> simp
 
-/-- One cycle over the base order is `Probe.AllLicensed` for the indiscriminate probe, with
-the needy goals the active participants. -/
-theorem plcOk_singleCycle_iff_allLicensed (goals : List PhiGoal) :
+/-- One cycle over a base order without repeated goals is `Probe.AllLicensed` for the
+indiscriminate probe, with the needy goals the active participants. -/
+theorem plcOk_singleCycle_iff_allLicensed {goals : List PhiGoal} (hnd : goals.Nodup) :
     PLCOk [goals] goals ↔
       (Probe.indiscriminate (α := PhiGoal)).AllLicensed
         (fun g => decide g.cell.IsParticipant && g.isActive) goals := by
-  rw [plcOk_iff, Probe.indiscriminate_allLicensed_iff]
+  rw [plcOk_iff, Probe.allLicensed_iff_forall_licensed hnd]
   refine forall₂_congr fun g _ => ?_
-  cases g.isActive <;> simp
+  cases g.isActive <;> simp [Probe.indiscriminate_licensed_iff]
 
 /-! ### The constraint -/
 
@@ -135,7 +135,7 @@ theorem pp_repair (ct cg : Bundle) :
   rw [plcOk_iff]
   simp [dat]
 
-/-- The person-Agree cycles of a dative–nominative construction: T probes the base order,
+/-- In the person-Agree cycles of a dative–nominative construction T probes the base order,
 and once the EPP is satisfied the projection of T probes again — over the same order if the
 dative can satisfy the EPP, over the reversed order if the nominative has raised past it
 ((16), (17), (25)). -/
