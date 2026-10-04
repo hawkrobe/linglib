@@ -992,7 +992,6 @@ import Linglib.Semantics.Modality.Kratzer.Premise
 import Linglib.Semantics.Modification.Basic
 import Linglib.Semantics.Modification.Classification
 import Linglib.Semantics.Modification.Coercion
-import Linglib.Semantics.Modification.RelativeClause
 import Linglib.Semantics.Mood.Defs
 import Linglib.Semantics.Mood.SpeechEvent
 import Linglib.Semantics.Mood.State

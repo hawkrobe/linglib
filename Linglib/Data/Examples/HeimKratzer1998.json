@@ -1,5 +1,59 @@
 [
   {
+    "id": "heimkratzer1998_ch5_1",
+    "source": {
+      "bibkey": "heim-kratzer-1998",
+      "paperLabel": "Ch. 5 (1)"
+    },
+    "language": "stan1293",
+    "primaryText": "The house which is empty is available.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.1"
+      ],
+      [
+        "relative",
+        "restrictive"
+      ]
+    ],
+    "comment": "Defined if exactly one house is empty, however many houses there are."
+  },
+  {
+    "id": "heimkratzer1998_ch5_2",
+    "source": {
+      "bibkey": "heim-kratzer-1998",
+      "paperLabel": "Ch. 5 (2)"
+    },
+    "language": "stan1293",
+    "primaryText": "The house, which is empty, is available.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.1"
+      ],
+      [
+        "relative",
+        "nonrestrictive"
+      ]
+    ],
+    "comment": "Presupposes exactly one house: the article applies to the noun alone."
+  },
+  {
     "id": "heimkratzer1998_ch7_1a",
     "source": {
       "bibkey": "heim-kratzer-1998",
