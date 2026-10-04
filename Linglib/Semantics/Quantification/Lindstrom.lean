@@ -2,6 +2,7 @@ module
 
 public import Linglib.Core.Data.Fin.VecNotation
 public import Linglib.Core.ModelTheory.Lindstrom
+public import Linglib.Core.ModelTheory.Monadic
 public import Linglib.Semantics.Quantification.Basic
 
 /-!
@@ -32,12 +33,15 @@ condition, and the determiners for *every*, *some* and *no* realize the denotati
 * `toGQ_compl`: realization carries the complement of a class to GQ outer negation.
 * `someDet_holds_eq_compl`, `noDet_toGQ_eq_innerNeg`, `someDet_toGQ_eq_dual`: the `no` and
   `some` corners as the complement, inner negation and dual of `every`.
+* `nEquiv_structOfAB`: two models agree on the sentences of quantifier rank `≤ t` when their
+  Venn regions agree in size up to `t`.
 
 ## References
 
 * [barwise-cooper-1981]
 * [demey-frijters-2023]
 * [mostowski-1957]
+* [peters-westerstahl-2006]
 * [van-benthem-1984]
 -/
 
@@ -72,8 +76,7 @@ abbrev uRel : L_UV.Relations 1 := .U
 /-- The scope symbol `V`. -/
 abbrev vRel : L_UV.Relations 1 := .V
 
-/-- The `L_UV`-structure `(α, A, B)`: `U` is interpreted as `A`, `V` as `B`, and there
-are no function symbols. -/
+/-- The `L_UV`-structure `(α, A, B)` interprets `U` as `A` and `V` as `B`. -/
 @[reducible] def structOfAB {α : Type u} (A B : α → Prop) : L_UV.Structure α where
   funMap := fun f _ => f.elim
   RelMap {n} r v :=
@@ -104,7 +107,7 @@ def toGQ (Q : Det.{u}) (α : Type u) : GQ α :=
     Q.toGQ α A B ↔ (⟨α, structOfAB A B⟩ : Bundled.{u} L_UV.Structure) ∈ Q.holds := Iff.rfl
 
 /-- The `L_UV`-isomorphism `(α, A, B) ≃[L_UV] (α, A', B')` induced by a bijection `f`
-matching the predicates pointwise. The underlying map is `f⁻¹`: `map_rel'` for `U`
+matching the predicates pointwise. The underlying map is `f⁻¹`, since `map_rel'` for `U`
 needs `A' (f⁻¹ z) ↔ A z`, which is `hA` read at `f⁻¹ z`. -/
 private noncomputable def equivOfBij {α : Type u} {A B A' B' : α → Prop} {f : α → α}
     (hBij : Function.Bijective f) (hA : ∀ x, A (f x) ↔ A' x) (hB : ∀ x, B (f x) ↔ B' x) :
@@ -124,7 +127,7 @@ private noncomputable def equivOfBij {α : Type u} {A B A' B' : α → Prop} {f 
         rw [Equiv.ofBijective_apply_symm_apply f hBij] at this
         exact this.symm)
 
-/-- Every realized Lindström quantifier satisfies `QuantityInvariant`: `q A B` is invariant
+/-- Every realized Lindström quantifier satisfies `QuantityInvariant`, so `q A B` is invariant
 under a bijective relabelling of the domain. This is the type-`⟨1,1⟩` form of Mostowski's
 permutation invariance, derived from `iso_inv` rather than stipulated on the denotation. -/
 theorem realize_quantityInvariant (Q : Det.{u}) {α : Type u} :
@@ -245,5 +248,39 @@ theorem noDet_toGQ_eq_innerNeg (α : Type u) :
 theorem someDet_toGQ_eq_dual (α : Type u) :
     someDet.toGQ α = dual (everyDet.toGQ α) := by
   rw [someDet_toGQ, everyDet_toGQ, dual_every]
+
+/-! ### Finite-rank equivalence of `L_UV`-models
+
+`L_UV` is monadic, so the Ehrenfeucht–Fraïssé game on its models is decided by counting: two
+models `(α, A, B)` and `(β, A', B')` agree on every sentence of quantifier rank `≤ t` when each of
+the four Venn regions of the two predicates has the same size in both or at least `t` elements in
+both. This is the tool behind the first-order undefinability of *more than half*. -/
+
+instance : L_UV.IsMonadic :=
+  ⟨fun _ => inferInstanceAs (IsEmpty Empty), fun _ hl => ⟨fun r => by cases r <;> exact hl rfl⟩⟩
+
+private theorem unaryType_structOfAB_eq {α : Type u} (A B : α → Prop) (x : α)
+    (S : L_UV.Relations 1 → Prop) :
+    @unaryType L_UV α (structOfAB A B) x = S ↔ ((A x ↔ S uRel) ∧ (B x ↔ S vRel)) := by
+  refine ⟨fun h => h ▸ ⟨Iff.rfl, Iff.rfl⟩, fun ⟨hA, hB⟩ => funext fun R => ?_⟩
+  cases R
+  exacts [propext hA, propext hB]
+
+/-- Two `L_UV`-models are `t`-equivalent when each Venn region of `U` and `V` has the same size in
+both or at least `t` elements in both ([peters-westerstahl-2006] Theorem 13 for type `⟨1, 1⟩`,
+first-order case). -/
+theorem nEquiv_structOfAB {α β : Type u} {A B : α → Prop} {A' B' : β → Prop} {t : ℕ}
+    (hAB : min (t : ℕ∞) {x | A x ∧ B x}.encard = min (t : ℕ∞) {y | A' y ∧ B' y}.encard)
+    (hAnB : min (t : ℕ∞) {x | A x ∧ ¬ B x}.encard = min (t : ℕ∞) {y | A' y ∧ ¬ B' y}.encard)
+    (hnAB : min (t : ℕ∞) {x | ¬ A x ∧ B x}.encard = min (t : ℕ∞) {y | ¬ A' y ∧ B' y}.encard)
+    (hnAnB : min (t : ℕ∞) {x | ¬ A x ∧ ¬ B x}.encard =
+      min (t : ℕ∞) {y | ¬ A' y ∧ ¬ B' y}.encard) :
+    @NEquiv L_UV t α β (structOfAB A B) (structOfAB A' B') := by
+  refine @nEquiv_of_min_encard_eq L_UV α β (structOfAB A B) (structOfAB A' B') _ t fun S => ?_
+  have key : ∀ {γ : Type u} (C D : γ → Prop),
+      @unaryType L_UV γ (structOfAB C D) ⁻¹' {S} = {c | (C c ↔ S uRel) ∧ (D c ↔ S vRel)} :=
+    fun C D => Set.ext fun c => unaryType_structOfAB_eq C D c S
+  rw [key, key]
+  by_cases hU : S uRel <;> by_cases hV : S vRel <;> simpa [hU, hV]
 
 end Quantifier.Lindstrom
