@@ -467,32 +467,22 @@ end SpatialModel
 
 The membership bundles `Person.Category.toFeatures` give the three groups including the speaker
 one bundle, `{participant, author}`. Harbour's signs distinguish them, a commitment of this theory
-derived from the partition above. Signs get their own type rather than `Person.Features`: the
-exclusive's `+author −participant` is the combination the containment filter rejects, and the
-filter, which holds of membership, does not hold of operations (chapter 9). -/
+derived from the partition above. A sign is a bivalent valuation `Person.Feature → Bool` rather
+than a membership bundle `Person.Features`: the exclusive's `+author −participant` is the
+combination the containment filter rejects, and the filter, which holds of membership, does not
+hold of operations (chapter 9). -/
 
 open Person (Category)
-
-/-- A sign assigns bivalent values to `author` and `participant` (chapter 9), unlike the
-membership bundles `Person.Features`. -/
-structure Sign where
-  author : Bool
-  participant : Bool
-  deriving DecidableEq, Repr
-
-/-- A sign read as a membership bundle, its positive features. -/
-def Sign.toFeatures (s : Sign) : Person.Features :=
-  (if s.participant then {.participant} else ∅) ∪ (if s.author then {.author} else ∅)
 
 /-- Harbour's sign for a Cysouw category (Table 4.3). The exclusive, and with it the singular
 speaker, which the quadripartition places in the exclusive cell (p. 96), is
 `+author −participant`, so it does not collapse with the inclusive `+author +participant` as
 under `Category.toFeatures`. -/
-def signOf : Category → Sign
-  | .speakerAddressee | .speakerAddresseeOthers => ⟨true, true⟩  -- +author +participant
-  | .speaker | .speakerOthers => ⟨true, false⟩                   -- +author −participant
-  | .addressee | .addresseeOthers => ⟨false, true⟩               -- −author +participant
-  | .other | .others => ⟨false, false⟩                           -- −author −participant
+def signOf : Category → Person.Feature → Bool
+  | .speakerAddressee, _ | .speakerAddresseeOthers, _ => true     -- +author +participant
+  | .speaker, f | .speakerOthers, f => f == .author                -- +author −participant
+  | .addressee, f | .addresseeOthers, f => f == .participant       -- −author +participant
+  | .other, _ | .others, _ => false                                -- −author −participant
 
 /-- Harbour's signs distinguish exclusive from inclusive, where the neutral membership
 decomposition (`Category.toFeatures`) collapses them (cf. `Examples.inclusive_ne_exclusive`). -/
@@ -510,13 +500,13 @@ open Tamil.Pronouns (naam naanŋgæ)
 
 /-- The signs a pronoun realizes are those of its categories, several where its φ-features
 underdetermine the category. -/
-def harbourSign (p : Pronoun) : Finset Sign := p.categories.image signOf
+def harbourSign (p : Pronoun) : Finset (Person.Feature → Bool) := p.categories.image signOf
 
 /-- *naam* (1pl inclusive) realizes the inclusive sign `+author +participant`. -/
-theorem naam_sign : harbourSign naam.toPronoun = {⟨true, true⟩} := by decide
+theorem naam_sign : harbourSign naam.toPronoun = {fun _ ↦ true} := by decide
 
 /-- *naan-ŋgæ* (1pl exclusive) realizes the exclusive sign `+author −participant`. -/
-theorem naanŋgæ_sign : harbourSign naanŋgæ.toPronoun = {⟨true, false⟩} := by decide
+theorem naanŋgæ_sign : harbourSign naanŋgæ.toPronoun = {(· == .author)} := by decide
 
 /-- Harbour's signs distinguish *naam* from *naan-ŋgæ* through the Pronoun API. -/
 theorem tamil_clusivity_distinguished :
@@ -533,7 +523,7 @@ membership bundles rejects (`Person.wellFormed_iff_isIntent`), the author as a n
 which the free combinatorics of chapter 9 generate and the calculus fills
 (`Examples.exclusive_includes_speaker`). -/
 theorem exclusive_sign_filtered :
-    ¬ IsLowerSet (↑(signOf .speakerOthers).toFeatures : Set Person.Feature) := by
+    ¬ IsLowerSet (↑(Finset.univ.filter (signOf .speakerOthers ·)) : Set Person.Feature) := by
   decide
 
 end Harbour2016
