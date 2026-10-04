@@ -5,7 +5,7 @@ public import Linglib.Semantics.Modality.Universals
 public import Linglib.Fragments.Washo.Modals
 public import Linglib.Data.Examples.Bochnak2015a
 public import Linglib.Studies.MocnikAbramovitz2019
-public import Linglib.Fragments.Javanese.Modals
+public import Linglib.Fragments.Javanese.Paciran.Modals
 public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Finite
 
 /-!
@@ -74,24 +74,25 @@ theorem washo_modalEq :
       ForceFlavorIndependent Washo.modalEq.meaning := by
   decide
 
-/-- The force a row of [bochnak-2015a] records. -/
+/-- `forceTable` maps the force label of a row of [bochnak-2015a] to its force. -/
 def forceTable : List (String × ModalForce) :=
   [("possibility", .possibility), ("weak necessity", .weakNecessity), ("necessity", .necessity)]
 
-/-- The flavor a row of [bochnak-2015a] records, when it lies in the space. -/
+/-- `flavorTable` maps the flavor label of a row of [bochnak-2015a] to its flavor, when the
+flavor lies in the space. -/
 def flavorTable : List (String × ModalFlavor) :=
   [("epistemic", .epistemic), ("deontic", .deontic), ("bouletic", .bouletic),
     ("circumstantial", .circumstantial)]
 
-/-- The pairs of the uses of *-eʔ* that [bochnak-2015a] elicits, in §3 and, with the prejacent
-negated, in §5. -/
+/-- `washoAttested` collects the pairs of the uses of *-eʔ* that [bochnak-2015a] elicits, in §3
+and, with the prejacent negated, in §5. -/
 def washoAttested : Finset ForceFlavor :=
   (Bochnak2015a.Examples.all.filterMap fun e ↦ (e.parse? "force" forceTable).bind
     fun fo ↦ (e.parse? "flavor" flavorTable).map (fo, ·)).toFinset
 
-/-- Section 4.1 on the uses [bochnak-2015a] reports: both forces with the epistemic and the
-deontic flavor, bouletic necessity and weak necessity but no bouletic possibility, and weak
-necessity with no other flavor. -/
+/-- As Section 4.1 notes, the uses [bochnak-2015a] reports include both forces with the
+epistemic and the deontic flavor, bouletic necessity and weak necessity but no bouletic
+possibility, and weak necessity with no other flavor. -/
 theorem washoAttested_gaps :
     ({.necessity, .possibility} : Finset ModalForce) ×ˢ ({.epistemic, .deontic} : Finset _) ⊆
         washoAttested ∧
@@ -124,9 +125,9 @@ theorem ivek_attested :
 
 /-- Paciran Javanese *mesthi*, *oleh* and *iso* express one pair each. -/
 theorem javanese_singletons :
-    ForceFlavorIndependent Javanese.mesthi.meaning ∧
-      ForceFlavorIndependent Javanese.oleh.meaning ∧
-      ForceFlavorIndependent Javanese.iso.meaning :=
+    ForceFlavorIndependent Javanese.Paciran.mesthi.meaning ∧
+      ForceFlavorIndependent Javanese.Paciran.oleh.meaning ∧
+      ForceFlavorIndependent Javanese.Paciran.iso.meaning :=
   ⟨.singleton _, .singleton _, .singleton _⟩
 
 /-- The hypothetical *mighst* expresses epistemic possibility and deontic necessity only, which
@@ -153,8 +154,8 @@ theorem table1a_forceFlavorIndependent :
     ForceFlavorIndependent table1a ∧ ¬ SingleAxis table1a := by
   decide
 
-/-- The rook's graph on the force-flavor grid, in which pairs differing in exactly one coordinate
-are adjacent. -/
+/-- `rookGraph` is the rook's graph on the force-flavor grid, in which pairs differing in exactly
+one coordinate are adjacent. -/
 abbrev rookGraph : SimpleGraph ForceFlavor := (⊤ : SimpleGraph ModalForce) □ ⊤
 
 /-- Two pairs of a meaning sharing a coordinate are joined in the rook's graph. -/

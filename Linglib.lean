@@ -537,7 +537,6 @@ import Linglib.Fragments.Japanese.Relativization
 import Linglib.Fragments.Japanese.TemporalConnectives
 import Linglib.Fragments.Japanese.TemporalDeictic
 import Linglib.Fragments.Jarawara.PossessedNouns
-import Linglib.Fragments.Javanese.Modals
 import Linglib.Fragments.Kannada.Coordination
 import Linglib.Fragments.Kannada.Indefinites
 import Linglib.Fragments.Kashaya.Evidentiality

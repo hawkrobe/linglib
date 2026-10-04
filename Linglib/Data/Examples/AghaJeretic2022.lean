@@ -433,7 +433,7 @@ def ex_19b : Datum :=
 
 def ex_31a : Datum :=
   { id := "aghajeretic2022_31a"
-    source := ⟨"vander-klok-hohaus-2020", "(31a)"⟩
+    source := ⟨"vander-klok-hohaus-2020", "(3a)"⟩
     reportedIn := some ⟨"agha-jeretic-2022", "(31a)"⟩
     language := "java1254"
     primaryText := "Aku iso ngelangi."
@@ -446,7 +446,7 @@ def ex_31a : Datum :=
 
 def ex_31b : Datum :=
   { id := "aghajeretic2022_31b"
-    source := ⟨"vander-klok-hohaus-2020", "(31b)"⟩
+    source := ⟨"vander-klok-hohaus-2020", "(3b)"⟩
     reportedIn := some ⟨"agha-jeretic-2022", "(31b)"⟩
     language := "java1254"
     primaryText := "Aku iso-ne ngelangi."
