@@ -39,6 +39,8 @@ instance must be supplied for the finite-state class `IsMealyComputable`.
 
 * `Mealy.getElem?_run`: output coordinate `i` is the output at the state reached
   after the length-`i` input prefix
+* `Mealy.getElem?_runRight`: output coordinate `i` of the right-to-left pass is the output at
+  the state reached over the reversed strict suffix
 * `Mealy.getElem?_ofFlag_run`, `Mealy.getElem?_ofFlag_runRight`: each coordinate of a
   flag machine sees the flag over its strict prefix (its strict suffix, for the
   right-to-left pass)
@@ -81,11 +83,11 @@ transition function (`step`) and an output function (`output`); it is letter-to-
 emitting exactly one output symbol per input symbol. -/
 @[ext]
 structure Mealy (σ α β : Type*) where
-  /-- Starting state. -/
+  /-- The machine starts in this state. -/
   start : σ
-  /-- Transition function. -/
+  /-- The transition function gives the state reached on reading a symbol. -/
   step : σ → α → σ
-  /-- Output function: the symbol emitted on reading an input symbol in a state. -/
+  /-- The output function gives the symbol emitted on reading an input symbol in a state. -/
   output : σ → α → β
 
 instance [Inhabited σ] [Inhabited β] : Inhabited (Mealy σ α β) :=
@@ -140,7 +142,7 @@ theorem runFrom_append :
 @[simp] theorem runRight_nil : T.runRight [] = [] := rfl
 
 /-- The right-to-left pass emits the head output at the state reached over the entire
-reversed tail: the right scan reads the future. -/
+reversed tail, so the right scan reads the future. -/
 @[simp] theorem runRight_cons :
     T.runRight (x :: xs)
       = T.output (T.stateAfter T.start xs.reverse) x :: T.runRight xs := by
@@ -157,6 +159,15 @@ first `i` input symbols. -/
 theorem getElem?_run (i : ℕ) :
     (T.run xs)[i]? = xs[i]?.map (T.output (T.stateAfter T.start (xs.take i))) :=
   T.getElem?_runFrom T.start xs i
+
+/-- Output coordinate `i` of `T.runRight` is the output at the state reached over the reversed
+strict suffix. -/
+theorem getElem?_runRight (i : ℕ) :
+    (T.runRight xs)[i]? =
+      xs[i]?.map (T.output (T.stateAfter T.start (xs.drop (i + 1)).reverse)) := by
+  induction xs generalizing i with
+  | nil => simp
+  | cons x xs ih => cases i <;> simp [ih]
 
 end
 
@@ -185,7 +196,7 @@ end Comp
 
 /-! ### Letter-wise machines -/
 
-/-- The single-state machine applying `h` to every symbol. -/
+/-- `ofFn h` is the single-state machine applying `h` to every symbol. -/
 def ofFn (h : α → β) : Mealy Unit α β where
   start := ()
   step _ _ := ()
@@ -228,9 +239,7 @@ theorem getElem?_ofFlag_run (xs : List α) (i : ℕ) :
 suffix. -/
 theorem getElem?_ofFlag_runRight (xs : List α) (i : ℕ) :
     ((ofFlag p out).runRight xs)[i]? = xs[i]?.map (out ((xs.drop (i + 1)).any p)) := by
-  induction xs generalizing i with
-  | nil => simp
-  | cons x xs ih => cases i <;> simp [*]
+  simp [getElem?_runRight]
 
 /-! ### Transport along state equivalences -/
 
@@ -259,7 +268,7 @@ def map (g : σ ≃ τ) (T : Mealy σ α β) : Mealy τ α β where
 @[simp] theorem run_map (g : σ ≃ τ) : (map g T).run = T.run := by
   funext xs; simp [run]
 
-/-- `map` as an equivalence of machines. -/
+/-- `reindex g` is `map g` as an equivalence of machines. -/
 def reindex (g : σ ≃ τ) : Mealy σ α β ≃ Mealy τ α β where
   toFun := map g
   invFun := map g.symm
@@ -275,11 +284,11 @@ end Mealy
 
 /-! ### The Mealy-computable class -/
 
-/-- The class of functions computed by a finite-state `Mealy` machine. -/
+/-- `f` is computed by some finite-state `Mealy` machine. -/
 def IsMealyComputable (f : List α → List β) : Prop :=
   ∃ (σ : Type) (_ : Fintype σ) (T : Mealy σ α β), T.run = f
 
-/-- The universe-polymorphic form of `IsMealyComputable`. -/
+/-- `IsMealyComputable` holds as soon as a machine with states in any universe computes `f`. -/
 theorem isMealyComputable_iff.{v} {f : List α → List β} :
     IsMealyComputable f
       ↔ ∃ (σ : Type v) (_ : Fintype σ) (T : Mealy σ α β), T.run = f :=
@@ -313,7 +322,7 @@ section ComapMealy
 
 variable {τ : Type*} (M : DFA β τ) (T : Mealy σ α β)
 
-/-- `M.comapMealy T` pulls the acceptor `M` back along the transducer `T`: the product
+/-- `M.comapMealy T` pulls the acceptor `M` back along the transducer `T`. The product
 machine runs `T` and feeds its output symbols to `M`, so it accepts `x` if and only if
 `M` accepts `T.run x`. -/
 @[simps]

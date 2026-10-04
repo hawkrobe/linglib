@@ -48,8 +48,10 @@ separation theorems.
   by three target-cell observations
 * `IsNonInteractingBimachineComputable.oneSidedChanges`: a non-interacting bimachine
   changes each cell from one side
-* `IsLeftSubsequential.boundedDependence_right`: a length-preserving left-subsequential
-  function depends boundedly on the right
+* `IsLeftSubsequential.boundedDependence_right`, `IsRightSubsequential.boundedDependence_left`:
+  a length-preserving subsequential function depends boundedly on the input ahead of its scan
+* `TwoSidedUnboundedDependence.not_isSubsequential`: two-sided unbounded dependence rules out
+  a subsequential function in either direction
 * `Mealy.leftDetermined`, `Mealy.boundedDependence_right`: a sequential machine is
   prefix-determined at every coordinate
 * `RequiresBothSides.not_isNonInteractingBimachineComputable`: a map whose target needs
@@ -61,12 +63,12 @@ separation theorems.
 
 The coordinate predicates index the output coordinate and the input window
 separately, which is informative for length-preserving functions; for block-emitting
-transducers the two drift apart. `BoundedDependence` is the positive primitive; `unboundedDependence_iff` recovers
-the margin-indexed witness form, and unpacking the negated dependence yields word-pair
-witnesses. The forms are margin-indexed rather than fixed-index because a fixed
-target has only finitely many positions to its left.
-The predicates place no in-range guard on target coordinates: for length-preserving
-maps an out-of-range coordinate is `none` on both sides of any perturbation.
+transducers the two drift apart. `BoundedDependence` is the positive primitive;
+`unboundedDependence_iff` recovers the margin-indexed witness form, and unpacking the
+negated dependence yields word-pair witnesses. The forms are margin-indexed rather than
+fixed-index because a fixed target has only finitely many positions to its left. The
+predicates place no in-range guard on target coordinates, since for length-preserving maps
+an out-of-range coordinate is `none` on both sides of any perturbation.
 -/
 
 @[expose] public section
@@ -86,7 +88,7 @@ def LeftDetermined (f : List α → List β) (i : ℕ) : Prop :=
 def IsFarPerturbation (base u : List α) (i d : ℕ) (s : ScanDirection) : Prop :=
   u.length = base.length ∧ EqOn (base[·]?) (u[·]?) (s.window i d)
 
-/-- `f` depends boundedly on side `s`: a single margin caps, at every output
+/-- `f` depends boundedly on side `s` when a single margin caps, at every output
 coordinate, how far input on side `s` can matter. -/
 def BoundedDependence (f : List α → List β) (s : ScanDirection) : Prop :=
   ∃ N, ∀ i n, DependsOn (fun x : Fin n → α ↦ (f (List.ofFn x))[i]?) (Fin.val ⁻¹' s.window i N)
@@ -100,7 +102,7 @@ bounded. -/
 @[simp] theorem not_unboundedDependence_iff {s : ScanDirection} :
     ¬ UnboundedDependence f s ↔ BoundedDependence f s := not_not
 
-/-- Unbounded dependence coordinate-wise: every margin fails at some output
+/-- Unbounded dependence, coordinate-wise, says that every margin fails at some output
 coordinate. -/
 theorem unboundedDependence_iff {s : ScanDirection} :
     UnboundedDependence f s ↔
@@ -175,7 +177,7 @@ run, with independently editable flanks. `RequiresBothSides.of_flanks` packages 
 whole assembly — a map is excluded by three target-cell observations: the base image
 leaves the filler, and either single-flank perturbation restores it. -/
 
-/-- The word `x`, then `n` copies of `fill`, then `y`. -/
+/-- `flankWord x fill y n` is the word `x`, then `n` copies of `fill`, then `y`. -/
 def flankWord (x fill y : α) (n : ℕ) : List α := x :: (List.replicate n fill ++ [y])
 
 @[simp] theorem length_flankWord :
@@ -191,6 +193,8 @@ theorem getElem?_flankWord :
 
 @[simp] theorem getElem?_flankWord_zero :
     (flankWord x fill y n)[0]? = some x := rfl
+
+@[simp] theorem head?_flankWord : (flankWord x fill y n).head? = some x := rfl
 
 @[simp] theorem getElem?_flankWord_last :
     (flankWord x fill y n)[n + 1]? = some y := by
@@ -301,7 +305,7 @@ variable {L R : Type*}
 
 /-! ### Non-interacting decompositions -/
 
-/-- The output at a cell is determined by one side alone: fixing the input symbol and
+/-- The output at a cell is determined by one side alone when fixing the input symbol and
 one context state already fixes it. -/
 def OneSidedAt (B : Bimachine L R α β) (l : L) (a : α) (r : R) : Prop :=
   (∀ r', B.output l a r' = B.output l a r) ∨ (∀ l', B.output l' a r = B.output l a r)
@@ -337,14 +341,14 @@ inert. -/
 @[simp] theorem unite_eq_self_iff {cL cR a : α} : unite cL cR a = a ↔ cL = a ∧ cR = a := by
   grind [unite]
 
-/-- A non-interacting decomposition of a bimachine: a change-rule per side over the
+/-- A non-interacting decomposition of a bimachine is a change-rule per side over the
 identity default, whose union is order-independent and produces the cell output. -/
 structure NonInteraction (B : Bimachine L R α α) where
-  /-- The change the left context proposes for the current symbol. -/
+  /-- `ruleL l a` is the change the left context proposes for the current symbol. -/
   ruleL : L → α → α
-  /-- The change the right context proposes for the current symbol. -/
+  /-- `ruleR r a` is the change the right context proposes for the current symbol. -/
   ruleR : R → α → α
-  /-- The union of the two proposals is order-independent (`unite_comm_iff`: they agree
+  /-- The union of the two proposals is order-independent (by `unite_comm_iff`, they agree
   wherever both fire), so neither side can suppress the other's change. -/
   unite_comm : ∀ l a r, unite (ruleL l a) (ruleR r a) a = unite (ruleR r a) (ruleL l a) a
   /-- The cell output is the union of the two proposals. -/
@@ -373,7 +377,7 @@ theorem NonInteraction.output_eq_ruleR (hR : w.ruleR r a ≠ a) :
   (w.output_eq l a r).trans (by rw [w.unite_comm l a r, unite_of_left_ne hR])
 
 /-- At every cell whose output differs from the input symbol, a decomposed bimachine is
-one-sided: the change is the left rule's alone or the right rule's alone. -/
+one-sided, the change being the left rule's alone or the right rule's alone. -/
 theorem NonInteraction.oneSidedAt_of_change (w : B.NonInteraction)
     (hne : B.output l a r ≠ [a]) : B.OneSidedAt l a r := by
   by_cases hL : w.ruleL l a = a
@@ -418,7 +422,7 @@ section
 
 variable [DecidableEq α]
 
-/-- Computability by a non-interacting finite bimachine. -/
+/-- `f` is computed by a non-interacting finite bimachine. -/
 def IsNonInteractingBimachineComputable (f : List α → List α) : Prop :=
   ∃ (L : Type) (_ : Fintype L) (R : Type) (_ : Fintype R) (B : Bimachine L R α α),
     B.run = f ∧ B.IsNonInteracting
@@ -454,8 +458,8 @@ theorem IsNonInteractingBimachineComputable.length_eq {f : List α → List α}
     (h : IsNonInteractingBimachineComputable f) (x : List α) : (f x).length = x.length :=
   have ⟨_, _, _, _, _, hB, ⟨w⟩⟩ := h
   hB ▸ w.letterToLetter.length_run x
-/-- A Mealy-computable function is computed by a non-interacting bimachine: the
-bimachine view (`Mealy.toBimachine`) has a trivial right automaton, so the cell output
+/-- A Mealy-computable function is computed by a non-interacting bimachine, since the
+bimachine view (`Mealy.toBimachine`) has a trivial right automaton and so its cell output
 is a one-sided rule with `ωR` the identity. -/
 theorem IsNonInteractingBimachineComputable.of_mealyComputable {f : List α → List α}
     (h : IsMealyComputable f) : IsNonInteractingBimachineComputable f :=
@@ -485,6 +489,20 @@ theorem IsLeftSubsequential.boundedDependence_right
   obtain ⟨N, hN⟩ := hf.exists_dependsOn_Iic hlen
   exact ⟨N, hN⟩
 
+/-- A length-preserving right-subsequential function depends boundedly on the left. -/
+theorem IsRightSubsequential.boundedDependence_left
+    (hlen : ∀ w, (f w).length = w.length) (hf : IsRightSubsequential f) :
+    BoundedDependence f .left := by
+  obtain ⟨N, hN⟩ := hf.exists_dependsOn_Ici hlen
+  exact ⟨N, hN⟩
+
+/-- A length-preserving function with two-sided unbounded dependence is subsequential in
+neither direction. -/
+theorem TwoSidedUnboundedDependence.not_isSubsequential (h : TwoSidedUnboundedDependence f)
+    (hlen : ∀ w, (f w).length = w.length) : ∀ d, ¬ IsSubsequential d f
+  | .left => fun hf ↦ h.unboundedDependence .right (hf.boundedDependence_right hlen)
+  | .right => fun hf ↦ h.unboundedDependence .left (hf.boundedDependence_left hlen)
+
 /-- A sequential machine is left-determined at every coordinate. -/
 theorem Mealy.leftDetermined (T : Mealy σ α β) (i : ℕ) : LeftDetermined T.run i :=
   T.dependsOn_run_Iic i
@@ -509,7 +527,7 @@ A map that requires both sides escapes the non-interacting bimachines, and the
 conjunctive flag bimachine shows the non-interacting class is proper. -/
 
 /-- A map that requires both sides is computed by no non-interacting bimachine. At the
-witness the base changes but each far perturbation reverts: the right perturbation
+witness the base changes but each far perturbation reverts. The right perturbation
 shares the left window, silencing `ruleL` at this cell; the left perturbation shares
 the right window, silencing `ruleR`; yet the base needs one of them to fire. -/
 theorem RequiresBothSides.not_isNonInteractingBimachineComputable [DecidableEq α]
@@ -531,8 +549,8 @@ A *conjunctive* change — a symbol raised iff a mark occurs on **both** sides �
 bimachine-computable but requires both sides, so no non-interacting bimachine computes
 it. -/
 
-/-- The conjunctive flag bimachine: a `false` cell is raised exactly when a `true`
-occurs on both sides. -/
+/-- The conjunctive flag bimachine raises a `false` cell exactly when a `true` occurs on
+both sides. -/
 def conjBM : Bimachine Bool Bool Bool Bool := .ofFlags id id fun l s r => s || (l && r)
 
 /-- In the middle of a `d`-margined flank word, `conjBM` computes the conjunction of
@@ -543,9 +561,9 @@ theorem conjBM.run_flankWord_mid (x y : Bool) (d : ℕ) :
     any_take_flankWord rfl (by omega), any_drop_flankWord rfl (by omega)]
   rfl
 
-/-- The conjunctive change requires both sides: with a mark on each flank the medial
-cell is raised, and demoting either mark alone reverts it — the three-map template, one
-map per argument. -/
+/-- The conjunctive change requires both sides. With a mark on each flank the medial
+cell is raised, and demoting either mark alone reverts it, by the three-map template with
+one map per argument. -/
 theorem conjBM.requiresBothSides : RequiresBothSides conjBM.run :=
   .of_flanks (fun d => by omega) (fun d => by omega)
     (fun d => by rw [conjBM.run_flankWord_mid]; decide)
