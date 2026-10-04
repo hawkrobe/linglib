@@ -58,12 +58,11 @@ namespace HeimKratzer1998
 
 open Semantics.Composition
 open scoped Assignment
-open Semantics.Montague
 open Syntax
 open Semantics.Composition.Tree
 open Quantifier Quantifier.GQ
 open Quantifier.Polyadic (surfaceScope inverseScope iterate_every_some_of_some_every)
-open Semantics.Montague.ToyLexicon (student_sem person_sem)
+open Semantics.Composition.Toy (student person)
 open English.Determiners (QuantityWord)
 open scoped Semantics
 
@@ -115,7 +114,8 @@ fragment's nouns and verbs through the toy lexicon. -/
 def lex : QuantityWord ⊕ String → Option (Denotation ToyEntity Unit) :=
   Sum.elim quantifierReading toyLexicon
 
-def g₀ : Assignment ToyEntity := λ _ => .john
+/-- The assignment `g₀` sends every index to John. -/
+def g₀ : Assignment ToyEntity := fun _ ↦ .john
 
 /-! ### "Every student sleeps" -/
 
@@ -125,10 +125,9 @@ def tree_everyStudentSleeps : Tree Unit String :=
     (.bin (.leaf "every") (.leaf "student"))
     (.binder 1 (.bin (.tr 1) (.leaf "sleeps")))
 
-/-- Every student sleeps is false (Mary is a student but doesn't sleep). -/
-theorem every_student_sleeps_false :
-    ¬(every student_sem ToyLexicon.sleeps_sem) := by
-  intro h; exact h ToyEntity.mary trivial
+/-- Every student sleeps is false, since Mary is a student but does not sleep. -/
+theorem every_student_sleeps_false : ¬(every student Toy.sleeps) :=
+  fun h ↦ nomatch h .mary (.inr rfl)
 
 /-- The QR tree `[S [DP some student] [1 [S t₁ sleeps]]]`. -/
 def tree_someStudentSleeps : Tree Unit String :=
@@ -136,21 +135,18 @@ def tree_someStudentSleeps : Tree Unit String :=
     (.bin (.leaf "some") (.leaf "student"))
     (.binder 1 (.bin (.tr 1) (.leaf "sleeps")))
 
-/-- Some student sleeps = true (John is a student and sleeps). -/
+/-- Some student sleeps is true, since John is a student and sleeps. -/
 theorem some_student_sleeps_true :
-    GQ.some student_sem ToyLexicon.sleeps_sem :=
-  ⟨ToyEntity.john, trivial, trivial⟩
+    GQ.some student Toy.sleeps :=
+  ⟨.john, .inl rfl, rfl⟩
 
 /-! ### Scope ambiguity: "Every person sees some person"
 
 Two QR structures yield two scope readings. The trees differ only in
 which quantifier occupies the higher position. -/
 
-/-- Surface scope (∀>∃):
-```
-[S [DP every person] [1 [S [DP some person] [2 [S t₁ [VP sees t₂]]]]]]
-```
-∀x[person(x) → ∃y[person(y) ∧ sees(x,y)]] -/
+/-- The surface-scope tree `[S [DP every person] [1 [S [DP some person] [2 [S t₁ [VP sees t₂]]]]]]`
+has the reading ∀x[person(x) → ∃y[person(y) ∧ sees(x,y)]]. -/
 def tree_surface : Tree Unit (QuantityWord ⊕ String) :=
   .bin
     (.bin (.leaf (.inl .every)) (.leaf (.inr "person")))
@@ -160,11 +156,8 @@ def tree_surface : Tree Unit (QuantityWord ⊕ String) :=
         (.binder 2
           (.bin (.tr 1) (.bin (.leaf (.inr "sees")) (.tr 2))))))
 
-/-- Inverse scope (∃>∀):
-```
-[S [DP some person] [2 [S [DP every person] [1 [S t₁ [VP sees t₂]]]]]]
-```
-∃y[person(y) ∧ ∀x[person(x) → sees(x,y)]] -/
+/-- The inverse-scope tree `[S [DP some person] [2 [S [DP every person] [1 [S t₁ [VP sees t₂]]]]]]`
+has the reading ∃y[person(y) ∧ ∀x[person(x) → sees(x,y)]]. -/
 def tree_inverse : Tree Unit (QuantityWord ⊕ String) :=
   .bin
     (.bin (.leaf (.inl .some_)) (.leaf (.inr "person")))
@@ -174,34 +167,28 @@ def tree_inverse : Tree Unit (QuantityWord ⊕ String) :=
         (.binder 1
           (.bin (.tr 1) (.bin (.leaf (.inr "sees")) (.tr 2))))))
 
-/-- The surface-scope reading, `∀ > ∃`: `every` over `some`, with `x sees y`. -/
+/-- The surface-scope reading `∀ > ∃` puts `every` over `some`, with `x sees y`. -/
 abbrev surfaceScopeProp : Prop :=
-  surfaceScope every GQ.some person_sem person_sem λ x y => ToyLexicon.sees_sem y x
+  surfaceScope every GQ.some person person fun x y ↦ Toy.sees y x
 
 /-- The inverse-scope reading, `∃ > ∀`. -/
 abbrev inverseScopeProp : Prop :=
-  inverseScope every GQ.some person_sem person_sem λ x y => ToyLexicon.sees_sem y x
+  inverseScope every GQ.some person person fun x y ↦ Toy.sees y x
 
 /-- Surface scope is true in the toy model.
 (John sees Mary and Mary sees John — each person sees some person.) -/
 theorem surface_scope_true : surfaceScopeProp := by
-  intro x hx
-  cases x with
-  | john => exact ⟨ToyEntity.mary, trivial, trivial⟩
-  | mary => exact ⟨ToyEntity.john, trivial, trivial⟩
-  | pizza => exact absurd hx id
-  | book => exact absurd hx id
+  rintro x (rfl | rfl)
+  · exact ⟨.mary, .inr rfl, .inl ⟨rfl, rfl⟩⟩
+  · exact ⟨.john, .inl rfl, .inr ⟨rfl, rfl⟩⟩
 
 /-- Inverse scope is false.
 (No single person is seen by everyone — John doesn't see John,
  Mary doesn't see Mary.) -/
 theorem inverse_scope_false : ¬inverseScopeProp := by
-  intro ⟨y, _, hy_all⟩
-  cases y with
-  | john => exact hy_all ToyEntity.john trivial
-  | mary => exact hy_all ToyEntity.mary trivial
-  | pizza => exact hy_all ToyEntity.john trivial
-  | book => exact hy_all ToyEntity.john trivial
+  rintro ⟨y, (rfl | rfl), hall⟩
+  · exact nomatch hall .john (.inl rfl)
+  · exact nomatch hall .mary (.inr rfl)
 
 /-- The two scope readings differ, so the ambiguity is genuine. -/
 theorem scope_readings_differ : surfaceScopeProp ≠ inverseScopeProp := by
@@ -245,8 +232,8 @@ The QR tree as `Tree Cat String` — carrying real UD-grounded categories
 on every node. `interp` ignores the categories and produces identical
 truth conditions to the category-free `Tree Unit String` version. -/
 
-/-- QR tree with UD categories:
-`[S [DP [Det every] [N student]] [1 [S [t₁:NP] [VP sleeps]]]]` -/
+/-- The QR tree `[S [DP [Det every] [N student]] [1 [S [t₁:NP] [VP sleeps]]]]` carries UD
+categories. -/
 def synTree_everyStudentSleeps : Tree Cat String :=
   .node .S
     (.node .DP (.terminal .Det "every" :: .terminal .N "student" :: []) ::
@@ -376,28 +363,28 @@ variable {C L E W : Type}
 /-- The book's interpretation relation, relative to a leaf interpretation and an assignment. -/
 inductive Denotes (lex : L → Option (Denotation E W)) :
     Assignment E → Tree C L → Denotation E W → Prop
-  /-- Terminal Nodes: a leaf denotes what the lexicon gives it. -/
+  /-- By Terminal Nodes, a leaf denotes what the lexicon gives it. -/
   | tn {g : Assignment E} {c : C} {w : L} {d : Denotation E W} (h : lex w = some d) :
       Denotes lex g (.terminal c w) d
-  /-- Non-Branching Nodes: a node denotes what its only daughter does. -/
+  /-- By Non-Branching Nodes, a node denotes what its only daughter does. -/
   | nn {g : Assignment E} {c : C} {t : Tree C L} {d : Denotation E W} (h : Denotes lex g t d) :
       Denotes lex g (.node c (t :: [])) d
-  /-- Functional Application, the left daughter the function. -/
+  /-- By Functional Application, a node whose left daughter is the function denotes its value. -/
   | faLeft {g : Assignment E} {c : C} {t₁ t₂ : Tree C L} {σ τ : Ty} {f : Ty.Domain E W (σ ⇒ τ)}
       {a : Ty.Domain E W σ} (h₁ : Denotes lex g t₁ ⟨σ ⇒ τ, f⟩) (h₂ : Denotes lex g t₂ ⟨σ, a⟩) :
       Denotes lex g (.node c (t₁ :: t₂ :: [])) ⟨τ, f a⟩
-  /-- Functional Application, the right daughter the function. -/
+  /-- By Functional Application, a node whose right daughter is the function denotes its value. -/
   | faRight {g : Assignment E} {c : C} {t₁ t₂ : Tree C L} {σ τ : Ty} {a : Ty.Domain E W σ}
       {f : Ty.Domain E W (σ ⇒ τ)} (h₁ : Denotes lex g t₁ ⟨σ, a⟩)
       (h₂ : Denotes lex g t₂ ⟨σ ⇒ τ, f⟩) :
       Denotes lex g (.node c (t₁ :: t₂ :: [])) ⟨τ, f a⟩
-  /-- Predicate Modification: two predicates conjoin. -/
+  /-- By Predicate Modification, two sister predicates conjoin. -/
   | pm {g : Assignment E} {c : C} {t₁ t₂ : Tree C L} {P Q : Ty.Domain E W (.e ⇒ .t)}
       (h₁ : Denotes lex g t₁ ⟨.e ⇒ .t, P⟩) (h₂ : Denotes lex g t₂ ⟨.e ⇒ .t, Q⟩) :
       Denotes lex g (.node c (t₁ :: t₂ :: [])) ⟨.e ⇒ .t, fun x ↦ P x ∧ Q x⟩
-  /-- The Traces and Pronouns Rule: a trace denotes the value of its index. -/
+  /-- By the Traces and Pronouns Rule, a trace denotes the value of its index. -/
   | trace {g : Assignment E} {n : ℕ} {c : C} : Denotes lex g (.trace n c) ⟨.e, g n⟩
-  /-- Predicate Abstraction: a binder abstracts over its index in the body. -/
+  /-- By Predicate Abstraction, a binder abstracts over its index in the body. -/
   | pa {g : Assignment E} {n : ℕ} {c : C} {body : Tree C L} {τ : Ty} {F : E → Ty.Domain E W τ}
       (h : ∀ x, Denotes lex (g[n ↦ x]) body ⟨τ, F x⟩) : Denotes lex g (.bind n c body) ⟨.e ⇒ τ, F⟩
 
@@ -440,21 +427,21 @@ theorem Denotes.unique [Nonempty E] {lex : L → Option (Denotation E W)} {g : A
     d = d' :=
   Option.some.inj ((interp_of_denotes h).symm.trans (interp_of_denotes h'))
 
-/-- The surface-scope reading is a derivation in the book's rules: Functional Application
-around two Predicate Abstractions, with the quantifier words as terminals. -/
+/-- The surface-scope reading is a derivation in the book's rules, Functional Application around
+two Predicate Abstractions with the quantifier words as terminals. -/
 theorem denotes_surface : Denotes lex g₀ tree_surface ⟨Ty.t, surfaceScopeProp⟩ := by
   show Denotes lex g₀ tree_surface
-    ⟨Ty.t, every person_sem fun x ↦ GQ.some person_sem fun y ↦ ToyLexicon.sees_sem y x⟩
-  refine .faLeft (lex := lex) (σ := .e ⇒ .t) (τ := .t) (f := every person_sem) ?_
+    ⟨Ty.t, every person fun x ↦ GQ.some person fun y ↦ Toy.sees y x⟩
+  refine .faLeft (lex := lex) (σ := .e ⇒ .t) (τ := .t) (f := every person) ?_
     (.pa (τ := .t) fun x ↦ ?_)
   · exact .faLeft (lex := lex) (σ := .e ⇒ .t) (τ := (.e ⇒ .t) ⇒ .t) (f := every)
-      (a := person_sem) (.tn rfl) (.tn rfl)
-  · refine .faLeft (lex := lex) (σ := .e ⇒ .t) (τ := .t) (f := GQ.some person_sem) ?_
+      (a := person) (.tn rfl) (.tn rfl)
+  · refine .faLeft (lex := lex) (σ := .e ⇒ .t) (τ := .t) (f := GQ.some person) ?_
       (.pa (τ := .t) fun y ↦ ?_)
     · exact .faLeft (lex := lex) (σ := .e ⇒ .t) (τ := (.e ⇒ .t) ⇒ .t) (f := GQ.some)
-        (a := person_sem) (.tn rfl) (.tn rfl)
-    · exact .faRight (lex := lex) (σ := .e) (τ := .t) (a := x) (f := ToyLexicon.sees_sem y) .trace
-        (.faLeft (lex := lex) (σ := .e) (τ := .e ⇒ .t) (f := ToyLexicon.sees_sem) (a := y)
+        (a := person) (.tn rfl) (.tn rfl)
+    · exact .faRight (lex := lex) (σ := .e) (τ := .t) (a := x) (f := Toy.sees y) .trace
+        (.faLeft (lex := lex) (σ := .e) (τ := .e ⇒ .t) (f := Toy.sees) (a := y)
           (.tn rfl) .trace)
 
 end Reference
@@ -487,7 +474,7 @@ theorem interp_eq_realize {t : Tree Unit String} {φ : toyLang.Formula ℕ}
 theorem someStudentSleeps_holds (g : Assignment ToyEntity) :
     HoldsAt toyModel (toyModel.lexiconFO {} toyNaming ()) g
       tree_someStudentSleeps :=
-  ⟨_, rfl, ⟨ToyEntity.john, trivial, trivial⟩⟩
+  ⟨_, rfl, ⟨.john, .inl rfl, rfl⟩⟩
 
 /-- "John sleeps and Mary laughs". -/
 def tree_conj : Tree Unit String :=
@@ -502,7 +489,7 @@ theorem conj_entails_first (g : Assignment ToyEntity) :
         (.bin (.leaf "John") (.leaf "sleeps")) :=
   holdsAt_of_models toyModel {} toyNaming () FOWords.nodup_default
     toyNaming_freshFor toyNaming_disjoint rfl rfl
-    (λ _ S v h => by
+    (fun _ S v h ↦ by
       let _inst := S
       exact (FirstOrder.Language.Formula.realize_inf.mp h).1) g
 
@@ -525,25 +512,24 @@ open Partial
 nouns and names lifted to partial denotations. -/
 noncomputable def partialLex : String → Option (PDenotation ToyEntity Unit)
   | "the" => some ⟨(.e ⇒ .t) ⇒ .e, Part.some the⟩
-  | "student" => some ⟨.e ⇒ .t, Part.some (PFun.lift student_sem)⟩
-  | "pizza" => some ⟨.e ⇒ .t, Part.some (PFun.lift ToyLexicon.pizza_sem)⟩
+  | "student" => some ⟨.e ⇒ .t, Part.some (PFun.lift student)⟩
+  | "pizza" => some ⟨.e ⇒ .t, Part.some (PFun.lift Toy.pizza)⟩
   | "John" => some ⟨.e, Part.some .john⟩
   | _ => none
 
 /-- *The student* is a presupposition failure in the toy model, which has two students. -/
 theorem the_student_fails :
     PresupFailure partialLex g₀ (.bin (.leaf "the") (.leaf "student")) := by
-  refine ⟨_, interpBinary_forward the (PFun.lift student_sem), fun ⟨x, _, huniq⟩ ↦ ?_⟩
-  have hj := huniq .john ((holds_lift _ _).mpr trivial)
-  have hm := huniq .mary ((holds_lift _ _).mpr trivial)
+  refine ⟨_, interpBinary_forward the (PFun.lift student), fun ⟨x, _, huniq⟩ ↦ ?_⟩
+  have hj := huniq .john ((holds_lift _ _).mpr (.inl rfl))
+  have hm := huniq .mary ((holds_lift _ _).mpr (.inr rfl))
   exact ToyEntity.noConfusion (hj.trans hm.symm)
 
 /-- *The pizza* denotes the pizza, the toy model's unique one. -/
 theorem the_pizza : interp partialLex g₀ (.bin (.leaf "the") (.leaf "pizza")) =
     some ⟨.e, Part.some .pizza⟩ := by
-  refine (interpBinary_forward the (PFun.lift ToyLexicon.pizza_sem)).trans ?_
-  rw [the_lift_eq_some fun x ↦ ?_]
-  cases x <;> exact ⟨fun h ↦ by first | rfl | exact h.elim, fun h ↦ by trivial⟩
+  refine (interpBinary_forward the (PFun.lift Toy.pizza)).trans ?_
+  rw [the_lift_eq_some (P := Toy.pizza) (a := .pizza) fun _ ↦ Iff.rfl]
 
 /-- *The John*, the article applied to an individual rather than a predicate, is
 uninterpretable, and the types alone decide it. -/
@@ -574,31 +560,32 @@ variable {C L E W : Type}
 assignment. -/
 inductive Denotes (lex : L → Option (PDenotation E W)) :
     Assignment E → Tree C L → PDenotation E W → Prop
-  /-- Terminal Nodes: a leaf denotes what the lexicon gives it. -/
+  /-- By Terminal Nodes, a leaf denotes what the lexicon gives it. -/
   | tn {g : Assignment E} {c : C} {w : L} {d : PDenotation E W} (h : lex w = some d) :
       Denotes lex g (.terminal c w) d
-  /-- Non-Branching Nodes: a node denotes what its only daughter does. -/
+  /-- By Non-Branching Nodes, a node denotes what its only daughter does. -/
   | nn {g : Assignment E} {c : C} {t : Tree C L} {d : PDenotation E W}
       (h : Denotes lex g t d) : Denotes lex g (.node c (t :: [])) d
-  /-- Functional Application, the left daughter the function, defined at the argument or not. -/
+  /-- By Functional Application, a node whose left daughter is the function denotes its value,
+  defined or not. -/
   | faLeft {g : Assignment E} {c : C} {t₁ t₂ : Tree C L} {σ τ : Ty}
       {f : Ty.PDomain E W (σ ⇒ τ)} {a : Ty.PDomain E W σ}
       (h₁ : Denotes lex g t₁ ⟨σ ⇒ τ, Part.some f⟩) (h₂ : Denotes lex g t₂ ⟨σ, Part.some a⟩) :
       Denotes lex g (.node c (t₁ :: t₂ :: [])) ⟨τ, f a⟩
-  /-- Functional Application, the right daughter the function. -/
+  /-- By Functional Application, a node whose right daughter is the function denotes its value. -/
   | faRight {g : Assignment E} {c : C} {t₁ t₂ : Tree C L} {σ τ : Ty} {a : Ty.PDomain E W σ}
       {f : Ty.PDomain E W (σ ⇒ τ)} (h₁ : Denotes lex g t₁ ⟨σ, Part.some a⟩)
       (h₂ : Denotes lex g t₂ ⟨σ ⇒ τ, Part.some f⟩) :
       Denotes lex g (.node c (t₁ :: t₂ :: [])) ⟨τ, f a⟩
-  /-- Predicate Modification: two predicates conjoin where both are defined. -/
+  /-- By Predicate Modification, two sister predicates conjoin where both are defined. -/
   | pm {g : Assignment E} {c : C} {t₁ t₂ : Tree C L} {P Q : Ty.PDomain E W (.e ⇒ .t)}
       (h₁ : Denotes lex g t₁ ⟨.e ⇒ .t, Part.some P⟩)
       (h₂ : Denotes lex g t₂ ⟨.e ⇒ .t, Part.some Q⟩) :
       Denotes lex g (.node c (t₁ :: t₂ :: []))
         ⟨.e ⇒ .t, Part.some fun x ↦ (P x).bind fun a ↦ (Q x).map fun b ↦ a ∧ b⟩
-  /-- The Traces and Pronouns Rule: a trace denotes the value of its index. -/
+  /-- By the Traces and Pronouns Rule, a trace denotes the value of its index. -/
   | trace {g : Assignment E} {n : ℕ} {c : C} : Denotes lex g (.trace n c) ⟨.e, Part.some (g n)⟩
-  /-- Predicate Abstraction: a binder abstracts over its index in the body, the abstract
+  /-- By Predicate Abstraction, a binder abstracts over its index in the body, the abstract
   defined at an individual where the body has a defined value under the modified assignment. -/
   | pa {g : Assignment E} {n : ℕ} {c : C} {body : Tree C L} {τ : Ty}
       {F : E → Part (Ty.PDomain E W τ)} (h : ∀ x, Denotes lex (g[n ↦ x]) body ⟨τ, F x⟩) :
@@ -645,11 +632,10 @@ theorem Denotes.unique [Nonempty E] {lex : L → Option (PDenotation E W)} {g : 
 theorem denotes_the_pizza :
     Denotes partialLex g₀ (.bin (.leaf "the") (.leaf "pizza")) ⟨.e, Part.some .pizza⟩ := by
   have h : Denotes partialLex g₀ (.bin (.leaf "the") (.leaf "pizza"))
-      ⟨.e, Partial.the (PFun.lift ToyLexicon.pizza_sem)⟩ :=
-    .faLeft (σ := .e ⇒ .t) (τ := .e) (f := Partial.the) (a := PFun.lift ToyLexicon.pizza_sem)
+      ⟨.e, Partial.the (PFun.lift Toy.pizza)⟩ :=
+    .faLeft (σ := .e ⇒ .t) (τ := .e) (f := Partial.the) (a := PFun.lift Toy.pizza)
       (.tn rfl) (.tn rfl)
-  rwa [Partial.the_lift_eq_some fun x ↦ ?_] at h
-  cases x <;> exact ⟨fun h ↦ by first | rfl | exact h.elim, fun h ↦ by trivial⟩
+  rwa [Partial.the_lift_eq_some (P := Toy.pizza) (a := .pizza) fun _ ↦ Iff.rfl] at h
 
 /-- Whatever value the book's rules assign *the student* is undefined. -/
 theorem denotes_the_student {v : Part ToyEntity}

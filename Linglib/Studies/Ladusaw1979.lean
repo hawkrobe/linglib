@@ -3,7 +3,6 @@ module
 public import Linglib.Semantics.Polarity.Licensing
 public import Linglib.Semantics.Quantification.Basic
 public import Linglib.Semantics.Quantification.Counting
-public import Linglib.Semantics.Composition.Toy
 
 /-!
 # Ladusaw (1979): Polarity Sensitivity as Inherent Scope Relations
@@ -43,7 +42,6 @@ the converse of the generalization is not stated.
 namespace Ladusaw1979
 
 open PolarityItem Quantifier Quantifier.GQ
-open Semantics.Montague (ToyEntity)
 
 /-- An environment is downward entailing when its recorded entailment signature reverses
 entailment, that is, carries a strength on the scale of downward-entailing licensers. -/
@@ -54,7 +52,7 @@ instance (c : LicensingContext) : Decidable (IsDownwardEntailing c) :=
   inferInstanceAs (Decidable (c.strength ≠ ⊥))
 
 -- UNVERIFIED: the list is the substrate's record, not checked against the dissertation.
-/-- The licensing environments credited to the dissertation: negation, negative quantifiers,
+/-- The licensing environments credited to the dissertation are negation, negative quantifiers,
 *without*, the restrictor of a universal, *few*, *at most*, the antecedent of a conditional,
 *before*, *too … to*, and the clausal comparative. -/
 def environments : List LicensingContext :=
@@ -67,27 +65,26 @@ theorem cited_environments_de : ∀ c ∈ environments, IsDownwardEntailing c :=
 /-- Questions are not downward entailing. -/
 theorem question_not_de : ¬ IsDownwardEntailing .question := by decide
 
-/-- The generalization: a downward-entailing environment licenses the weak polarity items. -/
+/-- A downward-entailing environment licenses the weak polarity items, which is the
+dissertation's generalization. -/
 theorem ladusaw_generalization (c : LicensingContext) (hc : IsDownwardEntailing c)
     (e : PolarityItem) (he : e.licensor = some .weak) : c.Licenses e := by
   cases c <;> first
     | exact absurd hc (by decide)
     | exact .inl ⟨rfl, .weak, he, by decide, .inl rfl⟩
 
-/-- *every* is not downward entailing in its scope: with a witness in the domain, a scope
-true of everything shrinks to one true of nothing. -/
-theorem every_not_scope_down : ¬ ScopeAntitone (every (α := ToyEntity)) := fun h =>
-  h (fun _ => True) (show ((fun _ : ToyEntity => False) : ToyEntity → Prop) ≤ fun _ => True
-    from fun _ hx => hx.elim) (fun _ _ => trivial) .john trivial
+variable {α : Type*}
 
-/-- Inherent scope relations: *no* reverses entailment in both arguments, *few* in its scope,
-and *every* in its restrictor but not its scope, which is where each licenses a polarity
-item. -/
-theorem determiner_monotonicity :
-    ScopeAntitone (no (α := ToyEntity)) ∧ RestrictorAntitone (no (α := ToyEntity)) ∧
-      ScopeAntitone (few (α := ToyEntity)) ∧
-      RestrictorAntitone (every (α := ToyEntity)) ∧
-      ¬ ScopeAntitone (every (α := ToyEntity)) :=
+/-- *every* is not downward entailing in its scope. With a witness in the domain, a scope true of
+everything shrinks to one true of nothing. -/
+theorem every_not_scope_down [Nonempty α] : ¬ ScopeAntitone (every : GQ α) := fun h ↦
+  h ⊤ (bot_le : (⊥ : α → Prop) ≤ ⊤) (fun _ _ ↦ trivial) (Classical.arbitrary α) trivial
+
+/-- *no* reverses entailment in both arguments, *few* in its scope, and *every* in its restrictor
+but not its scope, which is where each licenses a polarity item. -/
+theorem determiner_monotonicity [Fintype α] [Nonempty α] :
+    ScopeAntitone (no : GQ α) ∧ RestrictorAntitone (no : GQ α) ∧ ScopeAntitone (few : GQ α) ∧
+      RestrictorAntitone (every : GQ α) ∧ ¬ ScopeAntitone (every : GQ α) :=
   ⟨scopeAntitone_no, restrictorAntitone_no, scopeAntitone_few, restrictorAntitone_every,
     every_not_scope_down⟩
 

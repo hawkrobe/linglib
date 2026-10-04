@@ -90,7 +90,7 @@ def john_sees_mary : Derivation Atom S :=
 
 section Coordination
 
-open Semantics.Montague
+open Semantics.Composition
 
 /-- The type-raised subject "John" is a lexical leaf of category `S/(S\NP)`. -/
 def john_tr : Derivation Atom (S / (S \ NP)) := .lex "John" (S / (S \ NP))
@@ -132,14 +132,14 @@ def semLexicon : SemLexicon ToyEntity Unit := fun word cat ↦
       some (Quantifier.NP.individual ToyEntity.john)
   | "Mary", .rslash (.atom .S) _ (.lslash (.atom .S) _ (.atom .NP)) =>
       some (Quantifier.NP.individual ToyEntity.mary)
-  | "sleeps", .lslash (.atom .S) _ (.atom .NP) => some ToyLexicon.sleeps_sem
-  | "laughs", .lslash (.atom .S) _ (.atom .NP) => some ToyLexicon.laughs_sem
+  | "sleeps", .lslash (.atom .S) _ (.atom .NP) => some Toy.sleeps
+  | "laughs", .lslash (.atom .S) _ (.atom .NP) => some Toy.laughs
   | "sees", .rslash (.lslash (.atom .S) _ (.atom .NP)) _ (.atom .NP) =>
-      some ToyLexicon.sees_sem
+      some Toy.sees
   | "eats", .rslash (.lslash (.atom .S) _ (.atom .NP)) _ (.atom .NP) =>
-      some ToyLexicon.eats_sem
+      some Toy.eats
   | "reads", .rslash (.lslash (.atom .S) _ (.atom .NP)) _ (.atom .NP) =>
-      some ToyLexicon.reads_sem
+      some Toy.reads
   | "and", .rslash (.lslash (.atom .S) _ (.atom .S)) _ (.atom .S) =>
       some (fun q p ↦ p ∧ q)
   | "and", .rslash (.lslash (.rslash (.atom .S) _ (.atom .NP)) _
@@ -521,11 +521,14 @@ section TruthConditions
 
 def mary_sleeps : Derivation Atom S := .bapp (.lex "Mary" NP) (.lex "sleeps" IV)
 
-theorem ccg_predicts_john_sleeps : john_sleeps.interp semLexicon = some True := rfl
+theorem ccg_predicts_john_sleeps : ∃ p, john_sleeps.interp semLexicon = some p ∧ p :=
+  ⟨_, rfl, rfl⟩
 
-theorem ccg_predicts_mary_sleeps : mary_sleeps.interp semLexicon = some False := rfl
+theorem ccg_predicts_mary_sleeps : ∃ p, mary_sleeps.interp semLexicon = some p ∧ ¬ p :=
+  ⟨_, rfl, nofun⟩
 
-theorem ccg_predicts_john_sees_mary : john_sees_mary.interp semLexicon = some True := rfl
+theorem ccg_predicts_john_sees_mary : ∃ p, john_sees_mary.interp semLexicon = some p ∧ p :=
+  ⟨_, rfl, .inl ⟨rfl, rfl⟩⟩
 
 end TruthConditions
 
