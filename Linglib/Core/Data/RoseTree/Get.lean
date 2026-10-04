@@ -30,8 +30,9 @@ a binary-search-tree lookup, which has no analogue for a general rose tree.
 * `RoseTree.subtreeAt`, `RoseTree.validPaths`: the subtree at an address, and the addresses
   inside a tree, prefix-closed (`validPaths_prefix_closed`).
 * `RoseTree.IsSubtree`: the subtree relation, the subtrees being the values of `subtreeAt`
-  (`isSubtree_iff_exists_subtreeAt`). It is a partial order (`IsSubtree.antisymm`) with a
-  decision procedure the kernel evaluates.
+  (`isSubtree_iff_exists_subtreeAt`). It is a partial order (`IsSubtree.antisymm`).
+* `RoseTree.subtrees`: the subtrees in preorder, exactly those of `IsSubtree` (`mem_subtrees`),
+  which decides it.
 * `RoseTree.subtreeAt_map`: relabelling commutes with navigation.
 * `RoseTree.exists_subtreeAt_height_sub`: a maximal descent from a tree of height above `k`.
 * `RoseTree.numNodes_le_of_subtreeAt`: a subtree is no larger than its tree.
@@ -255,39 +256,36 @@ theorem IsSubtree.antisymm {s t : RoseTree α}
     (h₁ : IsSubtree s t) (h₂ : IsSubtree t s) : s = t :=
   h₁.eq_of_numNodes_le h₂.numNodes_le
 
-section DecidableIsSubtree
-variable [DecidableEq α]
-
 mutual
-/-- Structural decision procedure for `IsSubtree`, which the kernel can evaluate. -/
-protected def decIsSubtree (s : RoseTree α) : (t : RoseTree α) → Decidable (IsSubtree s t)
-  | node a cs =>
-    if h : s = node a cs then .isTrue (h ▸ .refl _)
-    else
-      match RoseTree.decIsSubtreeList s cs with
-      | .isTrue hex => .isTrue (isSubtree_node_iff.2 (.inr hex))
-      | .isFalse hno => .isFalse fun hc ↦ (isSubtree_node_iff.1 hc).elim h hno
-
-/-- Decides whether some tree of `cs` has `s` as a subtree. -/
-protected def decIsSubtreeList (s : RoseTree α) :
-    (cs : List (RoseTree α)) → Decidable (∃ c ∈ cs, IsSubtree s c)
-  | [] => .isFalse fun ⟨_, hmem, _⟩ ↦ by cases hmem
-  | c :: cs =>
-    match RoseTree.decIsSubtree s c with
-    | .isTrue hc => .isTrue ⟨c, List.mem_cons_self .., hc⟩
-    | .isFalse hc =>
-      match RoseTree.decIsSubtreeList s cs with
-      | .isTrue hex =>
-        .isTrue (have ⟨d, hmem, hd⟩ := hex; ⟨d, List.mem_cons_of_mem _ hmem, hd⟩)
-      | .isFalse hno => .isFalse fun ⟨d, hmem, hd⟩ ↦ by
-          cases hmem with
-          | head => exact hc hd
-          | tail _ hmem => exact hno ⟨d, hmem, hd⟩
+/-- `subtrees t` lists the subtrees of `t` in preorder, `t` first, one per vertex. -/
+def subtrees : RoseTree α → List (RoseTree α)
+  | t@(node _ cs) => t :: subtreesList cs
+/-- `subtreesList cs` lists the subtrees of the trees of `cs`. -/
+def subtreesList : List (RoseTree α) → List (RoseTree α)
+  | [] => []
+  | c :: cs => subtrees c ++ subtreesList cs
 end
 
-instance (s t : RoseTree α) : Decidable (IsSubtree s t) := RoseTree.decIsSubtree s t
+theorem subtreesList_eq (cs : List (RoseTree α)) : subtreesList cs = cs.flatMap subtrees := by
+  induction cs with
+  | nil => rfl
+  | cons c cs ih => rw [subtreesList, ih, List.flatMap_cons]
 
-end DecidableIsSubtree
+@[simp] theorem subtrees_node (a : α) (cs : List (RoseTree α)) :
+    (node a cs).subtrees = node a cs :: cs.flatMap subtrees := by
+  rw [subtrees, subtreesList_eq]
+
+/-- The listed subtrees are exactly the subtrees. -/
+theorem mem_subtrees {s t : RoseTree α} : s ∈ t.subtrees ↔ IsSubtree s t := by
+  induction t with
+  | node a cs ih =>
+    rw [subtrees_node, List.mem_cons, List.mem_flatMap, isSubtree_node_iff]
+    exact or_congr_right (exists_congr fun c ↦ and_congr_right fun hc ↦ ih c hc)
+
+theorem self_mem_subtrees (t : RoseTree α) : t ∈ t.subtrees := mem_subtrees.mpr (.refl t)
+
+instance [DecidableEq α] (s t : RoseTree α) : Decidable (IsSubtree s t) :=
+  decidable_of_iff _ mem_subtrees
 
 /-! ### Enumerating the addresses -/
 

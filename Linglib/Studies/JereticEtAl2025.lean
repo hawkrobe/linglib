@@ -271,14 +271,14 @@ def lesDeuxVerres : Tree Cat String := .node .NP [lesDeuxLex, verresLex]
 
 /-- Whether a tree contains the silent dual marker. -/
 def hasDualMarker (t : Tree Cat String) : Bool :=
-  t.subtrees.any λ s => match s with
-    | .terminal _ "tous_DUAL" => true
+  t.subtrees.any fun s ↦ match s with
+    | Tree.terminal _ "tous_DUAL" => true
     | _ => false
 
 /-- Whether a tree contains *les deux*. -/
 def hasLesDeux (t : Tree Cat String) : Bool :=
-  t.subtrees.any λ s => match s with
-    | .terminal _ "les_deux" => true
+  t.subtrees.any fun s ↦ match s with
+    | Tree.terminal _ "les_deux" => true
     | _ => false
 
 /-- Under French pronounceability, trees containing the silent dual marker are silent. Stipulated
