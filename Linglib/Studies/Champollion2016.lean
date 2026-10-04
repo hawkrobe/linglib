@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Core.Order.UpperLower.Closure
 public import Linglib.Semantics.Reference.ChoiceFunction
 public import Linglib.Syntax.Category.Coordinator
 public import Mathlib.Data.Set.Card
@@ -73,17 +74,6 @@ namespace Champollion2016
 open Quantifier Quantifier.NP Reference Set SetFamily
 
 variable {α E : Type*}
-
-/-! ### Minimal elements -/
-
-/-- The minimal elements of an upper closure are those of the generating set. -/
-private theorem minimal_mem_upperClosure_iff [PartialOrder α] {s : Set α} {x : α} :
-    Minimal (· ∈ upperClosure s) x ↔ Minimal (· ∈ s) x := by
-  refine ⟨fun h ↦ ?_, fun h ↦ ⟨⟨x, h.prop, le_rfl⟩, fun y ⟨a, has, hay⟩ hyx ↦ ?_⟩⟩
-  · obtain ⟨a, has, hax⟩ := h.prop
-    obtain rfl := h.eq_of_ge ⟨a, has, le_rfl⟩ hax
-    exact ⟨has, fun y hy hyx ↦ h.le_of_le ⟨y, hy, le_rfl⟩ hyx⟩
-  · exact (h.eq_of_ge has (hay.trans hyx)).symm ▸ hay
 
 /-! ### The operators -/
 
