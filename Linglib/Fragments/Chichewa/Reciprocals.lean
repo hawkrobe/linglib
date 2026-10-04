@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Fragments.Chichewa.Voice
 public import Linglib.Syntax.Reciprocal
 
 /-!
@@ -33,9 +34,9 @@ namespace Chichewa.Reciprocals
 
 open Reciprocal
 
-/-- The reciprocal suffix *-an-*. -/
+/-- The reciprocal suffix *-an-*, the marker of the reciprocal voice. -/
 def anSuffix : Marker :=
-  { form := "-an-", strategy := .verbalAffix }
+  { form := Morphology.Morph.surface Chichewa.reciprocal.marker ++ "-", strategy := .verbalAffix }
 
 /-- The marker inventory. -/
 def markers : Finset Marker := {anSuffix}
