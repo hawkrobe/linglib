@@ -44,7 +44,7 @@ open scoped FirstOrder
 structure LindstromQuantifier (L : Language.{u, v}) where
   /-- The class of structures the quantifier holds of. -/
   holds : Set (Bundled.{w} L.Structure)
-  /-- The class is closed under `L`-isomorphism (Mostowski QUANT, general form). -/
+  /-- The class is closed under `L`-isomorphism. -/
   iso_inv : ∀ {M N : Bundled.{w} L.Structure}, Nonempty (M ≃[L] N) → (M ∈ holds ↔ N ∈ holds)
 
 namespace LindstromQuantifier
