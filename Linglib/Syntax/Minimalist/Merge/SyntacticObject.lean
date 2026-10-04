@@ -195,37 +195,30 @@ example :
 
 /-! ### The pruning cuts on syntactic objects -/
 
-mutual
-private theorem odd_numNodes_of_wellFormed : ∀ {t : RoseTree Vertex}, wellFormed t = true →
-    Odd t.numNodes
-  | .node (.inl (some _)) cs, h => by
-    rw [wellFormed, List.isEmpty_iff] at h; subst h; simp
-  | .node (.inr _) cs, h => by
-    rw [wellFormed, List.isEmpty_iff] at h; subst h; simp
-  | .node (.inl none) cs, h => by
-    rw [wellFormed, Bool.and_eq_true, beq_iff_eq] at h
-    obtain ⟨hlen, hl⟩ := h
-    match cs, hlen, hl with
-    | [a, b], _, hl =>
-      simp only [wellFormedList, Bool.and_eq_true] at hl
-      obtain ⟨x, hx⟩ := odd_numNodes_of_wellFormed hl.1
-      obtain ⟨y, hy⟩ := odd_numNodes_of_wellFormed hl.2.1
+private theorem odd_numNodes_of_isSyntacticObject {t : RoseTree Vertex}
+    (h : IsSyntacticObject (UnorderedTree.mk t)) : Odd t.numNodes := by
+  induction t with
+  | node a cs ih =>
+    rcases length_eq_zero_or_two h with hlen | hlen
+    · obtain rfl := List.length_eq_zero_iff.mp hlen
+      simp
+    · obtain ⟨l, r, rfl⟩ := List.length_eq_two.mp hlen
+      obtain rfl := eq_bare_of_ne_nil h (by simp)
+      obtain ⟨hl, hr⟩ := (isSyntacticObject_mk_merge l r).mp h
+      obtain ⟨x, hx⟩ := ih l (by simp) hl
+      obtain ⟨y, hy⟩ := ih r (by simp) hr
       simp only [RoseTree.numNodes_node, List.map_cons, List.map_nil, List.sum_cons,
         List.sum_nil, add_zero]
       exact ⟨x + y + 1, by omega⟩
-    | [], h, _ => simp at h
-    | [_], h, _ => simp at h
-    | _ :: _ :: _ :: _, h, _ => simp at h
-end
 
 /-- A syntactic object, being a full binary tree, has an odd number of vertices. -/
 theorem numNodes_odd (s : SyntacticObject) : Odd s.val.numNodes := by
   obtain ⟨t, ht⟩ := s
   induction t using Quotient.inductionOn with
-  | h t => exact odd_numNodes_of_wellFormed ht
+  | h t => exact odd_numNodes_of_isSyntacticObject ht
 
-/-- A pruning cut removing one syntactic object from another leaves no syntactic object: the
-    remainder has an even number of vertices. -/
+/-- A pruning cut removing one syntactic object from another leaves no syntactic object, since
+    the remainder has an even number of vertices. -/
 theorem not_isSyntacticObject_of_mem_cutSummandsN {T mover : SyntacticObject}
     {p : Forest (UnorderedTree Vertex) × UnorderedTree Vertex} (hp : p ∈ cutSummandsN T.val)
     (hcrown : p.1 = {mover.val}) : ¬ IsSyntacticObject p.2 := fun h ↦ by

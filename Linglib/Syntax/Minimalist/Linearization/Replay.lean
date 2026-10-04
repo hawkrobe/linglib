@@ -61,7 +61,7 @@ def planarYield : RoseTree Vertex → List LIToken
   | .node (.inl none) _ => []
   | .node (.inr _) _ => []
 
-/-- The subtree projects to `target`: its unordered tree is `target`'s. -/
+/-- A subtree projects to `target` when its unordered tree is `target`'s. -/
 def projEqP (target : SyntacticObject) (s : RoseTree Vertex) : Bool :=
   decide (UnorderedTree.mk s = target.val)
 
@@ -101,26 +101,17 @@ private theorem planarFindP?_pred {p : RoseTree Vertex → Bool} {t s : RoseTree
   | case5 _ _ _ _ hp => obtain rfl := Option.some.inj h; exact hp
   | case6 => exact absurd h (by simp)
 
-/-- The daughters of a well-formed binary node are well-formed. -/
-private theorem wellFormed_pair_children {l r : RoseTree Vertex}
-    (ht : wellFormed (.node Vertex.bare [l, r]) = true) :
-    wellFormed l = true ∧ wellFormed r = true := by
-  rwa [wellFormed_merge, Bool.and_eq_true] at ht
-
 /-- A subtree raised by `planarFindP?` from a well-formed tree is well-formed. -/
-private theorem planarFindP?_wellFormed {p : RoseTree Vertex → Bool} {t s : RoseTree Vertex}
-    (h : planarFindP? p t = some s) (ht : wellFormed t = true) : wellFormed s = true := by
+private theorem planarFindP?_isSyntacticObject {p : RoseTree Vertex → Bool}
+    {t s : RoseTree Vertex} (h : planarFindP? p t = some s)
+    (ht : IsSyntacticObject (UnorderedTree.mk t)) : IsSyntacticObject (UnorderedTree.mk s) := by
   fun_induction planarFindP? p t generalizing s with
   | case1 => obtain rfl := Option.some.inj h; exact ht
   | case2 => exact absurd h (by simp)
   | case3 => obtain rfl := Option.some.inj h; exact ht
   | case4 a l r _ ihl ihr =>
-    have hcase : a = Vertex.bare := by
-      match a with
-      | .inl none => rfl
-      | .inl (some _) | .inr _ => simp [wellFormed] at ht
-    subst hcase
-    obtain ⟨hl', hr'⟩ := wellFormed_pair_children ht
+    obtain rfl := eq_bare_of_ne_nil ht (by simp)
+    obtain ⟨hl', hr'⟩ := (isSyntacticObject_mk_merge l r).mp ht
     rcases hlf : planarFindP? p l with _ | sl
     · rw [hlf, Option.none_or] at h; exact ihr h hr'
     · rw [hlf, Option.some_or] at h; obtain rfl := Option.some.inj h; exact ihl hlf hl'
@@ -130,11 +121,12 @@ private theorem planarFindP?_wellFormed {p : RoseTree Vertex → Bool} {t s : Ro
 /-- The ordered replacement by a well-formed leaf `rep` projecting to `R` forgets to the
     structural substitution `UnorderedTree.replace target R` and stays well-formed. -/
 theorem replaceWhereP_mk (target : SyntacticObject) {rep : RoseTree Vertex}
-    {R : SyntacticObject} (hrep : wellFormed rep = true) (hmkr : UnorderedTree.mk rep = R.val)
-    {t : RoseTree Vertex} (ht : wellFormed t = true) :
+    {R : SyntacticObject} (hrep : IsSyntacticObject (UnorderedTree.mk rep))
+    (hmkr : UnorderedTree.mk rep = R.val) {t : RoseTree Vertex}
+    (ht : IsSyntacticObject (UnorderedTree.mk t)) :
     UnorderedTree.mk (planarReplaceWhereP (projEqP target) rep t)
         = UnorderedTree.replace target.val R.val (UnorderedTree.mk t)
-      ∧ wellFormed (planarReplaceWhereP (projEqP target) rep t) = true := by
+      ∧ IsSyntacticObject (UnorderedTree.mk (planarReplaceWhereP (projEqP target) rep t)) := by
   fun_induction planarReplaceWhereP (projEqP target) rep t with
   | case1 _ hp =>
     refine ⟨?_, hrep⟩
@@ -149,25 +141,21 @@ theorem replaceWhereP_mk (target : SyntacticObject) {rep : RoseTree Vertex}
     refine ⟨?_, hrep⟩
     rw [projEqP_eq hp, UnorderedTree.replace_self]; exact hmkr
   | case4 a l r hp ihl ihr =>
-    have hcase : a = Vertex.bare := by
-      match a with
-      | .inl none => rfl
-      | .inl (some _) | .inr _ => simp [wellFormed] at ht
-    subst hcase
-    obtain ⟨hl', hr'⟩ := wellFormed_pair_children ht
+    obtain rfl := eq_bare_of_ne_nil ht (by simp)
+    obtain ⟨hl', hr'⟩ := (isSyntacticObject_mk_merge l r).mp ht
     obtain ⟨ihle, ihls⟩ := ihl hl'
     obtain ⟨ihre, ihrs⟩ := ihr hr'
-    refine ⟨?_, by rw [wellFormed_merge, ihls, ihrs]; rfl⟩
+    refine ⟨?_, (isSyntacticObject_mk_merge _ _).mpr ⟨ihls, ihrs⟩⟩
     have hne : UnorderedTree.node Vertex.bare {UnorderedTree.mk l, UnorderedTree.mk r}
       ≠ target.val := by
       rw [← merge_mk_raw]; exact not_projEqP hp
     rw [merge_mk_raw, ihle, ihre, merge_mk_raw, UnorderedTree.replace_node_pair, ite_eq_right hne]
   | case5 _ cs hnil hpair _ =>
-    rcases wellFormed_length ht with hlen | hlen
+    rcases length_eq_zero_or_two ht with hlen | hlen
     · exact absurd (List.length_eq_zero_iff.mp hlen) hnil
     · obtain ⟨x, y, rfl⟩ := List.length_eq_two.mp hlen; exact absurd rfl (hpair x y)
   | case6 _ cs hnil hpair _ =>
-    rcases wellFormed_length ht with hlen | hlen
+    rcases length_eq_zero_or_two ht with hlen | hlen
     · exact absurd (List.length_eq_zero_iff.mp hlen) hnil
     · obtain ⟨x, y, rfl⟩ := List.length_eq_two.mp hlen; exact absurd rfl (hpair x y)
 where
@@ -186,7 +174,7 @@ namespace PlanarSyntacticObject
 def find? (target : SyntacticObject) (acc : PlanarSyntacticObject) :
     Option PlanarSyntacticObject :=
   (planarFindP? (projEqP target) acc.val).bind fun s =>
-    if h : wellFormed s = true then some ⟨s, h⟩ else none
+    if h : IsSyntacticObject (UnorderedTree.mk s) then some ⟨s, h⟩ else none
 
 /-- Every subtree projecting to `target` replaced by the leaf `rep`. -/
 def replaceWhere (target : SyntacticObject) (rep acc : PlanarSyntacticObject) :
@@ -200,7 +188,8 @@ theorem toSyntacticObject_find? {target : SyntacticObject} {acc s : PlanarSyntac
   rcases hf : planarFindP? (projEqP target) acc.val with _ | s'
   · rw [hf] at h; exact absurd h (by simp)
   · rw [hf] at h
-    change (if h : wellFormed s' = true then some (⟨s', h⟩ : PlanarSyntacticObject) else none)
+    change (if h : IsSyntacticObject (UnorderedTree.mk s') then
+      some (⟨s', h⟩ : PlanarSyntacticObject) else none)
       = some s at h
     split at h
     · obtain rfl := Option.some.inj h
@@ -353,8 +342,8 @@ private theorem foldl_externStep_toSyntacticObject :
       · rw [hstep] at h
         rw [foldl_externStep_toSyntacticObject rest h, externStep_toSyntacticObject hstep]
 
-/-- **Faithfulness** ([marcolli-chomsky-berwick-2025] §1.12): a successful replay forgets to the
-    derived object, so the surface readouts are the word order of `final` itself. -/
+/-- By **faithfulness** ([marcolli-chomsky-berwick-2025] §1.12), a successful replay forgets to
+    the derived object, so the surface readouts are the word order of `final` itself. -/
 theorem SyntacticObject.Derivation.externalize?_faithful (d : Derivation)
     {p : PlanarSyntacticObject} (h : d.externalize? = some p) : p.toSyntacticObject = d.final := by
   rw [Derivation.externalize?] at h
@@ -365,8 +354,8 @@ theorem SyntacticObject.Derivation.externalize?_faithful (d : Derivation)
     rw [foldl_externStep_toSyntacticObject d.steps h, toPlanarLeaf?_toSyntacticObject hinit]
     rfl
 
-/-- Faithfulness holds for a prefix: a successful replay of the first `n` steps forgets to stage
-    `n`. -/
+/-- Faithfulness holds for prefixes, since a successful replay of the first `n` steps forgets to
+    stage `n`. -/
 theorem SyntacticObject.Derivation.externalize?_take_faithful (d : Derivation) (n : Nat)
     {p : PlanarSyntacticObject} (h : (d.take n).externalize? = some p) :
     p.toSyntacticObject = d.stageAt n :=
@@ -394,10 +383,10 @@ private def xAN : SyntacticObject :=
 
 /-- Without movement the order is `Dem Num A N`. -/
 private def xDerivBase : Derivation := ⟨xN, [.em .left xA, .em .left xNum, .em .left xD]⟩
-/-- Raise N around A, pied-pipe `[N A]` around Num: `Dem N A Num`. -/
+/-- Raising N around A and pied-piping `[N A]` around Num gives `Dem N A Num`. -/
 private def xDerivO : Derivation :=
   ⟨xN, [.em .left xA, .im xN, .em .left xNum, .im xNAt, .em .left xD]⟩
-/-- Pied-pipe `[A N]` around Num, no sub-raise: `Dem A N Num`. -/
+/-- Pied-piping `[A N]` around Num without a sub-raise gives `Dem A N Num`. -/
 private def xDerivN : Derivation := ⟨xN, [.em .left xA, .em .left xNum, .im xAN, .em .left xD]⟩
 
 example : xDerivBase.surfaceCats = [.D, .Num, .A, .N] := by decide
