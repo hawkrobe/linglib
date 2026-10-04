@@ -6,26 +6,22 @@ public import Mathlib.Order.Hom.Lattice
 /-!
 # Lindström generalized quantifiers
 
-`[UPSTREAM]` candidate. A (Lindström 1966; Mostowski 1957 for type `⟨1⟩`) generalized
-quantifier over a language `L` is an **isomorphism-invariant class of `L`-structures**:
-the field `holds`, a `Set (Bundled L.Structure)` closed under `L`-isomorphism. The
-iso-invariance (Mostowski's QUANT / permutation invariance, in its general
-type-`⟨1ⁿ⟩` form) is *part of the type*, not a side condition checked on a denotation.
-
-This is the same shape as mathlib's `FirstOrder.Language.age` (an iso-invariant
-`Set (Bundled L.Structure)`; cf. `age.is_equiv_invariant`) — a thin layer over
-`Bundled`/`≃[L]`, not a new framework. The first-order *definability* of such a class
-is decided by the Ehrenfeucht–Fraïssé apparatus in this directory
-(`not_foDefinable_of_nEquiv`); its per-model *realization* (a determiner denotation)
-and the linguistic generalized-quantifier API live downstream in `Semantics.Quantification`.
+`[UPSTREAM]` candidate. A generalized quantifier over a language `L`, in Lindström's sense, is a
+class of `L`-structures closed under isomorphism, so the invariance Mostowski imposed on
+quantifiers is part of the type rather than a side condition on a denotation. These classes form
+a Boolean subalgebra of the powerset of `Bundled L.Structure`. Each sentence defines one, its
+class of models, and the Ehrenfeucht–Fraïssé results in this directory decide which classes are
+defined by a sentence.
 
 ## Main definitions
 
-* `FirstOrder.Language.LindstromQuantifier` — an iso-invariant class of `L`-structures.
-* `BooleanAlgebra (LindstromQuantifier L)` — the Boolean algebra of generalized quantifiers
-  (`Qᶜ` outer negation, `Q ⊓ R`/`Q ⊔ R` conjunction/disjunction, `⊤`/`⊥` the trivial quantifiers),
-  obtained by pulling the powerset algebra back along the injective `holds`; `holdsHom` bundles that
-  embedding as a `BoundedLatticeHom`.
+* `FirstOrder.Language.LindstromQuantifier`: an isomorphism-invariant class of `L`-structures.
+* `FirstOrder.Language.LindstromQuantifier.ofSentence`: the class of models of a sentence.
+* `FirstOrder.Language.LindstromQuantifier.holdsHom`: the embedding into the powerset algebra.
+
+## References
+
+* [mostowski-1957]
 -/
 
 @[expose] public section
@@ -37,8 +33,7 @@ namespace FirstOrder.Language
 open CategoryTheory
 open scoped FirstOrder
 
-/-- A (Lindström) generalized quantifier over `L`: an isomorphism-invariant class of
-`L`-structures. The defining closure under `L`-isomorphism is built into the type. -/
+/-- A Lindström quantifier over `L` is a class of `L`-structures closed under `L`-isomorphism. -/
 @[ext]
 structure LindstromQuantifier (L : Language.{u, v}) where
   /-- The class of structures the quantifier holds of. -/
@@ -92,9 +87,9 @@ instance : BooleanAlgebra (LindstromQuantifier.{u, v, w} L) :=
 @[simp] theorem holds_top : (⊤ : LindstromQuantifier.{u, v, w} L).holds = Set.univ := rfl
 @[simp] theorem holds_bot : (⊥ : LindstromQuantifier.{u, v, w} L).holds = ∅ := rfl
 
-/-- `holds` bundled: the embedding of the generalized-quantifier Boolean algebra into the powerset
-algebra `Set (Bundled L.Structure)` is a `BoundedLatticeHom` (it also preserves `ᶜ`, see
-`holds_compl`) — the pulled-back powerset algebra, bundled. -/
+/-- `holdsHom` is the embedding of the quantifiers into the powerset algebra
+`Set (Bundled L.Structure)` as a bounded lattice homomorphism; it also preserves complements
+(`holds_compl`). -/
 def holdsHom :
     BoundedLatticeHom (LindstromQuantifier.{u, v, w} L) (Set (Bundled.{w} L.Structure)) where
   toFun := holds
@@ -102,6 +97,14 @@ def holdsHom :
   map_inf' _ _ := rfl
   map_top' := rfl
   map_bot' := rfl
+
+/-- The quantifier defined by a sentence holds of exactly the models of the sentence. -/
+def ofSentence (φ : L.Sentence) : LindstromQuantifier.{u, v, w} L where
+  holds := {M | M ⊨ φ}
+  iso_inv := fun ⟨e⟩ => StrongHomClass.realize_sentence e φ
+
+@[simp] theorem mem_holds_ofSentence {φ : L.Sentence} {M : Bundled.{w} L.Structure} :
+    M ∈ (ofSentence φ).holds ↔ M ⊨ φ := Iff.rfl
 
 end LindstromQuantifier
 

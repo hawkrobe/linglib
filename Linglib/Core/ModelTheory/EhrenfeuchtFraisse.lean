@@ -18,21 +18,23 @@ Hintikka formulas. This is the rank-bounded counterpart of mathlib's `IsExtensio
 
 ## Main definitions
 
-* `FirstOrder.Language.NEquiv`: `n`-equivalence of structures.
+* `FirstOrder.Language.ElementarilyEquivalentUpTo`: `n`-equivalence of structures.
 * `FirstOrder.Language.FODefinable`: definability of a class of structures within a class.
 * `FirstOrder.Language.BackForth`: the rank-`k` back-and-forth relation on tuples.
 * `FirstOrder.Language.hintikka`: the rank-`k` Hintikka formula of a tuple.
 
 ## Main results
 
-* `FirstOrder.Language.not_foDefinable_of_nEquiv`: the Ehrenfeucht–Fraïssé method for
-  undefinability.
+* `FirstOrder.Language.not_foDefinable_of_elementarilyEquivalentUpTo`: the Ehrenfeucht–Fraïssé
+  method for undefinability.
 * `FirstOrder.Language.BackForth.realize_iff`: back-and-forth implies agreement on formulas of
   quantifier rank `≤ k`.
-* `FirstOrder.Language.backForth_iff_realize_iff`, `FirstOrder.Language.nEquiv_iff_backForth`:
-  the converse over a finite relational signature.
-* `FirstOrder.Language.foDefinable_iff_exists_nEquiv`: over a finite relational signature, a class
-  is definable within `K` iff it is closed under `NEquiv k` within `K` for some `k`.
+* `FirstOrder.Language.backForth_iff_realize_iff`,
+  `FirstOrder.Language.elementarilyEquivalentUpTo_iff_backForth`: the converse over a finite
+  relational signature.
+* `FirstOrder.Language.foDefinable_iff_exists_elementarilyEquivalentUpTo`: over a finite relational
+  signature, a class is definable within `K` iff it is closed under `n`-equivalence within `K` for
+  some `n`.
 
 ## Implementation notes
 
@@ -61,10 +63,15 @@ variable (L : Language.{u, v}) {M : Type w} {N : Type w'} {P : Type w''}
 
 /-! ### `n`-equivalence and definability -/
 
-/-- Two structures are `n`-equivalent when they satisfy the same sentences of quantifier rank
-`≤ n`. -/
-def NEquiv (n : ℕ) (M : Type w) (N : Type w') [L.Structure M] [L.Structure N] : Prop :=
+/-- Two structures are elementarily equivalent up to `n`, or `n`-equivalent, when they satisfy the
+same sentences of quantifier rank `≤ n`. -/
+def ElementarilyEquivalentUpTo (n : ℕ) (M : Type w) (N : Type w') [L.Structure M]
+    [L.Structure N] : Prop :=
   ∀ φ : L.Sentence, φ.qr ≤ n → (M ⊨ φ ↔ N ⊨ φ)
+
+@[inherit_doc FirstOrder.Language.ElementarilyEquivalentUpTo]
+scoped[FirstOrder] notation:25 A " ≅[" L ", " n "] " B:50 =>
+  FirstOrder.Language.ElementarilyEquivalentUpTo L n A B
 
 /-- A class `P` of structures is *first-order definable within* `K` when some sentence holds of
 exactly the members of `P` among the structures in `K`. -/
@@ -73,31 +80,32 @@ def FODefinable (K P : Set (Bundled.{w} L.Structure)) : Prop :=
 
 variable {L} {k l n : ℕ}
 
-namespace NEquiv
+namespace ElementarilyEquivalentUpTo
 
 variable (L) in
-@[refl] theorem refl (n : ℕ) (M : Type w) [L.Structure M] : L.NEquiv n M M := fun _ _ => Iff.rfl
+@[refl] theorem refl (n : ℕ) (M : Type w) [L.Structure M] : M ≅[L, n] M := fun _ _ => Iff.rfl
 
-@[symm] theorem symm (h : L.NEquiv n M N) : L.NEquiv n N M := fun φ hφ => (h φ hφ).symm
+@[symm] theorem symm (h : M ≅[L, n] N) : N ≅[L, n] M := fun φ hφ => (h φ hφ).symm
 
-@[trans] theorem trans (h₁ : L.NEquiv n M N) (h₂ : L.NEquiv n N P) : L.NEquiv n M P :=
+@[trans] theorem trans (h₁ : M ≅[L, n] N) (h₂ : N ≅[L, n] P) : M ≅[L, n] P :=
   fun φ hφ => (h₁ φ hφ).trans (h₂ φ hφ)
 
-theorem mono (hkn : k ≤ n) (h : L.NEquiv n M N) : L.NEquiv k M N :=
+theorem mono (hkn : k ≤ n) (h : M ≅[L, n] N) : M ≅[L, k] N :=
   fun φ hφ => h φ (hφ.trans hkn)
 
-end NEquiv
+end ElementarilyEquivalentUpTo
 
 /-- `ElementarilyEquivalent` is `n`-equivalence at every rank. -/
-theorem elementarilyEquivalent_iff_forall_nEquiv : M ≅[L] N ↔ ∀ n, L.NEquiv n M N :=
+theorem elementarilyEquivalent_iff_forall_elementarilyEquivalentUpTo :
+    M ≅[L] N ↔ ∀ n, M ≅[L, n] N :=
   ⟨fun h _ φ _ => h.realize_sentence φ,
     fun h => elementarilyEquivalent_iff.2 fun φ => h φ.qr φ le_rfl⟩
 
 /-- **The Ehrenfeucht–Fraïssé method.** If for every rank `n` some structure in `K` with
 property `P` is `n`-equivalent to one in `K` without it, then `P` is not definable within `K`,
 since a defining sentence would be fooled at its own quantifier rank. -/
-theorem not_foDefinable_of_nEquiv {K P : Set (Bundled.{w} L.Structure)}
-    (h : ∀ n, ∃ M ∈ K, ∃ N ∈ K, L.NEquiv n M N ∧ M ∈ P ∧ N ∉ P) : ¬ L.FODefinable K P := by
+theorem not_foDefinable_of_elementarilyEquivalentUpTo {K P : Set (Bundled.{w} L.Structure)}
+    (h : ∀ n, ∃ M ∈ K, ∃ N ∈ K, (M ≅[L, n] N) ∧ M ∈ P ∧ N ∉ P) : ¬ L.FODefinable K P := by
   rintro ⟨φ, hφ⟩
   obtain ⟨M, hM, N, hN, hMN, hP, hnP⟩ := h φ.qr
   exact hnP ((hφ N hN).2 ((hMN φ le_rfl).1 ((hφ M hM).1 hP)))
@@ -164,8 +172,8 @@ theorem realize_iff : ∀ {n} {φ : L.BoundedFormula Empty n} {k} {v : Fin n →
         fun hw a => (h.forth a).elim fun b hab => (realize_iff hab hφ).2 (hw b)⟩
 
 /-- On the empty tuples, the rank-`k` relation gives `k`-equivalence. -/
-theorem nEquiv (h : L.BackForth k (default : Fin 0 → M) (default : Fin 0 → N)) :
-    L.NEquiv k M N :=
+theorem elementarilyEquivalentUpTo (h : L.BackForth k (default : Fin 0 → M) (default : Fin 0 → N)) :
+    M ≅[L, k] N :=
   fun _ hφ => h.realize_iff hφ
 
 theorem symm : ∀ {k n} {v : Fin n → M} {w : Fin n → N}, L.BackForth k v w → L.BackForth k w v
@@ -410,15 +418,16 @@ theorem backForth_iff_realize_iff (v : Fin n → M) (w : Fin n → N) :
   ⟨fun h _ hφ => h.realize_iff hφ, fun h => (realize_hintikka_iff v w).1
     ((h _ (qr_hintikka_le k v)).1 (realize_hintikka_self k v))⟩
 
-theorem nEquiv_iff_backForth :
-    L.NEquiv k M N ↔ L.BackForth k (default : Fin 0 → M) (default : Fin 0 → N) :=
-  ⟨fun h => (backForth_iff_realize_iff _ _).2 fun φ hφ => h φ hφ, BackForth.nEquiv⟩
+theorem elementarilyEquivalentUpTo_iff_backForth :
+    (M ≅[L, k] N) ↔ L.BackForth k (default : Fin 0 → M) (default : Fin 0 → N) :=
+  ⟨fun h => (backForth_iff_realize_iff _ _).2 fun φ hφ => h φ hφ,
+    BackForth.elementarilyEquivalentUpTo⟩
 
 /-- Over a finite relational signature, a class is first-order definable within `K` iff, for some
 `k`, it is closed under `k`-equivalence within `K` ([libkin-2004] Corollary 3.17). The defining
 sentence is the disjunction of the rank-`k` Hintikka sentences of its members. -/
-theorem foDefinable_iff_exists_nEquiv {K P : Set (Bundled.{w} L.Structure)} :
-    L.FODefinable K P ↔ ∃ k, ∀ M ∈ K, ∀ N ∈ K, L.NEquiv k M N → M ∈ P → N ∈ P := by
+theorem foDefinable_iff_exists_elementarilyEquivalentUpTo {K P : Set (Bundled.{w} L.Structure)} :
+    L.FODefinable K P ↔ ∃ k, ∀ M ∈ K, ∀ N ∈ K, (M ≅[L, k] N) → M ∈ P → N ∈ P := by
   classical
   refine ⟨fun ⟨φ, hφ⟩ => ⟨φ.qr, fun M hM N hN h hP => (hφ N hN).2 ((h φ le_rfl).1
     ((hφ M hM).1 hP))⟩, fun ⟨k, hk⟩ => ⟨iSup fun θ : (L.hintikkaSet k 0).filter
@@ -428,7 +437,7 @@ theorem foDefinable_iff_exists_nEquiv {K P : Set (Bundled.{w} L.Structure)} :
   refine ⟨fun hP => ⟨_, ⟨hintikka_mem k default, M, hM, hP, realize_hintikka_self k _⟩,
     realize_hintikka_self k _⟩, fun ⟨θ, ⟨hθ, N, hN, hP, hNθ⟩, hMθ⟩ => ?_⟩
   obtain rfl := eq_hintikka_of_realize _ hθ hNθ
-  exact hk N hN M hM ((realize_hintikka_iff _ _).1 hMθ).nEquiv hP
+  exact hk N hN M hM ((realize_hintikka_iff _ _).1 hMθ).elementarilyEquivalentUpTo hP
 
 end Hintikka
 

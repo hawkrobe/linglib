@@ -376,24 +376,24 @@ sentence with fewer than `m` quantifiers, their (5). B&C prove (5) by extending 
 correspondence that respects `U` and `V` one step at each quantifier, their (6), since "there is
 always enough room": below `m`, every Venn region of the two models is either the same set or
 large in both. That argument is the Ehrenfeucht–Fraïssé game on monadic models, so (5) is
-`Quantifier.Lindstrom.nEquiv_structOfAB_iff` applied to the two models (`nEquiv_struc`), for
-quantifier rank, which is at most the number of quantifiers. -/
+`elementarilyEquivalentUpTo_monadicStructure_iff` applied to the two models
+(`elementarilyEquivalentUpTo_struc`), for quantifier rank, which is at most the number of
+quantifiers. The language is `Language.monadic (Fin 2)`, with `U` as `pred 0` and `V` as
+`pred 1`. -/
 
 namespace BarwiseCooper1981
 
 open FirstOrder Language
 
-open Quantifier.Lindstrom (L_UV uRel vRel structOfAB nEquiv_structOfAB_iff)
-
 /-- The structure `M₁`, in which `U` is `[0, m)` and `V` is `[0, 2m)`, so that exactly half the
 `V`'s are `U`'s. -/
-@[reducible] def struc₁ (m k : ℕ) : L_UV.Structure (Fin k) :=
-  structOfAB (fun x => x.val < m) (fun x => x.val < 2 * m)
+@[reducible] def struc₁ (m k : ℕ) : (Language.monadic (Fin 2)).Structure (Fin k) :=
+  monadicStructure (Fin k) ![fun x => x.val < m, fun x => x.val < 2 * m]
 
 /-- The structure `M₂`, in which `U` is `[0, m+1)` and `V` is `[0, 2m)`, so that more than
 half the `V`'s are `U`'s. -/
-@[reducible] def struc₂ (m k : ℕ) : L_UV.Structure (Fin k) :=
-  structOfAB (fun x => x.val < m + 1) (fun x => x.val < 2 * m)
+@[reducible] def struc₂ (m k : ℕ) : (Language.monadic (Fin 2)).Structure (Fin k) :=
+  monadicStructure (Fin k) ![fun x => x.val < m + 1, fun x => x.val < 2 * m]
 
 private theorem le_encard_of_Ico {k lo hi t : ℕ} {s : Set (Fin k)} (hhi : hi ≤ k)
     (ht : t ≤ hi - lo) (hs : ∀ x : Fin k, lo ≤ x.val → x.val < hi → x ∈ s) :
@@ -414,9 +414,11 @@ private theorem min_eq_min_of_le {t k : ℕ} {s s' : Set (Fin k)} (h : (t : ℕ�
 for quantifier rank this is `(m - 1)`-equivalence, since each Venn region of `U` and `V` is either
 the same set in both models or has at least `m - 1` elements in both. The region outside `V` is
 the same set, so `2m ≤ k` suffices where B&C take `k ≥ 3m`. -/
-theorem nEquiv_struc (m k : ℕ) (hm : 0 < m) (hk : 2 * m ≤ k) :
-    @NEquiv L_UV (m - 1) (Fin k) (Fin k) (struc₁ m k) (struc₂ m k) := by
-  refine nEquiv_structOfAB_iff.2 ⟨?_, ?_, ?_, ?_⟩
+theorem elementarilyEquivalentUpTo_struc (m k : ℕ) (hm : 0 < m) (hk : 2 * m ≤ k) :
+    @ElementarilyEquivalentUpTo _ (m - 1) (Fin k) (Fin k) (struc₁ m k) (struc₂ m k) := by
+  refine elementarilyEquivalentUpTo_monadicStructure_iff.2 fun S => ?_
+  simp only [Fin.forall_fin_two, Matrix.cons_val_zero, Matrix.cons_val_one]
+  by_cases h₀ : S 0 <;> by_cases h₁ : S 1 <;> simp only [h₀, h₁, iff_true, iff_false]
   · exact min_eq_min_of_le (le_encard_of_Ico (lo := 0) (hi := m) (by omega) (by omega)
       fun x _ hx => ⟨hx, by omega⟩) (le_encard_of_Ico (lo := 0) (hi := m) (by omega) (by omega)
       fun x _ hx => ⟨by omega, by omega⟩)
@@ -434,8 +436,8 @@ def MostUV {M : Type} (U V : M → Prop) : Prop :=
   2 * Set.ncard {x | U x ∧ V x} > Set.ncard {x | V x}
 
 /-- The *more than half* truth condition over a structure. -/
-def MoreThanHalf (M : Type) (S : L_UV.Structure M) : Prop :=
-  MostUV (fun x => S.RelMap uRel ![x]) (fun x => S.RelMap vRel ![x])
+def MoreThanHalf (M : Type) (S : (Language.monadic (Fin 2)).Structure M) : Prop :=
+  MostUV (fun x => S.RelMap (.pred 0) ![x]) (fun x => S.RelMap (.pred 1) ![x])
 
 private theorem ncard_val_lt (n c : ℕ) (hc : c ≤ n) :
     Set.ncard {x : Fin n | x.val < c} = c := by
@@ -448,17 +450,17 @@ private theorem ncard_val_lt (n c : ℕ) (hc : c ≤ n) :
 
 /-- `MoreThanHalf` over a structure whose `U` is `[0, c)` and `V` is
 `[0, 2m)` reduces to the count comparison `2 * c > 2 * m`. -/
-private theorem moreThanHalf_iff {k m c : ℕ} (S : L_UV.Structure (Fin k))
-    (hU : ∀ x : Fin k, S.RelMap uRel ![x] ↔ x.val < c)
-    (hV : ∀ x : Fin k, S.RelMap vRel ![x] ↔ x.val < 2 * m)
+private theorem moreThanHalf_iff {k m c : ℕ} (S : (Language.monadic (Fin 2)).Structure (Fin k))
+    (hU : ∀ x : Fin k, S.RelMap (.pred 0) ![x] ↔ x.val < c)
+    (hV : ∀ x : Fin k, S.RelMap (.pred 1) ![x] ↔ x.val < 2 * m)
     (hc : c ≤ 2 * m) (hm : 2 * m ≤ k) :
     MoreThanHalf (Fin k) S ↔ 2 * c > 2 * m := by
-  have hUV : {x : Fin k | S.RelMap uRel ![x] ∧ S.RelMap vRel ![x]}
+  have hUV : {x : Fin k | S.RelMap (.pred 0) ![x] ∧ S.RelMap (.pred 1) ![x]}
       = {x : Fin k | x.val < c} := by
     ext x
     rw [Set.mem_ofPred_eq, Set.mem_ofPred_eq, hU, hV]
     omega
-  have hVs : {x : Fin k | S.RelMap vRel ![x]}
+  have hVs : {x : Fin k | S.RelMap (.pred 1) ![x]}
       = {x : Fin k | x.val < 2 * m} := by
     ext x
     rw [Set.mem_ofPred_eq, Set.mem_ofPred_eq, hV]
@@ -469,9 +471,9 @@ private theorem moreThanHalf_iff {k m c : ℕ} (S : L_UV.Structure (Fin k))
 unary predicates is true in exactly the finite models where more than half the `V`'s are `U`'s,
 the formal core of the claim that *most* is a determiner, not a quantifier. -/
 theorem more_than_half_not_definable :
-    ¬ ∃ φ : L_UV.Sentence, ∀ (M : Type) [Fintype M] [Nonempty M]
-      (S : L_UV.Structure M),
-      (@Sentence.Realize L_UV M S φ ↔ MoreThanHalf M S) := by
+    ¬ ∃ φ : (Language.monadic (Fin 2)).Sentence, ∀ (M : Type) [Fintype M] [Nonempty M]
+      (S : (Language.monadic (Fin 2)).Structure M),
+      (@Sentence.Realize _ M S φ ↔ MoreThanHalf M S) := by
   rintro ⟨φ, hφ⟩
   set m := φ.qr + 1 with hm
   -- M₁ does not satisfy more-than-half: |U₁ ∩ V| = m, |V| = 2m
@@ -485,7 +487,7 @@ theorem more_than_half_not_definable :
       (by omega) (by omega)]
     omega
   -- but they agree on φ, by (5)
-  have hagree := nEquiv_struc m (3 * m + 1) (by omega) (by omega) φ (by omega)
+  have hagree := elementarilyEquivalentUpTo_struc m (3 * m + 1) (by omega) (by omega) φ (by omega)
   exact hmth₁ ((hφ _ (struc₁ m (3 * m + 1))).mp
     (hagree.mpr ((hφ _ (struc₂ m (3 * m + 1))).mpr hmth₂)))
 end BarwiseCooper1981
@@ -508,7 +510,6 @@ agree on `φ*` by (5), "since `φ*` is a first-order sentence with `c(φ*) < m`"
 namespace BarwiseCooper1981
 
 open FirstOrder Language
-open Quantifier.Lindstrom (L_UV uRel vRel structOfAB structOfAB_relMap_V)
 
 /-- The formulas of Barwise and Cooper's `L(Q)`, the monadic language of C12 with the atoms
 `U`, `V` and equality plus the unrelativized majority quantifier `Qx[·]`, in de Bruijn
@@ -549,14 +550,14 @@ def numQ : ∀ {n : ℕ}, QFormula n → ℕ
 
 /-- B&C's `Q`-elimination `ψ*` (p. 215) translates `L(Q)` into the first-order language of C12,
 sending `Qx θ` to "every `x` is in `V`, equal to a free variable, or satisfies `θ*`". -/
-noncomputable def star : ∀ {n : ℕ}, QFormula n → L_UV.BoundedFormula Empty n
+noncomputable def star : ∀ {n : ℕ}, QFormula n → (Language.monadic (Fin 2)).BoundedFormula Empty n
   | _, .falsum => ⊥
   | _, .equal i j => (&i).bdEqual &j
-  | _, .isU i => uRel.boundedFormula₁ &i
-  | _, .isV i => vRel.boundedFormula₁ &i
+  | _, .isU i => Relations.boundedFormula₁ (.pred 0) &i
+  | _, .isV i => Relations.boundedFormula₁ (.pred 1) &i
   | _, .imp f₁ f₂ => (star f₁).imp (star f₂)
   | _, .all f => (star f).all
-  | n, .qx f => (vRel.boundedFormula₁ &(Fin.last n) ⊔
+  | n, .qx f => (Relations.boundedFormula₁ (L := Language.monadic (Fin 2)) (.pred 1) &(Fin.last n) ⊔
       ((BoundedFormula.iSup fun i : Fin n => (&(Fin.last n)).bdEqual &i.castSucc) ⊔ star f)).all
 
 /-- The translation adds no quantifier nesting beyond `ψ`'s quantifier count, a form of B&C's
@@ -642,7 +643,7 @@ theorem realize_star_iff {E : Type} [Fintype E] {U V : E → Prop}
     ∀ {n : ℕ} (ψ : QFormula n),
       2 * (Set.ncard {x | V x} + (numQ ψ + n)) ≤ Fintype.card E →
       ∀ xs : Fin n → E,
-        (@BoundedFormula.Realize L_UV E (structOfAB U V) Empty n (star ψ) default xs ↔
+        (@BoundedFormula.Realize _ E (monadicStructure E ![U, V]) Empty n (star ψ) default xs ↔
           ψ.Realize U V xs)
   | _, .falsum, _, _ => Iff.rfl
   | _, .equal _ _, _, _ => Iff.rfl
@@ -662,7 +663,7 @@ theorem realize_star_iff {E : Type} [Fintype E] {U V : E → Prop}
       have := Classical.decEq E
       have hq : numQ (qx f) = numQ f + 1 := rfl
       rw [hq] at hb
-      let _ : L_UV.Structure E := structOfAB U V
+      let _ : (Language.monadic (Fin 2)).Structure E := monadicStructure E ![U, V]
       have hIH : ∀ b, ((star f).Realize default (Fin.snoc xs b) ↔
           f.Realize U V (Fin.snoc xs b)) := fun b =>
         realize_star_iff hUV f (by omega) (Fin.snoc xs b)
@@ -673,7 +674,7 @@ theorem realize_star_iff {E : Type} [Fintype E] {U V : E → Prop}
         simp only [BoundedFormula.realize_sup, BoundedFormula.realize_iSup,
           BoundedFormula.realize_bdEqual, BoundedFormula.realize_rel₁, Term.realize_var,
           Function.comp_apply, Sum.elim_inr, Fin.snoc_last, Fin.snoc_castSucc,
-          structOfAB_relMap_V, hIH b]
+          relMap_monadicStructure, Matrix.cons_val_one, hIH b]
         constructor
         · rintro (hv | ⟨i, hi⟩ | hf) hnv hne
           · exact absurd hv hnv
@@ -797,7 +798,7 @@ theorem more_than_half_not_Q_definable :
     (by rw [show {x : Fin k | x.val < 2 * m}.ncard = 2 * m from hcardV,
       Fintype.card_fin]; omega)
   -- by (5), since `φ*` is a first-order sentence of quantifier rank below `m`
-  have htrans := nEquiv_struc m k (by omega) (by omega) (QFormula.star φ)
+  have htrans := elementarilyEquivalentUpTo_struc m k (by omega) (by omega) (QFormula.star φ)
     ((QFormula.qr_star_le φ).trans (by omega))
   exact hfalse₁ (hcast _ _ ((hP₁ _).mp (htrans.mpr ((hP₂ _).mpr (hcast _ _ htrue₂)))))
 
@@ -835,11 +836,11 @@ theorem mostUV_iff_most_sem {M : Type} [Fintype M] (U V : M → Prop) :
 /-- C12 restated through `most` says that no first-order sentence expresses `most` over finite
 models. -/
 theorem most_sem_not_definable :
-    ¬ ∃ φ : L_UV.Sentence, ∀ (M : Type) [Fintype M] [Nonempty M]
-      (S : L_UV.Structure M),
-      (@Sentence.Realize L_UV M S φ ↔
-        Quantifier.GQ.most (fun x => S.RelMap vRel ![x])
-          (fun x => S.RelMap uRel ![x])) := by
+    ¬ ∃ φ : (Language.monadic (Fin 2)).Sentence, ∀ (M : Type) [Fintype M] [Nonempty M]
+      (S : (Language.monadic (Fin 2)).Structure M),
+      (@Sentence.Realize _ M S φ ↔
+        Quantifier.GQ.most (fun x => S.RelMap (.pred 1) ![x])
+          (fun x => S.RelMap (.pred 0) ![x])) := by
   rintro ⟨φ, hφ⟩
   exact more_than_half_not_definable ⟨φ, fun M _ _ S =>
     (hφ M S).trans (mostUV_iff_most_sem _ _).symm⟩
@@ -849,20 +850,20 @@ theorem most_sem_not_definable :
 open Semantics.Composition in
 set_option linter.style.haveILetI false in
 /-- No tree of the compiled fragment means *most*, since for any logical vocabulary and disjoint
-naming maps over `L_UV`, no closed tree of the first-order fragment has, across all nonempty
-finite models, exactly the truth conditions of `most`; this is C12 stated about `Tree.interp`
-itself, via the agreement theorem `holdsAt_iff_realize`, so the fragment's partiality at *most*
-is a theorem, not a design choice. -/
-theorem no_tree_means_most (fw : FOWords) (nm : LexNaming L_UV)
+naming maps over the language of C12, no closed tree of the first-order fragment has, across all
+nonempty finite models, exactly the truth conditions of `most`; this is C12 stated about
+`Tree.interp` itself, via the agreement theorem `holdsAt_iff_realize`, so the fragment's
+partiality at *most* is a theorem, not a design choice. -/
+theorem no_tree_means_most (fw : FOWords) (nm : LexNaming (Language.monadic (Fin 2)))
     (hnd : fw.Nodup) (hfr : fw.FreshFor nm) (hdj : nm.Disjoint) :
-    ¬ ∃ (t : Syntax.Tree Unit String) (φ : L_UV.Formula ℕ)
+    ¬ ∃ (t : Syntax.Tree Unit String) (φ : (Language.monadic (Fin 2)).Formula ℕ)
         (_ : compileFO fw nm t = some φ) (_ : φ.freeVarFinset = ∅),
-      ∀ (M : Type) [Fintype M] [Nonempty M] (S : L_UV.Structure M)
+      ∀ (M : Type) [Fintype M] [Nonempty M] (S : (Language.monadic (Fin 2)).Structure M)
         (g : Assignment M),
         HoldsAt (Model.ofStructure M S)
           ((Model.ofStructure M S).lexiconFO fw nm ()) g t ↔
-          Quantifier.GQ.most (fun x => S.RelMap vRel ![x])
-            (fun x => S.RelMap uRel ![x]) := by
+          Quantifier.GQ.most (fun x => S.RelMap (.pred 1) ![x])
+            (fun x => S.RelMap (.pred 0) ![x]) := by
   rintro ⟨t, φ, h, hcl, htree⟩
   refine most_sem_not_definable ⟨φ.toSentence hcl, ?_⟩
   intro M _ _ S
