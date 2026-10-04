@@ -33,7 +33,7 @@ occurrences silences it everywhere. An [E] head applies once per distinct comple
 
 namespace Minimalist
 
-open RoseTree SyntacticObject Core.Order Core.Order.Branching
+open RoseTree SyntacticObject Core.Order
 
 variable (t : PlanarSyntacticObject)
 

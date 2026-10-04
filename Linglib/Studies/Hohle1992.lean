@@ -49,14 +49,14 @@ verbs, relative and interrogative pronouns without a particle, and verb-final ve
 
 namespace Hohle1992
 
-open Core.Order Core.Order.Branching Syntax
+open Core.Order Syntax
 
 /-! ### The peripheral structure of (76) -/
 
-/-- Constituent labels: the clause, the position in front of Φ holding a Vorfeld constituent or
-a relative or interrogative phrase, the peripheral position Φ of (76), its complement Π
-(Mittelfeld, verbal complex and Nachfeld), and inside Π the negation particle, the verb position
-and other material. -/
+/-- The constituent labels are the clause, the position in front of Φ holding a Vorfeld constituent
+or a relative or interrogative phrase, the peripheral position Φ of (76), its complement Π
+(Mittelfeld, verbal complex and Nachfeld), and inside Π the negation particle, the verb position and
+other material. -/
 inductive Node
   | clause
   | front
@@ -67,42 +67,42 @@ inductive Node
   | other
   deriving DecidableEq, Repr
 
-/-- (55a) *er HÖRT ihr nicht zu*: the finite verb fills Φ and binds a trace in Π. -/
+/-- In (55a) *er HÖRT ihr nicht zu* the finite verb fills Φ and binds a trace in Π. -/
 def fClause : Tree Node String :=
   .node .clause [.terminal .front "er",
     .node .clause [.terminal .phi "hört",
       .node .pi [.terminal .other "ihr", .terminal .neg "nicht", .terminal .other "zu",
         .trace 1 .verb]]]
 
-/-- (55b) *daß er ihr nicht zuhört*: the complementizer fills Φ and binds nothing. -/
+/-- In (55b) *daß er ihr nicht zuhört* the complementizer fills Φ and binds nothing. -/
 def cClause : Tree Node String :=
   .node .clause [.terminal .phi "daß",
     .node .pi [.terminal .other "er", .terminal .other "ihr", .terminal .neg "nicht",
       .terminal .verb "zuhört"]]
 
-/-- (81) *WER hat den Hund getreten*: an interrogative pronoun in front of a filled Φ. -/
+/-- In (81) *WER hat den Hund getreten* an interrogative pronoun precedes a filled Φ. -/
 def whClause : Tree Node String :=
   .node .clause [.terminal .front "wer",
     .node .clause [.terminal .phi "hat",
       .node .pi [.terminal .other "den", .terminal .other "Hund", .terminal .other "getreten",
         .trace 1 .verb]]]
 
-/-- (82a) *DER das Buch gelesen hat*: a relative pronoun in front of an empty Φ (91ii). -/
+/-- In (82a) *DER das Buch gelesen hat* a relative pronoun precedes an empty Φ (91ii). -/
 def rwClause : Tree Node String :=
   .node .clause [.terminal .front "der",
     .node .clause [.node .phi [],
       .node .pi [.terminal .other "das", .terminal .other "Buch", .terminal .other "gelesen",
         .terminal .verb "hat"]]]
 
-/-- (77a) and (80a) *der WO das Buch gelesen hat*: a relative pronoun in front of a Φ filled by
-the dialectal relative particle. -/
+/-- In (77a) and (80a) *der WO das Buch gelesen hat* a relative pronoun stands in front of a Φ
+filled by the dialectal relative particle. -/
 def woClause : Tree Node String :=
   .node .clause [.terminal .front "der",
     .node .clause [.terminal .phi "wo",
       .node .pi [.terminal .other "das", .terminal .other "Buch", .terminal .other "gelesen",
         .terminal .verb "hat"]]]
 
-/-- (68b) *daß sie damit aufHÖRT*: the finite verb stays in final position inside Π. -/
+/-- In (68b) *daß sie damit aufHÖRT* the finite verb stays in final position inside Π. -/
 def finalClause : Tree Node String :=
   .node .clause [.terminal .phi "daß",
     .node .pi [.terminal .other "sie", .terminal .other "damit", .terminal .other "auf",
@@ -110,7 +110,7 @@ def finalClause : Tree Node String :=
 
 /-! ### The scope rule (60) -/
 
-/-- The relation SR of (60), read as c-command with reconstruction (footnote 7): `k₁` stands
+/-- The relation SR of (60), read as c-command with reconstruction (footnote 7). `k₁` stands
 in SR to `k₂` in `t` when `k₂` c-commands `k₁` or a trace that `k₁` binds. -/
 def SR (t : Tree Node String) (binds : List (TreePath × TreePath)) (k₁ k₂ : TreePath) : Prop :=
   (k₂, k₁) ∈ cCommandAt t ∨ ∃ b ∈ binds, b.1 = k₁ ∧ (k₂, b.2) ∈ cCommandAt t
@@ -119,7 +119,7 @@ instance (t : Tree Node String) (binds : List (TreePath × TreePath)) (k₁ k₂
     Decidable (SR t binds k₁ k₂) := by
   unfold SR; infer_instance
 
-/-- A negated clause with verum focus: its tree, the trace bindings, the position of the
+/-- A negated clause with verum focus records its tree, the trace bindings, the position of the
 accented word carrying VERUM and the position of the negation particle. -/
 structure Configuration where
   tree : Tree Node String
@@ -127,10 +127,10 @@ structure Configuration where
   focus : TreePath
   neg : TreePath
 
-/-- (55a): verum focus on the fronted finite verb, reconstructed to its trace. -/
+/-- In (55a) verum focus is on the fronted finite verb, reconstructed to its trace. -/
 def negatedF : Configuration := ⟨fClause, [(⟨[1, 0]⟩, ⟨[1, 1, 3]⟩)], ⟨[1, 0]⟩, ⟨[1, 1, 1]⟩⟩
 
-/-- (55b): verum focus on the complementizer. -/
+/-- In (55b) verum focus is on the complementizer. -/
 def negatedC : Configuration := ⟨cClause, [], ⟨[0]⟩, ⟨[1, 2]⟩⟩
 
 /-- The two scopings of VERUM relative to the negation, paraphrased in (56a) and (56b). -/
@@ -139,8 +139,8 @@ inductive Scoping
   | verumOverNeg
   deriving DecidableEq
 
-/-- (60) applied to VERUM and the negation: VERUM may lie in the scope of the negation iff the
-accented constituent stands in SR to the negation particle, and conversely. -/
+/-- Applied to VERUM and the negation, (60) says that VERUM may lie in the scope of the negation iff
+the accented constituent stands in SR to the negation particle, and conversely. -/
 def Scoping.Admissible (c : Configuration) : Scoping → Prop
   | .negOverVerum => SR c.tree c.binds c.focus c.neg
   | .verumOverNeg => SR c.tree c.binds c.neg c.focus
@@ -172,13 +172,13 @@ inductive WF
 
 variable {W : Type*}
 
-/-- The extension of a WF element: VERUM is a truth predicate, so it maps a thought to itself. -/
+/-- The extension of a WF element. VERUM, a truth predicate, maps a thought to itself. -/
 def WF.apply : WF → Set W → Set W
   | .verum, p => p
   | .neg, p => pᶜ
 
-/-- A focus–background structure: the highlighted chain of WF elements, outermost first, and the
-background thought they apply to. -/
+/-- A focus–background structure consists of the highlighted chain of WF elements, outermost
+first, and the background thought they apply to. -/
 structure FocusBackground (W : Type*) where
   focus : List WF
   background : Set W
@@ -187,7 +187,7 @@ structure FocusBackground (W : Type*) where
 def FocusBackground.content (s : FocusBackground W) : Set W :=
   s.focus.foldr WF.apply s.background
 
-/-- (56): with VERUM in the scope of the negation, the negation joins the highlighted part and
+/-- By (56), with VERUM in the scope of the negation, the negation joins the highlighted part and
 the background is the thought `p` itself; with VERUM above the negation, the background is the
 negated thought. -/
 def Scoping.focusBackground (p : Set W) : Scoping → FocusBackground W
@@ -200,7 +200,7 @@ theorem content_focusBackground (p : Set W) (s : Scoping) :
     (s.focusBackground p).content = pᶜ := by
   cases s <;> rfl
 
-/-- Höhle's condition on verum focus: the background thought is known from the context. A
+/-- Höhle's condition on verum focus is that the background thought is known from the context. A
 negated clause expressing the thought `p` is appropriate when some scoping that (60) admits
 has its background among the propositions `known` from the context. -/
 def Appropriate (known : Set (Set W)) (c : Configuration) (p : Set W) : Prop :=
@@ -229,12 +229,12 @@ theorem appropriate_negatedC_iff (known : Set (Set W)) (p : Set W) :
     · exact hb
   · exact fun h ↦ ⟨.verumOverNeg, verumOverNeg_admissible_negatedC, h⟩
 
-/-- (55a) after (55c): *ich hoffe, daß Karl ihr zuhört* makes the thought known, and the
+/-- In (55a) after (55c), *ich hoffe, daß Karl ihr zuhört* makes the thought known, and the
 verb-second reply *er HÖRT ihr nicht zu* is appropriate. -/
 theorem appropriate_negatedF_singleton (p : Set W) : Appropriate {p} negatedF p :=
   (appropriate_negatedF_iff _ p).2 (Or.inl rfl)
 
-/-- (55b) after (55c): the reply *daß er ihr nicht zuhört* is inappropriate, since the negated
+/-- In (55b) after (55c), the reply *daß er ihr nicht zuhört* is inappropriate, since the negated
 thought its *daß* must take as background is not known. -/
 theorem not_appropriate_negatedC_singleton [Nonempty W] (p : Set W) :
     ¬ Appropriate {p} negatedC p := by
@@ -251,24 +251,25 @@ theorem not_appropriate_negatedC_singleton [Nonempty W] (p : Set W) :
 
 /-! ### The non-segmental introduction of VERUM (97) -/
 
-/-- Phonologically empty: an empty yield. -/
+/-- A tree is phonologically empty when its yield is empty. -/
 def PhonEmpty (t : Tree Node String) : Prop := t.yield = []
 
 instance (t : Tree Node String) : Decidable (PhonEmpty t) := by unfold PhonEmpty; infer_instance
 
-/-- A constituent of the form `[σ Π σ]` with `σ` phonologically empty: a `Π` itself, or a node
+/-- A constituent of the form `[σ Π σ]` with `σ` phonologically empty is a `Π` itself, or a node
 among whose daughters is a `Π` and the others are phonologically empty. -/
 def IsBarePi (t : Tree Node String) : Prop :=
-  t.cat = .pi ∨ ∃ c ∈ children t, c.cat = .pi ∧ ∀ d ∈ children t, d.cat ≠ .pi → PhonEmpty d
+  t.cat = .pi ∨
+    ∃ c ∈ t.children, Tree.cat c = .pi ∧ ∀ d ∈ t.children, Tree.cat d ≠ .pi → PhonEmpty d
 
 instance (t : Tree Node String) : Decidable (IsBarePi t) := by unfold IsBarePi; infer_instance
 
-/-- (97): in a local tree `[Kₖ Kⱼ Kᵢ]` whose second daughter is a bare `Π` and whose first
+/-- By (97), in a local tree `[Kₖ Kⱼ Kᵢ]` whose second daughter is a bare `Π` and whose first
 daughter is not phonologically empty, VERUM is introduced over the translation of `Kᵢ`; by (98ii)
 it is assigned to `Kⱼ`, so an accent on `Kⱼ` yields verum focus. -/
 def IntroducesVerum (t : Tree Node String) (kj : TreePath) : Prop :=
-  match kj.toList.getLast?, subtreeAt t kj.toList.dropLast with
-  | some 0, some (.node _ [a, b]) => ¬ PhonEmpty a ∧ IsBarePi b
+  match kj.toList.getLast?, t.subtreeAt kj.toList.dropLast with
+  | some 0, some (Tree.node _ [a, b]) => ¬ PhonEmpty a ∧ IsBarePi b
   | _, _ => False
 
 instance (t : Tree Node String) (kj : TreePath) : Decidable (IntroducesVerum t kj) := by
@@ -280,20 +281,21 @@ theorem introducesVerum_fClause_phi : IntroducesVerum fClause ⟨[1, 0]⟩ := by
 /-- The complementizer of (55b) is the non-empty sister of Π. -/
 theorem introducesVerum_cClause_phi : IntroducesVerum cClause ⟨[0]⟩ := by decide
 
-/-- (77a): the relative particle *wo* filling Φ carries VERUM. -/
+/-- In (77a) the relative particle *wo* filling Φ carries VERUM. -/
 theorem introducesVerum_woClause_phi : IntroducesVerum woClause ⟨[1, 0]⟩ := by decide
 
-/-- (82a): the relative pronoun in front of an empty Φ carries VERUM, the RW-verum focus of §9. -/
+/-- In (82a) the relative pronoun in front of an empty Φ carries VERUM, the RW-verum focus of
+§9. -/
 theorem introducesVerum_rwClause_front : IntroducesVerum rwClause ⟨[0]⟩ := by decide
 
-/-- (80a): with the particle *wo* filling Φ, the relative pronoun's sister is not a bare Π, so its
-accent yields no verum focus. -/
+/-- In (80a), with the particle *wo* filling Φ, the relative pronoun's sister is not a bare Π, so
+its accent yields no verum focus. -/
 theorem not_introducesVerum_woClause_front : ¬ IntroducesVerum woClause ⟨[0]⟩ := by decide
 
-/-- (81): the interrogative pronoun in front of a fronted verb yields no verum focus. -/
+/-- In (81) the interrogative pronoun in front of a fronted verb yields no verum focus. -/
 theorem not_introducesVerum_whClause_front : ¬ IntroducesVerum whClause ⟨[0]⟩ := by decide
 
-/-- (68b): the verb-final finite verb inside Π yields no verum focus. -/
+/-- In (68b) the verb-final finite verb inside Π yields no verum focus. -/
 theorem not_introducesVerum_finalClause_verb : ¬ IntroducesVerum finalClause ⟨[1, 3]⟩ := by
   decide
 

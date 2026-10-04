@@ -1,33 +1,33 @@
 module
 
-public import Linglib.Core.Order.Branching
+public import Linglib.Core.Data.RoseTree.Get
 
 /-!
-# Positions of a tree
+# Positions of a rose tree
 
-The valid positions of a tree `t` of a `Branching` carrier form `Branching.Positions t`, a subtype
-of `TreePath`. Since `validPaths t` is prefix-closed, the positions inherit the order structure of
-`TreePath`: the root is the least position, the parent of a position and the meet of two positions
-are again positions, and strict dominance is well founded, so `Positions t` is a rooted tree in the
-sense of `Mathlib/Order/SuccPred/Tree.lean`. Covering in `Positions t` is covering in `TreePath`
+The positions of a rose tree `t` form `RoseTree.Positions t`, a subtype of `TreePath`. Since
+`validPaths t` is prefix-closed, the positions inherit the order structure of `TreePath`: the root
+is the least position, the parent of a position and the meet of two positions are again positions,
+and strict dominance is well founded, so `Positions t` is a rooted tree in the sense of
+`Mathlib/Order/SuccPred/Tree.lean`. Covering in `Positions t` is covering in `TreePath`
 (`Positions.covBy_iff`), so the daughters of a position are its valid daughters.
 -/
 
 @[expose] public section
 
-namespace Core.Order
+namespace RoseTree
 
-namespace Branching
+open Core.Order
 
-variable {T : Type*} [Branching T]
+variable {α : Type*}
 
 /-- The valid positions of `t`, as a subtype of `TreePath`, form a rooted tree under the prefix
 order. -/
-abbrev Positions (t : T) : Type := {p : TreePath // p ∈ validPaths t}
+abbrev Positions (t : RoseTree α) : Type := {p : TreePath // p ∈ t.validPaths}
 
 namespace Positions
 
-variable {t : T}
+variable {t : RoseTree α}
 
 /-- The root is the least position. -/
 instance : OrderBot (Positions t) where
@@ -76,6 +76,4 @@ theorem covBy_iff {p q : Positions t} : p ⋖ q ↔ p.val ⋖ q.val := by
 
 end Positions
 
-end Branching
-
-end Core.Order
+end RoseTree

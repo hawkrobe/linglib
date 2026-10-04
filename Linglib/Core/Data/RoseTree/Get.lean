@@ -6,7 +6,7 @@ Authors: Linglib contributors
 module
 
 public import Linglib.Core.Data.RoseTree.Basic
-public import Linglib.Core.Order.Branching
+public import Linglib.Core.Order.TreePath
 public import Mathlib.Algebra.Order.BigOperators.Group.List
 public import Mathlib.Algebra.Order.Group.Nat
 public import Mathlib.Data.List.Nodup
@@ -14,23 +14,27 @@ public import Mathlib.Data.List.Nodup
 /-!
 # Rose trees under Gorn addresses
 
-A `RoseTree` is a `Branching` carrier, so `Branching.subtreeAt` navigates it by a **Gorn
-address**, a `List ℕ` path of child indices. This file states what the concrete tree adds:
-relabelling commutes with navigation, a subtree is no larger than its tree, a tree of height
-above `k` descends `k` steps, `vertices` enumerates the addresses, and `replaceAt` replaces the
-subtree at an address.
+A **Gorn address** is a `List ℕ` path of child indices from the root, and `subtreeAt` navigates a
+rose tree by one. The addresses inside a tree are its positions (`validPaths`), a prefix-closed set
+of `TreePath`s, and the subtrees are the trees reached by descending through children
+(`IsSubtree`). Navigation recurses on the address, not on the tree. This file also shows that
+relabelling commutes with navigation, that a subtree is no larger than its tree and that a tree of
+height above `k` descends `k` steps. It defines `vertices`, which enumerates the addresses, and
+`replaceAt`, which replaces the subtree at an address.
 
 Unlike `BinaryTree.get` (indexed by a `PosNum` left/right path) there is no `indexOf`: that is
 a binary-search-tree lookup, which has no analogue for a general rose tree.
 
 ## Main declarations
 
+* `RoseTree.subtreeAt`, `RoseTree.validPaths`: the subtree at an address, and the addresses
+  inside a tree, prefix-closed (`validPaths_prefix_closed`).
+* `RoseTree.IsSubtree`: the subtree relation, the subtrees being the values of `subtreeAt`
+  (`isSubtree_iff_exists_subtreeAt`). It is a partial order (`IsSubtree.antisymm`) with a
+  decision procedure the kernel evaluates.
 * `RoseTree.subtreeAt_map`: relabelling commutes with navigation.
 * `RoseTree.exists_subtreeAt_height_sub`: a maximal descent from a tree of height above `k`.
 * `RoseTree.numNodes_le_of_subtreeAt`: a subtree is no larger than its tree.
-* `RoseTree.isSubtree_node_iff`, `Branching.IsSubtree.antisymm`: the subtree relation of
-  `Branching.IsSubtree` on rose trees, a partial order with a decision procedure the kernel
-  evaluates.
 * `RoseTree.vertices`: the addresses in preorder, one per vertex (`length_vertices`,
   `nodup_vertices`) and exactly those inside the tree (`mem_vertices`).
 * `RoseTree.positionedLeaves`: the leaves with their addresses, exactly the leaf addresses
@@ -45,18 +49,92 @@ a binary-search-tree lookup, which has no analogue for a general rose tree.
 
 namespace RoseTree
 
-open Core.Order Core.Order.Branching
+open Core.Order
 
 variable {α : Type*}
 
-instance : Branching (RoseTree α) := ⟨children⟩
+/-! ### Navigation by address -/
 
-@[simp] theorem branching_children (t : RoseTree α) : Branching.children t = t.children := rfl
+/-- The subtree at a Gorn address, `none` if the address leaves the tree. -/
+def subtreeAt (t : RoseTree α) : List ℕ → Option (RoseTree α)
+  | [] => some t
+  | i :: rest => t.children[i]?.bind fun c ↦ c.subtreeAt rest
+
+@[simp] theorem subtreeAt_nil (t : RoseTree α) : t.subtreeAt [] = some t := rfl
+
+@[simp] theorem subtreeAt_cons (t : RoseTree α) (i : ℕ) (rest : List ℕ) :
+    t.subtreeAt (i :: rest) = t.children[i]?.bind fun c ↦ c.subtreeAt rest := rfl
+
+/-- Descending along `p ++ q` is descending along `p`, then along `q` from there. -/
+theorem subtreeAt_append (t : RoseTree α) (p q : List ℕ) :
+    t.subtreeAt (p ++ q) = (t.subtreeAt p).bind (·.subtreeAt q) := by
+  induction p generalizing t with
+  | nil => rfl
+  | cons i rest ih =>
+    rw [List.cons_append, subtreeAt_cons, subtreeAt_cons]
+    rcases t.children[i]? with _ | c
+    · rfl
+    · exact ih c
+
+theorem subtreeAt_cons_eq_some_iff {t s : RoseTree α} {i : ℕ} {p : List ℕ} :
+    t.subtreeAt (i :: p) = some s ↔ ∃ c, t.children[i]? = some c ∧ c.subtreeAt p = some s := by
+  simp [Option.bind_eq_some_iff]
+
+/-- Every prefix of an address inside the tree is inside the tree. -/
+theorem subtreeAt_take_isSome {t s : RoseTree α} {p : List ℕ} (h : t.subtreeAt p = some s)
+    (k : ℕ) : (t.subtreeAt (p.take k)).isSome := by
+  rw [← List.take_append_drop k p, subtreeAt_append] at h
+  exact Option.isSome_of_isSome_bind (by rw [h]; rfl)
 
 /-- Relabelling commutes with subtree access. -/
 theorem subtreeAt_map {β : Type*} (f : α → β) (t : RoseTree α) (p : List ℕ) :
-    subtreeAt (map f t) p = (subtreeAt t p).map (map f) :=
-  subtreeAt_map_of_children_map (fun t => by cases t; simp) t p
+    (map f t).subtreeAt p = (t.subtreeAt p).map (map f) := by
+  induction p generalizing t with
+  | nil => rfl
+  | cons i rest ih =>
+    obtain ⟨a, cs⟩ := t
+    simp only [map_node, subtreeAt_cons, children_node, List.getElem?_map]
+    cases cs[i]? with
+    | none => rfl
+    | some c => exact ih c
+
+/-! ### Positions -/
+
+/-- The positions of `t` are the addresses inside it. Node identity is the position, never the
+subtree, since identical subtrees occur at several positions, so orders and graphs live on
+positions. -/
+def validPaths (t : RoseTree α) : Set TreePath := {p | (t.subtreeAt p.toList).isSome}
+
+theorem bot_mem_validPaths (t : RoseTree α) : (⊥ : TreePath) ∈ t.validPaths := by
+  simp [validPaths]
+
+/-- A non-root position descends to one child and is a position there. -/
+theorem mem_validPaths_cons {t : RoseTree α} {i : ℕ} {rest : List ℕ} :
+    (⟨i :: rest⟩ : TreePath) ∈ t.validPaths ↔
+      ∃ c, t.children[i]? = some c ∧ (⟨rest⟩ : TreePath) ∈ c.validPaths := by
+  simp only [validPaths, Set.mem_ofPred_eq, subtreeAt_cons]
+  rcases t.children[i]? with _ | c <;> simp
+
+/-- Positions are closed under prefixes, so they inherit the rooted-tree order of `TreePath`. -/
+theorem validPaths_prefix_closed {t : RoseTree α} {p q : TreePath} (hq : q ∈ t.validPaths)
+    (hpq : p ≤ q) : p ∈ t.validPaths := by
+  obtain ⟨s, hs⟩ := hpq
+  simp only [validPaths, Set.mem_ofPred_eq] at hq ⊢
+  rw [← hs, subtreeAt_append] at hq
+  exact Option.isSome_of_isSome_bind hq
+
+theorem isLowerSet_validPaths (t : RoseTree α) : IsLowerSet t.validPaths :=
+  fun _ _ hpq hq ↦ validPaths_prefix_closed hq hpq
+
+/-- The daughters of a position are its extensions by an index below the arity of its
+subtree. -/
+theorem mem_validPaths_append_singleton_iff {t : RoseTree α} {p : List ℕ} {i : ℕ} :
+    (⟨p ++ [i]⟩ : TreePath) ∈ t.validPaths ↔
+      ∃ s, t.subtreeAt p = some s ∧ i < s.children.length := by
+  simp only [validPaths, Set.mem_ofPred_eq, subtreeAt_append, subtreeAt_cons, subtreeAt_nil]
+  cases t.subtreeAt p with
+  | none => simp
+  | some s => simp
 
 /-! ### Height and size along addresses -/
 
@@ -89,7 +167,7 @@ theorem exists_subtreeAt_height_sub (t : RoseTree α) (k : ℕ) (hk : k < t.heig
     | zero => exact ⟨t, rfl, by simp⟩
     | succ i =>
       obtain ⟨s, hs, hsh⟩ := hsub i (Nat.le_of_succ_le_succ hi)
-      exact ⟨s, by simp only [List.take_succ_cons, subtreeAt_cons, branching_children, hj,
+      exact ⟨s, by simp only [List.take_succ_cons, subtreeAt_cons, hj,
         Option.bind_some, hs], by omega⟩
 
 theorem numNodes_lt_of_mem {t c : RoseTree α} (h : c ∈ t.children) : c.numNodes < t.numNodes := by
@@ -116,10 +194,45 @@ theorem numNodes_lt_of_subtreeAt_cons {t s : RoseTree α} {i : ℕ} {p : List �
 
 /-! ### Subtrees -/
 
+/-- `IsSubtree s t` holds when `s` is the subtree of `t` rooted at one of its nodes, reached from
+`t` by descending through children. -/
+def IsSubtree (s t : RoseTree α) : Prop := Relation.ReflTransGen (fun c u ↦ c ∈ u.children) s t
+
+@[refl]
+theorem IsSubtree.refl (t : RoseTree α) : IsSubtree t t := Relation.ReflTransGen.refl
+
+theorem IsSubtree.trans {r s t : RoseTree α} (h₁ : IsSubtree r s) (h₂ : IsSubtree s t) :
+    IsSubtree r t :=
+  Relation.ReflTransGen.trans h₁ h₂
+
+instance : @Trans (RoseTree α) (RoseTree α) (RoseTree α) IsSubtree IsSubtree IsSubtree :=
+  ⟨IsSubtree.trans⟩
+
+theorem IsSubtree.of_mem_children {c t : RoseTree α} (h : c ∈ t.children) : IsSubtree c t :=
+  Relation.ReflTransGen.single h
+
+/-- The subtrees of `t` are exactly the values of `subtreeAt t` at addresses inside `t`. -/
+theorem isSubtree_iff_exists_subtreeAt {s t : RoseTree α} :
+    IsSubtree s t ↔ ∃ p, t.subtreeAt p = some s := by
+  constructor
+  · intro h
+    induction h using Relation.ReflTransGen.head_induction_on with
+    | refl => exact ⟨[], rfl⟩
+    | head hc _ ih =>
+      obtain ⟨p, hp⟩ := ih
+      obtain ⟨i, hi⟩ := List.mem_iff_getElem?.1 hc
+      exact ⟨p ++ [i], by simp [subtreeAt_append, hp, hi]⟩
+  · rintro ⟨p, hp⟩
+    induction p generalizing t with
+    | nil => cases hp; exact .refl _
+    | cons i p ih =>
+      obtain ⟨c, hc, hp⟩ := subtreeAt_cons_eq_some_iff.1 hp
+      exact (ih hp).tail (List.mem_of_getElem? hc)
+
 theorem isSubtree_node_iff {s : RoseTree α} {a : α} {cs : List (RoseTree α)} :
     IsSubtree s (node a cs) ↔ s = node a cs ∨ ∃ c ∈ cs, IsSubtree s c := by
   rw [IsSubtree, Relation.ReflTransGen.cases_tail_iff]
-  simp only [IsChild, branching_children, children_node, eq_comm (a := node a cs)]
+  simp only [children_node, eq_comm (a := node a cs)]
   exact or_congr_right ⟨fun ⟨c, h, hc⟩ ↦ ⟨c, hc, h⟩, fun ⟨c, hc, h⟩ ↦ ⟨c, h, hc⟩⟩
 
 @[simp] theorem isSubtree_leaf_iff {s : RoseTree α} {a : α} :
@@ -127,18 +240,18 @@ theorem isSubtree_node_iff {s : RoseTree α} {a : α} {cs : List (RoseTree α)} 
   simp [isSubtree_node_iff]
 
 /-- A subtree is no larger than its tree. -/
-theorem _root_.Core.Order.Branching.IsSubtree.numNodes_le {s t : RoseTree α}
+theorem IsSubtree.numNodes_le {s t : RoseTree α}
     (h : IsSubtree s t) : s.numNodes ≤ t.numNodes :=
   let ⟨_, hp⟩ := isSubtree_iff_exists_subtreeAt.1 h; numNodes_le_of_subtreeAt hp
 
 /-- A subtree as large as its tree is the tree. -/
-theorem _root_.Core.Order.Branching.IsSubtree.eq_of_numNodes_le {s t : RoseTree α}
+theorem IsSubtree.eq_of_numNodes_le {s t : RoseTree α}
     (h : IsSubtree s t) (hn : t.numNodes ≤ s.numNodes) : s = t := by
   obtain ⟨_ | ⟨i, p⟩, hp⟩ := isSubtree_iff_exists_subtreeAt.1 h
   · exact (Option.some.inj hp).symm
   · exact absurd hn (not_le.2 (numNodes_lt_of_subtreeAt_cons hp))
 
-theorem _root_.Core.Order.Branching.IsSubtree.antisymm {s t : RoseTree α}
+theorem IsSubtree.antisymm {s t : RoseTree α}
     (h₁ : IsSubtree s t) (h₂ : IsSubtree t s) : s = t :=
   h₁.eq_of_numNodes_le h₂.numNodes_le
 
@@ -226,7 +339,7 @@ theorem mem_vertices {t : RoseTree α} {p : List ℕ} :
     rcases p with _ | ⟨j, q⟩
     · simp
     · simp only [vertices_node, List.mem_cons, reduceCtorEq, false_or, mem_verticesList,
-        List.cons.injEq, subtreeAt_cons, branching_children, children_node]
+        List.cons.injEq, subtreeAt_cons, children_node]
       constructor
       · rintro ⟨_, _, c, ⟨rfl, rfl⟩, hc, hq⟩
         rw [hc, Option.bind_some]
@@ -333,7 +446,7 @@ theorem mem_positionedLeaves_of_subtreeAt {t : RoseTree α} {p : List ℕ} {a : 
     rcases p with _ | ⟨i, p⟩
     · cases h
       exact List.mem_singleton.mpr rfl
-    simp only [subtreeAt_cons, branching_children, children_node, Option.bind_eq_some_iff] at h
+    simp only [subtreeAt_cons, children_node, Option.bind_eq_some_iff] at h
     obtain ⟨c, hc, h⟩ := h
     rw [positionedLeaves_node_of_ne_nil b (List.ne_nil_of_mem (List.mem_of_getElem? hc))]
     simp only [List.mem_flatMap, List.mem_map]
@@ -367,6 +480,12 @@ def replaceAt : RoseTree α → List ℕ → RoseTree α → RoseTree α
 theorem replaceAt_cons (a : α) (cs : List (RoseTree α)) (i : ℕ) (p : List ℕ)
     (new : RoseTree α) :
     (node a cs).replaceAt (i :: p) new = node a (cs.modify i (·.replaceAt p new)) := rfl
+
+/-- Replacing below the root replaces inside one child. -/
+@[simp] theorem children_replaceAt_cons (t : RoseTree α) (i : ℕ) (p : List ℕ)
+    (new : RoseTree α) :
+    (t.replaceAt (i :: p) new).children = t.children.modify i (·.replaceAt p new) := by
+  cases t; rfl
 
 @[simp] theorem value_replaceAt_cons (t : RoseTree α) (i : ℕ) (p : List ℕ) (new : RoseTree α) :
     (t.replaceAt (i :: p) new).value = t.value := by
@@ -409,7 +528,7 @@ theorem leafList_replaceAt {t s : RoseTree α} {p : List ℕ} (h : subtreeAt t p
     obtain ⟨pre, post, hy, hy'⟩ := ih hcs
     cases t with
     | node a cs =>
-      rw [branching_children, children_node] at hc
+      rw [children_node] at hc
       refine ⟨((cs.take i).map leafList).flatten ++ pre,
         post ++ ((cs.drop (i + 1)).map leafList).flatten, ?_, fun new => ?_⟩
       · conv_lhs => rw [eq_take_append_cons_drop hc]
@@ -432,7 +551,7 @@ theorem numNodes_replaceAt_lt {t s : RoseTree α} {p : List ℕ} (h : subtreeAt 
     obtain ⟨c, hc, hcs⟩ := subtreeAt_cons_eq_some_iff.mp h
     cases t with
     | node a cs =>
-      rw [branching_children, children_node] at hc
+      rw [children_node] at hc
       rw [replaceAt_cons_of_getElem? (by simpa using hc), value_node, children_node,
         set_eq_take_append_cons_drop hc, numNodes_node]
       conv_rhs => rw [eq_take_append_cons_drop hc, numNodes_node]

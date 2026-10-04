@@ -55,7 +55,7 @@ against the rows rather than presupposed by their coding.
 
 namespace BhattTakahashi2011
 
-open Core.Order Core.Order.Branching Minimalist Syntax
+open Core.Order Minimalist Syntax
 open Syntax.Tree
 
 /-! ### The binding generalization (§2) -/

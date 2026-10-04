@@ -9,7 +9,7 @@ public import Linglib.Morphology.Exponence.Select
 
 In nanosyntax a lexical entry pairs an exponent with a stored tree of features, one feature per
 node. Caha, after Starke, lets an entry spell out a syntactic tree when the stored tree has a
-subtree identical to it, the Superset Principle, which is `Branching.IsSubtree` on `RoseTree`.
+subtree identical to it, the Superset Principle, which is `RoseTree.IsSubtree`.
 When several entries match, the Elsewhere Condition prefers the one that matches in fewer
 environments, and since a matching stored tree exceeds the syntactic tree by exactly its
 superfluous material, that is the matching entry with the smallest tree. The Foot Condition asks
@@ -62,7 +62,7 @@ where tree spellout is also the rank-based spellout of the containment engine.
 
 namespace Morphology.Nanosyntax
 
-open Core.Order.Branching Morphology.Exponence RoseTree
+open Morphology.Exponence RoseTree
 
 variable {F α : Type*}
 

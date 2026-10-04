@@ -59,8 +59,8 @@ abbrev Coord : Cat := .proj .CCONJ
 /-- A word of a part of speech. -/
 def w (pos : UD.UPOS) (form : String) : Tree Cat String := .terminal (.head pos) form
 
-/-- A movement in a tree: the position of the moved constituent and the position it lands
-at. -/
+/-- A movement in a tree records the position of the moved constituent and the position it
+lands at. -/
 structure Movement where
   tree : Tree Cat String
   source : List ℕ
@@ -71,48 +71,48 @@ namespace Movement
 variable (m : Movement)
 
 /-- The subtree at a position. -/
-def at? (p : List ℕ) : Option (Tree Cat String) := Branching.subtreeAt m.tree p
+def at? (p : List ℕ) : Option (Tree Cat String) := m.tree.subtreeAt p
 
 /-- The category at a position. -/
 def cat? (p : List ℕ) : Option Cat := (m.at? p).map Tree.cat
 
-/-- The positions the movement crosses: the strict ancestors of the source that do not
+/-- The positions the movement crosses are the strict ancestors of the source that do not
 dominate the landing site, the constituents the moved element is moved out of. -/
 def crossed : List (List ℕ) :=
   m.source.inits.filter λ p => p ≠ m.source ∧ ¬ p <+: m.landing
 
-/-- A noun phrase with a lexical head noun: a noun among its daughters. -/
+/-- A noun phrase has a lexical head noun when a noun is among its daughters. -/
 def LexicalNP (t : Tree Cat String) : Prop :=
-  t.cat = NP ∧ ∃ d ∈ Branching.children t, d.cat = .head .NOUN
+  t.cat = NP ∧ ∃ d ∈ t.children, Tree.cat d = .head .NOUN
 
 instance (t : Tree Cat String) : Decidable (LexicalNP t) := inferInstanceAs (Decidable (_ ∧ _))
 
-/-- A conjunct: a daughter of a coordinate structure other than a conjunction word. -/
+/-- A conjunct is a daughter of a coordinate structure other than a conjunction word. -/
 def IsConjunct (p : List ℕ) : Prop :=
   m.cat? p.dropLast = some Coord ∧ m.cat? p ≠ some (.head .CCONJ)
 
 instance (p : List ℕ) : Decidable (m.IsConjunct p) := inferInstanceAs (Decidable (_ ∧ _))
 
-/-- The Complex NP Constraint: the movement leaves a sentence and the noun phrase with a
-lexical head noun immediately dominating it. -/
+/-- The Complex NP Constraint is violated when the movement leaves a sentence and the noun phrase
+with a lexical head noun immediately dominating it. -/
 def CNPC : Prop :=
   ∃ s ∈ m.crossed, m.cat? s = some .S ∧ s.dropLast ∈ m.crossed ∧
     ∃ t ∈ m.at? s.dropLast, LexicalNP t
 
-/-- The Coordinate Structure Constraint: the moved element is a conjunct leaving its
+/-- The Coordinate Structure Constraint is violated when the moved element is a conjunct leaving its
 coordinate structure, or the movement leaves a conjunct. -/
 def CSC : Prop :=
   (m.IsConjunct m.source ∧ m.source.dropLast ∈ m.crossed) ∨
     ∃ c ∈ m.crossed, m.IsConjunct c
 
-/-- The Sentential Subject Constraint: the movement leaves a sentence immediately dominated
-by a noun phrase that is itself immediately dominated by a sentence. -/
+/-- The Sentential Subject Constraint is violated when the movement leaves a sentence immediately
+dominated by a noun phrase that is itself immediately dominated by a sentence. -/
 def SSC : Prop :=
   ∃ s ∈ m.crossed, m.cat? s = some .S ∧ m.cat? s.dropLast = some NP ∧
     m.cat? s.dropLast.dropLast = some .S
 
-/-- The Left Branch Condition: the moved element is a noun phrase that is the leftmost
-daughter of a noun phrase the movement leaves. -/
+/-- The Left Branch Condition is violated when the moved element is a noun phrase that is the
+leftmost daughter of a noun phrase the movement leaves. -/
 def LBC : Prop :=
   m.cat? m.source = some NP ∧ m.source.getLast? = some 0 ∧
     m.cat? m.source.dropLast = some NP ∧ m.source.dropLast ∈ m.crossed
@@ -131,7 +131,7 @@ end Movement
 
 /-! ### The dissertation's examples -/
 
-/-- *Who does Phineas know a girl who is jealous of?*: the questioned NP inside the relative
+/-- In *Who does Phineas know a girl who is jealous of?* the questioned NP is inside the relative
 clause on *girl*. -/
 def phineas : Tree Cat String :=
   .node .S [.node NP [w .PROPN "Phineas"],
@@ -160,7 +160,8 @@ def hatThat : Tree Cat String :=
             .node VP [w .AUX "was", w .VERB "wearing", .node NP [w .PRON "which"]]]]]],
     .node VP [w .AUX "is", w .ADJ "red"]]
 
-/-- *What sofa will he put the chair between some table and?*: the questioned NP a conjunct. -/
+/-- In *What sofa will he put the chair between some table and?* the questioned NP is a
+conjunct. -/
 def sofa : Tree Cat String :=
   .node .S [.node NP [w .PRON "he"],
     .node VP [w .VERB "put", .node NP [w .DET "the", w .NOUN "chair"],
@@ -168,7 +169,7 @@ def sofa : Tree Cat String :=
         .node Coord [.node NP [w .DET "some", w .NOUN "table"], w .CCONJ "and",
           .node NP [w .DET "what", w .NOUN "sofa"]]]]]
 
-/-- *The lute which Henry plays and sings madrigals*: relativization out of a conjoined VP. -/
+/-- *The lute which Henry plays and sings madrigals* relativizes out of a conjoined VP. -/
 def lute : Tree Cat String :=
   .node .S [.node NP [w .DET "the", w .NOUN "lute",
       .node .S [.node NP [w .PROPN "Henry"],
@@ -176,8 +177,8 @@ def lute : Tree Cat String :=
           .node VP [w .VERB "sings", .node NP [w .NOUN "madrigals"]]]]],
     .node VP [w .AUX "is", w .ADJ "warped"]]
 
-/-- *Which trombone did the nurse polish and the plumber computed my tax?*: questioning out
-of a conjoined sentence. -/
+/-- *Which trombone did the nurse polish and the plumber computed my tax?* questions out of a
+conjoined sentence. -/
 def trombone : Tree Cat String :=
   .node .S [.node Coord [
     .node .S [.node NP [w .DET "the", w .NOUN "nurse"],
@@ -186,7 +187,7 @@ def trombone : Tree Cat String :=
     .node .S [.node NP [w .DET "the", w .NOUN "plumber"],
       .node VP [w .VERB "computed", .node NP [w .PRON "my", w .NOUN "tax"]]]]]
 
-/-- *The boy whose guardian's employer we elected president*: the possessor NPs nested on
+/-- In *The boy whose guardian's employer we elected president* the possessor NPs are nested on
 left branches. -/
 def guardian : Tree Cat String :=
   .node .S [.node NP [w .DET "the", w .NOUN "boy",
@@ -214,8 +215,8 @@ def teacherActive : Tree Cat String :=
         .node VP [w .VERB "expected", fireClause]]],
     battleax]
 
-/-- *The teacher who that the principal would fire was expected by the reporters*: the
-that-clause a sentential subject. -/
+/-- In *The teacher who that the principal would fire was expected by the reporters* the
+that-clause is a sentential subject. -/
 def teacherPassive : Tree Cat String :=
   .node .S [.node NP [w .DET "the", w .NOUN "teacher",
       .node .S [.node NP [fireClause],
@@ -223,8 +224,8 @@ def teacherPassive : Tree Cat String :=
           .node PP [w .ADP "by", .node NP [w .DET "the", w .NOUN "reporters"]]]]],
     battleax]
 
-/-- *The teacher who it was expected by the reporters that the principal would fire*: the
-that-clause extraposed. -/
+/-- In *The teacher who it was expected by the reporters that the principal would fire* the
+that-clause is extraposed. -/
 def teacherExtraposed : Tree Cat String :=
   .node .S [.node NP [w .DET "the", w .NOUN "teacher",
       .node .S [.node NP [w .PRON "it"],
@@ -232,7 +233,7 @@ def teacherExtraposed : Tree Cat String :=
           .node PP [w .ADP "by", .node NP [w .DET "the", w .NOUN "reporters"]], fireClause]]],
     battleax]
 
-/-- *Of which cars were the hoods damaged by the explosion?*: a subconstituent of a phrasal
+/-- *Of which cars were the hoods damaged by the explosion?* moves a subconstituent of a phrasal
 subject. -/
 def hoods : Tree Cat String :=
   .node .S [.node NP [w .DET "the", w .NOUN "hoods",
@@ -240,8 +241,8 @@ def hoods : Tree Cat String :=
     .node VP [w .AUX "were", w .VERB "damaged",
       .node PP [w .ADP "by", .node NP [w .DET "the", w .NOUN "explosion"]]]]
 
-/-- *My father, the man he works with in Boston is going to tell the police …*: the
-dislocated NP the subject of a relative clause. -/
+/-- In *My father, the man he works with in Boston is going to tell the police …* the
+dislocated NP is the subject of a relative clause. -/
 def father : Tree Cat String :=
   .node .S [.node NP [w .DET "the", w .NOUN "man",
       .node .S [.node NP [w .PRON "my", w .NOUN "father"],
@@ -250,8 +251,8 @@ def father : Tree Cat String :=
     .node VP [w .AUX "is", w .VERB "going",
       .node PP [w .ADP "to", .node VP [w .VERB "tell", .node NP [w .DET "the", w .NOUN "police"]]]]]
 
-/-- *This guitar, I've sung folksongs and accompanied myself on it all my life*: the
-dislocated NP inside a conjunct. -/
+/-- In *This guitar, I've sung folksongs and accompanied myself on it all my life* the
+dislocated NP is inside a conjunct. -/
 def guitar : Tree Cat String :=
   .node .S [.node NP [w .PRON "I"],
     .node VP [w .AUX "have",
@@ -259,8 +260,8 @@ def guitar : Tree Cat String :=
         .node VP [w .VERB "accompanied", .node NP [w .PRON "myself"],
           .node PP [w .ADP "on", .node NP [w .DET "this", w .NOUN "guitar"]]]]]]
 
-/-- *My father, that he's lived here all his life is well-known to the cops*: the dislocated
-NP inside a sentential subject. -/
+/-- In *My father, that he's lived here all his life is well-known to the cops* the dislocated
+NP is inside a sentential subject. -/
 def lived : Tree Cat String :=
   .node .S [.node NP [.node .S [w .SCONJ "that", .node NP [w .PRON "my", w .NOUN "father"],
       .node VP [w .AUX "has", w .VERB "lived", w .ADV "here",
@@ -268,15 +269,15 @@ def lived : Tree Cat String :=
     .node VP [w .AUX "is", w .ADJ "well-known",
       .node PP [w .ADP "to", .node NP [w .DET "the", w .NOUN "cops"]]]]
 
-/-- *My wife, somebody stole her handbag last night*: the dislocated NP a possessor on a left
-branch. -/
+/-- In *My wife, somebody stole her handbag last night* the dislocated NP is a possessor on a
+left branch. -/
 def handbag : Tree Cat String :=
   .node .S [.node NP [w .PRON "somebody"],
     .node VP [w .VERB "stole",
       .node NP [.node NP [w .PRON "my", w .NOUN "wife"], w .NOUN "handbag"],
       .node NP [w .ADJ "last", w .NOUN "night"]]]
 
-/-- The movement of each example, by the dissertation's number: questions and dislocations
+/-- The movement of each example, by the dissertation's number. Questions and dislocations
 land at the root, relativizations at the relative clause. -/
 def movement : String → Option Movement
   | "(4.15a)" => some ⟨phineas, [1, 1, 2, 1, 1, 1, 1], []⟩
@@ -325,8 +326,8 @@ def Constraint.Fires : Constraint → Movement → Prop
 instance (c : Constraint) (m : Movement) : Decidable (c.Fires m) := by
   unfold Constraint.Fires; cases c <;> infer_instance
 
-/-- An example: its movement, the kind of rule that moved it, the constraint the dissertation
-holds responsible, if any, and its judgment. -/
+/-- An example records its movement, the kind of rule that moved it, the constraint the
+dissertation holds responsible, if any, and its judgment. -/
 structure Row where
   movement : Movement
   rule : Rule
@@ -348,8 +349,8 @@ def data : List Row := Examples.all.filterMap Row.ofDatum
 /-- Every row has its movement. -/
 theorem data_length : data.length = Examples.all.length := by decide +kernel
 
-/-- The constraints on chopping rules: a question or relativization is acceptable exactly when
-it violates none of the four. -/
+/-- Under the constraints on chopping rules, a question or relativization is acceptable exactly
+when it violates none of the four. -/
 theorem chopping_rows :
     ∀ d ∈ data, d.rule = .chopping →
       (d.judgment = .acceptable ↔ ¬ d.movement.Violates) := by
@@ -360,14 +361,14 @@ its movement violates. -/
 theorem attributions : ∀ d ∈ data, ∀ c ∈ d.constraint, c.Fires d.movement := by
   decide +kernel
 
-/-- Copying rules are not subject to the constraints: each Left Dislocation crosses one of the
-four islands and is acceptable. -/
+/-- Copying rules are not subject to the constraints, since each Left Dislocation crosses one of
+the four islands and is acceptable. -/
 theorem copying_rows :
     ∀ d ∈ data, d.rule = .copying → d.judgment = .acceptable ∧ d.movement.Violates := by
   decide +kernel
 
-/-- The Sentential Subject Constraint is not the Complex NP Constraint: the sentential subject
-has no lexical head noun, and the noun complement clause is not a subject. -/
+/-- The Sentential Subject Constraint is not the Complex NP Constraint, since the sentential
+subject has no lexical head noun, and the noun complement clause is not a subject. -/
 theorem ssc_cnpc_independent :
     (∃ d ∈ data, d.movement.SSC ∧ ¬ d.movement.CNPC) ∧
       ∃ d ∈ data, d.movement.CNPC ∧ ¬ d.movement.SSC := by

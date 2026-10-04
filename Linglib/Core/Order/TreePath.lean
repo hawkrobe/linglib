@@ -13,7 +13,7 @@ positions form the rooted tree in which every node has a child for each natural 
 the order structure of `Mathlib/Order/SuccPred/Tree.lean`: the root `⊥` is the empty address,
 `Order.pred` drops the last index, `p ⊓ q` is the longest common prefix, and strict dominance is
 well founded, so ancestor chains are finite. The positions of a concrete tree form a prefix-closed
-subset (`Core/Order/Branching.lean`).
+subset (`RoseTree.validPaths`).
 
 `p` precedes `q` when the two part at some position with `p` taking the earlier child. Precedence
 is lexicographic order between positions neither of which dominates the other. It is a decidable

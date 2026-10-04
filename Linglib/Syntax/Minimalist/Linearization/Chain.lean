@@ -81,7 +81,7 @@ both ([sato-ngui-2017]).
 
 namespace Minimalist
 
-open RoseTree SyntacticObject Core.Order Core.Order.Branching Syntax
+open RoseTree SyntacticObject Core.Order Syntax
 
 /-! ### Copies -/
 

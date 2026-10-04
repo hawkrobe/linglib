@@ -44,18 +44,18 @@ reflexive environments that (10) sets aside do not arise in the rows.
 
 namespace Reinhart1976
 
-open Core.Order Core.Order.Branching Syntax Syntax.Tree
+open Core.Order Syntax Syntax.Tree
 
 variable {C W : Type*}
 
 /-! ### Command and c-command -/
 
-/-- A node commands another (1): neither dominates the other and the S node most immediately
+/-- A node commands another (1) when neither dominates the other and the S node most immediately
 dominating the first dominates the second. -/
 def Commands (t : Tree Cat W) (a b : TreePath) : Prop :=
   (a, b) ∈ sCommand t ∧ ¬ a ≤ b ∧ ¬ b ≤ a
 
-/-- A node precedes and commands another: the domain relation of the received view (5). -/
+/-- Precede-and-command is the domain relation of the received view (5). -/
 def PrecedesAndCommands (t : Tree Cat W) (a b : TreePath) : Prop :=
   TreePath.Precedes a b ∧ Commands t a b
 
@@ -67,19 +67,19 @@ instance (t : Tree Cat W) : DecidableRel (PrecedesAndCommands t) := λ _ _ => by
 
 /-- C-command entails command (49) whenever every S node branches. -/
 theorem cCommands_commands {t : Tree Cat W} {a b : TreePath}
-    (hS : labeled t {.S} ⊆ {p | isBranchingAt t p}) (h : CCommands t a b) : Commands t a b :=
+    (hS : labeled t {.S} ⊆ {p | IsBranchingAt t p}) (h : CCommands t a b) : Commands t a b :=
   ⟨commandRelation_anti hS h.1, h.2⟩
 
-/-- The c-command domain is a constituent (38): with `m` the first branching node dominating
+/-- The c-command domain is a constituent (38). With `m` the first branching node dominating
 `a`, the nodes `a` c-commands, dominance aside, are those `m` dominates. -/
-theorem cCommandAt_eq_Ici {t : Tree C W} {a m : TreePath} (hm : m < a) (hb : isBranchingAt t m)
-    (hmax : ∀ x < a, isBranchingAt t x → x ≤ m) : {b | (a, b) ∈ cCommandAt t} = Set.Ici m :=
+theorem cCommandAt_eq_Ici {t : Tree C W} {a m : TreePath} (hm : m < a) (hb : IsBranchingAt t m)
+    (hmax : ∀ x < a, IsBranchingAt t x → x ≤ m) : {b | (a, b) ∈ cCommandAt t} = Set.Ici m :=
   commandRelation_eq_Ici hb hm fun x hx hxa => hmax x hxa hx
 
-/-- Type I of (50): `a` c-commands `b` but `b` precedes `a`. -/
+/-- In type I of (50), `a` c-commands `b` but `b` precedes `a`. -/
 def TypeI (t : Tree Cat W) (a b : TreePath) : Prop := CCommands t a b ∧ TreePath.Precedes b a
 
-/-- Type III of (50): `a` precedes and commands `b` but does not c-command it. -/
+/-- In type III of (50), `a` precedes and commands `b` but does not c-command it. -/
 def TypeIII (t : Tree Cat W) (a b : TreePath) : Prop :=
   PrecedesAndCommands t a b ∧ ¬ CCommands t a b
 
@@ -90,7 +90,7 @@ instance (t : Tree Cat W) : DecidableRel (TypeIII t) := λ _ _ => by
 
 /-- The two domains agree except on types I and III (50). -/
 theorem cCommands_iff_precedesAndCommands {t : Tree Cat W} {a b : TreePath}
-    (hS : labeled t {.S} ⊆ {p | isBranchingAt t p}) (h₁ : ¬ TypeI t a b) (h₃ : ¬ TypeIII t a b) :
+    (hS : labeled t {.S} ⊆ {p | IsBranchingAt t p}) (h₁ : ¬ TypeI t a b) (h₃ : ¬ TypeIII t a b) :
     CCommands t a b ↔ PrecedesAndCommands t a b := by
   refine ⟨λ h => ⟨?_, cCommands_commands hS h⟩, λ h => by_contra λ h' => h₃ ⟨h, h'⟩⟩
   rcases TreePath.Precedes.trichotomy a b with hp | hp | hp | hp
@@ -101,12 +101,12 @@ theorem cCommands_iff_precedesAndCommands {t : Tree Cat W} {a b : TreePath}
 
 /-! ### The coreference restriction -/
 
-/-- The restriction (10b) read with the domain relation `R`: two noun phrases can corefer just
-in case, if either is in the domain of the other, the one in the domain is a pronoun. -/
+/-- Under the restriction (10b), read with the domain relation `R`, two noun phrases can corefer
+just in case, if either is in the domain of the other, the one in the domain is a pronoun. -/
 def Permits (R : TreePath → TreePath → Prop) (pron : List TreePath) (a b : TreePath) : Prop :=
   (R a b → b ∈ pron) ∧ (R b a → a ∈ pron)
 
-/-- The restriction (10a): two noun phrases can corefer just in case one is a pronoun, the
+/-- Under the restriction (10a), two noun phrases can corefer just in case one is a pronoun, the
 other is not, and the non-pronoun is not in the domain of the pronoun; two names or two
 pronouns are not covered. -/
 def Permits10a (R : TreePath → TreePath → Prop) (pron : List TreePath) (a b : TreePath) : Prop :=
@@ -130,23 +130,23 @@ theorem permits10a_of_permits {R : TreePath → TreePath → Prop} {pron : List 
 /-- A noun phrase. -/
 def np : Tree Cat Unit := .node .NP [.terminal .N ()]
 
-/-- The abstract tree (37): a cyclic node with daughters A, B and C, of which B branches into
+/-- The abstract tree (37) is a cyclic node with daughters A, B and C, of which B branches into
 D and a cyclic node with daughters E and F. -/
 def tree37 : Tree Cat Unit :=
   .node .S [.terminal .N (), .node .VP [.terminal .N (), .node .S [.terminal .N (),
     .terminal .N ()]], .terminal .N ()]
 
-/-- The nodes of (37) other than the root: A, B, C, D, the lower cyclic node, E and F. -/
+/-- The nodes of (37) other than the root are A, B, C, D, the lower cyclic node, E and F. -/
 def nodes37 : List TreePath :=
   [⟨[0]⟩, ⟨[1]⟩, ⟨[2]⟩, ⟨[1, 0]⟩, ⟨[1, 1]⟩, ⟨[1, 1, 0]⟩, ⟨[1, 1, 1]⟩]
 
-/-- The nodes among `nodes` in the relation `R` to `a`: the domain of `a` under `R`, without
+/-- The nodes among `nodes` in the relation `R` to `a` form the domain of `a` under `R`, without
 `a` itself. -/
 def domain (R : TreePath → TreePath → Prop) [DecidableRel R] (nodes : List TreePath)
     (a : TreePath) : List TreePath :=
   nodes.filter λ b => decide (R a b)
 
-/-- The precede-and-command domains of (37), table (39a): C has nothing in its domain, and D,
+/-- In the precede-and-command domains of (37), table (39a), C has nothing in its domain, and D,
 which precedes and commands C, has C in its domain. -/
 theorem domain_precedesAndCommands_tree37 :
     domain (PrecedesAndCommands tree37) nodes37 ⟨[0]⟩ =
@@ -160,7 +160,7 @@ theorem domain_precedesAndCommands_tree37 :
       domain (PrecedesAndCommands tree37) nodes37 ⟨[1, 1, 1]⟩ = [] := by
   decide
 
-/-- The c-command domains of (37), table (39b): every domain is a constituent, C's is the whole
+/-- In the c-command domains of (37), table (39b), every domain is a constituent, C's is the whole
 sentence, and D's is B without C. -/
 theorem domain_cCommands_tree37 :
     domain (CCommands tree37) nodes37 ⟨[0]⟩ =
@@ -174,54 +174,54 @@ theorem domain_cCommands_tree37 :
       domain (CCommands tree37) nodes37 ⟨[1, 1, 1]⟩ = [⟨[1, 1, 0]⟩] := by
   decide
 
-/-- (9a): a subject and an embedded subject, `NP₁ denied that NP₂ has met the Shah`, at `0` and
-`110`. -/
+/-- Example (9a) has a subject and an embedded subject, `NP₁ denied that NP₂ has met the Shah`,
+at `0` and `110`. -/
 def tree9a : Tree Cat Unit :=
   .node .S [np, .node .VP [.terminal .V (), .node .S [np, .node .VP [.terminal .V (), np]]]]
 
-/-- (9b): a noun phrase inside a relative clause of the subject, `the man who traveled with
-NP₅`, at `02111`, and an embedded subject at `110`. -/
+/-- Example (9b) has a noun phrase inside a relative clause of the subject, `the man who traveled
+with NP₅`, at `02111`, and an embedded subject at `110`. -/
 def tree9b : Tree Cat Unit :=
   .node .S [.node .NP [.terminal .Det (), .terminal .N (), .node .S [np, .node .VP
     [.terminal .V (), .node .PP [.terminal .P (), np]]]],
     .node .VP [.terminal .V (), .node .S [np, .node .VP [.terminal .V (), np]]]]
 
-/-- (12): an object inside a relative clause of the subject, `people who know NP`, at `0111`,
-and the matrix object at `11`. -/
+/-- Example (12) has an object inside a relative clause of the subject, `people who know NP`, at
+`0111`, and the matrix object at `11`. -/
 def tree12 : Tree Cat Unit :=
   .node .S [.node .NP [.terminal .N (), .node .S [np, .node .VP [.terminal .V (), np]]],
     .node .VP [.terminal .V (), np]]
 
-/-- (41): a preposed prepositional phrase whose noun phrase, at `01`, may contain a possessor
-at `010`; the subject at `1` and the object at `21`. -/
+/-- Example (41) has a preposed prepositional phrase whose noun phrase, at `01`, may contain a
+possessor at `010`, with the subject at `1` and the object at `21`. -/
 def tree41 : Tree Cat Unit :=
   .node .S [.node .PP [.terminal .P (), .node .NP [np, .terminal .N ()]], np,
     .node .VP [.terminal .V (), np]]
 
-/-- (42): a sentential prepositional phrase whose clause has a subject with a possessor at
-`2100`; the matrix subject at `0` and object at `11`. -/
+/-- Example (42) has a sentential prepositional phrase whose clause has a subject with a
+possessor at `2100`, with the matrix subject at `0` and object at `11`. -/
 def tree42 : Tree Cat Unit :=
   .node .S [np, .node .VP [.terminal .V (), np], .node .PP [.terminal .P (), .node .S
     [.node .NP [np, .terminal .N ()], .node .VP [.terminal .V ()]]]]
 
-/-- (48b): a verb-phrasal prepositional phrase with a possessor at `11310`; the object at
-`111`. -/
+/-- Example (48b) has a verb-phrasal prepositional phrase with a possessor at `11310`, and the
+object at `111`. -/
 def tree48b : Tree Cat Unit :=
   .node .S [np, .node .VP [.terminal .V (), .node .VP [.terminal .V (), np, np,
     .node .PP [.terminal .P (), .node .NP [np, .terminal .N ()]]]]]
 
-/-- (51): a VOS clause with a VP, the object at `01` with a possessor at `011`, and the
+/-- Example (51) is a VOS clause with a VP, the object at `01` with a possessor at `011`, and the
 subject at `1` with a possessor at `11`. -/
 def tree51 : Tree Cat Unit :=
   .node .S [.node .VP [.terminal .V (), .node .NP [.terminal .N (), np]],
     .node .NP [.terminal .N (), np]]
 
-/-- In (41) the subject c-commands the noun phrase of the preposed phrase, which precedes it:
-type I. -/
+/-- In (41) the subject c-commands the noun phrase of the preposed phrase, which precedes it, a
+pair of type I. -/
 theorem typeI_tree41 : TypeI tree41 ⟨[1]⟩ ⟨[0, 1]⟩ := by decide
 
 /-- In (42) the object precedes and commands the possessor in the sentential phrase without
-c-commanding it: type III. -/
+c-commanding it, a pair of type III. -/
 theorem typeIII_tree42 : TypeIII tree42 ⟨[1, 1]⟩ ⟨[2, 1, 0, 0]⟩ := by decide
 
 /-- (10a) does not cover two names, so it fails to block (11a) where (10b) blocks it. -/
@@ -240,7 +240,8 @@ def trees : List (String × Tree Cat Unit) :=
 /-- A position from its digits. -/
 def path (s : String) : TreePath := ⟨s.toList.map λ c => c.toNat - '0'.toNat⟩
 
-/-- An example: its tree, the two noun phrases, the pronouns among them, and the judgment. -/
+/-- An example records its tree, the two noun phrases, the pronouns among them, and the
+judgment. -/
 structure Row where
   tree : Tree Cat Unit
   np₁ : TreePath
@@ -268,14 +269,14 @@ theorem permits_rows :
     ∀ d ∈ data, (d.judgment = .acceptable ↔ Permits (CCommands d.tree) d.pron d.np₁ d.np₂) := by
   decide
 
-/-- Read with precede-and-command, the restriction fails: on *Near him, Dan saw a snake* and
-the Malagasy pair among others. -/
+/-- Read with precede-and-command, the restriction fails on *Near him, Dan saw a snake* and the
+Malagasy pair among others. -/
 theorem exists_not_permits_precedesAndCommands :
     ∃ d ∈ data,
       ¬ (d.judgment = .acceptable ↔ Permits (PrecedesAndCommands d.tree) d.pron d.np₁ d.np₂) := by
   decide
 
-/-- Precede-and-command fails only where the two domains come apart: on a pair of type I or
+/-- Precede-and-command fails only where the two domains come apart, on a pair of type I or
 type III in one order or the other. -/
 theorem typeI_or_typeIII_of_not_permits_precedesAndCommands :
     ∀ d ∈ data,

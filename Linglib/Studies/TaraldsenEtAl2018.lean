@@ -54,7 +54,7 @@ later study.
 
 namespace TaraldsenEtAl2018
 
-open Core.Order.Branching Morphology.Nanosyntax Morphology.Exponence
+open Morphology.Nanosyntax Morphology.Exponence
 
 /-! ### Features and entry shapes -/
 

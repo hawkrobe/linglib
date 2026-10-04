@@ -52,12 +52,12 @@ clause into the second argument of the nonconservative *-er* and yield a contrad
 
 namespace BhattPancheva2004
 
-open Core.Order Core.Order.Branching Degree Minimalist Set Syntax Syntax.Tree
+open Core.Order Degree Minimalist Set Syntax Syntax.Tree
 
 /-! ### The Heim–Kennedy constraint (Section 4.1) -/
 
-/-- The LF (22a) of *every girl is exactly 1 inch taller than that*, the quantifier over the
-DegP: `[every girl [λx [[DegP exactly 1 inch -er than that] [λd [x is d-tall]]]]]`. -/
+/-- The LF (22a) of *every girl is exactly 1 inch taller than that*, with the quantifier over the
+DegP, is `[every girl [λx [[DegP exactly 1 inch -er than that] [λd [x is d-tall]]]]]`. -/
 def lf22a : Tree Unit String :=
   bin (leaf "every girl") (binder 1 (bin (bin (leaf "exactly 1 inch -er") (leaf "than that"))
     (binder 2 (bin (leaf "x is") (bin (tr 2) (leaf "tall"))))))
@@ -127,8 +127,8 @@ def Row.ofDatum (e : Datum) : Option Row := do
 /-- The extraposition data of Section 5.2, (41) to (46) and (53) to (54). -/
 def rows : List Row := Examples.all.filterMap Row.ofDatum
 
-/-- Countercyclic merger derives one half of (39), (38): a clause merged above an operator leaves
-the comparison no scope below it, (42), (44), (46), (53b) and (54b). -/
+/-- Countercyclic merger derives one half of (39), (38), since a clause merged above an operator
+leaves the comparison no scope below it, (42), (44), (46), (53b) and (54b). -/
 theorem at_least_as_high : ∀ r ∈ rows, r.site = .high → r.narrow = false := by decide
 
 /-- In the other half of (39), a bare DegP whose clause is merged below an operator has no scope
@@ -178,7 +178,7 @@ def high : TellLF where
   matrixVP := ⟨[0, 0, 1]⟩
   embeddedVP := ⟨[0, 0, 1, 1, 1]⟩
 
-/-- The Ellipsis-Scope Generalization, (59), holds on the LFs of (62): the scope of the DegP
+/-- The Ellipsis-Scope Generalization, (59), holds on the LFs of (62). The scope of the DegP
 contains the embedded VP at either site and the matrix VP only at the high site, so the reading
 (62b), the clause merged low with the matrix VP elided, is the one missing. -/
 theorem ellipsisScope :
@@ -187,8 +187,8 @@ theorem ellipsisScope :
       (high.degP, high.matrixVP) ∈ cCommandAt high.tree := by
   refine ⟨?_, ?_, ?_⟩ <;> decide
 
-/-- The Condition C–Scope Generalization, (69) and (70), holds: the pronoun c-commands the name in
-the degree clause exactly when the comparison does not scope over the matrix predicate. -/
+/-- The Condition C–Scope Generalization, (69) and (70), holds, since the pronoun c-commands the
+name in the degree clause exactly when the comparison does not scope over the matrix predicate. -/
 theorem conditionC_scope :
     ∀ lf ∈ [low, high],
       (lf.pronoun, lf.clause) ∈ cCommandAt lf.tree ↔ (lf.degP, lf.tells) ∉ cCommandAt lf.tree := by

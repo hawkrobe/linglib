@@ -44,7 +44,6 @@ at its leaves, left to right.
 
 namespace RoseTree
 
-open Core.Order.Branching
 
 variable {T N : Type*}
 

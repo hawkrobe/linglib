@@ -35,6 +35,11 @@ it, and the interpreter denotes them `none`. That each binder binds a trace of i
 property of a tree, not a guarantee of the type, and interpretation does not read the category on
 a binder.
 
+`Tree C W` abbreviates `RoseTree (Label C W)`, so the rose tree's navigation (`children`,
+`subtreeAt`) returns `RoseTree (Label C W)`. Dot notation for this file's operations does not
+resolve on those results, so write `Tree.cat s`, and write constructor patterns on them as
+`Tree.node`: an anonymous `.node` would elaborate as `RoseTree.node`, which matches any label.
+
 ## References
 
 * [heim-kratzer-1998]
@@ -399,27 +404,19 @@ end LeafSubst
 
 /-! ### Positions
 
-A tree takes Gorn addresses through the rose tree's `Branching` instance, and with them the
-dominance order on its positions and, in `Syntax/Command.lean`, the command relations. -/
+A tree takes Gorn addresses as a rose tree, and with them the dominance order on its positions
+and, in `Syntax/Command.lean`, the command relations. -/
 
 open Core.Order
 
-@[simp] theorem children_terminal (c : C) (w : W) : Branching.children (terminal c w) = [] := rfl
-
-@[simp] theorem children_node (c : C) (cs : List (Tree C W)) :
-    Branching.children (node c cs) = cs := rfl
-
-@[simp] theorem children_trace (n : ℕ) (c : C) : Branching.children (trace n c : Tree C W) = [] :=
+@[simp] theorem children_terminal (c : C) (w : W) : (terminal c w : Tree C W).children = [] :=
   rfl
 
-@[simp] theorem children_bind (n : ℕ) (c : C) (t : Tree C W) :
-    Branching.children (bind n c t) = [t] := rfl
+@[simp] theorem children_node (c : C) (cs : List (Tree C W)) : (node c cs).children = cs := rfl
 
-/-- Replacing below the root replaces inside one daughter. -/
-theorem children_replaceAt_cons (t : Tree C W) (i : ℕ) (p : List ℕ) (new : Tree C W) :
-    Branching.children (t.replaceAt (i :: p) new) =
-      (Branching.children t).modify i (·.replaceAt p new) := by
-  rcases t with ⟨l, cs⟩
+@[simp] theorem children_trace (n : ℕ) (c : C) : (trace n c : Tree C W).children = [] := rfl
+
+@[simp] theorem children_bind (n : ℕ) (c : C) (t : Tree C W) : (bind n c t).children = [t] :=
   rfl
 
 /-! ### Positions of the terminals
@@ -443,7 +440,7 @@ theorem map_snd_positionedTerminals (t : Tree C W) :
 /-- Each listed position holds its terminal. -/
 theorem subtreeAt_of_mem_positionedTerminals {t : Tree C W} {x : TreePath × (C × W)}
     (h : x ∈ t.positionedTerminals) :
-    Branching.subtreeAt t x.1.toList = some (terminal x.2.1 x.2.2) := by
+    RoseTree.subtreeAt t x.1.toList = some (terminal x.2.1 x.2.2) := by
   obtain ⟨⟨p, l⟩, hl, hx⟩ := List.mem_filterMap.mp h
   cases l with
   | terminal c w =>
@@ -453,7 +450,7 @@ theorem subtreeAt_of_mem_positionedTerminals {t : Tree C W} {x : TreePath × (C 
 
 /-- Every terminal position is listed. -/
 theorem mem_positionedTerminals_of_subtreeAt {t : Tree C W} {p : List ℕ} {c : C} {w : W}
-    (h : Branching.subtreeAt t p = some (terminal c w)) :
+    (h : RoseTree.subtreeAt t p = some (terminal c w)) :
     (⟨p⟩, (c, w)) ∈ t.positionedTerminals :=
   List.mem_filterMap.mpr ⟨_, RoseTree.mem_positionedLeaves_of_subtreeAt h, rfl⟩
 
