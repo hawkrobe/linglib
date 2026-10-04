@@ -11,6 +11,7 @@ public import Linglib.Phonology.Subregular.OSL
 public import Linglib.Core.Computability.Subsequential
 public import Linglib.Phonology.Subregular.Dependence
 public import Linglib.Core.Computability.Bimachine
+public import Linglib.Studies.LamontOHaraSmith2019
 public import Linglib.Studies.McCollumEtAl2020
 
 /-!
@@ -26,12 +27,14 @@ non-deterministic, an unbounded circumambient pattern in which some targets depe
 sides at once. Dominance is an underlying specification of the spreading value on vowels,
 carried by roots and suffixes alike. The rightward spreading pass is output-strictly-local
 after Chandlee, Eyraud and Heinz, the bidirectional dominant–recessive map is weakly
-deterministic through a non-interacting bimachine (`maasai_weaklyDeterministic`) with
-two-sided unbounded dependence (`maasai_twoSidedUnboundedDependence`) but without
+deterministic through a non-interacting bimachine (`maasai_isNonInteractingBimachineComputable`)
+with two-sided unbounded dependence (`maasai_twoSidedUnboundedDependence`) but without
 requiring both sides at once (`maasai_not_requiresBothSides`), the boundary the paper draws.
-Tutrugbu's conditional blocking, the paper's (3), lies on the other side: it requires both
-sides, so it is neither semiambient (`tutrugbu_not_semiambient`) nor weakly deterministic
-(`tutrugbu_not_weaklyDeterministic`).
+Tutrugbu's conditional blocking, the paper's (3), and unbounded tonal plateauing, its (2), lie on
+the other side: each requires both sides, so neither is semiambient (`tutrugbu_not_semiambient`)
+or computed by a non-interacting bimachine. Plateauing is nonetheless weakly deterministic in
+Heinz and Lai's sense, by the phonotactic code of §5.2, so their class is not contained in the
+paper's (`exists_isWeaklyDeterministic_not_isNonInteractingBimachineComputable`).
 
 ## Implementation notes
 
@@ -40,6 +43,12 @@ map is modelled directly, raising a recessive vowel when a dominant one occurs a
 rather than as a two-pass composition, and the opaque low vowel, the re-paired low vowel,
 glide effects, and the Turkana half of the paper are not represented.
 
+Weak determinism is rendered by the change-based reading of Def. 5: a non-interacting bimachine
+licenses every change by one side alone (`IsNonInteractingBimachineComputable`). Def. 6 read
+literally asks the same of unchanged cells, and the Maasai bimachine of Fig. 8 fails it: at a
+recessive vowel with `q1` on both sides the output is the vowel itself, and moving either state
+alone to `q2` changes it.
+
 ## References
 
 * [meinhardt-mai-bakovic-mccollum-2024]
@@ -47,6 +56,7 @@ glide effects, and the Turkana half of the paper are not represented.
 * [chandlee-eyraud-heinz-2015]
 * [wilson-2006]
 * [mccollum-bakovic-mai-meinhardt-2020]
+* [lamont-ohara-smith-2019]
 -/
 
 @[expose] public section
@@ -254,9 +264,9 @@ theorem maasaiBM_run : maasaiBM.run = maasai := by
     simp only [maasai, List.getElem?_map, List.getElem?_eq_none (by simpa using hi),
       Option.map_none]
 
-/-- **Maasai ATR harmony is weakly deterministic**, the bidirectional dominant-recessive
-spread being a non-interacting bimachine. -/
-theorem maasai_weaklyDeterministic : IsNonInteractingBimachineComputable maasai :=
+/-- Maasai ATR harmony is weakly deterministic in the paper's sense, the bidirectional
+dominant-recessive spread being a non-interacting bimachine. -/
+theorem maasai_isNonInteractingBimachineComputable : IsNonInteractingBimachineComputable maasai :=
   maasaiBM_run ▸ maasaiBM.isNonInteractingBimachineComputable maasaiBM_isNonInteracting
 
 /-- **Maasai has two-sided unbounded dependence** — at every distance, a medial
@@ -285,20 +295,16 @@ theorem maasai_twoSidedUnboundedDependence : TwoSidedUnboundedDependence maasai 
 /-- **Maasai is semiambient**, the paper's positive classification, with every harmonised
 cell licensed by one side alone, the far dominant that triggers it. -/
 theorem maasai_semiambient : OneSidedChanges maasai :=
-  maasai_weaklyDeterministic.oneSidedChanges
+  maasai_isNonInteractingBimachineComputable.oneSidedChanges
 
 /-- Hence Maasai does **not** require both sides — it escapes the teeth, unlike Tutrugbu.
 Covariation (both languages) and interaction (Tutrugbu only) come apart. -/
 theorem maasai_not_requiresBothSides : ¬ RequiresBothSides maasai := fun h ↦
-  h.not_isNonInteractingBimachineComputable maasai_weaklyDeterministic
+  h.not_isNonInteractingBimachineComputable maasai_isNonInteractingBimachineComputable
 
-/-- Maasai is weakly deterministic yet not Mealy-computable, witnessing
-`synchronous ⊊ WD` in the length-preserving-stratum reading of Heinz and Lai's
-`LSF, RSF ⊆ WD` corollary being strict, with `maasai` as their own dominant-recessive
-witness (their Thms. 6 and 7). A Mealy-computable map is right-myopic
-(`IsMealyComputable.boundedDependence_right`), but Maasai's bidirectional spread is not
-(`maasai_twoSidedUnboundedDependence`), and the block class is excluded by
-`maasai_not_leftSubsequential`. -/
+/-- Maasai ATR harmony is not Mealy-computable, since a Mealy-computable map depends boundedly
+on the right (`IsMealyComputable.boundedDependence_right`) and Maasai's bidirectional spread
+does not (`maasai_twoSidedUnboundedDependence`). -/
 theorem maasai_not_mealyComputable : ¬ IsMealyComputable maasai := fun h ↦
   maasai_twoSidedUnboundedDependence.unboundedDependence .right h.boundedDependence_right
 
@@ -320,9 +326,30 @@ by neither side alone. -/
 theorem tutrugbu_not_semiambient : ¬ OneSidedChanges McCollumEtAl2020.tutrugbu.map :=
   McCollumEtAl2020.tutrugbu_requiresBothSides.not_oneSidedChanges
 
-/-- Tutrugbu ATR harmony is not weakly deterministic. -/
-theorem tutrugbu_not_weaklyDeterministic :
+/-- Tutrugbu ATR harmony is computed by no non-interacting bimachine. -/
+theorem tutrugbu_not_isNonInteractingBimachineComputable :
     ¬ IsNonInteractingBimachineComputable McCollumEtAl2020.tutrugbu.map :=
   McCollumEtAl2020.tutrugbu_requiresBothSides.not_isNonInteractingBimachineComputable
+
+/-! ### Unbounded tonal plateauing
+
+Plateauing, the paper's (2), is unbounded circumambient (Def. 2): it requires both sides, so no
+non-interacting bimachine computes it. Yet it is weakly deterministic in Heinz and Lai's sense,
+by the phonotactic code of Lamont, O'Hara and Smith that §5.2 and Fig. 12 take up: their first
+pass is length- and alphabet-preserving and still tells the second pass what lies beyond its
+reach. -/
+
+/-- Unbounded tonal plateauing is not computed by any non-interacting bimachine. -/
+theorem utp_not_isNonInteractingBimachineComputable :
+    ¬ IsNonInteractingBimachineComputable Tone.utp.map :=
+  Tone.utp.requiresBothSides.not_isNonInteractingBimachineComputable
+
+/-- Heinz and Lai's weakly deterministic functions are not all computed by non-interacting
+bimachines. -/
+theorem exists_isWeaklyDeterministic_not_isNonInteractingBimachineComputable :
+    ∃ f : List Tone.TBU → List Tone.TBU,
+      IsWeaklyDeterministic f ∧ ¬ IsNonInteractingBimachineComputable f :=
+  ⟨Tone.utp.map, LamontOHaraSmith2019.utp_isWeaklyDeterministic,
+    utp_not_isNonInteractingBimachineComputable⟩
 
 end MeinhardtEtAl2024
