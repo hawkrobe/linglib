@@ -57,48 +57,49 @@ open scoped DistributedMorphology.VocabularyItem
 /-- The person features of (26), [±PSE, ±Auth], as the substrate's [±participant, ±author]
 decomposition of a person. -/
 def personFeatures (p : Person) : List FeatureVal :=
-  [.participant (decide (.participant ∈ p.toFeatures)), .author (decide (.author ∈ p.toFeatures))]
+  [⟨.participant, decide (.participant ∈ p.toFeatures)⟩,
+    ⟨.author, decide (.author ∈ p.toFeatures)⟩]
 
 /-- Number as the feature [±Pl]. -/
-def number (pl : Bool) : FeatureVal := .phi (.number (if pl then .plural else .singular))
+def number (pl : Bool) : FeatureVal := ⟨.number, if pl then .plural else .singular⟩
 
-/-- An ergative argument's matrix, (42): first-person number is a person distinction, singular
+/-- In an ergative argument's matrix (42), first-person number is a person distinction, singular
 [+PSE, +Auth] and plural [+Auth]. -/
 def ergMatrix : Person → Bool → List FeatureVal
-  | .first, false => [.participant true, .author true, .case .erg]
-  | .first, true => [.author true, .case .erg]
-  | p, pl => personFeatures p ++ [number pl, .case .erg]
+  | .first, false => [⟨.participant, true⟩, ⟨.author, true⟩, ⟨.case, .erg⟩]
+  | .first, true => [⟨.author, true⟩, ⟨.case, .erg⟩]
+  | p, pl => personFeatures p ++ [number pl, ⟨.case, .erg⟩]
 
-/-- An argument's matrix for Agr3: (42) for ergative arguments and for second and third person;
-for nominative first person the assignment (27) presupposes, *-oʔon* 1pl [+PSE, +Auth, NOM] and
-*-en* 1sg [+Auth, NOM]. -/
+/-- An argument's matrix for Agr3 is (42) for ergative arguments and for second and third person,
+and for nominative first person the one the assignment (27) presupposes, *-oʔon* 1pl [+PSE, +Auth,
+NOM] and *-en* 1sg [+Auth, NOM]. -/
 def matrix : Person → Bool → Case → List FeatureVal
-  | .first, false, .nom => [.author true, .case .nom]
-  | .first, true, .nom => [.participant true, .author true, .case .nom]
+  | .first, false, .nom => [⟨.author, true⟩, ⟨.case, .nom⟩]
+  | .first, true, .nom => [⟨.participant, true⟩, ⟨.author, true⟩, ⟨.case, .nom⟩]
   | p, pl, .erg => ergMatrix p pl
-  | p, pl, c => personFeatures p ++ [number pl, .case c]
+  | p, pl, c => personFeatures p ++ [number pl, ⟨.case, c⟩]
 
 /-! ### The Vocabularies (27), (43), (44) -/
 
 /-- The Agr3 Vocabulary Items (27), in scansion order. -/
 def agr3 : List (VocabularyItem FeatureVal String) :=
-  [[.participant true, .author true, .case .nom] ⟷ "oʔon",
-    [.participant true, number false, .case .nom] ⟷ "etʃ",
-    [.author true, .case .nom] ⟷ "en", [.participant true, number true] ⟷ "éːʃ",
+  [[⟨.participant, true⟩, ⟨.author, true⟩, ⟨.case, .nom⟩] ⟷ "oʔon",
+    [⟨.participant, true⟩, number false, ⟨.case, .nom⟩] ⟷ "etʃ",
+    [⟨.author, true⟩, ⟨.case, .nom⟩] ⟷ "en", [⟨.participant, true⟩, number true] ⟷ "éːʃ",
     [number true] ⟷ "oʔob", [] ⟷ "Ø"]
 
-/-- The Agr1 Vocabulary Items (43): the ergative auxiliary suffix. -/
+/-- The Agr1 Vocabulary Items (43) realize the ergative auxiliary suffix. -/
 def agr1 : List (VocabularyItem FeatureVal String) :=
-  [[.participant true, .author true] ⟷ "in", [.author true] ⟷ "k", [.participant true] ⟷ "a",
-    [] ⟷ "u"]
+  [[⟨.participant, true⟩, ⟨.author, true⟩] ⟷ "in", [⟨.author, true⟩] ⟷ "k",
+    [⟨.participant, true⟩] ⟷ "a", [] ⟷ "u"]
 
-/-- The Agr2 Vocabulary Items (44): the ergative verbal prefix. -/
+/-- The Agr2 Vocabulary Items (44) realize the ergative verbal prefix. -/
 def agr2 : List (VocabularyItem FeatureVal String) :=
-  [[.participant true] ⟷ "w", [.participant false] ⟷ "j", [] ⟷ ""]
+  [[⟨.participant, true⟩] ⟷ "w", [⟨.participant, false⟩] ⟷ "j", [] ⟷ ""]
 
-/-- The overt verbal suffixes of a clause: Agr3 bears the subject's matrix and, in a transitive
-clause, the object's, (25) and (28b); strict scansion of (27) realizes them, and the elsewhere
-*-Ø* is not overt. -/
+/-- In the overt verbal suffixes of a clause, Agr3 bears the subject's matrix and, in a transitive
+clause, the object's, (25) and (28b); strict scansion of (27) realizes them, and the elsewhere *-Ø*
+is not overt. -/
 def suffixes (subj : Person × Bool) (obj : Option (Person × Bool)) : List String :=
   (scansion agr3 ∅
     (matrix subj.1 subj.2 .erg :: (obj.map fun o ↦ [matrix o.1 o.2 .nom]).getD []))
@@ -111,7 +112,7 @@ def aux (subj : Person × Bool) : Option String := subsetPrinciple agr1 (ergMatr
 def verbPrefix (subj : Person × Bool) : Option String :=
   subsetPrinciple agr2 (ergMatrix subj.1 subj.2)
 
-/-- The rival template (18): object agreement then subject agreement, each a node of its own
+/-- The rival template (18) has object agreement then subject agreement, each a node of its own
 realized by the Subset Principle over (27). -/
 def templateSuffixes (subj obj : Person × Bool) : List String :=
   ((subsetPrinciple agr3 (matrix obj.1 obj.2 .nom)).toList ++
@@ -119,7 +120,7 @@ def templateSuffixes (subj obj : Person × Bool) : List String :=
 
 /-! ### The data pool: (3) to (8), (16), (19) to (24) -/
 
-/-- A row of the pool: the arguments, the auxiliary suffix, the verbal prefix, the overt
+/-- A row of the pool records the arguments, the auxiliary suffix, the verbal prefix, the overt
 verbal suffixes, and the judgment. -/
 structure Row where
   subj : Person × Bool
@@ -149,7 +150,7 @@ theorem row_ofDatum_isSome : ∀ ex ∈ Examples.all, (Row.ofDatum ex).isSome :=
 
 def rows : List Row := Examples.all.filterMap Row.ofDatum
 
-/-- Local Fission, (19) to (24): a row is grammatical iff its overt verbal suffixes are what
+/-- Under Local Fission, (19) to (24), a row is grammatical iff its overt verbal suffixes are what
 strict scansion of (27) inserts, *-éːʃ* before *-oʔob* in both (20) and (22) and *-oʔob* once in
 (24). -/
 theorem suffixes_rows :
@@ -173,16 +174,16 @@ theorem aux_prefix_rows :
 
 /-! ### Against long-distance Fission, section 5 -/
 
-/-- The paradigm (39) for second and third person: the auxiliary suffix and the prefix mark
+/-- In the paradigm (39) for second and third person, the auxiliary suffix and the prefix mark
 person alone, and plurality is a verbal suffix, the distribution of (36) to (38). -/
 theorem ergative_paradigm (p : Person) (h : p = .second ∨ p = .third) :
     aux (p, false) = aux (p, true) ∧ verbPrefix (p, false) = verbPrefix (p, true) ∧
       suffixes (p, false) none = [] ∧ suffixes (p, true) none ≠ [] := by
   rcases h with rfl | rfl <;> decide
 
-/-- The paradigm (39) for first person: the auxiliary distinguishes singular from plural and no
-verbal suffix marks number, since (42) makes first-person number a person distinction, (3) and
-(4). -/
+/-- In the paradigm (39) for first person, the auxiliary distinguishes singular from plural and no
+verbal suffix marks number, since (42) makes first-person number a person distinction, (3) and (4).
+-/
 theorem first_person_paradigm :
     aux (.first, false) ≠ aux (.first, true) ∧ ∀ pl, suffixes (.first, pl) none = [] := by
   refine ⟨by decide, fun pl ↦ ?_⟩

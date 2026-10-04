@@ -49,7 +49,6 @@ from fission and the coproduct (`Studies/SenturiaMarcolli2025.lean`).
 ## References
 
 * [K. Arregi and A. Nevins, *Morphotactics*][arregi-nevins-2012]
-* [G. Scott, *Pronoun reduction in Mam*][scott-2023]
 -/
 
 @[expose] public section
@@ -62,11 +61,10 @@ open Minimalist
 
 variable {Bundle Target : Type*}
 
-/-- An Impoverishment rule: delete `target` from the focus terminal when
-`condition` holds over the neighborhood. The condition is `Prop`-valued
-with a `DecidablePred` witness carried alongside, so applications reduce
-by `decide` on concrete inputs; the deletion operation itself is
-supplied to `ImpoverishmentRule.apply`. -/
+/-- An Impoverishment rule deletes `target` from the focus terminal when `condition` holds over the
+neighborhood. The condition is `Prop`-valued with a `DecidablePred` witness carried alongside, so
+applications reduce by `decide` on concrete inputs; the deletion operation itself is supplied to
+`ImpoverishmentRule.apply`. -/
 structure ImpoverishmentRule (Bundle Target : Type*) where
   /-- Does this rule apply at the given neighborhood? -/
   condition : Neighborhood Bundle → Prop
@@ -80,9 +78,8 @@ structure ImpoverishmentRule (Bundle Target : Type*) where
 instance (rule : ImpoverishmentRule Bundle Target) (n : Neighborhood Bundle) :
     Decidable (rule.condition n) := rule.decCond n
 
-/-- Apply a rule at a neighborhood, deleting with `delete`: when the
-condition holds, the focus loses the target; otherwise it is
-unchanged. -/
+/-- Applying a rule at a neighborhood with the deletion `delete` removes the target from the focus
+when the condition holds, and otherwise leaves the focus unchanged. -/
 def ImpoverishmentRule.apply (delete : Bundle → Target → Bundle)
     (rule : ImpoverishmentRule Bundle Target) (n : Neighborhood Bundle) : Bundle :=
   if rule.condition n then delete n.focus rule.target else n.focus
@@ -131,9 +128,8 @@ def ImpoverishmentRule.syntagmatic (cond : Neighborhood Bundle → Bool) (target
 
 /-! ### Rule chains -/
 
-/-- Generic postsyntactic chain: apply a list of rules to a
-neighborhood, threading the *focus* bundle through each step while
-holding the surrounding context fixed. -/
+/-- A postsyntactic chain applies a list of rules to a neighborhood, threading the *focus* bundle
+through each step while holding the surrounding context fixed. -/
 def runChain {R : Type*} (apply : R → Neighborhood Bundle → Bundle)
     (rules : List R) (n : Neighborhood Bundle) : Bundle :=
   rules.foldl (init := n.focus)
@@ -153,41 +149,37 @@ theorem runChain_append {R : Type*} (apply : R → Neighborhood Bundle → Bundl
 
 /-! ### The Minimalist-bundle instantiation
 
-Deletion on `Minimalist.FeatureBundle` zeroes the target's dimension
-slot. A rule whose focus might carry a different value of that
-dimension should guard in its `condition`: deletion is by dimension,
-not by value match. -/
+Deletion on `Minimalist.FeatureBundle` empties the target dimension's slot, whatever value it
+carries; a rule that should fire only on a particular value guards it in its `condition`. -/
 
-/-- Delete the target's dimension from a bundle: set its slot to
-`absent`. -/
-def deleteFeature (fb : FeatureBundle) (target : FeatureVal) : FeatureBundle :=
-  Function.update fb target.dimension .absent
+/-- Deleting a dimension from a bundle sets its slot to `absent`. -/
+def deleteFeature (fb : FeatureBundle) (target : FeatureType) : FeatureBundle :=
+  Function.update fb target .absent
 
 /-- Apply an Impoverishment rule at a neighborhood of Minimalist
 bundles. -/
-def applyImpoverishment (rule : ImpoverishmentRule FeatureBundle FeatureVal)
+def applyImpoverishment (rule : ImpoverishmentRule FeatureBundle FeatureType)
     (n : Neighborhood FeatureBundle) : FeatureBundle :=
   rule.apply deleteFeature n
 
 /-- Apply a sequence of impoverishment rules. Specializes `runChain`. -/
-def applyImpoverishmentChain (rules : List (ImpoverishmentRule FeatureBundle FeatureVal))
+def applyImpoverishmentChain (rules : List (ImpoverishmentRule FeatureBundle FeatureType))
     (n : Neighborhood FeatureBundle) : FeatureBundle :=
   runChain applyImpoverishment rules n
 
 /-- `applyImpoverishmentChain` distributes over list concatenation. -/
 theorem applyImpoverishmentChain_append
-    (rs₁ rs₂ : List (ImpoverishmentRule FeatureBundle FeatureVal))
+    (rs₁ rs₂ : List (ImpoverishmentRule FeatureBundle FeatureType))
     (n : Neighborhood FeatureBundle) :
     applyImpoverishmentChain (rs₁ ++ rs₂) n =
       applyImpoverishmentChain rs₂
         { n with focus := applyImpoverishmentChain rs₁ n } :=
   runChain_append _ _ _ _
 
-/-- Convenience: apply a rule to a bare focus bundle with no
-surrounding context, for paradigmatic rules where context is
-irrelevant. -/
+/-- A rule applies to a bare focus bundle as at a neighborhood with no surrounding context, for
+paradigmatic rules where context is irrelevant. -/
 def ImpoverishmentRule.applyToBundle
-    (rule : ImpoverishmentRule FeatureBundle FeatureVal)
+    (rule : ImpoverishmentRule FeatureBundle FeatureType)
     (fb : FeatureBundle) : FeatureBundle :=
   applyImpoverishment rule (Neighborhood.ofBundle fb)
 
@@ -199,16 +191,15 @@ the monotone destructiveness that forces retreat to the more general
 exponent at VI. -/
 
 /-- Deletion leaves every dimension as it was, or absent. -/
-theorem deleteFeature_pointwise (fb : FeatureBundle) (target : FeatureVal)
-    (d : FeatureType) :
+theorem deleteFeature_pointwise (fb : FeatureBundle) (target d : FeatureType) :
     deleteFeature fb target d = fb d ∨ deleteFeature fb target d = .absent := by
-  by_cases h : d = target.dimension
+  by_cases h : d = target
   · subst h; right; simp [deleteFeature]
   · left; simp [deleteFeature, Function.update_of_ne h]
 
 /-- One rule application leaves every dimension as it was, or absent. -/
 theorem applyImpoverishment_pointwise
-    (rule : ImpoverishmentRule FeatureBundle FeatureVal)
+    (rule : ImpoverishmentRule FeatureBundle FeatureType)
     (n : Neighborhood FeatureBundle) (d : FeatureType) :
     applyImpoverishment rule n d = n.focus d
       ∨ applyImpoverishment rule n d = .absent := by
@@ -218,7 +209,7 @@ theorem applyImpoverishment_pointwise
   · exact .inl rfl
 
 /-- A chain leaves every dimension as it was, or absent. -/
-theorem chain_pointwise (rules : List (ImpoverishmentRule FeatureBundle FeatureVal))
+theorem chain_pointwise (rules : List (ImpoverishmentRule FeatureBundle FeatureType))
     (n : Neighborhood FeatureBundle) (d : FeatureType) :
     applyImpoverishmentChain rules n d = n.focus d
       ∨ applyImpoverishmentChain rules n d = .absent := by
@@ -235,33 +226,8 @@ theorem chain_pointwise (rules : List (ImpoverishmentRule FeatureBundle FeatureV
     · exact .inr h
 
 /-- Deleting a feature twice is deleting it once. -/
-theorem deleteFeature_idempotent (fb : FeatureBundle) (target : FeatureVal) :
+theorem deleteFeature_idempotent (fb : FeatureBundle) (target : FeatureType) :
     deleteFeature (deleteFeature fb target) target = deleteFeature fb target := by
   simp only [deleteFeature, Function.update_idem]
-
-/-! ### Redundancy-based impoverishment -/
-
-/-- A feature is redundant when it is recoverable from another source,
-such as agreement morphology on the verb. This is the mechanism
-underlying pronoun reduction in Mam ([scott-2023]): when all features
-of the pronominal base are also expressed by agreement, the base is
-deleted at PF. -/
-def allRecoverable (recoverable pronFeatures : List FeatureVal) : Bool :=
-  pronFeatures.all (λ f => recoverable.any (f.sameType ·))
-
-/-- Build a redundancy-based Impoverishment rule. The condition only
-inspects the focus bundle, so the rule is paradigmatic by
-construction. -/
-def redundancyRule (source : List FeatureVal) (target : FeatureVal) :
-    ImpoverishmentRule FeatureBundle FeatureVal :=
-  .paradigmatic
-    (λ fb => allRecoverable source
-      ((FeatureBundle.toGramFeatures fb).map GramFeature.featureType))
-    target
-
-/-- Redundancy rules are paradigmatic. -/
-theorem redundancyRule_isParadigmatic (source : List FeatureVal)
-    (target : FeatureVal) : (redundancyRule source target).Paradigmatic :=
-  ImpoverishmentRule.paradigmatic_isParadigmatic _ _
 
 end DistributedMorphology

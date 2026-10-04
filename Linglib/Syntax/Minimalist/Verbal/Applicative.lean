@@ -63,30 +63,30 @@ namespace Minimalist
 
 /-! ### Applicative types -/
 
-/-- The relation a low applicative expresses between the applied argument and the theme: the
-dynamic transfer to a recipient or from a source of [pylkkanen-2008], or the static possession of
-[cuervo-2003]'s low applicative AT. -/
+/-- A low applicative relates the applied argument and the theme by the dynamic transfer to a
+recipient or from a source of [pylkkanen-2008], or by the static possession of [cuervo-2003]'s low
+applicative AT. -/
 inductive LowRelation where
   | recipient
   | source
   | possessor
   deriving DecidableEq, Repr
 
-/-- The applicative types: high, relating the applied argument to the event; affected, relating
-it to a result state under the dynamic event that embeds it; and low, relating it to the theme. -/
+/-- An applicative is high, relating the applied argument to the event; affected, relating it to a
+result state under the dynamic event that embeds it; or low, relating it to the theme. -/
 inductive ApplType where
   | high
   | affected
   | low (relation : LowRelation)
   deriving DecidableEq, Repr
 
-/-- The category an applicative Merges with: a vP for a high or an affected one, the theme `D`
-for a low one. -/
+/-- An applicative Merges with a vP when it is high or affected, and with the theme `D` when it is
+low. -/
 def ApplType.complement : ApplType → Cat
   | .high | .affected => .v
   | .low _ => .D
 
-/-- A low applicative: its complement is the theme. -/
+/-- An applicative is low when its complement is the theme. -/
 def ApplType.IsLow (t : ApplType) : Prop := t.complement = .D
 
 instance : DecidablePred ApplType.IsLow := fun _ ↦ inferInstanceAs (Decidable (_ = _))
@@ -96,8 +96,8 @@ theorem ApplType.isLow_iff (t : ApplType) : t.IsLow ↔ ∃ r, t = .low r := by
 
 /-! ### The merge site -/
 
-/-- The site of an applicative head in an event structure: the verbal heads above ApplP and the
-heads of its complement, highest first. -/
+/-- The site of an applicative head in an event structure records the verbal heads above ApplP and
+the heads of its complement, highest first. -/
 structure ApplSite where
   above : List LittleV
   below : List LittleV
@@ -110,15 +110,15 @@ variable (s : ApplSite)
 /-- The event structure the applicative sits in. -/
 def heads : List LittleV := s.above ++ s.below
 
-/-- Low: Appl takes the theme DP as its complement, below every verbal head, and ApplP is the
-complement of the root. -/
+/-- A site is low when Appl takes the theme DP as its complement, below every verbal head, and ApplP
+is the complement of the root. -/
 def Low : Prop := s.below = []
 
-/-- High: ApplP is the complement of no verbal head, Voice or Tense taking it. -/
+/-- A site is high when ApplP is the complement of no verbal head, Voice or Tense taking it. -/
 def High : Prop := s.above = []
 
-/-- Affected: Appl takes a vP as its complement and ApplP is the complement of the verbal head
-above, so the applied argument participates in two events. -/
+/-- A site is affected when Appl takes a vP as its complement and ApplP is the complement of the
+verbal head above, so the applied argument participates in two events. -/
 def Affected : Prop := s.above ≠ [] ∧ s.below ≠ []
 
 instance : DecidablePred Low := fun _ ↦ inferInstanceAs (Decidable (_ = _))
@@ -128,8 +128,8 @@ instance : DecidablePred Affected := fun _ ↦ inferInstanceAs (Decidable (_ ∧
 /-- The category of Appl's complement, the theme DP of a low applicative and a vP otherwise. -/
 def complement : Cat := if s.below = [] then .D else .v
 
-/-- The verbal head ApplP is the complement of: the lowest head above it, whose root takes ApplP
-when the applicative is low; none when it is high. -/
+/-- ApplP is the complement of the lowest verbal head above it, whose root takes ApplP when the
+applicative is low, and of no verbal head when it is high. -/
 def selector : Option LittleV := s.above.getLast?
 
 /-- The type of the applicative at the site, given the relation a low one reads. -/
@@ -188,7 +188,7 @@ theorem not_affected_of_state (hw : LittleV.IsWellFormed s.heads)
     (h : s.selector = some .vBE) : ¬ s.Affected :=
   fun ha ↦ (ha.selector_dynamic s hw _ h) rfl
 
-/-- The sites of an applicative in the structure `l`: every cut of the list. -/
+/-- The sites of an applicative in the structure `l` are the cuts of the list. -/
 def all (l : List LittleV) : List ApplSite :=
   (List.range (l.length + 1)).map fun i ↦ ⟨l.take i, l.drop i⟩
 
@@ -198,8 +198,8 @@ theorem mem_all_iff {l : List LittleV} {s : ApplSite} : s ∈ all l ↔ s.heads 
     obtain ⟨i, -, rfl⟩ := List.mem_map.1 h
     exact List.take_append_drop i l
   · rintro rfl
-    exact List.mem_map.2 ⟨s.above.length, List.mem_range.2 (by simp [heads]; omega),
-      by simp [heads]⟩
+    exact List.mem_map.2 ⟨s.above.length,
+      List.mem_range.2 (by simp only [heads, List.length_append]; omega), by simp [heads]⟩
 
 end ApplSite
 

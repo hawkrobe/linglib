@@ -4,218 +4,64 @@ public import Linglib.Core.Order.Bundle
 public import Linglib.Pragmatics.SocialMeaning.Honorific
 public import Linglib.Syntax.Case.Basic
 public import Linglib.Semantics.Reference.Prominence
+public import Linglib.Syntax.Gender.Basic
 public import Linglib.Syntax.Number.Basic
 public import Linglib.Syntax.Minimalist.FeatureSlot
 public import Linglib.Syntax.Person.Basic
 
 /-!
-# Feature Infrastructure for Minimalist Agree
-[adger-2003] [chomsky-1995] [chomsky-2000] [chomsky-2001] [alok-2020] [alok-bhalla-2026] [lobeck-1995] [panagiotidis-2015] [pollock-1989]
+# Features for Minimalist Agree
 
-Phi-features, case values, and feature bundles — the shared infrastructure
-underlying all Agree-based operations. Extracted from `Agree.lean` to
-separate the feature *types* (what can be checked) from the Agree
-*operation* (how checking works) and the *failure model* (what happens
-when checking fails — a `Probe.outcome` of `unvalued`; see `Probe/Basic.lean`).
+A feature dimension is a kind of feature that Agree checks, such as person, number, case or
+[±wh], and each dimension has a value type: `Person`, `Number`, `Gender` and `Case` for the
+φ-features and case, as elsewhere in the library, and `Bool` for the bivalent features. A
+feature value is a dimension with a value in it, and two values share a dimension when their
+first components agree. A feature bundle assigns each dimension a three-state checking slot:
+absent, unvalued (a probe), or valued.
 
-## ±Interpretable Features ([chomsky-1995] Ch 4 §4.5)
+Interpretability is orthogonal to valuation. Chomsky's interpretable features contribute to LF
+(the φ-features of a noun, categorial features), and uninterpretable ones must be checked and
+deleted before it (the φ-features of T and v, the case of a noun); which a feature is depends on
+its host as well as its dimension.
 
-The ±Interpretable distinction is orthogonal to valued/unvalued:
+## Main definitions
 
-- **+Interpretable**: contributes to meaning, survives to LF.
-  Categorial features ([N], [V], [D], [C]) and φ-features of nouns.
-- **–Interpretable**: must be checked and deleted before LF.
-  Case features, φ-features of T/v, strong [nominal-] features.
+* `Minimalist.FeatureType`, `Minimalist.FeatureType.ValueOf` — the dimensions and their values
+* `Minimalist.FeatureVal` — a dimension with a value
+* `Minimalist.FeatureBundle` — a checking slot at each dimension, with `ofList`, `toList` and
+  `valued`
+* `Minimalist.Interpretability` — ±interpretable
 
-Interpretability is determined by the combination of feature type and host category, so that
-person on N is +Interpretable and person on T is –Interpretable.
+## References
 
-## Design Decision: `Person` replaces `Nat`
-
-`PhiFeature.person` uses `Person` (`.first |.second
-|.third`) rather than a raw `Nat`. This eliminates the possibility of
-meaningless person values (e.g., `person 47`) and grounds the feature
-inventory in the same canonical type used across the library:
-
-- `Person` — framework-agnostic person hierarchy
-- `Phi.Geometry.DecomposedPerson` — [preminger-2014]'s [±participant,
-  ±author] decomposition, now mapping from `Person`
-- `DifferentialIndexing.IndexingPersonLevel` — [just-2024]'s SAP/3rd
-  binary split, bridged to `Person`
-
-For unvalued (probe) features, the value is irrelevant —
-`FeatureVal.sameType` matches any `.person _` against any `.person _`
-and any `.number _` against any `.number _`, ignoring specific values.
-Use `.person .third` and `.number .sg` as conventional placeholders
-for probes.
-
+* [chomsky-1995], [chomsky-2000], [chomsky-2001]
+* [adger-2003]
+* [bjorkman-2011] — the [Infl] feature
+* [alok-2020], [alok-bhalla-2026] — the honorific feature
+* [lobeck-1995] — the [E] feature
+* [panagiotidis-2015] — categorial [N] and [V]
+* [pollock-1989] — [±neg]
+* [marcolli-chomsky-berwick-2025] — bundles as assignments
 -/
 
 @[expose] public section
-
 
 namespace Minimalist
 
 open Reference.Prominence
 
--- ============================================================================
--- § 1: Phi-Features
--- ============================================================================
-
-/-- Phi-features (agreement features). -/
-inductive PhiFeature where
-  | person : Person → PhiFeature
-  | number : Number → PhiFeature         -- grammatical number (canonical inventory)
-  | gender : Nat → PhiFeature        -- language-specific encoding
-  deriving Repr, DecidableEq
-
-/-- Inflectional feature values: `[Infl]` ([bjorkman-2011]) is valued on the verb by
-the higher temporal/aspectual head that selects it (`perf` for a participle under
-Perf/Asp, `impf` under imperfective Asp). -/
+/-- The inflectional feature `[Infl]` ([bjorkman-2011]) is valued on the verb by the higher temporal
+or aspectual head that selects it, `perf` for a participle under Perf/Asp and `impf` under
+imperfective Asp. -/
 inductive Infl where
   | perf
   | impf
   deriving Repr, DecidableEq
 
--- ============================================================================
--- § 2: Feature Values
--- ============================================================================
+/-! ### Dimensions and values -/
 
-/-- Feature values that can be checked via Agree -/
-inductive FeatureVal where
-  | phi : PhiFeature → FeatureVal
-  | case : Case → FeatureVal
-  | wh : Bool → FeatureVal           -- [±wh]
-  | q : Bool → FeatureVal            -- [±Q] (question)
-  | epp : Bool → FeatureVal          -- EPP (needs specifier)
-  | tense : Bool → FeatureVal        -- [±tense]
-  | hon : SocialMeaning.HonorificLevel → FeatureVal -- [iHON] ([alok-bhalla-2026])
-  | infl : Infl → FeatureVal         -- [Infl] ([bjorkman-2011])
-  | finite : Bool → FeatureVal       -- [±finite] (Fin head, [rizzi-1997])
-  | factive : Bool → FeatureVal      -- [±factive] (clause-typing)
-  | neg : Bool → FeatureVal          -- [±neg] (NegP, [pollock-1989])
-  | rel : Bool → FeatureVal          -- [±rel] (relative clause typing, [rizzi-1997])
-  | oblique : Bool → FeatureVal     -- [±oblique] (extraction tracking, [elkins-torrence-brown-2026])
-  | ellipsis : Bool → FeatureVal   -- [E] feature licensing NP-ellipsis ([lobeck-1995], [saab-2026])
-  | catN : Bool → FeatureVal       -- [N] referentiality ([panagiotidis-2015])
-  | catV : Bool → FeatureVal       -- [V] temporal predication ([panagiotidis-2015])
-  | foc : Bool → FeatureVal       -- [±FOC] information structure ([westergaard-2009])
-  | pol : Bool → FeatureVal       -- [±Pol] polarity ([laka-1990]; [holmberg-2016])
-  | pov : Bool → FeatureVal      -- [±d] point-of-view ([chou-2012]; [chan-shen-2026])
-  -- Harbour decompositional features for person/number; distinct from the
-  -- `phi` constructors above so postsyntactic rules can target them
-  -- individually without colliding with existing person/number/gender
-  -- pattern-matching elsewhere in the library.
-  | atomic : Bool → FeatureVal     -- [±atomic] number lattice ([harbour-2014])
-  | minimal : Bool → FeatureVal    -- [±minimal] number lattice ([harbour-2014])
-  | participant : Bool → FeatureVal -- [±participant] person lattice ([harbour-2016])
-  | author : Bool → FeatureVal     -- [±author] person lattice ([harbour-2016])
-  deriving Repr, DecidableEq
-
-/-- Do two feature values have the same type, ignoring specific values?
-
-    This is the correct matching predicate for Agree: a probe with
-    [uPerson] should match any goal with [Person:x], regardless of
-    the specific person value x. In contrast, `DecidableEq` (`==`)
-    compares both type and value, which is wrong for Agree matching
-    where the probe carries a placeholder value. -/
-def FeatureVal.sameType : FeatureVal → FeatureVal → Bool
-  | .phi p1, .phi p2 => match p1, p2 with
-    | .person _, .person _ => true
-    | .number _, .number _ => true
-    | .gender _, .gender _ => true
-    | _, _ => false
-  | .case _, .case _ => true
-  | .wh _, .wh _ => true
-  | .q _, .q _ => true
-  | .epp _, .epp _ => true
-  | .tense _, .tense _ => true
-  | .hon _, .hon _ => true
-  | .infl _, .infl _ => true
-  | .finite _, .finite _ => true
-  | .factive _, .factive _ => true
-  | .neg _, .neg _ => true
-  | .rel _, .rel _ => true
-  | .oblique _, .oblique _ => true
-  | .ellipsis _, .ellipsis _ => true
-  | .catN _, .catN _ => true
-  | .catV _, .catV _ => true
-  | .foc _, .foc _ => true
-  | .pol _, .pol _ => true
-  | .pov _, .pov _ => true
-  | .atomic _, .atomic _ => true
-  | .minimal _, .minimal _ => true
-  | .participant _, .participant _ => true
-  | .author _, .author _ => true
-  | _, _ => false
-
--- ============================================================================
--- § 3: Grammatical Features (Valued / Unvalued)
--- ============================================================================
-
-/-- A grammatical feature: either valued or unvalued.
-
-    **Valued vs unvalued** is about whether the feature carries a specific
-    value (person:3) or just a type placeholder (person:_). This is
-    orthogonal to ±Interpretable (see `Interpretability` below):
-
-    |                 | +Interpretable          | –Interpretable               |
-    |-----------------|------------------------|-------------------------------|
-    | **Valued**      | φ of N (person:3)      | —                             |
-    | **Unvalued**    | —                      | φ of T/v, Case of N           |
-
-    Unvalued features act as probes; valued features can be goals.
-    But interpretability determines whether a feature *must be checked
-    and deleted* before LF — a separate question from whether it
-    currently carries a value. -/
-inductive GramFeature where
-  | valued : FeatureVal → GramFeature
-  | unvalued : FeatureVal → GramFeature  -- The FeatureVal indicates feature TYPE
-  deriving Repr, DecidableEq
-
-/-- Is this feature valued? -/
-def GramFeature.isValued : GramFeature → Bool
-  | .valued _ => true
-  | .unvalued _ => false
-
-/-- Is this feature unvalued (a potential probe)? -/
-def GramFeature.isUnvalued : GramFeature → Bool
-  | .valued _ => false
-  | .unvalued _ => true
-
-/-- Get the feature type (ignoring valued/unvalued distinction) -/
-def GramFeature.featureType : GramFeature → FeatureVal
-  | .valued v => v
-  | .unvalued v => v
-
-/-- Do two features match in type? (for Agree)
-    Delegates to `FeatureVal.sameType`, ignoring specific values. -/
-def featuresMatch (f1 f2 : GramFeature) : Bool :=
-  f1.featureType.sameType f2.featureType
-
--- ============================================================================
--- § 4: Feature Bundles as Assignments ([marcolli-chomsky-berwick-2025])
--- ============================================================================
-
-/-! A feature bundle is a **total assignment** from feature dimensions to
-three-state checking slots (`Minimalist.FeatureSlot`): one slot per dimension,
-`absent` / `unvalued` (probe) / `valued v`. This replaces the earlier list
-representation (`List GramFeature`), which admitted junk — duplicate
-dimensions, conflicting values — and was not extensional, so it could not be
-a `LawfulBundleLike` (the `Core/Order/Bundle.lean` Todo).
-
-This is the Agree-layer structure; per [marcolli-chomsky-berwick-2025] (book
-p. 13) the free-Merge core keeps `SO₀` features atomic, so the slot apparatus
-is decoupled from the `SyntacticObject` carrier and lives in
-`Syntax/Minimalist/FeatureSlot.lean`.
-
-`GramFeature` survives as a literal-builder DSL: `ofGramFeatures` folds a list
-of valued/unvalued features into the assignment, the list head winning on
-duplicate dimensions. -/
-
-/-- The feature *dimensions* checked via Agree — the equivalence classes of
-`FeatureVal.sameType`. φ-features split into their three sub-dimensions
-(`person`, `number`, `gender`) so each is a slot in its own right. -/
+/-- The feature dimensions checked via Agree. φ-features split into their three
+sub-dimensions (`person`, `number`, `gender`) so each is a slot in its own right. -/
 inductive FeatureType where
   | person | number | gender
   | case | wh | q | epp | tense | hon | infl | finite | factive | neg | rel
@@ -230,42 +76,12 @@ def FeatureType.all : List FeatureType :=
    .factive, .neg, .rel, .oblique, .ellipsis, .catN, .catV, .foc, .pol, .pov,
    .atomic, .minimal, .participant, .author]
 
-/-- The dimension a feature value belongs to. Two values share a dimension
-iff `FeatureVal.sameType` holds. -/
-def FeatureVal.dimension : FeatureVal → FeatureType
-  | .phi (.person _) => .person
-  | .phi (.number _) => .number
-  | .phi (.gender _) => .gender
-  | .case _ => .case
-  | .wh _ => .wh
-  | .q _ => .q
-  | .epp _ => .epp
-  | .tense _ => .tense
-  | .hon _ => .hon
-  | .infl _ => .infl
-  | .finite _ => .finite
-  | .factive _ => .factive
-  | .neg _ => .neg
-  | .rel _ => .rel
-  | .oblique _ => .oblique
-  | .ellipsis _ => .ellipsis
-  | .catN _ => .catN
-  | .catV _ => .catV
-  | .foc _ => .foc
-  | .pol _ => .pol
-  | .pov _ => .pov
-  | .atomic _ => .atomic
-  | .minimal _ => .minimal
-  | .participant _ => .participant
-  | .author _ => .author
-
-/-- The value space of a dimension: the canonical type a slot at that
-dimension carries (`person ↦ Person`, `number ↦ Number`, `gender ↦ Nat`,
-`case ↦ Case`, `hon ↦ HonorificLevel`, every binary dimension `↦ Bool`). -/
+/-- The value type of a dimension is `Person`, `Number`, `Gender` or `Case` for the φ-features and
+case, the honorific levels, the [Infl] values, and `Bool` for the bivalent features. -/
 @[reducible] def FeatureType.ValueOf : FeatureType → Type
   | .person => Person
   | .number => Number
-  | .gender => Nat
+  | .gender => Gender
   | .case => Case
   | .hon => SocialMeaning.HonorificLevel
   | .infl => Infl
@@ -279,46 +95,26 @@ instance (t : FeatureType) : DecidableEq t.ValueOf := by
 instance (t : FeatureType) : Repr t.ValueOf := by
   cases t <;> exact inferInstance
 
-/-- The value carried by a feature value, in its dimension's value space. -/
-def FeatureVal.value : (fv : FeatureVal) → fv.dimension.ValueOf
-  | .phi (.person p) => p
-  | .phi (.number n) => n
-  | .phi (.gender g) => g
-  | .case c => c
-  | .wh b => b
-  | .q b => b
-  | .epp b => b
-  | .tense b => b
-  | .hon hl => hl
-  | .infl i => i
-  | .finite b => b
-  | .factive b => b
-  | .neg b => b
-  | .rel b => b
-  | .oblique b => b
-  | .ellipsis b => b
-  | .catN b => b
-  | .catV b => b
-  | .foc b => b
-  | .pol b => b
-  | .pov b => b
-  | .atomic b => b
-  | .minimal b => b
-  | .participant b => b
-  | .author b => b
+/-- A feature value is a dimension with a value in it, written `⟨.person, .first⟩`. -/
+abbrev FeatureVal := Σ t : FeatureType, t.ValueOf
 
-/-- A feature bundle as a total assignment: each dimension maps to a
-three-state checking slot. The canonical extensional carrier — replacing
-`List GramFeature` — that is `LawfulBundleLike`. -/
+/-! ### Feature bundles
+
+A feature bundle is a total assignment from the dimensions to three-state checking slots
+(`Minimalist.FeatureSlot`), absent, unvalued or valued, after [marcolli-chomsky-berwick-2025],
+whose free-Merge core keeps the features of a syntactic object atomic, so the slots are an
+Agree-layer structure decoupled from the `SyntacticObject` carrier. -/
+
+/-- A feature bundle assigns each dimension a checking slot. -/
 abbrev FeatureBundle := (t : FeatureType) → Minimalist.FeatureSlot t.ValueOf
 
 namespace FeatureBundle
 
-instance : BundleLike FeatureBundle FeatureType (λ t => Minimalist.FeatureSlot t.ValueOf) :=
-  ⟨λ b => b⟩
+instance : BundleLike FeatureBundle FeatureType (fun t ↦ Minimalist.FeatureSlot t.ValueOf) :=
+  ⟨fun b ↦ b⟩
 
 instance : LawfulBundleLike FeatureBundle :=
-  ⟨λ _ _ h => h⟩
+  ⟨fun _ _ h ↦ h⟩
 
 /-- The bundle has a valued feature of the given dimension. -/
 def hasValuedFeature (a : FeatureBundle) (t : FeatureType) : Bool :=
@@ -340,136 +136,44 @@ def single (t : FeatureType) (v : t.ValueOf) : FeatureBundle :=
     single t v t = .valued v := by
   simp [single]
 
+/-- The bundle read off a list of slots, the list head winning on a repeated dimension. -/
+def ofList (l : List (Σ t : FeatureType, Minimalist.FeatureSlot t.ValueOf)) : FeatureBundle :=
+  l.foldr (fun p b ↦ Function.update b p.1 p.2) ⊥
+
+@[simp] theorem ofList_nil : ofList [] = ⊥ := rfl
+
+/-- The specified slots of a bundle, in `FeatureType.all` order. -/
+def toList (b : FeatureBundle) : List (Σ t : FeatureType, Minimalist.FeatureSlot t.ValueOf) :=
+  FeatureType.all.filterMap fun t ↦ if (b t).isSpecified then some ⟨t, b t⟩ else none
+
+/-- The valued features of a bundle, in `FeatureType.all` order. -/
+def valued (b : FeatureBundle) : List FeatureVal :=
+  FeatureType.all.filterMap fun t ↦ (b t).value?.map (⟨t, ·⟩)
+
 /-- The everywhere-`absent` bundle is the default. -/
 instance : Inhabited FeatureBundle := ⟨⊥⟩
 
 instance : DecidableEq FeatureBundle :=
   inferInstanceAs (DecidableEq ((t : FeatureType) → Minimalist.FeatureSlot t.ValueOf))
 
-/-- Render a bundle by its specified (non-`absent`) dimensions. The function
-carrier has no structural `Repr`, so containing structures that `deriving Repr`
-rely on this. -/
+/-- A bundle is rendered by its specified (non-`absent`) dimensions. The function carrier has no
+structural `Repr`, so containing structures that `deriving Repr` rely on this. -/
 instance : Repr FeatureBundle where
   reprPrec fb _ :=
-    repr <| FeatureType.all.filterMap λ t =>
+    repr <| FeatureType.all.filterMap fun t ↦
       if (fb t).isSpecified then some (reprStr t, reprStr (fb t)) else none
 
 end FeatureBundle
 
-/-- The checking slot a single grammatical feature contributes at its own
-dimension: `valued v ↦ valued v.value`, `unvalued _ ↦ unvalued`. -/
-def GramFeature.toSlot : (gf : GramFeature) → Minimalist.FeatureSlot gf.featureType.dimension.ValueOf
-  | .valued v => .valued v.value
-  | .unvalued _ => .unvalued
+/-! ### Interpretability -/
 
-/-- Bridge from the legacy list representation: fold each feature into its
-dimension's slot, the list head taking precedence on duplicate dimensions
-(matching `getValuedFeature`/`find?` first-match semantics). -/
-def FeatureBundle.ofGramFeatures (l : List GramFeature) : FeatureBundle :=
-  l.foldr (λ gf a => Function.update a gf.featureType.dimension gf.toSlot) ⊥
-
-/-- Reconstruct a `FeatureVal` at dimension `t` from a value. -/
-def FeatureType.toFeatureVal : (t : FeatureType) → t.ValueOf → FeatureVal
-  | .person, p => .phi (.person p)
-  | .number, n => .phi (.number n)
-  | .gender, g => .phi (.gender g)
-  | .case, c => .case c
-  | .hon, hl => .hon hl
-  | .infl, i => .infl i
-  | .wh, b => .wh b
-  | .q, b => .q b
-  | .epp, b => .epp b
-  | .tense, b => .tense b
-  | .finite, b => .finite b
-  | .factive, b => .factive b
-  | .neg, b => .neg b
-  | .rel, b => .rel b
-  | .oblique, b => .oblique b
-  | .ellipsis, b => .ellipsis b
-  | .catN, b => .catN b
-  | .catV, b => .catV b
-  | .foc, b => .foc b
-  | .pol, b => .pol b
-  | .pov, b => .pov b
-  | .atomic, b => .atomic b
-  | .minimal, b => .minimal b
-  | .participant, b => .participant b
-  | .author, b => .author b
-
-/-- A conventional placeholder value per dimension (for `unvalued`-feature
-reconstruction, where the value is semantically irrelevant). -/
-def FeatureType.placeholderValue : (t : FeatureType) → t.ValueOf
-  | .person => .third
-  | .number => .singular
-  | .gender => 0
-  | .case => .nom
-  | .hon => .nonhonorific
-  | .infl => .perf
-  | .wh | .q | .epp | .tense | .finite | .factive | .neg | .rel
-  | .oblique | .ellipsis | .catN | .catV | .foc | .pol | .pov
-  | .atomic | .minimal | .participant | .author => false
-
-/-- `[t:_]`: the unvalued feature at dimension `t` (its placeholder value is inert,
-`ofGramFeatures` discarding it via `toSlot`). -/
-def FeatureType.unvalued (t : FeatureType) : GramFeature :=
-  .unvalued (t.toFeatureVal t.placeholderValue)
-
-/-- Bridge back to the legacy list representation: one `GramFeature` per
-specified dimension, so `ofGramFeatures ∘ toGramFeatures` round-trips. -/
-def FeatureBundle.toGramFeatures (fb : FeatureBundle) : List GramFeature :=
-  FeatureType.all.filterMap λ t =>
-    match fb t with
-    | .absent => none
-    | .unvalued => some t.unvalued
-    | .valued v => some (.valued (t.toFeatureVal v))
-
--- ============================================================================
--- § 5: ±Interpretable Features
--- ============================================================================
-
-/-- Whether a feature is interpretable (contributes to LF) or
-    uninterpretable (must be checked and deleted before LF).
-
-    This is the central distinction of [chomsky-1995] Ch 4 §4.5.
-    It is orthogonal to valued/unvalued: a feature can be interpretable
-    but unvalued (rare), or uninterpretable but valued (never, in the
-    standard theory). The typical pairings are:
-
-    - +Interpretable, valued: φ-features on nouns, categorial features
-    - –Interpretable, unvalued: φ-features on T/v, Case on nouns
-
-    `AgreeSOT.lean` uses `Interpretability` directly for tense features.
-    `Agree/Coordination.lean`'s `Coordination.Annotated.interp` uses
-    `Interpretability` directly; `AdamsonAnagnostopoulou2025.lean` uses it via
-    `open _root_.Minimalist`. -/
+/-- A feature is interpretable when it contributes to LF and uninterpretable when it must be
+checked and deleted before LF ([chomsky-1995]). The distinction is orthogonal to valuation: the
+φ-features of a noun are interpretable and valued, those of T and v uninterpretable and
+unvalued. -/
 inductive Interpretability where
-  | interpretable    -- +Interp: contributes to LF, survives
-  | uninterpretable  -- –Interp: must be checked and deleted
+  | interpretable
+  | uninterpretable
   deriving Repr, DecidableEq
-
-/-- Whether a feature is inherently interpretable regardless of host.
-
-    Some features are always interpretable (categorial, honorific,
-    factive) or always uninterpretable (Case, EPP, ellipsis).
-    Features whose interpretability depends on the host category (φ, wh, tense)
-    have none. -/
-def FeatureVal.inherentInterpretability : FeatureVal → Option Interpretability
-  | .catN _ | .catV _ => some .interpretable
-  | .case _ => some .uninterpretable
-  | .epp _ => some .uninterpretable
-  | .ellipsis _ => some .uninterpretable
-  | .oblique _ => some .uninterpretable
-  | .hon _ => some .interpretable
-  | .neg _ => some .interpretable
-  | .factive _ | .pol _ | .pov _ => some .interpretable
-  | _ => none  -- host-dependent: phi, wh, q, tense, finite, foc, rel
-
-/-- Case is always uninterpretable. -/
-theorem case_always_uninterpretable (c : Case) :
-    FeatureVal.inherentInterpretability (.case c) = some .uninterpretable := rfl
-
-/-- Categorial [N] is always interpretable. -/
-theorem catN_always_interpretable (b : Bool) :
-    FeatureVal.inherentInterpretability (.catN b) = some .interpretable := rfl
 
 end Minimalist

@@ -157,7 +157,7 @@ def rank : Feat → ℕ
 
 end Feat
 
-/-- An argument: its features. -/
+/-- An argument is given by its features. -/
 abbrev Arg := List Feat
 
 /-- First person, `[+participant +author]`. -/
@@ -238,7 +238,7 @@ inductive Slot where
   | object
   deriving DecidableEq, Repr
 
-/-- The agreement prefix of (1): the agent, goal and object; an absent argument has no
+/-- The agreement prefix of (1) has the agent, goal and object, an absent argument having no
 features. -/
 structure Prefix where
   /-- The agent. -/
@@ -263,7 +263,7 @@ def set (p : Prefix) : Slot → Arg → Prefix
   | .goal, a => { p with goal := a }
   | .object, a => { p with object := a }
 
-/-- The neighborhood of a slot: its argument in focus, the other two as context in the order
+/-- The neighborhood of a slot has its argument in focus and the other two as context, in the order
 of (1). -/
 def around (p : Prefix) : Slot → Neighborhood Arg
   | .agent => ⟨p.agent, [], [p.goal, p.object]⟩
@@ -279,7 +279,7 @@ def ofAround : Slot → Neighborhood Arg → Prefix
 @[simp] theorem ofAround_around (p : Prefix) (s : Slot) : ofAround s (p.around s) = p := by
   cases s <;> rfl
 
-/-- The leftmost number bundle: the first slot with a number feature. -/
+/-- The leftmost number bundle is the first slot with a number feature. -/
 def leftmostNumber (p : Prefix) : Option Slot :=
   if p.agent.number.isEmpty then
     if p.goal.number.isEmpty then
@@ -290,7 +290,7 @@ def leftmostNumber (p : Prefix) : Option Slot :=
 /-- The features of the leftmost number bundle. -/
 def leftmostNumberArg (p : Prefix) : Arg := (p.leftmostNumber.map p.get).getD []
 
-/-- The leftmost person bundle: the first slot with a `[±participant]` feature. -/
+/-- The leftmost person bundle is the first slot with a `[±participant]` feature. -/
 def leftmostPerson (p : Prefix) : Option Slot :=
   if p.agent.hasParticipant then some .agent
   else if p.goal.hasParticipant then some .goal
@@ -299,7 +299,7 @@ def leftmostPerson (p : Prefix) : Option Slot :=
 /-- The leftmost exponed person is second. -/
 def person2 (p : Prefix) : Bool := (p.leftmostPerson.map fun s ↦ (p.get s).is2).getD false
 
-/-- The second argument: the goal, or the object of a prefix without a goal. -/
+/-- The second argument is the goal, or the object of a prefix without a goal. -/
 def secondArg (p : Prefix) : Slot := if p.goal.present then .goal else .object
 
 /-- The present arguments. -/
@@ -404,53 +404,54 @@ theorem run_eq_of_paraThenSyn {p s : Rule} (hp : p.Paradigmatic) (hs : s.Syntagm
 The appendix's rules of impoverishment, by its numbering; the paper's numbers are in the
 docstrings. -/
 
-/-- (1): the goal loses its number after an inverse agent, with an object. -/
+/-- By rule (1), the goal loses its number after an inverse agent, with an object. -/
 def r1 : Rule :=
   .syntagmatic .goal (fun p ↦ p.agent.isI && p.goal.is3 && p.object.present) .deleteNumber
 
-/-- (4): a first person agent loses its number before a second person goal. -/
+/-- By rule (4), a first person agent loses its number before a second person goal. -/
 def r4 : Rule :=
   .syntagmatic .agent (fun p ↦ p.agent.has (.author true) && p.goal.is2) .deleteNumber
 
-/-- (5), optional: a second person agent loses its number before a first dual or inverse goal
-with no object; the prefix is then the portmanteau *ku*. -/
+/-- By the optional rule (5), a second person agent loses its number before a first dual or inverse
+goal with no object; the prefix is then the portmanteau *ku*. -/
 def r5 : Rule :=
   .syntagmatic .agent
     (fun p ↦ p.agent.is2 && p.goal.is1 && p.goal.has (.atomic false) &&
       p.goal.has (.minimal true) && !p.object.present)
     .deleteNumber
 
-/-- (9): a first singular possessive goal loses `[+participant]`. -/
+/-- By rule (9), a first singular possessive goal loses `[+participant]`. -/
 def r9 : Rule :=
   .syntagmatic .goal
     (fun p ↦ !p.agent.present && p.goal.has (.author true) && p.goal.has (.atomic true))
     (.delete [.participant true])
 
-/-- (12): a first person agent loses `[+participant]` before a second dual or inverse goal. -/
+/-- By rule (12), a first person agent loses `[+participant]` before a second dual or inverse goal.
+-/
 def r12 : Rule :=
   .syntagmatic .agent
     (fun p ↦ p.agent.has (.author true) && p.goal.is2 && p.goal.has (.atomic false) &&
       p.goal.has (.minimal true))
     (.delete [.participant true])
 
-/-- (24), the paper's (27): a `[−author]` goal loses `[−participant]` after a dual agent. -/
+/-- By rule (24), the paper's (27), a `[−author]` goal loses `[−participant]` after a dual agent. -/
 def r24 : Rule :=
   .syntagmatic .goal (fun p ↦ p.agent.isD && p.goal.has (.author false))
     (.delete [.participant false])
 
-/-- (33), the paper's (41): a `[−author]` goal loses its singular features between a dual
+/-- By rule (33), the paper's (41), a `[−author]` goal loses its singular features between a dual
 agent and a third singular object. -/
 def r33 : Rule :=
   .syntagmatic .goal
     (fun p ↦ p.agent.isD && p.goal.has (.author false) && p.object.is3 && p.object.isS)
     (.delete singular)
 
-/-- (34a), the paper's (32a): a singular object loses its person after an agent. -/
+/-- By rule (34a), the paper's (32a), a singular object loses its person after an agent. -/
 def r34a : Rule :=
   .syntagmatic .object (fun p ↦ !p.goal.present && p.agent.present && p.object.isS)
     .deletePerson
 
-/-- (34b), the paper's (32b): an inverse `[−author]` object loses `[−participant]` after an
+/-- By rule (34b), the paper's (32b), an inverse `[−author]` object loses `[−participant]` after an
 agent. -/
 def r34b : Rule :=
   .syntagmatic .object
@@ -458,7 +459,7 @@ def r34b : Rule :=
       p.object.isI)
     (.delete [.participant false])
 
-/-- (14): a first dual or inverse agent loses its person before no object, or a singular,
+/-- By rule (14), a first dual or inverse agent loses its person before no object, or a singular,
 dummy or inverse one. -/
 def r14 : Rule :=
   .syntagmatic .agent
@@ -467,12 +468,12 @@ def r14 : Rule :=
       (!p.object.present || p.object.isS || p.object.isDummy || p.object.isI))
     .deletePerson
 
-/-- (35): a singular object loses its person after a first inverse possessive goal. -/
+/-- By rule (35), a singular object loses its person after a first inverse possessive goal. -/
 def r35 : Rule :=
   .syntagmatic .object (fun p ↦ !p.agent.present && p.goal.is1 && p.goal.isI && p.object.isS)
     .deletePerson
 
-/-- (46), the paper's (37): a first or second singular agent loses `[+minimal]` before a
+/-- By rule (46), the paper's (37), a first or second singular agent loses `[+minimal]` before a
 singular or dummy object. -/
 def r46 : Rule :=
   .syntagmatic .agent
@@ -480,14 +481,14 @@ def r46 : Rule :=
       !p.goal.present && (p.object.isS || p.object.isDummy))
     (.delete [.minimal true])
 
-/-- (2): the agent loses its number before a third dual or inverse goal, with an object. -/
+/-- By rule (2), the agent loses its number before a third dual or inverse goal, with an object. -/
 def r2 : Rule :=
   .syntagmatic .agent
     (fun p ↦ p.goal.has (.author false) && p.goal.has (.atomic false) &&
       p.goal.has (.minimal true) && p.object.present)
     .deleteNumber
 
-/-- (7), on the agent: a second person agent with number and a first person goal both lose
+/-- By rule (7), on the agent, a second person agent with number and a first person goal both lose
 their number; the optional (5) bleeds it, leaving the goal's number for *ku*. -/
 def r7a : Rule :=
   .syntagmatic .agent (fun p ↦ p.agent.is2 && p.agent.number.present && p.goal.is1)
@@ -499,53 +500,53 @@ def r7b : Rule :=
   .syntagmatic .goal (fun p ↦ p.agent.is2 && p.agent.number.present && p.goal.is1)
     .deleteNumber
 
-/-- (32), the paper's (40): a singular object loses its person after a singular goal. -/
+/-- By rule (32), the paper's (40), a singular object loses its person after a singular goal. -/
 def r32 : Rule :=
   .syntagmatic .object (fun p ↦ p.goal.isS && p.object.isS) .deletePerson
 
-/-- (15): a first person agent is obliterated before a second singular goal. -/
+/-- By rule (15), a first person agent is obliterated before a second singular goal. -/
 def r15 : Rule :=
   .syntagmatic .agent
     (fun p ↦ p.agent.has (.author true) && p.goal.is2 && p.goal.has (.atomic true))
     .deletePerson
 
-/-- (26), the paper's (43), paradigmatic: a first person `[+minimal]` goal loses
+/-- By the paradigmatic rule (26), the paper's (43), a first person `[+minimal]` goal loses
 `[+atomic]`. -/
 def r26 : Rule :=
   .paradigmatic .goal (fun a ↦ a.has (.author true) && a.has (.minimal true))
     (.delete [.atomic true])
 
-/-- (45a), the paper's (36b): the object loses its singular features after a `[+atomic]`
+/-- By rule (45a), the paper's (36b), the object loses its singular features after a `[+atomic]`
 agent. -/
 def r45a : Rule :=
   .syntagmatic .object
     (fun p ↦ p.agent.has (.atomic true) && !p.goal.present && p.object.present)
     (.delete singular)
 
-/-- (45b), the paper's (36a): the dummy object is obliterated after a `[+atomic]` agent. -/
+/-- By rule (45b), the paper's (36a), the dummy object is obliterated after a `[+atomic]` agent. -/
 def r45b : Rule :=
   .syntagmatic .object
     (fun p ↦ p.agent.has (.atomic true) && !p.goal.present && p.object.isDummy) .obliterate
 
-/-- (40), the paper's (35), paradigmatic: a third singular agent is obliterated. -/
+/-- By the paradigmatic rule (40), the paper's (35), a third singular agent is obliterated. -/
 def r40 : Rule := .paradigmatic .agent (fun a ↦ a.is3 && a.isS) .obliterate
 
-/-- (40) as the appendix prints it, `[[A __](O)]`: with no goal. -/
+/-- Rule (40) as the appendix prints it, `[[A __](O)]`, applies with no goal. -/
 def r40' : Rule :=
   .syntagmatic .agent (fun p ↦ p.agent.is3 && p.agent.isS && !p.goal.present) .obliterate
 
-/-- (26) as the appendix prints it, `[[G 1 __ +minimal]`: with no agent. -/
+/-- Rule (26) as the appendix prints it, `[[G 1 __ +minimal]`, applies with no agent. -/
 def r26' : Rule :=
   .syntagmatic .goal
     (fun p ↦ !p.agent.present && p.goal.has (.author true) && p.goal.has (.minimal true))
     (.delete [.atomic true])
 
-/-- (47): an inverse object loses `[−author]` after a singular agent. -/
+/-- By rule (47), an inverse object loses `[−author]` after a singular agent. -/
 def r47 : Rule :=
   .syntagmatic .object (fun p ↦ p.agent.isS && !p.goal.present && p.object.isI)
     (.delete [.author false])
 
-/-- (3): a first person agent loses `[+participant]` before a third person goal and an
+/-- By rule (3), a first person agent loses `[+participant]` before a third person goal and an
 object when the leftmost number is dual or inverse. -/
 def r3 : Rule :=
   .syntagmatic .agent
@@ -553,25 +554,26 @@ def r3 : Rule :=
       p.leftmostNumberArg.has (.atomic false) && p.leftmostNumberArg.has (.minimal true))
     (.delete [.participant true])
 
-/-- (11a), the paper's (39), paradigmatic: a second singular agent loses `[+participant]`. -/
+/-- By the paradigmatic rule (11a), the paper's (39), a second singular agent loses
+`[+participant]`. -/
 def r11a : Rule :=
   .paradigmatic .agent (fun a ↦ a.has (.author false) && a.has (.atomic true))
     (.delete [.participant true])
 
-/-- (11b): a second singular possessive goal loses `[−author]`. -/
+/-- By rule (11b), a second singular possessive goal loses `[−author]`. -/
 def r11b : Rule :=
   .syntagmatic .goal
     (fun p ↦ !p.agent.present && p.goal.has (.participant true) && p.goal.has (.atomic true))
     (.delete [.author false])
 
-/-- (29), the paper's (44), at slot `s`: the leftmost number bundle, when singular, loses
+/-- By rule (29), the paper's (44), at slot `s`, the leftmost number bundle, when singular, loses
 `[+minimal]` before a third inverse object. -/
 def r29 (s : Slot) : Rule :=
   .syntagmatic s
     (fun p ↦ p.leftmostNumber == some s && (p.get s).isS && p.object.is3 && p.object.isI)
     (.delete [.minimal true])
 
-/-- (43): a first singular agent loses `[+participant]` before no object or a `[−atomic]`
+/-- By rule (43), a first singular agent loses `[+participant]` before no object or a `[−atomic]`
 one. -/
 def r43 : Rule :=
   .syntagmatic .agent
@@ -579,37 +581,37 @@ def r43 : Rule :=
       (!p.object.present || p.object.has (.atomic false)))
     (.delete [.participant true])
 
-/-- (44): a first singular agent loses `[+minimal]` before no object or, this study's widening,
-a plural one. -/
+/-- By rule (44), a first singular agent loses `[+minimal]` before no object or, this study's
+widening, a plural one. -/
 def r44 : Rule :=
   .syntagmatic .agent
     (fun p ↦ p.agent.has (.author true) && p.agent.has (.atomic true) && !p.goal.present &&
       (!p.object.present || p.object.isP))
     (.delete [.minimal true])
 
-/-- (38b): the reflexive object is obliterated after a singular agent. -/
+/-- By rule (38b), the reflexive object is obliterated after a singular agent. -/
 def r38b : Rule :=
   .syntagmatic .object (fun p ↦ p.agent.isS && !p.goal.present && p.object.isRefl) .obliterate
 
-/-- (42): a second singular intransitive agent loses `[−author]`. -/
+/-- By rule (42), a second singular intransitive agent loses `[−author]`. -/
 def r42 : Rule :=
   .syntagmatic .agent
     (fun p ↦ p.agent.isS && p.agent.has (.author false) && !p.goal.present &&
       !p.object.present)
     (.delete [.author false])
 
-/-- (38a): a third plural object is obliterated after a singular agent. -/
+/-- By rule (38a), a third plural object is obliterated after a singular agent. -/
 def r38a : Rule :=
   .syntagmatic .object
     (fun p ↦ p.agent.atomicS && !p.goal.present && p.object.is3 && p.object.isP) .obliterate
 
-/-- (48a): an inverse object loses its number after a first singular agent. -/
+/-- By rule (48a), an inverse object loses its number after a first singular agent. -/
 def r48a : Rule :=
   .syntagmatic .object
     (fun p ↦ p.agent.has (.author true) && p.agent.isS && !p.goal.present && p.object.isI)
     .deleteNumber
 
-/-- (48b): a second singular agent loses its singular features before an inverse object. -/
+/-- By rule (48b), a second singular agent loses its singular features before an inverse object. -/
 def r48b : Rule :=
   .syntagmatic .agent
     (fun p ↦ p.agent.has (.author false) && p.agent.isS && !p.goal.present && p.object.isI)
@@ -638,28 +640,28 @@ theorem r11a_paradigmatic : r11a.Paradigmatic := Rule.paradigmatic_isParadigmati
 
 theorem r26_paradigmatic : r26.Paradigmatic := Rule.paradigmatic_isParadigmatic _ _ _
 
-/-- The 3S:3S transitive prefix, Table 15: ∅. -/
+/-- The 3S:3S transitive prefix is ∅ (Table 15). -/
 def prefix3S3S : Prefix := ⟨third ++ singular, [], third ++ singular⟩
 
-/-- The 3S:3I transitive prefix, Table 15: *í*. -/
+/-- The 3S:3I transitive prefix is *í* (Table 15). -/
 def prefix3S3I : Prefix := ⟨third ++ singular, [], third ++ inverse⟩
 
-/-- The 3S:no transitive prefix, Table 16: ∅. -/
+/-- The 3S:no transitive prefix is ∅ (Table 16). -/
 def prefix3Sno : Prefix := ⟨third ++ singular, [], [.dummy]⟩
 
-/-- The 2S:3S transitive prefix, Table 17: *o*. -/
+/-- The 2S:3S transitive prefix is *o* (Table 17). -/
 def prefix2S3S : Prefix := ⟨second ++ singular, [], third ++ singular⟩
 
-/-- The 2S intransitive prefix, Table 17: *ǫ*. -/
+/-- The 2S intransitive prefix is *ǫ* (Table 17). -/
 def prefix2S : Prefix := ⟨second ++ singular, [], []⟩
 
-/-- The 1S:3S possessive prefix, Table 22: *ôn*. -/
+/-- The 1S:3S possessive prefix is *ôn* (Table 22). -/
 def prefix1S3S : Prefix := ⟨[], first ++ singular, third ++ singular⟩
 
-/-- The 1S:3I possessive prefix, Table 22: *ónôm*. -/
+/-- The 1S:3I possessive prefix is *ónôm* (Table 22). -/
 def prefix1S3I : Prefix := ⟨[], first ++ singular, third ++ inverse⟩
 
-/-- The 1D:3S:3S ditransitive prefix, Table 21: *opénôm*. -/
+/-- The 1D:3S:3S ditransitive prefix is *opénôm* (Table 21). -/
 def prefix1D3S3S : Prefix := ⟨first ++ dual, third ++ singular, third ++ singular⟩
 
 theorem r34a_syntagmatic : r34a.Syntagmatic := by
@@ -729,7 +731,7 @@ theorem case1_block (l : List Rule) (hl : ParaThenSyn l) (hperm : l.Perm [r40, r
     (run l prefix3S3S).object = third ++ singular := by
   rw [run_eq_of_paraThenSyn r40_paradigmatic r34a_syntagmatic hl hperm, case1_para_syn]
 
-/-- The same for the 3S:3I prefix and (34b): syntagmatic first, the object loses
+/-- The same holds for the 3S:3I prefix and (34b): syntagmatic first, the object loses
 `[−participant]`; paradigmatic first, it keeps it. -/
 theorem case1_inverse :
     run [r34b, r40] prefix3S3I = ⟨[], [], [.author false, .inverse]⟩ ∧
@@ -858,7 +860,7 @@ After Linearization the prefix is a string of feature terminals, each tagged wit
 in the order of (4) and (5); the appendix's rules of metathesis swap adjacent terminals, the
 library's `TerminalMetathesisRule`. Exponence then reads each terminal in its prefix. -/
 
-/-- A terminal of the linearized prefix: its slot and feature. -/
+/-- A terminal of the linearized prefix is a slot with a feature. -/
 abbrev Tok := Slot × Feat
 
 /-- The linearized prefix. -/
@@ -866,20 +868,20 @@ def linearize (p : Prefix) : List Tok :=
   [Slot.agent, .goal, .object].flatMap fun s ↦
     ((List.range 6).flatMap fun k ↦ (p.get s).filter (Feat.rank · == k)).map ((s, ·))
 
-/-- (18): the goal's `[−author]` swaps with its following inverse feature, when an agent is
+/-- By rule (18), the goal's `[−author]` swaps with its following inverse feature, when an agent is
 present. -/
 def m18 (p : Prefix) : TerminalMetathesisRule Tok :=
   .ofBool fun n ↦ p.agent.present && n.focus == (.goal, .author false) &&
     n.rightCtx.head? == some (.goal, .inverse)
 
-/-- (23), the paper's (26): a `[−atomic]` agent's `[+minimal]` swaps with the second
+/-- By rule (23), the paper's (26), a `[−atomic]` agent's `[+minimal]` swaps with the second
 argument's following `[−author]`. -/
 def m23 (p : Prefix) : TerminalMetathesisRule Tok :=
   .ofBool fun n ↦ p.agent.has (.atomic false) && n.focus == (.agent, .minimal true) &&
     n.rightCtx.head? == some (p.secondArg, .author false)
 
-/-- (22), the paper's (24): the goal's `[−author]` swaps with its following `[−atomic]` before
-`[+minimal]`, when an agent is present. -/
+/-- By rule (22), the paper's (24), the goal's `[−author]` swaps with its following `[−atomic]`
+before `[+minimal]`, when an agent is present. -/
 def m22 (p : Prefix) : TerminalMetathesisRule Tok :=
   .ofBool fun n ↦ p.agent.present && n.focus == (.goal, .author false) &&
     n.rightCtx.take 2 == [(.goal, .atomic false), (.goal, .minimal true)]
@@ -898,7 +900,7 @@ inductive Role where
 /-- An exponent and its role. -/
 abbrev Morph := String × Role
 
-/-- The exponents of one terminal in its prefix: the appendix's rules of exponence (8), (10),
+/-- The exponents of one terminal in its prefix follow the appendix's rules of exponence (8), (10),
 (13), (16), (17), (19), (20), (25), (30), (31), (36), (37) and (39). -/
 def exponeTok (p : Prefix) (t : Tok) : List Morph :=
   let s := t.1
@@ -952,8 +954,8 @@ def concat (l : List String) : String := l.foldl (· ++ ·) ""
 /-- A vowel of the exponents, before tone is assigned. -/
 def isVowel (c : Char) : Bool := "aeiouǫé".toList.contains c
 
-/-- The epenthetic vowel, (27): an onset consonant with no vowel after it, or a coda consonant
-with none before it, takes *o*. -/
+/-- By the epenthesis rule (27), an onset consonant with no vowel after it, or a coda consonant with
+none before it, takes the vowel *o*. -/
 def epenthesis : Option Char → List Morph → List String
   | _, [] => []
   | prev, (m, r) :: rest =>
@@ -1015,9 +1017,9 @@ def exception (c : Taos.Cell) : Option (Option Tone) :=
   | none, some (.third, .dual), some _ => some (some .high)
   | _, _, _ => none
 
-/-- The tone rules (50) and (51): a one-argument prefix is toneless; otherwise the final
-syllable, *mo* aside, is high if open and falling if closed, *pé* is high, and the syllable
-before it is high unless it precedes *pi* or *pé*. -/
+/-- By the tone rules (50) and (51), a one-argument prefix is toneless; otherwise the final
+syllable, *mo* aside, is high if open and falling if closed, *pé* is high, and the syllable before
+it is high unless it precedes *pi* or *pé*. -/
 def tone (c : Taos.Cell) (nargs : ℕ) (morphs : List String) (fixed : Bool) : String :=
   let s := concat morphs
   if fixed then s else
@@ -1067,15 +1069,14 @@ def spellOut (c : Taos.Cell) : Prefix where
     | some .reflexive => [.refl]
     | some (.third n) => third ++ numberFeats n
 
-/-- The arguments a prefix expones: its present arguments, less an object silenced by the
-allomorphs (39b,d). -/
+/-- A prefix expones its present arguments, less an object silenced by the allomorphs (39b,d). -/
 def Prefix.exponed (p : Prefix) : ℕ :=
   p.args.length -
     if p.agent.isD && !p.goal.present && (p.object.isRefl || (p.object.is3 && p.object.isP))
     then 1 else 0
 
-/-- The surface form of a cell under a rule system: Spell-Out, impoverishment, Linearization,
-metathesis, exponence, epenthesis and tone. -/
+/-- The surface form of a cell under a rule system results from Spell-Out, impoverishment,
+Linearization, metathesis, exponence, epenthesis and tone. -/
 def deriveWith (rules : List Rule) (c : Taos.Cell) : String :=
   let p := run rules (spellOut c)
   let (morphs, fixed) := expone p (metathesis p (linearize p))
@@ -1156,20 +1157,20 @@ and Nevins's (25), obliterates a clitic in the Feature Markedness module; T-Noni
 paper's (12), is repaired in the Linear Operations module by Ergative Metathesis (13) or
 L-Support. -/
 
-/-- A Basque terminal: its Minimalist features. -/
+/-- A Basque terminal is a list of Minimalist features. -/
 abbrev Terminal := List FeatureVal
 
-/-- A clitic: its case and person and number features. -/
-def clitic (c : Case) (φ : Terminal) : Terminal := .case c :: φ
+/-- A clitic bears its case and its person and number features. -/
+def clitic (c : Case) (φ : Terminal) : Terminal := ⟨.case, c⟩ :: φ
 
 /-- First person, in the Minimalist inventory. -/
-def firstφ : Terminal := [.participant true, .author true]
+def firstφ : Terminal := [⟨.participant, true⟩, ⟨.author, true⟩]
 
 /-- Second person, in the Minimalist inventory. -/
-def secondφ : Terminal := [.participant true, .author false]
+def secondφ : Terminal := [⟨.participant, true⟩, ⟨.author, false⟩]
 
 /-- T, past tense (see the implementation notes). -/
-def pastT : Terminal := [.tense true]
+def pastT : Terminal := [⟨.tense, true⟩]
 
 /-- The epenthetic L of L-Support, a terminal without features. -/
 def lSupport : Terminal := []
@@ -1177,28 +1178,27 @@ def lSupport : Terminal := []
 /-- `a` bears every feature of `fs`. -/
 def Terminal.bears (fs a : Terminal) : Bool := fs.all a.contains
 
-/-- Participant Dissimilation: a `[+participant +author]` clitic is obliterated when another
-clitic of the word bears `trigger`; Arregi and Nevins's `[+motion]` restriction and their
-First Singular Clitic Impoverishment, which keep first singular clitics out of it, are not
-modelled. -/
+/-- Under Participant Dissimilation a `[+participant +author]` clitic is obliterated when another
+clitic of the word bears `trigger`; Arregi and Nevins's `[+motion]` restriction and their First
+Singular Clitic Impoverishment, which keep first singular clitics out of it, are not modelled. -/
 def participantDissimilation (trigger : Terminal) : ObliterationRule Terminal :=
   .ofBool fun n ↦ firstφ.bears n.focus && (n.leftCtx ++ n.rightCtx).any (trigger.bears ·)
 
-/-- Ondarru, the paper's (16): the trigger is an ergative participant clitic. -/
+/-- In Ondarru, the paper's (16), the trigger is an ergative participant clitic. -/
 def ondarru : ObliterationRule Terminal :=
-  participantDissimilation [.case .erg, .participant true]
+  participantDissimilation [⟨.case, .erg⟩, ⟨.participant, true⟩]
 
-/-- Zamudio, the paper's (18): the trigger is any participant clitic. -/
-def zamudio : ObliterationRule Terminal := participantDissimilation [.participant true]
+/-- In Zamudio, the paper's (18), the trigger is any participant clitic. -/
+def zamudio : ObliterationRule Terminal := participantDissimilation [⟨.participant, true⟩]
 
-/-- Ergative Metathesis, the paper's (13) after Arregi and Nevins's (105): a word-initial T is
-preceded by the first ergative clitic that follows it, without (105a)'s conditions on an
-intervening dative clitic. -/
+/-- Under Ergative Metathesis, the paper's (13) after Arregi and Nevins's (105), a word-initial T is
+preceded by the first ergative clitic that follows it, without (105a)'s conditions on an intervening
+dative clitic. -/
 def ergativeMetathesis : SpelloutDomain Terminal → SpelloutDomain Terminal :=
   rewriteFirst
-    (fun n ↦ n.leftCtx = [] ∧ n.focus.contains (.tense true) ∧
-      n.rightCtx.any (·.contains (.case .erg)))
-    fun n ↦ match n.rightCtx.find? (·.contains (.case .erg)) with
+    (fun n ↦ n.leftCtx = [] ∧ n.focus.contains (⟨.tense, true⟩) ∧
+      n.rightCtx.any (·.contains (⟨.case, .erg⟩)))
+    fun n ↦ match n.rightCtx.find? (·.contains (⟨.case, .erg⟩)) with
       | some e => n.leftCtx.reverse ++ e :: n.focus :: n.rightCtx.erase e
       | none => n.toList
 
@@ -1207,7 +1207,7 @@ theorem length_ergativeMetathesis (d : SpelloutDomain Terminal) :
     (ergativeMetathesis d).length = d.length := by
   unfold ergativeMetathesis
   refine length_rewriteFirst (fun n ↦ ?_) d
-  cases h : n.rightCtx.find? (·.contains (.case .erg)) with
+  cases h : n.rightCtx.find? (·.contains (⟨.case, .erg⟩)) with
   | none => rfl
   | some e =>
     have hmem := List.mem_of_find?_eq_some h
@@ -1218,9 +1218,9 @@ theorem length_ergativeMetathesis (d : SpelloutDomain Terminal) :
 
 /-- L-Support: an L before a word-initial T. -/
 def lSupportRepair (d : SpelloutDomain Terminal) : SpelloutDomain Terminal :=
-  if d.head?.any (·.contains (.tense true)) then lSupport :: d else d
+  if d.head?.any (·.contains (⟨.tense, true⟩)) then lSupport :: d else d
 
-/-- The Linear Operations module: the two repairs of T-Noninitiality. -/
+/-- The Linear Operations module applies the two repairs of T-Noninitiality. -/
 def linearOperations : SpelloutDomain Terminal → SpelloutDomain Terminal :=
   lSupportRepair ∘ ergativeMetathesis
 
@@ -1237,46 +1237,46 @@ def linearThenMarkedness (pd : ObliterationRule Terminal) :
 /-- The Ondarru auxiliary of (17), *s-endu-n* 'you saw us': a first plural absolutive clitic,
 past T, and a second singular ergative clitic. -/
 def auxiliary17 : SpelloutDomain Terminal :=
-  [clitic .abs (firstφ ++ [.atomic false, .minimal false]), pastT,
-   clitic .erg (secondφ ++ [.atomic true, .minimal true])]
+  [clitic .abs (firstφ ++ [⟨.atomic, false⟩, ⟨.minimal, false⟩]), pastT,
+   clitic .erg (secondφ ++ [⟨.atomic, true⟩, ⟨.minimal, true⟩])]
 
 /-- The Zamudio auxiliary of (19), *y-a-tzu-e-n* 'we accompanied you lot': past T, a second
 plural dative clitic, and a first plural ergative clitic. -/
 def auxiliary19 : SpelloutDomain Terminal :=
-  [pastT, clitic .dat (secondφ ++ [.atomic false, .minimal false]),
-   clitic .erg (firstφ ++ [.atomic false, .minimal false])]
+  [pastT, clitic .dat (secondφ ++ [⟨.atomic, false⟩, ⟨.minimal, false⟩]),
+   clitic .erg (firstφ ++ [⟨.atomic, false⟩, ⟨.minimal, false⟩])]
 
-/-- Ondarru, markedness first: Participant Dissimilation obliterates the absolutive clitic,
-leaving T initial, and Ergative Metathesis then fronts the ergative clitic: *s-endu-n*. -/
+/-- In Ondarru with markedness first, Participant Dissimilation obliterates the absolutive clitic,
+leaving T initial, and Ergative Metathesis then fronts the ergative clitic, giving *s-endu-n*. -/
 theorem ondarru_markedness_then_linear :
     markednessThenLinear ondarru auxiliary17 =
-      [clitic .erg (secondφ ++ [.atomic true, .minimal true]), pastT] := by
+      [clitic .erg (secondφ ++ [⟨.atomic, true⟩, ⟨.minimal, true⟩]), pastT] := by
   decide
 
-/-- Ondarru, linear module first: T is not initial, so neither repair applies, and after the
-absolutive clitic goes T is stranded initial, Arregi and Nevins's (17b) *eu-su-n*. -/
+/-- In Ondarru with the linear module first, T is not initial, so neither repair applies, and after
+the absolutive clitic goes T is stranded initial, Arregi and Nevins's (17b) *eu-su-n*. -/
 theorem ondarru_linear_then_markedness :
     linearThenMarkedness ondarru auxiliary17 =
-      [pastT, clitic .erg (secondφ ++ [.atomic true, .minimal true])] := by
+      [pastT, clitic .erg (secondφ ++ [⟨.atomic, true⟩, ⟨.minimal, true⟩])] := by
   decide
 
 theorem ondarru_orders_differ :
     markednessThenLinear ondarru auxiliary17 ≠ linearThenMarkedness ondarru auxiliary17 := by
   decide
 
-/-- Zamudio, markedness first: Participant Dissimilation obliterates the ergative clitic, so
-no ergative is left to front and L-Support repairs the initial T: *y-a-tzu-e-n*. -/
+/-- In Zamudio with markedness first, Participant Dissimilation obliterates the ergative clitic, so
+no ergative is left to front and L-Support repairs the initial T, giving *y-a-tzu-e-n*. -/
 theorem zamudio_markedness_then_linear :
     markednessThenLinear zamudio auxiliary19 =
-      [lSupport, pastT, clitic .dat (secondφ ++ [.atomic false, .minimal false])] := by
+      [lSupport, pastT, clitic .dat (secondφ ++ [⟨.atomic, false⟩, ⟨.minimal, false⟩])] := by
   decide
 
-/-- Zamudio, linear module first: Ergative Metathesis fronts the ergative clitic, which
-Participant Dissimilation then obliterates, stranding T initial, the form Arregi and Nevins's
-§6.2.4 rejects. -/
+/-- In Zamudio with the linear module first, Ergative Metathesis fronts the ergative clitic, which
+Participant Dissimilation then obliterates, stranding T initial, the form Arregi and Nevins's §6.2.4
+rejects. -/
 theorem zamudio_linear_then_markedness :
     linearThenMarkedness zamudio auxiliary19 =
-      [pastT, clitic .dat (secondφ ++ [.atomic false, .minimal false])] := by
+      [pastT, clitic .dat (secondφ ++ [⟨.atomic, false⟩, ⟨.minimal, false⟩])] := by
   decide
 
 theorem zamudio_orders_differ :

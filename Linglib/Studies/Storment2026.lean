@@ -79,8 +79,8 @@ inductive Position
   | beforeAgent | afterAgent
   deriving DecidableEq, Repr
 
-/-- The order the derivation predicts: a VP complement is smuggled to Spec,VoiceP above the
-agent, a vP adjunct is not. -/
+/-- The derivation predicts that a VP complement is smuggled to Spec,VoiceP above the agent and a vP
+adjunct is not. -/
 def predictedPosition (d : QIDerivation) : Material → Position
   | .vpComplement => if d.vpPosition = .specVoiceP ∧ d.agentPosition = .specvP then .beforeAgent
       else .afterAgent
@@ -92,7 +92,7 @@ def orderOf (ex : Datum) : Option (Material × Position) := do
   let p ← ex.parse? "position" [("beforeAgent", Position.beforeAgent), ("afterAgent", .afterAgent)]
   pure (m, p)
 
-/-- (10)–(31): a quotative inversion is acceptable exactly when its constituent surfaces where
+/-- In (10)–(31), a quotative inversion is acceptable exactly when its constituent surfaces where
 the smuggling derivation puts it, complements before the agent and adjuncts after. -/
 theorem order_predicted :
     ∀ ex ∈ Examples.all, ex.feature? "heavyNPShift" = none → ∀ o ∈ orderOf ex,
@@ -163,9 +163,9 @@ def Licensed (smuggledDPs : ℕ) : Prop := smuggledDPs ≤ 1
 
 instance (n : ℕ) : Decidable (Licensed n) := inferInstanceAs (Decidable (_ ≤ _))
 
-/-- (125)–(135): an inversion is acceptable exactly when the smuggled constituent carries at
-most one DP, a goal DP blocking it and a PP or adjunct goal not, in quotative and locative
-inversion alike. -/
+/-- In (125)–(135), an inversion is acceptable exactly when the smuggled constituent carries at most
+one DP, a goal DP blocking it and a PP or adjunct goal not, in quotative and locative inversion
+alike. -/
 theorem transitivity_predicted :
     ∀ ex ∈ Examples.all, ∀ n ∈ ex.parse? "smuggledDPs" [("1", 1), ("2", 2)],
       (ex.judgment = .acceptable ↔ Licensed n) := by
@@ -210,11 +210,11 @@ open Minimalist (FeatureBundle)
 /-- A goal `G` is **defective** w.r.t. a probe `P` iff `G`'s formal
     features are a proper subset of `P`'s, so checking is incomplete
     ([roberts-2010], ch. 2; eq. (49) in [storment-2026]). The feature
-    comparison is over the bundles' grammatical-feature lists
-    (`FeatureBundle.toGramFeatures`). -/
+    comparison is over the bundles' specified slots
+    (`FeatureBundle.toList`). -/
 def DefectiveGoal (probe goal : FeatureBundle) : Prop :=
-  goal.toGramFeatures ⊆ probe.toGramFeatures ∧
-    ∃ f ∈ probe.toGramFeatures, f ∉ goal.toGramFeatures
+  goal.toList ⊆ probe.toList ∧
+    ∃ f ∈ probe.toList, f ∉ goal.toList
 
 instance (probe goal : FeatureBundle) : Decidable (DefectiveGoal probe goal) := by
   unfold DefectiveGoal; infer_instance
@@ -223,7 +223,7 @@ instance (probe goal : FeatureBundle) : Decidable (DefectiveGoal probe goal) := 
 theorem DefectiveGoal.empty_of_nonempty (probe : FeatureBundle)
     (h : probe ≠ ⊥) : DefectiveGoal probe ⊥ := by
   refine ⟨List.nil_subset _, ?_⟩
-  have hne : probe.toGramFeatures ≠ [] := by
+  have hne : probe.toList ≠ [] := by
     intro he
     refine h (funext λ t => ?_)
     have hnone := (List.filterMap_eq_nil_iff.mp he) t (by cases t <;> decide)
@@ -231,18 +231,18 @@ theorem DefectiveGoal.empty_of_nonempty (probe : FeatureBundle)
     | absent => rfl
     | unvalued => rw [hp] at hnone; exact absurd hnone (by simp)
     | valued v => rw [hp] at hnone; exact absurd hnone (by simp)
-  match hp : probe.toGramFeatures, hne with
+  match hp : probe.toList, hne with
   | f :: _, _ => exact ⟨f, List.mem_cons_self, List.not_mem_nil⟩
 
 /-- A defective goal is missing some feature the probe has. -/
 theorem DefectiveGoal.exists_missing {probe goal : FeatureBundle}
     (h : DefectiveGoal probe goal) :
-    ∃ f ∈ probe.toGramFeatures, f ∉ goal.toGramFeatures := h.2
+    ∃ f ∈ probe.toList, f ∉ goal.toList := h.2
 
 /-- A defective goal's features are all in the probe. -/
 theorem DefectiveGoal.subset {probe goal : FeatureBundle}
     (h : DefectiveGoal probe goal) :
-    goal.toGramFeatures ⊆ probe.toGramFeatures := h.1
+    goal.toList ⊆ probe.toList := h.1
 
 /-- No goal is defective w.r.t. itself. -/
 theorem DefectiveGoal.irrefl (fb : FeatureBundle) : ¬ DefectiveGoal fb fb := by

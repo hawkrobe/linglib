@@ -180,9 +180,9 @@ theorem exists_hostsReflex_spine_iff (s : ClauseSpine) (n : ℕ) :
   · intro hv
     exact ⟨.cat .Voice, ⟨.Voice, hv, by simp⟩, Or.inl rfl⟩
 
-/-- Table 3: =(y)a' is licensed in a clause of the dependency exactly when that clause's size
-projects Voice, so in full CP and aspectless complements but not in nonfinite ones (§3.3–3.4,
-§4.3). -/
+/-- By Table 3, =(y)a' is licensed in a clause of the dependency exactly when that clause's size
+projects Voice, so in full CP and aspectless complements but not in nonfinite ones (§3.3–3.4, §4.3).
+-/
 theorem licensed_iff_mem_voice {d : Dependency} {i : ℕ} {s : ClauseSpine} {n : ℕ}
     (hd : d.getD i [] = spine s n) : Licensed d i ↔ .Voice ∈ s := by
   rw [licensed_iff, hd, exists_hostsReflex_spine_iff]
@@ -198,15 +198,15 @@ theorem sites_monoclausal_length (n : ℕ) : (sites [spine finiteClause n]).leng
   rw [sites_monoclausal]
   simp
 
-/-- (46b): each site is independently realized as =(y)a' or as ∅, so the surface patterns of a
+/-- In (46b) each site is independently realized as =(y)a' or as ∅, so the surface patterns of a
 dependency are the sublists of its sites. -/
 def patterns (d : Dependency) : List (List (ℕ × Head)) := (sites d).sublists
 
-/-- (22): with one directional the enclitic may appear on both hosts, on neither, or on either
+/-- In (22), with one directional, the enclitic may appear on both hosts, on neither, or on either
 alone, four combinations. -/
 theorem patterns_length_22 : (patterns [spine finiteClause 1]).length = 4 := by decide
 
-/-- (63): with two directionals there are three sites although the intransitive clause has a
+/-- In (63), with two directionals, there are three sites although the intransitive clause has a
 single argument DP, so leapfrogging over intervening DPs ([keine-zeijlstra-2025]) yields too few
 stopovers (§5.2). -/
 theorem sites_exceed_interveners : 1 < (sites [spine finiteClause 2]).length := by
@@ -215,7 +215,7 @@ theorem sites_exceed_interveners : 1 < (sites [spine finiteClause 2]).length := 
 
 /-! ### The rival mechanisms (§3.6, §5.1) -/
 
-/-- Chain Reduction via Substitution, (55)–(57): the reflex spells out the lower copies of the
+/-- Under Chain Reduction via Substitution (55)–(57), the reflex spells out the lower copies of the
 mover, the base copy in the clause of origin and the intermediate copy in each Spec,CP crossed,
 which linearizes onto the predicate of the next clause up. -/
 def CopyLicensed (d : Dependency) (i : ℕ) : Prop :=
@@ -224,7 +224,7 @@ def CopyLicensed (d : Dependency) (i : ℕ) : Prop :=
 instance (d : Dependency) (i : ℕ) : Decidable (CopyLicensed d i) :=
   inferInstanceAs (Decidable (_ ∨ _ ∧ _ ∧ _))
 
-/-- The Fronting Particle Generalization (54): over a single embedded clause, the matrix reflex is
+/-- By the Fronting Particle Generalization (54), over a single embedded clause the matrix reflex is
 contingent on the embedded clause projecting C. -/
 theorem fpg (e m : Spine) : CopyLicensed [e, m] 1 ↔ .cat .C ∈ e := by
   simp [CopyLicensed]
@@ -239,15 +239,15 @@ theorem copy_single_site (n : ℕ) : (∀ i, CopyLicensed [spine finiteClause n]
     simp only [List.length_singleton] at h2
     omega, sites_monoclausal_length n⟩
 
-/-- Over an aspectless complement, (31): copy spellout predicts no matrix reflex, since the
+/-- Over an aspectless complement (31), copy spellout predicts no matrix reflex, since the
 complement has no Spec,CP, whereas Ā-agreement predicts one at the matrix Voice⁰. -/
 theorem copy_fails_aspectless :
     ¬ CopyLicensed [spine aspectlessClause 0, spine finiteClause 0] 1 ∧
       Licensed [spine aspectlessClause 0, spine finiteClause 0] 1 := by
   decide
 
-/-- Over a nonfinite complement, (34): copy spellout predicts a reflex in the complement, where
-the base copy sits, whereas Ā-agreement finds no Voice⁰ there. -/
+/-- Over a nonfinite complement (34), copy spellout predicts a reflex in the complement, where the
+base copy sits, whereas Ā-agreement finds no Voice⁰ there. -/
 theorem copy_fails_nonfinite :
     CopyLicensed [spine nonfiniteClause 0, spine finiteClause 0] 0 ∧
       ¬ Licensed [spine nonfiniteClause 0, spine finiteClause 0] 0 := by
@@ -268,8 +268,8 @@ theorem origin_only_fails :
 
 /-! ### Which movers trigger the reflex (§2, §5.3) -/
 
-/-- The article's featural hypothesis (9), footnotes 3 and 12, §5.3: every adjunct class but the
-temporals bears the [obl] Case feature that Voice⁰ and Dir⁰ copy. -/
+/-- By the article's featural hypothesis ((9), footnotes 3 and 12, §5.3), every adjunct class but
+the temporals bears the [obl] Case feature that Voice⁰ and Dir⁰ copy. -/
 def BearsObl (a : Mayan.Adjunct) : Prop := a ≠ .temporal
 
 instance : DecidablePred BearsObl := fun _ ↦ inferInstanceAs (Decidable (_ ≠ _))
@@ -281,7 +281,7 @@ def IsLow (a : Mayan.Adjunct) : Prop :=
 
 instance : DecidablePred IsLow := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _ ∨ _ ∨ _))
 
-/-- Table 4: the Mam and K'ichean triggers differ exactly at reasons, purposes and manners. -/
+/-- By Table 4, the Mam and K'ichean triggers differ exactly at reasons, purposes and manners. -/
 theorem table4 (a : Mayan.Adjunct) :
     ¬ (BearsObl a ↔ IsLow a) ↔ a = .reason ∨ a = .purpose ∨ a = .manner := by
   decide +revert
@@ -350,15 +350,15 @@ theorem kiche_mem_realize_iff (c : Mayan.VerbClass) (s : Mayan.ExtractionSite) :
 /-- Voice⁰ of the analysis is an [Ā]-bearing head with an unvalued [oblique] probe that Agree with
 the mover values, (45a). -/
 def voice : Voice.Head :=
-  { Voice.agentive with features := .ofGramFeatures [.unvalued (.oblique false)] }
+  { Voice.agentive with features := .ofList [⟨.oblique, .unvalued⟩] }
 
 /-- The vocabulary item (46a) realizes the valued [obl] on Voice⁰ or Dir⁰. -/
-def eqYa : VocabularyItem GramFeature String :=
-  [.valued (.oblique true)] ⟷ toString Mam.Extraction.movementEnclitic
+def eqYa : VocabularyItem FeatureVal String :=
+  [⟨.oblique, true⟩] ⟷ toString Mam.Extraction.movementEnclitic
 
 /-- Agree with an [obl] mover followed by insertion yields the enclitic. -/
 theorem agree_spellout :
-    (voice.features.applyAgree (.ofGramFeatures [.valued (.oblique true)]) .oblique).bind
+    (voice.features.applyAgree (.single .oblique true) .oblique).bind
       (spellout [eqYa]) = some "=(y)a'" := by
   decide
 
@@ -378,7 +378,7 @@ def moverTable : List (String × Mover) :=
 /-- Whether the reflex may appear, as recorded in the rows. -/
 def reflexTable : List (String × Bool) := [("licensed", true), ("blocked", false)]
 
-/-- The monoclausal Mam rows of §2 and §3.5–3.6: the enclitic is licensed exactly for the movers
+/-- In the monoclausal Mam rows of §2 and §3.5–3.6, the enclitic is licensed exactly for the movers
 bearing [obl]. -/
 theorem mamRows_realizable :
     ∀ e ∈ [ex_10b, ex_11b, ex_12b, ex_13a, ex_13b, ex_14b, ex_15b, ex_16b, ex_17b, ex_18b,
@@ -388,14 +388,14 @@ theorem mamRows_realizable :
         (b = true ↔ Realizable m [spine finiteClause 0] 0) := by
   decide
 
-/-- The K'ichean rows (51), K'iche', and (64), Patzún Kaqchikel: *wi* is licensed exactly for
-the low adjuncts. -/
+/-- In the K'ichean rows, (51) for K'iche' and (64) for Patzún Kaqchikel, *wi* is licensed exactly
+for the low adjuncts. -/
 theorem kicheanRows_low :
     ∀ e ∈ [ex_51, ex_64], ∀ a, e.parse? "mover" moverTable = some (.adjunct a) →
       ∀ b, e.parse? "reflex" reflexTable = some b → (b = true ↔ IsLow a) := by
   decide
 
-/-- The rows with directionals, (22) and (63): one host per Voice⁰ and directional. -/
+/-- The rows with directionals, (22) and (63), have one host per Voice⁰ and directional. -/
 theorem directionalRows_sites :
     ∀ e ∈ [ex_22, ex_63], ∀ n, e.nat? "directionals" = some n →
       ∀ k, e.nat? "hosts" = some k → (sites [spine finiteClause n]).length = k := by

@@ -70,7 +70,7 @@ def Position.IsSpecifier : Position → Prop
   | .specVoice | .specP | .specAppl => True
   | .directObject => False
 
-/-- Whether a position lets a caseless element merge in it: Appl demands dative of its
+/-- This decides whether a position lets a caseless element merge in it: Appl demands dative of its
 specifier, Voice and p demand nothing. -/
 def Position.AdmitsCaseless : Position → Prop
   | .specAppl => applLowRecipient.SpecCanBearCase none
@@ -93,15 +93,14 @@ theorem admitsSt_iff (p : Position) : p.AdmitsSt ↔ p = .specVoice ∨ p = .spe
 
 /-! ### Voice and its specifier -/
 
-/-- What occupies the specifier of Voice: a DP, the clitic *-st*, or nothing, for the
-specifierless Voice. -/
+/-- The specifier of Voice holds a DP, the clitic *-st*, or nothing, for the specifierless Voice. -/
 inductive Occupant where
   | dp
   | st
   | none
   deriving DecidableEq, Repr
 
-/-- A VoiceP: its head, a cell of the substrate's typology, thematic when the vP is agentive and
+/-- A VoiceP has its head, a cell of the substrate's typology, thematic when the vP is agentive and
 Voice introduces the agent role, and what occupies its specifier. -/
 structure VoiceP where
   head : Voice.Head
@@ -145,8 +144,8 @@ theorem expletive_of_none (h : V.Interpretable) (hs : V.spec = .none) : V.Explet
 theorem no_st_of_thematic (h : V.Interpretable) (ht : V.head.IsThematic) : V.spec ≠ .st := by
   rw [h ht]; decide
 
-/-- The two ways of forming an anticausative: specifierless Voice, or Voice whose D feature
-is checked by *-st*. -/
+/-- An anticausative is formed with specifierless Voice, or with Voice whose D feature is checked by
+*-st*. -/
 theorem anticausative_iff : V.Anticausative ↔ V.spec = .none ∨ V.spec = .st := by
   cases hs : V.spec <;> simp [Anticausative, hs]
 
@@ -190,14 +189,14 @@ thematic against expletive; for [cuervo-2003] they differ in v, `vDO` against `v
 same state, and the inchoative has no Voice to vary. The two accounts are incompatible on the
 locus of the alternation, and the substrate lets each be stated. -/
 
-/-- Wood: the active and the *-st* anticausative are one verb under two Voice heads, the
+/-- For Wood, the active and the *-st* anticausative are one verb under two Voice heads, the
 thematic active cell and the expletive active cell. -/
 theorem alternation_in_voice :
     Voice.agentive.IsThematic ∧ ¬ Voice.anticausative.IsThematic ∧
       Voice.agentive.HasD ∧ Voice.anticausative.HasD := by
   decide
 
-/-- Cuervo: the causative and the inchoative differ in the head over the state, and the
+/-- For Cuervo, the causative and the inchoative differ in the head over the state, and the
 inchoative admits no Voice at all. -/
 theorem alternation_in_v :
     LittleV.Causative [.vDO, .vBE] ∧ LittleV.Inchoative [.vGO, .vBE] ∧
@@ -207,8 +206,8 @@ theorem alternation_in_v :
 
 /-! ### The exponents of v and Voice -/
 
-/-- The heads of the verb above the root: v, with or without the *-ka* exponent, and Voice,
-with or without a D feature. -/
+/-- Above the root the verb has v, with or without the *-ka* exponent, and Voice, with or without a
+D feature. -/
 inductive Head where
   | v (ka : Bool)
   | voice (hasD : Bool)
@@ -230,7 +229,7 @@ instance : DecidablePred Head.Cyclic := λ h => by
 
 instance : DecidablePred Head.Null := λ h => by cases h <;> unfold Head.Null <;> infer_instance
 
-/-- The verb: a root, v, and Voice. -/
+/-- The verb consists of a root, v, and Voice. -/
 def verb (r : Root) (ka hasD : Bool) : Spine Head := ⟨r, [.v ka, .voice hasD]⟩
 
 /-- Voice's position in the verb. -/
@@ -246,7 +245,7 @@ theorem rootLocal_voice (r : Root) (ka hasD : Bool) :
     rintro ⟨_ | _ | x, hx⟩ ⟨-, h₂⟩
     · rfl
     · simp [verb, Head.Cyclic] at h₂
-    · simp [verb] at hx; omega
+    · simp [verb] at hx <;> omega
   refine Finset.card_le_one.mpr λ a ha b hb => Fin.ext ?_
   simp only [Finset.mem_filter, Finset.mem_univ, true_and] at ha hb
   rw [key a ha, key b hb]
