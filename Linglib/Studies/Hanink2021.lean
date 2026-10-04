@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.Reference.Description
+public import Linglib.Semantics.Modification.Basic
 public import Mathlib.Data.Finset.BooleanAlgebra
 public import Mathlib.Data.Fintype.Powerset
 public import Linglib.Syntax.Person.Basic
@@ -11,28 +12,30 @@ public import Mathlib.Data.Prod.Lex
 /-!
 # Hanink (2021): DP Structure and Internally Headed Relatives in Washo
 
-This file formalizes [hanink-2021]'s argument that indices are syntactic objects of their own, a
-head idx below D that Washo pronounces as *gi ~ ge*: in third-person pronouns (1), in
-demonstratives (2), and at the edge of internally headed relative clauses (3), which are DPs
-over a nominalized CP (40). The index has two meanings (80): as a variable it is the property of
-being the antecedent, so a familiar DP is D's ι over the restriction modified by the index (15),
-which is the substrate's anaphoric description, `denote_anaphoric_eq_iota`, with the
-deixis of *hádi* and *wídi* a presupposition on D (34); as a binder it turns the open proposition
-of the embedded clause, whose semantic head is a restricted variable (69), into a property
-without movement, the substrate's abstraction `lambdaAbsG`, so that the relative denotes what an
-externally headed relative denotes by raising and intersection, `iota_idxBind`, (72) and
-(60). The Prohibition against Vacuous Binding (86) leaves the binder meaning to complements with
-a free variable: under a perception verb the nominalization has none, so the index is a
-variable and the clause a familiar DP over a property of events (106). Washo relatives are
-island-insensitive (50) and restrictive, with existential readings (53) and stacking (54), the
-profile of a language with articles (49) and (52), and idx bears no φ-features of the head (91),
-so its relation to the head is binding, not Agree (section 4.5). The exponence of idx (119) is
-*gi*, *ge* under dependent case, and null before an overt NP, and that of D (130) is null,
-*hádi*, or *wídi*; with contextual specificity ranked above the Elsewhere Principle (118), the
-Vocabulary derives the whole distribution, `idxExponent`: overt in pronouns, whose NP is elided
-(113), in relatives (114), and in demonstratives, whose complement is RP (129), null in
-anaphoric bare definites (115) even under dependent case (22). The examples are the rows of
-`Data.Examples.Hanink2021`.
+Hanink argues that an index is a syntactic head of its own, idx below D, which Washo pronounces
+*gi ~ ge* in third-person pronouns (1), in demonstratives (2), and at the edge of internally
+headed relative clauses (3), DPs over a nominalized CP (40). The index has two meanings (80). As
+a variable it restricts D's ι to its antecedent (15), with the deixis of *hádi* and *wídi* a
+presupposition on D (34). As a binder it turns the embedded clause, whose semantic head is a
+restricted variable (69), into a property without movement, so the relative denotes what an
+externally headed relative denotes by raising and Predicate Modification, (72) and (60). The
+Prohibition against Vacuous Binding (86) leaves the binder meaning to complements with a free
+variable, and the Vocabulary for idx (119) and D (130), with contextual specificity ranked above
+the Elsewhere Principle (118), derives where *gi* is overt. The examples are the rows of
+`Data.Examples.Hanink2021`, among them section 4's island-insensitivity and stacking and the
+absence of the head's φ-features on idx (91), which makes its relation to the head binding
+rather than Agree.
+
+## Main results
+
+* `denote_anaphoric_eq_iota`, `denote_demonstrative_eq_iota`: a familiar or demonstrative DP is
+  D's ι over the restriction modified by the index as a variable.
+* `idxBind_openClause`, `iota_idxBind`: the index as a binder yields the property and the
+  referent of the externally headed relative.
+* `idxBind_eq_const`: without a free occurrence of its index the binder binds nothing, which
+  leaves a perception nominalization a familiar DP (106).
+* `idxExponent_distribution`, `demonstrative_forms`: the Vocabulary derives the distribution of
+  *gi ~ ge* and the demonstratives *hádigi* and *wídigi*.
 
 ## Implementation notes
 
@@ -105,15 +108,15 @@ def openClause (n : ℕ) (P : E → Prop) (ψ : Assignment E → Prop) : Assignm
 property (59) that an externally headed relative builds by abstracting over the trace and
 intersecting with the head noun. -/
 theorem idxBind_openClause (n : ℕ) (P : E → Prop) (ψ : Assignment E → Prop) (g : Assignment E) :
-    idxBind n (openClause n P ψ) g = fun x ↦ P x ∧ lambdaAbsG n ψ g x := by
+    idxBind n (openClause n P ψ) g = Modifier.intersective P (lambdaAbsG n ψ g) := by
   funext x
-  simp only [idxBind, lambdaAbsG, openClause, Function.update_self]
+  simp only [idxBind, lambdaAbsG, openClause, Function.update_self, Modifier.intersective_apply]
 
 /-- The silent D over the bound clause, (72), refers to what the definite over the externally
 headed relative, (60), refers to, the same meaning reached by different steps. -/
 theorem iota_idxBind (n : ℕ) (P : E → Prop) (ψ : Assignment E → Prop) (g : Assignment E) :
     iota (idxBind n (openClause n P ψ) g) =
-      iota (fun x ↦ P x ∧ lambdaAbsG n ψ g x) := by
+      iota (Modifier.intersective P (lambdaAbsG n ψ g)) := by
   rw [idxBind_openClause]
 
 /-- Without a free occurrence of the index, when `φ` depends only on the other indices, the

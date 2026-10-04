@@ -15,6 +15,32 @@ this module; declarations live in `namespace HeimKratzer1998.Examples`.
 
 namespace HeimKratzer1998.Examples
 
+def ch5_1 : Datum :=
+  { id := "heimkratzer1998_ch5_1"
+    source := ⟨"heim-kratzer-1998", "Ch. 5 (1)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "The house which is empty is available."
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "5.1"), ("relative", "restrictive")] }
+
+def ch5_2 : Datum :=
+  { id := "heimkratzer1998_ch5_2"
+    source := ⟨"heim-kratzer-1998", "Ch. 5 (2)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "The house, which is empty, is available."
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "5.1"), ("relative", "nonrestrictive")] }
+
 def ch7_1a : Datum :=
   { id := "heimkratzer1998_ch7_1a"
     source := ⟨"heim-kratzer-1998", "Ch. 7 (1a)"⟩
@@ -54,6 +80,6 @@ def ch7_2 : Datum :=
     readings := []
     paperFeatures := [("section", "7.1"), ("readings", "some > every; every > some")] }
 
-def all : List Datum := [ch7_1a, ch7_1b, ch7_2]
+def all : List Datum := [ch5_1, ch5_2, ch7_1a, ch7_1b, ch7_2]
 
 end HeimKratzer1998.Examples

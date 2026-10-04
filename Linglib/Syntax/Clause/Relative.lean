@@ -6,10 +6,10 @@ public import Mathlib.Order.Interval.Finset.Defs
 /-!
 # Relativization
 
-Theory-neutral types for cross-linguistic relativization data: the relativizable positions of
-[keenan-comrie-1977]'s Accessibility Hierarchy as a bounded linear order, the placement of the
-relative clause relative to its head, what occupies the relativized position (NP_rel), and the
-relativizers the fragments record.
+These theory-neutral types describe relativization across languages. The relativizable
+positions of Keenan and Comrie's Accessibility Hierarchy form a bounded linear order; a relative
+clause has a placement relative to its head; something occupies the relativized position
+(NP_rel); and the fragments record each language's relativizers.
 
 ## Main declarations
 
@@ -26,11 +26,12 @@ A relativizer's realization is a finite relation between positions and NP_rel ty
 records one entry per relativizer, as a grammar describes it, with free variation where the
 grammar reports it (Hebrew *she-* with a gap or a resumptive at the direct object).
 A classification of relative clauses is a predicate on `NPRel` pulled back along the
-realization, and lives with the paper that draws it: [keenan-comrie-1977]'s ±case and its
+realization, and lives with the paper that draws it: Keenan and Comrie's ±case and their
 "RC-forming strategies" are derived in `Studies/KeenanComrie1977.lean`.
 
-The semantics of relative clauses, their denotation, is `RelativeClause.denote` in
-`Semantics/Modification/RelativeClause.lean`.
+A restrictive relative clause needs no semantic rule of its own: the composition engine of
+`Semantics/Composition/Tree.lean` interprets it by Predicate Abstraction over the gap and
+Predicate Modification with the head, as `Studies/HeimKratzer1998.lean` computes.
 
 ## References
 
@@ -73,7 +74,7 @@ def rank : Position → ℕ
 theorem rank_injective : Function.Injective rank := by
   intro a b h; cases a <;> cases b <;> simp_all [rank]
 
-/-- The accessibility order: `p ≤ q` iff `p` is no more accessible than `q`. -/
+/-- In the accessibility order `p ≤ q` iff `p` is no more accessible than `q`. -/
 instance : LinearOrder Position := LinearOrder.lift' rank rank_injective
 
 /-- The subject is the top of the hierarchy, the object of comparison its bottom. -/
