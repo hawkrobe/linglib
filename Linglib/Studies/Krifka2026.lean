@@ -4,23 +4,24 @@ public import Linglib.Semantics.Reference.Iota
 public import Linglib.Semantics.Plurality.Algebra
 public import Linglib.Semantics.Dynamic.Update
 public import Linglib.Logic.Assignment
-public import Linglib.Syntax.Category.Noun.Basic
+public import Linglib.Fragments.English.Nouns
 
 /-!
 # Krifka (2026): Anaphora for Concepts, Kinds, and Parts in Dynamic Interpretation
 
 Krifka treats the head noun of a DP as introducing a discourse referent for a concept, a property
-with a count feature. The kind pronouns take that concept to a kind: *it* takes a mass concept to
-its kind, and *they* takes a count concept to the kind of its plural closure, so *a spider* is
-resumed by *them* and *mold* by *it*. Krifka takes the feature to be formal, like grammatical
-gender, since *pollen* and *pollen grains* can describe the same stuff and are still resumed by *it*
-and *them* respectively, (8) and (12) on pp. 605–606. Concept referents are presupposed by the input
-assignment, as the referents of names are, so they survive negation, which is a test, while an
-entity referent introduced under negation does not. After *John doesn't own a dog*, the kind pronoun
-*them* is therefore interpretable and a partitive is not.
+with the noun's count feature. The kind pronouns take that concept to a kind: *it* takes the
+concept of a mass noun to its kind, and *they* the concept of a count noun to the kind of its plural
+closure, so *a spider* is resumed by *them* and *mold* by *it*. Krifka takes the feature to be
+formal, like grammatical gender, since *pollen* and *pollen grains* can describe the same stuff and
+are still resumed by *it* and *them* respectively, (8) and (12) on pp. 605–606. Concept referents
+are presupposed by the input assignment, as the referents of names are, so they survive negation,
+which is a test, while an entity referent introduced under negation does not. After *John doesn't
+own a dog*, the kind pronoun *them* is therefore interpretable and a partitive is not.
 
 ## Main results
 
+* `Krifka2026.pronoun_pollen`: *pollen* is resumed by *it* and *pollen grain* by *they*.
 * `Krifka2026.they_eq_it_of_supClosed`: on a cumulative concept the two pronouns coincide.
 * `Krifka2026.spider_no_kind`, `Krifka2026.spiders_kind`: a singular count concept with two
   instances has only the closed kind.
@@ -42,11 +43,19 @@ entity referent introduced under negation does not. After *John doesn't own a do
   projection theorems; the paper derives it from the head noun's partial lexical entry.
 * Which concepts sponsor kinds (*dogs from the animal shelter* does not) is left to the
   lexicon, as in the paper.
+* The count feature is read off the head noun's English entry: a count noun is one a numeral
+  counts (`ClassifiedNoun.IsCount`).
 * Individuals form any join semilattice, as in the paper (§3); the models are Link's nonempty
   sets of atoms, `Plurality.Algebra.Individual`. A kind is a function from worlds to partial
   individuals, and σ is `Reference.iota` of `IsGreatest`, as in (13a). The sufficient condition
   for σ is stated for finite extensions (`it_isSome_of_supClosed`), where the paper has closure
   under arbitrary sums.
+
+## TODO
+
+* *cattle*, *police* and *clothes* are resumed by *they* although no numeral counts them, so
+  reading the feature off the counting record selects *it* for them. The paper does not discuss
+  such nouns; they need the feature recorded apart from the counting record.
 
 ## References
 
@@ -81,10 +90,25 @@ noncomputable def it (P : World → Set E) : World → Option E :=
 noncomputable def they (P : World → Set E) : World → Option E :=
   fun w ↦ iota (IsGreatest (supClosure (P w)))
 
-/-- `pronoun f` is the kind pronoun that the count feature `f` selects. -/
-noncomputable def pronoun : MassCount → (World → Set E) → World → Option E
-  | .mass => it
-  | .count => they
+/-- `pronoun noun` is the kind pronoun that the head noun selects, *they* for a count noun and
+*it* for a mass noun (12). -/
+noncomputable def pronoun (noun : English.Nouns.Noun) : (World → Set E) → World → Option E :=
+  if noun.IsCount then they else it
+
+theorem pronoun_of_isCount {noun : English.Nouns.Noun} (h : noun.IsCount) :
+    pronoun (World := World) (E := E) noun = they :=
+  ite_eq_left h
+
+theorem pronoun_of_not_isCount {noun : English.Nouns.Noun} (h : ¬ noun.IsCount) :
+    pronoun (World := World) (E := E) noun = it :=
+  ite_eq_right h
+
+/-- *pollen* is resumed by *it* and *pollen grains* by *they*, though they can describe the same
+stuff (8), (12). -/
+theorem pronoun_pollen :
+    pronoun (World := World) (E := E) English.Nouns.pollen = it ∧
+      pronoun (World := World) (E := E) English.Nouns.pollenGrain = they :=
+  ⟨pronoun_of_not_isCount (by decide), pronoun_of_isCount (by decide)⟩
 
 /-- On a cumulative concept the plural closure changes nothing, so *they* and *it* denote the
 same kind ((16), (18d)). -/
@@ -126,11 +150,11 @@ theorem spiders_kind : they spider () = some (Individual.atom true ⊔ Individua
 
 /-! ### Concept discourse referents and anaphoric islands -/
 
-/-- A discourse referent is anchored to an entity, a concept with its count feature, a kind, or
-an index (§4); `undef` marks an index outside the assignment's domain. -/
+/-- A discourse referent is anchored to an entity, a concept with the head noun that introduced
+it, a kind, or an index (§4); `undef` marks an index outside the assignment's domain. -/
 inductive DRefVal (World E : Type*)
   | entity (x : E)
-  | concept (P : World → Set E) (f : MassCount)
+  | concept (P : World → Set E) (noun : English.Nouns.Noun)
   | kind (k : World → Option E)
   | index (w : World)
   | undef
@@ -150,9 +174,9 @@ theorem test_apply_eq {C : Condition (HAssign World E)} {g h : HAssign World E}
   congrFun hTest.1.symm n
 
 /-- A concept referent presupposed in the input survives an island ((5a), (25), (45)). -/
-theorem concept_survives_test {n : ℕ} {P : World → Set E} {f : MassCount}
+theorem concept_survives_test {n : ℕ} {P : World → Set E} {noun : English.Nouns.Noun}
     {C : Condition (HAssign World E)} {g h : HAssign World E}
-    (hPresup : g n = .concept P f) (hTest : g ~[test C] h) : h n = .concept P f :=
+    (hPresup : g n = .concept P noun) (hTest : g ~[test C] h) : h n = .concept P noun :=
   (test_apply_eq hTest n).trans hPresup
 
 /-- An entity referent novel in the input, introduced only inside the island, is still undefined
@@ -163,10 +187,10 @@ theorem entity_trapped_by_test {n : ℕ} {C : Condition (HAssign World E)}
 
 /-- Under negation the concept referent persists and the entity referent does not (45); the
 asymmetry lies only in where the two referents are introduced. -/
-theorem concept_entity_asymmetry {nC nE : ℕ} {P : World → Set E} {f : MassCount}
+theorem concept_entity_asymmetry {nC nE : ℕ} {P : World → Set E} {noun : English.Nouns.Noun}
     {φ : Update (HAssign World E)} {g h : HAssign World E}
-    (hPresup : g nC = .concept P f) (hNovel : g nE = .undef) (hNeg : g ~[test (neg φ)] h) :
-    h nC = .concept P f ∧ h nE = .undef :=
+    (hPresup : g nC = .concept P noun) (hNovel : g nE = .undef) (hNeg : g ~[test (neg φ)] h) :
+    h nC = .concept P noun ∧ h nE = .undef :=
   ⟨concept_survives_test hPresup hNeg, entity_trapped_by_test hNovel hNeg⟩
 
 /-! ### Concept, kind and partitive anaphors -/
@@ -178,12 +202,12 @@ variable [SemilatticeSup E]
 /-- The empty NP (46d) presupposes a concept referent at `n` and hands its property on. -/
 def emptyNP (n : ℕ) (K : (World → Set E) → Update (HAssign World E)) :
     Update (HAssign World E) :=
-  {(g, h) | ∃ P f, g n = .concept P f ∧ g ~[K P] h}
+  {(g, h) | ∃ P noun, g n = .concept P noun ∧ g ~[K P] h}
 
-/-- The kind pronoun (48c) presupposes a concept referent at `n` bearing the feature it agrees
-with and introduces the kind at `m`. -/
-def kindPronoun (f : MassCount) (n m : ℕ) : Update (HAssign World E) :=
-  {(g, h) | ∃ P, g n = .concept P f ∧ h = Function.update g m (.kind (pronoun f P))}
+/-- The kind pronoun (48c) presupposes a concept referent at `n` introduced by a head noun it
+agrees with and introduces the kind at `m`. -/
+def kindPronoun (noun : English.Nouns.Noun) (n m : ℕ) : Update (HAssign World E) :=
+  {(g, h) | ∃ P, g n = .concept P noun ∧ h = Function.update g m (.kind (pronoun noun P))}
 
 /-- The partitive PP presupposes an entity referent at `n` and introduces a part of it at `m`.
 -/
@@ -192,13 +216,13 @@ def partitive (n m : ℕ) : Update (HAssign World E) :=
 
 /-- After a negated sentence the kind pronoun and the empty NP are interpretable on the
 concept referent, and a partitive on the trapped entity referent is not ((5a)–(5c)). -/
-theorem anaphora_after_negation {nC nE m : ℕ} {P : World → Set E} {f : MassCount}
+theorem anaphora_after_negation {nC nE m : ℕ} {P : World → Set E} {noun : English.Nouns.Noun}
     {φ : Update (HAssign World E)} {g h : HAssign World E}
-    (hPresup : g nC = .concept P f) (hNovel : g nE = .undef) (hNeg : g ~[test (neg φ)] h) :
-    (∃ h', h ~[kindPronoun f nC m] h') ∧ (∀ K, h ~[K P] h → h ~[emptyNP nC K] h) ∧
+    (hPresup : g nC = .concept P noun) (hNovel : g nE = .undef) (hNeg : g ~[test (neg φ)] h) :
+    (∃ h', h ~[kindPronoun noun nC m] h') ∧ (∀ K, h ~[K P] h → h ~[emptyNP nC K] h) ∧
       ¬ ∃ h', h ~[partitive nE m] h' :=
   ⟨⟨_, P, concept_survives_test hPresup hNeg, rfl⟩,
-    fun _ hK ↦ ⟨P, f, concept_survives_test hPresup hNeg, hK⟩,
+    fun _ hK ↦ ⟨P, noun, concept_survives_test hPresup hNeg, hK⟩,
     fun ⟨_, _, _, hx, _⟩ ↦ by rw [entity_trapped_by_test hNovel hNeg] at hx; cases hx⟩
 
 end Anaphors
@@ -214,15 +238,16 @@ inductive Ent
 /-- The concept *dog* has no instances. -/
 def dog : Unit → Set (Individual Ent) := fun _ ↦ ∅
 
-/-- The input assignment of (44e) sends 1 to John and 2 to the count concept *dog*. -/
+/-- The input assignment of (44e) sends 1 to John and 2 to the concept of the count noun
+*dog*. -/
 def g₀ : HAssign Unit (Individual Ent)
   | 1 => .entity (Individual.atom .john)
-  | 2 => .concept dog .count
+  | 2 => .concept dog English.Nouns.dog
   | _ => .undef
 
 /-- *own [a₃ [dog]₂]* (44c) introduces a referent at 3 that falls under the concept at 2. -/
 def ownADog : Update (HAssign Unit (Individual Ent)) :=
-  entityIntro 3 (test {g | ∃ P f x, g 2 = .concept P f ∧ g 3 = .entity x ∧ x ∈ P ()})
+  entityIntro 3 (test {g | ∃ P noun x, g 2 = .concept P noun ∧ g 3 = .entity x ∧ x ∈ P ()})
 
 /-- *John₁ doesn't own [a₃ [dog]₂]* (44e) is the VP negation, the test of the negated update. -/
 def doesntOwnADog : Update (HAssign Unit (Individual Ent)) := test (neg ownADog)
@@ -237,7 +262,9 @@ theorem doesntOwnADog_g₀ : g₀ ~[doesntOwnADog] g₀ :=
 (5c). -/
 theorem them_after_doesntOwnADog {h : HAssign Unit (Individual Ent)}
     (hNeg : g₀ ~[doesntOwnADog] h) :
-    h ~[kindPronoun .count 2 4] Function.update h 4 (.kind (they dog)) ∧ h 3 = .undef :=
-  ⟨⟨dog, concept_survives_test rfl hNeg, rfl⟩, entity_trapped_by_test rfl hNeg⟩
+    h ~[kindPronoun English.Nouns.dog 2 4] Function.update h 4 (.kind (they dog)) ∧
+      h 3 = .undef :=
+  ⟨⟨dog, concept_survives_test rfl hNeg, by rw [pronoun_of_isCount (by decide)]⟩,
+    entity_trapped_by_test rfl hNeg⟩
 
 end Krifka2026

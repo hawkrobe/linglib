@@ -5,11 +5,12 @@ public import Linglib.Syntax.Category.Noun.Basic
 /-!
 # Italian nouns
 
-The Italian noun as a lexical entry: the root `GenderedNoun` over the masculine and feminine
-genders, with the count/mass class and its plural; names are the root `ProperName`. Italian nouns
-need a determiner (`Italian.Determiners.inventory`) to be arguments ([chierchia-1998]); the definite
-plural denotes a kind and the bare plural, where licensed, a property (`Studies/Guerrini2026.lean`).
-The plurals in *-a* that change gender are `Italian.NumberGender`.
+The Italian noun as a lexical entry is the root `GenderedNoun` over the masculine and feminine
+genders, which a numeral counts directly or not at all, with its plural; names are the root
+`ProperName`. Italian nouns need a determiner (`Italian.Determiners.inventory`) to be arguments, as
+Chierchia observes; the definite plural denotes a kind and the bare plural, where licensed, a
+property (`Studies/Guerrini2026.lean`). The plurals in *-a* that change gender are
+`Italian.NumberGender`.
 
 ## References
 
@@ -21,13 +22,13 @@ The plurals in *-a* that change gender are `Italian.NumberGender`.
 namespace Italian.Nouns
 
 
-/-- An Italian noun is the root gendered entry with the count/mass class and its plural. -/
-structure Noun extends GenderedNoun Gender where
-  /-- The count/mass class. -/
-  massCount : MassCount := .count
+/-- An Italian noun is the root gendered entry, which a numeral counts directly or not at all,
+with its plural. -/
+structure Noun extends GenderedNoun Gender, ClassifiedNoun Empty where
+  counters := {none}
   /-- The plural. -/
   plural : Option String := none
-  deriving DecidableEq, Repr
+  deriving DecidableEq
 
 /-! ### Count nouns -/
 
@@ -52,10 +53,10 @@ def casa : Noun := { form := "casa", gloss := "house", gender := .feminine, plur
 
 /-! ### Mass nouns -/
 
-def acqua : Noun := { form := "acqua", gloss := "water", gender := .feminine, massCount := .mass }
-def vino : Noun := { form := "vino", gloss := "wine", gender := .masculine, massCount := .mass }
-def pane : Noun := { form := "pane", gloss := "bread", gender := .masculine, massCount := .mass }
-def latte : Noun := { form := "latte", gloss := "milk", gender := .masculine, massCount := .mass }
+def acqua : Noun := { form := "acqua", gloss := "water", gender := .feminine, counters := ∅ }
+def vino : Noun := { form := "vino", gloss := "wine", gender := .masculine, counters := ∅ }
+def pane : Noun := { form := "pane", gloss := "bread", gender := .masculine, counters := ∅ }
+def latte : Noun := { form := "latte", gloss := "milk", gender := .masculine, counters := ∅ }
 
 /-! ### Proper names -/
 

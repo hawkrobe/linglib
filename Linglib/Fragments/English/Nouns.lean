@@ -7,17 +7,24 @@ public import Linglib.Fragments.English.Inflection
 /-!
 # English nouns
 
-The English noun as a lexical entry: the root `Noun` with the count/mass class, its lexical gender
-where it has one, and its plural where that is not the regular *-s* one, which `Inflection.lean`'s
-`suffixS` supplies; names are the root `ProperName`. English nouns have no grammatical gender; the
-label recorded for *man*, *woman* and the names is the natural gender their pronouns agree with.
-Bare plurals and bare mass nouns are arguments and a bare singular count noun is not, which
-[chierchia-1998] derives from the Nominal Mapping Parameter (`Studies/Chierchia1998.lean`).
+The English noun as a lexical entry is a `ClassifiedNoun` over no classifiers, which a numeral
+counts directly or not at all, with its lexical gender and its plural where it has them; a regular
+plural is the *-s* form of `Inflection.lean`'s `suffixS`. Names are the root `ProperName`. English
+nouns have no grammatical gender; the label recorded for *man*, *woman* and the names is the natural
+gender their pronouns agree with. Bare plurals and bare mass nouns are arguments and a bare singular
+count noun is not, which Chierchia derives from the Nominal Mapping Parameter
+(`Studies/Chierchia1998.lean`).
 
 ## Main definitions
 
-* `Noun` — the entry, with `Noun.realize` giving its form at a number
-* `Noun.toWordSg`, `Noun.toWord` — the entry as a `Word` token
+* `Noun`: the entry, with `Noun.realize` giving its form at a number.
+* `Noun.toWordSg`, `Noun.toWord`: the entry as a `Word` token.
+
+## Implementation notes
+
+Whether a numeral counts a noun and whether the noun has a plural are separate fields, since
+*oats* has a plural and no numeral counts it. A noun with a plural and no singular, such as
+*oats*, is not yet recorded: `Noun.realize` gives every entry its citation form as the singular.
 
 ## References
 
@@ -32,29 +39,28 @@ open English.Inflection
 
 open Morphology (Word Features)
 
-/-- An English noun is the root entry with the count/mass class, its lexical gender where it
-has one, and its plural where that is not the regular *-s* one. -/
-structure Noun extends _root_.Noun where
-  /-- The count/mass class. -/
-  massCount : MassCount := .count
+/-- An English noun is a classified noun over no classifiers, with its lexical gender and its
+plural where it has them. -/
+structure Noun extends ClassifiedNoun Empty where
   /-- The natural gender the noun's pronouns agree with, where it has one. -/
   gender : Option Gender := none
-  /-- The plural, where it is not the regular *-s* one. -/
-  irregularPlural : Option String := none
-  deriving DecidableEq, Repr
+  /-- The plural, where the noun has one. -/
+  plural : Option String := none
+  deriving DecidableEq
 
-/-- A common count noun; English is the metalanguage, so the gloss is the form. -/
-def Noun.common (form : String) : Noun := { form, gloss := form }
+/-- A common count noun, counted directly and with the regular *-s* plural; English is the
+metalanguage, so the gloss is the form. -/
+def Noun.common (form : String) : Noun :=
+  { form, gloss := form, counters := {none}, plural := some (suffixS form) }
 
-/-- A mass noun. -/
-def Noun.mass (form : String) : Noun := { form, gloss := form, massCount := .mass }
+/-- A mass noun, which no numeral counts and which has no plural. -/
+def Noun.mass (form : String) : Noun := { form, gloss := form, counters := ∅ }
 
-/-- The form at a number is the citation form in the singular and, in the plural of a count
-noun, the irregular plural where there is one and else the regular *-s* one. -/
+/-- The form at a number is the citation form in the singular and the plural where the noun has
+one. -/
 def Noun.realize (n : Noun) : Number → Option String
   | .singular => some n.form
-  | .plural =>
-    if n.massCount = .mass then none else some (n.irregularPlural.getD (suffixS n.form))
+  | .plural => n.plural
   | _ => none
 
 /-- The singular word token is a `NOUN` with the gender where the entry has one. -/
@@ -93,14 +99,16 @@ def idea : Noun := .common "idea"
 def lot : Noun := .common "lot"
 def bean : Noun := .common "bean"
 def lentil : Noun := .common "lentil"
+def spider : Noun := .common "spider"
+def pollenGrain : Noun := .common "pollen grain"
 def father : Noun := { Noun.common "father" with gender := some .masculine }
 def mother : Noun := { Noun.common "mother" with gender := some .feminine }
-def man : Noun := { Noun.common "man" with gender := some .masculine, irregularPlural := "men" }
+def man : Noun := { Noun.common "man" with gender := some .masculine, plural := "men" }
 def woman : Noun :=
-  { Noun.common "woman" with gender := some .feminine, irregularPlural := "women" }
-def fireman : Noun := { Noun.common "fireman" with irregularPlural := "firemen" }
-def person : Noun := { Noun.common "person" with irregularPlural := "people" }
-def child : Noun := { Noun.common "child" with irregularPlural := "children" }
+  { Noun.common "woman" with gender := some .feminine, plural := "women" }
+def fireman : Noun := { Noun.common "fireman" with plural := "firemen" }
+def person : Noun := { Noun.common "person" with plural := "people" }
+def child : Noun := { Noun.common "child" with plural := "children" }
 
 /-! ### Mass nouns -/
 
@@ -116,6 +124,8 @@ def coffee : Noun := .mass "coffee"
 def beer : Noun := .mass "beer"
 def milk : Noun := .mass "milk"
 def tea : Noun := .mass "tea"
+def pollen : Noun := .mass "pollen"
+def mold : Noun := .mass "mold"
 
 /-! ### Proper names -/
 

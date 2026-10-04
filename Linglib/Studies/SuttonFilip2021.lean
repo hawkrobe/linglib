@@ -20,7 +20,7 @@ overlaps; *lentil*, over a frame of the same kind, counts its units.
 
 * `Frame`, `Frame.objects`: a basic predicate with its unit field, (28) to (30).
 * `Entry`, `Entry.cbase`, `Entry.extn`: a lexical entry with its counting base and extension.
-* `Entry.IsCount`, `Entry.massCount`: an entry is count when its counting base is disjoint.
+* `Entry.IsCount`: an entry is count when its counting base is disjoint.
 * `unitShift`, `containerExtn`: the unit extracting and container classifiers.
 
 ## Main results
@@ -32,8 +32,8 @@ overlaps; *lentil*, over a frame of the same kind, counts its units.
 * `cum_extn_of_sumClosed`, `not_cum_extn_of_singular`: a container classifier's argument, (45),
   can be sum-closed but not singular count.
 * `furniture_two_perspectives`, `rice_accessibility`: the two halves of the puzzle on a model.
-* `massCount_eq_english`: the categorization gives *furniture* and *rice* the mass class and
-  *lentil* the count class that the English lexicon records.
+* `isCount_iff_english`: the categorization agrees with the English lexicon, where a numeral
+  counts *lentil* and neither *furniture* nor *rice*.
 
 ## Implementation notes
 
@@ -119,10 +119,6 @@ def IsCount : Prop := DisjointPred Overlap E.cbase
 /-- The features `[±O]` and `[±S]`. -/
 def features : Bool × Bool := (E.objectFn, E.perspective.isSome)
 
-open scoped Classical in
-/-- An entry is a count noun when its counting base is disjoint, and a mass noun otherwise. -/
-noncomputable def massCount : MassCount := if E.IsCount then .count else .mass
-
 variable {E}
 
 /-- A `[+S]` entry is count: its perspective is disjoint. -/
@@ -139,11 +135,6 @@ theorem isCount_iff_of_null (h : E.perspective = none) :
     E.IsCount ↔ DisjointPred Overlap E.base := by
   rw [IsCount, cbase_of_null h]
 
-theorem massCount_eq_count_iff : E.massCount = .count ↔ E.IsCount := by
-  unfold massCount; split_ifs <;> simp [*]
-
-theorem massCount_eq_mass_iff : E.massCount = .mass ↔ ¬ E.IsCount := by
-  unfold massCount; split_ifs <;> simp [*]
 
 variable (E)
 
@@ -343,14 +334,14 @@ theorem mud_mass : ¬ mud.IsCount := by
   show ¬ DisjointPred Overlap {s : Part | s.Nonempty}
   exact fun h ↦ h ⟨{0}, by decide, {0, 1}, by decide, by decide, {0}, by decide, le_rfl, by decide⟩
 
-/-- The categorization derives the classes of the English lexicon: *furniture* and *rice* are
-mass and *lentil* is count. -/
-theorem massCount_eq_english :
-    furniture.massCount = English.Nouns.furniture.massCount ∧
-      rice.massCount = English.Nouns.rice.massCount ∧
-      (lentil riceGrains riceGrains_disjoint true).massCount = English.Nouns.lentil.massCount :=
-  ⟨Entry.massCount_eq_mass_iff.2 furniture_mass, Entry.massCount_eq_mass_iff.2
-    rice_accessibility.2.1, Entry.massCount_eq_count_iff.2 rice_accessibility.2.2.2.1⟩
+/-- The categorization agrees with the English lexicon: a numeral counts *lentil* and neither
+*furniture* nor *rice*. -/
+theorem isCount_iff_english :
+    (furniture.IsCount ↔ English.Nouns.furniture.IsCount) ∧
+      (rice.IsCount ↔ English.Nouns.rice.IsCount) ∧
+      ((lentil riceGrains riceGrains_disjoint true).IsCount ↔ English.Nouns.lentil.IsCount) :=
+  ⟨iff_of_false furniture_mass (by decide), iff_of_false rice_accessibility.2.1 (by decide),
+    iff_of_true rice_accessibility.2.2.2.1 (by decide)⟩
 
 end Model
 
