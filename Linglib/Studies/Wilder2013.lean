@@ -88,7 +88,7 @@ open Focus
 
 /-! ### The auxiliary system -/
 
-/-- The heads of the clause structure (3) that decide whether Tense reaches the verb: an
+/-- These heads of the clause structure (3) decide whether Tense reaches the verb, namely an
 auxiliary raising to T (*have*, *be*) or a modal in T, the polarity head Σ with its value and
 whether it is F-marked, subject–auxiliary inversion, and an empty verb (ellipsis or VP fronting). -/
 structure Clause where
@@ -98,42 +98,42 @@ structure Clause where
   emptyV : Bool
   deriving DecidableEq
 
-/-- Affix Hopping attaches a stranded Tense affix to the adjacent overt verb: no Σ intervenes,
-the subject has not intervened by inversion, and the verb is overt. -/
+/-- Affix Hopping attaches a stranded Tense affix to the adjacent overt verb when no Σ
+intervenes, the subject has not intervened by inversion, and the verb is overt. -/
 def AffixHopping (c : Clause) : Prop := c.sigma = none ∧ ¬c.inversion ∧ ¬c.emptyV
 
-/-- *Do*-support: no auxiliary satisfies Tense and Affix Hopping is blocked. -/
+/-- *Do*-support arises when no auxiliary satisfies Tense and Affix Hopping is blocked. -/
 def DoSupport (c : Clause) : Prop := ¬c.aux ∧ ¬AffixHopping c
 
-/-- Polarity focus: Σ is present and F-marked. -/
+/-- A clause has polarity focus when Σ is present and F-marked. -/
 def PolarityFocus (c : Clause) : Prop := ∃ s, c.sigma = some (s, true)
 
-/-- Emphatic *do*: *do*-support motivated by none of the contexts of (1), negation, inversion
+/-- Emphatic *do* is *do*-support motivated by none of the contexts of (1), negation, inversion
 or an empty verb. -/
 def EmphaticDo (c : Clause) : Prop :=
   DoSupport c ∧ (∀ f, c.sigma ≠ some (.negative, f)) ∧ ¬c.inversion ∧ ¬c.emptyV
 
-/-- (4): *do*-support arises exactly when Σ intervenes, the subject intervenes, or the verb is
+/-- By (4), *do*-support arises exactly when Σ intervenes, the subject intervenes, or the verb is
 empty, and no auxiliary hosts Tense. -/
 theorem doSupport_iff (c : Clause) :
     DoSupport c ↔ ¬c.aux ∧ (c.sigma ≠ none ∨ c.inversion ∨ c.emptyV) := by
   simp only [DoSupport, AffixHopping]
   tauto
 
-/-- Emphatic *do* is *do*-support forced by an affirmative Σ alone: (4a-ii). -/
+/-- Emphatic *do* is *do*-support forced by an affirmative Σ alone, as in (4a-ii). -/
 theorem emphaticDo_iff (c : Clause) :
     EmphaticDo c ↔ ¬c.aux ∧ ¬c.inversion ∧ ¬c.emptyV ∧ ∃ f, c.sigma = some (.positive, f) := by
   obtain ⟨aux, sigma, inv, ev⟩ := c
   rcases sigma with _ | ⟨_ | _, f⟩ <;> simp [EmphaticDo, DoSupport, AffixHopping]
 
-/-- The syntax of emphatic assertion is that of negation: with Σ present, *do*-support does not
-depend on the value of Σ. -/
+/-- The syntax of emphatic assertion is that of negation, since with Σ present *do*-support does
+not depend on the value of Σ. -/
 theorem doSupport_negative_iff_positive (c : Clause) (f f' : Bool) :
     DoSupport { c with sigma := some (.negative, f) } ↔
       DoSupport { c with sigma := some (.positive, f') } := by
   simp [doSupport_iff]
 
-/-- (5): an auxiliary in T hosts Tense, so no *do* appears whatever Σ holds. -/
+/-- By (5), an auxiliary in T hosts Tense, so no *do* appears whatever Σ holds. -/
 theorem not_doSupport_of_aux {c : Clause} (h : c.aux) : ¬DoSupport c :=
   fun hd ↦ hd.1 h
 
@@ -144,8 +144,8 @@ theorem not_polarityFocus_of_affixHopping {c : Clause} (h : AffixHopping c) :
   rw [h.1] at hs
   cases hs
 
-/-- Emphatic *do* is the sole auxiliary whose presence signals Σ: an emphatic *do* clause has Σ,
-though its F-mark is syntactically optional. -/
+/-- Emphatic *do* is the sole auxiliary whose presence signals Σ, since an emphatic *do* clause has
+Σ, though its F-mark is syntactically optional. -/
 theorem emphaticDo_sigma {c : Clause} (h : EmphaticDo c) : ∃ f, c.sigma = some (.positive, f) :=
   ((emphaticDo_iff c).1 h).2.2.2
 
@@ -153,8 +153,8 @@ theorem emphaticDo_sigma {c : Clause} (h : EmphaticDo c) : ∃ f, c.sigma = some
 
 variable {W : Type*}
 
-/-- F-marking Σ: the proposition of the clause with the alternatives obtained by applying each
-value of Σ, affirmation and negation, to it (73), its polarity alternatives. -/
+/-- F-marking Σ pairs the proposition of the clause with the alternatives obtained by applying
+each value of Σ, affirmation and negation, to it (73), its polarity alternatives. -/
 def polarityFocus (p : Set W) : WithAlternatives (Set W) :=
   ⟨p, MulAction.orbit Polarity p⟩
 
@@ -165,7 +165,7 @@ theorem polarityFocus_alternatives (p : Set W) :
     (polarityFocus p).alternatives = {p, pᶜ} :=
   Polarity.orbit_eq_pair_compl p
 
-/-- Polarity focus is well formed: the proposition is among its alternatives. -/
+/-- Polarity focus is well formed, since the proposition is among its alternatives. -/
 theorem polarityFocus_wellFormed (p : Set W) : (polarityFocus p).WellFormed :=
   MulAction.mem_orbit_self p
 
@@ -175,14 +175,14 @@ theorem polarityFocus_alternatives_eq_alt_polar {p : Set W} (hne : p ≠ ∅) (h
     (polarityFocus p).alternatives = (Question.polar p).alt :=
   (Question.alt_polar_eq_orbit hne hnu).symm
 
-/-- (59), (60): a context that evokes the polar question admits the polarity focus of an answer
-to it. -/
+/-- By (59) and (60), a context that evokes the polar question admits the polarity focus of an
+answer to it. -/
 theorem question_admits_polarityFocus {p : Set W} (hne : p ≠ ∅) (hnu : p ≠ Set.univ) :
     (Antecedent.question (Question.polar p).alt).Admits (polarityFocus p).alternatives := by
   rw [polarityFocus_alternatives_eq_alt_polar hne hnu]
   exact subset_rfl
 
-/-- (51): a prior assertion of the negation is corrected by the emphatic *do* sentence, which
+/-- In (51) a prior assertion of the negation is corrected by the emphatic *do* sentence, which
 resolves the focus antecedent among the polarity alternatives. -/
 theorem assertion_neg_resolves_polarityFocus {p : Set W} (hne : p ≠ ∅) :
     (Antecedent.assertion pᶜ {p, pᶜ}).Resolves (polarityFocus p).ordinary
@@ -193,33 +193,33 @@ theorem assertion_neg_resolves_polarityFocus {p : Set W} (hne : p ≠ ∅) :
   · simp
   · simp
 
-/-- (57): an antecedent asserting the proposition itself is not a focus alternative that the
+/-- In (57) an antecedent asserting the proposition itself is not a focus alternative that the
 sentence corrects; the alternative set is evoked by the context instead. -/
 theorem not_assertion_self_resolves (p : Set W) (alts : Set (Set W)) :
     ¬ (Antecedent.assertion p alts).Resolves (polarityFocus p).ordinary
       (polarityFocus p).alternatives :=
   fun h ↦ h.2 rfl
 
-/-- The existential F-closure (66): the proposition that some alternative holds. -/
+/-- The existential F-closure (66) is the proposition that some alternative holds. -/
 def existentialClosure (m : WithAlternatives (Set W)) : Set W := ⋃₀ m.alternatives
 
-/-- Givenness (70) at the propositional level: a salient antecedent entails the existential
-F-closure. -/
+/-- Givenness (70) at the propositional level holds when a salient antecedent entails the
+existential F-closure. -/
 def Given (a : Set W) (m : WithAlternatives (Set W)) : Prop := a ⊆ existentialClosure m
 
-/-- (73): the existential F-closure of a clause with F-marked Σ is a tautology. -/
+/-- By (73), the existential F-closure of a clause with F-marked Σ is a tautology. -/
 theorem existentialClosure_polarityFocus (p : Set W) :
     existentialClosure (polarityFocus p) = Set.univ := by
   rw [existentialClosure, polarityFocus_alternatives]
   simp
 
-/-- Any salient antecedent makes a clause with polarity focus Given: the requirement that the
+/-- Any salient antecedent makes a clause with polarity focus Given, so the requirement that the
 antecedent be the negation falls on the unfocused subject and verb phrase, not on the clause. -/
 theorem given_polarityFocus (a p : Set W) : Given a (polarityFocus p) := by
   rw [Given, existentialClosure_polarityFocus]
   exact Set.subset_univ a
 
-/-- (72): a narrow focus whose alternatives do not exhaust the worlds is not Given after every
+/-- By (72), a narrow focus whose alternatives do not exhaust the worlds is not Given after every
 antecedent, so it constrains the antecedent as polarity focus does not. -/
 theorem exists_not_given {m : WithAlternatives (Set W)} (h : existentialClosure m ≠ Set.univ) :
     ∃ a, ¬ Given a m :=
@@ -227,14 +227,14 @@ theorem exists_not_given {m : WithAlternatives (Set W)} (h : existentialClosure 
 
 /-! ### Contrastive topic and strategies -/
 
-/-- The hypothesis (112): a sentence with a contrastive topic and emphatic *do* directly answers a
-polar question of the strategy the contrastive topic indicates, so the polar question is a node
+/-- Under hypothesis (112), a sentence with a contrastive topic and emphatic *do* directly answers
+a polar question of the strategy the contrastive topic indicates, so the polar question is a node
 of the strategy. -/
 def DirectlyAnswersPolar (s : Discourse.Strategy W) (p : Set W) : Prop :=
   Question.polar p ∈ s.values
 
-/-- The strategy the contrastive-topic verb phrase of (106) and (107) indicates: whether he is a
-good doctor, divided into whether he has a lot of patients, diagnoses well and treats his
+/-- The strategy the contrastive-topic verb phrase of (106) and (107) indicates asks whether he is
+a good doctor, divided into whether he has a lot of patients, diagnoses well and treats his
 patients politely. -/
 def doctorStrategy (good patients diagnose polite : Set W) : Discourse.Strategy W :=
   .node (Question.polar good)
@@ -246,12 +246,12 @@ theorem directlyAnswersPolar_doctorStrategy (good patients diagnose polite : Set
     DirectlyAnswersPolar (doctorStrategy good patients diagnose polite) patients := by
   simp [DirectlyAnswersPolar, doctorStrategy, RoseTree.leaf]
 
-/-- The strategy is complete when the three subquestions decide the superquestion: a state that
-settles each of them settles whether he is a good doctor. -/
+/-- The strategy is complete when the three subquestions decide the superquestion, so that a
+state that settles each of them settles whether he is a good doctor. -/
 theorem doctorStrategy_isComplete {good patients diagnose polite : Set W}
     (h : good = patients ∩ diagnose ∩ polite) :
     (doctorStrategy good patients diagnose polite).IsComplete := by
-  refine ⟨fun _ ↦ ?_, fun c hc ↦ ?_⟩
+  refine .node (fun _ ↦ ?_) (fun c hc ↦ ?_)
   · intro σ hσ
     simp only [List.map_cons, List.map_nil, RoseTree.value_node, RoseTree.leaf, Multiset.inf_coe,
       List.foldr, inf_top_eq, Question.mem_props, Question.mem_inf, Question.mem_polar] at hσ
@@ -269,14 +269,14 @@ theorem doctorStrategy_isComplete {good patients diagnose polite : Set W}
   · simp only [List.mem_cons, List.mem_nil_iff, or_false] at hc
     rcases hc with rfl | rfl | rfl <;> exact Discourse.Strategy.IsComplete.leaf _
 
-/-- (24): a negative answer to an unanswered subquestion is a negative answer to the
+/-- By (24), a negative answer to an unanswered subquestion is a negative answer to the
 superquestion. -/
 theorem not_good_of_not_diagnose {good patients diagnose polite : Set W}
     (h : good = patients ∩ diagnose ∩ polite) {σ : Set W} (hσ : σ ⊆ diagnoseᶜ) : σ ⊆ goodᶜ :=
   hσ.trans (Set.compl_subset_compl.mpr (h ▸ Set.inter_subset_left.trans Set.inter_subset_right))
 
-/-- (113), (114): a constituent question has an alternative that is neither the proposition nor
-its negation, so it does not admit the polarity focus of an emphatic *do* answer. A
+/-- By (113) and (114), a constituent question has an alternative that is neither the
+proposition nor its negation, so it does not admit the polarity focus of an emphatic *do* answer. A
 contrastive-topic sentence that directly answers a constituent question rejects *do*. -/
 theorem not_admits_polarityFocus_of_constituentQuestion {Q : Question W} {p a : Set W}
     (ha : a ∈ Q.alt) (hp : a ≠ p) (hc : a ≠ pᶜ) :
@@ -294,7 +294,7 @@ inductive Constituent
   | subject | vp | object
   deriving DecidableEq, Repr
 
-/-- The kind of sentence a row judges: the Verum-focus pattern (46), the contrastive-topic
+/-- A row judges one kind of sentence, the Verum-focus pattern (46), the contrastive-topic
 pattern (47) with its marked constituent, a contrastive-topic sentence directly answering a
 constituent question (113), (114), or a Yes-answer to a polar question (126), (127), (137). -/
 inductive Kind
@@ -365,37 +365,37 @@ instance : DecidablePred Environment.IsEmbedding := fun e ↦ by
   cases e <;> simp only [Environment.IsEmbedding] <;> infer_instance
 
 /-- An environment hosts a Yes-answer to a polar question when the paper judges one acceptable
-in it: (126) and (137) against (127). -/
+in it, (126) and (137) against (127). -/
 def HostsYesAnswer (e : Environment) : Prop :=
   ∃ r ∈ rows, r.kind = .yesAnswer ∧ r.environment = e ∧ r.acceptable
 
 instance : DecidablePred HostsYesAnswer := fun _ ↦ by
   unfold HostsYesAnswer; infer_instance
 
-/-- (46c): the Verum-focus pattern is acceptable in every clause type. -/
+/-- By (46c), the Verum-focus pattern is acceptable in every clause type. -/
 theorem vf_acceptable : ∀ r ∈ rows, r.kind = .vf → r.acceptable := by decide
 
-/-- (125) meets (127): across the embedding environments, a contrastive-topic sentence with
+/-- Where (125) meets (127), across the embedding environments, a contrastive-topic sentence with
 emphatic *do* is acceptable exactly where a Yes-answer to a polar question can be embedded. -/
 theorem ct_acceptable_iff_hostsYesAnswer :
     ∀ r ∈ rows, r.kind.IsCT → r.environment.IsEmbedding →
       (r.acceptable ↔ HostsYesAnswer r.environment) := by
   decide
 
-/-- Section 6.1: no contrastive-topic sentence occurs in a wh-subject question, since contrastive
-topic is undefined for questions. -/
+/-- By Section 6.1, no contrastive-topic sentence occurs in a wh-subject question, since
+contrastive topic is undefined for questions. -/
 theorem ct_not_whSubjectQuestion :
     ∀ r ∈ rows, r.kind.IsCT → r.environment = .whSubjectQuestion → ¬r.acceptable := by
   decide
 
-/-- Section 6.2: a preposed object is itself a contrastive topic, so a further contrastive-topic
-accent on the verb phrase clashes with its strategy. -/
+/-- By Section 6.2, a preposed object is itself a contrastive topic, so a further
+contrastive-topic accent on the verb phrase clashes with its strategy. -/
 theorem ct_not_objectPreposing :
     ∀ r ∈ rows, r.kind.IsCT → r.environment = .objectPreposing → ¬r.acceptable := by
   decide
 
-/-- (113), (114): a contrastive-topic sentence directly answering a constituent question rejects
-emphatic *do*, as `not_admits_polarityFocus_of_constituentQuestion` predicts. -/
+/-- By (113) and (114), a contrastive-topic sentence directly answering a constituent question
+rejects emphatic *do*, as `not_admits_polarityFocus_of_constituentQuestion` predicts. -/
 theorem ctConstituentQuestion_unacceptable :
     ∀ r ∈ rows, r.kind.IsCTConstituentQuestion → ¬r.acceptable := by
   decide
