@@ -83,8 +83,6 @@ Option Bool` form), with the shared `merge`/`set`/`delete` algebra below.
 
 ## Todo
 
-* Instantiate `BundleLike` at the Minimalist `FeatureBundle`
-  (lawful only after the planned list-to-assignment retype).
 * Per-slot generality: `Bundle` fixes the flat slot order. UD-practice
   pressure (multivalued features as `Finset`-superset slots, layered
   features as a nested index) is accommodated by working with
