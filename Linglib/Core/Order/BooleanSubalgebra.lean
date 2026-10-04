@@ -22,11 +22,15 @@ nonzero minterms, and two such subalgebras are isomorphic iff they have equally 
 
 ## Main definitions
 
+* `BooleanSubalgebra.orderIsoMapOfInjective`: a Boolean subalgebra is order-isomorphic to its
+  image along an injective homomorphism.
 * `BooleanSubalgebra.toSetOfMinterms φ`: the order isomorphism from `closure (Set.range φ)`
   onto the powerset of the nonzero minterms of `φ`.
 
 ## Main results
 
+* `BooleanSubalgebra.map_closure`: a homomorphism carries the closure of a set onto the closure of
+  its image.
 * `BooleanSubalgebra.minterm_le_or_le_compl`: a minterm lies below each element of the closure or
   below its complement.
 * `BooleanSubalgebra.card_closure`: the closure has `2 ^ n` elements.
@@ -54,6 +58,25 @@ variable {α : Type*} [BooleanAlgebra α] {L : BooleanSubalgebra α} {a b : L}
   rw [codisjoint_iff, codisjoint_iff, ← val_sup, ← val_top, Subtype.coe_inj]
 
 end Coe
+
+section Map
+
+variable {α β : Type*} [BooleanAlgebra α] [BooleanAlgebra β] {f : BoundedLatticeHom α β}
+
+theorem map_closure (f : BoundedLatticeHom α β) (s : Set α) :
+    (closure s).map f = closure (f '' s) :=
+  le_antisymm (map_le_iff_le_comap.2 <| closure_le.2 fun a ha ↦ subset_closure ⟨a, ha, rfl⟩)
+    (closure_le.2 <| Set.image_mono subset_closure)
+
+/-- A Boolean subalgebra is order-isomorphic to its image along an injective homomorphism. -/
+noncomputable def orderIsoMapOfInjective (L : BooleanSubalgebra α) (hf : Function.Injective f) :
+    L ≃o L.map f where
+  toEquiv := Equiv.Set.image f L hf
+  map_rel_iff' {a b} := by
+    change f a.1 ≤ f b.1 ↔ a.1 ≤ b.1
+    rw [← inf_eq_left, ← InfHomClass.map_inf, hf.eq_iff, inf_eq_left]
+
+end Map
 
 variable {α ι : Type*} [BooleanAlgebra α] [Fintype ι] {φ : ι → α}
 

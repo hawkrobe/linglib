@@ -63,6 +63,18 @@ theorem the_iff {α : Type*} (R S : α → Prop) :
   · rintro ⟨⟨x, hx, huniq⟩, hS⟩
     exact ⟨x, fun y => ⟨huniq y, fun h => h ▸ hx⟩, hS x hx⟩
 
+section Decidable
+
+variable {α : Type*} [Fintype α] {R S : α → Prop} [DecidablePred R] [DecidablePred S]
+
+instance : Decidable (every R S) := inferInstanceAs (Decidable (∀ _, _))
+
+instance : Decidable (GQ.some R S) := inferInstanceAs (Decidable (∃ _, _))
+
+instance : Decidable (no R S) := inferInstanceAs (Decidable (∀ _, _))
+
+end Decidable
+
 /-- A quantifier satisfies Barwise and Cooper's semantic universals when it is conservative and
 either monotone or antitone in its scope. -/
 def SatisfiesUniversals {α : Type*} (q : GQ α) : Prop :=
@@ -171,8 +183,8 @@ theorem compl_some :
 theorem positiveStrong_every : PositiveStrong (every : GQ α) := by
   intro R x hR; exact hR
 
-/-- `(no : GQ α)` is negative strong on non-empty restrictors:
-    no(A,A) = false for all non-empty A. -/
+/-- `(no : GQ α)` is negative strong on non-empty restrictors, `no(A,A)` being false for every
+    non-empty `A`. -/
 theorem no_negative_strong_nonempty (R : α → Prop)
     (hR : ∃ x : α, R x) :
     ¬ (no : GQ α) R R := by
@@ -205,8 +217,8 @@ theorem quasiUniversal_no : QuasiUniversal (no : GQ α) := by
 
 /-! ### Double monotonicity classification ([van-benthem-1984] §4.2) -/
 
-/-- `(every : GQ α)` is restrictor-↓ (anti-persistent). Follows from Zwarts bridge:
-    reflexive + transitive + CONSERV → ↓MON. -/
+/-- `(every : GQ α)` is restrictor-↓ (anti-persistent), by Zwarts's bridge from reflexivity,
+    transitivity and conservativity to ↓MON. -/
 theorem restrictorAntitone_every : RestrictorAntitone (every : GQ α) :=
   zwarts_refl_trans_restrictorDown _ conservative_every positiveStrong_every
     isTrans_every

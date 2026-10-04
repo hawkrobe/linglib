@@ -24,6 +24,8 @@ Aristotelian isomorphic diagram of bitstrings.
 ## Main results
 
 * `BooleanIso.toAristotelianIso`: every Boolean isomorphism is an Aristotelian isomorphism.
+* `BooleanIso.ofInjective`: a diagram is Boolean isomorphic to its image along an injective
+  homomorphism.
 * `AristotelianIso.toSetOfMinterms`: a diagram and its bitstrings are Aristotelian isomorphic.
 
 ## Implementation notes
@@ -171,6 +173,14 @@ namespace BooleanIso
   closureIso := e.closureIso.trans e'.closureIso
   extends_corners i := by
     simp only [OrderIso.trans_apply, e.extends_corners, e'.extends_corners, Equiv.trans_apply]
+
+/-- A diagram is Boolean isomorphic to its image along an injective homomorphism. -/
+noncomputable def ofInjective (g : BoundedLatticeHom α α') (hg : Function.Injective g) :
+    BooleanIso φ (g ∘ φ) where
+  toEquiv := .refl ι
+  closureIso := (orderIsoMapOfInjective _ hg).trans <|
+    Set.orderIsoOfEq _ _ (by rw [map_closure, ← Set.range_comp])
+  extends_corners _ := rfl
 
 /-- Every Boolean isomorphism is an Aristotelian isomorphism. -/
 def toAristotelianIso (bi : BooleanIso φ φ') : AristotelianIso φ φ' where
