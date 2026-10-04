@@ -6,93 +6,53 @@ public import Linglib.Logic.Team.Operations
 public import Linglib.Logic.Team.Closure
 public import Linglib.Logic.Team.Definability
 public import Linglib.Logic.Team.Atoms
+public import Linglib.Logic.Team.Bisimulation
 
 /-!
-# Modal Inclusion Logic (MIL)
+# Modal inclusion logic
 
-[anttila-haggblom-yang-2024] [anttila-2025]
+Modal inclusion logic ML(⊆) extends classical modal logic with inclusion atoms `a ⊆ b`, supported
+by a team when every tuple of truth values that `a` takes at a world of the team is taken by `b`
+at some world of the team. It has support only, no anti-support. Its `◇` is lax: a team supports
+`◇φ` when some team of successors supporting `φ` reaches every world of the team. ML(⊆) formulas
+are union closed and supported by the empty team, but the inclusion atom breaks downward
+closure. Anttila, Häggblom and Yang axiomatize the logic and characterize its expressive power.
 
-Modal inclusion logic ML(⊆) extends classical modal logic with an
-**inclusion atom** `x⃗ ⊆ y⃗` meaning: for every tuple of `x⃗`-truth-values
-realised at some world in the team, the same tuple is realised as a
-tuple of `y⃗`-truth-values at some world in the team. Introduced for
-team semantics by Galliani; the modal variant ML(⊆) is axiomatised in
-[anttila-haggblom-yang-2024] (*Archive for Mathematical Logic*
-2025; arXiv:2312.02285), which is also [anttila-2025] Chapter 5.
+## Main definitions
 
-Unlike BSML / MDL, **MIL is unilateral**: there is only a support
-relation, no separate anti-support. Negation is restricted to classical
-sub-formulas and defined by pointwise team-extension of classical
-Kripke negation. This file follows AHY 2024's exact Definition 2.2 and
-provides single-polarity `eval`.
+* `Formula`: atoms, `⊥`, inclusion atoms, `¬`, `∧`, split `∨`, `◇` and `□`.
+* `eval`, `support`: support of a formula by a team.
+* `Formula.modalDepth`: the nesting depth of `◇` and `□`.
+* `Formula.InclFree`, `Realize`: the fragment without inclusion atoms, and classical truth.
 
-## Closure profile
+## Main results
 
-| Property            | BSML (with NE) | MDL              | MIL              |
-|---------------------|----------------|------------------|------------------|
-| `IsLowerSet`        | broken by NE   | ✓                | broken by `incl` |
-| `SupClosed`         | ✓              | broken by `dep`  | ✓                |
-| `∅ ∈ support`       | ✓              | ✓                | ✓                |
-
-MIL shares its closure profile cell (— ✓ ✓) with BSML-with-NE and
-BSMLEmpty — same closure cell, different syntactic mechanism (the
-inclusion atom rather than NE breaks DC; UC is preserved because two
-teams that each witness an inclusion provide a superset of witnesses
-in the union).
-
-## Main declarations
-
-* `Formula` — MIL syntax (AHY 2024 Definition 2.1).
-* `eval` — single-polarity team-semantic evaluation (AHY 2024
-  Definition 2.2).
-* `support` — alias for `eval`.
-* `Formula.modalDepth` — depth of nested ◇/□.
-* `supClosed_support` — every MIL formula has sup-closed support
-  (AHY 2024 §2, "Union closure").
-* `support_empty` — every formula is supported on the empty team
-  (AHY 2024 §2, "Empty Team Property").
-* `not_isLowerSet_incl_of_witness` — constructive witness that the
-  inclusion atom breaks downward closure.
-* `Formula.InclFree`, `Realize`, `support_iff_forall_realize` — without
-  inclusion atoms MIL is classical modal logic: support is pointwise Kripke
-  truth.
+* `supClosed_support`, `support_empty`: support is union closed and contains `∅`.
+* `not_isLowerSet_incl_of_witness`: the inclusion atom is not downward closed.
+* `invariant_eval`: `k`-bisimilar teams agree on every formula of modal depth at most `k`.
+* `definableClass_support_subset`: every definable team property is union closed, contains `∅`
+  and is closed under bounded bisimulation.
+* `support_iff_forall_realize`: without inclusion atoms, support is pointwise classical truth.
 
 ## Implementation notes
 
-The `eval` clauses are the operations of `Team/Operations.lean` — `Team.flat`
-for atoms and negation, `Team.tensor` for disjunction, the lax modality
-`Team.possLax` and the image modality `Team.necImage` — and the inclusion atom
-`Team.incl` of `Team/Atoms.lean` read through the valuation, so union closure and
-the empty-team property are folds over their per-case lemmas.
+`eval` is a fold over the operations of `Team/Operations.lean` and the inclusion atom
+`Team.incl`. It departs from the source in two ways. Inclusion atoms relate lists of atoms,
+where the source allows classical formulas. Negation applies to any formula, with the source's
+pointwise clause, where the source restricts it to classical formulas.
 
-The paper's inclusion atom takes equal-length lists of *classical
-formulas* `α₁...αₙ ⊆ β₁...βₙ`. We simplify to lists of *atoms* — each
-pair encoded as `(Atom × Atom)`. This loses some expressive power but
-matches concrete instances and avoids mutual recursion with a separate
-classical-formula type.
+## TODO
 
-The paper allows `¬α` only when `α` is a classical formula. We allow
-`neg` syntactically over any MIL formula and define its semantics by
-the same pointwise team-extension as the paper. Under the paper's
-syntactic restriction this case is unreachable for non-classical
-sub-formulas; we extend the definition uniformly because team-extended
-pointwise classical negation is well-defined regardless.
+* The converse of `definableClass_support_subset`. The source's normal form uses inclusion atoms
+  `⊤ ⊆ α` over classical formulas, which the atom-only encoding lacks.
+* The natural-deduction axiomatization and its completeness.
+* The might operator and the singular might operator, which have the same expressive power.
 
-The ◇ clause uses AHY 2024's **lax semantics** (Definition 2.2): a
-successor team `S` must satisfy both `S ⊆ R[T]` (the reach constraint)
-and `T ⊆ R⁻¹[S]` (the back constraint). The paper's footnote 1 notes
-that with the **strict semantics** (functional successor selection),
-MIL would lose union closure. We follow the paper in using lax.
+## References
 
-## Todo
-
-* AHY 2024 §3 — expressive completeness and normal forms for MIL.
-* AHY 2024 §4 — natural deduction axiomatisation + completeness proof.
-* AHY 2024 §5 — the variant logics ML(▽) and ML(▽) (might-operator
-  and singular might-operator). Should each get its own file once
-  the substrate proves itself.
-* Bisim invariance for MIL — same shape as BSML's; AHY 2024 §3.1 uses
-  this for the expressive completeness proof.
+* [anttila-haggblom-yang-2025] Anttila, Häggblom and Yang, Axiomatizing modal inclusion logic
+  and its variants
+* [anttila-2021] Anttila, The Logic of Free Choice: Axiomatizations of State-based Modal Logics
 -/
 
 @[expose] public section
@@ -103,10 +63,11 @@ variable {W : Type*} {Atom : Type*}
 
 open ModalLogic (KripkeModel)
 
-/-! ### Syntax (AHY 2024 Definition 2.1) -/
+/-! ### Syntax -/
 
-/-- MIL syntax. The paper's `α₁...αₙ ⊆ β₁...βₙ` is encoded as a list of
-    pairs `[(α₁, β₁), ..., (αₙ, βₙ)]`. Both ◇ and □ are primitives. -/
+/-- The formulas of ML(⊆) ([anttila-haggblom-yang-2025] Definition 2.1), with `◇` and `□` both
+    primitive. An inclusion atom `α₁...αₙ ⊆ β₁...βₙ` is the list of pairs
+    `[(α₁, β₁), ..., (αₙ, βₙ)]`. -/
 inductive Formula (Atom : Type*) where
   /-- Atomic proposition. -/
   | atom (p : Atom)
@@ -160,9 +121,9 @@ theorem realize_nec {M : KripkeModel W Atom} {ψ : Formula Atom} {w : W} :
 
 variable [DecidableEq W]
 
-/-! ### Semantics (AHY 2024 Definition 2.2) -/
+/-! ### Semantics -/
 
-/-- Single-polarity team-semantic evaluation. -/
+/-- A team supports a formula ([anttila-haggblom-yang-2025] Definition 2.2). -/
 def eval (M : KripkeModel W Atom) : Formula Atom → Finset W → Prop
   | .atom p,        t => t ∈ Team.flat fun w ↦ M.val p w = true
   | .bot,           t => t ∈ ({∅} : Team.TeamProperty W)
@@ -174,9 +135,7 @@ def eval (M : KripkeModel W Atom) : Formula Atom → Finset W → Prop
   | .poss ψ,        t => t ∈ Team.possLax M.access {s | eval M ψ s}
   | .nec ψ,         t => t ∈ Team.necImage M.access {s | eval M ψ s}
 
-/-- Support: alias for `eval`. MIL is unilateral (no separate
-    anti-support), but the name `support` is the conventional one
-    in team semantics. -/
+/-- Support is `eval`, under its conventional name; ML(⊆) has no anti-support. -/
 abbrev support (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) : Prop :=
   eval M φ t
 
@@ -212,24 +171,17 @@ abbrev support (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) : Pro
 
 /-! ### Modal depth -/
 
-/-- Modal depth of a MIL formula. -/
+/-- The modal depth of a formula is the greatest number of nested modalities in it. -/
 def Formula.modalDepth : Formula Atom → ℕ
-  | .atom _ => 0
-  | .bot => 0
-  | .incl _ => 0
+  | .atom _ | .bot | .incl _ => 0
   | .neg ψ => ψ.modalDepth
-  | .conj ψ₁ ψ₂ => max ψ₁.modalDepth ψ₂.modalDepth
-  | .disj ψ₁ ψ₂ => max ψ₁.modalDepth ψ₂.modalDepth
-  | .poss ψ => ψ.modalDepth + 1
-  | .nec ψ => ψ.modalDepth + 1
+  | .conj ψ₁ ψ₂ | .disj ψ₁ ψ₂ => max ψ₁.modalDepth ψ₂.modalDepth
+  | .poss ψ | .nec ψ => ψ.modalDepth + 1
 
-/-! ### Sup-closure: the defining property of the inclusion family
-    (AHY 2024 §2 — "Union closure: if M, Tᵢ ⊨ φ for all i ∈ I ≠ ∅,
-    then M, ⋃_{i ∈ I} Tᵢ ⊨ φ") -/
+/-! ### Union closure -/
 
-/-- Every MIL formula has sup-closed support: each case is the closure lemma of its
-    connective in `Team/Operations.lean`; a world's inclusion witness in either team is a
-    witness in the union. -/
+/-- Every MIL formula has union-closed support. Each case is the closure lemma of its connective
+    in `Team/Operations.lean`, and an inclusion witness in either team is one in the union. -/
 theorem supClosed_support (M : KripkeModel W Atom) (φ : Formula Atom) :
     SupClosed { t : Finset W | support M φ t } := by
   induction φ with
@@ -242,7 +194,7 @@ theorem supClosed_support (M : KripkeModel W Atom) (φ : Formula Atom) :
   | poss ψ ih => exact ih.possLax
   | nec ψ ih => exact ih.necImage
 
-/-! ### Empty team property (AHY 2024 §2) -/
+/-! ### Empty team property -/
 
 theorem support_empty (M : KripkeModel W Atom) (φ : Formula Atom) :
     support M φ ∅ := by
@@ -258,9 +210,9 @@ theorem support_empty (M : KripkeModel W Atom) (φ : Formula Atom) :
 
 /-! ### Inclusion breaks downward closure (the defining feature) -/
 
-/-- **The inclusion atom breaks downward closure** (`Team.not_isLowerSet_incl`): if `w₂`
-    supplies the `b`-value matching both its own and `w₁`'s `a`-value, but `w₁` does not match
-    itself, then `{w₁, w₂}` supports `a ⊆ b` and `{w₁}` does not. -/
+/-- The inclusion atom is not downward closed. If `w₂` supplies the `b`-value matching both its
+    own and `w₁`'s `a`-value but `w₁` does not match itself, then `{w₁, w₂}` supports `a ⊆ b`
+    and `{w₁}` does not. -/
 theorem not_isLowerSet_incl_of_witness {a b : Atom} {w₁ w₂ : W} {M : KripkeModel W Atom}
     (hpair : M.val a w₁ = M.val b w₂) (hself : M.val a w₂ = M.val b w₂)
     (hwit : M.val a w₁ ≠ M.val b w₁) :
@@ -270,22 +222,56 @@ theorem not_isLowerSet_incl_of_witness {a b : Atom} {w₁ w₂ : W} {M : KripkeM
       (g := fun w ↦ [(a, b)].map (M.val ·.2 w)) (a := w₁) (b := w₂) (by simp [hpair])
       (by simp [hself]) (by simp [hwit])
 
+/-! ### Bisimulation invariance -/
+
+section Bisimulation
+
+open ModalLogic (WorldBisim BisimClosed)
+
+variable {W' : Type*} [DecidableEq W'] {M : KripkeModel W Atom} {M' : KripkeModel W' Atom}
+
+/-- Teams that are `k`-bisimilar agree on every formula of modal depth at most `k`
+    ([anttila-haggblom-yang-2025] Theorem 3.6). -/
+theorem invariant_eval {k : ℕ} (φ : Formula Atom) (hd : φ.modalDepth ≤ k) :
+    Team.Invariant (WorldBisim k M · M' ·) {t | eval M φ t} {t | eval M' φ t} := by
+  induction φ generalizing k with
+  | atom p => exact Team.invariant_flat fun _ _ h ↦ by rw [h.val_eq]
+  | bot => exact Team.invariant_singleton_empty
+  | incl xys =>
+    exact Team.invariant_incl (fun _ _ h ↦ List.map_congr_left fun x _ ↦ h.val_eq x.1)
+      fun _ _ h ↦ List.map_congr_left fun x _ ↦ h.val_eq x.2
+  | neg ψ ih => exact Team.invariant_flat fun _ _ h ↦ not_congr ((ih hd).singleton h)
+  | conj ψ₁ ψ₂ ih₁ ih₂ =>
+    obtain ⟨hd₁, hd₂⟩ := max_le_iff.mp hd
+    exact (ih₁ hd₁).inter (ih₂ hd₂)
+  | disj ψ₁ ψ₂ ih₁ ih₂ =>
+    obtain ⟨hd₁, hd₂⟩ := max_le_iff.mp hd
+    exact (ih₁ hd₁).tensor (ih₂ hd₂)
+  | poss ψ ih =>
+    obtain _ | k := k
+    · exact absurd hd (Nat.not_succ_le_zero _)
+    exact (ih (Nat.le_of_succ_le_succ hd)).possLax fun _ _ h ↦ h.2
+  | nec ψ ih =>
+    obtain _ | k := k
+    · exact absurd hd (Nat.not_succ_le_zero _)
+    exact (ih (Nat.le_of_succ_le_succ hd)).necImage fun _ _ h ↦ h.2
+
+/-- The support of a formula is closed under bisimulation at its modal depth. -/
+theorem bisimClosed_support (M : KripkeModel W Atom) (φ : Formula Atom) :
+    BisimClosed M {t | support M φ t} :=
+  ⟨φ.modalDepth, invariant_eval φ le_rfl⟩
+
+end Bisimulation
+
 /-! ### Soundness for the closure cell (Definability bridge) -/
 
-open Team in
-/-- **MIL is sound for its closure cell**: every MIL-definable team property is
-    union-closed and has the empty-team property. This is the soundness half of
-    the expressive-completeness theorem for ML(⊆) ([anttila-haggblom-yang-2024];
-    [anttila-2025] Ch 5 shows ML(⊆) is complete for the union-closed modal
-    properties with the empty-team property, modulo bounded bisimulation).
-
-    Composes `supClosed_support` and `support_empty` through the
-    `Team/Definability.lean` bridge — the first consumer of that substrate. The
-    converse (every such property is MIL-definable, via the inclusion normal
-    form) is the open half. -/
+open Team ModalLogic in
+/-- Every MIL-definable team property is union closed, contains the empty team and is closed
+    under bounded bisimulation. This is the easy inclusion of the expressive completeness of
+    ML(⊆) ([anttila-haggblom-yang-2025] §3). -/
 theorem definableClass_support_subset (M : KripkeModel W Atom) :
-    definableClass (support M) ⊆ {P | SupClosed P ∧ ∅ ∈ P} :=
-  definableClass_subset fun φ ↦ ⟨supClosed_support M φ, support_empty M φ⟩
+    definableClass (support M) ⊆ {P | SupClosed P ∧ ∅ ∈ P ∧ BisimClosed M P} :=
+  definableClass_subset fun φ ↦ ⟨supClosed_support M φ, support_empty M φ, bisimClosed_support M φ⟩
 
 /-! ### The classical fragment
 

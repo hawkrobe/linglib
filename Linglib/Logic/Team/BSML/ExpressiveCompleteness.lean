@@ -13,10 +13,6 @@ the vocabulary of `Team/Definability.lean` this is `definableClass (support M) =
 properties of support; the other is proved within one model over finitely many atoms, from the
 characteristic formulas of `Characteristic.lean`.
 
-## Main definitions
-
-* `BisimClosed M P`: closure of a team property under bounded bisimulation within `M`.
-
 ## Main results
 
 * `bisimClosed_support`: support is closed under bounded bisimulation.
@@ -40,11 +36,6 @@ open Team ModalLogic
 variable {W : Type*} [DecidableEq W] {Atom : Type*}
 
 /-! ### Bounded-bisimulation closure -/
-
-/-- A team property of `M` is closed under bounded bisimulation when, for some depth `k`, it is
-    invariant under `k`-bisimilarity within `M`. -/
-def BisimClosed (M : KripkeModel W Atom) (P : TeamProperty W) : Prop :=
-  ∃ k : ℕ, Invariant (WorldBisim k M · M ·) P P
 
 /-- The support of a formula is closed under bisimulation at its modal depth. -/
 theorem bisimClosed_support (M : KripkeModel W Atom) (φ : Formula Atom) :
