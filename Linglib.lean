@@ -838,7 +838,6 @@ import Linglib.Pragmatics.Bidirectional
 import Linglib.Pragmatics.DecisionTheoretic.Basic
 import Linglib.Pragmatics.Efficiency
 import Linglib.Pragmatics.Implicature.Diagnostics
-import Linglib.Pragmatics.Implicature.SomeAll
 import Linglib.Pragmatics.NeoGricean.Basic
 import Linglib.Pragmatics.RSA.Basic
 import Linglib.Pragmatics.RSA.Uniform
